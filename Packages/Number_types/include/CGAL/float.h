@@ -30,12 +30,118 @@
 #include <cmath>
 #ifdef CGAL_CFG_IEEE_754_BUG
 #  include <CGAL/IEEE_754_unions.h>
+#  define CGAL_EXPONENT_FLOAT_MASK   0x7f800000
+#  define CGAL_MANTISSA_FLOAT_MASK   0x007fffff
 #endif
 #ifdef __sgi
 #  include <fp_class.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
+
+#ifdef CGAL_NEW_NT_TRAITS
+
+template<>
+class Number_type_traits<float>
+  : public CGALi::Default_field_number_type_traits<float>
+{
+public:
+  typedef Tag_true   Has_sqrt;
+  typedef Tag_false  Has_exact_division;
+  typedef Tag_false  Has_exact_sqrt;
+
+  typedef Tag_false  Has_rational_traits;
+  typedef Tag_false  Has_simplify;
+
+  static inline double to_double(float f) {
+    return static_cast<double>(f);
+  }
+
+  static inline std::pair<double,double> to_interval(float f) {
+    return std::pair<double,double>(f, f);
+  }
+
+  static inline float sqrt(float f) {
+    return std::sqrt(f);
+  }
+
+#ifdef __sgi
+  static inline bool is_finite(float f) {
+    switch (fp_class_f(f)) {
+    case FP_POS_NORM:
+    case FP_NEG_NORM:
+    case FP_POS_ZERO:
+    case FP_NEG_ZERO:
+    case FP_POS_DENORM:
+    case FP_NEG_DENORM:
+      return true;
+    case FP_SNAN:
+    case FP_QNAN:
+    case FP_POS_INF:
+    case FP_NEG_INF:
+      return false;
+    }
+    return false; // NOT REACHED
+  }
+
+  static inline bool is_valid(float f)
+  {
+    switch (fp_class_f(f)) {
+    case FP_POS_NORM:
+    case FP_NEG_NORM:
+    case FP_POS_ZERO:
+    case FP_NEG_ZERO:
+    case FP_POS_INF:
+    case FP_NEG_INF:
+    case FP_POS_DENORM:
+    case FP_NEG_DENORM:
+      return true;
+    case FP_SNAN:
+    case FP_QNAN:
+      return false;
+    }
+    return false; // NOT REACHED
+  }
+#elif defined CGAL_CFG_IEEE_754_BUG
+private:
+  static inline bool is_finite_by_mask_float(unsigned int u)
+  {
+    unsigned int e = u & CGAL_EXPONENT_FLOAT_MASK;
+    return ( (e ^ CGAL_EXPONENT_FLOAT_MASK) != 0);
+  }
+
+  static inline bool
+  is_nan_by_mask_float(unsigned int u)
+  {
+    if ( is_finite_by_mask_float(u) ) return false;
+    // unsigned int m = u & CGAL_MANTISSA_FLOAT_MASK;
+    return ( (u & CGAL_MANTISSA_FLOAT_MASK) != 0);
+  }
+
+public:
+  static inline bool is_finite( const float& flt) {
+    float f = flt;
+    IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
+    return is_finite_by_mask_float( p->c );
+  }
+
+  static inline bool is_valid( const float& flt) {
+    float f = flt;
+    IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
+    return !is_nan_by_mask_float( p->c );
+  }
+
+#else
+
+  static inline bool is_valid(float f) { return (f == f); }
+
+  static inline bool is_finite(float f) {
+    return (f == f) && (is_valid(f-f));
+  }
+#endif
+};
+
+#else // CGAL_NEW_NT_TRAITS
 
 template <> struct Number_type_traits<float> {
   typedef Tag_false Has_gcd;
@@ -101,8 +207,8 @@ bool is_valid(float d)
 
 #elif defined CGAL_CFG_IEEE_754_BUG
 
-#define CGAL_EXPONENT_FLOAT_MASK   0x7f800000
-#define CGAL_MANTISSA_FLOAT_MASK   0x007fffff
+//#define CGAL_EXPONENT_FLOAT_MASK   0x7f800000
+//#define CGAL_MANTISSA_FLOAT_MASK   0x007fffff
 
 inline
 bool
@@ -157,6 +263,8 @@ inline
 io_Operator
 io_tag(float)
 { return io_Operator(); }
+
+#endif // CGAL_NEW_NT_TRAITS
 
 CGAL_END_NAMESPACE
 

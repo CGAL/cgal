@@ -1,7 +1,7 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/Quotient.h> 
-#include <CGAL/MP_Float.h> 
+//#include <CGAL/MP_Float.h> 
 #include <CGAL/Lazy_exact_nt.h> 
 #include <CGAL/Fixed_precision_nt.h> 
 #include <CGAL/Interval_arithmetic.h> 
@@ -33,9 +33,9 @@
 
 #include <CGAL/_test_utilities.h>
 
-typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
+//typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
 
-typedef CGAL::Filtered_exact<double, QMPF>        FEDQ;
+//typedef CGAL::Filtered_exact<double, QMPF>        FEDQ;
 #ifdef CGAL_USE_GMP
 typedef CGAL::Filtered_exact<int, CGAL::Gmpz>     FEIG;
 typedef CGAL::Filtered_exact<double, CGAL::Gmpz>  FEDG;
@@ -72,16 +72,16 @@ int main()
 
   // CGAL number types
   TESTIT(CGAL::Fixed_precision_nt, "Fixed_precision_nt")
-  TESTIT(CGAL::MP_Float, "MP_Float")
+    //  TESTIT(CGAL::MP_Float, "MP_Float")
   TESTIT(CGAL::Quotient<int>, "Quotient<int>")
-  TESTIT(QMPF, "Quotient<MP_Float>")
-  TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
+    //  TESTIT(QMPF, "Quotient<MP_Float>")
+    //  TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
   TESTIT(CGAL::Interval_nt<>, "Interval_nt<>")
 #ifdef CGAL_USE_GMP
   TESTIT(FEIG, "Filtered_exact<int, Gmpz>");
   TESTIT(FEDG, "Filtered_exact<double, Gmpz>");
 #endif
-  TESTIT(FEDQ, "Filtered_exact<double, Quotient<MP_Float> >");
+  //  TESTIT(FEDQ, "Filtered_exact<double, Quotient<MP_Float> >");
 
   // GMP based NTs
 #ifdef CGAL_USE_GMP

@@ -36,6 +36,45 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_NEW_NT_TRAITS
+
+template<>
+struct Number_type_traits<leda_bigfloat>
+  : public CGALi::Default_ring_number_type_traits<leda_bigfloat>
+{
+  typedef Tag_true    Has_division;
+ 
+  typedef Tag_true    Has_exact_ring_operations;
+  typedef Tag_false   Has_exact_division;
+  typedef Tag_false   Has_exact_sqrt;
+
+#ifndef CGAL_CFG_NO_NAMESPACE
+  static inline double to_double(const leda_bigfloat & b) {
+    return CGAL_LEDA_SCOPE::to_double(b);
+  }
+#endif // CGAL_CFG_NO_NAMESPACE
+
+  static inline bool is_finite(const leda_bigfloat & b) {
+    return
+      !( CGAL_LEDA_SCOPE::isInf(b) || CGAL_LEDA_SCOPE::isNaN(b) );
+  }
+
+  static inline bool is_valid(const leda_bigfloat & b)
+  { return !( CGAL_LEDA_SCOPE::isNaN(b) ); }
+
+  static inline
+  std::pair<double,double> to_interval (const leda_bigfloat & z) {
+    // assuming leda_bigfloat guarantee 1 bit error max
+    Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
+    Interval_nt_advanced approx (CGAL_LEDA_SCOPE::to_double(z));
+    FPU_set_cw(CGAL_FE_UPWARD);
+    approx += Interval_nt<false>::smallest();
+    return approx.pair();
+  }
+};
+
+#else // CGAL_NEW_NT_TRAITS
+
 template <> struct Number_type_traits<leda_bigfloat> {
   typedef Tag_false Has_gcd;
   typedef Tag_true  Has_division;
@@ -75,6 +114,9 @@ to_interval (const leda_bigfloat & z)
   approx += Interval_nt<false>::smallest();
   return approx.pair();
 }
+
+#endif // CGAL_NEW_NT_TRAITS
+
 
 CGAL_END_NAMESPACE
 

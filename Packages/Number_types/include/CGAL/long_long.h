@@ -33,6 +33,37 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_NEW_NT_TRAITS
+
+template<>
+struct Number_type_traits<long long int>
+  : public CGALi::Default_euclidean_ring_number_type_traits<long long int>
+{
+  typedef Tag_false Has_exact_ring_operations;
+  typedef Tag_false Has_exact_division;
+  typedef Tag_false Has_exact_sqrt;
+
+  typedef Tag_false Has_simplify;
+
+  static inline double to_double(long long int i) {
+    return static_cast<long long int>(i);
+  }
+
+  static inline bool is_finite(long long int) { return true; }
+  static inline bool is_valid(long long int)  { return true; }
+
+  static inline std::pair<double,double>
+  to_interval(const long long int& z) {
+    Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+    Interval_nt<false> approx ((double) z);
+    FPU_set_cw(CGAL_FE_UPWARD);
+    approx += Interval_nt<false>::smallest();
+    return approx.pair();
+  }
+};
+
+#else // CGAL_NEW_NT_TRAITS
+
 template <> struct Number_type_traits<long long int> {
   typedef Tag_true   Has_gcd;
   typedef Tag_false  Has_division;
@@ -115,6 +146,8 @@ to_interval (const long long & z)
   approx += Interval_nt<false>::smallest();
   return approx.pair();
 }
+
+#endif // CGAL_NEW_NT_TRAITS
 
 
 #if (defined(__sparc__) || defined(__sparc) || defined(sparc)) || \

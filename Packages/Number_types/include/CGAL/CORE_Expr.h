@@ -39,6 +39,51 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_NEW_NT_TRAITS
+
+template <>
+struct Number_type_traits<CORE::Expr>
+  : public CGALi::Default_field_number_type_traits<CORE::Expr>
+{
+  typedef Tag_true  Has_sqrt;
+
+  typedef Tag_true  Has_exact_ring_operations;
+  typedef Tag_true  Has_exact_division;
+  typedef Tag_true  Has_exact_sqrt;
+
+  static inline double to_double(const CORE::Expr & e)
+  { return e.doubleValue(); }
+
+  static inline CORE::Expr sqrt(const CORE::Expr & e)
+  { return CORE::sqrt(e); }
+
+  static inline bool is_finite(const CORE::Expr &) { return true; }
+  static inline bool is_valid(const CORE::Expr &)  { return true; }
+
+  static inline Sign sign(const CORE::Expr& e)
+  { return (Sign) e.sign(); }
+
+  static inline Comparison_result
+  compare(const CORE::Expr& e1, const CORE::Expr& e2) {
+    return Comparison_result(e1.cmp(e2));
+  }
+
+  // Should not be inline, but, well...
+  static inline
+  std::pair<double,double> to_interval (const CORE::Expr & e)
+  {
+    std::pair<double,double> result;
+    e.doubleInterval(result.first, result.second);
+    CGAL_expensive_assertion(result.first <= e);
+    CGAL_expensive_assertion(result.second >= e);
+    return result;
+  }
+
+};
+
+
+#else
+
 template <>
 struct Number_type_traits<CORE::Expr> {
   typedef Tag_false Has_gcd;
@@ -94,6 +139,8 @@ to_interval (const CORE::Expr & e)
   CGAL_expensive_assertion(result.second >= e);
   return result;
 }
+
+#endif
 
 CGAL_END_NAMESPACE
 

@@ -1,3 +1,6 @@
+20 August 2004 Menelaos Karavelas
+- first attempt towards the new number type traits
+
 4 August 2004 Sylvain Pion
 - Add CGAL_NO_STATIC_FILTERS.
 

@@ -1,3 +1,6 @@
+20 August 2004 Menelaos Karavelas
+- first attempt towards the new number type traits
+
 13 August 2004 Sylvain Pion
 - Use MPFR to properly fix to_interval(GMP types).
 

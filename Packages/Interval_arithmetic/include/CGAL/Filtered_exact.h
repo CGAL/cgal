@@ -107,10 +107,11 @@ class Filtered_exact
   CT    _value;
 
 public:
-
+#ifndef CGAL_NEW_NT_TRAITS
   typedef typename Number_type_traits<CT>::Has_gcd      Has_gcd;
   typedef typename Number_type_traits<CT>::Has_division Has_division;
   typedef typename Number_type_traits<CT>::Has_sqrt     Has_sqrt;
+#endif
 
   Filtered_exact () {}
   Filtered_exact (const CT & ct)
@@ -385,6 +386,71 @@ namespace CGALi {
 } // namespace CGALi
 
 
+#ifdef CGAL_NEW_NT_TRAITS
+
+template<class CT, class ET, bool Protected, class Cache>
+struct Number_type_traits< Filtered_exact<CT,ET,Protected,Cache> >
+  : public Number_type_traits<CT>
+{
+  typedef Filtered_exact<CT,ET,Protected,Cache> FENT;
+
+#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+  static inline FENT div (const FENT& fil1, const FENT& fil2)
+  { 
+    return CGAL::CGALi::checked_div(fil1.value(), fil2.value(), Has_gcd());
+  }
+
+  static inline FENT sqrt (const FENT& fil)
+  { return CGAL::sqrt(fil.value()); }
+
+
+  static inline FENT gcd (const FENT& fil1, const FENT& fil2)
+  { 
+    return CGAL::CGALi::checked_gcd(fil1.value(), fil2.value(), Has_gcd());
+  }
+
+
+  static inline FENT square (const FENT& fil)
+  { return CGAL::square(fil.value()); }
+
+
+#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+
+  static inline bool is_valid (const FENT& fil)
+  { return CGAL::is_valid(fil.value()); }
+
+  static inline bool is_finite (const FENT& fil)
+  { return CGAL::is_finite(fil.value()); }
+
+  static inline double to_double (const FENT& fil)
+  { return CGAL::to_double(fil.value()); }
+
+  static inline std::pair<double, double> to_interval (const FENT& fil)
+  { return CGAL::to_interval(fil.value()); }
+
+  static inline Sign sign (const FENT& fil)
+  { return CGAL::sign(fil.value()); }
+
+
+  static inline Comparison_result compare (const FENT& fil,
+					   const FENT& fil2)
+  { return CGAL::compare(fil.value(), fil2.value()); }
+
+
+  static inline FENT abs (const FENT& fil)
+  { return CGAL::abs(fil.value()); }
+
+
+  static inline FENT min (const FENT& fil, const FENT& fil2)
+  { return min(fil.value(), fil2.value()); }
+
+  static inline FENT max (const FENT& fil, const FENT& fil2)
+  { return max(fil.value(), fil2.value()); }
+
+};
+
+#else // CGAL_NEW_NT_TRAITS
+
 // We forward the following functions to the CT value:
 // sqrt, square, is_valid, is_finite, to_double, sign, compare, abs, min, max,
 // div, gcd, io_tag, operator>>, operator<<.
@@ -502,6 +568,8 @@ inline
 io_Operator
 io_tag (const Filtered_exact<CT, ET, Type, Protected, Cache> &fil)
 { return io_tag(fil.value()); }
+
+#endif // CGAL_NEW_NT_TRAITS
 
 template < class CT, class ET, class Type, bool Protected, class Cache >
 inline
