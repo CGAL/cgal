@@ -231,16 +231,17 @@ private slots:
       ymin = ymax = (*it).point().y();
       while(it != tr1.vertices_end()) {
         if(xmin > (*it).point().x())
-	  xmin = (*it).point().x();
+          xmin = (*it).point().x();
         if(xmax < (*it).point().x())
-	  xmax = (*it).point().x();
+          xmax = (*it).point().x();
         if(ymin > (*it).point().y())
-	  ymin = (*it).point().y();
+          ymin = (*it).point().y();
         if(ymax < (*it).point().y())
-	  ymax = (*it).point().y();
+          ymax = (*it).point().y();
         it++;
       }
     }
+    ed->widget->clear_history();
     ed->widget->set_window(xmin, xmax, ymin, ymax);
     ed->show();
     something_changed();
@@ -263,13 +264,13 @@ private slots:
     ymin = ymax = (*it).point().y();
     while(it != tr1.vertices_end()) {
       if(xmin > (*it).point().x())
-	xmin = (*it).point().x();
+        xmin = (*it).point().x();
       if(xmax < (*it).point().x())
-	xmax = (*it).point().x();
+        xmax = (*it).point().x();
       if(ymin > (*it).point().y())
-	ymin = (*it).point().y();
+        ymin = (*it).point().y();
       if(ymax < (*it).point().y())
-	ymax = (*it).point().y();
+        ymax = (*it).point().y();
       it++;
     }
     widget->clear_history();
@@ -306,13 +307,13 @@ private slots:
     ymin = ymax = (*it).point().y();
     while(it != tr1.vertices_end()) {
       if(xmin > (*it).point().x())
-	xmin = (*it).point().x();
+        xmin = (*it).point().x();
       if(xmax < (*it).point().x())
-	xmax = (*it).point().x();
+        xmax = (*it).point().x();
       if(ymin > (*it).point().y())
-	ymin = (*it).point().y();
+        ymin = (*it).point().y();
       if(ymax < (*it).point().y())
-	ymax = (*it).point().y();
+        ymax = (*it).point().y();
       it++;
     }
     widget->clear_history();
@@ -334,12 +335,12 @@ private:
     *widget << CGAL::WHITE ;
     for( ; fit != conflict_faces.end(); fit++)  {
       if(! tr1.is_infinite( *fit))
-	*widget << tr1.triangle( *fit );
+        *widget << tr1.triangle( *fit );
     }
     *widget << CGAL::YELLOW;
     for( ; eit != hole_bd.end(); eit++)  {
       if(! tr1.is_infinite( *eit ))
-	*widget << tr1.segment( *eit );
+        *widget << tr1.segment( *eit );
     }		
   }
   inline  void something_changed(){current_state++;};
