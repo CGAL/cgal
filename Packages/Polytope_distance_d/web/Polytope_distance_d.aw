@@ -1339,7 +1339,7 @@ realizing the distance.
     typedef  typename QP_rep::C_iterator C_it;
     typedef  typename QP_rep::D_iterator D_it;
     
-    solver.set( number_of_points(), 2,
+    solver.set( number_of_points(), 2, d+2,
                 A_it( a_matrix.begin()), B_it( 1), C_it( 0),
                 D_it( signed_pts_it, row_of_d));
 
@@ -1403,13 +1403,14 @@ realizing the distance.
     
     template < class NT >
     void  set_pricing_strategy( NT)
-    { /*strategyP = new CGAL::Partial_filtered_pricing<QP_rep>;
-      solver.set_pricing_strategy( *strategyP);*/ }
-  /*
+        { strategyP = new CGAL::Partial_filtered_pricing<QP_rep>;
+          solver.set_pricing_strategy( *strategyP); }
+
+    #ifndef _MSC_VER
     void  set_pricing_strategy( ET)
-    { strategyP = new CGAL::Partial_exact_pricing<QP_rep>;
-      solver.set_pricing_strategy( *strategyP); }
-  */
+        { strategyP = new CGAL::Partial_exact_pricing<QP_rep>;
+          solver.set_pricing_strategy( *strategyP); }
+    #endif
 @end
 
 
