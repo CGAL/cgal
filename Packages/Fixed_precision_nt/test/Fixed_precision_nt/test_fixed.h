@@ -345,6 +345,6 @@ int main()
        << ((test_all) ? "test succeeds" 
                          : "TEST FAILED   TEST FAILED   TEST FAILED")
        <<std::endl;
-  return ! test_all;
+  return test_all ? 0 : -1;
 }
 
