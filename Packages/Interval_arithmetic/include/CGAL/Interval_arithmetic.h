@@ -47,8 +47,8 @@ struct CGAL_Interval_nt_advanced
   typedef CGAL_Interval_nt_advanced IA;
   struct unsafe_comparison{};  // Exception class.
   // Usefull constants.
-  const static double min_double = 5e-324; // MIN_DOUBLE (subnormal)
-  const static double max_double = 1.7976931348623157081e+308; // MAX_DOUBLE
+  static const double min_double, max_double;
+  static const CGAL_Interval_nt_advanced largest, smallest;
 
 protected:
   double inf, sup;	// "inf" stores the OPPOSITE of the lower bound.
@@ -153,12 +153,20 @@ public:
   double upper_bound() const { return sup; }
 };
 
-// Two usefull constants.
+// Usefull constants.
 
-static const CGAL_Interval_nt_advanced CGAL_Interval_smallest
+// MIN_DOUBLE (subnormal)
+const double CGAL_Interval_nt_advanced::min_double =5e-324;
+
+// MAX_DOUBLE
+const double CGAL_Interval_nt_advanced::max_double =1.7976931348623157081e+308;
+
+// Smallest interval strictly around zero.
+const CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::smallest
 (-CGAL_Interval_nt_advanced::min_double, CGAL_Interval_nt_advanced::min_double);
 
-static const CGAL_Interval_nt_advanced CGAL_Interval_largest
+// [-inf;+inf]
+const CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::largest
 (-HUGE_VAL, HUGE_VAL);
 
 
@@ -234,7 +242,7 @@ inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator/
       return IA (-(sup/(-d.sup)), inf/(-d.sup));
   }
   else						/* 0 \in [d.inf;d.sup] */
-    return CGAL_Interval_largest; // IA (-HUGE_VAL, HUGE_VAL);
+    return largest; // IA (-HUGE_VAL, HUGE_VAL);
 	   // We could do slightly better -> [0;HUGE_VAL] when d.sup==0,
 	   // but is this worth ?
 }
@@ -270,12 +278,9 @@ inline CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced& d)
   CGAL_FPU_set_rounding_to_minus_infinity();
   CGAL_Interval_nt_advanced tmp;
   // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
-  // sqrt([-a,+b]) => [       0;sqrt(+b)] => we assume roundoff error.
-  // sqrt([-a,-b]) => [sqrt(-a);sqrt(-b)] => we assume user bug.
-  if ((d.inf<0) || (d.sup<0))
-    tmp.inf = - sqrt(-d.inf);
-  else
-    tmp.inf = 0;
+  // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
+  // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
+  tmp.inf = (d.inf<0) ? -sqrt(-d.inf) : 0;
   CGAL_FPU_set_rounding_to_infinity();
   tmp.sup = sqrt(d.sup);
   return tmp;
