@@ -91,7 +91,7 @@ void supporting_segment(Halfedge_handle e, I it)
 { if ( From[it] != E() ) Support[e] = From[it]; }
 
 void halfedge_below(Vertex_handle v, Halfedge_handle e)
-{ TRACEN("halfedge_below "<<&*v<<" "<<e); 
+{ TRACEN("halfedge_below point "<< v->point() <<": " << e); 
   geninfo<unsigned>::access(v->info()) = e; }
 
 // all empty, no update necessary
@@ -213,6 +213,9 @@ public:
   typedef std::list<Vertex_segment>            Segment_list;
   typedef typename Segment_list::iterator      Segment_iterator;
 
+  typedef CGAL::Halffacet_geometry<Point_3,Plane_3,Vertex_handle> 
+    Halffacet_geometry;
+
 protected:
   Halffacet_handle f_;
 public:
@@ -263,10 +266,12 @@ protected:
     SHalfedge_handle e_below = 
       Edge_of[geninfo<unsigned>::access(info(target(e_min)))];
     CGAL_assertion( e_below != SHalfedge_handle() );
+    TRACEN("  edge below " << debug(e_below));    
     Halffacet_handle f = facet(e_below);
     if ( f != Halffacet_handle() ) return f; // has already a facet 
     // e_below also has no facet
     f = determine_facet(e_below, MinimalEdge, FacetCycle, Edge_of);
+    TRACEN("  edge below " << debug(e_below));
     link_as_facet_cycle(e_below,f); 
     link_as_facet_cycle(twin(e_below),twin(f)); 
     return f;
@@ -310,7 +315,6 @@ void SNC_FM_decorator<SNC_>::
 create_facet_objects(const Plane_3& plane_supporting_facet,
   Object_list_iterator start, Object_list_iterator end) const
 { TRACEN(">>>>>create_facet_objects");
-
   CGAL::Unique_hash_map<SHalfedge_handle,int> FacetCycle(-1);
   std::vector<SHalfedge_handle> MinimalEdge;
   std::list<SHalfedge_handle> SHalfedges; 
@@ -328,10 +332,6 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   typedef CGAL::Halffacet_output<Vertex_point, Vertex_handle, 
     SHalfedge_handle, Segment_iterator> Halffacet_output;
 
-  // the geometry kernel for the facet plane sweep
-  typedef CGAL::Halffacet_geometry<Point_3,Plane_3,Vertex_handle> 
-    Halffacet_geometry;
-
   // the sweep traits class instantiated with the input, output and
   // geometry models
   typedef CGAL::Segment_overlay_traits
@@ -343,22 +343,18 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   /* We first separate sedges and sloops, and fill a list of segments
      to trigger a sweep. Note that we only allow those edges that are
      directed from lexicographically smaller to larger vertices.  */
+  // Insertion of SHalfedges into Segments is shifted below in order
+  // to guarantee that there are no gaps in the overlay.
 
   for ( ; start != end; ++start ) {
     if ( CGAL::assign(e,*start) ) {
       SHalfedges.push_back(e); 
-      TRACEN("  appending edge "<< debug(e));
-      if(compare_xy(point(source(e)),point(target(e))) < 0) {
-	Segments.push_front(segment(e)); From[Segments.begin()] = e; 
-      } 
-      else {
-	Segments.push_back(segment(e)); From[--Segments.end()] = e; 
-      }
-    }
-    else if ( CGAL::assign(l,*start) ) 
-    { SHalfloops.push_back(l); TRACEN("  appending loop " << point(vertex(l))); 
+    } else if ( CGAL::assign(l,*start) ) { 
+      SHalfloops.push_back(l); 
+      TRACEN("  appending loop " << point(vertex(l))); 
       Segments.push_back(segment(l)); }
-    else CGAL_assertion_msg(0,"Damn wrong handle.");
+    else 
+      CGAL_assertion_msg(0,"Damn wrong handle.");
   }
 
   /* We iterate all shalfedges and assign a number for each facet
@@ -371,13 +367,19 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     if ( FacetCycle[e] >= 0 ) continue; // already assigned
     SHalfedge_around_facet_circulator hfc(e),hend(hfc);
     SHalfedge_handle e_min = e;
-    TRACEN("  facet cycle numbering "<<i<<"\n    ");
+    TRACEN("\n  facet cycle numbering "<<i);
     CGAL_For_all(hfc,hend) {
       FacetCycle[hfc]=i; // assign face cycle number
-      if ( CGAL::lexicographically_xyz_smaller(
-             point(target(hfc)), point(target(e_min))))
-        e_min = hfc;
-      TRACE(debug(hfc));
+      if(compare_xy(point(source(hfc)),
+		    point(target(hfc))) < 0) {
+	TRACEN("  appending edge "<< debug(hfc));
+	Segments.push_front(segment(hfc)); 
+	From[Segments.begin()] = SHalfedge_handle(hfc);
+      }
+      if ( CGAL::lexicographically_xyz_smaller(point(target(hfc)), 
+					       point(target(e_min))))
+	e_min = hfc;
+      TRACEN(debug(hfc));
     } TRACEN("");
     MinimalEdge.push_back(e_min);
     ++i;
