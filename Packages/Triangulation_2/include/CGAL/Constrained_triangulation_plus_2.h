@@ -276,6 +276,7 @@ insert_subconstraint(Vertex_handle vaa,
   // insert the subconstraint [vaa vbb] 
   // it will eventually be splitted into several subconstraints
 {
+  CGAL_triangulation_precondition( vaa != vbb);
   Vertex_handle vi;
 
   Face_handle fr;
@@ -299,9 +300,12 @@ insert_subconstraint(Vertex_handle vaa,
 					       conflict_boundary_ba,
 					       vi);
   if ( intersection) {
-    hierarchy.split_constraint(vaa,vbb,vi);
-    insert_subconstraint(vaa,vi); 
-    insert_subconstraint(vi,vbb); 
+    if (vi != vaa && vi != vbb) {
+      hierarchy.split_constraint(vaa,vbb,vi);
+      insert_subconstraint(vaa,vi); 
+      insert_subconstraint(vi,vbb); 
+     }
+    else insert_subconstraint(vaa,vbb);
     return;
   }
 
@@ -494,13 +498,19 @@ intersect(Face_handle f, int i,
   bool intersection = assign(pi, result);
   if (!intersection) {
     CGAL_triangulation_assertion(false); // what can I do here? TODO
+    // I should probably issue vi = one of vaa, vbb, vcc, vdd ?
   }
    
   remove_constraint(f, i);
   Vertex_handle vi = insert(pi, f);
-  hierarchy.split_constraint(vcc,vdd,vi);
-  insert_subconstraint(vcc,vi); 
-  insert_subconstraint(vi, vdd); 
+  // if intersection point is found on vcc or vdd nothin is to be done 
+  // for the subconstraint [vcc,vdd]
+  // this may happen due to approximate construction of the intersection
+  if (vi != vcc && vi != vdd) { 
+    hierarchy.split_constraint(vcc,vdd,vi);
+    insert_subconstraint(vcc,vi); 
+    insert_subconstraint(vi, vdd);
+  } 
   return vi; 
 }
 
