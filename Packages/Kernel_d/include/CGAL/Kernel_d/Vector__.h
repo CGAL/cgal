@@ -189,7 +189,7 @@ Vector_<NT_,AL_>& operator=(const Vector_<NT_,AL_>& vec)
   if (&vec == this)
     return *this;
 
-  register int n = vec.d_;
+  int n = vec.d_;
   if (n != d_) {
     if (d_ > 0) deallocate_vec_space(v_,d_);
     d_=n;
@@ -298,7 +298,7 @@ inline Vector_<NT_,AL_>& Vector_<NT_,AL_>::
 operator+=(const Vector_<NT_,AL_>& vec)
 { 
   check_dimensions(vec);
-  register int n = d_;
+  int n = d_;
   while (n--) v_[n] += vec.v_[n];
   return *this;
 }
@@ -308,7 +308,7 @@ inline Vector_<NT_,AL_>& Vector_<NT_,AL_>::
 operator-=(const Vector_<NT_,AL_>& vec)
 { 
   check_dimensions(vec);
-  register int n = d_;
+  int n = d_;
   while (n--) v_[n] -= vec.v_[n];
   return *this;
 }
@@ -316,7 +316,7 @@ operator-=(const Vector_<NT_,AL_>& vec)
 template <class NT_, class AL_> 
 inline Vector_<NT_,AL_>& Vector_<NT_,AL_>::
 operator*=(const NT& s)
-{ register int n = d_;
+{ int n = d_;
   while (n--) v_[n] *= s;
   return *this;
 }
@@ -324,7 +324,7 @@ operator*=(const NT& s)
 template <class NT_, class AL_>
 inline Vector_<NT_,AL_>& Vector_<NT_,AL_>::
 operator/=(const NT& s)
-{ register int n = d_;
+{ int n = d_;
   while (n--) v_[n] /= s;
   return *this;
 }
@@ -334,7 +334,7 @@ inline Vector_<NT_,AL_> Vector_<NT_,AL_>::
 operator+(const Vector_<NT_,AL_>& vec) const
 { 
   check_dimensions(vec);
-  register int n = d_;
+  int n = d_;
   Vector_<NT_,AL_> result(n);
   while (n--) result.v_[n] = v_[n]+vec.v_[n];
   return result;
@@ -345,7 +345,7 @@ inline Vector_<NT_,AL_> Vector_<NT_,AL_>::
 operator-(const Vector_<NT_,AL_>& vec) const
 { 
   check_dimensions(vec);
-  register int n = d_;
+  int n = d_;
   Vector_<NT_,AL_> result(n);
   while (n--) result.v_[n] = v_[n]-vec.v_[n];
   return result;
@@ -355,7 +355,7 @@ template <class NT_, class AL_>
 inline Vector_<NT_,AL_> Vector_<NT_,AL_>::
 operator-() const  // unary minus
 { 
-  register int n = d_;
+  int n = d_;
   Vector_<NT_,AL_> result(n);
   while (n--) result.v_[n] = -v_[n];
   return result;
@@ -379,7 +379,7 @@ operator*(const Vector_<NT_,AL_>& vec) const
 { 
   check_dimensions(vec);
   NT_ result=0;
-  register int n = d_;
+  int n = d_;
   while (n--) result = result+v_[n]*vec.v_[n];
   return result;
 }
@@ -396,7 +396,7 @@ operator==(const Vector_<NT_,AL_>& vec)  const
 template <class NT_, class AL_> 
 int Vector_<NT_,AL_>::
 compare(const Vector_<NT_,AL_>& v1, const Vector_<NT_,AL_>& v2)
-{ register int i;
+{ int i;
   v1.check_dimensions(v2);
   for(i=0; i < v1.dimension() && v1[i]==v2[i]; i++);
   if (i == v1.dimension()) return 0;

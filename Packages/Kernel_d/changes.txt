@@ -1,5 +1,6 @@
 4 December 2004 Sylvain Pion
 - Fix memleak in LA::Vector_d.
+- Remove register keyword.
 
 17 September 2004 Andreas Fabri
 - Added a parameter to one of two Tuple_d constructors with three parameters to help Intel compiler

@@ -171,7 +171,7 @@ public:
   void print(std::ostream& out, const char*) const;
   void read(std::istream& in);
   void homogeneous_add(const Self* a, const Self* b)
-  { register int d = a->size()-1;
+  { int d = a->size()-1;
     if ( d < 0 ) return;
     CGAL_assertion_msg((d == b->size()-1),"dimensions disagree."); 
     CGAL_assertion_msg((d == size()-1),"dimensions disagree."); 
@@ -183,7 +183,7 @@ public:
   }
 
   void homogeneous_sub(const Self* a, const Self* b)
-  { register int d = a->size()-1; 
+  { int d = a->size()-1; 
     if ( d < 0 ) return;
     CGAL_assertion_msg((d == b->size()-1),"dimensions disagree."); 
     CGAL_assertion_msg((d == size()-1),"dimensions disagree."); 

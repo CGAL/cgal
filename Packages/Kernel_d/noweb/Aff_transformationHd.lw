@@ -177,7 +177,7 @@ vec.homogeneous(vec.dimension()) & 0 & \cdots & 0 & vec.homogeneous(0) \\
        \end{array} \right)
 \end{displaymath}{
 <<defining Aff_transformationHd>>=
-{ register int d = v.dimension();
+{ int d = v.dimension();
   for (int i = 0; i < d; ++i) {
     ptr->M_(i,i) = v.homogeneous(d);
     ptr->M_(i,d) = v.homogeneous(i);

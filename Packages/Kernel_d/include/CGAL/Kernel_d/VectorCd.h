@@ -77,14 +77,14 @@ VectorCd(int d, InputIterator first, InputIterator last)
   // else first specifies common denominator:
   CGAL_assertion_msg(*first!=FT(0),
     "VectorCd::constructor: denominator must be nonzero.");
-  for (register int i=0; i<d; ++i) entry(i)/=*first;
+  for (int i=0; i<d; ++i) entry(i)/=*first;
 }
 
 template <class InputIterator>
 VectorCd(int d, InputIterator first, InputIterator last, 
          const FT& D) : Base( Tuple(d,first,last) )
 { CGAL_assertion_msg(D!=FT(0), "VectorCd::constructor: D must be nonzero.");
-  for (register int i=0; i<d; ++i) entry(i)/=D;
+  for (int i=0; i<d; ++i) entry(i)/=D;
 }
 
 VectorCd(int d, Base_vector, int i) : Base( Tuple(d) )

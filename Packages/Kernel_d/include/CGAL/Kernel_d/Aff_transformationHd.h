@@ -118,7 +118,7 @@ dimension $d+1$.}*/
 Aff_transformationHd(Translation, const VectorHd<RT,LA>& v) :
   Base( Rep(v.dimension()) )
 /*{\Mcreate introduces the translation by vector $v$.}*/ 
-{ register int d = v.dimension();
+{ int d = v.dimension();
   for (int i = 0; i < d; ++i) {
     ptr()->M_(i,i) = v.homogeneous(d);
     ptr()->M_(i,d) = v.homogeneous(i);

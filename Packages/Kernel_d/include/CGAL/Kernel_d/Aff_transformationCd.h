@@ -89,7 +89,7 @@ dimension $d+1$.}*/
 
 Aff_transformationCd(Translation, const VectorCd<RT,LA>& v) :
   Base( Rep(v.dimension()) )
-{ register int d = v.dimension();
+{ int d = v.dimension();
   for (int i = 0; i < d; ++i) {
     ptr()->M_(i,i) = FT(1);
     ptr()->M_(i,d) = v.cartesian(i);

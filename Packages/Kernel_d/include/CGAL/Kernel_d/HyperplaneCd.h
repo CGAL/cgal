@@ -173,7 +173,7 @@ FT value_at(const PointCd<FT,LA>& p) const
 { CGAL_assertion_msg((dimension()==p.dimension()),
     "HyperplaneCd::value_at: dimensions disagree.");
   FT res(0);
-  for (register int i=0; i<dimension(); ++i) 
+  for (int i=0; i<dimension(); ++i) 
     res += coefficient(i)*p.cartesian(i);
   res += coefficient(dimension());
   return res;

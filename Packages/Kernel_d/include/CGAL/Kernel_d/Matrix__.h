@@ -576,7 +576,7 @@ operator=(const Matrix_<NT_,AL_>& mat)
   if (&mat == this)
     return *this;
 
-  register int i,j; 
+  int i,j; 
   if (dm_ != mat.dm_ || dn_ != mat.dn_) { 
     for(i=0; i<dm_; i++) delete v_[i]; 
     if (v_) deallocate_mat_space(v_,dm_);
@@ -611,7 +611,7 @@ template <class NT_, class AL_>
 inline bool Matrix_<NT_,AL_>::
 operator==(const Matrix_<NT_,AL_>& x) const
 { 
-  register int i,j; 
+  int i,j; 
   if (dm_ != x.dm_ || dn_ != x.dn_) 
     return false; 
 
@@ -626,7 +626,7 @@ template <class NT_, class AL_>
 Matrix_<NT_,AL_> Matrix_<NT_,AL_>::
 operator+ (const Matrix_<NT_,AL_>& mat)
 { 
-  register int i,j; 
+  int i,j; 
   check_dimensions(mat); 
   Matrix_<NT_,AL_> result(dm_,dn_); 
   for(i=0; i<dm_; i++)
@@ -639,7 +639,7 @@ template <class NT_, class AL_>
 Matrix_<NT_,AL_> Matrix_<NT_,AL_>::
 operator- (const Matrix_<NT_,AL_>& mat)
 { 
-  register int i,j; 
+  int i,j; 
   check_dimensions(mat); 
   Matrix_<NT_,AL_> result(dm_,dn_); 
   for(i=0; i<dm_; i++)
@@ -652,7 +652,7 @@ template <class NT_, class AL_>
 Matrix_<NT_,AL_> Matrix_<NT_,AL_>::
 operator- ()  // unary
 { 
-  register int i,j; 
+  int i,j; 
   Matrix_<NT_,AL_> result(dm_,dn_); 
   for(i=0; i<dm_; i++)
     for(j=0; j<dn_; j++)
@@ -664,7 +664,7 @@ template <class NT_, class AL_>
 Matrix_<NT_,AL_>& Matrix_<NT_,AL_>::
 operator-= (const Matrix_<NT_,AL_>& mat) 
 { 
-  register int i,j; 
+  int i,j; 
   check_dimensions(mat); 
   for(i=0; i<dm_; i++)
     for(j=0; j<dn_; j++)
@@ -676,7 +676,7 @@ template <class NT_, class AL_>
 Matrix_<NT_,AL_>& Matrix_<NT_,AL_>::
 operator+= (const Matrix_<NT_,AL_>& mat) 
 { 
-  register int i,j; 
+  int i,j; 
   check_dimensions(mat); 
   for(i=0; i<dm_; i++)
     for(j=0; j<dn_; j++)
@@ -690,7 +690,7 @@ operator*(const Matrix_<NT_,AL_>& M1) const
 { CGAL_assertion_msg((dn_==M1.dm_), 
     "Matrix_::operator*: incompatible matrix types."); 
   Matrix_<NT_,AL_> result(dm_,M1.dn_); 
-  register int i,j,l;
+  int i,j,l;
   for (i=0; i<dm_; ++i)
     for (j=0; j<M1.dn_; ++j)
       for (l=0; l<dn_; ++l)
@@ -702,7 +702,7 @@ template <class NT_, class AL_>
 inline Matrix_<NT_,AL_> Matrix_<NT_,AL_>::
 compmul(const NT& f) const
 { 
-  register int i,j; 
+  int i,j; 
   Matrix_<NT_,AL_> result(dm_,dn_); 
   for(i=0; i<dm_; i++)
     for(j=0; j<dn_; j++)
@@ -728,7 +728,7 @@ Matrix_<NT,AL>  operator*(const Matrix_<NT,AL>& M, const NT& x)
 template <class NT_, class AL_> 
 int Matrix_<NT_,AL_>::
 compare(const Matrix_<NT_,AL_>& M1, const Matrix_<NT_,AL_>& M2) 
-{ register int i; int res;
+{ int i; int res;
   M1.check_dimensions(M2);
   for(i=0; i < M1.row_dimension() && 
       (res = compare(M1.row(i),M2.row(i))) != 0; i++);
@@ -751,7 +751,7 @@ std::ostream&  operator<<(std::ostream& os, const Matrix_<NT_,AL_>& M)
         CGAL::write( os, d);
         CGAL::write( os, k);
         for ( int i = 0; i < d; ++i) {
-            for ( register int j = 0; j < k; ++j) {
+            for ( int j = 0; j < k; ++j) {
                 CGAL::write( os, M[i][j]);
             }
         }
@@ -759,7 +759,7 @@ std::ostream&  operator<<(std::ostream& os, const Matrix_<NT_,AL_>& M)
     case CGAL::IO::ASCII:
         os << d << ' ' << k;
         for ( int i = 0; i < d; ++i) {
-            for ( register int j = 0; j < k; ++j) {
+            for ( int j = 0; j < k; ++j) {
                 os << ' ' << M[i][j];
             }
         }
@@ -767,7 +767,7 @@ std::ostream&  operator<<(std::ostream& os, const Matrix_<NT_,AL_>& M)
     case CGAL::IO::PRETTY:
         os << "LA::Matrix((" << d << ", " << k << " [";
         for ( int i = 0; i < d; ++i) {
-            for ( register int j = 0; j < k; ++j) {
+            for ( int j = 0; j < k; ++j) {
                 if ( j != 0)
                     os << ',' << ' ';
                 os << M[i][j];
