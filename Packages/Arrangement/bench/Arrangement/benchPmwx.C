@@ -36,7 +36,6 @@
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Pm_with_intersections.h>
-#include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/Pm_Window_stream.h>
 
@@ -49,6 +48,13 @@
 #include <CGAL/Bench.C>
 #include <CGAL/Bench_parse_args.h>
 #include <CGAL/Bench_parse_args.C>
+
+#if defined(USE_CGAL_WINDOW)
+#include <CGAL/IO/Window_stream.h>
+#else
+#include <CGAL/IO/Qt_widget.h>
+#include <qapplication.h>
+#endif
 
 #include <stdlib.h>
 #include <iostream>
@@ -118,6 +124,13 @@ typedef CGAL::Bench_parse_args::TypeId                  TypeId;
 typedef CGAL::Bench_parse_args::StrategyId              StrategyId;
 typedef CGAL::Bench_parse_args::FormatId                FormatId;
 
+#if defined(USE_CGAL_WINDOW)
+typedef CGAL::Window_stream Window_stream;
+#else
+typedef CGAL::Qt_widget Window_stream;
+QApplication * App;
+#endif
+
 #if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
                                         const Point & p)
@@ -174,7 +187,7 @@ inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
 }
 #endif
 
-inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os, Pmwx & pm)
+inline Window_stream & operator<<(Window_stream & os, Pmwx & pm)
 {
   Pmwx::Edge_iterator ei;
   os << CGAL::BLUE;
@@ -292,6 +305,8 @@ public:
   }
 };
 
+/*!
+ */
 typedef Aggregate_pmwx<Dummy_point_location>    Dummy_agg_pmwx;
 typedef CGAL::Bench<Dummy_agg_pmwx>             Dummy_agg_pmwx_bench;
 
@@ -299,9 +314,6 @@ typedef CGAL::Bench<Dummy_agg_pmwx>             Dummy_agg_pmwx_bench;
  */
 template <class Strategy>
 class Display_pmwx : public Basic_Pm {
-private:
-  typedef CGAL::Window_stream Window_stream;
-
 public:
   /*!
    */
@@ -321,10 +333,18 @@ public:
       std::cout << "# of faces: " << pm.number_of_faces() << std::endl;
     }
 
+#if defined(USE_CGAL_WINDOW)
     m_window->set_flush(0);
     (*m_window) << pm;
     m_window->set_flush(1);
     m_window->flush();
+#else
+    m_window->lock();
+    *m_window << CGAL::BackgroundColor(CGAL::WHITE) << CGAL::RED;
+    (*m_window) << pm;
+    m_window->unlock();
+    App->flush();
+#endif
   }
   
   /*!
@@ -338,10 +358,6 @@ public:
     float y_range = m_bbox.ymax() - m_bbox.ymin();
     float width = 640;
     float height = (y_range * width) / x_range;
-    
-    m_window = new Window_stream(static_cast<int>(width),
-                                 static_cast<int>(height));
-    if (!m_window) return -1;
 
     float min_range = (x_range < y_range) ? x_range : y_range;
     float x_margin = min_range / 4;
@@ -350,6 +366,12 @@ public:
     float x0 = m_bbox.xmin() - x_margin;
     float x1 = m_bbox.xmax() + x_margin;
     float y0 = m_bbox.ymin() - y_margin;
+    float y1 = m_bbox.ymax() + y_margin;
+
+#if defined(USE_CGAL_WINDOW)
+    m_window = new Window_stream(static_cast<int>(width),
+                                 static_cast<int>(height));
+    if (!m_window) return -1;
     m_window->init(x0, x1, y0);   // logical window size 
 
     m_window->set_redraw(&Display_pmwx::redraw);
@@ -358,6 +380,14 @@ public:
     m_window->set_point_style(leda_cross_point);
     m_window->set_line_width(1);
     m_window->display(leda_window::center, leda_window::center);
+#else
+    m_window = new Window_stream();
+    if (!m_window) return -1;
+    App->setMainWidget(m_window);
+    m_window->resize(static_cast<int>(width), static_cast<int>(height));
+    m_window->set_window(x0, x1, y0, y1);   // logical window size 
+    m_window->show();
+#endif
     return 0;
   }
 
@@ -514,6 +544,11 @@ int main(int argc, char * argv[])
   // Construct and Display
   typeId = CGAL::Bench_parse_args::TYPE_DISPLAY;
   if (typeMask & (0x1 << typeId)) {
+#if !defined(USE_CGAL_WINDOW)
+    QApplication app(argc, argv);
+    App = &app;
+#endif
+    
     // Trapezoidal point location:
     StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
     if (strategyMask & (0x1 << strategyId)) {
