@@ -670,7 +670,7 @@ CGAL_END_NAMESPACE
     Line_2_Triangle_2_pair<R> *ncthis =
                 (Line_2_Triangle_2_pair<R> *) this;
     ncthis->_known = true;
-    _Straight_2<R> straight(*_line);
+    Straight_2_<R> straight(*_line);
 Line_2<R> l(_trian->vertex(0), _trian->vertex(1));
 if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
 //    if (_trian->is_counterclockwise()) {
@@ -689,15 +689,15 @@ if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
             Line_2<R>(_trian->vertex(0), _trian->vertex(2)));
     }
     switch (straight.current_state()) {
-    case _Straight_2<R>::EMPTY:
+    case Straight_2_<R>::EMPTY:
         ncthis->_result = NO;
         return _result;
-    case _Straight_2<R>::POINT: {
+    case Straight_2_<R>::POINT: {
         straight.current(ncthis->_intersection_point);
         ncthis->_result = POINT;
         return _result;
         }
-    case _Straight_2<R>::SEGMENT: {
+    case Straight_2_<R>::SEGMENT: {
         Segment_2<R> seg;
         straight.current(seg);
         ncthis->_intersection_point = seg.start();
@@ -914,7 +914,7 @@ CGAL_END_NAMESPACE
     Ray_2_Triangle_2_pair<R> *ncthis =
                 (Ray_2_Triangle_2_pair<R> *) this;
     ncthis->_known = true;
-    _Straight_2<R> straight(*_ray);
+    Straight_2_<R> straight(*_ray);
 Line_2<R> l(_trian->vertex(0), _trian->vertex(1));
 if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
 //    if (_trian->is_counterclockwise()) {
@@ -933,15 +933,15 @@ if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
             Line_2<R>(_trian->vertex(0), _trian->vertex(2)));
     }
     switch (straight.current_state()) {
-    case _Straight_2<R>::EMPTY:
+    case Straight_2_<R>::EMPTY:
         ncthis->_result = NO;
         return _result;
-    case _Straight_2<R>::POINT: {
+    case Straight_2_<R>::POINT: {
         straight.current(ncthis->_intersection_point);
         ncthis->_result = POINT;
         return _result;
         }
-    case _Straight_2<R>::SEGMENT: {
+    case Straight_2_<R>::SEGMENT: {
         Segment_2<R> seg;
         straight.current(seg);
         ncthis->_intersection_point = seg.start();
@@ -1156,7 +1156,7 @@ CGAL_END_NAMESPACE
     Segment_2_Triangle_2_pair<R> *ncthis =
                 (Segment_2_Triangle_2_pair<R> *) this;
     ncthis->_known = true;
-    _Straight_2<R> straight(*_seg);
+    Straight_2_<R> straight(*_seg);
 Line_2<R> l(_trian->vertex(0), _trian->vertex(1));
 if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
         straight.cut_right_off(
@@ -1174,15 +1174,15 @@ if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
             Line_2<R>(_trian->vertex(0), _trian->vertex(2)));
     }
     switch (straight.current_state()) {
-    case _Straight_2<R>::EMPTY:
+    case Straight_2_<R>::EMPTY:
         ncthis->_result = NO;
         return _result;
-    case _Straight_2<R>::POINT: {
+    case Straight_2_<R>::POINT: {
         straight.current(ncthis->_intersection_point);
         ncthis->_result = POINT;
         return _result;
         }
-    case _Straight_2<R>::SEGMENT: {
+    case Straight_2_<R>::SEGMENT: {
         Segment_2<R> seg;
         straight.current(seg);
         ncthis->_intersection_point = seg.start();
