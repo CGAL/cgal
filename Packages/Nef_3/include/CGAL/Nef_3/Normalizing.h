@@ -52,16 +52,16 @@ CGAL::Sphere_point<R> normalized(CGAL::Sphere_point<R>& p)
 {
   typedef typename R::RT     RT;
 
-  RT g = (p.hx()==0) ? ((p.hy()==0) ? ((p.hz()==0) ? 1: p.hz()): p.hy()): p.hx();
+  RT g = (p.x()==0) ? ((p.y()==0) ? ((p.z()==0) ? 1: p.z()): p.y()): p.x();
   
-  if(p.hy() != 0) g = gcd(g,p.hy());
-  if(p.hz() != 0) g = gcd(g,p.hz());
+  if(p.y() != 0) g = gcd(g,p.y());
+  if(p.z() != 0) g = gcd(g,p.z());
 
   if(g<0) g = -g;
 
-  RT x = p.hx()/g;
-  RT y = p.hy()/g;
-  RT z = p.hz()/g;
+  RT x = p.x()/g;
+  RT y = p.y()/g;
+  RT z = p.z()/g;
 
   return CGAL::Sphere_point<R>(x,y,z);
 }
