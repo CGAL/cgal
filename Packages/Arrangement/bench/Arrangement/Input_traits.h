@@ -147,7 +147,17 @@ struct Input_traits<CGAL::Lazy_exact_nt<leda_rational> > {
   typedef leda_rational                         Input_rat_type;
 };
 
-/*! CGAL::Lazy_exact_nt<leda_rational> */
+/*! CGAL::Lazy_exact_nt<CGAL::Gmpq> */
+template <>
+struct Input_traits<CGAL::Lazy_exact_nt<CGAL::Gmpq> > {
+  typedef CGAL::Gmpz                            Input_int_type;
+  typedef CGAL::Gmpz                            Input_float_type;
+  typedef CGAL::Gmpq                            Input_rat_type;
+
+  typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>       Output_type;
+};
+
+/*! CGAL::Lazy_exact_nt<Quotient<MP_float>> */
 template <>
 struct Input_traits<CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > > {
   typedef CGAL::MP_Float                        Input_int_type;
