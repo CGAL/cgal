@@ -1,3 +1,7 @@
+5 September 2004 Menelaos Karavelas
+- number_type_basic.h: put declarations for GMP, GMPXX and CORE inside
+  the proper #ifdef CGAL_USE_* / #endif blocks
+
 4 September 2004 Sylvain Pion
 - Add UInteger64 again.
 

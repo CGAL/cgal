@@ -259,6 +259,7 @@ Filtered_exact<CT,ET,Dynamic,Protected,Cache>
 max (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&,
      const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&);
 
+#ifdef CGAL_USE_GMP
 // Gmpz
 
 class Gmpz;
@@ -282,7 +283,9 @@ Sign sign(const Gmpq &);
 bool is_valid(const Gmpq &);
 bool is_finite(const Gmpq &);
 std::pair<double, double> to_interval (const Gmpq &);
+#endif
 
+#ifdef CGAL_USE_GMPXX
 // GMPXX
 
 CGAL_END_NAMESPACE
@@ -337,8 +340,10 @@ bool is_positive(const ::__gmp_expr<T, U> &);
 
 template < typename T, typename U >
 bool is_negative(const ::__gmp_expr<T, U> &);
+#endif // CGAL_USE_GMPXX
 
 // CORE::Expr
+#ifdef CGAL_USE_CORE
 CGAL_END_NAMESPACE
 
 namespace CORE {
@@ -356,6 +361,7 @@ Comparison_result compare(const CORE::Expr&, const CORE::Expr&);
 std::pair<double,double> to_interval (const CORE::Expr &);
 
 CGAL_END_NAMESPACE
+#endif
 
 // specializations for Quotient
 
@@ -369,7 +375,9 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_USE_GMP
 double to_double(const Quotient<Gmpz>&);
+#endif
 
 double to_double(const Quotient<MP_Float>&);
 std::pair<double,double> to_interval(const Quotient<MP_Float>&);
