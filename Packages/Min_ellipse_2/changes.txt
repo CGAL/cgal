@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.10.3 on 20-Mar-2001
+- no changes (moved to cvs-server)
+
 Version 3.10.2 on 29-Sep-2000
 - added (more) indexing commands
 
