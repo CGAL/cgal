@@ -8,9 +8,9 @@ typedef leda_integer NT;
 typedef CGAL::Gmpz NT;
 #endif
 
-#ifdef CGAL_NEF3_USE_GMPZ
-#include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz NT;
+#ifdef CGAL_NEF3_USE_GMPQ
+#include <CGAL/Gmpq.h>
+typedef CGAL::Gmpq NT;
 #endif
 
 #ifdef CGAL_NEF3_USE_LAZY_EXACT_NT
@@ -28,11 +28,6 @@ typedef CGAL::Simple_homogeneous<RT> Kernel;
 #ifdef CGAL_NEF3_USE_HOMOGENEOUS
 #include <CGAL/Homogeneous.h>
 typedef CGAL::Homogeneous<RT> Kernel;
-#endif
-
-#ifdef CGAL_NEF3_USE_FILTERED_HOMOGENEOUS_3
-#include <CGAL/Filtered_homogeneous_3.h>
-typedef CGAL::Filtered_homogeneous_3<RT> Kernel;
 #endif
 
 #ifdef CGAL_NEF3_USE_EXTENDED_HOMOGENEOUS
@@ -110,12 +105,12 @@ int main(int argc, char* argv[]) {
   CGAL_assertion(N2.is_valid());
 
 #if defined CGAL_NEF3_UNION
-  N1.union(N2);
+  N1.join(N2);
 #elif defined CGAL_NEF3_INTERSECTION
   N1.intersection(N2);
 #elif defined CGAL_NEF3_DIFFERENCE
   N1.difference(N2);
 #else
-  N1=N1.symmetric_difference(N2);
+  N1.symmetric_difference(N2);
 #endif
 }
