@@ -1044,28 +1044,85 @@ public:
 	}
 	// if p is collinear, location :
 	Cell_handle c = start;
-	bool notfound = true;
-	do {
-	  if ( side_of_edge( p, c, 0, 1, lt, li ) != CGAL_ON_UNBOUNDED_SIDE ) {
-	    notfound = false;
+	CGAL_Comparison_result o, o0, o1;
+	//	bool notfound = true;
+	while (1) {
+	  
+	  if ( c->has_vertex(infinite,inf) ) {
+	    // c must contain p in its interior
+	    lt = OUTSIDE_CONVEX_HULL;
+	    return c;
 	  }
-	  else {
-	    if ( geom_traits().compare_x(p,c->vertex(1)->point()) 
-		 == CGAL_LARGER ) {
-	      c = c->neighbor(0);
+
+	  // else c is finite
+	  // we test on which direction to continue the traversal
+	  p0 = c->vertex(0)->point();
+	  p1 = c->vertex(1)->point();
+	  o = geom_traits().compare_x(p0,p1);
+	  if ( o == CGAL_EQUAL ) {
+	    o = geom_traits().compare_y(p0,p1);
+	    if ( o == CGAL_EQUAL ) {
+	      o0 = geom_traits().compare_z(p0,p);
+	      o1 = geom_traits().compare_z(p,p1);
 	    }
 	    else {
-	      c = c->neighbor(1);
+	      o0 = geom_traits().compare_y(p0,p);
+	      o1 = geom_traits().compare_y(p,p1);
 	    }
 	  }
-	} while ( notfound );
-	if ( lt == EDGE ) {
-	  if ( c->has_vertex(infinite) ) {
-	    lt = OUTSIDE_CONVEX_HULL;
+	  else {
+	    o0 = geom_traits().compare_x(p0,p);
+	    o1 = geom_traits().compare_x(p,p1);
 	  }
-	  lj = 1-li;
-	} // else vertex, li is already the right index
-	return c;
+	  
+	  if ( o0 == o1 ) {
+	    lt = EDGE;
+	    li = 0;
+	    lj = 1;
+	    return c;
+	  }
+	  if ( o0 == o ) { 
+	    c = c->neighbor(0);
+	    continue;
+	  }
+	  if ( o1 == o ) { 
+	    c = c->neighbor(1);
+	    continue; 
+	  }
+	  if (o0 == CGAL_EQUAL) {
+	    lt = VERTEX;
+	    i = 0;
+	    return c;
+	  }
+	  if (o1 == CGAL_EQUAL) {
+	    lt = VERTEX;
+	    i = 1;
+	    return c;
+	  }
+	}
+// 	do {
+// 	  if ( side_of_edge( p, c, 0, 1, lt, li ) != CGAL_ON_UNBOUNDED_SIDE ) {
+// 	    notfound = false;
+// 	  }
+// 	  else {
+// 	    if ( geom_traits().compare_x(p,c->vertex(1)->point()) 
+// 		 == CGAL_LARGER ) {
+// 	      c = c->neighbor(0);
+// 	    }
+// 	    else {
+// 	      c = c->neighbor(1);
+// 	    }
+// 	  }
+// 	} while ( notfound );
+// 	if ( lt == EDGE ) {
+// 	  if ( c->has_vertex(infinite) ) {
+// 	    lt = OUTSIDE_CONVEX_HULL;
+// 	  }
+// 	  lj = 1-li;
+// 	} // else vertex, li is already the right index
+	
+	// to avoid warning
+	return start;
       }
     case 0:
       {
