@@ -67,7 +67,7 @@ void redraw(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 
 void show_biggest_rec(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 {
-  Iso_rectangle_2 b = empty_rectangle.get_largest_empty_rectangle();
+  Iso_rectangle_2 b = empty_rectangle.get_largest_empty_iso_rectangle();
 
   W << CGAL::RED << b;
 
