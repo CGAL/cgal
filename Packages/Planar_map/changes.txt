@@ -1,3 +1,6 @@
+13 October 2004 Idit Haran
+- Change name from Pm_trapezoid_dag_point_location to Pm_trapezoid_ric_point_location
+
 13 October 2004 Andreas Fabri
 - Added data member initialization in copy constructor of class Pm_trapezoid_ric_point_location
 
