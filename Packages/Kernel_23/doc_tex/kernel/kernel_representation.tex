@@ -224,20 +224,3 @@ Still other people will prefer the built-in
 type {\tt double}, because they need speed and can live with
 approximate results, or even algorithms that, from time to time,
 crash or compute incorrect results due to accumulated rounding errors.
-
-\section{Inclusion Order}
-You need to include a representation class first before you include any of
-the geometric objects of the kernel that you would like to use with
-the representation class, i.e., one or several of 
-\ccc{CGAL/Cartesian.h}, \ccc{CGAL/Homogeneous.h}, \ccc{CGAL/Simple_cartesian.h},
-and \ccc{CGAL/Simple_homogeneous.h}
-before \ccc{CGAL/..._2.h} and \ccc{CGAL/..._3.h}.
-
-\ccExample
-\begin{cprog}
-#include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
-#include <CGAL/Point_2.h>
-/* ... */
-\end{cprog}
-

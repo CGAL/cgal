@@ -1,3 +1,6 @@
+2.24    (18 June 2001)
+- Remove obsolete documentation about the order of inclusion of headers.
+
 2.23    (30 May 2001)
 - Remove Compare_distance_to_point_[23].
 
