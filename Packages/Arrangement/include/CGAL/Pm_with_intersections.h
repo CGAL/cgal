@@ -570,11 +570,9 @@ public:
 				      remaining_curve_prev_halfedge_set, 
 				      en);
 
-      // We removed the third parameter from insert_from_vertex()
-      inserted_halfedge = 
-	Planar_map::insert_from_vertex(cv_first_part, 
-				       remaining_curve_source_vertex);
-                                       // false);
+      inserted_halfedge =
+        Planar_map::insert_from_vertex(cv_first_part, 
+                                       remaining_curve_source_vertex);
       if (en != NULL) en->add_edge(cv_first_part, inserted_halfedge,
 				   false, false);
       CGAL_PM_END_OP(4)
@@ -723,8 +721,7 @@ public:
     else
     {
       inserted_halfedge = 
-	Planar_map::insert_from_vertex(cv, source_prev_halfedge->target(), 
-				       true);
+        Planar_map::insert_from_vertex(cv, source_prev_halfedge->target()); 
       if (en != NULL) 
 	en->add_edge(cv, inserted_halfedge,true, false);
       if (pmwx_traits->point_is_same(inserted_halfedge->source()->point(), 
@@ -1099,16 +1096,16 @@ public:
     return insert_intersecting_curve(c, src, tgt, false, en);
   }
 
-  Halfedge_handle non_intersecting_insert_from_vertex(const X_curve_2& cv, 
-						      Vertex_handle v1, bool source) 
-  { return Planar_map::insert_from_vertex(cv, v1, source); }
+  Halfedge_handle non_intersecting_insert_from_vertex(const X_curve_2 & cv, 
+						      Vertex_handle v1) 
+  { return Planar_map::insert_from_vertex(cv, v1); }
 
-  Halfedge_handle non_intersecting_insert(const X_curve_2& cv)
+  Halfedge_handle non_intersecting_insert(const X_curve_2 & cv)
   { return Planar_map::insert(cv); }
 
   Halfedge_handle non_intersecting_insert_at_vertices(const X_curve_2 & cv, 
-						      Vertex_handle   v1, 
-						      Vertex_handle   v2)
+						      Vertex_handle v1, 
+						      Vertex_handle v2)
   { return Planar_map::insert_at_vertices(cv, v1, v2); } 
 
   // Data Members
