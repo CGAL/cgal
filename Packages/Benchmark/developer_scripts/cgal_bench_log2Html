@@ -4,6 +4,7 @@ use Cwd;
 use Getopt::Long;
 use HTML::Element;
 use HTML::Tree;
+use XML::Parser;
 use English;
 
 my $help = 0;
@@ -13,8 +14,14 @@ my $home = $ENV{HOME};
 $home =~ s/\\/\//g;			# replace '\' with '/';
 my $logDir = $home . '/logs';
 
+my $root = $ENV{ROOT};
+my $benchDir = $root . '/bench';
+my $dataDir = $benchDir . '/data';
+my $databaseFile = $dataDir . '/benchDb.xml';
+
 $Getopt::Long::ignorecase = 0;
-GetOptions("help" => \$help,
+GetOptions("databaseFile=s" => \$databaseFile,
+	   "help" => \$help,
 	   "logFile=s" => \$logFile,
 	   "logDir=s" => \$logDir,
 	   "nameLength=i" => \$nameLength,
@@ -22,7 +29,26 @@ GetOptions("help" => \$help,
 
 usage() if $help;
 
+# Parse database file:
+my $parser = new XML::Parser(ErrorContext => 2,
+			     Handlers     => {Start      => \&start_handler,
+					      End        => \&end_handler,
+					      Char       => \&char_handler,
+					      CdataStart => \&cdata_start,
+					      CdataEnd   => \&cdata_end
+					      }
+			     );
+
+$parser->parsefile($databaseFile);
+
 $logFile = findLogFile($logDir) if (!defined($logFile));
+
+my $date = $logFile;
+$date =~ s/cgalBench_(.*)%.*/$1/;
+my $day = substr($date, 0, 2);
+my $month = substr($date, 2, 2);
+my $year = substr($date, 4, 2);
+
 $phpFile = $logFile;
 $phpFile =~ s/(.*)\.log/$1\.php/;
 $logFile = $logDir . '/' . $logFile;
@@ -72,7 +98,7 @@ $center = HTML::Element->new('center');
 
 $h1 = HTML::Element->new('h1');
 $font = HTML::Element->new('font', color => '#0f0f80');
-$font->push_content('Benchmarks');
+$font->push_content('Benchmarks ' . $day . '/' . $month . '/' . $year);
 $h1->push_content($font);
 $center->push_content($h1);
 
@@ -106,11 +132,29 @@ $tr->push_content($th_total);
 $tr->push_content($th_single);
 $tr->push_content($th_num);
 
+$th_curves = HTML::Element->new('th', align => 'middle');
+$th_curves->push_content('Number of Curves');
+
+$th_vertices = HTML::Element->new('th', align => 'middle');
+$th_vertices->push_content('Number of Vertices');
+
+$th_halfedges = HTML::Element->new('th', align => 'middle');
+$th_halfedges->push_content('Number of Halfedges');
+
+$th_faces = HTML::Element->new('th', align => 'middle');
+$th_faces->push_content('Number of Faces');
+
+$tr->push_content($th_curves);
+$tr->push_content($th_vertices);
+$tr->push_content($th_halfedges);
+$tr->push_content($th_faces);
+
 $table->push_content($tr);
 
 # loop
 open(LOGFILE, "$logFile") or die "Can't open file: $logFile\n";
-$line = <LOGFILE>;
+$cnt = 0;
+%days = (Sun => 0, Mon => 1, Tue => 2, Wed => 3, Thu => 4, Fri => 5, Sat => 6);
 while ($line = <LOGFILE>) {
     $offset = 0;
     $name = substr($line, $offset, $nameLength); $offset += $nameLength + 1;
@@ -122,6 +166,17 @@ while ($line = <LOGFILE>) {
     } elsif ($name =~ m/Leda Kernel/) {
 	$kernel = 'leda_kernel';
     } else {
+	@words = split ' ', $line;
+	next unless $words[0] =~ m/Sun|Mon|Tue|Wed|Thu|Fri|Sat/;
+	if ($cnt == 0) {
+	    @startTime = split /:/, $words[3];
+	    $startDay = $days{$words[0]};
+	    $cnt = 1;
+	} elsif ($cnt == 1) {
+	    @endTime = split /:/, $words[3];
+	    $endDay = $days{$words[0]};
+	    $cnt = 2;
+	}
 	next;
     }
     $time = substr($line, $offset, 8);		 $offset += 9;
@@ -163,6 +218,32 @@ while ($line = <LOGFILE>) {
     $tr->push_content($td_single);
     $tr->push_content($td_num);
 
+    $td_curves = HTML::Element->new('td', align => 'right');
+    $td_vertices = HTML::Element->new('td', align => 'right');
+    $td_halfedges = HTML::Element->new('td', align => 'right');
+    $td_faces = HTML::Element->new('td', align => 'right');
+    $fileName = $name;
+    $fileName =~ s/[^\(]*\(([^\)]*)\)?/$1/;
+    $curvesNum = '?';
+    $verticesNum = '?';
+    $halfedgesNum = '?';
+    $facesNum = '?';
+    if (defined($Files{$fileName})) {
+      my $fileAttrTable = $Files{$fileName};
+      $curvesNum = $fileAttrTable->{'curves'};
+      $verticesNum = $fileAttrTable->{'vertices'};
+      $halfedgesNum = $fileAttrTable->{'halfedges'};
+      $facesNum = $fileAttrTable->{'faces'};
+    }
+    $td_curves->push_content($curvesNum);
+    $tr->push_content($td_curves);
+    $td_vertices->push_content($verticesNum);
+    $tr->push_content($td_vertices);
+    $td_halfedges->push_content($halfedgesNum);
+    $tr->push_content($td_halfedges);
+    $td_faces->push_content($facesNum);
+    $tr->push_content($td_faces);
+
     $table->push_content($tr);
 }
 close LOGFILE;
@@ -177,33 +258,51 @@ $body->push_content($p);
 $table = HTML::Element->new('table');
 $body->push_content($table);
 
+# bench duration
+benchDuration($table) if (defined(@startTime) && defined(@endTime) &&
+			  defined($endDay) && defined($startDay));
+
 # Operating System
 $tr = HTML::Element->new('tr');
 $td1 = HTML::Element->new('td');
 $td2 = HTML::Element->new('td');
-$td1->push_content('Operating System');
+$b = HTML::Element->new('b');
+$b->push_content('Operating System');
+$td1->push_content($b);
 $td2->push_content($OSNAME);
 $tr->push_content($td1);
 $tr->push_content($td2);
 $table->push_content($tr);
 
-
 # System Information
+$sysInfo = `uname -a`;
 $tr = HTML::Element->new('tr');
 $td1 = HTML::Element->new('td');
 $td2 = HTML::Element->new('td');
-$td1->push_content('System Information');
+$b = HTML::Element->new('b');
+$b->push_content('System Information');
+$td1->push_content($b);
 $td2->push_content($sysInfo);
 $tr->push_content($td1);
 $tr->push_content($td2);
 $table->push_content($tr);
 
 # compiler
+OS_SWITCH: {
+    $compilerInfo = `cl -? 2>&1`, last OS_SWITCH if $OSNAME =~ /MSWin32/;
+    $compilerInfo = 'gcc ' . `gcc --version`, last OS_SWITCH if $OSNAME =~ /Linux/;
+    $compilerInfo = 'unrecognized';
+}
+
+$compilerInfo =~ s/([^\n]*)\n.*/$1/g;	# only 1st line
+
 $tr = HTML::Element->new('tr');
 $td1 = HTML::Element->new('td');
 $td2 = HTML::Element->new('td');
-$td1->push_content('Compiler');
-$td2->push_content('Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 12.00.8804 for 80x86');
+$b = HTML::Element->new('b');
+$b->push_content('Compiler');
+$td1->push_content($b);
+$td2->push_content($compilerInfo);
 $tr->push_content($td1);
 $tr->push_content($td2);
 $table->push_content($tr);
@@ -226,7 +325,12 @@ print PHPFILE $dec->as_HTML('<>&','  ');
 print PHPFILE $h->as_HTML('<>&','  ');
 close PHPFILE;
 
-####
+exit(0);
+################
+## End of main
+################
+
+################
 sub usage {
   printf "Usage: cgalBenchAnalyze [options]\n";
 printf "  -help\t\t\tprint this help message
@@ -238,6 +342,38 @@ printf "  -help\t\t\tprint this help message
     
   exit(0);
 }
+####
+sub benchDuration {
+  my ($table) = @_;
+  $diffTime[0] = $endTime[0] - $startTime[0];
+  $diffTime[1] = $endTime[1] - $startTime[1];
+  $diffTime[2] = $endTime[2] - $startTime[2];
+  $diffDay = $endDay - $startDay;
+  if ($diffTime[2] < 0) {
+    $diffTime[2] += 60;
+    $diffTime[1]--;
+  }
+  if ($diffTime[1] < 0) {
+    $diffTime[1] += 60;
+    $diffTime[0]--;
+  }
+  if ($diffTime[0] < 0) {
+      $diffTime[0] += 24;
+      $diffDay--;
+  }
+  $diffDay += 7 if ($diffDay < 0);
+  
+  $tr = HTML::Element->new('tr');
+  $td1 = HTML::Element->new('td');
+  $td2 = HTML::Element->new('td');
+  $b = HTML::Element->new('b');
+  $b->push_content('Bench Duration');
+  $td1->push_content($b);
+  $td2->push_content("$diffDay:$diffTime[0]:$diffTime[1]:$diffTime[2]");
+  $tr->push_content($td1);
+  $tr->push_content($td2);
+  $table->push_content($tr);
+}
 
 ####
 sub findLogFile {
@@ -247,7 +383,7 @@ sub findLogFile {
   closedir LOGDIR;
   $day = 0;
   $month = 0;
-  $year = 0;  
+  $year = 0;
   foreach $newLogFile (@logFiles) {
       $date = $newLogFile;
       $date =~ s/cgalBench_(.*)%.*/$1/;
@@ -266,3 +402,28 @@ sub findLogFile {
   }
   return $logFile;
 }
+
+#
+sub start_handler
+{
+  my ($xp, $currentElement) = @_;    
+
+  # Initialize attributes:
+  $attrTable = {};
+  
+  # Update attributes:
+  while (@_) {
+    my $id = shift;
+    my $val = shift;
+    $val = $xp->xml_escape($val, "'");
+    $attrTable->{$id} = $val;
+  }
+  $Files{$attrTable->{'name'}} = $attrTable if ($currentElement eq 'file');
+}
+
+#
+sub end_handler { my ($xp, $currentElement) = @_; }
+sub char_handler { my ($xp, $data) = @_; }
+sub cdata_start { my $xp = shift; }
+sub cdata_end { my $xp = shift; }
+
