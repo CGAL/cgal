@@ -46,6 +46,7 @@ my_rint(double d)
 }
 
 MP_Float::MP_Float(double d)
+  : exp(0)    // (to shut up valgrind)
 {
     // FIXME : Protection against rounding mode != nearest ?
     if (d == 0)

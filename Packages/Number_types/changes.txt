@@ -1,3 +1,6 @@
+4.63      (12 August 02)
+- Shut up a valgrind warning in MP_Float.C.
+
 4.62      (12 August 02)
 - Use CGAL_USE_LONG_LONG
 
