@@ -30,6 +30,9 @@
 #include <CGAL/predicates/Svd_are_same_segments_C2.h>
 
 
+#define SVD_USE_NEW_INCIRCLE_RING_CASE
+
+
 CGAL_BEGIN_NAMESPACE
 
 
@@ -742,9 +745,8 @@ private:
 
   //--------------------------------------------------------------------------
 
-  Sign
-  check_easy_degeneracies(const Site_2& t, PPS_Type,
-			  bool& use_result) const
+  Sign check_easy_degeneracies(const Site_2& t, PPS_Type,
+			       bool& use_result) const
   {
     CGAL_precondition( t.is_point() );
 
@@ -766,25 +768,37 @@ private:
     return ZERO;
   }
 
-  Sign
-  check_easy_degeneracies(const Site_2& t, PSS_Type,
-			  bool& use_result) const
+  inline
+  Sign check_easy_degeneracies(const Site_2& t, PSS_Type,
+			       bool& use_result) const
   {
     CGAL_precondition( t.is_point() );
-
     return check_easy_degeneracies(t, PPS_Type(), use_result);
   }
 
-  Sign
-  check_easy_degeneracies(const Site_2& t, SSS_Type,
-			  bool& use_result) const
+  inline
+  Sign check_easy_degeneracies(const Site_2& t, SSS_Type,
+			       bool& use_result) const
   {
     CGAL_precondition( t.is_point() );
-
     use_result = false;
-
     // ADD THE CASES WHERE t IS AN ENDPOINT OF ONE OF THE SEGMENTS
     return ZERO;
+  }
+
+  //--------------------------------------------------------------------------
+
+  template<class Type>
+  inline  
+  Sign incircle_p(const Site_2& st, Type type) const
+  {
+    CGAL_precondition( st.is_point() );
+
+    bool use_result(false);
+    Sign s = check_easy_degeneracies(st, type, use_result);
+    if ( use_result ) { return s; }
+
+    return incircle_p_no_easy(st, type);
   }
 
   //--------------------------------------------------------------------------
@@ -804,14 +818,9 @@ private:
 
   //--------------------------------------------------------------------------
 
-  
-  Sign incircle_p(const Site_2& st, PPS_Type type) const
+  Sign incircle_p_no_easy(const Site_2& st, PPS_Type type) const
   {
     CGAL_precondition( st.is_point() );
-
-    bool use_result(false);
-    Sign s = check_easy_degeneracies(st, type, use_result);
-    if ( use_result ) { return s; }
 
     Point_2 t = st.point();
 
@@ -830,14 +839,9 @@ private:
 
   //--------------------------------------------------------------------------
 
-  Sign incircle_p(const Site_2& st, PSS_Type type) const
+  Sign incircle_p_no_easy(const Site_2& st, PSS_Type type) const
   {
     CGAL_precondition( st.is_point() );
-
-    bool use_result(false);
-    Sign s = check_easy_degeneracies(st, type, use_result);
-    if ( use_result ) { return s; }
-
     Point_2 t = st.point();
 
     Sqrt_1 Zero(RT(0), RT(0), ux.a().c());
@@ -863,16 +867,11 @@ private:
     return s_Q;
   }
 
-
   //--------------------------------------------------------------------------
 
-  Sign incircle_p(const Site_2& st, SSS_Type type) const
+  Sign incircle_p_no_easy(const Site_2& st, SSS_Type type) const
   {
     CGAL_precondition( st.is_point() );
-
-    bool use_result(false);
-    Sign s = check_easy_degeneracies(st, type, use_result);
-    if ( use_result ) { return s; }
 
     Point_2 t = st.point();
 
@@ -923,6 +922,27 @@ private:
       break;
     case SSS:
       s = incircle_p(t, SSS_Type());
+      break;
+    }
+
+    return s;
+  }
+
+  Sign incircle_p_no_easy(const Site_2& t) const 
+  {
+    Sign s(ZERO);
+    switch ( v_type ) {
+    case PPP:
+      s = incircle_p(t, PPP_Type());
+      break;
+    case PPS:
+      s = incircle_p_no_easy(t, PPS_Type());
+      break;
+    case PSS:
+      s = incircle_p_no_easy(t, PSS_Type());
+      break;
+    case SSS:
+      s = incircle_p_no_easy(t, SSS_Type());
       break;
     }
 
@@ -1094,8 +1114,6 @@ private:
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
 
-
-
   template<class Type>
   Sign incircle_s(const Site_2& t, Type type) const
   {
@@ -1136,6 +1154,12 @@ private:
       }
     }
 
+    return incircle_s_no_easy(t, type);
+  }
+
+  template<class Type>
+  Sign incircle_s_no_easy(const Site_2& t, Type type) const
+  {
     Sign d1, d2;
     if (  ( p_.is_point() && same_points(p_, t.source_site()) ) ||
 	  ( q_.is_point() && same_points(q_, t.source_site()) ) ||
@@ -1164,6 +1188,15 @@ private:
     Oriented_side os1 = oriented_side(l, t.source(), type);
     Oriented_side os2 = oriented_side(l, t.target(), type);
 
+#ifdef SVD_USE_NEW_INCIRCLE_RING_CASE
+    if ( sl == ZERO ) {
+      if ( (os1 == ON_POSITIVE_SIDE && os2 != ON_POSITIVE_SIDE) ||
+	   (os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE) ) {
+	return ZERO;
+      }
+      return POSITIVE;
+    }
+#else
     if ( sl == ZERO ) {
       if ( (os1 == ON_POSITIVE_SIDE && os2 == ON_NEGATIVE_SIDE) ||
 	   (os1 == ON_NEGATIVE_SIDE && os2 == ON_POSITIVE_SIDE) ) {
@@ -1171,11 +1204,14 @@ private:
       }
       return POSITIVE;
     }
+#endif
 
     return (os1 == os2) ? POSITIVE : NEGATIVE;
   }
 
   //--------------------------------------------------------------------------
+
+  
 
   Sign incircle_s(const Site_2& t) const 
   {
@@ -1256,6 +1292,27 @@ private:
       break;
     case SSS:
       s = incircle_s(t, SSS_Type());
+      break;
+    }
+
+    return s;
+  }
+
+  Sign incircle_s_no_easy(const Site_2& t) const
+  {
+    Sign s(ZERO);
+    switch ( v_type ) {
+    case PPP:
+      s = incircle_s_no_easy(t, PPP_Type());
+      break;
+    case PPS:
+      s = incircle_s_no_easy(t, PPS_Type());
+      break;
+    case PSS:
+      s = incircle_s_no_easy(t, PSS_Type());
+      break;
+    case SSS:
+      s = incircle_s_no_easy(t, SSS_Type());
       break;
     }
 
@@ -1409,6 +1466,19 @@ public:
       s = incircle_p(t);
     } else {
       s = incircle_s(t);
+    }
+
+    return s;
+  }
+
+  Sign incircle_no_easy(const Site_2& t) const 
+  {
+    Sign s;
+
+    if ( t.is_point() ) {
+      s = incircle_p_no_easy(t);
+    } else {
+      s = incircle_s_no_easy(t);
     }
 
     return s;

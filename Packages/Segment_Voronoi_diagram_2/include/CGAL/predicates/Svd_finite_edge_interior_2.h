@@ -385,10 +385,27 @@ private:
     // return true if interior is in conflict; false otherwise
     if ( t.is_segment() ) { return false; }
 
+#if 1
+    CGAL_assertion( p.is_segment() || q.is_segment() );
+
+    Voronoi_vertex_2 vpqr(p, q, r);
+    Voronoi_vertex_2 vqps(q, p, s);
+
+    if ( vpqr.incircle_no_easy(s) == ZERO &&
+	 vqps.incircle_no_easy(r) == ZERO ) {
+      return false;
+    }
+
+    if ( p.is_segment() && q.is_segment() ) {
+      return true;
+    }
+#else
+    // OLD CODE: buggy if the edge is degenerate
     if ( (p.is_point() && q.is_point()) ||
 	 (p.is_segment() && q.is_segment()) ) { 
       return true;
     }
+#endif
 
     if ( p.is_point() && q.is_segment() ) {
       Line_2 lq = compute_supporting_line(q.supporting_segment());

@@ -30,10 +30,10 @@
 #include <CGAL/predicates/Svd_are_same_points_C2.h>
 #include <CGAL/predicates/Svd_are_same_segments_C2.h>
 
+#define SVD_USE_NEW_INCIRCLE_SQRT_FIELD_CASE
+
 
 CGAL_BEGIN_NAMESPACE
-
-
 
 
 template<class K>
@@ -670,7 +670,7 @@ private:
   Sign incircle_p(const Site_2& st, PPP_Type) const
   {
     CGAL_precondition( st.is_point() );
-
+    
     Point_2 t = st.point();
 
     Oriented_side os =
@@ -683,6 +683,7 @@ private:
   //--------------------------------------------------------------------------
 
   template<class Type>
+  inline
   Sign incircle_p(const Site_2& st, Type type) const
   {
     CGAL_precondition( st.is_point() );
@@ -690,6 +691,14 @@ private:
     bool use_result(false);
     Sign s = check_easy_degeneracies(st, type, use_result);
     if ( use_result ) { return s; }
+
+    return incircle_p_no_easy(st, type);
+  }
+
+  template<class Type>
+  Sign incircle_p_no_easy(const Site_2& st, Type type) const
+  {
+    CGAL_precondition( st.is_point() );
 
     FT r2 = squared_radius();
 
@@ -700,7 +709,6 @@ private:
 
     return Sign( CGAL::compare(d2, r2) );
   }
-
 
   //--------------------------------------------------------------------------
 
@@ -723,6 +731,27 @@ private:
       break;
     case SSS:
       s = incircle_p(t, SSS_Type());
+      break;
+    }
+
+    return s;
+  }
+
+  Sign incircle_p_no_easy(const Site_2& t) const 
+  {
+    Sign s(ZERO);
+    switch ( v_type ) {
+    case PPP:
+      s = incircle_p(t, PPP_Type());
+      break;
+    case PPS:
+      s = incircle_p_no_easy(t, PPS_Type());
+      break;
+    case PSS:
+      s = incircle_p_no_easy(t, PSS_Type());
+      break;
+    case SSS:
+      s = incircle_p_no_easy(t, SSS_Type());
       break;
     }
 
@@ -763,7 +792,7 @@ private:
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
 
-  Sign incircle_s(const Site_2& t, int) const
+  Sign incircle_s(const Site_2& t, int i) const
   {
     CGAL_precondition( t.is_segment() );
 
@@ -802,6 +831,12 @@ private:
       }
     }
 
+    return incircle_s_no_easy(t, i);
+  }
+
+  
+  Sign incircle_s_no_easy(const Site_2& t, int) const
+  {
     Sign d1, d2;
     if (  ( p_.is_point() && same_points(p_, t.source_site()) ) ||
 	  ( q_.is_point() && same_points(q_, t.source_site()) ) ||
@@ -829,6 +864,15 @@ private:
     Oriented_side os1 = oriented_side(l, t.source());
     Oriented_side os2 = oriented_side(l, t.target());
 
+#ifdef SVD_USE_NEW_INCIRCLE_SQRT_FIELD_CASE
+    if ( sl == ZERO ) {
+      if ( (os1 == ON_POSITIVE_SIDE && os2 != ON_POSITIVE_SIDE) ||
+	   (os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE) ) {
+	return ZERO;
+      }
+      return POSITIVE;
+    }
+#else
     if ( sl == ZERO ) {
       if ( (os1 == ON_POSITIVE_SIDE && os2 == ON_NEGATIVE_SIDE) ||
 	   (os1 == ON_NEGATIVE_SIDE && os2 == ON_POSITIVE_SIDE) ) {
@@ -836,6 +880,7 @@ private:
       }
       return POSITIVE;
     }
+#endif
 
     return (os1 == os2) ? POSITIVE : NEGATIVE;
   }
@@ -911,6 +956,12 @@ private:
     Sign s = incircle_s(t, 0);
 
     return s;
+  }
+
+  inline
+  Sign incircle_s_no_easy(const Site_2& t) const
+  {
+    return incircle_s_no_easy(t, 0);
   }
 
   //--------------------------------------------------------------------------
@@ -1051,6 +1102,19 @@ public:
       return incircle_p(t);
     }
     return incircle_s(t);
+  }
+
+  Sign incircle_no_easy(const Site_2& t) const 
+  {
+    Sign s;
+
+    if ( t.is_point() ) {
+      s = incircle_p_no_easy(t);
+    } else {
+      s = incircle_s_no_easy(t);
+    }
+
+    return s;
   }
 
   //--------------------------------------------------------------------------
