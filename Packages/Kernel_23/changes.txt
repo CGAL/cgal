@@ -1,4 +1,6 @@
-- The operators of Construct_vertex_[2,3] now return references to points and not copies
+1.68 (7 September 2003) [af]
+- The operators of Construct_vertex_[2,3] now return const references to points 
+  and not copies
 
 1.67 (7 September 2003) [af]
 - Added #include <CGAL/squared_distance_[2,3].h> to Kernel/function_objects.h
