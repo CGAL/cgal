@@ -472,7 +472,7 @@ private:
 template <class _Poly>
 class dualize_rule {
 public:
-  typedef _Poly                                        Polyhedron;
+  typedef _Poly                                         Polyhedron;
   typedef typename Polyhedron::Traits                  Traits;
   typedef typename Traits::Kernel                      Kernel;
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
@@ -489,7 +489,7 @@ public:
 template <class _Poly>
 class DooSabin_rule : public dualize_rule<_Poly> {
 public:
-  typedef _Poly                                        Polyhedron;
+  typedef _Poly                                         Polyhedron;
   
   typedef typename Polyhedron::Traits                  Traits;
   typedef typename Traits::Kernel                      Kernel;
@@ -497,6 +497,7 @@ public:
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
                                             Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Point_3                 Point;
+  typedef CGAL::Vector_3<Kernel>                        Vector;
   //typedef typename Kernel::FT                          FT;
 
 public:

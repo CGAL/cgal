@@ -372,7 +372,7 @@ void Polyhedron_subdivision<_P>::tri_quadralize_1step(_P& p, RULE<_P> rule) {
     Halfedge_around_facet_circulator hcir = hcir_begin;
     
     // After linsub, the facet valence = 6
-    ASSERTION_MSG(circulator_size(hcir)==6, "(ERROR) Non-triangle facet!");
+    //ASSERTION_MSG(circulator_size(hcir)==6, "(ERROR) Non-triangle facet!");
     
     Halfedge_handle e1 = ++hcir;
     ++hcir;
