@@ -22,8 +22,18 @@
 
 typedef CGAL::Cartesian<double> K;
 
+void test_parse_point()
+{
+  K::Point_3 p;
+  const char *test_point="( 123 456 789 1 )";
+  CGAL::parse_point(test_point, p);
+  CGAL_assertion(p == K::Point_3(123, 456, 789));
+}
+
 int main()
 {
+  test_parse_point();
+
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0, 0, 0, 350, 350, 350));
   gv.set_trace(true);
 
@@ -49,7 +59,7 @@ int main()
   gv << CGAL::Bbox_3(10, 10, 10, 30, 30, 30);
 
   gv.look_recenter();
-  sleep(30);
+  sleep(10);
 
   return 0;
 }
