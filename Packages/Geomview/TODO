@@ -7,7 +7,9 @@
 - Finish get rid of standard deprecated (and gcc 2.97 unfriendly) strstream.
   http://www.cmla.ens-cachan.fr/Utilisateurs/dosreis/C++/FAQ/
   It's harder than I thought, since g++ 2.95 doesn't have <sstream>.
-  Maybe CGAL should define it ?
+  Maybe CGAL should define it ?  Or simply CGAL should define
+  <strstream> = <backward/strstream> for gcc > 2.95 ?
+  Or wait for an update of gcc that fixes it ? :)
 - The remote geomview (with rsh) facility probably doesn't work.
   But is it useful ?
 - What to do for Circle_2 ?  Maybe there's some code somewhere, or ask the
@@ -24,8 +26,8 @@
   displaying a tetrahedron that I select, so that I can see the inside.
 - Why not use the OOGL library coming with Geomview to parse stuff ?
 - See how we can use this as a debugger : ask Frederic details on his stuff.
-  The fact we're multiprocess probably means we'll have less problems than
-  multi-threads...
+  The fact we're multiprocess probably means we'll even have less problems
+  than multi-threads...
 
 Demo :
 ------
