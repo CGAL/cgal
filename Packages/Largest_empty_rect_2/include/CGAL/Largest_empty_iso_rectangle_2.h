@@ -423,12 +423,21 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
      _p.y() <= bl_p.y() || _p.y() >= tr_p.y())
     return(false);
 
+  // check that the point is not already inserted
+  Point_data *po = new Point_data(_p);
+  Point_data_set_of_x::iterator iter = x_sorted.find(po);
+
+  if(iter != x_sorted.end()) {
+    delete(po);
+    return(true);
+  }
+
   cache_valid = false;
   Point_data_set_of_y *right_tent =
     new Point_data_set_of_y(Less_yx(geom_traits()));
   Point_data_set_of_y *left_tent =
     new Point_data_set_of_y(Less_yx(geom_traits()));
-  Point_data *po = new Point_data(_p,right_tent,left_tent,REG);
+  po = new Point_data(_p,right_tent,left_tent,REG);
 
   x_sorted.insert(po);
   y_sorted.insert(po);
@@ -555,12 +564,21 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
      _p.y() <= bl_p.y() || _p.y() >= tr_p.y()))
     return(false);
 
+  // check that the point is not already inserted
+  Point_data *po = new Point_data(_p);
+  Point_data_set_of_x::iterator iter = x_sorted.find(po);
+
+  if(iter != x_sorted.end()) {
+    delete(po);
+    return(true);
+  }
+
   cache_valid = false;
   Point_data_set_of_y *right_tent =
     new Point_data_set_of_y(Less_yx(geom_traits()));
   Point_data_set_of_y *left_tent = 
     new Point_data_set_of_y(Less_yx(geom_traits()));
-  Point_data *po = new Point_data(_p,right_tent,left_tent,i_type);
+  po = new Point_data(_p,right_tent,left_tent,i_type);
 
   x_sorted.insert(po);
   y_sorted.insert(po);
