@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.74
+- changed the template parameters of
+  Regular_triangulation_face_base_2.h
+  Constrained_triangulation_face_base_2.h
+  and the default face base of regular and constrained triangulations.
+
 ver 7.73 (6/05/03)
 - cleaned up CGAL_CFG_NO_ITERATOR_TRAITS in Trivial_iterator.h
 - fixed vertex_and_face_base_concept_checker in 

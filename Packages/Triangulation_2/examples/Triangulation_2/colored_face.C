@@ -4,13 +4,14 @@
 #include <CGAL/Triangulation_2.h>
 
 /* A facet with a color member variable. */
-template < class Fb = CGAL::Triangulation_ds_face_base_2<> >
+template < class Gt, class Fb = CGAL::Triangulation_face_base_2<Gt> >
 class My_face_base 
   : public  Fb
 {
   typedef Fb                                           Base;
   typedef typename Fb::Triangulation_data_structure    TDS;
 public:
+  typedef Gt                               Geom_traits;
   typedef TDS                              Triangulation_data_structure;
   typedef typename TDS::Vertex_handle      Vertex_handle;
   typedef typename TDS::Face_handle        Face_handle;
@@ -18,7 +19,7 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Fb::template Rebind_TDS<TDS2>::Other    Fb2;
-    typedef My_face_base<Fb2>                                  Other;
+    typedef My_face_base<Gt,Fb2>                             Other;
   };
 
   CGAL::Color color;
@@ -39,7 +40,7 @@ public:
 
 typedef CGAL::Cartesian<double> Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef My_face_base<> Fb;
+typedef My_face_base<Gt> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb > Tds;
 typedef CGAL::Triangulation_2<Gt,Tds> Triangulation;
 
