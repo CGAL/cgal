@@ -400,7 +400,7 @@ void SM_triangulator<Decorator_>::triangulate()
     Input_range(L_pos.begin(),L_pos.end()),O,
     PH_geometry());
   SP.sweep();
-  v_sep=--svertices_end(); e_sep=--shalfedges_end();
+  v_sep=--this->svertices_end(); e_sep=--this->shalfedges_end();
 
   Negative_halfsphere_sweep SM(
     Input_range(L_neg.begin(),L_neg.end()),O,
@@ -421,8 +421,8 @@ void SM_triangulator<Decorator_>::triangulate()
   Mark lower, upper;
   SM_point_locator PL(E_->sphere_map());
   PL.marks_of_halfspheres(lower,upper);
-  complete_support(svertices_begin(), v_sep, lower);
-  complete_support(v_sep, svertices_end(), upper);
+  complete_support(this->svertices_begin(), v_sep, lower);
+  complete_support(v_sep, this->svertices_end(), upper);
 
   /*
   CGAL_forall_sedges(u,*this) {
@@ -437,11 +437,11 @@ void SM_triangulator<Decorator_>::triangulate()
   typedef CGAL::generic_sweep<NCT_traits> Negative_halfsphere_ct_sweep;
   typedef std::pair<SVertex_iterator,SVertex_iterator> SVertex_pair;
 
-  SVertex_pair vpp(svertices_begin(),v_sep);
+  SVertex_pair vpp(this->svertices_begin(),v_sep);
   Positive_halfsphere_ct_sweep PCTS(vpp, *this,
     PH_geometry());
   PCTS.sweep();
-  SVertex_pair vpn(v_sep,svertices_end());
+  SVertex_pair vpn(v_sep,this->svertices_end());
   Negative_halfsphere_ct_sweep NCTS(vpn, *this,
     NH_geometry());
   NCTS.sweep();
@@ -461,10 +461,10 @@ void SM_triangulator<Decorator_>::triangulate()
      vertex y-(y+).
   */
 
-  correct_triangle_at(svertices_begin());
+  correct_triangle_at(this->svertices_begin());
   correct_triangle_at(--SVertex_iterator(v_sep));
   correct_triangle_at(v_sep);
-  correct_triangle_at(--svertices_end());
+  correct_triangle_at(--this->svertices_end());
 
   // enrigh triangulation edges by circle information
   /*
@@ -502,8 +502,8 @@ void SM_triangulator<Decorator_>::triangulate()
   }
 
   // merge the hemisphere maps into one sphere map
-  merge_halfsphere_maps(svertices_begin(),v_sep);
-  check_integrity_and_topological_planarity(false);
+  merge_halfsphere_maps(this->svertices_begin(),v_sep);
+  this->check_integrity_and_topological_planarity(false);
 }
 
 
