@@ -1,11 +1,22 @@
+#include <CGAL/basic.h>
 #include <fstream>
 #include <stack>
 #include <set>
 
+#ifndef CGAL_USE_LEDA
+int main(int argc, char* argv[])
+{
+
+  std::cout << "Sorry, this demo needs LEDA for visualisation.";
+  std::cout << std::endl;
+
+  return 0;
+}
+
+#else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/IO/Window_stream.h>
-
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Gt;
@@ -136,3 +147,4 @@ main( )
   return 0;
 }
   
+#endif // CGAL_USE_LEDA

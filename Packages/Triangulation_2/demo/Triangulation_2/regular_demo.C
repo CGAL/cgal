@@ -1,15 +1,23 @@
 #include <CGAL/basic.h>
-#include <iostream>
-#include <fstream>
+
+#ifndef CGAL_USE_LEDA
+int main(int argc, char* argv[])
+{
+
+  std::cout << "Sorry, this demo needs LEDA for visualisation.";
+  std::cout << std::endl;
+
+  return 0;
+}
+
+#else
 #include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/IO/Window_stream.h>
 
 
 typedef CGAL::Cartesian<double> Rp;
-//typedef CGAL::Homogeneous<double> Rp;
 typedef double W;
 typedef CGAL::Regular_triangulation_euclidean_traits_2<Rp,W>  Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
@@ -59,3 +67,5 @@ int main()
      }
    return 0;	
 }
+
+#endif // CGAL_USE_LEDA

@@ -6,6 +6,18 @@
 #include <strstream>
 #include <list>
 
+#ifndef CGAL_USE_LEDA
+int main(int argc, char* argv[])
+{
+
+  std::cout << "Sorry, this demo needs LEDA for visualisation.";
+  std::cout << std::endl;
+
+  return 0;
+}
+
+#else
+
 //to get shorter names
 #define Cartesian Ca
 
@@ -29,11 +41,11 @@
 typedef double coord_type;
 typedef CGAL::Cartesian<coord_type>  Rp;
 
-typedef CGAL::Point_2<Rp>  Point_;
-typedef CGAL::Segment_2<Rp>  Segment_;
-typedef CGAL::Ray_2<Rp>  Ray_;
-typedef CGAL::Line_2<Rp>  Line_;
-typedef CGAL::Triangle_2<Rp>  Triangle_;
+typedef Rp::Point_2     Point_;
+typedef Rp::Segment_2   Segment_;
+typedef Rp::Ray_2       Ray_;
+typedef Rp::Line_2      Line_;
+typedef Rp::Triangle_2  Triangle_;
 
 typedef CGAL::Triangulation_euclidean_traits_2<Rp> Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
@@ -551,9 +563,9 @@ void show_conflicts( Delaunay_ &T, Window_stream &W )
     W << CGAL::RED << p;
     std::list<Face_handle_> conflict_faces;
     std::list<Edge_>  hole_bd;
-    T.find_conflicts(p, 
-		     std::back_inserter(conflict_faces),
-		     std::back_inserter(hole_bd));
+    T.get_conflicts(p, 
+		    std::back_inserter(conflict_faces),
+		    std::back_inserter(hole_bd));
     std::list<Face_handle_>::iterator fit = conflict_faces.begin();
     std::list<Edge_>::iterator eit = hole_bd.begin();
     for( ; fit != conflict_faces.end(); fit++)  {
@@ -676,3 +688,4 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+#endif // CGAL_USE_LEDA
