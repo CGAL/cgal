@@ -1189,7 +1189,7 @@ triangle(const Cell_handle c, int i) const
     CGAL_triangulation_assertion( false );
     // return ?
   }
-  CGAL_triangulation_precondition( ! is_infinite(make_pair(c,i)) );
+  CGAL_triangulation_precondition( ! is_infinite(std::make_pair(c,i)) );
   switch (i) {
   case 0:
     return Triangle(c->vertex(1)->point(),
