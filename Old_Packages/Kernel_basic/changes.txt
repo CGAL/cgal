@@ -1,3 +1,6 @@
+3.34   (13 Apr 2001)
+- Remove Coplanar_orientation(3 points, 1 vector).
+
 3.33   (13 Apr 2001)
 - Coplanar_side_of_oriented_circle.
 
