@@ -10,8 +10,7 @@ print_platforms()
 {
   cd Polygon
   for FILE in `ls CompilerOutput_*` ; do
-    PLATFORM=`echo $FILE | nawk '{ gsub("CompilerOutput_", ""); print }'`
-    PLATFORM=`echo $PLATFORM | nawk '{ gsub("\.gz", ""); print }'`
+    PLATFORM=`echo $FILE | sed 's/CompilerOutput_//'| sed 's/\.gz//'`
     printf "$PLATFORM "
   done
   cd ..
@@ -40,13 +39,25 @@ print_testresult()
 # do_platform <platform>
 do_platform()
 {
-  CURRENT_DIR=`pwd`
-  TEST_REPORT="TestReport_$PLATFORM"
-  RESULT_FILE=$CURRENT_DIR/results_${PLATFORM}.txt
-  rm -f $RESULT_FILE
-  echo "${PLATFORM} $USER" > $RESULT_FILE
-
   PLATFORM=$1
+  CURRENT_DIR=`pwd`
+  TESTER=${CGAL_TESTER:-${USER:-`whoami`}}
+  TEST_REPORT="TestReport_${TESTER}_${PLATFORM}"
+  RESULT_FILE=$CURRENT_DIR/results_${TESTER}_${PLATFORM}.txt
+  rm -f $RESULT_FILE
+  touch $RESULT_FILE
+  sed -n '/CGAL_VERSION/s/#define //p' <../include/CGAL/config.h >> $RESULT_FILE
+  echo "TESTER ${TESTER}" >> $RESULT_FILE
+  echo "PLATFORM ${PLATFORM}" >> $RESULT_FILE
+  OS_COMPILER=`echo $PLATFORM | sed 's/_LEDA//'`
+
+  LEDA_INCL_DIR=`cat "../config/install/${OS_COMPILER}" |sed -n '/LEDA_INCL_DIR/s/^.*= .\([^ ]*\). .*$/\1/p'`
+  if [ -r ${LEDA_INCL_DIR}/LEDA/basic.h ]; then
+    sed -n '/__LEDA__/s/^#define __LEDA__/LEDA version/p' < ${LEDA_INCL_DIR}/LEDA/basic.h >>$RESULT_FILE
+  fi
+
+  cat "../config/install/${OS_COMPILER}" >> $RESULT_FILE
+  echo "------------" >> $RESULT_FILE
 
   for DIR in $TEST_DIRECTORIES ; do
     if [ -d $DIR ] ; then
@@ -85,9 +96,9 @@ do_platform()
     fi
   done
 
-  OUTPUT_FILE=results_${PLATFORM}.tar
+  OUTPUT_FILE=results_${TESTER}_${PLATFORM}.tar
   rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
-  tar cf $OUTPUT_FILE results_${PLATFORM}.txt */$TEST_REPORT
+  tar cf $OUTPUT_FILE results_${TESTER}_${PLATFORM}.txt */$TEST_REPORT
   echo
   echo "compressing ..."
   gzip -9f $OUTPUT_FILE
