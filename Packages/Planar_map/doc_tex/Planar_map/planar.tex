@@ -153,18 +153,28 @@ not analyzed further, as this program is presented to illustrates a
 simple usage only.
 
 Let us make our simple example a bit more interesting, and draw
-the planar map. First, we must add the following include
-directives:
+the planar map with Qt, as exemplified in the code fragments below.
+First, we must add the following include directives:
 
-\ccInclude{CGAL/IO/Window_stream.h}\\
+\ccInclude{qapplication.h}\\
+\ccInclude{CGAL/IO/Qt_widget.h}\\
 \ccInclude{CGAL/IO/Pm_Window_stream.h}
 
-Now, we can send the planar map to a window stream after constructing
-one, as exemplified in the code fragment below:
+Next, we create a Qt widget:
 
 \begin{alltt}
-  CGAL::Window_stream ws(400, 400);
-  ws.init(-0.5, 4.5, -0.5);
+  QApplication app(argc, argv);
+  CGAL::Qt_widget widget;
+  app.setMainWidget(widget);
+  widget.resize(400,400);
+  widget.set_window(-0.5, 4.5, -0.5, 4.5);
+  widget.show();
+\end{alltt}
+
+Now, we can send the planar map to a Qt widget after constructing
+one::
+
+\begin{alltt}
   ws << pm;
 \end{alltt}
 
@@ -203,7 +213,7 @@ A default constructor as well as a copy constructor are
 available. However, if you want to override the default point-location
 strategy, you must provide the strategy you choose as the single
 parameter to the constructor. See section
-~\ref{PM_sec:point_location}) for further information.
+~\ref{PM_sec:point_location} for further information.
 
 \subsubsection{Modification}
 Once a planar map has been constructed, you can insert an $x$-monotone
@@ -406,14 +416,14 @@ haven't been implemented yet, nor has a binary format.
 
 With the use of the \ccc{Pm_drawer} class a {\em planar map}
 representation can be sent to a graphic stream, such as
-\ccStyle{leda_window}, Postscript file, or Geomview. Add the include
-directive below to include this class definition.
+\ccStyle{CGAL::Qt_widget}, Postscript file, or Geomview window.
+Add the include directive below to include this class definition.
 
 \ccInclude{CGAL/IO/Pm_drawer.h}
 
 Drawing a {\em planar map} with Geomview or producing Postscript that
 represents a planar map, can be done by applying the \ccc{Inserter}
-operator on the appropriate graphic stream and the planar map
+operator to the appropriate graphic stream and the planar map
 instance. Add the corresponding include directive below, to include
 any if these class definitions.
 
