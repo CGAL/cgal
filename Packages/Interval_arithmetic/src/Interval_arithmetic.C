@@ -23,8 +23,8 @@
  
 #include <CGAL/basic.h>
 
-#include <CGAL/predicates_on_ftC2.h>
-#include <CGAL/predicates_on_ftC3.h>
+#include <CGAL/predicates/kernel_ftC2.h>
+#include <CGAL/predicates/kernel_ftC3.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/predicates/Regular_triangulation_ftC2.h>
 #include <CGAL/predicates/Regular_triangulation_ftC3.h>
