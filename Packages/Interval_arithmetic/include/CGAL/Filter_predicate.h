@@ -205,8 +205,9 @@ public:
 template <class EP, class AP, class EC, class AC>
   template <class A1, class A2, class A3, class A4>
   inline
-typename Filtered_predicate<EP,AP,EC,AC>::result_type
-  Filtered_predicate<EP,AP,EC,AC>::operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
+  typename Filtered_predicate<EP,AP,EC,AC>::result_type
+  Filtered_predicate<EP,AP,EC,AC>::operator()(const A1 &a1, const A2 &a2,
+	  const A3 &a3, const A4 &a4) const
   {
     try
     {
