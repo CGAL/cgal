@@ -91,6 +91,7 @@ _test_weighted_alpha_shape_3()
   A.set_alpha(0.);
   count_faces(A, verbose);
 
+  A.set_mode(Alpha_shape_3::REGULARIZED);
   assert(A.number_of_solid_components(0.) == 2);
   assert(A.number_of_solid_components(*(A.find_optimal_alpha(2))) <= 2);
   assert(A.number_of_solid_components(*(A.find_optimal_alpha(1))) == 1);
@@ -128,17 +129,28 @@ _test_weighted_alpha_shape_3()
   std::ifstream is("./data/fin", std::ios::in);
   assert(is);
   file_input(is,L);
-  A.set_mode(Alpha_shape_3::GENERAL);
+  A.set_mode(Alpha_shape_3::REGULARIZED);
   int  n = A.make_alpha_shape(L.begin(), L.end());
   std::cout << "Alpha Shape computed :" << n  << " points" << std::endl;
   std::cout << " test number_of_components - find_optimal_alpha "
 	    <<   std::endl;
   A.set_alpha(*A.find_optimal_alpha(2));
-  //show_alpha_values(A);
-  // std::cerr << "optimal alpha " << *A.find_optimal_alpha(2) << std::endl;
   assert( A.number_of_solid_components() <= 2);
-  assert(A.number_of_solid_components(*(A.find_optimal_alpha(1))) == 1);
 
+  Alpha_iterator opt = A.find_optimal_alpha(1);
+  Alpha_iterator previous = opt; --previous;
+  if(verbose) {
+    std::cerr << " alpha optimal for 1 component  = " << *opt
+	      << "nb of components " << A.number_of_solid_components(*opt)
+	      << std::endl;
+    std::cerr << " previous        " << *previous 
+	      << "nb of components " 
+	      << A.number_of_solid_components(*previous) << std::endl;
+    std::cerr << "alpha_solid " << A.find_alpha_solid() << std::endl;
+  }
+  assert (A.number_of_solid_components(*opt) == 1);
+  assert (A.number_of_solid_components(*previous) > 1 
+	  || *opt ==  A.find_alpha_solid());
 }
 
 

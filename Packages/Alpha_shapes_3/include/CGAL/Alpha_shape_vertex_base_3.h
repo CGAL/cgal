@@ -21,6 +21,7 @@
 #define CGAL_ALPHA_SHAPE_VERTEX_BASE_3_H
 
 #include <utility>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
 
@@ -43,14 +44,20 @@ public:
   typedef typename Gt::Point_3 Point;
   typedef typename Gt::FT      NT;
   typedef CGAL::Alpha_status<NT>     Alpha_status;
-
+  typedef Compact_container<Alpha_status>   Alpha_status_container;
+  typedef typename Alpha_status_container::const_iterator 
+                                            Alpha_status_const_iterator;
+  typedef typename Alpha_status_container::iterator 
+                                            Alpha_status_iterator;
+  typedef typename Alpha_status_container::const_iterator 
+                                            Alpha_status_const_iterator;
 private:
-  Alpha_status* _as;
+  Alpha_status  _as;
 
 
 public:
 
-  Alpha_shape_vertex_base_3()
+  Alpha_shape_vertex_base_3()    
     : Vb() {}
   
   Alpha_shape_vertex_base_3(const Point& p)
@@ -59,9 +66,8 @@ public:
   Alpha_shape_vertex_base_3(const Point& p, Cell_handle c)
     : Vb(p, c) {}
 
-  Alpha_status*  get_alpha_status() const { return _as;}
-  void set_alpha_status(Alpha_status* as) {_as= as;}
-
+  Alpha_status*  get_alpha_status() { return &_as;}
+  void set_alpha_status(Alpha_status_iterator as) {_as= as;}
 };
 
 CGAL_END_NAMESPACE

@@ -1,4 +1,28 @@
 
+10 August 2004 Mariette
+   merge major changes from branch tmp-my-2
+- use a compact container to store alpha_status of facets and edges
+- alpha_status of vertices are stored in vertices
+- do not build alpha_edge_map and edge_alpha_map in REGULARIZED mode
+  edges are then classify on the fly
+- suppress SUPER_REGULAR type. For any $k$ :
+  in GENERAL mode,  a boundary $k$ face is said to be REGULAR
+  when belonging to a  $k+1$ of the Alpha complex
+  in REGULAR mode. a boundary $k$ face is said to be REGULAR
+  when belonging to a cell of the Alpha complex
+- introduce the notion of Gabriel vertex or not Gabriel vertex
+  for regular triangulation and add the  alpha_min_vertex_map;
+- suppress building of alpha_mid_facet_map, alpha_mid_edge_map
+  and alpha_mid_vertex_map.
+  This saves time when building at the price of slightly more costly
+  enumeration of aplha_shapes faces.
+  add the _alpha_solid member type to recover the efficiency of
+  find_optimal_alpha
+- add member functions get_alpha_shapes_[cells, facets, edges vertices]
+  to access to the faces of the alpha shapes
+
+
+
 9 August 2004 Mariette
 - fixed a bug in make_alpha_shape() coming from clear()
   which was abusively ressetting default values for _mode and _alpha

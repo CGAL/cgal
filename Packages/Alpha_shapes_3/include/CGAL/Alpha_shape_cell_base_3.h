@@ -22,12 +22,14 @@
 
 #include <vector>
 #include <CGAL/utility.h>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class NT>
 class  Alpha_status 
+: public Compact_container_base
 {
 private:
   bool _is_Gabriel;
@@ -66,11 +68,16 @@ public:
 
   typedef typename Gt::FT               NT;
   typedef CGAL::Alpha_status<NT>        Alpha_status;
-
+  typedef Compact_container<Alpha_status>   Alpha_status_container;
+  typedef typename Alpha_status_container::const_iterator 
+                                            Alpha_status_const_iterator;
+  typedef typename Alpha_status_container::iterator 
+                                            Alpha_status_iterator;
+ typedef typename Alpha_status_container::const_iterator 
+                                            Alpha_status_const_iterator;
 
 private:
-
-  Alpha_status* facet_status[4];
+  Alpha_status_iterator facet_status[4];
   NT A;
 
 public:
@@ -89,26 +96,17 @@ public:
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
 
-  NT get_alpha() const
-    {
-      return A;
-    }
-  
-  void set_alpha(const NT & AA)
-    {
-      A = AA;
-    }
+ NT get_alpha() const    {  return A;    }
+ void set_alpha(const NT & AA) { A = AA;}
 
-  Alpha_status*  get_facet_status(int i) const
-    {
-      return facet_status[i];
-    }
+ Alpha_status_iterator get_facet_status(int i) const {return facet_status[i];}
+//Alpha_status_const_iterator get_facet_status(int i) const {
+//   return facet_status[i];}
 
-  void set_facet_status(int i, Alpha_status* as)
-    {
-      facet_status[i]= as;
-    }
-  };
+ void set_facet_status(int i, Alpha_status_iterator as) {
+   facet_status[i]= as;  }
+
+};
 
 CGAL_END_NAMESPACE
 

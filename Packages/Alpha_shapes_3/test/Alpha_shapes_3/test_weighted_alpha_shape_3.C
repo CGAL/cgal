@@ -33,7 +33,6 @@
 
 // Filtered_kernel fails with Regular until weighted points are in the kernel.
 typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
-//typedef CGAL::Simple_cartesian<NT>  SC;
 
 // Try to shorten symbol names (for VC++)
 struct K : public CGAL::Simple_cartesian<NT> {};
@@ -53,3 +52,7 @@ int main()
   _test_weighted_alpha_shape_3<Alpha_shape_3>();
   return 0;
 }
+
+// MipsPro prefers this after the other instantiations...
+// Explicit instantiation of the whole class :
+template class CGAL::Alpha_shape_3<Triangulation_3>;

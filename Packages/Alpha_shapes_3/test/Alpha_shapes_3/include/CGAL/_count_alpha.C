@@ -21,6 +21,8 @@
 #ifndef CGAL_COUNT_ALPHA_C
 #define CGAL_COUNT_ALPHA_C
 
+#include <list>
+
 
 template <class AS>
 void 
@@ -41,69 +43,92 @@ count_faces(const AS &A, bool verbose)
                                       Alpha_shape_facets_iterator; 
   typedef typename AS::size_type   size_type;
 
+  
+  typedef typename AS::Cell_handle   Cell_handle;
+  typedef typename AS::Facet         Facet;
+  typedef typename AS::Edge          Edge;
+  typedef typename AS::Vertex_handle Vertex_handle;
+  typedef std::list<Cell_handle>     Cell_list;
+  typedef std::list<Facet>           Facet_list;
+  typedef std::list<Edge>            Edge_list;
+  typedef std::list<Vertex_handle>   Vertex_list;
+
   Alpha_shape_cells_iterator cit=A.alpha_shape_cells_begin();
   size_type count_cells=0;
   for ( ; cit != A.alpha_shape_cells_end() ; ++cit) ++count_cells;
-  Finite_cells_iterator fcit=A.finite_cells_begin();
-  size_type count_cint=0;
-  for (; fcit != A.finite_cells_end(); ++fcit) 
-    if ( A.classify(fcit) ==  Alpha_shape_3::INTERIOR) ++count_cint;
-  assert(count_cells == count_cint);
 
-  size_type count_exterior_facets = 0;
-  size_type count_singular_facets = 0;
-  size_type count_regular_facets  = 0;
-  size_type count_interior_facets = 0;
+  Cell_list exterior_cells;
+  Cell_list interior_cells;
+  A.get_alpha_shape_cells( std::back_inserter(exterior_cells), 
+			   Alpha_shape_3::EXTERIOR);
+  A.get_alpha_shape_cells( std:: back_inserter(interior_cells), 
+			   Alpha_shape_3::INTERIOR);
+  assert(count_cells == interior_cells.size());
+  assert(interior_cells.size() + exterior_cells.size() == 
+	 A.number_of_finite_cells());
+
+  
   size_type count_facets = 0;
+  Facet_list exterior_facets;
+  Facet_list singular_facets;
+  Facet_list regular_facets; 
+  Facet_list interior_facets;
   Alpha_shape_facets_iterator face_iterator = A.alpha_shape_facets_begin();
   for (;face_iterator!=A.alpha_shape_facets_end();face_iterator++) 
     count_facets++;
-  Finite_facets_iterator fit = A.finite_facets_begin();
-  for ( ;  fit != A.finite_facets_end(); ++fit) {
-    switch(A.classify(*fit) ) {
-    case Alpha_shape_3::EXTERIOR : ++count_exterior_facets; break;
-    case Alpha_shape_3::SINGULAR : ++count_singular_facets;  break;
-    case Alpha_shape_3::REGULAR  : ++count_regular_facets;  break;
-    case Alpha_shape_3::SUPER_REGULAR : break;
-    case Alpha_shape_3::INTERIOR : ++count_interior_facets;  break;
-    }
-  }
-  
-  size_type count_exterior_edges = 0;
-  size_type count_singular_edges = 0;
-  size_type count_regular_edges = 0;
-  size_type count_interior_edges = 0;
-  for (Finite_edges_iterator e_iterator = A.finite_edges_begin();
-       e_iterator!=A.finite_edges_end();e_iterator++){
-       switch(A.classify(*e_iterator)) {
-       case Alpha_shape_3::EXTERIOR : ++count_exterior_edges; break;
-       case Alpha_shape_3::SINGULAR : ++count_singular_edges;  break;
-       case Alpha_shape_3::REGULAR  : ++count_regular_edges;  break;
-       case Alpha_shape_3::SUPER_REGULAR : break;
-       case Alpha_shape_3::INTERIOR : ++count_interior_edges;  break;
-    }
-  }
+  A.get_alpha_shape_facets(std::back_inserter(exterior_facets), 
+			   Alpha_shape_3::EXTERIOR);
+  A.get_alpha_shape_facets(std::back_inserter(singular_facets), 
+			   Alpha_shape_3::SINGULAR);
+  A.get_alpha_shape_facets(std::back_inserter(regular_facets), 
+			   Alpha_shape_3::REGULAR);
+  A.get_alpha_shape_facets(std::back_inserter(interior_facets), 
+			   Alpha_shape_3::INTERIOR);
+  size_type count_exterior_facets = exterior_facets.size();
+  size_type count_singular_facets = singular_facets.size();
+  size_type count_regular_facets  = regular_facets.size();
+  size_type count_interior_facets = interior_facets.size();
 
-  size_type count_regular_vertices = 0;
-  size_type count_super_regular_vertices = 0;
-  size_type count_singular_vertices = 0;
-  size_type count_exterior_vertices = 0;
-  size_type count_interior_vertices = 0;
+  Edge_list exterior_edges;
+  Edge_list singular_edges;
+  Edge_list regular_edges; 
+  Edge_list interior_edges;
+  A.get_alpha_shape_edges(std::back_inserter(exterior_edges), 
+			  Alpha_shape_3::EXTERIOR);
+  A.get_alpha_shape_edges(std::back_inserter(singular_edges), 
+			  Alpha_shape_3::SINGULAR);
+  A.get_alpha_shape_edges(std::back_inserter(regular_edges), 
+			  Alpha_shape_3::REGULAR);
+  A.get_alpha_shape_edges(std::back_inserter(interior_edges), 
+			  Alpha_shape_3::INTERIOR);
+  size_type count_exterior_edges = exterior_edges.size();
+  size_type count_singular_edges = singular_edges.size();
+  size_type count_regular_edges  = regular_edges.size();
+  size_type count_interior_edges = interior_edges.size();
+  
+ 
   size_type count_vertices = 0;
   Alpha_shape_vertices_iterator vit=A.alpha_shape_vertices_begin();
   for ( ; vit != A.alpha_shape_vertices_end() ; ++vit) ++count_vertices;
-  Finite_vertices_iterator fvit = A.finite_vertices_begin();
-  for ( ; fvit != A.finite_vertices_end(); ++fvit) {
-    switch(A.classify(fvit)) {
-    case Alpha_shape_3::EXTERIOR : ++count_exterior_vertices; break;
-    case Alpha_shape_3::SINGULAR : ++count_singular_vertices;  break;
-    case Alpha_shape_3::REGULAR  : ++count_regular_vertices;  break;
-    case Alpha_shape_3::SUPER_REGULAR  : 
-                              ++count_super_regular_vertices;  break;
-    case Alpha_shape_3::INTERIOR : ++count_interior_vertices;  break;
-    }
-  }
 
+  Vertex_list exterior_vertices;
+  Vertex_list singular_vertices;
+  Vertex_list regular_vertices; 
+  Vertex_list interior_vertices;
+  A.get_alpha_shape_vertices(std::back_inserter(exterior_vertices), 
+			     Alpha_shape_3::EXTERIOR);
+  A.get_alpha_shape_vertices(std::back_inserter(singular_vertices), 
+			     Alpha_shape_3::SINGULAR);
+  A.get_alpha_shape_vertices(std::back_inserter(regular_vertices), 
+			     Alpha_shape_3::REGULAR);
+  A.get_alpha_shape_vertices(std::back_inserter(interior_vertices), 
+			     Alpha_shape_3::INTERIOR);
+  size_type count_exterior_vertices = exterior_vertices.size();
+  size_type count_singular_vertices = singular_vertices.size();
+  size_type count_regular_vertices  = regular_vertices.size();
+  size_type count_interior_vertices = interior_vertices.size();
+
+  
   if (verbose) {
     std::cerr << "facets " << "\t" << "\t"
 	      << count_exterior_facets << "\t"
@@ -119,9 +144,9 @@ count_faces(const AS &A, bool verbose)
 	      << count_interior_edges << std::endl;
 
     std::cerr << "vertices "<< "\t"
-	      << count_singular_vertices  << "\t"
+	      << count_exterior_vertices  << "\t"
+	      << count_singular_vertices << "\t" 
 	      << count_regular_vertices << "\t" 
-	      << count_super_regular_vertices << "\t" 
 	      << count_interior_vertices << "\t"
 	      << count_vertices << std::endl;
     std::cerr<< std::endl;
@@ -140,12 +165,12 @@ count_faces(const AS &A, bool verbose)
 	   + count_regular_edges
 	   + count_exterior_edges == A.number_of_finite_edges());
 
-  assert(count_regular_vertices == 0);
-  assert(count_exterior_vertices == 0);
-  assert(count_vertices == count_super_regular_vertices );
-  assert(  count_interior_vertices 
-	   + count_super_regular_vertices 
-	   + count_singular_vertices  == A.number_of_vertices());
+   assert(count_singular_vertices == 0);
+   assert(count_vertices == count_regular_vertices );
+   assert(  count_interior_vertices 
+	   + count_regular_vertices 
+	   + count_singular_vertices 
+	   + count_exterior_vertices == A.number_of_vertices());
   }
 
   if( A.get_mode() == Alpha_shape_3::GENERAL) {
@@ -160,12 +185,9 @@ count_faces(const AS &A, bool verbose)
 	     + count_singular_edges 
 	     + count_exterior_edges == A.number_of_finite_edges());
 
-    assert(count_exterior_vertices == 0);
-    assert( count_vertices == 
-	    count_super_regular_vertices
-	    + count_regular_vertices
-	    + count_singular_vertices);
-    assert(  count_super_regular_vertices
+    assert( count_vertices ==  count_regular_vertices
+	                     + count_singular_vertices);
+    assert(  count_exterior_vertices
 	   + count_regular_vertices
 	   + count_singular_vertices
 	   + count_interior_vertices == A.number_of_vertices());
@@ -173,12 +195,13 @@ count_faces(const AS &A, bool verbose)
 
   int ncc = A.number_of_solid_components();
 
-  if (count_cells >= 1) {
-   //this relation might not be valid for any alpha_shape
-   // if connected components are touching
-   // through an edge or a vertex
-   assert(count_regular_facets == 2*count_super_regular_vertices - 4*ncc);
- }
+  if (count_cells >= 1 && A.get_mode()== Alpha_shape_3::REGULARIZED) {
+     //this relation might not be valid for any alpha_shape
+     // if connected components are touching
+     // through an edge or a vertex
+     assert(count_regular_facets == 2*count_regular_vertices - 4*ncc);
+   }
+
 }
 
 
