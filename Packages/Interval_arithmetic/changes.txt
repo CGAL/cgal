@@ -1,3 +1,6 @@
+Version 4.168 on 10 July 2003 [af]
+- Added full specialization for Filtered_exact
+
 Version 4.167 on 22 May 2003
 - Workaround a g++ 2.95 + Linux bug.
 
