@@ -55,6 +55,7 @@ private:
 template <class NT>
 class Pm_face_plus_area : public Pm_face_base 
 {
+  struct less_face;
 public:
   typedef Pm_face_base              face_base;
   typedef Pm_face_plus_area         face_plus_area;
@@ -62,10 +63,23 @@ public:
   typedef const_face_plus_area*     const_pointer;
   typedef const_face_plus_area&     const_ref;
 
+  typedef std::set<const_pointer, less_face>::iterator Inner_faces_iterator;
+  typedef std::set<const_pointer, less_face>::const_iterator Inner_faces_const_iterator;
+  
   Pm_face_plus_area() : face_base() {}
 
   virtual ~Pm_face_plus_area() {}
   
+  void insert_inner_face(const_pointer f) { 
+    inner_faces.insert(f); 
+  }
+  
+  Inner_faces_iterator inner_faces_begin() { return inner_faces.begin(); }
+  Inner_faces_iterator inner_faces_end() { return inner_faces.end(); }
+
+  Inner_faces_const_iterator inner_faces_begin() const { return inner_faces.begin(); }
+  Inner_faces_const_iterator inner_faces_end() const { return inner_faces.end(); }
+
   const NT& full_area() const { return full_area_; }
   NT& full_area() { return full_area_; }
   
@@ -73,6 +87,13 @@ public:
   NT& area() { return area_; }
   
 private:
+  struct less_face{
+    bool operator()(const_pointer f1, const_pointer f2) const {
+      return f1 < f2;
+    }
+  };
+
+  std::set<const_pointer, less_face>  inner_faces;
   NT full_area_;
   NT area_;
 };
@@ -100,46 +121,95 @@ private:
   typedef CGAL::Polygon_2<Polygon_traits, Polygon_Container> Polygon;
   typedef typename R::FT            NT;
   
-  struct less_face{
+  /* struct less_face{
     bool operator()(typename Planar_map::Face_handle f1, 
                     typename Planar_map::Face_handle f2) const {
       return &*f1 < &*f2;
     }
-  };
+    };*/
 
-  NT  face_area(typename Planar_map::Face_handle face){
-    std::set<typename Planar_map::Face_handle, less_face>  inner_faces;
+  NT  face_area(typename Planar_map::Face_handle face)
+  {
+    //std::set<typename Planar_map::Face_handle, less_face>  inner_faces;
 
     // inner_face is the set of all faces inside face (faces that adjacent to its holes).
     for (typename Planar_map::Holes_iterator hit = face->holes_begin(); 
          hit != face->holes_end(); ++hit) {
       typename Planar_map::Ccb_halfedge_circulator cc(*hit);
       do{
-        if (cc->twin()->face() != face)
-          inner_faces.insert(cc->twin()->face());
+        if (cc->twin()->face() != face){
+          face->insert_inner_face(&*(cc->twin()->face()));
+          
+          // if (cc->twin()->face()->full_area() == 0)
+          //   cc->twin()->face() = calc_full_area(cc->twin()->face());
+        }   
       } while (++cc != *hit);
     }
     
     NT  inner_faces_area=0;
-    for (std::set<typename Planar_map::Face_handle, less_face>::iterator iter = inner_faces.begin();
-         iter != inner_faces.end(); ++iter)
+    for (typename Pm_face_plus_area<NT>::Inner_faces_iterator iter = face->inner_faces_begin();
+         iter != face->inner_faces_end(); ++iter)
       inner_faces_area += (*iter)->full_area();
 
     if (face->is_unbounded())
-      return 0 - inner_faces_area;
+      face->full_area() = 0;
+    else{
+      Polygon p;
+      
+      typename Planar_map::Ccb_halfedge_circulator  outer_cc = face->outer_ccb();
+      do {
+        p.push_back(outer_cc->target()->point());
+      } while(++outer_cc != face->outer_ccb());
+      
+      face->full_area() = p.area();
+    }
     
-    Polygon p;
+    //cout<<"p.area()="<<to_double(face->full_area())<<
+    //  "  inner_faces_area="<<to_double(inner_faces_area)<<endl;
     
-    typename Planar_map::Ccb_halfedge_circulator  outer_cc = face->outer_ccb();
-    do {
-      p.push_back(outer_cc->target()->point());
-    } while(++outer_cc != face->outer_ccb());
-
-    face->full_area() = p.area();
-
     return face->full_area() - inner_faces_area;
   }
   
+  bool  has_common_edge(typename Planar_map::Face_handle face1, 
+                        typename Planar_map::Face_handle face2)
+  {
+    if (face1->is_unbounded() || face2->is_unbounded())
+      return true;
+
+    typename Planar_map::Ccb_halfedge_circulator cc1 = face1->outer_ccb();
+    typename Planar_map::Ccb_halfedge_circulator cc2 = face2->outer_ccb();
+
+    do{
+      do {
+        if (cc1->face() == cc2->twin()->face())
+          return true;
+      } while (++cc2 != face2->outer_ccb());
+    } while (++cc1 != face1->outer_ccb());
+
+    return false;
+  }
+
+  bool  edge_in_face(typename Planar_map::Halfedge_handle h, 
+                     typename Planar_map::Face_handle face)
+  {
+    if (face->is_unbounded())
+      return true;
+
+    Planar_map face_pm;
+
+    typename Planar_map::Ccb_halfedge_circulator cc = face->outer_ccb();
+
+    do{
+      face_pm.insert(cc->curve());
+    } while (++cc != face->outer_ccb());
+    
+    typename Planar_map::Locate_type  lt1, lt2;
+    face_pm.locate(h->source()->point(),lt1);
+    face_pm.locate(h->target()->point(),lt2);
+    
+    return  (lt1== Planar_map::FACE && lt2== Planar_map::FACE);
+  }
+
 public:
 
   virtual void add_edge(const typename Traits::X_curve& cv, 
@@ -176,18 +246,33 @@ public:
 			  typename Planar_map::Face_handle orig_face, 
 			  typename Planar_map::Face_handle new_face)
   {
+    //cout<<"---- in split_face"<< endl;
+
+    CGAL_assertion_msg(has_common_edge(orig_face, new_face),
+                       "two splited faces have a common edge");
+    
     new_face->area() = face_area(new_face);
     
+    //cout<<"orig_face area:"<<to_double(orig_face->area())<<endl;
+    //cout<<"new_face original area:"<<to_double(new_face->area())<<endl;
+    //cout<<"orig_face area:"<<to_double(face_area(orig_face))<<endl;
+    
+
     // asserting that both parts areas equals the original part area.
     CGAL_assertion(orig_face->area() == new_face->area() + face_area(orig_face));
 
     orig_face->area() -= new_face->area();
+    
+    //cout<<"orig_face area:"<<to_double(orig_face->area())<<endl;
+    //cout<<"new_face area:"<<to_double(new_face->area())<<endl;
   }
 	
   virtual void add_hole(
 			typename Planar_map::Face_handle in_face, 
 			typename Planar_map::Halfedge_handle new_hole)
   {
+    CGAL_assertion_msg(edge_in_face(new_hole, in_face), 
+                       "edge of hole is inside face");
   }
   
 };
@@ -232,6 +317,8 @@ int main(int argc, char *argv[])
   while (n--) {
     double x1, y1, x2, y2;
     std::cin >> x1 >> y1 >> x2 >> y2;
+    
+    //std::cout << "Inserting ("<< x1 <<","<< y1 <<"--"<< x2 <<","<< y2 <<")"<<std::endl;
     Halfedge_handle hh = Pm.insert(Curve(Point(x1,y1),Point(x2,y2)), &notf);
     std::cout << "Inserted ("<< hh->curve() <<")"<<std::endl;
   }
@@ -240,19 +327,11 @@ int main(int argc, char *argv[])
   // General test
   // This used to be tst21, (Shai, Aug. 03, 2000)
 
-  std::cout << "Faces" << Pm.number_of_faces() << std::endl;
-  std::cout << "Halfedges" << Pm.number_of_halfedges() << std::endl;
-  std::cout << "Vertices" << Pm.number_of_vertices() << std::endl;
+  std::cout << "Faces"  << Pm.number_of_faces() << std::endl;
+  std::cout << "Halfedges " << Pm.number_of_halfedges() << std::endl;
+  std::cout << "Vertices " << Pm.number_of_vertices() << std::endl;
 
   check_lengths(Pm);
   
   return 0;
 }
-
-
-
-
-
-
-
-
