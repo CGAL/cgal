@@ -1,4 +1,3 @@
-
 // Test program for the Static Adaptatif filter.
 
 #define CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
@@ -13,13 +12,6 @@ int main()
   return 0;
 }
 #else
-
-// Workaround for crappy compilers.
-#ifdef CGAL_CFG_MATCHING_BUG_2
-#define CGAL_IA_CT double
-#define CGAL_IA_ET CGAL::MP_Float
-#define CGAL_IA_CACHE No_Filter_Cache
-#endif
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Filtered_exact.h>

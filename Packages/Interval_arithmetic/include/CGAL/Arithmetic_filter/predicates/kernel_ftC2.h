@@ -35,26 +35,169 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
+/* inline */
+bool
+parallelC2(
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2b)
+{
+  try
+  {
+    CGAL_PROFILER("IA parallelC2 calls");
+    Protect_FPU_rounding<Protected> Protection;
+    return parallelC2(
+		l1a.interval(),
+		l1b.interval(),
+		l2a.interval(),
+		l2b.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    CGAL_PROFILER("IA parallelC2 failures");
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+    return parallelC2(
+		l1a.exact(),
+		l1b.exact(),
+		l2a.exact(),
+		l2b.exact());
+  }
+}
+
+template < class ET >
+/* inline */
+bool
+parallelC2(
+    const Lazy_exact_nt<ET> &l1a,
+    const Lazy_exact_nt<ET> &l1b,
+    const Lazy_exact_nt<ET> &l2a,
+    const Lazy_exact_nt<ET> &l2b)
+{
+  try
+  {
+    CGAL_PROFILER("Lazy IA parallelC2 calls");
+    Protect_FPU_rounding<true> Protection;
+    return parallelC2(
+		l1a.interval(),
+		l1b.interval(),
+		l2a.interval(),
+		l2b.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    CGAL_PROFILER("Lazy IA parallelC2 failures");
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
+    return parallelC2(
+		l1a.exact(),
+		l1b.exact(),
+		l2a.exact(),
+		l2b.exact());
+  }
+}
+
+template < class CT, class ET, bool Protected, class Cache >
+/*  */
+bool
+parallelC2(
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1sx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1sy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1tx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1ty,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2sx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2sy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2tx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2ty)
+{
+  try
+  {
+    CGAL_PROFILER("IA parallelC2 calls");
+    Protect_FPU_rounding<Protected> Protection;
+    return parallelC2(
+		s1sx.interval(),
+		s1sy.interval(),
+		s1tx.interval(),
+		s1ty.interval(),
+		s2sx.interval(),
+		s2sy.interval(),
+		s2tx.interval(),
+		s2ty.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    CGAL_PROFILER("IA parallelC2 failures");
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+    return parallelC2(
+		s1sx.exact(),
+		s1sy.exact(),
+		s1tx.exact(),
+		s1ty.exact(),
+		s2sx.exact(),
+		s2sy.exact(),
+		s2tx.exact(),
+		s2ty.exact());
+  }
+}
+
+template < class ET >
+/*  */
+bool
+parallelC2(
+    const Lazy_exact_nt<ET> &s1sx,
+    const Lazy_exact_nt<ET> &s1sy,
+    const Lazy_exact_nt<ET> &s1tx,
+    const Lazy_exact_nt<ET> &s1ty,
+    const Lazy_exact_nt<ET> &s2sx,
+    const Lazy_exact_nt<ET> &s2sy,
+    const Lazy_exact_nt<ET> &s2tx,
+    const Lazy_exact_nt<ET> &s2ty)
+{
+  try
+  {
+    CGAL_PROFILER("Lazy IA parallelC2 calls");
+    Protect_FPU_rounding<true> Protection;
+    return parallelC2(
+		s1sx.interval(),
+		s1sy.interval(),
+		s1tx.interval(),
+		s1ty.interval(),
+		s2sx.interval(),
+		s2sy.interval(),
+		s2tx.interval(),
+		s2ty.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    CGAL_PROFILER("Lazy IA parallelC2 failures");
+    Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
+    return parallelC2(
+		s1sx.exact(),
+		s1sy.exact(),
+		s1tx.exact(),
+		s1ty.exact(),
+		s2sx.exact(),
+		s2sy.exact(),
+		s2tx.exact(),
+		s2ty.exact());
+  }
+}
+
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
 equal_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2c)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2c)
 {
   try
   {
     CGAL_PROFILER("IA equal_lineC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return equal_lineC2(
 		l1a.interval(),
 		l1b.interval(),
@@ -66,7 +209,7 @@ equal_lineC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA equal_lineC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return equal_lineC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -77,7 +220,6 @@ equal_lineC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -114,29 +256,23 @@ equal_lineC2(
 		l2c.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &la,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &lb,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &lc,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ha,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &hb,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &hc)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &la,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &lb,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &lc,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ha,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &hb,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &hc)
 {
   try
   {
     CGAL_PROFILER("IA compare_xC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_xC2(
 		px.interval(),
 		la.interval(),
@@ -149,7 +285,7 @@ compare_xC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_xC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_xC2(
 		px.exact(),
 		la.exact(),
@@ -161,7 +297,6 @@ compare_xC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -201,31 +336,25 @@ compare_xC2(
 		hc.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &la,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &lb,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &lc,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h2c)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &la,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &lb,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &lc,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h1a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h1b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h1c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h2a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h2b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h2c)
 {
   try
   {
     CGAL_PROFILER("IA compare_xC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_xC2(
 		la.interval(),
 		lb.interval(),
@@ -240,7 +369,7 @@ compare_xC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_xC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_xC2(
 		la.exact(),
 		lb.exact(),
@@ -254,7 +383,6 @@ compare_xC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -300,34 +428,28 @@ compare_xC2(
 		h2c.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h2c)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h1a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h1b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h1c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h2a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h2b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h2c)
 {
   try
   {
     CGAL_PROFILER("IA compare_xC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_xC2(
 		l1a.interval(),
 		l1b.interval(),
@@ -345,7 +467,7 @@ compare_xC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_xC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -362,7 +484,6 @@ compare_xC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -417,27 +538,21 @@ compare_xC2(
 		h2c.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_y_at_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &la,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &lb,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &lc)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &la,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &lb,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &lc)
 {
   try
   {
     CGAL_PROFILER("IA compare_y_at_xC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_y_at_xC2(
 		px.interval(),
 		py.interval(),
@@ -448,7 +563,7 @@ compare_y_at_xC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_y_at_xC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_y_at_xC2(
 		px.exact(),
 		py.exact(),
@@ -458,7 +573,6 @@ compare_y_at_xC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -492,29 +606,23 @@ compare_y_at_xC2(
 		lc.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_y_at_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2c)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2c)
 {
   try
   {
     CGAL_PROFILER("IA compare_y_at_xC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_y_at_xC2(
 		px.interval(),
 		l1a.interval(),
@@ -527,7 +635,7 @@ compare_y_at_xC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_y_at_xC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_y_at_xC2(
 		px.exact(),
 		l1a.exact(),
@@ -539,7 +647,6 @@ compare_y_at_xC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -579,31 +686,25 @@ compare_y_at_xC2(
 		l2c.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
 compare_y_at_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ha,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &hb,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &hc)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ha,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &hb,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &hc)
 {
   try
   {
     CGAL_PROFILER("IA compare_y_at_xC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_y_at_xC2(
 		l1a.interval(),
 		l1b.interval(),
@@ -618,7 +719,7 @@ compare_y_at_xC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_y_at_xC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -632,7 +733,6 @@ compare_y_at_xC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
@@ -678,34 +778,28 @@ compare_y_at_xC2(
 		hc.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
 compare_y_at_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &h2c)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h1a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h1b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h1c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h2a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h2b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &h2c)
 {
   try
   {
     CGAL_PROFILER("IA compare_y_at_xC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_y_at_xC2(
 		l1a.interval(),
 		l1b.interval(),
@@ -723,7 +817,7 @@ compare_y_at_xC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_y_at_xC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -740,7 +834,6 @@ compare_y_at_xC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
@@ -795,31 +888,25 @@ compare_y_at_xC2(
 		h2c.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
 compare_y_at_x_segment_C2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1sx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1sy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2sx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2sy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2ty)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1sx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1sy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1tx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1ty,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2sx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2sy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2tx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2ty)
 {
   try
   {
     CGAL_PROFILER("IA compare_y_at_x_segment_C2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_y_at_x_segment_C2(
 		px.interval(),
 		s1sx.interval(),
@@ -834,7 +921,7 @@ compare_y_at_x_segment_C2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_y_at_x_segment_C2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_y_at_x_segment_C2(
 		px.exact(),
 		s1sx.exact(),
@@ -848,7 +935,6 @@ compare_y_at_x_segment_C2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
@@ -894,26 +980,20 @@ compare_y_at_x_segment_C2(
 		s2ty.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
 equal_directionC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &dx1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &dy1,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &dx2,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &dy2)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &dx1,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &dy1,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &dx2,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &dy2)
 {
   try
   {
     CGAL_PROFILER("IA equal_directionC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return equal_directionC2(
 		dx1.interval(),
 		dy1.interval(),
@@ -923,7 +1003,7 @@ equal_directionC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA equal_directionC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return equal_directionC2(
 		dx1.exact(),
 		dy1.exact(),
@@ -932,7 +1012,6 @@ equal_directionC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -963,26 +1042,20 @@ equal_directionC2(
 		dy2.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_slopesC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &l2b)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l1b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &l2b)
 {
   try
   {
     CGAL_PROFILER("IA compare_slopesC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_slopesC2(
 		l1a.interval(),
 		l1b.interval(),
@@ -992,7 +1065,7 @@ compare_slopesC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_slopesC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_slopesC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -1001,7 +1074,6 @@ compare_slopesC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -1032,30 +1104,24 @@ compare_slopesC2(
 		l2b.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_slopesC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1_src_x,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1_src_y,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1_tgt_x,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s1_tgt_y,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2_src_x,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2_src_y,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2_tgt_x,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &s2_tgt_y)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1_src_x,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1_src_y,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1_tgt_x,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s1_tgt_y,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2_src_x,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2_src_y,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2_tgt_x,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &s2_tgt_y)
 {
   try
   {
     CGAL_PROFILER("IA compare_slopesC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_slopesC2(
 		s1_src_x.interval(),
 		s1_src_y.interval(),
@@ -1069,7 +1135,7 @@ compare_slopesC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_slopesC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_slopesC2(
 		s1_src_x.exact(),
 		s1_src_y.exact(),
@@ -1082,7 +1148,6 @@ compare_slopesC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -1125,26 +1190,20 @@ compare_slopesC2(
 		s2_tgt_y.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* inline */
 Comparison_result
 compare_deltax_deltayC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &sy)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ry,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &sy)
 {
   try
   {
     CGAL_PROFILER("IA compare_deltax_deltayC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return compare_deltax_deltayC2(
 		px.interval(),
 		qx.interval(),
@@ -1154,7 +1213,7 @@ compare_deltax_deltayC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA compare_deltax_deltayC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return compare_deltax_deltayC2(
 		px.exact(),
 		qx.exact(),
@@ -1163,7 +1222,6 @@ compare_deltax_deltayC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* inline */
 Comparison_result
@@ -1194,28 +1252,22 @@ compare_deltax_deltayC2(
 		sy.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* inline */
 Orientation
 orientationC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ry)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ry)
 {
   try
   {
     CGAL_PROFILER("IA orientationC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return orientationC2(
 		px.interval(),
 		py.interval(),
@@ -1227,7 +1279,7 @@ orientationC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA orientationC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return orientationC2(
 		px.exact(),
 		py.exact(),
@@ -1238,7 +1290,6 @@ orientationC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* inline */
 Orientation
@@ -1275,28 +1326,22 @@ orientationC2(
 		ry.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* inline */
 Angle
 angleC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ry)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ry)
 {
   try
   {
     CGAL_PROFILER("IA angleC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return angleC2(
 		px.interval(),
 		py.interval(),
@@ -1308,7 +1353,7 @@ angleC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA angleC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return angleC2(
 		px.exact(),
 		py.exact(),
@@ -1319,7 +1364,6 @@ angleC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* inline */
 Angle
@@ -1356,30 +1400,24 @@ angleC2(
 		ry.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
 side_of_oriented_circleC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ty)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ry,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &tx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ty)
 {
   try
   {
     CGAL_PROFILER("IA side_of_oriented_circleC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return side_of_oriented_circleC2(
 		px.interval(),
 		py.interval(),
@@ -1393,7 +1431,7 @@ side_of_oriented_circleC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA side_of_oriented_circleC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return side_of_oriented_circleC2(
 		px.exact(),
 		py.exact(),
@@ -1406,7 +1444,6 @@ side_of_oriented_circleC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
@@ -1449,30 +1486,24 @@ side_of_oriented_circleC2(
 		ty.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_LARGE_INLINE */
 Bounded_side
 side_of_bounded_circleC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ty)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ry,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &tx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ty)
 {
   try
   {
     CGAL_PROFILER("IA side_of_bounded_circleC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return side_of_bounded_circleC2(
 		px.interval(),
 		py.interval(),
@@ -1486,7 +1517,7 @@ side_of_bounded_circleC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA side_of_bounded_circleC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_circleC2(
 		px.exact(),
 		py.exact(),
@@ -1499,7 +1530,6 @@ side_of_bounded_circleC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_LARGE_INLINE */
 Bounded_side
@@ -1542,28 +1572,22 @@ side_of_bounded_circleC2(
 		ty.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_LARGE_INLINE */
 Bounded_side
 side_of_bounded_circleC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ty)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &tx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ty)
 {
   try
   {
     CGAL_PROFILER("IA side_of_bounded_circleC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return side_of_bounded_circleC2(
 		px.interval(),
 		py.interval(),
@@ -1575,7 +1599,7 @@ side_of_bounded_circleC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA side_of_bounded_circleC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_circleC2(
 		px.exact(),
 		py.exact(),
@@ -1586,7 +1610,6 @@ side_of_bounded_circleC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_LARGE_INLINE */
 Bounded_side
@@ -1623,28 +1646,22 @@ side_of_bounded_circleC2(
 		ty.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* inline */
 Comparison_result
 cmp_dist_to_pointC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ry)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ry)
 {
   try
   {
     CGAL_PROFILER("IA cmp_dist_to_pointC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return cmp_dist_to_pointC2(
 		px.interval(),
 		py.interval(),
@@ -1656,7 +1673,7 @@ cmp_dist_to_pointC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA cmp_dist_to_pointC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return cmp_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
@@ -1667,7 +1684,6 @@ cmp_dist_to_pointC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* inline */
 Comparison_result
@@ -1704,28 +1720,22 @@ cmp_dist_to_pointC2(
 		ry.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* inline */
 Comparison_result
 cmp_signed_dist_to_directionC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &la,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &lb,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &la,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &lb,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy)
 {
   try
   {
     CGAL_PROFILER("IA cmp_signed_dist_to_directionC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return cmp_signed_dist_to_directionC2(
 		la.interval(),
 		lb.interval(),
@@ -1737,7 +1747,7 @@ cmp_signed_dist_to_directionC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA cmp_signed_dist_to_directionC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return cmp_signed_dist_to_directionC2(
 		la.exact(),
 		lb.exact(),
@@ -1748,7 +1758,6 @@ cmp_signed_dist_to_directionC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* inline */
 Comparison_result
@@ -1785,30 +1794,24 @@ cmp_signed_dist_to_directionC2(
 		qy.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* inline */
 Comparison_result
 cmp_signed_dist_to_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &sx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &sy)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ry,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &sx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &sy)
 {
   try
   {
     CGAL_PROFILER("IA cmp_signed_dist_to_lineC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return cmp_signed_dist_to_lineC2(
 		px.interval(),
 		py.interval(),
@@ -1822,7 +1825,7 @@ cmp_signed_dist_to_lineC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA cmp_signed_dist_to_lineC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return cmp_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
@@ -1835,7 +1838,6 @@ cmp_signed_dist_to_lineC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* inline */
 Comparison_result
@@ -1878,27 +1880,21 @@ cmp_signed_dist_to_lineC2(
 		sy.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* inline */
 Oriented_side
 side_of_oriented_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &x,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &y)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &b,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &c,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &x,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &y)
 {
   try
   {
     CGAL_PROFILER("IA side_of_oriented_lineC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return side_of_oriented_lineC2(
 		a.interval(),
 		b.interval(),
@@ -1909,7 +1905,7 @@ side_of_oriented_lineC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA side_of_oriented_lineC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return side_of_oriented_lineC2(
 		a.exact(),
 		b.exact(),
@@ -1919,7 +1915,6 @@ side_of_oriented_lineC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* inline */
 Oriented_side
@@ -1953,7 +1948,6 @@ side_of_oriented_lineC2(
 		y.exact());
   }
 }
-#endif
 
 CGAL_END_NAMESPACE
 

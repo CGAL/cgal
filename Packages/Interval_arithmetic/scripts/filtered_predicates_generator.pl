@@ -145,8 +145,8 @@ CGAL_END_NAMESPACE\n\n";
 # Print dynamic versions
 sub print_dynamic {
   my ($CGAL, $t, $inline, $ret_type, $fct_name, $e, $b, $n, @args)=@_;
-  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, ${CGAL}Dynamic,"
-             ." CGAL_IA_PROTECTED, CGAL_IA_CACHE>";
+  my $type = "const ${CGAL}Filtered_exact <CT, ET, ${CGAL}Dynamic,"
+             ." Protected, Cache>";
   my $type2 = "const ${CGAL}Lazy_exact_nt<ET>";
   my $args_call  = join ",", map "\n    $type &$_", @args;
   my $args_call2 = join ",", map "\n    $type2 &$_", @args;
@@ -154,12 +154,7 @@ sub print_dynamic {
   my $args_exact = join ",", map "\n\t\t$_.exact()", @args;
 
   print FO
-"#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+"template < class CT, class ET, bool Protected, class Cache >
 /* $inline */
 $ret_type
 $fct_name($args_call)
@@ -167,18 +162,17 @@ $fct_name($args_call)
   try
   {
     CGAL_PROFILER(\"IA $fct_name calls\");
-    ${CGAL}Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    ${CGAL}Protect_FPU_rounding<Protected> Protection;
     return $fct_name($args_inter);
   } 
   catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER(\"IA $fct_name failures\");
-    ${CGAL}Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    ${CGAL}Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return $fct_name($args_exact);
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* $inline */
 $ret_type
@@ -196,8 +190,7 @@ $fct_name($args_call2)
     ${CGAL}Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return $fct_name($args_exact);
   }
-}
-#endif\n\n";
+}\n\n";
 }
 
 # Print static infos
@@ -261,8 +254,8 @@ sub print_static {
       @args)=@_;
 
   my $predicate_class_name = "Static_Filtered_$fct_name\_".($#args+1);
-  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, ${CGAL}Static,"
-            ." $adv, CGAL_IA_CACHE>";
+  my $type = "const ${CGAL}Filtered_exact <CT, ET, ${CGAL}Static,"
+            ." $adv, Cache>";
   my $args_call     = join ",", map "\n    $type &$_", @args;
   my $args_dbl      = join ",", map "\n\t\t$_.dbl()", @args;
   my $args_exact    = join ",", map "\n\t\t$_.exact()", @args;
@@ -275,11 +268,7 @@ sub print_static {
      map "\n    NEW_bound = max(NEW_bound, fabs($_.to_double()));", @args;
 
   print FO
-"#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#else
-static
-#endif
+"template < class CT, class ET, class Cache >
 /* $inline */
 $ret_type
 $fct_name($args_call)

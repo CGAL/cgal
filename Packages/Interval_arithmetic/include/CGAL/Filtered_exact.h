@@ -1,4 +1,4 @@
-// Copyright (c) 1998,1999,2000,2003  Utrecht University (The Netherlands),
+// Copyright (c) 1998-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -394,27 +394,16 @@ namespace CGALi {
 #ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, bool Protected, class Cache >
 inline
-#else
-static
-#endif
-Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,CGAL_IA_PROTECTED,CGAL_IA_CACHE>
-div (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                          CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil1,
-     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET, Dynamic,
-                          CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil2)
+Filtered_exact<CT,ET,Dynamic,Protected,Cache>
+div (const Filtered_exact<CT,ET,Dynamic, Protected,Cache>& fil1,
+     const Filtered_exact<CT,ET, Dynamic, Protected,Cache>& fil2)
 { 
-  typedef
-#ifndef CGAL_CFG_MATCHING_BUG_2
-          typename
-#endif  
-                   Filtered_exact<CGAL_IA_CT,
-                                  CGAL_IA_ET,Dynamic,
-                                  CGAL_IA_PROTECTED,
-                                  CGAL_IA_CACHE>::Has_gcd Has_gcd;
+  typedef typename Filtered_exact<CT,
+                                  ET,Dynamic,
+                                  Protected,
+                                  Cache>::Has_gcd Has_gcd;
   return CGAL::CGALi::checked_div(fil1.value(), fil2.value(), Has_gcd()); 
 }
 
@@ -426,43 +415,24 @@ sqrt (const Filtered_exact<CT, ET, Type, Protected, Cache>& fil)
 { return CGAL::sqrt(fil.value()); }
 
 
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, bool Protected, class Cache >
 inline
-#else
-static
-#endif
-Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,CGAL_IA_PROTECTED,CGAL_IA_CACHE>
-gcd (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                          CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil1,
-     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                          CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil2)
+Filtered_exact<CT,ET,Dynamic,Protected,Cache>
+gcd (const Filtered_exact<CT,ET,Dynamic, Protected,Cache>& fil1,
+     const Filtered_exact<CT,ET,Dynamic, Protected,Cache>& fil2)
 { 
- typedef
-#ifndef CGAL_CFG_MATCHING_BUG_2
-         typename
-#endif
-                   Filtered_exact<CGAL_IA_CT,
-                                  CGAL_IA_ET,Dynamic,
-			          CGAL_IA_PROTECTED,
-                                  CGAL_IA_CACHE>::Has_gcd Has_gcd;
+  typedef typename Filtered_exact<CT,
+                                  ET,Dynamic,
+			          Protected,
+                                  Cache>::Has_gcd Has_gcd;
   return CGAL::CGALi::checked_gcd(fil1.value(), fil2.value(), Has_gcd());
 }
 
 
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, bool Protected, class Cache >
 inline
-#else
-static
-#endif
-Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,CGAL_IA_PROTECTED,CGAL_IA_CACHE>
-square (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic, 
-                             CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil)
+Filtered_exact<CT,ET,Dynamic,Protected,Cache>
+square (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>& fil)
 { return CGAL_NTS square(fil.value()); }
 
 
@@ -493,73 +463,40 @@ to_interval (const Filtered_exact<CT, ET, Type, Protected, Cache>& fil)
 { return CGAL::to_interval(fil.value()); }
 
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, bool Protected, class Cache >
 inline
-#else
-static
-#endif
 Sign
-sign (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                           CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil)
+sign (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>& fil)
 { return CGAL_NTS sign(fil.value()); }
 
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, bool Protected, class Cache >
 inline
-#else
-static
-#endif
 Comparison_result
-compare (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                              CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil,
-	 const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                              CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil2)
+compare (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>& fil,
+	 const Filtered_exact<CT, ET, Dynamic, Protected, Cache>& fil2)
 { return CGAL_NTS compare(fil.value(), fil2.value()); }
 
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, bool Protected, class Cache >
 inline
-#else
-static
-#endif
-Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,CGAL_IA_PROTECTED,CGAL_IA_CACHE>
-abs (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                          CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil)
+Filtered_exact<CT,ET,Dynamic,Protected,Cache>
+abs (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>& fil)
 { return CGAL_NTS abs(fil.value()); }
 
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, bool Protected, class Cache >
 inline
-#else
-static
-#endif
-Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,CGAL_IA_PROTECTED,CGAL_IA_CACHE>
-min (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                          CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil,
-     const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                          CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil2)
+Filtered_exact<CT,ET,Dynamic,Protected,Cache>
+min (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>& fil,
+     const Filtered_exact<CT, ET, Dynamic, Protected, Cache>& fil2)
 { return min(fil.value(), fil2.value()); }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, bool Protected, class Cache >
 inline
-#else
-static
-#endif
-Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,CGAL_IA_PROTECTED,CGAL_IA_CACHE>
-max (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                          CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil,
-     const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                          CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil2)
+Filtered_exact<CT,ET,Dynamic,Protected,Cache>
+max (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>& fil,
+     const Filtered_exact<CT, ET, Dynamic, Protected, Cache>& fil2)
 { return max(fil.value(), fil2.value()); }
 
 template < class CT, class ET, class Type, bool Protected, class Cache >

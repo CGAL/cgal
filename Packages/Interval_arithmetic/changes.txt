@@ -1,3 +1,6 @@
+Version 4.189 on 18 January 2004
+- Remove obsolete workarounds related to CGAL_CFG_MATCHING_BUG_2 (VC++ <= 7.0).
+
 Version 4.188 on 15 January 2004
 - Fix FPU.h on g++ and Solaris 5.9.
 

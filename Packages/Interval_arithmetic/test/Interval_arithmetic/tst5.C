@@ -2,25 +2,8 @@
  * This test file is not extensive enough.
  */
 
-#include <CGAL/basic.h>
-
-// Workaround for buggy compilers.
-#ifdef CGAL_CFG_MATCHING_BUG_2
-#define CGAL_IA_CT double
-#define CGAL_IA_PROTECTED true
-#define CGAL_IA_CACHE No_Filter_Cache
-#ifdef CGAL_USE_LEDA
-#  define CGAL_IA_ET leda_real
-// #elif defined CGAL_USE_GMP
-// #  define CGAL_IA_ET CGAL::Quotient<CGAL::Gmpz>
-#else
-#  define CGAL_IA_ET CGAL::Quotient<CGAL::MP_Float>
-#endif
-#endif
-
-#include <CGAL/Timer.h>
-
 #include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Timer.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
 
@@ -40,7 +23,6 @@
 #define CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 #include <CGAL/Filtered_exact.h>
 
-// PLEASE PAY ATTENTION TO THE WORKAROUND AT THE TOP OF THE FILE !!!
 #ifdef CGAL_USE_LEDA
 typedef CGAL::Filtered_exact<double, leda_real> NT;
 // #elif defined CGAL_USE_GMP
@@ -70,7 +52,6 @@ void bench()
   std::cout << (int) result << "\t" << t.time()-dt << std::endl;
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 namespace CGAL {
 template <class NT>
 NT
@@ -79,14 +60,12 @@ my_abs (const NT &n)
   return CGAL_NTS abs(n);
 }
 } // namespace CGAL
-#endif
 
 // The program code is 100% generic/templated, as usual.
 int test()
 {
   NT px, py, la, lb, lc;
   NT a (1);
-#ifndef CGAL_CFG_MATCHING_BUG_2
   a = CGAL::my_abs(a);
 #ifdef CGAL_USE_GMP
   CGAL::Filtered_exact< CGAL::Quotient<CGAL::Gmpz>, CGAL::Quotient<CGAL::Gmpz> > qq (3,5);
@@ -104,7 +83,6 @@ int test()
   std::cout << nt << std::endl;
   std::cout << nt2 << std::endl;
 #endif // CGAL_USE_LEDA
-#endif // CGAL_CFG_MATCHING_BUG_2
   px=1; py=2; la=3; lb=4; lc=5;
   std::cout << "Result 1st test: " << (int)CGAL::compare_y_at_xC2(px, py, la, lb, lc);
   std::cout << " ( == 1 )\n";

@@ -35,32 +35,27 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /*  */
 Oriented_side
 power_testC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &pwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &rwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &twt)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &pwt,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qwt,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ry,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &rwt,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &tx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ty,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &twt)
 {
   try
   {
     CGAL_PROFILER("IA power_testC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return power_testC2(
 		px.interval(),
 		py.interval(),
@@ -78,7 +73,7 @@ power_testC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA power_testC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return power_testC2(
 		px.exact(),
 		py.exact(),
@@ -95,7 +90,6 @@ power_testC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /*  */
 Oriented_side
@@ -150,31 +144,25 @@ power_testC2(
 		twt.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /*  */
 Oriented_side
 power_testC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &pwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &qwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &twt)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &px,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &py,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &pwt,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qy,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &qwt,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &tx,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &ty,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &twt)
 {
   try
   {
     CGAL_PROFILER("IA power_testC2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return power_testC2(
 		px.interval(),
 		py.interval(),
@@ -189,7 +177,7 @@ power_testC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA power_testC2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return power_testC2(
 		px.exact(),
 		py.exact(),
@@ -203,7 +191,6 @@ power_testC2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /*  */
 Oriented_side
@@ -249,7 +236,6 @@ power_testC2(
 		twt.exact());
   }
 }
-#endif
 
 CGAL_END_NAMESPACE
 

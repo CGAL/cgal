@@ -641,7 +641,6 @@ sqrt (const Interval_nt<Protected> & d)
   return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup()));
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template <bool Protected>
 inline
 Interval_nt<Protected>
@@ -660,39 +659,6 @@ max (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 		                std::max(d.sup(), e.sup()));
 }
 
-#else
-
-inline
-Interval_nt<false>
-min (const Interval_nt<false> & d, const Interval_nt<false> & e)
-{
-  return Interval_nt<false>(min(d.inf(), e.inf()),min(d.sup(), e.sup()));
-}
-
-inline
-Interval_nt<false>
-max (const Interval_nt<false> & d, const Interval_nt<false> & e)
-{
-  return Interval_nt<false>(max(d.inf(), e.inf()),max(d.sup(), e.sup()));
-}
-
-inline
-Interval_nt<true>
-min (const Interval_nt<true> & d, const Interval_nt<true> & e)
-{
-  return Interval_nt<true>(min(d.inf(), e.inf()),min(d.sup(), e.sup()));
-}
-
-inline
-Interval_nt<true>
-max (const Interval_nt<true> & d, const Interval_nt<true> & e)
-{
-  return Interval_nt<true>(max(d.inf(), e.inf()),max(d.sup(), e.sup()));
-}
-
-#endif // CGAL_CFG_MATCHING_BUG_2
-
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template <bool Protected>
 inline
 Interval_nt<Protected>
@@ -742,100 +708,6 @@ compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
   Interval_nt<Protected>::overlap_action();
   return EQUAL;
 }
-#else // CGAL_CFG_MATCHING_BUG_2
-// For crappy "compilers", we have to define complete overloaded functions.
-// First we overload for true.
-inline
-Interval_nt<true>
-square (const Interval_nt<true> & d)
-{
-  Protect_FPU_rounding<true> P;
-  if (d.inf()>=0.0)
-      return Interval_nt<true>(-CGAL_IA_MUL(d.inf(), -d.inf()),
-	                        CGAL_IA_MUL(d.sup(), d.sup()));
-  if (d.sup()<=0.0)
-      return Interval_nt<true>(-CGAL_IA_MUL(d.sup(), -d.sup()),
-	                        CGAL_IA_MUL(d.inf(), d.inf()));
-  return Interval_nt<true>(0.0, CGAL_IA_SQUARE(std::max(-d.inf(), d.sup())));
-}
-
-inline
-Interval_nt<true>
-abs (const Interval_nt<true> & d)
-{
-  if (d.inf() >= 0.0) return d;
-  if (d.sup() <= 0.0) return -d;
-  return Interval_nt<true>(0.0, std::max(-d.inf(), d.sup()));
-}
-
-inline
-Sign
-sign (const Interval_nt<true> & d)
-{
-  if (d.inf() > 0.0) return POSITIVE;
-  if (d.sup() < 0.0) return NEGATIVE;
-  if (d.inf() == d.sup()) return ZERO;
-  Interval_nt<true>::overlap_action();
-  return ZERO;
-}
-
-inline
-Comparison_result
-compare (const Interval_nt<true> & d, const Interval_nt<true> & e)
-{
-  if (d.inf() > e.sup()) return LARGER;
-  if (e.inf() > d.sup()) return SMALLER;
-  if (e.inf() == d.sup() && d.inf() == e.sup()) return EQUAL;
-  Interval_nt<true>::overlap_action();
-  return EQUAL;
-}
-
-// Then we overload for false.
-inline
-Interval_nt<false>
-square (const Interval_nt<false> & d)
-{
-  Protect_FPU_rounding<false> P;
-  if (d.inf()>=0.0)
-      return Interval_nt<false>(-CGAL_IA_MUL(d.inf(), -d.inf()),
-	                         CGAL_IA_MUL(d.sup(), d.sup()));
-  if (d.sup()<=0.0)
-      return Interval_nt<false>(-CGAL_IA_MUL(d.sup(), -d.sup()),
-	                         CGAL_IA_MUL(d.inf(), d.inf()));
-  return Interval_nt<false>(0.0, CGAL_IA_SQUARE(std::max(-d.inf(), d.sup())));
-}
-
-inline
-Interval_nt<false>
-abs (const Interval_nt<false> & d)
-{
-  if (d.inf() >= 0.0) return d;
-  if (d.sup() <= 0.0) return -d;
-  return Interval_nt<false>(0.0, std::max(-d.inf(), d.sup()));
-}
-
-inline
-Sign
-sign (const Interval_nt<false> & d)
-{
-  if (d.inf() > 0.0) return POSITIVE;
-  if (d.sup() < 0.0) return NEGATIVE;
-  if (d.inf() == d.sup()) return ZERO;
-  Interval_nt<false>::overlap_action();
-  return ZERO;
-}
-
-inline
-Comparison_result
-compare (const Interval_nt<false> & d, const Interval_nt<false> & e)
-{
-  if (d.inf() > e.sup()) return LARGER;
-  if (e.inf() > d.sup()) return SMALLER;
-  if (e.inf() == d.sup() && d.inf() == e.sup()) return EQUAL;
-  Interval_nt<false>::overlap_action();
-  return EQUAL;
-}
-#endif // CGAL_CFG_MATCHING_BUG_2
 
 inline
 std::pair<double,double>

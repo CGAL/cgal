@@ -108,27 +108,9 @@ As a general rule, we advise the use of
 \ccImplementation
 
 The template definition of the low level predicates of {\cgal} are overloaded
-for the type \ccc{Filtered_exact<CT,ET>}.  It is a partial specialisation,
-which implies that this is not supported by the compilers that do not support
-correctly this C++ feature (for which we set \ccc{CGAL_CFG_MATCHING_BUG_2}).
-A workaround is in place that allows you to use
-one such filtered number type at once, by explicitely fully specializing the
-predicates for it.  To do so, just define the macros \ccc{CGAL_IA_CT} and
-\ccc{CGAL_IA_ET} to the corresponding number types before any inclusion of
-{\cgal} files, as well as \ccc{CGAL_IA_CACHE}.  For example~:
+for the type \ccc{Filtered_exact<CT,ET>}.
 
-\begin{verbatim} 
-#define CGAL_IA_CT double
-#define CGAL_IA_ET leda_real
-#define CGAL_IA_CACHE No_Filter_Cache
-#define CGAL_IA_PROTECTED true
-\end{verbatim}
-
-Note that you may run into other problems if you use Visual C++.  We recommend
-that you use \ccc{Filtered_kernel} if you run into compilation problems with
-Visual C++.
-
-For each predicate file, the overloaded code is generated automatically by a
+For each predicate file, the overloaded code is generated automatically by the
 \ccc{PERL} script (\ccc{scripts/filtered_predicates_generator.pl}) that you can
 use for your own predicates.
 This script parses the template functions and generates the

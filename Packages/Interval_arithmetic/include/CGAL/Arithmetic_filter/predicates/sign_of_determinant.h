@@ -35,24 +35,19 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* inline */
 Sign
 sign_of_determinant2x2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a00,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a01,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a10,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a11)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a00,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a01,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a10,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a11)
 {
   try
   {
     CGAL_PROFILER("IA sign_of_determinant2x2 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return sign_of_determinant2x2(
 		a00.interval(),
 		a01.interval(),
@@ -62,7 +57,7 @@ sign_of_determinant2x2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA sign_of_determinant2x2 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant2x2(
 		a00.exact(),
 		a01.exact(),
@@ -71,7 +66,6 @@ sign_of_determinant2x2(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* inline */
 Sign
@@ -102,31 +96,25 @@ sign_of_determinant2x2(
 		a11.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* inline */
 Sign
 sign_of_determinant3x3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a00,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a01,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a02,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a10,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a11,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a12,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a20,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a21,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a22)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a00,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a01,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a02,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a10,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a11,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a12,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a20,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a21,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a22)
 {
   try
   {
     CGAL_PROFILER("IA sign_of_determinant3x3 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return sign_of_determinant3x3(
 		a00.interval(),
 		a01.interval(),
@@ -141,7 +129,7 @@ sign_of_determinant3x3(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA sign_of_determinant3x3 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant3x3(
 		a00.exact(),
 		a01.exact(),
@@ -155,7 +143,6 @@ sign_of_determinant3x3(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* inline */
 Sign
@@ -201,38 +188,32 @@ sign_of_determinant3x3(
 		a22.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* inline */
 Sign
 sign_of_determinant4x4(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a00,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a01,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a02,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a03,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a10,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a11,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a12,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a13,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a20,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a21,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a22,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a23,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a30,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a31,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a32,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a33)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a00,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a01,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a02,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a03,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a10,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a11,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a12,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a13,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a20,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a21,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a22,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a23,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a30,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a31,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a32,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a33)
 {
   try
   {
     CGAL_PROFILER("IA sign_of_determinant4x4 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return sign_of_determinant4x4(
 		a00.interval(),
 		a01.interval(),
@@ -254,7 +235,7 @@ sign_of_determinant4x4(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA sign_of_determinant4x4 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant4x4(
 		a00.exact(),
 		a01.exact(),
@@ -275,7 +256,6 @@ sign_of_determinant4x4(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* inline */
 Sign
@@ -342,47 +322,41 @@ sign_of_determinant4x4(
 		a33.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
 sign_of_determinant5x5(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a00,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a01,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a02,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a03,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a04,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a10,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a11,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a12,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a13,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a14,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a20,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a21,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a22,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a23,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a24,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a30,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a31,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a32,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a33,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a34,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a40,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a41,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a42,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a43,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a44)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a00,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a01,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a02,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a03,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a04,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a10,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a11,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a12,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a13,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a14,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a20,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a21,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a22,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a23,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a24,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a30,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a31,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a32,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a33,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a34,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a40,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a41,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a42,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a43,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a44)
 {
   try
   {
     CGAL_PROFILER("IA sign_of_determinant5x5 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return sign_of_determinant5x5(
 		a00.interval(),
 		a01.interval(),
@@ -413,7 +387,7 @@ sign_of_determinant5x5(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA sign_of_determinant5x5 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant5x5(
 		a00.exact(),
 		a01.exact(),
@@ -443,7 +417,6 @@ sign_of_determinant5x5(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
@@ -537,58 +510,52 @@ sign_of_determinant5x5(
 		a44.exact());
   }
 }
-#endif
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
-#else
-static
-#endif
+template < class CT, class ET, bool Protected, class Cache >
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
 sign_of_determinant6x6(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a00,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a01,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a02,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a03,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a04,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a05,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a10,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a11,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a12,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a13,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a14,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a15,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a20,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a21,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a22,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a23,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a24,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a25,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a30,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a31,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a32,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a33,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a34,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a35,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a40,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a41,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a42,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a43,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a44,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a45,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a50,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a51,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a52,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a53,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a54,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &a55)
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a00,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a01,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a02,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a03,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a04,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a05,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a10,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a11,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a12,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a13,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a14,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a15,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a20,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a21,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a22,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a23,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a24,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a25,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a30,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a31,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a32,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a33,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a34,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a35,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a40,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a41,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a42,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a43,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a44,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a45,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a50,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a51,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a52,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a53,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a54,
+    const Filtered_exact <CT, ET, Dynamic, Protected, Cache> &a55)
 {
   try
   {
     CGAL_PROFILER("IA sign_of_determinant6x6 calls");
-    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    Protect_FPU_rounding<Protected> Protection;
     return sign_of_determinant6x6(
 		a00.interval(),
 		a01.interval(),
@@ -630,7 +597,7 @@ sign_of_determinant6x6(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_PROFILER("IA sign_of_determinant6x6 failures");
-    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant6x6(
 		a00.exact(),
 		a01.exact(),
@@ -671,7 +638,6 @@ sign_of_determinant6x6(
   }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class ET >
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
@@ -798,7 +764,6 @@ sign_of_determinant6x6(
 		a55.exact());
   }
 }
-#endif
 
 CGAL_END_NAMESPACE
 

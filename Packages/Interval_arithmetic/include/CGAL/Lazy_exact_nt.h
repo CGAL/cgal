@@ -526,7 +526,6 @@ to_interval(const Lazy_exact_nt<ET> & a)
     return a.approx().pair();
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template <typename ET>
 inline
 Sign
@@ -571,15 +570,12 @@ Lazy_exact_nt<ET>
 square(const Lazy_exact_nt<ET> & a)
 { return new Lazy_exact_Square<ET>(a); }
 
-#endif // CGAL_CFG_MATCHING_BUG_2
-
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
 sqrt(const Lazy_exact_nt<ET> & a)
 { return new Lazy_exact_Sqrt<ET>(a); }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
@@ -591,7 +587,6 @@ inline
 Lazy_exact_nt<ET>
 max(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 { return new Lazy_exact_Max<ET>(a, b); }
-#endif // CGAL_CFG_MATCHING_BUG_2
 
 template <typename ET>
 std::ostream &
