@@ -69,7 +69,7 @@ public:
   // assign function for non-connectivity data
   virtual void assign(const Pm_vertex_base<Pt> &v)
   {
-	pt = v.pt;
+    pt = v.pt;
   }
 };
 
@@ -117,7 +117,7 @@ public:
   // assign function for non-connectivity data
   virtual void assign(const Pm_halfedge_base<X_curve> &e)
   {
-	cv = e.cv;
+    cv = e.cv;
   }
 
 protected:
@@ -376,8 +376,7 @@ public:
   typedef typename Vertex_list::const_iterator    Vertex_const_iterator;
   typedef typename Halfedge_list::const_iterator  Halfedge_const_iterator;
   typedef typename Face_list::const_iterator     Face_const_iterator;
-  typedef CGAL::N_step_adaptor< Halfedge_const_iterator, 2> Edge_const_iterator;
-  
+  typedef CGAL::N_step_adaptor<Halfedge_const_iterator,2> Edge_const_iterator;
   // CREATION
 
   Pm_dcel() {}
@@ -567,7 +566,6 @@ public:
 
     delete_all();
 
-	  
     ConnectMap vm, hm, fm;
     //VertexMap vm;
     //HalfedgeMap hm;
@@ -579,21 +577,21 @@ public:
 
     for (vit = d.vertices_begin(); vit != d.vertices_end(); vit++)
     {
-	  Vertex * nv = new_vertex();
+      Vertex * nv = new_vertex();
       nv->assign(*vit);
       vm.insert(ConnectMap::value_type((void*)&(*vit), (void*)nv));
     }
 
     for (hit = d.halfedges_begin(); hit != d.halfedges_end(); hit++)
     {
-	  Halfedge * nh = new_halfedge();
-	  nh->assign(*hit);
-	  hm.insert(ConnectMap::value_type((void*)(&(*hit)), (void*)nh));
+      Halfedge * nh = new_halfedge();
+      nh->assign(*hit);
+      hm.insert(ConnectMap::value_type((void*)(&(*hit)), (void*)nh));
     }
 
     for (fit = d.faces_begin(); fit != d.faces_end(); fit++)
     {
-	  Face * nf = new_face();
+      Face * nf = new_face();
       nf->assign(*fit);
       fm.insert(ConnectMap::value_type((void*)&(*fit), (void*)nf));
     }
@@ -609,7 +607,7 @@ public:
       nhe = (void*)(hm.find(he)->second);
       ((Vertex*)nv)->set_halfedge((Halfedge*)nhe);
     }
-	  
+
     for (hit = d.halfedges_begin(); hit != d.halfedges_end(); hit++)
     {
       void *he, *nhe, *v, *nv, *f, *nf, *op, *nop, *xt, *nxt;
@@ -643,13 +641,13 @@ public:
       else
         nhe = NULL;
       ((Face*)nf)->set_halfedge((Halfedge*)nhe);
-		  
+
       for (holes = fit->holes_begin(); holes != fit->holes_end(); holes++)
-	  {
-	    h = (void*)(*holes);
-	    nh = hm.find(h)->second;
-	    ((Face*)nf)->add_hole((Halfedge*)nh);
-	  }
+      {
+        h = (void*)(*holes);
+        nh = hm.find(h)->second;
+        ((Face*)nf)->add_hole((Halfedge*)nh);
+      }
     }
     return fm.find(u_face)->second;
   }

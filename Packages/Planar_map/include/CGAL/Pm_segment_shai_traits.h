@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.4-I-40 $
 // release_date  : $CGAL_Date: 2001/12/28 $
 //
-// file          : include/CGAL/Pm_segment_traits.h
+// file          : include/CGAL/Pm_segment_shai_traits.h
 // package       : Planar_map (5.80)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
@@ -51,7 +51,7 @@ public:
   //   typedef typename Kernel::Is_vertical_2      Is_vertical_2;
   //   typedef typename Kernel::Compare_y_at_x_2   Compare_y_at_x_2;
   //   typedef typename Kernel::Counterclockwise_in_between_2
-  //                                               Counterclockwise_in_between_2;
+  //                                           Counterclockwise_in_between_2;
   //   typedef typename Kernel::Equal_2            Equal_2;
   //   typedef typename Kernel::Has_on_2           Has_on_2;
   //   typedef typename Kernel::Compare_x_2        Compare_x_2;
@@ -78,7 +78,7 @@ public:
     ABOVE_CURVE        =  1,
     ON_CURVE           =  2
 
-  } Curve_point_status;	
+  } Curve_point_status;
 
 private:
   Kernel m_kernel;
@@ -115,23 +115,23 @@ public:
       return CURVE_NOT_IN_RANGE;
     if ( ! curve_is_vertical(cv))
       {
-	// Calculate vertical projection on curve
-	const Point_2 & proj = 
-	  construct_vertical_projected_point_2_object(cv, p);
-	int res = m_kernel.compare_y_2_object()(p, proj);
-	if (res == SMALLER) return UNDER_CURVE;
-	if (res == LARGER)	return ABOVE_CURVE;
+        // Calculate vertical projection on curve
+        const Point_2 & proj =
+          construct_vertical_projected_point_2_object(cv, p);
+        int res = m_kernel.compare_y_2_object()(p, proj);
+        if (res == SMALLER) return UNDER_CURVE;
+        if (res == LARGER) return ABOVE_CURVE;
 
-	return ON_CURVE;
+        return ON_CURVE;
       }
     else
       {
-	if (is_lower(p,lowest(curve_source(cv),curve_target(cv))))
-	  return UNDER_CURVE;
-	if (is_higher(p,highest(curve_source(cv),curve_target(cv))))
-	  return ABOVE_CURVE;
+        if (is_lower(p,lowest(curve_source(cv),curve_target(cv))))
+          return UNDER_CURVE;
+        if (is_higher(p,highest(curve_source(cv),curve_target(cv))))
+          return ABOVE_CURVE;
 
-	return ON_CURVE;
+        return ON_CURVE;
       }
   }
 
@@ -172,7 +172,7 @@ public:
   // the right of the x value of the input point
   Comparison_result 
   curve_compare_at_x_right(const X_curve &cv1, const X_curve &cv2, 
-			   const Point_2 & q) const 
+                           const Point_2 & q) const 
   {
     // If one of the curves is vertical then return EQUAL.
     if ( curve_is_vertical(cv1) || (curve_is_vertical(cv2))  ) return EQUAL;
@@ -232,7 +232,7 @@ public:
   bool curve_is_in_x_range(const X_curve & cv, const Point_2 & q) const
   { 
     return !( is_right(q, rightmost(cv.source(), cv.target())) ||
-              is_left(q, leftmost(cv.source(), cv.target()))	 );
+              is_left(q, leftmost(cv.source(), cv.target())));
   }
 
 private:
@@ -276,21 +276,22 @@ private:
   
   // Comment this one ! ##############
   
-  Point_2 construct_vertical_projected_point_2_object(const X_curve &cv, const Point_2 & q) const
+  Point_2 construct_vertical_projected_point_2_object(const X_curve &cv,
+                                                      const Point_2 & q) const
     {
       if ( ! curve_is_in_x_range(cv, q) )
-	return cv.source();
+        return cv.source();
       
       if (curve_is_vertical(cv))
-	return cv.source();
+        return cv.source();
       
       const Point_2 & a = cv.source();
       const Point_2 & b = cv.target();
       return Point_2 ((b.hx() * a.hw() - a.hx() * b.hw()) * q.hx() * a.hw(),
-		      (b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hy() + 
-		      (b.hy() * a.hw() - a.hy() * b.hw()) * 
-		      (q.hx() * a.hw() - a.hx() * q.hw()),  
-		      (b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hw());
+                      (b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hy() + 
+                      (b.hy() * a.hw() - a.hy() * b.hw()) * 
+                      (q.hx() * a.hw() - a.hx() * q.hw()),  
+                      (b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hw());
     }
 
 };
