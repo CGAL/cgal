@@ -786,7 +786,7 @@ set_compiler_flags()
             LEDA_LIB_OPT="lib"
 	    LIBPATH_OPT="-LIBPATH:"
 	    DEBUG_OPT="-Z7"
-	    EXE_OPT="/OUT:"
+	    EXE_OPT="-Fp"
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    MATH_LIB=
