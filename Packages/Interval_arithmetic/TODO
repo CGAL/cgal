@@ -1,7 +1,5 @@
 [See also the file TODO_static_filters]
 
-- Filtered_kernel<> should be a proper kernel.  It should be possible to use
-  the Kernel_base stuff (see Kernel_traits paper)...
 - mv test/include/*.C *.def ; Or use template functions ?
 
 Concerning the main code:
@@ -21,26 +19,6 @@ Concerning the main code:
       void operator() const { pipo = true; }
       void reset() const { pipo = false; }
     };
-- Pentium 4 : gcc -march=pentium4 -mfpmath=sse supports something like:
-    #include <xmmintrin.h>
-    #include <iostream>
-    
-    int main()
-    {
-      int i = _mm_getcsr();
-      std::cout << i << std::endl;
-
-      x = _MM_GET_ROUNDING_MODE()
-      _MM_SET_ROUNDING_MODE(x)
-      return 0;
-    }
-  Faut juste bien faire gaffe a __SSE2__ pour savoir quelle unite est utilisee
-  pour les calculs (x87 ou SSE2).  Ca pourrait meme etre les deux (bonjour le
-  bordel...).
-  Avantage : y'a pas de risque d'overflow/underflow avec la SSE2, donc on peut
-  disabler le workaround.
-  Y'a peut-etre meme des instructions interessantes pour speeder l'IA avec la
-  SSE2.
 - Use expression templates for Interval_nt<> and Lazy_exact_nt<>.
 - Specializations for is_zero() and co, and make use of them in the kernel.
   [Filtered_exact<> doesn't define them either, it's a bug...]
@@ -83,13 +61,6 @@ Concerning the main code:
   +  builtin_function ("__builtin_isunordered", default_function_type,
   +                   BUILT_IN_ISUNORDERED, BUILT_IN_NORMAL, NULL_PTR);
   [voir le draft C99 ce que c'est]
-? SUN: Add "-Wa,-xarch=v8plus" to fix the following "error":
-  /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
-  required between ldfsr and next FBfcc; nops inserted
-
-Concerning the script:
-----------------------
-- Produce separate files for declarations and definitions (=> libCGAL).
 
 Concerning the doc:
 -------------------
