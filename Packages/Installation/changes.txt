@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: OOPS, fixed _LEDA config/install stuff.
 GLOB: Recognize existing _LEDA config/install files.
 GLOB: The _LEDA suffix is now part of the config/install file as well.
 GLOB: Run the compiler tests when it becomes necessary only.
