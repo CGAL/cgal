@@ -1,4 +1,4 @@
-// Copyright (c) 1998  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1998-2003  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Francois Rebufat, Monique Teillaud
+// Author(s)     : Francois Rebufat, Monique Teillaud, Sylvain Pion
 
 #ifndef CGAL_TEST_CLS_DELAUNAY_C
 #define CGAL_TEST_CLS_DELAUNAY_C
@@ -455,6 +455,31 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T3_13.is_valid());
   assert(T3_13.number_of_vertices()==22);
   assert(T3_13.dimension()==3);
+
+  {
+    std::cout << "    Testing move_point()" << std::endl;
+    Cls T;
+    std::list<Vertex_handle> L;
+    for (i=0; i<22; ++i)
+      L.push_back(T.insert(q[i]));
+    assert(T.is_valid());
+    assert(T.number_of_vertices()==22);
+    assert(T.dimension()==3);
+
+    for (i=0; i<100; ++i) {
+      assert(!L.empty());
+      Vertex_handle v = L.front();
+      L.pop_front();
+      int nbv = T.number_of_vertices();
+      L.push_back(T.move_point(v, q[(3*i)%22]));
+
+      if (nbv != T.number_of_vertices())
+        L.pop_back(); // it means we move onto an already existing point.
+
+      assert(T.is_valid());
+      assert(T.number_of_vertices()<=22);
+    }
+  }
 
   {
       std::cout << "    Testing nearest_vertex()" << std::endl;

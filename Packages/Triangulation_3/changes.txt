@@ -1,3 +1,6 @@
+Version 1.180 (21 November 03)
+- First shot at Delaunay_3::move_point(v, p).
+
 Version 1.179 (20 November 03)
 - Remove deprecated functions push_back() and copy_triangulation().
 

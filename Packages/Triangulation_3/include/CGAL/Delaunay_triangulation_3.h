@@ -193,7 +193,9 @@ public:
 
   Vertex_handle insert(const Point & p, Locate_type lt,
 	               Cell_handle c, int li, int);
- 
+
+  Vertex_handle move_point(Vertex_handle v, const Point & p);
+
   template <class OutputIteratorBoundaryFacets,
             class OutputIteratorCells,
             class OutputIteratorInternalFacets>
@@ -479,6 +481,29 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
   }
 }
 
+template < class Gt, class Tds >
+typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds>::
+move_point(Vertex_handle v, const Point & p)
+{
+    CGAL_triangulation_precondition(! is_infinite(v));
+    CGAL_triangulation_expensive_precondition(tds().is_vertex(v));
+
+    // Dummy implementation for a start.
+
+    // Remember a cell to start the point location after the removal.
+    Cell_handle c = v->cell();
+    c = c->neighbor(c->index(v));
+
+    CGAL_triangulation_assertion(! c->has_vertex(v));
+
+    remove(v);
+    CGAL_triangulation_expensive_assertion(number_of_vertices() == 0
+	                                   || tds().is_cell(c));
+
+    return insert(p, number_of_vertices() == 0 ? Cell_handle(NULL) : c);
+}
+ 
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::

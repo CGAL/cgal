@@ -106,6 +106,15 @@ number of inserted points.
 {Inserts the points in the iterator range $\left[\right.$\ccc{first},
 \ccc{last}$\left.\right)$, of value type \ccc{Point}.}
 
+\ccHeading{Point moving}
+
+\ccMethod{Vertex_handle move_point(Vertex_handle v, const Point & p);}
+{Moves the point stored in \ccc{v} to \ccc{p}, while preserving the Delaunay
+property.  This performs an action semantically equivalent to \ccc{remove(v)}
+followed by \ccc{insert(p)}, but is supposedly faster when the point has
+not moved much.  Returns the handle to the new vertex.
+\ccPrecond{\ccc{v} is a finite vertex of the triangulation.}}
+
 \ccHeading{Removal}
 
 When a vertex \ccc{v} is removed from a triangulation, all the cells

@@ -116,6 +116,8 @@ public:
     return n - number_of_vertices();
   }
 
+  Vertex_handle move_point(Vertex_handle v, const Point & p);
+
   //LOCATE
   Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj) const;
   Cell_handle locate(const Point& p) const;
@@ -318,6 +320,32 @@ remove(Vertex_handle v)
   return true;
 }
 
+template < class Tr >
+typename Triangulation_hierarchy_3<Tr>::Vertex_handle
+Triangulation_hierarchy_3<Tr>::
+move_point(Vertex_handle v, const Point & p)
+{
+  CGAL_triangulation_precondition(v != NULL);
+  Vertex_handle u = v->up();
+  Vertex_handle old, ret;
+  int l = 0;
+  while (1) {
+    Vertex_handle w = hierarchy[l++]->move_point(v, p);
+    if (l == 1)
+	ret = w;
+    if (l > 1) {
+	old->set_up(w);
+	w->set_down(old);
+    }
+    old = w;
+    if (u == NULL || l > Triangulation_hierarchy_3__maxlevel)
+	break;
+    v = u;
+    u = v->up();
+  }
+  return ret;
+}
+ 
 template <class Tr>
 inline
 typename Triangulation_hierarchy_3<Tr>::Cell_handle
