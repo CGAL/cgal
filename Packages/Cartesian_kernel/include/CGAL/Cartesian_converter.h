@@ -56,8 +56,10 @@ public:
     typedef K2         Target_kernel;
     typedef Converter  Number_type_converter;
 
+#if defined(__GNUC__) && (__GNUC__ < 3)
+#else
     using Enum_converter::operator();
-
+#endif
     Cartesian_converter()
 	: c(), k() {}
 
