@@ -461,12 +461,12 @@ bool Hot_pixel<Traits_>::intersect_top(const Segment_2 & seg,
 /*! */
 template<class Traits_>
 bool
-Hot_pixel<Traits_>::intersect(Segment_data & seg, Direction seg_dir) const
+Hot_pixel<Traits_>::intersect(Segment_data & seg, Direction my_seg_dir) const
 {
   Segment_2 s = seg.segment();
 
-  return(intersect_bot(s,seg_dir) || intersect_left(s, seg_dir) ||
-         intersect_right(s, seg_dir) || intersect_top(s, seg_dir));
+  return(intersect_bot(s,my_seg_dir) || intersect_left(s, my_seg_dir) ||
+         intersect_right(s, my_seg_dir) || intersect_top(s, my_seg_dir));
 }
 
 // a function for compare two hot pixels for the set of hot pixels
