@@ -259,7 +259,9 @@ Bbox_2
 TriangleC2<R>::bbox() const
 {
   typename R::Construct_bbox_2 construct_bbox_2;
-  return construct_bbox_2(vertex(0)) + construct_bbox_2(vertex(1)) + construct_bbox_2(vertex(2));
+  return construct_bbox_2(vertex(0)) 
+    + construct_bbox_2(vertex(1)) 
+    + construct_bbox_2(vertex(2));
 }
 
 template < class R >
