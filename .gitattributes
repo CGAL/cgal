@@ -2033,10 +2033,11 @@ Packages/wininst/demo/Robustness/VC6/rotation_2.dsp -text
 Packages/wininst/demo/Robustness/VC6/triangulation_of_intersection_points_2.dsp -text
 Packages/wininst/demo/Stream_support_LEDA/VC6/Istream_iterator.dsp -text
 Packages/wininst/demo/Stream_support_LEDA/VC6/stream_iterator.dsp -text
-Packages/wininst/demo/Triangulation_3/VC6/demo.dsp -text
-Packages/wininst/demo/Triangulation_3/VC6/demo_color.dsp -text
-Packages/wininst/demo/Triangulation_3/VC6/demo_remove.dsp -text
-Packages/wininst/demo/Triangulation_3/VC6/demo_voronoi.dsp -text
+Packages/wininst/demo/Triangulation_2/VC6/Delaunay.dsp -text
+Packages/wininst/demo/Triangulation_2/VC6/constrained.dsp -text
+Packages/wininst/demo/Triangulation_2/VC6/constrained_wi.dsp -text
+Packages/wininst/demo/Triangulation_2/VC6/demo.dsp -text
+Packages/wininst/demo/Triangulation_2/VC6/regular_demo.dsp -text
 Packages/wininst/demo/Window_stream/VC6/window_input.dsp -text
 Packages/wininst/src/cgallib.dsp -text
 Packages/wininst/src/cgallib.vcproj -text
