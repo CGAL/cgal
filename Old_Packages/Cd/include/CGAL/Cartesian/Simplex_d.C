@@ -141,7 +141,7 @@ oriented_side(const typename SimplexCd<R CGAL_CTAG>::Point_d &p) const
   if (o != ZERO)
     return Oriented_side(o * bounded_side(p));
 
-  CGAL_assertion (!is_degenerate());
+  CGAL_kernel_assertion (!is_degenerate());
   return ON_ORIENTED_BOUNDARY;
 }
 

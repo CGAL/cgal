@@ -179,7 +179,7 @@ public:
   virtual Plane_d transform(const Plane_d &h) const
   {
     CGAL_kernel_precondition( h.dimension()==dimension() );
-    CGAL_assertion( h.has_on( h.point() ) );
+    CGAL_kernel_assertion( h.has_on( h.point() ) );
     return Plane_d( transform(h.point()), is_even()
               ? transpose().inverse().transform(h.orthogonal_direction())
 	      : - transpose().inverse().transform(h.orthogonal_direction()) );
