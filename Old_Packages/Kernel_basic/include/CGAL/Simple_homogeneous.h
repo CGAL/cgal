@@ -70,6 +70,6 @@
 #include <CGAL/predicates_on_pointsH2.h>
 */
 
-#include <CGAL/iterator_traits_pointer_specs_for_homogeneous_kernel.h>
+#include <CGAL/iterator_traits_pointer_specs_for_simple_homogeneous_kernel.h>
 
 #endif // CGAL_SIMPLE_HOMOGENEOUS_H

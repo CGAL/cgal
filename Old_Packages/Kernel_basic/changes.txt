@@ -1,5 +1,8 @@
+3.27   (28 Feb 2001)
+- Added iterator_traits_pointer_specs_for_simple_homogeneous_kernel.h
+
 3.26   (25 Feb 2001)
-- iterator_traits_pointer_specs_for_simple_homogeneous_kernel.h fixes.
+- iterator_traits_pointer_specs_for_simple_cartesian_kernel.h fixes.
 - Allow changing inline policy without having to modify CGAL files...
 
 3.25   (21 Feb 2001)
