@@ -996,22 +996,20 @@ find_conflicts_3(std::set<void*, std::less<void*> > & conflicts,
   // gives a cell ac having a facet on the boundary of conflicts
   // and the index i of its facet on the boundary
 {
-  if ( ( conflicts.find( (void *) &(*c) ) ) != conflicts.end() )
-    return;   // c was already found
-
   (void) conflicts.insert( (void *) &(*c) );
 
   for ( int j=0; j<4; j++ ) {
-    if ( side_of_sphere( c->neighbor(j),p ) 
-	 ==  ON_BOUNDED_SIDE ) {
-      find_conflicts_3(conflicts, p, c->neighbor(j), ac, i);
-    }
+    Cell_handle test = c->neighbor(j);
+    if ( conflicts.find( (void *) &(*test) ) != conflicts.end() )
+      continue;   // test was already tested and found to be in conflict.
+    if ( side_of_sphere( test, p ) == ON_BOUNDED_SIDE )
+      find_conflicts_3(conflicts, p, test, ac, i);
     else {
       ac = c;
       i = j;
     }
   }
-}// find_conflicts_3
+}
 
 template < class Gt, class Tds >
 bool
@@ -1097,22 +1095,20 @@ find_conflicts_2(std::set<void*, std::less<void*> > & conflicts,
   // gives a cell ac having a facet on the boundary of conflicts
   // and the index i of its facet on the boundary
 {
-  if ( ( conflicts.find( (void *) &(*c) ) ) != conflicts.end() )
-      return;   // c was already found
-
   (void) conflicts.insert( (void *) &(*c) );
 
   for ( int j=0; j<3; j++ ) {
-    if ( side_of_circle( c->neighbor(j), 3, p ) 
-	 ==  ON_BOUNDED_SIDE ) {
-      find_conflicts_2(conflicts, p, c->neighbor(j), ac, i);
-    }
+    Cell_handle test = c->neighbor(j);
+    if ( conflicts.find( (void *) &(*test) ) != conflicts.end() )
+      continue;   // test was already found
+    if ( side_of_circle( test, 3, p ) == ON_BOUNDED_SIDE )
+      find_conflicts_2(conflicts, p, test, ac, i);
     else {
       ac = c;
       i = j;
     }
   }
-}// find_conflicts_2
+}
 
 
 template < class Gt, class Tds >
