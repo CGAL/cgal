@@ -1,0 +1,106 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Handle.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2002   Mariette Yvinec
+% | Package: Handle
+% | 
+\RCSdef{\RCSHandleRev}{$Revision$}
+\RCSdefDate{\RCSHandleDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Handle}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+Most of the data structures and classes of the \cgal library
+uses the concept of \ccRefName\ in their user interface.
+The concept \ccRefName\ refers to what is  often called 
+a trivial iterator. The concept \ccRefName\
+refers mainly a pointer to an object providing 
+dereference operator \ccc{operator*()} and 
+member access \ccc{operator->()}  but no increment or decrement 
+operators.
+
+
+
+\ccTypes
+
+\ccNestedType{value_type}{The type of the object obtained by
+dereferencing a  \ccRefName\ .}
+
+\ccCreation
+\ccCreationVariable{h}  %% choose variable name
+
+\ccConstructor{Handle();}{default constructor.}
+\ccGlue
+\ccConstructor{Handle(const Handle& hr);}{copy constructor}
+\ccGlue
+\ccConstructor{Handle(value_type* pt);}{constructs a reference from a
+pointer to an object of type \ccc{value_type}.}
+
+\ccHeading{Assignement}
+
+\ccMethod{Handle& operator=(value_type* pr);} {\ccVar\ points to the object *pr}
+\ccGlue
+\ccMethod{Handle&  operator=(const Handle& hr);} {\ccVar\ and hr point
+to the same object.}
+
+
+\ccHeading{Dereference}
+
+\ccMethod{value-type& operator*();}{returns the object pointed to.}
+\ccGlue
+\ccMethod{value_type* operator->();}{returns a pointer to the object pointed to.}
+
+\ccHeading{Equality and Comparison}
+
+\ccMethod{ bool operator==(Handle hr) const;}
+{true if \ccVar\ and \ccc{hr} reference the same object.}
+\ccGlue
+\ccMethod{ bool operator!=(const Handle& hr) const;}{true if
+\ccVar\ and \ccc{hr} reference distinct objects.}
+
+The following operator is not quite compulsory, but very conveniemt if 
+present to define structures like \ccc{set<Handle>}
+\ccMethod{bool operator<(Handle hr) const;} {true if 
+\ccc { &(*\ccVar ) < &(*hr) } .}
+
+
+
+
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Pointer<T>}
+
+
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{examples/Package/Handle_prog.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{examples/Package/Handle_prog.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

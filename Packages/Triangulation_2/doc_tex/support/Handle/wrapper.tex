@@ -24,22 +24,57 @@
 \topmargin -14mm       
 \evensidemargin 3mm 
 \oddsidemargin 3mm
-
-% default column layout
-% ---------------------
-% This is the recommended layout. It may be changed inside main.tex.
-
-\newcommand{\cgalColumnLayout}{\ccTexHtml{%
-    \ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{8.5cm}}
-    \ccPropagateThreeToTwoColumns}{}}
-
 \sloppy
+
+\makeindex     % so the indexing commands have some ef
+
+% New manual style including tab markers on the side margins
+% ----------------------------------------------------------
+\marginparsep12mm
+\marginparwidth13mm
+\gdef\ccNewRefManualStyle{\ccTrue}  % undef this for old style manual
+
+% The tab marker are aligned with the top of the main text. To align
+% them with the page header, the following redefinition of the actual
+
+% formatting command can be used.
+\renewcommand{\ccDrawRefTabs}[2]{%
+    \marginpar{~\\\raisebox{12.5mm}[48mm]{%
+        \includegraphics{eps_tabs/cc_#1.eps}}}%
+}
+
+% Optionally, package authors and a package release can be shown
+% right below the chapter title. Comment out the following lines
+% to get back to the default behavior.
+% -----------------------------------------------------------------
+\def\ccTagChapterAuthor{\ccTrue}
+\def\ccTagChapterRelease{\ccTrue}
+
+% The colunm layout can be set for all reference pages. Since
+% local changes are possible, it is a good idea to enforce the
+% the global layout before each reference page. This way, local
+% changes of the layout do not change pages in the remainder
+% of the manual.
+% ------------------------------------------------------------
+\newcommand{\cgalColumnLayout}{% example setting of the CGAL manuals
+    \ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{8.5cm}}%
+    \ccPropagateThreeToTwoColumns
+}
+\cgalColumnLayout
+
+\def\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\def\ccRefPageEnd{\ccParDims\cgalColumnLayout}
+
+% We define the global scope here, for example, to be 'CGAL::'.
+% -------------------------------------------------------------
+\ccDefGlobalScope{CGAL::}
 
 \begin{document}
 
 \cgalColumnLayout
 
 \include{main}
+\include{Handle_ref/main}
 
 \bibliographystyle{alpha}
 \bibliography{geom}

@@ -1,12 +1,5 @@
-%% $RCSfile$
-% $Revision$
-% $Date$
+\chapter{Handles} 
 
-\chapter{Handles} \label{I1_ChapterPointer}
-
-
-
-\section{Definition}
 Most of the data structures and classes of the \cgal library
 uses the concept of \ccc{Handle} in their user interface.
 The concept \ccc{Handle} describes what is    often called 
@@ -20,15 +13,8 @@ A  \ccc{Handle} should be used whenever the referenced
 object
 is not part of a logical sequence.
  
- \section{Model for a handle}
-The class \ccc{CGAL::Pointer<T>}
-provides a model for a handle
-pointing to an object
-of class \ccc{T}. 
+\subsection*{Concept}
+\ccRefIdfierPage{Handle}
 
-Note that a simple pointer \ccc{T*},
-an iterator or a circulator with value type \ccc{T},
-can also be used as handles for object of type  \ccc{T}.
-
-
-
+\subsection*{Class}
+\ccRefIdfierPage{CGAL::Pointer<T>}

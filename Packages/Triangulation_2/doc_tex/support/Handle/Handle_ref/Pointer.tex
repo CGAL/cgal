@@ -1,0 +1,58 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pointer.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2002   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSPointerRev}{$Revision$}
+\RCSdefDate{\RCSPointerDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Pointer<T>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements  a model of the concept \ccc{Handle}
+with \ccc{T} as value type.
+
+\ccInclude{Pointer.h}
+
+\ccIsModel
+\ccRefConceptPage{Handle}
+
+\ccTypes
+\ccTypedef{typedef T value_type;}{}
+
+%\ccSeeAlso
+%\ccRefConceptPage{Handle}
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{examples/Package/Pointer_prog.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{examples/Package/Pointer_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
