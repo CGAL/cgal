@@ -1231,6 +1231,13 @@ protected:
   }
 
   inline Oriented_side
+  oriented_side(const Site_2& q, const Site_2& supp, const Site_2& p) const
+  {
+    CGAL_precondition( q.is_point() && supp.is_segment() && p.is_point() );
+    return geom_traits().oriented_side_2_object()(q, supp, p);
+  }
+
+  inline Oriented_side
   oriented_side(const Site_2& s1, const Site_2& s2, const Site_2& s3,
 		const Site_2& supp, const Site_2& p) const {
     CGAL_precondition( supp.is_segment() && p.is_point() );

@@ -460,6 +460,22 @@ typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Face_pair
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 {
+  CGAL_precondition( v->is_segment() );
+
+#ifndef NDEBUG
+  {
+    // count number of adjacent infinite faces
+    Face_circulator fc = incident_faces(v);
+    Face_circulator fc_start = fc;
+    int n_inf = 0;
+    do {
+      if ( is_infinite(fc) ) { n_inf++; }
+      fc++;
+    } while ( fc != fc_start );
+    CGAL_assertion( n_inf == 0 || n_inf == 2 || n_inf == 4 );
+  }
+#endif
+
   Face_circulator fc1 = incident_faces(v);
   Face_circulator fc2 = fc1; ++fc2;
   Face_circulator fc_start = fc1;
@@ -469,18 +485,56 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
   do {
     Face_handle ff1(fc1), ff2(fc2);
 
-    // MK::ERROR: ff1 and ff2 cannot be infinite. Modify the code to
-    //    handle this case
-    CGAL_assertion( !is_infinite(ff1) && !is_infinite(ff2) );
+    Oriented_side os1, os2;
 
-    Oriented_side os1 = oriented_side(fc1->vertex(0)->site(),
-				      fc1->vertex(1)->site(),
-				      fc1->vertex(2)->site(),
-				      sitev_supp, t);
-    Oriented_side os2 = oriented_side(fc2->vertex(0)->site(),
-				      fc2->vertex(1)->site(),
-				      fc2->vertex(2)->site(),
-				      sitev_supp, t);
+    if ( is_infinite(ff1) ) {
+      int id_v = ff1->index(v);
+      int cw_v = this->cw( id_v );
+      int ccw_v = this->ccw( id_v );
+
+      Site_2 sv_ep;
+      if ( is_infinite( ff1->vertex(cw_v) ) ) {
+	CGAL_assertion(  !is_infinite( ff1->vertex(ccw_v) )  );
+	CGAL_assertion( ff1->vertex(ccw_v)->site().is_point() );
+	sv_ep = ff1->vertex(ccw_v)->site();
+      } else {
+	CGAL_assertion(  !is_infinite( ff1->vertex( cw_v) )  );
+	CGAL_assertion( ff1->vertex( cw_v)->site().is_point() );
+	sv_ep = ff1->vertex( cw_v)->site();
+      }
+
+      os1 = oriented_side(sv_ep, sitev_supp, t);
+    } else {
+      os1 = oriented_side(fc1->vertex(0)->site(),
+			  fc1->vertex(1)->site(),
+			  fc1->vertex(2)->site(),
+			  sitev_supp, t);
+    }
+
+    if ( is_infinite(ff2) ) {
+      int id_v = ff2->index(v);
+      int cw_v = this->cw( id_v );
+      int ccw_v = this->ccw( id_v );
+
+      Site_2 sv_ep;
+      if ( is_infinite( ff2->vertex(cw_v) ) ) {
+	CGAL_assertion(  !is_infinite( ff2->vertex(ccw_v) )  );
+	CGAL_assertion( ff2->vertex(ccw_v)->site().is_point() );
+	sv_ep = ff2->vertex(ccw_v)->site();
+      } else {
+	CGAL_assertion(  !is_infinite( ff2->vertex( cw_v) )  );
+	CGAL_assertion( ff2->vertex( cw_v)->site().is_point() );
+	sv_ep = ff2->vertex( cw_v)->site();
+      }
+
+      os2 = oriented_side(sv_ep, sitev_supp, t);
+    } else {
+      os2 = oriented_side(fc2->vertex(0)->site(),
+			  fc2->vertex(1)->site(),
+			  fc2->vertex(2)->site(),
+			  sitev_supp, t);
+    }
+
     if ( !found_f1 &&
 	 os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE ) {
       f1 = ff2;
@@ -498,6 +552,8 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
     ++fc1, ++fc2;
   } while ( fc_start != fc1 ); 
 
+
+  CGAL_assertion( found_f1 && found_f2 );
   CGAL_assertion( f1 != f2 );
 
   return Face_pair(f1, f2);

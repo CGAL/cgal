@@ -294,9 +294,16 @@ class Svd_oriented_side_2
 public:
   typedef typename K::Site_2     Site_2;
   typedef Oriented_side          result_type;
-  typedef Arity_tag<5>           Arity;
+
+  struct Arity {};
 
 public:
+  result_type
+  operator()(const Site_2& q, const Site_2& s, const Site_2& p) const
+  {
+    return svd_oriented_side_ftC2<K,Method_tag>(q, s, p, Method_tag());
+  }
+
   result_type
   operator()(const Site_2& s1, const Site_2& s2, const Site_2& s3,
 	     const Site_2& s, const Site_2& p) const

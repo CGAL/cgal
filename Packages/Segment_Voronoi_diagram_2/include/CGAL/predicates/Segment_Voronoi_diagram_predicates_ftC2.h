@@ -1257,7 +1257,7 @@ svd_are_parallel_C2(const typename K::Site_2& p,
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-template<class FT, class MTag, class ITag>
+template<class FT, class MTag, class ITag, int Num_sites>
 struct Svd_oriented_side_ftC2
 {
 
@@ -1271,17 +1271,54 @@ struct Svd_oriented_side_ftC2
     typedef typename Kernel::Site_2                   Site_2;
     typedef Svd_oriented_side_C2<Kernel,MTag>         Predicate;
 
+    typedef
+      Svd_predicate_caller<Oriented_side, Predicate, Num_sites> Caller;
+
     must_be_filtered(FT());
 
-    Site_2 t[5];
+    Site_2 t[Num_sites];
 
-    for (unsigned int i = 0, k = 0, j = 0; i < 5; i++) {
+    for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
       t[i] = svd_get_site_C2<Kernel>(v, k, site_types, j, ITag());
     }
 
-    return Predicate()(t[0], t[1], t[2], t[3], t[4]);
+    return Caller()(t);
   }
 };
+
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+template<class K, class Method_tag>
+inline
+Oriented_side
+svd_oriented_side_ftC2(const typename K::Site_2& q,
+		       const typename K::Site_2& s,
+		       const typename K::Site_2& p,
+		       const Method_tag& mtag)
+{
+  typedef typename K::FT                  FT;
+  typedef typename K::Intersections_tag   ITag;
+  typedef Method_tag                      MTag;
+
+  typedef Svd_oriented_side_ftC2<FT,MTag,ITag,3>   Predicate_ftC2;
+
+  typename K::Site_2 tt[] = {q, s, p};
+
+  ITag itag;
+
+  FT v[36];
+  char site_types[6];
+
+
+  for (unsigned int i = 0, k = 0, j = 0; i < 3; i++) {
+    svd_predicate_push_back_C2<K>(tt[i], v, k, site_types, j, itag);
+  }
+
+  return Predicate_ftC2()(v, site_types);
+}
+
+//--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 inline
@@ -1297,7 +1334,7 @@ svd_oriented_side_ftC2(const typename K::Site_2& s1,
   typedef typename K::Intersections_tag   ITag;
   typedef Method_tag                      MTag;
 
-  typedef Svd_oriented_side_ftC2<FT,MTag,ITag>   Predicate_ftC2;
+  typedef Svd_oriented_side_ftC2<FT,MTag,ITag,5>   Predicate_ftC2;
 
   typename K::Site_2 tt[] = {s1, s2, s3, s, p};
 

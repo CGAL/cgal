@@ -53,6 +53,22 @@ public:
   typedef Site_2                     argument_type;
   typedef Arity_tag<5>               Arity;
 
+  // computes the oriented side of the point q
+  // wrt the line that is passes through the point p and its direction
+  // is the direction of the supporting line of s, rotated by 90
+  // degrees counterclockwise.
+  Oriented_side operator()(const Site_2& q, 
+			   const Site_2& s, const Site_2& p) const
+  {
+    CGAL_precondition( q.is_point() );
+    CGAL_precondition( s.is_segment() && p.is_point() );
+
+    Line_2 l = compute_supporting_line( s.segment() );
+    Line_2 lp = compute_perpendicular(l, p.point());
+
+    return lp.oriented_side(q.point());
+  }
+
   // computes the oriented side of the Voronoi vertex of s1, s2, s3
   // wrt the line that is passes through the point p and its direction
   // is the direction of the supporting line of s, rotated by 90

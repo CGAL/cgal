@@ -80,6 +80,13 @@ public:
     RT b() const { return b_; }
     RT c() const { return c_; }
 
+
+    Oriented_side oriented_side(const Point_2& p) const
+    {
+      Sign s = CGAL::sign(a_ * p.x() + b_ * p.y() + c_);
+      if ( s == ZERO ) { return ON_ORIENTED_BOUNDARY; }
+      return (s == POSITIVE) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
+    }
   };
 
   class Homogeneous_point_2

@@ -471,17 +471,19 @@ public:
 //----------------------------------------------------------------------------
 
 template <class CT, class ET, bool Protected, class Cache, class MTag,
-	  class ITag>
+	  class ITag, int Num_sites>
 class Svd_oriented_side_ftC2<
   Filtered_exact<CT,ET,Dynamic,Protected,Cache>,
-  MTag,ITag>
+  MTag,ITag,Num_sites>
 {
 private:
   typedef Interval_nt_advanced                              IT;
   typedef Filtered_exact<CT,ET,Dynamic,Protected,Cache>     FT;
 
-  typedef Svd_oriented_side_ftC2<IT,Sqrt_field_tag,ITag>    IT_Predicate;
-  typedef Svd_oriented_side_ftC2<ET,MTag,ITag>              ET_Predicate;
+  typedef Svd_oriented_side_ftC2<IT,Sqrt_field_tag,ITag,Num_sites>
+  IT_Predicate;
+
+  typedef Svd_oriented_side_ftC2<ET,MTag,ITag,Num_sites>    ET_Predicate;
 
 public:
   inline
@@ -490,9 +492,9 @@ public:
     try {
       Protect_FPU_rounding<Protected> Protection;
 
-      IT v_IT[60];
+      IT v_IT[12 * Num_sites];
 
-      for (unsigned int i = 0; i < 60; i++) {
+      for (unsigned int i = 0; i < 12 * Num_sites; i++) {
 	v_IT[i] = v[i].interval();
       }
       return IT_Predicate()(v_IT, site_types);
@@ -502,9 +504,9 @@ public:
 
       num_failures_oriented_side++;
 
-      ET v_ET[60];
+      ET v_ET[12 * Num_sites];
 
-      for (unsigned int i = 0; i < 60; i++) {
+      for (unsigned int i = 0; i < 12 * Num_sites; i++) {
 	v_ET[i] = v[i].exact();
       }
 
