@@ -123,25 +123,6 @@ public:
   typedef Point_2                               Point;
   typedef X_curve_2                             X_curve;
 
-  // sweep related types
-  typedef Pm_less_point_xy<Point, Traits>      PointLessFunctor;
-  typedef std::list<X_curve_2>                 X_curve_list;
-  typedef typename X_curve_list::iterator      X_curve_list_iterator;
-  typedef Point_plus_handle<Planar_map_2>      Point_plus;
-  typedef typename std::map<Point_2, Point_plus, PointLessFunctor>
-                                               PointContainer;
-  typedef typename PointContainer::value_type  PointContainer_value_type; 
-  typedef typename PointContainer::iterator    PointContainer_iterator;
-  typedef Pm_point_node<Traits, Point_plus, X_curve_2>   
-                                               Point_node;
-  typedef typename std::map<Point_2,Point_node, PointLessFunctor >
-                                               Event_queue;
-  typedef typename Event_queue::value_type     Event_queue_value_type;
-  typedef typename Event_queue::iterator       Event_queue_iterator;  
-  typedef Pm_curve_node<Traits, Point_plus, X_curve> Curve_node_;
-  typedef typename Point_node::Curve_node_iterator 
-                                               Curve_node_iterator;
-
   // Implementation Types
   // --------------------
 protected:
@@ -150,7 +131,7 @@ protected:
   // sweep related types
   typedef Pm_less_point_xy<Point, Traits>      PointLessFunctor;
   typedef typename X_curve_2_container::iterator X_curve_2_container_iterator;
-  typedef Point_plus_handle<Planar_map_2>      Point_plus;
+  typedef Point_plus_handle<Traits, Vertex_handle>   Point_plus;
   typedef typename std::map<Point_2, Point_plus, PointLessFunctor>
                                                PointContainer;
   typedef typename PointContainer::value_type  PointContainer_value_type; 
@@ -722,10 +703,105 @@ private:
 
 
  private:
+
+  /*! Initializes the data structures to peroform and insert of a 
+   *  container of curves to the planar map.
+   *
+   * Note: At the end of this function the specified planar map is empty.
+   *
+   * \param curves_begin the input iterator that points to the first curve 
+   * in the range.
+   * \param curves_end the input past-the-end iterator of the range.
+   * \param en the notification class.
+   */
   template <class X_curve_2_iterator>
-  void init_for_insert(X_curve_2_iterator curves_begin, 
-		       X_curve_2_iterator curves_end,
-		       Event_queue &event_queue);
+  inline void
+  init_for_insert(X_curve_2_iterator curves_begin, 
+		  X_curve_2_iterator curves_end,
+		  Event_queue &event_queue)
+  {
+    X_curve_2_iterator cv_iter;
+    X_curve_2_container_iterator xcv_iter;
+    X_curve_2_container all_curves;
+
+    // take the curves from the planar map and insert them to
+    // the curve list. Clear the planar map.
+    for (Halfedge_iterator h_iter = halfedges_begin(); 
+	 h_iter != halfedges_end(); ++h_iter, ++h_iter)
+      all_curves.push_back(h_iter->curve());
+    
+    // clear the planar map
+    clear(); 
+    
+    // add the inout curves to the container
+    for (cv_iter = curves_begin; cv_iter != curves_end; ++cv_iter)
+      all_curves.push_back(*cv_iter);
+    
+    
+    // Create the point_plus handles: for any pair of
+    // overlapping points from the input we ensure we have only one
+    // handle. - not having such a structure as input_vertices caused
+    // a bug.
+    PointLessFunctor pred(traits);
+    PointContainer input_vertices(pred);
+    for (xcv_iter = all_curves.begin(); 
+	 xcv_iter != all_curves.end(); ++xcv_iter){
+      if (input_vertices.find(traits->curve_source(*xcv_iter)) == 
+	  input_vertices.end())  
+	input_vertices.insert( PointContainer_value_type
+			       (traits->curve_source(*xcv_iter), 
+				Point_plus(traits->curve_source(*xcv_iter))) );
+      if (input_vertices.find(traits->curve_target(*xcv_iter)) == 
+	  input_vertices.end())  
+	input_vertices.insert( PointContainer_value_type
+			       (traits->curve_target(*xcv_iter), 
+				Point_plus(traits->curve_target(*xcv_iter))) );
+    }
+
+    // Create the Curve_node handles and the event queue.
+    unsigned int id = 0;
+    for(xcv_iter = all_curves.begin(); 
+	xcv_iter != all_curves.end(); ++xcv_iter, ++id) {
+      
+      X_curve cv(*xcv_iter);
+      
+      PointContainer_iterator curr_point_plus = 
+	input_vertices.find( traits->curve_source(cv) );
+
+      // defining one cv_node for both source and target event points.  
+      Curve_node_  cv_node = Curve_node_(cv, curr_point_plus->second, traits); 
+      
+      // look for the interection point in the queue. if does not exist, 
+      // add it. if exists, merge it with the existing one (add the curve)
+      Event_queue_iterator  edge_point = 
+	event_queue.find( traits->curve_source(cv) );
+      
+      if (edge_point == event_queue.end() || 
+	  edge_point->second.get_point() != curr_point_plus->second) {
+	Point_node  new_ix = 
+	  Point_node(cv_node, curr_point_plus->second, traits );
+	event_queue.insert(Event_queue_value_type(traits->curve_source(cv), 
+						  new_ix));
+      }
+      else
+	edge_point->second.add_curve(cv_node);
+      
+      
+      // same as above for the curve's target
+      edge_point = event_queue.find( traits->curve_target(cv) );
+      curr_point_plus = input_vertices.find( traits->curve_target(cv) );
+      
+      if (edge_point == event_queue.end() || 
+	  edge_point->second.get_point() != curr_point_plus->second) {
+	Point_node  new_ix = 
+	  Point_node(cv_node, curr_point_plus->second, traits );
+	event_queue.insert(Event_queue_value_type(traits->curve_target(cv), 
+						  new_ix));
+      }
+      else
+	edge_point->second.add_curve(cv_node);
+    }
+  }
 
   void update_subdivision(Point_node& point_node, 
 			  Change_notification *pm_change_notf);
@@ -1725,119 +1801,6 @@ x_curve_container(X_curve_2_container &l) const
   }
 }
 
-/*!
- * Given a container of curves, this function modifies the current
- * planar map to contain all previously existing curves and the 
- * specified curves.
- * \param curves_begin the input iterator that points to the first curve 
- * in the range.
- * \param curves_end the input past-the-end iterator of the range.
- * \param en the notification class.
-*/
-
-
-/*! Initializes the event queue according to the input:
- *  - create a list of curves consisting of the curves of the input planar
- *    map and the input curves given in the container
- *  - create a curve_node for each curve
- *
- * Note: At the end of this function the specified planar map is empty.
- *
- * \param curves_begin the input iterator that points to the first curve 
- * in the range.
- * \param curves_end the input past-the-end iterator of the range.
- * \param en the notification class.
- */
-template <class PlanarMapDcel_2, class PlanarMapTraits_2> 
-template <class X_curve_2_iterator>
-inline void
-Planar_map_2<PlanarMapDcel_2, PlanarMapTraits_2>::
-init_for_insert(X_curve_2_iterator curves_begin, 
-		X_curve_2_iterator curves_end,
-		Event_queue &event_queue)
-{
-  X_curve_2_iterator cv_iter;
-  X_curve_2_container_iterator xcv_iter;
-  X_curve_2_container all_curves;
-
-  // take the curves from the planar map and insert them to
-  // the curve list. Clear the planar map.
-  for (Halfedge_iterator h_iter = halfedges_begin(); 
-       h_iter != halfedges_end(); ++h_iter, ++h_iter)
-    all_curves.push_back(h_iter->curve());
-
-  // clear the planar map
-  clear(); 
-    
-  // add the inout curves to the container
-  for (cv_iter = curves_begin; cv_iter != curves_end; ++cv_iter)
-    all_curves.push_back(*cv_iter);
-
-    
-  // Create the point_plus handles: for any pair of
-  // overlapping points from the input we ensure we have only one
-  // handle. - not having such a structure as input_vertices caused
-  // a bug.
-  PointLessFunctor pred(traits);
-  PointContainer input_vertices(pred);
-  for (xcv_iter = all_curves.begin(); 
-       xcv_iter != all_curves.end(); ++xcv_iter){
-    if (input_vertices.find(traits->curve_source(*xcv_iter)) == 
-	input_vertices.end())  
-      input_vertices.insert( PointContainer_value_type
-			     (traits->curve_source(*xcv_iter), 
-			      Point_plus(traits->curve_source(*xcv_iter))) );
-    if (input_vertices.find(traits->curve_target(*xcv_iter)) == 
-	input_vertices.end())  
-      input_vertices.insert( PointContainer_value_type
-			     (traits->curve_target(*xcv_iter), 
-			      Point_plus(traits->curve_target(*xcv_iter))) );
-  }
-
-  // Create the Curve_node handles and the event queue.
-  unsigned int id = 0;
-  for(xcv_iter = all_curves.begin(); 
-      xcv_iter != all_curves.end(); ++xcv_iter, ++id) {
-
-    X_curve cv(*xcv_iter);
-      
-    PointContainer_iterator curr_point_plus = 
-      input_vertices.find( traits->curve_source(cv) );
-
-    // defining one cv_node for both source and target event points.  
-    Curve_node_  cv_node = Curve_node_(cv, curr_point_plus->second, traits); 
-
-    // look for the interection point in the queue. if does not exist, add it
-    // if exists, merge it with the existing one (add the curve)
-    Event_queue_iterator  edge_point = 
-      event_queue.find( traits->curve_source(cv) );
-
-    if (edge_point == event_queue.end() || 
-	edge_point->second.get_point() != curr_point_plus->second) {
-      Point_node  new_ix = 
-	Point_node(cv_node, curr_point_plus->second, traits );
-      event_queue.insert(Event_queue_value_type(traits->curve_source(cv), 
-						new_ix));
-    }
-    else
-      edge_point->second.add_curve(cv_node);
-      
-
-    // same as above for the curve's target
-    edge_point = event_queue.find( traits->curve_target(cv) );
-    curr_point_plus = input_vertices.find( traits->curve_target(cv) );
-
-    if (edge_point == event_queue.end() || 
-	edge_point->second.get_point() != curr_point_plus->second) {
-      Point_node  new_ix = 
-	Point_node(cv_node, curr_point_plus->second, traits );
-      event_queue.insert(Event_queue_value_type(traits->curve_target(cv), 
-						new_ix));
-    }
-    else
-      edge_point->second.add_curve(cv_node);
-  }
-}
 
 
 /*!
