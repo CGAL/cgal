@@ -1,6 +1,12 @@
 Manual_tools/TO_DO
 ==================
 
+-- operator simplification not working, see operator< in Point_2
+
+-- Removal of same type not working, see Nef_S2 Sphere_segment
+   (in Sphere_point, might be a scope question that the surrounding class
+    must be given as well).
+
 -- Bug: why does latex_to_html.css show up in /usr/tmp ?
 
 -- Problem: The .gif figures are needed for the Modifier section. Since
@@ -13,8 +19,6 @@ Manual_tools/TO_DO
 
 -- Once \includonly works, we might need a script to gray out unused TOC
    entries (using a different CSS class for the link)
-
--- Bug in linking Assert_circulator in Circulator package in the intro.tex page
 
 -- detect and layout long template parameter lists
 
@@ -34,14 +38,10 @@ Manual_tools/TO_DO
 
 -- OS License GPL for Manual tools: ask ETH/MPI for allowance
 
--- Merge all three manuals into one to get active cross-links
-
 -- Make User manual to print separately
 
 -- Each Chapter in its own PS file
    try \includeonly and check of TOC gets reduced also
-
--- Clearer TOC such that user and reference manual are easily identified
 
 -- Add new commands such as
    \ccSummaryMethod{bool is_valid();}{short summary comment}
@@ -91,6 +91,8 @@ printed cgal manual
 
 latex_to_html
 -------------
+-- Numbered equations
+
 -- Document new filename macros: \lciInputPath, \lciOutputFilename, 
    ...Rootname, ...FilePath, ...Uppath
 
@@ -139,7 +141,9 @@ latex_to_html
 -- More generic #X expand mechanism for \edef, check what \protect does
    (i.e., where to stop the expansions)
 
--- What does cc_remove_unwanted_links?
+-- What does cc_remove_unwanted_links? (strips all links in an area
+   delimited by keyword lines in the HTML files). Is it used anywhere
+   or documented? Could it be replaced by the new \lcNoLinkBegin/End?
 
 -- Move "Next" navigation creation to style file for parametrization.
 
@@ -156,19 +160,10 @@ latex_to_html
 
 -- Enable part title when full hierarchical file output is supported
 
--- Revise developers manual, also how cgal.bib is _not_ considered
-
--- Control where 'MultipleParts' macro was used
-
--- Define protecting comments that are respected by the cc_anchor's and
-   can be added around regions that should not have links.
-
 -- Check and improve that cross linking to reference pages point to 
    the top of the page (navigation header), not the section title
    (if the reference pages are in there own file of course).
 
 -- Remove the explicit \ccRefPageBegin/End's from my manual pages
    since they are automatically called in the refPage environment
-
--- check \v macro for Matousek bib file entry
 
