@@ -12,7 +12,7 @@
 // release_date  :
 //
 // file          : include/CGAL/predicates/Regular_triangulation_ftC3.h
-// maintainer    : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+// maintainer    : Monique.Teillaud@sophia.inria.fr
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>

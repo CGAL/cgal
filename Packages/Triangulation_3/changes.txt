@@ -1,3 +1,7 @@
+Version 1.36 (17 jul 00)
+fixes in typenames in Delaunay::remove
+call to Filtered_exact commented in examples to test on all platforms
+
 Version 1.35 (14 jul 00)
 first version of vertex_removal in Delaunay_3
 small functionalities (are_equal, has_vertex) on facets
