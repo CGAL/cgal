@@ -64,13 +64,16 @@ public:
   typedef Constraint_hierarchy_2<Vertex_handle, bool> Constraint_hierarchy;
 
   // for user interface with the constraint hierarchy
-  typedef typename Constraint_hierarchy::H_vertex_it    Vertices_in_constraint;
+  typedef typename Constraint_hierarchy::H_vertex_it    
+                                            Vertices_in_constraint_iterator;
   typedef typename Constraint_hierarchy::H_context      Context;
   typedef typename Constraint_hierarchy::H_context_iterator  Context_iterator;
   typedef typename Constraint_hierarchy::H_c_iterator   Constraint_iterator;
   typedef typename Constraint_hierarchy::H_sc_iterator  Subconstraint_iterator;
  
-
+  //for backward compatibility
+ typedef Vertices_in_constraint_iterator     Vertices_in_constraint;
+  
 protected:
   Constraint_hierarchy hierarchy;
  
@@ -166,9 +169,9 @@ public:
 				    Vertex_handle vb);
   Context_iterator   contexts_end(Vertex_handle va, 
 				  Vertex_handle vb);
-  Vertices_in_constraint vertices_in_constraint_begin(Vertex_handle va, 
+  Vertices_in_constraint_iterator vertices_in_constraint_begin(Vertex_handle va, 
 						      Vertex_handle vb);
-  Vertices_in_constraint vertices_in_constraint_end(Vertex_handle va, 
+  Vertices_in_constraint_iterator vertices_in_constraint_end(Vertex_handle va, 
 						    Vertex_handle vb);
   int number_of_constraints() { return hierarchy.number_of_constraints();}
   int number_of_subconstraints(){return hierarchy.number_of_subconstraints();}
@@ -554,7 +557,7 @@ contexts_end(Vertex_handle va, Vertex_handle vb)
 
 template <class Tr>
 inline
-typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint
+typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator
 Constrained_triangulation_plus_2<Tr>::
 vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb)
 {
@@ -563,7 +566,7 @@ vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb)
 
 template <class Tr>
 inline
-typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint
+typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator
 Constrained_triangulation_plus_2<Tr>::
 vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb)
 {

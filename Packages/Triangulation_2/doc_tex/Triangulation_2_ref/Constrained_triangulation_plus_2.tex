@@ -67,7 +67,7 @@ The value type of this iterator is a pair
 correponding to the vertices of  the
 subconstraint.}
 
-\ccNestedType{Vertices_in_constraint;}{ An iterator on the
+\ccNestedType{Vertices_in_constraint_iterator;}{ An iterator on the
 vertices of the chain of triangulation edges representing a
 constraint. The value type of this iterator is \ccc{Vertex_handle}.}
 
@@ -77,12 +77,12 @@ subconstraint in this constraint.
 It provides three member functions \ccc{Vertices_begin()}, \ccc{Vertices_end()}
 and \ccc{current()} returning 
 iterators  on the sequence of vertices of the enclosing constraint.
-\ccc{Vertices_begin()} returns a  \ccc{Vertices_in_constraint} 
+\ccc{Vertices_begin()} returns a  \ccc{Vertices_in_constraint_iterator} 
 iterator pointing 
 on the first vertex of the enclosing constraint,
-\ccc{last()} returns a  \ccc{Vertices_in_constraint} iterator 
+\ccc{last()} returns a  \ccc{Vertices_in_constraint_iterator}  
 pointing past the last vertex on  the enclosing constraint, and 
-\ccc{current()} returns a \ccc{Vertices_in_constraint} iterator  pointing
+\ccc{current()} returns a \ccc{Vertices_in_constraint_iterator}  pointing
 on the first vertex of the subconstraint.}
 
 
@@ -226,14 +226,14 @@ corresponding to the constraints enclosing the  \ccc{(va,vb).}
 \ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
 of a constrained edge of the triangulation.}
 \ccGlue
-\ccMethod{Vertices_in_constraint 
+\ccMethod{Vertices_in_constraint_iterator 
 vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb);}
 {Returns an iterator on the first vertex on the constraint
 \ccc{(va,vb)}
 \ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
 of a constrained edge of the triangulation.}
 \ccGlue
-\ccMethod{Vertices_in_constraint 
+\ccMethod{Vertices_in_constraint_iterator 
 vertices_in_constraint_end(Vertex_handle va, ertex_handle vb);}
 {Returns an iterator past  the last  vertex on  the constraint
 \ccc{(va,vb)}
