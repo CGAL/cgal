@@ -18,11 +18,8 @@ typedef Nef_polyhedron_S2::Sphere_point Sphere_point;
 
 int main() {
 
-  int n;
-  std::cin >> n;
-
   Nef_polyhedron_S2 S;
-  create_random_Nef_S2(S,n);
+  create_random_Nef_S2(S,5);
 
   SVertex_const_handle sv;
   SHalfedge_const_handle se;

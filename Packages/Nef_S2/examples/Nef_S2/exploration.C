@@ -17,11 +17,8 @@ typedef Nef_polyhedron_S2::SFace_cycle_const_iterator
 			   
 int main() {
 
-  int n;
-  std::cin >> n;
-
   Nef_polyhedron_S2 S;
-  create_random_Nef_S2(S,n);
+  create_random_Nef_S2(S,5);
 
   int i=0;
   SFace_const_iterator sf;
