@@ -86,7 +86,8 @@ simplest_rational_in_interval(double x, double y) {
       // Return 1/(xc + s).
 
       r_numerator = t.denominator(s);
-      r_denominator = t.numerator(s) + xc * t.denominator(s);
+      typename Rational_traits<Rational>::RT  xc_rt(xc);
+      r_denominator = t.numerator(s) + xc_rt * t.denominator(s);
     }
   }
 
