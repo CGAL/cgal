@@ -1502,6 +1502,7 @@ Packages/Qt_widget/demo/Qt_widget/Min_ellipse_2/min_ellipse_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Min_quadrilateral_2/min_quadrilateral_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Nef_2/nef_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Partition_2/partition_2.vcproj -text
+Packages/Qt_widget/demo/Qt_widget/Polygon/polygon.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/conflict_zone.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/conflict_zone_after.gif svneol=native#unset
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/help/input_line_layer.gif svneol=native#unset
