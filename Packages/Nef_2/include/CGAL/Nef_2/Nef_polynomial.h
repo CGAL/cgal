@@ -124,9 +124,9 @@ class Nef_polynomial<double> : public Polynomial<double> {
   static void set_R(const double& R) { R_ = R; }
 };
 
-template <class NT> NT Nef_polynomial<NT>::R_;
-int                    Nef_polynomial<int>::R_;
-double                 Nef_polynomial<double>::R_;
+template <class NT> NT Nef_polynomial<NT>::R_ = 1;
+int                    Nef_polynomial<int>::R_ = 1;
+double                 Nef_polynomial<double>::R_ = 1.0;
 
 template <class NT> double to_double(const ::CGAL::Nef_polynomial<NT>& p) { 
   return (CGAL::to_double(p.eval_at(CGAL::Nef_polynomial<NT>::R_))); 

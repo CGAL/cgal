@@ -22,7 +22,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_2.h> 
 #include <CGAL/Line_2_Line_2_intersection.h>
-#include <CGAL/Nef_2/Polynomial.h>
+#include <CGAL/Nef_2/Nef_polynomial.h>
 
 #undef _DEBUG
 #define _DEBUG 51
@@ -37,9 +37,9 @@ template <class T> class Extended_cartesian;
 
 template <class pFT>
 class Extended_cartesian : public 
-  CGAL::Simple_cartesian< CGAL::Polynomial<pFT> > { 
+  CGAL::Simple_cartesian< CGAL::Nef_polynomial<pFT> > { 
 public:
-typedef CGAL::Simple_cartesian< CGAL::Polynomial<pFT> > Base;
+typedef CGAL::Simple_cartesian< CGAL::Nef_polynomial<pFT> > Base;
 typedef Extended_cartesian<pFT> Self;
 
 /*{\Xdefinition |\Mname| is a kernel model realizing the concept
