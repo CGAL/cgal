@@ -1,3 +1,6 @@
+26 September 2004 Sylvain Pion
+- create_cgal_test : remove error message about "no *.cpp file".
+
 8 September 2004 Sylvain Pion
 - Add developer_scripts/crypt_passwd .
 
