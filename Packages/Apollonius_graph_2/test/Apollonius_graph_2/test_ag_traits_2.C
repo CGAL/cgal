@@ -31,18 +31,22 @@ struct EK : public CGAL::Simple_cartesian<CGAL::MP_Float> {};
 int main(int argc, char* argv[])
 {
   {
-    std::ifstream ifs_algo("./data/algo.dat");
+    std::ifstream ifs_traits("./data/traits.dat");
 
-    assert( ifs_algo );
+    assert( ifs_traits );
 
-    std::cout << "testing the Apollonius graph class..." << std::flush;
-    bool algo_ok =
-      CGAL::test_algo<Kernel,Method_tag,std::ifstream>(ifs_algo);
+    //  bool is_ok =
+    //    CGAL::test_traits<Kernel,CGAL::Ring_tag,std::ifstream>(ifs_traits);
 
-    assert( algo_ok );
+    std::cout << "testing the traits class..." << std::flush;
+
+    CGAL::Traits_tester<Kernel,Method_tag> test_traits;
+    bool traits_ok = test_traits();
+
+    assert( traits_ok );
     std::cout << " done!" << std::endl;
 
-    ifs_algo.close();
+    ifs_traits.close();
 
     std::cout << std::endl;
   }
@@ -50,20 +54,19 @@ int main(int argc, char* argv[])
   //------------------------------------------------------------------------
 
   {
-    std::ifstream ifs_algo("./data/algo.dat");
+    std::ifstream ifs_traits("./data/traits.dat");
 
-    assert( ifs_algo );
+    assert( ifs_traits );
 
-    std::cout << "testing the Apollonius graph class"
-	      << " with filtered traits..." << std::flush;
-    bool algo_ok =
-      CGAL::test_filtered_traits_algo<CK,Method_tag,EK,Method_tag,
-      std::ifstream>(ifs_algo);
+    std::cout << "testing the filtered traits class..." << std::flush;
 
-    assert( algo_ok );
+    CGAL::Filtered_traits_tester<CK,Method_tag,EK,Method_tag> test_traits;
+    bool traits_ok = test_traits();
+
+    assert( traits_ok );
     std::cout << " done!" << std::endl;
 
-    ifs_algo.close();
+    ifs_traits.close();
 
     std::cout << std::endl;
   }
