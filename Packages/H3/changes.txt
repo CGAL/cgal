@@ -1,3 +1,6 @@
+2.47   (30 January 2002)
+- submit again...
+
 2.46   (30 January 2002)
 - Fixes for MipsPro and VC6.
 
