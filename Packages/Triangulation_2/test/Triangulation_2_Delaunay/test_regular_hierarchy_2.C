@@ -44,7 +44,7 @@ typedef CGAL::Triangulation_data_structure_2<Vb,Fb>  Tds;
 typedef CGAL::Regular_triangulation_2<RGt,Tds>  Rt;
 typedef CGAL::Triangulation_hierarchy_2<Rt> Regular_hierarchy_cartesian;
 
-// Explicit instantiation of the whole class :
+// Explicit instantiation of the whole class  :
 template class CGAL::Triangulation_hierarchy_2<Rt>;
 
 
@@ -55,12 +55,7 @@ int main()
   std::cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "
 	    <<std::endl;
   std::cout << "using  Cartesian  points "   <<  std::endl;
-
-  std::cout << "Testing hierarchy" << std::endl;
-  //_test_cls_regular_triangulation_2( Regular_hierarchy_cartesian() );
   _test_cls_regular_hierarchy_2( Regular_hierarchy_cartesian());
-
-
   return 0;
 }
 

@@ -42,7 +42,7 @@ int main()
 	    <<std::endl;
   std::cout << "using  Cartesian  points "   <<  std::endl;
   typedef CGAL::Regular_triangulation_2<RGt>                    RCls;
-  _test_cls_reg_triangulation_2( RCls() );
+  _test_cls_regular_triangulation_2( RCls() );
 
   std::cout << "Testing Regular_triangulation_2" <<std::endl;
   std::cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "
@@ -51,7 +51,7 @@ int main()
   typedef CGAL::Regular_triangulation_euclidean_traits_2
                              <Test_rep_homogeneous, Rtype>        RGt2;
   typedef CGAL::Regular_triangulation_2<RGt2>                    RCls2;
-  _test_cls_reg_triangulation_2( RCls2() );
+  _test_cls_regular_triangulation_2( RCls2() );
 
   return 0;
 }

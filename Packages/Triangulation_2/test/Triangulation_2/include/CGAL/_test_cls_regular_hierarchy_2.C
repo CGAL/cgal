@@ -23,7 +23,7 @@ _test_cls_regular_hierarchy_2( const Rh & )
     Bare_point p( rand.get_double(), rand.get_double());
     Weighted_point wp(p, (rand.get_double())*100);
     //output <<  wp ;
-    std::cerr << i << " " << std::endl ;
+    //std::cerr << i << " " << std::endl ;
     rh.insert(wp);
     rh.is_valid();
   }
