@@ -267,7 +267,7 @@ protected:
           std::list<Point>  points;
           find_intersections(h_iter1->curve(), h_iter2->curve(), points);
           
-          for (std::list<Point>::iterator p_iter = points.begin(); 
+          for (typename std::list<Point>::iterator p_iter = points.begin(); 
                p_iter != points.end(); ++p_iter){
             Locate_type lt;
             Halfedge_const_handle  h=map_overlay.subdivision().locate(*p_iter, lt);
@@ -470,12 +470,12 @@ protected:
     
     // Checking faces of creators.
     Face_const_iterator f_iter;
-    for (f_iter = map_overlay.first_creator()->subdivision().faces_begin();
-         f_iter != map_overlay.first_creator()->subdivision().faces_end(); ++f_iter)
+    for (f_iter = map_overlay.first_creator().subdivision().faces_begin();
+         f_iter != map_overlay.first_creator().subdivision().faces_end(); ++f_iter)
       CGAL_assertion(faces.find(&*f_iter) != faces.end());
 
-    for (f_iter = map_overlay.second_creator()->subdivision().faces_begin();
-         f_iter != map_overlay.second_creator()->subdivision().faces_end(); ++f_iter)
+    for (f_iter = map_overlay.second_creator().subdivision().faces_begin();
+         f_iter != map_overlay.second_creator().subdivision().faces_end(); ++f_iter)
       CGAL_assertion(faces.find(&*f_iter) != faces.end());
 
     std::cout<<"check_all_features_are_marked -- passed"<<std::endl;
