@@ -24,10 +24,6 @@
 #include <iostream>
 #include <vector>
 
-#include <CGAL/IO/Segment_circle_Window_stream.h>
-#include <CGAL/IO/Pm_Window_stream.h>
-#include <CGAL/IO/cgal_window.h>
-
 typedef CGAL::Quotient<CGAL::MP_Float>          NT;
 typedef CGAL::Cartesian<NT>                     Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>  Traits;
