@@ -32,6 +32,8 @@
 #include <pair.h>
 #include <CGAL/triple.h>
 
+//#include <CGAL/Triangulation_cw_2.h>
+
 #include <CGAL/Pointer.h>
 #include <CGAL/circulator.h>
 
@@ -137,19 +139,22 @@ private:
     {
       infinite = new Vertex(Point(500,500,500)); // ?? debug
       _tds.insert_outside_affine_hull(&(*infinite));
+      // forces the compiler to instanciate CGAL_debug :
+      CGAL_debug( infinite ); 
+      CGAL_debug( Cell_handle() );
     }
   
 public:
 
 // CONSTRUCTORS
   CGAL_Triangulation()
-    : _gt()
+    : _gt(), _tds()
   {
     init_tds();
   }
 
   CGAL_Triangulation(const GT & gt) 
-    : _gt(gt)
+    : _gt(gt), _tds()
   {
     init_tds();
   }
@@ -164,7 +169,7 @@ public:
 		     const Point & p1,
 		     const Point & p2,
 		     const Point & p3)
-    : _gt()
+    : _gt(), _tds()
     {
       init_tds();
       insert_outside_affine_hull(p0);
@@ -575,14 +580,16 @@ public:
 	CGAL_triangulation_precondition
 	  ( ( i == 0 || i == 1 || i == 2 || i == 3 ) &&
 	    ( j == 0 || j == 1 || j == 2 || j == 3 ) );
-	break;
+	CGAL_triangulation_precondition( ! is_infinite(c,i,j) );
+   	break;
       }
     case 2:
       {
 	CGAL_triangulation_precondition
 	  ( ( i == 0 || i == 1 || i == 2 ) &&
 	    ( j == 0 || j == 1 || j == 2 ) );
-	break;
+	CGAL_triangulation_precondition( ! is_infinite(c,i,j) );
+   	break;
       }
     case 1:
       {
@@ -594,7 +601,6 @@ public:
       CGAL_triangulation_assertion( false );
       // return 
     }
-    CGAL_triangulation_precondition( ! is_infinite(c,i,j) );
     Locate_type lt;
     int li;
     CGAL_triangulation_precondition
@@ -709,19 +715,125 @@ public:
 	// n is an infinite cell containing p
 
 	Vertex_handle v = new Vertex(p);
+	v->set_cell( n );
+
 	set_number_of_vertices(number_of_vertices()+1);
 
-	Locate_type loc;
-	int i, j;
+	link( v, hat(v,n) );
+	// infinite->set_cell is done by link
 
-
-	v->set_cell( n );
 	return v;
       }
     }
     // to avoid warning with eg++
     return NULL;
   }
+
+private:
+Cell_handle
+hat(Vertex_handle v, Cell_handle c)
+  // recursive traversal of the set of facets of the convex hull
+  // that are visible from v
+  // v replaces infinite_vertex in these cells
+  // on the boundary, new cells with vertices v, infinite_vertex
+  // and the two vertices of an edge of the boumdary are created
+  // returns a cell inside the "hat", having a facet on its boundary
+{
+  static Cell_handle bound;
+
+  int inf = c->index(infinite_vertex());
+  c->set_vertex( inf , v );
+
+  Cell_handle cni, cnew;
+  Locate_type loc;
+  int li,lj;
+
+  int i, i1, i2;
+  for ( i=0; i<4; i++ ) {
+    if ( i!= inf ) {
+      cni = c->neighbor(i);
+      if ( ! cni->has_vertex( v ) ) {
+	if ( side_of_cell( v->point(), cni, loc, li, lj )
+	     == CGAL_ON_BOUNDED_SIDE ) {
+	  hat( v, cni );
+	}
+	else { // we are on the boundary of the set of facets of the
+	  // convex hull that are visible from v
+	  i1 = nextposaroundij(i,inf);
+	  i2 = 6-i-i1-inf;
+	  cnew = new Cell( _tds,
+			   c->vertex(i1), c->vertex(i2), 
+			   v, infinite_vertex(),
+			   NULL, NULL, cni, c );
+	  c->set_neighbor(i,cnew);
+	  cni->set_neighbor( cni->index(c), cnew );
+
+	  bound = c;
+	}
+      }
+    }// no else
+  } // for
+  return bound;
+} // hat
+void
+link(Vertex_handle v, Cell_handle c)
+  // c belongs to the hat of v anad has a fecet on its boundary
+  // traverses the boundary of the hat and finds adjacencies
+  // traversal is done counterclockwise as seen from v
+{
+  // finds a facet ib of c on the boundary of the hat
+  int iv = c->index(v);
+  int ib;
+  for ( ib=0; ib<4; ib++ ) {
+    if ( ib != iv ) {
+      if ( c->neighbor(ib)->has_vertex(infinite) ) {
+	break;
+      }
+    }
+    else {
+      ++ib;
+    }
+  }
+  
+  infinite->set_cell(c->neighbor(ib));
+
+  Cell_handle bound = c;
+  int i = ib;
+  int next;
+  Vertex_handle v1;
+
+  do {
+    iv = bound->index(v);
+    // indices of the vertices != v of bound on the boundary of the hat
+    // such that (i,i1,i2,iv) positive
+    int i1 = nextposaroundij(i,iv);
+    int i2 = 6-i-i1-iv;
+
+    // looking for the neighbor i2 of bound :
+    // we turn around i1 until we reach the boundary of the hat
+    v1 = bound->vertex(i1);
+
+    Cell_handle cur = bound;
+
+    next = nextposaroundij(i1,iv);
+    while ( ! cur->neighbor(next)->has_vertex(infinite) ) {
+      cur = cur->neighbor(next);
+      next = nextposaroundij(cur->index(v1),cur->index(v));
+    }
+    Cell_handle courant = bound->neighbor(i);
+    Cell_handle trouve = cur->neighbor(next);
+    courant->set_neighbor( courant->index(bound->vertex(i2)), trouve);
+    trouve->set_neighbor( 6 - trouve->index(v) - 
+			  trouve->index(infinite) -
+			  trouve->index(v1), courant );
+    bound = cur;
+    i = next;
+  } while ( ( bound != c ) || ( i != ib ) );
+  // c may have two facets on the boundary of the hat
+  // test bound != c is not enough, we must test whether
+  // facet ib of c has been treated
+}// end link
+public:
 
   Vertex_handle
   insert_outside_affine_hull(const Point & p)
@@ -758,6 +870,7 @@ public:
 	break;
       }
     default:
+      reorient = false;
       break;
     }
     Vertex_handle v = new Vertex(p);
@@ -772,7 +885,7 @@ public:
     Cell_handle c = locate( p, lt, li, lj);
     switch (lt) {
     case VERTEX:
-      break;
+      return c->vertex(li);
     case EDGE:
       return insert_in_edge(p, c, li, lj);
     case FACET:
@@ -1074,10 +1187,14 @@ public:
 	else {
 	  lt = VERTEX;
 	  li = 0;
-	  
 	}
 	return vit->cell();
 	break;
+      }
+    case -1:
+      {
+	lt = OUTSIDE_AFFINE_HULL;
+	return NULL;
       }
     default:
       {
