@@ -25,27 +25,16 @@
 
 // This file contains the definition of a kernel converter, based on Cartesian
 // representation.  It should work between *Cartesian<A> and *Cartesian<B>,
-// provided you give a NT converter from a to B.
-// It's not recommended for converting with homogeneous-like kernels, since
-// robustness issues have not been checked (prefer a different converter for
-// that).
+// provided you give a NT converter from A to B.
+// There's a Homogeneous counterpart.
 
 // TODO :
 // - Probably we should use data accessors everywhere !
 
 #include <CGAL/basic.h>
+#include <CGAL/NT_converter.h>
 
 CGAL_BEGIN_NAMESPACE
-
-template < class NT1, class NT2 >
-struct NT_converter
-{
-    NT2
-    operator()(const NT1 &a) const
-    {
-	return NT2(a);
-    }
-};
 
 template < class K1, class K2,
            class Converter = NT_converter<CGAL_TYPENAME_MSVC_NULL K1::FT,
