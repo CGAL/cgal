@@ -134,7 +134,7 @@ clean: \
 		conform.clean \
 		Show_points.clean \
 		Qt_widget_styled_layer.clean \
-		Qt_widget_style_editor.clean \
+		Qt_widget_style_editor.clean
 	rm -f Show_clusters.moc
 
 #---------------------------------------------------------------------#
