@@ -693,10 +693,17 @@ VectorH3<R>
 operator*(const VectorH3<R>& v, const typename R::RT& f)
 { return VectorH3<R>( v.hx()*f, v.hy()*f, v.hz()*f, v.hw() ); }
 
+#ifdef __SUNPRO_CC
+template <class RT, class R>
+CGAL_KERNEL_INLINE
+VectorH3<R>
+operator*(const RT& f, const VectorH3<R>& v)
+#else
 template <class R>
 CGAL_KERNEL_INLINE
 VectorH3<R>
 operator*(const typename R::RT& f, const VectorH3<R>& v)
+#endif
 { return VectorH3<R>( v.hx()*f, v.hy()*f, v.hz()*f, v.hw() ); }
 
 template <class R>
