@@ -278,7 +278,7 @@ section, so we do not comment on it here.
     typedef           _Traits                           Traits;
     typedef typename  _Traits::Point                    Point;
     typedef typename  _Traits::Circle                   Circle;
-    typedef           std::list<Point>::const_iterator  Point_iterator;
+    typedef typename  std::list<Point>::const_iterator  Point_iterator;
     typedef           const Point *                     Support_point_iterator;
 
     /**************************************************************************
@@ -995,8 +995,8 @@ and the circle's center are collinear, then $p$ and $q$ form a
 diameter of the circle.
 
 @macro <Min_circle_2 check two support points> = @begin
-    const Point& p( support_point( 0)),
-                 q( support_point( 1));
+    const Point& p = support_point( 0),
+                 q = support_point( 1);
 
     // p equals q?
     if ( p == q)
@@ -1029,9 +1029,9 @@ Otherwise, if two triples have opposite orientations, the center is not
 contained in the triangle.
 
 @macro <Min_circle_2 check three support points> = @begin
-    const Point& p( support_point( 0)),
-                 q( support_point( 1)),
-                 r( support_point( 2));
+    const Point& p = support_point( 0),
+                 q = support_point( 1),
+                 r = support_point( 2);
 
     // p, q, r not pairwise distinct?
     if ( ( p == q) || ( q == r) || ( r == p))
@@ -1045,7 +1045,7 @@ contained in the triangle.
                     "the three support points are collinear."));
 
     // current circle not equal the unique circle through p,q,r ?
-    Circle c( circle());
+    Circle c = circle();
     c.set( p, q, r);
     if ( circle() != c)
         return( CGAL::_optimisation_is_valid_fail( verr,
@@ -1053,7 +1053,7 @@ contained in the triangle.
                      through its three support points."));
 
     // circle's center on boundary of triangle(p,q,r)?
-    const Point& center( circle().center());
+    const Point& center = circle().center();
     CGAL::Orientation o_pqz = tco.orientation( p, q, center);
     CGAL::Orientation o_qrz = tco.orientation( q, r, center);
     CGAL::Orientation o_rpz = tco.orientation( r, p, center);
@@ -1261,9 +1261,9 @@ pseudo-code above.
         if ( n_sp == 3) return;
 
         // test first n points
-        std::list<Point>::iterator  point_iter( points.begin());
+        std::list<Point>::iterator  point_iter = points.begin();
         for ( ; last != point_iter; ) {
-            const Point& p( *point_iter);
+            const Point& p = *point_iter;
 
             // p not in current circle?
             if ( has_on_unbounded_side( p)) {
