@@ -57,7 +57,9 @@ namespace OpenNL {
 
 // Class FullVector
 // Model of the SparseLinearAlgebraTraits_d::Vector concept
-template <class T> class FullVector {
+template <class T> class FullVector
+{
+// Public types
 public:
     typedef T CoeffType ;
 	typedef T NT;								// for SparseLinearAlgebraTraits_d::Vector concept

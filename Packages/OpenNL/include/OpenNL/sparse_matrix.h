@@ -57,7 +57,9 @@ namespace OpenNL {
 //________________________________________________________________
 // Class SparseMatrix
 // Model of the SparseLinearAlgebraTraits_d::Matrix concept
-template <class T> class SparseMatrix {
+template <class T> class SparseMatrix 
+{
+// Public types
 public:
 
     typedef T CoeffType ;
@@ -129,7 +131,10 @@ public:
         }
     } ;
 
-    //__________ constructors / destructor _____
+// Public operations
+public:
+
+	//__________ constructors / destructor _____
 
 	// Create a square matrix initialized with zeros
     SparseMatrix(unsigned int dim) {
@@ -169,6 +174,18 @@ public:
         return row_[i] ;
     }
 
+	// Read access to 1 matrix coefficient 
+	// (for SparseLinearAlgebraTraits_d::Matrix concept)
+	// 
+	// Preconditions:
+	// * 0 <= row < row_dimension()
+	// * 0 <= column < column_dimension()
+	NT  get_coef (unsigned int i, unsigned int j) const {
+        assert(i < dimension_) ;
+        assert(j < dimension_) ;
+        return row(i).get_coef(j) ;
+	}
+            
 	// Write access to 1 matrix coefficient: aij <- aij + val
     void add(unsigned int i, unsigned int j, T val) {
         assert(i < dimension_) ;
@@ -178,20 +195,16 @@ public:
 
 	// Write access to 1 matrix coefficient: aij <- val
 	//(for SparseLinearAlgebraTraits_d::Matrix concept)
+	// 
+	// Preconditions:
+	// * 0 <= row < row_dimension()
+	// * 0 <= column < column_dimension()
     void set_coef(unsigned int i, unsigned int j, NT  val) {
         assert(i < dimension_) ;
         assert(j < dimension_) ;
         row(i).set_coef(j, val) ;
     }
 
-	// Read access to 1 matrix coefficient 
-	// (for SparseLinearAlgebraTraits_d::Matrix concept)
-	NT  get_coef (unsigned int i, unsigned int j) const {
-        assert(i < dimension_) ;
-        assert(j < dimension_) ;
-        return row(i).get_coef(j) ;
-	}
-            
     /**
      * removes all the coefficients and frees the allocated
      * space.

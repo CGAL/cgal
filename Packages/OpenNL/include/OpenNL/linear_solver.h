@@ -71,6 +71,7 @@ template <class COEFFTYPE,										// type of matrix and vector coefficients
 		  class SOLVER = Solver_BICGSTAB<MATRIX, VECTOR> >		// BICGSTAB general purpose solver
 class DefaultLinearSolverTraits 
 {
+// Public types
 public:
     typedef MATRIX							Matrix ;
     typedef VECTOR							Vector ;
@@ -81,9 +82,12 @@ public:
     typedef Solver_CG<MATRIX, VECTOR>		SymmetricSolver ;	// obsolete
     typedef Solver_BICGSTAB<MATRIX, VECTOR> NonSymmetricSolver;	// obsolete
 
+// Public operations
+public:
 	// Default constructor, copy constructor and operator =() are fine
 
-	// Solve the sparse linear system "A*X = B". Return true on success. The solution is then (1/D) * X.
+	// Solve the sparse linear system "A*X = B"
+	// Return true on success. The solution is then (1/D) * X.
 	// (for SparseLinearAlgebraTraits_d concept)
 	// 
 	// Preconditions:
