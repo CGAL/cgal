@@ -34,14 +34,14 @@
 Polyhedron}}\\ the example of subdivision surfaces}
 \author{\small
 \sffamily Pierre Alliez\footnote{GEOMETRICA, INRIA Sophia-Antipolis}
-\and 
+\and \small
 \sffamily Andreas Fabri\footnote{GeometryFactory, Sophia-Antipolis}
-\and 
+\and \small
 \sffamily Lutz Kettner\footnote{Max-Planck Institut für Informatik, 
                                 Saarbrücken}
-\and
+\and \small
 \sffamily Le-Jeng Shiue\footnote{SurfLab, University of Florida}
-\and
+\and \small
 \sffamily Radu Ursu\footnote{GEOMETRICA, INRIA Sophia-Antipolis}}
 \maketitle
 
@@ -49,18 +49,18 @@ Polyhedron}}\\ the example of subdivision surfaces}
 
 % ABSTRACT
 
-\abstract{This document gives a description for a user to get
-started with the halfedge data structure provided by the Computational
-Geometry Algorithm Library (CGAL). Assuming the reader to be familiar
-with the C++ template mechanisms and the key concepts of the Standard
-Template Library (STL), we describe three different approaches with
-increasing level of sophistication for implementing mesh subdivision
-schemes. The simplest approach uses simple Euler operators to
-implement the $\sqrt{3}$ subdivision scheme applicable to triangle
-meshes. A second approach overloads the incremental builder already
-provided by CGAL to implement the quad-triangle subdivision scheme
-applicable to polygon meshes. The third approach is more generic and
-offers an efficient way to design its own subdivision scheme through
+\abstract{This document is a tutorial on how to get
+started with the halfedge data structure provided by CGAL, the
+Computational Geometry Algorithm Library. Assuming the reader to be
+familiar with the C++ template mechanisms and the key concepts of the
+STL (Standard Template Library), we describe three different
+approaches with increasing level of sophistication for implementing
+mesh subdivision schemes. The simplest approach uses simple Euler
+operators to implement the $\sqrt{3}$ subdivision scheme applicable to
+triangle meshes. A second approach overloads the incremental builder
+already provided by CGAL to implement the quad-triangle subdivision
+scheme applicable to polygon meshes. The third approach is generic and
+offers a convenient way to design its own subdivision scheme through
 the definition of rule templates. Catmull-Clark, Loop and Doo-Sabin
 schemes are illustrated using the latter approach. Two companion
 applications, one developed on Windows with MS .NET, MFC and OpenGL,
