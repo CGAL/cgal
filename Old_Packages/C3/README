@@ -8,7 +8,8 @@ IMPORTANT FILES:
   releases. Put the latest (non submitted) changes at the top under no
   release numbers.
   Please, anytime you add something, modify this file (with your
-  name between brackets, see Sylvain's entries).
+  name between brackets, see Sylvain's entries). To make sure, I've
+  added the edit command to "make commit"
 * include/CGAL/* : the source files. There is no web/ subdirectory.
   Please therefore comment the source code appropriately.
 * Makefile : has some nice targets for releasing the packages. You must
@@ -26,7 +27,7 @@ make test : try to see if you still work. Try not to modify the
   the other Cartesian packages. For this to work, you must have
   Cartesian_basic, C2 and C3 in the same directory.
 
-cvs commit : commit your changes. Always cvs update before just to make
+make commit : commit your changes. Always cvs update before just to make
   sure you'll have no conflict. As for the log file, I usually enter the
   line(s) that I added in changes.txt (it's a good check if you did
   modify that file...)

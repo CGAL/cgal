@@ -31,8 +31,10 @@ test:
 
 version:
 	echo "$(VERSION) (" `date +"%e %b %Y"` ")" > version
+	cvs update
 
 commit:
+	vim changes.txt
 	cvs commit
 
 rtag:
