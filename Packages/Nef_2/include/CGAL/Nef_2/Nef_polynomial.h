@@ -34,12 +34,22 @@
 #include <CGAL/Nef_2/debug.h>
 #include <vector>
 
+#include <CGAL/Kernel/mpl.h>
+
+#include <boost/operators.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class NT> 
-class Nef_polynomial : public Polynomial<NT> {
+#define CGAL_int(T)    typename First_if_different<int,    T>::Type
+#define CGAL_double(T) typename First_if_different<double, T>::Type
 
+template <class NT> 
+class Nef_polynomial
+  : boost::ordered_field_operators1< Nef_polynomial<NT>
+  , boost::ordered_field_operators2< Nef_polynomial<NT>, int
+  > >
+  , public Polynomial<NT>
+{
   typedef typename CGAL::Polynomial<NT>  Base;
   typedef typename Base::size_type       size_type;
 
@@ -49,19 +59,21 @@ class Nef_polynomial : public Polynomial<NT> {
  public:
   Nef_polynomial() : Base() {}
   Nef_polynomial(const NT& a0) : Base(a0) {}
-  Nef_polynomial(NT a0, NT a1) : Base(a0,a1) {}
-  Nef_polynomial(const NT& a0, const NT& a1,const NT& a2) : Base(a0,a1,a2) {}
+  Nef_polynomial(const NT& a0, const NT& a1) : Base(a0,a1) {}
+  Nef_polynomial(const NT& a0, const NT& a1, const NT& a2) : Base(a0,a1,a2) {}
 
   template <class Fwd_iterator>
   Nef_polynomial(std::pair<Fwd_iterator, Fwd_iterator> poly) : Base(poly) {}
 
-  Nef_polynomial(double n) : Base(n) {}
-  Nef_polynomial(double n1, double n2) : Base(n1, n2) {}
-  Nef_polynomial(int n) : Base(NT(n)) {}
-  Nef_polynomial(int n1, int n2) : Base(n1,n2) {}
+  Nef_polynomial(CGAL_double(NT) n) : Base(n) {}
+  Nef_polynomial(CGAL_double(NT) n1, CGAL_double(NT) n2) : Base(n1, n2) {}
+  Nef_polynomial(CGAL_int(NT) n) : Base(NT(n)) {}
+  Nef_polynomial(CGAL_int(NT) n1, CGAL_int(NT) n2) : Base(n1,n2) {}
 
   Nef_polynomial(const Base& p) : Base(p) {}
-  Nef_polynomial(const Nef_polynomial<NT>& p) : Base(p) {}
+
+  Base & polynomial() { return static_cast<Base&>(*this); }
+  const Base & polynomial() const  { return static_cast<const Base&>(*this); }
 
     //  static NT R_; // for visualization only
     //  static void set_R(const NT& R) { R_ = R; }
@@ -71,97 +83,69 @@ class Nef_polynomial : public Polynomial<NT> {
     }
 };
 
-template <> 
-class Nef_polynomial<int> : public Polynomial<int> {
+template <class NT> 
+inline
+Nef_polynomial<NT> operator-(const Nef_polynomial<NT> &a)
+{
+  return - a.polynomial();
+}
 
-  typedef CGAL::Polynomial<int>           Base;
-  typedef Base::size_type                 size_type;
+template <class NT> 
+inline
+bool operator<(const Nef_polynomial<NT> &a, const Nef_polynomial<NT> &b)
+{
+  return a.polynomial() < b.polynomial();
+}
 
- protected:
-  Nef_polynomial(size_type s) : Base(s) {}
+template <class NT> 
+inline
+bool operator==(const Nef_polynomial<NT> &a, const Nef_polynomial<NT> &b)
+{
+  return a.polynomial() == b.polynomial();
+}
 
- public:
-  Nef_polynomial() : Base() {}
-  Nef_polynomial(const int& a0) : Base(a0) {}
-  Nef_polynomial(int a0, int a1) : Base(a0,a1) {}
-  Nef_polynomial(const int& a0, const int& a1,const int& a2) : Base(a0,a1,a2) {}
+template <class NT> 
+inline
+bool operator==(const Nef_polynomial<NT> &a, int b)
+{
+  return a.polynomial() == b;
+}
 
-  template <class Fwd_iterator>
-  Nef_polynomial(std::pair<Fwd_iterator, Fwd_iterator> poly) : Base(poly) {}
+template <class NT> 
+inline
+bool operator<(const Nef_polynomial<NT> &a, int b)
+{
+  return a.polynomial() < b;
+}
 
-  Nef_polynomial(double n) : Base(n) {}
-  Nef_polynomial(double n1, double n2) : Base(n1, n2) {}
+template <class NT> 
+inline
+bool operator>(const Nef_polynomial<NT> &a, int b)
+{
+  return a.polynomial() > b;
+}
 
-  Nef_polynomial(const Base& p) : Base(p) {}
-  Nef_polynomial(const Nef_polynomial<int>& p) : Base(p) {}
-
-    //  static int R_; // for visualization only
-    //  static void set_R(const int& R) { R_ = R; }
-  static int& infi_maximal_value() {
-    static int R_ = 1;
-    return R_;
-  }
-};
-
-template <> 
-class Nef_polynomial<double> : public Polynomial<double> {
-
-  typedef CGAL::Polynomial<double>  Base;
-  typedef Base::size_type           size_type;
-
- protected:
-  Nef_polynomial(size_type s) : Base(s) {}
-
- public:
-  Nef_polynomial() : Base() {}
-  Nef_polynomial(const double& a0) : Base(a0) {}
-  Nef_polynomial(double a0, double a1) : Base(a0,a1) {}
-  Nef_polynomial(const double& a0, const double& a1,const double& a2) 
-    : Base(a0,a1,a2) {}
-
-  template <class Fwd_iterator>
-  Nef_polynomial(std::pair<Fwd_iterator, Fwd_iterator> poly) : Base(poly) {}
-
-  Nef_polynomial(int n) : Base(NT(n)) {}
-  Nef_polynomial(int n1, int n2) : Base(n1,n2) {}
-
-  Nef_polynomial(const Base& p) : Base(p) {}
-  Nef_polynomial(const Nef_polynomial<double>& p) : Base(p) {}
-
-    //  static double R_; // for visualization only
-    //  static void set_R(const double& R) { R_ = R; }
-    static double& infi_maximal_value() {
-      static double R_ = 1.0;
-      return R_;
-    }
-};
 
 // template <class NT> NT Nef_polynomial<NT>::R_ = 1;
 // int                    Nef_polynomial<int>::R_ = 1;
 // double                 Nef_polynomial<double>::R_ = 1.0;
 
-template <class NT> double to_double(const ::CGAL::Nef_polynomial<NT>& p) { 
-  return (CGAL::to_double(p.eval_at(CGAL::Nef_polynomial<NT>::infi_maximal_value()))); 
+template <class NT>
+double to_double(const Nef_polynomial<NT>& p)
+{
+  return CGAL::to_double(p.eval_at(Nef_polynomial<NT>::infi_maximal_value()));
 }
 
-inline
-double to_double(const Nef_polynomial<int>& p) { 
-  return (CGAL::to_double(p.eval_at(Nef_polynomial<int>::infi_maximal_value()))); 
+template <class NT>
+Nef_polynomial<NT>
+gcd(const Nef_polynomial<NT>& p1, const Nef_polynomial<NT>& p2)
+{
+  return gcd(p1.polynomial(), p2.polynomial());
 }
 
-inline
-double to_double(const Nef_polynomial<double>& p) { 
-  return (CGAL::to_double(p.eval_at(Nef_polynomial<double>::infi_maximal_value()))); 
-}
-
-template <class NT> 
-Nef_polynomial<NT> 
-gcd(const Nef_polynomial<NT>& p1, const Nef_polynomial<NT>& p2) {
-  return gcd(Polynomial<NT>(p1), Polynomial<NT>(p2));
-}
+#undef CGAL_double
+#undef CGAL_int
 
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_NEF_POLYNOMIAL_H
-
-

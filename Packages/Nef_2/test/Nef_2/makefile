@@ -15,6 +15,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
+           -I../../../Polynomial/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            -Iinclude \
