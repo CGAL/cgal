@@ -23,26 +23,23 @@
 
 \ccDefinition
 The \ccRefName\ concpet is a refinement of the 
-\ccc{PlanarMapWithIntersectionsChangeNotification_2} concept. 
+\ccc{PlanarMapChangeNotification_2} concept. 
 Hence, the requirements of the latter are the requirements of the former.
-In addition, A class \ccClassTemplateName\ that satisfies the requirements of an
-interface class for a map overlay class must provide the
-following types and operations. 
+In addition, a class which is a model for the \ccRefName\ concept 
+must provide the following types and operations. 
 (\ccc{Self} is an abbreviation of the \ccRefName\ type hereafter.)
 
 \ccTypes
 \ccNestedType{Subdivision}{
-   The subdivision type. 
-   The requirements of the subdivision type are 
-   the definitions of all types and methods of the \ccc{Planar Map}.}
+   The subdivision type.}
 
 \ccNestedType{X_curve_2}{
-   a curve of the subdivision.}
+   curve type.}
 
 \ccNestedType{Point_2}{
-   a point of the subdivision.}
+   point type.}
 
-The three following types should have constant counter parts.
+The following three types have constant counterparts.
 
 \ccNestedType{Vertex_handle}{
    handle to a vertex of the subdivision.}
@@ -67,61 +64,62 @@ The three following types should have constant counter parts.
 
 \ccOperations
 \ccMethod{void  update_all_faces(Subdivision& s);}
-{traverse all the faces of $s$ in a DFS manner, and updating all pointers 
-in the overlay components to refer the suitable faces of the creators.}
+{traverses all the faces of $s$ in a DFS manner, 
+and updates all pointers in the overlay components to refer 
+the suitable faces of the creators.}
 
 \ccMethod{void set_curve_attributes(const X_curve_2& cv, 
    Halfedge_const_handle  h, bool first_creator);}
-{set the information regards the creator halfedge $h$.
-   It maintains the halfedge $h$, defined in the first creator or in the
-   second one, in the notifier class.}
+{maintains the halfedge $h$ of a creator in the notifier 
+   for future usage. The flag $first_creator$ indicates 
+   whether $h$ belongs to the first creator or to the second one.}
 
 
-The following methods have constant counter parts.
+The following methods have constant counterparts.
 
 \ccMethod{Vertex_handle get_first_vertex_above(Vertex_handle v);}
-{return the vertex handle of the first creator laying above $v$.
- If the return value equals $v$, it means there is no vertex of the first creator laying 
-above $v$.}
+{returns the hadle of the vertex of the first creator laying above $v$.
+   If there is no vertex of the first creator laying above $v$,
+   the returned value equals to $v$.}
   
 \ccMethod{Vertex_handle get_second_vertex_above(Vertex_handle v);}
-{return the vertex handle of the second creator laying above $v$.
-   If the return value equals $v$, it means there is no vertex of the second creator laying 
-   above $v$.}
-  
+{returns the hadle of the vertex of the second creator laying above $v$.
+   If there is no vertex of the first creator laying above $v$,
+   the returned value equals to $v$.}
+
 \ccMethod{Halfedge_handle get_first_halfedge_above(Vertex_handle v);}
-{return the halfedge handle of the first creator laying above $v$.}
+{returns the handle of the halfedge in the first creator laying above $v$.}
 
 \ccMethod{Halfedge_handle get_second_halfedge_above(Vertex_handle v);}
-{return the halfedge handle of the second creator laying above $v$.}
+{returns the handle of the halfedge in the second creator laying above $v$.}
 
 \ccMethod{Face_handle get_first_face_above(Vertex_handle v);}
-{return the face handle of the first creator laying above $v$.}
+{returns the handle of the face in the first creator laying above $v$.}
 
 \ccMethod{Face_handle get_second_face_above(Vertex_handle v);}
-{return the face handle of the second creator laying above $v$.}
+{returns the handle of the face in the second creator laying above $v$.}
 
 \ccMethod{Halfedge_handle get_first_halfedge_above(Halfedge_handle h);}
-{return the halfedge handle of the first creator laying above $h$.
-   If the return value equals $h$, it means there is no halfedge of the first creator laying 
-   above $h$.}
+{returns the handle of the halfedge in the first creator laying above $h$.
+   If there is no halfedge of the first creator laying above $h$,
+   the returned value equals to $h$.}
 
 \ccMethod{Halfedge_handle get_second_halfedge_above(Halfedge_handle h);}
-{return the halfedge handle of the second creator laying above $h$.
-   If the return value equals $h$, it means there is no halfedge of the second creator laying 
-   above $h$.}
+{returns the handle of the halfedge in the second creator laying above $h$.
+   If there is no halfedge of the second creator laying above $h$,
+   the returned value equals to $h$.}
 
 \ccMethod{Face_handle get_first_face_above(Halfedge_handle h);}
-{return the face handle of the first creator laying above $h$.}
+{returns the handle of the face in the first creator laying above $h$.}
 
 \ccMethod{Face_handle get_second_face_above(Halfedge_handle h);}
-{return the face handle of the second creator laying above $h$.}
+{returns the handle of the face in the second creator laying above $h$.}
 
 \ccMethod{Face_handle get_first_face_above(Face_handle f);}
-{return the face handle of the first creator laying above $f$.}
+{returns the handle of the face in the first creator laying above $f$.}
 
 \ccMethod{Face_handle get_second_face_above(Face_handle f);}
-{return the face handle of the second creator laying above $f$.}
+{returns the handle of the face in the second creator laying above $f$.}
 
 \end{ccRefConcept} % MapOverlayNotifier_2
 

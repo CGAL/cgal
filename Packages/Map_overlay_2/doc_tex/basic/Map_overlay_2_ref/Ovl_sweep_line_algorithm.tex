@@ -15,13 +15,13 @@
 \renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
 \renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
 
-\begin{ccRefClass}{Map_overlay_sweep_line<Subdivision,Notifier>}
+\begin{ccRefClass}{Map_overlay_sweep<Subdivision,Notifier>}
 \label{OVL_sec:sweep_line}
 
 The \ccRefName\ class implements the sweep-line algorithm.
 It sweeps all curves of both creators simultaneously. 
-We implemented and generalize the sweep-line algorithm presented by 
-Bentley and Ottmann~\cite{bkos-cgaa-97}, which requires 
+We implemented and generalized the standard sweep-line algorithm 
+presented by Bentley and Ottmann~\cite{bkos-cgaa-97}, which requires 
 $O(N\log{N} + k\log{N})$ time, where $N$ is the number of curves the two 
 creators have in total, and $k$ is the number of intersections between curves 
 from the first creator and curves from the second one.

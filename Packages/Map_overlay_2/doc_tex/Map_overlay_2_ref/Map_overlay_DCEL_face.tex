@@ -26,17 +26,17 @@ The requirements of the latter are the requirements of the former.
 In addition the \ccRefName\ should contain the following methods.
 
   \ccOperations
-  \ccMethod{void set_first_face_above(const void* f);}
-  {set $f$ to be the pointer to the face of the first creator laying above the current face of the overlay.}
+  \ccMethod{void set_first_face_above(void* f);}
+  {sets $f$ to be the pointer to the face of the first creator laying above the current face of the overlay.}
   
-  \ccMethod{void set_second_face_above(const void* f);}
-  {set $f$ to be the pointer to the face of the second creator laying above the current face of the overlay.}
+  \ccMethod{void set_second_face_above(void* f);}
+  {sets $f$ to be the pointer to the face of the second creator laying above the current face of the overlay.}
 
-  \ccMethod{const void* get_first_face_above();}
-  {return the face pointer of the first creator laying above the current face of the overlay.}
+  \ccMethod{void* get_first_face_above();}
+  {returns the face pointer of the first creator laying above the current face of the overlay.}
 
-  \ccMethod{const void* get_second_face_above();}
-  {return the face pointer of the second creator laying above the current face of the overlay.}
+  \ccMethod{void* get_second_face_above();}
+  {returns the face pointer of the second creator laying above the current face of the overlay.}
   
 \end{ccRefConcept} % MapOverlayDcelFace_2
 

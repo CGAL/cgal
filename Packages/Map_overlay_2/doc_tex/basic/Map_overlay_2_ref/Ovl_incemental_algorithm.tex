@@ -18,19 +18,26 @@
 \begin{ccRefClass}{Map_overlay_incremental<Subdivision,Notifier>}
 \label{OVL_sec:incremental}
 
-The \ccRefName\ class implements the incremental algorithm which inserts 
-all curves of the two creators one by one in a random order. 
-Theoretically, when maintaining the trapezoidal decomposition of 
-the overlay constructed so far, the construction of the overlay 
-takes randomized expected time $O(N\log{N} + k)$ employing Mulmuley game~\cite{m-cgitr-93},
+The \ccRefName\ class implements the incremental algorithm,
+in which we insert all curves of the two creators into the overlay 
+one by one in a random order. 
+Theoretically, when maintaining a trapezoidal decomposition of the 
+arrangement of the curves in the two creators $R$ and $B$, 
+which were added so far, 
+the construction of the overlay takes randomized expected time 
+$O(N\log{N} + k)$~\cite{m-cgitr-93},
 where $N$ is the number of curves the two creators have in total, 
 and $k$ is the number of intersections between curves 
-from the first creator and curves from the second one. 
-However, the usage of the \ccc{Planar Map With Intersections}
+from $R$ and $B$. 
+However, the usage of the \ccc{Planar_Map_With_Intersections_2}
 package employing trapezoidal decomposition is too slow in practice. 
 Hence, we construct the arrangement presenting the overlay 
-using the ``walk along a line'' strategy, implying that the construction 
-running time is $O(n^2)$.
+using the ``walk along a line'' strategy, 
+implying that the construction running time is quaratic in the input size.
+The incremental algorithm can not use the 
+\ccc{Planar_Map_2} package, since it has to deal all possibly 
+intersections of each inserted curve during the overlay construction.
+
 
 \ccInclude{CGAL/Map_overlay_incremental.h}
 
