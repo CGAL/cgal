@@ -512,7 +512,7 @@ template <class R>
 Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
 {
 
-  R::FT xr1, yr1, xr2, yr2;
+  typename R::FT xr1, yr1, xr2, yr2;
   xr1 = w.x_real(0); xr2 = w.x_real(w.geometry().width());
   
   if((s.source().x() < xr1 && s.target().x() < xr1) ||
