@@ -43,20 +43,6 @@ Geomview_stream::Geomview_stream(const Bbox_3 &bbox,
     set_vertex_radius((bbox.xmax() - bbox.xmin())/100.0);
 }
 
-Geomview_stream::Geomview_stream(const char *machine,
-				 const char *login,
-				 const Bbox_3 &bbox)
-    : _line_width(1)
-{
-    std::cerr << "Warning: This constructor is going to disappear" << std::endl
-         << "The bounding box should come as first argument" << std::endl
-         << "machine and login default to NULL" << std::endl;
-    setup_geomview(machine,login);
-    frame(bbox);
-    pickplane(bbox);
-    set_vertex_radius((bbox.xmax() - bbox.xmin())/100.0);
-}
-
 Geomview_stream::~Geomview_stream()
 {
     kill(pid, SIGKILL);  // kills geomview
@@ -131,8 +117,10 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         in = pipe_in[0];
         out = pipe_out[1];
 
-        char inbuf[10];
-        ::read(in, inbuf, 7);
+        // The following code blocks, at least on Linux.
+        // What was its purpose ?
+        // char inbuf[10];
+        // ::read(in, inbuf, 7);
 
         std::cout << "done." << std::endl;
 

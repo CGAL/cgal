@@ -51,11 +51,6 @@ public:
 		    const char *machine = (char*)NULL,
 		    const char *login = (char*)NULL);
 
-    // kept for backward compatibility
-    Geomview_stream(const char *machine,
-		    const char *login,
-		    const Bbox_3 &bbox = Bbox_3(0,0,0, 1,1,1));
-
     ~Geomview_stream();
 
     void clear();
