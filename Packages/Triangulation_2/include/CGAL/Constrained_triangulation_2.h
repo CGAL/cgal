@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Constrained_triangulation_2.h
 // source        : $RCSfile$
@@ -25,9 +25,9 @@
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_2_H
 
-#include <utility>
-#include <list>
-#include <map> 
+// #include <utility>
+// #include <list>
+// #include <map> 
 #include <set>
 
 #include <CGAL/triangulation_assertions.h>

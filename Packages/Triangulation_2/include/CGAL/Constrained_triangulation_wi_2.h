@@ -25,10 +25,10 @@
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_WI_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_WI_2_H
 
-#include <utility>
-#include <list>
-#include <map> 
-#include <set>
+// #include <utility>
+// #include <list>
+// #include <map> 
+// #include <set>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>

@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Constrained_Delaunay_triangulation_2.h
 // source        : $RCSfile$
@@ -25,12 +25,7 @@
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 
-#include <math.h>
-#include <pair.h>
-#include <list.h>
-#include <vector.h>
-#include <map.h> 
-#include <set.h>
+// #include cmath
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
