@@ -1,7 +1,6 @@
 // ============================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
-
 // This software and related documentation are part of the Computational
 // Geometry Algorithms Library (CGAL).
 // This software and documentation are provided "as-is" and without warranty
@@ -28,7 +27,7 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : Qt_widget_toolbar.h
+// file          : constrained_delaunay_triangulation_2_toolbar.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 

@@ -1,7 +1,6 @@
 // ============================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
-
 // This software and related documentation are part of the Computational
 // Geometry Algorithms Library (CGAL).
 // This software and documentation are provided "as-is" and without warranty
@@ -28,7 +27,7 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : triangulation_2_constrained.C
+// file          : constrained_delaunay_triangulation_2.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu 
 // release       : 
@@ -65,8 +64,8 @@ int main(int, char*)
 
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
-#include "Qt_widget_toolbar.h"
-#include "Qt_widget_toolbar_layers.h"
+#include "constrained_delaunay_triangulation_2_toolbar.h"
+#include "constrained_delaunay_triangulation_2_toolbar_layers.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_helpwindow.h>
 
@@ -83,7 +82,7 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-const QString my_title_string("Constrained Triangulation Demo with"
+const QString my_title_string("Constrained Delaunay Triangulation Demo with"
 			      " CGAL Qt_widget");
 
 CDT   ct;
@@ -230,7 +229,7 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Triangulation_2_constrained,\n"
+		"This is a demo for Constrained Delaunay Triangulation,\n"
   		"Copyright CGAL @2002");
   }
 
@@ -442,7 +441,7 @@ private:
   int                               old_state;
 };//endclass
 
-#include "triangulation_2_constrained.moc"
+#include "constrained_delaunay_triangulation_2.moc"
 
 int
 main(int argc, char **argv)

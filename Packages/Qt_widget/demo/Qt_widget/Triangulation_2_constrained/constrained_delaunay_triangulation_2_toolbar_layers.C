@@ -28,7 +28,7 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : Qt_widget_toolbar_layers.C
+// file          : constrained_delaunay_triangulation_2_toolbar_layers.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -44,7 +44,7 @@
 
 #ifdef CGAL_USE_QT
 
-#include "Qt_widget_toolbar_layers.h"
+#include "constrained_delaunay_triangulation_2_toolbar_layers.h"
 
 // icons
 #include <CGAL/IO/pixmaps/points.xpm>
@@ -106,6 +106,6 @@
   }
   
 
-#include "Qt_widget_toolbar_layers.moc"
+#include "constrained_delaunay_triangulation_2_toolbar_layers.moc"
 
 #endif

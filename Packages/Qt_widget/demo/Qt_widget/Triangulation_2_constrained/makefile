@@ -33,35 +33,35 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: triangulation_2_constrained
+all: constrained_delaunay_triangulation_2
 
-Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
+constrained_delaunay_triangulation_2_toolbar$(OBJ_EXT): constrained_delaunay_triangulation_2_toolbar.C constrained_delaunay_triangulation_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) constrained_delaunay_triangulation_2_toolbar.C
 
-Qt_widget_toolbar.moc: Qt_widget_toolbar.h
-	$(QT_MOC) -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
+constrained_delaunay_triangulation_2_toolbar.moc: constrained_delaunay_triangulation_2_toolbar.h
+	$(QT_MOC) -o constrained_delaunay_triangulation_2_toolbar.moc constrained_delaunay_triangulation_2_toolbar.h
 
-Qt_widget_toolbar_layers$(OBJ_EXT): Qt_widget_toolbar_layers.C \
-		Qt_widget_toolbar_layers.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_layers.C
+constrained_delaunay_triangulation_2_toolbar_layers$(OBJ_EXT): constrained_delaunay_triangulation_2_toolbar_layers.C \
+		constrained_delaunay_triangulation_2_toolbar_layers.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) constrained_delaunay_triangulation_2_toolbar_layers.C
 
-Qt_widget_toolbar_layers.moc: Qt_widget_toolbar_layers.h
-	$(QT_MOC) -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
+constrained_delaunay_triangulation_2_toolbar_layers.moc: constrained_delaunay_triangulation_2_toolbar_layers.h
+	$(QT_MOC) -o constrained_delaunay_triangulation_2_toolbar_layers.moc constrained_delaunay_triangulation_2_toolbar_layers.h
 
-triangulation_2_constrained.moc: triangulation_2_constrained.C \
-			Qt_widget_toolbar$(OBJ_EXT) \
-			Qt_widget_toolbar_layers$(OBJ_EXT)
-	${QT_MOC} -o triangulation_2_constrained.moc triangulation_2_constrained.C
+constrained_delaunay_triangulation_2.moc: constrained_delaunay_triangulation_2.C \
+			constrained_delaunay_triangulation_2_toolbar$(OBJ_EXT) \
+			constrained_delaunay_triangulation_2_toolbar_layers$(OBJ_EXT)
+	${QT_MOC} -o constrained_delaunay_triangulation_2.moc constrained_delaunay_triangulation_2.C
 
-triangulation_2_constrained$(OBJ_EXT): triangulation_2_constrained.C triangulation_2_constrained.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulation_2_constrained.C
+constrained_delaunay_triangulation_2$(OBJ_EXT): constrained_delaunay_triangulation_2.C constrained_delaunay_triangulation_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) constrained_delaunay_triangulation_2.C
 
-triangulation_2_constrained$(EXE_EXT): triangulation_2_constrained$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)triangulation_2_constrained triangulation_2_constrained$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
+constrained_delaunay_triangulation_2$(EXE_EXT): constrained_delaunay_triangulation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)constrained_delaunay_triangulation_2 constrained_delaunay_triangulation_2$(OBJ_EXT) constrained_delaunay_triangulation_2_toolbar$(OBJ_EXT) constrained_delaunay_triangulation_2_toolbar_layers$(OBJ_EXT) $(LDFLAGS)
 
-clean: triangulation_2_constrained.clean \
-       Qt_widget_toolbar_layers.clean \
-       Qt_widget_toolbar.clean 
+clean: constrained_delaunay_triangulation_2.clean \
+       constrained_delaunay_triangulation_2_toolbar_layers.clean \
+       constrained_delaunay_triangulation_2_toolbar.clean 
 
 
 #---------------------------------------------------------------------#
