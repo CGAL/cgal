@@ -152,8 +152,11 @@ public:
     for(typename Zone::Faces_iterator fh_it = zone.faces.begin();
         fh_it != zone.faces.end();
         ++fh_it)
-      if(*fh_it != fh)
-        bad_faces.erase(*fh_it);
+      {
+        if(*fh_it != fh && (*fh_it)->is_marked() )
+          bad_faces.erase(*fh_it);
+        (*fh_it)->set_marked(false);
+      }
   }
 
   /** Do nothing. */
@@ -229,7 +232,7 @@ compute_new_bad_faces(Vertex_handle v)
   do {
     Quality q;
     if(!tr.is_infinite(fc))
-      if( is_bad(fc, q) && fc->is_marked() )
+      if( fc->is_marked() && is_bad(fc, q) )
         push_in_bad_faces(fc, q);
     fc++;
   } while(fc!=fcbegin);
