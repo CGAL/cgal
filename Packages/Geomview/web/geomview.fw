@@ -21,7 +21,7 @@
 @p maximum_output_line_length = 110
 
 \title{\bf How to Implement Geomview Stream IO Operators}
-\author{Andreas Fabri}
+\author{Andreas Fabri (revised by Hervé Brönnimann}
 \date{\geomviewRevision, \geomviewDate}
 \maketitle
 
@@ -1309,11 +1309,6 @@ parse_point(char* pickpoint,
 @}
 
 
-
-
-
-
-
 \section{Constructors and Destructors}
 
 The parameters for the constructor are a bounding box, the machine
@@ -1334,7 +1329,7 @@ process and establishes two pipes between the processes. The forked
 process is then overlayed with geomview. The file descriptors
 \ccc{stdin} and \ccc{stdout} of geomview are hooked on the two pipes.
 
-@$@<constructors and destructors@>+=@{@-
+@$@<constructors and destructors@>+=@{
 CGAL_Geomview_stream::CGAL_Geomview_stream(const CGAL_Bbox_3 &bbox,
                                            const char *machine,
                                            const char *login)
@@ -1350,7 +1345,7 @@ CGAL_Geomview_stream::CGAL_Geomview_stream(const CGAL_Bbox_3 &bbox,
 We keep the following constructor for backward compatibility, and
 warn the user.
 
-@$@<constructors and destructors@>+=@{@-
+@$@<constructors and destructors@>+=@{
 CGAL_Geomview_stream::CGAL_Geomview_stream(const char *machine,
                                            const char *login,
                                            const CGAL_Bbox_3 &bbox)
@@ -1366,7 +1361,7 @@ CGAL_Geomview_stream::CGAL_Geomview_stream(const char *machine,
 }
 @}
 
-@$@<constructors and destructors@>+=@{@-
+@$@<constructors and destructors@>+=@{
 CGAL_Geomview_stream::~CGAL_Geomview_stream()
 {
     kill(pid, SIGKILL);  // kills geomview
@@ -1430,33 +1425,39 @@ only streams geomview can communicate with.
         dup(pipe_in[1]);    // we connect it to the pipe
 @}
 
-Finally, we overlay the child process with geomview. The function execlp
+Finally, we overlay the child process with geomview. In a previous version,
+Andreas said: ``The function execlp
 expects the absolute path for the commands rsh and geomview. These come from
-the makefile.
+the makefile.'' In fact, the man for Solaris and linux now says that execlp
+looks up the environment variable PATH which is exported by the shell. So there
+is no more a reason to use \ccc{CGAL_RSH} and \ccc{CGAL_GEOMVIEW} with a
+complete path. Rather we will assume that they are in the user's path.
 
 @$@<setup_geomview@>+=@{@-
         if (machine && (strlen(machine)>0)) {
             ostrstream os;
             os << " rgeomview " << machine << ":0.0" << ends ;
             ostrstream logos;
-            execlp(CGAL_RSH,
-                   "rsh",
-                   machine,
-                   "-l",
-                   login,
-                   os.str(),
-                   (char *)0);
+            execlp("rsh", "rsh", machine, "-l", login, os.str(), (char *)0);
         } else {
-            execlp(CGAL_GEOMVIEW,
-                   "geomview",
-                   "-c",
-                   "-",
-                   (char *)0);
+            execlp("geomview", "geomview", "-c", "-", (char *)0);
         }
 
-    // if we get to this point something went wrong.
-    cerr << "execl geomview failed" << endl ;
-    exit(-1);
+        // if we get to this point something went wrong.
+        cerr << "execl geomview failed" << endl ;
+        switch(errno) {
+        case EACCES:
+            cerr << "please check your environment variable PATH" << endl;
+            cerr << "make sure the file `geomview' is contained in it" << endl;
+            cerr << "and is executable" << endl;
+            break;
+        case ELOOP:
+            cerr << "too many links for filename `geomview'" << endl;
+            break;
+        default:
+            cerr << "error number " << errno << " (check `man execlp')" << endl;
+        };
+        exit(-1);
 @}
 
 
@@ -1703,11 +1704,13 @@ private:
 // source        : web/Geomview_stream.fw
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri
+// author(s)     : Andreas Fabri and Herve Bronnimann
 @<CGAL notice tail@>
 
 #include <CGAL/IO/Geomview_stream.h>
 
+#include <unistd.h>
+#include <errno.h>
 
 @<constructors and destructors@>
 
