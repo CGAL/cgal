@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-75 $
-// release_date  : $CGAL_Date: 2002/04/10 $
+// release       : 
+// release_date  : 
 //
 // file          : include/CGAL/nearest_neighbor_delaunay_2.h
-// package       : Point_set_2 (2.3.2)
+// package       : Point_set_2 (2.3.3)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.3.2
-// revision_date : 11 April 2002 
+// revision      : 2.3.3
+// revision_date : 16 Oct 2002 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -234,8 +234,8 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
   compare_vertices<Vertex_handle,Numb_type,MAP_TYPE> comp(& priority_number);      // comparison object ...
   std::priority_queue<Vertex_handle, std::vector<Vertex_handle>, CGAL::compare_vertices<Vertex_handle,Numb_type,MAP_TYPE> > PQ(comp);
 
-  priority_number[v.ptr()] = 0;
-  PQ.push(v.ptr());
+  priority_number[& (*v)] = 0;
+  PQ.push(& (*v));
      
   // mark vertex v
   mark[v] = cur_mark;

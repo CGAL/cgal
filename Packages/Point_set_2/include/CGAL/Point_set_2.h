@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-75 $
-// release_date  : $CGAL_Date: 2002/04/10 $
+// release       : 
+// release_date  : 
 //
 // file          : include/CGAL/Point_set_2.h
-// package       : Point_set_2 (2.3.2)
+// package       : Point_set_2 (2.3.3)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.3.2
-// revision_date : 11 April 2002 
+// revision      : 2.3.3
+// revision_date : 16 Oct 2002 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -256,7 +256,7 @@ public:
      compare_vertices<Vertex_handle,Numb_type,MAP_TYPE>    comp(& priority_number);      // comparison object ...
      std::priority_queue<Vertex_handle, std::vector<Vertex_handle>, CGAL::compare_vertices<Vertex_handle,Numb_type,MAP_TYPE> > PQ(comp);
 
-     priority_number[v.ptr()] = 0;
+     priority_number[& (*v)] = 0;
      PQ.push(v);
      
      mark_vertex(v);
@@ -420,7 +420,7 @@ public:
      //Point d(a.xcoord(),c.ycoord());
      Point a=a1,b=b1,c=c1,d=d1;
    
-     if (tr_orientation(a,b,c) == RIGHT_TURN) 
+     if (tr_orientation(a,b,c) == RIGHTTURN) 
      { Point tmp = b;
        b = d;
        d = tmp;
@@ -434,8 +434,8 @@ public:
 
      for(;it != L.end();it++)
      { Point p = (*it)->point();
-       if ( tr_orientation(a,b,p) == RIGHT_TURN || tr_orientation(b,c,p) == RIGHT_TURN ||
-            tr_orientation(c,d,p) == RIGHT_TURN || tr_orientation(d,a,p) == RIGHT_TURN )  { }
+       if ( tr_orientation(a,b,p) == RIGHTTURN || tr_orientation(b,c,p) == RIGHTTURN ||
+            tr_orientation(c,d,p) == RIGHTTURN || tr_orientation(d,a,p) == RIGHTTURN )  { }
         else { *res = *it; res++; }
      }
      return res;     

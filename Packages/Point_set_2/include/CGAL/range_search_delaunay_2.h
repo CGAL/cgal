@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-75 $
-// release_date  : $CGAL_Date: 2002/04/10 $
+// release       : 
+// release_date  : 
 //
 // file          : include/CGAL/range_search_delaunay_2.h
-// package       : Point_set_2 (2.3.2)
+// package       : Point_set_2 (2.3.3)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.3.2
-// revision_date : 11 April 2002 
+// revision      : 2.3.3
+// revision_date : 16 Oct 2002 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -265,7 +265,7 @@ OutputIterator range_search(Dt& delau,
   
   Point a=a1,b=b1,c=c1,d=d1;
     
-  if (Orientation_2()(a,b,c) == RIGHT_TURN) 
+  if (Orientation_2()(a,b,c) == RIGHTTURN) 
   { Point tmp = b;
     b = d;
     d = tmp;
@@ -279,8 +279,8 @@ OutputIterator range_search(Dt& delau,
 
   for(;it != L.end();it++)
   { Point p = (*it)->point();
-    if ( Orientation_2()(a,b,p) == RIGHT_TURN || Orientation_2()(b,c,p) == RIGHT_TURN ||
-         Orientation_2()(c,d,p) == RIGHT_TURN || Orientation_2()(d,a,p) == RIGHT_TURN )  { }
+    if ( Orientation_2()(a,b,p) == RIGHTTURN || Orientation_2()(b,c,p) == RIGHTTURN ||
+         Orientation_2()(c,d,p) == RIGHTTURN || Orientation_2()(d,a,p) == RIGHTTURN )  { }
     else { *res = *it; res++; }
   }
   return res;     
@@ -416,7 +416,7 @@ OutputIterator range_search(Dt& delau,
   
   Point a=a1,b=b1,c=c1,d=d1;
     
-  if (Orientation_2()(a,b,c) == RIGHT_TURN) 
+  if (Orientation_2()(a,b,c) == RIGHTTURN) 
   { Point tmp = b;
     b = d;
     d = tmp;
@@ -434,8 +434,8 @@ OutputIterator range_search(Dt& delau,
 
   for(;it != L.end();it++)
   { Point p = (*it)->point();
-    if ( Orientation_2()(a,b,p) == RIGHT_TURN || Orientation_2()(b,c,p) == RIGHT_TURN ||
-         Orientation_2()(c,d,p) == RIGHT_TURN || Orientation_2()(d,a,p) == RIGHT_TURN )  { }
+    if ( Orientation_2()(a,b,p) == RIGHTTURN || Orientation_2()(b,c,p) == RIGHTTURN ||
+         Orientation_2()(c,d,p) == RIGHTTURN || Orientation_2()(d,a,p) == RIGHTTURN )  { }
     else { *res = *it; res++; }
   }
   return res;     

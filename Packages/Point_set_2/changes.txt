@@ -1,3 +1,5 @@
+2.3.3  other pointer access using handles
+
 2.3.2  the Unique hash map stores now Vertex_handles
        instead of Vertex* (necessary for VC)
 
