@@ -17,7 +17,6 @@ int main()
 unsigned int delete_restriction=0;
 int curve_type,action_type,mbutton,read_queue,display_mode;
 Point p,q,lastp,lastq;
-
 Window_stream w(400, 400);
 X_curve_container curve_list;
 Point_container point_list;
@@ -352,7 +351,8 @@ int main(int argc, char* argv[])
 	POINT_LOCATION pl POINT_LOCATION_ARGS;
 	BOUNDING_BOX bbox;
         Traits tr;
-	Planar_map m(tr,&pl,&bbox); mp=&m;
+	Planar_map m(tr,&pl,&bbox); 
+	mp=&m;
 	test(m,POINT_LOCATION_NAME,argc,argv);
 	std::cout << std::endl;
 	
