@@ -1,3 +1,6 @@
+3.76   (16 January 2002)
+- Support namespace LEDA.
+
 3.75   (8 January 2002)
 - Adding CGAL_CLIB_STD:: for abort() and exit() in src/assertions.C.
 - Adding missing opposite(Comparison_result).

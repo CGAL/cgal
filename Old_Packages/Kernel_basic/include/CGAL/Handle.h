@@ -94,8 +94,13 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-typedef handle_base      Handle;
-typedef handle_rep       Rep;
+#ifdef LEDA_NAMESPACE
+typedef leda::handle_base      Handle;
+typedef leda::handle_rep       Rep;
+#else
+typedef handle_base            Handle;
+typedef handle_rep             Rep;
+#endif
 
 inline
 unsigned long
