@@ -483,13 +483,13 @@ max (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 }
 
 inline
-ostream &
-operator<< (ostream & os, const Interval_nt_advanced & d)
+std::ostream &
+operator<< (std::ostream & os, const Interval_nt_advanced & d)
 { return os << "[" << d.lower_bound() << ";" << d.upper_bound() << "]"; }
 
 inline
-istream &
-operator>> (istream & is, Interval_nt_advanced & ia)
+std::istream &
+operator>> (std::istream & is, Interval_nt_advanced & ia)
 {
     double d;
     is >> d;
