@@ -1,3 +1,6 @@
+2.25    (18 June 2001)
+- Added Bounded_side_2, Bounded_side_3
+
 2.24    (18 June 2001)
 - Remove obsolete documentation about the order of inclusion of headers.
 
