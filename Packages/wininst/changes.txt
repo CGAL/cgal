@@ -1,3 +1,6 @@
+2.2.12 (19/11/03) [rursu] removed INSTALL.rtf and Install.hlp that were used 
+		  in CGAL-2.4
+
 2.2.11 (04/10/03) [rursu] modified C2vcproj script to make the project name
 		  and the output file name the same as the .C file name
 		  added the script that was used to generate CGAL3.0Setup.exe
