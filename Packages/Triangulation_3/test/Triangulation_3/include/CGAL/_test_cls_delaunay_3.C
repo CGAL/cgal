@@ -516,7 +516,7 @@ _test_cls_delaunay_3(const Triangulation &)
   v0=T3_5.insert(p117);
   v0=T3_5.insert(p118);
   v0=T3_5.insert(p119);
-  
+
   assert(T3_5.is_valid());
   assert(T3_5.number_of_vertices()==10);
 
@@ -525,11 +525,13 @@ _test_cls_delaunay_3(const Triangulation &)
     std::cout << "    deletion in a 10 points Delaunay triangulation";
     Vertex_handle v;
     while ( T3_5.number_of_vertices() >= 1 ) {
-      if ( T3_5.dimension() > 1 )
+      if ( T3_5.dimension() == 3 )
 	v = T3_5.infinite_cell()->vertex
 	  ( (T3_5.infinite_cell()->index( T3_5.infinite_vertex() ) +1 )&3 );
-      else
-	if ( T3_5.dimension() == 1 )
+      else if ( T3_5.dimension() == 2 )
+	v = T3_5.infinite_cell()->vertex
+	  ( (T3_5.infinite_cell()->index( T3_5.infinite_vertex() ) +1 )%3 );
+      else if ( T3_5.dimension() == 1 )
 	  v = T3_5.infinite_cell()->vertex
 	    ( (T3_5.infinite_cell()->index( T3_5.infinite_vertex() ) +1 )%2 );
 	else
