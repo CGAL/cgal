@@ -7,6 +7,7 @@
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
+#include <CGAL/Incremental_neighbor_search.h>
 #include <CGAL/algorithm.h>
 
 
@@ -28,7 +29,8 @@ typedef CGAL::Search_traits_3<K> TreeTraits;
 
 
 typedef std::vector<Point>               Vector;
-typedef CGAL::Orthogonal_incremental_neighbor_search<TreeTraits> Orthogonal_incremental_neighbor_search;
+//typedef CGAL::Orthogonal_incremental_neighbor_search<TreeTraits> Orthogonal_incremental_neighbor_search;
+typedef CGAL::Incremental_neighbor_search<TreeTraits> Orthogonal_incremental_neighbor_search;
 typedef Orthogonal_incremental_neighbor_search::iterator NN_iterator;
 typedef Orthogonal_incremental_neighbor_search::Tree Tree;
 typedef Orthogonal_incremental_neighbor_search::Point_with_transformed_distance Point_with_transformed_distance;
@@ -57,9 +59,8 @@ main() {
   CGAL::copy_n( g, 1000, std::back_inserter(points));
 
   Tree t(points.begin(), points.end());
-  //  g++;
-  //Point query = *g;
-  Point query(0,0,0);
+  g++;
+  Point query = *g;
 
   std::vector<Orthogonal_incremental_neighbor_search::Point_with_transformed_distance> result(N); 
 
@@ -71,19 +72,21 @@ main() {
   if(CGAL::squared_distance(query,pd.first) != pd.second){
     std::cout << "different distances: " << CGAL::squared_distance(query,pd.first) << " != " << pd.second << std::endl;
   }
+
   assert(CGAL::squared_distance(query,pd.first) == pd.second);
   it++;
   for(; it != oins.end();it++){
     Point_with_transformed_distance qd = *it;
     assert(pd.second <= qd.second);
     pd = qd;
-  points2.push_back(pd.first);
-  if(CGAL::squared_distance(query,pd.first) != pd.second){
-    std::cout  << "different distances: " << CGAL::squared_distance(query,pd.first) << " != " << pd.second << std::endl;
+    points2.push_back(pd.first);
+    if(CGAL::squared_distance(query,pd.first) != pd.second){
+      std::cout  << "different distances: " << CGAL::squared_distance(query,pd.first) << " != " << pd.second << std::endl;
+    }
+    assert(CGAL::squared_distance(query,pd.first) == pd.second);
   }
-  assert(CGAL::squared_distance(query,pd.first) == pd.second);
-  }
-  /*
+
+
   std::sort(points.begin(),points.end());
   std::sort(points2.begin(),points2.end());
   assert(points.size() == points2.size());
@@ -93,7 +96,8 @@ main() {
     }
   }
   assert(points == points2);
-  */
+  
+
   std::cout << "done" << std::endl;
 
   return 0;
