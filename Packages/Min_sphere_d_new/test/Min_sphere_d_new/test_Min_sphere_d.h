@@ -8,19 +8,18 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : test/Min_sphere_d_new/test_Min_sphere_d.h
-// package       : Min_sphere_d_new 0.11.1 (20 Mar 2001)
+// package       : $CGAL_Package: Min_sphere_d_new $
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_sphere_d.aw
-// revision      : 1.18
-// revision_date : 2000/09/28 13:18:06
+// revision      : 1.19
+// revision_date : 2001/03/21
 //
-// author(s)     : Bernd Gärtner, Sven Schönherr
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Bernd Gärtner, Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: test function for smallest enclosing sphere

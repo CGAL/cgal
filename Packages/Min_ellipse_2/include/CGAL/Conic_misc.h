@@ -8,19 +8,18 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Conic_misc.h
-// package       : Min_ellipse_2 3.10.3 (20 Mar 2001)
+// package       : $CGAL_Package: Min_ellipse_2 $
 // chapter       : Geometric Optimisation
 //
 // source        : web/Conic_2.aw
-// revision      : 5.19
-// revision_date : 2001/03/20 14:14:06
+// revision      : 5.20
+// revision_date : 2001/03/21
 //
-// author(s)     : Bernd Gärtner, Sven Schönherr
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Bernd Gärtner, Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: 2D Conic

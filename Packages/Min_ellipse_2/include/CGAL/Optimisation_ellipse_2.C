@@ -8,19 +8,18 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Optimisation_ellipse_2.C
-// package       : Min_ellipse_2 3.10.3 (20 Mar 2001)
+// package       : $CGAL_Package: Min_ellipse_2 $
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_ellipse_2.aw
-// revision      : 5.30
-// revision_date : 2001/03/20 14:14:07
+// revision      : 5.31
+// revision_date : 2001/03/21
 //
-// author(s)     : Sven Schönherr, Bernd Gärtner
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: 2D Optimisation Ellipse
