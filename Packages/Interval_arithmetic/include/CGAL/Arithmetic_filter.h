@@ -75,9 +75,7 @@ class Filtered_exact
 public:
   typedef typename Number_type_traits<CT>::Has_gcd      Has_gcd;
   typedef typename Number_type_traits<CT>::Has_division Has_division;
-#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
   typedef typename Number_type_traits<CT>::Has_sqrt     Has_sqrt;
-#endif
 
 private:
   typedef Filtered_exact<CT, ET, Type, Protection, Cache> Fil;
