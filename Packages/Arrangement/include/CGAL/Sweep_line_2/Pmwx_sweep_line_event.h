@@ -21,7 +21,6 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
-#include <CGAL/Sweep_line_2/Pmwx_sweep_line_functors.h>
 #include <CGAL/assertions.h>
 
 CGAL_BEGIN_NAMESPACE
