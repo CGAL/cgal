@@ -2,7 +2,7 @@
 
 // if LEDA is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_LEDA
-int main(int argc, char* argv[])
+int main()
 {
 
   std::cout << "Sorry, helputil needs LEDA..";
