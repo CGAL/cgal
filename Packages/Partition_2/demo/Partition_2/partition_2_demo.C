@@ -22,6 +22,11 @@ int main() {
 #include <CGAL/Partition_traits_2.h>
 #include <fstream>
 
+#if defined(LEDA_NAMESPACE)
+using leda::menu;
+using leda::panel_item;
+#endif
+
 enum Button_nums {QUIT=4, MOUSE_POLYGON, RANDOM_POLYGON, 
                   READ_FROM_FILE, WRITE_INPUT_TO_FILE, REFRESH};
 
