@@ -12,7 +12,27 @@ use Getopt::Std;
 
 sub usage()
 {
-    print STDERR "usage: $0 [-v version [-d date]] file1 ...\n";
+    print STDERR<<'EOF';
+usage: $0 (-h|-u|-c) [-v version] [-d date] [-p package] file1 ...
+
+Exactly one of the options -h, -u and -c must be present.
+    -h show this message and quit
+    -u update headers
+    -c check but do no updates
+
+The following options are only effective in combination with -u.
+They give some data that is filled in in the header.     
+    -v version of the release (default: empty string)
+    -d date of the release (default: today)
+    -p package (default: leave it as specified in the file)
+
+EOF
+}
+
+sub gjmove($$)
+{
+    return 1 if rename($_[0], $_[1] );
+    return (system('mv', "$_[0]", "$_[1]") == 0);
 }
 
 #----------------------------------------------------------------#
@@ -24,7 +44,7 @@ my $TEMPFILE;
 
 sub print_license()
 {
-    print TEMPFILE <<'END_OF_LICENSE'
+    print TEMPFILE <<'END_OF_LICENSE';
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -39,9 +59,11 @@ END_OF_LICENSE
 #
 #----------------------------------------------------------------#
 
-sub add_header($$$)
+sub add_header($$$$)
 {
-    my ($version, $date, $filename) = @_;
+    my ($version, $date, $package, $filename) = @_;
+    $version = "" if (!defined($version));
+    $package = "" if (!defined($package));
     my $year = `date '+%Y'`;
     chomp $year;
     print TEMPFILE "// ", '=' x 70,"\n";
@@ -51,10 +73,11 @@ sub add_header($$$)
     print TEMPFILE "// ", '-' x 70,"\n";
     print TEMPFILE <<"END_OF_HEADER";
 //
-// release       : \$CGAL_Revision: $version \$
-// release_date  : \$CGAL_Date: $date \$
+// release       : $version
+// release_date  : $date
 //
 // file          : ?/$filename
+// package       : $package
 // author(s)     : ?
 // coordinator   : ?
 //
@@ -69,9 +92,9 @@ END_OF_HEADER
 #                     check_and_update_2                         #
 #----------------------------------------------------------------#
 
-sub check_and_update_2($$$)
+sub check_and_update_2($$$$)
 {
-    my ($version, $date, $filename) = @_;
+    my ($version, $date, $package, $filename) = @_;
     my $warnings = 0;
     my $header_position = 1;
 # 1:before header; 2: in first part; 3: in second part 4: after header.
@@ -87,12 +110,12 @@ sub check_and_update_2($$$)
 	}
 	print TEMPFILE $_;
     }
-    if ($text_before_header) {
-	print FILE_CHECKS "$filename has text before the header.\n";
-    }
     if ($header_position != 2) {
 	print FILE_CHECKS "$filename has no header.\n";
 	return 0;
+    }
+    if ($text_before_header) {
+	print FILE_CHECKS "$filename has text before the header.\n";
     }
     print TEMPFILE "// ", '=' x 70,"\n";
     print TEMPFILE "//\n";
@@ -117,8 +140,8 @@ sub check_and_update_2($$$)
     }
     print TEMPFILE "// ", '-' x 70,"\n";
 
-    my ($release_seen, $release_date_seen,
-	$file_seen, $authors_seen, $coordinator_seen) = (0,0,0,0,0);
+    my ($release_seen, $release_date_seen, $file_seen, $package_seen,
+	$authors_seen, $coordinator_seen) = (0,0,0,0,0,0);
     while ( <SOURCE_FILE> ) {
 	if ( m|^\s*//\s*={10,}\s*$| ) {
 	    $header_position = 4;
@@ -127,12 +150,12 @@ sub check_and_update_2($$$)
 	next if ($_ !~ m|^\s*//| );
 	if ( m<^\s*//\s*release\s*:> ) {
 	    ++$release_seen;
-	    print TEMPFILE "// release       : \$CGAL_Revision: $version \$\n";
+	    print TEMPFILE "// release       : $version\n";
 	    next;
 	}
 	if ( m<^\s*//\s*release_date\s*:> ) {
 	    ++$release_date_seen;
-	    print TEMPFILE "// release_date  : \$CGAL_Date: $date \$\n";
+	    print TEMPFILE "// release_date  : $date\n";
 	    next;
 	}
 	if ( m<^\s*//\s*file\s*:\s*(.*?)\s*$> ) {
@@ -149,6 +172,16 @@ sub check_and_update_2($$$)
 		    " ($short_filename1) is incorrect.\n";
 	    }
 	    print TEMPFILE $_;
+	    if (defined($package) and $file_seen==1) {
+		print TEMPFILE "// package       : $package\n";
+	    }
+	    next;
+	}
+	if ( m<^\s*//\s*package\s*:>i ) {
+	    ++$package_seen;
+	    if (!defined($package)) {
+		print TEMPFILE $_;
+	    }
 	    next;
 	}
 	++$authors_seen if m<^\s*//\s*author(s|\(s\))?\s*:>;
@@ -164,7 +197,7 @@ sub check_and_update_2($$$)
 	print FILE_CHECKS
 	    "$filename: release field missing in header.\n";
 	$warnings = 1;
-	print TEMPFILE "// release       : ?\n";
+	print TEMPFILE "// release       : $version\n";
     } elsif ($release_seen > 1) {
 	print FILE_CHECKS
 	    "$filename: Multiple release fields in header.\n";
@@ -174,7 +207,7 @@ sub check_and_update_2($$$)
 	print FILE_CHECKS
 	    "$filename: release_date field missing in header.\n";
 	$warnings = 1;
-	print TEMPFILE "// release_date  : ?\n";
+	print TEMPFILE "// release_date  : $date\n";
     } elsif ($release_date_seen > 1) {
 	print FILE_CHECKS
 	    "$filename: Multiple release_date fields in header.\n";
@@ -185,9 +218,20 @@ sub check_and_update_2($$$)
 	    "$filename: file field missing in header.\n";
 	$warnings = 1;
 	print TEMPFILE "// file         : ?\n";
+	if (defined($package)) {
+	    print TEMPFILE "// package       : $package\n";
+	} elsif ($package_seen == 0) {
+	    print FILE_CHECKS "$filename: Unknown package.\n";
+	    print TEMPFILE "// package       : ?\n";
+	}
     } elsif ($file_seen > 1) {
 	print FILE_CHECKS
 	    "$filename: Multiple file fields in header.\n";
+	$warnings = 1;
+    }
+    if ($package_seen > 1) {
+	print FILE_CHECKS
+	    "$filename: Multiple package fields in header.\n";
 	$warnings = 1;
     }
     if ($authors_seen == 0) {
@@ -230,13 +274,13 @@ sub check_and_update_2($$$)
     return ($warnings ? 1 : 2);
 }
 
-sub check_and_update_file($$$)
+sub check_and_update_file($$$$)
 {
-    my ($filename, $version, $date) = @_;
+    my ($filename, $version, $date, $package) = @_;
     my $check_status;
     open SOURCE_FILE, "<$filename" || die "Error opening $filename: $!\n";
     open TEMPFILE, ">$TEMPFILE" || die;
-    $check_status =check_and_update_2($version, $date, $filename);
+    $check_status =check_and_update_2($version, $date, $package, $filename);
     close SOURCE_FILE || die "Error closing $filename: $!";
     close TEMPFILE || die "Error closing temporary file: $!\n";
     if ($check_status == 0) {
@@ -245,13 +289,12 @@ sub check_and_update_file($$$)
 	open SOURCE_FILE, "<$filename"
 	    || die "Error opening $filename: $!\n";
 	open TEMPFILE, ">$TEMPFILE" || die;
-	add_header($version, $date, $filename);
+	add_header($version, $date, $package, $filename);
 	close SOURCE_FILE || die "Error closing $filename: $!";
 	close TEMPFILE || die "Error closing temporary file: $!\n";
     }
-    if ($version) {
-	rename($TEMPFILE, $filename )
-	|| system('mv', "$TEMPFILE", "$filename")
+    if ($::opt_u) {
+	gjmove($TEMPFILE, $filename )
 	|| warn "Could not update file $filename\n";
     }
 }
@@ -263,26 +306,34 @@ sub main()
 {
     umask(002);
     
-    getopts('hv:d:');
+    getopts('hucv:d:p:');
     if ($::opt_h ) {
 	usage;
 	return;
     }
     $::opt_h = 0;
-    if ($::opt_v ) {
+    if ($::opt_u and $::opt_c) {
+	usage;
+	die "Both -c and -u option present\n";
+    }
+    if ($::opt_u ) {
 	$TEMPFILE="tmp.$$";
-    } else {
+	$::opt_v = "" if !$::opt_v;
+	if ( ! $::opt_d ) {
+	    $::opt_d = `date '+%Y, %B %d'`;
+	    chomp $::opt_d;
+	}
+    } else {  # no updates, only checking
 	$TEMPFILE="/dev/null";
 	$::opt_v = "";
+	$::opt_d = "";
+	undef $::opt_p;
     }
-    if ( ! $::opt_d ) {
-	$::opt_d = `date '+%Y, %B %d'`;
-	chomp $::opt_d;
-    }
+    
     open FILE_CHECKS, ">-";
     my $filename;
     foreach $filename (@ARGV) {
-	check_and_update_file($filename, $::opt_v, $::opt_d);
+	check_and_update_file($filename, $::opt_v, $::opt_d, $::opt_p);
     }
     close  FILE_CHECKS;
 }
