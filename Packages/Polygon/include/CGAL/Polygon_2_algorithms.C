@@ -45,12 +45,12 @@
 CGAL_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------//
-//                          CGAL_Simplicity_test_2
+//                          Simplicity_test_2
 //-----------------------------------------------------------------------//
 // The simplicity test is implemented as a class.
 
 template <class ForwardIterator, class Traits>
-class CGAL_Simplicity_test_2 {
+class Simplicity_test_2 {
   private:
     std::vector<ForwardIterator> d_index;
     // the attribute d_index is just a mapping between the integers and the
@@ -66,8 +66,8 @@ class CGAL_Simplicity_test_2 {
   public:
     typedef typename Traits::Point_2 Point_2;
 
-    CGAL_Simplicity_test_2(const Traits& tr): d_traits(tr) {}
-    ~CGAL_Simplicity_test_2() {}
+    Simplicity_test_2(const Traits& tr): d_traits(tr) {}
+    ~Simplicity_test_2() {}
 
     const Traits& traits() const { return d_traits; }
 
@@ -90,11 +90,11 @@ class CGAL_Simplicity_test_2 {
 
     class VertexComp {
       private:
-        const CGAL_Simplicity_test_2<ForwardIterator, Traits>* s;
+        const Simplicity_test_2<ForwardIterator, Traits>* s;
       public:
         VertexComp() {}
         VertexComp(
-          const CGAL_Simplicity_test_2<ForwardIterator, Traits>* s0): s(s0)
+          const Simplicity_test_2<ForwardIterator, Traits>* s0): s(s0)
         {}
         bool operator() (int i, int j) const { return s->VertexCompare(i,j); }
     };
@@ -107,12 +107,12 @@ class CGAL_Simplicity_test_2 {
     // segment qr
     // N.B. if p lies on the segment qr, the result is indeterminate.
     {
-      CGAL_Comparison_result qr = d_traits.compare_y(q,r);
-      if (qr == CGAL_EQUAL)
-        return (d_traits.compare_x(p,q) == CGAL_SMALLER);
+      Comparison_result qr = d_traits.compare_y(q,r);
+      if (qr == EQUAL)
+        return (d_traits.compare_x(p,q) == SMALLER);
       else
         return ( d_traits.is_negative(d_traits.cross_product_2(p-q,r-q)) ==
-                 (qr == CGAL_SMALLER)                                       );
+                 (qr == SMALLER)                                       );
     }
 
     bool has_y_overlap(const Point_2& p,
@@ -120,9 +120,9 @@ class CGAL_Simplicity_test_2 {
                        const Point_2& r ) const
     // returns true if the horizontal line through p intersects the segments qr
     {
-      CGAL_Comparison_result pq = d_traits.compare_y(p,q);
-      CGAL_Comparison_result pr = d_traits.compare_y(p,r);
-      return (pq != pr) || (pq == CGAL_EQUAL);
+      Comparison_result pq = d_traits.compare_y(p,q);
+      Comparison_result pr = d_traits.compare_y(p,r);
+      return (pq != pr) || (pq == EQUAL);
     }
 
     bool EdgeCompare(int e1, int e2) const;
@@ -139,11 +139,11 @@ class CGAL_Simplicity_test_2 {
 
     class EdgeComp {
       private:
-        const CGAL_Simplicity_test_2<ForwardIterator, Traits>* s;
+        const Simplicity_test_2<ForwardIterator, Traits>* s;
       public:
         EdgeComp() {}
         EdgeComp(
-          const CGAL_Simplicity_test_2<ForwardIterator, Traits>* s0): s(s0)
+          const Simplicity_test_2<ForwardIterator, Traits>* s0): s(s0)
         {}
         bool operator() (int i, int j) const { return s->EdgeCompare(i,j); }
     };
@@ -158,7 +158,7 @@ class CGAL_Simplicity_test_2 {
       private:
         std::set<int,VertexComp> queue;
       public:
-        EventQueue(CGAL_Simplicity_test_2<ForwardIterator, Traits>* s)
+        EventQueue(Simplicity_test_2<ForwardIterator, Traits>* s)
           : queue(VertexComp(s)) {}
         bool insert(int i) { return queue.insert(i).second; }
         bool empty() const      { return queue.empty(); }
@@ -193,13 +193,13 @@ class CGAL_Simplicity_test_2 {
         std::vector<typename std::set<int,EdgeComp>::const_iterator> index;
         // the iterators of the edges are stored to enable fast deletion
 
-        const CGAL_Simplicity_test_2<ForwardIterator, Traits>* s;
-        // store a pointer to the CGAL_Simplicity_test_2 class, to enable
+        const Simplicity_test_2<ForwardIterator, Traits>* s;
+        // store a pointer to the Simplicity_test_2 class, to enable
         // access to the vertices
 
       public:
         SweepStatus(
-          const CGAL_Simplicity_test_2<ForwardIterator, Traits>* s0, int n)
+          const Simplicity_test_2<ForwardIterator, Traits>* s0, int n)
           : status(EdgeComp(s0)), s(s0)
         {
           index.reserve(n);
@@ -219,14 +219,14 @@ class CGAL_Simplicity_test_2 {
             int v2 = (v1<n-1) ? v1+1 : v1+1-n; 
             // edge(v1) = (vertex(v1), vertex(v2))
 
-            CGAL_Comparison_result c1 =
+            Comparison_result c1 =
               s->traits().compare_y(s->Vertex(v1), s->EventPoint());
 
-            CGAL_Comparison_result c2 =
+            Comparison_result c2 =
               s->traits().compare_y(s->Vertex(v2), s->EventPoint());
 
-            if (c1 == CGAL_SMALLER && c2 == CGAL_SMALLER) return false;
-            if (c1 == CGAL_LARGER && c2 == CGAL_LARGER) return false;
+            if (c1 == SMALLER && c2 == SMALLER) return false;
+            if (c1 == LARGER && c2 == LARGER) return false;
           }
 
           return true;
@@ -288,7 +288,7 @@ class CGAL_Simplicity_test_2 {
 
 template <class ForwardIterator, class Traits>
 inline
-bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::VertexCompare(
+bool Simplicity_test_2<ForwardIterator, Traits>::VertexCompare(
   int i, int j) const
 {
   return !d_traits.lexicographically_yx_smaller_or_equal(Vertex(i), Vertex(j));
@@ -296,7 +296,7 @@ bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::VertexCompare(
 
 template <class ForwardIterator, class Traits>
 inline
-bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgeCompare(
+bool Simplicity_test_2<ForwardIterator, Traits>::EdgeCompare(
   int e1, int e2) const
 {
   // Edges must always be compared in the same order! This is to avoid problems
@@ -343,7 +343,7 @@ bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgeCompare(
 }
 
 template <class ForwardIterator, class Traits>
-bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgeCompareShared(
+bool Simplicity_test_2<ForwardIterator, Traits>::EdgeCompareShared(
   int e1, int e2) const
 // This function is used to compare two edges that share a vertex:
 //
@@ -376,7 +376,7 @@ bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgeCompareShared(
 
 template <class ForwardIterator, class Traits>
 bool
-CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgeCompareNonShared(
+Simplicity_test_2<ForwardIterator, Traits>::EdgeCompareNonShared(
   int e1, int e2) const
 {
   int n = NumberOfVertices();
@@ -396,7 +396,7 @@ CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgeCompareNonShared(
 
 template <class ForwardIterator, class Traits>
 bool
-CGAL_Simplicity_test_2<ForwardIterator, Traits>::Test(ForwardIterator first,
+Simplicity_test_2<ForwardIterator, Traits>::Test(ForwardIterator first,
                                                       ForwardIterator last)
 {
   int n = 0;
@@ -528,7 +528,7 @@ CGAL_Simplicity_test_2<ForwardIterator, Traits>::Test(ForwardIterator first,
 }
 
 template <class ForwardIterator, class Traits>
-bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgesDoIntersect(
+bool Simplicity_test_2<ForwardIterator, Traits>::EdgesDoIntersect(
   int e1, int e2) const
 {
 #ifdef CGAL_POLYGON_DEBUG
@@ -558,7 +558,7 @@ bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgesDoIntersect(
 
 template <class ForwardIterator, class Traits>
 inline
-bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgesShareVertex(
+bool Simplicity_test_2<ForwardIterator, Traits>::EdgesShareVertex(
   int e1, int e2) const
 {
   int n = NumberOfVertices();
@@ -566,7 +566,7 @@ bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgesShareVertex(
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_is_simple_2
+//                          is_simple_2
 //-----------------------------------------------------------------------//
 // uses Traits::compare_x
 //      Traits::compare_y
@@ -577,21 +577,21 @@ bool CGAL_Simplicity_test_2<ForwardIterator, Traits>::EdgesShareVertex(
 //      Traits::lexicographically_yx_smaller_or_equal
 
 template <class ForwardIterator, class Traits>
-bool CGAL_is_simple_2(ForwardIterator first,
+bool is_simple_2(ForwardIterator first,
                       ForwardIterator last,
                       const Traits& traits)
 {
-  CGAL_Simplicity_test_2<ForwardIterator, Traits> test(traits);
+  Simplicity_test_2<ForwardIterator, Traits> test(traits);
   return test.Test(first, last);
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_left_vertex_2
+//                          left_vertex_2
 //-----------------------------------------------------------------------//
 // uses Traits::Less_xy
 
 template <class ForwardIterator, class Traits>
-ForwardIterator CGAL_left_vertex_2(ForwardIterator first,
+ForwardIterator left_vertex_2(ForwardIterator first,
                                    ForwardIterator last,
                                    const Traits&)
 {
@@ -602,12 +602,12 @@ ForwardIterator CGAL_left_vertex_2(ForwardIterator first,
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_right_vertex_2
+//                          right_vertex_2
 //-----------------------------------------------------------------------//
 // uses Traits::Less_xy
 
 template <class ForwardIterator, class Traits>
-ForwardIterator CGAL_right_vertex_2(ForwardIterator first,
+ForwardIterator right_vertex_2(ForwardIterator first,
                                     ForwardIterator last,
                                     const Traits&)
 {
@@ -618,12 +618,12 @@ ForwardIterator CGAL_right_vertex_2(ForwardIterator first,
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_top_vertex_2
+//                          top_vertex_2
 //-----------------------------------------------------------------------//
 // uses Traits::Less_yx
 
 template <class ForwardIterator, class Traits>
-ForwardIterator CGAL_top_vertex_2(ForwardIterator first,
+ForwardIterator top_vertex_2(ForwardIterator first,
                                   ForwardIterator last,
                                   const Traits&)
 {
@@ -634,12 +634,12 @@ ForwardIterator CGAL_top_vertex_2(ForwardIterator first,
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_bottom_vertex_2
+//                          bottom_vertex_2
 //-----------------------------------------------------------------------//
 // uses Traits::Less_yx
 
 template <class ForwardIterator, class Traits>
-ForwardIterator CGAL_bottom_vertex_2(ForwardIterator first,
+ForwardIterator bottom_vertex_2(ForwardIterator first,
                                      ForwardIterator last,
                                      const Traits&)
 {
@@ -650,14 +650,14 @@ ForwardIterator CGAL_bottom_vertex_2(ForwardIterator first,
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_bbox_2
+//                          bbox_2
 //-----------------------------------------------------------------------//
 
 template <class InputIterator>
-CGAL_Bbox_2 CGAL_bbox_2(InputIterator first, InputIterator last)
+Bbox_2 bbox_2(InputIterator first, InputIterator last)
 {
   CGAL_polygon_precondition(first != last);
-  CGAL_Bbox_2 result = (*first).bbox();
+  Bbox_2 result = (*first).bbox();
 
   while (++first != last)
     result = result + (*first).bbox();
@@ -666,12 +666,12 @@ CGAL_Bbox_2 CGAL_bbox_2(InputIterator first, InputIterator last)
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_area_2
+//                          area_2
 //-----------------------------------------------------------------------//
 // uses Traits::determinant_2
 
 template <class ForwardIterator, class FT, class Traits>
-void CGAL_area_2(ForwardIterator first,
+void area_2(ForwardIterator first,
                  ForwardIterator last,
                  FT& result,
                  const Traits& traits)
@@ -697,13 +697,13 @@ void CGAL_area_2(ForwardIterator first,
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_is_convex_2
+//                          is_convex_2
 //-----------------------------------------------------------------------//
 // uses Traits::lexicographically_xy_smaller
 //      Traits::orientation
 
 template <class ForwardIterator, class Traits>
-bool CGAL_is_convex_2(ForwardIterator first,
+bool is_convex_2(ForwardIterator first,
                       ForwardIterator last,
                       const Traits& traits)
 {
@@ -724,10 +724,10 @@ bool CGAL_is_convex_2(ForwardIterator first,
 
   do {
     switch (traits.orientation(*previous, *current, *next)) {
-      case CGAL_CLOCKWISE:
+      case CLOCKWISE:
         HasClockwiseTriples = true;
         break;
-      case CGAL_COUNTERCLOCKWISE:
+      case COUNTERCLOCKWISE:
         HasCounterClockwiseTriples = true;
         break;
       default:
@@ -763,7 +763,7 @@ cout << "polygon not locally convex!" << endl;
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_oriented_side_2
+//                          oriented_side_2
 //-----------------------------------------------------------------------//
 // uses Traits::Less_xy
 //      Traits::compare_x
@@ -773,32 +773,32 @@ cout << "polygon not locally convex!" << endl;
 //      Traits::sign
 
 template <class ForwardIterator, class Point, class Traits>
-CGAL_Oriented_side CGAL_oriented_side_2(ForwardIterator first,
+Oriented_side oriented_side_2(ForwardIterator first,
                                         ForwardIterator last,
                                         const Point& point,
                                         const Traits& traits)
 {
-  CGAL_Oriented_side result;
+  Oriented_side result;
 
-  CGAL_Orientation o = CGAL_orientation_2(first, last, traits);
-  CGAL_polygon_assertion(o != CGAL_COLLINEAR);
+  Orientation o = orientation_2(first, last, traits);
+  CGAL_polygon_assertion(o != COLLINEAR);
 
-  CGAL_Bounded_side b = CGAL_bounded_side_2(first, last, point, traits);
+  Bounded_side b = bounded_side_2(first, last, point, traits);
   switch (b) {
-    case CGAL_ON_BOUNDARY:
-      result = CGAL_ON_ORIENTED_BOUNDARY;
+    case ON_BOUNDARY:
+      result = ON_ORIENTED_BOUNDARY;
       break;
 
-    case CGAL_ON_BOUNDED_SIDE:
-      result = (o == CGAL_CLOCKWISE) ?
-               CGAL_ON_NEGATIVE_SIDE :
-               CGAL_ON_POSITIVE_SIDE;
+    case ON_BOUNDED_SIDE:
+      result = (o == CLOCKWISE) ?
+               ON_NEGATIVE_SIDE :
+               ON_POSITIVE_SIDE;
       break;
 
-    case CGAL_ON_UNBOUNDED_SIDE:
-      result = (o == CGAL_CLOCKWISE) ?
-               CGAL_ON_POSITIVE_SIDE :
-               CGAL_ON_NEGATIVE_SIDE;
+    case ON_UNBOUNDED_SIDE:
+      result = (o == CLOCKWISE) ?
+               ON_POSITIVE_SIDE :
+               ON_NEGATIVE_SIDE;
       break;
   }
 
@@ -806,48 +806,48 @@ CGAL_Oriented_side CGAL_oriented_side_2(ForwardIterator first,
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_bounded_side_2
+//                          bounded_side_2
 //-----------------------------------------------------------------------//
 // uses Traits::compare_x
 //      Traits::compare_y
 //      Traits::determinant_2
 //      Traits::sign
 //
-// returns CGAL_ON_BOUNDED_SIDE, CGAL_ON_BOUNDARY or CGAL_ON_UNBOUNDED_SIDE
+// returns ON_BOUNDED_SIDE, ON_BOUNDARY or ON_UNBOUNDED_SIDE
 
 template <class ForwardIterator, class Point, class Traits>
-CGAL_Bounded_side CGAL_bounded_side_2(ForwardIterator first,
+Bounded_side bounded_side_2(ForwardIterator first,
                                       ForwardIterator last,
                                       const Point& point,
                                       const Traits& traits)
 {
   ForwardIterator current = first;
-  if (current == last) return CGAL_ON_UNBOUNDED_SIDE;
+  if (current == last) return ON_UNBOUNDED_SIDE;
 
   ForwardIterator next = current; ++next;
-  if (next == last) return CGAL_ON_UNBOUNDED_SIDE;
+  if (next == last) return ON_UNBOUNDED_SIDE;
 
   bool IsInside = false;
-  CGAL_Comparison_result CompareCurrent = traits.compare_y(*current, point);
+  Comparison_result CompareCurrent = traits.compare_y(*current, point);
 
   do // check if the segment (current,next) intersects
      // the ray { (t,y) | t >= point.x() }
   {
-    CGAL_Comparison_result CompareNext = traits.compare_y(*next, point);
+    Comparison_result CompareNext = traits.compare_y(*next, point);
 
     switch (CompareCurrent) {
-      case CGAL_SMALLER:
+      case SMALLER:
         switch (CompareNext) {
-          case CGAL_SMALLER:
+          case SMALLER:
             break;
-          case CGAL_EQUAL:
+          case EQUAL:
             switch (traits.compare_x(point, *next)) {
-              case CGAL_SMALLER: IsInside = !IsInside; break;
-              case CGAL_EQUAL:   return CGAL_ON_BOUNDARY;
-              case CGAL_LARGER:  break;
+              case SMALLER: IsInside = !IsInside; break;
+              case EQUAL:   return ON_BOUNDARY;
+              case LARGER:  break;
             }
             break;
-          case CGAL_LARGER:
+          case LARGER:
             if (point.x() < min((*current).x(), (*next).x())) {
               IsInside = !IsInside;
             }
@@ -856,38 +856,38 @@ CGAL_Bounded_side CGAL_bounded_side_2(ForwardIterator first,
                                                        *current,
                                                        *next)))
               {
-                case 0: return CGAL_ON_BOUNDARY;
+                case 0: return ON_BOUNDARY;
                 case 1: IsInside = !IsInside; break;
               }
             }
             break;
         }
         break;
-      case CGAL_EQUAL:
+      case EQUAL:
         switch (CompareNext) {
-          case CGAL_SMALLER:
+          case SMALLER:
             switch (traits.compare_x(point, *current)) {
-              case CGAL_SMALLER: IsInside = !IsInside; break;
-              case CGAL_EQUAL:   return CGAL_ON_BOUNDARY;
-              case CGAL_LARGER:  break;
+              case SMALLER: IsInside = !IsInside; break;
+              case EQUAL:   return ON_BOUNDARY;
+              case LARGER:  break;
             }
             break;
-          case CGAL_EQUAL:
+          case EQUAL:
             if ( (min((*current).x(), (*next).x()) <= point.x()) &&
                  (point.x() <= max((*current).x(), (*next).x()))    ) {
-              return CGAL_ON_BOUNDARY;
+              return ON_BOUNDARY;
             }
             break;
-          case CGAL_LARGER:
+          case LARGER:
             if (point.x() == (*current).x()) {
-              return CGAL_ON_BOUNDARY;
+              return ON_BOUNDARY;
             }
             break;
         }
         break;
-      case CGAL_LARGER:
+      case LARGER:
         switch (CompareNext) {
-          case CGAL_SMALLER:
+          case SMALLER:
             if (point.x() < min((*current).x(), (*next).x())) {
               IsInside = !IsInside;
             }
@@ -897,16 +897,16 @@ CGAL_Bounded_side CGAL_bounded_side_2(ForwardIterator first,
                                                        *next)))
               {
                 case -1: IsInside = !IsInside; break;
-                case  0: return CGAL_ON_BOUNDARY;
+                case  0: return ON_BOUNDARY;
               }
             }
             break;
-          case CGAL_EQUAL:
+          case EQUAL:
             if (point.x() == (*next).x()) {
-              return CGAL_ON_BOUNDARY;
+              return ON_BOUNDARY;
             }
             break;
-          case CGAL_LARGER:
+          case LARGER:
             break;
         }
         break;
@@ -919,23 +919,23 @@ CGAL_Bounded_side CGAL_bounded_side_2(ForwardIterator first,
   }
   while (current != first);
 
-  return IsInside ? CGAL_ON_BOUNDED_SIDE : CGAL_ON_UNBOUNDED_SIDE;
+  return IsInside ? ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
 }
 
 //-----------------------------------------------------------------------//
-//                          CGAL_orientation_2
+//                          orientation_2
 //-----------------------------------------------------------------------//
 // uses Traits::Less_xy
 //      Traits::orientation
 
 template <class ForwardIterator, class Traits>
-CGAL_Orientation CGAL_orientation_2(ForwardIterator first,
+Orientation orientation_2(ForwardIterator first,
                                     ForwardIterator last,
                                     const Traits& traits)
 {
-  CGAL_polygon_precondition(CGAL_is_simple_2(first, last, traits));
+  CGAL_polygon_precondition(is_simple_2(first, last, traits));
 
-  ForwardIterator i = CGAL_left_vertex_2(first, last, traits);
+  ForwardIterator i = left_vertex_2(first, last, traits);
 
   ForwardIterator prev = (i == first) ? last : i;
   --prev;
