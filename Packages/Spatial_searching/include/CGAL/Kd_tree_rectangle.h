@@ -61,7 +61,7 @@ namespace CGAL {
   };
 
 
-  template <class T> class Kd_tree_rectangle{
+  template <class T> class Kd_tree_rectangle {
   public:
     typedef T NT;
 
@@ -100,7 +100,8 @@ namespace CGAL {
       }
     }
     
-    Kd_tree_rectangle(const int d) : dim(d), lower_(new NT[d]), upper_(new NT[d])
+    Kd_tree_rectangle(const int d) : 
+    dim(d), lower_(new NT[d]), upper_(new NT[d])
     {
       std::fill(lower_, lower_ + dim, 0);
       std::fill(upper_, upper_ + dim, 0);
@@ -192,7 +193,8 @@ namespace CGAL {
       return s;
     }
 
-    // Splits rectangle by modifying itself to lower half and returns upper half
+    // Splits rectangle by modifying itself to lower half 
+    // and returns upper half
     Kd_tree_rectangle* split(int d, NT value) {
 		// assert(d >= 0 && d < dim);
 		// assert(lower_[d] <= value && value <= upper_[d]);
@@ -229,7 +231,8 @@ namespace CGAL {
   }
 
   template <class NT, class Point> bool belongs(const Point& p, 
-					      const Kd_tree_rectangle<NT>& r) {
+					      const Kd_tree_rectangle<NT>& r) 
+  {
     NT h;
     for (int i = 0; i < r.dimension(); ++i) {
         h=p[i];

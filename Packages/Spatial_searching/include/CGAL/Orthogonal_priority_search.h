@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Nearest_neighbour_L2.h
+// file          : include/CGAL/Orthogonal_priority_search.h
 // package       : ASPAS
 // revision      : 1.4 
 // revision_date : 2002/16/08 
@@ -21,99 +21,36 @@
 //
 // ======================================================================
 
-#ifndef  NEAREST_NEIGHBOUR_L2_H
-#define  NEAREST_NEIGHBOUR_L2_H
+#ifndef  ORTHOGONAL_PRIORITY_SEARCH
+#define  ORTHOGONAL_PRIORITY_SEARCH
 #include <cstring>
 #include <list>
 #include <queue>
 #include <memory>
 #include <CGAL/Kd_tree_node.h>
-#include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Kd_tree_rectangle.h>
+
 namespace CGAL {
 
-template <class NT, class Point> 
-  NT Min_squared_distance_l2_to_box(const Point& p,
-					      const Kd_tree_rectangle<NT>& r) {
-    NT distance(0.0);
-    NT h;
-    for (int i = 0; i < r.dimension(); ++i) {
-      h=p[i];
-      if (h < r.lower(i)) distance += (r.lower(i)-h)*(r.lower(i)-h);
-	  if (h > r.upper(i)) distance += (h-r.upper(i))*(h-r.upper(i));
-	}
-    return distance;
-  }
-
-  template <class NT, class Point> 
-  NT Max_squared_distance_l2_to_box(const Point& p, const Kd_tree_rectangle<NT>& r) {
-    NT distance(0.0);
-    NT h;
-    for (int i = 0; i < r.dimension(); ++i) {
-      h=p[i];
-      if (h >= (r.lower(i)+r.upper(i))/2.0) 
-		  distance += (h-r.lower(i))*(h-r.lower(i)); 
-	  else
-		  distance += (r.upper(i)-h)*(r.upper(i)-h);
-	}
-    return distance;
-  }
-
-  
-template <class Tree_traits, class Search_traits> //= Kd_tree_traits_2d>
-class Nearest_neighbour_L2 {
+template <class Traits, class Query_item, class Distance>
+class Orthogonal_priority_search {
 
 public:
 
-typedef typename Tree_traits::Item Item;
-typedef typename Tree_traits::NT NT;
+typedef typename Traits::Item Item;
+typedef typename Traits::NT NT;
 typedef Item** Item_iterator;
-typedef Kd_tree_node<Tree_traits> Node;
-typedef Kd_tree<Tree_traits> Tree;
+typedef Kd_tree_node<Traits> Node;
+typedef Kd_tree<Traits> Tree;
 
-typedef typename Tree_traits::Item_with_distance Item_with_distance;
+typedef typename Traits::Item_with_distance Item_with_distance;
 typedef std::pair<Node*,NT> Node_with_distance;
 
-// this forward declaration causes problems for g++ 
+private:
+
+// this forward declaration may cause problems for g++ 
 class iterator;
-    
-class Priority_higher
-    {
-    public:
 
-        bool search_nearest;
 
-        Priority_higher() {
-                Search_traits s;
-                search_nearest = s.Search_nearest();
-        }
-        //highest priority is smallest distance
-        bool operator() 
-	  (Node_with_distance* n1, Node_with_distance* n2) const {
-                if (search_nearest) { return (n1->second > n2->second);}
-                else {return (n2->second > n1->second);}
-        }
-    };
-
-class Distance_smaller
-    {
-
-    public:
-
-        bool search_nearest;
-
-        Distance_smaller() {
-                Search_traits s;
-                search_nearest = s.Search_nearest();
-        }
-
-        //highest priority is smallest distance
-        bool operator() 
-	  (Item_with_distance* p1, Item_with_distance* p2) const {
-		if (search_nearest) {return (p1->second > p2->second);}
-                else {return (p2->second > p1->second);}
-        }
-    };
 
     typedef std::vector<Node_with_distance*> Node_with_distance_vector;
 
@@ -127,13 +64,18 @@ class Distance_smaller
     public:
 
     // constructor
-    Nearest_neighbour_L2(Tree& tree, Item& q, NT Eps=0.0) {
-		start = new iterator(tree,q,Eps);
-                past_the_end = new iterator();
-	};
+    Orthogonal_priority_search(Tree& tree,  
+	Query_item& q, Distance& tr, NT Eps = 0.0, 
+        bool Search_nearest=true)
+    {
+	
+        start = new iterator(tree,q,tr,Eps,Search_nearest);
+        past_the_end = new iterator();
+        
+    };
 
     // destructor
-    ~Nearest_neighbour_L2() {
+    Orthogonal_priority_search() {
 		delete start;
                 delete past_the_end;
     };
@@ -146,6 +88,10 @@ class Distance_smaller
 		return *past_the_end;
     }
 
+    void statistics() {
+	start->statistics();
+    }
+
     class iterator {
 
     public:
@@ -153,9 +99,10 @@ class Distance_smaller
     typedef std::input_iterator_tag iterator_category;
     typedef Item_with_distance value_type;
     typedef int distance_type;
-    
+
     class Iterator_implementation;
     Iterator_implementation *Ptr_implementation;
+
 
     public:
 
@@ -167,8 +114,10 @@ class Distance_smaller
     }
 
     // constructor
-    iterator(Tree& tree, Item& q, NT eps=0.0) {
-        Ptr_implementation = new Iterator_implementation(tree, q, eps);
+    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=0.0, 
+    bool search_nearest=true){
+        Ptr_implementation =
+        new Iterator_implementation(tree, q, tr, eps, search_nearest);
     }
 
     // copy constructor
@@ -197,9 +146,9 @@ class Distance_smaller
 
         if (
                 ((Ptr_implementation == 0) || 
-			Ptr_implementation->Item_PriorityQueue.empty()) &&
+		  Ptr_implementation->Item_PriorityQueue.empty()) &&
                 ((It.Ptr_implementation == 0) ||  
-			It.Ptr_implementation->Item_PriorityQueue.empty())
+		  It.Ptr_implementation->Item_PriorityQueue.empty())
         )
         return true;
         // else
@@ -210,32 +159,33 @@ class Distance_smaller
         return !(*this == It);
     }
 
+    void statistics () {
+    	Ptr_implementation->statistics();
+    }
+
     ~iterator() {
-        // std::cout << "called ~iterator"  << std::endl;
         if (Ptr_implementation != 0) {
-               
                 Ptr_implementation->reference_count--;
                 if (Ptr_implementation->reference_count==0) {
                         delete Ptr_implementation;
                         Ptr_implementation = 0;
                 }
-              
         }
-       
     }
+
 
     class Iterator_implementation {
 
     public:
 
     int number_of_neighbours_computed;
-
     int number_of_internal_nodes_visited;
     int number_of_leaf_nodes_visited;
     int number_of_items_visited;
 
     private:
 
+    
     NT multiplication_factor;
 
     Item* query_point;
@@ -243,39 +193,92 @@ class Distance_smaller
     int total_item_number;
 
     NT distance_to_root;
-   
+
+    bool search_nearest_neighbour;
+
     NT rd;
 
-    bool search_nearest;
+    class Priority_higher
+    {
+    public:
+
+        bool search_nearest;
+
+        Priority_higher(bool search_the_nearest_neighbour) {
+                search_nearest = search_the_nearest_neighbour;
+        } 
+
+        //highest priority is smallest distance
+        bool operator() (Node_with_distance* n1, Node_with_distance* n2) const
+	{
+                if (search_nearest) { return (n1->second > n2->second);}
+                else {return (n2->second > n1->second);}
+        }
+    };
+
+    class Distance_smaller
+    {
+
+    public:
+
+        bool search_nearest;
+
+        Distance_smaller(bool search_the_nearest_neighbour) {
+                // Search_traits s;
+                search_nearest = search_the_nearest_neighbour;
+        } 
+
+        //highest priority is smallest distance
+        bool operator() (Item_with_distance* p1, Item_with_distance* p2) const
+	{
+		if (search_nearest) {return (p1->second > p2->second);}
+                else {return (p2->second > p1->second);}
+        }
+    };
 
     std::priority_queue<Node_with_distance*, Node_with_distance_vector,
-    Priority_higher> PriorityQueue;
+    Priority_higher>* PriorityQueue;
+
+    std::priority_queue<Item_with_distance*, Item_with_distance_vector,
+    Distance_smaller>* Item_PriorityQueue;
+
+    Distance* Orthogonal_Distance_instance;
 
     public:
 
     int reference_count;
-    int dim;
 
-    std::priority_queue<Item_with_distance*, Item_with_distance_vector,
-    Distance_smaller> Item_PriorityQueue;
+    
 
     // constructor
-    Iterator_implementation(Tree& tree, Item& q, NT Eps=0.0) {
+    Iterator_implementation(Tree& tree, Query_item& q, Distance& tr,
+        NT Eps=0.0, bool search_nearest=true)
+    {
+        PriorityQueue= new std::priority_queue<Node_with_distance*, 
+	Node_with_distance_vector,
+    	Priority_higher> 
+        (Priority_higher(search_nearest));
 
-        reference_count=1;
-
-        multiplication_factor=(1.0+Eps)*(1.0+Eps);
-
-        Search_traits s;
-        search_nearest = s.Search_nearest();    
-        
-        if (search_nearest) distance_to_root=
-        Min_squared_distance_l2_to_box<NT,Item>(q,*(tree.bounding_box()));
-        else distance_to_root=
-        Max_squared_distance_l2_to_box<NT,Item>(q,*(tree.bounding_box()));
+        Item_PriorityQueue = new std::priority_queue<Item_with_distance*, 
+	Item_with_distance_vector,
+    	Distance_smaller> 
+       (Distance_smaller(search_nearest));
        
+        search_nearest_neighbour=search_nearest;
+	reference_count=1;
+        Orthogonal_Distance_instance=&tr;
+        multiplication_factor=
+	Orthogonal_Distance_instance->transformed_distance(1.0+Eps);
+
+        if (search_nearest) distance_to_root=
+	Orthogonal_Distance_instance->min_distance_to_rectangle(q,
+						*(tree.bounding_box()));
+        else distance_to_root=
+   	Orthogonal_Distance_instance->max_distance_to_rectangle(q,
+						*(tree.bounding_box()));
+
+        
         query_point = &q;
-        dim=query_point->dimension();
 
         total_item_number=tree.item_number();
 
@@ -285,9 +288,10 @@ class Distance_smaller
         number_of_neighbours_computed=0;
 
 
-        Node_with_distance *The_Root = 
-	  new Node_with_distance(tree.root(),distance_to_root);
-        PriorityQueue.push(The_Root);
+
+        Node_with_distance *The_Root = new Node_with_distance(tree.root(),
+						distance_to_root);
+        PriorityQueue->push(The_Root);
 
         // rd is the distance of the top of the priority queue to q
         rd=The_Root->second;
@@ -296,7 +300,7 @@ class Distance_smaller
 
     // * operator
     Item_with_distance& operator* () {
-			return *(Item_PriorityQueue.top());
+			return *(Item_PriorityQueue->top());
     }
 
     // prefix operator
@@ -309,11 +313,20 @@ class Distance_smaller
 
     // postfix operator
     std::auto_ptr<Item_with_distance> operator++(int) {
-        Item_with_distance Value = *(Item_PriorityQueue.top());
+        Item_with_distance Value = *(Item_PriorityQueue->top());
         std::auto_ptr<Item_with_distance>
         result(new Item_with_distance(Value));
         ++*this;
         return result;
+    }
+
+    // Print statistics of the general priority search process.
+    void statistics () {
+    	std::cout << "Orthogonal priority search statistics:" << std::endl;
+    	std::cout << "Number of internal nodes visited:" << number_of_internal_nodes_visited << std::endl;
+    	std::cout << "Number of leaf nodes visited:" << number_of_leaf_nodes_visited << std::endl;
+    	std::cout << "Number of items visited:" << number_of_items_visited << std::endl;
+        std::cout << "Number of neighbours computed:" << number_of_neighbours_computed << std::endl;
     }
 
 
@@ -321,47 +334,45 @@ class Distance_smaller
     ~Iterator_implementation() {
 
         // std::cout << "called destructor" << std::endl;
-	while (PriorityQueue.size()>0) {
-                Node_with_distance* The_top=PriorityQueue.top();
-                PriorityQueue.pop();
+	while (PriorityQueue->size()>0) {
+                Node_with_distance* The_top=PriorityQueue->top();
+                PriorityQueue->pop();
                 delete The_top;
 	};
-	while (Item_PriorityQueue.size()>0) {
-                Item_with_distance* The_top=Item_PriorityQueue.top();
-                Item_PriorityQueue.pop();
+	while (Item_PriorityQueue->size()>0) {
+                Item_with_distance* The_top=Item_PriorityQueue->top();
+                Item_PriorityQueue->pop();
                 delete The_top;
         };
+        delete PriorityQueue;
+        delete Item_PriorityQueue;
     }
 
     private:
 
     void Delete_the_current_item_top() {
-        Item_with_distance* The_item_top=Item_PriorityQueue.top();
-        Item_PriorityQueue.pop();
+        Item_with_distance* The_item_top=Item_PriorityQueue->top();
+        Item_PriorityQueue->pop();
         delete The_item_top;
     }
 
     void Compute_the_next_nearest_neighbour() {
 
-        
         // compute the next item
         bool next_neighbour_found=false;
-
-        if (!(Item_PriorityQueue.empty())) {
-        if (search_nearest)
+        if (!(Item_PriorityQueue->empty())) {
+        if (search_nearest_neighbour)
         	next_neighbour_found=
-		(multiplication_factor*rd > Item_PriorityQueue.top()->second);
+		(multiplication_factor*rd > Item_PriorityQueue->top()->second);
         else
 		next_neighbour_found=
-		(multiplication_factor*rd < Item_PriorityQueue.top()->second);
+		(multiplication_factor*rd < Item_PriorityQueue->top()->second);
         }
-        
-
         // otherwise browse the tree further
-        while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
-                Node_with_distance* The_node_top=PriorityQueue.top();
+        while ((!next_neighbour_found) && (!PriorityQueue->empty())) {
+                Node_with_distance* The_node_top=PriorityQueue->top();
                 Node* N= The_node_top->first;
-                PriorityQueue.pop();
+                PriorityQueue->pop();
                 delete The_node_top;
 
                 while (!(N->is_leaf())) { // compute new distance
@@ -369,29 +380,31 @@ class Distance_smaller
                         int new_cut_dim=N->separator()->cutting_dimension();
                         NT old_off, new_rd;
                         NT new_off =
-                        (*query_point)[new_cut_dim] - 
-				N->separator()->cutting_value();
-                        if ( ((new_off < 0.0) && (search_nearest)) ||
-                        (( new_off >= 0.0) && (!search_nearest))  ) {
-                                old_off= (*query_point)[new_cut_dim]-
-							N->low_value();
+                        (*query_point)[new_cut_dim] -
+                        N->separator()->cutting_value();
+                        if ( ((new_off < 0.0) && (search_nearest_neighbour)) ||
+                        (( new_off >= 0.0) && (!search_nearest_neighbour))  ) {
+				old_off=
+                                (*query_point)[new_cut_dim]-N->low_value();
                                 if (old_off>0.0) old_off=0.0;
-                                new_rd=rd - old_off*old_off + 
-							  new_off*new_off;
+                                new_rd=
+                                Orthogonal_Distance_instance->
+                                new_distance(rd,old_off,new_off,new_cut_dim);
                                 Node_with_distance *Upper_Child =
                                 new Node_with_distance(N->upper(),new_rd);
-                                PriorityQueue.push(Upper_Child);
+				PriorityQueue->push(Upper_Child);
                                 N=N->lower();
+
                         }
                         else { // compute new distance
-                                old_off= N->high_value() - 
-						(*query_point)[new_cut_dim];
+				old_off= N->high_value() -
+                                (*query_point)[new_cut_dim];
                                 if (old_off>0.0) old_off=0.0;
-                                new_rd=rd - old_off*old_off + 
-						new_off*new_off;
+                                new_rd=Orthogonal_Distance_instance->
+                                new_distance(rd,old_off,new_off,new_cut_dim);
                                 Node_with_distance *Lower_Child =
                                 new Node_with_distance(N->lower(),new_rd);
-                                PriorityQueue.push(Lower_Child);
+                                PriorityQueue->push(Lower_Child);
                                 N=N->upper();
                         }
                 }
@@ -399,26 +412,23 @@ class Distance_smaller
                 number_of_leaf_nodes_visited++;
                 for (Item_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
-                        NT distance_to_query_point=0.0;
-                        for (int i=0; i< dim; i++)       {
-				NT h=((*query_point)[i]- (*(*it))[i]);
-                                distance_to_query_point += h*h;
-                        }
+                        NT distance_to_query_point=
+                        Orthogonal_Distance_instance->
+                        distance(*query_point,**it);
                         Item_with_distance *NN_Candidate=
                         new Item_with_distance(*it,distance_to_query_point);
-                        Item_PriorityQueue.push(NN_Candidate);
+                        Item_PriorityQueue->push(NN_Candidate);
                 }
                 // old top of PriorityQueue has been processed,
                 // hence update rd
-                if (!PriorityQueue.empty()) {
-                        rd = PriorityQueue.top()->second;
-			if (search_nearest)
+                if (!PriorityQueue->empty()) {
+                        rd = PriorityQueue->top()->second;
+                        if (search_nearest_neighbour)
 				next_neighbour_found =
-                (multiplication_factor*rd > Item_PriorityQueue.top()->second);
+                (multiplication_factor*rd > Item_PriorityQueue->top()->second);
                         else
 				next_neighbour_found =
-                (multiplication_factor*rd < Item_PriorityQueue.top()->second);
-                        
+                (multiplication_factor*rd < Item_PriorityQueue->top()->second);
                 }
                 else // priority queue empty => last neighbour found
                 {
@@ -430,22 +440,23 @@ class Distance_smaller
     }
 }; // class Iterator_implementaion
 }; // class iterator
-}; // class Nearest neighbour_L2
+}; // class 
 
-template <class Tree_traits, class Search_traits>
-void swap (typename 
-		Nearest_neighbour_L2<Tree_traits,Search_traits>::iterator& x,
-        typename 
-		Nearest_neighbour_L2<Tree_traits,Search_traits>::iterator& y) {
-        typename 
-Nearest_neighbour_L2<Tree_traits,
-		    Search_traits>::iterator::Iterator_implementation
+template <class Traits, class Query_item, class Distance>
+void swap (typename Orthogonal_priority_search<Traits, 
+				Query_item, Distance>::iterator& x,
+        typename Orthogonal_priority_search<Traits, 
+				Query_item, Distance>::iterator& y) {
+        typename Orthogonal_priority_search<Traits, 
+		Query_item, Distance>::iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;
-    }
+}
+
+
 
 } // namespace CGAL
 
 
-#endif  // NEAREST_NEIGHBOUR_L2_H
+#endif  // ORTHOGONAL_PRIORITY_SEARCH_H

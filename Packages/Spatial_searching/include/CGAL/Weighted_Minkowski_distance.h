@@ -35,13 +35,12 @@
 
 namespace CGAL {
 
-  template <class Tree_traits>
+  template <class Query_item, class Item>
   class Weighted_Minkowski_distance {
 
     public:
 
-    typedef typename Tree_traits::Item Item;
-    typedef typename Tree_traits::NT NT;
+    typedef typename Item::R::FT NT;
     typedef std::vector<NT> Weight_vector;
 
     private:
@@ -72,28 +71,30 @@ namespace CGAL {
 		for (unsigned int i = 0; i < Weights.size(); ++i)
                 assert(Weights[i]>=0.0);
 		The_weights = new Weight_vector(Weights.size());
-		for (unsigned int i = 0; i < Weights.size(); ++i) (*The_weights)[i]=Weights[i];
+		for (unsigned int i = 0; i < Weights.size(); ++i) 
+		(*The_weights)[i]=Weights[i];
 	}
 
 	~Weighted_Minkowski_distance() {
 		delete The_weights;
 	};
 
-	inline NT distance(const Item& p1, const Item& p2) {
+	inline NT distance(const Query_item& p1, const Item& p2) {
 		NT distance = 0.0;
 		if (p == 0.0) {
 				for (unsigned int i = 0; i < The_dimension; ++i)
 			        if ((*The_weights)[i] * fabs(p1[i] - p2[i]) > distance)
-				        distance = (*The_weights)[i] * fabs(p1[i]-p2[i]);
+				distance = (*The_weights)[i] * fabs(p1[i]-p2[i]);
 		}
 		else
 			for (unsigned int i = 0; i < The_dimension; ++i)
-				distance += (*The_weights)[i] * pow(fabs(p1[i]-p2[i]),p);
+				distance += 
+				(*The_weights)[i] * pow(fabs(p1[i]-p2[i]),p);
         return distance;
 	}
 
 
-	inline NT lower_bound_distance_to_box(const Item& Point,
+	inline NT min_distance_to_rectangle(const Query_item& Point,
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance = 0.0;
 		if (p == 0.0)
@@ -117,7 +118,7 @@ namespace CGAL {
 		return distance;
 	}
 
-	inline NT upper_bound_distance_to_box(const Item& Point,
+	inline NT max_distance_to_rectangle(const Query_item& Point,
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance=0.0;
 		if (p == 0.0)

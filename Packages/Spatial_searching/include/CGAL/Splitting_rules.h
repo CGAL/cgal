@@ -39,17 +39,17 @@ enum Split_rule {MEDIAN_OF_MAX_SPREAD, MEDIAN_OF_BOX,
 		SLIDING_MIDPOINT, SLIDING_FAIR};
 };
 
-template <class P>
+template <class Item>
 class Splitter {
 public:
 // empty base class
 };
 
-template <class P>
-class Median_of_max_spread : public Splitter<P> {
+template <class Item>
+class Median_of_max_spread : public Splitter<Item> {
 public:
-  typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Point_container<P>& c) {
+  typedef typename Item::R::FT NT;
+  Plane_separator<NT>* rule(Point_container<Item>& c) {
         Plane_separator<NT>* sep =
         new Plane_separator<NT>(c.max_tight_span_coord(),0.0);
         sep->set_cutting_val(c.median(sep->cutting_dimension()));
@@ -57,11 +57,11 @@ public:
   }
 };
 
-template <class P>
-class Fair : public Splitter<P> {
+template <class Item>
+class Fair : public Splitter<Item> {
 public:
-  typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Point_container<P>& c, NT Aspect_ratio) {
+  typedef typename Item::R::FT NT;
+  Plane_separator<NT>* rule(Point_container<Item>& c, NT Aspect_ratio) {
 		// find legal cut with max spread
 	    Plane_separator<NT>* sep = 
         new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),
@@ -72,11 +72,11 @@ public:
   }
 };
 
-template <class P>
-class Sliding_fair : public Splitter<P> {
+template <class Item>
+class Sliding_fair : public Splitter<Item> {
 public:
-  typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Point_container<P>& c, NT Aspect_ratio) {
+  typedef typename Item::R::FT NT;
+  Plane_separator<NT>* rule(Point_container<Item>& c, NT Aspect_ratio) {
     // find legal cut with max spread
     Plane_separator<NT>* sep = 
     new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),
@@ -87,11 +87,11 @@ public:
   }
 };
 
-template <class P>
-class Sliding_midpoint: public Splitter<P> {
+template <class Item>
+class Sliding_midpoint: public Splitter<Item> {
 public:
-  typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Point_container<P>& c)
+  typedef typename Item::R::FT NT;
+  Plane_separator<NT>* rule(Point_container<Item>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
               (c.max_span_upper() + c.max_span_lower())/2.0);
@@ -107,11 +107,11 @@ public:
   }
 };
 
-template <class P>
-class Median_of_box : public Splitter<P> {
+template <class Item>
+class Median_of_box : public Splitter<Item> {
 public:
-  typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Point_container<P>& c)
+  typedef typename Item::R::FT NT;
+  Plane_separator<NT>* rule(Point_container<Item>& c)
   {
     Plane_separator<NT>* sep = 
     new Plane_separator<NT>(c.max_span_coord(),0.0);
@@ -120,11 +120,11 @@ public:
   }
 };
 
-template <class P>
-class Midpoint_of_max_spread : public Splitter<P> {
+template <class Item>
+class Midpoint_of_max_spread : public Splitter<Item> {
 public:
-  typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Point_container<P>& c)
+  typedef typename Item::R::FT NT;
+  Plane_separator<NT>* rule(Point_container<Item>& c)
   {
     Plane_separator<NT>* sep = 
     new Plane_separator<NT>(c.max_tight_span_coord(),
@@ -133,11 +133,11 @@ public:
   }
 };
 
-template <class P>
-class Midpoint_of_box: public Splitter<P> {
+template <class Item>
+class Midpoint_of_box: public Splitter<Item> {
 public:
-  typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Point_container<P>& c)
+  typedef typename Item::R::FT NT;
+  Plane_separator<NT>* rule(Point_container<Item>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
               (c.max_span_upper() + c.max_span_lower())/2.0);

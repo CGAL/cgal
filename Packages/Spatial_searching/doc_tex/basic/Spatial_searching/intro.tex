@@ -2,7 +2,7 @@
 
 \section{Introduction}
 
-The Approximate SPAtial Searching (ASPAS) package supports
+The Approximate SPAtial Searching (ASPAS) package implements
 exact and approximate distance browsing
 by providing implementations of algorithms supporting both exact and
 approximate nearest and furthest, (approximate) $k$-nearest and furthest,
@@ -17,7 +17,7 @@ $d$-dimensional iso-rectangles.
 
 In these searching problems a set $P$ of data points in $d$-dimensional
 space is given.
-These points are preprocessed into a data structure, so that given
+These points are preprocessed into a $k$-$d$ tree data structure, so that given
 any query item $q$ the points of $P$ can be browsed efficiently.
 ASPAS is designed for data sets that are small enough to store
 the search structure in main menory (in contrast to approaches
@@ -133,7 +133,7 @@ and the midpoint of box splitting rule. This splitting rule maintains an upper
 bound on the maximal allowed ratio of the longest and shortest side of
 a rectangle (the value of this upper bound is set in the constructor of the
 fair splitting rule). Among the splits that satisfy this bound, it selects
-the one one in which the points have the largest spread.
+the one in which the points have the largest spread.
 It then splits the points in the most even manner possible, subject
 to maintaining the bound on the ratio of the resulting rectangles.
 

@@ -58,7 +58,8 @@ namespace CGAL {
     Point_list p_list; // list of pointers to points
     int built_coord;    // a coordinate for which the pointer list is built
     Kd_tree_rectangle<NT> bbox;       // bounding box, i.e. rectangle of node
-    Kd_tree_rectangle<NT> tbox;       // tight bounding box, i.e. minimal enclosing bounding
+    Kd_tree_rectangle<NT> tbox;       // tight bounding box, 
+				      // i.e. minimal enclosing bounding
 	                	      // box of points
   public:
     std::ostream& print(std::ostream& s) {
@@ -70,7 +71,8 @@ namespace CGAL {
 
     inline const Kd_tree_rectangle<NT>& bounding_box() const { return bbox; }
 
-    inline const Kd_tree_rectangle<NT>& tight_bounding_box() const { return tbox; }
+    inline const Kd_tree_rectangle<NT>& tight_bounding_box() const 
+    { return tbox; }
 
     inline int dimension() const { return bbox.dimension(); } 
 

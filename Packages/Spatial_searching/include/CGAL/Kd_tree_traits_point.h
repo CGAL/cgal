@@ -35,7 +35,7 @@ namespace CGAL {
     typedef Item_ Item;
     typedef Item** Item_iterator;
     // CGAL dependency typedef typename Kernel_traits<Item>::Kernel K;
-    // CGaL dependency typedef typename K::FT NT;
+    // CGAL dependency typedef typename K::FT NT;
     typedef typename Item::R::FT NT;
     typedef std::pair<Item*,NT> Item_with_distance;
     typedef typename Split_rule_enumeration::Split_rule split_rule;

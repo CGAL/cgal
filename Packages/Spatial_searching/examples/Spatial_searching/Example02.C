@@ -1,6 +1,6 @@
+// Example02.C
 // Example illustrating for each separate splitting rule
 // building a kd-tree 
-
 
 #include <vector>
 #include <numeric>
