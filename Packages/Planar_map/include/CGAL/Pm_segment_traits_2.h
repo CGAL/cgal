@@ -298,14 +298,14 @@ public:
    * \param cv The curve.
    * \return The source point.
    */
-  Point_2 curve_source(const X_monotone_curve_2 & cv) const 
+  const Point_2 & curve_source(const X_monotone_curve_2 & cv) const 
   { return construct_vertex_2_object()(cv, 0); }
 
   /*! Get the curve target.
    * \param cv The curve.
    * \return The target point.
    */
-  Point_2 curve_target(const X_monotone_curve_2 & cv) const 
+  const Point_2 & curve_target(const X_monotone_curve_2 & cv) const 
   { return construct_vertex_2_object()(cv, 1); }
 };
 
