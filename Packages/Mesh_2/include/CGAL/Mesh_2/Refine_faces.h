@@ -345,7 +345,7 @@ public:
   bool check_bad_faces()
   {
     CGAL_assertion_code(typename Geom_traits::Orientation_2 orientation =
-                        tr.geom_traits().orientation_2_object());
+                        this->tr.geom_traits().orientation_2_object());
     for(Bad_faces_const_iterator fit = begin();
         fit != end();
         ++fit)
