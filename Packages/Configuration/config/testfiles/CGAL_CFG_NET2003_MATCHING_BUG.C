@@ -52,7 +52,8 @@ class D_Triangulation : public Triangulation_3<Gt, Tds>
   typedef typename Tr_base::Vertex_handle Vertex_handle;
   typedef typename Tr_base::Facet Facet;
   
-  void make_hole(Vertex_handle, std::vector<Facet>&, std::vector<Cell_handle>&);
+  void make_hole(Vertex_handle, std::vector<Facet>&, 
+    std::vector<Cell_handle>&);
   
 };
 
