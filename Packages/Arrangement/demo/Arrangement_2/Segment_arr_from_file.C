@@ -67,7 +67,7 @@ int main()
 #include <CGAL/Arr_segment_exact_traits.h>
 
 #include <CGAL/Pm_walk_along_line_point_location.h>
-#include <Draw_preferences.h>
+#include <CGAL/Draw_preferences.h>
 
 typedef leda_integer NT;
 //typedef double           NT;

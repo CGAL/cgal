@@ -52,7 +52,7 @@ int main()
 #else
 
 #include <CGAL/leda_real.h>
-#include <Draw_preferences.h>
+#include <CGAL/Draw_preferences.h>
 
 typedef leda_real                            NT;
 typedef CGAL::Cartesian<NT>                  Rep;

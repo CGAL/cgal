@@ -30,7 +30,7 @@ int main()
 #include <CGAL/leda_real.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Arr_circle_traits_Window_stream.h>
-#include <Draw_preferences.h>
+#include <CGAL/Draw_preferences.h>
 
 typedef CGAL::Arr_circles_real_traits<leda_real> Traits; 
 

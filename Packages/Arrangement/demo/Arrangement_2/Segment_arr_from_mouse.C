@@ -41,7 +41,7 @@ int main()
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
-#include <Draw_preferences.h>
+#include <CGAL/Draw_preferences.h>
 #include <vector>
 
 typedef CGAL::Arr_leda_segment_exact_traits         Traits;
