@@ -24,12 +24,14 @@
 #ifndef CGAL_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_DELAUNAY_TRIANGULATION_3_H
 
-#include <set.h>
+#include <set>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_3.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template < class Gt, class Tds>
-class CGAL_Delaunay_triangulation_3 : public CGAL_Triangulation_3<Gt,Tds>
+class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
 {
 public:
   
@@ -38,38 +40,38 @@ public:
   typedef typename Gt::Triangle Triangle;
   typedef typename Gt::Tetrahedron Tetrahedron;
 
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
+  typedef typename Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
 
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell Cell;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Vertex Vertex;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Facet Facet;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Edge Edge;
+  typedef typename Triangulation_3<Gt,Tds>::Cell Cell;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
+  typedef typename Triangulation_3<Gt,Tds>::Facet Facet;
+  typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
 
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell_circulator Cell_circulator;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell_iterator Cell_iterator;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Facet_iterator Facet_iterator;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Edge_iterator Edge_iterator;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Vertex_iterator Vertex_iterator;
+  typedef typename Triangulation_3<Gt,Tds>::Cell_circulator Cell_circulator;
+  typedef typename Triangulation_3<Gt,Tds>::Cell_iterator Cell_iterator;
+  typedef typename Triangulation_3<Gt,Tds>::Facet_iterator Facet_iterator;
+  typedef typename Triangulation_3<Gt,Tds>::Edge_iterator Edge_iterator;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex_iterator Vertex_iterator;
 
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Locate_type Locate_type;
+  typedef typename Triangulation_3<Gt,Tds>::Locate_type Locate_type;
 
-  CGAL_Delaunay_triangulation_3()
-    : CGAL_Triangulation_3<Gt,Tds>() {}
+  Delaunay_triangulation_3()
+    : Triangulation_3<Gt,Tds>() {}
   
-  CGAL_Delaunay_triangulation_3(const Gt & gt)
-  : CGAL_Triangulation_3<Gt,Tds>(gt) {}
+  Delaunay_triangulation_3(const Gt & gt)
+  : Triangulation_3<Gt,Tds>(gt) {}
   
-  CGAL_Delaunay_triangulation_3(const Point & p0,
+  Delaunay_triangulation_3(const Point & p0,
 				const Point & p1,
 				const Point & p2,
 				const Point & p3)
-    : CGAL_Triangulation_3<Gt,Tds>(p0,p1,p2,p3){} // debug
+    : Triangulation_3<Gt,Tds>(p0,p1,p2,p3){} // debug
 
   // copy constructor duplicates vertices and cells
-  CGAL_Delaunay_triangulation_3(const CGAL_Delaunay_triangulation_3<Gt,Tds> 
+  Delaunay_triangulation_3(const Delaunay_triangulation_3<Gt,Tds> 
 				& tr)
-    : CGAL_Triangulation_3<Gt,Tds>(tr)
+    : Triangulation_3<Gt,Tds>(tr)
     { CGAL_triangulation_postcondition( is_valid(true) );  }
   
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -87,8 +89,8 @@ public:
 #else
 #if defined(LIST_H) || defined(__SGI_STL_LIST_H)
   int
-  insert(list<Point>::const_iterator first,
-         list<Point>::const_iterator last)
+  insert(std::list<Point>::const_iterator first,
+         std::list<Point>::const_iterator last)
   {
     int n = number_of_vertices();
     while(first != last){
@@ -100,8 +102,8 @@ public:
 #endif // LIST_H
 #if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
   int
-  insert(vector<Point>::const_iterator first,
-         vector<Point>::const_iterator last)
+  insert(std::vector<Point>::const_iterator first,
+         std::vector<Point>::const_iterator last)
   {
     int n = number_of_vertices();
     while(first != last){
@@ -135,7 +137,7 @@ public:
     }
     return number_of_vertices() - n;
   }
-#endif // CGAL_TEMPLATE_MEMBER_FUNCTIONS
+#endif // TEMPLATE_MEMBER_FUNCTIONS
 
   Vertex_handle insert(const Point & p )
   {
@@ -208,15 +210,15 @@ public:
 	    // if the 2d triangulation is Delaunay, the 3d
 	    // triangulation will be Delaunay
 	    return
-	      CGAL_Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p); 
+	      Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p); 
 	  }
 	}
       }//dim 2
     default :
       // dimension <= 1
-      return CGAL_Triangulation_3<Gt,Tds>::insert(p);
+      return Triangulation_3<Gt,Tds>::insert(p);
     }
-    return CGAL_Triangulation_3<Gt,Tds>::insert(p);// to avoid warning with egcs
+    return Triangulation_3<Gt,Tds>::insert(p);// to avoid warning with egcs
   }// insert(p)
 
 private:
@@ -237,7 +239,7 @@ private:
 
     for ( int j=0; j<4; j++ ) {
       if ( side_of_sphere( c->neighbor(j),p ) 
-	   ==  CGAL_ON_BOUNDED_SIDE ) {
+	   ==  ON_BOUNDED_SIDE ) {
 	find_conflicts_3(conflicts, p, c->neighbor(j), ac, i);
       }
       else {
@@ -263,7 +265,7 @@ private:
 
     for ( int j=0; j<3; j++ ) {
       if ( side_of_circle( c->neighbor(j), 3, p ) 
-	   ==  CGAL_ON_BOUNDED_SIDE ) {
+	   ==  ON_BOUNDED_SIDE ) {
 	find_conflicts_2(conflicts, p, c->neighbor(j), ac, i);
       }
       else {
@@ -274,20 +276,20 @@ private:
   }// find_conflicts_2
 public:
 
-  CGAL_Bounded_side
+  Bounded_side
   side_of_sphere( Cell_handle c, const Point & p) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     int i3;
     if ( ! c->has_vertex( infinite_vertex(), i3 ) ) {
-      CGAL_Oriented_side
+      Oriented_side
 	o = geom_traits().side_of_oriented_sphere(c->vertex(0)->point(),
 						  c->vertex(1)->point(),
 						  c->vertex(2)->point(),
 						  c->vertex(3)->point(),p);
-      return ( (o == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
-	       (o == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
-	       CGAL_ON_BOUNDARY );
+      return ( (o == ON_NEGATIVE_SIDE) ? ON_UNBOUNDED_SIDE :
+	       (o == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
+	       ON_BOUNDARY );
     }
     // infinite cell :
     int i0,i1,i2;
@@ -301,28 +303,28 @@ public:
       i1 = (i3+1)&3;
       i2 = (i3+3)&3;
     }
-    CGAL_Orientation
+    Orientation
       o = geom_traits().orientation(c->vertex(i0)->point(),
 				    c->vertex(i1)->point(),
 				    c->vertex(i2)->point(),
 				    p);
     switch (o) {
-    case CGAL_POSITIVE:
-      return CGAL_ON_BOUNDED_SIDE;
-    case CGAL_NEGATIVE:
-      return CGAL_ON_UNBOUNDED_SIDE;
-    case CGAL_ZERO:
+    case POSITIVE:
+      return ON_BOUNDED_SIDE;
+    case NEGATIVE:
+      return ON_UNBOUNDED_SIDE;
+    case ZERO:
       {
-	CGAL_Oriented_side s = 
+	Oriented_side s = 
 	  geom_traits().side_of_oriented_circle
 	  ( c->vertex(i0)->point(),
 	    c->vertex(i1)->point(),
 	    c->vertex(i2)->point(),
 	    p );
-	return ( (s == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
-		 (s == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
-		 CGAL_ON_BOUNDARY );
-// return ( (CGAL_Bounded_side) 
+	return ( (s == ON_NEGATIVE_SIDE) ? ON_UNBOUNDED_SIDE :
+		 (s == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
+		 ON_BOUNDARY );
+// return ( (Bounded_side) 
 // 		 geom_traits().side_of_oriented_circle
 // 		 ( c->vertex(i0)->point(),
 // 		   c->vertex(i1)->point(),
@@ -330,30 +332,30 @@ public:
 // 		   p ) ); 
       }
     }
-    return CGAL_ON_UNBOUNDED_SIDE;// to avoid warning with egcs
+    return ON_UNBOUNDED_SIDE;// to avoid warning with egcs
   }// end side of sphere
 
-  CGAL_Bounded_side
+  Bounded_side
   side_of_circle( const Facet & f, const Point & p) const
     {
       return side_of_circle(f.first, f.second, p);
     }
 
-  CGAL_Bounded_side
+  Bounded_side
   side_of_circle( Cell_handle c, int i, const Point & p) const
     // precondition : dimension >=2
     // in dimension 3, - for a finite facet
-    // returns CGAL_ON_BOUNDARY if the point lies on the circle,
-    // CGAL_ON_UNBOUNDED_SIDE when exterior, CGAL_ON_BOUNDED_SIDE
+    // returns ON_BOUNDARY if the point lies on the circle,
+    // ON_UNBOUNDED_SIDE when exterior, ON_BOUNDED_SIDE
     // interior
     // for an infinite facet, considers the plane defined by the
     // adjacent finite facet of the same cell, and does the same as in 
     // dimension 2 in this plane
     // in dimension 2, for an infinite facet
-    // in this case, returns CGAL_ON_BOUNDARY if the point lies on the 
+    // in this case, returns ON_BOUNDARY if the point lies on the 
     // finite edge (endpoints included) 
-    // CGAL_ON_BOUNDED_SIDE for a point in the open half-plane
-    // CGAL_ON_UNBOUNDED_SIDE elsewhere
+    // ON_BOUNDED_SIDE for a point in the open half-plane
+    // ON_UNBOUNDED_SIDE elsewhere
   {
     CGAL_triangulation_precondition( dimension() >= 2 );
     int i3 = 5;
@@ -361,16 +363,16 @@ public:
     if ( dimension() == 2 ) {
       CGAL_triangulation_precondition( i == 3 );
       if ( ! c->has_vertex( infinite_vertex(), i3 ) ) {
-	CGAL_Oriented_side
+	Oriented_side
 	  o = geom_traits().side_of_oriented_circle(c->vertex(0)->point(),
 						    c->vertex(1)->point(),
 						    c->vertex(2)->point(),
 						    p);
 	// the triangulation is supposed to be valid, ie the facet
 	// with vertices 0 1 2 in this order is positively oriented
-	return ( (o == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
-		 (o == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
-		 CGAL_ON_BOUNDARY );
+	return ( (o == ON_NEGATIVE_SIDE) ? ON_UNBOUNDED_SIDE :
+		 (o == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
+		 ON_BOUNDARY );
       }
       // else infinite facet
       // v1, v2 finite vertices of the facet such that v1,v2,infinite
@@ -382,42 +384,42 @@ public:
       // we need a fourth point to look at orientation with respect
       // to v1v2
       Cell_handle n = c->neighbor(i3);
-      CGAL_Orientation o =
+      Orientation o =
 	geom_traits().orientation_in_plane( v1->point(), 
 					    v2->point(), 
 					    n->vertex(n->index(c))->point(),
 					    p );
       switch (o) {
-      case CGAL_POSITIVE:
+      case POSITIVE:
 	// p lies on the same side of v1v2 as vn, so not in f
 	{
-	  return CGAL_ON_UNBOUNDED_SIDE;
+	  return ON_UNBOUNDED_SIDE;
 	}
-      case CGAL_NEGATIVE:
+      case NEGATIVE:
 	// p lies in f
 	{ 
-	  return CGAL_ON_BOUNDED_SIDE;
+	  return ON_BOUNDED_SIDE;
 	}
-      case CGAL_ZERO:
+      case ZERO:
 	// p collinear with v1v2
 	{
 	  int i_e;
 	  Locate_type lt;
-	  CGAL_Bounded_side side = 
+	  Bounded_side side = 
 	    side_of_segment( p,
 			     v1->point(), v2->point(),
 			     lt, i_e );
 	  switch (side) {
-	  case CGAL_ON_UNBOUNDED_SIDE:
+	  case ON_UNBOUNDED_SIDE:
 	    {
 	      // p lies on the line defined by the finite edge, but
 	      // not in edge v1v2
-	      return CGAL_ON_UNBOUNDED_SIDE;
+	      return ON_UNBOUNDED_SIDE;
 	    }
 	  default :
 	    {
 	      // p lies in edge v1v2 (including v1 or v2)
-	      return CGAL_ON_BOUNDARY;
+	      return ON_BOUNDARY;
 	    }
 	  }
 	}
@@ -465,15 +467,15 @@ public:
 				       (c->vertex(i0)->point(),
 					c->vertex(i1)->point(),
 					c->vertex(i2)->point(),
-					p) == CGAL_COPLANAR );
-      CGAL_Oriented_side
+					p) == COPLANAR );
+      Oriented_side
 	o = geom_traits().side_of_oriented_circle(c->vertex(i0)->point(),
 						  c->vertex(i1)->point(),
 						  c->vertex(i2)->point(),
 						  p);
-      return ( (o == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
-	       (o == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
-	       CGAL_ON_BOUNDARY );
+      return ( (o == ON_NEGATIVE_SIDE) ? ON_UNBOUNDED_SIDE :
+	       (o == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
+	       ON_BOUNDARY );
     }
     else {//infinite facet
       // v1, v2 finite vertices of the facet such that v1,v2,infinite
@@ -481,49 +483,49 @@ public:
       Vertex_handle 
 	v1 = c->vertex( nextposaround(i3,i) ),
 	v2 = c->vertex( nextposaround(i,i3) );
-      CGAL_Orientation o =
+      Orientation o =
 	geom_traits().orientation_in_plane( v1->point(),
 					    v2->point(),
 					    c->vertex(i)->point(),
 					    p );
       // then the code is duplicated from 2d case
       switch (o) {
-      case CGAL_POSITIVE:
+      case POSITIVE:
 	// p lies on the same side of v1v2 as c->vertex(i), so not in f
 	{
-	  return CGAL_ON_UNBOUNDED_SIDE;
+	  return ON_UNBOUNDED_SIDE;
 	}
-      case CGAL_NEGATIVE:
+      case NEGATIVE:
 	// p lies in f
 	{ 
-	  return CGAL_ON_BOUNDED_SIDE;
+	  return ON_BOUNDED_SIDE;
 	}
-      case CGAL_ZERO:
+      case ZERO:
 	// p collinear with v1v2
 	{
 	  int i_e;
 	  Locate_type lt;
-	  CGAL_Bounded_side side = 
+	  Bounded_side side = 
 	    side_of_segment( p,
 			     v1->point(), v2->point(),
 			     lt, i_e );
 	  switch (side) {
-	  case CGAL_ON_UNBOUNDED_SIDE:
+	  case ON_UNBOUNDED_SIDE:
 	    {
 	      // p lies on the line defined by the finite edge, but
 	      // not in edge v1v2
-	      return CGAL_ON_UNBOUNDED_SIDE;
+	      return ON_UNBOUNDED_SIDE;
 	    }
 	  default :
 	    {
 	      // p lies in edge v1v2 (including v1 or v2)
-	      return CGAL_ON_BOUNDARY;
+	      return ON_BOUNDARY;
 	    }
 	  }
 	}
       }// switch o
     }// infinite facet
-    return CGAL_ON_BOUNDARY; // to avoid warning with egcs
+    return ON_BOUNDARY; // to avoid warning with egcs
   }// side_of_circle
 
   
@@ -552,7 +554,7 @@ public:
 		   ( (*it).handle(), 
 		     it->vertex( (it->neighbor(i))->index((*it).handle() ) )
 		     ->point() )
-		   == CGAL_ON_BOUNDED_SIDE ) {
+		   == ON_BOUNDED_SIDE ) {
 		if (verbose) { 
 		  cerr << "non-empty sphere " << endl;
 		}
@@ -572,7 +574,7 @@ public:
 		   ( (*it).first, 3,
 		     (*it).first
 		     ->vertex( (((*it).first)->neighbor(i))->index((*it).first) )->point() )
-		   == CGAL_ON_BOUNDED_SIDE ) {
+		   == ON_BOUNDED_SIDE ) {
 		if (verbose) { 
 		  cerr << "non-empty circle " << endl;
 		}
@@ -596,4 +598,7 @@ public:
     }
 
 };
-#endif CGAL_DELAUNAY_TRIANGULATION_3_H
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_DELAUNAY_TRIANGULATION_3_H

@@ -29,38 +29,40 @@
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_ds_iterators_3.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template <class Vb, class Cb >
-class  CGAL_Triangulation_ds_vertex_3 
+class  Triangulation_ds_vertex_3 
   : public Vb
 {
 
 public:
   typedef typename Vb::Point Point;
-  typedef CGAL_Triangulation_ds_vertex_3<Vb,Cb> Vertex;
-  typedef CGAL_Triangulation_ds_cell_3<Vb,Cb> Cell;
-//   typedef CGAL_Triangulation_ds_cell_circulator_3<Vertex,Cell> Cell_circulator;
-//   typedef CGAL_Triangulation_ds_vertex_circulator_3<Vertex,Cell> Vertex_circulator;
-//   typedef CGAL_Triangulation_ds_edge_circulator_3<Vertex,Cell> Edge_circulator;
+  typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
+  typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
+//   typedef Triangulation_ds_cell_circulator_3<Vertex,Cell> Cell_circulator;
+//   typedef Triangulation_ds_vertex_circulator_3<Vertex,Cell> Vertex_circulator;
+//   typedef Triangulation_ds_edge_circulator_3<Vertex,Cell> Edge_circulator;
 
   // CONSTRUCTORS
 
   inline 
-  CGAL_Triangulation_ds_vertex_3()
+  Triangulation_ds_vertex_3()
     : Vb()
   {}
     
   inline 
-  CGAL_Triangulation_ds_vertex_3(const Point & p)
+  Triangulation_ds_vertex_3(const Point & p)
     :  Vb(p)
   {}
     
   inline 
-  CGAL_Triangulation_ds_vertex_3(const Point & p, Cell * c)
+  Triangulation_ds_vertex_3(const Point & p, Cell * c)
     :  Vb(p, c)
   {}
 
   inline 
-  CGAL_Triangulation_ds_vertex_3(Cell * c)
+  Triangulation_ds_vertex_3(Cell * c)
     :  Vb(c)
   {}
 
@@ -143,4 +145,6 @@ public:
   }
 };
 
-#endif CGAL_TRIANGULATION_DS_VERTEX_3_H
+CGAL_END_NAMESPACE
+
+#endif // CGAL_TRIANGULATION_DS_VERTEX_3_H

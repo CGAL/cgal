@@ -18,10 +18,13 @@
 // coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
+
 #ifndef CGAL_TRIANGULATION_UTILS_3_H
 #define CGAL_TRIANGULATION_UTILS_3_H
 
-class CGAL_Triangulation_utils_3
+CGAL_BEGIN_NAMESPACE
+
+class Triangulation_utils_3
 {
 public:
 //   inline unsigned int ccw(const unsigned int i) const
@@ -66,5 +69,6 @@ public:
 
 };
 
-#endif CGAL_TRIANGULATION_UTILS_3_H
+CGAL_END_NAMESPACE
 
+#endif // CGAL_TRIANGULATION_UTILS_3_H

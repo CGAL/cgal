@@ -29,32 +29,34 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_3.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template < class Gt >
-class CGAL_Triangulation_cell_base_3
+class Triangulation_cell_base_3
 {
-  friend istream& operator>> CGAL_NULL_TMPL_ARGS
-  (istream&, CGAL_Triangulation_cell_base_3<Gt>&);
+  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+  (std::istream&, Triangulation_cell_base_3<Gt>&);
 
 public:
 
   // CONSTRUCTORS
 
   inline
-  CGAL_Triangulation_cell_base_3()
+  Triangulation_cell_base_3()
   {
     set_vertices();
     set_neighbors();
   }
 
   inline
-  CGAL_Triangulation_cell_base_3(void* v0, void* v1, void* v2, void* v3)
+  Triangulation_cell_base_3(void* v0, void* v1, void* v2, void* v3)
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors();
   }
 
   inline
-  CGAL_Triangulation_cell_base_3(void* v0, void* v1, void* v2, void* v3,
+  Triangulation_cell_base_3(void* v0, void* v1, void* v2, void* v3,
 				 void* n0, void* n1, void* n2, void* n3)
   {
     set_vertices(v0, v1, v2, v3);
@@ -155,20 +157,11 @@ public:
   inline 
   int cell_index(const void* n) const
   {
-    if (n == N[0]) {
-      return 0;
-    }
-    if (n == N[1]) {
-      return 1;
-    }
-    if (n == N[2]) {
-      return 2;
-    }
-    if (n == N[3]) {
-      return 3;
-    }
-    CGAL_triangulation_precondition(false); // we should not get here
-    return -1;
+    if (n == N[0]) return 0;
+    if (n == N[1]) return 1;
+    if (n == N[2]) return 2;
+	CGAL_triangulation_assertion( n == N[3] );
+    return 3;
   }
  
   // SETTING
@@ -190,10 +183,7 @@ public:
   inline 
   void set_vertices()
   {
-    V[0] = NULL;
-    V[1] = NULL;
-    V[2] = NULL;
-    V[3] = NULL;
+    V[0] = V[1] = V[2] = V[3] = NULL;
   }
     
   inline 
@@ -244,22 +234,24 @@ private:
 };
 
 template < class GT >
-istream& operator>>
-(istream& is, CGAL_Triangulation_cell_base_3<GT> & c)
+std::istream& operator>>
+(std::istream& is, Triangulation_cell_base_3<GT> & c)
   // non combinatorial information. Default = nothing
 {
   return is;
 }
 template < class GT >
-ostream& operator<<
-(ostream& os, const CGAL_Triangulation_cell_base_3<GT> & c)
+std::ostream& operator<<
+(std::ostream& os, const Triangulation_cell_base_3<GT> & c)
   // non combinatorial information. Default = nothing
 {
   // ADD THE FOLLOWING WHEN ADDING INFORMATION : 
-//   if(CGAL_is_ascii(os)) {
+//   if(is_ascii(os)) {
 //     os << endl;
 //   }
   return os;
 }
 
-#endif CGAL_TRIANGULATION_CELL_BASE_3_H
+CGAL_END_NAMESPACE
+
+#endif // CGAL_TRIANGULATION_CELL_BASE_3_H

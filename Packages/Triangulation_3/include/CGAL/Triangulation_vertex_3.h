@@ -27,27 +27,28 @@
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_circulators_3.h>
 
+CGAL_BEGIN_NAMESPACE
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_cell_3;
+class Triangulation_cell_3;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_vertex_handle_3;
+class Triangulation_vertex_handle_3;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_cell_handle_3;
+class Triangulation_cell_handle_3;
 
 // template<class Gt,  class Tds>
-// class CGAL_Triangulation_cell_circulator_3;
+// class Triangulation_cell_circulator_3;
 
 // template<class Gt,  class Tds>
-// class CGAL_Triangulation_vertex_circulator_3;
+// class Triangulation_vertex_circulator_3;
 
 // template<class Gt, class Tds>
-// class CGAL_Triangulation_edge_circulator_3;
+// class Triangulation_edge_circulator_3;
 
 template<class Gt, class Tds >
-class CGAL_Triangulation_vertex_3
+class Triangulation_vertex_3
   : public Tds::Vertex
 {
 public:
@@ -57,31 +58,31 @@ public:
   typedef typename Tds::Vertex Vtds;
   typedef typename Tds::Cell Ctds;
 
-  typedef CGAL_Triangulation_cell_3<Gt,Tds> Cell;
-  typedef CGAL_Triangulation_vertex_3<Gt,Tds> Vertex;
+  typedef Triangulation_cell_3<Gt,Tds> Cell;
+  typedef Triangulation_vertex_3<Gt,Tds> Vertex;
   
-  typedef CGAL_Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
-  typedef CGAL_Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
+  typedef Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
+  typedef Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
   //  typedef pair<Cell_handle, int, int>     Edge;
 
-  //  typedef CGAL_Triangulation_cell_circulator_3<Gt,Tds>      Cell_circulator;
-  //  typedef CGAL_Triangulation_edge_circulator_3<Gt,Tds>      Edge_circulator;
-  //  typedef CGAL_Triangulation_vertex_circulator_3<Gt,Tds>    Vertex_circulator;
+  //  typedef Triangulation_cell_circulator_3<Gt,Tds>      Cell_circulator;
+  //  typedef Triangulation_edge_circulator_3<Gt,Tds>      Edge_circulator;
+  //  typedef Triangulation_vertex_circulator_3<Gt,Tds>    Vertex_circulator;
 
   
-  CGAL_Triangulation_vertex_3()
+  Triangulation_vertex_3()
      : Vtds()
   {}
 
-  CGAL_Triangulation_vertex_3(const Point & p)
+  Triangulation_vertex_3(const Point & p)
     :  Vtds(p)
   {}
     
-  CGAL_Triangulation_vertex_3(const Point & p, Cell_handle c)
+  Triangulation_vertex_3(const Point & p, Cell_handle c)
     :  Vtds(p, &(*c))
   {}
 
-  CGAL_Triangulation_vertex_3(Cell_handle c)
+  Triangulation_vertex_3(Cell_handle c)
     :  Vtds(&(*c))
   {}
 
@@ -141,4 +142,7 @@ public:
 //   }
     
 };
-#endif CGAL_TRIANGULATION_VERTEX_3_H
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_TRIANGULATION_VERTEX_3_H

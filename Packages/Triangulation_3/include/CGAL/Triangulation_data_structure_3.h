@@ -28,12 +28,13 @@
 #ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 
-#include <pair.h>
 #include <CGAL/triple.h>
-#include <list.h>
-#include <map.h>
-#include <set.h>
-#include <vector.h>
+//#include <pair.h>
+#include <utility>
+#include <list>
+#include <map>
+#include <set>
+#include <vector>
 
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/triangulation_assertions.h>
@@ -48,63 +49,64 @@
 #include <CGAL/Triangulation_ds_iterators_3.h>
 #include <CGAL/Triangulation_ds_circulators_3.h>
 
+CGAL_BEGIN_NAMESPACE
 
-template <class Tds>
-class CGAL_Triangulation_ds_cell_iterator_3;
-template <class Tds>
-class CGAL_Triangulation_ds_facet_iterator_3;
-template <class Tds>
-class CGAL_Triangulation_ds_vertex_iterator_3;
-template <class Tds>
-class CGAL_Triangulation_ds_cell_circulator_3;
+template <class TDS>
+class Triangulation_ds_cell_iterator_3;
+template <class TDS>
+class Triangulation_ds_facet_iterator_3;
+template <class TDS>
+class Triangulation_ds_vertex_iterator_3;
+template <class TDS>
+class Triangulation_ds_cell_circulator_3;
 
 template <class Vb, class Cb>
-class CGAL_Triangulation_data_structure_3
-  :public CGAL_Triangulation_utils_3
+class Triangulation_data_structure_3
+  :public Triangulation_utils_3
 {
 
-  friend istream& operator>> CGAL_NULL_TMPL_ARGS
-  (istream&, CGAL_Triangulation_data_structure_3<Vb,Cb>&);
-//   friend ostream& operator<< CGAL_NULL_TMPL_ARGS
-//   (ostream& os, const CGAL_Triangulation_data_structure_3<Vb,Cb> &tr);
+  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+  (std::istream&, Triangulation_data_structure_3<Vb,Cb>&);
+//   friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
+//   (std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tr);
 
-  friend void CGAL_Triangulation_ds_cell_3<Vb,Cb>::add_list
-  (CGAL_Triangulation_data_structure_3<Vb,Cb>&);
+  //  friend void Triangulation_ds_cell_3<Vb,Cb>::add_list
+  //  (Triangulation_data_structure_3<Vb,Cb>&);
+  friend class Triangulation_ds_cell_3<Vb,Cb>;
 
-  friend class CGAL_Triangulation_ds_cell_iterator_3
-  <CGAL_Triangulation_data_structure_3<Vb,Cb> >;
-  friend class CGAL_Triangulation_ds_facet_iterator_3
-  <CGAL_Triangulation_data_structure_3<Vb,Cb> >;
-  friend class CGAL_Triangulation_ds_edge_iterator_3
-  <CGAL_Triangulation_data_structure_3<Vb,Cb> >;
-  friend class CGAL_Triangulation_ds_vertex_iterator_3
-  <CGAL_Triangulation_data_structure_3<Vb,Cb> >;
+  friend class Triangulation_ds_cell_iterator_3
+  <Triangulation_data_structure_3<Vb,Cb> >;
+  friend class Triangulation_ds_facet_iterator_3
+  <Triangulation_data_structure_3<Vb,Cb> >;
+  friend class Triangulation_ds_edge_iterator_3
+  <Triangulation_data_structure_3<Vb,Cb> >;
+  friend class Triangulation_ds_vertex_iterator_3
+  <Triangulation_data_structure_3<Vb,Cb> >;
   
 public:
   
   //  typedef typename Vb::Point Point;
   
-  typedef CGAL_Triangulation_ds_vertex_3<Vb,Cb> Vertex;
-  typedef CGAL_Triangulation_ds_cell_3<Vb,Cb> Cell;
+  typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
+  typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
   typedef pair<Cell*, int>  Facet;
-  typedef CGAL_triple<Cell*, int, int> Edge;
+  typedef triple<Cell*, int, int> Edge;
 
-  typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
+  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
 
-  typedef CGAL_Triangulation_ds_cell_iterator_3<Tds> Cell_iterator;
-  typedef CGAL_Triangulation_ds_facet_iterator_3<Tds> Facet_iterator;
-  typedef CGAL_Triangulation_ds_edge_iterator_3<Tds> Edge_iterator;
-  typedef CGAL_Triangulation_ds_vertex_iterator_3<Tds> Vertex_iterator;
-  typedef CGAL_Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
+  typedef Triangulation_ds_cell_iterator_3<Tds> Cell_iterator;
+  typedef Triangulation_ds_facet_iterator_3<Tds> Facet_iterator;
+  typedef Triangulation_ds_edge_iterator_3<Tds> Edge_iterator;
+  typedef Triangulation_ds_vertex_iterator_3<Tds> Vertex_iterator;
+  typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
 
   // CONSTRUCTORS
 
-  inline
-  CGAL_Triangulation_data_structure_3() 
+  Triangulation_data_structure_3() 
     : _dimension(-2), _number_of_vertices(0), _list_of_cells() 
   {}
 
-  CGAL_Triangulation_data_structure_3(const Vertex & v)
+  Triangulation_data_structure_3(const Vertex & v)
     : _dimension(-2), _number_of_vertices(0), _list_of_cells()
   {
     insert_outside_affine_hull(v);
@@ -112,7 +114,7 @@ public:
   }
 
   inline
-  CGAL_Triangulation_data_structure_3(const Tds & tds)
+  Triangulation_data_structure_3(const Tds & tds)
     : _number_of_vertices(0), _list_of_cells()
     // _number_of_vertices is set to 0 so that clear() in copy_tds() works
   {
@@ -121,7 +123,7 @@ public:
 
   // DESTRUCTOR
 
-  ~CGAL_Triangulation_data_structure_3()
+  ~Triangulation_data_structure_3()
   {
     clear();
   }
@@ -556,7 +558,7 @@ public:
 	cnew->set_neighbor(j,c);
 
 	// the code here duplicates a large part of the code 
-	// of CGAL_Triangulation_ds_cell_circulator_3
+	// of Triangulation_ds_cell_circulator_3
 
 	//	int k=Cell_circulator::other(i,j);
 	//	Cell* ctmp = c->neighbor(k);
@@ -1266,8 +1268,8 @@ public:
       CGAL_triangulation_precondition( tds.is_vertex(vert) );
     }
 
-    map< void*, void*, less<void*> > V;
-    map< void*, void*, less<void*> > F;
+    std::map< void*, void*, less<void*> > V;
+    std::map< void*, void*, less<void*> > F;
     Vertex*  v;
     Cell* f;
 
@@ -1546,8 +1548,8 @@ private:
 };
 
 template < class Vb, class Cb>
-istream& operator>>
-(istream& is, CGAL_Triangulation_data_structure_3<Vb,Cb>& tds)
+std::istream& operator>>
+(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   // reads :
   // the dimension
   // the number of vertices
@@ -1557,7 +1559,7 @@ istream& operator>>
   // when dimension < 3 : the same with faces of maximal dimension
 {
 
-  typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
+  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef  Tds::Vertex  Vertex;
   typedef  Tds::Cell Cell;
   typedef  Tds::Edge Edge;
@@ -1577,8 +1579,8 @@ istream& operator>>
   }
 
   //  Point p;
-  map< int, Vertex*, less<int> > V;
-  //  vector<Vertex*> V(n);
+  std::map< int, Vertex*, less<int> > V;
+  //  std::vector<Vertex*> V(n);
   
   // creation of the vertices    
 
@@ -1588,14 +1590,14 @@ istream& operator>>
     V[i] = new Vertex();
   }
 
-  map< int, Cell*, less<int> > C;
+  std::map< int, Cell*, less<int> > C;
   int m;
 //   // creation of the cells and neighbors
 //   switch (d) {
 //   case 3:
 //     {
 //       is >> m;
-//      vector<Cell*> C(m);
+//      std::vector<Cell*> C(m);
 //       Cell* c;
 
 //       int i0, i1, i2, i3;
@@ -1621,7 +1623,7 @@ istream& operator>>
 //   case 2:
 //     {
 //       is >> m;
-//      vector<Cell*> C(m);
+//      std::vector<Cell*> C(m);
 //       Cell* c;
 
 //       int i0, i1, i2;
@@ -1645,7 +1647,7 @@ istream& operator>>
 //   case 1:
 //     {
 //       is >> m;
-//      vector<Cell*> C(m);
+//      std::vector<Cell*> C(m);
 //       Cell* c;
 
 //       int i0, i1;
@@ -1667,7 +1669,7 @@ istream& operator>>
 //   case 0:
 //     {
 //       m=2;
-//      vector<Cell*> C(2);
+//      std::vector<Cell*> C(2);
 //       Cell* c;
 
 //       CGAL_triangulation_assertion( (n == 2) );
@@ -1685,7 +1687,7 @@ istream& operator>>
 //   case -1:
 //     {
 //       m = 1;
-//      vector<Cell*> C(1);
+//      std::vector<Cell*> C(1);
 //       Cell* c;
 //       CGAL_triangulation_assertion( (n == 1) );
 //       c = new Cell(tds, V[0], NULL, NULL, NULL);
@@ -1701,8 +1703,8 @@ istream& operator>>
 
 
 template < class Vb, class Cb>
-ostream& operator<<
-(ostream& os, const CGAL_Triangulation_data_structure_3<Vb,Cb>  &tds)
+std::ostream& operator<<
+(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb>  &tds)
   // writes :
   // the dimension
   // the number of vertices
@@ -1711,7 +1713,7 @@ ostream& operator<<
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
-  typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
+  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef  Tds::Vertex  Vertex;
   typedef  Tds::Cell Cell;
   typedef  Tds::Edge Edge;
@@ -1721,15 +1723,15 @@ ostream& operator<<
   typedef  Tds::Edge_iterator  Edge_iterator;
   typedef  Tds::Facet_iterator  Facet_iterator;
 
-  map< void*, int, less<void*> > V;
-  //  map< void*, int, less<void*> > C;
+  std::map< void*, int, less<void*> > V;
+  //  std::map< void*, int, less<void*> > C;
 
   // outputs dimension and number of vertices
   int n = tds.number_of_vertices();
   switch ( tds.dimension() ) {
   case 3:
     {
-      if(CGAL_is_ascii(os)){
+      if(is_ascii(os)){
         os << tds.dimension() << endl << n << endl;
       } else {
         os << tds.dimension() << n;
@@ -1738,7 +1740,7 @@ ostream& operator<<
     }
   case 2:
     {
-      if(CGAL_is_ascii(os)){
+      if(is_ascii(os)){
         os << tds.dimension() << endl << n << endl;
       } else {
         os << tds.dimension() << n;
@@ -1747,7 +1749,7 @@ ostream& operator<<
     }
   case 1:
     {
-      if(CGAL_is_ascii(os)){
+      if(is_ascii(os)){
         os << tds.dimension() << endl << n << endl;
       } else {
         os << tds.dimension() << n ;
@@ -1756,7 +1758,7 @@ ostream& operator<<
     }
   case 0:
     {
-      if(CGAL_is_ascii(os)){
+      if(is_ascii(os)){
 	os << tds.dimension() << endl << n << endl;
       } else {
 	os << tds.dimension() << n;
@@ -1765,7 +1767,7 @@ ostream& operator<<
     }
   default:
     {
-      if(CGAL_is_ascii(os)){
+      if(is_ascii(os)){
 	os << tds.dimension() << endl << n << endl;
       } else {
 	os << tds.dimension() << n;
@@ -1784,7 +1786,7 @@ ostream& operator<<
   while(it != tds.vertices_end()){
     V[&(*it)] = i++;
     //    os << it->point();
-    //    if(CGAL_is_ascii(os)){
+    //    if(is_ascii(os)){
     //      os << endl;
     //    }
     ++it;
@@ -1799,7 +1801,7 @@ ostream& operator<<
 //   case 3:
 //     {
 //       os << m;
-//       if(CGAL_is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << endl;}
 
 //       // write the cells
 //       Cell_iterator it = tds.cells_begin();
@@ -1807,7 +1809,7 @@ ostream& operator<<
 // 	C[&(*it)] = i++;
 // 	for(j = 0; j < 4; j++){
 // 	  os << V[it->vertex(j)];
-// 	  if(CGAL_is_ascii(os)) {
+// 	  if(is_ascii(os)) {
 // 	    if ( j==3 ) {
 // 	      os << endl;
 // 	    } else {
@@ -1824,7 +1826,7 @@ ostream& operator<<
 //       while ( it != tds.cells_end() ) {
 // 	for (j = 0; j < 4; j++) {
 // 	  os << C[&(* it->neighbor(j))];
-// 	  if(CGAL_is_ascii(os)){
+// 	  if(is_ascii(os)){
 // 	    if(j==3) {
 // 	      os << endl;
 // 	    } else {
@@ -1839,7 +1841,7 @@ ostream& operator<<
 //   case 2:
 //     {
 //       os << m;
-//       if(CGAL_is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << endl;}
 
 //       // write the facets
 //       Facet_iterator it = tds.facets_begin();
@@ -1847,7 +1849,7 @@ ostream& operator<<
 // 	C[&*((*it).first)] = i++;
 // 	for(j = 0; j < 3; j++){
 // 	  os << V[(*it).first->vertex(j)];
-// 	  if(CGAL_is_ascii(os)) {
+// 	  if(is_ascii(os)) {
 // 	    if ( j==2 ) {
 // 	      os << endl;
 // 	    } else {
@@ -1864,7 +1866,7 @@ ostream& operator<<
 //       while ( it != tds.facets_end() ) {
 // 	for (j = 0; j < 3; j++) {
 // 	  os << C[&*((*it).first->neighbor(j))];
-// 	  if(CGAL_is_ascii(os)){
+// 	  if(is_ascii(os)){
 // 	    if(j==2) {
 // 	      os << endl;
 // 	    } else {
@@ -1879,7 +1881,7 @@ ostream& operator<<
 //   case 1:
 //     {
 //       os << m;
-//       if(CGAL_is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << endl;}
 
 //       // write the edges
 //       Edge_iterator it = tds.edges_begin();
@@ -1887,7 +1889,7 @@ ostream& operator<<
 // 	C[&*((*it).first)] = i++;
 // 	for(j = 0; j < 2; j++){
 // 	  os << V[(*it).first->vertex(j)];
-// 	  if(CGAL_is_ascii(os)) {
+// 	  if(is_ascii(os)) {
 // 	    if ( j==1 ) {
 // 	      os << endl;
 // 	    } else {
@@ -1904,7 +1906,7 @@ ostream& operator<<
 //       while ( it != tds.edges_end() ) {
 // 	for (j = 0; j < 2; j++) {
 // 	  os << C[&*((*it).first->neighbor(j))];
-// 	  if(CGAL_is_ascii(os)){
+// 	  if(is_ascii(os)){
 // 	    if(j==1) {
 // 	      os << endl;
 // 	    } else {
@@ -1919,7 +1921,7 @@ ostream& operator<<
 // //   default:
 // //     {
 // //       os << m;
-// //       if(CGAL_is_ascii(os)){ os << endl;}
+// //       if(is_ascii(os)){ os << endl;}
 // //       break;
 // //     }
 //   }
@@ -1928,18 +1930,18 @@ ostream& operator<<
 
 // not documented
 template < class Vb, class Cb>
-istream& read_cells
-(istream& is,
- CGAL_Triangulation_data_structure_3<Vb,Cb>  &tds,
+std::istream& read_cells
+(std::istream& is,
+ Triangulation_data_structure_3<Vb,Cb>  &tds,
  int n,
- // vector<void*> &V(n),
- map< int, CGAL_Triangulation_data_structure_3<Vb,Cb>::Vertex*, less<int> > &V,
- // vector<void*> &C(m)
+ // std::vector<void*> &V(n),
+ std::map< int, Triangulation_data_structure_3<Vb,Cb>::Vertex*, less<int> > &V,
+ // std::vector<void*> &C(m)
  int & m,
- map< int, CGAL_Triangulation_data_structure_3<Vb,Cb>::Cell*, less<int> > &C
+ std::map< int, Triangulation_data_structure_3<Vb,Cb>::Cell*, less<int> > &C
 )
 {
-  typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
+  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef  Tds::Vertex  Vertex;
   typedef  Tds::Cell Cell;
   typedef  Tds::Edge Edge;
@@ -2049,14 +2051,14 @@ istream& read_cells
 }
 // not documented
 template < class Vb, class Cb>
-ostream& print_cells
-(ostream& os, 
- const CGAL_Triangulation_data_structure_3<Vb,Cb>  &tds,
+std::ostream& print_cells
+(std::ostream& os, 
+ const Triangulation_data_structure_3<Vb,Cb>  &tds,
  int n,
- map< void*, int, less<void*> > &V
+ std::map< void*, int, less<void*> > &V
 )
 {
-  typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
+  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef  Tds::Vertex  Vertex;
   typedef  Tds::Cell Cell;
   typedef  Tds::Edge Edge;
@@ -2066,7 +2068,7 @@ ostream& print_cells
   typedef  Tds::Edge_iterator  Edge_iterator;
   typedef  Tds::Facet_iterator  Facet_iterator;
 
-  map< void*, int, less<void*> > C;
+  std::map< void*, int, less<void*> > C;
 
   int i = 0;
   int j;
@@ -2077,7 +2079,7 @@ ostream& print_cells
     {
       m = tds.number_of_cells();
       os << m;
-      if(CGAL_is_ascii(os)){ os << endl;}
+      if(is_ascii(os)){ os << endl;}
 
       // write the cells
       Cell_iterator it = tds.cells_begin();
@@ -2085,7 +2087,7 @@ ostream& print_cells
 	C[&(*it)] = i++;
 	for(j = 0; j < 4; j++){
 	  os << V[it->vertex(j)];
-	  if(CGAL_is_ascii(os)) {
+	  if(is_ascii(os)) {
 	    if ( j==3 ) {
 	      os << endl;
 	    } else {
@@ -2102,7 +2104,7 @@ ostream& print_cells
       while ( it != tds.cells_end() ) {
 	for (j = 0; j < 4; j++) {
 	  os << C[&(* it->neighbor(j))];
-	  if(CGAL_is_ascii(os)){
+	  if(is_ascii(os)){
 	    if(j==3) {
 	      os << endl;
 	    } else {
@@ -2118,7 +2120,7 @@ ostream& print_cells
     {
       m = tds.number_of_facets();
       os << m;
-      if(CGAL_is_ascii(os)){ os << endl;}
+      if(is_ascii(os)){ os << endl;}
 
       // write the facets
       Facet_iterator it = tds.facets_begin();
@@ -2126,7 +2128,7 @@ ostream& print_cells
 	C[&*((*it).first)] = i++;
 	for(j = 0; j < 3; j++){
 	  os << V[(*it).first->vertex(j)];
-	  if(CGAL_is_ascii(os)) {
+	  if(is_ascii(os)) {
 	    if ( j==2 ) {
 	      os << endl;
 	    } else {
@@ -2143,7 +2145,7 @@ ostream& print_cells
       while ( it != tds.facets_end() ) {
 	for (j = 0; j < 3; j++) {
 	  os << C[&*((*it).first->neighbor(j))];
-	  if(CGAL_is_ascii(os)){
+	  if(is_ascii(os)){
 	    if(j==2) {
 	      os << endl;
 	    } else {
@@ -2159,7 +2161,7 @@ ostream& print_cells
     {
       m = tds.number_of_edges();
       os << m;
-      if(CGAL_is_ascii(os)){ os << endl;}
+      if(is_ascii(os)){ os << endl;}
 
       // write the edges
       Edge_iterator it = tds.edges_begin();
@@ -2167,7 +2169,7 @@ ostream& print_cells
 	C[&*((*it).first)] = i++;
 	for(j = 0; j < 2; j++){
 	  os << V[(*it).first->vertex(j)];
-	  if(CGAL_is_ascii(os)) {
+	  if(is_ascii(os)) {
 	    if ( j==1 ) {
 	      os << endl;
 	    } else {
@@ -2184,7 +2186,7 @@ ostream& print_cells
       while ( it != tds.edges_end() ) {
 	for (j = 0; j < 2; j++) {
 	  os << C[&*((*it).first->neighbor(j))];
-	  if(CGAL_is_ascii(os)){
+	  if(is_ascii(os)){
 	    if(j==1) {
 	      os << endl;
 	    } else {
@@ -2199,10 +2201,12 @@ ostream& print_cells
 //   default:
 //     {
 //       os << m;
-//       if(CGAL_is_ascii(os)){ os << endl;}
+//       if(is_ascii(os)){ os << endl;}
 //       break;
 //     }
   }
   return os;
 }
-#endif CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
+
+CGAL_END_NAMESPACE
+#endif // CGAL_TRIANGULATION_DATA_STRUCTURE_3_H

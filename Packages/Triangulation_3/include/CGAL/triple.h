@@ -22,30 +22,32 @@
 #ifndef CGAL_TRIPLE_H
 #define CGAL_TRIPLE_H
 
+CGAL_BEGIN_NAMESPACE
+
 template <class T1, class T2, class T3>
-struct CGAL_triple 
+struct triple 
 {
   T1 first;
   T2 second;
   T3 third;
 
-  CGAL_triple() {}
+  triple() {}
 
-  CGAL_triple(const T1& a, const T2& b, const T3& c)
+  triple(const T1& a, const T2& b, const T3& c)
     : first(a), second(b), third(c) 
     {}
 };
 
 template <class T1, class T2, class T3>
 inline 
-CGAL_triple<T1, T2, T3> CGAL_make_triple(const T1& x, const T2& y, const T3& z)
+triple<T1, T2, T3> make_triple(const T1& x, const T2& y, const T3& z)
 {
-  return CGAL_triple<T1, T2, T3>(x, y, z);
+  return triple<T1, T2, T3>(x, y, z);
 }
 
 template <class T1, class T2, class T3>
-inline bool operator==(const CGAL_triple<T1, T2, T3>& x,
-		       const CGAL_triple<T1, T2, T3>& y) 
+inline bool operator==(const triple<T1, T2, T3>& x,
+		       const triple<T1, T2, T3>& y) 
 { 
   return ( (x.first == y.first) && 
 	   (x.second == y.second) && 
@@ -54,8 +56,8 @@ inline bool operator==(const CGAL_triple<T1, T2, T3>& x,
 
 template <class T1, class T2, class T3>
 inline
-bool operator<(const CGAL_triple<T1, T2, T3>& x,
-	       const CGAL_triple<T1, T2, T3>& y)
+bool operator<(const triple<T1, T2, T3>& x,
+	       const triple<T1, T2, T3>& y)
 { 
   return ( x.first < y.first || 
 	   ( (x.first == y.first) && (x.second < y.second) ) ||
@@ -63,4 +65,6 @@ bool operator<(const CGAL_triple<T1, T2, T3>& x,
 	                             (x.third < y.third) ) );
 }
 
-#endif CGAL_TRIPLE_H
+CGAL_END_NAMESPACE
+
+#endif // CGAL_TRIPLE_H

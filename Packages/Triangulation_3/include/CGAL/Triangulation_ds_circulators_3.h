@@ -22,17 +22,20 @@
 #ifndef CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
 #define CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
 
-#include <pair.h>
+//#include <pair.h>
+#include <utility>
 #include <CGAL/triple.h>
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_utils_3.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template < class Tds >
-class CGAL_Triangulation_ds_cell_circulator_3
-  : public CGAL_Bidirectional_circulator_base<typename Tds::Cell, ptrdiff_t, size_t>, 
-    public CGAL_Triangulation_utils_3
+class Triangulation_ds_cell_circulator_3
+  : public Bidirectional_circulator_base<typename Tds::Cell, ptrdiff_t, size_t>, 
+    public Triangulation_utils_3
 {
   // circulates on cells around a given edge
 public:
@@ -42,11 +45,11 @@ public:
   typedef typename Tds::Edge Edge;
   typedef typename Tds::Vertex Vertex;
 
-  typedef CGAL_Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
+  typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
 
   // CONSTRUCTORS
 
-  CGAL_Triangulation_ds_cell_circulator_3()
+  Triangulation_ds_cell_circulator_3()
     : _tds(NULL), _e(), pos(NULL)//, prev(NULL)
   {
     _e.first = NULL;
@@ -54,7 +57,7 @@ public:
     _e.third = 0;
   }
         
-  CGAL_Triangulation_ds_cell_circulator_3(Tds * tds, Edge e)
+  Triangulation_ds_cell_circulator_3(Tds * tds, Edge e)
     : _tds(tds), _e(e)
   {
     CGAL_triangulation_precondition( e.first != NULL && 
@@ -74,7 +77,7 @@ public:
 //    }
   }
   
-  CGAL_Triangulation_ds_cell_circulator_3(Tds * tds, Edge e, Cell* c)
+  Triangulation_ds_cell_circulator_3(Tds * tds, Edge e, Cell* c)
     : _tds(tds), _e(e)
   {
     CGAL_triangulation_precondition( e.first != NULL && 
@@ -89,7 +92,7 @@ public:
     pos = c;
   }
 
-  CGAL_Triangulation_ds_cell_circulator_3(const Cell_circulator & ccir)
+  Triangulation_ds_cell_circulator_3(const Cell_circulator & ccir)
     : _tds(ccir._tds), _e(ccir._e), pos(ccir.pos)//, prev(ccir.prev)
   {}
    
@@ -225,5 +228,6 @@ private:
 //   }
 };
 
-#endif CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
+CGAL_END_NAMESPACE
 
+#endif // CGAL_TRIANGULATION_DS_CIRCULATORS_3_H

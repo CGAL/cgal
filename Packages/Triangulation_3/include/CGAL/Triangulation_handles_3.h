@@ -24,48 +24,50 @@
 
 #include <CGAL/Triangulation_short_names_3.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template < class Gt, class Tds >
-class CGAL_Triangulation_cell_3;
+class Triangulation_cell_3;
 
 template <  class Gt, class Tds >
-class CGAL_Triangulation_vertex_3;
+class Triangulation_vertex_3;
 
 template <  class Gt, class Tds>
-class CGAL_Triangulation_cell_iterator_3;
+class Triangulation_cell_iterator_3;
 
 template <  class Gt, class Tds>
-class CGAL_Triangulation_vertex_iterator_3;
+class Triangulation_vertex_iterator_3;
 
 template <  class Gt, class Tds>
-class CGAL_Triangulation_cell_circulator_3;
+class Triangulation_cell_circulator_3;
 
 //template <  class Gt, class Tds>
-//class CGAL_Triangulation_vertex_circulator_3;
+//class Triangulation_vertex_circulator_3;
 
 
 template < class Gt, class Tds>
-class CGAL_Triangulation_vertex_handle_3
-  :public CGAL_Pointer<CGAL_Triangulation_vertex_3<Gt,Tds> > 
+class Triangulation_vertex_handle_3
+  :public Pointer<Triangulation_vertex_3<Gt,Tds> > 
 {
 public:
-  typedef CGAL_Pointer<CGAL_Triangulation_vertex_3<Gt,Tds> > Pointer;
-  typedef CGAL_Triangulation_vertex_3<Gt,Tds> Vertex;
-  typedef CGAL_Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
+  typedef Pointer<Triangulation_vertex_3<Gt,Tds> > Pointer;
+  typedef Triangulation_vertex_3<Gt,Tds> Vertex;
+  typedef Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
   
-  typedef CGAL_Triangulation_vertex_iterator_3<Gt,Tds>      Vertex_iterator;
+  typedef Triangulation_vertex_iterator_3<Gt,Tds>      Vertex_iterator;
   
   inline 
-  CGAL_Triangulation_vertex_handle_3()
+  Triangulation_vertex_handle_3()
     : Pointer(NULL)
   {}
 
   inline  
-  CGAL_Triangulation_vertex_handle_3(const Vertex* v)
+  Triangulation_vertex_handle_3(const Vertex* v)
     : Pointer((Vertex*)v)
     {}
 
   inline  
-  CGAL_Triangulation_vertex_handle_3(const Vertex_iterator & vit)
+  Triangulation_vertex_handle_3(const Vertex_iterator & vit)
     : Pointer(&(*vit))
     {}
   
@@ -84,41 +86,41 @@ public:
 };
 
 template <class Gt, class Tds>
-CGAL_Triangulation_vertex_3<Gt,Tds> * 
-CGAL_debug(const CGAL_Triangulation_vertex_handle_3<Gt,Tds> v)
+Triangulation_vertex_3<Gt,Tds> * 
+debug(const Triangulation_vertex_handle_3<Gt,Tds> v)
 {
   return v.ptr();
 }
 
 template <class Gt, class Tds>
-class CGAL_Triangulation_cell_handle_3
-  :public CGAL_Pointer<CGAL_Triangulation_cell_3<Gt,Tds> > 
+class Triangulation_cell_handle_3
+  :public Pointer<Triangulation_cell_3<Gt,Tds> > 
 {
 public:
-  typedef CGAL_Pointer<CGAL_Triangulation_cell_3<Gt,Tds> > Pointer;
-  typedef CGAL_Triangulation_cell_3<Gt,Tds> Cell;
-  typedef CGAL_Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
+  typedef Pointer<Triangulation_cell_3<Gt,Tds> > Pointer;
+  typedef Triangulation_cell_3<Gt,Tds> Cell;
+  typedef Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
   
-  typedef CGAL_Triangulation_cell_iterator_3<Gt,Tds> Cell_iterator;
-  typedef CGAL_Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
+  typedef Triangulation_cell_iterator_3<Gt,Tds> Cell_iterator;
+  typedef Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
   
   inline 
-  CGAL_Triangulation_cell_handle_3()
+  Triangulation_cell_handle_3()
     : Pointer(NULL)
   {}
 
   inline  
-  CGAL_Triangulation_cell_handle_3(const Cell* c)
+  Triangulation_cell_handle_3(const Cell* c)
     : Pointer((Cell*)c)
   {}
 
   inline  
-  CGAL_Triangulation_cell_handle_3(const Cell_iterator & cit)
+  Triangulation_cell_handle_3(const Cell_iterator & cit)
     : Pointer(&(*cit))
   {}
   
   inline  
-  CGAL_Triangulation_cell_handle_3(const Cell_circulator & ccir)
+  Triangulation_cell_handle_3(const Cell_circulator & ccir)
     : Pointer(&(*ccir))
   {}
 
@@ -137,11 +139,12 @@ public:
 };
 
 template <class Gt, class Tds>
-CGAL_Triangulation_cell_3<Gt,Tds> * 
-CGAL_debug(const CGAL_Triangulation_cell_handle_3<Gt,Tds> c)
+Triangulation_cell_3<Gt,Tds> * 
+debug(const Triangulation_cell_handle_3<Gt,Tds> c)
 {
   return c.ptr();
 }
 
+CGAL_END_NAMESPACE
 
-#endif CGAL_TRIANGULATION_HANDLES_3_H
+#endif // CGAL_TRIANGULATION_HANDLES_3_H

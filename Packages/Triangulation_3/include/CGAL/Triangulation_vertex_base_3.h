@@ -24,11 +24,13 @@
 
 #include <CGAL/Triangulation_short_names_3.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template < class GT >
-class CGAL_Triangulation_vertex_base_3
+class Triangulation_vertex_base_3
 {
-  friend istream& operator>> CGAL_NULL_TMPL_ARGS
-  (istream&, CGAL_Triangulation_vertex_base_3<GT>&);
+  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+  (std::istream&, Triangulation_vertex_base_3<GT>&);
 
 public:
   typedef typename GT::Point Point;
@@ -36,22 +38,22 @@ public:
   // CONSTRUCTORS
   
   inline 
-  CGAL_Triangulation_vertex_base_3()
+  Triangulation_vertex_base_3()
     : _p(), _c(NULL)
   {}
   
   inline 
-  CGAL_Triangulation_vertex_base_3(const Point & p)
+  Triangulation_vertex_base_3(const Point & p)
     :  _p(p), _c(NULL)
   {}
     
   inline 
-  CGAL_Triangulation_vertex_base_3(const Point & p, void* c)
+  Triangulation_vertex_base_3(const Point & p, void* c)
     :  _p(p), _c(c)
   {}
 
   inline 
-  CGAL_Triangulation_vertex_base_3(void* c)
+  Triangulation_vertex_base_3(void* c)
     :  _p(), _c(c)
   {}
 
@@ -94,23 +96,25 @@ private:
 };
 
 template < class GT >
-istream& operator>>
-(istream& is, CGAL_Triangulation_vertex_base_3<GT> & v)
+std::istream& operator>>
+(std::istream& is, Triangulation_vertex_base_3<GT> & v)
   // non combinatorial information. Default = point
 {
   is >> v._p;
   return is;
 }
 template < class GT >
-ostream& operator<<
-(ostream& os, const CGAL_Triangulation_vertex_base_3<GT> & v)
+std::ostream& operator<<
+(std::ostream& os, const Triangulation_vertex_base_3<GT> & v)
   // non combinatorial information. Default = point
 {
   os << v.point();
-  //  if(CGAL_is_ascii(os)){
+  //  if(is_ascii(os)){
   //    os << endl;
   //  }
   return os;
 }
 
-#endif CGAL_TRIANGULATION_VERTEX_BASE_3_H
+CGAL_END_NAMESPACE
+
+#endif // CGAL_TRIANGULATION_VERTEX_BASE_3_H

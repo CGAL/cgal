@@ -23,52 +23,54 @@
 #ifndef CGAL_TRIANGULATION_CIRCULATORS_3_H
 #define CGAL_TRIANGULATION_CIRCULATORS_3_H
 
-#include <pair.h>
+// #include <pair.h>
 #include <CGAL/triple.h>
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_ds_circulators_3.h>
 
-template < class Gt, class Tds >
-class CGAL_Triangulation_3;
+CGAL_BEGIN_NAMESPACE
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_cell_3;
+class Triangulation_3;
+
+template < class Gt, class Tds >
+class Triangulation_cell_3;
 
 template < class Gt, class Tds>
-class CGAL_Triangulation_cell_circulator_3
-  : public CGAL_Bidirectional_circulator_base<CGAL_Triangulation_cell_3<Gt,Tds>, ptrdiff_t, size_t>
+class Triangulation_cell_circulator_3
+  : public Bidirectional_circulator_base<Triangulation_cell_3<Gt,Tds>, ptrdiff_t, size_t>
 {
 public:
   typedef typename Tds::Cell Ctds;
   typedef typename Tds::Cell_circulator Circulator_base;
 
-  typedef CGAL_Triangulation_cell_3<Gt,Tds> Cell;
-  typedef CGAL_Triangulation_vertex_3<Gt,Tds> Vertex;
+  typedef Triangulation_cell_3<Gt,Tds> Cell;
+  typedef Triangulation_vertex_3<Gt,Tds> Vertex;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Cell::Cell_handle Cell_handle;
-  typedef CGAL_Triangulation_3<Gt,Tds> Triangulation_3;
+  typedef Triangulation_3<Gt,Tds> Triangulation_3;
   typedef typename Triangulation_3::Edge Edge;
 
-  typedef CGAL_Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
+  typedef Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
 
-  CGAL_Triangulation_cell_circulator_3()
+  Triangulation_cell_circulator_3()
     : _cb(), _tr(NULL)
     {}
 
-  CGAL_Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e)
-    : _cb( &(tr->_tds), CGAL_make_triple( (Ctds *) &(*(e.first)), e.second, e.third ) ), _tr(tr)
+  Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e)
+    : _cb( &(tr->_tds), make_triple( (Ctds *) &(*(e.first)), e.second, e.third ) ), _tr(tr)
     {}
 
-   CGAL_Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e, Cell_handle c)
+   Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e, Cell_handle c)
     : _cb( &(tr->_tds), 
-	   CGAL_make_triple( (Ctds *) &(*(e.first)), e.second, e.third ),
+	   make_triple( (Ctds *) &(*(e.first)), e.second, e.third ),
 	   (Ctds *) &(*c) ), 
       _tr(tr)
     {}
  
-  CGAL_Triangulation_cell_circulator_3(const Cell_circulator & ccir)
+  Triangulation_cell_circulator_3(const Cell_circulator & ccir)
     : _cb(ccir._cb), _tr(ccir._tr)
     {}
 
@@ -137,4 +139,6 @@ private:
   Triangulation_3 * _tr;
 };
 
-#endif
+CGAL_END_NAMESPACE
+
+#endif  // CGAL_TRIANGULATION_CIRCULATORS_3_H

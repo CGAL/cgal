@@ -26,18 +26,19 @@
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 
+CGAL_BEGIN_NAMESPACE
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_vertex_3;
+class Triangulation_vertex_3;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_vertex_handle_3;
+class Triangulation_vertex_handle_3;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_cell_handle_3;
+class Triangulation_cell_handle_3;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_cell_3
+class Triangulation_cell_3
   : public Tds::Cell
 {
 public:
@@ -47,31 +48,31 @@ public:
   typedef typename Tds::Vertex Vtds;
   typedef typename Tds::Cell Ctds;
 
-  typedef CGAL_Triangulation_vertex_3<Gt,Tds> Vertex;
-  typedef CGAL_Triangulation_cell_3<Gt,Tds> Cell;
+  typedef Triangulation_vertex_3<Gt,Tds> Vertex;
+  typedef Triangulation_cell_3<Gt,Tds> Cell;
 
-  typedef CGAL_Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
-  typedef CGAL_Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
+  typedef Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
+  typedef Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
   //  typedef triple<Cell_handle, int, int>     Edge;
 
   inline
-  CGAL_Triangulation_cell_3()
+  Triangulation_cell_3()
     : Ctds()
   { }
 
 //   inline 
-//   CGAL_Triangulation_cell_3(Ctds f)
+//   Triangulation_cell_3(Ctds f)
 //     : Ctds(f)
 //   {}
 // 
   
   inline
-  CGAL_Triangulation_cell_3(Tds& tds)
+  Triangulation_cell_3(Tds& tds)
     : Ctds(tds)
   { }
 
   inline
-  CGAL_Triangulation_cell_3(Tds & tds,
+  Triangulation_cell_3(Tds & tds,
 			    Vertex_handle v0,
 			    Vertex_handle v1,
 			    Vertex_handle v2,
@@ -80,7 +81,7 @@ public:
   {}
     
   inline
-  CGAL_Triangulation_cell_3(Tds & tds,
+  Triangulation_cell_3(Tds & tds,
 			    Vertex_handle v0,
 			    Vertex_handle v1,
 			    Vertex_handle v2,
@@ -183,4 +184,6 @@ public:
 //   }
 };
 
-#endif CGAL_TRIANGULATION_CELL_3_H
+CGAL_END_NAMESPACE
+
+#endif // CGAL_TRIANGULATION_CELL_3_H
