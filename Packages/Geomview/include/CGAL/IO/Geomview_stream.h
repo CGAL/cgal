@@ -32,6 +32,7 @@
 
 #include <string>
 #include <strstream> // deprecated
+// #include <sstream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -384,8 +385,9 @@ template < class R >
 void
 parse_point(const char* pickpoint, Point_3<R> &point)
 {
+    // std::stringstream ss;
     std::strstream ss;
-    ss << pickpoint << std::ends ;
+    ss << pickpoint << std::ends;
 
     double x, y, z, w;
     char parenthesis;

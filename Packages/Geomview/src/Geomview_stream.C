@@ -26,7 +26,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/IO/Geomview_stream.h>
 
-#include <strstream>
+#include <strstream> // deprecated
 #include <csignal>
 #include <cerrno>
 #include <unistd.h>
