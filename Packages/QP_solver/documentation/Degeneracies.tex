@@ -20,7 +20,9 @@
 \newcommand{\RMBI}[1]{\ensuremath{\check{M}_{#1}^{-1}}}
 
 \newcommand{\pmu}[2]{\ensuremath{p_{\mu_{j}}^{(#1)}(\varepsilon, #2)}}
+\newcommand{\pmuz}[2]{\ensuremath{\dot{p}_{\mu_{j}}^{(#1)}(\varepsilon, #2)}}
 \newcommand{\px}[3]{\ensuremath{p_{x_{#1}}^{(#2)}(\varepsilon, #3)}}
+\newcommand{\pxz}[3]{\ensuremath{\dot{p}_{x_{#1}}^{(#2)}(\varepsilon, #3)}}
 \newcommand{\xe}[1]{\ensuremath{x_{#1}(\varepsilon)}}
 \newcommand{\cab}[3]{\ensuremath{\mathcal{A}_{>}(#1, #2, #3)}}
 \newcommand{\can}[3]{\ensuremath{\mathcal{A}_{<}(#1, #2, #3)}}
@@ -53,7 +55,7 @@ s.t.	 & \sum_{j=0}^{n-1}a_{ij}x_{j} = b_{i}	& i \in E  \nonumber \\
 	 \nonumber
 \end{eqnarray}
 %\end{equation}
-where $I:= I^{\leq} \cup I^{\geq}$ and
+with $D$ positive semi definite, where $I:= I^{\leq} \cup I^{\geq}$ and
 $\left| E \right| + \left| I \right| = m$,
 the following conditions
 \begin{assumption} \label{ass:nondegeneracy}
@@ -345,7 +347,9 @@ for the unperturbed problem.
 Values will be considered as polynomials in $\varepsilon$,
 $p(\varepsilon)=\sum_{k=0}^{l}p_{k}\varepsilon^{k}$, and values are compared
 lexicographically in ascending order of the exponents of $\varepsilon$. As
-a consequence degenerate bases are no longer possible and therefore cycling is
+a consequence degenerate bases, in the sense of basic variables taking on their
+implicit lower bound values,
+are no longer possible and therefore cycling is
 avoided.   
 
 For later use we define the leading coefficient of a polynomial 
@@ -406,12 +410,13 @@ requirement that
 \label{req:order_eps}
 \max_{i \in O \cup S}i < \min_{i \in art}i
 \end{equation} 
-holds. Furthermore we require that the index $ind(\tilde{a}^{s})$ is
-the largest one with respect to slack and artificial variables
-\begin{equation}
-\label{req:order_eps_spec_art}
-\max_{i \in S \cup art \setminus \{\tilde{a}^{s} \}}i < ind(\tilde{a}^{s})
-\end{equation} 
+holds.
+%Furthermore we require that the index $ind(\tilde{a}^{s})$ is
+%the largest one with respect to slack and artificial variables
+%\begin{equation}
+%\label{req:order_eps_spec_art}
+%\max_{i \in S \cup art \setminus \{\tilde{a}^{s} \}}i < ind(\tilde{a}^{s})
+%\end{equation} 
 \marginpar{may the mapping $\sigma: S \rightarrow I$ still be arbitrary?}
 
 \subsection{Initialization of the auxiliary problem for the lexicographic
@@ -436,28 +441,28 @@ is now unique.
 \marginpar{variable index issue subsubsection adapted}
 Let $B$ be the current basis and $j \in N$ be the entering variable
 and define $\hat{N}:= N \setminus\{j\}$ and
-$q:= \tilde{A}_{B}^{-1}\tilde{A}_{\bullet,j}$.
+$q:= A_{B}^{-1}\tilde{A}_{\bullet,j}$.
 Let $i_{1}, i_{2} \in B$ be
 involved in a tie in the unperturbed problem, that is
 \begin{equation*}
   \min_{i \in B: q_{x_{i}} > 0}
-  \frac{\left(\tilde{A}_{B}^{-1}b\right)_{x_{i}}}{q_{x_{i}}}
+  \frac{\left(A_{B}^{-1}b\right)_{x_{i}}}{q_{x_{i}}}
   =
-  \frac{\left(\tilde{A}_{B}^{-1}b\right)_{x_{i_{1}}}}{q_{x_{i_{1}}}}
+  \frac{\left(A_{B}^{-1}b\right)_{x_{i_{1}}}}{q_{x_{i_{1}}}}
   =
-  \frac{\left(\tilde{A}_{B}^{-1}b\right)_{x_{i_{2}}}}{q_{x_{i_{2}}}}
+  \frac{\left(A_{B}^{-1}b\right)_{x_{i_{2}}}}{q_{x_{i_{2}}}}
 \end{equation*}
 by Definition~(\ref{def:aux_prob}),  we then have to compare
 polynomials in $\varepsilon$ of the following form in the perturbed problem
 \begin{eqnarray}
 \tilde{p}_{x_{i}}^{(L)}\left(\varepsilon, B\right) & := &
   \frac{\varepsilon^{i+1}
-  - \left(\tilde{A}_{B}^{-1}\tilde{A}_{N}\right)_{x_{i}}
+  - \left(A_{B}^{-1}\tilde{A}_{N}\right)_{x_{i}}
   \epsilon_{N}}{q_{x_{i}}} \nonumber \\
 \label{def:p_x_i_tilde}
  & = &
   \frac{\varepsilon^{i+1}
-  - \left(\tilde{A}_{B}^{-1}\tilde{A}_{\hat{N}}\right)_{x_{i}}
+  - \left(A_{B}^{-1}\tilde{A}_{\hat{N}}\right)_{x_{i}}
   \epsilon_{\hat{N}}}{q_{x_{i}}}
   + \varepsilon^{j+1}
 \end{eqnarray}
@@ -497,9 +502,9 @@ M_{B}
 \quad
 M_{B}:=
 \left(\begin{array}{c|c}
-        0 & \tilde{A}_{B} \\
+        0 & A_{B} \\
 	\hline
-	\tilde{A}_{B}^{T} & 0 
+	A_{B}^{T} & 0 
        \end{array}
 \right)
 \end{equation}
@@ -508,9 +513,9 @@ such that $M_{B}^{-1}$ is defined as
 \label{def:M_B_inv_phaseI}
 M_{B}^{-1}:=
 \left(\begin{array}{c|c}
-        0 & \left(\tilde{A}_{B}^{-1}\right)^{T} \\
+        0 & \left(A_{B}^{-1}\right)^{T} \\
 	\hline
-	\tilde{A}_{B}^{-1} & 0
+	A_{B}^{-1} & 0
        \end{array}
 \right)
 \end{equation}
@@ -530,7 +535,7 @@ q:= M_{B}^{-1}
 \left(\begin{array}{c}
         0 \\
 	\hline
-	\tilde{A}_{B}^{-1}\tilde{A}_{\bullet, j}
+	A_{B}^{-1}\tilde{A}_{\bullet, j}
        \end{array}
 \right)
 \end{equation}
@@ -879,7 +884,7 @@ In the following subsections we will mimic the arguments of \cite{Sven},
 Sections (2.3.1), (2.3.2) for the perturbed problem.
 
 \subsubsection{Pricing}
-Testing whether a nonbasic variable $x_{j}(\varepsilon)$ can improve the
+Testing whether a nonbasic variable \xe{j} can improve the
 current solution $x_{B}^{*}(\varepsilon)$ by entering the current
 $QP_{\varepsilon}$-basis $B$ is done as follows.
 Let $\hat{B}:=B \cup \{j\}$ and consider the subproblem
@@ -928,7 +933,7 @@ feasibility constraints~(\ref{eq:QP_eps_basis_feasibility_B}),
 (\ref{eq:QP_eps_basis_feasibility_N}) of
 $(UQP(B_{\epsilon}))$ and the fact that $N:=\hat{N} \cup \{j\}$ determine
 $\lambda(\varepsilon)$, given $x_{B}^{*}(\varepsilon)$ and
-$x_{j}^{*}(\varepsilon) = -\varepsilon^{j}$, by the linear equation system
+$x_{j}^{*}(\varepsilon) = -\varepsilon^{j+1}$, by the linear equation system
 \begin{equation}
 M_{B}\left(
         \begin{array}{c}
@@ -974,11 +979,11 @@ that $M_{B}$ is the same as in the unperturbed problem.
  
 \subsubsection{Ratio Test Step 1}
 Starting with a $QP_{\varepsilon}$-basis $B$ and an entering variable
-$x_{j}(\varepsilon)$,
+\xe{j},
 we want to find a new basis $B^{\prime} \subseteq B \cup \{j\}$ with
 better objective function value.
 Define $\hat{B}:=B \cup \{j\}$, then $x_{\hat{B}}^{*}(\varepsilon)$ with
-$x_{j}^{*}=-\varepsilon^{j}$ is the optimal solution to
+$x_{j}^{*}(\varepsilon)=-\varepsilon^{j+1}$ is the optimal solution to
 \begin{eqnarray*}
 (UQP_{j}^{t}(\hat{B}_{\varepsilon})) & minimize &
   c_{\hat{B} \cup \hat{N}}^{T}x_{\hat{B} \cup \hat{N}}(\varepsilon)
@@ -988,7 +993,7 @@ $x_{j}^{*}=-\varepsilon^{j}$ is the optimal solution to
   & s.t & A_{\hat{B}}x_{\hat{B}}(\varepsilon) =
   b - A_{\hat{N}}x_{\hat{N}}(\varepsilon) \\
   & & I_{\hat{N}}x_{\hat{N}}(\varepsilon) = \epsilon_{\hat{N}} \\
-  & & x_{j}(\varepsilon) = - \varepsilon^{j} + t
+  & & \xe{j} = - \varepsilon^{j+1} + t
 \end{eqnarray*}
 for $t=0$. $(UQP_{j}^{t}(\hat{B}_{\varepsilon}))$ has a unique solution
 $x_{\hat{B}}^{*}(\varepsilon, t)$ for each value of t, given by
@@ -1022,7 +1027,7 @@ M_{B}\left(\begin{array}{c}
       \end{array}
 \right)
 \end{equation}
-and $x_{j}^{*}\left(\varepsilon,t\right)= -\varepsilon^{j} + t$. This follows
+and $x_{j}^{*}\left(\varepsilon,t\right)= -\varepsilon^{j+1} + t$. This follows
 from the KKT conditions given by Lemma~\ref{lemma:KKT_UQP(B)_epsilon} for the
 reformulation of $(UQP_{j}^{t}(\hat{B}_{\varepsilon}))$ as
 \begin{eqnarray*}
@@ -1036,7 +1041,7 @@ reformulation of $(UQP_{j}^{t}(\hat{B}_{\varepsilon}))$ as
 with $\epsilon_{N}^{j}:=\epsilon_{N} + te_{j}$, and the regularity of
 $M_{B}$. 
 While increasing $t$ starting from zero, either some basic variable $i \in B$
-may become $x_{i}(\varepsilon)=-\varepsilon^{i}$ or a local minimum of the
+may become $\xe{i}=-\varepsilon^{i+1}$ or a local minimum of the
 objective function, that is $\mu_{j}(\varepsilon)$ in
 Equation~(\ref{eq:KKT_lagrange_id_j}) becomes zero, is reached.
 We will show later that these two events never happen simultaneously for the
@@ -1107,7 +1112,7 @@ such that Equation~(\ref{eq:UQP_j_t_opt_explicit}) becomes
 \end{equation}
 $\mu_{j}\left(\varepsilon, t\right)$ can then, by using
 Equations~(\ref{eq:KKT_lagrange_id_j}),(\ref{eq:UQP_j_t_opt_short}) and 
-$x_{j}^{*}\left(\varepsilon, t\right)= -\varepsilon^{j} + t$ be
+$x_{j}^{*}\left(\varepsilon, t\right)= -\varepsilon^{j+1} + t$ be
 expressed as
 \begin{eqnarray}
 \label{eq:mu_j_eps_t}
@@ -1195,7 +1200,7 @@ additional requirements of uniqueness of the solution as well as full row rank
 of $A_{\hat{B}}$ for $\hat{B}$ being the new $QP_{\varepsilon}$-basis.
 
 In the first case happening, we implicitly add the constraint
-$x_{i}(\varepsilon)=-\varepsilon^{i}$
+$\xe{i}=-\varepsilon^{i+1}$
 to $(UQP_{j}^{t}(\hat{B}_{\varepsilon}))$ by removing $i$ from the set $B$.
 If $M_{B \setminus \{i\}}$ is regular,
 we still have a unique optimal solution to
@@ -1249,7 +1254,7 @@ is defined as
 	        \hline
 	        x_{B}^{*}\left(\varepsilon, 0 \right)
 	      \end{array}
-        \right)_{x_{i}}+ \varepsilon^{i}}{q_{x_{i}}} \\
+        \right)_{x_{i}}+ \varepsilon^{i+1}}{q_{x_{i}}} \\
   &=&
     \check{t}\left(0, B \right) +
   \min_{i \in B: q_{x_{i}} > 0} \px{i}{Q_{1}}{B}
@@ -1258,7 +1263,7 @@ where
 \begin{eqnarray}
 \label{def:p_x_i_Q_1}
 \px{i}{Q_{1}}{B} &:=&
-  \frac{\varepsilon^{i} -
+  \frac{\varepsilon^{i+1} -
          \left(M_{B}^{-1}
            \left(\begin{array}{c}
                     A_{N}  \\
@@ -1268,7 +1273,7 @@ where
 	   \right)
          \right)_{x_{i}}\epsilon_{N}}{q_{x_{i}}} \\
   &=&
-    \frac{\varepsilon^{i} -
+    \frac{\varepsilon^{i+1} -
          \left(M_{B}^{-1}
            \left(\begin{array}{c}
                     A_{N \setminus \{j\}}  \\
@@ -1277,14 +1282,14 @@ where
 	         \end{array}
 	   \right)
          \right)_{x_{i}}\epsilon_{N \setminus \{j\}}}{q_{x_{i}}}
-	 + \varepsilon^{j}
+	 + \varepsilon^{j+1}
 \end{eqnarray}
 Therefore, in order to resolve the tie in the perturbed problem, we have 
 to compare the polynomials \px{i_{1}}{Q_{1}}{B} and \px{i_{2}}{Q_{1}}{B}.
 Again, as in phaseI we always have either
 $\px{i_{1}}{Q_{1}}{B} < \px{i_{2}}{Q_{1}}{B}$ or
 $\px{i_{1}}{Q_{1}}{B} > \px{i_{2}}{Q_{1}}{B}$, since the
-$\frac{\varepsilon^{i}}{q_{x_{i}}}$ terms are unique to each
+$\frac{\varepsilon^{i+1}}{q_{x_{i}}}$ terms are unique to each
 \px{i}{Q_{1}}{B}.
 
 Ties between a basic variable $x_{i}(0)$ taking its lower bound $0$ value and
@@ -1309,7 +1314,7 @@ for the latter expression above, the following two
 polynomials in $\varepsilon$ have to be compared in order to resolve the tie
 \begin{eqnarray}
 \px{i}{Q_{1}}{B} & = & 
-    \frac{\varepsilon^{i} -
+    \frac{\varepsilon^{i+1} -
          \left(M_{B}^{-1}
            \left(\begin{array}{c}
                     A_{N \setminus \{j\}}  \\
@@ -1318,7 +1323,7 @@ polynomials in $\varepsilon$ have to be compared in order to resolve the tie
 	         \end{array}
 	   \right)
          \right)_{x_{i}}\epsilon_{N \setminus \{j\}}}{q_{x_{i}}}
-	 + \varepsilon^{j} \\
+	 + \varepsilon^{j+1} \\
 \label{def:p_mu_j_Q_1}
 \pmu{Q_{1}}{B} & := &
   -\frac{2D_{j, N} -
@@ -1345,19 +1350,16 @@ polynomials in $\varepsilon$ have to be compared in order to resolve the tie
   \epsilon_{N \setminus \{j\}}
 \nonumber \\
 &&
-+\varepsilon^{j}      
++\varepsilon^{j+1}      
 \end{eqnarray}
-The term $\frac{\varepsilon^{i}}{q_{x_{i}}}$ is again unique to 
+The term $\frac{\varepsilon^{i+1}}{q_{x_{i}}}$ is again unique to 
 \px{i}{Q_{1}}{B}, such that the tie can always
 be resolved.
 
 
 \subsubsection{Ratio Test Step 2}
 Let $B$ be the set of basic variables after the last iteration of 
-Ratio Test Step~1
-and let $x_{l}(\varepsilon)$ be the leaving variable of this last iteration,
-such that $\tilde{B}:=B \cup \{l\}$ is the last basis
-of Ratio Test Step~1 for a given pivot. Since
+Ratio Test Step~1. Since
 $M_{B}$ is no longer regular, Equation~(\ref{eq:UQP_j_t_opt_explicit}) does
 no longer
 determine unique solutions to $(UQP_{j}^{t}(\hat{B_{\epsilon}}))$ for arbitrary
@@ -1507,8 +1509,8 @@ $QP(\hat{B_{\varepsilon}})$. Uniqueness of the solution follows from the
 regularity of $M_{\hat{B}}$, which also implies that $\hat{B}$ is the new basis
 in that case.
 
-On the other hand, if some basic variable $x_{k}(\varepsilon)$ becomes zero, we
-implicitly add the constraint $x_{k}(\varepsilon)=-\varepsilon^{k}$ to
+On the other hand, if some basic variable \xe{k} becomes zero, we
+implicitly add the constraint $\xe{k}=-\varepsilon^{k+1}$ to
 $(UQP(\hat{B_{\varepsilon}}))$ by removing $k$ from $\hat{B}$. If
 $M_{\hat{B} \setminus \{k\}}$ stays regular, we still obtain unique solutions
 of Equation~(\ref{eq:QP_j_mu_opt_explicit}) for arbitrary values of
@@ -1562,7 +1564,7 @@ $\check{\mu}_{j}(\varepsilon, \hat{B})$ is defined as
 	        \hline
 	        x_{\hat{B}}^{*}\left(\varepsilon,0\right)
 	      \end{array}
-        \right)_{x_{i}}+ \varepsilon^{i}}{p_{x_{i}}} \\
+        \right)_{x_{i}}+ \varepsilon^{i+1}}{p_{x_{i}}} \\
   &=&
   \check{\mu}_{j}(0, \hat{B}) +
   \min_{i \in \hat{B}: p_{x_{i}} < 0} p_{x_{i}}^{(Q_{2})}
@@ -1572,7 +1574,7 @@ where
 \begin{eqnarray}
 \label{def:p_x_i_Q_2}
 p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B}) &:=&
-  \frac{\varepsilon^{i} -
+  \frac{\varepsilon^{i+1} -
          \left(M_{\hat{B}}^{-1}
            \left(\begin{array}{c}
                     A_{\hat{N}}  \\
@@ -1585,7 +1587,7 @@ p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B}) &:=&
 Therefore in order to resolve the tie in the perturbed problem, we have to
 compare the polynomials \px{i_{1}}{Q_{2}}{\hat{B}} and
 \px{i_{2}}{Q_{2}}{\hat{B}}. Again, because of the term
-$\frac{\varepsilon^{i}}{p_{x_{i}}}$ we always have either
+$\frac{\varepsilon^{i+1}}{p_{x_{i}}}$ we always have either
 $\px{i_{1}}{Q_{2}}{\hat{B}} < \px{i_{2}}{Q_{2}}{\hat{B}}$ or
 $\px{i_{1}}{Q_{2}}{\hat{B}} > \px{i_{2}}{Q_{2}}{\hat{B}}$.
 
@@ -1593,11 +1595,13 @@ For ties between a basic variable $x_{i}(0)$ and $\mu_{j}(0)$ becoming zero
 in the unperturbed problem, that is
 \begin{equation}
 \label{eq:tie_unpert_ratio_test_step_2}
-  \check{\mu}_{j}(0, \hat{B}) = \mu_{j}\left(0\right)
+  \check{\mu}_{j}(0, \hat{B}) = 0
 \end{equation}
-we distinguish two cases: $\mu_{j}(0)$ may be
-determined by the last iteration of Ratio Test Step~1 or by the previous
-iteration in Ratio Test Step~2.
+Therefore, in order to resolve the tie,
+given Equation~(\ref{eq:tie_unpert_ratio_test_step_2}), we have to compare
+$\check{\mu}_{j}(\varepsilon, \hat{B})$ and the constant zero polynomial,
+because of the term $\frac{\varepsilon^{i+1}}{p_{x_{i}}}$ we always have
+either $\px{i}{Q_{2}}{\hat{B}} < 0$ or $\px{i}{Q_{2}}{\hat{B}} > 0$.
 
 \paragraph{$\mu_{j}$ determined by the last iteration of Ratio Test Step~1:}
 We have to compare $\check{\mu}_{j}(\varepsilon, \hat{B})$ and
@@ -1661,7 +1665,7 @@ such that \pmu{Q_{2}^{(0)}}{\hat{B}} is defined as
    \right]\epsilon_{\tilde{N} \setminus \{j\}} + 
  \nonumber \\ 
   &&
-  \frac{\varepsilon^{l} -
+  \frac{\varepsilon^{l+1} -
          \left(M_{\tilde{B}}^{-1}
            \left(\begin{array}{c}
                     A_{\tilde{N} \setminus \{j\}}  \\
@@ -1674,7 +1678,7 @@ such that \pmu{Q_{2}^{(0)}}{\hat{B}} is defined as
 Therefore, in order to resolve the tie, we have to compare
 $p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B})$ and
 \pmu{Q_{2}^{(0)}}{\hat{B}}, again,
-the term $\frac{\varepsilon^{i}}{p_{x_{i}}}$ is unique to
+the term $\frac{\varepsilon^{i+1}}{p_{x_{i}}}$ is unique to
 $p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B})$, such that the tie can
 always be resolved.
 
@@ -1713,7 +1717,7 @@ such that \pmu{Q_{2}^{(+)}}{\hat{B}} is defined as
 \begin{equation}
 \label{def:p_mu_j_Q_2_+}
 \pmu{Q_{2}^{(+)}}{\hat{B}^{(k)}} :=
-  \frac{\varepsilon^{l} -
+  \frac{\varepsilon^{l+1} -
          \left(M_{\hat{B}^{(k-1)}}^{-1}
            \left(\begin{array}{c}
                     A_{\hat{N}^{(k-1)}}  \\
@@ -1726,39 +1730,10 @@ such that \pmu{Q_{2}^{(+)}}{\hat{B}} is defined as
 Therefore, in order to resolve the tie, we have to compare
 $p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B}^{(k)})$ and
 $p_{x_{l}}^{(Q_{2})}(\varepsilon, \hat{B}^{(k-1)})$, again,
-the term $\frac{\varepsilon^{i}}{p_{x_{i}}}$ is unique to
+the term $\frac{\varepsilon^{i+1}}{p_{x_{i}}}$ is unique to
 $p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B}^{(k)})$, such that the tie can
 always be resolved. 
 
-\subsubsection{The maximum number of coefficient comparisons needed for the tie
-resolution in Ratio Test Step 2}
-As the Definition~(\ref{def:p_mu_j_Q_2_0}) of
-\pmu{Q_{2}^{(0)}}{\hat{B}} indicates
-the coefficients of \pmu{Q_{2}^{(0)}}{\hat{B}} entirely depend
-on the last basis $\tilde{B}$ and its headings in Ratio Test Step~1.
-For all the bases
-$\hat{B}$ in Ratio Test Step~2 for some given pivot step we have
-\begin{equation}
-\label{eq:B_hat_inclusion}
-\tilde{B} \setminus \{l\} \cup \{j\} =
-B \cup \{j\} =
-\hat{B}^{(1)} \supset \hat{B}^{(2)} \supset \cdots \supset \hat{B}^{(s_{2}-1)}
-\supset \hat{B}^{(s_{2})}
-\end{equation}
-For each $k \in \hat{B}^{(l)}$, $l \in \{1 \dots s_{2}\}$ the coefficient of
-$\varepsilon^{k}$ in the polynomial
-$p_{x_{j}}^{(Q_{2})}(\varepsilon, \hat{B})$ is zero, such that
-\pmu{Q_{2}}{\hat{B}} has a different coefficient with all
-the polynomials $p_{x_{i}}^{(Q_2)}(\varepsilon, \hat{B})$, $i \in \hat{B}$.
-Therefore due to the uniqueness of the term $\frac{\varepsilon^{i}}{p_{x_{i}}}$
-to $p_{x_{i}}^{(Q_2)}(\varepsilon, \hat{B})$, for $i \in \hat{B}$, at most 
-\begin{equation}
-\label{eq:max_varepsilon_exp_Q_2}
-\left|\{1 \ldots u_{T}(\hat{B})\} \cap \hat{N}\right|
-\end{equation}
-coefficient comparisons are needed to resolve the tie, if
-$\hat{B}_{T} \subseteq \hat{B}$ denotes the set of basic variable involved in a
-tie. 
 \subsection{The lexicographic method in the context of reduced bases}
 The polynomials used in the perturbed problem to decide possible ties use
 the full basis inverses $M_{B}^{-1}$ and $A_{B}^{-1}$ respectively, since these
@@ -2116,26 +2091,32 @@ $\tilde{p}_{x_{i}}^{(Q)}(\varepsilon, B)$ are equal such that considering
 \begin{equation}
 \label{eq:p_x_i_tilde_ref}
 \tilde{p}_{x_{i}}^{(L)}\left(\varepsilon, B\right) := 
-  \frac{\varepsilon^{i}
+  \frac{\varepsilon^{i+1}
   - \left(A_{B}^{-1}\tilde{A}_{N}\right)_{x_{i}}
   \epsilon_{N}}{q_{x_{i}}}
 = 
-\frac{\varepsilon^{i}
+\frac{\varepsilon^{i+1}
 - \left(A_{B}^{-1}\tilde{A}_{\hat{N}}\right)_{x_{i}}
   \epsilon_{\hat{N}}}{q_{x_{i}}}
-+ \varepsilon^{j}
++ \varepsilon^{j+1}
 \end{equation}
 in light of Equation~(\ref{eq:A_B_inv_exp})
 will be sufficient for the LP-case as well as the QP-case
 in phaseI when evaluating coefficients.
-We will only consider the coefficients
-$\varepsilon^{k}$ for $k \in \hat{N}= N \setminus \{j\}$ in
+We will only consider the coefficients of
+$\varepsilon^{k+1}$ for $k \in \hat{N}= N \setminus \{j\}$ in
 $\tilde{p}_{x_{i}}^{(L)}(\varepsilon, B)$,
 since the other cases $k=j$ and $k \in B$
 are trivial. Furthermore we only evaluate entities that are not evaluated in the
 unperturbed problem, such that, taking into account the
 Definition~(\ref{def:epsilon}) of $\epsilon$, we merely consider
-the subexpression $(A_{B}^{-1}\tilde{A}_{\hat{N}})_{x_{i}}$. The correct value
+the subexpression
+\begin{equation}
+\label{def:tilde_n_p_x_i_L}
+\tilde{n}_{x_{i}}^{(L)}(B)[k]:=
+(A_{B}^{-1}\tilde{A}_{k})_{x_{i}} 
+\end{equation}
+The correct value
 of the coefficient is obtained by scaling the subexpression with the factor
 $q_{x_{i}}^{-1}$.  
 We will distinguish the two
@@ -2358,8 +2339,7 @@ According to Sections~\ref{sec:Ties_ratio_test_step_1}
 and~\ref{sec:Ties_ratio_test_step_2} we have in the QP-case
 to consider the polynomials $p_{x_{i}}^{(Q_{1})}(\varepsilon, B)$,
 \pmu{Q_{1}}{B} and
-$p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B})$ as well as
-\pmu{Q_{2}^{(0)}}{\hat{B}} and \pmu{Q_{2}^{(+)}}{\hat{B}} in light of
+$p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B})$ in light of
 Equation~(\ref{eq:M_B_inv_exp}). The LP-case in phaseII can be omitted,
 since only LP-type ties can occur in the LP-case
 and these have already been treated in the last section. 
@@ -2370,7 +2350,7 @@ For ease of reference, we restate the Definition~(\ref{def:p_x_i_Q_1}),
 of $p_{x_{i}}^{(Q_{1})}(\varepsilon, B)$
 \begin{eqnarray*}
 p_{x_{i}}^{(Q_{1})}\left(\varepsilon, B\right) &:=&
-  \frac{\varepsilon^{i} -
+  \frac{\varepsilon^{i+1} -
          \left(M_{B}^{-1}
            \left(\begin{array}{c}
                     A_{N}  \\
@@ -2381,7 +2361,7 @@ p_{x_{i}}^{(Q_{1})}\left(\varepsilon, B\right) &:=&
          \right)_{x_{i}}\epsilon_{N}}{q_{x_{i}}}
 \\
 &=&
-\frac{\varepsilon^{i} -
+\frac{\varepsilon^{i+1} -
          \left(M_{B}^{-1}
            \left(\begin{array}{c}
                     A_{\hat{N}}  \\
@@ -2390,23 +2370,23 @@ p_{x_{i}}^{(Q_{1})}\left(\varepsilon, B\right) &:=&
 	         \end{array}
 	   \right)
          \right)_{x_{i}}\epsilon_{\hat{N}}}{q_{x_{i}}}
-+ \varepsilon^{j}
++ \varepsilon^{j+1}
 \end{eqnarray*}
-Again, we will only consider the coefficients
-$\varepsilon^{k}$ for $k \in \hat{N}= N \setminus \{j\}$ in
+Again, we will only consider the coefficients of
+$\varepsilon^{k+1}$ for $k \in \hat{N}= N \setminus \{j\}$ in
 $p_{x_{i}}^{(Q_{1})}(\varepsilon, B)$, since the other cases $k=j$ and $k \in B$
 are trivial. Furthermore we only evaluate entities that are not evaluated in the
 unperturbed problem, such that, taking into account the
 Definition~(\ref{def:epsilon}) of $\epsilon$, we merely consider
 the subexpression
 \begin{equation}
-\label{def:e_x_i_Q_1}
-e_{x_{i}}^{(Q_{1})}(B):=
+\label{def:n_x_i_Q_1}
+n_{x_{i}}^{(Q_{1})}(B)[k]:=
 \left(M_{B}^{-1}
            \left(\begin{array}{c}
-                    A_{\hat{N}}  \\
+                    A_{k}  \\
 	            \hline
-	            2D_{B, \hat{N}}
+	            2D_{B,k}
 	         \end{array}
 	   \right)
          \right)_{x_{i}}
@@ -2661,7 +2641,7 @@ of \pmu{Q_{1}}{B}
 	  \end{array}
     \right)}{\nu}
   \epsilon_{\hat{N}}
-  +\varepsilon^{j}
+  +\varepsilon^{j+1}
 \\
 &=&
   -\frac{2D_{j, \hat{N}} -
@@ -2673,10 +2653,10 @@ of \pmu{Q_{1}}{B}
 	  \end{array}
     \right)}{\nu}
   \epsilon_{\hat{N}}
-  +\varepsilon^{j}
+  +\varepsilon^{j+1}
 \end{eqnarray*}
-Again, we will only consider the coefficients
-$\varepsilon^{k}$ for $k \in \hat{N}= N \setminus \{j\}$ in
+Again, we will only consider the coefficients of
+$\varepsilon^{k+1}$ for $k \in \hat{N}= N \setminus \{j\}$ in
 \pmu{Q_{1}}{B}, since the other cases $k=j$ and $k \in B$
 are trivial. Furthermore we only evaluate entities that are not evaluated in the
 unperturbed problem, such that, taking into account the
@@ -2685,14 +2665,14 @@ and the fact that $j$ and $B$ remain constant during an iteration of Ratio Test
 Step~1 of a given pivot step, 
 we merely consider the subexpression
 \begin{equation}
-\label{def:e_mu_j_Q_1}
-e_{\mu_{j}}^{(Q_{1})}(B):=
-2D_{j, \hat{N}} -
+\label{def:n_mu_j_Q_1}
+n_{\mu_{j}}^{(Q_{1})}(B)[k]:=
+2D_{j, k} -
     \left(q_{\lambda}^{T} \left| \right. q_{x}^{T} \right)
     \left(\begin{array}{c}
-            A_{\hat{N}} \\
+            A_{k} \\
 	    \hline
-	    2D_{B,\hat{N}}
+	    2D_{B,k}
 	  \end{array}
     \right)
 \end{equation}
@@ -2995,7 +2975,7 @@ For ease of reference, we restate the Definition~(\ref{def:p_x_i_Q_2}),
 of $p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B})$
 \begin{eqnarray*}
 \px{i}{Q_{2}}{\hat{B}} &:=&
-  \frac{\varepsilon^{i} -
+  \frac{\varepsilon^{i+1} -
          \left(M_{\hat{B}}^{-1}
            \left(\begin{array}{c}
                     A_{\hat{N}}  \\
@@ -3005,30 +2985,33 @@ of $p_{x_{i}}^{(Q_{2})}(\varepsilon, \hat{B})$
 	   \right)
          \right)_{x_{i}}\epsilon_{\hat{N}}}{p_{x_{i}}}
 \end{eqnarray*}
-Again, we will only consider the coefficients
-$\varepsilon^{k}$ for $k \in \hat{N}= N \setminus \{j\}$ in
+Again, we will only consider the coefficients of
+$\varepsilon^{k+1}$ for $k \in \hat{N}= N \setminus \{j\}$ in
 \px{i}{Q_{2}}{\hat{B}}, since the other case $k \in \hat{B}$
 is trivial. Furthermore we only evaluate entities that are not evaluated in the
 unperturbed problem, such that, taking into account the
 Definition~(\ref{def:epsilon}) of $\epsilon$, 
 we merely consider the subexpression
-\begin{equation*}
+\begin{equation}
+\label{def:n_x_i_Q_2}
+n_{x_{i}}^{(Q_{2})}(\hat{B})[k]:=
 \left(
   M_{\hat{B}}^{-1}
   \left(\begin{array}{c}
-          A_{\hat{N}}  \\
+          A_{k}  \\
           \hline
-          2D_{\hat{B}, \hat{N}}
+          2D_{\hat{B}, k}
         \end{array}
   \right)
 \right)_{x_{i}}
-\end{equation*}
+\end{equation}
 The correct value of the coefficient is obtained by scaling the subexpression
 with the factor $p_{x_{i}}^{-1}$.
 Since the above subexpression and the corresponding subexpression
-in~(\ref{def:e_x_i_Q_1}) for the polynomial \px{i}{Q_{1}}{B} as
+in~(\ref{def:n_x_i_Q_1}) for the polynomial \px{i}{Q_{1}}{B} as
 functions differ only in the sets $B$ and $\hat{B}$ and their respective
-headings, we list the expressions without their derivations.
+headings, as well as in the scaling factor
+we list the expressions without their derivations.
 
 According to Equation~(\ref{eq:M_B_inv_exp}) and the definition of
 \px{i}{Q_{2}}{\hat{B}} we distinguish $i \in \hat{B}_{O}$ and
@@ -3151,7 +3134,7 @@ of \pmu{Q_{2}^{(0)}}{\hat{B}}
    \right]\epsilon_{\tilde{N} \setminus \{j\}} +
 \nonumber \\ 
   &&
-  \frac{\varepsilon^{l} -
+  \frac{\varepsilon^{l+1} -
          \left(M_{\tilde{B}}^{-1}
            \left(\begin{array}{c}
                     A_{\tilde{N} \setminus \{j\}}  \\
@@ -3175,7 +3158,7 @@ of \pmu{Q_{2}^{(0)}}{\hat{B}}
    \right]\epsilon_{\tilde{N} \setminus \{j\}} +
 \nonumber \\ 
   &&
-  \frac{\varepsilon^{l} -
+  \frac{\varepsilon^{l+1} -
          \left(M_{\tilde{B}}^{-1}
            \left(\begin{array}{c}
                     A_{\tilde{N} \setminus \{j\}}  \\
@@ -3203,7 +3186,7 @@ of \pmu{Q_{2}^{(0)}}{\hat{B}}
    \right]\epsilon_{\tilde{N} \setminus \{j\}} +
 \nonumber \\
   &&
-\frac{\tilde{\nu}}{\tilde{q}_{x_{l}}}\varepsilon^{l}
+\frac{\tilde{\nu}}{\tilde{q}_{x_{l}}}\varepsilon^{l+1}
 \end{eqnarray}
 Since the coefficients of \pmu{Q_{2}^{(0)}}{\hat{B}} depend on
 the last basis $\tilde{B}$ and its headings in the Ratio Test Step~1 we need
@@ -3235,7 +3218,7 @@ we merely consider the subexpression
 \end{equation*}
 as a linear combination of $e_{\mu_{j}}^{(Q_{1})}(\tilde{B})$ and
 $e_{x_{l}}^{(Q_{1})}(\tilde{B})$ defined by
-Definitions~(\ref{def:e_mu_j_Q_1}) and~(\ref{def:e_x_i_Q_1}).
+Definitions~(\ref{def:n_mu_j_Q_1}) and~(\ref{def:n_x_i_Q_1}).
 According to the Definition of
 \pmu{Q_{2}^{(0)}}{\hat{B}} we distinguish $j \in O \cap \tilde{N}$
 and $j \in S \cap \tilde{N}$ as well as $l \in \tilde{B}_{O}$ and
@@ -3635,7 +3618,7 @@ of \pmu{Q_{2}^{(+)}}{\hat{B}}
 
 \begin{equation}
 \pmu{Q_{2}^{(+)}}{\hat{B}^{(k)}} :=
-  \frac{\varepsilon^{l} -
+  \frac{\varepsilon^{l+1} -
          \left(M_{\hat{B}^{(k-1)}}^{-1}
            \left(\begin{array}{c}
                     A_{\hat{N}^{(k-1)}}  \\
@@ -3647,23 +3630,29 @@ of \pmu{Q_{2}^{(+)}}{\hat{B}}
 \end{equation}
 
 \section{Ratio Tests for the perturbed problem}
-The setup of the auxiliary problem excepted, Ratio Test Step~1 and Ratio Test
+The setup of the auxiliary problem and the transition from PhaseI to PhaseII
+excepted, Ratio Test Step~1 and Ratio Test
 Step~2 are the only parts of the algorithm that differ for the unperturbed and
 perturbed problem.
 In this section we present a pseudocode description of the ratio tests needed
 for Ratio Test Step~1 and Ratio Test Step~2. We will only consider the most
 general cases for which Ratio Test Step~1 and Ratio Test Step~2 occur,
 that is for both ratio test steps we consider the QP-case with
-inequalities only. Furthermore we will compute the coefficients of the involved
+inequalities in PhaseII only. Furthermore we will compute the coefficients
+of the involved
 polynomials $\pmu{Q_{1}}{B}$, $\px{i}{Q_{1}}{B}$ and $\px{i}{Q_{2}}{\hat{B}}$
-only when needed. We denote by $\check{t}(\varepsilon, B)[k]$,
-$k \in O \cup S$, the coefficient of $\varepsilon^{k}$ in the polynomial
-$\check{t}(\varepsilon, B)$ defined by Definition~(\ref{def:t_min_eps}), such
-that $\check{t}(\varepsilon, B)[0]=\check{t}(0, B)$. Similarly, we denote by
-$\check{\mu}_{j}(\varepsilon, \hat{B})[k]$, $k \in O \cup S$, the coefficient
-of $\varepsilon^{k}$ in the polynomial $\check{\mu}_{j}(\varepsilon, \hat{B})$
+only when needed. We denote by $\pxz{i}{Q_{1}}{B}[k]$ respectively
+$\pxz{i}{Q_{2}}{\hat{B}}[k]$, 
+$0 \leq k \leq \left|O \cup S\right|$,
+the coefficients of $\varepsilon^{k}$ in the polynomials
+defined by Definitions~(\ref{def:t_min_eps}) and~(\ref{def:hat_mu_j_min_eps}),
+such that $\pxz{i}{Q_{1}}{B}[0]=\check{t}(0, B)$ and 
+$\pxz{i}{Q_{2}}{\hat{B}}[0]=\check{\mu}_{j}(0, \hat{B})$ respectively.
+Similarly, we denote by $\pmuz{Q_{1}}{B}[k]$,
+$0 \leq k \leq \left|O \cup S\right|$, the coefficient of $\varepsilon^{k}$
+in the polynomial
 defined by Definition~(\ref{def:hat_mu_j_min_eps}), such that
-$\check{\mu}_{j}(\varepsilon, \hat{B})[0]=\check{\mu}_{j}(0, \hat{B})$.
+$\pmuz{Q_{1}}{B}[0]=-\frac{\mu_{j}(0,0)}{\nu}$.
 \marginpar{variable index issue: indices start with $0$,  $0 \in O \cup S$}
 
 \subsection{Ratio Test Step 1}
@@ -3678,23 +3667,23 @@ We distinguish three cases with respect to $\check{t}(0, B)$ and
 $\mu_{j}(0, t)$, supposing that $T_{k}$ with
 $\emptyset \subset T_{k} \subseteq B$, denotes the set of candidate
 leaving variables after consideration of of
-coefficients $\check{t}(\varepsilon, B)[j]$, $0 \leq j \leq k$:
+coefficients $\pxz{i}{Q_{1}}{B}[j]$, $0 \leq j \leq k$:
 
 \begin{algorithm}
-\caption{Perturbed Ratio Test 1, zero}
+\caption{Perturbed Ratio Test 1\_0, $\check{t}(0, B)$}
 \label{alg:ratio_test_step_1_0}
 \begin{algorithmic}
 \Function{ratio\_test\_1\_0\_t\_i}{}
-\State $T_{k}^{\prime} \gets \emptyset,
+\State $T_{0}^{\prime} \gets \emptyset,
   \quad x_{min} \gets 1, \quad  q_{min} \gets 0$
 \ForAll{$i \gets 0,  \left|B_{O}\right| - 1$}
     \If{$q_{B_{O}}[i] > 0$}
         \If{$x_{min}*q_{B_{O}}[i] < x_{B_{O}}[i]*q_{min}$}
             \State $x_{min} \gets x_{B_{O}}[i],
 	      \quad q_{min} \gets q_{B_{O}}[i],
-	      \quad T_{k}^{\prime} \gets \{B_{O}[i]\}$
+	      \quad T_{0}^{\prime} \gets \{B_{O}[i]\}$
         \ElsIf{$x_{min}*q_{B_{O}}[i] = x_{B_{O}}[i]*q_{min}$}
-            \State $T_{k}^{\prime} \gets T_{k}^{\prime} \cup \{B_{O}[i]\}$	 
+            \State $T_{0}^{\prime} \gets T_{0}^{\prime} \cup \{B_{O}[i]\}$	 
         \EndIf
     \EndIf
 \EndFor
@@ -3703,13 +3692,13 @@ coefficients $\check{t}(\varepsilon, B)[j]$, $0 \leq j \leq k$:
         \If{$x_{min}*q_{B_{S}}[i] < x_{B_{S}}[i]*q_{min}$}
             \State $x_{min} \gets x_{B_{S}}[i],
 	      \quad q_{min} \gets q_{B_{S}}[i],
-	      \quad T_{k}^{\prime} \gets \{B_{S}[i]\}$
+	      \quad T_{0}^{\prime} \gets \{B_{S}[i]\}$
         \ElsIf{$x_{min}*q_{B_{S}}[i] = x_{B_{S}}[i]*q_{min}$}
-            \State $T_{k}^{\prime} \gets T_{k}^{\prime} \cup \{B_{S}[i]\}$
+            \State $T_{0}^{\prime} \gets T_{0}^{\prime} \cup \{B_{S}[i]\}$
 	\EndIf	
     \EndIf 
 \EndFor
-\State \textbf{return} $T_{k}^{\prime}$
+\State \textbf{return} $(T_{0}^{\prime}, x_{min}, q_{min})$
 \EndFunction
 %\Function{ratio\_test\_1\_0\_t\_j}{}
 %\EndFunction
@@ -3729,15 +3718,15 @@ Definition~(\ref{def:t_min_eps})
 both $-\frac{\mu_{j}(\varepsilon, 0)}{\nu} < \check{t}(\varepsilon, B)$ and
 $-\frac{\mu_{j}(\varepsilon, 0)}{\nu} > \check{t}(\varepsilon, B)$ are
 possible.
-We continue comparing coefficients of $\mu_{j}(\varepsilon, 0)[k]$ and
-$\check{t}(\varepsilon, B)[k]$, $1 \leq k \leq \left|O \cup S \right|$
-until the equality no longer holds.  
+We continue comparing the coefficients $\pmu{Q_{1}}{B}[k]$ and
+$\px{i}{Q_{1}}{B}[k]$, $1 \leq k \leq \left|O \cup S \right|$,
+until $\pmu{Q_{1}}{B}[k] \neq \px{i}{Q_{1}}{B}[k]$.  
 If $-\frac{\mu_{j}(\varepsilon, 0)}{\nu} < \check{t}(\varepsilon, B)$
 a local optimum is found and according to Lemma~2.7 $B \cup \{j\}$ is the new
 basis,
 if $-\frac{\mu_{j}(\varepsilon, 0)}{\nu} > \check{t}(\varepsilon, B)$
 we continue computing coefficients
-$\check{t}(\varepsilon, B)[k]$, $1 \leq k \leq \left|O \cup S \right|$, until
+$\px{i}{Q_{1}}{B}[k]$, $1 \leq k \leq \left|O \cup S \right|$, until
 $\left|T_{k}\right|=1$. $T_{k}$ then contains the index of the leaving
 variable.
  
@@ -3746,7 +3735,7 @@ According to Equation~(\ref{eq:mu_j_eps_t}) and
 Definition~(\ref{def:t_min_eps}) we then have
 $-\frac{\mu_{j}(\varepsilon, 0)}{\nu} > \check{t}(\varepsilon, B)$. If
 $\left|T_{k}\right| > 1$ we continue computing coefficients
-$\check{t}(\varepsilon, B)[k]$, $1 \leq k \leq \left|O \cup S \right|$, until
+$\px{i}{Q_{1}}{B}[k]$, $1 \leq k \leq \left|O \cup S \right|$, until
 $\left|T_{k}\right|=1$. $T_{k}$ then contains the index of the leaving
 variable.
 \end{itemize}
@@ -3759,22 +3748,21 @@ variable.
 \Comment{Initializes global $q_{B_{O}}$ and $q_{B_{S}}$}
 \State $(T_{k}, c_{min}, q_{min}) \gets RATIO\_TEST\_1\_0\_T\_I$
 \State $(c_{j,k}, \nu) \gets RATIO\_TEST\_1\_0\_T\_J$
-\If{$c_{j,k}*q_{min} < \nu * c_{min}$}
-  \Comment{$-\frac{\mu_{j}(0, 0)}{\nu}<\check{t}(0, B)$}
-  \State \textbf{return} $\emptyset$
-\ElsIf{$c_{j,k}*q_{min} > \nu * c_{min} \wedge \left|T_{k}\right| =1$}
+\If{$c_{j,k}*q_{min} > \nu * c_{min} \wedge \left|T_{k}\right| =1$}
   \Comment{$-\frac{\mu_{j}(0, 0)}{\nu}>\check{t}(0, B)
     \wedge \left|T_{k}\right|=1$}
   \State \textbf{return} $T_{k}$
+\ElsIf{$c_{j,k}*q_{min} < \nu * c_{min}$}
+  \Comment{$-\frac{\mu_{j}(0, 0)}{\nu}<\check{t}(0, B)$}
+  \State \textbf{return} $\emptyset$
 \Else
-  \State $k \gets 1, \quad leaving \gets c_{j,k}*q_{min} > \nu * c_{min}$
+  \State $k \gets 0, \quad leaving \gets c_{j,k}*q_{min} > \nu * c_{min}$
   \Repeat
     \State $T_{k}^{\prime} \gets \emptyset,
       \quad c_{min} \gets 1,
       \quad q_{min} \gets 0$
     \ForAll{$i \in T_{k}$}
-      \State $c_{x_{i,k}} \gets e_{x_{i}}^{(Q_{1})}
-        (\varepsilon, \hat{B})[k]$
+      \State $c_{x_{i,k}} \gets n_{x_{i}}^{(Q_{1})}(B)[k]$
       \If{$i < n$} \Comment{$x_{i}$ is original variable}
         \If{$c_{min}*q_{B_{O}}[\beta_{O}[i]]<c_{x_{i,k}}*q_{min}$}
 	  \State $c_{min} \gets c_{x_{i,k}},
@@ -3794,7 +3782,7 @@ variable.
       \EndIf
     \EndFor
     \If{$ \neg leaving$}
-      \State $c_{j,k} \gets e_{\mu_{j}}^{(Q_{1})}(\varepsilon, 0)[k]$
+      \State $c_{j,k} \gets n_{\mu_{j}}^{(Q_{1})}(B)[k]$
       \If{$c_{j,k} * q_{min} < \nu *c_{min}$}
         \State \textbf{return} $\emptyset$
       \EndIf
@@ -3814,7 +3802,7 @@ unperturbed variant.
 The function that computes $\mu_{j}(0,0)$ is omitted here, since it already
 occurs in the unperturbed problem.
 The function that performs the actual Ratio Test Step~1 by comparing
-$-\frac{\mu_{j}(\varepsilon, 0)}{\nu}$ and $\check{t}(\varepsilon,B)$
+$\pmuz{Q_{1}}{B}$ and $\pxz{i}{Q_{1}}{B}$
 coefficient by coefficient is outlined in
 Algorithm~(\ref{alg:ratio_test_step_1_pert}). It returns the unique index of
 the leaving variable if
@@ -3838,7 +3826,7 @@ $\mu_{j}(\varepsilon)$ for which some
 basic variable is leaving, supposing that $T_{k}$ with 
 $\emptyset  \subset T_{k} \subseteq \hat{B}$, denotes the set 
 of candidate leaving variables after consideration of coefficients
-$\check{\mu}_{j}(\varepsilon, \hat{B})[j]$, 
+$\pxz{i}{Q_{2}}{\hat{B}}[j]$, 
 $0 \leq j \leq k$,
 we distinguish three cases with respect to
 $\check{\mu}_{j}(0, \hat{B})$:
@@ -3888,23 +3876,23 @@ According to Definition~(\ref{def:hat_mu_j_min_eps}) and
 Definition~(\ref{def:p_x_i_Q_2}) both
 $\check{\mu}_{j}(\varepsilon, \hat{B}) > 0$ and
 $\check{\mu}_{j}(\varepsilon, \hat{B}) < 0$ are possible.
-We compute coefficients $\check{\mu}_{j}(\varepsilon, \hat{B})[k]$,
-$1 \leq k \leq \left|O \cup S\right|$ until the sign of
+We compute coefficients $\px{i}{Q_{2}}{\hat{B}}[k]$,
+$1 \leq k \leq \left|O \cup S\right|$, until the sign of
 $\check{\mu}_{j}(\varepsilon, \hat{B})$ is known. 
 If $\check{\mu}_{j}(\varepsilon, \hat{B}) > 0$, we found an optimal solution
 $x_{\hat{B}}^{*}(\varepsilon, \hat{B})$ to $UQP(\hat{B}_{\varepsilon})$,
 which again by Lemma~(\ref{lemma:strict}) is also an optimal solution to
 $QP(\hat{B}_{\varepsilon})$,
 if $\check{\mu}_{j}(\varepsilon, \hat{B}) < 0$, we continue computing
-coefficients $\check{\mu}_{j}(\varepsilon, \hat{B})[k]$ until
+coefficients $\px{i}{Q_{2}}{\hat{B}}[k]$ until
 $\left|T_{k}\right|=1$. $T_{k}$ then contains the index of the leaving
 variable.
 
 \item $\check{\mu}_{j}(0, \hat{B}) < 0$:
 According to Definition~(\ref{def:hat_mu_j_min_eps})
 $\check{\mu}_{j}(\varepsilon, \hat{B}) < 0$ then holds, so we compute
-coefficients $\check{\mu}_{j}(\varepsilon, \hat{B})[k]$,
-$1 \leq k \leq \left|O \cup S\right|$ until $\left|T_{k}\right|=1$.
+coefficients $\px{i}{Q_{2}}{\hat{B}}[k]$,
+$1 \leq k \leq \left|O \cup S\right|$, until $\left|T_{k}\right|=1$.
 $T_{k}$ then contains the index of the leaving
 variable.
 \end{itemize}
@@ -3924,14 +3912,13 @@ variable.
     \State \textbf{return} $T_{k}$
 \Else
     \Comment{$\check{\mu}_{j}(\varepsilon, \hat{B}) \leq 0$}   
-    \State $k \gets 1$
+    \State $k \gets 0$
     \Repeat
         \State $T_{k}^{\prime} \gets \emptyset,
 	  \quad c_{min} \gets 1,
 	  \quad p_{min} \gets 0$
         \ForAll{$i \in T_{k}$}
-            \State $c_{x_{i,k}} \gets e_{x_{i}}^{(Q_{2})}
-	      (\varepsilon, \hat{B})[k]$
+            \State $c_{x_{i,k}} \gets n_{x_{i}}^{(Q_{2})}(\hat{B})[k]$
 	    \If{$i < n$} \Comment{$x_{i}$ is original variable}
 	        \If{$c_{min}*p_{B_{O}}[\beta_{O}[i]]<c_{x_{i,k}}*p_{min}$}
 	            \State $c_{min} \gets c_{x_{i,k}},
