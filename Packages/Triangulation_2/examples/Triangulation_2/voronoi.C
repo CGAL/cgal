@@ -125,8 +125,8 @@ void input_from_file(Triangulation &T,
     is >> n;
     std::cout << "Reading " << n << " points" << std::endl;
 
-    std::istream_iterator<Point, ptrdiff_t> begin(is);
-    std::istream_iterator<Point, ptrdiff_t> end;
+    std::istream_iterator<Point, std::ptrdiff_t> begin(is);
+    std::istream_iterator<Point, std::ptrdiff_t> end;
     T.insert(begin, end);
 }
 

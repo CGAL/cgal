@@ -117,8 +117,8 @@ void input_from_file(Triangulation &T,
     is >> n;
     std::cout << "Reading " << n << " points" << std::endl;
 
-    std::istream_iterator<Point, ptrdiff_t> begin(is);
-    std::istream_iterator<Point, ptrdiff_t> end;
+    std::istream_iterator<Point, std::ptrdiff_t> begin(is);
+    std::istream_iterator<Point, std::ptrdiff_t> end;
     T.insert(begin, end);
 }
 
@@ -158,7 +158,8 @@ void faces_along_line(Triangulation &T)
                 count++;
             }
         }while(++lfc != done);
-        std::cout << "The line intersects " << count << " finite faces" << std::endl;
+        std::cout << "The line intersects " 
+		  << count << " finite faces" << std::endl;
     }
 }
 
@@ -186,13 +187,13 @@ void fileIO(Triangulation &T,
 {
     std::cout << "The triangulation will be written to a file and read again\n";
     {
-        ofstream out("tr");
+        std::ofstream out("tr");
         CGAL::set_ascii_mode(out);
         out << T << std::endl;
     }
     Triangulation T2;
 
-    ifstream in("tr");
+    std::ifstream in("tr");
     CGAL::set_ascii_mode(in);
     in >> T2;
     assert( T2.is_valid() );

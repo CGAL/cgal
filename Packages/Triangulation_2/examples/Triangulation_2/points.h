@@ -47,7 +47,7 @@ private:
 
 
 
-ostream& operator<<(ostream& os, const point& p)
+std::ostream& operator<<(std::ostream& os, const point& p)
 {
   os << "(" << p.x() << ", " << p.y() << ")";
   return os;
@@ -72,7 +72,7 @@ public:
 };
 
 
-ostream& operator<< (ostream& os, const dir& d)
+std::ostream& operator<< (std::ostream& os, const dir& d)
 {
   os << "(" << d.x() << ", " << d.y() << ")";
   return os;
@@ -123,7 +123,7 @@ private:
   point *_s, *_t;
 };
 
-ostream& operator<<(ostream& os, const segment& s)
+std::ostream& operator<<(std::ostream& os, const segment& s)
 {
   os << "(" << *(s.source()) << ", " << *(s.target()) << ")";
   return os;
@@ -172,7 +172,7 @@ private:
   point *_p, *_q, *_r;
 };
 
-ostream& operator<<(ostream& os, const triangle& t)
+std::ostream& operator<<(std::ostream& os, const triangle& t)
 {
   os << "(" << t.vertex(0) << ", " << t.vertex(1) << ", " << t.vertex(2) << ")";
   return os;
@@ -181,7 +181,7 @@ ostream& operator<<(ostream& os, const triangle& t)
 
 class ray
 {
-friend ostream& operator<< (ostream&, const ray&);
+friend std::ostream& operator<< (std::ostream&, const ray&);
 
 protected:
   point _p;
@@ -194,7 +194,7 @@ public:
   dir   d() const { return _d; }
 };
 
-ostream& operator<<(ostream& os, const ray& r)
+std::ostream& operator<<(std::ostream& os, const ray& r)
 {
   os << r.p() << "+" << r.d();
   return os;
@@ -234,7 +234,7 @@ public:
     _size = n;
   }
 
-  void read(istream& is)
+  void read(std::istream& is)
   {
     int n;
     is >> n;
@@ -255,7 +255,7 @@ private:
   int _size;
 };
 
-istream& operator>>(istream& is, PVector &pv)
+std::istream& operator>>(std::istream& is, PVector &pv)
 {
   pv.read(is);
   return is;
@@ -297,7 +297,7 @@ public:
                                const Point &r) const
   {
     if(*p==*q || *p == *r || *q == *r){
-      cout << "coll" << endl;
+      std::cout << "coll" << std::endl;
       return CGAL::COLLINEAR;
     }
     return CGAL::orientationC2(p->x(), p->y(), q->x(), q->y(), r->x(), r->y());
@@ -309,7 +309,7 @@ public:
 			    const Point &r) const
   {
     if(*p==*q || *p == *r || *q == *r){
-      cout << "coll" << endl;
+      std::cout << "coll" << std::endl;
       return CGAL::COLLINEAR;
     }
     return CGAL::orientationC2(p->x(), p->y(), q->x(), q->y(), r->x(), r->y());
