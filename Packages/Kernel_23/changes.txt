@@ -1,3 +1,6 @@
+13 September 2004
+- Added construct_min/max_vertex_2/3 in the kernel archetype interface macros
+
 7 September 2004 Andreas Fabri
 - Added functions and functor for constructing min and max vertex of iso rectangle and cuboid
 
