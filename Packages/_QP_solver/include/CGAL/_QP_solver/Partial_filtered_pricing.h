@@ -153,7 +153,7 @@ class Partial_filtered_pricing
             }
         }
         N.erase( N.end()-m, N.end());
-        s = min( (int)(m*CGAL_NTS sqrt<double>(n)), n-m);
+        s = min( (int)(m*CGAL_NTS sqrt(n)), n-m);
     
         // update row/column maxima of `A'
         C_iterator  c_i = solve.c_begin();
