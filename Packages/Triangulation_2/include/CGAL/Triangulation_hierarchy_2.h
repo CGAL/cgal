@@ -199,24 +199,29 @@ Triangulation_hierarchy_2<Tr>::
 copy_triangulation(const Triangulation_hierarchy_2<Tr> &tr)
 {
   std::map< const void*, void*, std::less<const void*> > V;
-
-  for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
+  {
+    for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
     hierarchy[i]->copy_triangulation(*tr.hierarchy[i]);
+  }
   //up and down have been copied in straightforward way
   // compute a map at lower level
-  for( Vertex_iterator it=hierarchy[0]->vertices_begin(); 
-       it != hierarchy[0]->vertices_end(); ++it) {
-    if (it->up()) V[ ((Vertex*)(it->up()))->down() ] = &(*it);
-      }
-  for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i) {
-    for( Vertex_iterator it=hierarchy[i]->vertices_begin(); 
-	 it != hierarchy[i]->vertices_end(); ++it) {
-      // down pointer goes in original instead in copied triangulation
-      it->set_down(V[it->down()]);
-      // make reverse link
-      ((Vertex*)(it->down()))->set_up( &(*it) );
-      // make map for next level
+  {
+    for( Vertex_iterator it=hierarchy[0]->vertices_begin(); 
+	 it != hierarchy[0]->vertices_end(); ++it) {
       if (it->up()) V[ ((Vertex*)(it->up()))->down() ] = &(*it);
+    }
+  }
+  {
+    for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i) {
+      for( Vertex_iterator it=hierarchy[i]->vertices_begin(); 
+	   it != hierarchy[i]->vertices_end(); ++it) {
+	// down pointer goes in original instead in copied triangulation
+	it->set_down(V[it->down()]);
+	// make reverse link
+	((Vertex*)(it->down()))->set_up( &(*it) );
+	// make map for next level
+	if (it->up()) V[ ((Vertex*)(it->up()))->down() ] = &(*it);
+      }
     }
   }
 }
