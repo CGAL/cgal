@@ -1,3 +1,17 @@
+#include <iostream>
+
+#ifndef CGAL_USE_LEDA
+int main()
+{
+
+  std::cout << "Sorry, this demo needs LEDA for visualisation.";
+  std::cout << std::endl;
+
+  return 0;
+}
+
+#else
+
 #include <fstream>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
@@ -278,3 +292,5 @@ int main(int argc,char *argv[])
 
   return(0);
 }
+
+#endif
