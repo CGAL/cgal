@@ -162,7 +162,7 @@ bool test_sphere3(InputIterator first, int N, int& p, int& z, int& n)
 
 
 
-int main()
+int main_test()
 {
   // The following is necessary on Intel platforms.
   CGAL::force_ieee_double_precision();

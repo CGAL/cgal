@@ -1,3 +1,8 @@
+2.33 (24 April 2002)
+- dont_submit the test makefile.
+- Add a main() function in the test_*.C files so that correct rules are
+  actually created by create_makefile.
+
 2.32 (21 March 2002)
 - converted doc to new manual style
 
