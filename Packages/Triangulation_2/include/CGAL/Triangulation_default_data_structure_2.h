@@ -45,26 +45,27 @@ public:
 
   //creators
   CGAL_Triangulation_default_data_structure_2() 
-    : _infinite_vertex(NULL), _number_of_vertices(0)
+    : _finite_vertex(NULL), _number_of_vertices(0)
   {
     _infinite_vertex = new Vertex();
   }
 
    CGAL_Triangulation_default_data_structure_2(const Geom_traits& gt) 
-    : _infinite_vertex(NULL), _number_of_vertices(0), _geom_traits(gt)
+    : _finite_vertex(NULL), _number_of_vertices(0), _geom_traits(gt)
   {
     _infinite_vertex = new Vertex();
   }
 
   CGAL_Triangulation_default_data_structure_2(Vertex * v)
-    : _infinite_vertex(NULL), _number_of_vertices(0)
+    : _infinite_vertex(NULL),_finite_vertex(NULL), _number_of_vertices(0)
   {
     init(v);
     CGAL_triangulation_postcondition( is_valid() );
   }
 
   CGAL_Triangulation_default_data_structure_2(Vertex * v, const Geom_traits& gt)
-    : _infinite_vertex(NULL), _number_of_vertices(0), _geom_traits(gt)
+    : _infinite_vertex(NULL), _finite_vertex(NULL),
+      _number_of_vertices(0), _geom_traits(gt)
   {
     init(v);
     CGAL_triangulation_postcondition( is_valid() );
@@ -110,14 +111,19 @@ public:
   }
   const Geom_traits& geom_traits() const {return _geom_traits;}
 
-  Vertex* finite_vertex() const  {return _finite_vertex;  }
+  Vertex* finite_vertex() const  
+  {
+    //CGAL_triangulation_precondition( number_of_vertices() > 0);
+    //this precondition plants the swap function 
+    return _finite_vertex;  
+  }
 
   Vertex* infinite_vertex() const  {return _infinite_vertex;  }
 
   Face* infinite_face() const
   {
-    CGAL_triangulation_precondition(_infinite_vertex->face()->
-                                       has_vertex(_infinite_vertex));
+    CGAL_triangulation_precondition( number_of_vertices() >= 2  &&
+				     _infinite_vertex->face() != NULL );
     return _infinite_vertex->face();
   }
 
@@ -261,7 +267,7 @@ public:
     //insert in face
     // vertex v will replace f->vertex(0)
   {
-    CGAL_triangulation_precondition( v != NULL & f != NULL);
+    CGAL_triangulation_precondition( v != NULL && f != NULL);
     
     Vertex* v0 = f->vertex(0);
     Vertex* v2 = f->vertex(2);
@@ -297,7 +303,7 @@ public:
   void insert_on_edge(Vertex* v, Face* f, int i)
     //insert in the edge opposite to vertex i of face f
   {
-    CGAL_triangulation_precondition(v != NULL & f != NULL); 
+    CGAL_triangulation_precondition(v != NULL && f != NULL); 
     CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
 
     Face* n = f->neighbor(i);
@@ -476,10 +482,8 @@ public:
         }
     
         bool result = true;
-
 	CGAL_triangulation_assertion( is_infinite(infinite_vertex()->face()));
 	result = result && is_infinite(infinite_vertex()->face());			      
-    
 	// vertex count
         int vertex_count = 0;
         {
@@ -492,10 +496,8 @@ public:
                 ++it;
             }
         }
-    
-        result = result && (number_of_vertices() == vertex_count);
-    
-        CGAL_triangulation_assertion( number_of_vertices() == vertex_count );
+	result = result && (number_of_vertices() == vertex_count);
+	CGAL_triangulation_assertion( number_of_vertices() == vertex_count );
     
         //edge count
 	int edge_count = 0;
@@ -519,48 +521,21 @@ public:
                 CGAL_triangulation_assertion( it->is_valid(verbose, level) );
                 result = result && (! is_infinite( &(*it)));
                 CGAL_triangulation_assertion( ! is_infinite(&(*it)) );
-		CGAL_Orientation s = geom_traits().orientation(it->vertex(0)->point(),
-                                                          it->vertex(1)->point(),
-                                                          it->vertex(2)->point());
-                result = result && ( s == CGAL_LEFTTURN );
-                CGAL_triangulation_assertion( s == CGAL_LEFTTURN );
-                ++it;
+		++it;
             }
         }
-    
-    
+        
         Face_circulator fc(infinite_vertex());
-
         Face_circulator    fcdone(fc);
         do {
 	  result = result && fc->is_valid(verbose, level);
           CGAL_triangulation_assertion( fc->is_valid(verbose, level) );
-            
-            ++face_count;
-            ++edge_count;
+	  ++face_count;
+	  ++edge_count;
         }
         while(++fc != fcdone);
     
-    
-        Vertex_circulator start = infinite_vertex()->incident_vertices(),
-            pc(start),
-            qc(start),
-            rc(start);
-        ++qc;
-        ++rc;
-        ++rc;
-        do{
-            bool extremal = ( geom_traits().extremal(pc->point(),
-                                                qc->point(),
-                                                rc->point()) != CGAL_POSITIVE);
-            result = result && extremal;
-            CGAL_triangulation_assertion( extremal );
-            pc = qc;
-            qc = rc;
-            ++rc;
-        }while(pc != start);
-
-        result = result && ( edge_count == 3* (vertex_count -1) );
+	result = result && ( edge_count == 3* (vertex_count -1) );
         CGAL_triangulation_assertion( edge_count == 3* (vertex_count -1) );
         result = result && ( face_count == 2* (vertex_count -1) );
         CGAL_triangulation_assertion( face_count == 2* (vertex_count -1) );
@@ -600,7 +575,7 @@ public:
                 ++_number_of_vertices;
                 ++it;
             }
-            _number_of_vertices -= 3;
+            set_number_of_vertices(number_of_vertices()-3);
 	}
     }
 

@@ -151,43 +151,43 @@ public:
     
   
   //MODIFIERS
-  void insert_in_face(const Vertex_handle& v)
-  {
-    Fa::insert_in_face(&(*v));
-  }
+//   void insert_in_face(const Vertex_handle& v)
+//   {
+//     Fa::insert_in_face(&(*v));
+//   }
+// 
+//   void insert_on_edge(const Vertex* v, int i)
+//   {
+//     Fa::insert_on_edge(&(*v),i);
+//   }
+// 
+//   void insert_out(const Vertex* v, int i)
+//   {
+//     Fa::insert_out(&(*v),i);
+//   }
 
-  void insert_on_edge(const Vertex* v, int i)
-  {
-    Fa::insert_on_edge(&(*v),i);
-  }
-
-  void insert_out(const Vertex* v, int i)
-  {
-    Fa::insert_out(&(*v),i);
-  }
-
-  // for compatibility with previous versions
-  void insert(const Vertex_handle& v)
-  {
-    Fa::insert_in_face(&(*v));
-  }
-
-  // for compatibility with previous versions
-  void insert(const Vertex* v, int i)
-  {
-    Fa::insert_out(&(*v),i);
-  }
-
-  bool remove(Vertex_handle v)
-  {
-    Fa::remove(&(*v));
-  }
-
-  //void flip(int i) inherited
-
-  //CHECKING
-  //bool is_valid(bool verbose = false, int level = 0) const inherited
-
+//   // for compatibility with previous versions
+//   void insert(const Vertex_handle& v)
+//   {
+//     Fa::insert_in_face(&(*v));
+//   }
+// 
+//   // for compatibility with previous versions
+//   void insert(const Vertex* v, int i)
+//   {
+//     Fa::insert_out(&(*v),i);
+//   }
+// 
+//   bool remove(Vertex_handle v)
+//   {
+//     Fa::remove(&(*v));
+//   }
+// 
+//   //void flip(int i) inherited
+// 
+//   CHECKING
+//   bool is_valid(bool verbose = false, int level = 0) const inherited
+// 
 };
 
 #endif CGAL_TRIANGULATION_FACE_2_H
