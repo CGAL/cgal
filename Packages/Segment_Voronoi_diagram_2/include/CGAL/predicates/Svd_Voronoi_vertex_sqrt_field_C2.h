@@ -278,6 +278,8 @@ private:
       cq_ = FT(0);
     }
 
+    //    std::cout << "cq_ : " << cq_ << std::endl;
+
     Sign s = CGAL::sign(c_);
 
     if ( s == NEGATIVE ) {
@@ -300,6 +302,8 @@ private:
 
     Comparison_result res = CGAL::compare( c_, cq_ );
 
+    //    std::cout << "res: " << res << std::endl;
+    
     if ( res == EQUAL ) {
       FT e1 = CGAL::square(c_);
       FT J = nl * (a * n_ + FT(4) * c_ * x_) - FT(4) * a * e1;
@@ -329,34 +333,50 @@ private:
 
 
   //--------------------------------------------------------------------------
-#if 0
+
+  // determines of the segment s is on the positive halfspace as
+  // defined by the supporting line of the segment supp; the line l
+  // is supposed to be the supporting line of the segment supp and we
+  // pass it so that we do not have to recompute it
   bool
-  is_consistent(const Segment_2& p, const Segment_2& q,
-		const Segment_2& r, FT a[], FT b[], FT c[]) const
+  is_on_positive_halfspace(const Site_2& supp,
+			   const Site_2& s, const Line_2& l) const
   {
-    Line_2 l[3] = {Line_2(a[0], b[0], c[0]), Line_2(a[1], b[1], c[1]), 
-		   Line_2(a[2], b[2], c[2])};
+#if 1
+    CGAL_precondition( supp.is_segment() && s.is_segment() );
 
-    int num_oriented(0);
-
-    if ( is_on_positive_halfspace(l[0], q) ||
-	 is_on_positive_halfspace(l[0], r) ) {
-      num_oriented++;
+    if ( same_segments(supp.supporting_segment(),
+		       s.supporting_segment()) ) {
+      return false;
     }
 
-    if ( is_on_positive_halfspace(l[1], p) ||
-	 is_on_positive_halfspace(l[1], r) ) {
-      num_oriented++;
+    if ( are_same(supp.source_site(), s.source_site()) ||
+	 are_same(supp.target_site(), s.source_site()) ) {
+      return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
     }
 
-    if ( is_on_positive_halfspace(l[2], p) ||
-	 is_on_positive_halfspace(l[2], q) ) {
-      num_oriented++;
+    if ( are_same(supp.source_site(), s.target_site()) ||
+	 are_same(supp.target_site(), s.target_site()) ) {
+      return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
     }
 
-    return ( num_oriented >= 2 );
-  }
+    if ( !s.is_exact(0) &&
+	 same_segments(supp.supporting_segment(),
+		       s.crossing_segment(0)) ) {
+      return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
+    }
+
+    if ( !s.is_exact(1) &&
+	 same_segments(supp.supporting_segment(),
+		       s.crossing_segment(1)) ) {
+      return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
+    }
+
 #endif
+    return Base::is_on_positive_halfspace(l, s.segment());
+  }
+
+  //--------------------------------------------------------------------------
 
   void
   orient_lines(const Site_2& sp, const Site_2& sq,
@@ -365,6 +385,10 @@ private:
     CGAL_precondition( sp.is_segment() && sq.is_segment() &&
 		       sr.is_segment() );
 
+#if 0
+    std::cout << "inside orient lines" << std::endl;
+#endif
+
     Line_2 l[3];
     l[0] = compute_supporting_line(sp.supporting_segment());
     l[1] = compute_supporting_line(sq.supporting_segment());
@@ -372,45 +396,54 @@ private:
     
     bool is_oriented[3] = {false, false, false};
 
-    Segment_2 p = sp.segment(), q = sq.segment(), r = sr.segment();
+    //    Segment_2 p = sp.segment(), q = sq.segment(), r = sr.segment();
 
-    std::cout << "************************ LALA 1" << std::endl;
-
-    if ( is_on_positive_halfspace(l[0], q) ||
-	 is_on_positive_halfspace(l[0], r) ) {
+    //    if ( is_on_positive_halfspace(l[0], q) ||
+    //	 is_on_positive_halfspace(l[0], r) ) {
+    if ( is_on_positive_halfspace(sp, sq, l[0]) ||
+    	 is_on_positive_halfspace(sp, sr, l[0]) ) {
       is_oriented[0] = true;
     } else {
+      
       l[0] = opposite_line(l[0]);
-      if ( is_on_positive_halfspace(l[0], q) ||
-	   is_on_positive_halfspace(l[0], r) ) {
+      //      if ( is_on_positive_halfspace(l[0], q) ||
+      //	   is_on_positive_halfspace(l[0], r) ) {
+      if ( is_on_positive_halfspace(sp, sq, l[0]) ||
+      	   is_on_positive_halfspace(sp, sr, l[0]) ) {
 	is_oriented[0] = true;
       } else {
 	l[0] = opposite_line(l[0]);
       }
     }
 
-    std::cout << "************************ LALA 2" << std::endl;
-
-    if ( is_on_positive_halfspace(l[1], p) ||
-	 is_on_positive_halfspace(l[1], r) ) {
+    //    if ( is_on_positive_halfspace(l[1], p) ||
+    //	 is_on_positive_halfspace(l[1], r) ) {
+    if ( is_on_positive_halfspace(sq, sp, l[1]) ||
+	 is_on_positive_halfspace(sq, sr, l[1]) ) {
       is_oriented[1] = true;
     } else {
       l[1] = opposite_line(l[1]);
-      if ( is_on_positive_halfspace(l[1], p) ||
-	   is_on_positive_halfspace(l[1], r) ) {
+      //      if ( is_on_positive_halfspace(l[1], p) ||
+      //	   is_on_positive_halfspace(l[1], r) ) {
+      if ( is_on_positive_halfspace(sq, sp, l[1]) ||
+	   is_on_positive_halfspace(sq, sr, l[1]) ) {
 	is_oriented[1] = true;
       } else {
 	l[1] = opposite_line(l[1]);
       }
     }
 
-    if ( is_on_positive_halfspace(l[2], p) ||
-	 is_on_positive_halfspace(l[2], q) ) {
+    //    if ( is_on_positive_halfspace(l[2], p) ||
+    //	 is_on_positive_halfspace(l[2], q) ) {
+    if ( is_on_positive_halfspace(sr, sp, l[2]) ||
+	 is_on_positive_halfspace(sr, sq, l[2]) ) {
       is_oriented[2] = true;
     } else {
       l[2] = opposite_line(l[2]);
-      if ( is_on_positive_halfspace(l[2], p) ||
-	   is_on_positive_halfspace(l[2], q) ) {
+      //      if ( is_on_positive_halfspace(l[2], p) ||
+      //	   is_on_positive_halfspace(l[2], q) ) {
+      if ( is_on_positive_halfspace(sr, sp, l[2]) ||
+	   is_on_positive_halfspace(sr, sq, l[2]) ) {
 	is_oriented[2] = true;
       } else {
 	l[2] = opposite_line(l[2]);
@@ -696,6 +729,8 @@ private:
     FT d2 = CGAL::square(x() - t.x()) +
       CGAL::square(y() - t.y());
 
+    //    std::cout << "r2, d2: " << r2 << ", " << d2 << std::endl;
+
     return Sign( CGAL::compare(d2, r2) );
   }
 
@@ -765,6 +800,10 @@ private:
   {
     CGAL_precondition( t.is_segment() );
 
+#if 0
+    std::cout << "inside incircle_s with int" << std::endl;
+#endif
+
     if ( v_type == PPP || v_type == PPS ) {
       if (  p_.is_point() && q_.is_point() &&
 	    is_endpoint_of(p_, t) && is_endpoint_of(q_, t)  ) {
@@ -819,7 +858,6 @@ private:
     }
     if ( d2 == NEGATIVE ) { return NEGATIVE; }
 
-
     Line_2 l = compute_supporting_line(t.supporting_segment());
     Sign sl = incircle(l);
 
@@ -845,6 +883,10 @@ private:
   Sign incircle_s(const Site_2& t) const 
   {
     CGAL_precondition( t.is_segment() );
+
+#if 0
+    std::cout << "inside incircle_s without int" << std::endl;
+#endif
 
     if ( is_degenerate_Voronoi_circle() ) {
       // case 1: the new segment is not adjacent to the center of the
@@ -919,6 +961,11 @@ private:
       }
 #endif
     } // if ( is_degenerate_Voronoi_circle() )
+
+#if 0
+    std::cout << "inside incircle_s without int: non-degenerate VV"
+	      << std::endl;
+#endif
 
     Sign s = incircle_s(t, 0);
 

@@ -42,42 +42,47 @@ CGAL_BEGIN_NAMESPACE
 
 template<class K>
 void svd_predicate_push_back_C2(const typename K::Site_2& t,
-				std::vector<typename K::FT>& v,
-				std::vector<char>& site_types)
+				typename K::FT v[], unsigned int& k,
+				char site_types[], unsigned int& j)
 {
+  unsigned int step(0);
+
   if ( t.is_point() ) {
-    site_types.push_back('p');
+    site_types[j] = 'p';
     if ( t.is_exact() ) {
-      site_types.push_back('e');
-      v.push_back( t.point().x() );
-      v.push_back( t.point().y() );
+      site_types[j+1] = 'e';
+      v[k] = t.point().x();
+      v[k+1] = t.point().y();
+      step = 2;
     } else {
-      site_types.push_back('i');
+      site_types[j+1] = 'i';
       typename K::Segment_2 s1 = t.supporting_segment(0);
       typename K::Segment_2 s2 = t.supporting_segment(1);
-      v.push_back( s1.source().x() );
-      v.push_back( s1.source().y() );
-      v.push_back( s1.target().x() );
-      v.push_back( s1.target().y() );
-      v.push_back( s2.source().x() );
-      v.push_back( s2.source().y() );
-      v.push_back( s2.target().x() );
-      v.push_back( s2.target().y() );
+      v[k] = s1.source().x();
+      v[k+1] = s1.source().y();
+      v[k+2] = s1.target().x();
+      v[k+3] = s1.target().y();
+      v[k+4] = s2.source().x();
+      v[k+5] = s2.source().y();
+      v[k+6] = s2.target().x();
+      v[k+7] = s2.target().y();
+      step = 8;
     }
   } else {
-    site_types.push_back('s');
+    site_types[j] = 's';
     if ( t.is_exact() ) {
-      site_types.push_back('e');
-      v.push_back( t.source().x() );
-      v.push_back( t.source().y() );
-      v.push_back( t.target().x() );
-      v.push_back( t.target().y() );
+      site_types[j+1] = 'e';
+      v[k] = t.source().x();
+      v[k+1] = t.source().y();
+      v[k+2] = t.target().x();
+      v[k+3] = t.target().y();
+      step = 4;
     } else {
       typename K::Segment_2 supp = t.supporting_segment();
-      v.push_back( supp.source().x() );
-      v.push_back( supp.source().y() );
-      v.push_back( supp.target().x() );
-      v.push_back( supp.target().y() );
+      v[k] = supp.source().x();
+      v[k+1] = supp.source().y();
+      v[k+2] = supp.target().x();
+      v[k+3] = supp.target().y();
 
       typename K::Segment_2 cs, cs2;
       char stype;
@@ -93,27 +98,33 @@ void svd_predicate_push_back_C2(const typename K::Site_2& t,
 	cs2 = t.crossing_segment(1);
       }
 
-      site_types.push_back( stype );
-      v.push_back( cs.source().x() );
-      v.push_back( cs.source().y() );
-      v.push_back( cs.target().x() );
-      v.push_back( cs.target().y() );
+      site_types[j+1] = stype;
+      v[k+4] = cs.source().x();
+      v[k+5] = cs.source().y();
+      v[k+6] = cs.target().x();
+      v[k+7] = cs.target().y();
+
+      step = 8;
 
       if ( stype == 'i' ) {
-	v.push_back( cs2.source().x() );
-	v.push_back( cs2.source().y() );
-	v.push_back( cs2.target().x() );
-	v.push_back( cs2.target().y() );
+	v[k+8] = cs2.source().x();
+	v[k+9] = cs2.source().y();
+	v[k+10] = cs2.target().x();
+	v[k+11] = cs2.target().y();
+	step = 12;
       }
     }
   }
+
+  j += 2;
+  k += step;
 }
 
 
 template<class K>
 typename K::Site_2
-get_site(const std::vector<typename K::FT>& v, unsigned int& k,
-	 const std::vector<char>& site_types, unsigned int& j)
+get_site(const typename K::FT v[], unsigned int& k,
+	 const char site_types[], unsigned int& j)
 {
   typedef typename K::Point_2             Point_2;
   typedef typename K::Segment_2           Segment_2;
@@ -237,8 +248,7 @@ template<template<class Kernel> class Predicate_t,
 	 typename Return_t, class FT,
 	 unsigned int Num_sites>
 Return_t
-svd_predicate_ftC2(const std::vector<FT>& v,
-		   const std::vector<char>& site_types)
+svd_predicate_ftC2(const FT v[], const char site_types[])
 {
    typedef Simple_cartesian<FT>                 Rep;
    typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
@@ -266,8 +276,7 @@ template<template<class Kernel, class MTag> class Predicate_t,
 	 typename Return_t, class FT,
 	 class Method_tag, unsigned int Num_sites>
 Return_t
-svd_predicate_ftC2(const std::vector<FT>& v,
-		   const std::vector<char>& site_types)
+svd_predicate_ftC2(const FT v[], const char site_types[])
 {
    typedef Simple_cartesian<FT>                 Rep;
    typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
@@ -295,8 +304,7 @@ template<template<class Kernel, class MTag> class Predicate_t,
 	 typename Return_t, class FT,
 	 class Method_tag, typename Data, unsigned int Num_sites>
 Return_t
-svd_predicate_ftC2(const std::vector<FT>& v,
-		   const std::vector<char>& site_types, Data data)
+svd_predicate_ftC2(const FT v[], const char site_types[], Data data)
 {
    typedef Simple_cartesian<FT>                 Rep;
    typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
@@ -330,11 +338,11 @@ svd_predicate_C2(const typename K::Site_2 t[])
 {
   typedef typename K::FT   FT;
 
-  std::vector<FT> v;
-  std::vector<char> site_types;
+  FT v[Num_sites * 12];
+  char site_types[Num_sites * 2];
 
-  for (unsigned int i = 0; i < Num_sites; i++) {
-    svd_predicate_push_back_C2<K>(t[i], v, site_types);
+  for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+    svd_predicate_push_back_C2<K>(t[i], v, k, site_types, j);
   }
 
   return
@@ -349,11 +357,11 @@ svd_predicate_C2(const typename K::Site_2 t[])
 {
   typedef typename K::FT   FT;
 
-  std::vector<FT> v;
-  std::vector<char> site_types;
+  FT v[Num_sites * 12];
+  char site_types[Num_sites * 2];
 
-  for (unsigned int i = 0; i < Num_sites; i++) {
-    svd_predicate_push_back_C2<K>(t[i], v, site_types);
+  for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+    svd_predicate_push_back_C2<K>(t[i], v, k, site_types, j);
   }
 
   return svd_predicate_ftC2<Predicate,Return_t,FT,
@@ -368,11 +376,11 @@ svd_predicate_C2(const typename K::Site_2 t[], Data data)
 {
   typedef typename K::FT   FT;
 
-  std::vector<FT> v;
-  std::vector<char> site_types;
+  FT v[Num_sites * 12];
+  char site_types[Num_sites * 2];
 
-  for (unsigned int i = 0; i < Num_sites; i++) {
-    svd_predicate_push_back_C2<K>(t[i], v, site_types);
+  for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+    svd_predicate_push_back_C2<K>(t[i], v, k, site_types, j);
   }
 
   return svd_predicate_ftC2<Predicate,Return_t,FT,

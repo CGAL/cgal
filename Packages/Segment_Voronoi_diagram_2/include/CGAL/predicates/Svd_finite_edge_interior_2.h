@@ -34,6 +34,16 @@ private:
 private:
   Are_same_points_2  are_same;
 
+  bool same_segments(const Site_2& p, const Site_2& q) const
+  {
+    CGAL_precondition( p.is_segment() && q.is_segment() );
+    return
+      ( are_same(p.source_site(), q.source_site()) &&
+        are_same(p.target_site(), q.target_site()) ) ||
+      ( are_same(p.source_site(), q.target_site()) &&
+        are_same(p.target_site(), q.source_site()) );
+  }
+
 private:
 
   //--------------------------------------------------------------------
@@ -198,7 +208,6 @@ private:
     Point_2 p = sp.point();
     Segment_2 q = sq.segment(), t = st.segment();
 
-    Line_2 lt = compute_supporting_line(st.supporting_segment());
     Line_2 lq = compute_supporting_line(sq.supporting_segment());
 
     if ( oriented_side_of_line(lq, p) == ON_NEGATIVE_SIDE ) {
@@ -222,26 +231,45 @@ private:
 
       if ( !on_different_parabola_arcs ) { return true; }
 
-      Point_2 t1;
+      Site_2 t1;
       if ( are_same(sp, st.source_site()) ) {
-	t1 = t.target();
+	t1 = st.target_site();
       } else {
-	t1 = t.source();
+	t1 = st.source_site();
       }
 
-      Oriented_side o_p = oriented_side_of_line(lq, p);
-      Oriented_side o_t1 = oriented_side_of_line(lq, t1);
+      //      Oriented_side o_p = oriented_side_of_line(lq, p);
 
-      if ( (o_p == ON_POSITIVE_SIDE && o_t1 == ON_NEGATIVE_SIDE) ||
-	   (o_p == ON_NEGATIVE_SIDE && o_t1 == ON_POSITIVE_SIDE) ) {
+      Oriented_side o_t1;
+
+      if ( are_same(t1, sq.source_site()) ||
+	   are_same(t1, sq.target_site()) ) {
+	o_t1 = ON_ORIENTED_BOUNDARY;
+      } else if (  !t1.is_exact() &&
+		   ( same_segments(t1.supporting_segment(0),
+				   sq.supporting_segment()) ||
+		     same_segments(t1.supporting_segment(1),
+				   sq.supporting_segment()) )  ) {
+	o_t1 = ON_ORIENTED_BOUNDARY;
+      } else {
+	o_t1 = oriented_side_of_line(lq, t1.point());
+      }
+
+      //      CGAL_assertion( o_p == ON_POSITIVE_SIDE );
+
+      //      if ( (o_p == ON_POSITIVE_SIDE && o_t1 == ON_NEGATIVE_SIDE) ||
+      //	   (o_p == ON_NEGATIVE_SIDE && o_t1 == ON_POSITIVE_SIDE) ) {
+      if ( o_t1 == ON_NEGATIVE_SIDE ) {
 	return true;
       }
 	     
       Comparison_result res =
-	compare_squared_distances_to_line(lq, p, t1);
+	compare_squared_distances_to_line(lq, p, t1.point());
 
       return ( res == LARGER );
     }
+
+    Line_2 lt = compute_supporting_line(st.supporting_segment());
 
     if ( oriented_side_of_line(lt, p) == ON_NEGATIVE_SIDE ) {
       lt = opposite_line(lt);
@@ -539,6 +567,18 @@ public:
   bool operator()(const Site_2& p, const Site_2& q, const Site_2& r,
 		  const Site_2& s, const Site_2& t, Sign sgn) const
   {
+#if 0
+    std::cout << "inside finite edge interior top "
+	      << "level operator()" << std::endl;
+    std::cout << "p: " << p << std::endl;
+    std::cout << "q: " << q << std::endl;
+    std::cout << "r: " << r << std::endl;
+    std::cout << "s: " << s << std::endl;
+    std::cout << "t: " << t << std::endl;
+    std::cout << "sgn: " << sgn << std::endl;
+#endif
+
+
 #if 0
     bool res;
     if ( sgn == POSITIVE ) {

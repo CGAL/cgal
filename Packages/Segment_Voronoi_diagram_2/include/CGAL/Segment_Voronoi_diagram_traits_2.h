@@ -50,7 +50,7 @@ CGAL_BEGIN_NAMESPACE
 template<class T>
 void debug_info(char msg[], const T& t)
 {
-  std::cerr << msg << " \t\t\t" << t << std::endl;
+  std::cout << msg << " \t\t\t" << t << std::endl;
 }
 
 //***********************************************************************
@@ -175,7 +175,7 @@ public:
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t) const
   {
-    debug_info("vertex_conflict_2 (4)::", p);
+    //    debug_info("vertex_conflict_2 (4)::", p);
     return
       svd_vertex_conflict_ftC2<K,Method_tag>(p, q, r, t, Method_tag());
   }

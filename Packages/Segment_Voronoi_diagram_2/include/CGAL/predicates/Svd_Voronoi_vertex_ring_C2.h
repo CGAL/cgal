@@ -386,87 +386,99 @@ private:
     uz_pps = Sqrt_1(X, RT(0), S);
   }
 
+  //--------------------------------------------------------------------------
+
+  // determines of the segment s is on the positive halfspace as
+  // defined by the supporting line of the segment supp; the line l
+  // is supposed to be the supporting line of the segment supp and we
+  // pass it so that we do not have to recompute it
+  bool
+  is_on_positive_halfspace(const Site_2& supp,
+			   const Site_2& s, const Line_2& l) const
+  {
+#if 1
+    CGAL_precondition( supp.is_segment() && s.is_segment() );
+    
+    if ( same_segments(supp.supporting_segment(),
+		       s.supporting_segment()) ) {
+      return false;
+    }
+
+    if ( are_same(supp.source_site(), s.source_site()) ||
+	 are_same(supp.target_site(), s.source_site()) ) {
+      return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
+    }
+
+    if ( are_same(supp.source_site(), s.target_site()) ||
+	 are_same(supp.target_site(), s.target_site()) ) {
+      return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
+    }
+
+    if ( !s.is_exact(0) &&
+	 same_segments(supp.supporting_segment(),
+		       s.crossing_segment(0)) ) {
+      return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
+    }
+
+    if ( !s.is_exact(1) &&
+	 same_segments(supp.supporting_segment(),
+		       s.crossing_segment(1)) ) {
+      return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
+    }
+
+#endif
+    return Base::is_on_positive_halfspace(l, s.segment());
+  }
 
   //--------------------------------------------------------------------------
 
-#if 0
-  bool
-  is_consistent(const Segment_2& p, const Segment_2& q,
-		const Segment_2& r, RT a[], RT b[], RT c[]) const
-  {
-    Line_2 l[3] = {Line_2(a[0], b[0], c[0]), Line_2(a[1], b[1], c[1]), 
-		   Line_2(a[2], b[2], c[2])};
-
-    int num_oriented(0);
-
-    if ( is_on_positive_halfspace(l[0], q) ||
-	 is_on_positive_halfspace(l[0], r) ) {
-      num_oriented++;
-    }
-
-    if ( is_on_positive_halfspace(l[1], p) ||
-	 is_on_positive_halfspace(l[1], r) ) {
-      num_oriented++;
-    }
-
-    if ( is_on_positive_halfspace(l[2], p) ||
-	 is_on_positive_halfspace(l[2], q) ) {
-      num_oriented++;
-    }
-
-    return ( num_oriented >= 2 );
-  }
-#endif
-
   void
-  orient_lines(const Site_2& sp, const Site_2& sq,
-	       const Site_2& sr, RT a[], RT b[], RT c[]) const 
+  orient_lines(const Site_2& p, const Site_2& q,
+	       const Site_2& r, RT a[], RT b[], RT c[]) const 
   {
-    CGAL_precondition( sp.is_segment() && sq.is_segment() &&
-		       sr.is_segment() );
+    CGAL_precondition( p.is_segment() && q.is_segment() &&
+		       r.is_segment() );
 
     Line_2 l[3];
-    l[0] = compute_supporting_line(sp.supporting_segment());
-    l[1] = compute_supporting_line(sq.supporting_segment());
-    l[2] = compute_supporting_line(sr.supporting_segment());
+    l[0] = compute_supporting_line(p.supporting_segment());
+    l[1] = compute_supporting_line(q.supporting_segment());
+    l[2] = compute_supporting_line(r.supporting_segment());
     
     bool is_oriented[3] = {false, false, false};
 
-    Segment_2 p = sp.segment(), q = sq.segment(), r = sr.segment();
-
-    if ( is_on_positive_halfspace(l[0], q) ||
-	 is_on_positive_halfspace(l[0], r) ) {
+    if ( is_on_positive_halfspace(p, q, l[0]) ||
+	 is_on_positive_halfspace(p, r, l[0]) ) {
       is_oriented[0] = true;
     } else {
       l[0] = opposite_line(l[0]);
-      if ( is_on_positive_halfspace(l[0], q) ||
-	   is_on_positive_halfspace(l[0], r) ) {
+      if ( is_on_positive_halfspace(p, q, l[0]) ||
+	   is_on_positive_halfspace(p, r, l[0]) ) {
 	is_oriented[0] = true;
       } else {
 	l[0] = opposite_line(l[0]);
       }
     }
 
-    if ( is_on_positive_halfspace(l[1], p) ||
-	 is_on_positive_halfspace(l[1], r) ) {
+    if ( is_on_positive_halfspace(q, p, l[1]) ||
+	 is_on_positive_halfspace(q, r, l[1]) ) {
       is_oriented[1] = true;
     } else {
        l[1] = opposite_line(l[1]);
-      if ( is_on_positive_halfspace(l[1], p) ||
-	   is_on_positive_halfspace(l[1], r) ) {
+      if ( is_on_positive_halfspace(q, p, l[1]) ||
+	   is_on_positive_halfspace(q, r, l[1]) ) {
 	is_oriented[1] = true;
       } else {
 	l[1] = opposite_line(l[1]);
       }
     }
 
-    if ( is_on_positive_halfspace(l[2], p) ||
-	 is_on_positive_halfspace(l[2], q) ) {
+    if ( is_on_positive_halfspace(r, p, l[2]) ||
+	 is_on_positive_halfspace(r, q, l[2]) ) {
       is_oriented[2] = true;
     } else {
       l[2] = opposite_line(l[2]);
-      if ( is_on_positive_halfspace(l[2], p) ||
-	   is_on_positive_halfspace(l[2], q) ) {
+      if ( is_on_positive_halfspace(r, p, l[2]) ||
+	   is_on_positive_halfspace(r, q, l[2]) ) {
 	is_oriented[2] = true;
       } else {
 	l[2] = opposite_line(l[2]);

@@ -479,6 +479,8 @@ do_intersect(const Site& t, Vertex_handle v) const
   // add here the cases where t is a segment and intersects a point
   // and t is a point and lies in a segment
 
+  //  return false;
+
   if ( t.is_segment() ) {
     if ( !is_infinite(v) && v->is_segment() ) {
       if ( do_intersect(t, v->site()) ) {
@@ -877,10 +879,11 @@ expand_conflict_region(const Face_handle& f, const Site& t,
 		       std::pair<bool,Vertex_handle>& vcross,
 		       std::vector<Vh_triple*>* fe)
 {
+  if ( fm.find(f) != fm.end() ) { return; }
+
   // this is done to stop the recursion when intersecting segments
   // are found
   if ( vcross.first ) { return; }
-  //  if ( fm.size() == 0 && l.size() == 0 ) { return; }
 
   for (int i = 0; i < 3; i++) {
     Vertex_handle vf = f->vertex(i);
@@ -898,11 +901,6 @@ expand_conflict_region(const Face_handle& f, const Site& t,
   // face to be available for recycling we must set this flag to
   // false.
   fm[f] = true;
-
-  // MK: I MAY NEED TO ADD SOME TEST HERE THAT CORRESPONDS TO THE CASE
-  // WHERE AN INTERSECTING SEGMENT HAS BEEN FOUND.
-
-  //  std::cout << "Size of l: " << l.size() << std::endl;
 
   //  CGAL_assertion( fm.find(f) != fm.end() );
 

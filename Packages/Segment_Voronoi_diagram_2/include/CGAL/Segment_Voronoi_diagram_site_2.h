@@ -155,6 +155,25 @@ public:
     }
   }
 
+  Self opposite_site() const {
+    CGAL_precondition( is_segment() );
+    if ( input_ ) {
+      return Self( segment().opposite() );
+    }
+
+    Segment_2 supp = supporting_segment().opposite();
+
+    CGAL_assertion( !is_exact_[0] || !is_exact_[1] );
+
+    if ( is_exact_[0] && !is_exact_[1] ) {
+      return Self(supp, crossing_segment(1), false);
+    } else if ( !is_exact_[0] && is_exact_[1] ) {
+      return Self(supp, crossing_segment(0), true);
+    } else {
+      return Self(supp, crossing_segment(1), crossing_segment(0));
+    }
+  }
+
   Segment_2 supporting_segment() const {
     CGAL_precondition( is_segment() );
     if ( input_ ) {

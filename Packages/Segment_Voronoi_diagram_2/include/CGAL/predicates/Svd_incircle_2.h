@@ -189,7 +189,7 @@ public:
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t) const
   {
-#if 1
+#if 0
     std::cout << "inside vertex conflict top "
 	      << "level operator()" << std::endl;
     std::cout << "p: " << p << std::endl;

@@ -345,6 +345,12 @@ insert(const Site& t, int hierarchy_level)
     return vertex;
   }
 
+  // MK:: by doing this the hierarchy stores segments only at the
+  //      bottom-most level
+  if ( false && t.is_segment() ) {
+    return vertex;
+  }
+
   // insert at other levels
   Vertex_handle previous = vertex;
   Vertex_handle first = vertex;
