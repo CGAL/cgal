@@ -1,21 +1,8 @@
-IO package: support for iostream (io modes, tags)
+Version 2.9 (12 February 2001)
+- use static_cast<>.
 
-CONTENTS:
-
-doc_ps/iostream.ps.gz
-doc_tex/general/Color.tex
-               /iostream.tex
-include/CGAL/IO/io.h
-               /io_tags.h
-               /Color.h
-src/io.C
-   /Color.C
-
-
-CHANGES:
-
-fixed banner and long lines (31 January 2000)
-
+Version 2.8 (?? ??????? 200?)
+- fixed banner and long lines (31 January 2000)
 
 Version 2.7 (31 January 2000)
 cleaned up  CGAL_static_cast(A,B) to static_cast<A>(B)

@@ -70,7 +70,7 @@ inline
 void
 write(std::ostream& os, const T& t, const io_Read_write&)
 {
-    os.write((char*)&t, sizeof(t));
+    os.write(static_cast<char*>(&t), sizeof(t));
 }
 
 
@@ -106,7 +106,7 @@ inline
 void
 read(std::istream& is, T& t, const io_Read_write&)
 {
-    is.read((char*)&t, sizeof(t));
+    is.read(static_cast<char*>(&t), sizeof(t));
 }
 
 
