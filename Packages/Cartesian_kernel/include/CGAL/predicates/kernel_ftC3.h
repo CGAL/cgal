@@ -131,6 +131,25 @@ coplanar_orientationC3(const FT &px, const FT &py, const FT &pz,
 }
 
 template < class FT >
+/*CGAL_NO_FILTER*/
+CGAL_KERNEL_MEDIUM_INLINE
+Orientation
+coplanar_orientationC3(const FT &px, const FT &py, const FT &pz,
+                       const FT &qx, const FT &qy, const FT &qz,
+                       const FT &rx, const FT &ry, const FT &rz)
+{
+  Orientation oxy_pqr = orientationC2(px,py,qx,qy,rx,ry);
+  if (oxy_pqr != COLLINEAR)
+      return oxy_pqr;
+
+  Orientation oyz_pqr = orientationC2(py,pz,qy,qz,ry,rz);
+  if (oyz_pqr != COLLINEAR)
+      return oyz_pqr;
+
+  return orientationC2(px,pz,qx,qz,rx,rz);
+}
+
+template < class FT >
 CGAL_KERNEL_LARGE_INLINE
 Bounded_side
 coplanar_side_of_bounded_circleC3(const FT &px, const FT &py, const FT &pz,

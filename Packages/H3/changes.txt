@@ -1,5 +1,6 @@
-2.33   (?? June 2001)
+2.33   (10 July 2001)
 - deprecated has_on_boundary for Plane_3
+- New predicate : coplanar_orientation(3 points).
 
 2.32   (21 June 2001)
 - New constructors for DirectionH3.

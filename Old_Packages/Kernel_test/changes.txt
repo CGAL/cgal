@@ -1,5 +1,6 @@
-3.30   (?? June 2001)
+3.30   (10 July 2001)
 - additions of function objects following discussion of kernel traits
+- New predicate : coplanar_orientation(3 points).
 
 3.29   (26 June 2001)
 - Remove references to obsolete Equal_xy_2, Equal_xyz_3,

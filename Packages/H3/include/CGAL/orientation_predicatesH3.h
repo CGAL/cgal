@@ -127,6 +127,32 @@ coplanar_orientation(const PointH3<R>& p,
   return COLLINEAR;
 }
 
+template <class R>
+CGAL_KERNEL_LARGE_INLINE
+Orientation
+coplanar_orientation(const PointH3<R>& p,
+                     const PointH3<R>& q,
+                     const PointH3<R>& r)
+// Returns an Orientation which is coherent for all (p,q,r) chosen in a same
+// plane.
+{
+  Orientation oxy_pqr = orientationH2(p.hx(), p.hy(), p.hw(),
+	                              q.hx(), q.hy(), q.hw(),
+				      r.hx(), r.hy(), r.hw());
+  if (oxy_pqr != COLLINEAR)
+      return oxy_pqr;
+
+  Orientation oyz_pqr = orientationH2(p.hy(), p.hz(), p.hw(),
+	                              q.hy(), q.hz(), q.hw(),
+				      r.hy(), r.hz(), r.hw());
+  if (oyz_pqr != COLLINEAR)
+      return oyz_pqr;
+
+  return orientationH2(p.hx(), p.hz(), p.hw(),
+	               q.hx(), q.hz(), q.hw(),
+		       r.hx(), r.hz(), r.hw());
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ORIENTATION_PREDICATESH3_H

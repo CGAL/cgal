@@ -471,6 +471,7 @@ test_new_3(const R& rep)
   typename R::Coplanar_orientation_3 coplanar_orientation
         = rep.coplanar_orientation_3_object();
   Orientation tmp30a = coplanar_orientation(p7,p8,p9,p10);
+              tmp30a = coplanar_orientation(p7,p8,p9);
 
   typename R::Coplanar_side_of_bounded_circle_3
            coplanar_side_of_bounded_circle

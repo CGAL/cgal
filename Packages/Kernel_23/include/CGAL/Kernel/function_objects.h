@@ -586,7 +586,11 @@ class Coplanar_orientation
 {
   public:
     typedef Orientation  result_type;
-    typedef Arity_tag< 4 >   Arity;
+
+    template <class P>
+    Orientation
+    operator()(const P& p, const P& q, const P& r) const
+    { return coplanar_orientation(p,q,r); }
 
     template <class P>
     Orientation

@@ -270,6 +270,19 @@ coplanar_orientation(const PointC3<R CGAL_CTAG> &p,
 
 template < class R >
 inline
+Orientation
+coplanar_orientation(const PointC3<R CGAL_CTAG> &p,
+                     const PointC3<R CGAL_CTAG> &q,
+                     const PointC3<R CGAL_CTAG> &r)
+{
+  // Returns an Orientation which is coherent for all (p,q,r) in a same plane.
+  return coplanar_orientationC3(p.x(), p.y(), p.z(),
+                                q.x(), q.y(), q.z(),
+                                r.x(), r.y(), r.z());
+}
+
+template < class R >
+inline
 Bounded_side
 coplanar_side_of_bounded_circle(const PointC3<R CGAL_CTAG> &p,
                                 const PointC3<R CGAL_CTAG> &q,

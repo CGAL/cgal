@@ -1,5 +1,6 @@
-3.49   (?? June 2001)
+3.49   (10 July 2001)
 - further traits update 
+- New predicate : coplanar_orientation(3 points).
 
 3.48   (26 June 2001)
 - Deprecate Equal_xy_2 and Equal_xyz_3.
