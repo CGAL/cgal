@@ -189,7 +189,7 @@ public:
 
   bool make_tree(typename std::list< C_Data>::iterator& beg, 
 		 typename std::list< C_Data>::iterator& end, 
-		 typename tbt::lit *dummy=0) 
+		 typename tbt::lit * =0) 
   {
     USE_ARGUMENT(beg);
     USE_ARGUMENT(end);
@@ -198,7 +198,7 @@ public:
 #ifdef stlvector
   bool make_tree(typename std::vector< C_Data>::iterator& beg, 
 		 typename std::vector< C_Data>::iterator& end, 
-		 typename tbt::vit *dummy=0) 
+		 typename tbt::vit * =0) 
   {
     USE_ARGUMENT(beg);
     USE_ARGUMENT(end);
@@ -218,7 +218,7 @@ public:
       window_query( 
        C_Window const &win, 
        std::back_insert_iterator< std::list< C_Data> > out,
-       typename tbt::lbit *dummy=0){
+       typename tbt::lbit * =0){
     USE_ARGUMENT(win);
     USE_ARGUMENT(out);
     return out;
@@ -227,7 +227,7 @@ public:
   std::back_insert_iterator< std::vector< C_Data> >  
       window_query( C_Window const &win, 
 		    std::back_insert_iterator< std::vector< C_Data> > out, 
-                    typename tbt::vbit *dummy=0){
+                    typename tbt::vbit * =0){
     USE_ARGUMENT(win);
     USE_ARGUMENT(out);
     return out;
@@ -251,14 +251,14 @@ public:
 #endif
    std::back_insert_iterator< std::list< C_Data> > enclosing_query( C_Window const &win, 
                                    std::back_insert_iterator< std::list< C_Data> > out,
-				   typename tbt::lbit *dummy=0){
+				   typename tbt::lbit * =0){
     USE_ARGUMENT(win);
     USE_ARGUMENT(out);
     return out;
   }
    std::back_insert_iterator< std::vector< C_Data> > enclosing_query( C_Window const &win, 
                                    std::back_insert_iterator< std::vector< C_Data> > out,
-				   typename tbt::vbit *dummy=0){
+				   typename tbt::vbit * =0){
     USE_ARGUMENT(win);
     USE_ARGUMENT(out); 
     return out;

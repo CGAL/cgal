@@ -1,3 +1,6 @@
+Version 2.68 (27 April 2002)
+- Kill "unused argument dummy" warnings.
+
 Version 2.67 (22 April 2002)
 - Fix warning "conversion double to int".
 

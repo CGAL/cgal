@@ -442,14 +442,14 @@ public:
   
   bool make_tree(typename std::list< C_Data>::iterator& beg, 
 		 typename std::list< C_Data>::iterator& end,
-		 typename tbt::lit *dummy=0){ 
+		 typename tbt::lit * =0){ 
     return make_tree_impl(beg,end);
   }
 
 #ifdef stlvector
   bool make_tree(typename std::vector< C_Data>::iterator& beg, 
 		 typename std::vector< C_Data>::iterator& end,
-		 typename tbt::vbit *dummy=0){ 
+		 typename tbt::vbit * =0){ 
     return make_tree_impl(beg,end);
   }
 #endif
@@ -500,7 +500,7 @@ public:
   std::back_insert_iterator< std::list< C_Data> > window_query
           ( C_Window const &win, 
 	    std::back_insert_iterator< std::list< C_Data> > out,
-	    typename tbt::lbit *dummy=0){
+	    typename tbt::lbit * =0){
     return window_query_impl(win,out);
   }
 
@@ -508,7 +508,7 @@ public:
   std::back_insert_iterator< std::vector< C_Data> > window_query
           ( C_Window const &win, 
 	    std::back_insert_iterator< std::vector< C_Data> > out,
-	    typename tbt::vbit *dummy=0){
+	    typename tbt::vbit * =0){
     return window_query_impl(win,out);
   }
 
@@ -604,13 +604,13 @@ public:
 
   std::back_insert_iterator< std::list< C_Data> > enclosing_query( C_Window const &win, 
 			     std::back_insert_iterator< std::list< C_Data> > out,
-			     typename tbt::lbit *dummy=0){
+			     typename tbt::lbit * =0){
     return enclosing_query_impl(win,out);
   }
 
   std::back_insert_iterator< std::vector< C_Data> > enclosing_query( C_Window const &win, 
 			     std::back_insert_iterator< std::vector< C_Data> > out,
-			     typename tbt::vbit *dummy=0){
+			     typename tbt::vbit * =0){
     return enclosing_query_impl(win,out);
   }
 
