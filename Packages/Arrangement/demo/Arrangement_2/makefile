@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I./include \
+	   -Iinclude \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -38,6 +38,7 @@ all:            \
                 Circle_arr_from_file$(EXE_EXT) \
                 Polyline_arr_from_file$(EXE_EXT) \
                 Polyline_arr_from_mouse$(EXE_EXT) \
+                Seg_circ_arr_from_file$(EXE_EXT) \
                 Segment_arr_from_file$(EXE_EXT) \
                 Segment_arr_from_mouse$(EXE_EXT) 
 
@@ -50,6 +51,9 @@ Polyline_arr_from_file$(EXE_EXT): Polyline_arr_from_file$(OBJ_EXT)
 Polyline_arr_from_mouse$(EXE_EXT): Polyline_arr_from_mouse$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polyline_arr_from_mouse Polyline_arr_from_mouse$(OBJ_EXT) $(LDFLAGS)
 
+Seg_circ_arr_from_file$(EXE_EXT): Seg_circ_arr_from_file$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Seg_circ_arr_from_file Seg_circ_arr_from_file$(OBJ_EXT) $(LDFLAGS)
+
 Segment_arr_from_file$(EXE_EXT): Segment_arr_from_file$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Segment_arr_from_file Segment_arr_from_file$(OBJ_EXT) $(LDFLAGS)
 
@@ -60,6 +64,7 @@ clean: \
                    Circle_arr_from_file.clean \
                    Polyline_arr_from_file.clean \
                    Polyline_arr_from_mouse.clean \
+                   Seg_circ_arr_from_file.clean \
                    Segment_arr_from_file.clean \
                    Segment_arr_from_mouse.clean 
 

@@ -1,4 +1,4 @@
-The directory contains 4 graphic demo programs.
+The directory contains 6 graphic demo programs.
 To run them you need CGAL with LEDA.
 
 Segment_arr_from_file - constructs a segment arrangement from an input
@@ -16,3 +16,8 @@ Polyline_arr_from_file - constructs a polyline arrangement from an input
 Polyline_arr_from_mouse - constructs a polyline arrangement from window
        input. It Does not use the LEDA traits (but, of course, the LEDA
        graphic interface).
+
+Seg_circ_arr_from_file - constructs an arrangement of circular arcs and 
+       line segments from an input file. Some example files are given in 
+       seg_circ_input_files/.
+
