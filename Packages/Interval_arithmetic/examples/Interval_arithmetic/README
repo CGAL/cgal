@@ -1,0 +1,12 @@
+Patch the first line of the PERL 5 script "filtered_predicate_converter"
+if necessary.  Then you can try:
+
+cd include/CGAL/Arithmetic_filter
+make clean all
+
+It produces the partial specialisation:
+include/CGAL/Arithmetic_filter/template_predicates_on_ft.h
+from the full template one:
+include/CGAL/template_predicates_on_ft.h
+
+You can guess now how to use it for your own predicates.
