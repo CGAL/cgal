@@ -839,56 +839,60 @@ public:
 
   Cell_iterator cells_begin() const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    //    CGAL_triangulation_precondition( dimension() == 3 );
+    if ( dimension() < 3 ) return cells_end();
     Tds* ncthis = (Tds *)this;
     return Cell_iterator(ncthis);
   }
 
   Cell_iterator cells_end() const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    //    CGAL_triangulation_precondition( dimension() == 3 );
     Tds* ncthis = (Tds *)this;
     return Cell_iterator(ncthis, 1);
   }
 
   Facet_iterator facets_begin() const
   {
-    CGAL_triangulation_precondition( dimension() >=2 );
+    if ( dimension < 2 ) return facets_end();
+    //    CGAL_triangulation_precondition( dimension() >=2 );
     Tds* ncthis = (Tds*)this;
     return Facet_iterator(ncthis);
   }
 
   Facet_iterator facets_end() const
   {
-    CGAL_triangulation_precondition( dimension() >=2 );
+    //    CGAL_triangulation_precondition( dimension() >=2 );
     Tds* ncthis = (Tds*)this;
     return Facet_iterator(ncthis,1);
   }
 
   Edge_iterator edges_begin() const
   {
-    CGAL_triangulation_precondition( dimension() >=1 );
+    if ( dimension < 1 ) return edges_end();
+    //    CGAL_triangulation_precondition( dimension() >=1 );
     Tds* ncthis = (Tds*)this;
     return Edge_iterator(ncthis);
   }
 
   Edge_iterator edges_end() const
   {
-    CGAL_triangulation_precondition( dimension() >=1 );
+    //    CGAL_triangulation_precondition( dimension() >=1 );
     Tds* ncthis = (Tds*)this;
     return Edge_iterator(ncthis,1);
   }
 
   Vertex_iterator vertices_begin() const
   {
-    CGAL_triangulation_precondition( number_of_vertices() > 0 );
+    if ( dimension < 0 ) return vertices_end();
+    //    CGAL_triangulation_precondition( number_of_vertices() > 0 );
     Tds* ncthis = (Tds*)this;
     return Vertex_iterator(ncthis);
   }
 
   Vertex_iterator vertices_end() const
   {
-    CGAL_triangulation_precondition( number_of_vertices() > 0 );
+    //    CGAL_triangulation_precondition( number_of_vertices() > 0 );
     Tds* ncthis = (Tds*)this;
     return Vertex_iterator(ncthis,1);
   }
