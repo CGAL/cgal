@@ -52,8 +52,8 @@
 // PL flag enables the running of the test independently of cgal_make.)
 #ifndef CGAL_ARR_TEST_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
-#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
+//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
+#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
 #endif
 
@@ -165,6 +165,49 @@ typedef Pmwx::Pmwx_change_notification         Notifier;
  
 // we use the namespace std for compatability with MSVC
 typedef std::list<Point>                     Point_list;
+
+// Defining IO operators for polyline curves.
+#if (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS)
+
+
+CGAL_BEGIN_NAMESPACE
+
+std::ostream&  operator<<(std::ostream& os,  
+			  const Curve& cv)
+{
+  typedef Curve::const_iterator       Points_iterator;
+  
+  os<<cv.size()<<std::endl;
+  for (Points_iterator points_iter = cv.begin(); 
+       points_iter != cv.end(); points_iter++)
+    os<<" "<<*points_iter;
+
+  return os;
+}
+
+
+std::istream&  operator>>(std::istream& in,  
+			  Curve& cv)
+{
+  typedef Curve::value_type           Point;
+
+  std::size_t  size;
+
+  in >> size;
+
+  for (unsigned int i = 0; i < size; i++){
+    Point  p;
+    
+    in >> p;
+    
+    cv.push_back(p);  
+  }
+  
+  return in;
+}
+
+CGAL_END_NAMESPACE
+#endif
 
 using namespace std;
 
