@@ -1,7 +1,7 @@
 #!/sw/bin/perl5
 
 @source_files = glob("*.C");
-@object_files = map {substr($_, 0,-1) . "o"} @source_files;
+@object_files = map {substr($_, 0,-2) . '$(OBJ_EXT)'} @source_files;
 $, = " \\\n";
 
 open MFLIB, ">makefile_lib";
@@ -25,8 +25,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = $(CGAL_LIB_CXXFLAGS) \
-           -g
+CXXFLAGS = $(CGAL_LIB_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 # Object files
@@ -45,8 +44,9 @@ print MFLIB <<'EOF';
 #---------------------------------------------------------------------#
 
 lib: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
-	$(CGAL_LIB_CREATE) $(CGAL_LIB) $(CGAL_EXTRA_OBJECTS) $(CGAL_OBJECTS) $(CGAL_LIB_LDFLAGS)
-	mv $(CGAL_LIB) $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)
+	$(CGAL_LIB_CREATE)$(CGAL_LIB) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS) \
+		$(CGAL_LIB_LDFLAGS)
+	mv $(CGAL_LIB) $(CGAL_LIB_DESTINATION)
 	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 
 workaround_4_irix.o:
@@ -55,12 +55,11 @@ workaround_4_irix.o:
 workaround_4_irix6.o:
 	$(CGAL_CC) $(CXXFLAGS) -c Interval_arithmetic/workaround_4_irix6.s
 
-
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
+.C$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
 
 EOF
@@ -108,8 +107,9 @@ print MFSHARED <<'EOF';
 #---------------------------------------------------------------------#
 
 lib: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
-	$(CGAL_SHARED_LIB_CREATE) $(CGAL_SHARED_LIB) $(CGAL_EXTRA_OBJECTS) $(CGAL_OBJECTS) $(CGAL_SHARED_LIB_LDFLAGS)
-	mv $(CGAL_SHARED_LIB) $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)
+	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB) $(CGAL_OBJECTS) \
+		$(CGAL_EXTRA_OBJECTS) $(CGAL_SHARED_LIB_LDFLAGS)
+	mv $(CGAL_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
 	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 
 workaround_4_irix.o:
@@ -122,7 +122,7 @@ workaround_4_irix6.o:
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
+.C$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
 
 EOF

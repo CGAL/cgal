@@ -12,7 +12,7 @@ use strict;
 use vars qw($opt_p);
 use Getopt::Std;
 
-my $SCRIPTDIR = '/users/www/CGAL/Members/Develop/scripts';
+my $SCRIPTDIR = '/projects/CGAL/admin_scripts';
 
 my $TEMPPAGE="tmp$$.html";
 my $WWWPAGE;
@@ -227,6 +227,10 @@ EOF
 	if (!defined($responsible)) {
 	    print STDERR "Unknown responsible person.\n";
 	    print OUTPUT "<TD>?</TD><TD>?</TD>\n";
+	} elsif ($responsible eq 'Matthias') {
+	    print OUTPUT "<TD>Halle</TD>\n",
+		'<TD><A HREF="mailto:baesken\@infsn2.informatik.uni-halle.de">',
+		"Matthias Baesken</A></TD>\n";
 	} elsif ($responsible eq 'Sylvain') {
 	    print OUTPUT "<TD>INRIA Sophia-Antipolis</TD>\n",
 		'<TD><A HREF="mailto:Sylvain.Pion\@sophia.inria.fr">',
@@ -239,6 +243,10 @@ EOF
 	    print OUTPUT "<TD>Utrecht University</TD>\n",
 		'<TD><A HREF="mailto:geert\@cs.uu.nl">',
 		"Geert-Jan Giezeman</A></TD>\n";
+	} elsif ($responsible eq 'Dima') {
+	    print OUTPUT "<TD>Utrecht University</TD>\n",
+		'<TD><A HREF="mailto:dima\@cs.uu.nl">',
+		"Dima Pasechnik</A></TD>\n";
 	} elsif ($responsible eq 'Michael') {
 	    print OUTPUT "<TD>ETH Z&uuml;rich</TD>\n",
 		'<TD><A HREF="mailto:hoffmann\@inf.ethz.ch">',
@@ -426,7 +434,23 @@ sub main()
     'i686_Linux-2.0.35_eg++-egcs-2.91.60_LEDA', 'Sylvain',
     'i686_Linux-2.0.36_eg++-egcs-2.91.60_LEDA', 'Francois',
     'mips_IRIX-5.3_g++-egcs-2.91.60_LEDA', 'Geert',
+    'sparc_SunOS-5.5.1_g++-egcs-2.91.66_LEDA','Matthias',
+    'sparc_SunOS-5.6_g++-egcs-2.91.66_LEDA_GJ', 'Geert',
+    'sparc_SunOS-5.6_g++-egcs-2.91.66', 'Geert',
+    'sparc_SunOS-5.6_g++-egcs-2.91.66_LEDA', 'Michael',
+    'sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA', 'Sylvain',
+    'i586_Linux-2.0.35_eg++-egcs-2.91.66_LEDA', 'Francois',
     'i686_Linux-2.0.36_eg++-egcs-2.91.66_LEDA', 'Francois',
+    'i686_Linux-2.0.36_eg++-egcs-2.91.66', 'Francois',
+    'i686_Linux-2.2.7_eg++-egcs-2.91.66', 'Francois',
+    'i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA', 'Francois',
+    'i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA_EX', 'Sylvain',
+    'i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA_W', 'Sylvain',
+    'ppc_Linux-2.2.7_g++-egcs-2.91.66_LEDA', 'Sylvain',
+    'sparc_SunOS-5.6_g++-gcc-2.95.', 'Francois',
+    'i686_Linux-2.2.7_g++-2.95._LEDA', 'Francois',
+    'i686_Linux-2.2.7_g++-2.95.1_LEDA', 'Francois',
+    'sparc_SunOS-5.6_g++-2.95.1', 'Geert',
     'i686_Linux-2.0.29_g++-2.8.1_LEDA', 'Sylvain',
     'i686_Linux-2.0.35_g++-2.8.1_LEDA', 'Sylvain',
     'i686_Linux-2.0.35_g++-2.8.1', 'Sylvain',
@@ -440,10 +464,15 @@ sub main()
     'mips_IRIX64-6.5_CC-n32-7.2.1.3m_LEDA', 'Michael',
     'mips_IRIX-6.5_CC-n32-7.2.1.3m_LEDA', 'Michael',
     'mips_IRIX64-6.2_CC-64-7.20_LEDA', 'Michael',
+    'mips_IRIX64-6.5_CC-n32-7.30_LEDA', 'Michael',
     'sparc_SunOS-5.5_CC-4.2_LEDA', 'Michael',
     'sparc_SunOS-5.6_CC-4.2_LEDA', 'Michael',
     'sparc_SunOS-5.6_CC-5.0', 'Stefan',
-    'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168', 'Geert'
+    'sparc_SunOS-5.6_g++-2.95.1_LEDA', 'Stefan',
+    'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168', 'Geert',
+    'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168_cp', 'Dima',
+    'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168_LEDA', 'Dima',
+    'i686_CYGWINNT-4.0-20.1_g++-egcs-2.91.57_LEDA', 'Dima'
 );
 main();
 

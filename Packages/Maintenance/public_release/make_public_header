@@ -1,4 +1,4 @@
-#!/net/bin/perl5 -w
+#!/sw/bin/perl5 -w
 
 #----------------------------------------------------------------#
 # This script updates a file with a valid internal header to
