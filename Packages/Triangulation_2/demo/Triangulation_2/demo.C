@@ -58,112 +58,112 @@ typedef CGAL::Window_stream  Window_stream;
 
 #include "window_stuff.h"
 
-template <class TRIANGULATION>
-void window_input(TRIANGULATION &T,
-		  Window_stream &W,
-		  const Options& opt)
-{
-    std::cerr << "Enter points with the left button" << std::endl;
-    std::cerr << "Remove points with the middle button" << std::endl;
-    std::cerr << "Right button terminates input of points" << std::endl;
+// template <class TRIANGULATION>
+// void window_input(TRIANGULATION &T,
+// 		  Window_stream &W,
+// 		  const Options& opt)
+// {
+//     std::cerr << "Enter points with the left button" << std::endl;
+//     std::cerr << "Remove points with the middle button" << std::endl;
+//     std::cerr << "Right button terminates input of points" << std::endl;
 
-    Point p;
-    Point q(coord_type(W.xmin()-1),
-            coord_type(W.ymin()-1));
+//     Point p;
+//     Point q(coord_type(W.xmin()-1),
+//             coord_type(W.ymin()-1));
 
-    Face_handle highlight = NULL;
-    Vertex_handle hv;
+//     Face_handle highlight = NULL;
+//     Vertex_handle hv;
 
-    while(1) {
-        double x, y;
-        int b = W.get_mouse(x,y);
-        bool button_pressed = (b == MOUSE_BUTTON(1)) ||
-                              (b == MOUSE_BUTTON(2)) ||
-                              (b == MOUSE_BUTTON(3));
-        p = Point(coord_type(x),
-                  coord_type(y));
-        bool mouse_moved = p != q;
-        bool face_change = true,
-             vertex_change = false;
-        if( (highlight != (CGAL_NULL_TYPE) NULL) && 
-	                  (button_pressed || mouse_moved) ){
-            face_change = mouse_moved &&
-                          ( T.oriented_side(highlight, p)
-                                == CGAL::ON_NEGATIVE_SIDE );
-            vertex_change = face_change ||
-                            ( mouse_moved &&
-                              ( hv != closest_vertex(T,highlight, p)));
+//     while(1) {
+//         double x, y;
+//         int b = W.get_mouse(x,y);
+//         bool button_pressed = (b == MOUSE_BUTTON(1)) ||
+//                               (b == MOUSE_BUTTON(2)) ||
+//                               (b == MOUSE_BUTTON(3));
+//         p = Point(coord_type(x),
+//                   coord_type(y));
+//         bool mouse_moved = p != q;
+//         bool face_change = true,
+//              vertex_change = false;
+//         if( (highlight != (CGAL_NULL_TYPE) NULL) && 
+// 	                  (button_pressed || mouse_moved) ){
+//             face_change = mouse_moved &&
+//                           ( T.oriented_side(highlight, p)
+//                                 == CGAL::ON_NEGATIVE_SIDE );
+//             vertex_change = face_change ||
+//                             ( mouse_moved &&
+//                               ( hv != closest_vertex(T,highlight, p)));
 
-            leda_drawing_mode dm = W.set_mode(leda_xor_mode);
-            if(vertex_change){
-                W << CGAL::RED ;
-                W.draw_node(CGAL::to_double(hv->point().x()),
-                            CGAL::to_double(hv->point().y()));
-            }
-            W.set_mode(leda_src_mode);
-            if(face_change){
-                W << CGAL::BLUE << T.triangle(highlight);
-                highlight = NULL;
-            }
-            W.set_mode(dm);
-        }
-        if(b == MOUSE_BUTTON(1)){
-            typename TRIANGULATION::Locate_type lt;
-	    int li;
-	    Face_handle loc = T.locate(p, lt, li);
-            T.insert(p,lt, loc,li) ;
-            if(opt.check){
-                T.is_valid();
-            }
+//             leda_drawing_mode dm = W.set_mode(leda_xor_mode);
+//             if(vertex_change){
+//                 W << CGAL::RED ;
+//                 W.draw_node(CGAL::to_double(hv->point().x()),
+//                             CGAL::to_double(hv->point().y()));
+//             }
+//             W.set_mode(leda_src_mode);
+//             if(face_change){
+//                 W << CGAL::BLUE << T.triangle(highlight);
+//                 highlight = NULL;
+//             }
+//             W.set_mode(dm);
+//         }
+//         if(b == MOUSE_BUTTON(1)){
+//             typename TRIANGULATION::Locate_type lt;
+// 	    int li;
+// 	    Face_handle loc = T.locate(p, lt, li);
+//             T.insert(p,lt, loc,li) ;
+//             if(opt.check){
+//                 T.is_valid();
+//             }
 
-            if(lt != TRIANGULATION::VERTEX){
-                W.clear();
-                W << T;
-            }
-        } else if(b == MOUSE_BUTTON(2)){
-            if(hv != (CGAL_NULL_TYPE) NULL){
-                T.remove(hv);
-                face_change = vertex_change = true;
-                highlight = NULL;
-                W.clear();
-                W << T;
-            }
-        } else if(b == MOUSE_BUTTON(3)){
-            // we are done. Nothing is highlighted
-            break;
-        }
-        if( button_pressed || face_change){
-            bool outside = highlight == (CGAL_NULL_TYPE) NULL;
-            highlight = T.locate(p, highlight);
-            if((highlight != (CGAL_NULL_TYPE) NULL) && 
-	                     (! T.is_infinite(highlight)) &&
-	                        T.dimension()==2){
-                vertex_change = outside && true;
-                leda_drawing_mode dm = W.set_mode(leda_src_mode);
-                W << CGAL::RED << T.triangle(highlight) << CGAL::BLUE;
-                W.set_mode(dm);
-            } else {
-                highlight = NULL;
-            }
-        }
-        if(vertex_change){
-            hv.clear();
-        }
-        if(button_pressed || vertex_change){
-            if((highlight != (CGAL_NULL_TYPE) NULL) && 
-	       (! T.is_infinite(highlight))){
-                leda_drawing_mode dm = W.set_mode(leda_xor_mode);
-                W << CGAL::RED;
-                hv = closest_vertex(T, highlight, p);
-                W.draw_node(CGAL::to_double(hv->point().x()),
-                            CGAL::to_double(hv->point().y()));
-                W << CGAL::BLUE;
-                W.set_mode(dm);
-            }
-        }
-        q = p;
-    }
-}
+//             if(lt != TRIANGULATION::VERTEX){
+//                 W.clear();
+//                 W << T;
+//             }
+//         } else if(b == MOUSE_BUTTON(2)){
+//             if(hv != (CGAL_NULL_TYPE) NULL){
+//                 T.remove(hv);
+//                 face_change = vertex_change = true;
+//                 highlight = NULL;
+//                 W.clear();
+//                 W << T;
+//             }
+//         } else if(b == MOUSE_BUTTON(3)){
+//             // we are done. Nothing is highlighted
+//             break;
+//         }
+//         if( button_pressed || face_change){
+//             bool outside = highlight == (CGAL_NULL_TYPE) NULL;
+//             highlight = T.locate(p, highlight);
+//             if((highlight != (CGAL_NULL_TYPE) NULL) && 
+// 	                     (! T.is_infinite(highlight)) &&
+// 	                        T.dimension()==2){
+//                 vertex_change = outside && true;
+//                 leda_drawing_mode dm = W.set_mode(leda_src_mode);
+//                 W << CGAL::RED << T.triangle(highlight) << CGAL::BLUE;
+//                 W.set_mode(dm);
+//             } else {
+//                 highlight = NULL;
+//             }
+//         }
+//         if(vertex_change){
+//             hv.clear();
+//         }
+//         if(button_pressed || vertex_change){
+//             if((highlight != (CGAL_NULL_TYPE) NULL) && 
+// 	       (! T.is_infinite(highlight))){
+//                 leda_drawing_mode dm = W.set_mode(leda_xor_mode);
+//                 W << CGAL::RED;
+//                 hv = closest_vertex(T, highlight, p);
+//                 W.draw_node(CGAL::to_double(hv->point().x()),
+//                             CGAL::to_double(hv->point().y()));
+//                 W << CGAL::BLUE;
+//                 W.set_mode(dm);
+//             }
+//         }
+//         q = p;
+//     }
+// }
 
 
 void draw_incident_edges(Triangulation &T,
