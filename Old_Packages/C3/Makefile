@@ -24,6 +24,7 @@ Package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 
 Test:
+	cd include/CGAL/Cartesian ; sh ./create_symlinks
 	cd test/Kernel ; ./cgal_test
 
 Version:
@@ -42,12 +43,12 @@ Submit: Package
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mutt -s autohandle cgal-submit@cs.uu.nl hbronni < $(TMP_file)
 	rm -f $(TMP_file)
 
 clean:
 	rm -f $(Package).tar.gz
-	cd test/Kernel ; make clean
+	cd include/CGAL/Cartesian ; sh ./remove_symlinks
+	cd test/Kernel ; make distclean
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
