@@ -1,3 +1,6 @@
+1.61 (30 September 2003) [af]
+- Moved \chapter to main.tex
+
 1.60 (19 September 2003) [af]
 - New license headers
 
