@@ -5,7 +5,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
-#include <CGAL/Pm_segment_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/IO/write_pm.h>
 #include <CGAL/IO/Pm_iostream.h>
 #include <iostream>
@@ -17,7 +17,7 @@
 
 typedef CGAL::Quotient<int>                     NT;
 typedef CGAL::Cartesian<NT>                     Kernel;
-typedef CGAL::Pm_segment_traits<Kernel>         Traits;
+typedef CGAL::Pm_segment_traits_2<Kernel>       Traits;
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
 typedef CGAL::Pm_file_writer<Planar_map>        Pm_writer;

@@ -5,7 +5,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
-#include <CGAL/Pm_segment_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/write_pm.h>
 #include <iostream>
@@ -55,12 +55,12 @@ public:
   }
 };
 
-typedef CGAL::Quotient<int>             NT;
-typedef CGAL::Cartesian<NT>             Kernel;
-typedef CGAL::Pm_segment_traits<Kernel> Traits;
-typedef Pm_my_dcel<Traits>              Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits> Planar_map;
-typedef Planar_map::Vertex_iterator     Vertex_iterator;
+typedef CGAL::Quotient<int>               NT;
+typedef CGAL::Cartesian<NT>               Kernel;
+typedef CGAL::Pm_segment_traits_2<Kernel> Traits;
+typedef Pm_my_dcel<Traits>                Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>   Planar_map;
+typedef Planar_map::Vertex_iterator       Vertex_iterator;
 
 int main()
 {

@@ -6,7 +6,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
-#include <CGAL/Pm_segment_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/IO/Pm_file_writer.h>
@@ -15,7 +15,7 @@
 
 typedef CGAL::Simple_cartesian<float>           Cartesian_kernel;
 typedef CGAL::Filtered_kernel<Cartesian_kernel> Kernel;
-typedef CGAL::Pm_segment_traits<Kernel>         Traits;
+typedef CGAL::Pm_segment_traits_2<Kernel>       Traits;
 typedef Traits::Point_2                         Point_2;
 typedef Traits::X_curve_2                       X_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;

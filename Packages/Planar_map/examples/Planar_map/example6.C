@@ -10,7 +10,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Pm_segment_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/IO/Pm_file_writer.h>
@@ -22,7 +22,7 @@
 
 typedef CGAL::Quotient<float>                   Number_type;
 typedef CGAL::Cartesian<Number_type>            Kernel;
-typedef CGAL::Pm_segment_traits<Kernel>         Traits;
+typedef CGAL::Pm_segment_traits_2<Kernel>       Traits;
 typedef Traits::Point_2                         Point_2;
 typedef Traits::X_curve_2                       X_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;
