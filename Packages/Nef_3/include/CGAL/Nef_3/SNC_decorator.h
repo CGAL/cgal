@@ -58,10 +58,14 @@ CGAL::Timer timer_overlay;
 
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
 int number_of_point_location_queries;
+int number_of_ray_shooting_queries;
 CGAL::Timer timer_point_location;
+CGAL::Timer timer_ray_shooting;
 #endif 
 
 #ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
+int number_of_edge_facet_overlays=0;
+int number_of_clones=0;
 int number_of_sphere_sweeps=0;
 CGAL::Timer timer_sphere_sweeps;
 #endif
@@ -1216,6 +1220,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     // choose between intersection algorithms
 #ifdef CGAL_NEF3_INTERSECTION_BY_KDTREE
     Halfedge_const_iterator e0, e1;
+    /*
     TRACEN("=> finding edge-edge intersections...");
     CGAL_forall_edges( e0, snc1) {
       //      ee_intersections++;
@@ -1234,6 +1239,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       pl2->intersect_with_facets( e0, call_back0);
     }
     TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
+    */
+
+    CGAL_forall_edges(e0,snc1)
+      pl2->intersect_with_edges_and_facets(e0,call_back0);
+
 
     TRACEN("=> finding edge1-facet0 intersections...");
     CGAL_forall_edges( e1, snc2) {
@@ -1250,9 +1260,10 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
 #ifdef CGAL_NEF3_TIMER_INTERSECTION
     timer_intersection.stop();
-    std::cout << "Runtime_intersection: "
-	      << timer_intersection.time()-timer_overlay.time()+split_intersection 
-	      << std::endl;
+    if(cgal_nef3_timer_on)
+      std::cout << "Runtime_intersection: "
+		<< timer_intersection.time()-timer_overlay.time()+split_intersection 
+		<< std::endl;
 #endif
 
     TRACEN("=> resultant vertices (before simplification): ");
@@ -1269,8 +1280,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
 #ifdef CGAL_NEF3_TIMER_SIMPLIFICATION
     timer_simplification.stop();
-    std::cout << "Runtime_simplification: " 
-	      << timer_simplification.time() << std::endl;
+    if(cgal_nef3_timer_on)
+      std::cout << "Runtime_simplification: " 
+		<< timer_simplification.time() << std::endl;
 #endif
 
     TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
@@ -1284,9 +1296,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     O.print();
 #endif
     
+#ifndef CGAL_NEF3_NO_EXTERNAL
     //    CGAL_assertion( !sncp()->is_empty());
     SNC_constructor C(*sncp(), pl0);
     C.build_external_structure();
+#endif
 
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> construction completed, result: ");
@@ -1295,54 +1309,82 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #endif
 
 #ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS
-    std::cout << "Number_of_plane_sweeps: " 
-	      << number_of_plane_sweeps << std::endl;
-    std::cout << "Runtime_plane_sweeps: "
-	      << timer_plane_sweeps.time() << std::endl;
+    if(cgal_nef3_timer_on) {
+      std::cout << "Number_of_plane_sweeps: " 
+		<< number_of_plane_sweeps << std::endl;
+      std::cout << "Runtime_plane_sweeps: "
+		<< timer_plane_sweeps.time() << std::endl;
+    }
 #endif
 
     CGAL_assertion(!simp.simplify());
     TRACEN("=> end binary operation. ");
 
 #ifdef CGAL_NEF3_DUMP_STATISTICS
-    std::cout << "Vertices_in_object_A: "
-	      << snc1.number_of_vertices() << std::endl;
-    std::cout << "Vertices_in_object_B: "
-	      << snc2.number_of_vertices() << std::endl;
-    std::cout << "Number_of_intersections: "
-	      << number_of_intersections << std::endl;    
-    std::cout << "Vertices_in_Result: "
-	      << sncp()->number_of_vertices() << std::endl;
+    if(cgal_nef3_timer_on) {
+      std::cout << "Vertices_in_object_A: "
+		<< snc1.number_of_vertices() << std::endl;
+      std::cout << "Vertices_in_object_B: "
+		<< snc2.number_of_vertices() << std::endl;
+      std::cout << "Number_of_intersections: "
+		<< number_of_intersections << std::endl;    
+      std::cout << "Vertices_in_Result: "
+		<< sncp()->number_of_vertices() << std::endl;
+    }
 #endif
 
 #ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
-    std::cout << "Number_of_sphere_sweeps: " 
-	      << number_of_sphere_sweeps << std::endl;
-    std::cout << "Runtime_sphere_sweeps: "
-	      << timer_sphere_sweeps.time() << std::endl;
+    if(cgal_nef3_timer_on) {
+      std::cout << "Number_of_edge_facet_overlays: " 
+		<< number_of_edge_facet_overlays << std::endl;
+      std::cout << "Number_of_clones: " 
+		<< number_of_clones << std::endl;
+      std::cout << "Number_of_sphere_sweeps: " 
+		<< number_of_sphere_sweeps << std::endl;
+      std::cout << "Runtime_sphere_sweeps: "
+		<< timer_sphere_sweeps.time() << std::endl;
+    }
 #endif
 
 #if defined (CGAL_NEF3_TIMER_SPHERE_SWEEPS) && defined (CGAL_NEF3_TIMER_PLANE_SWEEPS)
-    std::cout << "Runtime_all_sweeps: "
-	      << timer_sphere_sweeps.time()+timer_plane_sweeps.time() << std::endl;
+    if(cgal_nef3_timer_on) {
+      std::cout << "Runtime_all_sweeps: "
+		<< timer_sphere_sweeps.time()+timer_plane_sweeps.time() << std::endl;
+    }
 #endif
 
 #ifdef CGAL_NEF3_TIMER_OVERLAY
-    std::cout << "Runtime_overlay: " 
-	      << timer_overlay.time() << std::endl;
+    if(cgal_nef3_timer_on) {
+      std::cout << "Runtime_overlay: " 
+		<< timer_overlay.time() << std::endl;
+    }
 #endif
 
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
-    std::cout << "Number_of_point_location_queries: "
-	      << number_of_point_location_queries << std::endl;
-    std::cout << "Runtime_point_location: "
-	      << timer_point_location.time() << std::endl;;
+    if(cgal_nef3_timer_on) {
+      std::cout << "Number_of_ray_shooting_queries: "
+		<< number_of_ray_shooting_queries << std::endl;
+      std::cout << "Runtime_ray_shooting: "
+		<< timer_ray_shooting.time() << std::endl;
+      std::cout << "Number_of_point_location_queries: "
+		<< number_of_point_location_queries << std::endl;
+      std::cout << "Runtime_point_location: "
+		<< timer_point_location.time() << std::endl;
+      std::cout << "Number_of_kd_tree_queries: "
+		<< number_of_point_location_queries + 
+	           number_of_ray_shooting_queries << std::endl;
+      std::cout << "Runtime_kd_tree_queries: "
+		<< timer_point_location.time() + 
+                   timer_ray_shooting.time() << std::endl;
+    }
 #endif 
 
 #ifdef CGAL_NEF3_TIMER_BINARY_OPERATION
-    timer_binary_operation.stop();
-    std::cout << "Runtime_binary_operation: " 
-	      << timer_binary_operation.time() << std::endl;
+    if(cgal_nef3_timer_on) {
+      timer_binary_operation.stop();
+      std::cout << "Runtime_binary_operation: " 
+		<< timer_binary_operation.time() << std::endl;
+    }
 #endif 
   }
   

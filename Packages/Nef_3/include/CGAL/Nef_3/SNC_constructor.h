@@ -663,6 +663,10 @@ public:
 
   Vertex_handle clone_SM( Vertex_const_handle vin) {
     
+#ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
+    ++number_of_clones;
+#endif
+
     CGAL::Unique_hash_map<SVertex_const_handle, SVertex_handle>         VM;
     CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_handle>     EM;
     CGAL::Unique_hash_map<SHalfloop_const_handle, SHalfloop_handle>     LM;
@@ -733,6 +737,10 @@ public:
 		                	   Halffacet_const_handle f,
 					   const Point_3& p,
 					 const Selection& BOP, bool inv) {
+
+#ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
+    ++number_of_edge_facet_overlays;
+#endif
 
     TRACEN("edge facet overlay " << p);
     
@@ -1171,7 +1179,7 @@ public:
     pl->initialize(this->sncp()); // construct the point locator 
 #ifdef CGAL_NEF3_TIMER_INITIALIZE_KDTREE
     timer_initialize_kdtree.stop();
-    if(sncp()->number_of_vertices() > 0)
+    if(cgal_nef3_timer_on)
       std::cout << "Runtime_initialize_kdtree: " 
 		<< timer_initialize_kdtree.time() << std::endl;
 #endif
@@ -1246,12 +1254,12 @@ public:
     
     Ray_3 ray = Ray_3(p, Direction_3(-1,0,0));
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
-    number_of_point_location_queries++;
-    timer_point_location.start();
+    number_of_ray_shooting_queries++;
+    timer_ray_shooting.start();
 #endif 
     Object_handle o = pl->shoot(ray);
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
-    timer_point_location.stop();
+    timer_ray_shooting.stop();
 #endif 
     // The ray here has an special property since it is shooted from the lowest
     // vertex in a shell, so it would be expected that the ray goes along the
@@ -2013,14 +2021,25 @@ public:
     timer_external_structure.start();
 #endif
 
+#ifdef CGAL_NEF3_TIMER_PLUECKER
+    CGAL::Timer timer_pluecker;
+    timer_pluecker.start();
+#endif
     pair_up_halfedges();
+#ifdef CGAL_NEF3_TIMER_PLUECKER
+    timer_pluecker.stop();
+     if(cgal_nef3_timer_on)
+      std::cout << "Runtime_pluecker: " 
+		<< timer_pluecker.time() << std::endl;
+#endif   
+
     link_shalfedges_to_facet_cycles();
     categorize_facet_cycles_and_create_facets();
     create_volumes();
 
 #ifdef CGAL_NEF3_TIMER_EXTERNAL_STRUCTURE
     timer_external_structure.stop();
-    if(this->sncp()->number_of_vertices() > 0)
+    if(cgal_nef3_timer_on)
       std::cout << "Runtime_external_structure: " 
 		<< timer_external_structure.time() << std::endl;
 #endif
