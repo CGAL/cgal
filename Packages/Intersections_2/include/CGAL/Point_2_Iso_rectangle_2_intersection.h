@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -109,8 +108,9 @@ intersection(const Iso_rectangle_2<K> &iso,
 	     const Point_2<K> &pt)
 {
   typedef typename K::Intersect_2 Intersect;
-  return intersect()(pt, iso);
+  return Intersect()(pt, iso);
 }
+
 template <class K>
 inline 
 Object
@@ -120,6 +120,7 @@ intersection(const Point_2<K> &pt,
   typedef typename K::Intersect_2 Intersect;
   return Intersect()(pt, iso);
 }
+
 CGAL_END_NAMESPACE
 
 #endif

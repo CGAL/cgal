@@ -1,5 +1,9 @@
+20 June 2004 Sylvain Pion
+- Fix typos in un-instantiated code, spotted by g++ 3.4.
+
 20 May 2004 Andreas Fabri
-- split return typename K::Something_2 in a typedef typename K::Something_2 Something; return Something (to please SunPro CC 5.3)
+- split return typename K::Something_2 in a typedef typename K::Something_2
+  Something; return Something (to please SunPro CC 5.3)
 
 14 May 2004 Sylvain Pion
 - sign_of_cross() : simplify code and remove warning.

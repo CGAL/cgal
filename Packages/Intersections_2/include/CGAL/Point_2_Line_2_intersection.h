@@ -1,4 +1,3 @@
-
 // Copyright (c) 2000  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -29,6 +28,7 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Object.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -104,7 +104,7 @@ intersection(const Line_2<K> &line,
 	     const Point_2<K> &pt)
 {
   typedef typename K::Intersect_2 Intersect;
-  return Intersection()(pt, line);
+  return Intersect()(pt, line);
 }
 
 template <class K>
@@ -114,8 +114,9 @@ intersection(const Point_2<K> &pt,
 	     const Line_2<K> &line)
 {
   typedef typename K::Intersect_2 Intersect;
-  return Intersection()(pt, line);
+  return Intersect()(pt, line);
 }
+
 CGAL_END_NAMESPACE
 
 #endif
