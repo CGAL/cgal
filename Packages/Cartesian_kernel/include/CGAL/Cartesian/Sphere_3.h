@@ -23,6 +23,7 @@
 #define CGAL_CARTESIAN_SPHERE_3_H
 
 #include <CGAL/utility.h>
+#include <CGAL/Interval_arithmetic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -279,14 +280,23 @@ template < class R >
 CGAL_KERNEL_INLINE
 Bbox_3
 SphereC3<R>::bbox() const
-{
-  double cx = CGAL::to_double(center().x());
-  double cy = CGAL::to_double(center().y());
-  double cz = CGAL::to_double(center().z());
-  double radius = CGAL::sqrt(CGAL::to_double(squared_radius()));
+{ 
+  Bbox_3 b = center().bbox();
 
-  return Bbox_3(cx - radius, cy - radius, cz - radius,
-                cx + radius, cy + radius, cz + radius);
+  Interval_nt<> x (b.xmin(), b.xmax());
+  Interval_nt<> y (b.ymin(), b.ymax());
+  Interval_nt<> z (b.zmin(), b.zmax());
+
+  Interval_nt<> sqr = CGAL::to_interval(squared_radius());
+  Interval_nt<> r = CGAL::sqrt(sqr);
+  Interval_nt<> minx = x-r;
+  Interval_nt<> maxx = x+r;
+  Interval_nt<> miny = y-r;
+  Interval_nt<> maxy = y+r;
+  Interval_nt<> minz = z-r;
+  Interval_nt<> maxz = z+r;
+
+  return Bbox_3(minx.inf(), miny.inf(), minz.inf(), maxx.sup(), maxy.sup(), maxz.sup());
 }
 
 /*

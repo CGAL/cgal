@@ -170,11 +170,10 @@ template < class R >
 Bbox_3
 PointC3<R>::bbox() const
 {
-  // FIXME: to_interval
-  double bx = CGAL::to_double(x());
-  double by = CGAL::to_double(y());
-  double bz = CGAL::to_double(z());
-  return Bbox_3(bx, by, bz, bx, by, bz);
+  std::pair<double,double> xp = CGAL::to_interval(x());
+  std::pair<double,double> yp = CGAL::to_interval(y());
+  std::pair<double,double> zp = CGAL::to_interval(z());
+  return Bbox_3(xp.first, yp.first, zp.first,  xp.second, yp.second, zp.second);
 }
 
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_POINTC3
