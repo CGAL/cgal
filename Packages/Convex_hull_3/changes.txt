@@ -1,3 +1,6 @@
+4 May 2004 Andreas Fabri
+- Fixed typo in example
+
 8 April 2004 Andreas Fabri
 - Bug fix in Convex_hull_traits_3 so that it also works with homogenous kernel
 
