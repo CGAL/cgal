@@ -141,32 +141,31 @@ struct PMO_from_pm {
 
  void supporting_segment(Halfedge_handle e, IT it) const
  { INFO& si = M[it];
-   assert( si._e != Halfedge_const_handle() );
-   G.supp_halfedge(e,si._i) = si._e;
+   CGAL_assertion( si.e != Halfedge_const_handle() );
+   G.supp_halfedge(e,si.i) = si.e;
    G.is_forward(e) = true;
-   TRACEN("   supporting "<<si._i<<" "<<*it);
  }
 
 
  void trivial_segment(Vertex_handle v, IT it) const
  { INFO& si = M[it];
-   assert( si._v != Vertex_const_handle() );
-   G.supp_vertex(v,si._i) = si._v; 
+   CGAL_assertion( si.v != Vertex_const_handle() );
+   G.supp_vertex(v,si.i) = si.v; 
  }
 
  void starting_segment(Vertex_handle v, IT it) const
  { INFO& si = M[it];
-   G.supp_vertex(v,si._i) = pGI[si._i]->source(si._e);
+   G.supp_vertex(v,si.i) = pGI[si.i]->source(si.e);
  }
 
  void ending_segment(Vertex_handle v, IT it) const
  { INFO& si = M[it];
-   G.supp_vertex(v,si._i) = pGI[si._i]->target(si._e);
+   G.supp_vertex(v,si.i) = pGI[si.i]->target(si.e);
  }
 
  void passing_segment(Vertex_handle v, IT it) const
  { INFO& si = M[it];
-   G.supp_halfedge(v,si._i) = si._e; 
+   G.supp_halfedge(v,si.i) = si.e; 
  }
 
  Halfedge_handle halfedge_below(Vertex_handle v) const
@@ -180,7 +179,7 @@ struct PMO_from_pm {
 PM_decorator_#PMD
 Geometry_#GEO
 }*/
-/*{\Manpage {PM_overlayer}{PMD,GEO}{Planar Map Overlay}{O}}*/
+/*{\Manpage {PM_overlayer}{PMD,GEO}{Plane Map Overlay}{O}}*/
 template <typename PM_decorator_, typename Geometry_>
 class PM_overlayer : public PM_decorator_ {
   typedef PM_decorator_ Base;
@@ -198,16 +197,15 @@ to different scenarios.  The template parameter |PM_decorator_| has to
 be a model conforming to our plane map decorator concept
 |PMDecorator|.  The concept describes the interface how the
 topological information stored in |P| can be extracted.  The geometry
-|Geometry_| has to be a model conforming to our two dimensional
-geometry kernel concept |AffineGeometry|.
+|Geometry_| has to be a model conforming to the concept 
+|OverlayerGeometry_2|.
 
 The overlay of a set of segments $S$ is stored in a plane map $P =
 (V,E,F)$. Vertices are either the endpoints of segments (trivial
-segments are allowed) or the result of the internal intersection of
-two segments. Between two vertices there's an edge if there's 
-a segment that supports the straight line embedding of $e$ and
-if there's no vertex in the relative interior of the embedding of 
-$e$.
+segments are allowed) or the result of a non-degenerate internal
+intersection of two segments. Between two vertices there is an edge if
+there is a segment that supports the straight line embedding of $e$ and
+if there is no vertex in the relative interior of the embedding of $e$.
 
 The faces refer to the maximal connected open point sets of the
 planar subdivision implied by the embedding of the vertices and edges.
@@ -255,7 +253,7 @@ public:
   /*{\Mtypemember the geometry kernel |Geometry_|.}*/
   typedef typename Geometry::Point_2    Point;
   /*{\Mtypemember the point type of the geometric kernel, 
-     \precond |Point_2| equals |Plane_map::Point_2|.}*/
+     \precond |Point| equals |Plane_map::Point|.}*/
   typedef typename Geometry::Segment_2  Segment;
   /*{\Mtypemember the segment type of the geometric kernel.}*/
   typedef typename Decorator::Mark      Mark;
@@ -296,19 +294,19 @@ public:
   /*{\Moperations 1.1 1}*/
 
   struct Seg_info { // to transport information from input to output
-    Halfedge_const_handle _e;
-    Vertex_const_handle   _v;
-    int                   _i;
+    Halfedge_const_handle e;
+    Vertex_const_handle   v;
+    int                   i;
 
-    Seg_info() : _i(-1) {}
-    Seg_info(Halfedge_const_handle e, int i) 
-    { _e=e; _i=i; }
-    Seg_info(Vertex_const_handle v, int i) 
-    { _v=v; _i=i; }
+    Seg_info() : i(-1) {}
+    Seg_info(Halfedge_const_handle e_, int i_) 
+    { e=e_; i=i_; }
+    Seg_info(Vertex_const_handle v_, int i_) 
+    { v=v_; i=i_; }
     Seg_info(const Seg_info& si) 
-    { _e=si._e; _v=si._v; _i=si._i; }
+    { e=si.e; v=si.v; i=si.i; }
     Seg_info& operator=(const Seg_info& si) 
-    { _e=si._e; _v=si._v; _i=si._i; return *this; }
+    { e=si.e; v=si.v; i=si.i; return *this; }
     LEDA_MEMORY(Seg_info)
   };
 
@@ -358,7 +356,6 @@ created vertex |v|.
 }
 
 
-
 void subdivide(const Plane_map& P0, const Plane_map& P1) const
 /*{\Mop constructs the overlay of the plane maps |P0| and |P1| in
 |P|, where all objects (vertices, halfedges, faces) of |P| are
@@ -398,7 +395,10 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
   create_face_objects(Out);
 
 
-  TRACEN("creating marks");
+  TRACEN("transfering marks");
+  Face_iterator f = faces_begin(); assoc_info(f);
+  for (i=0; i<2; ++i) mark(f,i) = PI[i].mark(PI[i].faces_begin());
+
   Vertex_iterator v, vend = vertices_end();
   for (v = vertices_begin(); v != vend; ++v) {
     TRACEN("mark at "<<PV(v));
@@ -449,9 +449,7 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
     }
 
   }
-  Face_iterator f = faces_begin();
-  for (i=0; i<2; ++i) mark(f,i) = PI[i].mark(PI[i].faces_begin());
-  for (++f; f != faces_end(); ++f) { // skip first face
+  for (f = ++faces_begin(); f != faces_end(); ++f) { // skip first face
     assoc_info(f);
     for (i=0; i<2; ++i) mark(f,i) = incident_mark(halfedge(f),i);
   }
@@ -461,10 +459,10 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
 
 
 
-template <typename SELECTION>
-void select(SELECTION& predicate) const
+template <typename Selection>
+void select(Selection& predicate) const
 /*{\Mop sets the marks of all objects according to the selection
-predicate |predicate|. |SELECTION| has to be a function object type
+predicate |predicate|. |Selection| has to be a function object type
 with a function operator\\ [[Mark operator()(Mark m0, Mark m1)]]\\ For
 each object |u| of |P| enriched by the marks of the supporting objects
 according to the previous procedure |subdivide|, after this operation
@@ -492,14 +490,17 @@ additional marks are invalidated afterwards. }*/
 }
 
 
-void simplify() const
+template <typename Keep_edge>
+void simplify(const Keep_edge& keep) const
 /*{\Mop simplifies the structure of |P| according to the marks of
 its objects. An edge |e| separating two faces |f1| and |f2| and equal
 marks |mark(e) == mark(f1) == mark(f2)| is removed and the faces are
 unified.  An isolated vertex |v| in a face |f| with |mark(v)==mark(f)|
 is removed.  A vertex |v| with outdegree two, two collinear out-edges
 |e1|,|e2| and equal marks |mark(v) == mark(e1) == mark(e2)| is removed
-and the edges are unified.}*/
+and the edges are unified. The data accessor |keep| requires the function
+call operator\\[[bool operator()(Halfedge_handle e)]]\\that allows to
+avoid the simplification for edge pairs referenced by |e|.}*/
 {
   TRACEN("simplifying"); 
   typedef typename CGAL::Partition<Face_handle>::item partition_item;
@@ -507,7 +508,7 @@ and the edges are unified.}*/
   CGAL::Partition<Face_handle> FP;
 
   Face_iterator f, fend = faces_end();
-  for (f = faces_begin(); f!= fend; ++f) {
+  for (f = faces_begin(); f!= fend; ++f) { 
      Pitem[f] = FP.make_block(f);
      clear_face_cycle_entries(f);
   }
@@ -516,7 +517,7 @@ and the edges are unified.}*/
   Halfedge_iterator e = halfedges_begin(), en,
                     eend = halfedges_end();
   for(; en=e, ++(++en), e != eend; e=en) { 
-    if ( is_outer_face_cycle_edge(e) ) continue;
+    if ( keep(e) ) continue;
     if ( mark(e) == mark(face(e)) &&
          mark(e) == mark(face(twin(e))) ) {
         TRACEN("deleting "<<PE(e));
@@ -553,7 +554,7 @@ and the edges are unified.}*/
 
 
   Vertex_iterator v, vn, vend = vertices_end();
-  for(v = vertices_begin(); v != vend; v=vn) {
+  for(v = vertices_begin(); v != vend; v=vn) { TRACEN("at vertex "<<PV(v));
     vn=v; ++vn;
     if ( is_isolated(v) ) {
       if ( mark(v) == mark(face(v)) ) delete_vertex_only(v);
@@ -578,12 +579,6 @@ and the edges are unified.}*/
 
 
 }
-
-bool is_outer_face_cycle_edge(Halfedge_handle h) const
-/*{\Xop returns |true| when |h| or |twin(h)| is part of the outer 
-face cycle.}*/
-{ return ( face(h) == faces_begin() ||
-           face(twin(h)) == faces_begin() ); }
 
 struct vertex_info {
   Mark                  m[2];
@@ -689,7 +684,7 @@ void clear_associated_info_of_all_objects() const
     discard_info(fit);
 }
 
-template <class Below_info>
+template <typename Below_info>
 void create_face_objects(const Below_info& D) const
 {
   TRACEN("create_face_objects()");
@@ -712,7 +707,7 @@ void create_face_objects(const Below_info& D) const
     MinimalHalfedge.push_back(e_min); ++i;
   }
 
-  Face_handle f_outer = new_face(); assoc_info(f_outer);
+  Face_handle f_outer = new_face();
   for (int j=0; j<i; ++j) {
     Halfedge_handle e = MinimalHalfedge[j];
       TRACEN("  face cycle "<<j);TRACEN("  minimal halfedge "<<PE(e));
@@ -744,7 +739,7 @@ void create_face_objects(const Below_info& D) const
 
 }
 
-template <class Below_info>
+template <typename Below_info>
 Face_handle determine_face(Halfedge_handle e, 
   const std::vector<Halfedge_handle>& MinimalHalfedge,
   const CGAL::Unique_hash_map<Halfedge_handle,int>& FaceCycle,

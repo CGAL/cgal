@@ -34,7 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-static int frame_default = 100;
+static long frame_default = 100;
 static bool show_triangulation = false;
 
 template <typename T>

@@ -32,6 +32,10 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Window_stream.h>
 
+#if defined(CGAL_USE_CGAL_WINDOW)
+#define leda_color CGAL::color
+#endif
+
 #define USING(t) typedef typename PMCDEC::t t
 #define LGREY CGAL::Color(190,190,190)
 #define DGREY CGAL::Color(130,130,130)

@@ -35,6 +35,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
+#include <CGAL/Random.h>
 #ifndef CGAL_SIMPLE_HDS
 #include <CGAL/Nef_2/HDS_items.h>
 #include <CGAL/HalfedgeDS_default.h>
@@ -111,7 +112,7 @@ public:
 /*{\Mdefinition
 An instance of data type |\Mname| is a subset of the plane that is
 the result of forming complements and intersections starting from a
-finite set |H| of halfspaces. |\Mtype| is closed under all binary set
+finite set |H| of half-spaces. |\Mtype| is closed under all binary set
 operations |intersection|, |union|, |difference|, |complement| and
 under the topological operations |boundary|, |closure|, and
 |interior|.
@@ -134,7 +135,7 @@ static  T EK; // static extended kernel
   typedef typename T::Segment_2 Extended_segment;
 
   typedef typename T::Standard_line_2 Line;
-  /*{\Mtypemember the oriented lines modeling halfplanes}*/
+  /*{\Mtypemember the oriented lines modeling half-planes}*/
   typedef typename T::Standard_point_2 Point;
   /*{\Mtypemember the affine points of the plane.}*/
   typedef typename T::Standard_direction_2 Direction;
@@ -191,6 +192,14 @@ protected:
                                                     Halfedge_const_iterator;
   typedef typename Const_decorator::Face_const_iterator     
                                                     Face_const_iterator;
+
+  struct Except_frame_box_edges {
+  Decorator D_; Face_handle f_;
+  Except_frame_box_edges(Plane_map& P) : D_(P), f_(D_.faces_begin()) {}
+  bool operator()(Halfedge_handle e) const
+  { return D_.face(e)==f_ || D_.face(D_.twin(e))==f_; }
+  };
+
 
   typedef std::list<Extended_segment>      ES_list;
   typedef typename ES_list::const_iterator ES_iterator;
@@ -252,7 +261,7 @@ public:
 
 
   Nef_polyhedron_2(const Line& l, Boundary line = INCLUDED) : Base(Nef_rep())
-  /*{\Mcreate creates a Nef polyhedron |\Mvar| containing the halfplane
+  /*{\Mcreate creates a Nef polyhedron |\Mvar| containing the half-plane
   left of |l| including |l| if |line==INCLUDED|, excluding |l| if 
   |line==EXCLUDED|.}*/  
   {   TRACEN("Nconstruction from line "<<l);
@@ -334,6 +343,39 @@ public:
   { Base::operator=(N1); return (*this); }
   ~Nef_polyhedron_2() {}
 
+  #ifndef _MSC_VER
+
+  template <class Forward_iterator>
+  Nef_polyhedron_2(Forward_iterator first, Forward_iterator beyond, 
+    double p) : Base(Nef_rep())
+  /*{\Xcreate creates a random Nef polyhedron from the arrangement of
+  the set of lines |S = set[first,beyond)|. The cells of the arrangement
+  are selected uniformly at random with probability $p$. \precond $0 < p
+  < 1$.}*/
+  { CGAL_assertion(0<p && p<1);
+    ES_list L; fill_with_frame_segs(L);
+    while ( first != beyond ) {
+      Extended_point ep1 = EK.construct_opposite_point(*first);
+      Extended_point ep2 = EK.construct_point(*first);
+      L.push_back(EK.construct_segment(ep1,ep2)); ++first;
+    }
+    Overlayer D(pm());
+    Link_to_iterator I(D, --L.end(), false);
+    D.create(L.begin(),L.end(),I);
+
+    Vertex_iterator v; Halfedge_iterator e; Face_iterator f;
+    for (v = D.vertices_begin(); v != D.vertices_end(); ++v)
+      D.mark(v) = ( default_random.get_double() < p ? true : false );
+    for (e = D.halfedges_begin(); e != D.halfedges_end(); ++(++e))
+      D.mark(e) = ( default_random.get_double() < p ? true : false );
+    for (f = D.faces_begin(); f != D.faces_end(); ++f)
+      D.mark(f) = ( default_random.get_double() < p ? true : false );
+    D.simplify(Except_frame_box_edges(pm()));
+    clear_outer_face_cycle_marks(); 
+  }
+
+  #endif
+
   protected:
   Nef_polyhedron_2(const Plane_map& H, bool clone=true) : Base(Nef_rep()) 
   /*{\Xcreate makes |\Mvar| a new object.  If |clone==true| then the
@@ -394,7 +436,7 @@ public:
     for(v = D.vertices_begin(); v != vend; ++v)      D.mark(v) = false;
     Halfedge_iterator e, eend = D.halfedges_end();
     for(e = D.halfedges_begin(); e != eend; ++(++e)) D.mark(e) = false;
-    D.simplify();
+    D.simplify(Except_frame_box_edges(pm()));
   }
 
 
@@ -409,7 +451,7 @@ public:
     Face_iterator f, fend = D.faces_end();
     for(f = D.faces_begin(); f != fend; ++f)         D.mark(f) = false;
     clear_outer_face_cycle_marks();
-    D.simplify();
+    D.simplify(Except_frame_box_edges(pm()));
   }
 
   void extract_closure()
@@ -469,11 +511,11 @@ public:
   Nef_polyhedron_2<T> intersection(const Nef_polyhedron_2<T>& N1) const
   /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/
   { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
-    Overlayer PMO(res.pm());
-    PMO.subdivide(pm(),N1.pm());
-    AND _and; PMO.select(_and);
+    Overlayer D(res.pm());
+    D.subdivide(pm(),N1.pm());
+    AND _and; D.select(_and);
     res.clear_outer_face_cycle_marks();
-    PMO.simplify();
+    D.simplify(Except_frame_box_edges(res.pm()));
     return res;
   }
 
@@ -481,22 +523,22 @@ public:
   Nef_polyhedron_2<T> join(const Nef_polyhedron_2<T>& N1) const
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/
   { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
-    Overlayer PMO(res.pm());
-    PMO.subdivide(pm(),N1.pm());
-    OR _or; PMO.select(_or);
+    Overlayer D(res.pm());
+    D.subdivide(pm(),N1.pm());
+    OR _or; D.select(_or);
     res.clear_outer_face_cycle_marks();
-    PMO.simplify();
+    D.simplify(Except_frame_box_edges(res.pm()));
     return res;
   }
 
   Nef_polyhedron_2<T> difference(const Nef_polyhedron_2<T>& N1) const
   /*{\Mop returns |\Mvar| $-$ |N1|. }*/
   { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
-    Overlayer PMO(res.pm());
-    PMO.subdivide(pm(),N1.pm());
-    DIFF _diff; PMO.select(_diff);
+    Overlayer D(res.pm());
+    D.subdivide(pm(),N1.pm());
+    DIFF _diff; D.select(_diff);
     res.clear_outer_face_cycle_marks();
-    PMO.simplify();
+    D.simplify(Except_frame_box_edges(res.pm()));
     return res;
   }    
 
@@ -505,11 +547,11 @@ public:
   /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
           |T - \Mvar|. }*/
   { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
-    Overlayer PMO(res.pm());
-    PMO.subdivide(pm(),N1.pm());
-    XOR _xor; PMO.select(_xor);
+    Overlayer D(res.pm());
+    D.subdivide(pm(),N1.pm());
+    XOR _xor; D.select(_xor);
     res.clear_outer_face_cycle_marks();
-    PMO.simplify();
+    D.simplify(Except_frame_box_edges(res.pm()));
     return res;
   }
 
@@ -522,6 +564,7 @@ public:
     return res;
   }
   #endif
+
 
   /*{\Mtext Additionally there are operators |*,+,-,^,!| which
   implement the binary operations \emph{intersection}, \emph{union},
@@ -581,7 +624,7 @@ public:
 
   /*{\Mtext \headerline{Exploration - Point location - Ray shooting}
   As Nef polyhedra are the result of forming complements 
-  and intersections starting from a set |H| of halfspaces that are
+  and intersections starting from a set |H| of half-spaces that are
   defined by oriented lines in the plane, they can be represented by
   an attributed plane map $M = (V,E,F)$. For topological queries
   within |M| the following types and operations allow exploration

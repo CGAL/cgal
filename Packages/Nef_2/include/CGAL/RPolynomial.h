@@ -68,7 +68,7 @@ struct ring_or_field<int> {
       if (b == 0)  return 1;
       else         return CGAL_NTS abs(b);
     if (b == 0)    return CGAL_NTS abs(a);
-    // here both a and b are non-zero
+    // here both a and b are nonzero
     int u = CGAL_NTS abs(a);
     int v = CGAL_NTS abs(b);
     if (u < v) v = v%u;
@@ -90,7 +90,7 @@ struct ring_or_field<long> {
       if (b == 0)  return 1;
       else         return CGAL_NTS abs(b);
     if (b == 0)    return CGAL_NTS abs(a);
-    // here both a and b are non-zero
+    // here both a and b are nonzero
     int u = CGAL_NTS abs(a);
     int v = CGAL_NTS abs(b);
     if (u < v) v = v%u;
@@ -497,7 +497,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   \textbf{Note} that |NT=int| quickly leads to overflow
   errors when using this operation.}*/
 
-  /*{\Mtext \headerline{Non member functions}}*/
+  /*{\Mtext \headerline{Static member functions}}*/
 
   static RPolynomial<NT> gcd
     (const RPolynomial<NT>& p1, const RPolynomial<NT>& p2);
@@ -620,7 +620,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 /*{\Mimplementation This data type is implemented as an item type
 via a smart pointer scheme. The coefficients are stored in a vector of
 |NT| entries.  The simple arithmetic operations $+,-$ take time
-$O(d*T(NT))$, multiplication is quadratic in maximal degree of the
+$O(d*T(NT))$, multiplication is quadratic in the maximal degree of the
 arguments times $T(NT)$, where $T(NT)$ is the time for a corresponding
 operation on two instances of the ring type.}*/
 
@@ -837,7 +837,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   \textbf{Note} that |int=int| quickly leads to overflow
   errors when using this operation.}*/
 
-  /*{\Xtext \headerline{Non member functions}}*/
+  /*{\Xtext \headerline{Static member functions}}*/
 
   static RPolynomial<int> gcd
     (const RPolynomial<int>& p1, const RPolynomial<int>& p2);
@@ -941,7 +941,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 /*{\Ximplementation This data type is implemented as an item type
 via a smart pointer scheme. The coefficients are stored in a vector of
 |int| entries.  The simple arithmetic operations $+,-$ take time
-$O(d*T(int))$, multiplication is quadratic in maximal degree of the
+$O(d*T(int))$, multiplication is quadratic in the maximal degree of the
 arguments times $T(int)$, where $T(int)$ is the time for a corresponding
 operation on two instances of the ring type.}*/
 
@@ -1158,7 +1158,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   \textbf{Note} that |double=int| quickly leads to overflow
   errors when using this operation.}*/
 
-  /*{\Xtext \headerline{Non member functions}}*/
+  /*{\Xtext \headerline{Static member functions}}*/
 
   static RPolynomial<double> gcd
     (const RPolynomial<double>& p1, const RPolynomial<double>& p2);
@@ -1262,7 +1262,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 /*{\Ximplementation This data type is implemented as an item type
 via a smart pointer scheme. The coefficients are stored in a vector of
 |double| entries.  The simple arithmetic operations $+,-$ take time
-$O(d*T(double))$, multiplication is quadratic in maximal degree of the
+$O(d*T(double))$, multiplication is quadratic in the maximal degree of the
 arguments times $T(double)$, where $T(double)$ is the time for a corresponding
 operation on two instances of the ring type.}*/
 

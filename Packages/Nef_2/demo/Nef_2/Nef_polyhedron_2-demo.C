@@ -120,7 +120,7 @@ void create(int i)
 
   switch (i) {
     case HOPEN: 
-      pW->message("Insert Halfspace by Line");
+      pW->message("Insert Half-Space by Line");
       (*pW) >> l; sos << '(' << l << ')' << '\0';
       if ( l.is_degenerate() ) {
         (*pW).acknowledge("Please enter non-degenerate line."); 
@@ -129,7 +129,7 @@ void create(int i)
         store_new(Nef_polyhedron(l,Nef_polyhedron::EXCLUDED),sos.str());
       break;
     case HCLOSED: 
-      pW->message("Insert Halfspace by Line");
+      pW->message("Insert Half-Space by Line");
       (*pW) >> l; sos << '[' << l << ']' << '\0';
       if ( l.is_degenerate() ) {
         (*pW).acknowledge("Please enter non-degenerate line.");
@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
     Overlayer 13 PointLoc 17 ConstrTriang 19
     SegSweep 23
   */
-  SETDTHREAD(71); 
+  SETDTHREAD(113); 
   CGAL::set_pretty_mode ( std::cerr );
   std::cerr << "using " << CGAL::pointlocationversion << std::endl;
   std::cerr << "using " << CGAL::sweepversion << std::endl;
@@ -373,8 +373,8 @@ int main(int argc, char* argv[])
   main_panel.button(p_clos,p_clos,"closure", 42,unop);
   main_panel.button(p_bound,p_bound,"boundary", 43,unop);
 
-  create_menu.button("halfplane (open)", HOPEN, create);
-  create_menu.button("halfplane (closed)", HCLOSED, create);
+  create_menu.button("half-plane (open)", HOPEN, create);
+  create_menu.button("half-plane (closed)", HCLOSED, create);
   create_menu.button("polygon (open)", POPEN, create);
   create_menu.button("polygon (closed)", PCLOSED, create);
   create_menu.button("load from disk",FILE_LOAD, file_handler);

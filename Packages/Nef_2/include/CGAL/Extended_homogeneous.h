@@ -181,7 +181,7 @@ on the extended geometric objects.}*/
   template <class Forward_iterator>
   void determine_frame_radius(Forward_iterator start, Forward_iterator end,
                               Standard_RT& R0) const
-  { Standard_RT R;
+  { Standard_RT R, mx, nx, my, ny;
     while ( start != end ) {
       Point_2 p = *start++;
       if ( is_standard(p) ) {
@@ -189,9 +189,11 @@ on the extended geometric objects.}*/
                 CGAL_NTS abs(p.hy()[0])/p.hw()[0]);
       } else {
         RT rx = CGAL_NTS abs(p.hx()), ry = CGAL_NTS abs(p.hy());
-        if ( rx[1] > ry[1] )      R = CGAL_NTS abs(ry[0]-rx[0])/(rx[1]-ry[1]);
-        else if ( rx[1] < ry[1] ) R = CGAL_NTS abs(rx[0]-ry[0])/(ry[1]-rx[1]);
-        else /* rx[1] == ry[1] */ R = CGAL_NTS abs(rx[0]-ry[0])/(2*p.hw()[0]);
+        mx = ( rx.degree()>0 ? rx[1] : 0 ); nx = rx[0];
+        my = ( ry.degree()>0 ? ry[1] : 0 ); ny = ry[0];
+        if ( mx > my )      R = CGAL_NTS abs((ny-nx)/(mx-my));
+        else if ( mx < my ) R = CGAL_NTS abs((nx-ny)/(my-mx));
+        else /* mx == my */ R = CGAL_NTS abs(nx-ny)/(2*p.hw()[0]);
       }
       R0 = CGAL_NTS max(R+1,R0);
     }

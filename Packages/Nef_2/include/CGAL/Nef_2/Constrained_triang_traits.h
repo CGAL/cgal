@@ -148,10 +148,10 @@ public:
     Halfedge_handle         e_low,e_high; // framing edges !
     Halfedge_handle         e_search;
 
-    Constrained_triang_traits(const INPUT& in, OUTPUT& out, const GEOMETRY& k) :
-      Base(out), K(k), event_Q(lt_pnts_xy(*this,K)), 
-      SL(lt_edges_in_sweepline(p_sweep,e_low,e_high,*this,K)), 
-      SLItem(SL.end()),  Treat_new_edge(in)
+    Constrained_triang_traits(const INPUT& in, OUTPUT& out, const GEOMETRY& k) 
+      : Base(out), K(k), event_Q(lt_pnts_xy(*this,K)), 
+        SL(lt_edges_in_sweepline(p_sweep,e_low,e_high,*this,K)), 
+        SLItem(SL.end()),  Treat_new_edge(in)
     { TRACEN("Constrained Triangulation Sweep"); }
 
 
