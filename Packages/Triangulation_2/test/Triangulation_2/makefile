@@ -14,13 +14,19 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
+#CXXFLAGS = \
+#	-I../../include \
+#	-I./include \
+#	$(CGAL_CXXFLAGS)\
+#	$(TESTSUITE_CXXFLAGS) \
+#	-g
+
 CXXFLAGS = \
 	-I../../include \
 	-I./include \
 	$(CGAL_CXXFLAGS)\
 	$(TESTSUITE_CXXFLAGS) \
-	-g
-
+	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_ASSERTIONS -DCGAL_NO_POSTCONDITIONS
 
 #---------------------------------------------------------------------#
 #                    linker flags
