@@ -49,10 +49,12 @@ int main(int, char*)
 
 
 #include <CGAL/IO/Qt_widget.h>
-#include "Qt_widget_toolbar.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/pixmaps/demoicon.xpm>
+#include "Qt_widget_toolbar.h"
+
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -87,7 +89,7 @@ public:
   void draw()
   {
     widget->lock();
-    *widget << CGAL::PointSize(6);
+    *widget << CGAL::PointSize(3);
     *widget << CGAL::GREEN;
     std::list<Point>::iterator itp = list_of_points.begin();
     while(itp!=list_of_points.end())
@@ -214,7 +216,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
@@ -285,6 +287,8 @@ main(int argc, char **argv)
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  widget.setIcon(cgal_icon);
   widget.show();
   current_state = -1;
   return app.exec();
