@@ -11,7 +11,7 @@ struct Primitive {
     { return f * other->f > 0.6; }
 };
 
-struct Box : public CGAL::Default_box_d< double, 3 >
+struct Box : public CGAL::Box_intersection_d::Box_d< double, 3 >
 {
     Primitive *primitive;
     Box( Primitive *p ) : primitive( p ) {
@@ -37,7 +37,7 @@ int main() {
     std::vector< Box > boxes1, boxes2;
     fill_boxes( 100, boxes1 );
     fill_boxes( 100, boxes2 );
-    box_intersection_d( boxes1.begin(), boxes1.end(),
-                        boxes2.begin(), boxes2.end(), callback );
+    CGAL::box_intersection_d( boxes1.begin(), boxes1.end(),
+                              boxes2.begin(), boxes2.end(), callback );
 }
 

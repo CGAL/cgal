@@ -53,7 +53,7 @@ int main() {
     std::vector<User_box> a, b;
     fill_boxes( 100, a );
     fill_boxes( 100, b );
-    box_intersection_d( a.begin(), a.end(),
-                        b.begin(), b.end(), callback, Box_traits() );
+    CGAL::box_intersection_d( a.begin(), a.end(),
+                              b.begin(), b.end(), callback, Box_traits() );
 }
 

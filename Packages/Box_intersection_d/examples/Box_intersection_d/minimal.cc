@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <vector>
 
-typedef CGAL::Default_box_d< double, 3 > Box;
+typedef CGAL::Box_intersection_d::Box_d< double, 3 > Box;
 
 void fill_boxes( unsigned int n, std::vector<Box>& boxes ) {
     double lo[3], hi[3];
@@ -26,6 +26,7 @@ int main() {
     std::vector<Box> a, b;
     fill_boxes( 100, a );
     fill_boxes( 100, b );
-    box_intersection_d( a.begin(), a.end(), b.begin(), b.end(), callback );
+    CGAL::box_intersection_d( a.begin(), a.end(),
+                              b.begin(), b.end(), callback );
 }
 
