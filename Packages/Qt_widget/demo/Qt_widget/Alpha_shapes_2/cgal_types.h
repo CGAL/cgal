@@ -20,12 +20,12 @@
 
 typedef double                      Coord_type;
 typedef CGAL::Cartesian<Coord_type> Rep;
-typedef CGAL::Point_2<Rep>          Point;
-typedef CGAL::Segment_2<Rep>        Segment;
-typedef CGAL::Line_2<Rep>           Line;
-typedef CGAL::Triangle_2<Rep>       Triangle;
+typedef Rep::Point_2                Point;
+typedef Rep::Segment_2              Segment;
+typedef Rep::Line_2                 Line;
+typedef Rep::Triangle_2             Triangle; 
 
-typedef CGAL::CGALi::Less_xy_2<Rep> Point_compare;
+typedef Rep::Less_xy_2              Point_compare;
 typedef CGAL::Triangulation_2<Rep>  Triangulation;
 typedef std::list<Point>            CGALPointlist;
 
