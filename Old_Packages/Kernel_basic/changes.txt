@@ -1,3 +1,6 @@
+3.47   (?? June 2001)
+- Cleanup kernel_to_kernel.h
+
 3.46   (21 June 2001)
 - Traits update.
 

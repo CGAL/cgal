@@ -38,11 +38,11 @@ struct Cartesian_double_to_Homogeneous
   typedef Segment_2< Homogeneous< NumberType> >  Segment;
 
   Point2
-  operator()(  const Point_2<Cartesian<double> >& p)
+  operator()(  const Point_2<Cartesian<double> >& p) const
   { return Point2( NumberType(p.x()), NumberType(p.y()) ); }
 
   Segment
-  operator()(  const Segment_2<Cartesian<double> >& s)
+  operator()(  const Segment_2<Cartesian<double> >& s) const
   {
     return Segment( Point2( NumberType(s.source().x()),
                             NumberType(s.source().y()) ),
@@ -50,55 +50,6 @@ struct Cartesian_double_to_Homogeneous
                             NumberType(s.target().y()) ) );
   }
 };
-
-
-template <class NumberType>
-struct Cartesian_double_to_Cartesian
-{
-  typedef Point_2< Cartesian< NumberType> >    Point2;
-  typedef Point_3< Cartesian< NumberType> >    Point3;
-  typedef Segment_2< Cartesian< NumberType> >  Segment;
-
-  Point2
-  operator()(  const Point_2<Cartesian<double> >& p)
-  { return Point2( NumberType(p.x()), NumberType(p.y()) ); }
-
-  Point3
-  operator()(  const Point_3<Cartesian<double> >& p)
-  { return Point3( NumberType(p.x()),
-                   NumberType(p.y()),
-                   NumberType(p.z()) ); }
-
-  Segment
-  operator()(  const Segment_2<Cartesian<double> >& s)
-  {
-    return Segment( Point2( NumberType(s.source().x()),
-                            NumberType(s.source().y()) ),
-                    Point2( NumberType(s.target().x()),
-                            NumberType(s.target().y()) ) );
-  }
-};
-
-template <class NumberType>
-struct Cartesian_float_to_Cartesian
-{
-  typedef Point_2< Cartesian< NumberType> >    Point2;
-  typedef Segment_2< Cartesian< NumberType> >  Segment;
-
-  Point2
-  operator()(  const Point_2<Cartesian<float> >& p)
-  { return Point2( NumberType(p.x()), NumberType(p.y()) ); }
-
-  Segment
-  operator()(  const Segment_2<Cartesian<float> >& s)
-  {
-    return Segment( Point2( NumberType(s.source().x()),
-                            NumberType(s.source().y()) ),
-                    Point2( NumberType(s.target().x()),
-                            NumberType(s.target().y()) ) );
-  }
-};
-
 
 #ifdef CGAL_USE_LEDA
 struct Cartesian_double_to_H_double_int
@@ -107,13 +58,12 @@ struct Cartesian_double_to_H_double_int
   typedef Segment_2< Homogeneous< double> >  Segment;
 
   Segment
-  operator()(  const Segment_2< Cartesian< double> >& s)
+  operator()(  const Segment_2< Cartesian< double> >& s) const
   {
     leda_rat_point rs =  leda_point(s.source().x(), s.source().y());
     leda_rat_point rt =  leda_point(s.target().x(), s.target().y());
 
-    return
-    Segment(
+    return Segment(
       Point2(::to_double(rs.X()),::to_double(rs.Y()),::to_double(rs.W())),
       Point2(::to_double(rt.X()),::to_double(rt.Y()),::to_double(rt.W())) );
   }
@@ -125,13 +75,12 @@ struct Cartesian_float_to_H_double_int
   typedef Segment_2< Homogeneous< double> >  Segment;
 
   Segment
-  operator()(  const Segment_2< Cartesian< float> >& s)
+  operator()(  const Segment_2< Cartesian< float> >& s) const
   {
     leda_rat_point rs =  leda_point(s.source().x(), s.source().y());
     leda_rat_point rt =  leda_point(s.target().x(), s.target().y());
 
-    return
-    Segment(
+    return Segment(
       Point2(::to_double(rs.X()),::to_double(rs.Y()),::to_double(rs.W())),
       Point2(::to_double(rt.X()),::to_double(rt.Y()),::to_double(rt.W())) );
   }
