@@ -127,6 +127,7 @@ public:
   }
 
   Pm_trapezoid_ric_point_location(const_Self_ref pl) : 
+    pm(NULL),
     td(*pl.get_trapezoidal_decomposition())
   {
     const_Planar_map_ptr pm = pl.get_planar_map();
