@@ -1,48 +1,50 @@
 #ifndef CGAL_MESH_3_ISOSURFACE_H
 #define CGAL_MESH_3_ISOSURFACE_H
 
-#include <inrimage/Inrimage.h>
+#include "imageio/ImageIO.h"
 
 namespace CGAL {
 
-template <class FT> 
 class Inrimage_isosurface
 {
-  yav::Inrimage *entree;
-  yav::Voxel *voxl;
-  double isovalue;
+  _image *image;
+  float isovalue;
+  float max_x, max_y, max_z;
 
 public:
-  enum SURFACE_LOCATION {IN = -1, ON = 0, OUT = 1};
-
-  Inrimage_isosurface(char* file, double isoval=0)
+  Inrimage_isosurface(char* file, float isoval=0)
   {
-    entree = new yav::Inrimage(file);
-    yav::Inrimage::WORD_TYPE wt = entree->getType();
-    voxl = yav::Voxel::voxelByType(wt);
+    image = ::_readImage(file);
+    ::convertImageTypeToFloat(image);
     isovalue=isoval;
+    max_x = ((image->xdim) - 1.0)*(image->vx);
+    max_y = ((image->ydim) - 1.0)*(image->vy);
+    max_z = ((image->zdim) - 1.0)*(image->vz);
   }
 
-  SURFACE_LOCATION operator()(FT x, FT y, FT z) const
+  bool inside(float X, float Y, float Z) const
   {
-    unsigned X=static_cast<int>(floor(CGAL::to_double (x)));
-    unsigned Y=static_cast<int>(floor(CGAL::to_double (y)));
-    unsigned Z=static_cast<int>(floor(CGAL::to_double (z)));
+    return ( X>=0. && Y>=0. && Z>=0. && 
+             X<=max_x && Y<=max_y && Z<=max_z );
+  }
 
-    bool inside = entree->inside(X,Y,Z);
+  int operator()(double x, double y, double z) const
+  {
+    float X=static_cast<float>(x);
+    float Y=static_cast<float>(y);
+    float Z=static_cast<float>(z);
 
-    if (!inside)
-      return IN;
+    if (!inside(X,Y,Z))
+      return 1;
     else{
-      entree->getRealVoxel(x,y,z,*voxl);
-      double value = voxl->getValueAsDouble();    
+      float value = triLinInterp(image, X, Y, Z); 
 
       if (value < isovalue)
-	return IN;
+	return -1;
       else if (value > isovalue)
-	return OUT;
+	return 1;
       else
-	return ON;
+	return 0;
     }
   }
 }; // end Inrimage_isosurface

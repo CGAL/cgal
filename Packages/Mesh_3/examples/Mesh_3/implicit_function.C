@@ -12,6 +12,7 @@
 
 #include <cmath>
 #include "implicit_function.h"
+#include "Isosurface.h"
 
 ///////////////// Definitions of several famous surfaces /////////////////
 int sphere_function (double, double, double);  // (c=(0,0,0), r=1)
@@ -29,8 +30,13 @@ int knot2_function (double, double, double);  // (c=(0,0,0), r=4)
 int knot3_function (double, double, double);  // (c=(0,0,0), r=4)
 int peanut_function (double, double, double);  // (c=(0,0,0), r=2)
 
+int ventricules_0_function(double x, double y, double z)
+{
+  static CGAL::Inrimage_isosurface image
+    = CGAL::Inrimage_isosurface("./ventricules_0.23.inr.gz", 1.);
 
-
+  return image(x, y, z);
+}
 
 ///////////////// Definition of the current surface /////////////////
 int implicit_function (double x, double y, double z) {
@@ -461,4 +467,5 @@ void init_functions()
   functions["sphere"] = &sphere_function;
   functions["tanglecube"] = &tanglecube_function;
   functions["torus"] = &torus_function;
+  functions["ventricules_0"] = &ventricules_0_function;
 }

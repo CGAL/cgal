@@ -35,7 +35,7 @@ LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS)
 
-INRIMAGE_LDFLAGS = -L. -lBasics -lInrimageNG -ltclGraphics2D -ltclInrimage -ltclModules
+INRIMAGE_LDFLAGS = -L. -lInrimage
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -44,6 +44,26 @@ INRIMAGE_LDFLAGS = -L. -lBasics -lInrimageNG -ltclGraphics2D -ltclInrimage -ltcl
 all:            \
 		implicit_surfaces_mesher_3$(EXE_EXT)
 
+Inrimage_files= \
+  ImageIO/ImageIO.c \
+  ImageIO/analyze.c \
+  ImageIO/bmp.c \
+  ImageIO/bmpendian.c \
+  ImageIO/bmpread.c \
+  ImageIO/convert.c \
+  ImageIO/gif.c \
+  ImageIO/gis.c \
+  ImageIO/inr.c \
+  ImageIO/iris.c \
+  ImageIO/mincio.c \
+  ImageIO/pnm.c \
+  ImageIO/recbuffer.c \
+  ImageIO/recline.c \
+  ImageIO/reech4x4.c
+
+libInrimage.a: $(INRIMAGE_FILES)
+	gcc -I ImageIO -static -shared -o libInrimage.a $(Inrimage_files) -lm
+
 essai$(OBJ_EXT): essai.C
 
 essai$(EXE_EXT): essai$(OBJ_EXT)
@@ -51,8 +71,8 @@ essai$(EXE_EXT): essai$(OBJ_EXT)
 
 implicit_surfaces_mesher_3$(OBJ_EXT): implicit_surfaces_mesher_3.C
 
-implicit_surfaces_mesher_3$(EXE_EXT): implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) parameters$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surfaces_mesher_3 implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) parameters$(OBJ_EXT) $(LDFLAGS)
+implicit_surfaces_mesher_3$(EXE_EXT): implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) parameters$(OBJ_EXT) libInrimage.a
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surfaces_mesher_3 implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) parameters$(OBJ_EXT) $(LDFLAGS) $(INRIMAGE_LDFLAGS)
 
 isosurface_mesher$(OBJ_EXT): isosurface_mesher.C
 
@@ -65,6 +85,7 @@ clean: \
                    isosurface_mesher.clean \
                    parameters.clean \
                    implicit_function.clean
+	rm -f libInrimage.a
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -72,4 +93,3 @@ clean: \
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-
