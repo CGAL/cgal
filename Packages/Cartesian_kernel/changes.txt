@@ -1,3 +1,8 @@
+Version 6.25 (15 August 2001)
+- Workaround for SunPro.
+
+========================== CGAL 2.3 ====================
+
 Version 6.24 (25 July 2001)
 - Remove Aff_transformation_[23] from Cartesian_converter.
 

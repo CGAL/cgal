@@ -82,10 +82,17 @@ operator-(const Origin &, const PointC2<R CGAL_CTAG> &p)
   return VectorC2<R CGAL_CTAG>(-p.x(), -p.y());
 }
 
+#ifdef __SUNPRO_CC
+template < class FT, class R >
+CGAL_KERNEL_INLINE
+VectorC2<R CGAL_CTAG>
+operator*(const FT &c, const VectorC2<R CGAL_CTAG> &w)
+#else
 template < class R >
 CGAL_KERNEL_INLINE
 VectorC2<R CGAL_CTAG>
 operator*(const typename R::FT &c, const VectorC2<R CGAL_CTAG> &w)
+#endif
 { // FIXME : construction
    return VectorC2<R CGAL_CTAG>(c * w.x(), c * w.y());
 }
