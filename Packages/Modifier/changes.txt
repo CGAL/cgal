@@ -1,5 +1,9 @@
 Modifier Package: Release changes:
 ---------------------------------------------------------------------
+28 March 2004 Radu Ursu
+- ./modifier.gif and ./modifier_small.gif have passed to Modifier/modifier.gif, Modifier/modifier_small.gif
+- fixed error in latex_to_html conversion
+
 25 March 2004 Radu Ursu
 - made the doc work with the new implementation of Manual tools
 
