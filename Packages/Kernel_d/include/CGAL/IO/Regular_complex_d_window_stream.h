@@ -1,36 +1,13 @@
-// ============================================================================
-//
-// Copyright (c) 1997-2000 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
-//
-// file          : include/CGAL/Regular_complex_d_window_stream.h
-// package       : Kernel_d
-// chapter       : Basic
-//
-// source        : ddgeo/Regular_complex_d.lw
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
-// coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
-//
-// implementation: Higher dimensional geometry
-// ============================================================================
 #ifndef CGAL_REGULAR_COMPLEX_D_WINDOW_STREAM_H
 #define CGAL_REGULAR_COMPLEX_D_WINDOW_STREAM_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
+#ifndef _MSC_VER
 #include <CGAL/Regular_complex_d.h>
+#else
+#include <CGAL/Regular_complex_d_MSC.h>
+#endif
 #include <CGAL/IO/Window_stream.h>
 #include <LEDA/graph.h>
 #include <LEDA/node_map.h>
@@ -94,7 +71,7 @@ void d2_map(const Regular_complex_d<R>& RC, GRAPH<leda_point,int>& G)
 
   if (RC.dimension() != 2) CGAL_assertion_msg(0,"d2_map: dim must be 2.");
   G.clear();
-  Hash_map<Vertex_handle,leda_node> node_for(nil);
+  Unique_hash_map<Vertex_handle,leda_node> node_for(nil);
   
   forall_rc_vertices(v,RC) {
     node_for[v] = G.new_node(to_leda_point(RC.associated_point(v)));
@@ -198,7 +175,7 @@ void d3_graph(const Regular_complex_d<R>& RC,
   CGAL_assertion_msg(RC.dimension() == 3,"d3_graph: dim must be 3.");
   G.clear();
   node_map2<bool> connected(G);
-  Hash_map<Vertex_handle,leda_node> node_for(nil);
+  Unique_hash_map<Vertex_handle,leda_node> node_for(nil);
 
   forall_rc_vertices(v,RC) {
     node_for[v] = G.new_node(RC.associated_point(v));

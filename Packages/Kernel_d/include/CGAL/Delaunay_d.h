@@ -729,7 +729,7 @@ opposite_simplex(Simplex_const_handle s, int i) const
   if ( const_cast<Self*>(this)->is_S_cocircular() ) {
     Simplex_const_handle f = Base::opposite_simplex(s,i);
     return ( Base::is_unbounded_simplex(f) ? 
-             Simplex_handle() : f );    
+             Simplex_const_handle() : f );    
   } else {
     Simplex_const_handle f = Base::opposite_simplex(s,i+1);
     return ( type_of(f) == type_of(s) ? f : Simplex_const_handle() );
