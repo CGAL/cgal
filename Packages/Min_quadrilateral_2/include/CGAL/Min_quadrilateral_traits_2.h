@@ -34,6 +34,7 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/Direction_2.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/intersections.h>
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
