@@ -73,6 +73,8 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
   typedef typename Traits::Point_3             Point_3; 
   typedef typename Traits::Ray_3               Ray_3; 
   typedef typename Traits::Triangle_3          Triangle_3; 
+
+  if (P.vertices_begin() == P.vertices_end()) return false;
   
   Facet_iterator f_it;
   for ( f_it = P.facets_begin(); f_it != P.facets_end(); ++f_it)
@@ -94,6 +96,9 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
   p = v_it->point();  v_it++;
   q = v_it->point();  v_it++;
   r = v_it->point();  v_it++;
+
+  // three vertices that form a single (triangular) facet
+  if (v_it == P.vertices_end()) return P.facets_begin() != P.facets_end(); 
   
   // Now take 4th point s.t. it's not coplaner with them
   while (v_it != P.vertices_end() && coplanar(p, q, r, (*v_it).point()))
