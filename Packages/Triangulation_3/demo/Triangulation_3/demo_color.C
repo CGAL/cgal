@@ -37,28 +37,29 @@ int main()
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
-template < class Gt >
+template < class Traits >
 class My_vertex_base
-  : public CGAL::Triangulation_vertex_base_3<Gt>
+  : public CGAL::Triangulation_vertex_base_3<Traits>
 {
 public :
   CGAL::Color color;
+  typedef typename Traits::Point_3 Point;
 
   My_vertex_base() 
-    : CGAL::Triangulation_vertex_base_3<Gt>() 
-    {color=CGAL::WHITE;}
+    : CGAL::Triangulation_vertex_base_3<Traits>(), color(CGAL::WHITE)
+    {}
 
   My_vertex_base(const Point & p) 
-    : CGAL::Triangulation_vertex_base_3<Gt>(p) 
-    {color=CGAL::WHITE;}
+    : CGAL::Triangulation_vertex_base_3<Traits>(p), color(CGAL::WHITE)
+    {}
 
   My_vertex_base(const Point & p, void* c) 
-    : CGAL::Triangulation_vertex_base_3<Gt>(p,c) 
-    {color=CGAL::WHITE;}
+    : CGAL::Triangulation_vertex_base_3<Traits>(p,c), color(CGAL::WHITE)
+    {} 
 
   My_vertex_base(void* c)
-    : CGAL::Triangulation_vertex_base_3<Gt>(c) 
-    {color=CGAL::WHITE;}
+    : CGAL::Triangulation_vertex_base_3<Traits>(c), color(CGAL::WHITE)
+    {} 
 };
 
 typedef CGAL::Cartesian<double> Gt;

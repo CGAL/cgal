@@ -1,3 +1,8 @@
+Version 1.67 (?? June 01)
+- dual functions cleaned
+- useless blind_demo removed
+- cleanup
+
 Version 1.66 (21 June 01)
 - dual function for cells and facets
 - demo.voronoi
