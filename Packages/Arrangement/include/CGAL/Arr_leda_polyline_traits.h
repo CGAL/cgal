@@ -74,7 +74,8 @@ public:
     return (Comparison_result)(
 
 #if (__LEDA__ >= 380)
-			       Point_2::cmp_x(p0,p1)
+                               // full specification is required for msvc:
+			       Arr_leda_polyline_traits::Point_2::cmp_x(p0,p1)
 #else // backward compatability to LEDA   
 			       compare(p0.xcoord(),p1.xcoord()) 
 #endif
@@ -84,7 +85,8 @@ public:
     return (Comparison_result)(
 
 #if (__LEDA__ >= 380)
-			       Point_2::cmp_y(p0,p1)
+                               // full specification is required for msvc:
+			       Arr_leda_polyline_traits::Point_2::cmp_y(p0,p1)
 #else // backward compatability to LEDA
 			       compare(p0.ycoord(),p1.ycoord())
 #endif
