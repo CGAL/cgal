@@ -284,8 +284,6 @@ private slots:
     }
   }
 
-	
-
   void load_triangulation()
   {
     QString s( QFileDialog::getOpenFileName( QString::null,
@@ -297,6 +295,14 @@ private slots:
     CGAL::set_ascii_mode(in);
     in >> ct;
     something_changed();
+  }
+
+  void load_constraineds()
+  {
+  }
+
+  void save_constraineds()
+  {
   }
 
 private:
