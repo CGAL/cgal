@@ -1,3 +1,6 @@
+13 Feb 2004 Sylvain Pion
+- Remove traces of CLN.
+
 1 Feb 2004 Sylvain Pion
 - Improve the precision of to_interval(Quotient<MP_Float>).
 
