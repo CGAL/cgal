@@ -3,7 +3,10 @@
 #include <CGAL/MP_Float.h> 
 #include <CGAL/Lazy_exact_nt.h> 
 #include <CGAL/Fixed_precision_nt.h> 
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 #include <CGAL/Filtered_exact.h> 
+#endif // CGAL_CFG_MATCHING_BUG_2
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
@@ -17,13 +20,21 @@
 #endif // CGAL_USE_LEDA
 
 typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
+
+// Exclude Filtered_exact tests with VC++ (lack of partial specialization)
+#ifndef CGAL_CFG_MATCHING_BUG_2
+
+typedef CGAL::Filtered_exact<double, QMPF>        FEDQ;
+#ifdef CGAL_USE_GMP
 typedef CGAL::Filtered_exact<int, CGAL::Gmpz>     FEIG;
 typedef CGAL::Filtered_exact<double, CGAL::Gmpz>  FEDG;
-typedef CGAL::Filtered_exact<double, QMPF>        FEDQ;
+#endif // CGAL_USE_GMP
 
 #ifdef CGAL_USE_LEDA
 typedef CGAL::Filtered_exact<double, leda_real>   FEDR;
 #endif // CGAL_USE_LEDA
+
+#endif // CGAL_CFG_MATCHING_BUG_2
 
 template < class NT >
 bool
@@ -185,9 +196,13 @@ int main()
   TESTIT(CGAL::Quotient<int>, "Quotient<int>")
   TESTIT(QMPF, "Quotient<MP_Float>")
   TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
+#ifndef CGAL_CFG_MATCHING_BUG_2
+#ifdef CGAL_USE_GMP
   TESTIT(FEIG, "Filtered_exact<int, Gmpz>");
   TESTIT(FEDG, "Filtered_exact<double, Gmpz>");
+#endif
   TESTIT(FEDQ, "Filtered_exact<double, Quotient<MP_Float> >");
+#endif // CGAL_CFG_MATCHING_BUG_2
 
   // GMP based NTs
 #ifdef CGAL_USE_GMP
@@ -200,7 +215,9 @@ int main()
   TESTIT(leda_rational, "leda_rational")
   TESTIT(leda_bigfloat, "leda_bigfloat")
   TESTIT(leda_real, "leda_real")
-  TESTIT(FEDR, "Filtered_exact<double, leda_real");
+#ifndef CGAL_CFG_MATCHING_BUG_2
+  TESTIT(FEDR, "Filtered_exact<double, leda_real>");
+#endif // CGAL_CFG_MATCHING_BUG_2
 #endif // CGAL_USE_LEDA
 
 
