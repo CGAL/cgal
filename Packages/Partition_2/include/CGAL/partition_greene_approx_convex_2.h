@@ -300,8 +300,7 @@ void stack_extend(Polygon& polygon,
 #endif
    }
    else
-      change_top_chain(polygon, point_ref, stack, top_chain, bottom_chain, 
-                       result, traits);
+      change_top_chain(polygon, point_ref, stack, top_chain, result, traits);
 }
 
 template <class Polygon, class BidirectionalCirculator, 
@@ -310,7 +309,6 @@ void change_top_chain(Polygon& polygon,
                       BidirectionalCirculator new_point_ref,
                       Circ_pair< BidirectionalCirculator >& stack,
                       Circ_pair< BidirectionalCirculator >& top_chain, 
-                      Circ_pair< BidirectionalCirculator >& bottom_chain, 
                       OutputIterator& result, const Traits& traits)
 {
    BidirectionalCirculator next_point_ref = new_point_ref;
@@ -548,7 +546,7 @@ void make_polygons_from_stack(Polygon& polygon,
                             Circ_pair< BidirectionalCirculator >& stack,
                             Circ_pair< BidirectionalCirculator >& bottom_chain,
                             Circ_pair< BidirectionalCirculator >& top_chain,
-                            OutputIterator& result, const Traits& traits)
+                            OutputIterator& result, const Traits& )
 {
    bool update_required;
    // make polygons by connecting the high point to every point on the stack
@@ -770,7 +768,7 @@ void ga_convex_decomposition(ForwardIterator first, ForwardIterator beyond,
                       bottom_chain, result, traits);
       else if (is_adjacent_to(point_ref, top_chain.front()))
          change_top_chain(polygon, point_ref, stack, top_chain, 
-                          bottom_chain, result, traits);
+                          result, traits);
       else
          change_bottom_chain(polygon, point_ref, stack, bottom_chain, 
                              top_chain, result, traits);

@@ -391,10 +391,5 @@ private:
 
 }
 
-/*
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Partitioned_polygon_2.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-*/
 
 #endif // CGAL_PARTITIONED_POLYGON_2_H

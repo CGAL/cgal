@@ -150,13 +150,13 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
 {
    if (poly_first == poly_last)  return (point_first == point_last);
 
-   typedef typename Traits::Polygon_2::Vertex_const_iterator   
-                                                       Poly_vtx_const_iterator;
+   typedef typename Traits::Polygon_2::Vertex_iterator   
+                                                       Poly_vtx_iterator;
    typedef typename Traits::Point_2                    Point_2;
    typedef Partition_vertex_map<Traits>                P_Vertex_map;
    typedef typename Traits::Is_valid                   Is_valid;
 
-   Poly_vtx_const_iterator begin, end;
+   Poly_vtx_iterator vtx_begin, vtx_end;
 
    Is_valid is_valid = traits.is_valid_object(traits);
 
@@ -174,15 +174,15 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
    int poly_num = 0;
    for (; poly_first != poly_last; poly_first++, poly_num++)
    {
-      begin = (*poly_first).vertices_begin();
-      end = (*poly_first).vertices_end();
+      vtx_begin = (*poly_first).vertices_begin();
+      vtx_end = (*poly_first).vertices_end();
 #ifdef CGAL_PARTITION_CHECK_DEBUG
          std::cout << "Polygon " << poly_num << " is " << std::endl;
          std::cout << *poly_first << std::endl;
 #endif
       CGAL_partition_assertion (
-           orientation_2(begin, end, traits) == COUNTERCLOCKWISE);
-      if (!is_valid(begin, end)) 
+           orientation_2(vtx_begin, vtx_end, traits) == COUNTERCLOCKWISE);
+      if (!is_valid(vtx_begin, vtx_end)) 
       {
 #ifdef CGAL_PARTITION_CHECK_DEBUG
          std::cout << "It does NOT have the tested property." << std::endl;
@@ -251,7 +251,7 @@ convex_partition_is_valid_2(InputIterator point_first,
                             InputIterator point_last,
                             ForwardIterator poly_first,
                             ForwardIterator poly_last,
-                            const Traits& traits)
+                            const Traits& )
 {
    typedef typename Traits::Is_convex_2                 Is_convex_2;
    Partition_is_valid_traits_2<Traits, Is_convex_2>     validity_traits;
@@ -292,7 +292,7 @@ y_monotone_partition_is_valid_2(InputIterator point_first,
                                 InputIterator point_last,
                                 ForwardIterator poly_first,
                                 ForwardIterator poly_last,
-                                const Traits& traits)
+                                const Traits& )
 {
    typedef typename Traits::Is_y_monotone_2                Is_y_monotone_2;
 

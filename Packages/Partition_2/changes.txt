@@ -1,3 +1,15 @@
+1.8 (12 March 2001)
+
+    Changed Vertex_const_iterator to Vertex_iterator for Partition_vertex_map
+    build() function and partition_is_valid_2() in the hopes that this will 
+    fix the problem the Windows compilers have with the call to insert in
+    build().
+
+    Removed the .C files that cannot be used with VC++ because of template
+    member functions.
+
+    Fixed some warnings related to unused variables and parameters.
+
 1.7 (8 March 2001)
 
     Added typedefs for Traits parameters in Partitioned_polygon_2.

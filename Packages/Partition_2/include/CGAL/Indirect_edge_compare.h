@@ -161,15 +161,6 @@ class Indirect_edge_compare
 
 }
 
-//
-// See if the windows compilers continue to have problems if the function
-// definitions are in the class
-//
-/*
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Indirect_edge_compare.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-*/
 
 
 #endif // CGAL_INDIRECT_EDGE_COMPARE_H

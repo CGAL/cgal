@@ -38,7 +38,7 @@ class Is_vacuously_valid
 {
   public:
 
-     Is_vacuously_valid(Traits t) {}
+     Is_vacuously_valid(Traits ) {}
 
      template <class ForwardIterator>
      bool operator()(ForwardIterator, ForwardIterator)

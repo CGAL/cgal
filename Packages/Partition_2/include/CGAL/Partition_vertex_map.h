@@ -277,7 +277,7 @@ class Partition_vertex_map : public std::map<typename Traits::Point_2,
 {
 public:
 
-   typedef std::map<typename Traits::Point_2,
+   typedef typename std::map<typename Traits::Point_2,
                              Edge_list<Traits>,
                              typename Traits::Less_xy_2>::iterator
                                                    Self_iterator;
