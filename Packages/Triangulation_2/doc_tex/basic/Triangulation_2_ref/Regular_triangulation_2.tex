@@ -143,6 +143,13 @@ and a power test on these weighted points.
 \ccGlue
 \ccTypedef{typedef Traits::Weighted_point  Weighted_point;}{}
 
+\ccNestedType{All_vertices_iterator}{An iterator that allows to enumerate the
+vertices that are not hidden.}
+\ccNestedType{Finite_vertices_iterator}{An iterator that allows to enumerate the
+finite vertices that are not hidden.}
+\ccNestedType{Hidden_vertices_iterator;}{An iterator that allows to enumerate the
+hidden vertices.}
+
 
 \ccCreation
 \ccCreationVariable{rt}  %% choose variable name
@@ -203,6 +210,28 @@ located in  \ccc{lt,loc,li}.}
 {removes the vertex from the triangulation and
 returns the number of new vertices created by the insertion of previously
 hidden points.}
+
+\ccHeading{Access functions}
+
+\ccMethod{int number_of_vertices() const;}
+{returns the number of finite vertices that are not hidden.}
+
+\ccMethod{int number_of_hidden_vertices() const;}
+{returns the number of hidden vertices.}
+
+\ccMethod{Hidden_vertices_iterator hidden_vertices_begin() const;}
+{returns an iterator on the first element of a sequence of hidden vertices.}
+
+\ccMethod{Hidden_vertices_iterator hidden_vertices_begin() const;}
+{returns the past the end iterator of the sequence of hidden vertices.}
+
+\ccMethod{All_vertices_iterator all_vertices_begin() const;}
+{returns an iterator on the first element of a sequence of hidden and not hidden
+finite vertices.}
+
+\ccMethod{All_vertices_iterator all_vertices_begin() const;}
+{returns the past the end iterator of the sequence of hidden and not hidden
+finite vertices.}
 
 \ccHeading{Dual power diagram}
 \ccIndexMainItem{power diagram}
