@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: fixed EXTRA_OBJECTS bug (workaround_4_irix was addded ALWAYS).
 GLOB: changed EXTRA_OBJECTS for Intervall_arithmetic workaround on irix6.
 GLOB: define CGAL_CC in include makefiles.
 GLOB: write CGAL_EXTRA_OBJECTS without path-prefix.
