@@ -138,7 +138,7 @@ namespace CGAL {
   }
   void Qt_widget_standard_toolbar::zoomout()
   {
-    widget->zoom(1/2);
+    widget->zoom(0.5);
     widget->redraw();
   }
   void Qt_widget_standard_toolbar::back()
