@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.36 (1/2/04) [mk]
+- added this-> before some inherited methods in ds vertex and ds face base;
+  gcc 3.4 was complaining
+
 ver 8.34 (22/1/04)
 - Fix Regular (missing #includes).
 
