@@ -36,6 +36,7 @@
 
 #include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_triangulation_2.C>
+//#include <CGAL/SegmentH2.h>
 
 int main()
 {
