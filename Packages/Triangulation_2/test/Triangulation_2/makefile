@@ -30,8 +30,8 @@ CXXFLAGS = \
 	-I./include \
 	$(CGAL_CXXFLAGS)\
 	$(TESTSUITE_CXXFLAGS) \
-	-g  \
-	-fhonor-std
+	-g  
+#	-fhonor-std
 #       -B$(UTIL)/Binutils/SunOS/bin/ 
 #	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_ASSERTIONS -DCGAL_NO_POSTCONDITIONS
 
