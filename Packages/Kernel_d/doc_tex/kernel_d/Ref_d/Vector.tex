@@ -1,0 +1,122 @@
+% begin cgal manual page
+
+\begin{ccRefConcept}{Vector}
+\ccCreationVariable{v}
+
+\ccDefinition
+
+An instance of data type \ccc{Vector} is a vector of variables of
+number type \ccc{NT}.  Together with the type \ccc{Matrix} it realizes
+the basic operations of linear algebra. 
+
+\ccSetOneOfTwoColumns{5.5cm}
+
+\ccTypes
+
+\ccNestedType{NT}{
+  the number type of the components.}
+
+\ccNestedType{iterator}{
+  the iterator type for accessing components.}
+
+\ccNestedType{const_iterator}{
+ the const iterator type for accessing components.}
+
+\ccNestedType{Initialize}{
+  a tag class for homogeneous initialization.}
+
+\ccCreationVariable{v}
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{Vector(int d = 0)}{
+creates an instance \ccc{v} of type \ccc{Vector}. 
+\ccc{v} is initialized to a vector of dimension $d$. 
+}
+
+\ccConstructor{Vector(int d, Initialize, NT x)}{
+creates an instance \ccc{v} of type \ccc{Vector}. 
+\ccc{v} is initialized to a vector of dimension $d$ with entries \ccc{x}. 
+}
+
+\ccConstructor{template <class Forward_iterator>
+Vector(Forward_iterator first, Forward_iterator last)}{
+creates an instance \ccc{v} of type \ccc{Vector}; 
+\ccc{v} is initialized to the vector with entries
+\ccc{tuple [first,last)}. \ccPrecond 
+\ccc{Forward_iterator} has value type \ccc{NT}. }
+
+\ccConstructor{Vector(NT a, NT b)}{
+creates an instance \ccc{v} of type \ccc{Vector}.
+\ccc{v} is initialized to the two-dimensional vector $(a,b)$. 
+}
+
+\ccConstructor{Vector(NT a, NT b, NT c)}{
+creates an instance \ccc{v} of type \ccc{Vector}. 
+\ccc{v} is initialized to the three-dimensional vector 
+$(a,b,c)$. 
+}
+
+\ccConstructor{Vector(NT a, NT b, NT c, NT d)}{
+creates an instance \ccc{v} of type \ccc{Vector}; 
+\ccc{v} is initialized to the four-dimensional vector 
+$(a,b,c,d)$. 
+}
+
+\ccSetTwoOfThreeColumns{3cm}{3cm}
+
+\ccOperations
+
+\ccMethod{int dimension() ;}{returns the dimension of \ccc{v}. }
+
+\ccMethod{bool is_zero() ;}{returns true iff \ccc{v} is the zero vector.}
+
+\ccMethod{NT& operator[](int i) ;}{returns $i$-th component of \ccc{v}.\\
+           \ccPrecond $0\le i \le \ccc{v.dimension()-1}$.  
+}
+
+\ccMethod{ Vector& operator+=(const Vector& v1);}{Addition plus assignment. \ccPrecond\\
+\ccc{v.dimension() == v1.dimension()}. 
+}
+
+\ccMethod{ Vector& operator-=(const Vector& v1);}{Subtraction plus assignment. \ccPrecond\\ 
+\ccc{v.dimension() == v1.dimension()}. 
+}
+
+\ccMethod{ Vector& operator*=(const NT& s);}{Scalar multiplication plus assignment. 
+}
+
+\ccMethod{ Vector& operator/=(const NT& s);}{Scalar division plus assignment. 
+}
+
+\ccMethod{Vector  operator+(const Vector& v1) ;}{Addition. \ccPrecond\\ 
+\ccc{v.dimension() == v1.dimension()}. 
+}
+
+\ccMethod{Vector  operator-(const Vector& v1) ;}{Subtraction. \ccPrecond\\ 
+\ccc{v.dimension() = v1.dimension()}. 
+}
+
+\ccMethod{NT operator*(const Vector& v1) ;}{Inner Product. \ccPrecond\\ 
+\ccc{v.dimension() = v1.dimension()}. 
+}
+
+\ccMethod{Vector  operator-() ;}{Negation.}
+
+Component access is also possible via \ccc{iterator} and \ccc{const_iterator}
+by the standard iterator range access operations \ccc{begin()}, \ccc{end()}. 
+
+
+\ccFunction{template <class NT, class A>
+Vector<NT,A> operator*(const NT& r, const Vector<NT,A>& v) ;}{
+  Componentwise multiplication with number $r$.}
+
+\ccFunction{template <class NT, class A>
+Vector<NT,A> operator*(const Vector<NT,A>& v, const NT& r) ;}{
+  Componentwise multiplication with number $r$.}
+
+\end{ccRefConcept}
+
+
