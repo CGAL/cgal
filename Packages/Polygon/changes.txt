@@ -1,3 +1,6 @@
+4.8 (8 April 2002)
++ Added operator-> for Edge_const_iterator
+
 4.7 (20 March 2002)
 + Added test for availability of GMP in SimplicityTest.C
 
