@@ -129,6 +129,17 @@ public:
     }
   }
 
+  Nested_iterator(const Self& other)
+  {
+    copy_from(other);
+  }
+
+  Self& operator=(const Self& other)
+  {
+    copy_from(other);
+    return *this;
+  }
+
   Self& operator++()
   {
     if ( nested_it_ != end( this->base() ) ) {
@@ -190,6 +201,15 @@ public:
   friend bool operator==<>(const Self&, const Self&);
 
 protected:
+  void copy_from(const Self& other)
+  {
+    Filter_base_iterator::operator=(other);
+    if ( !other.is_end() ) {
+      nested_it_ = other.nested_it_;
+    }
+  }
+
+protected:
   Iterator       nested_it_;
 };
 
@@ -205,7 +225,6 @@ bool operator==(const Nested_iterator<Base_it,Traits>& it1,
   //  CGAL_precondition( it1.b_ == it2.b_ && it1.e_ == it2.e_ );
 
   if ( it1.base() != it2.base() ) { return false; }
-  
   return it1.is_end() || ( it1.nested_it_ == it2.nested_it_ );
 }
 
