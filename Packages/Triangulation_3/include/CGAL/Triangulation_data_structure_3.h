@@ -12,6 +12,7 @@
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_H
 
 #include <pair.h>
+#include <CGAL/triple.h>
 #include <list.h>
 #include <vector.h>
 #include <map.h>
@@ -26,6 +27,7 @@
 #include <CGAL/Triangulation_ds_vertex.h>
 
 #include <CGAL/Triangulation_ds_iterators.h>
+#include <CGAL/Triangulation_ds_circulators.h>
 
 template <class Tds>
 class CGAL_Triangulation_ds_cell_iterator;
@@ -33,6 +35,8 @@ template <class Tds>
 class CGAL_Triangulation_ds_facet_iterator;
 template <class Tds>
 class CGAL_Triangulation_ds_vertex_iterator;
+template <class Tds>
+class CGAL_Triangulation_ds_cell_circulator;
 
 template <class Vb, class Cb>
 class CGAL_Triangulation_data_structure
@@ -56,12 +60,14 @@ public:
   typedef CGAL_Triangulation_ds_vertex<Vb,Cb> Vertex;
   typedef CGAL_Triangulation_ds_cell<Vb,Cb> Cell;
   typedef pair<Cell*, int>  Facet;
+  typedef CGAL_triple<Cell*, int, int> Edge;
 
   typedef CGAL_Triangulation_data_structure<Vb,Cb> Tds;
 
   typedef CGAL_Triangulation_ds_cell_iterator<Tds> Cell_iterator;
   typedef CGAL_Triangulation_ds_facet_iterator<Tds> Facet_iterator;
   typedef CGAL_Triangulation_ds_vertex_iterator<Tds> Vertex_iterator;
+  typedef CGAL_Triangulation_ds_cell_circulator<Tds> Cell_circulator;
 
   // CONSTRUCTORS
 
@@ -135,7 +141,7 @@ public:
 				  Vertex* star = NULL,
 				  bool reorient = false) 
     // star = vertex from which we triangulate the facet of the incremented dimension
-    // ( geometrically : infinite vertex )
+    // ( geometrically : star = infinite vertex )
     // = Null only used to insert the 1st vertex (dimension -2 to dimension -1)
 
     // changes the dimension
@@ -149,9 +155,14 @@ public:
     Cell* e;
     int i, j;
 
+    set_number_of_vertices( number_of_vertices()+1 );
+    set_dimension( dimension()+1 );
+    // this is set before the switch, so that it becomes allowed to reorient
+    // new facets or cells by iterating on them (otherwise the dimension is to small
+
     switch ( dimension() ) {
 
-    case -2:
+    case -1:
       // insertion of the first vertex
       // ( geometrically : infinite vertex )
       {
@@ -162,7 +173,7 @@ public:
 	break;
       }
 
-    case -1:
+    case 0:
       // insertion of the second vertex
       // ( geometrically : first finite vertex )
       {
@@ -175,7 +186,7 @@ public:
 	break;
       }
 
-    case 0:
+    case 1:
       // insertion of the third vertex
       // ( geometrically : second finite vertex )
       {
@@ -214,7 +225,7 @@ public:
 	break;
       }
 
-    case 1:
+    case 2:
       // general case : 4th vertex ( geometrically : 3rd finite vertex )
       // degenerate cases geometrically : 1st non collinear vertex
       {
@@ -284,17 +295,84 @@ public:
 	break;
       }
 
-    case 2:
-      // geometrically : insertion of the 1st non coplanar vertex
-      // 5th vertex ( geometrically : 4th finite vertex )
+    case 3:
+      // general case : 5th vertex ( geometrically : 4th finite vertex )
+      // degenerate cases : geometrically 1st non coplanar vertex
       {
 	CGAL_triangulation_precondition( star != NULL );
+
+	Cell* old_cells = list_of_cells()._next_cell; 
+	// used to store the beginning of the list of cells,
+	// which will be past end for the list of new cell
+	// in order to be able to traverse only the new cells 
+	// to find the missing neighbors (we know that new Cell() puts
+	// each new cell at the beginning of the list).
+	
+	Cell* cnew;
+	Cell_iterator it = cells_begin(); 
+	// allowed since the dimension has already been set to 3
+
+	v->set_cell(&(*it)); // ok since there is at list one ``cell''
+	while (it != cells_end()) {
+	  it->set_vertex(3,v);
+	  if ( ! it->has_vertex(star) ) {
+	    cnew = new Cell( *this,
+			     it->vertex(0),it->vertex(2),
+			     it->vertex(1),star,
+			     NULL,NULL,NULL,&(*it));
+	    it->set_neighbor(3,cnew);
+	  }
+	  ++it;
+	}
+
+	it = cells_begin(); 
+	Cell* n;
+	Cell* c;
+	// traversal of the new cells only, to add missing neighbors
+	while ( &(*it) != old_cells ) {
+	  n = it->neighbor(3); // opposite to star
+	  for ( int i=0; i<3; i++ ) {
+	    int j;
+	    if ( i==0 ) j=0;
+	    else j=3-i; // vertex 1 and vertex 2 are always switched when
+	                // creating a new cell (see above)
+	    if ( ( c = n->neighbor(i)->neighbor(3) ) != NULL ) {
+	      // i.e. star is not a vertex of n->neighbor(i)
+	      it->set_neighbor(j,c);
+	      // opposite relation will be set when it arrives on c
+	      // this avoids to look for the correct index 
+	      // and to test whether *it already has neighbor i
+	    }
+	    else {
+	      // star is a vertex of n->neighbor(i)
+	      it->set_neighbor(j,n->neighbor(i));
+	      n->neighbor(i)->set_neighbor(3,&(*it)); // neighbor opposite to v
+	    }
+	  }
+	  ++it;
+	}
+	
+	// reorientation of all the cells
+	if (reorient) {
+	  Vertex* vtmp;
+	  Cell* ctmp;
+	  it = cells_begin();
+	  
+	  while ( it != cells_end() ) {
+	    vtmp = it->vertex(1);
+	    it->set_vertex(1,it->vertex(0));
+	    it->set_vertex(0,vtmp);
+
+	    ctmp = it->neighbor(1);
+	    it->set_neighbor(1,it->neighbor(0));
+	    it->set_neighbor(0,ctmp);
+	    
+	    ++it;
+	  }
+	}
       }
-    
     }// end switch
     
-    set_number_of_vertices( number_of_vertices()+1 );
-    set_dimension( dimension()+1 );
   } 
   // end insert_outside_affine_hull
 
@@ -304,15 +382,6 @@ public:
     CGAL_triangulation_precondition( v != NULL && c != NULL ); 
     CGAL_triangulation_precondition( i != j );
     CGAL_triangulation_precondition( dimension() >= 1 );
-    if (dimension() == 1) {
-      CGAL_triangulation_precondition( (i==0 || i==1) && (j==0 || j==1) );
-    }
-    if (dimension() == 2) {
-      CGAL_triangulation_precondition( i>=0 && i<=2 && j>=0 && j<=2 );
-    }
-    if (dimension() == 3) {
-      CGAL_triangulation_precondition( i>=0 && i<=3 && j>=0 && j<=3 );
-    }
 
     Cell* cnew;
     Cell* dnew;
@@ -321,6 +390,7 @@ public:
 
     case 1:
       {
+	CGAL_triangulation_precondition( (i==0 || i==1) && (j==0 || j==1) );
 	cnew = new Cell(*this,
 			v,c->vertex(1),NULL,NULL,
 			c->neighbor(0),c,NULL,NULL);
@@ -328,12 +398,14 @@ public:
 	c->set_vertex(1,v);
 	c->neighbor(0)->set_neighbor(1,cnew);
 	c->set_neighbor(0,cnew);
-	//      v->set_cell(cnew); plus bas
+
+	v->set_cell(cnew); 
 	break;
       }
 
     case 2:
       {
+	CGAL_triangulation_precondition( i>=0 && i<=2 && j>=0 && j<=2 );
 	int k=3-i-j; // index of the third vertex of the facet
 	Cell* d = c->neighbor(k);
 	int kd = d->index(c);
@@ -367,63 +439,207 @@ public:
 	nj->set_neighbor(nj->index(d),dnew);
 	d->set_neighbor(jd,dnew);
 	dnew->set_neighbor(kd,cnew);
-      
+
+	v->set_cell(cnew);
 	break;
       }
 
     case 3:
-      break;
+      {
+	CGAL_triangulation_precondition( i>=0 && i<=3 && j>=0 && j<=3 );
+	Vertex* vi=c->vertex(i);
+	Vertex* vj=c->vertex(j);
+	
+	cnew = new Cell(*this, c);
+	c->set_vertex(j,v);
+	vj->set_cell(cnew);
+	v->set_cell(c);
+	c->neighbor(i)->set_neighbor(c->neighbor(i)->index(c),cnew);
+	c->set_neighbor(i,cnew);
+	cnew->set_vertex(i,v);
+	cnew->set_neighbor(j,c);
+
+	// the code here duplicates a large part of the code 
+	// of CGAL_Triangulation_ds_cell_circulator
+
+	int k=Cell_circulator::other(i,j);
+
+	Cell* ctmp = c->neighbor(k);
+	Cell* cprev = c;
+	Cell* cnewprev = cnew;
+
+	while ( ctmp != c ) {
+	  // the current cell is duplicated. vertices and neighbors i and j
+	  // are updated during the traversal.
+	  // uses the field prev of the circulator
+	  i = ctmp->index(vi);
+	  j = ctmp->index(vj);
+	  cnew = new Cell(*this, ctmp);
+	  // v will become vertex j of c
+	  // and vertex i of cnew
+	  ctmp->set_vertex(j,v);
+	  ctmp->neighbor(i)->set_neighbor(ctmp->neighbor(i)->index(ctmp),cnew);
+	  ctmp->set_neighbor(i,cnew);
+	  cnew->set_vertex(i,v);
+	  cnew->set_neighbor(j,ctmp);
+
+	  // neighbor relations of all cells are used
+	  // to find relations between new cells
+	  cnew->set_neighbor(ctmp->index(cprev),cnewprev);
+	  cnewprev->set_neighbor(cprev->index(ctmp),cnew);
+
+	  cnewprev = cnew;
+	  k=Cell_circulator::other(i,j);
+	  if ( ctmp->neighbor(k) == cprev ) {
+	    cprev = ctmp;
+	    ctmp = ctmp->neighbor(6-i-j-k);
+	  }
+	  else {
+	    cprev = ctmp;
+	    ctmp = ctmp->neighbor(k);
+	  }
+	}
+	cnew = c->neighbor(c->index(vi));
+	cnew->set_neighbor(c->index(cprev),cnewprev);
+	cnewprev->set_neighbor(cprev->index(c),cnew);
+	break;
+      }
     }
     set_number_of_vertices(number_of_vertices() +1);
-    v->set_cell(cnew);
-  }
-  // end insert_in_edge
+  }// end insert_in_edge
 
   void insert_in_facet(Vertex* v, Cell* c, int i)
     // inserts v in the facet opposite to vertex i of cell c
   {
     CGAL_triangulation_precondition( (v != NULL) && (c != NULL)); 
     CGAL_triangulation_precondition( dimension() >= 2 );
-    if (dimension() == 2) {
-      CGAL_triangulation_precondition( i == 3 );
-    }   
-    if (dimension() == 3) {
-      CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2 || i == 3 );
-    }
-
-    Cell* cnew;
-    Cell* dnew;
 
     switch ( dimension() ) {
 
     case 2:
       {
+	CGAL_triangulation_precondition( i == 3 );
 	Cell* n = c->neighbor(2);
-	cnew = new Cell(*this,
-			c->vertex(0),c->vertex(1),v,NULL,
-			c, NULL,n,NULL);
+	Cell* cnew = new Cell(*this,
+			      c->vertex(0),c->vertex(1),v,NULL,
+			      c, NULL,n,NULL);
 	n->set_neighbor(n->index(c),cnew);
 	c->set_neighbor(2,cnew);
 	c->vertex(0)->set_cell(cnew);
 
 	n = c->neighbor(1);
-	dnew = new Cell(*this,
-			c->vertex(0),v,c->vertex(2),NULL,
-			c,n,cnew,NULL);
+	Cell* dnew = new Cell(*this,
+			      c->vertex(0),v,c->vertex(2),NULL,
+			      c,n,cnew,NULL);
 	n->set_neighbor(n->index(c),dnew);
 	c->set_neighbor(1,dnew);
 	cnew->set_neighbor(1,dnew);
 
 	c->set_vertex(0,v);
+	v->set_cell(c);
 	break;
       }
     case 3:
       {
+	CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2 || i == 3 );
+	// c will be modified to have v replacing vertex(i+3)
+	int i1,i2,i3;
+
+	if ( i%2 == 0 ) {
+	  i1=(i+1)%4; i2=(i+2)%4; i3=6-i-i1-i2;
+	}
+	else {
+	  i1=(i+1)%4; i2=(i+3)%4; i3=6-i-i1-i2;
+	}
+	// i,i1,i2,i3 is well oriented
+	// so v will "replace" the vertices in this order
+	// when creating the new cells one after another from c
+
+	Vertex* vi=c->vertex(i);
+	Vertex* v1=c->vertex(i1); 
+	Vertex* v2=c->vertex(i2);
+	Vertex* v3=c->vertex(i3);
+
+	// new cell with v in place of i1
+	Cell* nc = c->neighbor(i1);
+	Cell* cnew1 = new Cell(*this,
+			       vi,v,v2,v3,
+			       NULL,nc,NULL,c);
+	nc->set_neighbor(nc->index(c),cnew1);
+	c->set_neighbor(i1,cnew1);
+
+	v3->set_cell(cnew1);
+
+	// new cell with v in place of i2
+	nc = c->neighbor(i2);
+	Cell* cnew2 = new Cell(*this,
+			       vi,v1,v,v3,
+			       NULL,cnew1,nc,c);
+	nc->set_neighbor(nc->index(c),cnew2);
+	c->set_neighbor(i2,cnew2);
+	cnew1->set_neighbor(2,cnew2); // links to previous cell
+
+	// v replaces i3 in c
+	c->set_vertex(i3,v);
+
+	// other side of facet containing v
+	Cell* d = c->neighbor(i);
+	int j = d->index(c);
+	int j1=d->index(v1);// triangulation supposed to be valid
+	int j2=d->index(v2);
+	int j3=6-j-j1-j2;
+	// then the orientation of j,j1,j2,j3 depends on the parity
+	// of i-j
+
+//	if ( (j-i)%2 == 0 ) { IDIOT !!!
+	  // new cell with v in place of j1
+	  Cell* nd = d->neighbor(j1);
+	  Cell* dnew1 = new Cell(*this,
+				 d->vertex(j),v,v3,v2,
+				 cnew1,nd,d,NULL);
+	  nd->set_neighbor(nd->index(d),dnew1);
+	  d->set_neighbor(j1,dnew1);
+	  cnew1->set_neighbor(0,dnew1);
+	  
+	  // new cell with v in place of j2
+	  nd = d->neighbor(j2);
+	  Cell* dnew2 = new Cell(*this,
+				 d->vertex(j),v1,v3,v,
+				 cnew2,dnew1,d,nd);
+	  nd->set_neighbor(nd->index(d),dnew2);
+	  d->set_neighbor(j2,dnew2);
+	  cnew2->set_neighbor(0,dnew2);
+	  dnew1->set_neighbor(3,dnew2);
+// 	}
+// 	else { IDIOT !!!
+// 	  // new cell with v in place of j1
+// 	  Cell* nd = d->neighbor(j1);
+// 	  Cell* dnew1 = new Cell(*this,
+// 			  d->vertex(j),v,v2,v3,
+// 			  cnew1,nd,NULL,d);
+// 	  nd->set_neighbor(nd->index(d),dnew1);
+// 	  d->set_neighbor(j1,dnew1);
+// 	  cnew1->set_neighbor(0,dnew1);
+
+// 	  // new cell with v in place of j2
+// 	  nd = d->neighbor(j2);
+// 	  Cell* dnew2 = new Cell(*this,
+// 			  d->vertex(j),v1,v,v3,
+// 			  cnew2,dnew1,d,nd);
+// 	  nd->set_neighbor(nd->index(d),dnew2);
+// 	  d->set_neighbor(j2,dnew2);
+// 	  cnew2->set_neighbor(0,dnew2);
+// 	  dnew1->set_neighbor(2,dnew2);
+// 	}
+
+	// v replaces i3 in d
+	d->set_vertex(j3,v);
+	v->set_cell(d);
+
 	break;
       }
     }
     set_number_of_vertices(number_of_vertices() +1);
-    v->set_cell(cnew);
   }
   // end insert_in_facet
 
@@ -455,10 +671,10 @@ public:
     n2->set_neighbor(n2->index(c),c2);
     n3->set_neighbor(n3->index(c),c3);
 
-    set_vertex(0,v);
-    set_neighbor(1,c1);
-    set_neighbor(2,c2);
-    set_neighbor(3,c3);
+    c->set_vertex(0,v);
+    c->set_neighbor(1,c1);
+    c->set_neighbor(2,c2);
+    c->set_neighbor(3,c3);
 
     if( v0->cell() == c  ) {  v0->set_cell(c1); }
     v->set_cell(c);
@@ -511,12 +727,34 @@ public:
     return Vertex_iterator(ncthis,1);
   }
 
+  // CIRCULATOR METHODS
+
+  Cell_circulator incident_cells(Edge e) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    Tds* ncthis = (Tds *)this;
+    return Cell_circulator(ncthis,e);
+  }
+
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const
   {
     switch ( dimension() ) {
     case 3:
       {
+	int vertex_count;
+	if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
+	if ( number_of_vertices() != vertex_count ) {
+	  if (verbose) { cerr << "false number of vertices" << endl; }
+	  CGAL_triangulation_assertion(false); return false;
+	}
+	// edge count to be done
+	int facet_count;
+	if ( ! count_facets(facet_count,verbose,level) ) {return false;}
+	int cell_count;
+	if ( ! count_cells(cell_count,verbose,level) ) {return false;}
+	// Euler relation to be done
+	break;
       }
     case 2:
       {
@@ -791,6 +1029,22 @@ private:
     return true;
   }
 
+  bool count_cells(int & i, bool verbose = false, int level = 0) const
+  {
+    i = 0;
+    Cell_iterator it = cells_begin();
+    
+    while(it != cells_end()) {
+      if ( ! it->is_valid(dimension(),verbose, level) ) {
+	if (verbose) { cerr << "invalid cell" << endl;}
+	CGAL_triangulation_assertion(false); return false;
+      }
+      ++i;
+      ++it;
+    }
+    return true;
+  }
+  
 };
 
 template < class Vb, class Cb>
