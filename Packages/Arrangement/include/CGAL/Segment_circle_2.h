@@ -1,3 +1,23 @@
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.3-I-79 $
+// release_date  : $CGAL_Date: 2001/07/03 $
+//
+// file          : include/CGAL/Segment_circle_2.h
+// package       : Arrangement 
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
+// author(s)     : Ron Wein <wein@post.tau.ac.il>
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// ======================================================================
 #ifndef SEGMENT_CIRCLE_2_H
 #define SEGMENT_CIRCLE_2_H
 
@@ -73,7 +93,7 @@ CGAL_END_NAMESPACE
 
 // ----------------------------------------------------------------------------
 // Representation of a conic arc which is either a segment (a curve of
-// degree 1), or a circular arc (od degree 2).
+// degree 1), or a circular arc (of degree 2).
 //
 
 CGAL_BEGIN_NAMESPACE
@@ -880,8 +900,10 @@ std::ostream& operator<< (std::ostream& os, const Segment_circle_2<NT>& arc)
      << CGAL::to_double(conic.u()) << "*x + "
      << CGAL::to_double(conic.v()) << "*y + "
      << CGAL::to_double(conic.w()) << "}: "
-     << "(" << CGAL::to_double(source.x()) << "," << CGAL::to_double(source.y()) << ") -> "
-     << "(" << CGAL::to_double(target.x()) << "," << CGAL::to_double(target.y()) << ")";
+     << "(" << CGAL::to_double(source.x()) << "," 
+     << CGAL::to_double(source.y()) << ") -> "
+     << "(" << CGAL::to_double(target.x()) << "," 
+     << CGAL::to_double(target.y()) << ")";
 
   return (os);
 }
