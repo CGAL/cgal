@@ -36,7 +36,9 @@ File_writer_OFF.o \
 File_writer_VRML_2.o \
 File_writer_inventor.o \
 File_writer_wavefront.o \
+Fixed_precision_nt.o \
 Float.o \
+Geomview_stream.o \
 Interval_arithmetic.o \
 Origin.o \
 Random.o \

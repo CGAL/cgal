@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: generate cctype replacement header, if CCTYPE_MACRO_BUG is encountered.
+GLOB: add -DLEDA_NO_DEFAULT_COMPARE to cxxflags on gcc-2.8.
+GLOB: use "make -k" when building the libs.
 GLOB: added CGAL_EXTRA_OBJECTS to include makefile (Intervall_arithmetic fix
 ALL : for irix)
 GLOB: added -DLEDA_STD_HEADERS if compiling with LEDA support

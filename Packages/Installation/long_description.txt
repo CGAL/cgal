@@ -4,6 +4,14 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.41
+//---------------------------------------------------------------------
+
+GLOB: generate cctype replacement header, if CCTYPE_MACRO_BUG is encountered.
+GLOB: add -DLEDA_NO_DEFAULT_COMPARE to cxxflags on gcc-2.8.
+GLOB: use "make -k" when building the libs.
+
+//---------------------------------------------------------------------
 //	revision 1.40
 //---------------------------------------------------------------------
 
