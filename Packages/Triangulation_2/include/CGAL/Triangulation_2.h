@@ -275,6 +275,17 @@ public:
 		  int& li) const;
 
   Face_handle
+  march_locate_2D_LFC(Face_handle start,
+		  const Point& t,
+		  Locate_type& lt,
+		  int& li) const;
+
+  void
+  compare_walks(Face_handle c1, Face_handle c2,
+		Locate_type& lt1, Locate_type& lt2,
+		int li1, int li2) const;
+
+  Face_handle
   locate(const Point& p,
 	 Locate_type& lt,
 	 int& li,
@@ -1619,6 +1630,112 @@ march_locate_1D(const Point& t,
   return Face_handle();
 }
 
+template <class Gt, class Tds >    
+typename Triangulation_2<Gt, Tds>::Face_handle
+Triangulation_2<Gt, Tds>::
+march_locate_2D_LFC(Face_handle start,
+		const Point& t,
+		Locate_type& lt,
+		int& li) const
+{
+  //    CGAL_triangulation_precondition( ! is_infinite(start) );
+  const Point& p = start->vertex(0)->point();
+  const Point& q = start->vertex(1)->point();
+  const Point& r = start->vertex(2)->point();
+  if(xy_equal(t,p)) {
+    lt = VERTEX;
+    li = 0;
+    return start;
+  }
+
+  Line_face_circulator lfc;
+  
+  Orientation o2 = orientation(p, q, t);
+  Orientation o0 = orientation(q, r, t);
+  Orientation o1 = orientation(r, p, t);
+  if( (o2 == LEFT_TURN)&& (o1 == LEFT_TURN)) {
+    lfc = Line_face_circulator(start, 0, Line_face_circulator::vertex_edge, this, p, t); 
+  } else if ( (o0 == LEFT_TURN)&& (o2 == LEFT_TURN)) {
+    lfc = Line_face_circulator(start, 1, Line_face_circulator::vertex_edge, this, q, t); 
+  } else if ( (o1 == LEFT_TURN)&& (o0 == LEFT_TURN)) {
+    lfc = Line_face_circulator(start, 2, Line_face_circulator::vertex_edge, this, r, t); 
+  } if( (o2 == RIGHT_TURN)&& (o1 == RIGHT_TURN)) {
+    lfc = Line_face_circulator(start, 0, Line_face_circulator::edge_vertex, this, p, t); 
+  } else if ( (o0 == RIGHT_TURN)&& (o2 == RIGHT_TURN)) {
+    lfc = Line_face_circulator(start, 1, Line_face_circulator::edge_vertex, this, q, t); 
+  } else if ( (o1 == RIGHT_TURN)&& (o0 == RIGHT_TURN)) {
+    lfc = Line_face_circulator(start, 2, Line_face_circulator::edge_vertex, this, r, t); 
+  }else {
+    lfc = Line_face_circulator(start->vertex(0), this, t);
+  }
+  if(lfc==0 || lfc.collinear_outside()){
+    // point t lies outside or on the convex hull
+    // we walk on the convex hull to find it out
+    Face_circulator fc = infinite_vertex()->incident_faces();
+    Face_circulator done(fc);
+    int ic = fc->index(infinite_vertex());
+    if (xy_equal(t,fc->vertex(cw(ic))->point())){
+      lt = VERTEX;
+      li = cw(ic);
+      return fc;
+     }
+    Orientation ori;
+    do{ // walking ccw around convex hull
+      ic = fc->index(infinite_vertex());
+      if (xy_equal(t,fc->vertex(ccw(ic))->point())){
+	lt = VERTEX;
+	li = ccw(ic);
+	return fc;
+      }
+      ori = orientation( fc->vertex(cw(ic))->point(),
+			 fc->vertex(ccw(ic))->point(), t);
+      if (ori == RIGHT_TURN) {
+	lt = OUTSIDE_CONVEX_HULL;
+	li = ic;
+	return fc;
+      }
+      if (ori == COLLINEAR &&
+	  collinear_between(fc->vertex(cw(ic))->point(),
+			    t, 
+			    fc->vertex(ccw(ic))->point()) ) {
+	lt = EDGE;
+	li = ic;
+	return fc;
+      }
+    } while (--fc != done);
+    //should not arrive there;
+    CGAL_triangulation_assertion(fc != done);
+  }
+	  
+  while(! lfc.locate(t, lt, li) ){
+    ++lfc;
+  }
+  return lfc;
+}    
+
+template <class Gt, class Tds >    
+void
+Triangulation_2<Gt, Tds>::
+compare_walks(Face_handle c1, Face_handle c2,
+	      Locate_type& lt1, Locate_type& lt2,
+	      int li1, int li2) const
+{
+  bool b = true;
+  if((lt1 == lt2) && (lt1 == VERTEX)) {
+    b = b && ( c1->vertex(li1) == c2->vertex(li2) );
+  } else if((lt1 == lt2) && (lt1 == EDGE)) {
+    b = b && ((c1 == c2) || ( (c1->neighbor(li1) == c2) && (c2->neighbor(li2) == c1)));
+  }else if((lt1 == lt2) && (lt1  == OUTSIDE_CONVEX_HULL)) {
+    b = b && (is_infinite(c1) && is_infinite(c2));
+  } else {
+    b = b && (lt1 == lt2);
+    b = b && (lt1 == FACE);
+    b = b && (c1 == c2);
+  }
+  CGAL_triangulation_assertion(b);
+}
+      
+
 #if 1
 
 template <class Gt, class Tds >   typename Triangulation_2<Gt, Tds>::Face_handle
@@ -1927,7 +2044,34 @@ locate(const Point& p,
     start = start->neighbor(start->index(infinite_vertex()));
   }
 
-  return march_locate_2D(start, p, lt, li);
+#if ( ! defined(CGAL_ZIG_ZAG_WALK)) && ( ! defined(CGAL_LFC_WALK))
+#define CGAL_ZIG_ZAG_WALK
+#endif
+
+#ifdef CGAL_ZIG_ZAG_WALK
+  Face_handle res1 = march_locate_2D(start, p, lt, li);
+#endif
+#ifdef CGAL_LFC_WALK
+  Locate_type lt2;
+  int li2;
+  Face_handle res2 = march_locate_2D_LFC(start, p, lt2, li2);
+#endif
+
+#if defined(CGAL_ZIG_ZAG_WALK) && defined(CGAL_LFC_WALK)
+  compare_walks(res1, res2,
+		lt, lt2,
+		li, li2);
+#endif
+
+#ifdef CGAL_ZIG_ZAG_WALK
+  return res1;
+#endif
+
+#ifdef CGAL_LFC_WALK
+  lt = lt2;
+  li = li2;
+  return res2;
+#endif
 
 }
 
