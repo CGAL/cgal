@@ -1,5 +1,9 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.44 (04 Dec 2001)
+   - removed dependency from ch_value_type. Replaced with iterator_traits::
+     value_type.
+
 2.43 (31 Oct 2001)
    - removed obsolete Simplicity_sweep.h file and added Random_polygon_2_sweep.h
 

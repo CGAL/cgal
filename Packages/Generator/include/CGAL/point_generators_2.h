@@ -29,7 +29,7 @@
 #ifndef CGAL_GENERATORS_H
 #include <CGAL/generators.h>
 #endif
-#include <CGAL/ch_value_type.h>
+#include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -312,22 +312,14 @@ points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
     return o;
 }
 
-template <class OutputIterator, class P>
-OutputIterator
-_points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
-                          const P*)
-{
-    return points_on_square_grid_2(a, n, o, Creator_uniform_2<double,P>());
-}
-
-// Works only if value_type is defined for the OutputIterator.
 template <class OutputIterator>
 OutputIterator
 points_on_square_grid_2( double a, std::size_t n, OutputIterator o)
 {
-    return _points_on_square_grid_2( a, n, o, ch_value_type(o));
+    typedef std::iterator_traits<OutputIterator> ITraits;
+    typedef typename ITraits::value_type         P;
+    return points_on_square_grid_2(a, n, o, Creator_uniform_2<double,P>());
 }
-
 
 template <class P, class OutputIterator>
 OutputIterator
@@ -367,18 +359,6 @@ void perturb_points_2( ForwardIterator first,
     }
 }
 
-template <class ForwardIterator, class P>
-void _perturb_points_2( ForwardIterator first,
-                        ForwardIterator last,
-                        double xeps,
-                        double yeps,
-                        Random& rnd,
-                        const P*)
-{
-    perturb_points_2( first, last, xeps, yeps, rnd,
-                      Creator_uniform_2<double,P>());
-}
-
 template <class ForwardIterator>
 void perturb_points_2( ForwardIterator first,
                        ForwardIterator last,
@@ -386,7 +366,10 @@ void perturb_points_2( ForwardIterator first,
                        double yeps,
                        Random& rnd)
 {
-    _perturb_points_2( first, last, xeps, yeps, rnd, ch_value_type(first));
+    typedef std::iterator_traits<ForwardIterator> ITraits;
+    typedef typename ITraits::value_type          P;
+    perturb_points_2( first, last, xeps, yeps, rnd,
+                      Creator_uniform_2<double,P>());
 }
 
 template <class ForwardIterator>
@@ -439,19 +422,6 @@ OutputIterator random_collinear_points_2(
     return first2;
 }
 
-template <class RandomAccessIterator, class OutputIterator, class P>
-OutputIterator _random_collinear_points_2(
-                       RandomAccessIterator first,
-                       RandomAccessIterator last,
-                       std::size_t n,
-                       OutputIterator first2,
-                       Random& rnd,
-                       P*)
-{
-    return random_collinear_points_2( first, last, n, first2, rnd,
-                                      Creator_uniform_2<double,P>());
-}
-
 template <class RandomAccessIterator, class OutputIterator>
 OutputIterator random_collinear_points_2(
                        RandomAccessIterator first,
@@ -468,8 +438,10 @@ OutputIterator random_collinear_points_2(
     // Precondition: The expression `to_double((*first).x()
     // )' and `to_double((*first).y())' must be legal.
 {
-    return  _random_collinear_points_2( first, last, n, first2, rnd,
-                                        ch_value_type(first));
+    typedef std::iterator_traits<RandomAccessIterator> ITraits;
+    typedef typename ITraits::value_type               P;
+    return random_collinear_points_2( first, last, n, first2, rnd,
+                                      Creator_uniform_2<double,P>());
 }
 
 template <class RandomAccessIterator, class OutputIterator>
