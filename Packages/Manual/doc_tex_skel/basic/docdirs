@@ -7,11 +7,11 @@ Convex_hull_d
 Polygon
 Partition_2
 Nef_2
-Sweep_line_2
+Topological_map
 Planar_map
 Pm_with_intersections_2
 Arrangement_2
-Topological_map
+Sweep_line_2
 Polyhedron
 HalfedgeDS
 Triangulation_2
