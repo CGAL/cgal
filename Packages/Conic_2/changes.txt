@@ -1,4 +1,5 @@
-Changes to package Conic_2
+20 June 2004 Sylvain Pion
+- Add #include <cmath> and qualify sqrt() with std:: when using doubles.
 
 18 February 2004 Radu Ursu
 - removed dependency with Optimisation package
@@ -8,4 +9,4 @@ Version 0.4 on 02-Feb-2004 [rursu]
 - fixed Conic_2.h for gcc 3.4
 
 Version 0.3 on 15-Jan-2004 [rursu]
--Moved Conic files from Min_ellipse_2 package into this package
+- Moved Conic files from Min_ellipse_2 package into this package

@@ -24,6 +24,7 @@
 #ifndef CGAL_CONIC_MISC_H
 #define CGAL_CONIC_MISC_H
 
+#include <cmath>
 #include <CGAL/kernel_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -139,8 +140,8 @@ int solve_cubic (NT c3, NT c2, NT c1, NT c0,
        u_I       = r_prime * sin (phi_prime);
     // three distinct real roots
     r1 = 2.0*u_R - g2/3.0;
-    r2 = -u_R + u_I*CGAL::sqrt(3.0) - g2/3.0;
-    r3 = -u_R - u_I*CGAL::sqrt(3.0) - g2/3.0;
+    r2 = -u_R + u_I*std::sqrt(3.0) - g2/3.0;
+    r3 = -u_R - u_I*std::sqrt(3.0) - g2/3.0;
     return 3;
 }
 
