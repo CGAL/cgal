@@ -8,6 +8,7 @@
 #include <fstream>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Threetuple.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Filtred_container.h>
 #include <CGAL/Filtred_circulator.h>
 #include <CGAL/IO/File_header_extended_OFF.h>
@@ -84,7 +85,9 @@ public:
   typedef typename Tr::List_constraints       List_constraints;
 
 public:
+  unsigned int number_of_contrained_edges() const;
   void write(std::ostream &f) const;
+  void write_poly(std::ostream &f) const;
   void read(std::istream &f);
   void read_poly(std::istream &f);
   void reset() {
@@ -403,6 +406,19 @@ private:
 
 }; // end of Mesh_2
 
+template <class Tr>
+unsigned int Mesh_2<Tr>::
+number_of_contrained_edges() const
+{
+  int nedges = 0;
+  for(Finite_edges_iterator eit = finite_edges_begin();
+      eit != finite_edges_end();
+      ++eit)
+    if((*eit).first->is_constrained((*eit).second))
+      ++nedges;
+  return nedges;
+}
+
 // # used by refine_face and cut_cluster_edge
 template <class Tr>
 bool Mesh_2<Tr>::
@@ -429,24 +445,65 @@ template <class Tr>
 void Mesh_2<Tr>::
 write(std::ostream &f) const
 {
-  int nedges = 0;
-  Finite_edges_iterator eit = finite_edges_begin();
-  while(eit != finite_edges_end()) {
-    if((*eit).first->is_constrained((*eit).second))
-      nedges++;
-    eit++;
-  }
-  f<<nedges<<std::endl;
-  eit = finite_edges_begin();
-  while(eit!=finite_edges_end()) {
-    if((*eit).first->is_constrained((*eit).second)) {
-      f<<(*eit).first->vertex(cw((*eit).second))->point().x()<<" ";
-      f<<(*eit).first->vertex(cw((*eit).second))->point().y()<<" ";
-      f<<(*eit).first->vertex(ccw((*eit).second))->point().x()<<" ";
-      f<<(*eit).first->vertex(ccw((*eit).second))->point().y()<<std::endl;
+  f << number_of_contrained_edges() << std::endl;
+  for(Finite_edges_iterator eit = finite_edges_begin();
+      eit!=finite_edges_end();
+      ++eit)
+    if((*eit).first->is_constrained((*eit).second)) 
+      {
+	f << (*eit).first->vertex(cw((*eit).second))->point() << " "
+	  << (*eit).first->vertex(ccw((*eit).second))->point() <<std::endl;
+      }
+}
+
+//the function that write a Shewchuk Triangle .poly file
+template <class Tr>
+void Mesh_2<Tr>::
+write_poly(std::ostream &f) const
+{
+  std::map<Vertex_handle, unsigned int> index;
+
+  // write vertices
+  f << "# Shewchuk Triangle .poly file, produced by the CGAL::Mesh_2 package"
+    << std::endl
+    << "# Neither attributes nor boundary markers are used." << std::endl
+    << number_of_vertices() << " " << 2 << " " 
+    << 0 << " " << 0 << std::endl;
+
+  f << std::endl;
+
+  unsigned int vertices_counter = 0;
+  for(Finite_vertices_iterator vit = finite_vertices_begin();
+      vit != finite_vertices_end();
+      ++vit)
+    {
+      f << ++vertices_counter << " " << vit->point() << std::endl;
+      index[vit] = vertices_counter;
     }
-    eit++;
-  }
+
+  f << std::endl;
+
+  // write constrained edges
+
+  f << number_of_contrained_edges() << " " << 0 << std::endl;
+  unsigned int edges_counter = 0;
+  for(Finite_edges_iterator eit = finite_edges_begin();
+      eit != finite_edges_end();
+      ++eit)
+    if((*eit).first->is_constrained((*eit).second)) 
+      f << ++edges_counter << " "
+	<< index[(*eit).first->vertex(cw((*eit).second))] << " "
+	<< index[(*eit).first->vertex(ccw((*eit).second))] 
+	<< std::endl;
+
+  f << std::endl;
+
+  // write seeds, assuming that the seeds unmarks faces
+  unsigned int seeds_counter = 0;
+  f << seeds.size() << std::endl;
+  for(typename Seeds::const_iterator sit = seeds.begin();
+      sit!=seeds.end(); ++sit)
+    f << ++seeds_counter << " " << *sit << std::endl;
 }
 
 //the function that reads a file

@@ -594,14 +594,11 @@ public slots:
   void openTriangulation()
     {
       QString s( QFileDialog::getOpenFileName( QString::null,
-        "Constrained edges (*.edg)
-         Shewchuk Triangle .poly files (*.poly)
-         All files (*)",
-         this ) );
+					       my_filters, this ) );
       if ( s.isEmpty() )
         return;
       std::ifstream f(s);
-      if(s.left(5) == ".poly")
+      if(s.right(5) == ".poly")
 	{
 	  mesh.read_poly(f);
 	  seeds.clear();
@@ -609,9 +606,14 @@ public slots:
 	      it != mesh.seeds.end();
 	      ++it)
 	    seeds.push_back(*it);
+	  is_mesh_initialized=true;
 	}
       else
-	mesh.read(f);
+	{
+	  mesh.read(f);
+	  seeds.clear();
+	  is_mesh_initialized=false;
+	}
 
       // compute bounds
       FT xmin, xmax, ymin, ymax;
@@ -621,21 +623,22 @@ public slots:
 	yspan = (ymax-ymin)/2;
 
       widget->set_window(xmin-1.1*xspan, xmax+1.1*xspan, 
-			 ymin-1.1*yspan, ymax+1.1*yspan, true);
+			 ymin-1.1*yspan, ymax+1.1*yspan);
 
-      seeds.clear();
-      is_mesh_initialized=false;
       widget->redraw();
     }
 
   void saveTriangulation()
     {
-      QString s( QFileDialog::getSaveFileName( "filename.edg", 
-        "Constrained edges (*.edg)", this ) );
+      QString s( QFileDialog::getSaveFileName( "filename.edg",
+					       my_filters, this ) );
       if ( s.isEmpty() )
         return;
       std::ofstream of(s);
-      mesh.write(of);
+      if(s.right(5) == ".poly")
+	mesh.write_poly(of);
+      else
+	mesh.write(of);
     }
 
   void saveTriangulationUrgently(QString s=QString("dump.edg"))
@@ -679,6 +682,7 @@ public slots:
     }
 
 private:
+  static const QString my_filters;
   bool is_mesh_initialized;
   Meshtraits traits;
   Mesh mesh;
@@ -707,6 +711,11 @@ private:
   QPushButton *pbMeshTimer;
   int timer_interval;
 };
+
+const QString MyWindow::my_filters =
+"Constrained edges (*.edg);;"
+"Shewchuk Triangle .poly files (*.poly);;"
+"All files (*)";
 
 
 #include <CGAL/assertions.h>
