@@ -1,20 +1,3 @@
-# This makefile needs a file named ./.env
-# This .env file can be used to declare environment variables.  It is
-# usefull to have different environment per working copy of the
-# repository. It use that two work with two different version of Qt on
-# two working copies.
-# For example, I have two different .env file:
-# one for Qt-2.3:
-#>export QTDIR=/usr/lib/qt2
-#>export CGAL_MAKEFILE=/opt/CGAL/make/makefile_i686_Linux-2.4.8-26mdk_g++-2.96.
-# and one for Qt-3.0:
-#>export QTDIR=/opt/local/qt-3
-#>export CGAL_MAKEFILE=/opt/CGAL/make/makefile_i686_Linux-2.4.8-26mdk_g++-3.0.1-3.0.1
-# If that bothers you, just comment the following line:
-# [Laurent Rineau 2002/01/30]
-
-include .env
-
 # make the lib and all demos, and test
 all: lib
 	make -C demo/Qt_widget
