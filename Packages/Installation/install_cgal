@@ -3555,6 +3555,7 @@ create_include_makefile()
   # CGAL_CXX
   # 
   makefile_header "compiler" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_CC  = `c_compiler_bin`" >> ${FILE}
   ${_printf} "%s\n" "CGAL_CXX = ${CGAL_CXX}" >> ${FILE}
 
   write_compiler_flags
@@ -3569,7 +3570,7 @@ create_include_makefile()
   case ${SYST} in
     *IRIX*) 
 	${_printf} "%s\n" \
-	"CGAL_EXTRA_OBJECTS = Interval_arithmetic/workaround_4_irix.o" \
+	"CGAL_EXTRA_OBJECTS = workaround_4_irix.o" \
 	>> ${FILE}
 	;;
   esac
