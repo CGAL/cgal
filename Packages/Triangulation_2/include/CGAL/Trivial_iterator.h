@@ -130,7 +130,7 @@ public:
   typedef Ctg                                          iterator_category;
   typedef Val                                          value_type;
   typedef Dist                                         difference_type;
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#if defined  CGAL_CFG_NO_ITERATOR_TRAITS || defined _MSC_VER
   typedef Ref                                          reference;
   typedef Ptr                                          pointer;
 #else
@@ -172,6 +172,8 @@ private:
 
   Iterator base_;
 };
+
+class Comparable_iterator_tag{};
 
 // This macro added to workaround the fact that MSC does not support
 // defaut  template parameter
