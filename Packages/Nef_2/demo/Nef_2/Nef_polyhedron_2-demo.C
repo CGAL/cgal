@@ -405,7 +405,8 @@ int main(int argc, char* argv[])
         std::cerr << "shooting down from " << p_down << std::endl;
         dm = W.set_mode(leda_xor_mode); 
         W<<CGAL::GREEN<<p_down; W.set_mode(dm);
-        //h = N_display.ray_shoot(p_down,Direction(0,-1),Nef_polyhedron::NAIVE);
+        //h = N_display.ray_shoot( p_down, Direction(0,-1),
+        //                         Nef_polyhedron::NAIVE);
         h = N_display.ray_shoot(p_down,Direction(0,-1));
         draw(h);
       }
