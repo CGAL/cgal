@@ -118,7 +118,7 @@ public:
   Polynomial(const Polynomial &);
   Polynomial(const VecNT &);
   Polynomial(int n, const char* s[]);
-  Polynomial(string s, char myX);
+  Polynomial(string s, char myX='x');
   ~Polynomial();
 
 

@@ -128,7 +128,7 @@ Polynomial<NT>::Polynomial(int n, const char * s[]) {
 //Unary minus is treated as a basic term. Number is a BigInt, rest of the
 //cases are still not handled.
 template <class NT>
-Polynomial<NT>::Polynomial(string s, char myX='x') {
+Polynomial<NT>::Polynomial(string s, char myX) {
   if(myX != 'x' || myX != 'X'){
     //Replace myX with 'x'.
     unsigned int loc = s.find(myX, 0);
