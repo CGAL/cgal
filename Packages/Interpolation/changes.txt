@@ -1,4 +1,7 @@
 18 December 2004 Sylvain Pion
+- demo copyright header updates.
+
+18 December 2004 Sylvain Pion
 - Doc fixes.
 
 17 December 2004 Sylvain Pion
