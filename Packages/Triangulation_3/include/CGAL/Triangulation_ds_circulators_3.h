@@ -284,11 +284,14 @@ public:
 				     s >= 0 && s < 4 &&
 				     t >= 0 && t < 4 &&
 				     f >= 0 && f < 4 );
-    int i; int j;
     CGAL_triangulation_precondition
-      ( start->has_vertex( c->vertex(s), i ) &&
-	start->has_vertex( c->vertex(t), j ) &&
-	( f!=i && f!=j ) );
+      ( start->has_vertex( c->vertex(s) ) && 
+	start->has_vertex( c->vertex(t) ) );
+
+    int i = start->index( c->vertex(s) );
+    int j = start->index( c->vertex(t) );
+    CGAL_triangulation_precondition( ( f!=i ) && ( f!=j ) );
+
     if ( f == (int) next_around_edge(i,j) ) pos = start;
     else pos = start->neighbor(6-i-j-f); // other cell with same facet
   }
@@ -300,13 +303,15 @@ public:
     CGAL_triangulation_precondition( c != NULL && 
 				     s >= 0 && s < 4 &&
 				     t >= 0 && t < 4 );
-    CGAL_triangulation_precondition_code
-      ( int i; int j; )
     CGAL_triangulation_precondition
-      ( start.first->has_vertex( c->vertex(s), i ) &&
-	start.first->has_vertex( c->vertex(t), j ) &&
-	( start.second !=i && start.second !=j ) );
-    
+      ( start.first->has_vertex( c->vertex(s) ) &&
+	start.first->has_vertex( c->vertex(t) ) );
+
+    int i = start.first->index( c->vertex(s) );
+    int j = start.first->index( c->vertex(t) );
+    CGAL_triangulation_precondition
+      ( ( start.second !=i ) && ( start.second !=j ) );
+
     if ( start.second == (int) next_around_edge(i,j) ) pos = start.first;
     else pos = start.first->neighbor(6-i-j-start.second); 
     // other cell with same facet
@@ -322,12 +327,14 @@ public:
 				     (e.third==0 || e.third==1 ||
 				      e.third==2 || e.third==3 ) &&
 				     f >= 0 && f < 4 );
-    CGAL_triangulation_precondition_code
-      ( int i; int j; )
     CGAL_triangulation_precondition
-      ( start.first->has_vertex( e.first->vertex(e.second), i ) &&
-	start.first->has_vertex( e.first->vertex(e.third), j ) &&
-	( f!=i && f!=j ) );
+      ( start.first->has_vertex( e.first->vertex(e.second) ) &&
+	start.first->has_vertex( e.first->vertex(e.third) ) );
+
+    int i = start.first->index( e.first->vertex(e.second) );
+    int j = start.first->index( e.first->vertex(e.third) );
+    CGAL_triangulation_precondition( ( f!=i ) && ( f!=j ) );
+
     if ( f == (int) next_around_edge(i,j) ) pos = start.first;
     else pos = start.first->neighbor(6-i-j-f); // other cell with same facet
   }
@@ -341,11 +348,14 @@ public:
 				      e.second==2 || e.second==3 ) &&
 				     (e.third==0 || e.third==1 ||
 				      e.third==2 || e.third==3 ) );
-    CGAL_triangulation_precondition_code
-      ( int i; int j; )
+
     CGAL_triangulation_precondition
-      ( start.first->has_vertex( e.first->vertex(e.second), i ) &&
-	start.first->has_vertex( e.first->vertex(e.third), j ) );
+      ( start.first->has_vertex( e.first->vertex(e.second) ) &&
+	start.first->has_vertex( e.first->vertex(e.third) ) );
+
+    int i = start.first->index( e.first->vertex(e.second) );
+    int j = start.first->index( e.first->vertex(e.third) );
+
     if ( start.second == (int) next_around_edge(i,j) ) pos = start.first;
     else pos = start.first->neighbor(6-i-j-start.second); 
   }
