@@ -1,4 +1,9 @@
 //-----------------------------------------------------------------------//
+// Changes in 1.30
+
+Adapted CGAL_CFG_CCTYPE_MACRO_BUG.C (added assertion).
+
+//-----------------------------------------------------------------------//
 // Changes in 1.29
 
 Added CGAL_CFG_CCTYPE_MACRO_BUG.C
