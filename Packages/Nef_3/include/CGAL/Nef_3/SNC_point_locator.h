@@ -3,7 +3,6 @@
 #define SNC_POINT_LOCATOR_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_3/SNC_ray_shooter.h>
 #include <CGAL/Nef_3/SNC_k3_tree_traits.h>
@@ -32,36 +31,39 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename SNC_structure>
+template <typename SNC_decorator>
 class SNC_point_locator
 {
  public:
   class Intersection_call_back;
-  typedef SNC_point_locator<SNC_structure> Self;
-
+  typedef SNC_point_locator<SNC_decorator> Self;
+  typedef typename SNC_decorator::Decorator_traits Decorator_traits;
+  typedef typename SNC_decorator::SNC_structure SNC_structure;
 protected:
   char version_[64];
   // time for construction, point location, ray shooting and intersection test
   mutable Timer ct_t, pl_t, rs_t, it_t; 
 
 public: 
-  #define USING(t) typedef typename SNC_structure::t t
-  USING(Object_handle);
-  USING(Vertex_handle);
-  USING(Halfedge_handle);
-  USING(Halffacet_handle);
-  USING(Halffacet_triangle_handle);
-  USING(Volume_handle);
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Halffacet_iterator);
-  USING(Point_3);
-  USING(Segment_3);
-  USING(Ray_3);
-  USING(Vector_3);
-  USING(Triangle_3);
-  USING(Aff_transformation_3);
-  #undef USING
+  typedef typename SNC_structure::Object_handle Object_handle;
+  typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename SNC_structure::Halffacet_triangle_handle 
+                                  Halffacet_triangle_handle;
+  typedef typename SNC_structure::Point_3 Point_3;
+  typedef typename SNC_structure::Segment_3 Segment_3;
+  typedef typename SNC_structure::Ray_3 Ray_3;
+  typedef typename SNC_structure::Vector_3 Vector_3;
+  typedef typename SNC_structure::Triangle_3 Triangle_3;
+  typedef typename SNC_structure::Aff_transformation_3 
+                                  Aff_transformation_3;
+
+  typedef typename Decorator_traits::Vertex_handle Vertex_handle;
+  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
+  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+  typedef typename Decorator_traits::Volume_handle Volume_handle;
+  typedef typename Decorator_traits::Vertex_iterator Vertex_iterator;
+  typedef typename Decorator_traits::Halfedge_iterator Halfedge_iterator;
+  typedef typename Decorator_traits::Halffacet_iterator Halffacet_iterator;
 
   const char* version() { return version_; }
 
@@ -69,18 +71,18 @@ public:
 
   virtual Object_handle shoot(const Ray_3& s) const = 0;
 
-  virtual void intersect_with_edges( Halfedge_handle edge,
+  virtual void intersect_with_edges( Halfedge_const_handle edge,
                                      const Intersection_call_back& call_back) 
     const = 0;
 
-  virtual void intersect_with_facets( Halfedge_handle edge,
+  virtual void intersect_with_facets( Halfedge_const_handle edge,
                                       const Intersection_call_back& call_back)
     const = 0;
 
   class Intersection_call_back 
   {
   public:
-    virtual void operator()( Halfedge_handle edge, Object_handle object, 
+    virtual void operator()( Halfedge_const_handle edge, Object_handle object, 
                              const Point_3& intersection_point) const = 0;
   };
 
@@ -109,43 +111,44 @@ public:
   };
 };
 
-template <typename SNC_structure>
+template <typename SNC_decorator>
 class SNC_point_locator_by_spatial_subdivision : 
-  public SNC_point_locator<SNC_structure>,
-  public SNC_decorator<SNC_structure>
+  public SNC_point_locator<SNC_decorator>,
+  public SNC_decorator
 { 
-  typedef SNC_decorator<SNC_structure> Base;
-  typedef SNC_decorator<SNC_structure> SNC_decorator;
-  typedef SNC_point_locator<SNC_structure> SNC_point_locator;
-  typedef SNC_point_locator_by_spatial_subdivision<SNC_structure> Self;
-  typedef typename SNC_structure::Sphere_map  Sphere_map;
-  typedef SM_decorator<Sphere_map>  SM_decorator;
+  typedef SNC_decorator Base;
+  typedef SNC_point_locator<SNC_decorator> SNC_point_locator;
+  typedef SNC_point_locator_by_spatial_subdivision<SNC_decorator> Self;
+  typedef typename SNC_decorator::SNC_structure SNC_structure;
+  typedef typename SNC_decorator::Decorator_traits Decorator_traits;
+  typedef typename Decorator_traits::SM_decorator SM_decorator;
   typedef SNC_intersection<SNC_structure> SNC_intersection;
-
-  typedef typename SNC_structure::Kernel Kernel;
+  typedef typename SNC_decorator::Kernel Kernel;
 
 public:
-  typedef typename CGAL::SNC_k3_tree_traits<SNC_structure> K3_tree_traits;
+  typedef typename CGAL::SNC_k3_tree_traits<SNC_decorator> K3_tree_traits;
   typedef typename CGAL::K3_tree<K3_tree_traits> K3_tree;
   typedef K3_tree SNC_candidate_provider;
   
-  #define USING(t) typedef typename SNC_point_locator::t t
-  USING(Object_handle);
-  USING(Vertex_handle);
-  USING(Halfedge_handle);
-  USING(Halffacet_handle);
-  USING(Halffacet_triangle_handle);
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Halffacet_iterator);
-  USING(Volume_handle);
-  USING(Point_3);
-  USING(Segment_3);
-  USING(Ray_3);
-  USING(Vector_3);
-  USING(Triangle_3);
-  USING(Aff_transformation_3);
-  #undef USING
+  typedef typename SNC_structure::Object_handle Object_handle;
+  typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename SNC_structure::Halffacet_triangle_handle 
+                                  Halffacet_triangle_handle;	
+  typedef typename SNC_structure::Point_3 Point_3;
+  typedef typename SNC_structure::Segment_3 Segment_3;
+  typedef typename SNC_structure::Ray_3 Ray_3;
+  typedef typename SNC_structure::Vector_3 Vector_3;
+  typedef typename SNC_structure::Triangle_3 Triangle_3;
+  typedef typename SNC_structure::Aff_transformation_3 
+                                  Aff_transformation_3;
+
+  typedef typename Decorator_traits::Vertex_handle Vertex_handle;
+  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
+  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+  typedef typename Decorator_traits::Vertex_iterator Vertex_iterator;
+  typedef typename Decorator_traits::Halfedge_iterator Halfedge_iterator;
+  typedef typename Decorator_traits::Halffacet_iterator Halffacet_iterator;
+  typedef typename Decorator_traits::Volume_handle Volume_handle;
 
   typedef typename SNC_candidate_provider::Object_list Object_list;
   typedef typename Object_list::iterator Object_list_iterator;
@@ -165,7 +168,8 @@ public:
     CLOG(version());
 #endif
     CGAL_assertion( W != NULL);
-    Base::initialize(W);
+//    (Base) *this = SNC_decorator(*W);
+	set_snc(*W);
     initialized = true;
     Object_list objects;
     Vertex_iterator v;
@@ -195,7 +199,7 @@ public:
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
     }
     candidate_provider = new SNC_candidate_provider(objects);
-    //_TRACEN(*candidate_provider);
+//    TRACEN(*candidate_provider);
     TIMER(ct_t.stop());
   }
 
@@ -384,7 +388,7 @@ public:
     return result;
   }
 
-  virtual void intersect_with_edges( Halfedge_handle e0,
+  virtual void intersect_with_edges( Halfedge_const_handle e0,
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
@@ -420,7 +424,7 @@ public:
     TIMER(it_t.stop());
   }
 
-  virtual void intersect_with_facets( Halfedge_handle e0, 
+  virtual void intersect_with_facets( Halfedge_const_handle e0, 
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
@@ -512,11 +516,12 @@ private:
   bool initialized;
   SNC_candidate_provider* candidate_provider;
   SNC_intersection is;
-
-  std::list<Halffacet_triangle_handle> triangulation;
+ 
+ std::list<Halffacet_triangle_handle> triangulation;
 };
 
-template <typename SNC_structure>
+/*
+template <typename SNC_decorator>
 class SNC_point_locator_naive : 
   public SNC_ray_shooter<SNC_structure>, 
   public SNC_point_locator<SNC_structure>
@@ -527,20 +532,24 @@ class SNC_point_locator_naive :
   typedef SNC_intersection<SNC_structure> SNC_intersection;
 
 public:
-  #define USING(t) typedef typename SNC_point_locator::t t
-  USING(Object_handle);
-  USING(Vertex_handle);
-  USING(Halfedge_handle);
-  USING(Halffacet_handle);
-  USING(Volume_handle);
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Halffacet_iterator);
-  USING(Point_3);
-  USING(Segment_3);
-  USING(Ray_3);
-  USING(Triangle_3);
-  #undef USING
+  typedef typename SNC_decorator::Object_handle Object_handle;
+  typedef typename SNC_decorator::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename SNC_decorator::Halffacet_triangle_handle 
+                                  Halffacet_triangle_handle;
+  typedef typename SNC_decorator::Point_3 Point_3;
+  typedef typename SNC_decorator::Segment_3 Segment_3;
+  typedef typename SNC_decorator::Ray_3 Ray_3;
+  typedef typename SNC_decorator::Triangle_3 Triangle_3;
+
+
+  typedef typename Decorator_traits::Vertex_handle Vertex_handle;
+  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
+  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+  typedef typename Decorator_traits::Volume_handle Volume_handle;
+  typedef typename Decorator_traits::Vertex_iterator Vertex_iterator;
+  typedef typename Decorator_traits::Halfedge_iterator Halfedge_iterator;
+  typedef typename Decorator_traits::Halffacet_iterator Halffacet_iterator;
+
 
 public:
   SNC_point_locator_naive() : initialized(false) {}
@@ -583,7 +592,7 @@ public:
     return Base::shoot(r);
   }
 
-  virtual void intersect_with_edges( Halfedge_handle e0, 
+  virtual void intersect_with_edges( Halfedge_const_handle e0, 
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
@@ -602,7 +611,7 @@ public:
     TIMER(it_t.stop());
   }
 
-  virtual void intersect_with_facets( Halfedge_handle e0, 
+  virtual void intersect_with_facets( Halfedge_const_handle e0, 
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
@@ -625,9 +634,8 @@ private:
   bool initialized;
 };
 
+*/
 
 CGAL_END_NAMESPACE
-
-
 #endif // SNC_POINT_LOCATOR_H
 
