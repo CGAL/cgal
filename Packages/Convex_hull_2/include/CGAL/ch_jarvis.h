@@ -57,7 +57,7 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
 {
     typedef CGAL::Kernel_traits<Point>  KTraits;
     typedef typename KTraits::Kernel    Kernel;
-    return ch_jarvis_march( first, last, start_p, stop_p, results, Kernel());
+    return ch_jarvis_march( first, last, start_p, stop_p, result, Kernel());
 }
 
 

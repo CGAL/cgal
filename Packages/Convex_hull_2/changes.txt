@@ -1,3 +1,6 @@
+3.44 (22 Apr 2003)
+- Fix typo.
+
 3.43 (26 Feb 2003)
 - kernel archetype test file added
 
