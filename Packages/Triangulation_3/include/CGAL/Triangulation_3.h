@@ -2706,7 +2706,7 @@ test_next(const Tr &t1, const Tr &t2,
     // and recursively calls itself over them.
     // Returns false if an inequality has been found.
 
-    // Precondition: c1 and c2 have been registered as well as their 4 vertices.
+    // Precondition: c1, c2 have been registered as well as their 4 vertices.
     CGAL_triangulation_precondition(t1.dimension() >= 2);
     CGAL_triangulation_precondition(Cmap[c1] == c2);
     CGAL_triangulation_precondition(Vmap.find(c1->vertex(0)) != Vmap.end());
@@ -2718,7 +2718,8 @@ test_next(const Tr &t1, const Tr &t2,
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;
     typedef typename std::map<Cell_handle, Cell_handle>::const_iterator  Cit;
-    typedef typename std::map<Vertex_handle, Vertex_handle>::const_iterator Vit;
+    typedef typename std::map<Vertex_handle,
+                              Vertex_handle>::const_iterator Vit;
 
     for (int i=0; i <= t1.dimension(); ++i) {
 	Cell_handle n1 = c1->neighbor(i);
