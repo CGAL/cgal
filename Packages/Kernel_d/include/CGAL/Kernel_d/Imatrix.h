@@ -114,7 +114,7 @@ protected:
     vi = MM.allocate(d); 
     vector_pointer* p = vi + d - 1; 
     while (p >= vi) { 
-      new (p,0) vector_pointer*; p--; 
+      new (p) vector_pointer*(0); p--; 
     }
   }
 

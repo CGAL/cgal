@@ -55,7 +55,7 @@ is degenerate.}*/
     if (S.column_dimension()>0) return LINE;
     l1 = R::make_FT(lambda[0],D);
     l2 = R::make_FT(lambda[1],D);
-    p = s1 + l1 * (t1 - s1); 
+    p = s1 + l1 * (t1 - s1);
     return POINT; 
   }
   return NO; 

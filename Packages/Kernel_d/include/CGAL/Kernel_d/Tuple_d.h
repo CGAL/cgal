@@ -2,6 +2,7 @@
 #define CGAL_TUPLE_D_H
 
 #ifndef NOCGALINCL
+#include <strstream>
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #endif

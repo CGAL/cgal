@@ -16,6 +16,7 @@ class Line_line_intersectionCd {
 typedef typename R::FT FT;
 typedef typename R::LA LA;
 typedef typename R::Point_d Point_d;
+typedef typename R::Line_d Line_d;
 
 public:
 enum Intersection_result { NO, POINT, LINE };
@@ -49,6 +50,10 @@ is degenerate.}*/
     if ( S.column_dimension()>0 ) return LINE;
     l1 = lambda[0]; l2 = lambda[1];
     p = s1 + l1 * (t1 - s1); 
+#ifdef CGAL_CHECK_EXACTNESS
+    Line_d L1(s1,t1), L2(s2,t2);
+    CGAL_assertion(L1.has_on(p)&&L2.has_on(p));
+#endif
     return POINT; 
   }
   return NO; 
@@ -100,7 +105,11 @@ not degenerate.}*/
     v[i] = (S * t.cartesian(i) - T * s.cartesian(i))/D;
   p = Point_d(d,v.begin(),v.end()); lambda = S/D;
 
-  CGAL_assertion(h.has_on(p));
+#ifdef CGAL_CHECK_EXACTNESS
+  Line_d l(s,t);
+  CGAL_assertion(h.has_on(p)&&l.has_on(p));
+#endif
+
   return POINT;
 }
 
