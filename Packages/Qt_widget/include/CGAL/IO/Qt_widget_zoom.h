@@ -21,9 +21,21 @@
 #ifndef CGAL_QT_WIDGET_ZOOM_H
 #define CGAL_QT_WIDGET_ZOOM_H
 
+
+#include <CGAL/IO/pixmaps/focus1.xpm>
+#include <CGAL/IO/pixmaps/focus1_mask.xpm>
+#include <CGAL/IO/pixmaps/focus2.xpm>
+#include <CGAL/IO/pixmaps/focus2_mask.xpm>
+#include <CGAL/IO/pixmaps/focus3.xpm>
+#include <CGAL/IO/pixmaps/focus3_mask.xpm>
+
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_tool.h>
 #include <qcolor.h>
+#include <qtimer.h>
+#include <qpixmap.h>
+#include <qbitmap.h>
+
 
 namespace CGAL {
 
@@ -31,88 +43,78 @@ class Qt_widget_zoom : public Qt_widget_tool
 {
 private:
   int	x2, y2;
-  bool	circle_already_drawn;
-  bool	old_mouse_tracking;
+  QPixmap	*mouse_ico1,
+			*mouse_ico2,
+			*mouse_ico3;
+  QCursor	*cursor1,
+			*cursor2,
+			*cursor3;
+  QBitmap	cb, cm;
+  int		cycle;
 
 public:
-  Qt_widget_zoom() : circle_already_drawn(false) {};
+  Qt_widget_zoom() : cycle(0) {
+	mouse_ico1 = new QPixmap( (const char**)focus1_xpm);
+	mouse_ico2 = new QPixmap( (const char**)focus2_xpm);
+	mouse_ico3 = new QPixmap( (const char**)focus3_xpm);
+	
+	QPixmap *mouse_ico_mask1 = new QPixmap((const char**)focus1_mask_xpm);	
+	QPixmap *mouse_ico_mask2 = new QPixmap((const char**)focus2_mask_xpm);
+	QPixmap *mouse_ico_mask3 = new QPixmap((const char**)focus3_mask_xpm);
 
-  void draw_circle(int x,int y)
+	cb = *mouse_ico1; cm = *mouse_ico_mask1;
+	mouse_ico1->setMask(cm);
+	cursor1 = new QCursor(*mouse_ico1);
+
+	cb = *mouse_ico2; cm = *mouse_ico_mask2;
+	mouse_ico2->setMask(cm);
+	cursor2 = new QCursor(*mouse_ico2);
+
+	cb = *mouse_ico3; cm = *mouse_ico_mask3;
+	mouse_ico3->setMask(cm);
+	cursor3 = new QCursor(*mouse_ico3);
+  };
+
+  void timerEvent( QTimerEvent *e )
   {
-    const int
-      d=100, // diameter
-      r=50;  // radius (should be d/2 :-)
-
-    RasterOp oldRasterOp = widget->rasterOp();	//save the initial raster mode
-    widget->setRasterOp(XorROP);
-    QColor oldColor=widget->color(); // save the initial color
-    widget->setColor(Qt::green);
-    widget->painter().drawEllipse(x-r, y-r, d, d);
-    widget->setColor(oldColor);
-    widget->setRasterOp(oldRasterOp);
-    widget->do_paint();
-  };
-
-  void leaveEvent(QEvent*)
-  {
-    if(circle_already_drawn)
-      draw_circle(x2,y2);
-    circle_already_drawn=false;
-  };
-
-  void widget_repainted(){
-    circle_already_drawn=false;
-  };
-
+	switch(cycle){
+	case 1:
+		widget->setCursor(*cursor1);
+		cycle++;
+		break;
+	case 2:
+		widget->setCursor(*cursor2);
+		cycle++;
+		break;
+	case 3:
+		widget->setCursor(*cursor3);
+		cycle=1;
+		break;
+	}
+  }
+private:  
   void mousePressEvent(QMouseEvent *e)
   {
     const double ratios=2.0;
     double
       x=widget->x_real(e->x()),
       y=widget->y_real(e->y());
-		
-    if(e->button() == Qt::LeftButton)
-			widget->zoom_in(ratios, x, y);
-    if(e->button() == Qt::RightButton)
-			widget->zoom_out(ratios, x, y);
-		
+	
+	widget->set_center(x, y);
     widget->redraw();
     emit(redraw()); 
   };
-
-  void mouseMoveEvent(QMouseEvent *e)
-  {
-    int
-      x = e->x(),
-      y = e->y();
-    
-    widget->lock();
-    draw_circle(x,y); // draw the new circle
-    if(circle_already_drawn) // erase the old one if needed
-      draw_circle(x2,y2);
-    widget->unlock();
-		
-    //save the last coordinates to redraw the screen
-    x2 = x;
-    y2 = y;
-    circle_already_drawn=true;
-  };
-
   void attaching()
   {
-    old_mouse_tracking=widget->hasMouseTracking();
-    widget->setMouseTracking(TRUE);
     oldcursor = widget->cursor();
-    widget->setCursor(crossCursor);
-    circle_already_drawn=false;
+	startTimer( 200 );
+	cycle = 1;
   };
 
   void detaching()
   {
-    if(circle_already_drawn)
-      draw_circle(x2,y2); // erase the circle if needed
     widget->setCursor(oldcursor);
-    widget->setMouseTracking(old_mouse_tracking);
+	killTimers();
   };
 };//end class 
 
