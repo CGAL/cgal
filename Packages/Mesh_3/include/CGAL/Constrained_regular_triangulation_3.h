@@ -39,8 +39,11 @@ template <typename CT_3, typename Tr2>
 struct PLC_loader
 {
   typedef PLC_loader<CT_3, Tr2 > Self;
-  typedef Conforming_Delaunay_triangulation_2<Tr2> Conform_2;
+
   typedef typename Tr2::Point Point_3;
+  typedef typename Tr2::Vertex_handle Vertex_handle_2;
+  typedef typename Tr2::Face_handle Face_handle_2;
+  typedef typename Tr2::Geom_traits Geom_traits_2;
   typedef typename CT_3::Weighted_point Weighted_point;
   typedef typename CT_3::Vertex_handle Vertex_handle_3;
   typedef typename CT_3::Cell_handle Cell_handle_3;
@@ -52,6 +55,49 @@ struct PLC_loader
   typedef typename CT_3::Sharp_vertices Sharp_vertices;
   typedef typename CT_3::Sharp_vertices_iterator Sharp_vertices_iterator;
   
+  struct Conform_extras {
+    CT_3& t;
+
+    explicit Conform_extras(CT_3& tr) : t(tr) {};
+    
+    bool is_bad(const Tr2& tr2,
+		const Face_handle_2& fh, const int index) const {
+      const Point_3& a = fh->vertex(tr2.cw(index) )->point();
+      const Point_3& b = fh->vertex(tr2.ccw(index))->point();
+
+      const Vertex_handle_3 va = t.insert(Weighted_point(a));
+      const Vertex_handle_3 vb = t.insert(Weighted_point(b));
+
+      Cell_handle_3 c;
+      int i, j;
+      return not t.is_edge(va, vb, c, i, j);
+    }
+
+    void signal_inserted_vertex(const Tr2& tr2,
+				const Face_handle_2& fh, 
+				const int edge_index,
+				const Vertex_handle_2& v) const
+    {
+      const Point_3& p = v->point();
+
+      const Point_3& a = fh->vertex(tr2.cw(edge_index) )->point();
+      const Point_3& b = fh->vertex(tr2.ccw(edge_index))->point();
+
+      const Vertex_handle_3 va = t.insert(Weighted_point(a));
+      const Vertex_handle_3 vb = t.insert(Weighted_point(b));
+
+      Cell_handle_3 c;
+      int i, j;
+      if( t.is_edge(va, vb, c, i, j) )
+	t.insert(Weighted_point(p), CT_3::EDGE, c, i, j);
+      else
+	t.insert(Weighted_point(p), va->cell());
+      // MY_DEBUG
+      std::cerr << "t.number_of_vertices()=" << t.number_of_vertices()
+		<< std::endl;
+      
+    }
+  }; //end of class Conform_extras
 
   typedef std::pair<Point_3, Point_3> Constraint_2;
 
@@ -417,7 +463,12 @@ struct PLC_loader
 	std::cerr << "lfs(" << vh->point().point() << ") = "
 		  << squared_lfs << std::endl;
 
+	t.sharp_vertices[vh] = squared_lfs;
+
       }
+
+    // MY_DEBUG
+    std::cerr << "Coucou1\n";
 
 // 	for(Points_of_face_iterator p_it = points_of_face.begin();
 // 	    p_it != points_of_face.end();
@@ -453,7 +504,15 @@ struct PLC_loader
     for(CF_it cf_it = constrained_faces_begin;
 	cf_it != constrained_faces_end; ++cf_it)
       {
-	Conform_2 tr2;
+	typedef Conforming_Delaunay_triangulation_2<Tr2,
+	  Conform_extras> Conform_2;
+
+	// MY_DEBUG
+	std::cerr << "Coucou2\n";
+
+	Conform_extras extra = Conform_extras(t);
+
+	Conform_2* tr2 = new Conform_2(Geom_traits_2(), extra);
 
 	typedef std::queue<CGAL::Triple<Vertex_handle_3,
                                         Vertex_handle_3,
@@ -461,21 +520,48 @@ struct PLC_loader
 
 	Facet_queue queue;
 
+	// MY_DEBUG
+	std::cerr << "Coucou3\n";
+
 	for(Constraints_2_iterator c_it = cf_it->edges.begin();
-	    cf_it != cf_it->edges.end();
-	    ++cf_it) // *c_it is a Contraint_2, that is, a pair of Point_3
-	  tr2.insert(c_it->first, c_it->second); // insert the
+	    c_it != cf_it->edges.end();
+	    ++c_it) // *c_it is a Contraint_2, that is, a pair of Point_3
+	  tr2->insert(c_it->first, c_it->second); // insert the
 						 // constrained edge in tr2
 
-	tr2.mark_facets(cf_it->seeds.begin(),
+	// MY_DEBUG
+	std::cerr << "Coucou4\n";
+
+
+	tr2->mark_facets(cf_it->seeds.begin(),
 			cf_it->seeds.end(),
 			cf_it->seeds_in_face);
 
-	tr2.make_conforming_Delaunay();
+	tr2->make_conforming_Delaunay();
+
+	for(typename Tr2::Finite_edges_iterator e_it_2 = 
+	      tr2->finite_edges_begin();
+	    e_it_2 != tr2->finite_edges_end();
+	    ++e_it_2)
+	  {
+	    const Point_3& a = e_it_2->first->
+	      vertex(tr2->cw(e_it_2->second) )->point();
+	    const Point_3& b = e_it_2->first->
+	      vertex(tr2->ccw(e_it_2->second))->point();
+
+	    const Vertex_handle_3& va = t.insert(Weighted_point(a));
+	    const Vertex_handle_3& vb = t.insert(Weighted_point(b));
+
+	    std::cerr << t.insert_constrained_edge(va, vb) << std::endl;
+	  }
+
+	// MY_DEBUG
+	std::cerr << "t.number_of_vertices()=" << t.number_of_vertices()
+		  << std::endl;
 
 	for(typename Tr2::Finite_faces_iterator f_it_2 =
-	      tr2.finite_faces_begin();
-	    f_it_2 != tr2.finite_faces_end();
+	      tr2->finite_faces_begin();
+	    f_it_2 != tr2->finite_faces_end();
 	    ++f_it_2)
 	  {
 	    if( ! f_it_2->is_marked() ) continue;
@@ -483,12 +569,12 @@ struct PLC_loader
 	    Cell_handle_3 c;
 	    int i, j, k;
 
-	    if( !is_facet( t.insert(f_it_2->vertex(0)->point()),
-			   t.insert(f_it_2->vertex(1)->point()),
-			   t.insert(f_it_2->vertex(2)->point()),
-			   c, i, j, k) );
+// 	    if( !is_facet( t.insert(f_it_2->vertex(0)->point()),
+// 			   t.insert(f_it_2->vertex(1)->point()),
+// 			   t.insert(f_it_2->vertex(2)->point()),
+// 			   c, i, j, k) );
 	  }
-	    
+	delete tr2;
       }
   } // end of PLC_loader::create_triangulation(begin, end)
 
