@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /W3 /GR /GX /O2 /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\auxiliary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include" /I "$(QTDIR)\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "CGAL_USE_QT" /D "QT_DLL" /D "UNICODE" /D "QT_THREAD_SUPPORT" /FD /Zm900 /c /Tp
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "NDEBUG"
@@ -52,7 +52,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(QTDIR)\lib\qt-mt230nc.lib $(QTDIR)\lib\qtmain.lib $(CGALROOT)\lib\msvc6\CGAL.lib $(CGALROOT)\lib\msvc6\CGALQt.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcmtd"
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
@@ -68,7 +68,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(QTDIR)\include" /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\auxiliary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "CGAL_USE_QT" /D "QT_DLL" /D "UNICODE" /D "QT_THREAD_SUPPORT" /FR /YX /FD /GZ /c /Tp
+# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\include\cgal\config\msvc6" /I "$(CGALROOT)\auxiliary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include" /I "$(QTDIR)\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "CGAL_USE_QT" /D "QT_DLL" /D "UNICODE" /D "QT_THREAD_SUPPORT" /FR /FD /GZ /Zm900 /c /Tp
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
