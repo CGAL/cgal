@@ -1,3 +1,6 @@
+3.29   (16 Mar 2001)
+- Side_of_bounded_circle_2 and Side_of_bounded_sphere_3.
+
 3.28   (6 Mar 2001)
 - Added Compute_squared_distance_2 and 3.
 - Remove references to point_vector_declarationsH2.h.

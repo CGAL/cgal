@@ -404,6 +404,11 @@ class Side_of_bounded_circle
 
     template <class T>
     Bounded_side
+    operator()(const T& p, const T& q, const T& t) const
+    { return side_of_bounded_circle(p,q,t); }
+
+    template <class T>
+    Bounded_side
     operator()(const T& p, const T& q, const T& r, const T& t) const
     { return side_of_bounded_circle(p,q,r,t); }
 };
@@ -423,6 +428,16 @@ class Side_of_bounded_sphere
 {
   public:
     typedef Bounded_side   result_type;
+
+    template <class T>
+    Bounded_side
+    operator()(const T& p, const T& q, const T& t) const
+    { return side_of_bounded_sphere(p,q,t); }
+
+    template <class T>
+    Bounded_side
+    operator()(const T& p, const T& q, const T& r, const T& t) const
+    { return side_of_bounded_sphere(p,q,r,t); }
 
     template <class T>
     Bounded_side
