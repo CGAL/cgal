@@ -8,6 +8,11 @@ Stuff to look at, as time permits:
 
 - Mariette would like Circle intersection.
 
+- Triangle-Triangle instersection (and predicate) :
+    Tomas Möller. A fast triangle-triangle intersection test. Journal of
+    Graphics Tools, 2(2):25-30, 1997
+              A Fast Triangle-Triangle Intersection Test,  tompa@clarus.se
+
 - det3x3_by_formula speeds up T3D a lot when it's inline.
   CGAL_KERNEL_MEDIUM_INLINE should be settable to inline from the outside...
 
@@ -30,28 +35,6 @@ Stuff to look at, as time permits:
 - Remove all global function usage, and replace by common code for all kernels.
   The backward compatible layer could look like :
 
-// The following should work for all Point types which have an internal "R".
-template <class Point>
-Orientation
-orientation(const Point &p, const Point &q, const Point &r)
-{
-  return Point::R::orientation_2_object()(p, q, r);
-}
-
-// However, it's a bit too general, as shows :
-template <class Point>
-// Point::R::Vector_2 // and Vector_3 ?
-Point::Vector // fixes the dimension choice.
-operator-(const Point &p, const Point &q)
-{
-  return Point::R::Construct_vector_2_object()(p, q);
-}
-// This is still loosy.  So maybe having these operators as member functions
-// will be fine for backward compatible stuff...
-// Also look at what Michael proposed on the list.
-
-// Or we keep also this stuff, but don't maintain nor add new stuff...
-
 // Another idea : write a backward compatible wrapper for any kernel,
 // say, Backward<R> using only the kernel traits R, and giving the additional
 // interface to get an "old kernel interface" from it.
@@ -64,12 +47,6 @@ Backward
 // Backward<R> would also be a valid kernel traits, but with
 // R::Point_2 != Backward<R>::Point_2.
  
-// So, to sum up (and ask the list) :
-// - is this acceptable if we drop all compatibility stuff with the old
-//   non-traits interface ?
-// - if not, is the Backward<> approach acceptable ?
-// [Note : ideally, all code in CGAL should be converted to use the traits only]
-
 ------------------------
 
 - Tests :
@@ -181,20 +158,11 @@ Backward
 - include/CGAL/smallest_radiusC2.h should use the kernel code.
   Check if it's ok (correct and as efficient), and tell Frank to do so.
   The name of this file doesn't have anything to do with what is inside anyway.
-- Bonne remarque de Mariette :
-    question subsidiaire sur le noyau :
-    sais tu pourquoi Point_2<R> (dans sa version actuelle)
-    redefinis les functions qu'elle pouurait silpement heriter de
-    R::Point_2_base.
-    Y a t il une ruse, un workaround, une subtilite,
-    un truc d'efficacite la dedans?
-    ou alors c'est juste pour avoir l'interface des classes utilisateurs plus
-    lisible ?
 - Herve complains that the design of the CGAL kernel is too
   cartesian/homogeneous oriented, whereas it could be made more general (think
   polar kernel).  Anyone with a concrete proposal ? :)
 
 Notes:
 ------
-- To run the test-suite, download the Kernel_test package, and add the correct
+- To run the test-suite, go in the Kernel_test package, and add the correct
   "-I../../../Cartesian_kernel/include" line in the makefile.
