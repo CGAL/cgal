@@ -38,6 +38,8 @@ CGAL__test_cls_tds_vertex( const Vertex &, const Gt & )
   typedef typename Vertex::Face_circulator      Face_circulator;
   typedef typename Vertex::Edge_circulator      Edge_circulator;
 
+
+  // Build a few objects
   // Build a few objects
   Point p2(1,2);
   Point p3(2,3);

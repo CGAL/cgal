@@ -43,6 +43,7 @@ class CGAL_Triangulation_test_point {
     bool   uncompare(const Point &p) const { return !compare(p); }
     Point  &operator=(const Point &p) { _x=p.test_x(); _y=p.test_y(); return *this; }
     void   test_set(TESTFT x, TESTFT y) { _x=x; _y=y; }
+    bool operator==(const Point &p) const {return this->compare(p);}
 };
 
 class CGAL_Triangulation_test_segment {
@@ -56,6 +57,7 @@ class CGAL_Triangulation_test_segment {
       : _p(p), _q(q) {}
 
     void test_set(const Point &p, const Point &q) { _p=p; _q=q; }
+    
  };
 
 class CGAL_Triangulation_test_direction {
@@ -289,13 +291,20 @@ istream &operator>>(istream &is, CGAL_Triangulation_test_triangle &t)
 }
 
 
+
+
 ostream &operator<<(ostream &os, const CGAL_Triangulation_test_point &p)
 {
   return os << p.test_x() << ' ' << p.test_y();
 }
 
-ostream &operator<<(ostream &os, const CGAL_Triangulation_test_triangle &t)
-{
-  return os << t.p() <<' '<< t.q() <<' '<< t.r() ;
-}
+//ostream &operator<<(ostream &os, const CGAL_Triangulation_test_segment &s)
+//{
+//  return os << s.test_source() << ' ' << s.test_target();
+//}
+
+//ostream &operator<<(ostream &os, const CGAL_Triangulation_test_triangle &t)
+//{
+//  return os << t.p() <<' '<< t.q() <<' '<< t.r() ;
+//}
 

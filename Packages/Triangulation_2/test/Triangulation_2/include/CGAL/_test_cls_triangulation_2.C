@@ -15,8 +15,9 @@
 // file          : include/CGAL/_test_cls_triangulation_2.C
 // revision      : 
 // revision_date : 
+
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
-//
+
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
@@ -33,6 +34,8 @@
 #include <CGAL/_test_fct_is_infinite.C>
 #include <CGAL/_test_triangulation_iterators.C>
 #include <CGAL/_test_triangulation_circulators.C>
+
+
 
 template < class VIt >
 class V2p_adaptor : public VIt {
@@ -325,6 +328,30 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
   assert( T2_7.number_of_vertices() == m*p );
   assert( T2_7.is_valid() );
 
+  // test flip
+     cout << "    test flip " << endl;
+     Cls T2_8=T2_7;
+     assert( T2_8.is_valid() );
+     Face_handle ff = T2_8.locate(Point(5*px+5*qx,5*py+5*qy));
+     assert(!T2_8.is_infinite(ff));
+     Face_handle f2 = ff->neighbor(0);
+     assert(!T2_8.is_infinite(f2));
+     // T2_8.flip(ff,0);
+     // Ok precondition violation  (non convex quadrilater)   
+     assert( T2_8.is_valid() );
+     // try with a valid face (and neighbor)
+     T2_8.clear();
+     T2_8.insert(Point(0,0,1));
+     T2_8.insert(Point(1,0,1));
+     T2_8.insert(Point(2,2,1));
+     T2_8.insert(Point(1,1,1));
+     ff = T2_8.locate(Point(0.5,0.5));
+     assert(!T2_8.is_infinite(ff));
+     f2 = ff->neighbor(1);
+     assert(!T2_8.is_infinite(f2));
+     assert( T2_8.is_valid() );
+     
+
   /****************************/
   /***** CONSTRUCTORS (2) *****/
   cout << "    constructors (2)" << endl;
@@ -449,15 +476,20 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
   f = T1_3_2.locate(p8,lt,li); assert( lt == Cls::COLLINEAR_OUTSIDE );
   assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p9) );
   f = T1_3_2.locate(p0,lt,li); assert( lt == Cls::OUTSIDE );
-  assert( CGAL__test_is_to_the_left(T2_1,p13,f,li) );
+  li = f->index(T1_3_2.infinite_vertex());
+  assert( CGAL__test_is_to_the_left(T1_3_2,p0,f,li) );
   f = T1_3_2.locate(p7,lt,li); assert( lt == Cls::OUTSIDE );
-  assert( CGAL__test_is_to_the_left(T2_1,p13,f,li) );
+  li = f->index(T1_3_2.infinite_vertex());
+  assert( CGAL__test_is_to_the_left(T1_3_2,p7,f,li) );
   f = T1_3_2.locate(p5,lt,li); assert( lt == Cls::OUTSIDE );
-  assert( CGAL__test_is_to_the_left(T2_1,p13,f,li) );
+  li = f->index(T1_3_2.infinite_vertex());
+  assert( CGAL__test_is_to_the_left(T1_3_2,p5,f,li) );
   f = T1_3_2.locate(p4,lt,li); assert( lt == Cls::OUTSIDE );
-  assert( CGAL__test_is_to_the_left(T2_1,p13,f,li) );
+  li = f->index(T1_3_2.infinite_vertex());
+  assert( CGAL__test_is_to_the_left(T1_3_2,p4,f,li) );
   f = T1_3_2.locate(p6,lt,li); assert( lt == Cls::OUTSIDE );
-  assert( CGAL__test_is_to_the_left(T2_1,p13,f,li) );
+  li = f->index(T1_3_2.infinite_vertex());
+  assert( CGAL__test_is_to_the_left(T1_3_2,p6,f,li) );
 
   // Check point location in 2-dimensional triangulations
   cout << "    point locations 2-dim" << endl;
@@ -491,10 +523,13 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
   f = T2_1.locate(p12,lt,li); assert( lt == Cls::FACE );
   assert( T2_1.oriented_side(f,p12) == CGAL_ON_POSITIVE_SIDE );
   f = T2_1.locate(p13,lt,li,f); assert( lt == Cls::OUTSIDE );
+  li = f->index(T2_1.infinite_vertex());
   assert( CGAL__test_is_to_the_left(T2_1,p13,f,li) );
   f = T2_1.locate(p14,lt,li); assert( lt == Cls::OUTSIDE );
+  li = f->index(T2_1.infinite_vertex());
   assert( CGAL__test_is_to_the_left(T2_1,p14,f,li) );
   f = T2_1.locate(p15,lt,li); assert( lt == Cls::OUTSIDE );
+  li = f->index(T2_1.infinite_vertex());
   assert( CGAL__test_is_to_the_left(T2_1,p15,f,li) );
 
   // test grid locate
@@ -554,10 +589,60 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
   CGAL__test_circulators(T1_6);
   CGAL__test_circulators(T2_1);
   CGAL__test_circulators(T2_3);
-  CGAL__test_circulators(T2_5);
+  CGAL__test_circulators (T2_5);
   CGAL__test_circulators(T2_6);
   CGAL__test_circulators(T2_7);
   
+  // Line_face_circulator
+  cout << "    line face circulator  " << endl;
+  typedef typename Cls::Line_face_circulator LFC;
+  // here == operator needed for Point!
+  // testing with the grid triangulation
+  LFC fc= T2_7.line_walk(p1,p10);
+  assert(fc.ptr()!=NULL);
+  assert(!fc.is_empty());
+  LFC fc2=fc;
+  assert(fc==fc2);
+  fc++;
+  fc--;
+  ++fc;
+  --fc;
+  Point pp(0,0.5);
+  f = T2_7.locate(pp,lt,li);
+  assert(lt==Cls::FACE);
+  fc= T2_7.line_walk(pp,p10,f);
+  fc2=fc;
+  assert(fc==fc2);
+  fc++;
+  fc--;
+  ++fc;
+  --fc;
+  // testing with dummy triangulations
+  int n=0;
+  do {fc2++ ; n = n+1;} while (fc2 != fc);
+  assert(T2_8.number_of_vertices()>=2);
+  assert(T2_8.is_valid());
+  fc= T2_8.line_walk(Point(0.5,0.4),Point(5,5));
+  fc2=fc;
+  n=0;
+  assert(fc==fc2);
+  do {fc2++ ; n = n+1;} while (fc2 != fc);
+  assert(n==4);
+  // the two point are vertices of the triangulation.
+  Cls TT;
+  TT.insert(Point(0,0)); TT.insert(Point(1,0));TT.insert(Point(1,1));
+  TT.insert(Point(0,1));
+  assert(TT.dimension()==2);
+  assert(TT.is_valid());
+  assert(TT.number_of_vertices()==4);
+  f = TT.locate(Point(0,0));
+  fc = TT.line_walk(Point(0,0),Point(1,1));
+  fc2 = TT.line_walk(Point(0,0),Point(1,1),f);
+  assert(fc==fc2);
+  n=0;
+  do {fc2++ ; n = n+1;} while (fc2 != fc);
+  assert(n==3);
+
   /*****************************/
   /******** Miscellaneaous *****/
   cout << "    misc." << endl;

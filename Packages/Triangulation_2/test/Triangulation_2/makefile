@@ -4,7 +4,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-4/make/makefile_sparc_SunOS-5.6_g++-2.8.1_LEDA
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -18,12 +18,12 @@ CXXFLAGS = \
 	$(TESTSUITE_CXXFLAGS) \
 	-g
 
+
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LDFLAGS =  \
-          $(TESTSUITE_LDFLAGS) \
+LDFLAGS = $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -45,10 +45,13 @@ test_triangulation_2: test_triangulation_2.o
 test_delaunay_triangulation_2: test_delaunay_triangulation_2.o
 	$(CGAL_CXX) -o test_delaunay_triangulation_2 test_delaunay_triangulation_2.o $(LDFLAGS)
 
+test_constrained_triangulation_2: test_constrained_triangulation_2.o	
+	$(CGAL_CXX) -o test_constrained_triangulation_2 test_constrained_triangulation_2.o $(LDFLAGS)
+
 clean:
 	- rm -f *.o test_triangulation_geom_traits test_triangulation_2 \
 	            test_triangulation_tds test_delaunay_triangulation_2 core \
-	            T??.triangulation
+	            T??.triangulation test_constrained_triangulation_2
 
 realclean: clean
 	- rm -f Program* Error* Compiler* error*

@@ -11,43 +11,38 @@
 // release       :
 // release_date  :
 // 
-// source        : 
-// file          : test_delaunay_triangulation.C
+// source        : test_constrained_triangulation.C
+// file          : test_constrained_triangulation.C
 // revision      : 
 // revision_date : 
-// author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
+// author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <pair.h>
-#include <list.h>
-#include <vector.h>
+
 
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_default_data_structure_2.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
-#include <CGAL/Delaunay_triangulation_2.h>
+
+#include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_face_base_2.h>
 
 #include <CGAL/_test_types.C>
-#include <CGAL/_test_cls_delaunay_triangulation_2.C>
+#include <CGAL/_test_cls_constrained_triangulation_2.C>
 
 int main()
 {
-  cout << "Testing Delaunay Triangulation_2 with Gmpz coordinates"; 
-  // cout << " with Euclidean_traits_2<Cartesian> : " << endl;
-  // typedef CGAL_Triangulation_euclidean_traits_2<Test_rep_homogeneous> Gt;
-  cout << " with Triangulation_test_traits : " << endl;
+  cout << "Testing constrained_triangulation with Gmpz "<< endl;
+
   typedef CGAL__Triangulation_test_traits                       Gt;
   typedef CGAL_Triangulation_vertex_base_2<Gt>                  Vb;
-  typedef CGAL_Triangulation_face_base_2<Gt>                    Fb;
+  typedef CGAL_Constrained_triangulation_face_base_2<Gt>        Fb;
   typedef CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-  typedef CGAL_Delaunay_triangulation_2<Gt,Tds>                 Cls;
+  typedef CGAL_Constrained_triangulation_2<Gt,Tds>              CCls;
 
-  CGAL__test_cls_delaunay_triangulation_2( Cls() );
-
+  CGAL__test_cls_constrained_triangulation(CCls());
   return 0;
 }

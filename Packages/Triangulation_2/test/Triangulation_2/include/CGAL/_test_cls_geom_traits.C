@@ -22,7 +22,7 @@
 
 
 #include <assert.h>
-// #include <CGAL/_test_cls_distance.C>
+#include <CGAL/_test_cls_distance.C>
 
 // In order to test the class properly, we need some points whose
 // geometry is defined accordingly. The following must be true:
@@ -35,6 +35,7 @@
 //               p[15],p[16],p[17] COLLINEAR
 
 template <class Traits, class Point >
+
 void
 CGAL__test_cls_geom_traits( Point p[34], const Traits & )
 {
@@ -97,7 +98,7 @@ CGAL__test_cls_delaunay_geom_traits( Point p[34], const Traits & )
   Traits gt;
 
   // Distance
-  // CGAL__test_cls_distance(Traits);
+  CGAL__test_cls_distance(p, Traits());
 
   // Test side_of_oriented_circle()
   assert( gt.side_of_oriented_circle(p[18],p[19],p[20],p[21]) == CGAL_ON_NEGATIVE_SIDE );

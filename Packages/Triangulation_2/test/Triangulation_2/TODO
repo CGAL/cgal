@@ -9,12 +9,10 @@ TODO pour la test suite de triangulation:
 
 RESTE A TESTER:
 
-dans _test_cls_geom_traits()
-* manque _test_cls_distance()
+Done : dans _test_cls_geom_traits()
+* manque _test_cls_distance() ## Erreur compile avec la distance "vide"(cf. _test_cls_distance.C
 
 dans _test_cls_triangulation_2()
-* la fonction flip()
-* le Line_face_circulator et la fonction line_walk()
 * les fonctions advanced insert_on_edge, insert_collinear_outside,
   insert_in_face, remove_degree_3
 * traversal of the convex hull: quand plusieurs points sont
@@ -24,8 +22,6 @@ dans _test_cls_triangulation_2()
 * le leda_window << Triangulation doit etre teste dans la demo
 
 dans _test_cls_triangulation_vertex()
-* je comprends pas du tout la description de is_valid et donc pas
-  teste
 * je ne sais pas comment tester les typedefs CGAL_Point_2<R> dans
   euclidean_traits (pour verifier que c'est bien ce qui est dit).
   A priori il faudrait utiliser une fonction "bidon"
@@ -55,4 +51,4 @@ dans test_cls_delaunay_triangulation()
 
 et bien sur...
 * Regular triangulation
-* Constrained triangulation
+

@@ -93,3 +93,5 @@ CGAL__test_circulators( const Triangulation &T )
   //Check Euler formula
   assert( n+m == 2*(T.number_of_vertices() +1) -4);
 }
+
+

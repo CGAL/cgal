@@ -16,6 +16,8 @@
 #include <CGAL/Homogeneous.h>
 #endif // CGAL_HOMOGENEOUS_H
 
+#include <CGAL/_test_short_names_2.h>
+
 typedef CGAL_Cartesian<CGAL_Gmpz> Test_rep_cartesian;
 typedef CGAL_Homogeneous<CGAL_Gmpz> Test_rep_homogeneous;
 

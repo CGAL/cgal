@@ -55,6 +55,11 @@ CGAL__test_cls_triangulation_vertex( const Vertex & )
   Vertex v2(p2);
   Vertex v3(p3,f3.handle());
   
+  // test is_valid
+  assert( v3.face() == f3.handle() );
+  f3.set_vertex(1,v3.handle());
+  assert(v3.is_valid());
+
   // Test point()
   assert( Gt().compare( v2.point(), p2) );
   assert( Gt().compare( v3.point(), p3) );
