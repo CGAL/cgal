@@ -1,5 +1,6 @@
 Version 1.50 (?? Apr 01)
 - Fix recently introduced bug in the hierarchy when dimension() < 3.
+- more for() scope VC++ bug workaround.
 
 Version 1.49 (13 Apr 01)
 - locate() interface changes to match the 2D case wrt the default start.
