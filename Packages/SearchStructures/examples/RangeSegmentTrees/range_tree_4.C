@@ -60,9 +60,6 @@
 
 typedef CGAL::Range_tree_4<CGAL::Tree_traits_4> Range_tree_4_type;
 
-// MSVC compiler bug prevention
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CGAL::tuple_4);
-
 int main()
 {
   typedef CGAL::Tree_traits_4::Key Key;

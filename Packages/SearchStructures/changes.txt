@@ -1,3 +1,8 @@
+Version 2.80 (18 Jan 2004)
+- Remove obsolete *ITERATOR_TRAITS_POINTER_SPEC* workarounds.
+
+========================= CGAL 3.0 =======================
+
 Version 2.79 (21 October 2003) [af]
 - Removed interval skip list again
 

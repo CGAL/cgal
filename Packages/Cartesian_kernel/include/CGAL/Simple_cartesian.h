@@ -60,6 +60,4 @@ struct Simple_cartesian
 
 CGAL_END_NAMESPACE
 
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_TEMPLATE(CGAL::Simple_cartesian)
-
 #endif // CGAL_SIMPLE_CARTESIAN_H

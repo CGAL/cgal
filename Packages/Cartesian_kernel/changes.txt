@@ -1,3 +1,6 @@
+Version 102.18 (18 January 2004)
+- Remove obsolete *ITERATOR_TRAITS_POINTER_SPEC* workarounds.
+
 Version 102.17 (18 January 2004)
 - Remove obsolete CGAL_VC7_BUG_PROTECTED workaround (VC++ <= 7.0).
 

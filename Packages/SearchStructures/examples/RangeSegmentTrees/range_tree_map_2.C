@@ -63,10 +63,6 @@
 #include <iterator>
 
 
-//MSVC compiler bug prevention
-typedef std::pair<CGAL::Point_2<CGAL::Cartesian<double> >,char> Pair002;
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Pair002);
-
 typedef CGAL::Cartesian<double> Representation;
 typedef CGAL::Range_tree_map_traits_2<Representation, char> Traits;
 typedef CGAL::Range_tree_2<Traits> Range_tree_2_type;

@@ -1,3 +1,6 @@
+2.115 (18 January 2004)
+- Remove obsolete *ITERATOR_TRAITS_POINTER_SPEC* workarounds.
+
 2.114 (18 January 2004)
 - Replace obsolete CGAL_NULL_TMPL_ARGS by <>.
 

@@ -61,9 +61,6 @@
 
 typedef CGAL::Range_tree_2<CGAL::Tree_traits_2> Range_tree_2_type;
 
-typedef std::pair<int, double> Pair001;
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Pair001);
-
 int main()
 {
   typedef CGAL::Tree_traits_2::Key Key;

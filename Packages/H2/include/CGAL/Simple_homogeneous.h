@@ -71,6 +71,4 @@ struct Simple_homogeneous
 
 CGAL_END_NAMESPACE
 
-CGAL_ITERATOR_TRAITS_POINTER_SPEC_TEMPLATE(CGAL::Simple_homogeneous)
-
 #endif // CGAL_SIMPLE_HOMOGENEOUS_H

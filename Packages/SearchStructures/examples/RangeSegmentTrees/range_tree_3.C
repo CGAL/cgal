@@ -62,9 +62,6 @@
 
 typedef CGAL::Range_tree_3<CGAL::Tree_traits_3> Range_tree_3_type;
 
-//prevention of a MSVC compiler bug:
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CGAL::tuple_3);
-
 
 int main()
 {
