@@ -497,7 +497,7 @@ protected:
       ++out;
     } else {
       if ( prevCurve && SimilarCurves(cv, prevXCv)) {
-	std::cout << " curve already reported... " << std::endl;
+	SL_DEBUG(std::cout << " curve already reported... " << std::endl;)
 	return;
       }
       prevCurve = curve;
@@ -516,7 +516,7 @@ protected:
       ++out;
     } else {
       if ( VerticalSubCurveExists(cv)) {
-	std::cout << " curve already reported... " << std::endl;
+	SL_DEBUG(std::cout << " curve already reported... " << std::endl;)
 	return;
       }
       m_verticalSubCurves.push_back(cv);
