@@ -167,12 +167,12 @@ Iso_cuboidC3<R CGAL_CTAG>::vertex(int i) const
   switch (i%8)
   {
     case 0: return min();
-    case 1: return Point_3(max.hx(), min.hy(), min.hz());
-    case 2: return Point_3(max.hx(), max.hy(), min.hz());
-    case 3: return Point_3(min.hx(), max.hy(), min.hz());
-    case 4: return Point_3(min.hx(), max.hy(), max.hz());
-    case 5: return Point_3(min.hx(), min.hy(), max.hz());
-    case 6: return Point_3(max.hx(), min.hy(), max.hz());
+    case 1: return Point_3(max().hx(), min().hy(), min().hz());
+    case 2: return Point_3(max().hx(), max().hy(), min().hz());
+    case 3: return Point_3(min().hx(), max().hy(), min().hz());
+    case 4: return Point_3(min().hx(), max().hy(), max().hz());
+    case 5: return Point_3(min().hx(), min().hy(), max().hz());
+    case 6: return Point_3(max().hx(), min().hy(), max().hz());
     case 7: return max();
   }
   return Point_3();
@@ -232,8 +232,10 @@ bool
 Iso_cuboidC3<R CGAL_CTAG>::
 has_on_unbounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  return lexicographically_smaller(p,min())
-      || lexicographically_smaller(max(),p);
+  // return lexicographically_smaller(p,min())
+//       || lexicographically_smaller(max(),p);
+  return lexicographically_xyz_smaller(p,min())
+      || lexicographically_xyz_smaller(max(),p);
 }
 
 template < class R >
