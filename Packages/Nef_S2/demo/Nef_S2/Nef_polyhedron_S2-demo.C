@@ -1,3 +1,5 @@
+#ifdef CGAL_USE_LEDA
+
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/leda_integer.h>
@@ -93,3 +95,14 @@ int main(int argc, char **argv)
 }
 
 
+#else
+
+#include <iostream>
+
+int main() 
+{
+  std::cout << "This demo requires LEDA\n";
+  return 0;
+}
+
+#endif

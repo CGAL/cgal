@@ -54,16 +54,25 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:    \
-	Nef_polyhedron_S2-demo Sphere_geometry-demo 
+	Nef_polyhedron_S2-demo Nef_polyhedron_S2-demo2 Sphere_geometry-demo
 
 Nef_polyhedron_S2-demo$(EXE_EXT): Nef_polyhedron_S2-demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_S2-demo Nef_polyhedron_S2-demo$(OBJ_EXT) $(LDFLAGS)
 
+Nef_polyhedron_S2-demo2$(EXE_EXT): Nef_polyhedron_S2-demo2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_S2-demo2 Nef_polyhedron_S2-demo2$(OBJ_EXT) $(LDFLAGS)
+
 Sphere_geometry-demo$(EXE_EXT): Sphere_geometry-demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Sphere_geometry-demo Sphere_geometry-demo$(OBJ_EXT) $(LDFLAGS)
 
+SM_overlayer-demo$(EXE_EXT): SM_overlayer-demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)SM_overlayer-demo SM_overlayer-demo$(OBJ_EXT) $(LDFLAGS)
+
 clean:  \
-	Nef_polyhedron_S2-demo.clean Sphere_geometry-demo.clean 
+	Nef_polyhedron_S2-demo.clean \
+	Nef_polyhedron_S2-demo2.clean \
+	Sphere_geometry-demo.clean \
+	SM_overlayer-demo.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -1,4 +1,5 @@
-#include <LOCAL/CGALH3.h>
+#include <CGAL/Homogeneous.h>
+#include <CGAL/Gmpz.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/random_selection.h>
 #include <CGAL/point_generators_3.h>
@@ -6,9 +7,14 @@
 #include <CGAL/Nef_S2/Sphere_map.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_io_parser.h>
-#include "SM_overlayer.h"
+#include <CGAL/Nef_S2/SM_overlayer.h>
 
-typedef CGAL::Sphere_geometry<HKernel> SKernel;
+typedef CGAL::Gmpz NT;
+typedef CGAL::Homogeneous<NT> Kernel;
+typedef Kernel::Point_3       Point_3;
+typedef Kernel::Plane_3       Plane_3;
+
+typedef CGAL::Sphere_geometry<Kernel> SKernel;
 typedef CGAL::Sphere_map<SKernel> Sphere_map;
 
 typedef Sphere_map::Vertex_handle   Vertex_handle;
@@ -17,7 +23,7 @@ typedef Sphere_map::Face_handle     Face_handle;
 typedef CGAL::SM_decorator<Sphere_map,SKernel> SM_decorator;
 typedef CGAL::SM_overlayer<SM_decorator>  SM_overlayer;
 
-typedef CGAL::Creator_uniform_3<RT,Point_3>  Creator;
+typedef CGAL::Creator_uniform_3<NT,Point_3>  Creator;
 typedef CGAL::Random_points_in_cube_3<Point_3,Creator> Point_source;
 typedef SKernel::Sphere_point   SPoint;
 typedef SKernel::Sphere_segment SSegment;
@@ -86,12 +92,12 @@ int main(int argc, char **argv)
   }
   std::ofstream output("smo-demo.log");
   std::list<SSegment>::iterator it;
-  forall_iterators(it,L) output << *it;
+  CGAL_forall_iterators(it,L) output << *it;
   output << std::endl;
   output.close();
   std::list<SSegment> L1,L2;
   int b=0;
-  forall_iterators(it,L) {
+  CGAL_forall_iterators(it,L) {
     if ( b == 0 ) L1.push_back(*it);
     else          L2.push_back(*it);
     b = 1-b;

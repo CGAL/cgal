@@ -1,14 +1,20 @@
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Gmpz.h>
 #include <CGAL/random_selection.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/test_macros.h>
 
-typedef CGAL::Gmpz NT;
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer NT;
+#else
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float NT;
+#endif
+
 typedef CGAL::Homogeneous<NT> Kernel;
-typedef CGAL::Nef_polyhedron_S2<Kernel>   Nef_polyhedron;
+typedef CGAL::Nef_polyhedron_S2<Kernel> Nef_polyhedron;
 typedef Nef_polyhedron::Sphere_point   Sphere_point;
 typedef Nef_polyhedron::Sphere_segment Sphere_segment;
 typedef Nef_polyhedron::Sphere_circle  Sphere_circle;
