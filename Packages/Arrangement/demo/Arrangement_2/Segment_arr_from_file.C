@@ -1,7 +1,6 @@
 // demo/Arrangement_2/Segment_arr_from_file.C
 //
 //constructs a segment arrangement from file.
-// We use a homogeneous representation with the cached traits.
 
 #include <CGAL/config.h> // needed for the LONGNAME flag
 
@@ -63,7 +62,6 @@ int main()
 //#include <CGAL/Double_eps.h>
 
 #include <CGAL/Arr_2_default_dcel.h>
-//#include <CGAL/Arr_segment_exact_cached_traits.h>
 #include <CGAL/Arr_segment_exact_traits.h>
 
 #include <CGAL/Pm_walk_along_line_point_location.h>
@@ -78,7 +76,6 @@ typedef leda_integer NT;
 typedef CGAL::Homogeneous<NT>                      Rep;
 //typedef CGAL::Cartesian<NT>                      Rep;
 
-//typedef CGAL::Arr_segment_exact_cached_traits<Rep>   Traits;
 typedef CGAL::Arr_segment_exact_traits<Rep>          Traits;
 
 typedef Traits::Point                                 Point;
