@@ -28,11 +28,44 @@
 #include <vector>
 #include <algorithm>
 
-// #define GJ_DEBUG_43
+/*
+  A polygon is called simple of no edges intersect each other, except
+  consecutive edges, which intersect in their common vertex.
+  The test for simplicity is implemented by means of a sweep line algorithm.
+  The vertical line is swept from left to right. The edges of the polygon that
+  are crossed by the sweep line are stored in a tree from bottom to top.
 
+  We discern three types of events:
+  - insertion events. When both edges of a polygon vertex extend to the right we
+    need to insert both edges in the tree. We need to search with the vertex to
+    find out between which edges the new edges are to be inserted.
+  - deletion events. When both edges extend to the left of the vertex we need to
+    remove both edges from the tree. We have to check that the vertex lies
+    between the edges above and below the removed edges.
+  - replacement event. In the other case we need to replace the edge that
+    extends to the left by the edge that extends to the right. We need to check
+    that the vertex lies between the edges above and below the current edge.
+
+  We represent the tree by a std::set. This is not a perfect fit for the
+  operations described above. In particular, the fact that we search with a
+  VERTEX, while the set contains EDGES, is not directly supported. The insertion
+  of edges is also complicated by the fact that we need to insert two edges
+  starting at the same vertex. The order in which they are inserted in the tree
+  does matter, because the edges go in separate directions. Because of this the
+  set needs a special associated comparison function. Every edge has a flag
+  'is_in_tree', which is true for the edges in the tree but false for the edges
+  when they are inserted. The comparison function treats the latter type of edge
+  as a vertex. Another flag, is_left_to_right, tells which of the two vertices
+  to take. The problem of the coinciding vertices is solved by the convention
+  that the highest edges is always inserted first. The comparison function uses
+  this fact.
+
+  Vertex indices of the polygon play a double role. The number v can be used to
+  identify vertex v or the edge from vertex v to vertex v+1.
+*/
 namespace CGAL {
 
-namespace i_polygon {
+namespace i_polygon {  // namespace CGAL::i_polygon is used for internal functions
 
 typedef std::vector<int>::size_type Index_t;
 
@@ -52,50 +85,59 @@ private:
     Index_t m_i;
 };
 
-template <class RandomAccessIt, class PolygonTraits>
+template <class ForwardIterator, class PolygonTraits>
 class Vertex_data ;
 
-template <class RandomAccessIt, class PolygonTraits>
+template <class ForwardIterator, class PolygonTraits>
 class Less_segments {
-    Vertex_data<RandomAccessIt, PolygonTraits> *m_vertex_data;
+    Vertex_data<ForwardIterator, PolygonTraits> *m_vertex_data;
     bool less_than_in_tree(Vertex_index i, Vertex_index j);
   public:
-    Less_segments(Vertex_data<RandomAccessIt, PolygonTraits> *vertex_data)
+    Less_segments(Vertex_data<ForwardIterator, PolygonTraits> *vertex_data)
     : m_vertex_data(vertex_data) {}
     bool operator()(Vertex_index i, Vertex_index j);
 };
 
+// The data in Edge_data is attached to an edge when it is (about to be)
+// inserted in the tree.
+// Although conceptually this data belongs in the tree, it is stored with
+// the vertices in the Vertex_data structure.
 
-
-template <class RandomAccessIt, class PolygonTraits>
+template <class ForwardIterator, class PolygonTraits>
 struct Edge_data {
-    typedef std::set<Vertex_index, Less_segments<RandomAccessIt,PolygonTraits> >
+    typedef std::set<Vertex_index, Less_segments<ForwardIterator,PolygonTraits> >
             Tree;
     Edge_data() : is_in_tree(false) {}
-    typename Tree::iterator tree_it;
-    bool is_in_tree :1;
-    bool is_in_order :1;
+    typename Tree::iterator tree_it; // The iterator of the edge in the tree.
+                                     // Needed for cross reference. If edge j
+				     // is in the tree: *edges[j].tree_it == j
+    bool is_in_tree :1;              // Must be set -after- inserting the edge
+                                     // in the tree. Plays a role in the
+				     // comparison function of the tree.
+    bool is_left_to_right :1;        // Direction of edge from vertex v to v+1
 };
 
-template <class RandomAccessIt, class PolygonTraits>
+template <class ForwardIterator, class PolygonTraits>
 class Vertex_data {
 public:
-    typedef std::set<Vertex_index, Less_segments<RandomAccessIt,PolygonTraits> >
+    typedef std::set<Vertex_index, Less_segments<ForwardIterator,PolygonTraits> >
 	            Tree;
 
     typedef typename PolygonTraits::Point_2 Point_2;
-    Vertex_data(RandomAccessIt begin, RandomAccessIt end, PolygonTraits pgnt);
-    RandomAccessIt points_start;
+    Vertex_data(ForwardIterator begin, ForwardIterator end, PolygonTraits pgnt);
+//    ForwardIterator points_start;
+    std::vector<ForwardIterator> iterators;
     std::vector<Vertex_order> m_order_of;
     std::vector<Vertex_index> m_idx_at_rank;
-    std::vector<Edge_data<RandomAccessIt, PolygonTraits> > edges;
+    std::vector<Edge_data<ForwardIterator, PolygonTraits> > edges;
     std::vector<Vertex_index>::size_type m_size;
     typename PolygonTraits::Orientation_2 orientation_2;
     typename PolygonTraits::Less_xy_2 less_xy_2;
     bool is_simple_result;
 
-    Vertex_order xy_order_of(Vertex_index vi) const
-    	{ return m_order_of[vi.as_int()];}
+    bool ordered_left_to_right(Vertex_index v1, Vertex_index v2)
+        { return  m_order_of[v1.as_int()].as_int() <
+	m_order_of[v2.as_int()].as_int();}
     Vertex_index index_at_rank(Vertex_order vo) const
         { return m_idx_at_rank[vo.as_int()];}
     Vertex_index next(Vertex_index k) const
@@ -108,37 +150,22 @@ public:
     void left_and_right_index(Vertex_index &left, Vertex_index &right,
             Vertex_index edge);
     Vertex_index left_index(Vertex_index edge)
-        { return edges[edge.as_int()].is_in_order ? edge : next(edge); }
-    Point_2 point(Vertex_index i) { return points_start[i.as_int()];}
+        { return edges[edge.as_int()].is_left_to_right ? edge : next(edge); }
+    Point_2 point(Vertex_index i)
+//    { return points_start[i.as_int()];}
+        { return *iterators[i.as_int()];}
     void sweep(Tree *tree);
-    bool chain_start(Tree *tree, Vertex_index i, Vertex_index j, Vertex_index k);
-    bool chain_continuation(Tree *tree, Vertex_index cur, Vertex_index to_insert);
-    bool chain_end(Tree *tree, Vertex_index i, Vertex_index j);
+    bool insertion_event(Tree *tree, Vertex_index i, Vertex_index j, Vertex_index k);
+    bool replacement_event(Tree *tree, Vertex_index cur, Vertex_index to_insert);
+    bool deletion_event(Tree *tree, Vertex_index i, Vertex_index j);
     bool on_right_side(Vertex_index vt, Vertex_index edge, bool above);
-#ifdef GJ_DEBUG_43
-   void print_tree(Tree *tree);
-#endif
 };
 
-#ifdef GJ_DEBUG_43
-template <class RandomAccessIt, class PolygonTraits>
-void Vertex_data<RandomAccessIt, PolygonTraits>::
-print_tree(Tree *tree)
-{
-    typedef typename Tree::iterator Tree_it;
-    for (Tree_it cur = tree->begin(); cur != tree->end(); ++cur) {
-	Vertex_index nb = next(*cur);
-        std::cout << (*cur).as_int() << ' ' << nb.as_int() <<'\n';
-    }
-    std::cout << "-----\n";
-}
-#endif
-
-template <class RandomAccessIt, class PolygonTraits>
+template <class ForwardIterator, class PolygonTraits>
 class Less_vertex_data {
-    Vertex_data<RandomAccessIt, PolygonTraits> *m_vertex_data;
+    Vertex_data<ForwardIterator, PolygonTraits> *m_vertex_data;
 public:
-    Less_vertex_data(Vertex_data<RandomAccessIt, PolygonTraits> *vd)
+    Less_vertex_data(Vertex_data<ForwardIterator, PolygonTraits> *vd)
     : m_vertex_data(vd) {}
     bool operator()(Vertex_index i, Vertex_index j);
 };
@@ -147,8 +174,9 @@ public:
 
 // ----- implementation of i_polygon functions. -----
 
-template <class RandomAccessIt, class PolygonTraits>
-bool i_polygon::Less_segments<RandomAccessIt, PolygonTraits>::
+namespace i_polygon {
+template <class ForwardIterator, class PolygonTraits>
+bool Less_segments<ForwardIterator, PolygonTraits>::
 operator()(Vertex_index i, Vertex_index j)
 {
     if (m_vertex_data->edges[j.as_int()].is_in_tree) {
@@ -158,8 +186,8 @@ operator()(Vertex_index i, Vertex_index j)
     }
 }
 
-template <class RandomAccessIt, class PolygonTraits>
-bool i_polygon::Less_segments<RandomAccessIt, PolygonTraits>::
+template <class ForwardIterator, class PolygonTraits>
+bool Less_segments<ForwardIterator, PolygonTraits>::
 less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge)
 {
     CGAL_polygon_precondition(m_vertex_data->edges[tree_edge.as_int()].is_in_tree);
@@ -167,17 +195,7 @@ less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge)
     Vertex_index left, mid, right;
     m_vertex_data->left_and_right_index(left, right, tree_edge);
     mid = m_vertex_data->left_index(new_edge);
-#ifdef GJ_DEBUG_43
-if (new_edge.as_int() == 14 || new_edge.as_int() == 15)
-        std::cout << "Checking  "<< new_edge.as_int() << " and " 
-	    << tree_edge.as_int() <<'\n';
-    std::cout<< "left: "<<left.as_int()<<"  right: "<<right.as_int()<<'\n';
-#endif
     if (mid.as_int() == left.as_int()) {
-#ifdef GJ_DEBUG_43
-        std::cout << "Insertion detected. "<< new_edge.as_int() << "<" 
-	    << tree_edge.as_int() <<'\n';
-#endif
         return true;
     }
     switch (m_vertex_data->orientation_2( m_vertex_data->point(left),
@@ -190,51 +208,55 @@ if (new_edge.as_int() == 14 || new_edge.as_int() == 15)
     return true;
 }
 
-template <class RandomAccessIt, class PolygonTraits>
-bool i_polygon::Less_vertex_data<RandomAccessIt, PolygonTraits>::
+template <class ForwardIterator, class PolygonTraits>
+bool Less_vertex_data<ForwardIterator, PolygonTraits>::
 operator()(Vertex_index i, Vertex_index j)
 {
     return m_vertex_data->less_xy_2(
             m_vertex_data->point(i), m_vertex_data->point(j));
 }
 
-template <class RandomAccessIt, class PolygonTraits>
-i_polygon::Vertex_data<RandomAccessIt, PolygonTraits>::
-Vertex_data(RandomAccessIt begin, RandomAccessIt end, PolygonTraits pgn_traits)
-: points_start(begin),
+template <class ForwardIterator, class PolygonTraits>
+Vertex_data<ForwardIterator, PolygonTraits>::
+Vertex_data(ForwardIterator begin, ForwardIterator end, PolygonTraits pgn_traits)
+: // points_start(begin),
   orientation_2(pgn_traits.orientation_2_object()),
   less_xy_2(pgn_traits.less_xy_2_object())
 {
-    m_size = end - begin;
+    m_size = std::distance(begin, end);
     is_simple_result = true;
     m_idx_at_rank.reserve(m_size);
+    iterators.reserve(m_size);
     m_order_of.insert(m_order_of.end(), m_size, Vertex_order(0));
-    edges.insert(edges.end(), m_size, Edge_data<RandomAccessIt, PolygonTraits>());
-    for (Index_t i = 0; i< m_size; ++i)
+    edges.insert(edges.end(), m_size,
+            Edge_data<ForwardIterator, PolygonTraits>());
+    for (Index_t i = 0; i< m_size; ++i, ++begin) {
         m_idx_at_rank.push_back(Vertex_index(i));
+	iterators.push_back(begin);
+    }
     std::sort(m_idx_at_rank.begin(), m_idx_at_rank.end(),
-        Less_vertex_data<RandomAccessIt, PolygonTraits>(this));
+        Less_vertex_data<ForwardIterator, PolygonTraits>(this));
     for (Index_t j = 0; j < m_size; ++j) {
 	Vertex_order vo(j);
         m_order_of[index_at_rank(vo).as_int()] = vo;
     }
 }
 
-template <class RandomAccessIt, class PolygonTraits>
-void i_polygon::Vertex_data<RandomAccessIt, PolygonTraits>::
+template <class ForwardIterator, class PolygonTraits>
+void Vertex_data<ForwardIterator, PolygonTraits>::
 left_and_right_index(Vertex_index &left, Vertex_index &right,
             Vertex_index edge)
 {
-    if (edges[edge.as_int()].is_in_order) {
+    if (edges[edge.as_int()].is_left_to_right) {
         left = edge; right = next(edge);
     } else {
         right = edge; left = next(edge);
     }
 }
 
-template <class RandomAccessIt, class PolygonTraits>
-bool i_polygon::Vertex_data<RandomAccessIt, PolygonTraits>::
-chain_start(Tree *tree, Vertex_index prev_vt,
+template <class ForwardIterator, class PolygonTraits>
+bool Vertex_data<ForwardIterator, PolygonTraits>::
+insertion_event(Tree *tree, Vertex_index prev_vt,
             Vertex_index mid_vt, Vertex_index next_vt)
 {
     // check which endpoint is above the other
@@ -245,20 +267,14 @@ chain_start(Tree *tree, Vertex_index prev_vt,
       case COLLINEAR: return false;
       
     }
-    Edge_data<RandomAccessIt, PolygonTraits>
+    Edge_data<ForwardIterator, PolygonTraits>
         &td_prev = edges[prev_vt.as_int()],
         &td_mid = edges[mid_vt.as_int()];
     td_prev.is_in_tree = false;
-    td_prev.is_in_order = false;
+    td_prev.is_left_to_right = false;
     td_mid.is_in_tree = false;
-    td_mid.is_in_order = true;
+    td_mid.is_left_to_right = true;
     // insert the highest chain first
-#ifdef GJ_DEBUG_43
-if (left_turn)
-  std::cout << "Ins " << prev_vt.as_int() << " and " << mid_vt.as_int() <<'\n';
-else
-  std::cout << "Ins " << mid_vt.as_int() << " and " << prev_vt.as_int() <<'\n';
-#endif
     std::pair<CGAL_TYPENAME_MSVC_NULL Tree::iterator, bool> result;
     if (left_turn) {
         result = tree->insert(prev_vt);
@@ -282,13 +298,13 @@ else
     return true;
 }
 
-template <class RandomAccessIt, class PolygonTraits>
-bool i_polygon::Vertex_data<RandomAccessIt, PolygonTraits>::
+template <class ForwardIterator, class PolygonTraits>
+bool Vertex_data<ForwardIterator, PolygonTraits>::
 on_right_side(Vertex_index vt, Vertex_index edge_id, bool above)
 {
     Orientation turn =
         orientation_2(point(edge_id), point(vt), point(next(edge_id)));
-    bool leftturn = edges[edge_id.as_int()].is_in_order ? above : !above;
+    bool leftturn = edges[edge_id.as_int()].is_left_to_right ? above : !above;
     if (leftturn) {
         if (turn != RIGHTTURN) {
             return false;
@@ -301,16 +317,16 @@ on_right_side(Vertex_index vt, Vertex_index edge_id, bool above)
     return true;
 }
 
-template <class RandomAccessIt, class PolygonTraits>
-bool i_polygon::Vertex_data<RandomAccessIt, PolygonTraits>::
-chain_continuation(Tree *tree, Vertex_index cur_edge, Vertex_index next_edge)
+template <class ForwardIterator, class PolygonTraits>
+bool Vertex_data<ForwardIterator, PolygonTraits>::
+replacement_event(Tree *tree, Vertex_index cur_edge, Vertex_index next_edge)
 {
     // check if continuation point is on the right side of neighbor segments
     typedef typename Tree::iterator It;
-    Edge_data<RandomAccessIt, PolygonTraits> &td = edges[cur_edge.as_int()];
+    Edge_data<ForwardIterator, PolygonTraits> &td = edges[cur_edge.as_int()];
     CGAL_polygon_assertion(td.is_in_tree);
     It cur_seg = td.tree_it;
-    Vertex_index cur_vt = (td.is_in_order) ? next_edge : cur_edge;
+    Vertex_index cur_vt = (td.is_left_to_right) ? next_edge : cur_edge;
     if (cur_seg != tree->begin()) {
         It seg_below = cur_seg;
 	--seg_below;
@@ -326,9 +342,9 @@ chain_continuation(Tree *tree, Vertex_index cur_edge, Vertex_index next_edge)
         }
     }
     // replace the segment
-    Edge_data<RandomAccessIt, PolygonTraits> &new_td =
+    Edge_data<ForwardIterator, PolygonTraits> &new_td =
             edges[next_edge.as_int()];
-    new_td.is_in_order = td.is_in_order;
+    new_td.is_left_to_right = td.is_left_to_right;
     new_td.is_in_tree = false;
     tree->erase(cur_seg);
     td.is_in_tree = false;
@@ -337,17 +353,17 @@ chain_continuation(Tree *tree, Vertex_index cur_edge, Vertex_index next_edge)
     return true;
 }
 
-template <class RandomAccessIt, class PolygonTraits>
-bool i_polygon::Vertex_data<RandomAccessIt, PolygonTraits>::
-chain_end(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
+template <class ForwardIterator, class PolygonTraits>
+bool Vertex_data<ForwardIterator, PolygonTraits>::
+deletion_event(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
 {
     // check if continuation point is on the right side of neighbor segments
     typedef typename Tree::iterator It;
-    Edge_data<RandomAccessIt, PolygonTraits>
+    Edge_data<ForwardIterator, PolygonTraits>
         &td_prev = edges[prev_vt.as_int()],
         &td_mid = edges[mid_vt.as_int()];
     It prev_seg = td_prev.tree_it, mid_seg = td_mid.tree_it;
-    Vertex_index cur_vt = (td_prev.is_in_order) ? mid_vt : prev_vt;
+    Vertex_index cur_vt = (td_prev.is_left_to_right) ? mid_vt : prev_vt;
     It seg_above = prev_seg;
     ++seg_above;
     if (seg_above == mid_seg) ++seg_above;
@@ -368,8 +384,8 @@ chain_end(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
     return true;
 }
 
-template <class RandomAccessIt, class PolygonTraits>
-void i_polygon::Vertex_data<RandomAccessIt, PolygonTraits>::
+template <class ForwardIterator, class PolygonTraits>
+void Vertex_data<ForwardIterator, PolygonTraits>::
 sweep(Tree *tree)
 {
     if (m_size < 3)
@@ -377,29 +393,25 @@ sweep(Tree *tree)
     bool succes = true;
     for (Index_t i=0; i< m_size; ++i) {
         Vertex_index cur = index_at_rank(Vertex_order(i));
-	Vertex_index prev_vt = prev(cur), next_vt = next(cur);
-	if (xy_order_of(next_vt).as_int() > i) {
-	    if (xy_order_of(prev_vt).as_int() > i)
-	        succes = chain_start(tree, prev_vt, cur, next_vt);
-	    else
-	        succes = chain_continuation(tree, prev_vt, cur);
-	} else {
-	    if (xy_order_of(prev_vt).as_int() > i)
-	        succes = chain_continuation(tree, cur, prev_vt);
-	    else
-	        succes = chain_end(tree, prev_vt, cur);
-	}
-#ifdef GJ_DEBUG_43
-  std::cout << "after treating " << cur.as_int() << ":\n";
-  print_tree(tree);
-#endif
-	if (!succes)
-	    break;
+	    Vertex_index prev_vt = prev(cur), next_vt = next(cur);
+	    if (ordered_left_to_right(cur, next_vt)) {
+	        if (ordered_left_to_right(cur, prev_vt))
+	            succes = insertion_event(tree, prev_vt, cur, next_vt);
+	        else
+	            succes = replacement_event(tree, prev_vt, cur);
+	    } else {
+	        if (ordered_left_to_right(cur, prev_vt))
+	            succes = replacement_event(tree, cur, prev_vt);
+	        else
+	            succes = deletion_event(tree, prev_vt, cur);
+	    }
+	    if (!succes)
+	        break;
     }
     if (!succes)
     	is_simple_result = false;
 }
-
+}
 // ----- End of implementation of i_polygon functions. -----
 
 
@@ -407,10 +419,10 @@ template <class Iterator, class PolygonTraits>
 bool is_simple_polygon(Iterator points_begin, Iterator points_end,
         PolygonTraits polygon_traits)
 {
-    typedef Iterator RandomAccessIt;
+    typedef Iterator ForwardIterator;
     typedef std::set<i_polygon::Vertex_index,
-            i_polygon::Less_segments<RandomAccessIt,PolygonTraits> > Tree;
-    i_polygon::Vertex_data<RandomAccessIt, PolygonTraits>
+            i_polygon::Less_segments<ForwardIterator,PolygonTraits> > Tree;
+    i_polygon::Vertex_data<ForwardIterator, PolygonTraits>
         vertex_data(points_begin, points_end, polygon_traits);
     Tree tree(&vertex_data);
     vertex_data.sweep(&tree);
