@@ -1301,13 +1301,18 @@ Polynomial<NT> operator * (const Polynomial<NT>& p1,
 template <class NT> inline
 Polynomial<NT> operator / (const Polynomial<NT>& p1, 
                            const Polynomial<NT>& p2)
-{ return divop(p1,p2, typename Number_type_traits<NT>::Has_gcd()); }
+{ 
+  typedef Number_type_traits<NT> Traits;
+  return divop(p1,p2, Traits::Has_gcd());
+}
 
 
 template <class NT> inline
 Polynomial<NT> operator % (const Polynomial<NT>& p1,
 			   const Polynomial<NT>& p2)
-{ return modop(p1,p2, typename Number_type_traits<NT>::Has_gcd()); }
+{ 
+  typedef Number_type_traits<NT> Traits;
+  return modop(p1,p2, Traits::Has_gcd()); }
 
 
 template <class NT> 
@@ -1853,6 +1858,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p) {
                 is.clear( std::ios::badbit);
             if ( ! is)
                 return is;
+	    is.putback(ch);
         } else {
             is.putback(ch);
         }
