@@ -177,32 +177,53 @@ public:
   //! An operator =
   Snap_rounding_2& operator =(const Snap_rounding_2& other);
 
-  //! Returns a constant iterator to the first input segment.
+   //! Returns a constant iterator to the first input segment.
   inline Segment_const_iterator segments_begin() const {
              return(seg_2_list.begin());}
+
   //! Returns a constant iterator to the after-the-last of the input segments.
   inline Segment_const_iterator segments_end() const {
     return(seg_2_list.end());}
+
   //! Returns an iterator to the first input segment.
   inline Segment_iterator segments_begin() {return(seg_2_list.begin());}
+
   //! Returns an iterator to the after-the-last of the input segments.
   inline Segment_iterator segments_end() {return(seg_2_list.end());}
 
   //! Returns a constant iterator to the output of the first input segment.
   const Polyline_const_iterator polylines_begin();
+
   /*! Returns a constant iterator to the after-the-last of the output of
    *  the input segments.
    */
   const Polyline_const_iterator polylines_end();
 
+  //! insert a segment
   bool insert(Segment_2 seg);
+
+  //! The STL standard member function for insertion.
   bool push_back(Segment_2 seg);
+
+  //! Insertion of an iterator range.
   template < class InputIterator >
     int insert(InputIterator first, InputIterator last);
+  
+  //! Remove a segment
   bool remove(Segment_2 seg);
+
+  //! Remove all segments  .           .
   void clear();
+
+  //! Change the number of kd-trees used for segment-hot pixel queries.
   bool change_number_of_kd_trees(int inp_number_of_kd_trees);
+
+  //! Change the pixel size
   bool change_pixel_size(NT inp_pixel_size);
+
+  /*! Determine whether to apply Iterated Snap Rounding (ISR)
+      or Snap Rounding (SR).
+   */
   void do_isr(bool inp_do_isr);
 
   template<class Out>
