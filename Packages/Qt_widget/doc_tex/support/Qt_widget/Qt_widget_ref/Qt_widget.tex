@@ -68,6 +68,10 @@ with given coordinates. This method should be called after \ccc{resize()} from
 viewport and transformations to history. You can use the public slots
 \ccc{back()} and \ccc{forth()} to walk into history.}
 
+\ccMethod{void clear_history();}{Clears the history. This means that 
+there are no elements in the history list. Call this method when you
+want to reinitialize the history list.}
+
 \ccHeading{public slots:}
 \ccGlue
 \ccMethod{void back();}{}

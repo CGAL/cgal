@@ -138,14 +138,6 @@ InputPath=..\..\..\include\CGAL\IO\Qt_Widget.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Get_point.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Handtool.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\include\CGAL\IO\Qt_widget_layer.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
@@ -226,14 +218,6 @@ BuildCmds= \
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Zoom.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Zoomrect.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
