@@ -37,7 +37,9 @@ typedef CGAL::Kernel_traits<Point>::Kernel K;
 typedef K::FT NT;
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
+typedef 
+CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::iterator 
+NNN_Iterator;
 
 {// start of scope of first test
   CGAL::Timer t;
@@ -47,8 +49,10 @@ typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::ite
   int bucket_size=10;
   double eps=0.1;
 
-  std::cout << "test parameters: d=" << dim << " point_number=" << point_number << std::endl;
-  std::cout << "nearest_neighbour_number=" << nearest_neighbour_number << " bucket_size="
+  std::cout << "test parameters: d=" << dim << " point_number=" 
+	    << point_number << std::endl;
+  std::cout << "nearest_neighbour_number=" 
+	    << nearest_neighbour_number << " bucket_size="
   << bucket_size << " eps=" << eps << std::endl;
 
   typedef std::list<Point> listd;
@@ -69,7 +73,8 @@ typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::ite
   Tree d(lpt.begin(), lpt.end(), bucket_size);
   t.stop();
   std::cout << "created binary search tree containing" << std::endl
-  << point_number << " random points in the d-dim unit square in time " << t.time() <<
+  << point_number << " random points in the d-dim unit square in time " 
+  << t.time() <<
   " seconds " << std::endl;
   // d.statistics();
 
@@ -153,7 +158,8 @@ typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::ite
                  << std::endl;
                  std::cout << "distance_array[" << i4 << "]=" <<
                  distance_array[i4] << std::endl;
-                 std::cout << "result[" << i4 << "]= " << *(result1[i4].first) << std::endl;
+                 std::cout << "result[" << i4 << "]= " 
+		<< *(result1[i4].first) << std::endl;
   };
 
   // compute the next k nearest neighbours
@@ -161,19 +167,22 @@ typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::ite
   std::cout << "number of items visited is " <<
   NNN_Iterator1.the_number_of_items_visited() << std::endl;
 
-  std::cout << "testing iterator started computing next " << nearest_neighbour_number
+  std::cout << "testing iterator started computing next " 
+  << nearest_neighbour_number
   << " nearest neighbours" << std::endl;
   NNN_Iterator NNN_Iterator2=NNN_Iterator1;
-  CGAL::swap<Traits,CGAL::Search_nearest_neighbour>(NNN_Iterator1, NNN_Iterator2);
+CGAL::swap<Traits,CGAL::Search_nearest_neighbour>(NNN_Iterator1,NNN_Iterator2);
   std::vector<Traits::Item_with_distance> result2(nearest_neighbour_number);
 
   for (int i3=0; i3 < nearest_neighbour_number; i3++) {
         result2[i3] = *NNN_Iterator2; ++NNN_Iterator2;
         std::cout << "dist[" << i3 << "]=" << result2[i3].second
-        << std::endl;
-        std::cout << "distance_array[" << nearest_neighbour_number+i3 << "]=" <<
+                  << std::endl;
+        std::cout << "distance_array[" << 
+        nearest_neighbour_number+i3 << "]=" <<
         distance_array[nearest_neighbour_number+i3] << std::endl;
-        std::cout << "result[" << i3 << "]= " << *(result2[i3].first) << std::endl;
+        std::cout << "result[" << i3 << "]= " << *(result2[i3].first) 
+                  << std::endl;
   }
 
   std::cout << "number of items visited is " <<

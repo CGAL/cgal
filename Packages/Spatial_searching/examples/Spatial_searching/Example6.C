@@ -34,7 +34,9 @@ typedef CGAL::Kernel_traits<Point>::Kernel K;
 typedef K::FT NT;
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> MyTraits;
-typedef CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
+typedef 
+CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour>::iterator 
+NNN_Iterator;
 
 int test_nearest_neighbour_Linf() {
 
@@ -47,9 +49,11 @@ int test_nearest_neighbour_Linf() {
   int bucket_size=1;
   double eps=0.1;
 
-  std::cout << "test parameters: d=" << dim << " point_number=" << point_number << std::endl;
-  std::cout << "nearest_neighbour_number=" << nearest_neighbour_number << " bucket_size="
-  << bucket_size << " eps=" << eps << std::endl;
+  std::cout << "test parameters: d=" << dim << " point_number=" 
+	    << point_number << std::endl;
+  std::cout << "nearest_neighbour_number=" << nearest_neighbour_number 
+	    << " bucket_size="
+  	    << bucket_size << " eps=" << eps << std::endl;
 
   typedef std::list<Point> listd;
 
@@ -97,7 +101,8 @@ int test_nearest_neighbour_Linf() {
   std::cout << "started test copy" << std::endl;
 
   std::vector<MyTraits::Item_with_distance> result3(point_number);
-  CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour> NNN1(d2,Q,eps);
+  CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour> 
+  NNN1(d2,Q,eps);
 
   NNN_Iterator begin, end;
   begin = NNN1.begin();
@@ -119,8 +124,10 @@ int test_nearest_neighbour_Linf() {
   std::cout << "copied approximate nearest neighbours are" << std::endl;
 
   for (int i3=0; i3 < nearest_neighbour_number; i3++) {
-        std::cout << "result3[" << i3 << "]= " << *(result3[i3].first) << std::endl;
-        std::cout << "with distance " << result3[i3].second << std::endl;
+        std::cout << "result3[" << i3 << "]= " << *(result3[i3].first) 
+		  << std::endl;
+        std::cout << "with distance " << result3[i3].second 
+                  << std::endl;
   }
 
   std::cout << "testing copy ready" << std::endl;
@@ -130,7 +137,8 @@ int test_nearest_neighbour_Linf() {
   // example of browsing
   std::cout << "started testing browsing" << std::endl;
 
-  CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour> NNN2(d2,Q,eps);
+  CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour> 
+  NNN2(d2,Q,eps);
 
 
 
