@@ -6,12 +6,40 @@
 % +----------------------------------------
 
 { \catcode`\$=12
-  \def\cs #1$#2${\gdef#1{#2}}
-  \cs\CCrevision$Revision$
-  \cs\CCdate$Date$
+  \def\cs #1$#2${\gdef#1{#2}}%
+  \cs\CCrevision$Revision$%
+  \cs\CCdate$Date$%
 }
 
 %\tracingmacros=1
+
+% +--------------------------------------------------------------------------
+% | A handy macro to define macros for RCS entries in a TeX file
+% +--------------------------------------------------------------------------
+%   #1  the macro name for the RCS entry
+%   #2  the RCS entry
+\newcommand{\RCSdef}{\begingroup\catcode`\$=12 \RCSdefSet}
+{ \catcode`\$=12
+    \gdef\RCSdefSet #1$#2${\gdef#1{#2}\endgroup}%
+}
+
+% +--------------------------------------------------------------------------
+% | Customization tags for the style: here are the defaults defined.
+% +--------------------------------------------------------------------------
+\newcommand{\CCtagChapterAuthor}{\CCtrue}  % true -> the author is shown.
+\newcommand{\CCtagReplacePrefix}{\CCfalse} % true -> prefixes are replaced.
+\newcommand{\CCtagReplaceInclude}{\CCfalse} % true -> include file prefixes
+                                            % are replaced when 
+                                            % \CCtagReplacePrefix is also true.
+\newcommand{\CCtagRmTrailingConst}{\CCtrue} % true -> trailing const declarat.
+                                            % for member fct's are removed.
+\newcommand{\CCtagRmEigenClassName}{\CCtrue} % true -> removes own class name
+                                             % when it appears in parameter
+                                             % list.
+\newcommand{\CCtagRmConstRefPair}{\CCtrue} % true -> removes const & pairs
+                                           % when it appearing in parameters
+                                           % and return values.
+
 
 % +--------------------------------------------------------------------------
 % | Dimensions (from the LEDA Manual):
@@ -62,7 +90,7 @@
 
 \CCWfunctionfirst      = 2.5cm
 \CCWfunctionsecond     = 4.5cm
-\CCWconstructorfirst   = 0pt
+\CCWconstructorfirst   = -1\CCWbetween
 \CCWconstructorsecond  = 2.5cm
 
 
@@ -86,7 +114,7 @@
 \def\CCtopskip{\smallskip}
 \def\CCreturnskip{\par\hspace*{\CCWindent}\hspace*{\CCWfirst}%
                       \hspace*{\CCWbetween}}
-\def\CCmiddleskip{\par\hspace*{1cm}\hfill}
+\def\CCmiddleskip{\par\hspace*{1cm}\hfill} % aligns commentblock to the right
 \def\CCbottomskip{\par\smallskip}
 \def\CCbottombigskip{\par\bigskip}
 
@@ -95,18 +123,27 @@
 % | Original LEDA Manual macros (shortcuts):
 % | Several new shortcuts for CGAL
 % |
-% | \CC, \gg, \nat, \real, \boxit
+% | \CC, \gcc, \nat, \real, \boxit
 % | \leda, \cgal, \protocgal, \plageo
 % +--------------------------------------------------------------------------
+% selfmade
 \def\CC{C\raise.08ex\hbox{\tt ++}}
-\def\gg{g\hbox{\tt ++}}
+\def\gcc{g\hbox{\tt ++}}
 \def\nat{\hbox{\rm I\kern-0.045em N}}
 \def\real{\hbox{\rm I\kern-0.035em R}}
 % \def\boxit#1{\vbox{\hrule\hbox{\vrule\kern3pt\vbox{#1}\kern3pt\vrule}\hrule}}
+% (older) AMS-TeX style
 \def\R{\mbox{$\mathbb R$}}  %% zusammen mit usepackage{amssymb}
 \def\N{\mbox{$\mathbb N$}}  %% zusammen mit usepackage{amssymb}
 \def\Z{\mbox{$\mathbb Z$}}  %% zusammen mit usepackage{amssymb}
+\def\Q{\mbox{$\mathbb Q$}}  %% zusammen mit usepackage{amssymb}
 \def\E{\mbox{$\mathbb E$}}  %% zusammen mit usepackage{amssymb}
+% actual AMS-TeX style (according to Kopka LaTeX Ergaenzungsband S.92)
+%\def\R{\mbox{$\Bbb{R}$}}  %% zusammen mit usepackage{amssymb}
+%\def\N{\mbox{$\Bbb{N}$}}  %% zusammen mit usepackage{amssymb}
+%\def\Z{\mbox{$\Bbb{Z}$}}  %% zusammen mit usepackage{amssymb}
+%\def\Q{\mbox{$\Bbb{Q}$}}  %% zusammen mit usepackage{amssymb}
+%\def\E{\mbox{$\Bbb{E}$}}  %% zusammen mit usepackage{amssymb}
 
 \newcommand{\leda}{{\sc Leda}}
 \newcommand{\cgal}{{\sc Cgal}}
@@ -153,47 +190,54 @@
 % +--------------------------------------------------------------------------
 % | Structuring macros (similar to LEDA Manual):
 % |
-% | \CCsection, \definition, \creation, \operations, \implementation,
-% | \example, \precond
+% | \CCsection, \definition, \constants, \types, \creation, \operations, 
+% | \implementation, \example, \precond, \postcond, \chapterauthor
 % +--------------------------------------------------------------------------
 
+\newcommand{\CCchapterAuthor}[1]{%
+    \ifnum\CCtagChapterAuthor=\CCtrue
+        \noindent\setlength{\unitlength}{1mm}%
+        \begin{picture}(0,0)% 
+            \put(0,11){{\em #1}}%
+        \end{picture}%
+    \fi}
+
 \def\CCsection #1{%
-                   \section[#1 (\protect\CCprintSingleToken \pureclassname;)]%
-                           {#1 (\classname)}
+                   \section[#1 (\protect\CCprintSingleTokenSemi
+                   \pureclassname;)]{#1 (\classname)}
                    \label{#1}}
 
-\def\definition    {\bigskip\pagebreak[1]
-                    {\bf Definition}
-                    \par\nopagebreak }
+\def\CCsubsection #1{%
+                   \subsection[#1 (\protect\CCprintSingleToken 
+                           \pureclassname\end)]{#1 (\classname)}
+                   \label{#1}}
 
-\def\types         {\bigskip\pagebreak[1]
-                    {\bf Types}
+\def\cgalheading #1{\bigskip\pagebreak[1]
+                    {\bf #1}
                     \par\nopagebreak }
+\def\cgalcommentheading #1{\par{\it #1}: }
 
-\def\creation      {\bigskip\pagebreak[1]
-                    {\bf Creation}
-                    \par\nopagebreak }
 
-\def\operations    {\bigskip\pagebreak[1]
-                    {\bf Operations}
-                    \par\nopagebreak }
+\def\definition     {\cgalheading{Definition}}
+\def\synopsis       {\cgalheading{Synopsis}}
+\def\parameters     {\cgalheading{Parameters}}
+\def\constants      {\cgalheading{Constants}}
+\def\types          {\cgalheading{Types}}
+\def\creation       {\cgalheading{Creation} }
+\def\operations     {\cgalheading{Operations}}
+\def\implementation {\cgalheading{Implementation}}
+\def\example        {\cgalheading{Example}}
 
-\def\implementation {\bigskip\pagebreak[1]
-                    {\bf Implementation}
-                    \par\nopagebreak }
-
-\def\example       {\bigskip\pagebreak[1]
-                    {\bf Example}
-                    \par\nopagebreak }
-
-\def\precond {\par{\it Precondition}: }
+\def\precond  {\cgalcommentheading{Precondition}}
+\def\postcond {\cgalcommentheading{Postcondition}}
 
 
 % +--------------------------------------------------------------------------
 % | C++ declarations for different C++ language elements:
 % |
 % | \begin{class}, \begin{classtemplate}, \end...
-% | \creationvariable, \threecolumns, \constructor, \method, \function
+% | \creationvariable, \threecolumns, \constructorcolumn, \constructor, 
+% | \method, \function
 % | \CCstyle
 % +--------------------------------------------------------------------------
 \newenvironment{class}{%
@@ -278,14 +322,69 @@
                    \gdef\purevar{#1}
                    \endgroup}
 
-\def\threecolumns #1#2{%
+\newcommand{\CCsetTwoOfThreeColumns}[2]{%
                    \global\CCWfunctionfirst=#1
                    \global\CCWfunctionsecond=#2
-                   }
+}
+
+\newcommand{\threecolumns}[2]{%
+    \CCsetTwoOfThreeColumns{#1}{#2}
+}
+
+\newdimen\CCWtmp
+
+\newcommand{\CCsetThreeColumns}[3]{%
+    \isEmpty{#3}\ifnum\CCbool=\CCtrue
+        \setbox0=\hbox{\mbox{\CCstyle{#1}}}\setbox1=\hbox{\mbox{\CCstyle{#2}}}%
+        \CCsetTwoOfThreeColumns{\wd0}{\wd1}%
+    \else\isEmpty{#2}\ifnum\CCbool=\CCtrue
+        \setbox0=\hbox{\mbox{\CCstyle{#1}}}\setbox1=\hbox{\mbox{#3}}%
+        \CCWtmp=\textwidth 
+        \advance\CCWtmp -\wd0
+        \advance\CCWtmp -\wd1
+        \advance\CCWtmp -\CCWindent
+        \advance\CCWtmp -\CCWbetween
+        \advance\CCWtmp -\CCWbetween
+        \CCsetTwoOfThreeColumns{\wd0}{\CCWtmp}%
+    \else\isEmpty{#1}\ifnum\CCbool=\CCtrue
+        \setbox0=\hbox{\mbox{\CCstyle{#2}}}\setbox1=\hbox{\mbox{#3}}%
+        \CCWtmp=\textwidth 
+        \advance\CCWtmp -\wd0
+        \advance\CCWtmp -\wd1
+        \advance\CCWtmp -\CCWindent
+        \advance\CCWtmp -\CCWbetween
+        \advance\CCWtmp -\CCWbetween
+        \CCsetTwoOfThreeColumns{\CCWtmp}{\wd0}%
+    \else
+        \errmessage{\CCsetThreeColumns expects one empty parameter. Go
+        ahead, the old settings will remain active.}%
+    \fi\fi\fi
+}
+
+\newcommand{\CCsetOneOfTwoColumns}[1]{%
+                   \global\CCWconstructorsecond=#1
+}
 
 \def\constructorcolumn #1{%
-                   \global\CCWconstructorsecond=#1
+                   \CCsetOneOfTwoColumns{#1}
                    }
+
+\newcommand{\CCsetTwoColumns}[2]{%
+    \isEmpty{#2}\ifnum\CCbool=\CCtrue
+        \setbox0=\hbox{\mbox{\CCstyle{#1}}}%
+        \CCsetOneOfTwoColumns{\wd0}%
+    \else\isEmpty{#1}\ifnum\CCbool=\CCtrue
+        \setbox0=\hbox{\mbox{#2}}%
+        \CCWtmp=\textwidth 
+        \advance\CCWtmp -\wd0
+        \advance\CCWtmp -\CCWindent
+        \advance\CCWtmp -\CCWbetween % \CCWconstructorfirst = -1\CCWbetween
+        \CCsetOneOfTwoColumns{\CCWtmp}%
+    \else
+        \errmessage{\CCsetTwoColumns expects one empty parameter. Go
+        ahead, the old settings will remain active.}%
+    \fi\fi
+}
 
 \def\constructor {%
                    \begingroup\CCcatcode\constructorX}
@@ -353,6 +452,28 @@
 
 \def\typedef {\variable}
 
+\def\nestedtype {%
+                       \begingroup\CCcatcode
+                       \nestedtypeX}
+
+\def\nestedtypeX #1{%
+                       \endgroup
+                       \CCglobalContinuation{%
+                           \nestedtypeXX{#1}}}
+
+\long\def\nestedtypeXX #1#2{%
+                       \CCWfirst  =\CCWconstructorfirst
+                       \CCWsecond =\CCWconstructorsecond
+                       \CCinitWidths
+                       \setbox\returntypebox=\hbox{}%
+                       \setbox\callnamebox=\hbox{\classtemplatename
+                           \CCfont\CCprintTokens ::\end}%
+                       \setbox\functioncallbox=\hbox{\unhcopy\callnamebox
+                           \ \CCfont\CCprintTokens #1\end}
+                       \CClayoutThreeColumns{}{}{}{#2}%
+                     }
+
+
 
 % Enum's are formatted like constructors. There is exact one matching
 % pair of braces in the declaration.
@@ -377,6 +498,14 @@
 \long\def\enumXX #1#2{%
                    \CCenumDeclaration {#2}#1\end}
 
+% a struct is formatted like an enum (needs the parantheses parsing)
+\def\struct {%
+                   \begingroup\CCcatcode
+                   \catcode`\[=1
+                   \catcode`\]=2
+                   \catcode`\{=12
+                   \catcode`\}=12
+                   \enumX}
 
 % A \declaration accepts one parameter. The style will ignore it, while
 % the checker tests if it exists one to one in the C++ code.
@@ -413,6 +542,7 @@
 \def\globalfunction         {\gdef\CCglobalDecl{\CCtrue}\function}
 \def\globalfunctiontemplate {\gdef\CCglobalDecl{\CCtrue}\functiontemplate}
 \def\globalenum             {\gdef\CCglobalDecl{\CCtrue}\enum}
+\def\globalstruct           {\gdef\CCglobalDecl{\CCtrue}\struct}
 \def\globalvariable         {\gdef\CCglobalDecl{\CCtrue}\variable}
 \def\globaltypedef          {\gdef\CCglobalDecl{\CCtrue}\typedef}
 
@@ -422,6 +552,12 @@
 
 \def\CCstyleX #1{%
                        {\CCfont \CCprintTokens #1\end\CCendfont}\endgroup}
+
+% print CC programs. Encapsulate cprog with better spacing at the top
+% and bottom  
+\newenvironment{CCprog}{%
+    \smallskip\begin{cprog}}{%
+    \end{cprog}\smallskip}
 
 
 % +--------------------------------------------------------------------------
@@ -462,8 +598,8 @@
 % +--------------------------------------------------------------------------
 % | Predicates:
 % |
-% | isEmpty, isLetter, hasLeadingSpace, isOperator, isParenthesisOperator
-% | isConversionOperator
+% | isEmpty, isLetter, isUnderscore, hasLeadingSpace, isTemplate,
+% | isLastAlpha, isOperator, isParenthesisOperator, isConversionOperator
 % |
 % | All predicates uses pattern matching of TeX. The original predicate uses
 % | a single parameter that should be in braces like in LaTeX. Internally,
@@ -490,16 +626,40 @@
    \def\xparams{#2}\ifx\xparams\empty \CCbool=\CCtrue
        \else \CCbool=\CCfalse \fi}
 
-% This macro test wheather its argument starts (after leading spaces) with
+% This macro test wheather its argument starts (after leading spaces)
 % with a valid C++ letter.
 \def\isLetter #1{%
     \def\qparams{#1}\ifx\qparams\empty\CCbool=\CCfalse 
         \else\isLetterX #1\end\fi}
 \def\isLetterX #1#2\end{%
     \CCbool=\CCfalse
+    \ifx#1\_\CCbool=\CCtrue\else
     \ifcat#1A\CCbool=\CCtrue
     \else\ifnum`#1>`/\ifnum`#1<`:\CCbool=\CCtrue \fi\fi
         \if#1_\CCbool=\CCtrue \fi
+    \fi\fi}
+
+% Test for a leading underscore, either _ with changed catcode, or \_
+\def\isUnderscore #1{%
+    \def\qparams{#1}\ifx\qparams\empty\CCbool=\CCfalse 
+        \else\isUnderscoreX #1\end\fi}
+\def\isUnderscoreX #1#2\end{%
+    \CCbool=\CCfalse
+    \ifx#1\_\CCbool=\CCtrue\else
+        \if#1_\CCbool=\CCtrue \fi
+    \fi}
+
+% Test for a leading underscore, either _ with changed catcode, or \_,
+% or the / character. Used to validate the character after a prefix.
+\def\isPrefixFollowChar #1{%
+    \def\qparams{#1}\ifx\qparams\empty\CCbool=\CCfalse 
+        \else\isPrefixFollowCharX #1\end\fi}
+\def\isPrefixFollowCharX #1#2\end{%
+    \CCbool=\CCfalse
+    \ifx#1\_\CCbool=\CCtrue\else
+        \if#1_\CCbool=\CCtrue \else
+            \if#1/\CCbool=\CCtrue\fi
+        \fi
     \fi}
 
 % These macros allow the characterwise parsing of an argument, where normally
@@ -520,10 +680,26 @@
     \def\xxparams{#1}\def\xxxparams{#2#3}\ifx\xxparams\xxxparams\else\ \fi}
 
 % This macro gets a complete C++ declaration and decides weather
+% it starts with a template declaration or not.
+\def\isTemplate #1{%
+    \isTemplateX #1template\end}
+    % Note: these macros has to test for characters directly following
+    % the template keyword, because it is allowed as an identifier substring.
+\def\isTemplateX #1template#2\end{%
+    \isEmpty{#2}\ifnum\CCbool=\CCtrue \CCbool=\CCfalse
+    \else\hasLeadingSpace{#2}\ifnum\CCbool=\CCfalse
+            \isLetter{#2}\CCinvert
+        \fi
+    \fi
+    \ifnum\CCbool=\CCtrue
+        \isEmpty{#1}%
+    \fi}
+
+% This macro gets a complete C++ declaration and decides weather
 % it is an operator declaration or not.
 \def\isOperator #1{%
     \isOperatorX #1operator\end}
-    % Note: these macros has to test for characters diretcly surrounding
+    % Note: these macros has to test for characters directly surrounding
     % the operator keyword, because it is allowed as an identifier substring.
 \def\isOperatorX #1operator#2\end{%
     \isEmpty{#2}\ifnum\CCbool=\CCtrue \CCbool=\CCfalse
@@ -533,15 +709,21 @@
     \fi
     \ifnum\CCbool=\CCtrue
         \isEmpty{#1}\ifnum\CCbool=\CCfalse
-            \isOperatorXX #1\end
+            \isLastAlphaX #1\end \CCinvert
         \fi
     \fi}
-% Check the parameter, if it does not end with a character or _
-\def\isOperatorXX #1#2\end{%
-    \def\xbody{\isOperatorXX #2\end}%
-    \isLetterX #1\end \CCinvert
-    \def\qparams{#2}\ifx\qparams\empty\let\xnext=\relax
-    \else\isEmpty{#2}\ifnum\CCbool=\CCtrue
+
+% Check the last character in the parameter. If it is a character (or _) 
+% return \CCtrue, else return \CCfalse. 
+\def\isLastAlpha #1{%
+    \isEmpty{#1}\ifnum\CCbool=\CCtrue\CCinvert
+                \else\isLastAlphaX #1\end
+    \fi}
+\def\isLastAlphaX #1#2\end{%
+    \def\xbody{\isLastAlphaX #2\end}%
+    \isLetterX #1\end 
+    \def\qqparams{#2}\ifx\qqparams\empty\let\xnext=\relax
+    \else\isEmpty{#2}\ifnum\CCbool=\CCtrue \CCinvert
             \let\xnext=\relax
         \else
             \let\xnext=\xbody
@@ -580,6 +762,8 @@
 \newbox\returntypebox     % contains the return type
 \newbox\functionnamebox   % contains the function name
 \newbox\callnamebox       % contains the fct. name incl. variable for methods
+\newbox\trailingconstbox  % contains the trailing const after member functions
+                          % or is empty according to \CCtagRmTrailingConst
 
 
 % Formats a constructor call.
@@ -589,19 +773,24 @@
 %   o  The 4th parameter contains the optional const specifier for methods.
 % The declaration has to be terminated with "\end".
 \def\constructorcall #1#2(#3)#4\end {%
-                       \CCWfirst  =\CCWconstructorfirst
-                       \CCWsecond =\CCWconstructorsecond
-                       \CCinitWidths
-                       \setbox\returntypebox=\hbox{}%
-                       \setbox\callnamebox=\hbox{\classtemplatename
-                                 \ \ \CCfont\var}%
-                       \setbox\functioncallbox=\hbox{\classtemplatename
-                                 \ \ \CCfont\var
-                                 \isEmpty{#3}\ifnum\CCbool=\CCfalse
-                                     ( \CCprintParamList{#3)#4})%
-                                 \fi
-                                 ;}%
-                       \CClayoutThreeColumns{(}{#3)#4}{)}{#1}%
+                       % check for template function
+                       \isTemplate{#2}\ifnum\CCbool=\CCtrue
+                           \CCseparateTemplate{\CCtemplateLine}{%
+                               \constructorcall{#1}}#2(#3)#4\end
+                       \else
+                         \CCWfirst  =\CCWconstructorfirst
+                         \CCWsecond =\CCWconstructorsecond
+                         \CCinitWidths
+                         \setbox\callnamebox=\hbox{%
+                             \classtemplatename\ \ \CCfont\var}%
+                         \setbox\functioncallbox=\hbox{\unhcopy\callnamebox
+                                   \isEmpty{#3}\ifnum\CCbool=\CCfalse
+                                       ( \CCprintParamList{#3)#4})%
+                                   \fi
+                                   ;}%
+                         \setbox\returntypebox=\hbox{}%
+                         \CClayoutThreeColumns{(}{#3)#4}{)}{#1}%
+                       \fi
                      }
 
 % Formats a method or a function call.
@@ -624,7 +813,13 @@
                            declaration has to end with a ";". 
                            Go ahead, I've inserted one}%
                        \fi
+                       % check for template function
+                       \isTemplate{#3 #4}\ifnum\CCbool=\CCtrue
+                           \CCseparateTemplate{\CCtemplateLine}{%
+                               \functioncall{#1}{#2}}#3 #4(#5)#6;#7\end
+                       \else
                        \def\CCextendedFormat{\ }% Switches ext. format OFF.
+                       \CCseparateTrailingConst #6)\end
                        \isOperator{#3 #4(#5)#6}\ifnum\CCbool=\CCtrue
                            \isConversionOperator{#3 #4(#5)#6}
                            \ifnum\CCbool=\CCtrue
@@ -647,12 +842,14 @@
                                \unhcopy\functionnamebox(% 
                                \isEmpty{#5}\ifnum\CCbool=\CCfalse
                                    \ \CCprintParamList{#5)#6}%
-                               \fi)}}
+                               \fi)\unhcopy\trailingconstbox}}
                        \fi
                        \setbox\callnamebox=\hbox{{\CCfont
                            \ifnum#1=0 \var.\fi
                            \unhbox\functionnamebox}}%
-                       \CClayoutThreeColumns{(}{#5)#6}{)}{#2}%
+                       \CClayoutThreeColumns{(}{#5)#6}{)\unhbox
+                           \trailingconstbox}{#2}%
+                       \fi % from \isTemplate
                      }
 
 \def\CCextendedFormat{\ }% Default: Extended Format switched OFF.
@@ -778,7 +975,7 @@
                            \hfill
                            \isEmpty{#4}\ifnum\CCbool=\CCfalse
                                \nopagebreak\CCmiddleskip
-                               \parbox[t]{\CCWcomment}{\sloppy #4}\hfill
+                               \parbox[t]{\CCWcomment}{\sloppy #4}%
                                \CCbottombigskip
                            \else
                                \CCbottomskip
@@ -791,6 +988,16 @@
                       \fi\fi
                      }
 
+
+
+% \CCtemplateLine: extends the \CClayoutThreeColumns with an additional
+% line above the three columns that contains the template declaration
+% for functions or methods (if any)
+% 
+%   #1   the template declaration, delimited with \end
+\def\CCtemplateLine #1\end{%
+    \CCprintTokens #1\end \\
+}
 
 
 % Set the two boxes, returntype and functionname, for an operator declaration.
@@ -850,6 +1057,28 @@
                            \fi
                        \fi}
 
+
+% Set the \trailingconstbox appropriately to \CCtagRmTrailingConst.
+% If #2 is empty we have found the trailing part in #1,
+% else apply this recursivly.
+\def\CCseparateTrailingConst #1)#2\end{%
+    \ifnum\CCtagRmTrailingConst=\CCtrue
+        \setbox\trailingconstbox=\hbox{}%
+    \else
+        \isEmpty{#1}\ifnum\CCbool=\CCtrue
+            \setbox\trailingconstbox=\hbox{}%
+        \else
+            \def\xparams{#2}\ifx\xparams\empty
+                \setbox\trailingconstbox=\hbox{{ % here is one space !
+                    \CCfont\CCprintTokens #1\end}}%
+            \else
+                \CCseparateFunctionXX #2\end
+            \fi
+        \fi
+    \fi
+}
+
+
 % +--------------------------------------------------------------------------
 % | Formatting of simple C++ code:
 % |
@@ -872,18 +1101,34 @@
 
 % Print a single C++ token (without spaces inbetween). Skip leading spaces.
 % The token has to be delimited by "\end".
-\def\CCprintSingleToken #1#2;{%CCtrue
+\def\CCprintSingleTokenSemi #1;{%
+    \CCprintSingleToken #1\end
+}
+\def\CCprintSingleToken #1\end{%
+    \ifnum\CCtagReplacePrefix=\CCtrue
+        \CCreplacePrefix{#1}{\CCprintSingleTokenX}%
+    \else\CCprintSingleTokenX #1\end
+    \fi
+}
+
+\def\CCprintSingleTokenX #1#2\end{%CCtrue
                    \CCprintChar #1%
-                   \def\xbody{\CCprintSingleToken #2;}%
+                   \def\xbody{\CCprintSingleTokenX #2\end}%
                    \isEmpty{#2}\ifnum\CCbool=\CCtrue \let\xnext=\relax
                    \else\let\xnext=\xbody\fi
                    \xnext}
 
 % Print C++ tokens (separated with spaces). Skip leading spaces.
 % The tokens have to be delimited by "\end".
-\def\CCprintTokens #1#2\end{%
+\def\CCprintTokens #1\end{%
+    \ifnum\CCtagReplacePrefix=\CCtrue
+        \CCreplacePrefix{#1}{\CCprintTokensX}%
+    \else\CCprintTokensX #1\end
+    \fi
+}
+\def\CCprintTokensX #1#2\end{%
                    \CCprintChar #1%
-                   \def\xbody{\CCprintTokens #2\end}%
+                   \def\xbody{\CCprintTokensX #2\end}%
                    \isEmpty{#2}\ifnum\CCbool=\CCtrue
                        \let\xnext=\relax
                    \else
@@ -891,6 +1136,83 @@
                        \let\xnext=\xbody
                    \fi
                    \xnext}
+
+
+% +--------------------------------------------------------------------------
+% | Replacement of Prefixes
+% | 
+% | \CCsrcPrefix     contains the old prefix
+% | \CCtargetPrefix  contains the new prefix
+% | 
+% | \CCreplacePrefix #1#2  replaces all prefixes in #1 and applies #2 to
+% |                        the partial results that have to be terminated
+% |                        by \end.
+% +--------------------------------------------------------------------------
+\gdef\CCsrcPrefix{CGAL}
+\gdef\CCtargetPrefix{CGAL}
+
+\def\CCreplacePrefix #1#2{%
+    \edef\CCpair{{\CCsrcPrefix}{\CCtargetPrefix}}%
+    \expandafter\CCreplacePrefixX\CCpair{#1}{#2}%
+}
+
+% Does the actual work:  #1 is the old prefix
+%                        #2 is the new prefix
+%                        #3 the text to process
+%                        #4 the macro to be applied to the partial results
+\def\CCreplacePrefixX #1#2#3#4{%
+    \def\repminusone ##1##2\end{%
+        \isEmpty{##2}\ifnum\CCbool=\CCfalse
+            \rep ##2\end
+        \fi
+    }%
+    % local macro to do the parsing: ##1 is the text before the old prefix
+    %                                ##2 is the text after the old prefix
+    \def\rep ##1#1##2\end{% set up a recursive loop
+           \def\repbody{\rep ##2\end}%
+           \isEmpty{##2}\ifnum\CCbool=\CCtrue
+               \isEmpty{##1}\ifnum\CCbool=\CCfalse
+                   #4##1\end
+               \fi
+               \let\repnext=\relax
+           \else
+               % figure out whether it is a real prefix
+               \isPrefixFollowChar{##2}\ifnum\CCbool=\CCtrue
+                   \isLastAlpha{##1}\CCinvert
+               \else\if
+               \fi\fi
+               \ifnum\CCbool=\CCtrue  % it is a real prefix
+                   \isUnderscore{##2}\ifnum\CCbool=\CCtrue
+                       \isEmpty{#2}\ifnum\CCbool=\CCtrue
+                           \def\repbody{\repminusone ##2\end}%
+                       \fi
+                       \isEmpty{##1#2}\ifnum\CCbool=\CCfalse
+                           #4##1#2\end
+                       \fi
+                   \else
+                       \ifnum\CCtagReplaceInclude=\CCtrue
+                           \isEmpty{#2}\ifnum\CCbool=\CCtrue
+                               \def\repbody{\repminusone ##2\end}%
+                           \fi
+                           \isEmpty{##1#2}\ifnum\CCbool=\CCfalse
+                               #4##1#2\end
+                           \fi
+                       \else
+                           #4##1#1\end
+                       \fi
+                   \fi
+               \else
+                   \isEmpty{##1#1}\ifnum\CCbool=\CCfalse
+                       #4##1#1\end
+                   \fi
+               \fi
+               \let\repnext=\repbody
+           \fi
+           \repnext
+    }%
+    % call the above definition with at least one old prefix
+    \rep #3#1\end
+}
 
 % +--------------------------------------------------------------------------
 % | Formatting of operator declarations:
@@ -1095,10 +1417,60 @@
 
 
 % +--------------------------------------------------------------------------
+% | Template declaration separation
+% |
+% | The input starts with a template declaration. This and including
+% | its parameter list will be separated from the rest of the declaration. 
+% | The macro in argument #1 will be applied to them, delimited with \end. The 
+% | rest will be handed over to the command in argument #2, also delimited
+% | with \end.
+% +--------------------------------------------------------------------------
+%   #1  macro to be applied to the template declaration
+%   #2  macro to be applied to the rest of the declaration
+%   #3  should be empty
+%   #4  the declaration, delimited by \end.
+
+\def\CCseparateTemplate #1#2#3template#4\end{%
+        \nestinglevel=0
+        \hasLeadingSpace{#4}\ifnum\CCbool=\CCtrue
+            \CCseparateTemplateX{#1}{#2}{template }#4\end
+        \else
+            \CCseparateTemplateX{#1}{#2}{template}#4\end
+        \fi}
+
+%   #1  macro to be applied to the template declaration
+%   #2  macro to be applied to the rest of the declaration
+%   #3  accumulator for the template declaration
+%   #4  first character of declaration
+%   #5  rest of declaration, delimited by \end.
+\def\CCseparateTemplateX #1#2#3#4#5\end{%
+                   \if<#4\advance\nestinglevel by1 \fi
+                   \if(#4\advance\nestinglevel by1 \fi
+                   \if)#4\advance\nestinglevel by-1 \fi
+                   \if>#4\advance\nestinglevel by-1 \fi
+                   \ifnum\nestinglevel<1
+                       \ifnum\nestinglevel<0
+                           \errmessage{Unbalanced angles detected in
+                           template parameters of template
+                           declaration. I'll try.}%
+                       \fi
+                       #1#3#4\end #2#5\end
+                   \fi
+                   \hasLeadingSpace{#5}\ifnum\CCbool=\CCtrue
+                       \def\xxbody{\CCseparateTemplateX{#1}{#2}{#3#4 }#5\end}%
+                   \else
+                       \def\xxbody{\CCseparateTemplateX{#1}{#2}{#3#4}#5\end}%
+                   \fi
+                   \ifnum\nestinglevel<1 \let\xxnext=\relax
+                   \else\let\xxnext=\xxbody\fi
+                   \xxnext}
+
+
+% +--------------------------------------------------------------------------
 % | Parameter list parsing:
 % |
 % | Parameter lists are commata separated parameters. Template
-% | instantiation nesting is considered. Parantheses nesting 
+% | instantiation nesting is considered. Parentheses nesting 
 % | from default initializers are also considered.
 % +--------------------------------------------------------------------------
 
@@ -1261,6 +1633,9 @@
 % The parameter has to be delimited with "<>\end".
 % Ignore leading spaces.
 \def\CCprintOwnClassParameter #1#2<#3#4\end{%
+    \ifnum\CCtagRmEigenClassName=\CCfalse
+        \CCprintOwnClassXQX #1#2<#3#4\end%
+    \else
         \ifx\pureparameters\empty
             \if>#3%
                 \CCprintOwnClassX  #1#2 \end% no template case
@@ -1271,7 +1646,9 @@
             \CCprintOwnClassX  #1#2 \end% no template case
         \else
             \CCprintOwnClassXX{#1#2}<#3#4\end% template case ?
-        \fi\fi}
+        \fi\fi
+    \fi
+}
 \def\CCprintOwnClassXQX #1#2<>\end{% strip the unneccessary <> from the end
         \CCprintTokens #1#2\end}
 \def\CCprintOwnClassX #1 #2\end{% check for \classname
@@ -1327,28 +1704,55 @@
 % Print a C++ function or method parameter. Strips a matching
 % "const ...&" pair.
 % The parameter has to be delimited with "const.&.\end".
-\def\CCprintParameter #1const#2#3&#4#5\end{%
-    \if.#2\CCprintOwnClassParameter #1<>\end%
+\def\CCprintParameter #1const#2&#3\end{%
+    \ifnum\CCtagRmConstRefPair=\CCfalse
+        \CCprintParameterXQ #1const#2&#3\end%
     \else
-        \if&#2\CCprintParameter #1#3&#4#5\end%
+        \if.#2\isEmpty{#1}\ifnum\CCbool=\CCfalse 
+            \CCprintOwnClassParameter #1<>\end%
+            \fi
         \else
-            \if.#4\CCprintParameterXQ #1const #2#3&#4#5\end%
-            \else \CCprintParameter #1#2#3 #4#5\end%
+            \if&#2\CCprintParameter #1&#3\end%
+            \else
+                \if.#3\CCprintParameterXQ #1const#2&#3\end%
+                \else\hasLeadingSpace{#2}\ifnum\CCbool=\CCfalse
+                        \isLetter{#2}\CCinvert
+                    \fi
+                    \ifnum\CCbool=\CCtrue
+                        \CCprintParameter #1#2 #3\end%
+                    \else
+                        \CCprintParameterXQ #1const#2&#3\end%
+                    \fi
+                \fi
             \fi
         \fi
     \fi}
+
 \def\CCprintParameterXQ #1const.&.\end{\CCprintOwnClassParameter #1<>\end}
 
 % Print a C++ function or method return type. Strips a matching
 % "const ...&" pair.
 % The parameter has to be delimited with "const.&.\end".
-\def\CCprintReturnType #1const#2#3&#4#5\end{%
-    \if.#2\CCprintTokens #1\end%
+\def\CCprintReturnType #1const#2&#3\end{%
+    \ifnum\CCtagRmConstRefPair=\CCfalse
+        \CCprintReturnTypeXQ #1const#2&#3\end%
     \else
-        \if&#2\CCprintReturnType #1#3&#4#5\end%
+        \if.#2\isEmpty{#1}\ifnum\CCbool=\CCfalse 
+            \CCprintTokens #1\end%
+            \fi
         \else
-            \if.#4\CCprintReturnTypeXQ #1const #2#3&#4#5\end%
-            \else \CCprintReturnType #1#2#3 #4#5\end%
+            \if&#2\CCprintReturnType #1&#3\end%
+            \else
+                \if.#3\CCprintReturnTypeXQ #1const#2&#3\end%
+                \else\hasLeadingSpace{#2}\ifnum\CCbool=\CCfalse
+                        \isLetter{#2}\CCinvert
+                    \fi
+                    \ifnum\CCbool=\CCtrue
+                        \CCprintReturnType #1#2 #3\end%
+                    \else 
+                        \CCprintReturnTypeXQ #1const#2&#3\end%
+                    \fi
+                \fi
             \fi
         \fi
     \fi}
