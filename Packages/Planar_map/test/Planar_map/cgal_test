@@ -3,7 +3,7 @@ ERRORFILE=error.txt
 #CMP=diff
 CMP='diff -w'
 #fix for i686_CYGWINNT-5.0-1.1.4-0.26-3-2_CL.EXE-12.00.8804
-CAR_TEST=true
+CAR_TEST=false
 HOM_TEST=true
 GMP_TEST=false
 LEDA_RATIONAL_CAR_TEST=true
