@@ -237,7 +237,7 @@ public:
 
     sweep_curves_to_planar_map(curves.begin(), curves.end(), pm_change_notf, result);
 
-    pm_change_notf->update_all_faces(result, a1, a2);
+    pm_change_notf->update_all_faces(result);
   }
   
 private:
