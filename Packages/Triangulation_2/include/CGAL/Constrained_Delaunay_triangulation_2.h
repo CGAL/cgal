@@ -1,3 +1,27 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Constrained_Delaunay_triangulation_2.h
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+
+// author(s)     : Mariette Yvinec, Jean Daniel Boissonnat
+//
+// coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 
@@ -75,7 +99,9 @@ protected:
 
 public:
   // MESHING 
-  double twice_area_of_triangle(const Point &p, const Point &q, const Point &r);
+  double twice_area_of_triangle(const Point &p, 
+				const Point &q, 
+				const Point &r);
   double norm(const Point &p, const Point &q);
   double aspect_ratio(const Point &p, const Point &q, const Point &r);
   double size(const Point &p, const Point &q, const Point &r);
@@ -111,9 +137,8 @@ is_flipable(Face_handle f, int i) const
   Face_handle ni = f->neighbor(i); 
   if (is_infinite(f) || is_infinite(ni)) return false; 
   if (f->is_constrained(i)) return false;
-//   return (!(ON_POSITIVE_SIDE != 
-// 	    side_of_oriented_circle(ni, f->vertex(i)->point()) ));
-  return (side_of_oriented_circle(ni, f->vertex(i)->point()) == ON_POSITIVE_SIDE);
+  return (side_of_oriented_circle(ni, f->vertex(i)->point()) 
+                                        == ON_POSITIVE_SIDE);
 }
 
 template < class Gt, class Tds >
@@ -132,14 +157,17 @@ flip(Face_handle& f, int i)
   Face_handle ngj=g->neighbor(ccw(ig));
   f->set_constraint(ccw(i),false);
   g->set_constraint(cw(ig),false);
-  if (nfi->is_constrained(f->mirror_index(i))) f->set_constraint(i,true);
+  if (nfi->is_constrained(f->mirror_index(i))) 
+           f->set_constraint(i,true);
   else     f->set_constraint(i,false);
  
-  if (nfj->is_constrained(f->mirror_index(cw(i)))) f->set_constraint(cw(i),true);
+  if (nfj->is_constrained(f->mirror_index(cw(i)))) 
+           f->set_constraint(cw(i),true);
   else     f->set_constraint(cw(i),false);
  
-  if (ngi->is_constrained(g->mirror_index(ig)))  g->set_constraint(ig,true);
-   else     g->set_constraint(ig,false);
+  if (ngi->is_constrained(g->mirror_index(ig)))  
+           g->set_constraint(ig,true);
+  else     g->set_constraint(ig,false);
 
   if (ngj->is_constrained(g->mirror_index(ccw(ig)))) 
        g->set_constraint(ccw(ig),true);

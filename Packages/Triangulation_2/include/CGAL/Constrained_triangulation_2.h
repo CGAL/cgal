@@ -16,7 +16,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 
-// author(s)     : Mariette Yvinec
+// author(s)     : Mariette Yvinec, Jean Daniel Boissonnat
 //
 // coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
 //
@@ -87,7 +87,9 @@ public:
   }
 
   // INSERTION
-  Vertex_handle insert_in_constrained_edge(const Point& a, Face_handle f, int i);
+  Vertex_handle insert_in_constrained_edge(const Point& a, 
+					   Face_handle f, 
+					   int i);
   Vertex_handle insert(Point a);
   void insert(Point a, Point b);
   void insert(const Vertex_handle & va, const Vertex_handle & vb);
@@ -99,7 +101,9 @@ public:
   void remove(Vertex_handle  v);
   void remove_constraint(Face_handle f, int i);
 
-  void find_conflicts(Vertex_handle va, Vertex_handle & vb, List_edges & list_ab, 
+  void find_conflicts(Vertex_handle va, 
+		      Vertex_handle & vb, 
+		      List_edges & list_ab, 
 		      List_edges & list_ba);
   void triangulate(List_edges & list_edges, List_faces & faces_to_be_removed); 
   void triangulate(List_edges & list_edges, List_faces &
@@ -376,7 +380,8 @@ insert(const Vertex_handle & va, const Vertex_handle & vb,
   // fr is the face incident to edge ab and to the right  of ab
   // edge ab=(fr,i)
   // the edges that are created are put  in list new_edges
-  // the algorithm runs in time proportionnal to the number of removed triangles
+  // the algorithm runs in time proportionnal to the number 
+  // of removed triangles
 {
   Vertex_handle vaa=va, vbb;
   Face_handle fl;
@@ -495,10 +500,11 @@ void
 Constrained_triangulation_2<Gt,Tds>::
 find_conflicts(Vertex_handle va, Vertex_handle & vb, 
 	       List_edges & list_ab, List_edges & list_ba)
-  // finds all triangles intersected by ab
-  // if segment ab contains a vertex c, c becomes the new vertex vb and only triangles
-  // intersected by ac are reported
-  // returns the boundary B of the union of those triangles oriented cw
+  // finds all triangles intersected by ab.
+  // If segment ab contains a vertex c, 
+  // c becomes the new vertex vb and 
+  // only triangles intersected by ac are reported.
+  // Returns the boundary B of the union of those triangles oriented cw
   // B is represented by two lists of edges list_ab and list_ba 
   // list_ab consists of the edges from a to b (i.e. on the left of a->b)
   // list_ba    "         "        from b to a (i.e. on the right of a->b)
