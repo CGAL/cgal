@@ -1065,10 +1065,10 @@ Largest_empty_iso_rectangle_2<T>::init(const Point_2& bl, const Point_2& tr)
   tr_p = tr;
 
   // add extreme points
-  insert(Point_2(bl.x() - T(0.000001) * (tr.x() - bl.x()), bl.y() - T(0.000001) * (tr.y() - bl.y())), BOT_LEFT);
-  insert(Point_2(tr.x() + T(0.000001) * (tr.x() - bl.x()), bl.y() - T(0.000001) * (tr.y() - bl.y())), BOT_RIGHT);
-  insert(Point_2(bl.x() - T(0.000001) * (tr.x() - bl.x()), tr.y() + T(0.000001) * (tr.y() - bl.y())), TOP_LEFT);
-  insert(Point_2(tr.x() + T(0.000001) * (tr.x() - bl.x()), tr.y() + T(0.000001) * (tr.y() - bl.y())), TOP_RIGHT);
+  insert(Point_2(bl.x() - NT(0.000001) * (tr.x() - bl.x()), bl.y() - NT(0.000001) * (tr.y() - bl.y())), BOT_LEFT);
+  insert(Point_2(tr.x() + NT(0.000001) * (tr.x() - bl.x()), bl.y() - NT(0.000001) * (tr.y() - bl.y())), BOT_RIGHT);
+  insert(Point_2(bl.x() - NT(0.000001) * (tr.x() - bl.x()), tr.y() + NT(0.000001) * (tr.y() - bl.y())), TOP_LEFT);
+  insert(Point_2(tr.x() + NT(0.000001) * (tr.x() - bl.x()), tr.y() + NT(0.000001) * (tr.y() - bl.y())), TOP_RIGHT);
 }
 
 template<class T>
