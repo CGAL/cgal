@@ -486,7 +486,7 @@ public:
 		split_point = Pm_point_2( p.x() , p.y() );
       } 
       else
-      {
+      {	    
 	    active = false;
 		Pm_point_2 split_point2 = Pm_point_2( p.x() , p.y() );
         const Xcurve split_curve = 
@@ -508,7 +508,7 @@ public:
 			  xcurve, p_right, p1, p2))
 			  break;
 
-		}
+		}		
 		m_tab_traits.draw_xcurve(this, hei->curve());
 		if (hei != m_curves_arr.halfedges_end())
 		  m_tab_traits.split_edge(hei , p1 , this);
@@ -660,6 +660,11 @@ public:
 	  {
 	    setColor(Qt::green);
 	    m_tab_traits.draw_xcurve(this,seconed_curve->curve());
+	  }
+	  else
+	  {
+	    first_time_merge = true;
+	   	redraw();
 	  }
       return;
     }
@@ -1420,10 +1425,23 @@ public:
     Coord_type min_dist = 0;
 	  
 	Halfedge_iterator hei;
-	Pm_point_2 s = *(closest_curve->curve().begin());
-	Pm_point_2 t = *(closest_curve->curve().rbegin());
-	Vertex_iterator   vis = closest_curve->source();
-    Vertex_iterator   vit = closest_curve->target();
+	Pm_point_2 s;
+	Pm_point_2 t;
+    Vertex_iterator   vis;
+    Vertex_iterator   vit;
+
+	if (closest_curve->source()->point() == *(closest_curve->curve().begin()))
+	{
+	  vis = closest_curve->source();
+      vit = closest_curve->target();
+	}
+	else
+	{
+	  vit = closest_curve->source();
+      vis = closest_curve->target();
+	}
+	s = *(closest_curve->curve().begin());
+	t = *(closest_curve->curve().rbegin());
 
     for (hei = w->m_curves_arr.halfedges_begin();
           hei != w->m_curves_arr.halfedges_end(); ++hei) 
@@ -1438,25 +1456,16 @@ public:
 	  if (((s == s1 || s == t1) && vis->degree() != 2) ||
 		  ((t == s1 || t == t1) && vit->degree() != 2))
 	  {
-	    //if ( t == s1 )
-	    //  std::cout << "t == s1" << std::endl;
-	    //if ( t == t1 )
-	    //  std::cout << "t == t1" << std::endl;
-	    //if ( s == s1 )
-	    //  std::cout << "s == s1" << std::endl;
-	    //if ( s == t1 )
-	    //  std::cout << "s == t1" << std::endl;
-	    //std::cout << "failed in degree != 2" << std::endl;
 		continue;      // vertex degree > 2
 	  }
       if ((s == s1 && ((t.x() < s.x() && t1.x() > s.x()) ||
 		               (t.x() > s.x() && t1.x() < s.x()))) ||
 	      (s == t1 && ((t.x() < s.x() && s1.x() > s.x()) ||
 		               (t.x() > s.x() && s1.x() < s.x()))) ||
-	      (t == s1 && ((t.x() < s.x() && t1.x() < s.x()) ||
-		               (t.x() > s.x() && t1.x() > s.x()))) ||
-	      (t == t1 && ((t.x() < s.x() && s1.x() < s.x()) ||
-		               (t.x() > s.x() && s1.x() > s.x()))))
+	      (t == s1 && ((t.x() < s.x() && t1.x() < t.x()) ||
+		               (t.x() > s.x() && t1.x() > t.x()))) ||
+	      (t == t1 && ((t.x() < s.x() && s1.x() < t.x()) ||
+		               (t.x() > s.x() && s1.x() > t.x()))))
 	  {
 	    Xcurve & xcurve = hei->curve();
         Coord_type dist = xcurve_point_distance( p, xcurve , w);
@@ -1478,33 +1487,35 @@ public:
 	{
 	  Xcurve & c = closest_curve->curve();
 	  Xcurve & c1 = seconed_curve->curve();
+
 	  Pm_point_2 s1 = *(seconed_curve->curve().begin());
 	  Pm_point_2 t1 = *(seconed_curve->curve().rbegin());
 	  std::vector<Pm_pol_point_2> temp_points;
-	  Curve_const_iterator cit,cit2;
-	
+	  Curve_const_iterator cit;
+	 
 	  if (t == s1 || t == t1)
 	  {
-		  for (cit = c.begin(); cit != c.end(); cit++)
-	          temp_points.push_back(*cit);
+        for (cit = c.begin(); cit != c.end(); cit++)
+	      temp_points.push_back(*cit);
 	  }
 	  else
 	  {
-		  for (cit = c.rbegin(); cit != c.rend(); cit++)
-	          temp_points.push_back(*cit);
+		for (cit = c.rbegin(); cit != c.rend(); cit++)
+		  temp_points.push_back(*cit);
+		  
 	  }
 
 	  if (s1 == s || s1 == t)
 	  {
-		  cit = c1.begin(), cit++;
-		  for (; cit != c1.end(); cit++)
-	          temp_points.push_back(*cit);
+		cit = c1.begin(), cit++;
+		for (; cit != c1.end(); cit++)
+		  temp_points.push_back(*cit);		  
 	  }
 	  else
 	  {
-		  cit = c1.rbegin(), cit++;
-		  for (; cit != c1.rend(); cit++)
-	          temp_points.push_back(*cit);
+		cit = c1.rbegin(), cit++;
+		for (; cit != c1.rend(); cit++)
+		  temp_points.push_back(*cit);		
 	  }
 
 	  Base_curve *base = new Base_curve(temp_points.begin(), temp_points.end());
@@ -1842,7 +1853,10 @@ public:
                                  /*     /    \       */
 		  a = abs(x0 - p.x());   /*           x1,y1  */
 		  b = ((y - y1)/(x - x1))*a;
-		  
+		 
+		  if (p.x() == x0 || (p.x() < x && x < x1 ) || (p.x() > x && x > x1 )
+			           || (p.x() < x1 && x1 < x ) || (p.x() > x1 && x1 > x ))
+		    return; // p is out of rectangle bounds
 		  r = b*b;
 		  s = -1*a*a;
 		  t = 0;
@@ -1856,21 +1870,19 @@ public:
 		  y2 = (-1*v + root)/(2*s);
 		  y3 = (-1*v - root)/(2*s);
 
-		  cv = new Pm_base_conic_2(r, s, t, u, v, ww, Pm_conic_point_2(x1,y3), 
-			Pm_conic_point_2(x1,y2));	
-
-		  // now we create and insert the seconed half of the hyperbula
-		  root = CGAL::sqrt(v*v - 4*s*(ww + u*x + r*x*x));
-		  y2 = (-1*v + root)/(2*s);
-		  y3 = (-1*v - root)/(2*s);
-		  Pm_base_conic_2 *cv2 = 
-			  new Pm_base_conic_2(r, s, t, u, v, ww, Pm_conic_point_2(x,y2), 
-			                                         Pm_conic_point_2(x,y3));
-		  Curve_conic_data cd2;
-		  cd2.m_type = Curve_conic_data::LEAF;
-		  cd2.m_index = w->index;
-		  cd2.m_ptr.m_curve = cv2;
-		  w->m_curves_arr.insert(Pm_conic_2( *cv2 , cd2));
+		  if (x1 > x && p.x() > x0)
+		    cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
+			         Pm_conic_point_2(x1,y3), Pm_conic_point_2(x1,y2));	
+		  else if (x1 < x && p.x() < x0)
+		    cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
+			         Pm_conic_point_2(x1,y2), Pm_conic_point_2(x1,y3));	
+		  else if (x1 < x && p.x() > x0)
+		    cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
+			         Pm_conic_point_2(x,y3), Pm_conic_point_2(x,y2));	
+		  else if (x1 > x && p.x() < x0)
+		    cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
+			         Pm_conic_point_2(x,y2), Pm_conic_point_2(x,y3));	
+		
 		}		
 		break;	
 	  }
@@ -1895,45 +1907,49 @@ public:
   /*! draw_last_segment - call from mouse move event */
   void draw_last_segment( Qt_widget_demo_tab<Conic_tab_traits> * w)
   {
-    switch (w->conic_type)
-	{
-	  case CIRCLE:
-	  *w << Coord_circle(m_p1,
-		  pow(m_p1.x() - m_p2.x(), 2) + pow(m_p1.y() - m_p2.y(),2));
-	  break;
-	  case SEGMENT:
+    if (w->mode == SPLIT)
 	  *w << Coord_segment( m_p1 , m_p2 );
-	  break;
-	  case ELLIPSE:
+	else
+	{
+      switch (w->conic_type)
 	  {
- 		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
-		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
-		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
-		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
-		break;
-	  }		
-	  case PARABOLA:
-	  {
- 		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
-		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
-		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
-		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
-		break;
-	  }		
-	  case HYPERBOLA:
-	  {
-	    if (first_time_hyperbula)
-		{
+	    case CIRCLE:
+	    *w << Coord_circle(m_p1,
+		    pow(m_p1.x() - m_p2.x(), 2) + pow(m_p1.y() - m_p2.y(),2));
+	    break;
+	    case SEGMENT:
+    	  *w << Coord_segment( m_p1 , m_p2 );
+	    break;
+        case ELLIPSE:
+	    {
  		  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
 		  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
 		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
 		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
-		  *w << Coord_segment( m_p1 , m_p2 );
-		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , Coord_point(m_p1.x(),m_p2.y()) );
-		}
-		break;
-	  }		
-	  
+		  break;
+	    }		
+	    case PARABOLA:
+	    {
+ 	  	  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
+		  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
+		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
+		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+		  break;
+	    }		
+	    case HYPERBOLA:
+	    {
+	      if (first_time_hyperbula)
+	 	  {
+ 		    *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
+		    *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
+		    *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
+		    *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+		    *w << Coord_segment( m_p1 , m_p2 );
+		    *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , Coord_point(m_p1.x(),m_p2.y()) );
+		  }
+		  break;
+	    }		
+	  }
 	}
   }
   
@@ -2140,20 +2156,142 @@ public:
 	return c1;
   }
   
-  const Xcurve curve_make_x_monotone( Xcurve &c1 , Xcurve &c2 ,
-	                        Qt_widget_demo_tab<Conic_tab_traits> * w)
-  {	
-	return c1;
-  }
-
    void find_close_curve(Halfedge_iterator &closest_curve ,Halfedge_iterator 
 	&seconed_curve ,Coord_point &p ,Qt_widget_demo_tab<Conic_tab_traits> *w,
 	bool move_event)
-  {}
+  {
+    bool is_first = true;
+    Coord_type min_dist = 0;
+	const Xcurve first = closest_curve->curve();
+	Halfedge_iterator hei;
+	Pm_point_2 s = closest_curve->curve().source();
+	Pm_point_2 t = closest_curve->curve().target();
+	Vertex_iterator   vis;
+	Vertex_iterator   vit;
+	if ( closest_curve->curve().source() == closest_curve->source()->point())
+	{
+	  vis = closest_curve->source();
+	  vit = closest_curve->target();
+	}
+	else
+	{
+	  vit = closest_curve->source();
+	  vis = closest_curve->target();
+	}
+    for (hei = w->m_curves_arr.halfedges_begin();
+          hei != w->m_curves_arr.halfedges_end(); ++hei) 
+    {
+	  if (first.has_same_base_conic(hei->curve()))
+	  { 		  
+	    Pm_point_2 s1 = hei->curve().source();
+	    Pm_point_2 t1 = hei->curve().target();
+	    if ((s1 == s && t1 == t) || (s1 == t && t1 == s))
+		  continue;      // same curve as closest_curve
+	    if (((s == s1 || s == t1) && vis->degree() != 2) ||
+		    ((t == s1 || t == t1) && vit->degree() != 2))
+		  continue;      // vertex degree > 2
+	 	if ((s == s1 && ((t.x() < s.x() && t1.x() > s.x()) ||
+		               (t.x() > s.x() && t1.x() < s.x()))) ||
+	      (s == t1 && ((t.x() < s.x() && s1.x() > s.x()) ||
+		               (t.x() > s.x() && s1.x() < s.x()))) ||
+	      (t == s1 && ((t.x() < s.x() && t1.x() < t.x()) ||
+		               (t.x() > s.x() && t1.x() > t.x()))) ||
+	      (t == t1 && ((t.x() < s.x() && s1.x() < t.x()) ||
+		               (t.x() > s.x() && s1.x() > t.x()))))
+	    { // the connected curve will be xmonnotone	  
+          Xcurve & xcurve = hei->curve();
+          Coord_type dist = xcurve_point_distance( p, xcurve , w);
+          if (is_first || dist < min_dist)
+          {
+	        min_dist = dist;
+            seconed_curve = hei;
+            is_first = false;
+           }    
+		}
+      }
+	}
+	if (is_first) // didn't find any "good" curve
+	{
+	  return;
+	}
+	else if (!move_event)	  
+	{	  
+	  /*Pm_point_2 s1 = seconed_curve->curve().source();
+	  Pm_point_2 t1 = seconed_curve->curve().target();
+	  Base_curve *base;
 
+	  if ( t == s1 )
+	    base = new Base_curve(first.conic().r(), first.conic().s(), 
+		first.conic().t(), first.conic().u(), first.conic().v(), 
+		first.conic().w(), s, t1);
+	  else if ( t == t1 )
+	    base = new Base_curve(first.conic().r(), first.conic().s(), 
+		first.conic().t(), first.conic().u(), first.conic().v(), 
+		first.conic().w(), s, s1);
+	  else if ( s == s1 )
+	    base = new Base_curve(first.conic().r(), first.conic().s(), 
+		first.conic().t(), first.conic().u(), first.conic().v(), 
+		first.conic().w(), t1, t);
+	  else if ( s == t1 )
+	  	base = new Base_curve(first.conic().r(), first.conic().s(), 
+		first.conic().t(), first.conic().u(), first.conic().v(), 
+		first.conic().w(), s1, t);
+
+
+      Curve_conic_data cd;
+      cd.m_type = Curve_conic_data::LEAF;
+      cd.m_index = w->index;
+      cd.m_ptr.m_curve = base;
+
+	  w->m_curves_arr.remove_edge(closest_curve);
+	  w->m_curves_arr.remove_edge(seconed_curve);
+	  w->m_curves_arr.insert(Pm_conic_2( *base , cd));*/
+	  Xcurve curve;
+	  const Xcurve seconed = seconed_curve->curve();
+
+	  m_traits.curve_merge(curve , first , seconed );
+	
+	  Curve_conic_data cd1;
+      cd1.m_type = Curve_conic_data::LEAF;
+      cd1.m_index = first.get_data().m_index;
+      cd1.m_ptr.m_curve = first.get_data().m_ptr.m_curve;
+	
+	  w->m_curves_arr.remove_edge(closest_curve);
+	  w->m_curves_arr.remove_edge(seconed_curve);
+	  w->m_curves_arr.insert(Pm_conic_2( curve , cd1));	
+	}
+  }
+
+  /*!
+   */
   void split_edge(Halfedge_iterator &hei ,Pm_point_2 &p ,
 	  Qt_widget_demo_tab<Conic_tab_traits> *w)
-  {}
+  {    
+    
+	const Xcurve split_curve = hei->curve();
+	Xcurve sbc1;
+	Xcurve sbc2;
+
+	m_traits.curve_split(split_curve , sbc1 , sbc2 , p);
+	
+	Curve_conic_data cd1;
+    cd1.m_type = Curve_conic_data::LEAF;
+    cd1.m_index = hei->curve().get_data().m_index;
+    cd1.m_ptr.m_curve = hei->curve().get_data().m_ptr.m_curve;
+
+	Pm_conic_2   sub_curve1 (sbc1, cd1);
+
+	Curve_conic_data cd2;
+    cd2.m_type = Curve_conic_data::LEAF;
+    cd2.m_index = hei->curve().get_data().m_index;
+    cd2.m_ptr.m_curve =hei->curve().get_data().m_ptr.m_curve;
+
+	Pm_conic_2   sub_curve2 (sbc2, cd2);
+ 
+	w->m_curves_arr.remove_edge(hei);
+	w->m_curves_arr.insert(sub_curve1);
+	w->m_curves_arr.insert(sub_curve2);
+  }
 
   Traits m_traits;
   /*! temporary points of the created conic */

@@ -16,8 +16,6 @@ int main(int, char*)
 
 #else
 
-#include <CGAL/IO/pixmaps/zoom_out.xpm>
-#include <CGAL/IO/pixmaps/zoom_in.xpm>
 #include <CGAL/IO/pixmaps/hand.xpm>
 #include <CGAL/IO/pixmaps/movepoint.xpm>
 #include <CGAL/IO/pixmaps/point.xpm>
@@ -25,16 +23,22 @@ int main(int, char*)
 #include <CGAL/IO/pixmaps/arrow.xpm>
 #include <CGAL/IO/pixmaps/alpha_shape.xpm>
 #include "icons/polyline.xpm"
-#include "icons/insert.xpm"
-#include "icons/delete.xpm"
-#include "icons/grid.xpm"
 #include "icons/conic.xpm"
 #include "icons/ray_shooting2.xpm"
 #include "icons/draw.xpm"
-#include "icons/snap.xpm"
 #include "icons/conic_types.xpm"
-#include "icons/merge.xpm"
-#include "icons/split.xpm"
+
+#include "icons/demo_insert.xpm"
+#include "icons/demo_delete.xpm"
+#include "icons/demo_snapgrid.xpm"
+#include "icons/demo_rayshoot.xpm"
+#include "icons/demo_snapvertex.xpm"
+#include "icons/demo_merge.xpm"
+#include "icons/demo_split.xpm"
+#include "icons/demo_zoomout.xpm"
+#include "icons/demo_zoomin.xpm"
+#include "icons/demo_pointlocation.xpm"
+
 
 const QString my_title_string("Arrangement Demo with CGAL Qt_widget");
 
@@ -94,12 +98,12 @@ MyWindow::MyWindow(int w, int h)
   
   // Snap Mode Group
   
-  setSnapMode = new QAction("Snap Mode", QPixmap( (const char**)snap_xpm ),
+  setSnapMode = new QAction("Snap Mode", QPixmap( (const char**)snapvertex_xpm ),
                             "&Snap Mode", 0 , this, "Snap Mode" );
   setSnapMode->setToggleAction( TRUE );
   
   setGridSnapMode = new QAction("Grid Snap Mode", 
-                                QPixmap( (const char**)grid_xpm ),
+                                QPixmap( (const char**)snapgrid_xpm ),
                                 "&Grid Snap Mode", 0 , this, 
                                 "Grid Snap Mode" );
   setGridSnapMode->setToggleAction( TRUE );
@@ -108,7 +112,7 @@ MyWindow::MyWindow(int w, int h)
   QActionGroup *modeGroup = new QActionGroup( this ); // Connected later
   modeGroup->setExclusive( TRUE );
   
-  insertMode = new QAction("Insert", QPixmap( (const char**)draw_xpm ),
+  insertMode = new QAction("Insert", QPixmap( (const char**)insert_xpm ),
                            "&Insert", 0 , modeGroup, "Insert" );
   insertMode->setToggleAction( TRUE );
   
@@ -117,13 +121,13 @@ MyWindow::MyWindow(int w, int h)
   deleteMode->setToggleAction( TRUE );
   
   pointLocationMode = new QAction("PointLocation",
-                                  QPixmap( (const char**)point_xpm ),
+                                  QPixmap( (const char**)pointlocation_xpm ),
                                   "&Point Location", 0 , modeGroup,
                                   "Point Location" );
   pointLocationMode->setToggleAction( TRUE );
   
   rayShootingMode = new QAction("RayShooting",
-                                QPixmap( (const char**)ray_shooting_xpm ),
+                                QPixmap( (const char**)rayshoot_xpm ),
                                 "&Ray Shooting", 0 , modeGroup,
                                 "Ray Shooting" );
   rayShootingMode->setToggleAction( TRUE );
@@ -191,6 +195,9 @@ MyWindow::MyWindow(int w, int h)
   file->insertItem("&Open Segment File", this, SLOT(fileOpenSegment()));
   file->insertItem("&Open Polyline File", this, SLOT(fileOpenPolyline()));
   file->insertItem("&Open Conic File", this, SLOT(fileOpenConic()));
+  file->insertItem("&Open Segment Pm File", this, SLOT(fileOpenSegmentPm()));
+  file->insertItem("&Open Polyline Pm File", this, SLOT(fileOpenPolylinePm()));
+  //file->insertItem("&Open Conic Pm File", this, SLOT(fileOpenConicPm()));
   file->insertItem("&Save", this, SLOT(fileSave()));
   file->insertItem("&Save As", this, SLOT(fileSaveAs()));
   file->insertItem("&Save to ps", this, SLOT(fileSave_ps()));
@@ -862,6 +869,44 @@ void MyWindow::fileOpenSegment()
   }
 }// fileOpenSegment
 
+/*! open a segment file and add new tab */
+void MyWindow::fileOpenSegmentPm()
+{
+  Qt_widget_base_tab *w_demo_p = 
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  bool flag = (w_demo_p->traits_type == SEGMENT_TRAITS);
+  if( w_demo_p->empty ) // pm is empty
+  {
+    if (flag)
+	  fileOpenPm();
+	else
+	{
+	  updateTraitsType( setSegmentTraits );
+      fileOpenPm();
+	}
+  }
+  else
+  {
+    FileOpenOptionsForm
+         *form = new FileOpenOptionsForm(false);
+    if ( form->exec() ) 
+    {
+        int id = form->buttonGroup->id(form->buttonGroup->selected());
+		switch ( id ) 
+		{
+          case 0: // open file in a new tab
+            add_segment_tab();
+            fileOpenPm();      
+            break;
+          case 1: // open file in current tab (delete current Pm)
+            updateTraitsType( setSegmentTraits );
+            fileOpenPm();
+          break;          
+		}// switch
+	}// if
+  }
+}// fileOpenSegment
+
 /*! open a polyline file and add new tab */
 void MyWindow::fileOpenPolyline()
 {
@@ -902,6 +947,44 @@ void MyWindow::fileOpenPolyline()
 	}// if
   } 
 }// fileOpenPolyline
+
+/*! open a polyline file and add new tab */
+void MyWindow::fileOpenPolylinePm()
+{
+  Qt_widget_base_tab *w_demo_p = 
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  bool flag = (w_demo_p->traits_type == POLYLINE_TRAITS);
+  if( w_demo_p->empty ) // pm is empty
+  {
+    if (flag)
+	  fileOpenPm();
+	else
+	{
+	  updateTraitsType( setPolylineTraits );
+      fileOpenPm();
+	}
+  }
+  else
+  {
+    FileOpenOptionsForm
+         *form = new FileOpenOptionsForm(false);
+    if ( form->exec() ) 
+    {
+        int id = form->buttonGroup->id(form->buttonGroup->selected());
+		switch ( id ) 
+		{
+          case 0: // open file in a new tab
+            add_polyline_tab();
+            fileOpenPm();      
+            break;
+          case 1: // open file in current tab (delete current Pm)
+            updateTraitsType( setPolylineTraits );
+            fileOpenPm();
+          break;          
+		}// switch
+	}// if
+  }
+}// fileOpenPolylinePm
 
 /*! open a polyline file and add new tab */
 void MyWindow::fileOpenConic()
@@ -955,6 +1038,72 @@ void MyWindow::fileOpen( bool clear_flag )
     load( filename , clear_flag);
   else
     statusBar()->message( "File Open abandoned", 2000 );
+}
+
+/*! open a Pm file */
+void MyWindow::fileOpenPm()
+{  
+  QString filename =
+    QFileDialog::getOpenFileName(QString::null, 0, this,
+                                 "file open", "Demo -- File Open" );
+  if ( filename.isEmpty() )
+  {
+    statusBar()->message( "File Open abandoned", 2000 );
+	return;
+  }
+  std::ifstream inputFile(filename);
+  // Creates an ifstream object named inputFile
+  if (! inputFile.is_open()) // Always test file open
+  {
+    std::cout << "Error opening input file" << std::endl;
+    return;
+  }
+ 
+  Qt_widget_base_tab    *w_demo_p1 = 
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+
+  QCursor old = w_demo_p1->cursor();
+  w_demo_p1->setCursor(Qt::WaitCursor);
+
+  switch ( w_demo_p1->traits_type ) {
+   case SEGMENT_TRAITS:
+    {
+     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
+       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+       (myBar->currentPage());
+     w_demo_p->m_curves_arr.read(inputFile);
+     break;
+    }
+   case POLYLINE_TRAITS: // dosen't work !!
+    {
+     Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
+       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+       (myBar->currentPage());
+     w_demo_p->m_curves_arr.read(inputFile);     
+	 break;
+    }
+   case CONIC_TRAITS: // dosen't work !!
+    {
+  //   Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
+  //     static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+  //     (myBar->currentPage());
+	 //w_demo_p->m_curves_arr.read(inputFile);
+     break;
+    }
+  }  
+  
+  inputFile.close();
+  
+  w_demo_p1->set_window(w_demo_p1->bbox.xmin() , w_demo_p1->bbox.xmax() , 
+                     w_demo_p1->bbox.ymin() , w_demo_p1->bbox.ymax());
+  
+  inputFile.close();
+  w_demo_p1->setCursor(old);
+  something_changed();
+
+  setCaption( QString( "Planar Map -- %1" ).arg( m_filename ) );
+  statusBar()->message( QString( "Opened \'%1\'" ).arg( m_filename ), 2000 );
+
 }
 
 /*! open a polyline or conic file 
@@ -1388,7 +1537,6 @@ void MyWindow::fileSave()
 void MyWindow::fileSave_ps()
 {
 #if 0
-  CGAL::Postscript_file_stream ps_stream(m_width, m_height ,"pm.ps");
   
   Qt_widget_base_tab    *w_demo_p1 = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
@@ -1399,37 +1547,31 @@ void MyWindow::fileSave_ps()
      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
        (myBar->currentPage());
-     
-     //ps_stream.set_line_width(w_demo_p->m_line_width);
-     CGAL::Pm_drawer<Seg_arr, 
-       CGAL::Postscript_file_stream> drawer(ps_stream);
-     ps_stream << CGAL::BLUE;
-     drawer.draw_halfedges(w_demo_p->m_curves_arr.halfedges_begin(), 
-                           w_demo_p->m_curves_arr.halfedges_end());
-     ps_stream << CGAL::RED;
-     drawer.draw_vertices(w_demo_p->m_curves_arr.vertices_begin(), 
-                          w_demo_p->m_curves_arr.vertices_end());
+     // Print to Postscript file:
+     CGAL::Postscript_file_stream  LPF(m_width, m_height ,"pm.ps");
+     LPF.init(-3,3,-3);
+     LPF.set_line_width(1);
+     LPF << w_demo_p->m_curves_arr;
      break;
     }
    case POLYLINE_TRAITS:
     {
      //Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
-     static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
-       (myBar->currentPage());
+     //static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
+     //  (myBar->currentPage());
      //outFile << w_demo_p->m_curves_arr;
      break;
     }
    case CONIC_TRAITS:
     {
      //Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
-     static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
-       (myBar->currentPage());
+     //static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
+      // (myBar->currentPage());
      //outFile << w_demo_p->m_curves_arr;
      break;
     }
   }  
-  
-#endif 
+ #endif 
 }
 
 /*! print planar map */

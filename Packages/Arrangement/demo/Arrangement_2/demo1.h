@@ -41,6 +41,8 @@
 #include "cgal_types1.h"
 #include <CGAL/IO/Qt_widget_handtool.h>
 
+//#include <CGAL/IO/Pm_Postscript_file_stream.h>
+
 //////////////////////////////////////////////////////////////////////////////
 class Qt_layer;
 class Qt_widget_base_tab;
@@ -111,10 +113,16 @@ private slots:
 	void zoomout();
 	/*! open a file */
 	void fileOpen( bool clear_flag = false);
+	/*! open a Pm file */
+	void fileOpenPm();
 	/*! open a file and add a segment tab */
 	void fileOpenSegment();
+	/*! open a pm file and add a segment tab */
+	void fileOpenSegmentPm();
 	/*! open a file and add a polyline tab */
 	void fileOpenPolyline();
+	/*! open a pm file and add a Polyline tab */
+	void fileOpenPolylinePm();
 	/*! open a file and add a conic tab */
 	void fileOpenConic();
 	/*! overlay planar maps */
