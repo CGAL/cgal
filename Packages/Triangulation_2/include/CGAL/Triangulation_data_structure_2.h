@@ -1759,7 +1759,7 @@ reorient_faces()
       for(int ih = 0 ; ih < 3 ; ++ih){
 	Face_handle fn = fh->neighbor(ih);
 	if (oriented_set.find(fn) == oriented_set.end()){
-	  int in = fh->mirror_index(ih);
+	  int in = fn->index(fh);
 	  if (fn->vertex(cw(in)) != fh->vertex(ccw(ih))) fn->reorient();
 	  oriented_set.insert(fn);
 	  st.push(fn);
