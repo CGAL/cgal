@@ -51,6 +51,7 @@
 // copy construtor for point location.
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
+#include <CGAL/Pm_simple_point_location.h>
 
 // default bounding box for finite curves
 #include <CGAL/Pm_unbounding_box.h>
@@ -821,12 +822,15 @@ Planar_map_2(const Planar_map_2< Dcel, Traits >& pm )
   traits = new Traits_wrap();
   use_delete_traits = true;
 
-  if (Pm_naive_pointer tmp_pl = dynamic_cast<Pm_naive_pointer>(pm.pl) ){
+  if (dynamic_cast<Pm_naive_pointer>(pm.pl) ){
     //cout<<"Naive"<<std::endl;
     pl = new Pm_naive_point_location<Self>;
   }
-  else if (Pm_walk_along_line_point_location<Self>* tmp_pl = 
-           dynamic_cast<Pm_walk_along_line_point_location<Self>*>(pm.pl) ){
+  else if (dynamic_cast<Pm_simple_point_location<Self>*>(pm.pl) ){
+    pl = new Pm_simple_point_location<Self>;
+    //cout<<"Walk"<<std::endl;
+  }
+  else if (dynamic_cast<Pm_walk_along_line_point_location<Self>*>(pm.pl) ){
     pl = new Pm_walk_along_line_point_location<Self>;
     //cout<<"Walk"<<std::endl;
   }
