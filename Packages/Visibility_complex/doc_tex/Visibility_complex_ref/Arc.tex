@@ -1,0 +1,91 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arc.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{Arc}
+\label{pageVCArcRef}
+  
+% ------------------------------------------------------------------------------
+\ccDefinition
+
+The \ccRefName\ concept defines the minimal requirement for the
+\ccc{Arc_2} type of the \ccc{VisibilityComplexTraits} concept. It
+models an \emph{arc} (see the Introduction), i.e. a connected portion of a disk.
+
+The \ccRefName\ concept is introduced for efficiency reasons. When the disks
+have constant complexity, the implementation of \ccRefName\ is trivial. The
+\ccc{Arc} type is used as a base type for the concept VisibilityComplexEdge
+\ccIndexMainItem[c]{VisibilityComplexEdge}.
+% ------------------------------------------------------------------------------
+  
+% ------------------------------------------------------------------------------
+\ccTypes
+\ccThree{Disk_handle}{Disk_handle}{}
+\ccThreeToTwo
+
+\ccNestedType{Arc_handle}{handle to an arc. }
+\ccGlue
+\ccNestedType{Disk}{type of disks defining the arc. }
+\ccGlue
+\ccNestedType{Disk_handle}{handle to a disk.}
+\ccGlue
+\ccNestedType{Point_2}{the type of a point belonging to a \ccc{Disk}.}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccThree{Disk_handle}{ a.object(); }{}
+\ccThreeToTwo
+\ccCreation
+\ccCreationVariable{a}
+
+\ccConstructor{Arc();}{default constructor.}
+\ccGlue
+\ccConstructor{Arc(Disk_handle d);}
+{ Creates an arc representing the complete boundary of the disk \ccc{d}. }
+% ------------------------------------------------------------------------------
+
+\ccOperations
+
+\ccThree{Disk_handle}{ a.split (Arc_handle tmp, Point_2 p); }{}
+\ccTagFullDeclarations
+\ccMethod{Disk_handle object(); const}
+{returns a handle to the disk containing \ccVar\ .}
+\ccGlue
+\ccMethod{void set_object(Disk_handle d); }
+{sets \ccc{d} as the disk containing \ccVar\ .}
+\ccGlue
+\ccMethod{void split (Arc_handle tmp, Point_2 p);} 
+{splits the arc \ccVar\ at point \ccc{p}. In other words, the target (resp. source) 
+of \ccVar\ (resp. \ccc{tmp}) becomes \ccc{p} and the target of \ccc{tmp} becomes
+the previous target of \ccVar.}
+\ccGlue
+\ccMethod{void join (Arc_handle y);}
+{joins the two arcs \ccVar\ and \ccc{y}. That is, the target of \ccVar\ becomes
+the target of \ccc{y} and the arc \ccc{y} is destroyed.}
+
+% ------------------------------------------------------------------------------
+\ccHasModels
+\ccRefIdfierPage{CGAL::Arc_2<Disk>}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccSeeAlso
+\ccRefConceptPage{VisibilityComplexVertex}\\
+\ccRefConceptPage{VisibilityComplexTraits}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccTagDefaults
+\end{ccRefConcept}
+\ccRefPageEnd
+% +------------------------------------------------------------------------+

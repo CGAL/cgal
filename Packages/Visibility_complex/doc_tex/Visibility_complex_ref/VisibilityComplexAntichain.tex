@@ -1,0 +1,159 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: VisibilityComplexAntichain.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +----------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{VisibilityComplexAntichain}
+\label{pageVisibilityComplexAntichainRef}
+
+% +----------------------------------------------------------------------------+
+\ccDefinition
+  
+The concept of a \ccRefName\ defines the sweep structure used to sweep the
+visibility complex. It is a planar st-graph: a node corresponds to an edge of
+visibility complex and an edge corresponds to a face of the visibility complex.
+The antichain maintains a list of potential candidates which are ready to be
+swept. 
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccTypes
+\ccTwo{VisibilityComplexAntichain:: Vertex_iterator }{}
+
+\ccNestedType{Gt}{the geoemtric traits class. Model of a \ccc{VisibilityComplexTraits}. }
+\ccGlue
+\ccNestedType{Disk}{the disk type. Same as \ccc{VisibilityComplexTraits::Disk}. }
+\ccGlue
+\ccNestedType{Vertex}{vertex, model for \ccc{VisibilityComplexVertex}\  
+		      concept.}
+\ccGlue
+\ccNestedType{Edge}{edge, model for \ccc{VisibilityComplexEdge}\  concept.}
+\ccGlue
+\ccNestedType{Face}{face, model for \ccc{VisibilityComplexFace}\  concept.}
+\ccNestedType{Vertex_handle}{handle to vertex.}
+\ccGlue
+\ccNestedType{Edge_handle}{handle to edge.}
+\ccGlue
+\ccNestedType{Face_handle}{handle to face.}
+\ccNestedType{Vertex_iterator}{iterator over all vertices of the antichain.}
+\ccGlue
+\ccNestedType{Edge_iterator}{iterator over all edges of the antichain.}
+\ccGlue
+\ccNestedType{Face_iterator}{iterator over all faces of the antichain.}
+\ccGlue
+\ccNestedType{Minimals_iterator}{iterator over all the minimal vertices of the antichain. }
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccCreation
+\ccCreationVariable{a}
+
+\ccConstructor{VisibilityComplex_Antichain();}{default constructor.}
+\ccConstructor{VisibilityComplex_Antichain(InputIterator first, InputIterator last,
+					   ConstraintIt firstc, ConstraintIt lastc);}
+{creates the antichain of the disks in the range $[$\ccc{first,last}$)$ and
+constraints in the range $[$\ccc{firstc,lastc}$)$ corresponding to the filter
+$I(0)$ of bitangents with positive slope. The value type of \ccc{InputIterator}
+must be \ccc{Disk} and the value type of \ccc{ConstraintIt} must be
+\ccc{Vertex}. }
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccOperations
+
+\ccThree{Vertex_iterator}{a.vertices_cw_begin(); }{}
+\ccThreeToTwo
+\ccTagFullDeclarations
+\ccMethod{Vertex_iterator vertices_begin();}{iterator over all the sinks of the
+					    faces of the antichain. }
+\ccGlue
+\ccMethod{Vertex_iterator vertices_end();}{}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_cw_begin();}{iterator over all the sources of the
+						faces of the antichain.}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_cw_end();}{}
+\ccGlue
+\ccMethod{Edge_iterator edges_begin();}{iterator over all the edges of the
+					antichain.}
+\ccGlue
+\ccMethod{Edge_iterator edges_end();}{}
+\ccGlue
+\ccMethod{Face_iterator faces_begin();}{iterator over all the faces of the
+					antichain.}
+\ccGlue
+\ccMethod{Face_iterator faces_end();}{}
+
+\ccThree{bool }{v.is_right_minimal( Vertex_handle v);}{}
+\ccMethod{void set_linear_space(bool b);} {If \ccc{b} is true then the antichain
+will destroy the elements which are no longer necessary after each sweep of a
+vertex. This method is used to sweep the visibility complex while keeping the
+storage linear (i.e. in the size of the input). The default value is true.}
+\ccGlue
+\ccMethod{bool linear_space(); } {returns true if the storage is linear. }
+\ccMethod{void set_straight(bool b); } {if \ccc{b} is false (resp. true) then
+the antichain will sweep the visibility complex using a topological (straight)
+sweep. The default value is false. }
+\ccGlue
+\ccMethod{bool is_straight(); } { returns true if the antichain is straight. }
+\ccMethod{bool is_right_minimal(Vertex_handle v);}{returns true if the vertex
+						   $v$ is right minimal.}
+\ccGlue
+\ccMethod{bool is_left_minimal(Vertex_handle v);} {returns true if the vertex
+						   $v$ is left minimal.}
+\ccGlue
+\ccMethod{bool is_minimal(Vertex_handle v);}{returns true if the vertex $v$ is
+					     minimal.}
+
+\ccThree{Minimals_iterator }{v.sweep( Vertex_handle v); }{}
+\ccMethod{Minimals_iterator minimals_begin();} {}
+\ccGlue
+\ccMethod{Minimals_iterator minimals_end();}{ iterator over all the minimal 
+					      bitangents in the filter associated 
+					      with the antichain. If the antichain 
+					      is straight then the vertices are 
+					      ordered by increasing slope. }
+\ccGlue
+\ccMethod{void sweep_all_minimals();}{sweeps all the minimals vertices of the
+				      antichain.}
+\ccGlue
+\ccMethod{void sweep(Vertex_handle v);}{sweeps the vertex $v$. precondition:
+					$v$ is minimal. If the antichain is
+					not straight, this operation is 
+					amortized constant otherwise it takes 
+					$O(\log n)$ time. The vertex is removed
+					from the list of minimals. }
+\ccTagDefaults
+% +----------------------------------------------------------------------------+
+
+% ------------------------------------------------------------------------------
+\ccHasModels
+\ccRefIdfierPage{CGAL::Visibility_complex_antichain<Gt,It>}
+% ------------------------------------------------------------------------------
+
+% +----------------------------------------------------------------------------+
+\ccSeeAlso
+
+\ccRefConceptPage{VisibilityComplex} \\
+\ccRefConceptPage{VisibilityComplexTraits}  \\
+\ccRefConceptPage{VisibilityComplexVertex}\\
+\ccRefConceptPage{VisibilityComplexEdge}\\
+\ccRefConceptPage{VisibilityComplexFace}
+% +----------------------------------------------------------------------------+
+
+\end{ccRefConcept}
+
+% +----------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +----------------------------------------------------------------------------+

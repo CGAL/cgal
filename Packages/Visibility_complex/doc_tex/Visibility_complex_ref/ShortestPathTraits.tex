@@ -1,0 +1,87 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ShortestPathTraits.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+% +----------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{ShortestPathTraits}
+\label{pageShortestPathTraitsRef}
+
+% +----------------------------------------------------------------------------+
+\ccDefinition
+
+The concept \ccRefName\  describes the set of requirements to be fulfilled by
+any class used to instantiate the last parameter in the shortest\_path\_2 
+\ccIndexMainItem[c]{shortest_path_2} function. This function computes the shortest path between
+two points in a scene.
+This concept inherits all the types and requirement from the
+\ccc{VisibilityComplexTraits} concept and adds a few additional primitives used
+specifically for shortest path computations.
+
+We distinguish two different number types: the one used for the input data and
+the one used for the distance computations during our algorithm. The latter type
+has to support the square root operation whereas the first type doesn't (i.e. it 
+can be of integer type).
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccTypes
+\ccThree{ShortestPathTraits::Exact_NT }{}{}
+\ccThreeToTwo
+
+\ccNestedType{Exact_NT}{the number type used to compute distances. It must
+support the square root operation.}
+\ccGlue
+\ccNestedType{Disk}{the disk type.}
+\ccGlue
+\ccNestedType{Arc_2}{the arc type. Model of the \ccc{Arc} concept.}
+\ccGlue
+\ccNestedType{Bitangent_2}{the bitangent type. Model of the \ccc{Bitangent}
+concept.}
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{ShortestPathTraits();} {default constructor.}
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccOperations
+
+\ccTagFullDeclarations
+\ccMethod{Disk make_disk(Point_2 p);}{method to create a disk from a point.}
+\ccGlue
+\ccMethod{bool is_vertex(Disk d);}{returns true if \ccc{d} is a point. }
+\ccGlue
+\ccMethod{Exact_NT length(Arc_2 a, Bitangent_2 b, Bitangent_2 c);}
+{returns the length of the arc \ccc{a} defined by the two bitangents \ccc{b} and
+\ccc{c}.}
+\ccGlue
+\ccMethod{Exact_NT length(Bitangent_2 b);}{return the length of the bitangent
+\ccc{b}.}
+
+\ccTagDefaults
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Shortest_path_point_traits<R,E>} \\
+\ccRefIdfierPage{CGAL::Shortest_path_segment_traits<R,E>} \\
+\ccRefIdfierPage{CGAL::Shortest_path_polygon_traits<R,E>}
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\end{ccRefConcept}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+

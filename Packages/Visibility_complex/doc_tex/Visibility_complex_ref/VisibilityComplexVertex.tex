@@ -1,0 +1,134 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: VisibilityComplexVertex.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{VisibilityComplexVertex}
+\label{pageVCVertexRef}
+  
+% ------------------------------------------------------------------------------
+\ccDefinition
+
+The concept \ccRefName\ represents the vertex class in the visibility complex.
+It defines the requirements for the \ccc{Vertex} type in the
+\ccc{VisibilityComplex} concept. It is also required in the
+\ccc{Vertex_wrapper<_Vc>} member class template of an items class, see the
+\ccc{VisibilityComplex_Items} concept. In addition to the requirement below, the
+concept \ccRefName\ must inherit from the \ccc{Bitangent} concept defined on
+page~\pageref{pageBitangentRef}.
+% ------------------------------------------------------------------------------
+  
+% ------------------------------------------------------------------------------
+\ccInheritsFrom
+\ccRefConceptPage{Bitangent}\\
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccTypes
+\ccThree{typedef Vertex::Vertex_handle}{Vertex_handle;}{}
+\ccThreeToTwo
+
+\ccNestedType{Gt} {geometric traits class. }
+\ccGlue
+\ccNestedType{Bitangent_2} {model of \ccc{Bitangent}. Same as
+\ccc{Gt::Bitangent\_2}.}
+
+\ccNestedType{Vertex}{model of \ccc{Vertex}.}
+\ccGlue
+\ccNestedType{Edge}{model of \ccc{Edge}.}
+\ccGlue
+\ccNestedType{Face}{model of \ccc{Face}.}
+
+\ccNestedType{Vertex_handle}{handle to vertex.}
+\ccGlue
+\ccNestedType{Edge_handle}{handle to halfedge.}
+\ccGlue
+\ccNestedType{Face_handle}{handle to face.}
+% ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
+
+\ccTypes
+\ccThree{Vertex_handle}{v.set_ccw_edge( Edge_handle e); } {}
+\ccThreeToTwo
+
+% ------------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{v}
+
+\ccConstructor{Vertex();}{default constructor.}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccOperations
+
+\ccTagFullDeclarations
+\ccMethod{bool is_constraint(); const}
+    {returns true if the vertex is a constraint.}
+\ccMethod{Edge_handle ccw_target_edge(); const}{}
+\ccGlue
+\ccMethod{Edge_handle ccw_source_edge(); const}{}
+\ccGlue
+\ccMethod{Edge_handle cw_source_edge(); const}{}
+\ccGlue
+\ccMethod{Edge_handle cw_target_edge(); const}
+    {returns the four adjacent edges of the vertex.}
+\ccMethod{Edge_handle target_cusp_edge(); const}{}
+\ccGlue
+\ccMethod{Edge_handle source_cusp_edge(); const}
+    {If the vertex is a constraint, returns the two constraint edges with sink
+     \ccVar. Use this method on \ccc{\ccVar->pi()} to get the two other constraint
+     edges adjacent to \ccVar. If the vertex is regular, the null pointer is returned.}
+\ccMethod{void set_ccw_edge(Edge_handle e);}
+    {sets the edge $e$ on the source or target object such that $\sup(e) = $ \ccVar.}
+\ccGlue
+\ccMethod{void set_cw_edge(Edge_handle e);}
+    {sets the edge $e$ on the source or target object such that $\sup(e) = $ \ccVar.}
+\ccMethod{Face_handle sup(); const}
+    {returns the sink face of \ccVar.}
+\ccGlue
+\ccMethod{Face_handle inf(); const}
+    {returns the source face of \ccVar for a regular vertex and the null pointer
+     otherwise. To access the faces adjacent to a constraint vertex, use
+     the method \ccc{face()} on the two edges obtained by the methods
+     \ccc{target_cusp_edge()} and \ccc{source_cusp_edge()}.}
+\ccGlue
+\ccMethod{void set_inf(Face_handle f);}
+    {sets the source face of \ccVar\  to $f$.}
+\ccGlue
+\ccMethod{void set_sup(Face_handle f);}
+    {sets the sink face of \ccVar\  to $f$.}
+
+\ccTagDefaults
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Visibility_complex_vertex_base<Vc>}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefConceptPage{Bitangent} \\
+\ccRefConceptPage{VisibilityComplex} \\
+\ccRefConceptPage{VisibilityComplexItems}\\
+\ccRefConceptPage{VisibilityComplexEdge}\\
+\ccRefConceptPage{VisibilityComplexFace}
+% ------------------------------------------------------------------------------
+
+% +----------------------------------------------------------------------------+
+\ccTagDefaults
+\end{ccRefConcept}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+
+

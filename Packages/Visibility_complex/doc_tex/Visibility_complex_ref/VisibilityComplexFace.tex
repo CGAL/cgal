@@ -1,0 +1,126 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: VisibilityComplexFace.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{VisibilityComplexFace}
+\label{pageVCFaceRef}
+  
+% +----------------------------------------------------------------------------+
+\ccDefinition
+
+The concept \ccRefName\ defines the requirements for the \ccc{Face} type in the
+\ccc{VisibilityComplex} concept. It is also required in the
+\ccc{Face_wrapper<_Vc,_Tr>} member class template of an items class, see the
+\ccc{VisibilityComplex_items} concept.
+% +----------------------------------------------------------------------------+
+
+% ------------------------------------------------------------------------------
+\ccTypes
+\ccThree{typedef Face::Vertex_handle}{Vertex_handle;}{}
+\ccThreeToTwo
+
+\ccNestedType{Gt} {geometric traits class. }
+\ccGlue
+\ccNestedType{Vertex}{model of \ccc{Vertex}.}
+\ccGlue
+\ccNestedType{Edge}{model of \ccc{Edge}.}
+\ccGlue
+\ccNestedType{Face}{model of \ccc{Face}.}
+
+\ccNestedType{Vertex_handle}{handle to vertex.}
+\ccGlue
+\ccNestedType{Edge_handle}{handle to halfedge.}
+\ccGlue
+\ccNestedType{Face_handle}{handle to face.}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccThree{Edge_handle}{v.set_bottom_edge( Edge_handle e);}{}
+\ccThreeToTwo
+
+\ccCreation
+\ccCreationVariable{f}
+
+\ccConstructor{Face();}{default constructor.}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccOperations
+
+\ccTagFullDeclarations
+\ccMethod{Edge_handle sup(); const}
+    {returns the sink of face \ccVar.}
+\ccGlue
+\ccMethod{Edge_handle inf(); const}
+    {returns the source of face \ccVar.}
+\ccGlue
+\ccMethod{void set_sup(Vertex_handle v);}
+    {sets the sink of face \ccVar\ to $v$ and sets the source face of $v$ to
+    \ccVar.}
+\ccGlue
+\ccMethod{void set_inf(Vertex_handle v);}
+    {sets the source of face \ccVar\ to $v$ and sets the sink face of $v$ to
+    \ccVar.}
+\ccGlue
+\ccMethod{Edge_handle top_edge(); const}
+    {returns the last edge on the left boundary of \ccVar\ that has been swept.
+    If \ccVar\ belongs to the current antichain then this is the target node of the
+    underlying upward directed graph of the antichain. }
+\ccGlue
+\ccMethod{Edge_handle bottom_edge(); const}
+    {returns the last edge on the right boundary of \ccVar\ that has been swept. 
+    If \ccVar\ belongs to the current antichain then this is the source node of the
+    underlying upward directed graph of the antichain. }
+\ccGlue
+\ccMethod{void set_top_edge(Edge_handle e);}
+    {sets $e$ as the last edge on the left boundary of \ccVar\ that has been
+    swept.}
+\ccGlue
+\ccMethod{void set_bottom_edge(Edge_handle e);}
+    {sets $e$ as the last edge on the right boundary of \ccVar\ that has been
+    swept.}
+
+\ccThree{Disk_handle}{ v.set_backward_edge( Disk_handle d) ;}{}
+\ccMethod{Disk_handle backward_object(); const}
+{returns a pointer to the disk in the backward view of the face \ccVar.}
+\ccGlue
+\ccMethod{Disk_handle forward_object(); const}
+{returns a pointer to the disk in the forward view of the face \ccVar.}
+\ccMethod{void set_backward_object(Disk_handle d);}
+    {sets $d$ as the backward view of \ccVar.}
+\ccGlue
+\ccMethod{void set_forward_object(Disk_handle d);}
+    {sets $d$ as the forward view of \ccVar.}
+\ccTagDefaults
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Visibility_complex_face_base<Vc>}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefConceptPage{VisibilityComplex} \\
+\ccRefConceptPage{VisibilityComplexItems}\\
+\ccRefConceptPage{VisibilityComplexVertex}\\
+\ccRefConceptPage{VisibilityComplexEdge}
+% ------------------------------------------------------------------------------
+
+% +----------------------------------------------------------------------------+
+\ccTagDefaults
+\end{ccRefConcept}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+

@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Bitangent_2.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Bitangent_2<Disk>}
+\label{pageBitangent_2}
+
+% ------------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccRefName\ is a model for the \ccc{Bitangent} concept. \ccc{Disk} is
+the disk type.
+
+Partial specializations of \ccRefName\ are given for the types
+\ccc{CGAL::Point_2<R>}, \ccc{CGAL::Segment_2<R>}, \ccc{CGAL::Circle_2<R>} and
+\ccc{CGAL::Polygon_2<R>}.
+Adding a partial specialization is done by inheriting from the class
+\ccc{CGAL::Bitangent_base<Disk>} and implementing the constructors described in
+the \ccc{Bitangent} concept.
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccInclude{CGAL/Bitangent_2.h}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccInheritsFrom
+\ccRefIdfierPage{CGAL::Bitangent_base<Disk>}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccIsModel
+\ccRefConceptPage{Bitangent}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccTypes
+\ccThree{const Point&;;}{source() const;MMMMMMMMMMMM}{}
+\ccThreeToTwo
+
+\ccNestedType{Point_2}{point type.}
+
+
+% No longer required.
+%\ccTypedef{typedef Traits::Plane_3 Plane_3;}
+%    {plane equation type for three argument version.}
+%\ccGlue
+%\ccTypedef{typedef Traits::Vector_3 Vector_3;}
+%    {normal vector of plane equation.}
+
+\ccCreation
+\ccCreationVariable{b}
+\ccOperations
+
+\ccTagFullDeclarations
+\ccMethod{Point_2 source();}{returns the source of the bitangent.}
+\ccGlue
+\ccMethod{Point_2 target();}{returns the target of the bitangent.}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Bitangent_base<Disk>}
+% ------------------------------------------------------------------------------
+
+
+% +----------------------------------------------------------------------------+
+\ccTagDefaults
+\end{ccRefClass}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+

@@ -1,0 +1,112 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Shortest_path_2.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{shortest_path_2}
+\label{pageShortest_path_2Ref}
+
+% ------------------------------------------------------------------------------
+\ccDefinition
+
+Function that computes the shortest path between two points $p,q$ in a planar
+scene (see the basic definitions paragraph in the introduction for what we
+understand by a scene). The scene is given as two pairs of iterators describing
+the set of disks and constraints of the scene.
+
+The output iterator returned by the function is an iterator on the vertices of
+the shortest path. Here a vertex is a vertex of the visibility complex of the
+scene plus the two points $p,q$. Recall that vertices correspond to free
+bitangents. 
+
+Currently only scene containing points, segments or polygons are supported. In
+other words circles are not.
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccInclude{CGAL/Shortest_path_2.h}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccFunction{
+template < class DiskIterator , class ConstraintIterator , 
+	   class OutputIterator , class Traits >
+OutputIterator shortest_path_2(DiskIterator first , 
+			       DiskIterator last  ,
+			       ConstraintIterator firstc,
+			       ConstraintIterator lastc ,
+			       Traits::Point_2 p , Traits::Point_2 q ,
+			       OutputIterator result , 
+			       Traits t);
+}
+{
+computes the shortest path between \ccc{p} and \ccc{q} in the scene containing
+the disks in the range [\ccc{first},\ccc{last}) and the constraints in the range
+[\ccc{firstc},\ccc{lastc}). The past-the-end iterator for the list of vertices
+of the shortest path is returned. Here vertex refers to the visibility complex
+of the input scene plus the two points \ccc{p} and \ccc{q}.
+}
+
+\ccFunction{
+template < class DiskIterator , class OutputIterator , class Traits >
+OutputIterator shortest_path_2(DiskIterator first ,
+			       DiskIterator last  ,
+			       Traits::Point_2 p , Traits::Point_2 q ,
+                               OutputIterator result ,
+                               Traits t);
+}
+{
+Same as the previous function but with an empty list of constraints.
+}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccHeading{Requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model for the concept ShortestPathTraits.
+    \ccIndexMainItem[c]{ShortestPathTraits}
+    \item \ccc{OutputIterator::value_type} should be the same as
+    \ccc{ConstraintIterator::value_type} and the same as
+    \ccc{Visibility_complex_2<Traits>::Vertex}.
+    \item \ccc{DiskIterator::value_type} should be \ccc{Traits::Disk}.
+\end{enumerate}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Shortest_path_point_traits<R,E>} \\
+\ccRefIdfierPage{CGAL::Shortest_path_segment_traits<R,E>} \\
+\ccRefIdfierPage{CGAL::Shortest_path_polygon_traits<R,E>}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccImplementation
+
+The visibility graph of the input scene plus the two points is computed in time
+$O(k + n \log n)$ and $O(k)$ space where $n$ and $k$ are respectively the size
+of the input and output.
+A Dijsktra algorithm is then applied to get the shortest path. We have
+implemented the Dijsktra algorithm using a \ccc{stl::set} thus resulting in a
+$O(k \log n)$ time complexity.
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccExample
+
+The following program read a list of pairwise disjoint segments from the file
+\texttt{segments} and the outputs the bitangent segments of the shortest path to
+standard output in a one-per-line fashion.
+
+\ccIncludeExampleCode{Visibility_complex_ref/shortest_path.C}
+% ------------------------------------------------------------------------------
+
+% +----------------------------------------------------------------------------+
+\ccTagDefaults
+\end{ccRefFunction}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+

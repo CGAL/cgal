@@ -1,0 +1,129 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: VisibilityComplexEdge.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +----------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{VisibilityComplexEdge}
+\label{pageVCEdgeRef}
+  
+% +----------------------------------------------------------------------------+
+\ccDefinition
+
+The concept \ccRefName\ represents the edge class in the visibility complex.
+It defines the minimal requirements for the \ccc{Edge} type in the
+\ccc{VisibilityComplex} concept. It is also required in the
+\ccc{Edge_wrapper<_Vc,_Tr>} member class template of an items class, see the
+\ccc{VisibilityComplex_Items} concept. In addition to the requirement below, the
+concept \ccRefName\ must inherit from the \ccc{Arc} concept
+\ccIndexMainItem[c]{Arc}.
+% +----------------------------------------------------------------------------+
+  
+% ------------------------------------------------------------------------------
+\ccInheritsFrom
+\ccRefConceptPage{Arc}\\
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccTypes
+\ccThree{typedef Edge::Vertex_handle}{Vertex_handle;}{}
+\ccThreeToTwo
+
+\ccNestedType{Gt} {geometric traits class. }
+\ccGlue
+\ccNestedType{Vertex}{model of \ccc{Vertex}.}
+\ccGlue
+\ccNestedType{Edge}{model of \ccc{Edge}.}
+\ccGlue
+\ccNestedType{Face}{model of \ccc{Face}.}
+
+\ccNestedType{Vertex_handle}{handle to vertex.}
+\ccGlue
+\ccNestedType{Edge_handle}{handle to halfedge.}
+\ccGlue
+\ccNestedType{Face_handle}{handle to face.}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccThree{Vertex_handle}{void v.set_inf(Vertex_handle v);}{}
+\ccThreeToTwo
+
+% ------------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{e}
+
+\ccConstructor{Edge();}{default constructor.}
+\ccConstructor{Edge(bool s, Disk_handle p);}
+{ creates a edge with positive sign if $s$ is true and negative otherwise.
+The underlying arc is the complete boundary of the disk $p$. }
+\ccConstructor{Edge(Vertex_handle v, Vertex_handle w , Disk_handle p);}
+{ creates an edge on disk $p$ whose source is $v$ and sink $w$. The underlying
+arc is defined by the extremities of $v$ and $w$ on $p$. }
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccOperations
+
+\ccTagFullDeclarations
+\ccMethod{Face_handle dl(); const}{}
+\ccGlue
+\ccMethod{Face_handle dr(); const}{}
+\ccGlue
+\ccMethod{Face_handle ul(); const}{}
+\ccGlue
+\ccMethod{Face_handle ur(); const}
+    { returns a handle to one of the three faces adjacent to the edge \ccVar. For
+      a positive (resp. negative) edge, \ccc{dr()} and \ccc{dl()} (resp.
+      \ccc{ur()} and \ccc{ul()}) return the same \ccc{Face_handle}.}
+\ccMethod{Face_handle face(); const}
+    {returns the unique face adjacent to \ccVar\ if \ccVar\ is a constraint edge.
+     Otherwise $0$ is returned.}
+\ccMethod{void set_adjacent_faces(Face_handle f0,Face_handle f1,Face_handle f2);}
+    {set \ccc{f0,f1,f2} as the adjacent faces of \ccVar. For a positive edge, 
+     \ccc{f0 = dl() = dr()}, \ccc{f1 = ur()} and \ccc{f2 = ul()}. For a negative
+     edge \ccc{f0 = dl()}, \ccc{f1 = dr()} and \ccc{f2 = ul() = ur()}.}
+\ccMethod{Vertex_handle sup(); const}
+    {returns the sink vertex of \ccVar.}
+\ccGlue
+\ccMethod{Vertex_handle inf(); const}
+    {returns the source vertex of \ccVar.}
+\ccGlue
+\ccMethod{void set_inf(Vertex_handle v);}
+    {sets the source vertex of \ccVar\  to $v$ and sets the \ccc{ccw_edge}
+    of $v$ to \ccVar.}
+\ccGlue
+\ccMethod{void set_sup(Vertex_handle v);}
+    {sets the sink vertex of \ccVar\  to $v$ and sets the \ccc{cw_edge}
+    of $v$ to \ccVar.}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Visibility_complex_edge_base<Vc>}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefConceptPage{Arc} \\
+\ccRefConceptPage{VisibilityComplex} \\
+\ccRefConceptPage{VisibilityComplexItems}\\
+\ccRefConceptPage{VisibilityComplexVertex}\\
+\ccRefConceptPage{VisibilityComplexFace}
+% ------------------------------------------------------------------------------
+
+% +----------------------------------------------------------------------------+
+\ccTagDefaults
+\end{ccRefConcept}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+
+

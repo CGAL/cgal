@@ -1,0 +1,11 @@
+Two demos illustrating the Visibility_complex package.
+
+*** visibility_graph
+    Reads the 50 pairwise disjoint segments from the file "segments" 
+    and outputs the bitangents of the visibility graph.
+    The bitangents are in red and the segments in black.
+
+*** shortest_path
+    Reads the 50 pairwise disjoint segments from the file "segments"
+    and outputs the shortest path between two corners of the window.
+    The shortest path is in red and the segments in black.

@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Visibility_complex_point_traits.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Visibility_complex_point_traits<R>}
+\label{pageVisibility_complex_point_traitsRef}
+
+% ------------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccRefName\ is the predefined geometric traits class provided by
+\cgal\ for use with disks whith type \ccc{CGAL::Point_2<R>}.
+It uses the kernel geometric objects and predicates.  The class is templated
+with a representation class \ccc{R}.
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccInclude{CGAL/Visibility_complex_point_traits.h}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccTypes
+\ccThree{typedef Bitangent_2<Disk> }{Bitangent_2; }{}
+
+\ccTypedef{typedef R Rep;}{Representation type}
+\ccGlue
+\ccTypedef{typedef Point_2<R> Point_2;}{}
+\ccGlue
+\ccTypedef{typedef Segment_2<R> Segment_2;}{}
+\ccGlue
+\ccTypedef{typedef Point_2<R> Disk;}{Disk type}
+\ccGlue
+\ccTypedef{typedef Arc_2<Disk> Arc_2;}{}
+\ccGlue
+\ccTypedef{typedef Bitangent_2<Disk> Bitangent_2;}{}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccIsModel
+\ccRefConceptPage{VisibilityComplexTraits}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Arc_2<Disk>} \\
+\ccRefIdfierPage{CGAL::Bitangent_2<Disk>} \\
+\ccRefIdfierPage{CGAL::Visibility_complex_segment_traits<R>} \\
+\ccRefIdfierPage{CGAL::Visibility_complex_polygon_traits<R>} \\
+\ccRefIdfierPage{CGAL::Visibility_complex_circle_traits<R>} 
+% ------------------------------------------------------------------------------
+
+% +----------------------------------------------------------------------------+
+\ccTagDefaults
+\end{ccRefClass}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+
+

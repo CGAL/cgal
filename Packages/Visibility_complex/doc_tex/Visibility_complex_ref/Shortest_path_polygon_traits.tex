@@ -1,0 +1,50 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Shortest_path_polygon_traits.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Shortest_path_polygon_traits<R,E>}
+\label{pageShortest_path_polygon_traitsRef}
+
+% ------------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccRefName\ is the predefined geometric traits class provided by
+\cgal\ for use with disks whith type \ccc{CGAL::Polygon_2<R>}.
+This class is to be used as last argument of the \ccc{shortest_path_2} function
+which computes the shortest path between two points in a scene.
+This class is templated with a representation class \ccc{R} and a number type
+\ccc{E} which supports the square root operation. The number type \ccc{E} is
+used to compute distances between pairs of points.
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccInclude{CGAL/Shortest_path_polygon_traits.h}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccInheritsFrom
+\ccRefIdfierPage{CGAL::Visibility_complex_polygon_traits<R>}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccIsModel
+\ccRefConceptPage{ShortestPathTraits}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Shortest_path_segment_traits<R,E>} \\
+\ccRefIdfierPage{CGAL::Shortest_path_point_traits<R,E>}
+% ------------------------------------------------------------------------------
+
+% +----------------------------------------------------------------------------+
+\ccTagDefaults
+\end{ccRefClass}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+

@@ -1,0 +1,109 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: VisibilityComplex.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +----------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{VisibilityComplex}
+\label{pageVisibilityComplexRef}
+
+% +----------------------------------------------------------------------------+
+\ccDefinition
+  
+The class \ccRefName\ defines a vertex centered data structure capable of
+maintaining the incidence between vertices, edges and faces of the visibility
+complex of a collection of $n$ disks. In addition the \ccRefName\ maintains an
+\ccc{VisibilityComplexAntichain} used for sweeping the visibility complex.  The
+\ccRefName\ offers iterators pairs for traversing the vertices,edges and faces
+of the visibilty complex.
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccTypes
+\ccTwo{VisibilityComplex:: Vertex_iterator }{}
+
+\ccNestedType{Gt} {the geometric traits class.}
+\ccGlue
+\ccNestedType{Items} {items class, model of the \ccc{VisibilityComplex_items}
+		      concept.}
+\ccGlue
+\ccNestedType{Antichain} {the antichain used for sweeping the visibility
+			  complex, model for the 
+			  \ccc{VisibilityComplexAntichain} concept.}
+\ccGlue
+\ccNestedType{Vertex}{vertex type. Model of \ccc{VisibilityComplexVertex}.}
+\ccGlue
+\ccNestedType{Edge}{edge type. Model of \ccc{VisibilityComplexEdge}.}
+\ccGlue
+\ccNestedType{Face}{face type. Model of \ccc{VisibilityComplexFace}.}
+\ccNestedType{Vertex_handle}{handle to vertex.}
+\ccGlue
+\ccNestedType{Edge_handle}{handle to edge.}
+\ccGlue
+\ccNestedType{Face_handle}{handle to face.}
+\ccNestedType{Vertex_iterator}{iterator over all vertex.}
+\ccGlue
+\ccNestedType{Edge_iterator}{iterator over all edges.}
+\ccGlue
+\ccNestedType{Face_iterator}{iterator over all faces.}
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccCreation
+\ccCreationVariable{v}
+
+\ccConstructor{VisibilityComplex();}{default constructor.}
+\ccConstructor{VisibilityComplex(InputIterator first, InputIterator last,
+				 ConstraintIt  firstc,ConstraintIt lastc);}
+{creates the visibility complex of the disks in the range 
+ $[$\ccc{first,last}$)$ and constraints in the range $[$\ccc{firstc,lastc}$)$.
+ The value type of \ccc{ConstraintIt} is \ccc{Vertex}. }
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccOperations
+
+\ccTagFullDeclarations
+\ccMethod{Vertex_iterator vertices_begin();}{}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_end();}{iterator over all vertices.}
+\ccGlue
+\ccMethod{Edge_iterator edges_begin();}{}
+\ccGlue
+\ccMethod{Edge_iterator edges_end();}{iterator over all edges.}
+\ccGlue
+\ccMethod{Face_iterator faces_begin();}{}
+\ccGlue
+\ccMethod{Face_iterator faces_end();}{iterator over all faces.}
+\ccGlue
+
+\ccTagDefaults
+% +----------------------------------------------------------------------------+
+
+% ------------------------------------------------------------------------------
+\ccHasModels
+\ccRefIdfierPage{CGAL::Visibility_complex_2<Gt,It>}
+% ------------------------------------------------------------------------------
+
+% +----------------------------------------------------------------------------+
+\ccSeeAlso
+
+\ccRefConceptPage{VisibilityComplexAntichain} \\
+\ccRefConceptPage{VisibilityComplexTraits}  \\
+\ccRefConceptPage{VisibilityComplexVertex}\\
+\ccRefConceptPage{VisibilityComplexEdge}\\
+\ccRefConceptPage{VisibilityComplexFace}
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\end{ccRefConcept}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+

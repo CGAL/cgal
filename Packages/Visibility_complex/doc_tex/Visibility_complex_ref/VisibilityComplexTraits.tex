@@ -1,0 +1,92 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: VisibilityComplexTraits.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+% +----------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{VisibilityComplexTraits}
+\label{pageVisibilityComplexTraitsRef}
+
+% +----------------------------------------------------------------------------+
+\ccDefinition
+
+The concept \ccRefName\  describes the set of requirements to be fulfilled by
+any class used to instantiate the first template parameter of the classes
+\ccc{Visibility_complex_2<Gt,It>} and
+\ccc{Visibility_complex_antichain<Gt,It>}.  This concept provides the
+types of the geometric primitives used in the visiblity complex and some
+function object types for the required predicates on those primitives. 
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccTypes
+\ccThree{VisibilityComplexTraits::Is_upward_directed }{}{}
+\ccThreeToTwo
+
+\ccNestedType{Point_2}{point type.}
+\ccGlue
+\ccNestedType{Segment_2}{segment type.}
+\ccGlue
+\ccNestedType{Disk}{disk type.}
+\ccGlue
+\ccNestedType{Bitangent_2}{model of the \ccc{Bitangent} concept. }
+\ccGlue
+\ccNestedType{Arc_2}{model of the \ccc{Arc} concept. }
+% +----------------------------------------------------------------------------+
+
+\ccNestedType{Orientation_object}{Must provide the operator \ccc{Orientation
+operator()(Bitangent_2 a, Bitangent_2 b)}, which returns \ccc{LEFTURN,
+RIGHTTURN, COLLINEAR} depending on the sign, \ccc{POSITIVE, NEGATIVE, ZERO} of
+the determinant $\det(\vec{a},\vec{b})$ of the two underlying vectors of the
+bitangents $a$ and $b$.}
+\ccGlue
+\ccNestedType{Is_upward_directed}{Must provide the operator \ccc{bool
+operator()(Bitangent_2 d)}, which returns true iff. the angle of the bitangent
+belongs to $[0,\pi)$. }
+\ccGlue
+\ccNestedType{Compare_extreme_yx}{Let \ccc{FT extreme(bool x, C c)} be a function returning
+the maximal (resp. minimal) $y$-coordinate of $c$ if $x$ is false (resp. true). 
+The type $C$ can be either \ccc{Disk} or \ccc{Bitangent_2}. \\
+The type \ccc{Compare_extreme_yx} must provide an operator
+\ccc{Comparison_result operator()(bool x , C a , bool y , D b)} which returns
+the comparison result between the \ccc{compare(x,a)} and \ccc{extreme(y,b)}. The
+types $C$ and $D$ can be either \ccc{Disk} or \ccc{Bitangent}. }
+\ccNestedType{Is_point}{Must provide the operator \ccc{bool operator()(Disk d)},
+which returns true iff. $d$ is a point.}
+\ccGlue
+\ccNestedType{Equal_as_segments}{Must provide the operator \ccc{bool
+operator()(Bitangent_2 a, Bitangent_2 b)}, which returns true iff. the
+underlying segments of $a$ and $b$ are equal.}
+\ccGlue
+\ccNestedType{Do_intersect}{Must provide the four operators \ccc{bool
+operator()(C a, D b)}-- where the types $C, D$ are either \ccc{Disk} or
+\ccc{Bitangent_2}-- which return true iff. $a$ and $b$ intersect.}
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{VisibilityComplexTraits();} {default constructor.}
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Visibility_complex_point_traits<R>} \\
+\ccRefIdfierPage{CGAL::Visibility_complex_segment_traits<R>} \\
+\ccRefIdfierPage{CGAL::Visibility_complex_polygon_traits<R>} \\
+\ccRefIdfierPage{CGAL::Visibility_complex_circle_traits<R>}
+% +----------------------------------------------------------------------------+
+
+
+% +----------------------------------------------------------------------------+
+\end{ccRefConcept}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+

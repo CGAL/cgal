@@ -1,0 +1,97 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Bitangent.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{Bitangent}
+\label{pageBitangentRef}
+  
+% ------------------------------------------------------------------------------
+\ccDefinition
+
+The \ccRefName\ concept defines the minimal requirement for the local
+\ccc{Bitangent} type of the \ccc{VisibilityComplexTraits} concept.  The
+\ccc{Bitangent} type is used as a base class for the concept
+VisibilityComplexVertex \ccIndexMainItem[c]{VisibilityComplexVertex}.
+
+A bitangent is a directed line segment tangent to two disks. The relative
+positions of these two disks with respect to the supporting line of the
+bitangents are coded in the \ccc{Type} information. There are four possible
+types: \ccc{RR, LL, RL} and \ccc{LR}.
+% ------------------------------------------------------------------------------
+  
+% ------------------------------------------------------------------------------
+\ccTypes
+%\ccThree{aaaaaaaaBitangent_2}{aaaaaaaaDisk_handle}{}
+%\ccThreeToTwo
+
+\ccNestedType{Disk}{type of disks defining the bitangent. }
+\ccGlue
+\ccNestedType{Disk_handle}{handle to a \ccc{Disk}. }
+\ccGlue
+\ccNestedType{Arc}{type following the requirements of the \ccc{Arc} concept 
+\ccIndexMainItem[c]{Arc}].}
+\ccGlue
+\ccNestedType{Arc_handle}{handle to an \ccc{Arc}. }
+\ccGlue
+\ccNestedType{Type}{enumerated type to specify the type of the bitangent. The
+		    possible values are \ccc{LL,RR,RL} or \ccc{LR} respectively 
+		    for left-left,right-right,right-left and left-right 
+		    bitangents.}{}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccThree{Disk_handle}{ b.source_object(); }{}
+\ccThreeToTwo
+\ccCreation
+\ccCreationVariable{b}
+
+
+
+\ccConstructor{Bitangent();}{default constructor.}
+\ccGlue
+\ccConstructor{Bitangent(Type t, Disk_handle source, Disk_handle target);}
+{ Creates the bitangent with type t directed from source to target. }
+\ccGlue
+\ccConstructor{Bitangent(Type t, Arc_handle source, Arc_handle target);}
+{ Creates the bitangent with type t directed from the arc source to the arc
+target. If the two arcs do not have a common bitangent, the constructor is equal
+to the default constructor. }
+
+% ------------------------------------------------------------------------------
+\ccOperations
+\ccTagFullDeclarations
+
+\ccMethod{Type type();}{returns the type of \ccVar.}
+\ccGlue
+\ccMethod{Disk_handle source_object();}{returns a handle to the source disk.}
+\ccGlue
+\ccMethod{Disk_handle target_object();}{returns a handle to the target disk.}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccHasModels
+\ccRefIdfierPage{CGAL::Bitangent_2<Disk>}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+\ccSeeAlso
+\ccRefConceptPage{VisibilityComplexVertex}\\
+\ccRefConceptPage{VisibilityComplexTraits}
+% ------------------------------------------------------------------------------
+
+% +------------------------------------------------------------------------+
+\ccTagDefaults
+\end{ccRefConcept}
+\ccRefPageEnd
+% +------------------------------------------------------------------------+
+

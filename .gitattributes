@@ -1805,6 +1805,44 @@ Packages/Viewer_3/doc_tex/Viewer_3/viewer.eps -text
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
 Packages/Viewer_3/doc_tex/support/Viewer_3/viewer.eps -text
 Packages/Viewer_3/doc_tex/support/Viewer_3/viewer.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/halfedge.ips -text
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/hds_design.ips -text
+Packages/Visibility_complex/doc_tex/Visibility_complex/fig/loop.ips -text
+Packages/Visibility_complex/doc_tex/Visibility_complex/halfedge.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/halfedge_small.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/hds_design_col.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/Visibility_complex/loop.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/fig/bitangent.eps -text
+Packages/Visibility_complex/doc_tex/fig/bitangent.fig -text
+Packages/Visibility_complex/doc_tex/fig/bitangent.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/fig/configuration.eps -text
+Packages/Visibility_complex/doc_tex/fig/configuration.fig -text
+Packages/Visibility_complex/doc_tex/fig/configuration.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/fig/constraint-edge.eps -text
+Packages/Visibility_complex/doc_tex/fig/constraint-edge.fig -text
+Packages/Visibility_complex/doc_tex/fig/constraint-edge.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/fig/design.eps -text
+Packages/Visibility_complex/doc_tex/fig/design.fig -text
+Packages/Visibility_complex/doc_tex/fig/design.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/fig/edge-face.eps -text
+Packages/Visibility_complex/doc_tex/fig/edge-face.fig -text
+Packages/Visibility_complex/doc_tex/fig/edge-face.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/fig/edge-vertex.eps -text
+Packages/Visibility_complex/doc_tex/fig/edge-vertex.fig -text
+Packages/Visibility_complex/doc_tex/fig/edge-vertex.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/fig/order.eps -text
+Packages/Visibility_complex/doc_tex/fig/order.fig -text
+Packages/Visibility_complex/doc_tex/fig/order.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/fig/perturbation.eps -text
+Packages/Visibility_complex/doc_tex/fig/perturbation.fig -text
+Packages/Visibility_complex/doc_tex/fig/perturbation.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/fig/points.eps -text
+Packages/Visibility_complex/doc_tex/fig/points.fig -text
+Packages/Visibility_complex/doc_tex/fig/points.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/fig/vis-complex.eps -text
+Packages/Visibility_complex/doc_tex/fig/vis-complex.fig -text
+Packages/Visibility_complex/doc_tex/fig/vis-complex.gif -text svneol=unset#unset
+Packages/Visibility_complex/doc_tex/manual.ps.gz svneol=native#unset
 Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/a_annulus_21.xbm -text
 Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/circle_21.xbm -text
 Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/dice_21.xbm -text

@@ -1,0 +1,69 @@
+Package Name:     Visibility_complex
+
+Author:           Angelier Pierre  <Pierre.Angelier@ens.fr>
+
+Maintainer:       Angelier Pierre  <Pierre.Angelier@ens.fr>
+		  Rineau Laurent   <Laurent.Rineau@ens.fr>
+
+Address:          Département d'Informatique de l'Ecole Normale Supérieure
+		  45 rue d'Ulm 75230 Paris Cedex 05 France
+
+URL:              http://www.di.ens.fr/users/angelier/visibility_complex.tar.gz
+
+Version:          1.0 (10 July 2002)
+
+CGAL Versions:    2.2 and greater
+
+Supported Compilers & Platforms:
+     sparc_SunOS-5.8_g++-2.95
+     sparc_SunOS-5.7_g++-2.95.2_LEDA
+     i686_Linux-2.2.18_g++-2.95
+     i686_Linux-2.2.18_g++-2.95_LEDA
+     i686_Linux-2.2.18_g++-3.0.4
+     i686_Linux-2.2.18_g++-3.1.
+
+Purpose:
+     This package implements the visibility complex data structure for planar
+     scenes.
+
+Description:
+
+      Distributed with this package are the following things:
+        README       -- this file
+        INSTALLATION -- file describing more details about package installation
+        doc_tex/     -- directory containing the package documentation in
+                        LaTeX format
+        doc_ps/      -- directory containing the package documentation in
+                        postscript format
+        doc_html/    -- directory containing the package documentation in
+                        Html format
+	demo/        -- two small graphical (LEDA) demos illustrating the package. 
+			see demo/README for more details.
+        cep_test     -- shell script for running the test suite
+        include/     -- directory containing the Visibility_complex header files
+        test_suite/  -- directory containing the test suite source code,
+                        input and output files
+ 
+      This package can be used to compute the visibility graph or visibility
+      complex of planar scenes. These scenes can consist in pairwise
+      non-intersecting points, segments, circles or polygons.
+      The package can also be used to compute the shortest path between two
+      points in such scenes.
+
+Changes:
+      1.0    initial release
+      1.0.1  fix for gcc-3.x compilers
+
+Installation:
+      
+Documentation:
+      Package documentation is provided in postscript and HTML format in
+      the subdirectory doc.
+      
+Tested items:
+
+Testing process:
+
+Hardware & Software requirements:
+
+Constraints:

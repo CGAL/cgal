@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: VisibilityComplexItems.tex
+% +------------------------------------------------------------------------+
+% | Last revision: 09.07.2002   
+% | Author : Pierre Angelier <Pierre.Angelier@ens.fr>
+% | Maintainer: Laurent Rineau <Laurent.Rineau@ens.fr>
+% | Package: Visibility_complex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+% +----------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{VisibilityComplexItems}
+\label{pageVisibilityComplexItemsRef}
+
+% +----------------------------------------------------------------------------+
+\ccDefinition
+  
+The concept \ccRefName\ wraps the three item types -- vertex, edge, and face --
+for the visibity complex.  A \ccRefName\ contains three member class templates
+named \ccc{Vertex_wrapper}, \ccc{Edge_wrapper}, and \ccc{Face_wrapper}, each
+with one template parameter \ccc{Antichain} which is an instantiated model of
+the \ccc{VisibilityComplexAntichain} concept. These three member class templates
+provide local types named \ccc{Vertex}, \ccc{Edge} and \ccc{Face} respectively.
+The requirements on these types are described on page~\pageref{pageVCVertexRef},
+page~\pageref{pageVCEdgeRef}, and page~\pageref{pageVCFaceRef} respectively.
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\ccTypes
+\ccTwo{VisibilityComplexItems:: Vertex_wrapper<Antichain>::Vertex }{}
+
+\ccNestedType{Vertex_wrapper<Antichain>::Vertex}
+    {model of \ccc{VisibilityComplexVertex}.}
+\ccGlue
+\ccNestedType{Edge_wrapper<Antichain>::Edge}
+    {model of \ccc{VisibilityComplexEdge}.}
+\ccGlue
+\ccNestedType{Face_wrapper<Antichain>::Face}
+    {model of \ccc{VisibilityComplexFace}.}
+% +----------------------------------------------------------------------------+
+
+% ------------------------------------------------------------------------------
+\ccHasModels
+\ccRefIdfierPage{CGAL::Visibility_complex_items}
+% ------------------------------------------------------------------------------
+
+% +----------------------------------------------------------------------------+
+\ccSeeAlso
+
+\ccRefConceptPage{VisibilityComplexAntichain} \\
+\ccRefConceptPage{VisibilityComplexVertex} \\
+\ccRefConceptPage{VisibilityComplexEdge} \\
+\ccRefConceptPage{VisibilityComplexFace} \\
+\ccRefIdfierPage{CGAL::Visibility_complex_vertex_base<Vc>}\\
+\ccRefIdfierPage{CGAL::Visibility_complex_edge_base<Vc>}\\
+\ccRefIdfierPage{CGAL::Visibility_complex_face_base<Vc>}
+% +----------------------------------------------------------------------------+
+
+% +----------------------------------------------------------------------------+
+\end{ccRefConcept}
+\ccRefPageEnd
+% +----------------------------------------------------------------------------+
