@@ -80,23 +80,23 @@ compare_xC2(
     const Static_adaptatif_filter &l2c)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
-  static double _epsilon_1;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > _bound ||
-        fabs(l1a.value()) > _bound ||
-        fabs(l1b.value()) > _bound ||
-        fabs(l1c.value()) > _bound ||
-        fabs(l2a.value()) > _bound ||
-        fabs(l2b.value()) > _bound ||
-        fabs(l2c.value()) > _bound)
+        fabs(px.value()) > SAF_bound ||
+        fabs(l1a.value()) > SAF_bound ||
+        fabs(l1b.value()) > SAF_bound ||
+        fabs(l1c.value()) > SAF_bound ||
+        fabs(l2a.value()) > SAF_bound ||
+        fabs(l2b.value()) > SAF_bound ||
+        fabs(l2c.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_xC2_SAF(
@@ -107,8 +107,8 @@ letstry:
 		Restricted_double(l2a.value()),
 		Restricted_double(l2b.value()),
 		Restricted_double(l2c.value()),
-		_epsilon_0,
-		_epsilon_1);
+		SAF_epsilon_0,
+		SAF_epsilon_1);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -116,32 +116,32 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(px.value()));
-      _bound = std::max(_bound, fabs(l1a.value()));
-      _bound = std::max(_bound, fabs(l1b.value()));
-      _bound = std::max(_bound, fabs(l1c.value()));
-      _bound = std::max(_bound, fabs(l2a.value()));
-      _bound = std::max(_bound, fabs(l2b.value()));
-      _bound = std::max(_bound, fabs(l2c.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2c.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) compare_xC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0,
-		_epsilon_1);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0,
+		SAF_epsilon_1);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -237,29 +237,29 @@ compare_xC2(
     const Static_adaptatif_filter &h2c)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
-  static double _epsilon_1;
-  static double _epsilon_2;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+  static double SAF_epsilon_2;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(l1a.value()) > _bound ||
-        fabs(l1b.value()) > _bound ||
-        fabs(l1c.value()) > _bound ||
-        fabs(l2a.value()) > _bound ||
-        fabs(l2b.value()) > _bound ||
-        fabs(l2c.value()) > _bound ||
-        fabs(h1a.value()) > _bound ||
-        fabs(h1b.value()) > _bound ||
-        fabs(h1c.value()) > _bound ||
-        fabs(h2a.value()) > _bound ||
-        fabs(h2b.value()) > _bound ||
-        fabs(h2c.value()) > _bound)
+        fabs(l1a.value()) > SAF_bound ||
+        fabs(l1b.value()) > SAF_bound ||
+        fabs(l1c.value()) > SAF_bound ||
+        fabs(l2a.value()) > SAF_bound ||
+        fabs(l2b.value()) > SAF_bound ||
+        fabs(l2c.value()) > SAF_bound ||
+        fabs(h1a.value()) > SAF_bound ||
+        fabs(h1b.value()) > SAF_bound ||
+        fabs(h1c.value()) > SAF_bound ||
+        fabs(h2a.value()) > SAF_bound ||
+        fabs(h2b.value()) > SAF_bound ||
+        fabs(h2c.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_xC2_SAF(
@@ -275,9 +275,9 @@ letstry:
 		Restricted_double(h2a.value()),
 		Restricted_double(h2b.value()),
 		Restricted_double(h2c.value()),
-		_epsilon_0,
-		_epsilon_1,
-		_epsilon_2);
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -285,43 +285,43 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(l1a.value()));
-      _bound = std::max(_bound, fabs(l1b.value()));
-      _bound = std::max(_bound, fabs(l1c.value()));
-      _bound = std::max(_bound, fabs(l2a.value()));
-      _bound = std::max(_bound, fabs(l2b.value()));
-      _bound = std::max(_bound, fabs(l2c.value()));
-      _bound = std::max(_bound, fabs(h1a.value()));
-      _bound = std::max(_bound, fabs(h1b.value()));
-      _bound = std::max(_bound, fabs(h1c.value()));
-      _bound = std::max(_bound, fabs(h2a.value()));
-      _bound = std::max(_bound, fabs(h2b.value()));
-      _bound = std::max(_bound, fabs(h2c.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(l1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2c.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) compare_xC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0,
-		_epsilon_1,
-		_epsilon_2);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -385,21 +385,21 @@ compare_y_at_xC2(
     const Static_adaptatif_filter &lc)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
-  static double _epsilon_1;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > _bound ||
-        fabs(py.value()) > _bound ||
-        fabs(la.value()) > _bound ||
-        fabs(lb.value()) > _bound ||
-        fabs(lc.value()) > _bound)
+        fabs(px.value()) > SAF_bound ||
+        fabs(py.value()) > SAF_bound ||
+        fabs(la.value()) > SAF_bound ||
+        fabs(lb.value()) > SAF_bound ||
+        fabs(lc.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_y_at_xC2_SAF(
@@ -408,8 +408,8 @@ letstry:
 		Restricted_double(la.value()),
 		Restricted_double(lb.value()),
 		Restricted_double(lc.value()),
-		_epsilon_0,
-		_epsilon_1);
+		SAF_epsilon_0,
+		SAF_epsilon_1);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -417,28 +417,28 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(px.value()));
-      _bound = std::max(_bound, fabs(py.value()));
-      _bound = std::max(_bound, fabs(la.value()));
-      _bound = std::max(_bound, fabs(lb.value()));
-      _bound = std::max(_bound, fabs(lc.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(la.value()));
+      SAF_bound = std::max(SAF_bound, fabs(lb.value()));
+      SAF_bound = std::max(SAF_bound, fabs(lc.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) compare_y_at_xC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0,
-		_epsilon_1);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0,
+		SAF_epsilon_1);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -505,24 +505,24 @@ compare_y_at_xC2(
     const Static_adaptatif_filter &l2c)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
-  static double _epsilon_1;
-  static double _epsilon_2;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+  static double SAF_epsilon_2;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > _bound ||
-        fabs(l1a.value()) > _bound ||
-        fabs(l1b.value()) > _bound ||
-        fabs(l1c.value()) > _bound ||
-        fabs(l2a.value()) > _bound ||
-        fabs(l2b.value()) > _bound ||
-        fabs(l2c.value()) > _bound)
+        fabs(px.value()) > SAF_bound ||
+        fabs(l1a.value()) > SAF_bound ||
+        fabs(l1b.value()) > SAF_bound ||
+        fabs(l1c.value()) > SAF_bound ||
+        fabs(l2a.value()) > SAF_bound ||
+        fabs(l2b.value()) > SAF_bound ||
+        fabs(l2c.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_y_at_xC2_SAF(
@@ -533,9 +533,9 @@ letstry:
 		Restricted_double(l2a.value()),
 		Restricted_double(l2b.value()),
 		Restricted_double(l2c.value()),
-		_epsilon_0,
-		_epsilon_1,
-		_epsilon_2);
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -543,33 +543,33 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(px.value()));
-      _bound = std::max(_bound, fabs(l1a.value()));
-      _bound = std::max(_bound, fabs(l1b.value()));
-      _bound = std::max(_bound, fabs(l1c.value()));
-      _bound = std::max(_bound, fabs(l2a.value()));
-      _bound = std::max(_bound, fabs(l2b.value()));
-      _bound = std::max(_bound, fabs(l2c.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2c.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) compare_y_at_xC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0,
-		_epsilon_1,
-		_epsilon_2);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -644,27 +644,27 @@ compare_y_at_xC2(
     const Static_adaptatif_filter &hc)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
-  static double _epsilon_1;
-  static double _epsilon_2;
-  static double _epsilon_3;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+  static double SAF_epsilon_2;
+  static double SAF_epsilon_3;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(l1a.value()) > _bound ||
-        fabs(l1b.value()) > _bound ||
-        fabs(l1c.value()) > _bound ||
-        fabs(l2a.value()) > _bound ||
-        fabs(l2b.value()) > _bound ||
-        fabs(l2c.value()) > _bound ||
-        fabs(ha.value()) > _bound ||
-        fabs(hb.value()) > _bound ||
-        fabs(hc.value()) > _bound)
+        fabs(l1a.value()) > SAF_bound ||
+        fabs(l1b.value()) > SAF_bound ||
+        fabs(l1c.value()) > SAF_bound ||
+        fabs(l2a.value()) > SAF_bound ||
+        fabs(l2b.value()) > SAF_bound ||
+        fabs(l2c.value()) > SAF_bound ||
+        fabs(ha.value()) > SAF_bound ||
+        fabs(hb.value()) > SAF_bound ||
+        fabs(hc.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_y_at_xC2_SAF(
@@ -677,10 +677,10 @@ letstry:
 		Restricted_double(ha.value()),
 		Restricted_double(hb.value()),
 		Restricted_double(hc.value()),
-		_epsilon_0,
-		_epsilon_1,
-		_epsilon_2,
-		_epsilon_3);
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2,
+		SAF_epsilon_3);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -688,38 +688,38 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(l1a.value()));
-      _bound = std::max(_bound, fabs(l1b.value()));
-      _bound = std::max(_bound, fabs(l1c.value()));
-      _bound = std::max(_bound, fabs(l2a.value()));
-      _bound = std::max(_bound, fabs(l2b.value()));
-      _bound = std::max(_bound, fabs(l2c.value()));
-      _bound = std::max(_bound, fabs(ha.value()));
-      _bound = std::max(_bound, fabs(hb.value()));
-      _bound = std::max(_bound, fabs(hc.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(l1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ha.value()));
+      SAF_bound = std::max(SAF_bound, fabs(hb.value()));
+      SAF_bound = std::max(SAF_bound, fabs(hc.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) compare_y_at_xC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0,
-		_epsilon_1,
-		_epsilon_2,
-		_epsilon_3);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2,
+		SAF_epsilon_3);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -815,30 +815,30 @@ compare_y_at_xC2(
     const Static_adaptatif_filter &h2c)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
-  static double _epsilon_1;
-  static double _epsilon_2;
-  static double _epsilon_3;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+  static double SAF_epsilon_2;
+  static double SAF_epsilon_3;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(l1a.value()) > _bound ||
-        fabs(l1b.value()) > _bound ||
-        fabs(l1c.value()) > _bound ||
-        fabs(l2a.value()) > _bound ||
-        fabs(l2b.value()) > _bound ||
-        fabs(l2c.value()) > _bound ||
-        fabs(h1a.value()) > _bound ||
-        fabs(h1b.value()) > _bound ||
-        fabs(h1c.value()) > _bound ||
-        fabs(h2a.value()) > _bound ||
-        fabs(h2b.value()) > _bound ||
-        fabs(h2c.value()) > _bound)
+        fabs(l1a.value()) > SAF_bound ||
+        fabs(l1b.value()) > SAF_bound ||
+        fabs(l1c.value()) > SAF_bound ||
+        fabs(l2a.value()) > SAF_bound ||
+        fabs(l2b.value()) > SAF_bound ||
+        fabs(l2c.value()) > SAF_bound ||
+        fabs(h1a.value()) > SAF_bound ||
+        fabs(h1b.value()) > SAF_bound ||
+        fabs(h1c.value()) > SAF_bound ||
+        fabs(h2a.value()) > SAF_bound ||
+        fabs(h2b.value()) > SAF_bound ||
+        fabs(h2c.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_y_at_xC2_SAF(
@@ -854,10 +854,10 @@ letstry:
 		Restricted_double(h2a.value()),
 		Restricted_double(h2b.value()),
 		Restricted_double(h2c.value()),
-		_epsilon_0,
-		_epsilon_1,
-		_epsilon_2,
-		_epsilon_3);
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2,
+		SAF_epsilon_3);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -865,44 +865,44 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(l1a.value()));
-      _bound = std::max(_bound, fabs(l1b.value()));
-      _bound = std::max(_bound, fabs(l1c.value()));
-      _bound = std::max(_bound, fabs(l2a.value()));
-      _bound = std::max(_bound, fabs(l2b.value()));
-      _bound = std::max(_bound, fabs(l2c.value()));
-      _bound = std::max(_bound, fabs(h1a.value()));
-      _bound = std::max(_bound, fabs(h1b.value()));
-      _bound = std::max(_bound, fabs(h1c.value()));
-      _bound = std::max(_bound, fabs(h2a.value()));
-      _bound = std::max(_bound, fabs(h2b.value()));
-      _bound = std::max(_bound, fabs(h2c.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(l1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2c.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) compare_y_at_xC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0,
-		_epsilon_1,
-		_epsilon_2,
-		_epsilon_3);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2,
+		SAF_epsilon_3);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -955,19 +955,19 @@ compare_deltax_deltayC2(
     const Static_adaptatif_filter &sy)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > _bound ||
-        fabs(qx.value()) > _bound ||
-        fabs(ry.value()) > _bound ||
-        fabs(sy.value()) > _bound)
+        fabs(px.value()) > SAF_bound ||
+        fabs(qx.value()) > SAF_bound ||
+        fabs(ry.value()) > SAF_bound ||
+        fabs(sy.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return compare_deltax_deltayC2_SAF(
@@ -975,7 +975,7 @@ letstry:
 		Restricted_double(qx.value()),
 		Restricted_double(ry.value()),
 		Restricted_double(sy.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -983,25 +983,25 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(px.value()));
-      _bound = std::max(_bound, fabs(qx.value()));
-      _bound = std::max(_bound, fabs(ry.value()));
-      _bound = std::max(_bound, fabs(sy.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
+      SAF_bound = std::max(SAF_bound, fabs(sy.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) compare_deltax_deltayC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -1052,21 +1052,21 @@ orientationC2(
     const Static_adaptatif_filter &ry)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > _bound ||
-        fabs(py.value()) > _bound ||
-        fabs(qx.value()) > _bound ||
-        fabs(qy.value()) > _bound ||
-        fabs(rx.value()) > _bound ||
-        fabs(ry.value()) > _bound)
+        fabs(px.value()) > SAF_bound ||
+        fabs(py.value()) > SAF_bound ||
+        fabs(qx.value()) > SAF_bound ||
+        fabs(qy.value()) > SAF_bound ||
+        fabs(rx.value()) > SAF_bound ||
+        fabs(ry.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return orientationC2_SAF(
@@ -1076,7 +1076,7 @@ letstry:
 		Restricted_double(qy.value()),
 		Restricted_double(rx.value()),
 		Restricted_double(ry.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1084,29 +1084,29 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(px.value()));
-      _bound = std::max(_bound, fabs(py.value()));
-      _bound = std::max(_bound, fabs(qx.value()));
-      _bound = std::max(_bound, fabs(qy.value()));
-      _bound = std::max(_bound, fabs(rx.value()));
-      _bound = std::max(_bound, fabs(ry.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) orientationC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -1195,23 +1195,23 @@ side_of_oriented_circleC2(
     const Static_adaptatif_filter &ty)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > _bound ||
-        fabs(py.value()) > _bound ||
-        fabs(qx.value()) > _bound ||
-        fabs(qy.value()) > _bound ||
-        fabs(rx.value()) > _bound ||
-        fabs(ry.value()) > _bound ||
-        fabs(tx.value()) > _bound ||
-        fabs(ty.value()) > _bound)
+        fabs(px.value()) > SAF_bound ||
+        fabs(py.value()) > SAF_bound ||
+        fabs(qx.value()) > SAF_bound ||
+        fabs(qy.value()) > SAF_bound ||
+        fabs(rx.value()) > SAF_bound ||
+        fabs(ry.value()) > SAF_bound ||
+        fabs(tx.value()) > SAF_bound ||
+        fabs(ty.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return side_of_oriented_circleC2_SAF(
@@ -1223,7 +1223,7 @@ letstry:
 		Restricted_double(ry.value()),
 		Restricted_double(tx.value()),
 		Restricted_double(ty.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1231,33 +1231,33 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(px.value()));
-      _bound = std::max(_bound, fabs(py.value()));
-      _bound = std::max(_bound, fabs(qx.value()));
-      _bound = std::max(_bound, fabs(qy.value()));
-      _bound = std::max(_bound, fabs(rx.value()));
-      _bound = std::max(_bound, fabs(ry.value()));
-      _bound = std::max(_bound, fabs(tx.value()));
-      _bound = std::max(_bound, fabs(ty.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
+      SAF_bound = std::max(SAF_bound, fabs(tx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ty.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) side_of_oriented_circleC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -1326,24 +1326,24 @@ side_of_bounded_circleC2(
     const Static_adaptatif_filter &ty)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
-  static double _epsilon_1;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > _bound ||
-        fabs(py.value()) > _bound ||
-        fabs(qx.value()) > _bound ||
-        fabs(qy.value()) > _bound ||
-        fabs(rx.value()) > _bound ||
-        fabs(ry.value()) > _bound ||
-        fabs(tx.value()) > _bound ||
-        fabs(ty.value()) > _bound)
+        fabs(px.value()) > SAF_bound ||
+        fabs(py.value()) > SAF_bound ||
+        fabs(qx.value()) > SAF_bound ||
+        fabs(qy.value()) > SAF_bound ||
+        fabs(rx.value()) > SAF_bound ||
+        fabs(ry.value()) > SAF_bound ||
+        fabs(tx.value()) > SAF_bound ||
+        fabs(ty.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return side_of_bounded_circleC2_SAF(
@@ -1355,8 +1355,8 @@ letstry:
 		Restricted_double(ry.value()),
 		Restricted_double(tx.value()),
 		Restricted_double(ty.value()),
-		_epsilon_0,
-		_epsilon_1);
+		SAF_epsilon_0,
+		SAF_epsilon_1);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1364,34 +1364,34 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(px.value()));
-      _bound = std::max(_bound, fabs(py.value()));
-      _bound = std::max(_bound, fabs(qx.value()));
-      _bound = std::max(_bound, fabs(qy.value()));
-      _bound = std::max(_bound, fabs(rx.value()));
-      _bound = std::max(_bound, fabs(ry.value()));
-      _bound = std::max(_bound, fabs(tx.value()));
-      _bound = std::max(_bound, fabs(ty.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
+      SAF_bound = std::max(SAF_bound, fabs(tx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ty.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) side_of_bounded_circleC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0,
-		_epsilon_1);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0,
+		SAF_epsilon_1);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -1448,21 +1448,21 @@ cmp_dist_to_pointC2(
     const Static_adaptatif_filter &ry)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > _bound ||
-        fabs(py.value()) > _bound ||
-        fabs(qx.value()) > _bound ||
-        fabs(qy.value()) > _bound ||
-        fabs(rx.value()) > _bound ||
-        fabs(ry.value()) > _bound)
+        fabs(px.value()) > SAF_bound ||
+        fabs(py.value()) > SAF_bound ||
+        fabs(qx.value()) > SAF_bound ||
+        fabs(qy.value()) > SAF_bound ||
+        fabs(rx.value()) > SAF_bound ||
+        fabs(ry.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return cmp_dist_to_pointC2_SAF(
@@ -1472,7 +1472,7 @@ letstry:
 		Restricted_double(qy.value()),
 		Restricted_double(rx.value()),
 		Restricted_double(ry.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1480,29 +1480,29 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(px.value()));
-      _bound = std::max(_bound, fabs(py.value()));
-      _bound = std::max(_bound, fabs(qx.value()));
-      _bound = std::max(_bound, fabs(qy.value()));
-      _bound = std::max(_bound, fabs(rx.value()));
-      _bound = std::max(_bound, fabs(ry.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) cmp_dist_to_pointC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -1560,22 +1560,22 @@ cmp_signed_dist_to_lineC2(
     const Static_adaptatif_filter &qy)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(la.value()) > _bound ||
-        fabs(lb.value()) > _bound ||
-        fabs(lc.value()) > _bound ||
-        fabs(px.value()) > _bound ||
-        fabs(py.value()) > _bound ||
-        fabs(qx.value()) > _bound ||
-        fabs(qy.value()) > _bound)
+        fabs(la.value()) > SAF_bound ||
+        fabs(lb.value()) > SAF_bound ||
+        fabs(lc.value()) > SAF_bound ||
+        fabs(px.value()) > SAF_bound ||
+        fabs(py.value()) > SAF_bound ||
+        fabs(qx.value()) > SAF_bound ||
+        fabs(qy.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return cmp_signed_dist_to_lineC2_SAF(
@@ -1586,7 +1586,7 @@ letstry:
 		Restricted_double(py.value()),
 		Restricted_double(qx.value()),
 		Restricted_double(qy.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1594,31 +1594,31 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(la.value()));
-      _bound = std::max(_bound, fabs(lb.value()));
-      _bound = std::max(_bound, fabs(lc.value()));
-      _bound = std::max(_bound, fabs(px.value()));
-      _bound = std::max(_bound, fabs(py.value()));
-      _bound = std::max(_bound, fabs(qx.value()));
-      _bound = std::max(_bound, fabs(qy.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(la.value()));
+      SAF_bound = std::max(SAF_bound, fabs(lb.value()));
+      SAF_bound = std::max(SAF_bound, fabs(lc.value()));
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) cmp_signed_dist_to_lineC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -1680,23 +1680,23 @@ cmp_signed_dist_to_lineC2(
     const Static_adaptatif_filter &sy)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px.value()) > _bound ||
-        fabs(py.value()) > _bound ||
-        fabs(qx.value()) > _bound ||
-        fabs(qy.value()) > _bound ||
-        fabs(rx.value()) > _bound ||
-        fabs(ry.value()) > _bound ||
-        fabs(sx.value()) > _bound ||
-        fabs(sy.value()) > _bound)
+        fabs(px.value()) > SAF_bound ||
+        fabs(py.value()) > SAF_bound ||
+        fabs(qx.value()) > SAF_bound ||
+        fabs(qy.value()) > SAF_bound ||
+        fabs(rx.value()) > SAF_bound ||
+        fabs(ry.value()) > SAF_bound ||
+        fabs(sx.value()) > SAF_bound ||
+        fabs(sy.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return cmp_signed_dist_to_lineC2_SAF(
@@ -1708,7 +1708,7 @@ letstry:
 		Restricted_double(ry.value()),
 		Restricted_double(sx.value()),
 		Restricted_double(sy.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1716,33 +1716,33 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(px.value()));
-      _bound = std::max(_bound, fabs(py.value()));
-      _bound = std::max(_bound, fabs(qx.value()));
-      _bound = std::max(_bound, fabs(qy.value()));
-      _bound = std::max(_bound, fabs(rx.value()));
-      _bound = std::max(_bound, fabs(ry.value()));
-      _bound = std::max(_bound, fabs(sx.value()));
-      _bound = std::max(_bound, fabs(sy.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
+      SAF_bound = std::max(SAF_bound, fabs(sx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(sy.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) cmp_signed_dist_to_lineC2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).

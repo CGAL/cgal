@@ -55,19 +55,19 @@ sign_of_determinant2x2(
     const Static_adaptatif_filter &a11)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(a00.value()) > _bound ||
-        fabs(a01.value()) > _bound ||
-        fabs(a10.value()) > _bound ||
-        fabs(a11.value()) > _bound)
+        fabs(a00.value()) > SAF_bound ||
+        fabs(a01.value()) > SAF_bound ||
+        fabs(a10.value()) > SAF_bound ||
+        fabs(a11.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return sign_of_determinant2x2_SAF(
@@ -75,7 +75,7 @@ letstry:
 		Restricted_double(a01.value()),
 		Restricted_double(a10.value()),
 		Restricted_double(a11.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -83,25 +83,25 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(a00.value()));
-      _bound = std::max(_bound, fabs(a01.value()));
-      _bound = std::max(_bound, fabs(a10.value()));
-      _bound = std::max(_bound, fabs(a11.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(a00.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a01.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a10.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a11.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) sign_of_determinant2x2_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -165,24 +165,24 @@ sign_of_determinant3x3(
     const Static_adaptatif_filter &a22)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(a00.value()) > _bound ||
-        fabs(a01.value()) > _bound ||
-        fabs(a02.value()) > _bound ||
-        fabs(a10.value()) > _bound ||
-        fabs(a11.value()) > _bound ||
-        fabs(a12.value()) > _bound ||
-        fabs(a20.value()) > _bound ||
-        fabs(a21.value()) > _bound ||
-        fabs(a22.value()) > _bound)
+        fabs(a00.value()) > SAF_bound ||
+        fabs(a01.value()) > SAF_bound ||
+        fabs(a02.value()) > SAF_bound ||
+        fabs(a10.value()) > SAF_bound ||
+        fabs(a11.value()) > SAF_bound ||
+        fabs(a12.value()) > SAF_bound ||
+        fabs(a20.value()) > SAF_bound ||
+        fabs(a21.value()) > SAF_bound ||
+        fabs(a22.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return sign_of_determinant3x3_SAF(
@@ -195,7 +195,7 @@ letstry:
 		Restricted_double(a20.value()),
 		Restricted_double(a21.value()),
 		Restricted_double(a22.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -203,35 +203,35 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(a00.value()));
-      _bound = std::max(_bound, fabs(a01.value()));
-      _bound = std::max(_bound, fabs(a02.value()));
-      _bound = std::max(_bound, fabs(a10.value()));
-      _bound = std::max(_bound, fabs(a11.value()));
-      _bound = std::max(_bound, fabs(a12.value()));
-      _bound = std::max(_bound, fabs(a20.value()));
-      _bound = std::max(_bound, fabs(a21.value()));
-      _bound = std::max(_bound, fabs(a22.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(a00.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a01.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a02.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a10.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a11.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a12.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a20.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a21.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a22.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) sign_of_determinant3x3_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -323,31 +323,31 @@ sign_of_determinant4x4(
     const Static_adaptatif_filter &a33)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(a00.value()) > _bound ||
-        fabs(a01.value()) > _bound ||
-        fabs(a02.value()) > _bound ||
-        fabs(a03.value()) > _bound ||
-        fabs(a10.value()) > _bound ||
-        fabs(a11.value()) > _bound ||
-        fabs(a12.value()) > _bound ||
-        fabs(a13.value()) > _bound ||
-        fabs(a20.value()) > _bound ||
-        fabs(a21.value()) > _bound ||
-        fabs(a22.value()) > _bound ||
-        fabs(a23.value()) > _bound ||
-        fabs(a30.value()) > _bound ||
-        fabs(a31.value()) > _bound ||
-        fabs(a32.value()) > _bound ||
-        fabs(a33.value()) > _bound)
+        fabs(a00.value()) > SAF_bound ||
+        fabs(a01.value()) > SAF_bound ||
+        fabs(a02.value()) > SAF_bound ||
+        fabs(a03.value()) > SAF_bound ||
+        fabs(a10.value()) > SAF_bound ||
+        fabs(a11.value()) > SAF_bound ||
+        fabs(a12.value()) > SAF_bound ||
+        fabs(a13.value()) > SAF_bound ||
+        fabs(a20.value()) > SAF_bound ||
+        fabs(a21.value()) > SAF_bound ||
+        fabs(a22.value()) > SAF_bound ||
+        fabs(a23.value()) > SAF_bound ||
+        fabs(a30.value()) > SAF_bound ||
+        fabs(a31.value()) > SAF_bound ||
+        fabs(a32.value()) > SAF_bound ||
+        fabs(a33.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return sign_of_determinant4x4_SAF(
@@ -367,7 +367,7 @@ letstry:
 		Restricted_double(a31.value()),
 		Restricted_double(a32.value()),
 		Restricted_double(a33.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -375,49 +375,49 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(a00.value()));
-      _bound = std::max(_bound, fabs(a01.value()));
-      _bound = std::max(_bound, fabs(a02.value()));
-      _bound = std::max(_bound, fabs(a03.value()));
-      _bound = std::max(_bound, fabs(a10.value()));
-      _bound = std::max(_bound, fabs(a11.value()));
-      _bound = std::max(_bound, fabs(a12.value()));
-      _bound = std::max(_bound, fabs(a13.value()));
-      _bound = std::max(_bound, fabs(a20.value()));
-      _bound = std::max(_bound, fabs(a21.value()));
-      _bound = std::max(_bound, fabs(a22.value()));
-      _bound = std::max(_bound, fabs(a23.value()));
-      _bound = std::max(_bound, fabs(a30.value()));
-      _bound = std::max(_bound, fabs(a31.value()));
-      _bound = std::max(_bound, fabs(a32.value()));
-      _bound = std::max(_bound, fabs(a33.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(a00.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a01.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a02.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a03.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a10.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a11.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a12.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a13.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a20.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a21.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a22.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a23.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a30.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a31.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a32.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a33.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) sign_of_determinant4x4_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -545,40 +545,40 @@ sign_of_determinant5x5(
     const Static_adaptatif_filter &a44)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(a00.value()) > _bound ||
-        fabs(a01.value()) > _bound ||
-        fabs(a02.value()) > _bound ||
-        fabs(a03.value()) > _bound ||
-        fabs(a04.value()) > _bound ||
-        fabs(a10.value()) > _bound ||
-        fabs(a11.value()) > _bound ||
-        fabs(a12.value()) > _bound ||
-        fabs(a13.value()) > _bound ||
-        fabs(a14.value()) > _bound ||
-        fabs(a20.value()) > _bound ||
-        fabs(a21.value()) > _bound ||
-        fabs(a22.value()) > _bound ||
-        fabs(a23.value()) > _bound ||
-        fabs(a24.value()) > _bound ||
-        fabs(a30.value()) > _bound ||
-        fabs(a31.value()) > _bound ||
-        fabs(a32.value()) > _bound ||
-        fabs(a33.value()) > _bound ||
-        fabs(a34.value()) > _bound ||
-        fabs(a40.value()) > _bound ||
-        fabs(a41.value()) > _bound ||
-        fabs(a42.value()) > _bound ||
-        fabs(a43.value()) > _bound ||
-        fabs(a44.value()) > _bound)
+        fabs(a00.value()) > SAF_bound ||
+        fabs(a01.value()) > SAF_bound ||
+        fabs(a02.value()) > SAF_bound ||
+        fabs(a03.value()) > SAF_bound ||
+        fabs(a04.value()) > SAF_bound ||
+        fabs(a10.value()) > SAF_bound ||
+        fabs(a11.value()) > SAF_bound ||
+        fabs(a12.value()) > SAF_bound ||
+        fabs(a13.value()) > SAF_bound ||
+        fabs(a14.value()) > SAF_bound ||
+        fabs(a20.value()) > SAF_bound ||
+        fabs(a21.value()) > SAF_bound ||
+        fabs(a22.value()) > SAF_bound ||
+        fabs(a23.value()) > SAF_bound ||
+        fabs(a24.value()) > SAF_bound ||
+        fabs(a30.value()) > SAF_bound ||
+        fabs(a31.value()) > SAF_bound ||
+        fabs(a32.value()) > SAF_bound ||
+        fabs(a33.value()) > SAF_bound ||
+        fabs(a34.value()) > SAF_bound ||
+        fabs(a40.value()) > SAF_bound ||
+        fabs(a41.value()) > SAF_bound ||
+        fabs(a42.value()) > SAF_bound ||
+        fabs(a43.value()) > SAF_bound ||
+        fabs(a44.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return sign_of_determinant5x5_SAF(
@@ -607,7 +607,7 @@ letstry:
 		Restricted_double(a42.value()),
 		Restricted_double(a43.value()),
 		Restricted_double(a44.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -615,67 +615,67 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(a00.value()));
-      _bound = std::max(_bound, fabs(a01.value()));
-      _bound = std::max(_bound, fabs(a02.value()));
-      _bound = std::max(_bound, fabs(a03.value()));
-      _bound = std::max(_bound, fabs(a04.value()));
-      _bound = std::max(_bound, fabs(a10.value()));
-      _bound = std::max(_bound, fabs(a11.value()));
-      _bound = std::max(_bound, fabs(a12.value()));
-      _bound = std::max(_bound, fabs(a13.value()));
-      _bound = std::max(_bound, fabs(a14.value()));
-      _bound = std::max(_bound, fabs(a20.value()));
-      _bound = std::max(_bound, fabs(a21.value()));
-      _bound = std::max(_bound, fabs(a22.value()));
-      _bound = std::max(_bound, fabs(a23.value()));
-      _bound = std::max(_bound, fabs(a24.value()));
-      _bound = std::max(_bound, fabs(a30.value()));
-      _bound = std::max(_bound, fabs(a31.value()));
-      _bound = std::max(_bound, fabs(a32.value()));
-      _bound = std::max(_bound, fabs(a33.value()));
-      _bound = std::max(_bound, fabs(a34.value()));
-      _bound = std::max(_bound, fabs(a40.value()));
-      _bound = std::max(_bound, fabs(a41.value()));
-      _bound = std::max(_bound, fabs(a42.value()));
-      _bound = std::max(_bound, fabs(a43.value()));
-      _bound = std::max(_bound, fabs(a44.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(a00.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a01.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a02.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a03.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a04.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a10.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a11.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a12.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a13.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a14.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a20.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a21.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a22.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a23.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a24.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a30.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a31.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a32.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a33.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a34.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a40.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a41.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a42.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a43.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a44.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) sign_of_determinant5x5_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -847,51 +847,51 @@ sign_of_determinant6x6(
     const Static_adaptatif_filter &a55)
 {
   bool tried = false;
-  static double _bound = -1.0;
-  static double _epsilon_0;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
 
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(a00.value()) > _bound ||
-        fabs(a01.value()) > _bound ||
-        fabs(a02.value()) > _bound ||
-        fabs(a03.value()) > _bound ||
-        fabs(a04.value()) > _bound ||
-        fabs(a05.value()) > _bound ||
-        fabs(a10.value()) > _bound ||
-        fabs(a11.value()) > _bound ||
-        fabs(a12.value()) > _bound ||
-        fabs(a13.value()) > _bound ||
-        fabs(a14.value()) > _bound ||
-        fabs(a15.value()) > _bound ||
-        fabs(a20.value()) > _bound ||
-        fabs(a21.value()) > _bound ||
-        fabs(a22.value()) > _bound ||
-        fabs(a23.value()) > _bound ||
-        fabs(a24.value()) > _bound ||
-        fabs(a25.value()) > _bound ||
-        fabs(a30.value()) > _bound ||
-        fabs(a31.value()) > _bound ||
-        fabs(a32.value()) > _bound ||
-        fabs(a33.value()) > _bound ||
-        fabs(a34.value()) > _bound ||
-        fabs(a35.value()) > _bound ||
-        fabs(a40.value()) > _bound ||
-        fabs(a41.value()) > _bound ||
-        fabs(a42.value()) > _bound ||
-        fabs(a43.value()) > _bound ||
-        fabs(a44.value()) > _bound ||
-        fabs(a45.value()) > _bound ||
-        fabs(a50.value()) > _bound ||
-        fabs(a51.value()) > _bound ||
-        fabs(a52.value()) > _bound ||
-        fabs(a53.value()) > _bound ||
-        fabs(a54.value()) > _bound ||
-        fabs(a55.value()) > _bound)
+        fabs(a00.value()) > SAF_bound ||
+        fabs(a01.value()) > SAF_bound ||
+        fabs(a02.value()) > SAF_bound ||
+        fabs(a03.value()) > SAF_bound ||
+        fabs(a04.value()) > SAF_bound ||
+        fabs(a05.value()) > SAF_bound ||
+        fabs(a10.value()) > SAF_bound ||
+        fabs(a11.value()) > SAF_bound ||
+        fabs(a12.value()) > SAF_bound ||
+        fabs(a13.value()) > SAF_bound ||
+        fabs(a14.value()) > SAF_bound ||
+        fabs(a15.value()) > SAF_bound ||
+        fabs(a20.value()) > SAF_bound ||
+        fabs(a21.value()) > SAF_bound ||
+        fabs(a22.value()) > SAF_bound ||
+        fabs(a23.value()) > SAF_bound ||
+        fabs(a24.value()) > SAF_bound ||
+        fabs(a25.value()) > SAF_bound ||
+        fabs(a30.value()) > SAF_bound ||
+        fabs(a31.value()) > SAF_bound ||
+        fabs(a32.value()) > SAF_bound ||
+        fabs(a33.value()) > SAF_bound ||
+        fabs(a34.value()) > SAF_bound ||
+        fabs(a35.value()) > SAF_bound ||
+        fabs(a40.value()) > SAF_bound ||
+        fabs(a41.value()) > SAF_bound ||
+        fabs(a42.value()) > SAF_bound ||
+        fabs(a43.value()) > SAF_bound ||
+        fabs(a44.value()) > SAF_bound ||
+        fabs(a45.value()) > SAF_bound ||
+        fabs(a50.value()) > SAF_bound ||
+        fabs(a51.value()) > SAF_bound ||
+        fabs(a52.value()) > SAF_bound ||
+        fabs(a53.value()) > SAF_bound ||
+        fabs(a54.value()) > SAF_bound ||
+        fabs(a55.value()) > SAF_bound)
       throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return sign_of_determinant6x6_SAF(
@@ -931,7 +931,7 @@ letstry:
 		Restricted_double(a53.value()),
 		Restricted_double(a54.value()),
 		Restricted_double(a55.value()),
-		_epsilon_0);
+		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -939,89 +939,89 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;
-      _bound = std::max(_bound, fabs(a00.value()));
-      _bound = std::max(_bound, fabs(a01.value()));
-      _bound = std::max(_bound, fabs(a02.value()));
-      _bound = std::max(_bound, fabs(a03.value()));
-      _bound = std::max(_bound, fabs(a04.value()));
-      _bound = std::max(_bound, fabs(a05.value()));
-      _bound = std::max(_bound, fabs(a10.value()));
-      _bound = std::max(_bound, fabs(a11.value()));
-      _bound = std::max(_bound, fabs(a12.value()));
-      _bound = std::max(_bound, fabs(a13.value()));
-      _bound = std::max(_bound, fabs(a14.value()));
-      _bound = std::max(_bound, fabs(a15.value()));
-      _bound = std::max(_bound, fabs(a20.value()));
-      _bound = std::max(_bound, fabs(a21.value()));
-      _bound = std::max(_bound, fabs(a22.value()));
-      _bound = std::max(_bound, fabs(a23.value()));
-      _bound = std::max(_bound, fabs(a24.value()));
-      _bound = std::max(_bound, fabs(a25.value()));
-      _bound = std::max(_bound, fabs(a30.value()));
-      _bound = std::max(_bound, fabs(a31.value()));
-      _bound = std::max(_bound, fabs(a32.value()));
-      _bound = std::max(_bound, fabs(a33.value()));
-      _bound = std::max(_bound, fabs(a34.value()));
-      _bound = std::max(_bound, fabs(a35.value()));
-      _bound = std::max(_bound, fabs(a40.value()));
-      _bound = std::max(_bound, fabs(a41.value()));
-      _bound = std::max(_bound, fabs(a42.value()));
-      _bound = std::max(_bound, fabs(a43.value()));
-      _bound = std::max(_bound, fabs(a44.value()));
-      _bound = std::max(_bound, fabs(a45.value()));
-      _bound = std::max(_bound, fabs(a50.value()));
-      _bound = std::max(_bound, fabs(a51.value()));
-      _bound = std::max(_bound, fabs(a52.value()));
-      _bound = std::max(_bound, fabs(a53.value()));
-      _bound = std::max(_bound, fabs(a54.value()));
-      _bound = std::max(_bound, fabs(a55.value()));
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;
+      SAF_bound = std::max(SAF_bound, fabs(a00.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a01.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a02.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a03.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a04.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a05.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a10.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a11.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a12.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a13.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a14.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a15.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a20.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a21.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a22.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a23.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a24.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a25.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a30.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a31.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a32.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a33.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a34.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a35.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a40.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a41.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a42.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a43.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a44.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a45.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a50.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a51.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a52.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a53.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a54.value()));
+      SAF_bound = std::max(SAF_bound, fabs(a55.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
       (void) sign_of_determinant6x6_SAF(
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		Static_filter_error(_bound,0,1),
-		_epsilon_0);
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		Static_filter_error(SAF_bound,0,1),
+		SAF_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
