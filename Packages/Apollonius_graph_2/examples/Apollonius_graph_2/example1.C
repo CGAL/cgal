@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   assert( ifs );
 
   Apollonius_graph ag;
-  Apollonius_graph::Weighted_point wp;
+  Apollonius_graph::Weighted_point_2 wp;
 
   // read the weighted points and insert them in the Apollonius graph
   while ( ifs >> wp ) {
