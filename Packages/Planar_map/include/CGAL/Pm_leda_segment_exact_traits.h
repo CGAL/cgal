@@ -30,7 +30,6 @@
 #include <CGAL/rat_leda_in_CGAL_2.h>
 
 #include <cmath>
-#include <cassert>
 
 #ifdef CGAL_PM_LEDA_SEGMENT_EXACT_TRAITS_DEBUG
 #include <CGAL/Pm_traits_operations_count.h>
@@ -394,9 +393,9 @@ public:
 		// precondition: first, second, this are pairwise interior 
 	        // disjoint
 	{
-		// assert(is_intersection_simple(first, second);
-		// assert(is_intersection_simple(first, *this);
-		// assert(is_intersection_simple(*this, second);
+		// CGAL_assertion(is_intersection_simple(first, second));
+		// CGAL_assertion(is_intersection_simple(first, *this));
+		// CGAL_assertion(is_intersection_simple(*this, second));
 		
 		Curve_status cv0_status, cv1_status, cvx_status;
 		int cv0_cv1, cv0_cvx, cv1_cvx;

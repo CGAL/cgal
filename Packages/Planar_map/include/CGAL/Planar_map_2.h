@@ -196,8 +196,8 @@ public:
         use_delete_pl = true;
         pl->init(*this,*traits);
 #else
-        assert(0); 
-	// if no default PL is defined you must supply a pl.
+        CGAL_assertion_msg( false,
+	"No default point location is defined; you must supply one.");
 #endif
       }
     else
@@ -244,8 +244,8 @@ public:
         use_delete_pl = true;
         pl->init(*this,*traits);
 #else
-        assert(0); 
-        // if no default PL is defined you must supply a pl.
+        CGAL_assertion_msg( false,
+	"No default point location is defined; you must supply one.");
 #endif
       }
     else
@@ -296,8 +296,8 @@ public:
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
       pl = new Pm_default_point_location<Self>;
 #else
-      assert(0); 
-      // if no default PL is defined you must supply a pl.
+      CGAL_assertion_msg( false,
+      "No default point location is defined; you must supply one.");
 #endif
     }
     use_delete_pl = true;
