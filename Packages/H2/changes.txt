@@ -1,3 +1,6 @@
+2.35   (9 July 2001)
+- added miss Object_2 and Object_3 types in Homogeneous classes
+
 2.34   (21 June 2001)
 - New constructors for DirectionH2.
 
