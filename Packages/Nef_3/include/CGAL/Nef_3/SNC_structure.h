@@ -1209,7 +1209,8 @@ public:
       v = v_next;
     }
 
-    purge_no_find_objects(hash_volume, hash_facet, hash_sface, uf_volume, uf_facet, uf_sface);
+    purge_no_find_objects(hash_volume, hash_facet, hash_sface, uf_volume, 
+                          uf_facet, uf_sface);
     create_boundary_links_forall_sfaces( hash_sface, uf_sface);
     create_boundary_links_forall_facets( hash_facet, uf_facet);
     create_boundary_links_forall_volumes( hash_volume, uf_volume);
