@@ -249,12 +249,12 @@ Bounded_side operator()(ForwardIterator first, ForwardIterator last,
 {
   TUPLE_DIM_CHECK(first,last,region_of_sphere);
   typename R::Orientation_d _orientation;
-  Orientation or = _orientation(first,last);
-  CGAL_assertion_msg((or != 0), "Side_of_bounded_sphere_d: \
+  Orientation o = _orientation(first,last);
+  CGAL_assertion_msg((o != 0), "Side_of_bounded_sphere_d: \
   A must be full dimensional.");
   typename R::Side_of_oriented_sphere_d _side_of_oriented_sphere;
   Oriented_side oside = _side_of_oriented_sphere(first,last,p);
-  if (or == POSITIVE) {
+  if (o == POSITIVE) {
     switch (oside) {
         case ON_POSITIVE_SIDE    :   return ON_BOUNDED_SIDE;
         case ON_ORIENTED_BOUNDARY:   return ON_BOUNDARY;

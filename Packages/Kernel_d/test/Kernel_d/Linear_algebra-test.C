@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
       v1 += 2*v2;
       v1 -= v2;
       v1 = -v1;
-      CGAL_TEST((v1*v1 == vec_dim*vec_dim*vec_dim));
+      CGAL_TEST((v1*v1 == NT(vec_dim*vec_dim*vec_dim)));
       /* squared length of (v1 + v2) = v1*v1 
          should be equal to dim*dim*dim */
       NT res1 = (v1*v1 - v2*v2);
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
       CGAL_TEST(A!=B);
       CGAL_TEST(A==D);
       CGAL_TEST(A.row_dimension()==mat_dim && A.column_dimension()==mat_dim);
-      CGAL_TEST(A.row(1)*B.column(1)==mat_dim);
+      CGAL_TEST(A.row(1)*B.column(1)==NT(mat_dim));
 
       /* some basic arithmetic testing */
       C = A; C += A; 
@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
       Vector c; 
       std::vector<int> q; 
       NT det = LA::determinant(C, L, U, q, c); // det must be 2^{2*mat_dim}
-      NT pot = 1; for (i=0; i<mat_dim; ++i) pot *= 4;
+      NT pot = 1; for (i=0; i<mat_dim; ++i) pot *= NT(4);
       CGAL_TEST(det == pot);
       CGAL_TEST(LA::verify_determinant(C, det, L, U, q, c));
       CGAL_TEST(det == LA::determinant(C));
@@ -191,7 +191,7 @@ int main(int argc, char* argv[])
         }
         else {
           Vector null(mat_dim);
-          CGAL_TEST(LA::transpose(E)*e==null && b*e!=0);
+          CGAL_TEST(LA::transpose(E)*e==null && b*e!=NT(0));
           CGAL_TEST(!LA::is_solvable(E,b));
         }
 
@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
           CGAL_TEST(N*x == b*denom);
         } else {
           Vector null(mat_dim-1);
-          CGAL_TEST(LA::transpose(N)*e==null && b*e!=0);
+          CGAL_TEST(LA::transpose(N)*e==null && b*e!=NT(0));
         }
       }
 
@@ -261,7 +261,7 @@ int main(int argc, char* argv[])
       v1 += 2*v2;
       v1 -= v2;
       v1 = -v1;
-      CGAL_TEST((v1*v1 == vec_dim*vec_dim*vec_dim));
+      CGAL_TEST((v1*v1 == NT(vec_dim*vec_dim*vec_dim)));
       /* squared length of (v1 + v2) = v1*v1 
          should be equal to dim*dim*dim */
       NT res1 = (v1*v1 - v2*v2);
@@ -322,7 +322,7 @@ int main(int argc, char* argv[])
       CGAL_TEST(A!=B);
       CGAL_TEST(A==D);
       CGAL_TEST(A.row_dimension()==mat_dim && A.column_dimension()==mat_dim);
-      CGAL_TEST(A.row(1)*B.column(1)==mat_dim);
+      CGAL_TEST(A.row(1)*B.column(1)==NT(mat_dim));
 
       /* some basic arithmetic testing */
       C = A; C += A; 
@@ -353,7 +353,7 @@ int main(int argc, char* argv[])
       Vector c; 
       std::vector<int> q; 
       NT det = LA::determinant(C, L, U, q, c); // det must be 2^{2*mat_dim}
-      NT pot = 1; for (i=0; i<mat_dim; ++i) pot *= 4;
+      NT pot = 1; for (i=0; i<mat_dim; ++i) pot *= NT(4);
       CGAL_TEST(det == pot);
       CGAL_TEST(LA::verify_determinant(C, det, L, U, q, c));
       CGAL_TEST(det == LA::determinant(C));
@@ -384,7 +384,7 @@ int main(int argc, char* argv[])
         }
         else {
           Vector null(mat_dim);
-          CGAL_TEST(LA::transpose(E)*e==null && b*e!=0);
+          CGAL_TEST(LA::transpose(E)*e==null && b*e!=NT(0));
           CGAL_TEST(!LA::is_solvable(E,b));
         }
 
@@ -415,7 +415,7 @@ int main(int argc, char* argv[])
           CGAL_TEST(N*x == b*denom);
         } else {
           Vector null(mat_dim-1);
-          CGAL_TEST(LA::transpose(N)*e==null && b*e!=0);
+          CGAL_TEST(LA::transpose(N)*e==null && b*e!=NT(0));
         }
       }
 

@@ -16,8 +16,8 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
-// author(s)     : seel@mpi-sb.mpg.de
-// coordinator   : seel@mpi-sb.mpg.de
+// author(s)     : Michael.Seel@mpi-sb.mpg.de
+// coordinator   : Michael.Seel@mpi-sb.mpg.de
 //
 // ======================================================================
 
@@ -113,7 +113,7 @@ Gaussian_elimination(const Matrix &M,
     // By invariant, L * M[q] = U and det(M) = det
   rank = k;
   if (rank == dim) {
-    det *= sign;
+    det *= FT(sign);
   } else {
     det = FT(0);
     // A vector c such that M[q] * c == 0 is obtained by L.row(dim-1)

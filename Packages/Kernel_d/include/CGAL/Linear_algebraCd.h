@@ -11,13 +11,13 @@
 // release       : 1.1
 // release_date  : %-e Dec 1999
 //
-// file          : include/CGAL/Linear_algebra_c.h
+// file          : include/CGAL/Linear_algebraCd.h
 // package       : Kernel_d
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
-// author(s)     : seel@mpi-sb.mpg.de
-// coordinator   : seel@mpi-sb.mpg.de
+// author(s)     : Michael.Seel@mpi-sb.mpg.de
+// coordinator   : Michael.Seel@mpi-sb.mpg.de
 //
 // ======================================================================
 
