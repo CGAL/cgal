@@ -1,5 +1,5 @@
 // examples/Nef_S2/simple.C
-//-------------------------
+
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>

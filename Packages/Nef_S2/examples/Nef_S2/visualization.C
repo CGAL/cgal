@@ -1,5 +1,5 @@
 // examples/Nef_S2/visualization.C
-// -------------------------------------
+
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>
@@ -18,11 +18,12 @@ int main() {
   Nef_polyhedron_S2 S;
   create_random_Nef_S2(S,n);
 
-  CGAL::ogl << S;
-  CGAL::ogl << "Visualization example"; 
-  CGAL::ogl.display();
-
-  return 0;
+  QApplication a(argc, argv);
+  Qt_widget_Nef_S2<Nef_polyhedron_S2>* w = 
+    new Qt_widget_Nef_S2<Nef_polyhedron_S2>(S);
+  a.setMainWidget(w);
+  w->show();
+  return a.exec();
 }
 
 
