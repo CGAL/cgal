@@ -27,15 +27,9 @@
 #if ! (PIERCE_RECTANGLES_2_TRAITS_H)
 #define PIERCE_RECTANGLES_2_TRAITS_H 1
 
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLE_2_H
-#ifndef CGAL_ISO_SQUARE_STATIC_2_H
 #include <CGAL/Iso_square_static_2.h>
-#endif // CGAL_ISO_SQUARE_STATIC_2_H
 
 CGAL_BEGIN_NAMESPACE
 

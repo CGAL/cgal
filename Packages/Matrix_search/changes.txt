@@ -8,5 +8,7 @@
 //---------------------------------------------------------------------
 
 ALL : some minor changes to prevent warnings for gcc -Wall.
-DEMO: Initial revision
+ALL : Initial revision
+ALL : use namespace std and CGAL
+ALL : use standard header files
 SRC : fix signed <-> unsigned comparison warning on gcc.
