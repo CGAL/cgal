@@ -1,0 +1,23 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Handle_ref.tex
+% +------------------------------------------------------------------------+
+% | 10 04 2002   Mariette Yvinec
+% | Package: Handle
+% | 
+\RCSdef{\RCSTriangulationRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%\clearpage
+%\section{Reference pages for Handles}
+%\chapter{Handles}
+
+Most data structures in \cgal\ use the concept of \ccc{Handle} in their user
+interface to refer to the elements they store.  This concept describes what is
+sometimes called a trivial iterator.  A \ccc{Handle} is akeen to a pointer to
+an object providing the dereference operator \ccc{operator*()} and member
+access \ccc{operator->()} but no increment or decrement operators like
+iterators.  A \ccc{Handle} is intended to be used whenever the referenced
+object is not part of a logical sequence.
