@@ -178,7 +178,7 @@ power_test(const Weighted_point<pt, Weight> &p,
 	   Homogeneous_tag)
 {
     typedef typename pt::FT FT;
-    return power_testH3(p.x(), p.y(), p.z(), FT(p.weight()),
+    return power_testC3(p.x(), p.y(), p.z(), FT(p.weight()),
                         q.x(), q.y(), q.z(), FT(q.weight()),
                         r.x(), r.y(), r.z(), FT(r.weight()),
                         t.x(), t.y(), t.z(), FT(t.weight()));
