@@ -1,3 +1,14 @@
+0.6.1 (08/12/00)
+a bit more cleanup in cgal_vector.h
+
+0.6   (08/12/00)
+changed cgal_vector.h to use __STLPORT_STD:: prefix instead of std::
+prefix. This is mostly for consistensy with the rest of stlport/
+contents. (pointed out by S.Pashkov on the cgal-discuss mailing list)
+
+0.5   (05/07/00)
+fixed reverse_iterator oddity repoted by M.Seel
+
 0.4.1 (03/01/00)
 added
  #define CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT 1

@@ -1774,8 +1774,8 @@ protected:
             //  but it's harder to make guarantees.
         }
 
-#     if defined(__STL_CLASS_PARTIAL_SPECIALIZATION) && \
-  !defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+#     if defined(__STL_CLASS_PARTIAL_SPECIALIZATION) || \
+  defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
 
         typedef __STLPORT_STD::reverse_iterator<const_iterator> const_reverse_iterator;
 #     else /* __STL_CLASS_PARTIAL_SPECIALIZATION */
@@ -2163,9 +2163,9 @@ protected:
 	iterator mutable_end() {
 	    return(iterator(this, size()));
 	}
-#if defined ( __STL_CLASS_PARTIAL_SPECIALIZATION ) && \
-! defined (__STL_PARTIAL_SPECIALIZATION_BUG) && \
-! defined( CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+#if (defined ( __STL_CLASS_PARTIAL_SPECIALIZATION ) && \
+! defined (__STL_PARTIAL_SPECIALIZATION_BUG)) || \
+ defined( CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
          typedef __STLPORT_STD::reverse_iterator<iterator> reverse_iterator;
 #     else /* __STL_CLASS_PARTIAL_SPECIALIZATION */
 # if defined (__STL_MSVC50_COMPATIBILITY)

@@ -131,9 +131,9 @@ public:
   typedef size_t size_type;
   typedef ptrdiff_t difference_type;
 
-#if defined ( __STL_CLASS_PARTIAL_SPECIALIZATION ) && \
-  ! defined (__STL_PARTIAL_SPECIALIZATION_BUG) && \
-  ! defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+#if (defined ( __STL_CLASS_PARTIAL_SPECIALIZATION ) && \
+  ! defined (__STL_PARTIAL_SPECIALIZATION_BUG)) || \
+   defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
   typedef __STLPORT_STD::reverse_iterator<const_iterator> const_reverse_iterator;
   typedef __STLPORT_STD::reverse_iterator<iterator> reverse_iterator;
 #else /* __STL_CLASS_PARTIAL_SPECIALIZATION */

@@ -421,18 +421,20 @@ public:
   typedef _Bit_iterator                iterator;
   typedef _Bit_const_iterator          const_iterator;
 
-#if defined ( __STL_CLASS_PARTIAL_SPECIALIZATION ) && \
-  ! defined (__STL_PARTIAL_SPECIALIZATION_BUG) && \
-  ! defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+#if (defined ( __STL_CLASS_PARTIAL_SPECIALIZATION ) && \
+  ! defined (__STL_PARTIAL_SPECIALIZATION_BUG)) || \
+  defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
   typedef __STLPORT_STD::reverse_iterator<const_iterator> const_reverse_iterator;
   typedef __STLPORT_STD::reverse_iterator<iterator> reverse_iterator;
 #else /* __STL_CLASS_PARTIAL_SPECIALIZATION */
+#error " wrong reverse_iterator! "
 # if defined (__STL_MSVC50_COMPATIBILITY)
   typedef __STLPORT_STD::reverse_iterator<const_iterator, value_type, const_reference, 
   const_pointer, difference_type> const_reverse_iterator;
   typedef __STLPORT_STD::reverse_iterator<iterator, value_type, reference, reference*, 
   difference_type> reverse_iterator;
 # else
+#error " wrong reverse_iterator! "
   typedef __STLPORT_STD::reverse_iterator<const_iterator, value_type, const_reference, 
                                   difference_type> const_reverse_iterator;
   typedef __STLPORT_STD::reverse_iterator<iterator, value_type, reference, difference_type>

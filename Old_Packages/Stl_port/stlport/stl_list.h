@@ -259,12 +259,13 @@ public:
   typedef _List_iterator<_Tp, _Nonconst_traits<_Tp> > iterator;
   typedef _List_iterator<_Tp, _Const_traits<_Tp> >    const_iterator;
 
-#if defined ( __STL_CLASS_PARTIAL_SPECIALIZATION ) && \
-  ! defined (__STL_PARTIAL_SPECIALIZATION_BUG) && \
-  ! defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+#if (defined ( __STL_CLASS_PARTIAL_SPECIALIZATION ) && \
+  ! defined (__STL_PARTIAL_SPECIALIZATION_BUG)) || \
+  defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
     typedef __STLPORT_STD::reverse_iterator<const_iterator> const_reverse_iterator;
     typedef __STLPORT_STD::reverse_iterator<iterator> reverse_iterator;
 #else /* __STL_CLASS_PARTIAL_SPECIALIZATION */
+#error "wrong reverse_iterator definition !"
 # if defined (__STL_MSVC50_COMPATIBILITY)
     typedef reverse_bidirectional_iterator<const_iterator, value_type,
                                            const_reference, const value_type*, difference_type>

@@ -153,9 +153,9 @@ inline bool operator!=(
 
 #endif /* __STL_USE_SEPARATE_RELOPS_NAMESPACE */
 
-#if defined ( __STL_CLASS_PARTIAL_SPECIALIZATION ) && \
-  ! defined (__STL_PARTIAL_SPECIALIZATION_BUG) && \
-  ! defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
+#if (defined ( __STL_CLASS_PARTIAL_SPECIALIZATION ) && \
+  ! defined (__STL_PARTIAL_SPECIALIZATION_BUG)) || \
+  defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
 
 // This is the new version of reverse_iterator, as defined in the
 //  draft C++ standard.  It relies on the iterator_traits template,
@@ -187,7 +187,9 @@ public:
   reverse_iterator() {}
   explicit reverse_iterator(iterator_type __x) : current(__x) {}
 
-  reverse_iterator(const _Self& __x) : current(__x.current) {}
+  // removed, as incompatible with the templated version (dima)
+  //  reverse_iterator(const _Self& __x) : current(__x.current) {}
+
 #ifdef __STL_MEMBER_TEMPLATES
   template <class _Iter>
   reverse_iterator(const reverse_iterator<_Iter>& __x)
@@ -292,6 +294,7 @@ operator+(typename reverse_iterator<_Iterator>::difference_type __n,
 
 #else /* __STL_CLASS_PARTIAL_SPECIALIZATION */
 
+#error "wrong reverse_iterator definition!"
 // This is the old version of reverse_iterator, as found in the original
 //  HP STL.  It does not use partial specialization.
 

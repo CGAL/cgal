@@ -15,8 +15,8 @@
 #  undef vector
 #endif
 
-namespace stlport
-{
+// namespace stlport { // replace eventually with 
+__STL_BEGIN_NAMESPACE 
 
 template <class T, class _Alloc >
 class vector;
@@ -30,7 +30,7 @@ class vector_const_iterator {
     friend class vector<T,_Alloc>;
     friend class vector_iterator<T,_Alloc>;
     typedef typename _Alloc::const_pointer pointer;
-    typedef std::random_access_iterator_tag iterator_category;
+    typedef __STLPORT_STD::random_access_iterator_tag iterator_category;
     typedef T value_type;
     typedef typename _Alloc::difference_type difference_type;
     typedef typename _Alloc::const_reference reference;
@@ -73,16 +73,18 @@ friend bool operator== CGAL_NULL_TMPL_ARGS
 };
 
 template <class T, class _Alloc>
-bool operator==(const stlport::vector_const_iterator<T,_Alloc> &it1,
-	const stlport::vector_const_iterator<T,_Alloc> &it2)
+bool operator==(const __STLPORT_STD::vector_const_iterator<T,_Alloc> &it1,
+	const __STLPORT_STD::vector_const_iterator<T,_Alloc> &it2)
 {
     return it1.the_it == it2.the_it;
 }
 
 
 template <class T, class _Alloc>
-inline bool operator!=(const stlport::vector_const_iterator<T,_Alloc> &it1,
-	const stlport::vector_const_iterator<T,_Alloc> &it2)
+inline bool operator!=(const 
+		       __STLPORT_STD::vector_const_iterator<T,_Alloc> &it1,
+		       const 
+		       __STLPORT_STD::vector_const_iterator<T,_Alloc> &it2)
 {
     return !(it1== it2);
 }
@@ -92,7 +94,7 @@ class vector_iterator {
   public:
     friend class vector<T,_Alloc>;
     typedef typename _Alloc::pointer pointer;
-    typedef std::random_access_iterator_tag iterator_category;
+    typedef __STLPORT_STD::random_access_iterator_tag iterator_category;
     typedef T value_type;
     typedef typename _Alloc::difference_type difference_type;
     typedef typename _Alloc::reference reference;
@@ -137,21 +139,21 @@ friend bool operator== CGAL_NULL_TMPL_ARGS
 
 
 template <class T, class _Alloc>
-bool operator==(const stlport::vector_iterator<T,_Alloc> &it1,
-	const stlport::vector_iterator<T,_Alloc> &it2)
+bool operator==(const __STLPORT_STD::vector_iterator<T,_Alloc> &it1,
+	const __STLPORT_STD::vector_iterator<T,_Alloc> &it2)
 {
     return it1.the_it == it2.the_it;
 }
 
 
 template <class T, class _Alloc>
-inline bool operator!=(const stlport::vector_iterator<T,_Alloc> &it1,
-	const stlport::vector_iterator<T,_Alloc> &it2)
+inline bool operator!=(const __STLPORT_STD::vector_iterator<T,_Alloc> &it1,
+	const __STLPORT_STD::vector_iterator<T,_Alloc> &it2)
 {
     return !(it1== it2);
 }
 
-template <class T, class _Alloc = std::allocator<T> >
+template <class T, class _Alloc = __STLPORT_STD::allocator<T> >
 class vector {
   public:
     typedef T value_type;
@@ -163,8 +165,8 @@ class vector {
     typedef typename _Alloc::difference_type difference_type;
     typedef vector_const_iterator<T,_Alloc> const_iterator;
     typedef vector_iterator<T,_Alloc> iterator;
-    typedef stlport::reverse_iterator<iterator,value_type,reference,difference_type> reverse_iterator;
-    typedef stlport::reverse_iterator<const_iterator,value_type,const_reference,difference_type>
+    typedef __STLPORT_STD::reverse_iterator<iterator> reverse_iterator;
+    typedef __STLPORT_STD::reverse_iterator<const_iterator>
             const_reverse_iterator;
   protected:
     pointer data_;
@@ -240,10 +242,10 @@ class vector {
     void move_positive(difference_type shift, pointer &source);
     void insert_n(iterator pos, size_type n, const T& x);
     template <class InputIterator>
-    void construct(InputIterator cur, InputIterator beyond, std::input_iterator_tag)
+    void construct(InputIterator cur, InputIterator beyond, __STLPORT_STD::input_iterator_tag)
     {  for ( ; cur != beyond; ++cur) push_back(*cur); }
     template <class ForwardIterator>
-    void construct(ForwardIterator cur, ForwardIterator beyond, std::forward_iterator_tag)
+    void construct(ForwardIterator cur, ForwardIterator beyond, __STLPORT_STD::forward_iterator_tag)
     {
     	size_type n = distance(cur,beyond);
     	reserve(n);
@@ -255,7 +257,7 @@ class vector {
     }
     template <class InputIterator>
     void insert_it(iterator pos, InputIterator f,
-                   InputIterator l,std::input_iterator_tag)
+                   InputIterator l, __STLPORT_STD::input_iterator_tag)
     {
         for (;f != l; ++f) {
             pos = insert(pos, *f);
@@ -264,7 +266,7 @@ class vector {
     }
     template <class InputIterator>
     void insert_it(iterator pos, InputIterator f,
-                   InputIterator l,std::forward_iterator_tag)
+                   InputIterator l, __STLPORT_STD::forward_iterator_tag)
     {
         pointer result = pos.the_it;
         size_type n = distance(f,l);
@@ -283,12 +285,12 @@ friend bool operator< CGAL_NULL_TMPL_ARGS
 
 
 template <class T>
-bool operator==(const stlport::vector<T> &v1,
-	const stlport::vector<T> &v2)
+bool operator==(const __STLPORT_STD::vector<T> &v1,
+	const __STLPORT_STD::vector<T> &v2)
 {
     if (v1.size() != v2.size())
         return false;
-    typedef typename stlport::vector<T>::const_iterator ci;
+    typedef typename __STLPORT_STD::vector<T>::const_iterator ci;
     ci cur1 = v1.begin(), cur2 = v2.begin(), end1 = v1.end();
     for ( ; cur1 != end1; ++cur1, ++cur2) {
         if ( !(*cur1 == *cur2)) return false;
@@ -297,45 +299,51 @@ bool operator==(const stlport::vector<T> &v1,
 }
 
 template <class T>
-bool operator< (const stlport::vector<T>&v1, const stlport::vector<T>& v2)
+bool operator< (const __STLPORT_STD::vector<T>&v1, 
+		const __STLPORT_STD::vector<T>& v2)
 {
-    return std::lexicographical_compare(v1.begin(), v1.end(),v2.begin(),v2.end());
+    return __STLPORT_STD::lexicographical_compare(v1.begin(), v1.end(),
+						  v2.begin(),v2.end());
 }
 
 # ifdef __STL_USE_SEPARATE_RELOPS_NAMESPACE
 
 template <class T>
 inline bool 
-operator!=(const stlport::vector<T>& __x, const stlport::vector<T>& __y)
+operator!=(const __STLPORT_STD::vector<T>& __x, 
+	   const __STLPORT_STD::vector<T>& __y)
 {
   return !(__x == __y);
 }
 
 template <class T>
-inline bool operator>(const stlport::vector<T>& __x, const stlport::vector<T>& __y)
+inline bool operator>(const __STLPORT_STD::vector<T>& __x, 
+		      const __STLPORT_STD::vector<T>& __y)
 {
   return __y < __x;
 }
 
 template <class T>
-inline bool operator<=(const stlport::vector<T>& __x, const stlport::vector<T>& __y)
+inline bool operator<=(const __STLPORT_STD::vector<T>& __x, 
+		       const __STLPORT_STD::vector<T>& __y)
 {
   return !(__y < __x);
 }
 
 template <class T>
-inline bool operator>=(const stlport::vector<T>& __x, const stlport::vector<T>& __y)
+inline bool operator>=(const __STLPORT_STD::vector<T>& __x, 
+		       const __STLPORT_STD::vector<T>& __y)
 {
   return !(__x < __y);
 }
 
 #endif
 
-}
-
+// } // namespace stlport ends ; replace eventually with 
+  // 
 
 template <class T, class _Alloc>
-stlport::vector<T,_Alloc>::
+vector<T,_Alloc>::
 vector(size_type n, const T& x , const _Alloc &alloc)
     : alloc_(alloc)
 {
@@ -353,7 +361,7 @@ vector(size_type n, const T& x , const _Alloc &alloc)
 }
 
 template <class T, class _Alloc>
-stlport::vector<T,_Alloc>::
+vector<T,_Alloc>::
 vector(const vector & v)
 : alloc_(v.alloc_)
 {
@@ -371,7 +379,7 @@ vector(const vector & v)
 }
 
 template <class T, class _Alloc>
-stlport::vector<T,_Alloc>::
+vector<T,_Alloc>::
     ~vector()
 {
     if (data_ != 0) {
@@ -384,7 +392,7 @@ stlport::vector<T,_Alloc>::
 }
 
 template <class T, class _Alloc>
-void stlport::vector<T,_Alloc>::
+void vector<T,_Alloc>::
 swap(vector &o)
 {
    pointer tmp_data= o.data_;
@@ -399,7 +407,7 @@ swap(vector &o)
 }
 
 template <class T, class _Alloc>
-void stlport::vector<T,_Alloc>::
+void vector<T,_Alloc>::
 reserve(size_type n)
 {
     if (n <= capacity_) return;
@@ -419,7 +427,7 @@ reserve(size_type n)
 }
 
 template <class T, class _Alloc>
-void stlport::vector<T,_Alloc>::
+void vector<T,_Alloc>::
 push_back(const T& t)
 {
     if (size_ == capacity_) {
@@ -433,7 +441,7 @@ push_back(const T& t)
 }
 
 template <class T, class _Alloc>
-void stlport::vector<T,_Alloc>::
+void vector<T,_Alloc>::
 pop_back()
 {
     --size_;
@@ -442,7 +450,7 @@ pop_back()
 
 
 template <class T, class _Alloc>
-void stlport::vector<T,_Alloc>::
+void vector<T,_Alloc>::
 move_positive(difference_type shift, pointer &source)
 {
     pointer result = source;
@@ -484,7 +492,7 @@ move_positive(difference_type shift, pointer &source)
 }
 
 template <class T, class _Alloc>
-stlport::vector_iterator<T,_Alloc> stlport::vector<T,_Alloc>::
+vector_iterator<T,_Alloc> vector<T,_Alloc>::
 insert(iterator pos, const T& x)
 {
     pointer result = pos.the_it;
@@ -494,7 +502,7 @@ insert(iterator pos, const T& x)
 }
 
 template <class T, class _Alloc>
-void stlport::vector<T,_Alloc>::
+void vector<T,_Alloc>::
 insert_n(iterator pos, size_type n, const T& x)
 {
     pointer result = pos.the_it;
@@ -506,7 +514,7 @@ insert_n(iterator pos, size_type n, const T& x)
 }
 
 template <class T, class _Alloc>
-void stlport::vector<T,_Alloc>::
+void vector<T,_Alloc>::
 move_negative(pointer source, pointer source_end, pointer destination)
 {
     for ( ; source != source_end; ++source, ++ destination) {
@@ -517,7 +525,7 @@ move_negative(pointer source, pointer source_end, pointer destination)
 
 
 template <class T, class _Alloc>
-stlport::vector_iterator<T,_Alloc> stlport::vector<T,_Alloc>::
+vector_iterator<T,_Alloc> vector<T,_Alloc>::
 erase(iterator pos)
 {
     pointer curpos = pos.the_it;
@@ -528,7 +536,7 @@ erase(iterator pos)
 }
     
 template <class T, class _Alloc>
-stlport::vector_iterator<T,_Alloc> stlport::vector<T,_Alloc>::
+vector_iterator<T,_Alloc> vector<T,_Alloc>::
 erase(iterator first, iterator last)
 {
     pointer firstpos = first.the_it;
@@ -543,7 +551,7 @@ erase(iterator first, iterator last)
 
 
 template <class T, class _Alloc>
-void stlport::vector<T,_Alloc>::
+void vector<T,_Alloc>::
 clear()
 {
     if (size_ == 0) return;
@@ -555,7 +563,7 @@ clear()
 }
 
 template <class T, class _Alloc>
-void stlport::vector<T,_Alloc>::
+void vector<T,_Alloc>::
 resize(size_type n,const T& t)
 {
     if (n == size_) return;
@@ -572,7 +580,7 @@ resize(size_type n,const T& t)
 }
 
 template <class T, class _Alloc>
-void stlport::vector<T,_Alloc>::
+void vector<T,_Alloc>::
 assign(size_type n, const T& x)
 {
     clear();
@@ -580,5 +588,6 @@ assign(size_type n, const T& x)
     for (size_t i = 0; i < n; ++i)
         push_back(x);
 }
+__STL_END_NAMESPACE
 
 #endif
