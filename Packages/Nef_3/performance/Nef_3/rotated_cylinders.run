@@ -3,4 +3,4 @@
 labrun -a -v --log=Rotated_cylinders -n union_of_rotated_cylineders ./union_of_rotated_cylinders off/ngon100.off input/10e0-7.sinus
 labrun -v --log=Rotated_cylinders -n union_of_rotated_cylineders ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus
 labrun -v --log=Rotated_cylinders -n union_of_rotated_cylineders ./union_of_rotated_cylinders off/ngon2000.off input/10e0-7.sinus
-labrun -v --log=Rotated_cylinders -n union_of_rotated_cylineders ./union_of_rotated_cylinders off/ngon10000.off input/10e0-7.sinus
+labrun -v --log=Rotated_cylinders -n union_of_rotated_cylineders ./union_of_rotated_cylinders off/ngon10000.off input/10e-7.sinus
