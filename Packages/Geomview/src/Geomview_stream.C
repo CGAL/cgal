@@ -93,9 +93,11 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 	    std::string s (" rgeomview ");
 	    s += machine;
 	    s += ":0.0";
-            execlp("rsh", "rsh", machine, "-l", login, s.data(), NULL);
+            execlp("rsh", "rsh", machine, "-l", login, s.data(),
+                   static_cast<void *>(NULL)); // cast to stop gcc warning
         } else {
-            execlp("geomview", "geomview", "-c", "-", NULL);
+            execlp("geomview", "geomview", "-c", "-",
+                   static_cast<void *>(NULL)); // cast to stop gcc warning
         }
 
         // if we get to this point something went wrong.
