@@ -55,7 +55,9 @@ squared_radius_orthogonalcircleC2(
 
   FT det2 = det2x2_by_formula(dpx, dpp, dqx, dqq);
 
-  return (CGAL_NTS square(det1)+CGAL_NTS square(det2))/(FT4*CGAL_NTS square(det0)) - rw;
+  return 
+    (CGAL_NTS square(det1)+CGAL_NTS square(det2))/
+                                  (FT4*CGAL_NTS square(det0)) - rw;
 }
 
 template< class FT >

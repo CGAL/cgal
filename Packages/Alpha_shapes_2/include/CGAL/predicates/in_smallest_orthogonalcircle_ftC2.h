@@ -45,8 +45,9 @@ in_smallest_orthogonalcircleC2(const FT &px, const FT &py, const FT  &pw,
   FT dty = ty-qy;
   FT dpz = CGAL_NTS square(dpx)+CGAL_NTS square(dpy);
  
-  return Bounded_side (CGAL_NTS sign(-(CGAL_NTS square(dtx)+CGAL_NTS square(dty)-tw+qw)*dpz
-				  +(dpz-pw+qw)*(dpx*dtx+dpy*dty)));
+  return Bounded_side 
+    (CGAL_NTS sign(-(CGAL_NTS square(dtx)+CGAL_NTS square(dty)-tw+qw)*dpz
+		   +(dpz-pw+qw)*(dpx*dtx+dpy*dty)));
 }
 
 //-------------------------------------------------------------------

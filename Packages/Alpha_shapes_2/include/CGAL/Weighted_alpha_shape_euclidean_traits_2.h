@@ -57,7 +57,8 @@ public:
   
   typedef typename R::FT Coord_type;
   typedef typename 
-  Regular_triangulation_euclidean_traits_2<R, typename R::FT>::Weighted_point Point;
+   Regular_triangulation_euclidean_traits_2<R, typename R::FT>::Weighted_point 
+     Point;
 
   //---------------------------------------------------------------------
 
