@@ -2,7 +2,6 @@
 #include <list>
 #include <vector>
 #include <cassert>
-#include <cstddef>
 
 #include <CGAL/basic.h>
 #include <CGAL/Concatenate_iterator.h>
@@ -16,11 +15,10 @@ public:
   CGAL::Concatenate_iterator<typename C1::iterator,
 			     typename C2::iterator>  Iterator;
 
-
+  typedef typename C1::size_type  size_type;
 
   Concatenate_container(const C1& c1, const C2& c2)
     : c1(c1), c2(c2) {}
-
 
   Iterator begin() const {
     return Iterator(c1.end(), c2.begin(), c1.begin());
@@ -30,10 +28,10 @@ public:
     return Iterator(c1.end(), c2.begin(), c2.end(), 0);
   }
 
-  std::size_t size() const { return c1.size() + c2.size(); }
-  std::size_t lazy_size()
+  size_type size() const { return c1.size() + c2.size(); }
+  size_type lazy_size()
   {
-    std::size_t k(0);
+    size_type k(0);
     for (Iterator it = begin(); it != end(); it++) { k++; }
     return k;
   }
@@ -61,8 +59,9 @@ void print_container(C c)
   std::cout << "Contents of concatenated container in reverse order:"
 	    << std::endl;
   if ( c.begin() != c.end() ) {
-    Iterator it;
-    for (it = --c.end(); it != c.begin(); it--) {
+    Iterator it = c.end();
+    --it;
+    for (; it != c.begin(); it--) {
       std::cout << " " << (*it);
     }
     std::cout << " " << *it;

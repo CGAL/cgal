@@ -2,6 +2,9 @@
 //	Revision History for package STL_Extension
 //=====================================================================
 
+Version 2.76 (15 May 2003)
+Nested_iterator and Concatenate_iterator fixes for MipsPro.
+
 Version 2.75 (12 May 2003)
 Added dox for Compact_container
 Fixed quadruple/triple dox

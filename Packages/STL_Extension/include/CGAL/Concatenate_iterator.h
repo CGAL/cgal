@@ -27,6 +27,7 @@
 #define CGAL_CONCATENATE_ITERATOR_H
 
 #include <CGAL/basic.h>
+#include <iterator>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -42,17 +43,18 @@ template <class It1, class It2>
 class Concatenate_iterator
 {
 private:
-  typedef Concatenate_iterator<It1,It2>    Self;
+  typedef Concatenate_iterator<It1,It2>        Self;
+  typedef std::iterator_traits<It1>            Traits1;
 
 public:
-  typedef It1                              Iterator1;
-  typedef It2                              Iterator2;
+  typedef It1                                  Iterator1;
+  typedef It2                                  Iterator2;
 
-  typedef typename It1::reference          reference;
-  typedef typename It1::pointer            pointer;
-  typedef typename It1::value_type         value_type;
-  typedef typename It1::difference_type    difference_type;
-  typedef typename It1::iterator_category  iterator_category;
+  typedef typename Traits1::reference          reference;
+  typedef typename Traits1::pointer            pointer;
+  typedef typename Traits1::value_type         value_type;
+  typedef typename Traits1::difference_type    difference_type;
+  typedef typename Traits1::iterator_category  iterator_category;
 
 public:
   Concatenate_iterator() : e1_(), i1_(), b2_(), i2_() {}

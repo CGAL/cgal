@@ -27,6 +27,7 @@
 #define CGAL_NESTED_ITERATOR_H
 
 #include <CGAL/iterator.h>
+#include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -34,7 +35,7 @@ template<class It>
 struct Nested_iterator_traits
 {
   typedef It                                 Base_iterator;
-  typedef typename It::value_type::iterator  Iterator;
+  typedef typename std::iterator_traits<It>::value_type::iterator  Iterator;
 
   Iterator begin(It it) const { return it->begin(); }
   Iterator end(It it) const { return it->end(); }
@@ -109,12 +110,15 @@ protected:
 				  CGALi::Emptyness_predicate<Tr> > >
   Filter_base_iterator;
 
+private:
+  typedef std::iterator_traits<Iterator>        ItTraits;
+
 public:
-  typedef typename Iterator::reference          reference;
-  typedef typename Iterator::pointer            pointer;
-  typedef typename Iterator::value_type         value_type;
-  typedef typename Iterator::difference_type    difference_type;
-  typedef typename Iterator::iterator_category  iterator_category;
+  typedef typename ItTraits::reference          reference;
+  typedef typename ItTraits::pointer            pointer;
+  typedef typename ItTraits::value_type         value_type;
+  typedef typename ItTraits::difference_type    difference_type;
+  typedef typename ItTraits::iterator_category  iterator_category;
 
 public:
   Nested_iterator() : Filter_base_iterator(), nested_it_() {}
@@ -154,13 +158,15 @@ public:
   {
     if ( this->is_end() ) {
       Filter_base_iterator::operator--();
-      nested_it_ = --end(this->base());
+      nested_it_ = this->end(this->base());
+      --nested_it_;
     } else {
       if ( nested_it_ != begin( this->base() ) ) {
 	--nested_it_;
       } else {
 	Filter_base_iterator::operator--();
-	nested_it_ = --end( this->base() );
+	nested_it_ = this->end( this->base() );
+	--nested_it_;
       }
     }
     return *this;
@@ -177,7 +183,7 @@ public:
   
   reference  operator*()  const
   {
-    return nested_it_.operator*();
+    return *nested_it_;
   }
 
   pointer    operator->() const
