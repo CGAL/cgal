@@ -2,7 +2,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Iso_rectangle_2.h>
-#include "../../include/CGAL/Largest_empty_iso_rectangle_2.h"
+#include <CGAL/Largest_empty_iso_rectangle_2.h>
 #include <fstream>
 #include <cassert>
 

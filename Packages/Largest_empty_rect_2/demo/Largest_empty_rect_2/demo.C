@@ -19,7 +19,7 @@ int main()
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include <CGAL/IO/cgal_window_redefine.h>
+//#include <CGAL/IO/cgal_window_redefine.h>
 #include <CGAL/Largest_empty_iso_rectangle_2.h>
 
 #define MIN_X 0
@@ -37,16 +37,17 @@ typedef K::Iso_rectangle_2              Iso_rectangle_2;
 
 typedef CGAL::Polygon_2<K> Polygon;
 typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_rect;
+typedef CGAL::Window_stream  Window_stream;
 
 void display_bounding_box(Largest_empty_rect &empty_rectangle,
-			  CGAL::Window_stream &W)
+			  Window_stream &W)
 {
   Iso_rectangle_2 b = empty_rectangle.get_bounding_box();
 
   W << CGAL::BLACK << b;
 }
 
-void clear(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
+void clear(Largest_empty_rect &empty_rectangle,Window_stream &W)
 {
   empty_rectangle.clear();
 
@@ -55,7 +56,7 @@ void clear(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
   display_bounding_box(empty_rectangle,W);
 }
 
-void redraw(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
+void redraw(Largest_empty_rect &empty_rectangle,Window_stream &W)
 {
   W.clear();
 
@@ -69,7 +70,7 @@ void redraw(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 
 
 void show_biggest_rec(Largest_empty_rect &empty_rectangle,
-		      CGAL::Window_stream &W)
+		      Window_stream &W)
 {
   Iso_rectangle_2 b = empty_rectangle.get_largest_empty_iso_rectangle();
 
@@ -87,7 +88,7 @@ void show_biggest_rec(Largest_empty_rect &empty_rectangle,
 
 int main(int argc,char *argv[])
 {
-  CGAL::Window_stream W(600, 600);
+  Window_stream W(600, 600);
   std::ifstream *is_ptr;
   bool automatic_show = false;
 
