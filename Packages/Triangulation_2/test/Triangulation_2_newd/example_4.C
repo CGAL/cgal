@@ -49,7 +49,7 @@ public:
 
 //
 // A user defined Vertex 
-template <class TDS = Bidon> 
+template <class TDS = TDS_Bidon> 
 class  My_vertex : public Vertex_base<TDS>
 {
 public:
@@ -70,13 +70,13 @@ private:
 };
 
 
-typedef Vertex_base<Bidon>                        Vb;
-typedef TDS_2<Vb>                                 Tds;
-typedef My_vertex<Bidon>                          Myvb;
-typedef TDS_2<Myvb>                               Mytds;
+typedef Vertex_base<>                        Vb;
+typedef TDS_2<Vb>                            Tds;
+typedef My_vertex<>                          Myvb;
+typedef TDS_2<Myvb>                          Mytds;
 
-typedef Tds::Vertex_handle                        Vertex_handle;
-typedef Mytds::Vertex_handle                      My_vertex_handle;
+typedef Tds::Vertex_handle                   Vertex_handle;
+typedef Mytds::Vertex_handle                 My_vertex_handle;
 
 int  main()
 {
