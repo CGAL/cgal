@@ -23,24 +23,27 @@
 #define CGAL_CARTESIAN_SEGMENT_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
-#include <CGAL/Twotuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class SegmentC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for<Twotuple<typename R_::Point_3 > >
+  : R_::Segment_handle_3
 {
 public:
-  typedef R_                               R;
-  typedef typename R::FT                   FT;
-  typedef typename R::RT                   RT;
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
+  typedef typename R::Segment_handle_3          Segment_handle_3;
+  typedef typename R::Segment_ref_3             Segment_ref_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef SegmentC3<R CGAL_CTAG>           Self;
-  typedef typename R::Point_3              Point_3;
-  typedef typename R::Direction_3          Direction_3;
-  typedef typename R::Line_3               Line_3;
-  typedef typename R::Aff_transformation_3 Aff_transformation_3;
+  typedef SegmentC3<R CGAL_CTAG>                Self;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Direction_3               Direction_3;
+  typedef typename R::Line_3                    Line_3;
+  typedef typename R::Aff_transformation_3      Aff_transformation_3;
 #else
   typedef SegmentC3<R>                          Self;
   typedef typename R::Point_3_base              Point_3;
@@ -91,19 +94,19 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC3<R CGAL_CTAG>::SegmentC3()
-  : Handle_for<Twotuple<typename R::Point_3 > >( Twotuple<typename R::Point_3>()) {}
+  : Segment_handle_3(Segment_ref_3()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC3<R CGAL_CTAG>::SegmentC3(const SegmentC3<R CGAL_CTAG> &s)
-  : Handle_for<Twotuple<typename R::Point_3 > >(s) {}
+  : Segment_handle_3(s) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC3<R CGAL_CTAG>::
 SegmentC3(const typename SegmentC3<R CGAL_CTAG>::Point_3 &sp,
           const typename SegmentC3<R CGAL_CTAG>::Point_3 &ep)
-  : Handle_for<Twotuple<typename R::Point_3 > >( Twotuple<typename R::Point_3>(sp, ep)) {}
+  : Segment_handle_3(Segment_ref_3(sp, ep)) {}
 
 template < class R >
 inline

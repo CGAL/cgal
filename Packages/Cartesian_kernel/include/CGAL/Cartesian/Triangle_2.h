@@ -23,19 +23,22 @@
 #define CGAL_CARTESIAN_TRIANGLE_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Threetuple.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class TriangleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Threetuple< typename R_::Point_2> >
+  : public R_::Triangle_handle_2
 {
 public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
+  typedef typename R::Triangle_handle_2         Triangle_handle_2;
+  typedef typename R::Triangle_ref_2            Triangle_ref_2;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef TriangleC2<R,Cartesian_tag>           Self;
   typedef typename R::Point_2                   Point_2;
@@ -88,18 +91,17 @@ public:
   bool           is_degenerate() const;
 
   Bbox_2         bbox() const;
-
 };
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TriangleC2<R CGAL_CTAG>::TriangleC2()
-  : Handle_for<Threetuple< typename R::Point_2> >(Threetuple< typename R::Point_2> ()) {}
+  : Triangle_handle_2(Triangle_ref_2()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TriangleC2<R CGAL_CTAG>::TriangleC2(const TriangleC2<R CGAL_CTAG> &t)
-  : Handle_for<Threetuple< typename R::Point_2> >(t) {}
+  : Triangle_handle_2(t) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -107,7 +109,7 @@ TriangleC2<R CGAL_CTAG>::
 TriangleC2(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p,
            const typename TriangleC2<R CGAL_CTAG>::Point_2 &q,
            const typename TriangleC2<R CGAL_CTAG>::Point_2 &r)
-  : Handle_for<Threetuple< typename R::Point_2> >(Threetuple< typename R::Point_2> (p, q, r)) {}
+  : Triangle_handle_2(Triangle_ref_2(p, q, r)) {}
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE

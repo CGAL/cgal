@@ -23,7 +23,6 @@
 #define CGAL_CARTESIAN_TETRAHEDRON_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
-#include <CGAL/Fourtuple.h>
 #include <CGAL/Cartesian/solve_3.h>
 #include <vector>
 #include <functional>
@@ -32,17 +31,21 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class TetrahedronC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Fourtuple< typename R_::Point_3 > >
+  : public R_::Tetrahedron_handle_3
 {
 public:
-  typedef R_                               R;
-  typedef typename R::FT                   FT;
-  typedef typename R::RT                   RT;
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
+  typedef typename R::Tetrahedron_handle_3      Tetrahedron_handle_3;
+  typedef typename R::Tetrahedron_ref_3         Tetrahedron_ref_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef TetrahedronC3<R CGAL_CTAG>       Self;
-  typedef typename R::Point_3              Point_3;
-  typedef typename R::Plane_3              Plane_3;
-  typedef typename R::Aff_transformation_3 Aff_transformation_3;
+  typedef TetrahedronC3<R CGAL_CTAG>            Self;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Plane_3                   Plane_3;
+  typedef typename R::Aff_transformation_3      Aff_transformation_3;
 #else
   typedef TetrahedronC3<R>                      Self;
   typedef typename R::Point_3_base              Point_3;
@@ -52,9 +55,7 @@ public:
 
   TetrahedronC3();
   TetrahedronC3(const Self &t);
-  TetrahedronC3(const Point_3 &p,
-                const Point_3 &q,
-                const Point_3 &r,
+  TetrahedronC3(const Point_3 &p, const Point_3 &q, const Point_3 &r,
                 const Point_3 &s);
 
   Point_3    vertex(int i) const;
@@ -78,18 +79,17 @@ public:
   bool       has_on_unbounded_side(const Point_3 &p) const;
 
   bool       is_degenerate() const;
-
 };
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TetrahedronC3<R CGAL_CTAG>::TetrahedronC3()
-  : Handle_for<Fourtuple< typename R::Point_3> >( Fourtuple< typename R::Point_3>()) {}
+  : Tetrahedron_handle_3(Tetrahedron_ref_3()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TetrahedronC3<R CGAL_CTAG>::TetrahedronC3(const TetrahedronC3<R CGAL_CTAG> &t)
-  : Handle_for<Fourtuple< typename R::Point_3> >(t) {}
+  : Tetrahedron_handle_3(t) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -98,7 +98,7 @@ TetrahedronC3(const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &p,
               const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &q,
               const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &r,
               const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &s)
-  : Handle_for<Fourtuple< typename R::Point_3> >( Fourtuple< typename R::Point_3>(p, q, r, s)) {}
+  : Tetrahedron_handle_3(Tetrahedron_ref_3(p, q, r, s)) {}
 
 template < class Point_3 >
 struct Less_xyzC3 {

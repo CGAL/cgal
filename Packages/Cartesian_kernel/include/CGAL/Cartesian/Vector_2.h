@@ -23,19 +23,22 @@
 #define CGAL_CARTESIAN_VECTOR_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Twotuple.h>
 #include <CGAL/Cartesian/Direction_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class VectorC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Twotuple<typename R_::FT> >
+  : public R_::Vector_handle_2
 {
 public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
+  typedef typename R::Vector_handle_2		Vector_handle_2;
+  typedef typename R::Vector_ref_2		Vector_ref_2;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef VectorC2<R,Cartesian_tag>             Self;
   typedef typename R::Point_2                   Point_2;
@@ -119,23 +122,23 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::VectorC2()
-  : Handle_for<Twotuple<typename R::FT> >(Twotuple<typename R::FT>() ) {}
+  : Vector_handle_2(Vector_ref_2()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::VectorC2(const VectorC2<R CGAL_CTAG> &v)
-  : Handle_for<Twotuple<typename R::FT> >(v) {}
+  : Vector_handle_2(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::VectorC2(const Null_vector &)
-  : Handle_for<Twotuple<typename R::FT> >(Twotuple<typename R::FT>(FT(0), FT(0)) ) {}
+  : Vector_handle_2(Vector_ref_2(FT(0), FT(0)) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::FT &x,
                                 const typename VectorC2<R CGAL_CTAG>::FT &y)
-  : Handle_for<Twotuple<typename R::FT> >(Twotuple<typename R::FT>(x, y) ) {}
+  : Vector_handle_2(Vector_ref_2(x, y) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
@@ -144,22 +147,22 @@ VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::FT &hx,
 				const typename VectorC2<R CGAL_CTAG>::FT &hw)
 {
   if( hw != FT(1))
-    initialize_with( Twotuple<FT>(hx/hw, hy/hw) );
+    initialize_with( Vector_ref_2(hx/hw, hy/hw) );
   else
-    initialize_with( Twotuple<FT>(hx, hy) );
+    initialize_with( Vector_ref_2(hx, hy) );
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::
 VectorC2(const typename VectorC2<R CGAL_CTAG>::Point_2 &p)
-  : Handle_for<Twotuple<typename R::FT> > (p) {}
+  : Vector_handle_2(p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::
 VectorC2(const typename VectorC2<R CGAL_CTAG>::Direction_2 &d)
-  : Handle_for<Twotuple<typename R::FT> > (d) {}
+  : Vector_handle_2(d) {}
 
 template < class R >
 CGAL_KERNEL_INLINE

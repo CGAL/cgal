@@ -23,18 +23,21 @@
 #define CGAL_CARTESIAN_RAY_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Twotuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class RayC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Twotuple< typename R_::Point_2> >
+  : public R_::Ray_handle_2
 {
 public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
+  typedef typename R::Ray_handle_2              Ray_handle_2;
+  typedef typename R::Ray_ref_2                 Ray_ref_2;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef RayC2<R,Cartesian_tag>                Self;
   typedef typename R::Point_2                   Point_2;
@@ -94,24 +97,24 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2()
-  : Handle_for<Twotuple<typename R::Point_2> >( Twotuple<typename R::Point_2>() ) {}
+  : Ray_handle_2(Ray_ref_2() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2(const RayC2<R CGAL_CTAG> &r)
-  : Handle_for<Twotuple<typename R::Point_2> >(r) {}
+  : Ray_handle_2(r) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
                           const typename RayC2<R CGAL_CTAG>::Point_2 &secondp)
-  : Handle_for<Twotuple<typename R::Point_2> >( Twotuple<typename R::Point_2>(sp, secondp) ) {}
+  : Ray_handle_2(Ray_ref_2(sp, secondp) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
                           const typename RayC2<R CGAL_CTAG>::Direction_2 &d)
-  : Handle_for<Twotuple<typename R::Point_2> >(Twotuple<typename R::Point_2>(sp, sp + d.to_vector())){}
+  : Ray_handle_2(Ray_ref_2(sp, sp + d.to_vector())){}
 
 template < class R >
 CGAL_KERNEL_INLINE

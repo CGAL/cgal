@@ -23,18 +23,21 @@
 #define CGAL_CARTESIAN_DIRECTION_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
-#include <CGAL/Threetuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class DirectionC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Threetuple<typename R_::FT> >
+  : public R_::Direction_handle_3
 {
 public:
   typedef R_                               R;
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
+
+  typedef typename R::Direction_handle_3   Direction_handle_3;
+  typedef typename R::Direction_ref_3      Direction_ref_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef DirectionC3<R CGAL_CTAG>         Self;
   typedef typename R::Vector_3             Vector_3;
@@ -92,18 +95,18 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC3<R CGAL_CTAG>::DirectionC3()
-  : Handle_for< Threetuple<FT> >( Threetuple<FT>() ) {}
+  : Direction_handle_3(Direction_ref_3() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC3<R CGAL_CTAG>::DirectionC3(const DirectionC3<R CGAL_CTAG> &d)
-  : Handle_for< Threetuple<FT> >(d) {}
+  : Direction_handle_3(d) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC3<R CGAL_CTAG>::
 DirectionC3(const typename DirectionC3<R CGAL_CTAG>::Vector_3 &v)
-  : Handle_for< Threetuple<FT> >(v) {}
+  : Direction_handle_3(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -111,7 +114,7 @@ DirectionC3<R CGAL_CTAG>::
 DirectionC3(const typename DirectionC3<R CGAL_CTAG>::FT &x,
             const typename DirectionC3<R CGAL_CTAG>::FT &y,
             const typename DirectionC3<R CGAL_CTAG>::FT &z)
-  : Handle_for< Threetuple<FT> >( Threetuple<FT>(x, y, z) ) {}
+  : Direction_handle_3(Direction_ref_3(x, y, z) ) {}
 
 template < class R >
 inline

@@ -23,19 +23,22 @@
 #define CGAL_CARTESIAN_PLANE_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
-#include <CGAL/Fourtuple.h>
 #include <CGAL/Cartesian/predicates_on_planes_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class PlaneC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Fourtuple<typename R_::FT> >
+  : public R_::Plane_handle_3
 {
 public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
+  typedef typename R::Plane_handle_3            Plane_handle_3;
+  typedef typename R::Plane_ref_3               Plane_ref_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef PlaneC3<R,Cartesian_tag>              Self;
   typedef typename R::Point_2                   Point_2;
@@ -119,12 +122,12 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::PlaneC3()
-  : Handle_for<Fourtuple<FT> >( Fourtuple<FT>() ) {}
+  : Plane_handle_3(Plane_ref_3()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::PlaneC3(const PlaneC3<R CGAL_CTAG> &p)
-  : Handle_for<Fourtuple<FT> >(p) {}
+  : Plane_handle_3(p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -133,7 +136,7 @@ PlaneC3(const typename PlaneC3<R CGAL_CTAG>::FT &a,
         const typename PlaneC3<R CGAL_CTAG>::FT &b,
         const typename PlaneC3<R CGAL_CTAG>::FT &c,
         const typename PlaneC3<R CGAL_CTAG>::FT &d)
-  : Handle_for<Fourtuple<FT> >( Fourtuple<FT>(a, b, c, d) ) {}
+  : Plane_handle_3(Plane_ref_3(a, b, c, d) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -141,42 +144,44 @@ PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &q,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &r)
-  : Handle_for<Fourtuple<FT> >( plane_from_points(p, q, r) ) {}
+  : Plane_handle_3(plane_from_points(p, q, r)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
         const typename PlaneC3<R CGAL_CTAG>::Direction_3 &d)
-  : Handle_for<Fourtuple<FT> >( plane_from_point_direction(p, d) ) {}
+  : Plane_handle_3(plane_from_point_direction(p, d)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
         const typename PlaneC3<R CGAL_CTAG>::Vector_3 &v)
-  : Handle_for<Fourtuple<FT> >( plane_from_point_direction(p, v.direction()) ) {}
+  : Plane_handle_3(plane_from_point_direction(p, v.direction())) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Line_3 &l,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
-  : Handle_for<Fourtuple<FT> >( plane_from_points( l.point(), l.point()+l.direction().to_vector(), p)) {}
+  : Plane_handle_3(plane_from_points(l.point(),
+	                             l.point()+l.direction().to_vector(),
+				     p)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Segment_3 &s,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
-  : Handle_for<Fourtuple<FT> >( plane_from_points( s.start(), s.end(), p) ) {}
+  : Plane_handle_3(plane_from_points(s.start(), s.end(), p)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Ray_3 &r,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
-  : Handle_for<Fourtuple<FT> >( plane_from_points( r.start(), r.second_point(), p) ) {}
+  : Plane_handle_3(plane_from_points(r.start(), r.second_point(), p)) {}
 
 template < class R >
 CGAL_KERNEL_INLINE

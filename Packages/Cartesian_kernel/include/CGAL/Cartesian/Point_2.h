@@ -31,12 +31,16 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class PointC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
- : public Handle_for< Twotuple<typename R_::FT> >
+  : public R_::Point_handle_2
 {
 public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
+  typedef typename R::Point_handle_2		Point_handle_2;
+  typedef typename R::Point_ref_2		Point_ref_2;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef PointC2<R,Cartesian_tag>              Self;
   typedef typename R::Vector_2                  Vector_2;
@@ -119,28 +123,28 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2()
-  : Handle_for< Twotuple<FT> >(Twotuple<FT>()) {}
+  : Point_handle_2(Point_ref_2()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2(const Origin &)
-  : Handle_for< Twotuple<FT> >(Twotuple<FT>(FT(0), FT(0))) {}
+  : Point_handle_2(Point_ref_2(FT(0), FT(0))) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &x,
                               const typename PointC2<R CGAL_CTAG>::FT &y)
-  : Handle_for< Twotuple<FT> >(Twotuple<FT>(x, y)) {}
+  : Point_handle_2(Point_ref_2(x, y)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2(const PointC2<R CGAL_CTAG> &p)
-  : Handle_for< Twotuple<FT> >(p) {}
+  : Point_handle_2(p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::Vector_2 &v)
-  : Handle_for< Twotuple<FT> >(v) {}
+  : Point_handle_2(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

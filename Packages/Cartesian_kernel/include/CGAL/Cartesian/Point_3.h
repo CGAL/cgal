@@ -25,18 +25,21 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Cartesian/redefine_names_3.h>
-#include <CGAL/Threetuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class PointC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Threetuple<typename R_::FT> >
+  : public R_::Point_handle_3
 {
 public:
   typedef R_                               R;
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
+
+  typedef typename R::Point_handle_3       Point_handle_3;
+  typedef typename R::Point_ref_3          Point_ref_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef PointC3<R CGAL_CTAG>             Self;
   typedef typename R::Vector_3             Vector_3;
@@ -109,24 +112,24 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC3<R CGAL_CTAG>::PointC3()
-  : Handle_for< Threetuple<FT> > ( Threetuple<FT>() ) {}
+  : Point_handle_3(Point_ref_3()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC3<R CGAL_CTAG>::PointC3(const Origin &)
-  : Handle_for< Threetuple<FT> > ( Threetuple<FT>(FT(0), FT(0), FT(0)) ) {}
+  : Point_handle_3(Point_ref_3(FT(0), FT(0), FT(0)) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC3<R CGAL_CTAG>::PointC3(const PointC3<R CGAL_CTAG> &p)
-  : Handle_for< Threetuple<FT> > (p) {}
+  : Point_handle_3(p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC3<R CGAL_CTAG>::PointC3(const typename PointC3<R CGAL_CTAG>::FT &x,
                               const typename PointC3<R CGAL_CTAG>::FT &y,
 			      const typename PointC3<R CGAL_CTAG>::FT &z)
-  : Handle_for< Threetuple<FT> > ( Threetuple<FT>(x, y, z) ) {}
+  : Point_handle_3(Point_ref_3(x, y, z) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -136,16 +139,16 @@ PointC3<R CGAL_CTAG>::PointC3(const typename PointC3<R CGAL_CTAG>::FT &x,
 			      const FT &w)
 {
   if (w != FT(1))
-    initialize_with( Threetuple<FT>(x/w, y/w, z/w) );
+    initialize_with(Point_ref_3(x/w, y/w, z/w) );
   else
-    initialize_with( Threetuple<FT>(x, y, z) );
+    initialize_with(Point_ref_3(x, y, z) );
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC3<R CGAL_CTAG>::
 PointC3(const typename PointC3<R CGAL_CTAG>::Vector_3 &v)
-  : Handle_for< Threetuple<FT> > (v) {}
+  : Point_handle_3(v) {}
 
 template < class R >
 inline

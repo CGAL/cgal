@@ -23,24 +23,27 @@
 #define CGAL_CARTESIAN_VECTOR_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
-#include <CGAL/Threetuple.h>
 #include <CGAL/Cartesian/Direction_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class VectorC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for<Threetuple<typename R_::FT> >
+  : public R_::Vector_handle_3
 {
 public:
-  typedef R_                               R;
-  typedef typename R::FT                   FT;
-  typedef typename R::RT                   RT;
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
+  typedef typename R::Vector_ref_3	   	Vector_ref_3;
+  typedef typename R::Vector_handle_3	   	Vector_handle_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef VectorC3<R CGAL_CTAG>            Self;
-  typedef typename R::Point_3              Point_3;
-  typedef typename R::Direction_3          Direction_3;
-  typedef typename R::Aff_transformation_3 Aff_transformation_3;
+  typedef VectorC3<R CGAL_CTAG>                 Self;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Direction_3               Direction_3;
+  typedef typename R::Aff_transformation_3      Aff_transformation_3;
 #else
   typedef VectorC3<R>                           Self;
   typedef typename R::Point_3_base              Point_3;
@@ -114,17 +117,17 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC3<R CGAL_CTAG>::VectorC3()
-  : Handle_for<Threetuple<typename R::FT> >( Threetuple<FT>()) {}
+  : Vector_handle_3(Vector_ref_3()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC3<R CGAL_CTAG>::VectorC3(const VectorC3<R CGAL_CTAG> &v)
-  : Handle_for<Threetuple<typename R::FT> >(v) {}
+  : Vector_handle_3(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC3<R CGAL_CTAG>::VectorC3(const Null_vector &)
-  : Handle_for<Threetuple<typename R::FT> >( Threetuple<FT>(FT(0), FT(0), FT(0))) {}
+  : Vector_handle_3(Vector_ref_3(FT(0), FT(0), FT(0))) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -132,7 +135,7 @@ VectorC3<R CGAL_CTAG>::
 VectorC3(const typename VectorC3<R CGAL_CTAG>::FT &x,
          const typename VectorC3<R CGAL_CTAG>::FT &y,
          const typename VectorC3<R CGAL_CTAG>::FT &z)
-  : Handle_for<Threetuple<typename R::FT> >( Threetuple<FT>(x, y, z)) {}
+  : Vector_handle_3(Vector_ref_3(x, y, z)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -143,22 +146,22 @@ VectorC3(const typename VectorC3<R CGAL_CTAG>::FT &x,
          const typename VectorC3<R CGAL_CTAG>::FT &w)
 {
   if (w != FT(1))
-    initialize_with( Threetuple<FT>(x/w, y/w, z/w) );
+    initialize_with(Vector_ref_3(x/w, y/w, z/w) );
   else
-    initialize_with( Threetuple<FT>(x, y, z) );
+    initialize_with(Vector_ref_3(x, y, z) );
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC3<R CGAL_CTAG>::
 VectorC3(const typename VectorC3<R CGAL_CTAG>::Point_3 &p)
-  : Handle_for<Threetuple<typename R::FT> >(p) {}
+  : Vector_handle_3(p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC3<R CGAL_CTAG>::
 VectorC3(const typename VectorC3<R CGAL_CTAG>::Direction_3 &d)
-  : Handle_for<Threetuple<typename R::FT> >(d) {}
+  : Vector_handle_3(d) {}
 
 template < class R >
 inline

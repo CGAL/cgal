@@ -23,19 +23,22 @@
 #define CGAL_CARTESIAN_LINE_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Threetuple.h>
 #include <CGAL/Cartesian/predicates_on_lines_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class LineC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Threetuple<typename R_::FT> >
+  : public R_::Line_handle_2
 {
 public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
+  typedef typename R::Line_handle_2             Line_handle_2;
+  typedef typename R::Line_ref_2                Line_ref_2;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef LineC2<R,Cartesian_tag>               Self;
   typedef typename R::Point_2                   Point_2;
@@ -112,41 +115,41 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC2<R CGAL_CTAG>::LineC2()
-  : Handle_for<Threetuple<FT> >( Threetuple<FT>() ) {}
+  : Line_handle_2(Line_ref_2()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC2<R CGAL_CTAG>::LineC2(const LineC2<R CGAL_CTAG> &l)
-  : Handle_for<Threetuple<FT> >(l) {}
+  : Line_handle_2(l) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
                             const typename LineC2<R CGAL_CTAG>::Point_2 &q)
-  : Handle_for<Threetuple<FT> >( line_from_points(p, q) ) {}
+  : Line_handle_2(line_from_points(p, q)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::FT &a,
                             const typename LineC2<R CGAL_CTAG>::FT &b,
 			    const typename LineC2<R CGAL_CTAG>::FT &c)
-  : Handle_for<Threetuple<FT> >( Threetuple<FT>(a, b, c) ) {}
+  : Line_handle_2(Line_ref_2(a, b, c)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Segment_2 &s)
-  : Handle_for<Threetuple<FT> >( line_from_points(s.source(), s.target()) ) {}
+  : Line_handle_2(line_from_points(s.source(), s.target())) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Ray_2 &r)
-  : Handle_for<Threetuple<FT> >( line_from_points(r.point(0), r.point(1)) ) {}
+  : Line_handle_2(line_from_points(r.point(0), r.point(1))) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
                             const typename LineC2<R CGAL_CTAG>::Direction_2 &d)
-  : Handle_for<Threetuple<FT> >( line_from_point_direction(p,d) ) {}
+  : Line_handle_2(line_from_point_direction(p, d)) {}
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE

@@ -30,12 +30,16 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_ >
 class CircleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Circle_repC2<R_> >
+  : public R_::Circle_handle_2
 {
 public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
+  typedef typename R::Circle_handle_2           Circle_handle_2;
+  typedef typename R::Circle_ref_2              Circle_ref_2;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef CircleC2<R,Cartesian_tag>             Self;
   typedef typename R::Point_2                   Point_2;
@@ -101,12 +105,12 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 CircleC2<R CGAL_CTAG>::CircleC2()
-  : Handle_for< Circle_repC2<R> > () {}
+  : Circle_handle_2() {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 CircleC2<R CGAL_CTAG>::CircleC2(const CircleC2<R CGAL_CTAG> &c)
-  : Handle_for< Circle_repC2<R> > (c) {}
+  : Circle_handle_2(c) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -118,7 +122,7 @@ CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &center,
   CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
                             ( orient    != COLLINEAR) );
 
-  initialize_with( Circle_repC2<R>(center, squared_radius, orient) );
+  initialize_with(Circle_ref_2(center, squared_radius, orient));
 }
 
 template < class R >
@@ -129,7 +133,7 @@ CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &center,
 {
   CGAL_kernel_precondition( orient != COLLINEAR );
 
-  initialize_with( Circle_repC2<R>(center, FT(0), orient) );
+  initialize_with(Circle_ref_2(center, FT(0), orient));
 }
 
 template < class R >
@@ -145,9 +149,9 @@ CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &p,
     Point_2 center = midpoint(p,q);
     FT      squared_radius = squared_distance(p,center);
 
-    initialize_with( Circle_repC2<R>(center, squared_radius, orient) );
+    initialize_with(Circle_ref_2(center, squared_radius, orient));
   } else
-    initialize_with( Circle_repC2<R>(p, FT(0), orient) );
+    initialize_with(Circle_ref_2(p, FT(0), orient));
 }
 
 template < class R >
@@ -163,7 +167,7 @@ CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &p,
   Point_2 center = circumcenter(p,q,r);
   FT      squared_radius = squared_distance(p,center);
 
-  initialize_with( Circle_repC2<R>(center, squared_radius, orient) );
+  initialize_with(Circle_ref_2(center, squared_radius, orient));
 }
 
 template < class R >

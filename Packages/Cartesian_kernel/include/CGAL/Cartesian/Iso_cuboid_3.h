@@ -22,21 +22,23 @@
 #ifndef CGAL_CARTESIAN_ISO_CUBOID_3_H
 #define CGAL_CARTESIAN_ISO_CUBOID_3_H
 
-#include <CGAL/Twotuple.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Cartesian/predicates_on_points_3.h>
-
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class Iso_cuboidC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Twotuple< typename R_::Point_3> >
+  : public R_::Iso_cuboid_handle_3
 {
 public:
   typedef R_                               R;
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
+
+  typedef typename R::Iso_cuboid_handle_3  Iso_cuboid_handle_3;
+  typedef typename R::Iso_cuboid_ref_3     Iso_cuboid_ref_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef Iso_cuboidC3<R CGAL_CTAG>        Self;
   typedef typename R::Point_3              Point_3;
@@ -85,12 +87,12 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3()
-  : Handle_for< Twotuple<typename R::Point_3> >( Twotuple<typename R::Point_3>() ) {}
+  : Iso_cuboid_handle_3(Iso_cuboid_ref_3()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>& r)
-  : Handle_for< Twotuple<typename R::Point_3> >(r) {}
+  : Iso_cuboid_handle_3(r) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_LARGE_INLINE
@@ -105,8 +107,8 @@ Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p,
   else               { miny = q.y(); maxy = p.y(); }
   if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
   else               { minz = q.z(); maxz = p.z(); }
-  initialize_with( Twotuple<typename R::Point_3>(Point_3(minx, miny, minz),
-				                 Point_3(maxx, maxy, maxz)) );
+  initialize_with(Iso_cuboid_ref_3(Point_3(minx, miny, minz),
+				   Point_3(maxx, maxy, maxz)) );
 }
 
 template < class R >

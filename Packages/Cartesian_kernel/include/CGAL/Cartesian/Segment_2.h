@@ -23,19 +23,22 @@
 #define CGAL_CARTESIAN_SEGMENT_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Twotuple.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class SegmentC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Twotuple< typename R_::Point_2> >
+  : public R_::Segment_handle_2
 {
 public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
+  typedef typename R::Segment_handle_2          Segment_handle_2;
+  typedef typename R::Segment_ref_2             Segment_ref_2;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef SegmentC2<R,Cartesian_tag>            Self;
   typedef typename R::Point_2                   Point_2;
@@ -104,19 +107,19 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC2<R CGAL_CTAG>::SegmentC2()
-  : Handle_for<Twotuple<typename R::Point_2> >( Twotuple<typename R::Point_2>() ) {}
+  : Segment_handle_2(Segment_ref_2() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC2<R CGAL_CTAG>::SegmentC2(const SegmentC2<R CGAL_CTAG> &s)
-  : Handle_for<Twotuple<typename R::Point_2> >(s) {}
+  : Segment_handle_2(s) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC2<R CGAL_CTAG>::
 SegmentC2(const typename SegmentC2<R CGAL_CTAG>::Point_2 &sp,
           const typename SegmentC2<R CGAL_CTAG>::Point_2 &ep)
-  : Handle_for<Twotuple<typename R::Point_2> >( Twotuple<typename R::Point_2>(sp, ep) ) {}
+  : Segment_handle_2(Segment_ref_2(sp, ep) ) {}
 
 template < class R >
 inline

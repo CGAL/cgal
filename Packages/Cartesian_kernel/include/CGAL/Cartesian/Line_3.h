@@ -30,21 +30,25 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class LineC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Line_repC3<R_> >
+  : public R_::Line_handle_3
 {
 public:
-  typedef R_                               R;
-  typedef typename R::FT                   FT;
-  typedef typename R::RT                   RT;
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
+  typedef typename R::Line_handle_3             Line_handle_3;
+  typedef typename R::Line_ref_3                Line_ref_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef LineC3<R CGAL_CTAG>              Self;
-  typedef typename R::Point_3              Point_3;
-  typedef typename R::Vector_3             Vector_3;
-  typedef typename R::Direction_3          Direction_3;
-  typedef typename R::Plane_3              Plane_3;
-  typedef typename R::Ray_3                Ray_3;
-  typedef typename R::Segment_3            Segment_3;
-  typedef typename R::Aff_transformation_3 Aff_transformation_3;
+  typedef LineC3<R CGAL_CTAG>                   Self;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Vector_3                  Vector_3;
+  typedef typename R::Direction_3               Direction_3;
+  typedef typename R::Plane_3                   Plane_3;
+  typedef typename R::Ray_3                     Ray_3;
+  typedef typename R::Segment_3                 Segment_3;
+  typedef typename R::Aff_transformation_3      Aff_transformation_3;
 #else
   typedef LineC3<R>                             Self;
   typedef typename R::Point_3_base              Point_3;
@@ -91,35 +95,37 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3()
-  : Handle_for< Line_repC3<R> >( Line_repC3<R>() ) {}
+  : Line_handle_3(Line_ref_3() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3(const LineC3<R CGAL_CTAG> &l)
-  : Handle_for< Line_repC3<R> >(l) {}
+  : Line_handle_3(l) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
                             const typename LineC3<R CGAL_CTAG>::Point_3 &q)
-  : Handle_for< Line_repC3<R> >( Line_repC3<R>(p, (q-p).direction()) ) {}
+  : Line_handle_3(Line_ref_3(p, (q-p).direction())) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3(const typename LineC3<R CGAL_CTAG>::Segment_3 &s)
-  : Handle_for< Line_repC3<R> >( Line_repC3<R>(s.start(), (s.end() - s.start()).direction())) {}
+  : Line_handle_3(Line_ref_3(s.start(), (s.end() - s.start()).direction()))
+{}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3(const typename LineC3<R CGAL_CTAG>::Ray_3 &r)
-  : Handle_for< Line_repC3<R> >( Line_repC3<R>(r.start(), (r.point(1) - r.start()).direction())) {}
+  : Line_handle_3(Line_ref_3(r.start(),
+	                     (r.point(1) - r.start()).direction())) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::
 LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
        const typename LineC3<R CGAL_CTAG>::Direction_3 &d)
-  : Handle_for< Line_repC3<R> >( Line_repC3<R>(p, d)) {}
+  : Line_handle_3(Line_ref_3(p, d)) {}
 
 template < class R >
 inline

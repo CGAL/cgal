@@ -29,12 +29,16 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class SphereC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Sphere_repC3<R_> >
+  : public R_::Sphere_handle_3
 {
 public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
+  typedef typename R::Sphere_handle_3           Sphere_handle_3;
+  typedef typename R::Sphere_ref_3              Sphere_ref_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef SphereC3<R CGAL_CTAG>                 Self;
   typedef typename R::Point_3                   Point_3;
@@ -112,12 +116,12 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::SphereC3()
-  : Handle_for< Sphere_repC3<R> > () {}
+  : Sphere_handle_3() {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::SphereC3(const SphereC3<R CGAL_CTAG> &t)
-  : Handle_for< Sphere_repC3<R> > (t) {}
+  : Sphere_handle_3(t) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -128,7 +132,7 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
   CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
                             ( o != COLLINEAR) );
 
-  initialize_with( Sphere_repC3<R>(center, squared_radius, o) );
+  initialize_with(Sphere_ref_3(center, squared_radius, o) );
 }
 
 template < class R >
@@ -139,7 +143,7 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
 {
   CGAL_kernel_precondition( o != COLLINEAR );
 
-  initialize_with( Sphere_repC3<R>(center, FT(0), o) );
+  initialize_with(Sphere_ref_3(center, FT(0), o) );
 }
 
 template < class R >
@@ -154,7 +158,7 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
   SphereC3<R CGAL_CTAG>::Point_3 center = midpoint(p,q);
   SphereC3<R CGAL_CTAG>::FT      squared_radius = squared_distance(p,center);
 
-  initialize_with( Sphere_repC3<R>( center, squared_radius, o) );
+  initialize_with(Sphere_ref_3( center, squared_radius, o) );
 }
 
 template < class R >
@@ -170,7 +174,7 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
   Point_3 center = circumcenter(p,q,r);
   FT      squared_radius = squared_distance(p,center);
 
-  initialize_with( Sphere_repC3<R>(center, squared_radius, o) );
+  initialize_with(Sphere_ref_3(center, squared_radius, o) );
 }
 
 template < class R >
@@ -185,7 +189,7 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
   Point_3 center = circumcenter(p,q,r,s);
   FT      squared_radius = squared_distance(p,center);
 
-  initialize_with( Sphere_repC3<R>(center, squared_radius, orient) );
+  initialize_with(Sphere_ref_3(center, squared_radius, orient) );
 }
 
 template < class R >

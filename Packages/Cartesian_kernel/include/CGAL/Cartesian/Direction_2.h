@@ -23,18 +23,21 @@
 #define CGAL_CARTESIAN_DIRECTION_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Twotuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class DirectionC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Twotuple<typename R_::FT> >
+  : public R_::Direction_handle_2
 {
 public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
+  typedef typename R::Direction_handle_2        Direction_handle_2;
+  typedef typename R::Direction_ref_2           Direction_ref_2;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef DirectionC2<R,Cartesian_tag>          Self;
   typedef typename R::Point_2                   Point_2;
@@ -93,26 +96,26 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::DirectionC2()
-  : Handle_for< Twotuple<FT> >( Twotuple<FT>() ) {}
+  : Direction_handle_2(Direction_ref_2()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::
 DirectionC2(const DirectionC2<R CGAL_CTAG> &d)
-  : Handle_for< Twotuple<FT> >(d) {}
+  : Direction_handle_2(d) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::
 DirectionC2(const typename DirectionC2<R CGAL_CTAG>::Vector_2 &v)
- : Handle_for< Twotuple<FT> >(v) {}
+ : Direction_handle_2(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::
 DirectionC2(const typename DirectionC2<R CGAL_CTAG>::FT &x,
             const typename DirectionC2<R CGAL_CTAG>::FT &y)
- : Handle_for< Twotuple<FT> >( Twotuple<FT>(x, y) ) {}
+ : Direction_handle_2(Direction_ref_2(x, y)) {}
 
 template < class R >
 inline

@@ -23,24 +23,27 @@
 #define CGAL_CARTESIAN_RAY_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
-#include <CGAL/Twotuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class RayC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for<Twotuple<typename R_::Point_3 > >
+  : public R_::Ray_handle_3
 {
 public:
-  typedef R_                               R;
-  typedef typename R::FT                   FT;
-  typedef typename R::RT                   RT;
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
+  typedef typename R::Ray_handle_3              Ray_handle_3;
+  typedef typename R::Ray_ref_3                 Ray_ref_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef RayC3<R CGAL_CTAG>               Self;
-  typedef typename R::Point_3              Point_3;
-  typedef typename R::Direction_3          Direction_3;
-  typedef typename R::Line_3               Line_3;
-  typedef typename R::Aff_transformation_3 Aff_transformation_3;
+  typedef RayC3<R CGAL_CTAG>                    Self;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Direction_3               Direction_3;
+  typedef typename R::Line_3                    Line_3;
+  typedef typename R::Aff_transformation_3      Aff_transformation_3;
 #else
   typedef RayC3<R>                              Self;
   typedef typename R::Point_3_base              Point_3;
@@ -82,24 +85,24 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC3<R CGAL_CTAG>::RayC3()
-  : Handle_for<Twotuple<typename R::Point_3> >( Twotuple<typename R::Point_3>() ) {}
+  : Ray_handle_3(Ray_ref_3() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC3<R CGAL_CTAG>::RayC3(const RayC3<R CGAL_CTAG> &r)
-  : Handle_for<Twotuple<typename R::Point_3> >(r) {}
+  : Ray_handle_3(r) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC3<R CGAL_CTAG>::RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
                           const typename RayC3<R CGAL_CTAG>::Point_3 &secondp)
-  : Handle_for<Twotuple<typename R::Point_3> >( Twotuple<typename R::Point_3>(sp, secondp)) {}
+  : Ray_handle_3(Ray_ref_3(sp, secondp)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC3<R CGAL_CTAG>::RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
                           const typename RayC3<R CGAL_CTAG>::Direction_3 &d)
-  : Handle_for<Twotuple<typename R::Point_3> >( Twotuple<typename R::Point_3>(sp, sp + d.to_vector())) {}
+  : Ray_handle_3(Ray_ref_3(sp, sp + d.to_vector())) {}
 
 template < class R >
 inline

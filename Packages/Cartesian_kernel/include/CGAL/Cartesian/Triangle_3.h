@@ -23,24 +23,27 @@
 #define CGAL_CARTESIAN_TRIANGLE_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
-#include <CGAL/Threetuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class TriangleC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for< Threetuple< typename R_::Point_3 > >
+  : public R_::Triangle_handle_3
 {
 public:
-  typedef R_                               R;
-  typedef typename R::FT                   FT;
-  typedef typename R::RT                   RT;
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
+  typedef typename R::Triangle_handle_3         Triangle_handle_3;
+  typedef typename R::Triangle_ref_3            Triangle_ref_3;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef TriangleC3<R CGAL_CTAG>          Self;
-  typedef typename R::Point_3              Point_3;
-  typedef typename R::Vector_3             Vector_3;
-  typedef typename R::Plane_3              Plane_3;
-  typedef typename R::Aff_transformation_3 Aff_transformation_3;
+  typedef TriangleC3<R CGAL_CTAG>               Self;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::Vector_3                  Vector_3;
+  typedef typename R::Plane_3                   Plane_3;
+  typedef typename R::Aff_transformation_3      Aff_transformation_3;
 #else
   typedef TriangleC3<R>                         Self;
   typedef typename R::Point_3_base              Point_3;
@@ -72,12 +75,12 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TriangleC3<R CGAL_CTAG>::TriangleC3()
-  : Handle_for<Threetuple< typename R::Point_3> >(Threetuple< typename R::Point_3> ()) {}
+  : Triangle_handle_3(Triangle_ref_3()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TriangleC3<R CGAL_CTAG>::TriangleC3(const TriangleC3<R CGAL_CTAG> &t)
-  : Handle_for<Threetuple< typename R::Point_3> >(t) {}
+  : Triangle_handle_3(t) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -85,7 +88,7 @@ TriangleC3<R CGAL_CTAG>::
 TriangleC3(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p,
            const typename TriangleC3<R CGAL_CTAG>::Point_3 &q,
            const typename TriangleC3<R CGAL_CTAG>::Point_3 &r)
-  : Handle_for<Threetuple< typename R::Point_3> >(Threetuple< typename R::Point_3> (p, q, r)) {}
+  : Triangle_handle_3(Triangle_ref_3(p, q, r)) {}
 
 
 template < class R >
