@@ -56,6 +56,7 @@ _test_cls_triangulation_3(const Triangulation &)
   typedef typename Cls::Cell_handle          Cell_handle; 
   typedef typename Cls::Vertex_iterator      Vertex_iterator;
   typedef typename Cls::Cell_iterator        Cell_iterator;
+  //  typedef typename Cls::Point_iterator       Point_iterator;
   typedef typename Cls::Locate_type          Locate_type;
   typedef std::list<Point>                        list_point;
 
@@ -321,6 +322,15 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(n==5);
   assert(T1_2.dimension()==1);
   assert(T1_2.number_of_vertices()==n);
+//   // test for point_iterator
+//   Point_iterator pit;
+//   Point pppp;
+//   int nbpt=0;
+//   for (pit = T1_2.points_begin(); pit != T1_2.points_end(); ++pit) {
+//     nbpt++;
+//     pppp = *pit;
+//   }
+//   assert(nbpt==n);
   assert(T1_2.is_valid());
 
   if (! del) // to avoid doing the following tests for both Delaunay
