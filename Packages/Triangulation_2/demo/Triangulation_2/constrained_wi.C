@@ -24,7 +24,6 @@ int main(int argc, char* argv[])
 #include <CGAL/Filtered_kernel.h>
 
 #include <CGAL/intersections.h>
-#include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
