@@ -12,6 +12,3 @@ Version 1.1 :
 
 Version 1.0 :
 Import source from the Reconstruction package.
-
-Version 1.3 :
--> New Kernel.
