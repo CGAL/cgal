@@ -24,9 +24,9 @@
 # 
 # **************************************************************************
 
-# =======================================================
-# Installation: chose the appropriate compiler and paths:
-# =======================================================
+# ========================================================
+# Installation: choose the appropriate compiler and paths:
+# ========================================================
 # A C compiler can be specified here. Normally cc or gcc should work.
 # Note: cc does not work on SunOS 4.1.3 (BSD), but on SunOS 5...
 #set CC = gcc
@@ -38,18 +38,19 @@ set CC = cc
 #set HTML_DEFAULT_PATH = 
 set HTML_DEFAULT_PATH = /home/kettner/topics/cgal/Tools/src/html_config_files
 
-# A couple of default settings that the cc_extract_html program does not know.
+# A couple of default settings that will be used to configure
+# the cc_extract_html program.
 set DEFAULT_DATE = `date +"%a, %B %e, %Y"`
-set DEFAULT_AUTHOR = "The <A HREF="http://www.cs.ruu.nl/CGAL/"><TT>CGAL</TT> Project</A>"
-set DEFAULT_TITLE  = "The CGAL Kernel Manual"
+set DEFAULT_AUTHOR = "The <A HREF="http://www.cs.ruu.nl/CGAL/">CGAL Project</A>"
+set DEFAULT_TITLE  = "Reference Manual"
 
 # The header files within the \ccInclude macro can be linked to the original
-# header files if the -cgal_dir option is given to the cc_extract_html program.
-# The environment variable CGAL_INCL_DIR is used as default. If it is not
+# header files if the -header option is given to the cc_extract_html program.
+# The environment variable HEADER_DIR is used as default. If it is not
 # set, the default setting is empty and include files are not linked.
-set cgal_dir = ""
-if ($?CGAL_INCL_DIR) then
-    set cgal_dir = "-cgal_dir ${CGAL_INCL_DIR}/"
+set header = ""
+if ($?HEADER_DIR) then
+    set header = "-header ${HEADER_DIR}/"
 endif
 
 
@@ -152,13 +153,24 @@ while ($#argv > 0)
 	shift
         continue
     endif
+    if ( "$1" == "-header") then
+        shift
+        if ( $#argv < 1) then
+	    echo "error: switch -header needs an additional parameter."
+            goto usage
+	endif
+	set header = "-header $1/"
+	shift
+        continue
+    endif
+    # The following block remains for compatibility.
     if ( "$1" == "-cgal_dir") then
         shift
         if ( $#argv < 1) then
 	    echo "error: switch -cgal_dir needs an additional parameter."
             goto usage
 	endif
-	set cgal_dir = "-cgal_dir $1/"
+	set header = "-header $1/"
 	shift
         continue
     endif
@@ -239,7 +251,7 @@ if ( $?DEBUG || $default_switch == 1) then
     echo "  DEFAULT_RELEASE   = ${DEFAULT_RELEASE}"
     echo "  tmp_path          = ${tmp_path}"
     echo "  out_path          = ${out_path}"
-    echo "  cgal_dir          = ${cgal_dir}"
+    echo "  header            = ${header}"
     echo "  config_path       = ${config_path}"
     echo "  input_files       = ${in_files}"
     echo "  aux_file          = ${aux_file}"
@@ -268,7 +280,7 @@ if ( $extended_switch) goto extended_conversion
 
 # Step 1: convert each LaTeX file into an HTML file.
 # --------------------------------------------------
-set options = "${cgal_dir} -config ${config_path}/ -tmp ${new_tmp_path}/ ${aux_file} ${bbl_file}"
+set options = "${header} -config ${config_path}/ -tmp ${new_tmp_path}/ ${aux_file} ${bbl_file}"
 
 if ( $?DEBUG) echo "# Step 1: convert each LaTeX file into an HTML file."
 if ($show_main_switch) then
@@ -357,7 +369,7 @@ end
 # --------------------------------------------------
 if ( $?DEBUG) echo "# Step 1: convert each LaTeX file into an HTML file."
 foreach f ($in_files)
-    set options = "${cgal_dir} -config ${config_path}/ -tmp ${new_tmp_path}/$f:h/ -noheader"
+    set options = "${header} -config ${config_path}/ -tmp ${new_tmp_path}/$f:h/ -noheader"
     if ( $?DEBUG) echo "cd $f:h"
     cd $f:h
     if ( $?DEBUG) echo "cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} $f:t >/dev/null"
@@ -404,7 +416,7 @@ end
 # Step 3: convert bibliography (if any) and .aux file.
 # -----------------------------------------------------------
 if ( $?DEBUG) echo "# Step 3: convert bibliography (if any) and .aux file."
-set options = "${cgal_dir} -config ${config_path}/ -tmp ${new_tmp_path}/ -noheader ${aux_file} ${bbl_file}"
+set options = "${header} -config ${config_path}/ -tmp ${new_tmp_path}/ -noheader ${aux_file} ${bbl_file}"
 touch ${new_tmp_path}/cc_index_body
 if ( "${aux_file}" == ""  && "${bbl_file}" == "") then
     if ( $?DEBUG) echo "touch ${new_tmp_path}/cc_anchor_rules"
@@ -454,7 +466,7 @@ ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/biblio.html > ${out_path}/bib
 
 if ( $?DEBUG) echo "# Converting the index."
 mv ${new_tmp_path}/cc_index_body ${new_tmp_path}/cc_index_body.bak
-set options = "${cgal_dir} -config ${config_path}/ -tmp ${new_tmp_path}/ -onlyheader cc_toc_footer cc_toc_header cc_index_footer cc_index_header"
+set options = "${header} -config ${config_path}/ -tmp ${new_tmp_path}/ -onlyheader cc_toc_footer cc_toc_header cc_index_footer cc_index_header"
 if ( $?DEBUG) echo "cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} >/dev/null"
 cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} >/dev/null
 if ( $?DEBUG) echo "cat ${new_tmp_path}/cc_toc_header > ${new_tmp_path}/contents.html"
@@ -496,7 +508,7 @@ echo "           -title    <text>    set a title text for the manual."
 echo "           -author   <text>    set an author address (email) for the manual."
 echo "           -config   <dir>     set the path where to find the config files."
 echo "           -tmp      <dir>     set the path where to put intermediate files."
-echo "           -cgal_dir <dir>     set the path where the CGAL headers are."
+echo "           -header   <dir>     set the path where the C headers are."
 echo "           -o        <dir>     output directory for the generated HTML manual"
 echo "           -aux      <file>    auxiliary file where the \\bibcite's are in."
 echo "           -bbl      <file>    bibliography file produced by bibtex."
