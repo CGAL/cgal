@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-5 $
-// release_date  : $CGAL_Date: 2001/08/31 $
+// release       : $$
+// release_date  : $$
 //
 // file          : include/CGAL/Conic_arc_2_Window_stream.h
 // package       : Arrangement (2.19)
@@ -26,9 +26,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class NT>
+template <class Kernel>
 Window_stream& operator<<(Window_stream& ws,
-                          const Conic_arc_2<NT>& cv)
+                          const Conic_arc_2<Kernel>& cv)
 {
   // Get the co-ordinates of the curve's source and target.
   double sx = CGAL::to_double(cv.source().x()),
@@ -60,13 +60,13 @@ Window_stream& operator<<(Window_stream& ws,
       double   curr_x, curr_y;
       int      x;
 
-      typename Conic_arc_2<NT>::Point_2 ps[2];
+      typename Conic_arc_2<Kernel>::Point_2 ps[2];
       int                      nps;
 
       for (x = x_min + 1; x < x_max; x++)
       {
 	curr_x = ws.pix_to_real(x);
-	nps = cv.get_points_at_x (Conic_arc_2<NT>::Point_2(NT(curr_x), 0), 
+	nps = cv.get_points_at_x (Conic_arc_2<Kernel>::Point_2(typename Kernel::FT(curr_x), 0), 
 				  ps);
 	if (nps == 1)
 	{
