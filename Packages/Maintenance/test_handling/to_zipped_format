@@ -1,5 +1,6 @@
-#!/sw/bin/perl5 -w
+#!/usr/local/bin/perl -w -W
 
+use Cwd;
 use strict;
 
 my $TMPDIR;
@@ -26,12 +27,12 @@ sub reformat_results($)
     $_ = shift;
     s/\.tar//;
     my $platform = $_;
-    system("dos2unix ${platform}.txt ${platform}.txt");
+#    system("dos2unix ${platform}.txt ${platform}.txt");
     open (PLATFORM_RESULTS,"<${platform}.txt") or return;
     while (/^\s*$/) {
 	$_= <PLATFORM_RESULTS>;
     }
-    open (PLATFORM_INFO,">$platform.info") or return;
+    open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
     my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$GMP,$CLN,$QT) = ("-","-","-","-","-","-");
     while (! /^------/) {
@@ -61,7 +62,7 @@ sub reformat_results($)
     while (<PLATFORM_RESULTS>) {
 	print PLATFORM_NEW_RESULTS $_;
     }
-    rename("${platform}.new_results","${platform}.txt");
+    rename("${platform}.new_results","${platform}.txt") or die "cannot rename!";
     print PLATFORM_INFO <<"EOF";
 $CGAL_VERSION
 $TESTER
@@ -88,7 +89,7 @@ sub one_archive($)
 	return 0;
     }
     if ( $archive =~ m/\.gz$/ ) {
-	system("/sw/bin/gunzip", "$archive") == 0 or return 0;
+	system("gunzip", "$archive") == 0 or return 0;
 	$archive =~ s/\.gz$//;
     }
     if ( $archive =~ m/.*\.tgz$/ ) {
@@ -100,14 +101,14 @@ sub one_archive($)
 	return 0;
     }
     make_tempdir();
-    rename("$archive","$TMPDIR/$archive") or die;
-    chdir("$TMPDIR") or die;
-    system("gtar", "xf", "$archive") == 0 or die;
+    rename("$archive","$TMPDIR/$archive") or die "cannot rename";
+    chdir("$TMPDIR") or die "cannot chdir";
+    system("gtar", "xf", "$archive") == 0 or die "cannot gtar";
     unlink($archive);
 
     reformat_results($archive);
-    system('gzip',glob("*/*"));
-    system('chmod','-R','a+r,og+w','.');
+    system('gzip',glob("*/*")) == 0 or die "cannot gzip";
+    system('chmod','-R','a+r,og+w','.') == 0 or die "cannot chmod";
     system('tar', 'cf', "../$archive", glob("*")) == 0 or die;
     chdir('..') or die;
     system('rm', '-rf', "$TMPDIR")== 0 or die;

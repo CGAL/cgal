@@ -1,6 +1,7 @@
 26 Feb 2004 Sylvain Pion
 - Replace treat_result_collection by the version I use.
 - Replace create_testresult_page by the version I use.
+- Replace to_zipped_format by the version I use.
 
 18 Jan 2004
 - Remove support/to_cgal_namespace (now obsolete).
