@@ -1692,6 +1692,12 @@ Packages/Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.ps -text
 Packages/Spatial_searching/demo/Spatial_searching/spatial_searching.vcproj -text
 Packages/Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#unset
 Packages/Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text
+Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner.off -text
+Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner_tris_with_hole.off -text
+Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner_with_hole.off -text
+Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/corner_with_sharp_edge.off -text
+Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/cross.off -text
+Packages/Subdivision_surfaces_3/examples/Subdivision_surfaces_3/data/quint_tris.off -text
 Packages/Sweep_line_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#unset
 Packages/Sweep_line_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#unset
 Packages/Sweep_line_2/doc_tex/Sweep_line_2/sl_simple.ps -text
