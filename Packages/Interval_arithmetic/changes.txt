@@ -1,3 +1,6 @@
+Version 4.159
+- Added function zero() to make the testsuite pass for Intel 7 with -O2
+
 Version 4.158 on 20 January 2003
 - Add "Arity" type to functors.
 - GCC new parser support.
