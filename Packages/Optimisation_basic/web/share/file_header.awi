@@ -16,17 +16,30 @@ parameterized with the title of the implementation, the product file
 name, the source file name, the author name, and the RCS variables
 @em{Revision} and @em{Date} of the source file.
 
-@macro <file header>(6) zero many = @begin
+@macro <file header>(8) zero many = @begin
 // ============================================================================
-// The CGAL Project
-// Implementation: @1
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
 // ----------------------------------------------------------------------------
-// file  : @2
-// source: web/@3.aw
-// author: @4
-// ----------------------------------------------------------------------------
-// @5
-// @6
+//
+// release       : $CGAL_Revision: CGAL-wip $
+// release_date  : $CGAL_Date$
+//
+// file          : @2
+// source        : web/@3.aw
+// revision      : @7
+// revision_date : @8
+// author(s)     : @4
+//                 @5
+//
+// coordinator   : @6
+//
+// implementation: @1
 // ============================================================================
 @end
 
