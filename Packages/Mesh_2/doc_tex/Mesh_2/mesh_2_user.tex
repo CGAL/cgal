@@ -87,41 +87,32 @@ printed.
 \label{sec:Mesh_2_meshes}
 
 
-\subsection{Definition}
+\subsection{Definitions}
 \label{sec:Mesh_2_meshes_definition}
 
-A mesh is a partition of a given domain into simplices whose shapes
+A mesh is a partition of a given region into simplices whose shapes
 and sizes satisfy several criteria.
 
-The domain to be meshed is bounded and can include internal constraints
-that have to be respected.  Such a domain is defined by a \emph{planar
-  straight line graph}, {\sc Pslg} for short, and a set of seed points.
+The domain is the region that the user wants to mesh. It has to be
+  a bounded region of the plane. The domain is defined by a \emph{planar
+  straight line graph}, {\sc Pslg} for short, which is a set of segments
+  such that two segments in the set are either disjoint or share an
+  endpoint. The segments of the \sc{Pslg} are constraints that will be
+  represented by a union of edges in the mesh. The \sc{Pslg} can also
+  contain isolated points that will appear as vertices of the mesh.
 
-A {\sc Pslg} is a plane embedded one dimensional simplicial complex, that
-is a set of vertices and segments such that: \\
-- the endpoints of any segment in the set are vertices of the set, \\
-- two segments in the set are either disjoint or share a vertex of the 
-set. \\
-The segments of the {\sc Pslg} describe the boundaries and the internal
-constraints of the domain.
+The segments of the \sc{Pslg} are either segments of the
+boundary or internals constraints. The segments of the \sc{Pslg} have to
+cover the boundary of the domain.
 
-\subsection{Meshing Domain}
-\label{sec:Mesh_2_meshin_domain}
+The {\sc Pslg} divides the plane into several connected components. By
+default, the domain is the union of the bounded connected components. The
+user can override this default by providing a set of seed points. Either
+seed points mark components to be meshed or they mark components not to be
+meshed (holes).
 
-The {\sc Pslg}, represented here by the constrained edges, divides the plane into several connected components.  The domain
-is usually defined as the union all of the bounded connected components
-including no seed points, meaning that seeds defines \emph{holes} is the
-domain.  Alternatively, the seed points can be used to mark the connected
-components which are inside the domain.
-
-The domain has to be bounded. Therefore, the unbounded component will not be
-part of it, whatever is the set of seed points. By default, if the set of
-seeds is empty, the domain to be meshed is the union of the bounded
-components. Note that the constrained edges have to bound the domain to be
-meshed and that the domain will be empty if the constrained edges do not
-define bounded components.
-
-\textbf{TODO: Insert a figure on seeds, here.}
+\textbf{TODO: Insert figures: PSQL, its mesh. The same PSLG with seeds, and
+its mesh.}
 
 \subsection{Shape and Size Criteria}
 \label{sec:Mesh_2_criteria}
@@ -236,5 +227,5 @@ defaults provided by the traits class \ccc{Delaunay_mesh_traits_2<K>}.
 %%% For emacs/AucTeX:
 %%% Local Variables: ***
 %%% mode:latex ***
-%%% TeX-master: "user_manual.tex"  ***
+%%% TeX-master: "../Mesh_2.tex"  ***
 %%% End: ***
