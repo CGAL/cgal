@@ -6,6 +6,17 @@
 #include <CGAL/basic.h>
 #include <iostream>
 
+// Workaround for crappy compilers.
+#ifdef CGAL_CFG_MATCHING_BUG_2
+#define CGAL_IA_CT double
+#ifdef CGAL_USE_LEDA
+#define CGAL_IA_ET leda_real
+#else
+#define CGAL_IA_ET double
+#endif
+#define CGAL_IA_CACHE No_Filter_Cache
+#endif
+
 // The number types.
 #include <CGAL/Arithmetic_filter.h>
 #include <CGAL/double.h>
