@@ -164,7 +164,7 @@ public:
   //! Retrieve four points from the input that define the largest
   //! empty iso rectangle.
   Quadruple<Point_2, Point_2, Point_2, Point_2>
-  get_left_bottom_right_top() const
+  get_left_bottom_right_top()
   {
     if(x_sorted.size() == 4) {
       return(make_quadruple(bl_p.original, bl_p.original,
@@ -391,9 +391,6 @@ private:
 
   Traits _gt;
 
-  Less_xy_internal_point less_xy_point;
-  Less_yx_internal_point less_yx_point;  
-
   /*! this class holds points' data as needed in the LER process.
    */
 
@@ -434,6 +431,9 @@ private:
   // the next sets store the points sorted
   Point_data_set_of_x x_sorted;
   Point_data_set_of_y y_sorted;
+
+  Less_xy_internal_point less_xy_point;
+  Less_yx_internal_point less_yx_point;  
 
   // bottom left and top right points of the bounding box
   Point bl_p, tr_p;
@@ -775,10 +775,10 @@ Largest_empty_iso_rectangle_2<T>::
 Largest_empty_iso_rectangle_2(
                const Largest_empty_iso_rectangle_2<T>& ler)
 : cache_valid(false), _gt(),
-  less_xy_point(traits()),
-  less_yx_point(traits()),
   x_sorted(Less_xy(traits())),
-  y_sorted(Less_yx(traits()))
+  y_sorted(Less_yx(traits())),
+  less_xy_point(traits()),
+  less_yx_point(traits())
 {
   copy_memory(ler);
 }
@@ -1354,10 +1354,10 @@ template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   const Iso_rectangle_2 &b)
   : cache_valid(false), _gt(),
-     less_xy_point(traits()),
-     less_yx_point(traits()),
      x_sorted(Less_xy(traits())),
      y_sorted(Less_yx(traits())),
+     less_xy_point(traits()),
+     less_yx_point(traits()),
      bl_p(b.min()),
      tr_p(b.max())
 {
