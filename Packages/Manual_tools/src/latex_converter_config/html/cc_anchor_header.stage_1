@@ -119,8 +119,10 @@ noCCchar        [^a-zA-Z0-9_]
 word            {letter}+
 CCidfier        ({CCletter}({CCletter}|{digit})*)
 ws              [ \t\n\r]*
-par             {ws}("<P>"{ws})*
-glue            {ws}("<P>"{ws})*"<!GLUE>"{ws}("<P>"{ws})*
+par             {ws}("<"[pP]">"{ws})*
+glue            {ws}("<"[pP]">"{ws})*"<!GLUE>"{ws}("<"[pP]">"{ws})*
+head            "<"[hH][eE][aA][dD]
+endhead         "</"[hH][eE][aA][dD]">"
 
 %%
 
@@ -148,7 +150,7 @@ glue            {ws}("<P>"{ws})*"<!GLUE>"{ws}("<P>"{ws})*
                        }
 <PARAMMODE>.           {   yymore(); }
 
-"<HEAD>"(.|[\n])*"</HEAD>"     { ECHO; /* Avoid substitutions in the head */ }
+{head}(.|[\n])*{endhead}       { ECHO; /* Avoid substitutions in the head */ }
 
 "<"[aA][^0-9a-zA-Z]            { BEGIN( ANCHORMODE); ECHO;}
 <ANCHORMODE>"</"[aA]">"        { BEGIN( INITIAL); ECHO;}
@@ -179,13 +181,13 @@ glue            {ws}("<P>"{ws})*"<!GLUE>"{ws}("<P>"{ws})*
 "</TABLE><!".">"{par}"<!"."><TABLE"        { /* smooth other tables   */
                                fputs( "</TABLE>\n<P>\n\n        <TABLE", stdout);
 }
-{ws}"<P>"{ws}("<P>"{ws})+  {   /* Reduce <P>'s to one <P> */
+{ws}"<"[pP]">"{ws}("<"[pP]">"{ws})+  {   /* Reduce <P>'s to one <P> */
                                fputs( "\n<P>\n\n", stdout);
 }
-{ws}"<P>"{ws}              {   /* Pretty print single <P>'s */
+{ws}"<"[pP]">"{ws}         {   /* Pretty print single <P>'s */
                                fputs( "\n<P>\n\n", stdout);
 }
-{ws}"<BR>"{ws}             {   /* Pretty print single <BR>'s */
+{ws}"<"[bB][rR]">"{ws}     {   /* Pretty print single <BR>'s */
                                fputs( "<BR>\n\n", stdout);
 }
 "<!GLUE>"                  { ; /* remove superfluous glues */ }

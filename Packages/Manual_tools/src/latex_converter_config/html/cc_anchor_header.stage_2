@@ -119,8 +119,10 @@ noCCchar        [^a-zA-Z0-9_]
 word            {letter}+
 CCidfier        ({CCletter}({CCletter}|{digit})*)
 ws              [ \t\n\r]*
-par             {ws}("<P>"{ws})*
-glue            {ws}("<P>"{ws})*"<!GLUE>"{ws}("<P>"{ws})*
+par             {ws}("<"[pP]">"{ws})*
+glue            {ws}("<"[pP]">"{ws})*"<!GLUE>"{ws}("<"[pP]">"{ws})*
+head            "<"[hH][eE][aA][dD]
+endhead         "</"[hH][eE][aA][dD]">"
 
 %%
 
@@ -148,7 +150,7 @@ glue            {ws}("<P>"{ws})*"<!GLUE>"{ws}("<P>"{ws})*
                        }
 <PARAMMODE>.           {   yymore(); }
 
-"<HEAD>"(.|[\n])*"</HEAD>"     { ECHO; /* Avoid substitutions in the head */ }
+{head}(.|[\n])*{endhead}       { ECHO; /* Avoid substitutions in the head */ }
 
 "<"[aA][^0-9a-zA-Z]            { BEGIN( ANCHORMODE); ECHO;}
 <ANCHORMODE>"</"[aA]">"        { BEGIN( INITIAL); ECHO;}
