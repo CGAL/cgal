@@ -230,7 +230,8 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_2<R> &p)
 {
-    output_point(gv, p.x(), p.y(), typename R::FT(0));
+    typename R::FT zero(0);
+    output_point(gv, p.x(), p.y(), zero);
     return gv;
 }
 #endif
