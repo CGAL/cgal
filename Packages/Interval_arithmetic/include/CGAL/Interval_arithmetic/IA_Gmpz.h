@@ -52,6 +52,7 @@ convert_from_to (const Interval_nt_advanced&, const Gmpz & z)
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template <>
 struct converter<Interval_nt_advanced,Gmpz>
 {
     static inline Interval_nt_advanced do_it (const Gmpz & z)

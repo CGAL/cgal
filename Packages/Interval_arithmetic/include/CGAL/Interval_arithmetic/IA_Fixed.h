@@ -36,6 +36,7 @@ convert_from_to (const Interval_nt_advanced&, const Fixed_precision_nt & z)
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template <>
 struct converter<Interval_nt_advanced,Fixed_precision_nt>
 {
     static inline Interval_nt_advanced do_it (const Fixed_precision_nt & z)
