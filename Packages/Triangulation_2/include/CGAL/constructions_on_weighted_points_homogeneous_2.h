@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : constructions_on_weighted_homogeneous_2.h
+// file          : constructions_on_weighted_points_homogeneous_2.h
 // package       : Triangulation
 // source        : $RCSfile$
 // revision      : $Revision$
