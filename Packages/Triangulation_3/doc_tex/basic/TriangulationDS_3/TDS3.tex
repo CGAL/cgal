@@ -178,6 +178,11 @@ triangulation data structure. The infinite vertex of the geometric
 embedding is a vertex that cannot be distinguished from the other
 vertices in the combinatorial triangulation.
 
+The same cell class is used in all cases: triangular faces in
+2D can be considered as degenerate cells, having only three vertices
+(resp. neighbors) numbered $(0,1,2)$;
+edges in 1D have only two vertices (resp. neighbors) numbered $0$ and $1$.
+
 The implicit representation of facets (resp. edges) still holds
 for degenerate ($< 3$) dimensions : in dimension~2, each cell has only one
 facet of index 3, and 3 edges $(0,1)$, $(1,2)$ and $(2,0)$; in
