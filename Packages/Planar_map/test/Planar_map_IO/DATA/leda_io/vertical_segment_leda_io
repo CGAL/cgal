@@ -1,6 +1,6 @@
-# ------------------------------------- Printing Planar map
+# ------------------------------------- Begin Planar Map
 # --------------------------------------------------------
-# Printing number of vertices halfedges and faces in Planar map
+# Number of vertices halfedges and faces in Planar map
 2 2 1
 # 2 vertices
 # ------------------------------------------
@@ -25,5 +25,5 @@
 0 1 
 # finish writing face
 # ------------------------------------------
-# ------------------------------------- End of Planar map
+# ------------------------------------- End Planar Map
 # --------------------------------------------------------
