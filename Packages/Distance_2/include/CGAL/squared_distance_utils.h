@@ -50,16 +50,40 @@ wdot(const typename K::Vector_2 &u,
 
 
 template <class K>
+typename K::RT wdot_tag(const typename K::Point_2 &p,
+			const typename K::Point_2 &q,
+			const typename K::Point_2 &r,
+			const K&,
+			const Cartesian_tag)
+{
+  return  (p.x() - q.x()) * (r.x() - q.x())
+          + (p.y() - q.y()) * (r.y() - q.y());
+}
+
+
+template <class K>
+typename K::RT wdot_tag(const typename K::Point_2 &p,
+			const typename K::Point_2 &q,
+			const typename K::Point_2 &r,
+			const K&,
+			const Homogeneous_tag)
+{
+  return  (p.hx() * q.hw() - q.hx() * p.hw())
+          * (r.hx() * q.hw() - q.hx() * r.hw())
+          + (p.hy() * q.hw() - q.hy() * p.hw())
+            * (r.hy() * q.hw() - q.hy() * r.hw());
+}
+
+
+template <class K>
 typename K::RT wdot(const typename K::Point_2 &p,
 		    const typename K::Point_2 &q,
 		    const typename K::Point_2 &r,
-		    const K&)
+		    const K& k)
 {
-    K* pR = 0;
-    return  (wmult(pR, p.hx(),q.hw()) - wmult(pR, q.hx(),p.hw()))
-          * (wmult(pR, r.hx(),q.hw()) - wmult(pR, q.hx(),r.hw()))
-          + (wmult(pR, p.hy(),q.hw()) - wmult(pR, q.hy(),p.hw()))
-          * (wmult(pR, r.hy(),q.hw()) - wmult(pR, q.hy(),r.hw()));
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  return wdot_tag(p, q, r, k, tag);
 }
 
 
@@ -238,6 +262,56 @@ inline bool collinear(const typename K::Vector_2 &u,
 the ordertype, right_turn, left_turn and collinear routines for points are
 defined elsewhere.
 */
+template <class K>
+inline
+bool
+same_direction_tag(const typename K::Vector_2 &u,
+		   const typename K::Vector_2 &v,
+		   const K&,
+		   const Cartesian_tag&)
+{ 
+  typedef typename K::FT FT;
+  const FT& ux = u.x();
+  const FT& uy = u.y();
+   if (CGAL_NTS abs(ux) > CGAL_NTS abs(uy)) {
+      return CGAL_NTS sign(ux) == CGAL_NTS sign(v.x());
+  } else {
+    return CGAL_NTS sign(uy) == CGAL_NTS sign(v.y());
+  } 
+}
+
+
+template <class K>
+inline
+bool
+same_direction_tag(const typename K::Vector_2 &u,
+		   const typename K::Vector_2 &v,
+		   const K&,
+		   const Homogeneous_tag&)
+{   
+  typedef typename K::RT RT;
+  const RT& uhx = u.hx();
+  const RT& uhy = u.hy();
+  if (CGAL_NTS abs(uhx) > CGAL_NTS abs(uhy)) {
+      return CGAL_NTS sign(uhx) == CGAL_NTS sign(v.hx());
+  } else {
+    return CGAL_NTS sign(uhy) == CGAL_NTS sign(v.hy());
+  }
+}
+
+
+template <class K>
+inline
+bool
+same_direction(const typename K::Vector_2 &u,
+	       const typename K::Vector_2 &v,
+	       const K& k)
+{  
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  same_direction_tag(u,v, k, tag);
+}
+
 
 } // namespace CGALi
 
