@@ -63,6 +63,7 @@ protected:
   typedef typename Kernel::Compare_xy_2         Compare_xy_2;
   typedef typename Kernel::Compare_y_at_x_2     Compare_y_at_x_2;
   typedef typename Kernel::Is_vertical_2        Is_vertical_2;
+  typedef typename Kernel::Equal_2              Equal_2;
   typedef typename Kernel::Orientation_2        Orientation_2;
   
 public:
@@ -110,9 +111,9 @@ public:
   {
     //split curve at split point (x coordinate) into c1 and c2
     CGAL_precondition(curve_get_point_status(cv, split_pt) == EQUAL);
-    CGAL_precondition_code(Compare_xy_2 compare_xy = compare_xy_2_object());
-    CGAL_precondition(compare_xy(curve_source(cv), split_pt) != EQUAL);
-    CGAL_precondition(compare_xy(curve_target(cv), split_pt) != EQUAL);
+    CGAL_precondition_code(Equal_2 is_equal = equal_2_object());
+    CGAL_precondition(!is_equal(curve_source(cv), split_pt));
+    CGAL_precondition(!is_equal(curve_target(cv), split_pt));
     
     Construct_vertex_2 construct_vertex = construct_vertex_2_object();
     const Point_2 & source = construct_vertex(cv, 0);

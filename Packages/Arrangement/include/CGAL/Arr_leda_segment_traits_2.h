@@ -83,9 +83,8 @@ public:
   {
     //split curve at split point (x coordinate) into c1 and c2
     CGAL_precondition(curve_get_point_status(cv,split_pt) == EQUAL);
-    // does not suit pmwx 
-	//CGAL_precondition(curve_source(cv) != split_pt);
-    //CGAL_precondition(curve_target(cv) != split_pt);
+    CGAL_precondition(curve_source(cv) != split_pt);
+    CGAL_precondition(curve_target(cv) != split_pt);
     
     c1 = X_curve_2(cv.source(), split_pt);
     c2 = X_curve_2(split_pt, cv.target());

@@ -126,6 +126,7 @@ protected:
   typedef typename Kernel::Compare_x_2          Compare_x_2;
   typedef typename Kernel::Compare_y_2          Compare_y_2;
   typedef typename Kernel::Compare_xy_2         Compare_xy_2;
+  typedef typename Kernel::Equal_2              Equal_2;
   typedef typename Kernel::Compare_slope_2      Compare_slope_2;
   typedef typename Kernel::Has_on_2             Has_on_2;
     
@@ -489,9 +490,9 @@ public:
   {
     // Check preconditions.
     CGAL_precondition(curve_get_point_status(cv, p) == EQUAL);
-    CGAL_precondition_code(Compare_xy_2 compare_xy = compare_xy_2_object());
-    CGAL_precondition(compare_xy(cv.ps, p) != EQUAL);
-    CGAL_precondition(compare_xy(cv.pt, p) != EQUAL);
+    CGAL_precondition_code(Equal_2 is_equal = equal_2_object());
+    CGAL_precondition(!is_equal(cv.ps, p));
+    CGAL_precondition(!is_equal(cv.pt, p));
     
     // Do the split.
     c1.line = cv.line;
