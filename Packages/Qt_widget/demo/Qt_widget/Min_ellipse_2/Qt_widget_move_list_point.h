@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : demo/Qt_widget/Min_ellipse_2/Qt_widget_move_list_point.h
+// file          : demo/Qt_widget/Max_k-gon/Qt_widget_move_list_point.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -61,7 +61,7 @@ public:
 
   //constructor
   Qt_widget_move_list_point(std::list<Point>* l, const QCursor c=QCursor(Qt::crossCursor)) :
-      cursor(c), l_of_p(l), on_first(FALSE)
+      on_first(FALSE), cursor(c), l_of_p(l)
   {
     popup1 = new QPopupMenu( widget, 0);
     popup1->insertItem("Delete Point", this, SLOT(delete_point()));
@@ -133,7 +133,7 @@ private:
       *widget << Point(x, y);
       l_of_p->remove(old_point);
       l_of_p->push_back(Point(x, y));
-      widget->redraw();	//redraw the layers
+      widget->redraw();	//redraw the scenes
       old_point = Point(x, y);
     }
   };
@@ -151,7 +151,7 @@ private:
 
   void delete_pointi(){
     l_of_p->remove(current_v);
-    widget->redraw();	//redraw the layers
+    widget->redraw();	//redraw the scenes
   };
   void move_pointi(){
     on_first = TRUE;

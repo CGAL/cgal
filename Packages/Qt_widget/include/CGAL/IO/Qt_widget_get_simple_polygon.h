@@ -67,10 +67,6 @@ public:
 	widget->painter().drawPolyline(qpoints_old);
 	widget->setRasterOp(old_rasterop);
 	widget->do_paint();
-	FT
-	  x=static_cast<FT>(widget->x_real(e->x())),
-	  y=static_cast<FT>(widget->y_real(e->y()));
-	
 	
 	widget->new_object(make_object(poly));
 

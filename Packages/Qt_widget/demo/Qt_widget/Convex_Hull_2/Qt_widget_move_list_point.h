@@ -61,7 +61,7 @@ public:
 
   //constructor
   Qt_widget_move_list_point(std::list<Point>* l, const QCursor c=QCursor(Qt::crossCursor)) :
-      cursor(c), l_of_p(l), on_first(FALSE)
+      on_first(FALSE), cursor(c), l_of_p(l)
   {
     popup1 = new QPopupMenu( widget, 0);
     popup1->insertItem("Delete Point", this, SLOT(delete_point()));

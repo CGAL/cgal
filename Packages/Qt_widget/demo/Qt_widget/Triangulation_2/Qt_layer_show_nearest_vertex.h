@@ -37,7 +37,7 @@ public:
   typedef typename T::Vertex_handle		Vertex_handle;
   typedef typename T::Geom_traits::FT		FT;
 
-  Qt_layer_nearest_vertex(T &t) : first_time(TRUE), tr(t){};
+  Qt_layer_nearest_vertex(T &t) : tr(t), first_time(TRUE) {};
 	
   void draw(Qt_widget &widget){first_time = TRUE;};
   void mouseMoveEvent(QMouseEvent *e, Qt_widget &widget)
