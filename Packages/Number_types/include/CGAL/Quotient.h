@@ -134,7 +134,7 @@ sqrt(const Quotient<NT> &q)
 }
 
 template <class NT>
-CGAL_KERNEL_MEDIUM_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::normalize()
 {
@@ -159,7 +159,7 @@ Quotient<NT>::normalize()
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const Quotient<NT>& r)
 {
@@ -170,7 +170,7 @@ Quotient<NT>::operator+= (const Quotient<NT>& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator-= (const Quotient<NT>& r)
 {
@@ -181,7 +181,7 @@ Quotient<NT>::operator-= (const Quotient<NT>& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator*= (const Quotient<NT>& r)
 {
@@ -192,7 +192,7 @@ Quotient<NT>::operator*= (const Quotient<NT>& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator/= (const Quotient<NT>& r)
 {
@@ -204,7 +204,7 @@ Quotient<NT>::operator/= (const Quotient<NT>& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const NT& r)
 {
@@ -213,7 +213,7 @@ Quotient<NT>::operator+= (const NT& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator-= (const NT& r)
 {
@@ -222,7 +222,7 @@ Quotient<NT>::operator-= (const NT& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator*= (const NT& r)
 {
@@ -231,7 +231,7 @@ Quotient<NT>::operator*= (const NT& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator/= (const NT& r)
 {
@@ -241,7 +241,7 @@ Quotient<NT>::operator/= (const NT& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const CGAL_int(NT)& r)
 {
@@ -250,7 +250,7 @@ Quotient<NT>::operator+= (const CGAL_int(NT)& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator-= (const CGAL_int(NT)& r)
 {
@@ -259,7 +259,7 @@ Quotient<NT>::operator-= (const CGAL_int(NT)& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator*= (const CGAL_int(NT)& r)
 {
@@ -268,7 +268,7 @@ Quotient<NT>::operator*= (const CGAL_int(NT)& r)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator/= (const CGAL_int(NT)& r)
 {
@@ -278,7 +278,7 @@ Quotient<NT>::operator/= (const CGAL_int(NT)& r)
 }
 
 template <class NT>
-CGAL_KERNEL_MEDIUM_INLINE
+CGAL_MEDIUM_INLINE
 Comparison_result
 quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
 {
@@ -371,7 +371,7 @@ io_tag(const Quotient<NT>&)
 { return io_Operator(); }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator+(const Quotient<NT>& x, const Quotient<NT>& y)
 {
@@ -380,13 +380,13 @@ operator+(const Quotient<NT>& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator-(const Quotient<NT>& x, const Quotient<NT>& y)
 { return (Quotient<NT>(x) -= y); }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator*(const Quotient<NT>& x, const Quotient<NT>& y)
 {
@@ -395,7 +395,7 @@ operator*(const Quotient<NT>& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator/(const Quotient<NT>& x, const Quotient<NT>& y)
 {
@@ -410,7 +410,7 @@ operator-(const Quotient<NT>& x)
 { return Quotient<NT>(-x.num,x.den); }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator+(const NT& x, const Quotient<NT>& y)
 {
@@ -419,7 +419,7 @@ operator+(const NT& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator+(const Quotient<NT>& x, const NT& y)
 {
@@ -428,7 +428,7 @@ operator+(const Quotient<NT>& x, const NT& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator+(const Quotient<NT>& x, const CGAL_int(NT)& y)
 {
@@ -437,13 +437,13 @@ operator+(const Quotient<NT>& x, const CGAL_int(NT)& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator+(const CGAL_int(NT)& x, const Quotient<NT>& y)
 { return y + x; }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator-(const NT& x, const Quotient<NT>& y)
 {
@@ -452,7 +452,7 @@ operator-(const NT& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator-(const Quotient<NT>& x, const NT& y)
 {
@@ -461,7 +461,7 @@ operator-(const Quotient<NT>& x, const NT& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator-(const Quotient<NT>& x, const CGAL_int(NT)& y)
 {
@@ -470,7 +470,7 @@ operator-(const Quotient<NT>& x, const CGAL_int(NT)& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator-(const CGAL_int(NT)& x, const Quotient<NT>& y)
 {
@@ -479,7 +479,7 @@ operator-(const CGAL_int(NT)& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator*(const NT& x, const Quotient<NT>& y)
 {
@@ -488,7 +488,7 @@ operator*(const NT& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator*(const Quotient<NT>& x, const NT& y)
 {
@@ -497,7 +497,7 @@ operator*(const Quotient<NT>& x, const NT& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator*(const Quotient<NT>& x, const CGAL_int(NT)& y)
 {
@@ -512,7 +512,7 @@ operator*(const CGAL_int(NT)& x, const Quotient<NT>& y)
 { return y*x; }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator/(const NT& x, const Quotient<NT>& y)
 {
@@ -521,7 +521,7 @@ operator/(const NT& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator/(const Quotient<NT>& x, const NT& y)
 {
@@ -530,7 +530,7 @@ operator/(const Quotient<NT>& x, const NT& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator/(const Quotient<NT>& x, const CGAL_int(NT)& y)
 {
@@ -539,7 +539,7 @@ operator/(const Quotient<NT>& x, const CGAL_int(NT)& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 Quotient<NT>
 operator/(const CGAL_int(NT)& x, const Quotient<NT>& y)
 {
@@ -548,7 +548,7 @@ operator/(const CGAL_int(NT)& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 NT
 quotient_truncation(const Quotient<NT>& r)
 { return (r.num / r.den); }
@@ -556,13 +556,13 @@ quotient_truncation(const Quotient<NT>& r)
 
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 bool
 operator==(const Quotient<NT>& x, const Quotient<NT>& y)
 { return x.num * y.den == x.den * y.num; }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 bool
 operator==(const Quotient<NT>& x, const NT& y)
 { return x.den * y == x.num; }
@@ -574,7 +574,7 @@ operator==(const NT& x, const Quotient<NT>& y)
 { return y == x; }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 bool
 operator==(const CGAL_int(NT) & x, const Quotient<NT>& y)
 { return y.den * x == y.num; }
@@ -618,7 +618,7 @@ operator!=(const Quotient<NT>& x, const CGAL_int(NT) & y)
 
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 bool
 operator<(const Quotient<NT>& x, const Quotient<NT>& y)
 {
@@ -626,7 +626,7 @@ operator<(const Quotient<NT>& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 bool
 operator<(const Quotient<NT>& x, const NT& y)
 {
@@ -634,7 +634,7 @@ operator<(const Quotient<NT>& x, const NT& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 bool
 operator<(const NT& x, const Quotient<NT>& y)
 {
@@ -642,7 +642,7 @@ operator<(const NT& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 bool
 operator<(const CGAL_int(NT)& x, const Quotient<NT>& y)
 {
@@ -650,7 +650,7 @@ operator<(const CGAL_int(NT)& x, const Quotient<NT>& y)
 }
 
 template <class NT>
-CGAL_KERNEL_INLINE
+CGAL_MEDIUM_INLINE
 bool
 operator<(const Quotient<NT>& x, const CGAL_int(NT)& y)
 {
