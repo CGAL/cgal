@@ -1,3 +1,7 @@
+Version 3.2.3 (September 2 1999)
+- Release for M$VC++ which doesn't understand Base::
+  I renamed it to Kernel_base in all the Cartesian* classes
+
 Version 3.2.2 (September 2 1999)
 - fixed include files that still included <CGAL/...C2.h>
   [worked with symlinks, but not in releases newer than 2.1-I-13]
