@@ -67,8 +67,8 @@ public:
   typedef Triangulation_ds_vertex_3<Tds>           Vertex;
   typedef Triangulation_ds_cell_3<Tds>             Cell;
 
-  typedef CGAL_COMPARABLE_ITERATOR_CHECKER(Cell*)   Cell_handle;
-  typedef CGAL_COMPARABLE_ITERATOR_CHECKER(Vertex*) Vertex_handle;
+  typedef CGAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Cell)   Cell_handle;
+  typedef CGAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Vertex) Vertex_handle;
 
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;

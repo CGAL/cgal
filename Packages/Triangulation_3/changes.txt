@@ -1,3 +1,8 @@
+
+Version 1.117 (??)
+- Changed typedef for Cell_handle and Vertex_handle in TDS_3
+  following a workaround in Trivial_iterator.h for MSC
+
 Version 1.116 (5 Aug 02)
 - replace Pointer by CGAL_COMPARABLE_ITERATOR_CHECKER( *) for 
   Vertex_handle and Cell_handle in TDS
