@@ -1422,7 +1422,7 @@ public:
 // modifying member functions
 ////////////////////////////////
 
- inline void set_bounding_box(const Bounding_box& b) {
+  inline void set_bounding_box(const Bounding_box& b) {
 
 #ifdef CGAL_PMBB_DEBUG
    std::cout << "\nset_bounding_box("; debug();
@@ -1444,7 +1444,7 @@ public:
     std::cout << ")" << std::flush;
 #endif
 
-  }
+}
 
   const Bounding_box& increase_bounding_box(const Point& p,
                                             const Bounding_box& b)
@@ -1768,7 +1768,7 @@ private:
   inline const Bounding_box& ref(const Indirect_bounding_box& bbox) const 
   {return bbox.pointer()->e0;}
   inline Bounding_box& ref() {return ref(bbox);}
-  inline Bounding_box& ref(const Indirect_bounding_box& bbox)
+  inline Bounding_box& ref(Indirect_bounding_box& bbox)
   {return bbox.pointer()->e0;}
   inline bool is_totally_unbounded() const {return is_totally_unbounded(ref());}
   inline bool is_totally_unbounded(const Bounding_box& b) const
