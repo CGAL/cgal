@@ -237,6 +237,9 @@ to_double(const Quotient<MP_Float> &b);
 std::pair<double,double>
 to_interval(const MP_Float &b);
 
+std::pair<double, double>
+to_interval(const Quotient<MP_Float> &b);
+
 inline
 bool
 is_finite(const MP_Float &)

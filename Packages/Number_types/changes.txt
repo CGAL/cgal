@@ -1,3 +1,6 @@
+1 Feb 2004 Sylvain Pion
+- Improve the precision of to_interval(Quotient<MP_Float>).
+
 4.131 (18 Jan 2004)
 - Remove CGAL_CFG_RETURN_TYPE_BUG workarounds.
 

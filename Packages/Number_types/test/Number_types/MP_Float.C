@@ -82,6 +82,21 @@ void test_overflow_to_double()
   assert(CGAL::to_double(val) == 0.5);
 }
 
+void test_overflow_to_interval()
+{
+  std::cout << "Tests if to_interval(Quotient<MPF>) overflows or not."
+            << std::endl;
+
+  QMPF val = MPF(1)/2;
+  for (int i=0; i<3000; ++i) {
+    // std::cout << CGAL::to_double(val) << std::endl;
+    // std::cout << val.numerator() << " , " << val.denominator() << std::endl;
+    val = val * (1<<16);
+    val = val / (1<<16);
+  }
+  assert(CGAL::to_interval(val) == std::make_pair(0.5, 0.5));
+}
+
 int main(int argc, char **argv)
 {
   QMPF q1(1), q2(2);
@@ -160,6 +175,8 @@ int main(int argc, char **argv)
   square_test();
 
   test_overflow_to_double();
+
+  test_overflow_to_interval();
 
   return 0;
 }
