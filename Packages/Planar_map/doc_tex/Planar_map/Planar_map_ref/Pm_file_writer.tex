@@ -72,8 +72,11 @@ In the following operations the methods for writing lines in comments are define
 \ccMethod{void write_comment (const char *str, int i);}
 {writing a line by comments with the information noted in {\em str} and {\em i} to the output stream.}
 
-\ccMethod{void write_value (unsigned int val, char deliminator = \'\\n\');}
-{writing an integer value followed by a deliminator to the output stream.}
+\ccMethod{void write_value (unsigned int val, 
+                            char deliminator = newline);}
+{writing an integer value followed by a deliminator to the output stream.
+ the delimiter has a default value set to the newline character 
+ '$\backslash$n'.}
 
 \ccMethod{ostream& out();}
 {return the output stream the \ccc{Planar map} is written to.} 
