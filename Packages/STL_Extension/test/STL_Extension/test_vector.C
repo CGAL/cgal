@@ -153,12 +153,13 @@ int main() {
 
     vector V5(3);
     assert( V5.size() == 3);
-    for( unsigned int i = 0; i < V5.size(); i++) {
+    unsigned int i = 0;
+    for( ; i < V5.size(); i++) {
         assert( V5[i] == X());
     }
     vector V6(3, X(7812));
     assert(V6.size() == 3);
-    for( unsigned int i = 0; i < V6.size(); i++) {
+    for( i = 0; i < V6.size(); i++) {
         assert( V6[i] == X(7812));
     }
     list L;
@@ -171,10 +172,10 @@ int main() {
     vector V7(7, X(7));
     vector V8(7, X(8));
     V7.swap(V8);
-    for( unsigned int i = 0; i< V7.size(); i++) {
+    for( i = 0; i< V7.size(); i++) {
         assert( V7[i] == X(8));
     }
-    for( unsigned int i = 0; i< V8.size(); i++) {
+    for( i = 0; i< V8.size(); i++) {
         assert( V8[i] == X(7));
     }
     assert( V7.size() == 7);

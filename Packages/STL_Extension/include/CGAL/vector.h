@@ -36,6 +36,7 @@
 #include <iterator>
 #include <algorithm>
 #include <memory>
+#include <cstddef>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -202,6 +203,14 @@ protected:
             alloc.deallocate( &*start, end_of_storage - start );
     }
 
+protected:
+    // pointer versions of begin()/end() to call the various
+    // standard algorithms with the (possibly) more efficient pointers.
+    pointer         pbegin()         { return &*start; }
+    const_pointer   pbegin()   const { return &*start; }
+    pointer         pend()           { return &*finish; }
+    const_pointer   pend()     const { return &*finish; }
+
 public:
     // ACCESS
     // ------
@@ -240,12 +249,12 @@ public:
     // COMPARISON
     // ----------
     bool      operator==( const Self& y) const {
-        return size() == y.size() && std::equal( begin(), end(), y.begin());
+        return size() == y.size() && std::equal( pbegin(), pend(), y.pbegin());
     }
     bool      operator!=( const Self& y) const { return !(*this == y); }
     bool operator< ( const Self& y) const {
-        return std::lexicographical_compare( begin(),   end(),
-                                             y.begin(), y.end());
+        return std::lexicographical_compare( pbegin(),   pend(),
+                                             y.pbegin(), y.pend());
     }
     bool operator> ( const Self& y) const { return y < *this;    }
     bool operator<=( const Self& y) const { return !(y < *this); }
@@ -295,8 +304,8 @@ public:
                 iterator i = std::copy( x.begin(), x.end(), begin());
                 destroy( i, finish);
             } else {
-                std::copy( x.begin(), x.begin() + size(), start);
-                std::uninitialized_copy( x.begin() + size(), x.end(), finish);
+                std::copy( x.begin(), x.begin() + size(), begin());
+                std::uninitialized_copy(x.pbegin() + size(), x.pend(), pend());
             }
             finish = start + x.size();
         }
@@ -407,7 +416,7 @@ protected:
     iterator allocate_and_fill( size_type n, const T& x) {
         iterator result = iterator( alloc.allocate(n));
         try {
-            std::uninitialized_fill_n( result, n, x);
+            std::uninitialized_fill_n( &*result, n, x);
             return result;
         }
         catch(...) { 
@@ -422,7 +431,7 @@ protected:
                                 ForwardIterator last) {
         iterator result = iterator( alloc.allocate(n));
         try {
-            std::uninitialized_copy( first, last, result);
+            std::uninitialized_copy( first, last, &*result);
             return result;
         }
         catch(...) { 
@@ -473,16 +482,16 @@ protected:
                 const size_type elems_after = finish - position;
                 iterator old_finish = finish;
                 if (elems_after > n) {
-                    std::uninitialized_copy( finish - n, finish, finish);
+                    std::uninitialized_copy( pend() - n, pend(), pend());
                     finish += n;
                     std::copy_backward( position, old_finish - n, old_finish);
                     std::copy( first, last, position);
                 } else {
                     ForwardIterator mid = first;
                     std::advance( mid, elems_after);
-                    std::uninitialized_copy( mid, last, finish);
+                    std::uninitialized_copy( mid, last, pend());
                     finish += n - elems_after;
-                    std::uninitialized_copy( position, old_finish, finish);
+                    std::uninitialized_copy( position, old_finish, pend());
                     finish += elems_after;
                     std::copy( first, mid, position);
                 }
@@ -492,12 +501,12 @@ protected:
                 iterator new_start = iterator( alloc.allocate(len));
                 iterator new_finish = new_start;
                 try {
-                    new_finish = std::uninitialized_copy( start, position,
-                                                          new_start);
-                    new_finish = std::uninitialized_copy( first, last,
-                                                          new_finish);
-                    new_finish = std::uninitialized_copy( position, finish,
-                                                          new_finish);
+                    new_finish = iterator( 
+                        std::uninitialized_copy(start, position, &*new_start));
+                    new_finish = iterator(
+                        std::uninitialized_copy( first, last, &*new_finish));
+                    new_finish = iterator( 
+                        std::uninitialized_copy(position,finish,&*new_finish));
                 }
                 catch(...) {
                     destroy( new_start, new_finish);
@@ -540,10 +549,12 @@ void vector<T, Alloc>::insert_aux( iterator position, const T& x) {
         iterator new_start = iterator( alloc.allocate(len));
         iterator new_finish = new_start;
         try {
-            new_finish = std::uninitialized_copy( start, position, new_start);
+            new_finish = iterator(
+                std::uninitialized_copy(start, position, &*new_start));
             construct( new_finish, x);
             ++new_finish;
-            new_finish = std::uninitialized_copy(position, finish, new_finish);
+            new_finish = iterator(
+                std::uninitialized_copy(position,finish,&*new_finish));
         }
         catch(...) {
             destroy( new_start, new_finish); 
@@ -567,14 +578,14 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
             const size_type elems_after = finish - position;
             iterator old_finish = finish;
             if (elems_after > n) {
-                std::uninitialized_copy( finish - n, finish, finish);
+                std::uninitialized_copy( pend() - n, pend(), pend());
                 finish += n;
                 std::copy_backward( position, old_finish - n, old_finish);
                 std::fill( position, position + n, x_copy);
             } else {
-                std::uninitialized_fill_n( finish, n - elems_after, x_copy);
+                std::uninitialized_fill_n( pend(), n - elems_after, x_copy);
                 finish += n - elems_after;
-                std::uninitialized_copy( position, old_finish, finish);
+                std::uninitialized_copy( position, old_finish, pend());
                 finish += elems_after;
                 std::fill(position, old_finish, x_copy);
             }
@@ -584,11 +595,12 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
             iterator new_start = iterator( alloc.allocate(len));
             iterator new_finish = new_start;
             try {
-                new_finish = std::uninitialized_copy( start, position,
-                                                      new_start);
-                new_finish = std::uninitialized_fill_n( new_finish, n, x);
-                new_finish = std::uninitialized_copy( position, finish,
-                                                      new_finish);
+                new_finish = iterator(
+                    std::uninitialized_copy( start, position, &*new_start));
+                std::uninitialized_fill_n( &*new_finish, n, x);
+                new_finish += n;
+                new_finish = iterator( 
+                    std::uninitialized_copy( position, finish, &*new_finish));
             }
             catch(...) {
                 destroy( new_start, new_finish);

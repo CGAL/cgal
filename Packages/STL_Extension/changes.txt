@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+SRC : Changed vector to improve cross platform compilation.
 SRC : Added vector class in include/CGAL/vector.h.
 TEST: Added vector test program in test/STL_Extension/test_vector.C
 ALL : Use Arity_traits also in functional_msvc.
