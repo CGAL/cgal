@@ -26,6 +26,9 @@
 #define CGAL_LEDA_BASIC_H
 
 #ifdef CGAL_USE_LEDA
+// The following is needed for LEDA 4.4 due to min/max problems...
+#  define LEDA_NO_MIN_MAX_TEMPL
+
 #include <LEDA/basic.h>
 
 #ifdef LEDA_NAMESPACE
