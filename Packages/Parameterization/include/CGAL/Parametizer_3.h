@@ -1,0 +1,163 @@
+// Copyright (c) 2005  INRIA (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$
+// $Name$
+//
+// Author(s)     : Laurent Saboret, Bruno Levy, Pierre Alliez
+
+
+#ifndef PARAMETIZER_3_H
+#define PARAMETIZER_3_H
+
+#include "CGAL/parameterization_assertions.h"
+
+CGAL_BEGIN_NAMESPACE
+
+
+// Class Parametizer_3
+// Base class and concept of parameterization objects for a given type of mesh (MeshAdaptor_3)
+template <class MeshAdaptor_3>				// 3D surface
+class Parametizer_3 
+{
+// Public types
+public:
+				// The various errors detected by this package
+				enum ErrorCode { 
+					OK,
+					ERROR_NON_CONVEX_BORDER,			// some parameterization algorithms require a convex border
+					ERROR_BAD_MATRIX_CONDITIONING,		// result is mathematically unstable
+					ERROR_NON_TRIANGULAR_MESH,			// the whole package is restricted to triangular meshes
+					ERROR_NO_SURFACE_MESH,				// the whole package is restricted to surfaces
+					ERROR_NO_1_TO_1_MAPPING,			// some parameterization algorithms do not ensure 1 to 1 mapping
+					ERROR_EMPTY_MESH,					// cannot parameterize an empty mesh
+					ERROR_NOT_ENOUGH_MEMORY,			// it's time to buy some RAM :-)
+					ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,	// cannot solve a sparse linear system (bug or bad matrix conditioning)
+				};
+
+				// MeshAdaptor_3 type and subtypes
+				typedef typename MeshAdaptor_3									MeshAdaptor_3;
+				typedef typename MeshAdaptor_3::NT								NT;
+				typedef typename MeshAdaptor_3::Face							Face;
+				typedef typename MeshAdaptor_3::Vertex							Vertex;
+				typedef typename MeshAdaptor_3::Point_3							Point_3;
+				typedef typename MeshAdaptor_3::Point_2							Point_2;
+				typedef typename MeshAdaptor_3::Vector_3						Vector_3;
+				typedef typename MeshAdaptor_3::Face_iterator					Face_iterator;
+				typedef typename MeshAdaptor_3::Vertex_iterator					Vertex_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_iterator			Border_vertex_iterator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_circulator	Vertex_around_face_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator	Vertex_around_vertex_circulator;
+
+// Public operations
+public:
+				// Default constructor, copy constructor and operator =() are fine
+
+				// Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. 
+				// The mapping is linear by pieces (linear in each triangle).
+				// The result is the (u,v) pair image of each vertex of the 3D surface. 
+				//
+				// Preconditions:
+				// * 'mesh' must be a surface with 1 connected component and no hole
+				// * 'mesh' must be a triangular mesh
+				virtual ErrorCode  parameterize (MeshAdaptor_3* mesh) = 0;
+
+// Protected operations
+protected:
+				//                                                                   -> ->
+				// return cotangent of corner specified by P,Q,R points (ie cotan of QP,QR angle)
+				double cotangent(const Point_3& P, const Point_3& Q, const Point_3& R)
+				{
+					Vector_3 u = P - Q;
+					Vector_3 v = R - Q;
+					// (u . v)/((u x v).len)
+					double dot = (u*v);
+					Vector cross_vector = CGAL::cross_product(u,v);
+					double cross_norm = std::sqrt(cross_vector*cross_vector);
+					CGAL_parameterization_assertion(cross_norm != 0.0);
+					if(cross_norm != 0.0)
+						return (dot/cross_norm);
+					else
+						return 0.0; // undefined
+				}
+
+				//                                                                   -> ->
+				// return tangent of corner specified by P,Q,R points (ie tangent of QP,QR angle)
+				double tangent(const Point_3& P, const Point_3& Q, const Point_3& R)
+				{
+					Vector_3 u = P - Q;
+					Vector_3 v = R - Q;
+					// (u . v)/((u x v).len)
+					double dot = (u*v);
+					CGAL_parameterization_assertion(dot != 0.0);
+					Vector cross_vector = CGAL::cross_product(u,v);
+					double cross_norm = std::sqrt(cross_vector*cross_vector);
+					if(dot != 0.0)
+						return (cross_norm/dot);
+					else
+						return 0.0; // undefined
+				}
+
+				//                                                                   -> ->
+				// return angle (in radians) of corner specified by P,Q,R points (ie QP,QR angle)
+				//
+				// Implementation note: we use this formula
+				// uv = |u||v| cos(u,v)
+				// u  ^ v  = w
+				// |w| = |u||v| |sin(u,v)|
+				//**************************************************
+				static double compute_angle_rad(const Point_3& P, const Point_3& Q, const Point_3& R)
+				{
+					static const double PI = 3.14159265359;
+
+					Vector_3 u = P - Q;
+					Vector_3 v = R - Q;
+
+					// check
+					double product = std::sqrt(u*u) * std::sqrt(v*v);
+					if(product == 0)
+						return 0.0;
+
+					// cosine
+					double dot = (u*v);
+					double cosine = dot / product;
+
+					// sine
+					My_kernel::Vector_3 w = CGAL::cross_product(u,v);
+					double AbsSine = std::sqrt(w*w) / product;
+
+					if(cosine >= 0)
+						return std::asin(fix_sine(AbsSine));
+					else
+						return PI-std::asin(fix_sine(AbsSine));
+				}
+
+// Private operations
+private:
+				// fix sine
+				static double fix_sine(double sine)
+				{
+					if(sine >= 1)
+						return 1;
+					else if(sine <= -1)
+						return -1;
+					else
+						return sine;
+				}
+};
+
+
+CGAL_END_NAMESPACE
+
+#endif //PARAMETIZER_3_H
