@@ -1,3 +1,8 @@
+3.11 (24 Jan 2001)
+
+- rearranged some include directives to put them at the top of the file
+  removed others that were unnecessary and added some that were missing
+
 3.10  (22 Jan 2001)
 - Adapts to new simple cartesian kernel.
 - Remove redundant protect macros tests.
