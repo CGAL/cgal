@@ -9,6 +9,19 @@
 typedef CGAL::Gmpz Gmpz;
 typedef CGAL::Gmpq Gmpq;
 
+void test_overflow_to_double()
+{
+  std::cout << "Tests if to_double(Gmpq) overflows or not." << std::endl;
+
+  Gmpq val = Gmpq(1)/2;
+  for (int i=0; i<3000; ++i) {
+    // std::cout << CGAL::to_double(val) << std::endl;
+    // std::cout << val.numerator() << " , " << val.denominator() << std::endl;
+    val = val * (1<<16);
+    val = val / (1<<16);
+  }
+  assert(CGAL::to_double(val) == 0.5);
+}
 
 int main() {
 
@@ -38,6 +51,9 @@ int main() {
   Gmpq qs2("100/1");
   assert(qs2.numerator() == Gmpz(100));
   assert(qs2.denominator() == Gmpz(1));
+
+  test_overflow_to_double();
+
   return 0;
 }
 #else 

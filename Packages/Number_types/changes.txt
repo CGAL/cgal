@@ -1,3 +1,6 @@
+4.128 (18 Jan 2004)
+- Add tests for overflow in to_double(Gmpq and Quotient<MP_Float>). 
+
 4.127 (15 Dec 2003)
 - Proper fix for SunPro.
 
