@@ -43,7 +43,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                essai 
+                demo blind_demo
 
 demo: demo.o 
 	$(CGAL_CXX) -o demo demo.o $(LDFLAGS)
@@ -53,8 +53,9 @@ blind_demo: blind_demo.o
 
 clean:
 	/bin/rm -f *.o \
-                   essai \
-		   essai_tds \
+                   demo \
+		   blind_demo \
+		   output \
                    core
 
 #---------------------------------------------------------------------#

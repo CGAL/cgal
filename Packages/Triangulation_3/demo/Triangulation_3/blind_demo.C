@@ -86,8 +86,7 @@ int main(int argc, char* argv[])
   T.is_valid(true);
 
   ofstream oFileT("output",ios::out);
-  cout <<"                              writing file "
-       << "output" << endl << flush;
+  cout <<"                              writing file output" << endl << flush;
   oFileT << T;
 
   char ch;

@@ -86,9 +86,9 @@ void visu_cells(CGAL::Geomview_stream & os, const TRIANGULATION & T)
 void visu_cell(CGAL::Geomview_stream & os, Cell_handle c)
 {
   os << Gt::Tetrahedron(c->vertex(0)->point(),
-			   c->vertex(1)->point(),
-			   c->vertex(2)->point(),
-			   c->vertex(3)->point());
+			c->vertex(1)->point(),
+			c->vertex(2)->point(),
+			c->vertex(3)->point());
 }
 template<class TRIANGULATION>
 void visu_facets(CGAL::Geomview_stream & os, const TRIANGULATION & T)
@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
 
   gv.set_line_width(4);
   gv.set_trace(false);
-  gv.set_bg_color(CGAL::Color(200, 200, 200));
+  gv.set_bg_color(CGAL::Color(0, 200, 200));
   gv.set_face_color(CGAL::RED);
   gv.set_edge_color(CGAL::GREEN);
   gv.set_vertex_color(CGAL::BLUE);
@@ -167,8 +167,7 @@ int main(int argc, char* argv[])
   T.is_valid(true);
 
   ofstream oFileT("output",ios::out);
-  cout <<"                              writing file "
-       << "output" << endl << flush;
+  cout <<"                              writing file output" << endl << flush;
   oFileT << T;
 
   char ch;
