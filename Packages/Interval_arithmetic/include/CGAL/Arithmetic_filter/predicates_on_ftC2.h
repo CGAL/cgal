@@ -26,6 +26,139 @@
 
 CGAL_BEGIN_NAMESPACE
 
+inline
+Comparison_result
+compare_xC2_SAF(
+    const Static_filter_error &px,
+    const Static_filter_error &l1a,
+    const Static_filter_error &l1b,
+    const Static_filter_error &l1c,
+    const Static_filter_error &l2a,
+    const Static_filter_error &l2b,
+    const Static_filter_error &l2c,
+    double & epsilon_0,
+    double & epsilon_1)
+{
+  typedef Static_filter_error FT;
+
+  Sign sign1 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
+		epsilon_0);
+  Sign sign2 = sign_of_determinant3x3_SAF(l1a, l1b, l1c,
+                                      l2a, l2b, l2c,
+                                      -FT(1), FT(0), px,
+		epsilon_1);
+  CGAL_kernel_assertion( sign1 != 0 );
+  return Comparison_result (sign1 * sign2);
+}
+
+inline
+Comparison_result
+compare_xC2_SAF(
+    const Restricted_double &px,
+    const Restricted_double &l1a,
+    const Restricted_double &l1b,
+    const Restricted_double &l1c,
+    const Restricted_double &l2a,
+    const Restricted_double &l2b,
+    const Restricted_double &l2c,
+    const double & epsilon_0,
+    const double & epsilon_1)
+{
+  typedef Restricted_double FT;
+
+  Sign sign1 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
+		epsilon_0);
+  Sign sign2 = sign_of_determinant3x3_SAF(l1a, l1b, l1c,
+                                      l2a, l2b, l2c,
+                                      -FT(1), FT(0), px,
+		epsilon_1);
+  CGAL_kernel_assertion( sign1 != 0 );
+  return Comparison_result (sign1 * sign2);
+}
+
+inline
+Comparison_result
+compare_xC2(
+    const Static_adaptatif_filter &px,
+    const Static_adaptatif_filter &l1a,
+    const Static_adaptatif_filter &l1b,
+    const Static_adaptatif_filter &l1c,
+    const Static_adaptatif_filter &l2a,
+    const Static_adaptatif_filter &l2b,
+    const Static_adaptatif_filter &l2c)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(px.value()) > SAF_bound ||
+	fabs(l1a.value()) > SAF_bound ||
+	fabs(l1b.value()) > SAF_bound ||
+	fabs(l1c.value()) > SAF_bound ||
+	fabs(l2a.value()) > SAF_bound ||
+	fabs(l2b.value()) > SAF_bound ||
+	fabs(l2c.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2c.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) compare_xC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0,
+		SAF_epsilon_1);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return compare_xC2_SAF(
+		Restricted_double(px.value()),
+		Restricted_double(l1a.value()),
+		Restricted_double(l1b.value()),
+		Restricted_double(l1c.value()),
+		Restricted_double(l2a.value()),
+		Restricted_double(l2b.value()),
+		Restricted_double(l2c.value()),
+		SAF_epsilon_0,
+		SAF_epsilon_1);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return compare_xC2(
+		px.exact(),
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -40,6 +173,7 @@ compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -68,6 +202,196 @@ compare_xC2(
   }
 }
 
+inline
+Comparison_result
+compare_xC2_SAF(
+    const Static_filter_error &l1a,
+    const Static_filter_error &l1b,
+    const Static_filter_error &l1c,
+    const Static_filter_error &l2a,
+    const Static_filter_error &l2b,
+    const Static_filter_error &l2c,
+    const Static_filter_error &h1a,
+    const Static_filter_error &h1b,
+    const Static_filter_error &h1c,
+    const Static_filter_error &h2a,
+    const Static_filter_error &h2b,
+    const Static_filter_error &h2c,
+    double & epsilon_0,
+    double & epsilon_1,
+    double & epsilon_2)
+{
+  typedef Static_filter_error FT;
+
+  Sign sign1 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
+		epsilon_0);
+  Sign sign2 = sign_of_determinant2x2_SAF(h1a, h1b, h2a, h2b,
+		epsilon_1);
+  
+  
+  FT FT0(0);
+  Sign sign3 = sign_of_determinant4x4_SAF(l1a, l1b, FT0, l1c,
+                                      l2a, l2b, FT0, l2c,
+                                      h1a, FT0, h1b, h1c,
+                                      h2a, FT0, h2b, h2c,
+		epsilon_2);
+  CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
+  return Comparison_result (- sign1 * sign2 * sign3);
+}
+
+inline
+Comparison_result
+compare_xC2_SAF(
+    const Restricted_double &l1a,
+    const Restricted_double &l1b,
+    const Restricted_double &l1c,
+    const Restricted_double &l2a,
+    const Restricted_double &l2b,
+    const Restricted_double &l2c,
+    const Restricted_double &h1a,
+    const Restricted_double &h1b,
+    const Restricted_double &h1c,
+    const Restricted_double &h2a,
+    const Restricted_double &h2b,
+    const Restricted_double &h2c,
+    const double & epsilon_0,
+    const double & epsilon_1,
+    const double & epsilon_2)
+{
+  typedef Restricted_double FT;
+
+  Sign sign1 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
+		epsilon_0);
+  Sign sign2 = sign_of_determinant2x2_SAF(h1a, h1b, h2a, h2b,
+		epsilon_1);
+  
+  
+  FT FT0(0);
+  Sign sign3 = sign_of_determinant4x4_SAF(l1a, l1b, FT0, l1c,
+                                      l2a, l2b, FT0, l2c,
+                                      h1a, FT0, h1b, h1c,
+                                      h2a, FT0, h2b, h2c,
+		epsilon_2);
+  CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
+  return Comparison_result (- sign1 * sign2 * sign3);
+}
+
+inline
+Comparison_result
+compare_xC2(
+    const Static_adaptatif_filter &l1a,
+    const Static_adaptatif_filter &l1b,
+    const Static_adaptatif_filter &l1c,
+    const Static_adaptatif_filter &l2a,
+    const Static_adaptatif_filter &l2b,
+    const Static_adaptatif_filter &l2c,
+    const Static_adaptatif_filter &h1a,
+    const Static_adaptatif_filter &h1b,
+    const Static_adaptatif_filter &h1c,
+    const Static_adaptatif_filter &h2a,
+    const Static_adaptatif_filter &h2b,
+    const Static_adaptatif_filter &h2c)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+  static double SAF_epsilon_2;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(l1a.value()) > SAF_bound ||
+	fabs(l1b.value()) > SAF_bound ||
+	fabs(l1c.value()) > SAF_bound ||
+	fabs(l2a.value()) > SAF_bound ||
+	fabs(l2b.value()) > SAF_bound ||
+	fabs(l2c.value()) > SAF_bound ||
+	fabs(h1a.value()) > SAF_bound ||
+	fabs(h1b.value()) > SAF_bound ||
+	fabs(h1c.value()) > SAF_bound ||
+	fabs(h2a.value()) > SAF_bound ||
+	fabs(h2b.value()) > SAF_bound ||
+	fabs(h2c.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(l1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2c.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) compare_xC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return compare_xC2_SAF(
+		Restricted_double(l1a.value()),
+		Restricted_double(l1b.value()),
+		Restricted_double(l1c.value()),
+		Restricted_double(l2a.value()),
+		Restricted_double(l2b.value()),
+		Restricted_double(l2c.value()),
+		Restricted_double(h1a.value()),
+		Restricted_double(h1b.value()),
+		Restricted_double(h1c.value()),
+		Restricted_double(h2a.value()),
+		Restricted_double(h2b.value()),
+		Restricted_double(h2c.value()),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return compare_xC2(
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -87,6 +411,7 @@ compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -125,6 +450,119 @@ compare_xC2(
   }
 }
 
+inline
+Comparison_result
+compare_y_at_xC2_SAF(
+    const Static_filter_error &px,
+    const Static_filter_error &py,
+    const Static_filter_error &la,
+    const Static_filter_error &lb,
+    const Static_filter_error &lc,
+    double & epsilon_0,
+    double & epsilon_1)
+{
+  typedef Static_filter_error FT;
+
+  Sign sign1 = CGAL::sign_SAF(lb,
+		epsilon_0);
+  Sign sign2 = CGAL::sign_SAF(la*px + lb*py + lc,
+		epsilon_1);
+  CGAL_kernel_assertion( sign1 != 0 );
+  return Comparison_result (sign1 * sign2);
+}
+
+inline
+Comparison_result
+compare_y_at_xC2_SAF(
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &la,
+    const Restricted_double &lb,
+    const Restricted_double &lc,
+    const double & epsilon_0,
+    const double & epsilon_1)
+{
+  typedef Restricted_double FT;
+
+  Sign sign1 = CGAL::sign_SAF(lb,
+		epsilon_0);
+  Sign sign2 = CGAL::sign_SAF(la*px + lb*py + lc,
+		epsilon_1);
+  CGAL_kernel_assertion( sign1 != 0 );
+  return Comparison_result (sign1 * sign2);
+}
+
+inline
+Comparison_result
+compare_y_at_xC2(
+    const Static_adaptatif_filter &px,
+    const Static_adaptatif_filter &py,
+    const Static_adaptatif_filter &la,
+    const Static_adaptatif_filter &lb,
+    const Static_adaptatif_filter &lc)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(la.value()) > SAF_bound ||
+	fabs(lb.value()) > SAF_bound ||
+	fabs(lc.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(la.value()));
+      SAF_bound = std::max(SAF_bound, fabs(lb.value()));
+      SAF_bound = std::max(SAF_bound, fabs(lc.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) compare_y_at_xC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0,
+		SAF_epsilon_1);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return compare_y_at_xC2_SAF(
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(la.value()),
+		Restricted_double(lb.value()),
+		Restricted_double(lc.value()),
+		SAF_epsilon_0,
+		SAF_epsilon_1);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return compare_y_at_xC2(
+		px.exact(),
+		py.exact(),
+		la.exact(),
+		lb.exact(),
+		lc.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -137,6 +575,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -161,6 +600,144 @@ compare_y_at_xC2(
   }
 }
 
+inline
+Comparison_result
+compare_y_at_xC2_SAF(
+    const Static_filter_error &px,
+    const Static_filter_error &l1a,
+    const Static_filter_error &l1b,
+    const Static_filter_error &l1c,
+    const Static_filter_error &l2a,
+    const Static_filter_error &l2b,
+    const Static_filter_error &l2c,
+    double & epsilon_0,
+    double & epsilon_1,
+    double & epsilon_2)
+{
+  typedef Static_filter_error FT;
+
+  Sign sign1 = CGAL::sign_SAF(l1b,
+		epsilon_0);
+  Sign sign2 = CGAL::sign_SAF(l2b,
+		epsilon_1);
+  Sign sign3 = sign_of_determinant2x2_SAF(l1a*px+l1c,l2a*px+l2c,l1b,l2b,
+		epsilon_2);
+  CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
+  return Comparison_result (- sign1 * sign2 * sign3);
+}
+
+inline
+Comparison_result
+compare_y_at_xC2_SAF(
+    const Restricted_double &px,
+    const Restricted_double &l1a,
+    const Restricted_double &l1b,
+    const Restricted_double &l1c,
+    const Restricted_double &l2a,
+    const Restricted_double &l2b,
+    const Restricted_double &l2c,
+    const double & epsilon_0,
+    const double & epsilon_1,
+    const double & epsilon_2)
+{
+  typedef Restricted_double FT;
+
+  Sign sign1 = CGAL::sign_SAF(l1b,
+		epsilon_0);
+  Sign sign2 = CGAL::sign_SAF(l2b,
+		epsilon_1);
+  Sign sign3 = sign_of_determinant2x2_SAF(l1a*px+l1c,l2a*px+l2c,l1b,l2b,
+		epsilon_2);
+  CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
+  return Comparison_result (- sign1 * sign2 * sign3);
+}
+
+inline
+Comparison_result
+compare_y_at_xC2(
+    const Static_adaptatif_filter &px,
+    const Static_adaptatif_filter &l1a,
+    const Static_adaptatif_filter &l1b,
+    const Static_adaptatif_filter &l1c,
+    const Static_adaptatif_filter &l2a,
+    const Static_adaptatif_filter &l2b,
+    const Static_adaptatif_filter &l2c)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+  static double SAF_epsilon_2;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(px.value()) > SAF_bound ||
+	fabs(l1a.value()) > SAF_bound ||
+	fabs(l1b.value()) > SAF_bound ||
+	fabs(l1c.value()) > SAF_bound ||
+	fabs(l2a.value()) > SAF_bound ||
+	fabs(l2b.value()) > SAF_bound ||
+	fabs(l2c.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2c.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) compare_y_at_xC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return compare_y_at_xC2_SAF(
+		Restricted_double(px.value()),
+		Restricted_double(l1a.value()),
+		Restricted_double(l1b.value()),
+		Restricted_double(l1c.value()),
+		Restricted_double(l2a.value()),
+		Restricted_double(l2b.value()),
+		Restricted_double(l2c.value()),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return compare_y_at_xC2(
+		px.exact(),
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -175,6 +752,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -203,6 +781,165 @@ compare_y_at_xC2(
   }
 }
 
+inline
+Comparison_result
+compare_y_at_xC2_SAF(
+    const Static_filter_error &l1a,
+    const Static_filter_error &l1b,
+    const Static_filter_error &l1c,
+    const Static_filter_error &l2a,
+    const Static_filter_error &l2b,
+    const Static_filter_error &l2c,
+    const Static_filter_error &ha,
+    const Static_filter_error &hb,
+    const Static_filter_error &hc,
+    double & epsilon_0,
+    double & epsilon_1,
+    double & epsilon_2,
+    double & epsilon_3)
+{
+  typedef Static_filter_error FT;
+
+  Sign sign0 = sign_of_determinant2x2_SAF(l1a,l1b,l2a,l2b,
+		epsilon_0);
+  Sign sign1 = sign_of_determinant3x3_SAF(ha,hb,hc,l1a,l1b,l1c,l2a,l2b,l2c,
+		epsilon_1);
+  CGAL_kernel_assertion( (sign0 != ZERO) && (sign_SAF(hb,
+		epsilon_2) != ZERO) );
+  return Comparison_result (sign0 * CGAL::sign_SAF(hb,
+		epsilon_3) * sign1);
+}
+
+inline
+Comparison_result
+compare_y_at_xC2_SAF(
+    const Restricted_double &l1a,
+    const Restricted_double &l1b,
+    const Restricted_double &l1c,
+    const Restricted_double &l2a,
+    const Restricted_double &l2b,
+    const Restricted_double &l2c,
+    const Restricted_double &ha,
+    const Restricted_double &hb,
+    const Restricted_double &hc,
+    const double & epsilon_0,
+    const double & epsilon_1,
+    const double & epsilon_2,
+    const double & epsilon_3)
+{
+  typedef Restricted_double FT;
+
+  Sign sign0 = sign_of_determinant2x2_SAF(l1a,l1b,l2a,l2b,
+		epsilon_0);
+  Sign sign1 = sign_of_determinant3x3_SAF(ha,hb,hc,l1a,l1b,l1c,l2a,l2b,l2c,
+		epsilon_1);
+  CGAL_kernel_assertion( (sign0 != ZERO) && (sign_SAF(hb,
+		epsilon_2) != ZERO) );
+  return Comparison_result (sign0 * CGAL::sign_SAF(hb,
+		epsilon_3) * sign1);
+}
+
+inline
+Comparison_result
+compare_y_at_xC2(
+    const Static_adaptatif_filter &l1a,
+    const Static_adaptatif_filter &l1b,
+    const Static_adaptatif_filter &l1c,
+    const Static_adaptatif_filter &l2a,
+    const Static_adaptatif_filter &l2b,
+    const Static_adaptatif_filter &l2c,
+    const Static_adaptatif_filter &ha,
+    const Static_adaptatif_filter &hb,
+    const Static_adaptatif_filter &hc)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+  static double SAF_epsilon_2;
+  static double SAF_epsilon_3;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(l1a.value()) > SAF_bound ||
+	fabs(l1b.value()) > SAF_bound ||
+	fabs(l1c.value()) > SAF_bound ||
+	fabs(l2a.value()) > SAF_bound ||
+	fabs(l2b.value()) > SAF_bound ||
+	fabs(l2c.value()) > SAF_bound ||
+	fabs(ha.value()) > SAF_bound ||
+	fabs(hb.value()) > SAF_bound ||
+	fabs(hc.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(l1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ha.value()));
+      SAF_bound = std::max(SAF_bound, fabs(hb.value()));
+      SAF_bound = std::max(SAF_bound, fabs(hc.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) compare_y_at_xC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2,
+		SAF_epsilon_3);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return compare_y_at_xC2_SAF(
+		Restricted_double(l1a.value()),
+		Restricted_double(l1b.value()),
+		Restricted_double(l1c.value()),
+		Restricted_double(l2a.value()),
+		Restricted_double(l2b.value()),
+		Restricted_double(l2c.value()),
+		Restricted_double(ha.value()),
+		Restricted_double(hb.value()),
+		Restricted_double(hc.value()),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2,
+		SAF_epsilon_3);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return compare_y_at_xC2(
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
+		ha.exact(),
+		hb.exact(),
+		hc.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -219,6 +956,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hb,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hc)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -251,6 +989,199 @@ compare_y_at_xC2(
   }
 }
 
+inline
+Comparison_result
+compare_y_at_xC2_SAF(
+    const Static_filter_error &l1a,
+    const Static_filter_error &l1b,
+    const Static_filter_error &l1c,
+    const Static_filter_error &l2a,
+    const Static_filter_error &l2b,
+    const Static_filter_error &l2c,
+    const Static_filter_error &h1a,
+    const Static_filter_error &h1b,
+    const Static_filter_error &h1c,
+    const Static_filter_error &h2a,
+    const Static_filter_error &h2b,
+    const Static_filter_error &h2c,
+    double & epsilon_0,
+    double & epsilon_1,
+    double & epsilon_2,
+    double & epsilon_3)
+{
+  typedef Static_filter_error FT;
+
+  FT FT0(0);
+  Sign s1 = lexicographical_sign_SAF(h1b, -h1a,
+		epsilon_0);
+  Sign s2 = lexicographical_sign_SAF(h2b, -h2a,
+		epsilon_1);
+  Sign s3 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
+		epsilon_2);
+  Sign s4 = sign_of_determinant4x4_SAF(h2a, h2b, FT0, h2c,
+                                   l1a, FT0, l1b, l1c,
+                                   l2a, FT0, l2b, l2c,
+                                   h1a, h1b, FT0, h1c,
+		epsilon_3);
+  return Comparison_result (s1 * s2 * s3 * s4);
+}
+
+inline
+Comparison_result
+compare_y_at_xC2_SAF(
+    const Restricted_double &l1a,
+    const Restricted_double &l1b,
+    const Restricted_double &l1c,
+    const Restricted_double &l2a,
+    const Restricted_double &l2b,
+    const Restricted_double &l2c,
+    const Restricted_double &h1a,
+    const Restricted_double &h1b,
+    const Restricted_double &h1c,
+    const Restricted_double &h2a,
+    const Restricted_double &h2b,
+    const Restricted_double &h2c,
+    const double & epsilon_0,
+    const double & epsilon_1,
+    const double & epsilon_2,
+    const double & epsilon_3)
+{
+  typedef Restricted_double FT;
+
+  FT FT0(0);
+  Sign s1 = lexicographical_sign_SAF(h1b, -h1a,
+		epsilon_0);
+  Sign s2 = lexicographical_sign_SAF(h2b, -h2a,
+		epsilon_1);
+  Sign s3 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
+		epsilon_2);
+  Sign s4 = sign_of_determinant4x4_SAF(h2a, h2b, FT0, h2c,
+                                   l1a, FT0, l1b, l1c,
+                                   l2a, FT0, l2b, l2c,
+                                   h1a, h1b, FT0, h1c,
+		epsilon_3);
+  return Comparison_result (s1 * s2 * s3 * s4);
+}
+
+inline
+Comparison_result
+compare_y_at_xC2(
+    const Static_adaptatif_filter &l1a,
+    const Static_adaptatif_filter &l1b,
+    const Static_adaptatif_filter &l1c,
+    const Static_adaptatif_filter &l2a,
+    const Static_adaptatif_filter &l2b,
+    const Static_adaptatif_filter &l2c,
+    const Static_adaptatif_filter &h1a,
+    const Static_adaptatif_filter &h1b,
+    const Static_adaptatif_filter &h1c,
+    const Static_adaptatif_filter &h2a,
+    const Static_adaptatif_filter &h2b,
+    const Static_adaptatif_filter &h2c)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+  static double SAF_epsilon_2;
+  static double SAF_epsilon_3;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(l1a.value()) > SAF_bound ||
+	fabs(l1b.value()) > SAF_bound ||
+	fabs(l1c.value()) > SAF_bound ||
+	fabs(l2a.value()) > SAF_bound ||
+	fabs(l2b.value()) > SAF_bound ||
+	fabs(l2c.value()) > SAF_bound ||
+	fabs(h1a.value()) > SAF_bound ||
+	fabs(h1b.value()) > SAF_bound ||
+	fabs(h1c.value()) > SAF_bound ||
+	fabs(h2a.value()) > SAF_bound ||
+	fabs(h2b.value()) > SAF_bound ||
+	fabs(h2c.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(l1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(l2c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h1c.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2a.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2b.value()));
+      SAF_bound = std::max(SAF_bound, fabs(h2c.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) compare_y_at_xC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2,
+		SAF_epsilon_3);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return compare_y_at_xC2_SAF(
+		Restricted_double(l1a.value()),
+		Restricted_double(l1b.value()),
+		Restricted_double(l1c.value()),
+		Restricted_double(l2a.value()),
+		Restricted_double(l2b.value()),
+		Restricted_double(l2c.value()),
+		Restricted_double(h1a.value()),
+		Restricted_double(h1b.value()),
+		Restricted_double(h1c.value()),
+		Restricted_double(h2a.value()),
+		Restricted_double(h2b.value()),
+		Restricted_double(h2c.value()),
+		SAF_epsilon_0,
+		SAF_epsilon_1,
+		SAF_epsilon_2,
+		SAF_epsilon_3);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return compare_y_at_xC2(
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -270,6 +1201,7 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -308,6 +1240,98 @@ compare_y_at_xC2(
   }
 }
 
+inline
+Comparison_result
+compare_deltax_deltayC2_SAF(
+    const Static_filter_error &px,
+    const Static_filter_error &qx,
+    const Static_filter_error &ry,
+    const Static_filter_error &sy,
+    double & epsilon_0)
+{
+  typedef Static_filter_error FT;
+
+    return CGAL::compare_SAF(abs(px-qx), abs(ry-sy),
+		epsilon_0);
+}
+
+inline
+Comparison_result
+compare_deltax_deltayC2_SAF(
+    const Restricted_double &px,
+    const Restricted_double &qx,
+    const Restricted_double &ry,
+    const Restricted_double &sy,
+    const double & epsilon_0)
+{
+  typedef Restricted_double FT;
+
+    return CGAL::compare_SAF(abs(px-qx), abs(ry-sy),
+		epsilon_0);
+}
+
+inline
+Comparison_result
+compare_deltax_deltayC2(
+    const Static_adaptatif_filter &px,
+    const Static_adaptatif_filter &qx,
+    const Static_adaptatif_filter &ry,
+    const Static_adaptatif_filter &sy)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(px.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound ||
+	fabs(sy.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
+      SAF_bound = std::max(SAF_bound, fabs(sy.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) compare_deltax_deltayC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return compare_deltax_deltayC2_SAF(
+		Restricted_double(px.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(ry.value()),
+		Restricted_double(sy.value()),
+		SAF_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return compare_deltax_deltayC2(
+		px.exact(),
+		qx.exact(),
+		ry.exact(),
+		sy.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -319,6 +1343,7 @@ compare_deltax_deltayC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -341,6 +1366,114 @@ compare_deltax_deltayC2(
   }
 }
 
+inline
+Orientation
+orientationC2_SAF(
+    const Static_filter_error &px,
+    const Static_filter_error &py,
+    const Static_filter_error &qx,
+    const Static_filter_error &qy,
+    const Static_filter_error &rx,
+    const Static_filter_error &ry,
+    double & epsilon_0)
+{
+  typedef Static_filter_error FT;
+
+  return sign_of_determinant2x2_SAF(px-rx,py-ry,qx-rx,qy-ry,
+		epsilon_0);
+}
+
+inline
+Orientation
+orientationC2_SAF(
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &rx,
+    const Restricted_double &ry,
+    const double & epsilon_0)
+{
+  typedef Restricted_double FT;
+
+  return sign_of_determinant2x2_SAF(px-rx,py-ry,qx-rx,qy-ry,
+		epsilon_0);
+}
+
+inline
+Orientation
+orientationC2(
+    const Static_adaptatif_filter &px,
+    const Static_adaptatif_filter &py,
+    const Static_adaptatif_filter &qx,
+    const Static_adaptatif_filter &qy,
+    const Static_adaptatif_filter &rx,
+    const Static_adaptatif_filter &ry)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) orientationC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return orientationC2_SAF(
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(rx.value()),
+		Restricted_double(ry.value()),
+		SAF_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return orientationC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -354,6 +1487,7 @@ orientationC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -380,6 +1514,160 @@ orientationC2(
   }
 }
 
+inline
+Oriented_side
+side_of_oriented_circleC2_SAF(
+    const Static_filter_error &px,
+    const Static_filter_error &py,
+    const Static_filter_error &qx,
+    const Static_filter_error &qy,
+    const Static_filter_error &rx,
+    const Static_filter_error &ry,
+    const Static_filter_error &tx,
+    const Static_filter_error &ty,
+    double & epsilon_0)
+{
+  typedef Static_filter_error FT;
+
+  
+  
+  
+  
+  
+  
+  FT ptx = px-tx;
+  FT pty = py-ty;
+  FT qtx = qx-tx;
+  FT qty = qy-ty;
+  FT rtx = rx-tx;
+  FT rty = ry-ty;
+  return Oriented_side(
+           sign_of_determinant3x3_SAF(ptx, pty, square(ptx) + square(pty),
+                                  qtx, qty, square(qtx) + square(qty),
+                                  rtx, rty, square(rtx) + square(rty),
+		epsilon_0));
+}
+
+inline
+Oriented_side
+side_of_oriented_circleC2_SAF(
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &rx,
+    const Restricted_double &ry,
+    const Restricted_double &tx,
+    const Restricted_double &ty,
+    const double & epsilon_0)
+{
+  typedef Restricted_double FT;
+
+  
+  
+  
+  
+  
+  
+  FT ptx = px-tx;
+  FT pty = py-ty;
+  FT qtx = qx-tx;
+  FT qty = qy-ty;
+  FT rtx = rx-tx;
+  FT rty = ry-ty;
+  return Oriented_side(
+           sign_of_determinant3x3_SAF(ptx, pty, square(ptx) + square(pty),
+                                  qtx, qty, square(qtx) + square(qty),
+                                  rtx, rty, square(rtx) + square(rty),
+		epsilon_0));
+}
+
+inline
+Oriented_side
+side_of_oriented_circleC2(
+    const Static_adaptatif_filter &px,
+    const Static_adaptatif_filter &py,
+    const Static_adaptatif_filter &qx,
+    const Static_adaptatif_filter &qy,
+    const Static_adaptatif_filter &rx,
+    const Static_adaptatif_filter &ry,
+    const Static_adaptatif_filter &tx,
+    const Static_adaptatif_filter &ty)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound ||
+	fabs(tx.value()) > SAF_bound ||
+	fabs(ty.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
+      SAF_bound = std::max(SAF_bound, fabs(tx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ty.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) side_of_oriented_circleC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return side_of_oriented_circleC2_SAF(
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(rx.value()),
+		Restricted_double(ry.value()),
+		Restricted_double(tx.value()),
+		Restricted_double(ty.value()),
+		SAF_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return side_of_oriented_circleC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		tx.exact(),
+		ty.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -395,6 +1683,7 @@ side_of_oriented_circleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -425,6 +1714,143 @@ side_of_oriented_circleC2(
   }
 }
 
+inline
+Bounded_side
+side_of_bounded_circleC2_SAF(
+    const Static_filter_error &px,
+    const Static_filter_error &py,
+    const Static_filter_error &qx,
+    const Static_filter_error &qy,
+    const Static_filter_error &rx,
+    const Static_filter_error &ry,
+    const Static_filter_error &tx,
+    const Static_filter_error &ty,
+    double & epsilon_0,
+    double & epsilon_1)
+{
+  typedef Static_filter_error FT;
+
+  Oriented_side s = side_of_oriented_circleC2_SAF(px,py,qx,qy,rx,ry,tx,ty,
+		epsilon_0);
+  Orientation o = orientationC2_SAF(px,py,qx,qy,rx,ry,
+		epsilon_1);
+
+  return Bounded_side (s * o);
+}
+
+inline
+Bounded_side
+side_of_bounded_circleC2_SAF(
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &rx,
+    const Restricted_double &ry,
+    const Restricted_double &tx,
+    const Restricted_double &ty,
+    const double & epsilon_0,
+    const double & epsilon_1)
+{
+  typedef Restricted_double FT;
+
+  Oriented_side s = side_of_oriented_circleC2_SAF(px,py,qx,qy,rx,ry,tx,ty,
+		epsilon_0);
+  Orientation o = orientationC2_SAF(px,py,qx,qy,rx,ry,
+		epsilon_1);
+
+  return Bounded_side (s * o);
+}
+
+inline
+Bounded_side
+side_of_bounded_circleC2(
+    const Static_adaptatif_filter &px,
+    const Static_adaptatif_filter &py,
+    const Static_adaptatif_filter &qx,
+    const Static_adaptatif_filter &qy,
+    const Static_adaptatif_filter &rx,
+    const Static_adaptatif_filter &ry,
+    const Static_adaptatif_filter &tx,
+    const Static_adaptatif_filter &ty)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+  static double SAF_epsilon_1;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound ||
+	fabs(tx.value()) > SAF_bound ||
+	fabs(ty.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
+      SAF_bound = std::max(SAF_bound, fabs(tx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ty.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) side_of_bounded_circleC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0,
+		SAF_epsilon_1);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return side_of_bounded_circleC2_SAF(
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(rx.value()),
+		Restricted_double(ry.value()),
+		Restricted_double(tx.value()),
+		Restricted_double(ty.value()),
+		SAF_epsilon_0,
+		SAF_epsilon_1);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return side_of_bounded_circleC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		tx.exact(),
+		ty.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -440,6 +1866,7 @@ side_of_bounded_circleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -470,6 +1897,116 @@ side_of_bounded_circleC2(
   }
 }
 
+inline
+Comparison_result
+cmp_dist_to_pointC2_SAF(
+    const Static_filter_error &px,
+    const Static_filter_error &py,
+    const Static_filter_error &qx,
+    const Static_filter_error &qy,
+    const Static_filter_error &rx,
+    const Static_filter_error &ry,
+    double & epsilon_0)
+{
+  typedef Static_filter_error FT;
+
+  return CGAL::compare_SAF(squared_distanceC2(px,py,qx,qy),
+                       squared_distanceC2(px,py,rx,ry),
+		epsilon_0);
+}
+
+inline
+Comparison_result
+cmp_dist_to_pointC2_SAF(
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &rx,
+    const Restricted_double &ry,
+    const double & epsilon_0)
+{
+  typedef Restricted_double FT;
+
+  return CGAL::compare_SAF(squared_distanceC2(px,py,qx,qy),
+                       squared_distanceC2(px,py,rx,ry),
+		epsilon_0);
+}
+
+inline
+Comparison_result
+cmp_dist_to_pointC2(
+    const Static_adaptatif_filter &px,
+    const Static_adaptatif_filter &py,
+    const Static_adaptatif_filter &qx,
+    const Static_adaptatif_filter &qy,
+    const Static_adaptatif_filter &rx,
+    const Static_adaptatif_filter &ry)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) cmp_dist_to_pointC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return cmp_dist_to_pointC2_SAF(
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(rx.value()),
+		Restricted_double(ry.value()),
+		SAF_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return cmp_dist_to_pointC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -483,6 +2020,7 @@ cmp_dist_to_pointC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -509,6 +2047,124 @@ cmp_dist_to_pointC2(
   }
 }
 
+inline
+Comparison_result
+cmp_signed_dist_to_lineC2_SAF(
+    const Static_filter_error &la,
+    const Static_filter_error &lb,
+    const Static_filter_error &lc,
+    const Static_filter_error &px,
+    const Static_filter_error &py,
+    const Static_filter_error &qx,
+    const Static_filter_error &qy,
+    double & epsilon_0)
+{
+  typedef Static_filter_error FT;
+
+  return CGAL::compare_SAF(scaled_distance_to_directionC2(la,lb,px,py),
+                       scaled_distance_to_directionC2(la,lb,qx,qy),
+		epsilon_0);
+}
+
+inline
+Comparison_result
+cmp_signed_dist_to_lineC2_SAF(
+    const Restricted_double &la,
+    const Restricted_double &lb,
+    const Restricted_double &lc,
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const double & epsilon_0)
+{
+  typedef Restricted_double FT;
+
+  return CGAL::compare_SAF(scaled_distance_to_directionC2(la,lb,px,py),
+                       scaled_distance_to_directionC2(la,lb,qx,qy),
+		epsilon_0);
+}
+
+inline
+Comparison_result
+cmp_signed_dist_to_lineC2(
+    const Static_adaptatif_filter &la,
+    const Static_adaptatif_filter &lb,
+    const Static_adaptatif_filter &lc,
+    const Static_adaptatif_filter &px,
+    const Static_adaptatif_filter &py,
+    const Static_adaptatif_filter &qx,
+    const Static_adaptatif_filter &qy)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(la.value()) > SAF_bound ||
+	fabs(lb.value()) > SAF_bound ||
+	fabs(lc.value()) > SAF_bound ||
+	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(la.value()));
+      SAF_bound = std::max(SAF_bound, fabs(lb.value()));
+      SAF_bound = std::max(SAF_bound, fabs(lc.value()));
+      SAF_bound = std::max(SAF_bound, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) cmp_signed_dist_to_lineC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return cmp_signed_dist_to_lineC2_SAF(
+		Restricted_double(la.value()),
+		Restricted_double(lb.value()),
+		Restricted_double(lc.value()),
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		SAF_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return cmp_signed_dist_to_lineC2(
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -523,6 +2179,7 @@ cmp_signed_dist_to_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
@@ -551,6 +2208,132 @@ cmp_signed_dist_to_lineC2(
   }
 }
 
+inline
+Comparison_result
+cmp_signed_dist_to_lineC2_SAF(
+    const Static_filter_error &px,
+    const Static_filter_error &py,
+    const Static_filter_error &qx,
+    const Static_filter_error &qy,
+    const Static_filter_error &rx,
+    const Static_filter_error &ry,
+    const Static_filter_error &sx,
+    const Static_filter_error &sy,
+    double & epsilon_0)
+{
+  typedef Static_filter_error FT;
+
+  return CGAL::compare_SAF(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
+                       scaled_distance_to_lineC2(px,py,qx,qy,sx,sy),
+		epsilon_0);
+}
+
+inline
+Comparison_result
+cmp_signed_dist_to_lineC2_SAF(
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &rx,
+    const Restricted_double &ry,
+    const Restricted_double &sx,
+    const Restricted_double &sy,
+    const double & epsilon_0)
+{
+  typedef Restricted_double FT;
+
+  return CGAL::compare_SAF(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
+                       scaled_distance_to_lineC2(px,py,qx,qy,sx,sy),
+		epsilon_0);
+}
+
+inline
+Comparison_result
+cmp_signed_dist_to_lineC2(
+    const Static_adaptatif_filter &px,
+    const Static_adaptatif_filter &py,
+    const Static_adaptatif_filter &qx,
+    const Static_adaptatif_filter &qy,
+    const Static_adaptatif_filter &rx,
+    const Static_adaptatif_filter &ry,
+    const Static_adaptatif_filter &sx,
+    const Static_adaptatif_filter &sy)
+{
+  bool re_adjusted = false;
+  static double SAF_bound = -1.0;
+  static double SAF_epsilon_0;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(px.value()) > SAF_bound ||
+	fabs(py.value()) > SAF_bound ||
+	fabs(qx.value()) > SAF_bound ||
+	fabs(qy.value()) > SAF_bound ||
+	fabs(rx.value()) > SAF_bound ||
+	fabs(ry.value()) > SAF_bound ||
+	fabs(sx.value()) > SAF_bound ||
+	fabs(sy.value()) > SAF_bound)
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ry.value()));
+      SAF_bound = std::max(SAF_bound, fabs(sx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(sy.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) cmp_signed_dist_to_lineC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
+    return cmp_signed_dist_to_lineC2_SAF(
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(rx.value()),
+		Restricted_double(ry.value()),
+		Restricted_double(sx.value()),
+		Restricted_double(sy.value()),
+		SAF_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
+    }
+    // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return cmp_signed_dist_to_lineC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		sx.exact(),
+		sy.exact());
+  }
+}
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -566,6 +2349,7 @@ cmp_signed_dist_to_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
