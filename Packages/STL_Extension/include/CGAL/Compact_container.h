@@ -366,11 +366,7 @@ public:
     insert(first, last);
   }
 
-#ifdef CGAL_CFG_EARLY_INSTANTIATION_BUG
-  void erase(const iterator &x)
-#else
   void erase(iterator x)
-#endif
   {
     CGAL_precondition(type(&*x) == USED);
     alloc.destroy(&*x);
@@ -378,12 +374,7 @@ public:
     --size_;
   }
 
-#ifdef CGAL_CFG_EARLY_INSTANTIATION_BUG
-  void erase(const iterator &_first, const iterator &last) {
-    iterator first = _first;
-#else
   void erase(iterator first, iterator last) {
-#endif
     for (; first != last; ++first)
       erase(first);
   }
