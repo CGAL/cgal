@@ -112,17 +112,44 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
  is \ccc{Constraint}.}
 
 
+
 \ccHeading{Insertion and Removal}
 The following member functions overwrite the corresponding
 members of the base class to include a step restoring
  the Delaunay constrained
 property after modification of the triangulation.
 
-\ccMethod{ Vertex_handle insert(Point a);}
-{ Inserts point a in the triangulation. }
+\ccMethod{ Vertex_handle insert(Point p, Face_handle f = Face_handle());}
+{ Inserts point \ccc{p} in the triangulation. 
+If present \ccc{f} is used as an hint
+for the location of \ccc{p}.}
+
+\ccMethod{Vertex_handle 
+          insert(const Point& p,
+                 Locate_type& lt,
+                 Face_handle loc, int li );}
+{Same as above except that the location of the point
+\ccc{p}  to be inserted is assumed to be given by
+\ccc{(lt,loc,i)}.}
+
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{Inserts the points in the range
+ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+ Returns the number of inserted points.
+ \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}
 
 \ccMethod{ void insert(Point a, Point b);}
 { Inserts segment ab as a constrained edge in the triangulation. }
+
+\ccMethod{ void push_back(const Constraint& c);}
+{Inserts constraints \ccc{c} as above.}
+
 
 \ccMethod{ void insert(Vertex_handle va, Vertex_handle vb);}
 { Inserts the line segment whose endpoints are the vertices va and vb

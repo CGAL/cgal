@@ -1,0 +1,271 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Constrained_triangulation_plus_2.tex
+% +------------------------------------------------------------------------+
+% | 05.02.2002   Mariette Yvinec
+% | Package: Triangulation_2
+% | 
+\RCSdef{\RCSConstrainedtriangulationplusRev}{$Revision$}
+\RCSdefDate{\RCSConstrainedtriangulationplusDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Constrained_triangulation_plus_2<Tr,Itag>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+The class \ccRefName\ implements a constrained triangulation that 
+can deal with intersecting constraints. 
+The class allows as input a set of constraint segments which may be
+intersecting, overlapping or partially
+overlapping segments. 
+The class \ccRefName\ constructs a triangulated arrangements 
+of these constraints.
+A vertex is introduced at each intersection point,
+thus refining the input constraints into subconstraints
+which are edges of the triangulation.
+In addition, the class \ccRefName\ is equipped
+with a data structure called  the constraint hierarchy that
+ allows to retrieve, 
+for each input constraint, the 
+sequence of intersection vertices added on this constraint
+and for each constrained edge of the
+triangulation the set of input constraints that overlap it.
+
+The class has two template parameters.  The first one has to be
+instantiated by a constrained or Delaunay constrained triangulation
+class. The second parameter is an intersection tag
+ which allows to choose different
+strategies to deal with constraint intersections. 
+\cgal\ provides three valid types for this parameter : \\
+the type \ccc{Tag_no_intersection} disallows intersections of
+ input constraints,\\
+the type \ccc{Tag_exact_intersections} is to be used in conjonction
+with an exact aritmetic type \\
+the type \ccc{Tag_exact_predicates} is to be used when the triangulation traits
+provide exact predicates but approximate constructions of the
+intersection points.
+
+When constraint intersection are allowed, the traits class of the
+triangulation is required to provide the type
+\ccc{Intersect_2},  a function object whose operator()
+compute the intersection of two segments.
+
+
+\ccInclude{CGAL/Constrained_triangulation_plus_2.h}
+
+\ccInheritsFrom
+\ccc{Tr}
+
+\ccTypes 
+\ccTypedef{typedef Triangulation;}{the triangulation base class.}
+\ccGlue
+\ccTypedef{typedef Intersection_tag;}{the intersection tag}
+
+\ccTypedef{typedef Constraint_iterator;}{An iterator to visit
+all the input  constraints. The order of visit is arbitrary.
+The value type of this iterator  is a pair of \ccc{Vertex_handle}
+(\ccc{std::pair<Vertex_handle, Vertex_handle>}) corresponding to the
+endpoints of the constraint.}
+\ccGlue
+\ccTypedef{typedef Subconstraint_iterator;}{An iterator 
+to visit all the subconstraints  of the triangulation.
+The order of visit is arbitrary.
+The value type of this iterator is a pair of \ccc{Vertex_handle}
+correponding to the vertices of  the
+subconstraint.}
+\ccGlue
+\ccTypedef{typedef Vertices_in_constraint;}{ An iterator on the
+vertices of the chain of triangulation edges representing a
+constraint.}
+
+\ccTypedef{typedef Context;}{This type is intended to describe
+a constraint including a subconstraint and the position of the
+subconstraint in this constraint.
+It provides three member functions \ccc{first()}, \ccc{last()}
+and \ccc{current()} returning 
+iterators  on the sequence of vertices of the enclosing constraint.
+\ccc{first()} returns a  \ccc{Vertices_in_constraint} iterator pointing 
+on the first vertex of the enclosing constraint,
+\ccc{last()} returns a  \ccc{Vertices_in_constraint} iterator 
+pointing on the last vertex of the enclosing constraint, and 
+\ccc{current()} returns a \ccc{Vertices_in_constraint} iterator  pointing
+on the first vertex of the subconstraint.}
+
+
+\ccTypedef{typedef Context_iterator;}{An iterator on the \ccc{Contexts}
+corresponding to the different constraint enclosing a given subconstraint.}
+
+
+\ccCreation
+\ccCreationVariable{ctp}
+
+\ccConstructor{Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits());}
+{Introduces an empty triangulation.}
+
+\ccConstructor{Constrained_triangulation_plus_2(const
+Constrained_triangulation_plus_2& ct);}{copy constructor}
+
+\ccConstructor{Constrained_triangulation_plus_2(list<Constrained>& lc,
+const Geom_traits& t = Geom_traits());}
+{Introduces and builds a constrained triangulation 
+from the list of constraints \ccc{lc}.}
+
+\ccConstructor{ template<class InputIterator> 
+Constrained_triangulation_plus_2(
+        			InputIterator first,
+                               	InputIterator last,
+                               const Geom_traits& gt= Geom_traits());}
+{Introduces and builds a constrained triangulation 
+from the constraints in the range
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+\ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Constraint}.
+}
+
+\ccFunction{void ~ Constrained_triangulation_plus_2();}
+{Destructor. All vertices and faces are deleted.
+The constraint hierarchy is deleted.}
+
+
+
+\ccHeading{Assignment}
+
+\ccMethod{Constrained_triangulation_plus_2 operator=(const
+Constrained_triangulation_plus_2 tr);)}
+{Assignement. All the vertices and faces are duplicated.
+ The constraint hierarchy is also duplicated.}
+
+\ccMethod{void swap(Constrained_triangulation_plus_2 tr);}
+{The triangulations \ccc{tr} and \ccVar\ are swapped.
+This operation should be preferred to \ccVar\ = \ccc{tr} or to
+\ccc{t(tr)} if \ccc{tr} is deleted after that.}
+
+\ccHeading{Insertion and Removal}
+The class \ccRefName\ overwrites the following insertion and removal
+member functions for points and constraints.
+
+\ccMethod{Vertex_handle insert(const Point& p, 
+Face_handle start = Face_handle() );}
+{Inserts point \ccc{p} as a vertex of the triangulation.}
+
+\ccMethod{Vertex_handle insert(const Point& p,
+		       Locate_type lt,
+		       Face_handle loc, int li );}
+{inserts a point \ccc{p} whose location is assumed 
+to be given by \ccc{(lt,loc,li)}.}
+
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{Inserts the points in the range
+ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+ Returns the number of inserted points.
+ \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}
+
+\ccMethod{ void insert(Point a, Point b);}
+{Inserts the constraint segment ab in the triangulation. }
+
+\ccMethod{ void push_back(const Constraint& c);}
+{Inserts the constraints \ccc{c} as above.}
+
+\ccMethod{ void insert(Vertex_handle va, Vertex_handle vb);}
+{ Inserts a constraint whose endpoints are the vertices va and vb
+in the triangulation. }
+
+\ccMethod{void remove_constraint(Vertex_handle va, Vertex_handle vb);}
+{Removes the segment joining \ccc{va} and \ccc{vb}
+from the constraints of the triangulation. 
+\ccPrecond The segment \ccc{va vb} has to be one of the input
+constraint.}
+
+
+\ccHeading{Queries}
+\ccMethod{ Constraint_iterator constraints_begin() const;}
+{Returns a \ccc{Constraint_iterator} pointing on the first
+constraint.}
+\ccGlue
+\ccMethod{Constraint_iterator constraints_end()   const;}
+{Returns a \ccc{Constraint_iterator} pointing past the last
+constraint.}
+\ccGlue
+\ccMethod{Subconstraint_iterator subconstraints_begin() const;}
+{Returns a \ccc{Subconstraint_iterator} pointing on the first
+subconstraint.}
+\ccGlue
+\ccMethod{Subconstraint_iterator subconstraints_end() const;}
+{Returns a \ccc{Subconstraint_iterator} pointing past the last
+subconstraint.}
+\ccGlue
+\ccMethod{int number_of_enclosing_constraints(Vertex_handle va, 
+				      Vertex_handle vb);}
+{Returns the number of constraints enclosing the subconstraint
+\ccc{(va,vb).}
+\ccPrecond \ccc{(va,vb)} has to be a subconstraint, i. e. an edge
+of the triangulation.}
+\ccGlue
+\ccMethod{Context  context(Vertex_handle va, Vertex_handle vb);}
+{Returns the \ccc{Context}  of one enclosing constraint of the
+subconstraint  \ccc{(va,vb)}
+\ccPrecond \ccc{(va,vb)} has to be a subconstraint.}
+\ccGlue
+\ccMethod{Context_iterator   contexts_begin(Vertex_handle va, 
+				    Vertex_handle vb);}
+{Returns an iterator pointing on the first \ccc{Context}
+of the sequence of \ccc{Contexts}
+corresponding to the constraints enclosing the subconstraint\ccc{(va,vb).}
+\ccPrecond \ccc{(va,vb)} has to be a subconstraint.}
+\ccGlue
+\ccMethod{Context_iterator   contexts_end(Vertex_handle va, 
+				  Vertex_handle vb);}
+{Returns an iterator past the last  \ccc{Context}
+of the sequence of \ccc{Contexts}
+corresponding to the constraints enclosing the  \ccc{(va,vb).}}
+\ccGlue
+\ccMethod{Vertices_in_constraint 
+vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb);}
+{Returns an iterator on the first vertex on the constraint
+\ccc{(va,vb)}
+\ccPrecond \ccc{(va,vb)} has to be a constraint.}
+\ccGlue
+\ccMethod{Vertices_in_constraint 
+vertices_in_constraint_end(Vertex_handle va, ertex_handle vb);}
+{Returns an iterator past  the last  vertex on  the constraint
+\ccc{(va,vb)}
+\ccPrecond \ccc{(va,vb)} has to be a constraint.}
+
+
+\ccSeeAlso
+\ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds>} \\
+\ccc{ConstrainedTriangulationPlusTraits_2}
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{examples/Package/Constrained_triangulation_plus_2_prog.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{examples/Package/Constrained_triangulation_plus_2_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

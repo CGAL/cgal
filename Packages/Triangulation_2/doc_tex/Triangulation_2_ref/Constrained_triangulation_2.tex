@@ -131,10 +131,30 @@ are inserted in the sequence pointed to by the output iterator \ccc{out}.}
 
 \ccHeading{Insertion and removal}
 
-\ccMethod{Vertex_handle insert(Point a);}
-{ Inserts point a and restore the status (constrained or not) of all
-the
-touched edges.}
+\ccMethod{Vertex_handle insert(Point p, Face_handle f = Face_handle() );}
+{ Inserts point \ccc{p} and restores the status (constrained or not) of all
+the touched edges. If present \ccc{f} is used as an hint
+for the location of \ccc{p}.}
+
+\ccMethod{Vertex_handle 
+          insert(const Point& p,
+                 Locate_type& lt,
+                 Face_handle loc, int li );}
+{Same as above except that the location of the point
+ \ccc{p} to be inserted is assumed to be given by
+\ccc{(lt,loc,i).}}
+
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{Inserts the points in the range
+ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+ Returns the number of inserted points.
+ \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}
 
 \ccMethod{void insert(Point a, Point b);}
 { Inserts points a and b, and inserts segment ab as a
@@ -145,6 +165,9 @@ a and b, the algorithm runs in time proportionnal to the number of
 removed triangles. 
 \ccPrecond The relative interior of segment \ccc{ab} does not
 intersect the relative interior of another constrained edge.}
+
+\ccMethod{ void push_back(const Constraint& c);}
+{Inserts constraints \ccc{c} as above.}
 
 \ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb);}
 { Inserts the line segment \ccc{s} whose endpoints are the vertices 
