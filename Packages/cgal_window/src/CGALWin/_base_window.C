@@ -12,10 +12,10 @@
 // release_date  : $CGAL_Date: 2001/06/21 $
 //
 // file          : src/CGALWin/_base_window.C
-// package       : cgal_window (1.0)
+// package       : cgal_window (1.0.5)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 0.9.7
-// revision_date : 23 May 2001
+// revision      : 1.0.5
+// revision_date : 16 August 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
@@ -23,8 +23,8 @@
 
 
 
-// defines the BASE_WINDOW operations declared in <LEDA/base_window.h>
-// using the basic graphics routines from <LEDA/impl/x_basic.h>
+// defines the BASE_WINDOW operations declared in <CGAL/LEDA/base_window.h>
+// using the basic graphics routines from <CGAL/LEDA/impl/x_basic.h>
 
 #include <CGAL/LEDA/base_window.h>
 #include <CGAL/LEDA/impl/x_basic.h>
@@ -48,6 +48,13 @@ using std::time_t;
 #if defined(__unix__)
 #include <csignal>
 #include <sys/time.h>
+#endif
+
+
+#if defined(__SUNPRO_CC)
+extern "C" {
+void (*signal (int sig, void (*disp)(int)))(int);
+}
 #endif
 
 
