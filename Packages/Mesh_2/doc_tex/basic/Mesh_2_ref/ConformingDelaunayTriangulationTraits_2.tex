@@ -15,7 +15,9 @@ edges.
 
 \ccTypes
 
-\ccNestedType{FT}{The field type.}
+\ccNestedType{FT}{The field type. It must be a model of the
+  \ccc{SqrtFieldNumberType}, meaning it must be a number type
+  supporting the operation $+$, $-$, $*$, $/$, and $\sqrt{\cdot}$.}
 \ccNestedType{Vector_2}{The vector type.}
 \ccNestedType{Construct_vector_2}{Constructor object. Must
   provide the operator \ccc{Vector_2 operator()(Point a, Point b)}

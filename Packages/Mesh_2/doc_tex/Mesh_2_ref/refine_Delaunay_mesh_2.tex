@@ -3,21 +3,27 @@
 
 \ccFunction{ template<class CDT> 
 void refine_Delaunay_mesh_2 (CDT &t, const typename CDT::Geomtraits& gt = 
-typename CDT::Geom_traits() ); } 
-{ Conforms the constrained edges of \ccc{t} regarding the Delaunay
-  criteria. After a call to this functions, all edges or \ccc{t} are
-  Delaunay edges.
-  \ccPrecond \ccc{CDT} has to be a \cgal\ constrained Delaunay
-  triangulation (CDT) and its geometric traits class must be a model
-  of \ccc{ConformingDelaunayTriangulationTraits_2}.}
+typename CDT::Geom_traits() ); }
+{ Refines the defaults domain defined by a constrained Delaunay
+  triangulation and no seeds into a mesh satifying the criteria
+  defined by the traits \ccc{gt}.
+  \ccPrecond The template parameter \ccc{CDT} has to be instantiated
+  by a \ccc{Constrained_Delaunay_triangulation_2<Gt, Tds>}, or a
+  \ccc{Constrained_triangulation_plus_2<CDT2>} or a
+  \ccc{Triangulation_hierarchy_2<CDT2>} where \ccc{CDT2} is a
+  \ccc{Constrained_Delaunay_triangulation_2<Gt, Tds>}, and the
+  geometric traits class of this instance must be a model of
+  \ccc{DelaunayMeshTraits_2}. }
 
 \ccFunction{ template <class CDT, class InputIterator>
 void refine_Delaunay_mesh_2(CDT& t,
                        InputIterator begin, InputIterator end,
                        bool mark = false,
                        const typename CDT::Geom_traits& gt =
-                       typename CDT::Geom_traits()); }
-{
+                       typename CDT::Geom_traits()); }                     
+{ Same a the previous function, but the sequence [\ccc{begin},
+  \ccc{end}] defines a set of seeds, that is used with the marker
+  \ccc{mark} to defines the domain to mesh.
   \ccPrecond The \ccc{value_type} of \ccc{begin} and \ccc{end}
   is \ccc{CDT::Geom_traits::Point_2}.}
 

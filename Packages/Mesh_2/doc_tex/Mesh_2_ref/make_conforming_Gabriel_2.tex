@@ -3,13 +3,18 @@
 \ccInclude{CGAL/Conforming_Delaunay_triangulation_2.h}
 
 \ccFunction{ template<class CDT> void make_conforming_Gabriel_2 (CDT &t); } 
-{ Conforms the constrained edges of \ccc{t} regarding the Gabriel
-  criteria. After a call to this functions, all constrained edges of
-  \ccc{t} have the \emph{Gabriel property}: the circle that have $e$
-  as diameter doesn't contain any points from the triangulation.
-  \ccPrecond \ccc{CDT} has to be a \cgal\ constrained Delaunay
-  triangulation (CDT) and its geometric traits class must be a model
-  of \ccc{ConformingGabrielTriangulationTraits_2}.}
+{ Refines the constrained Delaunay triangulation \ccc{t} into a
+  conforming Gabriel triangulation. After a call to this function, all
+  constrained edges of \ccc{t} have the \emph{Gabriel property}: the
+  circle that have $e$ as diameter does not contain any points from
+  the triangulation.
+  \ccPrecond The template parameter \ccc{CDT} has to be instantiated
+  by a \ccc{Constrained_Delaunay_triangulation_2<Gt, Tds>}, or a
+  \ccc{Constrained_triangulation_plus_2<CDT2>} or a
+  \ccc{Triangulation_hierarchy_2<CDT2>} where \ccc{CDT2} is a
+  \ccc{Constrained_Delaunay_triangulation_2<Gt, Tds>}, and the
+  geometric traits class of this instance must be a model of
+  \ccc{ConformingGabrielTriangulationTraits_2}. }
 
 \end{ccRefFunction}
 
