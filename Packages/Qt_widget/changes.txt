@@ -1,3 +1,7 @@
+1.0.10 
+======
+Moved Qt_Window.h from include/CGAL to include/CGAL/IO
+
 1.0.9 (7 June 2001)
 =====
 Removed main's parameters when unused to avoid warnings
