@@ -2963,8 +2963,9 @@ retrieve_compiler_settings()
     case `leda_support` in
 	OLD*) 
 	    # maybe someone hacked an _LEDA file ...
-	    if [ ! -r "${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}_LEDA" ]
-	    then
+	    if [ -r "${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}_LEDA" ]; then
+		_file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}_LEDA"
+	    else
 		_file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
 	    fi
 	    if try_to_get_var_from_file LEDA_SUPPORT "${_file}"; then
