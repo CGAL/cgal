@@ -406,15 +406,11 @@ operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
 }
 #endif
 
-#ifdef CGAL_BBOX_2_H
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_2 &bbox);
-#endif
 
-#ifdef CGAL_BBOX_3_H
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_3 &bbox);
-#endif
 
 // The following stuff is for the very old Tetrahedralization.
 // I keep it for inspiration only.
