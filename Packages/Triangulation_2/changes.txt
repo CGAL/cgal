@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+19 novembre Mariette
+ - fixed typo in doc file : Delaunay_triangulation_2.tex
+
 8 November Andreas Fabri
 - In Triangulation_hierarchy_2: Treat special case that the triangulation in 
   higher levels is 1D and the point to insert collinear
