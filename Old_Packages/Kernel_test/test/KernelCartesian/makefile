@@ -12,6 +12,13 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -I../../../Cartesian_kernel/include \
+           -I../../../Kernel_basic/include \
+           -I../../../Number_types/include \
+           -I../../../H2/include \
+           -I../../../H3/include \
+           -I../../../_2/include \
+           -I../../../_3/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            -I../Kernel/include \

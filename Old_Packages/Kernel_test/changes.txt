@@ -1,3 +1,6 @@
+3.32   (23 July 2001)
+- Don't submit makefile and cgal_test.
+
 3.31   (20 July 2001)
 - restored Less_distance_to_point_[23] with default constructors
 - removed remaining constructive predicates in Kernel traits
