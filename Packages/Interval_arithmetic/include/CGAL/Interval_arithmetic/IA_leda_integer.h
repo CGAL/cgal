@@ -32,7 +32,7 @@
 
 inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_integer &z)
 {
-#ifndef CGAL_NO_PRECONDITIONS
+#ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
     CGAL_FPU_set_rounding_to_nearest();
@@ -41,7 +41,7 @@ inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_integer &z)
     const CGAL_Interval_nt_advanced result = 
 	CGAL_Interval_nt_advanced (approx) +
 	CGAL_Interval_nt_advanced::smallest;
-#ifndef CGAL_NO_POSTCONDITIONS
+#ifdef CGAL_IA_DEBUG
     CGAL_FPU_set_rounding_to_nearest();
     CGAL_assertion(     leda_integer(result.lower_bound()) <= z &&
 			leda_integer(result.upper_bound()) >= z);

@@ -26,7 +26,7 @@
 
 inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_real &z)
 {
-#ifndef CGAL_NO_PRECONDITIONS
+#ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
     CGAL_FPU_set_rounding_to_nearest();
@@ -36,7 +36,7 @@ inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_real &z)
     const CGAL_Interval_nt_advanced result =
 	( CGAL_Interval_nt_advanced(-rel_error,rel_error) + 1 )
 	* CGAL_Interval_nt_advanced(approx);
-#ifndef CGAL_NO_POSTCONDITIONS
+#ifdef CGAL_IA_DEBUG
     CGAL_FPU_set_rounding_to_nearest();
     CGAL_assertion( leda_real(result.lower_bound()) <= z &&
 		    leda_real(result.upper_bound()) >= z );

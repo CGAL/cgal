@@ -30,7 +30,7 @@
 
 inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_rational &z)
 {
-#ifndef CGAL_NO_PRECONDITIONS
+#ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
 #endif
     CGAL_FPU_set_rounding_to_nearest();
@@ -45,7 +45,7 @@ inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_rational &z)
 // The following is bad because overflow is highly probable with rationals.
     // return CGAL_convert_to<CGAL_Interval_nt_advanced>(z.numerator())
 	// /  CGAL_convert_to<CGAL_Interval_nt_advanced>(z.denominator());
-#ifndef CGAL_NO_POSTCONDITIONS
+#ifdef CGAL_IA_DEBUG
     CGAL_FPU_set_rounding_to_nearest();
     CGAL_assertion( leda_rational(result.lower_bound()) <= z &&
 		    leda_rational(result.upper_bound()) >= z );
