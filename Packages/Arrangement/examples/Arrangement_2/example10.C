@@ -1,4 +1,4 @@
-//example10.C
+//examples/Arrangement_2/example10.C
 
 // Define shorter names to please linker (g++/egcs)
 #define Arrangement_2 Ar

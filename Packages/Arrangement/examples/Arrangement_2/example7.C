@@ -1,4 +1,4 @@
-//example7.C
+//examples/Arrangement_2/example7.C
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>

@@ -1,4 +1,4 @@
-//example3.C   
+//examples/Arrangement_2/example3.C   
 #include <CGAL/basic.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>

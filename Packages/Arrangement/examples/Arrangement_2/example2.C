@@ -1,4 +1,4 @@
-//example2.C
+//examples/Arrangement_2/example2.C
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arr_segment_exact_traits.h>
