@@ -53,18 +53,18 @@ Figure~\ref{Triangulation3-fig-orient}.
 \ccRefConceptPage{TriangulationHierarchyTraits_3}\\
 \ccRefConceptPage{RegularTriangulationTraits_3}
 
-\ccRefConceptPage{Tds_3}\\
+\ccRefConceptPage{TriangulationDataStructure_3}\\
 \ccRefConceptPage{Weighted_pt}
 
 \subsection*{Classes}
 
 \subsubsection*{Main classes}
 
-\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>}
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
 
-\ccRefIdfierPage{CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,Tds_3>}\\
+\ccRefIdfierPage{CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}\\
 \ccRefIdfierPage{CGAL::Triangulation_hierarchy_3<Tr>}\\
-\ccRefIdfierPage{CGAL::Regular_triangulation_3<RegularTriangulationTraits_3,Tds_3>}
+\ccRefIdfierPage{CGAL::Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}
 
 The vertex stores a point and gives access to an incident face of
 maximal dimension. A cell of a triangulation gives access to its four
@@ -72,8 +72,8 @@ vertices indexed 0, 1, 2, and 3 in positive orientation and to its
 four adjacent cells, also called neighbors. The neighbors are indexed
 in such a way that neighbor $i$ lies opposite to vertex $i$.
 
-\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Vertex}\\
-\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Cell}
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Vertex}\\
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Cell}
 
 \subsubsection*{Traits classes}
 

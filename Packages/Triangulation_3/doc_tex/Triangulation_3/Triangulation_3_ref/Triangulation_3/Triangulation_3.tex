@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_3<TriangulationTraits_3,Tds_3>}  %% add template arg's if necessary
+\begin{ccRefClass}{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -32,7 +32,7 @@ The class \ccClassTemplateName\ defines the following types:
 {Tetrahedron}{}
 \ccThreeToTwo
 
-\ccTypedef{typedef Tds_3 Triangulation_data_structure;}{}
+\ccTypedef{typedef TriangulationDataStructure_3 Triangulation_data_structure;}{}
 \ccGlue
 \ccTypedef{typedef TriangulationTraits_3 Geom_traits;}{}
 
@@ -102,15 +102,15 @@ OUTSIDE_AFFINE_HULL};}
 \ccCreation
 \ccCreationVariable{t}  %% choose variable name
 
-\ccThree{Triangulation_3<TriangulationTraits_3,Tds_3>}{Facet }{}
+\ccThree{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}{Facet }{}
 
-\ccConstructor{Triangulation_3<TriangulationTraits_3,Tds_3>
+\ccConstructor{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>
 (const TriangulationTraits_3 & traits );}
 {Introduces a triangulation \ccVar\ having only one vertex which is the
 infinite vertex.} 
 
-\ccConstructor{Triangulation_3<TriangulationTraits_3,Tds_3>(const
-Triangulation_3<TriangulationTraits_3,Tds_3> & tr);} 
+\ccConstructor{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>(const
+Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);} 
 {Copy constructor. All vertices and faces are duplicated.}
 
 \ccFunction{void ~t();}
@@ -121,18 +121,18 @@ deleted.}
 
 \ccHeading{Assignment}
 
-\ccMethod{Triangulation_3<TriangulationTraits_3,Tds_3>
-	operator=(const Triangulation_3<TriangulationTraits_3,Tds_3> & tr);}
+\ccMethod{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>
+	operator=(const Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);}
 {The triangulation \ccc{tr} is duplicated, and modifying one copy after the 
 duplication does not modify the other copy.}
 
 \ccMethod{void copy_triangulation
-		(const Triangulation_3<TriangulationTraits_3,Tds_3> & tr);}
+		(const Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);}
 {The triangulation is duplicated.}
 
 The previous two methods are equivalent.
 
-\ccMethod{void swap(Triangulation_3<TriangulationTraits_3,Tds_3> & tr);}
+\ccMethod{void swap(Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);}
 {The triangulations \ccc{tr} and \ccVar\ are swapped.
 \ccVar.\ccc{swap(tr)} should be preferred to \ccVar\ = \ccc{tr} or to
 \ccc{t(tr)} if \ccc{tr} is deleted after that. Indeed, there is no
@@ -144,7 +144,7 @@ copy of cells and vertices, thus this method runs in constant time.}
 \ccMethod{const TriangulationTraits_3 & geom_traits() const;}
 {Returns a const reference to the geometric traits object.}
 \ccGlue
-\ccMethod{const Tds_3 & tds() const;}
+\ccMethod{const TriangulationDataStructure_3 & tds() const;}
 {Returns a const reference to the triangulation data structure.}
 
 \ccMethod{int dimension() const;}
@@ -195,7 +195,7 @@ The geometric triangulation is not supposed to perform any operations
 on its underlying triangulation data structure. We nevertheless
 provide the following function to add a cell created by a constructor
 of the cell class of a triangulation
-\ccc{Triangulation_cell_3<TriangulationTraits_3,Tds_3>}. 
+\ccc{Triangulation_cell_3<TriangulationTraits_3,TriangulationDataStructure_3>}. 
 Users programming their own
 triangulation algorithms might use it.
 
@@ -860,7 +860,7 @@ messages describing the first invalidity encountered are printed.}
 \ccMethod{bool
           is_valid(Cell_handle c, bool verbose = false) const;}
 {Checks the combinatorial validity of the cell by calling the
-\ccc{is_valid} method of the \ccc{Tds_3} cell class. Also checks the
+\ccc{is_valid} method of the \ccc{TriangulationDataStructure_3} cell class. Also checks the
 geometric validity of \ccc{c}, if \ccc{c} is finite. (See
 Section~\pageref{Triangulation3-sec-Valid}.)\\ 
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
@@ -876,7 +876,7 @@ These methods are mainly a debugging help for the users of advanced features.
 See Chapter~\ref{ChapterGeomview}. 
 
 \ccFunction{istream& operator>>
-(istream& is, Triangulation_3<TriangulationTraits_3, Tds_3> &t);}
+(istream& is, Triangulation_3<TriangulationTraits_3, TriangulationDataStructure_3> &t);}
 {Reads the underlying combinatorial triangulation from \ccc{is} by
 calling the corresponding input operator of the triangulation data
 structure class, and the non-combinatorial information by calling the
@@ -884,7 +884,7 @@ corresponding input operators of the vertex and the cell
 classes. Assigns the resulting triangulation to \ccc{t}.}
 
 \ccFunction{ostream& operator<<
-(ostream& os, const Triangulation_3<TriangulationTraits_3, Tds_3> &t);}
+(ostream& os, const Triangulation_3<TriangulationTraits_3, TriangulationDataStructure_3> &t);}
 {Writes the triangulation \ccc{t} into \ccc{os}.}
 
 The information in the \ccc{iostream} is: the dimension, the number of
@@ -898,8 +898,8 @@ cells.
 
 \ccSeeAlso
 
-\ccc{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Vertex},\\
-\ccc{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Cell}.
+\ccc{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Vertex},\\
+\ccc{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Cell}.
 
 %\ccExample
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,Tds_3>}  %% add template arg's if necessary
+\begin{ccRefClass}{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -22,11 +22,11 @@ The class \ccRefName\ represents a three-dimensional Delaunay triangulation.
 
 \ccInclude{CGAL/Delaunay_triangulation_3.h}
 
-\ccInheritsFrom{\ccc{Triangulation_3<DelaunayTriangulationTraits_3,Tds_3>}}
+\ccInheritsFrom{\ccc{Triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}}
 
 \ccTypes
 
-Inherits the types of \ccc{Triangulation_3<DelaunayTriangulationTraits_3,Tds_3>}.
+Inherits the types of \ccc{Triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}.
 
 \ccCreation
 \ccCreationVariable{dt}  %% choose variable name
@@ -35,16 +35,17 @@ Inherits the types of \ccc{Triangulation_3<DelaunayTriangulationTraits_3,Tds_3>}
 \ccConstructor{Delaunay_triangulation_3();}{default constructor.}
 
 
-\ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,Tds_3>()}
+\ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>()}
 {Creates an empty Delaunay triangulation.}
 
-\ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,Tds_3>
+\ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>
 (const DelaunayTriangulationTraits_3 & traits)}
 {Creates an empty Delaunay triangulation with traits class
 \ccc{traits}.}
 
-\ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,Tds_3>
-(const Delaunay_triangulation_3<DelaunayTriangulationTraits_3,Tds_3> & dt1)}
+\ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>
+(const
+Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3> & dt1)}
 {Copy constructor.}
 
 \ccOperations

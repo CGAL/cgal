@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}[Triangulation_3<TriangulationTraits_3,Tds_3>::]{Vertex}  %% add template arg's if necessary
+\begin{ccRefClass}[Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::]{Vertex}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -25,13 +25,13 @@ maximal dimension.
 \ccInclude{CGAL/Triangulation_vertex_3.h}
 
 \ccInheritsFrom
-\ccc{Tds_3::Vertex}
+\ccc{TriangulationDataStructure_3::Vertex}
 
 \ccTypes
 \ccThree{typedef TriangulationTraits_3::Pointxx}{Pointxx}{}
 \ccThreeToTwo
 The class \ccClassTemplateName\ defines the following types, also
-defined in the class \ccc{Triangulation_3<TriangulationTraits_3,Tds_3>}:
+defined in the class \ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}:
 
 \ccTypedef{typedef TriangulationTraits_3::Point Point;}{point type}
 \ccGlue
@@ -48,26 +48,26 @@ own triangulation algorithms. If he uses the standard ways proposed by
 \cgal\ to construct a triangulation, he does not need the following
 constructors. 
 
-\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,Tds_3>}();}
+\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,TriangulationDataStructure_3>}();}
 {Introduces a new vertex. The geometric information is initialized by
 the default constructor of the class \ccc{Point}. A test on the handle
 to the incident cell of \ccVar\ for equality with \ccc{NULL} will
 answer \ccc{true}.} 
 
-\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,Tds_3>}
+\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,TriangulationDataStructure_3>}
 (const Point & p);}
 {Introduces vertex \ccVar, and initializes its geometric information.
 A test on the handle
 to the incident cell of \ccVar\ for equality with \ccc{NULL} will
 answer \ccc{true}.}
 
-\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,Tds_3>}
+\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,TriangulationDataStructure_3>}
 (const Point & p,
                       		Cell_handle c);}
 {Introduces vertex \ccVar, and initializes the geometric information and 
 the handle to the incident cell.}
 
-\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,Tds_3>}
+\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,TriangulationDataStructure_3>}
 (Cell_handle c);}
 {Introduces vertex \ccVar, and initializes the handle to the incident cell.}
 
@@ -107,7 +107,7 @@ of maximal dimension (Section~\ref{Triangulation3-sec-degen_dim}).}
 
 \ccSeeAlso
 
-\ccc{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Cell}.
+\ccc{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Cell}.
 
 \end{ccRefClass}
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}[Triangulation_3<TriangulationTraits_3,Tds_3>::]{Cell}  %% add template arg's if necessary
+\begin{ccRefClass}[Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::]{Cell}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -29,12 +29,12 @@ dimension: (Section~\ref{Triangulation3-sec-degen_dim}).
 \ccInclude{CGAL/Triangulation_cell_3.h}
 
 \ccInheritsFrom
-\ccc{Tds_3::Cell}
+\ccc{TriangulationDataStructure_3::Cell}
 
 \ccTypes
 
 The class \ccRefName\ defines the same types as the
-\ccc{Triangulation_3<TriangulationTraits_3,Tds_3>::Vertex} class.
+\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Vertex} class.
 
 \ccCreationVariable{c}  %% choose variable name
 \begin{ccAdvanced}
@@ -46,7 +46,7 @@ it into any triangulation. To add a cell to a given triangulation,
 the \ccc{add_cell()} method of the triangulation must be used. Note
 that a given cell can be inserted into only textit{one} triangulation.
 
-\ccConstructor{Triangulation_cell_3<TriangulationTraits_3,Tds_3>();}
+\ccConstructor{Triangulation_cell_3<TriangulationTraits_3,TriangulationDataStructure_3>();}
 {Introduces a cell \ccVar\ and initializes all its vertices and
 neighbors in such a way that tests on the handles for equality with
 \ccc{NULL} will answer \ccc{true}.} 
@@ -56,7 +56,7 @@ neighbors in such a way that tests on the handles for equality with
 %structure related, and initializes all its vertices and
 %neighbors as the preceding constructor.}
 
-\ccConstructor{Triangulation_cell_3<TriangulationTraits_3,Tds_3>(
+\ccConstructor{Triangulation_cell_3<TriangulationTraits_3,TriangulationDataStructure_3>(
                             Vertex_handle v0,	
     	                    Vertex_handle v1,
                             Vertex_handle v2,
@@ -65,7 +65,7 @@ neighbors in such a way that tests on the handles for equality with
 neighbors are initialized so that tests on the handles for equality with
 \ccc{NULL} will answer \ccc{true}.} 
 
-\ccConstructor{Triangulation_cell_3<TriangulationTraits_3,Tds_3>(
+\ccConstructor{Triangulation_cell_3<TriangulationTraits_3,TriangulationDataStructure_3>(
                         Vertex_handle v0,
                     	Vertex_handle v1,
                     	Vertex_handle v2,
@@ -150,7 +150,7 @@ computes the index \ccc{i} of the neighbor.}
 
 \ccSeeAlso
 
-\ccc{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Vertex}.
+\ccc{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Vertex}.
 
 %% \ccExample
 
