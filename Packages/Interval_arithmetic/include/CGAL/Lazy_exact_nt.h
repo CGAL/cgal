@@ -121,6 +121,20 @@ template <typename ET> class Lazy_exact_nt;
  * Should we have a CT template parameter (with corresponding ctor) ?
  */
 
+/*
+ * Do we want to have an interval rafinement functionnality ?
+ * (that is: recompute a smaller interval when exact() is called.
+ */
+
+/*
+ * I see also 2 possibilities for the reference counting:
+ * - Use NULL as a pointer to a non valid object, and test for it in a few
+ *   places.
+ * - Use a static object "lazy_null", with a faked ref counter, to avoid these
+ *   tests.  In this case, it's better if it's not template...
+ * Benchmark will tell which approach is the best.
+ * Note that GCC-2.96 does NULL constant propagation...
+ */
 
 // Does this class need to be template ?
 #if 1
