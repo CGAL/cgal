@@ -32,8 +32,8 @@ tag:
 submit:	
 	rm -rf Geomview.tar.gz
 	tar -zcvf Geomview.tar.gz\
-	--exclude=CVS --exclude=wrapper.tex --exclude=makefile \
-	--exclude=TODO --exclude=run_testsuite\
+	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
+	--exclude=TODO \
 	version maintainer description.txt changes.txt \
 	include src test doc_tex doc_ps
 	cp -f Geomview.tar.gz *.txt version $(WWW_dir)
