@@ -1,4 +1,4 @@
-2.31   (20 June 2001)
+2.32   (20 June 2001)
 - fixed bug in centroid
 - change #include order.
 - Add lexicographically_yx_larger_or_equal() and
