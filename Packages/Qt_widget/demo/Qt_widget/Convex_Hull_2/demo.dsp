@@ -95,10 +95,6 @@ SOURCE=.\convex_hull_2.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\Qt_Scene.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\src\Qt_Widget.C
 # End Source File
 # Begin Source File
