@@ -18,6 +18,12 @@
 #include <Inventor/nodes/SoPointLight.h>
 #include <Inventor/nodes/SoTexture2.h>
 
+#include <qapplication.h>
+#include <qmainwindow.h>
+#include <qfiledialog.h>
+#include <qpopupmenu.h>
+#include <qmenubar.h>
+
 #include <CGAL/IO/So_node_polyhedron_3.h>
 
 #include <list>
@@ -98,17 +104,14 @@ mouse_button_pressed(void * ud, SoEventCallback * n)
     SoRayPickAction rp(viewer->getViewportRegion());
     rp.setPoint(mbe->getPosition());
     //rp.setPickAll(true);
-    rp.apply(viewer->getSceneManager()->getSceneGraph());    
-
-    SoPickedPoint * point = rp.getPickedPoint();
+    rp.apply(viewer->getSceneManager()->getSceneGraph());        
+    SoPickedPoint * point = rp.getPickedPoint();    
     if (point == NULL) {
       (void)fprintf(stderr, "\n** MISS LEFT BUTTON! **\n\n");
+      (void)fprintf(stdout, "\n");
       return;
     }
     
-
-    (void)fprintf(stdout, "\n");
-
     SbVec3f v = point->getPoint();
     SbVec3f nv = point->getNormal();
 
@@ -124,12 +127,8 @@ mouse_button_pressed(void * ud, SoEventCallback * n)
       v3p.setPoint(poly_detail->get_vertex(2)->getPoint());
       v3p.setNormal(poly_detail->get_vertex(2)->getNormal());
 
-      Facet_handle fh = poly_detail->find_face();      
-      Halfedge_around_facet_circulator haf = (*fh).facet_begin ();
-      do{
-        std::cout << (*(*haf).vertex()).point().x() <<"\n"<< (*(*haf).vertex()).point().y() <<"\n"<< (*(*haf).vertex()).point().z() << "\n";
-      }while(++haf!=(*fh).facet_begin());
-      Halfedge_handle hh = (*fh).halfedge();      
+      Facet_handle fh = poly_detail->find_face();
+      Halfedge_handle hh = (*fh).halfedge();
       P.erase_facet(hh);
       should_pick = true;
     }    
@@ -146,79 +145,165 @@ mouse_button_pressed(void * ud, SoEventCallback * n)
 }
 
 
-
-int
-main (int argc, char ** argv)
-{
-  // Initialize Coin, and return a main window to use
-  // If unsuccessful, exit
-  QWidget * window = SoQt::init(argv[0]); 
-  if (window==NULL) exit(1);    
+SoSeparator* get_main_scene(){
   Node_polyhedron_3<Polyhedron>::initClass();
+
 
   //read the polyhedron
   const char* iname = "cin";
   std::istream*    p_in  = &std::cin;
   std::ifstream    in;
   in.open("data\\venus.off");
-  p_in = &in;  
+  p_in = &in;
   if ( !*p_in)
-    std::cout << "error: cannot open file for reading." <<endl;  
-  CGAL::set_ascii_mode(* p_in);      
+    std::cout << "error: cannot open file for reading." <<endl;
+  //CGAL::set_ascii_mode(* p_in);
   (*p_in) >> P;
   in.close();
 
-  root = new SoSeparator;
-  SoSeparator * sep1 = new SoSeparator;
-  SoSeparator * sep2 = new SoSeparator;
+/*
+  Point_3 p1 = Point_3(0, 0, 0);
+  Point_3 p2 = Point_3(10, 0, 0);
+  Point_3 p3 = Point_3(0, 0, 10);
+  Point_3 p4 = Point_3(5, 10, 5);
+
+  P.make_tetrahedron(p1, p2, p3, p4);
+*/
+  SoSeparator * sep1 = new SoSeparator;  
   SoComplexity * complexity = new SoComplexity;
   SoMaterial * material = new SoMaterial;
 
   Node_polyhedron_3<Polyhedron> *poly = new Node_polyhedron_3<Polyhedron>(P);
-  SoEventCallback *myEventCB = new SoEventCallback;  
-  
 
+  material->shininess.setValue(1.0f);
+  material->ambientColor.setValue(0.0f, 0.0f, 0.0f);
   material->diffuseColor.setValue(0.8f, 0.2f, 0.0);
   complexity->value.setValue(0.8f);
-
-
-  root->ref();                   //increments the reference counter
-  root->addChild(myEventCB);
   
   sep1->ref();
   sep1->addChild(complexity);
   sep1->addChild(material);
   sep1->addChild(poly);
 
-  root->addChild(sep1);
+  return sep1;
+}
 
-  // Set up the ExaminerViewer
-  viewer = new SoQtExaminerViewer(window);
-  viewer->setSceneGraph(root);
-  viewer->setTitle("Draw Style");
-  viewer->viewAll();  
-  viewer->show();
+class MyWindow : public QMainWindow{
+  Q_OBJECT
+public:
+  MyWindow(){
+    SoQt::init(this);
 
-  viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_BBOX);  
+    // file menu
+    QPopupMenu * file = new QPopupMenu( this );
+    menuBar()->insertItem( "&File", file );
+    file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
+    file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
+    file->insertSeparator();
+    file->insertItem("&Load Polyhedron", this, SLOT(load_polyhedron()), CTRL+Key_L);
+    file->insertItem("&Save Polyhedron", this, SLOT(save_polyhedron()), CTRL+Key_S);
+    file->insertSeparator();
+    file->insertItem("&Print to ps", this, SLOT(print_to_ps()), CTRL+Key_P);
+    file->insertSeparator();
+    file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
+    file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
+    QPopupMenu * edit = new QPopupMenu(this);
+    menuBar()->insertItem( "&Edit", edit );
+    edit->insertItem("&Generate Polyhedron", this, SLOT(generate_polyhedron()), CTRL+Key_G);
 
-  // Set up the event callback. We want to pass the root of the
-  // entire scene graph (including the camera) as the userData,
-  // so we get the scene manager's version of the scene graph
-  // root.
+    SoEventCallback *myEventCB = new SoEventCallback;  
+  
+    root = get_main_scene();    
+    root->addChild(myEventCB);
+    // Set up the ExaminerViewer
+    viewer = new SoQtExaminerViewer(this);
+    viewer->setSceneGraph(root);    
+    viewer->viewAll();  
+    viewer->show();
 
-  myEventCB->addEventCallback(
-      SoMouseButtonEvent::getClassTypeId(),
-      mouse_button_pressed,
-      viewer);
+    //viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_BBOX); 
 
-  myEventCB->addEventCallback(
-      SoEvent::getClassTypeId(),
-      mouse_moved,
-      viewer);
+    setCentralWidget(viewer->getBaseWidget());
+    // Set up the event callback. We want to pass the root of the
+    // entire scene graph (including the camera) as the userData,
+    // so we get the scene manager's version of the scene graph
+    // root.
 
-  SoQt::show(window); // display the main window
-  SoQt::mainLoop();   // main Coin event loop
-  delete viewer;      // free all the viewers resources
-  root->unref();      // decrements the reference counter  
+    myEventCB->addEventCallback(
+        SoMouseButtonEvent::getClassTypeId(),
+        mouse_button_pressed,
+        viewer);
+
+    myEventCB->addEventCallback(
+        SoEvent::getClassTypeId(),
+        mouse_moved,
+        viewer);
+
+  }
+public slots:
+  void new_instance(){
+  }
+  void new_window(){
+  }
+  void load_polyhedron(){
+    QString s( QFileDialog::getOpenFileName( QString::null,
+			    "GeomView files (*.off)", this ) );
+    if ( s.isEmpty() )
+        return;
+
+  }
+  void save_polyhedron(){/*
+    QFileDialog qfd(this, "Save Polyhedron", true);
+    qfd.setViewMode(QFileDialog::Detail);    
+    qfd.addFilter("CGAL files (*.cgal)");
+    qfd.addFilter("GeomView files (*.off)");
+    qfd.addFilter("VRML files (*.wrl)");
+    qfd.addFilter("Inventor files (*.iv)");
+    qfd.addFilter("Geometry files (*.cgal *.off *.wrl *.iv)");
+    qfd.setMode(QFileDialog::AnyFile);
+
+    QString fileName;
+    if ( qfd.exec() == QDialog::Accepted )
+      fileName = qfd.selectedFile();
+
+    if ( !fileName.isNull() ) {
+      // got a file name
+      if(fileName.endsWith(".cgal")){
+        std::ofstream out(fileName);
+        CGAL::set_ascii_mode(out);
+        out << P;
+      }
+      else if(fileName.endsWith(".off")){
+        CGAL::File_writer_OFF writter;
+        //CGAL::set_ascii_mode(out);
+        //out << P;
+      } else if(fileName.endsWith(".iv")){
+        CGAL::File_writer_inventor writter;
+      } else if(fileName.endsWith(".wrl")){
+        CGAL::File_writer_VRML_2 writter;
+      }
+      
+    }
+*/
+  }
+  void print_to_ps(){
+  }
+  void generate_polyhedron(){
+  }
+private:
+};
+
+#include "polyhedron_3.moc"
+
+int
+main (int argc, char ** argv)
+{
+  QApplication app(argc, argv);
+  MyWindow *mainwin = new MyWindow();
+  app.setMainWidget(mainwin);   
+  mainwin->resize(400, 400);
+  mainwin->setCaption("Polyhedron_3 Demo");
+  mainwin->show();
+  app.exec();
   return 0;
 }

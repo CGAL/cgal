@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/GR /Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;d:/coin3d_vc7/include;c:/qt/3.0.4.NET/include;D:\CgalCVS\Coin\include"
+				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;c:/coin/.net.ml/include;c:/qt/3.1.0.NET.ML/include;D:\CgalCVS\Coin\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SOQT_NOT_DLL;COIN_NOT_DLL"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="c:\qt\3.0.4.NET\lib\qtmain.lib c:\qt\3.0.4.NET\lib\qt.lib d:\coin3d_vc7\lib\coin1.lib d:\coin3d_vc7\lib\soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib "
+				AdditionalOptions="c:\qt\3.1.0.NET.ML\lib\qtmain.lib c:\qt\3.1.0.NET.ML\lib\qt.lib c:/coin/.net.ml/lib/coin1.lib c:/coin/.net.ml/lib/soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib "
 				OutputFile="$(OutDir)/polyhedron_3.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBC"
@@ -46,7 +46,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe -o polyhedron_3.moc polyhedron_3.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -68,7 +69,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;d:/coin3d_vc7/include;c:/qt/3.0.4.NET/include;D:\CgalCVS\Coin\include"
+				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;c:/coin/.net.ml/include;c:/qt/3.1.0.NET.ML/include;D:\CgalCVS\Coin\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SOQT_NOT_DLL;COIN_NOT_DLL"
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
@@ -81,10 +82,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="c:\qt\3.0.4.NET\lib\qtmain.lib c:\qt\3.0.4.NET\lib\qt.lib d:\coin3d_vc7\lib\coin1.lib d:\coin3d_vc7\lib\soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib "
+				AdditionalOptions="c:\qt\3.1.0.NET.ML\lib\qtmain.lib c:\qt\3.1.0.NET.ML\lib\qt.lib c:/coin/.net.ml/lib/coin1.lib c:/coin/.net.ml/lib/soqt2.lib user32.lib ole32.lib imm32.lib  gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib "
 				OutputFile="$(OutDir)/polyhedron_3.exe"
 				LinkIncremental="1"
-				IgnoreDefaultLibraryNames="LIBC"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -95,7 +96,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="c:/qt/3.1.0.NET.ML/bin/moc.exe -o polyhedron_3.moc polyhedron_3.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
