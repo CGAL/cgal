@@ -15,7 +15,6 @@ TEST SUITE
 
 Doc
 - ameliorer user manual
-- verifier les locate (default start) et insert(p,start) 
 - revoir les anciennes corrections de JF Dufourd
 
 Exemples - demo
@@ -45,7 +44,6 @@ Delaunay
 - optimiser remove
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
-- dual -> voronoi (voir Raphaelle)
 - nearest neighbor
 
 Gestion memoire
