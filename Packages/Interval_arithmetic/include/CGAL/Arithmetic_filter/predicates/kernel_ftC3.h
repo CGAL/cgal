@@ -33,6 +33,542 @@ template <>
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
+strict_dominanceC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qz)
+{
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
+  try
+  {
+    bool result = strict_dominanceC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval());
+    FPU_set_cw(backup);
+    return result;
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_set_cw(backup);
+    return strict_dominanceC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+strict_dominanceC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz)
+{
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
+  try
+  {
+    return strict_dominanceC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
+    bool result = strict_dominanceC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+    FPU_set_cw(backup);
+    return result;
+  }
+}
+
+#ifdef CGAL_IA_NEW_FILTERS
+
+struct Static_Filtered_strict_dominanceC3_6
+{
+  static double _bound;
+  static double _epsilon_0,_epsilon_1,_epsilon_2;
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
+
+  static bool update_epsilon(
+	const Static_filter_error &px,
+	const Static_filter_error &py,
+	const Static_filter_error &pz,
+	const Static_filter_error &qx,
+	const Static_filter_error &qy,
+	const Static_filter_error &qz,
+	double & epsilon_0,
+	double & epsilon_1,
+	double & epsilon_2)
+  {
+    typedef Static_filter_error FT;
+  
+    return ( CGAL::Static_Filtered_compare_2::update_epsilon(px, qx,
+  		epsilon_0) == LARGER &&
+  	   CGAL::Static_Filtered_compare_2::update_epsilon(py, qy,
+  		epsilon_1) == LARGER &&
+  	   CGAL::Static_Filtered_compare_2::update_epsilon(pz, qz,
+  		epsilon_2) == LARGER );
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    number_of_updates++;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  static bool epsilon_variant(
+	const Restricted_double &px,
+	const Restricted_double &py,
+	const Restricted_double &pz,
+	const Restricted_double &qx,
+	const Restricted_double &qy,
+	const Restricted_double &qz,
+	const double & epsilon_0,
+	const double & epsilon_1,
+	const double & epsilon_2)
+  {
+    typedef Restricted_double FT;
+  
+    return ( CGAL::Static_Filtered_compare_2::epsilon_variant(px, qx,
+  		epsilon_0) == LARGER &&
+  	   CGAL::Static_Filtered_compare_2::epsilon_variant(py, qy,
+  		epsilon_1) == LARGER &&
+  	   CGAL::Static_Filtered_compare_2::epsilon_variant(pz, qz,
+  		epsilon_2) == LARGER );
+  }
+};
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+strict_dominanceC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz)
+{
+//   bool re_adjusted = false;
+  const double SAF_bound = Static_Filtered_strict_dominanceC3_6::_bound;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound)
+  {
+// re_adjust:
+    // Compute the new bound.
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    // Re-adjust the context.
+    Static_Filtered_strict_dominanceC3_6::new_bound(NEW_bound);
+  }
+
+  try
+  {
+    return Static_Filtered_strict_dominanceC3_6::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		Static_Filtered_strict_dominanceC3_6::_epsilon_0,
+		Static_Filtered_strict_dominanceC3_6::_epsilon_1,
+		Static_Filtered_strict_dominanceC3_6::_epsilon_2);
+  }
+  catch (...)
+  {
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_strict_dominanceC3_6::number_of_failures++;
+    return strict_dominanceC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+strict_dominanceC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_strict_dominanceC3_6::_bound; )
+  CGAL_assertion(!(
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_strict_dominanceC3_6::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		Static_Filtered_strict_dominanceC3_6::_epsilon_0,
+		Static_Filtered_strict_dominanceC3_6::_epsilon_1,
+		Static_Filtered_strict_dominanceC3_6::_epsilon_2);
+  }
+  catch (...)
+  {
+    Static_Filtered_strict_dominanceC3_6::number_of_failures++;
+    return strict_dominanceC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+  }
+}
+
+#endif // CGAL_IA_NEW_FILTERS
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+dominanceC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &qz)
+{
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
+  try
+  {
+    bool result = dominanceC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval());
+    FPU_set_cw(backup);
+    return result;
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_set_cw(backup);
+    return dominanceC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+dominanceC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz)
+{
+  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
+  try
+  {
+    return dominanceC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_TONEAREST);
+    bool result = dominanceC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+    FPU_set_cw(backup);
+    return result;
+  }
+}
+
+#ifdef CGAL_IA_NEW_FILTERS
+
+struct Static_Filtered_dominanceC3_6
+{
+  static double _bound;
+  static double _epsilon_0,_epsilon_1,_epsilon_2;
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
+
+  static bool update_epsilon(
+	const Static_filter_error &px,
+	const Static_filter_error &py,
+	const Static_filter_error &pz,
+	const Static_filter_error &qx,
+	const Static_filter_error &qy,
+	const Static_filter_error &qz,
+	double & epsilon_0,
+	double & epsilon_1,
+	double & epsilon_2)
+  {
+    typedef Static_filter_error FT;
+  
+    return ( CGAL::Static_Filtered_compare_2::update_epsilon(px, qx,
+  		epsilon_0) != SMALLER && 
+  	   CGAL::Static_Filtered_compare_2::update_epsilon(py, qy,
+  		epsilon_1) != SMALLER &&
+  	   CGAL::Static_Filtered_compare_2::update_epsilon(pz, qz,
+  		epsilon_2) != SMALLER );
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    number_of_updates++;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  static bool epsilon_variant(
+	const Restricted_double &px,
+	const Restricted_double &py,
+	const Restricted_double &pz,
+	const Restricted_double &qx,
+	const Restricted_double &qy,
+	const Restricted_double &qz,
+	const double & epsilon_0,
+	const double & epsilon_1,
+	const double & epsilon_2)
+  {
+    typedef Restricted_double FT;
+  
+    return ( CGAL::Static_Filtered_compare_2::epsilon_variant(px, qx,
+  		epsilon_0) != SMALLER && 
+  	   CGAL::Static_Filtered_compare_2::epsilon_variant(py, qy,
+  		epsilon_1) != SMALLER &&
+  	   CGAL::Static_Filtered_compare_2::epsilon_variant(pz, qz,
+  		epsilon_2) != SMALLER );
+  }
+};
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+dominanceC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz)
+{
+//   bool re_adjusted = false;
+  const double SAF_bound = Static_Filtered_dominanceC3_6::_bound;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound)
+  {
+// re_adjust:
+    // Compute the new bound.
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    // Re-adjust the context.
+    Static_Filtered_dominanceC3_6::new_bound(NEW_bound);
+  }
+
+  try
+  {
+    return Static_Filtered_dominanceC3_6::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		Static_Filtered_dominanceC3_6::_epsilon_0,
+		Static_Filtered_dominanceC3_6::_epsilon_1,
+		Static_Filtered_dominanceC3_6::_epsilon_2);
+  }
+  catch (...)
+  {
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_dominanceC3_6::number_of_failures++;
+    return dominanceC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+dominanceC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_dominanceC3_6::_bound; )
+  CGAL_assertion(!(
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_dominanceC3_6::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		Static_Filtered_dominanceC3_6::_epsilon_0,
+		Static_Filtered_dominanceC3_6::_epsilon_1,
+		Static_Filtered_dominanceC3_6::_epsilon_2);
+  }
+  catch (...)
+  {
+    Static_Filtered_dominanceC3_6::number_of_failures++;
+    return dominanceC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+  }
+}
+
+#endif // CGAL_IA_NEW_FILTERS
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+template <>
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
 collinearC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &py,

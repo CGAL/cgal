@@ -24,6 +24,24 @@
 #ifndef CGAL_ARITHMETIC_FILTER_PREDICATES_KERNEL_FTC3_H_STATIC_INFO_H
 #define CGAL_ARITHMETIC_FILTER_PREDICATES_KERNEL_FTC3_H_STATIC_INFO_H
 
+double Static_Filtered_strict_dominanceC3_6::_epsilon_0;
+double Static_Filtered_strict_dominanceC3_6::_epsilon_1;
+double Static_Filtered_strict_dominanceC3_6::_epsilon_2;
+double Static_Filtered_strict_dominanceC3_6::_bound = -1.0;
+
+unsigned Static_Filtered_strict_dominanceC3_6::number_of_updates = 0;
+
+unsigned Static_Filtered_strict_dominanceC3_6::number_of_failures = 0;
+
+double Static_Filtered_dominanceC3_6::_epsilon_0;
+double Static_Filtered_dominanceC3_6::_epsilon_1;
+double Static_Filtered_dominanceC3_6::_epsilon_2;
+double Static_Filtered_dominanceC3_6::_bound = -1.0;
+
+unsigned Static_Filtered_dominanceC3_6::number_of_updates = 0;
+
+unsigned Static_Filtered_dominanceC3_6::number_of_failures = 0;
+
 double Static_Filtered_collinearC3_9::_epsilon_0;
 double Static_Filtered_collinearC3_9::_epsilon_1;
 double Static_Filtered_collinearC3_9::_epsilon_2;

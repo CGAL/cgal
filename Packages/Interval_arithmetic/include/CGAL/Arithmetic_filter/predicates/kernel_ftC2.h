@@ -740,11 +740,12 @@ struct Static_Filtered_compare_xC2_9
     typedef Static_filter_error FT;
   
     
-    FT num1 = det2x2( la, lc, h1a, h1c);
-    FT num2 = det2x2( la, lc, h2a, h2c);
-    FT num  = det2x2(h1a,h1c,h2a,h2c)*lb+det2x2(num1,num2,h1b,h2b);
-    FT den1 = det2x2( la, lb, h1a, h1b);
-    FT den2 = det2x2( la, lb, h2a, h2b);
+    FT num1 = det2x2_by_formula( la, lc, h1a, h1c);
+    FT num2 = det2x2_by_formula( la, lc, h2a, h2c);
+    FT num  = det2x2_by_formula(h1a,h1c,h2a,h2c)*lb
+              + det2x2_by_formula(num1,num2,h1b,h2b);
+    FT den1 = det2x2_by_formula( la, lb, h1a, h1b);
+    FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
     return Comparison_result( CGAL::Static_Filtered_sign_1::update_epsilon(lb,
   		epsilon_0) * CGAL::Static_Filtered_sign_1::update_epsilon(num,
   		epsilon_1) *
@@ -782,11 +783,12 @@ struct Static_Filtered_compare_xC2_9
     typedef Restricted_double FT;
   
     
-    FT num1 = det2x2( la, lc, h1a, h1c);
-    FT num2 = det2x2( la, lc, h2a, h2c);
-    FT num  = det2x2(h1a,h1c,h2a,h2c)*lb+det2x2(num1,num2,h1b,h2b);
-    FT den1 = det2x2( la, lb, h1a, h1b);
-    FT den2 = det2x2( la, lb, h2a, h2b);
+    FT num1 = det2x2_by_formula( la, lc, h1a, h1c);
+    FT num2 = det2x2_by_formula( la, lc, h2a, h2c);
+    FT num  = det2x2_by_formula(h1a,h1c,h2a,h2c)*lb
+              + det2x2_by_formula(num1,num2,h1b,h2b);
+    FT den1 = det2x2_by_formula( la, lb, h1a, h1b);
+    FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
     return Comparison_result( CGAL::Static_Filtered_sign_1::epsilon_variant(lb,
   		epsilon_0) * CGAL::Static_Filtered_sign_1::epsilon_variant(num,
   		epsilon_1) *
