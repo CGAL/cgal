@@ -61,14 +61,14 @@ typedef typename kd_tree::Box Box;
 typedef std::list<my_point<NT,SAVED_OBJECT> > Points_List; 
 
 private:
-  static map<const int,NT> angle_to_sines_appr;
+  static std::map<const int,NT> angle_to_sines_appr;
   static bool map_done;
   const double pi,half_pi,epsilon,rad_to_deg;
   int number_of_trees;
   std::list<std::pair<kd_tree *,NT> > kd_trees_list;
   std::list<std::pair<std::pair<NT,NT>,SAVED_OBJECT > > input_points_list;
 
-  pair<kd_tree *,NT> create_kd_tree(NT angle)
+  std::pair<kd_tree *,NT> create_kd_tree(NT angle)
   {
     Points_List l;
     kd_tree *tree = new kd_tree(2);
@@ -95,7 +95,7 @@ private:
       tree->dump();
     assert(tree->is_valid());
 
-    return(pair<kd_tree *,NT>(tree,angle));
+    return(std::pair<kd_tree *,NT>(tree,angle));
   }
 
   inline NT squere(NT x) {return(x * x);}
@@ -156,7 +156,7 @@ public:
     t.start();
 #endif
 
-    pair<kd_tree *,NT> kd;
+    std::pair<kd_tree *,NT> kd;
 
     // check that there are at least two trees
     if(number_of_trees < 1) {
@@ -317,13 +317,14 @@ public:
     double alpha_double = atan((y2.to_double() -y1.to_double())/(x2.to_double() - x1.to_double()));
 
     if(alpha_double < 0)
-      alpha_double += PI / 2.0;
+      alpha_double += pi / 2.0;
 
     NT alpha = alpha_double;
 
     bool found = false;
     NT last_dif;
-    list<pair<kd_tree *,NT> >::iterator iter,right_iter;
+
+    typename list<std::pair<kd_tree *,NT> >::iterator iter,right_iter;
 
     for(iter = kd_trees_list.begin();iter != kd_trees_list.end() && !found;++iter) {
       if(iter->second > alpha) {
@@ -384,7 +385,7 @@ public:
 
     // create result
     result_list.empty();
-    for(list<my_point<NT,SAVED_OBJECT> >::iterator my_point_iter = res.begin();my_point_iter != res.end();++my_point_iter)
+    for(typename list<my_point<NT,SAVED_OBJECT> >::iterator my_point_iter = res.begin();my_point_iter != res.end();++my_point_iter)
       result_list.push_back(my_point_iter->object);
   }
 };
@@ -393,6 +394,6 @@ template<class NT,class SAVED_OBJECT>
 bool Multiple_kd_tree<NT,SAVED_OBJECT>::map_done(false);
 
 template<class NT,class SAVED_OBJECT>
-  map<const int,NT> Multiple_kd_tree<NT,SAVED_OBJECT>::angle_to_sines_appr;
+  std::map<const int,NT> Multiple_kd_tree<NT,SAVED_OBJECT>::angle_to_sines_appr;
 
 #endif // CGAL_SR_KD_2_H

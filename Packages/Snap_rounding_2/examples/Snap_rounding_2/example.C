@@ -4,10 +4,9 @@
 
 #include <CGAL/leda_real.h>
 
-typedef leda_rational                        Number_type;
+typedef leda_rational                    Number_type;
 typedef CGAL::Cartesian<Number_type>     Rep;
 typedef CGAL::Snap_rounding_2<Rep>       Sr;
-
 typedef Sr::Segment_2           Segment_2;
 typedef Sr::Point_2             Point_2;
 typedef Sr::Segments_container  Segments;

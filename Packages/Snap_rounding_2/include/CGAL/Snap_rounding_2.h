@@ -208,11 +208,8 @@ public:
   inline NT average_distance() const {return(stat_average_distance);}
   inline double time() const {return(timer.time());}
   inline int number_of_input_segments() const {return(number_of_segments);}
-
-#if defined(ISR_DEBUG) || defined(TEST)
   template<class Out>
   void output(Out &o);
-#endif
 
 #ifdef ISR_DEBUG
   void window_output(Window_stream &w,bool wait_for_click);
@@ -815,12 +812,10 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
     timer.stop();
   }
 
-#if defined(ISR_DEBUG) || defined(TEST)
 template<class Rep_>
 template<class Out> void Snap_rounding_2<Rep_>::output(Out &o)
   {
-    o << number_of_segments << endl;
-
+    o << number_of_segments << std::endl;
     for(typename std::list<std::list<Point_2> >::iterator iter1 =
         segments_output_list.begin();iter1 != segments_output_list.end();
         ++iter1) {
@@ -828,10 +823,9 @@ template<class Out> void Snap_rounding_2<Rep_>::output(Out &o)
           iter2 != iter1->end();++iter2)
         o << iter2->x().to_double() << " " << iter2->y().to_double() << " ";
 
-      o << endl;
+      o << std::endl;
     }
   }
-#endif
 
 #ifdef ISR_DEBUG
 template<class Rep_>
@@ -877,8 +871,6 @@ void Snap_rounding_2<Rep_>::window_output(Window_stream &w,bool wait_for_click)
     bool seg_painted;
 
     w << CGAL::GREEN;
-
-    //std::cerr << "hp_set size is " << hp_set.size() << endl;
 
     for(typename std::set<Hot_Pixel<Rep_> *,hot_pixel_auclidian_cmp<Rep_> >::
         iterator iter = hp_set.begin();
