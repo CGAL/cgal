@@ -33,6 +33,28 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*! @class Sweep_line_event
+ *
+ * A class associated with an event in a sweep line algorithm.
+ * An intersection point in the sweep line algorithm is refered to as an event.
+ * This class contains the information that is associated with any given 
+ * event point. This information contains the following:
+ * - the actual point 
+ * - a list of curves that pass through the event point and defined to 
+ *   the left of the event point.
+ * - a list of curves that pass through the event point and defined to 
+ *   the right of the event point.
+ * - a list of vertical curves that pass through the event
+ * - a list of points that are intersection points on the vertical curves
+ * and some more data that is used to help with the algorithm.
+ *
+ * The class mostly exists to store information and does not have any 
+ * significant functionality otherwise.
+ * 
+ * TODO - implement this class with a set to hold the left and right curves
+ * TODO - implement the vertical points array as a set
+ */
+
 template<class SweepLineTraits_2, class CurveWrap>
 class Sweep_line_event
 {
@@ -75,12 +97,13 @@ public:
 
 
   /*! Adds a new curve to the event. The curve is added only to the list/s
-      in which it is defined (left or/and right).
-      If the curve is vertical, it is added to the list of vertical curves.
-      Precondition: The event point has to be either the source or the 
-      target of the curve.
-      @param curve  a pointer to the curve.
-  */
+   *  in which it is defined (left or/and right).
+   *  If the curve is vertical, it is added to the list of vertical curves.
+   *
+   *  Precondition: The event point has to be either the source or the 
+   *  target of the curve.
+   *  @param curve  a pointer to the curve.
+   */
   void addCurve(SubCurve *scurve)
   {
     const X_curve_2 &curve = scurve->getCurve();
@@ -105,16 +128,20 @@ public:
     }
   }
 
-  /*! Adds a new curve that is defined to the right of the event point.
-      The insertion is performed so that the curves remain srted by their Y 
-      values to theright of the event.
-      If the curve is already in the list of curves, it is removed and 
-      re-inserted. This way the curves remain sorted.
-      @param curve  a pointer to the curve.
-      @pram ref a reference point to perform the compare by
-      @param isInitStage true when thie method is called at the 
-      initialization stage (in which case some extra tests are performed).
-  */
+  /*! Adds a new curve that is defined to the left of the event point.
+   *  The insertion is performed so that the curves remain sorted by their
+   *  Y values to the left of the event.                             <br>
+   *  If the curve is already in the list of curves, it is removed and 
+   *  re-inserted. This way the curves remain sorted.
+   *
+   *  @param curve  a pointer to the curve.
+   *  @pram ref a reference point to perform the compare by
+   *  @param isInitStage true when thie method is called at the 
+   *  initialization stage (in which case some extra tests are performed).
+   *
+   * TODO - check to see in which cases the curve is re-inserted with 
+   *        a different ordering. Probably in case of conics.
+   */
   void addCurveToLeft(SubCurve *curve, const Point_2 &ref, 
 		      bool isInitStage=false) 
   {
@@ -187,10 +214,10 @@ public:
 
 
   /*! Adds a new curve that is defined to the right of the event point.
-      The insertion is performed so that the curves remain sorted by their Y 
-      values to the right of the event.
-      @param curve  a pointer to the curve.
-  */
+   *  The insertion is performed so that the curves remain sorted by their Y 
+   *  values to the right of the event.
+   *  @param curve  a pointer to the curve.
+   */
   void addCurveToRight(SubCurve *curve) 
   {
     if ( !curve->isEndPoint(m_point) )
@@ -262,6 +289,9 @@ public:
   int getNumRightCurves() {
     return m_rightCurves->size();
   }
+
+  /*! Returns the number of intersecting curves that are defined
+      to the left of the event point. */
   int getNumLeftCurves() {
     return m_leftCurves->size();
   }
@@ -295,16 +325,18 @@ public:
 
 
   /*! Insert a new intersection point on any of the vertical curves.
-      The list of points is sorted by their y values.
-      If the requireSort flag is true, the appripriate place in the list 
-      is searched for. If not, the point is assumed to have the largest y 
-      value, and is inserted at the end of the list. 
-      If the pioint already exists, the point is nott inserted again.
-      @param p a reference to the point
-      @param requireSort false if the point is to be added at the end
-      of the list.
-  */
-  void addVerticalCurveXPoint(const Point_2 &p, bool requireSort=false) {
+   *  The list of points is sorted by their y values.              <br>
+   *  If the requireSort flag is true, the appripriate place in the list 
+   *  is searched for. If not, the point is assumed to have the largest y 
+   *  value, and is inserted at the end of the list.               <br>
+   *  If the pioint already exists, the point is not inserted again.
+   *  @param p a reference to the point
+   *  @param requireSort false if the point is to be added at the end
+   *  of the list.
+   *  TODO - replace the datastructure to a set
+   */
+  void addVerticalCurveXPoint(const Point_2 &p, bool requireSort=false) 
+  {
     if ( m_verticalCurveXPoints.empty() ) 
     {
       m_verticalCurveXPoints.push_back(p); 
@@ -335,12 +367,12 @@ public:
   }
 
   /*! 
-    Returns a referece to the list of intersection points on the 
-    vertical curves passign through the event. If no vertical curves 
-    pass through the event or no intersection curves exist, the list 
-    will be empty.
-    @return a reference to the list of points.
-  */
+   *  Returns a referece to the list of intersection points on the 
+   * vertical curves passign through the event. If no vertical curves 
+   * pass through the event or no intersection curves exist, the list 
+   * will be empty.
+   * @return a reference to the list of points.
+   */
   VerticalXPointList &getVerticalXPointList() {
     return m_verticalCurveXPoints;
   }
@@ -375,11 +407,11 @@ public:
 protected:
 
   /*! Whenever a new curve is added to the event at the initialization 
-    stage, the right most end point to the left of the event point is 
-    updated.
-    Precondition: the event is either the source or destination of the curve.
-    @param curve a pointer to a new curve added to the event.
-  */
+   * stage, the right most end point to the left of the event point is 
+   * updated.
+   * Precondition: the event is either the source or destination of the curve.
+   * @param curve a pointer to a new curve added to the event.
+   */
   void UpdateRightmostPoint(SubCurve *curve)
   {
     if ( curve->isSourceLeftToTarget())

@@ -31,6 +31,31 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*! @class Sweep_line_subcurve
+ *
+ * This is a wrapper class to Curve_2 in the traits class, that contains
+ * data that is used when applying the sweep algorithm on a set of curves.
+ *
+ * The information contained in this class is:
+ * - the curve itself
+ * - two points which are the source and target of the curve. We keep 
+ *   the points in order to avoid many calls to the source() and 
+ *   target() methods of the traits class 
+ * - an indication for the direction of the curve (source point 
+ *   is left or right to the target point). 
+ * - a reference point that is used when comparing the y values of 
+ *   any two curves. Since the curves are inserted in to a balanced 
+ *   tree, and at any given time they are sorted on the status line, 
+ *   and since their order may change, depending on the position of 
+ *   the status line, we need to be able to compare the curves 
+ *   relative to a point that will produce a correct answer.
+ * - a reference to the last event point on the curve that was already 
+ *   handled and also the curve that is the portion of the original 
+ *   curve that is to the right of the last event point mentioned. 
+ *   This is stored to avoid unneccesary splits of the curve.
+ *
+ */
+
 template<class SweepLineTraits_2>
 class Sweep_line_subcurve
 {
@@ -208,7 +233,8 @@ private:
     point on the curve. */
   Point_2 m_lastPoint;
 
-  /*! the last curve that intersected this curve. */
+  /*! the portion of the curve to the right of the last event point 
+      on the curve */
   X_curve_2 m_lastCurve;
 
   /*! true if the source of the curve is to the left of the target. */
