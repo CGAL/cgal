@@ -28,6 +28,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
+
+template <class K>
+bool
+do_intersect(const typename CGAL_WRAP(K)::Circle_2 & circ1, 
+	     const typename CGAL_WRAP(K)::Circle_2& circ2,
+	     const K&);
+} // namespace CGALi
+
 template <class R>
 bool
 do_intersect(const Circle_2<R> &tr1, const Circle_2<R>&tr2);
@@ -38,3 +47,5 @@ CGAL_END_NAMESPACE
 #include <CGAL/Circle_2_Circle_2_intersection.C>
 #endif
 #endif
+
+
