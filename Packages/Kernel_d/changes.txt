@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.92 (3 September 2003)
+- Added missing cstddef include for std::ptrdiff_t.
+
 0.9.91 (2 September 2003)
 - Work around VC7 bug Iso_box_d.
 

@@ -30,6 +30,7 @@
 #include <functional>
 #include <algorithm>
 #include <numeric>
+#include <cstddef>
 
 namespace CGAL {
   
