@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | CGAL Reference Manual:  generators.tex
 % +------------------------------------------------------------------------+
-% | Random sources and geometric object generators.
+% | Geometric object generators.
 % |
 % | 09.06.1997   Lutz Kettner
 % | 
@@ -13,35 +13,27 @@
 \aftercprogskip\medskipamount
 \ccParDims
 
-\chapter{Random Sources and Geometric Object Generators}
+\chapter{Geometric Object Generators}
 \label{chapterGenerators}
 \ccChapterRelease{\generatorsRev. \ \generatorsDate}\\
 \ccChapterAuthor{Michael Hoffmann}\\
-\ccChapterAuthor{Lutz Kettner}\\
-\ccChapterAuthor{Sven Sch\"onherr}
+\ccChapterAuthor{Lutz Kettner}
 
 
-A variety of generators for random numbers and geometric objects is
-provided in \cgal.  They are useful as synthetic test data sets,
-e.g.~for testing algorithms on degenerate object sets and for
-performance analysis.
+A variety of generators for geometric objects is provided in \cgal.
+They are useful as synthetic test data sets, e.g.~for testing
+algorithms on degenerate object sets and for performance analysis.
 
-The first section describes the random number source used for random
-generators. The second section provides useful generic functions
-related to random numbers like \ccc{CGAL_random_selection()}. The
-third section documents generators for two-dimensional point sets, the
-fourth section for three-dimensional point sets. The fifth section
-presents examples using functions from
-Section~\ref{sectionGenericFunctions} to generate composed objects
-like segments. 
-%% The sixth section describes random convex sets.
- Note that the \stl\ algorithm \ccc{random_shuffle} is
-useful in this context to achieve random permutations for otherwise
-regular generators (e.g.~points on a grid or segment).
-
-
-% +------------------------------------------------------------------------+
-\input{Random}
+The first section provides useful generic functions related to random
+numbers like \ccc{CGAL_random_selection()}. The second section
+documents generators for two-dimensional point sets, the third section
+for three-dimensional point sets. The fourth section presents examples
+using functions from Section~\ref{sectionGenericFunctions} to generate
+composed objects, such as segments.  The fifth section describes
+random convex sets.  Note that the \stl\ algorithm
+\ccc{random_shuffle} is useful in this context to achieve random
+permutations for otherwise regular generators (e.g.~points on a grid
+or segment).
 
 % +------------------------------------------------------------------------+
 %\newpage
@@ -62,7 +54,7 @@ sets with multiple entries of identical items.
                       class OutputIterator, class Random>
     OutputIterator CGAL_random_selection( RandomAccessIterator first,
         RandomAccessIterator last, 
-        Size n, OutputIterator result, Random& rnd = CGAL_random);}
+        Size n, OutputIterator result, Random& rnd = default_random);}
 { chooses a random item from the range $[\ccc{first},\ccc{last})$ and
     writes it to \ccc{result}, each item from the range with equal
     probability, and repeats this $n$ times, thus writing $n$ items to
@@ -77,6 +69,7 @@ sets with multiple entries of identical items.
 % +------------------------------------------------------------------------+
 \newpage
 \section{2D Point Generators}
+\label{sectionPointGenerators}
 
 Two kind of point generators are provided: First, random point
 generators and second deterministic point generators. Most random
@@ -124,13 +117,14 @@ includes local type declarations including \ccc{value_type} which
 denotes \ccc{P} here.
 
 \ccCreation
-
+\ccTwo{}{\hspace*{11cm}}
+%% \ccTwo{}{\hspace*{10cm}}
 
 \ccHtmlNoClassFile
 \begin{ccClassTemplate}{CGAL_Random_points_in_disc_2<P,Creator>}
 \ccCreationVariable{g}
 \ccConstructor{CGAL_Random_points_in_disc_2( double r, CGAL_Random& rnd =
-  CGAL_random);}{%
+  default_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed in the open disc with radius $r$,
   i.e.~$|\ccc{*g}| < r$~. Two random numbers are needed from
@@ -142,7 +136,7 @@ denotes \ccc{P} here.
 \begin{ccClassTemplate}{CGAL_Random_points_on_circle_2<P,Creator>}
 \ccCreationVariable{g}
 \ccConstructor{CGAL_Random_points_on_circle_2( double r, CGAL_Random& rnd =
-  CGAL_random);}{%
+  default_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed on the circle with radius $r$,
   i.e.~$|\ccc{*g}| == r$~. A single random number is needed from
@@ -154,7 +148,7 @@ denotes \ccc{P} here.
 \begin{ccClassTemplate}{CGAL_Random_points_in_square_2<P,Creator>}
 \ccCreationVariable{g}
 \ccConstructor{CGAL_Random_points_in_square_2( double a, CGAL_Random& rnd =
-  CGAL_random);}{%
+  default_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed in the half-open square with side length $2 a$, centered
   at the origin, i.e.~$\forall p = \ccc{*g}:  -a \le p.x() < a$ and 
@@ -167,7 +161,7 @@ denotes \ccc{P} here.
 \begin{ccClassTemplate}{CGAL_Random_points_on_square_2<P,Creator>}
 \ccCreationVariable{g}
 \ccConstructor{CGAL_Random_points_on_square_2( double a, CGAL_Random& rnd =
-  CGAL_random);}{%
+  default_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed on the boundary of the square with side length $2 a$,
   centered at the origin, i.e.~$\forall p = \ccc{*g}:$ one
@@ -181,7 +175,7 @@ denotes \ccc{P} here.
 \begin{ccClassTemplate}{CGAL_Random_points_on_segment_2<P,Creator>}
 \ccCreationVariable{g}
 \ccConstructor{CGAL_Random_points_on_segment_2( const P& p, const P& q,
-  CGAL_Random& rnd = CGAL_random);}{%
+  CGAL_Random& rnd = default_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed on the segment from $p$ to $q$ (excluding $q$),
   i.e.~$\ccc{*g} == (1-\lambda)\, p + \lambda q$ where $0 \le \lambda < 1$~.
@@ -278,7 +272,7 @@ exact predicates to compute the sign of expressions slightly off from zero.
 
 \ccFunction{template <class ForwardIterator>
     void CGAL_perturb_points_2( ForwardIterator first, ForwardIterator last, 
-        double xeps, double yeps = xeps, CGAL_Random& rnd = CGAL_random,
+        double xeps, double yeps = xeps, CGAL_Random& rnd = default_random,
         Creator creator = CGAL_Creator_uniform_2<double,P>);}
 { perturbs the points in the range $[\ccc{first},\ccc{last})$ by
   replacing each point with a random point from the rectangle
@@ -311,7 +305,7 @@ a point set.
 \ccFunction{template <class RandomAccessIterator, class OutputIterator>
     OutputIterator CGAL_random_collinear_points_2( RandomAccessIterator first,
         RandomAccessIterator last, 
-        size_t n, OutputIterator first2, CGAL_Random& rnd = CGAL_random,
+        size_t n, OutputIterator first2, CGAL_Random& rnd = default_random,
         Creator creator = CGAL_Creator_uniform_2<double,P>);}
 { randomly chooses two points from the range $[\ccc{first},\ccc{last})$,
     creates a random third point on the segment connecting this two
@@ -383,6 +377,7 @@ Figure~\ref{figurePointGenerator}}{Figure <A HREF="#PointGenerators">
   </TD></TR></TABLE>
 \end{ccHtmlOnly}
 
+\newpage
 
 The second example demonstrates the point generators with integer
 points. Arithmetic with \ccc{double}'s is sufficient to produce
@@ -455,13 +450,13 @@ includes local type declarations including \ccc{value_type} which
 denotes \ccc{P} here.
 
 \ccCreation
-
+\ccTwo{}{\hspace*{11cm}}
 
 \ccHtmlNoClassFile
 \begin{ccClassTemplate}{CGAL_Random_points_in_sphere_3<P,Creator>}
 \ccCreationVariable{g}
 \ccConstructor{CGAL_Random_points_in_sphere_3( double r, CGAL_Random& rnd =
-  CGAL_random);}{%
+  default_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed in the open sphere with radius $r$,
   i.e.~$|\ccc{*g}| < r$~. 
@@ -472,7 +467,7 @@ denotes \ccc{P} here.
 \begin{ccClassTemplate}{CGAL_Random_points_on_sphere_3<P,Creator>}
 \ccCreationVariable{g}
 \ccConstructor{CGAL_Random_points_on_sphere_3( double r, CGAL_Random& rnd =
-  CGAL_random);}{%
+  default_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed on the boundary of a sphere with radius $r$,
   i.e.~$|\ccc{*g}| == r$~. Two random numbers are needed from
@@ -484,7 +479,7 @@ denotes \ccc{P} here.
 \begin{ccClassTemplate}{CGAL_Random_points_in_cube_3<P,Creator>}
 \ccCreationVariable{g}
 \ccConstructor{CGAL_Random_points_in_cube_3( double a, CGAL_Random& rnd =
-  CGAL_random);}{%
+  default_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed in the half-open cube with side length $2 a$, centered
   at the origin, i.e.~$\forall p = \ccc{*g}:  -a \le p.x(),p.y(),p.z() < a$~. 
