@@ -1,4 +1,9 @@
-1.22 (19/05/2003) [ru]
+1.23 (28/06/2003) [rursu]
+----------------------
+- fixed demo/Min_quadrilateral_2/makefile for FreeBSD
+
+
+1.22 (19/05/2003) [rursu]
 ----------------------
 - replaced Leda_window based demo with Qt demo
 
