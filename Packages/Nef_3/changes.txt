@@ -1,5 +1,9 @@
 Nef_3 Package: Release changes:
 ---------------------------------------------------------------------
+
+19 December 2004 Andreas Fabri
+- Updated file headers in the demos
+
 19 November 2004 Sylvain Pion
 - Some g++ 3.4.3 workarounds.
 
