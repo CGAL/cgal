@@ -41,25 +41,23 @@ typedef Traits::Curve                                 Curve;
 typedef CGAL::Pm_default_dcel<Traits>                Dcel;   
 typedef CGAL::Planar_map_2<Dcel, Traits>             PM;
 
-using namespace std;
-
 template <class Container>
 void read_polylines(Container& curves)
 {
   int      num_polylines = 0;
   NT       x,y; 
 
-  cin >> num_polylines;
-  std::cout<<"number of polylines is : " << num_polylines<<std::endl;
+  std::cin >> num_polylines;
+  std::cout << "number of polylines is : " << num_polylines << std::endl;
 
   while (num_polylines--) {
     Curve      polyline;
     int        num_points;
     
-    cin >> num_points;
+    std::cin >> num_points;
 
     while (num_points--) {
-      cin >> x >> y;
+      std::cin >> x >> y;
       Point s(x, y);
       
       polyline.push_back(s);
@@ -80,7 +78,7 @@ int main(int argc, char* argv[])
 
   CGAL::sweep_to_construct_planar_map(polylines.begin(),polylines.end(), pm);
   
-  cout<<pm;
+  std::cout << pm;
   
   //CGAL::Window_stream W(700, 700);
   //W.init(-10, 10, -10);
