@@ -108,10 +108,12 @@ struct Homogeneous_base
     typedef SphereH3<Kernel>                        Sphere_3;
     typedef Aff_transformationH3<Kernel>            Aff_transformation_3;
 
+    typedef Cartesian_coordinate_iterator_2<Kernel> Cartesian_coordinate_const_iterator_2;
+    typedef Cartesian_coordinate_iterator_3<Kernel> Cartesian_coordinate_const_iterator_3;
+
     // Undocumented stuff.
     typedef Data_accessorH2<Kernel>                 Data_accessor_2;
-    typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2;
- 
+    typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2; 
     // Functors types and access functions.
 #define CGAL_Kernel_pred(Y,Z) typedef HomogeneousKernelFunctors::Y<Kernel> Y; \
                               Y Z() const { return Y(); }

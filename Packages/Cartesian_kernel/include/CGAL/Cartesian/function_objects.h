@@ -101,6 +101,8 @@ namespace CartesianKernelFunctors {
   using CommonKernelFunctors::Construct_vertex_3;
   using CommonKernelFunctors::Construct_bbox_2;
   using CommonKernelFunctors::Construct_bbox_3;
+  using CommonKernelFunctors::Construct_cartesian_coordinate_const_iterator_2;
+  using CommonKernelFunctors::Construct_cartesian_coordinate_const_iterator_3;
   using CommonKernelFunctors::Counterclockwise_in_between_2;
   using CommonKernelFunctors::Do_intersect_2;
   using CommonKernelFunctors::Do_intersect_3;
