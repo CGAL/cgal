@@ -57,7 +57,7 @@ namespace CGAL {
     but[0]->setTextLabel("Show Triangulation");
     but[1] = new QToolButton(maintoolbar, "constraineds");
     but[1]->setPixmap(QPixmap( (const char**)constrained_xpm ));
-    but[1]->setTextLabel("Show Constraineds");
+    but[1]->setTextLabel("Show Constraints");
     but[2] = new QToolButton(maintoolbar, "vertices");
     but[2]->setPixmap(QPixmap( (const char**)points_xpm ));
     but[2]->setTextLabel("Show Vertices");
