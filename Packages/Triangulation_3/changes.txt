@@ -1,3 +1,7 @@
+27 September 2004 Sylvain Pion
+- Rename Triangulation_cell_base_with_hidden_points_3 into
+  Regular_triangulation_cell_base_3.
+
 20 September 2004 Andreas Fabri
 - Made derivation in Regular_triangulation_euclidean_traits_3 public
 - Add a short name macro for Regular_triangulation_filtered_traits_3.

@@ -12,12 +12,12 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Author(s)     : Christophe Delage <christophe.delage@sophia.inria.fr>
-//
+
 // cell of a triangulation of any dimension <=3
 // with hidden points (for the regular triangulation)
 
-#ifndef CGAL_TRIANGULATION_CELL_BASE_WITH_HIDDEN_POINTS_3_H
-#define CGAL_TRIANGULATION_CELL_BASE_WITH_HIDDEN_POINTS_3_H
+#ifndef CGAL_REGULAR_TRIANGULATION_CELL_BASE_3_H
+#define CGAL_REGULAR_TRIANGULATION_CELL_BASE_3_H
 
 #include <list>
 #include <CGAL/Triangulation_vertex_base_3.h>
@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 template < typename GT,
            typename Cb = Triangulation_cell_base_3<GT>,
            typename C = std::list<typename GT::Weighted_point_3> >
-class Triangulation_cell_base_with_hidden_points_3
+class Regular_triangulation_cell_base_3
   : public Cb
 {
 public:
@@ -44,27 +44,27 @@ public:
 
   template < typename TDS2 >
   struct Rebind_TDS {
-    typedef typename Cb::template Rebind_TDS<TDS2>::Other            Cb2;
-    typedef Triangulation_cell_base_with_hidden_points_3<GT, Cb2, C> Other;
+    typedef typename Cb::template Rebind_TDS<TDS2>::Other     Cb2;
+    typedef Regular_triangulation_cell_base_3<GT, Cb2, C>     Other;
   };
 
-  Triangulation_cell_base_with_hidden_points_3()
+  Regular_triangulation_cell_base_3()
     : Cb() {}
 
-  Triangulation_cell_base_with_hidden_points_3(const Vertex_handle& v0,
-                                               const Vertex_handle& v1,
-					       const Vertex_handle& v2,
-                                               const Vertex_handle& v3)
+  Regular_triangulation_cell_base_3(const Vertex_handle& v0,
+                                    const Vertex_handle& v1,
+				    const Vertex_handle& v2,
+                                    const Vertex_handle& v3)
     : Cb(v0, v1, v2, v3) {}
 
-  Triangulation_cell_base_with_hidden_points_3(const Vertex_handle& v0,
-                                               const Vertex_handle& v1,
-					       const Vertex_handle& v2,
-                                               const Vertex_handle& v3,
-					       const Cell_handle&   n0,
-                                               const Cell_handle&   n1,
-					       const Cell_handle&   n2,
-                                               const Cell_handle&   n3)
+  Regular_triangulation_cell_base_3(const Vertex_handle& v0,
+                                    const Vertex_handle& v1,
+				    const Vertex_handle& v2,
+                                    const Vertex_handle& v3,
+				    const Cell_handle&   n0,
+                                    const Cell_handle&   n1,
+				    const Cell_handle&   n2,
+                                    const Cell_handle&   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
   Point_iterator hidden_points_begin() { return _hidden.begin(); }
@@ -82,4 +82,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_TRIANGULATION_CELL_BASE_WITH_HIDDEN_POINTS_3_H
+#endif // CGAL_REGULAR_TRIANGULATION_CELL_BASE_3_H

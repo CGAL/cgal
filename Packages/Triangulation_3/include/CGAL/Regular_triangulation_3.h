@@ -28,7 +28,7 @@
 
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_3.h>
-#include <CGAL/Triangulation_cell_base_with_hidden_points_3.h>
+#include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Unique_hash_map.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt,
            class Tds = Triangulation_data_structure_3 <
                            Triangulation_vertex_base_3<Gt>,
-                           Triangulation_cell_base_with_hidden_points_3<Gt> > >
+                           Regular_triangulation_cell_base_3<Gt> > >
 class Regular_triangulation_3
   : public Triangulation_3<Gt,Tds>
 {
