@@ -51,7 +51,7 @@ void
 LineC2<R CGAL_CTAG>::new_rep(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
                              const typename LineC2<R CGAL_CTAG>::Point_2 &q)
 {
-  LineC2<R CGAL_CTAG> l =  line_from_points(p,q);
+  LineC2<R CGAL_CTAG> l = line_from_points(p,q);
   new_rep(l.a(), l.b(), l.c());
 }
 
@@ -104,7 +104,7 @@ CGAL_KERNEL_INLINE
 LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
                             const typename LineC2<R CGAL_CTAG>::Direction_2 &d)
 {
-  LineC2<R CGAL_CTAG> l =  line_from_point_direction(p,d);
+  LineC2<R CGAL_CTAG> l = line_from_point_direction(p,d);
   new_rep(l.a(), l.b(), l.c());
 }
 
@@ -129,7 +129,6 @@ LineC2<R CGAL_CTAG>::operator!=(const LineC2<R CGAL_CTAG> &l) const
   return !(*this == l);
 }
 
-
 template < class R >
 inline
 typename LineC2<R CGAL_CTAG>::FT
@@ -152,6 +151,22 @@ typename LineC2<R CGAL_CTAG>::FT
 LineC2<R CGAL_CTAG>::c() const
 {
   return ptr->e2;
+}
+
+template < class R >
+inline
+bool
+LineC2<R CGAL_CTAG>::is_horizontal() const
+{
+  return a() == FT(0);
+}
+
+template < class R >
+inline
+bool
+LineC2<R CGAL_CTAG>::is_vertical() const
+{
+  return b() == FT(0);
 }
 
 template < class R >
@@ -180,7 +195,7 @@ LineC2<R CGAL_CTAG>
 LineC2<R CGAL_CTAG>::
 perpendicular(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return LineC2<R CGAL_CTAG>( -b(), a(), b() * p.x() - a() * p.y());
+  return perpendicular_through_point(*this, p);
 }
 
 template < class R >
@@ -213,12 +228,7 @@ typename LineC2<R CGAL_CTAG>::Point_2
 LineC2<R CGAL_CTAG>::
 projection(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  if (is_horizontal()) return Point_2(p.x(), -c()/b());
-  if (is_vertical())   return Point_2( -c()/a(), p.y());
-
-  FT ab = a()/b(), ba = b()/a(), ca = c()/a();
-  FT y = ( -p.x() + ab*p.y() - ca ) / ( ba + ab );
-  return Point_2(-ba * y - ca, y);
+  return line_project_point(*this, p);
 }
 
 template < class R >
@@ -263,22 +273,6 @@ LineC2<R CGAL_CTAG>::
 has_on_negative_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   return oriented_side(p) == ON_NEGATIVE_SIDE;
-}
-
-template < class R >
-inline
-bool
-LineC2<R CGAL_CTAG>::is_horizontal() const
-{
-  return a() == LineC2<R CGAL_CTAG>::FT(0);
-}
-
-template < class R >
-inline
-bool
-LineC2<R CGAL_CTAG>::is_vertical() const
-{
-  return b() == FT(0);
 }
 
 template < class R >
