@@ -692,7 +692,7 @@ gobble_parameters:
                 | GOBBLEONEPARAM    reduced_group
                 | GOBBLEONEPARAM    CHAR
                 | NEWCOMMAND        reduced_group reduced_group
-
+;
 
 
 /* End if Grammar */
