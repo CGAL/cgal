@@ -12,7 +12,7 @@
 // release_date  :
 //
 // file          : include/CGAL/Interval_arithmetic.h
-// revision      : 1.1
+// revision      : 1.2
 // revision_date : 16 December 1997
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //

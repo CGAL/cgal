@@ -12,7 +12,7 @@
 // release_date  :
 //
 // file          : include/CGAL/_FPU.h
-// revision      : 1.1
+// revision      : 1.2
 // revision_date : 16 December 1997
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
@@ -58,6 +58,9 @@
 #include <float.h>
 #endif
 #ifdef __sgi
+  /* This #define is forced for backward compatibility with Irix 5.3. */
+  /* I think it slows down Irix 6.2... */
+#define __SGI_ieeefph__
 #ifdef __SGI_ieeefph__
 #include <ieeefp.h>
 #else
