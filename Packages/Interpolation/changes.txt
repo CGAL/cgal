@@ -1,3 +1,6 @@
+8 September Sylvain Pion
+- Remove makefile_local files, regenerate makefiles, update README files.
+
 7 September Andreas Fabri
 - Encapsulated \includegraphics in a \begin{texonly} and added \begin{htmlonly}
 
