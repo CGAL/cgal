@@ -54,17 +54,10 @@ public:
 
   typedef typename AP::result_type  result_type;
 
-#if 0
-  // Simple function to check if 2 arguments have the same type.
-  template < class T >
-  inline
-  void
-  same_type_checker(const T&, const T&)
-  {}
-
+#if 1
   Filtered_predicate()
   {
-    same_type_checker(typename AP::result_type(), typename EP::result_type());
+    assert_equal_types(typename AP::result_type(), typename EP::result_type());
   }
 #endif
 
