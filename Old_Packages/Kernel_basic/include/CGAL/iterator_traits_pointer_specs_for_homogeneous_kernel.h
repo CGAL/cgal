@@ -787,10 +787,19 @@ CGAL_ITERATOR_TRAITS_POINTER_SPECH3( float )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH2( double )
 CGAL_ITERATOR_TRAITS_POINTER_SPECH3( double )
 
+#if defined(LEDA_NAMESPACE)
+namespace leda {
+class real;
+class integer;
+class rational;
+class bigfloat;
+}
+#else
 class leda_real;
 class leda_integer;
 class leda_rational;
 class leda_bigfloat;
+#endif
 
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2H( leda_real )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3H( leda_real )

@@ -105,7 +105,7 @@ typedef handle_rep             Rep;
 inline
 unsigned long
 id(const Handle& x)
-{ return ID_Number(x); }
+{ return CGAL_LEDA_SCOPE::ID_Number(x); }
 
 CGAL_END_NAMESPACE
 

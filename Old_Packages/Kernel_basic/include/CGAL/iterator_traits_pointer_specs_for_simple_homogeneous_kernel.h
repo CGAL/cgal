@@ -816,10 +816,20 @@ CGAL_ITERATOR_TRAITS_POINTER_SPECSH2( double )
 CGAL_ITERATOR_TRAITS_POINTER_SPECSH3( double )
 // CGAL_ITERATOR_TRAITS_POINTER_SPECSHD( double )
 
+#if defined(LEDA_NAMESPACE)
+namespace leda {
+class real;
+class integer;
+class rational;
+class bigfloat;
+}
+#else
 class leda_real;
 class leda_integer;
 class leda_rational;
 class leda_bigfloat;
+#endif
+
 
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_2SH( leda_real )
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_3SH( leda_real )
