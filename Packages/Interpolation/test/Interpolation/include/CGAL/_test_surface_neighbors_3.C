@@ -202,11 +202,11 @@ test_coords(const Triangul& T, const  typename
     Triangul::Geom_traits> I_traits;
 
   //coordinate computation result types
-  typedef  std::pair< OutputIterator, 
-    typename Triangul::Geom_traits::FT >                  Result_pair;  
-  //the result type of the certified version:
   typedef CGAL::Triple< OutputIterator, 
     typename Triangul::Geom_traits::FT, bool >            Result_triple;
+  //the result type of the certified version:
+  typedef CGAL::Quadruple< OutputIterator, 
+    typename Triangul::Geom_traits::FT, bool, bool >      Result_quadruple;
   
   
   typename Triangul::Cell_handle start;
@@ -214,54 +214,59 @@ test_coords(const Triangul& T, const  typename
   //test different function calls
   switch(version){
   case 0:{
-    Result_pair result
+    Result_triple result
       = CGAL::surface_neighbor_coordinates_3(T, p,n,out);
+    assert(result.third); 
     norm =  result.second;
     break;}
   case 1: {
-    Result_pair result  = 
+    Result_triple result  = 
       CGAL::surface_neighbor_coordinates_3(T, p,out,I_traits(p,n)); 
+    assert(result.third); 
     norm =  result.second; break;}
   //both versions with locate:
   case 2:{
     start = T.locate(p);
-    Result_pair result  = CGAL::surface_neighbor_coordinates_3(T, p,n,
+    Result_triple result  = CGAL::surface_neighbor_coordinates_3(T, p,n,
 							       out, start);
+    assert(result.third); 
     norm =  result.second; break;}
   case 3: { 
     start = T.locate(p);
-    Result_pair result  = 
-      CGAL::surface_neighbor_coordinates_3(T, p,out, I_traits(p,n),start); 
-    
+    Result_triple result  = 
+      CGAL::surface_neighbor_coordinates_3(T, p,out, I_traits(p,n),start);
+    assert(result.third); 
     norm =  result.second; break;}
   //taking all points:
   case 4: {
-    Result_pair result  
+    Result_triple result  
       = CGAL::surface_neighbor_coordinates_3(T.points_begin(),
 					     T.points_end(),p,n,
 					     out,
 					     T.geom_traits()); 
+    assert(result.third);
     norm =  result.second; break;}
   case 5: {
-    Result_pair result  
+    Result_triple result  
       = CGAL::surface_neighbor_coordinates_3(T.points_begin(),
 					     T.points_end(),p,
 					     out ,I_traits(p,n));
+    assert(result.third);
     norm =  result.second; break;}
   //the last two with certification:    
   case 6: {
-    Result_triple 
+    Result_quadruple 
       result = CGAL::surface_neighbor_coordinates_certified_3
       (T.points_begin(), T.points_end(),p,n,
        out, T.geom_traits());
-    assert(result.third);
+    assert(result.third && result.fourth);
     norm =  result.second; break;
   }
   case 7: {
-    Result_triple 
+    Result_quadruple 
       result = CGAL::surface_neighbor_coordinates_certified_3
       (T.points_begin(), T.points_end(),p, out ,I_traits(p,n));
-    assert(result.third);
+    assert(result.third && result.fourth);
     norm =  result.second;
     break;
   }
@@ -270,7 +275,7 @@ test_coords(const Triangul& T, const  typename
       std::endl;
   } 
   assert(norm>0);
-
+  
   return std::make_pair(out,norm);
 }
 

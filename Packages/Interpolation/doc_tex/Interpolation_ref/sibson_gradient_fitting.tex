@@ -77,7 +77,7 @@ coordinates.
   \ccc{OutputIterator::value_type} is a pair associating a point to a
   vector. The sequence of point/gradient pairs computed by this
   function is placed starting at \ccc{out}. The function returns an
-  iterator that is placed past-the-end of the resulting sequence.The
+  iterator that is placed past-the-end of the resulting sequence. The
   requirements are the same as above. The template class \ccc{Rt} must
   be equivalent to \ccc{Regular_triangulation_2<Gt, Tds>}.}
 
@@ -94,10 +94,7 @@ coordinates.
 
 \ccImplementation This function implements Sibson's gradient
 estimation method based on natural neighbor coordinates
-\cite{s-bdnni-81}. It computes the weighted sum of matrices and
-vectors. The vector is the multiplied with the inverse matrix yielding
-the result.
-
+\cite{s-bdnni-81}. 
 
 \ccIndexSubitemEnd{Interpolation}{sibson_gradient_fitting}
 \end{ccRefFunction}

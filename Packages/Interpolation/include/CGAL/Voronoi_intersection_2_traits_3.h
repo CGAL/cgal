@@ -241,7 +241,6 @@ class Compute_area_3
   //-> if no sqrt is supported, cast to double
 public:
   typedef typename  R::FT                     FT;
-  typedef typename  R::Triangle_3             Triangle;
   typedef typename  R::Point_3                Point;
   typedef typename  R::Compute_squared_area_3 Compute_squared_area_3;
   

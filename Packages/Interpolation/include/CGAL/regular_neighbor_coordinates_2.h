@@ -38,7 +38,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 			       Weighted_point& p, 
 			       OutputIterator out){
   return regular_neighbor_coordinates_2(rt, p, out,
-					typename Rt::Face_handle(NULL));
+					typename Rt::Face_handle());
 };
 //Face_handle start is known:
 template <class Rt, class OutputIterator>

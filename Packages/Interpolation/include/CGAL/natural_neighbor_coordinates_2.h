@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 // 			     const typename Traits::Point_2& p, 
 // 			     OutputIterator out, const Traits& traits, 
 // 			     typename Dt::Face_handle start 
-// 			     = typename Dt::Face_handle(NULL))
+// 			     = typename Dt::Face_handle())
 //
 //template <class Dt, class OutputIterator, class Traits>
 //Triple< OutputIterator, typename Traits::FT, bool > 
@@ -47,7 +47,7 @@ Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt, 
 			     const typename Dt::Geom_traits::Point_2& p, 
 			     OutputIterator out, typename Dt::Face_handle start 
-			     = typename Dt::Face_handle(NULL))
+			     = typename Dt::Face_handle())
 
 {
   typedef typename Dt::Geom_traits       Traits;        

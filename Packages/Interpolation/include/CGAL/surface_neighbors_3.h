@@ -1,4 +1,4 @@
-// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -208,7 +208,7 @@ surface_neighbors_3(const Dt& dt,
 		    normal, 
 		    OutputIterator out, 
 		    typename Dt::Cell_handle start 
-		    = typename Dt::Cell_handle(NULL)){
+		    = typename Dt::Cell_handle()){
   
   typedef Voronoi_intersection_2_traits_3<typename Dt::Geom_traits> I_gt;
   return surface_neighbors_3(dt, p, out, I_gt(p,normal),start);
@@ -221,7 +221,7 @@ surface_neighbors_3(const Dt& dt,
 		    const typename ITraits::Point_2& p,
 		    OutputIterator out, const ITraits& traits,
 		    typename Dt::Cell_handle start 
-		    = typename Dt::Cell_handle(NULL)){
+		    = typename Dt::Cell_handle()){
   
   typedef typename ITraits::FT            Coord_type;
   typedef typename ITraits::Point_2       Point_3;

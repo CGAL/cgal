@@ -24,7 +24,7 @@
 #include <CGAL/double.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Regular_neighbor_coordinates_traits_2.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
 #include <CGAL/_test_regular_neighbors_2.C>
@@ -33,7 +33,7 @@
 struct K : CGAL::Exact_predicates_exact_constructions_kernel {};
 typedef double W;
 
-typedef CGAL::Regular_neighbor_coordinates_traits_2<K,W>     Gt1;
+typedef CGAL::Regular_triangulation_euclidean_traits_2<K,W>  Gt1;
 typedef CGAL::Regular_triangulation_2<Gt1>                   Rt1;
 
 int main()

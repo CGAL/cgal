@@ -1,4 +1,4 @@
-// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
 template <class OutputIterator, class InputIterator, class Kernel>
-std::pair< OutputIterator, typename Kernel::FT > 
+Triple< OutputIterator, typename Kernel::FT, bool > 
 surface_neighbor_coordinates_3(InputIterator
 			       first, InputIterator beyond,
 			       const typename Kernel::Point_3& p, 
@@ -50,7 +50,7 @@ surface_neighbor_coordinates_3(InputIterator
 
 
 template <class OutputIterator, class InputIterator, class ITraits>
-std::pair< OutputIterator, typename ITraits::FT > 
+Triple< OutputIterator, typename ITraits::FT, bool > 
 surface_neighbor_coordinates_3(InputIterator
 			       first, InputIterator beyond,
 			       const typename ITraits::Point_2& p,
@@ -65,7 +65,7 @@ surface_neighbor_coordinates_3(InputIterator
   it.insert(first,beyond);
   
   return 
-    regular_neighbor_coordinates_2(it, p, out, traits);
+    regular_neighbor_coordinates_2(it, p, out);
 }
 
 
@@ -75,7 +75,7 @@ surface_neighbor_coordinates_3(InputIterator
 // Voronoi cell of p is not affected by any point outside the smallest 
 // ball centered on p containing all points in [first,beyond) 
 template <class OutputIterator, class InputIterator, class Kernel>
-Triple< OutputIterator, typename Kernel::FT, bool > 
+Quadruple< OutputIterator, typename Kernel::FT, bool, bool > 
 surface_neighbor_coordinates_certified_3(InputIterator
 			       first, InputIterator beyond,
 			       const typename Kernel::Point_3& p, 
@@ -92,7 +92,7 @@ surface_neighbor_coordinates_certified_3(InputIterator
 // containing the points in [first, beyond] (i.e. the maximal 
 // distance from p to [first,beyond) as add. parameter: 
 template <class OutputIterator, class InputIterator, class Kernel>
-Triple< OutputIterator, typename Kernel::FT, bool > 
+Quadruple< OutputIterator, typename Kernel::FT, bool, bool > 
 surface_neighbor_coordinates_certified_3(InputIterator
 					 first, InputIterator beyond,
 					 const typename Kernel::Point_3& p, 
@@ -132,7 +132,7 @@ private:
 };
 // Versions with instantiated traits class:
 template <class OutputIterator, class InputIterator, class ITraits>
-Triple< OutputIterator, typename ITraits::FT, bool > 
+Quadruple< OutputIterator, typename ITraits::FT, bool, bool > 
 surface_neighbor_coordinates_certified_3(InputIterator
 					 first, InputIterator beyond,
 					 const typename ITraits::Point_2& p,
@@ -154,7 +154,7 @@ surface_neighbor_coordinates_certified_3(InputIterator
 //with radius(maximal distance from p to [first,beyond)) as
 // add. parameter: 
 template <class OutputIterator, class InputIterator, class ITraits>
-Triple< OutputIterator, typename ITraits::FT, bool > 
+Quadruple< OutputIterator, typename ITraits::FT, bool, bool > 
 surface_neighbor_coordinates_certified_3(InputIterator
 					 first, InputIterator beyond,
 					 const typename
@@ -175,9 +175,13 @@ surface_neighbor_coordinates_certified_3(InputIterator
   //determine the furthest distance from p to the boundary of its cell 
   std::vector<  typename ITraits::Point_2  > vor_vertices;
 
-  std::pair< OutputIterator, typename ITraits::FT > 
+  //unfortunately, there is no function call without Face_handle 
+  // "start" because this would cause type conflicts because 
+  // of resembling function signatures (-> default constructor)
+  Triple< OutputIterator, typename ITraits::FT, bool > 
     res = regular_neighbor_coordinates_2
-    (it, p, out, std::back_inserter(vor_vertices),traits);
+    (it, p, out, std::back_inserter(vor_vertices),
+     typename I_triangulation::Face_handle());
   
   typename ITraits::Point_2 furthest = 
     *std::max_element(vor_vertices.begin(),  vor_vertices.end(), 
@@ -187,9 +191,9 @@ surface_neighbor_coordinates_certified_3(InputIterator
   // might be found: return false
   if(radius < 4* traits.compute_squared_distance_2_object()
      (p, furthest))
-    return make_triple(res.first, res.second, false);
+    return make_quadruple(res.first, res.second, res.third, false);
   
-  return make_triple(res.first, res.second, true);
+  return make_quadruple(res.first, res.second,res.third, true);
 }
 //Sylvain:
 //this class should probably be moved to CGAL/function_objects.h
@@ -214,14 +218,14 @@ struct Project_vertex_iterator_to_point {
 //using Delaunay triangulation for candidate point filtering:
 // => no certification is necessary
 template <class Dt, class OutputIterator>
-std::pair< OutputIterator, typename Dt::Geom_traits::FT > 
+Triple< OutputIterator, typename Dt::Geom_traits::FT, bool > 
 surface_neighbor_coordinates_3(const Dt& dt, 
 			       const typename Dt::Geom_traits::Point_3& p,
 			       const typename Dt::Geom_traits::Vector_3& 
 			       normal, 
 			       OutputIterator out, 
 			       typename Dt::Cell_handle start 
-			       = typename Dt::Cell_handle(NULL)){
+			       = typename Dt::Cell_handle()){
   
   typedef Voronoi_intersection_2_traits_3<typename Dt::Geom_traits> I_gt;
   return surface_neighbor_coordinates_3(dt, p, out, I_gt(p,normal),start);
@@ -229,12 +233,12 @@ surface_neighbor_coordinates_3(const Dt& dt,
 };
 
 template <class Dt, class OutputIterator, class ITraits>
-std::pair< OutputIterator, typename ITraits::FT > 
+Triple< OutputIterator, typename ITraits::FT, bool > 
 surface_neighbor_coordinates_3(const Dt& dt,
 			       const typename ITraits::Point_2& p,
 			       OutputIterator out, const ITraits& traits,
 			       typename Dt::Cell_handle start 
-   			       = typename Dt::Cell_handle(NULL)){
+   			       = typename Dt::Cell_handle()){
   
   typedef typename ITraits::FT            Coord_type;
   typedef typename ITraits::Point_2       Point_3;
@@ -262,7 +266,7 @@ surface_neighbor_coordinates_3(const Dt& dt,
   if(lt == Dt::VERTEX){
     *out++= std::make_pair(c->vertex(li)->point(),
 			   Coord_type(1));
-    return( std::make_pair(out, Coord_type(1)));
+    return( make_triple(out, Coord_type(1), true));
   }
 
   //the candidate points are the points of dt in conflict with p:

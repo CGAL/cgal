@@ -15,6 +15,8 @@ struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef K::FT                      Coord_type;
 typedef K::Point_3                 Point_3;
 typedef K::Vector_3                Vector_3;
+typedef std::vector< std::pair< Point_3, K::FT  > >
+                                   Point_coordinate_vector;
 
 int main()
 {
@@ -32,12 +34,20 @@ int main()
   Vector_3 normal(p-CGAL::ORIGIN);
   std::cout << "Compute surface neighbor coordinates for " 
 	    << p << std::endl;
-  std::vector< std::pair< Point_3, Coord_type  > > coords;
-  Coord_type norm = 
+  Point_coordinate_vector coords;
+  CGAL::Triple< std::back_insert_iterator<Point_coordinate_vector>, 
+    K::FT, bool> result = 
     CGAL::surface_neighbor_coordinates_3(points.begin(), points.end(), 
 					 p, normal,
 					 std::back_inserter(coords), 
-					 K()).second;
+					 K());
+  if(!result.third){
+    //Undersampling:
+    std::cout << "The coordinate computation was not successful." 
+	      << std::endl;
+    return 0;
+  }
+  K::FT norm = result.second;
   
   std::cout << "Testing the barycentric property " << std::endl;
   Point_3 b(0, 0,0);

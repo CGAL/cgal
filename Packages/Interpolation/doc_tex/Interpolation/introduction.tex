@@ -1,3 +1,5 @@
+%\ccAuthor{Julia Fl{\"o}totto}
+
 This chapter describes \cgal's interpolation package which implements
 natural neighbor coordinate functions as well as different
 methods for scattered data interpolation most of which are based on
@@ -13,7 +15,7 @@ Scattered data interpolation solves the following problem: given
 measures of a function on a set of discrete data points, the task is
 to interpolate this function on an arbitrary query point.
 More formally, let $\mathcal{P}=\{\mathbf{p_1},\ldots ,\mathbf{p_n}\}$ be a set of
-$n$ point in $\mathbb{R}^2$ or $\mathbb{R}^3$ and $\Phi$ be a scalar
+$n$ points in $\mathbb{R}^2$ or $\mathbb{R}^3$ and $\Phi$ be a scalar
 function defined inside the convex hull of $\mathcal{P}$. We assume that
 the function values are known at the points of $\mathcal{P}$, i.e. to
 each $\mathbf{p_i} \in \mathcal{P}$, we associate $z_i =
@@ -21,4 +23,4 @@ each $\mathbf{p_i} \in \mathcal{P}$, we associate $z_i =
 at $\mathbf{p_i}$. It is denoted $\mathbf{g_i}= \nabla
 \Phi(\mathbf{p_i})$. The interpolation is carried out for an arbitrary query point
 $\mathbf{x}$. Except for interpolation on surfaces, $\mathbf{x}$ must lie 
-in the convex hull of $\mathcal{P}$.
+inside the convex hull of $\mathcal{P}$.
