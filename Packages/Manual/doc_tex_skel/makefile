@@ -1,6 +1,6 @@
 #located in doc_tex;
 
-VERSION_NUM=2.3
+VERSION_NUM=2.4
 VERSION=CGAL-$(VERSION_NUM)
 
 # location of the test manul results
@@ -9,7 +9,8 @@ TEST_DESTINATION=/www/pub/www.cgal.org/Members/Manual_test
 TEST_SUBDIR=test_manual
 
 # location of the final manual
-DESTINATION=/www/pub/www.cgal.org/Members/test_release/Manual
+#DESTINATION=/www/pub/www.cgal.org/Members/test_release/Manual
+DESTINATION=/www/pub/www.cgal.org/Manual
 # location of the doc_ps subdirectory
 DOC_PS_DESTINATION=$(DESTINATION)
 # location of the doc_pdf subdirectory
@@ -17,13 +18,13 @@ DOC_PDF_DESTINATION=$(DESTINATION)
 # location of the doc_html subdirectory
 DOC_HTML_DESTINATION=$(DESTINATION)
 # location of the tar files for downloading
-#DOC_DOWNLOAD_DIR=/ftp/pub/outgoing/CGAL
-DOC_DOWNLOAD_DIR=/www/pub/www.cgal.org/Members/test_release/Manual
+DOC_DOWNLOAD_DIR=/ftp/pub/outgoing/CGAL
+#DOC_DOWNLOAD_DIR=/www/pub/www.cgal.org/Members/test_release/Manual
 
 # location of the frame set and the extra index files of the manual
 HTML_EXTRA_SOURCE=/KM/usr3/cgal/web_pages/Manual
 # location of the frame set and the extra index files of the manual
-INCLUDE_SOURCE=/KM/usr3/cgal/releases/CGAL-2.3/
+INCLUDE_SOURCE=/KM/projects/CGAL/Work_in_Progress/releases/CGAL-2.4/
 
 all:
 	driver
@@ -71,6 +72,7 @@ pack: pack_doc_ps_a4 pack_doc_ps_letter pack_doc_pdf pack_doc_html
 pack_doc_ps_a4:
 	cd $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4; \
            mkdir doc_ps; cp *.ps* doc_ps; \
+           cp ../index.html doc_ps; \
            tar -cvf $(VERSION)-doc_ps.tar doc_ps ; \
            gzip -f $(VERSION)-doc_ps.tar; \
            gtar -cvf $(VERSION)-doc_ps.gtar doc_ps ; \
@@ -84,6 +86,7 @@ pack_doc_ps_a4:
 pack_doc_ps_letter:
 	cd $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter;\
            mkdir doc_ps; cp *.ps* doc_ps; \
+           cp ../index.html doc_ps; \
            tar -cvf $(VERSION)-doc_ps_letter.tar doc_ps ; \
            gzip -f $(VERSION)-doc_ps_letter.tar; \
            gtar -cvf $(VERSION)-doc_ps_letter.gtar doc_ps ; \
@@ -97,6 +100,7 @@ pack_doc_ps_letter:
 pack_doc_pdf:
 	cd $(DOC_PDF_DESTINATION)/doc_pdf;\
            mkdir doc_pdf; cp *.pdf doc_pdf; \
+           cp index.html doc_pdf; \
            tar -cvf $(VERSION)-doc_pdf.tar doc_pdf ; \
            gzip -f $(VERSION)-doc_pdf.tar; \
            gtar -cvf $(VERSION)-doc_pdf.gtar doc_pdf ; \
@@ -460,8 +464,11 @@ install_html_extras:
 	mkdir -p $(DOC_HTML_DESTINATION)
 	cp -r $(HTML_EXTRA_SOURCE)/index.html $(DOC_HTML_DESTINATION)
 	cp -r $(HTML_EXTRA_SOURCE)/doc_html $(DOC_HTML_DESTINATION)
+	rm -rf $(DOC_HTML_DESTINATION)/doc_html/CVS
 	cp -r $(HTML_EXTRA_SOURCE)/doc_pdf $(DOC_HTML_DESTINATION)
+	rm -rf $(DOC_HTML_DESTINATION)/doc_pdf/CVS
 	cp -r $(HTML_EXTRA_SOURCE)/doc_ps $(DOC_HTML_DESTINATION)
+	rm -rf $(DOC_HTML_DESTINATION)/doc_ps/CVS
 
 clean:
 	rm -f *.aux docdirs_failed* docdirs_passed*;
