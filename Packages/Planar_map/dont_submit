@@ -1,1 +1,2 @@
-./include/CGAL/Pm_segment_traits.h
+include/CGAL/Pm_segment_slim_traits.h
+include/CGAL/Pm_segment_shai_traits.h
