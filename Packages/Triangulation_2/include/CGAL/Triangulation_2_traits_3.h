@@ -54,7 +54,7 @@ template <class R>
 class Side_of_oriented_circle_2_3
 {
   // 2d triangulation needs a side_of_oriented_circle
-  // that in fact is a side_of_bounded_circle
+   // that in fact is a side_of_bounded_circle
   // meaning that
   // bounded side of circle = positive side
 public:
