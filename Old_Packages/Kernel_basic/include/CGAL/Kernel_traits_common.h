@@ -34,7 +34,9 @@ typedef CGALi::Construct<Ray_2>                Construct_ray_2;
 typedef CGALi::Construct<Circle_2>             Construct_circle_2;
 typedef CGALi::Construct<Triangle_2>           Construct_triangle_2;
 typedef CGALi::Construct<Iso_rectangle_2>      Construct_iso_rectangle_2;
+#ifndef CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Construct<Aff_transformation_2> Construct_aff_transformation_2;
+#endif // CGAL_NO_DEPRECATED_CODE
 
 CGAL_Kernel_obj(Construct_point_2, construct_point_2_object)
 CGAL_Kernel_obj(Construct_vector_2, construct_vector_2_object)
@@ -45,19 +47,26 @@ CGAL_Kernel_obj(Construct_ray_2, construct_ray_2_object)
 CGAL_Kernel_obj(Construct_circle_2, construct_circle_2_object)
 CGAL_Kernel_obj(Construct_triangle_2, construct_triangle_2_object)
 CGAL_Kernel_obj(Construct_iso_rectangle_2, construct_iso_rectangle_2_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Construct_aff_transformation_2,
 	        construct_aff_transformation_2_object)
+#endif // CGAL_NO_DEPRECATED_CODE
 
 typedef CGALi::Call_point_to_get<Point_2>         Construct_point_on_2;
+#ifndef CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Call_second_point_to_get<Point_2>  Construct_second_point_on_2;
 typedef CGALi::Call_source_to_get<Point_2>        Construct_source_point_2;
 typedef CGALi::Call_target_to_get<Point_2>        Construct_target_point_2;
 typedef CGALi::Call_min_to_get<Point_2>           Construct_min_point_2;
 typedef CGALi::Call_max_to_get<Point_2>           Construct_max_point_2;
+#endif // CGAL_NO_DEPRECATED_CODE
+typedef CGALi::Call_vertex_to_get<Point_2>        Construct_vertex_2;
+#ifndef CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Call_direction_to_get<Direction_2> 
                                              Construct_direction_of_line_2;
 typedef CGALi::Call_direction_to_get<Direction_2> 
                                              Construct_direction_of_ray_2;
+#endif // CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Call_supporting_line_to_get<Line_2> 
                                                Construct_supporting_line_2;
 typedef CGALi::Call_perpendicular_to_get<Vector_2> 
@@ -73,16 +82,21 @@ typedef CGALi::p_Centroid<Point_2>                 Construct_centroid_2;
 typedef CGALi::pl_Bisector<Point_2, Line_2>        Construct_bisector_2;
 
 CGAL_Kernel_obj(Construct_point_on_2, construct_point_on_2_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Construct_second_point_on_2,
 	        construct_second_point_on_2_object)
 CGAL_Kernel_obj(Construct_source_point_2, construct_source_point_2_object)
 CGAL_Kernel_obj(Construct_target_point_2, construct_target_point_2_object)
 CGAL_Kernel_obj(Construct_min_point_2, construct_min_point_2_object)
 CGAL_Kernel_obj(Construct_max_point_2, construct_max_point_2_object)
+#endif // CGAL_NO_DEPRECATED_CODE
+CGAL_Kernel_obj(Construct_vertex_2, construct_vertex_2_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Construct_direction_of_line_2,
 	        construct_direction_of_line_2_object)
 CGAL_Kernel_obj(Construct_direction_of_ray_2,
                 construct_direction_of_ray_2_object)
+#endif // CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Construct_supporting_line_2,
 	        construct_supporting_line_2_object)
 CGAL_Kernel_obj(Construct_perpendicular_vector_2,
@@ -98,6 +112,7 @@ CGAL_Kernel_obj(Construct_centroid_2, construct_centroid_2_object)
 CGAL_Kernel_obj(Construct_bisector_2, construct_bisector_2_object)
 
 
+typedef CGALi::v_Opposite<Direction_2>          Construct_opposite_direction_2;
 typedef CGALi::Call_opposite_to_get<Segment_2>  Construct_opposite_segment_2;
 typedef CGALi::Call_opposite_to_get<Ray_2>      Construct_opposite_ray_2;
 typedef CGALi::Call_opposite_to_get<Line_2>     Construct_opposite_line_2;
@@ -105,10 +120,14 @@ typedef CGALi::Call_opposite_to_get<Triangle_2> Construct_opposite_triangle_2;
 typedef CGALi::Call_opposite_to_get<Circle_2>   Construct_opposite_circle_2;
 typedef CGALi::v_Opposite<Vector_2>             Construct_opposite_vector_2;
 typedef CGALi::Assign                           Assign_2;
+#ifndef CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Call_transform                   Transform_2;
+#endif // CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Intersect                        Intersect_2;
 typedef CGALi::Do_intersect                     Do_intersect_2;
 
+CGAL_Kernel_obj(Construct_opposite_direction_2,
+	        construct_opposite_direction_2_object)
 CGAL_Kernel_obj(Construct_opposite_segment_2,
 	        construct_opposite_segment_2_object)
 CGAL_Kernel_obj(Construct_opposite_ray_2, construct_opposite_ray_2_object)
@@ -120,7 +139,9 @@ CGAL_Kernel_obj(Construct_opposite_circle_2,
 CGAL_Kernel_obj(Construct_opposite_vector_2,
 	        construct_opposite_vector_2_object)
 CGAL_Kernel_obj(Assign_2, assign_2_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Transform_2, transform_2_object)
+#endif // CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Intersect_2, intersect_2_object)
 CGAL_Kernel_obj(Do_intersect_2, do_intersect_2_object)
 
@@ -144,6 +165,8 @@ typedef CGALi::Compare_xy                          Compare_xy_2;
 typedef CGALi::Compare_y_at_x                      Compare_y_at_x_2;
 typedef CGALi::Compare_x_at_y                      Compare_x_at_y_2;
 typedef CGALi::Compare_distance<Point_2>           Compare_distance_2;
+typedef CGALi::Compare_angle_with_x_axis<Direction_2> 
+                                                 Compare_angle_with_x_axis_2;
 
 CGAL_Kernel_obj(Compute_y_at_x_2, compute_y_at_x_2_object)
 CGAL_Kernel_obj(Compute_squared_distance_2, compute_squared_distance_2_object)
@@ -164,6 +187,8 @@ CGAL_Kernel_obj(Compare_xy_2, compare_xy_2_object)
 CGAL_Kernel_obj(Compare_y_at_x_2, compare_y_at_x_2_object)
 CGAL_Kernel_obj(Compare_x_at_y_2, compare_x_at_y_2_object)
 CGAL_Kernel_obj(Compare_distance_2, compare_distance_2_object)
+CGAL_Kernel_obj(Compare_angle_with_x_axis_2, 
+		compare_angle_with_x_axis_2_object)
 
 typedef CGAL ::p_Less_dist_to_point<Point_2>       Less_distance_to_point_2;
 Less_distance_to_point_2
@@ -256,8 +281,10 @@ typedef CGALi::Construct<Sphere_3>                 Construct_sphere_3;
 typedef CGALi::Construct<Triangle_3>               Construct_triangle_3;
 typedef CGALi::Construct<Tetrahedron_3>            Construct_tetrahedron_3;
 typedef CGALi::Construct<Iso_cuboid_3>             Construct_iso_cuboid_3;
+#ifndef CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Construct<Aff_transformation_3>     
                                             Construct_aff_transformation_3;
+#endif // CGAL_NO_DEPRECATED_CODE
 
 CGAL_Kernel_obj(Construct_point_3, construct_point_3_object)
 CGAL_Kernel_obj(Construct_vector_3, construct_vector_3_object)
@@ -270,18 +297,25 @@ CGAL_Kernel_obj(Construct_sphere_3, construct_sphere_3_object)
 CGAL_Kernel_obj(Construct_triangle_3, construct_triangle_3_object)
 CGAL_Kernel_obj(Construct_tetrahedron_3, construct_tetrahedron_3_object)
 CGAL_Kernel_obj(Construct_iso_cuboid_3, construct_iso_cuboid_3_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Construct_aff_transformation_3,
 	        construct_aff_transformation_3_object)
+#endif // CGAL_NO_DEPRECATED_CODE
 
 typedef CGALi::Call_point_to_get<Point_3>         Construct_point_on_3;
+#ifndef CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Call_second_point_to_get<Point_3>  Construct_second_point_on_3;
 typedef CGALi::Call_source_to_get<Point_3>        Construct_source_point_3;
 typedef CGALi::Call_target_to_get<Point_3>        Construct_target_point_3;
 typedef CGALi::Call_min_to_get<Point_3>           Construct_min_point_3;
 typedef CGALi::Call_max_to_get<Point_3>           Construct_max_point_3;
+#endif // CGAL_NO_DEPRECATED_CODE
+typedef CGALi::Call_vertex_to_get<Point_3>        Construct_vertex_3;
+#ifndef CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Call_direction_to_get<Direction_3>
                                                Construct_direction_of_line_3;
 typedef CGALi::Call_direction_to_get<Direction_3> Construct_direction_of_ray_3;
+#endif // CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Call_supporting_line_to_get<Line_3> Construct_supporting_line_3;
 typedef CGALi::Call_perpendicular_plane_to_get<Plane_3> 
                                                Construct_perpendicular_plane_3;
@@ -294,6 +328,7 @@ typedef CGALi::p_Center<Point_3>               Construct_center_3;
 typedef CGALi::p_Circumcenter<Point_3>         Construct_circumcenter_3;
 typedef CGALi::p_Centroid<Point_3>             Construct_centroid_3;
 typedef CGALi::v_Cross_product<Vector_3>      Construct_cross_product_vector_3;
+typedef CGALi::v_Opposite<Direction_3>         Construct_opposite_direction_3;
 typedef CGALi::Call_opposite_to_get<Segment_3> Construct_opposite_segment_3;
 typedef CGALi::Call_opposite_to_get<Ray_3>     Construct_opposite_ray_3;
 typedef CGALi::Call_opposite_to_get<Line_3>    Construct_opposite_line_3;
@@ -301,22 +336,29 @@ typedef CGALi::Call_opposite_to_get<Plane_3>   Construct_opposite_plane_3;
 typedef CGALi::v_Opposite<Vector_3>            Construct_opposite_vector_3;
 typedef CGALi::Call_supporting_plane_to_get<Plane_3>   
                                                Construct_supporting_plane_3;
+#ifndef CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Call_transform                  Transform_3;
+#endif // CGAL_NO_DEPRECATED_CODE
 typedef CGALi::Assign                          Assign_3;
 typedef CGALi::Intersect                       Intersect_3;
 typedef CGALi::Do_intersect                    Do_intersect_3;
 
 CGAL_Kernel_obj(Construct_point_on_3, construct_point_on_3_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Construct_second_point_on_3,
 	        construct_second_point_on_3_object)
 CGAL_Kernel_obj(Construct_source_point_3, construct_source_point_3_object)
 CGAL_Kernel_obj(Construct_target_point_3, construct_target_point_3_object)
 CGAL_Kernel_obj(Construct_min_point_3, construct_min_point_3_object)
 CGAL_Kernel_obj(Construct_max_point_3, construct_max_point_3_object)
+#endif // CGAL_NO_DEPRECATED_CODE
+CGAL_Kernel_obj(Construct_vertex_3, construct_vertex_3_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Construct_direction_of_line_3, 
                 construct_direction_of_line_3_object)
 CGAL_Kernel_obj(Construct_direction_of_ray_3,
                 construct_direction_of_ray_3_object)
+#endif // CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Construct_supporting_line_3,
 	        construct_supporting_line_3_object)
 CGAL_Kernel_obj(Construct_perpendicular_plane_3,
@@ -331,6 +373,8 @@ CGAL_Kernel_obj(Construct_circumcenter_3, construct_circumcenter_3_object)
 CGAL_Kernel_obj(Construct_centroid_3, construct_centroid_3_object)
 CGAL_Kernel_obj(Construct_cross_product_vector_3,
 	        construct_cross_product_vector_3_object)
+CGAL_Kernel_obj(Construct_opposite_direction_3,
+	        construct_opposite_direction_3_object)
 CGAL_Kernel_obj(Construct_opposite_segment_3,
 	        construct_opposite_segment_3_object)
 CGAL_Kernel_obj(Construct_opposite_ray_3, construct_opposite_ray_3_object)
@@ -339,7 +383,9 @@ CGAL_Kernel_obj(Construct_opposite_plane_3, construct_opposite_plane_3_object)
 CGAL_Kernel_obj(Construct_opposite_vector_3, construct_opposite_vector_3_object)
 CGAL_Kernel_obj(Construct_supporting_plane_3,
 	        construct_supporting_plane_3_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Transform_3, transform_3_object)
+#endif // CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_obj(Assign_3, assign_3_object)
 CGAL_Kernel_obj(Intersect_3, intersect_3_object)
 CGAL_Kernel_obj(Do_intersect_3, do_intersect_3_object)

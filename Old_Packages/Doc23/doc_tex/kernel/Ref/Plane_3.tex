@@ -29,7 +29,7 @@ negative side, iff \ccTexHtml{$a\, px +b\, py\, +c\, pz + d < 0$}{a px + b py +c
              {introduces an uninitialized variable \ccVar.}
 
 \ccHidden \ccConstructor{Plane_3(const Plane_3<R> &h);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccConstructor{Plane_3(const R::RT &a, 
                        const R::RT &b,
@@ -40,8 +40,8 @@ negative side, iff \ccTexHtml{$a\, px +b\, py\, +c\, pz + d < 0$}{a px + b py +c
 Notice that \ccVar\ is degenerate if \ccTexHtml{$a = b = c$}{a = b = c}.}
 
 \ccConstructor{Plane_3(const Point_3<R> &p,
-	               const Point_3<R> &q,
-	               const Point_3<R> &r);}
+                       const Point_3<R> &q,
+                       const Point_3<R> &r);}
 {creates a plane \ccVar\ passing through the points \ccStyle{p},
  \ccStyle{q} and \ccStyle{r}. The plane is oriented such that \ccStyle{p}, 
  \ccStyle{q} and \ccStyle{r} are oriented in a positive sense 
@@ -50,7 +50,7 @@ Notice that \ccVar\ is degenerate if the points are collinear.}
 
 
 \ccConstructor{Plane_3(const Point_3<R> &p,
-	                  const Direction_3<R>&d)}
+                          const Direction_3<R>&d)}
 {introduces a plane \ccVar\ that passes through point \ccStyle{p} and
  that has as an orthogonal direction equal to \ccStyle{d}.}
 
@@ -154,9 +154,9 @@ For convenience we provide the following boolean functions:
 
 \ccMethod{bool has_on(const  Point_3<R> &p) const;}
        {}
-\ccGlue
-\ccMethod{bool has_on_boundary(const  Point_3<R> &p) const;}
-       {}
+%%\ccGlue
+%%\ccMethod{bool has_on_boundary(const  Point_3<R> &p) const;}
+%%       {}
 \ccGlue
 \ccMethod{bool has_on_positive_side(const  Point_3<R> &p) const;}
        {}
@@ -166,9 +166,9 @@ For convenience we provide the following boolean functions:
 
 \ccMethod{bool has_on(const  Line_3<R> &l) const;}
        {}
-\ccGlue
-\ccMethod{bool has_on_boundary(const  Line_3<R> &l) const;}
-       {}
+%%\ccGlue
+%%\ccMethod{bool has_on_boundary(const  Line_3<R> &l) const;}
+%%       {}
 
 \ccMethod{bool is_degenerate() const;}
        {Plane \ccVar\ is degenerate, if the coefficients \ccStyle{a},  

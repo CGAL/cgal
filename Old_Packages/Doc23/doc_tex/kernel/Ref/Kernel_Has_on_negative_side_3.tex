@@ -8,6 +8,10 @@ A model for this must provide:
 {returns true iff $p$ lies on the negative side of $h$ 
 ($h$ is considered a halfspace).}
 
+\ccMemberFunction{bool operator()(const Kernel::Sphere_3&s,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the negative side of $s$.}
+
 \ccMemberFunction{bool operator()(const Kernel::Tetrahedron_3&t,
                                   const Kernel::Point_3&p);}
 {returns true iff $p$ lies on the negative side of $t$.}

@@ -8,16 +8,16 @@ A model for this must provide:
              {introduces an uninitialized variable .}
 
 \ccHidden \ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Vector_3 &w);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Point_3 &a,
                                               const Kernel::Point_3 &b);}
- 	    {introduces the vector $b-a$.}
+            {introduces the vector $b-a$.}
 
 \ccMemberFunction{Kernel::Vector_3 operator()(const Null_vector &NULL_VECTOR);}
- 	    {introduces a null vector .}
+            {introduces a null vector .}
 
-\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::FT &hz, const Kernel::RT &hw = Kernel::RT(1));}
+\ccHidden\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::FT &hz, const Kernel::RT &hw = Kernel::RT(1));}
             {introduces a vector  initialized to $(hx/hw, hy/hw, hz/hw)$.
              If the third argument is not explicitly given it defaults
              to \ccStyle{Kernel::RT(1)}.}

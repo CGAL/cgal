@@ -1,10 +1,43 @@
 \begin{ccRefFunctionObjectConcept}{Kernel::Equal_2}
-A model for this must provide:
-
 \ccCreationVariable{fo}
 
-\ccMemberFunction{bool operator()(const Kernel::Point_2&p, 
-                                  const Kernel::Point_2&q);}
-{returns true iff $p$ and $q$ are equal (as two-dimensional points);}
+A model for this must provide the following operations. For all of
+them \ccVar\ccc{(x,y)} returns true iff $x$ and $y$ are equal.
+
+\ccMemberFunction{bool operator()(const Kernel::Point_2& x, 
+                                  const Kernel::Point_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Vector_2& x, 
+                                  const Kernel::Vector_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Direction_2& x, 
+                                  const Kernel::Direction_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Line_2& x, 
+                                  const Kernel::Line_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Ray_2& x, 
+                                  const Kernel::Ray_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Segment_2& x, 
+                                  const Kernel::Segment_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Circle_2& x, 
+                                  const Kernel::Circle_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Triangle_2& x, 
+                                  const Kernel::Triangle_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Iso_rectangle_2& x, 
+                                  const Kernel::Iso_rectangle_2& y);}
+{}
 
 \end{ccRefFunctionObjectConcept}

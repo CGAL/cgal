@@ -27,11 +27,11 @@ The positive side is to the left of \ccc{l}.
              {introduces an uninitialized variable \ccVar.}
 
 \ccHidden \ccConstructor{Line_2(const Line_2<R> &h);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccConstructor{Line_2(const R::RT &a, const R::RT &b, const R::RT &c)}
             {introduces a line \ccVar\ with the line equation in Cartesian
-	      coordinates $ax +by +c = 0$.}
+              coordinates $ax +by +c = 0$.}
 
 \ccConstructor{Line_2(const Point_2<R> &p, const Point_2<R> &q);}
             {introduces a line \ccVar\ passing through the points $p$ and $q$. 
@@ -43,11 +43,11 @@ The positive side is to the left of \ccc{l}.
 
 \ccConstructor{Line_2(const Segment_2<R> &s);}
             {introduces a line \ccVar\ supporting the segment $s$,
-	    oriented from source to target.}
+            oriented from source to target.}
 
 \ccConstructor{Line_2(const Ray_2<R> &r)}
             {introduces a line \ccVar\ supporting the ray $r$,
-	    with same orientation.}
+            with same orientation.}
 
 \ccOperations
 
@@ -116,9 +116,9 @@ For convenience we provide the following boolean functions:
 
 \ccMethod{bool has_on(const Point_2<R> &p) const;}
        {}
-\ccGlue
-\ccMethod{bool has_on_boundary(const Point_2<R> &p) const;}
-       {returns \ccStyle{has_on()}.}
+%%\ccGlue
+%%\ccMethod{bool has_on_boundary(const Point_2<R> &p) const;}
+%%       {returns \ccStyle{has_on()}.}
 \ccGlue
 \ccMethod{bool has_on_positive_side(const Point_2<R> &p) const;}
        {}

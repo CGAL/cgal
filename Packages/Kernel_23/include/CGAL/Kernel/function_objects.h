@@ -917,6 +917,17 @@ class Compare_distance
     { return cmp_dist_to_point(p,q,r); }
 };
 
+template <class T>
+class Compare_angle_with_x_axis
+{
+  public:
+    typedef Comparison_result           result_type;
+
+    Comparison_result
+    operator()(const T& p, const T& q) const
+    { return compare_angle_with_x_axis(p,q); }
+};
+
 template <class Plane, class Point>
 class Less_signed_distance_to_plane
 {
@@ -969,6 +980,7 @@ class Collinear_are_strictly_ordered_along_line
     { return collinear_are_strictly_ordered_along_line(p,q,r); }
 };
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 class Call_transform
 {
  public:
@@ -977,6 +989,7 @@ class Call_transform
     operator()( const ArgumentType& a, const Transformation& t)
     { return a.transform(t); }
 };
+#endif // CGAL_NO_DEPRECATED_CODE
 
 template <class ReturnType>
 class Call_source_to_get
@@ -1024,6 +1037,18 @@ class Call_max_to_get
     ReturnType
     operator()( const Cls& c) const
     { return c.max(); }
+};
+
+template <class ReturnType>
+class Call_vertex_to_get
+{
+  public:
+    typedef ReturnType     result_type;
+
+    template <class Cls>
+    ReturnType
+    operator()( const Cls& c, int i) const
+    { return c.vertex(i); }
 };
 
 template <class ReturnType>

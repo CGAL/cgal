@@ -20,15 +20,24 @@ orthogonal to an oriented plane, or the direction of an oriented line.
              {introduces an uninitialized direction \ccVar.}
 
 \ccHidden \ccConstructor{Direction_3(const Direction_3<R> &d);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccConstructor{Direction_3(const Vector_3<R> &v);}
-	    {introduces a direction \ccVar\ initialised with the 
-	     direction of vector $v$.}
+            {introduces a direction \ccVar\ initialised with the 
+             direction of vector $v$.}
+
+\ccConstructor{Direction_3(const Line_3<R> &l);}
+            {introduces the direction \ccVar\ of line $l$.}
+
+\ccConstructor{Direction_3(const Ray_3<R> &r);}
+            {introduces the direction \ccVar\ of ray $r$.}
+
+\ccConstructor{Direction_3(const Segment_3<R> &s);}
+            {introduces the direction \ccVar\ of segment $s$.}
 
 \ccConstructor{Direction_3(const R::RT &x, const R::RT &y, const R::RT &z);}
             {introduces a direction \ccVar\ initialised with the direction 
-	     from the origin to the point with Cartesian coordinates $(x, y, z)$.}
+             from the origin to the point with Cartesian coordinates $(x, y, z)$.}
 
 
 \ccOperations
@@ -39,7 +48,7 @@ orthogonal to an oriented plane, or the direction of an oriented line.
         {Assignment.}
 
 \ccMethod{R::RT delta(int i) const;}
-       {returns values, such that \ccVar \ccc{== Direction_2<R>(delta(0),delta(1),delta(2))}.
+       {returns values, such that \ccVar \ccc{== Direction_3<R>(delta(0),delta(1),delta(2))}.
         \ccPrecond: $0 \leq i \leq 2$.}
 
 \ccMethod{R::RT dx() const;}

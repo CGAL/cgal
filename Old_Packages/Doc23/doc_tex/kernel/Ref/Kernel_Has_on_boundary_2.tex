@@ -11,10 +11,6 @@ A model for this must provide:
                                   const Kernel::Point_2&p);}
 {returns true iff $p$ lies on the boundary of $i$.}
 
-\ccMemberFunction{bool operator()(const Kernel::Line_2&l,
-                                  const Kernel::Point_2&p);}
-{returns true iff $p$ lies on $l$ ($l$ is considered a halfspace).}
-
 \ccMemberFunction{bool operator()(const Kernel::Triangle_2&t,
                                   const Kernel::Point_2&p);}
 {returns true iff $p$ lies on the boundary of $t$.}
