@@ -1,21 +1,25 @@
-// Copyright (c) 2002  Utrecht University (The Netherlands).
-// All rights reserved.
+// ======================================================================
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// Copyright (c) 2002 The CGAL Consortium
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// ----------------------------------------------------------------------
 //
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
-// Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// file          : include/CGAL/Euclidean_distance.h
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
+// revision      : 2.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
+//
+// ======================================================================
 
 
 
@@ -25,63 +29,65 @@
 
 namespace CGAL {
 
-  template <class Point>
+  template <class GeomTraits>
   class Euclidean_distance {
 
     public:
 
-    typedef typename Kernel_traits<Point>::Kernel::FT NT;
+    typedef typename GeomTraits::Point Point;
+    typedef typename GeomTraits::NT    NT;
+    typedef Point Query_item;
     
-    private:
-
-    unsigned int the_dimension;
-
     public:
 
     	// default constructor
-    	Euclidean_distance() {
-		Point p;
-		the_dimension=p.dimension();
-		assert(the_dimension>0);
-    	}
+    	Euclidean_distance() {}
 
- 
-
-        Euclidean_distance(const int d) : the_dimension(d) {}
+    // obsolete as we no longer store dimension    Euclidean_distance(const int d) {}
 
 	~Euclidean_distance() {}
 
 	inline NT distance(const Point& q, const Point& p) const {
 	        NT distance = NT(0);
-		for (unsigned int i = 0; i < the_dimension; ++i)
-			distance += (q[i]-p[i])*(q[i]-p[i]);
+		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+                typename GeomTraits::Cartesian_const_iterator qit = construct_it(q),
+		  qe = construct_it(q,1), pit = construct_it(p);
+		for(; qit != qe; qit++, pit++){
+		  distance += ((*qit)-(*pit))*((*qit)-(*pit));
+		}
         	return distance;
 	}
 
 
 	inline NT min_distance_to_queryitem(const Point& q,
-					    const Kd_tree_rectangle<NT>& r) const {
+					    const Kd_tree_rectangle<GeomTraits>& r) const {
 		NT distance = NT(0);
-		for (unsigned int i = 0; i < the_dimension; ++i) {
-			if (q[i] < r.min_coord(i))
+		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+                typename GeomTraits::Cartesian_const_iterator qit = construct_it(q),
+		  qe = construct_it(q,1);
+		for(unsigned int i = 0;qit != qe; i++, qit++){
+		  if((*qit) < r.min_coord(i))
 				distance += 
-				(r.min_coord(i)-q[i])*(r.min_coord(i)-q[i]);
-			if (q[i] > r.max_coord(i))
+				(r.min_coord(i)-(*qit))*(r.min_coord(i)-(*qit));
+			if ((*qit) > r.max_coord(i))
 				distance +=  
-				(q[i]-r.max_coord(i))*(q[i]-r.max_coord(i));
+				((*qit)-r.max_coord(i))*((*qit)-r.max_coord(i));
 			
-		};
+		}
 		return distance;
 	}
 
 	inline NT max_distance_to_queryitem(const Point& q,
-					      const Kd_tree_rectangle<NT>& r) const {
+					      const Kd_tree_rectangle<GeomTraits>& r) const {
 		NT distance=NT(0);
-		for (unsigned int i = 0; i < the_dimension; ++i) {
-				if (q[i] <= (r.min_coord(i)+r.max_coord(i))/NT(2.0))
-					distance += (r.max_coord(i)-q[i])*(r.max_coord(i)-q[i]);
+		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+                typename GeomTraits::Cartesian_const_iterator qit = construct_it(q),
+		  qe = construct_it(q,1);
+		for(unsigned int i = 0;qit != qe; i++, qit++){
+				if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/NT(2.0))
+					distance += (r.max_coord(i)-(*qit))*(r.max_coord(i)-(*qit));
 				else
-					distance += (q[i]-r.min_coord(i))*(q[i]-r.min_coord(i));
+					distance += ((*qit)-r.min_coord(i))*((*qit)-r.min_coord(i));
 		};
 		return distance;
 	}
