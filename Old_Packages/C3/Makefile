@@ -39,8 +39,8 @@ Rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
 
 Submit: Package
-	cp $(Package).tar.gz version description.txt changes.txt \
-	   $(WWW_dir)
+	cp $(Package).tar.gz version description.txt long_description.txt \
+	   changes.txt $(WWW_dir)
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
