@@ -1,3 +1,6 @@
+1.54 (7 August 2003) [af]
+- Replaced call to internal squared distance functions 2d, 3d
+
 1.53 (7 August 2003)
 - Fix test-suite.
 
