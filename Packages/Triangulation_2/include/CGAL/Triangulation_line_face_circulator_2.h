@@ -49,7 +49,8 @@ public:
   typedef Triangulation_2<Gt,Tds> Triangulation;
   typedef Triangulation_face_2<Gt,Tds> Face;
   typedef Triangulation_vertex_2<Gt,Tds> Vertex;
-
+  typedef Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
+  
   typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
   typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
   typedef std::pair<Face_handle, int>                Edge;
