@@ -106,7 +106,7 @@ public:
     typedef _Ref  reference;
     // -------------------------------------------------------------------------
     Visibility_complex_edge_iterator() : Base(),visited(false)  {}
-    Visibility_complex_edge_iterator(iterator v) : Base(v) {}
+    Visibility_complex_edge_iterator(iterator v) : Base(v), visited(false) {}
     Visibility_complex_edge_iterator(Base v) : Base(v) ,visited(false) {}
     Visibility_complex_edge_iterator& operator=(const Self& vi)
     {

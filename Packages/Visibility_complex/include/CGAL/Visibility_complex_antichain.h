@@ -21,7 +21,7 @@
 #define CGAL_VISIBILITY_COMPLEX_ANTICHAIN_H
 
 #include <CGAL/basic.h>
-#include <CGAL/function_objects.h>
+#include <CGAL/Visibility_complex_function_objects.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Visibility_complex_items.h>
 #include <CGAL/Visibility_complex_flip_traits.h>
