@@ -23,9 +23,6 @@ A model for this must provide:
 \ccMemberFunction{Kernel::Vector_2 operator()(const Kernel::Line_2 &l);}
             {introduces a vector having the same direction as $l$.}
 
-\ccMemberFunction{Kernel::Vector_2 operator()(const Kernel::Segment_2 &s);}
-            {introduces the vector $s.target()-s.source()$.}
-
 \ccMemberFunction{Kernel::Vector_2 operator()(const Null_vector &NULL_VECTOR);}
             {introduces a null vector .}
 
@@ -40,5 +37,6 @@ AdaptableFunctor (with two arguments)
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Vector_2<Kernel>}\\
+\ccRefIdfierPage{Kernel::ConstructScaledVector_2}\\
 
 \end{ccRefFunctionObjectConcept}
