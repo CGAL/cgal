@@ -214,8 +214,8 @@ public:
     //                                    &Nef_visible,
     //                                    &Nef_visible2);
     
-    nef_layer1 = new CGAL::Qt_layer_nef_red<Nef_polyhedron>(Nef_visible);
-    nef_layer2 = new CGAL::Qt_layer_nef_gray<Nef_polyhedron>(Nef_visible2);
+    nef_layer1 = new Qt_layer_nef_red<Nef_polyhedron>(Nef_visible);
+    nef_layer2 = new Qt_layer_nef_gray<Nef_polyhedron>(Nef_visible2);
     widget->attach(nef_layer1);
     widget->attach(nef_layer2);
     //boolean operations toolbar
@@ -666,8 +666,7 @@ private:
   void  something_changed(){current_state++;};
 
   CGAL::Qt_widget             *widget;		
-  Tools_toolbar         *newtoolbar;
-  //CGAL::Layers_toolbar        *ltoolbar;
+  Tools_toolbar               *newtoolbar;
   CGAL::Qt_widget_standard_toolbar
                               *stoolbar;
   int                         old_state, 
