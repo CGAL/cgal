@@ -1,3 +1,5 @@
+// demo/Arrangement_2/Segment_arr_from_mouse.C
+//
 //constructs a segment arrangement from CGAL window.
 // We use the leda traits (therefore we are using leda functions).
 
@@ -23,7 +25,7 @@
 #include <CGAL/basic.h>
 
 #ifndef CGAL_USE_LEDA
-int main(int argc, char* argv[])
+int main()
 {
 
   std::cout << "Sorry, this demo needs LEDA for visualisation.";
@@ -34,11 +36,18 @@ int main(int argc, char* argv[])
 
 #else
 
-#include <CGAL/IO/Window_stream.h>
 #include <CGAL/Arr_leda_segment_exact_traits.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
+
+#ifndef CGAL_IO_FILE_DRAWER_H
+#include <CGAL/IO/Pm_drawer.h>
+#endif
+
+#ifndef CGAL_IO_DRAW_PM_H
+#include <CGAL/IO/draw_pm.h>
+#endif
 
 #include <CGAL/IO/Window_stream.h>
 
@@ -65,7 +74,6 @@ CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
 CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
                           const X_curve &c)
 {
-  //  return os << leda_segment(c.xcoord1D(),c.ycoord1D(),c.xcoord2D(),c.ycoord2D());
   return os << c.to_segment();
 }
 
@@ -77,36 +85,57 @@ static CGAL::Window_stream W(400, 400, "CGAL - Segment Arrangement Demo");
 
 CGAL_BEGIN_NAMESPACE
 
-Window_stream& operator<<(Window_stream& os,
-                          Arr_2 &A)
+class My_Arr_drawer : public Pm_drawer<Arr_2,Window_stream> {
+private:
+  typedef Pm_drawer<Arr_2,Window_stream>  Base;
+public:
+  My_Arr_drawer( Window_stream& W ): Pm_drawer<Arr_2,Window_stream>( W ){}
+  
+  void draw_face(Face_handle f) {
+    if (f->does_outer_ccb_exist()) {
+      Arr_2::Ccb_halfedge_circulator cc=f->outer_ccb();
+      do {
+	W << cc->curve();
+      } while (++cc != f->outer_ccb());  
+    }
+
+    Arr_2::Holes_iterator hit=f->holes_begin(),eit=f->holes_end();
+    for (;hit!=eit; ++hit) {
+      Arr_2::Ccb_halfedge_circulator cc=*hit; 
+      do {
+	W << cc->curve();
+	} while (++cc != *hit);  
+    }      
+  }
+
+  void draw_vertices(Vertex_const_iterator Vertices_begin, 
+		     Vertex_const_iterator Vertices_end) {
+    W << GREEN;
+    Base::draw_vertices(Vertices_begin, Vertices_end);
+  }
+  
+  void draw_halfedges(Halfedge_const_iterator Halfedges_begin, 
+		      Halfedge_const_iterator Halfedges_end) {
+    W << BLUE;
+    Base base(window());
+    base.draw_halfedges(Halfedges_begin, Halfedges_end);
+  }
+  
+};
+ 
+Window_stream& operator<<(Window_stream& os, Arr_2 &A)
 {
-   Arr_2::Halfedge_iterator it = A.halfedges_begin();
-
-   os << BLUE;
-
-    while(it != A.halfedges_end()){
-
-      os << (*it).curve();
-      ++it; ++it;
-
-    }
-
-    os << GREEN;
-    Arr_2::Vertex_iterator vit = A.vertices_begin();
-    while(vit!=A.vertices_end()) {
-      os << (*vit).point();
-      ++vit;
-    }
-
-    os.set_flush( 1 );
-    os.flush();
-
-    return os;
+  My_Arr_drawer drawer(os);
+  
+  draw_pm(arr, drawer, os);
+  
+  return os;
 }
 
 CGAL_END_NAMESPACE
 
-// redraw function for the LEDA window. used automatically when window reappears
+// redraw function for the LEDA window. 
+// used automatically when window reappears.
 void redraw(CGAL::Window_stream * wp) 
 { wp->start_buffering();
   wp->clear();
@@ -126,12 +155,14 @@ int main()
   W.set_mode(leda_src_mode);
   W.set_node_width(3);
   W.button("finish",10);
+  W.open_status_window();
   W.display();
 
   //read input from window
-  std::cout << "left button to start and end the segment\n";
-  std::cout << "clicking close to a vertex, assumes the location is at the vertex"
-       << std::endl;
+  std::cout << "Left button to start and end the segment.\n";
+  std::cout << "Clicking close to a vertex assumes the location" 
+	    << "is at the vertex"
+	    << std::endl;
 
   std::vector<Point> cv1;
 
@@ -160,9 +191,17 @@ int main()
         W << CGAL::GREEN;
         
         if (!begin) {
-          arr.insert(X_curve(cv1[0],cv1[1]));
+          if ( cv1[0] == cv1[1] ){
+            //Error. Segment has a zero length.
+             W.set_status_string("Error. Segment has a zero length.");
+            redraw( &W );
+          }
+          else{ 
+            arr.insert(X_curve(cv1[0],cv1[1]));
+            W.set_status_string("  ");
+            W << arr;
+	  }
           cv1.clear();
-          W << arr;
         }
         begin=!begin;
       }
@@ -188,6 +227,8 @@ int main()
     }
   else {
     // map is not empty
+    
+    CGAL::My_Arr_drawer  drawer(W);
     for (; ; ) {
       
       double x,y;
@@ -203,22 +244,24 @@ int main()
       
       //color the face on the screen
       Arr_2::Face_handle f=e->face();
-      if (f->does_outer_ccb_exist()) {
+      drawer.draw_face(f);
+      
+      /*if (f->does_outer_ccb_exist()) {
 	Arr_2::Ccb_halfedge_circulator cc=f->outer_ccb();
 	do {
-	  W << cc->curve();
+	W << cc->curve();
 	} while (++cc != f->outer_ccb());
 	
-      }
+	}
       
-      Arr_2::Holes_iterator hit=f->holes_begin(),eit=f->holes_end();
-      for (;hit!=eit; ++hit) {
+	Arr_2::Holes_iterator hit=f->holes_begin(),eit=f->holes_end();
+	for (;hit!=eit; ++hit) {
 	Arr_2::Ccb_halfedge_circulator cc=*hit; 
 	do {
-	  W << cc->curve();
+	W << cc->curve();
 	} while (++cc != *hit);
-	
-      }      
+      
+	} */     
     }
   } // else of 'if map is empty'
 

@@ -1,3 +1,7 @@
+// demo/Arrangement_2/Polyline_arr_from_file.C
+//
+//constructs an arrangement of polylines from file
+
 #include <CGAL/config.h> // needed for the LONGNAME flag
 
 #ifdef CGAL_CFG_NO_LONGNAME_PROBLEM
@@ -28,8 +32,6 @@
 //constructs a ployline arrangement from a file.
 // We use the leda traits (therefore we use leda functions).
 
-// PARTIALLY CHANGED
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Arr_2_bases.h>
@@ -38,7 +40,7 @@
 #include <CGAL/Arr_polyline_traits.h>
 
 #ifndef CGAL_USE_LEDA
-int main(int argc, char* argv[])
+int main()
 {
 
   std::cout << "Sorry, this demo needs LEDA for visualisation.";
@@ -50,6 +52,14 @@ int main(int argc, char* argv[])
 #else
 
 #include <CGAL/leda_real.h>
+#ifndef CGAL_IO_FILE_DRAWER_H
+#include <CGAL/IO/Pm_drawer.h>
+#endif
+
+#ifndef CGAL_IO_DRAW_PM_H
+#include <CGAL/IO/draw_pm.h>
+#endif
+
 #include <CGAL/IO/Window_stream.h>
 
 typedef leda_real                            NT;
@@ -99,26 +109,56 @@ CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
     
   return os;
 }
+CGAL_BEGIN_NAMESPACE
 
-// draw an arrangement with polyline traits
-CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-                                Arr_2 &A)
-{
-   Arr_2::Halfedge_iterator it = A.halfedges_begin();
-   
-   os << CGAL::BLUE;
-   while(it != A.halfedges_end()){
-
-      os << (*it).curve();
-      ++it; ++it;
+class My_Arr_drawer : public Pm_drawer< Arr_2, Window_stream >{
+private:
+  typedef Pm_drawer<Arr_2,Window_stream>  Base;
+public:
+  My_Arr_drawer( Window_stream& W ): Pm_drawer<Arr_2,Window_stream>( W ){}
+  
+  void draw_face(Face_handle f) {
+    if (f->does_outer_ccb_exist()) {
+      Arr_2::Ccb_halfedge_circulator cc=f->outer_ccb();
+      do {
+	W << cc->curve();
+      } while (++cc != f->outer_ccb());  
     }
-   it = A.halfedges_begin();
 
-    os.set_flush( 1 );
-    os.flush();
+    Arr_2::Holes_iterator hit=f->holes_begin(),eit=f->holes_end();
+    for (;hit!=eit; ++hit) {
+      Arr_2::Ccb_halfedge_circulator cc=*hit; 
+      do {
+	W << cc->curve();
+	} while (++cc != *hit);  
+    }      
+  }
 
-    return os;
+  void draw_vertices(Vertex_const_iterator Vertices_begin, 
+		     Vertex_const_iterator Vertices_end) {
+    W << GREEN;
+    Base::draw_vertices(Vertices_begin, Vertices_end);
+  }
+  
+  void draw_halfedges(Halfedge_const_iterator Halfedges_begin, 
+		      Halfedge_const_iterator Halfedges_end) {
+    W << BLUE;
+    Base base(window());
+    base.draw_halfedges(Halfedges_begin, Halfedges_end);
+  }
+  
+};
+ 
+Window_stream& operator<<(Window_stream& os, Arr_2 &A)
+{
+  My_Arr_drawer drawer(os);
+  
+  draw_pm(arr, drawer, os);
+  
+  return os;
 }
+
+CGAL_END_NAMESPACE
 
 void read_arr(Arr_2 & arr, char * filename)
 {  

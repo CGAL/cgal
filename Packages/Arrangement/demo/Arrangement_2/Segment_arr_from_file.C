@@ -1,3 +1,5 @@
+// demo/Arrangement_2/Segment_arr_from_file.C
+//
 //constructs a segment arrangement from file.
 // We use a homogeneous representation with the cached traits.
 
@@ -44,7 +46,7 @@
 #include <fstream>
 
 #ifndef CGAL_USE_LEDA
-int main(int argc, char* argv[])
+int main()
 {
 
   std::cout << "Sorry, this demo needs LEDA for visualisation.";
@@ -66,22 +68,30 @@ int main(int argc, char* argv[])
 
 #include <CGAL/Pm_walk_along_line_point_location.h>
 
+#ifndef CGAL_IO_FILE_DRAWER_H
+#include <CGAL/IO/Pm_drawer.h>
+#endif
+
+#ifndef CGAL_IO_DRAW_PM_H
+#include <CGAL/IO/draw_pm.h>
+#endif
+
 #include <CGAL/IO/Window_stream.h>
 
 typedef leda_integer NT;
-//typedef double                                           NT;
-//typedef leda_real                                           NT;
-//typedef leda_rational NT;
+//typedef double           NT;
+//typedef leda_real        NT;
+//typedef leda_rational    NT;
 //typedef CGAL::Double_eps NT;
 
 typedef CGAL::Homogeneous<NT>                      Rep;
 //typedef CGAL::Cartesian<NT>                      Rep;
 
-//typedef CGAL::Arr_segment_exact_cached_traits<Rep>          Traits;
+//typedef CGAL::Arr_segment_exact_cached_traits<Rep>   Traits;
 typedef CGAL::Arr_segment_exact_traits<Rep>          Traits;
 
-typedef Traits::Point                                  Point;
-typedef Traits::X_curve                                X_curve;
+typedef Traits::Point                                 Point;
+typedef Traits::X_curve                               X_curve;
 
 
 typedef CGAL::Arr_base_node<X_curve>   Base_node;
@@ -95,6 +105,53 @@ static CGAL::Window_stream W(400, 400, "CGAL - Segment Arrangement Demo");
 
 CGAL_BEGIN_NAMESPACE
 
+class My_Arr_drawer : public Pm_drawer< Arr_2, Window_stream >{
+private:
+  typedef Pm_drawer<Arr_2,Window_stream>  Base;
+public:
+  My_Arr_drawer( Window_stream& W ): Pm_drawer<Arr_2,Window_stream>( W ){}
+  
+  void draw_face(Face_handle f) {
+    if (f->does_outer_ccb_exist()) {
+      Arr_2::Ccb_halfedge_circulator cc=f->outer_ccb();
+      do {
+	W << cc->curve();
+      } while (++cc != f->outer_ccb());  
+    }
+
+    Arr_2::Holes_iterator hit=f->holes_begin(),eit=f->holes_end();
+    for (;hit!=eit; ++hit) {
+      Arr_2::Ccb_halfedge_circulator cc=*hit; 
+      do {
+	W << cc->curve();
+	} while (++cc != *hit);  
+    }      
+  }
+
+  void draw_vertices(Vertex_const_iterator Vertices_begin, 
+		     Vertex_const_iterator Vertices_end) {
+    W << GREEN;
+    Base::draw_vertices(Vertices_begin, Vertices_end);
+  }
+  
+  void draw_halfedges(Halfedge_const_iterator Halfedges_begin, 
+		      Halfedge_const_iterator Halfedges_end) {
+    W << BLUE;
+    Base base(window());
+    base.draw_halfedges(Halfedges_begin, Halfedges_end);
+  }
+  
+};
+ 
+Window_stream& operator<<(Window_stream& os, Arr_2 &A)
+{
+  My_Arr_drawer drawer(os);
+  
+  draw_pm(arr, drawer, os);
+  
+  return os;
+}
+/*
 Window_stream& operator<<(Window_stream& os,
                           Arr_2 &A)
 {
@@ -120,6 +177,7 @@ Window_stream& operator<<(Window_stream& os,
 
     return os;
 }
+*/
 CGAL_END_NAMESPACE
 
 void color_face(CGAL::Window_stream& W, Arr_2::Halfedge_handle e,
@@ -145,7 +203,8 @@ void color_face(CGAL::Window_stream& W, Arr_2::Halfedge_handle e,
     
   }
 }
-// redraw function for the LEDA window. used automatically when window reappears
+// redraw function for the LEDA window. used automatically when window 
+// reappears
 void redraw(CGAL::Window_stream * wp) 
 { wp->start_buffering();
   wp->clear();
@@ -168,9 +227,6 @@ int main(int argc, char* argv[])
 
   CGAL::Timer insrt_t;
 
-  //  Arr_2 arr(new CGAL::Pm_walk_along_line_point_location<Arr_2::Planar_map>);
-
-  //  CGAL::Window_stream W(400, 400);
   double x0=-200,x1=200,y0=-200;
 
   W.init(x0,x1,y0);
