@@ -1,6 +1,7 @@
 negocier la doc de Filtered_exact...
 
 General
+- parametres template par defaut
 - new Vertex/Cell
 	create_cell T3 pour remove
 	etc
@@ -8,6 +9,7 @@ General
   tout le 2d dans le 3d
 - virer geom_traits
 - purify
+- vrml
 
 TEST SUITE
 
@@ -42,6 +44,7 @@ Delaunay
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
 - dual -> voronoi
+- nearest neighbor
 
 Gestion memoire
 - Alignement des cellules en memoire : effets de cache + pointeurs a
