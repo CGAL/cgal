@@ -1,3 +1,6 @@
+4.41	 (8 January 02)
+- CodeWarrior support.
+
 4.40	 (21 December 01)
 - VC++ 7 support.
 

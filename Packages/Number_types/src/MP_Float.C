@@ -38,6 +38,8 @@ my_rint(double d)
 {
 #if defined __BORLANDC__ || defined _MSC_VER
   return int(d<0 ? d-0.5 : d+0.5);
+#elif defined __MWERKS__
+  return (int) std::rint(d);
 #else
   return (int) ::rint(d);
 #endif
@@ -206,8 +208,8 @@ to_double(const MP_Float &b)
 
   int exp = b.max_exp();
   int steps = std::min(limbs_per_double, b.v.size());
-  double d_exp_1 = ::ldexp(1.0, - (int) log_limb);
-  double d_exp   = ::ldexp(1.0, exp * log_limb);
+  double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - (int) log_limb);
+  double d_exp   = CGAL_CLIB_STD::ldexp(1.0, exp * log_limb);
   double d = 0;
 
   for (int i = exp - 1; i > exp - 1 - steps; i--) {
@@ -227,8 +229,8 @@ to_interval(const MP_Float &b)
 
   int exp = b.max_exp();
   int steps = std::min(limbs_per_double, b.v.size());
-  double d_exp_1 = ::ldexp(1.0, - (int) log_limb);
-  double d_exp   = ::ldexp(1.0, exp * log_limb);
+  double d_exp_1 = CGAL_CLIB_STD::ldexp(1.0, - (int) log_limb);
+  double d_exp   = CGAL_CLIB_STD::ldexp(1.0, exp * log_limb);
 
   // We take care of overflow.  The following should be enough.
   if (!CGAL_NTS is_finite(d_exp))
@@ -289,7 +291,7 @@ print (std::ostream & os, const MP_Float &b)
     if (exp != 0)
       os << " * 2^" << exp;
 
-    approx += ::ldexp(double(*i), exp);
+    approx += CGAL_CLIB_STD::ldexp(double(*i), exp);
 
     exp += log_limb;
   }
