@@ -144,9 +144,6 @@ typedef typename Traits::Curve                       Curve;
 typedef std::list<X_curve>                           CurveContainer;
 typedef typename CurveContainer::iterator            CurveContainerIter;
 
-//typedef typename Traits::compare_x_2_object                  compare_x_2_object;
-//typedef typename Traits::compare_y_2_object                  compare_y_2_object;
-
 public:
   friend class Segment_data<Rep>;
   friend class Hot_Pixel<Rep>;
@@ -480,11 +477,15 @@ bool Hot_Pixel<Rep_>::intersect_bot(Segment_2 &seg) const
     result = CGAL::intersection(seg,*bot_seg);
 
     if(CGAL::assign(p,result)) {
-      NT tmp = x + pixel_size / 2.0;
-      return(p.x() != tmp || Snap_rounding_2<Rep_>::get_direction() ==
-             Snap_rounding_2<Rep_>::UP_LEFT && seg.target().x() != tmp ||
+      Point_2 tmp(x + pixel_size / 2.0,0);
+      Comparison_result c_p = _gt.compare_x_2_object()(p,tmp);
+      Comparison_result c_target = _gt.compare_x_2_object()(seg.target(),tmp);
+      Comparison_result c_source = _gt.compare_x_2_object()(seg.source(),tmp);
+
+      return(c_p != EQUAL || Snap_rounding_2<Rep_>::get_direction() ==
+             Snap_rounding_2<Rep_>::UP_LEFT && c_target != EQUAL ||
              Snap_rounding_2<Rep_>::get_direction() ==
-             Snap_rounding_2<Rep_>::DOWN_RIGHT && seg.source().x() != tmp);
+             Snap_rounding_2<Rep_>::DOWN_RIGHT && c_source != EQUAL);
     } else if(CGAL::assign(s,result))
       return(true);
     else
