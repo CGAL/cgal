@@ -20,23 +20,27 @@
   
 The class \ccRefName\ is a geometric traits class which alows to
 triangulate
-a terrain. It builds 
-a two dimensional triangulation  embedded in 3D space
-whose projection 
+a terrain. This traits class is designed to build 
+a two dimensional triangulation  embedded in 3D space,
+i.e. a triangulated surface, such that 
+its
 on the $xy$ plane  is a Delaunay triangulation.
 This is a usual construction for GIS terrains.
 Instead of really projecting the 3D points and
 maintaining a mapping between each point and its projection
  (which costs space and is error prone)
-this class supplies geometric predicates that ignore the
+the class \ccRefName\  supplies geometric predicates that ignore the
 \ccc{z}-coordinate of the points.
 
 The class is a model of the concept \ccc{DelaunayTriangulationTraits_2} 
-except that it dooesnot provide the type and constructors
+except that it does not provide the type and constructors
 required to build the dual Voronoi diagram.
-The class \ccRefName\ has  templated by a parameter which has to
-be instantiated by a \ccc{Kernel} and it uses types 
-and predicates defined in this  kernel.
+
+\ccParameter
+The template parameter \ccc{K}  has to
+be instantiated by a model of the \ccc{Kernel} concept.
+\ccRefName\ uses types 
+and predicates defined in \ccc{K}.
 
 \ccInclude{CGAL/Triangulation_euclidean_traits_xy_3.h}
 
@@ -63,7 +67,7 @@ which constructs a triangle from three points.}
 \ccGlue
 \ccNestedType{Compare_x_2}{Predicate object. Provides
 the operator~: \\
-\ccc{Comparison_result operator()(Point p, Point q)} \\
+\ccc{Comparison_result operator()(Point_2 p, Point_2 q)} \\
 which returns 
 \ccc{SMALLER, EQUAL} or \ccc{ LARGER}
  accordingto the
@@ -71,7 +75,7 @@ $x$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
 \ccNestedType{Compare_y_2}{Predicate object. Provides
 the operator~: \\ 
-\ccc{Comparison_result operator()(Point p, Point q)}\\
+\ccc{Comparison_result operator()(Point_2 p, Point_2 q)}\\
 which returns 
 (\ccc{SMALLER, EQUAL} or \ccc{ LARGER})
 according to the
@@ -79,19 +83,21 @@ $y$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
 \ccNestedType{Orientation_2}{Predicate object. Provides
 the  operator~: \\
-\ccc{Orientation operator()(Point p, Point q, Point r)}\\
+\ccc{Orientation operator()(Point_2 p, Point_2 q, Point_2 r)}\\
 which returns
-\ccc{LEFT_TURN} (resp. \ccc{RIGHT_TURN}) is $r$ is on the left 
-(resp. on the right) of the oriented line \ccc{pq}
-and \ccc{COLLINEAR} is the three points are colinear.}
+\ccc{LEFT_TURN}, \ccc{RIGHT_TURN} or \ccc{COLLINEAR}
+ according to the position of the projection of $r$
+with respect to the projection of the 
+oriented line \ccc{pq}.}
 \ccGlue
-\ccNestedType{Side_of_oriented_circle_2}{Predicate object. Must
-provide the operator
-\ccc{Oriented_side operator()(Point p, Point q, Point r, Point s)}
+\ccNestedType{Side_of_oriented_circle_2}{Predicate object. 
+Provides the operator~:
+\ccc{Oriented_side operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 s)}
 which takes four points $p, q, r, s$ as arguments and returns
 \ccc{ON_POSITIVE_SIDE}, \ccc{ON_NEGATIVE_SIDE} or, 
-\ccc{ON_ORIENTED_BOUNDARY} according to the position of points \ccc{s}
-with respect to the oriented circle through  through $p,q$
+\ccc{ON_ORIENTED_BOUNDARY} according to the position of 
+the projection of point\ccc{s}
+with respect to the oriented circle through the projections of $p,q$
 and $r$.}
 
 \ccCreation
@@ -107,7 +113,7 @@ default constructor.}
 \ccGlue
 \ccConstructor{Triangulation_euclidean_traits_xy_3(
                       Triangulation_euclidean_traits_xy_3 tr);}
-{Copy constructor}
+{Copy constructor.}
 \ccMethod{Triangulation_euclidean_traits_xy_3 operator=
               (Triangulation_euclidean_traits_xy_3  tr);}
 {Assignment operator.}
@@ -115,10 +121,11 @@ default constructor.}
 
 \ccHeading{Access to predicate objects}
 The following access functions are provided
+
 \ccThree{Side_of_oriented_circle_2}{side_of_oriented_circle_2_object();}{}
-\ccMethod{Construct_segment_2 construct_segment_2_object();}
+\ccMethod{Construct_segment_2 construct_segment_2_object();}{}
 \ccGlue
-\ccMethod{Construct_triangle_2 construct_triangle_2_object();}
+\ccMethod{Construct_triangle_2 construct_triangle_2_object();}{}
 \ccGlue
 \ccMethod{Comparison_x_2 compare_x_2_object();}{}                               \ccGlue
 \ccMethod{Comparison_y_2 compare_y_2_object();}{}

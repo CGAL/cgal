@@ -23,14 +23,14 @@ The class \ccRefName\ is the basic class
 designed to handle triangulations
 of set of points ${  A}$ in the plane.
 
-Such a triangulation has as its vertices the points of ${  A}$
+Such a triangulation has vertices at the points of ${  A}$
 and its domain covers the convex hull of ${  A}$.
 It can be viewed as a planar partition of the plane
 whoses bounded faces are triangular and cover
 the convex hull of ${  A}$. The single unbounded face of this partition
-is the complementary of the convex hull of ${  A}$. 
-In many applications, such as Kirkpatrick's hierarchy
-or incremental Delaunay construction, it is convenient to
+is the complementary of the convex hull of ${  A}$.
+ 
+In many applications, it is convenient to
 deal only with triangular faces. Therefore, we add to the
 triangulation
 a fictitious vertex, called the \ccc{infinite vertex}
@@ -78,7 +78,7 @@ in counterclockwise order. The neighbor of a face are also
 indexed with 0,1,2 in such a way that the neighbor indexed by $i$
 is opposite to the vertex with the same index.
 
-The triangulation classes
+The triangulation class
 offer  two functions \ccStyle{int cw(int i)} and 
 \ccStyle{int ccw(int i)} 
 which given the index of a vertex in a face
@@ -119,6 +119,7 @@ of~\ccc{f} (see Figure~\ref{Triangulation_ref_Fig_neighbors}).
 The class \ccRefName\ has  two template parameters. The first one
 \ccc{Traits} is the geometric traits, it is to be instantiated by
  a model of the concept \ccc{TriangulationTraits_2}.
+
 The second parameter is the triangulation data structure,
 it has to be instantiated by a model of the concept
 \ccc{TriangulationDataStructure_2}.
@@ -132,16 +133,16 @@ By befault, the triangulation data structure  is instanciated by
 This class provides the functions \ccc{cw(i)} et \ccc{ccw(i)}.
 
 \ccTypes
-\ccThree{typedef Traits::Triangle}{Triangulation_data_structure;}{}
+\ccThree{typedef Traits::Triangle_2}{Triangulation_data_structure;}{}
 \ccTypedef{typedef Traits Geom_traits;}{the traits class.}
 \ccGlue
 \ccTypedef{typedef Tds Triangulation_data_structure;}{the triangulation data structure type.}
 
-\ccTypedef{typedef Traits::Point Point;}{the point type}
+\ccTypedef{typedef Traits::Poin_2t Point;}{the point type}
 \ccGlue
-\ccTypedef{typedef Traits::Segment Segment;}{the segment type}
+\ccTypedef{typedef Traits::Segment_2 Segment;}{the segment type}
 \ccGlue
-\ccTypedef{typedef Traits::Triangle Triangle;}{the triangle type}
+\ccTypedef{typedef Traits::Triangle_2 Triangle;}{the triangle type}
 
 \ccTypedef{typedef Tds::Vertex Vertex;}{the vertex type.}
 \ccGlue
@@ -199,17 +200,17 @@ vertices.}
 finite vertices of the triangulation.} 
 
 
-\ccNestedType{Line_face_circulator}{circulator over faces intersected by a line.}
+\ccNestedType{Line_face_circulator}{circulator over all faces intersected by a line.}
 
 
 \ccNestedType{Face_circulator} 
-{circulator over faces incident to a given vertex.}
+{circulator over all faces incident to a given vertex.}
 \ccGlue
 \ccNestedType{Edge_circulator}
-{circulator over edges incident to a given vertex.}
+{circulator over all  edges incident to a given vertex.}
 \ccGlue
 \ccNestedType{Vertex_circulator}
-{circulator over vertices incident to a given vertex.}
+{circulator over all vertices incident to a given vertex.}
 
 The triangulation class also defines the following enum type to specify
 which case occurs when locating a point in the triangulation.
@@ -314,14 +315,14 @@ of a particular feature (edge or face).
 \ccThree{bool }{t.is_infinite( Face_handle f, int i)x}{}
 \ccMethod{bool
           is_infinite(Vertex_handle v) const;}
-{\ccc{true}, iff \ccc{v} is the \ccc{infinite_vertex}.}
+{\ccc{true} iff \ccc{v} is the \ccc{infinite_vertex}.}
 \ccGlue
 \ccMethod{bool
           is_infinite(Face_handle f) const;}
-{\ccc{true}, iff face \ccc{f} is infinite.}
+{\ccc{true} iff face \ccc{f} is infinite.}
 \ccGlue
 \ccMethod{bool is_infinite(Face_handle f, int i) const;}
-{\ccc{true}, iff edge \ccc{(f,i)} is infinite.}
+{\ccc{true} iff edge \ccc{(f,i)} is infinite.}
 \ccGlue
 \ccMethod{bool
           is_infinite(Edge e) const;}
@@ -356,7 +357,7 @@ the other vertex of \ccc{e}, \ccc{e} is the edge \ccc{(fr,i)} where
 on the right side \ccc{e} oriented from \ccc{va} to \ccc{vb}.}
 \ccGlue
 \ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3);}
-{\ccc{true} if there is a face having \ccc{v1}, \ccc{v2} and a\ccc{v3} 
+{\ccc{true} if there is a face having \ccc{v1}, \ccc{v2} and \ccc{v3} 
 as vertices.}
 \ccGlue
 \ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
@@ -907,20 +908,17 @@ is an internal format.
 {Reads a triangulation from stream \ccc{is} and assigns it
 to \ccVar. \ccPrecond The extract operator must be defined for \ccc{Point}.}
 
-The information ouput  in the \ccc{iostream} is: 
-the dimension, the number of vertices (including the infinite one), 
-and the number of faces (including infinite ones).
-Then comes 
-for each vertex (except the infinite vertex), 
+The information ouput  in the \ccc{iostream} is: \\
+- the dimension, the number of vertices (including the infinite one), 
+ and the number of faces (including infinite ones). \\
+- for each vertex (except the infinite vertex), 
 the non combinatorial information stored in  that vertex
-(point, etc.).
-Then comes 
-for each faces,  the indices of its vertices and 
+(point, etc.). \\
+- for each faces,  the indices of its vertices and 
 the non combinatorial information (if any) in  this face.
-Then comes 
-for each face again 
- the indices of the neighboring faces. 
-The  index of an item  (vertex of face)
+- for each face again 
+ the indices of the neighboring faces. \\
+The  index of an item  (vertex of face) is
 the rank of this item in the ouput order.
 When dimension $<$ 2, the same information is ouput
 for faces of maximal dimension instead of faces.
@@ -933,9 +931,9 @@ for faces of maximal dimension instead of faces.
 %{Inserts the triangulation \ccVar\ into the window stream \ccc{W}.
 %The insert operator must be defined for \ccc{Point}
 %and \ccc{Segment}.}
-CGAL also provides  stram operators \ccc{ <<}  to draw triangulations
+CGAL also provides  stream operators \ccc{ <<}  to draw triangulations
 on \ccc{CGAL::Window_stream}, the LEDA based graphic package,
-and on \ccc{CGAL::Qt_widget},the Qt based graphic package.
+and on \ccc{CGAL::Qt_widget}, the Qt based graphic package.
 See the chapters on \ccc{Window_stream} and on \ccc{Qt_widget} in
 the Support Library manual.
 

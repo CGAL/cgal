@@ -63,10 +63,10 @@ $y$-ordering of points \ccc{p} and \ccc{q}.}
 \ccNestedType{Orientation_2}{Predicate object. Provides
 the  operator~: \\
 \ccc{Orientation operator()(Point p, Point q, Point r)}\\
-which returns
-\ccc{LEFT_TURN} (resp. \ccc{RIGHT_TURN}) is $r$ is on the left 
-(resp. on the right) of the oriented line \ccc{pq}
-and \ccc{COLLINEAR} is the three points are colinear.}
+which returns \ccc{LEFT_TURN}, \ccc{RIGHT_TURN} or \ccc{COLLINEAR}
+depending on $r$ being, with respect to
+the oriented line \ccc{pq}, 
+on the left side , on the right side or on the line.}
 \ccGlue
 \ccNestedType{Side_of_oriented_circle_2}{Predicate object. Must
 provide the operator
@@ -94,7 +94,7 @@ Only a default constructor, copy constructor
  and an assignement operator are required. 
 Note that further constructors
 can be provided. 
-\ccThree{TriangulationTraits_2}{traits=gtr  }{}
+\ccThree{TriangulationTraits_2}{traits=gtrxx  }{}
 \ccConstructor{TriangulationTraits_2();}{default constructor.}
 \ccGlue
 \ccConstructor{TriangulationTraits_2(TriangulationTraits_2 gtr);}
@@ -103,7 +103,7 @@ can be provided.
 {Assignment operator.}
 
 \ccHeading{Predicate functions}
-\ccThree{TriangulationTraits_2}{traits.construct_circumcenter_2_object();}
+\ccThree{Construct_circumcenter_2}{traits.construct_circumcenter_2_object();}
 {}
 The following functions give access to the  predicate 
 and constructor objects.

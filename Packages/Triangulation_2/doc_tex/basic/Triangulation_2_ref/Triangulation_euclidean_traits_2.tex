@@ -20,9 +20,10 @@
   
 The class \ccRefName\ can be used to instantiate the geometric traits
 class of basic and Delaunay triangulations.
- It is templated by a parameter which has to
-be instantiated by a \ccc{Kernel} and uses types 
-and predicates defined in this  kernel.
+The templated parameter \ccc{K} has to
+be instantiated by a \model of the \ccc{Kernel} concept.
+The class \ccRefName\  uses types 
+and predicates defined \ccc{K}.
 
 
 \ccInclude{CGAL/Triangulation_euclidean_traits_2.h}

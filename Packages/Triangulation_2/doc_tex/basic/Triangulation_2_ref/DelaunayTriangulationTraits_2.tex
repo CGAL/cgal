@@ -22,10 +22,10 @@ In addition to the requirements
 of the concept \ccc{TriangulationTraits_2}
 described \ccRefPage{TriangulationTraits_2},
 the concept \ccRefName\
-has to  provide a predicate type  \ccc{Side_of_oriented_circle_2} 
-to implement the \ccc{side_of_oriented_circle} test.
-This test  is the basic test used to maintain the
-empty circle property.
+provide a predicate to check the empty circle
+property. The correponding predicate type
+is called  type  \ccc{Side_of_oriented_circle_2}.
+
 
 The additional types \ccc{Line_2},
 \ccc{Ray_2} and the constructor objects
@@ -38,6 +38,8 @@ The additional predicate type \ccc{Compare_distance_2} is
 required if calls to 
 \ccc{nearest_vertex(..)} are issued.
 
+\ccRefines
+\ccc{TriangulationTraits_2}
 
 \ccTypes
 \ccThree{DelaunayTriangulationTraits_2}{traits(dt)xxx}{}
@@ -46,7 +48,7 @@ required if calls to
 some dual
 functions are called.}
 \ccGlue
-\ccNestedType{Ray_2}{The type for ray.This type is  required only if
+\ccNestedType{Ray_2}{The type for ray. This type is  required only if
 some dual
 functions are called.}
 
@@ -66,7 +68,7 @@ and $r$.}
  the operator : \\
 \ccc{Comparison_result operator()(Point_2 p, Point_2 q, Point_2 r)}
 which returns \ccc{SMALLER}, \ccc{EQUAL} or \ccc{LARGER}
-iff the distance between p and q is smaller, equal or larger
+according to the distance between p and q being smaller, equal or larger
 than the distance between p and r.  This type is only require if
 \ccc{nearest_vertex} queries are issued.}
 
@@ -105,19 +107,17 @@ operator=(traits2);}{Assignment operator.}
 \ccThree{Construct_circumcenter_2}{traits.construct_circumcenter_2_object();}{}
 \ccMethod{Side_of_oriented_circle_2
 side_of_oriented_circle_2_object();}{}
-\ccGlue
+
+
+The following  functions are required  only if
+member functions of the Delaunay triangulation
+relative to the dual Voronoi diagram  are called.
 \ccMethod{Compare_distance_2
-compare_distance_2_object();}
-{This function is required only if
-\ccc{nearest_vertex} queries are issued.}
+compare_distance_2_object();} {}
 \ccGlue
-\ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}
-{Required only if  functions
-relative to the dual Voronoi diagram are called.}
+\ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}{}
 \ccGlue
-\ccMethod{Construct_bisector_2 construct_bisector_2_object();}
-{Required only if  functions
-relative to the dual Voronoi diagram are called.}
+\ccMethod{Construct_bisector_2 construct_bisector_2_object();}{}
 \ccGlue
 \ccMethod{Construct_direction_2 construct_direction_2_object();} {}
 \ccGlue
@@ -125,8 +125,11 @@ relative to the dual Voronoi diagram are called.}
 
 
 \ccHasModels
-The Cartesian and homogeneous kernels provided by \cgal. \\
-\ccc{CGAL::Triangulation_euclidean_traits_2<Rep>}, \\
+\cgal kernels\\
+\ccc{CGAL::Triangulation_euclidean_traits_2<Rep>}.
+
+The following traits class  provide  everything except types and member
+functions required for the dual Voronoi diagram~;\\
 \ccc{CGAL::Triangulation_euclidean_traits_xy_3<Rep>}, \\
 \ccc{CGAL::Triangulation_euclidean_traits_yz_3<Rep>}, \\
 \ccc{CGAL::Triangulation_euclidean_traits_zx_3<Rep>}.

@@ -31,18 +31,19 @@ There are three versions of  constrained triangulations
 \begin{itemize}
 \item
 In the basic version, the constrained triangulation 
-do not handle intersecting constraints, and the set of input 
+does not handle intersecting constraints, and the set of input 
 constraints is required to be a set of segments that do not intersect
 except possibly at their endpoints. Any number of constrained edges
-are allowed to share the same endpoint.  Vertical constrained edges or
-constrained edges with null length are allowed.
+are allowed to share the same endpoint.  Vertical constrained edges
+are allowed as well as 
+constrained edges with null length.
 \item
 The two other versions support intersecting input constraints.
 In those versions, input constraints are allowed to be
 intersecting, overlapping or partially
 overlapping segments.
 The triangulation introduce  additional  vertices at each point which
-is a proper intersection points of  two 
+is a proper intersection point of  two 
 constraints. A single constraint intersecting other
 constraints will then appear as the union of several 
 constrained edges of  the triangulation.
@@ -106,7 +107,7 @@ intersection points.\\
 \ccc{CGAL::Exact_intersections_tag} is to be used in conjunction
 with an exact arithmetic type.
 
- The information about constrained edges is store in the 
+ The information about constrained edges is stored in the 
 faces of the triangulation. Thus the nested \ccc{Face}
 type of a constrained triangulation offers
 additonnal functionalities to deal with this information.
@@ -279,15 +280,6 @@ write ``C'' or ``N'' depending whether edge
  The insertion of a constrained edge runs in time
 proportionnal to the number of triangles intersected by this edge.
 
-There is no need for a special implementation
-of the method \ccVar\ccc{.is_valid()}
-because the base class function
-\ccc{ Triangulation_2<Traits>::is_valid()}
-call the face class method
-\ccc{Tds::Face::is_valid()} 
-which, in the case of a constrained triangulation,
-includes a test of the consistency of the
-information about constrained edges.
 
 \end{ccRefClass}
 

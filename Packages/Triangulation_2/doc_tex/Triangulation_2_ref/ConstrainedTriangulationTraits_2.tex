@@ -64,19 +64,7 @@ a line  and a point :
 betwen \ccc{p} and \ccc{l}.}
 
 
-\ccCreation
 \ccCreationVariable{traits}  %% choose variable name
-
-\ccConstructor{ConstrainedTriangulationTraits_2();}{default constructor.}
-\ccGlue
-\ccConstructor{ConstrainedTriangulationTraits_2(
-                    const ConstrainedTriangulationTraits_2& traits2);}
-{Copy constructor}
-
-\ccMethod{ConstrainedTriangulationTraits_2 operator=
-	(const ConstrainedTriangulationTraits_2& traits2);}
-{Assignment operator.}
-
 
 \ccHeading{Access to constructor object}
 \ccMethod{Intersect_2  intersect_2_object();}{}
@@ -95,7 +83,7 @@ The kernels of \cgal\ are models for this traits class.
 
 \ccSeeAlso
 \ccc{TriangulationTraits_2} \\
-\ccc{ConstrainedDelaunayTriangulationTraits_2}
+\ccc{ConstrainedDelaunayTriangulationTraits_2} \\
 \ccc{CGAL:Constrained_Triangulation_2<Traits,Tds,Itag>}
 
 %\ccExample

@@ -220,7 +220,7 @@ included in the circumcircle of \ccc{f}.
 \ccc{OutItBoundaryEdges} stands for an output iterator with \ccc{Edge} as value type.
 This members function outputs in the container pointed to by \ccc{fit}
 the faces which are in conflict with point \ccc{p}.
-It outputs in the container pointed to by \ccc{eit} the 
+It outputs in the container pointed to by \ccc{eit} 
 the boundary of the zone in conflict with \ccc{p}.
 The boundary edges
 of the conflict  zone are ouput in counterclockwise order
@@ -279,8 +279,9 @@ initial list of edges to be flipped. The returned
 triangulation is constrained Delaunay 
 if the initial list contains at least all the edges of the
 input triangulation that failed to be 
-constrained Delaunay (i. e. either constrained or
-locally Delaunay. }
+constrained Delaunay. (An edge is said to be 
+constrained Delaunay if it is  either constrained or
+locally Delaunay.) }
 \end{ccAdvanced}
 
 

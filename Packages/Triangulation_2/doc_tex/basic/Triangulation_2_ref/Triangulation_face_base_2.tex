@@ -18,13 +18,13 @@
 \ccCreationVariable{fb}
 \ccDefinition
   
-The class \ccRefName\ is model for the concept
+The class \ccRefName\ is a model for the concept
 \ccc{TriangulationFaceBase_2}. It is the default face base class
 for basic and Delaunay triangulation.
 
 These default base class can be used directly or can serve as a base to derive
 other base classes with some additional attribute (a color for example)
-tuned for a specific application.
+tuned for specific applications.
 
 
 \ccParameters
@@ -33,8 +33,8 @@ The geometric traits is actually not used by the class.
 
 The second template parameter 
 has to be a  model of the concept \ccc{TriagulationDSFaceBase_2}
-and will serve as a base class for \ccRefName\.
-The default value for this parameter is
+and will serve as a base class for \ccRefName\ .
+\cgal provides a default instantiation for this parameter which is
 \ccc{Triangulation_ds_face_base_2<>}.
 
 

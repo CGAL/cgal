@@ -36,13 +36,14 @@ the vertex base of a triangulation stores a point.
 \ccConstructor{TriangulationVertexBase_2(Point p);}
 {constructs a vertex embedded in point \ccc{p}.}
 \ccConstructor{TriangulationVertexBase_2(Point p, Face_handle f);}
-{constructs a vertex embedded in point \ccc{p}and pointing on face \ccc{f}.}
+{constructs a vertex embedded in point \ccc{p} and pointing on face \ccc{f}.}
 
 \ccAccessFunctions
+\ccThree{istream&}{istream& is << & v }{}
 \ccMethod{Point point() const;}
 {returns  the point.}
 \ccGlue
-\ccMethod{void* face() const;}{ a pointer to an incident face.}
+\ccMethod{void* face() const;}{ returns a pointer to an incident face.}
 
 \ccHeading{Setting}
 \ccMethod{void set_point(Point p);}

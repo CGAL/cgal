@@ -19,14 +19,15 @@
 \ccDefinition
   
 The concept \ccRefName\ describes the requirements for
-the base face of a triangulation data structure
-plugged into a basic (\ccc{Triangulation_2<Traits,Tds>}).
-or Delaunay triangulation.
+the base face class of a triangulation data structure
+that is itself plugged into a basic triangulation
+or a Delaunay triangulation.
 
 This concept refines the concept \ccc{TriangulationDSFaceBase_2}
-and could add  geometric information. However, the triangulations of
-CGAL do not store any geometric information in the faces
-and, in fact, this concept is just equal to \ccc{TriangulationDSFaceBase_2}
+and could add  geometric information. In fact, 
+currently the triangulations of
+CGAL do not  store any geometric information in the faces
+and, thus this concept is just equal to \ccc{TriangulationDSFaceBase_2}
 and only provided for symmetry with the vertex case.
 
 

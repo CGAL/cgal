@@ -33,7 +33,7 @@ When intersections of input constraints are supported,
 the base class constructs a triangulation  of the  arrangement
 of the constraints,
 introducing new vertices at each proper intersection
-points and  refining the input constraints into subconstraints
+point and  refining the input constraints into subconstraints
 which are edges (more precisely constrained edges) of the
 triangulation. 
 In this context, the constraint hierarchy 
@@ -79,14 +79,12 @@ subconstraint in this constraint.
 It provides three member functions \ccc{vertices_begin()}, \ccc{vertices_end()}
 and \ccc{current()} returning 
 iterators of the type \ccc{Vertices_in_constraint_iterator}
-\ccc{vertices_begin()} returns an
-iterator pointing 
-on the first vertex of the enclosing constraint,
-\ccc{vertices_end()} returns an iterator
-pointing past the last vertex on  the enclosing constraint, and 
-\ccc{current()} returns an iterator pointing
-on the first vertex of the subconstraint in the sequence of vertices
-of the enclosing constraint.}
+on the sequence of vertices of the enclosing constraint. 
+These iterators point
+respectively on the first vertex of the enclosing constraint,
+past the last vertex  
+and on the first vertex of the subconstraint.}
+
 
 
 \ccTypedef{typedef Context_iterator;}{An iterator on 
@@ -121,7 +119,7 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
  is \ccc{Constraint}.
 }
 
-\ccFunction{void ~Constrained_triangulation_plus_2();}
+\ccFunction{void ~ctp();}
 {Destructor. All vertices and faces are deleted.
 The constraint hierarchy is deleted.}
 
@@ -234,14 +232,14 @@ vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb);}
 {Returns an iterator on the first vertex on the constraint
 \ccc{(va,vb)}
 \ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
-of a constrained edge of the triangulation.}
+of an input constraint.}
 \ccGlue
 \ccMethod{Vertices_in_constraint_iterator 
 vertices_in_constraint_end(Vertex_handle va, ertex_handle vb);}
 {Returns an iterator past  the last  vertex on  the constraint
 \ccc{(va,vb)}
 \ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
-of a constrained edge of the triangulation.}
+of an input constraints.}
 
 
 \ccSeeAlso

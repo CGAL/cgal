@@ -101,32 +101,56 @@ on the two dimensional plane of the convex hull of the set of three
 dimensional points 
 ${  P'}= \{ (p_i,p_i ^2 - w_i ), i = 1, \ldots , n \}$.
 
+The vertices of the regular triangulation
+of a set of weighted points ${  PW}$ form only a subset
+of the set of center points of ${   PW}$.
+Therefore the  insertion of a weighted point  in a regular triangulation
+does not necessarily imply the creation of a new vertex.
+If the new inserted point does not appear as a vertex in the
+regular triangulation, it is said to be hidden. 
+
+Hidden points
+are  stored in special vertices called hidden vertices.
+A hidden point is considered as hidden by
+the facet of the triangulation where its point component is located :
+in fact, the hidden point 
+can appear as vertex of the triangulation
+only if this facet is removed.
+Each  face of a regular triangulation stores
+the list of hidden vertices whose points are located in the facet.
+When a facet is removed, 
+points hidden by this facet are reinserted in the triangulation.
 
 
- 
-A regular triangulation is a special triangulation of a set of points,
-and  the class \ccRefName\ derives
-from the basic class \ccc{Triangulation_2<Traits,Tds>}.
-The template parameters \ccc{Traits} and \ccc{Tds} 
-are to be instantiated with models of respectively
-\ccc{RegularTriangulationTraits_2}  and
-\ccc{TriangulationDataStructure_2}.
 
 
-The concept of triangulation data structure
-is described in \ccRefPage{TriangulationDataStructure_2}
-and the same models can be used to instantiate the
-triangulation data structure of either a \ccc{Triangulation_2<Traits,Tds>}
-or a \ccRefName.
-The  concept of \ccc{RegularTriangulationTraits_2},
-described page~\ccRefPage{RegularTriangulationTraits_2}, 
-must provide a weighted point type
-and a power test on these weighted points. 
 
 \ccInclude{CGAL/Regular_triangulation_2.h}
 
+\ccParameters
+The geometric traits parameter \ccc{Traits}  has 
+to be instantiated with a model of the concept
+\ccc{RegularTriangulationTraits_2}. 
+The concept \ccc{RegularTriangulationTraits_2} refines the
+concept \ccc{TriangulationTraits_2} by adding the type
+\ccc{Weighted_point_2} to describe weighted points
+and the power_test on weighted points.
+
+The \ccc{Tds} parameter has to be instantiated by a model of
+\ccc{TriangulationDataStructure_2}. The face base of a regular
+triangulation has to be a model of the concept
+\ccc{RegularTriangulationFaceBase_2}.  while
+the vertex base class has to be a model
+of \ccc{RegularTriangulationVertexBase_2}.
+\cgal\ provides a default
+instantiation for the \ccc{Tds} parameter by the class
+\ccc{CGAL::Triangulation_data_structure_2 <
+                       CGAL::Reugular_triangulation_vertex_base_2<Traits>,
+		       CGAL::Regular_Triangulation_face_base_2<Traits> >}.
+ 
 \ccInheritsFrom
 \ccc{Triangulation_2<Traits,Tds>}
+
 
 \ccTypes
 \ccThree{typedef Traits::Weighted_point}{Weighted_point;}{}
@@ -160,27 +184,6 @@ hidden vertices.}
 
 
 \ccHeading{Insertion and Removal}
-
-The vertices of the regular triangulation
-of a set of weighted points ${  PW}$ form only a subset
-of the set of center points of ${   PW}$.
-Therefore the  insertion of a weighted point  in a regular triangulation
-does not necessarily imply the creation of a new vertex.
-If the new inserted point does not appear as a vertex in the
-regular triangulation, it is said to be hidden. 
-
-Hidden points
-are  stored in a special vertices called hidden vertices.
-A hidden point can appear as vertex of the triangulation
-only when the
-two dimensional face where its point component is located
-(the face which hides it)
-is removed.
-Each  face of a regular triangulation stores
-the list of hidden vertices whose points are located in the face.
-Thus,  points hidden by a face can easily reinserted in the triangulation
-when the face is removed.
-
 
 \ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
 
@@ -291,7 +294,7 @@ power circle  associated with \ccc{f}}
 \ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
 { Tests the validity of the triangulation as a \ccc{Triangulation_2}
 and additionally test the regularity of the triangulation. This method is
- mainly  useful for debugging Delaunay triangulation algorithms designed by
+useful to debug regular triangulation algorithms implemented by
  the user.}
 \end{ccAdvanced}
 
