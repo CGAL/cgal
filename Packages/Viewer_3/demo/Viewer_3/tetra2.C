@@ -57,8 +57,15 @@ tetra schrink(tetra tet)
 
 int main(int argc, char *argv[]) 
 {
-  CGAL::Viewer_3 W(500);
+  int ex_array[6];
+  ex_array[0] = 0;
+  ex_array[1] = 500;
+  ex_array[2] = 0;
+  ex_array[3] = 500;
+  ex_array[4] = 0;
+  ex_array[5] = 500;
 
+  CGAL::Viewer_3 W(ex_array, 6);
 
   Delaunay_3 tr;
   

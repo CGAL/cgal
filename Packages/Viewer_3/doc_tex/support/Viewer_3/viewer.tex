@@ -305,6 +305,13 @@ viasualization window scaled on a 500~$\times$~500~$\times$~500 units cube. }
 
 \ccConstructor{Viewer_3(int scale);}{Defines and displays a new viewer scaled on a scale~$\times$~scale~$\times$~scale units cube.}
 
+\ccConstructor{Viewer_3(int x, int y, int z);}{Defines and displays a new viewer scaled on a x~$\times$~y~$\times$~z units cube.}
+
+\ccConstructor{Viewer_3(int x_min, int x_max, int y_min, int y_max,
+int z_min, int z_max);}{Defines and displays a new viewer scaled on a
+(x_max-x_min)~$\times$~(x_max-x_min)~$\times$~(x_max-x_min) units cube 
+whose origin is (x_min, y_min, z_min).}
+
 \ccHeading{Adding things}
 
 \ccMethod{void add_group();}{Adds a new empty group at the end of the

@@ -42,12 +42,12 @@ submit: package
 	mail -s autohandle cgal-submit@cs.uu.nl rebufat < $(TMP_file)
 	rm -f $(TMP_file)
 
-test:
+test: ./test/Viewer_3/Viewer_test.o
 	$(MAKE) -C test/$(Package)
 
 clean:
-	$(MAKE) -C doc_tex/support/$(Package) clean
-	$(MAKE) -C examples/$(Package) clean
+#	$(MAKE) -C doc_tex/support/$(Package) clean
+#	$(MAKE) -C examples/$(Package) clean
 	$(MAKE) -C test/$(Package) clean
 	rm -f $(Package).tar.gz
 

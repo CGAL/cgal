@@ -61,7 +61,9 @@ typedef void (*User_ctr_win)(GL_win *,Viewer_3 *);
 private:
 typedef Point_3<Cartesian<double> >   Point3;
   User_ctr_win default_impl;
-  int scale;
+  int *scale;
+
+
 #ifdef USE_THREAD
   pthread_t thr1;
 #endif
@@ -204,18 +206,81 @@ void main_loop();
 void set_style_in_selection(Style);
 
 
-
-
+/*
 Viewer_3() : scale(500), group(1){init_window();obj_color1=RED; obj_color2=BLACK;obj_size=10 ; obj_precision = 20 ; obj_style = FILL;}
+*/
+Viewer_3() : group(1){
+  scale = (int*) malloc(6*sizeof(int));
+  scale[0] = scale[2] = scale[4] = 0; 
+  scale[1] = scale[3] = scale[5] = 500; 
+  init_window();obj_color1=RED; obj_color2=BLACK;obj_size=10 ;
+  obj_precision = 20 ; obj_style = FILL;
+}
 
+~Viewer_3(){
+  free(scale);
+}
 
-~Viewer_3(){}
-
-
+/*
 Viewer_3(GLsizei s) :
-  scale(s)  , group(1)  {init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
+  scale(s) , group(1)  {init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
   obj_precision = 20 ; obj_style = FILL; default_impl=custom_win ;}
-   
+*/
+Viewer_3(GLsizei s) : group(1)  {
+  scale = (int*) malloc(6*sizeof(int));
+  scale[0] = scale[2] = scale[4] = 0;
+  scale[1] = scale[3] = scale[5] = s; 
+  init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
+  obj_precision = 20 ; obj_style = FILL; default_impl=custom_win ;
+}
+
+Viewer_3(GLsizei x_max, GLsizei y_max, GLsizei z_max) : group(1)  {
+  scale = (int*) malloc(6*sizeof(int));
+  scale[0] = scale[2] = scale[4] = 0;
+  scale[1] = x_max; 
+  scale[3] = y_max; 
+  scale[5] = z_max; 
+  init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
+  obj_precision = 20 ; obj_style = FILL; default_impl=custom_win ;
+}
+
+Viewer_3(GLsizei x_min, GLsizei x_max, GLsizei y_min, 
+	 GLsizei y_max, GLsizei z_min, GLsizei z_max) : group(1)  {
+  scale = (int*) malloc(6*sizeof(int));
+  scale[0] = x_min; scale[1] = x_max; 
+  scale[2] = y_min; scale[3] = y_max; 
+  scale[4] = z_min; scale[5] = z_max; 
+  init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
+  obj_precision = 20 ; obj_style = FILL; default_impl=custom_win ;
+}
+
+Viewer_3(GLsizei *s, int size_of_s) : group(1)  {
+  scale = (GLsizei*) malloc(6*sizeof(GLsizei));
+  for (int i = 0; i < 6; i++) scale[i] = 0;
+
+  switch(size_of_s) {
+  case 1:
+    scale[1] = scale[3] = scale[5] = s[0];
+    break;
+  case 3:
+    scale[1] = s[0]; scale[3] = s[1]; scale[5] = s[2];
+    break;
+  case 6:
+    for (int ii = 0; ii < 6; ii++)
+      scale[ii] = s[ii];
+    break;
+  default:
+    cerr << "Viewer_3(s, length) wrong size of array" << endl;
+    exit(0);
+  }
+
+  init_window(); obj_color1=RED;obj_color2=BLACK; obj_size=10 ;
+  obj_precision = 20 ; obj_style = FILL; default_impl=custom_win ;
+}
+
+
+
+
 
 // #########   All the callbacks #####################################
 
@@ -1051,7 +1116,7 @@ void Viewer_3::init_window()
   
   new Fl_Box(FL_DOWN_FRAME,107,97,size-119,size-144,"");
   canvas = new GL_win(110,100,size-125,size-150,scale,0);
-  form->resizable(canvas);
+  //  form->resizable(canvas);
 
   close_but = new Fl_Button(size-85,size-35,80,25,"Quit"); 
 
@@ -1072,9 +1137,10 @@ void Viewer_3::init_window()
   angle_sld->color2(FL_RED);
 
   deep_sld = new Fl_Dial(size-110, 5, 50,50, "Deep");
-  deep_sld->range(scale/10,4*scale);
+  deep_sld->range((scale[5] - scale[4])/10,
+		  4*(scale[5] - scale[4]));
   deep_sld->step(1);
-  deep_sld->value(2*scale);
+  deep_sld->value(2*(scale[5] - scale[4]));
   deep_sld->color(40);
   deep_sld->color2(FL_RED);
 
@@ -1169,20 +1235,23 @@ void Viewer_3::init_window()
   orient_but->callback(orient_cb,(void*)this);
   orient_but->value(0);
 
+
   Fl_Counter* wid_ct = new Fl_Counter(25,100,100,25,"Width");
   wid_ct->callback(wid_cb,(void*)this);
-  wid_ct->value((float) scale/5);
-  wid_ct->step((float) scale/250);
-  wid_ct->lstep((float) scale/100);
-  wid_ct->range(0,scale);
+  wid_ct->value((float) scale[1]/5);
+  wid_ct->step((float) scale[1]/250);
+  wid_ct->lstep((float) scale[1]/100);
+  wid_ct->range(0,scale[1]);
   wid_ct->align(FL_ALIGN_TOP);
 
   Fl_Roller* move_sld = new Fl_Roller(25,150,100,25,"Move");
   move_sld->type(FL_HORIZONTAL);
   move_sld->callback(move_cb, (void*)this);
-  move_sld->value(0);
-  move_sld->range(-2*scale,2*scale);
-  move_sld->step((float) scale/500);
+  //  move_sld->value(0);
+  move_sld->value((scale[0]+scale[1])/2);
+  //
+  move_sld->range(2*scale[0] - scale[1], 2*scale[1] - scale[0]);
+  move_sld->step((float) (scale[1]-scale[0])/500);
   move_sld->align(FL_ALIGN_TOP);
 
   clip_win->end();

@@ -51,7 +51,7 @@ private:
   float zplan;
   float d_zplan;
 
-  int scale;
+  int *scale;
   Color bg_color;
   Scene_graph SCG;
   std::vector<double> add_point;
@@ -112,7 +112,7 @@ std::vector<double> get_real_point(int,std::vector<double>);
 
 std::vector<double> get_point();
 
-GL_win(int ,int ,int ,int ,int ,const char*);
+GL_win(int ,int ,int ,int ,int *sc ,const char*);
 
 void reshape();
 
@@ -222,18 +222,18 @@ void mouse_release(int x, int y, int but, GL_win *W)
 
 void GL_win::set_light(float x,float y , float z, float* diff, float
 		       v, float s)
-
 {
-      GLfloat ambient[] = { 0.4, 0.4, 0.3, 1.0 };
- 
+    GLfloat ambient[] = { 0.4, 0.4, 0.3, 1.0 };
+    
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient);
     GLfloat position[] = { x, y, z, 1.0 };
     glLightf(GL_LIGHT0,GL_CONSTANT_ATTENUATION, v);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diff);
+
     glLightfv(GL_LIGHT0, GL_POSITION, position);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-
+    
     // define material reflective properties
 
     GLfloat ref[] = { 1.0,1.0,0.0};
@@ -318,9 +318,6 @@ void GL_win::draw_scene()
 	  break;
 	}
 	glPopMatrix();
-	
-
-
       }
       blink=!blink;
 #ifdef USE_THREAD
@@ -338,13 +335,13 @@ void GL_win::draw_plan(double x, double y, double z) {
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   glBegin(GL_POLYGON);
   glNormal3dv(v1);
-  glVertex3f(x-scale/2,y-scale/2,z);
+  glVertex3f(x-(scale[1]-scale[0])/2,y-(scale[3]-scale[2])/2,z);
   glNormal3dv(v2);
-  glVertex3f(x+scale/2,y-scale/2,z);
+  glVertex3f(x+(scale[1]-scale[0])/2,y-(scale[3]-scale[2])/2,z);
   glNormal3dv(v1);
-  glVertex3f(x+scale/2,y+scale/2,z);
+  glVertex3f(x+(scale[1]-scale[0])/2,y+(scale[3]-scale[2])/2,z);
   glNormal3dv(v2);
-  glVertex3f(x-scale/2,y+scale/2,z);
+  glVertex3f(x-(scale[1]-scale[0])/2,y+(scale[3]-scale[2])/2,z);
   glEnd();
  }
 
@@ -430,7 +427,7 @@ void GL_win::draw()
     glColor4f(1.0,1.0,1.0,1);
     GLUquadricObj *q= gluNewQuadric();
     gluQuadricNormals(q, GL_SMOOTH);
-    gluSphere(q,(float) (scale/100) + 1,10,8);
+    gluSphere(q,(float) (scale[5]-scale[4]/100) + 1,10,8);
     gluDeleteQuadric(q);
     glPopMatrix();
    }
@@ -467,8 +464,8 @@ void GL_win::m_grab(int dx,int dy, int but)
 	
     }
     else {
-      mx = (double) dx*(scale/500.0);
-      my = (double) dy*(scale/500.0);
+      mx = (double) dx*( (scale[1] - scale[0]) /500.0);
+      my = (double) dy*( (scale[3] - scale[2]) /500.0);
       SCG.add_translation(mx,my);
     }
 
@@ -487,10 +484,10 @@ void GL_win::m_grab(int dx,int dy, int but)
     break;
   case 3:
     if (choice == Insert) {
-      mx = (double) dx*(scale/500.0);
-      my = (double) dy*(scale/500.0);
+      mx = (double) dx*( (scale[1] - scale[0]) /500.0);
+      my = (double) dy*( (scale[3] - scale[2]) /500.0);
       add_point[0]=add_point[0] + mx; 	
-      add_point[1]=add_point[1]-my;
+      add_point[1]=add_point[1] - my;
     }
     break;
   }
@@ -548,7 +545,7 @@ int GL_win::handle(int event)
 
 
 
-GL_win::GL_win(int x,int y,int w,int h,int sc, const char *l=0)
+GL_win::GL_win(int x,int y,int w,int h,int *sc, const char *l=0)
     : Fl_Gl_Window(x,y,w,h,l), add_point(3)
       {bg_color=BLACK; bg_color.set_alpha(255);
       angle=40;Projection=true; M_P = mouse_push; 
@@ -556,7 +553,12 @@ GL_win::GL_win(int x,int y,int w,int h,int sc, const char *l=0)
       zplan=0; col_diff[0]=1; col_diff[1]=1; col_diff[2]=1;
       col_diff[3]=0.5; 
       var=1; shy=50; Xlight = 0; Ylight = 0; 
-      Zlight =1000; scale = sc; deep = 2*scale; Tclip=0;Wclip=scale/5;
+      Zlight =1000; 
+      
+      scale = sc; 
+
+      deep = 2*(scale[5] - scale[4]); 
+      Tclip=0;Wclip=(scale[5]-scale[4])/5;
       clip0[0]=0; clip0[1]=0 ; clip0[2]=1 ; clip0[3]= -Tclip + Wclip/2;
       clip1[0]=0; clip1[1]=0 ; clip1[2]=-1 ; clip1[3]= Tclip +
 					       Wclip/2;
@@ -577,21 +579,32 @@ void GL_win::redraw() {draw();swap_buffers();}
 void GL_win::reshape()
 {
      static bool first;
-     glViewport(0,0,w(),h());
+
+     glViewport(0, 0, w(), h());
+     
      glMatrixMode(GL_PROJECTION);
      glLoadIdentity();
-     float fact = (float) (scale/100) + 0.1;
+     float fact = (float) ((scale[5]-scale[4])/100) + 0.1;
  
      if (Projection) {
-       if (deep>2*scale)
-	 gluPerspective(angle,(float) w()/h(),(deep -2*scale)+fact,(deep
-								     +2*scale));
+       if (deep>2*(scale[5] - scale[4]))
+	 gluPerspective(angle,(float) w()/h(),
+			(deep -2*(scale[5] - scale[4]))+fact,
+			(deep +2*(scale[5] - scale[4])));
        else
-	  gluPerspective(angle,(float) w()/h(),fact,4*scale+deep);
-	glTranslatef(-scale/2,-scale/2,-deep);
+	  gluPerspective(angle,(float) w()/h(),fact,
+			 4*(scale[5] - scale[4])+deep);
+	glTranslatef(-(scale[0]+scale[1])/2,
+		     -(scale[2]+scale[3])/2,-deep);
+
+
       }
      else {
-      	glOrtho(0.0, w()*2, 0.0, h()*2, -2*scale,2*scale);
+
+      	glOrtho(2*scale[0] - scale[1], 2*scale[1] - scale[0], 
+ 	 	2*scale[2] - scale[3], 2*scale[3] - scale[2],
+	  	-2*(scale[5] - scale[4]), 2*(scale[5] - scale[4]));
+
      }
 
 
