@@ -137,8 +137,8 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
 template < class FT > 
 inline
 Oriented_side
-line_oriented_sideC2(const FT &a, const FT &b, const FT &c,
-                     const FT &x, const FT &y)
+side_of_oriented_lineC2(const FT &a, const FT &b, const FT &c,
+                        const FT &x, const FT &y)
 {
   return Oriented_side(CGAL::sign(a*x+b*y+c));
 }

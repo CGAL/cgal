@@ -22,7 +22,7 @@ Package: clean $(Package).tar.gz
 	@echo "---- make Submit              ----"
 	@echo "----------------------------------"
 
-symlinks: include/CGAL/PointC2.h
+symlinks:
 	cd include/CGAL/Cartesian ; sh ./create_symlinks
 
 Test:

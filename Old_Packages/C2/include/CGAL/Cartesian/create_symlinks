@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Presumably LINK=cp on M$ since there are no symlinks
-LINK="ln -s"
+LINK="ln -f -s"
 
 # The following is necessary for the new kernel to work, since
 # 1. outer files may still try to include ClassC2<R>

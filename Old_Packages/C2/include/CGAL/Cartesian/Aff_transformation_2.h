@@ -43,10 +43,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// this will be defined in aff_transformation_tags.h in the next release
-// and will have to be cleaned up
 class Identity;
-
 template < class R > class Aff_transformation_rep_baseC2;
 template < class R > class Aff_transformation_repC2;
 template < class R > class Translation_repC2;

@@ -2,9 +2,9 @@
 #define CGAL_CTAG
 #endif
 
-#ifndef CGAL_CARTESIAN_BASIC_CONSTRUCTIONS_2_H
-#include <CGAL/Cartesian/basic_constructions_2.h>
-#endif // CGAL_CARTESIAN_BASIC_CONSTRUCTIONSC2_H
+#include <CGAL/Cartesian/constructions_on_points_2.h>
+#include <CGAL/Cartesian/constructions_on_circles_2.h>
+#include <CGAL/Cartesian/distance_computations_2.h>
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 #endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H

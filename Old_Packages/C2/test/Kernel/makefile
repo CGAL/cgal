@@ -22,8 +22,6 @@ CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
            $(EXTRA_FLAGS) -Wall -W
 
-# REMOVE THE LINE WITH -DCGAL_CFG_NO_ADVANCED_KERNEL TO TRY MICHAEL'S DESIGN
-
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
@@ -82,11 +80,12 @@ test_more: test_more.o
 	$(CGAL_CXX) -o test_more test_more.o $(LDFLAGS)
 
 clean:
-	- rm -f test_kernel?? test_kernel??.o 
-	- rm -f test_predicate_classes_2?.o test_predicate_classes_2?
-	- rm -f test_new_parts??.o test_new_parts??
-	- rm -f point_d_test.o point_d_test
-	- rm -f test_more.o test_more
+	- rm -f *.o core
+	- rm -f test_kernel?? 
+	- rm -f test_predicate_classes_2?
+	- rm -f test_new_parts??
+	- rm -f point_d_test
+	- rm -f test_more
 	- rm -f core
 
 distclean: clean

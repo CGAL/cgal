@@ -1,3 +1,6 @@
+Version 3.2.1 (September 1 1999)
+- f*ck CVS!
+
 Version 3.2 (September 1 1999)
 - moved some constructions and predicates from classes to kernel_ftC2.h
   TODO: finish it so that C2 is robust with filtered

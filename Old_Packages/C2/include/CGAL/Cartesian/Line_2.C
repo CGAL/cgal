@@ -2,10 +2,9 @@
 #define CGAL_CTAG
 #endif
 
-#ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
-#include <CGAL/Cartesian/predicates_on_points_2.h>
-#endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
-
+#ifndef CGAL_CARTESIAN_CONSTRUCTIONS_ON_LINES_2_H
+#include <CGAL/Cartesian/constructions_on_lines_2.h>
+#endif // CGAL_CARTESIAN_CONSTRUCTIONS_ON_LINES_2_H
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_LINES_2_H
 #include <CGAL/Cartesian/predicates_on_lines_2.h>
 #endif // CGAL_CARTESIAN_PREDICATES_ON_LINES_2_H
@@ -235,7 +234,7 @@ Oriented_side
 LineC2<R CGAL_CTAG>::
 oriented_side(const LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return Oriented_side(CGAL::sign(a()*p.x() + b()*p.y() + c()));
+  return side_of_oriented_line(*this,p);
 }
 
 template < class R >
