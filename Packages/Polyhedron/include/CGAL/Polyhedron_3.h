@@ -62,10 +62,10 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template <class Vertex_base>
-class I_Polyhedron_vertex  : public Vertex_base  {
+template <class VertexBase>
+class I_Polyhedron_vertex  : public VertexBase  {
 public:
-    typedef Vertex_base                            Base;
+    typedef VertexBase                            Base;
     //typedef typename Base::HalfedgeDS              HDS;
     typedef typename Base::Point                   Point;
     typedef Point                                  Point_3;
@@ -121,10 +121,10 @@ public:
 public:
     // We need to repeat the constructors here.
     I_Polyhedron_vertex() {}
-    I_Polyhedron_vertex( const Vertex_base& b) : Vertex_base(b) {}
-    I_Polyhedron_vertex( const Point_3& p) : Vertex_base(p) {}
+    I_Polyhedron_vertex( const VertexBase& b) : VertexBase(b) {}
+    I_Polyhedron_vertex( const Point_3& p) : VertexBase(p) {}
 
-// New Access Functions (not provided in Vertex_base).
+// New Access Functions (not provided in VertexBase).
 
     Halfedge_around_vertex_circulator vertex_begin() {
         // a circulator of halfedges around the vertex (clockwise).
@@ -170,10 +170,10 @@ public:
 //             \_ _ _ _ _ _    '
 //
 
-template <class Halfedge_base>
-class I_Polyhedron_halfedge : public Halfedge_base {
+template <class HalfedgeBase>
+class I_Polyhedron_halfedge : public HalfedgeBase {
 public:
-    typedef Halfedge_base                          Base;
+    typedef HalfedgeBase                          Base;
     typedef typename Base::HalfedgeDS              HDS;
 
     // Handles have to explicitly repeated, although they are derived
@@ -223,9 +223,9 @@ public:
 
 public:
     I_Polyhedron_halfedge() {}
-    I_Polyhedron_halfedge( const Halfedge_base& b) : Halfedge_base(b) {}
+    I_Polyhedron_halfedge( const HalfedgeBase& b) : HalfedgeBase(b) {}
 
-// New Access Functions (not provided in Halfedge_base).
+// New Access Functions (not provided in HalfedgeBase).
 
     // Change semantic of prev: it is always available at this level.
     // If the HDS does not provide a prev-function, the previous
@@ -293,10 +293,10 @@ private:
 };
 
 
-template <class Facet_base>
-class I_Polyhedron_facet  : public Facet_base  {
+template <class FacetBase>
+class I_Polyhedron_facet  : public FacetBase  {
 public:
-    typedef Facet_base                             Base;
+    typedef FacetBase                             Base;
     //typedef typename Base::HalfedgeDS              HDS;
     typedef typename Base::Plane                   Plane;
     typedef Plane                                  Plane_3;
@@ -353,9 +353,9 @@ public:
 public:
     // We need to repeat the constructors here.
     I_Polyhedron_facet() {}
-    I_Polyhedron_facet( const Facet_base& b) : Facet_base(b) {}
+    I_Polyhedron_facet( const FacetBase& b) : FacetBase(b) {}
 
-// New Access Functions (not provided in Facet_base).
+// New Access Functions (not provided in FacetBase).
 
     Halfedge_around_facet_circulator facet_begin() {
         // a circulator of halfedges around the facet (counterclockwise).
