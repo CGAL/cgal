@@ -29,14 +29,8 @@
 #define CGAL_POINT_PLUS_HANDLE_H
 
 
-#ifndef CGAL_HANDLE_FOR_H
 #include <CGAL/Handle_for.h>
-#endif
-
-#ifndef CGAL_ASSERTIONS_H
 #include <CGAL/assertions.h>
-#endif
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -59,9 +53,9 @@ public:
   
   Point_plus_rep() {}
   
-  Point_plus_rep(const Point& p) : p_(p), v_(Vertex_handle(NULL)) {}
+  Point_plus_rep(const Point & p) : p_(p), v_(Vertex_handle(NULL)) {}
   
-  Point_plus_rep(const Point& p, Vertex_handle v) : p_(p), v_(v) {}
+  Point_plus_rep(const Point & p, Vertex_handle v) : p_(p), v_(v) {}
   
   ~Point_plus_rep() {}
   
@@ -75,62 +69,54 @@ protected:
 // Point_plus:
 // The handle to Point_plus.
 template <class traits, class vertexHandle>
-class Point_plus_handle : public  Handle_for<
-                                 Point_plus_rep<traits, vertexHandle> > 
+class Point_plus_handle :
+  public Handle_for<Point_plus_rep<traits, vertexHandle> > 
 {
   typedef Handle_for<Point_plus_rep<traits, vertexHandle> > 
-                                      Handle_for_Point_plus_rep;
+                                                Handle_for_Point_plus_rep;
 public:
-  typedef  traits                               Traits;
+  typedef traits                                Traits;
   typedef typename Traits::Point                Point;
   typedef vertexHandle                          Vertex_handle;
   typedef Point_plus_rep<Traits, Vertex_handle> Point_plus_rep_pm;
   
   Point_plus_handle() : Handle_for_Point_plus_rep() {}
   
-  Point_plus_handle(const Point& p) : 
+  Point_plus_handle(const Point & p) : 
     Handle_for_Point_plus_rep(Point_plus_rep_pm(p)) 
   {  
   }
   
-  Point_plus_handle(const Point& p, Vertex_handle v) : 
-    Handle_for_Point_plus_rep(Point_plus_rep_pm(p,v)) 
+  Point_plus_handle(const Point & p, Vertex_handle v) : 
+    Handle_for_Point_plus_rep(Point_plus_rep_pm(p, v)) 
   { 
   }
   
-  Point_plus_handle(const Point_plus_handle& p_plus) : 
+  Point_plus_handle(const Point_plus_handle & p_plus) : 
     Handle_for_Point_plus_rep(p_plus) {}
   
   ~Point_plus_handle() {}
   
-  Point_plus_handle& operator=(const Point_plus_handle &p_plus) {
+  Point_plus_handle & operator=(const Point_plus_handle & p_plus) {
     Handle_for_Point_plus_rep::operator=(p_plus);
     return *this;
   }
   
-  bool operator==(const Point_plus_handle &p_plus) const
+  bool operator==(const Point_plus_handle & p_plus) const
   { return ptr()->p_ == p_plus.point(); }
   
-  bool operator!=(const Point_plus_handle &p_plus) const
+  bool operator!=(const Point_plus_handle & p_plus) const
   { return !(operator==(p_plus)); }
   
-  void set_point(const Point& p) { ptr()->p_ = p; }
+  void set_point(const Point & p) { ptr()->p_ = p; }
   
   void set_vertex (Vertex_handle v) { ptr()->v_ = v; }
   
-  const Point& point() const { return ptr()->p_; }
+  const Point & point() const { return ptr()->p_; }
   
-  Vertex_handle vertex() const { return ptr()->v_; } 
-  
-
+  Vertex_handle vertex() const { return ptr()->v_; }
 };
-
 
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
