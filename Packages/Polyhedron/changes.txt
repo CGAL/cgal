@@ -1,5 +1,12 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
+3.6 (18 Jun 2001)
+
+     - Fixed example code inclusion in the doc.
+     - Added default template argument for HDS in Polyhedron_3. That
+       simplifies programs using the default polyhedron independent
+       of old or new design.
+
 3.5 (17 Jun 2001)
 
      - Merged old design files and new design files into one package.
