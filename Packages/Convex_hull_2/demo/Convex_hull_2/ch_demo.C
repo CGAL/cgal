@@ -27,8 +27,12 @@
 #include <CGAL/Cartesian.h>
 
 #ifndef CGAL_USE_LEDA
-#error Sorry, this demo needs LEDA for visualisation
-#endif // CGAL_USE_LEDA
+int main()
+{
+  cout << "Sorry.  This demo needs LEDA for visualization" << endl;
+  return 0;
+}
+#else
 
 #include <CGAL/leda_real.h>
 #include <CGAL/Point_2.h>
@@ -60,8 +64,7 @@ typedef CGAL::Polygon_traits_2<R>                             PolygonTraits;
 typedef std::list<Point>                                      Container;
 typedef CGAL::Polygon_2<PolygonTraits,Container>              Polygon;
 
-int
-main()
+int main()
 {
   CGAL::Window_stream W("Convex Hull of Intersection Points");
   W.init(-256.0, 255.0, -256.0);
@@ -104,3 +107,4 @@ main()
   cout << "Click in the window to exit." << endl; 
   W.read_mouse();
 }
+#endif // CGAL_USE_LEDA

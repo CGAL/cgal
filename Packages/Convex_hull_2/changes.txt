@@ -1,3 +1,6 @@
+3.8    (21 Jun 2001)
+- some cleanups of header files in examples and demos
+
 3.7    (28 May 2001)
 - moved a demo program from the examples directory
 - added README for demo programs
