@@ -59,6 +59,8 @@ $(Package).tar.gz:
 	--exclude=.pure --exclude=*.pv \
 	--exclude=.nfs*\
 	--exclude=HTML_TEST \
+	--exclude=test_triangulation_geom_traits.C \
+	--exclude=test_triangulation_regular_traits.C\
 	version maintainer description.txt changes.txt \
 	demo include doc_tex doc_ps src test examples
 

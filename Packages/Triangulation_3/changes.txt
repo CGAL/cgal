@@ -1,4 +1,4 @@
-Version 1.45 (?? dec 00)
+Version 1.45 (22 dec 00)
 - point() of vertex_base returns a const ref instead of a Point. [syl]
 - locate() improvements (remembering). [syl]
 - new typdefs Geom_traits and Triangulation_data_structure.

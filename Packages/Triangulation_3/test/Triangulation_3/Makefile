@@ -5,7 +5,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # pour purify, virer LEDA
-#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.2-I-26/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.3-I-19/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
 #CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
 include $(CGAL_MAKEFILE)
 
@@ -49,19 +49,20 @@ LDFLAGS = $(TESTSUITE_LDFLAGS) \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: test_triangulation_geom_traits test_triangulation_tds \
+all: test_triangulation_tds \
      test_triangulation_3 test_delaunay_3 \
-     test_triangulation_regular_traits test_regular_3 
-	./test_triangulation_geom_traits
+     test_regular_3 
+# test_triangulation_geom_traits test_triangulation_regular_traits 
+#	./test_triangulation_geom_traits
 	./test_triangulation_tds
 	./test_triangulation_3
 	./test_delaunay_3
-	./test_triangulation_regular_traits
+#	./test_triangulation_regular_traits
 	./test_regular_3 
 #        -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 
-test_triangulation_geom_traits : test_triangulation_geom_traits.o
-	$(CGAL_CXX)  -o test_triangulation_geom_traits test_triangulation_geom_traits.o $(LDFLAGS)
+#test_triangulation_geom_traits : test_triangulation_geom_traits.o
+#	$(CGAL_CXX)  -o test_triangulation_geom_traits test_triangulation_geom_traits.o $(LDFLAGS)
 
 test_triangulation_tds: ../../src/Triangulation_3.o test_triangulation_tds.o 
 	$(CGAL_CXX)  -o test_triangulation_tds Triangulation_3.o test_triangulation_tds.o $(LDFLAGS)
@@ -72,8 +73,8 @@ test_triangulation_3: ../../src/Triangulation_3.o  test_triangulation_3.o
 test_delaunay_3: ../../src/Triangulation_3.o  test_delaunay_3.o 
 	$(CGAL_CXX) -o test_delaunay_3 Triangulation_3.o test_delaunay_3.o $(LDFLAGS)
 
-test_triangulation_regular_traits: test_triangulation_regular_traits.o 
-	$(CGAL_CXX) -o test_triangulation_regular_traits test_triangulation_regular_traits.o $(LDFLAGS)
+#test_triangulation_regular_traits: test_triangulation_regular_traits.o 
+#	$(CGAL_CXX) -o test_triangulation_regular_traits test_triangulation_regular_traits.o $(LDFLAGS)
 
 test_regular_3: ../../src/Triangulation_3.o  test_regular_3.o 
 	$(CGAL_CXX) -o test_regular_3 Triangulation_3.o test_regular_3.o $(LDFLAGS)

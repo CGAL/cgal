@@ -168,12 +168,10 @@ by \cgal, a class must provide definitions for the \textit{power tests}.
 We use here the same notation as in
 Section~\ref{Triangulation3-sec-class-Regulartriangulation}. 
 
-\ccNestedType{Power_test_3}{Predicate object. Must provide the following
-operators:
+\ccNestedType{Power_test_3}{Predicate object.
+Must provide the following operators:}
 
-
-
-\ccc{Oriented_side operator()( Weighted_point p,
+\ccMethod{Oriented_side operator()( Weighted_point p,
 			    Weighted_point q,
 			    Weighted_point r,
 			    Weighted_point s,
@@ -193,7 +191,7 @@ to 0, then
 \ccc{power_test(p,q,r,s,t)} = \ccc{side_of_oriented_sphere(p,q,r,s,t)}.
 
 
-\ccc{Oriented_side operator()( Weighted_point p,
+\ccMethod{Oriented_side operator()( Weighted_point p,
 			    Weighted_point q,
 			    Weighted_point r,
 			    Weighted_point t) ;}
@@ -205,7 +203,7 @@ coplanar.}}
 If all the points have a weight equal to 0, then
 \ccc{power_test(p,q,r,s,t)} = \ccc{side_of_oriented_circle(p,q,r,s,t)}.
 
-\ccc{Oriented_side operator()( Weighted_point p,
+\ccMethod{Oriented_side operator()( Weighted_point p,
 			    Weighted_point q,
 			    Weighted_point t) ;}
 {Same for collinear points, where ${z(p,q)}^{(w)}$ is the
@@ -216,8 +214,7 @@ power segment of \ccc{p} and \ccc{q}.
 If all the points have a weight equal to 0, then
 \ccc{power_test(p,q,t)} gives the same answer as the kernel predicate
 \ccc{s(p,q).has_on(t)} would give, where  \ccc{s(p,q)} denotes the
-segment with endpoints \ccc{p} and \ccc{q}.}
-
+segment with endpoints \ccc{p} and \ccc{q}.
 
 
 \ccCreation
@@ -237,7 +234,7 @@ Only a default constructor is required.
 \ccHeading{Predicate functions}
 The following functions give access to the  predicate 
 and constructor objects.
-\ccThree{Construct_segment_3}{gt.compare_x(Point p0, Point p1)x}{}
+\ccThree{coplanar_side_of_oriented_circle_3}{gt.compare_x(Point p0, Point p1)x}{}
 %
 \ccMethod{Construct_segment_3 construct_segment_3_object();}{}
 \ccGlue
@@ -257,12 +254,9 @@ and constructor objects.
 \ccGlue
 \ccMethod{Coplanar_orientation_3  coplanar_orientation_3_object();}{}
 \ccGlue
+\ccMethod{Side_of_oriented_sphere_3  side_of_oriented_sphere_3_object();}{}
 \ccGlue
-\ccMethod{{Side_of_oriented_sphere_3  side_of_oriented_sphere_3_object();}{}
-\ccGlue
-\ccGlue
-\ccMethod{coplanar_side_of_oriented_circle_3  coplanar_side_of_oriented_circle_3_object();}{}
-\ccGlue
+\ccMethod{Coplanar_side_of_oriented_circle_3  coplanar_side_of_oriented_circle_3_object();}{}
 \ccGlue
 \ccMethod{Power_test_3  power_test_3_object();}{}
 \ccGlue
