@@ -468,13 +468,15 @@ main(int argc, char* argv[])
           cerr << CGAL::to_double(i->x()) << " "
                << CGAL::to_double(i->y()) << "\n";
         cerr << CGAL::to_double(result) << "\n";
-#ifndef _MSC_VER
-        for (iterator i = centers.begin(); i != centers.end(); ++i)
-#else
-        for (i = centers.begin(); i != centers.end(); ++i)
+#ifdef _MSC_VER
+        {
 #endif
+        for (iterator i = centers.begin(); i != centers.end(); ++i)
           cerr << CGAL::to_double(i->x()) << " "
                << CGAL::to_double(i->y()) << endl;
+#ifdef _MSC_VER
+        }
+#endif
         set_pretty_mode(cerr);
       } else if (input == ps_button) {
         iterator xmin = std::min_element(input_points.begin(),
@@ -532,11 +534,10 @@ main(int argc, char* argv[])
                  << " 2 circle\n";
           }
           cout << "\n% covering squares:\n";
-#ifndef _MSC_VER
-        for (iterator i = centers.begin();
-#else
-        for (i = centers.begin();
+#ifdef _MSC_VER
+        {
 #endif
+        for (iterator i = centers.begin();
              i != centers.end();
              ++i)
           {
@@ -563,6 +564,9 @@ main(int argc, char* argv[])
                  << " square\n";
           }
           cout << "\nshowpage\n\n%% EOF\n" << endl;
+#ifdef _MSC_VER
+        }
+#endif
       } else if (input == end_button || input == MOUSE_BUTTON(3))
         done = true;
     } while (!done);
