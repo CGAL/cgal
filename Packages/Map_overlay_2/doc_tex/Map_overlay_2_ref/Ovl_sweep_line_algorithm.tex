@@ -1,0 +1,50 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ovl_sweep_line_algorithm.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%**************************************************************************
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefClass}{Map_overlay_sweep_line<Subdivision,Notifier>}
+\label{OVL_sec:sweep_line}
+
+The \ccRefName\ class implements the sweep-line algorithm.
+It sweeps all curves of both creators simultaneously. 
+We implemented and generalize the sweep-line algorithm presented by 
+Bentley and Ottmann~\cite{bkos-cgaa-97}, which requires 
+$O(N\log{N} + k\log{N})$ time, where $N$ is the number of curves the two 
+creators have in total, and $k$ is the number of intersections betweem curves 
+from the first creator and curves from the second one.
+
+\ccInclude{CGAL/Map_overlay_sweep.h}
+
+\ccIsModel
+  \ccc{MapOverlayAlgorithm_2}
+
+\ccInheritsFrom
+  \ccc{Map_overlay_base<Subdivision,Notifier>}
+
+\ccSeeAlso
+   Discussion of the different overlay construction strategies in the introduction
+of \ccc{Map_overlay} reference pages\lcTex{ (\ccRefPage{Ovl_Ref_intro})}.
+
+\end{ccRefClass}
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
