@@ -29,7 +29,7 @@
 #define typename
 #endif
 
-#include <CGAL/Cartesian/distance_computations_3.C>
+#include <CGAL/Cartesian/distance_computations_3.h>
 
 #ifndef CGAL_CARTESIAN_SEGMENT_3_C
 #define CGAL_CARTESIAN_SEGMENT_3_C
