@@ -149,20 +149,20 @@ struct Map_overlay_sweep_utils {
 };
 
 template <class PM_, 
-          class Map_overlay_change_notification_, 
-          class Curve_iterator_ = std::list<Map_overlay_sweep_utils::X_curve_plus_id_handle<PM_> >::iterator >
+          class Map_overlay_change_notification_>
 class Map_overlay_sweep : public Map_overlay_base<PM_, Map_overlay_change_notification_>,
-                          public Sweep_curves_base_2<Curve_iterator_,
-                                                     typename PM_::Traits,
-                                                     Point_plus_handle<PM_>, 
-                        Map_overlay_sweep_utils::X_curve_plus_id_handle<PM_> >
+                          public Sweep_curves_base_2<
+std::list<typename Map_overlay_sweep_utils::X_curve_plus_id_handle<PM_> >::iterator,
+   typename PM_::Traits, Point_plus_handle<PM_>, 
+   Map_overlay_sweep_utils::X_curve_plus_id_handle<PM_> >
 {
 public:
   typedef PM_                                    PM;
   typedef Map_overlay_change_notification_       Map_overlay_change_notification;
-  typedef Curve_iterator_                        Curve_iterator;
+  //typedef std::list<typename Map_overlay_sweep_utils::X_curve_plus_id_handle<PM> >::iterator                                Curve_iterator;
   typedef Point_plus_handle<PM>                  Point_plus;
   typedef Map_overlay_sweep_utils::X_curve_plus_id_handle<PM> X_curve_plus;
+  typedef typename std::list<X_curve_plus>::iterator  Curve_iterator;
 
   typedef typename PM::Vertex_handle             Vertex_handle;
   typedef typename PM::Halfedge_handle           Halfedge_handle;
