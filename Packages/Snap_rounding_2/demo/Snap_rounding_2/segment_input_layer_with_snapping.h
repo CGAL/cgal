@@ -14,6 +14,12 @@ private:
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::widget;
+  using Base::x1;
+  using Base::y1;
+  using Base::x2;
+  using Base::y2;
+  using Base::firstpoint;
+  using Base::oldcursor;
 #endif
 
   std::list<Segment_2>          *seg_list;
