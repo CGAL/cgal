@@ -1,5 +1,5 @@
 
-------- example_simple -------------------------------------------------
+------- example_simple ---------------------------------------
 
 This example shows the incremental construction of a 3D triangulation, 
 the location of a point, and how to manipulate elementary operations
@@ -8,23 +8,32 @@ CGAL for the Triangulation_3 class.
 
 --------------------------------------------------------------
 
-------- example_color -------------------------------------------------
+------- example_color ----------------------------------------
 
 This example shows how the user can plug his own vertex base in a
 triangulation.
 
 --------------------------------------------------------------
 
-------- example_hierarchy -------------------------------------------------
+------- example_hierarchy ------------------------------------
 
 This example shows the use of the hierarchy to speed up the 
 construction of a Delaunay triangulation. 
 
 --------------------------------------------------------------
 
-------- example_tds -------------------------------------------------
+------- example_tds ------------------------------------------
 
 Shows how to construct a 3D triangulation data structure by 
 inserting vertices.
+
+--------------------------------------------------------------
+
+------- example_find_conflicts -------------------------------
+
+Illustrates how the insertion process of points in a Delaunay
+triangulation can be decomposed in order to give access to the
+cells in conflict (those which would be destroyed by the insertion
+of a point) prior to deciding to do the actual insertion or not.
 
 --------------------------------------------------------------
