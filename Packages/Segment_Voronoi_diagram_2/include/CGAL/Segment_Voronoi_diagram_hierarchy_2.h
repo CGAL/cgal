@@ -163,6 +163,19 @@ public:
   Vertex_handle  insert(const Segment& p);
   Vertex_handle  insert(const Site& t);
 
+  template< class Input_iterator >
+  void insert(Input_iterator first, Input_iterator beyond,
+	      bool do_shuffle = true)
+  {
+    if ( do_shuffle ) {
+      std::random_shuffle(first, beyond);
+    }
+
+    for (Input_iterator it = first; it != beyond; ++it) {
+      insert(*it, UNDEFINED_LEVEL);
+    }
+  }
+
 private:
   Vertex_handle insert(const Site& t, int hierarchy_level);
   void          insert(const Point& p, int hierarchy_level,

@@ -29,6 +29,7 @@
 
 #include <vector>
 #include <map>
+#include <algorithm>
 
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -322,11 +323,16 @@ public:
   // INSERTION
   //----------
   template< class Input_iterator >
-  void insert(Input_iterator first, Input_iterator beyond) {
-
+  void insert(Input_iterator first, Input_iterator beyond,
+	      bool do_shuffle = true)
+  {
     // do it the obvious way: insert them as they come;
     // one might think though that it might be better to first insert
     // all end points and then all segments, or a variation of that.
+
+    if ( do_shuffle ) {
+      std::random_shuffle(first, beyond);
+    }
 
     for (Input_iterator it = first; it != beyond; ++it) {
       insert(*it);
