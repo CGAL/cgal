@@ -41,7 +41,7 @@ _general_transformation_composition (
                            Aff_transformation_repH3<R> r);
 
 template <class R_ >
-class Aff_transformation_rep_baseH3 : public Ref_counted
+class Aff_transformation_rep_baseH3 : public Ref_counted_virtual
 // abstract base class of aff transformation representations
 {
 public:

@@ -26,42 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-class Segment_repH3 : public Ref_counted
-{
-public:
-   typedef typename R::Kernel_base::Point_3  Point_3;
-
-   Segment_repH3() {}
-   Segment_repH3(const Point_3& sp, const Point_3& ep)
-     : startpoint(sp), endpoint(ep) {}
-
-   const Point_3 & start() const { return startpoint; }
-   const Point_3 & end()   const { return endpoint; }
-
-private:
-   Point_3  startpoint;
-   Point_3  endpoint;
-};
-
-template < class R >
-class Simple_Segment_repH3
-{
-public:
-   typedef typename R::Kernel_base::Point_3  Point_3;
-
-   Simple_Segment_repH3() {}
-   Simple_Segment_repH3(const Point_3& sp, const Point_3& ep)
-     : startpoint(sp), endpoint(ep) {}
-
-   const Point_3 & start() const { return startpoint; }
-   const Point_3 & end()   const { return endpoint; }
-
-private:
-   Point_3  startpoint;
-   Point_3  endpoint;
-};
-
 template < class R_ >
 class SegmentH3
   : public R_::Segment_handle_3
@@ -115,25 +79,25 @@ template < class R >
 inline
 const typename SegmentH3<R>::Point_3 &
 SegmentH3<R>::source() const
-{ return Ptr()->start(); }
+{ return Ptr()->e0; }
 
 template < class R >
 inline
 const typename SegmentH3<R>::Point_3 &
 SegmentH3<R>::target() const
-{ return Ptr()->end(); }
+{ return Ptr()->e1; }
 
 template < class R >
 inline
 const typename SegmentH3<R>::Point_3 &
 SegmentH3<R>::start() const
-{ return Ptr()->start(); }
+{ return source(); }
 
 template < class R >
 inline
 const typename SegmentH3<R>::Point_3 &
 SegmentH3<R>::end() const
-{ return Ptr()->end(); }
+{ return target(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -177,27 +141,27 @@ CGAL_KERNEL_INLINE
 typename SegmentH3<R>::FT
 SegmentH3<R>::squared_length() const
 {
-  return  (Ptr()->end() - Ptr()->start()) *
-          (Ptr()->end() - Ptr()->start())   ;
+  return  (end() - start()) *
+          (end() - start())   ;
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 typename SegmentH3<R>::Direction_3
 SegmentH3<R>::direction() const
-{ return Direction_3( Ptr()->end() - Ptr()->start() ); }
+{ return Direction_3( end() - start() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 typename SegmentH3<R>::Line_3
 SegmentH3<R>::supporting_line() const
-{ return Line_3(Ptr()->start(), Ptr()->end()); }
+{ return Line_3(start(), end()); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 SegmentH3<R>
 SegmentH3<R>::opposite() const
-{ return SegmentH3<R>(Ptr()->end(), Ptr()->start()); }
+{ return SegmentH3<R>(end(), start()); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -205,8 +169,8 @@ SegmentH3<R>
 SegmentH3<R>::
 transform( const typename SegmentH3<R>::Aff_transformation_3& t) const
 {
-  return SegmentH3<R>(t.transform(Ptr()->start()),
-                      t.transform(Ptr()->end())   );
+  return SegmentH3<R>(t.transform(start()),
+                      t.transform(end())   );
 }
 
 template < class R >
@@ -258,9 +222,9 @@ SegmentH3<R>::has_on(const typename SegmentH3<R>::Point_3 &p) const
   return( ( p == start() )
        || ( p == end() )
        || (  ( collinear(p,source(),target() )
-           &&( Direction_3( p - Ptr()->start())
+           &&( Direction_3( p - start())
                !=
-               Direction_3( p - Ptr()->end()))
+               Direction_3( p - end()))
              )
           )
        );
@@ -273,9 +237,9 @@ SegmentH3<R>::collinear_has_on(const typename SegmentH3<R>::Point_3 &p) const
 {
   return( ( p == start() )
        || ( p == end() )
-       || ( Direction_3( p - Ptr()->start())
+       || ( Direction_3( p - start())
             !=
-            Direction_3( p - Ptr()->end())
+            Direction_3( p - end())
           )
         );
 }

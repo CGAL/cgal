@@ -1,3 +1,6 @@
+2.40   (24 October 2001)
+- Handles simplifications.
+
 2.39   (23 October 2001)
 - added missing Homogeneous directory in include statement
 

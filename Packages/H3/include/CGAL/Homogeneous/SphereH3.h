@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 template <class R_> class SphereH3;
 
 template <class R>
-class Sphere_repH3 : public Ref_counted
+class Sphere_repH3
 {
   public:
     typedef typename R::FT   FT;
@@ -40,27 +40,6 @@ class Sphere_repH3 : public Ref_counted
     Sphere_repH3() {}
 
     Sphere_repH3(const Point_3 p, const FT sq_rad, const Orientation& o)
-      : center(p), squared_radius(sq_rad), orientation_(o) {}
-
-  protected:
-    Point_3   center;
-    FT           squared_radius;
-    Orientation  orientation_;
-};
-
-template <class R>
-class Simple_Sphere_repH3
-{
-  public:
-    typedef typename R::FT   FT;
-    typedef typename R::Kernel_base::Point_3  Point_3;
-
-    friend class SphereH3<R>;
-
-    Simple_Sphere_repH3() {}
-
-    Simple_Sphere_repH3(const Point_3 p, const FT sq_rad,
-	                const Orientation& o)
       : center(p), squared_radius(sq_rad), orientation_(o) {}
 
   protected:

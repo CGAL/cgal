@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ > class TetrahedronH3;
 
 template < class R >
-class Tetrahedron_repH3 : public Ref_counted
+class Tetrahedron_repH3
 {
  public:
   typedef typename R::Kernel_base::Point_3 Point_3;
@@ -51,26 +51,6 @@ class Tetrahedron_repH3 : public Ref_counted
  private:
     Fourtuple< Point_3 > container;
     Orientation             ordertype;
-};
-
-template < class R >
-class Simple_Tetrahedron_repH3
-{
- public:
-  typedef typename R::Kernel_base::Point_3 Point_3;
-  Simple_Tetrahedron_repH3()
-      : ordertype(DEGENERATE) {}
-  Simple_Tetrahedron_repH3(const Point_3 &p,
-                           const Point_3 &q,
-                           const Point_3 &r,
-                           const Point_3 &s )
-    : container(p,q,r,s), ordertype(orientation(p,q,r,s)) {}
-
-  friend class TetrahedronH3<R>;
-
- private:
-    Simple_Fourtuple< Point_3 > container;
-    Orientation                    ordertype;
 };
 
 

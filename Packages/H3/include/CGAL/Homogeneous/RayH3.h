@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ > class RayH3;
 
 template < class R >
-class Ray_repH3 : public Ref_counted
+class Ray_repH3
 {
  public:
   typedef typename R::Kernel_base::Point_3             Point_3;
@@ -46,23 +46,6 @@ class Ray_repH3 : public Ref_counted
   Direction_3  direction;
 };
 
-template < class R >
-class Simple_Ray_repH3
-{
- public:
-  typedef typename R::Kernel_base::Point_3             Point_3;
-  typedef typename R::Kernel_base::Direction_3         Direction_3;
-
-  Simple_Ray_repH3() {}
-  Simple_Ray_repH3(const Point_3& p, const Direction_3& d)
-   : startpoint(p), direction(d) {}
-
- friend class RayH3<R>;
-
- private:
-  Point_3      startpoint;
-  Direction_3  direction;
-};
 
 template < class R_ >
 class RayH3
