@@ -26,33 +26,29 @@ using std::cin;
 using std::cout; 
 using std::endl;
 
-void read_polygon(const char* filename, Polygon_2& polygon)
+void read_polygon(Polygon_2& polygon)
 {  
-  std::ifstream file(filename);
   unsigned int n;  
 
-  file >> n;
+  cin >> n;
   
   int    x, y;
   while (n--) {
-    file >> x >> y;
+    cin >> x >> y;
     polygon.push_back(Point_2(x,y));
   }
-  
-  file.close();
 }
 
-int  main(int argc, char* argv[])
+int  main()
 {
-  if (argc != 2) {
-    cout << "usage: Segment_sweep_ovl_from_file filename"<<endl;
-    exit(1);
-  }
-
   Polygon_2  poly1, poly2;
   
-  read_polygon(argv[1],poly1);
-  read_polygon(argv[1],poly2);
+  read_polygon(poly1);
+  read_polygon(poly2);
+  
+  cout<<"Polygons are"<<endl;
+  cout<<poly1<<endl;
+  cout<<poly2<<endl;
   
   Traits traits;
   BopsTraits bops_traits;
@@ -60,10 +56,10 @@ int  main(int argc, char* argv[])
   std::list<Segment_2>    curves;
   std::list<Point_2>      points;
   
-  CGAL::intersection(poly1,poly2,traits,bops_traits,
-                     std::back_inserter(polygons),
-                     std::back_inserter(curves),
-                     std::back_inserter(points));
+  CGAL::Union(poly1,poly2,traits,bops_traits,
+              std::back_inserter(polygons),
+              std::back_inserter(curves),
+              std::back_inserter(points));
  
   cout<<"The number of resulting polygons: "<<polygons.size()<<endl;
   
@@ -75,13 +71,6 @@ int  main(int argc, char* argv[])
   
  return 0;
 }
-
-
-
-
-
-
-
 
 
 
