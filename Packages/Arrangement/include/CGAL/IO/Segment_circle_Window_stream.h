@@ -14,8 +14,8 @@
 // file          : include/CGAL/IO/Segment_circle_Window_stream.h
 // package       : Arrangement (2.19)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
-// author(s)     : ?
-// coordinator   : ?
+// author(s)     : Ron Wein <wein@post.tau.ac.il>
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
 // ======================================================================
 #ifndef SEGMENT_CIRCLE_WINDOW_STREAM_H
