@@ -1,3 +1,19 @@
+13 August 2004:  Menelaos Karavelas
+***************************************************************
+*** Day of the opening ceremony of the Athens Olympic Games ***
+***************************************************************
+- fixed errors in the doc: Segment_Voronoi_diagram_2 class: some typedefs
+  where not really typedefs and some other ones where not written correctly
+- Segment_Voronoi_diagram_2 class: fixed some typedefs (changes related to
+  the changes above)
+- replaced Are_same_points_2 predicate by Equal_2 according to the spec
+- added the type Arrangement_type; this type was in the spec but was
+  not defined
+- added some methods in the simple site classes so that they conform
+  with the spec; removed some methods not in the spec and modified the code
+  wherever they were used.
+- vertex base class: made some types that were not in the spec privat
+
 12 August 2004:  Menelaos Karavelas
 - made some more code conforming to the spec
 - fixed bugs (due to yesterday's changes) that I forgot to fix
