@@ -349,11 +349,6 @@ protected:
 };
 
 
-template<class Gt, class STag, class DS, class LTag>
-const int
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::UNDEFINED_LEVEL = -1;
-
-
 CGAL_END_NAMESPACE
 
 
@@ -362,6 +357,14 @@ CGAL_END_NAMESPACE
 #  include <CGAL/Segment_Voronoi_diagram_hierarchy_2.C>
 #endif
 
+
+CGAL_BEGIN_NAMESPACE
+
+template<class Gt, class STag, class DS, class LTag>
+const int
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::UNDEFINED_LEVEL = -1;
+
+CGAL_END_NAMESPACE
 
 
 #endif // CGAL_SEGMENT_VORONOI_DIAGRAM_HIERARCHY_2_H
