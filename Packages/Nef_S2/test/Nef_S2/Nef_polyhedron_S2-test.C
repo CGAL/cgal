@@ -57,8 +57,8 @@ int main(int argc, char **argv)
   CGAL_TEST((N1+!N1) == SPHERE);
   CGAL_TEST((N1^N2) == ((N1-N2)+(N2-N1))); // xor reformulation
 
-  //  TRACEV((N1*N2)); TRACEV(!(N1*N2)); TRACEV((!N1+!N2)); 
-  //  TRACEV(!(N1*N2) ^ (!N1+!N2));
+  TRACEV((N1*N2)); TRACEV(!(N1*N2)); TRACEV((!N1+!N2)); 
+  TRACEV(!(N1*N2) ^ (!N1+!N2));
   CGAL_TEST( (!(N1*N2)) == (!N1+!N2) ); // deMorgan
 #if 1
   Nef_polyhedron N3 = N1.intersection(N2);
