@@ -6,6 +6,7 @@ constrained and regular triangulations with  tests and examples.
 
 Ver 7.39 (08/07/02)
 - andreas fixes : Point -> const Point&
+- updated doc of the Triangulation_hierarchy_2
 
 Ver 7.38 (08/07/02)
 - remove the virtual character of insert in Constrained_triangulation

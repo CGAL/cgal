@@ -80,6 +80,15 @@ member functions to update the whole data structure at each operation.
 If point \ccc{p} coincides with an already existing vertex, this 
 vertex is returned and the triangulation hierarchy is not updated.}
 \ccGlue
+\ccMethod{Vertex_handle 
+          insert(const Point& p,
+                 Locate_type lt,
+                 Face_handle loc, int li );}
+{Same as above except that the location of the point
+ \ccc{p} to be inserted is assumed to be given by
+\ccc{(lt,loc,i)} (see the description of the \ccc{locate} method
+above.)}
+\ccGlue
 \ccMethod{Vertex_handle push_back(const Point& p);}
 {Equivalent to \ccc{insert(p)}.}
 \ccGlue
