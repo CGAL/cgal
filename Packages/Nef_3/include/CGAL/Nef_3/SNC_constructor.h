@@ -594,7 +594,7 @@ create_extended_box_corner(int x, int y, int z, bool space, bool boundary) const
     mark(sv[vi]) = boundary;
   }
   /* create facet's edge uses */
-  Sphere_segment ss[3];
+  // Sphere_segment ss[3]; // Not used???
   SHalfedge_handle she[3];
   for(int si=0; si<3; ++si)
     she[si] = SD.new_edge_pair(sv[si], sv[(si+1)%3]);
