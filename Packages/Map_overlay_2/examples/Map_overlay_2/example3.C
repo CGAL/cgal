@@ -77,8 +77,9 @@ int  main()
   CGAL::sweep_to_construct_planar_map_2(polylines.begin(),polylines.end(), 
                                         traits, pm2);
   
+  MapOverlay map1(pm1), map2(pm2);
   cout<<"Calling map overlay\n";
-  MapOverlay map_overlay(pm1, pm2);
+  MapOverlay map_overlay(map1, map2);
   
   MapOverlay::Change_notification  notifier;
   for (Planar_map::Vertex_const_iterator v_iter=map_overlay.subdivision().vertices_begin();
@@ -93,14 +94,3 @@ int  main()
   
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
