@@ -25,7 +25,7 @@
 
 \cgal\ is designed in the spirit of the generic programming paradigm
 to work together with the Standard Template Library (\stl)
-\cite{c-wpdpi-96,ms-strg-96}.  This chapter documents non-geometric
+\cite{ansi-is14882,a-gps-98}. This chapter documents non-geometric
 \stl-like components that are not provided in the \stl\ standard but
 in \cgal: a doubly-connected list managing items in place (where
 inserted items are not copied), generic functions, function objects
@@ -63,10 +63,24 @@ current \stl\ implementations).
 \ccRefIdfierPage{CGAL::min_element_if}\\
 \ccRefIdfierPage{CGAL::max_element_if}
 
+\subsection*{Function Object Adaptors.}
+
+\ccRefIdfierPage{CGAL::bind_1}\\
+\ccRefIdfierPage{CGAL::bind_2}\\
+\ccRefIdfierPage{CGAL::bind_3}\\
+\ccRefIdfierPage{CGAL::bind_4}\\
+\ccRefIdfierPage{CGAL::bind_5}\\
+\ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
+\ccRefIdfierPage{CGAL::compose}\\
+\ccRefIdfierPage{CGAL::Compose<F0,F1,F2,F3>}\\
+\ccRefConceptPage{AdaptableFunctor}\\
+\ccRefIdfierPage{CGAL::Arity_tag<int>}\\
+\ccRefIdfierPage{CGAL::Arity_traits<F>}
+
 \subsection*{Projection Function Objects.}
 
 \ccRefIdfierPage{CGAL::Identity<Value>}\\
-\ccRefIdfierPage{CGAL::Compose<Fct1, Fct2>}\\
+%%\ccRefIdfierPage{CGAL::Compose<Fct1, Fct2>}\\
 \ccRefIdfierPage{CGAL::Dereference<Value>}\\
 \ccRefIdfierPage{CGAL::Get_address<Value>}\\
 \ccRefIdfierPage{CGAL::Cast_function_object<Arg, Result>}\\
@@ -106,25 +120,25 @@ objects in this way. This seems to be quite a limitation, since many
 algorithms are to be parameterized with binary (e.g. comparison)
 functions.
 
-We overcome these problems by defining our own composition functions
-in \cgal. Also the naming is slightly different to easily distinguish
-our implementation from eventually existing others:
-\ccStyle{composei_j} where \ccStyle{i}, \ccStyle{j} are either \ccc{1}
-or \ccc{2}.  \ccStyle{j} denotes the arity of the resulting function,
-\ccStyle{i} the arity of the outermost function in the composition.
-E.g. \ccStyle{compose2_1} takes three functions \ccc{f}, \ccc{g} and
-\ccc{h} and computes \ccc{x}~$\rightarrow$~\ccc{f(g(x),h(x))}.
-
-\ccRefIdfierPage{CGAL::compose1_1}\\
-\ccRefIdfierPage{CGAL::compose1_2}\\
-\ccRefIdfierPage{CGAL::compose2_1}\\
-\ccRefIdfierPage{CGAL::compose2_2}\\
-\ccRefIdfierPage{CGAL::Unary_compose_1<Op1, Op2>}\\
-\ccRefIdfierPage{CGAL::Unary_compose_2<Op1, Op2>}\\
-\ccRefIdfierPage{CGAL::Binary_compose_1<Op1, Op2, Op3>}\\
-\ccRefIdfierPage{CGAL::Binary_compose_2<Op1, Op2, Op3>}\\
-\ccRefConceptPage{AdaptableUnaryFunction}\\
-\ccRefConceptPage{AdaptableBinaryFunction}
+%%We overcome these problems by defining our own composition functions
+%%in \cgal. Also the naming is slightly different to easily distinguish
+%%our implementation from eventually existing others:
+%%\ccStyle{composei_j} where \ccStyle{i}, \ccStyle{j} are either \ccc{1}
+%%or \ccc{2}.  \ccStyle{j} denotes the arity of the resulting function,
+%%\ccStyle{i} the arity of the outermost function in the composition.
+%%E.g. \ccStyle{compose2_1} takes three functions \ccc{f}, \ccc{g} and
+%%\ccc{h} and computes \ccc{x}~$\rightarrow$~\ccc{f(g(x),h(x))}.
+%%
+%%\ccRefIdfierPage{CGAL::compose1_1}\\
+%%\ccRefIdfierPage{CGAL::compose1_2}\\
+%%\ccRefIdfierPage{CGAL::compose2_1}\\
+%%\ccRefIdfierPage{CGAL::compose2_2}\\
+%%\ccRefIdfierPage{CGAL::Unary_compose_1<Op1, Op2>}\\
+%%\ccRefIdfierPage{CGAL::Unary_compose_2<Op1, Op2>}\\
+%%\ccRefIdfierPage{CGAL::Binary_compose_1<Op1, Op2, Op3>}\\
+%%\ccRefIdfierPage{CGAL::Binary_compose_2<Op1, Op2, Op3>}\\
+%%\ccRefConceptPage{AdaptableUnaryFunction}\\
+%%\ccRefConceptPage{AdaptableBinaryFunction}
 
 \subsection*{Adaptor Classes around Iterators and Circulators.}
 

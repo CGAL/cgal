@@ -40,6 +40,7 @@ struct Identity {
   const Value& operator()( const Value& x) const { return x; }
 };
 
+/* Taken out
 // Composes two function objects: result is
 // Fct1 o Fct2 o x == Fct1()( Fct2()(x)).
 template < class Fct1, class Fct2>
@@ -57,6 +58,7 @@ struct Compose {
     return fct1( fct2(x));
   }
 };
+*/
 
 template < class Value>
 struct Dereference {

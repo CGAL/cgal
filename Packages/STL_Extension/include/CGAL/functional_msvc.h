@@ -23,7 +23,7 @@
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
 //
-// New Functor Adaptors (not using partial spec.).
+// New Functor Adaptors (MSVC version).
 // ============================================================================
 
 #ifndef CGAL_FUNCTIONAL_MSVC_H
@@ -31,9 +31,51 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// helper classes for arity
+namespace CGALi {
+#ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
+
+  template < class T > struct Arity_minus_one;
+  template < int i > struct Arity_minus_one< Arity_tag< i > > {
+    typedef Arity_tag< i - 1 > Arity;
+  };
+
+  template < class T1, class T2 > struct Arity_plus;
+  template < int i, int j >
+  struct Arity_plus< Arity_tag< i >, Arity_tag< j > > {
+    typedef Arity_tag< i + j > Arity;
+  };
+
+#else
+#ifdef CGAL_CFG_ENUM_BUG
+#error "Too many compiler bugs, sorry ..."
+#endif // CGAL_CFG_ENUM_BUG
+
+  // msvc6 needs this, whysoever ...
+  template < class T1, class T2 >
+  struct CGAL__Wrap_arity {
+    enum { a1 = T1::arity };
+    enum { a2 = T2::arity };
+    enum { ar1 = a1 - 1 };
+    enum { ar2 = a1 + a2 };
+  };
+
+  template < class T > struct Arity_minus_one {
+    typedef Arity_tag< CGAL__Wrap_arity< T, T >::ar1 > Arity;
+  };
+
+  template < class T1, class T2 > struct Arity_plus {
+    typedef Arity_tag< CGAL__Wrap_arity< T1, T2 >::ar2 > Arity;
+  };
+
+#endif // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
+} // namespace CGALi
 template < class F, class A >
 struct Binder_1 {
   typedef typename F::result_type result_type;
+  typedef
+    typename CGALi::Arity_minus_one< typename F::Arity >::Arity Arity;
+
   Binder_1(const F& f_, const A& a_) : f(f_), a(a_) {}
 
   result_type
@@ -68,6 +110,9 @@ protected:
 template < class F, class A >
 struct Binder_2 {
   typedef typename F::result_type result_type;
+  typedef
+    typename CGALi::Arity_minus_one< typename F::Arity >::Arity Arity;
+
   Binder_2(const F& f_, const A& a_) : f(f_), a(a_) {}
 
   template < class A1 >
@@ -98,6 +143,9 @@ protected:
 template < class F, class A >
 struct Binder_3 {
   typedef typename F::result_type result_type;
+  typedef
+    typename CGALi::Arity_minus_one< typename F::Arity >::Arity Arity;
+
   Binder_3(const F& f_, const A& a_) : f(f_), a(a_) {}
 
   template < class A1, class A2 >
@@ -123,6 +171,9 @@ protected:
 template < class F, class A >
 struct Binder_4 {
   typedef typename F::result_type result_type;
+  typedef
+    typename CGALi::Arity_minus_one< typename F::Arity >::Arity Arity;
+
   Binder_4(const F& f_, const A& a_) : f(f_), a(a_) {}
 
   template < class A1, class A2, class A3 >
@@ -143,6 +194,9 @@ protected:
 template < class F, class A >
 struct Binder_5 {
   typedef typename F::result_type result_type;
+  typedef
+    typename CGALi::Arity_minus_one< typename F::Arity >::Arity Arity;
+
   Binder_5(const F& f_, const A& a_) : f(f_), a(a_) {}
 
   template < class A1, class A2, class A3, class A4 >
@@ -154,99 +208,84 @@ protected:
   F f;
   A a;
 };
-
 namespace CGALi {
-  template < int i >
-  struct Binder_helper;
-
-  template <>
-  struct Binder_helper< 1 > {
-    template < class T, class A >
-    struct Help { typedef Binder_1< T, A > Type; };
-  };
-
-  template <>
-  struct Binder_helper< 2 > {
-    template < class T, class A >
-    struct Help { typedef Binder_2< T, A > Type; };
-  };
-
-  template <>
-  struct Binder_helper< 3 > {
-    template < class T, class A >
-    struct Help { typedef Binder_3< T, A > Type; };
-  };
-
-  template <>
-  struct Binder_helper< 4 > {
-    template < class T, class A >
-    struct Help { typedef Binder_4< T, A > Type; };
-  };
-
-  template <>
-  struct Binder_helper< 5 > {
-    template < class T, class A >
-    struct Help { typedef Binder_5< T, A > Type; };
+  template < class T, class A >
+  struct Binder_helper {
+    template < int i > struct Help;
+    template <> struct Help< 1 > { typedef Binder_1< T, A > Type; };
+    template <> struct Help< 2 > { typedef Binder_2< T, A > Type; };
+    template <> struct Help< 3 > { typedef Binder_3< T, A > Type; };
+    template <> struct Help< 4 > { typedef Binder_4< T, A > Type; };
+    template <> struct Help< 5 > { typedef Binder_5< T, A > Type; };
   };
 }
 
 template < class T, class A, int i >
-struct Binder_class {
-#ifdef __sgi
-  typedef typename CGALi::Binder_helper< i >::template
-    Help< T, A >::Type Type;
-#else
-  typedef typename CGALi::Binder_helper< i >::Help< T, A >::Type Type;
-#endif
+struct Bind {
+  typedef typename CGALi::Binder_helper< T, A >::Help< i >::Type Type;
 };
 template < class F, class A >
-inline typename Binder_class< F, A, 1 >::Type
+inline typename Bind< F, A, 1 >::Type
 bind_1(const F& f, const A& a) {
-  typedef typename Binder_class< F, A, 1 >::Type B;
+  typedef typename Bind< F, A, 1 >::Type B;
   return B(f, a);
 }
 
 template < class F, class A >
-inline typename Binder_class< F, A, 2 >::Type
+inline typename Bind< F, A, 2 >::Type
 bind_2(const F& f, const A& a) {
-  typedef typename Binder_class< F, A, 2 >::Type B;
+  typedef typename Bind< F, A, 2 >::Type B;
   return B(f, a);
 }
 
 template < class F, class A >
-inline typename Binder_class< F, A, 3 >::Type
+inline typename Bind< F, A, 3 >::Type
 bind_3(const F& f, const A& a) {
-  typedef typename Binder_class< F, A, 3 >::Type B;
+  typedef typename Bind< F, A, 3 >::Type B;
   return B(f, a);
 }
 
 template < class F, class A >
-inline typename Binder_class< F, A, 4 >::Type
+inline typename Bind< F, A, 4 >::Type
 bind_4(const F& f, const A& a) {
-  typedef typename Binder_class< F, A, 4 >::Type B;
+  typedef typename Bind< F, A, 4 >::Type B;
   return B(f, a);
 }
 
 template < class F, class A >
-inline typename Binder_class< F, A, 5 >::Type
+inline typename Bind< F, A, 5 >::Type
 bind_5(const F& f, const A& a) {
-  typedef typename Binder_class< F, A, 5 >::Type B;
+  typedef typename Bind< F, A, 5 >::Type B;
   return B(f, a);
 }
 
 
-namespace CGALi {
-  template < int i > struct N {};
-}
 
-template < class F1, class F2 >
+template < class F1, class R1, class F2, class R2 >
 struct Compose_1 {
   typedef typename F1::result_type result_type;
-  enum { arity = F2::arity };
+  typedef R2 Arity;
 
   Compose_1(const F1& f1_, const F2& f2_) : f1(f1_), f2(f2_) {}
 
-  template < class A1 >
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3,
+                         const A4& a4, const A5& a5) const
+  { return f1(f2(a1, a2, a3, a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3,
+                         const A4& a4) const
+  { return f1(f2(a1, a2, a3, a4)); }
+
+  template < class A1, class A2, class A3 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3) const
+  { return f1(f2(a1, a2, a3)); }
+
+  template < class A1, class A2 >
+  result_type operator()(const A1& a1, const A2& a2) const
+  { return f1(f2(a1, a2)); }
+
   result_type operator()() const
   { return f1(f2()); }
 
@@ -254,117 +293,159 @@ struct Compose_1 {
   result_type operator()(const A1& a1) const
   { return f1(f2(a1)); }
 
-  template < class A1, class A2 >
-  result_type operator()(const A1& a1, const A2& a2) const
-  { return f1(f2(a1, a2)); }
-
-  template < class A1, class A2, class A3 >
-  result_type operator()(const A1& a1, const A2& a2, const A3& a3) const
-  { return f1(f2(a1, a2, a3)); }
-
-  template < class A1, class A2, class A3, class A4 >
-  result_type operator()(const A1& a1, const A2& a2, const A3& a3,
-                         const A4& a4) const
-  { return f1(f2(a1, a2, a3, a4)); }
-
-  template < class A1, class A2, class A3, class A4, class A5 >
-  result_type operator()(const A1& a1, const A2& a2, const A3& a3,
-                         const A4& a4, const A5& a5) const
-  { return f1(f2(a1, a2, a3, a4, a5)); }
-
 protected:
   F1 f1;
   F2 f2;
 };
 
-template < class F1, class F2, class F3 >
+template < class F1, class R1, class F2, class R2, class F3, class R3 >
 struct Compose_2 {
   typedef typename F1::result_type result_type;
-  enum { arity = F2::arity + F3::arity };
+  typedef typename CGALi::Arity_plus< R2, R3 >::Arity Arity;
 
   Compose_2(const F1& f1_, const F2& f2_, const F3& f3_)
   : f1(f1_), f2(f2_), f3(f3_)
   {}
 
   result_type operator()() const
-  { return call(CGALi::N<F2::arity>(),
-                CGALi::N<F3::arity>(), CGALi::N<arity>()); }
+  { return call(R2(), R3(), Arity()); }
 
   template < class A1 >
   result_type operator()(const A1& a1) const
-  { return call(a1, CGALi::N<F2::arity>(),
-                CGALi::N<F3::arity>(), CGALi::N<arity>()); }
+  { return call(a1, R2(), R3(), Arity()); }
 
   template < class A1, class A2 >
   result_type operator()(const A1& a1, const A2& a2) const
-  { return call(a1, a2, CGALi::N<F2::arity>(),
-                CGALi::N<F3::arity>(), CGALi::N<arity>()); }
+  { return call(a1, a2, R2(), R3(), Arity()); }
 
   template < class A1, class A2, class A3 >
   result_type operator()(const A1& a1, const A2& a2, const A3& a3) const
-  { return call(a1, a2, a3, CGALi::N<F2::arity>(),
-                CGALi::N<F3::arity>(), CGALi::N<arity>()); }
+  { return call(a1, a2, a3, R2(), R3(), Arity()); }
 
   template < class A1, class A2, class A3, class A4 >
   result_type operator()(const A1& a1, const A2& a2, const A3& a3,
                          const A4& a4 ) const
-  { return call(a1, a2, a3, a4, CGALi::N<F2::arity>(),
-                CGALi::N<F3::arity>(), CGALi::N<arity>()); }
+  { return call(a1, a2, a3, a4, R2(), R3(),Arity()); }
 
   template < class A1, class A2, class A3, class A4, class A5 >
   result_type operator()(const A1& a1, const A2& a2, const A3& a3,
                          const A4& a4, const A5& a5) const
-  { return call(a1, a2, a3, a4, a5, CGALi::N<F2::arity>(),
-                CGALi::N<F3::arity>(), CGALi::N<arity>()); }
+  {
+    return call(a1, a2, a3, a4, a5, R2(), R3(), Arity()); }
 
-
-  result_type call(CGALi::N<1>, CGALi::N<0>, CGALi::N<1>) const
+  result_type call(Arity_tag< 0 >, Arity_tag< 0 >, Arity_tag< 0 >) const
   { return f1(f2(), f3()); }
 
   template < class A1 >
   result_type call(const A1& a1,
-                   CGALi::N<1>, CGALi::N<0>, CGALi::N<1>) const
+                   Arity_tag< 1 >, Arity_tag< 0 >, Arity_tag< 1 >) const
   { return f1(f2(a1), f3()); }
 
   template < class A1 >
   result_type call(const A1& a1,
-                   CGALi::N<0>, CGALi::N<1>, CGALi::N<1>) const
+                   Arity_tag< 0 >, Arity_tag< 1 >, Arity_tag< 1 >) const
   { return f1(f2(), f3(a1)); }
 
   template < class A1, class A2 >
   result_type call(const A1& a1, const A2& a2,
-                   CGALi::N<2>, CGALi::N<0>, CGALi::N<2>) const
+                   Arity_tag< 2 >, Arity_tag< 0 >, Arity_tag< 2 >) const
   { return f1(f2(a1, a2), f3()); }
 
   template < class A1, class A2 >
   result_type call(const A1& a1, const A2& a2,
-                   CGALi::N<1>, CGALi::N<1>, CGALi::N<2>) const
+                   Arity_tag< 1 >, Arity_tag< 1 >, Arity_tag< 2 >) const
   { return f1(f2(a1), f3(a2)); }
 
   template < class A1, class A2 >
   result_type call(const A1& a1, const A2& a2,
-                   CGALi::N<0>, CGALi::N<2>, CGALi::N<2>) const
+                   Arity_tag< 0 >, Arity_tag< 2 >, Arity_tag< 2 >) const
   { return f1(f2(), f3(a1, a2)); }
 
   template < class A1, class A2, class A3 >
   result_type call(const A1& a1, const A2& a2, const A3& a3,
-                   CGALi::N<3>, CGALi::N<0>, CGALi::N<3>) const
+                   Arity_tag< 3 >, Arity_tag< 0 >, Arity_tag< 3 >) const
   { return f1(f2(a1, a2, a3), f3()); }
 
   template < class A1, class A2, class A3 >
   result_type call(const A1& a1, const A2& a2, const A3& a3,
-                   CGALi::N<1>, CGALi::N<2>, CGALi::N<3>) const
-  { return f1(f2(a1), f3(a2, a3)); }
-
-  template < class A1, class A2, class A3 >
-  result_type call(const A1& a1, const A2& a2, const A3& a3,
-                   CGALi::N<2>, CGALi::N<1>, CGALi::N<3>) const
+                   Arity_tag< 2 >, Arity_tag< 1 >, Arity_tag< 3 >) const
   { return f1(f2(a1, a2), f3(a3)); }
 
   template < class A1, class A2, class A3 >
   result_type call(const A1& a1, const A2& a2, const A3& a3,
-                   CGALi::N<0>, CGALi::N<3>, CGALi::N<3>) const
+                   Arity_tag< 1 >, Arity_tag< 2 >, Arity_tag< 3 >) const
+  { return f1(f2(a1), f3(a2, a3)); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 0 >, Arity_tag< 3 >, Arity_tag< 3 >) const
   { return f1(f2(), f3(a1, a2, a3)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 4 >, Arity_tag< 0 >, Arity_tag< 4 >) const
+  { return f1(f2(a1, a2, a3, a4), f3()); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 3 >, Arity_tag< 1 >, Arity_tag< 4 >) const
+  { return f1(f2(a1, a2, a3), f3(a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 2 >, Arity_tag< 2 >, Arity_tag< 4 >) const
+  { return f1(f2(a1, a2), f3(a3, a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 1 >, Arity_tag< 3 >, Arity_tag< 4 >) const
+  { return f1(f2(a1), f3(a2, a3, a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 0 >, Arity_tag< 4 >, Arity_tag< 4 >) const
+  { return f1(f2(), f3(a1, a2, a3, a4)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 5 >, Arity_tag< 0 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2, a3, a4, a5), f3()); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 4 >, Arity_tag< 1 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2, a3, a4), f3(a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 3 >, Arity_tag< 2 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2, a3), f3(a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 2 >, Arity_tag< 3 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2), f3(a3, a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 1 >, Arity_tag< 4 >, Arity_tag< 5 >) const
+  { return f1(f2(a1), f3(a2, a3, a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 0 >, Arity_tag< 5 >, Arity_tag< 5 >) const
+  { return f1(f2(), f3(a1, a2, a3, a4, a5)); }
 
 protected:
   F1 f1;
@@ -372,15 +453,485 @@ protected:
   F3 f3;
 };
 
-template < class F1, class F2 >
-inline Compose_1< F1, F2 >
-compose(const F1& f1, const F2& f2)
-{ return Compose_1< F1, F2 >(f1, f2); }
+template < class F1, class R1, class F2, class R2,
+           class F3, class R3, class F4, class R4 >
+struct Compose_3 {
+  typedef typename F1::result_type result_type;
+  typedef typename CGALi::Arity_plus< R2, R3 >::Arity   Rtmp;
+  typedef typename CGALi::Arity_plus< Rtmp, R4 >::Arity Arity;
 
-template < class F1, class F2, class F3 >
-inline Compose_2< F1, F2, F3 >
-compose(const F1& f1, const F2& f2, const F3& f3)
-{ return Compose_2< F1, F2, F3 >(f1, f2, f3); }
+  Compose_3(const F1& f1_, const F2& f2_, const F3& f3_,
+            const F4& f4_)
+  : f1(f1_), f2(f2_), f3(f3_), f4(f4_)
+  {}
+
+  result_type operator()() const
+  { return call(R2(), R3(), R4(), Arity()); }
+
+  template < class A1 >
+  result_type operator()(const A1& a1) const
+  { return call(a1, R2(), R3(), R4(), Arity()); }
+
+  template < class A1, class A2 >
+  result_type operator()(const A1& a1, const A2& a2) const
+  { return call(a1, a2, R2(), R3(), R4(), Arity()); }
+
+  template < class A1, class A2, class A3 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3) const
+  { return call(a1, a2, a3, R2(), R3(), R4(), Arity()); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3,
+                         const A4& a4) const
+  { return call(a1, a2, a3, a4, R2(), R3(), R4(), Arity()); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type operator()(const A1& a1, const A2& a2, const A3& a3,
+                         const A4& a4, const A5& a5) const
+  { return call(a1, a2, a3, a4, a5, R2(), R3(), R4(), Arity()); }
+
+  result_type call(Arity_tag< 0 >, Arity_tag< 0 >,
+                   Arity_tag< 0 >, Arity_tag< 0 >) const
+  { return f1(f2(), f3(), f4()); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 5 >, Arity_tag< 0 >,
+                   Arity_tag< 0 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2, a3, a4, a5), f3(), f4()); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 0 >, Arity_tag< 5 >,
+                   Arity_tag< 0 >, Arity_tag< 5 >) const
+  { return f1(f2(), f3(a1, a2, a3, a4, a5), f4()); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 0 >, Arity_tag< 0 >,
+                   Arity_tag< 5 >, Arity_tag< 5 >) const
+  { return f1(f2(), f3(), f4(a1, a2, a3, a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 4 >, Arity_tag< 1 >,
+                   Arity_tag< 0 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2, a3, a4), f3(a5), f4()); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 4 >, Arity_tag< 0 >,
+                   Arity_tag< 1 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2, a3, a4), f3(), f4(a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 1 >, Arity_tag< 4 >,
+                   Arity_tag< 0 >, Arity_tag< 5 >) const
+  { return f1(f2(a1), f3(a2, a3, a4, a5), f4()); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 0 >, Arity_tag< 4 >,
+                   Arity_tag< 1 >, Arity_tag< 5 >) const
+  { return f1(f2(), f3(a1, a2, a3, a4), f4(a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 1 >, Arity_tag< 0 >,
+                   Arity_tag< 4 >, Arity_tag< 5 >) const
+  { return f1(f2(a1), f3(), f4(a2, a3, a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 0 >, Arity_tag< 1 >,
+                   Arity_tag< 4 >, Arity_tag< 5 >) const
+  { return f1(f2(), f3(a1), f4(a2, a3, a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 3 >, Arity_tag< 2 >,
+                   Arity_tag< 0 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2, a3), f3(a4, a5), f4()); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 3 >, Arity_tag< 0 >,
+                   Arity_tag< 2 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2, a3), f3(), f4(a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 2 >, Arity_tag< 3 >,
+                   Arity_tag< 0 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2), f3(a3, a4, a5), f4()); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 0 >, Arity_tag< 3 >,
+                   Arity_tag< 2 >, Arity_tag< 5 >) const
+  { return f1(f2(), f3(a1, a2, a3), f4(a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 2 >, Arity_tag< 0 >,
+                   Arity_tag< 3 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2), f3(), f4(a3, a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 0 >, Arity_tag< 2 >,
+                   Arity_tag< 3 >, Arity_tag< 5 >) const
+  { return f1(f2(), f3(a1, a2), f4(a3, a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 3 >, Arity_tag< 1 >,
+                   Arity_tag< 1 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2, a3), f3(a4), f4(a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 1 >, Arity_tag< 3 >,
+                   Arity_tag< 1 >, Arity_tag< 5 >) const
+  { return f1(f2(a1), f3(a2, a3, a4), f4(a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 1 >, Arity_tag< 1 >,
+                   Arity_tag< 3 >, Arity_tag< 5 >) const
+  { return f1(f2(a1), f3(a2), f4(a3, a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 2 >, Arity_tag< 2 >,
+                   Arity_tag< 1 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2), f3(a3, a4), f4(a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 2 >, Arity_tag< 1 >,
+                   Arity_tag< 2 >, Arity_tag< 5 >) const
+  { return f1(f2(a1, a2), f3(a3), f4(a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4, class A5 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4, const A5& a5,
+                   Arity_tag< 1 >, Arity_tag< 2 >,
+                   Arity_tag< 2 >, Arity_tag< 5 >) const
+  { return f1(f2(a1), f3(a2, a3), f4(a4, a5)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 4 >, Arity_tag< 0 >,
+                   Arity_tag< 0 >, Arity_tag< 4 >) const
+  { return f1(f2(a1, a2, a3, a4), f3(), f4()); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 0 >, Arity_tag< 4 >,
+                   Arity_tag< 0 >, Arity_tag< 4 >) const
+  { return f1(f2(), f3(a1, a2, a3, a4), f4()); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 0 >, Arity_tag< 0 >,
+                   Arity_tag< 4 >, Arity_tag< 4 >) const
+  { return f1(f2(), f3(), f4(a1, a2, a3, a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 3 >, Arity_tag< 1 >,
+                   Arity_tag< 0 >, Arity_tag< 4 >) const
+  { return f1(f2(a1, a2, a3), f3(a4), f4()); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 3 >, Arity_tag< 0 >,
+                   Arity_tag< 1 >, Arity_tag< 4 >) const
+  { return f1(f2(a1, a2, a3), f3(), f4(a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 1 >, Arity_tag< 3 >,
+                   Arity_tag< 0 >, Arity_tag< 4 >) const
+  { return f1(f2(a1), f3(a2, a3, a4), f4()); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 0 >, Arity_tag< 3 >,
+                   Arity_tag< 1 >, Arity_tag< 4 >) const
+  { return f1(f2(), f3(a1, a2, a3), f4(a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 1 >, Arity_tag< 0 >,
+                   Arity_tag< 3 >, Arity_tag< 4 >) const
+  { return f1(f2(a1), f3(), f4(a2, a3, a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 0 >, Arity_tag< 1 >,
+                   Arity_tag< 3 >, Arity_tag< 4 >) const
+  { return f1(f2(), f3(a1), f4(a2, a3, a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 2 >, Arity_tag< 2 >,
+                   Arity_tag< 0 >, Arity_tag< 4 >) const
+  { return f1(f2(a1, a2), f3(a3, a4), f4()); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 2 >, Arity_tag< 0 >,
+                   Arity_tag< 2 >, Arity_tag< 4 >) const
+  { return f1(f2(a1, a2), f3(), f4(a3, a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 0 >, Arity_tag< 2 >,
+                   Arity_tag< 2 >, Arity_tag< 4 >) const
+  { return f1(f2(), f3(a1, a2), f4(a3, a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 2 >, Arity_tag< 1 >,
+                   Arity_tag< 1 >, Arity_tag< 4 >) const
+  { return f1(f2(a1, a2), f3(a3), f4(a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 1 >, Arity_tag< 2 >,
+                   Arity_tag< 1 >, Arity_tag< 4 >) const
+  { return f1(f2(a1), f3(a2, a3), f4(a4)); }
+
+  template < class A1, class A2, class A3, class A4 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   const A4& a4,
+                   Arity_tag< 1 >, Arity_tag< 1 >,
+                   Arity_tag< 2 >, Arity_tag< 4 >) const
+  { return f1(f2(a1), f3(a2), f4(a3, a4)); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 3 >, Arity_tag< 0 >,
+                   Arity_tag< 0 >, Arity_tag< 3 >) const
+  { return f1(f2(a1, a2, a3), f3(), f4()); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 0 >, Arity_tag< 3 >,
+                   Arity_tag< 0 >, Arity_tag< 3 >) const
+  { return f1(f2(), f3(a1, a2, a3), f4()); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 0 >, Arity_tag< 0 >,
+                   Arity_tag< 3 >, Arity_tag< 3 >) const
+  { return f1(f2(), f3(), f4(a1, a2, a3)); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 2 >, Arity_tag< 1 >,
+                   Arity_tag< 0 >, Arity_tag< 3 >) const
+  { return f1(f2(a1, a2), f3(a3), f4()); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 2 >, Arity_tag< 0 >,
+                   Arity_tag< 1 >, Arity_tag< 3 >) const
+  { return f1(f2(a1, a2), f3(), f4(a3)); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 1 >, Arity_tag< 2 >,
+                   Arity_tag< 0 >, Arity_tag< 3 >) const
+  { return f1(f2(a1), f3(a2, a3), f4()); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 0 >, Arity_tag< 2 >,
+                   Arity_tag< 1 >, Arity_tag< 3 >) const
+  { return f1(f2(), f3(a1, a2), f4(a3)); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 1 >, Arity_tag< 0 >,
+                   Arity_tag< 2 >, Arity_tag< 3 >) const
+  { return f1(f2(a1), f3(), f4(a2, a3)); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 0 >, Arity_tag< 1 >,
+                   Arity_tag< 2 >, Arity_tag< 3 >) const
+  { return f1(f2(), f3(a1), f4(a2, a3)); }
+
+  template < class A1, class A2, class A3 >
+  result_type call(const A1& a1, const A2& a2, const A3& a3,
+                   Arity_tag< 1 >, Arity_tag< 1 >,
+                   Arity_tag< 1 >, Arity_tag< 3 >) const
+  { return f1(f2(a1), f3(a2), f4(a3)); }
+
+  template < class A1, class A2 >
+  result_type call(const A1& a1, const A2& a2,
+                   Arity_tag< 2 >, Arity_tag< 0 >,
+                   Arity_tag< 0 >, Arity_tag< 2 >) const
+  { return f1(f2(a1, a2), f3(), f4()); }
+
+  template < class A1, class A2 >
+  result_type call(const A1& a1, const A2& a2,
+                   Arity_tag< 0 >, Arity_tag< 2 >,
+                   Arity_tag< 0 >, Arity_tag< 2 >) const
+  { return f1(f2(), f3(a1, a2), f4()); }
+
+  template < class A1, class A2 >
+  result_type call(const A1& a1, const A2& a2,
+                   Arity_tag< 0 >, Arity_tag< 0 >,
+                   Arity_tag< 2 >, Arity_tag< 2 >) const
+  { return f1(f2(), f3(), f4(a1, a2)); }
+
+  template < class A1, class A2 >
+  result_type call(const A1& a1, const A2& a2,
+                   Arity_tag< 1 >, Arity_tag< 1 >,
+                   Arity_tag< 0 >, Arity_tag< 2 >) const
+  { return f1(f2(a1), f3(a2), f4()); }
+
+  template < class A1, class A2 >
+  result_type call(const A1& a1, const A2& a2,
+                   Arity_tag< 1 >, Arity_tag< 0 >,
+                   Arity_tag< 1 >, Arity_tag< 2 >) const
+  { return f1(f2(a1), f3(), f4(a2)); }
+
+  template < class A1, class A2 >
+  result_type call(const A1& a1, const A2& a2,
+                   Arity_tag< 0 >, Arity_tag< 1 >,
+                   Arity_tag< 1 >, Arity_tag< 2 >) const
+  { return f1(f2(), f3(a1), f4(a2)); }
+
+  template < class A1 >
+  result_type call(const A1& a1,
+                   Arity_tag< 1 >, Arity_tag< 0 >,
+                   Arity_tag< 0 >, Arity_tag< 1 >) const
+  { return f1(f2(a1), f3(), f4()); }
+
+  template < class A1 >
+  result_type call(const A1& a1,
+                   Arity_tag< 0 >, Arity_tag< 1 >,
+                   Arity_tag< 0 >, Arity_tag< 1 >) const
+  { return f1(f2(), f3(a1), f4()); }
+
+  template < class A1 >
+  result_type call(const A1& a1,
+                   Arity_tag< 0 >, Arity_tag< 0 >,
+                   Arity_tag< 1 >, Arity_tag< 1 >) const
+  { return f1(f2(), f3(), f4(a1)); }
+
+protected:
+  F1 f1;
+  F2 f2;
+  F3 f3;
+  F4 f4;
+};
+// ------------------------------------------------------------------------
+// Encapsulate the composition type ==> can be adapted
+// ------------------------------------------------------------------------
+
+namespace CGALi {
+  // msvc6 needs this, whysoever ...
+  template < class T >
+  struct CGAL__Wrap_type {
+    typedef typename T::Arity Arity;
+  };
+
+  template < class F1, class F2, class F3, class F4 >
+  struct Compose_helper {
+    template < class T > struct Help;
+
+    template <> struct Help< Arity_tag< 1 > >
+    { typedef Compose_1< F1, Arity_tag< 1 >,
+                         F2, typename CGAL__Wrap_type< F2 >::Arity
+                     > Type; };
+
+    template <> struct Help< Arity_tag< 2 > >
+    { typedef Compose_2< F1, Arity_tag< 2 >,
+                         F2, typename CGAL__Wrap_type< F2 >::Arity,
+                         F3, typename CGAL__Wrap_type< F3 >::Arity
+                     > Type; };
+
+    template <> struct Help< Arity_tag< 3 > >
+    { typedef Compose_3< F1, Arity_tag< 3 >,
+                         F2, typename CGAL__Wrap_type< F2 >::Arity,
+                         F3, typename CGAL__Wrap_type< F3 >::Arity,
+                         F4, typename CGAL__Wrap_type< F4 >::Arity
+                     > Type; };
+  };
+}
+
+template < class F1, class F2, class F3 = F2, class F4 = F2 >
+struct Compose {
+  typedef typename CGALi::Compose_helper< F1, F2, F3, F4 >::Help<
+    typename CGALi::CGAL__Wrap_type< F1 >::Arity  >::Type Type;
+};
+// ------------------------------------------------------------------------
+// compose helper functions
+// ------------------------------------------------------------------------
+
+template < class F0, class F1 >
+inline typename Compose< F0, F1 >::Type
+compose(const F0& f0, const F1& f1) {
+  typedef typename Compose< F0, F1 >::Type C;
+  return C(f0, f1);
+}
+
+template < class F0, class F1, class F2 >
+inline typename Compose< F0, F1, F2 >::Type
+compose(const F0& f0, const F1& f1, const F2& f2)
+{
+  typedef typename Compose< F0, F1, F2 >::Type C;
+  return C(f0, f1, f2);
+}
+
+template < class F0, class F1, class F2, class F3 >
+inline typename Compose< F0, F1, F2, F3 >::Type
+compose(const F0& f0, const F1& f1, const F2& f2, const F3& f3)
+{
+  typedef typename Compose< F0, F1, F2, F3 >::Type C;
+  return C(f0, f1, f2, f3);
+}
 
 CGAL_END_NAMESPACE
 
