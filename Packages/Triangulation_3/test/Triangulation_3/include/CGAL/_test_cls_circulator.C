@@ -21,6 +21,8 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+#ifndef CGAL_TEST_CLS_CIRCULATOR_C
+#define CGAL_TEST_CLS_CIRCULATOR_C
 
 #include <cassert>
 
@@ -202,3 +204,5 @@ _test_circulator( const Triangulation &T )
 
   return n;
 }
+
+#endif // CGAL_TEST_CLS_CIRCULATOR_C

@@ -20,7 +20,8 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-
+#ifndef CGAL_TEST_CLS_ITERATOR_C
+#define CGAL_TEST_CLS_ITERATOR_C
 
 template < class Triangulation >
 int
@@ -40,7 +41,6 @@ _test_vertex_iterator( const Triangulation &T )
     return n;
 
 }
-
 
 template < class Triangulation >
 int
@@ -120,4 +120,4 @@ _test_triangulation_iterator( const Triangulation &T )
   return(n-m+f-t);
 }
 
-
+#endif // CGAL_TEST_CLS_ITERATOR_C

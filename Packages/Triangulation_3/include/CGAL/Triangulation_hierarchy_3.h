@@ -97,7 +97,7 @@ public:
   void clear();
 
   // CHECKING
-  bool is_valid() const;
+  bool is_valid(bool verbose = false, int level = 0) const;
 
   // INSERT REMOVE
   Vertex_handle insert(const Point &p);
@@ -190,30 +190,29 @@ void
 Triangulation_hierarchy_3<Tr>::   
 copy_triangulation(const Triangulation_hierarchy_3<Tr> &tr)
 {
-  std::map< const void*, void*, std::less<const void*> > V;
-  {
-    for(int i=0;i<Triangulation_hierarchy_3__maxlevel;++i)
+  std::map< const void*, void* > V;
+
+  for(int i=0; i<Triangulation_hierarchy_3__maxlevel; ++i)
     hierarchy[i]->copy_triangulation(*tr.hierarchy[i]);
-  }
-  //up and down have been copied in straightforward way
+
+  // up and down have been copied in straightforward way
   // compute a map at lower level
-  {
-    for( Vertex_iterator it=hierarchy[0]->vertices_begin(); 
-	 it != hierarchy[0]->vertices_end(); ++it) {
-      if (it->up()) V[ ((Vertex*)(it->up()))->down() ] = &(*it);
-    }
-  }
-  {
-    for(int i=1;i<Triangulation_hierarchy_3__maxlevel;++i) {
-      for( Vertex_iterator it=hierarchy[i]->vertices_begin(); 
-	   it != hierarchy[i]->vertices_end(); ++it) {
+
+  for( Vertex_iterator it=hierarchy[0]->finite_vertices_begin(); 
+       it != hierarchy[0]->vertices_end(); ++it)
+    if (it->up())
+      V[ ((Vertex*)(it->up()))->down() ] = &(*it);
+
+  for(int j=1; j<Triangulation_hierarchy_3__maxlevel; ++j) {
+    for( Vertex_iterator it=hierarchy[j]->finite_vertices_begin();
+	 it != hierarchy[j]->vertices_end(); ++it) {
 	// down pointer goes in original instead in copied triangulation
 	it->set_down(V[it->down()]);
 	// make reverse link
 	((Vertex*)(it->down()))->set_up( &(*it) );
 	// make map for next level
-	if (it->up()) V[ ((Vertex*)(it->up()))->down() ] = &(*it);
-      }
+	if (it->up())
+	    V[ ((Vertex*)(it->up()))->down() ] = &(*it);
     }
   }
 }
@@ -258,13 +257,13 @@ clear()
 template <class Tr>
 bool
 Triangulation_hierarchy_3<Tr>:: 
-is_valid() const
+is_valid(bool verbose, int level) const
 {
   bool result = true;
   
   //verify correctness of triangulation at all levels
   for(int i=0; i<Triangulation_hierarchy_3__maxlevel; ++i)
-	result = result && hierarchy[i]->is_valid();
+	result = result && hierarchy[i]->is_valid(verbose, level);
 
   //verify that lower level has no down pointers
   for( Vertex_iterator it = hierarchy[0]->finite_vertices_begin(); 
@@ -294,8 +293,6 @@ Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 insert(const Point &p)
 {
-  CGAL_triangulation_expensive_assertion(is_valid());
-
   int vertex_level = random_level();
   Locate_type lt;
   int i, j;
@@ -335,8 +332,6 @@ void
 Triangulation_hierarchy_3<Tr>::
 remove(Vertex_handle v )
 {
-  CGAL_triangulation_expensive_assertion(is_valid());
-
   void * u=v->up();
   int l = 0;
   while(1){

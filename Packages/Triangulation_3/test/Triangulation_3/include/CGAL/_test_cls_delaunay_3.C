@@ -15,12 +15,14 @@
 // file          : include/CGAL/_test_cls_delaunay_3.C
 // revision      : 
 // revision_date : 
-
 // author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
 //                 Monique Teillaud
-
+//
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
+
+#ifndef CGAL_TEST_CLS_DELAUNAY_C
+#define CGAL_TEST_CLS_DELAUNAY_C
 
 #include <cassert>
 
@@ -34,6 +36,7 @@
 #include "_test_cls_circulator.C"
 
 #include <CGAL/Random.h>
+
 template <class Triangulation>
 void
 _test_cls_delaunay_3(const Triangulation &)
@@ -790,10 +793,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T3_0.is_valid());
   assert(T3_0.dimension()==-1);
   assert(T3_0.number_of_vertices()==0);
-        
-       
 
-    
 }
 
-
+#endif // CGAL_TEST_CLS_DELAUNAY_C
