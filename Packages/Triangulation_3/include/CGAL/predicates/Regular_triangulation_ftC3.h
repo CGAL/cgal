@@ -40,19 +40,23 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
     FT dpx = px - tx;
     FT dpy = py - ty;
     FT dpz = pz - tz;
-    FT dpt = square(dpx) + square(dpy) + square(dpz) - pwt + twt;
+    FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+             CGAL_NTS square(dpz) - pwt + twt;
     FT dqx = qx - tx;
     FT dqy = qy - ty;
     FT dqz = qz - tz;
-    FT dqt = square(dqx) + square(dqy) + square(dqz) - qwt + twt;
+    FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
+             CGAL_NTS square(dqz) - qwt + twt;
     FT drx = rx - tx;
     FT dry = ry - ty;
     FT drz = rz - tz;
-    FT drt = square(drx) + square(dry) + square(drz) - rwt + twt;
+    FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) + 
+             CGAL_NTS square(drz) - rwt + twt;
     FT dsx = sx - tx;
     FT dsy = sy - ty;
     FT dsz = sz - tz;
-    FT dst = square(dsx) + square(dsy) + square(dsz) - swt + twt;
+    FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) + 
+             CGAL_NTS square(dsz) - swt + twt;
 
     return Oriented_side( - sign_of_determinant4x4(dpx, dpy, dpz, dpt,
 						   dqx, dqy, dqz, dqt,
@@ -72,15 +76,18 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
     FT dpx = px - tx;
     FT dpy = py - ty;
     FT dpz = pz - tz;
-    FT dpt = square(dpx) + square(dpy) + square(dpz) - pwt + twt;
+    FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+             CGAL_NTS square(dpz) - pwt + twt;
     FT dqx = qx - tx;
     FT dqy = qy - ty;
     FT dqz = qz - tz;
-    FT dqt = square(dqx) + square(dqy) + square(dqz) - qwt + twt;
+    FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) + 
+             CGAL_NTS square(dqz) - qwt + twt;
     FT drx = rx - tx;
     FT dry = ry - ty;
     FT drz = rz - tz;
-    FT drt = square(drx) + square(dry) + square(drz) - rwt + twt;
+    FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) + 
+             CGAL_NTS square(drz) - rwt + twt;
     Sign cmp;
 
     // Projection on the (xy) plane.
@@ -118,25 +125,27 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
     FT dpx = px - tx;
     FT dpy = py - ty;
     FT dpz = pz - tz;
-    FT dpt = square(dpx) + square(dpy) + square(dpz) - pwt + twt;
+    FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+             CGAL_NTS square(dpz) - pwt + twt;
     FT dqx = qx - tx;
     FT dqy = qy - ty;
     FT dqz = qz - tz;
-    FT dqt = square(dqx) + square(dqy) + square(dqz) - qwt + twt;
+    FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) + 
+             CGAL_NTS square (dqz) - qwt + twt;
     Comparison_result cmp;
 
     // We do an orthogonal projection on the (x) axis, if possible.
-    cmp = CGAL::compare(px, qx);
+    cmp = CGAL_NTS compare(px, qx);
     if (cmp != EQUAL)
         return Oriented_side(cmp * sign_of_determinant2x2(dpx, dpt, dqx, dqt));
 
     // We do an orthogonal projection on the (y) axis, if possible.
-    cmp = CGAL::compare(py, qy);
+    cmp = CGAL_NTS compare(py, qy);
     if (cmp != EQUAL)
         return Oriented_side(cmp * sign_of_determinant2x2(dpy, dpt, dqy, dqt));
 
     // We do an orthogonal projection on the (z) axis.
-    cmp = CGAL::compare(pz, qz);
+    cmp = CGAL_NTS compare(pz, qz);
     return Oriented_side(cmp * sign_of_determinant2x2(dpz, dpt, dqz, dqt));
 }
 
