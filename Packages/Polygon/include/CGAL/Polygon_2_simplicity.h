@@ -279,7 +279,7 @@ Vertex_data(ForwardIterator begin, ForwardIterator end,
             const PolygonTraits& pgn_traits)
 : Base_class(begin, end, pgn_traits)
 {
-    edges.insert(edges.end(), m_size, Edge_data<Less_segs>());
+    edges.insert(edges.end(), this->m_size, Edge_data<Less_segs>());
 }
 
 
@@ -427,10 +427,10 @@ template <class ForwardIterator, class PolygonTraits>
 void Vertex_data<ForwardIterator, PolygonTraits>::
 sweep(Tree *tree)
 {
-    if (m_size < 3)
+    if (this->m_size < 3)
     	return;
     bool succes = true;
-    for (Index_t i=0; i< m_size; ++i) {
+    for (Index_t i=0; i< this->m_size; ++i) {
         Vertex_index cur = index_at_rank(Vertex_order(i));
 	    Vertex_index prev_vt = prev(cur), next_vt = next(cur);
 	    if (ordered_left_to_right(cur, next_vt)) {
@@ -448,7 +448,7 @@ sweep(Tree *tree)
 	        break;
     }
     if (!succes)
-    	is_simple_result = false;
+    	this->is_simple_result = false;
 }
 }
 // ----- End of implementation of i_polygon functions. -----
