@@ -15,8 +15,8 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
-//                 Bernd Gärtner
+// Author(s)     : Sven Schoenherr <sven@inf.fu-berlin.de>
+//                 Bernd Gaertner
 
 #include <iterator>
 

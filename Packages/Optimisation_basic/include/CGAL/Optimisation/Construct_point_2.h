@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sven Schönherr <sven@inf.ethz.ch>
+// Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
 
 #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_2_H
 #define CGAL_OPTIMISATION_CONSTRUCT_POINT_2_H

@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Sylvain Pion
+// Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Sylvain Pion
 
 #ifndef CGAL_RANDOM_H
 #define CGAL_RANDOM_H

@@ -1,3 +1,6 @@
+4 September 2004 Menelaos Karavelas
+- re-wrote author names in copyright notices using 7-bit characters
+
 13 August 2004 Andreas Fabri
 - Replaced the \Ipe with an \includegraphics
 

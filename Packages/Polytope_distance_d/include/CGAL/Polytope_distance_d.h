@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sven Schönherr <sven@inf.ethz.ch>
+// Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
 
 #ifndef CGAL_POLYTOPE_DISTANCE_D_H
 #define CGAL_POLYTOPE_DISTANCE_D_H

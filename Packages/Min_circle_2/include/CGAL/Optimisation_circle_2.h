@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
+// Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
 #ifndef CGAL_OPTIMISATION_CIRCLE_2_H
 #define CGAL_OPTIMISATION_CIRCLE_2_H

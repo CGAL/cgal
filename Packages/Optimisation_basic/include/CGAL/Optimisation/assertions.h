@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Geert-Jan Giezeman, Sven Schönherr <sven@inf.ethz.ch>
+// Author(s)     : Geert-Jan Giezeman, Sven Schoenherr <sven@inf.ethz.ch>
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #define CGAL_OPTIMISATION_ASSERTIONS_H

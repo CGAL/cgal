@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
+// Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
 // Each of the following operators is individually
 // protected against multiple inclusion.

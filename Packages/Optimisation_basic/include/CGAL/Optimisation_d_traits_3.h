@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sven Schönherr <sven@inf.ethz.ch>
+// Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
 
 #ifndef CGAL_OPTIMISATION_D_TRAITS_3_H
 #define CGAL_OPTIMISATION_D_TRAITS_3_H

@@ -1,3 +1,6 @@
+4 September 2004 Menelaos Karavelas
+- re-wrote author names in copyright notices using 7-bit characters
+
 Changes done to the `Min_annulus_d' package
 
 Version 1.1.11 on 18-Jan-2004

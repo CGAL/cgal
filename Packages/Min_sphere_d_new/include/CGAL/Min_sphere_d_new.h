@@ -15,7 +15,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Bernd Gärtner, Sven Schönherr <sven@inf.ethz.ch>
+// Author(s)     : Bernd Gaertner, Sven Schoenherr <sven@inf.ethz.ch>
 
 #ifndef CGAL_MIN_SPHERE_D_H
 #define CGAL_MIN_SPHERE_D_H
