@@ -9,7 +9,7 @@ LEDA_KERNEL =                   2
 MY_KERNEL =                     3
 
 SEGMENT_TRAITS =                0
-CACHED_SEGMENT_TRAITS =         1
+SEGMENT_CACHED_TRAITS =         1
 LEDA_SEGMENT_TRAITS =           2
 POLYLINE_TRAITS =               3
 CACHED_POLYLINE_TRAITS =        4
@@ -121,6 +121,7 @@ LOBJDIR =
 
 ifeq ($(DEBUG),1)
 GCPPOPTS = -g
+# GCPPOPTS+= -DVERBOSE
 else
 GCPPOPTS = -O3
 

@@ -7,7 +7,7 @@
 #define MY_KERNEL                       3
 
 #define SEGMENT_TRAITS                  0
-#define CACHED_SEGMENT_TRAITS           1
+#define SEGMENT_CACHED_TRAITS           1
 #define LEDA_SEGMENT_TRAITS             2
 #define POLYLINE_TRAITS                 3
 #define CACHED_POLYLINE_TRAITS          4
