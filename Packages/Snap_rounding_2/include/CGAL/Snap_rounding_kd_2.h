@@ -401,7 +401,7 @@ public:
       return(p1);
   }
 
-  void get_intersecting_points(list<SAVED_OBJECT> &result_list,
+  void get_intersecting_points(std::list<SAVED_OBJECT> &result_list,
                                Segment_2 s,
                                NT unit_square)
   {
@@ -460,12 +460,12 @@ public:
     Box b(point1,point2,2);
  
     // the kd-tree query
-    list<my_point<Rep,SAVED_OBJECT> > res;
+    std::list<my_point<Rep,SAVED_OBJECT> > res;
     iter->first->search(std::back_inserter(res),b);
 
     // create result
     result_list.empty();
-    for(typename list<my_point<Rep,SAVED_OBJECT> >::iterator 
+    for(typename std::list<my_point<Rep,SAVED_OBJECT> >::iterator 
         my_point_iter = res.begin();
         my_point_iter != res.end();
         ++my_point_iter)

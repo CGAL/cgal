@@ -500,7 +500,7 @@ void Snap_rounding_2<Rep_,OutputContainer>::
     Object result;
     Point_2 p;
     std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> > hot_pixels_list;
-    list<X_curve> segments;
+    std::list<X_curve> segments;
 
     if(seg_list.empty())
       return;

@@ -1639,7 +1639,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     Point_2 p;
 
     NUMBER_OF_HP = 0;
-    list<X_curve> segments;
+    std::list<X_curve> segments;
     for(iter1 = seg_list.begin();iter1 != seg_list.end();++iter1)
       segments.push_back(X_curve(iter1->source(),iter1->target()));
 
