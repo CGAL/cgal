@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
-CXXFLAGS = $(CGAL_CXXFLAGS) \
+CXXFLAGS = -I../../include $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 # -DDEBUG for display additionnal info
