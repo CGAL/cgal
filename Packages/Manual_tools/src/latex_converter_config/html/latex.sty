@@ -449,6 +449,7 @@
 % +--------------------------------------------------------------------------
 % |     * Calligraphic letters
 % +--------------------------------------------------------------------------
+\newcommand{\cal}{\mathcal} % comes from plain TeX
 \newcommand{\mathcal}[1]{\lciScanMathcal #C1@}
 \newcommand{\lciScanMathcal}[1]{%
   \lciIfEqual{#1}{@}{}{\lciGlueFirstToSecond{\lciMathcal}{#1}\lciScanMathcal}}
