@@ -1,3 +1,6 @@
+3.87   (25 March 2002)
+- removed more iterator traits pointer spec macro calls for Point_d
+
 3.86   (22 March 2002)
 - removed the iterator traits pointer spec macro calls for Point_d
 
