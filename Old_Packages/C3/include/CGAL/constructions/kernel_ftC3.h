@@ -1,6 +1,6 @@
 // ==========================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1997, 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -8,12 +8,10 @@
 //
 // --------------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
 // file          : include/CGAL/constructions/kernel_ftC3.h
-// source        : include/CGAL/constructions/kernel_ftC3.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
@@ -26,9 +24,7 @@
 #ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
 #define CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
 
-#ifndef CGAL_DETERMINANT_H
 #include <CGAL/determinant.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -165,7 +161,7 @@ template < class FT >
 CGAL_KERNEL_INLINE
 FT
 scaled_distance_to_directionC3(const FT &pa, const FT &pb, const FT &pc,
-                               const FT &px, const FT &py)
+                               const FT &px, const FT &py, const FT &pz)
 {
   return pa*px + pb*py + pc*pz;
 }
@@ -175,7 +171,7 @@ CGAL_KERNEL_INLINE
 FT
 scaled_distance_to_planeC3(
      const FT &pa, const FT &pb, const FT &pc, const FT &pd,
-     const FT &px, const FT &py)
+     const FT &px, const FT &py, const FT &pz)
 {
   return pa*px + pb*py + pc*pz + pd;
 }
