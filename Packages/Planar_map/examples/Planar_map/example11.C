@@ -50,8 +50,8 @@ int main()
   std::cout << "Inserting the curves to the map ... ";
 
   e[0] = pm.insert_in_face_interior(cv[0], pm.unbounded_face());
-  e[1] = pm.insert_from_vertex(cv[1], e[0], true);
-  e[2] = pm.insert_from_vertex(cv[2], e[1], true);
+  e[1] = pm.insert_from_vertex(cv[1], e[0]);
+  e[2] = pm.insert_from_vertex(cv[2], e[1]);
   e[3] = pm.insert_at_vertices(cv[3], e[2], e[0]->twin());
   e[4] = pm.insert_at_vertices(cv[4], e[1]->twin(), e[3]->twin());
   
@@ -63,4 +63,3 @@ int main()
 
   return 0;
 }
-

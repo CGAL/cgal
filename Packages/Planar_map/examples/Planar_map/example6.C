@@ -71,7 +71,7 @@ int main()
   Planar_map::Halfedge_handle e[6];
   e[0] = pm.insert(cv[0]);
   for (i = 1; i < 4; i++)
-    e[i] = pm.insert_from_vertex(cv[i], e[i-1]->target(), true);
+    e[i] = pm.insert_from_vertex(cv[i], e[i-1]->target());
   e[4] = pm.insert_at_vertices(cv[4], e[0]->source(), e[3]->target());
   e[5] = pm.insert_at_vertices(cv[5], e[0]->source(), e[2]->target());
 

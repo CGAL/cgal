@@ -10,10 +10,10 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Pm_straight_traits.h>
+#include <CGAL/IO/Straight_2_stream.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
-#include <CGAL/IO/Straight_2_stream.h>
 #include <iostream>
 #include <iterator>
 #include <algorithm>
@@ -26,6 +26,8 @@ typedef Traits::X_curve_2                       X_curve_2;
 typedef Traits::X_bounded_curve                 Segment;
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
+
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(X_curve_2);
 
 int main() 
 {

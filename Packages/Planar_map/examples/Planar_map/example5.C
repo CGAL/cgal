@@ -44,7 +44,7 @@ int main()
 
   e[0] = pm.insert_in_face_interior(cv[0], pm.unbounded_face());
   for (i = 1; i < 3; i++)
-    e[i] = pm.insert_from_vertex(cv[i], e[i-1]->target(), true);
+    e[i] = pm.insert_from_vertex(cv[i], e[i-1]->target());
   e[3] = pm.insert_at_vertices(cv[3], e[0]->source(), e[2]->target());
 
   // Check for correct topology:

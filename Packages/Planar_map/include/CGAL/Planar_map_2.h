@@ -179,7 +179,7 @@ public:
    * \return a handle to a new halfedge represented by the given curve.
    */
   Halfedge_handle insert(const X_curve_2     & cv, 
-			 Change_notification * en = NULL);
+                         Change_notification * en = NULL);
 
   //! inserts a set of new edges into the map. The new edges are
   //! reprsented by a given range of cirves.
@@ -223,7 +223,8 @@ public:
    * \param en the notification class. It's default value is NULL, which
    * implies no notification on insertion.
    * \return a handle to a new halfedge directed in the same way as the curve
-   * cv (traits->curve_source(cv) == h.source()).
+   * cv. That is, The curve source and target points coinside with the points
+   * of the source and target vertices of the returned halfedge respectively.)
    */
   Halfedge_handle insert_in_face_interior(const X_curve_2 & cv, 
                                           Face_handle f, 
@@ -243,16 +244,14 @@ public:
    * for the previous halfedge in the circular list of halfedges that share the
    * same target vertex v is unnecessary, saving its computation time.
    * \param cv the given curve.
-   * \param previous the reference halfedge. Its target vertex v, is already
+   * \param prev the reference halfedge. Its target vertex v, is already
    * in the map.
-   * \param source indicates whether the target of the returned halfedge holds
-   * the given curve (cv) target point.
    * \param en the notification class. It's default value is NULL, which
    * implies no notification on insertion.
    * \return a handle to a new halfedge that has the vertex v as its source.
    */
   Halfedge_handle insert_from_vertex(const X_curve_2 & cv,
-                                     Halfedge_handle previous, bool source,
+                                     Halfedge_handle prev, 
                                      Change_notification * en = NULL
 #ifdef _MSC_VER
                                      ,int dummy = 0
@@ -274,6 +273,11 @@ public:
    * implies no notification on insertion.
    * \return a handle to a new halfedge that has v1 as its source vertex.
    */
+  Halfedge_handle insert_from_vertex(const X_curve_2 & cv, 
+                                     Vertex_handle v1, 
+                                     Change_notification * en = NULL);
+
+  // Obsolete
   Halfedge_handle insert_from_vertex(const X_curve_2 & cv, 
                                      Vertex_handle v1, bool source, 
                                      Change_notification * en = NULL);
@@ -299,18 +303,18 @@ public:
    * the same target vertices v1 and v2 is unnecessary, saving its computation
    * time.
    * \param cv the given curve.
-   * \param previous1 the given halfedge that its target vertex is already in
+   * \param prev1 the given halfedge that its target vertex is already in
    * the map, and will be the source vertex of the returned halfedge.
-   * \param previous2 the given halfedge that its target vertex is already in
+   * \param prev2 the given halfedge that its target vertex is already in
    * the map, and will be the target vertex of the returned halfedge.
    * \param en the notification class. It's default value is NULL, which
    * implies no notification on insertion.
    * \return a handle to a new halfedge that has the target vertices of the
-   * previous1 and previous2 as its source and target vertices respectively.
+   * prev1 and prev2 as its source and target vertices respectively.
    */
   Halfedge_handle insert_at_vertices(const X_curve_2 & cv,
-                                     Halfedge_handle previous1, 
-                                     Halfedge_handle previous2,
+                                     Halfedge_handle prev1, 
+                                     Halfedge_handle prev2,
                                      Change_notification * en = NULL
 #ifdef _MSC_VER
                                      ,int dummy = 0
@@ -347,10 +351,10 @@ public:
 
 private:
 
-  //a private implementation which defines if previous1 is on an outer ccb of 
+  //a private implementation which defines if prev1 is on an outer ccb of 
   //the new face (returns true) or on an inner ccb (returns false)
-  bool prev1_inside_hole(Halfedge_const_handle previous1,
-                         Halfedge_const_handle previous2,
+  bool prev1_inside_hole(Halfedge_const_handle prev1,
+                         Halfedge_const_handle prev2,
                          const X_curve_2& cv);  
   
 public:  
@@ -361,14 +365,14 @@ public:
 
   Halfedge_handle merge_edge(Halfedge_handle e1, 
                              Halfedge_handle e2, 
-                             const X_curve_2& cv, 
+                             const X_curve_2 & cv, 
                              Change_notification * en = NULL);              
 
   Face_handle remove_edge(Halfedge_handle e);
 
   Halfedge_handle vertical_ray_shoot(const Point_2 & p, 
-				     Locate_type   & lt, 
-				     bool            up)
+                                     Locate_type   & lt, 
+                                     bool            up)
   {
     CGAL_precondition(pl);
     return pl->vertical_ray_shoot(p,lt,up);
@@ -892,11 +896,9 @@ insert_in_face_interior(
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_from_vertex(
-  const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
-  typename Planar_map_2<Dcel,Traits>::Halfedge_handle    previous,
-  bool                                                   source,
-  Change_notification                                  * en
+insert_from_vertex(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
+                   typename Planar_map_2<Dcel,Traits>::Halfedge_handle prev,
+                   Change_notification * en
 #ifdef _MSC_VER
   ,int dummy
 #endif
@@ -905,12 +907,20 @@ insert_from_vertex(
 #ifdef _MSC_VER
   (void) dummy;
 #endif
-  Halfedge_handle h = Topological_map<Dcel>::insert_from_vertex(previous);  
+  CGAL_precondition_msg(traits->point_is_same(prev->target()->point(), 
+                                              traits->curve_source(cv)) ||
+                        traits->point_is_same(prev->target()->point(), 
+                                              traits->curve_target(cv)),
+  "Point of target vertex of input halfedge should be a curve endpoint.");
+
+  Halfedge_handle h = Topological_map<Dcel>::insert_from_vertex(prev);  
   h->set_curve(cv);  
   h->twin()->set_curve(cv);
 
   pl->insert(h, cv);            // for arrangement
 
+  bool source = traits->point_is_same(prev->target()->point(), 
+                                      traits->curve_source(cv));
   (source) ?
     h->target()->set_point(traits->curve_target(cv)) :
     h->target()->set_point(traits->curve_source(cv));
@@ -927,21 +937,26 @@ typename Planar_map_2< Dcel, Traits >::Halfedge_handle
 Planar_map_2< Dcel, Traits >::
 insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
                    typename Planar_map_2< Dcel, Traits >::Vertex_handle v1, 
-                   bool source,
                    Change_notification * en)
 {
-  //find the previous of cv.
-  Halfedge_around_vertex_circulator previous = v1->incident_halfedges(),
-      after = previous,
-      infinite_loop = previous;
+  CGAL_precondition_msg(traits->point_is_same(v1->point(), 
+                                              traits->curve_source(cv)) ||
+                        traits->point_is_same(v1->point(), 
+                                              traits->curve_target(cv)),
+  "Point of input vertex should be a curve endpoint.");
+
+  // Find the previous of cv:
+  Halfedge_around_vertex_circulator prev = v1->incident_halfedges(),
+      after = prev,
+      infinite_loop = prev;
   ++after;
 
-  if (after != previous) {
-    while (!(traits->curve_is_between_cw(cv,previous->curve(),
+  if (after != prev) {
+    while (!(traits->curve_is_between_cw(cv,prev->curve(),
                                          after->curve(),v1->point()))) {
-      previous = after;
+      prev = after;
       ++after;
-      if (previous == infinite_loop)  // infinite loop indication
+      if (prev == infinite_loop)  // infinite loop indication
       {
         std::cerr << std::endl << "Planar_map_2::insert_from_vertex("
                   << "const X_curve_2& cv, Vertex_handle v1, "
@@ -952,7 +967,48 @@ insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
     }
   }
 
-  return insert_from_vertex(cv, previous, source, en);
+  return insert_from_vertex(cv, prev, en);
+}
+
+// Obsolete
+template < class Dcel, class Traits >
+typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
+Planar_map_2< Dcel, Traits >::
+insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
+                   typename Planar_map_2< Dcel, Traits >::Vertex_handle v1,
+                   bool source,
+                   Change_notification * en)
+{
+  (void) source;
+  // For some reason MSVC cannot handle the following call, even if the
+  // definition is inlined in the class. Too many nested calls. Go figure...
+#if 0
+  return insert_from_vertex(cv, v1, en);
+#else
+  // Find the previous of cv:
+  Halfedge_around_vertex_circulator prev = v1->incident_halfedges(),
+      after = prev,
+      infinite_loop = prev;
+  ++after;
+
+  if (after != prev) {
+    while (!(traits->curve_is_between_cw(cv,prev->curve(),
+                                         after->curve(),v1->point()))) {
+      prev = after;
+      ++after;
+      if (prev == infinite_loop)  // infinite loop indication
+      {
+        std::cerr << std::endl << "Planar_map_2::insert_from_vertex("
+                  << "const X_curve_2& cv, Vertex_handle v1, "
+                  << "bool source) called with previously "
+                  << "inserted curve " << std::endl;
+        return Halfedge_handle();
+      }
+    }
+  }
+
+  return insert_from_vertex(cv, prev, en);
+#endif
 }
 
 /*!
@@ -960,11 +1016,10 @@ insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_at_vertices(
-  const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
-  typename Planar_map_2< Dcel, Traits >::Halfedge_handle   previous1, 
-  typename Planar_map_2< Dcel, Traits >::Halfedge_handle   previous2,
-  Change_notification                                    * en
+insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
+                   typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev1, 
+                   typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev2,
+                   Change_notification * en
 #ifdef _MSC_VER
   ,int dummy
 #endif
@@ -973,22 +1028,22 @@ insert_at_vertices(
 #ifdef _MSC_VER
   (void) dummy;
 #endif
-  CGAL_precondition_msg(traits->point_is_same(previous1->target()->point(), 
-					traits->curve_source(cv)) &&
-			traits->point_is_same(previous2->target()->point(), 
-					traits->curve_target(cv)) ||
-			traits->point_is_same(previous2->target()->point(), 
-					traits->curve_source(cv)) &&
-			traits->point_is_same(previous1->target()->point(), 
-					traits->curve_target(cv)),
+  CGAL_precondition_msg(traits->point_is_same(prev1->target()->point(), 
+                                              traits->curve_source(cv)) &&
+                        traits->point_is_same(prev2->target()->point(), 
+                                              traits->curve_target(cv)) ||
+                        traits->point_is_same(prev2->target()->point(), 
+                                              traits->curve_source(cv)) &&
+                        traits->point_is_same(prev1->target()->point(), 
+                                              traits->curve_target(cv)),
   "Points of target vertices of input halfedges should be curve endpoints.");
 
   Size num_before = number_of_faces();
 
-  bool prev1_before_prev2 = prev1_inside_hole(previous1, previous2, cv);
+  bool prev1_before_prev2 = prev1_inside_hole(prev1, prev2, cv);
   Halfedge_handle h = (prev1_before_prev2) ?
-    Topological_map<Dcel>::insert_at_vertices(previous1, previous2) : 
-    Topological_map<Dcel>::insert_at_vertices(previous2, previous1); 
+    Topological_map<Dcel>::insert_at_vertices(prev1, prev2) : 
+    Topological_map<Dcel>::insert_at_vertices(prev2, prev1); 
 
   h->set_curve(cv);
   h->twin()->set_curve(cv);
@@ -1052,27 +1107,27 @@ insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
                    Change_notification                                  * en)
 {
   CGAL_precondition_msg(traits->point_is_same(v1->point(), 
-					traits->curve_source(cv)) &&
-			traits->point_is_same(v2->point(), 
-					traits->curve_target(cv)) ||
-			traits->point_is_same(v2->point(), 
-					traits->curve_source(cv)) &&
-			traits->point_is_same(v1->point(), 
-					traits->curve_target(cv)),
-			"Points of input vertices should be curve endpoints.");
+                                              traits->curve_source(cv)) &&
+                        traits->point_is_same(v2->point(), 
+                                              traits->curve_target(cv)) ||
+                        traits->point_is_same(v2->point(), 
+                                              traits->curve_source(cv)) &&
+                        traits->point_is_same(v1->point(), 
+                                              traits->curve_target(cv)),
+                        "Points of input vertices should be curve endpoints.");
 
-  Halfedge_around_vertex_circulator previous1 = v1->incident_halfedges(),
-    after = previous1,
-    infinite_loop = previous1;
+  Halfedge_around_vertex_circulator prev1 = v1->incident_halfedges(),
+    after = prev1,
+    infinite_loop = prev1;
   ++after;
 
-  if (after != previous1) {
-    while (!(traits->curve_is_between_cw(cv, previous1->curve(),
+  if (after != prev1) {
+    while (!(traits->curve_is_between_cw(cv, prev1->curve(),
                                          after->curve(), v1->point())))
     {
-      previous1 = after;
+      prev1 = after;
       ++after;
-      if (previous1 == infinite_loop)  // infinite loop indication
+      if (prev1 == infinite_loop)  // infinite loop indication
       {
         std::cerr << std::endl << "Planar_map_2::insert_at_vertices("
                   << "const X_curve_2 & cv, Vertex_const_handle v1, "
@@ -1083,18 +1138,18 @@ insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
     }
   }    
 
-  Halfedge_around_vertex_circulator previous2 = v2->incident_halfedges();
-  after = previous2;
-  infinite_loop = previous2;
+  Halfedge_around_vertex_circulator prev2 = v2->incident_halfedges();
+  after = prev2;
+  infinite_loop = prev2;
   ++after;
 
-  if (after != previous2) {
-    while (!(traits->curve_is_between_cw(cv, previous2->curve(),
+  if (after != prev2) {
+    while (!(traits->curve_is_between_cw(cv, prev2->curve(),
                                          after->curve(),v2->point())))
     {
-      previous2 = after;
+      prev2 = after;
       ++after;
-      if (previous2 == infinite_loop) // infinite loop indication
+      if (prev2 == infinite_loop) // infinite loop indication
       {
         std::cerr << std::endl << "Planar_map_2::insert_at_vertices("
                   << "const X_curve_2 & cv, Vertex_const_handle v1,"
@@ -1105,7 +1160,7 @@ insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
     }
   }    
 
-  return insert_at_vertices(cv, previous1, previous2, en);
+  return insert_at_vertices(cv, prev1, prev2, en);
 }
 
 //-----------------------------------------------------------------------------
@@ -1113,21 +1168,20 @@ template < class Dcel, class Traits >
 bool 
 Planar_map_2< Dcel, Traits >::
 prev1_inside_hole(
-  typename Planar_map_2< Dcel, Traits >::Halfedge_const_handle previous1,
-  typename Planar_map_2< Dcel, Traits >::Halfedge_const_handle previous2,
-  const typename Planar_map_2< Dcel, Traits >::X_curve_2&        cv )
+  typename Planar_map_2< Dcel, Traits >::Halfedge_const_handle prev1,
+  typename Planar_map_2< Dcel, Traits >::Halfedge_const_handle prev2,
+  const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv)
 {
   
   // Defining geometrically whether there is a new face. If there is,
-  // finds if previous1 is on the outside of the new face (send
-  // previous1,previous2) or on the inside of the new face (send
-  // previous2,previous1)
+  // finds if prev1 is on the outside of the new face (send
+  // prev1,prev2) or on the inside of the new face (send prev2,prev1)
 
   // The algorithm: 
 
   // 1. go over all the halfedges of the face which
-  // will hold previous1 (since the new face is not constructed yet,
-  // this is modeled by going from previous2->next to previous1 and
+  // will hold prev1 (since the new face is not constructed yet,
+  // this is modeled by going from prev2->next to prev1 and
   // then over the new curve)
 
   // 2. find if the left-most-lower halfedge in the path (i.e, the one
@@ -1136,13 +1190,13 @@ prev1_inside_hole(
   // on the outside) or right (we are inside ) (if not on same ccb
   // then it doesn't matter and return true)
   
-  Ccb_halfedge_const_circulator left_edge(previous2);
+  Ccb_halfedge_const_circulator left_edge(prev2);
   ++left_edge;
-  Ccb_halfedge_const_circulator first(previous2),curr(left_edge),
-    last(previous1);
-  ++last; //we want the previous1 to be checked as well 
+  Ccb_halfedge_const_circulator first(prev2),curr(left_edge),
+    last(prev1);
+  ++last; //we want the prev1 to be checked as well 
 
-  Point_2 left = previous2->target()->point();
+  Point_2 left = prev2->target()->point();
   bool b;
 
   do {
@@ -1200,14 +1254,14 @@ prev1_inside_hole(
   if (traits->point_is_same(traits->curve_target(cv),left)||
       traits->point_is_same(traits->curve_source(cv),left)) {
     if (traits->curve_is_vertical(cv)) {
-      return (traits->point_is_lower(previous2->target()->point(),
-                                     previous1->target()->point()));
+      return (traits->point_is_lower(prev2->target()->point(),
+                                     prev1->target()->point()));
     }
     else
       if (traits->curve_compare_at_x_right(cv,left_edge->curve(), 
                                            left)==SMALLER ) {  
-        return (traits->point_is_left(previous1->target()->point(),
-                                      previous2->target()->point()));
+        return (traits->point_is_left(prev1->target()->point(),
+                                      prev2->target()->point()));
       }
   }
 
@@ -1233,7 +1287,7 @@ insert(const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
        Change_notification * en)
 {
   CGAL_precondition_msg( ! traits->curve_is_degenerate(cv),
-			 "Curve length should be greater than zero.");
+                         "Curve length should be greater than zero.");
   CGAL_precondition_msg(bb, "Bounding box should not be null.");
 
   bb->insert(cv);
