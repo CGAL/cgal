@@ -68,7 +68,16 @@ struct Static_filter_error
       // +infinity, and on a positive number.
       d = CGAL_IA_FORCE_TO_DOUBLE(d); // stop constant propagation.
       CGAL_assertion(d>=0);
-      double u = (d + CGAL_IA_MIN_DOUBLE) - d;
+      double u;
+      if (d == 1) // I need to special case to prevent infinite recursion.
+          u = (d + CGAL_IA_MIN_DOUBLE) - d;
+      else {
+          // We need to use the d*ulp formula, in order for the formal proof
+          // of homogeneisation to work.
+          // u = (d + CGAL_IA_MIN_DOUBLE) - d;
+          u = d * ulp();
+      }
+
       // Then add extra bonus, because of Intel's extended precision feature.
       // (ulp can be 2^-53 + 2^-64)
       u += u / (1<<11);
