@@ -21,18 +21,12 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
-#ifndef CGAL_CONFIG_H
-#include <CGAL/config.h>
-#endif // CGAL_CONFIG_H
-
-#ifndef CGAL_ORIGIN_H
+#include <CGAL/basic.h>
 #include <CGAL/Origin.h>
-#endif // CGAL_ORIGIN_H
 
 CGAL_BEGIN_NAMESPACE
 
-Origin      ORIGIN ;
-Null_vector NULL_VECTOR ;
-CGAL_END_NAMESPACE
+const Origin      ORIGIN;
+const Null_vector NULL_VECTOR;
 
+CGAL_END_NAMESPACE

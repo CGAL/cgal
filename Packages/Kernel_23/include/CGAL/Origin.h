@@ -18,28 +18,26 @@
 // author(s)     : Andreas Fabri
 //                 Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
- 
 
 #ifndef CGAL_ORIGIN_H
 #define CGAL_ORIGIN_H
 
-#ifndef CGAL_CONFIG_H
-#include <CGAL/config.h>
-#endif // CGAL_CONFIG_H
+#include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
 class Origin
 {};
 
-extern Origin ORIGIN;
+extern const Origin ORIGIN;
 
 class Null_vector
 {};
 
-extern Null_vector NULL_VECTOR;
+extern const Null_vector NULL_VECTOR;
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ORIGIN_H
