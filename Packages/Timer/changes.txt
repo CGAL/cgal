@@ -1,5 +1,7 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
+26 March 2004 Radu Ursu
+-made doc work with the current implementation of the Manual tools
 
 2.12 (12 Jan 2004)
 - Add Memory_sizer
