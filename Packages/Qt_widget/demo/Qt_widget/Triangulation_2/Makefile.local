@@ -7,6 +7,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE = ~/CGAL-2.4-I-47/make/makefile_sparc_SunOS-5.6_g++-2.95
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -33,54 +34,43 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-SOURCES = ../../../src/Qt_Widget$(OBJ_EXT) ../../../src/Qt_Widget_tool$(OBJ_EXT) \
-	Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_views$(OBJ_EXT) \
-	../../../src/Qt_Widget_MovePoint$(OBJ_EXT) ../../../src/Qt_Scene$(OBJ_EXT)
-#	../../../src/Qt_ScenesWidget$(OBJ_EXT)
-
-CGAL_INCL = ../../../include
+SOURCES = ../../../../src/Qt_widget/Qt_widget.o \
+	../../../../src/Qt_widget/Qt_widget_tool.o \
+	../../../../src/Qt_widget/Qt_widget_view.o \
+	../../../../src/Qt_widget/Qt_widget_standard_toolbar.o
 
 all: triangulationdemo
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
 
-Qt_widget_toolbar.moc: Qt_widget_toolbar.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_widget.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_widget_zoom.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_widget_zoomrect.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_widget_move_point.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_widget_get_line.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_widget_get_point.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_widget_handtool.h
+Qt_widget_toolbar.moc: Qt_widget_toolbar.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc $<
 
 Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
 		Qt_widget_toolbar_views.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_views.C
 
-Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_widget.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_view_show_voronoi.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_view_show_triangulation.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_view_nearest_vertex.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_view_show_points.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_view_mouse_coordinates.h
+Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h
 	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
 
-triangulationdemo.moc: triangulationdemo.C $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
-			Qt_widget_toolbar_views.h Qt_widget_toolbar.h \
-			$(CGAL_INCL)/CGAL/IO/Qt_ScenesWidget.h
+Qt_widget_move_point$(OBJ_EXT): Qt_widget_move_point.C Qt_widget_move_point.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_move_point.C
+
+Qt_widget_move_point.moc: Qt_widget_move_point.h
+	$(QT_MOC) -o Qt_widget_move_point.moc $<
+
+
+triangulationdemo.moc: triangulationdemo.C
 	${QT_MOC} -o triangulationdemo.moc triangulationdemo.C
 
 triangulationdemo$(OBJ_EXT): triangulationdemo.C triangulationdemo.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulationdemo.C
 
-triangulationdemo$(EXE_EXT): triangulationdemo$(OBJ_EXT) $(SOURCES)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)triangulationdemo $(SOURCES) triangulationdemo$(OBJ_EXT) $(LDFLAGS)
+triangulationdemo$(EXE_EXT): triangulationdemo$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)triangulationdemo triangulationdemo$(OBJ_EXT) $(LDFLAGS)
 
-clean: triangulationdemo.clean Qt_widget_toolbar_views.clean \
-	Qt_widget_toolbar.clean
+clean: triangulation.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
