@@ -53,7 +53,7 @@ test_const_triang_plus_2: test_const_triang_plus_2$(OBJ_EXT)
 clean: \
 		test_const_del_triangulation_2.clean \
 		test_constrained_triangulation_2.clean \
-		test_const_triang_plus_2
+		test_const_triang_plus_2.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

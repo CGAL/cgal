@@ -1,6 +1,13 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 6.06
+- fixed the clean target of test/Triangulation_2_constrained
+- added missing typenames in  Constrained_triangulation_plus_2.h
+  Constraint_hierarchy_2.h
+- fixed the derivation from Face_handle in 
+  Triangulation_line_face_circulator_2.h
+
 Ver 6.05 (28/1/02)
 - fixed makefile in test/Triangulation_2_constrained
 - fixed star_hole in Constrained_triangulation_2.h
