@@ -4,13 +4,21 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.30
+//---------------------------------------------------------------------
+
+GLOB: removed geomview support (now in geomview package).
+SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
+SRC : Initial revision
+
+//---------------------------------------------------------------------
 //	revision 1.29
 //---------------------------------------------------------------------
 
-ALL : added geomview support,
-ALL : included fixes from CGAL-1-1-patch.
+GLOB: added geomview support,
+GLOB: included fixes from CGAL-1-1-patch.
 DOCS: adopted to new html-converter.
-ALL : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
+SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 
 //---------------------------------------------------------------------
 //	revision 1.28
@@ -19,7 +27,6 @@ ALL : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 GLOB: Added variable PRINT_STACKTRACE_PROGRAM to include makefiles. It can
 GLOB: be used to get a stacktrace, in case a program crashes during the
 GLOB: testsuite.
-GLOB: Made Rev 1.28.
 DOCS: Made conformant to the new html coverter.
 
 //---------------------------------------------------------------------
