@@ -183,6 +183,16 @@ template < class NT >
 bool
 test_utilities(const NT& x)
 {
+  typedef typename CGAL::Number_type_traits<NT>::Has_division   Has_division;
+  typedef typename CGAL::Number_type_traits<NT>::Has_sqrt       Has_sqrt;
+  typedef typename CGAL::Number_type_traits<NT>::Has_gcd        Has_gcd;
+  typedef typename CGAL::Number_type_traits<NT>::Has_exact_sqrt Has_exact_sqrt;
+  typedef typename CGAL::Number_type_traits<NT>::Has_exact_division
+                                                    Has_exact_division;
+  typedef typename CGAL::Number_type_traits<NT>::Has_exact_ring_operations
+                                                    Has_exact_ring_operations;
+
+
   NT zero(0);
   NT one(1);
   NT mone(-one);

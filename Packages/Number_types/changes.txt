@@ -1,3 +1,6 @@
+2 September 2004 Sylvain Pion
+- test for the precense of the Number_type_traits tags.
+
 2 September 2004 Sylvain Pion & Menelaos Karavelas
 - number_type_basic.h :
   - Replace #includes by declarations (for g++ 3.4).
