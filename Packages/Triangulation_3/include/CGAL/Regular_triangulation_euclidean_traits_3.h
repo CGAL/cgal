@@ -35,6 +35,9 @@
 CGAL_BEGIN_NAMESPACE 
 
 
+// return the sign of the determinant of the lifted points
+// associated with p,q,r,s,t  [P,Q,R,S,T]
+// where the P colum is [ p, p^2-wp,1]
 template <class Point, class Weight>
 class Power_test_3
 {
@@ -89,8 +92,6 @@ public:
 };
 
 
-
-
 // operator ()
 // return the sign of the power test of  last weighted point
 // with respect to the smallest sphere orthogonal to
@@ -109,11 +110,12 @@ public:
 		    const Weighted_point s,
 		    const Weighted_point t) {
     K traits;
-    typename K::Orientation_3  orientation = traits.orientation_3_object();
-    CGAL_triangulation_assertion( orientation(p,q,r,s) != COPLANAR);
-    if (orientation(p,q,r,s) == POSITIVE )
-      return static_cast<Sign>( - power_test(p,q,r,s,t));
-    return static_cast<Sign>(power_test(p,q,r,s,t));
+    typename K::Orientation_3  orientation =
+      traits.orientation_3_object();
+    Orientation o = orientation(p,q,r,s);
+    Oriented_side os = power_test(p,q,r,s,t);
+    CGAL_triangulation_assertion( o != COPLANAR); 
+    return Sign( (-1) * o * os);
   }
   
   Sign operator() ( const Weighted_point p,
@@ -136,6 +138,37 @@ public:
 			      r.x(), r.y(), r.z(), r.weight());
   }
 };
+
+template< class K, class Weight = typename K::RT >
+class Side_of_bounded_orthogonal_sphere_3
+{
+public :
+  typedef typename K::Point_3                        Bare_point;
+  typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
+  typedef CGAL::In_smallest_orthogonal_sphere_3<K,Weight>
+                                                     In_sphere;
+  Bounded_side operator() ( const Weighted_point p,
+			    const Weighted_point q,
+			    const Weighted_point r,
+			    const Weighted_point s,
+			    const Weighted_point t) {
+    return Bounded_side( (-1) * In_sphere()(p,q,r,s,t));
+  }
+  
+  Bounded_side operator() ( const Weighted_point p,
+			    const Weighted_point q,
+			    const Weighted_point r,
+			    const Weighted_point s) {
+    return Bounded_side ( (-1) * In_sphere()(p,q,r,s) );
+  }
+
+  Bounded_side operator() ( const Weighted_point p,
+			    const Weighted_point q,
+			    const Weighted_point r) {
+    return Bounded_side ( (-1) * In_sphere()(p,q,r) );
+  }
+};
+
 
 // operator() returns true if the affine hull of the dual
 // to the given weighted points 
@@ -219,7 +252,7 @@ public:
 
 
 template< class K, class Weight = typename K::RT >
-class Construct_power_product_3
+class Compute_power_product_3
 {
 public:
   typedef typename K::Point_3                        Bare_point;
@@ -235,7 +268,7 @@ public:
 
 
 template< class K, class Weight = typename K::RT >
-class Construct_squared_radius_smallest_orthogonal_sphere_3
+class Compute_squared_radius_smallest_orthogonal_sphere_3
 {
 public:
   typedef typename K::Point_3                        Bare_point;
@@ -295,16 +328,18 @@ public:
                                          Compare_power_distance_3;
   typedef CGAL::In_smallest_orthogonal_sphere_3<K, Weight>
                                 In_smallest_orthogonal_sphere_3;
+  typedef CGAL::Side_of_bounded_orthogonal_sphere_3<K, Weight>
+                                Side_of_bounded_orthogonal_sphere_3;
   typedef CGAL::Does_simplex_intersect_dual_support_3<K, Weight>
                                 Does_simplex_intersect_dual_support_3; 
   typedef CGAL::Construct_weighted_circumcenter_3<K,Weight>
                                  Construct_weighted_circumcenter_3;
   typedef 
-  CGAL::Construct_squared_radius_smallest_orthogonal_sphere_3<K,
+  CGAL::Compute_squared_radius_smallest_orthogonal_sphere_3<K,
     Weight>
-             Construct_squared_radius_smallest_orthogonal_sphere_3;
-   typedef  CGAL::Construct_power_product_3<K,Weight>
-                                Construct_power_product_3; 
+             Compute_squared_radius_smallest_orthogonal_sphere_3;
+   typedef  CGAL::Compute_power_product_3<K,Weight>
+                                Compute_power_product_3; 
   
   Power_test_3   power_test_3_object() const {
     return Power_test_3();}
@@ -317,6 +352,11 @@ public:
     return In_smallest_orthogonal_sphere_3();
   }
 
+  Side_of_bounded_orthogonal_sphere_3
+  side_of_bounded_orthogonal_sphere_3_object() const {
+    return Side_of_bounded_orthogonal_sphere_3();
+  }
+
   Does_simplex_intersect_dual_support_3 
   does_simplex_intersect_dual_support_3_object() const {
     return Does_simplex_intersect_dual_support_3();
@@ -327,14 +367,14 @@ public:
     return Construct_weighted_circumcenter_3();
   }
 
-  Construct_power_product_3
-  construct_power_product_3_object() const {
-    return Construct_power_product_3();
+  Compute_power_product_3
+  compute_power_product_3_object() const {
+    return Compute_power_product_3();
   }
 
-  Construct_squared_radius_smallest_orthogonal_sphere_3
-  construct_squared_radius_smallest_orthogonal_sphere_3_object() const  {
-    return Construct_squared_radius_smallest_orthogonal_sphere_3();
+  Compute_squared_radius_smallest_orthogonal_sphere_3
+  compute_squared_radius_smallest_orthogonal_sphere_3_object() const  {
+    return Compute_squared_radius_smallest_orthogonal_sphere_3();
   }
 
 

@@ -1,3 +1,8 @@
+
+2 avril 2004 Mariette Yvinec
+- fixes in Regular_triangulation_euclidean_traits_3.h
+- added Side_of_bounded_orthogonal_sphere_3
+
 25 March 2004 Radu Ursu
 - made doc work with the new implementation of the Manual tools
 
