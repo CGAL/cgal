@@ -266,11 +266,13 @@ Viewer_3(GLsizei *s, int size_of_s) : group(1)  {
     scale[1] = s[0]; scale[3] = s[1]; scale[5] = s[2];
     break;
   case 6:
+    { // scoping for MSVC
     for (int ii = 0; ii < 6; ii++)
       scale[ii] = s[ii];
+    }
     break;
   default:
-    cerr << "Viewer_3(s, length) wrong size of array" << endl;
+    std::cerr << "Viewer_3(s, length) wrong size of array" << std::endl;
     exit(0);
   }
 

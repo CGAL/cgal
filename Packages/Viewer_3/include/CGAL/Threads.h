@@ -21,8 +21,7 @@
 //
 // ============================================================================
 #include <pthread.h>
-#include <iostream.h>
-
+#include <iostream>
 
 class Synchronizer
 {
@@ -63,20 +62,20 @@ void Synchronizer::initAll()
 
 void sendSignal()
 {
- cerr << "condition...";
+ std::cerr << "condition...";
  pthread_mutex_lock(&Synchronizer::sMutex);
  pthread_cond_signal(&Synchronizer::sCond);
  pthread_mutex_unlock(&Synchronizer::sMutex); 
- cerr << "...signaled\n";
+ std::cerr << "...signaled\n";
 }
 
 
 void stop()
 {
- cerr << "stop...";
+ std::cerr << "stop...";
  pthread_mutex_lock(&Synchronizer::sMutex);
  pthread_cond_wait(&Synchronizer::sCond, &Synchronizer::sMutex);
  pthread_mutex_unlock(&Synchronizer::sMutex);
- cerr << "...executed\n";
+ std::cerr << "...executed\n";
 } 
 

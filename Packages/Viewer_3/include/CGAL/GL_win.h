@@ -509,7 +509,7 @@ int GL_win::handle(int event)
   double zz = 10000;
   int gp = group;
   int gpi = 0;
-  
+   
   switch (event) { 
   case FL_PUSH:
     button = Fl::event_button();
@@ -523,8 +523,8 @@ int GL_win::handle(int event)
     xx = double(x1 * (scale[1]-scale[0])) / w() + scale[0];
     yy = double((h()-y1) * (scale[3]-scale[2])) / h() + scale[2];
 
-    cerr << "(" << xx << "," << yy << ")" << endl;
-
+    std::cerr << "(" << xx << "," << yy << ")" << std::endl;
+    { // to satisfy MSVC - scope of it!
     Scene_graph::iterator it;
     for (it=SCG.begin() ; it!=SCG.end() ; it++) {
       gpi++;
@@ -534,7 +534,8 @@ int GL_win::handle(int event)
 	  yy < it->get_center(2)+20 &&
 	  it->get_center(3) < zz)
 	gp = gpi;
-    } 
+    }
+    }
     change_group(gp);
     // jln
 
