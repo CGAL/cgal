@@ -1,5 +1,5 @@
 
-1.0.7 (22 October 2003)
+1.9 (22 October 2003)
 - changed license header
 
 1.0.6 
