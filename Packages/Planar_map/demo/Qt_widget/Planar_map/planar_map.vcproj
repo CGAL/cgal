@@ -168,6 +168,12 @@
 						Outputs="Qt_widget_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath="cgal_types.h">
+			</File>
+			<File
+				RelativePath="snapping_layer.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

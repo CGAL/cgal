@@ -31,16 +31,18 @@
 #include "Qt_widget_toolbar.h"
 
 Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w, 
-			     QMainWindow *mw, std::list<Curve> * l1) :
+			     QMainWindow *mw, std::list<Curve> * l1, Planar_map * pm) :
   QToolBar(mw, "NT")
 {
-  //    w->attach(&move_deletebut);
+  snaplayer.pass_the_structure(l1, pm);
   w->attach(&pointbut);
   w->attach(&segmentbut);
+  w->attach(&snaplayer);
 
   //    move_deletebut.deactivate();
   pointbut.deactivate();
   segmentbut.deactivate();
+  snaplayer.deactivate();
 
   //    move_deletebut.pass_the_structure(l1);
   //set the widget
@@ -52,7 +54,10 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w,
                 QPixmap( (const char**)point_xpm ));
   QIconSet set2(QPixmap( (const char**)line_small_xpm ),
                 QPixmap( (const char**)line_xpm ));
+  QIconSet set3(QPixmap( (const char**)movepoint_small_xpm ),
+                QPixmap( (const char**)movepoint_xpm ));
     
+
   but[0] = new QToolButton(this, "deactivate layer");
   but[0]->setIconSet(set0);
   but[0]->setTextLabel("Deactivate Layer");
@@ -62,8 +67,11 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w,
   but[2] = new QToolButton(this, "segment layer");
   but[2]->setIconSet(set2);
   but[2]->setTextLabel("Segment layer");
-  
-  nr_of_buttons = 3;
+  but[3] = new QToolButton(this, "snapping layer");
+  but[3]->setIconSet(set3);
+  but[3]->setTextLabel("Snapping layer");
+
+  nr_of_buttons = 4;
   button_group = new QButtonGroup(0, "My_group");
   for (int i = 0; i<nr_of_buttons; i++) {
     button_group->insert(but[i]);
@@ -75,6 +83,9 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w,
           &pointbut, SLOT(stateChanged(int)));
   connect(but[2], SIGNAL(stateChanged(int)),
           &segmentbut, SLOT(stateChanged(int)));
+  connect(but[3], SIGNAL(stateChanged(int)),
+          &snaplayer, SLOT(stateChanged(int)));
+
 };
 
 #include "Qt_widget_toolbar.moc"

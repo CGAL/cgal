@@ -45,11 +45,8 @@
 #ifndef CGAL_QT_WIDGET_TOOLBAR_H
 #define CGAL_QT_WIDGET_TOOLBAR_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-
+#include "cgal_types.h"
+#include "snapping_layer.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 #include <CGAL/IO/Qt_widget_get_segment.h>
@@ -60,24 +57,14 @@
 #include <qbuttongroup.h>
 #include <qmainwindow.h>
 
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-#include <CGAL/Pm_segment_traits_2.h>
-
 #include <list>
 
-typedef CGAL::Quotient<CGAL::MP_Float>          NT;
-typedef CGAL::Cartesian<NT>                     Kernel;
-typedef CGAL::Pm_segment_traits_2<Kernel>       Traits;
-typedef Traits::X_monotone_curve_2              Curve;
-
-/*!
- */
 class Tools_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Tools_toolbar(CGAL::Qt_widget * w, QMainWindow * mw, std::list<Curve> * l1);
+  Tools_toolbar(CGAL::Qt_widget * w, QMainWindow * mw, 
+    std::list<Curve> * l1, Planar_map * pm);
   ~Tools_toolbar(){};
 
 signals:
@@ -89,8 +76,9 @@ private:
   CGAL::Qt_widget * widget;
   int nr_of_buttons;
 
-  CGAL::Qt_widget_get_point<Kernel> pointbut;
+  CGAL::Qt_widget_get_point<Kernel>   pointbut;
   CGAL::Qt_widget_get_segment<Kernel> segmentbut;
+  Snapping_layer<Kernel>              snaplayer;
 };
 
 #endif

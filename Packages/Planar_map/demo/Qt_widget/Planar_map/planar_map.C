@@ -32,19 +32,15 @@ int main(int, char*)
 
 #else
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include "Qt_widget_toolbar.h"
 #include <CGAL/IO/pixmaps/demoicon.xpm>
 
-#include <qplatinumstyle.h>
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
@@ -57,12 +53,6 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-#include <CGAL/point_generators_2.h>
-#include <CGAL/squared_distance_2.h>
-
-#include <CGAL/Pm_default_dcel.h>
-#include <CGAL/Pm_segment_traits_2.h>
-#include <CGAL/Planar_map_2.h>
 
 #include <fstream>
 #include <stack>
@@ -70,29 +60,6 @@ int main(int, char*)
 #include <string>
 #include <list>
 
-#include "Qt_widget_toolbar.h"
-
-typedef CGAL::Quotient<CGAL::MP_Float>          NT;
-typedef CGAL::Cartesian<NT>                     Kernel;
-typedef CGAL::Pm_segment_traits_2<Kernel>       Traits;
-
-typedef Traits::Point_2                         Point;
-typedef Traits::X_monotone_curve_2              Curve;
-
-typedef CGAL::Pm_default_dcel<Traits>           Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
-
-typedef Planar_map::Locate_type                 Locate_type;
-
-typedef Planar_map::Halfedge_handle             Halfedge_handle;
-typedef Planar_map::Face_handle                 Face_handle;
-
-typedef Planar_map::Halfedge_iterator           Halfedge_iterator;
-typedef Planar_map::Holes_iterator              Holes_iterator;
-typedef Planar_map::Ccb_halfedge_circulator     Ccb_halfedge_circulator;
-
-/*!
- */
 const QString my_title_string("Planar map demo with"
 			      " CGAL Qt_widget");
 
@@ -103,8 +70,6 @@ Planar_map pm;
 bool pl_valid = false;
 Point pl_point;
 
-/*!
- */
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer {
 public:
 	
@@ -134,60 +99,25 @@ public:
       Face_handle f = e->face();
 	
       if (f->does_outer_ccb_exist()) {
-	Ccb_halfedge_circulator cc = f->outer_ccb();
-	do {
-	  *widget << cc->curve();
-	} while (++cc != f->outer_ccb());
+        Ccb_halfedge_circulator cc = f->outer_ccb();
+        do {
+          *widget << cc->curve();
+        } while (++cc != f->outer_ccb());
       }
 
       Holes_iterator hit = f->holes_begin(), eit = f->holes_end();
       for (;hit != eit; ++hit) {
-	Ccb_halfedge_circulator cc = *hit; 
-	do {
-	  *widget << cc->curve();
-	} while (++cc != *hit);
+        Ccb_halfedge_circulator cc = *hit; 
+        do {
+          *widget << cc->curve();
+        } while (++cc != *hit);
       }
       *widget << CGAL::LineWidth(1);
-    }
+    }//endif
 
     widget->unlock();
   };	
 
-  void mousePressEvent(QMouseEvent * e)
-  {
-    if(e->button() == Qt::RightButton) {
-      if (list_of_segments.empty())
-	return;
-
-      NT x = static_cast<NT>(widget->x_real(e->x()));
-      NT y = static_cast<NT>(widget->y_real(e->y()));
-
-      Point p(x, y);
-      NT min_dist = 100000000;
-      std::list<Curve>::iterator itp = list_of_segments.begin();
-      std::list<Curve>::iterator it_seg = NULL;
-      while (itp != list_of_segments.end()) {
-	NT dist = CGAL::squared_distance(p, (*itp));
-	if (dist < min_dist) {
-	  min_dist = dist;
-	  it_seg = itp;
-	}
-	itp++;
-      }
-
-      for (Halfedge_iterator ei = pm.halfedges_begin();
-           ei != pm.halfedges_end(); ei++) {
-	if ((*ei).curve() != (*it_seg)) continue;
-        pm.remove_edge(ei);
-      }
-
-      list_of_segments.erase(it_seg);
-      
-      pl_valid = false;
-      (*widget).redraw();
-    }
-  };
-  
 };//end class 
 
 class MyWindow : public QMainWindow
@@ -233,7 +163,7 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the new tools toolbar
-    newtoolbar = new Tools_toolbar(widget, this, &list_of_segments);	
+    newtoolbar = new Tools_toolbar(widget, this, &list_of_segments, &pm);	
   
     *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
   
