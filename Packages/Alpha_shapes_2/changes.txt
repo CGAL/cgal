@@ -1,3 +1,6 @@
+Version 11.30 (20/06/03)
+- Replaced Leda_Window based demo with the Qt_widget based demo
+
 Version 11.29 (14/06/03)
 - Removed one more typedef for Direction
 
