@@ -24,12 +24,20 @@
 #ifndef CGAL_ARR_LEDA_SEGMENT_EXACT_TRAITS
 #define CGAL_ARR_LEDA_SEGMENT_EXACT_TRAITS
 
-#include <list>
-
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #include <CGAL/Arr_intersection_tags.h>
+
+#include <list>
+
+// if we use a LEDA version without namespaces
+// we have to define a few macros
+#if !defined(LEDA_NAMESPACE)
+#define LEDA_BEGIN_NAMESPACE
+#define LEDA_END_NAMESPACE
+#define LEDA_NAMESPACE_NAME
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -391,8 +399,8 @@ private:
       return Point_2(x,y,leda_integer(1));
     }
     else {
-      g = leda::gcd(x, y);
-      g = leda::gcd(g, w);
+      g = LEDA_NAMESPACE_NAME::gcd(x, y);
+      g = LEDA_NAMESPACE_NAME::gcd(g, w);
 
       return Point_2(x/g,y/g,w/g);
     }

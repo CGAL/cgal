@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-81 $
 // release_date  : $CGAL_Date: 2001/07/10 $
 //
-// file          : include/CGAL/Sweep_line_2/Sweep_curves_to_planar_map_2.h
+// file          : include/CGAL/Sweep_line_2/Pmwx_aggregate_insert_impl.h
 // package       : Arrangement (2.07)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 

@@ -11,8 +11,9 @@
 // release       : $$
 // release_date  : $$
 //
-// file          : include/CGAL/Arrangement_2/Conic_arc_2_eq.h
+// file          : include/CGAL/Arrangement_2/Conic_arc_2.h
 // package       : Arrangement (2.62)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Ron Wein <wein@post.tau.ac.il>
 // 
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)

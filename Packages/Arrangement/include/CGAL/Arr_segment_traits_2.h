@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 1999, October 13
 //
-// file          : include/CGAL/Arr_segment_exact_traits.h
+// file          : include/CGAL/Arr_segment_traits_2.h
 // package       : arr (1.03)
 // source        :
 // revision      :
