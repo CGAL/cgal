@@ -25,6 +25,20 @@
 
 namespace CGAL {
 
+
+template <class Plane, class Facet_handle>
+void get_plane2(Plane& plane, Facet_handle f) 
+{
+   typedef typename Facet_handle::value_type         Facet;
+   typedef typename Facet::Halfedge_handle           Halfedge_handle;
+
+   Halfedge_handle h = (*f).halfedge();
+   plane = Plane(h->opposite()->vertex()->point(),
+		   h->vertex()->point(),
+		   h->next()->vertex()->point());
+}
+
+
 template <class Facet_handle, class Traits>
 bool is_locally_convex(Facet_handle f_hdl, const Traits& traits)
 {
@@ -34,6 +48,7 @@ bool is_locally_convex(Facet_handle f_hdl, const Traits& traits)
   typedef typename Facet_handle::value_type                Facet;
   typedef typename Facet::Halfedge_around_facet_circulator Halfedge_circ;
   typedef typename Traits::Point_3			   Point_3; 
+  typedef typename Traits::Plane_3			   Plane_3; 
 
   typename Traits::Has_on_positive_side_3 has_on_positive_side = 
             traits.has_on_positive_side_3_object();
@@ -44,10 +59,12 @@ bool is_locally_convex(Facet_handle f_hdl, const Traits& traits)
   {
      // Take the point on the other facet not shared by this facet
      Point_3 point= h_circ->opposite()->next()->vertex()->point();
-     
+     Plane_3 plane;
+     get_plane2(plane, f_hdl);
      // Point must be on the plane or on the negative side 
-     if (has_on_positive_side((*f_hdl).plane(), point))
-          return false;
+     if (has_on_positive_side(plane, point)) {
+       return false;
+     }
      h_circ++;
   }
   while ( h_circ != (*f_hdl).facet_begin());
@@ -64,7 +81,7 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
   typedef typename Traits::Point_3             Point_3; 
   typedef typename Traits::Ray_3               Ray_3; 
   typedef typename Traits::Triangle_3          Triangle_3; 
-
+  typedef typename Traits::Plane_3             Plane_3; 
   if (P.vertices_begin() == P.vertices_end()) return false;
   
   Facet_iterator f_it;
@@ -96,8 +113,9 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
     v_it++;
 
   // if no such point, all are coplanar so it is not strongly convex
-  if( v_it == P.vertices_end() )
+  if( v_it == P.vertices_end() ){
     return false;
+  }
 
   s = (*v_it).point();
 
@@ -110,19 +128,26 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
             traits.oriented_side_3_object();
 
   f_it = P.facets_begin();
-
-  Oriented_side side = oriented_side(f_it->plane(), inside_pt);
+  Plane_3 plane;
+  get_plane2(plane, f_it);
+  Oriented_side side = oriented_side(plane, inside_pt);
 
   // the point inside should not be on the facet plane
-  if (side == ON_ORIENTED_BOUNDARY) return false;
+  if (side == ON_ORIENTED_BOUNDARY){
+    return false;
+  }
 
   // now make sure this point that is inside the polyhedron is on the same
   // side of each facet
   for (f_it++; f_it != P.facets_end(); f_it++)
   {
-    if ( oriented_side(f_it->plane(), inside_pt) != side )
-       return false;
+    f_it = P.facets_begin();
+    Plane_3 plane;
+    if ( oriented_side(plane, inside_pt) != side ){
+      return false;
+    }
   }
+
 
   // Check 3 :  see if a ray from the interior point to a point in the
   // middle of one of the facets intersects any other facets 
@@ -130,34 +155,28 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
             traits.construct_ray_3_object();
   typename Traits::Construct_triangle_3 construct_triangle = 
             traits.construct_triangle_3_object();
-  typename Traits::Intersect_3 intersect =
-            traits.intersect_3_object();
-  typename Traits::Has_on_3 has_on =
-            traits.has_on_3_object();
+  typename Traits::Do_intersect_3 do_intersect =
+            traits.do_intersect_3_object();
+
   f_it = P.facets_begin();
   Point_3 facet_pt = 
      construct_centroid(f_it->halfedge()->opposite()->vertex()->point(),
                         f_it->halfedge()->vertex()->point(),
                         f_it->halfedge()->next()->vertex()->point());
   Ray_3  ray = construct_ray(inside_pt, facet_pt);
-  Point_3 i_point;
-  Point_3 i_ray;
+
   for ( ++f_it ; f_it != P.facets_end(); f_it++)
   {
-     Object obj = intersection(f_it->plane(), ray);
-     if (assign(i_point, obj))  // ray  may intersect facet plane but not facet
-     {
-        Triangle_3 facet_tri = 
-          construct_triangle(f_it->halfedge()->opposite()->vertex()->point(),
-                             f_it->halfedge()->vertex()->point(),
-                             f_it->halfedge()->next()->vertex()->point());
+    Triangle_3 facet_tri = 
+      construct_triangle(f_it->halfedge()->opposite()->vertex()->point(),
+			 f_it->halfedge()->vertex()->point(),
+			 f_it->halfedge()->next()->vertex()->point());
      
-        if (has_on(facet_tri, i_point))
-          return false;
-     }
-     else if (assign(i_ray, obj)) // ray should not lie on a facet plane
-        return false;
+    if (do_intersect(facet_tri, ray)){
+      return false;
+    }
   }
+
   return true;
 }
 
@@ -180,7 +199,8 @@ bool all_points_inside( ForwardIterator first,
 			ForwardIterator last,
 			Polyhedron& P,
 			const Traits&  traits)
-{
+{  
+  typedef typename Traits::Plane_3			   Plane_3; 
    typedef typename Polyhedron::Facet_iterator Facet_iterator;
    typename Traits::Has_on_positive_side_3   has_on_positive_side = 
              traits.has_on_positive_side_3_object();
@@ -190,8 +210,11 @@ bool all_points_inside( ForwardIterator first,
       Facet_iterator f_it;
       for (f_it = P.facets_begin(); f_it != P.facets_end(); f_it++)
       {
-	 if (has_on_positive_side(f_it->plane(),*p_it))
+	f_it = P.facets_begin();
+	Plane_3 plane;
+	if (has_on_positive_side(plane,*p_it)){
              return false;
+	}
       }
    }
    return true;

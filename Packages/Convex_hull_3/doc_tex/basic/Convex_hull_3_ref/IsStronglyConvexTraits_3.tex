@@ -29,14 +29,11 @@ constructs and returns the triangle with vertices \ccc{p}, \ccc{q}, and
 determines if points \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar
 or not}
 
-\ccNestedType{Intersect_3}{Function object type that provides
-\ccc{CGAL::Object operator()(Plane_3 p, Ray_3 r)}, which constructs and
-returns the object representing the intersection between \ccc{p} and
-\ccc{r}}
+\ccNestedType{Do_intersect_3}{Function object type that provides
+\ccc{CGAL::Object operator()(Triangle_3 t, Ray_3 r)}, which 
+returns \ccc{true} iff \ccc{t} and
+\ccc{r} intersect.}
 
-\ccNestedType{Has_on_3}{Predicate object type that provides
-\ccc{bool operator()(Triangle_3 t, Point_3 q)}, which determines if the
-point \ccc{p} lies on the triangle \ccc{t}}
 
 \ccNestedType{Has_on_positive_side_3}{Predicate object type that provides
 \ccc{bool operator()(Plane_3 h, Point_3 q)}, which determines of the point

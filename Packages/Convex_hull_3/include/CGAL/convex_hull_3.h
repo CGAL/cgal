@@ -147,6 +147,8 @@ find_visible_set(const typename Traits::Point_3& point,
 {
    typedef typename Facet_handle::value_type                  Facet;
    typedef typename Facet::Halfedge_around_facet_circulator   Halfedge_circ;
+   typedef typename Facet::Halfedge_handle           Halfedge_handle;
+   typedef typename Traits::Plane_3                   Plane_3;
 
    typename Traits::Has_on_positive_side_3 has_on_positive_side =
             traits.has_on_positive_side_3_object();
@@ -173,7 +175,9 @@ find_visible_set(const typename Traits::Point_3& point,
           if ( !visited[f] )
           {
              visited[f] = true;
-             if ( has_on_positive_side((*f).plane(), point) )  // is visible
+	     Plane_3 plane;
+	     get_plane(plane,f);
+             if ( has_on_positive_side(plane, point) )  // is visible
              {
                visible.push_back(f);
              }
@@ -193,35 +197,30 @@ farthest_outside_point(Facet_handle f_handle, std::list<Point>& outside_set,
 {
    typedef typename std::list<Point>::iterator     Outside_set_iterator;
 
+   typename Traits::Plane_3 plane;
+   get_plane(plane, f_handle);
    CGAL_assertion(!outside_set.empty());
    typename Traits::Less_signed_distance_to_plane_3 less_dist_to_plane =
             traits.less_signed_distance_to_plane_3_object();
    Outside_set_iterator farthest_it =
           std::max_element(outside_set.begin(),
                            outside_set.end(), 
-                           bind_1(less_dist_to_plane, (*f_handle).plane()));
+                           bind_1(less_dist_to_plane, plane));
 
    return *farthest_it;
 }
 
-template <class Facet_handle>
-void compute_plane_equation(Facet_handle f) 
+
+template <class Plane, class Facet_handle>
+void get_plane(Plane& plane, Facet_handle f) 
 {
    typedef typename Facet_handle::value_type         Facet;
    typedef typename Facet::Halfedge_handle           Halfedge_handle;
-   typedef typename Facet::Plane_3                   Plane_3;
 
    Halfedge_handle h = (*f).halfedge();
-   (*f).plane() = Plane_3(h->opposite()->vertex()->point(),
-                          h->vertex()->point(),
-                          h->next()->vertex()->point());
-/*
-   (*f).plane() = Plane_3(
-                          h->next()->vertex()->point(),
-                          h->vertex()->point(),
-                          h->opposite()->vertex()->point()
-                         );
-*/
+   plane = Plane(h->opposite()->vertex()->point(),
+		   h->vertex()->point(),
+		   h->next()->vertex()->point());
 }
 
 // using a template for the Unique_hash_map is required by M$VC7
@@ -235,6 +234,7 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
         std::list<Facet_handle>& pending_facets, 
         const Traits& traits)
 {
+   typedef typename Traits::Plane_3                   Plane_3;
    typename std::list<Facet_handle>::const_iterator        f_list_it;
    typename std::list<Point>::iterator  point_it;
 
@@ -246,11 +246,12 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
    for (f_list_it = new_facets.begin(); f_list_it != new_facets.end();
         f_list_it++)
    {
-      compute_plane_equation(*f_list_it);
+     Plane_3 plane;
+      get_plane(plane, *f_list_it);
       for (point_it = vis_outside_set.begin(); 
            point_it != vis_outside_set.end();)
       {
-        if ( has_on_positive_side((*(*f_list_it)).plane(), *point_it) )
+        if ( has_on_positive_side(plane, *point_it) )
         {
            outside_sets[(*f_list_it)].push_back(*point_it);
            point_it = vis_outside_set.erase(point_it);
@@ -409,6 +410,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   typedef typename Polyhedron::Facet_iterator             Facet_iterator;
 
   typedef typename Traits::Point_3                        Point_3;
+  typedef typename Traits::Plane_3                        Plane_3;
   typedef CGAL::Unique_hash_map<Facet_handle, std::list<Point_3> >   
                                                           Outside_set_map;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
@@ -424,24 +426,21 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 
   // for each facet, look at each unassigned point and decide if it belongs
   // to the outside set of this facet.
-#ifdef CGAL_CH_3_WINDOW_DEBUG
-  window << CGAL::GREEN;
-#endif
+
   for (f_it = P.facets_begin(); f_it != P.facets_end(); f_it++)
   {
-     compute_plane_equation(f_it);
-     for (P3_iterator point_it = points.begin() ; point_it != points.end();)
+    Plane_3 plane;
+     get_plane(plane, f_it);
+     for (P3_iterator point_it = points.begin() ; point_it != points.end(); )
      {
-#ifdef CGAL_CH_3_WINDOW_DEBUG
-        window << *point_it;
-#endif
-        if ( has_on_positive_side((*f_it).plane(), *point_it) )
-        {
-           outside_sets[f_it].push_back(*point_it);
-           point_it = points.erase(point_it);
-        }
-        else
-           point_it++;
+       if ( has_on_positive_side(plane, *point_it) ){ 
+	 outside_sets[f_it].push_back(*point_it);
+	 point_it = points.erase(point_it);
+       } else {
+	 ++point_it;
+       }
+
+       
      }
   }
   // add all the facets with non-empty outside sets to the set of facets for
@@ -509,16 +508,10 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
 #endif
 
   // if the maximum distance point is on the plane then all are coplanar
-  if (coplanar(*point1_it, *point2_it, *point3_it, *max_it)) 
+  if (coplanar(*point1_it, *point2_it, *point3_it, *max_it)) {
      coplanar_3_hull(points.begin(), points.end(), plane, P, traits);
-  else
-  {
+  } else {  
      P.make_tetrahedron(*point1_it, *point2_it, *point3_it, *max_it);
-#ifdef CGAL_CH_3_WINDOW_DEBUG
-     cout << "first tetrahedron" << endl;
-     window << P;
-     assert (P.is_valid(true));
-#endif
      points.erase(point1_it);
      points.erase(point2_it);
      points.erase(point3_it);

@@ -27,6 +27,113 @@
 
 
 namespace CGAL {
+template < class R_ >
+class Point_triple
+{
+CGAL_VC7_BUG_PROTECTED
+  typedef typename R_::FT                   FT;
+  typedef typename R_::Point_3              Point_3;
+  typedef typename R_::Vector_3             Vector_3;
+
+  Point_3 p_, q_, r_;
+public:
+  typedef R_                                     R;
+
+  Point_triple() {}
+
+  Point_triple(const Point_3 &p, const Point_3 &q, const Point_3 &r)
+    : p_(p), q_(q), r_(r) 
+  {}
+
+  const Point_3& p() const { return p_; }
+  const Point_3& q() const { return q_; }
+  const Point_3& r() const { return r_; }
+
+  
+  Vector_3
+  orthogonal_vector() const
+  {
+    FT a, b, c, d;
+    
+    plane_from_pointsC3(p_.x(), p_.y(), p_.z(),
+			      q_.x(), q_.y(), q_.z(),
+			      r_.x(), r_.y(), r_.z(),
+			      a, b, c, d);
+    return Vector_3(a, b, c);
+  }
+
+};
+template <class K>
+class Point_triple_has_on_positive_side_3 {
+
+public:
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Plane_3 Plane_3;
+  bool
+    operator()( const Plane_3& pl, const Point_3& p) const
+    {
+      typename K::Orientation_3 o; 
+      return ( o(pl.p(), pl.q(), pl.r(), p) == CGAL::POSITIVE );
+    }
+};
+template <class K>
+class Point_triple_construct_orthogonal_vector_3 
+{
+public:
+  
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::Plane_3 Plane_3;
+  
+  Vector_3 operator()(const Plane_3& plane) const
+  {
+    return plane.orthogonal_vector();
+  }
+};
+
+
+template <class K>
+class Point_triple_oriented_side_3 
+{
+public:
+  
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Plane_3 Plane_3;
+    typedef Oriented_side    result_type;
+
+  result_type
+    operator()( const Plane_3& pl, const Point_3& p) const
+    {
+      typename K::Orientation_3 o; 
+      Orientation ori = o(pl.p(), pl.q(), pl.r(), p) ;
+      if(ori > 0) return ON_POSITIVE_SIDE;
+      if(ori < 0) return ON_NEGATIVE_SIDE;
+      return ON_ORIENTED_BOUNDARY;
+    }
+};
+
+template <typename K, typename OldK>
+class Point_triple_less_signed_distance_to_plane_3 
+{  
+public:
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Plane_3 Plane_3;
+
+    typedef bool             result_type;
+    typedef Arity_tag< 3 >   Arity;
+
+    bool
+    operator()( const Plane_3& h, const Point_3& p, const Point_3& q) const
+    {
+      const Point_3& hp = h.p();
+      const Point_3& hq = h.q();
+      const Point_3& hr = h.r();
+      typename OldK::Less_signed_distance_to_plane_3 
+	less_signed_distance_to_plane_3;
+      return less_signed_distance_to_plane_3(hp, hq, hr, q, p);
+    }
+  };
+
+
 
 template <class T>
 class Max_coordinate_3 
@@ -58,10 +165,11 @@ class Convex_hull_traits_3
 {
  public:  
   typedef R_                                     R;
+  typedef Convex_hull_traits_3<R>                Self;
   typedef typename R::Point_3                    Point_3;
   typedef typename R::Segment_3                  Segment_3;
   typedef typename R::Triangle_3                 Triangle_3;
-  typedef typename R::Plane_3                    Plane_3;
+  typedef Point_triple<R>                        Plane_3;
   typedef typename R::Vector_3                   Vector_3;
 
 #if defined(__BORLANDC__)
@@ -70,21 +178,31 @@ class Convex_hull_traits_3
   typedef CGAL::Polyhedron_3<R>                  Polyhedron_3;
 #endif
 
+
   typedef typename R::Construct_segment_3        Construct_segment_3;
   typedef typename R::Construct_ray_3            Construct_ray_3;
-  typedef typename R::Construct_plane_3          Construct_plane_3;
+
+  class Construct_plane_3 {
+  public:
+    Plane_3 operator ()(const Point_3& p, const Point_3& q, const Point_3& r)
+    {
+      return Plane_3(p,q,r);
+    }
+  };
+
   typedef typename R::Construct_vector_3         Construct_vector_3;
   typedef typename R::Construct_triangle_3       Construct_triangle_3;
   typedef typename R::Construct_centroid_3       Construct_centroid_3;
-  typedef typename R::Construct_orthogonal_vector_3
+  typedef Point_triple_construct_orthogonal_vector_3<Self>
                                                  Construct_orthogonal_vector_3;
 
+  typedef typename R::Orientation_3              Orientation_3;
   typedef typename R::Collinear_3                Collinear_3;
   typedef typename R::Coplanar_3                 Coplanar_3;
   typedef typename R::Less_distance_to_point_3   Less_distance_to_point_3;
-  typedef typename R::Has_on_positive_side_3     Has_on_positive_side_3;
+  typedef Point_triple_has_on_positive_side_3<Self>     Has_on_positive_side_3;
 
-  typedef typename R::Less_signed_distance_to_plane_3
+  typedef  Point_triple_less_signed_distance_to_plane_3<Self, R>
                                                Less_signed_distance_to_plane_3;
 
   // required for degenerate case of all points coplanar
@@ -97,8 +215,9 @@ class Convex_hull_traits_3
   typedef typename R::Ray_3                      Ray_3; 
 
   typedef typename R::Has_on_3                   Has_on_3;
-  typedef typename R::Oriented_side_3            Oriented_side_3;
+  typedef Point_triple_oriented_side_3<Self>     Oriented_side_3;
   typedef typename R::Intersect_3                Intersect_3;
+  typedef typename R::Do_intersect_3             Do_intersect_3;
 
   Construct_segment_3
   construct_segment_3_object() const
@@ -155,6 +274,10 @@ class Convex_hull_traits_3
   Intersect_3
   intersect_3_object() const
   { return Intersect_3(); }
+
+  Do_intersect_3
+  do_intersect_3_object() const
+  { return Do_intersect_3(); }
 
   Less_signed_distance_to_plane_3  
   less_signed_distance_to_plane_3_object() const
