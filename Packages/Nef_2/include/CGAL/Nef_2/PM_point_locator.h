@@ -792,7 +792,7 @@ PM_point_locator<PMD,GEO>::
 }
 
 template <typename PMD, typename GEO>
-CGAL_TYPENAME_MSVC_NULL PM_point_locator<PMD,GEO>::Object_handle  
+typename PM_point_locator<PMD,GEO>::Object_handle  
 PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
 { 
   TRACEN("walk in triangulation "<<q);

@@ -136,7 +136,7 @@ void reduce()
 friend class Polynomial<pNT>;
 friend class Polynomial<int>;
 friend class Polynomial<double>;
-friend std::istream& operator >> CGAL_NULL_TMPL_ARGS  
+friend std::istream& operator >> <>  
        (std::istream&, Polynomial<NT>&);
 
 
@@ -145,7 +145,7 @@ type wrapping the smart pointer architecture.
 <<the polynomial class template>>=
 /*{\Msubst 
 typename iterator_traits<Forward_iterator>::value_type#NT
-CGAL_NULL_TMPL_ARGS#
+<>#
 }*/
 
 /*{\Manpage{Polynomial}{NT}{Polynomials in one variable}{p}}*/
@@ -367,23 +367,23 @@ holds iff $|sign|(p_1 - p_2) < 0$. This data type is fully compliant
 to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
 
 friend  /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
-  operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<NT>&);   
+  operator - <>  (const Polynomial<NT>&);   
                         
 friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
-  operator + CGAL_NULL_TMPL_ARGS (const Polynomial<NT>&, 
+  operator + <> (const Polynomial<NT>&, 
                                   const Polynomial<NT>&);
 
 friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
-  operator - CGAL_NULL_TMPL_ARGS (const Polynomial<NT>&, 
+  operator - <> (const Polynomial<NT>&, 
                                   const Polynomial<NT>&);
 
 friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
-  operator * CGAL_NULL_TMPL_ARGS (const Polynomial<NT>&, 
+  operator * <> (const Polynomial<NT>&, 
                                   const Polynomial<NT>&);
 
 friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
 
-Polynomial<NT>  operator / CGAL_NULL_TMPL_ARGS 
+Polynomial<NT>  operator / <> 
 (const Polynomial<NT>& p1, const Polynomial<NT>& p2);
 /*{\Mbinopfunc implements polynomial division of |p1| and |p2|. if
 |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
@@ -423,7 +423,7 @@ the ring |NT[x]|: $f = g*q + r$.  \precond |NT| is a field, i.e.,
 there exists a division operation on |NT|.  }*/
 
 friend /*CGAL_KERNEL_INLINE*/ double to_double
-CGAL_NULL_TMPL_ARGS (const Polynomial<NT>& p);
+<> (const Polynomial<NT>& p);
 
 
 @ We allow self manipulating operations of a polynomial. Note that we
@@ -1775,13 +1775,13 @@ while (<>) {
     foreach my $arg (@arglist) {
       my $copied_class = $spec_class;
       $copied_class =~ 
-      s/template\s*\<class\s+$nt_from\>(\s*)class\s*(\w+)\s*/CGAL_TEMPLATE_NULL$1class $2\<$arg\> /sg;
+      s/template\s*\<class\s+$nt_from\>(\s*)class\s*(\w+)\s*/template \<\>$1class $2\<$arg\> /sg;
       $copied_class =~ 
-      s/template\s*\<class\s+p$nt_from\>(\s*)class\s*(\w+)\s*/CGAL_TEMPLATE_NULL$1class $2\<$arg\> /sg;
+      s/template\s*\<class\s+p$nt_from\>(\s*)class\s*(\w+)\s*/template \<\>$1class $2\<$arg\> /sg;
       $copied_class =~ 
-      s/template\s*\<typename\s+$nt_from\>(\s*)class\s*(\w+)\s*/CGAL_TEMPLATE_NULL$1class $2\<$arg\> /sg;
-      $copied_class =~ s/template\s*\<class\s+$nt_from\>/CGAL_TEMPLATE_NULL/sg;
-      $copied_class =~ s/template\s*\<typename\s+$nt_from\>/CGAL_TEMPLATE_NULL/sg;
+      s/template\s*\<typename\s+$nt_from\>(\s*)class\s*(\w+)\s*/template \<\>$1class $2\<$arg\> /sg;
+      $copied_class =~ s/template\s*\<class\s+$nt_from\>/template \<\>/sg;
+      $copied_class =~ s/template\s*\<typename\s+$nt_from\>/template \<\>/sg;
       $copied_class =~ s/([\W]|^)$nt_from([\W]|$)/$1$arg$2/smg;
       $copied_class =~ s/([\W]|^)p$nt_from([\W]|$)/$1$arg$2/smg;
       $copied_class =~ s/typename//sg;
@@ -1922,7 +1922,7 @@ class A {
   T a;
 
   friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-  A<T> operator+ CGAL_NULL_TMPL_ARGS (const A<T>&, const A<T>&);
+  A<T> operator+ <> (const A<T>&, const A<T>&);
 
 public: 
   A() : a() {}
@@ -1944,7 +1944,7 @@ public:
 
 template <class T> T A<T>::R_ = T(0);
 #ifdef INITFORGNU
-CGAL_TEMPLATE_NULL int A<int>::R_ = 0;
+template <> int A<int>::R_ = 0;
 #endif
 
 // symmetric op+

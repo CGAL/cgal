@@ -11,13 +11,13 @@ while (<>) {
     foreach my $arg (@arglist) {
       my $copied_class = $spec_class;
       $copied_class =~ 
-      s/template\s*\<class\s+$nt_from\>(\s*)class\s*(\w+)\s*/CGAL_TEMPLATE_NULL$1class $2\<$arg\> /sg;
+      s/template\s*\<class\s+$nt_from\>(\s*)class\s*(\w+)\s*/template \<\>$1class $2\<$arg\> /sg;
       $copied_class =~ 
-      s/template\s*\<class\s+p$nt_from\>(\s*)class\s*(\w+)\s*/CGAL_TEMPLATE_NULL$1class $2\<$arg\> /sg;
+      s/template\s*\<class\s+p$nt_from\>(\s*)class\s*(\w+)\s*/template \<\>$1class $2\<$arg\> /sg;
       $copied_class =~ 
-      s/template\s*\<typename\s+$nt_from\>(\s*)class\s*(\w+)\s*/CGAL_TEMPLATE_NULL$1class $2\<$arg\> /sg;
-      $copied_class =~ s/template\s*\<class\s+$nt_from\>/CGAL_TEMPLATE_NULL/sg;
-      $copied_class =~ s/template\s*\<typename\s+$nt_from\>/CGAL_TEMPLATE_NULL/sg;
+      s/template\s*\<typename\s+$nt_from\>(\s*)class\s*(\w+)\s*/template \<\>$1class $2\<$arg\> /sg;
+      $copied_class =~ s/template\s*\<class\s+$nt_from\>/template \<\>/sg;
+      $copied_class =~ s/template\s*\<typename\s+$nt_from\>/template \<\>/sg;
       $copied_class =~ s/([\W]|^)$nt_from([\W]|$)/$1$arg$2/smg;
       $copied_class =~ s/([\W]|^)p$nt_from([\W]|$)/$1$arg$2/smg;
       $copied_class =~ s/typename//sg;
