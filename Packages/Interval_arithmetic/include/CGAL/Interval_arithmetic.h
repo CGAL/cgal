@@ -423,9 +423,9 @@ sqrt (const Interval_nt_advanced & d)
   // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
-  tmp.inf = (d.inf<0) ? -sqrt(-d.inf) : 0;
+  tmp.inf = (d.inf<0) ? -std::sqrt(-d.inf) : 0;
   FPU_set_rounding_to_infinity();
-  tmp.sup = sqrt(d.sup);
+  tmp.sup = std::sqrt(d.sup);
   return tmp;
 }
 
