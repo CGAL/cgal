@@ -18,6 +18,18 @@
 // coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
+
+// Geomview doesn't work on M$ at the moment, so we don't compile this file.
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+#include <iostream>
+int main()
+{
+  std::cerr << "Geomview doesn't work on Windows, so this demo doesn't work"
+            << std::endl;
+  return 0;
+}
+#else
+
 #include <CGAL/basic.h>
 
 #include <iostream>
@@ -246,3 +258,5 @@ int main()
 
   return 1;
 }
+
+#endif // if defined(__BORLANDC__) || defined(_MSC_VER)
