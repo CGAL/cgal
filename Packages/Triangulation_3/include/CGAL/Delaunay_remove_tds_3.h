@@ -244,19 +244,20 @@ public:
   typedef typename TDSUL2::Vertex Vertex_3_2;
   typedef typename TDSUL2::Face Face_3_2;
   typedef typename TDSUL2::Face_iterator Face_iterator;
-  typedef quadruple<void*, void*, Face_3_2*, int> Halfedge;
 
   // FIXME : similar to operator>>(), isn't it ?  Should we try to factorize ?
-  Delaunay_remove_tds_3_2( std::vector<Facet> & boundhole ) {
+  Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole ) {
 
-    typedef typename std::vector<Facet>::iterator Facet_iterator;
+    typedef quadruple<void*, void*, Face_3_2*, int> Halfedge;
 
-    std::vector<Halfedge> halfedges(3*boundhole.size());
-    int i = 0;
+    std::vector<Halfedge> halfedges;
+    halfedges.reserve(3*boundhole.size());
+
     std::map<Vertex_handle, Vertex_3_2*>  vertex_map;
     typename std::map<Vertex_handle, Vertex_3_2*>::iterator map_it;
 
-    for(Facet_iterator fit = boundhole.begin(); fit != boundhole.end(); ++fit)
+    for(typename std::vector<Facet>::const_iterator fit = boundhole.begin();
+	    fit != boundhole.end(); ++fit)
     {
       Face_3_2 * f = create_face();
 
@@ -316,9 +317,8 @@ public:
       for(int j = 0; j < 3; j++) {
 	void* v = f->vertex(j); 
 	void* w = f->vertex(cw(j));
-	halfedges[i] = (v < w)? Halfedge(v, w, f, ccw(j))
-	                      : Halfedge(w, v, f, ccw(j));
-	i++;
+	halfedges.push_back((v < w) ? Halfedge(v, w, f, ccw(j))
+	                            : Halfedge(w, v, f, ccw(j)));
       }
     }
 

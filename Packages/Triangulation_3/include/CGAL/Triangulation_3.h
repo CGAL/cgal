@@ -129,6 +129,13 @@ protected:
       return geom_traits().orientation_3_object()(p, q, r, s);
   }
 
+  bool
+  coplanar(const Point &p, const Point &q,
+	   const Point &r, const Point &s) const
+  {
+      return orientation(p, q, r, s) == COPLANAR;
+  }
+
   Orientation
   coplanar_orientation(const Point &p, const Point &q, const Point &r) const
   {
@@ -951,23 +958,22 @@ test_dim_down(Vertex_handle v) const
   CGAL_triangulation_precondition(! is_infinite(v) );
 
   Finite_cells_iterator cit = finite_cells_begin();
-  Finite_cells_iterator cdone = finite_cells_end();
 
-  int i, iv;
-  if ( ! cit->has_vertex(v,iv) ) return false;
+  int iv;
+  if ( ! cit->has_vertex(v,iv) )
+      return false;
   const Point &p1=cit->vertex((iv+1)&3)->point();  
   const Point &p2=cit->vertex((iv+2)&3)->point();  
   const Point &p3=cit->vertex((iv+3)&3)->point();
   ++cit;
-  
-  while ( cit != cdone ) {
+
+  for (; cit != finite_cells_end(); ++cit ) {
     if ( ! cit->has_vertex(v,iv) )
       return false;
-    for ( i=1; i<4; i++ ) {
-	if ( orientation(p1,p2,p3,cit->vertex((iv+i)&3)->point()) != COPLANAR )
+    for (int i=1; i<4; i++ ) {
+	if ( !coplanar(p1,p2,p3,cit->vertex((iv+i)&3)->point()) )
 	  return false;
     }
-    ++cit;
   }
 
   return true;
@@ -1761,7 +1767,7 @@ side_of_triangle(const Point & p,
   // ON_BOUNDARY if p lies on one of the edges
   // ON_UNBOUNDED_SIDE if p lies strictly outside the triangle
 {
-  CGAL_triangulation_precondition( orientation(p,p0,p1,p2) == COPLANAR );
+  CGAL_triangulation_precondition( coplanar(p,p0,p1,p2) );
 
   Orientation o012 = coplanar_orientation(p0,p1,p2);
   CGAL_triangulation_precondition( o012 != COLLINEAR );
@@ -1842,10 +1848,10 @@ side_of_facet(const Point & p,
   if ( ! is_infinite(c,3) ) {
     // The following precondition is useless because it is written
     // in side_of_facet  
-    // 	CGAL_triangulation_precondition( orientation (p, 
+    // 	CGAL_triangulation_precondition( coplanar (p, 
     // 					  c->vertex(0)->point,
     // 					  c->vertex(1)->point,
-    // 					  c->vertex(2)->point) == COPLANAR );
+    // 					  c->vertex(2)->point) );
     int i_t, j_t;
     Bounded_side side = side_of_triangle(p,
 			    c->vertex(0)->point(),
@@ -1863,11 +1869,10 @@ side_of_facet(const Point & p,
   int inf = c->index(infinite);
     // The following precondition is useless because it is written
     // in side_of_facet  
-    // 	CGAL_triangulation_precondition( orientation (p,
-    // 					  c->neighbor(inf)->vertex(0)->point(),
-    // 					  c->neighbor(inf)->vertex(1)->point(),
-    // 					  c->neighbor(inf)->vertex(2)->point())
-    // 					 == COPLANAR );
+    // 	CGAL_triangulation_precondition( coplanar (p,
+    // 				  c->neighbor(inf)->vertex(0)->point(),
+    // 				  c->neighbor(inf)->vertex(1)->point(),
+    // 				  c->neighbor(inf)->vertex(2)->point()));
   int i2 = next_around_edge(inf,3);
   int i1 = 3-inf-i2;
   Vertex_handle v1 = c->vertex(i1),
@@ -2222,10 +2227,9 @@ insert_in_facet(const Point & p, Cell_handle c, int i, Vertex_handle v)
     ( Locate_type lt;
       int li; int lj; );
   CGAL_triangulation_precondition
-    ( orientation( p, 
-		   c->vertex((i+1)&3)->point(),
+    ( coplanar( p, c->vertex((i+1)&3)->point(),
 		   c->vertex((i+2)&3)->point(),
-		   c->vertex((i+3)&3)->point() ) == COPLANAR
+		   c->vertex((i+3)&3)->point() )
       && 
       side_of_triangle( p, 
 			c->vertex((i+1)&3)->point(),

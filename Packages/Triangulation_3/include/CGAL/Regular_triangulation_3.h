@@ -313,10 +313,9 @@ side_of_power_circle( Cell_handle c, int i, const Weighted_point &p) const
     int i0 = (i>0) ? 0 : 1;
     int i1 = (i>1) ? 1 : 2;
     int i2 = (i>2) ? 2 : 3;
-    CGAL_triangulation_precondition( orientation(c->vertex(i0)->point(),
-						 c->vertex(i1)->point(),
-						 c->vertex(i2)->point(),
-						 p) == COPLANAR );
+    CGAL_triangulation_precondition( coplanar ( c->vertex(i0)->point(),
+						c->vertex(i1)->point(),
+						c->vertex(i2)->point(), p) );
     return Bounded_side( power_test(c->vertex(i0)->point(),
 				    c->vertex(i1)->point(),
 				    c->vertex(i2)->point(), p) );

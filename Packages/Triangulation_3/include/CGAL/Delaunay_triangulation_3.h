@@ -279,9 +279,9 @@ private:
   void make_hole_3D_ear( Vertex_handle v, 
 	                 std::vector<Facet> & boundhole,
 	                 std::vector<Cell_handle> & hole);
-  void undo_make_hole_3D_ear(std::vector<Facet> & boundhole,
-		             std::vector<Cell_handle> & hole);
-  bool fill_hole_3D_ear(std::vector<Facet> & boundhole);
+  void undo_make_hole_3D_ear(const std::vector<Facet> & boundhole,
+		             const std::vector<Cell_handle> & hole);
+  bool fill_hole_3D_ear(const std::vector<Facet> & boundhole);
 
   class Conflict_tester_3
   {
@@ -686,10 +686,10 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     int i0 = (i>0) ? 0 : 1;
     int i1 = (i>1) ? 1 : 2;
     int i2 = (i>2) ? 2 : 3;
-    CGAL_triangulation_precondition( orientation( c->vertex(i0)->point(),
-				                  c->vertex(i1)->point(),
-				                  c->vertex(i2)->point(),
-				                  p ) == COPLANAR );
+    CGAL_triangulation_precondition( coplanar( c->vertex(i0)->point(),
+				               c->vertex(i1)->point(),
+				               c->vertex(i2)->point(),
+					       p ) );
     return coplanar_side_of_bounded_circle( c->vertex(i0)->point(),
 					    c->vertex(i1)->point(),
 					    c->vertex(i2)->point(),
@@ -948,11 +948,11 @@ make_hole_3D_ear( Vertex_handle v,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-undo_make_hole_3D_ear(std::vector<Facet> & boundhole,
-		      std::vector<Cell_handle> & hole)
+undo_make_hole_3D_ear(const std::vector<Facet> & boundhole,
+		      const std::vector<Cell_handle> & hole)
 {
-  typename std::vector<Cell_handle>::iterator cit = hole.begin();
-  for(typename std::vector<Facet>::iterator fit = boundhole.begin();	
+  typename std::vector<Cell_handle>::const_iterator cit = hole.begin();
+  for(typename std::vector<Facet>::const_iterator fit = boundhole.begin();	
       fit != boundhole.end(); ++fit) {
     Cell_handle ch = (*fit).first;
     ch->set_neighbor((*fit).second, *cit);
@@ -965,7 +965,7 @@ undo_make_hole_3D_ear(std::vector<Facet> & boundhole,
 template < class Gt, class Tds >
 bool
 Delaunay_triangulation_3<Gt,Tds>::
-fill_hole_3D_ear( std::vector<Facet> & boundhole)
+fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 {
   typedef Delaunay_remove_tds_3_2<Delaunay_triangulation_3> Surface;
   typedef typename Surface::Face_3_2 Face_3_2;
