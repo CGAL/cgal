@@ -940,16 +940,8 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
-intersection(const Iso_cuboid_3<R> &line,
-        const Iso_cuboid_3<R> &box) ;
-
-template <class R>
-inline Object
-intersection(const Iso_cuboid_3<R> &box,
-        const Iso_cuboid_3<R> &line)
-{
-    return intersection(line, box);
-}
+intersection(const Iso_cuboid_3<R> &box1,
+        const Iso_cuboid_3<R> &box2) ;
 
 CGAL_END_NAMESPACE
 @}
@@ -964,15 +956,15 @@ CGAL_BEGIN_NAMESPACE
 template <class R>
 Object
 intersection(
-    const Iso_cuboid_3<R> &irect1,
-    const Iso_cuboid_3<R> &irect2)
+    const Iso_cuboid_3<R> &icub1,
+    const Iso_cuboid_3<R> &icub2)
 {
     Point_3<R> min_points[2];
     Point_3<R> max_points[2];
-    min_points[0] = irect1.min();
-    min_points[1] = irect2.min();
-    max_points[0] = irect1.max();
-    max_points[1] = irect2.max();
+    min_points[0] = icub1.min();
+    min_points[1] = icub2.min();
+    max_points[0] = icub1.max();
+    max_points[1] = icub2.max();
     typedef typename R::FT FT;
     const int DIM = 3;
     int min_idx[DIM];
