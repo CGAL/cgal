@@ -4,12 +4,12 @@
 Package=Viewer_3
 
 #.PHONY: doc package test submit version rtag
-VERSION=0.2
+VERSION=0.3
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-package: doc clean $(Package).tar.gz
+package: $(Package).tar.gz
 	@echo "-----------------------------------"
 	@echo "------------ Penser à: ------------"
 	@echo "-----------------------------------"
@@ -31,7 +31,7 @@ version:
 
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
-	   changes.txt $(WWW_dir)
+	    $(WWW_dir)
 #	cvs update $(LOCAL)/Tetrahedralization
 	rm -f $(WWW_dir)/$(Package).ps.gz
 	gzip -9 $(WWW_dir)/$(Package).ps
@@ -39,14 +39,14 @@ submit: package
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl teillaud < $(TMP_file)
+	mail -s autohandle cgal-submit@cs.uu.nl rebufat < $(TMP_file)
 	rm -f $(TMP_file)
 
 test:
 	$(MAKE) -C test/$(Package)
 
 clean:
-	$(MAKE) -C doc_tex/basic/$(Package) clean
+	$(MAKE) -C doc_tex/support/$(Package) clean
 	$(MAKE) -C examples/$(Package) clean
 	$(MAKE) -C test/$(Package) clean
 	rm -f $(Package).tar.gz
@@ -57,9 +57,9 @@ $(Package).tar.gz:
 	--exclude=TODO \
 	--exclude=.pure --exclude=*.pv \
 	--exclude=.nfs*\
-	version description.txt changes.txt \
-	demo include doc_tex doc_ps src test examples
+	version description.txt \
+	demo include doc_tex doc_ps src 
 
 doc: doc_ps/$(Package).ps
-	$(MAKE) -C doc_tex/basic/$(Package)
-	cp doc_tex/basic/$(Package)/$(Package).ps doc_ps/
+	$(MAKE) -C doc_tex/support/$(Package)
+	cp doc_tex/support/$(Package)/$(Package).ps doc_ps/
