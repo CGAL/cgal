@@ -85,10 +85,10 @@ public:
   Point get_refinement_point(const Edge& edge)
   {
     typename Geom_traits::Construct_midpoint_2
-      midpoint = tr.geom_traits().construct_midpoint_2_object();
+      midpoint = this->tr.geom_traits().construct_midpoint_2_object();
 
-    this->va = edge.first->vertex(tr.cw (edge.second));
-    this->vb = edge.first->vertex(tr.ccw(edge.second));
+    this->va = edge.first->vertex(Tr::cw (edge.second));
+    this->vb = edge.first->vertex(Tr::ccw(edge.second));
     va_has_a_cluster = false;
     vb_has_a_cluster = false;
     cluster_splitted = false;
@@ -100,7 +100,7 @@ public:
         { // both ends are clusters
           va_has_a_cluster = true;
           vb_has_a_cluster = true;
-          return midpoint(va->point(), vb->point());
+          return midpoint(this->va->point(), this->vb->point());
         }
       else {
         // va only is a cluster
@@ -114,7 +114,7 @@ public:
       return split_cluster_point(this->vb,this->va,cb);
     }else{
       // no cluster
-      return midpoint(va->point(), vb->point());
+      return midpoint(this->va->point(), this->vb->point());
     }
   };
 
