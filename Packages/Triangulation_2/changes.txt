@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+17 May 2004 Menelaos Karavelas
+- replaced Point by Point_2 in the demo in order to resolve clash with
+  the Mac version of Qt
+
 14 May 2004 Andreas Fabri
 - Replaced template parameter K with K_ in class Weighted_point_mapper_2
   to avoid error message for SunPro and Intel compiler
