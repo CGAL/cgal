@@ -195,7 +195,7 @@ for the STL sequence containers \ccc{vector<Point>} and \ccc{list<Point>}.
         returns the \ccc{i}-th support point of \ccVar. Between two
         insert operations any call to \ccVar\ccc{.support_point(i)}
         with the same \ccc{i} returns the same point.
-        \ccPrecond $0 \leq i <$ \ccVar\ccc{.number_of_support_points()}.}
+        \ccPrecond $0 \leq i< \mbox{\ccVar\ccc{.number_of_support_points()}}$.}
 
 \ccMemberFunction{ Circle  circle( ) const;}{
         returns a circle with same center and same squared radius
@@ -238,7 +238,7 @@ bounded side, i.e.\ its unbounded side equals the whole plane $\E_2$.
 % -----------------------------------------------------------------------------
 \ccHeading{Modifiers}
 
-New points can be added to an existing $\ccVar$, allowing to build
+New points can be added to an existing \ccVar, allowing to build
 $mc(P)$ incrementally, e.g.\ if $P$ is not known in advance. Compared
 to the direct creation of $mc(P)$, this is not much slower, because
 the construction method is incremental itself.
