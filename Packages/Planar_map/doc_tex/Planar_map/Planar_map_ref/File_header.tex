@@ -19,8 +19,8 @@
 \ccDefinition
 Generally, the \ccRefName \/ class contains configurations the user defines before using the I/O functions.
 These configurations concern the verbose flag, writing a file with or without comments, etc.
-This class is the base class of \ccc{Pm_file_scanner} \ccc{Pm_file_writer}.
-The list of parameters for \ccRefName is as follows:
+The class is the base class of the classes \ccc{Pm_file_scanner} and \ccc{Pm_file_writer}.
+The list of parameters for \ccRefName\/ is as follows:
 
 \begin{itemize}
 \item {\bf verbose } define a verbose format for printing the \ccc{Planar map}. This flag is set by default to false.
@@ -48,7 +48,7 @@ When creating a \ccRefName \/ object, the user sets the parameters as needed.
 
 \ccConstructor{File_header (int v, int h, int f, bool verbose = false, bool no_comments = false, 
    bool ascii = true, int offset = 0, bool colors = false, int dim = 2);} 
-{constructs \ccRefName\ with \ccc{v} vertices \ccc{h} halfedges and \ccc{f} faces, the other parameters can also be set by the user, otherwise they are getting their default values.}
+{constructs \ccRefName\ with \ccc{v} vertices \ccc{h} halfedges and \ccc{f} faces, the other parameters can also be set by the user, otherwise they are set to their default values.}
 
 \ccConstructor{File_header(const File_header& file_header);}
 {copy constructor.}
