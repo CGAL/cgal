@@ -330,6 +330,18 @@ class Call_squared_length_to_get
     { return c.squared_length(); }
 };
 
+template <class ReturnType>
+class Call_squared_distance
+{
+  public:
+    typedef ReturnType     result_type;
+
+    template <class T1, class T2>
+    ReturnType
+    operator()( const T1& t1, const T2& t2) const
+    { return squared_distance(t1, t2); }
+};
+
 class Counterclockwise_in_between
 {
   public:

@@ -1,3 +1,7 @@
+3.28   (6 Mar 2001)
+- Added Compute_squared_distance_2 and 3.
+- Remove references to point_vector_declarationsH2.h.
+
 3.27   (28 Feb 2001)
 - Added iterator_traits_pointer_specs_for_simple_homogeneous_kernel.h
 
