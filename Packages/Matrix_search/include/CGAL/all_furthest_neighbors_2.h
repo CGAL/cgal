@@ -172,7 +172,8 @@ OutputIterator
 all_furthest_neighbors_2( RandomAccessIC points_begin,
                           RandomAccessIC points_end,
                           OutputIterator o,
-                          const Traits& t,
+                          const Traits&
+                          CGAL_optimisation_expensive_precondition_code(t),
                           std::random_access_iterator_tag)
 {
 #ifndef CGAL_CFG_TYPENAME_BUG
