@@ -40,15 +40,6 @@ equal_line(const LineC2<K> &l1, const LineC2<K> &l2)
 
 template < class K >
 inline
-Comparison_result
-compare_slopes(const LineC2<K> &l1,
-               const LineC2<K> &l2)
-{
-  return K().compare_slope_2_object()(l1, l2);
-}
-
-template < class K >
-inline
 Oriented_side
 side_of_oriented_line(const LineC2<K> &l,
                       const PointC2<K> &p)
