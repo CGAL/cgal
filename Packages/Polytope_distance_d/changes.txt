@@ -1,5 +1,8 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 0.5 on 15-Sep-2000
+- added indexing command.
+
 Version 0.4.1 on 13-Sep-2000
 - replaced '\ccPureGlobalScope' by 'CGAL::' in C++ arguments of '\cc...' macros
 - changed semantic and implementation of 'is_degenerate'.
