@@ -1,4 +1,11 @@
 13 Mar 2004 Sylvain Pion
+- Factorize identical Coplanar_3 functors between H&C.
+- Move to the new scheme :
+  orientation(4 Point_3), coplanar(4 Point_3),
+  are_positive_oriented(4 Point_3), are_negative_oriented(4 Point_3),
+  side_of_oriented_sphere(5 Point_3)
+
+13 Mar 2004 Sylvain Pion
 - Use TetrahedronC3 instead of TetrahedronH3.
   Duplicate Compute_volume_3 and Bounded_side_3 functors instead.
 

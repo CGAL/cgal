@@ -41,6 +41,15 @@ angle(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
   return CGALi::angle(p, q, r, K());
 }
 
+template < typename K >
+inline
+bool
+are_negative_oriented(const Point_3<K>& p, const Point_3<K>& q,
+                      const Point_3<K>& r, const Point_3<K>& s)
+{
+  return CGALi::are_negative_oriented(p, q, r, s, K());
+}
+
 template < class K >
 inline
 bool
@@ -49,6 +58,15 @@ are_ordered_along_line(const Point_3<K> &p,
                        const Point_3<K> &r)
 {
   return CGALi::are_ordered_along_line(p, q, r, K());
+}
+
+template < typename K >
+inline
+bool
+are_positive_oriented(const Point_3<K>& p, const Point_3<K>& q,
+                      const Point_3<K>& r, const Point_3<K>& s)
+{
+  return CGALi::are_positive_oriented(p, q, r, s, K());
 }
 
 template < class K >
@@ -132,6 +150,15 @@ collinear_are_strictly_ordered_along_line(const Point_3<K> &p,
 
 template < class K >
 inline
+bool
+coplanar(const Point_3<K> &p, const Point_3<K> &q,
+         const Point_3<K> &r, const Point_3<K> &s)
+{
+  return CGALi::coplanar(p, q, r, s, K());
+}
+
+template < class K >
+inline
 Orientation
 coplanar_orientation(const Point_3<K> &p,
                      const Point_3<K> &q,
@@ -176,25 +203,6 @@ typename K::Point_3
 midpoint(const Point_3<K> &p, const Point_3<K> &q)
 {
   return CGALi::midpoint(p, q, K());
-}
-
-template <class K >
-inline
-typename K::Vector_3
-orthogonal_vector(const Point_3<K>& p,
-		  const Point_3<K>& q,
-		  const Point_3<K>& r)
-{
-  return CGALi::orthogonal_vector(p, q, r, K());
-}
-
-
-template <class K >
-inline
-typename K::Vector_3
-orthogonal_vector(const Plane_3<K>& p)
-{
-  return CGALi::orthogonal_vector(p, K());
 }
 
 // FIXME TODO : what to do with teh operators ?
@@ -274,6 +282,35 @@ operator-(const Point_3<K> &p, const Point_3<K> &q)
   return K().construct_vector_3_object()(q, p);
 }
 
+template <class K >
+inline
+Orientation
+orientation(const Point_3<K> &p,
+            const Point_3<K> &q,
+            const Point_3<K> &r,
+            const Point_3<K> &s)
+{
+  return CGALi::orientation(p, q, r, s, K());
+}
+
+template <class K >
+inline
+typename K::Vector_3
+orthogonal_vector(const Point_3<K>& p,
+		  const Point_3<K>& q,
+		  const Point_3<K>& r)
+{
+  return CGALi::orthogonal_vector(p, q, r, K());
+}
+
+template <class K >
+inline
+typename K::Vector_3
+orthogonal_vector(const Plane_3<K>& p)
+{
+  return CGALi::orthogonal_vector(p, K());
+}
+
 // parallel() functions are in Kernel/global_functions.h
 
 template <class K >
@@ -307,6 +344,18 @@ side_of_bounded_sphere(const Point_3<K> &p,
                        const Point_3<K> &test)
 {
   return CGALi::side_of_bounded_sphere(p, q, r, s, test, K());
+}
+
+template <class K >
+inline
+Oriented_side
+side_of_oriented_sphere(const Point_3<K> &p,
+                        const Point_3<K> &q,
+                        const Point_3<K> &r,
+                        const Point_3<K> &s,
+                        const Point_3<K> &test)
+{
+  return CGALi::side_of_oriented_sphere(p, q, r, s, test, K());
 }
 
 template <typename K>

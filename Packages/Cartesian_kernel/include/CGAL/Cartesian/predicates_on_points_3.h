@@ -206,68 +206,12 @@ dominance(const PointC3<K> &p,
 
 template < class K >
 inline
-Orientation
-orientation(const PointC3<K> &p,
-            const PointC3<K> &q,
-            const PointC3<K> &r,
-            const PointC3<K> &s)
-{
-  return K().orientation_3_object()(p, q, r, s);
-}
-
-template < class K >
-inline
-bool
-coplanar(const PointC3<K> &p,
-         const PointC3<K> &q,
-         const PointC3<K> &r,
-         const PointC3<K> &s)
-{
-  return K().coplanar_3_object()(p, q, r, s);
-}
-
-template < class K>
-inline
-bool
-are_positive_oriented(const PointC3<K>& p,
-                      const PointC3<K>& q,
-                      const PointC3<K>& r,
-                      const PointC3<K>& s)
-{
-  return orientation(p, q, r, s) == POSITIVE;
-}
-
-template < class K>
-inline
-bool
-are_negative_oriented(const PointC3<K>& p,
-                      const PointC3<K>& q,
-                      const PointC3<K>& r,
-                      const PointC3<K>& s)
-{
-  return orientation(p, q, r, s) == NEGATIVE;
-}
-
-template < class K >
-inline
 bool
 collinear_are_ordered_along_line(const PointC3<K> &p,
                                  const PointC3<K> &q,
                                  const PointC3<K> &r)
 {
   return K().collinear_are_ordered_along_line_3_object()(p, q, r);
-}
-
-template <class K >
-inline
-Oriented_side
-side_of_oriented_sphere(const PointC3<K> &p,
-                        const PointC3<K> &q,
-                        const PointC3<K> &r,
-                        const PointC3<K> &s,
-                        const PointC3<K> &test)
-{
-  return K().side_of_oriented_sphere_3_object()(p, q, r, s, test);
 }
 
 CGAL_END_NAMESPACE

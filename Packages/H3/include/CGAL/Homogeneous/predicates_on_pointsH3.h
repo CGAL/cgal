@@ -278,13 +278,6 @@ bool
 less_z(const PointH3<R> &p, const PointH3<R> &q)
 { return   (p.hz() * q.hw() < q.hz() * p.hw() ); }
 
-
-CGAL_END_NAMESPACE
-
-#include <CGAL/Homogeneous/orientation_predicatesH3.h>
-
-CGAL_BEGIN_NAMESPACE
-
 template < class R >
 CGAL_KERNEL_INLINE
 bool
@@ -351,63 +344,6 @@ collinear_are_ordered_along_line(const PointH3<R> &p,
   }
   // p == r
   return  ((rqx == qrx) && (rqy == qry) && (rqz == qrz));
-}
-
-template < class R >
-CGAL_KERNEL_LARGE_INLINE
-Oriented_side
-side_of_oriented_sphere(const PointH3<R> &p,
-                             const PointH3<R> &q,
-                             const PointH3<R> &r,
-                             const PointH3<R> &s,
-                             const PointH3<R> &t)
-{
-  typedef typename R::RT RT;
-  CGAL_kernel_precondition( !coplanar(p,q,r,s) );
-  const RT phx = p.hx();
-  const RT phy = p.hy();
-  const RT phz = p.hz();
-  const RT phw = p.hw();
-  const RT phw2 = phw*phw;
-
-  const RT qhx = q.hx();
-  const RT qhy = q.hy();
-  const RT qhz = q.hz();
-  const RT qhw = q.hw();
-  const RT qhw2 = qhw*qhw;
-
-  const RT rhx = r.hx();
-  const RT rhy = r.hy();
-  const RT rhz = r.hz();
-  const RT rhw = r.hw();
-  const RT rhw2 = rhw*rhw;
-
-  const RT shx = s.hx();
-  const RT shy = s.hy();
-  const RT shz = s.hz();
-  const RT shw = s.hw();
-  const RT shw2 = shw*shw;
-
-  const RT thx = t.hx();
-  const RT thy = t.hy();
-  const RT thz = t.hz();
-  const RT thw = t.hw();
-  const RT thw2 = thw*thw;
-
-  const RT det = det5x5_by_formula<RT>(
-        phx*phw, phy*phw, phz*phw, phx*phx + phy*phy + phz*phz, phw2,
-        qhx*qhw, qhy*qhw, qhz*qhw, qhx*qhx + qhy*qhy + qhz*qhz, qhw2,
-        rhx*rhw, rhy*rhw, rhz*rhw, rhx*rhx + rhy*rhy + rhz*rhz, rhw2,
-        shx*shw, shy*shw, shz*shw, shx*shx + shy*shy + shz*shz, shw2,
-        thx*thw, thy*thw, thz*thw, thx*thx + thy*thy + thz*thz, thw2);
-  if (det < RT(0))
-  {
-      return ON_POSITIVE_SIDE;
-  }
-  else
-  {
-      return (RT(0) < det) ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
-  }
 }
 
 template < class R >

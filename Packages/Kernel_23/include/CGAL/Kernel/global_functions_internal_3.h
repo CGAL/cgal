@@ -41,6 +41,17 @@ angle(const typename CGAL_WRAP(K)::Point_3 &p,
   return k.angle_3_object()(p, q, r);
 }
 
+template <typename K>
+inline
+bool
+are_negative_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
+                      const typename CGAL_WRAP(K)::Point_3 &q,
+                      const typename CGAL_WRAP(K)::Point_3 &r,
+                      const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+{
+  return CGALi::orientation(p, q, r, s, k) == NEGATIVE;
+}
+
 template < class K >
 inline
 bool
@@ -49,6 +60,17 @@ are_ordered_along_line(const typename CGAL_WRAP(K)::Point_3 &p,
                        const typename CGAL_WRAP(K)::Point_3 &r, const K& k)
 {
   return k.are_ordered_along_line_3_object()(p, q, r);
+}
+
+template <typename K>
+inline
+bool
+are_positive_oriented(const typename CGAL_WRAP(K)::Point_3 &p,
+                      const typename CGAL_WRAP(K)::Point_3 &q,
+                      const typename CGAL_WRAP(K)::Point_3 &r,
+                      const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+{
+  return CGALi::orientation(p, q, r, s, k) == POSITIVE;
 }
 
 template < class K >
@@ -142,6 +164,17 @@ collinear_are_strictly_ordered_along_line(
 
 template < class K >
 inline
+bool
+coplanar(const typename CGAL_WRAP(K)::Point_3 &p,
+         const typename CGAL_WRAP(K)::Point_3 &q,
+         const typename CGAL_WRAP(K)::Point_3 &r,
+         const typename CGAL_WRAP(K)::Point_3 &s, const K& k)
+{
+  return k.coplanar_3_object()(p, q, r, s);
+}
+
+template < class K >
+inline
 Orientation
 coplanar_orientation(const typename CGAL_WRAP(K)::Point_3 &p,
                      const typename CGAL_WRAP(K)::Point_3 &q,
@@ -189,6 +222,17 @@ midpoint(const typename CGAL_WRAP(K)::Point_3 &p,
          const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
 {
   return k.construct_midpoint_3_object()(p, q);
+}
+
+template <class K >
+inline
+Orientation
+orientation(const typename CGAL_WRAP(K)::Point_3 &p,
+	    const typename CGAL_WRAP(K)::Point_3 &q,
+	    const typename CGAL_WRAP(K)::Point_3 &r,
+	    const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
+{
+  return k.orientation_3_object()(p, q, r, s);
 }
 
 template < class K >
@@ -276,6 +320,18 @@ side_of_bounded_sphere(const typename CGAL_WRAP(K)::Point_3 &p,
                        const typename CGAL_WRAP(K)::Point_3 &test, const K &k)
 {
   return k.side_of_bounded_sphere_3_object()(p, q, r, s, test);
+}
+
+template <class K >
+inline
+Oriented_side
+side_of_oriented_sphere(const typename CGAL_WRAP(K)::Point_3 &p,
+                        const typename CGAL_WRAP(K)::Point_3 &q,
+                        const typename CGAL_WRAP(K)::Point_3 &r,
+                        const typename CGAL_WRAP(K)::Point_3 &s,
+                        const typename CGAL_WRAP(K)::Point_3 &test, const K &k)
+{
+  return k.side_of_oriented_sphere_3_object()(p, q, r, s, test);
 }
 
 template <typename K>

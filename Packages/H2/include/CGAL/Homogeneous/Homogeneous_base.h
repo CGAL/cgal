@@ -63,7 +63,6 @@
 
 #include <CGAL/Homogeneous/basic_constructionsH3.h>
 #include <CGAL/Homogeneous/distance_predicatesH3.h>
-#include <CGAL/Homogeneous/orientation_predicatesH3.h>
 #include <CGAL/Homogeneous/predicates_on_pointsH3.h>
 #include <CGAL/Homogeneous/predicates_on_pointsH2.h>
 

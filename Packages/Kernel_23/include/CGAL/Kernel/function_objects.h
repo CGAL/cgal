@@ -1361,6 +1361,28 @@ namespace CommonKernelFunctors {
       return p.cartesian_end();
     }
   };
+
+  template <typename K>
+  class Coplanar_3
+  {
+    typedef typename K::Point_3       Point_3;
+    typedef typename K::Orientation_3 Orientation_3;
+    Orientation_3 o;
+  public:
+    typedef bool             result_type;
+    typedef Arity_tag< 4 >   Arity;
+
+    Coplanar_3() {}
+    Coplanar_3(const Orientation_3& o_) : o(o_) {}
+
+    bool
+    operator()( const Point_3& p, const Point_3& q,
+	        const Point_3& r, const Point_3& s) const
+    { 
+      return o(p, q, r, s) == COPLANAR;
+    }
+  };
+
   template <typename K>
   class Counterclockwise_in_between_2
   {
