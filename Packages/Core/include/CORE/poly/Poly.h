@@ -1,60 +1,77 @@
-/******************************************************************
- * Core Library Version 1.6, June 2003
- * Copyright (c) 1995-2003 Exact Computation Project
-
- File: Poly.h
-
- Description: simple polynomial class
-
-	REPRESENTATION:
-	--Each polynomial has a nominal "degree" (this
-		is an upper bound on the true degree, which
-		is determined by the first non-zero coefficient).
-	--coefficients are parametrized by some number type "NT".
-	--coefficients are stored in the "coeff" array of
-		length "degree + 1".  
-		CONVENTION: coeff[i] is the coefficient of X^i.  So, a
-			    coefficient list begins with the constant term.
-	--IMPORTANT CONVENTION:
-		the zero polynomial has degree -1
-		while nonzero constant polynomials have degree 0.
-
-	FUNCTIONALITY:
-	--Polynomial Ring Operations (+,-,*)
-	--Power
-	--Evaluation
-	--Differentiation
-	--Remainder, Quotient 
-	--Resultant, Discriminant (planned)
-	--Polynomial Composition (planned)
-	--file I/O (planned)
-	
- Author: Chee Yap 
- Date:   May 28, 2002
- Core Library 1.4.1
- $Id$
- ************************************** */ 
+/****************************************************************************
+ * Core Library Version 1.7, August 2004
+ * Copyright (c) 1995-2004 Exact Computation Project
+ * All rights reserved.
+ *
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
+ * redistribute it under the terms of the Q Public License version 1.0.
+ * See the file LICENSE.QPL distributed with CORE.
+ *
+ * Licensees holding a valid commercial license may use this file in
+ * accordance with the commercial license agreement provided with the
+ * software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *
+ * File: Poly.h
+ *  
+ * Description: simple polynomial class
+ * 
+ *	REPRESENTATION:
+ *	--Each polynomial has a nominal "degree" (this
+ *		is an upper bound on the true degree, which
+ *		is determined by the first non-zero coefficient).
+ *	--coefficients are parametrized by some number type "NT".
+ *	--coefficients are stored in the "coeff" array of
+ *		length "degree + 1".  
+ *		CONVENTION: coeff[i] is the coefficient of X^i.  So, a
+ *			    coefficient list begins with the constant term.
+ *	--IMPORTANT CONVENTION:
+ *		the zero polynomial has degree -1
+ *		while nonzero constant polynomials have degree 0.
+ * 
+ *	FUNCTIONALITY:
+ *	--Polynomial Ring Operations (+,-,*)
+ *	--Power
+ *	--Evaluation
+ *	--Differentiation
+ *	--Remainder, Quotient 
+ *      --GCD
+ *	--Resultant, Discriminant (planned)
+ *	--Polynomial Composition (planned)
+ *	--file I/O (planned)
+ *	
+ * Author: Chee Yap 
+ * Date:   May 28, 2002
+ *
+ * WWW URL: http://cs.nyu.edu/exact/
+ * Email: exact@cs.nyu.edu
+ *
+ * $Source$
+ * $Revision$ $Date$
+ ***************************************************************************/
 
 #ifndef CORE_POLY_H
 #define CORE_POLY_H
 
 #include <CORE/BigFloat.h>
-
 #include <vector>
 
 CORE_BEGIN_NAMESPACE
-
+using namespace std;
 class Expr;
 // ==================================================
-// Typedefs 
+// Typedefs
 // ==================================================
 
 //typedef std::vector<Expr>	VecExpr;
 //typedef std::pair<Expr, Expr>	Interval;
 //typedef std::vector<Interval>	VecInterval;
 typedef std::pair<BigFloat, BigFloat>	BFInterval;
-			// NOTE: an error condition is indicated by
-			// the special interval (1, 0)
+// NOTE: an error condition is indicated by
+// the special interval (1, 0)
 typedef std::vector<BFInterval>	BFVecInterval;
 
 
@@ -64,17 +81,21 @@ typedef std::vector<BFInterval>	BFVecInterval;
 
 template <class NT>
 class Polynomial {
+ private:
+  //The following are used in the constructor from strings.
+  //For more details see the related constructor.
+
 public:
   typedef std::vector<NT> VecNT;
 
-  int degree;	// This is the nominal degree (an upper bound 
-		// on the true degree)
+  int degree;	// This is the nominal degree (an upper bound
+  // on the true degree)
   NT * coeff;	// coeff is an array of size degree+1;
-		//	This remark holds even when degree = -1.
-		// Notes:
-		// (1) coeff[i] is the coefficient of x^i
-		// (2) The Zero Polynomial has degree -1
-		// (3) Nonzero Constant Polynomials has degree 0
+  //	This remark holds even when degree = -1.
+  // Notes:
+  // (1) coeff[i] is the coefficient of x^i
+  // (2) The Zero Polynomial has degree -1
+  // (3) Nonzero Constant Polynomials has degree 0
 
   // STATIC MEMBERS
   // static NT ccc_; // THIS IS A TEMPORARY HACK
@@ -84,6 +105,11 @@ public:
   static const Polynomial<NT> & polyZero();
   static const Polynomial<NT> & polyUnity();
   static Polynomial polyWilkinson;	      // a sample polynomial
+  static int NT_TYPE; // NT_TYPE = 1 if NT is integer type (int,long,BigInt)
+                      // NT_TYPE = 2 if NT is BigFloat 
+                      // NT_TYPE = 3 if NT is BigRat 
+                      // NT_TYPE = 4 if NT is Expr 
+                      // Hack?  NT_TYPE is needed for root bounds, etc.
 
   // Constructors:
   Polynomial(void);	// the Zero Polynomial
@@ -92,16 +118,30 @@ public:
   Polynomial(const Polynomial &);
   Polynomial(const VecNT &);
   Polynomial(int n, const char* s[]);
+  Polynomial(string s, char myX);
   ~Polynomial();
+
+
+  void constructX(int n, Polynomial<NT>& P);
+  int getnumber(const char* c, int i, unsigned int len, Polynomial<NT> & P);
+  bool isint(char c);
+  int getint(const char* c, int i, unsigned int len, int & n);
+  int matchparen(const char* cstr, int start);
+  int getbasicterm(string s, Polynomial<NT> & P);
+  int getterm(string s, Polynomial<NT> & P);
+
+  //Returns a Polynomial corresponding to s, which is supposed to
+  //contain as place-holders the chars 'x' and 'y'.
+  Polynomial<NT> getpoly(string s);
 
   // Assignment:
   Polynomial & operator=(const Polynomial&);
 
-  // Expand and Contract  
+  // Expand and Contract
   //  -- they are semi-inverses: i.e., Contract(expand(p))=p
   int expand(int n);	// Change the current degree to n
-			// Helper function for polynomial arithmetic
-  int contract();		// get rid of leading zeros
+  // Helper function for polynomial arithmetic
+  int contract();	// get rid of leading zeros
 
   // Polynomial arithmetic (these are all self-modifying):
   Polynomial & operator+=(const Polynomial&);	// +=
@@ -111,41 +151,50 @@ public:
   Polynomial & power (unsigned int n) ;		// power (*this is changed!)
 
   Polynomial & mulScalar (const NT & c);	// return (*this) * (c)
-  Polynomial & mulXpower(int i); 	// if i >= 0, then this is equivalent
-					//	to multiplying by X^i
-					// if i < 0 to dividing by X^i
-  Polynomial pseudoRemainder (Polynomial& p);
-			// the pseudo quotient of (*this) mod p
-			//	is returned, but (*this) is transformed
-			//	into the pseudo remainder
-  Polynomial reduceStep (Polynomial& p );
-			// One step of pseudo remainder 
-			// What is returned is a special polynomial C+M
-			//	telling us the initial constant C and					//	the quotient M of C*(THIS) divided by p.
-			
-  // Polynomial gcd(Polynomial p); // This may not be defined for some NT domains
+  Polynomial & mulXpower(int i); // If i >= 0, then this is equivalent
+                                 // to multiplying by X^i.
+                                 // If i < 0 to dividing by X^i
+  Polynomial pseudoRemainder (const Polynomial& B, NT& C); // C = return value
+  Polynomial pseudoRemainder (const Polynomial& B);        // no C version
+  // The pseudo quotient of (*this) mod B
+  //	is returned, but (*this) is transformed
+  //	into the pseudo remainder.  If the argument C is provided,
+  //	Then C*(*this) = B*pseudo-quotient + pseudo-remainder.
+  Polynomial & negPseudoRemainder (const Polynomial& B);  // negative remainder
+  Polynomial reduceStep (const Polynomial& B ); //helper for pseudoRemainder
+  // One step of pseudo remainder
+  // What is returned is a special polynomial C + X*M  (not "C+M")
+  //    telling us the initial constant C and
+  //    the quotient M of C*(THIS) divided by p.
+  Polynomial testReduceStep(const Polynomial& A, const Polynomial& B); //helper
 
   // Get functions
-  int getDegree() const;	// nominal degree
-  int getTrueDegree() const;	// true degree
-  const NT & getLeadCoeff() const;	// get TRUE leading coefficient
-  const NT & getTailCoeff() const;	// get last non-zero coefficient
+  int getDegree() const;        // nominal degree
+  int getTrueDegree() const;    // true degree
+  NT getCoeffi(int i) const;
+  const NT & getLeadCoeff() const;      // get TRUE leading coefficient
+  const NT & getTailCoeff() const;      // get last non-zero coefficient
   NT** getCoeffs() ;		// get all coefficients
-  const NT& getCoeff(int i) const;	// Get single coefficient of X^i
-				// NULL pointer if invalid i
+  const NT& getCoeff(int i) const;      // Get single coefficient of X^i
+                                        // NULL pointer if invalid i
   // Set functions
-  bool setCoeff(int i, const NT & cc);	// Make cc the coefficient of X^i
-					// Return FALSE if invalid i
-					// !! User's responsibility to 
-					// delete the old coefficient if
-					// necessary !!
+  bool setCoeff(int i, const NT & cc);  // Make cc the coefficient of X^i
+                                        // Return FALSE if invalid i
+                                        // !! User's responsibility to
+                                        // delete the old coefficient if
+                                        // necessary !!
   // Helper Functions
   void reverse();		// reverse the coefficients;  useful when
-				// input coefficients are in reversed
+  // input coefficients are in reversed
+  Polynomial & negate();	// multiplication by -1; useful for Sturm
+  int makeTailCoeffNonzero();	// Divide (*this) by X^k, so that the
+  // the tail coeff is non-zero. Return k.
 
   // Evaluation
   Expr eval(const Expr&) const;		// evaluation
   BigFloat eval(const BigFloat&) const;	// evaluation
+  template <class T>
+  T eval(const T&) const;	// evaluation
 
   // Bounds
   BigFloat CauchyUpperBound() const;  // Cauchy Root Upper Bound
@@ -158,23 +207,27 @@ public:
   Polynomial & differentiate() ;		// self-differentiation
   Polynomial & differentiate(int n) ;		// multi self-differentiation
 
-  // Reductions of polynomials
-  Polynomial & squareFreePart(); // P/gcd(P,P')
-  Polynomial & primPart(); 	//  Primitive Part of *this (which is changed)
+  // Reductions of polynomials (NT must have gcd function)
+  Polynomial sqFreePart(); // Square free part of P is P/gcd(P,P'). Return gcd
+  Polynomial & primPart();   // Primitive Part of *this (which is changed)
 
   //////////////////////////////////////////////////////////////////
   // Resultant and discriminant
   // NT & resultant() ;				// resultant
-  // NT & discriminant() ;				// discriminant
+  // NT & discriminant() ;			// discriminant
 
   // Composition of Polynomials:
   // NOT yet implemented
 
   //////////////////////////////////////////////////////////////////
   // Polynomial Dump
-  void dump() const;			// plain dump
-  void dump(std::string m1) const;	// dump with message string
-  void mapleDump() const;		// dump of maple code for Polynomial
+  void dump(std::ofstream & ofs, std::string msg="",
+         std::string com="# ", std::string com2="# ") const;  // dump to file
+  void dump(std::string msg="", std::string com="# ",
+	 std::string com2="# ") const; // dump to cout
+  void filedump(std::ostream & os, std::string msg="", std::string com="# ",
+	 std::string com2="# ") const; // dump workhorse (called by dump())
+  void mapleDump() const;              // dump of maple code for Polynomial
 
 }; //Polynomial Class
 
@@ -187,143 +240,170 @@ public:
 // ==================================================
 
 template < class NT >
-  CORE_INLINE
-  const Polynomial<NT> & Polynomial<NT>::polyZero(){
-	static Polynomial<NT> zeroP;
-	return zeroP;
-  }
+CORE_INLINE
+const Polynomial<NT> & Polynomial<NT>::polyZero() {
+  static Polynomial<NT> zeroP;
+  return zeroP;
+}
 
 template < class NT >
-  CORE_INLINE
-  const Polynomial<NT> & Polynomial<NT>::polyUnity() {
-	static NT c[] = {1};
-	static Polynomial<NT> unityP(0, c);
-	return unityP;
-  }
+CORE_INLINE
+const Polynomial<NT> & Polynomial<NT>::polyUnity() {
+  static NT c[] = {1};
+  static Polynomial<NT> unityP(0, c);
+  return unityP;
+}
 
 // ==================================================
 // Useful functions for Polynomial class
 // ==================================================
 
-  // polynomial arithmetic:
+// polynomial arithmetic:
 template < class NT >
-  Polynomial<NT> operator+(const Polynomial<NT>&, const Polynomial<NT>&);// +
+Polynomial<NT> operator+(const Polynomial<NT>&, const Polynomial<NT>&);// +
 template < class NT >
-  Polynomial<NT> operator-(const Polynomial<NT>&, const Polynomial<NT>&);// -
+Polynomial<NT> operator-(const Polynomial<NT>&, const Polynomial<NT>&);// -
 template < class NT >
-  Polynomial<NT> operator*(const Polynomial<NT>&, const Polynomial<NT>&);// *
+Polynomial<NT> operator*(const Polynomial<NT>&, const Polynomial<NT>&);// *
 template < class NT >
-  Polynomial<NT> power(const Polynomial<NT>&, int n);		// power
+Polynomial<NT> power(const Polynomial<NT>&, int n);		// power
 template < class NT >
-  Polynomial<NT> differentiate(const Polynomial<NT>&);		// differentiate
+Polynomial<NT> differentiate(const Polynomial<NT>&);		// differentiate
 template < class NT >
-  Polynomial<NT> differentiate(const Polynomial<NT>&, int n);	// multi-differ.
+Polynomial<NT> differentiate(const Polynomial<NT>&, int n);	// multi-differ.
+//Content of a Polynomial
+template < class NT >
+NT content(const Polynomial<NT>& p);
 
-  // comparisons
-template < class NT >
-  bool operator==(const Polynomial<NT>&, const Polynomial<NT>&); // ==
-template < class NT >
-  bool operator!=(const Polynomial<NT>&, const Polynomial<NT>&); // !=
-template < class NT >
-  bool zeroP(const Polynomial <NT>&);			// =Zero Poly?
-template < class NT >
-  bool unitP(const Polynomial <NT>&);			// =Unit Poly?
+template <class NT>
+bool isDivisible(Polynomial<NT> p, Polynomial<NT> q);
 
-  // stream i/o
+// GCD of two polynomials
 template < class NT >
-  std::ostream& operator<<(std::ostream&, const Polynomial<NT>&);
+Polynomial<NT> gcd(const Polynomial<NT>& p, const Polynomial<NT>& q);
+
+//Resultant of two polynomials
 template < class NT >
-  std::istream& operator>>(std::istream&, Polynomial<NT>&);
+NT res( Polynomial<NT> p,  Polynomial<NT> q);
+
+//Principal Subresultant Coefficient (psc) of two polynomials
+template < class NT >
+NT psc(int i, Polynomial<NT> p,  Polynomial<NT> q);
+
+//Returns the polynomial which contains only the real roots
+//of P which have multiplicity d
+template < class NT >
+Polynomial<NT> factorI(Polynomial<NT> p, int d);
+
+// comparisons
+template < class NT >
+bool operator==(const Polynomial<NT>&, const Polynomial<NT>&); // ==
+template < class NT >
+bool operator!=(const Polynomial<NT>&, const Polynomial<NT>&); // !=
+template < class NT >
+bool zeroP(const Polynomial <NT>&);			// =Zero Poly?
+template < class NT >
+bool unitP(const Polynomial <NT>&);			// =Unit Poly?
+
+// stream i/o
+template < class NT >
+std::ostream& operator<<(std::ostream&, const Polynomial<NT>&);
+template < class NT >
+std::istream& operator>>(std::istream&, Polynomial<NT>&);
 
 // ==================================================
 // Inline Functions
 // ==================================================
 
-  // friend polynomial arithmetic:
+// friend polynomial arithmetic:
 template < class NT >
-  CORE_INLINE
-  Polynomial<NT> operator+(const Polynomial<NT>& p1,
-				const Polynomial<NT>& p2){	// +
-    return Polynomial<NT>(p1) += p2;
-  }
+CORE_INLINE
+Polynomial<NT> operator+(const Polynomial<NT>& p1,
+                         const Polynomial<NT>& p2) {	// +
+  return Polynomial<NT>(p1) += p2;
+}
 template < class NT >
-  CORE_INLINE
-  Polynomial<NT> operator-(const Polynomial<NT>& p1,
-				const Polynomial<NT>& p2){	// -
-    return Polynomial<NT>(p1) -= p2;
-  }
+CORE_INLINE
+Polynomial<NT> operator-(const Polynomial<NT>& p1,
+                         const Polynomial<NT>& p2) {	// -
+  return Polynomial<NT>(p1) -= p2;
+}
 template < class NT >
-  CORE_INLINE
-  Polynomial<NT> operator*(const Polynomial<NT>& p1,
-				const Polynomial<NT>& p2){	// *
-    return Polynomial<NT> (p1) *= p2;
-  }
+CORE_INLINE
+Polynomial<NT> operator*(const Polynomial<NT>& p1,
+                         const Polynomial<NT>& p2) {	// *
+  return Polynomial<NT> (p1) *= p2;
+}
 template < class NT >
-  CORE_INLINE
-  Polynomial<NT> power(const Polynomial<NT>& p, int n){				// power
-    return Polynomial<NT>(p).power(n);
-  }
+CORE_INLINE
+Polynomial<NT> power(const Polynomial<NT>& p, int n) {				// power
+  return Polynomial<NT>(p).power(n);
+}
 
 // equal to zero poly?
 template < class NT >
-  CORE_INLINE
-  bool zeroP(const Polynomial <NT>& p){			// =Zero Poly?
-	return (p.getTrueDegree()== -1);
-  }
+CORE_INLINE
+bool zeroP(const Polynomial <NT>& p) {			// =Zero Poly?
+  return (p.getTrueDegree()== -1);
+}
 template < class NT >
-  CORE_INLINE
-  bool unitP(const Polynomial <NT>& p){			// =Unit Poly?
-	int d = p.getTrueDegree();
-	return ((d == 0) && p.coeff[0]==1 );
-  } 
+CORE_INLINE
+bool unitP(const Polynomial <NT>& p) {			// =Unit Poly?
+  int d = p.getTrueDegree();
+  return ((d == 0) && p.coeff[0]==1 );
+}
 
 // get functions
 template < class NT >
-  CORE_INLINE
-  int Polynomial<NT>::getDegree() const {
-	return degree;
-  }
+CORE_INLINE
+int Polynomial<NT>::getDegree() const {
+  return degree;
+}
 // get TRUE leading coefficient
 template < class NT >
-  CORE_INLINE
-  const NT & Polynomial<NT>::getLeadCoeff() const {
-	return getCoeff(getTrueDegree());
-  }
+CORE_INLINE
+const NT & Polynomial<NT>::getLeadCoeff() const {
+  return getCoeff(getTrueDegree());
+}
 
 // get last non-zero coefficient
 template < class NT >
-  CORE_INLINE
-  const NT & Polynomial<NT>::getTailCoeff() const {
-     for (int i = 0; i<= getTrueDegree(); i++) 
-	if (coeff[i] != 0) return coeff[i];
-     // This ought to be an error (user should check this :
-     NT * zero = new NT(0);
-     return *zero;
-  }
+CORE_INLINE
+const NT & Polynomial<NT>::getTailCoeff() const {
+  for (int i = 0; i<= getTrueDegree(); i++)
+    if (coeff[i] != 0)
+      return coeff[i];
+  // This ought to be an error (user should check this) :
+  NT * zero = new NT(0);
+  return *zero;
+}
 
 template < class NT >
-  CORE_INLINE
-  NT** Polynomial<NT>::getCoeffs() {
-	return &coeff;
-  }
+CORE_INLINE
+NT** Polynomial<NT>::getCoeffs() {
+  return &coeff;
+}
 template < class NT >
-  CORE_INLINE
-  const NT& Polynomial<NT>::getCoeff(int i) const {
-	//if (i > degree) return NULL;
-	assert(i <= degree);
-	return coeff[i];
-  }
+CORE_INLINE
+const NT& Polynomial<NT>::getCoeff(int i) const {
+  //if (i > degree) return NULL;
+  assert(i <= degree);
+  return coeff[i];
+}
 // set functions
 template < class NT >
-  CORE_INLINE
-  bool Polynomial<NT>::setCoeff(int i, const NT & cc) {
-	if ((i<0) || (i > degree)) return false;
-	coeff[i] = cc; return true;
-  }
+CORE_INLINE
+bool Polynomial<NT>::setCoeff(int i, const NT & cc) {
+  if ((i<0) || (i > degree))
+    return false;
+  coeff[i] = cc;
+  return true;
+}
 
 // IMPLEMENTATIONS ARE FOUND IN
 //#include <CORE/poly/Poly.tcc>
 // and we include this file from CORE/Expr.h  AFTER the definition
 // of class Expr, because otherwise VC++.net2003 can'y compile Expr.cpp
+
 CORE_END_NAMESPACE
 #endif
