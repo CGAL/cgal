@@ -46,15 +46,16 @@ int main()
   std::cout << "Testing Delaunay_hierarchy_3 " << std::endl; 
   std::cout << " with Cartesian<double> points "<<  std::endl;
 
-  typedef double                      Coord_type;
-  typedef CGAL::Simple_cartesian<Coord_type> Rep;
-  typedef CGAL::Triangulation_geom_traits_3<Rep> Gt;
-  typedef CGAL::Triangulation_vertex_base_3<Gt> Vbb;
+  typedef double                                           Coord_type;
+  typedef CGAL::Simple_cartesian<Coord_type>               Rep;
+  // typedef CGAL::Triangulation_geom_traits_3<Rep>          Gt;
+  typedef Rep                                              Gt;
+  typedef CGAL::Triangulation_vertex_base_3<Gt>            Vbb;
   typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vbb> Vb;
-  typedef CGAL::Triangulation_cell_base_3<Gt>  Ce;
-  typedef CGAL::Triangulation_data_structure_3<Vb,Ce>  Tdsul;
-  typedef CGAL::Delaunay_triangulation_3<Gt,Tdsul>  Dt;
-  typedef CGAL::Triangulation_hierarchy_3<Dt>  Dh;
+  typedef CGAL::Triangulation_cell_base_3<Gt>              Ce;
+  typedef CGAL::Triangulation_data_structure_3<Vb,Ce>      Tdsul;
+  typedef CGAL::Delaunay_triangulation_3<Gt,Tdsul>         Dt;
+  typedef CGAL::Triangulation_hierarchy_3<Dt>              Dh;
 
   _test_cls_delaunay_3( Dh() );
 

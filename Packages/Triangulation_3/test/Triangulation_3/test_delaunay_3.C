@@ -41,13 +41,10 @@ bool del=true;
 
 int main()
 {
-
-std::cout << " with CGAL::Triangulation_geom_traits_3: " << std::endl;
- typedef CGAL::Triangulation_geom_traits_3<Test_rep_cartesian>  traits;
-// works with both geom_traits
- // typedef CGAL::_Triangulation_test_traits_3                         traits;
- //  typedef CGAL::Triangulation_vertex_base_pointer_3<traits>         Vb;
-  typedef CGAL::Triangulation_vertex_base_3<traits>         Vb;
+  std::cout << " with CGAL::Triangulation_geom_traits_3: " << std::endl;
+  // typedef CGAL::Triangulation_geom_traits_3<Test_rep_cartesian>  traits;
+  typedef Test_rep_cartesian                                        traits;
+  typedef CGAL::Triangulation_vertex_base_3<traits>                 Vb;
   typedef CGAL::Triangulation_cell_base_3<traits>                   Fb;
   typedef CGAL::Triangulation_data_structure_3<Vb,Fb>               Tds;
   typedef CGAL::Delaunay_triangulation_3<traits,Tds>                Cls;
