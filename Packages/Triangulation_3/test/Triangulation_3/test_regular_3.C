@@ -211,7 +211,7 @@ int main()
   list_point::iterator it;
   count = 0 ;
   std::cout << " number of inserted points : " ;
-  for (it=lp.begin(); it!=lp.end();it++){
+  for (it=lp.begin(); it!=lp.end(); ++it){
     count++;
     T.insert(*it);
     if (count <10)
@@ -226,6 +226,7 @@ int main()
 	  std::cout << count << std::endl;
     std::cout.flush();
   }
+  std::cout << std::endl;
 
   std::cout << " number of vertices : " 
 	    << T.number_of_vertices() << std::endl;
