@@ -88,6 +88,7 @@ namespace std {
     return n;
   }
 
+#if ( __SUNPRO_CC < 0x550)
   template < class T >
   inline typename T::value_type*
   __value_type (const T&)
@@ -105,6 +106,8 @@ namespace std {
     typename T::iterator_category tmp;
     return tmp;
   }
+#endif
+
 } // namespace std
 
 #endif // CGAL_SUN_FIXES_H
