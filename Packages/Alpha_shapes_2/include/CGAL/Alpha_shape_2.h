@@ -848,45 +848,45 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map()
 		     Coord_type(0));
 
       //----------------- examine incident edges --------------------------
-      /*
-	// if we used Edelsbrunner and Muecke's definition
-	// singular means not incident to any higher-dimensional face
-	// regular means incident to a higher-dimensional face
-	Edge_circulator edge_circ = v->incident_edges(),
-	edge_done(edge_circ);
+      
+// 	// if we used Edelsbrunner and Muecke's definition
+// 	// singular means not incident to any higher-dimensional face
+// 	// regular means incident to a higher-dimensional face
+// 	Edge_circulator edge_circ = v->incident_edges(),
+// 	edge_done(edge_circ);
 
-	do 
+// 	do 
       
-	{ 
-	f = (*edge_circ).first;
-	int i = (*edge_circ).second;
+// 	{ 
+// 	f = (*edge_circ).first;
+// 	int i = (*edge_circ).second;
 
-	if (is_infinite(f, i))
+// 	if (is_infinite(f, i))
       
-	{
-	alpha_max_v = Infinity;
-	}
-	else
+// 	{
+// 	alpha_max_v = Infinity;
+// 	}
+// 	else
       
-	{
-	Interval3 interval3 = find_interval(const_Edge(f, i));
+// 	{
+// 	Interval3 interval3 = find_interval(const_Edge(f, i));
 				
 	
-	alpha_mid_v = (interval3.first != UNDEFINED) ?
-	std::min(alpha_mid_v, interval3.first): 
-	std::min(alpha_mid_v, interval3.second); 
+// 	alpha_mid_v = (interval3.first != UNDEFINED) ?
+// 	std::min(alpha_mid_v, interval3.first): 
+// 	std::min(alpha_mid_v, interval3.second); 
 			
-	if (alpha_max_v != Infinity)
+// 	if (alpha_max_v != Infinity)
       
-	{
-	alpha_max_v = (interval3.third != Infinity) ?
-	std::max(alpha_max_v, interval3.third):
-	Infinity;
-	}
-	}
-	}
-	while(++edge_circ != edge_done);
-      */
+// 	{
+// 	alpha_max_v = (interval3.third != Infinity) ?
+// 	std::max(alpha_max_v, interval3.third):
+// 	Infinity;
+// 	}
+// 	}
+// 	}
+// 	while(++edge_circ != edge_done);
+     
 
       //-------------- examine incident faces --------------------------
       

@@ -25,6 +25,7 @@
 #ifndef CGAL_ALPHA_SHAPE_3_H
 #define CGAL_ALPHA_SHAPE_3_H
 
+#include <assert.h>
 #include <CGAL/basic.h>
 
 #include <set>
@@ -118,7 +119,7 @@ private:
 
   typedef std::vector< Coord_type > Alpha_spectrum;
   
-  typedef std::set< Key, less<Key> > Marked_cell_set;
+  typedef std::set< Key, std::less<Key> > Marked_cell_set;
 
 public:
 
@@ -505,18 +506,18 @@ public:
     // Returns an iterator pointing to the first element with
     // alpha-value not less than `alpha'.
     {
-      return lower_bound(_alpha_spectrum.begin(),
-			 _alpha_spectrum.end(),
-			 alpha);
+      return std::lower_bound(_alpha_spectrum.begin(),
+			      _alpha_spectrum.end(),
+			      alpha);
     }
 
   Alpha_iterator alpha_upper_bound(const Coord_type& alpha) const
     // Returns an iterator pointing to the first element with
     // alpha-value greater than `alpha'.
     {
-      return upper_bound(_alpha_spectrum.begin(),
-			 _alpha_spectrum.end(),
-			 alpha);
+      return std::upper_bound(_alpha_spectrum.begin(),
+			      _alpha_spectrum.end(),
+			      alpha);
     }
 
   //--------------------- PREDICATES -----------------------------------
@@ -906,100 +907,100 @@ Alpha_shape_3<Dt>::initialize_interval_facet_map()
 
 }
 
-/*
+
 //---------------------------------------------------------------------
 
-template <class Dt>
-void 
-Alpha_shape_3<Dt>::initialize_interval_edge_map()
-{
-  // TBC since our definition of singular and regular differs from
-  // Edelsbrunner and Muecke's definition
-  // verify the relation between attached edges and singular and 
-  // regular edges
+// template <class Dt>
+// void 
+// Alpha_shape_3<Dt>::initialize_interval_edge_map()
+// {
+//   // TBC since our definition of singular and regular differs from
+//   // Edelsbrunner and Muecke's definition
+//   // verify the relation between attached edges and singular and 
+//   // regular edges
 
-  // _interval_edge_map.reserve(number_of_vertices()); TBC
+//   // _interval_edge_map.reserve(number_of_vertices()); TBC
     
-  Coord_type alpha_min_e;
-  Coord_type alpha_mid_e = (!_interval_cell_map.empty() ?
-		     _interval_cell_map.end()->first :
-		     0);;
-  Coord_type alpha_max_e = 0;
-  bool b_attached = false;
-  Cell_handle s;
+//   Coord_type alpha_min_e;
+//   Coord_type alpha_mid_e = (!_interval_cell_map.empty() ?
+// 		     _interval_cell_map.end()->first :
+// 		     0);;
+//   Coord_type alpha_max_e = 0;
+//   bool b_attached = false;
+//   Cell_handle s;
 
-  Edge_iterator edge_it;
-  // only finite edges
-  for( edge_it = edges_begin(); 
-       edge_it != edges_end(); 
-       ++edge_it)
-    {
-      Edge e = (*edge_it);
+//   Edge_iterator edge_it;
+//   // only finite edges
+//   for( edge_it = edges_begin(); 
+//        edge_it != edges_end(); 
+//        ++edge_it)
+//     {
+//       Edge e = (*edge_it);
 
-      if (! is_infinite(e))              // TBC
-	{
+//       if (! is_infinite(e))              // TBC
+// 	{
 	  
-	  //-------------- examine incident faces --------------------------
+// 	  //-------------- examine incident faces --------------------------
 
-	  Edge_circulator edge_circ = opposite_edges(e),
-	    edge_done(edge_circ);
+// 	  Edge_circulator edge_circ = opposite_edges(e),
+// 	    edge_done(edge_circ);
 
-	  do 
-	    { 
-	      // the incident face (s, i) has vertex with index j, 
-	      s = (*edge_circ).first;
-	      int i = (*edge_circ).second;
-	      int j = (*edge_circ).third;
+// 	  do 
+// 	    { 
+// 	      // the incident face (s, i) has vertex with index j, 
+// 	      s = (*edge_circ).first;
+// 	      int i = (*edge_circ).second;
+// 	      int j = (*edge_circ).third;
 
-	      if (is_infinite(make_pair(s,i)))   // TBC
-		{
-		  alpha_max_e = Infinity;
-		}
-	      else
-		{
-		  // test whether the vertex with index j
-		  // is inside the sphere defined by the edge e = (s, cw(i,j), 
-		  //                                               ccw(i,j))
-		  b_attached = is_attached(s, cw(i,j), ccw(i,j), j);
+// 	      if (is_infinite(std::make_pair(s,i)))   // TBC
+// 		{
+// 		  alpha_max_e = Infinity;
+// 		}
+// 	      else
+// 		{
+// 		  // test whether the vertex with index j
+// 		  // is inside the sphere defined by the edge e = (s, cw(i,j), 
+// 		  //                                               ccw(i,j))
+// 		  b_attached = is_attached(s, cw(i,j), ccw(i,j), j);
 
-		  Interval3 interval3 = find_interval(const_facet(s, i));
+// 		  Interval3 interval3 = find_interval(const_facet(s, i));
 				
-		  alpha_mid_e = (interval3.first != UNDEFINED) ?
-		    std::min(alpha_mid_e, interval3.first): 
-		    std::min(alpha_mid_e, interval3.second); 
+// 		  alpha_mid_e = (interval3.first != UNDEFINED) ?
+// 		    std::min(alpha_mid_e, interval3.first): 
+// 		    std::min(alpha_mid_e, interval3.second); 
 			
-		  if (alpha_max_e != Infinity)
-		    {
-		      alpha_max_e = (interval3.third != Infinity) ?
-			std::max(alpha_max_e, interval3.third):
-			Infinity;
-		    }
-		}
-	    }
-	  while(++edge_circ != edge_done);
+// 		  if (alpha_max_e != Infinity)
+// 		    {
+// 		      alpha_max_e = (interval3.third != Infinity) ?
+// 			std::max(alpha_max_e, interval3.third):
+// 			Infinity;
+// 		    }
+// 		}
+// 	    }
+// 	  while(++edge_circ != edge_done);
 
-	  alpha_min_e = (b_attached ? UNDEFINED : 
-			 squared_radius(e.first,
-					e.second,
-					e.third));
+// 	  alpha_min_e = (b_attached ? UNDEFINED : 
+// 			 squared_radius(e.first,
+// 					e.second,
+// 					e.third));
 
-	  Interval3 interval = make_triple(alpha_min_e, 
-						alpha_mid_e, 
-						alpha_max_e);
-	  _interval_edge_map.insert(Interval_edge(interval, e));
+// 	  Interval3 interval = make_triple(alpha_min_e, 
+// 						alpha_mid_e, 
+// 						alpha_max_e);
+// 	  _interval_edge_map.insert(Interval_edge(interval, e));
 
-	  // cross references 
-	  // we need a canonic description since otherwise we have problem
-	  // with our access operation
-	  // use the two vertices
+// 	  // cross references 
+// 	  // we need a canonic description since otherwise we have problem
+// 	  // with our access operation
+// 	  // use the two vertices
 
-	  s = e.first;
-	  const Edge const_edge(s,e.second, e.third);
-	  _edge_interval_map[const_edge] = interval;
-	}
-    }
-}
-*/
+// 	  s = e.first;
+// 	  const Edge const_edge(s,e.second, e.third);
+// 	  _edge_interval_map[const_edge] = interval;
+// 	}
+//     }
+// }
+
 
 //---------------------------------------------------------------------
 
@@ -1033,35 +1034,35 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 	  // singular means not incident to any 3-dimensional face
 	  // regular means incident to a 3-dimensional face
 
-	  /*--------------------------------------------------------------
-	  Cell_circulator cell_circ = v->incident_simplices(),
-	    done(cell_circ);
+	  //--------------------------------------------------------------
+// 	  Cell_circulator cell_circ = v->incident_simplices(),
+// 	    done(cell_circ);
 
-	  if ((*cell_circ) != NULL)
-	    {
-	      do
-		{
-		  s = (*cell_circ);
-		  if (is_infinite(s))
-		    {
-		      alpha_max_v = Infinity;
-		      // continue;
-		    }
-		  else
-		    {
-		      alpha_s = find_interval(s);
-		      // if we define singular as not incident to a 
-		      // 3-dimensional cell
-		      alpha_mid_v = std::min(alpha_mid_v, alpha_s);
+// 	  if ((*cell_circ) != NULL)
+// 	    {
+// 	      do
+// 		{
+// 		  s = (*cell_circ);
+// 		  if (is_infinite(s))
+// 		    {
+// 		      alpha_max_v = Infinity;
+// 		      // continue;
+// 		    }
+// 		  else
+// 		    {
+// 		      alpha_s = find_interval(s);
+// 		      // if we define singular as not incident to a 
+// 		      // 3-dimensional cell
+// 		      alpha_mid_v = std::min(alpha_mid_v, alpha_s);
 		    
-		      if (alpha_max_v != Infinity)
-			alpha_max_v = std::max(alpha_max_v, alpha_s);
+// 		      if (alpha_max_v != Infinity)
+// 			alpha_max_v = std::max(alpha_max_v, alpha_s);
 		    
-		    }
-		}
-	      while(++cell_circ != done);
-	    }
-	  --------------------------------------------*/
+// 		    }
+// 		}
+// 	      while(++cell_circ != done);
+// 	    }
+	  //---------------------------------------------------------------
 
 	  // TBC if cell_circulator become available
 	  // at the moment takes v*s time
@@ -1093,7 +1094,7 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 		  }
 	      }
 
-	  Interval2 interval = make_pair(alpha_mid_v, alpha_max_v);
+	  Interval2 interval = std::make_pair(alpha_mid_v, alpha_max_v);
 	  _interval_vertex_map.insert(Interval_vertex(interval, 
 							 vertex_it->handle()));
 
@@ -1422,175 +1423,6 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
   return os;
 
 }
-
-//---------------------------------------------------------------------
-
-// template <class Dt>
-// Geomview_stream&
-// operator<<(Geomview_stream& G,  const Alpha_shape_3<Dt>& A)
-//   // Inserts the alpha shape  into the geomview stream
-//   // stream `W'. Precondition: The insert operator must be defined for
-//   // `Segment'.
-// {
-//   typedef Alpha_shape_3<Dt>::Interval_facet_map Interval_facet_map;
-//   Interval_facet_map::const_iterator face_alpha_it;
-
-//   const Alpha_shape_3<Dt>::Interval3* pInterval;
-//  // std::cout << "nombre de facettes totales: " << 
-//  // A._interval_facet_map.size() << 
-//  //   std::endl;
-//  // int ind(0);
-//   if (A.get_mode() == Alpha_shape_3<Dt>::REGULARIZED)
-//     {
-//       // it is much faster looking at the sorted intervals 
-//       // than looking at all sorted faces
-//       // alpha must be larger than the mid boundary
-//       // and alpha is smaller than the upper boundary
-
-//       for (face_alpha_it = A._interval_facet_map.begin(); 
-// 	   face_alpha_it != A._interval_facet_map.end() &&
-// 	     (*face_alpha_it).first.first < A.get_alpha();
-// 	   ++face_alpha_it)
-// 	{
-// 	  pInterval = &(*face_alpha_it).first;
-
-// #ifdef DEBUG
-// 	  Alpha_shape_3<Dt>::Coord_type alpha =
-// 	    A.get_alpha();
-// 	  Alpha_shape_3<Dt>::Coord_type alpha_mid = 
-// 	    pInterval->second;
-// 	  Alpha_shape_3<Dt>::Coord_type alpha_max = 
-// 	    pInterval->third;
-// #endif // DEBUG
-
-// 	  assert(pInterval->second != A.Infinity);
-// 	  // since this happens only for convex hull of dimension 2
-// 	  // thus singular
-
-// 	  if(pInterval->second < A.get_alpha() &&
-// 	     (pInterval->third >= A.get_alpha()
-// 	      || pInterval->third == A.Infinity))
-// 	    // alpha must be larger than the mid boundary
-// 	    // and alpha is smaller than the upper boundary
-// 	    // which might be infinity 
-// 	    // visualize the boundary
-// 	    {
-// 	      assert(A.classify((*face_alpha_it).second.first,
-// 				(*face_alpha_it).second.second) ==
-// 		     Alpha_shape_3<Dt>::REGULAR);
-// 	      //ind++;
-// 	      G << A.triangle((*face_alpha_it).second.first,
-// 	      	      (*face_alpha_it).second.second);
-// 	    }
-// 	}
-//       //std::cout << "nbre de facettes selectionees: " << ind << std::endl;
-//     }
-//   else  // A.get_mode() == GENERAL
-//     {
-//       for (face_alpha_it = A._interval_facet_map.begin(); 
-// 	   face_alpha_it != A._interval_facet_map.end() &&
-// 	     (*face_alpha_it).first.first < A.get_alpha();
-// 	   ++face_alpha_it)
-// 	{
-// 	  pInterval = &(*face_alpha_it).first;
-
-// #ifdef DEBUG
-// 	  Alpha_shape_3<Dt>::Coord_type alpha =
-// 	    A.get_alpha();
-// 	  Alpha_shape_3<Dt>::Coord_type alpha_min = 
-// 	    pInterval->first;
-// 	  Alpha_shape_3<Dt>::Coord_type alpha_mid = 
-// 	    pInterval->second;
-// 	  Alpha_shape_3<Dt>::Coord_type alpha_max = 
-// 	    pInterval->third;
-// #endif // DEBUG
-
-// 	  if (pInterval->first == A.UNDEFINED)
-// 	    {
-// 	      assert(pInterval->second != A.Infinity);
-// 	      // since this happens only for convex hull of dimension 2
-// 	      // thus singular
-
-// 	      if(pInterval->second < A.get_alpha() &&
-// 		 (pInterval->third >= A.get_alpha()
-// 		  || pInterval->third == A.Infinity))
-// 		// alpha must be larger than the mid boundary
-// 		// and alpha is smaller than the upper boundary
-// 		// which might be infinity 
-// 		// visualize the boundary
-// 		{
-// 		  assert(A.classify((*face_alpha_it).second.first,
-// 				    (*face_alpha_it).second.second) ==
-// 			 Alpha_shape_3<Dt>::REGULAR);
-// 		  G << A.triangle((*face_alpha_it).second.first,
-// 				  (*face_alpha_it).second.second);
-// 		}
-// 	    }
-// 	  else
-// 	    {
-
-// 	      if(pInterval->third >= A.get_alpha()
-// 		 || pInterval->third == A.Infinity)
-// 		// if alpha is smaller than the upper boundary
-// 		// which might be infinity 
-// 		// visualize the boundary
-// 		{
-// 		  assert(A.classify((*face_alpha_it).second.first,
-// 				    (*face_alpha_it).second.second) ==
-// 			 Alpha_shape_3<Dt>::REGULAR || 
-// 			 A.classify((*face_alpha_it).second.first,
-// 				    (*face_alpha_it).second.second) ==
-// 			 Alpha_shape_3<Dt>::SINGULAR);
-// 		  G << A.triangle((*face_alpha_it).second.first,
-// 				  (*face_alpha_it).second.second);
-// 		}
-// 	    }
-
-// 	}
-//       /*
-//       // draw the singular edges
-
-//       Alpha_shape_3<Dt>::Interval_edge_map::const_iterator
-// 	edge_alpha_it;
-
-//       for (edge_alpha_it = A._interval_edge_map.begin(); 
-// 	   edge_alpha_it != A._interval_edge_map.end() &&
-// 	     (*edge_alpha_it).first.first < A.get_alpha();
-// 	   ++edge_alpha_it)
-// 	{
-// 	  pInterval = &(*edge_alpha_it).first;
-
-// #ifdef DEBUG
-// 	  Alpha_shape_3<Dt>::Coord_type alpha =
-// 	    A.get_alpha();
-// 	  Alpha_shape_3<Dt>::Coord_type alpha_min = 
-// 	    pInterval->first;
-// 	  Alpha_shape_3<Dt>::Coord_type alpha_mid = 
-// 	    pInterval->second;
-// #endif // DEBUG
-
-// 	  if (pInterval->first != A.UNDEFINED && 
-// 	      (pInterval->second >= A.get_alpha()
-// 	       || pInterval->second == A.Infinity))
-// 	    // if alpha is smaller than the upper boundary
-// 	    // which might be infinity 
-// 	    // visualize the boundary
-// 	    {
-// 	      assert(A.classify((*edge_alpha_it).second.first,
-// 				(*edge_alpha_it).second.second,
-// 				(*edge_alpha_it).second.third) ==
-// 		     Alpha_shape_3<Dt>::SINGULAR);
-// 	      G << A.segment((*edge_alpha_it).second.first,
-// 			     (*edge_alpha_it).second.second,
-// 			     (*edge_alpha_it).second.third);
-// 	    }
-// 	}
-// 	*/
-
-//     }
-
-//   return G;
-// }
 
 //---------------------------------------------------------------------
 
@@ -1996,19 +1828,19 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 	  // consider only finite vertices
 	  Coord_type alpha_min_v = _interval_cell_map.end()->first;
 
-	  /*------------------------------------------
-	    Cell_circulator cell_circ =
-	    (*vertex_it)->incident_simplices(),
-	    done(cell_circ);
-	    do
-	    {
-	    Cell_handle s = (*cell_circ);
-	    if (! is_infinite(s))
-	    alpha_min_v = std::min(find_interval(s),
-	    alpha_min_v);
-	    }
-	    while (++cell_circ != done);
-	    --------------------------------------------*/
+	  //------------------------------------------
+// 	    Cell_circulator cell_circ =
+// 	    (*vertex_it)->incident_simplices(),
+// 	    done(cell_circ);
+// 	    do
+// 	    {
+// 	    Cell_handle s = (*cell_circ);
+// 	    if (! is_infinite(s))
+// 	    alpha_min_v = std::min(find_interval(s),
+// 	    alpha_min_v);
+// 	    }
+// 	    while (++cell_circ != done);
+	  //--------------------------------------------
 
 	  // TBC if cell_circulator become available
 	  // at the moment takes v*s time
