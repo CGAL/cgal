@@ -1081,11 +1081,6 @@ inline
 void Mesh_2<Tr>::
 push_in_bad_faces(Face_handle fh)
 {
-  const Point
-    & va = fh->vertex(0)->point(),
-    & vb = fh->vertex(1)->point(),
-    & vc = fh->vertex(2)->point();
-  //  std::cerr << "push_in_bad_faces(" << va << ",  " << vb << ", " << vc << ")" << std::endl;  
   CGAL_assertion(fh->is_marked());
   bad_faces.insert(fh, squared_minimum_sine(fh));
 }
@@ -1106,8 +1101,6 @@ template <class Tr>
 void Mesh_2<Tr>::
 fill_facette_map()
 {
-  //  std::cerr << "bad_faces.size() = " << bad_faces.size() << std::endl;
- 
   for(Finite_faces_iterator fit = finite_faces_begin();
       fit != finite_faces_end();
       ++fit)
@@ -1144,17 +1137,8 @@ inline
 void Mesh_2<Tr>::
 process_one_face()
 {
-  //  std::cerr << "bad_faces.size() = " << bad_faces.size() << std::endl;
   Face_handle f = bad_faces.front()->second;
   bad_faces.pop_front();
-  const Point
-    & va = f->vertex(0)->point(),
-    & vb = f->vertex(1)->point(),
-    & vc = f->vertex(2)->point();
-  //  std::cerr << "process_one_face(" << va << ",  " << vb << ", " << vc << ")" << std::endl;
-
-  std::cerr << number_of_vertices() << std::endl;
-
   refine_face(f);
 }
 
@@ -1475,7 +1459,6 @@ insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   //  fh->set_constraint(edge_index,true);
   //  fh->neighbor(edge_index)->set_constraint(fh->mirror_index(edge_index),true);
   
-  //  std::cerr << "insert_in_the_edge: conflict_size=" << zone_of_p.size() << std::endl;
   for(typename List_of_face_handles::iterator fh_it = zone_of_p.begin();
       fh_it != zone_of_p.end();
       ++fh_it)
@@ -1555,7 +1538,6 @@ template <class Tr>
 bool Mesh_2<Tr>::
 is_bad_faces_valid()
 {
-  std::cerr << "is_bad_faces_valid()" << std::endl;
   typedef std::list<std::pair<double, Face_handle> > Bad_faces_list;
   
   bool result = true;
