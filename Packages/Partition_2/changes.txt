@@ -1,0 +1,41 @@
+1.6 (19 January 2001)
+
+    Fixed more problems with types and typedefs in Partitioned_polygon_2.
+
+    Fixed small problem with introduction to reference pages in doc.
+   
+1.5 (8 January 2001)
+   
+    Moved definitions of template functions in other classes to see if 
+    Borland and VC++ can deal with this better and fixed some typedefs
+    causing problems with these two compilers.
+
+    Modified documentation in accordance with suggestions from editors.
+
+1.4 (20 November 2000)
+   
+    fixed bug in the cgal_test script
+
+    Moved definitions of template functions in Indirect_edge_compare class 
+    inside the class to see if Borland and VC++ can deal with this better.
+
+1.3 (7 November 2000)
+    
+    changed test suite by dividing it into more programs that will take
+    less time to compile and adding a compile-time flag so the same program 
+    can be used for testing the homogeneous and Cartesian kernels.
+
+    fixed(?) some bugs with template parameters for Borland
+
+1.2 (20 September 2000)
+    
+    added a few missing .C files
+
+1.1 (2 August 2000)
+    
+    Fixed bugs with misplaced includes for .C files, a few missing CGAL::
+    for MIPS, and wrong function names in example files. 
+
+1.0 (28 July 2000)
+   
+    Initial release

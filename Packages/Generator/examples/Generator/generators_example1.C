@@ -1,0 +1,60 @@
+// generators_example1.C          
+// -------------------------------------------------------
+// CGAL example program for point generators.
+// Derived from generators_prog1.C, without visualization.
+
+#include <CGAL/basic.h>
+#include <cassert>
+#include <vector>
+#include <algorithm>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/copy_n.h>
+#include <CGAL/random_selection.h>
+
+using namespace CGAL;
+
+typedef Cartesian<double>                R;
+typedef Point_2<R>                       Point;
+typedef Creator_uniform_2<double,Point>  Creator;
+typedef std::vector<Point>               Vector;
+
+int main() {
+    // Create test point set. Prepare a vector for 1000 points.
+    Vector points;
+    points.reserve(1000);
+
+    // Create 600 points within a disc of radius 150.
+    Random_points_in_disc_2<Point,Creator> g( 150.0);
+    CGAL::copy_n( g, 600, std::back_inserter(points));
+
+    // Create 200 points from a 15 x 15 grid.
+    points_on_square_grid_2( 250.0, 200, std::back_inserter(points),Creator());
+
+    // Select 100 points randomly and append them at the end of
+    // the current vector of points.
+    random_selection( points.begin(), points.end(), 100, 
+		      std::back_inserter(points));
+
+    // Create 100 points that are collinear to two randomly chosen
+    // points and append them to the current vector of points.
+    random_collinear_points_2( points.begin(), points.end(), 100,
+			       std::back_inserter( points));
+
+    // Check that we have really created 1000 points.
+    assert( points.size() == 1000);
+
+    // Use a random permutation to hide the creation history
+    // of the point set.
+    std::random_shuffle( points.begin(), points.end(), default_random);
+
+    // Check range of values.
+    for ( Vector::iterator i = points.begin(); i != points.end(); i++){
+	assert( i->x() <=  251);
+	assert( i->x() >= -251);
+	assert( i->y() <=  251);
+	assert( i->y() >= -251);
+    }
+    return 0;
+}

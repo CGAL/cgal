@@ -1,0 +1,38 @@
+Generator Package
+---------------------------------------------------------------------
+
+-  CGAL/random_selection.h
+
+     STL Extension.
+
+-  CGAL/generators.h
+
+     Base classes for generators and random generators of any type.
+
+-  CGAL/point_generators_2.h
+
+     Random and synthetic point distributions over different domains
+     for two-dimensional points: disc, circle, in square, on square, 
+     on segment, grid, random perturbation. Generators for degeneracies.
+
+-  CGAL/point_generators_3.h
+
+     Random and synthetic point distributions over different domains
+     for three-dimensional points: in sphere, on sphere, in cube.
+
+-  CGAL/random_convex_set_2.h
+-  CGAL/Random_convex_set_traits_2.h
+
+     A function and its default CGAL traits class to generate random
+     convex sets using the centroid method.
+
+-  CGAL/random_polygon_2.h
+-  CGAL/Random_polygon_traits_2.h
+
+     A function and its default CGAL traits class to generate random
+     simple polygons using the "2-opt" method.
+
+Susan Hert (MPI) takes over the maintenance of this package
+with release 2.12 (28 Jul 1999).
+
+Lutz Kettner
