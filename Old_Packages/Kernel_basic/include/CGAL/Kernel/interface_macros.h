@@ -215,10 +215,10 @@ CGAL_Kernel_pred(CGALi::Less_x,
 CGAL_Kernel_pred(CGALi::Less_y,
 	         Less_y_2,
 		 less_y_2_object)
-CGAL_Kernel_pred(CGAL::p_Less_xy<Point_2>,
+CGAL_Kernel_pred(CGALi::p_Less_xy<Point_2>,
 	         Less_xy_2,
 		 less_xy_2_object)
-CGAL_Kernel_pred(CGAL::p_Less_yx<Point_2>,
+CGAL_Kernel_pred(CGALi::p_Less_yx<Point_2>,
 	         Less_yx_2,
 		 less_yx_2_object)
 CGAL_Kernel_pred(CGALi::Compare_x,
@@ -245,10 +245,10 @@ CGAL_Kernel_pred(CGALi::Compare_slope,
 CGAL_Kernel_pred(CGALi::p_Less_dist_to_point<Point_2>,
                  Less_distance_to_point_2,
                  less_distance_to_point_2_object)
-CGAL_Kernel_pred(CGAL ::p_Less_dist_to_line_2<Point_2>,
+CGAL_Kernel_pred(CGALi::p_Less_dist_to_line_2<Point_2>,
                  Less_signed_distance_to_line_2,
                  less_signed_distance_to_line_2_object)
-CGAL_Kernel_pred(CGAL ::p_Less_rotate_ccw<Point_2>,
+CGAL_Kernel_pred(CGALi::p_Less_rotate_ccw<Point_2>,
 	         Less_rotate_ccw_2,
 		 less_rotate_ccw_2_object)
 CGAL_Kernel_pred(CGALi::Compare_angle_with_x_axis<Direction_2>,
@@ -257,11 +257,11 @@ CGAL_Kernel_pred(CGALi::Compare_angle_with_x_axis<Direction_2>,
 CGAL_Kernel_pred(CGALi::Counterclockwise_in_between,
 	         Counterclockwise_in_between_2,
 		 counterclockwise_in_between_2_object)
-CGAL_Kernel_pred(CGAL ::p_Left_turn<Point_2>,
+CGAL_Kernel_pred(CGALi::p_Left_turn<Point_2>,
                  Left_turn_2,
                  left_turn_2_object)
 #ifndef CGAL_NO_DEPRECATED_CODE
-CGAL_Kernel_pred(CGAL ::p_Left_turn<Point_2>,
+CGAL_Kernel_pred(CGALi::p_Left_turn<Point_2>,
 	         Leftturn_2,
 		 leftturn_2_object)
 #endif // CGAL_NO_DEPRECATED_CODE

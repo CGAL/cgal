@@ -1334,6 +1334,93 @@ struct p_Less_dist_to_point
   { return has_smaller_dist_to_point(p0, p1, p2); }
 };
 
+template <class Point>
+struct p_Less_xy
+{
+  typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
+
+  bool operator()( const Point& p1, const Point& p2) const
+       { return lexicographically_xy_smaller( p1, p2); }
+};
+
+template <class Point>
+struct p_Less_yx
+{
+  typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
+
+  bool operator()( const Point& p1, const Point& p2) const
+       { return lexicographically_yx_smaller( p1, p2); }
+};
+
+template <class Point>
+class p_Less_dist_to_line_2
+{
+public:
+  typedef bool    result_type;
+  typedef  Arity_tag< 4 >   Arity;
+
+  bool  operator()(const Point&a, const Point& b,
+                   const Point& c, const Point& d) const
+        {
+          Comparison_result
+            res = compare_signed_distance_to_line( a, b, c, d);
+          if ( res == LARGER )
+          {
+              return false;
+          }
+          else if ( res == SMALLER )
+          {
+              return true;
+          }
+          else
+          {
+              return lexicographically_xy_smaller( c, d );
+         }
+        }
+
+};
+
+template <class Point>
+class p_Less_rotate_ccw
+{
+public:
+  typedef bool    result_type;
+  typedef  Arity_tag< 3 >   Arity;
+
+  bool  operator()(const Point& r, const Point& p, const Point& q) const
+        {
+          Orientation ori = orientation(r, p, q);
+          if ( ori == LEFTTURN )
+          {
+              return true;
+          }
+          else if ( ori == RIGHTTURN )
+          {
+              return false;
+          }
+          else
+          {
+              if (p == r) return false;
+              if (q == r) return true;
+              if (p == q) return false;
+              return  collinear_are_ordered_along_line( r, q, p);
+          }
+        }
+};
+
+template <class Point>
+struct p_Left_turn
+{
+  typedef bool    result_type;
+  typedef  Arity_tag< 3 >   Arity;
+
+  bool  operator()(const Point& p, const Point& q, const Point& r) const
+        { return left_turn(p,q,r); }
+};
+
+
 } // end namespace CGALi
 CGAL_END_NAMESPACE
 
