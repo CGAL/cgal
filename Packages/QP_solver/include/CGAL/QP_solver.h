@@ -270,7 +270,7 @@ private:
     S_art                    art_s;     // special artificial column for slacks
     int                      art_s_i;   // index of special artificial column
     int                      art_basic; // number of basic artificial variables
-    C_aux                    aux_c;     // objective function for phase I
+    Values                   aux_c;     // objective function for phase I
     
     // current status
     Indices                  B_O;       // basis (original variables)
@@ -302,6 +302,7 @@ private:
 
     // additional variables
     int                      l;         // minimum of 'qp_n' and 'qp_m'
+    
     int 		     e;         // number of equality constraints
     
     Indices                  in_B;      // variable   in basis, -1 if non-basic
@@ -326,7 +327,7 @@ private:
     ET                       mu;        //   numerator of `t_j'
     ET                       nu;        // denominator of `t_j'
     
-    Values                   q_lambda;  // 
+    Values                   q_lambda;  // length dependent on C
     Values                   q_x_O;     // used in the ratio test & update
     Values                   q_x_S;     // 
 
