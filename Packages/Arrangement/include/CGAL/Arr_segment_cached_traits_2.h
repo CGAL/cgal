@@ -810,9 +810,9 @@ protected:
    * \param q - first query point
    * \param r - second query point
    * \pre p is in the x-range of cv.
-   * \return SMALLER if q1 is closer to p than q2 
-   *         LARGER if q2 is closer to p
-   *         or else (if q1 and q2 are in equal distance from p) EQUAL.
+   * \return SMALLER if q is closer to p than r
+   *         LARGER if r is closer to p
+   *         or else (if q and r are in equal distance from p) EQUAL.
    */
   Comparison_result compare_distance(const Point_2 & p,
                                      const Point_2 & q, const Point_2 & r) const
