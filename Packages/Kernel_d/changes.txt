@@ -1,5 +1,11 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.76 (5. May 2003)
+  - fixed bug in preprocessor directive
+
+0.9.76
+  - Added Intel support
+
 0.9.73 (11 Oct 2002)
   - copy necessary functors from [23]D Kernel since they have changed.
     (include/CGAL/Kernel_d/function_objects.h)
