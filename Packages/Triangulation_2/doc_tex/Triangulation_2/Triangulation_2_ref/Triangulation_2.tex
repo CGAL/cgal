@@ -669,8 +669,9 @@ They are all invalidated by any change in the triangulation.
 
 The triangulation defines a circulator that allows
 to visit all faces that are intersected by a line. 
-More precisely a face  \ccc{f} is enumerated by the circulator 
-associated to the oriented line \ccc{l} if either:
+A  face  \ccc{f} is 
+considered has being intersected by 
+ the oriented line \ccc{l} if either:
 \begin{itemize}\ccTexHtml{\itemsep0pt}{}
 \item 
 \ccc{f} is a finite face whose interior intersects \ccc{l}, or
@@ -686,6 +687,8 @@ by \ccc{l}, or
 lying on  \ccc{l} and the finite edge of \ccc{f}
 lies to the left of \ccc{l}. 
 \end{itemize}
+The circulator has a singular value if  the line \ccc{l}
+intersect no finite face of the triangulation.
 This circulator is
 non-mutable and bidirectional. Its value type is \ccc{Face}.
 

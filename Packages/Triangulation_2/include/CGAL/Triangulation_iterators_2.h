@@ -144,6 +144,7 @@ class Triangulation_finite_vertices_iterator_2
 {
 public:
   typedef Triangulation_all_vertices_iterator_2<Gt,Tds>    All_vertices;
+  // typedef Triangulation_2<Gt,Tds>                          Triangulation;
   typedef Triangulation_finite_vertices_iterator_2<Gt,Tds> Finite_vertices;
   typedef typename All_vertices::Triangulation             Triangulation;
 private:

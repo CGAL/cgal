@@ -274,12 +274,12 @@ public:
   // the hole is supposed to be ccw oriented
   { 
     std::list<Face*> empty_list;
-    return star_hole(v, 
-		     edge_begin, 
-		     edge_end, 
-		     empty_list.begin(),
-		     empty_list.end());
-    
+    star_hole(v, 
+	      edge_begin, 
+	      edge_end, 
+	      empty_list.begin(),
+	      empty_list.end());
+    return;    
   }
 
 

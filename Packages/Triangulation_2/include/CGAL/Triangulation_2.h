@@ -2017,7 +2017,16 @@ line_walk(const Point& p, const Point& q,  Face_handle f) const
     : Line_face_circulator(p, q, f, this);
     
   if( (!lfc.is_empty()) && is_infinite( lfc )){
-    return Line_face_circulator();
+    cerr << "from Triangulation_2 " << std::endl;
+    //return Line_face_circulator();
+    do {
+      for (int i =0; i < 3; i++) {
+	if (lfc->vertex(i) != infinite_vertex())
+	  cerr << "vertex " << i << " " 
+	       << lfc->vertex(i)->point() << std::endl;
+      }
+      ++lfc ;} 
+    while (is_infinite(lfc));
   }
   return lfc;
 }
