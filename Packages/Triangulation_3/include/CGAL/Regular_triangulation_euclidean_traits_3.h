@@ -636,7 +636,7 @@ CGAL_BEGIN_NAMESPACE
 template < typename T >
 class Regular_triangulation_euclidean_traits_3
           <Exact_predicates_inexact_constructions_kernel, T>
-  : Regular_triangulation_filtered_traits_3
+  : public Regular_triangulation_filtered_traits_3
           <Exact_predicates_inexact_constructions_kernel>
 {};
 
