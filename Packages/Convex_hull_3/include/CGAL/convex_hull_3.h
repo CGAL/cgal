@@ -582,7 +582,7 @@ void CGAL_ch_quickhull_obj_3(InputIterator first, InputIterator beyond,
 
 template <class InputIterator, class Polyhedron_3, class Traits>
 void convex_hull_3(InputIterator first, InputIterator beyond, 
-		    Polyhedron_3& polyhedron,  const Traits& traits)
+                   Polyhedron_3& polyhedron,  const Traits& traits)
 {  
   typedef typename Traits::Point_3	  		  Point_3;  
   typedef typename Traits::Plane_3		      	  Plane_3;
@@ -617,7 +617,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
 template <class InputIterator, class Polyhedron_3>
 void convex_hull_3(InputIterator first, InputIterator beyond, 
-		    Polyhedron_3& polyhedron)
+                   Polyhedron_3& polyhedron)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
    return CGAL_ch_quickhull_poly_3(first, beyond, polyhedron,
