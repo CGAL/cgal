@@ -30,12 +30,14 @@ void draw_orig(CGAL::Window_stream &w,std::list<Segment_2> &seg_list)
 
   Point_2(1,1);
 
-  for(std::list<Segment_2>::iterator iter = seg_list.begin();iter != seg_list.end();++iter)
+  for(std::list<Segment_2>::iterator iter = seg_list.begin();
+      iter != seg_list.end();++iter)
     w << *iter;
 }
 #endif		   
 
-void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg_list,bool &wait_for_click,int &number_of_kd_trees,bool &do_isr)
+void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg_list,
+               bool &wait_for_click,int &number_of_kd_trees,bool &do_isr)
 {
   int number_of_segments,i;
   CGAL::Segment_data<Rep> seg;
@@ -128,7 +130,9 @@ int main(int argc,char *argv[])
   CGAL::Window_stream w(600,600);
   Number_Type x1,y1,x2,y2;
   get_extreme_points(seg_list,x1,y1,x2,y2);
-  w.init((x1 - prec * 2).to_double(),x2 - x1 > y2 - y1 ? (x2 + prec * 2).to_double() : (y2 - y1 + x1 + prec * 2).to_double(),(y1 - prec * 2).to_double());
+  w.init((x1 - prec * 2).to_double(),x2 - x1 > y2 - y1 ? 
+         (x2 + prec * 2).to_double() : (y2 - y1 + x1 + prec * 2).to_double(),
+         (y1 - prec * 2).to_double());
   w.set_mode(leda_src_mode);
   w.set_node_width(3);
   w.button("Finish",1);
