@@ -76,7 +76,8 @@ _test_cls_alpha_shape_3()
   if(verbose) show_triangulation(a1);
   assert(a1.number_of_alphas() == 3 );
 
-  std::cout << "test_classify_and_iterators in regularised mode" 
+  std::cout << "REGULARIZED  mode" << std::endl;
+  std::cout << "test_classify_and_iterators" 
 	    << std::endl;
   Alpha_iterator alpha_it = a1.alpha_begin();
   for (;alpha_it != a1.alpha_end();alpha_it++){
@@ -84,17 +85,25 @@ _test_cls_alpha_shape_3()
     if (verbose) {
       std::cerr << std::endl;
       std::cerr << "alpha value " << * alpha_it << std::endl;
-    }
+      std::cerr << std::endl;
+     }
     count_faces(a1, verbose);
   }
 
+  if(verbose) show_alpha_values(a1);
+  if (verbose)     a1.print_maps();
+  if (verbose)   a1.print_alphas();
+  std::cout << "test filtration " << std::endl;
+  test_filtration(a1,verbose);
+
   a1.set_mode(Alpha_shape_3::GENERAL);
-  if(verbose) std::cout << "GENERAL mode" << std::endl;
+  std::cout << "GENERAL mode" << std::endl;
+  if(verbose) std::cerr << "GENERAL mode" << std::endl;
   if(verbose) show_alpha_values(a1);
   if(verbose) a1.print_maps();
   if(verbose) a1.print_alphas();
   assert(a1.number_of_alphas() == 9) ;
-	 std::cout << "test_classify_and_iterators in general mode" 
+	 std::cout << "test_classify_and_iterators" 
 	    << std::endl;
  
   for(alpha_it = a1.alpha_begin();alpha_it!=a1.alpha_end();alpha_it++){
@@ -105,6 +114,8 @@ _test_cls_alpha_shape_3()
     }
     count_faces(a1, verbose);
   }
+  std::cout << "test filtration " << std::endl;
+  test_filtration(a1,verbose);
 
   // alpha values 0
   //              1
@@ -118,10 +129,15 @@ _test_cls_alpha_shape_3()
 
 
   a1.set_mode(Alpha_shape_3::REGULARIZED);
+  std::cout << "REGULARIZED mode" << std::endl;
   std::cout << "test number_of_components - find_optimal_alpha "
 	    <<  std::endl;
   if (verbose) {
     std::cerr << std::endl;
+    std::cerr << "REGULARIZED mode" << std::endl;
+    a1.print_maps();
+    a1.print_alphas();
+
     for(alpha_it = a1.alpha_begin();alpha_it!=a1.alpha_end();alpha_it++)
       std::cerr << "alpha  " << *alpha_it << "\t" 
 		<< "number of solid componenst " 
@@ -139,6 +155,7 @@ _test_cls_alpha_shape_3()
   assert (a1.number_of_solid_components(*(a1.find_optimal_alpha(1))) == 1);
   assert (a1.get_nth_alpha(2) == *(a1.alpha_lower_bound(3)));
   assert (a1.get_nth_alpha(3) == *(a1.alpha_upper_bound(4)));
+  test_filtration(a1,verbose);
 
   std::cout << std::endl;
   std::cout << "test additionnal creators and set mode" << std::endl;

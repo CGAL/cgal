@@ -1,4 +1,7 @@
 
+30 decembre 2004 Mariette
+- filtration  added (const correctness of the function to be done)
+
 27 December 2004 Mariette
 - changed assert() to cgal_triangulation_assertion()
 

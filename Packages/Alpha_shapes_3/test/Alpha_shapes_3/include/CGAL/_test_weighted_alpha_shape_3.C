@@ -85,16 +85,22 @@ _test_weighted_alpha_shape_3()
   if(verbose) show_alpha_values(A);
   A.set_alpha(0.);
   count_faces(A, verbose);
+  test_filtration(A,verbose);
 
   A.set_mode(Alpha_shape_3::GENERAL);
   if(verbose) show_alpha_values(A);
   A.set_alpha(0.);
   count_faces(A, verbose);
+  test_filtration(A,verbose);
 
   A.set_mode(Alpha_shape_3::REGULARIZED);
   assert(A.number_of_solid_components(0.) == 2);
   assert(A.number_of_solid_components(*(A.find_optimal_alpha(2))) <= 2);
   assert(A.number_of_solid_components(*(A.find_optimal_alpha(1))) == 1);
+  if(verbose) show_alpha_values(A);
+  A.set_alpha(0.);
+  count_faces(A, verbose);
+  test_filtration(A,verbose);
 
   // I add a test for CH4 
   //  This test detected a bug in make_alpha_shape() cominig from clear()

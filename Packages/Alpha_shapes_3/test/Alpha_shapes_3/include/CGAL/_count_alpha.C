@@ -205,6 +205,75 @@ count_faces(const AS &A, bool verbose)
 }
 
 
+
+template <class AS>
+void 
+test_filtration(AS &A, bool verbose)
+{
+  typename std::list<CGAL::Object> filtration;
+
+  A.filtration(std::back_inserter(filtration));
+  typename AS::size_type count_vertices = 0;
+  typename AS::size_type count_edges = 0;
+  typename AS::size_type count_facets = 0;
+  typename AS::size_type count_cells = 0;
+  
+
+
+    typename std::list<CGAL::Object>::iterator filtre_it = filtration.begin();
+    typename AS::Cell_handle cell;
+    typename AS::Facet      facet;
+    typename AS::Edge       edge;
+    typename AS::Vertex_handle  vertex;
+    typename AS::Alpha_status  as;
+    typename AS::NT alpha;
+    if(verbose) {
+      std::cerr << std::endl;
+      std::cerr << "Analyse filtration " << std::endl;
+    }
+    for (; filtre_it != filtration.end(); filtre_it++) {
+      if(assign(vertex, *filtre_it)) {
+	as = *(vertex->get_alpha_status());
+	if(verbose) std::cerr << "Vertex" << "\t";
+	if(verbose)show_alpha_status(A,as);
+	count_vertices++;
+      }
+      if(assign(edge, *filtre_it)) {
+	// could be done with Edge_alpha_map in GENERAL mode
+	A.compute_edge_status(edge.first,edge.second,edge.third, as);
+	if(verbose) std::cerr << "Edge" << "\t";
+	if(verbose) show_alpha_status(A,as);
+	count_edges++;
+      }
+      if(assign(facet, *filtre_it)) {
+	as = *(facet.first->get_facet_status(facet.second));
+	if(verbose) std::cerr << "Facet" << "\t";
+	if(verbose) show_alpha_status(A,as);
+	count_facets++;
+      }
+      if(assign(cell, *filtre_it)) {
+	alpha  = cell->get_alpha();
+	if(verbose) std::cerr << "Cell" << "\t";
+	if(verbose) std::cerr << alpha << std::endl;
+	count_cells++;
+      }
+    }
+    if(verbose) {
+      std::cerr << "vertices \t" << count_vertices << "\t"
+		<< A.number_of_vertices() << std::endl;
+      std::cerr << "edges \t" << count_edges << "\t"
+		<< A.number_of_finite_edges() << std::endl;
+      std::cerr << "facets \t" << count_facets << "\t"
+		<< A.number_of_finite_facets() << std::endl;
+      std::cerr << "cellss \t" << count_cells << "\t"
+		<< A.number_of_finite_cells() << std::endl;
+    }
+    assert(count_vertices == A.number_of_vertices());
+    assert(count_edges == A.number_of_finite_edges());
+    assert(count_facets == A.number_of_finite_facets());
+    assert(count_cells ==  A.number_of_finite_cells());	   
+}
+
 //TO DEBUG
 template <class AS>
 void
@@ -229,7 +298,7 @@ show_triangulation(AS& A)
 }
 
 template <class AS>
-void show_alpha_values(AS& A )
+void show_alpha_values(AS& A)
 {
   typedef typename AS::Alpha_iterator Alpha_iterator;
 
@@ -241,5 +310,19 @@ void show_alpha_values(AS& A )
 
 }
 
+template <class AS>
+void show_alpha_status(AS& A, const typename AS::Alpha_status&  as)
+{
+  if (A.get_mode() == AS::REGULARIZED || !(as.is_Gabriel())){
+    std::cerr << "*****" << "\t" ;
+  } else{
+    std::cerr << as.alpha_min() << "\t";
+  }
+  std::cerr << as.alpha_mid() << "\t";
+  if (as.is_on_chull())  std::cerr << "*****" << std::endl;
+  else  std::cerr << as.alpha_max() << std::endl;
+  return;
+}
+   
 
 #endif //  CGAL_COUNT_ALPHA_C
