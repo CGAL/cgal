@@ -32,15 +32,16 @@
 
 \ccCreationVariable{pmwx_cn}
 
-\ccMethod{ void add_edge(
-            const  Traits::X_curve& cv,
-             Planar_map::Halfedge_handle e,
-            bool original_direction, bool overlap);}
+\ccMethod{ void add_edge(const  Traits::X_curve& cv,
+                         Planar_map::Halfedge_handle e,
+                         bool original_direction, bool overlap);}
   {called each time a pair of twin halfedges is added to the planar map.
   \ccc{cv} is the curve of the added halfedges.
-  \ccc{e} is on of the new halfedges.
-  \ccc{original_direction} is true iff \ccc{cv} is directed the same as the curve that we insert to the map.
-  \ccc{overlap} is true iff the added halfedges overlap previously inserted halfedges in the map.}
+  \ccc{e} is one of the new halfedges.
+  \ccc{original_direction} is true iff \ccc{e} is directed the same as the
+  original curve inserted into the map.
+  \ccc{overlap} is true iff the added halfedges overlap halfedges already in the
+  map.}
 
 \ccMethod{ void split_edge(
                Planar_map::Halfedge_handle orig_edge,
