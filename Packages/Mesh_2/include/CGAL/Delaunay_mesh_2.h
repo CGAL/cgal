@@ -617,7 +617,6 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
 
   //  CGAL_assertion(is_bad_faces_valid());
 
-  Vertex_handle vaa = va;
   int dummy; 
   // if we put edge_index instead of dummy, Intel C++ does not find
   // a matching function for is_edge
