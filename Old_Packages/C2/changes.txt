@@ -1,4 +1,5 @@
-Version 4.2 (?? ???? 2000)
+Version 4.2 (27 July 2000)
+- Suppress id() in Cartesian Ray_2.h [my]
 - Fixed an assertion message. [syl]
 - Minor cleanups. [syl]
 
