@@ -4084,7 +4084,7 @@ _set_support()
 	    ;;
 	*VC++*)
 	    case `compiler_version` in
-		1200*) CGAL_SUPPORT_COMPILER='y';;
+		1300*) CGAL_SUPPORT_COMPILER='y';;
 		*) CGAL_SUPPORT_COMPILER='';;
 	    esac
 	    ;;
