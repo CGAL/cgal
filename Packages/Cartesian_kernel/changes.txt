@@ -1,6 +1,7 @@
-Version 6.1 (?? January 2001)
+Version 6.1 (16 January 2001)
 - Borland fixes.
-- MipsPro fixes : forward the handle typedefs in derived class.
+- MipsPro fixes : forward the handle typedefs in derived class *Cartesian<>.
+- VC++ fixes : rename the handle types inside object classes. [dima]
 
 Version 6.0 (12 January 2001)
 - Merged C2, C3 and Cartesian_basic in Cartesian_kernel.
