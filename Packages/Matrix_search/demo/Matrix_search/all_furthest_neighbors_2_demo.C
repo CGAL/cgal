@@ -50,7 +50,7 @@ using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
-using CGAL::has_smaller_dist_to_point;
+using CGAL::has_smaller_distance_to_point;
 using CGAL::all_furthest_neighbors_2;
 using CGAL::cgalize;
 using CGAL::RED;
@@ -128,7 +128,7 @@ main()
     last_button = W.read_mouse(x, y);
     Point sp(x, y);
     for (int k(1); k < p.size(); ++k)
-      if (has_smaller_dist_to_point(sp, p[k], p[nearest]))
+      if (has_smaller_distance_to_point(sp, p[k], p[nearest]))
         nearest = k;
   }
   for (;;) {
@@ -147,7 +147,7 @@ main()
     nearest = 0;
     Point sp(x, y);
     for (int k(1); k < p.size(); ++k)
-      if (has_smaller_dist_to_point(sp, p[k], p[nearest]))
+      if (has_smaller_distance_to_point(sp, p[k], p[nearest]))
         nearest = k;
   }
   

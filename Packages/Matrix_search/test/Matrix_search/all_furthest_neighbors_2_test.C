@@ -41,7 +41,6 @@ using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
-using CGAL::has_smaller_dist_to_point;
 using CGAL::all_furthest_neighbors_2;
 using CGAL::squared_distance;
 using CGAL::iterator_distance;

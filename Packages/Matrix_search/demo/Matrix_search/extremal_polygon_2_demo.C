@@ -47,7 +47,7 @@
 
 using CGAL::cgalize;
 using CGAL::Timer;
-using CGAL::has_smaller_dist_to_point;
+using CGAL::has_smaller_distance_to_point;
 using CGAL::RED;
 using CGAL::BLUE;
 using std::back_inserter;
@@ -263,7 +263,7 @@ main()
         PointIter nearest = points.begin();
         PointIter k = nearest;
         while (++k != points.end())
-          if (has_smaller_dist_to_point(sp, *k, *nearest))
+          if (has_smaller_distance_to_point(sp, *k, *nearest))
             nearest = k;
         
         // test for snapping:
@@ -350,7 +350,7 @@ main()
         PointIter nearest = points.begin();
         PointIter k = nearest;
         while (++k != points.end())
-          if (has_smaller_dist_to_point(sp, *k, *nearest))
+          if (has_smaller_distance_to_point(sp, *k, *nearest))
             nearest = k;
         
         // test for snapping:
