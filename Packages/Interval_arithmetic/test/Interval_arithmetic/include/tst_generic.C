@@ -24,15 +24,15 @@ void empty_handler(const char*, const char*, const char*, int, const char *)
 bool spiral_test()
 {
   int i=0;
-  IA_nt x_i (1), y_i (0), x_ip1, y_ip1, length;
+  IA_nt x_i (1.0), y_i (0.0);
 
   while (++i < 500)
   {
-    x_ip1 = x_i - y_i/CGAL::sqrt(IA_nt(i));
-    y_ip1 = y_i + x_i/CGAL::sqrt(IA_nt(i));
+    IA_nt x_ip1 = x_i - y_i/CGAL::sqrt(IA_nt(i));
+    IA_nt y_ip1 = y_i + x_i/CGAL::sqrt(IA_nt(i));
     x_i = x_ip1;
     y_i = y_ip1;
-    length = CGAL::square(x_i) + CGAL::square(y_i);
+    IA_nt length = CGAL::square(x_i) + CGAL::square(y_i);
     DEBUG(std::cout<<i<<": (" << x_i << " , " << y_i << ") : " << length << "\n";)
     if ( x_i.overlap(0) || y_i.overlap(0) )
       break;
