@@ -83,18 +83,18 @@ public:
 		      Face_handle start= Face_handle() ) const;
   //  //template member functions, declared and defined at the end 
   // template <class Out_it1, class Out_it2> 
-  //   bool get_conflicts (const Point  &p, 
-  // 		            Out_it1 fit, 
-  // 		            Out_it2 eit,
-  // 		            Face_handle start) const;
+  //   bool get_conflicts_and_boundary(const Point  &p, 
+  // 		                        Out_it1 fit, 
+  // 		                        Out_it2 eit,
+  // 		                        Face_handle start) const;
   //   template <class Out_it1> 
   //   bool get_conflicts (const Point  &p, 
   // 		            Out_it1 fit, 
   // 		            Face_handle start ) const;
   //   template <class Out_it2> 
-  //   bool boundary_of_conflict_zone (const Point  &p, 
-  // 				   Out_it2 eit, 
-  // 				   Face_handle start ) const;
+  //   bool get_boundary_of_conflicts(const Point  &p, 
+  // 				      Out_it2 eit, 
+  // 				      Face_handle start ) const;
    
  
   // DUAL
@@ -125,15 +125,6 @@ private:
 			      Face_handle f,
 			      int i,
 			      Vertex_handle& nn) const;
-
-  //   template <class Out_it1, class Out_it2> 
-  //   void propagate_conflicts (const Point  &p,
-  // 			    Face_handle fh, 
-  // 			   int i,
-  // 			    Out_it1 fit, 
-  // 			    Out_it2 eit) const;
-		       
-  
 
 public:
   template < class Stream>
@@ -167,10 +158,10 @@ public:
   //
   template <class Out_it1, class Out_it2> 
   bool 
-  get_conflicts (const Point  &p, 
-		  Out_it1 fit, 
-		  Out_it2 eit,
-		  Face_handle start = Face_handle()) const
+  get_conflicts_and_boundary (const Point  &p, 
+			      Out_it1 fit, 
+			      Out_it2 eit,
+			      Face_handle start = Face_handle()) const
     {
       CGAL_triangulation_precondition( dimension() == 2);
       int li;
@@ -200,17 +191,17 @@ public:
 		  Face_handle start= Face_handle()) const
     {
       Dummy_output_iterator eit;
-      return get_conflicts(p, fit, eit, start);
+      return get_conflicts_and_boundary(p, fit, eit, start);
     }
 
   template <class Out_it2> 
   bool 
-  boundary_of_conflict_zone (const Point  &p, 
-			      Out_it2 eit, 
-			      Face_handle start= Face_handle()) const
+  get_boundary_of_conflicts(const Point  &p, 
+			    Out_it2 eit, 
+			    Face_handle start= Face_handle()) const
     {
       Dummy_output_iterator fit;
-      return get_conflicts(p, fit, eit, start);
+      return get_conflicts_and_boundary(p, fit, eit, start);
     }
 
 private:
@@ -259,8 +250,7 @@ find_conflicts(const Point  &p,
 	       std::list<Face_handle>& conflicts,
 	       Face_handle start ) const
 {
-  typedef std::back_insert_iterator<std::list<Face_handle> > It;
-  return get_conflicts<It>(p, std::back_inserter(conflicts), start);
+  return get_conflicts(p, std::back_inserter(conflicts), start);
 }
 
 template < class Gt, class Tds >

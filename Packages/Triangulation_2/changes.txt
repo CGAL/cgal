@@ -2,7 +2,11 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 Ver 5.04 ()
+- change the names of conflicts function in Delaunay and
+  constrained Delaunay triangulation
 - added a test for the copy of constrained triangulation
+- change the order of iteration on faces in copy of 
+  Triangulation_data_structure_using_list_2
 
 Ver 5.03 (21/6/01)
 - splitted the demo for basic and Delaunay triangulation in two parts

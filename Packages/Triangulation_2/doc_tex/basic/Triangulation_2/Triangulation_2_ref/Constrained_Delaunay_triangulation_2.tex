@@ -157,7 +157,7 @@ in conflict with a face \ccc{f} iff it is
 included in the circumcircle of \ccc{f}.
 
 \ccMethod{template <class Out_it1, class Out_it2> 
-          bool get_conflicts (const Point  &p, 
+          bool get_conflicts_and_boundary(const Point  &p, 
    		       		Out_it1 fit, 
    		       		Out_it2 eit,
   		       		Face_handle start) const;} 
@@ -185,7 +185,7 @@ triangulation.
 {Same as above except that only the faces in conflict with \ccc{p}
 are output.}
 \ccMethod{template <class Out_it2> 
-          bool boundary_of_conflict_zone (const Point  &p, 
+          bool get_boundary_of_conflicts(const Point  &p, 
    		   		Out_it2 eit,
   		       		Face_handle start) const;}
 { \ccc{Out_it2} stands for an output iterator with \ccc{Edge} as value
