@@ -1,3 +1,6 @@
+19 August 2004 Andreas Fabri
+- Fixed bug in counting the unbounded simplices (thanks to Camille Wormser)
+
 4 August 2004  Sylvain Pion
 - Fix warning in release mode.
 
