@@ -85,9 +85,8 @@ public:
 				       const Geom_traits& gt=Geom_traits() )
     : Ctr(gt) 
     {
-      while(it != last){
-	insert((*it).first, (*it).second);
-	it++;
+      for ( ; it != last; it++) {
+      	insert((*it).first, (*it).second);
       }
       CGAL_triangulation_postcondition( is_valid() );
     }

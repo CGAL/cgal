@@ -88,7 +88,7 @@ public:
   }
 
   template<class InputIterator>
-  Constrained_triangulation_2(InputIterator first,
+  Constrained_triangulation_2(InputIterator it,
 			      InputIterator last,
 			      const Gt& gt=Gt() )
      : Triangulation_2<Gt,Tds>(gt)
@@ -98,10 +98,9 @@ public:
 //           lc.push_back(*first++);
 //       }
 //       Sweep sweep(this,lc);
-    while( first != last){
-      insert((*first).first, (*first).second);
-      ++first;
-    }
+    for ( ; it != last; it++) {
+      	insert((*it).first, (*it).second);
+      }
       CGAL_triangulation_postcondition( is_valid() );
   }
 
