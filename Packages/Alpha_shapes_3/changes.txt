@@ -1,3 +1,8 @@
+
+9 August 2004 Mariette
+- fixed a bug in make_alpha_shape() coming from clear()
+  which was abusively ressetting default values for _mode and _alpha
+
 5 July 2004 Andreas Fabri
 - Bug fix in std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 

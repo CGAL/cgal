@@ -21,7 +21,7 @@ CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-	   -pedantic
+	   -pedantic 
 
 #---------------------------------------------------------------------#
 #                    linker flags

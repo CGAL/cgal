@@ -80,8 +80,7 @@ _test_weighted_alpha_shape_3()
   L.push_back(Weighted_point(Bare_point(30.,0.,0.), 3));
   L.push_back(Weighted_point(Bare_point(32.,0.,0.), 3));
   
-
-
+ 
   Alpha_shape_3 A( L.begin(), L.end(), 0, Alpha_shape_3::REGULARIZED);
   if(verbose) show_alpha_values(A);
   A.set_alpha(0.);
@@ -96,6 +95,32 @@ _test_weighted_alpha_shape_3()
   assert(A.number_of_solid_components(*(A.find_optimal_alpha(2))) <= 2);
   assert(A.number_of_solid_components(*(A.find_optimal_alpha(1))) == 1);
 
+  // I add a test for CH4 
+  //  This test detected a bug in make_alpha_shape() cominig from clear()
+  if(verbose) std::cerr << "test for CH4" << std::endl;
+  L.clear();
+  L.push_back(Weighted_point(Bare_point(-1.,-1.,-1.), 1.));
+  L.push_back(Weighted_point(Bare_point(-1., 1., 1.), 1.)); 
+  L.push_back(Weighted_point(Bare_point( 1.,-1., 1.), 1.));
+  L.push_back(Weighted_point(Bare_point( 1., 1.,-1.), 1.));
+  L.push_back(Weighted_point(Bare_point( 0., 0., 0.), 3.));
+  Alpha_shape_3 A2( L.begin(), L.end(), 0, Alpha_shape_3::GENERAL);
+  A2.set_alpha(0.);
+  count_faces(A2, verbose);
+  if(verbose) show_triangulation(A2);
+  if(verbose) A2.print_alphas();
+  if(verbose) A2.print_maps();
+  assert(A2.get_mode()==Alpha_shape_3::GENERAL);
+  if(verbose) std::cout << std::endl;
+  if(verbose) std::cout << "test CH4 through make_alpha_shape" << std::endl;
+  Alpha_shape_3 a2(0, Alpha_shape_3::GENERAL);
+  a2.make_alpha_shape( L.begin(), L.end());
+  count_faces(a2, verbose);
+  if (verbose) show_triangulation(a2);
+  if(verbose) a2.print_alphas();
+  if(verbose) a2.print_maps();
+  assert(a2.get_mode()==Alpha_shape_3::GENERAL);
+  if(verbose) std::cout << std::endl;
 
   // test a bigger Alpha_shapes
   A.clear();

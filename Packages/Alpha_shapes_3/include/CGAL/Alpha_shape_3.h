@@ -340,7 +340,7 @@ public:
       alpha_shape_facets_list.clear();
 
       set_alpha(0); 
-      set_mode(REGULARIZED);
+      //    set_mode(REGULARIZED);
       use_vertex_cache = false;
       use_facet_cache = false;
 

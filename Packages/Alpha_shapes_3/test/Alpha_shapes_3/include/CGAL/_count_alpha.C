@@ -124,6 +124,7 @@ count_faces(const AS &A, bool verbose)
 	      << count_super_regular_vertices << "\t" 
 	      << count_interior_vertices << "\t"
 	      << count_vertices << std::endl;
+    std::cerr<< std::endl;
   }
 
 
