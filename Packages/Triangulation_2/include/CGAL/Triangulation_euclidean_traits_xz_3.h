@@ -84,6 +84,8 @@ public:
   typedef typename Rp::Compare_z_3          Compare_y_2;
   typedef Orientation_xz_3<Rp>              Orientation_2;
   typedef Side_of_oriented_circle_xz_3<Rp>  Side_of_oriented_circle_2;
+  typedef typename Rp::Construct_segment_3   Construct_segment_2;
+  typedef typename Rp::Construct_triangle_3  Construct_triangle_2;
 
   // for compatibility with previous versions
   typedef Point_2      Point;
@@ -114,6 +116,12 @@ public:
   Side_of_oriented_circle_2
   side_of_oriented_circle_2_object() const
     {return Side_of_oriented_circle_2();}
+
+  Construct_segment_2  construct_segment_2_object() const
+    {return Construct_segment_2();}
+
+  Construct_triangle_2  construct_triangle_2_object() const
+    {return Construct_triangle_2();}
 };
 
 CGAL_END_NAMESPACE

@@ -31,11 +31,19 @@ for the required predicates on those primitives.
 \ccNestedType{Point_2}{The  type must provide
 a copy constructor and assignment operator.}
 \ccGlue
-\ccNestedType{Segment_2}{The  type must provide a constructor that takes
-two points as argument.}
+\ccNestedType{Segment_2}{The segment  type. Must provide a constructor that takes
+two points as arguments.}
 \ccGlue
-\ccNestedType{Triangle_2}{The type must provide a constructor that takes
-three points as argument.}
+\ccNestedType{Triangle_2}{The triangle type. Must provide a constructor
+that takes three points as arguments.}
+
+\ccNestedType{Construct_segment_2} {A constructor object for
+\ccc{Segment_2}.Must provide Segment_2 operator()(Point_2 p,Point_2
+                       q), which constructs a  segment from two points.}
+\ccGlue
+\ccNestedType{Construct_triangle_2} {A constructor object for
+\ccc{Triangle_2}.Must provide Triangle_2 operator()(Point_2 p,Point_2
+                       q,Point_2 r ), which constructs a triangle from three points.}
 
 \ccNestedType{Compare_x_2}{Predicate object. Must proveide
 the operator 
@@ -98,7 +106,11 @@ can be provided.
 \ccHeading{Predicate functions}
 The following functions give access to the  predicate 
 and constructor objects.
-\ccThree{Comparison_result}{gt.compare_x(Point p0, Point p1)x}{}
+\ccThree{Construct_segment_2}{gt.compare_x(Point p0, Point p1)x}{}
+\ccMethod{Construct_segment_2 construct_segment_2_object();}{}
+\ccGlue
+\ccMethod{Construct_triangle_2 construct_triangle_2_object();}{}
+\ccGlue
 \ccMethod{Comparison_x_2 compare_x_2_object();}{}                               \ccGlue
 \ccMethod{Comparison_y_2 compare_y_2_object();}{}
 \ccGlue

@@ -272,7 +272,7 @@ dual(const Edge &e) const
   typedef typename Geom_traits::Line_2        Line;
   typedef typename Geom_traits::Ray_2         Ray;
   typedef typename Geom_traits::Direction_2   Direction;
-  
+
   CGAL_triangulation_precondition (!is_infinite(e));
   if( dimension()== 1 ){
     Point p = (e.first)->vertex(cw(e.second))->point();
@@ -284,7 +284,8 @@ dual(const Edge &e) const
   // dimension==2
   if( (!is_infinite(e.first)) &&
       (!is_infinite(e.first->neighbor(e.second))) ) {
-    Segment s(dual(e.first),dual(e.first->neighbor(e.second)));
+    Segment s = geom_traits().construct_segment_2_object()
+                          (dual(e.first),dual(e.first->neighbor(e.second)));
     return Object(new Wrapper< Segment >(s));
   } 
   // one of the adjacent face is infinite
@@ -297,11 +298,9 @@ dual(const Edge &e) const
   }
   Point p = f->vertex(cw(i))->point();
   Point q = f->vertex(ccw(i))->point();
-  //Point midpoint = geom_traits().construct_midpoint_object()(p,q);
-  //  Ray r(dual(f), midpoint);
   Line l = geom_traits().construct_bisector_2_object()(p,q);
   Direction d = geom_traits().construct_direction_of_line_2_object()(l);
-  Ray r = Ray(dual(f), d);
+  Ray r = geom_traits().construct_ray_2_object()(dual(f), d);
   return Object(new Wrapper< Ray >(r));
 }
   

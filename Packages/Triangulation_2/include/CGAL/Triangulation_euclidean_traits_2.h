@@ -57,10 +57,14 @@ public:
   typedef typename R::Side_of_oriented_circle_2  Side_of_oriented_circle_2;
   typedef typename R::Construct_circumcenter_2   Construct_circumcenter_2;
   typedef typename R::Construct_bisector_2       Construct_bisector_2;
-  typedef typename R::Construct_midpoint         Construct_midpoint;
+  //typedef typename R::Construct_midpoint         Construct_midpoint;
   typedef typename R::Less_distance_to_point_2   Less_distance_to_point_2;
+  typedef typename R::Construct_segment_2        Construct_segment_2;
+  typedef typename R::Construct_triangle_2       Construct_triangle_2;
+  //typedef typename R::Construct_direction_2      Construct_direction_2;
+  typedef typename R::Construct_ray_2            Construct_ray_2;
   typedef typename R::Construct_direction_of_line_2
-                                            Construct_direction_of_line_2;
+                                           Construct_direction_of_line_2;
 
   // for compatibility with previous versions
   typedef Point_2      Point;
@@ -100,9 +104,9 @@ public:
   construct_bisector_2_object() const
     {return Construct_bisector_2();}
   
-  Construct_midpoint
-  construct_midpoint_object() const
-    {return Construct_midpoint();}
+ //  Construct_midpoint
+//   construct_midpoint_object() const
+//     {return Construct_midpoint();}
 
 
   Less_distance_to_point_2
@@ -112,6 +116,18 @@ public:
   Construct_direction_of_line_2
   construct_direction_of_line_2_object() const
     {return  Construct_direction_of_line_2();}
+
+  Construct_segment_2  construct_segment_2_object() const
+    {return Construct_segment_2();}
+
+  Construct_triangle_2  construct_triangle_2_object() const
+    {return Construct_triangle_2();}
+
+//   Construct_direction_2  construct_direction_2_object() const
+//     {return Construct_direction_2();}
+
+  Construct_ray_2  construct_ray_2_object() const
+    {return Construct_ray_2();}
 
 };
 

@@ -651,9 +651,11 @@ Triangulation_2<Gt, Tds>::
 triangle(const Face_handle& f) const
 {
   CGAL_triangulation_precondition( ! is_infinite(f) );
-  return Triangle(f->vertex(0)->point(),
-		  f->vertex(1)->point(),
-		  f->vertex(2)->point());
+  typename Gt::Construct_triangle_2 
+     construct_triangle = geom_traits().construct_triangle_2_object();
+  return construct_triangle(f->vertex(0)->point(),
+			    f->vertex(1)->point(),
+			    f->vertex(2)->point());
 }
 
 template <class Gt, class Tds >
@@ -662,8 +664,10 @@ Triangulation_2<Gt, Tds>::
 segment(const Face_handle& f, int i) const
 {
   CGAL_triangulation_precondition( ! is_infinite(f,i));
-  return Segment(f->vertex(ccw(i))->point(),
-		 f->vertex(cw(i))->point());
+  typename Gt::Construct_segment_2 
+     construct_segment = geom_traits().construct_segment_2_object();
+  return construct_segment(f->vertex(ccw(i))->point(),
+			   f->vertex(cw(i))->point());
 }
 
 template <class Gt, class Tds >
@@ -671,9 +675,11 @@ Triangulation_2<Gt, Tds>::Segment
 Triangulation_2<Gt, Tds>::
 segment(const Edge& e) const
 {
-  CGAL_triangulation_precondition(! is_infinite(e));
-  return Segment(e.first->vertex(ccw(e.second))->point(),
-		 e.first->vertex( cw(e.second))->point());
+  CGAL_triangulation_precondition(! is_infinite(e)); 
+  typename Gt::Construct_segment_2 
+     construct_segment = geom_traits().construct_segment_2_object();
+  return construct_segment(e.first->vertex(ccw(e.second))->point(),
+			   e.first->vertex( cw(e.second))->point());
 }
 
 template <class Gt, class Tds >
