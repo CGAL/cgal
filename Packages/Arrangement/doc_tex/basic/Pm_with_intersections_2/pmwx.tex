@@ -97,26 +97,26 @@
   curves overlap the traits intersection function returns the two
   endpoints of the common part.
 
-\paragraph{Sweep line}
-  A \ccc{Planar Map with Intersections} can be built incrementally by
-  inserting one curve after the other into the map. For a big number
-  of curves it is much faster to perfrom the sweep line algorithm on
-  the collection of input curves. A sweep line utility is supported as
-  part of the package. The utility can either build the induced planar
-  map or rather collect the pairwise interior disjoint subcurves
-  computed in a container. 
+% \paragraph{Sweep line}
+%   A \ccc{Planar Map with Intersections} can be built incrementally by
+%   inserting one curve after the other into the map. For a big number
+%   of curves it is much faster to perfrom the sweep line algorithm on
+%   the collection of input curves. A sweep line utility is supported as
+%   part of the package. The utility can either build the induced planar
+%   map or rather collect the pairwise interior disjoint subcurves
+%   computed in a container. 
 
-  If no additional insertions of intersecting curves are planned
-  following the building of the map it is possible to perform a sweep
-  line operation that will build the simpler class \ccc{Planar_map_2}.
-  This is possible since the output of the sweep line operation is a
-  collection of $x$-monotone pairwise interior disjoint, which are
-  supported by the \ccc{Planar Map} package. The result of applying
-  the sweep line algorithm to a collection of curves and a non-empty
-  map is equal to that of applying the algorithm to the union of the
-  planar map curves and the collection of input curves. Simply put,
-  the intersections of input curves and planar map curves are also
-  calculated.
+%   If no additional insertions of intersecting curves are planned
+%   following the building of the map it is possible to perform a sweep
+%   line operation that will build the simpler class \ccc{Planar_map_2}.
+%   This is possible since the output of the sweep line operation is a
+%   collection of $x$-monotone pairwise interior disjoint, which are
+%   supported by the \ccc{Planar Map} package. The result of applying
+%   the sweep line algorithm to a collection of curves and a non-empty
+%   map is equal to that of applying the algorithm to the union of the
+%   planar map curves and the collection of input curves. Simply put,
+%   the intersections of input curves and planar map curves are also
+%   calculated.
 
 %******************************************************************************
 
@@ -144,23 +144,23 @@ Edges of the planar map:
 \end{verbatim}
 
 
-\subsection{Example of Sweep Line}
-\label{ssec:example1_sweep}
-  The following example demonstrates the usage of the \ccc {Sweep
-  line} algorithm.  It constructs a planar map out of four segments
-  --- $(0,0)-(1,1)$ , $(0,1)-(1,0)$ , $(0,0)-(1,0)$ and $(0,1)-(1,1)$
-  (an hourglass shape), two of them are intersecting in their
-  interior.  The resulting planar map will contain all the disjoint
-  interior sub-segments obtained by the calculation of the sweep
-  line algorithm. For clarity, we printed all the halfedges of the
-  resulting planar map to the standard output using the I/O functions
-  for the \ccc{Planar map} package.
+% \subsection{Example of Sweep Line}
+% \label{ssec:example1_sweep}
+%   The following example demonstrates the usage of the \ccc {Sweep
+%   line} algorithm.  It constructs a planar map out of four segments
+%   --- $(0,0)-(1,1)$ , $(0,1)-(1,0)$ , $(0,0)-(1,0)$ and $(0,1)-(1,1)$
+%   (an hourglass shape), two of them are intersecting in their
+%   interior.  The resulting planar map will contain all the disjoint
+%   interior sub-segments obtained by the calculation of the sweep
+%   line algorithm. For clarity, we printed all the halfedges of the
+%   resulting planar map to the standard output using the I/O functions
+%   for the \ccc{Planar map} package.
 
-\ccIncludeExampleCode{Sweep_line/example1.C}
+% \ccIncludeExampleCode{Sweep_line/example1.C}
 
-The output of the program looks like this:
+% The output of the program looks like this:
 
-\ccIncludeExampleCode{Sweep_line/example1.cout}
+% \ccIncludeExampleCode{Sweep_line/example1.cout}
 
 
 % EOF ------------------------------------------------------------------------80
