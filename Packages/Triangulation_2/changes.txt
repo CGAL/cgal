@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.29 (7/05/02)
+- fixed lanel in doc
+
 Ver 7.28 (3/05/02)
 - add a workaround in Constraint_hierarchy_2.h
   for the splice bug of CC
