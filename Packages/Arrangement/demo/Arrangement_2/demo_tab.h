@@ -1301,10 +1301,6 @@ public:
      case GRID:
       return Coord_point(getMid(x, xmin, xmax), 
                          getMid(y, ymin, ymax) );
-     case NONE:
-       break;
-
-      break;
 
      case NONE: break;
     }
