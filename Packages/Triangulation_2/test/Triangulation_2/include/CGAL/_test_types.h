@@ -26,6 +26,7 @@ typedef CGAL::Quotient<CGAL::Gmpz> CT;
 typedef CGAL::Quotient<CGAL::Gmpz> ET;
 //typedef CGAL::Filtered_exact<CT,ET> coord_type;
 typedef CGAL::Quotient<CGAL::Gmpz> coord_type;
+//typedef double coord_type;
 typedef CGAL::Cartesian<coord_type> Test_rep_cartesian;
 //typedef CGAL::Cartesian<CGAL::Gmpz>  Test_rep_cartesian;
 typedef CGAL::Homogeneous<CGAL::Gmpz> Test_rep_homogeneous;
