@@ -15,7 +15,7 @@ public:
     *widget << CGAL::BLUE;
     *widget << CGAL::PointSize(3);
     *widget << CGAL::LineWidth(3);
-    svd.draw_primal(*widget);
+    svd.draw_dual(*widget);
   }
 
 };

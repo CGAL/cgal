@@ -430,7 +430,12 @@ private slots:
     std::ofstream f(fileName);
     assert( f );
     f.precision(18);
-    svd.write_sites(f);
+    SVD_2::Finite_vertices_iterator vit;
+    for (vit = svd.finite_vertices_begin();
+	 vit != svd.finite_vertices_end(); ++vit) {
+      f << vit->site() << std::endl;
+    }
+    //    svd.write_sites(f);
   }
 
   void print_screen()
