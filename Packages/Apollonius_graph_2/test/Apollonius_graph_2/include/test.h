@@ -22,7 +22,7 @@ CGAL_BEGIN_NAMESPACE
 template<class Kernel, class Method_tag>
 struct Traits_tester
 {
-  typedef typename Apollonius_graph_traits_2<Kernel,Method_tag>  Traits;
+  typedef Apollonius_graph_traits_2<Kernel,Method_tag>  Traits;
 
   bool operator()(int = 0) const {
     return test_traits_base( Traits() );
