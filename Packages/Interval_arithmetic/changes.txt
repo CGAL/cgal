@@ -1,6 +1,6 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.59 on ?? ??????? 2000
+Version 4.59 on 13 December 2000
 - Moved CGAL/Interval_arithmetic/_FPU.h to CGAL/FPU.h.
 - Dispatched all to_interval() functions, and removed
   CGAL/Interval_arithmetic/IA_*.
