@@ -212,10 +212,10 @@ points corresponding to the vertices of face \ccc{f}.
 \ccPrecond \ccc{f} is not infinite}
 
 \ccMethod{Point dual(const Face_handle &f) const;}
-{same as weighted_circumcenter}
+{same as weighted\_circumcenter}
 
 \ccMethod{Object dual(const Edge &e) const;}
-If both incident faces are finite, returns a segment whose endpoints are the
+{If both incident faces are finite, returns a segment whose endpoints are the
 duals of each incident face. If only one incident face is finite, returns a
 ray whose endpoint is the dual of the finite incident face and supported by
 the line which is the bisector of the edge's endpoints. If both incident faces
