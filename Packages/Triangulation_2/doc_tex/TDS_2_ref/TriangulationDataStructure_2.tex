@@ -164,20 +164,20 @@ when tds1 is deleted after that.}
 \ccModifierCrossRefOff
 
 \ccAccessFunctions
-\ccThree{void}{tds.set_number_of_vertices(int n)}{}
+\ccThree{void}{tds.set_number_of_vertices(size_type n)}{}
 \ccMethod{int dimension() const;}
 {returns the dimension of the triangulation.}
 \ccGlue
-\ccMethod{int number_of_vertices() const;}
+\ccMethod{size_type number_of_vertices() const;}
 {returns the number of vertices in the data structure.}
 \ccGlue
-\ccMethod{int number_of_faces() const ;}
+\ccMethod{size_type number_of_faces() const ;}
 {returns the number of two dimensional faces in the data structure.}
 \ccGlue
-\ccMethod{int number_of_edges() const;}
+\ccMethod{size_type number_of_edges() const;}
 {returns the number of edges  in the triangulation data structure.}
 \ccGlue
-\ccMethod{int number_of_full_dim_faces() const;}
+\ccMethod{size_type number_of_full_dim_faces() const;}
 {returns the  number of full dimensional faces, 
 i.e. faces of dimension equal to the dimension
 of the triangulation. This is the actual
