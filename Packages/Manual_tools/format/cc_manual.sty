@@ -510,6 +510,21 @@
 % |
 % ###########################################################################
 % +--------------------------------------------------------------------------
+% | A handy macro to include files in verbatim mode.
+% +--------------------------------------------------------------------------
+%   #1  the file name.
+\newcommand{\ccIncludeVerbatim}[1]{%
+    \begin{alltt}
+    \begingroup
+    \catcode`\{=12
+    \catcode`\}=12
+    \catcode`\\=12
+    \input{#1}
+    \endgroup
+    \end{alltt}
+}
+
+% +--------------------------------------------------------------------------
 % | A handy macro to define macros for RCS entries in a TeX file
 % +--------------------------------------------------------------------------
 %   #1  the macro name for the RCS entry
@@ -851,7 +866,15 @@
                    \ccConstructorXX{#1}}
 
 \long\def\ccConstructorXX #1#2{%
-                   \ccConstructorCall {#2}#1\ccEnd}
+                       \isTemplate{#1}\ifnum\ccBool=\ccTrue
+                           \ccTemplateLineHandling #1\ccEnd
+                           \ccConstructorXXX{#2}#1\ccEnd
+                       \else
+                           \ccConstructorCall{#2}#1\ccEnd
+                       \fi}
+\def\ccConstructorXXX #1template#2<#3>#4#5\ccEnd{%
+  \ccConstructorCall{#1}#4#5\ccEnd
+}
 
 % +--------------------------------------------------------------------------
 % | \ccMemberFunction, \ccMethod, \ccFunction, \ccFunctionTemplate
@@ -873,7 +896,15 @@
                        \ccGlobalContinuation{\ccFunctionComment{#1}{#2}}}
 
 \long\def\ccFunctionComment #1#2#3{%
-                       \ccFunctionCall{#1}{#3}#2;\ccEnd}
+                       \isTemplate{#2}\ifnum\ccBool=\ccTrue
+                           \ccTemplateLineHandling #2\ccEnd
+                           \ccFunctionXX{#1}{#3}#2\ccEnd
+                       \else
+                           \ccFunctionCall{#1}{#3}#2;\ccEnd
+                       \fi}
+\def\ccFunctionXX #1#2template#3<#4>#5#6\ccEnd{%
+  \ccFunctionCall{#1}{#2}#5#6;\ccEnd
+}
 
 % Is getting obsolete!
 % A three! parameter macro to format template functions
@@ -938,7 +969,15 @@
 \endgroup
 
 \long\def\ccEnumXX #1#2{%
-                   \ccEnumDeclaration {#2}#1\ccEnd}
+                   \isTemplate{#1}\ifnum\ccBool=\ccTrue
+                       \ccTemplateLineHandling #1\ccEnd
+                       \ccEnumXXX{#2}#1\ccEnd
+                   \else
+                       \ccEnumDeclaration{#2}#1\ccEnd
+                   \fi}
+\def\ccEnumXXX #1template#2<#3>#4#5\ccEnd{%
+  \ccEnumDeclaration{#1}#4#5\ccEnd
+}
 
 % a struct is formatted like an enum (needs the parantheses parsing)
 \newcommand{\ccStruct}{%
@@ -1258,23 +1297,18 @@
 % The declaration has to be terminated with "\ccEnd".
 \def\ccConstructorCall #1#2(#3)#4\ccEnd {%
                        % check for template function
-                       \isTemplate{#2}\ifnum\ccBool=\ccTrue
-                           \ccSeparateTemplate{\ccTemplateLine}{%
-                               \ccConstructorCall{#1}}#2(#3)#4\ccEnd
-                       \else
-                         \ccInitConstructorWidths
-                         \setbox\callnamebox=\hbox{%
-                             \ccFont\unhbox\templatedeclbox
-                             \ccClassTemplateName\ \ \ccFont\ccVar}%
-                         \setbox\functioncallbox=\hbox{\unhcopy\callnamebox
-                                   \isEmpty{#3}\ifnum\ccBool=\ccFalse
-                                       \ccFont( \ccPrintParamList{#3)#4}%
-                                         \ccEndFont)%
-                                   \fi
-                                   ;}%
-                         \setbox\returntypebox=\hbox{}%
-                         \ccLayoutThreeColumns{(}{#3)#4}{)}{#1}%
-                       \fi
+                       \ccInitConstructorWidths
+                       \setbox\callnamebox=\hbox{%
+                           \ccFont\unhbox\templatedeclbox
+                           \ccClassTemplateName\ \ \ccFont\ccVar}%
+                       \setbox\functioncallbox=\hbox{\unhcopy\callnamebox
+                                 \isEmpty{#3}\ifnum\ccBool=\ccFalse
+                                     \ccFont( \ccPrintParamList{#3)#4}%
+                                       \ccEndFont)%
+                                 \fi
+                                 ;}%
+                       \setbox\returntypebox=\hbox{}%
+                       \ccLayoutThreeColumns{(}{#3)#4}{)}{#1}%
                      }
 
 % Formats a method or a function call.
@@ -1295,11 +1329,6 @@
                            declaration has to end with a ";". 
                            Go ahead, I've inserted one}%
                        \fi
-                       % check for template function
-                       \isTemplate{#3 #4}\ifnum\ccBool=\ccTrue
-                           \ccSeparateTemplate{\ccTemplateLine}{%
-                               \ccFunctionCall{#1}{#2}}#3 #4(#5)#6;#7\ccEnd
-                       \else
                        \def\ccExtendedFormat{\ }% Switches ext. format OFF.
                        \ccSeparateTrailingConst #6)\ccEnd
                        \ccBool=\ccTagOperatorLayout\ifnum\ccBool=\ccTrue
@@ -1312,12 +1341,12 @@
                                \isParenthesisOperator{#3 #4(#5)#6}%
                                \ifnum\ccBool=\ccTrue
                                    \setbox\functioncallbox=\hbox{{\ccFont 
-                                       \ccPrintParOperator #1#3 #4(#5)#6\ccEnd}}
+                                      \ccPrintParOperator #1#3 #4(#5)#6\ccEnd}}
                                \else
                                    \setbox\functioncallbox=\hbox{{\ccFont 
-                                       \ccPrintOperator #1#3 #4(#5)#6\ccEnd}}
+                                      \ccPrintOperator #1#3 #4(#5)#6\ccEnd}}
                                \fi
-   
+
                            \fi
                            \ccBool=\ccTrue
                          \fi
@@ -1365,7 +1394,6 @@
                            \ccLayoutThreeColumns{(}{#5)#6}{)\unhbox
                                \trailingconstbox}{#2}%
                        \fi
-                       \fi % from \isTemplate
                      }
 
 
@@ -1461,11 +1489,6 @@
 % The declaration has to be terminated with "\ccEnd".
 \def\ccEnumDeclaration #1#2\{#3\}#4\ccEnd {%
                        \ccInitConstructorWidths
-                       % check for template function
-                       \isTemplate{#2}\ifnum\ccBool=\ccTrue
-                           \ccSeparateTemplate{\ccTemplateLine}{%
-                               \ccEnumDeclaration{#1}}#2\{#3\}#4\ccEnd
-                       \else
                        \setbox\returntypebox=\hbox{}%
                        \setbox\callnamebox=\hbox{\ccFont
                            \unhcopy\templatedeclbox
@@ -1479,7 +1502,6 @@
                                  \ccEndFont\};}%
                        \ccLayoutThreeColumns{\ \{}{#3)}{%
                                  \ccEndFont\}}{#1}%
-                       \fi
                      }
 
 % Manual layout: generalized three column format
@@ -1579,30 +1601,33 @@
                      }
 
 
-% \ccTemplateLine: extends the \ccLayoutThreeColumns with an additional
+% \ccTemplateLineHandling: extends the \ccLayoutThreeColumns with an additional
 % line above the three columns that contains the template declaration
 % for functions or methods (if any)
 % 
-%   #1   the template declaration, delimited with \ccEnd
-\def\ccTemplateLine #1\ccEnd{%
+%   Param   the template declaration, delimited with \ccEnd
+
+\newbox\templatedeclbox
+
+\def\ccTemplateLineHandling template#1<#2>#3\ccEnd{%
     % Note: The \templatedeclbox must also be deleted after each use
     %       which is done in \ccLayoutThreeColumns.
     \ifnum\ccTagRmTemplate=\ccTrue
         \setbox\templatedeclbox=\hbox{}%
     \else
         \ifnum\ccTagTemplateInline=\ccTrue
-            \setbox\templatedeclbox=\hbox{\ccFont\ccPrintTokens #1\ccEnd\ }%
+            \setbox\templatedeclbox=\hbox{\ccFont\ccPrintTokens 
+                template#1<#2>\ccEnd\ }%
         \else
             \setbox\templatedeclbox=\hbox{}%
             \ccTopSkip
             \hspace*{\ccwIndent}%
-            {\ccFont\ccPrintTokens #1\ccEnd \ccEndFont}%
+            {\ccFont\ccPrintTokens template#1<#2>\ccEnd \ccEndFont}%
             \nopagebreak[4]\par
             \ccReverseTopSkip\vspace{-\parskip}%
         \fi
     \fi
 }
-\newbox\templatedeclbox
 
 % Set the two boxes, returntype and functionname, for an operator declaration.
 \def\ccSeparateOperator #1operator#2\ccEnd{%
