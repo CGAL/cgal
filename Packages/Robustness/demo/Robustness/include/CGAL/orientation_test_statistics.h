@@ -30,7 +30,7 @@ template <class ForwardIterator, class Traits>
 void
 orientation_statistics( ForwardIterator first, ForwardIterator last,
                         CGAL::Orientation* C,
-                        leda_string& s1, leda_string& s2,
+                        leda_string& /*s1*/, leda_string& /*s2*/,
                         const Traits& T )
 {
     typename Traits::Orientation_2  orientation = T.orientation_2_object();
