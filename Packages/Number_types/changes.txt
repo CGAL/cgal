@@ -1,3 +1,7 @@
+4.11     (21 Feb 01)
+- Removed <utility> in Quotient.h.
+- Fix test program typo for CLN.
+
 4.10     (20 Feb 01)
 - Add removed code again...
 

@@ -70,9 +70,9 @@ main()
 #endif // CGAL_USE_GMP
 
 #ifdef CGAL_USE_CLN
-  && test_to_interval( cl_integer() )
-  && test_to_interval( cl_rational() )
-  && test_to_interval( CGAL::Quotient< cl_integer>() )
+  && test_to_interval( cl_I() )
+  && test_to_interval( cl_RA() )
+  && test_to_interval( CGAL::Quotient< cl_I>() )
 #endif // CGAL_USE_CLN
   ;
 
