@@ -29,30 +29,30 @@ template <class Del>
 void
 _test_cls_delaunay_triangulation_2( const Del & del)
 {
-  typedef Del  Delaunay;
-  typedef typename Delaunay::Point                Point;
+  //typedef Del  Delaunay;
+  typedef typename Del::Point                Point;
 
   /***********************/
   /***** SUBCLASSES ******/
-   _test_cls_triangulation_short_2( Delaunay() );
+   _test_cls_triangulation_short_2( Del() );
 
   // Constructors
   std::cout << "    constructors(3)" << std::endl;
 
   // Build dummy delaunay triangulations, 1- and 2-dimensional
-  Delaunay T1;
+  Del T1;
   int m,p;
   for (m=0; m<20; m++)
       T1.insert( Point(3*m, 2*m) );
   assert( T1.is_valid() );
    
-  Delaunay T2;
+  Del T2;
   for (m=0; m<20; m++)
       for (p=0; p<20; p++)
 	  T2.insert( Point(3*m+p, m-2*p) );
   assert( T2.is_valid() );
   
-  Delaunay T3;
+  Del T3;
   // All these points are on a circle of radius 325
   Point pt[28] = {
       Point(36,323), Point(80,315), Point(91,-312),
