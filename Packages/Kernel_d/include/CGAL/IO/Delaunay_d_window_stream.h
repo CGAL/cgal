@@ -30,7 +30,7 @@ void d2_map(const Delaunay_d<R,Lifted_R>& D,
             GRAPH< typename Delaunay_d<R,Lifted_R>::Point_d, int >& DTG, 
             typename Delaunay_d<R,Lifted_R>::Delaunay_voronoi_kind k = 
             Delaunay_d<R,Lifted_R>::NEAREST)
-/*{\Mfunc constructs the graph representation of the nearest 
+/*{\Mfunc constructs a LEDA graph representation of the nearest 
 (|kind = NEAREST| or the furthest (|kind = FURTHEST|) site
 Delaunay triangulation.\\ \precond |dim() == 2|. }*/
 { 

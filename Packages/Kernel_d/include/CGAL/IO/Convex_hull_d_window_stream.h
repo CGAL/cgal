@@ -21,7 +21,7 @@ template <class R>
 void d3_surface_map(const Convex_hull_d<R>& C, 
                     GRAPH< typename Convex_hull_d<R>::Point_d ,int>& G);
 /*{\Mfunc constructs the representation of the surface of |\Mvar| as a 
-bidirected graph |G|.\\ \precond |dim == 3|.}*/
+bidirected LEDA graph |G|.\\ \precond |dim == 3|.}*/
 
 
 template <class R>

@@ -73,11 +73,11 @@ if (!(cond)) {\
 /*{\Moptions outfile=Ivector.man}*/
 
 /*{\Mtext \headerline{Common Notation}
-The following data types uses the concept of iterator ranges as an
+The following data types use the concept of iterator ranges as an
 abstraction of tuples and sets. For an iterator range |[first,last)|
 we define |S = set [first,last)| as the ordered tuple $(|S[0]|,|S[1]|,
 \ldots |S[d-1]|)$ where $|S[i]| = |*| |++|^{(i)}|first|$ (the element
-obtained by $i$ times forwarding the iterator by operator |++| and
+obtained by forwarding the iterator by operator |++| $i$ times and
 then dereferencing it to get the value to which it points). We write
 |d = size [first,last)|.  This extends the syntax of random access
 iterators to input iterators.  If we index the tuple as above then we
@@ -91,10 +91,10 @@ class Ivector
 {
 
 /*{\Mdefinition An instance of data type |Ivector| is a vector of
-variables of type |RT|, the so called ring type.  Together with the
+variables of type |RT|, the so-called ring type.  Together with the
 type |Imatrix| it realizes the basic operations of linear
 algebra. Internal correctness tests are executed if compiled with the
-flag [[LA_SELFTEST]].}*/
+flag [[CGAL_LA_SELFTEST]].}*/
 
 public:
 
@@ -161,8 +161,7 @@ public:
 
 Ivector(int d = 0) 
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|. 
-            |\Mvar| is initialized to a vector of dimension $d$
-            and initialized with |init_value|.}*/ 
+|\Mvar| is initialized to a vector of dimension $d$.}*/ 
 { 
   LA_PRECOND( d >= 0 , "Ivector::constructor: negative dimension.") 
   dim = d; 

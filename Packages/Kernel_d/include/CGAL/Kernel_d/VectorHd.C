@@ -53,12 +53,12 @@ VectorHd<RT,LA> operator*(int n, const VectorHd<RT,LA>& v)
 
 template <class RT, class LA>
 VectorHd<RT,LA> operator*(const RT& n, const VectorHd<RT,LA>& v) 
-/*{\Mbinopfunc returns the vector with cartesian coordinates $n v_i$.}*/
+/*{\Mbinopfunc returns the vector with Cartesian coordinates $n v_i$.}*/
 { return v.scale(n,1); }
 
 template <class RT, class LA>
 VectorHd<RT,LA> operator*(const Quotient<RT>& r, const VectorHd<RT,LA>& v)
-/*{\Mbinopfunc returns the vector with cartesian coordinates 
+/*{\Mbinopfunc returns the vector with Cartesian coordinates 
 $r v_i, 0 \leq i < d$.}*/
 { return v.scale(r.numerator(),r.denominator()); }
 

@@ -39,7 +39,7 @@ int main() {
     Point x(ia,ib); 
 
     T.insert(x); 
-    T.check();
+    T.is_valid();
     W.clear(); 
     CGAL::d2_show(T,W); 
     

@@ -43,7 +43,8 @@ OutputIterator linear_base(
 /*{\Mfunc computes a basis of the linear space spanned by the vectors 
 in |set [first,last)| and returns it via an iterator range starting
 in |result|. The returned iterator marks the end of the output.
-\precond value type of |ForwardIterator| is |Vector_d<R>|.}*/
+\precond value type of |ForwardIterator| and |OutputIterator| is 
+|Vector_d<R>|.}*/
 { typedef typename std::iterator_traits<ForwardIterator>::
     value_type value_type;
   typedef typename value_type::R R;

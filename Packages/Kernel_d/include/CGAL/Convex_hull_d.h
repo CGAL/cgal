@@ -46,7 +46,7 @@ underlying space. We use |dcur| to denote the affine dimension of |S|.
 The data type supports incremental construction of hulls.
 
 The closure of the hull is maintained as a simplicial complex, i.e.,
-as a collection of simplices the intersection of any two is a face of
+as a collection of simplices. The intersection of any two is a face of
 both\footnote{The empty set if a facet of every simplex.}. In the
 sequel we reserve the word simplex for the simplices of dimension
 |dcur|. For each simplex there is a handle of type |Simplex_handlex|
@@ -112,13 +112,13 @@ typedef std::list<Point_d> Point_list;
 // make traits types locally available
 
 typedef typename Base::Simplex_handle Simplex_handle;
-/*{\Mtypemember handle to simplices.}*/
+/*{\Mtypemember handle for simplices.}*/
 
 typedef typename Base::Simplex_handle Facet_handle;
-/*{\Mtypemember handle to facets.}*/
+/*{\Mtypemember handle for facets.}*/
 
 typedef typename Base::Vertex_handle Vertex_handle;
-/*{\Mtypemember handle to vertices.}*/
+/*{\Mtypemember handle for vertices.}*/
 
 typedef typename Base::Simplex_iterator Simplex_iterator;
 /*{\Mtypemember iterator for simplices.}*/
@@ -131,7 +131,7 @@ typedef typename Point_list::const_iterator Point_const_iterator;
 
 /*{Note that each iterator fits the handle concept, i.e. iterators can be
 used as handles. Note also that all iterator and handle types come also
-in a const flavor, e.g. |Vertex_const_iterator| is the constant version of
+in a const flavor, e.g., |Vertex_const_iterator| is the constant version of
 |Vertex_iterator|. Thus use the const version whenever the the convex hull
 object is refereced as constant.}*/
 
@@ -218,7 +218,7 @@ public:
   empty point set. The traits class |R| specifies the models of
   all types and the implementations of all geometric primitives used by
   the convex hull class. The default model is one of the $d$-dimensional
-  representation classes (e.g. |Homogeneous_d|).}*/
+  representation classes (e.g., |Homogeneous_d|).}*/
 
   protected:
   /*{\Mtext The data type |\Mtype| offers neither copy constructor nor
@@ -235,7 +235,7 @@ public:
   int dimension() const { return Base::dimension(); } 
   /*{\Mop returns the dimension of ambient space}*/
   int current_dimension() const { return Base::current_dimension(); } 
-  /*{\Mop returns the affine dimension of $S$.}*/
+  /*{\Mop returns the affine dimension |dcur| of $S$.}*/
 
   Point_d  associated_point(Vertex_handle v) const
   { return Base::associated_point(v); }
@@ -406,7 +406,7 @@ public:
   #undef STATISTIC
 
 
-  void check() const;
+  bool is_valid() const;
   /*{\Mop checks the validity of the data structure.}*/
 
 
@@ -424,11 +424,11 @@ public:
   Vertex_iterator vertices_begin() { return Base::vertices_begin(); }
   /*{\Mop the first vertex of |\Mvar|.}*/
   Vertex_iterator vertices_end()   { return Base::vertices_end(); }
-  /*{\Mop the beyond vertex of |\Mvar|.}*/
+  /*{\Mop the past the end iterator for vertices.}*/
   Simplex_iterator simplices_begin() { return Base::simplices_begin(); }
   /*{\Mop the first simplex of |\Mvar|.}*/
   Simplex_iterator simplices_end()   { return Base::simplices_end(); }
-  /*{\Mop the beyond simplex of |\Mvar|.}*/
+  /*{\Mop the past the end iterator for simplices.}*/
 
   Vertex_const_iterator vertices_begin() const 
   { return Base::vertices_begin(); }
@@ -450,7 +450,7 @@ public:
   /*{\Mtext\setopdims{5.5cm}{3.5cm}}*/
   template <typename Visitor>
   void visit_all_facets(const Visitor& V) const
-  /*{\Mop the visitor object |V| obtains access to all facets of |\Mvar|.
+  /*{\Mop each facet of |\Mvar| is visited by the visitor object |V|.
   |V| has to have a function call operator:\\
   |void operator()(Facet_handle) const|}*/
   {
@@ -538,7 +538,7 @@ public:
   implementation can be found in the implementation document available
   at the download site of this package.
 
-  The time and space requirement is input dependent.  Let $C_1$, $C_2$,
+  The time and space requirements are input dependent.  Let $C_1$, $C_2$,
   $C_3$, \ldots be the sequence of hulls constructed and for a point $x$
   let $k_i$ be the number of facets of $C_i$ that are visible from $x$
   and that are not already facets of $C_{i-1}$. Then the time for
@@ -547,12 +547,12 @@ public:
   hull which were not already facets of the hull before the insertion.
 
   The data type |\Mtype| is derived from |Regular_complex_d|. The space
-  requirement of regular complexes is essentially $12(|dim| +2)$ Bytes
+  requirement of regular complexes is essentially $12(|dim| +2)$ bytes
   times the number of simplices plus the space for the points. |\Mtype|
-  needs an additional $8 + (4 + x)|dim|$ Bytes per simplex where $x$ is
+  needs an additional $8 + (4 + x)|dim|$ bytes per simplex where $x$ is
   the space requirement of the underlying number type and an additional
-  $12$ Bytes per point. The total is therefore $(16 + x)|dim| + 32$
-  Bytes times the number of simplices plus $28 + x \cdot |dim|$ Bytes
+  $12$ bytes per point. The total is therefore $(16 + x)|dim| + 32$
+  bytes times the number of simplices plus $28 + x \cdot |dim|$ bytes
   times the number of points.}*/
 
   /*{\Mtext\headerline{Traits requirements}
@@ -618,14 +618,14 @@ compute_equation_of_base_facet(Simplex_handle S)
   S->set_hyperplane_of_base_facet(
     hyperplane_through_points(P.begin(),P.end(),center(), ON_NEGATIVE_SIDE)); 
 
-  #ifdef SELFCHECK
+  #ifdef CGAL_CHECK_EXPENSIVE
   { /* Let us check */
     typename R::Oriented_side_d side = kernel().oriented_side_d_object();
-    for ( int i = 1; i <= current_dimension(); i++)
+    for (int i = 1; i <= current_dimension(); i++)
       CGAL_assertion_msg(side(S->hyperplane_of_base_facet(),
-                              point_of_simplex(S,i)) != ON_ORIENTED_BOUNDARY, 
+                              point_of_simplex(S,i)) == ON_ORIENTED_BOUNDARY, 
         " hyperplane does not support base "); 
-    CGAL_assertion_msg(side(S->hyperplane_of_base_facet(),center()) != 
+    CGAL_assertion_msg(side(S->hyperplane_of_base_facet(),center()) == 
                        ON_NEGATIVE_SIDE,
       " hyperplane has quasi center on wrong side "); 
   }
@@ -805,8 +805,8 @@ Convex_hull_d<R>::insert(const Point_d& x)
     }
  
   }
-#ifdef SELFCHECK
-  check(); 
+#ifdef CGAL_CHECK_EXPENSIVE
+  CGAL_assertion(is_valid()); 
 #endif
   return z;
 }
@@ -944,10 +944,10 @@ dimension_jump(Simplex_handle S, Vertex_handle x)
 }
 
 template <class R>
-void Convex_hull_d<R>::check() const
+bool Convex_hull_d<R>::is_valid() const
 { 
   check_topology(); 
-  if (current_dimension() < 1) return; 
+  if (current_dimension() < 1) return true; 
  
   /* Recall that center() gives us the center-point of the origin
      simplex. We check whether it is locally inside with respect to
@@ -1029,6 +1029,7 @@ void Convex_hull_d<R>::check() const
       }
     }
   }
+  return true;
 }
 
 

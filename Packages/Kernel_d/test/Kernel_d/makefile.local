@@ -9,7 +9,7 @@
 #                    include/lib directory settings
 #---------------------------------------------------------------------#
 
-CGAL_ROOT = /KM/projects/CGAL/CGAL-2.2
+CGAL_ROOT = /KM/projects/CGAL/BETA
 CGAL_INCL_DIR = $(CGAL_ROOT)/include
 CGAL_LIB_DIR = $(CGAL_ROOT)/lib
 

@@ -21,18 +21,18 @@ class Tuple_d : public Ref_counted {
   Vector v;
 public:
   typedef typename Vector::const_iterator const_iterator;
-  typedef typename Vector::const_iterator Homogeneous_iterator;
+  typedef typename Vector::const_iterator Homogeneous_const_iterator;
 
-  struct Cartesian_iterator {
-    typedef Cartesian_iterator self;
+  struct Cartesian_const_iterator {
+    typedef Cartesian_const_iterator self;
     typedef std::random_access_iterator_tag iterator_category;
     typedef CGAL::Quotient<NT>              value_type;
     typedef ptrdiff_t                       difference_type;
     typedef const value_type*               pointer;
     typedef const value_type&               reference;
 
-  Cartesian_iterator() : _it(0), _w(0) {}
-  Cartesian_iterator(const_iterator it, const_iterator w = 0) 
+  Cartesian_const_iterator() : _it(0), _w(0) {}
+  Cartesian_const_iterator(const_iterator it, const_iterator w = 0) 
     : _it(it), _w(w) {}
     
   value_type operator*() const { return value_type(*_it,*_w); }
@@ -58,7 +58,7 @@ public:
 
   private:
     const_iterator _it, _w;  
-  }; // Cartesian_iterator
+  }; // Cartesian_const_iterator
 
 
 

@@ -100,7 +100,7 @@ int main()
       break;
     default:
       T.insert(x);
-      T.check();
+      T.is_valid();
       CGAL::d3_surface_map(T,G);
       pos.init(G);
       forall_nodes(v,G) pos[v] = transform(G[v],scale);

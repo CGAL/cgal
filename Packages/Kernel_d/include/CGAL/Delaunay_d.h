@@ -308,7 +308,7 @@ public:
   dimension of the underlying space is $d$ and |S| is initialized to the
   empty point set. The traits class |R| specifies the models of
   all types and the implementations of all geometric primitives used by
-  the delaunay class. The traits class |Lifted_R| specifies the models of
+  the Delaunay class. The traits class |Lifted_R| specifies the models of
   all types and the implementations of all geometric primitives used by
   the base class of |\Mname|. The second template parameter defaults to
   the first: |Delaunay_d<R> = Delaunay_d<R, Lifted_R = R >|.}*/
@@ -532,7 +532,7 @@ public:
   { return Simplex_const_iterator(Base::simplices_end()); }
 
 
-  /*{\Mimplementation The data type is derived from convex hulls via
+  /*{\Mimplementation The data type is derived from |Convex_hull_d| via
   the lifting map. For a point $x$ in $d$-dimensional space let
   |lift(x)| be its lifting to the unit paraboloid of revolution. There
   is an intimate relationship between the Delaunay triangulation of a
@@ -542,7 +542,7 @@ public:
   implementation details we refer the reader to \cite{MS98}.
 
   The space requirement is the same as for convex hulls. The time
-  requirement for an insert is the time to inserted the lifted point
+  requirement for an insert is the time to insert the lifted point
   into the convex hull of the lifted points.}*/
 
   /*{\Mexample 

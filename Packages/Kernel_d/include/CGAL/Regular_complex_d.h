@@ -265,7 +265,7 @@ complexes are built by constructing vertices and simplices, by
 assigning positions to vertices and vertices to simplices, and by
 establishing neighbor relations. The update operations do not check
 whether the data structure built actually encodes a simplicial
-complex.  The class provides a function |check()| that performs a
+complex.  The class provides a function |is_valid()| that performs a
 partial check whether the data structure encodes a simplicial
 complex. It is not checked whether two simplices intersect without
 sharing a face.

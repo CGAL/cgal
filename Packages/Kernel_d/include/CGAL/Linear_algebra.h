@@ -40,31 +40,32 @@
 #include <CGAL/Kernel_d/Ivector.h>
 #include <CGAL/Kernel_d/Imatrix.h>
 
-// #define LA_SELFTEST
+// #define CGAL_LA_SELFTEST
 LA_BEGIN_NAMESPACE
 
-/*{\Moptions 
-outfile=Linear_algebra.man
-}*/
+/*{\Moptions outfile=Linear_algebra.man}*/
 /*{\Manpage {Linear_algebra} {RT} {Linear Algebra on RT} {LA}}*/
 
 template <class _RT, class _ALLOC = CGAL_ALLOCATOR(_RT) >
 class Linear_algebra
 { 
 /*{\Mdefinition
-The data type |\Mname| encapsulates two classes |Imatrix|, |Ivector| and many
-functions of basic linear algebra. It is parametrized by a number type |RT|. An
-instance of data type |Imatrix| is a matrix of variables of type |RT|, the so
-called ring type. Accordingly |Ivector| implements vectors of variables of type
-|RT|. The arithmetic type |RT| is required to behave like integers in the
-mathematical sense.
+The data type |\Mname| encapsulates two classes |Imatrix|, |Ivector|
+and many functions of basic linear algebra. It is parametrized by a
+number type |RT|. An instance of data type |Imatrix| is a matrix of
+variables of type |RT|, the so called ring type. Accordingly,
+|Ivector| implements vectors of variables of type |RT|. The arithmetic
+type |RT| is required to behave like integers in the mathematical
+sense.
 
-All functions compute the exact result, i.e., there is no rounding error.  Most
-functions of linear algebra are \emph{checkable}, i.e., the programs can be
-asked for a proof that their output is correct. For example, if the linear
-system solver declares a linear system $A x = b$ unsolvable it also returns a
-vector $c$ such that $c^T A = 0$ and $c^T b \neq 0$.  All internal correctness
-checks can be switched on by the flag [[LA_SELFTEST]].}*/
+All functions compute the exact result, i.e., there is no rounding
+error.  Most functions of linear algebra are \emph{checkable}, i.e.,
+the programs can be asked for a proof that their output is
+correct. For example, if the linear system solver declares a linear
+system $A x = b$ unsolvable it also returns a vector $c$ such that
+$c^T A = 0$ and $c^T b \neq 0$.  All internal correctness checks can
+be switched on by the flag [[CGAL_LA_SELFTEST]].}*/ 
+
 public:
 
 /*{\Mtypes 5.5}*/
@@ -80,9 +81,8 @@ typedef Imatrix<_RT,_ALLOC> Matrix;
 
 typedef _ALLOC allocator_type;
 /*{\Mtypemember the allocator used for memory management. |\Mname| is
-an appreviation of |Linear_algebra<RT, ALLOC = allocator<RT,LA> >|. Thus  
+an abbreviation for |Linear_algebra<RT, ALLOC = allocator<RT,LA> >|. Thus  
 |allocator_type| defaults to the standard allocator offered by the STL.}*/ 
-
 
 /*{\Moperations 2 1}*/
 
@@ -91,8 +91,8 @@ static Matrix  transpose(const Matrix& M);
 
 static bool inverse(const Matrix& M, Matrix& I, RT& D, Vector& c); 
 /*{\Mstatic determines whether |M| has an inverse. It also computes 
-            either the inverse as $(1/D) \cdot |I|$ or a vector $c$ 
-            such that $c^T \cdot M = 0 $.  }*/
+either the inverse as $(1/D) \cdot |I|$ or when no inverse
+exists, a vector $c$ such that $c^T \cdot M = 0 $.  }*/
 
 static Matrix  inverse(const Matrix& M, RT& D)
 /*{\Mstatic returns the inverse matrix of |M|. More precisely, $1/D$ 
@@ -117,7 +117,7 @@ static RT  determinant (const Matrix& M, Matrix& L, Matrix& U,
             iff $i = q(j)$ such that $L \cdot M \cdot Q = U$, 
             $L(0,0) = 1$, $L(i,i) = U(i - 1,i - 1)$ for all $i$, 
             $1 \le i < n$, and $D = s \cdot U(n - 1,n - 1)$ where $s$ is 
-            the determinant of $Q$. \precond  |M| is quadratic. }*/
+            the determinant of $Q$. \precond  |M| is square. }*/
 
 static bool verify_determinant (const Matrix& M, RT D, Matrix& L, Matrix& U, 
                                 const std::vector<int>& q, Vector& c);
@@ -125,11 +125,11 @@ static bool verify_determinant (const Matrix& M, RT D, Matrix& L, Matrix& U,
 
 static RT determinant (const Matrix& M); 
 /*{\Mstatic  returns the determinant of |M|.
-         \precond  |M| is quadratic. }*/
+         \precond  |M| is square. }*/
 
 static int sign_of_determinant (const Matrix& M); 
 /*{\Mstatic returns the sign of the determinant of |M|.
-        \precond  |M| is quadratic. }*/
+        \precond  |M| is square. }*/
 
 static bool linear_solver(const Matrix& M, const Vector& b,
                    Vector& x, RT& D, 
@@ -178,8 +178,8 @@ static bool homogeneous_linear_solver (const Matrix& M, Vector& x);
         yes, then $x$ is such a solution. }*/
 
 static int homogeneous_linear_solver (const Matrix& M, Matrix& spanning_vecs); 
-/*{\Mstatic determines the solution space of the homogeneous linear system 
-$M\cdot x = 0$. It returns the dimension of the solution space.
+/*{\Mstatic determines the solution space of the homogeneous linear
+system $M\cdot x = 0$. It returns the dimension of the solution space.
 Moreover the columns of |spanning_vecs| span the solution space. }*/
 
 static void independent_columns (const Matrix& M, std::vector<int>& columns); 
@@ -296,7 +296,7 @@ linear_solver(const Imatrix<_RT,_ALLOC>& A, const Vector& b,
               C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom; 
           }
           denom = C(k,k); 
-          #ifdef LA_SELFTEST
+          #ifdef CGAL_LA_SELFTEST
             for(i = 0; i < rows; i++) { 
               for (j = 0; j < cols; j++) { 
                 RT Sum = 0; 
@@ -341,7 +341,7 @@ linear_solver(const Imatrix<_RT,_ALLOC>& A, const Vector& b,
         x[var[i]]= h / C(i,i); 
       }
 
-    #ifdef LA_SELFTEST
+    #ifdef CGAL_LA_SELFTEST
       /* we check whether |x| is a solution */
       { 
         for (i = 0; i < rows; i++) { 
@@ -373,13 +373,14 @@ linear_solver(const Imatrix<_RT,_ALLOC>& A, const Vector& b,
             spanning_vectors(var[i],l)= h / C(i,i); 
           }
 
-    #ifdef LA_SELFTEST
+    #ifdef CGAL_LA_SELFTEST
           /* we check whether the $l$ - th spanning vector is a solution 
              of the homogeneous system */
           { 
             Vector zero(rows); 
             if (A *spanning_vectors.col(l) != zero)
-              ERROR_HANDLER(1,"linear_solver: spanning_vector is not a solution."); 
+              ERROR_HANDLER(1,
+                "linear_solver: spanning_vector is not a solution."); 
           }
     #endif
         }
@@ -478,7 +479,7 @@ determinant(const Imatrix<_RT,_ALLOC>& A)
               C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom; 
           }
           denom = C(k,k); 
-          #ifdef LA_SELFTEST
+          #ifdef CGAL_LA_SELFTEST
             for(i = 0; i < rows; i++) { 
               for (j = 0; j < cols; j++) { 
                 RT Sum = 0; 
@@ -601,7 +602,7 @@ determinant(const Imatrix<_RT,_ALLOC>& A,
               C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom; 
           }
           denom = C(k,k); 
-          #ifdef LA_SELFTEST
+          #ifdef CGAL_LA_SELFTEST
             for(i = 0; i < rows; i++) { 
               for (j = 0; j < cols; j++) { 
                 RT Sum = 0; 
@@ -632,7 +633,7 @@ determinant(const Imatrix<_RT,_ALLOC>& A,
     return 0; 
   } else { 
     Ld = L; 
-    Ud = Matrix(rows); // quadratic
+    Ud = Matrix(rows); // square
     for (i = 0; i < rows; i++) 
       for(j = 0; j <rows; j++) 
         Ud(i,j) = C(i,j); 
@@ -807,7 +808,7 @@ independent_columns(const Imatrix<_RT,_ALLOC>& A,
               C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom; 
           }
           denom = C(k,k); 
-          #ifdef LA_SELFTEST
+          #ifdef CGAL_LA_SELFTEST
             for(i = 0; i < rows; i++) { 
               for (j = 0; j < cols; j++) { 
                 RT Sum = 0; 
@@ -930,7 +931,7 @@ rank(const Imatrix<_RT,_ALLOC>& A)
               C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom; 
           }
           denom = C(k,k); 
-          #ifdef LA_SELFTEST
+          #ifdef CGAL_LA_SELFTEST
             for(i = 0; i < rows; i++) { 
               for (j = 0; j < cols; j++) { 
                 RT Sum = 0; 
@@ -1047,7 +1048,7 @@ inverse(const Imatrix<_RT,_ALLOC>& A, Imatrix<_RT,_ALLOC>& inverse,
               C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom; 
           }
           denom = C(k,k); 
-          #ifdef LA_SELFTEST
+          #ifdef CGAL_LA_SELFTEST
             for(i = 0; i < rows; i++) { 
               for (j = 0; j < cols; j++) { 
                 RT Sum = 0; 
@@ -1086,7 +1087,7 @@ inverse(const Imatrix<_RT,_ALLOC>& A, Imatrix<_RT,_ALLOC>& inverse,
   }
   
     D = denom; 
-    inverse = Imatrix<_RT,_ALLOC>(rows); //quadratic
+    inverse = Imatrix<_RT,_ALLOC>(rows); //square
     _RT h; 
     for(i = 0; i <rows; i++) 
     {  // $i$-th column of inverse
@@ -1099,7 +1100,7 @@ inverse(const Imatrix<_RT,_ALLOC>& A, Imatrix<_RT,_ALLOC>& inverse,
       }
     }  
 
-  #ifdef LA_SELFTEST
+  #ifdef CGAL_LA_SELFTEST
     if (A*inverse != Matrix(rows,Matrix::RT_val(1))*D)
       ERROR_HANDLER(1,"inverse: matrix inverse computed incorrectly."); 
   #endif      
@@ -1199,7 +1200,7 @@ homogeneous_linear_solver(const Imatrix<_RT,_ALLOC> &A,
               C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom; 
           }
           denom = C(k,k); 
-          #ifdef LA_SELFTEST
+          #ifdef CGAL_LA_SELFTEST
             for(i = 0; i < rows; i++) { 
               for (j = 0; j < cols; j++) { 
                 RT Sum = 0; 
@@ -1235,7 +1236,7 @@ homogeneous_linear_solver(const Imatrix<_RT,_ALLOC> &A,
       x[var[i]]= h / C(i,i); 
     }
 
-  #ifdef LA_SELFTEST
+  #ifdef CGAL_LA_SELFTEST
     /* we check whether |x| is a solution */
     { 
       for (i = 0; i < rows; i++) { 
@@ -1267,13 +1268,14 @@ homogeneous_linear_solver(const Imatrix<_RT,_ALLOC> &A,
           spanning_vectors(var[i],l)= h / C(i,i); 
         }
 
-  #ifdef LA_SELFTEST
+  #ifdef CGAL_LA_SELFTEST
         /* we check whether the $l$ - th spanning vector is a solution 
            of the homogeneous system */
         { 
           Vector zero(rows); 
           if (A *spanning_vectors.col(l) != zero)
-            ERROR_HANDLER(1,"linear_solver: spanning_vector is not a solution."); 
+            ERROR_HANDLER(1,
+              "linear_solver: spanning_vector is not a solution."); 
         }
   #endif
       }

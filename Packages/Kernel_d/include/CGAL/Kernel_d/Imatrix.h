@@ -55,17 +55,16 @@ template <class _RT, class _ALLOC>
 class Imatrix 
 { 
 /*{\Mdefinition
-An instance of data type |Imatrix| is a matrix of variables of type |RT|, the
-so called ring type. The arithmetic type |RT| is required to behave like
-integers in the mathematical sense.
+An instance of data type |Imatrix| is a matrix of variables of type
+|RT|, the so-called ring type. The arithmetic type |RT| is required to
+behave like integers in the mathematical sense.
 
-The types |Imatrix| and |Ivector| together realize many functions of basic
-linear algebra.  All functions on integer matrices compute the exact result,
-i.e., there is no rounding error. |\Mname| offers all simple matrix
-operations. The more sophisticated ones are provided by the class
-|Linear_algebra|.  Preconditions are checked by default and can be switched off
-by the compile flag [[LA_PRECOND_OFF]].}*/
-public:
+The types |Imatrix| and |Ivector| together realize many functions of
+basic linear algebra.  All functions on integer matrices compute the
+exact result, i.e., there is no rounding error. |\Mname| offers all
+simple matrix operations. The more sophisticated ones are provided by
+the class |Linear_algebra|.  Preconditions are checked by default and
+can be switched off by the compile flag [[LA_PRECOND_OFF]].}*/ public:
 
 /*{\Mtypes 5.5}*/
 
@@ -195,20 +194,20 @@ void range_initialize(InputIterator first, InputIterator last,
 
 template <class Forward_iterator>
 Imatrix(Forward_iterator first, Forward_iterator last)
-/*{\Mcreate creates an instance |\Mvar| of type |\Mname|. Let $S$ be the
-ordered set of $m$ column-vectors of common dimension $n$ as given by the
-iterator range |[first,last)|.  |\Mvar| is initialized to an $n \times m$
-matrix with the columns as specified by $S$.  \precond |Forward_iterator| has a
-value type |V| from which we require to provide a iterator type
-|V::const_iterator|, to have value type |V::value_type == RT| and to provide a
-random access iterator range via |[ V::begin(), V::end() )|.\\ Note that
-|Vector| or |std::vector<RT,LA>| fulfill these requirements.}*/
+/*{\Mcreate creates an instance |\Mvar| of type |\Mname|. Let $S$ be
+the ordered set of $m$ column-vectors of common dimension $n$ as given
+by the iterator range |[first,last)|.  |\Mvar| is initialized to an $n
+\times m$ matrix with the columns as specified by $S$.  \precond
+|Forward_iterator| has a value type |V| from which we require to
+provide a iterator type |V::const_iterator|, to have |V::value_type ==
+RT|.\\ Note that |Ivector| or |std::vector<RT,LA>| fulfill these
+requirements.}*/
 { range_initialize(first,last,
   std::iterator_traits<Forward_iterator>::iterator_category()); }
 
 Imatrix(const std::vector< Vector >& A) 
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|. Let $A$
-            be an array of $m$ column - vectors of common dimension $n$. 
+            be an array of $m$ column-vectors of common dimension $n$. 
             |\Mvar| is initialized to an $n \times m$ matrix with the 
             columns as specified by $A$. }*/
 { range_initialize(A.begin(),A.end(),std::random_access_iterator_tag()); }
@@ -339,10 +338,11 @@ std::istream&  operator>>(std::istream& is, Imatrix<RT,A>& M);
 
 
 /*{\Mimplementation 
-The datatype |\Mname| is implemented by two-dimensional arrays of variables
-of type |RT|. The memory layout is row oriented. Operation |column| takes time
-$O(n)$, |row|, |dim1|, |dim2| take constant time, and all other operations take
-time $O(nm)$.  The space requirement is $O(nm)$.}*/
+The data type |\Mname| is implemented by two-dimensional arrays of
+variables of type |RT|. The memory layout is row oriented. Operation
+|column| takes time $O(n)$, |row|, |dim1|, |dim2| take constant time,
+and all other operations take time $O(nm)$.  The space requirement is
+$O(nm)$.}*/
 
 template <class RT, class A>
 Imatrix<RT,A>::

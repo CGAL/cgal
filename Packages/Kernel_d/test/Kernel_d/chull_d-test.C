@@ -79,7 +79,7 @@ int main()
     for (pit = T1.points_begin(); pit != T1.points_end(); pit++) *pit;
     for (vit = T1.vertices_begin(); vit != T1.vertices_end(); vit++) *vit;
     for (sit = T1.simplices_begin(); sit != T1.simplices_end(); sit++) *sit;
-    T1.check();
+    T1.is_valid();
     T1.clear(2);
   }
 
@@ -140,7 +140,7 @@ int main()
     CGAL_TEST(G.size()==1);
     CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE && 
               T2.bounded_side(Point(1,1,1,10))==CGAL::ON_BOUNDED_SIDE);
-    T2.check();
+    T2.is_valid();
     T2.clear(3);
 
 
@@ -203,7 +203,7 @@ int main()
     CGAL_TEST(G.size()==1);
     CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE && 
               T2.bounded_side(Point(1,1,1,10))==CGAL::ON_BOUNDED_SIDE);
-    T2.check();
+    T2.is_valid();
     T2.clear(3);
 
 
@@ -263,7 +263,7 @@ int main()
     CGAL_TEST(G.size()==1);
     CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE && 
               T2.bounded_side(Point(1,1,1,10))==CGAL::ON_BOUNDED_SIDE);
-    T2.check();
+    T2.is_valid();
     T2.clear(3);
 
 

@@ -12,7 +12,7 @@ CGAL_BEGIN_NAMESPACE
 /*{\Mtext \setopdims{4cm}{2cm}\computewidths
 \headerline{Linear and affine predicates}
 
-For a iterator range |[first,last)| we define |S = set [first,last)|
+For an iterator range |[first,last)| we define |S = set [first,last)|
 as the ordered tuple $(|S[0]|,|S[1]|, \ldots |S[d-1]|)$ where 
 $|S[i]| = |*| |++|^{(i)}|first|$ (the element obtained by $i$ times 
 forwarding the iterator by operator |++| and then dereferencing it to
@@ -52,8 +52,8 @@ This is the sign of the determinant
   where |A[i]| denotes the cartesian coordinate vector of 
   the $i$-th point in $A$.
   \precond |size [first,last) == d+1| and |A[i].dimension() == d| 
-  $\forall 0 \leq i \leq d$.
-\precond value type of |ForwardIterator| is |Point_d<R>|.}*/
+  $\forall 0 \leq i \leq d$
+  and the value type of |ForwardIterator| is |Point_d<R>|.}*/
 { typedef typename std::iterator_traits<ForwardIterator>::value_type Point_d;
   typedef typename Point_d::R R;
   typename R::Orientation_d or; return or(first,last); }
@@ -137,8 +137,8 @@ affinely independent.
 template <class R>
 Comparison_result compare_lexicographically( 
   const Point_d<R>& p1, const Point_d<R>& p2)
-/*{\Mfunc implements the lexicographic order on the cartesian coordinate
-tuple of points.}*/
+/*{\Mfunc compares the Cartesian coordiantes of points |p1| and |p2|
+lexicographically.}*/
 { typename R::Compare_lexicographically_d cmp; 
   return cmp(p1,p2); }
 

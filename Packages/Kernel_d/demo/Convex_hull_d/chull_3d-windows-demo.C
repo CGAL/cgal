@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
   std::ofstream To("ch3-demo.log");
   Point p;
   forall(p,L) {
-    To << p; T.insert(p); T.check();
+    To << p; T.insert(p); T.is_valid();
   }
   To.flush(); 
   GRAPH<Point,int> G;

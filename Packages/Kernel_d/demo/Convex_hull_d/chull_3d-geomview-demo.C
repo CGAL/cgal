@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     T.insert(*g++);
     if (i%10==0) std::cout << i << " points inserted" << std::endl;
   }
-  T.check(); 
+  T.is_valid(); 
 
   Polyhedron P;
   CGAL::convex_hull_d_to_polyhedron_3(T,P);

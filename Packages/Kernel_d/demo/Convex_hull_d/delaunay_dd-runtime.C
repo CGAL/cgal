@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
   }
   std::cout << "used time for inserts  " << used_time(ti) << std::endl;
   std::cout << "entering check" << std::endl;
-  T.check(); 
+  T.is_valid(); 
   std::cout << "used time for sanity check  " << used_time(ti) << std::endl;
   std::cout << "entering nearest neighbor location" << std::endl;
   L.clear();
