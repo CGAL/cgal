@@ -562,8 +562,8 @@ intersection of any two simplices is a facet of both.}*/
 
 typedef size_t Size_type;
 
-Size_type number_of_vertices() const  { return _vertices.size();}
-Size_type number_of_simplices() const  { return _simplices.size();}
+Size_type number_of_vertices() const  { return this->_vertices.size();}
+Size_type number_of_simplices() const  { return this->_simplices.size();}
 
 void print_statistics(std::ostream& os = std::cout) const
 { 

@@ -1,3 +1,6 @@
+22 June 2004  Sylvain Pion
+- G++ 3.4 fixes.
+
 0.3 (18/01/2004)
 - Remove CGAL_TYPENAME_MSVC_NULL
 

@@ -92,7 +92,13 @@ class Delaunay_d : public Convex_hull_d<Lifted_R_>
 { 
 typedef Delaunay_d<R_,Lifted_R_> Self;
 typedef Convex_hull_d<Lifted_R_> Base;
+
+using Base::origin_simplex_;
+
 public:
+
+using Base::dcur;
+
 /*{\Mgeneralization Convex_hull_d<Lifted_R>}*/
 
 /*{\Mtypes 7}*/
