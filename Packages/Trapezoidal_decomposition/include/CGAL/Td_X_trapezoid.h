@@ -41,9 +41,7 @@
   
 ------------------------------------------------------------------------ */
 
-#ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 #include <CGAL/Trapezoidal_decomposition_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -51,29 +49,32 @@ template < class Td_traits_>
 class Td_X_trapezoid : public Handle
 {
 public:
-  typedef Td_traits_ Traits;
-  typedef typename Traits::Point Point;
-  typedef typename Traits::X_curve X_curve;
-  typedef typename Traits::X_curve_ptr curve_pointer;
-  typedef typename Traits::X_curve_ref curve_ref;
-  typedef typename Traits::X_curve_const_ref curve_const_ref;
-  typedef typename Traits::X_trapezoid X_trapezoid;
-  typedef typename Traits::X_trapezoid_ptr pointer;
-  typedef typename Traits::X_trapezoid_ref reference;
-  typedef typename Traits::X_trapezoid_const_ref const_ref;
+  typedef Td_traits_                                    Traits;
+  typedef typename Traits::Point                        Point;
+  typedef typename Traits::X_curve                      X_curve;
+  typedef typename Traits::X_curve_ptr                  curve_pointer;
+  typedef typename Traits::X_curve_ref                  curve_ref;
+  typedef typename Traits::X_curve_const_ref            curve_const_ref;
+  typedef typename Traits::X_trapezoid                  X_trapezoid;
+  typedef typename Traits::X_trapezoid_ptr              pointer;
+  typedef typename Traits::X_trapezoid_ref              reference;
+  typedef typename Traits::X_trapezoid_const_ref        const_ref;
   typedef Td_ninetuple<Point,Point,X_curve,X_curve,unsigned char,
     pointer,pointer,pointer,pointer> Boundary_type;
-  typedef Trapezoidal_decomposition_2<Traits> TD;
-  typedef typename TD::Unbounded Unbounded;
-  typedef typename TD::Around_point_circulator Around_point_circulator;
-  typedef typename TD::In_face_iterator In_face_iterator;
+  typedef Trapezoidal_decomposition_2<Traits>           TD;
+  typedef typename TD::Unbounded                        Unbounded;
+  typedef typename TD::Around_point_circulator          Around_point_circulator;
+  typedef typename TD::In_face_iterator                 In_face_iterator;
   friend class Trapezoidal_decomposition_2<Traits>;
   
 #ifdef CGAL_PM_FRIEND_CLASS
-  
+#ifdef __GNUC__
   friend typename Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend typename Trapezoidal_decomposition_2<Traits>::In_face_iterator;
-  
+#else
+  friend class Around_point_circulator;
+  friend class In_face_iterator;
+#endif
 #endif
   
   typedef typename TD::Data_structure Data_structure;
