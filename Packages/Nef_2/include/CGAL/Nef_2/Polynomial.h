@@ -215,8 +215,7 @@ template <class pNT> class Polynomial_rep {
   friend class Polynomial<pNT>;
   friend class Polynomial<int>;
   friend class Polynomial<double>;
-  friend std::istream& operator >> CGAL_NULL_TMPL_ARGS  
-         (std::istream&, Polynomial<NT>&);
+  friend std::istream& operator >> <> (std::istream&, Polynomial<NT>&);
 
 };
 
@@ -224,7 +223,7 @@ template <class pNT> class Polynomial_rep {
 // CLASS TEMPLATE NT: 
 /*{\Msubst 
 typename iterator_traits<Forward_iterator>::value_type#NT
-CGAL_NULL_TMPL_ARGS#
+<>#
 }*/
 
 /*{\Manpage{Polynomial}{NT}{Polynomials in one variable}{p}}*/
@@ -383,22 +382,19 @@ template <class pNT> class Polynomial :
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
   
    friend Polynomial<NT>
-   operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<NT>&);   
+   operator - <>  (const Polynomial<NT>&);
                           
   friend Polynomial<NT>
-    operator + CGAL_NULL_TMPL_ARGS (const Polynomial<NT>&, 
-                                    const Polynomial<NT>&);
+    operator + <> (const Polynomial<NT>&, const Polynomial<NT>&);
 
   friend Polynomial<NT>
-    operator - CGAL_NULL_TMPL_ARGS (const Polynomial<NT>&, 
-                                    const Polynomial<NT>&);
+    operator - <> (const Polynomial<NT>&, const Polynomial<NT>&);
 
   friend Polynomial<NT>
-    operator * CGAL_NULL_TMPL_ARGS (const Polynomial<NT>&, 
-                                    const Polynomial<NT>&);
+    operator * <> (const Polynomial<NT>&, const Polynomial<NT>&);
 
   friend 
-  Polynomial<NT>  operator / CGAL_NULL_TMPL_ARGS 
+  Polynomial<NT>  operator / <> 
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2);
   
   /*{\Mbinopfunc implements polynomial division of |p1| and |p2|. if
@@ -438,8 +434,7 @@ template <class pNT> class Polynomial :
   the ring |NT[x]|: $f = g*q + r$.  \precond |NT| is a field, i.e.,
   there exists a division operation on |NT|.  }*/
 
-  friend double to_double
-  CGAL_NULL_TMPL_ARGS (const Polynomial<NT>& p);
+  friend double to_double <> (const Polynomial<NT>& p);
 
 
   Polynomial<NT>& operator += (const Polynomial<NT>& p1)
@@ -565,7 +560,7 @@ operation on two instances of the ring type.}*/
 // CLASS TEMPLATE int: 
 /*{\Xsubst 
  iterator_traits<Forward_iterator>::value_type#int
-CGAL_NULL_TMPL_ARGS#
+<>#
 }*/
 
 /*{\Xanpage{Polynomial}{int}{Polynomials in one variable}{p}}*/
@@ -715,20 +710,16 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
 
                           
   friend Polynomial<int>
-    operator + CGAL_NULL_TMPL_ARGS (const Polynomial<int>&, 
-                                    const Polynomial<int>&);
+    operator + <> (const Polynomial<int>&, const Polynomial<int>&);
 
   friend Polynomial<int>
-    operator - CGAL_NULL_TMPL_ARGS (const Polynomial<int>&, 
-                                    const Polynomial<int>&);
+    operator - <> (const Polynomial<int>&, const Polynomial<int>&);
 
   friend Polynomial<int>
-    operator * CGAL_NULL_TMPL_ARGS (const Polynomial<int>&, 
-                                    const Polynomial<int>&);
+    operator * <> (const Polynomial<int>&, const Polynomial<int>&);
 
   friend 
-
-  Polynomial<int>  operator / CGAL_NULL_TMPL_ARGS 
+  Polynomial<int>  operator / <> 
   (const Polynomial<int>& p1, const Polynomial<int>& p2);
   /*{\Xbinopfunc implements polynomial division of |p1| and |p2|. if
   |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
@@ -767,8 +758,7 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
   the ring |int[x]|: $f = g*q + r$.  \precond |int| is a field, i.e.,
   there exists a division operation on |int|.  }*/
 
-  friend double to_double
-  CGAL_NULL_TMPL_ARGS (const Polynomial<int>& p);
+  friend double to_double <> (const Polynomial<int>& p);
 
 
   Polynomial<int>& operator += (const Polynomial<int>& p1)
@@ -874,7 +864,7 @@ operation on two instances of the ring type.}*/
 // CLASS TEMPLATE double: 
 /*{\Xsubst 
  iterator_traits<Forward_iterator>::value_type#double
-CGAL_NULL_TMPL_ARGS#
+<>#
 }*/
 
 /*{\Xanpage{Polynomial}{double}{Polynomials in one variable}{p}}*/
@@ -1023,20 +1013,16 @@ determines the sign for the limit process $x \rightarrow \infty$.
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
                      
   friend Polynomial<double>
-    operator + CGAL_NULL_TMPL_ARGS (const Polynomial<double>&, 
-                                    const Polynomial<double>&);
+    operator + <> (const Polynomial<double>&, const Polynomial<double>&);
 
   friend Polynomial<double>
-    operator - CGAL_NULL_TMPL_ARGS (const Polynomial<double>&, 
-                                    const Polynomial<double>&);
+    operator - <> (const Polynomial<double>&, const Polynomial<double>&);
 
   friend Polynomial<double>
-    operator * CGAL_NULL_TMPL_ARGS (const Polynomial<double>&, 
-                                    const Polynomial<double>&);
+    operator * <> (const Polynomial<double>&, const Polynomial<double>&);
 
   friend 
-
-  Polynomial<double>  operator / CGAL_NULL_TMPL_ARGS 
+  Polynomial<double>  operator / <> 
   (const Polynomial<double>& p1, const Polynomial<double>& p2);
   /*{\Xbinopfunc implements polynomial division of |p1| and |p2|. if
   |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
@@ -1075,8 +1061,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the ring |double[x]|: $f = g*q + r$.  \precond |double| is a field, i.e.,
   there exists a division operation on |double|.  }*/
 
-  friend double to_double
-  CGAL_NULL_TMPL_ARGS (const Polynomial<double>& p);
+  friend double to_double <> (const Polynomial<double>& p);
 
 
   Polynomial<double>& operator += (const Polynomial<double>& p1)

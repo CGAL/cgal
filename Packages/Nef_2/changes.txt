@@ -1,5 +1,8 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.49 (17 Nov 2003)
+- Replaced obsolete CGAL_NULL_TMPL_ARGS with <>
+
 1.48 (19. October 2003)
 - Fix MipsPro warnings.
 
