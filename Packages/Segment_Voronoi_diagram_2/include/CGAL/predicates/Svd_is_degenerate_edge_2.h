@@ -33,17 +33,26 @@ CGAL_BEGIN_NAMESPACE
 
 
 
-template<class R, class Method_tag>
+template<class K, class Method_tag>
 class Svd_is_degenerate_edge_C2
 {
+private:
+  typedef CGAL::Svd_voronoi_vertex_2<K,Method_tag>  Voronoi_vertex_2;
+
 public:
-  typedef typename R::Site_2      Site_2;
+  typedef typename K::Site_2      Site_2;
 
 public:
   bool operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& s)
   {
-    return false;
+    Voronoi_vertex_2 vpqr(p, q, r);
+    if ( vpqr.incircle(s) == POSITIVE ) { return false; }
+
+    Voronoi_vertex_2 vqps(q, p, s);
+    if ( vqps.incircle(r) == POSITIVE ) { return false; }
+
+    return true;
   }
 
 };
