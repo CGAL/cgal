@@ -625,4 +625,9 @@ double to_double(const Quotient<Gmpz>& quot)
 }
 CGAL_END_NAMESPACE
 
+
+#if defined( _MSC_VER ) && ( _MSC_VER == 1300 )
+  CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CGAL::Gmpz);
+  CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CGAL::Gmpz*);
+#endif 
 #endif // CGAL_GMPZ_H

@@ -442,4 +442,9 @@ struct Rational_traits<Gmpq> {
 
 CGAL_END_NAMESPACE
 
+#if defined( _MSC_VER ) && ( _MSC_VER == 1300 )
+  CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CGAL::Gmpq);
+  CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CGAL::Gmpq*);
+#endif 
+
 #endif // CGAL_GMPQ_H
