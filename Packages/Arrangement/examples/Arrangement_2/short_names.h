@@ -7,7 +7,7 @@
 #define Simple_cartesian                SC
 #define Filtered_kernel                 FKl
 #define Segment_2                       St
-#define Point_2                         Pt
+#define Point_2                         Pt2
 #define Topological_map                 TM
 #define Planar_map_2                    PMp
 #define Arrangement_2                   Ar
