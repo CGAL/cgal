@@ -1,17 +1,19 @@
 #!/usr/local/bin/perl -w
 #
-# version: 3.0
 # author:  Geert-Jan Giezeman
 #
 # This script creates a WWW page with a table of test suite results.
 #
 # Usage:
-#   create_testpage [-p previous-release] <directory>
+#   create_testresult_page <directory>
+
+# Creates the following files :
+# - results-$version.shtml
+# - versions.inc (contains the version selector)
+# - index.shtml -> results-$version.shtml (symlink)
 
 use Cwd;
 use strict;
-use vars qw($opt_p);
-use Getopt::Std;
 
 my ($PLATFORMS_BESIDE_RESULTS, $PLATFORMS_REF_BETWEEN_RESULTS)=(1,1);
 
@@ -19,8 +21,6 @@ my $SCRIPTDIR = './';
 
 my $TEMPPAGE="tmp$$.html";
 my $TEMPPAGE2="tmp2$$.html";
-my $WWWPAGE;
-my $VERSIONS_WEBPAGE;
 my $release_name;
 my @platforms_to_do;
 my @known_platforms;
@@ -257,7 +257,7 @@ EOF
 </TABLE>
 EOF
     }
-    print OUTPUT "</BODY></HTML>\n";
+    print OUTPUT "</BODY>\n</HTML>\n";
 }
 
 sub parse_platform($)
@@ -407,23 +407,6 @@ EOF
     print OUTPUT "</TABLE>\n";
 }
 
-sub search_previous_release()
-{
-    if (! -r $WWWPAGE) {
-	print STDERR "Warning: no previous release known.\n";
-	print STDERR "Did you forget the -p option?.\n";
-	return;
-    }
-    open INPUT, $WWWPAGE or die;
-    while (<INPUT>) {
-	if (m/<!-- previous version: (.*) -->/) {
-	    $opt_p = $1;
-	    last;
-	}
-    }
-    close INPUT;
-}
-
 sub result_filename($)
 {
     return "results".substr($_[0],4).".shtml";
@@ -455,12 +438,6 @@ Downloading internal releases</A></LI>
 <LI><A HREF="http://www.cgal.org/Members/Manual_test/${release_name}/" style="color: red">
 The documentation of this release</A></LI>
 EOF
-    if (defined($opt_p)) {
-	my $prev_page = result_filename($opt_p);
-	print OUTPUT<<"EOF";
-<LI><A HREF="$prev_page" TARGET="results">Test Results $opt_p</A></LI>
-EOF
-    }
     if ( -r "announce.html" ) {
 	print OUTPUT<<"EOF";
 <LI><A HREF="$release_name/announce.html">Announcement of this release</A></LI>
@@ -476,10 +453,8 @@ EOF
 
 sub main()
 {
-    getopts('p:');
-    
     if (scalar(@ARGV)  != 1 ) {
-	print STDERR "usage: $0 [-p previous-release-directory] directory\n";
+	print STDERR "usage: $0 directory\n";
 	exit 1;
     }
 
@@ -492,15 +467,6 @@ sub main()
 	print STDERR "$release_name is not a valid directory\n";
 	exit 1;
     }
-    $WWWPAGE = result_filename($release_name);
-
-
-    if (defined($opt_p)) {
-	$opt_p =~ s</?\s*$><>;
-    } else {
-	search_previous_release();
-    }
-    undef($opt_p) if (defined ($opt_p) and $opt_p =~ /^\s*$/);
 
 #    init_known_platforms();
     chdir $testresult_dir or die;
@@ -521,6 +487,8 @@ sub main()
     print_resultpage();
     close OUTPUT;
     chdir "..";
+
+    my $WWWPAGE = result_filename($release_name);
     rename $TEMPPAGE, $WWWPAGE;
     chmod 0644, $WWWPAGE;
     unlink "index.shtml";
@@ -528,7 +496,7 @@ sub main()
 
     # Deal with the versions.inc file.
     write_select();
-    $VERSIONS_WEBPAGE="versions.inc";
+    my $VERSIONS_WEBPAGE="versions.inc";
     rename $TEMPPAGE2, $VERSIONS_WEBPAGE;
     chmod 0644, $VERSIONS_WEBPAGE;
 }

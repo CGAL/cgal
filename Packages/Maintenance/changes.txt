@@ -1,6 +1,6 @@
 11 February 2005 Sylvain Pion
-- create_testresult_page : cleanups, and fix version selector when first
-  execution.
+- create_testresult_page : cleanups, fix version selector when first
+  execution, and remove obsolete option "-p".
 
 7 February 2005 Sylvain Pion
 - Don't use frames in test suites pages, and other improvements.
