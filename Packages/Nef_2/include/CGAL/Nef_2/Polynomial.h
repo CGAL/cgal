@@ -1419,17 +1419,10 @@ Polynomial<NT> operator / (const Polynomial<NT>& p1,
                            const Polynomial<NT>& p2)
 { return divop(p1,p2, typename Number_type_traits<NT>::Has_gcd()); }
 
-/*
 template <class NT> inline
 Polynomial<NT> operator % (const Polynomial<NT>& p1,
 			   const Polynomial<NT>& p2)
 { return modop(p1,p2, typename Number_type_traits<NT>::Has_gcd()); }
-*/
-
-template <class NT> inline
-Polynomial<NT> operator % (const Polynomial<NT>& p1,
-			   const Polynomial<NT>& p2)
-{ return modop(p1,p2,Number_type_traits<NT>::Has_gcd()); }
 
 
 template <class NT> 
@@ -1536,9 +1529,9 @@ template <class NT> CGAL::Sign
   inline    Polynomial<int> operator / 
   (const int& num, const Polynomial<int>& p2)
   { return (Polynomial<int>(num)/p2); }
-//  inline    Polynomial<int> operator % 
-  //  (const int& num, const Polynomial<int>& p2)
-     //  { return (Polynomial<int>(num)%p2); }
+  inline    Polynomial<int> operator % 
+  (const int& num, const Polynomial<int>& p2)
+  { return (Polynomial<int>(num)%p2); }
 
   // righthand side
   inline    Polynomial<int> operator + 
@@ -1553,9 +1546,9 @@ template <class NT> CGAL::Sign
   inline    Polynomial<int> operator / 
   (const Polynomial<int>& p1, const int& num)
   { return (p1 / Polynomial<int>(num)); }
-//  inline    Polynomial<int> operator % 
-//  (const Polynomial<int>& p1, const int& num)
-//  { return (p1 % Polynomial<int>(num)); }
+  inline    Polynomial<int> operator % 
+  (const Polynomial<int>& p1, const int& num)
+  { return (p1 % Polynomial<int>(num)); }
 
   // lefthand side
   inline    bool operator ==  
@@ -1688,9 +1681,9 @@ template <class NT> CGAL::Sign
   inline    Polynomial<double> operator / 
   (const double& num, const Polynomial<double>& p2)
   { return (Polynomial<double>(num)/p2); }
-//  inline    Polynomial<double> operator %
-//  (const double& num, const Polynomial<double>& p2)
-//  { return (Polynomial<double>(num)%p2); }
+  inline    Polynomial<double> operator %
+  (const double& num, const Polynomial<double>& p2)
+  { return (Polynomial<double>(num)%p2); }
 
   // righthand side
   inline    Polynomial<double> operator + 
@@ -1705,9 +1698,9 @@ template <class NT> CGAL::Sign
   inline    Polynomial<double> operator / 
   (const Polynomial<double>& p1, const double& num)
   { return (p1 / Polynomial<double>(num)); }
-//  inline    Polynomial<double> operator % 
-  //  (const Polynomial<double>& p1, const double& num)
-  //  { return (p1 % Polynomial<double>(num)); }
+  inline    Polynomial<double> operator % 
+  (const Polynomial<double>& p1, const double& num)
+  { return (p1 % Polynomial<double>(num)); }
 
   // lefthand side
   inline    bool operator ==  
@@ -1920,7 +1913,6 @@ void print_monomial(std::ostream& os, const NT& n, int i)
 template <class NT>
 std::ostream& operator << (std::ostream& os, const Polynomial<NT>& p)
 {
-  os << "P";
   int i;
   switch( os.iword(CGAL::IO::mode) )
   {
