@@ -1,3 +1,7 @@
+Version 1.37 (28 jul 00)
+new fixes in typenames
+remove in Delaunay documented
+
 Version 1.36 (17 jul 00)
 fixes in typenames in Delaunay::remove
 call to Filtered_exact commented in examples to test on all platforms
