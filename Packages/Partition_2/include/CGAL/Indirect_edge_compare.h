@@ -45,13 +45,15 @@ class Indirect_edge_compare
      typedef typename Traits::Compare_x_2        Compare_x_2;
      typedef typename Traits::Construct_line_2   Construct_line_2;
      typedef typename Traits::Compare_x_at_y_2   Compare_x_at_y_2;
+     typedef typename Traits::Is_horizontal_2    Is_horizontal_2;
      typedef typename Traits::Line_2             Line_2;
 
      Indirect_edge_compare() : 
           _compare_y_2(Traits().compare_y_2_object()),
           _compare_x_2(Traits().compare_x_2_object()),
           _construct_line_2(Traits().construct_line_2_object()),
-          _compare_x_at_y_2(Traits().compare_x_at_y_2_object())
+          _compare_x_at_y_2(Traits().compare_x_at_y_2_object()),
+          _is_horizontal_2(Traits().is_horizontal_2_object())
      { }
      
      // determines if the edge (edge_vtx_1, edge_vtx_1++) has a larger
@@ -106,10 +108,10 @@ class Indirect_edge_compare
         {
           // construct supporting line
           Line_2  l_p = _construct_line_2(*p, *after_p);
-          if (l_p.is_horizontal()) 
+          if (is_horizontal(l_p)) 
           {
               Line_2  l_q = _construct_line_2(*q, *after_q);
-              if (l_q.is_horizontal())  // shouldn't ever happen, since these
+              if (is_horizontal(l_q))  // shouldn't ever happen, since these
               {                         // can't both be in sweep structure at
                                         // the same time
                  return std::max((*p).x(), (*after_p).x()) > 
@@ -130,7 +132,7 @@ class Indirect_edge_compare
              {
                 // construct the other line
                 Line_2 l_q = _construct_line_2(*q, *after_q); 
-                if (l_q.is_horizontal())     // p is not horizontal
+                if (is_horizontal(l_q))     // p is not horizontal
                 {
                    return (*q).x() > l_p.x_at_y((*q).y());
                 }
@@ -150,10 +152,11 @@ class Indirect_edge_compare
      }
 
    private:
-     Compare_y_2   _compare_y_2;
-     Compare_x_2   _compare_x_2;
+     Compare_y_2      _compare_y_2;
+     Compare_x_2      _compare_x_2;
      Construct_line_2 _construct_line_2;
      Compare_x_at_y_2 _compare_x_at_y_2;
+     Is_horizontal_2  _is_horizontal_2;
 };
 
 }
