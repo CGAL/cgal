@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.45 (05 Dec 2001)
+   - Changed lines of more than 79 characters in the demo dir.
+
 2.44 (04 Dec 2001)
    - removed dependency from ch_value_type. Replaced with iterator_traits::
      value_type.
