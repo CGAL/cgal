@@ -233,6 +233,7 @@ void test_In_place_list() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -249,8 +250,8 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -269,7 +270,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -325,6 +326,7 @@ void test_In_place_list() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -341,8 +343,8 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -361,7 +363,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -379,7 +381,7 @@ void test_In_place_list() {
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -429,6 +431,7 @@ void test_In_place_list() {
     
         // Default constructor.
         Const_iterator z = Const_iterator();
+        z = Const_iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Const_iterator i = c_begin;
@@ -445,8 +448,8 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Const_iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Const_iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -465,7 +468,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Const_iterator j = i++;
+                CGAL_assertion_code( Const_iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -483,7 +486,7 @@ void test_In_place_list() {
         int su = 0;
         int k  = 5;
         do {
-            Const_iterator j = --i;
+            CGAL_assertion_code(Const_iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -560,6 +563,7 @@ void test_In_place_list() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -576,8 +580,8 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -596,7 +600,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -652,6 +656,7 @@ void test_In_place_list() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -668,8 +673,8 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -688,7 +693,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -706,7 +711,7 @@ void test_In_place_list() {
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -755,6 +760,7 @@ void test_In_place_list() {
     
         // Default constructor.
         Const_iterator z = Const_iterator();
+        z = Const_iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Const_iterator i = c_begin;
@@ -771,8 +777,8 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Const_iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Const_iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -791,7 +797,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Const_iterator j = i++;
+                CGAL_assertion_code( Const_iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -809,7 +815,7 @@ void test_In_place_list() {
         int su = 0;
         int k  = 5;
         do {
-            Const_iterator j = --i;
+            CGAL_assertion_code(Const_iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -855,10 +861,12 @@ void test_In_place_list() {
     l.insert(i,*new item(5));
     l.insert(p,*new item(5));
     int a[7] = {2,5,4,3,5,1,2};
+    a[0] = 2; // avoids warning with NDEBUG
     CGAL_assertion( std::equal( l.begin(), l.end(), a));
     l.sort();
     l.unique();
     int b[5] = {1,2,3,4,5};
+    b[0] = 1; // avoids warning with NDEBUG
     CGAL_assertion( l.size() == 5);
     CGAL_assertion( std::equal( l.begin(), l.end(), b));
   }

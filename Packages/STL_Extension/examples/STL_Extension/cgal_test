@@ -20,15 +20,17 @@ ERRORFILE=error.txt
 compile_and_run()
 {
   echo "Compiling $1 ... "
+  SUCCES="y"
   if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
            TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
            TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then
-    echo "   compilation of $1 succeeded" >> $ERRORFILE
+    echo "   succesful compilation of $1" >> $ERRORFILE
   else
-    echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
+    echo "   ERROR:    compilation of $1" >> $ERRORFILE
+    SUCCES=""
   fi
 
-  if [ -f $1 ] ; then
+  if [ -n "${SUCCES}" ] ; then
      OUTPUTFILE=ProgramOutput.$1.$PLATFORM
     rm -f $OUTPUTFILE
     COMMAND="./$1"
@@ -41,12 +43,12 @@ compile_and_run()
     echo "Executing $1 ... "
     echo
     if eval 2>&1 $COMMAND > $OUTPUTFILE ; then
-      echo "   execution of $1 succeeded" >> $ERRORFILE
+      echo "   succesful execution   of $1" >> $ERRORFILE
     else
-      echo "   ERROR: execution of $1 failed" >> $ERRORFILE
+      echo "   ERROR:    execution   of $1" >> $ERRORFILE
     fi
   else
-    echo "   ERROR: could not execute $1" >> $ERRORFILE
+    echo   "   ERROR:    not executed   $1" >> $ERRORFILE
   fi
 
   eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "

@@ -4,6 +4,15 @@
 
 
 //---------------------------------------------------------------------
+//	revision 2.18
+//---------------------------------------------------------------------
+
+DOCS: Changed compose function/class.
+SRC : Replace reverse_bidirectional_iterator by reverse_iterator.
+SRC : Fixed composition class/functions.
+TEST: Initial revision
+
+//---------------------------------------------------------------------
 //	revision 2.17
 //---------------------------------------------------------------------
 

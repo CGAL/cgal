@@ -227,6 +227,7 @@ void test_Iterator_identity() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -243,8 +244,8 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -263,7 +264,7 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -319,6 +320,7 @@ void test_Iterator_identity() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -335,8 +337,8 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -355,7 +357,7 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -373,7 +375,7 @@ void test_Iterator_identity() {
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -428,6 +430,7 @@ void test_Iterator_identity() {
     
         // Default constructor.
         C_Iterator z = C_Iterator();
+        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -444,8 +447,8 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                C_Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( C_Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -464,7 +467,7 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                C_Iterator j = i++;
+                CGAL_assertion_code( C_Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -482,7 +485,7 @@ void test_Iterator_identity() {
         int su = 0;
         int k  = 5;
         do {
-            C_Iterator j = --i;
+            CGAL_assertion_code(C_Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -544,6 +547,7 @@ void test_Iterator_identity() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -560,8 +564,8 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -580,7 +584,7 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -636,6 +640,7 @@ void test_Iterator_identity() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -652,8 +657,8 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -672,7 +677,7 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -690,7 +695,7 @@ void test_Iterator_identity() {
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -731,6 +736,7 @@ void test_Iterator_identity() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -747,8 +753,8 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -767,7 +773,7 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -785,7 +791,7 @@ void test_Iterator_identity() {
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -821,11 +827,12 @@ void test_Iterator_identity() {
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        int su = begin[0]
-               + begin[1]
-               + begin[2]
-               + begin[3]
-               + begin[4];
+        CGAL_assertion_code(
+          int su = begin[0]
+                 + begin[1]
+                 + begin[2]
+                 + begin[3]
+                 + begin[4];)
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -846,6 +853,7 @@ void test_Iterator_identity() {
         jj = 4 + jj;
         CGAL_assertion( jj == end);
         Iterator ij = jj - 5;
+        ij = jj - 5; // avoids warning with NDEBUG
         CGAL_assertion( ij == begin);
     
         // Difference test.
@@ -924,6 +932,7 @@ void test_Iterator_identity() {
     
         // Default constructor.
         C_Iterator z = C_Iterator();
+        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -940,8 +949,8 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                C_Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( C_Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -960,7 +969,7 @@ void test_Iterator_identity() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                C_Iterator j = i++;
+                CGAL_assertion_code( C_Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -978,7 +987,7 @@ void test_Iterator_identity() {
         int su = 0;
         int k  = 5;
         do {
-            C_Iterator j = --i;
+            CGAL_assertion_code(C_Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -1014,11 +1023,12 @@ void test_Iterator_identity() {
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == c_begin[k]);
         }
-        int su = c_begin[0]
-               + c_begin[1]
-               + c_begin[2]
-               + c_begin[3]
-               + c_begin[4];
+        CGAL_assertion_code(
+          int su = c_begin[0]
+                 + c_begin[1]
+                 + c_begin[2]
+                 + c_begin[3]
+                 + c_begin[4];)
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -1039,6 +1049,7 @@ void test_Iterator_identity() {
         jj = 4 + jj;
         CGAL_assertion( jj == c_end);
         C_Iterator ij = jj - 5;
+        ij = jj - 5; // avoids warning with NDEBUG
         CGAL_assertion( ij == c_begin);
     
         // Difference test.
@@ -1103,6 +1114,7 @@ void test_Circulator_identity() {
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -1119,8 +1131,8 @@ void test_Circulator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -1139,7 +1151,7 @@ void test_Circulator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -1195,6 +1207,7 @@ void test_Circulator_identity() {
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -1211,8 +1224,8 @@ void test_Circulator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -1231,7 +1244,7 @@ void test_Circulator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -1249,7 +1262,7 @@ void test_Circulator_identity() {
         int su = 0;
         int k  = 5;
         do {
-            Circulator j = --i;
+            CGAL_assertion_code(Circulator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -1298,13 +1311,14 @@ void test_Circulator_identity() {
         CGAL_assertion( k1.key == 6);
         CGAL_assertion( k2.key == 6);
         CGAL_assertion( (*p1).key == 6);
-        Circulator::size_type s = 5;
+        CGAL_assertion_code( Circulator::size_type s = 5;)
         CGAL_assertion( s == 5);
-        Circulator::difference_type d = -5;
+        CGAL_assertion_code(Circulator::difference_type d = -5;)
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -1360,6 +1374,7 @@ Assert_bidirectional_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -1376,8 +1391,8 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            C_Circulator j = ++i;
-            CGAL_assertion(  i ==  j);
+            CGAL_assertion_code( C_Circulator j =) ++i;
+            CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key);
             }
@@ -1396,7 +1411,7 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            C_Circulator j = i++;
+            CGAL_assertion_code( C_Circulator j =) i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key + 1);
@@ -1414,7 +1429,7 @@ Assert_bidirectional_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        C_Circulator j = --i;
+        CGAL_assertion_code(C_Circulator j =) --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i).key == (*j).key);
         CGAL_assertion( k == (*i).key);
@@ -1463,13 +1478,14 @@ Assert_bidirectional_category(c_begin);
     CGAL_assertion( k1.key == 6);
     CGAL_assertion( k2.key == 6);
     CGAL_assertion( (*p1).key == 6);
-    C_Circulator::size_type s = 5;
+    CGAL_assertion_code( C_Circulator::size_type s = 5;)
     CGAL_assertion( s == 5);
-    C_Circulator::difference_type d = -5;
+    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -1532,6 +1548,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -1548,8 +1565,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -1568,7 +1585,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -1624,6 +1641,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -1640,8 +1658,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -1660,7 +1678,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -1678,7 +1696,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            Circulator j = --i;
+            CGAL_assertion_code(Circulator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -1719,6 +1737,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -1735,8 +1754,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -1755,7 +1774,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -1773,7 +1792,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            Circulator j = --i;
+            CGAL_assertion_code(Circulator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -1809,11 +1828,12 @@ l2.destroy();
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        int su = begin[0]
-               + begin[1]
-               + begin[2]
-               + begin[3]
-               + begin[4];
+        CGAL_assertion_code(
+          int su = begin[0]
+                 + begin[1]
+                 + begin[2]
+                 + begin[3]
+                 + begin[4];)
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -1834,6 +1854,7 @@ l2.destroy();
         jj = 4 + jj;
         CGAL_assertion( jj == begin);
         Circulator ij = jj - 5;
+        ij = jj - 5; // avoids warning with NDEBUG
         CGAL_assertion( ij == begin);
     
         // Difference test.
@@ -1882,13 +1903,14 @@ l2.destroy();
         CGAL_assertion( k1 == 6);
         CGAL_assertion( k2 == 6);
         CGAL_assertion( (*p1) == 6);
-        Circulator::size_type s = 5;
+        CGAL_assertion_code( Circulator::size_type s = 5;)
         CGAL_assertion( s == 5);
-        Circulator::difference_type d = -5;
+        CGAL_assertion_code(Circulator::difference_type d = -5;)
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -1967,6 +1989,7 @@ Assert_random_access_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -1983,8 +2006,8 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            C_Circulator j = ++i;
-            CGAL_assertion(  i ==  j);
+            CGAL_assertion_code( C_Circulator j =) ++i;
+            CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j));
             }
@@ -2003,7 +2026,7 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            C_Circulator j = i++;
+            CGAL_assertion_code( C_Circulator j =) i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j) + 1);
@@ -2021,7 +2044,7 @@ Assert_random_access_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        C_Circulator j = --i;
+        CGAL_assertion_code(C_Circulator j =) --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i) == (*j));
         CGAL_assertion( k == (*i));
@@ -2057,11 +2080,12 @@ Assert_random_access_category(c_begin);
     for( k = 0; k < 5; k++) {
         CGAL_assertion( 1+k == c_begin[k]);
     }
-    int su = c_begin[0]
-           + c_begin[1]
-           + c_begin[2]
-           + c_begin[3]
-           + c_begin[4];
+    CGAL_assertion_code(
+      int su = c_begin[0]
+             + c_begin[1]
+             + c_begin[2]
+             + c_begin[3]
+             + c_begin[4];)
     CGAL_assertion( su == 15);
 
     // Jump around.
@@ -2082,6 +2106,7 @@ Assert_random_access_category(c_begin);
     jj = 4 + jj;
     CGAL_assertion( jj == c_begin);
     C_Circulator ij = jj - 5;
+    ij = jj - 5; // avoids warning with NDEBUG
     CGAL_assertion( ij == c_begin);
 
     // Difference test.
@@ -2110,13 +2135,14 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( k1 == 6);
     CGAL_assertion( k2 == 6);
     CGAL_assertion( (*p1) == 6);
-    C_Circulator::size_type s = 5;
+    CGAL_assertion_code( C_Circulator::size_type s = 5;)
     CGAL_assertion( s == 5);
-    C_Circulator::difference_type d = -5;
+    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -2204,6 +2230,7 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2220,8 +2247,8 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -2240,7 +2267,7 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -2296,6 +2323,7 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2312,8 +2340,8 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -2332,7 +2360,7 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -2350,7 +2378,7 @@ void test_Iterator_project() {
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -2405,6 +2433,7 @@ void test_Iterator_project() {
     
         // Default constructor.
         C_Iterator z = C_Iterator();
+        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -2421,8 +2450,8 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                C_Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( C_Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -2441,7 +2470,7 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                C_Iterator j = i++;
+                CGAL_assertion_code( C_Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -2459,7 +2488,7 @@ void test_Iterator_project() {
         int su = 0;
         int k  = 5;
         do {
-            C_Iterator j = --i;
+            CGAL_assertion_code(C_Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -2522,6 +2551,7 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2538,8 +2568,8 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -2558,7 +2588,7 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -2614,6 +2644,7 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2630,8 +2661,8 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -2650,7 +2681,7 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -2668,7 +2699,7 @@ void test_Iterator_project() {
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -2723,6 +2754,7 @@ void test_Iterator_project() {
     
         // Default constructor.
         C_Iterator z = C_Iterator();
+        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -2739,8 +2771,8 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                C_Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( C_Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -2759,7 +2791,7 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                C_Iterator j = i++;
+                CGAL_assertion_code( C_Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -2777,7 +2809,7 @@ void test_Iterator_project() {
         int su = 0;
         int k  = 5;
         do {
-            C_Iterator j = --i;
+            CGAL_assertion_code(C_Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -2840,6 +2872,7 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2856,8 +2889,8 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -2876,7 +2909,7 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -2932,6 +2965,7 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2948,8 +2982,8 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -2968,7 +3002,7 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -2986,7 +3020,7 @@ void test_Iterator_project() {
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -3027,6 +3061,7 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -3043,8 +3078,8 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -3063,7 +3098,7 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -3081,7 +3116,7 @@ void test_Iterator_project() {
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -3117,11 +3152,12 @@ void test_Iterator_project() {
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        int su = begin[0]
-               + begin[1]
-               + begin[2]
-               + begin[3]
-               + begin[4];
+        CGAL_assertion_code(
+          int su = begin[0]
+                 + begin[1]
+                 + begin[2]
+                 + begin[3]
+                 + begin[4];)
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -3142,6 +3178,7 @@ void test_Iterator_project() {
         jj = 4 + jj;
         CGAL_assertion( jj == end);
         Iterator ij = jj - 5;
+        ij = jj - 5; // avoids warning with NDEBUG
         CGAL_assertion( ij == begin);
     
         // Difference test.
@@ -3220,6 +3257,7 @@ void test_Iterator_project() {
     
         // Default constructor.
         C_Iterator z = C_Iterator();
+        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -3236,8 +3274,8 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                C_Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( C_Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -3256,7 +3294,7 @@ void test_Iterator_project() {
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                C_Iterator j = i++;
+                CGAL_assertion_code( C_Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -3274,7 +3312,7 @@ void test_Iterator_project() {
         int su = 0;
         int k  = 5;
         do {
-            C_Iterator j = --i;
+            CGAL_assertion_code(C_Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -3310,11 +3348,12 @@ void test_Iterator_project() {
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == c_begin[k]);
         }
-        int su = c_begin[0]
-               + c_begin[1]
-               + c_begin[2]
-               + c_begin[3]
-               + c_begin[4];
+        CGAL_assertion_code(
+          int su = c_begin[0]
+                 + c_begin[1]
+                 + c_begin[2]
+                 + c_begin[3]
+                 + c_begin[4];)
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -3335,6 +3374,7 @@ void test_Iterator_project() {
         jj = 4 + jj;
         CGAL_assertion( jj == c_end);
         C_Iterator ij = jj - 5;
+        ij = jj - 5; // avoids warning with NDEBUG
         CGAL_assertion( ij == c_begin);
     
         // Difference test.
@@ -3401,6 +3441,7 @@ void test_Circulator_project() {
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -3417,8 +3458,8 @@ void test_Circulator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -3437,7 +3478,7 @@ void test_Circulator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -3493,6 +3534,7 @@ void test_Circulator_project() {
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -3509,8 +3551,8 @@ void test_Circulator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -3529,7 +3571,7 @@ void test_Circulator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -3547,7 +3589,7 @@ void test_Circulator_project() {
         int su = 0;
         int k  = 5;
         do {
-            Circulator j = --i;
+            CGAL_assertion_code(Circulator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -3596,13 +3638,14 @@ void test_Circulator_project() {
         CGAL_assertion( k1.key == 6);
         CGAL_assertion( k2.key == 6);
         CGAL_assertion( (*p1).key == 6);
-        Circulator::size_type s = 5;
+        CGAL_assertion_code( Circulator::size_type s = 5;)
         CGAL_assertion( s == 5);
-        Circulator::difference_type d = -5;
+        CGAL_assertion_code(Circulator::difference_type d = -5;)
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -3658,6 +3701,7 @@ Assert_bidirectional_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -3674,8 +3718,8 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            C_Circulator j = ++i;
-            CGAL_assertion(  i ==  j);
+            CGAL_assertion_code( C_Circulator j =) ++i;
+            CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key);
             }
@@ -3694,7 +3738,7 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            C_Circulator j = i++;
+            CGAL_assertion_code( C_Circulator j =) i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key + 1);
@@ -3712,7 +3756,7 @@ Assert_bidirectional_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        C_Circulator j = --i;
+        CGAL_assertion_code(C_Circulator j =) --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i).key == (*j).key);
         CGAL_assertion( k == (*i).key);
@@ -3761,13 +3805,14 @@ Assert_bidirectional_category(c_begin);
     CGAL_assertion( k1.key == 6);
     CGAL_assertion( k2.key == 6);
     CGAL_assertion( (*p1).key == 6);
-    C_Circulator::size_type s = 5;
+    CGAL_assertion_code( C_Circulator::size_type s = 5;)
     CGAL_assertion( s == 5);
-    C_Circulator::difference_type d = -5;
+    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -3832,6 +3877,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -3848,8 +3894,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -3868,7 +3914,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -3924,6 +3970,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -3940,8 +3987,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -3960,7 +4007,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -3978,7 +4025,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            Circulator j = --i;
+            CGAL_assertion_code(Circulator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -4027,13 +4074,14 @@ l2.destroy();
         CGAL_assertion( k1.key == 6);
         CGAL_assertion( k2.key == 6);
         CGAL_assertion( (*p1).key == 6);
-        Circulator::size_type s = 5;
+        CGAL_assertion_code( Circulator::size_type s = 5;)
         CGAL_assertion( s == 5);
-        Circulator::difference_type d = -5;
+        CGAL_assertion_code(Circulator::difference_type d = -5;)
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -4089,6 +4137,7 @@ Assert_bidirectional_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -4105,8 +4154,8 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            C_Circulator j = ++i;
-            CGAL_assertion(  i ==  j);
+            CGAL_assertion_code( C_Circulator j =) ++i;
+            CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key);
             }
@@ -4125,7 +4174,7 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            C_Circulator j = i++;
+            CGAL_assertion_code( C_Circulator j =) i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key + 1);
@@ -4143,7 +4192,7 @@ Assert_bidirectional_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        C_Circulator j = --i;
+        CGAL_assertion_code(C_Circulator j =) --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i).key == (*j).key);
         CGAL_assertion( k == (*i).key);
@@ -4192,13 +4241,14 @@ Assert_bidirectional_category(c_begin);
     CGAL_assertion( k1.key == 6);
     CGAL_assertion( k2.key == 6);
     CGAL_assertion( (*p1).key == 6);
-    C_Circulator::size_type s = 5;
+    CGAL_assertion_code( C_Circulator::size_type s = 5;)
     CGAL_assertion( s == 5);
-    C_Circulator::difference_type d = -5;
+    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -4263,6 +4313,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -4279,8 +4330,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -4299,7 +4350,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -4355,6 +4406,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -4371,8 +4423,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -4391,7 +4443,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -4409,7 +4461,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            Circulator j = --i;
+            CGAL_assertion_code(Circulator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -4450,6 +4502,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -4466,8 +4519,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -4486,7 +4539,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -4504,7 +4557,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            Circulator j = --i;
+            CGAL_assertion_code(Circulator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -4540,11 +4593,12 @@ l2.destroy();
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        int su = begin[0]
-               + begin[1]
-               + begin[2]
-               + begin[3]
-               + begin[4];
+        CGAL_assertion_code(
+          int su = begin[0]
+                 + begin[1]
+                 + begin[2]
+                 + begin[3]
+                 + begin[4];)
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -4565,6 +4619,7 @@ l2.destroy();
         jj = 4 + jj;
         CGAL_assertion( jj == begin);
         Circulator ij = jj - 5;
+        ij = jj - 5; // avoids warning with NDEBUG
         CGAL_assertion( ij == begin);
     
         // Difference test.
@@ -4613,13 +4668,14 @@ l2.destroy();
         CGAL_assertion( k1 == 6);
         CGAL_assertion( k2 == 6);
         CGAL_assertion( (*p1) == 6);
-        Circulator::size_type s = 5;
+        CGAL_assertion_code( Circulator::size_type s = 5;)
         CGAL_assertion( s == 5);
-        Circulator::difference_type d = -5;
+        CGAL_assertion_code(Circulator::difference_type d = -5;)
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -4698,6 +4754,7 @@ Assert_random_access_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -4714,8 +4771,8 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            C_Circulator j = ++i;
-            CGAL_assertion(  i ==  j);
+            CGAL_assertion_code( C_Circulator j =) ++i;
+            CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j));
             }
@@ -4734,7 +4791,7 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            C_Circulator j = i++;
+            CGAL_assertion_code( C_Circulator j =) i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j) + 1);
@@ -4752,7 +4809,7 @@ Assert_random_access_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        C_Circulator j = --i;
+        CGAL_assertion_code(C_Circulator j =) --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i) == (*j));
         CGAL_assertion( k == (*i));
@@ -4788,11 +4845,12 @@ Assert_random_access_category(c_begin);
     for( k = 0; k < 5; k++) {
         CGAL_assertion( 1+k == c_begin[k]);
     }
-    int su = c_begin[0]
-           + c_begin[1]
-           + c_begin[2]
-           + c_begin[3]
-           + c_begin[4];
+    CGAL_assertion_code(
+      int su = c_begin[0]
+             + c_begin[1]
+             + c_begin[2]
+             + c_begin[3]
+             + c_begin[4];)
     CGAL_assertion( su == 15);
 
     // Jump around.
@@ -4813,6 +4871,7 @@ Assert_random_access_category(c_begin);
     jj = 4 + jj;
     CGAL_assertion( jj == c_begin);
     C_Circulator ij = jj - 5;
+    ij = jj - 5; // avoids warning with NDEBUG
     CGAL_assertion( ij == c_begin);
 
     // Difference test.
@@ -4841,13 +4900,14 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( k1 == 6);
     CGAL_assertion( k2 == 6);
     CGAL_assertion( (*p1) == 6);
-    C_Circulator::size_type s = 5;
+    CGAL_assertion_code( C_Circulator::size_type s = 5;)
     CGAL_assertion( s == 5);
-    C_Circulator::difference_type d = -5;
+    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -4944,6 +5004,7 @@ void test_Circulator_on_node() {
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -4960,8 +5021,8 @@ void test_Circulator_on_node() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -4980,7 +5041,7 @@ void test_Circulator_on_node() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -5044,13 +5105,14 @@ void test_Circulator_on_node() {
         CGAL_assertion( k1.key == 6);
         CGAL_assertion( k2.key == 6);
         CGAL_assertion( (*p1).key == 6);
-        Circulator::size_type s = 5;
+        CGAL_assertion_code( Circulator::size_type s = 5;)
         CGAL_assertion( s == 5);
-        Circulator::difference_type d = -5;
+        CGAL_assertion_code(Circulator::difference_type d = -5;)
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -5092,6 +5154,7 @@ void test_Circulator_on_node() {
     
         // Default constructor.
         C_Circulator z = C_Circulator();
+        z = C_Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Circulator i = c_begin;
@@ -5108,8 +5171,8 @@ void test_Circulator_on_node() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                C_Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( C_Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != c_begin) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -5128,7 +5191,7 @@ void test_Circulator_on_node() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                C_Circulator j = i++;
+                CGAL_assertion_code( C_Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -5159,13 +5222,14 @@ void test_Circulator_on_node() {
         CGAL_assertion( k1.key == 6);
         CGAL_assertion( k2.key == 6);
         CGAL_assertion( (*p1).key == 6);
-        C_Circulator::size_type s = 5;
+        CGAL_assertion_code( C_Circulator::size_type s = 5;)
         CGAL_assertion( s == 5);
-        C_Circulator::difference_type d = -5;
+        CGAL_assertion_code(C_Circulator::difference_type d = -5;)
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
         C_Circulator z = C_Circulator();
+        z = C_Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         C_Circulator i = c_begin;
@@ -5226,6 +5290,7 @@ void test_N_step_adaptor() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -5242,8 +5307,8 @@ void test_N_step_adaptor() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -5262,7 +5327,7 @@ void test_N_step_adaptor() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -5318,6 +5383,7 @@ void test_N_step_adaptor() {
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -5334,8 +5400,8 @@ void test_N_step_adaptor() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
                 }
@@ -5354,7 +5420,7 @@ void test_N_step_adaptor() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -5372,7 +5438,7 @@ void test_N_step_adaptor() {
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -5426,6 +5492,7 @@ Assert_bidirectional_category(c_end);
 
     // Default constructor.
     C_Iterator z = C_Iterator();
+    z = C_Iterator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Iterator i = c_begin;
@@ -5442,8 +5509,8 @@ Assert_bidirectional_category(c_end);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            C_Iterator j = ++i;
-            CGAL_assertion(  i ==  j);
+            CGAL_assertion_code( C_Iterator j =) ++i;
+            CGAL_assertion( i ==  j);
             if ( i != c_end) {
                 CGAL_assertion( (*i).key == (*j).key);
             }
@@ -5462,7 +5529,7 @@ Assert_bidirectional_category(c_end);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            C_Iterator j = i++;
+            CGAL_assertion_code( C_Iterator j =) i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_end) {
                 CGAL_assertion( (*i).key == (*j).key + 1);
@@ -5480,7 +5547,7 @@ Assert_bidirectional_category(c_end);
     int su = 0;
     int k  = 5;
     do {
-        C_Iterator j = --i;
+        CGAL_assertion_code(C_Iterator j =) --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i).key == (*j).key);
         CGAL_assertion( k == (*i).key);
@@ -5547,6 +5614,7 @@ l2.destroy();
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -5563,8 +5631,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -5583,7 +5651,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -5639,6 +5707,7 @@ l2.destroy();
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -5655,8 +5724,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -5675,7 +5744,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -5693,7 +5762,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -5734,6 +5803,7 @@ l2.destroy();
     
         // Default constructor.
         Iterator z = Iterator();
+        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -5750,8 +5820,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -5770,7 +5840,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Iterator j = i++;
+                CGAL_assertion_code( Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -5788,7 +5858,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            Iterator j = --i;
+            CGAL_assertion_code(Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -5824,11 +5894,12 @@ l2.destroy();
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        int su = begin[0]
-               + begin[1]
-               + begin[2]
-               + begin[3]
-               + begin[4];
+        CGAL_assertion_code(
+          int su = begin[0]
+                 + begin[1]
+                 + begin[2]
+                 + begin[3]
+                 + begin[4];)
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -5849,6 +5920,7 @@ l2.destroy();
         jj = 4 + jj;
         CGAL_assertion( jj == end);
         Iterator ij = jj - 5;
+        ij = jj - 5; // avoids warning with NDEBUG
         CGAL_assertion( ij == begin);
     
         // Difference test.
@@ -5927,6 +5999,7 @@ l2.destroy();
     
         // Default constructor.
         C_Iterator z = C_Iterator();
+        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -5943,8 +6016,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                C_Iterator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( C_Iterator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -5963,7 +6036,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                C_Iterator j = i++;
+                CGAL_assertion_code( C_Iterator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -5981,7 +6054,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            C_Iterator j = --i;
+            CGAL_assertion_code(C_Iterator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -6017,11 +6090,12 @@ l2.destroy();
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == c_begin[k]);
         }
-        int su = c_begin[0]
-               + c_begin[1]
-               + c_begin[2]
-               + c_begin[3]
-               + c_begin[4];
+        CGAL_assertion_code(
+          int su = c_begin[0]
+                 + c_begin[1]
+                 + c_begin[2]
+                 + c_begin[3]
+                 + c_begin[4];)
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -6042,6 +6116,7 @@ l2.destroy();
         jj = 4 + jj;
         CGAL_assertion( jj == c_end);
         C_Iterator ij = jj - 5;
+        ij = jj - 5; // avoids warning with NDEBUG
         CGAL_assertion( ij == c_begin);
     
         // Difference test.
@@ -6110,6 +6185,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -6126,8 +6202,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -6146,7 +6222,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -6202,6 +6278,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -6218,8 +6295,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -6238,7 +6315,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -6256,7 +6333,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            Circulator j = --i;
+            CGAL_assertion_code(Circulator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -6297,6 +6374,7 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -6313,8 +6391,8 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                CGAL_assertion_code( Circulator j =) ++i;
+                CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
                 }
@@ -6333,7 +6411,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                Circulator j = i++;
+                CGAL_assertion_code( Circulator j =) i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -6351,7 +6429,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            Circulator j = --i;
+            CGAL_assertion_code(Circulator j =) --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -6387,11 +6465,12 @@ l2.destroy();
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        int su = begin[0]
-               + begin[1]
-               + begin[2]
-               + begin[3]
-               + begin[4];
+        CGAL_assertion_code(
+          int su = begin[0]
+                 + begin[1]
+                 + begin[2]
+                 + begin[3]
+                 + begin[4];)
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -6412,6 +6491,7 @@ l2.destroy();
         jj = 4 + jj;
         CGAL_assertion( jj == begin);
         Circulator ij = jj - 5;
+        ij = jj - 5; // avoids warning with NDEBUG
         CGAL_assertion( ij == begin);
     
         // Difference test.
@@ -6460,13 +6540,14 @@ l2.destroy();
         CGAL_assertion( k1 == 6);
         CGAL_assertion( k2 == 6);
         CGAL_assertion( (*p1) == 6);
-        Circulator::size_type s = 5;
+        CGAL_assertion_code( Circulator::size_type s = 5;)
         CGAL_assertion( s == 5);
-        Circulator::difference_type d = -5;
+        CGAL_assertion_code(Circulator::difference_type d = -5;)
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
+        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -6545,6 +6626,7 @@ Assert_random_access_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -6561,8 +6643,8 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            C_Circulator j = ++i;
-            CGAL_assertion(  i ==  j);
+            CGAL_assertion_code( C_Circulator j =) ++i;
+            CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j));
             }
@@ -6581,7 +6663,7 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            C_Circulator j = i++;
+            CGAL_assertion_code( C_Circulator j =) i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j) + 1);
@@ -6599,7 +6681,7 @@ Assert_random_access_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        C_Circulator j = --i;
+        CGAL_assertion_code(C_Circulator j =) --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i) == (*j));
         CGAL_assertion( k == (*i));
@@ -6635,11 +6717,12 @@ Assert_random_access_category(c_begin);
     for( k = 0; k < 5; k++) {
         CGAL_assertion( 1+k == c_begin[k]);
     }
-    int su = c_begin[0]
-           + c_begin[1]
-           + c_begin[2]
-           + c_begin[3]
-           + c_begin[4];
+    CGAL_assertion_code(
+      int su = c_begin[0]
+             + c_begin[1]
+             + c_begin[2]
+             + c_begin[3]
+             + c_begin[4];)
     CGAL_assertion( su == 15);
 
     // Jump around.
@@ -6660,6 +6743,7 @@ Assert_random_access_category(c_begin);
     jj = 4 + jj;
     CGAL_assertion( jj == c_begin);
     C_Circulator ij = jj - 5;
+    ij = jj - 5; // avoids warning with NDEBUG
     CGAL_assertion( ij == c_begin);
 
     // Difference test.
@@ -6688,13 +6772,14 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( k1 == 6);
     CGAL_assertion( k2 == 6);
     CGAL_assertion( (*p1) == 6);
-    C_Circulator::size_type s = 5;
+    CGAL_assertion_code( C_Circulator::size_type s = 5;)
     CGAL_assertion( s == 5);
-    C_Circulator::difference_type d = -5;
+    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
+    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -6785,6 +6870,7 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             Iterator z = Iterator();
+            z = Iterator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Iterator i = begin;
@@ -6801,8 +6887,8 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    Iterator j = ++i;
-                    CGAL_assertion(  i ==  j);
+                    CGAL_assertion_code( Iterator j =) ++i;
+                    CGAL_assertion( i ==  j);
                     if ( i != end) {
                         CGAL_assertion( (*i).key == (*j).key);
                     }
@@ -6821,7 +6907,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    Iterator j = i++;
+                    CGAL_assertion_code( Iterator j =) i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != end) {
                         CGAL_assertion( (*i).key == (*j).key + 1);
@@ -6877,6 +6963,7 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             Iterator z = Iterator();
+            z = Iterator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Iterator i = begin;
@@ -6893,8 +6980,8 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    Iterator j = ++i;
-                    CGAL_assertion(  i ==  j);
+                    CGAL_assertion_code( Iterator j =) ++i;
+                    CGAL_assertion( i ==  j);
                     if ( i != end) {
                         CGAL_assertion( (*i).key == (*j).key);
                     }
@@ -6913,7 +7000,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    Iterator j = i++;
+                    CGAL_assertion_code( Iterator j =) i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != end) {
                         CGAL_assertion( (*i).key == (*j).key + 1);
@@ -6931,7 +7018,7 @@ void test_N_step_adaptor_derived() {
             int su = 0;
             int k  = 5;
             do {
-                Iterator j = --i;
+                CGAL_assertion_code(Iterator j =) --i;
                 CGAL_assertion(  i ==  j);
                 CGAL_assertion( (*i).key == (*j).key);
                 CGAL_assertion( k == (*i).key);
@@ -6983,6 +7070,7 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             C_Iterator z = C_Iterator();
+            z = C_Iterator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             C_Iterator i = c_begin;
@@ -6999,8 +7087,8 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    C_Iterator j = ++i;
-                    CGAL_assertion(  i ==  j);
+                    CGAL_assertion_code( C_Iterator j =) ++i;
+                    CGAL_assertion( i ==  j);
                     if ( i != c_end) {
                         CGAL_assertion( (*i).key == (*j).key);
                     }
@@ -7019,7 +7107,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    C_Iterator j = i++;
+                    CGAL_assertion_code( C_Iterator j =) i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != c_end) {
                         CGAL_assertion( (*i).key == (*j).key + 1);
@@ -7037,7 +7125,7 @@ void test_N_step_adaptor_derived() {
             int su = 0;
             int k  = 5;
             do {
-                C_Iterator j = --i;
+                CGAL_assertion_code(C_Iterator j =) --i;
                 CGAL_assertion(  i ==  j);
                 CGAL_assertion( (*i).key == (*j).key);
                 CGAL_assertion( k == (*i).key);
@@ -7103,6 +7191,7 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             Circulator z = Circulator();
+            z = Circulator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Circulator i = begin;
@@ -7119,8 +7208,8 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    Circulator j = ++i;
-                    CGAL_assertion(  i ==  j);
+                    CGAL_assertion_code( Circulator j =) ++i;
+                    CGAL_assertion( i ==  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j));
                     }
@@ -7139,7 +7228,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    Circulator j = i++;
+                    CGAL_assertion_code( Circulator j =) i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j) + 1);
@@ -7195,6 +7284,7 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             Circulator z = Circulator();
+            z = Circulator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Circulator i = begin;
@@ -7211,8 +7301,8 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    Circulator j = ++i;
-                    CGAL_assertion(  i ==  j);
+                    CGAL_assertion_code( Circulator j =) ++i;
+                    CGAL_assertion( i ==  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j));
                     }
@@ -7231,7 +7321,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    Circulator j = i++;
+                    CGAL_assertion_code( Circulator j =) i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j) + 1);
@@ -7249,7 +7339,7 @@ void test_N_step_adaptor_derived() {
             int su = 0;
             int k  = 5;
             do {
-                Circulator j = --i;
+                CGAL_assertion_code(Circulator j =) --i;
                 CGAL_assertion(  i ==  j);
                 CGAL_assertion( (*i) == (*j));
                 CGAL_assertion( k == (*i));
@@ -7290,6 +7380,7 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             Circulator z = Circulator();
+            z = Circulator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Circulator i = begin;
@@ -7306,8 +7397,8 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    Circulator j = ++i;
-                    CGAL_assertion(  i ==  j);
+                    CGAL_assertion_code( Circulator j =) ++i;
+                    CGAL_assertion( i ==  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j));
                     }
@@ -7326,7 +7417,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    Circulator j = i++;
+                    CGAL_assertion_code( Circulator j =) i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j) + 1);
@@ -7344,7 +7435,7 @@ void test_N_step_adaptor_derived() {
             int su = 0;
             int k  = 5;
             do {
-                Circulator j = --i;
+                CGAL_assertion_code(Circulator j =) --i;
                 CGAL_assertion(  i ==  j);
                 CGAL_assertion( (*i) == (*j));
                 CGAL_assertion( k == (*i));
@@ -7380,11 +7471,12 @@ void test_N_step_adaptor_derived() {
             for( k = 0; k < 5; k++) {
                 CGAL_assertion( 1+k == begin[k]);
             }
-            int su = begin[0]
-                   + begin[1]
-                   + begin[2]
-                   + begin[3]
-                   + begin[4];
+            CGAL_assertion_code(
+              int su = begin[0]
+                     + begin[1]
+                     + begin[2]
+                     + begin[3]
+                     + begin[4];)
             CGAL_assertion( su == 15);
         
             // Jump around.
@@ -7405,6 +7497,7 @@ void test_N_step_adaptor_derived() {
             jj = 4 + jj;
             CGAL_assertion( jj == begin);
             Circulator ij = jj - 5;
+            ij = jj - 5; // avoids warning with NDEBUG
             CGAL_assertion( ij == begin);
         
             // Difference test.
@@ -7453,13 +7546,14 @@ void test_N_step_adaptor_derived() {
             CGAL_assertion( k1 == 6);
             CGAL_assertion( k2 == 6);
             CGAL_assertion( (*p1) == 6);
-            Circulator::size_type s = 5;
+            CGAL_assertion_code( Circulator::size_type s = 5;)
             CGAL_assertion( s == 5);
-            Circulator::difference_type d = -5;
+            CGAL_assertion_code(Circulator::difference_type d = -5;)
             CGAL_assertion( d == -5);
         
             // Check tests for empty data structures.
             Circulator z = Circulator();
+            z = Circulator(); // avoids warning with NDEBUG
             CGAL_assertion(   z == CGAL_CIRC_NULL);
             CGAL_assertion( ! (z != CGAL_CIRC_NULL));
             Circulator i = begin;
@@ -7537,6 +7631,7 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             C_Circulator z = C_Circulator();
+            z = C_Circulator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             C_Circulator i = c_begin;
@@ -7553,8 +7648,8 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    C_Circulator j = ++i;
-                    CGAL_assertion(  i ==  j);
+                    CGAL_assertion_code( C_Circulator j =) ++i;
+                    CGAL_assertion( i ==  j);
                     if ( i != c_begin) {
                         CGAL_assertion( (*i) == (*j));
                     }
@@ -7573,7 +7668,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    C_Circulator j = i++;
+                    CGAL_assertion_code( C_Circulator j =) i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != c_begin) {
                         CGAL_assertion( (*i) == (*j) + 1);
@@ -7591,7 +7686,7 @@ void test_N_step_adaptor_derived() {
             int su = 0;
             int k  = 5;
             do {
-                C_Circulator j = --i;
+                CGAL_assertion_code(C_Circulator j =) --i;
                 CGAL_assertion(  i ==  j);
                 CGAL_assertion( (*i) == (*j));
                 CGAL_assertion( k == (*i));
@@ -7627,11 +7722,12 @@ void test_N_step_adaptor_derived() {
             for( k = 0; k < 5; k++) {
                 CGAL_assertion( 1+k == c_begin[k]);
             }
-            int su = c_begin[0]
-                   + c_begin[1]
-                   + c_begin[2]
-                   + c_begin[3]
-                   + c_begin[4];
+            CGAL_assertion_code(
+              int su = c_begin[0]
+                     + c_begin[1]
+                     + c_begin[2]
+                     + c_begin[3]
+                     + c_begin[4];)
             CGAL_assertion( su == 15);
         
             // Jump around.
@@ -7652,6 +7748,7 @@ void test_N_step_adaptor_derived() {
             jj = 4 + jj;
             CGAL_assertion( jj == c_begin);
             C_Circulator ij = jj - 5;
+            ij = jj - 5; // avoids warning with NDEBUG
             CGAL_assertion( ij == c_begin);
         
             // Difference test.
@@ -7680,13 +7777,14 @@ void test_N_step_adaptor_derived() {
             CGAL_assertion( k1 == 6);
             CGAL_assertion( k2 == 6);
             CGAL_assertion( (*p1) == 6);
-            C_Circulator::size_type s = 5;
+            CGAL_assertion_code( C_Circulator::size_type s = 5;)
             CGAL_assertion( s == 5);
-            C_Circulator::difference_type d = -5;
+            CGAL_assertion_code(C_Circulator::difference_type d = -5;)
             CGAL_assertion( d == -5);
         
             // Check tests for empty data structures.
             C_Circulator z = C_Circulator();
+            z = C_Circulator(); // avoids warning with NDEBUG
             CGAL_assertion(   z == CGAL_CIRC_NULL);
             CGAL_assertion( ! (z != CGAL_CIRC_NULL));
             C_Circulator i = c_begin;

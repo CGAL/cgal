@@ -7,6 +7,15 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+DOCS: Changed compose function/class.
+SRC : Replace reverse_bidirectional_iterator by reverse_iterator.
+SRC : Fixed composition class/functions.
+TEST: Initial revision
+
+//---------------------------------------------------------------------
+//	 CGAL-2.1
+//---------------------------------------------------------------------
+
 DOCS: now joind into stl_extension.tex.
 ALL : Added file algorithm.h.
 ALL : New functions min_max_element and min/max_element_if.
