@@ -185,17 +185,17 @@ class Nearest_neighbour_Linf {
     }
 
     ~iterator() {
-        // std::cout << "called ~iterator"  << std::endl;
+        std::cout << "called ~iterator"  << std::endl;
         if (Ptr_implementation != 0) {
-               //  std::cout << "reference_count is" << Ptr_implementation->reference_count << std::endl;
+               std::cout << "reference_count is" << Ptr_implementation->reference_count << std::endl;
                 Ptr_implementation->reference_count--;
                 if (Ptr_implementation->reference_count==0) {
                         delete Ptr_implementation;
                         Ptr_implementation = 0;
                 }
-               // if (Ptr_implementation != 0) std::cout << "new reference_count is" << Ptr_implementation->reference_count << std::endl;
+               if (Ptr_implementation != 0) std::cout << "new reference_count is" << Ptr_implementation->reference_count << std::endl;
         }
-        // else std::cout << "Ptr_implementation is null" << std::endl;
+        else std::cout << "Ptr_implementation is null" << std::endl;
     }
 
 

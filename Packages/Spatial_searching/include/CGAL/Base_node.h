@@ -28,17 +28,10 @@
 
 namespace CGAL {
 
-        template <class T>
-        struct get_val : public std::unary_function<const T,
-                typename std::iterator_traits<T>::reference> {
-                typename std::iterator_traits<T>::reference operator()(const T x)
-                {return *x;}
-        };
-        
 	template < class Traits > // = Kd_tree_traits_point >
 	class Base_node {
 	public:
-		typedef Traits::Item Item;
+		typedef Traits::Item typename Item;
 		typedef Traits::Item_iterator Item_iterator;
 		typedef Base_node<Traits> Node;
 		typedef Traits::NT NT;
@@ -98,8 +91,8 @@ namespace CGAL {
 
 		template <class OutputIterator>
 		void tree_items(OutputIterator& it) {
-			if (is_leaf()) std::transform(begin(), end(), it,
-  			      get_val<Item*>());
+            if (is_leaf()) 
+				for (Item_iterator i=begin(); i != end(); i++) *it=**i;
 			else {
 				lower()->tree_items(it);
 				upper()->tree_items(it);

@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Points_container.h
 // package       : APSPAS
-// revision      : 1.1
+// revision      : 1.0 
 // revision_date : 2001/06/12 
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 //
@@ -50,9 +50,9 @@ namespace CGAL {
 
   template <class Item> class Points_container {
   public:
-    typedef std::list<Item*> Points_list;
+    typedef std::list<Item*> Points_list; 
 
-    typedef typename Item::FT NT;
+    typedef typename double NT; // Item::FT NT;
     typedef Points_container<Item> Self;
   private:
     Points_list *p_list; // array of sorted lists of pointers to points
@@ -253,17 +253,20 @@ namespace CGAL {
       void split_container(Points_container<Item>& c, Separator* sep, bool sliding=false) {
 
 		assert(dimension()==c.dimension());
+		
 
-		c.built_coord=built_coord;
         c.bbox=bbox;
         // bool test_validity=false;
 
         const int split_coord = sep->cutting_dimension();
         const NT cutting_value = sep->cutting_value();
 
-		// std::cout << "container size =" << size() << std::endl;
-		// std::cout << "split_coord=" << split_coord << std::endl;
-		// std::cout << "cutting_value=" << cutting_value << std::endl;
+		/*
+		std::cout << "container size =" << size() << std::endl;
+		std::cout << "split_coord=" << split_coord << std::endl;
+		std::cout << "cutting_value=" << cutting_value << std::endl;
+		std::cout << "dimension=" << dimension() << std::endl;
+        */
 
 		// prepare the coordinate, if necessary
 		if (p_list[split_coord].empty()) {
@@ -272,6 +275,10 @@ namespace CGAL {
 			// sort p_list[split_coord]
 			p_list[split_coord].sort(comp_coord_val<Item>(split_coord));
 		}
+        
+		//splitting builds list along the split_coord
+		built_coord=split_coord;
+		c.built_coord=split_coord;
 
 		// splitting the lists in two; can be done better for
 		// i == split_coord...
@@ -279,23 +286,46 @@ namespace CGAL {
 		Points_list tmp_list(0);
 		for (int i = 0; i < dimension(); ++i) {
 			if (! p_list[i].empty()) {
+                NT min_val=bbox.upper(split_coord); //init with upperbound
+				NT max_val=bbox.lower(split_coord);  //init with lowerbound;
+                Points_list::iterator pt_min=p_list[i].begin();
+                Points_list::iterator pt_max=p_list[i].begin();
 				tmp_list.clear();
 				c.p_list[i].clear();
+				
 				for (typename Points_list::iterator pt = p_list[i].begin();
-				pt != p_list[i].end(); pt = p_list[i].begin()) {
-					// if ((*(*pt))[split_coord] < val) {
+				pt != p_list[i].end(); pt= p_list[i].begin()) {
+					if ((*(*pt))[split_coord] < min_val) {
+						pt_min=pt; min_val= (*(*pt))[split_coord];
+                    }
+					if ((*(*pt))[split_coord] > max_val) {
+						pt_max=pt; max_val= (*(*pt))[split_coord];
+                    }
 					if (sep->side(*(*pt)) == ON_NEGATIVE_SIDE) {
-						c.p_list[i].splice(c.p_list[i].end(), p_list[i], pt);
+						c.p_list[i].splice(c.p_list[i].end(), p_list[i], pt); 
 					}
 					else {
-						tmp_list.splice(tmp_list.end(), p_list[i], pt);
+						tmp_list.splice(tmp_list.end(), p_list[i], pt); 
 					}
 				}
 				// in-place copy tmp_list to p_list[i]
 				p_list[i].splice(p_list[i].end(), tmp_list);
-			}
+				
+				if (sliding) { // avoid empty list
+					if (p_list[i].empty()) {// move maximal value to p_list
+						p_list[i].splice(p_list[i].end(), c.p_list[i], pt_max);
+					} 
+					if (c.p_list[i].empty()) {// move minimal value to c.p_list
+						c.p_list[i].splice(c.p_list[i].end(), p_list[i], pt_min);
+					} 
+				}
 		}
+		}
+		
+		
 
+
+        /*
 		if (sliding) { // then each list should contain at least one element
 			if (p_list[split_coord].empty()) { // move last element of c.p_list to p_list
 				// std::cout << "moved last element of c.p_list to p_list" << std::endl;
@@ -308,18 +338,50 @@ namespace CGAL {
 					}
 				}
 			};
+
+			{ for (int i = 0; i < dimension(); ++i)
+	    if (! p_list[i].empty()) assert(p_list[i].size() == size());
+        }
+
+		{ for (int i = 0; i < dimension(); ++i)
+	    if (! c.p_list[i].empty()) assert(c.p_list[i].size() == c.size());
+        }
+
 			if (c.p_list[split_coord].empty()) { // move first element of p_list to c.p_list
 				// std::cout << "moved first element of p_list to c.p_list" << std::endl;
                                 // test_validity=true;
 				Points_list::const_reference Front_p_list=p_list[split_coord].front();
 				for (int i = 0; i < dimension(); ++i) {
 					if (! p_list[i].empty()) {
-						c.p_list[i].push_front(Front_p_list);
+						c.p_list[i].push_back(Front_p_list);
+						std::cout << "i in loop = " << i << std::endl;
+						std::cout << "p_list size before remove=" << p_list[i].size() << std::endl;
 						p_list[i].remove(Front_p_list);
+						std::cout << "p_list size after remove=" << p_list[i].size() << std::endl;
 					}
 				}
 			}
-		}
+
+			{ for (int i = 0; i < dimension(); ++i)
+	    if (! p_list[i].empty()) 
+			if (! (p_list[i].size() == size())) {
+				
+				
+				std::cout << "split_coord=" << split_coord << std::endl;
+				std::cout << "size=" << size() << std::endl;
+				std::cout << "i=" << i << std::endl;
+				std::cout << "p_list size=" << p_list[i].size() << std::endl;
+				std::cout << "points:" << std::endl;
+				for (typename Points_list::iterator p = p_list[i].begin();
+					p != p_list[i].end(); ++p) std::cout << **p << " "; std::cout << std::endl;
+
+			}
+        } */
+
+		{ for (int i = 0; i < dimension(); ++i)
+	    if (! c.p_list[i].empty()) assert(c.p_list[i].size() == c.size());
+        }
+		// }
 
 		// Alternatively split list only in two for i == split_coord
 		// adjusting boxes
@@ -329,7 +391,7 @@ namespace CGAL {
 		c.bbox.set_upper(split_coord, cutting_value);
 		c.tbox.update_from_point_pointers(c.p_list[c.built_coord].begin(),
 		c.p_list[c.built_coord].end(),c.p_list[c.built_coord].empty());
-                // if (test_validity) {is_valid(); c.is_valid();};
+        if (true) {is_valid(); c.is_valid();};
 	}
 
 	NT median(const int split_coord) {
@@ -352,9 +414,9 @@ namespace CGAL {
 
     inline bool empty() { return size() == 0;}
 
-    // bool is_valid() {return true;}
+    bool is_valid() {return true;}
 
-
+    /*
     bool is_valid() {
       // checking that all the lists are of the same size
      { for (int i = 0; i < dimension(); ++i)
@@ -365,7 +427,6 @@ namespace CGAL {
 
 	  // std::cout << "warning: this call of Poins_cointaner::is_valid() takes much computing time" << std::endl;
       // std::cout << bbox; // bbox.print(std::cout);
-      // std::cout << "Container::is_valid: size=" << size() << std::endl;
 
 
       // extra test added by Hans to see if all pointer lists are sorted
@@ -414,10 +475,10 @@ namespace CGAL {
 	       p != p_list[i].end(); ++p) t1.insert(*(*p));
 	  assert(t == t1);
 	}
-     */
+     
      }
       return true;
-    }
+    }*/
 
       // friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
       // (std::ostream&, Points_container<P>&);

@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Extended_internal_node.h
 // package       : APSPAS
-// revision      : 1.1
+// revision      : 1.0 
 // revision_date : 2001/06/12 
 // maintainer : Hans Tangelder (<hanst@cs.uu.nl>)
 //
@@ -31,7 +31,7 @@ class Extended_internal_node : public Internal_node<Traits> {
 
 public:
   typedef Traits::Item Item;
-  typedef typename Item::FT NT;
+  typedef typename double NT; // Item::FT NT;
   typedef Traits::Separator Separator;
   typedef Base_node<Traits> Node;
   typedef CGAL::Point_2< CGAL::Cartesian<NT> > Point_2D;
@@ -57,7 +57,7 @@ public:
     Box<NT> bbox(c.bounding_box());
 
     sep = t.split(c, c_low);
-
+	
     int cd  = sep->cutting_dimension();
     low_val = bbox.lower(cd);
     high_val = bbox.upper(cd);

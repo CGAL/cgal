@@ -38,7 +38,7 @@ public:
   
   typedef Traits::Item Item;
   typedef Traits::InputIterator InputIterator;
-  typedef Item::FT NT;
+  typedef double NT; // Item::FT NT;
   typedef Base_node<Traits> Node;
   typedef Binary_search_tree<Traits> Tree;
 
@@ -95,7 +95,7 @@ public:
 	  PS_Stream PS(bb,height,filename,PS_Stream::QUIET_EPS);   
 	  PS << point_style(PS_Stream::FDOT);
 	  PS << point_size(1);
-          PS << line_width(0.5);
+          PS << line_width(1); // has been 0.5
           // PS << border(1);
           
 	  Point_2D p00(bbox->lower(i),bbox->lower(j));
@@ -145,6 +145,7 @@ public:
 
   int item_number() {return the_item_number;}
 
+ 
   bool is_valid(bool verbose = false, int level = 0) {
      // Perform internal consistency checks to verify the correctness
      // of the tree.
@@ -162,6 +163,9 @@ public:
     }
     return 1;
   }
+  
+
+
 
   // Print statistics of the tree.
   void statistics (bool check_validity=false) {

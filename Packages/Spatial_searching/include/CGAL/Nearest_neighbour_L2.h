@@ -42,7 +42,7 @@ class Nearest_neighbour_L2 {
     private:
 
     typedef Tree_traits::Item Item;
-    typedef Item::FT NT;
+    typedef double NT; // Item::FT NT;
     typedef Item** Item_iterator;
     typedef Base_node<Tree_traits> Node;
     typedef Binary_search_tree<Tree_traits> Tree;

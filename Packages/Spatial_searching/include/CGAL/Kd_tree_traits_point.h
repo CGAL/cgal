@@ -23,7 +23,6 @@
 #ifndef CGAL_KD_TREE_TRAITS_POINT_H
 #define CGAL_KD_TREE_TRAITS_POINT_H
 #include <CGAL/Splitting_rules.h>
-#include <CGAL/Kernel_d/Point_d.h>
 
 namespace CGAL {
 
@@ -32,8 +31,8 @@ namespace CGAL {
 
   public:
     typedef Separator Separator;
-    typedef Item Item;
-    typedef Item::FT NT;
+    typedef Item typename Item;
+    typedef double NT; // Item::FT NT; 
     typedef Item** Item_iterator;
     typedef std::list<Item>::iterator InputIterator;
     typedef std::pair<Item*,NT> Item_with_distance;
