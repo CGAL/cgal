@@ -1,3 +1,6 @@
+1.59 (14 August 2003)
+- Handle_for<> cleanups.
+
 1.58 (13 August 2003)
 - Handle_for.h : optimize one copy away.
 

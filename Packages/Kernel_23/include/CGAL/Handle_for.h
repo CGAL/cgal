@@ -24,6 +24,7 @@
 #define CGAL_HANDLE_FOR_H
 
 #include <CGAL/memory.h>
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -31,30 +32,18 @@ template <class T, class Alloc = CGAL_ALLOCATOR(T) >
 class Handle_for
 {
     // Wrapper that adds the reference counter.
-    struct RefCounted
-    {
-        RefCounted(const T& t) : t_(t), count(1) {}
-        RefCounted(const RefCounted& r) : t_(r.t_), count(1) {}
-
-        T* base_ptr() { return &t_; }
-        const T& t() const { return t_; }
-
-	// Speeds things up with LEDA and New_delete_allocator<>.
-        CGAL_MEMORY(RefCounted)
-
-        void add_reference()    { ++count; }
-        void remove_reference() { --count; }
-        bool is_shared() const  { return count > 1; }
-
-    private:
-
-        T t_;
+    struct RefCounted {
+        T t;
         unsigned int count;
     };
 
     typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
+    typedef typename Allocator::pointer                         pointer;
 
-  public:
+    static Allocator   allocator;
+    pointer            ptr_;
+
+public:
 
     typedef T element_type;
 
@@ -65,38 +54,42 @@ class Handle_for
         // avoid the requirement of a default constructor for T().
         static const Handle_for def = Handle_for(T());
         ptr_ = def.ptr_;
-        ptr_->add_reference();
+        ++(ptr_->count);
     }
 
-    // We should also think about providing many template constructors in
+    // TODO :
+    // We should also think about providing template constructors in
     // order to forward the functionality of T to Handle_for<T> without
     // the need to an intermediate copy.
+    // Currently it's not working, because some places use conversions.
 
     Handle_for(const T& t)
       : ptr_(allocator.allocate(1))
     {
-        // We use "placement new" instead of allocator.construct()
-        // in order to avoid a temporary copy.
-        new (ptr_) RefCounted(t);
-        // allocator.construct(ptr_, RefCounted(t));
+        new (&(ptr_->t)) T(t);
+        ptr_->count = 1;
     }
 
     Handle_for(const Handle_for& h)
       : ptr_(h.ptr_)
     {
-        ptr_->add_reference();
+        ++(ptr_->count);
     }
 
     ~Handle_for()
     {
-	remove_reference();
+      if (! is_shared() ) {
+          allocator.destroy( ptr_);
+          allocator.deallocate( ptr_, 1);
+      }
+      else
+	  --(ptr_->count);
     }
 
     Handle_for&
-    operator=(const Handle_for& h)
+    operator=(Handle_for h)
     {
-        Handle_for tmp(h);
-        swap(tmp);
+        swap(h);
         return *this;
     }
 
@@ -130,7 +123,7 @@ class Handle_for
     // non-const does copy-on-write.
     const T *
     Ptr() const
-    { return ptr_->base_ptr(); }
+    { return &(ptr_->t); }
 
     /*
     T *
@@ -144,7 +137,7 @@ class Handle_for
     bool
     is_shared() const
     {
-	return ptr_->is_shared();
+	return ptr_->count > 1;
     }
 
     void
@@ -160,9 +153,10 @@ protected:
     {
       if ( is_shared() )
       {
-        RefCounted* tmp_ptr = allocator.allocate(1);
-        allocator.construct( tmp_ptr, *ptr_);
-        ptr_->remove_reference();
+        pointer tmp_ptr = allocator.allocate(1);
+        new (&(tmp_ptr->_t)) T(*ptr_);
+        tmp_ptr_->count = 1;
+        --(ptr_->count);
         ptr_ = tmp_ptr;
       }
     }
@@ -170,27 +164,11 @@ protected:
     // ptr() is the protected access to the pointer.  Both const and non-const.
     T *
     ptr()
-    { return ptr_->base_ptr(); }
+    { return &(ptr_->t); }
 
     const T *
     ptr() const
-    { return ptr_->base_ptr(); }
-
-private:
-
-    void
-    remove_reference()
-    {
-      if (! is_shared() ) {
-          allocator.destroy( ptr_);
-          allocator.deallocate( ptr_, 1);
-      }
-      else
-	  ptr_->remove_reference();
-    }
-
-    static Allocator                 allocator;
-    typename Allocator::pointer      ptr_;
+    { return &(ptr_->t); }
 };
 
 
