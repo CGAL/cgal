@@ -39,38 +39,32 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt, class Tds>
-class Constrained_triangulation_2
-  : public Triangulation_2<Gt,Tds>
+class Constrained_triangulation_2   : public Triangulation_2<Gt,Tds>
 {
-
 public:
   typedef Triangulation_2<Gt,Tds> Triangulation;
   typedef Constrained_triangulation_2<Gt,Tds> Constrained_triangulation;
+  
+// the following typedef to satisfy MIPS CC 7.3
+  typedef Gt Geom_traits;
+  typedef typename Geom_traits::Point          Point;
+  
   typedef std::pair<Point,Point> Constraint;
-
   typedef Constrained_triangulation_sweep_2<Gt,Tds>  Sweep;
 
-  Constrained_triangulation_2() : Triangulation() { }
-
-  Constrained_triangulation_2(const Gt& gt) : Triangulation(gt) { }
+  Constrained_triangulation_2(const Gt& gt=Gt()) : Triangulation() { }
 
   Constrained_triangulation_2(const Constrained_triangulation_2& ct)
     : Triangulation(ct) {}
 
-  Constrained_triangulation_2(const Vertex_handle&  v, const Gt& gt) 
-    : Triangulation(v,gt) {}
-
   Constrained_triangulation_2(std::list<Constraint>& lc, const Gt& gt=Gt())
       : Triangulation_2<Gt,Tds>(gt)
   {
-    Sweep sweep(lc,gt);
-    Triangulation_2<Gt,Tds> Tr ( sweep.vertex(), gt);
-    swap(Tr);
+    Sweep sweep(this, lc);
   }
 
- #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
-  
-  #if defined(LIST_H) || defined(__SGI_STL_LIST_H)
+#ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
+#if defined(LIST_H) || defined(__SGI_STL_LIST_H)
   Constrained_triangulation_2(std::list<Constraint>::const_iterator first,
                                    std::list<Constraint>::const_iterator last,
                                    const Gt& gt=Gt() )
@@ -80,15 +74,12 @@ public:
       while(first != last){
           lc.push_back(*first); ++first;
       }
-      Sweep sweep(lc,gt);
-      Triangulation_2<Gt,Tds> Tr ( sweep.vertex(), gt);
-      swap(Tr);
-      //init(sweep.vertex());
+      Sweep sweep(this, lc);
       CGAL_triangulation_postcondition( is_valid() );
   }
-  #endif // LIST_H
+#endif // LIST_H
   
-  #if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
+#if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
   Constrained_triangulation_2(std::vector<Constraint>::const_iterator first,
                               std::vector<Constraint>::const_iterator last,
 			      const Gt& gt=Gt() )
@@ -98,15 +89,11 @@ public:
       while(first != last){
           lc.push_back(*first); ++first;
       }
-      Sweep sweep(lc,gt);
-      Triangulation_2<Gt,Tds> Tr ( sweep.vertex(), gt);
-      swap(Tr);
-    //init(sweep.vertex());
-      CGAL_triangulation_postcondition( is_valid() );
+      Sweep sweep(this,lc);
   }
-  #endif // VECTOR_H
+#endif // VECTOR_H
   
-  #ifdef ITERATOR_H
+#ifdef ITERATOR_H
   Constrained_triangulation_2(
 			std::istream_iterator<Constraint,std::ptrdiff_t> first,
 			std::istream_iterator<Constraint,std::ptrdiff_t> last,
@@ -117,31 +104,25 @@ public:
       while(first != last){
           lc.push_back(*first); ++first;
       }
-      Sweep sweep(lc,gt);
-      Triangulation_2<Gt,Tds> Tr ( sweep.vertex(), gt);
-      swap(Tr);
-      //init(sweep.vertex());
+      Sweep sweep(this,lc);
       CGAL_triangulation_postcondition( is_valid() );
   }
-  #endif // ITERATOR_H
+#endif // ITERATOR_H
   
   Constrained_triangulation_2(Constraint* first,
-                                   Constraint* last,
-                                    const Gt& gt=Gt() )
+			      Constraint* last,
+			      const Gt& gt=Gt() )
      : Triangulation_2<Gt,Tds>(gt)
   {
       std::list<Constraint> lc;
       while(first != last){
           lc.push_back(*first); ++first;
       }
-      Sweep sweep(lc,gt);
-      Triangulation_2<Gt,Tds> Tr ( sweep.vertex(), gt);
-      swap(Tr);
-      //init(sweep.vertex());
+      Sweep sweep(this,lc);
       CGAL_triangulation_postcondition( is_valid() );
   }
   
-  #else
+#else
   
   template<class InputIterator>
   Constrained_triangulation_2(InputIterator first,
@@ -153,24 +134,19 @@ public:
       while(first != last){
           lc.push_back(*first++);
       }
-      Sweep sweep(lc,gt);
-      Triangulation_2<Gt,Tds> Tr ( sweep.vertex(), gt);
-      swap(Tr);
-          //init(sweep.vertex());
+      Sweep sweep(this,lc);
       CGAL_triangulation_postcondition( is_valid() );
   }
   
-  #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
-  
-  // private:
-  // private part of class Constrained_triangulation_2
+#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
+
 };
 
 template < class Gt, class Tds >
 std::ostream &
-operator<<(std::ostream& os, const Constrained_triangulation_2<Gt,Tds> &Ct)
+operator<<(std::ostream& os, const Constrained_triangulation_2<Gt,Tds> &ct)
 {
-  return os << (const Triangulation_2<Gt,Tds>&)Ct;
+  return ct.draw_triangulation(os);
 }
 
 CGAL_END_NAMESPACE
