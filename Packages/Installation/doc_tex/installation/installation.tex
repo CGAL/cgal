@@ -1010,7 +1010,10 @@ command line tools installed and working\footnote{To make sure that
   executables.}. Certain familiarity with using Windows command prompt
 and these tools is assumed. A reasonable amount of system resources,
 that is enough memory to run large compilations (64 Mb on NT4.0) and
-about 15MB of disk space, is required.
+about 15MB of disk space, is required. Note, however, that 
+executables, object files and debug-related files in subdirectories
+\texttt{demo/} and \texttt{examples/} can occupy several hunderd
+megabytes all together.
 
 It is highly recommended that you have a recent (at least 4.0) version
 of \leda\ installed. Most of the \cgal\ demos use \leda\ for
@@ -1050,18 +1053,17 @@ subsequent compilation.
 \texttt{LEDAROOT\bslsh incl}.
 \end{enumerate}
 
-Typically, assuming that \leda\ is installed in 
-\texttt{k:\bslsh LEDA-4.1-991117}, 
-one would run at the command prompt:
+Typically, assuming that \leda\ is installed in \texttt{k:\bslsh
+  LEDA-4.0}, one would run at the command prompt:
 \begin{verbatim}
-K:\cgal\> cgal_config msc k:\LEDA-4.1-991117
+K:\cgal\> cgal_config msc k:\LEDA-4.0
 \end{verbatim}
 
 Otherwise, if \leda\ header files are not in \texttt{LEDAROOT\bslsh incl}, 
 one would run, say,
 
 \begin{verbatim}
-K:\cgal\> cgal_config msc k:\LEDA-4.1-991117\msvc k:\LEDA-4.1-991117\incl
+K:\cgal\> cgal_config msc k:\LEDA-4.0\msvc k:\LEDA-4.0\incl
 \end{verbatim}
 
 It is assumed that paths to \texttt{LEDAROOT} and \leda\ include
@@ -1093,11 +1095,13 @@ K:\cgal\> make_demos
 compiles and links the demos. 
 
 Examples and demos can also be built on per directory, or even on per
-executable basis.  For instance, change to 
-\texttt{\cgal-\cgalrelease\bslsh demo\bslsh Point\_set\_2}
-and type \texttt{nmake all} to build all the examples.  
-Typing \texttt{nmake ps\_test1}
-will build the particular demo program \texttt{ps\_test1}.
+executable basis.  Each \texttt{examples/} and \texttt{demo/}
+subdirectory contains a \texttt{makefile.mak} file that is a \mswin\ 
+\texttt{nmake} makefile.  For instance, change to
+\texttt{\cgal-\cgalrelease\bslsh demo\bslsh Point\_set\_2} and type
+\texttt{nmake -f makefile.mak all} to build all the examples there.
+Typing \texttt{nmake -f makefile.mak ps\_test1} will build the
+particular demo program \texttt{ps\_test1}.
 
 The corresponding executable(s) then can be run as usual, from the
 command prompt, or via Explorer.
@@ -1128,8 +1132,8 @@ the makefiles generated.  Customization of IDE is described in Sect
 
 
 \paragraph{Using nmake makefiles.}
-Simply adapt a makefile from an \texttt{examples/} or \texttt{demos/} 
-subdirectory.
+Simply adapt a makefile \texttt{makefile.mak} 
+from an \texttt{examples/} or \texttt{demos/} subdirectory.
 This means changing the target \texttt{all} and changing the targets that
 create executables (look in the subsection ``target entries'' there).
 For instance, you would like to create an executable \texttt{demo\_beta.exe}
