@@ -1435,12 +1435,6 @@ Packages/Nef_3/test/Nef_3/data/cube+vertex.off -text
 Packages/Nef_3/test/Nef_3/data/cube.off -text
 Packages/Nef_3/test/Nef_3/data/octa.off -text
 Packages/Nef_3/test/Nef_3/data/star.off -text
-Packages/Nef_S2/doc_tex/Nef_S2/complex.gif -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2/complex.pdf -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2/complex.ps -text
-Packages/Nef_S2/doc_tex/Nef_S2/halfspace.gif -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2/halfspace.pdf -text svneol=unset#unset
-Packages/Nef_S2/doc_tex/Nef_S2/halfspace.ps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#unset
