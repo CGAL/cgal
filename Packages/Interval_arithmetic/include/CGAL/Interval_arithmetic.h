@@ -47,17 +47,26 @@
 struct CGAL_Interval_nt_advanced
 {
   typedef CGAL_Interval_nt_advanced IA;
-  struct unsafe_comparison{};  // Exception class.
-  // Usefull constants.
-  static const double min_double, max_double;
-  static const CGAL_Interval_nt_advanced largest, smallest;
+  struct unsafe_comparison{};			// Exception class.
+  static const double min_double, max_double;	// Usefull constants.
+  static const IA largest, smallest;
 
 protected:
   double inf, sup;	// "inf" stores the OPPOSITE of the lower bound.
 			// "sup" stores the upper bound of the interval.
 private:
-  int overlap_action() const throw (unsafe_comparison)
+  int overlap_action() const
+#ifndef CGAL_IA_NO_EXCEPTION
+      throw (unsafe_comparison)
   { throw unsafe_comparison(); }
+#else
+  {
+#if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
+     CGAL_warning_msg(false, " Comparison between overlapping intervals");
+#endif
+     return 0; // Return a "random" value.
+  }
+#endif // CGAL_IA_NO_EXCEPTION
 
 public:
   friend IA	sqrt     (const IA &);
@@ -153,6 +162,9 @@ public:
 
   double lower_bound() const { return -inf; }
   double upper_bound() const { return sup; }
+
+  bool overlap(const IA &d) const
+  { return !((-d.inf >  sup) || (d.sup  < -inf)); }
 };
 
 // Usefull constants.
@@ -303,16 +315,16 @@ inline CGAL_Sign CGAL_sign (const CGAL_Interval_nt_advanced& d)
   if (d.inf < 0) return CGAL_POSITIVE;
   if (d.sup < 0) return CGAL_NEGATIVE;
   if ( (d.inf == 0) && (d.sup == 0) ) return CGAL_ZERO;
-  return (CGAL_Sign) d.overlap_action();
+  return CGAL_Sign (d.overlap_action());
 }
 
 inline CGAL_Comparison_result CGAL_compare(const CGAL_Interval_nt_advanced& d,
 					   const CGAL_Interval_nt_advanced& e)
 {
-  if (e.sup < -d.inf) return CGAL_LARGER;
+  if (-d.inf > e.sup) return CGAL_LARGER;
   if (-e.inf > d.sup) return CGAL_SMALLER;
   if ( (-d.inf==e.sup) && (-e.inf==d.sup) ) return CGAL_EQUAL;
-  return (CGAL_Comparison_result) d.overlap_action();
+  return CGAL_Comparison_result (d.overlap_action());
 }
 
 inline CGAL_Interval_nt_advanced CGAL_abs (const CGAL_Interval_nt_advanced& d)
@@ -352,21 +364,6 @@ inline istream& operator>>(istream& is, CGAL_Interval_nt_advanced& ia)
 
 struct CGAL_Interval_nt : public CGAL_Interval_nt_advanced
 {
-private:
-
-  // For this one to be overriden, it must be virtual...
-#if 0
-  int overlap_action() const
-  {
-#if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
-     CGAL_warning_msg(false, " Comparison between overlapping intervals");
-#endif
-     return 0; // Return a "random" value.
-  }
-#endif
-
-public:
-
   // Constructors are identical.
   CGAL_Interval_nt()
       {}
@@ -563,9 +560,6 @@ CGAL_number_type_tag(CGAL_Interval_nt_advanced)
 #include <CGAL/Interval_arithmetic/IA_Fixed.h>
 #endif
 
-inline CGAL_Interval_nt_advanced CGAL_to_Interval_nt_advanced(const double d)
-{ return CGAL_Interval_nt_advanced(d); }
-
 template <class FT>
 inline CGAL_Interval_nt CGAL_to_Interval_nt(const FT &z)
 {
@@ -574,6 +568,9 @@ inline CGAL_Interval_nt CGAL_to_Interval_nt(const FT &z)
     CGAL_FPU_set_rounding_to_nearest();
     return tmp;
 }
+
+inline CGAL_Interval_nt_advanced CGAL_to_Interval_nt_advanced(const double d)
+{ return CGAL_Interval_nt_advanced(d); }
 
 inline CGAL_Interval_nt CGAL_to_Interval_nt(const double d)
 { return CGAL_Interval_nt(d); }
