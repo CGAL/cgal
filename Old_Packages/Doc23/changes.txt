@@ -1,6 +1,7 @@
-2.9     (?? Mar 2001)
-- Add doc for Construct_cross_product_vector_3.
-- Add doc for Simple_homogeneous.
+2.9     (6 Mar 2001)
+- Add Construct_cross_product_vector_3.
+- Add Simple_homogeneous.
+- Add Compute_squared_distance_2 and 3.
 
 2.8     (14 Feb 2001)
 
