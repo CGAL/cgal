@@ -5,32 +5,10 @@
 // This software and related documentation is part of the
 // Computational Geometry Algorithms Library (CGAL).
 //
-// Every use of CGAL requires a license. Licenses come in three kinds:
-//
-// - For academic research and teaching purposes, permission to use and
-//   copy the software and its documentation is hereby granted free of  
-//   charge, provided that
-//   (1) it is not a component of a commercial product, and
-//   (2) this notice appears in all copies of the software and
-//       related documentation.
-// - Development licenses grant access to the source code of the library 
-//   to develop programs. These programs may be sold to other parties as 
-//   executable code. To obtain a development license, please contact
-//   the GALIA Consortium (at cgal@cs.uu.nl).
-// - Commercialization licenses grant access to the source code and the
-//   right to sell development licenses. To obtain a commercialization 
-//   license, please contact the GALIA Consortium (at cgal@cs.uu.nl).
-//
+// 
 // This software and documentation is provided "as-is" and without
 // warranty of any kind. In no event shall the CGAL Consortium be
 // liable for any damage of any kind.
-//
-// The GALIA Consortium consists of Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Free University of Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbrucken (Germany),
-// and Tel-Aviv University (Israel).
-//
 // ----------------------------------------------------------------------
 //
 // file          : demo/Alpha_shapes_2/demo_alpha.C
@@ -44,9 +22,8 @@
 //
 // ======================================================================
 
-//#define CGAL_MYTRAITS
 
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -59,15 +36,10 @@
 
 #include <CGAL/Alpha_shape_vertex_base_2.h>
 #include <CGAL/Alpha_shape_face_base_2.h>
-
+#include <CGAL/Random.h>
 #define CGAL_ALPHA_WINDOW_STREAM
 
-#include <CGAL/Cartesian.h>
-#ifndef CGAL_MYTRAITS
 #include <CGAL/Alpha_shape_euclidean_traits_2.h>
-#else
-#include <CGAL/Alpha_shape_euclidean_mytraits_2.h>
-#endif
 
 #include <CGAL/Alpha_shape_vertex_base_2.h>
 
@@ -81,29 +53,23 @@
 #include "Parse.C"
 
 
-#ifndef CGAL_MYTRAITS
 
-//typedef leda_integer  coord_type;
 typedef double coord_type;
-//typedef leda_real coord_type;
-//typedef CGAL::Fixed coord_type;
 
-typedef CGAL::Cartesian<coord_type>  CRep;
-//typedef CGAL::Homogeneous<coord_type>  CRep;
+// typedef leda_integer  coord_type;
+// typedef leda_real coord_type;
+// typedef CGAL::Fixed coord_type;
 
-typedef CGAL::Point_2<CRep>  Point;
-typedef CGAL::Segment_2<CRep>  Segment;
-typedef CGAL::Ray_2<CRep>  Ray;
-typedef CGAL::Line_2<CRep>  Line;
-typedef CGAL::Triangle_2<CRep>  Triangle;
+typedef CGAL::Cartesian<coord_type>  K;
+// typedef CGAL::Homogeneous<coord_type>  K;
 
-typedef CGAL::Alpha_shape_euclidean_traits_2<CRep> Gt;
+typedef K::Point_2    Point;
+typedef K::Segment_2  Segment;
+typedef K::Ray_2      Ray;
+typedef K::Line_2     Line;
+typedef K::Triangle_2 Triangle;
 
-#else
-
-typedef CGAL::Alpha_shape_euclidean_traits_2 Gt;
-
-#endif
+typedef CGAL::Alpha_shape_euclidean_traits_2<K> Gt;
 
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
 
@@ -130,11 +96,22 @@ typedef Alpha_shape::Face_iterator  Face_iterator;
 typedef Alpha_shape::Vertex_iterator  Vertex_iterator;
 typedef Alpha_shape::Edge_iterator  Edge_iterator;
 typedef Alpha_shape::Edge_circulator  Edge_circulator;
-//typedef Alpha_shape::Line_face_circulator  Line_face_circulator;
+
 typedef Alpha_shape::Coord_type Coord_type;
 typedef Alpha_shape::Alpha_iterator Alpha_iterator;
 
 typedef CGAL::Window_stream  Window_stream;
+
+
+#ifdef CGAL_USE_CGAL_WINDOW
+typedef CGAL::panel Panel;
+typedef std::string String;
+#else
+typedef leda_panel Panel;
+typedef leda_string String;
+#endif
+
+
 
 //---------------- global variables -----------------------------------
 
@@ -263,10 +240,11 @@ random_input(Alpha_shape &A,
 
   W << VERTEX_COLOR;
 
+  CGAL::Random rand;
   for(int i = 0; i<n; i++)
     { 
-      int x = rand_int(xmin,xmax);
-      int y = rand_int(ymin,ymax);
+      int x = rand.get_int(xmin,xmax);
+      int y = rand.get_int(ymin,ymax);
       Point p((double)x,(double)y);
       V.push_back(p);
      }
@@ -484,30 +462,37 @@ int main(int argc,  char* argv[])
 	case 1:
 	  { // get input points
 	    int input_choice;
-	    leda_panel Pin;
-	    leda_string finname(opt.finname);
+	    Panel Pin;
+	    String finname(opt.finname);
+
 
 	    Pin.text_item("\\bf Get input points");
 	    Pin.text_item("");
 	    Pin.choice_item("", input_choice ,"File","Mouse","Random");
-	    Pin.button("OK",0);
-	    Pin.button("Cancel",1);
+	    Pin.button("OK", 0);
+	    Pin.button("Cancel", 1);
 
 	    if (Pin.open(W) == 0)
 	      { 
-		leda_panel Pfin;
+		Panel Pfin;
 		
 		opt.file_input = (input_choice == 0);
 		switch (input_choice) 
 		  {
+
 		  case 0: 	 
 		          // Get the file name
-		          Pfin.string_item("Find file :", finname);
-			  Pfin.button("OK",0);
-			  Pfin.button("Cancel",1);
+		           Pfin.string_item("Find file :", finname); //.c_str()
+			  Pfin.button("OK", 0);
+			  Pfin.button("Cancel", 1);
 			  if (Pfin.open(W) == 1)
 			    break;
+#if defined(CGAL_USE_CGAL_WINDOW)			    
+			  CGAL_CLIB_STD::strcpy(opt.finname, finname.c_str());  
+#else			    
 			  CGAL_CLIB_STD::strcpy(opt.finname, finname);
+#endif
+
 			  std::cout << opt.finname << std::endl;
 	
 			  clear_all(A, V, W);
@@ -558,20 +543,25 @@ int main(int argc,  char* argv[])
 	case 2:
 	  {
 	    // write points
-	    leda_panel Pout;
+	    Panel Pout;
 	    // panel P;
 	    Pout.text_item("\\bf Save points");
 	    Pout.text_item("");
-	    leda_string foutname(opt.foutname);
+	    String foutname(opt.foutname);
 	    // Get the file name
-	    Pout.string_item("Find file :", foutname);
+	    Pout.string_item("Find file :", foutname); // .c_str()
 	    Pout.button("OK",0);
 	    Pout.button("Cancel",1);
 
 	    if (Pout.open(W) == 0)
 	      { 
 		opt.file_output = true;
+#if defined(CGAL_USE_CGAL_WINDOW)
+		CGAL_CLIB_STD::strcpy(opt.foutname, foutname.c_str());
+#else
 		CGAL_CLIB_STD::strcpy(opt.foutname, foutname);
+#endif
+		
 		file_output(V, opt);
 	      }
 	    break;
@@ -580,7 +570,7 @@ int main(int argc,  char* argv[])
 	case 4:
 	  {
 	    // help infos
-	    leda_panel Pout;
+	    Panel Pout;
 	    Pout.text_item("Open : points input from file or mouse.");
 	    Pout.text_item("");
 	    Pout.text_item("Save : save points.");
@@ -600,7 +590,7 @@ int main(int argc,  char* argv[])
 	  {
 	    // compute an optimal approximation
 	    int nb_comp =1, opt_alpha_index;
-	    leda_panel Popt;
+	    Panel Popt;
 	    // panel P;
 	    Popt.text_item("\\bf Compute optimal approximation");
 	    Popt.text_item("");
