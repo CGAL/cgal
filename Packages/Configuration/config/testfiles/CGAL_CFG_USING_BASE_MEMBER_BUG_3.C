@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Sylvain Pion, Andreas Fabri
 
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
@@ -28,36 +28,28 @@
 // ---------------------------------------------------------------------
 
 //| This flag is set if the compiler bugs with some "using Base::Member;" in
-//| a derived class, when there are 2 levels of derivation.
+//| a derived class, when there is a typedef of the base class.
 //| The workaround is to write a forwarder or not use using.
 //| At least MipsPRO CC 7.4 has this bug.
 
-template < typename T >
-struct A
+struct A 
 {
   void foo() {}
 };
 
-template < typename T >
-struct B : public A<T>
-{
-  using A<T>::foo;
-
-  void f() { foo(); }
-};
 
 template < typename T >
-struct C : public B<T>
+struct C : public T
 {
-  using B<T>::foo;
+  typedef T Base;
+  using Base::foo; // Note that Mipspro does not fail if we write T::foo  
 
   void g() { foo(); }
 };
 
 int main()
 {
-  C<int> c;
-  c.f();
+  C<A> c;
   c.g();
 
   return 0;
