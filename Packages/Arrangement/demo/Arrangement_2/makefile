@@ -14,12 +14,10 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	   -I../../../Planar_map/include \
        -Iinclude \
        -I../../include \
        $(CGAL_CXXFLAGS) \
-       $(LONG_NAME_PROBLEM_CXXFLAGS) \
-       $(DEBUG_OPT)
+       $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
