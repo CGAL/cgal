@@ -43,8 +43,8 @@ to_rational(double x)
       const unsigned shift = 15;   // a safe shift per step
       const unsigned int shift_pow = 32768; // = 2^shift
       const double width = 32768;  // = 2^shift
-      const int maxiter = 20;      // ought not be necessary, but just in case,
-                                   // max 300 bits of precision
+      const int maxiter = 20;      // ought not be necessary, but just in 
+                                   // case, max 300 bits of precision
       int expt;
       double mantissa = frexp(x, &expt);
       long exponent = expt;
