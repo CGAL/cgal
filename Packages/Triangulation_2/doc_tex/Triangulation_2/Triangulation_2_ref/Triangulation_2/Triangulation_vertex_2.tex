@@ -1,0 +1,154 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_2::Vertex.tex
+% +------------------------------------------------------------------------+
+% | 29.03.2000   Mariette Yvinec
+% | Package: Triangulation
+% | 
+\RCSdef{\RCSTriangulation::VertexRev}{$Revision$}
+\RCSdefDate{\RCSTriangulation::VertexDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Triangulation_2<Traits,Tds>::]{Vertex}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ stores a point, gives access to an incident face
+and provides circulators to visit all incident faces and edges
+and all adjacent vertices.
+
+\ccInclude{CGAL/Triangulation_2.h}
+
+\ccInheritsFrom{\ccc{Tds::Vertex}}
+
+
+
+\ccTypes
+The class \ccRefName\ defines the same types 
+as the class \ccc{CGAL::Triangulation_2<Traits,Tds>} 
+\ccRefPage{CGAL::Triangulation_2<Traits,Tds>}
+except for the iterators and the 
+\ccc{Line_face_circulator} which are not needed.
+
+\ccCreationVariable{v}  %% choose variable name
+\begin{ccAdvanced}
+\ccCreation
+
+For triangulation algorithms designed by the user, vertices need to be
+explicitly constructed.  If the modification of the triangulation is
+done through a member of the triangulation class, there is no need for these
+functions.
+
+\ccConstructor{Triangulation_2::Vertex();}{default constructor.
+The geometric information  is initialized by the default constructor of the class \ccc{Point}. The pointer to the incident face is initialized to \ccc{NULL}.}
+
+\ccConstructor{Triangulation_2::Vertex(const Point& p);}
+{Introduces a vertex \ccVar, and initializes the geometric information
+with the point \ccc{p}.
+The pointer to the incident face is initialized with \ccc{NULL}.}
+
+\ccConstructor{Triangulation_2::Vertex(const Point& p,
+                      Face_handle f);}
+{Introduces a vertex v \ccVar, and initializes the geometric information and 
+the pointer to the incident face.}
+\end{ccAdvanced}
+
+\ccAccessFunctions
+\ccMethod{Point point() const;}
+{Returns  the geometric information of \ccVar.}
+
+\ccMethod{Face_handle face() const;}
+{Returns a face of the triangulation having  \ccVar\ as vertex.}
+
+\begin{ccAdvanced}
+\ccHeading{Setting}
+\ccMethod{void set_face(Face_handle f); }{Sets the incident face to \ccc{f}.}
+\end{ccAdvanced}
+
+\ccHeading{Miscellaneous}
+\ccMethod{int degree() const;}
+{Returns the degree of \ccVar\ in the triangulation.}
+\ccGlue
+\ccMethod{Vertex_handle handle() const;}
+{Returns an handle to the vertex.}
+\ccGlue
+\ccMethod{bool is_valid();} 
+{Check the validity of a vertex:
+i.e. the pointer to the incident face  and call the \ccc{is_valid()}
+function of the base class to perform any geometric test provided by the user
+therein.}
+
+\ccHeading{Traversal of the Adjacent Vertices, Incident Edges and Faces.}
+
+Three circulator classes allow to traverse the edges, and faces
+incident to a given vertex or  the adjacent vertices.
+ These circulators are bidirectional
+and their value types are respectively \ccc{Vertex}, \ccc{Edge}
+and \ccc{Face}.
+The  \ccc{operator++} moves the circulator
+counterclockwise around the vertex 
+and  the \ccc{operator--} moves the circulator
+clockwise. 
+
+A face circulator is invalidated by any modification of the face it
+points to. An edge circulator is invalidated
+by any modification of one of the two faces that are incident to the edge
+pointed to.  A vertex circulator that turns around vertex \ccc{v}
+and and points  to a vertex \ccc{w}, is invalidated
+by any modification of the faces incident to the edge \ccc{vw}.
+
+
+
+
+\ccMethod{Face_circulator
+          incident_faces(Face_handle f=Face_handle()) const;}
+{A circulator for the  incident faces 
+that refers to face \ccc{f} or to an arbitrary face
+incident to \ccc{v}  if \ccc{f} is omitted.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+
+\ccMethod{Edge_circulator
+          incident_edges(Face_handle f=Face_handle()) const;}
+{A circulator for the incident edges that refers to an abitrary edge incident
+to \ccc{v} if \ccc{f} is omitted. Otherwise the circulator refers
+to the first edge of \ccc{f}
+incident
+to \ccc{v} in counterclockwise order around \ccc{v}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}. }
+
+\ccMethod{Vertex_circulator
+          incident_vertices(Face_handle f=Face_handle()) const;}
+{A circulator for the adjacent vertices.
+If \ccc{f} is omitted, the circulator begins with
+ an abitrary vertex incident
+to \ccc{v}, otherwise it begins with the
+vertex of face \ccc{f} that, 
+in counterclockwise order around \ccc{v},
+is the first vertex of \ccc{f} incident to \ccc{v}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_cw_ccw_2} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>::Face} \\
+\ccc{TriangulationTraits_2} \\
+\ccc{TriangulationDataStructure}
+\ccc{TriangulationDataStructure::Vertex}
+\ccc{TriangulationVertexBase_2}
+
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

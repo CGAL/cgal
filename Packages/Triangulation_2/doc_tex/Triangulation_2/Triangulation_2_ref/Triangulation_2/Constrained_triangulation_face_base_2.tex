@@ -1,0 +1,49 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Constrained_triangulation_face_base_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSConstrainedtriangulationfacebaseRev}{$Revision$}
+\RCSdefDate{\RCSConstrainedtriangulationfacebaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Constrained_triangulation_face_base_2<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{ctfb} 
+
+\ccDefinition
+ The class \ccRefName\ is the default model for the concept
+\ccc{ConstrainedTriangulationFaceBase_2}.
+It derives from \ccc{Triangulation_face_base_2<Traits>},
+add three boolean to deal with information about
+constrained edges and override the
+functions \ccc{reorient()}, \ccc{ccw_permute()} and 
+\ccc{cw_permute()}.
+
+\ccInclude{Constrained_triangulation_face_base_2.h}
+
+\ccIsModel
+
+\ccc{ConstrainedTriangulationFaceBase_2}
+
+
+\ccSeeAlso
+\ccc{TriangulationFaceBase_2} \\
+\ccc{ConstrainedTriangulationFaceBase_2}\\
+\ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Triangulation_face_base_2<Traits>}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,156 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_hierarchy_2.tex
+% +------------------------------------------------------------------------+
+% | 16.08.2000   Mariette Yvinec
+% | Package: Triangulation
+% | 
+\RCSdef{\RCSTriangulationhierarchyRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationhierarchyDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_hierarchy_2<Tr>}
+%% add template arg's if necessary
+
+\ccDefinition
+The class \ccRefName\ implements a triangulation augmented with
+a data structure which allows fast point location queries.
+The data structure is a hierarchy 
+of triangulations. The triangulation at the lowest level is
+the original triangulation where operations and point location are to 
+be performed.
+Then at each succedding level, the data structure
+stores a triangulation of a small random sample of the vertices
+of the triangulation at the preceeding level. Point location
+is done through a top-down nearest neighbor query.
+The nearest neighbor query is first
+performed naively in the top level triangulation.
+Then, at each following level, the nearest neighbor at that level
+is found through a linear walk performed from
+the nearest neighbor found at the preceeding level.
+Because the number of vertices in each triangulation is only a small
+fraction of the number of vertices of the preceeding triangulation 
+the data structure remains small and achieves fast point location 
+queries on real
+data. As proved in~\cite{d-iirdt-98}, this structure has an optimal behaviour
+when it is built for Delaunay triangulations.
+However it can be used as well for other triangulations
+and the \ccRefName\ class is templated by a parameter
+which is to be instantiated by one of the \cgal\ triangulation
+classes.
+
+\ccInclude{CGAL/Triangulation_hierarchy_2.h}
+
+\ccInheritsFrom
+
+\ccc{Tr}
+
+\ccTypes
+The class \ccRefName\ inherits the types from its base triangulation
+class \ccc{Tr}. 
+
+\ccCreation
+\ccCreationVariable{trh}  %% choose variable name
+
+\ccConstructor{Triangulation_hierarchy_2(const Traits& gt =
+Traits());}{default constructor.}
+\ccGlue
+\ccConstructor{Triangulation_hierarchy_2(const
+Triangulation_hierarchy_2& trh1);}{Each triangulation in the hierarchy 
+is duplicated.}
+\ccGlue
+\ccMethod{Triangulation_hierarchy_2<Tr> operator=(const Triangulation_hierarchy_2<Tr>& tr);}
+{Assignment. Each triangulation in the hierarchy is duplicated.}
+
+\ccHeading{Helper functions}
+\ccMethod{void swap(Triangulation_hierarchy_2<Tr>& trh1);}
+{The triangulations \ccc{trh1} and \ccVar\ are swapped.
+\ccVar. \ccc{swap(tr)} should be preferred to \ccc{trh} = \ccc{trh1} or to
+\ccc{trh(trh1)} if \ccc{trh} is deleted after that.}
+\ccGlue
+\ccMethod{void clear();}{Delete all triangulations in the hierarchy.}
+
+\ccHeading{Insertion and Removal}
+The class \ccRefName\ overwrites the following insertion and removal
+member functions to update the whole data structure at each operation.
+
+\ccMethod{Vertex_handle insert(const Point& p);}{Inserts  point \ccc{p}.
+If point \ccc{p} coincides with an already existing vertex, this 
+vertex is returned and the triangulation hierarchy is not updated.}
+\ccGlue
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+\ccGlue
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{inserts the points in the range
+ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+ Returns the number of inserted points.
+ \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}
+
+\ccMethod{void    remove(Vertex_handle v);}
+{removes the vertex from the triangulation hierarchy.}
+\ccGlue
+\ccMethod{void remove_degree_3(Vertex_handle v);}
+{Removes a vertex of degree three.
+\ccPrecond{Vertex \ccc{v} is a finite vertex with degree three.}}
+\ccMethod{void remove_second(Vertex_handle v);}{Removes the before
+last finite vertex.}
+\ccGlue
+\ccMethod{void remove_first(Vertex_handle v);}{Removes the last finite vertex.}
+
+\ccHeading{Point location}
+The following point location member functions are overwritten.
+They take advantage of the hierarchy to achieve an efficient
+point location.
+
+
+\ccMethod{ Face_handle  locate(const Point& p) const;}
+{Locates the point \ccc{p} in the triangulation. See the description of the
+\ccc{locate} member functions in the class \ccc{Triangulation_2<Traits,Tds>}. }
+
+\ccMethod{ Face_handle  locate(const Point& p, Locate_type& lt, int& li) const;}
+{Same as above. Additionally, the locate type \ccc{lt}
+ and the index \ccc{li} describing precisely the location are set.}
+
+\begin{ccAdvanced}
+\ccHeading{Checking}
+\ccMethod{bool is_valid() const;}{The \ccc{is_valid()} member function is
+overwritten
+to check the validity of the hierarchy, as well as the validity of the
+bottom triangulation.}
+\end{ccAdvanced}
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_2<Traits,Tds>} \\
+\ccc{TriangulationHierarchyVertexBase_2}, \\
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>}
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{examples/Package/Triangulation_hierarchy_2_prog.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{examples/Package/Triangulation_hierarchy_2_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

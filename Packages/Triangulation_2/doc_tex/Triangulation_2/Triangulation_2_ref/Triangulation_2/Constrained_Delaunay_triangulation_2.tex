@@ -1,0 +1,250 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Constrained_Delaunay_triangulation_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSConstrainedDelaunaytriangulationRev}{$Revision$}
+\RCSdefDate{\RCSConstrainedDelaunaytriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Constrained_Delaunay_triangulation_2<Traits,Tds>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+A constrained Delaunay triangulation is a triangulation with
+constrained edges which tries to be as much Delaunay as possible.
+As constrained edges are not necessarily Delaunay edges,
+the triangles of a constrained Delaunay triangulation do not
+necessarily fulfill the empty circle property
+but they fulfill a weaker constrained empty circle property.
+ To state this property,
+it is convenient to think of  constrained
+edges as blocking the view. Then, a triangulation is 
+constrained Delaunay if
+ the circumscribing circle
+of any of its triangular faces includes in its interior 
+no vertex  that is visible
+from the interior of the triangle.  
+The class \ccRefName\ is designed to represent
+constrained Delaunay triangulations.
+
+The template parameters \ccc{Tds} 
+has to be instantiate with a model of \ccc{Triangulation_data_structure_2}.
+The geometric traits 
+of a constrained Delaunay triangulation is required
+to provide the \ccc{side_of_oriented_circle} test as the geometric traits
+of a Delaunay triangulation and the \ccc{Traits}
+parameter has 
+to be instantiated with a model
+\ccc{Delaunay_triangulation_traits_2}.
+
+A constrained Delaunay triangulation is not a Delaunay
+triangulation but it is a constrained triangulation.
+Therefore the class \ccRefName\ derives from
+the class \ccc{Constrained_triangulation_2<Traits,Tds>}.
+Also, information about the status (constrained or not)
+of the edges of the triangulation is stored
+in the faces. 
+Thus the nested \ccc{Face}
+type of a constrained triangulation offers
+additonnal functionalities to deal with this information.
+Within the design of a triangulation data structure
+models templated by the base face class and the base vertex class,
+these additional functionalities related to the constraints
+are requirements which have to be fulfilled
+by the base face.
+The base face of a constrained triangulation
+has to be a model of the concept
+\ccc{ConstrainedTriangulationFaceBase_2}.
+If \ccc{Gt} is the geometric traits
+parameter,
+the default  for
+\ccc{ConstrainedTriangulationFaceBase_2}  is the class
+\ccc{CGAL::Constrained_triangulation_face_base_2<Gt>}
+and the default for the
+triangulation data structure parameter is the class
+\ccc{CGAL::Triangulation_data_structure_using_list_2 <
+                       CGAL::Triangulation_vertex_base_2<Gt>,
+		       CGAL::Constrained_triangulation_face_base_2<Gt>
+>}.
+
+\ccInclude{Constrained_Delaunay_triangulation_2.h}
+
+\ccInheritsFrom \ccc{Constrained_triangulation_2<Traits,Tds>}
+
+\ccTypes
+All types used in this class are inherited from the base class
+\ccc{Constrained_triangulation_2<Traits,Tds>}.
+
+
+
+\ccCreation
+\ccCreationVariable{cdt}  %% choose variable name
+
+\ccConstructor{Constrained_Delaunay_triangulation_2(const Traits &t = Traits())}
+{Introduces an empty constrained Delaunay triangulation \ccVar.}
+
+\ccConstructor{Constrained_Delaunay_triangulation_2(const
+Constrained_Delaunay_triangulation_2& cdt1)}
+ {Copy constructor, all faces and vertices
+are duplicated and  the constrained status of edges
+is copied. This last feature is not yet implemented.}
+
+\ccConstructor{Constrained_Delaunay_triangulation_2(list<Constrained>& lc,const Traits& t = Traits());}
+{Introduces a constrained triangulation, the constrained edges of which
+are the edges of the list \ccc{lc}.}
+
+
+\ccConstructor{ template<class InputIterator> Constrained_triangulation_2(
+        InputIterator first,
+                               InputIterator last,
+                               const Traits& t=Traits());}
+{A templated constructor which introduces and builds
+ a constrained triangulation with constrained edges in the range 
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+\ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Constraint}.}
+
+
+\ccHeading{Insertion and Removal}
+The following member functions overwrite the corresponding
+members of the base class to include a step restoring
+ the Delaunay constrained
+property after modification of the triangulation.
+
+\ccMethod{ Vertex_handle insert(Point a);}
+{ Inserts point a in the triangulation. }
+
+\ccMethod{ void insert(Point a, Point b);}
+{ Inserts segment ab as a constrained edge in the triangulation. }
+
+\ccMethod{ void insert(Vertex_handle va, Vertex_handle vb);}
+{ Inserts the line segment whose endpoints are the vertices va and vb
+as an edge e in the triangulation. }
+
+\ccMethod{void insert(Vertex_handle va, Vertex_handle vb,
+		   Face_handle & fr, int & i);}
+{Same as the previous procedure. In addition, returns f and i such that
+e=(f,i) and f is the face lying to the right of the oriented edge (va,vb). }
+
+
+\ccMethod{void remove(Vertex_handle & v);}
+{ Removes vertex v. 
+}\ccPrecond Vertex \ccc{v}  is not incident to a constrained edge.
+
+\ccMethod{ void remove_incident_constraints(Vertex_handle  v);}
+{Make the edges incident to vertex \ccc{v} unconstrained edges.}
+
+\ccMethod{void remove_constraint(const Face_handle & f, int i);}
+{ Edge \ccc{e}=\ccc{(f,i)}=\ccc{(g,j)} is no longer constrained.}
+
+
+\ccHeading{Queries}
+The following template member functions query the
+set of faces in conflict with a point \ccc{p}.
+The notion of conflict refers here to a 
+constrained Delaunay setting which means the following.
+Constrained edges are considered as visibility obstacles
+and a point \ccc{p} is considered to be 
+in conflict with a face \ccc{f} iff it is 
+ visible from the interior of \ccc{f} and 
+included in the circumcircle of \ccc{f}.
+
+\ccMethod{template <class Out_it1, class Out_it2> 
+          bool get_conflicts_and_boundary(const Point  &p, 
+   		       		Out_it1 fit, 
+   		       		Out_it2 eit,
+  		       		Face_handle start) const;} 
+{ 
+\ccc{Out_it1} is an output iterator with \ccc{Face_handle} as value type.
+\ccc{Out_it2} stands for an output iterator with \ccc{Edge} as value type.
+This members function outputs in the container pointed to by \ccc{fit}
+the faces which are in conflict with point \ccc{p}.
+It outputs in the container pointed to by \ccc{eit} the 
+the boundary of the zone in conflict with \ccc{p}.
+The boundary edges
+of the conflict  zone are ouput in counterclockwise order
+and each edge is described  through its incident face
+which is not in conflict with \ccc{p}.
+The ouput boolean is \ccc{true} if some conflicts has been found and 
+\ccc{false}
+otherwise, that is when \ccc{p} coincides with a vertex of the
+triangulation.
+}
+
+\ccMethod{template <class Out_it1> 
+          bool get_conflicts (const Point  &p, 
+   		       		Out_it1 fit, 
+  		       		Face_handle start) const;}
+{Same as above except that only the faces in conflict with \ccc{p}
+are output.}
+\ccMethod{template <class Out_it2> 
+          bool get_boundary_of_conflicts(const Point  &p, 
+   		   		Out_it2 eit,
+  		       		Face_handle start) const;}
+{ \ccc{Out_it2} stands for an output iterator with \ccc{Edge} as value
+type.
+ This functions  outputs in the container pointed to by \ccc{eit},
+the boundary of the zone in conflict with \ccc{p}. The boundary edges
+of the conflict  zone are ouput in counter-clockwise order
+and each edge is described  through the incident face
+which is not in conflict with \ccc{p}.
+The ouput boolean is true if some conflicts has been found and false
+otherwise
+(i. e. when \ccc{p} coincide with a vertex of the triangulation)}
+
+
+\ccHeading{Checking}
+
+\ccMethod{bool is_valid();}
+{ Checks if the triangulation is valid and if each constrained edge is
+a constraint for its two incident faces.}
+
+\begin{ccAdvanced}
+\ccHeading{Flips}
+
+\ccMethod{bool is_flipable(Face_handle f, int i);}
+{ Determines if edge \ccc{(f,i)} can be flipped. Returns true if
+edge \ccc{(f,i)} is not constrained and  the circle circumscribing f
+does not contain the vertex of \ccc{f->neighbor(i)}
+opposite to edge \ccc{(f,i)}. }
+
+\ccMethod{void flip(Face_handle& f, int i);}
+{ Flip \ccc{f} and \ccc{f->neighbor(i)}.}
+
+
+\ccMethod{void propagating_flip(List_edges & edges);}
+{ Makes the triangulation constrained Delaunay by flipping edges. 
+List edges contains an
+initial list of edges to be flipped. The returned
+triangulation is constrained Delaunay 
+if the list edges contains all edges of the
+input triangulation that need to be flipped (plus possibly others). }
+\end{ccAdvanced}
+
+
+\ccSeeAlso
+\ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} \\
+\ccc{TriangulationDataStructure_2} \\
+\ccc{DelaunayTriangulationTraits_2} \\
+\ccc{ConstrainedTriangulationFaceBase_2}
+
+\ccExample
+
+
+
+%% \ccIncludeExampleCode{examples/Package/Constrained_Delaunay_triangulation_2_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,192 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_2.tex
+% +------------------------------------------------------------------------+
+% | 29.03.2000   Mariette Yvinec
+% | Package: Triangulation
+% | 
+\RCSdef{\RCSTriangulationRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\clearpage
+\section{Reference pages for Triangulation}
+
+\subsection*{Definition}
+A 
+triangulation is a 2-dimensional simplicial complex which is pure
+connected and without singularities. Thus a triangulation
+can be viewed as a collection of triangular faces,
+such that two faces either have an empty intersection or share an edge or a vertex.
+The absence of singularities means that each edge belongs to 
+at most two triangles and that each vertex belongs  to a set  of faces
+whose union forms a topological disk.
+
+Each face of a triangulation can be given an orientation
+(clockwise or counterclockwise) which in turn induces an orientation
+on the edges incident to that face. The orientation of two adjacent
+faces are said to be consistent if they induce
+opposite orientations on their common incident edge.
+A triangulation is said to be orientable if 
+the orientation of each face can be chosen in such a way
+that all pairs of incident faces have consistent orientations. 
+
+In this chapter we present a framework to represent
+orientable triangulations which  may  be embedded 
+in a plane or in a higher dimensional space.
+Any such  triangulation can be described as a set of  vertices and
+triangular faces,  with incidence and adjacence relations:
+two facets or two vertices are said to be {\em adjacent}
+ (or neighboring) if they are incident to the same edge,
+a facet and a vertex are said to be incident if they are incident to the same
+edge.
+
+\subsection*{Design Rationale}
+Because a triangulation is merely a set of
+triangular faces with constant size complexity,
+triangulations are not implemented
+as a layer on top of a planar map.
+\cgal\ uses a proper internal
+representation of triangulations based on faces and vertices
+rather than on edges. Such a representation
+allows to save storage space and results in faster
+algorithms.
+
+Thus the basic elements of the representation are vertices and faces.
+Each triangular face gives access to its three incident vertices 
+and to its three adjacent faces. 
+Each vertex gives access to one of its incident faces
+and through that face to the circular list of its incident faces.
+The edges are not explicitely represented, they are only represented 
+through the adjacencies relations of two faces.
+
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\input{three_levels.ltex}
+\end{center}
+\end{ccTexOnly}
+\caption{The three layer design of triangulations.
+\label{Triangulation_ref_Fig_three_levels}}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=three_levels.gif align=center alt="Three_levels">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+
+
+The triangulations in \cgal\ are represented
+by a three layer structure  analog to the design used for polyhedral
+surfaces, see Figure~\ref{Triangulation_ref_Fig_three_levels}.
+In the bottom layer, the base classes for vertices and faces
+store some 
+geometric informations such as the coordinate of vertices 
+and any other attribute (such as color, constraint edges etc.)
+needed by the application.
+The base classes handle
+incidence and adjacency relations in term of \ccc{void*} pointers.
+The use of \ccc{void*} pointers in the bottom layer allows 
+to easily change one of the base
+class, to deal with an extra attribute like a color for example,
+without having to change the rest of the structure. 
+The advantages of strong type 
+checking is reestablished in the next layer 
+where the \ccc{triangulation data structure} can be thought 
+of as a container for faces and vertices which can take care
+of all the combinatorial aspects of the triangulation.
+The {triangulation data structure}
+implements
+adjacency and incidence relations with type safe pointer operations
+and maintains the combinatorial integrity of the triangulation.
+For that purpose, the {triangulation data structure} defines its own face and vertex
+classes which are derived
+ from the corresponding 
+base classes
+so that geometric and additional information on vertices and faces 
+are simply inherited.
+  At last, at the top layer, the \ccc{triangulation class}
+implements the user interface with the triangulation. 
+This classes offer to the user
+the high level functionalities that can be expected from a triangulation:
+insertion  or removal of a vertex, traversal of the faces,
+enumeration of the vertices,
+traversal of the   faces incident to a given vertex, location of a given point etc.
+The {triangulation class} defines its own 
+vertex and face classes
+derived from the corresponding class of the {triangulation data structure}.
+The vertices and faces of the {triangulation class}
+are only accessed through high levels concepts such as 
+handles, iterators, or circulators,
+according to the required functionalities of the access.
+The top layer {triangulation class}
+is responsible for the geometric embedding of the triangulation
+and comes in different flavors according to the kind of triangulation represented:
+planar triangulation of a set of points, Delaunay or regular or constrained
+ triangulations etc.
+
+The triangulation classes of \cgal\ depends on two template parameters.
+The first template parameter stands for
+ a geometric traits class which is assumed to provide
+the geometric objects (points, segments and triangles) 
+forming  the triangulation and the geometric predicates on those objects.
+The second template parameter stands for a model
+of  triangulation data
+structure acting as a container for faces and vertices
+while  taking care of the combinatorial aspects of the triangulation. 
+The triangulation data structure class is itself a template
+class parametrized by the base classes for faces and vertices.
+
+
+\subsection*{Concepts}
+\ccRefConceptPage{TriangulationTraits_2} \\
+\ccRefConceptPage{DelaunayTriangulationTraits_2} \\
+\ccRefConceptPage{RegularTriangulationTraits_2} \\
+
+\ccRefConceptPage{TriangulationDataStructure_2}\\
+\ccRefConceptPage{TriangulationDataStructure_2::Face}\\
+\ccRefConceptPage{TriangulationDataStructure_2::Vertex}\\
+\ccRefConceptPage{TriangulationFaceBase_2}\\
+\ccRefConceptPage{TriangulationVertexBase_2}\\
+\ccRefConceptPage{ConstrainedTriangulationFaceBase_2}\\
+\ccRefConceptPage{RegularTriangulationFaceBase_2}\\
+
+\subsection*{Classes}
+\ccRefIdfierPage{CGAL::Triangulation_2<Traits,Tds>}\\
+\ccRefIdfierPage{CGAL::Delaunay_triangulation_2<Traits,Tds>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_2<Traits,Tds>}\\
+\ccRefIdfierPage{CGAL::Constrained_triangulation_2<Traits,Tds>}\\
+\ccRefIdfierPage{CGAL::Constrained_triangulation_demo_2<Traits,Tds>}\\
+\ccRefIdfierPage{CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds>}\\
+\ccRefIdfierPage{CGAL::Triangulation_hierarchy_2<Tr>} \\
+
+\ccRefIdfierPage{CGAL::Triangulation_euclidean_traits_2<R>}\\
+\ccRefIdfierPage{CGAL::Triangulation_euclidean_traits_xy_3<R>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_euclidean_traits_2<Rep,Weight>}\\
+
+\ccRefIdfierPage{CGAL::Triangulation_data_structure_using_list_2<Vb,Fb>}\\
+\ccRefIdfierPage{CGAL::Triangulation_default_data_structure_2<Traits,Vb,Fb>}\\
+
+\ccRefIdfierPage{CGAL::Triangulation_2<Traits,Tds>::Face}\\
+\ccRefIdfierPage{CGAL::Triangulation_2<Traits,Tds>::Vertex}\\
+\ccRefIdfierPage{CGAL::Triangulation_face_base_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Triangulation_vertex_base_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_face_base_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Constrained_triangulation_face_base_2<Traits>}\\
+
+\ccRefIdfierPage{CGAL::Weighted_point<Pt,Wt>}\\
+\ccRefIdfierPage{CGAL::Triangulation_cw_ccw_2}\\
+
+
+\subsection*{Enum}
+\ccRefIdfierPage{CGAL::Triangulation_2<Traits,Tds>::Locate_type}
+
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,45 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_vertex_base_2.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationvertexbaseRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_vertex_base_2<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is the default model for the concept
+\ccc{TriangulationVertexBase_2}.
+It is  templated by a geometric traits class which provide the type
+\ccc{Point}. It is strongly recommanded to instantiate this
+traits class with the model used for the triangulation traits class.
+This ensures that the point type defined by \ccRefName
+is the same as the point type defined by 
+the triangulation.
+
+\ccInclude{Triangulation_vertex_base_2.h}
+
+\ccIsModel
+\ccc{TriangulationVertexBase_2}
+
+\ccSeeAlso
+\ccc{TriangulationVertexBase_2}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
