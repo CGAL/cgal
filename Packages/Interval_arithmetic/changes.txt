@@ -1,5 +1,12 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.50 on ?? June 2000
+- Replaced template by complete overloaded functions for true/false for sign,
+  compare, abs and square, for M$ VC++.
+- Qualified min and max by std:: for doubles.
+- Moved Interval_base to its own file Interval_base.h.
+- Moved Protect_FPU_rounding<> to _FPU.h.
+
 Version 4.49 on 21 June 2000
 - Fixed a bunch of namespace issues.
 - Interval_nt is now a template class.

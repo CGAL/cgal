@@ -16,11 +16,12 @@
 // revision_date : $Date$
 // package       : Interval Arithmetic
 // author(s)     : Sylvain Pion
-//
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
 // ======================================================================
  
 #include <CGAL/basic.h>
+#include <CGAL/Interval_base.h>
 
 // M$ VC++ doesn't like them yet.
 #ifdef CGAL_IA_NEW_FILTERS

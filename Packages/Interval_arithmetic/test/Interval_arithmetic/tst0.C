@@ -5,8 +5,12 @@
 #include <iostream>
 
 typedef CGAL::Interval_nt_advanced NT_adv;
+typedef CGAL::Interval_nt<>        NT;
 
-// 5 temporary functions to test the inlining of the compiler.
+// temporary functions to test the inlining of the compiler.
+NT triv_add (NT x)
+{ return x+x; }
+
 bool triv_test_1 ()
 { return NT_adv(1.0) < NT_adv(2.0); }
 

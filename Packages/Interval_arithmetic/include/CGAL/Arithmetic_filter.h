@@ -15,19 +15,19 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval Arithmetic
-// author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
-//
+// author(s)     : Sylvain Pion
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
 // ============================================================================
+
+#ifndef CGAL_ARITHMETIC_FILTER_H
+#define CGAL_ARITHMETIC_FILTER_H
 
 // This file contains a wrapper type for number types, that helps for
 // specializing template predicates, to use interval arithmetic as a filter.
 
 // Note: This stuff will one day be made obsolete by a filtered scheme at the
 //       kernel level.
-
-#ifndef CGAL_ARITHMETIC_FILTER_H
-#define CGAL_ARITHMETIC_FILTER_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic.h>

@@ -15,9 +15,9 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval Arithmetic
-// author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
-//
+// author(s)     : Sylvain Pion
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
 // ============================================================================
 
 #ifndef CGAL_LAZY_EXACT_NT_H
@@ -56,8 +56,6 @@
  *   The de-allocator won't work if it's not the standard one.
  *   Either it is fixed by Stefan, or I must use the usual Handle, or something
  *   else.
- * - It's not worth optimizing the beast to death, since it'll be obsoleted by
- *   the filtered kernel... one day.
  * - Interval rafinement functionnality ?
  * - The next step will be to replace Cartesian<Lazy_exact_nt<ET> > by a kernel
  *   similar to LOOK in functionality : Lazy_exact_Cartesian<FT,ET>.
