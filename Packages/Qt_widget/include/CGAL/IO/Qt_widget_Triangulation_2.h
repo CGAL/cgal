@@ -55,11 +55,11 @@ operator<<(Qt_widget& w,  const Triangulation_2<Gt, Tds> &t)
     t.draw_triangulation(w);
     return w;
   }
-  typedef Triangulation_2<Gt, Tds>::Point         Point;
+  typedef Triangulation_2<Gt, Tds>::Point         OpPoint;
   w.lock();
   Draw_triangulation<Gt, Tds> draw(t, w);
-  apply_to_range(t, Point(w.x_min(), w.y_max()), 
-                 Point(w.x_max(), w.y_min()), draw);
+  apply_to_range(t, OpPoint(w.x_min(), w.y_max()), 
+                 OpPoint(w.x_max(), w.y_min()), draw);
   w.unlock();
   return w;
 }
