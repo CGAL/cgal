@@ -96,32 +96,28 @@ private:
 
   typedef long Key;
  
-  typedef std::pair< Coord_type, Cell_handle > Interval_cell;
-  typedef std::multimap< Coord_type, Cell_handle, std::less<Coord_type> > 
-  Interval_cell_map;
+  typedef std::multimap< Coord_type, Cell_handle > Interval_cell_map;
+  typedef typename Interval_cell_map::value_type   Interval_cell;
 
   typedef triple<Coord_type, Coord_type , Coord_type> Interval3;
 
-  typedef std::pair< Interval3, Facet > Interval_facet;
-  typedef std::multimap< Interval3, Facet, std::less<Interval3> > 
-  Interval_facet_map;
+  typedef std::multimap< Interval3, Facet >        Interval_facet_map;
+  typedef typename Interval_facet_map::value_type  Interval_facet;
 
   //   typedef Cell_handle const const_void;
   //   typedef std::pair< const_void, int > const_Facet;
   //   typedef std::pair< const_void, int > const_Vertex;
 
   typedef std::pair< Interval3, Edge > Interval_edge;
-  typedef std::multimap< Interval3, Edge, std::less<Interval3> > 
-  Interval_edge_map;
+  typedef std::multimap< Interval3, Edge > Interval_edge_map;
 
   typedef std::pair< Coord_type, Coord_type > Interval2;
-  typedef std::pair< Interval2, Vertex_handle > Interval_vertex;
-  typedef std::multimap< Interval2, Vertex_handle, std::less<Interval2> > 
-  Interval_vertex_map;
+  typedef std::multimap< Interval2, Vertex_handle > Interval_vertex_map;
+  typedef typename Interval_vertex_map::value_type  Interval_vertex;
 
   typedef std::vector< Coord_type > Alpha_spectrum;
   
-  typedef std::set< Key, std::less<Key> > Marked_cell_set;
+  typedef std::set< Key > Marked_cell_set;
 
 public:
 

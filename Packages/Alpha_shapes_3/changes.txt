@@ -1,3 +1,6 @@
+version 3.12:
+- Fixes for SunPro.
+
 version 3.11:
 - Implicit typenames detected by GCC 3.1.
 

@@ -91,9 +91,8 @@ private:
 
   typedef long Key;
  
-  typedef std::pair< Coord_type, Face_handle > Interval_face;
-  typedef std::multimap< Coord_type, Face_handle, std::less<Coord_type> > 
-  Interval_face_map;
+  typedef std::multimap< Coord_type, Face_handle > Interval_face_map;
+  typedef typename Interval_face_map::value_type   Interval_face;
 
   typedef typename Tds::Face Face_tds;
   typedef typename Face_tds::Face Face_base;
@@ -101,14 +100,12 @@ private:
   // should be replaced by as soon as possible
   // typedef typename Face::Interval_3 Interval3;
 
-  typedef std::pair< Interval3, Edge > Interval_edge;
-  typedef std::multimap< Interval3, Edge, std::less<Interval3> > 
-  Interval_edge_map;
+  typedef std::multimap< Interval3, Edge >         Interval_edge_map;
+  typedef typename Interval_edge_map::value_type   Interval_edge;
 
   typedef std::pair< Coord_type, Coord_type > Interval2;
-  typedef std::pair< Interval2, Vertex_handle > Interval_vertex;
-  typedef std::multimap< Interval2, Vertex_handle, std::less<Interval2> > 
-  Interval_vertex_map;
+  typedef std::multimap< Interval2, Vertex_handle > Interval_vertex_map;
+  typedef typename Interval_vertex_map::value_type  Interval_vertex;
 
   typedef Face_handle const const_void;
   typedef std::pair<const_void, int> const_Edge;
@@ -117,7 +114,7 @@ private:
   
   typedef std::vector< Segment > Vect_seg;
 
-  typedef std::set< Key, std::less<Key> > Marked_face_set;
+  typedef std::set< Key > Marked_face_set;
 
 public:
 
@@ -722,11 +719,8 @@ Alpha_shape_2<Dt>::initialize_interval_face_map()
 {
   Coord_type alpha_f;
 
-  Face_iterator face_it;
   // only finite faces
-  for( face_it = faces_begin(); 
-       face_it != faces_end(); 
-       ++face_it) 
+  for(Face_iterator face_it = faces_begin(); face_it != faces_end(); ++face_it)
     {
       alpha_f = squared_radius(face_it);
       _interval_face_map.insert(Interval_face(alpha_f, face_it));
@@ -1423,7 +1417,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
   const typename Alpha_shape_2<Dt>::Interval2* pInterval2;
 
   typedef long Key;
-  std::map< Key, int, std::less< Key > > V;
+  std::map< Key, int > V;
 
   int number_of_vertices = 0;
       
