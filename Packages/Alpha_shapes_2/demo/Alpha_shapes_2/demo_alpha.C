@@ -76,8 +76,9 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
+#include <CGAL/Real_timer.h>
 #include "Parse.C"
-#include "Timing.C"
+
 
 #ifndef CGAL_MYTRAITS
 
@@ -133,6 +134,7 @@ typedef Alpha_shape::Coord_type Coord_type;
 typedef Alpha_shape::Alpha_iterator Alpha_iterator;
 
 typedef CGAL::Window_stream  Window_stream;
+
 //---------------- global variables -----------------------------------
 
 Alpha_shape* pA;
@@ -147,6 +149,8 @@ const CGAL::Color VERTEX_COLOR = CGAL::BLUE;
 
 const int ALPHA_MAX = 100;
 const int ALPHA_MIN = 0;
+
+CGAL::Real_timer t1;
 
 //------------------ visualization -------------------------------------
 
@@ -217,10 +221,10 @@ get_logical_size(InputIterator first,
        it != last;
        ++it)
     {
-      xmin = min( xmin, (*it).x());
-      xmax = max( xmax, (*it).x());
-      xmax = max( xmax,  (*it).y());
-      ymin = min( ymin, (*it).y());
+      xmin = std::min( xmin, (*it).x());
+      xmax = std::max( xmax, (*it).x());
+      xmax = std::max( xmax,  (*it).y());
+      ymin = std::min( ymin, (*it).y());
     }
  
   xmin -= 0.05*(xmax-xmin);
@@ -265,10 +269,12 @@ random_input(Alpha_shape &A,
       Point p((double)x,(double)y);
       V.push_back(p);
      }
-  start_timing();
+  t1.start();
   n = A.make_alpha_shape(V.begin(), V.end());
-  end_timing(1);
-  std::cout << "Inserted " << n  << " points" << std::endl;
+  t1.stop();
+  std::cout << "Inserted " << n << " points in " 
+	    << t1.time() << " secondes." << std::endl;
+  t1.reset();
 }
 
 //---------------------------------------------------------------------
@@ -306,10 +312,12 @@ window_input(Alpha_shape &A,
 	  }
     }
   std::cout << "You have entered " << V.size() << " points." << std::endl;
-  start_timing();
+  t1.start();
   n = A.make_alpha_shape(V.begin(), V.end());
-  end_timing(1);
-  std::cout << "Inserted " << n  << " points" << std::endl;
+  t1.stop();
+  std::cout << "Inserted " << n << " points in " 
+	    << t1.time() << " secondes." << std::endl;
+  t1.reset();
 
 }
 
@@ -322,7 +330,7 @@ file_input(Alpha_shape& A,
            const Options& opt)
 {
 
-  ifstream is(opt.finname, ios::in, filebuf::openprot);
+  std::ifstream is(opt.finname, std::ios::in);
 
   if(is.fail())
     {
@@ -350,7 +358,7 @@ file_input(Alpha_shape& A,
 //----------------------------------------------------------------
 
 void
-file_output(std::vector<Point>& V,
+file_output(const std::vector<Point>& V,
            const Options& opt)
   // the points are written in the same order as they where obtained;
   // if we woild use a vertex_iterator, this would not be the case.
@@ -360,7 +368,7 @@ file_output(std::vector<Point>& V,
         return;
       }
 
-    ofstream os(opt.foutname);
+    std::ofstream os(opt.foutname);
     CGAL::set_ascii_mode(os);
     
     int n = V.size();
@@ -513,14 +521,17 @@ int main(int argc,  char* argv[])
 		
 			  W.init(xmin, xmax, ymin);
 			  W << VERTEX_COLOR; 
-			  std::vector<Point>::const_iterator it;
-			  for (it = V.begin(); it != V.end(); ++it)
-			    W << *it;
-			  
-			  start_timing();
+			  {
+			    std::vector<Point>::const_iterator it;
+			    for (it = V.begin(); it != V.end(); ++it)
+			      W << *it;
+			  }
+			  t1.start();
 			  nn = A.make_alpha_shape(V.begin(), V.end());
-			  end_timing(1);
-			  std::cout << "Inserted " << nn  << " points" << std::endl;
+			  t1.stop();
+			  std::cout << "Inserted " << nn << " points in " 
+				    << t1.time() << " secondes." << std::endl;
+			  t1.reset();
 			  set_alpha(alpha_index);
 			  W.clear();
 			  W.init(xmin, xmax, ymin);

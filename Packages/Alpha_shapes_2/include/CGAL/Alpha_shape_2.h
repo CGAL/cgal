@@ -614,18 +614,18 @@ Alpha_iterator alpha_find(const Coord_type& alpha) const
   // Returns an iterator pointing to an element with alpha-value
   // `alpha', or the corresponding past-the-end iterator if such an
   // element is not found.
-  return find(_alpha_spectrum.begin(),
-	      _alpha_spectrum.end(),
-	      alpha);
+  return std::find(_alpha_spectrum.begin(),
+		   _alpha_spectrum.end(),
+		   alpha);
 }
 
 Alpha_iterator alpha_lower_bound(const Coord_type& alpha) const 
 {
   // Returns an iterator pointing to the first element with
   // alpha-value not less than `alpha'.
-  return lower_bound(_alpha_spectrum.begin(),
-		     _alpha_spectrum.end(),
-		     alpha);
+  return std::lower_bound(_alpha_spectrum.begin(),
+			  _alpha_spectrum.end(),
+			  alpha);
 }
 
 Alpha_iterator alpha_upper_bound(const Coord_type& alpha) const 

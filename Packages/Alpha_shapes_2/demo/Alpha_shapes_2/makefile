@@ -6,8 +6,6 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = $(CGAL-2.1)/make/the_makefile_you_choice
-
 include $(CGAL_MAKEFILE)
 
 # ---------------------------------------------------------------------#
@@ -18,10 +16,12 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = $(CGAL_CXXFLAGS) \
 
 # -DDEBUG for display additionnal info
+# -O2 supported
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
+
 LDFLAGS = $(CGAL_WINDOW_LIBPATH) \
           $(CGAL_WINDOW_LDFLAGS)
 
@@ -31,11 +31,11 @@ LDFLAGS = $(CGAL_WINDOW_LIBPATH) \
 
 all: demo_alpha demo_weight
 
-demo_alpha: demo_alpha.o
-	$(CGAL_CXX) -o demo_alpha demo_alpha.o $(CGAL_WINDOW_LDFLAGS)
+demo_alpha: demo_alpha$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) -o demo_alpha demo_alpha$(OBJ_EXT) $(CGAL_WINDOW_LDFLAGS)
 
-demo_weight: demo_weight.o
-	$(CGAL_CXX) -o demo_weight demo_weight.o $(CGAL_WINDOW_LDFLAGS)
+demo_weight: demo_weight$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) -o demo_weight demo_weight$(OBJ_EXT) $(CGAL_WINDOW_LDFLAGS)
 
 clean:
 	\rm -f *.o  *.obj *.exe \
@@ -47,7 +47,7 @@ clean:
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
+.C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) -c  $<
 
 

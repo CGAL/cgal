@@ -78,8 +78,10 @@
 #include <CGAL/Regular_triangulation_2.h>
 
 #include "weights_heuristic_2.h"
+
+#include <CGAL/Real_timer.h>
 #include "Parse_weight.C"
-#include "Timing.C"
+
 
 
 //typedef leda_integer  coord_type;
@@ -129,6 +131,7 @@ typedef Alpha_shape_2::Edge_circulator  Edge_circulator;
 typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
 
 typedef CGAL::Window_stream  Window_stream;
+
 //---------------- global variables -----------------------------------
 
 Alpha_shape_2* pA;
@@ -143,6 +146,8 @@ const CGAL::Color VERTEX_COLOR = CGAL::BLUE;
 
 const int ALPHA_MAX = 100;
 const int ALPHA_MIN = 0;
+
+CGAL::Real_timer t1;
 
 //------------------ visualization -------------------------------------
 
@@ -219,10 +224,10 @@ get_logical_size(InputIterator first,
        it != last;
        ++it)
     {
-      xmin = min( xmin, (*it).x());
-      xmax = max( xmax, (*it).x());
-      xmax = max( xmax,  (*it).y());
-      ymin = min( ymin, (*it).y());
+      xmin = std::min( xmin, (*it).x());
+      xmax = std::max( xmax, (*it).x());
+      xmax = std::max( xmax,  (*it).y());
+      ymin = std::min( ymin, (*it).y());
     }
  
   xmin -= 0.05*(xmax-xmin);
@@ -268,18 +273,24 @@ random_input(Alpha_shape_2 &A,
       Point p(Point::Point((double)x,(double)y));
       V.push_back(p);
      }
-  start_timing();
+  t1.start();
   std::vector<Point>::iterator first=V.begin(),
     last=V.end();
   if (opt.init)
     A.initialize_weights_to_the_nearest_voronoi_vertex(first, last, .7);
   else
-    A.initialize_weights_to_the_nearest_vertex(first, last, 1.0);
+    A.initialize_weights_to_the_nearest_vertex(first, last, 1.0);  
   for ( ;first!=last;first++)
     VV.push_back(*first);
+  t1.stop();
+  std::cout << "Weights of points initialized in " << t1.time() << std::endl;
+  t1.reset();
+  t1.start();
   n = A.make_alpha_shape(VV.begin(), VV.end());
-  end_timing(1);
-  std::cout << "Inserted " << n  << " points" << std::endl;
+  t1.stop();
+   std::cout << "Inserted " << n << " points in " 
+	     << t1.time() << " secondes." << std::endl;
+  t1.reset();
 }
 
 //---------------------------------------------------------------------
@@ -291,7 +302,7 @@ window_input(Alpha_shape_2 &A,
              const Options& opt)
 {
   std::cout << "Enter points with the left button" << std::endl;
-  std::cout << "Right button terminates input of points" << endl;
+  std::cout << "Right button terminates input of points" << std::endl;
 
   std::vector<Point> V;
   Point p;
@@ -317,8 +328,8 @@ window_input(Alpha_shape_2 &A,
 	  break;
 	  }
     }
-  std::cout << "You have entered " << V.size() << " points." << endl;
-  start_timing();
+  std::cout << "You have entered " << V.size() << " points." << std::endl;
+  t1.start();
   std::vector<Point>::iterator first=V.begin(),
     last=V.end();
   if (opt.init)
@@ -328,11 +339,15 @@ window_input(Alpha_shape_2 &A,
 
   for ( ;first!=last;first++)
     VV.push_back(*first);
-
+  t1.stop();
+  std::cout << "Weights of points initialized in " << t1.time() << std::endl;
+  t1.reset();
+  t1.start();
   n = A.make_alpha_shape(VV.begin(), VV.end());
-  end_timing(1);
-  std::cout << "Inserted " << n  << " points" << endl;
-
+  t1.stop();
+   std::cout << "Inserted " << n << " points in " 
+	     << t1.time() << " secondes." << std::endl;
+  t1.reset();
 }
 
 
@@ -346,11 +361,11 @@ file_input(Alpha_shape_2& A,
            const Options& opt)
 {
   std::vector<Point> V;
-  ifstream is(opt.finname, ios::in, filebuf::openprot);
+  std::ifstream is(opt.finname, std::ios::in);
 
   if(is.fail())
     {
-      std::cerr << "unable to open " << opt.finname << " for input" << endl;
+      std::cerr << "unable to open " << opt.finname << " for input" << std::endl;
       return false;
     }
 
@@ -358,7 +373,7 @@ file_input(Alpha_shape_2& A,
 
   int n;
   is >> n;
-  std::cout << "Reading " << n << " points" << endl;
+  std::cout << "Reading " << n << " points" << std::endl;
   V.reserve(n);
   Point_base p;
   for( ; n>0 ; n--)
@@ -368,14 +383,17 @@ file_input(Alpha_shape_2& A,
     }
   std::vector<Point>::iterator first=V.begin(),
     last=V.end();
+  std::cout << "Points read" << std::endl;
+  t1.start();
   if (opt.init)
     A.initialize_weights_to_the_nearest_voronoi_vertex(first, last, .7);
   else
     A.initialize_weights_to_the_nearest_vertex(first, last, 1.0);
   for ( ;first!=last;first++)
     VV.push_back(*first);
+  t1.stop();
+  std::cout << "Weights of points initialized in " << t1.time() << std::endl;
   
-  std::cout << "Points read" << endl;
   return true;
 }
     
@@ -383,7 +401,7 @@ file_input(Alpha_shape_2& A,
 //----------------------------------------------------------------
 
 void
-file_output(std::vector<Point>& V,
+file_output(const std::vector<Point>& V,
            const Options& opt)
   // the points are written in the same order as they where obtained;
   // if we woild use a vertex_iterator, this would not be the case.
@@ -394,17 +412,17 @@ file_output(std::vector<Point>& V,
         return;
       }
     
-    ofstream os(opt.foutname);
+    std::ofstream os(opt.foutname);
     CGAL::set_ascii_mode(os);
     
     int n = V.size();
-    os << n << endl;
+    os << n << std::endl;
 
     std::vector<Point>::const_iterator it;
     for (it = V.begin(); it != V.end(); ++it)
-      os << Point_base (*it) << endl;
+      os << Point_base (*it) << std::endl;
 
-    std::cout << n << " points written" << endl;
+    std::cout << n << " points written" << std::endl;
 }
 
 //-------------------------------------------------------------------
@@ -550,14 +568,17 @@ int main(int argc,  char* argv[])
 		
 			  W.init(xmin, xmax, ymin);
 			  W << VERTEX_COLOR; 
-			  std::vector<Point>::const_iterator it;
-			  for (it = V.begin(); it != V.end(); ++it)
-			    W << it->point();
-			  
-			  start_timing();
+			  {
+			    std::vector<Point>::const_iterator it;
+			    for (it = V.begin(); it != V.end(); ++it)
+			      W << it->point();
+			  }
+			  t1.start();
 			  nn = A.make_alpha_shape(V.begin(), V.end());
-			  end_timing(1);
-			  std::cout << "Inserted " << nn  << " points" << std::endl;
+			  t1.stop();
+			  std::cout << "Inserted " << nn << " points in " 
+				    << t1.time() << " secondes." << std::endl;
+			  t1.reset();
 			  set_alpha(alpha_index);
 			  W.clear();
 			  W.init(xmin, xmax, ymin);
