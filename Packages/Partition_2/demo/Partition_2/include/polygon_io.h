@@ -22,7 +22,8 @@ void draw_a_polygon(OutputStream& OS, const Polygon_2& poly, CGAL::Color color);
 
 template <class OutputStream>
 void draw_poly_list(OutputStream& OS, const std::list<Polygon_2>& poly_list, 
-                    int line_width, CGAL::Color color,  int& count);
+                    int line_width, CGAL::Color color,  int& count,
+                    bool show_coords);
 
 bool read_poly_from_file(Polygon_2& polygon, leda_string file_name);
 

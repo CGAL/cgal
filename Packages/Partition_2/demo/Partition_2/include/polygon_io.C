@@ -30,7 +30,8 @@ void input_polygon(Polygon_2& p, CGAL::Window_stream& W)
     W << CGAL::BLACK;
     leda_polygon ledaP;
     W >> ledaP;
-    convert_leda_polygon_to_CGAL(ledaP,p);
+    if (ledaP.size() > 2)
+       convert_leda_polygon_to_CGAL(ledaP,p);
 }
 
 template <class OutputStream>
@@ -61,7 +62,8 @@ void draw_a_polygon(OutputStream& OS, const Polygon_2& poly, CGAL::Color color)
 
 template <class OutputStream>
 void draw_poly_list(OutputStream& OS,  const std::list<Polygon_2>& poly_list, 
-                    int line_width, CGAL::Color color,  int& count)
+                    int line_width, CGAL::Color color,  int& count, 
+                    bool show_coords)
 {
    OS.set_line_width(line_width);
    OS << color;
@@ -81,6 +83,11 @@ void draw_poly_list(OutputStream& OS,  const std::list<Polygon_2>& poly_list,
            ++e_circ;
          }
          while (e_circ != end_circ);
+      }
+      if (show_coords) 
+      {
+         label_vertices(OS, *p_it);
+         OS << color;
       }
       count++;
    }

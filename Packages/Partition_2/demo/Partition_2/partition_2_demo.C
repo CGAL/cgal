@@ -1,6 +1,9 @@
 #include <CGAL/basic.h>
 #ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
+int main() { 
+   std::cout << "\nSorry, this demo needs LEDA for visualization.\n"; 
+   return 0; 
+}
 #else
 #include <typedefs.h>
 #include <polygon_io.h>
@@ -35,7 +38,7 @@ CGAL::Window_stream W(WINDOW_SIZE, WINDOW_SIZE, "Polygon decomposition");
 panel_item file_name_panel;
 leda_string file_label("Current file: ");
 leda_string current_file_name("data/_last");
-leda_panel controls("Controls");
+leda_panel controls(WINDOW_SIZE, 10, "Controls");
 
 bool show_greene_approx = false;
 bool show_monotone      = false;
@@ -72,7 +75,8 @@ void draw_polygons(int button_num)
    int num_greene_opt;
    if (show_greene_opt) 
    {
-      draw_poly_list(W, greene_opt_polys, width, CGAL::GREEN, num_greene_opt);
+      draw_poly_list(W, greene_opt_polys, width, CGAL::GREEN, num_greene_opt,
+                     show_coords);
       leda_string go_num_label(" greene opt. (%d)", num_greene_opt);
       W.draw_text(legend_x, legend_y, go_num_label);
       legend_y += legend_dist;
@@ -81,7 +85,8 @@ void draw_polygons(int button_num)
    int num_tri_approx;
    if (show_tri_approx) 
    {
-      draw_poly_list(W, tri_approx_polys, width, CGAL::VIOLET, num_tri_approx);
+      draw_poly_list(W, tri_approx_polys, width, CGAL::VIOLET, num_tri_approx,
+                     show_coords);
       leda_string tri_num_label(" tri. approx. (%d)", num_tri_approx);
       W.draw_text(legend_x, legend_y, tri_num_label);
       legend_y += legend_dist;
@@ -91,7 +96,7 @@ void draw_polygons(int button_num)
    if (show_greene_approx) 
    {
       draw_poly_list(W, greene_approx_polys, width, CGAL::BLUE, 
-                     num_greene_approx);
+                     num_greene_approx, show_coords);
       leda_string ga_num_label(" greene approx. (%d)", num_greene_approx);
       W.draw_text(legend_x, legend_y, ga_num_label);
       legend_y += legend_dist;
@@ -100,7 +105,8 @@ void draw_polygons(int button_num)
    int num_monotone; 
    if (show_monotone) 
    {
-      draw_poly_list(W, monotone_polys, width, CGAL::RED, num_monotone);
+      draw_poly_list(W, monotone_polys, width, CGAL::RED, num_monotone,
+                     show_coords);
       leda_string mono_num_label(" monotone (%d)", num_monotone);
       W.draw_text(legend_x, legend_y, mono_num_label);
       legend_y += legend_dist;

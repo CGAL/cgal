@@ -15,8 +15,7 @@ The contents of this directory are:
    greene_approx_convex_demo.C  
    optimal_convex_demo.C   
    y_monotone_2_demo.C      
-      programs that display various partitionings of a single, given polygon and
-      wait for a mouse click before closing the window.
+      programs that display various partitionings of a single, given polygon 
  
 
    partition_2_demo.C

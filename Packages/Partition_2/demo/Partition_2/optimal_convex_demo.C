@@ -1,6 +1,9 @@
 #include <CGAL/basic.h>
 #ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
+int main() { 
+  std::cout << "\nSorry, this demo needs LEDA for visualization.\n"; 
+  return 0; 
+}
 #else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
@@ -20,6 +23,7 @@ typedef std::list<Polygon_2>                              Polygon_list;
 using CGAL::is_convex_2;
 
 const int WINDOW_SIZE = 500;
+const int EXIT = 4; // button number for window's "Exit" button
 
 void make_polygon(Polygon_2& polygon)
 {
@@ -42,6 +46,7 @@ void draw_polygons(const Polygon_2& polygon,
                    CGAL::Window_stream& W)
 {
    W.clear();
+   W.set_node_width(2);
    W.set_line_width(3);
    W << CGAL::BLACK;
    W << polygon; 
@@ -59,11 +64,11 @@ int main( )
    Polygon_2    polygon;
    Polygon_list partition_polys;
    Traits       partition_traits;
-   CGAL::Window_stream W(WINDOW_SIZE, WINDOW_SIZE);
+   CGAL::Window_stream W(WINDOW_SIZE, WINDOW_SIZE,
+                         "Optimal Convex Partition");
 
    W.init(0, WINDOW_SIZE, 0);
-
-   CGAL::cgalize(W);
+   W.button("Exit", EXIT);
 
    W.display();
 
@@ -73,8 +78,9 @@ int main( )
                                     std::back_inserter(partition_polys),
                                     partition_traits);
    draw_polygons(polygon, partition_polys, W);
-   // wait for mouse click
-   W.read_mouse();
+
+   // wait for click on exit button
+   while (W.read_mouse() != EXIT) {}
    return 0;
 }
 

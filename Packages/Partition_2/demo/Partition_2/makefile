@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I./include \
-           -pedantic -I../../include -I/KM/guests/hert/cgal/Visibility_graph_2/include \
+           -pedantic -I../../include \
            $(CGAL_CXXFLAGS) \
            -g
 
@@ -47,6 +47,12 @@ optimal_convex_demo: optimal_convex_demo.o
 
 partition_2_demo: partition_2_demo.o 
 	$(CGAL_CXX) -o partition_2_demo partition_2_demo.o $(LDFLAGS)
+
+partition_2_demo.o: \
+        partition_2_demo.C \
+        ./include/polygon_io.h \
+        ./include/polygon_io.C \
+        ./include/typedefs.h
 
 y_monotone_demo: y_monotone_demo.o
 	$(CGAL_CXX) -o y_monotone_demo y_monotone_demo.o $(LDFLAGS)
