@@ -17,6 +17,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Mariette Yvinec
+//                 Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
@@ -39,6 +40,12 @@ struct Triangulation_iterator_handle_adaptor
    
   Triangulation_iterator_handle_adaptor(const Base & b) 
     : Base(b) {}
+
+  // MK: added this to satisfy the mips_CC-7.40 compiler
+  Self& operator=(const Self& other) {
+    Base::operator=((Base)other); 
+    return *this;
+  }
 
   operator Handle() const {return (*this)->handle();}
   Self&  operator++() { Base::operator++(); return *this;}
