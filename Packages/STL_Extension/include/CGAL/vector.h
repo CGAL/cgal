@@ -506,7 +506,7 @@ protected:
                 iterator new_finish = new_start;
                 try {
                     new_finish = iterator( 
-                        std::uninitialized_copy(start_, position, &*new_start));
+                        std::uninitialized_copy(start_, position,&*new_start));
                     new_finish = iterator(
                         std::uninitialized_copy( first, last, &*new_finish));
                     new_finish = iterator( 
