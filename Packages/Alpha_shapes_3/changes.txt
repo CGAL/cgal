@@ -1,5 +1,6 @@
 07 May 2004 Andreas Fabri
 - Prefixed Alpha_shape_status with CGAL::  (to get rid of error msg of SunPro CC)
+- Replaced std::make_pair with Alpha_{cell,vertex}_map::value_type (to get rid of error msg of SunProCC)
 
 05 May 2004 Andreas Fabri
 - Added missing std:: to find in Alpha_shape_3.h
