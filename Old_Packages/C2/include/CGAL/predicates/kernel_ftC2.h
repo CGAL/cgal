@@ -177,6 +177,7 @@ compare_deltax_deltayC2(const FT &px, const FT &qx,
   return CGAL::compare(abs(px-qx), abs(ry-sy));
 }
 
+//CGAL_NO_FILTER_BEGIN
 template < class FT >
 inline
 Comparison_result
@@ -186,6 +187,7 @@ compare_lexicographically_xyC2(const FT &px, const FT &py,
   Comparison_result c = CGAL::compare(px,qx);
   return (c != EQUAL) ? c : CGAL::compare(py,qy);
 }
+//CGAL_NO_FILTER_END
 
 template < class FT >
 inline

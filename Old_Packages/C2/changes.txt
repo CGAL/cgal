@@ -1,3 +1,6 @@
+Version 3.3.8 (October ?? 1999)
+- Don't filter compare_lexicographically_xyC2() [Sylvain].
+
 Version 3.3.7 (October 7 1999)
 - Various predicates and constructions cleanups and speedups [Sylvain].
 - Changed vector to to_vector in Direction
