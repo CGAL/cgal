@@ -2780,7 +2780,7 @@ istream& operator>>
   // the non combinatorial information on vertices (point, etc)
   // the number of cells
   // the cells by the indices of their vertices in the preceding list
-  // of vertices, plus the non combinatorial information on each cells
+  // of vertices, plus the non combinatorial information on each cell
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
@@ -2939,7 +2939,7 @@ ostream& operator<<
   // the non combinatorial information on vertices (point, etc)
   // the number of cells
   // the cells by the indices of their vertices in the preceding list
-  // of vertices, plus the non combinatorial information on each cells
+  // of vertices, plus the non combinatorial information on each cell
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
