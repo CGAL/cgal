@@ -57,11 +57,6 @@ namespace OpenNL {
 //________________________________________________________________
 // Class SparseMatrix
 // Model of the SparseLinearAlgebraTraits_d::Matrix concept
-//
-// TO DO: to match more closely LinearAlgebraTraits_d::Matrix concept, replace set_coef() and get_coef() by
-//			  NT& operator()(int i, int j)		  // allocate the coefficient if it doesn't exist
-//			  NT  operator()(int i, int j) const  // do NOT allocate the coefficient if it doesn't exist
-//        if all compilers understand the trick
 template <class T> class SparseMatrix {
 public:
 
@@ -191,7 +186,7 @@ public:
 
 	// Read access to 1 matrix coefficient 
 	// (for SparseLinearAlgebraTraits_d::Matrix concept)
-	NT  get_coef (int i, int j) const {
+	NT  get_coef (unsigned int i, unsigned int j) const {
         assert(i < dimension_) ;
         assert(j < dimension_) ;
         return row(i).get_coef(j) ;

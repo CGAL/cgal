@@ -23,7 +23,8 @@
 
 #include "CGAL/parameterization_assertions.h"
 
-#include <limits>
+#include <cfloat>
+#include <climits>
 #include <map>
 
 CGAL_BEGIN_NAMESPACE
@@ -44,7 +45,7 @@ class Square_border_parametizer_3
 {
 // Public types
 public:
-				typedef MeshAdaptor_3									MeshAdaptor_3;
+				typedef MeshAdaptor_3									Mesh_adaptor_3;
 
 // Public operations
 public:
@@ -125,7 +126,8 @@ bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdapto
 	std::cerr << "  map on a square...";
  	double len = 0.0;											// current position on square in [0, total_len[
 	Offset_map offsets;											// vertex index -> offset map
-	for(Border_vertex_iterator it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
+	Border_vertex_iterator it;
+	for(it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
 	{
 		CGAL_parameterization_assertion(mesh->is_vertex_on_border(*it));
 
@@ -160,7 +162,7 @@ bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdapto
 	offsets[mesh->get_vertex_index(*it3)] = 3.0;
 
  	// Set vertices along square's sides and mark them as "parameterized"
-	for(/*Border_vertex_iterator*/ it = it0; it != it1; it++)	// 1st side
+	for(it = it0; it != it1; it++)	// 1st side
 	{
 		Point_2 uv(offsets[mesh->get_vertex_index(*it)], 0.0);
 		mesh->set_vertex_uv(&*it, uv); 
@@ -201,12 +203,11 @@ inline
 typename Square_border_parametizer_3<MeshAdaptor_3>::Border_vertex_iterator 
 Square_border_parametizer_3<MeshAdaptor_3>::closest_iterator(/*const*/ MeshAdaptor_3& mesh, /*const*/ Offset_map& offsets, double value)
 {
-	Border_vertex_iterator best = 0;							// returned value
+	Border_vertex_iterator best;								// CAUTION: uninitialized iterator or iterator pointing to NULL?
 	double min = DBL_MAX;										// distance for 'best'
 
 	for (Border_vertex_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
 	{
-		double toto = offsets[mesh.get_vertex_index(*it)];
 		double d = fabs(offsets[mesh.get_vertex_index(*it)] - value);
 		if (d < min)
 		{

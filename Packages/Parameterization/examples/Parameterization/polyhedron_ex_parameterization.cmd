@@ -1,0 +1,1 @@
+-t floater -b square -o obj data/cone.off

@@ -67,14 +67,14 @@ public:
         dimension_ = dim ; coeff_ = new T[dim] ; 
 
 		// init with zeros (for SparseLinearAlgebraTraits_d::Vector concept)
-		for (int i=0; i < dimension_; i++)
+		for (unsigned int i=0; i < dimension_; i++)
 			coeff_[i] = 0;
     }
 	// Copy constructor
     FullVector(const FullVector& toCopy) { 
 		dimension_ = toCopy.dimension_ ; 
 		coeff_ = new T[dimension_] ; 
-		for (int i=0; i < dimension_; i++)
+		for (unsigned int i=0; i < dimension_; i++)
 			coeff_[i] = toCopy.coeff_[i];
     }
 	// operator =()
@@ -83,7 +83,7 @@ public:
 
 		dimension_ = toCopy.dimension_ ; 
 		coeff_ = new T[dimension_] ; 
-		for (int i=0; i < dimension_; i++)
+		for (unsigned int i=0; i < dimension_; i++)
 			coeff_[i] = toCopy.coeff_[i];
 
 		return *this;

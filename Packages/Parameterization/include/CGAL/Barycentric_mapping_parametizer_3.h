@@ -32,12 +32,33 @@ CGAL_BEGIN_NAMESPACE
 // Implement Tutte's barycentric mapping. 1 to 1 mapping is guaranteed if surface's border is mapped onto a convex polygon.
 template <class MeshAdaptor_3,														// 3D surface
 		  class BorderParametizer_3 = Circular_border_parametizer_3<MeshAdaptor_3>,	// Class to map the surface's border onto a 2D space
-		  class SparseLinearAlgebraTraits_d = OpenNL::DefaultLinearSolverTraits<MeshAdaptor_3::NT> >	
+		  class SparseLinearAlgebraTraits_d = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT> >	
 																					// Traits class for solving a sparse linear system "A*X = B"
 class Barycentric_mapping_parametizer_3 
 	: public Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>
 {
-// Public stuff
+// Public types
+public:
+				// Export Mesh_Adaptor_3, BorderParametizer_3 and SparseLinearAlgebraTraits_d types and subtypes
+				typedef MeshAdaptor_3											Mesh_adaptor_3;
+				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode		ErrorCode;
+				typedef typename MeshAdaptor_3::NT								NT;
+				typedef typename MeshAdaptor_3::Face							Face;
+				typedef typename MeshAdaptor_3::Vertex							Vertex;
+				typedef typename MeshAdaptor_3::Point_3							Point_3;
+				typedef typename MeshAdaptor_3::Point_2							Point_2;
+				typedef typename MeshAdaptor_3::Vector_3						Vector_3;
+				typedef typename MeshAdaptor_3::Face_iterator					Face_iterator;
+				typedef typename MeshAdaptor_3::Vertex_iterator					Vertex_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_iterator			Border_vertex_iterator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_circulator	Vertex_around_face_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator	Vertex_around_vertex_circulator;
+				typedef BorderParametizer_3										Border_parametizer_3;
+				typedef SparseLinearAlgebraTraits_d								Sparse_linear_algebra_traits_d;
+				typedef typename SparseLinearAlgebraTraits_d::Vector			Vector;
+				typedef typename SparseLinearAlgebraTraits_d::Matrix			Matrix;
+
+// Public operations
 public:
 				// Constructor
 				// @param borderParametizer	Object that maps the surface's border onto a 2D space

@@ -21,7 +21,7 @@
 #ifndef FIXED_BORDER_PARAMETIZER_3_H
 #define FIXED_BORDER_PARAMETIZER_3_H
 
-#include <CGAL/Circulator.h>
+#include <CGAL/circulator.h>
 
 #include "CGAL/Parametizer_3.h"
 #include "CGAL/Circular_border_parametizer_3.h"
@@ -43,15 +43,28 @@ CGAL_BEGIN_NAMESPACE
 //                       - The current implementation does not remove border vertices from the linear systems => A cannot be symmetric.
 template <class MeshAdaptor_3,														// 3D surface
 		  class BorderParametizer_3 = Circular_border_parametizer_3<MeshAdaptor_3>,	// Class to map the surface's border onto a 2D space
-		  class SparseLinearAlgebraTraits_d = OpenNL::DefaultLinearSolverTraits<MeshAdaptor_3::NT> >	
+		  class SparseLinearAlgebraTraits_d = OpenNL::DefaultLinearSolverTraits<typename MeshAdaptor_3::NT> >	
 																					// Traits class for solving a sparse linear system "A*X = B"
 class Fixed_border_parametizer_3 : public Parametizer_3<MeshAdaptor_3>
 {
-// Types
+// Public types
 public:
-				// BorderParametizer_3 and SparseLinearAlgebraTraits_d types and subtypes (Mesh_Adaptor_3 types are inherited)
-				typedef typename BorderParametizer_3							BorderParametizer_3;
-				typedef typename SparseLinearAlgebraTraits_d					SparseLinearAlgebraTraits_d;
+				// Export Mesh_Adaptor_3, BorderParametizer_3 and SparseLinearAlgebraTraits_d types and subtypes
+				typedef MeshAdaptor_3											Mesh_adaptor_3;
+				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode		ErrorCode;
+				typedef typename MeshAdaptor_3::NT								NT;
+				typedef typename MeshAdaptor_3::Face							Face;
+				typedef typename MeshAdaptor_3::Vertex							Vertex;
+				typedef typename MeshAdaptor_3::Point_3							Point_3;
+				typedef typename MeshAdaptor_3::Point_2							Point_2;
+				typedef typename MeshAdaptor_3::Vector_3						Vector_3;
+				typedef typename MeshAdaptor_3::Face_iterator					Face_iterator;
+				typedef typename MeshAdaptor_3::Vertex_iterator					Vertex_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_iterator			Border_vertex_iterator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_circulator	Vertex_around_face_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator	Vertex_around_vertex_circulator;
+				typedef BorderParametizer_3										Border_parametizer_3;
+				typedef SparseLinearAlgebraTraits_d								Sparse_linear_algebra_traits_d;
 				typedef typename SparseLinearAlgebraTraits_d::Vector			Vector;
 				typedef typename SparseLinearAlgebraTraits_d::Matrix			Matrix;
 
@@ -97,7 +110,7 @@ protected:
 				// * vertices must be indexed
 				// * vertex i musn't be already parameterized
 				// * line i of A must contains only zeros
-				virtual	ErrorCode  parameterize_inner_vertex (MeshAdaptor_3& mesh, Vertex* vertex, 
+				virtual ErrorCode  parameterize_inner_vertex (MeshAdaptor_3& mesh, Vertex* vertex, 
 															  Matrix* A, Vector* Bu, Vector* Bv);
 
 				// Check parameterize() postconditions:
@@ -343,24 +356,7 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 		Wii -= Wij;
 
 		// Get j index
-		int j;
-		/* LS 01/2005: je ne comprend pas le code ci-dessous :
-
-		Polyhedron_ex::Vertex_handle adjacent_vertex = neighborIt->opposite()->vertex();
-		if(adjacent_vertex->is_inner_param()) // simple case
-			j = adjacent_vertex->index();
-		else // fixed vertex
-		{
-			Polyhedron_ex::Halfedge_handle halfedge_param;
-			j =
-			m_pMesh->find_index_first_parameterized_halfedge(neighborIt->next()->next(),
-      														adjacent_vertex,
-      														halfedge_param);
-			//std::cerr << "** fixed case (i " << j << ")" << std::endl;
-			CGAL_assertion(j != -1);
-    	}
-		*/
-		j = mesh.get_vertex_index(*neighborIt);
+		int j = mesh.get_vertex_index(*neighborIt);
 
 		// Set Wij in matrix
      	A->set_coef(i,j, Wij);
@@ -430,8 +426,8 @@ inline
 bool Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::is_one_to_one_mapping (const Matrix& A) 
 {
 	// Check if all Wij coefficients are > 0 (for j vertex neighbor of i)
-	for (int i=0; i < A.row_dimension(); i++)
-		for (int j=0; j < A.column_dimension(); j++)
+	for (int i=0; i < (int)A.row_dimension(); i++)
+		for (int j=0; j < (int)A.column_dimension(); j++)
 			if (i != j)
 				if (A.get_coef(i,j) < 0)
 					return false;

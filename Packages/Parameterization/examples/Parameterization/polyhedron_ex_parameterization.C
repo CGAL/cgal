@@ -334,12 +334,12 @@ int main(int argc,char * argv[])
 			else 
 			{
      			fprintf(stderr,"invalid choice\n");
-     			return 1;
+     			return -1;
      		}
 			if (err != CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::OK)
 			{
 				fprintf(stderr,"parameterization failure: error = %d\n", (int)err);
-     			return 1;
+     			return err;
      		}
      		
      		//***************************************     		

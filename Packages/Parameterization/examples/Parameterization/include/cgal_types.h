@@ -17,11 +17,6 @@ email                : pierre.alliez@sophia.inria.fr
 
 #include <CGAL/basic.h>
 
-// LS 12/2004: seems mandatory to include gl.h
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 // CGAL stuff
 
 #include <CGAL/Cartesian.h>
@@ -31,7 +26,6 @@ email                : pierre.alliez@sophia.inria.fr
 #include <algorithm>
 #include <vector>
 #include <list>
-#include <GL/gl.h>
 #include <stdio.h>
 
 #include "my_kernel.h"

@@ -41,7 +41,7 @@ class Circular_border_parametizer_3
 {
 // Public types
 public:
-				typedef MeshAdaptor_3									MeshAdaptor_3;
+				typedef MeshAdaptor_3									Mesh_adaptor_3;
 
 // Public operations
 public:

@@ -88,10 +88,10 @@ private:
 
 public:
    OptArgvIter(const char * const argv[])
-      : av(argv), ac(-1), ndx(0) {}
+      :  ndx(0),  ac(-1), av(argv) {}
 
    OptArgvIter(int argc, const char * const argv[])
-      : av(argv), ac(argc), ndx(0) {}
+      : ndx(0),  ac(argc), av(argv) {}
 
    virtual
    ~OptArgvIter(void);
@@ -372,7 +372,7 @@ class Options {
 private:
    unsigned       explicit_end : 1;  // were we terminated because of "--"?
    unsigned       optctrls : 7;  // control settings (a set of OptCtrl masks)
-   const char  * const * optvec; // vector of option-specifications (last=NULL)
+   const char* const * optvec; // vector of option-specifications (last=NULL)
    const char   * nextchar;      // next option-character to process
    const char   * listopt;       // last list-option we matched
    const char   * cmdname;       // name of the command

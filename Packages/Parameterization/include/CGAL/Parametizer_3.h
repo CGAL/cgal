@@ -47,7 +47,7 @@ public:
 				};
 
 				// MeshAdaptor_3 type and subtypes
-				typedef typename MeshAdaptor_3									MeshAdaptor_3;
+				typedef MeshAdaptor_3											Mesh_adaptor_3;
 				typedef typename MeshAdaptor_3::NT								NT;
 				typedef typename MeshAdaptor_3::Face							Face;
 				typedef typename MeshAdaptor_3::Vertex							Vertex;
@@ -83,7 +83,7 @@ protected:
 					Vector_3 v = R - Q;
 					// (u . v)/((u x v).len)
 					double dot = (u*v);
-					Vector cross_vector = CGAL::cross_product(u,v);
+					Vector_3 cross_vector = CGAL::cross_product(u,v);
 					double cross_norm = std::sqrt(cross_vector*cross_vector);
 					CGAL_parameterization_assertion(cross_norm != 0.0);
 					if(cross_norm != 0.0)
@@ -101,7 +101,7 @@ protected:
 					// (u . v)/((u x v).len)
 					double dot = (u*v);
 					CGAL_parameterization_assertion(dot != 0.0);
-					Vector cross_vector = CGAL::cross_product(u,v);
+					Vector_3 cross_vector = CGAL::cross_product(u,v);
 					double cross_norm = std::sqrt(cross_vector*cross_vector);
 					if(dot != 0.0)
 						return (cross_norm/dot);
@@ -134,7 +134,7 @@ protected:
 					double cosine = dot / product;
 
 					// sine
-					My_kernel::Vector_3 w = CGAL::cross_product(u,v);
+					Vector_3 w = CGAL::cross_product(u,v);
 					double AbsSine = std::sqrt(w*w) / product;
 
 					if(cosine >= 0)
