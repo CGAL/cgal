@@ -1,3 +1,7 @@
+20 November 2004 Sylvain Pion
+- On Fedora Core 3, "uname -r" returns "2.6.9-1.678_FC3", and the underscore
+  confuses a few things.  Fixed by converting "_"s to "-"s.
+
 08 November 2004 Andreas Fabri
 - Removed gcc.lib again
 
