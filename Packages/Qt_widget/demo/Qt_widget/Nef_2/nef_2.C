@@ -220,9 +220,18 @@ public:
       "CLOSURE", "BOOLEAN OPERATIONS", this, SLOT(sl_closure()), optoolbar, "closure");
     QToolButton *but_boundary = new QToolButton(QPixmap( (const char**)boundary_xpm ), 
       "BOUNDARY", "BOOLEAN OPERATIONS", this, SLOT(sl_boundary()), optoolbar, "boundary");
-    QToolButton *but_regularisation = new QToolButton(QPixmap( (const char**)regularization_xpm ), 
+    QToolButton *but_regularization = new QToolButton(QPixmap( (const char**)regularization_xpm ), 
       "REGULARIZATION", "BOOLEAN OPERATIONS", this, SLOT(sl_regularization()), optoolbar, "regularization");
     
+    but_intersection->setOn(true);
+    but_union->setOn(true);
+    but_difference->setOn(true);
+    but_symm_difference->setOn(true);
+    but_complement->setOn(true);
+    but_interior->setOn(true);
+    but_closure->setOn(true);
+    but_boundary->setOn(true);
+    but_regularization->setOn(true);
 
     this->addToolBar(stoolbar->toolbar(), Top, false);
     this->addToolBar(newtoolbar->toolbar(), Top, false);

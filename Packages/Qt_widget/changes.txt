@@ -1,3 +1,9 @@
+1.2.40
+----------
+	Qt_widget have 2 new functions x_real_rational and y_real_rational.
+	Those 2 return an Gmpq object. The conversion between screen coordinates and real world coordinates return a more simple number (rational), a Gmpq object.
+	I put that in the doc either.
+
 1.2.39
 ----------
 	The VC7 vcproj files were added in binary mode for all the demos in Qt_widget. This projects are configured for RELEASE/DEBUG mode with Qt3.0
