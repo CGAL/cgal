@@ -132,7 +132,8 @@ public:
      */
     template <class InputIterator>
     X_monotone_curve_2 (const Org_x_monotone_curve_2 & cv, 
-			const InputIterator& begin, const InputIterator& end) :
+			const InputIterator & begin,
+                        const InputIterator & end) :
       Org_x_monotone_curve_2(cv),
       m_data_list()
     {
@@ -154,7 +155,7 @@ public:
      * Get the first data object associated with the curve.
      * \pre number_of_data_objects() is not 0.
      */
-    const Data& get_data () const
+    const Data & get_data () const
     {
       CGAL_precondition (m_data_list.size() > 0);
 
