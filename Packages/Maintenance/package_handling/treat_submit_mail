@@ -162,6 +162,15 @@ sub main()
     }
     
     $Sender =~ s/\s*//g;
+
+    if ( $Sender eq 'daemon@cs.uu.nl') {
+	while(<>) {
+	    if (/^\s*Sender\s*:\s*(.+)$/) {
+		$Sender = $1;
+		last;
+	    }
+	}
+    }
     if (!is_trusted_sender($Sender)) {
 	    open NOTICE, "|$MAIL_PROG -s \"Untrusted sender!\" $maintainer";
 	    print NOTICE <<"TOTHIER";
