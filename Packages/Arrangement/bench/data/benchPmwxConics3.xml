@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<bench name_length="80" header="false" type_mask="0x2" strategy_mask="0x8" samples="1">
+  <class name="cls111" key="aggregate dummy PMWX Conics Cartesian Leda Real"/>
+  <class name="cls112" key="aggregate dummy PMWX Conics Simple Cartesian Leda Real"/>
+  <class name="cls121" key="aggregate dummy PMWX Conics Cartesian Core Expr"/>
+  <class name="cls122" key="aggregate dummy PMWX Conics Simple Cartesian Core Expr"/>
+
+  <class name="cls211" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Gmpq"/>
+  <class name="cls212" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Gmpq"/>
+  <class name="cls213" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Gmpq"/>
+  <class name="cls214" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Gmpq"/>
+
+  <class name="cls221" key="aggregate dummy PMWX Curved Kernel Conics Cartesian Gmpz"/>
+  <class name="cls222" key="aggregate dummy PMWX Curved Kernel Conics Simple Cartesian Gmpz"/>
+
+  <class name="cls311" key="aggregate dummy PMWX Exacus Conics Cartesian NiX Leda Real"/>
+  <class name="cls321" key="aggregate dummy PMWX Exacus Conics Cartesian NiX Core"/>
+
+  <!-- <clo name="format" string="-If="/> -->
+  <!-- <clo name="time" string="-t"/> -->
+  <clo name="samples" string="-s"/>
+  <clo name="header" string="-bh="/> 
+  <clo name="name_length" string="-bnl="/> 
+  <clo name="type_mask" string="-btm="/> 
+  <clo name="strategy_mask" string="-bsm="/> 
+
+  <file name="ell_cir_32.dat" format="dat" curves="32"
+    vertices="783" halfedges="3078" faces="758"></file>
+  <file name="ell_cir_48.dat" format="dat" curves="48"
+    vertices="1656" halfedges="6516" faces="1604"></file>
+  <file name="ell_cir_64.dat" format="dat" curves="64"
+    vertices="2866" halfedges="11330" faces="2801"></file>
+
+  <bench>
+    <bench file="ell_cir_32.dat" enable="true">
+      <benchPmwxLedaRealCartesianConic header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic/>
+      <benchPmwxGmpzSimpleCartesianCkConic/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+
+    <bench file="ell_cir_48.dat" enable="true">
+      <benchPmwxLedaRealCartesianConic header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic />
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic/>
+      <benchPmwxGmpzSimpleCartesianCkConic/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+
+    <bench file="ell_cir_64.dat" enable="true">
+      <benchPmwxLedaRealCartesianConic header="true"/>
+      <benchPmwxLedaRealSimpleCartesianConic/>
+      <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
+      <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
+      <benchPmwxGmpzCartesianCkConic/>
+      <benchPmwxGmpzSimpleCartesianCkConic/>
+      <benchPmwxNixLedaCartesianExacusConic/>
+      <benchPmwxNixCoreCartesianExacusConic/>
+    </bench>
+  </bench>
+
+</bench>
