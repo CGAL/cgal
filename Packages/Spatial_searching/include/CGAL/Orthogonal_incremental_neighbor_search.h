@@ -63,6 +63,7 @@ namespace CGAL {
 
     private:
 
+      Distance Orthogonal_distance_instance;
     
       FT multiplication_factor;
 
@@ -118,7 +119,6 @@ namespace CGAL {
       std::priority_queue<Point_with_transformed_distance*, Point_with_transformed_distance_vector,
 	                  Distance_smaller> Item_PriorityQueue;
 
-      Distance Orthogonal_distance_instance;
 
     public:
 
@@ -129,11 +129,14 @@ namespace CGAL {
       // constructor
       Iterator_implementation(Tree& tree, Query_item& q, const Distance& tr,
 			      FT Eps=FT(0.0), bool search_nearest=true)
-	: PriorityQueue(Priority_higher(search_nearest)), Item_PriorityQueue(Distance_smaller(search_nearest)),
-	  search_nearest_neighbour(search_nearest), reference_count(1), Orthogonal_distance_instance(tr),
-	  multiplication_factor(Orthogonal_distance_instance.transformed_distance(FT(1.0)+Eps)),
-	  query_point(q), total_item_number(tree.size()), number_of_leaf_nodes_visited(0),
-        number_of_internal_nodes_visited(0), number_of_items_visited(0), number_of_neighbours_computed(0)
+	: number_of_neighbours_computed(0), number_of_internal_nodes_visited(0), 
+	number_of_leaf_nodes_visited(0), number_of_items_visited(0),
+	Orthogonal_distance_instance(tr), multiplication_factor(Orthogonal_distance_instance.transformed_distance(FT(1.0)+Eps)), 
+	query_point(q), total_item_number(tree.size()), search_nearest_neighbour(search_nearest), 
+	PriorityQueue(Priority_higher(search_nearest)), Item_PriorityQueue(Distance_smaller(search_nearest)),
+	reference_count(1)
+	  
+	  
       {
         // if (search_nearest) 
 	distance_to_root=

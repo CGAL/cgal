@@ -59,6 +59,7 @@ namespace CGAL {
     int number_of_items_visited;
   
     bool search_nearest;
+    Distance distance_instance;
   
     FT multiplication_factor;
     Query_item query_object;
@@ -77,7 +78,6 @@ namespace CGAL {
     int max_k;
     int actual_k;
   
-    Distance distance_instance;
   
     bool 
     branch(FT distance) 
@@ -137,9 +137,10 @@ namespace CGAL {
 		      int k=1, FT Eps=FT(0.0), 
 		      bool Search_nearest=true,
 		      const Distance& d=Distance())
-      : distance_instance(d), max_k(k), actual_k(0), search_nearest(Search_nearest), query_object(q),
-	total_item_number(tree.size()), number_of_leaf_nodes_visited(0), number_of_internal_nodes_visited(0),
-	number_of_items_visited(0), multiplication_factor(distance_instance.transformed_distance(FT(1.0)+Eps))
+      : number_of_internal_nodes_visited(0), number_of_leaf_nodes_visited(0), 
+      number_of_items_visited(0), search_nearest(Search_nearest), 
+      distance_instance(d), multiplication_factor(distance_instance.transformed_distance(FT(1.0)+Eps)), query_object(q),
+      total_item_number(tree.size()), max_k(k), actual_k(0)
     {
       compute_neighbors_general(tree.root(), tree.bounding_box());
     }

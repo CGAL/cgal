@@ -29,8 +29,8 @@ typedef CGAL::Search_traits_3<K> TreeTraits;
 
 
 typedef std::vector<Point>               Vector;
-typedef CGAL::Orthogonal_incremental_neighbor_search<TreeTraits> Orthogonal_incremental_neighbor_search;
-//typedef CGAL::Incremental_neighbor_search<TreeTraits> Orthogonal_incremental_neighbor_search;
+//typedef CGAL::Orthogonal_incremental_neighbor_search<TreeTraits> Orthogonal_incremental_neighbor_search;
+typedef CGAL::Incremental_neighbor_search<TreeTraits> Orthogonal_incremental_neighbor_search;
 typedef Orthogonal_incremental_neighbor_search::iterator NN_iterator;
 typedef Orthogonal_incremental_neighbor_search::Tree Tree;
 typedef Orthogonal_incremental_neighbor_search::Point_with_transformed_distance Point_with_transformed_distance;
@@ -93,7 +93,7 @@ main() {
   std::sort(points.begin(),points.end());
   std::sort(points2.begin(),points2.end());
   assert(points.size() == points2.size());
-  for(int i = 0; i < points.size(); i++){
+  for(unsigned int i = 0; i < points.size(); i++){
     if(points[i] != points2[i]){
       std::cout << i << "  " << points[i] << "   " << points2[i] << std::endl;
     }

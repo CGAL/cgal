@@ -26,8 +26,8 @@ typedef CGAL::K_neighbor_search<SearchTraits>  K_neighbor_search;
 
 int main() {
   
-  const int N = 1000;
-  const int K = 20;
+  const unsigned int N = 1000;
+  const unsigned int K = 20;
   
   std::vector<Point> points;
   

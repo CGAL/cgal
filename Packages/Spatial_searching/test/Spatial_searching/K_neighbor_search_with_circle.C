@@ -20,11 +20,11 @@ typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
   
 int main() {
 
-  const int N = 1000;
-  const int K = 50;
+  const unsigned int N = 1000;
+  const unsigned int K = 50;
   Random_points_iterator g(1.0);
   std::vector<Point> points;
-  for(int i=0; i < N; i++){
+  for(unsigned int i=0; i < N; i++){
     points.push_back(*g++);
   }
   
