@@ -167,15 +167,18 @@ public:
       return cnew; 
     }
 
-  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
+  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
+	                  Vertex_handle v2, Vertex_handle v3)
     {
       Cell_handle c = get_new_cell();
       c->set_vertices(v0,v1,v2,v3);
       return c; 
     }
 
-  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
-		    Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
+  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
+	                  Vertex_handle v2, Vertex_handle v3,
+		          Cell_handle n0, Cell_handle n1,
+			  Cell_handle n2, Cell_handle n3)
     {
       Cell_handle c = get_new_cell();
       c->set_vertices(v0,v1,v2,v3);
@@ -232,14 +235,17 @@ public:
 
   bool is_vertex(Vertex_handle v) const;
   bool is_edge(Cell_handle c, int i, int j) const;
-  bool is_edge(Vertex_handle u, Vertex_handle v, Cell_handle & c, int & i, int & j) const;
+  bool is_edge(Vertex_handle u, Vertex_handle v, Cell_handle & c,
+	       int & i, int & j) const;
   bool is_facet(Cell_handle c, int i) const;
   bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w, 
 		Cell_handle & c, int & i, int & j, int & k) const;
   bool is_cell(Cell_handle c) const;
-  bool is_cell(Vertex_handle u, Vertex_handle v, Vertex_handle w, Vertex_handle t, 
+  bool is_cell(Vertex_handle u, Vertex_handle v,
+	       Vertex_handle w, Vertex_handle t, 
 	       Cell_handle & c, int & i, int & j, int & k, int & l) const;
-  bool is_cell(Vertex_handle u, Vertex_handle v, Vertex_handle w, Vertex_handle t) const; 
+  bool is_cell(Vertex_handle u, Vertex_handle v,
+	       Vertex_handle w, Vertex_handle t) const; 
 
   bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;
   bool has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const;
@@ -549,7 +555,8 @@ public:
     CGAL_triangulation_precondition( dimension() == 3 );
     return Cell_circulator(e, start);
   }
-  Cell_circulator incident_cells(Cell_handle ce, int i, int j, Cell_handle start) const
+  Cell_circulator incident_cells(Cell_handle ce, int i, int j,
+	                         Cell_handle start) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     return Cell_circulator(ce, i, j, start);
@@ -577,7 +584,8 @@ public:
     CGAL_triangulation_precondition( dimension() == 3 );
     return Facet_circulator(ce, i, j, start);
   }
-  Facet_circulator incident_facets(const Edge & e, Cell_handle start, int f) const
+  Facet_circulator incident_facets(const Edge & e,
+	                           Cell_handle start, int f) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     return Facet_circulator(e, start, f);
@@ -1807,7 +1815,7 @@ insert_increase_dimension(Vertex_handle v, // new vertex
       }
 
       // traversal of the new cells only, to add missing neighbors
-      for (typename std::vector<Cell_handle >::iterator ncit = new_cells.begin(); 
+      for(typename std::vector<Cell_handle>::iterator ncit = new_cells.begin();
            ncit != new_cells.end(); ++ncit) {
 	Cell_handle n = (*ncit)->neighbor(3); // opposite to star
 	for ( int i=0; i<3; i++ ) {
@@ -1843,7 +1851,8 @@ insert_increase_dimension(Vertex_handle v, // new vertex
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-incident_cells(Vertex_handle v, std::set<Cell_handle> & cells, Cell_handle c) const
+incident_cells(Vertex_handle v, std::set<Cell_handle> & cells,
+	       Cell_handle c) const
 {
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_expensive_precondition( is_vertex(v) );
@@ -1869,7 +1878,8 @@ incident_cells(Vertex_handle v, std::set<Cell_handle> & cells, Cell_handle c) co
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices, Cell_handle c) const
+incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
+	          Cell_handle c) const
 {
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_expensive_precondition( is_vertex(v) );
