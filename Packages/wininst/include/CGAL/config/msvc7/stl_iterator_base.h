@@ -1,3 +1,24 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// file          : include/CGAL/config/msvc7/stl_iterator_base.h
+// package       : wininst
+// author(s)     : 
+// release       : 
+// release_date  : 
+//
+// coordinator   : 
+//
+// ============================================================================
+
+
 #ifndef CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC
 #include <iterator>
 // #include <utility>

@@ -1,3 +1,23 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// file          : include/CGAL/config/msvc7/iterator_specializations.h
+// package       : wininst
+// author(s)     : 
+// release       : 
+// release_date  : 
+//
+// coordinator   : 
+//
+// ============================================================================
+
 #ifndef CGAL_ITER_VC7
 #define CGAL_ITER_VC7
 #include <iterator>

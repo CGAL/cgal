@@ -1,5 +1,9 @@
+2.1.12(30/04/02)   added the CGAL headers for some files
+		   added the file dont_submit
+
+
 2.1.11(30/04/02)   modified the master dsp for VC6 and the script to generate 
-		   the VC6 directory.
+		   the VC6 directory. Patched the master script to generate .vcproj files
 		   added the dsps and vcprojs for the demos
 		   
 
