@@ -23,7 +23,6 @@
 //
 // ============================================================================
 
-
 #ifndef CGAL_GEOMVIEW_STREAM_H
 #define CGAL_GEOMVIEW_STREAM_H
 
@@ -128,7 +127,6 @@ private:
     int line_width_;
 };
 
-
 inline
 Geomview_stream&
 binary(Geomview_stream &os)
@@ -145,15 +143,12 @@ ascii(Geomview_stream &os)
     return os;
 }
 
-
-#ifdef CGAL_POINT_2_H
-#ifndef CGAL_GV_OUT_POINT_2_H
+#if defined CGAL_POINT_2_H && \
+   !defined CGAL_GV_OUT_POINT_2_H
 #define CGAL_GV_OUT_POINT_2_H
-
 template < class R >
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Point_2<R> &p)
+operator<<(Geomview_stream &gv, const Point_2<R> &p)
 {
     std::ostrstream os;
     os << "p" << gv.point_count++ << std::ends ;
@@ -173,16 +168,14 @@ operator<<(Geomview_stream &gv,
 
     return gv;
 }
-#endif // CGAL_GV_OUT_POINT_2_H
-#endif // CGAL_POINT_2_H
-#ifdef CGAL_POINT_3_H
-#ifndef CGAL_GV_OUT_POINT_3_H
-#define CGAL_GV_OUT_POINT_3_H
+#endif
 
+#if defined CGAL_POINT_3_H && \
+   !defined CGAL_GV_OUT_POINT_3_H
+#define CGAL_GV_OUT_POINT_3_H
 template < class R >
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Point_3<R> &p)
+operator<<(Geomview_stream &gv, const Point_3<R> &p)
 {
     std::ostrstream os;
     os << "p" << gv.point_count++ << std::ends ;
@@ -202,15 +195,14 @@ operator<<(Geomview_stream &gv,
 
     return gv;
 }
-#endif // CGAL_GV_OUT_POINT_3_H
-#endif // CGAL_POINT_3_H
-#ifdef CGAL_SEGMENT_2_H
-#ifndef CGAL_GV_OUT_SEGMENT_2_H
+#endif
+
+#if defined CGAL_SEGMENT_2_H && \
+   !defined CGAL_GV_OUT_SEGMENT_2_H
 #define CGAL_GV_OUT_SEGMENT_2_H
 template < class R >
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Segment_2<R> &segment)
+operator<<(Geomview_stream &gv, const Segment_2<R> &segment)
 {
     std::ostrstream os;
     os << "seg" << gv.segment_count++ << std::ends ;
@@ -239,15 +231,14 @@ operator<<(Geomview_stream &gv,
 
     return gv;
 }
-#endif // CGAL_GV_OUT_SEGMENT_2_H
-#endif //CGAL_SEGMENT_2_H
-#ifdef CGAL_SEGMENT_3_H
-#ifndef CGAL_GV_OUT_SEGMENT_3_H
+#endif
+
+#if defined CGAL_SEGMENT_3_H && \
+   !defined CGAL_GV_OUT_SEGMENT_3_H
 #define CGAL_GV_OUT_SEGMENT_3_H
 template < class R >
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Segment_3<R> &segment)
+operator<<(Geomview_stream &gv, const Segment_3<R> &segment)
 {
     std::ostrstream os;
     os << "seg" << gv.segment_count++ << std::ends ;
@@ -278,16 +269,14 @@ operator<<(Geomview_stream &gv,
 
     return gv;
 }
-#endif // CGAL_GV_OUT_SEGMENT_3_H
-#endif // CGAL_SEGMENT_3_H
-#ifdef CGAL_TRIANGLE_2_H
-#ifndef CGAL_GV_OUT_TRIANGLE_2_H
-#define CGAL_GV_OUT_TRIANGLE_2_H
+#endif
 
+#if defined CGAL_TRIANGLE_2_H && \
+   !defined CGAL_GV_OUT_TRIANGLE_2_H
+#define CGAL_GV_OUT_TRIANGLE_2_H
 template < class R >
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Triangle_2<R> &t)
+operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
 {
     std::ostrstream os;
     os << "tr" << gv.triangle_count++ << std::ends;
@@ -316,16 +305,14 @@ operator<<(Geomview_stream &gv,
 
     return gv;
 }
-#endif // CGAL_GV_OUT_TRIANGLE_2_H
-#endif // CGAL_TRIANGLE_2_H
-#ifdef CGAL_TRIANGLE_3_H
-#ifndef CGAL_GV_OUT_TRIANGLE_3_H
-#define CGAL_GV_OUT_TRIANGLE_3_H
+#endif
 
+#if defined CGAL_TRIANGLE_3_H && \
+   !defined CGAL_GV_OUT_TRIANGLE_3_H
+#define CGAL_GV_OUT_TRIANGLE_3_H
 template < class R >
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Triangle_3<R> &t)
+operator<<(Geomview_stream &gv, const Triangle_3<R> &t)
 {
     std::ostrstream os;
     os << "tr" << gv.triangle_count++ << std::ends;
@@ -354,16 +341,14 @@ operator<<(Geomview_stream &gv,
 
     return gv;
 }
-#endif // CGAL_GV_OUT_TRIANGLE_3_H
-#endif // CGAL_TRIANGLE_3_H
-#ifdef CGAL_TETRAHEDRON_3_H
-#ifndef CGAL_GV_OUT_TETRAHEDRON_3_H
-#define CGAL_GV_OUT_TETRAHEDRON_3_H
+#endif
 
+#if defined CGAL_TETRAHEDRON_3_H && \
+   !defined CGAL_GV_OUT_TETRAHEDRON_3_H
+#define CGAL_GV_OUT_TETRAHEDRON_3_H
 template < class R >
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Tetrahedron_3<R> &t)
+operator<<(Geomview_stream &gv, const Tetrahedron_3<R> &t)
 {
     std::ostrstream os;
     os << "tetra" << gv.tetrahedron_count++ << std::ends ;
@@ -395,22 +380,21 @@ operator<<(Geomview_stream &gv,
        << "}})" << ascii;
     return gv;
 }
-#endif // CGAL_GV_OUT_TETRAHEDRON_3_H
-#endif  // CGAL_TETRAHEDRON_3_H
+#endif
+
 #ifdef CGAL_BBOX_2_H
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Bbox_2 &bbox);
-#endif // CGAL_BBOX_2_H
+operator<<(Geomview_stream &gv, const Bbox_2 &bbox);
+#endif
+
 #ifdef CGAL_BBOX_3_H
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Bbox_3 &bbox);
-#endif // CGAL_BBOX_3_H
-#ifdef CGAL_TETRAHEDRALIZATION_3_H
-#ifndef CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_3_H
-#define CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_3_H
+operator<<(Geomview_stream &gv, const Bbox_3 &bbox);
+#endif
 
+#if defined CGAL_TETRAHEDRALIZATION_3_H && \
+   !defined CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_3_H
+#define CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_3_H
 template < class Tr >
 Geomview_stream&
 operator<<(Geomview_stream& os, Tetrahedralization_3<Tr>& T)
@@ -427,16 +411,14 @@ operator<<(Geomview_stream& os, Tetrahedralization_3<Tr>& T)
   }
   return os;
 }
-#endif // CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_3_H
-#endif // CGAL_TETRAHEDRALIZATION_3_H
-#ifdef CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-#ifndef CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-#define CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
+#endif
 
+#if defined CGAL_TETRAHEDRALIZATION_SIMPLEX_H && \
+   !defined CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
+#define CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
 template < class V >
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Tetrahedralization_simplex<V>* s)
+operator<<(Geomview_stream &gv, const Tetrahedralization_simplex<V>* s)
 {
     std::ostrstream os;
     os << "Simplex_" << (unsigned long int)s  << std::ends ;
@@ -471,16 +453,14 @@ operator<<(Geomview_stream &gv,
 
     return gv;
 }
-#endif // CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-#endif  // CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-#ifdef CGAL_TETRAHEDRALIZATION_VERTEX_H
-#ifndef CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_VERTEX_H
-#define CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_VERTEX_H
+#endif
 
+#if defined CGAL_TETRAHEDRALIZATION_VERTEX_H && \
+   !defined CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_VERTEX_H
+#define CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_VERTEX_H
 template < class P >
 Geomview_stream&
-operator<<(Geomview_stream &gv,
-           const Tetrahedralization_vertex<P>* v)
+operator<<(Geomview_stream &gv, const Tetrahedralization_vertex<P>* v)
 {
     std::ostrstream os;
     os << "Vertex_" << (unsigned long int)v  << std::ends ;
@@ -521,16 +501,14 @@ operator<<(Geomview_stream &gv,
 
     return gv;
 }
-#endif // CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_VERTEX_H
-#endif  // CGAL_TETRAHEDRALIZATION_VERTEX_H
+#endif
 
-#ifdef CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
-#ifndef CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
+#if defined CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H && \
+   !defined CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
 #define CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
 template < class I >
 Geomview_stream&
-operator<<(Geomview_stream& gv,
-           const Delaunay_tetrahedralization_3<I> &DT)
+operator<<(Geomview_stream& gv, const Delaunay_tetrahedralization_3<I> &DT)
 {
   // return gv << (const Tetrahedralization_3<I>&)DT;
   Tetrahedralization_3<I>::Simplex_iterator
@@ -545,9 +523,7 @@ operator<<(Geomview_stream& gv,
   }
   return gv;
 }
-#endif // CGAL_GV_OUT_CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
-#endif // CGAL_DELAUNAY_TETRAHEDRALIZATION_3_H
-
+#endif
 
 char*
 nth(char* s, int count);
@@ -555,12 +531,10 @@ nth(char* s, int count);
 bool
 is_prefix(const char* p, const char* w);
 
-
 #ifdef CGAL_POINT_3_H
 template < class R >
 void
-parse_point(char* pickpoint,
-            Point_3<R> &point)
+parse_point(char* pickpoint, Point_3<R> &point)
 {
     std::strstream ss;
     ss << pickpoint << std::ends ;
@@ -570,17 +544,13 @@ parse_point(char* pickpoint,
     ss >> parenthesis >> x >> y >> z >> w;
     point  = Point_3<R>(x, y, z, w);
 }
-#endif // CGAL_POINT_3_H
+#endif
 
-
-#ifdef CGAL_POINT_3_H
-#ifndef CGAL_GV_IN_POINT_3_H
+#if defined CGAL_POINT_3_H && !defined CGAL_GV_IN_POINT_3_H
 #define CGAL_GV_IN_POINT_3_H
-
 template < class R >
 Geomview_stream&
-operator>>(Geomview_stream &gv,
-           Point_3<R> &point)
+operator>>(Geomview_stream &gv, Point_3<R> &point)
 {
     char gclpick[100];
     std::strcpy(gclpick, 
@@ -604,17 +574,14 @@ operator>>(Geomview_stream &gv,
 
     return gv ;
 }
-#endif // CGAL_GV_IN_POINT_3_H
-#endif // CGAL_POINT_3_H
-#ifdef CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-#ifndef CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
+#endif
+
+#if defined CGAL_TETRAHEDRALIZATION_SIMPLEX_H && \
+   !defined CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
 #define CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-
-
 template < class V >
 Geomview_stream&
-operator>>(Geomview_stream &gv,
-           Tetrahedralization_simplex<V>*& s)
+operator>>(Geomview_stream &gv, Tetrahedralization_simplex<V>*& s)
 {
     char* id;
     char gclpick[100];
@@ -643,17 +610,14 @@ operator>>(Geomview_stream &gv,
 
     return gv;
 }
-#endif // CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-#endif  // CGAL_TETRAHEDRALIZATION_SIMPLEX_H
-#ifdef CGAL_TETRAHEDRALIZATION_VERTEX_H
-#ifndef CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_VERTEX_H
+#endif
+
+#if defined CGAL_TETRAHEDRALIZATION_VERTEX_H && \
+   !defined CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_VERTEX_H
 #define CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_VERTEX_H
-
-
 template < class P >
 Geomview_stream&
-operator>>(Geomview_stream &gv,
-           Tetrahedralization_vertex<P>*& v)
+operator>>(Geomview_stream &gv, Tetrahedralization_vertex<P>*& v)
 {
     char* id;
     char gclpick[100];
@@ -683,8 +647,7 @@ operator>>(Geomview_stream &gv,
 
     return gv;
 }
-#endif // CGAL_GV_IN_CGAL_TETRAHEDRALIZATION_VERTEX_H
-#endif  // CGAL_TETRAHEDRALIZATION_VERTEX_H
+#endif
 
 CGAL_END_NAMESPACE
 
