@@ -27,8 +27,10 @@ typedef typename R::Circle_2                Circle_2;
 typedef typename R::Iso_rectangle_2         Iso_rectangle_2;
 typedef typename R::Aff_transformation_2    Aff_transformation_2;
 
-CGAL_UNPACK_KERNEL_CONSTRUCTION_OBJECTS_2(typename Kernel_construction_objects_2<R>)
-CGAL_UNPACK_KERNEL_CONSTRUCTION_OBJECTS_3(typename Kernel_construction_objects_3<R>)
+CGAL_UNPACK_KERNEL_CONSTRUCTION_OBJECTS_2(typename 
+                                      Kernel_construction_objects_2<R>)
+CGAL_UNPACK_KERNEL_CONSTRUCTION_OBJECTS_3(typename 
+                                      Kernel_construction_objects_3<R>)
 };
 
 CGAL_END_NAMESPACE

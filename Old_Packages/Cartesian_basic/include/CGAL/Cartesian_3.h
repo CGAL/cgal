@@ -314,7 +314,8 @@ Construct_second_point_on_3
 construct_second_point_on_3_object() const 
 { return Construct_second_point_on_3(); }
 
-typedef CGALi::Call_perpendicular_plane_to_get<Plane_3> Construct_perpendicular_plane_3;
+typedef CGALi::Call_perpendicular_plane_to_get<Plane_3> 
+                                              Construct_perpendicular_plane_3;
 Construct_perpendicular_plane_3
 construct_perpendicular_plane_3() const 
 { return Construct_perpendicular_plane_3(); }
@@ -324,7 +325,8 @@ Construct_midpoint_3
 construct_midpoint_3_object() const 
 { return Construct_midpoint_3(); }
 
-typedef CGALi::Call_opposite_to_get<Segment_3>     Construct_opposite_segment_3;
+typedef CGALi::Call_opposite_to_get<Segment_3>     
+                                              Construct_opposite_segment_3;
 Construct_opposite_segment_3
 construct_opposite_segment_3_object() const 
 { return Construct_opposite_segment_3(); }
@@ -339,7 +341,8 @@ Construct_opposite_line_3
 construct_opposite_line_3_object() const 
 { return Construct_opposite_line_3(); }
 
-typedef CGALi::Call_supporting_plane_to_get<Plane_3> Construct_supporting_plane_3;
+typedef CGALi::Call_supporting_plane_to_get<Plane_3> 
+                                                Construct_supporting_plane_3;
 Construct_supporting_plane_3
 construct_supporting_plane_3_object() const 
 { return Construct_supporting_plane_3(); }
@@ -510,17 +513,20 @@ Are_ordered_along_line_3
 are_ordered_along_line_3_object() const 
 { return Are_ordered_along_line_3(); }
 
-typedef CGALi::Are_strictly_ordered_along_line     Are_strictly_ordered_along_line_3;
+typedef CGALi::Are_strictly_ordered_along_line     
+                                           Are_strictly_ordered_along_line_3;
 Are_strictly_ordered_along_line_3
 are_strictly_ordered_along_line_3_object() const 
 { return Are_strictly_ordered_along_line_3(); }
 
-typedef CGALi::Collinear_are_ordered_along_line    Collinear_are_ordered_along_line_3;
+typedef CGALi::Collinear_are_ordered_along_line    
+                                          Collinear_are_ordered_along_line_3;
 Collinear_are_ordered_along_line_3
 collinear_are_ordered_along_line_3_object() const 
 { return Collinear_are_ordered_along_line_3(); }
 
-typedef CGALi::Collinear_are_strictly_ordered_along_line Collinear_are_strictly_ordered_along_line_3;
+typedef CGALi::Collinear_are_strictly_ordered_along_line 
+                                 Collinear_are_strictly_ordered_along_line_3;
 Collinear_are_strictly_ordered_along_line_3
 collinear_are_strictly_ordered_along_line_3_object() const 
 { return Collinear_are_strictly_ordered_along_line_3(); }

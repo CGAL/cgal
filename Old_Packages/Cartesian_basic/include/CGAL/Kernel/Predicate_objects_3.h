@@ -171,17 +171,20 @@ Are_ordered_along_line_3
 are_ordered_along_line_3_object() const 
 { return Are_ordered_along_line_3(); }
 
-typedef CGALi::Are_strictly_ordered_along_line Are_strictly_ordered_along_line_3;
+typedef CGALi::Are_strictly_ordered_along_line 
+                                         Are_strictly_ordered_along_line_3;
 Are_strictly_ordered_along_line_3
 are_strictly_ordered_along_line_3_object() const 
 { return Are_strictly_ordered_along_line_3(); }
 
-typedef CGALi::Collinear_are_ordered_along_line Collinear_are_ordered_along_line_3;
+typedef CGALi::Collinear_are_ordered_along_line 
+                                         Collinear_are_ordered_along_line_3;
 Collinear_are_ordered_along_line_3
 collinear_are_ordered_along_line_3_object() const 
 { return Collinear_are_ordered_along_line_3(); }
 
-typedef CGALi::Collinear_are_strictly_ordered_along_line Collinear_are_strictly_ordered_along_line_3;
+typedef CGALi::Collinear_are_strictly_ordered_along_line 
+                               Collinear_are_strictly_ordered_along_line_3;
 Collinear_are_strictly_ordered_along_line_3
 collinear_are_strictly_ordered_along_line_3_object() const 
 { return Collinear_are_strictly_ordered_along_line_3(); }

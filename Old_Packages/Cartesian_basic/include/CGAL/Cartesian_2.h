@@ -153,7 +153,8 @@ struct Cartesian_2 :
     typedef typename Kernel_base::Triangle_2              Triangle_2_base;
     typedef typename Kernel_base::Circle_2                Circle_2_base;
     typedef typename Kernel_base::Iso_rectangle_2         Iso_rectangle_2_base;
-    typedef typename Kernel_base::Aff_transformation_2    Aff_transformation_2_base;
+    typedef typename Kernel_base::Aff_transformation_2    
+                                                     Aff_transformation_2_base;
 
     // Note: necessary to qualify Point_2 by CGAL:: to disambiguate between
     // Point_2 in the current namespace (nested within CGAL)
@@ -258,7 +259,8 @@ Construct_max_point_2
 construct_max_point_2_object() const 
 { return Construct_max_point_2(); }
 
-typedef CGALi::Call_direction_to_get<Direction_2> Construct_direction_of_line_2;
+typedef CGALi::Call_direction_to_get<Direction_2> 
+                                                Construct_direction_of_line_2;
 Construct_direction_of_line_2
 construct_direction_of_line_2_object() const 
 { return Construct_direction_of_line_2(); }
@@ -273,17 +275,20 @@ Construct_supporting_line_2
 construct_supporting_line_2_object() const 
 { return Construct_supporting_line_2(); }
 
-typedef CGALi::Call_perpendicular_to_get<Vector_2> Construct_perpendicular_vector_2;
+typedef CGALi::Call_perpendicular_to_get<Vector_2> 
+                                           Construct_perpendicular_vector_2;
 Construct_perpendicular_vector_2
 construct_perpendicular_vector_2_object() const 
 { return Construct_perpendicular_vector_2(); }
 
-typedef CGALi::Call_perpendicular_to_get<Direction_2>  Construct_perpendicular_direction_2;
+typedef CGALi::Call_perpendicular_to_get<Direction_2>  
+                                       Construct_perpendicular_direction_2;
 Construct_perpendicular_direction_2
 construct_perpendicular_direction_2_object() const 
 { return Construct_perpendicular_direction_2(); }
 
-typedef CGALi::Call_perpendicular_to_get<Line_2>   Construct_perpendicular_line_2;
+typedef CGALi::Call_perpendicular_to_get<Line_2>   
+                                        Construct_perpendicular_line_2;
 Construct_perpendicular_line_2
 construct_perpendicular_line_2_object() const 
 { return Construct_perpendicular_line_2(); }
@@ -303,7 +308,8 @@ Construct_bisector_2
 construct_bisector_2_object() const 
 { return Construct_bisector_2(); }
 
-typedef CGALi::Call_opposite_to_get<Segment_2>     Construct_opposite_segment_2;
+typedef CGALi::Call_opposite_to_get<Segment_2>     
+                                                Construct_opposite_segment_2;
 Construct_opposite_segment_2
 construct_opposite_segment_2_object() const 
 { return Construct_opposite_segment_2(); }
@@ -318,7 +324,8 @@ Construct_opposite_line_2
 construct_opposite_line_2_object() const 
 { return Construct_opposite_line_2(); }
 
-typedef CGALi::Call_opposite_to_get<Triangle_2>    Construct_opposite_triangle_2;
+typedef CGALi::Call_opposite_to_get<Triangle_2>    
+                                               Construct_opposite_triangle_2;
 Construct_opposite_triangle_2
 construct_opposite_triangle_2_object() const 
 { return Construct_opposite_triangle_2(); }
@@ -520,17 +527,21 @@ Are_ordered_along_line_2
 are_ordered_along_line_2_object() const 
 { return Are_ordered_along_line_2(); }
 
-typedef CGALi::Are_strictly_ordered_along_line     Are_strictly_ordered_along_line_2;
+typedef CGALi::Are_strictly_ordered_along_line     
+                                           Are_strictly_ordered_along_line_2;
 Are_strictly_ordered_along_line_2
 are_strictly_ordered_along_line_2_object() const 
 { return Are_strictly_ordered_along_line_2(); }
 
-typedef CGALi::Collinear_are_ordered_along_line    Collinear_are_ordered_along_line_2;
+
+typedef CGALi::Collinear_are_ordered_along_line    
+                                            Collinear_are_ordered_along_line_2;
 Collinear_are_ordered_along_line_2
 collinear_are_ordered_along_line_2_object() const 
 { return Collinear_are_ordered_along_line_2(); }
 
-typedef CGALi::Collinear_are_strictly_ordered_along_line Collinear_are_strictly_ordered_along_line_2;
+typedef CGALi::Collinear_are_strictly_ordered_along_line 
+                                   Collinear_are_strictly_ordered_along_line_2;
 Collinear_are_strictly_ordered_along_line_2
 collinear_are_strictly_ordered_along_line_2_object() const 
 { return Collinear_are_strictly_ordered_along_line_2(); }

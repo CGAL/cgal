@@ -82,12 +82,13 @@ Construct_point_on_3
 construct_point_on_3_object() const 
 { return Construct_point_on_3(); }
 
-typedef CGALi::Call_second_point_to_get<Point_3>       Construct_second_point_on_3;
+typedef CGALi::Call_second_point_to_get<Point_3>  Construct_second_point_on_3;
 Construct_second_point_on_3
 construct_second_point_on_3_object() const 
 { return Construct_second_point_on_3(); }
 
-typedef CGALi::Call_perpendicular_plane_to_get<Plane_3> Construct_perpendicular_plane_3;
+typedef CGALi::Call_perpendicular_plane_to_get<Plane_3> 
+                                         Construct_perpendicular_plane_3;
 Construct_perpendicular_plane_3
 construct_perpendicular_plane_3() const 
 { return Construct_perpendicular_plane_3(); }
@@ -97,7 +98,7 @@ Construct_midpoint_3
 construct_midpoint_3_object() const 
 { return Construct_midpoint_3(); }
 
-typedef CGALi::Call_opposite_to_get<Segment_3>     Construct_opposite_segment_3;
+typedef CGALi::Call_opposite_to_get<Segment_3>  Construct_opposite_segment_3;
 Construct_opposite_segment_3
 construct_opposite_segment_3_object() const 
 { return Construct_opposite_segment_3(); }
@@ -112,7 +113,8 @@ Construct_opposite_line_3
 construct_opposite_line_3_object() const 
 { return Construct_opposite_line_3(); }
 
-typedef CGALi::Call_supporting_plane_to_get<Plane_3> Construct_supporting_plane_3;
+typedef CGALi::Call_supporting_plane_to_get<Plane_3> 
+                                             Construct_supporting_plane_3;
 Construct_supporting_plane_3
 construct_supporting_plane_3_object() const 
 { return Construct_supporting_plane_3(); }
