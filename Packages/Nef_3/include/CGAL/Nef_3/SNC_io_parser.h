@@ -981,6 +981,10 @@ template <typename EW>
 void SNC_io_parser<EW>::print() const
 { 
   out << "Selective Nef Complex" << std::endl;
+  if(is_extended_kernel() && (!reduce || !is_bounded()))
+    out << "extended" << std::endl;
+  else
+    out << "standard" << std::endl;
   out << "vertices   " << VL.size() << std::endl;
   out << "halfedges  " << EL.size() << std::endl;
   out << "facets     " << FL.size() << std::endl;
@@ -1042,6 +1046,9 @@ void SNC_io_parser<EW>::read()
 { 
   if ( !check_sep("Selective Nef Complex") )  
     CGAL_assertion_msg(0,"SNC_io_parser::read: no SNC header.");
+  std::string kernel_type;
+  in >> kernel_type;
+  CGAL_assertion(kernel_type == "standard" || kernel_type == "extended");
   if ( !(check_sep("vertices") && (in >> vn)) ) 
     CGAL_assertion_msg(0,"SNC_io_parser::read: wrong vertex line.");
   if ( !(check_sep("halfedges") && (in >> en) && (en%2==0)) )
@@ -1057,6 +1064,7 @@ void SNC_io_parser<EW>::read()
   if ( !(check_sep("sfaces") && (in >> sfn)) )
     CGAL_assertion_msg(0,"SNC_io_parser::read: wrong sface line.");
 
+  /*
   char c;
   int spaces = 0;
   std::streampos pos(in.tellg());
@@ -1070,6 +1078,9 @@ void SNC_io_parser<EW>::read()
   CGAL_assertion_msg(!(Infi_box::standard_kernel() && spaces==26), 
 		     "you cannot load an inifinite polyhedron without an extended kernel.");
   addInfiBox = ((spaces==15 || vn == 0) && Infi_box::extended_kernel());
+  */
+
+  addInfiBox = (kernel_type == "standard" && Infi_box::extended_kernel());
 
   if(addInfiBox) {
     Vertex_of.reserve(vn+8);

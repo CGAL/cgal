@@ -264,7 +264,7 @@ public:
   Size_type number_of_volumes() const   
   { return sncp()->number_of_volumes();}
 
-  bool is_bounded() {
+  bool is_bounded() const {
     if(is_standard_kernel())
       return true;
     int i = 0;
