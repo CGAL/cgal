@@ -1508,8 +1508,8 @@ check_STL_STATUS()
 check_CGAL_STL_VERSION()
 {
     case ${CGAL_STL_VERSION} in
-	CGAL_STL_GCC|CGAL_STL_HP|CGAL_STL_SGI_WWW|CGAL_STL_SGI_WWW_OLD|\
-CGAL_STL_SGI_CC|CGAL_STL_UNKNOWN)
+	CGAL_STL_GCC|CGAL_STL_HP|CGAL_STL_SGI_WWW|CGAL_STL_SGI_3_0|\
+	    CGAL_STL_SGI_WWW_OLD|CGAL_STL_SGI_CC|CGAL_STL_UNKNOWN)
 	return 1;;
 	*)
 	$1 "WARNING: CGAL_STL_VERSION is not set correctly." 
@@ -1966,6 +1966,42 @@ _test_sgi_june_1997_stl()
     return $?
 }
 
+# test, if STL is SGI STL 3.0 (or compatible?)
+# (return 0, iff it is)
+# (test program due to Lutz Kettner)
+# ($1 nonzero indicates verbosity)
+_test_sgi_3_0_stl()
+{
+    ${_printf} '#include <assert.h>
+	#include <defalloc.h>
+	#include <iterator.h>
+	#define Allocator allocator
+	#include <list.h>
+
+	#ifndef __SGI_STL_LIST_H
+	#error Program does not use the SGI STL 3.0.
+	#endif
+
+	#ifndef Allocator
+	#error Program does not use the SGI STL 3.0.
+	#endif
+
+	template< class T, class Ref, class Ptr> inline
+	int check( const __list_iterator<T,Ref,Ptr>&){
+	    return 1;
+	}
+
+	int main() {
+	    list<int> l;
+	    assert( check( l.begin()));
+	    return 0;
+	}' > ${TMP_CXX_FILE}.C
+    
+    _compile_test "SGI STL 3.0" "`stl_test_cxxflags` " $1 && \
+	_link_run_test "SGI STL 3.0" "`stl_test_ldflags` " $1
+    return $?
+}
+
 # test, if STL works
 # (return 0, iff it is)
 # (test program due to Lutz Kettner)
@@ -2009,6 +2045,7 @@ test_stl_general()
 # we have the following different types:
 # CGAL_STL_GCC
 # CGAL_STL_HP
+# CGAL_STL_SGI_3_0
 # CGAL_STL_SGI_WWW
 # CGAL_STL_SGI_WWW_OLD
 # CGAL_STL_SGI_CC
@@ -2017,6 +2054,8 @@ set_stl_version()
 {
     if [ "`compiler_basename`" = "g++" ]; then
 	CGAL_STL_VERSION='CGAL_STL_GCC'
+    elif _test_sgi_3_0_stl $1; then
+	CGAL_STL_VERSION='CGAL_STL_SGI_3_0'
     elif _test_sgi_june_1997_stl $1; then
 	CGAL_STL_VERSION='CGAL_STL_SGI_WWW'
     elif _test_sgi_1996_stl $1; then
@@ -3128,11 +3167,6 @@ write_compiler_flags()
   ${_printf} \
     "\t\$(CUSTOM_CXXFLAGS) \\\\\n" \
     >> ${FILE}
-  if [ -n "${LEDA_SUPPORT}" ]; then
-    ${_printf} \
-      "\t-DCGAL_USE_LEDA_BOOL \\\\\n" \
-      >> ${FILE}
-  fi
   if [ -n "${ADDITIONAL_CXXFLAGS}" ]; then
     ${_printf} \
       "\t${ADDITIONAL_CXXFLAGS} \\\\\n" \
