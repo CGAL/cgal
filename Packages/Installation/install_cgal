@@ -1617,7 +1617,12 @@ qt_ldflags()
 		fi
 	    fi
 	fi
-	lib_option "qt"
+	if [ -z "${WINDOWS_COMPILER}" ]; then
+	    lib_option "qt"
+	else
+	    lib_option "qtmain"
+	    lib_option "qt-mt230nc"
+	fi
     fi
 }
 
@@ -3374,12 +3379,14 @@ int main( int argc, char **argv )
 	${_printf} "%s\n%s\n" \
 	    "MOC call:" "--------------" >${TMP_LOGFILE}
 	${_printf} "%s" \
-	    "${QT_MOC} -o ${TMP_CXX_FILE}.moc ${TMP_CXX_FILE}.C" >>${TMP_LOGFILE}
+	    "`posix_path ${QT_MOC}` -o ${TMP_CXX_FILE}.moc ${TMP_CXX_FILE}.C" \
+	    >>${TMP_LOGFILE}
 	${_printf} "\n\n%s\n" \
 	    "Got the following error messages:" >>${TMP_LOGFILE}
 	${_printf} "%s\n" \
 	"---------------------------------" >>${TMP_LOGFILE} 	
-	${QT_MOC} -o ${TMP_CXX_FILE}.moc ${TMP_CXX_FILE}.C >>${TMP_LOGFILE} 2>&1 
+	`posix_path ${QT_MOC}` -o ${TMP_CXX_FILE}.moc ${TMP_CXX_FILE}.C \
+	    >>${TMP_LOGFILE} 2>&1 
 	if [ $? = 0 ]; then
 	    log_print "Qt MOC test has passed \$QT_MOC execution."
 	    if _compile_test "Qt MOC" "`qt_test_cxxflags`" $1 && \
@@ -4527,7 +4534,12 @@ qt_menu()
 		print_line \
 		"${_bold_on}<D>${_bold_off}  Qt directory" 
 		if [ -n "${NEED_EXTRA_QTDIR}" ]; then
-		    print_line  "     ${QT_DIR:-<undefined>}" 
+		    if [ -z "${QT_DIR}" ]; then
+			_tmp1='<undefined>'
+		    else
+			_tmp1="`posix_path ${QT_DIR}`"
+		    fi
+		    print_line  "     ${_tmp1}" 
 		    if [ "${NEED_EXTRA_QTDIR}" = "x" ]; then
 			print_line \
 	    "${_bold_on}<E>${_bold_off}  Use \$QTDIR as Qt directory."
