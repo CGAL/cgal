@@ -1,3 +1,7 @@
+0.9.8 bbox constructor objects added
+      some demos added
+      new event/checking stuff in demo subdirectory
+
 0.9.7 small fix for compare_y_at_x_2
       some new constructions added
       convex hull projective traits stuff changed (for 3d hull)

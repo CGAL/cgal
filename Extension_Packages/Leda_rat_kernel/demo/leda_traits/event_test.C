@@ -1,4 +1,4 @@
-#include <CEP/Leda_rat_kernel/event.h>
+#include <CGAL/event.h>
 #include <iostream>
 
 using namespace CGAL;

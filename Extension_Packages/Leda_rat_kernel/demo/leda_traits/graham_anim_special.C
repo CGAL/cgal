@@ -1,10 +1,7 @@
-// Graham scan - wir haben nach der Sortierung zwei Phasen:
-// 1. untere Huelle wird gebaut
-// 2. obere Huelle wird gebaut
 
 #define CGAL_CH_NO_POSTCONDITIONS
 #define CGAL_PROVIDE_LEDA_RAT_KERNEL_TRAITS_3
-#define CGAL_GEOMETRY_EVENTS
+#define CGAL_NO_DEPRECATED_CODE
 
 #include <CGAL/basic.h>
 
@@ -21,7 +18,8 @@ int main(int argc, char *argv[])
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/leda_rational.h>
-#include <CGAL/Kernel_checker.h>
+#include <CGAL/Kernel_special.h>
+#include <CGAL/kernel_event_support.h>
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #include <CEP/Leda_rat_kernel/geowin_leda_rat_kernel.h>
 #include <CGAL/ch_graham_andrew.h>
@@ -31,11 +29,10 @@ int main(int argc, char *argv[])
 using namespace leda;
 #endif
 
-//typedef CGAL::Cartesian<leda_rational>    K;
-
-typedef CGAL::leda_rat_kernel_traits      K;
-//typedef CGAL::Homogeneous<leda_integer>   K2;
-//typedef CGAL::Kernel_checker<K, K2, CGAL::leda_to_cgal_2 > Kernel;
+typedef CGAL::leda_rat_kernel_traits                   LEDA_KERNEL;
+typedef CGAL::kernel_event<LEDA_KERNEL>                KEV;
+typedef CGAL::kernel_event<int>                        KRES;
+typedef CGAL::Kernel_special<LEDA_KERNEL, KEV, KRES>   K;
 
 typedef K::Point_2                        Point;
 typedef K::Segment_2                      Segment;
@@ -96,10 +93,10 @@ public:
    w.draw_line(p_left.to_float(), p_right.to_float(), leda_blue);
  }
  
- void left_turn_occurence(const Point& p1, const Point& p2, const Point& p3)
+ void left_turn_occurence(const LEDA_KERNEL::Left_turn_2& fcn,
+                          const Point& p1, const Point& p2, const Point& p3,
+			  const bool& result)
  {
-   // compute result ...
-   bool result = LEDA_NAMESPACE_NAME::left_turn(p1,p2,p3);   
    std::cout << "left_turn:" << p1 << " " << p2 << " " << p3 << " - result:" << result << "\n";
    
    if (first_scan) { // first left_turn call ...
@@ -132,15 +129,22 @@ public:
    user_interaction();
  }
  
- void less_xy_occurence(const Point& p1, const Point& p2)
+ void less_xy_occurence(const LEDA_KERNEL::Less_xy_2& fcn,
+                        const Point& p1, const Point& p2,
+			const bool& result)
  { } 
  
  void init_visualization(const std::list<Point>& L)
  {
+/* 
    left_turn_it       = CGAL::attach(CGAL::Predicate_leda_rat_leftturn_2<K>::ev_leda_rat_point, \
                                      *this, &geo_hull::left_turn_occurence);
    less_xy_it         = CGAL::attach(CGAL::Predicate_leda_rat_less_xy_2<K>::ev_leda_rat_point, \
-                                     *this, &geo_hull::less_xy_occurence);				     
+                                     *this, &geo_hull::less_xy_occurence);
+*/
+   left_turn_it       = CGAL::attach(KRES::EVENT, *this, &geo_hull::left_turn_occurence);
+   less_xy_it         = CGAL::attach(KRES::EVENT, *this, &geo_hull::less_xy_occurence);
+				     
    w.clear();
    w.set_redraw(new_redraw);
    input_set = &L;

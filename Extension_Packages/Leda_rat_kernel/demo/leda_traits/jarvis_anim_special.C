@@ -1,15 +1,11 @@
-//Achtung - LEDA kernel macht Probleme ohne audgeschaltete POSTCONDITIONS
-//rausfinden, warum ! - Problem war Fehler in Less_rotate_ccw_2, fixed
-//Loesung: Kernel_traits fuer LEDA spezialisieren ? - nein, diese Version wird nicht verwendet
-//
-//noch kleines Problem: bei w.clear() wird GeoWin-redraw Funktion gerufen, was
-//in diesem Fall Unsinn ist -> sollte man aendern !!
-//
-// Loesung: GeoWin::redraw sollte man mehr beeinflussen koennen ...
+/*
+Jarvis march visualization
+this time we use the special kernel ...
+*/
 
 #define CGAL_CH_NO_POSTCONDITIONS
 #define CGAL_PROVIDE_LEDA_RAT_KERNEL_TRAITS_3
-#define CGAL_GEOMETRY_EVENTS
+#define CGAL_NO_DEPRECATED_CODE
 
 #include <CGAL/basic.h>
 
@@ -26,7 +22,8 @@ int main(int argc, char *argv[])
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/leda_rational.h>
-#include <CGAL/Kernel_checker.h>
+#include <CGAL/Kernel_special.h>
+#include <CGAL/kernel_event_support.h>
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #include <CEP/Leda_rat_kernel/geowin_leda_rat_kernel.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
@@ -37,20 +34,17 @@ int main(int argc, char *argv[])
 using namespace leda;
 #endif
 
-//typedef CGAL::Cartesian<leda_rational>    K;
 
-typedef CGAL::leda_rat_kernel_traits      K;
-//typedef CGAL::Homogeneous<leda_integer>   K2;
-//typedef CGAL::Kernel_checker<K, K2, CGAL::leda_to_cgal_2 > Kernel;
+typedef CGAL::leda_rat_kernel_traits                   LEDA_KERNEL;
+typedef CGAL::kernel_event<LEDA_KERNEL>                KEV;
+typedef CGAL::kernel_event<int>                        KRES;
+typedef CGAL::Kernel_special<LEDA_KERNEL, KEV, KRES>   K;
+
 
 typedef K::Less_rotate_ccw_2              Less_rotate_ccw_2;
-
 typedef K::Point_2                        Point;
 typedef K::Segment_2                      Segment;
 
-
-void new_redraw(leda_window* wp, double x0, double y0, double x1, double y1)
-{ }
 
 class geo_hull : public geowin_update<std::list<Point>, std::list<Segment> >
 {
@@ -78,7 +72,9 @@ public:
  void user_interaction() { w.read_mouse(); }
  
  void draw_points()
- { leda_point_style ps = w.set_point_style(leda_cross_point);
+ { 
+   std::cout << "draw_points !\n";
+   leda_point_style ps = w.set_point_style(leda_cross_point);
    std::list<Point>::const_iterator it= input_set->begin();
    for(;it != input_set->end(); it++) w.draw_point(it->to_float());
    w.set_point_style(ps);
@@ -86,7 +82,10 @@ public:
  
  void draw_current_hull()
  {
-   w.clear();
+   //w.clear();
+   w.draw_box(-2000,-2000,4000,4000,white);
+   //w.read_mouse();
+   //w.stop_buffering();
    draw_points();
    std::list<Point>::const_iterator cit = current_hull.begin();
    Point plast;
@@ -99,30 +98,17 @@ public:
    }
  }
  
- bool less_rotate_ccw_2(const Point& p1, const Point& p2, const Point& p3)
- {
-   // switch off the event
-   CGAL::disable(less_rotate_ccw_it);
-   // compute result ...
-   Less_rotate_ccw_2 functor;
-   bool result = functor(p1,p2,p3);
-   // switch it on again ...
-   CGAL::enable(less_rotate_ccw_it);
-   return result;
- }
- 
- void less_rotate_ccw_occurence(const Point& p1, const Point& p2, const Point& p3)
+ void less_rotate_ccw_occurence(const LEDA_KERNEL::Less_rotate_ccw_2& fcn,
+                                const Point& p1, const Point& p2, const Point& p3,
+				const bool& result)
  {
    less_rotate_ccw_counter++;
-   //std::cout << "less_rotate_ccw:" << p1 << " " << p2 << " " << p3 << "\n";
+   std::cout << "less_rotate_ccw:" << p1 << " " << p2 << " " << p3 << "\n";
    //store hull ...
    if (current_hull.empty() || p1 != current_hull.front()) current_hull.push_front(p1);
-   
-   bool result = less_rotate_ccw_2(p1,p2,p3);  
-   
-   draw_current_hull();
     
    if (result) {
+    draw_current_hull();
     gw.msg_clear();
     gw.msg_open(leda_string("less_rotate_ccw - new point found ..."));
     w.draw_ray(p1.to_float(), p2.to_float(), leda_blue);
@@ -131,10 +117,10 @@ public:
    }  
  }
  
- void less_xy_occurence(const Point& p1, const Point& p2)
+ void less_xy_occurence(const LEDA_KERNEL::Less_xy_2& fcn,
+                        const Point& p1, const Point& p2, const bool& result)
  {
-   //std::cout << "less_xy:" << p1 << " " << p2 << "\n";
-   bool result = (leda_rat_point::cmp_xy(p1,p2)  <  0);
+   std::cout << "less_xy:" << p1 << " " << p2 << "\n";
    
    if (less_xy_counter == 0) // draw start point ...
      w.draw_point(p1.to_float(), leda_red);
@@ -150,12 +136,17 @@ public:
  void init_visualization(const std::list<Point>& L)
  {
    less_rotate_ccw_counter = 0; less_rotate_ccw_counter = 0;   
+/*   
    less_rotate_ccw_it = CGAL::attach(CGAL::Predicate_leda_rat_less_rotate_ccw_2<K>::ev_leda_rat_point, \
                                      *this, &geo_hull::less_rotate_ccw_occurence);
    less_xy_it         = CGAL::attach(CGAL::Predicate_leda_rat_less_xy_2<K>::ev_leda_rat_point, \
-                                     *this, &geo_hull::less_xy_occurence);				     
+                                     *this, &geo_hull::less_xy_occurence);	
+*/
+   less_rotate_ccw_it = CGAL::attach(KRES::EVENT, *this, &geo_hull::less_rotate_ccw_occurence);  
+   less_xy_it         = CGAL::attach(KRES::EVENT, *this, &geo_hull::less_xy_occurence);
+			     
    w.clear();
-   w.set_redraw(new_redraw);
+   //w.set_redraw(new_redraw);
    input_set = &L;
    draw_points();
    current_hull.clear(); 
@@ -168,7 +159,7 @@ public:
    CGAL::detach(less_rotate_ccw_it);
    CGAL::detach(less_xy_it);
    w.set_point_style(pold);
-   w.set_redraw(GeoWin::redraw_geowin);
+   //w.set_redraw(GeoWin::redraw_geowin);
  }
  // --------------------------------------------------------------------------------------------------
 

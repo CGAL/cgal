@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	   -I../../include \
+	   -I. -I../../include \
            $(CGAL_CXXFLAGS)
 
 #---------------------------------------------------------------------#
@@ -34,11 +34,13 @@ LDFLAGS = \
 
 all:            \
 CGAL_alpha_shape_2 \
+CGAL_arrangement_2 \
 CGAL_constrained_triang_2 \
 CGAL_convex_hull_2 \
 CGAL_convex_hull_3 \
 CGAL_delaunay_leda_2 \
 CGAL_delaunay_leda_3 \
+CGAL_delaunay_leda_event_3 \
 CGAL_partition_leda_2 \
 CGAL_segment_intersection_2 \
 alpha_shape_2_leda \
@@ -48,6 +50,8 @@ convex_hull_2_leda \
 delau_2_leda \
 delau_3_kernel_check \
 delau_3_leda \
+delau_3_leda_counting \
+delau_3_leda_new_check \
 delau_3_leda_speed \
 greene_2_leda \
 nearest_neighbor \
@@ -61,8 +65,8 @@ polyhedron_prog_simple_leda \
 quickhull_3_leda \
 triang_2_leda \
 event_test \
-jarvis_anim \
-graham_anim \
+jarvis_anim_special \
+graham_anim_special \
 triangulation_anim
 
 constrained_wi_2_leda$(EXE_EXT): constrained_wi_2_leda$(OBJ_EXT)
@@ -101,6 +105,9 @@ CGAL_delaunay_leda_2$(EXE_EXT): CGAL_delaunay_leda_2$(OBJ_EXT)
 CGAL_delaunay_leda_3$(EXE_EXT): CGAL_delaunay_leda_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_delaunay_leda_3 CGAL_delaunay_leda_3$(OBJ_EXT) $(LDFLAGS)
 
+CGAL_delaunay_leda_event_3$(EXE_EXT): CGAL_delaunay_leda_event_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_delaunay_leda_event_3 CGAL_delaunay_leda_event_3$(OBJ_EXT) $(LDFLAGS)
+
 CGAL_poly_triang_2$(EXE_EXT): CGAL_poly_triang_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_poly_triang_2 CGAL_poly_triang_2$(OBJ_EXT) $(LDFLAGS)
 
@@ -115,6 +122,9 @@ CGAL_constrained_triang_2$(EXE_EXT): CGAL_constrained_triang_2$(OBJ_EXT)
 
 CGAL_alpha_shape_2$(EXE_EXT): CGAL_alpha_shape_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_alpha_shape_2 CGAL_alpha_shape_2$(OBJ_EXT) $(LDFLAGS)
+
+CGAL_arrangment_2$(EXE_EXT): CGAL_arrangment_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_arrangement_2 CGAL_arrangement_2$(OBJ_EXT) $(LDFLAGS)
 
 CGAL_segment_intersection_2$(EXE_EXT): CGAL_segment_intersection_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_segment_intersection_2 CGAL_segment_intersection_2$(OBJ_EXT) $(LDFLAGS)
@@ -140,6 +150,12 @@ quickhull_3_leda$(EXE_EXT): quickhull_3_leda$(OBJ_EXT)
 delau_3_leda$(EXE_EXT): delau_3_leda$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)delau_3_leda delau_3_leda$(OBJ_EXT) $(LDFLAGS)
 
+delau_3_leda_counting$(EXE_EXT): delau_3_leda_counting$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)delau_3_leda_counting delau_3_leda_counting$(OBJ_EXT) $(LDFLAGS)
+
+delau_3_leda_new_check$(EXE_EXT): delau_3_leda_new_check$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)delau_3_leda_new_check delau_3_leda_new_check$(OBJ_EXT) $(LDFLAGS)
+
 delau_3_kernel_check$(EXE_EXT): delau_3_kernel_check$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)delau_3_kernel_check delau_3_kernel_check$(OBJ_EXT) $(LDFLAGS)
 
@@ -158,22 +174,24 @@ planar_map_example4$(EXE_EXT): planar_map_example4$(OBJ_EXT)
 event_test$(EXE_EXT): event_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)event_test event_test$(OBJ_EXT) $(LDFLAGS)
 
-jarvis_anim$(EXE_EXT): jarvis_anim$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)jarvis_anim jarvis_anim$(OBJ_EXT) $(LDFLAGS)
+jarvis_anim_special$(EXE_EXT): jarvis_anim_special$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)jarvis_anim_special jarvis_anim_special$(OBJ_EXT) $(LDFLAGS)
 
-graham_anim$(EXE_EXT): graham_anim$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)graham_anim graham_anim$(OBJ_EXT) $(LDFLAGS)
+graham_anim_special$(EXE_EXT): graham_anim_special$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)graham_anim_special graham_anim_special$(OBJ_EXT) $(LDFLAGS)
 
 triangulation_anim$(EXE_EXT): triangulation_anim$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)triangulation_anim triangulation_anim$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
 CGAL_alpha_shape_2.clean \
+CGAL_arrangement_2.clean \
 CGAL_constrained_triang_2.clean \
 CGAL_convex_hull_2.clean \
 CGAL_convex_hull_3.clean \
 CGAL_delaunay_leda_2.clean \
 CGAL_delaunay_leda_3.clean \
+CGAL_delaunay_leda_event_3.clean \
 CGAL_partition_leda_2.clean \
 CGAL_poly_triang_2.clean \
 CGAL_segment_intersection_2.clean \
@@ -184,6 +202,8 @@ convex_hull_2_leda.clean \
 delau_2_leda.clean \
 delau_3_kernel_check.clean \
 delau_3_leda.clean \
+delau_3_leda_counting.clean \
+delau_3_leda_new_check.clean \
 delau_3_leda_speed.clean \
 greene_2_leda.clean \
 nearest_neighbor.clean \
@@ -197,9 +217,10 @@ polyhedron_prog_simple_leda.clean \
 quickhull_3_leda.clean \
 triang_2_leda.clean \
 event_test.clean \
-jarvis_anim.clean \
-graham_anim.clean \
-triangulation_anim.clean
+graham_anim_special.clean \
+triangulation_anim.clean \
+CGAL_delaunay_leda_event_3.clean \
+jarvis_anim_special.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -1,4 +1,5 @@
-#define CGAL_GEOMETRY_EVENTS
+#define CGAL_PROVIDE_LEDA_RAT_KERNEL_TRAITS_3
+#define CGAL_NO_DEPRECATED_CODE
 
 #include <CGAL/basic.h>
 
@@ -14,6 +15,8 @@ int main(int argc, char *argv[])
 #else 
 
 #include <CGAL/Triangulation_2.h>
+#include <CGAL/Kernel_special.h>
+#include <CGAL/kernel_event_support.h>
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #include <CEP/Leda_rat_kernel/geowin_leda_rat_kernel.h>
 #include <CGAL/geowin_support.h>
@@ -22,10 +25,15 @@ int main(int argc, char *argv[])
 using namespace leda;
 #endif
 
-typedef CGAL::leda_rat_kernel_traits    K;
-typedef K::Point_2                      Point;
-typedef K::Segment_2                    Segment;
-typedef K::Ray_2                        Ray;
+typedef CGAL::leda_rat_kernel_traits    K1;
+typedef K1::Point_2                     Point;
+typedef K1::Segment_2                   Segment;
+typedef K1::Ray_2                       Ray;
+typedef K1::Orientation_2               Orientation_2;
+
+typedef CGAL::kernel_event<K1>          KEV;
+typedef CGAL::Kernel_special<K1, KEV>   K;
+
 
 typedef CGAL::Triangulation_2<K>        Triangulation_2;
 typedef Triangulation_2::Edge           Edge;
@@ -68,7 +76,7 @@ struct geo_triang : public geowin_update<std::list<Point>, std::list<Segment> >
    user_interaction();           
  }
  
- void orientation_occurence(const Point& p1, const Point& p2, const Point& p3)
+ void orientation_occurence(const Orientation_2&, const Point& p1, const Point& p2, const Point& p3)
  {
    CGAL::disable(orientation_it);
    std::cout << "orientation ...\n"; 
@@ -80,8 +88,7 @@ struct geo_triang : public geowin_update<std::list<Point>, std::list<Segment> >
  // --------------------------------------------------------------------------------------------------  
  void init_visualization(const std::list<Point>& L)
  {
-   orientation_it   = CGAL::attach(CGAL::Predicate_leda_rat_orientation_2<K>::ev_leda_rat_point, \
-                                   *this, &geo_triang::orientation_occurence);	
+   orientation_it   = CGAL::attach(KEV::EVENT, *this, &geo_triang::orientation_occurence);	
 				     				     			     
    w.clear();
    input_set = &L;
