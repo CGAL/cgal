@@ -3,7 +3,7 @@
  *    Simple example the CGAL KD-tree module.
  *
  * Written by Sariel Har-Peled 
- *            Iddo Hanniel
+ *            Iddo Hanniel 
 \*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
 
 #include <CGAL/Cartesian.h>

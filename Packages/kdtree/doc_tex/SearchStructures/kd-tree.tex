@@ -64,8 +64,8 @@
 Kd-trees are implemented by
 the class \ccc{Kdtree_d}, that is parameterized with a traits class defining
 the interface between the class and the geometric primitives used.
-For the description of the traits classes \ccc{Kd_Interface}, \ccc{Kd_Interface_2d} 
-and \ccc{Kd_Interface_3d} provided by {\cgal} please refer to the reference pages.
+For the description of the traits classes \ccc{Kd_interface}, \ccc{Kd_interface_2d} 
+and \ccc{Kd_interface_3d} provided by {\cgal} please refer to the reference pages.
 Also refer to the reference pages, for the description of the formal requirements for a class to be 
 a kd-tree traits class by the concept \ccc{Kdtree_d_traits}.
 % {\cgal}  provides ready-made interface classes that are presented in
@@ -141,6 +141,7 @@ The {\kdt} is built using 2D points from the CGAL kernel.
 #include <CGAL/Cartesian.h>
 
 #include <iostream>
+#include <iterator>
 #include <ctime>
 #include <cassert>
 #include <list>
@@ -158,6 +159,8 @@ int main()
 {
     CGAL::Kdtree_d<kd_interface> tree(2);
     points_list l, res;
+
+    srand( (unsigned)time(NULL) );
 
     std::cout << "Insering evenly 81 points  in the square (0,0)-(10,10) ...\n\n";
     for (int i=1; i<10; i++)
