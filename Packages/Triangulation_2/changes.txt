@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.31 (9/1/04)
+- just resubmit
+
 ver 8.30 (8/1/04)
 - fixed code and test for size_type and difference_type
 
