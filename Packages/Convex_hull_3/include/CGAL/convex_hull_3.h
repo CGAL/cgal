@@ -31,7 +31,7 @@
 #define CGAL_CONVEX_HULL_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/algorithm.h> 
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -171,7 +171,7 @@ find_visible_set(const typename Traits::Point_3& point,
 
    visible.clear();
    typename std::list<Facet_handle>::iterator  vis_it;
-   CGAL::Hash_map<Facet_handle, bool> visited(false);
+   CGAL::Unique_hash_map<Facet_handle, bool> visited(false);
    visible.push_back(start_facet);
    visited[start_facet] = true;
    Facet_handle current;
@@ -239,10 +239,10 @@ template <class Facet_handle, class Traits>
 void     
 partition_outside_sets(const std::list<Facet_handle>& new_facets,
         std::list<typename Traits::Point_3>& vis_outside_set, 
-        CGAL::Hash_map<Facet_handle, 
+        CGAL::Unique_hash_map<Facet_handle, 
                        std::list<typename Traits::Point_3> >& outside_sets,
         std::list<Facet_handle>& pending_facets, 
-        const Traits& traits, const typename Traits::Point_3& farthest_pt)
+        const Traits& traits)
 {
    typename std::list<Facet_handle>::const_iterator        f_list_it;
    typename std::list<typename Traits::Point_3>::iterator  point_it;
@@ -283,7 +283,7 @@ void
 ch_quickhull_3_scan( 
         Polyhedron_3& P,
         std::list<typename Polyhedron_3::Facet_handle>& pending_facets,
-        CGAL::Hash_map<typename Polyhedron_3::Facet_handle, 
+        CGAL::Unique_hash_map<typename Polyhedron_3::Facet_handle, 
                    std::list<typename Traits::Point_3> >& outside_sets,
         const Traits& traits)
 {
@@ -373,7 +373,7 @@ ch_quickhull_3_scan(
 
      // now partition the set of outside set points among the new facets.
      partition_outside_sets(new_facets, vis_outside_set, outside_sets,
-                            pending_facets, traits, farthest_pt);
+                            pending_facets, traits);
   }   
 }
 
@@ -384,7 +384,8 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   typedef typename Polyhedron_3::Facet_handle             Facet_handle;
   typedef typename Polyhedron_3::Facet_iterator           Facet_iterator;
   typedef typename Traits::Point_3                        Point_3;
-  typedef CGAL::Hash_map<Facet_handle, std::list<Point_3> >   Outside_set_map;
+  typedef CGAL::Unique_hash_map<Facet_handle, std::list<Point_3> >   
+                                                          Outside_set_map;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
 
   std::list<Facet_iterator> pending_facets;
