@@ -71,8 +71,8 @@ public:
   bool operator<=(const DirectionC2 &d) const;
   bool operator>(const DirectionC2 &d) const;
   bool operator<(const DirectionC2 &d) const;
-  bool counterclockwise_in_between( const DirectionC2 &d1,
-	                            const DirectionC2 &d2) const;
+  bool counterclockwise_in_between( const Direction_2 &d1,
+	                            const Direction_2 &d2) const;
   
   Vector_2 to_vector() const;
   Vector_2 vector() const { return to_vector(); }
@@ -150,15 +150,16 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 DirectionC2<R>::
-counterclockwise_in_between(const DirectionC2<R> &d1,
-                            const DirectionC2<R> &d2) const
+counterclockwise_in_between(const typename DirectionC2<R>::Direction_2 &d1,
+		    const typename DirectionC2<R>::Direction_2 &d2) const
 // returns true, iff \ccVar\ is not equal to \ccc{d1}, and 
 // while rotating counterclockwise starting at \ccc{d1}, 
 // \ccVar\ is reached strictly before \ccc{d2} is reached.
 // Note that true is returned if \ccc{d1} == \ccc{d2}, unless
 //  also \ccVar\ == \ccc{d1}.
 {
-  return R().counterclockwise_in_between_2_object()(*this, d1, d2);
+  return R().counterclockwise_in_between_2_object()
+               (static_cast<const typename R::Direction_2>(*this), d1, d2);
 }
 
 template < class R >

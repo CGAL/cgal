@@ -148,7 +148,8 @@ bool
 TriangleC3<R>::
 has_on(const typename TriangleC3<R>::Point_3 &p) const
 {
-  return R().has_on_3_object()(*this, p);
+  return R().has_on_3_object()
+               (static_cast<const typename R::Triangle_3>(*this), p);
 }
 
 template < class R >

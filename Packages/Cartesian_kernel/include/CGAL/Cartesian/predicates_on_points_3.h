@@ -31,78 +31,6 @@ CGAL_BEGIN_NAMESPACE
 template < class K >
 inline
 bool
-x_equal(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().equal_x_3_object()(p, q);
-}
-
-template < class K >
-inline
-bool
-y_equal(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().equal_y_3_object()(p, q);
-}
-
-template < class K >
-inline
-bool
-z_equal(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().equal_z_3_object()(p, q);
-}
-
-template < class K >
-inline
-bool
-less_x(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().less_x_3_object()(p, q);
-}
-
-template < class K >
-inline
-bool
-less_y(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().less_y_3_object()(p, q);
-}
-
-template < class K >
-inline
-bool
-less_z(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().less_z_3_object()(p, q);
-}
-
-template < class K >
-inline
-Comparison_result
-compare_x(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().compare_x_3_object()(p, q);
-}
-
-template < class K >
-inline
-Comparison_result
-compare_y(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().compare_y_3_object()(p, q);
-}
-
-template < class K >
-inline
-Comparison_result
-compare_z(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().compare_z_3_object()(p, q);
-}
-
-template < class K >
-inline
-bool
 equal_xy(const PointC3<K> &p, const PointC3<K> &q)
 {
   return K().equal_xy_3_object()(p, q);
@@ -152,40 +80,6 @@ lexicographically_xy_smaller(const PointC3<K> &p,
 
 template < class K >
 inline
-Comparison_result
-compare_xyz(const PointC3<K> &p, const PointC3<K> &q)
-{
-  return K().compare_xyz_3_object()(p, q);
-}
-
-template < class K >
-inline
-Comparison_result
-compare_lexicographically_xyz(const PointC3<K> &p,
-                              const PointC3<K> &q)
-{
-  return K().compare_xyz_3_object()(p, q);
-}
-
-template < class K >
-bool
-lexicographically_xyz_smaller_or_equal(const PointC3<K> &p,
-                                       const PointC3<K> &q)
-{
-  return compare_lexicographically_xyz(p, q) != LARGER;
-}
-
-template < class K >
-inline
-bool
-lexicographically_xyz_smaller(const PointC3<K> &p,
-                              const PointC3<K> &q)
-{
-  return K().less_xyz_3_object()(p, q);
-}
-
-template < class K >
-inline
 bool
 strict_dominance(const PointC3<K> &p,
 		 const PointC3<K> &q)
@@ -202,16 +96,6 @@ dominance(const PointC3<K> &p,
 {
   return dominanceC3(p.x(), p.y(), p.z(),
 		     q.x(), q.y(), q.z());
-}
-
-template < class K >
-inline
-bool
-collinear_are_ordered_along_line(const PointC3<K> &p,
-                                 const PointC3<K> &q,
-                                 const PointC3<K> &r)
-{
-  return K().collinear_are_ordered_along_line_3_object()(p, q, r);
 }
 
 CGAL_END_NAMESPACE

@@ -63,6 +63,7 @@ public:
       base = Rep(x, y, z);
   }
 
+/*
   bool operator==(const PointC3 &p) const
   {
       if (CGAL::identical(base, p.base))
@@ -73,6 +74,7 @@ public:
   {
       return !(*this == p);
   }
+*/
 
   const FT & x() const
   {

@@ -209,7 +209,8 @@ bool
 RayC2<R>::
 collinear_has_on(const typename RayC2<R>::Point_2 &p) const
 {
-  return R().collinear_has_on_2_object()(*this, p);
+  return R().collinear_has_on_2_object()
+               (static_cast<const typename R::Ray_2>(*this), p);
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAYC2
