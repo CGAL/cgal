@@ -64,7 +64,7 @@ public:
     point_factory = new CGAL::Qt_widget_get_point<K>();
     connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
 	    this, SLOT(new_point(CGAL::Object)) );
-    widget->attach(*point_factory);
+    widget->attach(point_factory);
 
     connect(widget, SIGNAL(custom_redraw()), this, SLOT(redrawWin()) );
 

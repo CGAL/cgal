@@ -16,7 +16,7 @@ class My_Window : public CGAL::Qt_widget {
 public:
   My_Window(int x, int y){
     resize(x,y);
-    attach(get_point);
+    attach(&get_point);
     connect(this, SIGNAL(new_cgal_object(CGAL::Object)), 
             this, SLOT(get_new_object(CGAL::Object)));
   };
