@@ -8,14 +8,14 @@
 # This script takes as STDIN "predicates_on_ftC2.h" or equivalent.
 # It produces as STDOUT "Arithmetic_filter/predicates_on_ftC2.h" or equivalent.
 #
-# It is not supposed to be universal, and it can be considered a quick and
-# dirty hack.  But it appears to work for CGAL's predicates, so you might want
+# It is not supposed to be universal, it doesn't understand full C++.
+# But it appears to work for CGAL's predicates, so you might want
 # to use it for your predicates too (but the job can be done by hand if you
 # don't have many to do).
 #
 # See the CGAL documentation:
 # Support Library, Number Types, Filtered_exact.
-#
+
 
 # $old_protect_name: contains the protect macro name, e.g. CGAL_BASIC_H:
 #                    It is set by $treat_CGAL_header().
@@ -82,16 +82,6 @@ sub skip_old_body {
   while (<>) { last if /^}$/; }
 }
 
-# List of CGAL's enum types.
-@CGAL_enum_types=("Sign", "Comparison_result", "Orientation", "Oriented_side",
-                  "Bounded_side");
-%known_return_types=("bool", 1);
-
-foreach (@CGAL_enum_types) {
-  $known_return_types{$_}=1;
-  $known_return_types{"CGAL::$_"}=1;
-}
-
 # Warns if the return type is not known
 # (to detect functions returning void or FT)
 sub check_known_type {
@@ -104,34 +94,27 @@ sub check_known_type {
 # Puts the new body 
 sub put_new_body {
   local ($result_type, $function_name, @args) = @_;
-  print
-"{
+  print "{
   CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
-    $result_type result = $function_name(
-";
+    $result_type result = $function_name(\n";
   foreach (@args) {
     print "\t\t$_.interval()";
-    if ($_ eq $args[$#args]) { print ");"; } else { print ",\n"; }
+    if ($_ eq $args[$#args]) { print ");\n"; } else { print ",\n"; }
   }
-  print "
-    CGAL::FPU_set_cw(backup);
+  print "    CGAL::FPU_set_cw(backup);
     return result;
   } 
   catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
     CGAL::FPU_set_cw(backup);
-    return $function_name(
-";
+    return $function_name(\n";
   foreach (@args) {
     print "\t\t$_.exact()";
-    if ($_ eq $args[$#args]) { print ");"; } else { print ",\n"; }
+    if ($_ eq $args[$#args]) { print ");\n"; } else { print ",\n"; }
   }
-  print "
-  }
-}
-";
+  print "  }\n}\n";
 }
 
 # Treat the declaration of a function.
@@ -149,7 +132,9 @@ sub parse_function_declaration {
       /([a-zA-Z_]\w*)\s*\(/;
       $function_name=$1;
     }
+
     if (! $in_decl) {
+      # get the return type.
       if (! (/inline/i)) {
         $return_type = $_;
         chop($return_type);
@@ -158,9 +143,9 @@ sub parse_function_declaration {
     }
     else
     {
-      @a = split /[,\)]/; # Stores the arguments names in @args.
-      foreach (@a) {
-	s/^.*\(//;
+      # get the arguments.
+      s/^.*\(//;
+      foreach (split /[,\)]/) {
         next if /^$/;
         /(\w+)\s*$/;
         push(@args, $1);
@@ -191,6 +176,16 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 }
 
 # Main program:
+
+# List of CGAL's enum types.
+@CGAL_enum_types=("Sign", "Comparison_result", "Orientation", "Oriented_side",
+                  "Bounded_side");
+%known_return_types=("bool", 1);
+
+foreach (@CGAL_enum_types) {
+  $known_return_types{$_}=1;
+  $known_return_types{"CGAL::$_"}=1;
+}
 
 treat_CGAL_header();
 
