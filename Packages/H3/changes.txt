@@ -1,4 +1,4 @@
-2.28   (?? Apr 2001)
+2.28   (2  May 2001)
 - angle()
 - Fix operator<<(Iso_cuboid_3).
 
