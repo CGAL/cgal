@@ -59,7 +59,7 @@ CGAL_BEGIN_NAMESPACE
   based on the algorithm of Bentley and Ottmann.
   It extends the algorithm to support not only segments but polylines and 
   general curves as well.
-  The curves are defined by the traits class that is one of the teplate 
+  The curves are defined by the traits class that is one of the template 
   arguments.
 
   The algorithm is also extended to support the following degenerate cases:
@@ -141,8 +141,8 @@ public:
   typedef typename StatusLine::iterator StatusLineIter;
   typedef typename Event::VerticalCurveList VerticalCurveList;
   typedef typename Event::VerticalCurveListIter VerticalCurveListIter;
-  typedef typename Event::VerticalXPointList VerticalXPointList;
-  typedef typename Event::VerticalXPointListIter VerticalXPointListIter;
+  typedef typename Event::VerticalXPointSet VerticalXPointList;
+  typedef typename Event::VerticalXPointSetIter VerticalXPointListIter;
 
   typedef std::list<Event *> EventList;
   typedef typename EventList::iterator EventListIter;
@@ -176,7 +176,7 @@ public:
    *                   of curves created by intersecting the input curves.
    *  \param overlapping indicates whether overlapping curves should be 
    *                   reported once or multiple times. If false, the 
-   *                   overlapping curves are r(unsigned int)eported once only.
+   *                   overlapping curves are reported once only.
    */
   template <class OutpoutIterator>
   void  get_subcurves(CurveInputIterator begin, CurveInputIterator end, 
@@ -1352,7 +1352,7 @@ protected:
     curves created when splitting them into x-monotone curves. */
   std::vector<X_monotone_curve_2> m_xcurves;
 
-  /*! a pointer to thecurrent event */
+  /*! a pointer to the current event */
   Event *m_currentEvent;
 
   /*! a queue that holds all the events that have the same x coordinate as 

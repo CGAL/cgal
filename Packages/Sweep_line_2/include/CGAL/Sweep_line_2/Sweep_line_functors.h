@@ -34,10 +34,18 @@ public:
     return (m_traits->compare_xy(*p1,*p2) == SMALLER);
   }
 
+	 bool operator()( const Point& p1,const   Point& p2) const 
+  { 
+    return (m_traits->compare_xy(p1,p2) == SMALLER);
+  }
+
 private:
   /*! a pointer to a traits class */
   Traits * m_traits;
 };
+
+
+
 
 template <class SweepLineTraits_2, class Subcurve>
 class Status_line_curve_less_functor 
