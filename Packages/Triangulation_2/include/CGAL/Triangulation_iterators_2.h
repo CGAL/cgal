@@ -34,40 +34,46 @@ public:
   typedef typename Tds::Face Fa;
   typedef typename Tds::Face_iterator  Iterator_base;
 
-  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
-  typedef typename Vertex::Vertex_handle Vertex_handle;
-  typedef typename Face::Face_handle Face_handle;
-  typedef pair<Face_handle, int>     Edge;
+  typedef CGAL_Triangulation_2<Gt,Tds> Triangulation;
+  typedef typename Triangulation::Face Face;
+  typedef typename Triangulation::Vertex Vertex;
+  typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef typename Triangulation::Face_handle Face_handle;
+  typedef typename Triangulation::Edge     Edge;
 
   typedef CGAL_Triangulation_face_iterator_2<Gt,Tds>      Face_iterator;
   typedef CGAL_Triangulation_edge_iterator_2<Gt,Tds>      Edge_iterator;
   typedef CGAL_Triangulation_vertex_iterator_2<Gt,Tds>    Vertex_iterator;
 
-  static int ccw(int i)
-  {
-        return (i+1) % 3;
-  }
 
-  static int cw(int i)
-  {
-    return (i+2) % 3;
-  }
-
+private:
+  Iterator_base   _ib;
+  Triangulation* _tr;
+ 
+public:
   CGAL_Triangulation_face_iterator_2()
-    : _ib()
+    : _ib(), _tr(NULL)
   {}
         
   CGAL_Triangulation_face_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr)
-            : _ib( &(tr->_tds))
-  { }
+            : _ib( &(tr->_tds)), _tr(tr)
+  { 
+    if (tr->dimension() == 0 ||tr->dimension() ==1){
+      _ib = Iterator_base(&(tr->_tds),1);
+      return;
+    }
+    while ( _ib != Iterator_base(&(tr->_tds),1) && _tr->is_infinite((Face *) &(*_ib))){
+      ++_ib;
+    }
+    return;
+  }
         
   CGAL_Triangulation_face_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr, int i)
-    : _ib( &(tr->_tds), i)
+    : _ib( &(tr->_tds), i), _tr(tr)
   { }
        
   CGAL_Triangulation_face_iterator_2(const Face_iterator& fi)
-          : _ib(fi._ib)
+          : _ib(fi._ib), _tr(fi._tr)
   {}
         
         
@@ -75,13 +81,14 @@ public:
         operator=(const Face_iterator& fi)
   { 
     _ib = fi._ib;
+    _tr = fi._tr;
     return *this;
   }
   
   bool
   operator==(const Face_iterator& fi) const
   {
-    return ( _ib == fi._ib);
+    return (  _tr == fi._tr && _ib == fi._ib);
   }
 
   bool
@@ -93,14 +100,20 @@ public:
   Face_iterator&
   operator++()
   {
-    ++_ib; 
+    ++_ib;
+    while ( _ib != Iterator_base(&(_tr->_tds),1) && _tr->is_infinite((Face *)&( *_ib))){
+      ++_ib;
+    }
     return *this;   
   }
 
   Face_iterator&
   operator--()
   {
-    --_ib;
+     --ib;
+     while ( _ib != Iterator_base(&(_tr->_tds),1) && _tr->is_infinite((Face *) &(*_ib))){
+      --_ib;
+    }
     return *this;   
   }
 
@@ -131,8 +144,6 @@ public:
     return   (Face*)( & (*_ib));
   }
      
-private:
-  Iterator_base   _ib;
 };
 
 
@@ -145,46 +156,48 @@ public:
   typedef typename Tds::Face Fa;
   typedef typename Tds::Vertex_iterator  Iterator_base;
 
-  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
-  typedef typename Vertex::Vertex_handle Vertex_handle;
-  typedef typename Face::Face_handle Face_handle;
-  typedef pair<Face_handle, int>     Edge;
+  typedef CGAL_Triangulation_2<Gt,Tds> Triangulation;
+  typedef typename Triangulation::Face Face;
+  typedef typename Triangulation::Vertex Vertex;
+  typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef typename Triangulation::Face_handle Face_handle;
+  typedef typename Triangulation::Edge     Edge;
 
   typedef CGAL_Triangulation_face_iterator_2<Gt,Tds>      Face_iterator;
   typedef CGAL_Triangulation_edge_iterator_2<Gt,Tds>      Edge_iterator;
   typedef CGAL_Triangulation_vertex_iterator_2<Gt,Tds>    Vertex_iterator;
 
-  static int ccw(int i)
-  {
-        return (i+1) % 3;
-  }
+private:
+  Iterator_base   _ib;
+  Triangulation* _tr; 
 
-  static int cw(int i)
-  {
-    return (i+2) % 3;
-  }
-
+public:
   CGAL_Triangulation_vertex_iterator_2()
-    : _ib()
+    : _ib(),_tr(NULL) 
   {}
         
   CGAL_Triangulation_vertex_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr)
-            : _ib( &(tr->_tds))
-  { }
+            : _ib( &(tr->_tds)), _tr(tr)
+  { 
+    if (_tr->number_of_vertices() == 0) { _ib = Iterator_base(&(tr->_tds),1);}
+    //else if ( _tr->is_infinite( (Vertex &) *_ib) ) { ++_ib;}
+    else if ( _tr->is_infinite( (Vertex *) &(*_ib)) ){ ++_ib;}
+    return;
+  }
         
   CGAL_Triangulation_vertex_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr, int i)
-    : _ib( &(tr->_tds), i)
-  { }
+    : _ib( &(tr->_tds), i), _tr(tr)
+  {   }
        
   CGAL_Triangulation_vertex_iterator_2(const Vertex_iterator& vi)
-          : _ib(vi._ib)
+          : _ib(vi._ib), _tr(vi._tr)
   {}
         
         
    Vertex_iterator&
         operator=(const Vertex_iterator& vi)
   { 
+    _tr = vi._tr;
     _ib = vi._ib;
     return *this;
   }
@@ -192,7 +205,7 @@ public:
   bool
   operator==(const Vertex_iterator& vi) const
   {
-    return ( _ib == vi._ib);
+    return ( _tr == vi._tr && _ib == vi._ib);
   }
 
   bool
@@ -204,7 +217,10 @@ public:
   Vertex_iterator&
   operator++()
   {
-    ++_ib; 
+     ++_ib;
+     while ( _ib != Iterator_base(&(_tr->_tds),1) && _tr->is_infinite((Vertex *) &(*_ib))){
+      ++_ib;
+    }
     return *this;   
   }
 
@@ -212,6 +228,9 @@ public:
   operator--()
   {
     --_ib;
+    while ( _ib != Iterator_base(&(_tr->_tds),1) && _tr->is_infinite((Vertex *) &(*_ib))){
+      --_ib;
+    }
     return *this;   
   }
 
@@ -242,8 +261,6 @@ public:
     return   (Vertex*)( & (*_ib));
   }
      
-private:
-  Iterator_base   _ib;
 };
 
 
@@ -256,46 +273,53 @@ public:
   typedef typename Tds::Face Fa;
   typedef typename Tds::Edge_iterator  Iterator_base;
 
-  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
-  typedef typename Vertex::Vertex_handle Vertex_handle;
-  typedef typename Face::Face_handle Face_handle;
-  typedef pair<Face_handle, int>     Edge;
+  typedef CGAL_Triangulation_2<Gt,Tds> Triangulation;
+  typedef typename Triangulation::Face Face;
+  typedef typename Triangulation::Vertex Vertex;
+  typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef typename Triangulation::Face_handle Face_handle;
+  typedef typename Triangulation::Edge     Edge;
+
 
   typedef CGAL_Triangulation_face_iterator_2<Gt,Tds>      Face_iterator;
   typedef CGAL_Triangulation_edge_iterator_2<Gt,Tds>      Edge_iterator;
   typedef CGAL_Triangulation_vertex_iterator_2<Gt,Tds>    Vertex_iterator;
 
-  static int ccw(int i)
-  {
-        return (i+1) % 3;
-  }
+private:
+   Iterator_base   _ib;
+  Triangulation* _tr;
 
-  static int cw(int i)
-  {
-    return (i+2) % 3;
-  }
-
+public:  
   CGAL_Triangulation_edge_iterator_2()
-    : _ib()
+    : _ib(), _tr(NULL)
   {}
         
   CGAL_Triangulation_edge_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr)
-            : _ib( &(tr->_tds))
-  { }
+            : _ib( &(tr->_tds)), _tr(tr)
+  { 
+    if (_tr->dimension() == 0 ) {
+      _ib = Iterator_base(&(tr->_tds),1);
+      return;
+    }
+    while ( _ib != Iterator_base(&(tr->_tds),1) && _tr->is_infinite((Face *)((*_ib).first), (*_ib).second)){
+      ++_ib;
+    }
+    return;
+  }
         
   CGAL_Triangulation_edge_iterator_2(CGAL_Triangulation_2<Gt,Tds> *tr, int i)
-    : _ib( &(tr->_tds), i)
+    : _ib( &(tr->_tds), i),  _tr(tr)
   { }
        
   CGAL_Triangulation_edge_iterator_2(const Edge_iterator& ei)
-          : _ib(ei._ib)
+          : _ib(ei._ib), _tr(ei._tr)
   {}
         
         
    Edge_iterator&
         operator=(const Edge_iterator& ei)
   { 
+    _tr = ei._tr;
     _ib = ei._ib;
     return *this;
   }
@@ -303,7 +327,7 @@ public:
   bool
   operator==(const Edge_iterator& ei) const
   {
-    return ( _ib == ei._ib);
+    return ( _tr == ei._tr && _ib == ei._ib);
   }
 
   bool
@@ -315,7 +339,10 @@ public:
   Edge_iterator&
   operator++()
   {
-    ++_ib; 
+    ++_ib;
+    while ( _ib != Iterator_base(&(_tr->_tds),1) && _tr->is_infinite((Face *)((*_ib).first), (*_ib).second)){
+      ++_ib;
+    }
      return *this;   
   }
 
@@ -323,7 +350,10 @@ public:
   operator--()
   {
     --_ib;
-    return *this;   
+    while ( _ib != Iterator_base(&(_tr->_tds),1) && _tr->is_infinite((Face *)((*_ib).first), *_ib.second)){
+      --_ib;
+     }
+     return *this;   
   }
 
   Edge_iterator
@@ -349,10 +379,6 @@ public:
     return make_pair( fh  , (*_ib).second );
   }
 
-  
-     
-private:
-  Iterator_base   _ib ;
 };
 
 

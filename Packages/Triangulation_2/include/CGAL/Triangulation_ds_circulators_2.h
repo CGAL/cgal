@@ -1,4 +1,4 @@
- #ifndef CGAL_TRIANGULATION_DS_CIRCULATORS_2_H
+#ifndef CGAL_TRIANGULATION_DS_CIRCULATORS_2_H
 #define CGAL_TRIANGULATION_DS_CIRCULATORS_2_H
 
 
@@ -14,9 +14,14 @@ class CGAL_Triangulation_ds_face_circulator_2
     : public CGAL_Bidirectional_circulator_base<Face,ptrdiff_t,size_t>
 {
 public:
-  
-  typedef CGAL_Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
+    typedef CGAL_Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
 
+private: 
+  Vertex* _v;
+  Face* pos;
+  
+
+public :
    static int ccw(int i)
     {
         return (i+1) % 3;
@@ -35,12 +40,13 @@ public:
         
   CGAL_Triangulation_ds_face_circulator_2(Vertex* v)
     : pos(v->face()), _v(v)
-  {}
+  {  }
 
-  CGAL_Triangulation_ds_face_circulator_2(Vertex* v,
-				     Face* f)
-          : pos(f),_v(v)
-  {}
+  CGAL_Triangulation_ds_face_circulator_2(Vertex* v,    Face* f)
+          : pos(f),_v(v) 
+  {
+    CGAL_triangulation_precondition( f->has_vertex(v));
+  }
         
         
   CGAL_Triangulation_ds_face_circulator_2(const Face_circulator &fc)
@@ -51,11 +57,11 @@ public:
   Face_circulator& operator++()
   {
     CGAL_triangulation_precondition( (pos != NULL) && (_v != NULL) );
+    //then dimension() cannot be 0
     int i = pos->index(_v);
-    pos = pos->neighbor(ccw(i));
-    if(pos == NULL){
-      pos = _v->face();
-    }
+
+    if(pos->dimension() == 1) {pos = pos->neighbor(1-i);} //for one dim case
+    else{pos = pos->neighbor(ccw(i));}
     return *this;
   }
         
@@ -71,21 +77,8 @@ public:
   {
     CGAL_triangulation_precondition( (pos != NULL) && (_v != NULL) );
     int i = pos->index(_v);
-    Face* f = pos->neighbor(cw(i));
-    if(f == NULL) {
-      Face* n;
-      do{
-	i = pos->index(_v);
-	//	n = pos->neighbor(cw(i));
-	n = pos->neighbor(ccw(i));
-	if(n != NULL){
-	  pos = n;
-	}
-      }while(n != NULL);
-    }
-    else{
-      pos = f;
-    }
+    if(pos->dimension() == 1) {pos = pos->neighbor(1-i);} //for one dim case
+    else {pos = pos->neighbor(cw(i));}
     return *this;
   }
         
@@ -123,7 +116,7 @@ public:
   operator==(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
-    return (_v == NULL) && (pos == NULL);
+    return (pos == NULL);
   }
         
   bool
@@ -133,9 +126,6 @@ public:
     return ! (*this == NULL);
   }
         
-private:
-  Vertex* _v;
-  Face* pos;
 
 };
 
@@ -158,29 +148,41 @@ public:
     return (i+2) % 3;
   }
 
+private:
+  Vertex* _v;
+  Face* _f;
+  int _ri;
+  int _dim;
+
+
+public:
   CGAL_Triangulation_ds_vertex_circulator_2()
-    :  _v(), _f(NULL)
+    :  _v(NULL), _f(NULL), _dim(0)
   {}
                 
-  CGAL_Triangulation_ds_vertex_circulator_2(Vertex* v,
-				       Face*   f)
-    : _v( v ), _f(f)
-  {
-    if( _f != NULL ) {
-      int i = _f->index( _v );
-      _ri = ccw(i);
-    }
-  }
-        
   CGAL_Triangulation_ds_vertex_circulator_2(Vertex* v)
 				      
     : _v( v ), _f(v->face())
   {
     if( _f != NULL ) {
       int i = _f->index( _v );
-      _ri = ccw(i);
+      if (_f->dimension() == 2) {_ri = ccw(i);}
+      else {_ri = 1-i;}
     }
   }
+
+  CGAL_Triangulation_ds_vertex_circulator_2(Vertex* v,
+				       Face*   f)
+    : _v( v ), _f(f)
+  {
+    if( _f != NULL ) {
+      int i = _f->index( _v );
+      if (_f->dimension() == 2) {_ri = ccw(i);}
+      else {_ri = 1-i;}
+    }
+  }
+        
+
 
   CGAL_Triangulation_ds_vertex_circulator_2(const Vertex_circulator &vc)
     : _ri(vc._ri), _v(vc._v), _f(vc._f)
@@ -207,20 +209,15 @@ public:
 
   Vertex_circulator& operator++()
   {
-    Face* n = _f;
-    int i = _f->index(_v);
-    n = _f->neighbor(ccw(i));
-    if(n == NULL){
-      if(_ri == ccw(i)){
-	_ri = cw(i);
-      } else {
-	_f = _v->face();
-	i = _f->index(_v);
-	_ri = ccw(i);
-      }
-    } 
-    else {
-      _f = n;
+     CGAL_triangulation_precondition( (_f != NULL) && (_v != NULL) );
+     int i = _f->index(_v);
+    
+    if (_f->dimension() == 1) { 
+      _f = _f->neighbor(1-i);
+      _ri = 1 - _f->index(_v);
+    }
+    else{
+      _f = _f->neighbor(ccw(i));
       i = _f->index(_v);
       _ri = ccw(i);
     }
@@ -236,29 +233,17 @@ public:
  
   Vertex_circulator& operator--()
   {
-    Face* n = _f;
-    int i = _f->index(_v);
-    n = _f->neighbor(cw(i));
-    if(n == NULL) {
-      do{
-	n = _f->neighbor(ccw(i));
-	if(n != NULL){
-	  _f = n;
-	  i = _f->index(_v);
-	}
-      }while(n != NULL);
+    CGAL_triangulation_precondition( (_f != NULL) && (_v != NULL) );
+     int i = _f->index(_v);
+    
+    if (_f->dimension() == 1) { 
+      _f = _f->neighbor(1-i);
+      _ri = 1 - _f->index(_v);
+    }
+    else{
+      _f = _f->neighbor(cw(i));
       i = _f->index(_v);
-      _ri = cw(i);
-    } 
-    else {
-      if(_ri == cw(i)){
-	_ri = ccw(i);
-      } 
-      else {
-	_f = n;
-	i = _f->index(_v);
-	_ri = ccw(i);
-      }
+      _ri = ccw(i);
     }
     return *this;
   }
@@ -285,7 +270,7 @@ public:
   bool operator==(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
-    return (_v == NULL) && (_f == NULL);
+    return (_f == NULL);
   }
         
         
@@ -295,10 +280,6 @@ public:
     return !(*this == NULL);
   }
         
-private:
-  int _ri;
-  Vertex* _v;
-  Face* _f;
         
 };
 
@@ -323,6 +304,12 @@ public:
     return (i+2) % 3;
   }
 
+private:
+  int _ri;
+  Vertex* _v;
+  Face* _f;
+
+public:
   CGAL_Triangulation_ds_edge_circulator_2()
     : _v(NULL), _f(NULL)
   {}
@@ -333,7 +320,8 @@ public:
   {
     if( _f != NULL ){
       int i = _f->index(_v);
-      _ri = ccw(i);
+      if (_f->dimension() == 2) {_ri = ccw(i);}
+      else {_ri = 1-i;}
     }
   }
 
@@ -343,7 +331,8 @@ public:
   {
     if( _f != NULL ){
       int i = _f->index(_v);
-      _ri = ccw(i);
+      if (_f->dimension() == 2) {_ri = ccw(i);}
+      else {_ri = 1-i;}
     }
   }
         
@@ -359,35 +348,27 @@ public:
     return *this;
   }
 
-  Edge&
+  Edge
   operator*()
   {
-    if( _f == NULL) {
-      return make_pair(_f, 0);
-    }
-    return make_pair(_f, _ri);
+        return make_pair(_f, _ri);
   }
         
   Edge_circulator& operator++()
   {
-    Face* n = _f;
+    CGAL_triangulation_precondition( (_f != NULL) && (_v != NULL) );
     int i = _f->index(_v);
-    n = _f->neighbor(ccw(i));
-    if(n == NULL){
-      if(_ri == ccw(i)){
-	_ri = cw(i);
-      } 
-      else {
-	_f = _v->face();
-	i = _f->index(_v);
-	_ri = ccw(i);
-      }
-    } 
-    else {
-      _f = n;
+
+    if (_f->dimension() == 1) { 
+      _f = _f->neighbor(1-i);
+      _ri = 1 - _f->index(_v);
+      return *this;
+    }
+    else{
+     _f = _f->neighbor(ccw(i));
       i = _f->index(_v);
       _ri = ccw(i);
-    }
+    }    
     return *this;
   }
         
@@ -400,28 +381,19 @@ public:
         
   Edge_circulator& operator--()
   {
-    Face* n = _f;
+    CGAL_triangulation_precondition( (_f != NULL) && (_v != NULL) );
     int i = _f->index(_v);
-    n = _f->neighbor(cw(i));
-    if(n == NULL){
-      do{
-	n = _f->neighbor(ccw(i));
-	if(n != NULL){
-	  _f = n;
-	  i = _f->index(_v);
-	}
-      }while(n != NULL);
-      i = _f->index(_v);
-      _ri = cw(i);
-    } else {
-      if(_ri == cw(i)){
-	_ri = ccw(i);
-      } else {
-	_f = n;
-	i = _f->index(_v);
-	_ri = ccw(i);
-      }
+
+    if (_f->dimension() == 1) { 
+      _f = _f->neighbor(1-i);
+      _ri = 1 - _f->index(_v);
+      return *this;
     }
+    else{
+     _f = _f->neighbor(cw(i));
+      i = _f->index(_v);
+      _ri = ccw(i);
+    }    
     return *this;
   }
         
@@ -445,7 +417,7 @@ public:
   bool operator==(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
-    return (_v == NULL) && (_f == NULL);
+    return (_f == NULL);
   }
                
   bool operator!=(CGAL_NULL_TYPE n) const
@@ -454,10 +426,7 @@ public:
     return !(*this == NULL);
   }
      
-private:
-  int _ri;
-  Vertex* _v;
-  Face* _f;
+
         
 };
         

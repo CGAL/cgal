@@ -31,6 +31,12 @@ public:
     :  Fb(v0,v1,v2,n0,n1,n2)
   {}
 
+   CGAL_Triangulation_ds_face_2( const Face * f)
+    :  Fb()
+  {
+    set_vertices(f->vertex(0), f->vertex(1), f->vertex(2));
+    set_neighbors(f->neighbor(0), f->neighbor(1), f->neighbor(2));
+  }
 
   //setting
   inline 
@@ -119,16 +125,13 @@ public:
   }
     
   //Miscelleanous
-//   inline int ccw(int i) const
-//   {
-//     return (i+1) % 3;
-//   }
-//     
-//   inline int cw(int i) const
-//   {
-//     return (i+2) % 3;
-//   }
-//    
+  int dimension()
+  {
+    if (vertex(2) != NULL) {return 2;}
+    else return( vertex(1) != NULL ? 1 : 0);
+  }
+
+
 
   //Additionnal Operations
 

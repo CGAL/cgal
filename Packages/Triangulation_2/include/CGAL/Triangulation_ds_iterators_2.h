@@ -17,14 +17,6 @@ template <class Tds>
 class CGAL_Triangulation_ds_iterator_base_2
 {
 public:
-//   typedef Gt Geom_traits;
-//   
-//   typedef CGAL_Triangulation_ds_vertex_2<Vb,Fb> Vertex;
-//   typedef CGAL_Triangulation_ds_face_2<Vb,Fb> Face;
-//   typedef pair<Face*, int>  Edge;
-// 
-//   typedef CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-
   typedef typename Tds::Geom_traits Geom_traits;
   typedef typename Tds::Vertex Vertex;
   typedef typename Tds::Face  Face;
@@ -40,7 +32,7 @@ public:
     if(_tds->number_of_vertices() < 2) {
       return;
     }
-    pos = _tds->infinite_face();
+    pos = _tds->infinite_vertex()->face();
   }
 
  CGAL_Triangulation_ds_iterator_base_2(Tds* tds, int i)
@@ -55,7 +47,7 @@ protected:
         Tds*  _tds;
         Face* pos;
         
-        
+public:       
         static
         int
         ccw(int i)
@@ -75,6 +67,11 @@ protected:
         void
         increment()
         {
+	  if (_tds->dimension() == 1 || _tds->dimension() == 0){
+	    pos = pos->neighbor(0);
+	    return;
+	  }
+
             int max = maximum(pos);
             Face* next=pos->neighbor(max);         // tentative first child
             Face* parent;
@@ -106,7 +103,18 @@ protected:
         void
         decrement()
         {
-            int max = maximum(pos);
+	  if(_tds->dimension() == 0){
+	    pos = pos->neighbor(0);
+	    return;
+	  }
+
+	    if (_tds->dimension() == 1){
+	    pos = pos->neighbor(1);
+	    return;
+	  }
+
+	    // dimension() ==2
+	    int max = maximum(pos);
             Face* next=pos->neighbor(cw(max));     // parent of pos
             int max2 = maximum(next);
             if ( next->neighbor(max2) == pos)      // pos is the first child of next
@@ -174,33 +182,17 @@ protected:
                         { return 0; }
         
         }
+
 };
 
-
-
-//template < class Gt , class Vb, class Fb> 
+// the following iterator visit all the Tds faces
+// whatever may be the dimensionality of those faces
 template<class Tds>
 class CGAL_Triangulation_ds_face_iterator_2
-//  : public CGAL_Triangulation_ds_iterator_base_2<Gt,Vb,Fb>,
-//    public bidirectional_iterator<CGAL_Triangulation_ds_face_2<Vb,Fb>, ptrdiff_t>
   : public CGAL_Triangulation_ds_iterator_base_2<Tds>,
     public bidirectional_iterator<typename Tds::Face, ptrdiff_t>
 {
 public:
-//   typedef Gt Geom_traits;
-//   
-//   typedef CGAL_Triangulation_ds_vertex_2<Vb,Fb> Vertex;
-//   typedef CGAL_Triangulation_ds_face_2<Vb,Fb> Face;
-//   typedef pair<Face*, int>  Edge;
-// 
-//   typedef CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-//   typedef CGAL_Triangulation_ds_iterator_base_2<Gt,Vb,Fb> Iterator_base;
-// 
-//   typedef CGAL_Triangulation_ds_face_iterator_2<Gt,Vb,Fb> Face_iterator;
-//   //  typedef CGAL_Triangulation_ds_vertex_iterator_2<Gt,Vb,Fb> Vertex_iterator;
-//   // typedef CGAL_Triangulation_ds_edge_iterator_2<Gt,Vb,Fb> Edge_iterator;
-//   
-
   typedef typename Tds::Geom_traits Geom_traits;
   typedef typename Tds::Vertex Vertex;
   typedef typename Tds::Face  Face;
@@ -214,20 +206,7 @@ public:
         {}
         CGAL_Triangulation_ds_face_iterator_2(Tds * tds)
             : Iterator_base(tds)
-        {
-	  if (tds->number_of_vertices()<2){
-	    pos = NULL;                   // there is no faces
-	    return;
-	  }
-	  Face* start = pos;
-            while (_tds->is_infinite(pos)){
-                increment();
-                if(pos == start){
-                    pos = NULL;                  // there is no finite triangle
-                    return;
-                }
-            }
-	}
+        {}
 
         CGAL_Triangulation_ds_face_iterator_2(Tds* tds, int i)
 	  : Iterator_base(tds,i)
@@ -263,33 +242,30 @@ public:
         {
             if ( pos == NULL ){
                 return *this;    //  past-the-end iterator cannot advance
-            }
-            do{
-                increment();
-                if ( pos == (_tds->infinite_face()) ){
-                    pos = NULL;  // complete tour
-                    return *this;
-                }
-            }while (_tds->is_infinite(pos));
+            }                    // include the case dimension()==0
+
+	    increment();
+	    if ( pos == _tds->infinite_face() ){
+	      pos = NULL;  // complete tour
+	    }  
 	    return *this;           // next finite triangle found
         }
 
         Face_iterator&
         operator--()
         {
-            if ( pos == NULL ) {//  past the end iterator can decrease
-                *this = Face_iterator(_tds); // first finite triangle
-            }              //next loop will go to last finite triangle
-        
-            do{
-                decrement();
-                if ( pos == _tds->infinite_face()){
-                    pos = NULL;  // complete tour
-		    return *this;
-                }
-           }while (_tds->is_infinite(pos));
-	   return *this;           // next finite triangle found
-        }
+	  if (dimension() == 0) {return this;}
+
+	  if (pos ==  _tds->infinite_face()) {
+	    pos == NULL; //first face, can't decrement
+	    return *this;
+	  }
+	  if (pos == NULL) { //  past the end iterator, can decrease
+	    *this = Face_iterator(_tds); //first face, decrement will give the last one if any
+	  }
+	  decrement(); 
+	  return *this;
+	}
         
         Face_iterator
         operator++(int)
@@ -322,27 +298,13 @@ public:
 };
 
 
-//template < class Gt , class Vb, class Fb> 
+
 template < class Tds>
 class CGAL_Triangulation_ds_vertex_iterator_2
-//  : public CGAL_Triangulation_ds_iterator_base_2<Gt,Vb,Fb>,
-//    public bidirectional_iterator<CGAL_Triangulation_ds_vertex_2<Vb,Fb>, ptrdiff_t>
 : public CGAL_Triangulation_ds_iterator_base_2<Tds>,
   public bidirectional_iterator<typename Tds::Vertex, ptrdiff_t>
 {
 public:
-//   typedef Gt Geom_traits;
-//   
-//   typedef CGAL_Triangulation_ds_vertex_2<Vb,Fb> Vertex;
-//   typedef CGAL_Triangulation_ds_face_2<Vb,Fb> Face;
-//   typedef pair<Face*, int>  Edge;
-// 
-//   typedef CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-//   typedef CGAL_Triangulation_ds_iterator_base_2<Gt,Vb,Fb> Iterator_base;
-// 
-//   typedef CGAL_Triangulation_ds_face_iterator_2<Gt,Vb,Fb> Face_iterator;
-//   typedef CGAL_Triangulation_ds_vertex_iterator_2<Gt,Vb,Fb> Vertex_iterator;
-// 
   typedef typename Tds::Geom_traits Geom_traits;
   typedef typename Tds::Vertex Vertex;
   typedef typename Tds::Face  Face;
@@ -352,57 +314,86 @@ public:
   typedef CGAL_Triangulation_ds_vertex_iterator_2<Tds> Vertex_iterator;
 
 
+private :
+  int index;
+
+public:
      CGAL_Triangulation_ds_vertex_iterator_2()
-            : Iterator_base()
+            : Iterator_base(), index(0)
         {}
     
     
     CGAL_Triangulation_ds_vertex_iterator_2(Tds * tds)
-        :  Iterator_base(tds)
+        :  Iterator_base(tds), index(0)
     {
-        switch( _tds->number_of_vertices() ){
+        switch( tds->number_of_vertices() ){
         case 0: // past-the-end
             pos = NULL;
             return;
         case 1:
-            pos = (Face*)1 ; // different from any pointer;
-            return;         // "points" to the only vertex of the triangulation
+	  pos = (Face*)1 ; // different from any pointer;
+	  return;         // the iterator must "point" to the only vertex of the triangulation
+	
         default:
-            {
-                pos = _tds->infinite_face();
-                while ( associated_vertex() ==NULL){
-                    increment();
-                }
-                return;
-            }
-        }
+	  pos = tds->infinite_face();
+	  index = 0;
+	  while ( ! associated_vertex()){
+	    increment();
+	  }
+	  return;
+	}
     }
     
     CGAL_Triangulation_ds_vertex_iterator_2(Tds* tds, int i)
-            : Iterator_base(tds,i)
+            : Iterator_base(tds,i), index(0)
     {}
 
+private:
+  void   increment()
+  {
+    if ( index==_tds->dimension()) {Iterator_base::increment(); index = 0;}
+    else { index +=1; }
+    return;
+  }
+
+  void decrement()
+  {
+    if (index == 0) { 
+      Iterator_base::decrement();
+      index = _tds->dimension();
+    }
+    else {index -= 1;}
+    return;
+  }
+
+bool associated_vertex()
+  {
+    return ( pos->vertex(index)->face() == pos ); // marche en toute dimension
+  }
+
+public:
     Vertex_iterator&
     operator++()
     {
         if (pos==NULL){
 	  return *this;            // cannot advance past-the-end iterator
-        }
-        if (_tds->number_of_vertices()==1){
-            pos = NULL; // past-the-end
-	    return *this;
-        }
+        }                          // include the case number_of_vertices() == 0
+	if (pos==(Face*)1){
+	  pos == NULL;             //number_of_vertices() == 1
+	  return *this; 
+	}
+
         do{
             increment();
-            if ( pos == _tds->infinite_face()){
+            if ( pos == _tds->infinite_face() && index == 0){
                 pos = NULL;   // complete tour
 		return *this;
             }
-        }while ( associated_vertex() ==NULL);
+        }while ( ! associated_vertex() );
         return *this;
     }
     
-    
+public:    
     Vertex_iterator&
     operator--()
     {
@@ -417,19 +408,22 @@ public:
             }
 	    return *this;            // can decrease past-the-end iterator
         default:
-            if (pos==NULL){
-                *this = Vertex_iterator(_tds);
-                --*this;
-		return *this;            // can decrease past-the-end iterator
-            }
-            do{
-                decrement();
-                if ( pos == _tds->infinite_face()){
-                    pos = NULL;   // complete tour
-		    return *this;
-                }
-            }while ( associated_vertex()  ==NULL);
-            return *this;
+	  if (pos == _tds->infinite_face() && index == 0){ //first position, cannot decrease
+	    pos = NULL;
+	    return *this;
+	  }
+	  if (pos==NULL){ // can decrease past-the-end iterator
+	    *this = Vertex_iterator(_tds);
+	  }
+	    
+	  do{
+	    decrement();
+	    if ( pos == _tds->infinite_face() && index == 0){
+	      pos = NULL;   // complete tour
+	      return *this;
+	    }
+	  }while ( ! associated_vertex());
+	  return *this;
         }
     }
     
@@ -450,9 +444,19 @@ public:
     }
     
     bool operator==(const Vertex_iterator& fi) const
-    {
-        return ( (pos == fi.pos ) && (_tds ==fi._tds) );
+   {
+    if ((pos==fi.pos)&&(_tds==fi._tds)){
+      if (pos==NULL) {
+	return true;
+      }else{
+	return (index == fi.index);
+      }
     }
+    else{
+      return false;
+    }
+  }
+ 
     
     bool operator!=(const Vertex_iterator& fi) const
     {
@@ -461,89 +465,26 @@ public:
     
   inline Vertex& operator*() const
   {
-        return *(associated_vertex());
+        return *(pos->vertex(index));
   }
     
   inline Vertex*  operator->() const
   {
-        return associated_vertex();
+        return pos->vertex(index);
   }
 
     
-    Vertex*
-    associated_vertex() const
-    {
-        if(pos == NULL) {
-            return NULL;
-        }
-        switch(_tds->number_of_vertices() ){
-        case 0:
-            return NULL;
-        case 1:
-            return _tds->finite_vertex();
-        case 2:
-             return pos->vertex(cw(maximum(pos)));
-        default:
-            {
-                int i = cw(maximum(pos));            // candidate associate vertex
-                if(_tds->geom_traits().compare_y(pos->vertex(i)->point(),
-                                                   pos->vertex(cw(i))->point())
-                   ==CGAL_LARGER){
-                    //   vcw(i) < vi
-                    return pos->vertex(i);
-                }
-                if ( _tds->is_infinite(pos)){
-                    Face* f=pos->neighbor(cw(i));
-                                                 // next edge on the CH in cw order
-                    int   j=f->index(_tds->infinite_vertex() );
-                    CGAL_Comparison_result comp =
-                        _tds->geom_traits().compare_y(pos->vertex(i)->point(),
-                                                        f->vertex(cw(j))->point());
-                    if (comp == CGAL_SMALLER){         //  vi smaller vertex
-                        return pos->vertex(i);
-                    }
-                    if(comp ==CGAL_EQUAL){            // horizontal part of CH
-                        comp = _tds->geom_traits().compare_x(
-                                                        pos->vertex(i)->point(),
-                                                        f->vertex(cw(j))->point());
-                        if(comp == CGAL_LARGER){        // lower hull
-                            return pos->vertex(i);
-                        }
-                        if(pos->vertex(cw(i)) == f->vertex(cw(j))){ // 1 dim. horiz.
-                            return pos->vertex(i);
-                        }
-                    }
-                }
-            }
-        }
-        return NULL;
-    }
-    
+   
 };
 
 
-//template < class Gt , class Vb, class Fb> 
+
 template <class Tds>
 class CGAL_Triangulation_ds_edge_iterator_2
-//  : public CGAL_Triangulation_ds_iterator_base_2<Gt,Vb,Fb>,
-//    public bidirectional_iterator<pair<CGAL_Triangulation_ds_face_2<Vb,Fb>,int>, ptrdiff_t>
  : public CGAL_Triangulation_ds_iterator_base_2<Tds>,
    public bidirectional_iterator<typename Tds::Edge, ptrdiff_t>
 {
 public:
-// //   typedef Gt Geom_traits;
-// //   
-// //   typedef CGAL_Triangulation_ds_vertex_2<Vb,Fb> Vertex;
-// //   typedef CGAL_Triangulation_ds_face_2<Vb,Fb> Face;
-// //   typedef pair<Face*, int>  Edge;
-// // 
-// //   typedef CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-//   typedef CGAL_Triangulation_ds_iterator_base_2<Gt,Vb,Fb> Iterator_base;
-// 
-// //   typedef CGAL_Triangulation_ds_face_iterator_2<Gt,Vb,Fb> Face_iterator;
-// //   typedef CGAL_Triangulation_ds_vertex_iterator_2<Gt,Vb,Fb> Vertex_iterator;
-//   typedef CGAL_Triangulation_ds_edge_iterator_2<Gt,Vb,Fb> Edge_iterator;
-// 
   typedef typename Tds::Geom_traits Geom_traits;
   typedef typename Tds::Vertex Vertex;
   typedef typename Tds::Face  Face;
@@ -552,32 +493,36 @@ public:
   typedef CGAL_Triangulation_ds_iterator_base_2<Tds> Iterator_base;
   typedef CGAL_Triangulation_ds_edge_iterator_2<Tds> Edge_iterator;
 
+private:
+int index;
+
+public:
      CGAL_Triangulation_ds_edge_iterator_2()
-            : Iterator_base(),status(0)
+            : Iterator_base(),index(0)
         {}
     
     
     CGAL_Triangulation_ds_edge_iterator_2(Tds * tds)
-        :  Iterator_base(tds)
+        :  Iterator_base(tds), index(0) 
     {
-      if (tds->number_of_vertices()<2){
-	pos = NULL;                   // there is no finite edge
+      if (_tds->dimension()== 0){
+	pos = NULL;                  // there is no edge
 	return;
       }
-      pos = tds->infinite_face();
-      Face* start = pos;
-      while ( ! compute_status(true) ){
+      pos = _tds->infinite_face();
+      if (_tds->dimension() == 1) {index = 2;}
+      else {index = 0;}
+      while ( !associated_edge() ){
 	increment();
-	if(pos == start){
-	  pos=NULL;                   // there is no finite triangle
-	  return;
-	}
       }
-    } 
+    }
+     
     
     CGAL_Triangulation_ds_edge_iterator_2(Tds* tds, int i)
-            : Iterator_base(tds,i),status(0)
-    {}
+            : Iterator_base(tds,i),index(0)
+    {
+       if (_tds->dimension() == 1) {index = 2;}
+    }
 
   bool
   operator==(const Edge_iterator& fi) const
@@ -586,7 +531,7 @@ public:
       if (pos==NULL) {
 	return true;
       }else{
-	return (status==fi.status);
+	return (index==fi.index);
       }
     }
     else{
@@ -600,23 +545,84 @@ public:
     {
         return ! (*this == fi);
     }
+
+private: 
+void   increment()
+  {
+    if (_tds->dimension() == 1) {Iterator_base::increment();}
+    else {
+      if (index == 2) {
+      Iterator_base::increment();
+      index =  0;
+      }
+      else{
+	index +=1;
+      }
+    }
+    return;
+  }
+
+void decrement()
+  {
+    if (_tds->dimension() == 1) {Iterator_base::increment();}
+    else {
+      if (index == 0) {
+	Iterator_base::decrement();
+	index = 2;
+      }
+      else {index -= 1;}
+      return;
+    }
+  }
+
+bool associated_edge()
+  {
+    if (_tds->dimension() == 1) {return true;}
+    int max = maximum(pos);
+    if (index == cw(max))  {return true; }
+    if (index == ccw(max)) { return false;}
+    // index = maximun(pos)
+    if ( pos->vertex(max) != _tds->infinite_vertex()){
+      return ( _tds->geom_traits().compare_y(pos->vertex(cw(max))->point(),
+					     pos->vertex(ccw(max))->point())
+               == CGAL_LARGER);
+    }
+    else{ //pos->vertex(max) == infinite_vertex(), convex hull edge
+      return ( _tds->geom_traits().compare_y(pos->vertex(cw(max))->point(),
+					     pos->vertex(ccw(max))->point())
+               == CGAL_LARGER ||
+	       (_tds->geom_traits().compare_y(pos->vertex(cw(max))->point(),
+					     pos->vertex(ccw(max))->point())
+		== CGAL_EQUAL  // convex hull horizntal edges
+		&&
+		_tds->geom_traits().compare_x(pos->vertex(cw(max))->point(),
+					     pos->vertex(ccw(max))->point())
+               == CGAL_SMALLER )
+	       );
+    }
+  }
     
+public:   
 Edge_iterator&
     operator++()
     {
         if (pos==NULL){
             return *this;            // cannot advance past-the-end iterator
         }
-        if ( (status >=3) && (status <=5) ) {
-            // current status is 3 + ccw(i), next status is 6+i
-            status = 6 + cw( status -3);
-        } else do{
+
+	if(_tds->dimension()==1){
+	  Iterator_base::increment();
+	  if ( pos == _tds->infinite_face()) { pos = NULL ; return *this;}
+	}
+	else{
+         do{
             increment();
-            if ( pos == _tds->infinite_face()){
-                pos = NULL;   // tour complete
-                return *this;
+            if ( pos == _tds->infinite_face() && index == 0){
+	      pos = NULL;   // complete tour
+	      return *this;
             }
-        }while (!compute_status(true));
+	 }while ( ! associated_edge() );
+	}
         return *this;
     }
     
@@ -626,22 +632,31 @@ Edge_iterator&
  Edge_iterator&
     operator--()
     {
-        if (pos==NULL){
-            *this = Edge_iterator(_tds);
-            --*this;
-            return *this;            // can decrease past-the=end iteartor
-        }
-        if ( (status >=3) && (status <=5) ) {
-            // current status is 6+i, next status is 3 + ccw(i)
-            status = 3 + ccw( status -6);
-        } else do{
-            decrement();
-            if ( pos == triangulation->infinite_face()){
-                pos = NULL;   // tour complete
-                return *this;
-            }
-        }while (compute_status(false));
-        return *this;
+      switch(_tds->dimension()){
+      case 0:
+	return *this;
+      case 1:
+	if (pos == _tds->infinite_face()) { pos=NULL; return *this;}
+	if (pos == NULL) { pos= _tds->infinite_face;} 
+	decrement(); 
+	return *this;
+      case 2:
+	if (pos == _tds->infinite_face() && index == 0){
+	  pos == NULL; //first edge, cannot decrement
+	  return this;
+	}
+	if (pos == NULL){ //past the end, can decrement;
+	  *this = Edge_iterator(_tds);
+	}
+	do{
+	  decrement();
+	  if ( pos == _tds->infinite_face() && index == 0){
+	    pos = NULL;   // complete tour
+	    return *this;
+	  }
+	}while ( ! associated_edge());
+	return *this;
+      }
     }
     
     
@@ -665,58 +680,7 @@ Edge_iterator&
     Edge
     operator*() const
     {
-        int j = (status<3) ? status : (status<6) ? status-3 : status-6;
-        return make_pair(pos, j);
-    }
-    
-    
-private:
-        
-    int status;
-
-    bool
-    compute_status(bool forward)
-    {
-        if (pos == NULL){
-            return false;
-        }
-        int i = maximum(pos);            // higher point
-        if ( ! _tds->is_infinite(pos)){
-            if(_tds->geom_traits().compare_y(pos->vertex(cw(i))->point(),
-                                               pos->vertex(ccw(i))->point())
-               == CGAL_LARGER){
-                //  vccw(i) < vcw(i)
-                // right edges = i cw(i)  cw(i) ccw(i)
-                status = (forward) ? 3+ccw(i) : 6+i;
-            } else {
-                // right edge = i cw(i)
-                status = ccw(i);
-            }
-            return true;
-        }
-        CGAL_Comparison_result comp = _tds->geom_traits().compare_y(
-                                                      pos->vertex(cw(i))->point(),
-                                                      pos->vertex(ccw(i))->point());
-        if( comp==CGAL_SMALLER){
-            return false;
-        }
-        if( comp==CGAL_LARGER){
-            //  vccw(i) < vcw(i)
-            // right edge =  cw(i) ccw(i)
-            status = i;
-            return true;
-        }
-        // comp = CGAL_EQUAL
-        if ( _tds->geom_traits().compare_x(pos->vertex(cw(i))->point(),
-                                             pos->vertex(ccw(i))->point())
-             == CGAL_SMALLER){
-            //  vccw(i) < vcw(i)
-            // upper horizontal edge =  cw(i) ccw(i)
-            status = i;
-            return true;
-        }
-    
-        return false;
+      return make_pair(pos, index);
     }
 };
 

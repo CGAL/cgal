@@ -62,12 +62,20 @@ public:
 
   CGAL_Triangulation_face_circulator_2(const Vertex_handle& v)
     : _bfc(&(*v))
-  {}
+  {
+    if (v->face()==NULL  ||
+        v->face()->dimension() == 0 || 
+	v->face()->dimension() == 1) { _bfc = Base_face_circulator();}
+  }
 
   CGAL_Triangulation_face_circulator_2(const Vertex_handle& v,
 				       const Face_handle& f)
     : _bfc( &(*v), &(*f))
-  {}
+  {
+    if (v->face()==NULL  ||
+        v->face()->dimension() == 0 || 
+	v->face()->dimension() == 1) { _bfc = Base_face_circulator();}
+  }
 
  
    
@@ -164,7 +172,7 @@ public:
 
   typedef CGAL_Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
   typedef CGAL_Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
-  typedef CGAL_Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
+   typedef CGAL_Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
 
 
   static int ccw(int i)
@@ -183,12 +191,18 @@ public:
 
   CGAL_Triangulation_vertex_circulator_2(const Vertex_handle& v)
     : _bvc(&(*v))
-  {}
+  {
+    if (v->face()==NULL  ||
+        v->face()->dimension() == 0 )	 { _bvc = Base_vertex_circulator();}
+  }
 
   CGAL_Triangulation_vertex_circulator_2(const Vertex_handle& v,
 				       const Face_handle& f)
     : _bvc( &(*v), &(*f))
-  {}
+  {
+    if (v->face()==NULL  ||
+        v->face()->dimension() == 0 )	 { _bvc = Base_vertex_circulator();}
+  }
    
    CGAL_Triangulation_vertex_circulator_2(const Vertex_circulator &vc)
     : _bvc(vc._bvc)
@@ -304,12 +318,18 @@ public:
 
   CGAL_Triangulation_edge_circulator_2(const Vertex_handle& v)
     : _bec(&(*v))
-  {}
+  {
+    if (v->face()==NULL  ||
+        v->face()->dimension() == 0 )	 { _bec = Base_face_circulator();}
+  }
 
   CGAL_Triangulation_edge_circulator_2(const Vertex_handle& v,
 				       const Face_handle& f)
     : _bec( &(*v), &(*f))
-  {}
+  {
+    if (v->face()==NULL  ||
+        v->face()->dimension() == 0 )	 { _bec = Base_face_circulator();}
+  }
    
    CGAL_Triangulation_edge_circulator_2(const Vertex_circulator &ec)
     : _bec(ec._bec)
