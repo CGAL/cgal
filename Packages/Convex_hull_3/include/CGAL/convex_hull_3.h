@@ -153,7 +153,7 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
   }
 
   std::list<Point_3_2_pair> CH_2;
-  typedef std::list<Point_3_2_pair>::iterator  CH_2_iterator;
+  typedef typename std::list<Point_3_2_pair>::iterator  CH_2_iterator;
   convex_hull_points_2(point_pair_list.begin(),point_pair_list.end(),
                        std::back_inserter(CH_2),
                        Convex_hull_projective_traits_2<Point_3_2_pair>());
@@ -164,7 +164,7 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
   typedef typename Traits::Vector_3              Vector_3;
   
   std::list<Point_3> CH_2;
-  typedef std::list<Point_3>::iterator  CH_2_iterator;
+  typedef typename std::list<Point_3>::iterator  CH_2_iterator;
   typedef typename Traits::Construct_orthogonal_vector_3
                                                    Construct_normal_vec;
   Construct_normal_vec c_normal = 
@@ -258,7 +258,7 @@ farthest_outside_point(Facet_handle f_handle,
                        const Traits& traits)
 {
    typedef typename Traits::Point_3               Point_3;
-   typedef std::list<Point_3>::iterator     Outside_set_iterator;
+   typedef typename std::list<Point_3>::iterator     Outside_set_iterator;
 
    typename Traits::Less_signed_distance_to_plane_3 less_dist_to_plane =
             traits.less_signed_distance_to_plane_3_object((*f_handle).plane());
@@ -339,7 +339,7 @@ ch_quickhull_3_scan(
   typedef typename Polyhedron_3::Facet_handle             Facet_handle;
   typedef typename Traits::Point_3			  Point_3;
   typedef std::list<Point_3>                              Outside_set;
-  typedef std::list<Point_3>::iterator                    Outside_set_iterator;
+  typedef typename std::list<Point_3>::iterator           Outside_set_iterator;
 
   std::list<Facet_handle>                visible_set;
   std::list<Facet_handle>::iterator      vis_set_it;
@@ -441,7 +441,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   typedef typename Polyhedron_3::Facet_iterator           Facet_iterator;
   typedef typename Traits::Point_3                        Point_3;
   typedef Handle_map<Facet_handle, std::list<Point_3> >   Outside_set_map;
-  typedef std::list<Point_3>::iterator                    P3_iterator;
+  typedef typename std::list<Point_3>::iterator           P3_iterator;
 
   std::list<Facet_iterator> pending_facets;
 
