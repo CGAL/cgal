@@ -1,0 +1,77 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_face_base.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSRegularfacebaseRev}{$Revision$}
+\RCSdefDate{\RCSRegularfacebaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{RegularTriangulationVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The regular triangulation of a set of weighted point does not
+necessarily
+have one vertex for each of the input points. Some of the input
+weigthed points have no cell in the dual power diagrams
+and therefore do not correspond to a vertex of the regular
+triangulation.
+Those weighted point are said to be {\it hidden} points.
+A  point which is hidden at a given time may appear later as a vertex of
+the regular triangulation upon removal on some other weighted point.
+Therefore, hidden points have to be stored somewhere.
+A hidden point can appear as vertex of the triangulation
+only when the
+two dimensional face where its point component is located
+(the face which hides it)
+is removed. Therefore we decided to store each hidden point
+in the face which  hides it and the nested face type of a 
+regular triangulation is assumed to include a list of hidden 
+weighted points. This list of weighted point is in fact included
+in the base face of a regular triangulation.
+
+The concept \ccRefName\ 
+has to fulfills the following requirements
+in addition to the requirements of \ccc{TriangulationVertexBase_2},
+described \ccRefPage{TriangulationVertexBase_2}
+
+
+\ccCreation
+\ccCreationVariable{rvb}  %% choose variable name
+
+\ccConstructor{RegularTriangulationVertexBase_2();}{default constructor.}
+\ccGlue
+\ccConstructor{RegularTriangulationVertexBase_2(const Point & p, void * f = NULL)}
+{constructs a vertex embedded in point \ccc{p} and pointing on face \ccc{f}.}
+
+
+\ccHeading{Access Functions}
+\ccMethod{bool is_hidden();}
+{returns \ccc{true}, iff the vertex is hidden.}
+
+\ccMethod{void set_hidden(bool b);}
+{Mark the vertex as hidden or as not hidden.}
+
+
+\ccHasModels
+\ccc{CGAL::Regular_triangulation_vertex_base_2}
+
+\ccSeeAlso
+\ccc{TriangulationVertexBase_2}
+\ccc{CGAL::Regular_triangulation_vertex_base_2}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
