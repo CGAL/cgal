@@ -561,6 +561,7 @@ public:
     return str;
   }
 
+protected:
   template< class Stream >
   Stream& draw_primal_vertex(const Finite_vertices_iterator& it,
 			     Stream &str) const
@@ -576,6 +577,7 @@ public:
     return str << dual(it);
   }
 
+public:
   template< class Stream >
   Stream& draw_primal_edge(const Finite_edges_iterator& eit,
 			   Stream &str) const
@@ -638,6 +640,7 @@ public:
     return str;
   }
 
+protected:
   template< class Stream >
   Stream& draw_primal_face(All_faces_iterator fit, Stream &str) const
   {
@@ -660,7 +663,6 @@ public:
     } while ( ec_start != ec );
     return str;
   }
-
 
 protected:
   template < class Stream > 

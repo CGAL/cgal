@@ -775,6 +775,7 @@ bool test_algo_generic(InputStream& is)
   ag.draw_primal(nos);
   ag.draw_dual(nos);
 
+#if 0
   for (fvit = ag.finite_vertices_begin();
        fvit != ag.finite_vertices_end(); ++fvit) {
     ag.draw_primal_vertex(fvit, nos);
@@ -784,6 +785,7 @@ bool test_algo_generic(InputStream& is)
        ffit != ag.finite_faces_end(); ++ffit) {
     ag.draw_dual_vertex(ffit, nos);
   }
+#endif
 
   for (feit = ag.finite_edges_begin();
        feit != ag.finite_edges_end(); ++feit) {
@@ -796,6 +798,7 @@ bool test_algo_generic(InputStream& is)
     ag.draw_primal_edge(aeit, nos);
   }
 
+#if 0
   for (afit = ag.all_faces_begin();
        afit != ag.all_faces_end(); ++afit) {
     ag.draw_primal_face(afit, nos);
@@ -805,7 +808,7 @@ bool test_algo_generic(InputStream& is)
        avit != ag.all_vertices_end(); ++avit) {
     ag.draw_dual_face(avit, nos);
   }
-
+#endif
   
 
   return true;
