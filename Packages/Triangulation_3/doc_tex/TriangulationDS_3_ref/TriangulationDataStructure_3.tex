@@ -592,12 +592,12 @@ a precise indication on the kind of invalidity encountered.}
 \ccHeading{I/O}
 
 \ccFunction{istream& operator>>
-	(istream& is, TriangulationDataStructure_3 & t);}
-{Reads a combinatorial triangulation from \ccc{is} and assigns it to \ccc{t}}
+	(istream& is, TriangulationDataStructure_3 & tds);}
+{Reads a combinatorial triangulation from \ccc{is} and assigns it to \ccc{tds}}
 
 \ccFunction{ostream& operator<<
-	(ostream& os, const TriangulationDataStructure_3 & t);}
-{Writes \ccc{t} into the stream \ccc{os}}
+	(ostream& os, const TriangulationDataStructure_3 & tds);}
+{Writes \ccc{tds} into the stream \ccc{os}}
 
 The information stored in the \ccc{iostream} is: 
 the dimension, the number of vertices, the number of cells,
