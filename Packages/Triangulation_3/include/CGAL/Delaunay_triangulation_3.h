@@ -341,13 +341,14 @@ private:
   Vertex_handle
   nearest_vertex(const Point &p, Vertex_handle v, Vertex_handle w) const
   {
+      // In case of equality, v is returned.
       CGAL_triangulation_precondition(v != w);
 
       if (is_infinite(v))
 	  return w;
       if (is_infinite(w))
 	  return v;
-      return less_distance(p, v->point(), w->point()) ? v : w;
+      return less_distance(p, w->point(), v->point()) ? w : v;
   }
 
 #ifndef CGAL_CFG_NET2003_MATCHING_BUG
@@ -1206,34 +1207,24 @@ nearest_vertex(const Point& p, Cell_handle start) const
     if (lt == Tr_Base::VERTEX)
 	return c->vertex(li);
 
-    // Note that we could use a different algorithm,
-    // which could be more efficient :
-    // - find the nearest_vertex_in_cell()
+    // - start with the closest vertex from the located cell.
     // - repeatedly take the nearest of its incident vertices if any
     // - if not, we're done.
-
-    // The nearest neighbor is on the boundary of the conflict hole.
-    // So let's obtain the boundary facets.
-    std::vector<Facet> F;
-    find_conflicts(p, c, std::back_inserter(F),
-	           Emptyset_iterator(), Emptyset_iterator());
-
-    // Now put all boundary vertices uniquely.
-    // (should this be isolated in a separate function a la find_conflicts ?)
-    std::set<Vertex_handle> V;
-    for (typename std::vector<Facet>::const_iterator fit = F.begin();
-	 fit != F.end(); ++fit) {
-	if (fit->second != 0) V.insert(fit->first->vertex(0));
-	if (fit->second != 1) V.insert(fit->first->vertex(1));
-	if (fit->second != 2) V.insert(fit->first->vertex(2));
-	if (fit->second != 3) V.insert(fit->first->vertex(3));
+    Vertex_handle nearest = nearest_vertex_in_cell(p, c);
+    std::vector<Vertex_handle> vs;
+    vs.reserve(32);
+    while (true) {
+	Vertex_handle tmp = nearest;
+        incident_vertices(nearest, std::back_inserter(vs));
+        for (typename std::vector<Vertex_handle>::const_iterator
+		vsit = vs.begin(); vsit != vs.end(); ++vsit)
+	    tmp = nearest_vertex(p, tmp, *vsit);
+	if (tmp == nearest)
+	    break;
+	vs.clear();
+	nearest = tmp;
     }
 
-    CGAL_triangulation_assertion(V.size() >= 2);
-    typename std::set<Vertex_handle>::const_iterator sit = V.begin();
-    Vertex_handle nearest = nearest_vertex(p, *sit++, *sit++);
-    for (; sit != V.end(); ++sit)
-        nearest = nearest_vertex(p, nearest, *sit);
     return nearest;
 }
 
