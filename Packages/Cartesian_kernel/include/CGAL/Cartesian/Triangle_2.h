@@ -31,7 +31,6 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class TriangleC2
-  : public R_::template Handle<Threetuple<typename R_::Point_2> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
@@ -39,11 +38,10 @@ class TriangleC2
   typedef typename R_::Triangle_2           Triangle_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Threetuple<Point_2>	                   rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Threetuple<Point_2>	                   Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                    R;
@@ -91,7 +89,7 @@ CGAL_KERNEL_MEDIUM_INLINE
 bool
 TriangleC2<R>::operator==(const TriangleC2<R> &t) const
 {
-  if (CGAL::identical(Base(), t.Base()))
+  if (CGAL::identical(base, t.base))
       return true;
 
   int i;
@@ -117,9 +115,9 @@ TriangleC2<R>::vertex(int i) const
 {
   if (i>2) i = i%3;
   else if (i<0) i = (i%3) + 3;
-  return (i==0) ? get(Base()).e0 :
-         (i==1) ? get(Base()).e1 :
-                  get(Base()).e2;
+  return (i==0) ? get(base).e0 :
+         (i==1) ? get(base).e1 :
+                  get(base).e2;
 }
 
 template < class R >

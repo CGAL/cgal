@@ -31,7 +31,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class Iso_cuboidC3
-  : public R_::template Handle<Twotuple<typename R_::Point_3> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Iso_cuboid_3         Iso_cuboid_3;
@@ -39,11 +38,10 @@ class Iso_cuboidC3
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
   typedef typename R_::Construct_point_3    Construct_point_3;
 
-  typedef Twotuple<Point_3>                        rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Twotuple<Point_3>                        Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                R;
@@ -60,8 +58,8 @@ public:
     else               { miny = q.y(); maxy = p.y(); }
     if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
     else               { minz = q.z(); maxz = p.z(); }
-    Base() = rep(construct_point_3(minx, miny, minz),
-		 construct_point_3(maxx, maxy, maxz));
+    base = Rep(construct_point_3(minx, miny, minz),
+	       construct_point_3(maxx, maxy, maxz));
   }
 
   Iso_cuboidC3(const Point_3 &left,   const Point_3 &right,
@@ -90,11 +88,11 @@ public:
                const FT& hw)
   {
     if (hw == FT(1))
-       Base() = rep(Construct_point_3()(min_hx, min_hy, min_hz),
-		    Construct_point_3()(max_hx, max_hy, max_hz));
+       base = Rep(Construct_point_3()(min_hx, min_hy, min_hz),
+		  Construct_point_3()(max_hx, max_hy, max_hz));
     else
-       Base() = rep(Construct_point_3()(min_hx/hw, min_hy/hw, min_hz/hw),
-                    Construct_point_3()(max_hx/hw, max_hy/hw, max_hz/hw));
+       base = Rep(Construct_point_3()(min_hx/hw, min_hy/hw, min_hz/hw),
+                  Construct_point_3()(max_hx/hw, max_hy/hw, max_hz/hw));
   }
 
   bool operator==(const Iso_cuboidC3& s) const;
@@ -102,11 +100,11 @@ public:
 
   const Point_3 & min() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const Point_3 & max() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
   Point_3 vertex(int i) const;
   Point_3 operator[](int i) const;
@@ -140,7 +138,7 @@ CGAL_KERNEL_INLINE
 bool
 Iso_cuboidC3<R>::operator==(const Iso_cuboidC3<R>& r) const
 { // FIXME : predicate
-  if (CGAL::identical(Base(), r.Base()))
+  if (CGAL::identical(base, r.base))
       return true;
   return min() == r.min() && max() == r.max();
 }

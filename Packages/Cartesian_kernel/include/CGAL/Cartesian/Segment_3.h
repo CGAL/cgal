@@ -30,7 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class SegmentC3
-  : public R_::template Handle<Twotuple<typename R_::Point_3> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
@@ -40,11 +39,10 @@ class SegmentC3
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef Twotuple<Point_3>                        rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Twotuple<Point_3>                        Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                     R;
@@ -62,11 +60,11 @@ public:
 
   const Point_3 &   source() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const Point_3 &   target() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
 
   const Point_3 &   start() const;
@@ -98,7 +96,7 @@ inline
 bool
 SegmentC3<R>::operator==(const SegmentC3<R> &s) const
 {
-  if (CGAL::identical(Base(), s.Base()))
+  if (CGAL::identical(base, s.base))
       return true;
   return source() == s.source() && target() == s.target();
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2000  Utrecht University (The Netherlands),
+// Copyright (c) 1997-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -32,20 +32,16 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_ >
 class CircleC2
-  : public R_::template Handle<Triple<typename R_::Point_2,
-                                      typename R_::FT,
-                                      Orientation> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Circle_2             Circle_2;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Triple<Point_2, FT, Orientation>         rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Triple<Point_2, FT, Orientation>         Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                     R;
@@ -58,14 +54,14 @@ public:
     CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
                               ( orient    != COLLINEAR) );
 
-    Base() = rep(center, squared_radius, orient);
+    base = Rep(center, squared_radius, orient);
   }
 
   CircleC2(const Point_2 &center, const Orientation &orient) // Is this new?
   {
     CGAL_kernel_precondition( orient != COLLINEAR );
 
-    Base() = rep(center, FT(0), orient);
+    base = Rep(center, FT(0), orient);
   }
 
   CircleC2(const Point_2 &p, const Point_2 &q,
@@ -77,9 +73,9 @@ public:
     typename R::Construct_midpoint_2 midpoint;
     if (p != q) {
       Point_2 center = midpoint(p, q);
-      Base() = rep(center, squared_distance(p, center), orient);
+      base = Rep(center, squared_distance(p, center), orient);
     } else
-      Base() = rep(p, FT(0), orient);
+      base = Rep(p, FT(0), orient);
   }
 
   CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
@@ -91,7 +87,7 @@ public:
     CGAL_kernel_precondition( orient != COLLINEAR);
 
     Point_2 center = circumcenter(p, q, r);
-    Base() = rep(center, squared_distance(p, center), orient);
+    base = Rep(center, squared_distance(p, center), orient);
   }
 
   bool           operator==(const CircleC2 &s) const;
@@ -99,17 +95,17 @@ public:
 
   const Point_2 & center() const
   {
-    return get(Base()).first;
+    return get(base).first;
   }
 
   const FT & squared_radius() const
   {
-    return get(Base()).second;
+    return get(base).second;
   }
 
   Orientation orientation() const
   {
-    return get(Base()).third;
+    return get(base).third;
   }
 
   Circle_2           opposite() const;
@@ -136,7 +132,7 @@ CGAL_KERNEL_INLINE
 bool
 CircleC2<R>::operator==(const CircleC2<R> &c) const
 { // FIXME : predicate
-  if (CGAL::identical(Base(), c.Base()))
+  if (CGAL::identical(base, c.base))
       return true;
   return center() == c.center() &&
          squared_radius() == c.squared_radius() &&

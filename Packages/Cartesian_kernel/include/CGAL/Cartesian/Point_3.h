@@ -33,18 +33,16 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class PointC3
-  : public R_::template Handle<Threetuple<typename R_::FT> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef Threetuple<FT>                           rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Threetuple<FT>                           Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef Cartesian_coordinate_iterator_3<R_> Cartesian_const_iterator;
@@ -55,23 +53,20 @@ public:
   PointC3(const Origin &)
     : base(FT(0), FT(0), FT(0)) {}
 
-  PointC3(const Vector_3 &v)
-    : base(v) {}
-
   PointC3(const FT &x, const FT &y, const FT &z)
     : base(x, y, z) {}
 
   PointC3(const FT &x, const FT &y, const FT &z, const FT &w)
   {
     if (w != FT(1))
-      Base() = rep(x/w, y/w, z/w);
+      base = Rep(x/w, y/w, z/w);
     else
-      Base() = rep(x, y, z);
+      base = Rep(x, y, z);
   }
 
   bool operator==(const PointC3 &p) const
   {
-      if (CGAL::identical(Base(), p.Base()))
+      if (CGAL::identical(base, p.base))
 	  return true;
       return x_equal(*this, p) && y_equal(*this, p) && z_equal(*this, p);
   }
@@ -82,15 +77,15 @@ public:
 
   const FT & x() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const FT & y() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
   const FT & z() const
   {
-      return get(Base()).e2;
+      return get(base).e2;
   }
 
   const FT & hx() const
@@ -144,7 +139,7 @@ const typename PointC3<R>::FT &
 PointC3<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
-  return *(&(get(Base()).e0)+i);
+  return *(&(get(base).e0)+i);
 }
 
 template < class R >

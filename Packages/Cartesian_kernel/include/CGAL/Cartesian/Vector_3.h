@@ -31,39 +31,40 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class VectorC3
-  : public R_::template Handle<Threetuple<typename R_::FT> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Ray_3                Ray_3;
+  typedef typename R_::Segment_3            Segment_3;
+  typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef Threetuple<FT>                           rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Threetuple<FT>                           Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                     R;
 
-  // Temporarily needed (?)
-  const rep & Rep() const { return get(Base()); }
-
   VectorC3() {}
 
   VectorC3(const Null_vector &n)
-    : base(R().construct_vector_3_object()(n)) {}
-
-  VectorC3(const Point_3 &p)
-    : base(p) {}
+  { *this = R().construct_vector_3_object()(n); }
 
   VectorC3(const Point_3 &a, const Point_3 &b)
-    : base(R().construct_vector_3_object()(a, b)) {}
+  { *this = R().construct_vector_3_object()(a, b); }
 
-  VectorC3(const Direction_3 &d)
-    : base(d) {}
+  VectorC3(const Segment_3 &s)
+  { *this = R().construct_vector_3_object()(s); }
+
+  VectorC3(const Ray_3 &r)
+  { *this = R().construct_vector_3_object()(r); }
+
+  VectorC3(const Line_3 &l)
+  { *this = R().construct_vector_3_object()(l); }
 
   VectorC3(const FT &x, const FT &y, const FT &z)
     : base(x, y, z) {}
@@ -71,22 +72,22 @@ public:
   VectorC3(const FT &x, const FT &y, const FT &z, const FT &w)
   {
     if (w != FT(1))
-      Base() = rep(x/w, y/w, z/w);
+      base = Rep(x/w, y/w, z/w);
     else
-      Base() = rep(x, y, z);
+      base = Rep(x, y, z);
   }
 
   const FT & x() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const FT & y() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
   const FT & z() const
   {
-      return get(Base()).e2;
+      return get(base).e2;
   }
 
   const FT & hx() const

@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2000,2001,2002,2003  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -1126,6 +1126,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Segment_3                 Segment_3;
     typedef typename K::Ray_3                     Ray_3;
     typedef typename K::Line_3                    Line_3;
+    typedef typename K::Vector_3                  Vector_3;
     typedef typename K::Construct_vector_3        Construct_vector_3;
     typedef typename K::Construct_direction_3     Construct_direction_3;
     typedef typename K::Construct_point_on_3      Construct_point_on_3;
@@ -1153,7 +1154,11 @@ namespace CartesianKernelFunctors {
 
     Line_3
     operator()(const Point_3& p, const Direction_3& d) const
-    { return Line_3(p, d); }
+    { return this->operator()(p, cv(d.dx(), d.dy(), d.dz())); }
+
+    Line_3
+    operator()(const Point_3& p, const Vector_3& v) const
+    { return Line_3(p, v); }
 
     Line_3
     operator()(const Segment_3& s) const

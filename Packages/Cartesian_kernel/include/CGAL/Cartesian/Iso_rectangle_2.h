@@ -30,18 +30,17 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Iso_rectangleC2
-  : public R_::template Handle<Twotuple<typename R_::Point_2> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Iso_rectangle_2      Iso_rectangle_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
   typedef typename R_::Construct_point_2    Construct_point_2;
-  typedef Twotuple<Point_2>                        rep;
-  typedef typename R_::template Handle<rep>::type  base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  typedef Twotuple<Point_2>                        Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
+
+  Base base;
 
 public:
   typedef R_                                     R;
@@ -56,8 +55,8 @@ public:
     if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
     else               { miny = q.y(); maxy = p.y(); }
     Construct_point_2 construct_point_2;
-    Base() = rep(construct_point_2(minx, miny),
-	         construct_point_2(maxx, maxy));
+    base = Rep(construct_point_2(minx, miny),
+	       construct_point_2(maxx, maxy));
   }
 
   Iso_rectangleC2(const Point_2 &left, const Point_2 &right,
@@ -85,11 +84,11 @@ public:
   {
     Construct_point_2 construct_point_2;
     if (hw == FT(1))
-       Base() = rep(construct_point_2(min_hx, min_hy),
-	            construct_point_2(max_hx, max_hy));
+       base = Rep(construct_point_2(min_hx, min_hy),
+	          construct_point_2(max_hx, max_hy));
     else
-       Base() = rep(construct_point_2(min_hx/hw, min_hy/hw),
-	            construct_point_2(max_hx/hw, max_hy/hw));
+       base = Rep(construct_point_2(min_hx/hw, min_hy/hw),
+	          construct_point_2(max_hx/hw, max_hy/hw));
   }
 
   bool            operator==(const Iso_rectangleC2 &s) const;
@@ -97,11 +96,11 @@ public:
 
   const Point_2 & min() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const Point_2 & max() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
   Point_2 vertex(int i) const;
   Point_2 operator[](int i) const;
@@ -138,7 +137,7 @@ bool
 Iso_rectangleC2<R>::
 operator==(const Iso_rectangleC2<R> &r) const
 {
-  if (CGAL::identical(Base(), r.Base()))
+  if (CGAL::identical(base, r.base))
       return true;
   return vertex(0) == r.vertex(0) && vertex(2) == r.vertex(2);
 }

@@ -30,7 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class LineC2
-  : public R_::template Handle<Threetuple<typename R_::FT> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
@@ -41,11 +40,10 @@ class LineC2
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Threetuple<FT>	                   rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Threetuple<FT>	                   Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                     R;
@@ -53,37 +51,37 @@ public:
   LineC2() {}
 
   LineC2(const Point_2 &p, const Point_2 &q)
-    : base(R().construct_line_2_object()(p, q)) {}
+  { *this = R().construct_line_2_object()(p, q); }
 
   LineC2(const FT &a, const FT &b, const FT &c)
     : base(a, b, c) {}
 
   LineC2(const Segment_2 &s)
-    : base(R().construct_line_2_object()(s)) {}
+  { *this = R().construct_line_2_object()(s); }
 
   LineC2(const Ray_2 &r)
-    : base(R().construct_line_2_object()(r)) {}
+  { *this = R().construct_line_2_object()(r); }
 
   LineC2(const Point_2 &p, const Direction_2 &d)
-    : base(R().construct_line_2_object()(p, d)) {}
+  { *this = R().construct_line_2_object()(p, d); }
 
   LineC2(const Point_2 &p, const Vector_2 &v)
-    : base(R().construct_line_2_object()(p, v)) {}
+  { *this = R().construct_line_2_object()(p, v); }
 
   bool            operator==(const LineC2 &l) const;
   bool            operator!=(const LineC2 &l) const;
 
   const FT & a() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const FT & b() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
   const FT & c() const
   {
-      return get(Base()).e2;
+      return get(base).e2;
   }
 
   FT              x_at_y(const FT &y) const;
@@ -121,7 +119,7 @@ CGAL_KERNEL_INLINE
 bool
 LineC2<R>::operator==(const LineC2<R> &l) const
 {
-  if (CGAL::identical(Base(), l.Base()))
+  if (CGAL::identical(base, l.base))
       return true;
   return equal_line(*this, l);
 }

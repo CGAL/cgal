@@ -30,7 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class DirectionC2
-  : public R_::template Handle<Twotuple<typename R_::FT> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
@@ -41,11 +40,10 @@ class DirectionC2
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Twotuple<FT>	                           rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Twotuple<FT>	                           Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                     R;
@@ -53,16 +51,16 @@ public:
   DirectionC2() {}
 
   DirectionC2(const Vector_2 &v)
-    : base(v) {}
+  { *this = v.direction(); }
 
   DirectionC2(const Line_2 &l)
-    : base(l.direction()) {}
+  { *this = l.direction(); }
 
   DirectionC2(const Ray_2 &r)
-    : base(r.direction()) {}
+  { *this = r.direction(); }
 
   DirectionC2(const Segment_2 &s)
-    : base(s.direction()) {}
+  { *this = s.direction(); }
 
   DirectionC2(const FT &x, const FT &y)
     : base(x, y) {}
@@ -90,11 +88,11 @@ public:
   const FT & delta(int i) const;
   const FT & dx() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const FT & dy() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
 };
 
@@ -103,7 +101,7 @@ inline
 bool
 DirectionC2<R>::operator==(const DirectionC2<R> &d) const
 {
-  if (CGAL::identical(Base(), d.Base()))
+  if (CGAL::identical(base, d.base))
       return true;
   return equal_direction(*this, d);
 }

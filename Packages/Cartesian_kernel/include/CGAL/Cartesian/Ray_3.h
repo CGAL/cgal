@@ -30,7 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class RayC3
-  : public R_::template Handle<Twotuple<typename R_::Point_3> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
@@ -40,11 +39,10 @@ class RayC3
   typedef typename R_::Ray_3                Ray_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef Twotuple<Point_3>                        rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Twotuple<Point_3>                        Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                     R;
@@ -69,11 +67,11 @@ public:
   const Point_3 &   start() const;
   const Point_3 &   source() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const Point_3 &   second_point() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
   Point_3     point(int i) const;
 
@@ -97,7 +95,7 @@ inline
 bool
 RayC3<R>::operator==(const RayC3<R> &r) const
 {
-    if (CGAL::identical(Base(), r.Base()))
+    if (CGAL::identical(base, r.base))
 	return true;
     return source() == r.source() && direction() == r.direction();
 }

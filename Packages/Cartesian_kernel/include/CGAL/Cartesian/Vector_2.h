@@ -31,7 +31,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class VectorC2
-  : public R_::template Handle<Twotuple<typename R_::FT> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
@@ -39,11 +38,10 @@ class VectorC2
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Twotuple<FT>	                           rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Twotuple<FT>	                           Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                     R;
@@ -51,16 +49,13 @@ public:
   VectorC2() {}
 
   VectorC2(const Null_vector &n)
-    : base(R().construct_vector_2_object()(n)) {}
-
-  VectorC2(const Point_2 &p)
-    : base(p) {}
+  { *this = R().construct_vector_2_object()(n); }
 
   VectorC2(const Point_2 &a, const Point_2 &b)
-    : base(R().construct_vector_2_object()(a, b)) {}
+  { *this = R().construct_vector_2_object()(a, b); }
 
   VectorC2(const Direction_2 &d)
-    : base(d) {}
+    : base(d.dx(), d.dy()) {}
 
   VectorC2(const FT &x, const FT &y)
     : base(x, y) {}
@@ -68,18 +63,18 @@ public:
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
   {
     if (hw != FT(1))
-      Base() = rep(hx/hw, hy/hw);
+      base = Rep(hx/hw, hy/hw);
     else
-      Base() = rep(hx, hy);
+      base = Rep(hx, hy);
   }
 
   const FT & x() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const FT & y() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
 
   const FT & hx() const
@@ -246,7 +241,7 @@ inline
 typename VectorC2<R>::Direction_2
 VectorC2<R>::direction() const
 {
-  return Direction_2(*this);
+  return Direction_2(x(), y());
 }
 
 template < class R >

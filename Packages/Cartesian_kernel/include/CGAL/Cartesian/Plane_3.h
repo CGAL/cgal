@@ -30,7 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class PlaneC3
-  : public R_::template Handle<Fourtuple<typename R_::FT> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
@@ -45,11 +44,10 @@ class PlaneC3
   typedef typename R_::Construct_point_3    Construct_point_3;
   typedef typename R_::Construct_point_2    Construct_point_2;
 
-  typedef Fourtuple<FT>	                           rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Fourtuple<FT>	                           Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                     R;
@@ -57,46 +55,46 @@ public:
   PlaneC3() {}
 
   PlaneC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
-    : base(plane_from_points(p, q, r)) {}
+  { *this = plane_from_points(p, q, r); }
 
   PlaneC3(const Point_3 &p, const Direction_3 &d)
-    : base(plane_from_point_direction(p, d)) {}
+  { *this = plane_from_point_direction(p, d); }
 
   PlaneC3(const Point_3 &p, const Vector_3 &v)
-    : base(plane_from_point_direction(p, v.direction())) {}
+  { *this = plane_from_point_direction(p, v.direction()); }
 
   PlaneC3(const FT &a, const FT &b, const FT &c, const FT &d)
     : base(a, b, c, d) {}
 
   PlaneC3(const Line_3 &l, const Point_3 &p)
-    : base(plane_from_points(l.point(),
-	                     l.point()+l.direction().to_vector(),
-			     p)) {}
+  { *this = plane_from_points(l.point(),
+	                      l.point()+l.direction().to_vector(),
+			      p); }
 
   PlaneC3(const Segment_3 &s, const Point_3 &p)
-    : base(plane_from_points(s.start(), s.end(), p)) {}
+  { *this = plane_from_points(s.start(), s.end(), p); }
 
   PlaneC3(const Ray_3 &r, const Point_3 &p)
-    : base(plane_from_points(r.start(), r.second_point(), p)) {}
+  { *this = plane_from_points(r.start(), r.second_point(), p); }
 
   bool         operator==(const PlaneC3 &p) const;
   bool         operator!=(const PlaneC3 &p) const;
 
   const FT & a() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const FT & b() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
   const FT & c() const
   {
-      return get(Base()).e2;
+      return get(base).e2;
   }
   const FT & d() const
   {
-      return get(Base()).e3;
+      return get(base).e3;
   }
 
   Line_3       perpendicular_line(const Point_3 &p) const;
@@ -145,7 +143,7 @@ CGAL_KERNEL_INLINE
 bool
 PlaneC3<R>::operator==(const PlaneC3<R> &p) const
 {
-  if (CGAL::identical(Base(), p.Base()))
+  if (CGAL::identical(base, p.base))
       return true;
   return equal_plane(*this, p);
 }

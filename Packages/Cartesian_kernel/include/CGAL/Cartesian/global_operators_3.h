@@ -47,7 +47,7 @@ inline
 typename K::Point_3
 operator+(const Origin &, const VectorC3<K> &v)
 {
-  return PointC3<K>(v);
+  return PointC3<K>(v.x(), v.y(), v.z());
 }
 
 template < class K >
@@ -55,7 +55,7 @@ inline
 typename K::Point_3
 operator-(const Origin &, const VectorC3<K> &v)
 {
-  return PointC3<K>(-v);
+  return PointC3<K>(-v.x(), -v.y(), -v.z());
 }
 
 template < class K >
@@ -72,7 +72,7 @@ inline
 typename K::Vector_3
 operator-(const PointC3<K> &p, const Origin &)
 {
-  return VectorC3<K>(p);
+  return VectorC3<K>(p.x(), p.y(), p.z());
 }
 
 template < class K >

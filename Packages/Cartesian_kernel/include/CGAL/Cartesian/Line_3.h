@@ -30,8 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class LineC3
-  : public R_::template Handle<std::pair<typename R_::Point_3,
-                                         typename R_::Vector_3> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
@@ -43,11 +41,10 @@ class LineC3
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef std::pair<Point_3, Vector_3>             rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef std::pair<Point_3, Vector_3>             Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                     R;
@@ -55,19 +52,19 @@ public:
   LineC3() {}
 
   LineC3(const Point_3 &p, const Point_3 &q)
-    : base(p, q-p) {}
+  { *this = R().construct_line_3_object()(p, q); }
 
   LineC3(const Segment_3 &s)
-    : base(R().construct_line_3_object()(s)) {}
+  { *this = R().construct_line_3_object()(s); }
 
   LineC3(const Ray_3 &r)
-    : base(R().construct_line_3_object()(r)) {}
+  { *this = R().construct_line_3_object()(r); }
 
   LineC3(const Point_3 &p, const Vector_3 &v)
     : base(p, v) {}
 
   LineC3(const Point_3 &p, const Direction_3 &d)
-    : base(p, Vector_3(d.dx(), d.dy(), d.dz())) {}
+  { *this = R().construct_line_3_object()(p, d); }
 
   bool        operator==(const LineC3 &l) const;
   bool        operator!=(const LineC3 &l) const;
@@ -77,12 +74,12 @@ public:
 
   const Point_3 &     point() const
   {
-      return get(Base()).first;
+      return get(base).first;
   }
 
   const Vector_3 & to_vector() const
   {
-      return get(Base()).second;
+      return get(base).second;
   }
 
   Direction_3 direction() const
@@ -108,7 +105,7 @@ inline
 bool
 LineC3<R>::operator==(const LineC3<R> &l) const
 {
-  if (CGAL::identical(Base(), l.Base()))
+  if (CGAL::identical(base, l.base))
       return true;
   return has_on(l.point()) && (direction() == l.direction());
 }

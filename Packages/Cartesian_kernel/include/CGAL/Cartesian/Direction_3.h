@@ -30,7 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class DirectionC3
-  : public R_::template Handle<Threetuple<typename R_::FT> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::Vector_3             Vector_3;
@@ -40,11 +39,10 @@ class DirectionC3
   typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef Threetuple<FT>                           rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Threetuple<FT>                           Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                R;
@@ -52,16 +50,17 @@ public:
   DirectionC3() {}
 
   DirectionC3(const Vector_3 &v)
-    : base(v.Rep()) {}
+    : base(v.x(), v.y(), v.z()) {}
+  // { *this = v.direction(); }
 
   DirectionC3(const Line_3 &l)
-    : base(l.direction()) {}
+  { *this = l.direction(); }
 
   DirectionC3(const Ray_3 &r)
-    : base(r.direction()) {}
+  { *this = r.direction(); }
 
   DirectionC3(const Segment_3 &s)
-    : base(s.direction()) {}
+  { *this = s.direction(); }
 
   DirectionC3(const FT &x, const FT &y, const FT &z)
     : base(x, y, z) {}
@@ -82,15 +81,15 @@ public:
   const FT & delta(int i) const;
   const FT & dx() const
   {
-      return get(Base()).e0;
+      return get(base).e0;
   }
   const FT & dy() const
   {
-      return get(Base()).e1;
+      return get(base).e1;
   }
   const FT & dz() const
   {
-      return get(Base()).e2;
+      return get(base).e2;
   }
 
   const FT & hdx() const
@@ -116,7 +115,7 @@ inline
 bool
 DirectionC3<R>::operator==(const DirectionC3<R> &d) const
 {
-  if (CGAL::identical(Base(), d.Base()))
+  if (CGAL::identical(base, d.base))
       return true;
   return equal_directionC3(dx(), dy(), dz(), d.dx(), d.dy(), d.dz());
 }
