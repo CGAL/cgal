@@ -8,11 +8,11 @@ In the directories \ccc{demo/Qt_widget/basic/tutorial*} we provide some examples
 In this tutorial you can see how you can use \ccStyle{Qt\_widget} like
 a stream, for the output of \cgal\ objects.  Of course I recommend to read
 the tutorial from Trolltech, that is the original Qt tutorial, but I
-think that you can pass this tutorials without having strong skills of \cgalqt\
+think that you can pass this tutorials without having strong skills of \qt\
 programming. Anyway, the code that belongs to Qt is explained in tutorials.
 
 The following is a typical way of how to create a window using
-\cgalqt\ and \ccStyle{Qt\_widget.}
+\qt\ and \ccStyle{Qt\_widget.}
 \begin{ccExampleCode}
 #include <CGAL/IO/Qt_widget.h>
 #include <qapplication.h>
@@ -184,7 +184,7 @@ the layer. The triangulation will not be shown anymore.
 \subsection*{Tutorial 4}
 
 The fourth tutorial shows how to create a more complex application
-using the \cgalqt\ class \ccStyle{QMainWindow}. With this class you can create a
+using the \qt\ class \ccStyle{QMainWindow}. With this class you can create a
 {\sc Mdi} (Multiple Document Interface) application as well as a {\sc
 Sdi} (Single Document Interface).
 
@@ -417,8 +417,8 @@ connect (get_point_button, SIGNAL(stateChanged(int)),
          &get_point, SLOT(stateChanged(int)));
 \end{ccExampleCode}
 \begin{ccAdvanced}
-This public slot was desinged to be used only with \cgalqt\/ buttons. The
-integer value sent as a parameter represents the state of a \cgalqt\/
-button. Please see the documentation of \cgalqt\ if you want to know more
+This public slot was desinged to be used only with \qt\/ buttons. The
+integer value sent as a parameter represents the state of a \qt\/
+button. Please see the documentation of \qt\ if you want to know more
 about buttons and how to use them properly.
 \end{ccAdvanced}

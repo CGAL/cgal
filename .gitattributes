@@ -1555,10 +1555,12 @@ Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/Qt_widget/triangulation.eps -text
 Packages/Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/support/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/support/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/standard_toolbar.png -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/support/Qt_widget/triangulation.eps -text
 Packages/Qt_widget/doc_tex/support/Qt_widget/triangulation.gif -text svneol=unset#unset
 Packages/Qt_widget/include/CGAL/IO/pixmaps/alpha_shape.xpm -text

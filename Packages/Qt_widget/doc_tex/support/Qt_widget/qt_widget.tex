@@ -11,7 +11,7 @@
 \RCSdefDate{\qtwidgetDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\newcommand{\cgalqt}{{\em Qt}}      %QT abbreviation
+\newcommand{\qt}{{\em Qt}}      %QT abbreviation
 
 \gdef\lciIfHtmlClassLinks{\lcFalse}
 \gdef\lciIfHtmlRefLinks{\lcFalse}
@@ -37,22 +37,22 @@
 \end{ccHtmlOnly}
 \end{figure}
 
-\cgalqt\ is a {\sc Gui} toolkit\footnote{http://www.trolltech.com} for
+\qt\ is a {\sc Gui} toolkit\footnote{http://www.trolltech.com} for
 cross-platform application development. 
 
 % +-----------------------------------------------------+
 \section{Introduction}
 
 This chapter describes the \ccc{Qt_widget} package which provides
-an interface between \cgal\  and the  {\sc Gui} toolkit \cgalqt\ .
-The \ccc{Qt_widget} package allows to build  Qt
+an interface between \cgal\  and the  {\sc Gui} toolkit \qt\ .
+The \ccc{Qt_widget} package allows to build \qt\ 
 applications  showing two dimensional \cgal\ objects 
 and algorithms.
 
 %In this chapter we describe a widget and some helper classes that
-%allow to interact with two dimensional \cgal\ objects in \cgalqt\/ based applications.
+%allow to interact with two dimensional \cgal\ objects in \qt\/ based applications.
 
-The atom of the \cgalqt\ user interface is called a widget.
+The atom of the \qt\ user interface is called a widget.
 A widget receives mouse, keyboard and other 
 events from the window system, and paints a representation of itself on the 
 screen. Widgets are rectangular, and the different widgets
@@ -65,7 +65,7 @@ The most important class in the package
 is the class \ccStyle{Qt_widget} which implements a widget
 providing 
 a drawing area and output stream operators for \cgal\ 
-two dimensional objects.  \ccStyle{Qt_widget} also provide
+two dimensional objects.  \ccStyle{Qt_widget} also provides
 zooming and panning functionalities.
 
 The \ccStyle{Qt_widget} allows to attach {\em layers}. Layers usually
@@ -97,11 +97,11 @@ The class \ccStyle{Qt_widget} is derived from the class
 %events from the window system, and paints a representation of itself on the 
 %screen. Every widget is rectangular, and they are sorted in a Z-order. A 
 %widget is clipped by its parent and by the widgets in front of it.} 
-which is the base class of all \cgalqt\ user interface objects. 
+which is the base class of all \qt\ user interface objects. 
 
 
 The \ccStyle{Qt_widget} provides output operators for two dimensional \cgal\
-objects. There are operators defined for output of : points, segments, 
+objects. There are operators defined for output of: points, segments, 
 lines, rays, circles, triangles, rectangles, polygons, conics,  and all type of
 triangulations. Also some operators are defined to set
 \ccStyle{Qt_widget}'s properties, like background and fill color, as
@@ -117,7 +117,7 @@ The first example draws a red segment on an orange background.
 Note that we call new but not delete. This does not mean that there is 
 a memory leak. It is in Qt's responsability to free widgets.
 
-We follow the \cgalqt\ naming conventions for material properties, for
+We follow the \qt\ naming conventions for material properties, for
 example, the {\tt CGAL::BackgroundColor} above.
 
 All the drawing code should be put between \ccStyle{Qt\_Widget}'s lock() and
@@ -130,14 +130,14 @@ This example has a severe drawback: when you resize the window it is
 empty, as nothing is redrawn. This style of programs makes
 only sense, if you quickly want to validate output of a geometric
 computation. As in any event driven {\sc Gui} application,
- \cgalqt\  provides a callback mecanism so
+ \qt\  provides a callback mecanism so
 that the window system can update the drawing
 whenever necessary. This is the topic of the next example.
 
 \subsection{Example: Signals and Slots}
 
 This example is slightly more involved and uses  the central
-signal/slots mecanism of \cgalqt\ .
+signal/slots mecanism of \qt\ .
 
 The main widget shows a
 Delaunay triangulation. Every time the mouse button is pressed over 
@@ -149,14 +149,14 @@ Furthermore, the drawing is  updated every time the window is resized.
 \ccIncludeExampleCode{Qt_widget/Examples/tutorial2.C}
 
 
-\cgalqt applications are event driven and respond to user interaction.
-For example, when a user click on a menu item or on a toolbar button,
+\qt\ applications are event driven and respond to user interaction.
+For example, when a user clicks on a menu item or on a toolbar button,
 the application executes some codes. The programmer of an
 application has to be able to relate events to the relevant code.
-\cgalqt provide for that the signals/slots mecanism~:
+\qt\ provide for that the signals/slots mecanism:
 \begin{description}
 \item{\bf Signals.}
-Each \cgalqt widget declares a set of signals which, using the
+Each \qt\ widget declares a set of signals which, using the
 keyword \ccc{emit}  can be  emitted by member functions 
 under some circumstances. Signals are declared by using 
 the keyword \ccc{signals:} just like an
@@ -170,14 +170,14 @@ Signals and slots can be connected together using the method
 that sends out the signal, the signal, 
 the object to which belong the connected slot
 and the slot connected to the signal.
-For instance, the statement  :
+For instance, the statement:
 \begin{ccExampleCode}
-connect(this, SIGNAL(redraw_on_back()), this,
+connect(widget, SIGNAL(redraw_on_back()), this,
 SLOT(redraw_win()));
 \end{ccExampleCode}
 
 connects the signal \ccc{redraw_on_back()} of the widget
-\ccc{this} to the slot \ccc{redraw_win()} of the same
+\ccc{this} to the slot \ccc{redraw_win()} of the \ccc{QMainWindow}
 widget. Signals and slots of different widget can be connected
 together. Signals and slots can have any type of arguments,
 but a signal and a slot connected together must have the same arguments types. 
@@ -189,14 +189,14 @@ which is done by the macro {\sc Q\_object}.
 
 Whenever you define a class of your own that uses \ccc{signals} and/or
 \ccc{slots}, it is not enough to simply compile it. You must also run
-\ccc{moc}, the Meta-Object Compiler supplied with \cgalqt\, on the file
+\ccc{moc}, the Meta-Object Compiler supplied with \qt\, on the file
 that contains the class declaration. Running \ccc{moc} outputs glue
 code that
 is needed for the signal/slot mechanism to work. You have two
 possibilities to add this glue code to your application: either you
 include the code generated by \ccc{moc} in one of your source files or 
 you compile the code generated by \ccc{moc} separately and link it to your
-application.\footnote{See the \cgalqt\ documentation related to signals/slots/moc.}
+application.\footnote{See the \qt\ documentation related to signals/slots/moc.}
 
 The line \ccc{//moc_source_file : tutorial2.C} is for users that use
 makefiles. This line tells to the \cgal\ makefile generator that
@@ -377,7 +377,7 @@ toolbar and buttons. To activate and deactivate a layer you have to
 click one of the toolbar buttons. There are layers that need exclusive 
 use. This is accomplished by grouping the buttons in one group, and
 making that group exclusive. The group class is \ccc{QButtonGroup} that
-comes with \cgalqt\ .
+comes with \qt\ .
 \end{ccAdvanced}
 
 We first show how to use layers and then how they work.
@@ -591,7 +591,7 @@ toolbar buttons, like this:
 
 \section{What Shall I Use?}
 
-The previous sections presented different ways of writing \cgalqt\ based 
+The previous sections presented different ways of writing \qt\ based 
 applications. We recommend to use layers for the drawing task and for
 input handling, even if you write tiny applications, because in general
 they grow over time. Layers are a little bit more overhead, but 
