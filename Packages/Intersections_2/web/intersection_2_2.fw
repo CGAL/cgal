@@ -1939,7 +1939,7 @@ Segment_2_Iso_rectangle_2_pair(
     _ref_point = seg->source();
     _dir = seg->direction().to_vector();
     _min = (typename R::FT)(0);
-    int main_dir = (abs(_dir.x()) > abs(_dir.y()) ) ? 0 : 1;
+    int main_dir = (CGAL_NTS abs(_dir.x()) > CGAL_NTS abs(_dir.y()) ) ? 0 : 1;
     _max = (seg->target().cartesian(main_dir)-_ref_point.cartesian(main_dir)) /
             _dir.cartesian(main_dir);
 }

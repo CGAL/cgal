@@ -93,9 +93,9 @@ Straight_2_(Line_2<R> const &line)
 {
     support_ = line;
     Vector_2<R> const &dir = support_.direction().to_vector();
-    main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
+    main_dir_ = (CGAL_NTS abs(dir.x()) > CGAL_NTS abs(dir.y()) ) ? 0 : 1;
     dir_sign_ =
-        CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
+        CGAL_NTS sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = BOTH_UNBOUNDED;
 }
 
@@ -117,10 +117,10 @@ Straight_2_(Ray_2<R> const &ray)
 {
     support_ = ray.supporting_line();
     Vector_2<R> const &dir = ray.direction().to_vector();
-//    main_dir_ = (abs(dir.hx()) > abs(dir.hy()) ) ? 0 : 1;
-    main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
+//    main_dir_ = (CGAL_NTS abs(dir.hx()) > CGAL_NTS abs(dir.hy()) ) ? 0 : 1;
+    main_dir_ = (CGAL_NTS abs(dir.x()) > CGAL_NTS abs(dir.y()) ) ? 0 : 1;
     dir_sign_ =
-        CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
+        CGAL_NTS sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = MAX_UNBOUNDED;
     min_ = ray.start();
 }
@@ -134,10 +134,10 @@ Straight_2_(Ray_2<R> const &ray_,bool cooriented)
         /* the supporting line is cooriented with the input ray iff
         cooriented is true */
     Vector_2<R> const &dir = ray.direction().to_vector();
-//    main_dir_ = (abs(dir.hx()) > abs(dir.hy()) ) ? 0 : 1;
-    main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
+//    main_dir_ = (CGAL_NTS abs(dir.hx()) > CGAL_NTS abs(dir.hy()) ) ? 0 : 1;
+    main_dir_ = (CGAL_NTS abs(dir.x()) > CGAL_NTS abs(dir.y()) ) ? 0 : 1;
     dir_sign_ =
-        CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
+        CGAL_NTS sign(support_.direction().to_vector().cartesian(main_dir_));
     if (cooriented)
         {
             bound_state_ = MAX_UNBOUNDED;
@@ -156,9 +156,9 @@ Straight_2_(Segment_2<R> const &seg)
 {
     support_ = seg.supporting_line();
     Vector_2<R> const &dir = support_.direction().to_vector();
-    main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
+    main_dir_ = (CGAL_NTS abs(dir.x()) > CGAL_NTS abs(dir.y()) ) ? 0 : 1;
     dir_sign_ =
-        CGAL::sign(support_.direction().to_vector().cartesian(main_dir_));
+        CGAL_NTS sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = NO_UNBOUNDED;
     min_ = seg.start();
     max_ = seg.end();
@@ -231,7 +231,7 @@ int
 sign_of_cross(Direction_2<R> const &dir1,
             Direction_2<R> const &dir2)
 {
-    return CGAL::sign(cross(dir1.to_vector(), dir2.to_vector()));
+    return CGAL_NTS sign(cross(dir1.to_vector(), dir2.to_vector()));
 }
 #endif
 
@@ -333,7 +333,7 @@ collinear_order(Point_2<R> const &pt1, Point_2<R> const & pt2) const
 // Other results are -1 (other side) and 0 (coincidence).
 {
     int diffsign;
-    diffsign = CGAL::sign(pt2.cartesian(main_dir_)-pt1.cartesian(main_dir_));
+    diffsign = CGAL_NTS sign(pt2.cartesian(main_dir_)-pt1.cartesian(main_dir_));
     if (diffsign == 0)
         return 0;
     return (diffsign == dir_sign_) ? 1 : -1;

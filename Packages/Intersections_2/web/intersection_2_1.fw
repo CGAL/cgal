@@ -1313,7 +1313,7 @@ Point_2<R> const &end2   = _seg2->end();
 Vector_2<R> diff1 = end1-start1;
 Point_2<R> const *minpt;
 Point_2<R> const *maxpt;
-if (abs(diff1.x()) > abs(diff1.y())) {
+if (CGAL_NTS abs(diff1.x()) > CGAL_NTS abs(diff1.y())) {
     @<Segment_2_Segment_2_pair collinear case 2@>@(x@)
 } else {
     @<Segment_2_Segment_2_pair collinear case 2@>@(y@)
@@ -1767,7 +1767,7 @@ const Point_2<R> &end1 = _seg->end();
 const Point_2<R> &start2 = _ray->start();
 const Point_2<R> *minpt,  *maxpt;
 Vector_2<R> diff1 = end1-start1;
-if (abs(diff1.x()) > abs(diff1.y())) {
+if (CGAL_NTS abs(diff1.x()) > CGAL_NTS abs(diff1.y())) {
     @<Ray_2_Segment_2_pair collinear case 2@>@(x@)
 } else {
     @<Ray_2_Segment_2_pair collinear case 2@>@(y@)
@@ -2031,7 +2031,7 @@ the fastest.
 typedef typename R::RT RT;
 const Vector_2<R> &dir1 = _ray1->direction().to_vector();
 const Vector_2<R> &dir2 = _ray2->direction().to_vector();
-if (abs(dir1.x()) > abs(dir1.y())) {
+if (CGAL_NTS abs(dir1.x()) > CGAL_NTS abs(dir1.y())) {
     @<Ray_2_Ray_2_pair collinear case 2@>@(x@)
 } else {
     @<Ray_2_Ray_2_pair collinear case 2@>@(y@)
