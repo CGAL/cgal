@@ -186,6 +186,7 @@ class Convex_hull_traits_3
   typedef Point_triple_construct_orthogonal_vector_3<Self, R>
                                                  Construct_orthogonal_vector_3;
 
+  typedef typename R::Equal_3                    Equal_3;
   typedef typename R::Orientation_3              Orientation_3;
   typedef typename R::Collinear_3                Collinear_3;
   typedef typename R::Coplanar_3                 Coplanar_3;
@@ -260,6 +261,10 @@ class Convex_hull_traits_3
   Oriented_side_3
   oriented_side_3_object() const
   { return Oriented_side_3(); }
+
+  Equal_3
+  equal_3_object() const
+  { return Equal_3(); }
 
   Intersect_3
   intersect_3_object() const

@@ -34,6 +34,10 @@ constructs and returns the triangle with vertices \ccc{p}, \ccc{q}, and
 \ccc{Vector_3 operator()(Point_3 p, Point_3 q)}, which constructs and
 returns the vector \ccc{q}-\ccc{p}}
 
+\ccNestedType{Equal_3}{Predicate object type that provides
+\ccc{bool operator()(Point_3 p, Point_3 q)}, which determines
+if points \ccc{p} and \ccc{q} are equal or not}
+
 \ccNestedType{Collinear_3}{Predicate object type that provides
 \ccc{bool operator()(Point_3 p, Point_3 q, Point_3 r)}, which determines
 if points \ccc{p}, \ccc{q} and \ccc{r} are collinear or not}

@@ -646,19 +646,28 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
   // at least 4 points 
   typename Traits::Collinear_3 collinear = traits.collinear_3_object();
-  
+    typename Traits::Equal_3 equal = traits.equal_3_object();
   P3_iterator point1_it = points.begin();
   P3_iterator point2_it = points.begin();
   point2_it++;
-  P3_iterator point3_it = points.end();
-  point3_it--;
 
   // find three that are not collinear
-  while (point2_it != points.end() && 
-         collinear(*point1_it,*point2_it,*point3_it))
-    point2_it++;
-  
+  while (point2_it != points.end() && equal(*point1_it,*point2_it))
+    ++point2_it;
+
   CGAL_ch_precondition_msg(point2_it != points.end(), 
+        "All points are equal; cannot construct polyhedron.");
+  
+  P3_iterator point3_it = point2_it;
+  ++point3_it;
+  
+  CGAL_ch_precondition_msg(point3_it != points.end(), 
+        "Only two points with different coordinates; cannot construct polyhedron.");
+  
+  while (point3_it != points.end() && collinear(*point1_it,*point2_it,*point3_it))
+    ++point3_it;
+  
+  CGAL_ch_precondition_msg(point3_it != points.end(), 
         "All points are collinear; cannot construct polyhedron.");
   
   polyhedron.clear();
