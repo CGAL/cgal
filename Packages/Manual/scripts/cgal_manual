@@ -102,6 +102,7 @@ shopt -s nullglob
 # =====================================================================
 
 Latex="latex"
+# idea, not finished: if $Latex --help | grep file-line-error-style
 Bibtex="bibtex -terse"
 MakeIndex="makeindex -q"
 DvipsA4="dvips -q -D 600 -t a4 -P pdf"
@@ -151,12 +152,13 @@ ProgName=${0##*/}
 
 # We keep some statistics for the protocol
 TotalStartTime=$SECONDS
-Date="`date`"
+Date="`date '+%d %b %Y'`"
+Time="`date '+%T %Z'`"
 
 # Try to determine the CGAL version (works only for internal/external releases)
 # Otherwise use date.
-if [ -r Manual/version.tex ]; then
-    CgalVersion="`cat Manual/version.tex | grep cgalversion | sed 's/[}]$//' | sed 's/.*[{]//'`"
+if [ -r M/version.tex ]; then
+    CgalVersion="`cat version.tex | grep cgalversion | sed 's/[}]$//' | sed 's/.*[{]//'`"
 else
     CgalVersion=${Date}
 fi
@@ -441,7 +443,7 @@ report_latex() {
         echo "Since this is a CGAL Package manual, one can probably ignore "
         echo "warnings about undefined references."
     fi
-    grep -i error $1.log | grep -v "operatorerror"
+    egrep -i '((error)|(^[!]))' $1.log | grep -v "operatorerror"
     grep -i warn $1.log 
     if [ $MakeTestSuiteResult -eq 1 ]; then mv $1.log testsuite/$1.log.txt ; fi
     if [ -r $1.blg ]; then 
@@ -535,6 +537,27 @@ check_index_warn() {
 }
 
 #---------------------------------------------------------------------#
+# testsuite_entry <exit-code> <log-filename>
+#     - writes a single <td> cell in HTML report table to stdout
+#     - reports exit code results: 0 = ok, 1 = error, 2 = warning, 3 = n.a.
+#---------------------------------------------------------------------#
+
+SP="&nbsp;&nbsp;&nbsp;&nbsp;"
+
+testsuite_entry() {
+  if [ $1 -eq 0 ]; then
+    echo "  <td align=\"center\" class=\"ok\"><a href=\"$2\">${SP}y${SP}</a></td>"
+  elif [ $1 -eq 1 ]; then
+    echo "  <td align=\"center\" class=\"error\"><a href=\"$2\">${SP}n${SP}</a></td>"
+  elif [ $1 -eq 2 ]; then
+    echo "  <td align=\"center\" class=\"warning\"><a href=\"$2\">${SP}w${SP}</a></td>"
+  else
+    echo "  <td align=\"center\" class=\"void\">-</td>"
+  fi
+}
+
+
+#---------------------------------------------------------------------#
 # run_latex <wrapper-rootname>
 #     - Runs LaTeX, either brief for HTML, or full for stable PS/PDF
 #     - Includes BiBTeX and makeindex if needed.
@@ -543,124 +566,74 @@ check_index_warn() {
 #---------------------------------------------------------------------#
 
 run_latex() {
-    RetCode=0
+    # codes memorized for the different passes:
+    # 0 = ok, 1 = error, 2 = warning, 3 = n.a.
+    LatexExit=0
+    BibtexExit=4
+    IndexExit=4
+    RetCode=0 # total return code
     # first run
     $Latex --interaction batchmode $1
-    if [ $? -ne 0 ]; then
-        RetCode=1
-        if [ $MakeTestSuiteResult -eq 1 ]; then 
-            echo "  <td align=\"center\" class=\"error\"><a href=\"$1.log.txt\">&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" > testsuite/index_row
-            echo "  <td align=\"center\" class=\"void\">-</td>" >> testsuite/index_row
-            echo "  <td align=\"center\" class=\"void\">-</td>" >> testsuite/index_row
-        fi
-        report_latex $1
-        cleanup_latex  $1
-        return $RetCode
-    fi
+    if [ $? -ne 0 ]; then LatexExit=1 ; fi
     # see if we need BiBTeX and run it
     if grep '[\\]bibdata'  $1.aux > /dev/null ; then
-        $Bibtex $1
+        if $Bibtex $1 ; then BibtexExit=0 ; else BibtexExit=1 ; fi
         # Run LaTeX to get citations into the auxfile.
         $Latex --interaction batchmode $1
-        if [ $? -ne 0 ]; then
-            RetCode=1
-            if [ $MakeTestSuiteResult -eq 1 ]; then 
-                if check_latex_warn $1 ; then
-                    echo "  <td align=\"center\" class=\"warning\"><a href=\"$1.log.txt\">&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" > testsuite/index_row
-                else
-                    echo "  <td align=\"center\" class=\"ok\"><a href=\"$1.log.txt\">&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" > testsuite/index_row
-                fi
-                echo "  <td align=\"center\" class=\"error\"><a href=\"$1.blg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-                echo "  <td align=\"center\" class=\"void\">-</td>" >> testsuite/index_row
-            fi
-            report_latex  $1
-            cleanup_latex  $1
-            return $RetCode
-        fi
+        if [ $? -ne 0 ]; then LatexExit=1 ; fi
     fi
     # see if we need full LaTeX results, or if suffices what we have so far
-    IndexExit=0
     if [ ${MakePS} -eq 1 ] ; then
         # Run LaTeX until their is no rerun necessary anymore
-        while grep "Rerun to get cross-references right" $1.log > /dev/null ; do
+        while grep "Rerun to get cross-references right" $1.log > /dev/null; do
             # Run makeindex as well if requested
             if [ -r $1.idx ]; then
                 if ${MakeIndex} $1 ; then IndexExit=0 ; else IndexExit=1 ; fi
             fi
             $Latex --interaction batchmode $1
-            if [ $? -ne 0 ]; then
-                RetCode=1
-                if [ $MakeTestSuiteResult -eq 1 ]; then 
-                    echo "  <td align=\"center\" class=\"error\"><a href=\"$1.log.txt\">&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" > testsuite/index_row
-                    if check_bibtex_warn $1 ; then
-                        echo "  <td align=\"center\" class=\"warning\"><a href=\"$1.blg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-                    else
-                        echo "  <td align=\"center\" class=\"ok\"><a href=\"$1.blg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-                    fi
-                    if check_index_warn $1 ; then
-                        echo "  <td align=\"center\" class=\"warning\"><a href=\"$1.ilg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-                    else
-                        echo "  <td align=\"center\" class=\"ok\"><a href=\"$1.ilg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-                    fi
-                fi
-                report_latex $1
-                cleanup_latex  $1
-                return $RetCode
-            fi            
+            if [ $? -ne 0 ]; then LatexExit=1 ; fi
         done
-        if [ $MakeTestSuiteResult -eq 1 ]; then 
-            if check_latex_warn $1 ; then
-                echo "  <td align=\"center\" class=\"warning\"><a href=\"$1.log.txt\">&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" > testsuite/index_row
-            else
-                echo "  <td align=\"center\" class=\"ok\"><a href=\"$1.log.txt\">&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" > testsuite/index_row
-            fi
-            if check_bibtex_warn $1 ; then
-                echo "  <td align=\"center\" class=\"warning\"><a href=\"$1.blg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-            else
-                echo "  <td align=\"center\" class=\"ok\"><a href=\"$1.blg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-            fi
-            if check_index_warn $1 ; then
-                echo "  <td align=\"center\" class=\"warning\"><a href=\"$1.ilg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-            else
-                echo "  <td align=\"center\" class=\"ok\"><a href=\"$1.ilg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-            fi
+        if [ -r $1.dvi ]; then
+            if ! ${DvipsA4} $1 -o $1.ps ; then RetCode=1; fi
         fi
-        ${DvipsA4} $1 -o $1.ps
-        ${Gzip} $1.ps
+        if [ -r $1.ps ]; then
+            if ! ${Gzip} $1.ps ; then RetCode=1; fi
+        fi
         if [ $MakeTestSuiteResult -eq 1 ]; then 
             mv $1.ps.gz testsuite
         else
             if [ ! -d ../doc_ps ]; then mkdir ../doc_ps; fi
             if [ ! -d ../doc_ps ]; then
-                report_latex  $1
-                cleanup_latex  $1
                 echo "ERROR: Something is wrong, I cannot create directory '../doc_ps' ."
                 RetCode=1
-                return $RetCode
-            fi
-            mv $1.ps.gz ../doc_ps
-        fi
-    else
-        if [ $MakeTestSuiteResult -eq 1 ]; then 
-            if check_latex_warn $1 ; then
-                echo "  <td align=\"center\" class=\"warning\"><a href=\"$1.log.txt\">&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" > testsuite/index_row
             else
-                echo "  <td align=\"center\" class=\"ok\"><a href=\"$1.log.txt\">&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" > testsuite/index_row
-            fi
-            if check_bibtex_warn $1 ; then
-                echo "  <td align=\"center\" class=\"warning\"><a href=\"$1.blg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-            else
-                echo "  <td align=\"center\" class=\"ok\"><a href=\"$1.blg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-            fi
-            if check_index_warn $1 ; then
-                echo "  <td align=\"center\" class=\"warning\"><a href=\"$1.ilg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-            else
-                echo "  <td align=\"center\" class=\"ok\"><a href=\"$1.ilg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
+                mv $1.ps.gz ../doc_ps
             fi
         fi
     fi
+    if [ $LatexExit  -eq 0 ]; then
+        if check_latex_warn  $1 ; then LatexExit=2;  fi
+    fi
+    if [ $BibtexExit -eq 0 ]; then
+        if check_bibtex_warn $1 ; then BibtexExit=2; fi
+    fi
+    if [ $IndexExit  -eq 0 ]; then
+        if check_index_warn  $1 ; then IndexExit=2;  fi
+    fi
+    if [ $MakeTestSuiteResult -eq 1 ]; then 
+        testsuite_entry $LatexExit  $1.log.txt >  testsuite/index_row
+        testsuite_entry $BibtexExit $1.blg.txt >> testsuite/index_row
+        testsuite_entry $IndexExit  $1.ilg.txt >> testsuite/index_row
+    fi
     if [ $RetCode -eq 0 ] ; then
-        if check_latex_warn $1 ; then RetCode=2 ; fi
+      if [[ $LatexExit -eq 1 || $BibtexExit -eq 1 || $IndexExit -eq 1 ]]; then
+          RetCode=1
+      fi
+    fi
+    if [ $RetCode -eq 0 ] ; then
+      if [[ $LatexExit -eq 2 || $BibtexExit -eq 2 || $IndexExit -eq 2 ]]; then
+          RetCode=2
+      fi
     fi
     report_latex $1
     cleanup_latex $1
@@ -870,23 +843,19 @@ make_manual() {
 
     #---------------------------------------------------------------------#
     # run LaTeX_to_HTML
+    HtmlExit=3
     if [ ${MakeHTML} -eq 1 ]; then
       try_command "${MakeName} ${WrapperRootName} HTML " run_html ${WrapperRootName}
+      HtmlExit=$ExitCode
       if [[ $ExitCode -ne 0 && ${ReturnStatus} -ne 1 ]]; then
           ReturnStatus=$ExitCode ; 
       fi
       if [ $MakeTestSuiteResult -eq 1 ]; then 
-        mv ${WrapperRootName}.hlg testsuite/${WrapperRootName}.hlg.txt
-        if [ $ExitCode -eq 2 ]; then
-            echo "  <td align=\"center\" class=\"warning\"><a href=\"${WrapperRootName}.hlg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-        elif [ $ExitCode -eq 0 ]; then
-            echo "  <td align=\"center\" class=\"ok\"><a href=\"${WrapperRootName}.hlg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-        else
-            echo "  <td align=\"center\" class=\"error\"><a href=\"${WrapperRootName}.hlg.txt\">&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;</a></td>" >> testsuite/index_row
-        fi
+          mv ${WrapperRootName}.hlg testsuite/${WrapperRootName}.hlg.txt
       fi
-    elif [ $MakeTestSuiteResult -eq 1 ]; then 
-      echo "  <td align=\"center\" class=\"void\">-</td>" >> testsuite/index_row
+    fi
+    if [ $MakeTestSuiteResult -eq 1 ]; then 
+        testsuite_entry $HtmlExit ${WrapperRootName}.hlg.txt >> testsuite/index_row
     fi
 
     #---------------------------------------------------------------------#
@@ -916,7 +885,7 @@ make_manual() {
 
     echo "==============================================================================" > $LogFile
     echo "$0 $CommandLineArgs" >> $LogFile
-    echo "Date: $Date"  >> $LogFile
+    echo "Date: $Date,   Time: $Time"  >> $LogFile
     echo "Pwd : `pwd`"  >> $LogFile
     echo "Time: `print_time $TotalStartTime $TotalEndTime` total runtime." >> $LogFile
     echo "" >> $LogFile
@@ -1119,7 +1088,7 @@ EOF
         echo "${ErrorColor}ERROR${ResetColor}: The directory '${TestSuiteResultPath}' for the testsuite results does not exist." 1>&2
         GlobalReturnStatus=1
     else
-        mv testsuite/* ${TestSuiteResultPath}
+        cp -r testsuite/* ${TestSuiteResultPath}
         rm -r testsuite
     fi
 }
