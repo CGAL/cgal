@@ -390,8 +390,7 @@ the following example demonstrates:
 \section{Scope Operator in Types}
 
 CGAL will use {\tt typedef}'s and the scope operator to define types.
-Here is an example for the scope operator within types.  The scope
-operator cannot be used within the function or method name.
+Here is an example for the scope operator within types.
 
   \ccSetTwoOfThreeColumns{5.8cm}{1.8cm}
   \ccFunction{Rep_Class::Nested_Class
@@ -401,8 +400,18 @@ operator cannot be used within the function or method name.
   \ccFunction{Rep_Class :: Nested_Class
         foo(Rep_Class :: Nested_Class p, Demo_Class q);}{
          The same, surrounded by spaces.}
+       
+The scope operator now also can be used for the function or method name.
 
+  \ccSetTwoOfThreeColumns{5.8cm}{1.8cm}
+  \ccFunction{Rep_Class::Nested_Class
+        TI::foo(Rep_Class::Nested_Class p, Demo_Class q);}{
+         Declaration with scope.}
 
+  \ccFunction{Rep_Class :: Nested_Class
+        CBP::foo(Rep_Class :: Nested_Class p, Demo_Class q);}{
+         The same, surrounded by spaces.}
+       
 
 % ----------------------------------------------------------------------
 \begin{ccClassTemplate}{ClassB<FT<RT> >}
