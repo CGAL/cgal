@@ -128,7 +128,7 @@
     %\ccConstructor{Planar_map<I>( list<X_curve> &l
 %       );} {construct the planar-map of the curves  of \ccStyle{l}
 %       \ccPrecond{The curves are $x$-monotone} 
-%       \ccPrecond{No pair of curves of $l$ intersect in their interiors} 
+%       \ccPrecond{no pair of curves of $l$ intersect in their interiors} 
 %       }
         
 %    \ccStyle{template <class InputIterator>} \\
@@ -140,7 +140,7 @@
 %                \ccPrecond{The value type of \ccStyle{InputIterator}
 %                   is \ccStyle{X_curve_2} objects}
 %                \ccPrecond{The curves are $x$-monotone} 
-%                \ccPrecond{No pair of curves intersect in their interiors} 
+%                \ccPrecond{no pair of curves intersect in their interiors} 
 %      }
 
 %    \ccConstructor{Planar_map<I>( Planar_map<I>
@@ -273,13 +273,27 @@ depends on the point location strategy used.
 
 \ccModifiers
 
-\ccMethod{Halfedge_handle insert( const X_curve &cv );} {inserts the curve
-   cv into the map.
-   \ccPrecond{No curve \ccStyle{cv1} of \ccStyle{pm}
-      intersects \ccStyle{cv} in the interiors of
-      \ccStyle{cv} and \ccStyle{cv1}. }
+  \ccMethod{Halfedge_handle insert( const X_curve & cv );} 
+  {inserts the curve \ccc{cv} into the map. \ccc{insert()} returns 
+   a handle to a new halfedge directed in the same way as the curve \ccc{cv}. 
+   That is, the curve source and target points coincide with the points of the 
+   source and target vertices of the returned halfedge respectively.
+   \ccPrecond{no curve of \ccStyle{pm} intersects \ccStyle{cv} in the 
+              interiors of the curve itself and \ccStyle{cv}. }
    \ccPrecond{\ccc{cv} is not equivalent to a point. } 
-   }                
+  }                
+
+  \ccMethod{Halfedge_handle insert(const X_curve_2_iterator & begin, 
+                                   const X_curve_2_iterator & end);}
+  {iterates through a given range of curves, inserting the curves into the
+   map. \ccc{begin} and \ccc{end} are input iterators that point to the first
+   curve and past-the-end curve of the range respectively. \ccc{insert()} 
+   returns a handle to a new halfedge directed in the same way as the last 
+   curve in the range.
+   \ccPrecond{the curves of \ccc{pm} do not intersect the curves in the 
+    given range in the interiors of the curves respectively. }
+   \ccPrecond{no curve in the given range is equivalent to a point. }
+  }
 
 \begin{ccAdvanced}
 
@@ -292,40 +306,88 @@ these functions with the naive point location strategy.
 %them with the default point location strategy is not helpful since
 %the time is spent in any case on the updating of the internal point location
 %structure). 
-           
-    \ccMethod{Halfedge_handle insert_at_vertices( const X_curve & cv,
-       Vertex_handle v1, Vertex_handle v2 );}{inserts \ccStyle{cv} as a new edge
-       between \ccStyle{v1} and \ccStyle{v2}, where \ccStyle{v1} and
-       \ccStyle{v2} are vertices of the map. \ccStyle{v1}
-          and \ccStyle{v2} represent the source and target of
-          the returned halfedge. 
-       \ccPrecond{\ccc{v1->point()} and \ccc{v2->point()} are the two endpoints of
-          \ccc{cv}.} 
-       \ccPrecond{\ccc{cv} is not equivalent to a point. }}
     
-    \ccMethod{Halfedge_handle insert_from_vertex( const X_curve & cv,
-       Vertex_handle v1, bool source);}{inserts a new edge for
-       which one endpoint, \ccStyle{v1}, is already in the
-       map. The returned halfedge is the one that has \ccc{v1} as it's source.
-       If \ccStyle{source} is \ccStyle{true} (respectively,
-       \ccStyle{false}) 
-       %then the source (respectively, target) of
-       %the returned halfedge is \ccStyle{v1} and its target (respectively, source)
-       %holds the point which is \ccc{cv's} target (respectively, source). 
-       then the \ccc{target} of the returned halfedge holds the point which is
-       \ccc{cv's} target (respectively, source).
-       \ccPrecond{the second endpoint of \ccStyle{cv} is not 
-          in the map.} 
-       \ccPrecond{\ccc{cv} is not equivalent to a point. }}
+  \ccMethod{Halfedge_handle insert_in_face_interior( const X_curve & cv, 
+                                                     Face_handle f);}
+  {inserts the curve \ccc{cv} as a new inner component of the face \ccc{f}. 
+   \ccc{insert_in_face_interior()} returns a handle to a new halfedge directed
+   in the same way as \ccc{cv}.
+   \ccPrecond{\ccc{cv} is contained completely in the interior of \ccc{f}, (no
+    endpoint of \ccc{cv} coincides with a point of any vertex of the map). }
+   \ccPrecond{\ccc{cv} is not equivalent to a point. }
+  }
+
+  \ccMethod{Halfedge_handle insert_from_vertex(const X_curve & cv,
+                                               Vertex_handle v);}
+  {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv} is the 
+   point of the given vertex \ccc{v}, that is already in the map. 
+   \ccc{insert_from_vertex} returns a handle to a new halfedge that has 
+   \ccc{v} as its source vertex.
+   \ccPrecond{\ccc{v} is a vertex of the map. }
+   \ccPrecond{the point of \ccc{v} coincides with one endpoint of \ccc{cv}. }
+   \ccPrecond{no vertex of the map has a point that coincides with the other 
+    endpoint of \ccc{cv}. }
+   \ccPrecond{\ccc{cv} is not equivalent to a point. }
+  }
     
-    \ccMethod{Halfedge_handle insert_in_face_interior( const X_curve &
-       cv, Face_handle f);}
-       {inserts \ccStyle{cv} as a new inner component of \ccc{f}. The
-       returned halfedge shares the same direction as the curve
-       \ccc{cv}. \ccPrecond{ \ccStyle{cv} is contained completely in
-       the interior of \ccStyle{f} (no vertex of \ccStyle{cv} meets
-       any vertex on the map).}  \ccPrecond{\ccc{cv} is not equivalent
-       to a point. }}
+  \ccMethod{Halfedge_handle insert_at_vertices(const X_curve & cv,
+                                               Vertex_handle v1, 
+                                               Vertex_handle v2 );}
+  {inserts the curve \ccc{cv} into the map. The two endpoints of \ccc{cv} are
+   held by the two given vertices \ccc{v1} and \ccc{v2} respectively, that are
+   already in the map.
+   \ccc{insert_at_vertices()} returns a handle to a new halfedge, that has
+   \ccc{v1} and \ccc{v2} as its source and target vertices respectively.
+   \ccPrecond{\ccc{v1} and \ccc{v2} are vertices of the map. }
+   \ccPrecond{the points of \ccc{v1} and \ccc{v2} coincide with the two 
+    endpoints of \ccc{cv} respectively. } 
+   \ccPrecond{\ccc{cv} is not equivalent to a point. }
+  }
+
+  \ccMethod{Halfedge_handle insert_from_vertex(const X_curve & cv,
+                                               Halfedge_handle h);}
+  {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv} is the 
+   point of the target vertex, \ccc{v}, of the given halfedge \ccc{h}.
+   \ccc{insert_from_vertex} returns a handle to a new halfedge that has 
+   \ccc{v} as its source vertex. The returened twin halfedge is inserted 
+   immediately after \ccc{h} in the circular list of halfedges that share the 
+   same target vertex \ccc{v}. This method is the quick version of 
+   \ccc{insert_from_vertex()}, as the search for the previous halfedge in the 
+   circular list of halfedges that share the same target vertex is 
+   unnecessary, saving computation time.
+   \ccPrecond{\ccc{h} is a halfedge of the map. }
+   \ccPrecond{the point of \ccc{v} coincides with one endpoint of \ccc{cv}. }
+   \ccPrecond{no vertex of the map has a point that coincides with the other 
+    endpoint of \ccc{cv}. }
+   \ccPrecond{\ccc{cv} is after the curve of \ccc{h} in the clockwise order of
+    curves around the common point of \ccc{v}. }
+   \ccPrecond{\ccc{cv} is not equivalent to a point. }
+  }
+    
+  \ccMethod{Halfedge_handle insert_at_vertices(const X_curve & cv,
+                                               Halfedge_handle h1, 
+                                               Halfedge_handle h2 );}
+  {inserts the curve \ccc{cv} into the map. The two endpoints of \ccc{cv} are
+   held by the two target vertices \ccc{v1} and \ccc{v2} of \ccc{h1} and
+   \ccc{h2} respectively.
+   \ccc{insert_at_vertices()} returns a handle to a new halfedge, that has
+   \ccc{v1} and \ccc{v2} as its source and target vertices respectively.
+   The returened halfedge is inserted immediately after \ccc{h1} in the 
+   circular list of halfedges that share the same target vertex \ccc{v1}. Its
+   twin halfedge is inserted immediately after \ccc{h2} in the circular list
+   of halfedges that share the same target vertex \ccc{v2}.
+   This method is the quick version of \ccc{insert_from_vertex()}, as the 
+   search for the previous halfedges in the circular lists of halfedges that
+   share the same target vertices is unnecessary, saving computation time.
+   \ccPrecond{\ccc{h1} and \ccc{h2} are halfedges of the map. }
+   \ccPrecond{the points of \ccc{v1} and \ccc{v2} coincide with the two 
+    endpoints of \ccc{cv} respectively. } 
+   \ccPrecond{\ccc{cv} is after the curve of \ccc{h1} in the clockwise order of
+    curves around the common point of \ccc{v1}. }
+   \ccPrecond{\ccc{cv} is after the curve of \ccc{h2} in the clockwise order of
+    curves around the common point of \ccc{v2}. }
+   \ccPrecond{\ccc{cv} is not equivalent to a point. }
+  }
 
 \end{ccAdvanced}              
 
