@@ -163,6 +163,12 @@ public:
     typedef std::set<Vertex_index, Less_segs> Tree;
     typedef Vertex_data_base<ForwardIterator, PolygonTraits> Base_class;
 
+    using Base_class::ordered_left_to_right;
+    using Base_class::next;
+    using Base_class::prev;
+    using Base_class::index_at_rank;
+    using Base_class::point;
+
     std::vector<Edge_data<Less_segs> > edges;
 
     Vertex_data(ForwardIterator begin, ForwardIterator end,
