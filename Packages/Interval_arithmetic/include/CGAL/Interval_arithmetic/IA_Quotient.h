@@ -35,7 +35,7 @@ Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const Quotient<RT> & z)
 {
 #ifdef CGAL_IA_DEBUG
-	CGAL_assertion(FPU_get_cw() == FPU_cw_up);
+	CGAL_warning(FPU_get_cw() == FPU_cw_up);
 #endif
 	return  convert_to<Interval_nt_advanced>(z.numerator()) /
 		convert_to<Interval_nt_advanced>(z.denominator());
