@@ -14,8 +14,9 @@
 % ========================================================================
 % Definitions of fonts for the different categories of non-C++ items 
 % ========================================================================
+\def\ccUnderscoreFont{}
 \def\ccIndexAbbreviationFont{}
-\def\ccIndexConceptFont{}
+\def\ccIndexConceptFont{\ccUnderscoreFont}
 \def\ccIndexFunctionalityFont{}
 \def\ccIndexDSFont{}
 \def\ccIndexHintFont{}
@@ -185,6 +186,7 @@
    \fi%
    \fi%
 }
+
 
 % ------------------------------------------------------------------------
 %  Subitem generic indexing macros
@@ -543,8 +545,13 @@
 %  
 \newcommand{\ccIndexMemberFunction}[1]{%
     \ifnum\ccIndex=\ccTrue%
+    \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
+     \ccIndexSubitem[C]{#1}{\ccUnderscoreFont \ccIndexClassName}%
+    \else \ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+     \ccIndexSubitem[C]{#1}{\ccUnderscoreFont \ccIndexClassName}%
+    \else
      \ccIndexSubitem[C]{#1}{\ccFont \ccIndexClassName}%
-    \fi%
+    \fi\fi\fi%
 }
 
 %
@@ -1064,6 +1071,7 @@
 % #5 - place to put the modifier
 % #6 - place to put the unmodified text
 \def\parseTextWithCategory#1#2\ccEnd#3#4#5#6{%
+    \xdef\allowUnderscores{\ccFalse}%
     \isEmpty{#1}\ifnum\ccBool=\ccTrue% unclassified item
        \indexTextParse{\noFont}{#3}{#4}{#5}{#6}%
     \else \if#1a%  abbreviation
@@ -1216,6 +1224,9 @@
       \ifx#1\ccFont%
         \xdef\indexingFontIsCC{\ccTrue}%
       \fi%
+      \ifx#1\ccUnderscoreFont%
+        \xdef\allowUnderscores{\ccTrue}%
+      \fi%
       \gdef\indexText{#2}%
    \else%
       \gdef\indexText{#1#2}%
@@ -1255,7 +1266,7 @@
 \def\separateModifier#1#2{%
    \ifx#11%
       \edef\argument{#2}% needed in case the argument is a macro
-      \separateModifierX\argument,\ccEnd%
+      \expandafter\separateModifierX\argument,\ccEnd%
    \else%
        \def\unmodifiedText{#2}%
        \def\modifier{}%
@@ -1335,8 +1346,12 @@
         \fi
       \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
         \gdef#4{#3@\protect\ccc{#3}}%
-      \else%                                     other font, no _s possible
-        \gdef#4{#3@{#1 #3}}%
+      \else%                                     other font 
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3@{#1 \protect\ccOnlyUnderscores{#3}}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3@{#1 #3}}%
+        \fi
       \fi \fi%
       \gdef#5{}%
    \else\ifdimmodifier%                          dimension modifier
@@ -1348,8 +1363,12 @@
         \fi
       \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
         \gdef#4{#3, #2@\protect\ccc{#3, #2}}%
-      \else%                                     other font; no _s possible
-        \gdef#4{#3, #2@{#1 #3, #2}}%
+      \else%                                     other font 
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3, #2@{#1 \protect\ccOnlyUnderscores{#3, #2}}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3, #2@{#1 #3, #2}}%
+        \fi
       \fi \fi%
       \gdef#5{}%
    \else\ifnum\ccIndexModifierCrossRef=\ccFalse% no cross referencing wanted
@@ -1361,8 +1380,12 @@
         \fi
       \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
         \gdef#4{#3, #2@\protect\ccc{#3, #2}}%
-      \else%                                     other font; no _s possible
-        \gdef#4{#3, #2@{#1 #3, #2}}%
+      \else%                                     other font
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3, #2@{#1 \protect\ccOnlyUnderscores{#3, #2}}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3, #2@{#1 #3, #2}}%
+        \fi
       \fi \fi%
       \gdef#5{}%
    \else%                                        non-dimensional modifier
@@ -1475,6 +1498,9 @@
          \ifx#1\ccFont%
            \xdef\indexingFontIsCC{\ccTrue}%
          \fi%
+         \ifx#1\ccUnderscoreFont%
+           \xdef\allowUnderscores{\ccTrue}%
+         \fi%
          \let#3=#1%
       \else%
          \let#3=\indexingFont%
@@ -1495,6 +1521,9 @@
          \fi%
          \ifx#1\ccFont%
            \xdef\indexingFontIsCC{\ccTrue}%
+         \fi%
+         \ifx#1\ccUnderscoreFont%
+           \xdef\allowUnderscores{\ccTrue}%
          \fi%
          \let#3=#1%
       \else%
@@ -1766,14 +1795,17 @@
 % used
 %
 \newcount\ccCurrentIndexCat
-\newcount\ccIndexEnumCat     \ccIndexEnumCat=0
-\newcount\ccIndexStructCat   \ccIndexStructCat=1
-\newcount\ccIndexTypedefCat  \ccIndexTypedefCat=2
-\newcount\ccIndexVariableCat \ccIndexVariableCat=3
-\newcount\ccIndexConceptCat  \ccIndexConceptCat=4
-\newcount\ccIndexFunctionCat \ccIndexFunctionCat=5
-\newcount\ccIndexClassCat    \ccIndexClassCat=6
-\newcount\ccIndexMacroCat    \ccIndexMacroCat=7
+\newcount\ccIndexEnumCat                  \ccIndexEnumCat=0
+\newcount\ccIndexStructCat                \ccIndexStructCat=1
+\newcount\ccIndexTypedefCat               \ccIndexTypedefCat=2
+\newcount\ccIndexVariableCat              \ccIndexVariableCat=3
+\newcount\ccIndexConstantCat              \ccIndexConstantCat=4
+\newcount\ccIndexConceptCat               \ccIndexConceptCat=5
+\newcount\ccIndexFunctionCat              \ccIndexFunctionCat=6
+\newcount\ccIndexFunctionObjectConceptCat \ccIndexFunctionObjectConceptCat=7
+\newcount\ccIndexFunctionObjectClassCat   \ccIndexFunctionObjectClassCat=8
+\newcount\ccIndexClassCat                 \ccIndexClassCat=9
+\newcount\ccIndexMacroCat                 \ccIndexMacroCat=10
 
 % #1 - enum tag
 % #2 - value assigned (possibly empty)
@@ -1877,6 +1909,9 @@
    \ifnum\ccCurrentIndexCat=\ccIndexClassCat%
       \expandafter\ccStripTemplates\ccPureClassTemplateName<\ccEnd\ccIndexClassName%
       \ccIndexMainItemBegin[C]{\ccIndexClassName}%
+   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectClassCat%
+      \expandafter\ccStripTemplates\ccPureClassTemplateName<\ccEnd\ccIndexClassName%
+      \ccIndexMainItemBegin[C]{\ccIndexClassName}%
    \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionCat%
       \expandafter\expandafter\isEmpty\ccIndexClassName\ifnum\ccBool=\ccTrue%
          \ccIndexFunctionBegin1\ccPureClassTemplateName%
@@ -1893,17 +1928,27 @@
       \else
          \ccIndexSubitemBegin[C]{\ccIndexClassName}{\ccPureClassTemplateName}%
       \fi
+   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+      \expandafter\expandafter\isEmpty{\ccIndexClassName}\ifnum\ccBool=\ccTrue
+         \xdef\ccIndexClassName{\ccPureClassTemplateName}%
+         \xdef\ccPureClassTemplateName{}%
+         \ccIndexMainItemBegin[c]{\ccIndexClassName}%
+      \else
+         \ccIndexSubitemBegin[C]{\ccIndexClassName}{\ccPureClassTemplateName}%
+      \fi
    \else% all other things are C++ names
       \expandafter\expandafter\isEmpty{\ccIndexClassName}\ifnum\ccBool=\ccTrue
          \ccIndexMainItemBegin[C]{\ccPureClassTemplateName}%
       \else
          \ccIndexSubitemBegin[C]{\ccIndexClassName}{\ccFont \ccPureClassTemplateName}%
       \fi
-   \fi\fi\fi%
+   \fi\fi\fi\fi\fi%
 }
 
 \def\ccIndexRefDeclarationEnd{%
    \ifnum\ccCurrentIndexCat=\ccIndexClassCat%
+      \ccIndexMainItemEnd[C]{\ccIndexClassName}%
+   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectClassCat%
       \ccIndexMainItemEnd[C]{\ccIndexClassName}%
    \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionCat%
       \expandafter\expandafter\isEmpty{\ccIndexClassName}\ifnum\ccBool=\ccTrue
@@ -1920,12 +1965,18 @@
       \else
          \ccIndexSubitemEnd[C]{\ccIndexClassName}{\ccPureClassTemplateName}%
       \fi
+   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+      \expandafter\expandafter\isEmpty{\ccPureClassTemplateName}\ifnum\ccBool=\ccTrue
+         \ccIndexMainItemEnd[c]{\ccIndexClassName}%
+      \else
+         \ccIndexSubitemEnd[C]{\ccIndexClassName}{\ccPureClassTemplateName}%
+      \fi
    \else% all other things are C++ names
       \expandafter\expandafter\isEmpty{\ccIndexClassName}\ifnum\ccBool=\ccTrue
          \ccIndexMainItemEnd[C]{\ccPureClassTemplateName}%
       \else
          \ccIndexSubitemEnd[C]{\ccIndexClassName}{\ccFont \ccPureClassTemplateName}%
       \fi
-   \fi\fi\fi%
+   \fi\fi\fi\fi\fi%
    \gdef\ccIndexClassName{}%
 }

@@ -1420,6 +1420,13 @@ void format_nested_type( const char* nested_type_name) {
     two_cols_html_new_closing( *current_ostream);
 }
 
+// NOTE:  when an enum is formatted inside a ccRefEnum environment
+// it currently always looks like it's inside a class (i.e. class_name
+// is not empty), so the enum tags will NOT be linked or indexed 
+// automatically.  This could be fixed by setting a flag of some sort
+// to indicate that it's not really a class or perhaps finding a different
+// way to make the classname and templateclassname known internally instead
+// of using a \begin{lciClass} in \lciRefDeclContX (in cc_manual.sty)
 void format_enum( const char* signature) {
     current_font = it_font;
     char* return_value;

@@ -53,7 +53,10 @@
 \newcommand{\ccwFunctionSecond}{}
 \newcommand{\ccwConstructorFirst}{}
 \newcommand{\ccwConstructorSecond}{}
-
+\newcommand{\ccSaveThreeColumns}{}
+\newcommand{\ccRestoreThreeColumns}{}
+\newcommand{\ccSaveTwoColumns}{}
+\newcommand{\ccRestoreTwoColumns}{}
 
 \newcommand{\ccOriginalParDims}{}
 \newcommand{\ccParDims}{}
@@ -284,10 +287,12 @@
 \newcommand{\ccTypes          }{\ccHeading{Types}}
 \newcommand{\ccCreation       }{\ccHeading{Creation}}
 \newcommand{\ccOperations     }{\ccHeading{Operations}}
+\newcommand{\ccQueryFunctions }{\ccHeading{Query Functions}}
 \newcommand{\ccAccessFunctions}{\ccHeading{Access Functions}}
 \newcommand{\ccPredicates     }{\ccHeading{Predicates}}
 \newcommand{\ccModifiers      }{\ccHeading{Modifiers}}
 \newcommand{\ccHasModels      }{\ccHeading{Has Models}}
+\newcommand{\ccGeneralizes    }{\ccHeading{Generalizes}}
 \newcommand{\ccSeeAlso        }{\ccHeading{See Also}}
 \newcommand{\ccImplementation }{\ccHeading{Implementation}}
 \newcommand{\ccExample        }{\ccHeading{Example}}
@@ -298,8 +303,9 @@
         \newcommand{\lciLocalHtmlName}{\lcAsciiToHtml{##X1}}}%
       \lciDefLocalHtmlName\lciHeaderPath\lciLocalHtmlName%
       \lcAsciiToHtml{#C1}\lcRawHtml{">}\lcAsciiToHtml{#C1}\lcRawHtml{</A>}}%
-    {\ccHtmlNoLinks\lcAsciiToHtml{#C1}}%
+    {\ccHtmlNoLinks\lcAsciiToHtml{#C1}\gdef{\lciIfHtmlLinks}{\lcTrue}}%
     \lcRawHtml{&gt;</I>}%
+
 }
 
 \newcommand{\ccPrecond  }{\ccCommentHeading{Precondition}}
@@ -356,14 +362,20 @@
 % |
 % ###########################################################################
 % +--------------------------------------------------------------------------
-% | \begin{ccRefDeclaration} ...ccRefConcept, ...ccRefClass, ...ccRefEnum
-% | ...ccRefFunction, ...ccRefVariable, ...ccRefMacro, 
+% | \begin{ccRefDeclaration} ...ccRefConcept, ...ccRefFunctionObjectConcept
+% | ...ccRefClass, ...ccRefFunctionObjectClass, ...ccRefEnum
+% | ...ccRefFunction, ...ccRefVariable, ...ccRefMacro,
 % | \ccRefName
 % +--------------------------------------------------------------------------
 
 % make the new manual style parameterized.
 \newcommand{\ccNewRefManualStyle}{}   % false -> old style, true -> new style
 \gdef\ccNewRefManualStyle{\ccFalse}
+
+\newcommand{\ccIsFunctionObjectClass}{}
+\gdef\ccIsFunctionObjectClass{\ccFalse}
+\newcommand{\ccIsFunctionObjectConcept}{}
+\gdef\ccIsFunctionObjectConcept{\ccFalse}
 
 \newcommand{\ccRefPageBegin}{}
 \newcommand{\ccRefPageEnd}{}
@@ -462,7 +474,10 @@
 %% Args: ccRefPureGlobalScope, ccPureRefScope, ccRefName
 \newcommand{\ccRefSectionX}[3]{%
     %%\section*{\lcAsciiToHtml{#XC1#XC2#XC3}}
-    \section*{\lciIf{\ccNewRefManualStyle}{}{\ccRefCategory~}%
+    \section*{\lciIf{\ccNewRefManualStyle}{}{%
+      \lciIf{\ccIsFunctionObjectClass}{Function Object Class}{%
+      \lciIf{\ccIsFunctionObjectConcept}{Function Object Concept}{%
+      \ccRefCategory~}}}%
       \ccc{#XC1#XC2#XC3}}\label{ccRef_#XC1#XC2#XC3}}
 
 %% #1 == ccCategory
@@ -489,9 +504,25 @@
                    \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
                    \begin{ccRefDeclaration}{Function}}{\end{ccRefDeclaration}}
 
+\newenvironment{ccRefFunctionObjectConcept}{%
+                   \gdef\ccRefPureGlobalScope{}%
+                   \gdef\ccIsFunctionObjectConcept{\ccTrue}%
+                   \begin{ccRefDeclaration}{FunctionObjectConcept}}%
+               {\gdef\ccIsFunctionObjectConcept{\ccFalse}\end{ccRefDeclaration}}
+
+\newenvironment{ccRefFunctionObjectClass}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
+                   \gdef\ccIsFunctionObjectClass{\ccTrue}%
+                   \begin{ccRefDeclaration}{FunctionObjectClass}}%
+               {\gdef\ccIsFunctionObjectClass{\ccFalse}\end{ccRefDeclaration}}
+
 \newenvironment{ccRefVariable}{%
                    \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
                    \begin{ccRefDeclaration}{Variable}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefConstant}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
+                   \begin{ccRefDeclaration}{Constant}}{\end{ccRefDeclaration}}
 
 \newenvironment{ccRefMacro}{%
                    \gdef\ccRefPureGlobalScope{}%
@@ -505,6 +536,7 @@
 \newcommand{\lciRefLabelXX}[1]{\label{ccRef_#XC1}}
 
 \newcommand{\ccRefIdfierPage}{\ccc}
+\newcommand{\ccRefConceptPage}{}
 
 % ___________________________________________________________________________
 % ###########################################################################

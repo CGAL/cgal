@@ -62,7 +62,7 @@ echo "" >> $htmlfile
 if ( -r $introfile ) then
     echo "\input{$prepath$introfile}" | sed "s/$1\///g" >> $htmlfile
     echo "" >> $htmlfile
-endif
+else
 
 cat >> $htmlfile <<EOF
 \begin{ccHtmlOnly}
@@ -74,6 +74,8 @@ EOF
 cc_index_sort -ger $reftmp | sed "s/$1\///g" >> $htmlfile
 echo "" >> $htmlfile
 echo "%% EOF" >> $htmlfile
+
+endif
 
 if ( -r $reftmp) rm $reftmp
 exit 0

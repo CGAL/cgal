@@ -311,6 +311,26 @@
 % |
 % +--------------------------------------------------------------------------
 \newdimen\ccwTmp
+\newdimen\ccwFunctionFirstSave
+\newdimen\ccwFunctionSecondSave
+\newdimen\ccwConstructorSecondSave
+
+\newcommand{\ccSaveThreeColumns}{%
+   \ccwFunctionFirstSave=\ccwFunctionFirst
+   \ccwFunctionSecondSave=\ccwFunctionSecond
+}
+\newcommand{\ccRestoreThreeColumns}{%
+   \ccwFunctionFirst=\ccwFunctionFirstSave
+   \ccwFunctionSecond=\ccwFunctionSecondSave
+}
+%
+% Note:  don't need to save ccwConstructorFirst since it doesn't ever change
+\newcommand{\ccSaveTwoColumns}{%
+   \ccwConstructorSecondSave=\ccwConstructorSecond
+}
+\newcommand{\ccRestoreTwoColumns}{%
+   \ccwConstructorSecond=\ccwConstructorSecondSave
+}
 
 \newcommand{\ccSetTwoOfThreeColumns}[2]{%
                    \global\ccwFunctionFirst=#1
@@ -615,7 +635,6 @@
 \newwrite\@unused
 \def\typeout#1{{\let\protect\string\immediate\write\@unused{#1}}}
 \typeout{cc_manual.sty: \ccRevision. \ccDate.}
-%\typeout{cc_manual.sty: *** Including revisions for automatic indexing ***}
 \catcode`\@=12\relax
 
 
@@ -714,10 +733,12 @@
 \newcommand{\ccTypes          }{\ccHeading{Types}}
 \newcommand{\ccCreation       }{\ccHeading{Creation}}
 \newcommand{\ccOperations     }{\ccHeading{Operations}}
+\newcommand{\ccQueryFunctions }{\ccHeading{Query Functions}}
 \newcommand{\ccAccessFunctions}{\ccHeading{Access Functions}}
 \newcommand{\ccPredicates     }{\ccHeading{Predicates}}
 \newcommand{\ccModifiers      }{\ccHeading{Modifiers}}
 \newcommand{\ccHasModels      }{\ccHeading{Has Models}}
+\newcommand{\ccGeneralizes    }{\ccHeading{Generalizes}}
 \newcommand{\ccSeeAlso        }{\ccHeading{See Also}}
 \newcommand{\ccImplementation }{\ccHeading{Implementation}}
 \newcommand{\ccExample        }{\ccHeading{Example}}
@@ -732,12 +753,14 @@
 \newcommand{\ccPrecond  }{\ccCommentHeading{Precondition}}
 \newcommand{\ccPostcond }{\ccCommentHeading{Postcondition}}
 
-\newenvironment{ccAdvanced}{\par
-    \hspace*{-1.2cm}\rule[-5mm]{0.3mm}{5mm}\rule{5cm}{0.2mm}%
+\newenvironment{ccAdvanced}{%
+    \setlength{\ccRefTabLift}{2\ccRefTabLift}
+    \par
+    \hspace*{-0.5cm}\rule[-5mm]{0.3mm}{5mm}\rule{1.8cm}{0.2mm}\raisebox{-.3\height}{\footnotesize\it\ advanced\ }\rule{1.8cm}{0.2mm}%
     \vspace*{-\parskip}\par
 }{
     \vspace*{-\parskip}\par
-    \hspace*{-1.2cm}\rule{0.3mm}{5mm}\rule{5cm}{0.2mm}%
+    \hspace*{-0.5cm}\rule{0.3mm}{5mm}\rule{1.8cm}{0.2mm}\raisebox{-.3\height}{\footnotesize\it\ advanced\ }\rule{1.8cm}{0.2mm}%
 }
 
 
@@ -810,14 +833,20 @@
 % |
 % ###########################################################################
 % +--------------------------------------------------------------------------
-% | \begin{ccRefDeclaration} ...ccRefConcept, ...ccRefClass, ...ccRefEnum
-% | ...ccRefFunction, ...ccRefVariable, ...ccRefMacro, 
+% | \begin{ccRefDeclaration} ...ccRefConcept, ...ccRefFunctionObjectConcept
+% | ...ccRefClass, ...ccRefFunctionObjectClass, ...ccRefEnum
+% | ...ccRefFunction, ...ccRefConstant, ...ccRefVariable, ...ccRefMacro,
 % | \ccRefName
 % +--------------------------------------------------------------------------
 
 % make the new manual style parameterized.
 \newcommand{\ccNewRefManualStyle}{}   % false -> old style, true -> new style
 \gdef\ccNewRefManualStyle{\ccFalse}
+\newlength{\ccRefTabLift}
+\ccRefTabLift=0mm
+
+\newcommand{\ccRefPageBreak}{} 
+\gdef\ccRefPageBreak{\ccTrue}
 
 \newcommand{\ccRefPageBegin}{}
 \newcommand{\ccRefPageEnd}{}
@@ -845,7 +874,11 @@
 % #2 == item name (actually parsed later by ccRefDeclarationX)
 \catcode`@=11
 \newenvironment{ccRefDeclaration}[1]{%
-                   \ifnum\ccNewRefManualStyle=\ccTrue \clearpage \fi
+                   \ifnum\ccRefPageBreak=\ccTrue
+                     \ifnum\ccNewRefManualStyle=\ccTrue 
+                        \clearpage \thispagestyle{plain}
+                     \fi
+                   \fi
                    \gdef\ccRefCategory{#1}%
                    \gdef\ccPureRefScope{}%
                    \gdef\ccRefScope{}%
@@ -856,7 +889,9 @@
                       \ccIndexRefDeclarationEnd%
                    \fi%
                    \ccRefPageEnd
+                   \ifnum\ccRefPageBreak=\ccTrue
                    \ifnum\ccNewRefManualStyle=\ccTrue \clearpage \fi
+                   \fi
                    \gdef\ccRefCategory{}%
                    \gdef\ccPureRefName{}%
                    \gdef\ccPureRefScope{}%
@@ -873,15 +908,16 @@
 \gdef\ccRefDeclarationX #1{%
                    \endgroup
                    \gdef\ccPureRefName{#1}%
-% ??? currently this has no effect since \ccRefName is not used and all
-% names (in the .ps manual) are displayed in the default font
                    \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
+                      \renewcommand{\ccRefName}{{{
+                        \ccPrintUnderscoreSeparatedTokens #1\ccEnd\ccEndFont}}}%
+                   \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
                       \renewcommand{\ccRefName}{{{
                         \ccPrintUnderscoreSeparatedTokens #1\ccEnd\ccEndFont}}}%
                    \else
                       \renewcommand{\ccRefName}{{{\ccFont 
                         \ccPrintTokens #1\ccEnd\ccEndFont}}}%
-                   \fi
+                   \fi\fi
                    \ccRefPageBegin
                    \ccRefSection{\ccRefCategory}{#1}%
                    \label{ccRef_\ccRefPureGlobalScope\ccPureRefScope #1}%
@@ -909,29 +945,51 @@
 \newcommand{\ccRefSection}{}
 \gdef\ccRefSection #1{\begingroup\ccCatcode\ccRefSectionX{#1}}
 \gdef\ccRefSectionX #1#2{\endgroup\section*{%
-    \ifnum\ccNewRefManualStyle=\ccTrue \ccDrawRefTabs{#1}{#2}\\ \else #1 \fi
+    \ifnum\ccRefPageBreak=\ccTrue
+    \ifnum\ccNewRefManualStyle=\ccTrue 
+       \ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat
+          \ccDrawRefTabs{FunctionObjectConcept}{#2}\\ 
+       \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectClassCat
+          \ccDrawRefTabs{FunctionObjectClass}{#2}\\ 
+       \else
+          \ccDrawRefTabs{#1}{#2}\\ 
+       \fi\fi
+    \else #1 \fi
+    \fi
     \expandafter\ccPrintTokens\ccRefPureGlobalScope\ccEnd%
     % for concepts, the only "special" character allowed is the underscore
     \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
        {\expandafter\ccPrintUnderscoreSeparatedTokens\ccPureRefScope #2\ccEnd}%
+    \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+       {\expandafter\ccPrintUnderscoreSeparatedTokens\ccPureRefScope #2\ccEnd}%
     \else
        {\expandafter\ccPrintTokens\ccPureRefScope #2\ccEnd}%
-    \fi}%
+    \fi\fi}%
     \ifnum\ccNewRefManualStyle=\ccTrue
     \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
-        \markright{\ccRefCategory : \ \protect\ccRefScope
+        \markboth{\ccRefCategory : \ \protect\ccRefScope
+                   \protect\ccRefName}%
+                 {\ccRefCategory : \ \protect\ccRefScope
+                   \protect\ccRefName}%
+    \else\ifnum\ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+        \markboth{\ccRefCategory : \ \protect\ccRefScope
+                   \protect\ccRefName}%
+                 {\ccRefCategory : \ \protect\ccRefScope
                    \protect\ccRefName}%
     \else
-        \markright{\ccRefCategory : \ \protect\ccGlobalScope\protect\ccRefScope
+        \markboth{\ccRefCategory : \ \protect\ccGlobalScope\protect\ccRefScope
                    \protect\ccRefName}%
-    \fi
+                 {\ccRefCategory : \ \protect\ccGlobalScope\protect\ccRefScope
+                   \protect\ccRefName}%
+    \fi\fi
     \fi
 }
 
 %% #1 == ccCategory
 %% #2 == ccRefName
 \newcommand{\ccDrawRefTabs}[2]{%
-    \marginpar{~\\\mbox{\includegraphics{eps_tabs/cc_#1.eps}}}%
+    \marginpar{~\\\raisebox{\ccRefTabLift}[48mm]{%
+        \includegraphics{eps_tabs/cc_#1.eps}}}%
 }
 
 \newenvironment{ccRefConcept}{%
@@ -962,11 +1020,32 @@
                    \ccCurrentIndexCat=\ccIndexFunctionCat%
                    \end{ccRefDeclaration}}
 
+\newenvironment{ccRefFunctionObjectConcept}{%
+                   \ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+                   \gdef\ccRefPureGlobalScope{}%
+                   \begin{ccRefDeclaration}{Function Object Concept}}{%
+                   \ccCurrentIndexCat=\ccIndexFunctionObjectConceptCat%
+                   \end{ccRefDeclaration}}
+
+\newenvironment{ccRefFunctionObjectClass}{%
+                   \ccCurrentIndexCat=\ccIndexFunctionObjectClassCat%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
+                   \begin{ccRefDeclaration}{Function Object Class}}{%
+                   \ccCurrentIndexCat=\ccIndexFunctionObjectClassCat%
+                   \end{ccRefDeclaration}}
+
 \newenvironment{ccRefVariable}{%
                    \ccCurrentIndexCat=\ccIndexVariableCat%
                    \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
                    \begin{ccRefDeclaration}{Variable}}{%
                    \ccCurrentIndexCat=\ccIndexVariableCat%
+                   \end{ccRefDeclaration}}
+
+\newenvironment{ccRefConstant}{%
+                   \ccCurrentIndexCat=\ccIndexConstantCat%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
+                   \begin{ccRefDeclaration}{Constant}}{%
+                   \ccCurrentIndexCat=\ccIndexConstantCat%
                    \end{ccRefDeclaration}}
 
 \newenvironment{ccRefMacro}{%
@@ -984,6 +1063,10 @@
 
 \newcommand{\ccRefIdfierPage}{\begingroup\ccCatcode\ccRefIdfierPageX}
 \def\ccRefIdfierPageX #1{\endgroup\ccc{#1}\hfill \ccRefPage{#1}}
+
+\newcommand{\ccRefConceptPage}{\begingroup\ccCatcode\ccRefConceptPageX}
+\def\ccRefConceptPageX #1{\endgroup%
+\ccPrintUnderscoreSeparatedTokens #1\ccEnd\ccEndFont \hfill \ccRefPage{#1}}
 
 % ___________________________________________________________________________
 % ###########################################################################

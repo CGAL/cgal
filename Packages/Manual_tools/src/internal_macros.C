@@ -61,7 +61,11 @@ const string& find_sort_key( string txt) {
 	txt[0] = tolower( txt[0]);
     if ( txt == "concept")
 	return sort_key_concept;
+    if ( txt == "functionObjectConcept")
+	return sort_key_concept;
     if ( txt == "class")
+	return sort_key_class;
+    if ( txt == "functionObjectClass")
 	return sort_key_class;
     if ( txt == "struct")
 	return sort_key_struct;
@@ -76,6 +80,8 @@ const string& find_sort_key( string txt) {
     if ( txt == "macro")
 	return sort_key_macro;
     if ( txt == "variable")
+	return sort_key_variable;
+    if ( txt == "constant")
 	return sort_key_variable;
     if ( txt == "function")
 	return sort_key_function;

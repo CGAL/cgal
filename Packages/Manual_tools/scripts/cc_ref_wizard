@@ -59,7 +59,7 @@ if ( ! $?REF_WIZARD_PACKAGE ) set REF_WIZARD_PACKAGE = "Package"
 set prog_name = $0
 set prog_name = $prog_name:t
 
-set categories = "Class Concept Enum Function Macro Variable"
+set categories = "Class Concept Constant Enum Function FunctionObjectClass FunctionObjectConcept Macro Variable"
 
 set tmp_path = "/usr/tmp"
 if ( ! -d ${tmp_path}) set tmp_path = "."
