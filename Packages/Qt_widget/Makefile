@@ -19,8 +19,15 @@ DEMO_DIRS= \
 ./demo/Qt_widget/Partition_2 \
 ./demo/Qt_widget \
 ./demo/Qt_widget/Triangulation_2 \
-./demo/Qt_widget/Convex_Hull_2
-
+./demo/Qt_widget/Convex_Hull_2 \
+./demo/Qt_widget/basic/tutorial1 \
+./demo/Qt_widget/basic/tutorial2 \
+./demo/Qt_widget/basic/tutorial3 \
+./demo/Qt_widget/basic/tutorial4 \
+./demo/Qt_widget/basic/tutorial5 \
+./demo/Qt_widget/basic/tutorial6 \
+./demo/Qt_widget/basic/tutorial7 \
+./demo/Qt_widget/basic/tutorial8
 
 # make the lib and all demos
 all:
