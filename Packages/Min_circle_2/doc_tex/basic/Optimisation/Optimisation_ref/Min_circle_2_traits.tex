@@ -145,10 +145,9 @@ of \ccc{CGAL_Min_circle_2} is used.
 
 \ccMemberFunction{ void  set( const Point& p,
                               const Point& q);}{
-        sets \ccVar\ to the circle with diameter
-        \ccTexHtml{$\overline{\mbox{\ccc{p}\ccc{q}}}$}{<i>pq</i>}.
-        The algorithm guarantees that \ccc{set} is never called
-        with two equal points.}
+        sets \ccVar\ to the circle with diameter equal to the segment
+	connecting \ccc{p} and \ccc{q}. The algorithm guarantees that
+	\ccc{set} is never called with two equal points.}
 
 \ccMemberFunction{ void  set( const Point& p,
                               const Point& q,
