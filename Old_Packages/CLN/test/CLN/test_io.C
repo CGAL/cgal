@@ -2,7 +2,6 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
-#include <fstream.h>
 #include <cassert>
 
 #ifndef CGAL_USE_CLN
