@@ -492,10 +492,10 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       //cout<<s1<<endl;
       //cout<<s2<<endl;
       
-      assert(std::string(s1) == std::string(s2));
+       CGAL_assertion(std::string(s1) == std::string(s2));
     }
     
-    assert (file1.eof() && file2.eof());
+     CGAL_assertion(file1.eof() && file2.eof());
 
     std::cout<<"Reading and writing file  - O.K"<<std::endl;
   }
