@@ -4,8 +4,8 @@
 Package=Viewer_3
 
 #.PHONY: doc package test submit version rtag
-VERSION=0.3
-WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
+VERSION=0.5
+WWW_base=/u/www-sop/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
@@ -53,7 +53,7 @@ clean:
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
-	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
+	--exclude=CVS --exclude=manual.tex --exclude=Makefile \
 	--exclude=TODO \
 	--exclude=.pure --exclude=*.pv \
 	--exclude=.nfs*\
