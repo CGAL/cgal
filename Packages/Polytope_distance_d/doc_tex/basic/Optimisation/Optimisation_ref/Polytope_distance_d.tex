@@ -28,9 +28,8 @@ An object of the class \ccRefName\ represents the (squared) distance
 between two convex polytopes, given as the convex hulls of two finite point
 sets in $d$-dimensional Euclidean space $\E_d$. For point sets $P$ and $Q$
 we denote by $pd(P,Q)$ the distance between the convex hulls of $P$ and
-$Q$.  Note that $pd(P,Q)$ can be degenerate, i.e.~$pd(P,Q)=0$ if the convex
-hulls of $P$ and $Q$ intersect, and $pd(P,Q)=\infty$ if $P$ or $Q$ is
-empty.
+$Q$.  Note that $pd(P,Q)$ can be degenerate, i.e.~$pd(P,Q)=\infty$ if $P$
+or $Q$ is empty.
 
 Two inclusion-minimal subsets $S_P$ of $P$ and $S_Q$ of $Q$ with
 $pd(S_P,S_Q)=pd(P,Q)$ are called \emph{pair of support sets}, the points in
@@ -192,18 +191,21 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 \ccMemberFunction{ Point  realizing_point_p( ) const;}{
         returns the realizing point of $P$.
-        \ccPrecond $pd(P,Q)$ is finite and an implicit conversion
-        from \ccc{ET} to \ccc{RT} must be available.}
+        \ccRequire  An implicit conversion from \ccc{ET} to \ccc{RT} is
+        available.
+        \ccPrecond $pd(P,Q)$ is finite.}
 
 \ccMemberFunction{ Point  realizing_point_q( ) const;}{
         returns the realizing point of $Q$.
-        \ccPrecond $pd(P,Q)$ is finite and an implicit conversion
-        from \ccc{ET} to \ccc{RT} must be available.}
+        \ccRequire  An implicit conversion from \ccc{ET} to \ccc{RT} is
+        available.
+        \ccPrecond $pd(P,Q)$ is finite.}
 
 \ccMemberFunction{ FT  squared_distance( ) const;}{
         returns the squared distance of \ccVar, i.e.~$(pd(P,Q))^2$.
-        \ccPrecond $pd(P,Q)$ is finite and an implicit conversion
-        from \ccc{ET} to \ccc{RT} must be available.}
+        \ccRequire  An implicit conversion from \ccc{ET} to \ccc{RT} is
+        available.
+        \ccPrecond $pd(P,Q)$ is finite.}
 
 \medskip
 \ccGlueBegin
@@ -256,7 +258,7 @@ using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 \ccMemberFunction{ bool  is_degenerate( ) const;}{
         returns \ccc{true}, iff $pd(P,Q)$ is degenerate,
-        i.e.~$pd(P,Q)=0$ or $pd(P,Q)=\infty$.}
+        i.e.~$pd(P,Q)$ is not finite.}
 
 % -----------------------------------------------------------------------------
 \ccModifiers
@@ -384,9 +386,9 @@ An object \ccVar\ is valid, iff
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
-\ccRefIdfierPage{\ccPureGlobalScope Polytope_distance_d_traits_2<R,ET,NT>}\\
-\ccRefIdfierPage{\ccPureGlobalScope Polytope_distance_d_traits_3<R,ET,NT>}\\
-\ccRefIdfierPage{\ccPureGlobalScope Polytope_distance_d_traits_d<R,ET,NT>}\\[1ex]
+\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_2<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_3<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_d<R,ET,NT>}\\[1ex]
 \ccRefIdfierPage{Polytope_distance_d_traits}
 
 % -----------------------------------------------------------------------------

@@ -183,7 +183,7 @@ reconstructing $me(P)$ from a given support set $S$ of $P$.
 By definition, an empty \ccRefName\ has no boundary and no bounded side,
 i.e.\ its unbounded side equals the whole space $\E_2$.
 
-\ccMemberFunction{ \ccPureGlobalScope Bounded_side
+\ccMemberFunction{ CGAL::Bounded_side
                    bounded_side( const Point& p) const;}{
         returns \ccGlobalScope\ccc{ON_BOUNDED_SIDE},
         \ccGlobalScope\ccc{ON_BOUNDARY}, or
@@ -290,7 +290,7 @@ anxious user that the traits class implementation is correct.
 \ccInclude{CGAL/IO/Window_stream.h}
 
 \ccFunction{ CGAL::Window_stream&
-             operator << ( \ccPureGlobalScope Window_stream& ws,
+             operator << ( CGAL::Window_stream& ws,
                            const Min_ellipse_2<Traits>& min_ellipse);}{
         writes \ccVar\ to window stream \ccc{ws}.
         \ccRequire  The window stream output operator is defined for
@@ -299,8 +299,8 @@ anxious user that the traits class implementation is correct.
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
-\ccRefIdfierPage{\ccPureGlobalScope Min_circle_2<Traits>}\\[1ex]
-\ccRefIdfierPage{\ccPureGlobalScope Min_ellipse_2_traits_2<R>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_ellipse_2_traits_2<R>}\\[1ex]
 \ccRefIdfierPage{Min_ellipse_2_traits}
 
 % -----------------------------------------------------------------------------
