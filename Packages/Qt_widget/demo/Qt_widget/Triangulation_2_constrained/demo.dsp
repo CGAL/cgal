@@ -112,29 +112,26 @@ SOURCE=.\Qt_layer_show_constraineds.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_widget_history.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Qt_widget_toolbar.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_toolbar.h
+
+"Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
 # Begin Custom Build
 InputPath=.\Qt_widget_toolbar.h
 
-BuildCmds= \
-	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h" \
-	$(QTDIR)\bin\moc.exe -o triangulation_2_constrained.moc triangulation_2_constrained.C \
-	
-
 "Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
 
-"triangulation_2_constrained.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
 # End Custom Build
 
 !ENDIF 
@@ -145,6 +142,14 @@ BuildCmds= \
 SOURCE=.\Qt_widget_toolbar_layers.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_toolbar_layers.h
+
+"Qt_widget_toolbar_layers.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar_layers.moc" "Qt_widget_toolbar_layers.h"
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
@@ -174,6 +179,14 @@ InputPath=.\triangulation_2_constrained.h
 # End Custom Build
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\triangulation_2_constrained.h
+
+"triangulation_2_constrained.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o triangulation_2_constrained.moc triangulation_2_constrained.C
+
+# End Custom Build
 
 !ENDIF 
 
