@@ -12,13 +12,13 @@
 #include <CGAL/IO/Arr_iostream.h>
 
 
-typedef CGAL::Quotient<int>                  NT;
-typedef CGAL::Cartesian<NT>                  R;
-typedef CGAL::Arr_polyline_traits<R>         Traits;
+typedef CGAL::Quotient<int>                            NT;
+typedef CGAL::Cartesian<NT>                            R;
+typedef CGAL::Arr_polyline_traits<R>                   Traits;
 
-typedef Traits::Point                                 Point;
-typedef Traits::X_curve                               X_curve;
-typedef Traits::Curve                                 Curve;
+typedef Traits::Point                                  Point;
+typedef Traits::X_curve                                X_curve;
+typedef Traits::Curve                                  Curve;
 
 typedef CGAL::Arr_2_default_dcel<Traits>               Dcel;
 typedef CGAL::Arr_base_node<Curve>                     Base_node;

@@ -19,9 +19,9 @@ typedef Traits::Point                                 Point;
 typedef Traits::X_curve                               X_curve;
 typedef Traits::Curve                                 Curve;
 
-typedef CGAL::Arr_base_node<Curve>                     Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits>               Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >    Arr_2;
+typedef CGAL::Arr_base_node<Curve>                    Base_node;
+typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >   Arr_2;
 
 using namespace std;
 
