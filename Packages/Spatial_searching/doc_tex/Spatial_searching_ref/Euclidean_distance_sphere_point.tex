@@ -1,0 +1,84 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Euclidean_distance_sphere_point.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSEuclideandistancespherepointRev}{$Revision$}
+\RCSdefDate{\RCSEuclideandistancespherepointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Euclidean_distance_sphere_point<QueryItem,Point>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides an implementation of \\
+the GeneralDistance concept
+for the Euclidean distance ($l_2$ metric) between a $d$-dimensional sphere and a point and 
+the Euclidean distance between a $d$-dimensional sphere
+and a $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
+
+\ccInclude{CGAL/Euclidean_distance_sphere_point.h}
+
+\ccParameters
+
+Expects for the parameter \ccc{QueryItem}
+an implementation of $d$-dimensional spheres
+for example \ccc{CGAL::sphere_d<R>}.
+Expects for the parameter \ccc{Point} an implementation
+of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}.
+
+\ccIsModel
+
+GeneralDistance
+
+\ccTypes
+
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{d}  %% choose variable name
+
+
+\ccConstructor{L2_distance_sphere_point(int d);}
+{Constructor implementing Euclidean distance for
+$d$-dimensional spheres.}
+
+\ccOperations
+
+\ccMethod{NT distance(QueryItem q, Point p);}{Returns the distance between \ccc{q} and \ccc{p}.}
+
+\ccMethod{NT min_distance_to_queryitem(QueryItem q, Kd_tree_rectangle<NT> r;);}
+{Returns the minimal distance between a point from the sphere \ccc{q} and a point from
+\ccc{r}}
+
+\ccMethod{NT max_distance_to_queryitem(QueryItem q, Kd_tree_rectangle<NT> r;);}
+{Returns the maximal distance between the sphere \ccc{q} and
+a point from \ccc{r} furthest to \ccc{q}.}
+
+\ccMethod{NT transformed_distance(NT d);} {Returns $d^2$.}
+
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $\sqrt d$.}
+
+
+\ccSeeAlso
+
+GeneralDistance.
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: FuzzyQueryItem.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSFuzzyQueryItemRev}{$Revision$}
+\RCSdefDate{\RCSFuzzyQueryItemDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{FuzzyQueryItem}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ provides a model for fuzzy $d$-dimensional spatial objects.
+
+\ccParameters
+
+\ccc{Point} represents a $d$-dimensional point.
+
+\ccTypes
+
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.} 
+
+\ccCreationVariable{q}  %% choose variable name
+
+
+
+\ccOperations
+
+\ccMethod{bool contains(const Point p); const}{test whether $q$ contains $p$.}
+
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle); const}
+{test whether the inner approximation of the spatial object intersects a rectangle
+associated with a node of a tree.}
+
+\ccMethod{bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle); const}
+{test whether the outer approximation of the spatial object encloses a rectangle
+associated with a node of a tree.}
+
+
+\ccHasModels
+
+\ccc{CGAL::Fuzzy_sphere_d<Point>},
+\ccc{CGAL::Fuzzy_iso_box_d<Point,Iso_box_d>}.
+
+\ccSeeAlso
+
+\ccc{CGAL::Fuzzy_sphere_d<Point>},
+\ccc{CGAL::Fuzzy_iso_box_d<Point,Iso_box_d>}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

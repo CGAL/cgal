@@ -11,59 +11,66 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{General_standard_search<Traits, QueryItem, Distance>}  %% add template arg's if necessary
+\begin{ccRefClass}{General_standard_search<TreeTraits, Distance, QueryItem, Tree>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The class \ccRefName\ implements approximate $k$-nearest and $k$-furthest neighbour searching
-using standard search on a $k$-$d$ tree using a general distance 
-class. It is not required that he $k$-$d$ tree is built with extended nodes.
+The class \ccRefName\ implements approximate $k$-nearest and $k$-furthest neighbor searching
+using standard search on a tree using a general distance 
+class. It is not required that the tree is built with extended nodes.
 
 \ccInclude{CGAL/General_standard_search.h}
 
 \ccParameters
 
-Expects for the parameter \ccc{Traits} an implementation of the concept TreeTraits.
+Expects for the parameter \ccc{TreeTraits} an implementation of the concept TreeTraits,
+for example \ccc{CGAL::Kd_tree_traits<Point,Splitter>}.
+Expects for the parameter \ccc{Distance} an implementation of the
+concept GeneralDistance. \ccc{Distance} has default argument 
+\ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
 Expects for the parameter \ccc{QueryItem}  an implementation of
 of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}
 or an implementation of a spatial object, for
 example \ccc{CGAL::Iso_rectangle_d<R>} implementing iso-rectangles.
-Expects for the parameter \ccc{Distance} an implementation of the
-concept GeneralDistance.
+\ccc{QueryItem} has default argement \ccc{TreeTraits::Point}.
+Expects for the parameter \ccc{Tree} an implementation of the concept Tree.
+\ccc{Tree} has default argument \ccc{CGAL::Kd_tree<TreeTraits>}.
 
 \ccTypes
 
-\ccTypedef{Traits::Item Item;}{Item type.}
-\ccTypedef{Traits::NT NT;}{Number type.}
-\ccTypedef{std::pair<Item*,NT> Item_with_distance;}{Pair of item and distance} 
-\ccTypedef{Kd_tree<Traits> Tree;}{$k$-$d$ tree storing the items.}
+\ccTypedef{TreeTraits::Point Point;}{Point type.}
+\ccTypedef{TreeTraits::NT NT;}{Number type.}
+\ccTypedef{std::pair<Point*,NT> Point_with_distance;}{Pair of point and distance} 
 
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
-\ccConstructor{General_standard_search(Tree& tree, QueryItem& q, Distance& d, int k, NT Eps,
+\ccConstructor{General_standard_search(Tree tree, QueryItem q, Distance d=Distance(), int k=1, NT Eps=NT(0.0),
 bool Search_nearest=true);}
-{Constructor for searching approximately $k$ neighbours of the query item \ccc{q} 
-in the items stored in the $k$-$d$ tree \ccc{tree} using a general distance
-traits class.} 
+{Constructor for searching approximately $k$ neighbors of the query item \ccc{q} 
+in the points stored in \ccc{tree} using 
+distance
+traits class $d$ and approximation factor \ccc{Eps}.}
 
-\ccHeading{Member Functions}
+\ccOperations
 
 \ccMethod{template <class OutputIterator>
-OutputIterator  the_k_neighbours(OutputIterator res);}
-{Returns a sequence of $k$ elements of type \ccc{Item_with_distance}}. 
+OutputIterator  the_k_neighbors(OutputIterator res);}
+{Returns a sequence of $k$ elements of type \ccc{Point_with_distance}}. 
 
+\begin{ccAdvanced}
 \ccMethod{std::ostream& statistics(std::ostream& s);}
 {
 Inserts statistics of the search process into the output stream \ccc{s}.
 }
+\end{ccAdvanced}
 
 \ccSeeAlso
 
-\ccc{Orthogonal_standard_search}.
+\ccc{CGAL::Orthogonal_standard_search<TreeTraits,Distance,Tree>}.
 
 \end{ccRefClass}
 

@@ -1,0 +1,87 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Tree.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSTreeRev}{$Revision$}
+\RCSdefDate{\RCSTreeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Tree}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for a tree supporting
+both neighbor searching and approximate range searching. 
+
+\ccParameters
+
+\ccc{TreeTraits} represents a tree traits class.
+
+\ccTypes
+
+\ccNestedType{Node;}{Node type.}
+\ccNestedType{Node_handle;}{Node handle.}
+\ccNestedType{Point_iterator;}{Iterator over points.}
+\ccNestedType{input_iterator;}{Input iterator over points.}
+
+\ccCreation
+\ccCreationVariable{tree}  %% choose variable name
+
+\ccConstructor{Tree(input_iterator first, input_iterator beyond, TreeTraits t);}
+{
+Constructs a tree on the elements from the sequence 
+\ccc{first, beyond}. 
+}
+
+\ccOperations
+
+\ccMethod{
+template <class OutputIterator, class FuzzyQueryItem>
+OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
+{Reports the points that are approximately contained by \ccc{q}.} 
+
+\ccMethod{
+OutputIterator report_all_points(OutputIterator it);}
+{Reports all the points contained by the tree.} 
+
+\ccMethod{Traits traits();}
+{
+Returns an instance of the traits class.
+}
+\ccMethod{Node_handle root();}
+{
+Returns a handle to the root node of the tree.
+}
+
+\ccMethod{Kd_tree_rectangle<NT>* bounding_box();}{returns a pointer to the bounding box 
+of the root node of the tree.}
+
+
+\ccMethod{int item_number();}
+{
+Returns the number of items that are stored in the tree.
+}
+
+\ccHasModels
+
+\ccc{CGAL::Kd_tree<TreeTraits>}.
+
+\ccSeeAlso
+
+\ccc{CGAL::Kd_tree<TreeTraits>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

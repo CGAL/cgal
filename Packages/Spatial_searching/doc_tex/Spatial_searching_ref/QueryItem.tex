@@ -11,28 +11,21 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{QueryItem<R>}
+\begin{ccRefConcept}{QueryItem}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
   
-The concept \ccClassTemplateName\ defines the requirements for a 
+The concept \ccClassTemplateName\ represents a 
 $d$-dimensional spatial object.
-
-\ccTypes
-
-\ccTypedef{Item::R::FT NT;}{Number type.}
-
-\ccCreation
-\ccCreationVariable{q}  %% choose variable name
-
-\ccConstructor{QueryItem();}{default constructor.}
 
 \ccHasModels
 
-\ccc{Point_2, Point_3, Point_d, Iso_rectangle_2, Iso_cuboid_3, Iso_rectange_d, Circle_2,Sphere_3,Sphere_d}.
+\ccc{CGAL::Point_2<R>, CGAL::Point_3<R>, CGAL::Point_d<R>, \\
+CGAL::Iso_rectangle_2<R>, CGAL::Iso_cuboid_3<R>, CGAL::Iso_box_d<R>, \\ 
+CGAL::Circle_2<R>, CGAL::Sphere_3<R>, CGAL::Sphere_d<R>}.
 
 \ccSeeAlso
 

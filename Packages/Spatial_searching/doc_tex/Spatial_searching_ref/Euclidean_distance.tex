@@ -1,0 +1,77 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Euclidean_distance.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSEuclideandistanceRev}{$Revision$}
+\RCSdefDate{\RCSEuclideandistanceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Euclidean_distance<Point>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides an implementation of the concept OrthogonalDistance, with the
+Euclidean distance ($l_2$ metric).
+To optimize distance computations squared distances are used.
+
+
+\ccInclude{CGAL/Euclidean_distance.h}
+
+\ccParameters
+
+Expects for the parameter
+\ccc{Point} an implementation
+of a $d$-dimensional point
+for example \ccc{CGAL::Point_d<R>}.
+
+\ccIsModel
+
+OrthogonalDistance
+
+\ccTypes
+
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{d}  %% choose variable name
+
+\ccConstructor{Euclidean_distance(int d);}{Constructor for using the Euclidean distance for $d$-dimensional points.}
+
+\ccOperations
+ 
+\ccMethod{NT distance(Point q, Point p);}{Returns the squared Euclidean distance between \ccc{q} and \ccc{p}.}
+
+\ccMethod{NT min_distance_to_queryitem(Point q, Kd_tree_rectangle<NT> r;);}
+{Returns the squared Euclidean distance between \ccc{q} and
+the point on the boundary of \ccc{r} closest to \ccc{q}.}
+
+\ccMethod{NT max_distance_to_queryitem(Point q, Kd_tree_rectangle<NT> r;);}
+{Returns the squared Euclidean distance, where $d$ denotes the distance between \ccc{q} and
+the point on the boundary of \ccc{r} farthest to \ccc{q}.}
+
+\ccMethod{NT new_distance(NT dist, NT old_off, NT new_off, int cutting_dimension);} {Updates the squared \ccc{dist} incrementally
+and returns the updated squared distance.}
+
+\ccMethod{NT transformed_distance(NT d);} {Returns $d^2$.}
+
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $\sqrt{d}$.}
+
+\ccSeeAlso
+
+OrthogonalDistance.
+\ccc{CGAL::Weighted_Minkowski_distance<Point>}.
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

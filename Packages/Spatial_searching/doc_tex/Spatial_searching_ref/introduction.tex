@@ -1,82 +1,84 @@
-\chapter{Approximate Spatial Searching}
+\chapter{Spatial Searching}
 
 \section{Introduction}
 
-
-The {\bf approximate spatial searching} package implements
+The {\bf spatial searching} package implements
 exact and approximate distance browsing
 by providing implementations of algorithms supporting
 
 \begin{itemize} 
 
 \item
-both nearest and furthest neighbour searching
+both nearest and furthest neighbor searching
 
 \item
 both exact and approximate searching
 
-\item 
-(approximate) $k$-nearest and $k$-furthest neighbour searching
+\item
+(approximate) range searching
 
 \item 
-(approximate) incremental nearest and incremental furthest neighbour searching
+(approximate) $k$-nearest and $k$-furthest neighbor searching
+
+\item 
+(approximate) incremental nearest and incremental furthest neighbor searching
 
 \item
 query items representing points and spatial objects.
 
 \end{itemize}
 
-In these searching problems a set of data points in $d$-dimensional
+In these searching problems a set $P$ of data points in $d$-dimensional
 space is given.
-The approximate spatial searching package 
-consists of the following concepts, function object concepts, classes, function object classes
-and enumerations that are described in the reference pages.
+
+The spatial searching package 
+consists of the following concepts and classes
+that are described in the reference pages.
 
 {\bf Concepts}
 
-GeneralDistance \ccOpenAngle QueryItem, Item\ccCloseAngle \\
-Item \ccOpenAngle R\ccCloseAngle \\ 
-OrthogonalDistance \ccOpenAngle QueryItem, Item\ccCloseAngle \\
-QueryItem \ccOpenAngle R\ccCloseAngle \\
-Separator \ccOpenAngle NT\ccCloseAngle \\
-TreeTraits \ccOpenAngle Separator, Item\ccCloseAngle 
-
-{\bf Function object concepts}
-
-SplitRule \ccOpenAngle Item\ccCloseAngle
+Container \\
+GeneralDistance \\ 
+FuzzyQueryItem \\
+IsoBox\_d \\
+OrthogonalDistance \\
+Point \\
+QueryItem \\
+Separator \\
+Splitter \\
+Traits \\
+TreeTraits
 
 {\bf Classes}
 
-\ccc{General_priority_search<Traits,QueryItem,Distance>} \\
-\ccc{General_priority_search<Traits,QueryItem,Distance>::iterator} \\
-\ccc{General_standard_search<Traits,QueryItem,Distance>} \\
-\ccc{Iso_rectangle_d<R>} \\
-\ccc{Kd_tree<Traits>} \\
-\ccc{Kd_tree_node<Traits>} \\
+\ccc{Euclidean_distance<Point>} \\
+\ccc{Euclidean_distance_sphere_point<QueryItem,Point>} \\
+\ccc{Fair<Point,Container,Separator>} \\
+\ccc{Fuzzy_iso_box<Point,IsoBox_d>} \\
+\ccc{Fuzzy_sphere_d<Point>} \\
+\ccc{General_priority_search<TreeTraits,Distance,QueryItem,Tree>} \\
+\ccc{General_standard_search<TreeTraits,Distance,QueryItem,Tree>} \\
+\ccc{Kd_tree<TreeTraits>} \\
+\ccc{Kd_tree_node<TreeTraits>} \\
 \ccc{Kd_tree_rectangle<NT>} \\
-\ccc{Kd_tree_traits_point<Separator,Item>} \\
-\ccc{L1_distance_rectangle_point<QueryItem,Item>} \\
-\ccc{L2_distance_sphere_point<QueryItem,Item>} \\
-\ccc{Point_container<Item>} \\
+\ccc{Kd_tree_traits_point<Point,Splitter>} \\
+\ccc{Manhattan_distance_rectangle_point<QueryItem,Point>} \\
+\ccc{Median_of_rectangle<Point,Container,Separator>} \\
+\ccc{Median_of_max_spread<Point,Container,Separator>} \\
+\ccc{Midpoint_of_rectangle<Point,Container,Separator>} \\
+\ccc{Midpoint_of_max_spread<Point,Container,Separator>} \\
+\ccc{Orthogonal_priority_search<TreeTraits,Distance,Tree>} \\
+\ccc{Orthogonal_standard_search<TreeTraits,Distance,Tree>} \\
 \ccc{Plane_separator<NT>} \\
-\ccc{Orthogonal_priority_search<Traits,QueryItem,Distance>} \\
-\ccc{Orthogonal_priority_search<Traits,QueryItem,Distance>::iterator} \\
-\ccc{Orthogonal_standard_search<Traits,QueryItem,Distance>} \\
-\ccc{Weighted_Minkowski_distance<QueryItem,Item>} 
+\ccc{Point_container<Point>} \\
+\ccc{Sliding_fair<Point,Container,Separator>} \\
+\ccc{Sliding_midpoint<Point,Container,Separator>} \\
+\ccc{Weighted_Minkowski_distance<Point>} 
 
-{\bf Function object classes}
 
-\ccc{Fair<Item>} \\
-\ccc{Median_of_rectangle<Item>} \\
-\ccc{Median_of_max_spread<Item>} \\
-\ccc{Midpoint_of_rectangle<Item>} \\
-\ccc{Midpoint_of_max_spread<Item>} \\
-\ccc{Sliding_fair<Item>} \\
-\ccc{Sliding_midpoint<Item>} 
+ 
 
-{\bf Enumerations}
 
-\ccc{Splitting_rules::Split_rule}
 
 
 

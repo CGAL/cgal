@@ -27,15 +27,10 @@ E.g. constructors and methods to compute bounding boxes of point sets are provid
 \ccCreation
 \ccCreationVariable{r}  %% choose variable name
 
-\ccConstructor{Kd_tree_rectangle();}{default constructor.}
-
 
 \ccConstructor{Kd_tree_rectangle(const int d);}
 {Constructs a $d$-dimensional rectangle \ccc{r} with lower bound and upper bound set to zero 
 in each dimension.}
-
-\ccConstructor{Kd_tree_rectangle(const Kd_tree_rectangle<NT>& rect);}
-{Copy constructor.}
  
 \ccConstructor{
 template <class PointIter>
@@ -43,7 +38,7 @@ Kd_tree_rectangle(const int d, PointIter begin, PointIter end);}
 {Constructs the bounding box of the points in the range [\ccc{begin,end}).}
 
 
-\ccHeading{Member Functions}
+\ccOperations
 
 \ccMethod{NT min_coord(int i);}
 {Returns the lower bound of the rectangle in dimension \ccc{i}.}
@@ -51,7 +46,7 @@ Kd_tree_rectangle(const int d, PointIter begin, PointIter end);}
 \ccMethod{NT max_coord(int i);}
 {Returns the upper bound of the rectangle in dimension \ccc{i}.}
 
-\begin{ccAdvanced}
+
 
 \ccMethod{void set_upper_bound(int i, const NT& x);}
 {Sets upper bound in dimension \ccc{i} to \ccc{x}.}
@@ -70,9 +65,6 @@ void update_from_point_pointers(PointPointerIter begin, PointPointerIter end, bo
 \ccMethod{NT max_span_coord();}
 {Returns the smallest coordinate for which the rectangle has its maximal span.}
 
-\ccMethod{std::ostream& print(std::ostream& s);}
-{Prints the rectangle to the output stream \ccc{s} and returns \ccc{s}.}
-
 \ccMethod{int dimension();}
 {Returns the dimension of the rectangle.}
 
@@ -90,13 +82,8 @@ std::ostream& operator<<(std::ostream& s, Kd_tree_rectangle<NT>& b);}
 {Prints the rectangle \ccc{b} to the output stream \ccc{s} and returns \ccc{s}.}
 \ccGlueEnd
 
-% \ccGlueBegin
-% \ccGlobalFunction{ template <class NT, class Point>
-% bool belongs(const Point& p, const Kd_tree_rectangle<NT>& r);} \
-% {Returns true if and only if \ccc{p} is in \ccc{r} or is on the boundary of \ccc{r}.}
-% \ccGlueEnd
 
-\end{ccAdvanced}
+
 
 \end{ccRefClass}
 

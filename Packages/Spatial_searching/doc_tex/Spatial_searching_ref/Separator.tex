@@ -11,12 +11,11 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Separator<NT>}
+\begin{ccRefConcept}{Separator}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
-\begin{ccAdvanced}
 
 \ccDefinition
   
@@ -25,26 +24,44 @@ A separator is a ($d$-1)-dimensional subspace that separates a $d$-dimensional s
 One part of space is said to be on the negative side of the separator and the other part of space is 
 said to be on the positive side of the separator.
 
+\ccTypes
+
+\ccNestedType{NT;}{Number type.}
+
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
 \ccConstructor{Separator();}{Default constructor.}
 
-{\bf Member functions}
-\ccMethod{template <class Item>
-bool on_negative_side(Item& i);}
-{Returns true if and only if the item value on the negative side of the separator.}
+\ccOperations
+
+\ccMethod{
+void set_cutting_dimension(int d);}
+{Sets the cutting dimension to \ccc{d}. }
+
+\ccMethod{
+void set_cutting_value(NT v);}
+{Sets the cutting value to \ccc{v}. }
+
+\ccMethod{int cutting_dimension();}{Returns the number of the cutting dimension.}
+
+\ccMethod{NT cutting_value();}{Returns the cutting value.}
+
+
+
+\ccMethod{template <class Point>
+bool has_on_negative_side(const Point p);}
+{Returns true if and only if the point \ccc{p} is on the negative side of the separator.}
 
 
 \ccHasModels
 
-\ccc{Plane_separator}.
+\ccc{CGAL::Plane_separator<NT>}.
 
 \ccSeeAlso
 
-\ccc{Plane_separator}.
+\ccc{CGAL::Plane_separator<NT>}.
 
-\end{ccAdvanced}
 
 \end{ccRefConcept}
 

@@ -1,0 +1,75 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Fuzzy_iso_box_d.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSFuzzyisoboxdRev}{$Revision$}
+\RCSdefDate{\RCSFuzzyisoboxdDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Fuzzy_iso_box_d<Point,IsoBox_d>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements fuzzy $d$-dimensional iso boxes.
+A fuzzy iso box with fuziness value $\epsilon$ has
+as outer approximation a box  dilated with a $d$-dim square of size $\epsilon$ and
+as inner approximation a box eroded by a $d$-dim square of size $\epsilon$. 
+
+\ccInclude{CGAL/Fuzzy_iso_box_d.h}
+
+\ccParameters
+Expects for the parameter \ccc{Point} an implementation of a $d$-dimensional point,\\
+for example \ccc{CGAL::Point_d<R>}.
+Expects for the parameter \ccc{IsoBox_d} an implementation of a $d$-dimensional iso box,
+for example \ccc{CGAL::Iso_rectangle_2<R>}, \ccc{CGAL::Iso_cuboid_3<R>}, or
+\ccc{CGAL::Iso_box_d<R>}.
+ 
+\ccIsModel
+
+FuzzyQueryItem
+
+\ccTypes
+
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{b}  %% choose variable name
+
+
+\ccConstructor{Fuzzy_iso_box_d(Point p,Point q, NT epsilon=NT(0));}{Constructs a fuzzy iso box
+specified by the minimal iso box containing $p$ and $q$ and fuzziness value \ccc{epsilon}.}
+
+\ccOperations
+
+\ccMethod{bool contains(Point p);}{test whether $b$ contains $p$.}
+
+\ccMethod{bool inner_range_intersects(Kd_tree_rectangle<NT>* rectangle);}
+{test whether the inner box intersects a rectangle
+associated with a node of a tree.}
+
+\ccMethod{bool outer_range_is_contained_by(Kd_tree_rectangle<NT>* rectangle);}
+{test whether the outer box encloses a rectangle
+associated with a node of a tree.}
+
+\ccSeeAlso
+
+FuzzyQueryItem.
+
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Splitter.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSSplitterRev}{$Revision$}
+\RCSdefDate{\RCSSplitterDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Splitter}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for a function object class implementing a splitting rule.
+
+\ccTypes
+
+\ccNestedType{NT;}{Number type.}
+\ccNestedType{Container;}{Point container.}
+\ccNestedType{Separator;}{Separator.} 
+
+\ccCreationVariable{s}  %% choose variable name
+
+
+\ccOperations
+
+\ccMethod{
+void operator()(Separator& s, Container& c0, Container& c1, NT Aspect_ratio=NT(3)););} 
+{Modifies the separator $s$, 
+and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
+using the splitting dimension and the splitting value of the modified separator.
+\ccc{Aspect_ratio} is an optional parameter.
+}
+\ccHasModels
+
+\ccc{CGAL::Fair<Point,Container,Separator>}, \\
+\ccc{CGAL::Median_of_rectangle<Point,Container,Separator>}, \\
+\ccc{CGAL::Median_of_max_spread<Point,Container,Separator>}, \\
+\ccc{CGAL::Midpoint_of_rectangle<Point,Container,Separator>}, \\
+\ccc{CGAL::Midpoint_of_max_spread<Point,Container,Separator>}, \\
+\ccc{CGAL::Sliding_fair<Point,Container,Separator>}, \\
+\ccc{CGAL::Sliding_midpoint<Point,Container,Separator>.}
+
+\ccSeeAlso
+
+Container, Separator.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

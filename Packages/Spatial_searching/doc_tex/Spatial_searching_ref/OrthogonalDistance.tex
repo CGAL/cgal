@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{OrthogonalDistance<QueryItem, Item>}
+\begin{ccRefConcept}{OrthogonalDistance}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -20,50 +20,59 @@
   
 Requirements of an orthogonal distance class supporting incremental distance updates.
 To optimize distance computations transformed distances are used. 
-E.g., for an Euclidian distance the transformed distance is the squared Euclidean distance.
+E.g., for an Euclidean distance the transformed distance is the squared Euclidean distance.
+
 
 \ccRefines
 
 GeneralDistance
 
+
+
 \ccParameters
 
-Expects for the parameter \ccc{QueryItem} as well for the parameter \ccc{Item}
-a $d$-dimensional point, for example \ccc{CGAL::Point_d}.
+$d$-dimensional query items as well as $d$-dimensional points should be represented 
+by a type $Point$. 
+
 
 \ccTypes
+
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
 
-\ccConstructor{OrthogonalDistance();}{Default constructor.}
+\ccConstructor{OrthogonalDistance(int d);}{Constructor implementing distance for $d$-dimensional points.}
 
-\ccHeading{Member Functions}
-\ccMethod{NT transformed_distance(NT d);} {Returns the transformed distance.}
+\ccOperations
 
-\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns the inverse of the transformed distance.}
+\ccMethod{NT distance(Point q, Point r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
 
-\ccMethod{NT distance(QueryItem& q, Item& p);}{Returns the transformed distance between \ccc{q} and \ccc{p}.}
-
-\ccMethod{NT min_distance_to_rectangle(QueryItem& q, Kd_tree_rectangle<NT>& r;);}
+\ccMethod{NT min_distance_to_rectangle(Point q, Kd_tree_rectangle<NT> r;);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_rectangle(QueryItem& q, Kd_tree_rectangle<NT>& r;);}
+\ccMethod{NT max_distance_to_rectangle(Point q, Kd_tree_rectangle<NT> r;);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
+
+\ccMethod{NT transformed_distance(NT d);} {Returns the transformed distance.}
+
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns the inverse of the transformed distance.}
 
 \ccMethod{NT new_distance(NT dist, NT old_off, NT new_off, int cutting_dimension);} {Updates 
 \ccc{dist} incrementally and returns the updated distance.}
 
 \ccHasModels
 
-\ccc{Weighted_Minkowski_distance}.
+\ccc{CGAL::Euclidean_distance<Point>},
+\ccc{CGAL::Weighted_Minkowski_distance<Point>}.
 
 \ccSeeAlso
 
-Distance,
-\ccc{Weighted_Minkowski_distance}.
+GeneralDistance,
+\ccc{CGAL::Euclidean_distance<Point>},
+\ccc{CGAL::Weighted_Minkowski_distance<Point>}.
 
 \end{ccRefConcept}
 

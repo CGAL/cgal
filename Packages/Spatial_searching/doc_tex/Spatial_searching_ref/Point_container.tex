@@ -11,76 +11,79 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Point_container<Item>}  %% add template arg's if necessary
+\begin{ccRefClass}{Point_container<Point>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
-\begin{ccAdvanced}
+
 
 
 
 \ccDefinition
-A custom container for items used to build a search tree. Each point container
-holds the points from a rectangle associated with a node of a $k$-$d$ tree.
+A custom container for points used to build a tree. Each point container
+holds the points from a rectangle associated with a node of the tree.
 In the remainder of this reference page this rectangle is called the
 associated rectangle.
-Provides a number of methods
+Provides a method to split a container and a number of methods
 to support the implementation of splitting rules.
 
 \ccInclude{CGAL/Point_container.h}
 
 \ccParameters
 
-Expects for the parameter \ccc{Item} an implementation of 
-a $d$-dimensional point, for example \ccc{CGAL::Point_d}.
+Expects for the parameter \ccc{Point} an implementation of 
+a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}.
 
 \ccTypes
 
-\ccTypedef{Item::FT NT;}{Number type.}
-\ccTypedef{std::list<Item*> Point_list;}{(Sorted) list of pointers to points.}
-
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+\ccTypedef{std::list<Point*> Point_list;}{(Sorted) list of pointers to points.}
 
 %----------------------------------------
 \ccCreation
 \ccCreationVariable{c}
 
-\ccConstructor{Point_container(const int d, Iter begin, Iter end);}
+\ccConstructor{Point_container(int d);}
 {
-Construct the container of points of dimension \ccc{d}
+Construct an empty container for storing \ccc{d}-dimensional points.
+}
+
+\ccConstructor{
+template <class InputIterator>
+Point_container(int d, InputIterator begin, InputIterator end);}
+{
+Construct the container of $d$-dimensional points of type \ccc{Point}
 given by the iterator sequence \ccc{begin}, \ccc{end}.
 }
 
-\ccConstructor{Point_container(int d);}
-{
-Construct an empty container for storing \ccc{d}-dimensional items.
-}
 
-\ccHeading{Member Functions}
 
-\ccMethod{void swap(Point_container<Item>& C);}
+\ccOperations
+
+\ccMethod{template <class Separator>
+void split_container(Point_container<Point> &C, Separator sep, bool sliding=false);}
+{Given an empty container \ccc{C} with the same dimension as \ccc{c}, splits \ccc{c} into
+\ccc{c} and \ccc{C} using the separator \ccc{sep}. If sliding is true after splitting 
+each container contains at least one point. \ccc{c} should contain at least two points.}
+
+
+\ccMethod{void swap(Point_container<Point> &C);}
 {Swap the contents of \ccc{c} and \ccc{C}}
 
-\ccMethod{void add_points_from_container(Point_container<Item>& C);}
-{Add the contents of \ccc{C} to \ccc{c}}
 
 \ccMethod{void recompute_tight_bounding_box();}
 {Recompute the bounding box of the points in the container.}
 
-\ccMethod{template <class Separator>
-void split_container(Point_container<Item>& C, Separator* sep, bool sliding=false);}
-{Given an empty container \ccc{C} with the same dimension as \ccc{c}, splits \ccc{c} into
-\ccc{c} and \ccc{C} using the separator \ccc{sep}. If sliding is true the splitting is adapted
-such that each container contains at least on point.}
 
 \ccMethod{Point_list::iterator begin();}
 {
-Return the iterator to the first item.
+Return the iterator pointing to the pointer to the first point.
 }
 
 \ccMethod{Point_list::iterator end();}
 {
-Return the iterator to the correspondiing past-the-end iterator.
+Return the iterator to the corresponding past-the-end iterator.
 }
 
 \ccMethod{int dimension() const;}
@@ -153,10 +156,10 @@ Return the median value of the points stored in the container for
 dimension \ccc{split_coord}.
 }
 
-\ccMethod{Kd_tree_rectangle<NT>& bounding_box();}
+\ccMethod{Kd_tree_rectangle<NT> & bounding_box();}
 {Return the associated rectangle.}
 
-\ccMethod{Kd_tree_rectangle<NT>& tight_bounding_box();}
+\ccMethod{Kd_tree_rectangle<NT> & tight_bounding_box();}
 {Return the bounding box of the items in associated rectangle.}
 
 \ccMethod{int max_tight_span_coord_balanced(NT Aspect_ratio);}
@@ -183,17 +186,21 @@ Return true is no points are present, false otherwise.
 
 
 
-% -----------------------------------
+\begin{ccAdvanced}
 
-{\bf Non-Member functions related to \ccc{Point_container<Item>}}
+{\bf Non-Member functions related to \ccc{Point_container<Point>}}
 
 \ccGlueBegin
-\ccGlobalFunction{ template<class Item>
-std::ostream& operator<<(std::ostream& s, Point_container<Item>& c);}
-{Prints the points container \ccc{c} to the output stream \ccc{s} and returns \ccc{s}.}
+\ccGlobalFunction{ template<class Point>
+std::ostream& operator<<(std::ostream& s, Point_container<Point> c);}
+{Prints the point container \ccc{c} to the output stream \ccc{s} and returns \ccc{s}.}
 \ccGlueEnd
 
 \end{ccAdvanced}
+
+\ccSeeAlso
+
+Point, Separator, Container.
 
 \end{ccRefClass}
 

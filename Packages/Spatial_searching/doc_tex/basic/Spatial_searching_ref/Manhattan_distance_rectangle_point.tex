@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Manhattan_distance_rectangle_point.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSManhattandistancerectanglepointRev}{$Revision$}
+\RCSdefDate{\RCSManhattandistancerectanglepointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Manhattan_distance_rectangle_point<QueryItem,Point>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides an implementation of \\
+the GeneralDistance concept
+for the Manhattan distance ($l_1$ metric)
+between a $d$-dimensional iso-rectangle and a $d$-dimensional point 
+and the Manhattan distance between a $d$-dimensional iso-rectangle
+and a $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
+
+\ccInclude{CGAL/Manhattan_distance_rectangle_point.h}
+
+\ccParameters
+
+Expects for the parameter \ccc{QueryItem}
+\ccc{item} an implementation of iso-rectangles
+for example \ccc{CGAL::Iso_rectangle_d<R>}.
+Expects for the parameter \ccc{Item} an implementation
+of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}.
+
+\ccIsModel
+
+GeneralDistance
+
+\ccTypes
+
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{d}  %% choose variable name
+
+\ccConstructor{Manhattan_distance_rectangle_point();}{Default constructor implementing Manhattan distance for
+two-dimensional iso-rectangles.}
+
+\ccConstructor{Manhattan_distance_rectangle_point(int d);}
+{Constructor implementing Manhattan distance for
+$d$-dimensional iso-rectangles.}
+
+\ccOperations
+
+\ccMethod{NT transformed_distance(NT d);} {Returns $d$.}
+
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $d$.}
+
+\ccMethod{NT distance(QueryItem q, Point p);}{Returns the distance between \ccc{q} and \ccc{p}.}
+
+\ccMethod{NT min_distance_to_queryitem(QueryItem q, Kd_tree_rectangle<NT> r;);}
+{Returns the minimal distance between a point from \ccc{q} and a point from
+\ccc{r}}
+
+\ccMethod{NT max_distance_to_queryitem(QueryItem q, Kd_tree_rectangle<NT> r;);}
+{Returns the maximal distance between the iso-rectangle \ccc{q} and
+a point from \ccc{r} furthest to \ccc{q}.}
+
+
+\ccSeeAlso
+
+GeneralDistance.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Fuzzy_sphere_d.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSFuzzyspheredRev}{$Revision$}
+\RCSdefDate{\RCSFuzzyspheredDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Fuzzy_sphere_d<Point>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements fuzzy $d$-dimensional spheres.
+A fuzzy sphere with radius $r$ and fuziness value $\epsilon$ has
+as outer approximation a sphere with radius $r+\epsilon$ and
+as inner approximation a sphere with radius $r-\epsilon$. 
+
+\ccInclude{CGAL/Fuzzy_sphere_d.h}
+
+\ccParameters
+
+Expects for the parameter \ccc{Point} an implementation of a $d$-dimensional point,\\
+for example \ccc{CGAL::Point_d<R>}. 
+
+\ccIsModel
+
+FuzzyQueryItem
+
+\ccTypes
+
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+
+
+\ccConstructor{Fuzzy_sphere_d(Point center, NT radius, NT epsilon=NT(0));}{Constructs a fuzzy sphere
+centered at \ccc{center} with radius \ccc{radius} and fuzziness value \ccc{epsilon}.}
+
+\ccOperations
+
+\ccMethod{bool contains(const Point& p); const}{test whether $s$ contains $p$.}
+
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle); const}
+{test whether the inner sphere intersects a rectangle
+associated with a node of a tree.}
+
+\ccMethod{bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle); const}
+{test whether the outer sphere encloses a rectangle
+associated with a node of a tree.}
+
+\ccSeeAlso
+
+FuzzyQueryItem.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

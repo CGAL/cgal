@@ -11,31 +11,47 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{TreeTraits<Separator,Item>}
+\begin{ccRefConcept}{TreeTraits}
 
 \ccDefinition
   
 The concept \ccRefName\ defines the requirements for a tree traits class, which is used as
-a template class for the construction of a $k$-$d$  tree by the class \ccc{Kd_tree}.
+a template class for the construction of a tree. 
+It is assumed that the tree consists of internal nodes
+and leaf nodes. There are two types of external nodes. Extended internal nodes support orthogonal range searching.
+Unextended internal nodes do not support orthogonal range searching.
+Leaf nodes have a bucket size denoting the maximal number of points that can be 
+stored at a leaf node.
+
+\ccTypes
+
+\ccNestedType{Point;}{$d$-dimensional point.}
+\ccNestedType{Point_iterator;}{Point iterator.}
+\ccNestedType{Container;}{Point container.}
+\ccNestedType{Separator;}{Separator.}
+\ccNestedType{NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{tr}  %% choose variable name
 
-\ccConstructor{TreeTraits();}{Default constructor.}
+\ccOperations
 
-\ccHeading{Member Functions}
-
-\ccMethod{const Separator& split(Point_container<Item>& c0, Point_container<Item>& c1);}
+\ccMethod{void split(Separator& sep, Container<Point>& c0, Container<Point>& c1);}
 {Splits \ccc{c0} into \ccc{c0} and \ccc{c1} and returns the separator}
+
+\ccMethod{int bucket_size();} {Returns the bucket size of the leaf nodes.}
+
+\ccMethod{int use_extended_nodes();} {Indicates whether a tree with extended internal nodes should be used.}
  
 \ccHasModels
 
-\ccc{Kd_tree_traits_point}
+\ccc{CGAL::Kd_tree_traits_point<Point,Splitter>}
 
 \ccSeeAlso
 
-\ccc{Kd_tree_traits_point},
-\ccc{Kd_tree}.
+Tree.
+\ccc{CGAL::Kd_tree_traits_point<Point,Splitter>},
+\ccc{CGAL::Kd_tree<Traits>}.
 
 \end{ccRefConcept}
 

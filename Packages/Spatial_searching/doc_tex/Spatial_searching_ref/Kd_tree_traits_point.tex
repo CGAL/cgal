@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree_traits_point<Separator,Item>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree_traits_point<Point,Splitter>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -32,56 +32,47 @@ TreeTraits.
 
 \ccParameters
 
-Expects for the parameter \ccc{Separator} an implementation of a separator, for
-example \ccc{Plane_separator}.
-Expects for the parameter \ccc{Item} an implementation of a $d$-dimensional point, \\
-for example \ccc{CGAL::Point_d}.
-
+Expects for the parameter \ccc{Point} an implementation of a $d$-dimensional point, \\
+for example \ccc{CGAL::Point_d<R>}.
+Expects for the parameter \ccc{Splitter} an implementation of a splitter, for
+example \ccc{CGAL::Sliding_midpoint<Point,Container,Separator>}.
+Splitter has default argument \ccc{CGAL::Sliding_midpoint<Point>}.
 
 \ccTypes
 
-\ccTypedef {Item::FT NT;}{Number type.}
-\ccTypedef {Item** Item_Iterator;}{Item iterator.}
-\ccTypedef {std::list<Item>::iterator InputIterator;}{Input iterator.}
-\ccTypedef {std::pair<Item*,NT> Item_with_distance;}{Pair of item and distance.}
+
+\ccTypedef {Point** Point_Iterator;}{Point iterator.}
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+\ccTypedef {Splitter::Container Container;}{Point container.}
+\ccTypedef {Splitter::Separator Separator;}{Separator.}
 
 \ccCreation
 \ccCreationVariable{tr}  %% choose variable name
 
-\ccConstructor{Kd_tree_traits_point();}{Default constructor assigning the default values 
-\ccc{bucket_size=1}, \ccc{Default_split_rule=SLIDING_MIDPOINT}, \ccc{aspect_ratio=3.0}, and \ccc{use_extended_nodes=true}
-to the parameters.}
+
 
 \ccConstructor{Kd_tree_traits_point
-(int bucket_size=1, Split_rule Default_split_rule=SLIDING_MIDPOINT, NT aspect_ratio=3.0, bool use_extended_nodes=true);}
+(int bucket_size=1, NT aspect_ratio=NT(3), bool use_extended_nodes=true);}
 {Constructor assigning values to the parameters.}
-\ccHeading{Member Functions}
+
+\ccOperations
 
 \ccMethod{NT aspect_ratio();}{Returns the maximal ratio between the largest and smallest side
 of a cell allowed for fair splitting.}
 
-\ccMethod{Split_rule_enumeration::Split_rule selected_split_rule();}{Returns the selected splitting rule.}
+\ccMethod{int bucket_size();}{Returns the selected bucket size of the leaf nodes.}
 
-\ccMethod{int bucket_size();}{Returns the selected bucket size.}
-
-\ccMethod{bool use_extended_nodes();}{Returns boolean indicating whether extened internal nodes
+\ccMethod{bool use_extended_nodes();}{Indicates whether extened internal nodes
 should be used.}
 
-\ccMethod{const Separator& split(Point_container<Item>& c0, Point_container<Item>& c1);}
+\ccMethod{void split(Separator& sep, Container<Point>& c0, Container<Point>& c1);}
 {Splits \ccc{c0} into \ccc{c0} and \ccc{c1} and returns the separator.}
+
 
 \ccSeeAlso
 
 TreeTraits,
-\ccc{Split_rule_enumeration},
-\ccc{Median_of_max_spread},
-\ccc{Fair},
-\ccc{Sliding_fair},
-\ccc{Sliding_midpoint},
-\ccc{Median_of_rectangle},
-\ccc{Midpoint_of_max_spread},
-\ccc{Midpoint_of_rectangle},
-\ccc{Kd_tree}.
+\ccc{CGAL::Kd_tree_traits_point<Point,Splitter>}.
 
 \end{ccRefClass}
 

@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Container.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSContainerRev}{$Revision$}
+\RCSdefDate{\RCSContainerDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Container}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for
+a point container. 
+
+\ccParameters
+
+\ccc{Point} represents a $d$-dimensional point.
+
+
+\ccCreation
+\ccCreationVariable{c}  %% choose variable name
+
+\ccConstructor{Container(int d);}
+{
+Construct an empty container for storing \ccc{d}-dimensional points.
+}
+
+\ccConstructor{
+template <class InputIterator>
+Point_container(int d, InputIterator begin, InputIterator end);}
+{
+Construct the container of $d$-dimensional points of type \ccc{Point}
+given by the iterator sequence \ccc{begin}, \ccc{end}.
+}
+
+\ccOperations
+
+\ccMethod{template <class Separator>
+void split_container(Container& C, Separator sep, bool sliding=false);}
+{Given an empty container \ccc{C} with the same dimension as \ccc{c}, splits \ccc{c} into
+\ccc{c} and \ccc{C} using the separator \ccc{sep}. If sliding is true after splitting 
+each container contains at least one point. \ccc{c} should contain at least two points.}
+
+\ccHasModels
+
+\ccc{CGAL::Point_container<Point>}.
+
+\ccSeeAlso
+
+Point, Separator.
+\ccc{CGAL::Point_container<Point>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

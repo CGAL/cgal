@@ -11,52 +11,53 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunctionObjectClass}{Sliding_midpoint<Item>}  %% add template arg's if necessary
+\begin{ccRefFunctionObjectClass}{Sliding_midpoint<Point,Container,Separator>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
-\begin{ccAdvanced}
-
 \ccDefinition
-Implements the sliding midpoint splitting rule.
-
-\ccInclude{CGAL/Splitting_rules.h}
+Implements the {\bf sliding midpoint} splitting rule.
 
 \ccParameters
 
-Expects for the parameter \ccc{Item} an implementation 
-of a $d$-dimensional point, \\
-for example \ccc{CGAL::Point_d}.
+Expects for the parameter \ccc{Point} an implementation of a $d$-dimensional point,
+for example \ccc{CGAL::Point_d<R>}. Expects for the parameter \ccc{Container} an implementation
+of a point container for example \ccc{CGAL::Point_container<Point>}.
+Expects for the parameter \ccc{Separator} an implementation of a $d$-1 dimensional 
+separating plane for example \ccc{CGAL::Plane_separator<NT>}.
+
+\ccc{Container} has default argument \ccc{CGAL::Point_container<Point>}.
+\ccc{Separator} has default argument \ccc{CGAL::Plane_separator<Kernel_traits<Point>::Kernel::FT>}. 
+
+
+\ccInclude{CGAL/Splitters.h}
 
 \ccIsModel
 
-SplitRule
+Splitter
 
 \ccTypes
 
-\ccTypedef{Item::R::FT NT;}{Number type.} 
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
+\ccTypedef{Container Container;}{Point container.}
+\ccTypedef{Separator Separator;}{Separator.} 
 
-\ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
-\ccConstructor{
-Sliding_midpoint();}{Default constructor.}
 
-\ccHeading{Member Functions}
+\ccOperations
 
 \ccMethod{
-const Plane_separator<NT>& rule(Point_container<Item>& c);} 
-{Computes and returns the splitter, that can split \ccc{c}.}
+void operator()(Separator& s, Container& c0, Container& c1);} 
+{Modifies the separator $s$ by the {\bf sliding midpoint} splitting rule, 
+and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
+using the splitting dimension and the splitting value of the modified separator.
+}
 
 \ccSeeAlso
 
-SplitRule,
-\ccc{Point_container},
-\ccc{Plane_separator}.
-
-\end{ccAdvanced}
-
+Splitter, Container, Separator.
 \end{ccRefFunctionObjectClass}
 
 % +------------------------------------------------------------------------+

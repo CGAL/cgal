@@ -11,12 +11,10 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree_node<Traits>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree_node<TreeTraits>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
-
-\begin{ccAdvanced}
 
 \ccDefinition
   
@@ -32,7 +30,7 @@ along the node's cutting dimension.
 
 \ccHeading{Parameters}
 
-Expects for the parameter \ccc{Traits} an implementation
+Expects for the parameter \ccc{TreeTraits} an implementation
 of the \ccc{Treetraits}
 concept.
 
@@ -40,28 +38,25 @@ concept.
 
 \ccEnum{ enum Node_type { LEAF, INTERNAL, EXTENDED_INTERNAL};}{Denotes type of node.}
 
-\ccTypedef{Traits::Item Item;}{Item provided by the Traits class.}
-\ccTypedef{Traits::Item_iterator Item_iterator;}{Iterator over items.} 
-\ccTypedef{Traits::NT NT;}{Number type.}
-\ccTypedef{Traits::Separator Separator;}{Separator type.}
+\ccTypedef{Kd_tree<TreeTraits>::Node_handle Node_handle;}{Node handle.}
+\ccTypedef{TreeTraits::Point Point;}{Point provided by the Traits class.}
+\ccTypedef{TreeTraits::Point_iterator Point_iterator;}{Iterator over points.} 
+\ccTypedef{TreeTraits::NT NT;}{Number type.}
+\ccTypedef{TreeTraits::Separator Separator;}{Separator type.}
 
 \ccCreation
 \ccCreationVariable{n}  %% choose variable name
 
-\ccConstructor{Kd_tree_node();} {Default constructor.}
-
-\ccConstructor{Kd_tree_node(Point_container<Item>& c);}
+\ccConstructor{Kd_tree_node(Point_container<Point> c);}
 {
 Creates a leaf node \ccc{n} that stores the points from $c$.
 }
 
-\ccConstructor{Kd_tree_node(Point_container<Item>& c, Traits& t, bool use_extension);}
+\ccConstructor{Kd_tree_node(Point_container<Point> c, Traits t, bool use_extension);}
 {
 Creates an internal or extended internal node \ccc{n}, which is the root of a subtree 
 storing all the points 
-from \ccc{c}. The splitting rule denoted by \ccc{t.selected_split_rule()} is used to 
-divide these points in
-two subsets. One subset is stored at the lower child and the other subset at the upper child.
+from \ccc{c}. One subset is stored at the lower child and the other subset at the upper child.
 For each of the childern either a leaf node or an internal node is created as follows.
 If the number of points in the subset does not exceed the \ccc{t.bucket_size()} a leaf node is
 created that stores the points. Otherwise an internal node is created, which is the root of
@@ -70,7 +65,18 @@ is true an extended internal node is created. An extended internal node stores
 the lower and upper limit of an extended node's rectangle. 
 }
 
-\ccHeading{Member Functions}
+\ccOperations
+
+\ccMethod{
+template <class OutputIterator, class FuzzyQueryItem>
+OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
+{Reports the points from the subtree of the node, that are approximately contained by q.} 
+
+\ccMethod{
+template <class OutputIterator>
+OutputIterator tree_points(OutputIterator it);}
+{Reports all the points contained by the subtree of the node.} 
+
 
 \ccMethod{bool is_leaf();}{Indicates whether a node is a leaf node.}
 \ccMethod{int  size();}{Returns the number of items stored in a leaf node.}
@@ -84,8 +90,6 @@ iterator in a leaf node.}
 along the node's cutting dimension.}
 \ccMethod{NT high_val();}{Returns the upper limit of an extended node's rectangle
 along the node's cutting dimension.}
-
-\end{ccAdvanced}
 
 \end{ccRefClass}
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Weighted_Minkowski_distance<QueryItem, Item>}  %% add template arg's if necessary
+\begin{ccRefClass}{Weighted_Minkowski_distance<Point>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -19,19 +19,20 @@
 \ccDefinition
   
 The class \ccRefName\ provides an implementation of the concept OrthogonalDistance, with a weighted Minkowski metric
-defined by $l_{power}(w)(p,q)=\root p\of {\sum_{i=1}^{i=d} w_i(p_i-q_i)^p}$ for $0 < p <\infty$ and
-defined by $l_{\infty}(w)(p,q)=max \{w_i |p_i-q_i| \mid 1 \leq i \leq d\}$.
+on $d$-dimensional points
+defined by $l_p(w)(r,q)=\root p\of {\sum_{i=1}^{i=d} w_i(r_i-q_i)^p}$ for $0 < p <\infty$ and
+defined by $l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}$.
 For the purpose of the distance computations it is more efficient to compute
-the transformed distance ${\sum_{i=1}^{i=d} w_i(p_i-q_i)^p}$ instead of the actual distance.
+the transformed distance ${\sum_{i=1}^{i=d} w_i(r_i-q_i)^p}$ instead of the actual distance.
 
 \ccInclude{CGAL/Weighted_Minkowski_distance.h}
 
 \ccParameters
 
-Expects for the parameter \ccc{QueryItem} as well for the parameter
-\ccc{Item} an implementation
+Expects for the parameter
+\ccc{Point} an implementation
 of a $d$-dimensional point
-for example \ccc{CGAL::Point_d}.
+for example \ccc{CGAL::Point_d<R>}.
 
 \ccIsModel
 
@@ -39,42 +40,44 @@ OrthogonalDistance
 
 \ccTypes
 
-\ccTypedef{Item::R::FT NT;}{Number type.}
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
 \ccTypedef{std::vector<NT> Weight_vector;}{Vector type used to represent weights.}
  
 
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
 
-\ccConstructor{Weighted_Minkowski_distance();}{Default constructor implementing $l_2$ metric for two-dimensional points.}
+\ccConstructor{Weighted_Minkowski_distance(int d);}{Constructor implementing $l_2$ metric for $d$-dimensional points.}
 
 \ccConstructor{Weighted_Minkowski_distance(NT power, int dim, Weight_vector weights);}
 {Constructor implementing the $l_{power}(weights)$ metric. $power \leq 0$ denotes the $l_{\infty}(weights)$ metric.}
 
-\ccHeading{Member Functions}
+\ccOperations
 
-\ccMethod{NT transformed_distance(NT d);} {Returns for $0 < p <\infty$ $d^p$. Returns for $p=\infty$ $d$.}
 
-\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns for $0 < p <\infty$ $\root p\of{d}$. Returns for $p=\infty$ $d$.}
- 
-\ccMethod{NT distance(QueryItem& q, Item&p);}{Returns $d^{power}$, 
-where $d$ denotes the distance between \ccc{q} and \ccc{p}.}
+\ccMethod{NT distance(Point q, Point r);}{Returns $d^{power}$, 
+where $d$ denotes the distance between \ccc{q} and \ccc{r}.}
 
-\ccMethod{NT min_distance_to_rectangle(QueryItem& q, Kd_tree_rectangle<NT>& r;);}
-{Returns $d^{power}$, where $d$ denotes the distance between \ccc{q} and
+\ccMethod{NT min_distance_to_queryitem(Point q, Kd_tree_rectangle<NT> r;);}
+{Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_rectangle(QueryItem& q, Kd_tree_rectangle<NT>& r;);}
-{Returns $d^{power}$, whre $d$ denotes the distance between \ccc{q} and
+\ccMethod{NT max_distance_to_queryitem(Point q, Kd_tree_rectangle<NT> r;);}
+{Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
 \ccMethod{NT new_distance(NT dist, NT old_off, NT new_off, int cutting_dimension);} {Updates \ccc{dist} incrementally
 and returns the updated distance.}
 
+\ccMethod{NT transformed_distance(NT d);} {Returns for $0 < p <\infty$ $d^p$. Returns for $p=\infty$ $d$.}
+
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns for $0 < p <\infty$ $\root p\of{d}$. Returns for $p=\infty$ $d$.}
+ 
 
 \ccSeeAlso
 
-OrthogonalDistance.
+OrthogonalDistance,
+\ccc{CGAL::Euclidean_distance<Point>}.
 
 \end{ccRefClass}
 
