@@ -52,12 +52,16 @@ triangulation_prog1 : triangulation_prog1.o
 
 terrain : terrain.o
 	$(CGAL_CXX) -o terrain terrain.o $(LDFLAGS)
+
+regular : regular.o
+	$(CGAL_CXX) -o regular regular.o $(LDFLAGS)
+
 clean:
 	rm -rf *~ *.o *.obj core tr
 
 realclean: clean
 	rm -rf points example voronoi colored_face triangulation_prog1 \
-	terrain *.exe \
+	terrain  regular *.exe \
 	Program* Compiler* Error* error.txt
 
 

@@ -20,7 +20,7 @@ int main()
 
     Point_3<Rp> p;
     while(std::cin >> p){
-        dt.insert(p);
+      dt.insert(p);
     }
     return 1;
 }

@@ -18,8 +18,8 @@ CXXFLAGS = \
 	-I../../include \
 	-I./include \
 	$(TESTSUITE_CXXFLAGS) \
-	$(CGAL_CXXFLAGS)\
-	-g 
+	$(CGAL_CXXFLAGS)
+
 
 
 #---------------------------------------------------------------------#
@@ -52,12 +52,17 @@ triangulation_prog1 : triangulation_prog1.obj
 terrain : terrain.obj
 	$(CGAL_CXX) -o terrain terrain.obj $(LDFLAGS)
 
+regular : regular.obj
+	$(CGAL_CXX) -o regular regular.obj $(LDFLAGS)
 
 clean:
-	- rm -f *.obj example voronoi colored_face triangulation_prog1 terrain
+	rm -rf *~ *.o *.obj core tr
 
 realclean: clean
-	- rm -f Program* Error* Compiler* error*
+	rm -rf points example voronoi colored_face triangulation_prog1 \
+	terrain  regular *.exe \
+	Program* Compiler* Error* error.txt
+
 
 #---------------------------------------------------------------------#
 #                    suffix rules
