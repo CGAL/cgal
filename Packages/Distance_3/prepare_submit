@@ -17,4 +17,4 @@ make xsrcs
 
 
 cd ..
-cvs -q commit -m "" src include
+cvs -q commit -m "" include

@@ -219,11 +219,14 @@ squared_distance_to_plane(
     const Vector_3<R> & diff)
 {
     typedef typename R::RT RT;
+    typedef typename R::FT FT;
     RT dot, squared_length;
     dot = wdot(normal, diff);
     squared_length = wdot(normal, normal);
-    return (typename R::FT)
-        ((dot*dot) / wmult((R*)0, squared_length, diff.hw(), diff.hw()));
+//    return FT(dot*dot) /
+//        FT(wmult((R*)0, squared_length, diff.hw(), diff.hw()));
+    return R::make_FT((dot*dot),
+        wmult((R*)0, squared_length, diff.hw(), diff.hw()));
 }
 
 
@@ -235,7 +238,7 @@ squared_distance_to_line(
 {
     typedef typename R::RT RT;
     Vector_3<R> wcr = wcross(dir, diff);
-    return (typename R::FT)((wcr*wcr)/
+    return R::make_FT((wcr*wcr),
         wmult((R*)0, RT(wdot(dir, dir)), diff.hw(), diff.hw()));
 }
 

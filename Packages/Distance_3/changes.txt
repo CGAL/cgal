@@ -1,3 +1,6 @@
+2.5.3 (9 November 2001)
++ Fixed two bugs: divisions were done on ring types instead of field types.
+
 2.5.2 (19 February 2001)
 + Fixed bug in wdot in squared_distance_3_0.
 
