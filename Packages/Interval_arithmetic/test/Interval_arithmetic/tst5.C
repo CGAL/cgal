@@ -1,7 +1,7 @@
 #include <CGAL/config.h>
 #include <CGAL/basic.h>
 
-// Workaround for MipsPro.
+// Workaround for crappy compilers.
 #ifdef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 #define CGAL_IA_CT double
 #define CGAL_IA_ET leda_real
@@ -42,7 +42,7 @@
 
 using namespace CGAL;
 
-// Please pay attention to the workaround for MipsPro at the top of the file.
+// Please pay attention to the workaround at the top of the file.
 
 // Don't be stupid, Gmpz can only store integers !!!
 // typedef Filtered_exact<double, Gmpz> NT;
