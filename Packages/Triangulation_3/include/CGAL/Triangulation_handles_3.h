@@ -24,29 +24,18 @@
 
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Pointer.h>
-#include <CGAL/Triangulation_vertex_3.h>
-#include <CGAL/Triangulation_cell_3.h>
-#include <CGAL/Triangulation_iterators_3.h>
-#include <CGAL/Triangulation_circulators_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt, class Tds > class Triangulation_cell_3;
-template < class Gt, class Tds > class Triangulation_vertex_3;
-template < class Gt, class Tds > class Triangulation_cell_iterator_3;
-template < class Gt, class Tds > class Triangulation_vertex_iterator_3;
-template < class Gt, class Tds > class Triangulation_cell_circulator_3;
-
-template < class Gt, class Tds>
+template <class Tr>
 class Triangulation_vertex_handle_3
-  : public Pointer<Triangulation_vertex_3<Gt,Tds> >
+  : public Pointer<CGAL_TYPENAME_MSVC_NULL Tr::Vertex>
 {
+  typedef typename Tr::Vertex                        Vertex;
+  typedef typename Tr::Vertex_iterator               Vertex_iterator;
+  typedef Pointer<Vertex>                            Ptr;
+  typedef Triangulation_vertex_handle_3<Tr>          Vertex_handle;
 public:
-  typedef Pointer<Triangulation_vertex_3<Gt,Tds> >   Ptr;
-  typedef Triangulation_vertex_3<Gt,Tds>             Vertex;
-  typedef Triangulation_vertex_handle_3<Gt,Tds>      Vertex_handle;
-
-  typedef Triangulation_vertex_iterator_3<Gt,Tds>    Vertex_iterator;
 
   Triangulation_vertex_handle_3()
     : Ptr(NULL)
@@ -73,24 +62,16 @@ public:
   }
 };
 
-template <class Gt, class Tds>
-Triangulation_vertex_3<Gt,Tds> * 
-handle2pointer(const Triangulation_vertex_handle_3<Gt,Tds> v)
-{
-  return v.ptr();
-}
-
-template <class Gt, class Tds>
+template <class Tr>
 class Triangulation_cell_handle_3
-  : public Pointer<Triangulation_cell_3<Gt,Tds> >
+  : public Pointer<CGAL_TYPENAME_MSVC_NULL Tr::Cell>
 {
+  typedef typename Tr::Cell                         Cell;
+  typedef typename Tr::Cell_iterator                Cell_iterator;
+  typedef typename Tr::Cell_circulator              Cell_circulator;
+  typedef Pointer<Cell>                             Ptr;
+  typedef Triangulation_cell_handle_3<Tr>           Cell_handle;
 public:
-  typedef Pointer<Triangulation_cell_3<Gt,Tds> >    Ptr;
-  typedef Triangulation_cell_3<Gt,Tds>              Cell;
-  typedef Triangulation_cell_handle_3<Gt,Tds>       Cell_handle;
-
-  typedef Triangulation_cell_iterator_3<Gt,Tds>     Cell_iterator;
-  typedef Triangulation_cell_circulator_3<Gt,Tds>   Cell_circulator;
 
   Triangulation_cell_handle_3()
     : Ptr(NULL)
@@ -120,13 +101,6 @@ public:
     return *this;
   }
 };
-
-template <class Gt, class Tds>
-Triangulation_cell_3<Gt,Tds> *
-handle2pointer(const Triangulation_cell_handle_3<Gt,Tds> c)
-{
-  return c.ptr();
-}
 
 CGAL_END_NAMESPACE
 

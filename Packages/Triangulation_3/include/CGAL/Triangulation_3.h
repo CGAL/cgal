@@ -53,6 +53,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template < class GT, class Tds > class Triangulation_3;
+
 template < class GT, class Tds > std::istream& operator>> 
 (std::istream& is, Triangulation_3<GT,Tds> &tr);
  
@@ -66,17 +68,6 @@ class Triangulation_3
   friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<GT,Tds> &tr);
 
-  friend class Triangulation_cell_3<GT,Tds>;
-  friend class Triangulation_vertex_3<GT,Tds>;
-
-  friend class Triangulation_cell_iterator_3<GT,Tds>;
-  friend class Triangulation_facet_iterator_3<GT,Tds>;
-  friend class Triangulation_edge_iterator_3<GT,Tds>;
-  friend class Triangulation_vertex_iterator_3<GT,Tds>;
-
-  friend class Triangulation_cell_circulator_3<GT,Tds>;
-  friend class Triangulation_facet_circulator_3<GT,Tds>;
-
 public:
   typedef Tds                                  Triangulation_data_structure;
   typedef GT                                   Geom_traits;
@@ -87,21 +78,21 @@ public:
   typedef typename GT::Triangle_3              Triangle;
   typedef typename GT::Tetrahedron_3           Tetrahedron;
 
-  typedef Triangulation_cell_handle_3<GT,Tds>          Cell_handle;
-  typedef Triangulation_vertex_handle_3<GT,Tds>        Vertex_handle;
+  typedef Triangulation_cell_handle_3<Self>            Cell_handle;
+  typedef Triangulation_vertex_handle_3<Self>          Vertex_handle;
 
-  typedef Triangulation_cell_3<GT,Tds>                 Cell;
-  typedef Triangulation_vertex_3<GT,Tds>               Vertex;
+  typedef Triangulation_cell_3<Self>                   Cell;
+  typedef Triangulation_vertex_3<Self>                 Vertex;
   typedef std::pair<Cell_handle, int>                  Facet;
   typedef triple<Cell_handle, int, int>                Edge;
 
-  typedef Triangulation_cell_circulator_3<GT,Tds>      Cell_circulator;
-  typedef Triangulation_facet_circulator_3<GT,Tds>     Facet_circulator;
+  typedef Triangulation_cell_circulator_3<Self>        Cell_circulator;
+  typedef Triangulation_facet_circulator_3<Self>       Facet_circulator;
 
-  typedef Triangulation_cell_iterator_3<GT,Tds>        Cell_iterator;
-  typedef Triangulation_facet_iterator_3<GT,Tds>       Facet_iterator;
-  typedef Triangulation_edge_iterator_3<GT,Tds>        Edge_iterator;
-  typedef Triangulation_vertex_iterator_3<GT,Tds>      Vertex_iterator;
+  typedef Triangulation_cell_iterator_3<Self>          Cell_iterator;
+  typedef Triangulation_facet_iterator_3<Self>         Facet_iterator;
+  typedef Triangulation_edge_iterator_3<Self>          Edge_iterator;
+  typedef Triangulation_vertex_iterator_3<Self>        Vertex_iterator;
 
   typedef Point                         value_type; // to have a back_inserter
   typedef const value_type&             const_reference;

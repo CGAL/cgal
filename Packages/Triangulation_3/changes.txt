@@ -1,5 +1,7 @@
 Version 1.87 (?? September 01)
 - Remove deprecated code.
+- Internal classes now templated either by Tds or Tr so they are more easily
+  reusable.
 
 Version 1.86 (31 August 01)
 - Remove non default constructors in [ds_]vertex and [ds_]cell.

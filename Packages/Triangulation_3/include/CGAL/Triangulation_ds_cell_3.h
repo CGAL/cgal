@@ -32,17 +32,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Vb, class Cb > class Triangulation_ds_vertex_3;
-
-template < class Vb, class Cb > class Triangulation_data_structure_3;
-
-template < class Tds> class Triangulation_ds_facet_iterator_3;
-template < class Tds> class Triangulation_ds_edge_iterator_3;
-template < class Elt, class Alloc > class DS_Container;
-
-template < class Vb, class Cb >
+template < class Tds >
 class Triangulation_ds_cell_3
-  : public Cb
+  : public Tds::Cell_base
 {
     static int ccw(int i)
     {
@@ -54,20 +46,11 @@ class Triangulation_ds_cell_3
       return Triangulation_utils_3::cw(i);
     } 
 
+  typedef typename Tds::Cell_base Cb;
 public:
 
-  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
-
-  friend class Triangulation_data_structure_3<Vb,Cb>;
-
-  friend class Triangulation_ds_facet_iterator_3<Tds>;
-  friend class Triangulation_ds_edge_iterator_3<Tds>;
-
-  typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
-  typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
-
-  template < class Elt, class Alloc >
-  friend class DS_Container;
+  typedef typename Tds::Vertex         Vertex;
+  typedef typename Tds::Cell           Cell;
 
   Triangulation_ds_cell_3()
     : Cb()
@@ -181,9 +164,9 @@ private:
   }
 };
 
-template <class Vb, class Cb >
+template <class Tds>
 bool
-Triangulation_ds_cell_3<Vb,Cb>::is_valid
+Triangulation_ds_cell_3<Tds>::is_valid
 (int dim, bool verbose, int level) const
 {
     if ( ! Cb::is_valid(verbose,level) )

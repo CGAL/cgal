@@ -27,24 +27,20 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt, class Tds > class Triangulation_vertex_3;
-template < class Gt, class Tds > class Triangulation_vertex_handle_3;
-template < class Gt, class Tds > class Triangulation_cell_handle_3;
-
-template < class Gt, class Tds >
+template < class Tr >
 class Triangulation_cell_3
-  : public Tds::Cell
+  : public Tr::Triangulation_data_structure::Cell
 {
-  typedef typename Tds::Vertex Vtds;
-  typedef typename Tds::Cell Ctds;
+  typedef typename Tr::Triangulation_data_structure::Vertex Vtds;
+  typedef typename Tr::Triangulation_data_structure::Cell Ctds;
 
-  typedef Triangulation_vertex_3<Gt,Tds> Vertex;
-  typedef Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
-  typedef Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
+  typedef typename Tr::Vertex           Vertex;
+  typedef typename Tr::Cell_handle      Cell_handle;
+  typedef typename Tr::Vertex_handle    Vertex_handle;
 
 public:
 
-  typedef typename Gt::Point_3 Point;
+  typedef typename Tr::Geom_traits::Point_3 Point;
 
   Triangulation_cell_3()
     : Ctds() {}

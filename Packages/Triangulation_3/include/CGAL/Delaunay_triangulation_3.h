@@ -969,7 +969,6 @@ fill_hole_3D_ear( std::vector<Facet> & boundhole)
   typedef Delaunay_remove_tds_3_2<Delaunay_triangulation_3> Surface;
   typedef typename Surface::Face_3_2 Face_3_2;
   typedef typename Surface::Vertex_3_2 Vertex_3_2;
-  typedef typename Surface::Vertex_circulator Vertex_circulator_3_2;
 
   // The list of cells that gets created, so that we know what
   // we have to delete, in case that we cannot fill the hole

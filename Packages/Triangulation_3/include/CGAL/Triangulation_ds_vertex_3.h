@@ -25,19 +25,18 @@
 #define CGAL_TRIANGULATION_DS_VERTEX_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Triangulation_ds_iterators_3.h>
 #include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Vb, class Cb >
+template <class Tds>
 class  Triangulation_ds_vertex_3 
-  : public Vb
+  : public Tds::Vertex_base
 {
-  typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
-  typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
-
+  typedef typename Tds::Vertex_base Vb;
 public:
+  typedef typename Tds::Vertex      Vertex;
+  typedef typename Tds::Cell        Cell;
 
   Triangulation_ds_vertex_3()
     : Vb()
@@ -80,9 +79,9 @@ public:
   }
 };
 
-template <class Vb, class Cb >
+template <class Tds>
 bool
-Triangulation_ds_vertex_3<Vb,Cb>::is_valid
+Triangulation_ds_vertex_3<Tds>::is_valid
 (bool verbose, int level) const
 {
   bool result = Vb::is_valid(verbose,level) && cell()->has_vertex(this);

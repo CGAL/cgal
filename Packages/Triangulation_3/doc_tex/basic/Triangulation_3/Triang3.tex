@@ -375,42 +375,6 @@ When all weights are 0, power spheres are nothing more than
 circumscribing spheres, and the regular triangulation is exactly the
 Delaunay triangulation.
 
-%\section{Debugging}
-
-%	\subsection{Pretty print}	
-% \textit{to be written}
-
-%	\subsection{Debugging with handles} 
-%Most debuggers cannot understand \ccc{handles} well. Under the
-%debugger, an instruction such as
-
-%\texttt{(dbx) print -r c->vertex(0)}
-
-%where \ccc{c} is a \ccc{Cell_handle}, is answered by:
-
-%\texttt{can't find field "vertex" in "c"}
-
-%To work around this problem, two functions have been defined to transform 
-%\ccc{handles} into usual $C^{++}$ pointers for debugging purposes.
-
-%\ccFunction{template <class Triangulation_traits_3, class Tds_3>
-%	Triangulation_vertex_3<Triangulation_traits_3,Tds_3> * 
-%debug(const Triangulation_vertex_handle_3<Triangulation_traits_3,Tds_3> v);}
-%{}
-
-%\ccFunction{template <class Triangulation_traits_3, class Tds_3>
-%	Triangulation_cell_3<Triangulation_traits_3,Tds_3> * 
-%	debug(const Triangulation_cell_handle_3<Triangulation_traits_3,Tds_3>
-%c);}
-%{}
-
-%This allows the following:\\
-%\texttt{(dbx) print -r CGAL\_debug(c)->vertex(0)\\
-%CGAL\_debug(c)->vertex(0) = \{\\\
-%\ldots\\
-%\} }
-
-
 
 \section{Examples}
 \label{Triangulation3-sec-examples}

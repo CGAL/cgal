@@ -61,10 +61,12 @@ class Triangulation_data_structure_3
 {
 public:
 
-  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
+  typedef Triangulation_data_structure_3<Vb,Cb>    Tds;
+  typedef Vb                                       Vertex_base;
+  typedef Cb                                       Cell_base;
 
-  typedef Triangulation_ds_vertex_3<Vb,Cb>         Vertex;
-  typedef Triangulation_ds_cell_3<Vb,Cb>           Cell;
+  typedef Triangulation_ds_vertex_3<Tds>           Vertex;
+  typedef Triangulation_ds_cell_3<Tds>             Cell;
   typedef std::pair<Cell*, int>                    Facet;
   typedef triple<Cell*, int, int>                  Edge;
 
@@ -1530,7 +1532,6 @@ insert_in_edge(Vertex * v, Cell* c, int i, int j)
   Cell* dnew;
 
   switch ( dimension() ) {
-    
   case 3:
     {
       CGAL_triangulation_expensive_precondition( is_cell(c) );
