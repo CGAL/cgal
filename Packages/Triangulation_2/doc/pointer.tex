@@ -1,0 +1,92 @@
+%% $RCSfile$
+% $Revision$
+% $Date$
+
+\chapter{Handles} \label{I1_ChapterPointer}
+
+
+\begin{ccClassTemplate}{Handle<T>}
+\section{Requirements for a handle}
+
+We present in this chapter the concept of a handle to an object
+of type \ccc{T}. Basically a handle to an object of type \ccc{T}
+behaves like a pointer to an object of type \ccc{T} except that it has
+no increment nor decrement operators and does not deal with memory
+allocation or deallocation. Essentially a
+ handle has two operators
+* and \ccc{->} which gives  access to the object pointed to.
+ 
+
+%\begin{ccClassTemplate}{Handle<T>}
+
+\ccTypes
+
+\ccTypedef{typedef T value_type;}{}
+
+\ccCreation
+\ccCreationVariable{ht}
+\ccThree{Handle<T>& }{operator==(const Pointer &hr);}{}
+\ccThreeToTwo
+
+\ccConstructor{Handle()}{\ccVar\ references no object.}
+\ccGlue
+\ccConstructor{Handle(const Handle<T>& hr);}{copy constructor}
+\ccGlue
+\ccConstructor{Handle(const T*& pt);}{constructs a reference from a
+pointer \ccc{T*}.}
+
+\ccMethod{Handle<T>& operator=(const T*& pr);} {\ccVar\ points to the object *pr}
+\ccGlue
+\ccMethod{Handle<T>&  operator=(const Handle<T>& pr);} {\ccVar\ and pr point
+to the same object.}
+\ccGlue
+%\ccMethod{void clear();} {sets \ccVar\ to reference no object.}
+
+\ccHeading{Dereference}
+
+\ccMethod{T& operator*();}{returns the object pointed to.}
+\ccGlue
+\ccMethod{T* operator->();}{returns a pointer to the object pointed to.}
+
+%\ccHeading{Memory allocation}
+
+%\ccMethod{void Delete();} {deallocate the memory referenced by \ccVar.}
+
+
+\ccHeading{Equality}
+%\ccMethod { bool is_null() const; }{ true if \ccVar\ references no
+%object.}
+%\ccGlue
+\ccMethod{ bool operator==(const Handle<T>& hr) const;}
+{true if \ccVar\ and \ccc{q} reference the same object.}
+\ccGlue
+\ccMethod{ bool operator!=(const Handle<T>& hr) const;}{true if
+\ccVar\ and \ccc{hr} reference distinct objects.}
+
+
+\end{ccClassTemplate} 
+
+\section{Model for a handle}
+
+
+
+\begin{ccClassTemplate} {Pointer<T>}
+
+
+\ccThree{typedef Pointer<T>}{Pointer}{}
+\ccThreeToTwo
+
+
+
+The class \ccClassTemplateName\ provides a model for a handle
+pointing to an object
+of class \ccc{T}. 
+
+\ccInclude{CGAL/Pointer.h}
+
+Note that a simple pointer \ccc{T*},
+an iterator or a circulator with value type \ccc{T},
+can also be used as handles for object of type  \ccc{T}.
+
+
+\end{ccClassTemplate} 
