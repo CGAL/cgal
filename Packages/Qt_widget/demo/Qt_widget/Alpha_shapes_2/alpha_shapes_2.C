@@ -63,6 +63,8 @@ Alpha_shape_w     AW;
 int               current_state;
 double            alpha_index;
 QImage            image;
+Coord_type        xmin, ymin, xmax, ymax;
+
 
 class Qt_layer_show_alpha_shape : public CGAL::Qt_widget_layer
 {
@@ -293,7 +295,7 @@ private slots:
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
     ed->show();
-    ed->set_window(-1.1, 1.1, -1.1, 1.1);
+    ed->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
 
@@ -368,6 +370,15 @@ private slots:
     Vertex_iterator it = tr1.vertices_begin();
     while(it != tr1.vertices_end()) {
       L.push_back((*it).point());
+      if(xmin > (*it).point().x())
+	xmin = (*it).point().x();
+      if(xmax < (*it).point().x())
+	xmax = (*it).point().x();
+      if(ymin > (*it).point().y())
+	ymin = (*it).point().y();
+      if(ymax < (*it).point().y())
+	ymax = (*it).point().y();
+      widget->set_window(xmin, xmax, ymin, ymax);
       it++;
     }
     A.make_alpha_shape(L.begin(), L.end());

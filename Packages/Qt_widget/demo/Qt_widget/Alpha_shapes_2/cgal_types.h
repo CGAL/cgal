@@ -14,7 +14,6 @@
 #include <CGAL/Alpha_shape_euclidean_traits_2.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
 #include <CGAL/Weighted_point.h>
-#include <CGAL/predicates_on_points_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Kernel/function_objects.h>
 
@@ -26,8 +25,7 @@ typedef CGAL::Segment_2<Rep>        Segment;
 typedef CGAL::Line_2<Rep>           Line;
 typedef CGAL::Triangle_2<Rep>       Triangle;
 
-typedef CGAL::CGALi::p_Less_xy<Point>
-                                    Point_compare;
+typedef CGAL::CGALi::Less_xy_2<Rep> Point_compare;
 typedef CGAL::Triangulation_2<Rep>  Triangulation;
 typedef std::list<Point>            CGALPointlist;
 
