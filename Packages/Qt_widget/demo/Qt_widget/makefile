@@ -33,7 +33,6 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 DEMO_SUBDIRS= \
-./Constrained_triangulation_2 \
 ./Examples
 
 all:
