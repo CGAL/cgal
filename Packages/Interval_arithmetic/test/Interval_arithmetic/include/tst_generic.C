@@ -32,7 +32,7 @@ bool spiral_test()
     IA_nt y_ip1 = y_i + x_i/CGAL::sqrt(IA_nt(i));
     x_i = x_ip1;
     y_i = y_ip1;
-    IA_nt length = CGAL::square(x_i) + CGAL::square(y_i);
+    DEBUG( IA_nt length = CGAL::square(x_i) + CGAL::square(y_i); )
     DEBUG(std::cout<<i<<": (" << x_i << " , " << y_i << ") : " << length << "\n";)
     if ( x_i.overlap(0) || y_i.overlap(0) )
       break;
