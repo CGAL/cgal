@@ -16,7 +16,8 @@
 \ccDefinition
   
 The function \ccRefName\ interpolates the function values and the
-gradients that are provided following the method described in \cite{s-bdnni-81}.
+gradients that are provided by functors 
+following the method described in \cite{s-bdnni-81}.
 
 \ccParameters The template parameter \ccc{Traits} is to be
 instantiated with a model of \ccc{InterpolationTraits}.
@@ -67,7 +68,7 @@ function gradient given a point.
   \ccc{Traits::FT}.
 \item \ccc{GradFunctor::argument_type} must be equivalent to
   \ccc{Traits::Point_d} and \ccc{Functor::result_type} is a pair of
-  the type of the gradient of the function value and a boolean. The
+  the function's gradient type and a boolean. The
   function gradient type must provide a multiplication operation with
   \ccc{Traits::Vector_d}.
 \item A model of the functor types \ccc{Functor} (resp.\ 

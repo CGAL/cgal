@@ -69,9 +69,8 @@ of the triangulation.
   OutputIterator, typename Dt::Geom_traits::FT >
   natural_neighbor_coordinates_2(const Dt& dt, typename
   Dt::Vertex_handle vh, OutputIterator out);}{This function computes
-  the natural neighbor coordinates of the point contained in the
-  vertex referenced by \ccc{vh}, \ccc{vh->point()}, with respect to
-  \ccc{Dt} excluding \ccc{vh->point()}. The same as above for the
+  the natural neighbor coordinates of the point \ccc{vh->point()} with respect to
+  the vertices of \ccc{dt} excluding \ccc{vh->point()}. The same as above for the
   remaining parameters.}
 
 \ccFunction{template <class Dt, class OutputIterator> 
@@ -106,8 +105,8 @@ of the triangulation.
 \ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3} \\
 \ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} 
 
-\ccImplementation This function computes the areas stolen from the
-Voronoi cells of points in \ccc{dt} by the insertion of \ccc{p}. The
+\ccImplementation This function computes the area of the sub-cells stolen from the
+Voronoi cells of the points in \ccc{dt} when inserting \ccc{p}. The
 total area of the Voronoi cell of \ccc{p} is also computed and
 returned by the function.
 

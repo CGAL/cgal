@@ -15,8 +15,9 @@
 
 \ccDefinition
   
-The function \ccRefName\ interpolates the function values provided by 
-a functor.
+The function \ccRefName\ interpolates the function values and first degree 
+functions defined from the function gradients. Both, function values and 
+gradients, must be provided by functors.
 
 \ccInclude{CGAL/interpolation_functions.h}
 
@@ -42,8 +43,7 @@ See \ccc{sibson_c1_interpolation}.
   \ccc{sibson_c1_interpolation}. \ccPrecond{\ccc{norm} $\neq 0$ 
     \ccc{function_value(p).second == true} for all points
     \ccc{p} of the point/coordinate pairs in the range
-    $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$.
-    .}}
+    $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$.}}
 
 
 \ccHeading{Requirements} Same requirements as for
@@ -51,8 +51,18 @@ See \ccc{sibson_c1_interpolation}.
 to provide the square root operation.
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::Interpolation_traits_class_2.h} \\
-
+\ccRefConceptPage{InterpolationTraits}\\
+\ccRefConceptPage{GradientFittingTraits}\\
+\ccRefIdfierPage{CGAL::Data_access<Map>}\\
+\ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
+\ccRefIdfierPage{CGAL::linear_interpolation} \\
+%\ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
+%\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+\ccRefIdfierPage{CGAL::Interpolation_traits_2<K>} \\
+\ccRefIdfierPage{CGAL::Interpolation_gradient_fitting_traits_2<K>} \\
+\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3}\\
 %\ccImplementation
 
 \ccIndexSubitemEnd{Interpolation}{quadratic_interpolation}

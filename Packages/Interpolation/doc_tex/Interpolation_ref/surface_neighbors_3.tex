@@ -18,11 +18,11 @@
 Given a set of sample points issued from a surface and a query point
 \ccc{p}, the function \ccRefName\ computes the neighbors of \ccc{p} on
 the surface within the sample points. If the sampling is sufficiently
-dense, the neighbors re provably close to the point \ccc{p} on the
+dense, the neighbors are provably close to the point \ccc{p} on the
 surface (cf.\ the manual pages and
 \cite{bf-lcss-02},\cite{prisme-these-flototto}). They are defined to
-be the neighbors of \ccc{p} in the regular triangulation that is dual
-to the power diagram that is equivalent to the intersection of the
+be the neighbors of \ccc{p} in the regular triangulation dual
+to the power diagram which is equivalent to the intersection of the
 Voronoi cell of the query point \ccc{p} with the tangent plane to the
 surface at \ccc{p}.
 
@@ -37,7 +37,7 @@ surface at \ccc{p}.
   \ccc{InputIterator::value_type} is the point type
   \ccc{Kernel::Point_3}. The tangent plane is defined by the point
   \ccc{p} and the vector \ccc{normal}.  The
-  parameter \ccc{K} determines the kernel type. \\
+  parameter \ccc{K} determines the kernel type that will instantiate the template parameter of \ccc{Voronoi_intersection_2_traits_3<K>}. \\
   The surface neighbors of \ccc{p} are computed which are the
   neighbors of \ccc{p} in the regular triangulation that is dual to
   the intersection of the $3D$ Voronoi diagram of $\mathcal{P}$ with
@@ -58,7 +58,7 @@ surface at \ccc{p}.
 
 The next functions return, in addition, a boolean value that certifies
 whether or not, the Voronoi cell of \ccc{p} can be affected by points
-that lie inside the ball centered on \ccc{p} passing through the
+that lie outside the input range, i.e.\ outside the ball centered on \ccc{p} passing through the
 furthest sample point from \ccc{p} in the range
 $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$. If the sample
 points are collected by a $k$-nearest neighbor or a range search
@@ -70,7 +70,7 @@ been considered.
   surface_neighbors_certified_3(InputIterator first,
   InputIterator beyond, const typename Kernel::Point_3& p, const
   typename Kernel::Vector_3& normal, OutputIterator out, const Kernel&
-  K);}{The similar to the first function. The additional third return
+  K);}{Similar to the first function. The additional third return
   value is \ccc{true} if the furthest point in the range
   $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$ is further
   away from \ccc{p} than twice the distance from \ccc{p} to the
@@ -84,7 +84,7 @@ been considered.
   typename Kernel::FT& max_distance, OutputIterator out, const
   Kernel& kernel);} { The same as above except that this function
   takes the maximal distance from \ccc{p} to the points in the range
-  $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$ as add.
+  $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$ as additional
   parameter.}
 
 \ccFunction{template <class OutputIterator, class InputIterator, class

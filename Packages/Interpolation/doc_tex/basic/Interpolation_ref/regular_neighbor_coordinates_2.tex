@@ -18,8 +18,8 @@
 The function \ccRefName\ computes natural neighbor coordinates, also
 called Sibson's coordinates, for weighted $2D$ points provided a
 two-dimensional regular triangulation and a (weighted) query point
-inside the convex hull of the vertices of the triangulation. The
-coordinates are also called regular neighbor coordinates.
+inside the convex hull of the vertices of the triangulation. We call these 
+coordinates regular neighbor coordinates.
 
 \ccInclude{CGAL/regular_neighbor_coordinates_2.h}
 
@@ -64,10 +64,10 @@ coordinates are also called regular neighbor coordinates.
   hidden_vertices_begin, VertexIterator hidden_vertices_end, const
   Traits& traits);} { The same as above.  \ccc{hole_begin} and
   \ccc{hole_end} determines the iterator range over the boundary edges
-  of the conflict zone of \ccc{p} in the triangulation.
+  of the conflict zone of \ccc{p} in the triangulation \ccc{rt}.
   \ccc{hidden_vertices_begin} and \ccc{hidden_vertices_end} determines
   the iterator range over the hidden vertices of the conflict zone of
-  \ccc{p} in the triangulation. It is the result of the function
+  \ccc{p} in\ccc{rt}. It is the result of the function
   \ccc{T.get_boundary_of_conflicts(p,std::back_inserter(hole),
     std::back_inserter(hidden_vertices),
     start)}, see \ccc{Regular_triangulation_2<Traits, Tds>}.}
@@ -77,9 +77,8 @@ coordinates are also called regular neighbor coordinates.
   std::pair< OutputIterator, typename Rt::Geom_traits::FT >
   regular_neighbor_coordinates_2(const Rt& rt, typename
   Rt::Vertex_handle vh, OutputIterator out);}{This function computes
-  the regular neighbor coordinates of the point contained in the
-  vertex referenced by \ccc{vh}, \ccc{vh->point()}, with respect to
-  \ccc{Rt} excluding \ccc{vh->point()}. The same as above for the
+  the regular neighbor coordinates of the point \ccc{vh->point()} with respect to
+  the vertices of \ccc{rt} excluding \ccc{vh->point()}. The same as above for the
   remaining parameters.}  
 
 \ccFunction{template <class Rt, class OutputIterator> 

@@ -37,7 +37,8 @@ the sample points onto the tangent plane at \ccc{p}.
   \ccc{InputIterator::value_type} is the point type
   \ccc{Kernel::Point_3}. The tangent plane is defined by the point
   \ccc{p} and the vector \ccc{normal}.  The
-  parameter \ccc{K} determines the kernel type. \\
+  parameter \ccc{K} determines the kernel type that will instantiate 
+  the template parameter of \ccc{Voronoi_intersection_2_traits_3<K>}. \\
   The natural neighbor coordinates for \ccc{p} are computed in the
   power diagram that results from the intersection of the $3D$ Voronoi
   diagram of $\mathcal{P}$ with the tangent plane. The sequence of
@@ -62,7 +63,8 @@ the sample points onto the tangent plane at \ccc{p}.
 
 The next functions return, in addition, a boolean value that certifies
 whether or not, the Voronoi cell of \ccc{p} can be affected by points
-that lie inside the ball centered on \ccc{p} passing through the
+that lie outside the input range, i.e.\ outside the ball centered on \ccc{p} 
+passing through the
 furthest sample point from \ccc{p} in the range
 $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$. If the sample
 points are collected by a $k$-nearest neighbor or a range search
@@ -160,10 +162,10 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
 \ccRefIdfierPage{CGAL::Voronoi_intersection_2_traits_3<K>}\\
 \ccRefIdfierPage{CGAL::surface_neighbors_3} 
 
-\ccImplementation This function computes the areas stolen from the
-Voronoi cells of points in \ccc{dt} by the insertion of \ccc{p}. The
-total area of the Voronoi cell of \ccc{p} is also computed and
-returned by the function.
+\ccImplementation This functions construct the regular triangulation of the input points 
+instantiated with \ccc{Voronoi_intersection_2_traits_3<Kernel>} or \ccc{ITraits} if provided. 
+They return the result of the function call 
+\ccc{regular_neighbor_coordinates_2} with the regular triangulation and \ccc{p} as arguments.
 
 \ccIndexSubitemEnd{Interpolation}{surface_neighbor_coordinates_3}
 \end{ccRefFunction}
