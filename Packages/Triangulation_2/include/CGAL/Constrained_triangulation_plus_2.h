@@ -66,11 +66,11 @@ public:
   typedef Constraint_hierarchy_2<Vertex_handle, bool> Constraint_hierarchy;
 
   // for user interface with the constraint hierarchy
-  typedef Constraint_hierarchy::H_vertex_it         Vertices_in_constraint;
-  typedef Constraint_hierarchy::H_context           Context;
-  typedef Constraint_hierarchy::H_context_iterator  Context_iterator;
-  typedef Constraint_hierarchy::H_c_iterator        Constraint_iterator;
-  typedef Constraint_hierarchy::H_sc_iterator       Subconstraint_iterator;
+  typedef typename Constraint_hierarchy::H_vertex_it    Vertices_in_constraint;
+  typedef typename Constraint_hierarchy::H_context      Context;
+  typedef typename Constraint_hierarchy::H_context_iterator  Context_iterator;
+  typedef typename Constraint_hierarchy::H_c_iterator   Constraint_iterator;
+  typedef typename Constraint_hierarchy::H_sc_iterator  Subconstraint_iterator;
  
 
 protected:

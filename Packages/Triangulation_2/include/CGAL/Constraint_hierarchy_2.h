@@ -47,9 +47,9 @@ public:
   typedef Constraint_hierarchy_2<T,Data>       Hierarchy;
   typedef std::pair<T, T>                      H_constraint;
   typedef std::list<T>                         H_vertex_list;
-  typedef std::list<T>::iterator               H_vertex_it;
   typedef std::list<H_constraint>              H_constraint_list;
-  typedef std::list<H_constraint>::iterator    H_constraint_it;
+  typedef typename std::list<T>::iterator               H_vertex_it;
+  typedef typename std::list<H_constraint>::iterator    H_constraint_it;
 
   class H_context {
     friend class Hierarchy;
@@ -63,7 +63,7 @@ public:
     int number_of_vertices() {return enclosing->size();}
   };                                           
   typedef std::list<H_context>                 H_context_list;
-  typedef std::list<H_context>::iterator       H_context_iterator;
+  typedef typename std::list<H_context>::iterator       H_context_iterator;
 
   typedef std::map<T, Data>                             H_vertex_map;
   typedef std::map<H_constraint, H_vertex_list*>        H_c_to_sc_map;
