@@ -57,6 +57,7 @@ void box_intersection_custom_predicates_d(
 
 
 // Generic call with box traits parameter.
+// - make all default parameters explicit overloads (workaround)
 template< class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class BoxTraits >
 void box_intersection_d(
@@ -64,10 +65,9 @@ void box_intersection_d(
     RandomAccessIter2 begin2, RandomAccessIter2 end2,
     Callback callback,
     BoxTraits box_traits,
-    std::ptrdiff_t cutoff = 10,
-    Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
-    Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE,
-    typename BoxTraits::NT nt = typename BoxTraits::NT(1))
+    std::ptrdiff_t cutoff,
+    Box_intersection_d::Topology topology,
+    Box_intersection_d::Setting  setting)
 {
     if (topology == Box_intersection_d::CLOSED) {
         typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
@@ -80,20 +80,91 @@ void box_intersection_d(
     }
 }
 
+template< class RandomAccessIter1, class RandomAccessIter2,
+          class Callback, class BoxTraits >
+void box_intersection_d(
+    RandomAccessIter1 begin1, RandomAccessIter1 end1,
+    RandomAccessIter2 begin2, RandomAccessIter2 end2,
+    Callback callback, BoxTraits box_traits, std::ptrdiff_t cutoff,
+    Box_intersection_d::Topology topology)
+{
+    box_intersection_d( begin1, end1, begin2, end2, callback, box_traits, 
+                        cutoff, topology, Box_intersection_d::BIPARTITE);
+}
+template< class RandomAccessIter1, class RandomAccessIter2,
+          class Callback, class BoxTraits >
+void box_intersection_d(
+    RandomAccessIter1 begin1, RandomAccessIter1 end1,
+    RandomAccessIter2 begin2, RandomAccessIter2 end2,
+    Callback callback, BoxTraits box_traits, std::ptrdiff_t cutoff)
+{
+    box_intersection_d( begin1, end1, begin2, end2, callback, box_traits, 
+                        cutoff, Box_intersection_d::CLOSED, 
+                        Box_intersection_d::BIPARTITE);
+}
+template< class RandomAccessIter1, class RandomAccessIter2,
+          class Callback, class BoxTraits >
+void box_intersection_d(
+    RandomAccessIter1 begin1, RandomAccessIter1 end1,
+    RandomAccessIter2 begin2, RandomAccessIter2 end2,
+    Callback callback, BoxTraits box_traits)
+{
+    box_intersection_d( begin1, end1, begin2, end2, callback, box_traits, 
+                        10, Box_intersection_d::CLOSED, 
+                        Box_intersection_d::BIPARTITE);
+}
+
 // Specialized call with default box traits.
+// - make all default parameters explicit overloads (workaround)
 template< class RandomAccessIter1, class RandomAccessIter2, class Callback >
 void box_intersection_d(
     RandomAccessIter1 begin1, RandomAccessIter1 end1,
     RandomAccessIter2 begin2, RandomAccessIter2 end2,
-    Callback callback,
-    std::ptrdiff_t cutoff = 10,
-    Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
-    Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE)
+    Callback callback, std::ptrdiff_t cutoff,
+    Box_intersection_d::Topology topology,
+    Box_intersection_d::Setting  setting)
 {
     typedef typename std::iterator_traits<RandomAccessIter1>::value_type Box_t;
     typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
-    box_intersection_d( begin1, end1, begin2, end2,
-                        callback, Box_traits(), cutoff, topology, setting);
+    box_intersection_d( begin1, end1, begin2, end2, callback, Box_traits(), 
+                        cutoff, topology, setting);
+}
+
+template< class RandomAccessIter1, class RandomAccessIter2, class Callback >
+void box_intersection_d(
+    RandomAccessIter1 begin1, RandomAccessIter1 end1,
+    RandomAccessIter2 begin2, RandomAccessIter2 end2,
+    Callback callback, std::ptrdiff_t cutoff,
+    Box_intersection_d::Topology topology)
+{
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type Box_t;
+    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    box_intersection_d( begin1, end1, begin2, end2, callback, Box_traits(), 
+                        cutoff, topology, Box_intersection_d::BIPARTITE);
+}
+template< class RandomAccessIter1, class RandomAccessIter2, class Callback >
+void box_intersection_d(
+    RandomAccessIter1 begin1, RandomAccessIter1 end1,
+    RandomAccessIter2 begin2, RandomAccessIter2 end2,
+    Callback callback, std::ptrdiff_t cutoff)
+{
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type Box_t;
+    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    box_intersection_d( begin1, end1, begin2, end2, callback, Box_traits(), 
+                        cutoff, Box_intersection_d::CLOSED, 
+                        Box_intersection_d::BIPARTITE);
+}
+template< class RandomAccessIter1, class RandomAccessIter2, class Callback >
+void box_intersection_d(
+    RandomAccessIter1 begin1, RandomAccessIter1 end1,
+    RandomAccessIter2 begin2, RandomAccessIter2 end2,
+    Callback callback)
+{
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type Box_t;
+    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    box_intersection_d( begin1, end1, begin2, end2, callback, Box_traits(), 
+                        10, Box_intersection_d::CLOSED, 
+                        Box_intersection_d::BIPARTITE);
 }
 
 
@@ -104,8 +175,7 @@ void box_self_intersection_d(
     Callback callback,
     BoxTraits box_traits,
     std::ptrdiff_t cutoff = 10,
-    Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
-    typename BoxTraits::NT nt = typename BoxTraits::NT(1))
+    Box_intersection_d::Topology topology = Box_intersection_d::CLOSED)
 {
     typedef typename std::iterator_traits<RandomAccessIter>::value_type Box_t;
     std::vector< Box_t> i( begin, end);
