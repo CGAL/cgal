@@ -23,17 +23,6 @@
 
 #ifndef CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H
 #define CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H
-
-#ifndef CGAL_NUMBER_UTILS_H
-#include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
-#ifndef CGAL_DETERMINANT_H
-#include <CGAL/determinant.h>
-#endif // CGAL_DETERMINANT_H
-#ifndef CGAL_BASIC_CONSTRUCTIONS_FTC2_H
-#include <CGAL/basic_constructions_ftC2.h>
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -833,6 +822,7 @@ has_smaller_signed_dist_to_lineC2(
 		qy.exact());
   }
 }
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -968,13 +958,6 @@ has_smaller_signed_dist_to_lineC2(
   }
 }
 
-
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H
-#include <CGAL/Arithmetic_filter/predicates_on_ftC2.h>
 #endif // CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H
-#endif
-
-#endif  // CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H

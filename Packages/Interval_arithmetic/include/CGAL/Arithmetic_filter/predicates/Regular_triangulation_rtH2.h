@@ -23,10 +23,6 @@
 
 #ifndef CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH2_H
 #define CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH2_H
-
-// This file contains the low level homogeneous predicates
-// used by the 2D regular triangulation.
-
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -97,7 +93,6 @@ power_testH2(
   }
 }
 
-
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -155,11 +150,5 @@ power_testH2(
 }
 
 CGAL_END_NAMESPACE
-
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH2_H
-#include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_rtH2.h>
-#endif // CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH2_H
-#endif
 
 #endif // CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH2_H

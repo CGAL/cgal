@@ -23,14 +23,6 @@
 
 #ifndef CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H
 #define CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H
-
-#ifndef CGAL_DETERMINANT_H
-#include <CGAL/determinant.h>
-#endif // CGAL_DETERMINANT_H
-#ifndef CGAL_BASIC_CONSTRUCTIONS_FTC3_H
-#include <CGAL/basic_constructions_ftC3.h>
-#endif // CGAL_BASIC_CONSTRUCTIONS_FTC3_H
-
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -273,7 +265,6 @@ collinear_are_strictly_ordered_along_lineC3(
   }
 }
 
-
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -405,7 +396,6 @@ side_of_bounded_sphereC3(
 		tz.exact());
   }
 }
-
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
@@ -703,6 +693,7 @@ has_smaller_signed_dist_to_planeC3(
 		qz.exact());
   }
 }
+
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
@@ -901,13 +892,6 @@ has_smaller_signed_dist_to_planeC3(
   }
 }
 
-
 CGAL_END_NAMESPACE
-
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H
-#include <CGAL/Arithmetic_filter/predicates_on_ftC3.h>
-#endif // CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H
-#endif
 
 #endif // CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H

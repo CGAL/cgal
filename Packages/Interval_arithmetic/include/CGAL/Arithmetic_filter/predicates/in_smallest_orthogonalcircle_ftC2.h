@@ -23,13 +23,7 @@
 
 #ifndef CGAL_ARITHMETIC_FILTER_IN_SMALLEST_ORTHOGONALCIRCLE_FTC2_H
 #define CGAL_ARITHMETIC_FILTER_IN_SMALLEST_ORTHOGONALCIRCLE_FTC2_H
-
-#include <CGAL/determinant.h>
-#include <CGAL/enum.h>
-
-//-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
-//-------------------------------------------------------------------
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
@@ -79,8 +73,6 @@ in_smallest_orthogonalcircleC2(
   }
 }
 
-//-------------------------------------------------------------------
 CGAL_END_NAMESPACE
-//-------------------------------------------------------------------
 
-#endif //CGAL_IN_SMALLEST_ORTHOGONALCIRCLEC2_H
+#endif // CGAL_ARITHMETIC_FILTER_IN_SMALLEST_ORTHOGONALCIRCLE_FTC2_H
