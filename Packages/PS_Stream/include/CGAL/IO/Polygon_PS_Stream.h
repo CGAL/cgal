@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/IO/Polygone_PS_Stream.h
+// file          : include/CGAL/IO/Polygon_PS_Stream.h
 // package       : PS_Stream
 // revision      : $Revision$
 // revision_date : $Date$
