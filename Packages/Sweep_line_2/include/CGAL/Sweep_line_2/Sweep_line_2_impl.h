@@ -28,10 +28,9 @@
 #define CGAL_SWEEP_LINE_2_IMPL_H
 
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
-
+#include <CGAL/assertions.h>
 #include <map>
 #include <set>
-#include <assert.h>
 
 #ifndef VERBOSE
 
@@ -250,6 +249,7 @@ public:
   { 
     // TODO - implement...
     SweepLineGetInterCurveList tag;
+    (void) tag;
   }
 
   bool do_curves_intersect(CurveInputIterator begin, 
@@ -1235,7 +1235,7 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
     SL_DEBUG((*slIter)->Print();)
     const Point_2 &topEnd = vcurve->getTopEnd();
     EventQueueIter topEndEventIter = m_queue->find(topEnd);
-    assert(topEndEventIter!=m_queue->end());
+    CGAL_assertion(topEndEventIter!=m_queue->end());
     Event *topEndEvent = topEndEventIter->second;
 
     bool lastEventCreatedHere = false;
@@ -1265,7 +1265,7 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
       Point_2 xp;
       bool res = m_traits->nearest_intersection_to_right(cv1, cv2,
                                                          currentPoint, xp, xp);
-      SL_DEBUG(assert(res==true);)
+      SL_DEBUG(CGAL_assertion(res==true);)
       res = 0;
       
       EventQueueIter eqi = m_queue->find(xp);
@@ -1364,7 +1364,7 @@ HandleVerticalOverlapCurves()
 
     } else if (!curve->isEndPoint(point)) {
       EventQueueIter eventIter = m_queue->find(curve->getTopEnd());
-      assert(eventIter!=m_queue->end());
+      CGAL_assertion(eventIter!=m_queue->end());
       (eventIter->second)->addVerticalCurveXPoint(point, true);
       m_currentEvent->markInternalIntersectionPoint();
       ++iter;
@@ -1907,7 +1907,7 @@ RemoveCurveFromStatusLine(Subcurve *leftCurve)
   }
 
   m_currentPos = m_prevPos;
-  assert(sliter!=m_statusLine->end());
+  CGAL_assertion(sliter!=m_statusLine->end());
   StatusLineIter end = m_statusLine->end(); --end;
   if ( sliter != m_statusLine->begin() && sliter != end ) 
   {
@@ -2090,7 +2090,7 @@ isInternalXPoint(const Point_2 &p)
     } 
     ++itt;
   }
-  assert(0);
+  CGAL_assertion(0);
   return false;
 }
 
@@ -2267,7 +2267,7 @@ HandleVerticalCurveBottom(SweepLineGetPoints &tag)
 
     const Point_2 &topEnd = vcurve->getTopEnd();
     EventQueueIter topEndEventIter = m_queue->find(topEnd);
-    assert(topEndEventIter!=m_queue->end());
+    CGAL_assertion(topEndEventIter!=m_queue->end());
     Event *topEndEvent = topEndEventIter->second;
 
     while (slIter != m_statusLine->end() &&
@@ -2295,7 +2295,7 @@ HandleVerticalCurveBottom(SweepLineGetPoints &tag)
 						(*slIter)->getCurve(), 
 						currentPoint, 
 						xp, xp);
-      SL_DEBUG(assert(res==true);)
+      SL_DEBUG(CGAL_assertion(res==true);)
       res = 0;
       EventQueueIter eqi = m_queue->find(xp);
       Event *e = 0;
@@ -2462,9 +2462,8 @@ PrintVerticals()
   std::cout << "Verticals - end" << std::endl;
 }
 
-#endif // NDEBUG
-
+#endif
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SWEEP_LINE_2_IMPL_H
+#endif

@@ -31,6 +31,7 @@
 #include <set>
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
+#include <CGAL/assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -188,12 +189,12 @@ public:
   }
 
   bool isBottomEnd(const Point_2 &p) {
-    assert(m_traits->curve_is_vertical(m_curve)==true);
+    CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
     return isLeftEnd(p);
   }
 
   bool isTopEnd(const Point_2 &p) {
-    assert(m_traits->curve_is_vertical(m_curve)==true);
+    CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
     return isRightEnd(p);
   }
 
@@ -210,12 +211,12 @@ public:
   }
 
   const Point_2 &getTopEnd() const {
-    assert(m_traits->curve_is_vertical(m_curve)==true);
+    CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
     return getRightEnd();
   }
 
   const Point_2 &getBottomEnd() const {
-    assert(m_traits->curve_is_vertical(m_curve)==true);
+    CGAL_assertion(m_traits->curve_is_vertical(m_curve)==true);
     return getLeftEnd();
   }
 
@@ -320,8 +321,9 @@ Print() const
 	    << "last P = (" << m_lastPoint << ")" << std::endl;
   
 }
+
 #endif
+
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SWEEP_LINE_SUBCURVE_H
-
+#endif
