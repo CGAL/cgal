@@ -77,7 +77,7 @@ void print_out(Snap_rounding_2 &s)
       std::cout << "    (" << i2->x().to_double() << ":"
                 << i2->y().to_double() << ")\n";
 
-    std::cout << endl;
+    std::cout << std::endl;
   }
 }
 
@@ -94,13 +94,13 @@ int main(int argc,char *argv[])
   for(Segment_iterator i1 = s1.segments_begin();
       i1 != s1.segments_end();
       ++i1)
-    cout << *i1 << std::endl;
+    std::cout << *i1 << std::endl;
 
   std::cout << "\ninput segments (const iterator)\n";
   for(Segment_const_iterator i2 = s1.segments_begin();
       i2 != s1.segments_end();
       ++i2)
-    cout << *i2 << std::endl;
+    std::cout << *i2 << std::endl;
 
   std::cout << "\nthe output\n";
   print_out(s1);

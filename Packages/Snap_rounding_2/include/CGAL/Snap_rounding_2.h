@@ -153,10 +153,10 @@ typedef typename Rep::FT                             NT;
 //typedef CGAL::Quotient<CGAL::MP_Float>             NT2;
 //typedef CGAL::Cartesian<NT>                        Kernel2;
 //typedef CGAL::Arr_segment_traits_2<Kernel2> Traits2;
-typedef CGAL::Pm_default_dcel<Traits>                      Dcel2;
+/*typedef CGAL::Pm_default_dcel<Traits>                      Dcel2;
 typedef CGAL::Planar_map_2<Dcel2,Traits>                   Planar_map_2;
 typedef CGAL::Planar_map_with_intersections_2<Planar_map_2> Pmwx;
-typedef Traits::X_curve                                    X_curve2;
+typedef Traits::X_curve                                    X_curve2;*/
 // @@@@ end special typedefs for pm
 typedef typename Traits::X_curve                     X_curve;
 typedef typename Traits::Curve                       Curve;
@@ -282,13 +282,13 @@ private:
   Multiple_kd_tree<Rep,Hot_Pixel<Rep> *> *mul_kd_tree;
   bool wheteher_to_do_isr;
   bool int_output;
-  Pmwx pm;// @@@@
+  //  Pmwx pm;// @@@@
 
   void find_hot_pixels_and_create_kd_trees();
 
   //@@@@ next function
-  void produce_extra_hot_pixels(std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >&
-                   hot_pixels_list,std::list<Segment_2> segment_list);
+  //  void produce_extra_hot_pixels(std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >&
+  //                 hot_pixels_list,std::list<Segment_2> segment_list);
 
   void find_intersected_hot_pixels(Segment_data<Rep> &seg,
                          std::set<Hot_Pixel<Rep> *,
@@ -418,11 +418,11 @@ Hot_Pixel<Rep_>::~Hot_Pixel()
   }
 
 template<class Rep_>
-inline Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center() const
+inline typename Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center() const
     {return(p);}
 
 template<class Rep_>
-inline Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center(
+inline typename Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center(
             bool int_output) const
   {
     if(int_output) {
@@ -630,7 +630,7 @@ bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,
 }
 
 // @@@@ a function for ISRS
-template<class Rep_>
+/*template<class Rep_>
 Segment_2 Snap_rounding_2<Rep_>::find_segment_to_right(Point_2 query_point,std::list<Segment_2>& segment_list,NT& dis,bool& found);
 {
   std::list<Segment_2>::const_iterator iter;
@@ -651,9 +651,9 @@ Segment_2 Snap_rounding_2<Rep_>::find_segment_to_right(Point_2 query_point,std::
     }
   }
 }
-
+*/
 // @@@@ a function for ISRS
-template<class Rep_>
+/*template<class Rep_>
 bool Snap_rounding_2<Rep_>::inside_bounding_box(Point_2 query_point,Segment_2 s)
 {
   NT x = query_point.x(),
@@ -665,9 +665,9 @@ bool Snap_rounding_2<Rep_>::inside_bounding_box(Point_2 query_point,Segment_2 s)
 
   return(!(x < s1x && x < s2x || x > s1x && x > s2x || y < s1y && y < s2y || y > s1y && y > s2y));
 }
-
+*/
 // @@@@ a function for ISRS
-template<class Rep_>
+/*template<class Rep_>
 void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list,std::list<Segment_2>& segment_list,NT delta)
 {
   typename std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >::const_iterator iter;
@@ -923,9 +923,9 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
       // @@@@ insert to planar map
       //std:: cout << "1st : " << begin->source() <<
       // " snd : " << begin->target() << endl;
-      X_curve2 c(begin->source(),begin->target());
+      //X_curve2 c(begin->source(),begin->target());
       //std::cout << "bbb\n";
-      pm.insert(c);
+      //pm.insert(c);
       // @@@@ end of pmwx for here
 
       ++begin;
@@ -1019,7 +1019,7 @@ Snap_rounding_2<Rep_>::insert(InputIterator first, InputIterator last)
 
 
 template<class Rep_>
-const Snap_rounding_2<Rep_>::Polyline_const_iterator
+const typename Snap_rounding_2<Rep_>::Polyline_const_iterator
       Snap_rounding_2<Rep_>::polylines_begin()
 {
   if(need_sr) {
@@ -1032,7 +1032,7 @@ const Snap_rounding_2<Rep_>::Polyline_const_iterator
 }
 
 template<class Rep_>
-const Snap_rounding_2<Rep_>::Polyline_const_iterator
+const typename Snap_rounding_2<Rep_>::Polyline_const_iterator
       Snap_rounding_2<Rep_>::polylines_end()
 {
   if(need_sr) {
@@ -1051,7 +1051,7 @@ bool Snap_rounding_2<Rep_>::remove(Segment_2 seg)
     bool found = false;
     Segment_data<Rep> s;
 
-    for(std::list<Segment_data<Rep> >::iterator i1 = seg_list.begin();
+    for(typename std::list<Segment_data<Rep> >::iterator i1 = seg_list.begin();
       i1 != seg_list.end();++i1) {
        s = *i1;  
       if(s.equal(seg)) {
