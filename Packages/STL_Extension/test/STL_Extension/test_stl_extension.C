@@ -5277,8 +5277,7 @@ void test_N_step_adaptor() {
     l.push_back( *new item(5));
     CGAL_assertion( l.size() == 10);
     typedef List::iterator IterBase;
-    typedef N_step_adaptor<IterBase,2,item&,item*,item,std::ptrdiff_t,
-      std::bidirectional_iterator_tag> Iterator;
+    typedef N_step_adaptor<IterBase,2> Iterator;
     Iterator begin(l.begin());
     Iterator end(l.end());
     Assert_bidirectional_category(begin);
@@ -5478,9 +5477,7 @@ void test_N_step_adaptor() {
     List l2 = l;
     const List& l1 = l2;
     typedef List::const_iterator ConstIterBase;
-    typedef N_step_adaptor<ConstIterBase,2,const item&,const item*,
-      item,std::ptrdiff_t, std::bidirectional_iterator_tag>
-    C_Iterator;
+    typedef N_step_adaptor<ConstIterBase,2> C_Iterator;
 C_Iterator c_begin(l1.begin());
 C_Iterator c_end(l1.end());
 Assert_bidirectional_category(c_begin);
@@ -5601,8 +5598,7 @@ l2.destroy();
     v.push_back(5);
     CGAL_assertion( v.size() == 10);
     typedef Vector::iterator IterBase;
-    typedef N_step_adaptor<IterBase,2,int&,int*,int,std::ptrdiff_t,
-      std::random_access_iterator_tag> Iterator;
+    typedef N_step_adaptor<IterBase,2> Iterator;
     Iterator begin(v.begin());
     Iterator end(v.end());
     Assert_random_access_category(begin);
@@ -5985,10 +5981,7 @@ l2.destroy();
     Vector v2 = v;
     const Vector& v1 = v2;
     typedef Vector::const_iterator ConstIterBase;
-    typedef N_step_adaptor< ConstIterBase,2,const int&,
-      const int*, int, std::ptrdiff_t,
-                            std::random_access_iterator_tag>
-    C_Iterator;
+    typedef N_step_adaptor< ConstIterBase,2> C_Iterator;
     C_Iterator c_begin(v1.begin());
     C_Iterator c_end(v1.end());
     Assert_random_access_category(c_begin);
@@ -6176,8 +6169,7 @@ l2.destroy();
     typedef Vector::iterator IterBase;
     typedef Random_access_circulator_from_iterator<IterBase,int,
       std::size_t,std::ptrdiff_t> CircBase;
-    typedef N_step_adaptor<CircBase,2,int&,int*,int,std::ptrdiff_t,
-      Random_access_circulator_tag> Circulator;
+    typedef N_step_adaptor<CircBase,2> Circulator;
     Circulator begin(CircBase( v.begin(),v.end()));
     Assert_random_access_category(begin);
     { // Open own scope to hide local variables.
@@ -6618,8 +6610,7 @@ l2.destroy();
     typedef Random_access_const_circulator_from_iterator<
       ConstIterBase, int, std::size_t, std::ptrdiff_t>
     ConstCircBase;
-typedef N_step_adaptor<ConstCircBase,2,const int&,const int*,
-  int,std::ptrdiff_t, Random_access_circulator_tag> C_Circulator;
+typedef N_step_adaptor<ConstCircBase,2> C_Circulator;
 C_Circulator c_begin(ConstCircBase(v1.begin(),v1.end()));
 Assert_random_access_category(c_begin);
 { // Open own scope to hide local variables.

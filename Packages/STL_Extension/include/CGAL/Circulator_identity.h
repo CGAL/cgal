@@ -132,18 +132,6 @@ public:
     tmp += n;
     return tmp.operator*();
   }
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-  friend inline  iterator_category
-  iterator_category( const Self&) { return iterator_category(); }
-  friend inline  value_type*
-  value_type( const Self&) { return (value_type*)(0); }
-  friend inline  difference_type*
-  distance_type( const Self&) { return (difference_type*)(0); }
-  friend inline  Circulator_tag
-  query_circulator_or_iterator( const Self&) { return Circulator_tag(); }
-#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
 template < class Dist, class C, class Ref, class Ptr>

@@ -36,11 +36,10 @@
 #include <cstddef>
 
 // copy_n is usually in the STL as well, but not in the official
-// standard. We provide out own copy_n. Only on Gnu g++ 2.8.1
-// the hack to work with namespaces gives a name clash, which
-// we avoid using the follwing workaround.
-#ifndef CGAL_CFG_NO_NAMESPACE
+// standard. We provide our own copy_n.
+
 CGAL_BEGIN_NAMESPACE
+
 template <class InputIterator, class Size, class OutputIterator>
 OutputIterator copy_n( InputIterator first,
                        Size n,
@@ -54,7 +53,7 @@ OutputIterator copy_n( InputIterator first,
   }
   return result;
 }
+
 CGAL_END_NAMESPACE
-#endif // CGAL_CFG_NO_NAMESPACE //
 #endif // CGAL_COPY_N_H //
 // EOF //

@@ -33,22 +33,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#if defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
-!defined(CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT)
-template < class I, class Ref, class Ptr, class Val, class Dist, class Ctg>
-#else
 template < class I,
-           class Ref  = CGAL_TYPENAME_MSVC_NULL
-                        std::iterator_traits<I>::reference,
-           class Ptr  = CGAL_TYPENAME_MSVC_NULL
-                        std::iterator_traits<I>::pointer,
-           class Val  = CGAL_TYPENAME_MSVC_NULL
-                        std::iterator_traits<I>::value_type,
-           class Dist = CGAL_TYPENAME_MSVC_NULL
-                        std::iterator_traits<I>::difference_type,
-           class Ctg = CGAL_TYPENAME_MSVC_NULL
-                        std::iterator_traits<I>::iterator_category>
-#endif
+           class Ref  = typename std::iterator_traits<I>::reference,
+           class Ptr  = typename std::iterator_traits<I>::pointer,
+           class Val  = typename std::iterator_traits<I>::value_type,
+           class Dist = typename std::iterator_traits<I>::difference_type,
+           class Ctg  = typename std::iterator_traits<I>::iterator_category>
 class Iterator_identity {
 protected:
   I        nt;    // The internal iterator.
@@ -145,26 +135,6 @@ public:
   bool operator>=( const Self& i) const {
     return !(*this < i);
   }
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-  friend inline  value_type*
-  value_type( const Self&) {
-    return (value_type*)(0);
-  }
-  friend inline  Ctg
-  iterator_category( const Self&){
-    return Ctg();
-  }
-  friend inline  Dist*
-  distance_type( const Self&) {
-    return (Dist*)(0);
-  }
-  friend inline  Iterator_tag
-  query_circulator_or_iterator( const Self&) {
-    return Iterator_tag();
-  }
-#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
 template < class I, class Ref, class Ptr, class Val,
