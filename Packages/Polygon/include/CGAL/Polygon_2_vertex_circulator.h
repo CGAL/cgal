@@ -114,9 +114,6 @@ public:
         --*this;
         return tmp;
     }
-#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
-    Self& operator+=( difference_type n);
-#else
     Self& operator+=( difference_type n) {
         CGAL_assertion( ctnr != NULL);
         CGAL_assertion( current_iterator() != ctnr->end());
@@ -130,7 +127,6 @@ public:
         i = const_cast<Container*>(ctnr)->begin() + j;
         return *this;
     }
-#endif
     Self operator+( difference_type n) const {
         Self tmp = *this;
         return tmp += n;
@@ -165,26 +161,6 @@ operator+( typename Polygon_circulator<Ctnr>::
     Polygon_circulator<Ctnr> tmp = c;
     return tmp += n;
 }
-
-#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
-template <class Ctnr>
-Polygon_circulator<Ctnr>&
-Polygon_circulator<Ctnr>::
-operator+=( typename Polygon_circulator<Ctnr>::difference_type n) {
-    CGAL_assertion( ctnr != NULL);
-    CGAL_assertion( current_iterator() != ctnr->end());
-    typename Ctnr::difference_type j    = current_iterator() - ctnr->begin();
-    typename Ctnr::difference_type size = ctnr->size();
-    CGAL_assertion( j    >= 0);
-    CGAL_assertion( size >= 0);
-    j = non_negative_mod( j + n, size);
-    CGAL_assertion( j >= 0);
-    CGAL_assertion( j < size);
-    i = const_cast<Container*>(ctnr)->begin() + j;
-    return *this;
-}
-#endif // CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
-
 
 }  // end of namespace CGAL
 
