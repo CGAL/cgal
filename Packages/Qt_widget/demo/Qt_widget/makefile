@@ -33,19 +33,11 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 DEMO_SUBDIRS= \
-./Alpha_shapes_2 \
 ./Constrained_triangulation_2 \
 ./Convex_Hull_2 \
 ./Generator \
 ./Max_k-gon \
-./Min_circle_2 \
-./Min_ellipse_2 \
-./Min_quadrilateral_2 \
 ./Nef_2 \
-./Largest_empty_rect_2 \
-./Partition_2 \
-./Polygon \
-./Triangulation_2 \
 ./Triangulation_2_constrained \
 ./Examples \
 ./basic/tutorial1 \
