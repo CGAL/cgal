@@ -192,6 +192,11 @@ typedef CGAL::Arr_curve_data_traits_2<Base_pol_traits,
                                       Curve_pol_data>      Pol_traits;
 typedef Pol_traits::Curve_2                                Pm_pol_2;
 typedef Pol_traits::X_monotone_curve_2                     Pm_xpol_2;
+
+
+
+
+
 typedef Pol_traits::Point_2                                Pm_pol_point_2;
 typedef Dcel<Pol_traits,QColor>                            Pol_dcel;
 typedef CGAL::Planar_map_2<Pol_dcel, Pol_traits>           Pol_pm;
@@ -212,6 +217,8 @@ typedef Pm_pol_list::iterator                              Pm_pol_iter;
 
 
 
+
+
 class Curve_pol_data { 
 public:
   enum Type {LEAF, INTERNAL}; 
@@ -223,6 +230,8 @@ public:
     Pm_xpol_2* m_x_motonote_curve; 
   } m_ptr;
 };
+
+
 
 
 
