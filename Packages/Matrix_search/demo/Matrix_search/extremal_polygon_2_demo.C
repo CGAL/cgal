@@ -20,6 +20,7 @@
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 // Demo program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
@@ -125,8 +126,9 @@ main()
   PointCont points;
   Polygon p;
   bool polygon_changed(false);
+  bool done(false);
 
-  for (;;) {
+  while(!done) {
     if (polygon_changed) {
       // compute convex hull:
       PointCont ch_points;
@@ -356,10 +358,11 @@ main()
         W.message( " <middle mouse button> -  move vertex");
         W.message( " <right mouse button>     -  delete vertex");
       }
-      else if ( input == quit_button)
+      else if ( input == quit_button) {
         // quit program
-        return 0;
-      else if ( input == generate_button) {
+        done = true;
+        break;
+      } else if ( input == generate_button) {
         // generate random convex polygon with n vertices
         typedef Random_points_in_square_2<
           Point,
@@ -384,7 +387,7 @@ main()
         break;
       }
     } // for (;;)
-  } // for (;;)
+  } // while (!done)
 
   return 0;
 } // int main()
