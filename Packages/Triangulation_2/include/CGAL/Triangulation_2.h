@@ -872,12 +872,11 @@ typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_in_edge(const Point& p, Face_handle f,int i)
 {
- //  CGAL_triangulation_precondition( orientation(f->vertex(cw(i))->point(), 
-// 					    p,
-// 					    f->vertex(ccw(i))->point()) 
-//                                    == COLLINEAR &&
-//       collinear_between(f->vertex(cw(i))->point(), p,
-// 			f->vertex(ccw(i))->point()) );
+ CGAL_triangulation_exactness_precondition( 
+	      orientation(f->vertex(cw(i))->point(),  p,
+			  f->vertex(ccw(i))->point()) == COLLINEAR &&
+	      collinear_between(f->vertex(cw(i))->point(), p,
+				f->vertex(ccw(i))->point() ) );
   Vertex_handle v = _tds.insert_in_edge(f,i);
   v->set_point(p);
   return v;

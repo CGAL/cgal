@@ -22,7 +22,9 @@ CXXFLAGS = \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
-	-g 
+	-g \
+	-DCGAL_CHECK_EXACTNESS  \
+	-DCGAL_CHECK_EXPENSIVE
 
 
 #---------------------------------------------------------------------#

@@ -189,9 +189,11 @@ public:
   
   // TEST FEATURES
   bool is_vertex(Vertex_handle v) const;
+  bool is_edge(Face_handle fh, int i) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb, 
 	       Face_handle& fr,  int& i) const;
+  bool is_face(Face_handle fh) const;
   bool is_face(Vertex_handle v1, 
 	       Vertex_handle v2, 
 	       Vertex_handle v3) const;
@@ -580,6 +582,19 @@ is_vertex(Vertex_handle v) const
 }
 
 template <class Vb, class Fb>
+inline bool
+Triangulation_data_structure_2<Vb,Fb>::
+is_edge(Face_handle fh, int i) const
+{
+  if ( dimension() == 0 )  return false;
+  if ( dimension() == 1 && i != 2) return false;
+  if (i > 2) return false;
+  Face_iterator fit = face_iterator_base_begin();
+  while (fit != face_iterator_base_end() && fh != fit ) ++fit;
+  return fh == fit;
+}
+
+template <class Vb, class Fb>
 bool
 Triangulation_data_structure_2<Vb,Fb>::
 is_edge(Vertex_handle va, Vertex_handle vb) const
@@ -622,13 +637,23 @@ is_edge(Vertex_handle va, Vertex_handle vb,
   return false;
 }
 
+template <class Vb, class Fb>
+inline bool 
+Triangulation_data_structure_2<Vb,Fb>::
+is_face(Face_handle fh) const
+{
+  if (dimension() < 2)  return false;
+  Face_iterator fit = faces_begin();
+  while (fit != faces_end() && fh != fit ) ++fit;
+  return fh == fit;
+}
 
 template <class Vb, class Fb>
 inline bool 
 Triangulation_data_structure_2<Vb,Fb>::
-is_face(const Vertex_handle v1, 
-	const Vertex_handle v2, 
-	const Vertex_handle v3) const
+is_face(Vertex_handle v1, 
+	Vertex_handle v2, 
+	Vertex_handle v3) const
 {
   Face_handle f;
   return is_face(v1,v2,v3,f);
@@ -803,7 +828,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
   // orient governs the orientation of the resulting triangulation
 
   Vertex_handle v = create_vertex();
-  set_dimension(dimension() + 1);
+  set_dimension( dimension() + 1);
   Face_handle f1;
   Face_handle f2;
     
@@ -887,8 +912,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
     break;
   default:
     CGAL_triangulation_assertion(false);
-    break;
-  }
+    break;  }
   return v;
 }
 
@@ -1240,11 +1264,9 @@ inline void
 Triangulation_data_structure_2<Vb,Fb>::
 delete_face(Face_handle f)
 {
-  CGAL_triangulation_expensive_precondition( dimension() != 2  ||
-					     is_face(f));
-  CGAL_triangulation_expensive_precondition( dimension() != 1  ||
-					     is_edge(f,2));
-  CGAL_triangulation_expensive_precondition( dimension() != 0  ||
+  CGAL_triangulation_expensive_precondition( dimension() != 2 || is_face(f));
+  CGAL_triangulation_expensive_precondition( dimension() != 1 || is_edge(f,2));
+  CGAL_triangulation_expensive_precondition( dimension() != 0 ||
 					     is_vertex(f->vertex(0)) );
   face_container().erase(f.base());
 }
