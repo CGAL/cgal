@@ -3,6 +3,7 @@ Version 1.142 (25 May 03)
 - Remove the undocumented [Vertex|Cell].handle() member functions.
 - Remove Triangulation_iterator_handle_adaptor_3<> : make
   Finite_[vertices|cells]_iterator nested classes of Triangulation_3.
+- Make the constructor of Delaunay_remove_tds_3_2 non-inline.
 
 Version 1.141 (11 May 03)
 - Remove Direction_3 from DelaunayTraits_3.

@@ -243,9 +243,24 @@ private:
 
 public:
 
-  // FIXME : similar to operator>>(), isn't it ?  Should we try to factorize ?
-  Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole ) {
+  Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole );
 
+  void remove_degree_3(Vertex_handle_3_2 v, Face_handle_3_2 f) 
+  {
+    int i = f->index(v);
+    // As f->neighbor(cw(i)) and f->neighbor(ccw(i)) will be removed,
+    // we first remove it from the list we maintain.
+    f->remove_neighbors_from_list(i);
+    // we are ready to call the method of the base class
+    TDS_2::remove_degree_3(v,f);
+  }
+};
+
+template <class T>
+Delaunay_remove_tds_3_2<T>::
+Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
+{
+// FIXME : similar to operator>>(), isn't it ?  Should we try to factorize ?
     std::vector<Halfedge> halfedges;
     halfedges.reserve(3*boundhole.size());
 
@@ -351,18 +366,7 @@ public:
     // f points to the last face
     f->set_n(dummy.n());
     dummy.n()->set_p(f);
-  }
-
-  void remove_degree_3(Vertex_handle_3_2 v, Face_handle_3_2 f) 
-  {
-    int i = f->index(v);
-    // As f->neighbor(cw(i)) and f->neighbor(ccw(i)) will be removed,
-    // we first remove it from the list we maintain.
-    f->remove_neighbors_from_list(i);
-    // we are ready to call the method of the base class
-    TDS_2::remove_degree_3(v,f);
-  }
-};
+}
 
 CGAL_END_NAMESPACE
 
