@@ -126,7 +126,7 @@ class Infimaximal_box {
   }
 
   template <typename SNC_structure>
-  static typename SNC_structure::Volume_handle getNirvana(SNC_structure& snc) {
+  static typename SNC_structure::Volume_const_handle getNirvana(SNC_structure& snc) {
     return snc.volumes_begin();
   }
 

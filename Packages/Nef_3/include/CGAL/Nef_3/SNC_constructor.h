@@ -979,7 +979,7 @@ public:
  private:
   void pair_up_halfedges() const {
   /*{\Mop pairs all halfedge stubs to create the edges in 3-space.}*/
-    
+
   //  CGAL_NEF_SETDTHREAD(43*61);
     CGAL_NEF_TRACEN(">>>>>pair_up_halfedges");
     typedef Halfedge_key< Point_3, Halfedge_handle, SNC_decorator>

@@ -67,6 +67,8 @@ struct Facet_plane_3 {
     normal_vector_newell_3( point_cir, point_cir, plane_orthogonal_vector);
     CGAL_NEF_TRACEN( *point_cir);
     CGAL_NEF_TRACEN(Plane( *point_cir, Vector( plane_orthogonal_vector)));
+    if(plane_orthogonal_vector == Vector(0,0,0))
+      std::cerr << "Error !!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
     return( Plane( *point_cir, Vector( plane_orthogonal_vector)));
   }
 };
@@ -138,6 +140,13 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       CGAL_NEF_TRACEN(pe_prev->facet()->plane());
       CGAL_NEF_TRACEN(pe_target);
       CGAL_NEF_TRACEN(pe_prev->opposite()->vertex()->point());
+      if(pe_prev->facet()->plane().is_degenerate()) {
+	typename Polyhedron::Halfedge_around_facet_const_circulator fc(pv.vertex_begin()), fcend(fc);
+	std::cerr << "wrong cycle "  << std::endl;
+	CGAL_For_all(fc,fcend) {
+	  std::cerr << "  " << fc->vertex()->point() << std::endl;
+	}
+      }
       CGAL_assertion(!pe_prev->facet()->plane().is_degenerate());
       CGAL_assertion(pe_prev->facet()->plane().
 		     has_on(pe_prev->opposite()->vertex()->point()));
