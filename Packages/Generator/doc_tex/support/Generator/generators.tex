@@ -17,8 +17,7 @@
 \ccChapterAuthor{Michael Hoffmann}\\
 \ccChapterAuthor{Lutz Kettner}
 
-
-A variety of generators for geometric objects is provided in \cgal.
+A variety of generators for geometric objects are provided in \cgal.
 They are useful as synthetic test data sets, e.g.~for testing
 algorithms on degenerate object sets and for performance analysis.
 
@@ -67,21 +66,24 @@ sets with multiple entries of identical items.
 % +------------------------------------------------------------------------+
 \section{2D Point Generators}
 \label{sectionPointGenerators}
+\ccIndexSubitemBegin[c]{generator}{2D point}
+\ccIndexSubitemBegin[c]{point, 2D}{generator}
 
 Two kinds of point generators are provided: first, random point
 generators and second deterministic point generators. Most random
 point generators and a few deterministic point generators are provided
 as input iterators.  The input iterators model an infinite sequence of
 points. The function \ccc{copy_n()} can be used to copy a
-finite sequence, see Section~\ref{sectionCopyN}. The iterator adaptor
+finite sequence; see Section~\ref{sectionCopyN}. The iterator adaptor
 \ccc{Counting_iterator} can be used to create finite iterator
-ranges, see Section~\ref{sectionCountingIterator}.
-Other generators are provided as functions writing to an output
-iterator. Further functions add degeneracies or random perturbations.
+ranges; see Section~\ref{sectionCountingIterator}.
+Other generators are provided as functions that write to output
+iterators. Further functions add degeneracies or random perturbations.
 
 
 % +------------------------------------------------------------------------+
 \subsection{Point Generators as Input Iterators}
+\ccIndexSubsubitemBegin[c]{generator}{2D point}{as input iterator}
 
 \ccDefinition
 
@@ -92,9 +94,9 @@ iterator generates equally spaced points from a segment.
 
 All iterators are parameterized with the point type \ccc{P} and all
 with the exception of the class \ccc{Points_on_segment_2} have a second
-template argument \ccc{Creator} which defaults to the class
+template argument \ccc{Creator}, which defaults to the class
 \ccc{Creator_uniform_2<double,P>}\footnote{%
-  For compilers not supporting these kind of default arguments, both
+  For compilers not supporting these kinds of default arguments, both
   template arguments must be provided when using these generators.}.
 The \ccc{Creator} must be a function object accepting two \ccc{double}
 values $x$ and $y$ and returning an initialized point \ccc{(x,y)} of type
@@ -109,9 +111,9 @@ generated points will lie.
 
 \ccTypes
 
-The generators comply to the requirements of input iterators which
-includes local type declarations including \ccc{value_type} which
-denotes \ccc{P} here.
+The generators comply with the requirements of input iterators, which
+include local type declarations including \ccc{value_type}, 
+denoted by \ccc{P} here.
 
 \ccCreation
 \ccTwo{}{\hspace*{11cm}}
@@ -179,7 +181,8 @@ denotes \ccc{P} here.
   A single random number is needed from \ccc{rnd} for each point.
   \ccPrecond The expressions \ccc{to_double(p.x())} and
     \ccc{to_double(p.y())} must  result in the respective
-    \ccc{double} representation of the coordinates and similar for $q$.}
+    \ccc{double} representation of the coordinates of $p$,
+    and similarly for $q$.}
 
 \end{ccClassTemplate}
 
@@ -189,27 +192,34 @@ denotes \ccc{P} here.
 \ccConstructor{Points_on_segment_2( const P& p, const P& q, 
                                     std::size_t n, std::size_t i = 0);}{%
   $g$ is an input iterator creating points of type \ccc{P} equally 
-  spaced on the segment from $p$ to $q$. $n$ points are placed on the
-  segment including $p$ and $q$. The iterator denoted the point $i$
-  where $p$ has the index 0 and $q$ the index $n$.
+  spaced on the segment from $p$ to $q$. $n-i$ points are placed on the
+  segment defined by $p$ and $q$. Values of the index parameter $i$ larger 
+  than 0 indicate starting points for the sequence further from $p$.
+  Point $p$ has index value 0 and $q$ has index value $n-1$.
   \ccPrecond The expressions \ccc{to_double(p.x())} and
     \ccc{to_double(p.y())} must  result in the respective
-    \ccc{double} representation of the coordinates and similar for $q$.}
+    \ccc{double} representation of the coordinates of $p$, and similarly 
+    for $q$.}
 
 
 \ccOperations
 \ccThree{double}{g.source();}{}
-
+\ccAutoIndexingOff
 \ccMethod{double range();}{returns the range in which the point
   coordinates lie, i.e.~$\forall x: |x| \leq $\ccc{range()} and
-  $\forall y: |y| \leq $\ccc{range()}.}
+  $\forall y: |y| \leq $\ccc{range()}.}\ccIndexSubitem[C]{range}{\ccFont Random_points_*_2}
 
 The generators \ccc{Random_points_on_segment_2} and
-\ccc{Points_on_segment_2} have to additional methods.
+\ccc{Points_on_segment_2} have two additional methods.
 
-\ccMethod{const P& source();}{returns the source point of the segment.}
+\ccMethod{const P& source();}{returns the source point of the segment.}%
+\ccIndexSubitem[C]{source}{\ccFont Random_points_on_segment_2}%
+\ccIndexSubitem[C]{source}{\ccFont Points_on_segment_2}%
 \ccGlue
 \ccMethod{const P& target();}{returns the target point of the segment.}
+\ccIndexSubitem[C]{target}{\ccFont Random_points_on_segment_2}%
+\ccIndexSubitem[C]{target}{\ccFont Points_on_segment_2}%
+\ccAutoIndexingOn
 
 \end{ccClassTemplate}
 
@@ -220,15 +230,18 @@ The generators \ccc{Random_points_on_segment_2} and
 \ccc{copy_n}, \ccc{Counting_iterator},
 \ccTexHtml{\\}{}
 \ccc{Join_input_iterator_1}.
+\ccIndexSubsubitemEnd[c]{generator}{2D point}{as input iterator}
 
 
 % +------------------------------------------------------------------------+
 \subsection{Point Generators as Functions}
+\ccIndexSubsubitemBegin[c]{generator}{2D point}{as function}
 
 \ccHeading{Grid Points}
 \ccThree{OutputIterator}{rand}{}
+\ccIndexSubsubitem[c]{generator}{2D point}{on grid}
 
-Grid points are generated by functions writing to an output iterator.
+Grid points are generated by functions that write to output iterators.
 
 \def\ccLongParamLayout{\ccTrue}
 \ccFunction{template <class OutputIterator, Creator creator>
@@ -236,7 +249,7 @@ Grid points are generated by functions writing to an output iterator.
     points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
                              Creator creator = 
                              Creator_uniform_2<double,P>);}
-{ creates the $n$ first points on the regular $\lceil\sqrt{n}\,\rceil
+{ creates the first $n$ points on the regular $\lceil\sqrt{n}\,\rceil
     \times \lceil  \sqrt{n}\,\rceil$ grid within the square
     $[-a,a]\times [-a,a]$. Returns the value of $o$ after inserting
     the $n$ points. 
@@ -261,6 +274,7 @@ Grid points are generated by functions writing to an output iterator.
     the $n$ points.}
 
 \ccHeading{Random Perturbations}
+\ccIndexMainItem{random perturbations}
 
 Degenerate input sets like grid points can be randomly perturbed by a
 small amount to produce {\em quasi}-degenerate test sets. This
@@ -272,8 +286,8 @@ exact predicates to compute the sign of expressions slightly off from zero.
         double xeps, double yeps = xeps, Random& rnd = default_random,
         Creator creator = Creator_uniform_2<double,P>);}
 { perturbs the points in the range $[\ccc{first},\ccc{last})$ by
-  replacing each point with a random point from the rectangle
-  \ccc{xeps} $\times$ \ccc{yeps} centered at the original point.
+  replacing each point with a random point from the 
+  \ccc{xeps} $\times$ \ccc{yeps} rectangle centered at the original point.
   Two random numbers are needed from \ccc{rnd} for each point.
   \ccPrecond   \ccc{Creator} must be a function object accepting two
     \ccc{double} values $x$ and $y$ and returning an initialized point
@@ -289,10 +303,11 @@ exact predicates to compute the sign of expressions slightly off from zero.
 }
 
 \ccHeading{Adding Degeneracies}
+\ccIndexMainItem{degeneracies in input, adding} 
 
 For a given point set certain kinds of degeneracies can be produced
 adding new points. The \ccc{random_selection()} function is
-useful to generate multiple entries of identical points, see
+useful for generating multiple copies of identical points; see
 Section~\ref{sectionRandomSelection}. The
 \ccc{random_collinear_points_2()} function adds collinearities to
 a point set.
@@ -305,7 +320,7 @@ a point set.
         std::size_t n, OutputIterator first2, Random& rnd = default_random,
         Creator creator = Creator_uniform_2<double,P>);}
 { randomly chooses two points from the range $[\ccc{first},\ccc{last})$,
-    creates a random third point on the segment connecting this two
+    creates a random third point on the segment connecting these two
     points, writes it to \ccc{first2}, and repeats this $n$ times, thus
     writing $n$ points to \ccc{first2} that are collinear with points
     in the range $[\ccc{first},\ccc{last})$.
@@ -324,6 +339,7 @@ a point set.
     coordinate values.
 }
 \def\ccLongParamLayout{\ccFalse}
+\ccIndexSubsubitemEnd[c]{generator}{2D point}{as function}
 
 
 \ccSeeAlso
@@ -333,8 +349,8 @@ a point set.
 \ccExample
 
 We want to generate a test set of 1000 points, where 60\% are chosen
-randomly in a small disc, 20\% are from a larger grid, 10\% duplicates
-are added, and 10\% collinearities added. A random shuffle removes the
+randomly in a small disc, 20\% are from a larger grid, 10\% are duplicates
+points, and 10\% collinear points. A random shuffle removes the
 construction order from the test set. See \ccTexHtml{%
 Figure~\ref{figurePointGenerator}}{Figure <A HREF="#PointGenerators">
   <IMG SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10"
@@ -377,7 +393,7 @@ Figure~\ref{figurePointGenerator}}{Figure <A HREF="#PointGenerators">
 \newpage
 
 The second example demonstrates the point generators with integer
-points. Arithmetic with \ccc{double}'s is sufficient to produce
+points. Arithmetic with \ccc{double}s is sufficient to produce
 regular integer grids. See \ccTexHtml{%
 Figure~\ref{figureIntegerPointGenerator}}{Figure 
   <A HREF="#IntegerPointGenerators">
@@ -399,14 +415,18 @@ for the example output.
         <img src="./generators_prog2_small.gif" 
              alt="Integer Point Generator Example Output"></A>
   </TD></TR></TABLE>
-\end{ccHtmlOnly}
+\end{ccHtmlOnly}%
+\ccIndexSubitemEnd[c]{generator}{2D point}%
+\ccIndexSubitemEnd[c]{point, 2D}{generator}%
 
 
 % +------------------------------------------------------------------------+
 \newpage
 \section{3D Point Generators}
+\ccIndexSubitemBegin[c]{generator}{3D point}
+\ccIndexSubitemBegin[c]{point, 3D}{generator}
 
-One kind of point generators is currently provided: Random point
+One kind of point generator is currently provided for 3D points: Random point
 generators implemented as input iterators.  The input iterators model
 an infinite sequence of points. The function \ccc{copy_n()} can
 be used to copy a finite sequence, see Section~\ref{sectionCopyN}. The
@@ -426,7 +446,7 @@ surface (boundary of a sphere).
 All iterators are parameterized with the point type \ccc{P} and a second
 template argument \ccc{Creator} which defaults to
 \ccc{Creator_uniform_3<double,P>}\footnote{%
-  For compilers not supporting these kind of default arguments, both
+  For compilers not supporting these kinds of default arguments, both
   template arguments must be provided when using these generators.}.
 The \ccc{Creator} must be a function object accepting three
 \ccc{double} values $x$, $y$ and $z$ and returning an initialized
@@ -442,9 +462,9 @@ generated points will lie.
 
 \ccTypes
 
-The generators comply to the requirements of input iterators which
-includes local type declarations including \ccc{value_type} which
-denotes \ccc{P} here.
+The generators comply with the requirements of input iterators, which
+include local type declarations including \ccc{value_type}, denoted by 
+\ccc{P} here.
 
 \ccCreation
 \ccTwo{}{\hspace*{11cm}}
@@ -456,7 +476,8 @@ denotes \ccc{P} here.
   default_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed in the open sphere with radius $r$,
-  i.e.~$|\ccc{*g}| < r$~. 
+  i.e.~$|\ccc{*g}| < r$~.  Three random numbers are needed from
+  \ccc{rnd} for each point.
 } 
 \end{ccClassTemplate}
 
@@ -483,6 +504,9 @@ denotes \ccc{P} here.
   Three random numbers are needed from \ccc{rnd} for each point.
 } 
 \end{ccClassTemplate}
+\ccIndexSubitemEnd[c]{generator}{3D point}
+\ccIndexSubitemEnd[c]{point, 3D}{generator}
+%\ccIndexSubitemEnd[c]{generator}{3D point}
 
 
 \ccSeeAlso
@@ -496,10 +520,12 @@ denotes \ccc{P} here.
 % +------------------------------------------------------------------------+
 \newpage
 \section{Examples Generating Segments}
+\ccIndexSubitemBegin[c]{generator}{segment}
 
 The following two examples illustrate the use of the generic functions
 from Section~\ref{sectionGenericFunctions} like
-\ccc{Join_input_iterator} to generate composed objects from other
+\ccc{Join_input_iterator_2}\ccIndexGlobalFunction{Join_input_iterator_2} to generate 
+composed objects from other
 generators -- here two-dimensional segments from two point generators.
 
 We want to generate a test set of 200 segments, where one endpoint is
@@ -544,14 +570,15 @@ output.
   </TD></TR></TABLE>
 \end{ccHtmlOnly}
 
-The second example generates a regular structure of 100 segments, see 
+The second example generates a regular structure of 100 segments; see 
 \ccTexHtml{Figure~\ref{figureSegmentGeneratorFan}}{Figure <A
   HREF="#SegmentGeneratorFan"> <IMG SRC="cc_ref_up_arrow.gif"
   ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>} for the example
-output. It uses the \ccc{Points_on_segment_2} iterator,
-\ccc{Join_input_iterator_2} and \ccc{Counting_iterator} to
+output. It uses the \ccc{Points_on_segment_2}\ccIndexGlobalFunction{Points_on_segment_2} iterator,
+\ccc{Join_input_iterator_2}\ccIndexGlobalFunction{Join_input_iterator_2} 
+and \ccc{Counting_iterator}\ccIndexGlobalFunction{Counting_iterator} to
 avoid any intermediate storage of the generated objects until they are
-used, in this example copied to a window stream.
+used, which in this example means copied to a window stream.
 
 \ccIncludeVerbatim{Segment_generator_prog2.C}
 
@@ -568,6 +595,7 @@ used, in this example copied to a window stream.
              alt="Segment Generator Example Output 2"></A>
   </TD></TR></TABLE>
 \end{ccHtmlOnly}
+\ccIndexSubitemEnd[c]{generator}{segment}
 
 
 % +--------------------------------------------------------+
@@ -576,7 +604,6 @@ used, in this example copied to a window stream.
 \cgalColumnLayout
 
 \input{rcs_spec}
-
 
 % +--------------------------------------------------------+
 % restore default column and paragraph layout
