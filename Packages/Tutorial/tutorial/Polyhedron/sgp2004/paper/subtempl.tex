@@ -116,7 +116,7 @@ that in a DQQ scheme, every new facet corresponds to a vertex, edge or
 facet. The combination of the points buffer and facet list represent a
 facet-vertex index list which indexes the vertices and enumerates each
 facet as an index sequence. A modifier creating a polyhedron from such
-a representation is straigthforward, here a sketch using the
+a representation is straightforward, here a sketch using the
 incremental builder \CodeFmt{pb}.
 \begin{lstlisting}
   pb.begin_surface(num_point, num_facet);
@@ -153,7 +153,7 @@ incremental builder \CodeFmt{pb}.
 Our subdivision design solution, decoupling the geometry rules from
 the refinement, grants users flexible control of the stencils.
 Variants of subdivisions can be devised by simply combining different
-refinement hosts and geometric policies.  A combinatory subdivision
+refinement hosts and geometric policies.  A combinatorial subdivision
 set is provided within our subdivision library. It includes
 Catmull-Clark subdivision, Doo-Sabin subdivision, Loop subdivision,
 Quad-Triangle subdivision and $\sqrt{3}$ subdivision. Since \cgalpoly\ 
