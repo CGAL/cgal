@@ -34,6 +34,8 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Extended_homogeneous_3.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -52,14 +54,22 @@ using std::endl;
 using std::strcmp;
 using std::exit;
 
+
+
+
+// #define CGAL_USE_EXTENDED_KERNEL
+
 typedef CGAL::Gmpz                         NT;
 #ifdef CGAL_USE_EXTENDED_KERNEL
 typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
 const char *kernelversion = "Extended homogeneous 3d kernel (tm).";
 #else // #elif CGAL_USE_SIMPLE_KERNEL
-typedef CGAL::Simple_homogeneous<NT>       Kernel;
+typedef CGAL::Lazy_exact_nt<NT>  LNT;
+// typedef CGAL::Simple_homogeneous<LNT>  Kernel;
+typedef CGAL::Simple_homogeneous<NT> Kernel;
 const char *kernelversion = "Simple homogeneous kernel (tm).";
 #endif
+
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 typedef CGAL::SNC_items<Kernel, bool>      SNC_items;
 typedef CGAL::SNC_structure<SNC_items>     SNC_structure;
@@ -92,9 +102,11 @@ void help_message( std::ostream& out) {
 "    simple                 tests if top is convertible to Polyhedron_2.\n"
 "    valid                  tests if the data structure of top is valid.\n"
 "    plane <a> <b> <c> <d>  creates a halfspace bounded by the plane ax+by+cz+d=0.\n"
+"    loadnef3 <filename>    loads nef3 file and pushes it on stack.\n"
 "    loadoff <filename>     loads file in OFF format and pushes it on stack.\n"
 "    saveoff <filename>     saves top in OFF format if top is simple.\n"
 "    dump                   dump Ascii description of top to stderr.\n"
+"    sorted                 dump standard Ascii description of top to stderr. \n"
 "    vis                    visualize it in OpenGL if available\n"
 "The following commands take their arguments from the stack, where the\n"
 "top of the stack is the first argument. They remove those arguments from\n"
@@ -380,7 +392,7 @@ int eval( int argc, char* argv[]) {
                 NT w;
                 rational_rotation_approximation( dirx, diry, 
                                                  sin_alpha, cos_alpha, w,
-                                                 NT(1), NT( 10000));
+                                                 NT(1), NT( 1000000));
                 Kernel::Aff_transformation_3 aff( w, NT(0), NT(0),
                                                   NT(0), cos_alpha,-sin_alpha,
                                                   NT(0), sin_alpha, cos_alpha,
@@ -405,7 +417,7 @@ int eval( int argc, char* argv[]) {
                 NT w;
                 rational_rotation_approximation( dirx, diry, 
                                                  sin_alpha, cos_alpha, w,
-                                                 NT(1), NT( 10000));
+                                                 NT(1), NT( 1000000));
                 Kernel::Aff_transformation_3 aff( cos_alpha, NT(0), sin_alpha,
                                                   NT(0), w, NT(0),
                                                   -sin_alpha, NT(0), cos_alpha,
@@ -430,7 +442,7 @@ int eval( int argc, char* argv[]) {
                 NT w;
                 rational_rotation_approximation( dirx, diry, 
                                                  sin_alpha, cos_alpha, w,
-                                                 NT(1), NT( 10000));
+                                                 NT(1), NT( 1000000));
                 Kernel::Aff_transformation_3 aff( cos_alpha,-sin_alpha, NT(0),
                                                   sin_alpha, cos_alpha, NT(0),
                                                   NT(0), NT(0), w,
