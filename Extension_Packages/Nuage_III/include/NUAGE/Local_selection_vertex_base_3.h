@@ -65,8 +65,6 @@ private:
   int _visu_index;
   int _post_mark;
   Intern_successors_type* _incident_border;
-  //1 Incidence_request_type* _incidence_request;
-  //2 Interior_edge_set_type* _interior_edge_set;
 
   // Instead of having a set per vertex, there should be a global list.
   static std::list<void*> interior_edges;
@@ -93,8 +91,6 @@ public:
 						    new Next_border_elt());
       _incident_border->first->first = NULL;
       _incident_border->second->first = NULL;
-      //1 _incidence_request = new Incidence_request_type();
-      //2 _interior_edge_set = new Interior_edge_set_type();
     }
   
   Local_selection_vertex_base_3(const Point & p)
@@ -107,8 +103,6 @@ public:
 						    new Next_border_elt());
       _incident_border->first->first = NULL;
       _incident_border->second->first = NULL;
-      //1 _incidence_request = new Incidence_request_type();
-      //2 _interior_edge_set = new Interior_edge_set_type();
     }
   
   Local_selection_vertex_base_3(const Point & p, void* f)
@@ -121,8 +115,6 @@ public:
 						    new Next_border_elt());
       _incident_border->first->first = NULL;
       _incident_border->second->first = NULL;
-      //1 _incidence_request = new Incidence_request_type();
-      //2 _interior_edge_set = new Interior_edge_set_type();
     }
 
   Local_selection_vertex_base_3(void* f)
@@ -135,8 +127,6 @@ public:
 						    new Next_border_elt());
       _incident_border->first->first = NULL;
       _incident_border->second->first = NULL;
-      //1 _incidence_request = new Incidence_request_type();
-      //2 _interior_edge_set = new Interior_edge_set_type();
     }
 
   //-------------------- DESTRUCTOR -----------------------------------
@@ -155,9 +145,6 @@ public:
 	e++;
 	incidence_requests.erase(b, e);
       }
-      //1 if (_incidence_request != NULL)
-      //1  delete _incidence_request;
-
 
       if(ie_first != interior_edges.end()){
 	assert(ie_last != interior_edges.end());
@@ -165,8 +152,6 @@ public:
 	e++;
 	interior_edges.erase(b, e);
       }
-      //2 if (_interior_edge_set != NULL)
-      //2   delete _interior_edge_set;
     }
 
   //-------------------- MEMBER FUNCTIONS -----------------------------
@@ -179,8 +164,6 @@ public:
 	  delete _incident_border->second;
 	  delete _incident_border;
 	}
-      //1 if (_incidence_request != NULL)
-      //1 delete _incidence_request;
 
       if(ir_first != incidence_requests.end()){
 	assert(ir_last != incidence_requests.end());
@@ -190,15 +173,11 @@ public:
 	ir_first = incidence_requests.end();
 	ir_last = incidence_requests.end();
       }
-      //af: was commented      if (_interior_edge_set != NULL)
-      //af: was commented	delete _interior_edge_set;
 
       _incident_border = new Intern_successors_type(new Next_border_elt(),
 						    new Next_border_elt());
       _incident_border->first->first = NULL;
       _incident_border->second->first = NULL;
-      //1_incidence_request = new Incidence_request_type();
-      //af: was commented      _interior_edge_set = new Interior_edge_set_type();
       _mark = -1;
       _post_mark = -1;
       // Attention ne pas toucher a visu index sous peine de tout casser dans la 
@@ -313,63 +292,20 @@ public:
     {
 
       bool r1;
-      // bool r2;
-      /*
-       if (_interior_edge_set == NULL){
-       assert(ie_first == interior_edges.end());
-       assert(ie_first == ie_last);
-       }
-       if(ie_first == interior_edges.end()){
-	 assert(ie_first == ie_last);
-	 assert(_interior_edge_set == NULL || _interior_edge_set->size() == 0);
-       } else {
-	 assert(ie_last != interior_edges.end());
-	 {
-	   std::list<void*>::iterator b(ie_first), e(ie_last);
-	   e++;
-	   if(_interior_edge_set->size() != std::distance(b,e)){
-	     std::cout << _interior_edge_set->size() << " != " 
-		       <<  std::distance(b,e) << std::endl;
-	     assert(false);
-	   }
-	 }
-
-	 {
-	   std::list<void*>::iterator b(ie_first), e(ie_last);
-	   e++;
-	   for(; b != e; b++){
-	     assert(_interior_edge_set->find(*b) != _interior_edge_set->end());
-	   }
-	 }
-       }
-      */
-       
       if(ie_first == interior_edges.end()){
 	r1 = false;
       }else {
 	std::list<void*>::iterator b(ie_first), e(ie_last);
 	e++;
 	std::list<void*>::iterator r = std::find(b, e, v);
-	//2 if(r == e){
-	//2   assert(_interior_edge_set->find(v) == _interior_edge_set->end());
-	//2 }
 	r1 = ( r != e);
       }
 
-      //2 if (_interior_edge_set == NULL){ 
-      //2   r2 = true; //  af: I do not understand this return value
-
-      //2      } else { 
-      //2	r2 = (_interior_edge_set->find(v) != _interior_edge_set->end());
-      //2      }
-      //2 assert(r1 == r2);
       return r1;
     }
 
   inline void set_interior_edge(void* v)
     {
-      // af: do we have to check whether v is already in the set?
-      //     For the implementation with the set this is done
       if(ie_last == interior_edges.end()){ // empty set
 	assert(ie_first == ie_last);
 	ie_last = interior_edges.insert(ie_last, v);
@@ -381,26 +317,13 @@ public:
 	assert(r == e);
 	ie_last = interior_edges.insert(e, v);
       }
-
-      //2 if(_interior_edge_set != NULL){
-      //2	_interior_edge_set->insert(v);
-      //2 }
-      /*
-	{
-	std::list<void*>::iterator b(ie_first), e(ie_last);
-	e++;
-	assert(_interior_edge_set->size() == std::distance(b,e));
-      }
-      */
     }
 
   inline void remove_interior_edge(void* v)
     {
       if(ie_first == interior_edges.end()){
 	assert(ie_last == ie_first);
-	//2 assert(_interior_edge_set->empty());
       } else if(ie_first == ie_last){ // there is only one element
-	//2 assert(_interior_edge_set->size() == 1);
 	if(*ie_first == v){
 	  interior_edges.erase(ie_first);
 	  ie_last = interior_edges.end();
@@ -420,20 +343,6 @@ public:
 	  interior_edges.erase(r);
 	}
       }
-      //2 typename Interior_edge_set_type::iterator
-       //2 it_tmp = _interior_edge_set->find(v);
-       //2 if(it_tmp != _interior_edge_set->end())
-       //2 _interior_edge_set->erase(it_tmp);
-      /*
-       if(ie_first == interior_edges.end()){
-	 assert(ie_last == ie_first);
-	 assert(_interior_edge_set->empty());
-       } else {
-	 std::list<void*>::iterator b(ie_first), e(ie_last);
-	 e++;
-	 assert(_interior_edge_set->size() == std::distance(b,e));
-       }
-      */
     }
 
   //-------------------------------------------------------------------
@@ -449,24 +358,19 @@ public:
 	e++;
 	ir_last = incidence_requests.insert(e, ir);
       }
-      //1_incidence_request->push_back(ir);
     }
 
   inline bool is_incidence_requested()
     {
       if(ir_last == incidence_requests.end()){
 	assert(ir_first == incidence_requests.end());
-	//1 assert((_incidence_request == NULL) || _incidence_request->empty());
       }
       return (ir_last != incidence_requests.end());
-      //1 if (_incidence_request == NULL) return false;
-      //1 return (!_incidence_request->empty());
     }
   
   inline Incidence_request_iterator incidence_request_begin()
     {
       return ir_first;
-      //1 return _incidence_request->begin();
     }
 
   inline Incidence_request_iterator get_incidence_request_end()
@@ -478,7 +382,6 @@ public:
 	return it;
       }
       return ir_last;
-      //1 return _incidence_request->end();
     }
 
   inline void erase_incidence_request()
@@ -490,8 +393,6 @@ public:
 	ir_first = incidence_requests.end();
 	ir_last = incidence_requests.end();
       }
-      //1 if (_incidence_request != NULL)
-      //1 _incidence_request->clear();
     }
   
 
@@ -537,10 +438,6 @@ public:
 	  delete _incident_border;
 	  _incident_border = NULL;
 	  erase_incidence_request();
-	  //1 delete _incidence_request;
-	  //af: was commented	  delete _interior_edge_set;
-	  //1 _incidence_request = NULL;
-	  //	af: was commented  _interior_edge_set = NULL;
 	}
     }
 
