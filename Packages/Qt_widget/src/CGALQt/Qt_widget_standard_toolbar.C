@@ -49,9 +49,9 @@
 
 namespace CGAL {
   Qt_widget_standard_toolbar::
-  Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw,
+  Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *parent,
 			     const char* name) :
-    QToolBar(mw, name),
+    QToolBar(parent, name),
     widget(w)
   {
     setLabel("Qt_widget standard toolbar");

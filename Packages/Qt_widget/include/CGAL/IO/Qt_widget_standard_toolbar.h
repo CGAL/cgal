@@ -38,7 +38,7 @@ class Qt_widget_standard_toolbar : public QToolBar
 	Q_OBJECT
 public:
   Qt_widget_standard_toolbar(Qt_widget *w,
-			     QMainWindow *mw = 0,
+			     QMainWindow *parent = 0,
 			     const char* name = 0);
 
   Qt_widget_standard_toolbar(Qt_widget *w,

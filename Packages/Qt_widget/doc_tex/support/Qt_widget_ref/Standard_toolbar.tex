@@ -13,7 +13,8 @@
 
 \ccDefinition
 
-The standard toolbar includes the basic tools used for zooming and translating.
+The standard toolbar includes the basic tools used for zooming and
+translating in a \ccc{Qt_widget}.
 
 \ccInclude{CGAL/IO/Qt_widget_standard_toolbar.h}
 \ccGlue
@@ -26,26 +27,27 @@ The standard toolbar includes the basic tools used for zooming and translating.
 \ccSetTwoColumns{Qt_widget_standard_toolbar}{}
 
 \ccConstructor{Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow
-*mw = 0, const char* name = 0);}{This constructor creates a new
-toolbar in your application, containing all the standard tools. The
-first parameter is a pointer to a Qt\_widget object, the second is a
-pointer to a QMainWindow object, that contains the toolbar. The last
-parameter is the name of the toolbar. If you are using this
-constructor, you should deallocate yourself the memory used for the
-toolbar. Use the other one if you want \cgalqt\ to do it for you.}
+*mw , QWidget* parent, bool newline = true, const char* name =
+0);}
+{ This constructor creates a new toolbar, called \ccc{name}, in your
+  application, containing all the standard tools. The first parameter
+  \ccc{w} is a non-null pointer to the Qt\_widget object on which the
+  toolbar functionalities act. The second parameter \ccc{mw} is a
+  pointer to the \ccc{QMainWindow} that manages the toolbar. The later
+  is added to the top area of the \ccc{QMainWindow}, unless
+  \ccc{mw=0}. \ccc{mw}, \ccc{parent}, \ccc{newline}, \ccc{name} are
+  passed to the \ccc{QMainWindow} constructor (with first parameter
+  \ccc{label="Qt_widget standard toolbar"}\footnote{but this can
+  change in future version}). }
 
 \ccConstructor{Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow
-*mw = 0, QWidget* parent, bool newline = true, const char* name =
-0);}{ The same as the previous one except from \ccc{parent} parameter that
-is used to tell \cgalqt\ to destroy the memory after the parent is
-destroied. If \ccc{newline} is true, the toolbar will be placed on a
-new line.}
+*parent = 0, const char* name = 0);}
+{ Simplified version of the previous one. The \ccc{parent} is the
+  \ccc{QMainWindow} that manages the toolbar. }
 
 \ccMethod{const QToolBar* toolbar();}{Deprecated: (in CGAL-2.4 the
 standard toolbar was not derived from \ccc{QToolBar}) Returns a pointer to
-the \ccc{QToolBar} private member. To use the standard toolbar in your 
-application, you need this function in order to get the pointer to the 
-toolbar.}
+the \ccc{QToolBar this} itself. }
 
 \ccHeading{public slots:}
 \ccMethod{void back();}{Goes back in the history list of the standard toolbar.}
