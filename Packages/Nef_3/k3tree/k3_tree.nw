@@ -107,7 +107,7 @@ public:
     Bounding_box_3 b;
 
   public:	
-    BBox_updater(const SNCd& sncd) : D(sncd), b(0,0,0,0,0,0) {}
+    BBox_updater(const SNCd& sncd) : D(sncd), b(Point_3(0,0,0),Point_3(0,0,0)) {}
 
     void pre_visit(const Node* n) {}
     void post_visit(const Node* n) {
@@ -116,7 +116,7 @@ public:
         Vertex_handle v;
         if( assign( v, *o)) {
 	  Point_3 p(D.point(v));
-          b = b + Bounding_box_3(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
+          b = b + Bounding_box_3(p,p);
         }
       }
     }
@@ -142,8 +142,8 @@ public:
     if(root != 0)
       root->transform(t);
 
-    Explorer D;
-    BBox_updater<Explorer> bbup(D);
+    SNC_decorator D;
+    BBox_updater<SNC_decorator> bbup(D);
     visit_k3tree(root, bbup);
     bounding_box = bbup.box();
   }
@@ -230,8 +230,9 @@ public:
       // First of all, we need to find out wheather we are working over an extended kernel or on a standard kernel. As precondition we have that ray is oriented in the minus x axis direction.  When having an extended kernel, the ray can be subtituted by a segment with the endpoint on the 'intersection' between the ray and the bounding infimaximal box.  In the presence of a standard kernel, the intersection is computed with the bounding box with the vertices of the Nef polyhedron.
       Point_3 p(r.source()), q;
       Bounding_box_3 b = k.bounding_box;
-      Point_3 pt_on_minus_x_plane = quotient_coordinates_to_homogeneous_point<Kernel>
-	( b.xmin(), b.ymin(), b.zmin());
+//      Point_3 pt_on_minus_x_plane = quotient_coordinates_to_homogeneous_point<Kernel>
+//	( b.xmin(), b.ymin(), b.zmin());
+	Point_3 pt_on_minus_x_plane(b.get_min());
       // We compute the intersection between a plane with normal vector in the minus x direction and located at the minimum point of the bounding box, and the input ray.  When the ray does not intersect the bounding volume, there won't be any object hit, so it is safe to construct a segment that simply lay in the unbounded side of the bounding box.  This approach is taken instead of somehow (efficiently) report that there was no hit object, in order to mantain a clear interface with the Iterator class.
       Plane_3 pl_on_minus_x( pt_on_minus_x_plane, Vector_3( -1, 0, 0));
       Object o = traits.intersect_object()( pl_on_minus_x, r);
@@ -279,12 +280,12 @@ bounding_box = objects_bbox(objects);
 Since all the geometric predicates have to be supplied by the traits class, the spatial subdivision has to know only about a general data types for the objects it holds.  Additionally, the data types for the query objects, and geometric constructions must be available.
 
 <<declaration of local types>>=
+typedef typename Traits::SNC_decorator SNC_decorator;
 typedef typename Traits::Infimaximal_box Infimaximal_box;
 typedef typename Traits::Vertex_handle Vertex_handle;
 typedef typename Traits::Halfedge_handle Halfedge_handle;
 typedef typename Traits::Halffacet_handle Halffacet_handle;
 typedef typename Traits::Halffacet_triangle_handle Halffacet_triangle_handle;
-typedef typename Traits::Explorer Explorer;
 
 typedef typename Traits::Object_handle Object_handle;
 typedef typename Traits::Object_list Object_list;
@@ -305,7 +306,6 @@ typedef typename Traits::Side_of_plane Side_of_plane;
 typedef typename Traits::Objects_bbox Objects_bbox;
 
 typedef typename Traits::Kernel Kernel;
-typedef typename Kernel::FT FT;
 typedef typename Kernel::RT RT;
 
 <<definition of the node structure>>
@@ -421,7 +421,7 @@ public:
   }
 private:
   Coordinate coord;
-  Explorer D;
+  SNC_decorator D;
 };
 
 template <typename Depth>
@@ -436,12 +436,12 @@ Plane_3 construct_splitting_plane( const Object_list& O, Depth depth) {
   }
   CGAL_assertion( vertices.size() > 1);
   std::sort( vertices.begin(), vertices.end(), 
-             Vertex_smaller_than<Vertex_handle, Explorer, int>(depth%3));
+             Vertex_smaller_than<Vertex_handle, SNC_decorator, int>(depth%3));
   typename Vertex_list::size_type i, n = vertices.size();
   typename Vertex_list::const_iterator median;
   for( i = 0, median = vertices.begin(); i < ((n+1)/2)-1; ++i, ++median)
     CGAL_assertion( median != vertices.end());
-  Explorer D;
+  SNC_decorator D;
   Point_3 p(D.point(*median));
   switch( depth % 3) {
   case 0: return Plane_3( p, Vector_3( 1, 0, 0)); break;
@@ -752,7 +752,7 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
   typename Object_list::size_type v_count = 0, e_count = 0, f_count = 0, t_count = 0;
   typename Object_list::const_iterator o;
   for( o = O.begin(); o != O.end(); ++o) {
-    Explorer D;
+    SNC_decorator D;
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
@@ -787,10 +787,7 @@ friend std::ostream& operator<<
   CGAL_assertion( node != 0);
   if( node->is_leaf())
     os <<  node->objects().size();
-  else {     if ( collinear( s2.source(), s2.target(), s1.source()) &&
-	 collinear( s2.source(), s2.target(), s1.point(1)) )
-      // the segments are collinear 
-      return false;
+  else {
     os << " ( ";
     if( !node->left()) os << '-';
     else os << node->left();
@@ -916,28 +913,31 @@ else {
 
 CGAL_BEGIN_NAMESPACE
 
-template <class SNCstructure>
+template <class SNC_decorator>
 class Side_of_plane {
 public:
-  typedef typename SNCstructure::Vertex_handle Vertex_handle;
-  typedef typename SNCstructure::Halfedge_handle Halfedge_handle;
-  typedef typename SNCstructure::Halffacet_handle Halffacet_handle;
-  typedef typename SNCstructure::Halffacet_triangle_handle Halffacet_triangle_handle;
-  typedef typename SNCstructure::Object_handle Object_handle;
+  typedef typename SNC_decorator::SNC_structure SNC_structure;	
+  typedef typename SNC_decorator::Decorator_traits Decorator_traits;
 
-  typedef typename SNCstructure::Halffacet_cycle_iterator
+  typedef typename Decorator_traits::Vertex_handle Vertex_handle;
+  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
+  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+
+  typedef typename SNC_structure::Halffacet_triangle_handle Halffacet_triangle_handle;
+  typedef typename SNC_structure::Object_handle Object_handle;
+
+  typedef typename Decorator_traits::Halffacet_cycle_iterator
     Halffacet_cycle_iterator;
-  typedef typename SNCstructure::SHalfedge_around_facet_circulator 
+  typedef typename Decorator_traits::SHalfedge_around_facet_circulator 
     SHalfedge_around_facet_circulator;
-  typedef typename SNCstructure::SHalfedge_handle SHalfedge_handle;
+  typedef typename Decorator_traits::SHalfedge_handle SHalfedge_handle;
   
-  typedef typename SNCstructure::Kernel Kernel;
+  typedef typename SNC_decorator::Kernel Kernel;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::Plane_3 Plane_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
   typedef typename Kernel::Vector_3 Vector_3;  
-  typedef typename Kernel::FT  FT;
   typedef typename Kernel::RT  RT;
 
   Oriented_side operator()( const Plane_3& pl, Object_handle o);
@@ -946,36 +946,38 @@ public:
   Oriented_side operator()( const Plane_3& pl, Halffacet_handle f);
   Oriented_side operator()( const Plane_3& pl, Halffacet_triangle_handle f);
 
-  typedef typename SNCstructure::SNC_decorator SNC_decorator;
   SNC_decorator D;
   Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
 };
 
-template <class SNCstructure>
+template <class SNC_decorator>
 class Objects_bbox {
 public:
-  typedef typename SNCstructure::Vertex_handle Vertex_handle;
-  typedef typename SNCstructure::Halfedge_handle Halfedge_handle;
-  typedef typename SNCstructure::Halffacet_handle Halffacet_handle;
-  typedef typename SNCstructure::Halffacet_triangle_handle Halffacet_triangle_handle;
-  typedef typename SNCstructure::Object_handle Object_handle;
-  typedef typename SNCstructure::Object_list Object_list;
+  typedef typename SNC_decorator::SNC_structure SNC_structure;	
+  typedef typename SNC_decorator::Decorator_traits Decorator_traits;
 
-  typedef typename SNCstructure::Halffacet_cycle_iterator
+  typedef typename Decorator_traits::Vertex_handle Vertex_handle;
+  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
+  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+
+  typedef typename SNC_structure::Halffacet_triangle_handle Halffacet_triangle_handle;
+  typedef typename SNC_structure::Object_handle Object_handle;
+  typedef typename SNC_structure::Object_list Object_list;
+
+  typedef typename Decorator_traits::Halffacet_cycle_iterator
     Halffacet_cycle_iterator;
-  typedef typename SNCstructure::SHalfedge_around_facet_circulator 
+  typedef typename Decorator_traits::SHalfedge_around_facet_circulator 
     SHalfedge_around_facet_circulator;
-  typedef typename SNCstructure::SHalfedge_handle SHalfedge_handle;
+  typedef typename Decorator_traits::SHalfedge_handle SHalfedge_handle;
 
-  typedef typename SNCstructure::Kernel Kernel;
+  typedef typename SNC_decorator::Kernel Kernel;
   typedef typename Kernel::Plane_3 Plane_3;
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
 
   typedef typename Kernel::RT RT;
-  typedef typename Kernel::FT FT;
-  typedef Bounding_box_3<FT> Bounding_box_3;
+  typedef Bounding_box_3<Kernel> Bounding_box_3;
   
   virtual Bounding_box_3 operator()(const Object_list& o) const;
   virtual Bounding_box_3 operator()(Object_handle o) const;
@@ -984,26 +986,27 @@ public:
   virtual Bounding_box_3 operator()(Halffacet_handle f) const;
   virtual Bounding_box_3 operator()(Halffacet_triangle_handle f) const;
 
-  typedef typename SNCstructure::SNC_decorator SNC_decorator;
   SNC_decorator D;
 };
 
-template <class SNCstructure>
+template <class Decorator>
 class SNC_k3_tree_traits {
 
 public:
-  typedef typename SNCstructure::Kernel Kernel;
+  typedef Decorator SNC_decorator;
+  typedef typename SNC_decorator::SNC_structure SNC_structure;
+  typedef typename SNC_structure::Kernel Kernel;
 
-  typedef SNCstructure SNC_structure;
-  typedef typename SNCstructure::Infi_box Infimaximal_box;
-  typedef typename SNCstructure::Vertex_handle Vertex_handle;
-  typedef typename SNCstructure::Halfedge_handle Halfedge_handle;
-  typedef typename SNCstructure::Halffacet_handle Halffacet_handle;
-  typedef typename SNCstructure::Halffacet_triangle_handle Halffacet_triangle_handle;
-  typedef typename SNCstructure::SNC_decorator Explorer;
+  typedef typename SNC_structure::Infi_box Infimaximal_box;
+  typedef typename SNC_decorator::Decorator_traits Decorator_traits;
+  typedef typename Decorator_traits::Vertex_handle Vertex_handle;
+  typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
+  typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
+  typedef typename SNC_structure::Halffacet_triangle_handle 
+                                  Halffacet_triangle_handle;
 
-  typedef typename SNCstructure::Object_handle Object_handle;
-  typedef typename SNCstructure::Object_list Object_list;
+  typedef typename SNC_structure::Object_handle Object_handle;
+  typedef typename SNC_structure::Object_list Object_list;
 
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Segment_3 Segment_3;
@@ -1014,12 +1017,11 @@ public:
   typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename Kernel::RT RT;
-  typedef typename Kernel::FT FT;
-  typedef Bounding_box_3<FT> Bounding_box_3;
+  typedef Bounding_box_3<Kernel> Bounding_box_3;
 
   typedef typename Kernel::Intersect_3 Intersect;
-  typedef Objects_bbox<SNCstructure> Objects_bbox;
-  typedef Side_of_plane<SNCstructure> Side_of_plane;
+  typedef Objects_bbox<SNC_decorator> Objects_bbox;
+  typedef Side_of_plane<SNC_decorator> Side_of_plane;
 
   Intersect intersect_object() const {
     return Intersect();
@@ -1034,9 +1036,9 @@ public:
   }
 };
 
-template <class SNCstructure>
+template <class SNC_decorator>
 Oriented_side 
-Side_of_plane<SNCstructure>::operator()
+Side_of_plane<SNC_decorator>::operator()
   ( const Plane_3& pl, Object_handle o) {
   Vertex_handle v;
   Halfedge_handle e;
@@ -1057,9 +1059,9 @@ Side_of_plane<SNCstructure>::operator()
   return Oriented_side(); // never reached
 }
 
-template <class SNCstructure>
+template <class SNC_decorator>
 Oriented_side 
-Side_of_plane<SNCstructure>::operator()
+Side_of_plane<SNC_decorator>::operator()
 ( const Plane_3& pl, Vertex_handle v) {
   if(!OnSideMap.is_defined(v))
     OnSideMap[v] = pl.oriented_side(D.point(v));
@@ -1073,9 +1075,9 @@ Side_of_plane<SNCstructure>::operator()
    should be already reported as an object intersecting the plane.
  */
 
-template <class SNCstructure>
+template <class SNC_decorator>
 Oriented_side 
-Side_of_plane<SNCstructure>::operator()
+Side_of_plane<SNC_decorator>::operator()
 ( const Plane_3& pl, Halfedge_handle e) {
   if(!OnSideMap.is_defined(D.source(e)))
     OnSideMap[D.source(e)] = pl.oriented_side(D.point(D.source(e)));  
@@ -1092,9 +1094,9 @@ Side_of_plane<SNCstructure>::operator()
   return ON_ORIENTED_BOUNDARY;
 }
 
-template <typename SNCstructure>
+template <typename SNC_decorator>
 Oriented_side
-Side_of_plane<SNCstructure>::operator()
+Side_of_plane<SNC_decorator>::operator()
 ( const Plane_3& pl, Halffacet_triangle_handle t) {
   bool on_positive_side = false, on_negative_side = false;
   Triangle_3 tr(t.get_triangle());
@@ -1128,15 +1130,15 @@ Side_of_plane<SNCstructure>::operator()
    as far as two vertices located on different sides of the plane.
 */
 
-template <class SNCstructure>
+template <class SNC_decorator>
 Oriented_side 
-Side_of_plane<SNCstructure>::operator()
+Side_of_plane<SNC_decorator>::operator()
   ( const Plane_3& pl, Halffacet_handle f) {
     CGAL_assertion( std::distance( f->facet_cycles_begin(), f->facet_cycles_end()) > 0);
   Halffacet_cycle_iterator fc(f->facet_cycles_begin());
   SHalfedge_handle e;
-  CGAL_assertion( assign( e, fc));
-  assign( e, fc);
+  CGAL_assertion(fc.is_shalfedge());
+  e = SHalfedge_handle(fc);
   SHalfedge_around_facet_circulator sc(e), send(sc);
   //CGAL_assertion( iterator_distance( sc, send) >= 3); // TODO: facet with 2 vertices was found, is it possible?
   Oriented_side facet_side;
@@ -1163,24 +1165,25 @@ Side_of_plane<SNCstructure>::operator()
   return facet_side;
 }
 
-template <class SNCstructure>
-Bounding_box_3<typename SNCstructure::Kernel::FT>
-Objects_bbox<SNCstructure>::operator()
+template <class SNC_decorator>
+Bounding_box_3<typename SNC_decorator::Kernel>
+Objects_bbox<SNC_decorator>::operator()
   ( const Object_list& O) const {
   CGAL_assertion( O.size() >= 0);
-  Bounding_box_3 b(0,0,0,0,0,0);
+  Bounding_box_3 b(Point_3(0,0,0),Point_3(0,0,0));
   typename Object_list::const_iterator o;
   for( o = O.begin(); o != O.end(); ++o) {
     Vertex_handle v;
-    if( assign( v, *o))
+    if( assign( v, *o)) {
       b = b + (*this)(v);
+    }	
   }
   return b;
 }
 
-template <class SNCstructure>
-Bounding_box_3<typename SNCstructure::Kernel::FT> 
-Objects_bbox<SNCstructure>::operator()
+template <class SNC_decorator>
+Bounding_box_3<typename SNC_decorator::Kernel> 
+Objects_bbox<SNC_decorator>::operator()
   (Object_handle o) const {
   Vertex_handle v;
   Halfedge_handle e;
@@ -1201,43 +1204,43 @@ Objects_bbox<SNCstructure>::operator()
   return Bounding_box_3(); // never reached
 }
 
-template <class SNCstructure>
-Bounding_box_3<typename SNCstructure::Kernel::FT> 
-Objects_bbox<SNCstructure>::operator()
+template <class SNC_decorator>
+Bounding_box_3<typename SNC_decorator::Kernel> 
+Objects_bbox<SNC_decorator>::operator()
   (Vertex_handle v) const {
   Point_3 p(D.point(v));
-  return Bounding_box_3( p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
+  return Bounding_box_3(p, p);
 }
 
-template <class SNCstructure>
-Bounding_box_3<typename SNCstructure::Kernel::FT> 
-Objects_bbox<SNCstructure>::operator()
+template <class SNC_decorator>
+Bounding_box_3<typename SNC_decorator::Kernel> 
+Objects_bbox<SNC_decorator>::operator()
   (Halfedge_handle e) const {
   return (operator()(D.vertex(e)) + operator()(D.vertex(D.twin(e))));
 }
 
-template <class SNCstructure>
-Bounding_box_3<typename SNCstructure::Kernel::FT> 
-Objects_bbox<SNCstructure>::operator()
+template <class SNC_decorator>
+Bounding_box_3<typename SNC_decorator::Kernel> 
+Objects_bbox<SNC_decorator>::operator()
   (Halffacet_triangle_handle t) const {
-  Bounding_box_3 bbox(0,0,0,0,0,0);
+  Bounding_box_3 bbox(Point_3(0,0,0),Point_3(0,0,0));
   Triangle_3 tr(t.get_triangle());
   for( int i = 0; i < 3; ++i) {
     Point_3 p(tr[i]);
-    bbox = bbox + Bounding_box_3( p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
+    bbox = bbox + Bounding_box_3(p,p);
   }
   return bbox;
 }
 
-template <class SNCstructure>
-Bounding_box_3<typename SNCstructure::Kernel::FT> 
-Objects_bbox<SNCstructure>::operator()
+template <class SNC_decorator>
+Bounding_box_3<typename SNC_decorator::Kernel> 
+Objects_bbox<SNC_decorator>::operator()
   (Halffacet_handle f) const { // TODO
   CGAL_assertion( f->facet_cycles_begin() != Halffacet_cycle_iterator());
   Halffacet_cycle_iterator fc(f->facet_cycles_begin());
   SHalfedge_handle e;
-  CGAL_assertion( assign( e, fc));
-  assign( e, fc);
+  CGAL_assertion(fc.is_shalfedge());
+  e = SHalfedge_handle(fc);
   SHalfedge_around_facet_circulator sc(e), send(sc);
   CGAL_assertion( !is_empty_range( sc, send));
   Bounding_box_3 b(operator()(D.vertex(sc)));

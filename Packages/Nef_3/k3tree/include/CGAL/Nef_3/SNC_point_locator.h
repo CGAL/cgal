@@ -69,11 +69,11 @@ public:
 
   virtual Object_handle shoot(const Ray_3& s) const = 0;
 
-  virtual void intersect_with_edges( Halfedge_handle edge,
+  virtual void intersect_with_edges( Halfedge_const_handle edge,
                                      const Intersection_call_back& call_back) 
     const = 0;
 
-  virtual void intersect_with_facets( Halfedge_handle edge,
+  virtual void intersect_with_facets( Halfedge_const_handle edge,
                                       const Intersection_call_back& call_back)
     const = 0;
 
