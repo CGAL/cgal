@@ -26,6 +26,7 @@
 
 #include <qtoolbar.h>
 #include <qbuttongroup.h>
+#include <qtoolbutton.h>
 
 namespace CGAL {
 

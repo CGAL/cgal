@@ -98,7 +98,6 @@ private:
            *widget << CGAL::GREEN;
            *widget << Circle(Point(x1,y1),
                       squared_distance(Point(x1, y1), Point(x2,y2)));
-           *widget << Line(Point(x1,y1), Point(x2,y2));
            widget->setRasterOp(old_raster);
            widget->setColor(old_color);
            widget->unlock();
