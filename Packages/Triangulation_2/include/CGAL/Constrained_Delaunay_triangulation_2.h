@@ -191,12 +191,12 @@ public:
       Locate_type lt;
       Face_handle fh = locate(p,lt,li, start);
       switch(lt) {
-      case OUTSIDE_AFFINE_HULL:
-      case VERTEX:
+      case Ctr::OUTSIDE_AFFINE_HULL:
+      case Ctr::VERTEX:
 	return false;
-      case FACE:
-      case EDGE:
-      case OUTSIDE_CONVEX_HULL:
+      case Ctr::FACE:
+      case Ctr::EDGE:
+      case Ctr::OUTSIDE_CONVEX_HULL:
 	*fit++ = fh; //put fh in Out_it1
 	propagate_conflicts(p,fh,0,fit,eit);
 	propagate_conflicts(p,fh,1,fit,eit);
@@ -271,7 +271,7 @@ flip(Face_handle& f, int i)
   // of triangulation to work on constrained Delaunay triangulation
   //CGAL_triangulation_precondition(is_flipable(f,i));
   Face_handle g = f->neighbor(i);
-  _tds.flip( &(*f), i);
+  this->_tds.flip( &(*f), i);
   int ig=g->index(f->vertex(i)); 
   // set constraints to new triangles
   Face_handle nfi=f->neighbor(i);
@@ -569,7 +569,7 @@ void
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 remove_2D(Vertex_handle v)
 {
- if (test_dim_down(v)) {  _tds.remove_dim_down(&(*v));  }
+ if (test_dim_down(v)) {  this->_tds.remove_dim_down(v);  }
   else {
      std::list<Edge> hole;
     make_hole(v, hole);

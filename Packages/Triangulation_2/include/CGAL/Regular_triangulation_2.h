@@ -51,6 +51,7 @@ public:
   typedef typename Base::Vertex         Vertex;
   typedef typename Base::Edge           Edge;
   typedef typename Base::Locate_type    Locate_type;
+  typedef typename Base::Vertex_circulator     Vertex_circulator;
   typedef typename Base::Face_circulator       Face_circulator;
   typedef typename Base::Edge_circulator       Edge_circulator;
   typedef typename Base::Finite_edges_iterator Finite_edges_iterator;
@@ -254,12 +255,12 @@ copy_triangulation(const Self &tr )
   // not good
   // clear them and next
   // scan the hidden vertices to retablish the list in faces
-  typename Tds::Iterator_base baseit=_tds.iterator_base_begin();
-  for( ; baseit != _tds.iterator_base_end(); baseit++){
+  typename Tds::Iterator_base baseit = this->_tds.iterator_base_begin();
+  for( ; baseit != this->_tds.iterator_base_end(); ++baseit){
     baseit->vertex_list().clear();
   }
   Hidden_vertices_iterator hvit = hidden_vertices_begin();
-  for( ; hvit !=  hidden_vertices_end() ; hvit++){
+  for( ; hvit !=  hidden_vertices_end() ; ++hvit){
     hvit->face()->vertex_list().push_back(&(*hvit));
   }
   CGAL_triangulation_postcondition(is_valid());
@@ -395,9 +396,9 @@ is_valid_vertex(Vertex_handle vh) const
     result = result && (!is_infinite(vh->face()));
     Face_handle loc  = locate(vh->point(), lt, li, vh->face());
     result = result && (loc == vh->face() ||
-		        (lt == VERTEX && 
+		        (lt == Base::VERTEX && 
 			     vh->face()->has_vertex(loc->vertex(li))) ||
-			(lt == EDGE && vh->face() ==
+			(lt == Base::EDGE && vh->face() ==
 			 loc->neighbor(li)) );
         if ( !result) {
       std::cerr << vh->point() << " " << std::endl;
@@ -721,14 +722,14 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v(NULL);
   Oriented_side os;
   switch (lt) {
-  case VERTEX:
+  case Base::VERTEX:
     if (power_test(loc->vertex(li)->point(), p) != ON_POSITIVE_SIDE) 
           return hide_new_vertex(loc,p);
     hide_new_vertex(loc, loc->vertex(li)->point());
     loc->vertex(li)->set_point(p);
     v = loc->vertex(li);
     break;
-  case EDGE:
+  case Base::EDGE:
     os = dimension() == 1 ?  power_test(loc,li,p) : 
                              power_test(loc,p);
     if (os == ON_NEGATIVE_SIDE)  { //hide preferably in finite face
@@ -737,15 +738,15 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
     }
     v = insert_in_edge(p,loc,li);
     break;
-  case FACE:
+  case Base::FACE:
     if (power_test(loc,p) == ON_NEGATIVE_SIDE) 
       return hide_new_vertex(loc,p);
     v = insert_in_face(p,loc);
     break;
-  case OUTSIDE_CONVEX_HULL:
+  case Base::OUTSIDE_CONVEX_HULL:
     v = insert_outside_convex_hull(p,loc);
     break;
-  case OUTSIDE_AFFINE_HULL:
+  case Base::OUTSIDE_AFFINE_HULL:
     v =  insert_outside_affine_hull(p);
     //clear vertex list of infinite faces which have been copied
      for ( All_faces_iterator afi = all_faces_begin();
@@ -781,7 +782,7 @@ reinsert(Vertex_handle v, Face_handle start)
   Vertex_handle vh = insert(v->point(), start);
   if(vh->is_hidden()) exchange_hidden(v,vh);
   else  exchange_incidences(v,vh);
-  _tds.delete_vertex(vh);
+  this->_tds.delete_vertex(vh);
   return v;
 }
 
@@ -1004,7 +1005,7 @@ void
 Regular_triangulation_2<Gt,Tds>::
 remove_2D(Vertex_handle v)
 {
-  if (test_dim_down(v)) {  _tds.remove_dim_down(&(*v));  }
+  if (test_dim_down(v)) {  this->_tds.remove_dim_down(v);  }
   else {
     std::list<Edge> hole;
     make_hole(v, hole);
@@ -1367,7 +1368,7 @@ void
 Regular_triangulation_2<Gt,Tds>::
 hide_remove_degree_3(Face_handle fh, Vertex_handle vh)
 {
- Vertex_handle vnew= _tds.create_vertex();
+ Vertex_handle vnew= this->_tds.create_vertex();
  exchange_incidences(vnew,vh);
  remove_degree_3(vnew, fh);
  hide_vertex(fh,vh);
@@ -1379,7 +1380,7 @@ typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
 hide_new_vertex(Face_handle f, const Weighted_point& p)
 {
-  Vertex_handle v = _tds.create_vertex(); 
+  Vertex_handle v = this->_tds.create_vertex(); 
   v->set_point(p);
   hide_vertex(f, v);
   return v;
@@ -1497,7 +1498,7 @@ stack_flip_4_2(Face_handle f, int i, int j, Faces_around_stack & faces_around)
     //Face_handle gn = g->neighbor(g->index(f->vertex(i)));
     Vertex_handle vq = f->vertex(j);
     
-    _tds.flip( &(*f), i); //not using flip because the vertex j is flat.
+    this->_tds.flip( &(*f), i); //not using flip because the vertex j is flat.
     update_hidden_points_2_2(f,fn);
     Face_handle h1 = ( f->has_vertex(vq) ? fn : f);
     //hide_vertex(h1, vq);

@@ -96,7 +96,7 @@ public:
     for( ;lcit != lc.end(); lcit++) {
       insert( (*lcit).first, (*lcit).second);
     }
-     CGAL_triangulation_postcondition( is_valid() );
+     CGAL_triangulation_postcondition( this->is_valid() );
   }
 
   template<class InputIterator>
@@ -108,7 +108,7 @@ public:
     for ( ; it != last; it++) {
       	insert_constraint((*it).first, (*it).second);
       }
-      CGAL_triangulation_postcondition( is_valid() );
+      CGAL_triangulation_postcondition( this->is_valid() );
   }
 
   //TODO Is that destructor correct ?
@@ -346,7 +346,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
-  if ( lt == EDGE && loc->is_constrained(li) ){
+  if ( lt == Triangulation::EDGE && loc->is_constrained(li) ){
     insert_in_constrained_edge = true;
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
@@ -354,7 +354,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 
   va = Triangulation::insert(a,lt,loc,li);
   if (insert_in_constrained_edge) update_constraints_incident(va, v1,v2);
-  else if(lt != VERTEX) clear_constraints_incident(va);
+  else if(lt != Triangulation::VERTEX) clear_constraints_incident(va);
   if (dimension() == 2) update_constraints_opposite(va);
   return va;
 }
@@ -373,7 +373,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 //   c2 = f->vertex(ccw(i)); //endpoint of edge
 //   bool insert_in_constrained_edge = f->is_constrained(i);
  
-//   va = _tds.insert_in_edge(f, i);
+//   va = this->_tds.insert_in_edge(f, i);
 //   va->set_point(a);
 
 //   if (insert_in_constrained_edge) update_constraints_incident(va, c1,c2);
@@ -593,7 +593,7 @@ intersect(Face_handle f, int i,
   Itag itag = Itag();
   bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
   CGAL_triangulation_assertion(ok);
-  Vertex_handle vi = virtual_insert(pi, EDGE, f, i);
+  Vertex_handle vi = virtual_insert(pi, Triangulation::EDGE, f, i);
   return vi; 
 }
 
@@ -869,7 +869,7 @@ void
 Constrained_triangulation_2<Gt,Tds,Itag>::
 remove_2D(Vertex_handle v)
 {
-  if (test_dim_down(v)) {_tds.remove_dim_down(&(*v));}
+  if (test_dim_down(v)) { this->_tds.remove_dim_down(v);}
   else {
     List_edges hole;
     make_hole(v, hole);
@@ -1030,8 +1030,8 @@ file_output(std::ostream& os) const
   Triangulation_2<Gt, Tds>::file_output(os);
 
   // write constrained status
-  typename Tds::Iterator_base ib = _tds.iterator_base_begin();
-  for( ; ib != _tds.iterator_base_end(); ++ib) {
+  typename Tds::Iterator_base ib = this->_tds.iterator_base_begin();
+  for( ; ib != this->_tds.iterator_base_end(); ++ib) {
     for(int j = 0; j < 3; ++j){
       if (ib->is_constrained(j)) { os << "C";}
       else { os << "N";}

@@ -580,7 +580,7 @@ typename Constraint_hierarchy_2<T,Data>::H_edge
 Constraint_hierarchy_2<T,Data>::
 make_edge(T va, T vb) const
 {
-  Constraint_hierarchy_2<T,Data>::H_edge he;
+  H_edge he;
   if(va<vb)
     { he.first = va; he.second = vb; }
   else

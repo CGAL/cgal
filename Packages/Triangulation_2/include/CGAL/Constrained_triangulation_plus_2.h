@@ -96,7 +96,7 @@ public:
     for( ;lcit != lc.end(); lcit++) {
       insert_constraint( (*lcit).first, (*lcit).second);
     }
-     CGAL_triangulation_postcondition( is_valid() );
+     CGAL_triangulation_postcondition( this->is_valid() );
   }
 
   template<class InputIterator>
@@ -109,7 +109,7 @@ public:
       insert_constraint((*first).first, (*first).second);
       ++first;
     }
-      CGAL_triangulation_postcondition( is_valid() );
+      CGAL_triangulation_postcondition( this->is_valid() );
   }
 
     //Helping
@@ -268,7 +268,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
-  if ( lt == EDGE && loc->is_constrained(li) ){
+  if ( lt == Triangulation::EDGE && loc->is_constrained(li) ){
     insert_in_constrained_edge = true;
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
@@ -416,7 +416,7 @@ intersect(Face_handle f, int i,
   bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
   CGAL_triangulation_assertion(ok);
 
-  Vertex_handle vi = insert(pi, EDGE, f, i);
+  Vertex_handle vi = insert(pi, Triangulation::EDGE, f, i);
   return vi; 
 }
 

@@ -1,7 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-ver 7.64 (08/03/03)
+ver 7.65 (12/04/03)
+- fixes for g++ 3.4.
+
+ver 7.64 (08/04/03)
 - fixed missing test files
 - fixed missing typename
 - there is still a bug in test_regular_hierarchy on Sun only

@@ -168,12 +168,12 @@ public:
       Locate_type lt;
       Face_handle fh = locate(p,lt,li, start);
       switch(lt) {
-      case OUTSIDE_AFFINE_HULL:
-      case VERTEX:
+      case Triangulation::OUTSIDE_AFFINE_HULL:
+      case Triangulation::VERTEX:
 	return false;
-      case FACE:
-      case EDGE:
-      case OUTSIDE_CONVEX_HULL:
+      case Triangulation::FACE:
+      case Triangulation::EDGE:
+      case Triangulation::OUTSIDE_CONVEX_HULL:
 	*fit++ = fh; //put fh in Out_it1
 	propagate_conflicts(p,fh,0,fit,eit);
 	propagate_conflicts(p,fh,1,fit,eit);
@@ -517,7 +517,7 @@ void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_2D(Vertex_handle v)
 {
-  if (test_dim_down(v)) {  _tds.remove_dim_down(&(*v));  }
+  if (test_dim_down(v)) {  this->_tds.remove_dim_down(v);  }
   else {
     std::list<Edge> hole;
     make_hole(v, hole);
