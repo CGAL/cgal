@@ -83,7 +83,7 @@ operator<<(CGAL_Window_stream& os,
 
   //return (os << (CGAL_Triangulation_2<Gt, Tds>) T);
   
-   CGAL_Constrained_triangulation_2<Gt,Tds>::Edge_iterator it = T.edges_begin();
+  CGAL_Constrained_triangulation_2<Gt,Tds>::Edge_iterator it = T.edges_begin();
 
     while(it != T.edges_end()){
         os << T.segment(it);
