@@ -16,7 +16,7 @@
 @usepackage{a4wide2}
 @usepackage{amssymb}
 @usepackage{path}
-@usepackage{cc_manual}
+@usepackage{cc_manual,cc_manual_index}
 @article
 
 \input{cprog.sty}
@@ -1777,7 +1777,7 @@ it is declared \ccc{friend}.
         dao.get( q, qx, qy);
         dao.get( r, rx, ry);
 
-        return( CGAL_static_cast( CGAL::Orientation,
+        return( static_cast< CGAL::Orientation>(
                     CGAL::sign( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx))));
     }
 @end
@@ -2176,7 +2176,7 @@ it is declared \ccc{friend}.
         dao.get( q, qhx, qhy, qhw);
         dao.get( r, rhx, rhy, rhw);
 
-        return( CGAL_static_cast( CGAL::Orientation,
+        return( static_cast< CGAL::Orientation>(
                     CGAL::sign( ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
                              - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw))));
     }
