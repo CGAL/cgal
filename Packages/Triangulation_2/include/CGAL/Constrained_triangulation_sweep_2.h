@@ -332,8 +332,8 @@ Constrained_triangulation_sweep_2<Gt,Tds>::
 make_event_queue()
 {
   if ( ! queue.empty()) {return;} // queue already done
-  std::list<Constraint>::iterator sit=_lc->begin();
-  std::list<Constraint>::iterator sdone=_lc->end();
+  typename std::list<Constraint>::iterator sit=_lc->begin();
+  typename std::list<Constraint>::iterator sdone=_lc->end();
   Constraint s;
   Point p,q;
   Event_queue_iterator look_up;

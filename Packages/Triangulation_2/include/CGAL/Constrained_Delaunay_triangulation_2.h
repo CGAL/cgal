@@ -73,7 +73,7 @@ public:
 					    const Gt& gt=Gt())
       : Constrained_triangulation(gt)
   {
-    std::list<Constraint>::iterator itc;
+    typename std::list<Constraint>::iterator itc;
     itc=lc.begin();      
       do{
 	insert((*itc).first, (*itc).second);
@@ -86,7 +86,7 @@ public:
   Constrained_Delaunay_triangulation_2(InputIterator first,
 			      InputIterator last,
 			      const Gt& gt=Gt() )
-     : Constrained_Delaunay_triangulation_2(gt)
+     : Constrained_triangulation(gt)
   {
     while(first != last){
           insert((*first).first, (*first).second);

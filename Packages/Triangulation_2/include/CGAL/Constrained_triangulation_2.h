@@ -41,7 +41,7 @@ template < class Gt, class Tds>
 class Constrained_triangulation_2  : public Triangulation_2<Gt,Tds>
 {
   friend Constrained_triangulation_sweep_2<Gt,Tds>;
-  friend Constrained_triangulation_sweep_2<Gt,Tds>::Neighbor_list;
+  //friend Constrained_triangulation_sweep_2<Gt,Tds>::Neighbor_list;
 public:
   typedef Triangulation_2<Gt,Tds> Triangulation;
   typedef Constrained_triangulation_2<Gt,Tds>  Constrained_triangulation;
@@ -71,7 +71,13 @@ public:
   Constrained_triangulation_2(std::list<Constraint>& lc, const Gt& gt=Gt())
       : Triangulation_2<Gt,Tds>(gt)
   {
-    Sweep sweep(this,lc);
+    //Sweep sweep(this,lc);
+    //sweep is momentaneously broken
+    typename std::list<Constraint>::iterator lcit=lc.begin();
+    for( ;lcit != lc.end(); lcit++) {
+      insert( (*lcit).first, (*lcit).second);
+    }
+     CGAL_triangulation_postcondition( is_valid() );
   }
 
   template<class InputIterator>
@@ -80,11 +86,15 @@ public:
 			      const Gt& gt=Gt() )
      : Triangulation_2<Gt,Tds>(gt)
   {
-      std::list<Constraint> lc;
-      while(first != last){
-          lc.push_back(*first++);
-      }
-      Sweep sweep(this,lc);
+     //  std::list<Constraint> lc;
+//       while(first != last){
+//           lc.push_back(*first++);
+//       }
+//       Sweep sweep(this,lc);
+    while( first != last){
+      insert((*first).first, (*first).second);
+      ++first;
+    }
       CGAL_triangulation_postcondition( is_valid() );
   }
 

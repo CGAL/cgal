@@ -577,7 +577,7 @@ includes_edge(Vertex_handle va, Vertex_handle vb,
   Orientation orient;
   int indv;
   Edge_circulator ec = va->incident_edges(), done(ec);
-  if (va != 0) {
+  if (ec != 0) {
     do { 
       //find the index of the other vertex of *ec
       indv = 3 - ((*ec).first)->index(va) - (*ec).second ; 
