@@ -80,11 +80,15 @@ public:
   typedef typename Dt::Edge_circulator Edge_circulator;
   typedef typename Dt::Vertex_circulator Vertex_circulator;
 
-  typedef typename Dt::Face_iterator Face_iterator;
+  typedef typename Dt::Finite_faces_iterator Finite_faces_iterator;
   typedef typename Dt::Edge_iterator Edge_iterator;
-  typedef typename Dt::Vertex_iterator Vertex_iterator;
+  typedef typename Dt::Finite_vertices_iterator Finite_vertices_iterator;
 
   typedef typename Dt::Locate_type Locate_type;
+
+  // for backward compatibility
+  typedef Finite_vertices_iterator Vertex_iterator;
+  typedef Finite_faces_iterator Face_iterator;
 
 private:
 
@@ -468,9 +472,7 @@ public:
   Alpha_shape_vertices_iterator alpha_shape_vertices_begin() const
     { 
       Alpha_shape_vertices_list.clear();
-      std::back_insert_iterator< std::list< Vertex_handle > > 
-	V_it(Alpha_shape_vertices_list);
-      get_alpha_shape_vertices(V_it);
+      get_alpha_shape_vertices(std::back_inserter(Alpha_shape_vertices_list));
       return Alpha_shape_vertices_list.begin();
     }
 
@@ -497,9 +499,7 @@ public:
   Alpha_shape_edges_iterator alpha_shape_edges_begin() const
     {
       Alpha_shape_edges_list.clear();
-      std::back_insert_iterator< std::list<Edge > > 
-	E_it(Alpha_shape_edges_list);
-      get_alpha_shape_edges(E_it);
+      get_alpha_shape_edges(std::back_inserter(Alpha_shape_edges_list));
       return Alpha_shape_edges_list.begin();
     }
 
@@ -760,7 +760,7 @@ Alpha_shape_2<Dt>::initialize_interval_face_map()
   Coord_type alpha_f;
 
   // only finite faces
-  for(Face_iterator face_it = faces_begin(); face_it != faces_end(); ++face_it)
+  for(Finite_faces_iterator face_it = faces_begin(); face_it != faces_end(); ++face_it)
     {
       alpha_f = squared_radius(face_it);
       _interval_face_map.insert(Interval_face(alpha_f, face_it));
@@ -891,8 +891,8 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map()
   Coord_type alpha_max_v;
   Coord_type alpha_f;
 
-  Vertex_iterator vertex_it;
-  // only finite vertexs
+  Finite_vertices_iterator vertex_it;
+
   for( vertex_it = vertices_begin(); 
        vertex_it != vertices_end(); 
        ++vertex_it) 
@@ -910,7 +910,7 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map()
 // 	// if we used Edelsbrunner and Muecke's definition
 // 	// singular means not incident to any higher-dimensional face
 // 	// regular means incident to a higher-dimensional face
-// 	Edge_circulator edge_circ = v->incident_edges(),
+// 	Edge_circulator edge_circ = this->incident_edges(v),
 // 	edge_done(edge_circ);
 
 // 	do 
@@ -952,7 +952,7 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map()
       // singular means not incident to any 2-dimensional face
       // regular means incident to a 2-dimensional face
      
-      Face_circulator face_circ = v->incident_faces(),
+      Face_circulator face_circ = this->incident_faces(v),
 	done = face_circ;
    
       if (!face_circ.is_empty()) 
@@ -970,10 +970,10 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map()
 		  alpha_f = find_interval(f);
 		  // if we define singular as not incident to a 2-dimensional
 		  // face
-		  alpha_mid_v = min(alpha_mid_v, alpha_f);
+		  alpha_mid_v = std::min(alpha_mid_v, alpha_f);
 		    
 		  if (alpha_max_v != Infinity)
-		    alpha_max_v = max(alpha_max_v, alpha_f);
+		    alpha_max_v = std::max(alpha_max_v, alpha_f);
 			    
 		}
 	    }
@@ -1246,7 +1246,7 @@ Alpha_shape_2<Dt>::number_of_solid_components(const Coord_type& alpha) const
   // takes time O(#alpha_shape) amortized if STL_STD::HASH_TABLES
   //            O(#alpha_shape log n) otherwise
   Marked_face_set marked_face_set;
-  Face_iterator face_it;
+  Finite_faces_iterator face_it;
   int nb_solid_components = 0;
 
   //prevent error (Rajout Frank)
@@ -1364,7 +1364,7 @@ Alpha_shape_2<Dt>::find_alpha_solid() const
   // takes O(#alpha_shape) time
   Coord_type alpha_solid = 0;
 
-  Vertex_iterator vertex_it;
+  Finite_vertices_iterator vertex_it;
   // only finite vertices
   for( vertex_it = vertices_begin(); 
        vertex_it != vertices_end();
@@ -1372,17 +1372,17 @@ Alpha_shape_2<Dt>::find_alpha_solid() const
     {
       Coord_type alpha_min_v = (--_interval_face_map.end())->first;
 
-      Face_circulator face_circ = vertex_it->incident_faces();
+      Face_circulator face_circ = this->incident_faces(vertex_it);
       Face_circulator  done = face_circ;
       do 
 	{
 	  Face_handle f = face_circ;
 	  if (! is_infinite(f))
-	    alpha_min_v = min(find_interval(f),
+	    alpha_min_v = std::min(find_interval(f),
 				   alpha_min_v);
 	}
       while (++face_circ != done);
-      alpha_solid = max(alpha_min_v, alpha_solid);
+      alpha_solid = std::max(alpha_min_v, alpha_solid);
 
     }
   return alpha_solid;
