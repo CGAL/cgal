@@ -330,7 +330,9 @@ int main()
   CGAL::Viewer_3 W(500);
   W.init_window_thread(); 
   W.set_custom_panel(demo_panel);
+  std::cerr << "before 1st stop" << std::endl;
   stop();
+  std::cerr << "after 1st stop" << std::endl;
   W.add_drawable(&dlp,1);
   W.display();
   stop();
@@ -342,5 +344,6 @@ int main()
   stop();
   W.add_drawable(&ddt,4);
   W.display();
+  stop();
   pthread_join(W.get_window_thread(), NULL);
 }
