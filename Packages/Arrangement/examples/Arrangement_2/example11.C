@@ -1,6 +1,6 @@
 // examples/Arrangement_2/example11
 
-// Shorten long names for MSVC:
+// Shorten long names for problematic compilers (e.g., MSVC):
 #if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
 #define Quotient                        Qt
 #define Cartesian                       Cn

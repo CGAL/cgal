@@ -1,4 +1,4 @@
-//examples/Arrangement_2/example1.C
+// examples/Arrangement_2/example1.C
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
@@ -8,24 +8,24 @@
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Quotient<CGAL::MP_Float>                NT;
-typedef CGAL::Cartesian<NT>                           Kernel;
-typedef CGAL::Arr_segment_exact_traits<Kernel>        Traits;
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
 
-typedef Traits::Point_2                               Point_2;
-typedef Traits::Curve_2                               Curve_2;
+typedef Traits::Point_2                                 Point_2;
+typedef Traits::Curve_2                                 Curve_2;
 
-typedef CGAL::Arr_base_node<Curve_2>                  Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>    Arr_2;
+typedef CGAL::Arr_base_node<Curve_2>                    Base_node;
+typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
 
 int main() 
 {
   Arr_2 arr;
 
   //insertion of the curves
-  arr.insert(Curve_2(Point_2(0,0), Point_2(1,1)));
-  arr.insert(Curve_2(Point_2(0,1), Point_2(1,0))); 
+  arr.insert(Curve_2(Point_2(0, 0), Point_2(1, 1)));
+  arr.insert(Curve_2(Point_2(0, 1), Point_2(1, 0))); 
   
   //traversal of the curves
   Arr_2::Curve_iterator cit;
@@ -33,7 +33,7 @@ int main()
   for (cit = arr.curve_node_begin(); cit != arr.curve_node_end(); ++cit) 
   {
     std::cout << std::endl << "Curve level:" << std::endl << cit->curve()
-	      << std::endl ;
+              << std::endl ;
     std::cout << "Edge level:" << std::endl;
 
     //traversal of the edges of the current curve
