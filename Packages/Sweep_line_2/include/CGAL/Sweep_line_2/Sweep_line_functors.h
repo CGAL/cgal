@@ -29,6 +29,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+int g_compare_func = 1;
+
 template <class Point, class SweepLineTraits_2>
 class Point_less_functor 
 {
@@ -89,6 +91,7 @@ private:
 };
 #endif
 
+
 template <class SweepLineTraits_2, class Subcurve>
 class Status_line_curve_less_functor 
 {
@@ -96,11 +99,34 @@ public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::X_curve_2 X_curve_2;
-  //typedef Sweep_line_subcurve<Traits> Subcurve;
+  typedef bool (Status_line_curve_less_functor::*func)
+                      (const Subcurve*, const Subcurve*) const;
 
-  Status_line_curve_less_functor(Traits *traits) : m_traits(traits) {}
+  Status_line_curve_less_functor(Traits *traits) : m_traits(traits) {
+    m_compare[0] = &Status_line_curve_less_functor::compare_at;
+    m_compare[1] = &Status_line_curve_less_functor::compare_right;
+  }
   
-  bool operator()(const Subcurve* c1, const Subcurve* c2) const { 
+  bool operator()(const Subcurve* c1, const Subcurve* c2) const {
+    return (this->*m_compare[g_compare_func])(c1, c2);
+  }
+
+  func m_compare[2];
+
+  bool compare_at(const Subcurve* c1, const Subcurve* c2)  const 
+  {
+    const Point_2 *p = c1->getReferencePoint();
+    Comparison_result r = 
+      m_traits->curve_compare_at_x(c1->getCurve(), 
+				   c2->getCurve(), 
+				   *p);
+    if ( r == SMALLER) {
+      return true;
+    } 
+    return false;
+  }
+
+  bool compare_right(const Subcurve* c1, const Subcurve* c2)  const {
     const Point_2 *p = c1->getReferencePoint();
 #if 0
     std::cout << "\t\tComparing between:" << *p << "\n"

@@ -921,6 +921,7 @@ FirstPass()
   EventCurveIter rightIter = m_currentEvent->rightCurvesBegin();
   m_currentPos = m_sweepLinePos;
 
+  g_compare_func = 0;
   while ( rightIter != m_currentEvent->rightCurvesEnd())
   {
     // if the point is not an end point, skip it
@@ -929,7 +930,7 @@ FirstPass()
       continue;
     }
 
-#if 1
+#if 0
 // improve here
     StatusLineIter slIter = m_statusLine->begin();
     while ( slIter != m_statusLine->end() ) 
@@ -980,6 +981,7 @@ FirstPass()
 #endif // 1
     ++rightIter;
   }
+  g_compare_func = 1;
 
   SL_DEBUG(m_currentEvent->Print();)
   SL_DEBUG(std::cout << "First pass - done\n" ;)
@@ -1619,7 +1621,7 @@ inline bool
 Sweep_line_tight_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
 DoCurvesOverlap(Subcurve *c1, Subcurve *c2)
 {
-#if 0
+#if 1
 // improve here...
   if ( m_traits->curve_compare_at_x_right(c1->getCurve(),
 					  c2->getCurve(),
