@@ -13,8 +13,8 @@ public Base_traits_test<Traits_class, Number_type>
  public:
   typedef Number_type  NT;
 
-  typedef typename Traits_class::CfNT               CoNT;
-  typedef typename Traits_class::CoNT               CfNT;
+  typedef typename Traits_class::CfNT               CfNT;
+  typedef typename Traits_class::CoNT               CoNT;
   typedef typename Traits_class::Point_2            Point;
   typedef typename Traits_class::Int_point_2        IPoint;
   typedef typename Traits_class::Int_segment_2      ISegment;
@@ -188,7 +188,7 @@ read_curve (std::ifstream & is, Curve & cv)
     str_line >> x1 >> y1;
     str_line >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
 
-    Point   app_source (CoNT(x1), CoNT(y1));
+    Point   app_source = Point(CoNT(x1), CoNT(y1));
 
     // Read the approximated target, along with a general conic 
     // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
@@ -199,7 +199,7 @@ read_curve (std::ifstream & is, Curve & cv)
     str_line >> x2 >> y2;
     str_line >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
 
-    Point   app_target (CoNT(x2), CoNT(y2));
+    Point   app_target = Point(CoNT(x2), CoNT(y2));
 
     // Create the conic arc.
     cv = Curve (r, s, t, u, v ,w,
@@ -220,18 +220,20 @@ read_curve (std::ifstream & is, Curve & cv)
 
   str_line >> x1 >> y1 >> x2 >> y2;
 
-  Point source (CoNT(x1), CoNT(y1));
-  Point target (CoNT(x2), CoNT(y2));
+  Point source = Point (CoNT(x1), CoNT(y1));
+  Point target = Point (CoNT(x2), CoNT(y2));
 
   // Create the conic (or circular) arc.
   if (is_circle)
   {
     cv = Curve (circle,
+                CGAL::CLOCKWISE,
 		source, target);
   }
   else
   {
     cv = Curve (r, s, t, u, v, w,
+                CGAL::CLOCKWISE,
 		source, target);
   }
  
