@@ -242,17 +242,18 @@ int main(int argc,char *argv[])
       W.disable_button(4);
       biggest_rect_shown = false;
       redraw(empty_rectangle,W);
-      //W.text_box(-1.5,-1,10,"manual");
     } else if(mouse_input == 5) {
       W.enable_button(6);
       W.disable_button(5);
       remove_points = false;
       redraw(empty_rectangle,W);
+      show_biggest_rec(empty_rectangle,W);
     } else if(mouse_input == 6) {
       W.enable_button(5);
       W.disable_button(6);
       remove_points = true;
       redraw(empty_rectangle,W);
+      show_biggest_rec(empty_rectangle,W);
     } else if(mouse_input == 7) {
       // finish
       break;
