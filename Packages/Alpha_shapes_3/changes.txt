@@ -1,3 +1,7 @@
+Version 3.27 [af]
+- Moved \chapter from alpha3.tex to main.tex
+
+
 Version 3.26 (22/09/03)
 - new headers
 
