@@ -1,3 +1,6 @@
+1.6.4 (3 Jan 2003)
+- arrangement and planar map demos changed
+
 1.6.3 (27 Nov 2002)
 - IRIX' make is picky about spaces.
 

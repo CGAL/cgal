@@ -51,39 +51,36 @@ int main(int argc, char *argv[])
 #else 
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Pm_segment_epsilon_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
-#include <CGAL/convex_hull_2.h>
-#include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/Pm_with_intersections.h>
 #include<list>
-
 #include <CGAL/geowin_support.h>
-#include <CGAL/distance_predicates_2.h>
+#include <CGAL/leda_rational.h>
 
 #if defined(LEDA_NAMESPACE)
 using namespace leda;
 #endif
 
-typedef double                                            number_type;
+//typedef double                                            number_type;
+typedef leda_rational                                     number_type;
 typedef CGAL::Cartesian<number_type>                      K;
-typedef CGAL::Pm_segment_epsilon_traits<K>                pmtraits;
+typedef CGAL::Pm_segment_traits_2<K>                      pmtraits;
 typedef K::Point_2                                        Point;
 typedef K::Segment_2                                      Segment;
 typedef CGAL::Polygon_traits_2<K>                         PTraits;
 typedef CGAL::Polygon_2<PTraits,std::list<Point> >        Polygon;
 typedef pmtraits::X_curve                                 Curve;
 typedef CGAL::Pm_default_dcel<pmtraits>                   pmdcel;
-
-typedef CGAL::Planar_map_2<pmdcel, pmtraits>	          planar_map;
-typedef planar_map::Locate_type                           loc_type;
-typedef planar_map::Halfedge_handle                       halfedge_handle;
+typedef CGAL::Planar_map_2<pmdcel, pmtraits>	          plmap;
+typedef plmap::Locate_type                                loc_type;
+typedef plmap::Halfedge_handle                            halfedge_handle;
 
 std::list<Point>   L;
 std::list<Point>   shoot;
 std::list<Segment> Lseg;
 std::list<Point>   Loc;
-
 
 bool snap_to_points(Segment& seg)
 {
@@ -122,7 +119,8 @@ bool segment_start_change(GeoWin& gw, const Segment& segold)
 bool point_start_change(GeoWin& gw, const Point& p)
 { return false; }
 
-CGAL::Planar_map_2<pmdcel, pmtraits>* pm;
+//plmap pm; - seems not to work
+plmap* pm;
 
 class geo_shoot : public geowin_redraw, public geowin_update<std::list<Point>, std::list<Point> >
 {
@@ -145,13 +143,14 @@ public:
       //draw shooting arrow ...
       Point src = *pit;
       double x1,y1,x2,y2,m,n;
-      x1 = (*it).source().x(); x2 = (*it).target().x();
-      y1 = (*it).source().y(); y2 = (*it).target().y();
+      x1 = CGAL::to_double ((*it).source().x()); x2 = CGAL::to_double ((*it).target().x());
+      y1 = CGAL::to_double ((*it).source().y()); y2 = CGAL::to_double ((*it).target().y());
       m = (y2-y1)/(x2-x1);
       n = y2-m*x2;
       
       W.set_color(leda_red);
-      W.draw_arrow((*pit).x(),(*pit).y(),(*pit).x(),m*((*pit).x())+n);
+      W.draw_arrow(CGAL::to_double((*pit).x()),CGAL::to_double((*pit).y()),
+                   CGAL::to_double((*pit).x()),CGAL::to_double(m*((*pit).x())+n));
       W.set_color(leda_blue);
     }
     
@@ -169,6 +168,10 @@ public:
       halfedge_handle he = pm->vertical_ray_shoot(*it,lt,true);
       switch(lt){
         case 1: {   //Vertex
+	  Point pt1 = (*he).source()->point();
+	  Point pt2 = (*he).target()->point();
+	  PSEG.push_back(Segment(pt1,pt2));
+	  PT.push_back(*it);
 	  break;
 	}
 	case 2: {   //Edge
@@ -208,11 +211,14 @@ public:
     std::list<Point>::const_iterator rt;
 
     W.set_color(leda_red);
-    for (rt=red.begin(); rt != red.end(); rt++) W.draw_disc((*rt).x(),(*rt).y(),5);
+    for (rt=red.begin(); rt != red.end(); rt++) 
+      W.draw_disc(CGAL::to_double((*rt).x()),CGAL::to_double((*rt).y()),5);
     W.set_color(leda_green);
-    for (rt=green.begin(); rt != green.end(); rt++) W.draw_disc((*rt).x(),(*rt).y(),5);
+    for (rt=green.begin(); rt != green.end(); rt++) 
+      W.draw_disc(CGAL::to_double((*rt).x()),CGAL::to_double((*rt).y()),5);
     W.set_color(leda_white);
-    for (rt=white.begin(); rt != white.end(); rt++) W.draw_disc((*rt).x(),(*rt).y(),5);
+    for (rt=white.begin(); rt != white.end(); rt++) 
+      W.draw_disc(CGAL::to_double((*rt).x()),CGAL::to_double((*rt).y()),5);
   }
   
   virtual bool write_postscript(ps_file& PS, leda_color c1, leda_color c2)
@@ -225,14 +231,17 @@ public:
        if (pol.is_simple()) PS << convert_to_leda(pol); 
     }
     // output the lists for location ...
-    std::list<CGALPoint>::const_iterator rt;
+    std::list<Point>::const_iterator rt;
 
     PS.set_color(leda_red);
-    for (rt=red.begin(); rt != red.end(); rt++) PS.draw_disc((*rt).x(),(*rt).y(),5);
+    for (rt=red.begin(); rt != red.end(); rt++) 
+       PS.draw_disc(CGAL::to_double((*rt).x()),CGAL::to_double((*rt).y()),5);
     PS.set_color(leda_green);
-    for (rt=green.begin(); rt != green.end(); rt++) PS.draw_disc((*rt).x(),(*rt).y(),5);
+    for (rt=green.begin(); rt != green.end(); rt++) 
+       PS.draw_disc(CGAL::to_double((*rt).x()),CGAL::to_double((*rt).y()),5);
     PS.set_color(leda_white);
-    for (rt=white.begin(); rt != white.end(); rt++) PS.draw_disc((*rt).x(),(*rt).y(),5);
+    for (rt=white.begin(); rt != white.end(); rt++) 
+       PS.draw_disc(CGAL::to_double((*rt).x()),CGAL::to_double((*rt).y()),5);
     return false;
   }
 
@@ -292,40 +301,37 @@ public:
   }
 };
 
-
 int main()
 {
   geowin_init_default_type((std::list<Point>*)0, leda_string("CGALPointList"));
   geowin_init_default_type((std::list<Segment>*)0, leda_string("CGALSegmentList"));
   
-  CGAL::Planar_map_2<pmdcel, pmtraits> pmap;
+  plmap pmap;
   pm = &pmap;
  
   GeoWin GW("CGAL - Planar map demo");
   GW.add_help_text(leda_string("CGAL_planar_map_2"));
+  GW.message("Attention - the input segments must not intersect");
 
-  geo_scene point_scene   = GW.new_scene(L);  
-
-  GeoEditScene<std::list<Point> >* PTR1 =
-       (GeoEditScene<std::list<Point> >*)point_scene;
-  GW.set_start_change_handler(PTR1, point_start_change);
+  GeoEditScene<std::list<Point> >* point_scene   = GW.new_scene(L);
+  GW.set_name(point_scene,"Start/end points of line segments for the planar map");    
+  GW.set_start_change_handler(point_scene, point_start_change);
   
   // vertical ray shooting scene ...
   geo_scene shoot_scene  = GW.new_scene(shoot);
+  GW.set_name(shoot_scene,"Input for vertical ray shooting"); 
   GW.set_color(shoot_scene, leda_blue);
   GW.set_point_style(shoot_scene, leda_disc_point);
  
-  geo_scene segment_scene = GW.new_scene(Lseg); 
-
-  GeoEditScene<std::list<Segment> >* PTR2 =
-       (GeoEditScene<std::list<Segment> >*)segment_scene;
-
-  GW.set_pre_add_change_handler(PTR2,segment_add_changer);
-  GW.set_start_change_handler(PTR2,segment_start_change);
+  GeoEditScene<std::list<Segment> >* segment_scene = GW.new_scene(Lseg); 
+  GW.set_name(segment_scene,"Input segments of the planar map");
+  GW.set_pre_add_change_handler(segment_scene,segment_add_changer);
+  GW.set_start_change_handler(segment_scene,segment_start_change);
 
   // second point scene for locating ...
   
-  geo_scene ploc_scene   = GW.new_scene(Loc);  
+  geo_scene ploc_scene   = GW.new_scene(Loc); 
+  GW.set_name(ploc_scene,"Input for point location");  
   GW.set_color(ploc_scene,leda_black);
 
   geo_plmap PM;

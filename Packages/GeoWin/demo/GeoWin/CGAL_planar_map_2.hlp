@@ -3,9 +3,9 @@ CGAL Planar map demo
 This demo program lets you construct a planar map.
 Construct the planar map using the scenes
 
-- CGALPointList and
+- Start/end points of line segments for the planar map and
 
-- CGALSegmentList.
+- Input segments of the planar map
 
 The program will show you the faces of the planar map in
 different colors.

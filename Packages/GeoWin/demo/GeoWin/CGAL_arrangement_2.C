@@ -53,13 +53,18 @@ int main(int argc, char *argv[])
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_2_default_dcel.h>
-#include <CGAL/Arr_leda_segment_exact_traits.h>
-#include <CGAL/Pm_walk_along_line_point_location.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/leda_rational.h>
 
-typedef CGAL::Arr_leda_segment_exact_traits            Traits;
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
+typedef leda_rational                                  NT;
+typedef CGAL::Cartesian<NT>                            K;
+typedef CGAL::Arr_segment_exact_traits<K>              Traits;
 
 typedef Traits::Point                                  IPoint;
-typedef CGAL::Cartesian<double>                        K;
 typedef K::Point_2                                     Point;
 typedef K::Segment_2                                   Segment;
 typedef Traits::X_curve                                X_curve;
@@ -68,15 +73,11 @@ typedef CGAL::Arr_base_node<X_curve>                   Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>               Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >    Arr_2;
 
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >::Curve_iterator  Curve_iterator;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >::Vertex_iterator Vertex_iterator;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >::Vertex          Vertex;
+typedef Arr_2::Curve_iterator                          Curve_iterator;
+typedef Arr_2::Vertex_iterator                         Vertex_iterator;
+typedef Arr_2::Vertex                                  Vertex;
 
 #include <CGAL/geowin_support.h>
-
-#if defined(LEDA_NAMESPACE)
-using namespace leda;
-#endif
 
 Arr_2 arr;
 
@@ -108,9 +109,7 @@ public:
     if (f->does_outer_ccb_exist()) {
       Arr_2::Ccb_halfedge_circulator cc=f->outer_ccb();
       do {
-        leda_segment seg = (cc->curve()).to_float();
-	Segment cseg(Point(seg.xcoord1(),seg.ycoord1()), Point(seg.xcoord2(),seg.ycoord2()) );   
-      
+        Segment cseg = cc->curve();      
         Sl.push_back(cseg);
       } while (++cc != f->outer_ccb());
       
@@ -120,9 +119,7 @@ public:
     for (;hit!=eit; ++hit) {
       Arr_2::Ccb_halfedge_circulator cc=*hit; 
       do {
-        leda_segment seg = (cc->curve()).to_float();
-	Segment cseg(Point(seg.xcoord1(),seg.ycoord1()), Point(seg.xcoord2(),seg.ycoord2()) );
-	
+        Segment cseg = cc->curve();
         Sl.push_back(cseg);
       } while (++cc != *hit);
     }
@@ -138,8 +135,7 @@ public:
 
  bool insert(const Segment& seg)
  {
-  leda_rat_segment ls(convert_to_leda(seg));
-  arr.insert(X_curve(ls.start(), ls.end() ));
+  arr.insert(X_curve(seg));
   //std::cout << "insert:" << seg << "\n";
   return true; 
  } 
@@ -167,8 +163,7 @@ public:
   
   for(;it1 != L.end(); ++it1){
     const Segment& s1= *it1;
-    leda_rat_segment ls(convert_to_leda(s1));
-    arr.insert(X_curve(ls.start(), ls.end() ));
+    arr.insert(s1);
   }
  }
 };
