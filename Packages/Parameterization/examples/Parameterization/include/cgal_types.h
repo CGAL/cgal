@@ -524,20 +524,23 @@ class Polyhedron_ex : public Polyhedron
       return ok;
     }
 
+	float round(double x)
+	{
+		return x;										// Default implementation
+		//return float(int(x*100.0 + 0.5))/100.0; 		// Round number to ease files comparison
+    }
+
     // output to a Wavefront OBJ file
 	// v x y z
 	// f 1 2 3 4 (1-based)
 	//********************************
 	bool write_file_obj(FILE *pFile)
 	{
-		#define UV_FORMAT "vt %f %f\n"				/* Default value */
-		//#define UV_FORMAT "vt %5.2f %5.2f\n"		/* Trick to ease file comparison */
-
 		fprintf(stderr,"  write_file_obj()...");
 
-		// Number all mesh vertices following the order of the vertices_begin() iterator
+		// Index all mesh vertices following the order of the vertices_begin() iterator
 		precompute_vertex_indices();
-		// Number all mesh half edges following the order of the halfedges_begin() iterator
+		// Index all mesh half edges following the order of the halfedges_begin() iterator
 		precompute_halfedge_indices();
 
 		// write the name of material file
@@ -553,7 +556,7 @@ class Polyhedron_ex : public Polyhedron
 		fprintf(pFile, "# uv coordinates\n") ;
 		Halfedge_iterator pHalfedge;
 		for(pHalfedge = halfedges_begin(); pHalfedge != halfedges_end(); pHalfedge++)
-			fprintf(pFile, UV_FORMAT, (float)pHalfedge->u(), (float)pHalfedge->v());
+			fprintf(pFile, "vt %f %f\n", round(pHalfedge->u()), round(pHalfedge->v()));
 
 		// Write faces using the unique material # 1
 		fprintf(pFile, "# faces\nusemtl Mat_1\n");
