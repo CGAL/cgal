@@ -1,25 +1,21 @@
-// ======================================================================
-//
 // Copyright (c) 2003 GeometryFactory
+// All rights reserved.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// ----------------------------------------------------------------------
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// release       : 
-// release_date  : 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// file          : include/CGAL/Level_interval.h
-// package       : Interval_skip_list
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Andreas Fabri
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// coordinator   : GeometryFactory (<Andreas.Fabri@geometryfactory.com>)
-//
-// ======================================================================
+// Author(s)     : Andreas Fabri
 
 #ifndef CGAL_LEVEL_INTERVAL_H
 #define CGAL_LEVEL_INTERVAL_H
