@@ -206,7 +206,7 @@ has_on_unbounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p)
 template < class R >
 bool Iso_rectangleC2<R CGAL_CTAG>::is_degenerate() const
 {
-  return (xmin() == xmax()) || (ymin() ==ymax());
+  return (xmin() == xmax()) || (ymin() == ymax());
 }
 
 template < class R >
@@ -230,7 +230,7 @@ transform(const typename Iso_rectangleC2<R CGAL_CTAG>::Aff_transformation_2 &t)
                              t.transform(vertex(2)));
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_ISOR_ECTANGLEC2
+#ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEC2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Iso_rectangleC2<R CGAL_CTAG> &r)
@@ -244,9 +244,9 @@ operator<<(std::ostream &os, const Iso_rectangleC2<R CGAL_CTAG> &r)
         return os << "Iso_rectangleC2(" << r[0] << ", " << r[2] << ")";
     }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_ISOR_ECTANGLEC2
+#endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEC2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_ISOR_ECTANGLEC2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEC2
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 std::istream &
@@ -259,7 +259,7 @@ operator>>(std::istream &is, Iso_rectangleC2<R CGAL_CTAG> &r)
     r = Iso_rectangleC2<R CGAL_CTAG>(p, q);
     return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_ISOR_ECTANGLEC2
+#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEC2
 
 CGAL_END_NAMESPACE
 
