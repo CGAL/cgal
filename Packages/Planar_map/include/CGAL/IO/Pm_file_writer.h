@@ -370,6 +370,14 @@ protected:
   //  out() << str << std::endl;
   // }
 
+  // Friends
+  // -------
+  template <class Arrangement, class Writer>
+  friend void write_arr(const Arrangement &, Writer & writer, std::ostream& o);
+
+  // Data Members
+  // ------------
+
   std::ostream * m_out;
   const PM & m_pm;
   H_index * m_h_index;
