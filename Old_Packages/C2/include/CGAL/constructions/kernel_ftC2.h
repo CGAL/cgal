@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1997, 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -8,12 +8,10 @@
 //
 // ----------------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
 // file          : include/CGAL/constructions/kernel_ftC2.h
-// source        : include/CGAL/constructions/kernel_ftC2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Sven Schoenherr (sven@inf.fu-berlin.de)
@@ -28,9 +26,7 @@
 #ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC2_H
 #define CGAL_CONSTRUCTIONS_KERNEL_FTC2_H
 
-#ifndef CGAL_DETERMINANT_H
 #include <CGAL/determinant.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -44,6 +40,7 @@ midpointC2( const FT &px, const FT &py,
   x = (px+qx) / FT(2);
   y = (py+qy) / FT(2);
 }
+
 template < class FT >
 CGAL_KERNEL_LARGE_INLINE
 void
@@ -210,7 +207,6 @@ scaled_distance_to_lineC2( const FT &px, const FT &py,
 {
   return det2x2_by_formula(px-rx,py-ry,qx-rx,qy-ry);
 }
-
 
 CGAL_END_NAMESPACE
 
