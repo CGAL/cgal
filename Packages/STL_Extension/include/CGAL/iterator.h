@@ -373,6 +373,11 @@ N_step_adaptor_derived<I,N>
 operator+( typename N_step_adaptor_derived<I,N>::difference_type n,
            N_step_adaptor_derived<I,N> i)
 { return i += n; }
+template < class I, class P > struct Filter_iterator;
+
+template < class I, class P >
+bool operator==(const Filter_iterator<I,P>&, const Filter_iterator<I,P>&);
+
 template < class I, class P >
 struct Filter_iterator {
   typedef I                                Iterator;
