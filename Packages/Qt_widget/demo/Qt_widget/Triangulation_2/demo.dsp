@@ -103,6 +103,10 @@ SOURCE=.\Qt_widget_move_point.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\CGALQt\Qt_widget_standard_tool.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\CGALQt\Qt_widget_standard_toolbar.C
 # End Source File
 # Begin Source File
@@ -252,25 +256,6 @@ InputPath=.\Qt_widget_toolbar_layers.h
 
 "Qt_widget_toolbar_layers.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar_layers.moc" "Qt_widget_toolbar_layers.h"
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\triangulation_2.h
-
-!IF  "$(CFG)" == "demo - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
-
-# Begin Custom Build
-InputPath=.\triangulation_2.h
-
-"triangulation_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)/bin/moc.exe -o triangulation_2.moc triangulation_2.h
 
 # End Custom Build
 
