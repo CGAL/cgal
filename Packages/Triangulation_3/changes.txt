@@ -9,6 +9,7 @@ Version 1.46 (?? ??? 01)
 - add dummy variable to cheat MSVC++
 - added Delaunay__traingulation_3::fill_hole_3d_ear, an alternative
   implementation for fill_hole_3d [af]
+- Use std::distance(). [syl]
 
 Version 1.45 (22 dec 00)
 - point() of vertex_base returns a const ref instead of a Point. [syl]

@@ -148,44 +148,22 @@ public:
   int number_of_cells() const 
     { 
       if ( dimension() < 3 ) return 0;
-
-      int i=0;
-      Cell_iterator it = cells_begin();
-      while(it != cells_end()) {
-	++i;
-	++it;
-      }
-      return i;
+      return std::distance(cells_begin(), cells_end());
     }
   
   int number_of_facets() const
     {
       if ( dimension() < 2 ) return 0;
-
-      int i=0;
-      Facet_iterator it = facets_begin();
-      while(it != facets_end()) {
-	++i;
-	++it;
-      }
-      return i;
+      return std::distance(facets_begin(), facets_end());
     }
 
   int number_of_edges() const
     {
       if ( dimension() < 1 ) return 0;
-
-      int i=0;
-      Edge_iterator it = edges_begin();
-      while(it != edges_end()) {
-	++i;
-	++it;
-      }
-      return i;
+      return std::distance(edges_begin(), edges_end());
     }
 
   // USEFUL CONSTANT TIME FUNCTIONS
-
 
   // SETTING
   // to be protected ?

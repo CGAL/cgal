@@ -1234,14 +1234,7 @@ Triangulation_3<GT,Tds>::
 number_of_finite_cells() const 
 { 
   if ( dimension() < 3 ) return 0;
-
-  int i=0;
-  Cell_iterator it = finite_cells_begin();
-  while(it != cells_end()) {
-    ++i;
-    ++it;
-  }
-  return i;
+  return std::distance(finite_cells_begin(), cells_end());
 }
   
 template < class GT, class Tds >
@@ -1250,14 +1243,7 @@ Triangulation_3<GT,Tds>::
 number_of_cells() const 
 { 
   if ( dimension() < 3 ) return 0;
-
-  int i=0;
-  Cell_iterator it = all_cells_begin();
-  while(it != cells_end()) {
-    ++i;
-    ++it;
-  }
-  return i;
+  return std::distance(all_cells_begin(), cells_end());
 }
 
 template < class GT, class Tds >
@@ -1266,14 +1252,7 @@ Triangulation_3<GT,Tds>::
 number_of_finite_facets() const
 {
   if ( dimension() < 2 ) return 0;
-
-  int i=0;
-  Facet_iterator it = finite_facets_begin();
-  while(it != facets_end()) {
-    ++i;
-    ++it;
-  }
-  return i;
+  return std::distance(finite_facets_begin(), facets_end());
 }
 
 template < class GT, class Tds >
@@ -1282,14 +1261,7 @@ Triangulation_3<GT,Tds>::
 number_of_facets() const
 {
   if ( dimension() < 2 ) return 0;
-
-  int i=0;
-  Facet_iterator it = all_facets_begin();
-  while(it != facets_end()) {
-    ++i;
-    ++it;
-  }
-  return i;
+  return std::distance(all_facets_begin(), facets_end());
 }
 
 template < class GT, class Tds >
@@ -1298,14 +1270,7 @@ Triangulation_3<GT,Tds>::
 number_of_finite_edges() const
 {
   if ( dimension() < 1 ) return 0;
-
-  int i=0;
-  Edge_iterator it = finite_edges_begin();
-  while(it != edges_end()) {
-    ++i;
-    ++it;
-  }
-  return i;
+  return std::distance(finite_edges_begin(), edges_end());
 }
 
 template < class GT, class Tds >
@@ -1314,14 +1279,7 @@ Triangulation_3<GT,Tds>::
 number_of_edges() const
 {
   if ( dimension() < 1 ) return 0;
-
-  int i=0;
-  Edge_iterator it = all_edges_begin();
-  while(it != edges_end()) {
-    ++i;
-    ++it;
-  }
-  return i;
+  return std::distance(all_edges_begin(), edges_end());
 }
 
 template < class GT, class Tds >
