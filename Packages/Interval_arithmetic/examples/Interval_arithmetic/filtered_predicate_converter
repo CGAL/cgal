@@ -11,6 +11,8 @@
 # TODO:
 # - Split the lines only if the result is larger than 80 characters ?
 # - Separate the class in other files ?  (they are needed by libCGAL)
+# - while parsing, remove CGAL_assertion() and co from the original code.
+# - Add assertions about the epsilons being updated.
 
 use vars qw($opt_p $opt_h $opt_d $opt_v $opt_l); # Suppress warnings
 require 'getopt.pl';
@@ -48,8 +50,7 @@ sub parse_command_line {
                 by default, only the built-in predicates are known.
                 (typically, it's just sign_of_determinant.h that you want)
 		(it's only useful when \"-s\" is here too).
-    -p        : be pedantic (changes warnings into errors)
-    -v        : be verbose [to stderr]
+    -p        : be pedantic (change warnings to errors)
     -h        : print this help\n";
     exit;
   }
@@ -66,11 +67,6 @@ sub parse_command_line {
 sub warning {
   warn "// Warning : @_\n";
   die if $pedantic;
-}
-
-# Emit a message in verbose mode only.
-sub verbose {
-  warn "// Info : @_\n" if $opt_v;
 }
 
 # Parse the CGAL header
@@ -115,10 +111,10 @@ sub print_CGAL_header {
 #define $new_protect_name\n\n";
 }
 
-# Print the Filtered_exact<> version of a predicate.
-sub print_filtered_exact {
-  my ($CGAL, $t, $inline, $ret_type, $fct_name, $e, $b, $n, @args) = @_;
-  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE>";
+# Print dynamic versions
+sub print_dynamic {
+  my ($adv, $CGAL, $t, $inline, $ret_type, $fct_name, $e, $b, $n, @args)=@_;
+  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, $adv, CGAL_IA_CACHE>";
   my $args_call  = join ",", map "\n    $type &$_", @args;
   my $args_inter = join ",", map "\n\t\t$_.interval()", @args;
   my $args_exact = join ",", map "\n\t\t$_.exact()", @args;
@@ -130,8 +126,24 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /* $inline */
 $ret_type
 $fct_name($args_call)
-{
-  CGAL_assertion(${CGAL}Interval_nt_advanced::want_exceptions);
+{";
+
+  if ($adv eq "Advanced") {
+    print FO "
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return $fct_name($args_inter);
+  } 
+  catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
+  {
+    ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(${CGAL}FPU_cw_near);
+    $ret_type result = $fct_name($args_exact);
+    ${CGAL}FPU_set_cw(backup);
+    return result;
+  }";
+  } else {
+    print FO "
   ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(${CGAL}FPU_cw_up);
   try
   {
@@ -143,8 +155,18 @@ $fct_name($args_call)
   {
     ${CGAL}FPU_set_cw(backup);
     return $fct_name($args_exact);
+  }";
   }
-}\n\n";
+  print FO "\n}\n\n";
+}
+
+# Print static infos
+sub print_static_infos {
+  my ($CGAL, $t, $inline, $ret_type, $fct_name, $eps, $b, $new_body, @args)=@_;
+  my $predicate_class_name = "Static_Filtered_$fct_name\_".($#args+1);
+
+  print FL map("double $predicate_class_name\::_epsilon_$_;\n", 0..$eps-1);
+  print FL "double $predicate_class_name\::_bound = -1.0;\n\n";
 }
 
 # Print the epsilon variant of the function
@@ -160,36 +182,17 @@ sub epsilon_function {
   return "static $ret_type $fct_name($args_call,$eps_call)$_";
 }
 
-# Print static infos
-sub print_static_infos {
+# Print the struct corresponding to the predicate
+sub print_predicate_struct {
   my ($CGAL, $t, $inline, $ret_type, $fct_name, $eps, $b, $new_body, @args)=@_;
-
   my $predicate_class_name = "Static_Filtered_$fct_name\_".($#args+1);
-
-  print FL map("double $predicate_class_name\::_epsilon_$_;\n", 0..$eps-1);
-  print FL "double $predicate_class_name\::_bound = -1.0;\n\n";
-}
-
-# Print the Static Adaptative version of a function
-sub print_static_adaptatif {
-  my ($CGAL, $t, $inline, $ret_type, $fct_name, $eps, $b, $new_body, @args)=@_;
-
-  if ($eps == 0) {
-    warning("Predicate \"$fct_name\" (".scalar(@args)." args) _must_ have at least one epsilon.");
-  }
-
-  my $predicate_class_name = "Static_Filtered_$fct_name\_".($#args+1);
-
-  # Print the accessory versions of the predicate.
-  my $update_epsilon = epsilon_function($ret_type, "update_epsilon", $new_body, $t,
-  				$eps, "${CGAL}Static_filter_error", "", @args);
-
-  my $epsilon_variant = epsilon_function($ret_type, "epsilon_variant", $new_body, $t,
-  				$eps, "Restricted_double", "const ", @args);
   my $epsilon_list = join ",", map "_epsilon_$_", 0..$eps-1;
   my $bound_list = "b," x ($#args+1);
+  my $update_epsilon = epsilon_function($ret_type, "update_epsilon",
+  		$new_body, $t, $eps, "${CGAL}Static_filter_error", "", @args);
 
-  # Print the static class corresponding to the predicate.
+  my $epsilon_variant = epsilon_function($ret_type, "epsilon_variant",
+  		$new_body, $t, $eps, "Restricted_double", "const ", @args);
   print FO
 "struct $predicate_class_name
 {
@@ -211,9 +214,14 @@ sub print_static_adaptatif {
 
   $epsilon_variant
 };\n\n";
+}
 
-  # Print the function declaration
-  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE>";
+# Print static versions
+sub print_static {
+  my ($adv, $CGAL, $t, $inline, $ret_type, $fct_name, $eps, $b, $new_body, @args)=@_;
+
+  my $predicate_class_name = "Static_Filtered_$fct_name\_".($#args+1);
+  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, $adv, CGAL_IA_CACHE>";
   my $args_call     = join ",", map "\n    $type &$_", @args;
   my $args_dbl      = join ",", map "\n\t\t$_.dbl()", @args;
   my $args_exact    = join ",", map "\n\t\t$_.exact()", @args;
@@ -229,7 +237,24 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /* $inline */
 $ret_type
 $fct_name($args_call)
-{
+{";
+
+  if ($adv eq "Advanced") {
+    print FO "
+  CGAL_assertion_code(
+    const double SAF_bound = $predicate_class_name\::_bound; )
+  CGAL_assertion(!($bounds_check));
+
+  try
+  {
+    return $predicate_class_name\::epsilon_variant($args_dbl,$args_epsilons);
+  }
+  catch (${CGAL}Restricted_double::unsafe_comparison)
+  {
+    return $fct_name($args_exact);
+  }";
+  } else {
+    print FO "
   bool re_adjusted = false;
   const double SAF_bound = $predicate_class_name\::_bound;
 
@@ -256,8 +281,9 @@ re_adjust:
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return $fct_name($args_exact);
+  }";
   }
-}\n\n";
+  print FO "\n}\n\n";
 }
 
 # Parse from "template" to end of body
@@ -314,8 +340,11 @@ sub print_predicates {
     my ($CGAL) = @{$predicates[$i]};
     print FO "CGAL_BEGIN_NAMESPACE\n\n" if $CGAL eq "" && not $was_in_CGAL;
     print FO "CGAL_END_NAMESPACE\n\n"   if $CGAL ne "" && $was_in_CGAL;
-    print_filtered_exact(@{$predicates[$i]});
-    print_static_adaptatif(@{$predicates[$i]});
+    print_dynamic("Protected", @{$predicates[$i]});
+    print_dynamic("Advanced", @{$predicates[$i]});
+    print_predicate_struct(@{$predicates[$i]});
+    print_static("Protected", @{$predicates[$i]});
+    print_static("Advanced", @{$predicates[$i]});
     print_static_infos(@{$predicates[$i]});
     $was_in_CGAL = $CGAL eq "";
   }
