@@ -55,8 +55,10 @@ namespace CGAL {
   but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
   but[1] = new QToolButton(maintoolbar, "pointtool");
   but[1]->setPixmap(QPixmap( (const char**)point_xpm ));
+  but[1]->setTextLabel("Input point");
   but[2] = new QToolButton(maintoolbar, "move/delete tool");
   but[2]->setPixmap(QPixmap( (const char**)movepoint_xpm ));
+  but[2]->setTextLabel("Move/Delete Point");
   
   nr_of_buttons = 3;
   button_group = new QButtonGroup(0, "My_group");
