@@ -127,7 +127,7 @@ public:
 
   //the new tools toolbar
   setUsesBigPixmaps(TRUE);
-  newtoolbar = new CGAL::Tools_toolbar(&win, this, list_of_points);	
+  newtoolbar = new CGAL::Tools_toolbar(&win, this, &list_of_points);	
   //the standard toolbar
   stoolbar = new CGAL::Standard_toolbar (&win, this);
   this->addToolBar(stoolbar->toolbar(), Top, FALSE);

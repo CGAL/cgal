@@ -99,6 +99,14 @@ SOURCE=..\..\..\src\CGALQt\Qt_widget.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_widget_move_list_point.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\CGALQt\Qt_widget_standard_toolbar.C
 # End Source File
 # Begin Source File
@@ -108,10 +116,6 @@ SOURCE=..\..\..\src\CGALQt\Qt_widget_tool.C
 # Begin Source File
 
 SOURCE=.\Qt_widget_toolbar.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -143,6 +147,25 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Get_point.h
 # Begin Source File
 
 SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Handtool.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_widget_move_list_point.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_move_list_point.h
+
+"Qt_widget_move_list_point.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_move_list_point.moc" "Qt_widget_move_list_point.h"
+
+# End Custom Build
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
