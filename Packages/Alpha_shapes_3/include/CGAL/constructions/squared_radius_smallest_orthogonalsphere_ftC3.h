@@ -45,15 +45,18 @@ squared_radius_orthogonalsphereC3(
   FT dpx = px-sx;
   FT dpy = py-sy;
   FT dpz = pz-sz;
-  FT dpp = CGAL_NTS square(dpx)+CGAL_NTS square(dpy)+CGAL_NTS square(dpz)-pw+sw;
+  FT dpp = CGAL_NTS square(dpx)+CGAL_NTS square(dpy)+CGAL_NTS square(dpz)
+           -pw+sw;
   FT dqx = qx-sx;
   FT dqy = qy-sy;
   FT dqz = qz-sz;
-  FT dqq = CGAL_NTS square(dqx)+CGAL_NTS square(dqy)+CGAL_NTS square(dqz)-qw+sw;
+  FT dqq = CGAL_NTS square(dqx)+CGAL_NTS square(dqy)+CGAL_NTS square(dqz)
+           -qw+sw;
   FT drx = rx-sx;
   FT dry = ry-sy;
   FT drz = rz-sz;
-  FT drr = CGAL_NTS square(drx)+CGAL_NTS square(dry)+CGAL_NTS square(drz)-rw+sw;
+  FT drr = CGAL_NTS square(drx)+CGAL_NTS square(dry)+CGAL_NTS square(drz)
+           -rw+sw;
 
   FT det0 = det3x3_by_formula(dpx,dpy,dpz,dqx,dqy,dqz,drx,dry,drz);
   
@@ -74,6 +77,12 @@ squared_radius_smallest_orthogonalsphereC3(
   const FT &qx, const FT &qy, const FT &qz, const FT  &qw,
   const FT &rx, const FT &ry, const FT &rz, const FT  &rw)
 {
+  // resolution of the system (where we note c the center)
+  // |       dc^2 = cw + rw
+  // |  (dp-dc)^2 = pw + cw
+  // |  (dq-dc)^2 = qw + cw
+  // |         dc = Lamdba*dp + Mu*dq
+
   FT FT2(2);
   FT dpx = px-rx;
   FT dpy = py-ry;
@@ -90,7 +99,8 @@ squared_radius_smallest_orthogonalsphereC3(
   FT Lambda = (dpp*dq-dqq*dpdq)/denom;
   FT Mu = (dqq*dp-dpp*dpdq)/denom;
 
-  return (CGAL_NTS square(Lambda)*dp+FT2*Lambda*Mu*dpdq+CGAL_NTS square(Mu)*dq-rw);
+  return (CGAL_NTS square(Lambda)*dp+CGAL_NTS square(Mu)*dq
+	  +FT2*Lambda*Mu*dpdq - rw);
 }
 
 template< class FT >

@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.0-I-20 $
 // release_date  : $CGAL_Date: 1999/06/02 $
 //
-// file          : include/CGAL/smallest_radiusFT3.h
+// file          : include/CGAL/smallest_radius_ftC3.h
 // package       : Alpha_shapes_3(1.0)
 // source        : $RCSfile$
 // revision      : $Revision$
