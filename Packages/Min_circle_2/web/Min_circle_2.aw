@@ -288,7 +288,7 @@ method $\mc$ to compute $\mc(P)=\mc(P,\emptyset)$.
     CGAL_Min_circle_2<R>::
     CGAL_Min_circle_2( const CGAL_Point_2<R>* first,
 		       const CGAL_Point_2<R>* last,
-		       bool randomize = false)
+		       bool randomize)
     {
 	// store points
 	int n = 0;
@@ -540,6 +540,7 @@ the data members of @prg{CGAL_Min_circle_2}.
     CGAL_Min_circle_2<R>::
     circle( ) const
     {
+        CGAL_Min_circle_2_precondition( ! is_empty());
 	// ensure positive orientation
 	if ( min_circle.orientation() == CGAL_NEGATIVE)
 	    const_cast< CGAL_Circle_2<R>&>(min_circle) = min_circle.opposite();
@@ -552,6 +553,7 @@ the data members of @prg{CGAL_Min_circle_2}.
     CGAL_Min_circle_2<R>::
     bbox( ) const
     {
+        CGAL_Min_circle_2_precondition( ! is_empty());
 	return( min_circle.bbox());
     }
 
@@ -638,8 +640,8 @@ noting that $|B| \leq 3$.
 @subsection{ Private Member Function \texttt{mc}}
 @! ----------------------------------------------------------------------------
 
-This function computes the general circle $\mc(P,B)$, where $P$ is the
-point set of size @prg{n_points} stored in the array @prg{points} and
+This function computes the general circle $\mc(P,B)$, where $P$
+contains the first @prg{n} points stored in the array @prg{points} and
 $B$ is given by the first @prg{n_support_points} indices in the array
 @prg{i_support_points}. The function is directly modelled after the
 pseudocode above.
@@ -733,7 +735,7 @@ we perform for each number of support points separately -- return
     template < class R >
     bool
     CGAL_Min_circle_2<R>::
-    check( bool verbose = false) const
+    check( bool verbose) const
     {
 	// containment check
 	@<containment check>
