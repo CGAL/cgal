@@ -1,4 +1,8 @@
 //-----------------------------------------------------------------------//
+// 1.44
++Added CGAL_SCOPE macro (empty on MSVC, CGAL:: on other platforms)
+
+//-----------------------------------------------------------------------//
 // 1.43
 +Removed setting of STL_DEBUG flag in config.h
 +Added macro CGAL_TYPENAME_MSVC_NULL
