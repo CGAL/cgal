@@ -28,32 +28,32 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _R >
+template < class R_ >
 class Optimisation_ellipse_2;
 
 CGAL_END_NAMESPACE
 
 // Why is this outside namespace CGAL ???
 
-template < class _R >
+template < class R_ >
 CGAL::Window_stream&
 operator << ( CGAL::Window_stream&,
-              const CGAL::Optimisation_ellipse_2<_R>&);
+              const CGAL::Optimisation_ellipse_2<R_>&);
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _R>
-class Conic_2 : public _R::Kernel_base::Conic_2 {
+template < class R_>
+class Conic_2 : public R_::Kernel_base::Conic_2 {
 
-    friend  class Optimisation_ellipse_2<_R>;
+    friend  class Optimisation_ellipse_2<R_>;
 
   public:
 
     // types
-    typedef  _R                    R;
-    typedef  typename _R::RT       RT;
-    typedef  typename _R::FT       FT;
-    typedef  typename _R::Kernel_base::Conic_2  _Conic_2;
+    typedef  R_                    R;
+    typedef  typename R_::RT       RT;
+    typedef  typename R_::FT       FT;
+    typedef  typename R_::Kernel_base::Conic_2  _Conic_2;
 
     // construction
     Conic_2 ()
@@ -190,12 +190,12 @@ class Conic_2 : public _R::Kernel_base::Conic_2 {
     
 
     // comparisons
-    bool operator == ( const Conic_2<_R>& c) const
+    bool operator == ( const Conic_2<R_>& c) const
     {
         return _Conic_2::operator == ( (Conic_2)c);
     }
     
-    bool operator != ( const Conic_2<_R>& c) const
+    bool operator != ( const Conic_2<R_>& c) const
     {
         return( ! operator == ( c));
     }
@@ -291,8 +291,8 @@ class Conic_2 : public _R::Kernel_base::Conic_2 {
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_CONIC_2
-template< class _R>
-std::ostream& operator << ( std::ostream& os, const Conic_2<_R>& c)
+template< class R_>
+std::ostream& operator << ( std::ostream& os, const Conic_2<R_>& c)
 {
     return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
                << c.u() << ' ' << c.v() << ' ' << c.w());
