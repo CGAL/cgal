@@ -571,74 +571,74 @@ as vertices. This function is NOT YET implemented.}
 \ccHeading{Queries}
 
 The class \ccClassTemplateName\  provides methods to locate
-a given point with respect to a triangulation. It also provides
-methods to locate a point with respect to
-a given  finite face of the triangulation.
+a given point with respect to a triangulation. The location of a point 
+is described  by the locate type \ccc{lt}, a face handle \ccc{f} and
+an index \ccc{li}. The locate type is : \\
+\ccc{VERTEX} if the point coincides with a vertex \ccc{v} of the triangulation
+ In this case the face handle \ccc{f} points to a face incident to \ccc{v}
+and the index \ccc{li} is the index of \ccc{v}  in \ccc{f}.\\
+\ccc{EDGE} if the point lies on an edge \ccc{e}. In this case, the face
+handle\ ccc{f}
+points to a face incident \ccc{e} and \ccc{li}  is the
+index of \ccc{e} in \ccc{f}.
+\ccc(FACE} if the point lies in the relative interior of a bounded
+face \ccc{f}. In this case the face handle point to \ccc{f} and the
+index \ccc{li}
+has no meaning.
+\ccc{OUSIDE_CONVEX_HULL} if the point lies within the afffine hull of
+the triangulation but outside its convex hull. In this case, 
+the face handle \ccc{f} points to any infinite face which is a {\em witness} of the
+query point location.For a two dimensional triangulation, it means
+that the supporting line of the finite edge of \ccc{f}  separates
+the query point from the triangulation. For a one-dimensional
+triangulation
+it means that the 
+finite vertex of \ccc{f}  separates
+the query point from the triangulation.
+\ccc{OUTSIDE_AFFINE_HULL} if the point lies outside the affine hull
+(in the case of a degenerate lower dimensional triangulation). In this 
+case, the face
+handle \ccc{f} and  the index \ccc{li} have no meaning.
 
 
+
+\ccThree{Oriented_side }{t.is_infinite( Face_handle f, int i)x}{}
 \ccMethod{Face_handle
           locate(const Point& query,
                  Face_handle f = Face_handle()) const;}
-{If the point \ccc{query} lies inside the convex hull of the points, a face 
-that contains the query in its interior or on its
- boundary is returned.\\
-If the point \ccc{query} lies outside the convex hull of the
-triangulation but in the affine hull,
-the returned face is an infinite face which is a proof of the point's
-location :
-for a two dimensional triangulation, it is a face $(\infty, p, q)$ 
-such that
-\ccc{query} lies to the left  of the oriented line $pq$ 
-(the rest of the triangulation lying to the right of this line),
-for a degenerate one dimensional triangulation it is the (degenarate
-one dimensional) face $(\infty, p, NULL)$ such that \ccc{query}
-and the triangulation lie on either side of \ccc{p}. \\
-If the point \ccc{query} lies outside the affine hull,
-the returned \ccc{Face_handle} is \ccc{NULL}. \\
-The optional \ccc{Face_handle} argument, if provided, is used as a hint
-of where the locate process has to start its search.}
+
 
 \ccMethod{Face_handle
           locate(const Point& query,
                  Locate_type& lt,
-                 int& li,
+                 int& li)
                  Face_handle h =Face_handle() ) const;}
-{Same as above. Additionally, the parameters \ccc{lt}
- and \ccc{li}
-describe where the query point is located. 
-The variable \ccc{lt} is set to the locate type of the query.
-If \ccc{lt==VERTEX} 
-the variable \ccc{li}
-is set to the index of the vertex, and if \ccc{lt==EDGE}
-\ccc{li}
-is set to the index 
-of the vertex opposite to the
-edge. 
-Be carefull that \ccc{li}
-has no meaning when the query type is \ccc{FACE}, \ccc{OUTSIDE_CONVEX_HULL}, 
-or \ccc{OUTSIDE_AFFINE_HULL} or when the
-triangulation is $0$-dimensional.}
+{Same as above. In addition, parameters \ccc{lt} and \ccc{li} are set respectively
+to the locate type and the index describing the location.}
+  
+
+The triangulation class also provides
+methods to locate a point with respect to
+a given  finite face of the triangulation or with respect to the
+circumcircle of such a feace.
+The face or its circimcircle are assumed to be counterclockwisely
+oriented.
 
 \ccMethod{Oriented_side
            oriented_side(Face_handle f,
                          const Point& p) const;}
-{Returns on which side of the oriented boundary of \ccc{f} lies 
-the point \ccc{p}. \ccPrecond \ccc{f} is finite.}
+{}
 
 \ccMethod{Oriented_side
  side_of_oriented_circle(Face_handle f, const Point & p);}
-{Returns on which side of the circumcircle  of face \ccc{f} lies 
-the point \ccc{p}. The circle is assumed to be counterclokwisely
-oriented, so its positive
-side correspond to its bounded side.
-This predicate is available only if the corresponding predicates on
-points is provided in the geometric traits class.}
+{}
 
 \ccHeading{Insertion, Removal and other Modifiers}
 
 The following operations are guaranteed to lead to a valid triangulation 
 when they are applied on a valid triangulation.
 
+\ccThree{Vertex_handle }{t.flip( Face_handle f, int i)}{}
 \ccMethod{void flip(Face_handle f, int i);}{Exchanges the edge incident to
 \ccc{f} and \ccc{f->neighbor(i)} with the other
 diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.
@@ -647,36 +647,9 @@ and their union form a convex quadrilateral.}}
 
 
 
-\ccMethod{Vertex_handle insert(const Point& p,
-                         Face_handle f = Face_handle());}
-{Inserts point \ccc{p} in the triangulation and returns the corresponding
- vertex.\\
-If point \ccc{p} coincides with an already existing vertex, this 
-vertex is returned and the triangulation remains unchanged.\\
-If point \ccc{p} is on an edge, the two incident faces are split 
-in two.\\
-If point \ccc{p} is strictly inside a face of the triangulation,
-the face is split in three.\\
-If point \ccc{p} is strictly outside the  convex hull, \ccc{p} is linked
-to all visible points on the convex hull to form the new
-triangulation.\\
-At last, if \ccc{p} is outside the affine hull (in case of degenerate
-1-dimensional or 0-dimensional triangulations), \ccc{p}
-is linked all the  other vertices to form a triangulation whose
-dimension is increased by one.
-The last argument \ccc{f} is an indication to the underlying locate
-algorithm of where to start.
-}
-
-
-\ccMethod{Vertex_handle 
-          insert(const Point& p,
-                 Locate_type& lt,
-                 Face_handle loc, int li );}
-{Same as above except that the location of the point
- \ccc{p} to be inserted is assumed to be given by
-\ccc{(lt,loc,i)} (see the description of the \ccc{locate} method above.)}
-
+\ccMethod{Vertex_handle insert(const Point& p);}{returns a handle to
+the created \ccc{Vertex}.}
+                         
 \ccMethod{Vertex_handle push_back(const Point& p);}
 {Equivalent to \ccc{insert(p)}.}
 
@@ -690,9 +663,7 @@ algorithm of where to start.
  is \ccc{Point}.}
 
 \ccMethod{void    remove(Vertex_handle v);}
-{Removes the vertex from the triangulation. The created hole is 
- retriangulated.
- \ccPrecond Vertex \ccc{v} must be finite.}
+{Removes the vertex from the triangulation.}
 
 
 \begin{figure}
@@ -765,49 +736,6 @@ convex hull">
 \end{figure}
 
 
-The following member functions offer more specialized versions of the
-insertion or removal operation to be used when one knows to be in the
-corresponding case.
-
-\ccMethod{Vertex_handle insert_first(const Point& p);} 
-{Inserts the first finite  vertex .}
-\ccMethod{Vertex_handle insert_second(const Point& p);} 
-{Inserts the second finite  vertex .}
-\ccMethod{Vertex_handle insert_in_face(const Point& p,Face_handle f);} {Inserts vertex \ccc{v} in face
-\ccc{f}. Face \ccc{f} is modified,
-two new faces are created.
-\ccPrecond{The point in vertex \ccc{v} lies inside face \ccc{f}.}}
-\ccMethod{Vertex_handle insert_in_edge(const Point& p, Face_handle f, int i);} 
-{Inserts vertex v in edge \ccc{i} of \ccc{f}.
-\ccPrecond{The point in vertex \ccc{v} lies on the edge opposite to 
-the vertex \ccc{i} of face \ccc{f}.}}
-\ccMethod{Vertex_handle insert_outside_convex_hull(const Point& p, Face_handle f);}
-{Inserts 
- a point which is outside the convex hull  but in the affine hull.
-Face handle \ccc{f} is assumed to point to a an infinite face
-which is a prove of the point's location (see the description of the
-\ccc{locate} method above.)
-\ccPrecond{
- \ccc{f} point to a face which is a proof  of the location
-of\ccc{f}.}}
-\ccMethod{Vertex_handle insert_outside_affine_hull(const Point& p);}
-{Inserts 
- a point which is outside the affine hull.}
-
-\ccMethod{void remove_degree_3(Vertex_handle v);}
-{Removes a vertex of degree three. Two of the incident faces are destroyed,
-the third one is modified.
-\ccPrecond{Vertex
-\ccc{v} is a finite vertex with degree three.}}
-\ccMethod{void remove_second(Vertex_handle v);}{Removes the before last finite vertex.}
-\ccMethod{void remove_first(Vertex_handle v);}{Removes the last finite vertex.}
-
-
-
-
-
-
-
 \ccHeading{Traversal of the Triangulation}
 
 
@@ -865,23 +793,6 @@ They are all invalidated by any change in the triangulation.
 
 The triangulation defines a circulator that allows
 to visit all faces that are intersected by a line. 
-More precisely a face  \ccc{f} is enumerated by the circulator 
-associated to the oriented line \ccc{l} if either:
-\begin{itemize}\ccTexHtml{\itemsep0pt}{}
-\item 
-\ccc{f} is a finite face whose interior intersects \ccc{l}, or
-\item
- \ccc{f} is a finite face with  an edge collinear with \ccc{l} and lies
-to the left of \ccc{l}, or
-\item
-\ccc{f} is an infinite face incident to a  convex hull edge 
-whose interior is intersected
-by \ccc{l}, or
-\item
-\ccc{f} is an infinite face incident to a  convex hull vertex
-lying on  \ccc{l} and the finite edge of \ccc{f}
-lies to the left of \ccc{l}. 
-\end{itemize}
 This circulator is
 non-mutable and bidirectional. Its value type is \ccc{Face}.
 
@@ -889,22 +800,8 @@ non-mutable and bidirectional. Its value type is \ccc{Face}.
           line_walk(const Point& p,
                     const Point& q,
                     Face_handle f = Face_handle()) const;}
-{ This function returns a circulator that allows to visit the 
- faces intersected by the line \ccc{pq}. 
-If there is no such face the circulator has a singular value.\\
- The starting point of the circulator is the face \ccc{f}, or, if
- \ccc{f} is omitted,  the first finite face traversed by \ccc{l}. \\
-  The circulator wraps around the \ccc{infinite_vertex} :
-after the last traversed finite face, it steps through the infinite face adjacent
-to this face then through the infinite face adjacent to the first
-traversed finite face then through the first finite traversed face again.
-\ccPrecond If \ccc{f != NULL}, the point \ccc{p} must be
-inside or on the boundary of \ccc{f}.}
-
-Figure~\ref{I1_fig_Line_face_circulator} illustrates which finite faces are enumerated. Lines
-$l_1$ and $l_2$ have no face to their left. Lines $l_3$ and $l_4$
-have faces to their left. Note that the finite faces that are only vertex
-incident to lines $l_3$ and  $l_4$ are not enumerated.
+{ returns a circulator to visit  all the 
+ faces intersected by the line \ccc{pq}.} 
 
 \begin{figure}
 \begin{ccTexOnly}
@@ -943,33 +840,11 @@ A face circulator is invalidated by any modification of the face pointed to.
 An edge or a vertex circulator are invalidated by any modification
 of one of the two faces incident to the edge pointed to.
 
-\ccMethod{Face_circulator incident_faces(Vertex_handle v) const;}
-{Starts at an arbitrary face incident
-to \ccc{v}.}
+\ccMethod{Face_circulator incident_faces(Vertex_handle v) const;}{}
 \ccGlue
-\ccMethod{Face_circulator incident_faces(Vertex_handle v, Face_handle f) const;}
-{Starts at face \ccc{f}.
-\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v) const;}{}
 \ccGlue
-\ccMethod{Edge_circulator incident_edges(Vertex_handle v) const;}
-{Starts at an arbitrary edge incident
-to \ccc{v}.}
-\ccGlue
-\ccMethod{Edge_circulator incident_edges(Vertex_handle v, Face_handle f) const;}
-{Starts at the the first edge of \ccc{f} incident to 
-\ccc{v}, in counterclockwise order around \ccc{v}.
-\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
-\ccGlue
-\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v) const;}
-{Starts at an arbitrary  vertex incident
-to \ccc{v}.}
-\ccGlue
-\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f) ;}
-{Starts at the first vertex of \ccc{f} adjacent  to \ccc{v}
-in  counterclockwise order around \ccc{v}.
-\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
-
-
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v) const;}{}
 
 
 \ccHeading{Traversal of the Convex Hull}
@@ -982,21 +857,14 @@ a clockwise traversal of the convex hull.
 
 \ccMethod{Face_circulator incident_faces(t.infinite_vertex()) const;}{}
 \ccGlue
-\ccMethod{Face_circulator incident_faces(t.infinite_vertex(), Face_handle f) const;}{}
-\ccGlue
 \ccMethod{Edge_circulator incident_edges(t.infinite_vertex()) const;}{}
 \ccGlue
-\ccMethod{Edge_circulator incident_edges(t.infinite_vertex(), Face_handle f);}{}
-\ccGlue
 \ccMethod{Vertex_circulator incident_vertices(t.infinite_vertex() v) ;} {}
-\ccGlue
-\ccMethod{Vertex_circulator incident_vertices(t.infinite_vertex(), Face_handle f) ;}{}
-
 
 
 \ccHeading{Miscellaneous}
 
-\ccThree{Segment}{t.segment(Face_handle f, int i)}{}
+\ccThree{Segment}{t.segment(Face_handle f, int i) }{}
 \ccMethod{int ccw(int i) const;}
 {Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
 \ccGlue
@@ -1042,30 +910,30 @@ a clockwise traversal of the convex hull.
 is available only if the correspoding function is provided in the
 geometric traits.}
 
-\begin{ccAdvanced}
+%\begin{ccAdvanced}
 
-\ccHeading{Setting}
-\ccMethod{void set_infinite_vertex(const Vertex_handle&  v);}{}
-\ccGlue
-\ccMethod{void set_dimension(int n);}{}
-\ccGlue
-\ccMethod{void set_number_of_vertices(int n);}{}
+%\ccHeading{Setting}
+%\ccMethod{void set_infinite_vertex(const Vertex_handle&  v);}{}
+%\ccGlue
+%\ccMethod{void set_dimension(int n);}{}
+%\ccGlue
+%\ccMethod{void set_number_of_vertices(int n);}{}
 
-\ccHeading{Checking}
-The responsibility of keeping a valid triangulation
-belongs to the users if advanced operations are used.
-Obviously the advanced user, who implements higher levels operations
-may have to make a triangulation invalid at some times. The following
-method is provided to help the debugging.
+%\ccHeading{Checking}
+%The responsibility of keeping a valid triangulation
+%belongs to the users if advanced operations are used.
+%Obviously the advanced user, who implements higher levels operations
+%may have to make a triangulation invalid at some times. The following
+%method is provided to help the debugging.
 
-\ccMethod{bool
-          is_valid(bool verbose = false, int level = 0) const;}
-{Checks the combinatorial validity of the triangulation and
-also the validity of its geometric embedding.
- This method is  mainly a debugging help
-for the users of advanced features.
-}
-\end{ccAdvanced}
+%\ccMethod{bool
+%          is_valid(bool verbose = false, int level = 0) const;}
+%{Checks the combinatorial validity of the triangulation and
+%also the validity of its geometric embedding.
+% This method is  mainly a debugging help
+%for the users of advanced features.
+%}
+%\end{ccAdvanced}
 
 
 
@@ -1078,7 +946,7 @@ is an internal format.
 
 %\ccInclude{CGAL/IO/ostream_2.h}
 
-\ccThree{ostream&x}{ostream& os << T}{}
+\ccThree{ostream&x}{ostream& os << T }{}
 \ccFunction{ostream& operator<<(ostream& os,
                   const Triangulation_2<Traits,Tds>& T);}
 {Inserts the triangulation \ccVar\ into the stream \ccc{os}.
@@ -1199,51 +1067,51 @@ The class  {Vertex} defines the same types
 as the class \ccc{Triangulation_2<Traits, Tds>} except for the iterators and the 
 \ccc{Line_face_circulator} which are not needed.
 
-\begin{ccAdvanced}
-\ccCreation
-For triangulation algorithms designed by the user, vertices need to be
-explicitly constructed.  If the modification of the triangulation is
-done through a member of the triangulation class, there is no need for these
-functions.
+%\begin{ccAdvanced}
+%\ccCreation
+%For triangulation algorithms designed by the user, vertices need to be
+%explicitly constructed.  If the modification of the triangulation is
+%done through a member of the triangulation class, there is no need for these
+%functions.
 
-\ccConstructor{Vertex()}{Introduces a new vertex. The geometric information  is initialized by the default constructor of the class \ccc{Point}. The pointer to the incident face is initialized to \ccc{NULL}.}
+%\ccConstructor{Vertex()}{Introduces a new vertex. The geometric information  is initialized by the default constructor of the class \ccc{Point}. The pointer to the incident face is initialized to \ccc{NULL}.}
 
-\ccConstructor{Vertex(const Point& p);}
-{Introduces a variable \ccVar, and initializes the geometric information.
-The pointer to the incident face is initialized with \ccc{NULL}.}
+%\ccConstructor{Vertex(const Point& p);}
+%{Introduces a variable \ccVar, and initializes the geometric information.
+%The pointer to the incident face is initialized with \ccc{NULL}.}
 
-\ccConstructor{Vertex(const Point& p,
-                      Face_handle f);}
-{Introduces a variable \ccVar, and initializes the geometric information and 
-the pointer to the incident face.}
-\end{ccAdvanced}
+%\ccConstructor{Vertex(const Point& p,
+%                      Face_handle f);}
+%{Introduces a variable \ccVar, and initializes the geometric information and 
+%the pointer to the incident face.}
+%\end{ccAdvanced}
 
 
 
 \ccHeading{Access Functions}
 
 \ccMethod{Point point() const;}
-{Returns  the geometric information of \ccVar.}
+{returns  the geometric information of \ccVar.}
 
 \ccMethod{Face_handle face() const;}
-{Returns a face of the triangulation having  \ccVar\ as vertex.}
+{returns a face of the triangulation having  \ccVar\ as vertex.}
 
 
-\begin{ccAdvanced}
-\ccHeading{Setting}
-\ccMethod{void set_face(Face_handle f); }{Sets the incident face to \ccc{f}.}
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%\ccHeading{Setting}
+%\ccMethod{void set_face(Face_handle f); }{sets the incident face to \ccc{f}.}
+%\end{ccAdvanced}
 
 
 
 \ccHeading{Miscellaneous}
 
-\ccMethod{int ccw(int i) const;}
-{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
-\ccGlue
-\ccMethod{int cw(int i) const;}
-{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
-\ccGlue
+%\ccMethod{int ccw(int i) const;}
+%{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+%\ccGlue
+%\ccMethod{int cw(int i) const;}
+%{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+%\ccGlue
 \ccMethod{int degree() const;}
 {Returns the degree of \ccVar\ in the triangulation.}
 \ccGlue
@@ -1269,42 +1137,35 @@ counterclockwise around the vertex
 and  the \ccc{operator--} moves the circulator
 clockwise. 
 
-A face circulator is invalidated by any modification of the face it
-points to. An edge circulator is invalidated
-by any modification of one of the two faces that are incident to the edge
-pointed to.  A vertex circulator that turns around vertex \ccc{v}
-and and points  to a vertex \ccc{w}, is invalidated
-by any modification of the faces incident to the edge \ccc{vw}.
+%A face circulator is invalidated by any modification of the face it
+%points to. An edge circulator is invalidated
+%by any modification of one of the two faces that are incident to the edge
+%pointed to.  A vertex circulator that turns around vertex \ccc{v}
+%and and points  to a vertex \ccc{w}, is invalidated
+%by any modification of the faces incident to the edge \ccc{vw}.
 
 
 
 
 \ccMethod{Face_circulator
-          incident_faces(Face_handle f=Face_handle()) const;}
-{A circulator for the  incident faces 
-that refers to face \ccc{f} or to an arbitrary face
-incident to \ccc{v}  if \ccc{f} is omitted.
-\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
-
+          incident_faces(Face_handle f=Face_handle()) const;}{}
+%{A circulator for the  incident faces 
+%that refers to face \ccc{f} or to an arbitrary face
+%incident to \ccc{v}  if \ccc{f} is omitted.
+%\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccGlue
 \ccMethod{Edge_circulator
-          incident_edges(Face_handle f=Face_handle()) const;}
-{A circulator for the incident edges that refers to an abitrary edge incident
-to \ccc{v} if \ccc{f} is omitted. Otherwise the circulator refers
-to the first edge of \ccc{f}
-incident
-to \ccc{v} in counterclockwise order around \ccc{v}.
-\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}. }
-
+          incident_edges(Face_handle f=Face_handle()) const;}{}
+%{A circulator for the incident edges that refers to an abitrary edge incident
+%to \ccc{v} if \ccc{f} is omitted. Otherwise the circulator refers
+%to the first edge of \ccc{f}
+%incident
+%to \ccc{v} in counterclockwise order around \ccc{v}.
+%\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}. }
+\ccGlue
 \ccMethod{Vertex_circulator
-          incident_vertices(Face_handle f=Face_handle()) const;}
-{A circulator for the adjacent vertices.
-If \ccc{f} is omitted, the circulator begins with
- an abitrary vertex incident
-to \ccc{v}, otherwise it begins with the
-vertex of face \ccc{f} that, 
-in counterclockwise order around \ccc{v},
-is the first vertex of \ccc{f} incident to \ccc{v}.
-\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+          incident_vertices(Face_handle f=Face_handle()) const;}{}
+
 
 
 \end{ccClass} 
@@ -1317,7 +1178,7 @@ is the first vertex of \ccc{f} incident to \ccc{v}.
 
 \ccDefinition
 A face of a triangulation gives access to its three
-vertices indexed 0,1, and 2 in counterclockwise order
+vertices indexed 0, 1, and 2 in counterclockwise order
 and to its three adjacent faces, also called neighbors.
 The neighbors are indexed in such a way that neighbor $i$ lies
 opposite to vertex i. 
@@ -1330,56 +1191,56 @@ as the class \ccc{Triangulation_2<Traits,Tds>} except the iterators and circulat
 which are not needed.
 
 
-\begin{ccAdvanced}
-\ccHeading{Creation}
+%\begin{ccAdvanced}
+%\ccHeading{Creation}
 
-For user defined triangulation algorithms, faces need to
-be explicitly constructed and linked to their neighbors.
+%For user defined triangulation algorithms, faces need to
+%be explicitly constructed and linked to their neighbors.
 
-\ccConstructor{Face();}
-{Introduces a variable \ccVar\ and initializes all vertices and neighbors 
- with \ccc{NULL}.}
+%\ccConstructor{Face();}
+%{Introduces a variable \ccVar\ and initializes all vertices and neighbors 
+% with \ccc{NULL}.}
 
-\ccConstructor{Face(Vertex_handle v0,
-                                           Vertex_handle v1,
-                                           Vertex_handle v2);}
-{Introduces a variable \ccVar, and initializes the vertices. The 
-neighbors are initialized with \ccc{NULL}.}
+%\ccConstructor{Face(Vertex_handle v0,
+%                                           Vertex_handle v1,
+%                                           Vertex_handle v2);}
+%{Introduces a variable \ccVar, and initializes the vertices. The 
+%neighbors are initialized with \ccc{NULL}.}
 
-\ccConstructor{Face(Vertex_handle v0,
-                    Vertex_handle v1,
-                    Vertex_handle v2,
-                     {Face_handle} n0,
-                     {Face_handle} n1,
-                     {Face_handle} n2);}
-{Introduces a variable \ccVar, and initializes the vertices and the neighbors.}
-
-
-
-\ccHeading{Setting}
+%\ccConstructor{Face(Vertex_handle v0,
+%                    Vertex_handle v1,
+%                    Vertex_handle v2,
+%                     {Face_handle} n0,
+%                     {Face_handle} n1,
+%                     {Face_handle} n2);}
+%{Introduces a variable \ccVar, and initializes the vertices and the neighbors.}
 
 
-\ccThree{Vertex_handle}{f.has_vertex( Vertex_handle v, int& i)x}{}
-\ccMethod{void set_vertex(int i, Vertex_handle v);}
-{Sets vertex \ccc{i} to be \ccc{v}.
-\ccPrecond $0\leq i \leq 2$.
-}
-\ccGlue
-\ccMethod{void set_neighbor(int i,  {Face_handle} n);}
-{Sets neighbor \ccc{i} to be \ccc{n}.
-\ccPrecond $0\leq i \leq 2$.
-}
-\ccGlue
-\ccMethod{void set_vertices();}{Sets vertices to \ccc{NULL}}
-\ccGlue
-\ccMethod{void set_neighbors();}{Sets neighbors to \ccc{NULL}}
-\ccGlue
-\ccMethod{void set_vertices(
-Vertex_handle v0, Vertex_handle v1, Vertex_handle v2);}{}
-\ccGlue
-\ccMethod{void set_neighbors(
- {Face_handle} n0,  {Face_handle} n1,  {Face_handle} n2);}{}
-\end{ccAdvanced} 
+
+%\ccHeading{Setting}
+
+
+%\ccThree{Vertex_handle}{f.has_vertex( Vertex_handle v, int& i)x}{}
+%\ccMethod{void set_vertex(int i, Vertex_handle v);}
+%{Sets vertex \ccc{i} to be \ccc{v}.
+%\ccPrecond $0\leq i \leq 2$.
+%}
+%\ccGlue
+%\ccMethod{void set_neighbor(int i,  {Face_handle} n);}
+%{Sets neighbor \ccc{i} to be \ccc{n}.
+%\ccPrecond $0\leq i \leq 2$.
+%}
+%\ccGlue
+%\ccMethod{void set_vertices();}{Sets vertices to \ccc{NULL}}
+%\ccGlue
+%\ccMethod{void set_neighbors();}{Sets neighbors to \ccc{NULL}}
+%\ccGlue
+%\ccMethod{void set_vertices(
+%Vertex_handle v0, Vertex_handle v1, Vertex_handle v2);}{}
+%\ccGlue
+%\ccMethod{void set_neighbors(
+% {Face_handle} n0,  {Face_handle} n1,  {Face_handle} n2);}{}
+%\end{ccAdvanced} 
 
 
 \ccHeading{Vertex Access Functions}
@@ -1731,7 +1592,7 @@ number of faces stored in the triangulation data structure.}
 The following modifier member functions  guarantee
 the combinatorial validity of the resulting triangulation.
 
-\ccThree{void}{tds.remove_second(Vertex* v)x}{}
+\ccThree{Vertex*}{tds.insert_in_edge(Fce* f, int i)x}{}
 \ccMethod{void flip(Face* f, int i);}{exchanges the edge incident to
 \ccc{f} and \ccc{f->neighbor(i)} with the other
 diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.}
@@ -1755,25 +1616,20 @@ diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.}
 
 
 \ccMethod{Vertex* insert_first();} {creates the first 
-vertex and returns a pointer to it.}
+vertex.}
 \ccGlue
-\ccMethod{Vertex* insert_second();} {creates the second finite
-vertex and returns a pointer to it.}
+\ccMethod{Vertex* insert_second();} {creates the second 
+vertex.}
 \ccMethod{Vertex* insert_in_edge(Face* f, int i);} {adds a
 vertex \ccc{v} splitting 
-edge \ccc{i} of face \ccc{f}. Return a  pointer to \ccc{v}.}
+edge \ccc{i} of face \ccc{f}.}
 \ccGlue
 \ccMethod{Vertex* insert_in_face(Face* f);} {adds a vertex
 \ccc{v} splitting  face
-\ccc{f} in three. Face \ccc{f} is modified,
-two new faces are created. Return a  pointer to \ccc{v} }
+\ccc{f} in three }
 \ccGlue
 \ccMethod{Vertex* insert_dim_up(Vertex* w, bool orient=true);} {adds
 a vertex \ccc{v}, increasing by one the dimension of the triangulation.
-Vertex \ccc{v} and the existing vertex \ccc{w} are linked to all 
-the vertices of the triangulation. 
-The boolean orient decides the final orientation of all 
-faces. A pointer to vertex \ccc{v} is returned.
 }
 
 \begin{figure}
@@ -1791,17 +1647,9 @@ faces. A pointer to vertex \ccc{v} is returned.
 \end{figure}
 
 
-
+\ccThree {void }{remove_degree_3(Vertex* v); }{}
 \ccMethod{void remove_degree_3(Vertex* v, Face *f=NULL);}
-{removes a vertex of degree 3. Two of the incident faces are destroyed,
-the third one is modified.
-If parameter \ccc{f}  is specified, it has to be a face incident to \ccc{v}
-and will be the modified face.
-\ccPrecond{Vertex
-\ccc{v} is a finite vertex with degree 3
-and, if specified, face \ccc{f} is incident to \ccc{v}.}}
-
-
+{removes a vertex of degree 3.}
 
 \ccMethod{void remove_second(Vertex* v);}{removes the before last
 vertex.}
@@ -1811,40 +1659,38 @@ vertex.}
 \ccMethod{void remove_dim_down(Vertex* v);}
 {removes vertex \ccc{v} incident to all other vertices
 and  decreases by one the dimension of the triangulation.
-\ccPrecond{if the dimension is 2, the number of vertices is more than
-3,
-if the dimension is 1, the number of vertices is 2.} }
+}
 
-\begin{ccAdvanced}
-The following modifiers are required for convenience of the advanced
-user.
-They do not guarantee the combinatorial validity 
-of the resulting triangulation.
-\ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2, Face*
-f3, int i3);}{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
-\ccc{i2} of ccc{f2} and \ccc{i3} of \ccc{f3}.}
-\ccGlue
-\ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2);}
-{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
-and the neighbor \ccc{i2} of ccc{f2}.}
-\ccGlue
-\ccMethod{Face* create_face(Face* f1, int i1, Vertex* v);}
-{adds a face which is the neighbor \ccc{i1} of \ccc{f1},
-and has \ccc{v} as vertex.}
-\ccGlue
-\ccMethod{ Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3);}
-{adds a face with vertices \ccc{v1}, \ccc{v2} and \ccc{v3}.}
-\ccGlue
-\ccMethod{Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3,
-		    Face* f1, Face* f2, Face* f3);}
-{adds a face with vertices \ccc{v1}, \ccc{v2} and \ccc{v3},
-and neighbors \ccc{f1}, \ccc{f2}, \ccc{f3}.}
-\ccGlue
-\ccMethod{Face* create_face();}
-{adds a face whose vertices and neighbors are set to NULL.}
- \ccGlue
-\ccMethod{void  delete_face(Face*);}{deletes a face.}
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%The following modifiers are required for convenience of the advanced
+%user.
+%They do not guarantee the combinatorial validity 
+%of the resulting triangulation.
+%\ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2, Face*
+%f3, int i3);}{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
+%\ccc{i2} of ccc{f2} and \ccc{i3} of \ccc{f3}.}
+%\ccGlue
+%\ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2);}
+%{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
+%and the neighbor \ccc{i2} of ccc{f2}.}
+%\ccGlue
+%\ccMethod{Face* create_face(Face* f1, int i1, Vertex* v);}
+%{adds a face which is the neighbor \ccc{i1} of \ccc{f1},
+%and has \ccc{v} as vertex.}
+%\ccGlue
+%\ccMethod{ Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3);}
+%{adds a face with vertices \ccc{v1}, \ccc{v2} and \ccc{v3}.}
+%\ccGlue
+%\ccMethod{Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3,
+%		    Face* f1, Face* f2, Face* f3);}
+%{adds a face with vertices \ccc{v1}, \ccc{v2} and \ccc{v3},
+%and neighbors \ccc{f1}, \ccc{f2}, \ccc{f3}.}
+%\ccGlue
+%\ccMethod{Face* create_face();}
+%{adds a face whose vertices and neighbors are set to NULL.}
+% \ccGlue
+%\ccMethod{void  delete_face(Face*);}{deletes a face.}
+%\end{ccAdvanced}
 
 
 \ccHeading{Traversing the triangulation}
@@ -1892,35 +1738,35 @@ The vertex stores a point and a pointer to an incident face.
 The class \ccClassName\
 defines the same types as the triangulation data structure class \ccc{Tds}
 except the iterators.
-\begin{ccAdvanced}
+%\begin{ccAdvanced}
 
-\ccCreation
+%\ccCreation
 
-\ccConstructor{Vertex();}
-{introduces a vertex \ccVar. The geometric information is
- initialized by the default constructor of class \ccc{Point}.
-The pointer to the incident face is initialized with \ccc{NULL}.}
+%\ccConstructor{Vertex();}
+%{introduces a vertex \ccVar. The geometric information is
+% initialized by the default constructor of class \ccc{Point}.
+%The pointer to the incident face is initialized with \ccc{NULL}.}
 
-\ccConstructor{Vertex(const Point& p);}
-{introduces a vertex \ccVar, and initializes the geometric information.
-The pointer to the incident face is initialized with \ccc{NULL}.}
+%\ccConstructor{Vertex(const Point& p);}
+%{introduces a vertex \ccVar, and initializes the geometric information.
+%The pointer to the incident face is initialized with \ccc{NULL}.}
 
-\ccConstructor{Vertex(const Point& p,
-                      Face* f);}
-{introduces a vertex \ccVar, and initializes the geometric information and 
-the pointer to the incident face.}
-
-
-\ccHeading{Setting}
-
-\ccMethod{void set_point(const Point& p);}
-{sets the geometric information to \ccc{p}.}
-\ccGlue
-\ccMethod{void set_face(Face* f);}
-{sets the incident face to \ccc{f}.}
+%\ccConstructor{Vertex(const Point& p,
+%                      Face* f);}
+%{introduces a vertex \ccVar, and initializes the geometric information and 
+%the pointer to the incident face.}
 
 
-\end{ccAdvanced}
+%\ccHeading{Setting}
+
+%\ccMethod{void set_point(const Point& p);}
+%{sets the geometric information to \ccc{p}.}
+%\ccGlue
+%\ccMethod{void set_face(Face* f);}
+%{sets the incident face to \ccc{f}.}
+
+
+%\end{ccAdvanced}
 
 
 \ccHeading{Access Functions}
@@ -1943,13 +1789,13 @@ counterclockwise around the vertex
 and  the \ccc{operator--} moves the circulator
 clockwise. 
 
-A face circulator is invalidated by any modification of the face it
-points to. An edge circulator is invalidated
-by any modification of anyone of the two faces incident to the edge
-pointed to.  A vertex circulator that turns around vertex \ccc{v}
-and that has as value a pointer to vertex \ccc{w}, is invalidated
-by any modification of anyone of the two faces incident to \ccc{v}
-and \ccc{w}.
+%A face circulator is invalidated by any modification of the face it
+%points to. An edge circulator is invalidated
+%by any modification of anyone of the two faces incident to the edge
+%pointed to.  A vertex circulator that turns around vertex \ccc{v}
+%and that has as value a pointer to vertex \ccc{w}, is invalidated
+%by any modification of anyone of the two faces incident to \ccc{v}
+%and \ccc{w}.
 
 \ccMethod{Vertex_circulator
           incident_vertices(Face* f=NULL) const;}{} 
@@ -1998,56 +1844,56 @@ the triangulation data structure
 except the iterators and circulators
 
 
-\begin{ccAdvanced}
-\ccHeading{Creation}
-For user defined triangulation algorithms, faces need to
-be explicitly constructed and linked to their neighbors.
+%\begin{ccAdvanced}
+%\ccHeading{Creation}
+%For user defined triangulation algorithms, faces need to
+%be explicitly constructed and linked to their neighbors.
 
-\ccConstructor{Face();}
-{introduces a face \ccVar\ and initializes all vertices and neighbors 
- with \ccc{NULL}.}
+%\ccConstructor{Face();}
+%{introduces a face \ccVar\ and initializes all vertices and neighbors 
+% with \ccc{NULL}.}
 
-\ccConstructor{Face(Vertex* v0,
-                                           Vertex* v1,
-                                           Vertex* v2);}
-{introduces a face \ccVar, and initializes the vertices. The 
-neighbors are initialized with \ccc{NULL}.}
+%\ccConstructor{Face(Vertex* v0,
+%                                           Vertex* v1,
+%                                           Vertex* v2);}
+%{introduces a face \ccVar, and initializes the vertices. The 
+%neighbors are initialized with \ccc{NULL}.}
 
-\ccConstructor{Face(Vertex* v0,
-                    Vertex* v1,
-                    Vertex* v2,
-                    Face* n0,
-                    Face* n1,
-                    Face* n2);}
-{introduces a face \ccVar, and initializes the vertices and the neighbors.}
+%\ccConstructor{Face(Vertex* v0,
+%                    Vertex* v1,
+%                    Vertex* v2,
+%                    Face* n0,
+%                    Face* n1,
+%                    Face* n2);}
+%{introduces a face \ccVar, and initializes the vertices and the neighbors.}
 
 
-\ccHeading{Setting}
+%\ccHeading{Setting}
 
-\ccThree{Vertex*}{f.has_vertex( Vertex* v, int& i)x}{}
-\ccMethod{void set_vertex(int i, Vertex* v);}
-{sets vertex \ccc{i} to be \ccc{v}.
-\ccPrecond $0\leq i \leq 2$.
-}
-\ccGlue
-\ccMethod{void set_neighbor(int i, Face* n);}
-{sets neighbor \ccc{i} to be \ccc{n}.
-\ccPrecond $0\leq i \leq 2$.
-}
-\ccGlue
-\ccMethod{ void set_vertices();}{sets the vertices pointers to \ccc{NULL}.}
-\ccGlue
-\ccMethod{void set_vertices(Vertex* v0,
-		    Vertex* v1,
-		    Vertex* v2);}{sets the vertices pointers.}
-\ccGlue
-\ccMethod{void set_neighbors();} {sets the neighbors pointers to \ccc{NULL}.}
-\ccGlue
-\ccMethod{void set_neighbors(Face* n0,
-		     Face* n1,
-		     Face* n2);}{sets the neighbors pointers.}
+%\ccThree{Vertex*}{f.has_vertex( Vertex* v, int& i)x}{}
+%\ccMethod{void set_vertex(int i, Vertex* v);}
+%{sets vertex \ccc{i} to be \ccc{v}.
+%\ccPrecond $0\leq i \leq 2$.
+%}
+%\ccGlue
+%\ccMethod{void set_neighbor(int i, Face* n);}
+%{sets neighbor \ccc{i} to be \ccc{n}.
+%\ccPrecond $0\leq i \leq 2$.
+%}
+%\ccGlue
+%\ccMethod{ void set_vertices();}{sets the vertices pointers to \ccc{NULL}.}
+%\ccGlue
+%\ccMethod{void set_vertices(Vertex* v0,
+%		    Vertex* v1,
+%		    Vertex* v2);}{sets the vertices pointers.}
+%\ccGlue
+%\ccMethod{void set_neighbors();} {sets the neighbors pointers to \ccc{NULL}.}
+%\ccGlue
+%\ccMethod{void set_neighbors(Face* n0,
+%		     Face* n1,
+%		     Face* n2);}{sets the neighbors pointers.}
 
-\end{ccAdvanced}
+%\end{ccAdvanced}
 
 \ccHeading{Vertex Access Functions}
 
@@ -2095,12 +1941,16 @@ compute the index \ccc{i} of \ccc{n}.}
 {index of \ccVar\ as a neighbor of \ccVar.\ccc{neighbor(i)}}
 \ccGlue
 \ccMethod{Vertex* mirror_vertex(int i) const;}
-{vertex of \ccVar.\ccc{neighbor(i)}} opposite to  \ccVar.
+{vertex of \ccVar.\ccc{neighbor(i)} opposite to  \ccVar.}
 
 
-\begin{ccAdvanced}
-\ccHeading{Checking}
+%\begin{ccAdvanced}
+%\ccHeading{Checking}
 
+%\end{ccAdvanced}
+
+
+\ccHeading{Miscellaneous} 
 
 \ccMethod{bool is_valid() const;}
 {returns \ccc{true} if  the function 
@@ -2110,21 +1960,11 @@ face $f$ is a neighbor of its neighboring face \ccc{neighbor(i)}
 and shares with this neighbor the  vertices \ccc{cw(i)} and \ccc{ccw(i)}
 in correct reverse order.}
 
-
-
-
-
-
-\end{ccAdvanced}
-
-
-\ccHeading{Miscellaneous} 
-
 \ccMethod{int ccw(int i) const;}
-{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
-
+{Returns $i+1$ modulo 3.}
+\ccGlue
 \ccMethod{int cw(int i) const;}
-{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+{Returns $i+2$ modulo 3.}
 
 \end{ccClass}
 
@@ -2529,18 +2369,19 @@ the functions inherited from the class
 
 
 
-\ccMethod{Vertex_handle insert(const Point& p, Face_handle f=Face_handle());}
-{Inserts  point \ccc{p}.
-If point \ccc{p} coincides with an already existing vertex, this 
-vertex is returned and the triangulation is not updated.
-Optional parameter \ccc{f} is used to initialize the location of \ccc{p}.
-}
+\ccMethod{Vertex_handle insert(const Point& p);}{returns a handle to the created
+vertex}
+%{Inserts  point \ccc{p}.
+%If point \ccc{p} coincides with an already existing vertex, this 
+%vertex is returned and the triangulation is not updated.
+%Optional parameter \ccc{f} is used to initialize the location of \ccc{p}.
+%}
 
-\ccMethod{Vertex_handle insert(const Point& p, Locate_type& lt,
-Face_handle loc, int li );}
-{ inerts a point \ccc{p}, the location of which is supposed to be
-given by \ccc{(lt,loc,li)}, see the description of member function
-\ccc{locate} in class \ccc{Triangulation_2<Traits,Tds>}.}
+%\ccMethod{Vertex_handle insert(const Point& p, Locate_type& lt,
+%Face_handle loc, int li );}
+%{ inerts a point \ccc{p}, the location of which is supposed to be
+%given by \ccc{(lt,loc,li)}, see the description of member function
+%\ccc{locate} in class \ccc{Triangulation_2<Traits,Tds>}.}
 
 \ccMethod{Vertex_handle push_back(const Point& p);}
 {Equivalent to \ccc{insert(p)}.}
@@ -2559,13 +2400,6 @@ given by \ccc{(lt,loc,li)}, see the description of member function
 \ccMethod{void    remove(Vertex_handle v);}
 {removes the vertex from the triangulation.}
 
-Note that the other modifier functions  of
-\ccc{Triangulation_2<Traits,Tds>} are not overwritten.
-Thus a  call to \ccc{insert_in_face}
-\ccc{insert_in_edge}, \ccc{insert_outside_convex_hull},
-\ccc{insert_outside_affine_hull}  or \ccc{flip}
-on a valid Delaunay triangulation might lead to a triangulation
-which is no longer a Delaunay triangulation.
 
 \ccHeading{Queries}
 
@@ -2576,9 +2410,10 @@ begins with a location step and
 \ccc{f} may be used to initialize the location.}
 
 
-
-
 \ccHeading{Duality}
+The following functions help to build the dual Vorono\"i diagrams.
+Note that since the dual of a egde of the triangulation can be either
+a segment or a ray or a line, the return type is a \cgal \ccc{Object).
 
 \ccMethod{Point dual(const Face_handle &f) const;}
 {Returns the center of the circle circumscribed to face \ccc{f}.
@@ -2602,30 +2437,30 @@ are infinite and the bisector line is returned.}
 
 
 
-\ccHeading{Geometric Predicates}
-\ccThree{Oriented_side}{side_of_}{}
-\ccThreeToTwo
+%\ccHeading{Geometric Predicates}
+%\ccThree{Oriented_side}{side_of_}{}
+%\ccThreeToTwo
 
-\ccMethod{Oriented_side
-  side_of_oriented_circle(Face_handle f,
-                          const Point& p) const;}
-{Returns the side of \ccc{p} with respect to the circle circumscribing
- the triangle associated with \ccc{f}}
+%\ccMethod{Oriented_side
+%  side_of_oriented_circle(Face_handle f,
+%                          const Point& p) const;}
+%{Returns the side of \ccc{p} with respect to the circle circumscribing
+% the triangle associated with \ccc{f}}
 
 
-\begin{ccAdvanced}
-\ccHeading{Miscellaneous}
-\ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
+%\begin{ccAdvanced}
+%\ccHeading{Miscellaneous}
+%\ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
 
-The checking function \ccc{is_valid()} is also overwritten
-to additionally test the empty circle property.
+%The checking function \ccc{is_valid()} is also overwritten
+%to additionally test the empty circle property.
 
-\ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
-{ Tests the validity of the triangulation as a \ccc{Triangulation_2}
-and additionally test the Delaunay property. This method is
- mainly  useful for debugging Delaunay triangulation algorithms designed by
- the user.}
-\end{ccAdvanced}
+%\ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
+%{ Tests the validity of the triangulation as a \ccc{Triangulation_2}
+%and additionally test the Delaunay property. This method is
+% mainly  useful for debugging Delaunay triangulation algorithms designed by
+% the user.}
+%\end{ccAdvanced}
 
 \ccHeading{I/O}
 The I/O operators for \ccc{iostream} and for
@@ -2988,9 +2823,9 @@ to be used for later tentative of insertions when future removal
 of some points implies the destruction of the hiding face.
 
 
-\ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
+\ccThree{Vertex_handle}{rt.push_back(Point p)x;}{}
 
-\ccMethod{bool insert(const Weighted_point& p, Face_handle f=Face_handle());}
+\ccMethod{bool insert(const Weighted_point& p);}
 {inserts  weighted point \ccc{p}.
 returns true if a new vertex is created. 
 If a weighted point with the same center point but a 
@@ -2998,11 +2833,11 @@ different weight already exists in the triangulation,
 it is removed and replaced by the new point.
 }
 
-\ccMethod{bool insert(const Weighted_point &p,
-	 	       Locate_type  lt,
-		       Face_handle loc, int li );}
-{insert a weighted point \ccc{p} whose bare-point is assumed to be
-located in  \ccc{lt,loc,li}.}
+%\ccMethod{bool insert(const Weighted_point &p,
+%	 	       Locate_type  lt,
+%		       Face_handle loc, int li );}
+%{insert a weighted point \ccc{p} whose bare-point is assumed to be
+%located in  \ccc{lt,loc,li}.}
 
 \ccMethod{Vertex_handle push_back(const Point& p);}
 {Equivalent to \ccc{insert(p)}.}
@@ -3419,31 +3254,31 @@ removed triangles.
 \ccPrecond The relative interior of segment \ccc{ab} does not
 intersect the relative interior of another constrained edge}
 
-\ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb);}
-{ Inserts the line segment \ccc{s} whose endpoints are the vertices 
-\ccc{va} and
-\ccc{vb}  as a constraintedge \ccc{e}. The triangles intersected by s
-are removed and new ones are created. 
-\ccPrecond The relative interior of \ccc{s} does not
-intersect the relative interior of another constrained edge.  
-\ccPrecond  va and vb are distinct vertices of t.  }
+%\ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb);}
+%{ Inserts the line segment \ccc{s} whose endpoints are the vertices 
+%\ccc{va} and
+%\ccc{vb}  as a constraintedge \ccc{e}. The triangles intersected by s
+%are removed and new ones are created. 
+%\ccPrecond The relative interior of \ccc{s} does not
+%intersect the relative interior of another constrained edge.  
+%\ccPrecond  va and vb are distinct vertices of t.  }
 
-\ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb,
-	    Face_handle & fr, int & i);}
-{Same as above. In addition,  sets the face \ccc{fr} incident to the
-egde \ccc{e} 
-and on the right of \ccc{e} oriented from  \ccc{va} to \ccc{vb}
-and the index \ccc{i}  of the vertex of \ccc{fr} opposite to
-\ccc{e}, i.e.  \ccc{e}=\ccc{(fr,i)}.}	    
+%\ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb,
+%	    Face_handle & fr, int & i);}
+%{Same as above. In addition,  sets the face \ccc{fr} incident to the
+%egde \ccc{e} 
+%and on the right of \ccc{e} oriented from  \ccc{va} to \ccc{vb}
+%and the index \ccc{i}  of the vertex of \ccc{fr} opposite to
+%\ccc{e}, i.e.  \ccc{e}=\ccc{(fr,i)}.}	    
 
-\ccMethod{void insert(const Vertex_handle & va, const Vertex_handle & vb,
-	    Face_handle & fr, int & i, List_edges & new_edges,
-	List_vertices & new_vertices);}
-{Same as above. In addition,  the edges that are created are put in
-the list \ccc{new\_edges} and the new vertices
-\(resulting from the intersection of two constraints\) are put in the
-list
-\ccc{new\_vertices}.}
+%\ccMethod{void insert(const Vertex_handle & va, const Vertex_handle & vb,
+%	    Face_handle & fr, int & i, List_edges & new_edges,
+%	List_vertices & new_vertices);}
+%{Same as above. In addition,  the edges that are created are put in
+%the list \ccc{new\_edges} and the new vertices
+%\(resulting from the intersection of two constraints\) are put in the
+%list
+%\ccc{new\_vertices}.}
 
 \ccMethod{void remove(const Vertex_handle & v);}
 { Removes a vertex v. All constraints incident to the removed vertex are removed. }
@@ -3677,27 +3512,27 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
  is \ccc{Constraint}.}
 
-\begin{ccAdvanced}
-\ccHeading{Flips}
+%\begin{ccAdvanced}
+%\ccHeading{Flips}
 
-\ccMethod{bool is_flipable(Face_handle f, int i);}
-{ Determines if edge (f,i) can be flipped. Returns true if
-1. edge(f,i) is not constrained and 2. the circle circumscribing f
-does not contain the vertex of f->neighbor(i) not on edge(f,i). }
+%\ccMethod{bool is_flipable(Face_handle f, int i);}
+%{ Determines if edge (f,i) can be flipped. Returns true if
+%1. edge(f,i) is not constrained and 2. the circle circumscribing f
+%does not contain the vertex of f->neighbor(i) not on edge(f,i). }
 
-\ccMethod{void flip(Face_handle& f, int i);}
-{ Flip f and f->neighbor(i).
-\ccPrecond f->is\_constrained(i) == FALSE.}
+%\ccMethod{void flip(Face_handle& f, int i);}
+%{ Flip f and f->neighbor(i).
+%\ccPrecond f->is\_constrained(i) == FALSE.}
 
 
-\ccMethod{void propagating_flip(List_edges & edges);}
-{ Makes the triangulation constrained Delaunay by flipping edges. 
-List edges contains an
-initial list of edges to be flipped. The returned
-triangulation is constrained Delaunay 
-if the list edges contains all edges of the
-input triangulation that need to be flipped (plus possibly others). }
-\end{ccAdvanced}
+%\ccMethod{void propagating_flip(List_edges & edges);}
+%{ Makes the triangulation constrained Delaunay by flipping edges. 
+%List edges contains an
+%initial list of edges to be flipped. The returned
+%triangulation is constrained Delaunay 
+%if the list edges contains all edges of the
+%input triangulation that need to be flipped (plus possibly others). }
+%\end{ccAdvanced}
 
 \ccHeading{Insertion and Removal}
 The following member functions override the corresponding
@@ -3705,20 +3540,21 @@ member of the base class to include a step restoring
  the Delaunay constrained
 property after modification of the triangulation.
 
+\ccThree{Vertex_handle}{insert(Point a, Point b);}{}
 \ccMethod{ Vertex_handle insert(Point a);}
 { Inserts point a in the triangulation. }
 
 \ccMethod{ void insert(Point a, Point b);}
 { Inserts segment ab as a constrained edge in the triangulation. }
 
-\ccMethod{ void insert(Vertex_handle va, Vertex_handle vb);}
-{ Inserts the line segment whose endpoints are the vertices va and vb
-as an edge e in the triangulation. }
+%\ccMethod{ void insert(Vertex_handle va, Vertex_handle vb);}
+%{ Inserts the line segment whose endpoints are the vertices va and vb
+%as an edge e in the triangulation. }
 
-\ccMethod{void insert(Vertex_handle va, Vertex_handle vb,
-		   Face_handle & fr, int & i);}
-{Same as the previous procedure. In addition, returns f and i such that
-e=(f,i) and f is the face lying to the right of the oriented edge (va,vb). }
+%\ccMethod{void insert(Vertex_handle va, Vertex_handle vb,
+%		   Face_handle & fr, int & i);}
+%{Same as the previous procedure. In addition, returns f and i such that
+%e=(f,i) and f is the face lying to the right of the oriented edge (va,vb). }
 
 
 \ccMethod{void remove(Vertex_handle & v);}
