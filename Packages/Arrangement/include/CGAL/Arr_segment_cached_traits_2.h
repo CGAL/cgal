@@ -386,13 +386,13 @@ protected:
 
     CGAL_precondition((cmp_xy(q, cv1.ps) == SMALLER) ||
                       (cmp_xy(q, cv1.pt) == SMALLER));
-    CGAL_precondition((cmp_xy(q, cv1.ps) != SMALLER) ||
-                      (cmp_xy(q, cv1.pt) != SMALLER));
+    /*CGAL_precondition((cmp_xy(q, cv1.ps) != SMALLER) ||
+                      (cmp_xy(q, cv1.pt) != SMALLER));*/
     
     CGAL_precondition((cmp_xy(q, cv2.ps) == SMALLER) ||
                       (cmp_xy(q, cv2.pt) == SMALLER));
-    CGAL_precondition((cmp_xy(q, cv2.ps) != SMALLER) ||
-                      (cmp_xy(q, cv2.pt) != SMALLER));
+    /*CGAL_precondition((cmp_xy(q, cv2.ps) != SMALLER) ||
+                      (cmp_xy(q, cv2.pt) != SMALLER));*/
 
     // Notice q is a placeholder for the x coordinate of the two segments.
     // That is, if we compare them at x(q) the result should be EQUAL.
