@@ -90,6 +90,8 @@ struct Cartesian_dynamic_d
     // CGAL::Point_d< Cartesian_d<FT> > (which is in the CGAL namespace)
 
     typedef CGAL::Point_d<Self>                 Point_d;
+    typedef CGAL::Vector_d<Self>                Vector_d;
+    typedef CGAL::Direction_d<Self>             Direction_d;
 
     // TODO: cleanup
     static   FT make_FT(const RT & num, const RT& denom) { return num/denom;}
