@@ -37,7 +37,7 @@ typedef CGAL::Window_stream                            Window_stream;
 #define MIN_Y 0
 #define MAX_X 10
 #define MAX_Y 10
-#define PRECISION 1
+#define PRECISION 0.5
 
 Number_Type min(const Number_Type &p,const Number_Type &q,Number_Type &r)
 {
@@ -111,7 +111,7 @@ void show_results(Snap_rounding_2 &s,
 void display_bounding_box(CGAL::Window_stream &W,
                           const Iso_rectangle_2 &b)
 {
-  W << CGAL::BLACK << b;
+  //  W << CGAL::BLACK << b;
 }
 
 void window_output(Snap_rounding_2 &s,Window_stream &w,
@@ -262,7 +262,10 @@ int main(int argc,char *argv[])
     W.button("Hide input",12);
     W.button("Show output",13);
     W.button("Hide output",14);
-    W.button("Exit",15);
+    W.button("Enlarge Pixel",15);
+    W.button("Shrink Pixel",16);
+    W.button("Reset Pixel",17);
+    W.button("Exit",18);
     W.display();
     W.disable_button(4);
     W.disable_button(5);
@@ -470,9 +473,35 @@ int main(int argc,char *argv[])
       if(automatic_show)
         show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 15) {
+      prec = prec * 2;
+      s.change_pixel_size(prec);
+      redraw(s,W,b,show_input);
+      if(automatic_show)
+        show_results(s,prec,W,show_hp,show_output);
+      if(prec == 2)
+        W.disable_button(15);
+      W.enable_button(16);
+    } else if(mouse_input == 16) {
+      prec = prec / 2;
+      s.change_pixel_size(prec);
+      redraw(s,W,b,show_input);
+      if(automatic_show)
+        show_results(s,prec,W,show_hp,show_output);
+      if(prec < 1.0 / 5)
+        W.disable_button(16);
+      W.enable_button(15);
+    } else if(mouse_input == 17) {
+      prec = PRECISION;
+      s.change_pixel_size(prec);
+      redraw(s,W,b,show_input);
+      if(automatic_show)
+        show_results(s,prec,W,show_hp,show_output);
+    } else if(mouse_input == 18) {
       // finish
       break;
     }
+
+    //    if(mouse_input > 4 && mouse_input < 17) {
 
     if(automatic_show)
       W.text_box(-1.5,-1,10,"auto");
