@@ -745,6 +745,7 @@ set_compiler_flags()
     EXE_OPT="-o "
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
+    GMP_LIBNAME="libgmp.a"
     MATH_LIB="m"
     SEPARATE_LIBPATH=""
     START_LD_OPT=""
@@ -771,6 +772,7 @@ set_compiler_flags()
 	    EXE_OPT="-e"
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
+	    GMP_LIBNAME="gmp.lib"
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
             LIB_CREATION_COMMANDS="tlib @borland_lib_creation"
@@ -797,6 +799,7 @@ set_compiler_flags()
 	    EXE_OPT="-Fp"
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
+	    GMP_LIBNAME="gmp.lib"
 	    MATH_LIB=
 	    START_LD_OPT="-link "
 	    ;;
@@ -2189,8 +2192,7 @@ check_GMP_INCL_DIR()
 check_GMP_LIB_DIR()
 {
     if [ -n "${GMP_LIB_DIR}" ]; then
-	if [ ! -r ${GMP_LIB_DIR}/libgmp.a -a \
-	     ! -r ${GMP_LIB_DIR}/gmp.lib -a \
+	if [ ! -r ${GMP_LIB_DIR}/${GMP_LIBNAME} -a \
 	     ! -r ${GMP_LIB_DIR}/libgmp.so ]; then 
 	    $1 "WARNING: GMP_LIB_DIR should contain"
 	    $1 "      libgmp.a, libgmp.so or gmp.lib." 
@@ -3743,18 +3745,18 @@ link_gmp()
 {
     for i in ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER} \
       ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}_LEDA; do
-	if [ ! -r ${CGAL_LIB_DIR}/`full_ostype`/libgmp.a -a \
-	    -r ${i}/libgmp.a ]
+	if [ ! -r ${CGAL_LIB_DIR}/`full_ostype`/${GMP_LIBNAME} -a \
+	    -r ${i}/${GMP_LIBNAME} ]
 	then
 	    case ${CGAL_OS_COMPILER} in 
 		*CYGWIN*) 
-		    ${_cp} ${i}/libgmp.a \
-			${CGAL_LIB_DIR}/`full_ostype`/libgmp.a
+		    ${_cp} ${i}/${GMP_LIBNAME} \
+			${CGAL_LIB_DIR}/`full_ostype`/${GMP_LIBNAME}
 		    log_print "remark: copied libgmp from ${i}" 
 		    ;;
 		*) 
-		    ${_ln} -s ${i}/libgmp.a \
-			${CGAL_LIB_DIR}/`full_ostype`/libgmp.a
+		    ${_ln} -s ${i}/${GMP_LIBNAME} \
+			${CGAL_LIB_DIR}/`full_ostype`/${GMP_LIBNAME}
 		    log_print "remark: linked libgmp from ${i}" 
 		    ;;
 	    esac
@@ -3814,9 +3816,8 @@ install_gmp_sub()
 install_gmp()
 {
     make_lib_dir
-    if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.a -o \
-	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.so -o \
-	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/gmp.lib ]; then
+    if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${GMP_LIBNAME} -o \
+	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.so ]; then
 	if [ "${GMP_INSTALLATION}" != "c" ]; then
 	    GMP_INSTALLATION='c'
 	    GMP_TEST_PASSED=''
@@ -4737,7 +4738,9 @@ upgrade()
     print_filled_line
     flush_buffer
     log_print "copy gmp libs ... "
-    for i in `${_find} ${UPGRADE_FROM} -follow -name "libgmp.a" -print`; do
+    for i in `${_find} ${UPGRADE_FROM} -follow -name "libgmp.a" -print` \
+	`${_find} ${UPGRADE_FROM} -follow -name "gmp.lib" -print`
+    do
 	go_up_lines 1
 	print_line "`${_printf} ${i} | ${_awk} 'BEGIN {FS=\"/\"} {i=NF-1;print $i}'`"
 	print_filled_line
