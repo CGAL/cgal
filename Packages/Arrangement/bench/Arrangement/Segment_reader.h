@@ -18,11 +18,11 @@ public:
   typedef typename Traits::Point_2    Point_2;
   typedef typename Traits::Curve_2    Curve_2;
   typedef typename Traits::X_monotone_curve_2  X_monotone_curve_2;
-  typedef std::list<Curve_2> Curve_list;
 
-  int read_data(const char * filename, Curve_list & curveList,
-               CGAL::Bench_parse_args::FormatId format,
-               CGAL::Bbox_2 & bbox)
+  template<class OutputIterator>
+  int read_data(const char * filename, OutputIterator curves_out,
+                CGAL::Bench_parse_args::FormatId format,
+                CGAL::Bbox_2 & bbox)
   {
     std::ifstream inp(filename);
     if (!inp.is_open()) {
@@ -63,7 +63,7 @@ public:
 #endif
       // if (p1 == p2) continue;
       Curve_2 curve(p1, p2);
-      curveList.push_back(curve);
+      ++curves_out = curve;
 
       // Update the bounding box of the arrangement.
 #if KERNEL == LEDA_KERNEL || KERNEL == MY_KERNEL

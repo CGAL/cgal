@@ -17,9 +17,9 @@ public:
     typedef typename Traits::Point_2               Point_2;
     typedef typename Traits::Curve_2               Curve_2;
     typedef typename Traits::X_monotone_curve_2    X_monotone_curve_2;
-    typedef std::list<Curve_2>                     Curve_list;
     
-    int read_data(const char* filename, Curve_list& curves,
+    template<class OutputIterator>
+    int read_data(const char* filename, OutputIterator curves_out,
                   CGAL::Bench_parse_args::FormatId format,
                   CGAL::Bbox_2 & bbox) {
         
@@ -34,7 +34,7 @@ public:
         inp >> count;
         for (int i = 0; i < count; i++) {
             inp >> cv;
-            curves.push_back(cv);
+            ++curves_out = cv;
             // TODO bounding box
 #if 0
             CGAL::Bbox_2 curve_bbox = cv.bounding_box();

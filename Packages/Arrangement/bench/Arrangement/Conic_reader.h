@@ -21,9 +21,9 @@ public:
   typedef typename Traits::Circle_2             Circle_2;
   typedef typename Traits::Segment_2            Segment_2;
   typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
-  typedef std::list<Curve_2>                    Curve_list;
 
-  int read_data(const char * filename, Curve_list & curves,
+  template<class OutputIterator>
+  int read_data(const char * filename, OutputIterator curves_out,
                 CGAL::Bench_parse_args::FormatId format,
                 CGAL::Bbox_2 & bbox)
   {
@@ -39,8 +39,8 @@ public:
     inp >> count;
     inp.getline(dummy, sizeof(dummy));
     for (int i = 0; i < count; i++) {
-      ReadCurve(inp, cv);
-      curves.push_back(cv);
+      read_curve(inp, cv);
+      ++curves_out = cv;
       CGAL::Bbox_2 curve_bbox = cv.bounding_box();
       if (i == 0) bbox = curve_bbox;
       else bbox = bbox + curve_bbox;      
@@ -49,7 +49,7 @@ public:
     return 0;
   }
   
-  void ReadCurve(std::ifstream & is, Curve_2 & cv)
+  void read_curve(std::ifstream & is, Curve_2 & cv)
   {
       // Read a line from the input file.
       char one_line[128];

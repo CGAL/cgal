@@ -65,8 +65,8 @@ typedef NT                                              WNT;
 #elif BENCH_NT == GMPZ_NT
 typedef ::mpz_class                                     NT;
 typedef NT                                              WNT;
-typedef NT                                              RT;
-typedef NT                                              FT;
+typedef ::mpz_class                                     RT;
+typedef ::mpq_class                                     FT;
 #define NUMBER_TYPE "Gmpz"
 
 #elif BENCH_NT == LEDA_RAT_NT

@@ -69,6 +69,8 @@
 #include <ECG/Conic_arc_traits.h>
 #include <CGAL/Random.h>
 #include <ECG/Conic_arc_traits_tracer.h> 
+#include <ECG/IO/Qt_widget_conic_arc_2.h>
+#include <ECG/IO/Qt_widget_conic_arc_endpoint_2.h>
 
 #else
 #error No traits (TRAITS) specified!
@@ -202,9 +204,9 @@ typedef ECG::Conic_arc_traits<Curved_k>                 Traits;
 typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                 Pm;
 typedef CGAL::Planar_map_with_intersections_2<Pm>       Pmwx;
-typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                      Curve;
-typedef std::list<Curve>                                Curve_list;
+typedef Traits::Point_2                                 Point_2;
+typedef Traits::Curve_2                                 Curve_2;
+typedef std::list<Curve_2>                              Curve_list;
 
 // Point location strategies:
 typedef CGAL::Pm_default_point_location<Pm>             Trap_point_location;
@@ -212,9 +214,9 @@ typedef CGAL::Pm_naive_point_location<Pm>               Naive_point_location;
 typedef CGAL::Pm_walk_along_line_point_location<Pm>     Walk_point_location;
 typedef CGAL::Pm_dummy_point_location<Pm>               Dummy_point_location;
 
-typedef CGAL::Bench_parse_args::TypeId                  TypeId;
-typedef CGAL::Bench_parse_args::StrategyId              StrategyId;
-typedef CGAL::Bench_parse_args::FormatId                FormatId;
+typedef CGAL::Bench_parse_args::TypeId                  Type_id;
+typedef CGAL::Bench_parse_args::StrategyId              Strategy_id;
+typedef CGAL::Bench_parse_args::FormatId                Format_id;
 
 // Window stream:
 #if defined(USE_CGAL_WINDOW)
@@ -230,13 +232,6 @@ QApplication * App;
 #define POSTSCRIPT_SUPPORTED 1
 #endif
 
-#if BENCH_TRAITS == CK_CONIC_TRAITS
-inline Window_stream & operator<<(Window_stream & os, Pmwx & pm)
-{
-  return os;
-}
-
-#else
 /*! */
 inline Window_stream & operator<<(Window_stream & os, Pmwx & pm)
 {
@@ -250,7 +245,6 @@ inline Window_stream & operator<<(Window_stream & os, Pmwx & pm)
     os << (*vi).point();
   return os;
 }
-#endif
 
 /*! */
 class Basic_Pm {
@@ -264,12 +258,10 @@ public:
 
   virtual ~Basic_Pm() {}
   
-  /*
-   */
+  /*! */
   virtual void op() = 0;
 
-  /*
-   */
+  /*! */
   int init()
   {
 #if BENCH_TRAITS == SEGMENT_TRAITS
@@ -285,12 +277,13 @@ public:
     Exacus_conix_reader<Traits> reader;
 
 #elif BENCH_TRAITS == CK_CONIC_TRAITS
-    Ck_conix_reader<Traits> reader;
+    Ck_conic_reader<Traits> reader;
 
 #else
 #endif
 
-    int rc = reader.read_data(m_filename, m_curve_list, m_format, m_bbox);
+    int rc = reader.read_data(m_filename, std::back_inserter(m_curve_list),
+                              m_format, m_bbox);
     if (rc < 0) return rc;
     if (m_verbose) std::cout << m_curve_list.size() << " curves" << std::endl;
 
@@ -302,7 +295,7 @@ public:
   void clean() { m_curve_list.clear(); }
   void sync(){}
 
-  void set_format(CGAL::Bench_parse_args::FormatId fmt) { m_format = fmt; }
+  void set_format(Format_id fmt) { m_format = fmt; }
   void set_file_name(const char * filename) { m_filename = filename; }
   void set_verbose(const bool verbose) { m_verbose = verbose; }
   void set_postscript(const bool postscript) { m_postscript = postscript; }
@@ -312,15 +305,14 @@ protected:
   Curve_list m_curve_list;
   bool m_verbose;
   bool m_postscript;
-  CGAL::Bench_parse_args::FormatId m_format;
+  Format_id m_format;
   CGAL::Bbox_2 m_bbox;
 
   int m_width, m_height;
   float m_x0, m_x1, m_y0, m_y1;
 };
 
-/*!
- */
+/*! */
 template <class Strategy>
 class Increment_pmwx : public Basic_Pm {
 public:
@@ -328,6 +320,7 @@ public:
   {
     Strategy strategy;
     Pmwx pm(&strategy);
+    
     Curve_list::const_iterator i;
     for (i = m_curve_list.begin(); i != m_curve_list.end(); i++)
         pm.insert(*i);
@@ -349,8 +342,7 @@ typedef CGAL::Bench<Naive_inc_pmwx>             Naive_inc_pmwx_bench;
 typedef Increment_pmwx<Walk_point_location>     Walk_inc_pmwx;
 typedef CGAL::Bench<Walk_inc_pmwx>              Walk_inc_pmwx_bench;
 
-/*!
- */
+/*! */
 template <class Strategy>
 class Aggregate_pmwx : public Basic_Pm {
 public:
@@ -375,18 +367,15 @@ public:
   }
 };
 
-/*!
- */
+/*! */
 typedef Aggregate_pmwx<Dummy_point_location>    Dummy_agg_pmwx;
 typedef CGAL::Bench<Dummy_agg_pmwx>             Dummy_agg_pmwx_bench;
 
-/*!
- */
+/*! */
 template <class Strategy>
 class Display_pmwx : public Basic_Pm {
 public:
-  /*!
-   */
+  /*! */
   virtual void op()
   {
     Strategy strategy;
@@ -399,9 +388,7 @@ public:
 #endif
 #else
     Curve_list::const_iterator i;
-    for (i = m_curve_list.begin(); i != m_curve_list.end(); i++)
-        pm.insert(*i);
-
+    for (i = m_curve_list.begin(); i != m_curve_list.end(); i++) pm.insert(*i);
 #endif
     if (m_verbose) {
       if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
@@ -524,7 +511,7 @@ typedef CGAL::Bench<Dummy_dis_pmwx>           Dummy_dis_pmwx_bench;
  */
 template <class Bench_inst, class Benchable>
 void run_bench(Bench_inst & benchInst, Benchable & benchable,
-               const char * fullname, FormatId format,
+               const char * fullname, Format_id format,
                int samples, int iterations, bool verbose,
                bool postscript = false)
 {
@@ -544,8 +531,7 @@ void run_bench(Bench_inst & benchInst, Benchable & benchable,
                          << std::endl;
 }
 
-/*
- */
+/* */
 int main(int argc, char * argv[])
 {
   CGAL::Bench_parse_args parse_args(argc, argv);
@@ -555,8 +541,8 @@ int main(int argc, char * argv[])
   
   bool verbose = parse_args.get_verbose();
   unsigned int type_mask = parse_args.get_type_mask();
-  unsigned int strategyMask = parse_args.get_strategy_mask();
-  FormatId format = parse_args.get_input_format();
+  unsigned int strategy_mask = parse_args.get_strategy_mask();
+  Format_id format = parse_args.get_input_format();
   int samples = parse_args.get_samples();
   int iterations = parse_args.get_iterations();
   int seconds = parse_args.get_seconds();
@@ -572,17 +558,15 @@ int main(int argc, char * argv[])
   CGAL::Bench_base::set_name_length(nameLength);
   if (printHeader) CGAL::Bench_base::print_header();
 
-  TypeId type_id;
-  StrategyId strategy_id;
-  
-#if BENCH_TRAITS != CONIC_TRAITS || BENCH_TRAITS != CK_CONIC_TRAITS
+  Type_id type_id;
+  Strategy_id strategy_id;
   
   // Construct Incrementaly
   type_id = CGAL::Bench_parse_args::TYPE_INCREMENT;
   if (type_mask & (0x1 << type_id)) {
     // Trapezoidal point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
-    if (strategyMask & (0x1 << strategy_id)) {
+    if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
           std::string(parse_args.get_type_name(type_id)) + " " +
           std::string(parse_args.get_strategy_name(strategy_id)) + " " +
@@ -598,7 +582,7 @@ int main(int argc, char * argv[])
     
     // Naive point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_NAIVE;
-    if (strategyMask & (0x1 << strategy_id)) {
+    if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
           std::string(parse_args.get_type_name(type_id)) + " " +
           std::string(parse_args.get_strategy_name(strategy_id)) + " " +
@@ -614,7 +598,7 @@ int main(int argc, char * argv[])
 
     // Walk point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_WALK;
-    if (strategyMask & (0x1 << strategy_id)) {
+    if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
           std::string(parse_args.get_type_name(type_id)) + " " +
           std::string(parse_args.get_strategy_name(strategy_id)) + " " +
@@ -628,14 +612,13 @@ int main(int argc, char * argv[])
                                                    verbose, postscript);
     }
   }
-#endif
   
   // Construct Aggregately
   type_id = CGAL::Bench_parse_args::TYPE_AGGREGATE;
   if (type_mask & (0x1 << type_id)) {
     // Dummy point location:
-    StrategyId strategy_id = CGAL::Bench_parse_args::STRATEGY_DUMMY;
-    if (strategyMask & (0x1 << strategy_id)) {
+    Strategy_id strategy_id = CGAL::Bench_parse_args::STRATEGY_DUMMY;
+    if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
           std::string(parse_args.get_type_name(type_id)) + " " +
           std::string(parse_args.get_strategy_name(strategy_id)) + " " +
@@ -658,11 +641,9 @@ int main(int argc, char * argv[])
     App = &app;
 #endif
 
-#if BENCH_TRAITS != CONIC_TRAITS || BENCH_TRAITS != CK_CONIC_TRAITS
-    
     // Trapezoidal point location:
-    StrategyId strategy_id = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
-    if (strategyMask & (0x1 << strategy_id)) {
+    Strategy_id strategy_id = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
+    if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
           std::string(parse_args.get_type_name(type_id)) + " " +
           std::string(parse_args.get_strategy_name(strategy_id)) + " " +
@@ -678,7 +659,7 @@ int main(int argc, char * argv[])
 
     // Naive point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_NAIVE;
-    if (strategyMask & (0x1 << strategy_id)) {
+    if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
           std::string(parse_args.get_type_name(type_id)) + " " +
           std::string(parse_args.get_strategy_name(strategy_id)) + " " +
@@ -694,7 +675,7 @@ int main(int argc, char * argv[])
 
     // Walk point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_WALK;
-    if (strategyMask & (0x1 << strategy_id)) {
+    if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
           std::string(parse_args.get_type_name(type_id)) + " " +
           std::string(parse_args.get_strategy_name(strategy_id)) + " " +
@@ -708,11 +689,9 @@ int main(int argc, char * argv[])
                                                    verbose, postscript);
     }
 
-#endif
-    
     // Dummy point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_DUMMY;
-    if (strategyMask & (0x1 << strategy_id)) {
+    if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
           std::string(parse_args.get_type_name(type_id)) + " " +
           std::string(parse_args.get_strategy_name(strategy_id)) + " " +
