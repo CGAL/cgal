@@ -71,6 +71,11 @@ class QPE_vector_accessor : public std::unary_function<
     int, typename std::iterator_traits<VectorIt>::value_type > {
 
   public:
+    typedef typename 
+        std::unary_function<
+           int, 
+           typename std::iterator_traits<VectorIt>::value_type >::result_type
+    result_type;
     QPE_vector_accessor( VectorIt it, int lower = 0, int upper = 0)
         : z( 0), v( it)
     {
@@ -103,7 +108,15 @@ class QPE_matrix_accessor : public std::binary_function<
     int, int, typename std::iterator_traits<
             typename std::iterator_traits<MatrixIt>::value_type>::value_type> {
 
-  public:
+  public:    
+    typedef typename 
+       std::binary_function<
+         int, int, 
+         typename std::iterator_traits<
+             typename std::iterator_traits
+                <MatrixIt>::value_type>::value_type>::result_type  
+    result_type;
+
     QPE_matrix_accessor( MatrixIt it, int lower_1 = 0, int upper_1 = 0,
 			              int lower_2 = 0, int upper_2 = 0)
 	: z( 0), m( it)
@@ -142,6 +155,13 @@ class QPE_matrix_pairwise_accessor : public std::unary_function<
     typedef  typename std::iterator_traits<MatrixIt>::value_type  VectorIt;
 
   public:
+    typedef typename
+    std::unary_function<
+    int, typename std::iterator_traits<
+             typename std::iterator_traits
+                  <MatrixIt>::value_type>::value_type>::result_type
+    result_type;
+
     QPE_matrix_pairwise_accessor( MatrixIt it, int row, int lower = 0,
 				                        int upper = 0)
 	: z( 0)

@@ -34,7 +34,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-struct To_double {
+// use CGAL function?
+struct To_Double {
     template < class NT >
     double  operator ( ) ( const NT& x) { return CGAL::to_double( x); }
 };
@@ -42,7 +43,7 @@ struct To_double {
 // ==================
 // class declarations
 // ==================
-template < class Rep_, class NT_ = double, class ET2NT_ = To_double >
+template < class Rep_, class NT_ = double, class ET2NT_ = To_Double >
 class QPE__filtered_base;
 
 // ===============
@@ -60,6 +61,7 @@ class QPE__filtered_base : virtual public QPE_pricing_strategy<Rep_> {
 
     // number type
     typedef  NT_                        NT;
+    typedef  typename Base::ET          ET;
     typedef  ET2NT_                     ET2NT;
 
   protected:
@@ -108,7 +110,8 @@ class QPE__filtered_base : virtual public QPE_pricing_strategy<Rep_> {
     typedef  typename Rep::Is_linear    Is_linear;
 
     typedef  typename Rep::A_iterator   A_iterator;
-    typedef  std::iterator_traits<typename Rep::D_iterator>::value_type
+    typedef  typename std::iterator_traits
+        <typename Rep::D_iterator>::value_type
                                         D_row_iterator;
     typedef  typename Rep::Row_type_iterator
                                         R_iterator;

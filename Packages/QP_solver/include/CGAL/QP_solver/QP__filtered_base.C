@@ -119,7 +119,7 @@ update_maxima( )
 
 	    // scan row and update maxima
 	    for ( col = 0; col < n; ++col) {
-		z = CGAL::NTS::abs( a_it[ col][ row]);
+		z = CGAL::abs( a_it[ col][ row]);
 		if ( z > row_max      ) row_max       = z;
 		if ( z > col_max[ col]) col_max[ col] = z;
 	    }
@@ -127,7 +127,7 @@ update_maxima( )
 	    handled_A[ row] = true;
 
 	    // update bounds
-	    z = CGAL::NTS::abs( lambda_NT[ row]);
+	    z = CGAL::abs( lambda_NT[ row]);
 	    if ( z > bound2_wq) bound2_wq = z;
 	    z *= row_max_A[ row];
 	    if ( z > bound1) bound1 = z;
@@ -173,7 +173,7 @@ update_maxima( Tag_false)
 	    // scan row and update maxima
 	    row_max = nt0;
 	    for ( col = 0; col < n; ++col, ++d_row_it) {
-		z = CGAL::NTS::abs( *d_row_it);
+		z = CGAL::abs( *d_row_it);
 		if ( z > row_max      ) row_max       = z;
 		if ( z > col_max[ col]) col_max[ col] = z;
 	    }
@@ -181,7 +181,7 @@ update_maxima( Tag_false)
 	    handled_D[ row] = true;
 
 	    // update bounds
-	    z = CGAL::NTS::abs( x_B_O_NT[ row]);
+	    z = CGAL::abs( x_B_O_NT[ row]);
 	    if ( z > bound2_wq) bound2_wq = z;
 	    z *= row_max_D[ row];
 	    if ( z > bound1) bound1 = z;
@@ -240,7 +240,7 @@ transition( )
     NT  z;
     row_max_c = nt0;
     for ( int i = 0; i < n; ++i, ++c_it) {
-	z = CGAL::NTS::abs( *c_it);
+	z = CGAL::abs( *c_it);
 	if ( z > row_max_c  ) row_max_c   = z;
 	if ( z > col_max[ i]) col_max[ i] = z;
     }

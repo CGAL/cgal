@@ -412,11 +412,11 @@ transition( )
 // ------
 // numerator of current solution
 template < class Rep_ >
-QPE_solver<Rep_>::ET
+typename QPE_solver<Rep_>::ET
 QPE_solver<Rep_>::
 solution_numerator( ) const
 {
-    Index_iterator        i_it;
+    Index_const_iterator  i_it;
     Value_const_iterator  x_i_it, c_it;
     ET   s, z = et0;
     int  i;
@@ -430,9 +430,9 @@ solution_numerator( ) const
         // quadratic part
         s = et0;
         if ( is_QP && is_phaseII) {
-
+       
             // foreach j < i
-	    s += std::inner_product( x_B_O.begin(), x_i_it,
+	    s += std::inner_product(x_B_O.begin(), x_i_it,
 				D_pairwise_iterator(
 				    B_O.begin(),
 				    D_pairwise_accessor( qp_D, i)),
@@ -1510,7 +1510,7 @@ set_pricing_strategy( Pricing_strategy& strategy)
 // -----------------
 template < class Rep_ >
 void  QPE_solver<Rep_>::
-set_verbosity( int verbose = 0, std::ostream& stream = std::cout)
+set_verbosity( int verbose, std::ostream& stream)
 {
     vout  = Verbose_ostream( verbose >  0, stream);
     vout1 = Verbose_ostream( verbose == 1, stream);

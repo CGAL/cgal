@@ -154,8 +154,9 @@ class QPE_transform_iterator_1 {
     // access
     Val    operator *  ( ) const { return op( *it); }
 
-    // equality operator
+    // equality operators
     bool   operator == ( const Self& x) const { return ( it == x.it); }
+    bool   operator != ( const Self& x) const { return ( it != x.it); }
 
     // forward operations
     // ------------------

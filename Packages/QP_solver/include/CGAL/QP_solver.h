@@ -45,6 +45,7 @@
 #endif
 
 #include <CGAL/Function_objects/Value_by_basic_index.h>
+#include <CGAL/functional.h>
 
 #ifndef CGAL_IO_VERBOSE_OSTREAM_H
 #include <CGAL/IO/Verbose_ostream.h>
@@ -127,9 +128,16 @@ class QPE_solver {
     
 
     // indices (variables and constraints)
+public:
+    // QPE__partial_base.h needs them
     typedef  std::vector<int>           Indices;
-    typedef  Indices::const_iterator    Index_iterator;
 
+    // it seems we need the non-const version here as well
+    typedef  Indices::iterator            Index_iterator;
+    typedef  Indices::const_iterator      Index_const_iterator;
+    //typedef  Indices::const_iterator    Index_iterator;
+
+private:
     // values (variables' numerators)
     typedef  std::vector<ET>            Values;
     typedef  typename Values::iterator  Value_iterator;
@@ -150,23 +158,23 @@ class QPE_solver {
     typedef  QPE_vector_accessor<
 		 typename std::iterator_traits<A_iterator>::value_type,
 		 false, false >         A_by_index_accessor;
-    typedef  QPE_transform_iterator_1< Index_iterator, A_by_index_accessor >
+    typedef  QPE_transform_iterator_1< Index_const_iterator, A_by_index_accessor >
                                         A_by_index_iterator;
 
     typedef  QPE_vector_accessor< B_iterator, false, false >
                                         B_by_index_accessor;
-    typedef  QPE_transform_iterator_1< Index_iterator, B_by_index_accessor >
+    typedef  QPE_transform_iterator_1< Index_const_iterator, B_by_index_accessor >
                                         B_by_index_iterator;
 
     typedef  QPE_vector_accessor< C_iterator, false, false >
                                         C_by_index_accessor;
-    typedef  QPE_transform_iterator_1< Index_iterator, C_by_index_accessor >
+    typedef  QPE_transform_iterator_1< Index_const_iterator, C_by_index_accessor >
                                         C_by_index_iterator;
 
     typedef  QPE_vector_accessor<
 		 typename std::iterator_traits<D_iterator>::value_type,
 		 false, false >         D_by_index_accessor;
-    typedef  QPE_transform_iterator_1< Index_iterator, D_by_index_accessor >
+    typedef  QPE_transform_iterator_1< Index_const_iterator, D_by_index_accessor >
                                         D_by_index_iterator;
 
     typedef  QPE_matrix_accessor< A_iterator, false, true, false, false>
@@ -179,7 +187,7 @@ class QPE_solver {
 
     typedef  QPE_matrix_pairwise_accessor< D_iterator, Is_symmetric >
                                         D_pairwise_accessor;
-    typedef  QPE_transform_iterator_1< Index_iterator, D_pairwise_accessor >
+    typedef  QPE_transform_iterator_1< Index_const_iterator, D_pairwise_accessor >
                                         D_pairwise_iterator;
 
     // access to special artificial column by basic constraint index
@@ -214,13 +222,13 @@ class QPE_solver {
     typedef  Variable_value_iterator    Working_variable_value_iterator;
     */
 
-    typedef  Index_iterator             Basic_variable_index_iterator;
+    typedef  Index_const_iterator       Basic_variable_index_iterator;
     typedef  Value_const_iterator       Basic_variable_numerator_iterator;
     typedef  QPE_transform_iterator_1<
                  Basic_variable_numerator_iterator, Quotient_maker >
                                         Basic_variable_value_iterator;
     
-    typedef  Index_iterator             Basic_constraint_index_iterator;
+    typedef  Index_const_iterator       Basic_constraint_index_iterator;
     
     typedef  Value_const_iterator       Lambda_numerator_iterator;
     typedef  QPE_transform_iterator_1<
@@ -856,15 +864,16 @@ transition( Tag_false)
     typedef  Creator_2< Index_iterator, D_pairwise_accessor,
 	         D_pairwise_iterator >  D_transition_creator_iterator;
 
-    typedef  QPE_transform_iterator_1< Index_iterator, std::binder1st<
-	         Binary_compose_2< D_transition_creator_iterator,
-	             Identity< Index_iterator >,
-	             std::binder1st< D_transition_creator_accessor > > > >
+    typedef  QPE_transform_iterator_1< Index_iterator, typename Bind<
+	         typename Compose< D_transition_creator_iterator,
+	             Identity< Index_iterator >, typename
+	             Bind< D_transition_creator_accessor, D_iterator, 1 >::Type >::Type,
+                            Index_iterator, 1>::Type >
 	                                twice_D_transition_iterator;
 
     inv_M_B.transition( twice_D_transition_iterator( B_O.begin(),
-	std::bind1st( compose2_2( D_transition_creator_iterator(),
-	    Identity<Index_iterator>(), std::bind1st(
+	bind_1( compose( D_transition_creator_iterator(),
+	    Identity<Index_iterator>(), bind_1(
 		D_transition_creator_accessor(), qp_D)), B_O.begin())));
 }
 
@@ -960,7 +969,7 @@ ratio_test_1__q_x_S( Tag_false)
 					     A_by_index_accessor( qp_A[ j])),
 			q_x_S.begin(),
 			compose2_2( std::minus<ET>(),
-				    std::identity<ET>(),
+				    Identity<ET>(),
 				    std::bind1st( std::multiplies<ET>(), d)));
     }
 
@@ -1151,7 +1160,7 @@ compute__x_B_S( Tag_false)
 		    x_B_S.begin(),
 		    compose2_2( std::minus<ET>(),
 				std::bind1st( std::multiplies<ET>(), d),
-				std::identity<ET>()));
+				Identity<ET>()));
 
     // x_B_S = +- ( b_S_B - A_S_BxB_O * x_B_O)
     Value_iterator  x_it = x_B_S.begin();

@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 // =================
 // class declaration
 // =================
-template < class Rep_, class NT_ = double, class ET2NT_ = To_double >
+template < class Rep_, class NT_ = double, class ET2NT_ = To_Double >
 class QPE_partial_filtered_pricing;
 
 // ===============
@@ -56,7 +56,8 @@ class QPE_partial_filtered_pricing
 
     // types from the base class
     typedef  typename Base::ET          ET;
-
+    typedef  typename Partial_base::Index_iterator Index_iterator;
+    typedef  typename Partial_base::Index_const_iterator Index_const_iterator;
   public:
 
     // number type
@@ -119,7 +120,7 @@ pricing( )
 	vout() << "active variables:" << std::endl;
     }
 
-    Partial_base::Index_iterator  it, min_it;
+    Index_const_iterator  it, min_it;
     NT                            mu, min_mu = nt0;
     for ( it = active_set_begin(); it != active_set_end(); ++it) {
 
@@ -160,7 +161,7 @@ pricing( )
 	CGAL_qpe_debug {
 	    vout() << "inactive variables:" << std::endl;
 	}
-	Index_iterator  active_it;
+	Index_const_iterator  active_it;
 	for ( it = inactive_set_begin(); it != inactive_set_end(); ++it) {
 
 	    // compute mu_j

@@ -63,8 +63,8 @@ class QPE_basis_inverse {
   private:
     
     // private types
-    typedef  std::vector<ET>            Row;
-    typedef  std::vector<Row>           Matrix;
+    typedef std::vector<ET>            Row;
+    typedef std::vector<Row>           Matrix;
 
   public:
 
@@ -312,8 +312,8 @@ class QPE_basis_inverse {
     template < class InputIterator >                            // QP case
     void  transition( InputIterator twice_D_it)
     {
-	Matrix::iterator  m_it1, m_it2, p_begin, r_begin;
-	Row   ::iterator  x_it;
+	typename Matrix::iterator  m_it1, m_it2, p_begin, r_begin;
+	typename Row   ::iterator  x_it;
 	unsigned int      row, col;
 
 	// compute new basis inverse [ upper-left part: -(Q^T * 2 D_B * Q) ]

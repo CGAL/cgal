@@ -52,6 +52,9 @@ class QPE_partial_exact_pricing : public QPE__partial_base<Rep_> {
 
     // types from the pricing base class
     typedef  typename Base::ET          ET;
+    typedef  typename Partial_base::Index_iterator Index_iterator;
+    typedef  typename Partial_base::Index_const_iterator Index_const_iterator;
+
 
   public:
 
@@ -82,7 +85,7 @@ template < class Rep_ >
 int  QPE_partial_exact_pricing<Rep_>::
 pricing( )
 {
-    Partial_base::Index_iterator  it, min_it;
+    Index_const_iterator  it, min_it;
     ET                            mu, min_mu =  0;
 
     // loop over all active non-basic variables
@@ -109,7 +112,7 @@ pricing( )
 	CGAL_qpe_debug {
 	    vout() << "inactive variables:" << std::endl;
 	}
-	Index_iterator  active_it;
+	Index_const_iterator  active_it;
 	for ( it = inactive_set_begin(); it != inactive_set_end(); ++it) {
 
 	    // compute mu_j

@@ -58,6 +58,7 @@ class QPE__partial_base : virtual public QPE_pricing_strategy<Rep_> {
     // types
     typedef  typename Base::QP_solver::Indices         Indices;
     typedef  typename Base::QP_solver::Index_iterator  Index_iterator;
+    typedef  typename Base::QP_solver::Index_const_iterator  Index_const_iterator;
 
     // construction
     QPE__partial_base( bool  randomize, Random&  random);
@@ -66,15 +67,15 @@ class QPE__partial_base : virtual public QPE_pricing_strategy<Rep_> {
     virtual  void  init( );
 
     // access
-    Index_iterator    active_set_begin( ) const { return N.begin();   }
-    Index_iterator    active_set_end  ( ) const { return N.begin()+s; }
+    Index_const_iterator    active_set_begin( ) const { return N.begin();   }
+    Index_const_iterator    active_set_end  ( ) const { return N.begin()+s; }
 
-    Index_iterator  inactive_set_begin( ) const { return N.begin()+s; }
-    Index_iterator  inactive_set_end  ( ) const { return N.end  ();   }
+    Index_const_iterator  inactive_set_begin( ) const { return N.begin()+s; }
+    Index_const_iterator  inactive_set_end  ( ) const { return N.end  ();   }
 
     // operations
-    void  entering_basis( Index_iterator  it);
-    void  activating    ( Index_iterator& it);
+    void  entering_basis( Index_const_iterator  it);
+    void  activating    ( Index_const_iterator& it);
 
     virtual  void  leaving_basis( int i);
     virtual  void  transition( );
@@ -130,7 +131,7 @@ init( )
 template < class Rep_ >  inline
 void
 QPE__partial_base<Rep_>::
-entering_basis( Index_iterator it)
+entering_basis( Index_const_iterator it)
 {
     CGAL_qpe_precondition( it >= active_set_begin() && it < active_set_end());
 
@@ -144,7 +145,7 @@ entering_basis( Index_iterator it)
 template < class Rep_ >  inline
 void
 QPE__partial_base<Rep_>::
-activating( Index_iterator& it)
+activating( Index_const_iterator& it)
 {
     CGAL_qpe_precondition(
 	it >= inactive_set_begin() && it < inactive_set_end());

@@ -11,6 +11,12 @@ class Value_by_basic_index : public std::unary_function<
     int, typename std::iterator_traits<RndAccIt>::value_type > {
 
   public:
+    typedef typename
+    std::unary_function<
+      int, typename std::iterator_traits
+         <RndAccIt>::value_type >::result_type
+    result_type;
+
     Value_by_basic_index( RndAccIt x_B_O_it,            int n_original,
 			  RndAccIt x_B_S_it = x_B_O_it, int n_slack = 0)
 	: o( x_B_O_it), s( x_B_S_it),
