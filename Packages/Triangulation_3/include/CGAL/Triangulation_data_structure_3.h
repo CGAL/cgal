@@ -654,14 +654,14 @@ private:
 public:
 
   template <class OutputIterator>
-  void
+  OutputIterator
   incident_cells(Vertex_handle v, OutputIterator cells) const
   {
       CGAL_triangulation_precondition( v != NULL );
       CGAL_triangulation_expensive_precondition( is_vertex(v) );
 
       if ( dimension() < 3 )
-          return;
+          return cells;
 
       std::vector<Cell_handle> tmp_cells;
       tmp_cells.reserve(64);
@@ -672,10 +672,11 @@ public:
 	  (*cit)->set_in_conflict_flag(0);
 	  *cells++ = *cit;
       }
+      return cells;
   }
 
   template <class OutputIterator>
-  void
+  OutputIterator
   incident_vertices(Vertex_handle v, OutputIterator vertices) const
   {
       CGAL_triangulation_precondition( v != NULL );
@@ -684,11 +685,11 @@ public:
       CGAL_triangulation_expensive_precondition( is_valid() );
 
       if (dimension() == -1)
-	  return;
+	  return vertices;
 
       if (dimension() == 0) {
 	  *vertices++ = v->cell()->neighbor(0)->vertex(0);
-	  return;
+	  return vertices;
       }
 
       if (dimension() == 1) {
@@ -697,7 +698,7 @@ public:
 	  Cell_handle n1 = n0->neighbor(1-n0->index(v));
 	  *vertices++ = n0->vertex(1-n0->index(v));
 	  *vertices++ = n1->vertex(1-n1->index(v));
-	  return;
+	  return vertices;
       }
 
       // Get the incident cells.
@@ -721,7 +722,7 @@ public:
       }
 
       // Now output the vertices.
-      std::copy(tmp_vertices.begin(), tmp_vertices.end(), vertices);
+      return std::copy(tmp_vertices.begin(), tmp_vertices.end(), vertices);
   }
 
   int degree(Vertex_handle v) const;
@@ -2251,9 +2252,8 @@ int
 Triangulation_data_structure_3<Vb,Cb>::
 degree(Vertex_handle v) const
 {
-    std::vector<Vertex_handle> V;
-    incident_vertices(v, std::back_inserter(V));
-    return V.size();
+    Counting_output_iterator cnt;
+    return (int) incident_vertices(v, cnt).current_counter();
 }
 
 template <class Vb, class Cb >
