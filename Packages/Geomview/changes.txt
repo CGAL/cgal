@@ -1,11 +1,10 @@
-Geomview package: an interface to the Geometry Center's popular 3D viewer
+CHANGES to the Geomview package.
 
-CONTENTS:
+Ver 3.0 (?? October 00)
+- Added "\newpage" from Susan's changes for CGAL 2.2.
+- Put myself as maintainer. [syl]
 
-include/CGAL/IO/Geomview_stream.h
-src/Geomview_stream.C
-
-CHANGES
+---- CGAL 2.2 is out. ----
 
 Ver 2.9 (8 August 00)
 - find back the tex files which had disappear
