@@ -71,6 +71,6 @@
 
 #include <CGAL/Homogeneous/simple_homogeneous_rep.h>
 
-#include <CGAL/iterator_traits_pointer_specs_for_simple_homogeneous_kernel.h>
+CGAL_ITERATOR_TRAITS_POINTER_SPEC_TEMPLATE(CGAL::Simple_homogeneous)
 
 #endif // CGAL_SIMPLE_HOMOGENEOUS_H

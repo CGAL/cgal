@@ -1,3 +1,6 @@
+2.72   (25 Oct 2002)
+- Rewrite iterator traits pointer specs.
+
 2.71   (9 Oct 2002)
 - Remove Kernel_traits_common.h.
 

@@ -1,3 +1,6 @@
+4.70      (25 October 02)
+- Rewrite iterator traits pointer specs.
+
 4.69      (12 October 02)
 - Remove Windows end of lines.
 

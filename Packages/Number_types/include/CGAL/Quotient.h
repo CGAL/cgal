@@ -611,6 +611,4 @@ gcd(const NumberType&, const NumberType&)
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/iterator_traits_pointer_specs_for_cartesian_quotient.h>
-
 #endif  // CGAL_QUOTIENT_H

@@ -219,6 +219,6 @@ struct Cartesian
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/iterator_traits_pointer_specs_for_cartesian_kernel.h>
+CGAL_ITERATOR_TRAITS_POINTER_SPEC_TEMPLATE(CGAL::Cartesian)
 
 #endif // CGAL_CARTESIAN_H
