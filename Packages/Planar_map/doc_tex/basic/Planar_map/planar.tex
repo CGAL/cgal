@@ -4,7 +4,7 @@
 %|
 %| by Iddo Hanniel ,Eyal Flato, Dan Halperin, Sariel Har-Peled, 
 %| Oren Nechushtan and Shai Hirsch
-%+----------------------------------------------------------------------------80
+%+----------------------------------------------------------------------------
 %| update log
 %|
 %| 01 Jun 2000 - Shai Hirsch
@@ -19,8 +19,10 @@
 %| 30 Mar 2000 - Shai Hirsch
 %|    Transforming to new format: Separating to User Manual
 %|    and Reference Manual. Using new cc commands.
-%|     
-%-----------------------------------------------------------------------------80
+%|    
+%| 12 May 2003 - Efi Fogel
+%|     Major surgery
+%-----------------------------------------------------------------------------
 
 \def\Ipe#1{\def\IPEfile{#1}\input{#1}}
 
@@ -40,98 +42,471 @@
 \label{I1_ChapterPlanarMap}
 \minitoc
 
-% +========================================================================+
-\section{Introduction}
-% +========================================================================+
+\section*{Introduction}
 \label{PM_sec:intro}
 
-In this chapter we introduce \ccc{planar maps} which are 
-embeddings of \ccc{topological maps} into the plane.
-The \ccc{Planar_map_2<Dcel,Traits>} class is derived
-from the \ccc{Topological_map<Dcel>} class with additional geometric
-considerations and functionalities (e.g., point location). 
-In this section we briefly review
-the geometric concepts added in the planar map; the combinatorial concepts were
-reviewed in Chapter ~\ref{I1_ChapterTopologicalMap}, {\em Topological Maps}.
-We also describe the additional functionality of \ccc{Planar_map_2<Dcel,Traits>}
-over that of \ccc{Topological_map<Dcel>}.
+{\em Planar maps} are embeddings of {\em topological maps} into the
+plane. A planar map subdivides the plane into vertices, edges, and
+faces. The vertices, edges, and faces of a subdivision are the
+embeddings of their {\em topological map} counterparts into the plane,
+such that (1) each vertex is embedded as a planar point, (2) each edge
+is embedded as a bounded $x$-monotone curve, and does not contain
+vertices in its interior, and (3) each face is a maximal connected
+region of the plane that does not contain edges and vertices in its
+interior.
 
-\section{Terms and Software Design}
+The \ccc{Planar_map_2<Dcel,Traits>} class is derived from the
+\ccc{Topological_map<Dcel>} class. While the
+\ccc{Topological_map<Dcel>} base class provides the necessary
+combinatorial-related capabilities, the
+\ccc{Planar_map_2<Dcel,Traits>} class provides all the
+geometric-related capabilities required to maintain {\em planar maps}
+induced by interior-disjoint $x$-monotone curves, and perform
+geometric queries, such as point location.
 
-   There are two template parameters, the \ccc{Dcel} which is the
-   underlying combinatorial data structure and the \ccc{Traits} which
-   is the underlying geometry, i.e. the number type used, the
-   coordinate representation and the family of curves treated.
+In this chapter we review the data and functionality added
+to the \ccc{Planar_map_2<Dcel,Traits>} class over that of the 
+\ccc{Topological_map<Dcel>} class. The combinatorial capabilities of
+the base class are covered in Chapter ~\ref{I1_ChapterTopologicalMap},
+{\em Topological Maps}.
 
-\paragraph{Curve:}
-We will use the term {\it curve} to describe the image of a continuous
-$1\!\!-\!\!1$ mapping into the plane of any one of the following: the
-closed unit interval (arc), the open unit interval (unbounded curve),
-or the unit circle (closed curve). In all cases a curve is non
-self-intersecting. Segments, lines, rays, conic sections are examples for curves.
+\subsection*{Terms and Definitions}
+Before we expose a code fragment that manipulates a {\em planar
+map}, let us define precisely some of the terms used here after.
 
-\paragraph{$X$-monotone curve:}
-We
-use a convention
-that a curve $c$ is $x$-monotone if $c$ either intersects 
-any vertical line in at most one point, or $c$ is a vertical
-segment. 
+\begin{description}
+\item[Curve] - the image of a continuous $1$--$1$ mapping into the
+plane of any one of the following: the closed unit interval (arc), the
+open unit interval (unbounded curve), or the unit circle (closed
+curve). In all cases a curve is non self-intersecting. Segments,
+lines, rays, conic sections are examples of curves.
 
-\paragraph{Planar subdivision (planar map):}
-A planar subdivision (or planar map) is an embedding of a planar 
-%graph $G$
-topological map $T$ 
-into the plane, such that each edge of $T$ is embedded as a
-bounded $x$-monotone curve and each vertex is embedded as a planar point.
-% The image of a vertex of $T$ is a {\em vertex},
-%and the image of an arc is an {\em edge}.
-In this embedding no
-%pair of edges intersect in their interiors.
-edge intersects another edge interior.
+\item[{\boldmath $X$}-monotone curve] - a curve $c$ that intersects
+any vertical line in at most one point, or a vertical segment.
 
-A {\em face} of the subdivision is a maximal connected region of the
-plane that does not contain any vertex or edge. 
-We consider a face to be open, and its boundary is
-formed by vertices and halfedges of the subdivision.
-The halfedges are oriented around a face so that the face they bound
+\item[Face] - a maximal connected region of the plane that does not
+contain any vertex or edge. We consider a face to be open, and its
+boundary is formed by vertices and halfedges of the subdivision.
+The halfedges are oriented around a face so that the face they bound 
 is to their left. This means that halfedges on the outer boundary
-of a face are traversed in counterclockwise order, and halfedges on the inner
-boundaries (holes) of a face are traversed in clockwise order. Halfedges 
-around a vertex are also traversed in clockwise order. 
+of a face are traversed in counterclockwise order, and halfedges on
+the inner boundaries (holes) of a face are traversed in clockwise
+order. Halfedges around a vertex are also traversed in clockwise order. 
 
-% \paragraph{Maps with infinite objects (bounding boxes):}
-% 
-% The Planar map deals both with bounded objects, such as segments,
-% circles. and with infinite objects, such as lines, rays,
-% parabolas. For simplicity we decided that the default would be the
-% former, e.g. bounded objects. In order to deal with the latter, some
-% finite representation of such infinite curves is required. The
-% bounding box strategy supplies the required functionality to do this. 
-%
-% A bounding box is defined by two main aspects: its traits
-% representation and its maintenance strategy. The traits representation
-% is a given shape that corresponds to a region in the plane in which we
-% are interested at a given moment, e.g. a rectangle, a big disk, the
-% whole plane. The maintenance strategy, can be of many types. The
-% strategy may be of \ccc{static} type , i.e. we are interested only in
-% a fixed region of the plane, curves outside this region are ignored,
-% or it may be \ccc{dynamic}, i.e. the bounding box increases or
-% decreases while the user updates the planar map. The strategy may be
-% of an \ccc{open} type, i.e. the boundary of the box should not be
-% included as curves of the map, or it may be \ccc{closed}, where this
-% means that the boundary is a part of the planar map. 
+\item[Point Location] - a query applied to a {\em planar map}. Given a
+map and a query point $p$, find the region of the map containing $p$.
+\end{description}
 
-\paragraph{Point Location:}
+\subsection*{A simple Program}
+The basic tasks of the simple program listed below are to construct a
+planar map of three segments, and issue a point location query.
 
-Some of the basic operations on planar maps are queries such as ``what is the location of a point in the map?'', or ``which curve is vertically above the point?''.
-These geometric queries are supplied as part of this Planar Map class, with 
-several algorithms available for the user to choose from.
+\begin{alltt}
+#include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Pm_segment_traits_2.h>
+#include <CGAL/Pm_default_dcel.h>
+#include <CGAL/Planar_map_2.h>
+#include <iostream>
+#include <iterator>
+#include <algorithm>
 
-\paragraph{I/O functions:}
-I/O functions for reading a saved planar map from the standard input, 
-writing it to the standard output or drawing it to a graphic stream are also provided.
-Users of I/O functions for the planar map package are required to define I/O 
-operators for the curves defined in their \ccc{Traits} classes.
+typedef CGAL::Quotient<MP_Float>          Number_type;
+typedef CGAL::Cartesian<Number_type>      Kernel;
+typedef CGAL::Pm_segment_traits_2<Kernel> Traits;
+typedef Traits::Point_2                   Point_2;
+typedef Traits::X_monotone_curve_2        X_monotone_curve_2;
+typedef CGAL::Pm_default_dcel<Traits>     Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>   Planar_map;
+typedef Planar_map::Halfedge_const_handle Halfedge_const_handle;
+typedef Planar_map::Locate_type           Locate_type;
+
+int main()
+\{
+  Planar_map pm;
+  X_monotone_curve_2 cv[3];
+  Point_2 a1(0,0), a2(0,4), a3(4,0);
+ 
+  cv[0] = X_monotone_curve_2(a1,a2);
+  cv[1] = X_monotone_curve_2(a2,a3);
+  cv[2] = X_monotone_curve_2(a3,a1);
+  pm.insert(&cv[0], &cv[3]);
+
+  Point_2 p(1,1);
+  Locate_type lt;
+  Halfedge_const_handle edge = pm.locate(p, lt);
+  if (lt != Planar_map::FACE)
+    std::cout << "Point location failed!" << std::endl;
+  else
+    std::cout << "Point location passed!" << std::endl;
+
+  return 0;
+\}
+\end{alltt}
+
+When compiled and executed properly, the program above results with
+the line ``Point location passed!'' printed to the standard
+output. The constructed planar map consists of two faces, a triangular
+face and the unbounded face. It is instantiated with the
+\ccc{Pm_segment_traits_2} traits class to handle segments only. The 
+information returned from the \ccc{locate()} function is not analyzed
+further, as this program is presented to illustrates a simple usage
+only.
+
+\section*{Architecture}
+The \ccc{Planar_map_2<Dcel,Traits>} class is parameterized with two
+objects. The \ccc{Dcel} object represents the underlying topological
+data structure and maintains a {\em doubly-connected edge list}. The
+\ccc{Traits} object provides the geometric functionality, and is
+tailored to handle a specific family of curves. It encapsulates the
+number type used and the coordinate representation. This package
+contains traits classes that handle various types of curves (e.g.,
+segments, polylines, conics, etc.).
+
+All the combinatorial entities have a geometric mapping, e.g.,
+a vertex of a planar map has a \ccc{Point} data member, a halfedge has
+a \ccc{X_monotone_curve_2} (x-monotone curve) data member, etc.
+
+\subsection*{Operations}
+In addition to the modifying function, namely, insertion, removal,
+splitting and merging, the user can perform point location queries and
+vertical ray shoot queries.
+
+\paragraph{Modification}
+\paragraph{Queries}
+\paragraph{IO}
+The \ccc{Planar Map} package supports saving, restoring, and drawing
+of planar maps. Each traits class shipped with this package contains
+the necessary I/O operators to save, restore and draw the type of
+curves it handles and the type of the curve endpoint.
+
+A simple textual format of a {\em planar map} representation can be
+written to the standard output with the \ccc{Extractor} (\ccc{ >> })
+operator defined for \ccc{Planar_map_2}. The same format can be read
+from the standard input with the \ccc{Insertor} (\ccc{ << }) operator
+defined for \ccc{Planar_map_2}. Add the include directive below to
+include these operator definitions,
+
+\ccInclude{CGAL/IO/Pm_iostream.h}
+
+Advanced formats, such as XML-based, are currently considered, but
+haven't been implemented yet, nor has a binary format.
+
+With the use of the \ccc{Pm_drawer} class a {\em planar map}
+representation can be sent to a graphic stream, such as
+\ccStyle{leda_window}, Postscript file, or Geomview. Add the include
+directive below to include this class definition.
+
+\ccInclude{CGAL/IO/Pm_drawer.h}
+
+Drawing a {\em planar map} with gomview or produce Postscript that
+represents a planar map, can be done by applying the \ccc{Insertor}
+operator on the appropriate graphic stream and the planar map
+instance. Add the corresponding include directive below, to include
+any if these class definitions.
+
+\ccInclude{CGAL/IO/Pm_Postscript_file_stream.h}
+\ccInclude{CGAL/IO/Pm_Geomview_stream.h}
+
+% Users of I/O functions for the planar map package are required to
+% define I/O operators for the curves defined in their \ccc{Traits}
+% classes. 
+
+Users of I/O functions for the planar map package are required to
+define I/O operators for the curves defined in their \ccc{Traits}
+classes.  When using \ccc{Traits} classes in which this operators are
+already defined (as \ccc{Segment Traits} or \ccc{Circle Traits} ) the
+operator definition is not obligated, however using \ccc{Traits}
+classes as the \ccc{Polyline Traits} will force the user to define
+I/O operators on his polyline curve.
+
+\begin{ccAdvanced}
+\subsection*{I/O for User Defined Planar Maps and the I/O Format}
+
+Users may wish to add their own attributes planar map components. If
+those attributes are to be written as part of the planar map
+representation (respectively, are to be re-read later) a specialized
+reader (scanner) class (writer class, resp.) should be defined for the
+special planar map. This is done preferably by making it a sub class
+of the class \ccStyle{Pm_file_scanner} (\ccStyle{Pm_file_writer},
+resp.) and overriding all the relevant function for scanning (writing,
+resp.) the changed components.
+
+After the definition of the inherited class users have to call the
+function \ccStyle{read} of \ccc{Planar map} (resp., the global
+function \ccStyle{write_pm} ) with the inherited class as a
+parameter. 
+
+The same applies for extending the output graphic streams to include
+additional attributes only for this purpose a new \ccc{drawer}\/ class
+has to be defined.  This is done preferably by making this class
+inherit the class \ccStyle{Pm_drawer}. In order to send the special
+planar map to the graphic stream one should call the global function
+\ccStyle{draw_pm} with this class and their planar map as parameters.
+
+\paragraph{Format}
+\ccRefLabel{Pm_IO_format}
+The chosen format does not follow an existing standard format.
+Generally, the format contains lists of the components of a planar map 
+followed by each other. For each component we write its associative
+geometric information and some topological information in order to be
+able to update the \ccc{Dcel} efficiently. The format is detailed
+below.
+
+\begin{enumerate}
+
+\item The data begins with a line of three integer values specifying
+the number of vertices, halfedges and faces in the planar map.
+\item The vertices list: each component in the vertices list contains
+the point of its associative vertex. 
+\item The halfedges list: each halfedge component is written by an
+index indicating the vertex origin of the halfedge, and a curve
+specifying the halfedge's curve.
+\item The faces list: each component in the faces list contains its
+outer boundary, if the face is bounded, and a list of its holes which
+can be empty in case the face has no holes. The format of the outer
+boundary is the number of halfedges of its connected component
+followed by the indices indicating the halfedges of that component,
+those indices have the same order of the halfedges on the connected
+component. The format of the list of the holes is first the number of
+holes followed by the connected components per each hole, the format
+of each connected components resembles the format of the outer
+boundary specified above.
+\item Lines beginning with '\#' serve as comments and are ignored.
+\item The format does not differentiate between spaces and new lines, 
+except new lines which belong to commented lines. 
+And hence, writing the planar in one single line having no comments is
+also considered legal. If users would like to keep the commented
+lines, they may write all the components between two consecutive
+commented lines in one single line.
+
+\end{enumerate}
+
+The current format may not be comfortable for a user to read because
+of the extensive use of indices. The user can print a planar map in a
+verbose format (shorthand for verbose mode format).  The skeleton of 
+the verbose format is the same. However, in order for the output to be
+clearer for a human reader points and halfedges are explicitly written
+rather than being represented by indices. Also the direction of the
+halfedges are printed in a more convenient way to read. This verbose
+format cannot be scanned by the reading functions of
+\ccc{Planar_map_2}.
+
+\ccExample
+
+The example below presents a representation of a planar map containing
+one triangle with the coordinates {\em (0,0)}, {\em (1,1)} and {\em
+(2,0)}.  The \ccc{Planar_map_2} instance that was used to produce this
+example was templated with the \ccStyle{Pm_segment_traits_2}
+class, which in turn was templated with the representation class
+\ccStyle{Cartesian<leda_rational>}.  The first line specifies that the
+planar map has three vertices, six halfedges, and 2 faces (the
+triangle and the unbounded face).  The list of vertices each
+represented by its associated point follows, as shown in the output
+example.  The next list is the one of halfedges, each component is
+represented by its index (0,1 or 2) in the vertices list and its
+associated segment.  The faces list is presented next. It starts with
+the \ccStyle{unbounded face} having one hole which is the triangle,
+this connected component specifies that the hole has three halfedges
+with the indices 4, 0 and 3. The next face presenting the triangle is
+written in the same manner.
+
+\ccIncludeExampleCode{Planar_map/example9.cin}
+
+\subsection*{Example of User Defined I/O Functions}
+\label{PM_sec:example10}
+
+The following program demonstrates the usage of I/O functions while
+users have an additional attribute in their planar map.
+The attribute chosen here is adding an associative color to each
+vertex. First the program extends the \ccc{Dcel} to maintain this
+attribute. Second, the program extends the \ccc{Pm_file_writer} class
+to handle the newly defined vertex. 
+It simply overrides the functions for writing a vertex to print the
+color of the vertex as well. Finally, the main function defines an
+empty \ccc{Planar map}, reads it from the standard input stream, and
+then set all vertices colors. It then defines an object of its
+extended writer class and parameterize the function \ccc{write_pm}
+with that object.
+
+\ccIncludeExampleCode{Planar_map/example10.C}
+
+The input of the program is a text file presenting the \ccc{Planar map}:
+\ccIncludeExampleCode{Planar_map/example10.cin}
+
+The output is the \ccc{Planar map} written in both formats, non
+verbose and verbose. In addition the two lists (non verbose and
+verbose) of halfedges are written.
+\ccIncludeExampleCode{Planar_map/example10.cout}  
+
+More details are given in sections
+\ccc{File_header}\lcTex{
+   (\ccRefPage{CGAL::File_header})},
+\ccc{Pm_file_scanner<Planar_map>}\lcTex{
+   (\ccRefPage{CGAL::Pm_file_scanner<Planar_map>})}, 
+\ccc{Pm_file_writer<Planar_map>}\lcTex{ 
+   (\ccRefPage{CGAL::Pm_file_writer<Planar_map>})} and
+\ccc{Pm_drawer<Planar_map>}\lcTex{
+   (\ccRefPage{CGAL::Pm_drawer<Planar_map, Window>})}.
+
+\end{ccAdvanced}
+
+\subsection*{Traits Classes}
+The planar map class is parameterized with the interface class
+\ccStyle{PlanarMapTraits_2} which defines the abstract interface
+between planar maps and the primitives they use.
+
+We supply a default traits class for exact arithmetic ---
+\ccStyle{Pm_segment_traits_2<Kernel>} where \ccStyle{Kernel} is the kernel
+representation type (\ccc{Homogeneous} or \ccc{Cartesian}).  
+The traits class handle finite line segments in the plane
+and use the CGAL kernel (\ccStyle{Point_2} is of type 
+\ccStyle{R::Point_2} and \ccStyle{X_monotone_curve_2} is of type
+\ccStyle{R::Segment_2}).
+We also supply a traits class that uses LEDA's rational kernel and makes use
+of its efficient predicates. The different supplied traits classes are described
+at the end of this chapter.
+
+Models of PlanarMapTraits\_2 are meant to serve as arguments for the respective
+template parameter of \ccc{CGAL::Planar_map_2<Dcel,Traits>}. However, it should
+be noted that
+each model of PlanarMapTraits\_2 defines a family of curves and
+primitive geometric operations thereof. Sometimes, the only
+implementation available for the manipulation of a certain family of
+curves is one of the supplied traits classes. A scenario where one
+uses a traits class object to manipulate such curves without
+maintaining planar maps is certainly possible.
+
+The \ccc{PlanarMapWithIntersectionsTraits_2} and \ccc{ArrangementTraits_2} 
+concepts are refinements of the \ccc{PlanarMapTraits_2} concept.
+Therefore, all models of the formers are models of the latter. 
+There are several supplied traits classes for the \ccc{Arrangement} which the user can use. 
+These classes are described at the end of Chapter \ref{I1_ChapterArrangement_2}
+(\ccc{2D Arrangements}).
+
+\subsection*{Point Location Strategies}
+Some of the basic operations on planar maps are queries such as ``what
+is the location of a point in the map?'', or ``which curve is
+vertically above the point?''. These geometric queries are supplied as
+part of this Planar Map class, with several algorithms available for
+the user to choose from.
+
+The \ccClassTemplateName\ class has a point location function
+(namely, the \ccc{locate} function that determines which feature of the map 
+contains a given query point)
+which is also used internally in the \ccc{insert} function.
+The planar map users can define which algorithm to use in the
+point location queries. This is done with a {\em point location class}
+passed to the map in the constructor. The class passed should be derived
+from the base class \ccc{Pm_point_location_base} which is a
+(\ccc{pure virtual}) base class that defines the interface between the 
+algorithm
+implemented by the users and the planar map. This follows the 
+known {\it Strategy}
+pattern ~\cite{ghjv-dpero-95}. The indirection overhead due to the virtual functions is
+negligible since the optimal point location algorithm 
+(e.g., the one implemented in our default strategy) takes $\Theta(\log n)$ time.  
+We have derived three concrete classes for point location strategies,
+the {\it default\/} strategy, based on trapezoidal decomposition of the map,
+the {\it naive\/} strategy, which goes over all the vertices and halfedges
+of the planar map and the {\it walk-along-a-line strategy\/}, which improves
+the {\it naive\/} one by ``walking'' only along the zone of the vertical ray emanating
+from the query point. All three strategies are classes
+that inherit \ccc{Pm_point_location_base<Planar_map>}.
+More details are give in sections 
+  \ccc{Pm_default_point_location<Planar_map>}\lcTex{
+  (\ccRefPage{CGAL::Pm_default_point_location<Planar_map>})}, 
+  \ccc{Pm_naive_point_location<Planar_map>}\lcTex{ 
+  (\ccRefPage{CGAL::Pm_naive_point_location<Planar_map>})} and
+  \ccc{Pm_walk_along_a_line_point_location<Planar_map>}\lcTex{
+  (\ccRefPage{CGAL::Pm_walk_along_a_line_point_location<Planar_map>})}.
+
+% Advanced users may wish to write their own point location class.  We
+% state that a point location class should inherit the \cgal\/ supplied
+% class \ccc{Pm_point_location_base<Planar_map>}.
+
+\paragraph{Trade-off Issues}
+The main trade-off among the three strategies implemented, is between
+time and storage. Using the naive or walk strategies takes more
+time but saves storage space.
+
+Another trade-off depends on the need for point location queries compared
+to the need for other functions. If the users do not need point location 
+queries, but do need other modifying functions (e.g., \ccc{remove_edge}, 
+\ccc{split_edge} and \ccc{merge_edge}) then using the naive or walk strategies
+is preferable. Note that using the \ccc{insert} function invokes the
+point location query, therefore when using the naive or walk strategies it
+is recommended to use the specialized insertion functions : 
+\ccc{insert_in_face_interior}, \ccc{insert_from_vertex} and 
+\ccc{insert_at_vertices}.
+For example, when using the planar map to represent polygons (e.g., when
+computing boolean operations on polygons) it might be preferable to use
+the walk strategy with the specialized insertion functions. 
+
+There are two modes of the {\it default\/} strategy which enables the user
+to choose whether preprocessing should be performed or not (read more in
+the section stated above).
+There is a trade-off between the those two modes. If
+preprocessing is not used, the building of the structure is faster. However,
+for some input sequences the structure might be unbalanced and therefore 
+queries and updates might take longer, especially, if many removal and split 
+operation are performed.
+
+\section*{Implementation}
+\subsection*{Robustness}
+It can handle all inputs and requires no general position assumption.
+\subsection*{Programming Tips}
+This section presents some tips on how to tune
+\ccc{CGAL::Planar_map_2<Dcel,Traits>} for best performance.
+
+Before the specific tips, it should be reminded that compiling
+programs with debug flags turned off and with optimization flags
+significantly reduces running time.
+
+\begin{enumerate}
+   \item The default point location strategy (i.e. using
+   \ccc{trapezoidal decomposition}) is the fastest one when queries
+   are concerned. However, since it has to build a search structure it
+   might slow down the incremental building process of the map. If it
+   is known in advance that there will not be many point location or
+   vertical ray shoot queries use another point location strategy
+   (such as the \ccc{walk} or \ccc{simple} strategies) which does not
+   slow down the building process (no search structure is being
+   built).
+
+   \item Prior knowledge of the combinatorial structure of the map can
+   be used to accelerate insertion time. The specialized insertion
+   functions, i.e \ccc{insert_in_face_interior},
+   \ccc{insert_from_vertex} or \ccc{insert_at_vertices} should be used
+   according to this information. The insert function performs point
+   location queries and then calls one of the other update functions
+   and therefore takes more time.  The function
+   \ccc{insert_in_face_interior} even takes constant time. The other
+   two are linear in the worst case, but should be much faster most of
+   the time.
+
+   Insertion of a polygon, which is represented by a list of segments
+   along its boundary, into an empty planar map should be done in the
+   following way. First, some segment should be inserted using
+   \ccc{insert_in_face_interior} with the unbounded face. Then a
+   segment with a common end point can be inserted using
+   \ccc{insert_from_vertex} and so on with the rest of the segments
+   but last. The last segment can be inserted using
+   \ccc{insert_at_vertices} since both it endpoints are represented as
+   vertices of the map and are known in advanced.
+ 
+   \item If the user has \leda\/ installed it is recommended to use
+   the specialized traits classes \ccc{Pm_leda_segment_traits_2}
+   or \ccc{Arr_leda_polyline_traits}. These traits classes are much
+   faster since they are specialized for \leda\/'s \ccc{rational
+   geometric kernel}. Note that these traits classes are models of
+   \ccc{PlanarMapTraits_2} since they model its refinement, the
+   \ccc{ArrangementTraits_2} concept.
+
+\end{enumerate}
+
+\subsection*{Performance}
 
 % %\paragraph{Sweep Line}
 % %-------------------------------------------------
@@ -166,18 +541,6 @@ operators for the curves defined in their \ccc{Traits} classes.
 %   %\ccRefPage{CGAL::sweep_to_construct_planar_map}} and
 %   %\ccc{sweep_to_produce_planar_map_subcurves}\lcTex{
 %   %\ccRefPage{CGAL::sweep_to_produce_planar_map_subcurves}}).
-
-\subsection*{Functionality}
-
-The class \ccc{Planar_map<Dcel,Traits>}  supplies the ability to maintain
-a planar map. All the combinatorial entities have a geometric mapping, e.g.,
-a vertex of a planar map has a \ccc{Point} data member, a halfedge has
-a \ccc{X_monotone_curve_2} (x-monotone curve) data member, etc. In addition to the 
-modifying function, namely, insertion, removal, splitting and merging, the user
-can perform point location queries and vertical ray shoot queries.
-For a full reference of the class (i.e its associated types,
-its operations, etc.) read the \ccc{Planar_map Reference Pages}\lcTex{
-(\ccRefPage{Pm_Ref_intro})}.
 
 % +========================================================================+
 \section{Example Programs}
@@ -241,7 +604,8 @@ returned the curve : 20 50 180 50
 \subsection{Example of IO functions}
 \label{PM_sec:example9}
 
-The following program demonstrates the use of I/O functions provided for planar maps. %\ccc{Planar_map}.
+The following program demonstrates the use of I/O functions provided
+for planar maps. 
 First the program demonstrates a trivial use of the I/O functions: 
 it defines an empty instance of \ccc{Planar_map_2}, 
 reads the planar map representation text from the standard input stream, 
@@ -250,40 +614,29 @@ and then prints the resulting planar map to the standard output stream.
 Second, it presents the usage of the verbose format, 
 by defining \ccc{Pm_file_writer} with the verbose flag set to true, 
 and then calls the function \ccc{write_pm}.
-A usage of the interface of the class \ccc{Pm_file_writer} is also presented, 
-by calling its function \ccStyle{write_halfedges}, which prints all the halfedges of the map.
-In addition, the program presents the operators writing the resulting 
-\ccc{Planar map} to a postscript file when LEDA is installed. 
-The demo for the planar map package makes use of the output operator 
-of \ccc{Planar_map_2<Dcel,Traits>} to a window stream  
-(see at \ccStyle{<CGAL_ROOT>/demo/Planar_map/demo.C} ).   
+A usage of the interface of the class \ccc{Pm_file_writer} is also
+presented, by calling its function \ccStyle{write_halfedges}, which
+prints all the halfedges of the map. In addition, the program presents
+the operators writing the resulting  \ccc{Planar map} to a postscript
+file when LEDA is installed. The demo for the planar map package makes
+use of the output operator of \ccc{Planar_map_2<Dcel,Traits>} to a
+window stream  (see at \ccStyle{<CGAL_ROOT>/demo/Planar_map/demo.C} ).   
 
 %graphic streams in commented lines
 %(The comments can be removed if the user has LEDA installed).
 
 \ccIncludeExampleCode{Planar_map/example9.C}
 
-The input of the program is a text file which holds the planar map representation in a special format (which is presented in the reference pages of the the \ccc{Planar Map} package. 
+The input of the program is a text file which holds the planar map
+representation in a special format (which is presented in the
+reference pages of the the \ccc{Planar Map} package.
 This representation appears as the first block in the output file.
  
 %\ccIncludeExampleCode{Planar_map/example9.cin}
 
-The output is the \ccc{Planar map} includes both formats, non-verbose and verbose. In addition the two lists 
-(non-verbose and verbose) of halfedges are written.
+The output is the \ccc{Planar map} includes both formats, non-verbose
+and verbose. In addition the two lists (non-verbose and verbose) of
+halfedges are written.
 \ccIncludeExampleCode{Planar_map/example9.cout}
 
 %% EOF %%
-
-
-
-
-
-
-
-
-
-
-
-
-
-
