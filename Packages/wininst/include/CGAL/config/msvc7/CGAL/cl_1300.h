@@ -70,7 +70,7 @@
 //| This flag is set, if the compiler does not match member 
 //| definition to an existing declaration (eg. cl1310 Beta)
 //+--------------------------------------------------------------------------
-#define CGAL_CFG_NET2003_MATCHING_BUG 1
+//#define CGAL_CFG_NET2003_MATCHING_BUG 1
 
 //+--------------------------------------------------------------------------
 //| When template implementation files are not included in the source files,
