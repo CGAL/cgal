@@ -13,7 +13,7 @@ my $receive_testresult_program =
 	'/users/geert/tmp/echo_to_log';
 my $update_submissions_www_page_program = "$scripts_dir/create_packages_page";
 my $receive_result_collection_program = "$scripts_dir/treat_result_collection";
-my $MAIL_PROG='$scripts_dir/send_cgal_mail';
+my $MAIL_PROG="$scripts_dir/send_cgal_mail";
 #my $MAIL_PROG='/usr/sbin/Mail';
 
 my $Sender;
