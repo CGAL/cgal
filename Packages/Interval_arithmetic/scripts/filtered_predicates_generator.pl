@@ -330,6 +330,7 @@ sub parse_input_code {
   my $CGAL = "CGAL::";
   # Treat NO_FILTER parts
   s#//CGAL_NO_FILTER_BEGIN.*?//CGAL_NO_FILTER_END##msg;
+  s#/\*CGAL_NO_FILTER\*/#CGAL_NO_FILTER_MARK#sg; # De-comment no filter marks.
   # Note that the following are buggy if they appear in strings (cf Perl FAQ).
   s#//.*##mg;      # Remove C++ "//" comments
   s#/\*.*?\*/##sg; # Remove C "/**/" comments
@@ -337,11 +338,16 @@ sub parse_input_code {
     if ($1 eq "CGAL_BEGIN_NAMESPACE") { $CGAL=""; $_=$'; }
     elsif ($1 eq "CGAL_END_NAMESPACE") { $CGAL="CGAL::"; $_=$'; }
     else {
-      my ($after, @pred) = parse_function_definition($1.$');
-      push @predicates, [ $CGAL, @pred ];
-      $pred_list_re.="|".$pred[$fct_name_pos-1];
-      treat_predicate($#predicates);
-      $_ = $after;
+      my $rest = $1.$';
+      $_=$';
+      if ( ! /^[^\(]*?CGAL_NO_FILTER_MARK/s ) {
+        my ($after, @pred) = parse_function_definition($rest);
+        push @predicates, [ $CGAL, @pred ];
+        $pred_list_re.="|".$pred[$fct_name_pos-1];
+        treat_predicate($#predicates);
+        $_ = $after;
+      }
+      else { $_=$'; }
     }
   }
 }
