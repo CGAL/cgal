@@ -68,22 +68,17 @@ public:
   Point_3    operator[](int i) const;
 
   Bbox_3     bbox() const;
-
 };
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TriangleC3<R CGAL_CTAG>::TriangleC3()
-{
-  new ( static_cast< void*>(ptr)) Threetuple<Point_3>();
-}
+  : Handle_for<Threetuple< typename R::Point_3> >(Threetuple< typename R::Point_3> ()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-TriangleC3<R CGAL_CTAG>::
-TriangleC3(const TriangleC3<R CGAL_CTAG> &t)
-  : Handle_for<Threetuple< typename R::Point_3> >(t)
-{}
+TriangleC3<R CGAL_CTAG>::TriangleC3(const TriangleC3<R CGAL_CTAG> &t)
+  : Handle_for<Threetuple< typename R::Point_3> >(t) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -91,9 +86,7 @@ TriangleC3<R CGAL_CTAG>::
 TriangleC3(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p,
            const typename TriangleC3<R CGAL_CTAG>::Point_3 &q,
            const typename TriangleC3<R CGAL_CTAG>::Point_3 &r)
-{
-  new ( static_cast< void*>(ptr)) Threetuple<Point_3>(p, q, r);
-}
+  : Handle_for<Threetuple< typename R::Point_3> >(Threetuple< typename R::Point_3> (p, q, r)) {}
 
 
 template < class R >

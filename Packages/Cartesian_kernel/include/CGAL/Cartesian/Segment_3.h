@@ -91,27 +91,20 @@ public:
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-SegmentC3<R CGAL_CTAG>::
-SegmentC3()
-{
-  new (static_cast< void*>(ptr)) Twotuple< Point_3 >;
-}
+SegmentC3<R CGAL_CTAG>::SegmentC3()
+  : Handle_for<Twotuple<typename R::Point_3 > >( Twotuple<typename R::Point_3>()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-SegmentC3<R CGAL_CTAG>::
-SegmentC3(const SegmentC3<R CGAL_CTAG>  &s) :
-  Handle_for<Twotuple<typename R::Point_3 > >(s)
-{}
+SegmentC3<R CGAL_CTAG>::SegmentC3(const SegmentC3<R CGAL_CTAG> &s)
+  : Handle_for<Twotuple<typename R::Point_3 > >(s) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC3<R CGAL_CTAG>::
 SegmentC3(const typename SegmentC3<R CGAL_CTAG>::Point_3 &sp,
           const typename SegmentC3<R CGAL_CTAG>::Point_3 &ep)
-{
-  new (static_cast< void*>(ptr)) Twotuple< Point_3 >(sp, ep);
-}
+  : Handle_for<Twotuple<typename R::Point_3 > >( Twotuple<typename R::Point_3>(sp, ep)) {}
 
 template < class R >
 inline

@@ -78,49 +78,42 @@ public:
   bool        is_degenerate() const;
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;
-
 };
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC3<R CGAL_CTAG>::RayC3()
-{
-  new (static_cast< void*>(ptr)) Twotuple< Point_3 >;
-}
+  : Handle_for<Twotuple<typename R::Point_3> >( Twotuple<typename R::Point_3>() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-RayC3<R CGAL_CTAG>::
-RayC3(const RayC3<R CGAL_CTAG>  &r)
-  : Handle_for<Twotuple<typename R::Point_3> >(r)
-{}
+RayC3<R CGAL_CTAG>::RayC3(const RayC3<R CGAL_CTAG> &r)
+  : Handle_for<Twotuple<typename R::Point_3> >(r) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-RayC3<R CGAL_CTAG>::
-RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
-      const typename RayC3<R CGAL_CTAG>::Point_3 &secondp)
-{
-  new (static_cast< void*>(ptr)) Twotuple< Point_3 >(sp,secondp);
-}
+RayC3<R CGAL_CTAG>::RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
+                          const typename RayC3<R CGAL_CTAG>::Point_3 &secondp)
+  : Handle_for<Twotuple<typename R::Point_3> >( Twotuple<typename R::Point_3>(sp, secondp)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-RayC3<R CGAL_CTAG>::
-RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
-      const typename RayC3<R CGAL_CTAG>::Direction_3 &d)
-{
-  new (static_cast< void*>(ptr)) Twotuple< Point_3 >(sp, sp + d.to_vector());
-}
+RayC3<R CGAL_CTAG>::RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
+                          const typename RayC3<R CGAL_CTAG>::Direction_3 &d)
+  : Handle_for<Twotuple<typename R::Point_3> >( Twotuple<typename R::Point_3>(sp, sp + d.to_vector())) {}
 
 template < class R >
-inline bool RayC3<R CGAL_CTAG>::operator==(const RayC3<R CGAL_CTAG> &r) const
+inline
+bool
+RayC3<R CGAL_CTAG>::operator==(const RayC3<R CGAL_CTAG> &r) const
 {
   return source() == r.source() && direction() == r.direction();
 }
 
 template < class R >
-inline bool RayC3<R CGAL_CTAG>::operator!=(const RayC3<R CGAL_CTAG> &r) const
+inline
+bool
+RayC3<R CGAL_CTAG>::operator!=(const RayC3<R CGAL_CTAG> &r) const
 {
   return !(*this == r);
 }

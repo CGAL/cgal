@@ -94,32 +94,26 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::DirectionC2()
-{
-  new ( static_cast< void*>(ptr)) Twotuple<FT>(); 
-}
+  : Handle_for< Twotuple<FT> >( Twotuple<FT>() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::
 DirectionC2(const DirectionC2<R CGAL_CTAG> &d)
-  : Handle_for<Twotuple<typename R::FT> >(d)
-{}
+  : Handle_for< Twotuple<FT> >(d) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::
 DirectionC2(const typename DirectionC2<R CGAL_CTAG>::Vector_2 &v)
- : Handle_for<Twotuple<typename R::FT> >(v)
-{}
+ : Handle_for< Twotuple<FT> >(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::
 DirectionC2(const typename DirectionC2<R CGAL_CTAG>::FT &x,
             const typename DirectionC2<R CGAL_CTAG>::FT &y)
-{
-  new ( static_cast< void*>(ptr)) Twotuple<FT>(x, y);
-}
+ : Handle_for< Twotuple<FT> >( Twotuple<FT>(x, y) ) {}
 
 template < class R >
 inline

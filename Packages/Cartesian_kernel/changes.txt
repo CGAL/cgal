@@ -9,6 +9,8 @@ Version 6.0 (?? ????? 00)
 - Use identical() instead of comparing "ptr".
 - Call identical() in all operator==() in order to be consistent.
 - Sphere_3 is back to life.
+- Ctors don't use "new (static_cast<void *> (ptr)) ...", but proper
+  construction via the Handle_for.
 - Various cleanups.
 
 --- CGAL 2.2 is out ---

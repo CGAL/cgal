@@ -97,21 +97,17 @@ public:
   bool           is_degenerate() const;
 
   Bbox_2         bbox() const;
-
 };
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 CircleC2<R CGAL_CTAG>::CircleC2()
-{
-  new ( static_cast< void*>(ptr)) Circle_repC2<R>();
-}
+  : Handle_for< Circle_repC2<R> > () {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 CircleC2<R CGAL_CTAG>::CircleC2(const CircleC2<R CGAL_CTAG> &c)
-  : Handle_for< Circle_repC2<R> > (c)
-{}
+  : Handle_for< Circle_repC2<R> > (c) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -123,9 +119,7 @@ CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &center,
   CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
                             ( orient    != COLLINEAR) );
 
-  new ( static_cast< void*>(ptr)) Circle_repC2<R>(center, 
-						  squared_radius, 
-						  orient);
+  initialize_with( Circle_repC2<R>(center, squared_radius, orient) );
 }
 
 template < class R >
@@ -136,7 +130,7 @@ CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &center,
 {
   CGAL_kernel_precondition( orient != COLLINEAR );
 
-  new ( static_cast< void*>(ptr)) Circle_repC2<R>(center, FT(0), orient);
+  initialize_with( Circle_repC2<R>(center, FT(0), orient) );
 }
 
 template < class R >
@@ -152,11 +146,9 @@ CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &p,
     Point_2 center = midpoint(p,q);
     FT      squared_radius = squared_distance(p,center);
 
-    new ( static_cast< void*>(ptr)) Circle_repC2<R>(center, 
-						     squared_radius, 
-						     orient);
+    initialize_with( Circle_repC2<R>(center, squared_radius, orient) );
   } else
-    new ( static_cast< void*>(ptr)) Circle_repC2<R>(p, FT(0), orient);
+    initialize_with( Circle_repC2<R>(p, FT(0), orient) );
 }
 
 template < class R >
@@ -172,9 +164,7 @@ CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &p,
   Point_2 center = circumcenter(p,q,r);
   FT      squared_radius = squared_distance(p,center);
 
-  new ( static_cast< void*>(ptr)) Circle_repC2<R>(center, 
-						  squared_radius, 
-						  orient);
+  initialize_with( Circle_repC2<R>(center, squared_radius, orient) );
 }
 
 template < class R >

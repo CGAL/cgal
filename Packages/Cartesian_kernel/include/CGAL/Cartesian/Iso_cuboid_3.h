@@ -81,21 +81,17 @@ public:
   FT           xmax() const;
   FT           ymax() const;
   FT           zmax() const;
-
 };
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3()
-{
-  new ( static_cast< void*>(ptr)) Twotuple< Point_3 >();
-}
+  : Handle_for< Twotuple<typename R::Point_3> >( Twotuple<typename R::Point_3>() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>& r)
-  : Handle_for<Twotuple<typename R::Point_3> >(r)
-{}
+  : Handle_for< Twotuple<typename R::Point_3> >(r) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_LARGE_INLINE
@@ -110,8 +106,8 @@ Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p,
   else               { miny = q.y(); maxy = p.y(); }
   if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
   else               { minz = q.z(); maxz = p.z(); }
-  new (static_cast< void*>(ptr)) Twotuple<Point_3>(Point_3(minx, miny, minz),
-						   Point_3(maxx, maxy, maxz));
+  initialize_with( Twotuple<typename R::Point_3>(Point_3(minx, miny, minz),
+				                 Point_3(maxx, maxy, maxz)) );
 }
 
 template < class R >

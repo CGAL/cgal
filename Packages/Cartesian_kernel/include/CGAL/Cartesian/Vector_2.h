@@ -120,22 +120,23 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::VectorC2()
-{
-  new ( static_cast< void*>(ptr)) Twotuple<FT>(); 
-}
+  : Handle_for<Twotuple<typename R::FT> >(Twotuple<typename R::FT>() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorC2<R CGAL_CTAG>::VectorC2(const VectorC2<R CGAL_CTAG>  &v) :
-  Handle_for<Twotuple<typename R::FT> >(v)
-{}
+VectorC2<R CGAL_CTAG>::VectorC2(const VectorC2<R CGAL_CTAG> &v)
+  : Handle_for<Twotuple<typename R::FT> >(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::VectorC2(const Null_vector &)
-{
-  new ( static_cast< void*>(ptr)) Twotuple<FT>(FT(0), FT(0));
-}
+  : Handle_for<Twotuple<typename R::FT> >(Twotuple<typename R::FT>(FT(0), FT(0)) ) {}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::FT &x,
+                                const typename VectorC2<R CGAL_CTAG>::FT &y)
+  : Handle_for<Twotuple<typename R::FT> >(Twotuple<typename R::FT>(x, y) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
@@ -144,32 +145,22 @@ VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::FT &hx,
 				const typename VectorC2<R CGAL_CTAG>::FT &hw)
 {
   if( hw != FT(1))
-    new ( static_cast< void*>(ptr)) Twotuple<FT>(hx/hw, hy/hw);
+    initialize_with( Twotuple<FT>(hx/hw, hy/hw) );
   else
-    new ( static_cast< void*>(ptr)) Twotuple<FT>(hx, hy);
-}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::FT &x,
-                                const typename VectorC2<R CGAL_CTAG>::FT &y)
-{
-  new ( static_cast< void*>(ptr)) Twotuple<FT>(x, y);
+    initialize_with( Twotuple<FT>(hx, hy) );
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::
 VectorC2(const typename VectorC2<R CGAL_CTAG>::Point_2 &p)
-  : Handle_for<Twotuple<typename R::FT> > (p)
-{}
+  : Handle_for<Twotuple<typename R::FT> > (p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::
 VectorC2(const typename VectorC2<R CGAL_CTAG>::Direction_2 &d)
-  : Handle_for<Twotuple<typename R::FT> > (d)
-{}
+  : Handle_for<Twotuple<typename R::FT> > (d) {}
 
 template < class R >
 CGAL_KERNEL_INLINE

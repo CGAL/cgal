@@ -84,18 +84,13 @@ public:
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-TetrahedronC3<R CGAL_CTAG>::
-TetrahedronC3()
-{
-  new ( static_cast< void*>(ptr)) Fourtuple< Point_3 >;
-}
+TetrahedronC3<R CGAL_CTAG>::TetrahedronC3()
+  : Handle_for<Fourtuple< typename R::Point_3> >( Fourtuple< typename R::Point_3>()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-TetrahedronC3<R CGAL_CTAG>::
-TetrahedronC3(const TetrahedronC3<R CGAL_CTAG> &t)
-  : Handle_for<Fourtuple< typename R::Point_3> >(t)
-{}
+TetrahedronC3<R CGAL_CTAG>::TetrahedronC3(const TetrahedronC3<R CGAL_CTAG> &t)
+  : Handle_for<Fourtuple< typename R::Point_3> >(t) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -104,9 +99,7 @@ TetrahedronC3(const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &p,
               const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &q,
               const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &r,
               const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &s)
-{
-  new ( static_cast< void*>(ptr)) Fourtuple< Point_3 >(p, q, r, s);
-}
+  : Handle_for<Fourtuple< typename R::Point_3> >( Fourtuple< typename R::Point_3>(p, q, r, s)) {}
 
 template < class Point_3 >
 struct Less_xyzC3 {

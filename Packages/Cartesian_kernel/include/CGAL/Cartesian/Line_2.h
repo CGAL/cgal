@@ -115,6 +115,11 @@ private:
 };
 
 template < class R >
+CGAL_KERNEL_CTOR_INLINE
+LineC2<R CGAL_CTAG>::LineC2()
+  : Handle_for<Threetuple<FT> >( Threetuple<FT>() ) {}
+
+template < class R >
 CGAL_KERNEL_INLINE
 void
 LineC2<R CGAL_CTAG>::new_rep(const typename LineC2<R CGAL_CTAG>::FT &a,
@@ -136,16 +141,8 @@ LineC2<R CGAL_CTAG>::new_rep(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-LineC2<R CGAL_CTAG>::LineC2()
-{
-  new ( static_cast< void*>(ptr)) Threetuple<FT>();
-}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
 LineC2<R CGAL_CTAG>::LineC2(const LineC2<R CGAL_CTAG>  &l)
-  : Handle_for<Threetuple<typename R::FT> >(l)
-{}
+  : Handle_for<Threetuple<FT> >(l) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

@@ -149,18 +149,13 @@ PlaneC3<R CGAL_CTAG>::new_rep(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::
-PlaneC3()
-{
-  new ( static_cast< void*>(ptr)) Fourtuple<FT>();
-}
+PlaneC3<R CGAL_CTAG>::PlaneC3()
+  : Handle_for<Fourtuple<FT> >( Fourtuple<FT>() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::
-PlaneC3(const PlaneC3<R CGAL_CTAG> &p)
-  : Handle_for<Fourtuple<typename R::FT> >(p)
-{}
+PlaneC3<R CGAL_CTAG>::PlaneC3(const PlaneC3<R CGAL_CTAG> &p)
+  : Handle_for<Fourtuple<FT> >(p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -233,8 +228,8 @@ PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Ray_3 &r,
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool PlaneC3<R CGAL_CTAG>::
-operator==(const PlaneC3<R CGAL_CTAG> &p) const
+bool
+PlaneC3<R CGAL_CTAG>::operator==(const PlaneC3<R CGAL_CTAG> &p) const
 {
   if ( identical(p) ) return true;
   return has_on_boundary(p.point()) &&
@@ -244,8 +239,8 @@ operator==(const PlaneC3<R CGAL_CTAG> &p) const
 
 template < class R >
 inline
-bool PlaneC3<R CGAL_CTAG>::
-operator!=(const PlaneC3<R CGAL_CTAG> &p) const
+bool
+PlaneC3<R CGAL_CTAG>::operator!=(const PlaneC3<R CGAL_CTAG> &p) const
 {
   return !(*this == p);
 }

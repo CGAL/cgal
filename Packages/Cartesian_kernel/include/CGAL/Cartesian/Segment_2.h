@@ -100,30 +100,24 @@ public:
 
   bool        is_degenerate() const;
   Bbox_2      bbox() const;
-
 };
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC2<R CGAL_CTAG>::SegmentC2()
-{
-  new ( static_cast< void*>(ptr)) Twotuple<Point_2>();
-}
+  : Handle_for<Twotuple<typename R::Point_2> >( Twotuple<typename R::Point_2>() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-SegmentC2<R CGAL_CTAG>::SegmentC2(const SegmentC2<R CGAL_CTAG>  &s)
-  : Handle_for<Twotuple<typename R::Point_2> >(s)
-{}
+SegmentC2<R CGAL_CTAG>::SegmentC2(const SegmentC2<R CGAL_CTAG> &s)
+  : Handle_for<Twotuple<typename R::Point_2> >(s) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC2<R CGAL_CTAG>::
 SegmentC2(const typename SegmentC2<R CGAL_CTAG>::Point_2 &sp,
           const typename SegmentC2<R CGAL_CTAG>::Point_2 &ep)
-{
-   new ( static_cast< void*>(ptr)) Twotuple<Point_2>(sp, ep);
-}
+  : Handle_for<Twotuple<typename R::Point_2> >( Twotuple<typename R::Point_2>(sp, ep) ) {}
 
 template < class R >
 inline

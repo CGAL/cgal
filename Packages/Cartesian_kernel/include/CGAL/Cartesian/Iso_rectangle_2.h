@@ -98,16 +98,13 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Iso_rectangleC2<R CGAL_CTAG>::Iso_rectangleC2()
-{
-  new ( static_cast< void*>(ptr)) Twotuple<Point_2>();
-}
+  : Handle_for<Twotuple<typename R::Point_2> >(Twotuple<typename R::Point_2>()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Iso_rectangleC2<R CGAL_CTAG>::
 Iso_rectangleC2(const Iso_rectangleC2<R CGAL_CTAG> &r)
-  : Handle_for<Twotuple<typename R::Point_2> >(r)
-{}
+  : Handle_for<Twotuple<typename R::Point_2> >(r) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -120,8 +117,8 @@ Iso_rectangleC2(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p,
   else               { minx = q.x(); maxx = p.x(); }
   if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
   else               { miny = q.y(); maxy = p.y(); }
-  new ( static_cast< void*>(ptr)) Twotuple<Point_2>(Point_2(minx, miny),
-						    Point_2(maxx, maxy));
+  initialize_with( Twotuple<typename R::Point_2>(Point_2(minx, miny),
+	                                         Point_2(maxx, maxy)) );
 }
 
 template < class R >

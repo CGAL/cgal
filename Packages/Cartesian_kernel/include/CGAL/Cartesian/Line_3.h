@@ -87,8 +87,7 @@ public:
   Self        transform(const Aff_transformation_3 &t) const;
 
 private:
-  void            new_rep(const Point_3 &p,
-                          const Vector_3 &v);
+  void            new_rep(const Point_3 &p, const Vector_3 &v);
 };
 
 template < class R >
@@ -99,21 +98,18 @@ new_rep(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
         const typename LineC3<R CGAL_CTAG>::Vector_3 &v)
 {
   // CGAL_kernel_precondition(  v != NULL_VECTOR );
-  new ( static_cast< void*>(ptr)) Twotuple< Point_3 > (p, ORIGIN+v);
+  new ( static_cast< void*>(ptr)) Twotuple<typename R::Point_3 > (p, ORIGIN+v);
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3()
-{
-  new ( static_cast< void*>(ptr)) Twotuple<Point_3>();
-}
+  : Handle_for<Twotuple<typename R::Point_3 > >( Twotuple<typename R::Point_3>() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-LineC3<R CGAL_CTAG>::LineC3(const LineC3<R CGAL_CTAG>  &l)
-  : Handle_for<Twotuple<typename R::Point_3 > >(l)
-{}
+LineC3<R CGAL_CTAG>::LineC3(const LineC3<R CGAL_CTAG> &l)
+  : Handle_for<Twotuple<typename R::Point_3> >(l) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

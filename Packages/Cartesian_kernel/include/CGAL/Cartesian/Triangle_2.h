@@ -95,15 +95,12 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TriangleC2<R CGAL_CTAG>::TriangleC2()
-{
-  new ( static_cast< void*>(ptr)) Threetuple<Point_2>();
-}
+  : Handle_for<Threetuple< typename R::Point_2> >(Threetuple< typename R::Point_2> ()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TriangleC2<R CGAL_CTAG>::TriangleC2(const TriangleC2<R CGAL_CTAG> &t)
-  : Handle_for<Threetuple< typename R::Point_2> >(t)
-{}
+  : Handle_for<Threetuple< typename R::Point_2> >(t) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -111,9 +108,7 @@ TriangleC2<R CGAL_CTAG>::
 TriangleC2(const typename TriangleC2<R CGAL_CTAG>::Point_2 &p,
            const typename TriangleC2<R CGAL_CTAG>::Point_2 &q,
            const typename TriangleC2<R CGAL_CTAG>::Point_2 &r)
-{
-  new ( static_cast< void*>(ptr)) Threetuple<Point_2>(p, q, r);
-}
+  : Handle_for<Threetuple< typename R::Point_2> >(Threetuple< typename R::Point_2> (p, q, r)) {}
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE

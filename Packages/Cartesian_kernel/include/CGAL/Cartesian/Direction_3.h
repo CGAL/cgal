@@ -92,25 +92,19 @@ public:
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionC3<R CGAL_CTAG>::
-DirectionC3()
-{
-   new ( static_cast< void*>(ptr)) Threetuple<FT>();
-}
+DirectionC3<R CGAL_CTAG>::DirectionC3()
+  : Handle_for< Threetuple<FT> >( Threetuple<FT>() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionC3<R CGAL_CTAG>::
-DirectionC3(const DirectionC3<R CGAL_CTAG> &d)
-  : Handle_for<Threetuple<typename R::FT> >(d)
-{}
+DirectionC3<R CGAL_CTAG>::DirectionC3(const DirectionC3<R CGAL_CTAG> &d)
+  : Handle_for< Threetuple<FT> >(d) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC3<R CGAL_CTAG>::
 DirectionC3(const typename DirectionC3<R CGAL_CTAG>::Vector_3 &v)
-  : Handle_for<Threetuple<typename R::FT> >(v)
-{}
+  : Handle_for< Threetuple<FT> >(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -118,9 +112,7 @@ DirectionC3<R CGAL_CTAG>::
 DirectionC3(const typename DirectionC3<R CGAL_CTAG>::FT &x,
             const typename DirectionC3<R CGAL_CTAG>::FT &y,
             const typename DirectionC3<R CGAL_CTAG>::FT &z)
-{
-  new ( static_cast< void*>(ptr)) Threetuple<FT>(x, y, z);
-}
+  : Handle_for< Threetuple<FT> >( Threetuple<FT>(x, y, z) ) {}
 
 template < class R >
 inline

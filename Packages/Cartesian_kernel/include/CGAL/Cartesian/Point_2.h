@@ -120,28 +120,28 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2()
-{
-  new ( static_cast< void*>(ptr)) Twotuple<FT>();
-}
+  : Handle_for< Twotuple<FT> >(Twotuple<FT>()) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2(const Origin &)
-{
-   new ( static_cast< void*>(ptr)) Twotuple<FT>(FT(0), FT(0));
-}
+  : Handle_for< Twotuple<FT> >(Twotuple<FT>(FT(0), FT(0))) {}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &x,
+                              const typename PointC2<R CGAL_CTAG>::FT &y)
+  : Handle_for< Twotuple<FT> >(Twotuple<FT>(x, y)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2(const PointC2<R CGAL_CTAG> &p)
-  : Handle_for<Twotuple<typename R::FT> >(p)
-{}
+  : Handle_for< Twotuple<FT> >(p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::Vector_2 &v)
-  : Handle_for<Twotuple<typename R::FT> > (v)
-{}
+  : Handle_for< Twotuple<FT> >(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -150,17 +150,9 @@ PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &hx,
                               const typename PointC2<R CGAL_CTAG>::FT &hw)
 {
   if( hw != FT(1))
-    new ( static_cast< void*>(ptr)) Twotuple<FT>(hx/hw, hy/hw);
+    initialize_with( Twotuple<FT>(hx/hw, hy/hw) );
   else
-    new ( static_cast< void*>(ptr)) Twotuple<FT>(hx, hy);
-}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &x,
-                              const typename PointC2<R CGAL_CTAG>::FT &y)
-{
-  new ( static_cast< void*>(ptr)) Twotuple<FT>(x, y);
+    initialize_with( Twotuple<FT>(hx, hy) );
 }
 
 template < class R >
