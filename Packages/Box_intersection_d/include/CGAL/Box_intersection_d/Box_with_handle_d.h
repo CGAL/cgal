@@ -56,7 +56,7 @@ public:
     typedef Box_d< NT_, N, ID_NONE> Base;
     typedef NT_                     NT;
     typedef Handle_                 Handle;
-    typedef std::size_t             Id_type;
+    typedef std::size_t             ID;
 
     Box_with_handle_d() {}
     Box_with_handle_d( Handle h) : m_handle(h) {}
@@ -65,7 +65,7 @@ public:
     Box_with_handle_d( const Bbox_2& b, Handle h) : Base( b), m_handle(h) {}
     Box_with_handle_d( const Bbox_3& b, Handle h) : Base( b), m_handle(h) {}
     Handle handle() const { return m_handle; }
-    Id_type  id() const { return reinterpret_cast<Id_type>( &* m_handle); }
+    ID  id() const { return reinterpret_cast<ID>( &* m_handle); }
 };
 
 

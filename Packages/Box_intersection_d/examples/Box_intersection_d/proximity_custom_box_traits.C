@@ -20,18 +20,18 @@ const float           eps = 0.1; // finds point pairs of distance < 2*eps
 // on the fly a box of size 2*eps centered at the point.
 struct Traits {
     typedef float          NT;
-    typedef Point_3*       Box;
-    typedef std::ptrdiff_t Id_type;
+    typedef Point_3*       Box_handle;
+    typedef std::ptrdiff_t ID;
 
     static int   dimension() { return 3; }
-    static float coord( Box box, int dim) {
-        return (dim == 0) ? box->x() : ((dim == 1) ? box->y() : box->z());
+    static float coord( Box_handle b, int d) {
+        return (d == 0) ? b->x() : ((d == 1) ? b->y() : b->z());
     }
-    static float min_coord( Box box, int dim) { return coord(box,dim) - eps; }
-    static float max_coord( Box box, int dim) { return coord(box,dim) + eps; }
+    static float min_coord( Box_handle b, int d) { return coord(b,d) - eps; }
+    static float max_coord( Box_handle b, int d) { return coord(b,d) + eps; }
     // id-function using address of current box,
     // requires to work with pointers to boxes later
-    static std::ptrdiff_t id(Box box) { return (std::ptrdiff_t)(box); }
+    static std::ptrdiff_t id(Box_handle b) { return (std::ptrdiff_t)(b); }
 };
 
 // callback function reports pairs in close proximity

@@ -34,7 +34,7 @@ namespace Box_intersection_d {
 // Pseudo template class to skip the need for a C file for the static counter
 template <class Dummy>
 struct Unique_numbers {
-    typedef std::size_t Id_type;
+    typedef std::size_t ID;
     Unique_numbers() : i(n++) {}
     std::size_t id() const { return i; }
 private:
@@ -63,7 +63,7 @@ protected:
     NT_ hi[N];
 public:
     typedef NT_         NT;
-    typedef std::size_t Id_type;
+    typedef std::size_t ID;
 
     Box_d() {}
     Box_d(bool complete) { init(complete); }
@@ -97,7 +97,7 @@ protected:
     Bbox_2 bbx;
 public:
     typedef double      NT;
-    typedef std::size_t Id_type;
+    typedef std::size_t ID;
 
     Box_d() {}
     Box_d(bool complete) { init(complete); }
@@ -136,7 +136,7 @@ protected:
     Bbox_3 bbx;
 public:
     typedef double      NT;
-    typedef std::size_t Id_type;
+    typedef std::size_t ID;
 
     Box_d() {}
     Box_d(bool complete) { init(complete); }
@@ -181,7 +181,7 @@ class Box_d< NT_, N, ID_EXPLICIT> : public Box_d< NT_, N, ID_NONE>,
 public:
     typedef Box_d< NT_, N, ID_NONE> Base;
     typedef NT_                     NT;
-    typedef typename Unique_numbers<int>::Id_type Id_type;
+    typedef typename Unique_numbers<int>::ID ID;
     Box_d() {}
     Box_d(bool complete) : Base(complete) {}
     Box_d(NT l[N], NT h[N]) : Base( l, h) {}
@@ -195,14 +195,14 @@ class Box_d< NT_, N, ID_FROM_BOX_ADDRESS> : public Box_d< NT_, N, ID_NONE> {
 public:
     typedef Box_d< NT_, N, ID_NONE> Base;
     typedef NT_                     NT;
-    typedef std::size_t             Id_type;
+    typedef std::size_t             ID;
 
     Box_d() {}
     Box_d(bool complete) : Base(complete) {}
     Box_d(NT l[N], NT h[N]) : Base( l, h) {}
     Box_d( const Bbox_2& b) : Base( b) {}
     Box_d( const Bbox_3& b) : Base( b) {}
-    Id_type  id() const { return reinterpret_cast<Id_type>(this); }
+    ID  id() const { return reinterpret_cast<ID>(this); }
 };
 
 

@@ -124,8 +124,8 @@ void box_intersection_d(
     Box_intersection_d::Topology topology,
     Box_intersection_d::Setting  setting)
 {
-    typedef typename std::iterator_traits<RandomAccessIter1>::value_type Box_t;
-    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_intersection_d( begin1, end1, begin2, end2, callback, Box_traits(), 
                         cutoff, topology, setting);
 }
@@ -137,8 +137,8 @@ void box_intersection_d(
     Callback callback, std::ptrdiff_t cutoff,
     Box_intersection_d::Topology topology)
 {
-    typedef typename std::iterator_traits<RandomAccessIter1>::value_type Box_t;
-    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_intersection_d( begin1, end1, begin2, end2, callback, Box_traits(), 
                         cutoff, topology, Box_intersection_d::BIPARTITE);
 }
@@ -148,8 +148,8 @@ void box_intersection_d(
     RandomAccessIter2 begin2, RandomAccessIter2 end2,
     Callback callback, std::ptrdiff_t cutoff)
 {
-    typedef typename std::iterator_traits<RandomAccessIter1>::value_type Box_t;
-    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_intersection_d( begin1, end1, begin2, end2, callback, Box_traits(), 
                         cutoff, Box_intersection_d::CLOSED, 
                         Box_intersection_d::BIPARTITE);
@@ -160,8 +160,8 @@ void box_intersection_d(
     RandomAccessIter2 begin2, RandomAccessIter2 end2,
     Callback callback)
 {
-    typedef typename std::iterator_traits<RandomAccessIter1>::value_type Box_t;
-    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_intersection_d( begin1, end1, begin2, end2, callback, Box_traits(), 
                         10, Box_intersection_d::CLOSED, 
                         Box_intersection_d::BIPARTITE);
@@ -176,8 +176,8 @@ void box_self_intersection_d(
     Callback callback,
     BoxTraits box_traits)
 {
-    typedef typename std::iterator_traits<RandomAccessIter>::value_type Box_t;
-    std::vector< Box_t> i( begin, end);
+    typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
+    std::vector< val_t> i( begin, end);
     box_intersection_d( begin, end, i.begin(), i.end(),
                         callback, box_traits, 10, 
                         Box_intersection_d::CLOSED,
@@ -191,8 +191,8 @@ void box_self_intersection_d(
     BoxTraits box_traits,
     std::ptrdiff_t cutoff)
 {
-    typedef typename std::iterator_traits<RandomAccessIter>::value_type Box_t;
-    std::vector< Box_t> i( begin, end);
+    typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
+    std::vector< val_t> i( begin, end);
     box_intersection_d( begin, end, i.begin(), i.end(),
                         callback, box_traits, cutoff, 
                         Box_intersection_d::CLOSED,
@@ -207,8 +207,8 @@ void box_self_intersection_d(
     std::ptrdiff_t cutoff,
     Box_intersection_d::Topology topology)
 {
-    typedef typename std::iterator_traits<RandomAccessIter>::value_type Box_t;
-    std::vector< Box_t> i( begin, end);
+    typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
+    std::vector< val_t> i( begin, end);
     box_intersection_d( begin, end, i.begin(), i.end(),
         callback, box_traits, cutoff, topology, Box_intersection_d::COMPLETE);
 }
@@ -220,8 +220,8 @@ void box_self_intersection_d(
     RandomAccessIter begin, RandomAccessIter end,
     Callback callback)
 {
-    typedef typename std::iterator_traits<RandomAccessIter>::value_type Box_t;
-    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_self_intersection_d(begin, end, callback,
                             Box_traits(), 10, Box_intersection_d::CLOSED);
 }
@@ -232,8 +232,8 @@ void box_self_intersection_d(
     Callback callback,
     std::ptrdiff_t cutoff)
 {
-    typedef typename std::iterator_traits<RandomAccessIter>::value_type Box_t;
-    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_self_intersection_d(begin, end, callback,
                             Box_traits(), 10, Box_intersection_d::CLOSED);
 }
@@ -245,8 +245,8 @@ void box_self_intersection_d(
     std::ptrdiff_t cutoff,
     Box_intersection_d::Topology topology)
 {
-    typedef typename std::iterator_traits<RandomAccessIter>::value_type Box_t;
-    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_self_intersection_d(begin, end, callback,
                             Box_traits(), cutoff, topology );
 }
@@ -305,8 +305,8 @@ void box_intersection_all_pairs_d(
     RandomAccessIter2 begin2, RandomAccessIter2 end2,
     Callback callback)
 {
-    typedef typename std::iterator_traits<RandomAccessIter1>::value_type Box_t;
-    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_intersection_all_pairs_d( begin1, end1, begin2, end2, 
                                   callback, Box_traits(), 
                                   Box_intersection_d::CLOSED );   
@@ -319,8 +319,8 @@ void box_intersection_all_pairs_d(
     Callback callback,
     Box_intersection_d::Topology topology)
 {
-    typedef typename std::iterator_traits<RandomAccessIter1>::value_type Box_t;
-    typedef Box_intersection_d::Box_traits_d< Box_t>  Box_traits;
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_intersection_all_pairs_d( begin1, end1, begin2, end2, 
                                   callback, Box_traits(), topology );   
 }

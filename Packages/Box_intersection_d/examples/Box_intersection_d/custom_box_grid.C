@@ -7,7 +7,7 @@
 
 struct Box {
     typedef int            NT;
-    typedef std::ptrdiff_t Id_type;
+    typedef std::ptrdiff_t ID;
     int x0, x1, y0, y1;
     Box( int u0, int u1, int v0, int v1) : x0(u0), x1(u1), y0(v0), y1(v1) {}
     static int dimension() { return 2; }
