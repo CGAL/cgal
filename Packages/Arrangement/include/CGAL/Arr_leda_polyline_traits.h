@@ -31,7 +31,6 @@
 #include <algorithm>
 #include <CGAL/rat_leda_in_CGAL_2.h>
 #include <LEDA/rat_point.h>
-#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #include <CGAL/tags.h>
 
 //the following is for a type check (creates compiler problems,not implemented)
