@@ -4257,7 +4257,7 @@ test_setup()
 	print_line "The following lines show results of configuration tests."
 	print_line \
 	  "Some of the tests might fail, since many compilers are"
-	print_line "still not completely ANSI/ISO compliant."
+	print_line "still not completely ISO standard compliant."
 	print_line "Since we worked around the arising problems," 
 	print_center_line "${_bold_on}*** CGAL will work fine ***${_bold_off}"
 	print_line "regardless of the outcome of these tests."
@@ -6601,8 +6601,8 @@ upgrade()
     log_print "done."
 
     # copy gmp header and libs
-    upgrade_copy "search/copy gmp header files" "include" "${CGAL_INCL_DIR}" "gmp.h"
-    upgrade_copy "search/copy gmp libs" "lib" "${CGAL_LIB_DIR}" "libgmp.* gmp.lib"
+    upgrade_copy "search/copy gmp header files" "include" "${CGAL_INCL_DIR}" "gmp.h gmpxx.h"
+    upgrade_copy "search/copy gmp libs" "lib" "${CGAL_LIB_DIR}" "libgmp.* libgmpxx.* gmp.lib"
     print_headline "D O N E"
     go_up_lines 1
     print_filled_line
