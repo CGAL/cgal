@@ -28,7 +28,7 @@
 #define CGAL_SWEEP_2_H
 
 #include <string>
-#include "CGAL/Sweep_line_2/Sweep_line_2_impl.h"
+#include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 
@@ -60,10 +60,10 @@ CGAL_BEGIN_NAMESPACE
 
 template <class CurveInputIterator,  class SweepLineTraits_2>
 class Sweep_line_2 : public Sweep_line_2_impl<
-   CurveInputIterator, 
-   SweepLineTraits_2, 
-   Sweep_line_event<SweepLineTraits_2, Sweep_line_subcurve<SweepLineTraits_2> >,
-   Sweep_line_subcurve<SweepLineTraits_2> >
+  CurveInputIterator, 
+  SweepLineTraits_2, 
+  Sweep_line_event<SweepLineTraits_2, Sweep_line_subcurve<SweepLineTraits_2> >,
+  Sweep_line_subcurve<SweepLineTraits_2> >
 {
 
 public:
@@ -146,4 +146,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SWEEP_2_H
+#endif
