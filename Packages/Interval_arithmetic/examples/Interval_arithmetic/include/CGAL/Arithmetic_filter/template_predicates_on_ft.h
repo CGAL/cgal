@@ -27,6 +27,7 @@
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
+/*  */
 CGAL::Comparison_result
 compare_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
@@ -64,9 +65,5 @@ compare_xC2(
 		l2c.exact());
   }
 }
-
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#include <Arithmetic_filter/template_predicates_on_ft.h>
-#endif
 
 #endif // CGAL_ARITHMETIC_FILTER_TEMPLATE_PREDICATES_ON_FT_H
