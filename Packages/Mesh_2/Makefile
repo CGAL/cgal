@@ -18,6 +18,14 @@ clean:
 	${MAKE} -C demo/Mesh_2 clean
 	${MAKE} -C test/Mesh_2 clean
 
+dist-clean: clean
+	find . -name '.#*' -exec rm \{\} \;
+	find . -name '*~' -exec rm \{\} \;
+
+dist: dist-clean
+	tar czfv /tmp/Mesh_2.tar.gz . --exclude=CVS --exclude=TODO \
+--exclude=wrapper.tex --exclude=dont_submit --exclude-from=dont_submit
+
 # make update: update the working directory
 update:
 	@cvs -q update -d -P
