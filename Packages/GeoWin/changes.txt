@@ -1,3 +1,6 @@
+1.4.8 (29 April 2002)
+- split of user and reference manual
+
 1.4.7 (25 April 2002)
 - the function templates in geowin_support.h work with VC 7.0
   -> I could change the setting of the GEOWIN_SUPPORT_NO_TEMPLATES

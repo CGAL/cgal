@@ -1,6 +1,9 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
 
+2.18 (29 Apr 2002)
+     - split of user and reference manuals
+
 2.17 (21 Mar 2002)
 
      - Maintenance moved to Lutz Kettner, MPI Saarbruecken.

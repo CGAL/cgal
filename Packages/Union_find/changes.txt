@@ -1,6 +1,9 @@
 Union_find Package: Release changes
 ----------------------------------------------------------------------
 
+1.5 (29 Apr 2002)
+     - split of user and reference manuals
+
 1.4 (11 Apr 2002)
 
      - Added #include <cstddef> whereever std::size_t is used.

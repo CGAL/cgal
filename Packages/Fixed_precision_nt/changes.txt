@@ -1,3 +1,6 @@
+2.35 (29 April 2002)
+- split of reference manual
+
 2.34 (26 April 2002)
 - Actually, makefile needs to be submitted for the demo (-lCGALWin)...
 

@@ -1,3 +1,6 @@
+4.57     (29 April 02)
+- split of user and reference manuals
+
 4.56     (24 April 02)
 - dont_submit makefile and cgal_test.
 

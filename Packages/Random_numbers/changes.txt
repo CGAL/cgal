@@ -1,5 +1,8 @@
 Changes done to the `Random_numbers' package
 
+Version 2.3.4 on 29-Apr-2002
+- split of user and reference manual 
+
 Version 2.3.4 on 21-Mar-2002
 - converted to "new" manual style
 

@@ -1,3 +1,6 @@
+Version 4.141 on 29 April 2002
+- split user and support manuals
+
 Version 4.140 on 15 April 2002
 - Workaround a bug in GCC 3.0.4 detected by Matthias.
 

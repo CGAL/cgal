@@ -1,3 +1,6 @@
+2.8.27 (29 April 2002)
+- split of user and reference manauls
+
 2.8.26 (18 April 2002)
 - small change in tests - don't execute manual_example_ps 
 

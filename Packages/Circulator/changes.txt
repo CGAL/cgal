@@ -1,6 +1,9 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
 
+3.26 (29 Apr 2002)
+     - split of reference and user manual
+
 3.25 (15 Apr 2002)
 
      - Fixed change in get_min_circulator in circulator.h.

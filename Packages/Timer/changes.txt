@@ -1,6 +1,9 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
 
+2.7 (29 Apr 2002)
+     - split of user and reference manuals
+
 2.6 (04 Apr 2002)
 
      - Changed details to get rid of spurious negative (small) timing

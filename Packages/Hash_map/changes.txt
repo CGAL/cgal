@@ -1,6 +1,9 @@
 Hash_map Package: Release changes
 ----------------------------------------------------------------------
 
+1.2 (29 Apr 2002)
+     - split of user and reference manual (put all pages in reference manual)
+
 1.1 (12 Apr 2002)
 
      - Removed Hash_map.h and test file. Replaced by Unique_hash_map.
