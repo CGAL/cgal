@@ -1,10 +1,12 @@
 # Makefile for Triangulation Package
 
+PACKAGE=Triangulation
+
 WWW=/u/www/0/www/htdocs/files/equipes/prisme
 WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Triangulation_2
 TMP_file=/tmp/submit-mail
-CGAL_MAKEFILE=/u/alcor/0/prisme_util/CGAL/CGAL-2.1/make/makefile_i686_Linux-2.2.13_g++-2.95.2_LEDA
+CGAL_MAKEFILE=/u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.13_g++-2.95.2_LEDA
 MAINTAINER=Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 package: 
@@ -13,14 +15,12 @@ package:
 	@echo "----------------------------------"
 	@echo "---- cvs update; -----------------"
 	@echo "---- make Test                ----"
+	@echo "---- make Doc --------------------"
 	@echo "---- editer changes.txt       ----"
 	@echo "---- more version ----------------"
-	@echo "---- VERSION=   ; export VERSION -"
+	@echo "---- make VERSION=4.11 Version ---"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make Doc --------------------"
-	@echo "---- make Version-----------------"
-	@echo "---- make Tag --------------------"
-	@echo "---- make Package ----------------"
+	@echo "---- make VERSION=4.11 Tag -------"
 	@echo "---- make Submit -----------------"
 	@echo "----------------------------------"
 
@@ -29,21 +29,24 @@ Version:
 	echo  "maintainer : $(MAINTAINER)" >> version
 
 Tag:
-	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"` demo doc examples include test
+	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"` \
+	demo doc_tex examples include test
 
-Package: 
-	rm -rf Triangulation.tar.gz
+clean:
+	rm -f $(PACKAGE).tar.gz
 	cd test/Triangulation ; make realclean
 	cd examples/Triangulation ; make realclean
 	cd demo/Triangulation ; make clean
-	tar -zcvf Triangulation.tar.gz\
+
+$(PACKAGE).tar.gz: 
+	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile* \
 	--exclude=Makefilevc \
 	--exclude=TODO --exclude=run_testsuite --exclude=error.txt \
 	version description.txt changes.txt \
 	include doc_tex doc_ps test examples demo
 
-Submit:
+Submit: clean $(PACKAGE).tar.gz
 	cp -f Triangulation.tar.gz *.txt version $(WWW_dir)
 	cp -rf doc_ps/* $(WWW_dir)/doc_ps/
 	cp -rf doc_html/* $(WWW_dir)/doc_html/
@@ -55,20 +58,51 @@ Submit:
 	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
 	rm -f $(TMP_file)
 
-Doc:
-	cd /u/alcor/0/prisme_util/CGAL/Local/Triangulation
-	cvs commit doc
-	rm -rf doc_tex/basic/Triangulation/*.*
-	rm -rf doc_ps/triangulation.ps.gz
-	cp doc/*.tex doc/*.ltex doc/*.ipe doc/*.gif doc_tex/basic/Triangulation
-	cp doc/*.gif doc/*.png doc_html/basic/Triangulation
-	rm -rf doc_tex/support/Handle/*.*
-	cp doc/pointer.tex doc_tex/support/Handle/main.tex
-	cd doc;\
-	latex wrapper.tex ; bibtex wrapper.tex; latex wrapper.tex; \
-	dvips wrapper -o; gzip wrapper.ps; rm wrapper.dvi
-	mv doc/wrapper.ps.gz doc_ps/triangulation.ps.gz
-	cd doc; cc_manual_to_html -title Triangulations -release $(VERSION) \
-	-o ../doc_html/basic/Triangulation main.tex
+Doc : Doc_ps Doc_html
+
+
+Doc_ps:
+	cd doc_tex/basic/Triangulation;\
+	latex wrapper.tex; bibtex wrapper; \
+	latex wrapper.tex; latex wrapper.tex; \
+	dvips -o Triangulation.ps wrapper.dvi; \
+	gzip Triangulation.ps;
+	mv Triangulation.ps.gz ../../../doc_ps/ ; \
+	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc
+	cd doc_tex/support/Handle;\
+	latex wrapper.tex; bibtex wrapper; \
+	latex wrapper.tex; latex wrapper.tex; \
+	dvips -o pointer.ps wrapper.dvi; \
+	gzip pointer.ps; \
+	mv pointer.ps.gz ../../../doc_ps/ ; \
+	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc
+
+Doc_html :
+	cd doc_tex/basic/Triangulation; \
+	cc_manual_to_html -title Triangulations \
+	-release $(VERSION) \
+	-o ../../../doc_html/basic/Triangulation main.tex
+	cd doc_tex/support/Handle; \
+	cc_manual_to_html -title Handles \
+	-release $(VERSION) \
+	-o ../../../doc_html/support/Handle main.tex
 	echo "done"
+
+#doc: 
+#	cd /u/alcor/0/prisme_util/CGAL/Local/Triangulation
+#	cvs commit doc
+#	rm -rf doc_tex/basic/Triangulation/*.*
+#	rm -rf doc_ps/triangulation.ps.gz
+#	cp doc/*.tex doc/*.ltex doc/*.ipe doc/*.gif doc_tex/basic/Triangulation
+#	cp doc/*.gif doc/*.png doc_html/basic/Triangulation
+#	rm -rf doc_tex/support/Handle/*.*
+#	cp doc/pointer.tex doc_tex/support/Handle/main.tex
+#	cd doc;\
+#	latex wrapper.tex ; bibtex wrapper.tex; latex wrapper.tex; \
+#	dvips wrapper -o; gzip wrapper.ps; rm wrapper.dvi
+#	mv doc/wrapper.ps.gz doc_ps/triangulation.ps.gz
+#	cd doc_tex; cc_manual_to_html -title Triangulations \
+#	-release $(VERSION) \
+#	-o ../doc_html/basic/Triangulation main.tex
+#	echo "done"
 
