@@ -43,6 +43,7 @@ public:
   typedef typename Gt::Weighted_point          Point;
   typedef typename Gt::Weight                  Weight;
 
+  typedef typename Base::size_type             size_type;
   typedef typename Base::Face_handle           Face_handle;
   typedef typename Base::Vertex_handle         Vertex_handle;
   typedef typename Base::Vertex                Vertex;
@@ -144,7 +145,7 @@ public:
 //                 <Hidden_filtered,Vertex_handle>    Hidden_vertices_iterator;
 
 private:
-  int _hidden_vertices;
+  size_type _hidden_vertices;
 
 public:
   Regular_triangulation_2(const Gt& gt=Gt()) : Base(gt), _hidden_vertices(0) {}
@@ -152,11 +153,11 @@ public:
   
   Regular_triangulation_2 & operator=(const Regular_triangulation_2 &tr);
 
-  int number_of_vertices() const {
+  size_type number_of_vertices() const {
     return Base::number_of_vertices() - _hidden_vertices;
   }
  
-  int number_of_hidden_vertices() const {
+  size_type number_of_hidden_vertices() const {
     return _hidden_vertices;
   }
 

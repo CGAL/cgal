@@ -31,6 +31,8 @@ class  Triangulation_ds_vertex_2
 {
   typedef typename Vb::Triangulation_data_structure Tds;
 public:
+  typedef typename Tds::size_type          size_type;
+  typedef typename Tds::difference_type    difference_type;
   typedef typename Tds::Vertex             Vertex;
   typedef typename Tds::Vertex_handle      Vertex_handle;
   typedef typename Tds::Face_handle        Face_handle;
@@ -42,7 +44,7 @@ public:
   Triangulation_ds_vertex_2() : Vb() {}
 
   //ACCESS
-  int degree(); //should be const
+  size_type degree(); //should be const
 
   //Deprecated access to circulators - for bacward compatibility
   // the following should be const
@@ -75,8 +77,8 @@ private:
 };
 
 template <class Tds>
-int
-Triangulation_ds_vertex_2 <Tds> ::
+Triangulation_ds_vertex_2 <Tds>::size_type
+Triangulation_ds_vertex_2 <Tds>::
 degree() //const
 {
   int count = 0;

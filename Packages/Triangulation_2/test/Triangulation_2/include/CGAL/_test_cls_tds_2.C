@@ -340,10 +340,12 @@ _test_tds_circulators( const Tds&  tds)
   typedef typename Tds::Face_circulator   Face_circulator;
   typedef typename Tds::Edge_circulator   Edge_circulator;
 
-  int countf = 0;
-  int counte = 0;
-  int countv = 0;
-  int countvv = 0;
+  typedef typename Tds::size_type         size_type;
+
+  size_type countf = 0;
+  size_type counte = 0;
+  size_type countv = 0;
+  size_type countvv = 0;
 
   Vertex v;
   Face f;
@@ -414,7 +416,9 @@ _test_tds_iterators( const Tds&  tds)
   typedef typename Tds::Face_iterator     Face_iterator;
   typedef typename Tds::Edge_iterator     Edge_iterator;
 
-  int nv, ne, nf;
+  typedef typename Tds::size_type         size_type;
+
+  size_type nv, ne, nf;
   nv = ne = nf = 0;
 
   Vertex v;

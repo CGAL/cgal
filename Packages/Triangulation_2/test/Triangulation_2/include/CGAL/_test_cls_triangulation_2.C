@@ -44,6 +44,7 @@ _test_cls_triangulation_2( const Triangul & )
   // actually, any traits is good if it has been tested
   typedef typename Triangul::Geom_traits          Gt;
 
+  typedef typename Triangul::size_type            size_type;
   typedef typename Triangul::Point                Point;
   typedef typename Triangul::Segment              Segment;
   typedef typename Triangul::Triangle             Triangle;
@@ -290,7 +291,7 @@ _test_cls_triangulation_2( const Triangul & )
   for (m=0; m<3; m++)
     for (p=0; p<3; p++)
       T2_7.insert( Point(m*px+p*qx, m*py+p*qy, 1) );
-  assert( T2_7.number_of_vertices() == m*p );
+  assert( T2_7.number_of_vertices() == static_cast<size_type> (m*p) );
   assert( T2_7.is_valid() );
 
   // test flip

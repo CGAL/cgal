@@ -36,6 +36,10 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
+CGAL_LDFLAGS = \
+	$(CGAL_LD_LIBPATH)  \
+	$(CUSTOM_LDFLAGS) \
+	 -lCGAL   -lgmpxx   -lgmp   -lm 
 
 LDFLAGS = $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)

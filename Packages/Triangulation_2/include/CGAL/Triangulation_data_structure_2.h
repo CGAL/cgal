@@ -75,6 +75,9 @@ private:
   typedef Compact_container<Vertex>                  Vertex_container;
 
 public:
+  typedef typename Face_container::size_type         size_type;
+  typedef typename Face_container::difference_type   difference_type;
+
   typedef typename Face_container::iterator          Face_iterator;
   typedef typename Vertex_container::iterator        Vertex_iterator;
 
@@ -186,10 +189,10 @@ private:
 
 public:
   int  dimension() const { return _dimension;  }
-  int number_of_vertices() const {return vertex_container().size();}
-  int number_of_faces() const ;
-  int number_of_edges() const;
-  int number_of_full_dim_faces() const; //number of faces stored by tds
+  size_type number_of_vertices() const {return vertex_container().size();}
+  size_type number_of_faces() const ;
+  size_type number_of_edges() const;
+  size_type number_of_full_dim_faces() const; //number of faces stored by tds
   
   // TEST FEATURES
   bool is_vertex(Vertex_handle v) const;
@@ -546,7 +549,8 @@ swap(Tds &tds)
 
 //ACCESS FUNCTIONS
 template <class Vb, class Fb>
-inline int 
+inline 
+typename Triangulation_data_structure_2<Vb,Fb>::size_type
 Triangulation_data_structure_2<Vb,Fb> ::
 number_of_faces() const 
 {
@@ -555,7 +559,8 @@ number_of_faces() const
 }
 
 template <class Vb, class Fb>
-int
+inline 
+typename Triangulation_data_structure_2<Vb,Fb>::size_type
 Triangulation_data_structure_2<Vb,Fb>::
 number_of_edges() const
 {
@@ -567,7 +572,7 @@ number_of_edges() const
 }
       
 template <class Vb, class Fb>
-int
+typename Triangulation_data_structure_2<Vb,Fb>::size_type
 Triangulation_data_structure_2<Vb,Fb>::
 number_of_full_dim_faces() const
 {
@@ -1311,7 +1316,7 @@ is_valid(bool verbose, int level) const
   //count and test the validity of the faces (for positive dimensions)
   Face_iterator ib = face_iterator_base_begin(); 
   Face_iterator ib_end = face_iterator_base_end();
-  int count_stored_faces =0;
+  size_type count_stored_faces =0;
   for ( ; ib != ib_end ; ++ib){
     count_stored_faces += 1;
     if (dimension()>= 0) {
@@ -1325,7 +1330,7 @@ is_valid(bool verbose, int level) const
 		 count_stored_faces == number_of_full_dim_faces());
  
   // vertex count
-  int vertex_count = 0;
+  size_type vertex_count = 0;
   for(Vertex_iterator vit = vertices_begin(); vit != vertices_end();
       ++vit) {
     CGAL_triangulation_assertion( vit->face() != Face_handle());
@@ -1337,13 +1342,13 @@ is_valid(bool verbose, int level) const
   CGAL_triangulation_assertion( number_of_vertices() == vertex_count );
     
   //edge count
-  int edge_count = 0;
+  size_type edge_count = 0;
   for(Edge_iterator eit = edges_begin(); eit != edges_end(); ++eit) { 
     ++edge_count;
   }
 
   // face count
-  int face_count = 0;
+  size_type face_count = 0;
   for(Face_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
     ++face_count;
   }
@@ -1387,7 +1392,7 @@ copy_tds(const Tds &tds, Vertex_handle vh)
     CGAL_triangulation_precondition( tds.is_vertex(vh));
 
   clear();
-  int n = tds.number_of_vertices();
+  size_type n = tds.number_of_vertices();
   set_dimension(tds.dimension());
 
   // Number of pointers to cell/vertex to copy per cell.
@@ -1443,8 +1448,8 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
   // if skip_first is true, the point in the first vertex is not output
   // (it may be for instance the infinite vertex of the triangulation)
   
-  int n = number_of_vertices();
-  int m = number_of_full_dim_faces();
+  size_type n = number_of_vertices();
+  size_type m = number_of_full_dim_faces();
   if(is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << std::endl;
   else     os << n << m << dimension();
   if (n==0) return;
@@ -1514,7 +1519,7 @@ file_input( std::istream& is, bool skip_first)
   //set this  first vertex as infinite_Vertex
   if(number_of_vertices() != 0)    clear();
   
-  int n, m, d;
+  size_type n, m, d;
   is >> n >> m >> d;
 
   if (n==0){ return Vertex_handle();}
@@ -1525,7 +1530,7 @@ file_input( std::istream& is, bool skip_first)
   std::vector<Face_handle> F(m);
 
   // read vertices
-  int i = 0;
+  size_type i = 0;
   if(skip_first){
     V[0] = create_vertex();
     ++i;

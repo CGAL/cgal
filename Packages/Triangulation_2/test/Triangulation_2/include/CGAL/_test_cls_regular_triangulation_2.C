@@ -80,6 +80,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   typedef typename Cls::Line_face_circulator Line_face_circulator;
 
   typedef typename Cls::Locate_type          Locate_type;
+  typedef typename Cls::size_type            size_type;
 
   // activate verbose will print the number of vertices and hidden
   // vertices
@@ -271,7 +272,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   for (m=0; m<3; m++)
     for (p=0; p<3; p++)
       T2_7.push_back( Weighted_point(Bare_point(m*px+p*qx, m*py+p*qy), 1) );
-  assert( T2_7.number_of_vertices() == m*p );
+  assert( T2_7.number_of_vertices() == static_cast<size_type>(m*p) );
   assert( T2_7.is_valid(verbose) );
 
 

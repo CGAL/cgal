@@ -44,6 +44,7 @@ class Triangulation_hierarchy_2
   typedef Tr                                   Tr_Base;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
   typedef typename Tr_Base::Point              Point;
+  typedef typename Tr_Base::size_type          size_type;
   typedef typename Tr_Base::Vertex_handle      Vertex_handle;
   typedef typename Tr_Base::Face_handle        Face_handle;
   typedef typename Tr_Base::Vertex             Vertex;
@@ -400,7 +401,7 @@ locate_in_all(const Point& p,
 
   // find the highest level with enough vertices
   while (hierarchy[--level]->number_of_vertices() 
-	 < Triangulation_hierarchy_2__minsize){
+	 < static_cast<size_type> (Triangulation_hierarchy_2__minsize )){
     if ( ! level) break;  // do not go below 0
   }
   for (int i=level+1; i<Triangulation_hierarchy_2__maxlevel;++i) pos[i]=0;

@@ -50,6 +50,7 @@ public:
   typedef typename Geom_traits::Point_2            Point;
   typedef typename Geom_traits::Segment_2          Segment;
   typedef typename Triangulation::Constraint       Constraint;
+  typedef typename Triangulation::size_type        size_type;
 
   typedef typename Triangulation::List_edges       List_edges;
   typedef typename Triangulation::List_faces       List_faces;
@@ -157,7 +158,7 @@ public:
   Subconstraint_iterator subconstraints_begin() const;
   Subconstraint_iterator subconstraints_end() const;
   Context   context(Vertex_handle va, Vertex_handle vb); 
-  int number_of_enclosing_constraints(Vertex_handle va, 
+  size_type number_of_enclosing_constraints(Vertex_handle va, 
 				      Vertex_handle vb);
   Context_iterator   contexts_begin(Vertex_handle va, 
 				    Vertex_handle vb);
@@ -169,8 +170,10 @@ public:
   Vertices_in_constraint_iterator 
                      vertices_in_constraint_end(Vertex_handle va, 
 						Vertex_handle vb);
-  int number_of_constraints() { return hierarchy.number_of_constraints();}
-  int number_of_subconstraints(){return hierarchy.number_of_subconstraints();}
+  size_type number_of_constraints() {
+    return static_cast<size_type> (hierarchy.number_of_constraints());}
+  size_type number_of_subconstraints(){
+    return static_cast<size_type> (hierarchy.number_of_subconstraints());}
 
 
 protected:
@@ -552,11 +555,13 @@ context(Vertex_handle va, Vertex_handle vb)
 
 
 template <class Tr>
-inline int
+inline 
+typename Constrained_triangulation_plus_2<Tr>::size_type
 Constrained_triangulation_plus_2<Tr>::
 number_of_enclosing_constraints(Vertex_handle va, Vertex_handle vb)
 {
- return hierarchy.number_of_enclosing_constraints(va,vb); 
+ return static_cast<size_type> 
+   (hierarchy.number_of_enclosing_constraints(va,vb)); 
 }
 
 template <class Tr>

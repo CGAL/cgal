@@ -72,6 +72,9 @@ public:
   typedef typename Geom_traits::Orientation_2 Orientation_2;
   typedef typename Geom_traits::Compare_x_2   Compare_x;
   typedef typename Geom_traits::Compare_y_2   Compare_y;
+
+  typedef typename Tds::size_type              size_type;
+  typedef typename Tds::difference_type        difference_type;
  
   typedef typename Tds::Vertex                 Vertex;
   typedef typename Tds::Face                   Face;
@@ -189,14 +192,14 @@ public:
   void clear();
 
 
-  //ACCESS FUNCTIONs
+  //ACCESS FUNCTION
   const Geom_traits& geom_traits() const { return _gt;}
   const Tds & tds() const  { return _tds;}
   Tds & tds()   { return _tds;}
   int dimension() const { return _tds.dimension();}
-  int number_of_vertices() const {return _tds.number_of_vertices() - 1;}
+  size_type number_of_vertices() const {return _tds.number_of_vertices() - 1;}
   
-  int number_of_faces() const;
+  size_type number_of_faces() const;
   Vertex_handle infinite_vertex() const;
   Vertex_handle finite_vertex() const;
   Face_handle infinite_face() const;
@@ -514,11 +517,11 @@ clear()
 }
 
 template <class Gt, class Tds >
-int
+typename Triangulation_2<Gt, Tds>::size_type
 Triangulation_2<Gt, Tds>::
 number_of_faces() const
 {
-  int count = _tds.number_of_faces();
+  size_type count = _tds.number_of_faces();
   Face_circulator fc = incident_faces(infinite_vertex()),
     done(fc);
   if ( ! fc.is_empty() ) {

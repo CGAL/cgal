@@ -27,10 +27,11 @@ template < class Triangulation >
 void
 _test_iterators( const Triangulation &T )
 {
-  int nv = _test_cls_vertex_iterator(T);
-  int ne = _test_cls_edge_iterator(T);
-  int nf = _test_cls_face_iterator(T);
-  int np = _test_cls_point_iterator(T);
+  typedef typename Triangulation:: size_type size_type;
+  size_type nv = _test_cls_vertex_iterator(T);
+  size_type ne = _test_cls_edge_iterator(T);
+  size_type nf = _test_cls_face_iterator(T);
+  size_type np = _test_cls_point_iterator(T);
   assert( np == nv);
   // std::cout << "Euler's relation: " << nv -ne + nf << std::endl;
   switch (T.dimension()) {
@@ -52,12 +53,13 @@ _test_cls_face_iterator( const Triangulation &T )
   typedef typename Triangulation::Face     Face;
   typedef typename Triangulation::Vertex_handle   Vertex_handle;
   typedef typename Triangulation::Face_handle     Face_handle;
-  
+  typedef typename Triangulation::size_type       size_type;
+
   Face f;
   Face_handle fh;
   Vertex_handle vh;
 
-  int n_finite = 0;
+  size_type n_finite = 0;
   Finite_faces_iterator fit;
 
   for (fit = T.finite_faces_begin(); 
@@ -70,7 +72,7 @@ _test_cls_face_iterator( const Triangulation &T )
   }
   assert(n_finite == T.number_of_faces());
 
-  int n=n_finite;
+  size_type n=n_finite;
   for (fit = T.finite_faces_end(); 
        fit != T.finite_faces_begin();
        --fit)
@@ -82,7 +84,7 @@ _test_cls_face_iterator( const Triangulation &T )
 
 
 template < class Triangulation >
-int
+typename Triangulation::size_type
 _test_cls_vertex_iterator( const Triangulation &T )
 {
   typedef typename Triangulation::Finite_vertices_iterator 
@@ -90,12 +92,13 @@ _test_cls_vertex_iterator( const Triangulation &T )
   typedef typename Triangulation::Vertex   Vertex;
   typedef typename Triangulation::Vertex_handle   Vertex_handle;
   typedef typename Triangulation::Face_handle     Face_handle;
+  typedef typename Triangulation::size_type       size_type;
   
   Vertex v;
   Face_handle fh;
   Vertex_handle vh;
 
-  int nv = 0;
+  size_type nv = 0;
   Finite_vertices_iterator vit;
 
   for (vit = T.finite_vertices_begin(); 
@@ -108,7 +111,7 @@ _test_cls_vertex_iterator( const Triangulation &T )
   }
   assert( nv == T.number_of_vertices() );
 
-  int n=nv;
+  size_type n = nv;
   for (vit = T.finite_vertices_end(); 
        vit != T.finite_vertices_begin(); 
        --vit)
@@ -119,13 +122,14 @@ _test_cls_vertex_iterator( const Triangulation &T )
 }
 
 template < class Triangulation >
-int
+typename Triangulation::size_type
 _test_cls_point_iterator( Triangulation &T )
 {
   typedef typename Triangulation::Point_iterator Point_iterator;
   typedef typename Triangulation::Point          Point;
+  typedef typename Triangulation::size_type      size_type;
 
-  int np = 0;
+  size_type np = 0;
   Point_iterator pit;
   Point p;
   for (pit = T.points_begin(); 
@@ -147,18 +151,19 @@ _test_cls_point_iterator( Triangulation &T )
 }
 
 template < class Triangulation >
-int
+typename Triangulation::size_type
 _test_cls_edge_iterator( const Triangulation &T )
 {
   typedef typename Triangulation::Finite_edges_iterator   
                                   Finite_edges_iterator;
   typedef typename Triangulation::Edge     Edge;
   typedef typename Triangulation::Face_handle     Face_handle;
- 
+  typedef typename Triangulation::size_type      size_type;
+
   Edge e;
   Face_handle fh;
  
-  int ne = 0;
+  size_type ne = 0;
   Finite_edges_iterator eit;
   for (eit = T.finite_edges_begin(); 
        eit != T.finite_edges_end(); 
@@ -168,7 +173,7 @@ _test_cls_edge_iterator( const Triangulation &T )
     ne++;
   }
  
-  int n = ne;
+  size_type n = ne;
   for (eit = T.finite_edges_end(); 
        eit != T.finite_edges_begin(); 
        --eit)
