@@ -53,7 +53,6 @@
 
 // TODO:
 // - remove the old code create_star() (Regular still uses it).
-// - use the new one in insert_outside_convex_hull() too.
 // - improve memory management (use a list of cell arrays instead, etc...)
 
 CGAL_BEGIN_NAMESPACE
