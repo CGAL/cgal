@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Map_overlay_DCEL_face.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{MapOverlayDcelFace_2}
+\ccRefLabel{Ovl_Dcel_Face}
+%\ccDefinition{A vertex $v$ 
+%stores %a point and 
+%   a reference to an incident 
+%   halfedge that has $v$ as its %source.}
+%   target.}
+
+  \ccCreationVariable{f}
+
+The \ccRefName\ concpet is a refinement of the \ccc{PlanarMapDcelFace_2} concept. 
+The requirements of the latter are the requirements of the former.
+In addition the \ccRefName\ should contain the following methods.
+
+  \ccOperations
+  \ccMethod{void set_first_face_above(const void* f);}
+  {set $f$ to be the pointer to the face of the first creator laying above the current face of the overlay.}
+  
+  \ccMethod{void set_second_face_above(const void* f);}
+  {set $f$ to be the pointer to the face of the second creator laying above the current face of the overlay.}
+
+  \ccMethod{const void* get_first_face_above();}
+  {return the face pointer of the first creator laying above the current face of the overlay.}
+
+  \ccMethod{const void* get_second_face_above();}
+  {return the face pointer of the second creator laying above the current face of the overlay.}
+  
+\end{ccRefConcept} % MapOverlayDcelFace_2
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
