@@ -1,5 +1,20 @@
 Changes done to the Interval Arithmetic package.
 
+Version 2.6 on 10 December 1998
+- Big renaming that does:
+  - /Filter/            -> /Arithmetic_filter/
+  - Filter.h            -> Arithmetic_filter.h
+  - CGAL_FILTER_H       -> CGAL_ARITHMETIC_FILTER_H
+  - CGAL_Filtering      -> CGAL_Filtered_exact
+  - CGAL_to_exact_type  -> CGAL_convert_to
+  - CGAL_to_IA[advanced]-> CGAL_convert_to<IA[advanced]> ()
+- SunPro and MipsPro are definitely not supported anymore.
+- Support for ftC3 and rtH2 (partially) is included.
+- Massive doc update.
+- The whole thing is supposed to be really "frozen for 1.2" now.
+- Mips assembly enabled back, hopefully Geert-Jan has upgraded to 1.1.1,
+  and the problem will be fixed.
+
 Version 2.5 on 26 November 1998
 - Mips assembly commented out, it fails for the test-suite...
 - Filtering stuff in place, doc updated.
