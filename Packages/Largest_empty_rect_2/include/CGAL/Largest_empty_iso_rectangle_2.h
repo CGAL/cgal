@@ -85,8 +85,8 @@ public:
   // the points in a set where they are stored
   typedef Iterator_project<typename Point_data_set_of_x::const_iterator, 
                            Proj_point<Point_data*>, 
-                           const Point&,
-                           const Point*> const_iterator;
+                           const Point_2&,
+                           const Point_2*> const_iterator;
 
 
   enum Point_type{REG, BOT_RIGHT, BOT_LEFT, TOP_LEFT, TOP_RIGHT};
@@ -131,7 +131,7 @@ public:
   }
 
   //! Remove a point from data.
-  bool 
+  bool
   remove(const Point& p);
 
   //! Get the bounding box of the instance.
@@ -151,14 +151,15 @@ public:
 
   //! Retrieve four points from the input that define the largest
   //! empty iso rectangle.
-  Quadruple<Point, Point, Point, Point>
+  Quadruple<Point_2, Point_2, Point_2, Point_2>
   get_left_bottom_right_top()
   {
     if(x_sorted.size() == 4) {
-      return(make_quadruple(bl_p, bl_p, tr_p, tr_p));
+      return(make_quadruple(bl_p.original, bl_p.original, tr_p.original, tr_p.original));
     }
     update();
-    return(make_quadruple(left_p, bottom_p, right_p, top_p));
+    return(make_quadruple(left_p.original, bottom_p.original, 
+                          right_p.original, top_p.original));
   }
 
   //! Clear the data(remove the points).
@@ -184,7 +185,7 @@ public:
   //! A copy constructor
   Largest_empty_iso_rectangle_2<T>(
 	       const Largest_empty_iso_rectangle_2<T>& ler);
-  
+
 private:
 
   /* this struct is the point representation. It is composed of two points
@@ -193,27 +194,32 @@ private:
   struct Internal_point {
     Point_2 x_part;// the x coordinate of the point
     Point_2 y_part;// the y coordinate of the point
+    Point_2 original;
 
     Internal_point &
      operator=(const Internal_point &other)
     {
       x_part = other.x_part;
       y_part = other.y_part;
+      original = other.original;
 
       return(*this);
     }
 
     Internal_point() // no real value - just to allow construction of LER
-      : x_part(Point_2(0,0)), y_part(Point_2(0,0)) {}
+      : x_part(Point_2(0,0)), y_part(Point_2(0,0)), original(Point_2(0,0)) {}
 
-     Internal_point(const Point_2 &p)
-       : x_part(p), y_part(p) {}
+    Internal_point(int x,int y)
+      : x_part(Point_2(x,y)), y_part(Point_2(x,y)), original(Point_2(x,y)) {}
 
-     Internal_point(const Point_2 &p, const Point_2 &q)
-       : x_part(p), y_part(q) {}
+    Internal_point(const Point_2 &p)
+       : x_part(p), y_part(p), original(p) {}
 
-     Internal_point(const Internal_point &p, const Internal_point &q)
-       : x_part(p.x_part), y_part(q.y_part) {}
+    /*Internal_point(const Point_2 &p, const Point_2 &q)
+      : x_part(p), y_part(q) {}*/
+
+    /*Internal_point(const Internal_point &p, const Internal_point &q)
+      : x_part(p.x_part), y_part(q.y_part) {}*/
   };
 
   /*! false if no points were inserted or removed, thus the previous
@@ -645,9 +651,9 @@ private:
   template < class Node>
   struct Proj_point {
     typedef Node                  argument_type;
-    typedef Point                 result_type;
-    Point&       operator()( Node& x)       const { return x->p; }
-    const Point& operator()( const Node& x) const { return x->p; }
+    typedef Point_2                 result_type;
+    Point_2&       operator()( Node& x)       const { return x->p.original; }
+    const Point_2& operator()( const Node& x) const { return x->p.original; }
   };
 
 };
@@ -1318,7 +1324,7 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2()
   Point bl(0,0);
   Point tr(1,1);
 
-  init(bl,tr);
+  init(bl.x_part,tr.x_part);
 }
 
 

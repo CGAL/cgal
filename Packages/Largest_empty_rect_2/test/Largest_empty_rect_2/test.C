@@ -185,10 +185,10 @@ int main(int argc,char *argv[])
             << "," << bb.max().y() << ")\n";
 
   // test quadruple
- CGAL::Quadruple<Largest_empty_rect::Point,
-                 Largest_empty_rect::Point,
-                 Largest_empty_rect::Point,
-                 Largest_empty_rect::Point>  q = 
+ CGAL::Quadruple<Largest_empty_rect::Point_2,
+                 Largest_empty_rect::Point_2,
+                 Largest_empty_rect::Point_2,
+                 Largest_empty_rect::Point_2>  q = 
    empty_rectangle1.get_left_bottom_right_top();
  std::cout << "test left_bottom_right_top is " << q.first << ",  " << q.second << ",  " << q.third << ",  " << q.fourth << std::endl;
   // complete
