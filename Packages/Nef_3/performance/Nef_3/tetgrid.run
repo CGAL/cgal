@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export OPTIMIZATION_FLAGS="-O2 -DNDEBUG"
-export KERNEL_FLAGS="-DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS"
+export KERNEL_FLAGS="-DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS -DCGAL_NEF3_UNION"
 
 labrun -v --log Tetrahedra_and_grid -n tetrahedra_and_grid labmex -v --clean before ./tetrahedra_and_grid cube.nef3 2 2 2 123415
 
