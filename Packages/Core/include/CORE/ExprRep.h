@@ -31,6 +31,19 @@
 
 CORE_BEGIN_NAMESPACE
 
+static const long BIG = (1L << 30);
+static const double log_5 = log(double(5))/log(double(2));
+
+// Returns the ceil of log_2(5^a).
+static extLong ceilLg5(const extLong & a) {
+  
+#if defined( _MSC_VER) || defined(__sgi) 
+  return (int) ::ceil(log_5 * a.toLong());
+#else
+  return (int) std::ceil(log_5 * a.toLong());
+#endif
+}
+
 #ifdef DEBUG_BOUND
 // These counters are incremented each time each bound is recognized as equal
 // to the best one in computeBound().
