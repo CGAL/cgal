@@ -1,41 +1,85 @@
 Concerning the code itself:
 
+- Attention, le "typedef .. IA" dans les test/Int.../include/*.h fait croire
+  que c'est ok dans les fichiers CGAL...
+- Essayer de linker 2 .o qui n'ont eu que des includes de mes trucs.
+  => test-suite.
+- Faire 2 fonctions "save" et "restore" pour protéger le FPCR.
+- La version assembleur Mips foire (bus error !!!), débugguer pdt qu'on les a
+  encore...
+- Essayer de blaster les volatile dans les IA_SETFPCW, et faire des
+  benchs/tests.  Sur Sparc et Intel, dernier egcs snapshot.
+- cf glibc-2.1 pour d'autres ports.
+- mettre les *_FPU_* dans un namespace à part ?
+- Supporter Quotient<> pour supporter les prédicats homogenes.
+- Essayer le fcmov-patch d'HJ Lu.
+- Add determinant_signs.h to the list of filtered files ?
+  (as soon as it will be included in CGAL).
+  And send the 3 lines to Stefan to add to the end of the original
+  determinant.h.
+? Essayer de faire marcher MipsPro (ask Michael).
+- Permettre de cacher (NT tag ?) les conversions en intervalles.
+  C'est pas un cache, mais un stockage forcé, et il faut l'updater
+  si la value est modifiée...
+- Comment intégrer ces foutus pré-calculs ?  Faire un draft de propal.
+- Pour les archis non supportées par le compilo, donner du code machine,
+  plutôt que de l'assembleur (hexadecimal, .byte...) => MipsPro supported
+  (et egcs Irix5, et SunPro 5.0, et...).  Ça n'est plus si critique => C code.
+  GCC/Irix-5.3 supported now, with the recent assembly change ?
+- Avoir un tag pour chaque type de nombre disant si pour sa conversion en IA,
+  il préfère avoir ou non le mode d'arrondi vers +inf ou nearest, ou si ça lui
+  est égal.  Et patcher le script pour qu'il calcule les conversions avant
+  l'appel pour permettre cette optimisation.  Avoir un défaut fixé est ok,
+  parce que les builtins s'en foutent, et les autres rament à la conversion
+  de toute façon.  ==> CGAL_convert_to (pour gérer le caching) supposera que
+  le rounding est "nearest".
 - try if __attribute__((const)) for GNU on my operators is ok, and speed up ?
+  what about putting it on predicates too ?
 - cast functions: better not have a CGAL_convert_to<IA_not_adv> templated ?
+? What about re-enabling assembly for Mips ?  (when Geert upgrades to IRIX 6)
+? CGAL_FPU_set_rounding_mode(CGAL_FPU_rounding_mode) should replace the
+  old functions if it's as fast.
+? CGAL_FPU_get_rounding_mode() doesn't need to be inline => libCGAL ?
 ? Currently, some types (leda_*, GMP) need the rounding to nearest for doing
   the conversion to Interval.  That's bad because double doesn't, and is the
   case that must be optimized.  Maybe have a Tag for each NT saying if/how it
   needs the rounding to do the conversion ?
+  Remark: the fast case is for the builtin types, so others (that care of the
+  rounding mode) can be slowed down...
 - For GMP (see CLN first), use a custom function ?
 - Workaround for the x86 bug: Rajouter pour __i386 + __GNUG__ ?
   #ifndef __OPTIMIZE__
   #warning Please compile with optimization on.
   #endif
   Elucider ce bug (-> new gdb a installer...)
+  Le new snapshot egcs a l'air de passer, par contre, sur Sun...
 - Include a counter for success/failures of the filter ?
   Would be really nice to have (one more compile option...).
-? What about re-enabling assembly for Mips ?  (when Geert upgrades to IRIX 6)
-? CGAL_FPU_set_rounding_mode(CGAL_FPU_rounding_mode) should replace the
-  old functions if it's as fast.
-? CGAL_FPU_get_rounding_mode() doesn't need to be inline => libCGAL ?
-? SunPro CC 4.2 & MipsPro CC 7.2 don't want partial specializations, which
+  This is the slow case, this can be handled dynamically (even just impose it).
+? MipsPro CC 7.2 doesn't want partial specializations, which
   breaks CGAL_convert_to<>(), and the overloaded predicates.  The first one is
-  workable around, but not the second one...  So I decide to totally drop
-  support for the CC's.
-? Try to fix that warning:
-  /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
-  required between ldfsr and next FBfcc; nops inserted
-? template by float/double ? (=> must provide CGAL_FPU... for floats...)
+  workable around, but not the second one...  Ask Michael, this might be
+  doable.
 ? implement operator{<,>,<=,>=}(double) -> the current operators will be
   implemented using them, and the tests (IA) > 0 will be faster ?
   Also, this would simplify the *() and /() code.
   But be careful with exceptions... => 2 different semantics...
 ? shall I protect ostream operator<<() by CGAL_FPU... ?
   it seems there's a pb with Linux & Irix  (& Solaris ?) here.
-  Hum... it's not MY fault, is it ?
+  Hum... it's not my fault, is it ?
+? template by float/double ? (=> must provide CGAL_FPU... for floats...)
+? Add "-Wa,-xarch=v8plus" to fix the following "error":
+  /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
+  required between ldfsr and next FBfcc; nops inserted
 
 Concerning the script:
 
+- Produire un fichier avec juste les déclarations, et un autre avec les
+  définitions, ça aidera à faire une library séparée de trucs précompilés.
+- Add a comment for the parser script, e.g. /*No_Filter*/, because some
+  predicates don't need to be filtered (compare_x, lexico,..)..
+  Or try to guess when parsing ?  Anyway for the filtered constructions, the
+  scheme will have to be rethought.
 - fix the "line too long".
   include/CGAL/Arithmetic_filter/predicates_on_ftC2.h has 3 lines over 80
   +characters.
@@ -47,9 +91,15 @@ Concerning the script:
 
 Concerning the doc:
 
+- documenter le fait que convert_to est par défaut le contructeur, et que donc
+  il y a besoin de redefinir convert_to que s'il n'y en a pas, ou s'il n'est
+  pas exact.
 - say we advise <double, leda_rational> or (<double, Quotient<Gmpz>> ?).
 - say we don't have Assembly on Mips by default (and change the code), but
   should work on IRIX 6.
+- Document CGAL_IA_DONT_USE_ASSEMBLY which disables the use of assembly.  It's
+  on by default, but is needed on IRIX 5.3 and its buggy assembler.  Will be
+  the default solution till I have some machine language code.
 ? document is_same().
 ? add a pointer to my MISC'99 paper to appear.
 ? when a "implementor's doc" will be available, shift the IA specific stuff in
@@ -57,8 +107,8 @@ Concerning the doc:
 
 Concerning the test-suite:
 
-- small benchs on a few predicates.
-- test cast functions ?
+? small benchs on a few predicates.
+- test cast functions ?  [handled by the flag CGAL_IA_DEBUG]
 - test NaNs (and Infs?).  Comparisons with these should throw the exception...
 - try to fix the x86 bug.  Currently, it hides the problem for the test-suite
   to work.

@@ -1,5 +1,12 @@
 Changes done to the Interval Arithmetic package.
 
+Version 2.8 on ?? 1999
+- Introduced .exact() and .interval() member functions to the filtered type.
+- Removed SunPro comments in the doc.
+- Introduced namespace CGAL.
+- Support standard headers.
+- More operators(double) supported.
+
 Version 2.7 on 22 December 1998
 - Hopefully the last fixes for the 1.2 release.
 - Added CGAL_square(), and benchmark for it.
