@@ -1,3 +1,6 @@
+1.11 (2 May 2001)
+    Fixed bugs in Indirect_edge_compare.
+
 1.10 (1 May 2001)
     Changed traits requirements for y-monotone partition to incorporate
     the Compare_x_at_y function now available in the kernel.

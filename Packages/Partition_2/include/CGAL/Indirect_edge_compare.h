@@ -50,7 +50,7 @@ class Indirect_edge_compare
      Indirect_edge_compare() : 
           _compare_y_2(Traits().compare_y_2_object()),
           _compare_x_2(Traits().compare_x_2_object()),
-          _construct_line_2(Traits().construct_line_2_object())
+          _construct_line_2(Traits().construct_line_2_object()),
           _compare_x_at_y_2(Traits().compare_x_at_y_2_object())
      { }
      
@@ -76,7 +76,7 @@ class Indirect_edge_compare
         { 
            // construct supporting line for edge
            Line_2  line = _construct_line_2(*edge_vtx_1, *edge_vtx_2);
-           return _compare_x_at_y(*vertex, line) == SMALLER;
+           return _compare_x_at_y_2(*vertex, line) == SMALLER;
         }
      }               
 
