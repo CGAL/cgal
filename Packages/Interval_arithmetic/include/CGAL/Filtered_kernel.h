@@ -14,7 +14,7 @@
 // file          : include/CGAL/Filtered_kernel.h
 // revision      : $Revision$
 // revision_date : $Date$
-// package       : ???
+// package       : Interval_arithmetic
 // author(s)     : Sylvain Pion
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -30,6 +30,7 @@
 //   generalized to allow static filters...
 // - at the moment, only the predicates are filtered.
 //   Constructions will come later.
+// - proper treatment of constructive predicates remains a question.
 // - the kernel only works with traits only and as a pure traits only.
 // - split in several files.
 
@@ -39,183 +40,6 @@
 #include <CGAL/Simple_cartesian.h>
 
 CGAL_BEGIN_NAMESPACE
-
-#if 0
-// This class is just used to encapsulate something.
-template <class T>
-class Blind_wrapper
-{
-public:
-    typedef T  value_type;
-    typedef Blind_wrapper<T>  result_type;
-
-    Blind_wrapper() : obj() {}
-
-    Blind_wrapper(const T& object) : obj(object) {}
-
-    const T& operator()() const
-    { return obj; }
-
-private:
-    T obj;
-};
-
-// Let's cheat...
-template <>
-class Blind_wrapper<double>
-{
-public:
-    typedef double T;
-    typedef T  value_type;
-    typedef T  result_type;
-
-    Blind_wrapper() : obj() {}
-
-    Blind_wrapper(const T& object) : obj(object) {}
-
-    const T& operator()() const
-    { return obj; }
-
-private:
-    T obj;
-};
-
-// Just forwards the construction of the CK kernel.
-template < class T >
-class Forward_construction
-{
-public:
-    typedef Blind_wrapper<typename T::result_type>::result_type   result_type;
-
-    Forward_construction() : CK_construction() {}
-
-    result_type
-    operator()() const
-    { return CK_construction(); }
-
-    template < class A1 >
-    result_type
-    operator()(const A1& a1) const
-    { return CK_construction(a1()); }
-
-    template < class A1, class A2 >
-    result_type
-    operator()(const A1& a1, const A2& a2) const
-    { return CK_construction(a1(), a2()); }
-
-    template < class A1, class A2, class A3 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3) const
-    { return CK_construction(a1(), a2(), a3()); }
-
-    template < class A1, class A2, class A3, class A4 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
-    { return CK_construction(a1(), a2(), a3(), a4()); }
-
-    template < class A1, class A2, class A3, class A4, class A5 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
-	       const A5& a5) const
-    {
-	return CK_construction(a1(), a2(), a3(), a4(),
-		a5());
-    }
-
-    template < class A1, class A2, class A3, class A4, class A5, class A6 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
-	       const A5& a5, const A6& a6) const
-    {
-	return CK_construction(a1(), a2(), a3(), a4(),
-		a5(), a6());
-    }
-
-    template < class A1, class A2, class A3, class A4, class A5, class A6,
-               class A7 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
-	       const A5& a5, const A6& a6, const A7& a7) const
-    {
-	return CK_construction(a1(), a2(), a3(), a4(),
-		a5(), a6(), a7());
-    }
-
-    template < class A1, class A2, class A3, class A4, class A5, class A6,
-               class A7, class A8 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
-	       const A5& a5, const A6& a6, const A7& a7, const A8& a8) const
-    {
-	return CK_construction(a1(), a2(), a3(), a4(),
-		a5(), a6(), a7(), a8());
-    }
-
-    template < class A1, class A2, class A3, class A4, class A5, class A6,
-               class A7, class A8, class A9 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
-	       const A5& a5, const A6& a6, const A7& a7, const A8& a8,
-	       const A9& a9) const
-    {
-	return CK_construction(a1(), a2(), a3(), a4(),
-		a5(), a6(), a7(), a8(), a9());
-    }
-
-    template < class A1, class A2, class A3, class A4, class A5, class A6,
-               class A7, class A8, class A9, class A10 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
-	       const A5& a5, const A6& a6, const A7& a7, const A8& a8,
-	       const A9& a9, const A10& a10) const
-    {
-	return CK_construction(a1(), a2(), a3(), a4(),
-		a5(), a6(), a7(), a8(), a9(), a10());
-    }
-
-    template < class A1, class A2, class A3, class A4, class A5, class A6,
-               class A7, class A8, class A9, class A10, class A11 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
-	       const A5& a5, const A6& a6, const A7& a7, const A8& a8,
-	       const A9& a9, const A10& a10, const A11& a11) const
-    {
-	return CK_construction(a1(), a2(), a3(), a4(),
-		a5(), a6(), a7(), a8(), a9(), a10(),
-		a11());
-    }
-
-    template < class A1, class A2, class A3, class A4, class A5, class A6,
-               class A7, class A8, class A9, class A10, class A11, class A12 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
-	       const A5& a5, const A6& a6, const A7& a7, const A8& a8,
-	       const A9& a9, const A10& a10, const A11& a11,
-	       const A12& a12) const
-    {
-	return CK_construction(a1(), a2(), a3(), a4(),
-		a5(), a6(), a7(), a8(), a9(), a10(),
-		a11(), a12());
-    }
-
-    template < class A1, class A2, class A3, class A4, class A5, class A6,
-               class A7, class A8, class A9, class A10, class A11, class A12,
-	       class A13 >
-    result_type
-    operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4,
-	       const A5& a5, const A6& a6, const A7& a7, const A8& a8,
-	       const A9& a9, const A10& a10, const A11& a11,
-	       const A12& a12, const A13& a13) const
-    {
-	return CK_construction(a1(), a2(), a3(), a4(),
-		a5(), a6(), a7(), a8(), a9(), a10(),
-		a11(), a12(), a13());
-    }
-
-private:
-    T CK_construction;
-};
-#endif // 0
 
 // CK = construction kernel.
 // EK = exact kernel called when needed by the filter.
@@ -240,7 +64,7 @@ public:
 
     // Macros to define the types, predicates and constructions.
 
-#if 1 // If we adopt this solution, then we can simply derive ?
+    // If we adopt this solution, then we can simply derive ?
 #define CGAL_Filter_type(X) \
     typedef typename CK::X X##_base; \
     typedef typename CK::X X;
@@ -249,6 +73,10 @@ public:
     typedef Filtered_predicate<typename EK::P, typename FK::P, \
 	                       C2E_Converter, C2F_Converter> P; \
     P Pf() const { return P(); }
+
+#define CGAL_Filter_pred_type_only(P) \
+    typedef Filtered_predicate<typename EK::P, typename FK::P, \
+	                       C2E_Converter, C2F_Converter> P;
 
     // The following could be used instead for some Cartesian predicates
     // that are exact : compare* and exact*.
@@ -259,21 +87,6 @@ public:
 #define CGAL_Filter_cons(C, Cf) \
     typedef typename CK::C C; \
     C Cf() const { return C(); }
-
-#else // old try
-#define CGAL_Filter_type(X) \
-    typedef Blind_wrapper<typename CK::X> X##_base; \
-    typedef Blind_wrapper<typename CK::X> X;
-
-#define CGAL_Filter_pred(P, Pf) \
-    typedef Filtered_predicate<typename EK::P, typename FK::P, \
-	                       C2E_Converter, C2F_Converter> P; \
-    P Pf() const { return P(); }
-
-#define CGAL_Filter_cons(C, Cf) \
-    typedef Forward_construction<typename CK::C> C; \
-    C Cf() const { return C(); }
-#endif
 
     // Types :
 
@@ -479,6 +292,43 @@ public:
 	    collinear_are_strictly_ordered_along_line_3)
     CGAL_Filter_pred(Side_of_oriented_sphere_3, side_of_oriented_sphere_3_object)
     CGAL_Filter_pred(Side_of_bounded_sphere_3, side_of_bounded_sphere_3_object)
+
+    // Constructive predicates
+    // They are problematic, as their constructor will systematically
+    // construct the _exact_ object, and thus will be uselessly costly.
+
+    CGAL_Filter_pred_type_only(Compare_distance_to_point_2)
+    CGAL_Filter_pred_type_only(Less_distance_to_point_2)
+    CGAL_Filter_pred_type_only(Less_signed_distance_to_line_2)
+    CGAL_Filter_pred_type_only(Less_rotate_ccw_2)
+    CGAL_Filter_pred_type_only(Left_of_line_2)
+    CGAL_Filter_pred_type_only(Compare_distance_to_point_3)
+    CGAL_Filter_pred_type_only(Less_distance_to_point_3)
+
+    Less_distance_to_point_2
+    less_distance_to_point_2_object(const Point_2& p) const
+    { return Less_distance_to_point_2(p); }
+
+    Less_signed_distance_to_line_2
+    less_signed_distance_to_line_2_object(const Point_2& p,
+                                          const Point_2& q) const
+    { return Less_signed_distance_to_line_2(p,q); }
+
+    Less_rotate_ccw_2
+    less_rotate_ccw_2_object(const Point_2& p) const
+    { return Less_rotate_ccw_2(p); }
+
+    Left_of_line_2
+    left_of_line_2_object(const Point_2& p, const Point_2& q) const
+    { return Left_of_line_2(p,q); }
+
+    Less_distance_to_point_3
+    less_distance_to_point_3_object(const Point_3& p) const
+    { return Less_distance_to_point_3(p); }
+
+    Compare_distance_to_point_3
+    compare_distance_to_point_3_object(const Point_3& p) const
+    { return Compare_distance_to_point_3(p); }
 
     // CGAL_Filter_cons(Construct_point_d, construct_point_d_object)
 };
