@@ -1,3 +1,6 @@
+1 October 2004 Sylvain Pion
+- Add gmp_ldflags to core_test_ldflags.
+- Use "uname -m" on Linux instead of "uname -p".
 
 29 September 2004 Andreas Fabri
 - Added CGAL_OPENGL_LIBS in install_cgal

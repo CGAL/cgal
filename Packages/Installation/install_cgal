@@ -647,7 +647,7 @@ check_for_utils()
 guess_os()
 {
     _tmp=`${_uname} -p 2>/dev/null`
-    if [ -z "${_tmp}" -o "${_tmp}" = 'unknown' ]; then
+    if [ -z "${_tmp}" -o "${_tmp}" = 'unknown' -o "`${_uname}`" = "Linux" ]; then
 	_tmp=`${_uname} -m 2>/dev/null`
     fi
     if [ -n "${_tmp}" ]; then
@@ -1610,6 +1610,7 @@ core_test_ldflags()
 {
     compiler_test_ldflags
     core_ldflags
+    gmp_ldflags
 }
 
 #---------------------------------------------------------
