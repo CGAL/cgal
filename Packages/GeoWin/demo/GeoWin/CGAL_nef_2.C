@@ -94,17 +94,17 @@ typedef CGAL::Polygon_2<PTraits,std::list<Point> >            Polygon;
 // drawing routine using the visualizor
 // see Nef Windowstream ...
 
-#define USING(t) typedef typename PMCDEC::t t
+#define CGAL_USING(t) typedef typename PMCDEC::t t
 
 namespace CGAL {
 
 template <typename PMCDEC>
 class PM_MyBooleanColor 
 {
-  USING(Vertex_const_handle);   
-  USING(Halfedge_const_handle); 
-  USING(Face_const_handle);
-  USING(Mark);
+  CGAL_USING(Vertex_const_handle);   
+  CGAL_USING(Halfedge_const_handle); 
+  CGAL_USING(Face_const_handle);
+  CGAL_USING(Mark);
   
   Color vertex_cl, hedge_cl, face_cl;
 public:
