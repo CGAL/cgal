@@ -1,3 +1,6 @@
+4.43	 (18 January 02)
+- Fix memory leak in Gmpz.
+
 4.42	 (16 January 02)
 - CodeWarrior support.
 

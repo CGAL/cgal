@@ -48,6 +48,12 @@ public:
   Gmpz_rep(mpz_t z)
   { mpz_init_set(mpZ, z); }
 
+  Gmpz_rep(const Gmpz_rep & g)
+  { mpz_init_set(mpZ, g.mpZ); }
+
+  Gmpz_rep & operator= (const Gmpz_rep & g)
+  { mpz_init_set(mpZ, g.mpZ); return *this; }
+
   Gmpz_rep(int si)
   { mpz_init_set_si(mpZ, si); }
 
@@ -65,6 +71,9 @@ public:
 
   Gmpz_rep(const char * const str, int base)
   { mpz_init_set_str(mpZ, str, base); }
+
+  ~Gmpz_rep()
+  { mpz_clear(mpZ); }
 };
 
 class Gmpz
@@ -149,24 +158,18 @@ public:
 
   const mpz_t & mpz() const { return Ptr()->mpZ; }
   mpz_t & mpz() { return ptr()->mpZ; }
-
-  ~Gmpz()
-  {
-      if (!is_shared())
-	  mpz_clear(mpz());
-  }
 };
 
 
 inline
 bool
 Gmpz::operator==(const Gmpz &z) const
-{ return ( mpz_cmp(mpz(), z.mpz()) == 0 ); }
+{ return mpz_cmp(mpz(), z.mpz()) == 0; }
 
 inline
 bool
 Gmpz::operator<(const Gmpz &z) const
-{ return ( mpz_cmp(mpz(), z.mpz()) < 0 ); }
+{ return mpz_cmp(mpz(), z.mpz()) < 0; }
 
 inline
 bool
@@ -176,33 +179,32 @@ Gmpz::operator<(int i) const
 inline
 bool
 Gmpz::operator<=(const Gmpz &z) const
-{ return ( mpz_cmp(mpz(), z.mpz()) <= 0 ); }
-
+{ return mpz_cmp(mpz(), z.mpz()) <= 0; }
 
 inline
 bool
 Gmpz::operator<=(int i) const
-{ return ( mpz_cmp_si(mpz(), i) <= 0 ); }
+{ return mpz_cmp_si(mpz(), i) <= 0; }
 
 inline
 bool
 Gmpz::operator>(const Gmpz &z) const
-{ return ( mpz_cmp(mpz(), z.mpz()) > 0 ); }
+{ return mpz_cmp(mpz(), z.mpz()) > 0; }
 
 inline
 bool
 Gmpz::operator>(int i) const
-{ return ( mpz_cmp_si(mpz(), i) > 0 ); }
+{ return mpz_cmp_si(mpz(), i) > 0; }
 
 inline
 bool
 Gmpz::operator>=(const Gmpz &z) const
-{ return ( mpz_cmp(mpz(), z.mpz()) >= 0 ); }
+{ return mpz_cmp(mpz(), z.mpz()) >= 0; }
 
 inline
 bool
 Gmpz::operator>=(int i) const
-{ return ( mpz_cmp_si(mpz(), i) >= 0 ); }
+{ return mpz_cmp_si(mpz(), i) >= 0; }
 
 inline
 bool
@@ -212,7 +214,7 @@ Gmpz::operator!=(const Gmpz &z) const
 inline
 bool
 Gmpz::operator==(int i) const
-{ return ( mpz_cmp_si(mpz(), i) == 0 ); }
+{ return mpz_cmp_si(mpz(), i) == 0; }
 
 inline
 bool
