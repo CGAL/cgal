@@ -36,6 +36,7 @@
 #include <CGAL/Segment_Voronoi_diagram_constructions_C2.h>
 
 #include <CGAL/in_place_edge_list.h>
+#include <CGAL/edge_list.h>
 #include <CGAL/Segment_Voronoi_diagram_traits_wrapper_2.h>
 
 #include <CGAL/Point_container.h>
@@ -165,7 +166,7 @@ protected:
 
   typedef std::map<Face_handle,bool>           Face_map;
   typedef std::map<Face_handle, Face_handle>   Face_face_map;
-  typedef std::vector<Edge>                    Edge_list;
+  typedef std::vector<Edge>                    Edge_vector;
 
   typedef std::list<Vertex_handle>         Vertex_list;
   typedef typename Vertex_list::iterator   Vertex_list_iterator;
@@ -179,7 +180,11 @@ protected:
 #endif
 
   // the in place edge list
+#ifdef USE_INPLACE_EDGE_LIST
   typedef In_place_edge_list<Edge>          List;
+#else
+  typedef Edge_list<Edge>          List;
+#endif
 
   typedef enum { NO_CONFLICT = -1, INTERIOR, LEFT_VERTEX,
 		 RIGHT_VERTEX, BOTH_VERTICES, ENTIRE_EDGE }

@@ -1240,7 +1240,7 @@ initialize_conflict_region(const Face_handle& f, List& l)
 
   l.clear();
   for (int i = 0; i < 3; i++) {
-    l.push(sym_edge(f, i));
+    l.push_back(sym_edge(f, i));
   }
 }
 
@@ -1301,6 +1301,7 @@ expand_conflict_region(const Face_handle& f, const Site& t,
     if ( !interior_in_conflict ) { continue; }
 
     if ( fm.find(n) != fm.end() ) {
+#if 0
       Edge e = sym_edge(f, i);
       if ( l.is_in_list(e) ||
 	   l.is_in_list(sym_edge(e)) ) {
@@ -1313,6 +1314,7 @@ expand_conflict_region(const Face_handle& f, const Site& t,
 	bool loop_in_conflict_region_found(false);
 	CGAL_assertion( loop_in_conflict_region_found );
       }
+#endif
       continue;
     }
 
@@ -1398,7 +1400,7 @@ Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 add_bogus_vertices(List& l)
 {
   Vertex_list vertex_list;
-  Edge_list edge_list;
+  Edge_vector edge_list;
 
   Edge e_start = l.front();
   Edge e = e_start;
@@ -1406,7 +1408,7 @@ add_bogus_vertices(List& l)
     Edge esym = sym_edge(e);
     if ( l.is_in_list(esym) ) {
       bool found(false);
-      typename Edge_list::iterator it;
+      typename Edge_vector::iterator it;
       for (it = edge_list.begin(); it != edge_list.end(); ++it) {
 	if ( *it == esym ) {
 	  found = true;
@@ -1418,7 +1420,7 @@ add_bogus_vertices(List& l)
     e = l.next(e);
   } while ( e != e_start );
 
-  typename Edge_list::iterator it;
+  typename Edge_vector::iterator it;
 
   for (it = edge_list.begin();  it != edge_list.end(); ++it) {
     e = *it;
@@ -2556,8 +2558,8 @@ find_conflict_region_remove(const Vertex_handle& v,
 
     CGAL_assertion( interior_in_conflict );
 
-    l.push(e);
-    l.push(sym_edge(e));
+    l.push_back(e);
+    l.push_back(sym_edge(e));
     return;
   }
 
