@@ -134,7 +134,7 @@ template <>
 struct Input_traits<leda_rational> {
   typedef leda_integer                          Input_int_type;
   typedef leda_integer                          Input_float_type;
-  typedef leda_integer                          Input_rat_type;
+  typedef leda_rational                         Input_rat_type;
 };
 #endif
 
@@ -144,7 +144,7 @@ template <>
 struct Input_traits<CGAL::Lazy_exact_nt<leda_rational> > {
   typedef leda_integer                          Input_int_type;
   typedef leda_integer                          Input_float_type;
-  typedef leda_integer                          Input_rat_type;
+  typedef leda_rational                         Input_rat_type;
 };
 
 /*! CGAL::Lazy_exact_nt<leda_rational> */
