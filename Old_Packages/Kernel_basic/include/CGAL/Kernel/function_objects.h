@@ -1312,6 +1312,27 @@ class Call_collinear_has_on
     { return c.collinear_has_on(a1); }
 };
 
+template <class Point>
+struct p_Orientation
+{
+  typedef Orientation    result_type;
+
+  Orientation operator()(const Point& p, const Point& q, const Point& r) const
+  { return orientation(p,q,r); }
+  Orientation operator()(const Point& p, const Point& q, const Point& r, 
+                         const Point& s) const
+  { return orientation(p,q,r,s); }
+};
+
+template <class Point>
+struct p_Less_dist_to_point
+{
+  typedef bool    result_type;
+  typedef Arity_tag< 3 >   Arity;
+
+  bool operator()(const Point& p0, const Point& p1, const Point& p2) const
+  { return has_smaller_dist_to_point(p0, p1, p2); }
+};
 
 } // end namespace CGALi
 CGAL_END_NAMESPACE

@@ -18,88 +18,11 @@
 // author(s)     : Andreas Fabri
 //                 Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
- 
 
 #ifndef CGAL_USER_CLASSES_H
 #define CGAL_USER_CLASSES_H
-
-CGAL_BEGIN_NAMESPACE
-
-template < class R >
-class Point_2;
-
-template < class R >
-class Vector_2;
-
-template < class R >
-class Direction_2;
-
-template < class R >
-class Line_2;
-
-template < class R >
-class Ray_2;
-
-template < class R >
-class Segment_2;
-
-template < class R >
-class Triangle_2;
-
-template < class R >
-class Iso_rectangle_2;
-
-template < class R >
-class Circle_2;
-
-template < class R >
-class Conic_2;
-
-template < class R >
-class Aff_transformation_base_2;
-
-template < class R >
-class Aff_transformation_2;
-
-template < class R >
-class Aff_transformation_3;
-
-template < class R >
-class Plane_3;
-
-template < class R >
-class Point_3;
-
-template < class R >
-class Vector_3;
-
-template < class R >
-class Direction_3;
-
-template < class R >
-class Line_3;
-
-template < class R >
-class Ray_3;
-
-template < class R >
-class Segment_3;
-
-template < class R >
-class Triangle_3;
-
-template < class R >
-class Tetrahedron_3;
-
-template < class R >
-class Iso_cuboid_3;
-
-template < class R >
-class Sphere_3;
-
-CGAL_END_NAMESPACE
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Vector_2.h>

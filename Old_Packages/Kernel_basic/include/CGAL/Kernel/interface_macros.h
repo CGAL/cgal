@@ -242,7 +242,7 @@ CGAL_Kernel_pred(CGALi::Compare_distance<Point_2>,
 CGAL_Kernel_pred(CGALi::Compare_slope,
 	         Compare_slope_2,
 		 compare_slope_2_object)
-CGAL_Kernel_pred(CGAL ::p_Less_dist_to_point<Point_2>,
+CGAL_Kernel_pred(CGALi::p_Less_dist_to_point<Point_2>,
                  Less_distance_to_point_2,
                  less_distance_to_point_2_object)
 CGAL_Kernel_pred(CGAL ::p_Less_dist_to_line_2<Point_2>,
@@ -271,7 +271,7 @@ CGAL_Kernel_pred(CGALi::p_Angle,
 CGAL_Kernel_pred(CGALi::Collinear,
 	         Collinear_2,
 		 collinear_2_object)
-CGAL_Kernel_pred(CGAL ::p_Orientation<Point_2>,
+CGAL_Kernel_pred(CGALi::p_Orientation<Point_2>,
 	         Orientation_2,
 		 orientation_2_object)
 CGAL_Kernel_pred(CGALi::Side_of_oriented_circle,
@@ -550,7 +550,7 @@ CGAL_Kernel_pred(CGALi::Compare_xyz,
 CGAL_Kernel_pred(CGALi::Compare_distance<Point_3>,
 	         Compare_distance_3,
 		 compare_distance_3_object)
-CGAL_Kernel_pred(CGAL ::p_Less_dist_to_point<Point_3>,
+CGAL_Kernel_pred(CGALi::p_Less_dist_to_point<Point_3>,
                  Less_distance_to_point_3,
                  less_distance_to_point_3_object)
 CGAL_Kernel_pred2(CGALi::Less_signed_distance_to_plane<Plane_3, Point_3>,
@@ -571,7 +571,7 @@ CGAL_Kernel_pred(CGALi::Coplanar_orientation,
 CGAL_Kernel_pred(CGALi::Coplanar_side_of_bounded_circle,
 	         Coplanar_side_of_bounded_circle_3,
 		 coplanar_side_of_bounded_circle_3_object)
-CGAL_Kernel_pred(CGAL ::p_Orientation<Point_3>,
+CGAL_Kernel_pred(CGALi::p_Orientation<Point_3>,
 	         Orientation_3,
 		 orientation_3_object)
 CGAL_Kernel_pred(CGALi::Call_is_degenerate,

@@ -17,18 +17,16 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
-
 #ifndef CGAL_REPRESENTATION_TAGS_H
 #define CGAL_REPRESENTATION_TAGS_H
+
 CGAL_BEGIN_NAMESPACE
 
 class Cartesian_tag {};
 class Homogeneous_tag {};
-class Old_style_tag {};
 
 CGAL_END_NAMESPACE
 
