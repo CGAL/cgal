@@ -38,6 +38,8 @@ class Ref_counted_virtual
     bool  is_referenced() { return (count != 0); }
     bool  is_shared() { return (count > 1); }
 
+    virtual ~Ref_counted_virtual() {}
+
   protected:
     unsigned int count;
 };

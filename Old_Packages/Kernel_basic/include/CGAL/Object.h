@@ -32,15 +32,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Object_base : public Ref_counted_virtual
-{
-  public:
-    virtual   ~Object_base() {}
-};
-
-
 template <class T>
-class Wrapper : public Object_base 
+class Wrapper : public Ref_counted_virtual
 {
   public:
     Wrapper(const T& object) : _object(object) {}
@@ -49,7 +42,7 @@ class Wrapper : public Object_base
 
     operator T() const { return _object; }
 
-    virtual   ~Wrapper() {}
+    ~Wrapper() {}
 
   private:
     T         _object;
@@ -57,10 +50,10 @@ class Wrapper : public Object_base
 
 
 class Object
-  : public Handle_for_virtual<Object_base>
+  : public Handle_for_virtual<Ref_counted_virtual>
 {
     struct empty{};
-    typedef Handle_for_virtual<Object_base> base;
+    typedef Handle_for_virtual<Ref_counted_virtual> base;
 
   public:
 
@@ -68,9 +61,6 @@ class Object
     {
 	initialize_with(Wrapper<empty>());
     }
-
-    Object(const Object &o)
-	: base(o) {}
 
     template <class T>
     Object(const T&t)
