@@ -242,8 +242,9 @@ public:
   }
 
 
-
-private:
+public:
+// made  public for the need of Mesh_2
+// but not documented
  template <class OutputItFaces, class OutputItBoundaryEdges> 
  std::pair<OutputItFaces,OutputItBoundaryEdges>
  propagate_conflicts (const Point  &p,

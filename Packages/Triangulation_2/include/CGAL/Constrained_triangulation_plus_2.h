@@ -57,15 +57,8 @@ public:
   typedef typename Triangulation::List_vertices    List_vertices;
   typedef typename Triangulation::List_constraints List_constraints;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
-  using Triangulation::geom_traits;
-  using Triangulation::cw;
-  using Triangulation::ccw;
-  using Triangulation::number_of_vertices;
-  using Triangulation::vertices_begin;
-#endif
-
   typedef Constraint_hierarchy_2<Vertex_handle, bool> Constraint_hierarchy;
+  typedef Tag_true                                Constraint_hierarchy_tag;
 
   // for user interface with the constraint hierarchy
   typedef typename Constraint_hierarchy::H_vertex_it    
@@ -78,6 +71,14 @@ public:
   //for backward compatibility
  typedef Vertices_in_constraint_iterator     Vertices_in_constraint;
   
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+  using Triangulation::geom_traits;
+  using Triangulation::cw;
+  using Triangulation::ccw;
+  using Triangulation::number_of_vertices;
+  using Triangulation::vertices_begin;
+#endif
+
 protected:
   Constraint_hierarchy hierarchy;
  

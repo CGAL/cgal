@@ -84,10 +84,13 @@ public:
   typedef std::list<Vertex_handle>           List_vertices;
   typedef std::list<Constraint>              List_constraints;
 
-  //nouveau 
+  // Tag to mark the presence of a hierarchy of constraints
+ typedef Tag_false                           Constraint_hierarchy_tag;
+   
+
   class Less_edge;
   typedef std::set<Edge,Less_edge> Edge_set;
-  //nouveau
+
 
   Constrained_triangulation_2(const Gt& gt = Gt()) : Triangulation(gt) { }
 
