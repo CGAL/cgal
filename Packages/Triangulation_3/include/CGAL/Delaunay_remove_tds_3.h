@@ -66,7 +66,7 @@ public :
 
 template < class I, class Fb = Triangulation_ds_face_base_2<> >
 class Delaunay_remove_tds_face_3_2
-  : public Fb, public Triangulation_cw_ccw_2
+  : public Fb
 {
 public:
 
@@ -97,9 +97,10 @@ public:
   void set_n(Face_handle f) {_n = f;}
 
 private:
+  // Dirty, so we should avoid it in another way
   Face_handle handle() const {
     Face_handle n = neighbor(0);
-    int i = ccw(n->index(vertex(1)));
+    int i = Triangulation_utils_3::ccw(n->index(vertex(1)));
     return n->neighbor(i);
   }
 
