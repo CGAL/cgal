@@ -22,6 +22,9 @@
 
 #include <CGAL/Pm_walk_along_line_point_location.h>
 
+//#define CGAL_PM_WALK_DEBUG
+//#define CGAL_PM_DEBUG
+
 CGAL_BEGIN_NAMESPACE
 
 //if unbounded face - returns NULL or some edge on unbounded face 
@@ -290,6 +293,10 @@ walk_along_line(const Point & p,
 }
 
 /*!
+The function gets a face circulator, a point p, direction (up/down), 
+and returns the edge that is closest to the point in the given direction. 
+An edge is returned in all cases. The info about the location type is returned 
+in the Locate_type lt (vertex/edge/face).
  */
 template <class Planar_map>
 bool Pm_walk_along_line_point_location<Planar_map>::
@@ -300,11 +307,27 @@ find_closest(const Point & p,
 	     Locate_type & lt) const
 {
   // for possible future implementation (if the ray includes its source).
+  //including - if the ray includes its source or not. 
+  //type == true : was called from locate, 
+  //              should return the edge that points to the face p is in.
+  //type == false: was called from vertical ray shoot 
+  //               should return the edge right above, or if vertex above - 
+  //               should return the first edge in ccb order
   bool type = including; 
+
+  // is this the first relevant edge found
   bool intersection = e != pm->halfedges_end(); 
+
   // used to answer is it known that ray shoot intersects curves?
-  bool inside = false; // used to calculate if point is inside ccb
+  // inside flips from false to true according to the number of edges found
+  // above p. odd number - p is inside, even - p outside the face.
+  // its like a counter to the number of edges above p.
+  bool inside = false; // used to calculate if point is inside ccb 
+
+  //an iterator on all the halfedges
   Ccb_halfedge_circulator curr = c;
+
+  //the main loop
   do {
 #ifdef CGAL_PM_WALK_DEBUG
     std::cout << curr->source()->point()<<" towards "
@@ -315,13 +338,27 @@ find_closest(const Point & p,
     const X_curve & cv = curr->curve();
     const X_curve & ecv = intersection ? e->curve() : cv;   // dummy ref to cv
     const Point & p1 = traits->curve_source(cv),
-      & p2 = traits->curve_target(cv);
-    bool in_x_range = traits->point_in_x_range(cv, p);
+                & p2 = traits->curve_target(cv);
+    bool in_x_range = true;
+
+    if (type) {//we are in locate - lexicographic x range
+      in_x_range = ((traits->point_is_left_low(p, p1) !=
+		    traits->point_is_left_low(p, p2)) || 
+		    (traits->point_equal(p, p1))   || 
+		    (traits->point_equal(p, p2)));
+    }
+    else { //we are in vertical ray shoot
+      in_x_range = traits->point_in_x_range(cv, p);
+    }
+
+    
     Comparison_result res = EQUAL;
 
     if (in_x_range)
       res = traits->curve_compare_y_at_x(p, cv);
 
+    //continue only if we're in x range, 
+    //and the halfedge is above us (if up) / below (if down)
     if (res == (up ? SMALLER: LARGER)) {
       /* cv is a non vertical curve intersecting the vertical ray shoot 
              x
@@ -347,8 +384,10 @@ find_closest(const Point & p,
         // count parity of curves intersecting ray in their interior
         inside = !inside;
       }
-      // if we had an intersection in the previoes iteration.
+      //if this curve is better for us than all the others : 
+      //or its the first in the right x-range, or its the closest
       if (!intersection ||   
+      // if we had an intersection in the previous iteration.
           traits->curves_compare_y_at_x(ecv, cv , p) == 
           (up ? LARGER : SMALLER))
         // we know that curr is above (or below, if up false) p.
@@ -365,7 +404,7 @@ find_closest(const Point & p,
                  << e->target()->point()<<std::endl;
 #endif  
 
-        if (!type)
+        if (!type)  //used for vertical ray shoot
           if (!traits->curve_is_vertical(cv)) {
             if (traits->point_equal_x(e->source()->point(),p)) {
               // p is below (above if not up) e->source().  
@@ -379,12 +418,15 @@ find_closest(const Point & p,
             lt=Planar_map::VERTEX;
         // the vertical ray intersects a vertex or an edge.
         intersection = true;   
-      } else if (e != curr && e != curr->twin() && 
+      } 
+      //if there was intersection in the previous run, and the compare-y_at_x 
+      //returned equal, that is in one of the cases: 
+      else if (e != curr && e != curr->twin() && 
                  traits->curves_compare_y_at_x(ecv, cv , p) == EQUAL)
       {
         /*
          * The common edge point of cv and ecv is on the vertical ray
-         * enamating from p. q is assigned with this common edge point.
+         * emanating from p. q is assigned with this common edge point.
          * first intersection point of ray and curve is an end point like
          *
          *                  x x
@@ -394,67 +436,54 @@ find_closest(const Point & p,
          *     p       or   p
          *
          */
+
+	//q will hold the intersection point of cv and ecv
         Point q = traits->curve_source(cv);
         if ((traits->compare_x(p, q) != EQUAL) ||
+	    //the next 2 lines are written to deal with cases 
+	    //that one of the curves is vertical
           (!traits->point_equal(q, traits->curve_source(ecv)) &&
            !traits->point_equal(q, traits->curve_target(ecv))))
           q = traits->curve_target(cv);
 
+	//check which curve (cv or ecv) is closer in the meaning of clockwise
         if ((up ? traits->curves_compare_y_at_x_from_bottom(ecv, cv, q) :
              traits->curves_compare_y_at_x_from_top(ecv,cv,q)) == LARGER)
         {
+	  //if type == vertical ray shoot we want to return the edge that points towards q
+	  //if type == locate -  
           // ecv is closer to p than cv.
-          if (type != (traits->point_equal(curr->target()->point(), q)))
+         if (type != (traits->point_equal(curr->target()->point(), q)))
             // means we're under cv (so we take the outer edge part).
             e = curr;      
           else
             // means we're above cv (between cv and ecv) and so
             // we take the inner edge part.
             e = curr->twin();  
+
+	 //idit - was moved, and to change to suit down ray shoot
+	 //in this case q is upper point of a vertical edge. 
+	 //in this case we have to take (in locate) the halfedge that q is its source
+	 //in vertical ray shoot we we have to take the halfedge that q is its target
+	 if (traits->curve_is_vertical(cv)) {
+	   if (traits->point_is_left_low
+	       (traits->curve_leftlow_most(cv), q))
+	   {
+	     // special treatment for this special case:
+	     // vertical segment downward - here we should take
+	     // the opposite direction
+	     if (type != (traits->point_equal(curr->target()->point(), q))) 
+	       e = curr->twin();
+	     else
+	       e = curr;
+	   }
+	 }
         }
-              
-        if (traits->curve_is_vertical(cv)) {
-          if (traits->point_is_left_low
-              (traits->curve_leftlow_most(cv), q))
-          {
-            // special treatment for this special case:
-            // vertical segment downward - here we should take
-            // the opposite direction
-            if (type != (traits->point_equal(curr->target()->point(), q))) 
-              e = curr->twin();
-            else
-              e = curr;
-          }
-        }
+
+
         if (!type) lt=Planar_map::VERTEX; 
         // lt should be already Planar_map::VERTEX
 
-	if (up && (traits->point_equal(traits->curve_leftmost(cv),traits->curve_leftmost(ecv)))) 
-	  //|| (!up && (traits->point_equal(traits->curve_rightmost(cv),traits->curve_rightmost(ecv)))))
-	
-	  // check if cv and ecv are both to the right of p (if up) 
-	  //if so, it means that the y-value of ecv and cv is equal on p.x
-	  // -  since traits->curves_compare_y_at_x(ecv, cv , p) == EQUAL
-	  //it also means that ecv is upper than cv
-	  // - since traits->curves_compare_y_at_x_from_bottom(ecv, cv, q) != LARGER
-	{
-	//idit : specail case:
-        /*
-         *           x
-         *          / 
-         *         x
-         *         |\
-         *         p x
-         *
-         */
-	  // orient e upright
-	  if ( up == traits->point_is_left_low(e->target()->point(),
-					       e->source()->point()))
-	  {
-	    //std::cout << "e changed to twin\n";
-	    e = e->twin();
-	  }
-	}
       }
 
 #ifdef CGAL_PM_DEBUG
