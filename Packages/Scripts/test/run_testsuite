@@ -52,7 +52,7 @@ test_directory()
     if [ -f cgal_test -a -x cgal_test ] ; then
       export PLATFORM CGAL_MAKEFILE TESTSUITE_CXXFLAGS TESTSUITE_LDFLAGS
       rm -f error.txt
-      ./cgal_test 2>&1 > current_compiler_output
+      ./cgal_test >current_compiler_output 2>&1
       exit_value=$?
       cat current_compiler_output >> $COMPILER_OUTPUT
       cat current_compiler_output
