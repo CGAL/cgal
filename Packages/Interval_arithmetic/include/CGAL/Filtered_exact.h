@@ -113,8 +113,6 @@ public:
   typedef typename Number_type_traits<CT>::Has_sqrt     Has_sqrt;
 
   Filtered_exact () {}
-  Filtered_exact (const Filtered_exact<CT, ET, Type, Protection, Cache> & fil)
-      : Cache(fil.cache()), _value(fil._value) {}
   Filtered_exact (const CT & ct)
       : _value(ct)  { update_cache(); }
   template <class NT>
