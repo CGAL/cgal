@@ -1,5 +1,6 @@
 19 August 2004 Monique Teillaud
 - fixes in the bibliography
+- pdf conversion of figures added
 
 13 August 2004 Sylvain Pion
 - T_hierarchy_vertex_base : remove useless and dubious "if (this)".
