@@ -273,24 +273,9 @@ std::pair<double,double> to_interval(const Polynomial<ET> &);
 template <typename ET>
 Sign sign(const Polynomial<ET> &);
 
-template <typename ET>
-Comparison_result
-compare(const Polynomial<ET> &, const Polynomial<ET> &);
 
 template <typename ET>
 Polynomial<ET> abs(const Polynomial<ET> &);
-
-template <typename ET>
-Polynomial<ET> square(const Polynomial<ET> &);
-
-template <typename ET>
-Polynomial<ET> sqrt(const Polynomial<ET> &);
-
-template <typename ET>
-Polynomial<ET> min(const Polynomial<ET> &, const Polynomial<ET> &);
-
-template <typename ET>
-Polynomial<ET> max(const Polynomial<ET> &, const Polynomial<ET> &);
 
 template <typename ET>
 bool is_finite(const Polynomial<ET> &);
@@ -307,37 +292,6 @@ template <typename> class Nef_polynomial;
 
 template <typename ET>
 double to_double(const Nef_polynomial<ET> &);
-
-template <typename ET>
-std::pair<double,double> to_interval(const Nef_polynomial<ET> &);
-
-template <typename ET>
-Sign sign(const Nef_polynomial<ET> &);
-
-template <typename ET>
-Comparison_result
-compare(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
-
-template <typename ET>
-Nef_polynomial<ET> abs(const Nef_polynomial<ET> &);
-
-template <typename ET>
-Nef_polynomial<ET> square(const Nef_polynomial<ET> &);
-
-template <typename ET>
-Nef_polynomial<ET> sqrt(const Nef_polynomial<ET> &);
-
-template <typename ET>
-Nef_polynomial<ET> min(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
-
-template <typename ET>
-Nef_polynomial<ET> max(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
-
-template <typename ET>
-bool is_finite(const Nef_polynomial<ET> &);
-
-template <typename ET>
-bool is_valid(const Nef_polynomial<ET> &);
 
 template <typename ET>
 Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
