@@ -1,6 +1,6 @@
 #include <CGAL/config.h> // needed for the LONGNAME flag
 
-#ifdef CGAL_CFG_NO_LONGNAME_PROBLEM
+#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
 // Define shorter names to please linker (g++/egcs)
 #define Arrangement_2 Ar
 #define Cartesian Cr
@@ -8,7 +8,9 @@
 #define Quotient Qt
 #define Planar_map_traits_wrap PMTW
 #define _List_iterator Lit
+#if !defined(_MSC_VER)
 #define bidirectional_iterator_tag Bitt
+#endif
 #define Planar_map_2 Pm2
 #define Arr_2_default_dcel A2dd
 #define Point_2 Pt2
