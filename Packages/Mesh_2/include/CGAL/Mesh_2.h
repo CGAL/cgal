@@ -324,8 +324,6 @@ template <class Tr>
 bool Mesh_2<Tr>::
 get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
 {
-  std::cerr << "----->get_cluster(...) {count=" << cluster_map.size()
-	    << "} = ";
   typedef Cluster_map_type::iterator Iterator;
   typedef std::pair<Iterator, Iterator> Range;
   Range range = cluster_map.equal_range(va);
@@ -336,11 +334,9 @@ get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
 	c = it->second;
 	if(erase)
 	  cluster_map.erase(it);
-	std::cerr << "true" << std::endl;
 	return true;
       }
     }
-  std::cerr << "false" << std::endl;
   return false;
 }
 
@@ -356,14 +352,14 @@ write(ostream &f)
       nedges++;
     eit++;
   }
-  f<<nedges<<endl;
+  f<<nedges<<std::endl;
   eit = finite_edges_begin();
   while(eit!=finite_edges_end()) {
     if((*eit).first->is_constrained((*eit).second)) {
       f<<(*eit).first->vertex(cw((*eit).second))->point().x()<<" ";
       f<<(*eit).first->vertex(cw((*eit).second))->point().y()<<" ";
       f<<(*eit).first->vertex(ccw((*eit).second))->point().x()<<" ";
-      f<<(*eit).first->vertex(ccw((*eit).second))->point().y()<<endl;
+      f<<(*eit).first->vertex(ccw((*eit).second))->point().y()<<std::endl;
     }
     eit++;
   }
@@ -442,11 +438,6 @@ template <class Tr>
 void Mesh_2<Tr>::
 refine_edge(Vertex_handle va, Vertex_handle vb)
 {
-
-  std::cerr << "->refine_edge( ["
-	    << va->point() << "], ["
-	    << vb->point() << "] )" << std::endl;
-
   Face_handle f;
   int i;
   is_edge(va, vb, f, i); // get the edge (f,i)
@@ -457,7 +448,6 @@ refine_edge(Vertex_handle va, Vertex_handle vb)
   if( get_cluster(va,vb,c,true) )
     if( get_cluster(vb,va,c2,true) )
       { // both ends are clusters
-	std::cerr << "#Two clusters" << std::endl;
 	Vertex_handle vm = insert_middle(f,i);
 	update_cluster(c,va,vb,vm,false);
 	update_cluster(c2,vb,va,vm,false);
@@ -508,10 +498,6 @@ refine_face(Face_handle f)
 	vb = fh->vertex(ccw(i));
       if(fh->is_constrained(i) and is_encroached(va,vb,pc))
 	{
-	  std::cerr << "The circumcenter encroaches [ ("
-		    << va->point() << "), (" << vb->point() 
-		    << ") ]" << std::endl;
-
 	  split_the_face = false;
 	  Cluster c,c2;
 	  bool 
@@ -537,15 +523,9 @@ refine_face(Face_handle f)
 // encroaches [va,vb] and let rg be the length of the shortest edge
 // of T. If rmin >= rg, then split the edge.
 
-	      std::cerr << "  cluster edge (reduced=" << c.reduced() 
-			<< ", rmin=" << c.rmin << ", rg="
-			<< shortest_edge_squared_length(f) 
-			<< ")" << std::endl;
-
 	      if( !c.reduced() or 
 		  c.rmin >= shortest_edge_squared_length(f) )
 		{
-		  std::cerr << " => cut!" << std::endl;
 		  c_edge_queue.push_back(Constrained_edge(va,vb));
 		  keep_the_face_bad = true;
 		}
@@ -580,8 +560,6 @@ inline
 void Mesh_2<Tr>::
 split_face(const Face_handle& f, const Point& circum_center)
 {
-  std::cerr << "(inserted circum: " << circum_center
-	    << ")" << std::endl;
   Vertex_handle v = insert(circum_center,f);
   update_facette_map(v);
 }
@@ -600,10 +578,6 @@ template <class Tr>
 void Mesh_2<Tr>::
 create_clusters_of_vertex(Vertex_handle v)
 {
-  using std::endl;
-  std::cerr << endl << "->create_clusters_of_vertex( [" << v->point()
-	    << "] )" << endl;
-
   Is_this_edge_constrained test(this, v);
   Constrained_vertex_circulator begin(incident_vertices(v),test);
   // This circulator represents all constrained edges around the
@@ -619,15 +593,8 @@ create_clusters_of_vertex(Vertex_handle v)
   bool in_a_cluster = false;
   do
     {
-      std::cerr << "Angle: [ (" <<
-	current->point() << "), (" << next->point() << ") ]" <<
-	std::endl;
-      std::cerr << "Vh: [ (" << (int)&(*current)
-		<< "), (" << (int)&(*next) << ") ]"
-		<< std::endl;
       if(is_small_angle(current->point(), v->point(), next->point()))
 	{
-	  std::cerr << "is small." << std::endl;
 	  if(!in_a_cluster)
 	    {
 	      // at this point, current is the beginning of a cluster
@@ -675,10 +642,7 @@ construct_cluster(Vertex_handle v,
       ++second;
       c.smallest_angle.first = begin;
       c.smallest_angle.second = second;
-      std::cerr << "New cluster!" << std::endl;
     }
-  else
-    std::cerr << "Clusters merge!" << std::endl;
 
   bool all_edges_in_cluster=false;
   if(begin==end)
@@ -699,9 +663,6 @@ construct_cluster(Vertex_handle v,
   do
     {
       c.vertices[begin] = false;
-      std::cerr << "Cluster edge: [ (" << v->point() << "), ("
-		<< begin->point() << ") ]" <<
-	std::endl;
       Squared_length l = squared_distance(vp,
 					begin->point());
       c.minimum_squared_length = 
@@ -713,7 +674,6 @@ construct_cluster(Vertex_handle v,
 	    squared_cosine_of_angle_times_4(begin->point(),
 					    v->point(),
 					    next->point());
-	  std::cerr << "cosine=" << cosine << std::endl;
 	  if(cosine>greatest_cosine)
 	    {
 	      greatest_cosine = cosine;
@@ -724,16 +684,6 @@ construct_cluster(Vertex_handle v,
     }
   while(next++,begin++!=end);
   cluster_map.insert(make_pair(v,c));
-
-  std::cerr << "smallest angle: [ (" << c.smallest_angle.first->point()
-	    << "), (" << c.smallest_angle.second->point() << ") ]" 
-	    << std::endl;
-
-  std::cerr << "Number of edges in this cluster: " <<
-    c.vertices.size() << std::endl;
-
-  std::cerr << "Number of clusters at (: " << v->point() << "): " <<
-    cluster_map.count(v) << std::endl;
 }
 
 template <class Tr>
@@ -750,10 +700,6 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
     geom_traits().construct_midpoint_2_object();
   Construct_translated_point_2 translate =
     geom_traits().construct_translated_point_2_object();
-
-  //  std::cerr << boolalpha;
-  std::cerr << "--->cut_cluster_edge( [" << va->point() << "], [" 
-	    << vb->point() << "], " << c.reduced(vb) <<" )" << std::endl;
 
   Vertex_handle vc;
 
@@ -790,8 +736,6 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
       int index;
       is_edge(va,vb,fh,index);
       
-      std::cerr << "(inserted clusterpoint: " << i << ")" << std::endl;
-
       vc = special_insert_in_edge(i, fh, index);
     }
   update_c_edge_queue(va, vb, vc);
@@ -813,8 +757,6 @@ insert_middle(Face_handle f, int i)
     vb = f->vertex(ccw(i));
 
   Point mp = midpoint(va->point(), vb->point());
-
-  std::cerr << "(inserted midpoint: " << mp << ")" << std::endl;
 
   Vertex_handle vm = special_insert_in_edge(mp, f, i);
   // WARNING: special_insert_in_edge is not robust!
@@ -901,14 +843,8 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
     }
 
   if(c.reduced())
-    {
-      c.rmin = squared_distance(c.smallest_angle.first->point(),
-				c.smallest_angle.second->point())/FT(4);
-      std::cerr << "rmin=" << c.rmin << std::endl;
-      std::cerr << "smallest angle: [ (" << c.smallest_angle.first->point()
-		<< "), (" << c.smallest_angle.second->point() << ") ]" 
-		<< std::endl;
-    }
+    c.rmin = squared_distance(c.smallest_angle.first->point(),
+			      c.smallest_angle.second->point())/FT(4);
   cluster_map.insert(make_pair(va,c));
 }
 
@@ -1090,11 +1026,6 @@ process_one_face()
     vb = t.e1,
     vc = t.e2;
 
-  std::cerr << "->refine_face( [ "
-	    << va->point() << "], ["
-	    << vb->point() << "], ["
-	    << vc->point() << "] )" << std::endl;
-  
   Face_handle f;
   is_face(va,vb,vc,f);
   Bad_faces.pop_front();
