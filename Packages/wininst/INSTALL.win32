@@ -1,7 +1,6 @@
-$(CGALROOT)/INSTALL.win32 for CGAL-3.0
+$(CGALROOT)/INSTALL.win32 for CGAL
 
-This file describes how to install CGAL-3.0 on MS Windows for VC++ .NET 
-and VC++ .NET 2003
+This file describes how to install CGAL on MS Windows for VC++ .NET 2003
 
 For installation on Unix and on Cygwin, please see INSTALL.
 
@@ -17,29 +16,19 @@ sure you carefully read the instructions from each installation step.
 
 
 GMP
-Some examples and demos need GMP. In order to use it you have to copy gmp.dll 
-from CGALROOT/auxiliary/wingmp/gmp-4.1.2/gmp.dll to your path.
-If you had CGAL-2.4 installed you have to overwrite the old gmp.dll file, 
-because it came from a different version of GMP, that was gmp-4.0.1.
+Some examples and demos need GMP. In order to use it you have to copy
+lib/msvc7/gmp.dll and mpfr.dll to your path.
 
      
 Building the Library
 
 The CGAL.lib is located in CGALROOT/lib/msvc7/CGAL.lib. It is built using
 the ML compiler option. If you want to rebuild the CGAL.lib you should go
-into the CGALROOT/src directory and open cgallib.vcproj using VC++ .NET or 
-VC++ .NET 2003. Go to "Build" menubar and press on "Rebuild Solution". The 
+into the CGALROOT/src directory and open cgallib.vcproj using VC++ .NET 2003. 
+Go to "Build" menubar and press on "Rebuild Solution". The 
 CGAL library will be created in CGALROOT/lib/msvc7/ as CGAL.lib.
 
 
-Building the Examples
-
-You can find the examples in CGALROOT/examples directory. Each 
-directory contains a new directory called Vc7. Those directories contain 
-projects for the example files. To build an example you should open one of 
-those projects and build it. You have to specify the right working directory 
-if you want to run the examples within the IDE. For the projects that are 
-shipped with CGAL, the working directory should be "../".
 
 
 Building the Demos
