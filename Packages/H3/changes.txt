@@ -1,3 +1,6 @@
+2.52   (20 January 2003)
+- Remove *handle_[23] types from the main kernel classes.
+
 2.51   (7 January 2003)
 - Replace "3" by RT(3) so that Quotient<Gmpz> works.
 

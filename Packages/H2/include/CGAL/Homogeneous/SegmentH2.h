@@ -17,19 +17,19 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
  
-
 #ifndef CGAL_SEGMENTH2_H
 #define CGAL_SEGMENTH2_H
+
+#include <CGAL/Twotuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class SegmentH2
-  : public R_::Segment_handle_2
+  : public R_::template Handle<Twotuple<typename R_::Point_2> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -39,23 +39,23 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef typename R_::Segment_handle_2            Segment_handle_2_;
-  typedef typename Segment_handle_2_::element_type Segment_ref_2;
+  typedef Twotuple<Point_2>                        rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                    R;
 
     SegmentH2()
-      : Segment_handle_2_(Segment_ref_2()) {}
+      : base(rep()) {}
 
     SegmentH2( const Point_2& sp, const Point_2& ep)
-      : Segment_handle_2_(Segment_ref_2(sp, ep)) {}
+      : base(rep(sp, ep)) {}
 
 #if 1 // FIXME : should this exist at all ?
     SegmentH2( const RT& sx, const RT& sy, const RT& sw,
                const RT& ex, const RT& ey, const RT& ew)
-      : Segment_handle_2_( Segment_ref_2( Point_2(sx,sy,sw),
-                                          Point_2(ex,ey,ew) ) ) {}
+      : base( rep( Point_2(sx,sy,sw),
+                   Point_2(ex,ey,ew) ) ) {}
 #endif
 
     bool    operator==(const SegmentH2<R>& s) const;

@@ -1,3 +1,6 @@
+2.73   (20 Jan 2003)
+- Remove *handle_[23] types from the main kernel classes.
+
 2.72   (25 Oct 2002)
 - Rewrite iterator traits pointer specs.
 

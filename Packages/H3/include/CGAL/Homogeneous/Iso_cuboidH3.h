@@ -19,7 +19,6 @@
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
- 
 
 #ifndef CGAL_ISO_CUBOIDH3_H
 #define CGAL_ISO_CUBOIDH3_H
@@ -30,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Iso_cuboidH3
-  : public R_::Iso_cuboid_handle_3
+  : public R_::template Handle<Twotuple<typename R_::Point_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;
@@ -38,14 +37,14 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
+  typedef Twotuple<Point_3>                        rep;
+  typedef typename R_::template Handle<rep>::type  base;
+
 public:
   typedef R_                 R;
 
-  typedef typename R::Iso_cuboid_handle_3             Iso_cuboid_handle_3_;
-  typedef typename Iso_cuboid_handle_3_::element_type Iso_cuboid_ref_3;
-
   Iso_cuboidH3()
-    : Iso_cuboid_handle_3_(Iso_cuboid_ref_3()) {}
+    : base(rep()) {}
 
   Iso_cuboidH3(const Point_3& p, const Point_3& q);
 
@@ -135,8 +134,8 @@ Iso_cuboidH3(const typename Iso_cuboidH3<R>::Point_3& p,
       minz = q.hz()*p.hw();
       maxz = p.hz()*q.hw();
   }
-  initialize_with( Iso_cuboid_ref_3 ( Point_3(minx, miny, minz, minw),
-                                      Point_3(maxx, maxy, maxz, maxw) ));
+  initialize_with( rep ( Point_3(minx, miny, minz, minw),
+                         Point_3(maxx, maxy, maxz, maxw) ));
 }
 
 template < class R >
@@ -145,8 +144,7 @@ Iso_cuboidH3<R>::
 Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
              const RT& max_hx, const RT& max_hy, const RT& max_hz)
 {
-  initialize_with( 
-     Iso_cuboid_ref_3 ( Point_3(min_hx, min_hy, min_hz, RT(1)),
+  initialize_with( rep( Point_3(min_hx, min_hy, min_hz, RT(1)),
                         Point_3(max_hx, max_hy, max_hz, RT(1)) ));
 }
 
@@ -157,8 +155,8 @@ Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
              const RT& max_hx, const RT& max_hy, const RT& max_hz, 
              const RT& hw)
 {
-  initialize_with( Iso_cuboid_ref_3( Point_3(min_hx, min_hy, min_hz, hw),
-                                     Point_3(max_hx, max_hy, max_hz, hw) ));
+  initialize_with( rep( Point_3(min_hx, min_hy, min_hz, hw),
+                        Point_3(max_hx, max_hy, max_hz, hw) ));
 }
 
 template < class R >

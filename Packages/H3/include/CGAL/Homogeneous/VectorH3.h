@@ -24,12 +24,13 @@
 #define CGAL_HOMOGENEOUS_VECTOR_3_H
 
 #include <CGAL/Origin.h>
+#include <CGAL/Fourtuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class VectorH3
-  : public R_::Vector_handle_3
+  : public R_::template Handle<Fourtuple<typename R_::RT> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;
@@ -39,33 +40,33 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef typename R_::Vector_handle_3                   Vector_handle_3_;
-  typedef typename Vector_handle_3_::element_type        Vector_ref_3;
+  typedef Fourtuple<RT>                            rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                 R;
 
   VectorH3()
-    : Vector_handle_3_(Vector_ref_3()) {}
+    : base(rep()) {}
 
   VectorH3(const Point_3& a, const Point_3& b)
-    : Vector_handle_3_(b-a) {}
+    : base(b-a) {}
 
   VectorH3(const Null_vector&)
-    : Vector_handle_3_(Vector_ref_3(RT(0), RT(0), RT(0), RT(1))) {}
+    : base(rep(RT(0), RT(0), RT(0), RT(1))) {}
 
   VectorH3(const RT& x, const RT& y, const RT& z)
-    : Vector_handle_3_(Vector_ref_3(x, y, z, RT(1))) {}
+    : base(rep(x, y, z, RT(1))) {}
 
   VectorH3(const RT& w, const RT& x, const RT& y, const RT& z);
 
 // undocumented:
 
   VectorH3(const Point_3 & p)
-    : Vector_handle_3_(p) {}
+    : base(p) {}
 
   VectorH3(const Direction_3 & d)   /* XXX */
-    : Vector_handle_3_(d) {}
+    : base(d) {}
 
   const RT & hx() const { return  Ptr()->e0 ; }
   const RT & hy() const { return  Ptr()->e1 ; }
@@ -102,9 +103,9 @@ CGAL_KERNEL_INLINE
 VectorH3<R>::VectorH3(const RT& x, const RT& y, const RT& z, const RT& w)
 {
   if ( w >= RT(0) )
-  { initialize_with( Vector_ref_3(x, y, z, w)); }
+  { initialize_with( rep(x, y, z, w)); }
   else
-  { initialize_with( Vector_ref_3(-x,-y,-z,-w)); }
+  { initialize_with( rep(-x,-y,-z,-w)); }
 }
 
 

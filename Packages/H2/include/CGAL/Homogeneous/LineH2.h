@@ -24,11 +24,13 @@
 #ifndef CGAL_LINEH2_H
 #define CGAL_LINEH2_H
 
+#include <CGAL/Threetuple.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class LineH2
-  : public R_::Line_handle_2
+  : public R_::template Handle<Threetuple<typename R_::RT> >::type
 {
 CGAL_VC7_BUG_PROTECTED
     typedef typename R_::FT                   FT;
@@ -40,8 +42,8 @@ CGAL_VC7_BUG_PROTECTED
     typedef typename R_::Ray_2                Ray_2;
     typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-    typedef typename R_::Line_handle_2            Line_handle_2_;
-    typedef typename Line_handle_2_::element_type Line_ref_2;
+    typedef Threetuple<RT>                           rep;
+    typedef typename R_::template Handle<rep>::type  base;
 
 public:
     typedef R_                                    R;
@@ -88,14 +90,14 @@ public:
 template < class R >
 CGAL_KERNEL_INLINE
 LineH2<R>::LineH2()
- : Line_handle_2_ ( Line_ref_2() )
+ : base ( rep() )
 {}
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 	          const typename LineH2<R>::Point_2& q)
- : Line_handle_2_ ( Line_ref_2(
+ : base ( rep(
   //  a() * X + b() * Y + c() * W() == 0
   //      |    X        Y       W     |
   //      |  p.hx()   p.hy()  p.hw()  |
@@ -109,7 +111,7 @@ LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 template < class R >
 CGAL_KERNEL_INLINE
 LineH2<R>::LineH2(const RT& a, const RT& b, const RT& c)
- : Line_handle_2_ ( Line_ref_2(a,b,c) )
+ : base ( rep(a,b,c) )
 {}
 
 template < class R >
@@ -118,7 +120,7 @@ LineH2<R>::LineH2(const typename LineH2<R>::Segment_2& s)
 {
   Point_2 p = s.start();
   Point_2 q = s.end();
-  initialize_with( Line_ref_2 (
+  initialize_with( rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() ) );
@@ -130,7 +132,7 @@ LineH2<R>::LineH2(const typename LineH2<R>::Ray_2& r)
 {
   Point_2 p = r.start();
   Point_2 q = r.second_point();
-  initialize_with( Line_ref_2 (
+  initialize_with( rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() ) );
@@ -142,7 +144,7 @@ LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 		  const typename LineH2<R>::Direction_2& d)
 {
   Point_2 q = p + d.to_vector();
-  initialize_with( Line_ref_2 (
+  initialize_with( rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() ) );

@@ -25,12 +25,13 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Threetuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class PointH2
-  : public R_::Point_handle_2
+  : public R_::template Handle<Threetuple<typename R_::RT> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -39,33 +40,33 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef typename R_::Point_handle_2            Point_handle_2_;
-  typedef typename Point_handle_2_::element_type Point_ref_2;
+  typedef Threetuple<RT>                           rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                    R;
 
     PointH2() 
-       : Point_handle_2_ ( Point_ref_2()) { }
+       : base ( rep()) { }
 
     PointH2(const Origin &)  
-       : Point_handle_2_ ( Point_ref_2( RT(0), RT(0), RT(1))) { }
+       : base ( rep( RT(0), RT(0), RT(1))) { }
 
     PointH2(const PointH2<R> & p) 
-       : Point_handle_2_ (p) { }
+       : base (p) { }
 
     PointH2(const Vector_2& v) 
-       : Point_handle_2_ (v) { }
+       : base (v) { }
 
     PointH2(const RT& hx, const RT& hy )
-      : Point_handle_2_ ( Point_ref_2( hx, hy, RT(1) )) { }
+      : base ( rep( hx, hy, RT(1) )) { }
 
     PointH2(const RT& hx, const RT& hy, const RT& hw)
     {
       if ( hw >= RT(0)   )
-        initialize_with( Point_ref_2( hx, hy, hw)); 
+        initialize_with( rep( hx, hy, hw)); 
       else
-        initialize_with( Point_ref_2(-hx,-hy,-hw)); 
+        initialize_with( rep(-hx,-hy,-hw)); 
     }
 
     bool    operator==( const PointH2<R>& p) const;

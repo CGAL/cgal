@@ -19,19 +19,19 @@
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
- 
 
 #ifndef CGAL_TETRAHEDRONH3_H
 #define CGAL_TETRAHEDRONH3_H
 
 #include <vector>
 #include <functional>
+#include <CGAL/Fourtuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class TetrahedronH3
-  : public R_::Tetrahedron_handle_3
+  : public R_::template Handle<Fourtuple<typename R_::Point_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;
@@ -40,20 +40,20 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef typename R_::Tetrahedron_handle_3            Tetrahedron_handle_3_;
-  typedef typename Tetrahedron_handle_3_::element_type Tetrahedron_ref_3;
+  typedef Fourtuple<Point_3>                       rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                R;
 
   TetrahedronH3()
-    : Tetrahedron_handle_3_(Tetrahedron_ref_3()) {}
+    : base(rep()) {}
 
   TetrahedronH3(const Point_3 &p,
                 const Point_3 &q,
                 const Point_3 &r,
                 const Point_3 &s)
-    : Tetrahedron_handle_3_(Tetrahedron_ref_3(p,q,r,s)) {}
+    : base(rep(p,q,r,s)) {}
 
   const Point_3 & vertex(int i) const;
   const Point_3 & operator[](int i) const;

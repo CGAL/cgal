@@ -19,16 +19,17 @@
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
- 
 
 #ifndef CGAL_TRIANGLEH2_H
 #define CGAL_TRIANGLEH2_H
+
+#include <CGAL/Threetuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class TriangleH2
-  : public R_::Triangle_handle_2
+  : public R_::template Handle<Threetuple<typename R_::Point_2> >::type
 {
 CGAL_VC7_BUG_PROTECTED
     typedef typename R_::FT                   FT;
@@ -37,17 +38,17 @@ CGAL_VC7_BUG_PROTECTED
     typedef typename R_::Vector_2             Vector_2;
     typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-    typedef typename R_::Triangle_handle_2            Triangle_handle_2_;
-    typedef typename Triangle_handle_2_::element_type Triangle_ref_2;
+    typedef Threetuple<Point_2>                      rep;
+    typedef typename R_::template Handle<rep>::type  base;
 
 public:
     typedef R_                                    R;
 
     TriangleH2()
-      : Triangle_handle_2_(Triangle_ref_2()) {}
+      : base(rep()) {}
 
     TriangleH2(const Point_2& p, const Point_2& q, const Point_2& r)
-      : Triangle_handle_2_(Triangle_ref_2(p, q, r)) {}
+      : base(rep(p, q, r)) {}
 
     Bbox_2             bbox() const;
 

@@ -20,15 +20,17 @@
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
  
-
 #ifndef CGAL_RAYH3_H
 #define CGAL_RAYH3_H
+
+#include <utility>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class RayH3
-  : public R_::Ray_handle_3
+  : public R_::template Handle<std::pair<typename R_::Point_3,
+                                         typename R_::Direction_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
    typedef typename R_::RT                   RT;
@@ -38,20 +40,20 @@ CGAL_VC7_BUG_PROTECTED
    typedef typename R_::Direction_3          Direction_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef typename R_::Ray_handle_3              Ray_handle_3_;
-   typedef typename Ray_handle_3_::element_type   Ray_ref_3;
+   typedef std::pair<Point_3, Direction_3>          rep;
+   typedef typename R_::template Handle<rep>::type  base;
 
-  public:
+public:
    typedef R_                R;
 
     RayH3()
-      : Ray_handle_3_(Ray_ref_3()) {}
+      : base(rep()) {}
 
     RayH3( const Point_3& sp, const Point_3& secondp)
-      : Ray_handle_3_(Ray_ref_3(sp, (secondp-sp).direction())) {}
+      : base(rep(sp, (secondp-sp).direction())) {}
 
     RayH3( const Point_3& sp, const Direction_3& d)
-      : Ray_handle_3_(Ray_ref_3(sp, d)) {}
+      : base(rep(sp, d)) {}
 
     const Point_3 & start() const;
     const Point_3 & source() const;

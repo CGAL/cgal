@@ -23,6 +23,7 @@
 #ifndef CGAL_AFF_TRANSFORMATIONH3_H
 #define CGAL_AFF_TRANSFORMATIONH3_H
 
+#include <CGAL/Handle_for_virtual.h>
 #include <CGAL/determinant.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -276,7 +277,8 @@ private:
 };
 
 template < class R_ >
-class Aff_transformationH3 : public R_::Aff_transformation_handle_3
+class Aff_transformationH3
+  : public Handle_for_virtual< Aff_transformation_rep_baseH3<R_> >
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;

@@ -23,11 +23,13 @@
 #ifndef CGAL_HOMOGENEOUS_DIRECTION_2_H
 #define CGAL_HOMOGENEOUS_DIRECTION_2_H
 
+#include <CGAL/Threetuple.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class DirectionH2
-  : public R_::Direction_handle_2
+  : public R_::template Handle<Threetuple<typename R_::RT> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -39,44 +41,44 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef typename R_::Direction_handle_2        Direction_handle_2_;
-  typedef typename Direction_handle_2_::element_type  Direction_ref_2;
+  typedef Threetuple<RT>                           rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                    R;
 
    DirectionH2()
-      : Direction_handle_2_ ( Direction_ref_2()) {}
+      : base ( rep()) {}
 
    DirectionH2(const DirectionH2<R>& d )
-      : Direction_handle_2_ ( d ) {}
+      : base ( d ) {}
 
    DirectionH2(const Point_2 & p )
-      : Direction_handle_2_ ( p) {}
+      : base ( p) {}
 
    DirectionH2(const Vector_2 & v )
-      : Direction_handle_2_ ( v) {}
+      : base ( v) {}
 
    DirectionH2(const Line_2 & l )
-      : Direction_handle_2_ ( l.direction()) {}
+      : base ( l.direction()) {}
 
    DirectionH2(const Ray_2 & r )
-      : Direction_handle_2_ ( r.direction()) {}
+      : base ( r.direction()) {}
 
    DirectionH2(const Segment_2 & s )
-      : Direction_handle_2_ ( s.direction()) {}
+      : base ( s.direction()) {}
 
    DirectionH2(const RT& x, const RT& y)
-      : Direction_handle_2_ ( Direction_ref_2( x, y, RT(1) )) {}
+      : base ( rep( x, y, RT(1) )) {}
 
    // TODO Not documented : should not exist , not used.
    // we should also change Threetuple<RT> -> Twotuple<RT>
    DirectionH2(const RT& x, const RT& y, const RT& w )
    {
      if (w > RT(0)   )
-       initialize_with( Direction_ref_2( x, y, w));
+       initialize_with( rep( x, y, w));
      else
-       initialize_with( Direction_ref_2(-x,-y,-w));
+       initialize_with( rep(-x,-y,-w));
    }
 
     bool    operator==( const DirectionH2<R>& d) const;

@@ -19,11 +19,11 @@
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
- 
 
 #ifndef CGAL_AFF_TRANSFORMATIONH2_H
 #define CGAL_AFF_TRANSFORMATIONH2_H
 
+#include <CGAL/Handle_for_virtual.h>
 #include <CGAL/rational_rotation.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -494,7 +494,7 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
 
 template < class R_ >
 class Aff_transformationH2
-  : public R_::Aff_transformation_handle_2
+  : public Handle_for_virtual< Aff_transformation_rep_baseH2<R_> >
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                        FT;

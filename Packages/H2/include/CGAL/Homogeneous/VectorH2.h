@@ -25,12 +25,13 @@
 #define CGAL_HOMOGENEOUS_VECTOR_2_h
 
 #include <CGAL/Origin.h>
+#include <CGAL/Threetuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class VectorH2
-  : public R_::Vector_handle_2
+  : public R_::template Handle<Threetuple<typename R_::RT> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -40,30 +41,30 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef typename R_::Vector_handle_2             Vector_handle_2_;
-  typedef typename Vector_handle_2_::element_type  Vector_ref_2;
+  typedef Threetuple<RT>                           rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                    R;
 
    VectorH2()
-      : Vector_handle_2_ ( Vector_ref_2()) {}
+      : base ( rep()) {}
 
    VectorH2(const Point_2& a, const Point_2& b)
-      : Vector_handle_2_ (b-a) {}
+      : base (b-a) {}
 
    VectorH2(const Null_vector &)
-      : Vector_handle_2_ ( Vector_ref_2(RT(0), RT(0), RT(1) )) {}
+      : base ( rep(RT(0), RT(0), RT(1) )) {}
 
    VectorH2(const RT& x, const RT& y)
-      : Vector_handle_2_ ( Vector_ref_2( x,  y,  RT(1) )) {}
+      : base ( rep( x,  y,  RT(1) )) {}
 
    VectorH2(const RT& x, const RT& y, const RT& w )
    {
      if ( w >= RT(0)   )
-     { initialize_with( Vector_ref_2( x,  y,  w)); }
+     { initialize_with( rep( x,  y,  w)); }
      else
-     { initialize_with( Vector_ref_2(-x, -y, -w)); }
+     { initialize_with( rep(-x, -y, -w)); }
    }
 
    bool    operator==( const VectorH2<R>& v) const;
@@ -99,10 +100,10 @@ public:
 
 // undocumented:
    VectorH2(const Direction_2 & dir)
-      : Vector_handle_2_ ( dir) {}
+      : base ( dir) {}
 
   VectorH2(const Point_2 & p)
-     : Vector_handle_2_ ( p) {}
+     : base ( p) {}
 };
 
 #ifdef CGAL_CFG_TYPENAME_BUG

@@ -23,12 +23,6 @@
 #define CGAL_SIMPLE_HOMOGENEOUS_REP_H
 
 #include <CGAL/Simple_Handle_for.h>
-#include <CGAL/Handle_for_virtual.h>
-#include <CGAL/Twotuple.h>
-#include <CGAL/Threetuple.h>
-#include <CGAL/Fourtuple.h>
-#include <CGAL/utility.h>
-
 #include <CGAL/Quotient.h>
 
 #include <CGAL/representation_tags.h>
@@ -44,6 +38,12 @@ class Simple_homogeneous_base
   public:
     typedef RT_                                     RT;
     typedef FT_                                     FT;
+
+    // The mecanism that allows to specify reference-counting or not.
+    template < typename T >
+    struct Handle {
+        typedef Simple_Handle_for<T>    type;
+    };
 
     typedef CGAL::Object                            Object_2;
     typedef CGAL::Object                            Object_3;
@@ -87,8 +87,8 @@ class Simple_homogeneous
     typedef Homogeneous_tag                         Rep_tag;
     typedef Simple_homogeneous_base< R, RT_, FT_ >  Kernel_base;
 
-    typedef typename Kernel_base::Object_2              Object_2;
-    typedef typename Kernel_base::Object_3              Object_3;
+    typedef typename Kernel_base::Object_2         Object_2;
+    typedef typename Kernel_base::Object_3         Object_3;
 
     typedef CGAL::Point_2< R >                     Point_2;
     typedef CGAL::Vector_2< R >                    Vector_2;
@@ -115,38 +115,7 @@ class Simple_homogeneous
     typedef CGAL::Sphere_3< R >                    Sphere_3;
     typedef CGAL::Aff_transformation_3< R >        Aff_transformation_3;
 
-    typedef Data_accessorH2<R>                       Data_accessor_2;
-
-    typedef CGAL::Simple_Handle_for< Threetuple<RT> > Point_handle_2;
-    typedef CGAL::Simple_Handle_for< Threetuple<RT> > Vector_handle_2;
-    typedef CGAL::Simple_Handle_for< Threetuple<RT> > Direction_handle_2;
-    typedef CGAL::Simple_Handle_for< Twotuple<Point_2> > Ray_handle_2;
-    typedef CGAL::Simple_Handle_for< Threetuple<Point_2> > Triangle_handle_2;
-    typedef CGAL::Simple_Handle_for< Triple<Point_2, FT, Orientation> >
-	                                              Circle_handle_2;
-    typedef CGAL::Simple_Handle_for< Twotuple<Point_2> >
-	                                              Iso_rectangle_handle_2;
-    typedef CGAL::Simple_Handle_for< Threetuple<RT> > Line_handle_2;
-    typedef CGAL::Simple_Handle_for< Twotuple<Point_2> > Segment_handle_2;
-    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseH2<R> >
-			                        Aff_transformation_handle_2;
-
-    typedef CGAL::Simple_Handle_for< Fourtuple<RT> > Point_handle_3;
-    typedef CGAL::Simple_Handle_for< Fourtuple<RT> > Vector_handle_3;
-    typedef CGAL::Simple_Handle_for< Fourtuple<RT> > Direction_handle_3;
-    typedef CGAL::Simple_Handle_for< Fourtuple<RT> > Plane_handle_3;
-    typedef CGAL::Simple_Handle_for<std::pair<Point_3, Direction_3> >
-	                                              Ray_handle_3;
-    typedef CGAL::Simple_Handle_for<std::pair<Point_3, Direction_3> >
-	                                              Line_handle_3;
-    typedef CGAL::Simple_Handle_for< Triple<Point_3, FT, Orientation> >
-	                                              Sphere_handle_3;
-    typedef CGAL::Simple_Handle_for< Fourtuple<Point_3> > Tetrahedron_handle_3;
-    typedef CGAL::Simple_Handle_for< Twotuple<Point_3> > Segment_handle_3;
-    typedef CGAL::Simple_Handle_for< Threetuple<Point_3> > Triangle_handle_3;
-    typedef CGAL::Simple_Handle_for< Twotuple<Point_3> > Iso_cuboid_handle_3;
-    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseH3<R> >
-			                        Aff_transformation_handle_3;
+    typedef Data_accessorH2<R>                     Data_accessor_2;
 
     static
     FT

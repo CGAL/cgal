@@ -23,11 +23,13 @@
 #ifndef CGAL_HOMOGENEOUS_DIRECTION_3_H
 #define CGAL_HOMOGENEOUS_DIRECTION_3_H
 
+#include <CGAL/Fourtuple.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class DirectionH3
-  : public R_::Direction_handle_3
+  : public R_::template Handle<Fourtuple<typename R_::RT> >::type
 {
 CGAL_VC7_BUG_PROTECTED
    typedef typename R_::RT                   RT;
@@ -39,38 +41,38 @@ CGAL_VC7_BUG_PROTECTED
    typedef typename R_::Ray_3                Ray_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef typename R_::Direction_handle_3            Direction_handle_3_;
-   typedef typename Direction_handle_3_::element_type Direction_ref_3;
+    typedef Fourtuple<RT>                            rep;
+    typedef typename R_::template Handle<rep>::type  base;
 
-  public:
-   typedef R_                 R;
+public:
+    typedef R_                 R;
 
   DirectionH3()
-    : Direction_handle_3_(Direction_ref_3()) {}
+    : base(rep()) {}
 
   DirectionH3(const Point_3 & p )
-    : Direction_handle_3_(p) {}
+    : base(p) {}
 
   DirectionH3(const Vector_3 & v )
-    : Direction_handle_3_(v) {}
+    : base(v) {}
 
   DirectionH3(const Line_3 & l )
-    : Direction_handle_3_(l.direction()) {}
+    : base(l.direction()) {}
 
   DirectionH3(const Ray_3 & r )
-    : Direction_handle_3_(r.direction()) {}
+    : base(r.direction()) {}
 
   DirectionH3(const Segment_3 & s )
-    : Direction_handle_3_(s.direction()) {}
+    : base(s.direction()) {}
 
   // the fourth argument is not documented.  Should go away ?
   DirectionH3(const RT& x, const RT& y,
               const RT& z, const RT& w = RT(1) )
   {
     if ( w >= RT(0) )
-    { initialize_with( Direction_ref_3(x,y,z,w)); }
+    { initialize_with( rep(x,y,z,w)); }
     else
-    { initialize_with( Direction_ref_3(-x,-y,-z,-w)); }
+    { initialize_with( rep(-x,-y,-z,-w)); }
   }
 
   DirectionH3<R>

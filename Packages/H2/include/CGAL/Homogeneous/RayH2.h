@@ -24,11 +24,13 @@
 #ifndef CGAL_RAYH2_H
 #define CGAL_RAYH2_H
 
+#include <CGAL/Twotuple.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class RayH2
-  : public R_::Ray_handle_2
+  : public R_::template Handle<Twotuple<typename R_::Point_2> >::type
 {
 CGAL_VC7_BUG_PROTECTED
     typedef typename R_::FT                   FT;
@@ -39,18 +41,18 @@ CGAL_VC7_BUG_PROTECTED
     typedef typename R_::Vector_2             Vector_2;
     typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-    typedef typename R_::Ray_handle_2                      Ray_handle_2_;
-    typedef typename Ray_handle_2_::element_type           Ray_ref_2;
+    typedef Twotuple<Point_2>                        rep;
+    typedef typename R_::template Handle<rep>::type  base;
 
 public:
     typedef R_                                             R;
 
     RayH2()
-      : Ray_handle_2_(Ray_ref_2()) {}
+      : base(rep()) {}
     RayH2( const Point_2& sp, const Point_2& secondp)
-      : Ray_handle_2_(Ray_ref_2(sp, secondp)) {}
+      : base(rep(sp, secondp)) {}
     RayH2( const Point_2& sp, const Direction_2& d)
-      : Ray_handle_2_(Ray_ref_2(sp, sp + d.to_vector())) {}
+      : base(rep(sp, sp + d.to_vector())) {}
 
     bool    operator==(const RayH2<R>& r) const;
     bool    operator!=(const RayH2<R>& r) const;

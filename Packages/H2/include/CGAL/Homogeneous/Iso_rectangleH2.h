@@ -23,11 +23,13 @@
 #ifndef CGAL_ISO_RECTANGLEH2_H
 #define CGAL_ISO_RECTANGLEH2_H
 
+#include <CGAL/Twotuple.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Iso_rectangleH2
-  : public R_::Iso_rectangle_handle_2
+  : public R_::template Handle<Twotuple<typename R_::Point_2> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -35,14 +37,14 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef typename R_::Iso_rectangle_handle_2         Iso_rectangle_handle_2_;
-  typedef typename Iso_rectangle_handle_2_::element_type  Iso_rectangle_ref_2;
+  typedef Twotuple<Point_2>                        rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                    R;
 
   Iso_rectangleH2()
-    : Iso_rectangle_handle_2_(Iso_rectangle_ref_2()) {}
+    : base(rep()) {}
 
   Iso_rectangleH2(const Point_2& p, const Point_2& q);
 
@@ -95,19 +97,19 @@ Iso_rectangleH2(const typename Iso_rectangleH2<R>::Point_2& p,
   {
       if ( px_g_qx && py_g_qy )
       {
-          initialize_with( Iso_rectangle_ref_2(q,p) );
+          initialize_with( rep(q,p) );
       }
       else
       {
          if ( px_g_qx )
          {
-             initialize_with( Iso_rectangle_ref_2(
+             initialize_with( rep(
              Point_2(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() ),
              Point_2(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() )) );
          }
          if ( py_g_qy )
          {
-             initialize_with( Iso_rectangle_ref_2(
+             initialize_with( rep(
              Point_2(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() ),
              Point_2(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() )) );
          }
@@ -115,7 +117,7 @@ Iso_rectangleH2(const typename Iso_rectangleH2<R>::Point_2& p,
   }
   else
   {
-      initialize_with( Iso_rectangle_ref_2(p,q) );
+      initialize_with( rep(p,q) );
   }
 }
 
@@ -124,8 +126,8 @@ inline
 Iso_rectangleH2<R>::Iso_rectangleH2(const RT& min_hx, const RT& min_hy, 
                                     const RT& max_hx, const RT& max_hy)
 {
-  initialize_with( Iso_rectangle_ref_2( Point_2(min_hx, min_hy), 
-                                        Point_2(max_hx, max_hy)) );
+  initialize_with( rep( Point_2(min_hx, min_hy), 
+                        Point_2(max_hx, max_hy)) );
 }
 
 template < class R >
@@ -134,8 +136,8 @@ Iso_rectangleH2<R>::Iso_rectangleH2(const RT& min_hx, const RT& min_hy,
                                     const RT& max_hx, const RT& max_hy,
                                     const RT& hw)
 {
-  initialize_with( Iso_rectangle_ref_2( Point_2(min_hx, min_hy, hw), 
-                                        Point_2(max_hx, max_hy, hw)) );
+  initialize_with( rep( Point_2(min_hx, min_hy, hw), 
+                        Point_2(max_hx, max_hy, hw)) );
 }
 
 template < class R >

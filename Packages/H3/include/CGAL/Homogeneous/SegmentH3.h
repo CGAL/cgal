@@ -19,16 +19,17 @@
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
- 
 
 #ifndef CGAL_SEGMENTH3_H
 #define CGAL_SEGMENTH3_H
+
+#include <CGAL/Twotuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class SegmentH3
-  : public R_::Segment_handle_3
+  : public R_::template Handle<Twotuple<typename R_::Point_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;
@@ -38,17 +39,17 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef typename R_::Segment_handle_3            Segment_handle_3_;
-  typedef typename Segment_handle_3_::element_type Segment_ref_3;
+  typedef Twotuple<Point_3>                        rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_               R;
  
   SegmentH3()
-    : Segment_handle_3_(Segment_ref_3()) {}
+    : base(rep()) {}
 
   SegmentH3( const Point_3& sp, const Point_3& ep)
-    : Segment_handle_3_(Segment_ref_3(sp, ep)) {}
+    : base(rep(sp, ep)) {}
 
   const Point_3 &  source() const;
   const Point_3 &  target() const;

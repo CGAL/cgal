@@ -19,19 +19,19 @@
 //
 // coordinator   : MPI, Saarbruecken  
 // ======================================================================
- 
 
 #ifndef CGAL_HOMOGENEOUS_POINT_3_H
 #define CGAL_HOMOGENEOUS_POINT_3_H
 
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Fourtuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class PointH3
-  : public R_::Point_handle_3
+  : public R_::template Handle<Fourtuple<typename R_::RT> >::type
 {
 CGAL_VC7_BUG_PROTECTED
    typedef typename R_::RT                   RT;
@@ -40,30 +40,30 @@ CGAL_VC7_BUG_PROTECTED
    typedef typename R_::Direction_3          Direction_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef typename R_::Point_handle_3            Point_handle_3_;
-   typedef typename Point_handle_3_::element_type Point_ref_3;
+    typedef Fourtuple<RT>                            rep;
+    typedef typename R_::template Handle<rep>::type  base;
 
 public:
    typedef R_                 R;
 
   PointH3()
-    : Point_handle_3_(Point_ref_3()) {}
+    : base(rep()) {}
 
   PointH3(const Origin &)
-    : Point_handle_3_ (Point_ref_3( RT(0), RT(0), RT(0), RT(1) )) { }
+    : base (rep( RT(0), RT(0), RT(0), RT(1) )) { }
 
   PointH3(const Vector_3& v)
-    : Point_handle_3_(v) {}
+    : base(v) {}
 
   PointH3(const RT& x, const RT& y, const RT& z)
-    : Point_handle_3_(Point_ref_3(x, y, z, RT(1))) {}
+    : base(rep(x, y, z, RT(1))) {}
 
   PointH3(const RT& x, const RT& y, const RT& z, const RT& w)
   {
     if ( w < RT(0) )
-      initialize_with( Point_ref_3(-x,-y,-z,-w)); 
+      initialize_with( rep(-x,-y,-z,-w)); 
     else
-      initialize_with( Point_ref_3(x,y,z,w)); 
+      initialize_with( rep(x,y,z,w)); 
   }
 
   FT    x()  const;

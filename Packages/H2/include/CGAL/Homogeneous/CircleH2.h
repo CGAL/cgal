@@ -25,11 +25,14 @@
 #ifndef CGAL_CIRCLEH2_H
 #define CGAL_CIRCLEH2_H
 
+#include <CGAL/utility.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class CircleH2
-  : public R_::Circle_handle_2
+  : public R_::template Handle<Triple<typename R_::Point_2,
+                                      typename R_::FT, Orientation> >::type
 {
 CGAL_VC7_BUG_PROTECTED
     typedef typename R_::FT                   FT;
@@ -37,14 +40,14 @@ CGAL_VC7_BUG_PROTECTED
     typedef typename R_::Point_2              Point_2;
     typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-    typedef typename R_::Circle_handle_2            Circle_handle_2_;
-    typedef typename Circle_handle_2_::element_type Circle_ref_2;
+    typedef Triple<Point_2, FT, Orientation>         rep;
+    typedef typename R_::template Handle<rep>::type  base;
 
 public:
     typedef R_                                    R;
 
     CircleH2()
-      : Circle_handle_2_() {}
+      : base() {}
 
     CircleH2(const Point_2& p, const Point_2& q, const Point_2& r)
     {
@@ -54,7 +57,7 @@ public:
       Point_2    cp   = circumcenter( p, q, r);
       FT         sq_r = squared_distance( p, cp);
 
-      initialize_with( Circle_ref_2( cp, sq_r, o));
+      initialize_with( rep( cp, sq_r, o));
     }
 
     CircleH2(const Point_2& p, const Point_2& q, const Orientation& o)
@@ -65,10 +68,10 @@ public:
       {
          Point_2    cp   = midpoint( p, q);
          FT         sq_r = squared_distance( cp, p);
-         initialize_with( Circle_ref_2( cp, sq_r, o));
+         initialize_with( rep( cp, sq_r, o));
       }
       else
-         initialize_with( Circle_ref_2( p, FT( 0), o));
+         initialize_with( rep( p, FT( 0), o));
     }
 
     CircleH2(const Point_2& cp, const FT& squared_radius,
@@ -76,7 +79,7 @@ public:
     {
       CGAL_precondition( ( ! CGAL_NTS is_negative( squared_radius)) &&
                          ( o != COLLINEAR ) );
-      initialize_with( Circle_ref_2( cp, squared_radius, o ));
+      initialize_with( rep( cp, squared_radius, o ));
     }
 
     Bbox_2

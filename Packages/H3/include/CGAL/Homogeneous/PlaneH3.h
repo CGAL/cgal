@@ -19,16 +19,17 @@
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
- 
 
 #ifndef CGAL_PLANEH3_H
 #define CGAL_PLANEH3_H
+
+#include <CGAL/Fourtuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class PlaneH3
-  : public R_::Plane_handle_3
+  : public R_::template Handle<Fourtuple<typename R_::RT> >::type
 {
 CGAL_VC7_BUG_PROTECTED
    typedef typename R_::RT                   RT;
@@ -43,14 +44,14 @@ CGAL_VC7_BUG_PROTECTED
    typedef typename R_::Plane_3              Plane_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef typename R_::Plane_handle_3            Plane_handle_3_;
-   typedef typename Plane_handle_3_::element_type Plane_ref_3;
+   typedef Fourtuple<RT>                            rep;
+   typedef typename R_::template Handle<rep>::type  base;
 
-  public:
+public:
    typedef R_                 R;
 
     PlaneH3()
-      : Plane_handle_3_(Plane_ref_3()) {}
+      : base(rep()) {}
 
     PlaneH3(const Point_3&, const Point_3&, const Point_3& );
     PlaneH3(const RT& a, const RT& b,
@@ -149,7 +150,7 @@ PlaneH3<R>::new_rep(const typename PlaneH3<R>::Point_3 &p,
   RT rhz = r.hz();
   RT rhw = r.hw();
 
-  initialize_with( Plane_ref_3 (
+  initialize_with( rep (
               phy*( qhz*rhw - qhw*rhz )
             - qhy*( phz*rhw - phw*rhz )     // * X
             + rhy*( phz*qhw - phw*qhz ),
@@ -171,7 +172,7 @@ template < class R >
 inline
 void
 PlaneH3<R>::new_rep(const RT &a, const RT &b, const RT &c, const RT &d)
-{ initialize_with( Plane_ref_3 (a, b, c, d) ); }
+{ initialize_with( rep (a, b, c, d) ); }
 
 template < class R >
 inline

@@ -19,7 +19,6 @@
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
- 
 
 #ifndef CGAL_TRIANGLEH3_H
 #define CGAL_TRIANGLEH3_H
@@ -28,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class TriangleH3
-  : public R_::Triangle_handle_3
+  : public R_::template Handle<Threetuple<typename R_::Point_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;
@@ -40,19 +39,19 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Tetrahedron_3        Tetrahedron_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef typename R_::Triangle_handle_3            Triangle_handle_3_;
-  typedef typename Triangle_handle_3_::element_type Triangle_ref_3;
+  typedef Threetuple<Point_3>                      rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                R;
 
   TriangleH3()
-    : Triangle_handle_3_(Triangle_ref_3()) {}
+    : base(rep()) {}
 
   TriangleH3(const Point_3 &p,
              const Point_3 &q,
              const Point_3 &r)
-    : Triangle_handle_3_(Triangle_ref_3(p,q,r)) {}
+    : base(rep(p,q,r)) {}
 
   bool          operator==(const TriangleH3<R> &t) const;
   bool          operator!=(const TriangleH3<R> &t) const;

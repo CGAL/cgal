@@ -20,15 +20,17 @@
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
  
-
 #ifndef CGAL_LINEH3_H
 #define CGAL_LINEH3_H
+
+#include <utility>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class LineH3
-  : public R_::Line_handle_3
+  : public R_::template Handle<std::pair<typename R_::Point_3,
+                                         typename R_::Direction_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;
@@ -41,26 +43,26 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef typename R_::Line_handle_3             Line_handle_3_;
-  typedef typename Line_handle_3_::element_type  Line_ref_3;
+  typedef std::pair<Point_3, Direction_3>          rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                R;
 
   LineH3()
-    : Line_handle_3_(Line_ref_3()) {}
+    : base(rep()) {}
 
   LineH3(const Point_3& p, const Point_3& q)
-    : Line_handle_3_(Line_ref_3(p, (q - p).direction())) {}
+    : base(rep(p, (q - p).direction())) {}
 
   LineH3(const Segment_3& s)
-    : Line_handle_3_(Line_ref_3(s.start(), s.direction())) {}
+    : base(rep(s.start(), s.direction())) {}
 
   LineH3(const Ray_3& r)
-    : Line_handle_3_(Line_ref_3(r.start(), r.direction())) {}
+    : base(rep(r.start(), r.direction())) {}
 
   LineH3(const Point_3& p, const Direction_3& d)
-    : Line_handle_3_(Line_ref_3(p, d)) {}
+    : base(rep(p, d)) {}
 
   Plane_3  perpendicular_plane(const Point_3& p) const;
   LineH3<R>   opposite() const;
