@@ -54,11 +54,11 @@ void write_pm( const PM& pm,
   //typedef Planar_map_2<Dcel,Traits>                     PM;
   typedef typename PM::Halfedge_const_iterator          HCI;
   typedef typename PM::Vertex_const_iterator            VCI;
-  typedef Inverse_index<HCI>                            H_index;
-  typedef Inverse_index<VCI>                            V_index;
+  //typedef Inverse_index<HCI>                            H_index;
+  //typedef Inverse_index<VCI>                            V_index;
   
-  H_index h_index(pm.halfedges_begin(), pm.halfedges_end()); 
-  V_index v_index(pm.vertices_begin(), pm.vertices_end()); 
+  //H_index h_index(pm.halfedges_begin(), pm.halfedges_end()); 
+  //V_index v_index(pm.vertices_begin(), pm.vertices_end()); 
   
   // Print header. write #vertices, #halfedges, #faces.
   writer.write_title("Printing Planar map" /*, pm.number_of_vertices(), pm.number_of_halfedges(), pm.number_of_faces()*/);
