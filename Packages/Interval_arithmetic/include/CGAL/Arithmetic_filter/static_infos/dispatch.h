@@ -26,14 +26,14 @@
 #include <CGAL/Arithmetic_filter/static_infos/predicates/builtin.h>
 #include <CGAL/Arithmetic_filter/static_infos/predicates/sign_of_determinant.h>
 
-#include <CGAL/Arithmetic_filter/static_infos/predicates_on_ftC2.h>
-#include <CGAL/Arithmetic_filter/static_infos/predicates_on_ftC3.h>
+#include <CGAL/Arithmetic_filter/static_infos/predicates/kernel_ftC2.h>
+#include <CGAL/Arithmetic_filter/static_infos/predicates/kernel_ftC3.h>
 // #include <CGAL/Arithmetic_filter/static_infos/predicates_on_rtH2.h>
 // #include <CGAL/Arithmetic_filter/static_infos/predicates_on_rtH3.h>
 
 #include <CGAL/Arithmetic_filter/static_infos/predicates/Regular_triangulation_ftC2.h>
 #include <CGAL/Arithmetic_filter/static_infos/predicates/Regular_triangulation_ftC3.h>
-#include <CGAL/Arithmetic_filter/static_infos/predicates/Regular_triangulation_rtH2.h>
-#include <CGAL/Arithmetic_filter/static_infos/predicates/Regular_triangulation_rtH3.h>
+// #include <CGAL/Arithmetic_filter/static_infos/predicates/Regular_triangulation_rtH2.h>
+// #include <CGAL/Arithmetic_filter/static_infos/predicates/Regular_triangulation_rtH3.h>
 
 #endif // CGAL_ARITHMETIC_FILTER_STATIC_INFOS_DISPATCH_H

@@ -32,14 +32,14 @@
 #include <CGAL/Arithmetic_filter/predicates/sign_of_determinant.h>
 #endif
 
-#if defined( CGAL_PREDICATES_ON_FTC2_H ) && \
-   !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H )
-#include <CGAL/Arithmetic_filter/predicates_on_ftC2.h>
+#if defined( CGAL_PREDICATES_KERNEL_FTC2_H ) && \
+   !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_KERNEL_FTC2_H )
+#include <CGAL/Arithmetic_filter/predicates/kernel_ftC2.h>
 #endif
 
-#if defined( CGAL_PREDICATES_ON_FTC3_H ) && \
-       !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H )
-#include <CGAL/Arithmetic_filter/predicates_on_ftC3.h>
+#if defined( CGAL_PREDICATES_KERNEL_FTC3_H ) && \
+       !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_KERNEL_FTC3_H )
+#include <CGAL/Arithmetic_filter/predicates/kernel_ftC3.h>
 #endif
 
 #if defined( CGAL_REGULAR_TRIANGULATION_FTC2_H ) && \
@@ -47,19 +47,23 @@
 #include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_ftC2.h>
 #endif
 
+    /*
 #if defined( CGAL_REGULAR_TRIANGULATION_RTH2_H ) && \
        !defined( CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH2_H )
 #include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_rtH2.h>
 #endif
+*/
 
 #if defined( CGAL_REGULAR_TRIANGULATION_FTC3_H ) && \
        !defined( CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC3_H )
 #include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_ftC3.h>
 #endif
 
+    /*
 #if defined( CGAL_REGULAR_TRIANGULATION_RTH3_H ) && \
        !defined( CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH3_H )
 #include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_rtH3.h>
 #endif
+*/
 
 #endif // CGAL_ARITHMETIC_FILTER_DISPATCH_H
