@@ -1,3 +1,6 @@
+- clean-up the code of the filtered traits: make all predicates functors
+  in the "predicates" directory in separate files (most are already there,
+  but some are not)
 - add a method insert_point_no_search in the segment Voronoi diagram class
   that inserts a point without searching for the nearest neighbor;
   the assumption here is that the nearest neighbor given is already known
