@@ -110,13 +110,7 @@ private:
 
   int get_kd_num(Segment seg,int n)
   {
-    // $$$$ this function is intended to kernel
-    double alpha = _gt.direction(seg);
-    /*double x1 = seg.source().x().to_double();
-    double y1 = seg.source().y().to_double();
-    double x2 = seg.target().x().to_double();
-    double y2 = seg.target().y().to_double();
-    double alpha = atan((y2 - y1)/(x2 - x1));*/
+    double alpha = _gt.segment_direction(seg);
 
     int i;
 
@@ -286,13 +280,9 @@ public:
     // using the below rotation is mandatory because the rotation is done
     // with the predefined sines under angle_to_sines_appr
     int tranc_angle = int(angle.to_double() * rad_to_deg);
-    // $$$$ the next two functions are not generic !!!
-    NT x = p.x() * angle_to_sines_appr[90 - tranc_angle] -
-           p.y() * angle_to_sines_appr[tranc_angle],
-       y = p.x() * angle_to_sines_appr[tranc_angle] +
-           p.y() * angle_to_sines_appr[90 - tranc_angle];
 
-    p = Point(x,y);
+    p = _gt.rotate_point(p,angle_to_sines_appr[90 - tranc_angle],
+                               angle_to_sines_appr[tranc_angle]);
   }
 
   Point small_x_point(Point p1,Point p2)

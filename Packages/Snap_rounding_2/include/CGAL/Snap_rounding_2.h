@@ -159,7 +159,7 @@ void snap(Point_2 p,NT pixel_size,NT &x,NT &y)
         pixel_size / 2.0;
   }
 
-double direction(Segment_2 s)
+double segment_direction(Segment_2 s)
   {
     double x1 = s.source().x().to_double();
     double y1 = s.source().y().to_double();
@@ -167,6 +167,14 @@ double direction(Segment_2 s)
     double y2 = s.target().y().to_double();
 
     return(atan((y2 - y1)/(x2 - x1)));
+  }
+
+Point_2 rotate_point(Point_2 p,NT cosine_val,NT sine_val)
+  {
+    NT x = p.x() * cosine_val - p.y() * sine_val,
+       y = p.x() * sine_val + p.y() * cosine_val;
+
+    return(Point_2(x,y));
   }
 };
 
