@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+20 May 2004 Radu Ursu
+- fixed inclusion path bug in doc 
+
 26 March 2004 Radu Ursu
 -made doc work with the current implementation of the Manual tools
 
