@@ -1,4 +1,4 @@
-[See also the file TODO_static_filters]
+[See also the file TODO_static_filters] 
 
 - DOCUMENT enough for the new to_interval() requirement.
 - Dispatch all CGAL/Interval_arithmetic/*.h into the respective packages.
