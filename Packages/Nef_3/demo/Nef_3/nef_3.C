@@ -53,13 +53,16 @@ using std::strcmp;
 using std::exit;
 
 // Types
-typedef CGAL::Gmpz                      NT;
-// typedef CGAL::Simple_homogeneous<NT>     Kernel;
-
+typedef CGAL::Gmpz                         NT;
+#ifdef CGAL_USE_EXTENDED_KERNEL
 typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
-// struct Kernel : public CGAL::Extended_homogeneous_3<NT>  {};
-typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
+const char *kernelversion = "Extended homogeneous 3d kernel (tm).";
+#else // #elif CGAL_USE_SIMPLE_KERNEL
+typedef CGAL::Simple_homogeneous<NT>       Kernel;
+const char *kernelversion = "Simple homogeneous kernel (tm).";
+#endif
 
+typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 typedef CGAL::SNC_items<Kernel, bool>      SNC_items;
 typedef CGAL::SNC_structure<SNC_items>     SNC_structure;
 typedef CGAL::Nef_polyhedron_3<SNC_items>  Nef_polyhedron;
@@ -569,5 +572,8 @@ int main(  int argc, char* argv[]) {
         help_message( cerr);
         exit(1);
     }
+    CGAL::set_pretty_mode(std::cerr);
+    //std::cin>>debugthread;
+    std::cout<<kernelversion<<std::endl;
     return eval( argc-1, argv+1);
 }
