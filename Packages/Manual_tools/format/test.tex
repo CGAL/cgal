@@ -4,11 +4,12 @@
 % 16.08.1995   Lutz Kettner
 % ----------------------------------------------------------------------
 % The style is compatible with LaTeX2e, try:
-% \documentclass[12pt]{article}
-% \usepackage{latexsym}
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb}
 
 % LaTeX:
-\documentstyle[12pt]{article}
+% \documentstyle[12pt]{article}
 
 %\pagestyle{empty}
 \textwidth 15.4cm 
@@ -168,7 +169,7 @@ formatted using the definitions \verb"\gdef\CCfont{\tt}\gdef\CCendfont{}".
 Also changable are the special characters the formatting has to
 deal with. They are named \verb"\CCunderscore", \verb"\CCopenangle",
 \verb"\CCcloseangle", \verb"\CCampersand", \verb"\CChat", and
-\verb"\CCtilde". The sign for the empty parameter is named
+\verb"\CCtilde". The symbol for the empty parameter is named
 \verb"\CCemptyParameter".
 
   \operations
@@ -387,7 +388,7 @@ checking tool.
 \functiontemplate{R}{bool CGAL_is_intersecting( Point< R>, Point<
   R>);}{comment.}
 
-Enum's are formatted similiar to constructors. Exactly on pair of
+Enum's are formatted similiar to constructors. Exactly one pair of
 matching braces has to be in the declaration.
 
 \enum{enum Short { A, B, C};}{ Comment.}
@@ -435,6 +436,72 @@ as a function template:
     one_with_initialisation = 5, another = -3};}
 
 \globalvariable{int CGAL_global;}Thats it.
+
+\section{New Features Introduced with Version 1.9}
+
+\begin{class}{Demo_Class}
+
+A set of handy abbreviations has been extended. They need the package
+{\tt amssymb} and \LaTeXe.
+
+\begin{tabbing}
+  dum \= dummyyyyyyyy \= \kill
+  \> \verb+\Z+        \> \N        \\
+  \> \verb+\Z+        \> \Z        \\
+  \> \verb+\R+        \> \R
+\end{tabbing}
+
+A \verb+\declaration+ accepts one parameter. The style will ignore it, while
+the checker tests if it exists one to one in the C++ code.
+It is intended for declarations that are somehow implied by the
+surrounded text, but should not be explicitly visible. For example, this
+example is not visible (smile).
+
+\declaration{Some arbitary funny *%&_ looking # C++ code declaration()...}
+
+A \verb+\hidden+ macro can be prepended to each macro with two parameters.
+It will remove the macro and its parameters from the manual.
+Again, the checker tests the macro as usual. Again an invisible example.
+
+\hidden\function{int foo( double d);}{This is a foo function.}
+
+If these non visible parts of the code should be made visible once,
+the \verb+\CCmakeAllVisible+ macro switches it on. For \verb+\declaration+ the 
+\verb+\CCstyle+ macro is used. The \verb+\hidden+ macro vanishes simply.
+The two funny invisible examples from above are repeated here.
+
+\CCmakeAllVisible
+
+\declaration{Some arbitary funny *%&_ looking # C++ code declaration()...}
+
+\hidden\function{int foo( double d);}{This is a foo function
+    previously hidden.}
+
+The following example demonstrates the new ability to write default
+parameters with initializers in parantheses notion of \CC.
+\end{class}
+
+\begin{classtemplate}{CGAL_Point_2< R>}
+\constructor{CGAL_Point_2(const R::RT &x, const R::RT &y, const R::RT &w = R::RT(1.0));}{blabla}
+\end{classtemplate}
+
+A problem has occured in detecting the operator keyword if it was
+directly preceded by an {\tt \&} or {\tt *} character. It is fixed as
+the following example demonstrates:
+
+\function{Int &operator+=( Int a, Int b);}{}
+
+%\begin{class}{Demo_class}
+% \creationvariable{demo_var}%
+%
+% \constructor{Demo_class();}{Default constructor creating variable \var.}
+%
+% \end{class}
+
+The \verb+\CCstyle+ macro is not appropriate to format multiple lines
+of \CC\ code. Use other environments like the {\tt cprog} style.
+
+
 
 
 % ----------------------------------------------------------------------

@@ -103,6 +103,9 @@
 \def\nat{\hbox{\rm I\kern-0.045em N}}
 \def\real{\hbox{\rm I\kern-0.035em R}}
 % \def\boxit#1{\vbox{\hrule\hbox{\vrule\kern3pt\vbox{#1}\kern3pt\vrule}\hrule}}
+\def\R{\mbox{$\mathbb R$}}  %% zusammen mit usepackage{amssymb}
+\def\N{\mbox{$\mathbb N$}}  %% zusammen mit usepackage{amssymb}
+\def\Z{\mbox{$\mathbb Z$}}  %% zusammen mit usepackage{amssymb}
 
 \newcommand{\leda}{{\sc Leda}}
 \newcommand{\cgal}{{\sc Cgal}}
@@ -325,9 +328,30 @@
                    \CCglobalContinuation[\enumXX[#1\{#2\}#3]]]
 \endgroup
 
-\def\enumXX #1#2{%
+\long\def\enumXX #1#2{%
                    \CCenumDeclaration {#2}#1\end}
 
+
+% A \declaration accepts one parameter. The style will ignore it, while
+% the checker tests if it exists one to one in the C++ code.
+% It is intended for declarations that are somehow implied by the
+% surrounded text, but should not be explicitly visible.
+\def\declaration {\begingroup\CCcatcode\declarationX}
+\def\declarationX #1{\endgroup}
+
+% A \hidden macro can be prepended to each macro with two parameters.
+% It will remove the macro and its parameters from the manual.
+% Again, the checker tests the macro as usual.
+\def\hidden #1{\begingroup\CCcatcode\hiddenX}
+\def\hiddenX #1{\endgroup\hiddenXX}
+\long\def\hiddenXX #1{}
+
+% If these non visible parts of the code should be made visible once,
+% the following macro switches it on.
+\def\CCmakeAllVisible{%
+    \gdef\declaration{\CCstyle}%
+    \gdef\hidden{}%
+}
 
 
 % All simple macros work also at the global level. The following
@@ -446,17 +470,32 @@
 % This macro gets a complete C++ declaration and decides weather
 % it is an operator declaration or not.
 \def\isOperator #1{%
-    \isOperatorX{ #1 operator\end}}
-    % Note: the macro introduces a leading space to allow the matching process
-    % to find in any way the right " operator" string. This is necessary,
-    % because "operator" is allowed as a substring in a function name.
-\def\isOperatorX #1{\isOperatorXX #1}  % Now, we can match.
-\def\isOperatorXX #1 operator#2\end{%
+    \isOperatorX #1operator\end}
+    % Note: these macros has to test for characters diretcly surrounding
+    % the operator keyword, because it is allowed as an identifier substring.
+\def\isOperatorX #1operator#2\end{%
     \isEmpty{#2}\ifnum\CCbool=\CCtrue \CCbool=\CCfalse
     \else\hasLeadingSpace{#2}\ifnum\CCbool=\CCfalse
             \isLetter{#2}\CCinvert
         \fi
+    \fi
+    \ifnum\CCbool=\CCtrue
+        \isEmpty{#1}\ifnum\CCbool=\CCfalse
+            \isOperatorXX #1\end
+        \fi
     \fi}
+% Check the parameter, if it does not end with a character or _
+\def\isOperatorXX #1#2\end{%
+    \def\xbody{\isOperatorXX #2\end}%
+    \isLetterX #1\end \CCinvert
+    \def\qparams{#2}\ifx\qparams\empty\let\xnext=\relax
+    \else\isEmpty{#2}\ifnum\CCbool=\CCtrue
+            \let\xnext=\relax
+        \else
+            \let\xnext=\xbody
+        \fi
+    \fi
+    \xnext}
 
 % This macro gets a complete C++ declaration for an operator and has to
 % decide weather it is the parenthesis () operator declaration or not.
@@ -507,10 +546,10 @@
                        \setbox\functioncallbox=\hbox{\classtemplatename
                                  \ \ \CCfont\purevar
                                  \isEmpty{#3}\ifnum\CCbool=\CCfalse
-                                     ( \CCprintParamList{#3})%
+                                     ( \CCprintParamList{#3)#4})%
                                  \fi
                                  ;}%
-                       \CClayoutThreeColumns{(}{#3}{)}{#1}%
+                       \CClayoutThreeColumns{(}{#3)#4}{)}{#1}%
                      }
 
 % Formats a method or a function call.
@@ -555,13 +594,13 @@
                                \ifnum#1=0 \purevar.\fi
                                \unhcopy\functionnamebox(% 
                                \isEmpty{#5}\ifnum\CCbool=\CCfalse
-                                   \ \CCprintParamList{#5}%
+                                   \ \CCprintParamList{#5)#6}%
                                \fi)}}
                        \fi
                        \setbox\callnamebox=\hbox{{\CCfont
                            \ifnum#1=0 \purevar.\fi
                            \unhbox\functionnamebox}}%
-                       \CClayoutThreeColumns{(}{#5}{)}{#2}%
+                       \CClayoutThreeColumns{(}{#5)#6}{)}{#2}%
                      }
 
 \def\CCextendedFormat{\ }% Default: Extended Format switched OFF.
@@ -617,15 +656,16 @@
                        \setbox\callnamebox=\hbox{\CCfont #2}%
                        \setbox\functioncallbox=\hbox{\CCfont #2\{\
                                  \isEmpty{#3}\ifnum\CCbool=\CCfalse
-                                     \CCprintParamList{#3}%
+                                     \CCprintParamList{#3)}%
                                  \fi
                                  \};}%
-                       \CClayoutThreeColumns{\{}{#3}{\}}{#1}%
+                       \CClayoutThreeColumns{\{}{#3)}{\}}{#1}%
                      }
 
 % Manual layout: generalized three column format
 %   o  The 1st parameter contains the opening brace.
-%   o  The 2nd parameter contains the parameter list, comma separated.
+%   o  The 2nd parameter contains the parameter list, comma separated,
+%        including the closing parantheses which will not be printed.
 %   o  The 3rd parameter contains the closing brace. 
 %   o  The 4th parameter contains the comment.
 % All paramters might be empty.
@@ -652,14 +692,15 @@
                            % Otherwise, they are formatted as functions.
                            \ifnum\CCalternateThreeColumn=\CCtrue
                                %  Switches ext. format ON.
-                               {\setbox0=\hbox{\unhcopy\callnamebox #1 }%
+                               {\setbox0=\hbox{\CCfont\unhcopy\callnamebox
+                                               #1 }%
                                  \global\CCWparam=\wd0}%
                                \ifdim\CCWfirst>0pt % check for constructors
                                  \global\advance\CCWparam \CCWfirst
                                  \global\advance\CCWparam \CCWbetween
                                \fi
                                \def\CCextendedFormat{\\\hspace*{\CCWparam}}%
-                               {\unhbox\callnamebox #1 }%
+                               {\CCfont\unhbox\callnamebox #1 }%
                            \else
                                %  Switches ext. format ON.
                                \def\CCextendedFormat{\\\hspace*{\CCWparam}}%
@@ -739,7 +780,7 @@
                                \else\if#3*%
                                    \CCseparateFunctionXX{#2#3}#4\end%
                                \else
-                                   \CCseparateFunctionXX{#2}#3#4\end%
+                                   \CCseparateFunctionXX{#2 }#3#4\end%
                                \fi\fi
                            \else
                                \if#3&%
@@ -747,7 +788,7 @@
                                \else\if#3*%
                                    \CCseparateFunctionXX{#1#2#3}#4\end%
                                \else
-                                   \CCseparateFunctionXX{#1#2}#3#4\end%
+                                   \CCseparateFunctionXX{#1#2 }#3#4\end%
                                \fi\fi
                            \fi
                        \fi}
@@ -851,7 +892,7 @@
 {
   \CCcatcode \catcode`\#=6 \catcode`\@=14
   \gdef\CCprintOperatorOne #1#2#3#4#5\end{@
-                       \CCextractParamList{#2#3}@
+                       \CCextractParamList{#2#3)}@
                        \operatorerror=1
                        \isEmpty{#5}\ifnum\CCbool=\CCtrue 
                            @ single character operations
@@ -893,7 +934,7 @@
                            \ifnum#1=0 {\CCfont \purevar.}\fi
                            \CCprintTokens operator #4#5\end@
                            (\isEmpty{#3}\ifnum\CCbool=\CCfalse
-                               \CCprintParamList{#3}\fi
+                               \CCprintParamList{#3)}\fi
                            )@
                        \fi
                      }
@@ -986,7 +1027,8 @@
 % | Parameter list parsing:
 % |
 % | Parameter lists are commata separated parameters. Template
-% | instantiation nesting is considered.
+% | instantiation nesting is considered. Parantheses nesting 
+% | from default initializers are also considered.
 % +--------------------------------------------------------------------------
 
 % Print a C++ parameter list (separated with commatas). The output formats
@@ -1003,6 +1045,8 @@
 \def\CCprintParamListX #1#2#3\end{%
                    \if<#2\advance\nestinglevel by1 \fi
                    \if>#2\advance\nestinglevel by-1 \fi
+                   \if(#2\advance\nestinglevel by1 \fi
+                   \if)#2\advance\nestinglevel by-1 \fi
                    \if,#2%
                        \ifnum\nestinglevel=0 
                            \CCprintParameter #1const.&.\end,\CCextendedFormat
@@ -1018,9 +1062,10 @@
                                \def\xxbody{\CCprintParamListX{#1#2}#3\end}%
                            \fi
                        \fi\fi
-                   \else\isEmpty{#3}\ifnum\CCbool=\CCtrue
-                       \ifnum\nestinglevel=0
-                           \CCprintParameter #1#2const.&.\end%
+                   \else%  old: \isEmpty{#3}\ifnum\CCbool=\CCtrue
+                       \ifnum\nestinglevel<0
+                       \ifnum\nestinglevel=-1
+                           \CCprintParameter #1const.&.\end%
                        \else
                            \errmessage{Unbalanced angles detected in
                            template types in the C++ parameter list}%
@@ -1033,7 +1078,8 @@
                            \def\xxbody{\CCprintParamListX{#1#2}#3\end}%
                        \fi
                    \fi\fi
-                   \isEmpty{#3}\ifnum\CCbool=\CCtrue \let\xxnext=\relax
+                   % old: \isEmpty{#3}\ifnum\CCbool=\CCtrue 
+                   \ifnum\nestinglevel<0 \let\xxnext=\relax
                    \else\let\xxnext=\xxbody\fi
                    \xxnext}
 
@@ -1063,6 +1109,8 @@
 \def\CCextractParamListX #1#2#3\end{%
                    \if<#2\advance\nestinglevel by1 \fi
                    \if>#2\advance\nestinglevel by-1 \fi
+                   \if(#2\advance\nestinglevel by1 \fi
+                   \if)#2\advance\nestinglevel by-1 \fi
                    \if,#2%
                        \ifnum\nestinglevel=0 
                            \advance\NParameters by1
@@ -1076,8 +1124,9 @@
                                    \hbox{\CCprintParamList{#3}}%
                                \def\xxxbody{\relax}%
                            \fi
-                       \else\ifnum\nestinglevel<0
-                           \errmessage{Unbalanced angles detected in
+                       \else\ifnum\nestinglevel<-1
+                           \errmessage{Unbalanced angles or parantheses
+                           detected in
                            template types in the C++ parameter list}%
                            \def\xxxbody{\CCextractParamListX{}#3\end}%
                        \else% comma within template parameter detected
@@ -1087,18 +1136,19 @@
                                \def\xxxbody{\CCextractParamListX{#1#2}#3\end}%
                            \fi
                        \fi\fi
-                   \else\isEmpty{#3}\ifnum\CCbool=\CCtrue
-                       \ifnum\nestinglevel=0
+                   \else\ifnum\nestinglevel<0
+                       \ifnum\nestinglevel=-1
                            \advance\NParameters by1
                            \ifnum\NParameters=1 \setbox\parameterX=%
-                                   \hbox{\CCprintParameter #1#2const.&.\end}%
+                                   \hbox{\CCprintParameter #1const.&.\end}%
                            \else\ifnum\NParameters=2 \setbox\parameterXX=%
-                                   \hbox{\CCprintParameter #1#2const.&.\end}%
+                                   \hbox{\CCprintParameter #1const.&.\end}%
                            \else\setbox\parameterXXX=%
-                                   \hbox{\CCprintParameter #1#2const.&.\end}%
+                                   \hbox{\CCprintParameter #1const.&.\end}%
                            \fi\fi
                        \else
-                           \errmessage{Unbalanced angles detected in
+                           \errmessage{Unbalanced angles or
+                           parantheses detected in
                            template types in the C++ parameter list}%
                        \fi
                        \def\xxxbody{\CCextractParamListX{}#3\end}%
@@ -1109,7 +1159,7 @@
                            \def\xxxbody{\CCextractParamListX{#1#2}#3\end}%
                        \fi
                    \fi\fi
-                   \isEmpty{#3}\ifnum\CCbool=\CCtrue \let\xxxnext=\relax
+                   \ifnum\nestinglevel<0 \let\xxxnext=\relax
                        \else\let\xxxnext=\xxxbody\fi
                    \xxxnext}
 
