@@ -484,7 +484,7 @@ protected:
         do{      
           Point point = h->vertex()->point();
           //glVertex3f(point[0],point[1],point[2]);          
-          GEN_VERTEX(pv, point[0], point[1],  point[2], .25,  0.0, sbnormal);
+          GEN_VERTEX(pv, static_cast<float>(point[0]), static_cast<float>(point[1]),  static_cast<float>(point[2]), .25,  0.0, sbnormal);
         }while(++h != (*fit).facet_begin());
       endShape();
       fit++;
