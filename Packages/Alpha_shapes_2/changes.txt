@@ -1,3 +1,6 @@
+version 5.0:
+Ready now...
+
 version 4.0:
 Mips_IRIX_CC and Borland_CC supported.
 

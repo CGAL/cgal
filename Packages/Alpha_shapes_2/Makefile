@@ -75,7 +75,7 @@ $(Package).tar.gz:
         --exclude=*.obj --exclude=*.exe --exclude=*~ \
 	--exclude=*5000* --exclude=Attali_7 \
 	--exclude=Melkemi_1 --exclude=allerton \
-	--exclude=baguette* --exclude=test* \
+	--exclude=baguette* --exclude=test2 --exclude=test.franki \
 	version description.txt changes.txt \
 	include doc_tex doc_ps test examples demo
 
