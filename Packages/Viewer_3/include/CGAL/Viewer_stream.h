@@ -177,8 +177,7 @@ public:
   O_manip(Viewer_3& (*ff)(Viewer_3&,Obj), Obj ii)
     : f(ff), i(ii){}
 
-  friend Viewer_3& operator<< CGAL_NULL_TMPL_ARGS
-  (Viewer_3& W, const O_manip<Obj>& m);
+  friend Viewer_3& operator<< <> (Viewer_3& W, const O_manip<Obj>& m);
    
 };
 
