@@ -81,6 +81,7 @@ public:
   typedef typename Traits::Point_2              Point_2;
   
   typedef Topological_map<Dcel> TPM;
+  typedef typename TPM::Halfedge                Halfedge;
   typedef typename TPM::Vertex_iterator         Vertex_iterator;
   typedef typename TPM::Halfedge_iterator       Halfedge_iterator;
   typedef typename TPM::Edge_iterator           Edge_iterator;
@@ -818,7 +819,11 @@ private:
 
   void update_subdivision(Point_node& point_node, 
 			  Change_notification *pm_change_notf);
-
+ protected:
+  // Remove the Halfedge_const_handle protections
+  static inline Halfedge_handle Halfedge_handle_unconst(const Halfedge_const_handle hc) {
+    return Halfedge_handle((Halfedge*)&*&*hc);
+  }
 };
 
 //-----------------------------------------------------------------------------
@@ -971,11 +976,14 @@ template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::
 Planar_map_2(const Planar_map_2<Dcel, Traits> & pm)
 {
+  typedef Pm_trapezoid_dag_point_location<Self>
+    Pm_trapezoid_dag_point_location;
+  
   // doing the same as Planar_map_2(pm.get_traits(),pm.get_point_location(),
   //                                pm.get_point_bbox());
     
-  typedef Pm_naive_point_location<Planar_map_2<Dcel,Traits> >  Pm_naive;
-  typedef Pm_naive*                                    Pm_naive_pointer;
+  typedef Pm_naive_point_location<Self> Pm_naive;
+  typedef Pm_naive*                     Pm_naive_pointer;
 
   traits = new Traits_wrap();
   use_delete_traits = true;
@@ -995,7 +1003,16 @@ Planar_map_2(const Planar_map_2<Dcel, Traits> & pm)
   else{
     //cout<<"Default"<<std::endl;
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-    pl = new Pm_trapezoid_dag_point_location<Self>;
+    pl =
+      new Pm_trapezoid_dag_point_location(*(Pm_trapezoid_dag_point_location*)
+                                          pm.pl);
+    //! \todo Unify the different point location copy constructors;
+    ((Pm_trapezoid_dag_point_location*)pl) -> set_planar_map(this);
+    use_delete_pl = true;
+    bb=init_default_bounding_box((Traits*)traits);
+    use_delete_bb=true;
+    bb->init(*this,*traits);
+    return;
 #else
     CGAL_assertion_msg( false,
     "No default point location is defined; you must supply one.");
@@ -1557,8 +1574,8 @@ insert(const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2 & cv,
   Point_2 tgt = traits->curve_target(cv);
     
   // The point location may not change the bounding box.
-  Halfedge_handle h1 = ((const Point_location_base*)pl)->locate(src, lt1);
-  Halfedge_handle h2 = ((const Point_location_base*)pl)->locate(tgt, lt2);
+  Halfedge_handle h1 = Halfedge_handle_unconst(((const Point_location_base*)pl)->locate(src, lt1));
+  Halfedge_handle h2 = Halfedge_handle_unconst(((const Point_location_base*)pl)->locate(tgt, lt2));
    
   // In principal, the result of a locate should not be an edge, 
   // because the planar map does not accept proper intersections.

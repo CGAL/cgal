@@ -29,20 +29,20 @@ CGAL_BEGIN_NAMESPACE
 //if unbounded face - returns NULL or some edge on unbounded face 
 //if its a vertex returns a halfedge pointing _at_ it
 template <class Planar_map>
-typename Pm_naive_point_location<Planar_map>::Halfedge_handle
+typename Pm_naive_point_location<Planar_map>::Halfedge_const_handle
 Pm_naive_point_location<Planar_map>::locate(const Point & p, 
                                             Locate_type & lt) const
 {
-  typename Planar_map::Vertex_iterator vit=pm->vertices_begin();
+  typename Planar_map::Vertex_const_iterator vit=pm->vertices_begin();
   for (; vit != pm->vertices_end(); ++vit) {
     if (traits->point_equal(p,vit->point()) ) {
       lt = Planar_map::VERTEX; 
-      Halfedge_handle h(vit->incident_halfedges());
+      Halfedge_const_handle h(vit->incident_halfedges());
       return h;
     }
   }
 
-  typename Planar_map::Halfedge_iterator hit=pm->halfedges_begin();
+  typename Planar_map::Halfedge_const_iterator hit=pm->halfedges_begin();
   for (; hit != pm->halfedges_end(); ++hit) {
     if (traits->point_in_x_range(hit->curve(),p) &&
 	traits->curve_compare_y_at_x(p, hit->curve()) == EQUAL) {
@@ -53,7 +53,7 @@ Pm_naive_point_location<Planar_map>::locate(const Point & p,
 
   lt = Planar_map::UNBOUNDED_FACE;
   Locate_type temp;
-  Halfedge_handle h = vertical_ray_shoot(p,temp,true);
+  Halfedge_const_handle h = vertical_ray_shoot(p,temp,true);
   if (temp != Planar_map::UNBOUNDED_FACE) {
     if (temp == Planar_map::VERTEX) {  
       //since h points at the vertex and is the first 
@@ -72,7 +72,7 @@ Pm_naive_point_location<Planar_map>::locate(const Point & p,
     return h; //return halfedges_end()
 
   //- returns a halfedge on an inner ccb of the unbounded face
-  typename Planar_map::Holes_iterator hot =
+  typename Planar_map::Holes_const_iterator hot =
     pm->unbounded_face()->holes_begin();
   return (*hot);
 }
@@ -82,14 +82,15 @@ typename Pm_naive_point_location<Planar_map>::Halfedge_handle
 Pm_naive_point_location<Planar_map>::locate(const Point & p, Locate_type & lt)
 {
   ((Bounding_box*)get_bounding_box())->insert(p);
-  Halfedge_handle h=((cPLp)this)->locate(p,lt);
+  Halfedge_handle h =
+    Halfedge_handle_unconst(((const_Self_ptr)this)->locate(p,lt));
   if (!((Bounding_box*)get_bounding_box())->locate(p,lt,h))
-    h = ((cPLp)this)->locate(p,lt);
+    h = Halfedge_handle_unconst(((const_Self_ptr)this)->locate(p,lt));
   return h;
 }
 
 template <class Planar_map>
-typename Pm_naive_point_location<Planar_map>::Halfedge_handle
+typename Pm_naive_point_location<Planar_map>::Halfedge_const_handle
 Pm_naive_point_location<Planar_map>::
 vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
 {
@@ -109,7 +110,7 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
     curve_above_under = SMALLER;
   }
 
-  typename Planar_map::Halfedge_iterator it  = pm->halfedges_begin(),
+  typename Planar_map::Halfedge_const_iterator it  = pm->halfedges_begin(),
                                          eit = pm->halfedges_end(),
                                          closest_edge = eit;
   bool first = false;
@@ -173,13 +174,13 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
   // if we didn't find any edge above p then it is the empty face
   if ( ! first) {
     lt = Planar_map::UNBOUNDED_FACE;
-    Halfedge_handle h = pm->halfedges_end();
+    Halfedge_const_handle h = pm->halfedges_end();
     return h; //==NULL
   }
 
   // if the closest point is a vertex then find the first clockwise 
   // edge from the vertical segment
-  typename Planar_map::Vertex_handle v = pm->vertices_end();
+  typename Planar_map::Vertex_const_handle v = pm->vertices_end();
   bool maybe_vertical = false; // BUG fix (Oren)
   if (traits->point_equal_x(closest_edge->target()->point(), p)) {
     v = closest_edge->target();
@@ -232,10 +233,13 @@ Pm_naive_point_location<Planar_map>::vertical_ray_shoot(const Point & p,
 {
   /* Make sure the source point is in the bounding box on the output */
   ((Bounding_box*)get_bounding_box())->insert(p);
-  Halfedge_handle h=((cPLp)this)->vertical_ray_shoot(p,lt,up);
+  Halfedge_handle h =
+    Halfedge_handle_unconst(((const_Self_ptr)this)->
+                            vertical_ray_shoot(p,lt,up));
   /* Apply the bounding box on the output */
   if (!((Bounding_box*)get_bounding_box())->vertical_ray_shoot(p,lt,up,h)) {
-    h = ((cPLp)this)->vertical_ray_shoot(p,lt,up);
+    h = Halfedge_handle_unconst(((const_Self_ptr)this)->
+                                vertical_ray_shoot(p,lt,up));
     CGAL_assertion(lt!=Planar_map::UNBOUNDED_FACE);
   }
   return h;
@@ -245,19 +249,19 @@ Pm_naive_point_location<Planar_map>::vertical_ray_shoot(const Point & p,
 //find the first halfedge pointing at v, when going clockwise
 //if highest==true - start from 12 oclock, else start from 6 oclock
 template <class Planar_map>
-typename Pm_naive_point_location<Planar_map>::Halfedge_handle 
+typename Pm_naive_point_location<Planar_map>::Halfedge_const_handle 
 Pm_naive_point_location<Planar_map>::
-find_lowest(typename Pm_naive_point_location<Planar_map>::Vertex_handle v,
+find_lowest(typename Pm_naive_point_location<Planar_map>::Vertex_const_handle v,
             bool highest) const
 {
-  Halfedge_handle lowest_left = pm->halfedges_end();
-  Halfedge_handle lowest_right = pm->halfedges_end();
-  Halfedge_handle vertical_up = pm->halfedges_end();
-  Halfedge_handle vertical_down = pm->halfedges_end();
+  Halfedge_const_handle lowest_left = pm->halfedges_end();
+  Halfedge_const_handle lowest_right = pm->halfedges_end();
+  Halfedge_const_handle vertical_up = pm->halfedges_end();
+  Halfedge_const_handle vertical_down = pm->halfedges_end();
 
-  typename Planar_map::Halfedge_around_vertex_circulator first = 
+  typename Planar_map::Halfedge_around_vertex_const_circulator first = 
     v->incident_halfedges();
-  typename Planar_map::Halfedge_around_vertex_circulator curr = first;
+  typename Planar_map::Halfedge_around_vertex_const_circulator curr = first;
 
   do {
     if (traits->point_is_left(curr->source()->point(), v->point())) {

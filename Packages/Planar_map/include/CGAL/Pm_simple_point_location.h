@@ -41,15 +41,21 @@ public:
   typedef typename Planar_map::Ccb_halfedge_circulator 
                                                Ccb_halfedge_circulator;
   typedef typename Planar_map::Halfedge_handle Halfedge_handle;
+  typedef typename Planar_map::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Planar_map::Halfedge_iterator  Halfedge_iterator;
+  typedef typename Planar_map::Halfedge_const_iterator
+    Halfedge_const_iterator;
   typedef typename Planar_map::Halfedge           Halfedge;
   typedef typename Planar_map::Vertex_handle      Vertex_handle;
+  typedef typename Planar_map::Vertex_const_handle Vertex_const_handle;
+  typedef typename Planar_map::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
   typedef typename Traits::Point                  Point;
   typedef typename Traits::X_curve                X_curve;
   typedef Pm_bounding_box_base<Planar_map>        Bounding_box;
   typedef typename Base::Halfedge_handle_iterator Halfedge_handle_iterator;
   typedef typename Base::Token                    Token;
-  typedef std::list<Halfedge_handle>              Halfedges_list;
+  typedef std::list<Halfedge_const_handle>        Halfedges_const_list;
 	
 public:	
   Pm_simple_point_location() : 
@@ -59,7 +65,7 @@ public:
   Pm_simple_point_location(Planar_map* _pm,Traits_wrap* _traits) : 
     Pm_point_location_base<Planar_map>(),traits(_traits),pm(_pm) {}
 	
-  void init(Planar_map& pmp, Traits& tr) 
+  void init(const Planar_map& pmp, const Traits& tr) 
   {
     pm = &pmp;
     traits = (Traits_wrap*)(&tr);
@@ -69,10 +75,11 @@ public:
   {
   }
 	
-  void find_relevant_halfedges(const Point& p, Halfedges_list &relevant) const
+  void find_relevant_halfedges(const Point& p,
+                               Halfedges_const_list &relevant) const
   {
     // find whether p is on a halfedge
-    typename Planar_map::Halfedge_iterator hit;
+    typename Planar_map::Halfedge_const_iterator hit;
     for (hit = pm->halfedges_begin(); hit != pm->halfedges_end(); ++hit) 
       {
 	if (traits->point_in_x_range(hit->curve(),p)) 
@@ -83,25 +90,25 @@ public:
 		
   }
 
-  Halfedge_handle locate(const Point& p, Locate_type& lt) const
+  Halfedge_const_handle locate(const Point& p, Locate_type& lt) const
   {
     // find whether p is on a vertex
-    typename Planar_map::Vertex_iterator vit;
+    typename Planar_map::Vertex_const_iterator vit;
     for (vit=pm->vertices_begin(); vit!=pm->vertices_end(); ++vit) 
       {
 	if (traits->point_equal(p,vit->point()) ) 
 	  {
 	    lt = Planar_map::VERTEX; 
-	    Halfedge_handle h(vit->incident_halfedges());	
+	    Halfedge_const_handle h(vit->incident_halfedges());	
 	    return h;
 	  }
       }
 		
-    Halfedges_list relevant_halfedges;
+    Halfedges_const_list relevant_halfedges;
     find_relevant_halfedges(p, relevant_halfedges);
 
     // find whether p is on a halfedge
-    typename Halfedges_list::const_iterator hit;
+    typename Halfedges_const_list::const_iterator hit;
     for (hit=relevant_halfedges.begin(); hit!=relevant_halfedges.end(); ++hit) 
       {
 	if (traits->point_in_x_range((*hit)->curve(),p) &&
@@ -114,7 +121,7 @@ public:
 		
     lt = Planar_map::UNBOUNDED_FACE;
     Locate_type temp;
-    Halfedge_handle h;
+    Halfedge_const_handle h;
 
     h = vertical_ray_shoot(p, temp, true, relevant_halfedges);
 		
@@ -138,7 +145,7 @@ public:
 	  return h; //return halfedges_end()
 	else {
 	  //- returns a halfedge on an inner ccb of the unbounded face
-	  typename Planar_map::Holes_iterator hot = 
+	  typename Planar_map::Holes_const_iterator hot = 
 	    pm->unbounded_face()->holes_begin();
 	  return (*hot);
 	}
@@ -148,26 +155,27 @@ public:
   Halfedge_handle locate(const Point& p, Locate_type& lt)
   {
     ((Bounding_box*)get_bounding_box())->insert(p);
-    Halfedge_handle h=((cPLp)this)->locate(p,lt);
+    Halfedge_handle h =
+      Halfedge_handle_unconst(((const_Self_ptr)this)->locate(p,lt));
     if (!((Bounding_box*)get_bounding_box())->locate(p,lt,h))
-      h=((cPLp)this)->locate(p,lt);
+      h=Halfedge_handle_unconst(((const_Self_ptr)this)->locate(p,lt));
     return h;
   }
 
-  Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, 
+  Halfedge_const_handle vertical_ray_shoot(const Point& p, Locate_type& lt, 
 				     bool up) const
   {
-    Halfedges_list relevant_halfedges;
+    Halfedges_const_list relevant_halfedges;
     find_relevant_halfedges(p, relevant_halfedges);
     return vertical_ray_shoot(p, lt, up, relevant_halfedges);
   }
 	
-  Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, bool up,
-				     const Halfedges_list &relevant_halfedges)
-  const
+  Halfedge_const_handle 
+    vertical_ray_shoot(const Point& p, Locate_type& lt, bool up,
+		       const Halfedges_const_list &relevant_halfedges) const
   {
 		
-    typename Planar_map::Halfedge_iterator it, eit, closest_edge;
+    typename Planar_map::Halfedge_const_iterator it, eit, closest_edge;
     bool first = false;
     Comparison_result point_above_under, res;
     Comparison_result curve_above_under;
@@ -191,7 +199,7 @@ public:
       curve_above_under = SMALLER;
     }
 
-    typename Halfedges_list::const_iterator rel_it;
+    typename Halfedges_const_list::const_iterator rel_it;
     for (rel_it = relevant_halfedges.begin(); 
 	 rel_it != relevant_halfedges.end();) 
       {
@@ -255,12 +263,12 @@ public:
     // if we didn't find any edge above p then it is the empty face
     if (!first) {
       lt=Planar_map::UNBOUNDED_FACE;
-      Halfedge_handle h=pm->halfedges_end();
+      Halfedge_const_handle h=pm->halfedges_end();
       return h; //==NULL
     }
     // if the closest point is a vertex then find the first clockwise 
     // edge from the vertical segment
-    typename Planar_map::Vertex_handle v = pm->vertices_end();
+    typename Planar_map::Vertex_const_handle v = pm->vertices_end();
     bool maybe_vertical=false; // BUG fix (Oren)
     if ( traits->point_equal_x(closest_edge->target()->point(), p) ) 
       {
@@ -297,7 +305,7 @@ public:
 	  closest_edge = find_lowest(v,traits, true);
       }
 		
-    Halfedge_handle h;	
+    Halfedge_const_handle h;	
     if (lt==Planar_map::VERTEX)
       {
 	h=closest_edge;
@@ -330,11 +338,13 @@ public:
   {
     /* Make sure the source point is in the bounding box on the output */
     ((Bounding_box*)get_bounding_box())->insert(p);
-    Halfedge_handle h=((cPLp)this)->vertical_ray_shoot(p,lt,up);
+    Halfedge_handle h = Halfedge_handle_unconst(((const_Self_ptr)this)->
+                                                vertical_ray_shoot(p,lt,up));
     /* Apply the bounding box on the output */
     if (!((Bounding_box*)get_bounding_box())->vertical_ray_shoot(p,lt,up,h))
       {
-	h=((cPLp)this)->vertical_ray_shoot(p,lt,up);
+	h = Halfedge_handle_unconst(((const_Self_ptr)this)->
+                                    vertical_ray_shoot(p,lt,up));
 	CGAL_assertion(lt!=Planar_map::UNBOUNDED_FACE);
       }
     return h;
@@ -376,58 +386,54 @@ public:
   inline const Traits* get_traits() const {return traits;}
 	
 protected:
-  Halfedge_handle find_lowest(Vertex_handle v,Traits_wrap *traits, 
+  Halfedge_const_handle find_lowest(const Vertex_const_handle v, 
+			      const Traits_wrap *traits, 
 			      bool highest) const
     //find the first halfedge pointing at v, when going clockwise
     //if highest==true - start from 12 oclock, else start from 6 oclock
   {
 		
-    Halfedge_handle lowest_left = pm->halfedges_end();
-    Halfedge_handle lowest_right = pm->halfedges_end();
-    Halfedge_handle vertical_up = pm->halfedges_end();
-    Halfedge_handle vertical_down = pm->halfedges_end();
+    Halfedge_const_handle lowest_left = pm->halfedges_end();
+    Halfedge_const_handle lowest_right = pm->halfedges_end();
+    Halfedge_const_handle vertical_up = pm->halfedges_end();
+    Halfedge_const_handle vertical_down = pm->halfedges_end();
 		
 		
-    typename Planar_map::Halfedge_around_vertex_circulator first = 
+    Halfedge_around_vertex_const_circulator first = 
       v->incident_halfedges();
-    typename Planar_map::Halfedge_around_vertex_circulator curr = first;
+    Halfedge_around_vertex_const_circulator curr = first;
 		
     do {
       if ( traits->point_is_left(curr->source()->point(), v->point())) 
-	{
-	  if (lowest_left == pm->halfedges_end())
-	    lowest_left = curr;
+      {
+        if (lowest_left == pm->halfedges_end())
+          lowest_left = curr;
 				
-	  if (traits->curves_compare_y_at_x_left(curr->curve(),
-					      lowest_left->curve(), 
-					      v->point())==SMALLER)
-	    lowest_left = curr;
-	}
+        if (traits->curves_compare_y_at_x_left(curr->curve(),
+                                               lowest_left->curve(), 
+                                               v->point())==SMALLER)
+          lowest_left = curr;
+      }
 			
-      if ( traits->point_is_right(curr->source()->point(), 
-				  v->point()) ) 
-	{
-	  if (lowest_right == pm->halfedges_end())
-	    lowest_right = curr;
-				
-	  if (traits->curves_compare_y_at_x_right(curr->curve(),
-					       lowest_right->curve(), 
-					       v->point())==LARGER
-	      )
-	    lowest_right = curr;
-	}
-			
-			
+      if ( traits->point_is_right(curr->source()->point(), v->point()) ) 
+      {
+        if (lowest_right == pm->halfedges_end())
+          lowest_right = curr;
+        
+        if (traits->curves_compare_y_at_x_right(curr->curve(),
+                                                lowest_right->curve(), 
+                                                v->point())==LARGER
+            )
+          lowest_right = curr;
+      }
 			
       if (traits->curve_is_vertical(curr->curve())) {
-	if (traits->compare_xy(v->point(),
-			       curr->source()->point())==LARGER)
+	if (traits->compare_xy(v->point(), curr->source()->point()) == LARGER)
 	  //debug
 	  //{ std::cout << "vertical up = " << curr->curve() << std::endl;
 					
 	  vertical_up=curr; 
-				
-				//}//enddebug
+        //}//enddebug
 				
 	if (traits->compare_xy(v->point(),
 			       curr->source()->point())==SMALLER)
@@ -435,12 +441,9 @@ protected:
 	  //{ std::cout << "vertical down = " << curr->curve() << std::endl;
 					
 	  vertical_down=curr;
-				//}//enddebug
-				
+        //}//enddebug
       }        
-			
     } while (++curr != first);
-		
 		
     /*
       vertical_down  
@@ -478,14 +481,13 @@ protected:
 #endif
 	
 protected:
-  typedef const Self* cPLp;
+  typedef const Self* const_Self_ptr;
 	
 protected:
-  Planar_map* pm;
-  Traits_wrap* traits;
+  const Planar_map* pm;
+  const Traits_wrap* traits;
 };
 
 CGAL_END_NAMESPACE
 
 #endif //CGAL_PM_NAIVE_POINT_LOCATION_H
-

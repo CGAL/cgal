@@ -30,19 +30,19 @@ CGAL_BEGIN_NAMESPACE
 //if unbounded face - returns NULL or some edge on unbounded face 
 //if its a vertex returns a halfedge pointing _at_ it
 template <class Planar_map>
-typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
+typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_const_handle
 Pm_walk_along_line_point_location<Planar_map>::locate(const Point & p, 
                                                       Locate_type & lt) const
 {
-  Face_handle f = pm->unbounded_face(), last = pm->faces_end();  
+  Face_const_handle f = pm->unbounded_face(), last = pm->faces_end();  
   // invariant: p always lies in f's interior or holes
   
-  Halfedge_handle e = pm->halfedges_end(); // closest halfedge so far
+  Halfedge_const_handle e = pm->halfedges_end(); // closest halfedge so far
 
   lt = Planar_map::UNBOUNDED_FACE;
   while (f != last) { // stop at innermost level
     last = f;
-    Holes_iterator it = f->holes_begin(), end = f->holes_end();
+    Holes_const_iterator it = f->holes_begin(), end = f->holes_end();
     while (it != end && last == f) {     // handle holes
       if (find_closest(p, *it, true, true, e, lt))
         switch (lt) {
@@ -91,7 +91,7 @@ Pm_walk_along_line_point_location<Planar_map>::locate(const Point & p,
   if (lt == Planar_map::UNBOUNDED_FACE && f != pm->unbounded_face()) 
     lt = Planar_map::FACE;
   if (e == pm->halfedges_end() && pm->number_of_halfedges() > 0) 
-    return Halfedge_handle(*(pm->unbounded_face()->holes_begin()));
+    return Halfedge_const_handle(*(pm->unbounded_face()->holes_begin()));
   
   return e;
 }
@@ -99,31 +99,33 @@ Pm_walk_along_line_point_location<Planar_map>::locate(const Point & p,
 template <class Planar_map>
 typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
 Pm_walk_along_line_point_location<Planar_map>::locate(const Point & p, 
-						      Locate_type & lt) {
+						      Locate_type & lt)
+{
   ((Bounding_box*)get_bounding_box())->insert(p);
-  Halfedge_handle h=((cPLp)this)->locate(p,lt);
+  Halfedge_handle h =
+    Halfedge_handle_unconst(((const_Self_ptr)this)->locate(p,lt));
   if (!((Bounding_box*)get_bounding_box())->locate(p,lt,h))
-    h=((cPLp)this)->locate(p,lt);
+    h=Halfedge_handle_unconst(((const_Self_ptr)this)->locate(p,lt));
   return h;
 }
 
 template <class Planar_map>
-typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
+typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_const_handle
 Pm_walk_along_line_point_location<Planar_map>::
 vertical_ray_shoot(const Point & p, 
                    Locate_type & lt, 
                    bool up) const
 {
-  Face_handle f    = pm->unbounded_face(),
-              last = pm->faces_end();  
+  Face_const_handle f    = pm->unbounded_face(),
+    last = pm->faces_end();  
   // p always lies in f's interior
-  Halfedge_handle e = pm->halfedges_end(); // closest halfedge so far
+  Halfedge_const_handle e = pm->halfedges_end(); // closest halfedge so far
   lt = Planar_map::UNBOUNDED_FACE;
   while(f != last) // stop at innermost level
   {
     last = f;
-    Holes_iterator it  = f->holes_begin(),
-                   end = f->holes_end();
+    Holes_const_iterator it  = f->holes_begin(),
+      end = f->holes_end();
     // For each hole
     while(it != end && last == f) 
     {
@@ -131,12 +133,12 @@ vertical_ray_shoot(const Point & p,
       {
         switch (lt)
         {
-        case Planar_map::VERTEX:
+         case Planar_map::VERTEX:
                   
 #ifdef CGAL_PM_DEBUG
           CGAL_assertion(traits->point_equal_x(e->target()->point(), p));
 #endif
-        case Planar_map::EDGE:
+         case Planar_map::EDGE:
                   
 #ifdef CGAL_PM_WALK_DEBUG
           std::cerr << "\ncalling walk_along_line(" << p << "," 
@@ -146,32 +148,28 @@ vertical_ray_shoot(const Point & p,
           walk_along_line(p,up,false,e,lt);
           switch(lt)
           {
-          case Planar_map::VERTEX:
+           case Planar_map::VERTEX:
             f=e->twin()->face();
             break;
-          case Planar_map::EDGE:
+           case Planar_map::EDGE:
                       
 #ifdef CGAL_PM_DEBUG
-            CGAL_assertion(
-              up == traits->point_is_left_low(e->target()->point(),
-                                              e->source()->point()));
+            CGAL_assertion(up ==
+                           traits->point_is_left_low(e->target()->point(),
+                                                     e->source()->point()));
 #endif                      
             f=e->face();
-          case Planar_map::UNBOUNDED_FACE:
+           case Planar_map::UNBOUNDED_FACE:
             break;
-          default:
-            CGAL_assertion(
-                           lt==Planar_map::UNBOUNDED_FACE||
+           default:
+            CGAL_assertion(lt==Planar_map::UNBOUNDED_FACE||
                            lt==Planar_map::EDGE||
-                           lt==Planar_map::VERTEX
-                           );
+                           lt==Planar_map::VERTEX);
             break;
           }
           break;
-        default:
-          CGAL_assertion(
-                         lt==Planar_map::EDGE||
-                         lt==Planar_map::VERTEX);
+         default:
+          CGAL_assertion(lt == Planar_map::EDGE || lt == Planar_map::VERTEX);
           break;
         }
       }
@@ -186,19 +184,22 @@ vertical_ray_shoot(const Point & p,
 
 template <class Planar_map>
 typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
-Pm_walk_along_line_point_location<Planar_map>::vertical_ray_shoot(
-                                                 const Point& p, 
-                                                 Locate_type& lt, bool up){
+Pm_walk_along_line_point_location<Planar_map>::
+vertical_ray_shoot(const Point& p, 
+                   Locate_type& lt, bool up)
+{
   /* Make sure the source point is in the bounding box on the output */
   ((Bounding_box*)get_bounding_box())->insert(p);
-  Halfedge_handle h=((cPLp)this)->vertical_ray_shoot(p,lt,up);
+  Halfedge_handle h =
+    Halfedge_handle_unconst(((const_Self_ptr)this)->vertical_ray_shoot(p,lt,up));
   /* Apply the bounding box on the output */
-	if (!((Bounding_box*)get_bounding_box())->vertical_ray_shoot(p,lt,up,h))
-	{
-		h=((cPLp)this)->vertical_ray_shoot(p,lt,up);
-		CGAL_assertion(lt!=Planar_map::UNBOUNDED_FACE);
-	}
-	return h;
+  if (!((Bounding_box*)get_bounding_box())->vertical_ray_shoot(p,lt,up,h))
+  {
+    h = Halfedge_handle_unconst(((const_Self_ptr)this)->
+                                vertical_ray_shoot(p,lt,up));
+    CGAL_assertion(lt!=Planar_map::UNBOUNDED_FACE);
+  }
+  return h;
 }
 
 ///IMPLEMENTATION ////////////////////////////////////////
@@ -240,13 +241,13 @@ walk_along_line(const Point & p,
                 bool up,
                 bool including, 
                 // bool type,
-                Halfedge_handle& e,
+                Halfedge_const_handle& e,
                 Locate_type& lt) const 
 { 
   bool type = including;
-  Face_handle face = (type || lt!=Planar_map::VERTEX) ? e->face() : 
+  Face_const_handle face = (type || lt!=Planar_map::VERTEX) ? e->face() : 
     e->twin()->face();    // hold the current face find_closest found.
-  Face_handle last_face;  // hold the last face find_closest found.
+  Face_const_handle last_face;  // hold the last face find_closest found.
 
   do {
     last_face = face;
@@ -286,9 +287,9 @@ walk_along_line(const Point & p,
 #endif
     }
         
-        face =
-	  (type || lt != Planar_map::VERTEX) ? e->face() : e->twin()->face();
-    }
+    face =
+      (type || lt != Planar_map::VERTEX) ? e->face() : e->twin()->face();
+  }
   while((type == (lt==Planar_map::UNBOUNDED_FACE)) && last_face != face);
 }
 
@@ -301,9 +302,9 @@ in the Locate_type lt (vertex/edge/face).
 template <class Planar_map>
 bool Pm_walk_along_line_point_location<Planar_map>::
 find_closest(const Point & p,
-	     const Ccb_halfedge_circulator & c,
+	     const Ccb_halfedge_const_circulator & c,
 	     bool up, bool including, // bool type,
-	     Halfedge_handle & e,
+	     Halfedge_const_handle & e,
 	     Locate_type & lt) const
 {
   // for possible future implementation (if the ray includes its source).
@@ -317,15 +318,15 @@ find_closest(const Point & p,
 
   // is this the first relevant edge found
   bool intersection = e != pm->halfedges_end(); 
-
   // used to answer is it known that ray shoot intersects curves?
+
   // inside flips from false to true according to the number of edges found
   // above p. odd number - p is inside, even - p outside the face.
   // its like a counter to the number of edges above p.
-  bool inside = false; // used to calculate if point is inside ccb 
+  bool inside = false; // used to calculate if point is inside ccb
 
   //an iterator on all the halfedges
-  Ccb_halfedge_circulator curr = c;
+  Ccb_halfedge_const_circulator curr = c;
 
   //the main loop
   do {

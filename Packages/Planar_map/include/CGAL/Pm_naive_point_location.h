@@ -36,18 +36,24 @@ public:
   typedef typename Planar_map::Traits_wrap Traits_wrap;
   typedef typename Planar_map::Locate_type Locate_type;
   typedef typename Planar_map::Face_handle Face_handle;
+  typedef typename Planar_map::Face_const_handle Face_const_handle;
   typedef typename Planar_map::Ccb_halfedge_circulator 
     Ccb_halfedge_circulator;
+  typedef typename Planar_map::Ccb_halfedge_const_circulator 
+    Ccb_halfedge_const_circulator;
   typedef typename Planar_map::Halfedge_handle Halfedge_handle;
+  typedef typename Planar_map::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Planar_map::Halfedge_iterator Halfedge_iterator;
+  typedef typename Planar_map::Halfedge_const_iterator Halfedge_const_iterator;
   typedef typename Planar_map::Halfedge Halfedge;
   typedef typename Planar_map::Vertex_handle Vertex_handle;
+  typedef typename Planar_map::Vertex_const_handle Vertex_const_handle;
   typedef typename Traits::Point Point;
   typedef typename Traits::X_curve X_curve;
   typedef Pm_bounding_box_base<Planar_map> Bounding_box;
   typedef typename Base::Halfedge_handle_iterator Halfedge_handle_iterator;
   typedef typename Base::Token Token;
-
+  
 public:
   // Constructors
   Pm_naive_point_location() : 
@@ -59,7 +65,7 @@ public:
   Pm_naive_point_location(Planar_map * _pm,Traits_wrap * _traits) : 
     Pm_point_location_base<Planar_map>(), traits(_traits), pm(_pm) {}
 
-  inline void init(Planar_map & pmp, Traits & tr) 
+  inline void init(const Planar_map & pmp, const Traits & tr) 
   {
     CGAL_precondition_msg(pm == NULL,
     "Point location instance should be uninitialized "
@@ -71,10 +77,10 @@ public:
   
   inline void insert(Halfedge_handle, const X_curve &) {}
   
-  Halfedge_handle locate(const Point & p, Locate_type & lt) const;
+  Halfedge_const_handle locate(const Point & p, Locate_type & lt) const;
   Halfedge_handle locate(const Point & p, Locate_type & lt);
   
-  Halfedge_handle vertical_ray_shoot(const Point & p,
+  Halfedge_const_handle vertical_ray_shoot(const Point & p,
                                      Locate_type & lt, bool up) const;
   Halfedge_handle vertical_ray_shoot(const Point & p,
                                      Locate_type & lt, bool up);
@@ -101,18 +107,18 @@ public:
   inline const Traits * get_traits() const {return traits;}
   
 protected:
-  Halfedge_handle find_lowest(Vertex_handle v, bool highest) const;
+  Halfedge_const_handle find_lowest(Vertex_const_handle v, bool highest) const;
   
 #ifdef CGAL_PM_DEBUG
   void debug(){}
 #endif
 
 protected:
-  typedef const Self * cPLp;
+  typedef const Self * const_Self_ptr;
   
 protected:
-  Planar_map * pm;
-  Traits_wrap * traits;
+  const Planar_map * pm;
+  const Traits_wrap * traits;
 };
 
 CGAL_END_NAMESPACE

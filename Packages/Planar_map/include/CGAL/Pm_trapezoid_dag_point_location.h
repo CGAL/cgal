@@ -20,6 +20,7 @@
 #ifndef CGAL_PM_TRAPEZOID_DAG_POINT_LOCATION_H
 #define CGAL_PM_TRAPEZOID_DAG_POINT_LOCATION_H
 
+#include <CGAL/Topological_map.h>
 #include <CGAL/Pm_point_location_base.h>
 #include <CGAL/Trapezoidal_decomposition_2.h>
 #include <CGAL/Td_traits.h>
@@ -27,7 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 ////////////////////////////////////////////////////////////////////
-//  TRAPEZOID_DAG PLANAR MAP STRATEGY
+//  DEFAULT PLANAR MAP STRATEGY
 ///////////////////////////////////////////////////////////////////
 
 template <class Planar_map_>
@@ -78,21 +79,31 @@ protected:
 
 
 template <class Planar_map_>
-class Pm_trapezoid_dag_point_location : public Pm_point_location_base<Planar_map_> {
+class Pm_trapezoid_dag_point_location :
+  public Pm_point_location_base<Planar_map_>
+{
 public:
   typedef Planar_map_ Planar_map;
+  typedef const Planar_map& const_Planar_map_ref;
+  typedef const Planar_map* const_Planar_map_ptr;
   typedef Pm_point_location_base<Planar_map_> Base;
   typedef Pm_trapezoid_dag_point_location<Planar_map> Self;
+  typedef const Self& const_Self_ref;
+  typedef const Self* const_Self_ptr;
   typedef typename Planar_map::Traits Pm_traits;
   typedef typename Planar_map::Traits_wrap Pm_traits_wrap;
   typedef typename Planar_map::Locate_type Locate_type;
   typedef typename Planar_map::Halfedge_handle Halfedge_handle;
+  typedef typename Planar_map::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Planar_map::Halfedge_iterator Halfedge_iterator;
+  typedef typename Planar_map::Halfedge_const_iterator Halfedge_const_iterator;
   typedef typename Planar_map::Ccb_halfedge_circulator Ccb_halfedge_circulator;
   typedef PL_X_curve_plus<Planar_map> X_curve_plus;
   // SunPro gets confused (a bug) because of the two Td_traits in the same
   // class scope. We add the CGAL namespace as a workaround.
   typedef CGAL::Td_traits<Pm_traits_wrap,X_curve_plus> Td_traits;
+  typedef const Td_traits& const_Td_traits_ref;
+  typedef const Td_traits* const_Td_traits_ptr;
   typedef Trapezoidal_decomposition_2<Td_traits> Trapezoidal_decomposition;
   typedef Pm_bounding_box_base<Planar_map> Bounding_box;
   typedef typename Pm_traits::Point Point;
@@ -106,7 +117,6 @@ public:
 protected:
   typedef Trapezoidal_decomposition TD;
   typedef Planar_map PM;
-  typedef const Self* cPLp;
   
 public:
   Pm_trapezoid_dag_point_location(bool rebuild=true) : 
@@ -115,6 +125,11 @@ public:
   {
     td.set_needs_update(rebuild);
   }
+  Pm_trapezoid_dag_point_location(const_Self_ref pl) : 
+    td(*pl.get_trapezoidal_decomposition())
+    {
+      init(*pl.get_planar_map(), *pl.get_traits());
+    }
   ~Pm_trapezoid_dag_point_location() 
   {
     if (traits) delete traits;
@@ -130,11 +145,11 @@ public:
     td.insert(X_curve_plus(cv,h));
   }
   
-  Halfedge_handle locate(const Point& p, Locate_type& lt) const;
+  Halfedge_const_handle locate(const Point& p, Locate_type& lt) const;
   Halfedge_handle locate(const Point& p, Locate_type& lt);
   
-  Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, bool up)
-    const;
+  Halfedge_const_handle vertical_ray_shoot(const Point& p, Locate_type& lt,
+                                           bool up) const;
   Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, bool up);
   
   //the function is called after the combinatoric split
@@ -163,8 +178,7 @@ public:
                   //end additions
                   )
   {
-    td.merge_edge(
-                  X_curve_plus(cv1),
+    td.merge_edge(X_curve_plus(cv1),
                   X_curve_plus(cv2),
                   // X_curve_plus(e)
                   X_curve_plus(cv,e)
@@ -231,8 +245,12 @@ public:
   const TD* get_trapezoidal_decomposition() const {return &td;}
   
   inline const Pm_traits* get_traits() const {return traits;}
+  inline const_Planar_map_ptr get_planar_map() const {return pm;}
+  inline const_Planar_map_ptr set_planar_map(const_Planar_map_ptr const pm_) {
+    return pm=pm_;
+  }
 
-  void init(Planar_map& pmp, Pm_traits& tr) 
+  void init(const Planar_map& pmp, const Pm_traits& tr) 
   {
     CGAL_precondition_msg(pm == NULL,
     "Point location instance should be uninitialized "
@@ -260,10 +278,11 @@ protected:
   TD td;
 
 private:
-  Planar_map* pm;
-  Td_traits* traits;
+  const_Planar_map_ptr pm;
+  const_Td_traits_ptr traits;
 
-  bool halfedge_represents_point(const Halfedge_handle& h,const Point& p) const
+  bool halfedge_represents_point(const Halfedge_const_handle& h,
+				 const Point& p) const
   {
     const Point 
       &source=h->source()->point(),
@@ -286,7 +305,7 @@ private:
      the input curve is not vertical,
      p is in its x range but not on its closure
   */
-  bool halfedge_represents_point_inside_face(const Halfedge_handle& h,
+  bool halfedge_represents_point_inside_face(const Halfedge_const_handle& h,
                                              const Point& p) const 
   {
     return (traits->point_in_x_range(h->curve(),p) &&
@@ -294,14 +313,14 @@ private:
       traits->point_is_left(h->source()->point(),h->target()->point());
   }
 
-  Halfedge_handle halfedge_representing_unbounded_face() const
+  Halfedge_const_handle halfedge_representing_unbounded_face() const
   {
     CGAL_assertion(pm);
     if (pm->unbounded_face()->holes_begin()!=pm->unbounded_face()->holes_end())
     {
       // case PM is not empty
       //return *(pm->unbounded_face()->holes_begin());
-      typename Planar_map::Holes_iterator hot =
+      typename Planar_map::Holes_const_iterator hot =
         pm->unbounded_face()->holes_begin();
       return (*hot);
     }
@@ -314,7 +333,7 @@ private:
   //to workaround internal compiler error in egcs1.1
   //Locate_type convert(const Point& p,const TD::Locate_type& lt,
   // Halfedge_handle& h,bool up=true) const
-  Locate_type convert(const Point & p,const int & lt,Halfedge_handle & h,
+  Locate_type convert(const Point & p,const int & lt,Halfedge_const_handle & h,
                       bool up = true) const
   {
     switch(lt)
