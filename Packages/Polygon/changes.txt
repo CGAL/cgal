@@ -1,3 +1,6 @@
+4.28 (30 September 2003) [af]
+- moved \chapter from polygon.tex to main.tex
+
 4.27 (23 September 2003) [mh]
 - Added one more missing typename
 
