@@ -20,7 +20,7 @@ CXXFLAGS = \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
-	-g 
+	-g -DCGAL_NO_CONCEPT_CHECKING
 
 
 

@@ -94,14 +94,15 @@ public:
   // Insertion, Deletion and Flip
   Vertex_handle push_back(const Weighted_point &p);
   Vertex_handle insert(const Weighted_point &p, 
-		       Face_handle f = Face_handle() );
+		       Face_handle f = Face_handle(NULL) );
   Vertex_handle insert(const Weighted_point &p,
 	 	       Locate_type  lt,
 		       Face_handle loc, int li );
   Vertex_handle insert_in_face(const Weighted_point &p, Face_handle f);
   Vertex_handle insert_in_edge(const Weighted_point &p, Face_handle f, int i);
   void flip(Face_handle f, int i);
-  void remove_degree_3(const Vertex_handle v, Face_handle f = Face_handle());
+  void remove_degree_3(const Vertex_handle v, 
+		       Face_handle f = Face_handle(NULL));
   void remove(Vertex_handle v);
 
 
@@ -592,7 +593,7 @@ void
 Regular_triangulation_2<Gt,Tds>::
 remove_degree_3(const Vertex_handle v, Face_handle f) 
 {
-  if (f == Face_handle())
+  if (f == Face_handle(NULL))
     f=v->face();
   update_hidden_points_3_1(f, f->neighbor( cw(f->index(v))),
 			   f->neighbor(ccw(f->index(v))));
@@ -604,7 +605,7 @@ void
 Regular_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v )
 {
-  CGAL_triangulation_precondition(!v.is_null());
+  CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_precondition(!is_infinite(v));
 
   //if (number_of_vertices() <= 1) Triangulation::remove(v);

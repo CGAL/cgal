@@ -103,8 +103,7 @@ public:
   bool is_valid() const;
 
   // INSERT REMOVE
-  // Vertex_handle insert(const Point &p);
-  Vertex_handle insert(const Point &p, Face_handle start = Face_handle() );
+  Vertex_handle insert(const Point &p, Face_handle start = Face_handle(NULL) );
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
@@ -131,14 +130,11 @@ public:
   locate(const Point& p,
 	 Locate_type& lt,
 	 int& li,
-	 Face_handle start = Face_handle()) const;
+	 Face_handle start = Face_handle(NULL)) const;
 
   Face_handle
   locate(const Point &p,
-	 Face_handle start = Face_handle()) const;
-
-  // Face_handle  locate(const Point& p, Locate_type& lt,int& li) const;
-  // Face_handle  locate(const Point& p) const;
+	 Face_handle start = Face_handle(NULL)) const;
 
 private:
   void  locate_in_all(const Point& p,
@@ -146,33 +142,6 @@ private:
 	    int& li,
 	    Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const;
   int random_level();
-
-
-//  // added to make the test program of usual triangulations work
-//   // undocuumented
-//   // TO BE FIXED
-// public:
-  
-//   Vertex_handle insert(const Point  &p, Face_handle start){
-//     return Tr_Base::insert(p,start);
-//     //return insert(p);
-//   }
-//   Vertex_handle insert(const Point& p,
-// 		       Locate_type lt,
-// 		       Face_handle loc, int li ){
-//     Tr_Base::insert(p);
-//     // TO BE FIXED
-//     //return insert(p);
-//   }
-
-//   Face_handle  locate(const Point& p, 
-// 		      Locate_type& lt,
-// 		      int& li,
-// 		      Face_handle start) const{
-//     return Tr_Base::locate(p, lt, li, start);
-//     //return locate(p,lt,li);
-//   }
-
 };
 
 
@@ -446,8 +415,8 @@ locate_in_all(const Point& p,
     int& li,
     Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const
 {
-  Face_handle position;
-  Vertex_handle nearest;
+  Face_handle position(NULL);
+  Vertex_handle nearest(NULL);
   int level  = Triangulation_hierarchy_2__maxlevel;
   typename Geom_traits::Compare_distance_2 
     closer = geom_traits().compare_distance_2_object();

@@ -80,9 +80,9 @@ _test_cls_triangulation_face( const Face & )
   
   // Test set_vertices()
   f5.set_vertices();
-  assert( f5.vertex(0).is_null() );
-  assert( f5.vertex(1).is_null() );
-  assert( f5.vertex(2).is_null() );
+  assert( f5.vertex(0) == NULL );
+  assert( f5.vertex(1) == NULL );
+  assert( f5.vertex(2) == NULL );
   f5.set_vertices( v1.handle(), v2.handle(), v3.handle() );
   assert( f5.vertex(0) == v1.handle() );
   assert( f5.vertex(1) == v2.handle() );
@@ -114,9 +114,9 @@ _test_cls_triangulation_face( const Face & )
   
   // Test set_neighbors()
   f5.set_neighbors();
-  assert( f5.neighbor(0).is_null() );
-  assert( f5.neighbor(1).is_null() );
-  assert( f5.neighbor(2).is_null() );
+  assert( f5.neighbor(0) == NULL );
+  assert( f5.neighbor(1) == NULL );
+  assert( f5.neighbor(2) == NULL );
   f5.set_neighbors( f1.handle(), f2.handle(), f3.handle() );
   assert( f5.neighbor(0) == f1.handle() );
   assert( f5.neighbor(1) == f2.handle() );

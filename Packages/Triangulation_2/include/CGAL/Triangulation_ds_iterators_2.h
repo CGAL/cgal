@@ -87,7 +87,7 @@ class Triangulation_ds_edge_iterator_2
 public:
   typedef typename Tds::Edge           Edge;
   typedef typename Tds::Iterator_base  Iterator_base;
-  typedef typename Tds::Face_handle    Face_handle();
+  typedef typename Tds::Face_handle    Face_handle;
     
   typedef Edge            value_type;
   typedef Edge*           pointer;

@@ -147,7 +147,7 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T0_0.is_valid() );
 
   Triangul T0_1; 
-  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( !v0_1_0.is_null() );
+  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( v0_1_0 != NULL );
   assert( T0_1.dimension() == 0 );
   assert( T0_1.number_of_vertices() == 1 );
   assert( T0_1.number_of_faces() == 0);
@@ -156,7 +156,7 @@ _test_cls_triangulation_2( const Triangul & )
   // test insert_first()
   Triangul T0_2; 
   Vertex_handle v0_2_0 =   T0_2.insert_first(p0);
-  assert( !v0_2_0.is_null() );
+  assert( v0_2_0 != NULL );
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
   assert( T0_2.number_of_faces() == 0);
@@ -177,9 +177,9 @@ _test_cls_triangulation_2( const Triangul & )
   
   // p1,p3,p2  [endpoints first]
   Triangul T1_3_0;
-  Vertex_handle v1_3_0_1 = T1_3_0.insert(p1); assert( !v1_3_0_1.is_null() );
-  Vertex_handle v1_3_0_3 = T1_3_0.insert(p3); assert( !v1_3_0_3.is_null() );
-  Vertex_handle v1_3_0_2 = T1_3_0.insert(p2); assert( !v1_3_0_2.is_null() );
+  Vertex_handle v1_3_0_1 = T1_3_0.insert(p1); assert( v1_3_0_1 != NULL );
+  Vertex_handle v1_3_0_3 = T1_3_0.insert(p3); assert( v1_3_0_3 != NULL );
+  Vertex_handle v1_3_0_2 = T1_3_0.insert(p2); assert( v1_3_0_2 != NULL );
   assert( T1_3_0.dimension() == 1 );
   assert( T1_3_0.number_of_vertices() == 3 );
   assert( T1_3_0.number_of_faces() == 0 );
@@ -187,9 +187,9 @@ _test_cls_triangulation_2( const Triangul & )
   
   // p1,p2,p3  [middle point first]
   Triangul T1_3_1;
-  Vertex_handle v1_3_1_1 = T1_3_1.insert(p1); assert( !v1_3_1_1.is_null() );
-  Vertex_handle v1_3_1_3 = T1_3_1.insert(p2); assert( !v1_3_1_3.is_null() );
-  Vertex_handle v1_3_1_2 = T1_3_1.insert(p3); assert( !v1_3_1_2.is_null() );
+  Vertex_handle v1_3_1_1 = T1_3_1.insert(p1); assert( v1_3_1_1 != NULL );
+  Vertex_handle v1_3_1_3 = T1_3_1.insert(p2); assert( v1_3_1_3 != NULL );
+  Vertex_handle v1_3_1_2 = T1_3_1.insert(p3); assert( v1_3_1_2 != NULL );
   assert( T1_3_1.dimension() == 1 );
   assert( T1_3_1.number_of_vertices() == 3 );
   assert( T1_3_1.number_of_faces() == 0 );
@@ -208,7 +208,7 @@ _test_cls_triangulation_2( const Triangul & )
 
   // test insert_second()
   Triangul T1_6 = T0_2; 
-  Vertex_handle v1_6_2 = T1_6.insert_second(p3); assert( !v1_6_2.is_null() );
+  Vertex_handle v1_6_2 = T1_6.insert_second(p3); assert( v1_6_2 != NULL );
   assert( T1_6.dimension() == 1 );
   assert( T1_6.number_of_vertices() == 2 );
   assert( T1_6.is_valid() ); 

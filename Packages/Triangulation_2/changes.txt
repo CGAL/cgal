@@ -5,16 +5,20 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 
-Ver 7.43 (14/12/02)
+Ver 7.44 (19/08/02)
+- Replaced CGAL::Pointer by CGAL::Comparable_iterator
+  in the implemantatins of Face_handle and Vertex_handle
+
+Ver 7.43 (14/08/02)
 - introduced explicit instanciation of big classes in testsuite
   so that each (non template) member function be instantiated
 - small doc fixes
 
-Ver 7.42 (13/12/02)
+Ver 7.42 (13/08/02)
 - changed deprecated Construct_direction_of_line_2 to
   Construct_direction_2
 
-Ver 7.41 (13/12/02)
+Ver 7.41 (13/08/02)
 - fixes in doc
 - changes RIGHTTURN to RIGHT_TURN and the like
   done by Susan

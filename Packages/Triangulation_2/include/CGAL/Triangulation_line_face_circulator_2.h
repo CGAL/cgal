@@ -73,7 +73,7 @@ private:
             
 public:
   Triangulation_line_face_circulator_2()
-    : pos(), _tr(NULL), s(undefined), i(-1)
+    : pos(NULL), _tr(NULL), s(undefined), i(-1)
     {}
             
   Triangulation_line_face_circulator_2(Vertex_handle v,

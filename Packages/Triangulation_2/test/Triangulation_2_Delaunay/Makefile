@@ -17,11 +17,10 @@ CXXFLAGS = \
 	-I../Triangulation_2/include \
 	-I./include \
 	-I../../include \
-	-B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
 	$(LONG_NAME_PROBLEM_CXXFLAGS) \
-	-g 
+	-g -DCGAL_NO_CONCEPT_CHECKING
 
 
 #---------------------------------------------------------------------#

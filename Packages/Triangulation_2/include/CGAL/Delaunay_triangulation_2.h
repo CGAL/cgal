@@ -74,13 +74,13 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
 
   Vertex_handle
-  nearest_vertex(const Point& p, Face_handle f= Face_handle()) const;
+  nearest_vertex(const Point& p, Face_handle f= Face_handle(NULL)) const;
   
   bool does_conflict(const Point  &p, Face_handle fh) const;// deprecated
   bool test_conflict(const Point  &p, Face_handle fh) const;
   bool find_conflicts(const Point  &p,                //deprecated
 		      std::list<Face_handle>& conflicts,
-		      Face_handle start= Face_handle() ) const;
+		      Face_handle start= Face_handle(NULL) ) const;
   //  //template member functions, declared and defined at the end 
   // template <class Out_it1, class Out_it2> 
   //   bool get_conflicts_and_boundary(const Point  &p, 
@@ -104,7 +104,7 @@ public:
   Object dual(const Finite_edges_iterator& ei) const;
   
   //INSERTION-REMOVAL
-  Vertex_handle insert(const Point  &p, Face_handle start = Face_handle() );
+  Vertex_handle insert(const Point  &p, Face_handle start = Face_handle(NULL) );
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
@@ -160,7 +160,7 @@ public:
   get_conflicts_and_boundary (const Point  &p, 
 			      Out_it1 fit, 
 			      Out_it2 eit,
-			      Face_handle start = Face_handle()) const
+			      Face_handle start = Face_handle(NULL)) const
     {
       CGAL_triangulation_precondition( dimension() == 2);
       int li;
@@ -187,7 +187,7 @@ public:
   bool 
   get_conflicts (const Point  &p, 
 		  Out_it1 fit, 
-		  Face_handle start= Face_handle()) const
+		  Face_handle start= Face_handle(NULL)) const
     {
       return get_conflicts_and_boundary(p, fit, Emptyset_iterator(), start);
     }
@@ -196,7 +196,7 @@ public:
   bool 
   get_boundary_of_conflicts(const Point  &p, 
 			    Out_it2 eit, 
-			    Face_handle start= Face_handle()) const
+			    Face_handle start= Face_handle(NULL)) const
     {
       return get_conflicts_and_boundary(p, Emptyset_iterator(), eit, start);
     }
@@ -296,7 +296,7 @@ Delaunay_triangulation_2<Gt,Tds>::
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
   CGAL_triangulation_precondition(dimension() == 2);
-  if (f== Face_handle()) f = locate(p);
+  if (f == Face_handle(NULL)) f = locate(p);
   else
     CGAL_triangulation_precondition(oriented_side(f,p)!=ON_NEGATIVE_SIDE);
 
@@ -485,7 +485,7 @@ void
 Delaunay_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v )
 {
-  CGAL_triangulation_precondition( v != Vertex_handle());
+  CGAL_triangulation_precondition( v != NULL);
   CGAL_triangulation_precondition( !is_infinite(v));
         
   if ( dimension() <= 1) Triangulation::remove(v);

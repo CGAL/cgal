@@ -160,7 +160,8 @@ public:
     bool is_removable(Face_handle fh)
       {
 	return ( (*fh).vertex(1) == (*fh).vertex(2) &&
-		 !(*fh).neighbor(1).is_null() && !(*fh).neighbor(2).is_null());
+		 (*fh).neighbor(1) != NULL && 
+		 (*fh).neighbor(2) != NULL );
       }
 
     void remove_flat(Face_handle fh) 
@@ -168,9 +169,9 @@ public:
 	CGAL_triangulation_precondition((*fh).vertex(1) == (*fh).vertex(2));
 	Face_handle f2= (*fh).neighbor(2);
 	Face_handle f1= (*fh).neighbor(1);
-	if ( !f2.is_null()) { (*f2).set_neighbor( (*f2).index(fh), f1);}
-	if ( !f1.is_null()) { (*f1).set_neighbor( (*f1).index(fh), f2);}
-	( (*fh). vertex(0))->set_face( !f2.is_null() ? f2 : f1 );
+	if ( f2 != NULL ) { (*f2).set_neighbor( (*f2).index(fh), f1);}
+	if ( f1 != NULL ) { (*f1).set_neighbor( (*f1).index(fh), f2);}
+	( (*fh). vertex(0))->set_face( f2!= NULL ? f2 : f1 );
 	_tr->delete_face(fh);
 	return;
       }
@@ -425,7 +426,7 @@ treat_in_edges(const Event_queue_iterator & event,
   if (loc == status.end()) { pch = &upper_chain;}
   else { pch = (Chain*)((*loc).second);}
   Vertex_handle w = pch->right_most();
-  if (w.is_null()) { // first event is treated
+  if (w == NULL ) { // first event is treated
     pch->set_right_most(v);
     return v;
   }
@@ -459,7 +460,7 @@ treat_in_edges(const Event_queue_iterator & event,
 
   //delete flat newf if possible
   // i. e. if at least one of its neighbor is not NULL
-  if ( !newf->neighbor(2).is_null() || !newf->neighbor(1).is_null()) {
+  if ( newf->neighbor(2) != NULL  || newf->neighbor(1)!= NULL ) {
     if (first == newf ) { // means newf->neighbor(1) == NULL
        first  = newf->neighbor(2);}
     if (last == newf) { // means newf->neighbor(2) == NULL
@@ -572,7 +573,7 @@ set_infinite_faces()
   Vertex_handle infinite= _tr->infinite_vertex();
 
   // Triangulation may be empty;
-  if (upper_chain.right_most().is_null()) {return;}
+  if (upper_chain.right_most() == NULL ) {return;}
 
   Neighbor_list* upper_list= upper_chain.up_list();
   Neighbor_list* lower_list= upper_chain.down_list();
@@ -609,7 +610,7 @@ set_infinite_faces()
       //turn the vertex [vww] into [wvNULL]
       fn->set_vertex(1, fn->vertex(0));
       fn->set_vertex(0, fn->vertex(2));
-      fn->set_vertex(2, Vertex_handle());
+      fn->set_vertex(2, Vertex_handle(NULL));
       fn->vertex(0)->set_face(fn);
       fn->set_neighbor(1,last);
       last->set_neighbor(0,fn);

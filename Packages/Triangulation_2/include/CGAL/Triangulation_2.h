@@ -211,7 +211,7 @@ public:
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
   Vertex_handle insert_outside_convex_hull(const Point& p, Face_handle f);
   Vertex_handle insert_outside_affine_hull(const Point& p);
-  Vertex_handle insert(const Point &p, Face_handle start = Face_handle() );
+  Vertex_handle insert(const Point &p, Face_handle start = Face_handle(NULL) );
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
@@ -219,7 +219,7 @@ public:
 //   int insert(InputIterator first, InputIterator last);
   Vertex_handle push_back(const Point& a);
  
-  void remove_degree_3(Vertex_handle  v, Face_handle f = Face_handle());
+  void remove_degree_3(Vertex_handle  v, Face_handle f = Face_handle(NULL));
   void remove_first(Vertex_handle  v);
   void remove_second(Vertex_handle v);
   void remove(Vertex_handle  v);
@@ -236,11 +236,11 @@ public:
   locate(const Point& p,
 	 Locate_type& lt,
 	 int& li,
-	 Face_handle start = Face_handle()) const;
+	 Face_handle start = Face_handle(NULL)) const;
 
   Face_handle
   locate(const Point &p,
-	 Face_handle start = Face_handle()) const;
+	 Face_handle start = Face_handle(NULL)) const;
     
 
   
@@ -270,15 +270,15 @@ public:
   Vertex_iterator vertices_end() const {return finite_vertices_end();}
 
   Face_circulator incident_faces( Vertex_handle v, 
-				  Face_handle f = Face_handle()) const;
+				  Face_handle f = Face_handle(NULL)) const;
   Vertex_circulator incident_vertices(Vertex_handle v,
-				      Face_handle f = Face_handle()) const;
+				      Face_handle f = Face_handle(NULL)) const;
   Edge_circulator incident_edges(Vertex_handle v,
-				 Face_handle f = Face_handle()) const;
+				 Face_handle f = Face_handle(NULL)) const;
  
   Line_face_circulator    line_walk(const Point& p,
 				    const Point& q,
-				    Face_handle f = Face_handle()) const;
+				    Face_handle f = Face_handle(NULL)) const;
 
  // TO DEBUG
  void show_all();
@@ -811,7 +811,7 @@ void
 Triangulation_2<Gt, Tds>::
 flip(Face_handle f, int i)
 {
-  CGAL_triangulation_precondition ( ! f.is_null() );
+  CGAL_triangulation_precondition ( f != NULL );
   CGAL_triangulation_precondition (i == 0 || i == 1 || i == 2);
   CGAL_triangulation_precondition( dimension()==2); 
     
@@ -1035,7 +1035,7 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int li)
     return loc->vertex(li);
   }
   CGAL_triangulation_assertion(false);  // locate step failed
-  return Vertex_handle();
+  return Vertex_handle(NULL);
 }
 
 
@@ -1053,7 +1053,7 @@ inline void
 Triangulation_2<Gt,Tds>::
 remove_degree_3(Vertex_handle  v, Face_handle f)
 {
-  if (f == Face_handle()) f=v->face();
+  if (f == Face_handle(NULL)) f=v->face();
   _tds.remove_degree_3(v, f);
   return;
 }
@@ -1081,7 +1081,7 @@ void
 Triangulation_2<Gt,Tds>::      
 remove(Vertex_handle  v)
 {
-  CGAL_triangulation_precondition( ! v.is_null() );
+  CGAL_triangulation_precondition( v != NULL);
   CGAL_triangulation_precondition( !is_infinite(v));
     
   if  (number_of_vertices() == 1)     remove_first(v);
@@ -1551,7 +1551,7 @@ march_locate_1D(const Point& t,
   if(pqt == RIGHT_TURN || pqt == LEFT_TURN) {
     lt = OUTSIDE_AFFINE_HULL;
     li = 4 ;// should not be used
-    return Face_handle();
+    return Face_handle(NULL);
   }
 
   int i= f->index(ff);
@@ -1599,7 +1599,7 @@ march_locate_1D(const Point& t,
     }
   }
   CGAL_triangulation_assertion(false);
-  return Face_handle();
+  return Face_handle(NULL);
 }
 
 template <class Gt, class Tds >    
@@ -1694,7 +1694,7 @@ locate(const Point& p,
     return march_locate_1D(p, lt, li);
   }
     
-  if(start.is_null()){
+  if(start == NULL){
     start = infinite_face()->
       neighbor(infinite_face()->index(infinite_vertex()));
   }else if(is_infinite(start)){
@@ -1874,7 +1874,7 @@ line_walk(const Point& p, const Point& q,  Face_handle f) const
 {
   CGAL_triangulation_precondition( (dimension() == 2) && 
 				! xy_equal(p,q));
-  Line_face_circulator lfc = (f.is_null())
+  Line_face_circulator lfc = (f == NULL)
     ? Line_face_circulator(p, q, this)
     : Line_face_circulator(p, q, f, this);
     

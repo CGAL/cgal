@@ -30,7 +30,7 @@ _test_fct_is_infinite( const Triangulation &T )
                                   All_edges_iterator;
 
   // test infinite_face() and is_infinite(Face_handle)
-  if ( !T.infinite_face().is_null() )
+  if ( T.infinite_face() != NULL )
     assert( T.is_infinite(T.infinite_face()) );
 
   // test infinite_vertex() and is_infinite(Vertex_handle)
@@ -44,7 +44,7 @@ _test_fct_is_infinite( const Triangulation &T )
 
   // test is_infinite(Edge)
   // an infinite face always has two infinite edges
-  if ( !T.infinite_face().is_null() )
+  if ( T.infinite_face() != NULL )
     { 
       int index = T.infinite_face()->index(T.infinite_vertex());
       assert( T.is_infinite( Edge(T.infinite_face(),(index+1)%3)) );

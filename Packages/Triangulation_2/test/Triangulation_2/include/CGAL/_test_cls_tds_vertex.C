@@ -95,6 +95,7 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
   // v1 is chosen because its face() is NULL, 
   // the constructors calls function that crashes with those
   // incomplete data
+     assert( v1.face() == NULL);
      Face_circulator   fc = v1.incident_faces(); 
      if (fc != 0) fc++;
      Edge_circulator   ec = v1.incident_edges(); 
@@ -102,7 +103,8 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
      Vertex_circulator vc = v1.incident_vertices(); 
      if (vc != 0) vc++;
   // Test degree()
-  assert( v1.degree() == 0 );
+     assert (v1.face() == NULL);
+     assert( v1.degree() == 0 );
 }
 
 CGAL_END_NAMESPACE

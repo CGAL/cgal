@@ -108,7 +108,7 @@ public:
   bool test_conflict(Face_handle fh, const Point& p) const; //deprecated
   bool test_conflict(const Point& p, Face_handle fh) const;
   void find_conflicts(const Point& p, std::list<Edge>& le,  //deprecated
-		      Face_handle hint= Face_handle()) const;
+		      Face_handle hint= Face_handle(NULL)) const;
   //  //template member functions, declared and defined at the end 
   // template <class Out_it1, class Out_it2> 
   //   bool get_conflicts_and_boundary(const Point  &p, 
@@ -126,7 +126,7 @@ public:
    
 
   // INSERTION-REMOVAL
-  Vertex_handle insert(const Point & a, Face_handle start = Face_handle());
+  Vertex_handle insert(const Point & a, Face_handle start = Face_handle(NULL));
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
@@ -147,7 +147,7 @@ public:
  
 protected:
   virtual Vertex_handle virtual_insert(const Point & a, 
-				       Face_handle start = Face_handle());
+				       Face_handle start = Face_handle(NULL));
   virtual Vertex_handle virtual_insert(const Point& a,
 				       Locate_type lt,
 				       Face_handle loc, 
@@ -184,7 +184,7 @@ public:
   get_conflicts_and_boundary(const Point  &p, 
 			     Out_it1 fit, 
 			     Out_it2 eit,
-			     Face_handle start = Face_handle()) const
+			     Face_handle start = Face_handle(NULL)) const
     {
       CGAL_triangulation_precondition( dimension() == 2);
       int li;
@@ -211,7 +211,7 @@ public:
   bool 
   get_conflicts(const Point  &p, 
 		Out_it1 fit, 
-		Face_handle start= Face_handle()) const
+		Face_handle start= Face_handle(NULL)) const
     {
       return get_conflicts_and_boundary(p, fit, Emptyset_iterator(), start);
     }
@@ -220,7 +220,7 @@ public:
   inline bool 
   get_boundary_of_conflicts(const Point  &p, 
 			    Out_it2 eit, 
-			    Face_handle start= Face_handle()) const
+			    Face_handle start= Face_handle(NULL)) const
     {
       return get_conflicts_and_boundary(p, Emptyset_iterator(), eit, start);
     }
@@ -540,7 +540,7 @@ remove(Vertex_handle v)
   // remove a vertex and updates the constrained edges of the new faces
   // precondition : there is no incident constraints
 {
-  CGAL_triangulation_precondition( ! v.is_null() );
+  CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_precondition( ! is_infinite(v));
   CGAL_triangulation_precondition( ! are_there_incident_constraints(v));
   if  (dimension() <= 1)    Ctr::remove(v);

@@ -162,7 +162,7 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   assert( T0_0.is_valid() );
 
   Cls T0_1; 
-  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( !v0_1_0.is_null() );
+  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( v0_1_0 != NULL );
   assert( T0_1.dimension() == 0 );
   assert( T0_1.number_of_vertices() == 1 );
   assert( T0_1.is_valid() );

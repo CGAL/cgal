@@ -140,7 +140,7 @@ _test_cls_triangulation_short_2( const Triangul &)
   assert( T0_0.is_valid() );
 
   Triangul T0_1; 
-  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( !v0_1_0.is_null() );
+  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( v0_1_0 != NULL );
   assert( T0_1.dimension() == 0 );
   assert( T0_1.number_of_vertices() == 1 );
   assert( T0_1.is_valid() );
@@ -148,7 +148,7 @@ _test_cls_triangulation_short_2( const Triangul &)
   // test insert_first()
   Triangul T0_2; 
   Vertex_handle v0_2_0 =   T0_2.insert_first(p0);
-  assert( !v0_2_0.is_null() );
+  assert( v0_2_0 != NULL );
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
   assert( T0_2.is_valid() );
