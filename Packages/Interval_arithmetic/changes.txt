@@ -1,6 +1,6 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.85 on ?? April 2001
+Version 4.85 on 18 April 2001
 - Add new predicate/constructions to Filtered_kernel :
   Construct_center_2, Construct_center_3, Coplanar_side_of_oriented_circle_3
 - Make some operator() non-inline in Filter_predicate.
