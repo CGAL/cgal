@@ -1811,8 +1811,8 @@ copy(Segment_Voronoi_diagram_2& other)
     Storage_site_2 new_ss_this = copy_storage_site(ss_other, hm, itag);
     vit_this->set_site( new_ss_this );
   }
-
 }
+
 
 CGAL_END_NAMESPACE
 

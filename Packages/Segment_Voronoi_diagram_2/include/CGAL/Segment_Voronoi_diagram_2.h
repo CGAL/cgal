@@ -23,6 +23,8 @@
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_2_H
 
 #include <vector>
+#include <list>
+#include <set>
 #include <map>
 #include <algorithm>
 #include <boost/tuple/tuple.hpp>
@@ -58,8 +60,6 @@
      points and segments; points start by a 'p' and segments by an 's'.
 */
 
-//#define STORE_INPUT_SITES 1
-#define STORE_INPUT_SITES 0
 
 CGAL_BEGIN_NAMESPACE
 
@@ -108,12 +108,46 @@ namespace CGALi {
     Site& operator()(const Node& x) const {
       static Site s;
       if ( x.third ) { // it is a point
-	s = Site::construct_site_2(x.first);
+	s = Site::construct_site_2(*x.first);
       } else {
-	s = Site::construct_site_2(x.first, x.second);
+	s = Site::construct_site_2(*x.first, *x.second);
       }
       return s;
     }
+  };
+
+  template < class Gt >
+  class Svd_point_2_less_than
+  {
+  public:
+    typedef Gt                                 Geom_traits;
+    typedef typename Geom_traits::Point_2      Point_2;
+    typedef typename Geom_traits::Site_2       Site_2;
+
+  private:
+    typedef typename Geom_traits::Compare_x_2  Compare_x_2;
+    typedef typename Geom_traits::Compare_y_2  Compare_y_2;
+
+  public:
+    Svd_point_2_less_than(const Geom_traits& gt = Geom_traits())
+      : gt(gt) {}
+
+    bool operator()(const Point_2& p, const Point_2& q) const {
+      Compare_x_2 comp_x = gt.compare_x_2_object();
+      // this should be optimized and not use the site constructors...
+      Comparison_result crx = comp_x( Site_2::construct_site_2(p),
+				      Site_2::construct_site_2(q) );
+      if ( crx == SMALLER ) { return true; }
+      if ( crx == LARGER ) { return false; }
+
+      Compare_y_2 comp_y = gt.compare_y_2_object();
+      Comparison_result cry = comp_y( Site_2::construct_site_2(p),
+				      Site_2::construct_site_2(q) );
+      return cry == SMALLER;
+    }
+
+  private:
+    Geom_traits gt;
   };
 
 } // namespace CGALi
@@ -177,23 +211,35 @@ protected:
   typedef typename Geom_traits::Arrangement_type_2  AT2;
   typedef typename AT2::Arrangement_type            Arrangement_type;
 
-  typedef std::list<Point_2>                     PC;
+  typedef CGALi::Svd_point_2_less_than<Modified_traits> Point_2_less_than;
 
-#if STORE_INPUT_SITES
-  typedef std::vector<Site_2>        Input_sites_container;
-  typedef typename Input_sites_container::const_iterator
-  All_inputs_iterator;
-#else
+  typedef std::set<Point_2,Point_2_less_than>    PC;
+  //  typedef std::list<Point_2>                     PC;
+  typedef typename PC::iterator                  PH;
+
+
   // these containers should have point handles and should replace the
   // point container...
-  typedef Triple<Point_2,Point_2,bool>   Site_rep_2;
-  typedef std::list<Site_rep_2>          Input_sites_container;
+  typedef Triple<PH,PH,bool>                     Site_rep_2;
+
+  struct Site_rep_less_than {
+    // less than for site representations
+    bool operator()(const Site_rep_2& s1, const Site_rep_2& s2) const
+    {
+      if ( &(*s1.first) == &(*s2.first) ) {
+	return &(*s1.second) < &(*s2.second);
+      } else {
+	return &(*s1.first) < &(*s2.first);
+      }
+    }
+  };
+
+  typedef std::set<Site_rep_2,Site_rep_less_than>   Input_sites_container;
   typedef typename Input_sites_container::const_iterator
   All_inputs_iterator;
 
   typedef CGALi::Svd_project_input_to_site_2<Site_rep_2, Site_2>
   Proj_input_to_site;
-#endif
 
 public:
   typedef Simple_container_wrapper<PC>           Point_container;
@@ -218,12 +264,8 @@ protected:
   Handle_map;
 
 public:
-#if STORE_INPUT_SITES
-  typedef All_inputs_iterator Input_sites_iterator;
-#else
   typedef Iterator_project<All_inputs_iterator, Proj_input_to_site>
   Input_sites_iterator;
-#endif
 
   typedef Iterator_project<Finite_vertices_iterator, 
                            Proj_site>            Output_sites_iterator;
@@ -367,19 +409,11 @@ public:
   }
 
   inline Input_sites_iterator input_sites_begin() const {
-#if STORE_INPUT_SITES
-    return isc_.begin();
-#else
     return Input_sites_iterator(isc_.begin());
-#endif
   }
 
   inline Input_sites_iterator input_sites_end() const {
-#if STORE_INPUT_SITES
-    return isc_.end();
-#else
     return Input_sites_iterator(isc_.end());
-#endif
   }
 
   inline Output_sites_iterator output_sites_begin() const {
@@ -514,11 +548,13 @@ public:
     CGAL_precondition( t.is_input() );
 
     // update input site container
-    register_input_site(t);
 
     if ( t.is_segment() ) {
+      register_input_site( t.source_of_supporting_site(),
+			   t.target_of_supporting_site() );
       return insert_segment(t, vnear);
     } else if ( t.is_point() ) {
+      register_input_site( t.point() );
       return insert_point(t.point(), vnear);
     } else {
       CGAL_precondition ( t.is_defined() );
@@ -530,31 +566,15 @@ public:
 protected:
   inline void register_input_site(const Point_2& p)
   {
-#if STORE_INPUT_SITES
-    isc_.push_back(Site_2(p));
-#else
-    isc_.push_back(Site_rep_2(p, p, true));
-#endif
+    std::pair<PH,bool> it = pc_.insert(p);
+    isc_.insert( Site_rep_2(it.first, it.first, true) );
   }
 
   inline void register_input_site(const Point_2& p0, const Point_2& p1)
   {
-#if STORE_INPUT_SITES
-    isc_.push_back(Site_2(p0, p1));
-#else
-    isc_.push_back(Site_rep_2(p0, p1, false));
-#endif
-  }
-
-  inline void register_input_site(const Site_2& t)
-  {
-    CGAL_precondition( t.is_input() );
-    if ( t.is_point() ) {
-      register_input_site( t.point() );
-    } else {
-      register_input_site( t.source_of_supporting_site(),
-			   t.target_of_supporting_site() );
-    }
+    std::pair<PH,bool> it1 = pc_.insert(p0);
+    std::pair<PH,bool> it2 = pc_.insert(p1);
+    isc_.insert( Site_rep_2(it1.first, it2.first, false) );
   }
 
   Vertex_handle  insert_first(const Point_2& p);
@@ -796,7 +816,7 @@ protected:
   // HELPER METHODS FOR CREATING STORAGE SITES
   //------------------------------------------
   inline Storage_site_2 create_storage_site(const Point_2& p) {
-    Point_handle ph = pc_.insert(p);
+    Point_handle ph = pc_.insert(p).first;
     return Storage_site_2::construct_storage_site_2(ph);
   }
 
@@ -1085,6 +1105,192 @@ protected:
 protected:
   // WRAPPERS FOR GEOMETRIC PREDICATES
   //----------------------------------
+  inline
+  bool same_points(const Storage_site_2& p, const Storage_site_2& q) const {
+    return geom_traits().equal_2_object()(p.site(), q.site());
+  }
+
+  inline
+  bool same_segments(const Storage_site_2& t, Vertex_handle v) const {
+    if ( is_infinite(v) ) { return false; }
+    if ( t.is_point() || v->storage_site().is_point() ) { return false; }
+    return same_segments(t.site(), v->site());
+  }
+
+  inline
+  bool is_endpoint_of_segment(const Storage_site_2& p,
+			      const Storage_site_2& s) const
+  {
+    CGAL_precondition( p.is_point() && s.is_segment() );
+    return ( same_points(p, s.source_site()) ||
+	     same_points(p, s.target_site()) );
+  }
+
+  inline
+  bool is_degenerate_segment(const Storage_site_2& s) const {
+    CGAL_precondition( s.is_segment() );
+    return same_points(s.source_site(), s.target_site());
+  }
+
+  // returns:
+  //   ON_POSITIVE_SIDE if q is closer to t1
+  //   ON_NEGATIVE_SIDE if q is closer to t2
+  //   ON_ORIENTED_BOUNDARY if q is on the bisector of t1 and t2
+  inline
+  Oriented_side side_of_bisector(const Storage_site_2 &t1,
+				 const Storage_site_2 &t2,
+				 const Storage_site_2 &q) const {
+    return
+      geom_traits().oriented_side_of_bisector_2_object()(t1.site(),
+							 t2.site(),
+							 q.site());
+  }
+
+  inline
+  Sign incircle(const Storage_site_2 &t1, const Storage_site_2 &t2,
+		const Storage_site_2 &t3, const Storage_site_2 &q) const {
+    return geom_traits().vertex_conflict_2_object()(t1.site(),
+						    t2.site(),
+						    t3.site(),
+						    q.site());
+  }
+
+  inline
+  Sign incircle(const Storage_site_2 &t1, const Storage_site_2 &t2,
+		const Storage_site_2 &q) const {
+    return geom_traits().vertex_conflict_2_object()(t1.site(),
+						    t2.site(),
+						    q.site());
+  }
+
+  inline
+  Sign incircle(const Face_handle& f, const Storage_site_2& q) const {
+    return incircle(f, q.site());
+  }
+
+  inline
+  bool finite_edge_interior(const Storage_site_2& t1,
+			    const Storage_site_2& t2,
+			    const Storage_site_2& t3,
+			    const Storage_site_2& t4,
+			    const Storage_site_2& q, Sign sgn) const {
+    return
+      geom_traits().finite_edge_interior_conflict_2_object()
+      (t1.site(), t2.site(), t3.site(), t4.site(), q.site(), sgn);
+  }
+
+  inline
+  bool finite_edge_interior(const Face_handle& f, int i,
+			    const Storage_site_2& q, Sign sgn) const {
+    CGAL_precondition( !is_infinite(f) &&
+		       !is_infinite(f->neighbor(i)) );
+    return finite_edge_interior( f->vertex( ccw(i) )->site(),
+				 f->vertex(  cw(i) )->site(),
+				 f->vertex(     i  )->site(),
+				 f->mirror_vertex(i)->site(),
+				 q.site(), sgn);
+  }
+
+  inline
+  bool finite_edge_interior(const Storage_site_2& t1,
+			    const Storage_site_2& t2,
+			    const Storage_site_2& t3,
+			    const Storage_site_2& q,
+			    Sign sgn) const {
+    return geom_traits().finite_edge_interior_conflict_2_object()(t1.site(),
+								  t2.site(),
+								  t3.site(),
+								  q.site(),
+								  sgn);
+  }
+
+  inline
+  bool finite_edge_interior(const Storage_site_2& t1,
+			    const Storage_site_2& t2,
+			    const Storage_site_2& q,
+			    Sign sgn) const {
+    return
+      geom_traits().finite_edge_interior_conflict_2_object()(t1.site(),
+							     t2.site(),
+							     q.site(),
+							     sgn);
+  }
+
+  bool finite_edge_interior(const Face_handle& f, int i,
+			    const Storage_site_2& p, Sign sgn,
+			    int j) const {
+    return finite_edge_interior(f, i, p.site(), sgn, j);
+  }
+
+  inline
+  bool infinite_edge_interior(const Storage_site_2& t2,
+			      const Storage_site_2& t3,
+			      const Storage_site_2& t4,
+			      const Storage_site_2& q, Sign sgn) const {
+    return
+      geom_traits().infinite_edge_interior_conflict_2_object()
+      (t2.site(), t3.site(), t4.site(), q.site(), sgn);
+  }
+
+  inline
+  bool infinite_edge_interior(const Face_handle& f, int i,
+			      const Storage_site_2& q, Sign sgn) const
+  {
+    return infinite_edge_interior(f, i, q, sgn);
+  }
+
+  inline
+  bool edge_interior(const Face_handle& f, int i,
+		     const Storage_site_2& t, Sign sgn) const {
+    return edge_interior(f, i, t.site(), sgn);
+  }
+
+  inline
+  bool edge_interior(const Edge& e,
+		     const Storage_site_2& t, Sign sgn) const {
+    return edge_interior(e.first, e.second, t, sgn);
+  }
+
+  inline Arrangement_type
+  arrangement_type(const Storage_site_2& t, const Vertex_handle& v) const {
+    if ( is_infinite(v) ) { return AT2::DISJOINT; }
+    return arrangement_type(t, v->storage_site());
+  }
+
+  inline
+  Arrangement_type arrangement_type(const Storage_site_2& p,
+				    const Storage_site_2& q) const {
+    return arrangement_type(p.site(), q.site());
+  }
+
+  inline
+  bool are_parallel(const Storage_site_2& p, const Storage_site_2& q) const {
+    return geom_traits().are_parallel_2_object()(p.site(), q.site());
+  }
+
+  inline Oriented_side
+  oriented_side(const Storage_site_2& q, const Storage_site_2& supp,
+		const Storage_site_2& p) const
+  {
+    CGAL_precondition( q.is_point() && supp.is_segment() && p.is_point() );
+    return
+      geom_traits().oriented_side_2_object()(q.site(), supp.site(), p.site());
+  }
+
+  inline Oriented_side
+  oriented_side(const Storage_site_2& s1, const Storage_site_2& s2,
+		const Storage_site_2& s3, const Storage_site_2& supp,
+		const Storage_site_2& p) const {
+    CGAL_precondition( supp.is_segment() && p.is_point() );
+    return geom_traits().oriented_side_2_object()(s1.site(),
+						  s2.site(),
+						  s3.site(),
+						  supp.site(), p.site());
+  }
+
+
+  //-------
+
   inline
   bool same_points(const Site_2& p, const Site_2& q) const {
     return geom_traits().equal_2_object()(p, q);

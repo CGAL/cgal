@@ -47,10 +47,16 @@ public:
   iterator begin() { return c.begin(); }
   iterator end()   { return c.end(); }
 
-  iterator insert(const value_type& t)
+  std::pair<iterator,bool> insert(const value_type& t)
   {
+    //    std::pair<iterator,bool> it_b = c.insert(t);
+    //    return it_b.first;
+#if 1
+    return c.insert(t);
+#else
     c.push_back(t);
-    return --c.end();
+    return std::pair<iterator,bool>(--c.end(), true);
+#endif
   }
 
   void remove(iterator it)

@@ -95,7 +95,7 @@ public:
   typedef typename Base::Output_sites_iterator     Output_sites_iterator;
 
 protected:
-  typedef std::list<Point_2>                       PC;
+  typedef typename Base::PC                        PC;
 
 public:
   typedef typename Base::Point_container           Point_container;
@@ -213,11 +213,11 @@ public:
     // thus the site must be an exact one; 
     CGAL_precondition( t.is_input() );
 
-    this->register_input_site(t);
-
     if ( t.is_segment() ) {
+      this->register_input_site(t.source(), t.target());
       return insert_segment(t.source(), t.target(), UNDEFINED_LEVEL);
     } else if ( t.is_point() ) {
+      this->register_input_site( t.point() );
       return insert_point(t.point(), UNDEFINED_LEVEL);
     } else {
       CGAL_precondition ( t.is_defined() );

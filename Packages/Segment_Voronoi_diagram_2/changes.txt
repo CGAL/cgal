@@ -1,3 +1,13 @@
+18 August 2004: Menelaos Karavelas
+- updated TODO list
+- the input site container now contains handles instead of points: this
+  reduces memory usage
+- the input site container and point container are now sets instead of lists.
+  I may have to change this and use lists again. The reason for this change
+  is that sets automatically check whether the inserted item has already been
+  inserted; with lists one has to do that explicitly and it is very
+  inefficient.
+
 17 august 2004:  Menelaos Karavelas
 - changed the API for the storage site classes; changed the classes that
   were using them accordingly

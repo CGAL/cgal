@@ -48,7 +48,7 @@ bool test_svd(InputStream& is, const SVD&)
   typedef typename SVD2::Output_sites_iterator     Output_sites_iterator;
   end_testing("type definitions");
 
-  Point_2 p1(0,0), p2(0,1), p3(1,0), p4(1,1);
+  Point_2 p1(0,0), p2(0,1), p3(1,0), p4(1,1), p5(10,1);
   Site_2 t1 = Site_2::construct_site_2(p1);
   Site_2 t2 = Site_2::construct_site_2(p2);
   Site_2 t3 = Site_2::construct_site_2(p3);
@@ -57,6 +57,8 @@ bool test_svd(InputStream& is, const SVD&)
   Site_2 s2 = Site_2::construct_site_2(p2,p3);
   Site_2 s3 = Site_2::construct_site_2(p3,p4);
   Site_2 s4 = Site_2::construct_site_2(p4,p1);
+
+  Site_2 t5 = Site_2::construct_site_2(p5);
 
   std::vector<Site_2> site_list;
   {
@@ -213,16 +215,23 @@ bool test_svd(InputStream& is, const SVD&)
     }
     
   }
+  //  svd.insert(t5);
+  //  svd2.clear();
+  //  std::cout << std::endl;
   {
     Input_sites_iterator isi = svd.input_sites_begin();
     for (; isi != svd.input_sites_end(); ++isi) {
       null_os << *isi;
+      //      std::cout << *isi << std::endl;
     }
+    //    std::cout << std::endl;
 
     Output_sites_iterator osi = svd.output_sites_begin();
     for (; osi != svd.output_sites_end(); ++osi) {
       null_os << *osi;
+      //      std::cout << *osi << std::endl;
     }
+    //    std::cout << std::endl;
   }
   end_testing("iterators and circulators");
 
