@@ -36,7 +36,7 @@ struct Container {
 };
 
 template < template < class T> class T_HDS >
-void Container<T_HDS>::foo( Handle e) {}
+void Container<T_HDS>::foo( Handle ) {}
 
 template <class T>
 struct A {

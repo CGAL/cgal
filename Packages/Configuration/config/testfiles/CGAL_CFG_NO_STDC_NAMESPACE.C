@@ -348,7 +348,7 @@ using std::size_t;
 
 int main()
 {
-  std::strlen("a");
+  (void) std::strlen("a");
   return 0;
 }
 

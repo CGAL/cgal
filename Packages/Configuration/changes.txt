@@ -1,3 +1,8 @@
+2.35
+- Fix some warnings.
+- Add CGAL_CFG_NO_LONG_LONG.C to test if the compiler knows about
+  (non C++ standard, but C standard) long long.
+
 2.34
 - I was wrong about basic.h, I have added the definition in
   $CGALROOT/include/CGAL/config.h

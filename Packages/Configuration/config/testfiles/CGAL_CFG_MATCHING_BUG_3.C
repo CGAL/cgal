@@ -38,7 +38,7 @@ template < class T > struct A<T*> { typedef typename T::CCC CCC; };
 
 template < class T >
 typename A< T >::CCC
-foo(T t)
+foo(T)
 {
   typedef typename A< T >::CCC C;
   return C();
