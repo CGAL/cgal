@@ -1227,7 +1227,7 @@ flip_really( Cell_handle c, int i, Cell_handle n, int in )
   set_adjacency(cnew, 3, c, i2);
   set_adjacency(c, i1, n, in3);
 
-  if (i&1 != 0)
+  if ((i&1) != 0)
       change_orientation(cnew);
 
   c->vertex(i1)->set_cell(cnew);
