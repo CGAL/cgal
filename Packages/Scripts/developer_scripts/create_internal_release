@@ -18,7 +18,7 @@ Exactly one of the options -h or -r must be present.
     -h show this message and quit
     -r release version to be created
 
-    -n version number
+    -n version number (CGAL_VERSION_NR)
     -d releasedir, default releasedir is the current dir
     -a allpackagesdir, default is releasedir/All
     -s scriptsdir, default is releasedir
@@ -43,9 +43,9 @@ Exactly one of the options -h or -r must be present.
 
 Example of how to use the script:
 >cvs -q co -P -r current_submission All
->./create_internal_release -r CGAL-I-1
+>./create_internal_release -r CGAL-3.3-I-1
 or
->./create_internal_release -r CGAL-I-7 -d \$HOME -a \$HOME/CGALCVS/All -s \$HOME/scripts -l release_creation.lock -p include_in_release
+>./create_internal_release -r CGAL-3.3-I-7 -d \$HOME -a \$HOME/CGALCVS/All -s \$HOME/scripts -l release_creation.lock -p include_in_release
 
 
 EOF
