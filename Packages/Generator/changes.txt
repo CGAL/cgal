@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.40 (25 July 2001)
+   - fixed section reference in doc.
+
 2.39 (19 July 2001)
    - fixed? a number type problem in random polygon example and added more
      output statements
