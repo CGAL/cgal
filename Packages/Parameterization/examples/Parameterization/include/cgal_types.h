@@ -1526,7 +1526,7 @@ class Polyhedron_ex : public Polyhedron
       fputs("showpage\n",pFile);
     }
 
-    // output to an obj file
+    // output to a Wavefront OBJ file
     //********************************
     bool write_file_obj(const char *pFilename)
     {
@@ -1545,12 +1545,15 @@ class Polyhedron_ex : public Polyhedron
       return ok;
     }
 
-	// output to an obj file
+    // output to a Wavefront OBJ file
 	// v x y z
 	// f 1 2 3 4 (1-based)
 	//********************************
 	bool write_file_obj(FILE *pFile)
 	{
+		#define UV_FORMAT "vt %f %f\n"				/* Default value */
+		//#define UV_FORMAT "vt %5.2f %5.2f\n"		/* Trick to ease file comparison */
+
 		fprintf(stderr,"  write_file_obj()...");
 
 		// Number all mesh vertices following the order of the vertices_begin() iterator
@@ -1564,35 +1567,23 @@ class Polyhedron_ex : public Polyhedron
 		// output coordinates
 		fprintf(pFile, "# vertices\n") ;
 		Vertex_iterator pVertex;
-		for(pVertex = vertices_begin();
-			pVertex != vertices_end();
-			pVertex++)
-			fprintf(pFile,"v %g %g %g\n",
-				pVertex->point().x(),
-				pVertex->point().y(),
-				pVertex->point().z());
+		for(pVertex = vertices_begin(); pVertex != vertices_end(); pVertex++)
+			fprintf(pFile,"v %g %g %g\n", (double)pVertex->point().x(), (double)pVertex->point().y(), (double)pVertex->point().z());
 
-		// Write UVs (1 UV / half edge)
+		// Write UVs (1 UV / vertex)
 		fprintf(pFile, "# uv coordinates\n") ;
-		Halfedge_iterator pHalfedge;
-		for(pHalfedge = halfedges_begin();
-			pHalfedge != halfedges_end();
-			pHalfedge++)
-			fprintf(pFile,"vt %5.2f %5.2f\n",
-					pHalfedge->u(),
-					pHalfedge->v());
+		for(pVertex = vertices_begin(); pVertex != vertices_end(); pVertex++)
+			fprintf(pFile, UV_FORMAT, (float)pVertex->u(), (float)pVertex->v());
 
 		// Write faces using the unique material # 1
 		fprintf(pFile, "# faces\nusemtl Mat_1\n");
-			Facet_iterator pFacet;
-		for(pFacet = facets_begin();
-			pFacet != facets_end();
-			pFacet++)
+		Facet_iterator pFacet;
+		for(pFacet = facets_begin(); pFacet != facets_end(); pFacet++)
 		{
 			Halfedge_around_facet_circulator h = pFacet->facet_begin();
 			fprintf(pFile,"f ");
 			do
-				fprintf(pFile, "%d/%d ", h->vertex()->index()+1, h->index()+1);
+				fprintf(pFile, "%d/%d ", (int)h->vertex()->index()+1, (int)h->vertex()->index()+1);
 			while(++h != pFacet->facet_begin());
 			fprintf(pFile,"\n");
 		}
@@ -1602,7 +1593,7 @@ class Polyhedron_ex : public Polyhedron
 		return true;
     }
 
-    // dump .obj file to stdout
+    // dump Wavefront OBJ file to stdout
     //********************************
     bool write_file_obj()  { return write_file_obj(stdout); }
 
