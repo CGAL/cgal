@@ -1,4 +1,4 @@
 /* XPM */
-extern char *optimal_convex_xpm[];
+extern const char * optimal_convex_xpm[];
 /* XPM */
-extern char * optimal_convex_small_xpm[];
+extern const char * optimal_convex_small_xpm[];

@@ -1,4 +1,4 @@
 /* XPM */
-extern char *voronoi_xpm[];
+extern const char * voronoi_xpm[];
 /* XPM */
-extern char * voronoi_small_xpm[];
+extern const char * voronoi_small_xpm[];

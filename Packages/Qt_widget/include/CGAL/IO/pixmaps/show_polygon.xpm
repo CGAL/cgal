@@ -1,4 +1,4 @@
 /* XPM */
-extern char *show_polygon_xpm[];
+extern const char * show_polygon_xpm[];
 /* XPM */
-extern char * show_polygon_small_xpm[];
+extern const char * show_polygon_small_xpm[];

@@ -1,4 +1,4 @@
 /* XPM */
-extern char *ymonotone_xpm[];
+extern const char * ymonotone_xpm[];
 /* XPM */
-extern char * ymonotone_small_xpm[];
+extern const char * ymonotone_small_xpm[];

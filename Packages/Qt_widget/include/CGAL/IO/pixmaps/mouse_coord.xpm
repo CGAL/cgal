@@ -1,2 +1,2 @@
 /* XPM */
-extern char *mouse_coord_xpm[];
+extern const char * mouse_coord_xpm[];

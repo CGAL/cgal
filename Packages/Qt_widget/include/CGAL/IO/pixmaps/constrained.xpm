@@ -1,4 +1,4 @@
 /* XPM */
-extern char *constrained_xpm[];
+extern const char * constrained_xpm[];
 /* XPM */
-extern char * constrained_small_xpm[];
+extern const char * constrained_small_xpm[];

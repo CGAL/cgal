@@ -1,2 +1,2 @@
 /* XPM */
-extern char *focus3_xpm[];
+extern const char * focus3_xpm[];

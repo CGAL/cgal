@@ -1,2 +1,2 @@
 /* XPM */
-extern char *zoomin_xpm[];
+extern const char * zoomin_xpm[];

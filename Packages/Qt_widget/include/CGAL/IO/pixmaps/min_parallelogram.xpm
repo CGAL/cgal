@@ -1,4 +1,4 @@
 /* XPM */
-extern char *min_parallelogram_xpm[];
+extern const char * min_parallelogram_xpm[];
 /* XPM */
-extern char * min_parallelogram_small_xpm[];
+extern const char * min_parallelogram_small_xpm[];

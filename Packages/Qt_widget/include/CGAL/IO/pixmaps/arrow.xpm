@@ -1,4 +1,4 @@
 /* XPM */
-extern char *arrow_xpm[];
+extern const char * arrow_xpm[];
 /* XPM */
-extern char * arrow_small_xpm[];
+extern const char * arrow_small_xpm[];

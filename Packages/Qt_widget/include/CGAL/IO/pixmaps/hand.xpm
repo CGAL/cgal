@@ -1,2 +1,2 @@
 /* XPM */
-extern char *hand_xpm[];
+extern const char * hand_xpm[];

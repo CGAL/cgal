@@ -1,4 +1,4 @@
 /* XPM */
-extern char *greene_approx_xpm[];
+extern const char * greene_approx_xpm[];
 /* XPM */
-extern char * greene_approx_small_xpm[];
+extern const char * greene_approx_small_xpm[];

@@ -1,4 +1,4 @@
 /* XPM */
-extern char *nearest_vertex_xpm[];
+extern const char * nearest_vertex_xpm[];
 /* XPM */
-extern char * nearest_vertex_small_xpm[];
+extern const char * nearest_vertex_small_xpm[];

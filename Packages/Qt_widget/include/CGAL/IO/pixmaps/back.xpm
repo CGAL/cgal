@@ -1,4 +1,4 @@
 /* XPM */
-extern char *back_xpm[];
+extern const char * back_xpm[];
 /* XPM */
-extern char * back_small_xpm[];
+extern const char * back_small_xpm[];

@@ -1,3 +1,3 @@
 /* XPM */
-extern char * demoicon_xpm[];
+extern const char * demoicon_xpm[];
 

@@ -1,5 +1,5 @@
 /* XPM */
-extern char * alpha_shape_xpm[];
+extern const char * alpha_shape_xpm[];
 
 /* XPM */
-extern char * alpha_shape_small_xpm[];
+extern const char * alpha_shape_small_xpm[];

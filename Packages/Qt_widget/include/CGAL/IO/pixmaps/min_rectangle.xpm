@@ -1,4 +1,4 @@
 /* XPM */
-extern char *min_rectangle_xpm[];
+extern const char * min_rectangle_xpm[];
 /* XPM */
-extern char * min_rectangle_small_xpm[];
+extern const char * min_rectangle_small_xpm[];

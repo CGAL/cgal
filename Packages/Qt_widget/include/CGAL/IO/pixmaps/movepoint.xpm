@@ -1,4 +1,4 @@
 /* XPM */
-extern char *movepoint_xpm[];
+extern const char * movepoint_xpm[];
 /* XPM */
-extern char * movepoint_small_xpm[];
+extern const char * movepoint_small_xpm[];

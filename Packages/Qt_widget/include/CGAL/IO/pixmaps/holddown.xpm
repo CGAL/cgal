@@ -1,2 +1,2 @@
 /* XPM */
-extern char *holddown_xpm[];
+extern const char * holddown_xpm[];

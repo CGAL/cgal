@@ -1,2 +1,2 @@
 /* XPM */
-extern char *focus1_mask_xpm[];
+extern const char * focus1_mask_xpm[];

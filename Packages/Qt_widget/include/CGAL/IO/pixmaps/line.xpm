@@ -1,4 +1,4 @@
 /* XPM */
-extern char *line_xpm[];
+extern const char * line_xpm[];
 /* XPM */
-extern char * line_small_xpm[];
+extern const char * line_small_xpm[];

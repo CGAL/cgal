@@ -1,4 +1,4 @@
 /* XPM */
-extern char *notool_xpm[];
+extern const char * notool_xpm[];
 /* XPM */
-extern char *notool_small_xpm[];
+extern const char * notool_small_xpm[];

@@ -1,4 +1,4 @@
 /* XPM */
-extern char * iso_rectangle_small_xpm[];
+extern const char * iso_rectangle_small_xpm[];
 /* XPM */
-extern char * iso_rectangle_xpm[];
+extern const char * iso_rectangle_xpm[];

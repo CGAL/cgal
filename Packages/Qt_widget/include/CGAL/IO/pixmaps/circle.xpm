@@ -1,4 +1,4 @@
 /* XPM */
-extern char *circle_xpm[];
+extern const char * circle_xpm[];
 /* XPM */
-extern char * circle_small_xpm[];
+extern const char * circle_small_xpm[];
