@@ -1,3 +1,7 @@
+Version 1.27 (17 dec 99)
+useful #include added in the demos
+a few small details changed in the doc
+
 Version 1.26 (16 dec 99)
 removed : useless #include in the "demos"
 added : pictures in the doc
