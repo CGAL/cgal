@@ -1,32 +1,23 @@
 #include <CGAL/box_intersection_d.h>
-
+#include <CGAL/Bbox_2.h>
 #include <iostream>
-#include <vector>
-#include <CGAL/Random.h>
 
-typedef CGAL::Box_intersection_d::Box_d< double, 3 > Box;
+typedef CGAL::Box_intersection_d::Box_d<double,2> Box;
+typedef CGAL::Bbox_2                              Bbox;
 
-void fill_boxes( unsigned int n, std::vector<Box>& boxes ) {
-    double min[3], max[3];
-    for( unsigned int i = 0; i < n; ++i ) {
-        for( unsigned int d = 0; d < 3; ++d ) {
-            min[d] = 10 * CGAL::default_random.get_double();
-            max[d] = min[d] + 1 + CGAL::default_random.get_double();
-        }
-        boxes.push_back( Box( min, max) );
-    }
-}
+// 9 boxes of a grid
+Box boxes[9] = { Bbox( 0,0,1,1), Bbox( 1,0,2,1), Bbox( 2,0,3,1), // low
+                 Bbox( 0,1,1,2), Bbox( 1,1,2,2), Bbox( 2,1,3,2), // middle
+                 Bbox( 0,2,1,3), Bbox( 1,2,2,3), Bbox( 2,2,3,3)};// upper
+// 2 selected boxes as query; center and upper right
+Box query[2] = { Bbox( 1,1,2,2), Bbox( 2,2,3,3)};
 
 void callback( const Box& a, const Box& b ) {
-    std::cout << "intersection between box "
-              << a.id() << " and " << b.id() << std::endl;
-};
+    std::cout << "box " << a.id() << " intersects box " << b.id() << std::endl;
+}
 
 int main() {
-    std::vector<Box> a, b;
-    fill_boxes( 100, a );
-    fill_boxes( 100, b );
-    CGAL::box_intersection_d( a.begin(), a.end(),
-                              b.begin(), b.end(), callback );
+    CGAL::box_intersection_d( boxes, boxes+9, query, query+2, callback);
+    return 0;
 }
 
