@@ -647,12 +647,17 @@ protected:
   }
 
   bool do_intersect(const Site& t, Face_handle f) const;
-  bool do_intersect(const Segment& s1, const Segment& s2) const
+  bool do_intersect(const Site& p, const Site& q) const
   {
     std::pair<int,int> res =
-      geom_traits().do_intersect_2_object()(s1, s2);
+      geom_traits().do_intersect_2_object()(p, q);
     if ( res.first < 2 && res.second < 2 ) { return false; }
     return (res.first != 3);
+  }
+
+  bool are_parallel(const Site_2& p, const Site_2& q) const
+  {
+    return geom_traits().are_parallel_2_object()(p, q);
   }
 
   void print_error_message() const

@@ -175,6 +175,7 @@ private:
   typedef typename FK_traits::Compare_y_2        FK_Compare_y_2;
   typedef typename FK_traits::Orientation_2      FK_Orientation_2;
   typedef typename FK_traits::Are_same_points_2  FK_Are_same_points_2;
+  typedef typename FK_traits::Are_parallel_2     FK_Are_parallel_2;
 
   typedef typename FK_traits::Oriented_side_of_bisector_2
   FK_Oriented_side_of_bisector_2;
@@ -191,13 +192,14 @@ private:
   FK_Is_degenerate_edge_2;
 
   typedef typename FK_traits::Do_intersect_2     FK_Do_intersect_2;
-
+  typedef typename FK_traits::Oriented_side_2    FK_Oriented_side_2;
 
   // Predicates for the exact kernel
   typedef typename EK_traits::Compare_x_2        EK_Compare_x_2;
   typedef typename EK_traits::Compare_y_2        EK_Compare_y_2;
   typedef typename EK_traits::Orientation_2      EK_Orientation_2;
   typedef typename EK_traits::Are_same_points_2  EK_Are_same_points_2;
+  typedef typename EK_traits::Are_parallel_2     EK_Are_parallel_2;
 
   typedef typename EK_traits::Oriented_side_of_bisector_2
   EK_Oriented_side_of_bisector_2;
@@ -214,7 +216,7 @@ private:
   EK_Is_degenerate_edge_2;
 
   typedef typename EK_traits::Do_intersect_2     EK_Do_intersect_2;
-
+  typedef typename EK_traits::Oriented_side_2    EK_Oriented_side_2;
 
 
 
@@ -238,6 +240,10 @@ public:
   Filtered_predicate<EK_Are_same_points_2,
 		     FK_Are_same_points_2, C2E, C2F>
   Are_same_points_2;
+
+  typedef
+  Filtered_predicate<EK_Are_parallel_2,	FK_Are_parallel_2, C2E, C2F>
+  Are_parallel_2;
 
   typedef
   Filtered_predicate<EK_Oriented_side_of_bisector_2,
@@ -267,6 +273,10 @@ public:
   typedef
   Filtered_predicate<EK_Do_intersect_2,	FK_Do_intersect_2, C2E, C2F>
   Do_intersect_2;
+
+  typedef
+  Filtered_predicate<EK_Oriented_side_2, FK_Oriented_side_2, C2E, C2F>
+  Oriented_side_2;
 
 public:
   //-----------------------------------------------------------------------
@@ -309,6 +319,11 @@ public:
     return Are_same_points_2();
   }
 
+  Are_parallel_2
+  are_parallel_2_object() const {
+    return Are_parallel_2();
+  }
+
   Oriented_side_of_bisector_2
   oriented_side_of_bisector_2_object() const {
     return Oriented_side_of_bisector_2();
@@ -337,6 +352,11 @@ public:
   Do_intersect_2
   do_intersect_2_object() const {
     return Do_intersect_2();
+  }
+
+  Oriented_side_2
+  oriented_side_2_object() const {
+    return Oriented_side_2();
   }
 };
 

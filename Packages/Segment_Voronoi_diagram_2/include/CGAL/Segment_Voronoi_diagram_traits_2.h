@@ -80,6 +80,31 @@ public:
 };
 
 //-----------------------------------------------------------------------
+//                           are parallel
+//-----------------------------------------------------------------------
+
+
+template< class K >
+class Are_parallel_2
+{
+public:
+  typedef typename K::Site_2       Site_2;
+
+  typedef bool                     result_type;
+
+  struct Arity {};
+
+public:
+
+  bool operator()(const Site_2& p, const Site_2& q) const
+  {
+    return svd_are_parallel_C2(p, q);
+  }
+};
+
+
+
+//-----------------------------------------------------------------------
 //                       oriented side of bisector
 //-----------------------------------------------------------------------
 
@@ -389,7 +414,7 @@ template< class K, class Method_tag >
 class Svd_do_intersect_2
 {
 public:
-  typedef typename K::Segment_2  Segment_2;
+  typedef typename K::Site_2     Site_2;
   typedef std::pair<int,int>     result_type;
 
   struct Arity {};
@@ -397,10 +422,35 @@ public:
 public:
   
   result_type
-  operator()(const Segment_2& s1, const Segment_2& s2) const
+  operator()(const Site_2& p, const Site_2& q) const
   {
     return
-      svd_do_intersect_ftC2<K,Method_tag>(s1, s2, Method_tag());
+      svd_do_intersect_C2<K,Method_tag>(p, q, Method_tag());
+  }
+};
+
+
+//-----------------------------------------------------------------------
+//                          oriented side
+//-----------------------------------------------------------------------
+
+template< class K, class Method_tag >
+class Svd_oriented_side_2
+{
+public:
+  typedef typename K::Site_2     Site_2;
+  typedef Oriented_side          result_type;
+
+  struct Arity {};
+
+public:
+  
+  result_type
+  operator()(const Site_2& s1, const Site_2& s2, const Site_2& s3,
+	     const Site_2& s, const Site_2& p) const
+  {
+    return
+      svd_oriented_side_ftC2<K,Method_tag>(s1, s2, s3, s, p, Method_tag());
   }
 };
 
@@ -455,6 +505,7 @@ public:
   typedef typename Kernel::Compare_y_2                  Compare_y_2;
   typedef typename Kernel::Orientation_2                Orientation_2;
   typedef CGAL::Are_same_points_2<K>                    Are_same_points_2;
+  typedef CGAL::Are_parallel_2<K>                       Are_parallel_2;
   typedef CGAL::Svd_oriented_side_of_bisector_2<K,MTag> 
   /*                                          */ Oriented_side_of_bisector_2;
   typedef CGAL::Svd_vertex_conflict_2<K,MTag >             Vertex_conflict_2;
@@ -464,6 +515,7 @@ public:
   /*                                    */ Infinite_edge_interior_conflict_2;
   typedef CGAL::Svd_is_degenerate_edge_2<K,MTag>        Is_degenerate_edge_2;
   typedef CGAL::Svd_do_intersect_2<K,MTag>              Do_intersect_2;
+  typedef CGAL::Svd_oriented_side_2<K,MTag>             Oriented_side_2;
 
 
 public:
@@ -507,6 +559,11 @@ public:
     return Are_same_points_2();
   }
 
+  Are_parallel_2
+  are_parallel_2_object() const {
+    return Are_parallel_2();
+  }
+
   Oriented_side_of_bisector_2
   oriented_side_of_bisector_2_object() const {
     return Oriented_side_of_bisector_2();
@@ -535,6 +592,11 @@ public:
   Do_intersect_2
   do_intersect_2_object() const {
     return Do_intersect_2();
+  }
+
+  Oriented_side_2
+  oriented_side_2_object() const {
+    return Oriented_side_2();
   }
 
 };
