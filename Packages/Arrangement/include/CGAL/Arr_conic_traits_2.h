@@ -710,6 +710,26 @@ class Arr_conic_traits_2
     return;
   }
 
+  // Merge a two given curves into one curve.
+  void curve_merge (X_monotone_curve_2& curve, 
+		    const X_monotone_curve_2& sub_curve1,
+            const X_monotone_curve_2& sub_curve2) const 
+  {
+    CGAL_precondition(is_x_monotone(sub_curve1));
+	CGAL_precondition(is_x_monotone(sub_curve2));
+	CGAL_precondition(sub_curve1.has_same_base_conic(sub_curve2));
+
+    // Make sure the point is on the curve and is not an end-point.
+    CGAL_precondition( sub_curve2.source().equals(sub_curve1.target()) ||
+					   sub_curve2.source().equals(sub_curve1.source()) ||
+					   sub_curve2.target().equals(sub_curve1.target()) ||
+					   sub_curve2.target().equals(sub_curve1.source()) );
+
+    // Merge the curve.
+    _curve_merge (curve, sub_curve1, sub_curve2);
+    return;
+  }
+
   // Find the nearest intersection point between the two given curves to the
   // right of the given point.
   // In case of an overlap, p1 and p2 are the source and destination of the
@@ -1026,6 +1046,28 @@ class Arr_conic_traits_2
     //CGAL_assertion(sub_curve1.is_x_monotone());
     //CGAL_assertion(sub_curve2.is_x_monotone());
 
+    return;
+  }
+
+  // Merge two given curves into one curve.
+  // Since this is a private function, there are no preconditions.
+  void _curve_merge (X_monotone_curve_2& curve, 
+		     const X_monotone_curve_2& sub_curve1,
+             const X_monotone_curve_2& sub_curve2) const
+  {
+    // Merge the curve to source->p and p->target.
+    if (sub_curve2.source().equals(sub_curve1.target()))
+	  curve = X_monotone_curve_2 (sub_curve1, sub_curve1.source(),
+		                                    sub_curve2.target(), false);
+	else if (sub_curve2.source().equals(sub_curve1.source()))
+	  curve = X_monotone_curve_2 (sub_curve1, sub_curve1.target(),
+		                                    sub_curve2.target(), false);
+	else if (sub_curve2.target().equals(sub_curve1.target()))
+	  curve = X_monotone_curve_2 (sub_curve1, sub_curve1.source(),
+		                                    sub_curve2.source(), false);
+	else if (sub_curve2.target().equals(sub_curve1.source()))
+	  curve = X_monotone_curve_2 (sub_curve2, sub_curve2.source(),
+		                                    sub_curve1.target(), false);
     return;
   }
 

@@ -1306,12 +1306,33 @@ Stream_ & operator<< (Stream_ & os, const Polyline_2<Segment_traits_> & cv)
   typename Polyline_2<Segment_traits_>::const_iterator ps = cv.begin();
   typename Polyline_2<Segment_traits_>::const_iterator pt = ps; pt++;
 
+  os << cv.points() << " ";
   while (pt != cv.end()) {
     typename Segment_traits_::Curve_2 seg(*ps, *pt);
     os << seg;
     ps++; pt++;
   }
   return (os);
+}
+
+/*!
+ * Input operator for a polyline.
+ */
+template <class Segment_traits_, class Stream_>
+Stream_ & operator>> (Stream_ & is, const Polyline_2<Segment_traits_> & cv)
+{
+  int n_points;
+  is >> n_points;
+  typename Segment_traits_::Point_2 point;
+  std::vector<typename Segment_traits_::Point_2> points;
+  for (int i=0; i<n_points; i++)
+  {
+    is >> point;
+	points.push_back(point);
+  }
+  //const Polyline_2<Segment_traits_> & pol(points.begin(), points.end());
+  //cv = pol;
+  return (is);
 }
 
 CGAL_END_NAMESPACE
