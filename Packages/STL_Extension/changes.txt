@@ -9,6 +9,7 @@
 
 ALL : New functor adaptors (bind/compose).
 ALL : Removed Compose for Projection objects.
+ALL : Fixed dumb compiler macro.
 ALL : Fixed stlport stuff for msvc.
 ALL : Added functional_base to stlport.
 ALL : Made In_place_list::allocator non-static for MSVC.
