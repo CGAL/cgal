@@ -706,7 +706,7 @@ private:
       _TRACEN("facet hit, obtaining volume...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());
-      return f_below_incident_volume();
+      return f_below->incident_volume();
     }
     return Base(*this).volumes_begin(); // TODO: Comment this hack!
   }
