@@ -1,3 +1,6 @@
+Version 1.100 (17 December 01)
+- Missing typenames for GCC 3.1.
+
 Version 1.99 (12 December 01)
 - Use MP_Float instead of Gmpz (gmp 4.0 produces warnings with SunPro...).
 - VC++ doesn't like NULL as default argument.
