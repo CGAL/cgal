@@ -1,5 +1,8 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.47 (15. September 2003) [af]
+- New license headers
+
 1.46 (15. September 2003) [af]
 - Added intro.tex to the reference manual
 
