@@ -1,3 +1,6 @@
+Version 1.29 (12 janv 99)
+changes in the figures of the doc only
+
 Version 1.28 (21 dec 99)
 newline removed in cout<<" " in demos
 
