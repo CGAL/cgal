@@ -45,7 +45,11 @@ namespace CGALi {
 
   struct Unsafe_comparison {};    // Exception class.
 
+#ifdef __INTEL_COMPILER
+  const double Huge_val = std::numeric_limits<double>::infinity();
+#else
   const double Huge_val = HUGE_VAL; // Workaround for G++ 2.95 on Linux.
+#endif
 }
 
 template <bool Protected = true>
