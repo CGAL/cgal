@@ -76,14 +76,56 @@ LCPPINCS+= $(CGALINCS)
 
 include $(ROOT)/include/make/cgalrul.mak
 
-use_leda_kernel:
+cartesian:
+	$(MAKEF)
+
+leda_kernel:
 	$(MAKEF) "USE_LEDA_KERNEL=1"
 
-use_my_kernel:
+quotient_mp_float:
+	$(MAKEF) "USE_MP_FLOAT=1"
+
+lazy_rat:
+	$(MAKEF) "USE_LAZY_RAT=1"
+
+lazy_quotient_mp_float:
+	$(MAKEF) "USE_LAZY_QUOTIENT=1"
+
+# 
+insert_fast:
+	$(MAKEF) "USE_INSERT_TIGHT=1"
+
+my_kernel:
 	$(MAKEF) "USE_MY_KERNEL=1"
 
-use_conic_traits:
+conic_traits:
 	$(MAKEF) "USE_CONIC_TRAITS=1"
 
-use_insert_fast:
-	$(MAKEF) "USE_INSERT_TIGHT=1"
+# Cached:
+
+cached_traits:
+	$(MAKEF) "USE_CACHED_TRAITS=1"
+
+leda_kernel_cached_traits:
+	$(MAKEF) "USE_LEDA_KERNEL=1" "USE_CACHED_TRAITS=1"
+
+quotient_mp_float_cached_traits:
+	$(MAKEF) "USE_MP_FLOAT=1" "USE_CACHED_TRAITS=1"
+
+lazy_rat_cached_traits:
+	$(MAKEF) "USE_LAZY_RAT=1" "USE_CACHED_TRAITS=1"
+
+lazy_quotient_mp_float_cached_traits:
+	$(MAKEF) "USE_LAZY_QUOTIENT=1" "USE_CACHED_TRAITS=1"
+
+all_non_cached: cartesian \
+	leda_kernel \
+	quotient_mp_float \
+	lazy_rat \
+	lazy_quotient_mp_float
+
+all_cached: cached_traits \
+	leda_kernel_cached_traits \
+	quotient_mp_float_cached_traits \
+	lazy_rat_cached_traits \
+	lazy_quotient_mp_float_cached_traits
