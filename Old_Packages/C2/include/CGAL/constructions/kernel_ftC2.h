@@ -96,7 +96,7 @@ bisector_of_pointsC2(const FT &px, const FT &py,
 {
   a = FT(2)*(px - qx);
   b = FT(2)*(py - qy);
-  c = px*px + py*py - qx*qx - qy*qy;
+  c = -px*px - py*py + qx*qx + qy*qy;
 }
 
 
