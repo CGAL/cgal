@@ -1,24 +1,5 @@
-// ============================================================================
-//
-// Copyright (c) 1997-2003 The CGAL Consortium
-// This software and related documentation are part of the Computational
-// Geometry Algorithms Library (CGAL).
-// This software and documentation are provided "as-is" and without warranty
-// of any kind. In no event shall the CGAL Consortium be liable for any
-// damage of any kind. 
-// ----------------------------------------------------------------------
-//
 // file          : robustness.C
-// package       : Qt_widget
-// author(s)     : Radu Ursu
-// release_date  : 2002, May 16
-//
-// coordinator   : Laurent Rineau
-//
-// email         : contact@cgal.org
-// www           : http://www.cgal.org
-//
-// ======================================================================
+// author(s)     : Stefan Schirra, Radu Ursu
 
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
