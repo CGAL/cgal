@@ -1,5 +1,8 @@
 TODO:
 ----
+- Use a common include files, with a macro specifying the type ?
+  Maybe too dirty to live...
+- Add min/max wrappers depending on what is decided for CGAL.
 - Should I provide operator/(cl_I, cl_I) ?  Not sure.
 - Is it possible to factorize more code (to_double()...) ?
 - Things that are supported by Gmpz, and should (?) be ported to cl_I:

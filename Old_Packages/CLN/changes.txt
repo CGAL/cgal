@@ -1,5 +1,8 @@
 Changes done to the CLN package.
 
+Version 1.7 on 27 October 1999.
+- Added IO include files by default.
+
 Version 1.6 on 12 October 1999.
 - Added missing "#include <fstream>".
 - New file <include/CGAL/CLN/common.h> which factorizes the common code.
