@@ -29,17 +29,18 @@
 
 namespace CGAL {
 
-  template <class SearchTraits, class Iso_box>
+  template <class SearchTraits>
   class Fuzzy_iso_box{
 
     public:
 
     typedef typename SearchTraits::Point_d Point_d;
+    typedef typename SearchTraits::Iso_box_d Iso_box_d;
     typedef typename SearchTraits::FT FT;
     
     private:
 
-    Iso_box box;
+    Iso_box_d box;
     FT eps;
     unsigned int dim;
 
@@ -56,7 +57,7 @@ namespace CGAL {
 	  typename SearchTraits::Cartesian_const_iterator_d begin = construct_it(p),
 	    end = construct_it(p,1);
 	  dim = end - begin;
-	  box = Iso_box(p,q);
+	  box = SearchTraits::Construct_iso_box_d(p,q);
 	}
 
         	
