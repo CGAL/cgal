@@ -133,8 +133,8 @@ class sort_facets : public SNC_decorator<T> {
   
   bool operator() (Halffacet_handle f1, Halffacet_handle f2) const {
     
-    Plane_3 p1(normalized(plane(f1)));
-    Plane_3 p2(normalized(plane(f2)));
+    Plane_3 p1(plane(f1));
+    Plane_3 p2(plane(f2));
     
     if(p1.d() != p2.d())
       return p1.d() < p2.d();
@@ -168,7 +168,8 @@ class sort_sedges : public SNC_decorator<T> {
   typedef SNC_decorator<T>             Base;
   typedef typename T::Vertex_handle    Vertex_handle;
   typedef typename T::SHalfedge_handle SHalfedge_handle;
-  
+  typedef typename T::Sphere_circle    Sphere_circle;
+
  public:
   sort_sedges(T& D) : Base(D) {}
   
@@ -186,8 +187,18 @@ class sort_sedges : public SNC_decorator<T> {
       se2 = twin(se2);      
     if(ssource(se1) != ssource(se2))
       return SORT(vertex(twin(ssource(se1))), vertex(twin(ssource(se2))));
-    else
+    if(target(se1) != target(se2))
       return SORT(target(se1), target(se2));
+
+    CGAL_nef3_assertion(se1->tmp_circle() != se2->tmp_circle());
+    Sphere_circle vec1 = se1->tmp_circle();
+    Sphere_circle vec2 = se2->tmp_circle();
+ 
+    if(vec1.a() != vec2.a())
+      return vec1.a() < vec2.a();
+    else if(vec1.b() != vec2.b())
+      return vec1.b() < vec2.b();
+    return vec1.c() < vec2.c();     
   }
 };
 

@@ -1014,6 +1014,10 @@ Nef_polyhedron_3( Content space, SNC_point_locator* _pl) {
   if(Infi_box::extended_Kernel()) {
     initialize_infibox_vertices(space);
     build_external_structure();
+  } else {
+    build_external_structure();
+    SNC_decorator D(snc());
+    D.mark(D.volumes_begin()) = (space == COMPLETE) ? 1 : 0;
   }
 }
 
