@@ -94,18 +94,10 @@ public:
     }
 };
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 class HalfedgeDS_list_types {
 public:
     typedef HalfedgeDS_list_types<Traits_, HalfedgeDSItems, Alloc> Self;
-#else
-struct HalfedgeDS_list_types {
-template < class Traits_, class HalfedgeDSItems, class Alloc>
-class HDS {
-public:
-    typedef HDS<Traits_, HalfedgeDSItems, Alloc> Self;
-#endif
     typedef Traits_                                    Traits;
     typedef HalfedgeDSItems                            Items;
     typedef Alloc                                      Allocator;

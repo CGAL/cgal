@@ -48,18 +48,10 @@
 CGAL_BEGIN_NAMESPACE
 
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 class HalfedgeDS_vector_types {
 public:
     typedef HalfedgeDS_vector_types<Traits_,HalfedgeDSItems,Alloc> Self;
-#else
-struct HalfedgeDS_vector_types {
-template < class Traits_, class HalfedgeDSItems, class Alloc>
-class HDS {
-public:
-    typedef HDS<Traits_,HalfedgeDSItems,Alloc>         Self;
-#endif
     typedef Traits_                                    Traits;
     typedef HalfedgeDSItems                            Items;
     typedef Alloc                                      Allocator;

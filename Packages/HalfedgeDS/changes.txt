@@ -1,6 +1,12 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.26 (03 Apr 2002)
+
+     - Fixed bug in HalfedgeDS_list.h and HalfedgeDS_vector.h on
+       machines needing the CGAL_CFG_NO_TMPL_IN_TMPL_PARAM workaround:
+       the _types base class does not need that workaround.
+
 3.25 (28 Mar 2002)
 
      - More changes in HalfedgeDS_vector to use CGALi::vector class.
