@@ -1,3 +1,8 @@
+23 March 2004 Radu Ursu
+- fixed Qt_widget.C x_pixel and y_pixel!!!
+- added more functionality to Qt_widget_get_polygon.h: shift key makes the line go vertical or horizontal 
+
+
 22 March 2004 Radu Ursu
 - removed obsolete functions of Qt3 from Qt_widget
   - removed QMainWindow::addToolBar

@@ -450,28 +450,28 @@ double Qt_widget::y_real_dist(double d) const
 
 int Qt_widget::x_pixel(double x) const
 {
-  return( static_cast<int>((x-xmin)*xscal+0.5) );
+  return( static_cast<int>((x-xmin)*xscal) );
 }
 
 int Qt_widget::y_pixel(double y) const
 {
-  return( - static_cast<int>((y-ymax)*yscal+0.5) );
+  return( - static_cast<int>((y-ymax)*yscal) );
 }
 
 int Qt_widget::x_pixel_dist(double d) const
 {
   if (d>0)
-    return( static_cast<int>(d*xscal+0.5) );
+    return( static_cast<int>(d*xscal) );
   else
-    return( static_cast<int>(d*xscal-0.5) );
+    return( static_cast<int>(d*xscal) );
 }
 
 int Qt_widget::y_pixel_dist(double d) const
 {
   if (d>0)
-    return( static_cast<int>(d*yscal+0.5) );
+    return( static_cast<int>(d*yscal) );
   else
-    return( static_cast<int>(d*yscal-0.5) );
+    return( static_cast<int>(d*yscal) );
 }
 
 Qt_widget& Qt_widget::operator<<(const Color& c)

@@ -153,14 +153,35 @@ protected:
 
   void mouseMoveEvent(QMouseEvent *e)
   {
-    if (active)
-    {
+    if(active) {
       FT x, y;
       widget->x_real(e->x(), x);
       widget->y_real(e->y(), y);
-
       rubber = Point_2(x, y);
-      widget->lock();
+      if(e->state() == Qt::ShiftButton){
+        FT dx, dy;
+        dx = last_of_poly.x() > x ? last_of_poly.x() - x : x - last_of_poly.x();
+        dy = last_of_poly.y() > y ? last_of_poly.y() - y : y - last_of_poly.y();
+        widget->lock();
+        RasterOp old_rasterop=widget->rasterOp();
+        widget->get_painter().setRasterOp(XorROP);
+        *widget << CGAL::WHITE;
+        if(!first_time)
+          *widget << Segment_2(rubber_old, last_of_poly);
+        if(dx < dy)
+          rubber = Point_2(last_of_poly.x(), y);
+        else
+          rubber = Point_2(x, last_of_poly.y());
+        *widget << Segment_2(rubber, last_of_poly);
+        widget->unlock();
+        first_time = false;
+        rubber_old = rubber;
+        widget->cursor().setPos(widget->mapToGlobal(
+          QPoint(widget->x_pixel(CGAL::to_double(rubber.x())), 
+          widget->y_pixel(CGAL::to_double(rubber.y())))));
+        widget->setRasterOp(old_rasterop);    
+      } else { 
+        widget->lock();
         RasterOp old_rasterop=widget->rasterOp();
         widget->get_painter().setRasterOp(XorROP);
         *widget << CGAL::WHITE;      	
@@ -170,7 +191,8 @@ protected:
         first_time = false;
         rubber_old = rubber;
         widget->setRasterOp(old_rasterop);
-      widget->unlock();
+        widget->unlock();
+      }
     }
   };
   void activating()
