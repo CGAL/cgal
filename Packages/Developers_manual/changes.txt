@@ -1,4 +1,7 @@
 20 June 2004 Sylvain Pion
+- Remove references to lexicographical_sign (dead for 2 years).
+
+20 June 2004 Sylvain Pion
 - Remove dead URL.
 
 26 May 2004 Radu Ursu
