@@ -7,6 +7,7 @@
   "CGAL_CFG_LONGNAME_BUG.C" (seems more correct).
 - install_cgal : replace now obsolete sed command by cat.
 - install_cgal : factorize header in a macro, and improve some wording.
+- remove now useless long_description.txt.
 
 18 August 2004 Radu Ursu
 - install GMP in the CGAL tree copies also mpfr.h and mpf2mpfr.h
