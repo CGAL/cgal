@@ -241,6 +241,7 @@ int main(int argc, char* argv[])
   std::cout <<"                writing file data/output" << std::endl ;
   oFileT << T;
 
+
   char ch;
   std::cout << "enter any character to quit" << std::endl;
   std::cin >> ch;
