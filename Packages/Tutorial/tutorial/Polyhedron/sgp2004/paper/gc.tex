@@ -3,36 +3,13 @@
 There are geometric algorithms available in \cgal, not directly
 processing a mesh, but that can be helpful in the mesh processing
 context, for example, a fast self intersection test, the smallest
-enclosing sphere, or the minimum width of a point set.
-
-The self intersection test is based on the general algorithm for fast
-box intersections~\cite{cgal:ze-fsbi-02}, applied to the bounding
-boxes of individual facets, i.e. triangles, as a filtering step. The
-triangles of  intersecting boxes are then checked in detail, i.e., if
-they share common edge, they do not intersect, if they share a common
-vertex, the may intersect or not depending on the opposite edge, and
-otherwise the intersection test for triangles in the \cgal\ geometric
-kernel is used to decide the intersection. A geometric kernel with
-exact predicates is sufficient for this algorithm. 
-
-if they are not adjacent in the data structur
-boxes that are reported as are then 
-
-\paragraph{Smallest enclosing spheres} are commonly used as bounding
-volumes, for example, to speed up intersection tests.
-
-All 7 digits after the decimal are identical between the exact and the
-double implementation.
-
-% \begin{tabular}{l|ll}
-%   \textbf{smallest enclosing sphere} & \texttt{double} & exact
-%     \texttt{qmpq} (non opt.)\\\hline
-%   Bunny     & 0.02 &  14 \\
-%   Lion vase & 0.15 & 396 \\
-%   David     & 0.13 & 215 \\
-%   Raptor    & 0.35  & 589
-% \end{tabular}
-
+enclosing sphere, or the minimum width of a point set. We use a few
+large meshes (see Fig.~\ref{fig:models}) to evaluate performance on a
+laptop with an Intel Pentium4 Mobile CPU running at 1.80GHz with 512KB
+cache and 254MB main memory under Linux. For our largest mesh, the
+Raptor, the algorithms started swapping. Nevertheless, the runtimes
+are acceptable. For the final paper, we can in addition run the
+experiments on a larger machine.
 
 % models used for benchmarking
 \begin{figure}
@@ -47,8 +24,20 @@ double implementation.
   \label{fig:models}
 \end{figure}
 
-\paragraph{Convex hulls} are commonly used as bounding
-volumes, for example, to speed up intersection tests.
+
+The self intersection test is based on the general algorithm for fast
+box intersections~\cite{cgal:ze-fsbi-02}, applied to the bounding
+boxes of individual facets, i.e. triangles, as a filtering step. The
+triangles of intersecting boxes are then checked in detail, i.e., if
+they share common edge, they do not intersect, if they share a common
+vertex, the may intersect or not depending on the opposite edge, and
+otherwise the intersection test for triangles in the \cgal\ geometric
+kernel is used to decide the intersection. A geometric kernel with
+exact predicates is sufficient for this algorithm. Interestingly, only
+the lion vase is free of self intersections. The algorithm is fast,
+see the table below, though not sufficient for interactive use.
+Nevertheless, a final quality check is possible for quite large meshes
+before they, for example, go into production.
 
 \noindent\hspace*{-3mm}%
 {\small
@@ -64,6 +53,61 @@ volumes, for example, to speed up intersection tests.
   Raptor    & 0.35 & 589 & 45.5 & 123 & 92.3
 \end{tabular}
 }
+
+Smallest enclosing spheres, min.~sphere for short, are commonly used
+as bounding volumes in bounding volume hierarchies, for example, to
+speed up intersection tests. This algorithm~\cite{minsphere} needs a
+geometric kernel with an exact number type. We use \CodeFmt{gmpq} from
+the GMP number type package here~\cite{cgal:g-gmpal-96}. The runtimes
+are slow, but still feasible for huge meshes. In contrast, when we run
+the algorithm with the \CodeFmt{double} number type, it becomes fast
+enough to be considered for interactive purposes, for example,
+selecting a good view frustrum in a viewer. We compared the resulting
+spheres of the algorithm run with the exact and with the floating-point number
+type. In all cases the sphere center coordinates and the radius
+where exactly the same up to the seven digits after the
+decimal. Nonetheless it must be said that the \CodeFmt{double} version
+can fail here. We want to point out the running time anomaly in above
+table---the smaller lion vase needs longer than the larger david
+sculpture---which is o.k. for this data sensitive algorithm. It is
+worst-case linear time, but depends on a heuristic to be really fast.
+
+
+% \begin{tabular}{l|ll}
+%   \textbf{smallest enclosing sphere} & \texttt{double} & exact
+%     \texttt{qmpq} (non opt.)\\\hline
+%   Bunny     & 0.02 &  14 \\
+%   Lion vase & 0.15 & 396 \\
+%   David     & 0.13 & 215 \\
+%   Raptor    & 0.35  & 589
+% \end{tabular}
+
+
+Convex hulls are, similar to the smallest enclosing sphere, sometimes
+useful as a bounding volumes, for example, as a placeholder for faster
+interaction. For the quickhull algorithm~\cite{bdh-qach-96} used here
+in \cgal\ a \cgal\ geometric kernel with exact predicates suffices,
+and the convex hull can be computed significantly faster than the
+exact smallest enclosing sphere, however, also far slower than the
+\CodeFmt{double} version of the smallest enclosing sphere.
+
+In fact we are more interested in the convex hull as a preprocessing
+to another optimization algorithm, the width of a point set. The
+minimum width is obtained by two parallel planes of smalles possible
+distance that enclose all point between them. The printing time for
+three-dimensional stereo-lithographic printer is proportional to the
+height of the object printed. Minimizing this height can be done by
+computing the normal direction that minimizes the width between the
+two planes, and then align this normal direction with the printer
+height direction.
+
+The width algorithm requires an exact number type, so we use the
+result of the convex hull computation, convert all vertices to exact
+points, recompute the convex hull, and run the width algorithm. The
+runtimes in the table above are for the conversion, recomputing of the
+convex hull and the width computation together, but excluding the
+first convex hull computation that runs on the full data set.
+
 
 % \begin{tabular}{l|l}
 %   & \textbf{self intersection} \\\hline
