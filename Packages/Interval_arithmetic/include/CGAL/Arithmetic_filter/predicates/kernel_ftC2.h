@@ -29,6 +29,8 @@ CGAL_BEGIN_NAMESPACE
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -155,6 +157,8 @@ struct Static_Filtered_equal_lineC2_6
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -227,6 +231,8 @@ equal_lineC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -283,6 +289,8 @@ equal_lineC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -390,6 +398,8 @@ struct Static_Filtered_compare_xC2_7
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -462,6 +472,8 @@ compare_xC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -517,6 +529,8 @@ compare_xC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -648,6 +662,8 @@ struct Static_Filtered_compare_xC2_9
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -732,6 +748,8 @@ compare_xC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -797,6 +815,8 @@ compare_xC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -937,6 +957,8 @@ struct Static_Filtered_compare_xC2_12
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -1035,6 +1057,8 @@ compare_xC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -1111,6 +1135,8 @@ compare_xC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -1202,6 +1228,8 @@ struct Static_Filtered_compare_y_at_xC2_5
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -1264,6 +1292,8 @@ compare_y_at_xC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -1311,6 +1341,8 @@ compare_y_at_xC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -1418,6 +1450,8 @@ struct Static_Filtered_compare_y_at_xC2_7
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -1491,6 +1525,8 @@ compare_y_at_xC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -1547,6 +1583,8 @@ compare_y_at_xC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
@@ -1668,6 +1706,8 @@ struct Static_Filtered_compare_y_at_xC2_9
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
@@ -1751,6 +1791,8 @@ compare_y_at_xC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
@@ -1815,6 +1857,8 @@ compare_y_at_xC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
@@ -1957,6 +2001,8 @@ struct Static_Filtered_compare_y_at_xC2_12
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
@@ -2056,6 +2102,8 @@ compare_y_at_xC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
@@ -2133,6 +2181,8 @@ compare_y_at_xC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -2231,6 +2281,8 @@ struct Static_Filtered_equal_directionC2_4
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -2291,6 +2343,8 @@ equal_directionC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -2337,6 +2391,8 @@ equal_directionC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -2415,6 +2471,8 @@ struct Static_Filtered_compare_deltax_deltayC2_4
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -2471,6 +2529,8 @@ compare_deltax_deltayC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -2513,6 +2573,8 @@ compare_deltax_deltayC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Orientation
@@ -2603,6 +2665,8 @@ struct Static_Filtered_orientationC2_6
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Orientation
@@ -2669,6 +2733,8 @@ orientationC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Orientation
@@ -2719,6 +2785,8 @@ orientationC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
@@ -2853,6 +2921,8 @@ struct Static_Filtered_side_of_oriented_circleC2_8
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
@@ -2929,6 +2999,8 @@ side_of_oriented_circleC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
@@ -2987,6 +3059,8 @@ side_of_oriented_circleC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Bounded_side
@@ -3095,6 +3169,8 @@ struct Static_Filtered_side_of_bounded_circleC2_8
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Bounded_side
@@ -3172,6 +3248,8 @@ side_of_bounded_circleC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Bounded_side
@@ -3231,6 +3309,8 @@ side_of_bounded_circleC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -3321,6 +3401,8 @@ struct Static_Filtered_cmp_dist_to_pointC2_6
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -3387,6 +3469,8 @@ cmp_dist_to_pointC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -3437,6 +3521,8 @@ cmp_dist_to_pointC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -3527,6 +3613,8 @@ struct Static_Filtered_cmp_signed_dist_to_directionC2_6
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -3593,6 +3681,8 @@ cmp_signed_dist_to_directionC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -3643,6 +3733,8 @@ cmp_signed_dist_to_directionC2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -3743,6 +3835,8 @@ struct Static_Filtered_cmp_signed_dist_to_lineC2_8
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result
@@ -3819,6 +3913,8 @@ cmp_signed_dist_to_lineC2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Comparison_result

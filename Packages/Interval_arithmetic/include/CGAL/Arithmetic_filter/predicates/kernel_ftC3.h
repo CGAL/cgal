@@ -29,6 +29,8 @@ CGAL_BEGIN_NAMESPACE
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -129,6 +131,8 @@ struct Static_Filtered_strict_dominanceC3_6
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -197,6 +201,8 @@ strict_dominanceC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -249,6 +255,8 @@ strict_dominanceC3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -349,6 +357,8 @@ struct Static_Filtered_dominanceC3_6
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -417,6 +427,8 @@ dominanceC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -469,6 +481,8 @@ dominanceC3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -598,6 +612,8 @@ struct Static_Filtered_collinearC3_9
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -681,6 +697,8 @@ collinearC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -745,6 +763,8 @@ collinearC3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Orientation
@@ -867,6 +887,8 @@ struct Static_Filtered_orientationC3_12
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Orientation
@@ -963,6 +985,8 @@ orientationC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Orientation
@@ -1037,6 +1061,8 @@ orientationC3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -1167,6 +1193,8 @@ struct Static_Filtered_equal_directionC3_6
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -1241,6 +1269,8 @@ equal_directionC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 bool
@@ -1299,6 +1329,8 @@ equal_directionC3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
@@ -1392,6 +1424,8 @@ struct Static_Filtered_side_of_oriented_planeC3_7
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
@@ -1463,6 +1497,8 @@ side_of_oriented_planeC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
@@ -1517,6 +1553,8 @@ side_of_oriented_planeC3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
@@ -1688,6 +1726,8 @@ struct Static_Filtered_side_of_oriented_sphereC3_15
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
@@ -1799,6 +1839,8 @@ side_of_oriented_sphereC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
@@ -1885,6 +1927,8 @@ side_of_oriented_sphereC3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Bounded_side
@@ -2040,6 +2084,8 @@ struct Static_Filtered_side_of_bounded_sphereC3_15
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Bounded_side
@@ -2152,6 +2198,8 @@ side_of_bounded_sphereC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Bounded_side
@@ -2239,6 +2287,8 @@ side_of_bounded_sphereC3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_INLINE */
 Comparison_result
@@ -2344,6 +2394,8 @@ struct Static_Filtered_cmp_dist_to_pointC3_9
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_INLINE */
 Comparison_result
@@ -2425,6 +2477,8 @@ cmp_dist_to_pointC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_INLINE */
 Comparison_result
@@ -2487,6 +2541,8 @@ cmp_dist_to_pointC3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -2592,6 +2648,8 @@ struct Static_Filtered_cmp_signed_dist_to_directionC3_9
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -2673,6 +2731,8 @@ cmp_signed_dist_to_directionC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -2735,6 +2795,8 @@ cmp_signed_dist_to_directionC3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -2874,6 +2936,8 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_15
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
@@ -2985,6 +3049,8 @@ cmp_signed_dist_to_planeC3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result

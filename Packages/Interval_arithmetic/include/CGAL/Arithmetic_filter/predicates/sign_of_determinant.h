@@ -29,6 +29,8 @@ CGAL_BEGIN_NAMESPACE
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Sign
@@ -109,6 +111,8 @@ struct Static_Filtered_sign_of_determinant2x2_4
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Sign
@@ -165,6 +169,8 @@ sign_of_determinant2x2(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Sign
@@ -207,6 +213,8 @@ sign_of_determinant2x2(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Sign
@@ -314,6 +322,8 @@ struct Static_Filtered_sign_of_determinant3x3_9
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Sign
@@ -395,6 +405,8 @@ sign_of_determinant3x3(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Sign
@@ -457,6 +469,8 @@ sign_of_determinant3x3(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Sign
@@ -601,6 +615,8 @@ struct Static_Filtered_sign_of_determinant4x4_16
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Sign
@@ -717,6 +733,8 @@ sign_of_determinant4x4(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* inline */
 Sign
@@ -807,6 +825,8 @@ sign_of_determinant4x4(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
@@ -998,6 +1018,8 @@ struct Static_Filtered_sign_of_determinant5x5_25
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
@@ -1159,6 +1181,8 @@ sign_of_determinant5x5(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
@@ -1285,6 +1309,8 @@ sign_of_determinant5x5(
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
@@ -1533,6 +1559,8 @@ struct Static_Filtered_sign_of_determinant6x6_36
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
@@ -1749,6 +1777,8 @@ sign_of_determinant6x6(
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
