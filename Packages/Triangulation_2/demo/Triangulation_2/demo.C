@@ -514,24 +514,28 @@ void fileIO(Delaunay_ &T,
 }
 
 
-void draw_dual( Delaunay_ &T, Window_stream &W )
+void show_dual( Delaunay_ &T, Window_stream &W )
 {
    std::cerr << "The dual of the triangulation is displayed" << std::endl;
    W << CGAL::RED;
-    Delaunay_::Face_iterator fit, fbegin=T.faces_begin(), fend=T.faces_end();
-    for (fit=fbegin; fit != fend; ++fit)
-        W << T.dual(fit);
+   // Delaunay_::Face_iterator fit, fbegin=T.faces_begin(), fend=T.faces_end();
+//     for (fit=fbegin; fit != fend; ++fit)
+//         W << T.dual(fit);
 
-    Delaunay_::Edge_iterator eit, ebegin=T.edges_begin(), eend=T.edges_end();
-    for (eit=ebegin; eit != eend; ++eit)
-    {
-        CGAL::Object o = T.dual(eit);
-        Gt::Ray r;
-        Gt::Segment s;
-        if (CGAL::assign(s,o)) W << s;
-        if (CGAL::assign(r,o)) W << r;
-    }
-    any_button(W);
+//     Delaunay_::Edge_iterator eit, ebegin=T.edges_begin(), eend=T.edges_end();
+//     for (eit=ebegin; eit != eend; ++eit)
+//     {
+//         CGAL::Object o = T.dual(eit);
+//         Gt::Ray_2 r;
+//         Gt::Segment_2 s;
+// 	Gt::Line_2 l;
+//         if (CGAL::assign(s,o)) W << s;
+//         if (CGAL::assign(r,o)) W << r;
+// 	if (CGAL::assign(l,o)) W << l;
+//     }
+//     any_button(W);
+   T.draw_dual(W);
+   any_button(W);
 }
  
 void action(int n)
@@ -598,7 +602,7 @@ int main(int argc, char* argv[])
     W << DCopy;
     show_nearest_vertex(D, W);
     fileIO(D, W, opt);
-    draw_dual(D, W);
+    show_dual(D, W);
 
     return 0;
 }

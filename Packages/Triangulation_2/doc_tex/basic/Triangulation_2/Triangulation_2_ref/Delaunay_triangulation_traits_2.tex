@@ -18,79 +18,107 @@
 
 \ccDefinition
   
-The concept \ccRefName\ does this and that.
 In addition to the requirements 
 of the concept \ccc{Triangulation_traits_2}
 described \ccRefPage{Triangulation_traits_2},
 the concept \ccRefName\
-has to  provide a \ccc{side_of_oriented_circle} test
-and some additional types.
-The \ccc{side_of_oriented_circle} test is the test used to maintain the
+has to  provide a predicate type  \ccc{Side_of_oriented_circle_2} 
+to implement the \ccc{side_of_oriented_circle} test.
+This test test is the basic test used to maintain the
 empty circle property and actually defines the triangulation.
-The additional types \ccc{Line}, \ccc{Direction}
-and \ccc{Ray} are used to describe the dual Voronoi diagram.
-The additional \ccc{Distance} type is only used by the
-\ccc{nearest_vertex(..)} query and the requirements for this type
-are given below.
+Some additional geometric  types (\ccc{Line}, \ccc{Ray})
+and constructors types (\ccc{Construct_circumcenter_2},
+\ccc{Construct_bisector_2} and \ccc{Construct_midpoint})
+are required if functions related to the dual Voronoi diagram
+are called.
+The additional predicate type \ccc{Less_distance_to_point_2} is o
+required if calls to 
+\ccc{nearest_vertex(..)} are issued.
 
 
 \ccTypes
-\ccNestedType{Line}
+\ccNestedType{Line_2}{}
 \ccGlue
-\ccNestedType{Ray}{}
+\ccNestedType{Ray_2}{Must have a constructor which takes two points as 
+arguments : the origin of the ray and another point on the ray.}
+
+
+
+\ccNestedType{Side_of_oriented_circle_2}{Predicate object. Must
+provide the operator
+\ccc{Oriented_side operator()(Point p, Point q, Point r, Point s)}
+which takes four points $p, q, r, s$ as arguments and returns
+\ccc{ON_POSITIVE_SIDE}, \ccc{ON_NEGATIVE_SIDE} or, 
+\ccc{ON_ORIENTED_BOUNDARY} according to the position of points \ccc{s}
+with respect to the oriented circle through  through $p,q$
+and $r$.}
 \ccGlue
-\ccNestedType{Direction}{}
-\ccNestedType{Distance}{Needed only if the \ccc{nearest_neighbor()} 
-function is called.}
+\ccNestedType{Less_distance_to_point_2}{Predicate type. Must provide
+the constructor
+\ccc{Less_distance_to_point_2( Point_2 p)}
+and the operator
+\ccc{bool operator()(Point_2 q, Point_2 r)}
+which returns \ccc{true}
+iff the distance between q and p is smaller
+than the distance between r and p.  This type is only require if
+\ccc{nearest_vertex} queries are issued.}
 
-Each of the three classes \ccc{Line}, \ccc{Direction} and 
-\ccc{Ray}  must know the two others.
-In addition, the \ccc{Line} class is required to have the two
-following member functions:
-\begin{ccClass}{Line}
-
-\ccCreationVariable{l}
-\ccThree{Direction }{l.direction()x}{}
-\ccMethod{Line opposite();}{the same line with opposite orientation.}
+\ccNestedType{Construct_circumcenter_2}{Constructor object. Provides
+the operator 
+\ccc{ Point_2 operator()(Point_2 p, Point_2 q, Point_2 r)} which returns
+the  circumcenter of the three points  \ccc{p, q} anf \ccc{r}.
+This type is required only if  functions
+relative to the dual Voronoi diagram are called.}
 \ccGlue
-\ccMethod{Direction direction();}{the direction of the line.}
-\end{ccClass}
-The \ccc{Ray} class must define a \ccc{Point} class which is the same
-as \ccc{Traits::Point} 
-is required to have the following constructor:
-
-\begin{ccClass}{Ray}
-\ccCreationVariable{r}
-\ccConstructor{Ray(Traits::Point p, Direction d);}{}
-\end{ccClass}
-
+\ccNestedType{Construct_bisector_2}{Constructor object. Provides
+the operator 
+\ccc{ Line_2 operator()(Point_2 p, Point_2 q)} which constructs the
+bisector line of points \ccc{p} and \ccc{q}.
+This type is required only if  functions
+relative to the dual Voronoi diagram are called.}
+\ccGlue
+\ccNestedType{Construct_midpoint} {Constructor object. Provides
+the operator 
+\ccc{ Point_2 operator()(Point_2 p, Point_2 q)} which constructs the
+the midpoint of  \ccc{p} and \ccc{q}.
+This type is required only if  functions
+relative to the dual Voronoi diagram are called.}    
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
 \ccConstructor{Delaunay_triangulation_traits_2();}{default constructor.}
-
-\ccPredicates
-\ccMethod{Oriented_side side_of_oriented_circle(const Point& p0,
-                                                     const Point& p1,
-                                                     const Point& p2,
-                                                     const Point& test);}
-{Gives the \ccc{Oriented_side} of point \ccc{test} with respect to
-the oriented circumscribing circle of  points \ccc{p0, p1} and \ccc{p2}.
-This answers the \ccc{in_circle}  test if the \ccc{Orientation}
-of  Points \ccc{p0, p1} and \ccc{p2} is known,
-which is the case for the points associated with the three
-vertices of a triangulation face.}
+\ccGlue
+\ccConstructor{Delaunay_triangulation_traits_2(Delaunay_triangulation_traits_2 
+dtt);}{copy constructor}
+\ccGlue
+\ccMethod{Delaunay_triangulation_traits_2 
+operator=(Delaunay_triangulation_traits_2);}{Assignment operator.}
 
 
-\ccOperations
-\ccMethod{Point circumcenter(const Point &p, const Point &q, const
-Point &r) const;} { Returns the center point equidistant from \ccc{p}, \ccc{q} and
-\ccc{r}. This method is required only if the duality functions are called.}
+\ccHeading{Access to predicate and constructor objects}
+\ccMethod{Side_of_oriented_circle_2
+side_of_oriented_circle_2_object();}{}
+\ccGlue
+\ccMethod{Less_distance_to_point_2
+less_distance_to_point_2_object(Point_2 p);}
+{This function is required only if
+\ccc{nearest_vertex} queries are issued.
+It forwards its argument $p$ to the constructor
+of \ccc{Less_distance_to_point_2}.}
+\ccGlue
+\ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}
+{Required only if  functions
+relative to the dual Voronoi diagram are called.}
+\ccGlue
+\ccMethod{Construct_bisector_2 construct_bisector_2_object();}
+{Required only if  functions
+relative to the dual Voronoi diagram are called.}
+\ccGlue
+\ccMethod{Construct_midpoint construct_midpoint_object();}
+{Required only if  functions
+relative to the dual Voronoi diagram are called.}
 
-\ccMethod{Line bisector(const Segment &s);}
-{Returns the bisector line of segment s. This method is required only if duality functions
-are called.}
 
 \ccHasModels
 \ccc{CGAL::Triangulation_euclidean_traits_2<Rep>}, \\

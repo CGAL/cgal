@@ -22,55 +22,69 @@ The concept \ccRefName\ fulfill the requirements of
 concept \ccc{Triangulation_traits_2} 
 described \ccRefPage{Triangulation_traits_2}
 and additionally provides  a type
-\ccc{Weitghed_point}  (which derives from the type \ccc{Point} 
+\ccc{Weitghed_point}  (which derives from the type \ccc{Point_2} 
 and add a weight data member )
-and the power tests for weighted points.
-The traits must also provide the types 
-\ccc{Ray} and \ccc{Line} to output the dual power diagram,
-and also eventually a \ccc{Distance} type 
-(analogue to the distance type defined in concept
-\ccc{Delaunay_triangulation_traits_2}
-to answer to lowest power query (localisation in the power diagram).
+and the power tests for weighted points
+and two function objects type for generic and degenerate
+power_test predicates.
+%The traits must also provide the types 
+%\ccc{Ray} and \ccc{Line} to output the dual power diagram,
+
 
 
 \ccTypes
-\ccNestedType{Bare_point}
+\ccNestedType{Bare_point}{Anothr name for the Point_2 type.}
 \ccGlue    
-\ccNestedType{Weighted_point}
+\ccNestedType{Weighted_point}{Is required to derive from Point_2
+and to be a model of the Weighted_point concept.}
 \ccGlue
-\ccNestedType{Line}{}
+%\ccNestedType{Line_2}{Only required if the dual power diagram is asked.}
+%\ccGlue
+%\ccNestedType{Ray_2}{Only required if the dual power diagram is asked.}
+%\ccGlue
+
+\ccNestedTypes{Power_test_2}{A predicate object type. Must provide
+the operator 
+\ccc{Oriented_side operator() ( Weighted_point p,
+			     Weighted_point q,
+			     Weighted_point r,
+			     Weighted_point s) }
+which is the power test for points \ccc{p}, \ccc{q}, \ccc{r} and 
+\ccc{s}. \ccPrecondition{the bare_points corresponding to 
+\ccc{p}, \ccc{q}, \ccc{r} are not collinear}.}
 \ccGlue
-\ccNestedType{Ray}{}
-\ccGlue
-\ccNestedType{Direction}{}
-\ccGlue
-\ccNestedType{Distance} {NOT YET required.}
+\ccNestedTypes{Power_test_degenerated_2}{A predicate object type. Must provide
+the operator 
+\ccc{Oriented_side operator() ( Weighted_point p,
+			     Weighted_point q,
+			     Weighted_point r) }
+which is the degenerated power test for collinear points 
+\ccc{p}, \ccc{q}, \ccc{r}.
+\ccPrecondition{the bare_points corresponding to 
+\ccc{p}, \ccc{q}, \ccc{r} are collinear and \ccc{p != q}.}
+
+
  
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
 \ccConstructor{Regular_triangulation_traits_2();}{default constructor.}
+\ccConstructor{ Regular_triangulation_traits_2 ( 
+    const  Regular_triangulatio_traits_2& );} { copy constructor.}
+\ccMethod{Regular_triangulation_euclidean_traits_2& operator=
+  (const  Regular_triangulation_euclidean_traits_2& );} {assignement operator}
 
-\ccPredicates
-\ccMethod
-{Oriented_side  power_test(const Weighted_point &p,
-                           const Weighted_point &q,
-                           const Weighted_point &r,
-                           const Weighted_point &s);} 
-{The two dimensional  power test.}
-\ccMethod
-{Oriented_side  power_test(const Weighted_point &p,
-                           const Weighted_point &q,
-                           const Weighted_point &r);}
-{The degenerate one dimensional power test  for collinear
-Weighted points.
-\ccPrecond The points included in \ccc{p}, \ccc{q} 
-and \ccc{r} are collinear.}
 
-\ccOperations
-\ccMethod{Rt power(Weighted_point wp, Weighted_point wq) const;}{Returns the power product
-of \ccc{wp} \ and \ccc{wq}. This function is NOT YET required nor used.}
+\ccHeading{Access to predicate objects}
+\ccMethod{Power_test_2 power_test_2_object();}{}
+\ccGlue
+\ccMethod{Power_test_degenerated_2
+  power_test_degenerated_2_object();}{}
+
+%\ccOperations
+%\ccMethod{Rt power(Weighted_point wp, Weighted_point wq) const;}{Returns the power product
+%of \ccc{wp} \ and \ccc{wq}. This function is NOT YET required nor used.}
 
 
 \ccHasModels

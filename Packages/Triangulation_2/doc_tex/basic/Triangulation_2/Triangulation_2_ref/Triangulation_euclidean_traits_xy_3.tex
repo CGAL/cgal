@@ -36,12 +36,30 @@ this class supplies geometric predicates that ignore the
 
 
 \ccTypes
-\ccTypedef{typedef Point_3<R>   Point;}{}
+\ccTypedef{typedef Point_3<R>   Point_2;}{}
 \ccGlue
-\ccTypedef{typedef Segment_3<R>   Segment;}{}
+\ccTypedef{typedef Segment_3<R>   Segment_2;}{}
 \ccGlue
-\ccTypedef{typedef Triangle_3<R>   Triangle;}{}
+\ccTypedef{typedef Triangle_3<R>   Triangle_2;}{}
 
+The following predicates and constructor types are provided
+\ccNestedType{Compare_x_2}
+\ccGlue
+\ccNestedType{Compare_y_2}
+\ccGlue
+\ccNestedType{Orientation_2}
+\ccGlue
+\ccNestedType{Side_of_oriented_circle_2}
+
+\ccHeading{Access to predicate objects}
+The following access functions are provided
+\ccMethod{Comparison_x_2 compare_x_2_object();}{}                               \ccGlue
+\ccMethod{Comparison_y_2 compare_y_2_object();}{}
+\ccGlue
+\ccMethod{Orientation_2  orientation_2_object();}{}
+\ccGlue
+\ccMethod{Side_of_oriented_circle_2
+side_of_oriented_circle_2_object();}{}
 
 \ccSeeAlso
 \ccc{Triangulation_traits_2} \\

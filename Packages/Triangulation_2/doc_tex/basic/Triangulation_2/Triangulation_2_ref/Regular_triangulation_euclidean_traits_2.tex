@@ -18,7 +18,6 @@
 
 \ccDefinition
   
-The class \ccRefName\ does this and that.
 \cgal\ provides the predefined geometric traits
  \ccRefName\ 
 This traits class is templated by a representation class \ccc{Rep}
@@ -35,16 +34,23 @@ derived from the type \ccc{Point} of
 \ccc{Regular_triangulation_traits_2}
 
 \ccTypes
-\ccTypedef{typedef Triangulation_euclidean_traits_2<Rep>::Point
-Point;}{}
+\ccTypedef{typedef Triangulation_euclidean_traits_2<Rep>::Point_2
+Point_2;}{}
 \ccGlue
-\ccTypedef{typedef Weighted_point<Point,Weight> Weighted_point;}{}
-\ccNestedType{TYPE}{some nested types}
+\ccTypedef{typedef Point_2  Bare_point}{}
+\ccGlue
+\ccTypedef{typedef Weighted_point<Point_2,Weight> Weighted_point;}{}
 
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccNestedTypes{Power_test_2}{}
+\ccGlue
+\ccNestedTypes{Power_test_degenerated_2}{}
 
-\ccConstructor{Regular_triangulation_traits_2();}{default constructor.}
+\ccHeading{Access to predicate objects}
+\ccMethod{Power_test_2 power_test_2_object();}{}
+\ccGlue
+\ccMethod{Power_test_degenerated_2
+  power_test_degenerated_2_object();}{}
+
 
 
 
