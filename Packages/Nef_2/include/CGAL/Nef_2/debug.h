@@ -22,20 +22,15 @@
 
 #include <iostream>
 
+static int debugthread=1;
+
 #undef TRACE
 #undef TRACEN
 #undef TRACEV
 #undef CTRACE
 #undef CTRACEN
-/*
 #undef ASSERT
-*/
-
-#if CGAL_NEF_DEBUG>0
-namespace CGAL {
-static int debugthread=3141592;
-}
-#endif
+#undef SETDTHREAD
 
 #if CGAL_NEF_DEBUG>0
 #define SETDTHREAD(l) debugthread=l
@@ -44,28 +39,31 @@ static int debugthread=3141592;
 #endif
 
 #if CGAL_NEF_DEBUG>0
-#define TRACE(t)   if((debugthread%CGAL_NEF_DEBUG)==0)\
- std::cerr<<" "<<t;std::cerr.flush()
+#define TRACE(t) if((debugthread%CGAL_NEF_DEBUG)==0) \
+ std::cerr<<" "<<t; \
+ std::cerr.flush()
 #else
 #define TRACE(t) 
 #endif
 
 #if CGAL_NEF_DEBUG>0
-#define TRACEV(t)  if((debugthread%CGAL_NEF_DEBUG)==0)\
- std::cerr<<" "<<#t<<" = "<<(t)<<std::endl;std::cerr.flush()
+#define TRACEV(t) if((debugthread%CGAL_NEF_DEBUG)==0) \
+ std::cerr<<" "<<#t<<" = "<<(t)<<std::endl; \
+ std::cerr.flush()
 #else
 #define TRACEV(t) 
 #endif
 
 #if CGAL_NEF_DEBUG>0
-#define TRACEN(t)  if((debugthread%CGAL_NEF_DEBUG)==0)\
- std::cerr<<" "<<t<<std::endl;std::cerr.flush()
+#define TRACEN(t) if((debugthread%CGAL_NEF_DEBUG)==0) \
+ std::cerr<<" "<<t<<std::endl; \
+ std::cerr.flush()
 #else
 #define TRACEN(t) 
 #endif
 
 #if CGAL_NEF_DEBUG>0
-#define CTRACE(b,t)  if(b) std::cerr<<" "<<t; else std::cerr<<" 0"
+#define CTRACE(b,t) if(b) std::cerr<<" "<<t; else std::cerr<<" 0"
 #else
 #define CTRACE(b,t) 
 #endif
@@ -75,18 +73,5 @@ static int debugthread=3141592;
 #else
 #define CTRACEN(b,t) 
 #endif
-
-#ifndef _ASSERT
-#define  CGAL_NEF_ASSERT(cond,fstr) 
-#else
-#define CGAL_NEF_ASSERT(cond,fstr)   \
-  if (!(cond)) {       \
-    std::cerr<<"   ASSERT:   "<< #fstr << std::endl; \
-    std::cerr<<"   COND:     "<< #cond << std::endl; \
-    std::cerr<<"   POSITION: "<<__FILE__<<" at line "<<__LINE__<<std::endl; \
-    abort();           \
-  }
-#endif
-
 
 #endif //CGAL_DEBUG_H
