@@ -79,43 +79,43 @@ power_testH2_SAF(
 inline
 Oriented_side
 power_testH2_SAF(
-    const double &phx,
-    const double &phy,
-    const double &phw,
-    const double &pwt,
-    const double &qhx,
-    const double &qhy,
-    const double &qhw,
-    const double &qwt,
-    const double &rhx,
-    const double &rhy,
-    const double &rhw,
-    const double &rwt,
-    const double &thx,
-    const double &thy,
-    const double &thw,
-    const double &twt,
+    const Restricted_double &phx,
+    const Restricted_double &phy,
+    const Restricted_double &phw,
+    const Restricted_double &pwt,
+    const Restricted_double &qhx,
+    const Restricted_double &qhy,
+    const Restricted_double &qhw,
+    const Restricted_double &qwt,
+    const Restricted_double &rhx,
+    const Restricted_double &rhy,
+    const Restricted_double &rhw,
+    const Restricted_double &rwt,
+    const Restricted_double &thx,
+    const Restricted_double &thy,
+    const Restricted_double &thw,
+    const Restricted_double &twt,
     const double & epsilon_0)
 {
-    double dphx = phx*phw;
-    double dphy = phy*phw;
-    double dphw = square(phw);
-    double dpz = square(phx) + square(phy) - pwt*dphw;
+    Restricted_double dphx = phx*phw;
+    Restricted_double dphy = phy*phw;
+    Restricted_double dphw = square(phw);
+    Restricted_double dpz = square(phx) + square(phy) - pwt*dphw;
 
-    double dqhx = qhx*qhw;
-    double dqhy = qhy*qhw;
-    double dqhw = square(qhw);
-    double dqz = square(qhx) + square(qhy) - qwt*dqhw;
+    Restricted_double dqhx = qhx*qhw;
+    Restricted_double dqhy = qhy*qhw;
+    Restricted_double dqhw = square(qhw);
+    Restricted_double dqz = square(qhx) + square(qhy) - qwt*dqhw;
 
-    double drhx = rhx*rhw;
-    double drhy = rhy*rhw;
-    double drhw = square(rhw);
-    double drz = square(rhx) + square(rhy) - rwt*drhw;
+    Restricted_double drhx = rhx*rhw;
+    Restricted_double drhy = rhy*rhw;
+    Restricted_double drhw = square(rhw);
+    Restricted_double drz = square(rhx) + square(rhy) - rwt*drhw;
 
-    double dthx = thx*thw;
-    double dthy = thy*thw;
-    double dthw = square(thw);
-    double dtz = square(thx) + square(thy) - twt*dthw;
+    Restricted_double dthx = thx*thw;
+    Restricted_double dthy = thy*thw;
+    Restricted_double dthw = square(thw);
+    Restricted_double dtz = square(thx) + square(thy) - twt*dthw;
 
     return Oriented_side(sign_of_determinant4x4_SAF(dphx, dphy, dpz, dphw,
 	                                        dqhx, dqhy, dqz, dqhw,
@@ -150,45 +150,46 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(phx) > _bound ||
-        fabs(phy) > _bound ||
-        fabs(phw) > _bound ||
-        fabs(pwt) > _bound ||
-        fabs(qhx) > _bound ||
-        fabs(qhy) > _bound ||
-        fabs(qhw) > _bound ||
-        fabs(qwt) > _bound ||
-        fabs(rhx) > _bound ||
-        fabs(rhy) > _bound ||
-        fabs(rhw) > _bound ||
-        fabs(rwt) > _bound ||
-        fabs(thx) > _bound ||
-        fabs(thy) > _bound ||
-        fabs(thw) > _bound ||
-        fabs(twt) > _bound)
-      throw (Static_adaptatif_filter::unsafe_comparison);
+        fabs(phx.value()) > _bound ||
+        fabs(phy.value()) > _bound ||
+        fabs(phw.value()) > _bound ||
+        fabs(pwt.value()) > _bound ||
+        fabs(qhx.value()) > _bound ||
+        fabs(qhy.value()) > _bound ||
+        fabs(qhw.value()) > _bound ||
+        fabs(qwt.value()) > _bound ||
+        fabs(rhx.value()) > _bound ||
+        fabs(rhy.value()) > _bound ||
+        fabs(rhw.value()) > _bound ||
+        fabs(rwt.value()) > _bound ||
+        fabs(thx.value()) > _bound ||
+        fabs(thy.value()) > _bound ||
+        fabs(thw.value()) > _bound ||
+        fabs(twt.value()) > _bound)
+      throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return power_testH2_SAF(
-		phx.value(),
-		phy.value(),
-		phw.value(),
-		pwt.value(),
-		qhx.value(),
-		qhy.value(),
-		qhw.value(),
-		qwt.value(),
-		rhx.value(),
-		rhy.value(),
-		rhw.value(),
-		rwt.value(),
-		thx.value(),
-		thy.value(),
-		thw.value(),
-		twt.value(),
+		Restricted_double(phx.value()),
+		Restricted_double(phy.value()),
+		Restricted_double(phw.value()),
+		Restricted_double(pwt.value()),
+		Restricted_double(qhx.value()),
+		Restricted_double(qhy.value()),
+		Restricted_double(qhw.value()),
+		Restricted_double(qwt.value()),
+		Restricted_double(rhx.value()),
+		Restricted_double(rhy.value()),
+		Restricted_double(rhw.value()),
+		Restricted_double(rwt.value()),
+		Restricted_double(thx.value()),
+		Restricted_double(thy.value()),
+		Restricted_double(thw.value()),
+		Restricted_double(twt.value()),
 		Filter_epsilon_power_testH2_16_0);
   }
-  catch (Static_adaptatif_filter::unsafe_comparison)
+  catch (Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -196,22 +197,22 @@ letstry:
       tried = true;
       // Recompute _bound (tighter or larger).
       _bound = 0;
-      _bound = max(_bound, fabs(phx));
-      _bound = max(_bound, fabs(phy));
-      _bound = max(_bound, fabs(phw));
-      _bound = max(_bound, fabs(pwt));
-      _bound = max(_bound, fabs(qhx));
-      _bound = max(_bound, fabs(qhy));
-      _bound = max(_bound, fabs(qhw));
-      _bound = max(_bound, fabs(qwt));
-      _bound = max(_bound, fabs(rhx));
-      _bound = max(_bound, fabs(rhy));
-      _bound = max(_bound, fabs(rhw));
-      _bound = max(_bound, fabs(rwt));
-      _bound = max(_bound, fabs(thx));
-      _bound = max(_bound, fabs(thy));
-      _bound = max(_bound, fabs(thw));
-      _bound = max(_bound, fabs(twt));
+      _bound = std::max(_bound, fabs(phx.value()));
+      _bound = std::max(_bound, fabs(phy.value()));
+      _bound = std::max(_bound, fabs(phw.value()));
+      _bound = std::max(_bound, fabs(pwt.value()));
+      _bound = std::max(_bound, fabs(qhx.value()));
+      _bound = std::max(_bound, fabs(qhy.value()));
+      _bound = std::max(_bound, fabs(qhw.value()));
+      _bound = std::max(_bound, fabs(qwt.value()));
+      _bound = std::max(_bound, fabs(rhx.value()));
+      _bound = std::max(_bound, fabs(rhy.value()));
+      _bound = std::max(_bound, fabs(rhw.value()));
+      _bound = std::max(_bound, fabs(rwt.value()));
+      _bound = std::max(_bound, fabs(thx.value()));
+      _bound = std::max(_bound, fabs(thy.value()));
+      _bound = std::max(_bound, fabs(thw.value()));
+      _bound = std::max(_bound, fabs(twt.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
@@ -317,24 +318,24 @@ power_testH2_SAF(
 inline
 Oriented_side
 power_testH2_SAF(
-    const double &phx,
-    const double &phy,
-    const double &phw,
-    const double &pwt,
-    const double &qhx,
-    const double &qhy,
-    const double &qhw,
-    const double &qwt,
-    const double &thx,
-    const double &thy,
-    const double &thw,
-    const double &twt,
+    const Restricted_double &phx,
+    const Restricted_double &phy,
+    const Restricted_double &phw,
+    const Restricted_double &pwt,
+    const Restricted_double &qhx,
+    const Restricted_double &qhy,
+    const Restricted_double &qhw,
+    const Restricted_double &qwt,
+    const Restricted_double &thx,
+    const Restricted_double &thy,
+    const Restricted_double &thw,
+    const Restricted_double &twt,
     const double & epsilon_0,
     const double & epsilon_1)
 {
     
     
-    double pa, qa, ta;
+    Restricted_double pa, qa, ta;
 
     if (phx * qhw != qhx * phw )
     {
@@ -349,14 +350,14 @@ power_testH2_SAF(
 	ta = thy*thw;
     }
 
-    double dphw = square(phw);
-    double dpz = square(phx) + square(phy) - pwt*dphw;
+    Restricted_double dphw = square(phw);
+    Restricted_double dpz = square(phx) + square(phy) - pwt*dphw;
 
-    double dqhw = square(qhw);
-    double dqz = square(qhx) + square(qhy) - qwt*dqhw;
+    Restricted_double dqhw = square(qhw);
+    Restricted_double dqz = square(qhx) + square(qhy) - qwt*dqhw;
 
-    double dthw = square(thw);
-    double dtz = square(thx) + square(thy) - twt*dthw;
+    Restricted_double dthw = square(thw);
+    Restricted_double dtz = square(thx) + square(thy) - twt*dthw;
 
     return Oriented_side(CGAL::compare_SAF(pa, qa, epsilon_0) *
 	                 sign_of_determinant3x3_SAF(pa, dpz, dphw,
@@ -387,38 +388,39 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(phx) > _bound ||
-        fabs(phy) > _bound ||
-        fabs(phw) > _bound ||
-        fabs(pwt) > _bound ||
-        fabs(qhx) > _bound ||
-        fabs(qhy) > _bound ||
-        fabs(qhw) > _bound ||
-        fabs(qwt) > _bound ||
-        fabs(thx) > _bound ||
-        fabs(thy) > _bound ||
-        fabs(thw) > _bound ||
-        fabs(twt) > _bound)
-      throw (Static_adaptatif_filter::unsafe_comparison);
+        fabs(phx.value()) > _bound ||
+        fabs(phy.value()) > _bound ||
+        fabs(phw.value()) > _bound ||
+        fabs(pwt.value()) > _bound ||
+        fabs(qhx.value()) > _bound ||
+        fabs(qhy.value()) > _bound ||
+        fabs(qhw.value()) > _bound ||
+        fabs(qwt.value()) > _bound ||
+        fabs(thx.value()) > _bound ||
+        fabs(thy.value()) > _bound ||
+        fabs(thw.value()) > _bound ||
+        fabs(twt.value()) > _bound)
+      throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return power_testH2_SAF(
-		phx.value(),
-		phy.value(),
-		phw.value(),
-		pwt.value(),
-		qhx.value(),
-		qhy.value(),
-		qhw.value(),
-		qwt.value(),
-		thx.value(),
-		thy.value(),
-		thw.value(),
-		twt.value(),
+		Restricted_double(phx.value()),
+		Restricted_double(phy.value()),
+		Restricted_double(phw.value()),
+		Restricted_double(pwt.value()),
+		Restricted_double(qhx.value()),
+		Restricted_double(qhy.value()),
+		Restricted_double(qhw.value()),
+		Restricted_double(qwt.value()),
+		Restricted_double(thx.value()),
+		Restricted_double(thy.value()),
+		Restricted_double(thw.value()),
+		Restricted_double(twt.value()),
 		Filter_epsilon_power_testH2_12_0,
 		Filter_epsilon_power_testH2_12_1);
   }
-  catch (Static_adaptatif_filter::unsafe_comparison)
+  catch (Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -426,18 +428,18 @@ letstry:
       tried = true;
       // Recompute _bound (tighter or larger).
       _bound = 0;
-      _bound = max(_bound, fabs(phx));
-      _bound = max(_bound, fabs(phy));
-      _bound = max(_bound, fabs(phw));
-      _bound = max(_bound, fabs(pwt));
-      _bound = max(_bound, fabs(qhx));
-      _bound = max(_bound, fabs(qhy));
-      _bound = max(_bound, fabs(qhw));
-      _bound = max(_bound, fabs(qwt));
-      _bound = max(_bound, fabs(thx));
-      _bound = max(_bound, fabs(thy));
-      _bound = max(_bound, fabs(thw));
-      _bound = max(_bound, fabs(twt));
+      _bound = std::max(_bound, fabs(phx.value()));
+      _bound = std::max(_bound, fabs(phy.value()));
+      _bound = std::max(_bound, fabs(phw.value()));
+      _bound = std::max(_bound, fabs(pwt.value()));
+      _bound = std::max(_bound, fabs(qhx.value()));
+      _bound = std::max(_bound, fabs(qhy.value()));
+      _bound = std::max(_bound, fabs(qhw.value()));
+      _bound = std::max(_bound, fabs(qwt.value()));
+      _bound = std::max(_bound, fabs(thx.value()));
+      _bound = std::max(_bound, fabs(thy.value()));
+      _bound = std::max(_bound, fabs(thw.value()));
+      _bound = std::max(_bound, fabs(twt.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.

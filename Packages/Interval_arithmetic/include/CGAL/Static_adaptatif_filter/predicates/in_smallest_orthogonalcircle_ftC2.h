@@ -56,22 +56,22 @@ in_smallest_orthogonalcircleC2_SAF(
 inline
 Oriented_side
 in_smallest_orthogonalcircleC2_SAF(
-    const double &px,
-    const double &py,
-    const double &pw,
-    const double &qx,
-    const double &qy,
-    const double &qw,
-    const double &tx,
-    const double &ty,
-    const double &tw,
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &pw,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &qw,
+    const Restricted_double &tx,
+    const Restricted_double &ty,
+    const Restricted_double &tw,
     const double & epsilon_0)
 {
-  double dpx = px-qx;
-  double dpy = py-qy;
-  double dtx = tx-qx;
-  double dty = ty-qy;
-  double dpz = square(dpx)+square(dpy);
+  Restricted_double dpx = px-qx;
+  Restricted_double dpy = py-qy;
+  Restricted_double dtx = tx-qx;
+  Restricted_double dty = ty-qy;
+  Restricted_double dpz = square(dpx)+square(dpy);
  
   return Oriented_side (sign_SAF((square(dtx)+square(dty)-tw+qw)*dpz
 			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty), epsilon_0));
@@ -97,31 +97,32 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px) > _bound ||
-        fabs(py) > _bound ||
-        fabs(pw) > _bound ||
-        fabs(qx) > _bound ||
-        fabs(qy) > _bound ||
-        fabs(qw) > _bound ||
-        fabs(tx) > _bound ||
-        fabs(ty) > _bound ||
-        fabs(tw) > _bound)
-      throw (Static_adaptatif_filter::unsafe_comparison);
+        fabs(px.value()) > _bound ||
+        fabs(py.value()) > _bound ||
+        fabs(pw.value()) > _bound ||
+        fabs(qx.value()) > _bound ||
+        fabs(qy.value()) > _bound ||
+        fabs(qw.value()) > _bound ||
+        fabs(tx.value()) > _bound ||
+        fabs(ty.value()) > _bound ||
+        fabs(tw.value()) > _bound)
+      throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return in_smallest_orthogonalcircleC2_SAF(
-		px.value(),
-		py.value(),
-		pw.value(),
-		qx.value(),
-		qy.value(),
-		qw.value(),
-		tx.value(),
-		ty.value(),
-		tw.value(),
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(pw.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(qw.value()),
+		Restricted_double(tx.value()),
+		Restricted_double(ty.value()),
+		Restricted_double(tw.value()),
 		Filter_epsilon_in_smallest_orthogonalcircleC2_9_0);
   }
-  catch (Static_adaptatif_filter::unsafe_comparison)
+  catch (Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -129,15 +130,15 @@ letstry:
       tried = true;
       // Recompute _bound (tighter or larger).
       _bound = 0;
-      _bound = max(_bound, fabs(px));
-      _bound = max(_bound, fabs(py));
-      _bound = max(_bound, fabs(pw));
-      _bound = max(_bound, fabs(qx));
-      _bound = max(_bound, fabs(qy));
-      _bound = max(_bound, fabs(qw));
-      _bound = max(_bound, fabs(tx));
-      _bound = max(_bound, fabs(ty));
-      _bound = max(_bound, fabs(tw));
+      _bound = std::max(_bound, fabs(px.value()));
+      _bound = std::max(_bound, fabs(py.value()));
+      _bound = std::max(_bound, fabs(pw.value()));
+      _bound = std::max(_bound, fabs(qx.value()));
+      _bound = std::max(_bound, fabs(qy.value()));
+      _bound = std::max(_bound, fabs(qw.value()));
+      _bound = std::max(_bound, fabs(tx.value()));
+      _bound = std::max(_bound, fabs(ty.value()));
+      _bound = std::max(_bound, fabs(tw.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.

@@ -61,25 +61,25 @@ collinearC3_SAF(
 inline
 bool
 collinearC3_SAF(
-    const double &px,
-    const double &py,
-    const double &pz,
-    const double &qx,
-    const double &qy,
-    const double &qz,
-    const double &rx,
-    const double &ry,
-    const double &rz,
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &pz,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &qz,
+    const Restricted_double &rx,
+    const Restricted_double &ry,
+    const Restricted_double &rz,
     const double & epsilon_0,
     const double & epsilon_1,
     const double & epsilon_2)
 {
-  double dpx = px-rx;
-  double dpy = py-ry;
-  double dpz = pz-rz;
-  double dqx = qx-rx;
-  double dqy = qy-ry;
-  double dqz = qz-rz;
+  Restricted_double dpx = px-rx;
+  Restricted_double dpy = py-ry;
+  Restricted_double dpz = pz-rz;
+  Restricted_double dqx = qx-rx;
+  Restricted_double dqy = qy-ry;
+  Restricted_double dqz = qz-rz;
   return (sign_of_determinant2x2_SAF(dpx,dqx,dpy,dqy, epsilon_0) == ZERO)
       && (sign_of_determinant2x2_SAF(dpx,dqx,dpz,dqz, epsilon_1) == ZERO)
       && (sign_of_determinant2x2_SAF(dpy,dqy,dpz,dqz, epsilon_2) == ZERO);
@@ -105,33 +105,34 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px) > _bound ||
-        fabs(py) > _bound ||
-        fabs(pz) > _bound ||
-        fabs(qx) > _bound ||
-        fabs(qy) > _bound ||
-        fabs(qz) > _bound ||
-        fabs(rx) > _bound ||
-        fabs(ry) > _bound ||
-        fabs(rz) > _bound)
-      throw (Static_adaptatif_filter::unsafe_comparison);
+        fabs(px.value()) > _bound ||
+        fabs(py.value()) > _bound ||
+        fabs(pz.value()) > _bound ||
+        fabs(qx.value()) > _bound ||
+        fabs(qy.value()) > _bound ||
+        fabs(qz.value()) > _bound ||
+        fabs(rx.value()) > _bound ||
+        fabs(ry.value()) > _bound ||
+        fabs(rz.value()) > _bound)
+      throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return collinearC3_SAF(
-		px.value(),
-		py.value(),
-		pz.value(),
-		qx.value(),
-		qy.value(),
-		qz.value(),
-		rx.value(),
-		ry.value(),
-		rz.value(),
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(pz.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(qz.value()),
+		Restricted_double(rx.value()),
+		Restricted_double(ry.value()),
+		Restricted_double(rz.value()),
 		Filter_epsilon_collinearC3_9_0,
 		Filter_epsilon_collinearC3_9_1,
 		Filter_epsilon_collinearC3_9_2);
   }
-  catch (Static_adaptatif_filter::unsafe_comparison)
+  catch (Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -139,15 +140,15 @@ letstry:
       tried = true;
       // Recompute _bound (tighter or larger).
       _bound = 0;
-      _bound = max(_bound, fabs(px));
-      _bound = max(_bound, fabs(py));
-      _bound = max(_bound, fabs(pz));
-      _bound = max(_bound, fabs(qx));
-      _bound = max(_bound, fabs(qy));
-      _bound = max(_bound, fabs(qz));
-      _bound = max(_bound, fabs(rx));
-      _bound = max(_bound, fabs(ry));
-      _bound = max(_bound, fabs(rz));
+      _bound = std::max(_bound, fabs(px.value()));
+      _bound = std::max(_bound, fabs(py.value()));
+      _bound = std::max(_bound, fabs(pz.value()));
+      _bound = std::max(_bound, fabs(qx.value()));
+      _bound = std::max(_bound, fabs(qy.value()));
+      _bound = std::max(_bound, fabs(qz.value()));
+      _bound = std::max(_bound, fabs(rx.value()));
+      _bound = std::max(_bound, fabs(ry.value()));
+      _bound = std::max(_bound, fabs(rz.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
@@ -212,18 +213,18 @@ orientationC3_SAF(
 inline
 Orientation
 orientationC3_SAF(
-    const double &px,
-    const double &py,
-    const double &pz,
-    const double &qx,
-    const double &qy,
-    const double &qz,
-    const double &rx,
-    const double &ry,
-    const double &rz,
-    const double &sx,
-    const double &sy,
-    const double &sz,
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &pz,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &qz,
+    const Restricted_double &rx,
+    const Restricted_double &ry,
+    const Restricted_double &rz,
+    const Restricted_double &sx,
+    const Restricted_double &sy,
+    const Restricted_double &sz,
     const double & epsilon_0)
 {
   return Orientation(sign_of_determinant3x3_SAF(qx-px,rx-px,sx-px,
@@ -254,37 +255,38 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px) > _bound ||
-        fabs(py) > _bound ||
-        fabs(pz) > _bound ||
-        fabs(qx) > _bound ||
-        fabs(qy) > _bound ||
-        fabs(qz) > _bound ||
-        fabs(rx) > _bound ||
-        fabs(ry) > _bound ||
-        fabs(rz) > _bound ||
-        fabs(sx) > _bound ||
-        fabs(sy) > _bound ||
-        fabs(sz) > _bound)
-      throw (Static_adaptatif_filter::unsafe_comparison);
+        fabs(px.value()) > _bound ||
+        fabs(py.value()) > _bound ||
+        fabs(pz.value()) > _bound ||
+        fabs(qx.value()) > _bound ||
+        fabs(qy.value()) > _bound ||
+        fabs(qz.value()) > _bound ||
+        fabs(rx.value()) > _bound ||
+        fabs(ry.value()) > _bound ||
+        fabs(rz.value()) > _bound ||
+        fabs(sx.value()) > _bound ||
+        fabs(sy.value()) > _bound ||
+        fabs(sz.value()) > _bound)
+      throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return orientationC3_SAF(
-		px.value(),
-		py.value(),
-		pz.value(),
-		qx.value(),
-		qy.value(),
-		qz.value(),
-		rx.value(),
-		ry.value(),
-		rz.value(),
-		sx.value(),
-		sy.value(),
-		sz.value(),
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(pz.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(qz.value()),
+		Restricted_double(rx.value()),
+		Restricted_double(ry.value()),
+		Restricted_double(rz.value()),
+		Restricted_double(sx.value()),
+		Restricted_double(sy.value()),
+		Restricted_double(sz.value()),
 		Filter_epsilon_orientationC3_12_0);
   }
-  catch (Static_adaptatif_filter::unsafe_comparison)
+  catch (Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -292,18 +294,18 @@ letstry:
       tried = true;
       // Recompute _bound (tighter or larger).
       _bound = 0;
-      _bound = max(_bound, fabs(px));
-      _bound = max(_bound, fabs(py));
-      _bound = max(_bound, fabs(pz));
-      _bound = max(_bound, fabs(qx));
-      _bound = max(_bound, fabs(qy));
-      _bound = max(_bound, fabs(qz));
-      _bound = max(_bound, fabs(rx));
-      _bound = max(_bound, fabs(ry));
-      _bound = max(_bound, fabs(rz));
-      _bound = max(_bound, fabs(sx));
-      _bound = max(_bound, fabs(sy));
-      _bound = max(_bound, fabs(sz));
+      _bound = std::max(_bound, fabs(px.value()));
+      _bound = std::max(_bound, fabs(py.value()));
+      _bound = std::max(_bound, fabs(pz.value()));
+      _bound = std::max(_bound, fabs(qx.value()));
+      _bound = std::max(_bound, fabs(qy.value()));
+      _bound = std::max(_bound, fabs(qz.value()));
+      _bound = std::max(_bound, fabs(rx.value()));
+      _bound = std::max(_bound, fabs(ry.value()));
+      _bound = std::max(_bound, fabs(rz.value()));
+      _bound = std::max(_bound, fabs(sx.value()));
+      _bound = std::max(_bound, fabs(sy.value()));
+      _bound = std::max(_bound, fabs(sz.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
@@ -392,39 +394,39 @@ side_of_oriented_sphereC3_SAF(
 inline
 Oriented_side
 side_of_oriented_sphereC3_SAF(
-    const double &px,
-    const double &py,
-    const double &pz,
-    const double &qx,
-    const double &qy,
-    const double &qz,
-    const double &rx,
-    const double &ry,
-    const double &rz,
-    const double &sx,
-    const double &sy,
-    const double &sz,
-    const double &tx,
-    const double &ty,
-    const double &tz,
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &pz,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &qz,
+    const Restricted_double &rx,
+    const Restricted_double &ry,
+    const Restricted_double &rz,
+    const Restricted_double &sx,
+    const Restricted_double &sy,
+    const Restricted_double &sz,
+    const Restricted_double &tx,
+    const Restricted_double &ty,
+    const Restricted_double &tz,
     const double & epsilon_0)
 {
-  double ptx = px - tx;
-  double pty = py - ty;
-  double ptz = pz - tz;
-  double pt2 = square(ptx) + square(pty) + square(ptz);
-  double qtx = qx - tx;
-  double qty = qy - ty;
-  double qtz = qz - tz;
-  double qt2 = square(qtx) + square(qty) + square(qtz);
-  double rtx = rx - tx;
-  double rty = ry - ty;
-  double rtz = rz - tz;
-  double rt2 = square(rtx) + square(rty) + square(rtz);
-  double stx = sx - tx;
-  double sty = sy - ty;
-  double stz = sz - tz;
-  double st2 = square(stx) + square(sty) + square(stz);
+  Restricted_double ptx = px - tx;
+  Restricted_double pty = py - ty;
+  Restricted_double ptz = pz - tz;
+  Restricted_double pt2 = square(ptx) + square(pty) + square(ptz);
+  Restricted_double qtx = qx - tx;
+  Restricted_double qty = qy - ty;
+  Restricted_double qtz = qz - tz;
+  Restricted_double qt2 = square(qtx) + square(qty) + square(qtz);
+  Restricted_double rtx = rx - tx;
+  Restricted_double rty = ry - ty;
+  Restricted_double rtz = rz - tz;
+  Restricted_double rt2 = square(rtx) + square(rty) + square(rtz);
+  Restricted_double stx = sx - tx;
+  Restricted_double sty = sy - ty;
+  Restricted_double stz = sz - tz;
+  Restricted_double st2 = square(stx) + square(sty) + square(stz);
   return Oriented_side(sign_of_determinant4x4_SAF(ptx,pty,ptz,pt2,
                                               rtx,rty,rtz,rt2,
                                               qtx,qty,qtz,qt2,
@@ -457,43 +459,44 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px) > _bound ||
-        fabs(py) > _bound ||
-        fabs(pz) > _bound ||
-        fabs(qx) > _bound ||
-        fabs(qy) > _bound ||
-        fabs(qz) > _bound ||
-        fabs(rx) > _bound ||
-        fabs(ry) > _bound ||
-        fabs(rz) > _bound ||
-        fabs(sx) > _bound ||
-        fabs(sy) > _bound ||
-        fabs(sz) > _bound ||
-        fabs(tx) > _bound ||
-        fabs(ty) > _bound ||
-        fabs(tz) > _bound)
-      throw (Static_adaptatif_filter::unsafe_comparison);
+        fabs(px.value()) > _bound ||
+        fabs(py.value()) > _bound ||
+        fabs(pz.value()) > _bound ||
+        fabs(qx.value()) > _bound ||
+        fabs(qy.value()) > _bound ||
+        fabs(qz.value()) > _bound ||
+        fabs(rx.value()) > _bound ||
+        fabs(ry.value()) > _bound ||
+        fabs(rz.value()) > _bound ||
+        fabs(sx.value()) > _bound ||
+        fabs(sy.value()) > _bound ||
+        fabs(sz.value()) > _bound ||
+        fabs(tx.value()) > _bound ||
+        fabs(ty.value()) > _bound ||
+        fabs(tz.value()) > _bound)
+      throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return side_of_oriented_sphereC3_SAF(
-		px.value(),
-		py.value(),
-		pz.value(),
-		qx.value(),
-		qy.value(),
-		qz.value(),
-		rx.value(),
-		ry.value(),
-		rz.value(),
-		sx.value(),
-		sy.value(),
-		sz.value(),
-		tx.value(),
-		ty.value(),
-		tz.value(),
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(pz.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(qz.value()),
+		Restricted_double(rx.value()),
+		Restricted_double(ry.value()),
+		Restricted_double(rz.value()),
+		Restricted_double(sx.value()),
+		Restricted_double(sy.value()),
+		Restricted_double(sz.value()),
+		Restricted_double(tx.value()),
+		Restricted_double(ty.value()),
+		Restricted_double(tz.value()),
 		Filter_epsilon_side_of_oriented_sphereC3_15_0);
   }
-  catch (Static_adaptatif_filter::unsafe_comparison)
+  catch (Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -501,21 +504,21 @@ letstry:
       tried = true;
       // Recompute _bound (tighter or larger).
       _bound = 0;
-      _bound = max(_bound, fabs(px));
-      _bound = max(_bound, fabs(py));
-      _bound = max(_bound, fabs(pz));
-      _bound = max(_bound, fabs(qx));
-      _bound = max(_bound, fabs(qy));
-      _bound = max(_bound, fabs(qz));
-      _bound = max(_bound, fabs(rx));
-      _bound = max(_bound, fabs(ry));
-      _bound = max(_bound, fabs(rz));
-      _bound = max(_bound, fabs(sx));
-      _bound = max(_bound, fabs(sy));
-      _bound = max(_bound, fabs(sz));
-      _bound = max(_bound, fabs(tx));
-      _bound = max(_bound, fabs(ty));
-      _bound = max(_bound, fabs(tz));
+      _bound = std::max(_bound, fabs(px.value()));
+      _bound = std::max(_bound, fabs(py.value()));
+      _bound = std::max(_bound, fabs(pz.value()));
+      _bound = std::max(_bound, fabs(qx.value()));
+      _bound = std::max(_bound, fabs(qy.value()));
+      _bound = std::max(_bound, fabs(qz.value()));
+      _bound = std::max(_bound, fabs(rx.value()));
+      _bound = std::max(_bound, fabs(ry.value()));
+      _bound = std::max(_bound, fabs(rz.value()));
+      _bound = std::max(_bound, fabs(sx.value()));
+      _bound = std::max(_bound, fabs(sy.value()));
+      _bound = std::max(_bound, fabs(sz.value()));
+      _bound = std::max(_bound, fabs(tx.value()));
+      _bound = std::max(_bound, fabs(ty.value()));
+      _bound = std::max(_bound, fabs(tz.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
@@ -602,21 +605,21 @@ side_of_bounded_sphereC3_SAF(
 inline
 Bounded_side
 side_of_bounded_sphereC3_SAF(
-    const double &px,
-    const double &py,
-    const double &pz,
-    const double &qx,
-    const double &qy,
-    const double &qz,
-    const double &rx,
-    const double &ry,
-    const double &rz,
-    const double &sx,
-    const double &sy,
-    const double &sz,
-    const double &tx,
-    const double &ty,
-    const double &tz,
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &pz,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &qz,
+    const Restricted_double &rx,
+    const Restricted_double &ry,
+    const Restricted_double &rz,
+    const Restricted_double &sx,
+    const Restricted_double &sy,
+    const Restricted_double &sz,
+    const Restricted_double &tx,
+    const Restricted_double &ty,
+    const Restricted_double &tz,
     const double & epsilon_0,
     const double & epsilon_1)
 {
@@ -658,44 +661,45 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px) > _bound ||
-        fabs(py) > _bound ||
-        fabs(pz) > _bound ||
-        fabs(qx) > _bound ||
-        fabs(qy) > _bound ||
-        fabs(qz) > _bound ||
-        fabs(rx) > _bound ||
-        fabs(ry) > _bound ||
-        fabs(rz) > _bound ||
-        fabs(sx) > _bound ||
-        fabs(sy) > _bound ||
-        fabs(sz) > _bound ||
-        fabs(tx) > _bound ||
-        fabs(ty) > _bound ||
-        fabs(tz) > _bound)
-      throw (Static_adaptatif_filter::unsafe_comparison);
+        fabs(px.value()) > _bound ||
+        fabs(py.value()) > _bound ||
+        fabs(pz.value()) > _bound ||
+        fabs(qx.value()) > _bound ||
+        fabs(qy.value()) > _bound ||
+        fabs(qz.value()) > _bound ||
+        fabs(rx.value()) > _bound ||
+        fabs(ry.value()) > _bound ||
+        fabs(rz.value()) > _bound ||
+        fabs(sx.value()) > _bound ||
+        fabs(sy.value()) > _bound ||
+        fabs(sz.value()) > _bound ||
+        fabs(tx.value()) > _bound ||
+        fabs(ty.value()) > _bound ||
+        fabs(tz.value()) > _bound)
+      throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return side_of_bounded_sphereC3_SAF(
-		px.value(),
-		py.value(),
-		pz.value(),
-		qx.value(),
-		qy.value(),
-		qz.value(),
-		rx.value(),
-		ry.value(),
-		rz.value(),
-		sx.value(),
-		sy.value(),
-		sz.value(),
-		tx.value(),
-		ty.value(),
-		tz.value(),
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(pz.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(qz.value()),
+		Restricted_double(rx.value()),
+		Restricted_double(ry.value()),
+		Restricted_double(rz.value()),
+		Restricted_double(sx.value()),
+		Restricted_double(sy.value()),
+		Restricted_double(sz.value()),
+		Restricted_double(tx.value()),
+		Restricted_double(ty.value()),
+		Restricted_double(tz.value()),
 		Filter_epsilon_side_of_bounded_sphereC3_15_0,
 		Filter_epsilon_side_of_bounded_sphereC3_15_1);
   }
-  catch (Static_adaptatif_filter::unsafe_comparison)
+  catch (Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -703,21 +707,21 @@ letstry:
       tried = true;
       // Recompute _bound (tighter or larger).
       _bound = 0;
-      _bound = max(_bound, fabs(px));
-      _bound = max(_bound, fabs(py));
-      _bound = max(_bound, fabs(pz));
-      _bound = max(_bound, fabs(qx));
-      _bound = max(_bound, fabs(qy));
-      _bound = max(_bound, fabs(qz));
-      _bound = max(_bound, fabs(rx));
-      _bound = max(_bound, fabs(ry));
-      _bound = max(_bound, fabs(rz));
-      _bound = max(_bound, fabs(sx));
-      _bound = max(_bound, fabs(sy));
-      _bound = max(_bound, fabs(sz));
-      _bound = max(_bound, fabs(tx));
-      _bound = max(_bound, fabs(ty));
-      _bound = max(_bound, fabs(tz));
+      _bound = std::max(_bound, fabs(px.value()));
+      _bound = std::max(_bound, fabs(py.value()));
+      _bound = std::max(_bound, fabs(pz.value()));
+      _bound = std::max(_bound, fabs(qx.value()));
+      _bound = std::max(_bound, fabs(qy.value()));
+      _bound = std::max(_bound, fabs(qz.value()));
+      _bound = std::max(_bound, fabs(rx.value()));
+      _bound = std::max(_bound, fabs(ry.value()));
+      _bound = std::max(_bound, fabs(rz.value()));
+      _bound = std::max(_bound, fabs(sx.value()));
+      _bound = std::max(_bound, fabs(sy.value()));
+      _bound = std::max(_bound, fabs(sz.value()));
+      _bound = std::max(_bound, fabs(tx.value()));
+      _bound = std::max(_bound, fabs(ty.value()));
+      _bound = std::max(_bound, fabs(tz.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
@@ -789,15 +793,15 @@ cmp_dist_to_pointC3_SAF(
 inline
 Comparison_result
 cmp_dist_to_pointC3_SAF(
-    const double &px,
-    const double &py,
-    const double &pz,
-    const double &qx,
-    const double &qy,
-    const double &qz,
-    const double &rx,
-    const double &ry,
-    const double &rz,
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &pz,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &qz,
+    const Restricted_double &rx,
+    const Restricted_double &ry,
+    const Restricted_double &rz,
     const double & epsilon_0)
 {
   return CGAL::compare_SAF(squared_distanceC3(px,py,pz,qx,qy,qz),
@@ -824,31 +828,32 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(px) > _bound ||
-        fabs(py) > _bound ||
-        fabs(pz) > _bound ||
-        fabs(qx) > _bound ||
-        fabs(qy) > _bound ||
-        fabs(qz) > _bound ||
-        fabs(rx) > _bound ||
-        fabs(ry) > _bound ||
-        fabs(rz) > _bound)
-      throw (Static_adaptatif_filter::unsafe_comparison);
+        fabs(px.value()) > _bound ||
+        fabs(py.value()) > _bound ||
+        fabs(pz.value()) > _bound ||
+        fabs(qx.value()) > _bound ||
+        fabs(qy.value()) > _bound ||
+        fabs(qz.value()) > _bound ||
+        fabs(rx.value()) > _bound ||
+        fabs(ry.value()) > _bound ||
+        fabs(rz.value()) > _bound)
+      throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return cmp_dist_to_pointC3_SAF(
-		px.value(),
-		py.value(),
-		pz.value(),
-		qx.value(),
-		qy.value(),
-		qz.value(),
-		rx.value(),
-		ry.value(),
-		rz.value(),
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(pz.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(qz.value()),
+		Restricted_double(rx.value()),
+		Restricted_double(ry.value()),
+		Restricted_double(rz.value()),
 		Filter_epsilon_cmp_dist_to_pointC3_9_0);
   }
-  catch (Static_adaptatif_filter::unsafe_comparison)
+  catch (Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -856,15 +861,15 @@ letstry:
       tried = true;
       // Recompute _bound (tighter or larger).
       _bound = 0;
-      _bound = max(_bound, fabs(px));
-      _bound = max(_bound, fabs(py));
-      _bound = max(_bound, fabs(pz));
-      _bound = max(_bound, fabs(qx));
-      _bound = max(_bound, fabs(qy));
-      _bound = max(_bound, fabs(qz));
-      _bound = max(_bound, fabs(rx));
-      _bound = max(_bound, fabs(ry));
-      _bound = max(_bound, fabs(rz));
+      _bound = std::max(_bound, fabs(px.value()));
+      _bound = std::max(_bound, fabs(py.value()));
+      _bound = std::max(_bound, fabs(pz.value()));
+      _bound = std::max(_bound, fabs(qx.value()));
+      _bound = std::max(_bound, fabs(qy.value()));
+      _bound = std::max(_bound, fabs(qz.value()));
+      _bound = std::max(_bound, fabs(rx.value()));
+      _bound = std::max(_bound, fabs(ry.value()));
+      _bound = std::max(_bound, fabs(rz.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
@@ -924,16 +929,16 @@ cmp_signed_dist_to_planeC3_SAF(
 inline
 Comparison_result
 cmp_signed_dist_to_planeC3_SAF(
-    const double &pa,
-    const double &pb,
-    const double &pc,
-    const double &pd,
-    const double &px,
-    const double &py,
-    const double &pz,
-    const double &qx,
-    const double &qy,
-    const double &qz,
+    const Restricted_double &pa,
+    const Restricted_double &pb,
+    const Restricted_double &pc,
+    const Restricted_double &pd,
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &pz,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &qz,
     const double & epsilon_0)
 {
   return CGAL::compare_SAF(scaled_distance_to_planeC3(pa,pb,pc,pd,px,py,pz),
@@ -961,33 +966,34 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(pa) > _bound ||
-        fabs(pb) > _bound ||
-        fabs(pc) > _bound ||
-        fabs(pd) > _bound ||
-        fabs(px) > _bound ||
-        fabs(py) > _bound ||
-        fabs(pz) > _bound ||
-        fabs(qx) > _bound ||
-        fabs(qy) > _bound ||
-        fabs(qz) > _bound)
-      throw (Static_adaptatif_filter::unsafe_comparison);
+        fabs(pa.value()) > _bound ||
+        fabs(pb.value()) > _bound ||
+        fabs(pc.value()) > _bound ||
+        fabs(pd.value()) > _bound ||
+        fabs(px.value()) > _bound ||
+        fabs(py.value()) > _bound ||
+        fabs(pz.value()) > _bound ||
+        fabs(qx.value()) > _bound ||
+        fabs(qy.value()) > _bound ||
+        fabs(qz.value()) > _bound)
+      throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return cmp_signed_dist_to_planeC3_SAF(
-		pa.value(),
-		pb.value(),
-		pc.value(),
-		pd.value(),
-		px.value(),
-		py.value(),
-		pz.value(),
-		qx.value(),
-		qy.value(),
-		qz.value(),
+		Restricted_double(pa.value()),
+		Restricted_double(pb.value()),
+		Restricted_double(pc.value()),
+		Restricted_double(pd.value()),
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(pz.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(qz.value()),
 		Filter_epsilon_cmp_signed_dist_to_planeC3_10_0);
   }
-  catch (Static_adaptatif_filter::unsafe_comparison)
+  catch (Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -995,16 +1001,16 @@ letstry:
       tried = true;
       // Recompute _bound (tighter or larger).
       _bound = 0;
-      _bound = max(_bound, fabs(pa));
-      _bound = max(_bound, fabs(pb));
-      _bound = max(_bound, fabs(pc));
-      _bound = max(_bound, fabs(pd));
-      _bound = max(_bound, fabs(px));
-      _bound = max(_bound, fabs(py));
-      _bound = max(_bound, fabs(pz));
-      _bound = max(_bound, fabs(qx));
-      _bound = max(_bound, fabs(qy));
-      _bound = max(_bound, fabs(qz));
+      _bound = std::max(_bound, fabs(pa.value()));
+      _bound = std::max(_bound, fabs(pb.value()));
+      _bound = std::max(_bound, fabs(pc.value()));
+      _bound = std::max(_bound, fabs(pd.value()));
+      _bound = std::max(_bound, fabs(px.value()));
+      _bound = std::max(_bound, fabs(py.value()));
+      _bound = std::max(_bound, fabs(pz.value()));
+      _bound = std::max(_bound, fabs(qx.value()));
+      _bound = std::max(_bound, fabs(qy.value()));
+      _bound = std::max(_bound, fabs(qz.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
@@ -1076,21 +1082,21 @@ cmp_signed_dist_to_planeC3_SAF(
 inline
 Comparison_result
 cmp_signed_dist_to_planeC3_SAF(
-    const double &ppx,
-    const double &ppy,
-    const double &ppz,
-    const double &pqx,
-    const double &pqy,
-    const double &pqz,
-    const double &prx,
-    const double &pry,
-    const double &prz,
-    const double &px,
-    const double &py,
-    const double &pz,
-    const double &qx,
-    const double &qy,
-    const double &qz,
+    const Restricted_double &ppx,
+    const Restricted_double &ppy,
+    const Restricted_double &ppz,
+    const Restricted_double &pqx,
+    const Restricted_double &pqy,
+    const Restricted_double &pqz,
+    const Restricted_double &prx,
+    const Restricted_double &pry,
+    const Restricted_double &prz,
+    const Restricted_double &px,
+    const Restricted_double &py,
+    const Restricted_double &pz,
+    const Restricted_double &qx,
+    const Restricted_double &qy,
+    const Restricted_double &qz,
     const double & epsilon_0)
 {
   return CGAL::compare_SAF(
@@ -1128,43 +1134,44 @@ letstry:
   try
   {
     // Check the bounds.  All arguments must be <= _bound.
+    // The throw mecanism is not useful here, it should be before the try{}.
     if (
-        fabs(ppx) > _bound ||
-        fabs(ppy) > _bound ||
-        fabs(ppz) > _bound ||
-        fabs(pqx) > _bound ||
-        fabs(pqy) > _bound ||
-        fabs(pqz) > _bound ||
-        fabs(prx) > _bound ||
-        fabs(pry) > _bound ||
-        fabs(prz) > _bound ||
-        fabs(px) > _bound ||
-        fabs(py) > _bound ||
-        fabs(pz) > _bound ||
-        fabs(qx) > _bound ||
-        fabs(qy) > _bound ||
-        fabs(qz) > _bound)
-      throw (Static_adaptatif_filter::unsafe_comparison);
+        fabs(ppx.value()) > _bound ||
+        fabs(ppy.value()) > _bound ||
+        fabs(ppz.value()) > _bound ||
+        fabs(pqx.value()) > _bound ||
+        fabs(pqy.value()) > _bound ||
+        fabs(pqz.value()) > _bound ||
+        fabs(prx.value()) > _bound ||
+        fabs(pry.value()) > _bound ||
+        fabs(prz.value()) > _bound ||
+        fabs(px.value()) > _bound ||
+        fabs(py.value()) > _bound ||
+        fabs(pz.value()) > _bound ||
+        fabs(qx.value()) > _bound ||
+        fabs(qy.value()) > _bound ||
+        fabs(qz.value()) > _bound)
+      throw Restricted_double::unsafe_comparison();
     // Try the epsilon variant of the predicate.
     return cmp_signed_dist_to_planeC3_SAF(
-		ppx.value(),
-		ppy.value(),
-		ppz.value(),
-		pqx.value(),
-		pqy.value(),
-		pqz.value(),
-		prx.value(),
-		pry.value(),
-		prz.value(),
-		px.value(),
-		py.value(),
-		pz.value(),
-		qx.value(),
-		qy.value(),
-		qz.value(),
+		Restricted_double(ppx.value()),
+		Restricted_double(ppy.value()),
+		Restricted_double(ppz.value()),
+		Restricted_double(pqx.value()),
+		Restricted_double(pqy.value()),
+		Restricted_double(pqz.value()),
+		Restricted_double(prx.value()),
+		Restricted_double(pry.value()),
+		Restricted_double(prz.value()),
+		Restricted_double(px.value()),
+		Restricted_double(py.value()),
+		Restricted_double(pz.value()),
+		Restricted_double(qx.value()),
+		Restricted_double(qy.value()),
+		Restricted_double(qz.value()),
 		Filter_epsilon_cmp_signed_dist_to_planeC3_15_0);
   }
-  catch (Static_adaptatif_filter::unsafe_comparison)
+  catch (Restricted_double::unsafe_comparison)
   {
     // It failed once, we re-adjust (bound, epsilons).
     if (!tried)
@@ -1172,21 +1179,21 @@ letstry:
       tried = true;
       // Recompute _bound (tighter or larger).
       _bound = 0;
-      _bound = max(_bound, fabs(ppx));
-      _bound = max(_bound, fabs(ppy));
-      _bound = max(_bound, fabs(ppz));
-      _bound = max(_bound, fabs(pqx));
-      _bound = max(_bound, fabs(pqy));
-      _bound = max(_bound, fabs(pqz));
-      _bound = max(_bound, fabs(prx));
-      _bound = max(_bound, fabs(pry));
-      _bound = max(_bound, fabs(prz));
-      _bound = max(_bound, fabs(px));
-      _bound = max(_bound, fabs(py));
-      _bound = max(_bound, fabs(pz));
-      _bound = max(_bound, fabs(qx));
-      _bound = max(_bound, fabs(qy));
-      _bound = max(_bound, fabs(qz));
+      _bound = std::max(_bound, fabs(ppx.value()));
+      _bound = std::max(_bound, fabs(ppy.value()));
+      _bound = std::max(_bound, fabs(ppz.value()));
+      _bound = std::max(_bound, fabs(pqx.value()));
+      _bound = std::max(_bound, fabs(pqy.value()));
+      _bound = std::max(_bound, fabs(pqz.value()));
+      _bound = std::max(_bound, fabs(prx.value()));
+      _bound = std::max(_bound, fabs(pry.value()));
+      _bound = std::max(_bound, fabs(prz.value()));
+      _bound = std::max(_bound, fabs(px.value()));
+      _bound = std::max(_bound, fabs(py.value()));
+      _bound = std::max(_bound, fabs(pz.value()));
+      _bound = std::max(_bound, fabs(qx.value()));
+      _bound = std::max(_bound, fabs(qy.value()));
+      _bound = std::max(_bound, fabs(qz.value()));
 
       // recompute epsilons: "just" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
