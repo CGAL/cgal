@@ -81,7 +81,7 @@ open unit interval (unbounded curve), or the unit circle (closed
 curve). In all cases a curve is non self-intersecting. Segments,
 lines, rays, conic sections are examples of curves.
 
-\item[{\boldmath $X$}-monotone curve] - a curve $c$ that intersects
+\item[{\boldmath $X$}-monotone curve] - a curve that intersects
 any vertical line in at most one point, or a vertical segment.
 
 \item[Face] - a maximal connected region of the plane that does not
@@ -98,8 +98,7 @@ map and a query point $p$, find the region of the map containing $p$.
 \end{description}
 
 \subsection{A simple Program}
-The basic tasks of the simple program listed below are to construct a
-planar map of three segments, and issue a point location query.
+The simple program listed below constructs a planar map of three segments
 
 \begin{alltt}
 #include <CGAL/Cartesian.h>
@@ -108,19 +107,14 @@ planar map of three segments, and issue a point location query.
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
-#include <iostream>
-#include <iterator>
-#include <algorithm>
 
-typedef CGAL::Quotient<MP_Float>          Number_type;
+typedef CGAL::Quotient<CGAL::MP_Float>    Number_type;
 typedef CGAL::Cartesian<Number_type>      Kernel;
 typedef CGAL::Pm_segment_traits_2<Kernel> Traits;
 typedef Traits::Point_2                   Point_2;
 typedef Traits::X_monotone_curve_2        X_monotone_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>     Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>   Planar_map;
-typedef Planar_map::Halfedge_const_handle Halfedge_const_handle;
-typedef Planar_map::Locate_type           Locate_type;
 
 int main()
 \{
@@ -133,26 +127,48 @@ int main()
   cv[2] = X_monotone_curve_2(a3,a1);
   pm.insert(&cv[0], &cv[3]);
 
-  Point_2 p(1,1);
-  Locate_type lt;
-  Halfedge_const_handle edge = pm.locate(p, lt);
-  if (lt != Planar_map::FACE)
-    std::cout << "Point location failed!" << std::endl;
-  else
-    std::cout << "Point location passed!" << std::endl;
-
   return 0;
 \}
 \end{alltt}
 
-When compiled and executed properly, the program above results with
-the line ``Point location passed!'' printed to the standard
-output. The constructed planar map consists of two faces, a triangular
-face and the unbounded face. It is instantiated with the
-\ccc{Pm_segment_traits_2} traits class to handle segments only. The 
-information returned from the \ccc{locate()} function is not analyzed
-further, as this program is presented to illustrates a simple usage
-only.
+The constructed planar map is instantiated with the
+\ccc{Pm_segment_traits_2} traits class to handle segments only. It
+consists of two faces, a triangular face and the unbounded face.
+This program is not very useful, as it ends immediately after the
+planar map is constructed. Let us add something useful, such as
+querying whether a point is located in the interior of the single
+face of our planar map. All we need to do is issue the following
+statements:
+
+\begin{alltt}
+  Point_2 p(1,1);
+  typedef Planar_map::Locate_type lt;
+  (void) pm.locate(p, lt);
+  if (lt != Planar_map::FACE)
+    std::cout << "Point location failed!" << std::endl;
+  else
+    std::cout << "Point location passed!" << std::endl;
+\end{alltt}
+
+The information returned from the \ccc{locate()} function is
+not analyzed further, as this program is presented to illustrates a
+simple usage only.
+
+Let us make our simple example a bit more interesting, and draw
+the planar map. In this case, we must add the following include
+directives:
+
+\ccInclude{CGAL/IO/Window_stream.h}
+\ccInclude{CGAL/IO/Pm_Window_stream.h}
+
+Now, we can send the planar map to a window stream after constructing
+one, as exemplified in the code fragment below:
+
+\begin{alltt}
+  CGAL::Window_stream ws(400, 400);
+  ws.init(-0.5, 4.5, -0.5);
+  ws << pm;
+\end{alltt}
 
 \section{Architecture}
 The \ccc{Planar_map_2<Dcel,Traits>} class is parameterized with two
@@ -164,18 +180,99 @@ number type used and the coordinate representation. This package
 contains traits classes that handle various types of curves (e.g.,
 segments, polylines, conics, etc.).
 
-All the combinatorial entities have a geometric mapping, e.g.,
-a vertex of a planar map has a \ccc{Point} data member, a halfedge has
-a \ccc{X_monotone_curve_2} (x-monotone curve) data member, etc.
+The combinatorial entities have a geometric mapping, e.g.,
+a vertex of a planar map has a \ccc{Point} data member and a halfedge
+has a \ccc{X_monotone_curve_2} (x-monotone curve) data member.
+
+The \ccc{Planar_map_2<Dcel,Traits>} class consists of a three other
+components. (1) It includes a set of interface functions that allow
+you to construct, modify, query, save, and restore a planar map,
+(2) It is parameterized with a traits concept class that defines the
+abstract interface between planar maps and the primitives they use,
+and (3) some of its constructors allow you to choose between
+various point-location strategies. The point-location strategy has a
+significant impact not only on the performance of point-location
+queries, but also on the performance of the operations that modify the
+planar map.
 
 \subsection{Operations}
-In addition to the modifying function, namely, insertion, removal,
-splitting and merging, the user can perform point location queries and
-vertical ray shoot queries.
+The set of operations you can apply to a planar map is divided into
+four subsets, namely constructors, modifiers, queries, and
+input/output operations. 
 
-\paragraph{Modification}
-\paragraph{Queries}
-\paragraph{IO}
+\subsubsection{Construction}
+A default constructor as well as a copy constructor are
+available. However, if you want to override the default point-location
+strategy, you must provide the strategy you choose as the single
+parameter to the constructor. See section
+~\ref{PM_sec:point_location}) for further information.
+
+\subsubsection{Modification}
+Once a planar has been constructed, you can insert an $x$-monotone
+curve or a collection of $x$-monotone curves into the map, remove a
+curve already in the map, split a curve already in the map into two
+curves, and merge two curves already in the map, given that the
+resulting curve can be handled by the traits class. All these
+operations can be repeated and performed at any order.
+
+Insertion of a collection of $x$-monotone curves into a planar map
+that is not empty is not supported yet. However, the aggregate
+insertion of a collection of curves into an empty map is drastically
+more efficient than the incremental insertion of the curves one at a
+time, as the aggregate insertion exploits a dedicated efficient sweep
+line algorithm. Notice, that the traits function
+\ccc{curves_compare_y_at_x_left()} is not required, nor are the
+\ccc{point_reflect_in_x_and_y()} and \ccc{curve_reflect_in_x_and_y()}
+functions, if aggregate insertion is the only modification performed
+and no queries are performed. 
+
+% Is this true for planar maps, or only for pm with intersections?
+
+When additional information detailed below is available, special
+insertion function can be used to expedite the insertion of a single
+curve. This information may consists of one of the follwoing: (1) the
+face containing the curve to be inserted, (2) the vertex containing a
+curve endpoint, (3) the two vertices containing the two curve
+endpoints respectively, or (4) the halfedges whose incident vertices
+contain the curve endpoints respectively. The time complexity of the
+insertion operation reduces to $O(1)$, when the incident halfedges are
+available and provided to the corresponding special insert function.
+
+The code fragment listed below demonstrates the use of some of the
+special insertion-functions.
+
+\begin{alltt}
+  Planar_map pm;
+  Point_2 a0(0, 0), a1(2, 0), a2(1, 2);
+
+  X_monotone_curve_2 cv[3];
+  cv[0] = X_monotone_curve_2(a0, a1);
+  cv[1] = X_monotone_curve_2(a1, a2);
+  cv[2] = X_monotone_curve_2(a2, a0);
+
+  Planar_map::Halfedge_handle e[3];  
+  e[0] = pm.insert_in_face_interior(cv[0], pm.unbounded_face());
+  e[1] = pm.insert_from_vertex(cv[1], e[0]);
+  e[2] = pm.insert_at_vertices(cv[2], e[1], e[0]->twin());
+\end{alltt}
+
+\subsubsection{Queries}
+
+In addition to the queries provided by the \ccc{Topological_map<Dcel>}
+base class, you can perform point location and vertical ray shoot
+queries, and find out whether a given point is contained in a given
+face.
+
+The point location and vertical ray-shoot functions, namely
+\ccc{Halfedge_handle locate(const Point_2 & p , Locate_type & lt)}
+and
+\ccc{ Halfedge_handle vertical_ray_shoot(const Point_2 & p, 
+                                         Locate_type & lt,
+					 bool up_direction )},
+return the type of the feature that has been located through the
+\ccc{Locate_type} reference parameter.
+
+\subsubsection{IO}
 The \ccc{Planar Map} package supports saving, restoring, and drawing
 of planar maps. Each traits class shipped with this package contains
 the necessary I/O operators to save, restore and draw the type of
@@ -206,25 +303,28 @@ operator on the appropriate graphic stream and the planar map
 instance. Add the corresponding include directive below, to include
 any if these class definitions.
 
-\ccInclude{CGAL/IO/Pm_Postscript_file_stream.h}
+\ccInclude{CGAL/IO/Pm_Postscript_file_stream.h}\\
 \ccInclude{CGAL/IO/Pm_Geomview_stream.h}
 
 % Users of I/O functions for the planar map package are required to
 % define I/O operators for the curves defined in their \ccc{Traits}
 % classes. 
 
-Users of I/O functions for the planar map package are required to
-define I/O operators for the curves defined in their \ccc{Traits}
-classes.  When using \ccc{Traits} classes in which this operators are
-already defined (as \ccc{Segment Traits} or \ccc{Circle Traits} ) the
-operator definition is not obligated, however using \ccc{Traits}
-classes as the \ccc{Polyline Traits} will force the user to define
-I/O operators on his polyline curve.
+If you intend to save, restore, or draw a planar map, you must
+define I/O operators for the point and curve types defined in your
+\ccc{Traits} classes, in case these operations are not present. The
+traits classes provided in the \ccc{Planar Map} packages, e.g.,
+\ccc{Pm_segment_traits_2} and \ccc{Pm_conic_traits_2},
+contain the appropriate definitions to save a textual representation
+of a planar map to the standard output, restore it from the standard 
+input, and draw it to a \cgal\ window stream.
+
+% Are all these provided for polylines?
 
 \begin{ccAdvanced}
 \subsection{I/O for User Defined Planar Maps and the I/O Format}
 
-Users may wish to add their own attributes planar map components. If
+If you wish to add your own attributes planar map components. If
 those attributes are to be written as part of the planar map
 representation (respectively, are to be re-read later) a specialized
 reader (scanner) class (writer class, resp.) should be defined for the
@@ -233,7 +333,7 @@ of the class \ccStyle{Pm_file_scanner} (\ccStyle{Pm_file_writer},
 resp.) and overriding all the relevant function for scanning (writing,
 resp.) the changed components.
 
-After the definition of the inherited class users have to call the
+After the definition of the inherited class, you have to call the
 function \ccStyle{read} of \ccc{Planar map} (resp., the global
 function \ccStyle{write_pm} ) with the inherited class as a
 parameter. 
@@ -277,14 +377,14 @@ boundary specified above.
 \item The format does not differentiate between spaces and new lines, 
 except new lines which belong to commented lines. 
 And hence, writing the planar in one single line having no comments is
-also considered legal. If users would like to keep the commented
+also considered legal. If you would like to keep the commented
 lines, they may write all the components between two consecutive
 commented lines in one single line.
 
 \end{enumerate}
 
 The current format may not be comfortable for a user to read because
-of the extensive use of indices. The user can print a planar map in a
+of the extensive use of indices. You can print a planar map in a
 verbose format (shorthand for verbose mode format).  The skeleton of 
 the verbose format is the same. However, in order for the output to be
 clearer for a human reader points and halfedges are explicitly written
@@ -353,56 +453,68 @@ More details are given in sections
 \end{ccAdvanced}
 
 \subsection{Traits Classes}
-The planar map class is parameterized with the interface class
-\ccStyle{PlanarMapTraits_2} which defines the abstract interface
-between planar maps and the primitives they use.
+The planar map class is parameterized with the concept class
+\ccStyle{PlanarMapTraits_2} that defines the abstract interface
+between planar maps and the primitives they use. It must define two
+types of objects, namely \ccStyle{X_monotone_curve_2} and
+\ccStyle{Point_2}, where the type of the endpoints of a
+\ccStyle{X_monotone_curve_2}-type curve is \ccStyle{Point_2}. In
+addition, the traits class must provide a set of operations on these
+two types.
+					  
+We supply a default traits class for segments, namely
+\ccStyle{Pm_segment_traits_2<Kernel>}, where \ccStyle{Kernel} is a
+kernel representation type, e.g., \ccc{Homogeneous} or
+\ccc{Cartesian}. This traits class handles finite line segments in
+the plane. In this class the
+\ccStyle{X_monotone_curve_2} and \ccStyle{Point_2} types are
+defined as the \cgal\ kernel types
+\ccStyle{Kernel::Segment_2} and \ccStyle{Kernel::Point_2}
+respectively, and the \cgal\ kernel operations on these types are
+exploited to implement the required functions.
+The \ccc{leda_rat_kernel_traits} class exploits \leda 's rational
+kernel and its efficient predicates. As a model that conforms to the
+\cgal\ kernel concept, it can be injected to the
+\ccStyle{Pm_segment_traits_2<Kernel>} class.
+\ccc{leda_rat_kernel_traits} class is available as an external
+package.
 
-We supply a default traits class for exact arithmetic ---
-\ccStyle{Pm_segment_traits_2<Kernel>} where \ccStyle{Kernel} is the kernel
-representation type (\ccc{Homogeneous} or \ccc{Cartesian}).  
-The traits class handle finite line segments in the plane
-and use the CGAL kernel (\ccStyle{Point_2} is of type 
-\ccStyle{R::Point_2} and \ccStyle{X_monotone_curve_2} is of type
-\ccStyle{R::Segment_2}).
-We also supply a traits class that uses LEDA's rational kernel and makes use
-of its efficient predicates. The different supplied traits classes are described
-at the end of this chapter.
-
-Models of PlanarMapTraits\_2 are meant to serve as arguments for the respective
-template parameter of \ccc{CGAL::Planar_map_2<Dcel,Traits>}. However, it should
-be noted that
-each model of PlanarMapTraits\_2 defines a family of curves and
+Models of PlanarMapTraits\_2 are meant to serve as arguments for the
+respective template parameter of
+\ccc{CGAL::Planar_map_2<Dcel,Traits>}. However, it should be noted
+that each model of PlanarMapTraits\_2 defines a family of curves and
 primitive geometric operations thereof. Sometimes, the only
 implementation available for the manipulation of a certain family of
 curves is one of the supplied traits classes. A scenario where one
 uses a traits class object to manipulate such curves without
 maintaining planar maps is certainly possible.
 
-The \ccc{PlanarMapWithIntersectionsTraits_2} and \ccc{ArrangementTraits_2} 
-concepts are refinements of the \ccc{PlanarMapTraits_2} concept.
+\ccc{ArrangementTraits_2} concept is a refinements of the
+\ccc{PlanarMapWithIntersectionsTraits_2} concept, and the latter is a
+refinment of the \ccc{PlanarMapTraits_2} concept.
 Therefore, all models of the formers are models of the latter. 
-There are several supplied traits classes for the \ccc{Arrangement} which the user can use. 
-These classes are described at the end of Chapter \ref{I1_ChapterArrangement_2}
-(\ccc{2D Arrangements}).
+There are several supplied traits classes for the \ccc{Arrangement}
+that you can use. These classes are described at the end of Chapter
+\ref{I1_ChapterArrangement_2} (\ccc{2D Arrangements}).
 
 \subsection{Point Location Strategies}
+\label{PM_sec:point_location}
 Some of the basic operations on planar maps are queries such as ``what
 is the location of a point in the map?'', or ``which curve is
 vertically above the point?''. These geometric queries are supplied as
 part of this Planar Map class, with several algorithms available for
-the user to choose from.
+you to choose from.
 
 The \ccClassTemplateName\ class has a point location function
 (namely, the \ccc{locate} function that determines which feature of the map 
 contains a given query point)
 which is also used internally in the \ccc{insert} function.
-The planar map users can define which algorithm to use in the
+You can define which algorithm to use in the
 point location queries. This is done with a {\em point location class}
 passed to the map in the constructor. The class passed should be derived
 from the base class \ccc{Pm_point_location_base} which is a
 (\ccc{pure virtual}) base class that defines the interface between the 
-algorithm
-implemented by the users and the planar map. This follows the 
+algorithm implemented by the users and the planar map. This follows the 
 known {\it Strategy}
 pattern ~\cite{ghjv-dpero-95}. The indirection overhead due to the virtual functions is
 negligible since the optimal point location algorithm 
@@ -422,9 +534,9 @@ More details are give in sections
   \ccc{Pm_walk_along_a_line_point_location<Planar_map>}\lcTex{
   (\ccRefPage{CGAL::Pm_walk_along_a_line_point_location<Planar_map>})}.
 
-% Advanced users may wish to write their own point location class.  We
-% state that a point location class should inherit the \cgal\/ supplied
-% class \ccc{Pm_point_location_base<Planar_map>}.
+% If you are an advanced user, you may wish to write your own point
+% location class.  We state that a point location class should inherit
+% the \cgal\/ supplied class \ccc{Pm_point_location_base<Planar_map>}.
 
 \paragraph{Trade-off Issues}
 The main trade-off among the three strategies implemented, is between
@@ -432,7 +544,7 @@ time and storage. Using the naive or walk strategies takes more
 time but saves storage space.
 
 Another trade-off depends on the need for point location queries compared
-to the need for other functions. If the users do not need point location 
+to the need for other functions. If you do not need point location 
 queries, but do need other modifying functions (e.g., \ccc{remove_edge}, 
 \ccc{split_edge} and \ccc{merge_edge}) then using the naive or walk strategies
 is preferable. Note that using the \ccc{insert} function invokes the
@@ -444,9 +556,9 @@ For example, when using the planar map to represent polygons (e.g., when
 computing boolean operations on polygons) it might be preferable to use
 the walk strategy with the specialized insertion functions. 
 
-There are two modes of the {\it default\/} strategy which enables the user
-to choose whether preprocessing should be performed or not (read more in
-the section stated above).
+There are two modes of the {\it default\/} strategy which enables the
+you to choose whether preprocessing should be performed or not (read
+more in the section stated above).
 There is a trade-off between the those two modes. If
 preprocessing is not used, the building of the structure is faster. However,
 for some input sequences the structure might be unbalanced and therefore 
@@ -455,14 +567,20 @@ operation are performed.
 
 \section{Implementation}
 \subsection{Robustness}
-It can handle all inputs and requires no general position assumption.
+The \ccc{Planar_map_2<Dcel,Traits>} class can handle all inputs and
+requires no general position assumption. Calculations are exact and
+leave no place for errors of any kind. Nevertheless, since the input
+curves are disjoint in their interiors, no construction of
+intersection points are performed. Therefore, filtered kernel can
+definitely expedite the various operations.
+
 \subsection{Programming Tips}
 This section presents some tips on how to tune
 \ccc{CGAL::Planar_map_2<Dcel,Traits>} for best performance.
 
-Before the specific tips, it should be reminded that compiling
-programs with debug flags turned off and with optimization flags
-significantly reduces running time.
+Before we list specific tips, we remind you that compiling
+programs with debug flags turned off, and with optimization flags
+turned on, significantly reduces running time.
 
 \begin{enumerate}
    \item The default point location strategy (i.e. using
@@ -496,7 +614,7 @@ significantly reduces running time.
    \ccc{insert_at_vertices} since both it endpoints are represented as
    vertices of the map and are known in advanced.
  
-   \item If the user has \leda\/ installed it is recommended to use
+   \item If you have \leda\/ installed it is recommended to use
    the specialized traits classes \ccc{Pm_leda_segment_traits_2}
    or \ccc{Arr_leda_polyline_traits}. These traits classes are much
    faster since they are specialized for \leda\/'s \ccc{rational
@@ -506,47 +624,12 @@ significantly reduces running time.
 
 \end{enumerate}
 
-\subsection{Performance}
-
-% %\paragraph{Sweep Line}
-% %-------------------------------------------------
-%   The \ccc{Planar Map with Intersections} packge contains a sweep line
-%   utility. The sweep line algorithm can be used to build a planar map
-%   much quicker than in an incremental way, where each curve is
-%   inserted after the other. Two global functions are provided. 
-
-%   The function \ccc{sweep_to_construct_planar_map} builds a planar map
-%   as a result of the call. Mind that it is possible to call this
-%   function also with an instance the \ccc{Planar_map_2} class rather
-%   than an instance of \ccc{Planar_map_with_intersections_2}. If no
-%   additional insertion of intersecting or non-$x$-monotone curves are
-%   planned follwing the building of the map, then it would be more
-%   efficient (in running time) and less demanding (in traits class
-%   functionality) to use an instance of the former.
-
-%   The function \ccc{sweep_to_produce_planar_map_subcurves} does not
-%   build a planar map but rather collects the $x$-monotone pairwise
-%   disjoint subcurves in a container. It is possible to tune the
-%   function so that it will avoid to produce repetitions of overlapping
-%   subcurves in the container or not.
-
-%   The sweep line utility calculates intersections of curves.  The
-%   \ccc{PlanarMapWithIntersectionTraits_2} concepts requires this
-%   very functionality.  Thus, the sweep line functions have to use
-%   traits classes that model the above concept. This is true even for
-%   the case where an instance of \ccc{Planar_map_2<Dcel, Traits>} is built.
-
-%   %See the sweep line functions reference pages for implementation
-%   %details (\ccc{sweep_to_construct_planar_map}\lcTex{
-%   %\ccRefPage{CGAL::sweep_to_construct_planar_map}} and
-%   %\ccc{sweep_to_produce_planar_map_subcurves}\lcTex{
-%   %\ccRefPage{CGAL::sweep_to_produce_planar_map_subcurves}}).
+% \subsection{Performance}
 
 % +========================================================================+
 \section{Example Programs}
 % +========================================================================+
 \label{PM_sec:example}
-
 
 \begin{figure}[h]
 \begin{ccTexOnly}
@@ -623,7 +706,7 @@ use of the output operator of \ccc{Planar_map_2<Dcel,Traits>} to a
 window stream  (see at \ccStyle{<CGAL_ROOT>/demo/Planar_map/demo.C} ).   
 
 %graphic streams in commented lines
-%(The comments can be removed if the user has LEDA installed).
+%(The comments can be removed if you have LEDA installed).
 
 \ccIncludeExampleCode{Planar_map/example9.C}
 

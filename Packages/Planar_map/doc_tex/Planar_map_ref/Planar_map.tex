@@ -151,7 +151,7 @@ of the \ccRefName\ type hereafter.
 
 \begin{ccAdvanced}
 
-\ccHeading{Point Location and Bounding Box}
+\ccHeading{Point Location}
 
 As described in the introduction, the planar map users can define
 which algorithm to use in the point location queries.  This is done
@@ -179,19 +179,6 @@ class derived from the \ccc{Point_location_base<Planar_map>}. The concept \ccc{P
 %In the static case, the bounding box is as indicated by its name, static.
 %In any case, each curve is represented as its intersection with the
 %bounding box, allowing the planar map to deal only with bounded curves. 
-
-
-The planar map user can also determine the bounding box strategy
-This is done with a {\em bounding box class} passed to the map in the
-following constructors.  The \ccc{Pm_dynamic_open_bounding_box}
-strategy is the one used by default by the library. If only the
-default strategy is to be used, the user can ignore the following
-constructors. 
-
-\ccConstructor{Planar_map<Dcel,Traits>(Pm_bounding_box_base<Self> * bb_ptr);}{}
-\ccConstructor{Planar_map<Dcel,Traits>(Pm_point_location_base<Self> * pl_ptr,
-        Pm_bounding_box_base<Self> * bb_ptr);}{}
-  
 
 \end{ccAdvanced}
 

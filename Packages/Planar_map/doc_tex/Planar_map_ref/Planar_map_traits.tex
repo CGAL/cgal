@@ -172,10 +172,10 @@ curve to be $x$-monotone.
 The \ccc{PlanarMapWithIntersectionsTraits_2} and
 \ccc{ArrangementTraits_2} concepts are refinements of the
 \ccc{PlanarMapTraits_2} concept, in other words, a model of the
-formers is a model of the latter.  The meaning of that is that all
-supplied (or user written ) arrangement traits classes can be used
-as the \ccc{Traits} template parameter for
-\ccc{Planar_map_2<Dcel,Traits>}.  See the list of the arrangement
+formers is a model of the latter.  Thus, all
+supplied (or user written ) arrangement traits classes can be passed
+as the \ccc{Traits} template parameter when instantiating an object of
+type \ccc{Planar_map_2<Dcel,Traits>}.  See the list of the arrangement
 traits classes in chapter ~\ref{I1_Chapter2DArrangements},
 {\em Arrangement}.
   
