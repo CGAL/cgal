@@ -35,7 +35,7 @@ The class \ccRefName{} derives from
   to mark the connected components which are inside the domain.
   
   The domain has to be bounded. Therefore the unbounded component will
-  not be part of it\new{, whatever is the set of seed points}. By
+  not be part of it, whatever is the set of seed points. By
   default, if the set of seeds is empty, the domain to be meshed is
   the union of the bounded components. Note that the constrained edges
   have to bound the domain to be meshed and that the domain will be
@@ -85,13 +85,13 @@ The following functions are used to define seeds.
           void set_seeds(InputIterator begin, InputIterator end,
                          const bool mark=false);}                   
                        { Sets seeds to the sequence [\ccc{begin},
-                         \ccc{end}]. \newnomargin{If \ccc{mark=true}, the mesh domain
+                         \ccc{end}]. If \ccc{mark=true}, the mesh domain
                          is the union of the bounded connected
                          components including at least one seed. If
                          \ccc{mark=false}, the domain is the union of
                          the bounded components including no seed. Note
                          that the unbounded component of the plane is
-                         never meshed.}
+                         never meshed.
                          \ccPrecond The \ccc{value_type} of
                          \ccc{begin} and \ccc{end} is
                          \ccc{Geom_traits::Point_2}.}
