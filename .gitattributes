@@ -2009,9 +2009,8 @@ Packages/wininst/demo/Partition_2/VC6/greene_approx_convex_demo.dsp -text
 Packages/wininst/demo/Partition_2/VC6/optimal_convex_demo.dsp -text
 Packages/wininst/demo/Partition_2/VC6/partition_2_demo.dsp -text
 Packages/wininst/demo/Partition_2/VC6/y_monotone_demo.dsp -text
-Packages/wininst/demo/Planar_map_Bbox/VC6/demo.dsp -text
-Packages/wininst/demo/Planar_map_Bbox/VC6/helputil.dsp -text
-Packages/wininst/demo/Planar_map_Bbox/VC6/voronoi.dsp -text
+Packages/wininst/demo/Planar_map/VC6/demo.dsp -text
+Packages/wininst/demo/Planar_map/VC6/helputil.dsp -text
 Packages/wininst/demo/Point_set_2/VC6/nearest_neighbor.dsp -text
 Packages/wininst/demo/Point_set_2/VC6/nn_functions.dsp -text
 Packages/wininst/demo/Point_set_2/VC6/ps_test1_cgal.dsp -text
