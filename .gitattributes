@@ -2021,8 +2021,7 @@ Packages/wininst/demo/Point_set_2/VC6/rs_check_empty_circle.dsp -text
 Packages/wininst/demo/Point_set_2/VC6/rs_check_empty_rectangle.dsp -text
 Packages/wininst/demo/Point_set_2/VC6/rs_check_empty_triangle.dsp -text
 Packages/wininst/demo/Point_set_2/VC6/rs_functions.dsp -text
-Packages/wininst/demo/Polyhedron_IO/VC6/geomview_demo.dsp -text
-Packages/wininst/demo/Polyhedron_IO/VC6/viewpoint2off.dsp -text
+Packages/wininst/demo/Polygon/VC6/PolygonDemo.dsp -text
 Packages/wininst/demo/Robustness/VC6/cocircular_2.dsp -text
 Packages/wininst/demo/Robustness/VC6/hull_of_intersection_points_2.dsp -text
 Packages/wininst/demo/Robustness/VC6/intersection_points_on_segment_2.dsp -text
