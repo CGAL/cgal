@@ -118,3 +118,6 @@ Changes from 2.29/2.30:
 
 Changes from 2.30/2.31:
    - Remove old workaround flags.
+
+Changes from 2.32
+   - Added VC7-0 workaround
