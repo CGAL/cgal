@@ -667,7 +667,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
   Hole hole;
   Hole_list hole_list;
   Face_handle ff, fn;
-  int i=0, ii=0, in=0;
+  int i, ii, in;
 	
   hole_list.push_front(first_hole);
   

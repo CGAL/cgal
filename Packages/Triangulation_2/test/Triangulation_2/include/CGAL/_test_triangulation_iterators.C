@@ -141,6 +141,7 @@ _test_cls_edge_iterator( const Triangulation &T )
        eit != T.finite_edges_begin(); 
        --eit)
     n--;
+  assert( n == 0 );
 
   return ne;
 }

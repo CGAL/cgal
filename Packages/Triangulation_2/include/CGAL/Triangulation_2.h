@@ -1161,8 +1161,8 @@ make_hole ( Vertex_handle v, std::list<Edge> & hole)
   std::list<Face_handle> to_delete;
 
   Face_handle  f, fn;
-  int i =0, in =0;
-  Vertex_handle  vv;
+  int i, in ;
+   Vertex_handle  vv;
       
   Face_circulator fc = v->incident_faces();
   Face_circulator done(fc);
@@ -1196,7 +1196,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
   typedef std::list<Edge> Hole;
 
   Face_handle  ff, fn;
-  int ii =0, in =0; 
+  int ii , in; 
   Vertex_handle v0, v1, v2;
   Bounded_side side;
   
@@ -1323,7 +1323,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
   typedef std::list<Hole> Hole_list;
   
   Face_handle  f, ff, fn;
-  int i =0,ii =0, in =0;
+  int i, ii, in;
   Hole_list hole_list;
   Hole hole;
         
@@ -2095,13 +2095,13 @@ bool
 Triangulation_2<Gt, Tds>::
 collinear_between(const Point& p, const Point& q, const Point& r) const
 {
-  // return true if point q is between p and r
+  // return true if point q is strictly between p and r
   // p,q and r are supposed to be collinear points
   Comparison_result c_pr = compare_x(p, r);
   Comparison_result c_pq;
   Comparison_result c_qr;
   if(c_pr == EQUAL) {
-    c_pr = compare_y(p, r);
+    //c_pr = compare_y(p, r);
     c_pq = compare_y(p, q);
     c_qr = compare_y(q, r);
   } else {
