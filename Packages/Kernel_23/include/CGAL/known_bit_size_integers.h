@@ -29,6 +29,7 @@ CGAL_BEGIN_NAMESPACE
 #if (defined(__sparc__) || defined(__sparc) || defined(sparc)) || \
     (defined(__sgi__)   || defined(__sgi)   || defined(sgi)) || \
     (defined(__i386__)  || defined(__i386)  || defined(i386)) || \
+    (defined(__ia64__)  || defined(__ia64)  || defined(ia64)) || \
     (defined(__alpha__) || defined(__alpha) || defined(alpha)) || \
     (defined(__ppc__)   || defined(__ppc)   || defined(ppc)) || \
     (defined(__powerpc__) || defined(__powerpc) || defined(powerpc))
@@ -39,6 +40,11 @@ CGAL_BEGIN_NAMESPACE
     typedef  unsigned short          UInteger16;
     typedef  unsigned int            UInteger32;
     // See long_long.h for Integer64.
+#  ifdef __ia64__
+    typedef long                     Integer64;
+    typedef unsigned long            UInteger64;
+#    define CGAL_HAS_INTEGER64
+#  endif
 #else
 #  if defined(__BORLANDC__)
     typedef  __int8                  Integer8;
