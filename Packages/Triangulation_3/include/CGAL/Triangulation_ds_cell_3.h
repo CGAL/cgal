@@ -265,8 +265,10 @@ public:
 
     case 1:
       {
-      Vertex* v0; Vertex* v1;
-      Cell* n0; Cell* n1;
+      Vertex* v0 = vertex(0); 
+      Vertex* v1 = vertex(1);
+      Cell* n0 = neighbor(0); 
+      Cell* n1 = neighbor(1);
 
       if ( v0 == NULL || v1 == NULL ) {
 	if (verbose) { cerr << "vertex 0 or 1 NULL" << endl;}
@@ -285,15 +287,15 @@ public:
 	CGAL_triangulation_assertion(false); return false;
       }
 
-      if ( v0 !=  n0->vertex(1) ) {
+      if ( v0 !=  n1->vertex(1) ) {
 	if (verbose) { cerr << 
-		       "neighbor 0 does not have vertex 0 as vertex 1" 
+		       "neighbor 1 does not have vertex 0 as vertex 1" 
 			    << endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
-      if ( v1 != n1->vertex(0) ) {
+      if ( v1 != n0->vertex(0) ) {
 	if (verbose) { cerr << 
-			 "neighbor 1 does not have vertex 1 as vertex 0" 
+			 "neighbor 0 does not have vertex 1 as vertex 0" 
 			    << endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
