@@ -617,6 +617,66 @@ can use \texttt{std::vector} instead of \texttt{std::list} (since their
 implementation of the STL uses pointers for vector iterators) or use 
 \texttt{CGAL::In\_place\_list}.
 
+\item[\textbf{parse error in constructions}]
+\ccIndexSubitem{parse error}{construction}
+The following program will produce a parse error with g++ 3.1.
+
+\begin{verbatim}
+#include <CGAL/Segment_circle_2.h> 
+
+typedef CGAL::Segment_circle_2<double> Curve; 
+typedef Curve::Segment                 Segment; 
+typedef Curve::Point                   Point; 
+
+int main()
+{
+  Segment s1(Point(0,0), Point(1,1));
+  Curve curve(Segment(Point(0,0), Point(1,1))); // parse error
+  
+  // ...
+  return 0;
+}
+\end{verbatim}
+
+This is a well-known bug in the Gnu compiler 
+(see \path|http://gcc.gnu.org/bugs.html#parsing|).
+The workaround is to split :
+
+\verb|   Curve curve(Segment(Point(0,0), Point(1,1)));| 
+
+into, {\textit e.g.,} :
+\begin{verbatim}
+   Segment s (Point(0,0), Point(1,1));
+   Curve rude_curve(s);
+\end{verbatim}
+
+\item[\textbf{\texttt{std::strcpy} and \texttt{-O2} flag}]
+\ccIndexSubitem{optimization flag}{errors when using}
+
+Borland's compiler cannot compile this program when the optimization flag
+\texttt{-O2} is used during compilation:
+\begin{verbatim}
+#include <cstring>
+
+int main() {
+  char from[10], to[10];
+  std::strcpy(to, from);
+  return 0;
+}
+\end{verbatim}
+The following error is produced:
+\begin{verbatim}
+bcc32.exe -O2 -P bug.C
+Borland C++ 5.5.1 for Win32 Copyright (c) 1993, 2000 Borland
+bug.C:
+Error E2316 bug.C 7: '__strcpy__' is not a member of 'std' in function main()
+*** 1 errors in Compile ***
+\end{verbatim}
+
+It is believed that this comes from the compiler attempting to produce an
+inline version of \texttt{strcpy()} when the optimization is turned on.
+Putting \texttt{\#undef strcpy} before the \texttt{strcpy()} fixes it.
+
 \end{description}
 \ccIndexMainItemEnd{configuration}
 
