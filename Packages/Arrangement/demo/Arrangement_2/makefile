@@ -66,7 +66,7 @@ demo_arr$(EXE_EXT): demo1$(OBJ_EXT) moc_demo1$(OBJ_EXT) \
 	qt_layer$(OBJ_EXT) $(LDFLAGS)
 
 clean: demo1.clean forms.clean qt_layer.clean
-	rm -rf moc_forms.* moc_demo1.*
+	rm -rf moc_forms.* moc_demo1.* demo_arr
 
 demo1.o : cgal_types1.h demo_tab.h
 
