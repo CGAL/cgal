@@ -5,30 +5,33 @@
 # $Id$
 # ---------------------------------------------------------------------
 # 
-# Copyright (c) 1997 The CGAL Consortium
-# 
-# This software and related documentation is part of the 
+# Copyright (c) 1998 The CGAL Consortium
+#
+# This software and related documentation is part of the
 # Computational Geometry Algorithms Library (CGAL).
-# 
-# Permission to use, copy, and distribute this software and its 
-# documentation is hereby granted free of charge, provided that 
-# (1) it is not a component of a commercial product, and 
-# (2) this notice appears in all copies of the software and
-#     related documentation. 
-# 
-# CGAL may be distributed by any means, provided that the original
-# files remain intact, and no charge is made other than for
-# reasonable distribution costs.
-# 
-# CGAL may not be distributed as a component of any commercial
-# product without a prior license agreement with the authors.
-# 
-# This software and documentation is provided "as-is" and without 
+#
+# Every use of CGAL requires a license. Licenses come in three kinds:
+#
+# - For academic research and teaching purposes, permission to use and
+#   copy the software and its documentation is hereby granted free of  
+#   charge, provided that
+#   (1) it is not a component of a commercial product, and
+#   (2) this notice appears in all copies of the software and
+#       related documentation.
+# - Development licenses grant access to the source code of the library 
+#   to develop programs. These programs may be sold to other parties as 
+#   executable code. To obtain a development license, please contact
+#   the CGAL Consortium (at cgal@cs.uu.nl).
+# - Commercialization licenses grant access to the source code and the
+#   right to sell development licenses. To obtain a commercialization 
+#   license, please contact the CGAL Consortium (at cgal@cs.uu.nl).
+#
+# This software and documentation is provided "as-is" and without
 # warranty of any kind. In no event shall the CGAL Consortium be
 # liable for any damage of any kind.
-# 
+#
 # The CGAL Consortium consists of Utrecht University (The Netherlands),
-# ETH Zurich (Switzerland), Free University of Berlin (Germany), 
+# ETH Zurich (Switzerland), Free University of Berlin (Germany),
 # INRIA Sophia-Antipolis (France), Max-Planck-Institute Saarbrucken
 # (Germany), RISC Linz (Austria), and Tel-Aviv University (Israel).
 #
@@ -42,7 +45,7 @@
 # CGAL specific:
 
 # ---------------------------------------------
-CGAL_VERSION='1.0'
+CGAL_VERSION='1.1'
 # ---------------------------------------------
 CGAL_INSTALL_VERSION='$Revision$'
 # ---------------------------------------------
@@ -234,18 +237,18 @@ CUSTOM_LDFLAGS=''
 # ---------------------------------------------------------------------
 print_general_information()
 {
-    ${_printf} \
+    ${_printf} "%s\n\n" \
 "You can get a list of all options with \"`basename $0` --help\"
 
 First-time-installers: 
 ----------------------
 Just type \"`basename $0` -i\" and follow the menus.
-If you get stuck, please read the documentation.\n\n"
+If you get stuck, please read the documentation."
 }
 
 print_usage_information()
 {
-	${_printf} \
+	${_printf} "%s\n\n" \
 "usage: `basename $0`  
       [--help | --version | -i | --interactive |
        -ni <comp> | --non-interactive <comp> | -os <comp> |
@@ -271,7 +274,7 @@ print_usage_information()
                specified by <comp>.
                For the rest you are on your own.
                (Have a look at the README file.)
-  -os <comp>   prints architecture/os/compiler spec\n\n"
+  -os <comp>   prints architecture/os/compiler spec"
 }
 
 # ---------------------------------------------------------------------
@@ -279,15 +282,17 @@ print_usage_information()
 # ---------------------------------------------------------------------
 exit_on_error()
 {
-    ${_printf} "\n===================================================\n"
-    ${_printf} "ERROR: ${1}"
+    ${_printf} "\n%s\n" \
+	"==================================================="
+    ${_printf} "%s" "ERROR: ${1}"
     shift
     while [ ${#} -gt 0 ]; do
-	${_printf} "\n\t${1}"
+	${_printf} "\n\t%s" "${1}"
 	shift
     done
-    ${_printf} ", exiting.\n"
-    ${_printf} "===================================================\n"
+    ${_printf} "%s\n" ", exiting."
+    ${_printf} "%s\n" \
+	"==================================================="
     exit 1
 }
 
@@ -300,7 +305,7 @@ exit_on_error()
 value_of()
 {
     _value=`eval "${_printf} '$'$1"`
-    eval "${_printf} \"$_value\""
+    eval "${_printf} \"%s\" \"${_value}\""
 }
 
 # print the value of variable $1, except for the first occurrence 
@@ -309,10 +314,10 @@ value_of_without()
 {
     _tmp=`value_of "$1"`
     while [ $# -gt 1 ]; do
-        _tmp=`${_printf} "${_tmp}\n" | ${_sed} "s/${2}//1"`
+	_tmp=`${_printf} "${_tmp}\n" | ${_sed} "s/${2}//1"`
 	shift
     done
-    ${_printf} "${_tmp}"
+    ${_printf} "%s" "${_tmp}"
 }
 
 # (/usr)/bin/which is completely STUPID
@@ -335,23 +340,24 @@ real_which()
 # /<path>/<cmd> -<opt1> ... -<optn>
 _real_basename()
 {
-    ${_basename} `${_printf} "${*}\n" | ${_awk} '{ printf "%s",$1 }'`
+    ${_basename} `${_printf} "${*}" | ${_awk} '{ printf "%s",$1 }'`
 }
 
 _real_dirname()
 {
-    ${_dirname} `${_printf} "${*}\n" | ${_awk} '{ printf "%s",$1 }'`
+    ${_dirname} `${_printf} "${*}" | ${_awk} '{ printf "%s",$1 }'`
 }
 
 _real_options()
 {
-    ${_printf} "${*}\n" | ${_awk} '{ for (i=2; i<=NF; ++i) printf "%s",$i }'
+    ${_printf} "${*}" | \
+	${_awk} '{ for (i=2; i<=NF; ++i) printf "%s",$i }'
 }
 
 # print to logfile
 log_print()
 {
-    eval "${_printf} \"$*\n\" ${INSTALL_LOGFILE_REDIRECTION}"
+    eval "${_printf} \"%s\n\" \"$*\" ${INSTALL_LOGFILE_REDIRECTION}"
 }
 
 # checks for existency of program $1 
@@ -483,17 +489,21 @@ get_cgal_version()
 # initialize the logfiles
 init_logfiles()
 {
-    ${_printf} "----------------------------------------------------------\n" \
+    ${_printf} "%s\n" \
+	"----------------------------------------------------------" \
 	>${INSTALL_LOGFILE}
     log_print "log of $0 $*" 
     log_print "called by $LOGNAME on `date`" 
     log_print "CGAL_DIR is ${CGAL_DIR}" 
     log_print "----------------------------------------------------------" 
-    ${_printf} "${_LEFTSPACE}----------------------------------------------------------\n" \
+    ${_printf} "${_LEFTSPACE}%s\n" \
+	"----------------------------------------------------------" \
 	>${INSTALL_RIS_LOGFILE}
-    ${_printf} "${_LEFTSPACE}You built CGAL ${CGAL_VERSION} on:\n" \
+    ${_printf} "%s\n" \
+	"${_LEFTSPACE}You built CGAL ${CGAL_VERSION} on:" \
 	>>${INSTALL_RIS_LOGFILE}
-    ${_printf} "${_LEFTSPACE}----------------------------------------------------------\n" \
+    ${_printf} "${_LEFTSPACE}%s\n" \
+	"----------------------------------------------------------\n" \
 	>>${INSTALL_RIS_LOGFILE}
 }
 
@@ -503,7 +513,7 @@ init_logfiles()
 check_conf_dir()
 {
     # confidence tests
-    case `$_basename ${CGAL_DIR}` in
+    case `${_basename} ${CGAL_DIR}` in
 	CGAL*) 
 	    log_print "Confidence test passed."
 	    ;;
@@ -525,7 +535,7 @@ check_conf_dir()
 # (in an RCS Revision string this is field nr two)
 _install_version_number()
 {
-    ${_printf} "${CGAL_INSTALL_VERSION}" | ${_awk} '{print $2}'
+    ${_printf} "%s\n" "${CGAL_INSTALL_VERSION}" | ${_awk} '{print $2}'
 }
 
 # check, if all needed utility programs are available
@@ -589,7 +599,8 @@ guess_os()
 # ($* is full path to executable)
 _gpp_version()
 {
-    ${_printf} "`$* --version 2>&1 | ${_awk} '{print $1}' | \
+    ${_printf} "%s" \
+	"`${*} --version 2>&1 | ${_awk} '{print $1}' | \
 	${_awk} 'BEGIN {FS=\".\"}
 		{print $1\".\"$2\".\"$3}'`"
 }
@@ -601,7 +612,7 @@ _sunpro_version()
     _tmp="`$* -V 2>&1 | ${_fgrep} \"C++\" | ${_awk} '{print $9}'`"
     if [ -n "${_tmp}" ]; then
 	# sunpro 4.2
-	${_printf} "${_tmp}" 
+	${_printf} "%s" "${_tmp}" 
     else
 	# sunpro 4.1
 	$* -V 2>&1 | ${_fgrep} "C++" | ${_awk} '{print $NF}'
@@ -614,7 +625,8 @@ _sgi_version()
 {
     case ${SYST} in
 	*IRIX*5.*)
-	    ${_printf} "`${_versions} -b c++_dev | ${_fgrep} c++_dev | \
+	    ${_printf} "%s" \
+		"`${_versions} -b c++_dev | ${_fgrep} c++_dev | \
 		${_awk} '{print $5}'`"
 	    ;;
 	*IRIX*6.*)
@@ -635,7 +647,7 @@ _sgi_version()
 		    ${_versions} -b c++_dev | ${_fgrep} c++_dev | \
 			${_awk} '{print $8}'
 		else
-		    ${_printf} "${_tmp}" 
+		    ${_printf} "%s" "${_tmp}" 
 		fi
 	    fi
 	    ;;
@@ -647,7 +659,7 @@ _sgi_version()
 rpath_directive()
 {
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-	${_printf} "${RUNTIME_LINKER_FLAG}"
+	${_printf} "%s" "${RUNTIME_LINKER_FLAG}"
 	_where_is "${1}"
     fi
 }
@@ -671,6 +683,8 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG="-rpath "
+	    LONG_NAME_PROBLEM_CXXFLAGS=""
+	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    ;;
 	*IRIX*6.*CC*)
 	    #### settings for sgi mipspro compiler on irix6
@@ -683,6 +697,8 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG="-rpath "
+	    LONG_NAME_PROBLEM_CXXFLAGS=""
+	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    ;;
 	*IRIX*g++-egcs*|*IRIX*g++-2.8*)
 	    #### settings for egcs/gcc2.8 on irix
@@ -695,6 +711,8 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG="-rpath "
+	    LONG_NAME_PROBLEM_CXXFLAGS=""
+	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    ;;
 	*IRIX*g++-2*)
 	    #### settings for GCC2 on irix
@@ -707,6 +725,8 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG=''
+	    LONG_NAME_PROBLEM_CXXFLAGS=""
+	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
@@ -719,6 +739,8 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
+	    LONG_NAME_PROBLEM_CXXFLAGS=""
+	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    ;;
 	*SunOS*5.*g++-egcs*|*SunOS*5.*g++-2.8*)
 	    #### settings for egcs/gcc2.8 on solaris
@@ -731,6 +753,8 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
+	    LONG_NAME_PROBLEM_CXXFLAGS="-g"
+	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    ;;
 	*SunOS*5.*g++*)
 	    #### settings for GNU compiler on solaris
@@ -743,6 +767,8 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
+	    LONG_NAME_PROBLEM_CXXFLAGS=""
+	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    ;;
 	*Linux*g++-egcs*|*Linux*g++-2.8*)
 	    #### settings for egcs/gcc2.8 on linux
@@ -753,8 +779,10 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
-	    WINDOW_DIR="/usr/lib/X11"
+	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
+	    LONG_NAME_PROBLEM_CXXFLAGS=""
+	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    ;;
 	*Linux*g++*)
 	    #### settings for GNU compiler on linux
@@ -765,8 +793,10 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
-	    WINDOW_DIR="/usr/lib/X11"
+	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
+	    LONG_NAME_PROBLEM_CXXFLAGS=""
+	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    ;;
 	*)
 	    #### settings for unknown compiler 
@@ -779,6 +809,8 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="`compiler_bin` -G"
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG=''
+	    LONG_NAME_PROBLEM_CXXFLAGS=""
+	    LONG_NAME_PROBLEM_LDFLAGS=""
 	    ;;
     esac
 }
@@ -794,34 +826,57 @@ test_compiler_specifica()
     _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}
     _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL
     _file=${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h
-    ${_printf} "/* Copyright (c) 1997 The CGAL Consortium\n" > ${_file}
-    ${_printf} " *\n" >> ${_file}
-    ${_printf} " * This software and related documentation is part of the\n" \
+    ${_printf} "%s\n" \
+	"// Copyright (c) 1998 The CGAL Consortium" \
+	> ${_file}
+    ${_printf} "%s\n" \
+	"//" \
 	>> ${_file}
-    ${_printf} " * Computational Geometry Algorithms Library (CGAL).\n" \
+    ${_printf} "%s\n" \
+	"// This software and related documentation is part of the" \
 	>> ${_file}
-    ${_printf} " *\n" >> ${_file}
-    ${_printf} \
-	" * Compiler specific configuration file for CGAL ${CGAL_VERSION}\n" \
+    ${_printf} "%s\n" \
+	"// Computational Geometry Algorithms Library (CGAL)." \
 	>> ${_file}
-    ${_printf} " * System: ${CGAL_OS_COMPILER}\n" >> ${_file}
-    ${_printf} \
-	" * generated by `${_basename} $0` ${CGAL_INSTALL_VERSION}\n" \
+    ${_printf} "%s\n" \
+	"//" \
 	>> ${_file}
-    ${_printf} \
-	" * with install testsuite ${CGAL_INSTALL_CONF_VERSION}.\n" \
+    ${_printf} "%s\n" \
+	"// Compiler specific configuration file for CGAL ${CGAL_VERSION}" \
 	>> ${_file}
-    ${_printf} " */\n\n" >> ${_file}
+    ${_printf} "%s\n" \
+	"// System: ${CGAL_OS_COMPILER}" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+	"// generated by `${_basename} $0` ${CGAL_INSTALL_VERSION}" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+	"// with install testsuite ${CGAL_INSTALL_CONF_VERSION}." \
+	>> ${_file}
+    ${_printf} "%s\n\n" \
+	"//" \
+	>> ${_file}
     set_stl_version "${INSTALL_VERBOSE}"
-    ${_printf} "// CGAL STL version id:\n" >> ${_file}
-    ${_printf} "#define ${CGAL_STL_VERSION} 1\n\n" >> ${_file}
+    ${_printf} "%s\n" \
+	"// CGAL STL version id:" \
+	>> ${_file}
+    ${_printf} "%s\n\n" \
+	"#define ${CGAL_STL_VERSION} 1" \
+	>> ${_file}
     cd ${CGAL_TEST_CONF_DIR}
     for i in ${CGAL_TEST_CONF_DIR}/CGAL*.C; do
 	${_cat} ${i} > ${TMP_CXX_FILE}.C
-	${_printf} '//+--------------------------------------------------------------------------\n' >> ${_file}
+	${_printf} "%s%s\n" \
+	    "//+----------------------------------------------------------" \
+	    "----------------" \
+	    >> ${_file}
 	${_cat} ${i} | ${_awk} '/\/\/\|/ {print $0}' >> ${_file}
-	${_printf} '//+--------------------------------------------------------------------------\n' >> ${_file}
-	_test_name="`value_of_without \"${i}\" \"${CGAL_CONFIG_PREFIX}\" \"\.C\"`"
+	${_printf} "%s%s\n" \
+	    "//+----------------------------------------------------------" \
+	    "----------------" \
+	    >> ${_file}
+	_test_name="`value_of_without \
+	    \"${i}\" \"${CGAL_CONFIG_PREFIX}\" \"\.C\"`"
 	_test_name=`${_basename} "${_test_name}"`
 	_tmp_name="`value_of_without \"_test_name\" \"^NO_\"`"
 	if [ "${_tmp_name}" = "${_test_name}" ]; then
@@ -840,10 +895,11 @@ test_compiler_specifica()
 	    "$1" \
 	    "${_NO}"
 	then
-	    ${_printf} "//" >> ${_file}
+	    ${_printf} "%s" "//" >> ${_file}
 	fi
-	${_printf} \
-	 "#define ${CGAL_CONFIG_PREFIX}${_test_name} 1\n\n" >> ${_file}
+	${_printf} "%s\n\n" \
+	    "#define ${CGAL_CONFIG_PREFIX}${_test_name} 1" \
+	    >> ${_file}
 	cleanup_after_compile
 	cleanup_after_link_run
     done
@@ -859,7 +915,7 @@ test_compiler_specifica()
 _where_is()
 {
     if [ -z "`value_of \"${1}\"`" ]; then
-	${_printf} "WHERE_IS_YOUR_${1}"
+	${_printf} "%s" "WHERE_IS_YOUR_${1}"
     else
 	value_of "${1}"
     fi
@@ -867,18 +923,15 @@ _where_is()
 
 cgal_cxxflags()
 {
-    ${_printf} \
-	"-I`_where_is 'CGAL_INCL_DIR'` "
+    ${_printf} "%s" "-I`_where_is 'CGAL_INCL_DIR'` "
 }
 
 cgal_ldflags()
 {
-    ${_printf} \
-	"-L`_where_is 'CGAL_LIB_DIR'`/`full_ostype` "
-    ${_printf} \
-	"`rpath_directive 'CGAL_LIB_DIR'`"
+    ${_printf} "%s" "-L`_where_is 'CGAL_LIB_DIR'`/`full_ostype` "
+    ${_printf} "%s" "`rpath_directive 'CGAL_LIB_DIR'`"
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-	${_printf} "/`full_ostype` "
+	${_printf} "%s" "/`full_ostype` "
     fi
 }
 
@@ -890,7 +943,7 @@ gmp_cxxflags()
     if [ -n "${GMP_SUPPORT}" -a \
 	"${GMP_INSTALLATION}" != 'c' -a \
 	"${GMP_INSTALLATION}" != 's' ]; then
-	${_printf} "-I`_where_is 'GMP_INCL_DIR'` "
+	${_printf} "%s" "-I`_where_is 'GMP_INCL_DIR'` "
     fi
 }
 
@@ -899,16 +952,16 @@ gmp_ldflags()
     if [ -n "${GMP_SUPPORT}" ]; then
 	if [ "${GMP_INSTALLATION}" != 'c' -a \
              "${GMP_INSTALLATION}" != 's' ]; then
-	    ${_printf} "-L`_where_is 'GMP_LIB_DIR'` "
-	    ${_printf} "`rpath_directive 'GMP_LIB_DIR'` "
+	    ${_printf} "%s" "-L`_where_is 'GMP_LIB_DIR'` "
+	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
 	fi
-	${_printf} "-lgmp "
+	${_printf} "%s" "-lgmp "
     fi
 }
 
 gmp_test_cxxflags()
 {
-    ${_printf} "${CUSTOM_CXXFLAGS} "
+    ${_printf} "%s" "${CUSTOM_CXXFLAGS} "
     if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
 	cgal_cxxflags
     fi
@@ -917,7 +970,7 @@ gmp_test_cxxflags()
 
 gmp_test_ldflags()
 {
-    ${_printf} "${CUSTOM_LDFLAGS} "
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} "
     if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
 	cgal_ldflags
     fi
@@ -930,18 +983,18 @@ gmp_test_ldflags()
 stl_cxxflags()
 {
     if [ "${STL_STATUS}" != "b" ]; then
-	${_printf} "-I`_where_is 'STL_DIR'` "
+	${_printf} "%s" "-I`_where_is 'STL_DIR'` "
     fi
 }
 
 stl_test_cxxflags()
 {
-    ${_printf} "${CUSTOM_CXXFLAGS} `stl_cxxflags`"
+    ${_printf} "%s" "${CUSTOM_CXXFLAGS} `stl_cxxflags`"
 }
 
 stl_test_ldflags()
 {
-    ${_printf} "${CUSTOM_LDFLAGS} -lm"
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} -lm"
 }
 
 #---------------------------------------------------------
@@ -949,7 +1002,7 @@ stl_test_ldflags()
 leda_cxxflags()
 {
     if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
-	${_printf} "-I`_where_is 'LEDA_INCL_DIR'` "
+	${_printf} "%s" "-I`_where_is 'LEDA_INCL_DIR'` "
     fi
 }
 
@@ -957,24 +1010,24 @@ leda_ldflags()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
 	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-	    ${_printf} "-L`_where_is 'LEDA_LIB_DIR'` "
-	    ${_printf} "`rpath_directive 'LEDA_LIB_DIR'` "
+	    ${_printf} "%s" "-L`_where_is 'LEDA_LIB_DIR'` "
+	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
 	fi
-	${_printf} "-lP -lG -lL "
+	${_printf} "%s" "-lP -lG -lL "
     fi
 }
 
 leda_test_cxxflags()
 {
-    ${_printf} "${CUSTOM_CXXFLAGS} "
+    ${_printf} "%s" "${CUSTOM_CXXFLAGS} "
     leda_cxxflags
 }
 
 leda_test_ldflags()
 {
-    ${_printf} "${CUSTOM_LDFLAGS} "
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} "
     leda_ldflags
-    ${_printf} "-lm "
+    ${_printf} "%s" "-lm "
 }
 
 #---------------------------------------------------------
@@ -983,20 +1036,20 @@ leda_test_ldflags()
 # print cxxflags for current setting
 compiler_flags()
 {
-    ${_printf} "${CUSTOM_CXXFLAGS} `cgal_cxxflags``stl_cxxflags``leda_cxxflags``gmp_cxxflags`"
+    ${_printf} "%s" "${CUSTOM_CXXFLAGS} `cgal_cxxflags``stl_cxxflags``leda_cxxflags``gmp_cxxflags`"
 }
 
 # print ldflags for current setting
 linker_flags()
 {
-    ${_printf} "${CUSTOM_LDFLAGS} `cgal_ldflags`-lCGAL `leda_ldflags``gmp_ldflags`-lm"
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags`-lCGAL `leda_ldflags``gmp_ldflags`-lm"
 }
 
 # print ldflags for current setting (do not link with cgal lib,
 # used for test before lib is compiled)
 linker_flags_no_cgal_lib()
 {
-    ${_printf} "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags`-lm"
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags`-lm"
 }
 
 # print version number of compiler $1 
@@ -1011,10 +1064,10 @@ get_compiler_version()
 			 ;;
 		*SunOS*) _sunpro_version "$*"
 			 ;;
-		*) ${_printf} "UnknownVersion";;
+		*) ${_printf} "%s" "UnknownVersion";;
      	    esac;;
 	*g++*) _gpp_version "$*";;
-	    *) ${_printf} "UnknownVersion";;
+	    *) ${_printf} "%s" "UnknownVersion";;
     esac
 }
 
@@ -1024,20 +1077,20 @@ get_compiler_description()
 {
     case ${1:-${COMPILER}} in
 	*CC*-32*)
-	    ${_printf} "MIPSPRO (o32)";;
+	    ${_printf} "%s" "MIPSPRO (o32)";;
 	*CC*-n32*)
-	    ${_printf} "MIPSPRO (n32)";;
+	    ${_printf} "%s" "MIPSPRO (n32)";;
 	*CC*-64*)
-	    ${_printf} "MIPSPRO (64)";;
+	    ${_printf} "%s" "MIPSPRO (64)";;
 	*CC*)
 	    case ${SYST} in
-		*IRIX*) ${_printf} "MIPSPRO";;
-		*SunOS*) ${_printf} "SUNPRO";;
-		*) ${_printf} "UnknownCompiler";;
+		*IRIX*) ${_printf} "%s" "MIPSPRO";;
+		*SunOS*) ${_printf} "%s" "SUNPRO";;
+		*) ${_printf} "%s" "UnknownCompiler";;
      	    esac;;
-	*g++*) ${_printf} "GNU";;
-	*xlC*) ${_printf} "IBM CSet";;
-	    *) ${_printf} "UnknownCompiler";;
+	*g++*) ${_printf} "%s" "GNU";;
+	*xlC*) ${_printf} "%s" "IBM CSet";;
+	    *) ${_printf} "%s" "UnknownCompiler";;
     esac
 }
 
@@ -1045,7 +1098,7 @@ get_compiler_description()
 # print compiler basenam
 compiler_basename()
 {
-    ${_printf} "${*:-${COMPILER}}\n" | \
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
 	${_awk} 'BEGIN {FS="@"} {printf "%s",$1}'
 }
 
@@ -1053,7 +1106,7 @@ compiler_basename()
 # print compiler description
 compiler_description()
 {
-    ${_printf} "${*:-${COMPILER}}\n" | \
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
 	${_awk} 'BEGIN {FS="@"} {printf "%s",$2}'
 }
 
@@ -1061,7 +1114,7 @@ compiler_description()
 # print compiler executable
 c_compiler_bin()
 {
-    ${_printf} "${*:-${COMPILER}}\n" | \
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
 	${_awk} 'BEGIN {FS="@"} {printf "%s",$3}'
 }
 
@@ -1069,7 +1122,7 @@ c_compiler_bin()
 # print compiler executable
 compiler_bin()
 {
-    ${_printf} "${*:-${COMPILER}}\n" | \
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
 	${_awk} 'BEGIN {FS="@"} {printf "%s",$4}'
 }
 
@@ -1077,7 +1130,7 @@ compiler_bin()
 # print compiler executable
 compiler_version()
 {
-    ${_printf} "${*:-${COMPILER}}\n" | \
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
 	${_awk} 'BEGIN {FS="@"} {printf "%s",$5}'
 }
 
@@ -1085,7 +1138,7 @@ compiler_version()
 # print extended compiler description
 extended_compiler_description()
 {
-    ${_printf} "${*:-${COMPILER}}\n" | \
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
 	${_awk} 'BEGIN {FS="@"} {printf "%s %s\n",$2,$5}'
 }
 
@@ -1146,13 +1199,13 @@ _search_compiler()
 _add_flags()
 {
     compiler_basename "$1"
-    ${_printf} "$2@"
+    ${_printf} "%s" "$2@"
     compiler_description "$1"
-    ${_printf} "$3@"
+    ${_printf} "%s" "$3@"
     c_compiler_bin "$1"
-    ${_printf} "$4@"
+    ${_printf} "%s" "$4@"
     compiler_bin "$1"
-    ${_printf} "$4@"
+    ${_printf} "%s" "$4@"
     compiler_version "$1"
 }
 
@@ -1218,31 +1271,31 @@ compiler_absolute()
     _args="${*}"
     _tmp="`_real_basename \"${*}\"`"
     shift
-    ${_printf} "${_tmp}"
+    ${_printf} "%s" "${_tmp}"
     # concat options - replace space by "-":
-    _tmp1=`${_printf} "${*}\n" | ${_sed} 's/"//g;s/ -/-/g' | \
+    _tmp1=`${_printf} "%s\n" "${*}" | ${_sed} 's/"//g;s/ -/-/g' | \
 	${_sed} "s/'//g;s/ /-/g"`
     if [ -n "${_tmp1}" ]; then
-	${_printf} "${_tmp1}"
+	${_printf} "%s" "${_tmp1}"
     fi
-    ${_printf} "@"
+    ${_printf} "%s" "@"
     get_compiler_description "${_args}"
-    ${_printf} "@"
+    ${_printf} "%s" "@"
     _tmp1=`_real_dirname "${_args}"`
     if [ "${_tmp1}" != "." ]; then
-	${_printf} "${_tmp1}/"
+	${_printf} "%s" "${_tmp1}/"
     fi
     # guess C compiler:
     case ${_tmp} in
-	g++) ${_printf} "gcc";;
-	xlC) ${_printf} "xlc";;
-	*) ${_printf} "cc";;
+	g++) ${_printf} "%s" "gcc";;
+	xlC) ${_printf} "%s" "xlc";;
+	*) ${_printf} "%s" "cc";;
     esac
     _tmp1=`_real_options "${_args}"`
     if [ -n "${_tmp1}" ]; then
-	${_printf} " ${_tmp1}"
+	${_printf} "%s" " ${_tmp1}"
     fi
-    ${_printf} "@${_args}@"
+    ${_printf} "%s" "@${_args}@"
     get_compiler_version "${_args}"
 }
 
@@ -1335,7 +1388,7 @@ clear_buffer()
 # print buffer
 flush_buffer()
 {
-    ${_printf} "$_BUF"
+    ${_printf} "${_BUF}"
     clear_buffer
 }
 
@@ -1355,7 +1408,7 @@ print_with_indent()
 	_read
 	${_printf} "${_LEFTSPACE}${KEY}\n"
     else
-	${_printf} "${_LEFTSPACE}$*\n"
+	${_printf} "${_LEFTSPACE}${*}\n"
     fi
 }
 
@@ -1365,14 +1418,14 @@ print_as_shell_comment()
 	_read
 	${_printf} "# ${KEY}\n"
     else
-	${_printf} "# $*\n"
+	${_printf} "# ${*}\n"
     fi
 }
 
 # print $2 times string $1 ($1 must not contain '@'!)
 string_n_print()
 {
-    _tmp=`eval "printf \"\`${_printf} \"$1@$2\" | ${_awk} 'BEGIN {FS=\"@\"} 
+    _tmp=`eval "printf \"%s\" \"\`${_printf} \"%s\" \"$1@$2\" | ${_awk} 'BEGIN {FS=\"@\"} 
 	{ for ( i=0; i<$2; ++i) printf $1}'\`\""`
    write_buffer "${_tmp}"
 }
@@ -1389,7 +1442,7 @@ length()
     then
 	return ${#1}
     elif [ -x /bin/wc ]; then
-	return `${_printf} "$1" | /bin/wc -c`
+	return `${_printf} "%s" "$1" | /bin/wc -c`
     else
 	return 30
     fi
@@ -1429,7 +1482,7 @@ print_line()
 #  is only used for displaying the custom options)
 print_multi_line()
 {
-    _tmp=`${_printf} "$1" | \
+    _tmp=`${_printf} "%s" "$1" | \
 	eval "${_awk} \`${_printf} \"${_MULTILINE_LAYOUT_AWK_PROG}\" dummy\`"`
     write_buffer "${_tmp}"
 }
@@ -1727,7 +1780,7 @@ try_to_get_var_from_file()
 	_awkprg="/${1}/"'{print $0}'
 	_tmp2=`${_awk} "${_awkprg}" ${2}`
 	if [ -n "${_tmp2}" ]; then
-	    _tmp2=`${_printf} "${_tmp2}\n" | \
+	    _tmp2=`${_printf} "%s\n" "${_tmp2}" | \
 		${_awk} '{for (i=4; i<NF-1; ++i) printf "%s ",$(i); \
 		    printf "%s",$(NF-1)}'`
 	    log_print "got ${1} from config/`${_basename} ${2}`."
@@ -1784,7 +1837,7 @@ _compile_test()
 {
     # add newlines to ${TMP_CXX_FILE}.C (ANSI)
     ${_printf} "\n\n" >> ${TMP_CXX_FILE}.C
-    ${_printf} "${_LEFTSPACE}Testing for $1 ..."
+    ${_printf} "%s" "${_LEFTSPACE}Testing for $1 ..."
 
     # set flags
     if [ -z "$2" ]; then
@@ -1795,10 +1848,14 @@ _compile_test()
     _flags="${_flags} -c ${TMP_CXX_FILE}.C -o ${TMP_CXX_FILE}.o"
 
     # compile
-    ${_printf} 'Compiler call:\n--------------\n' >${TMP_LOGFILE}
-    ${_printf} "`compiler_bin` ${_flags}" >>${TMP_LOGFILE}
-    ${_printf} "\n\nGot the following error messages:\n" >>${TMP_LOGFILE}
-    ${_printf} "---------------------------------\n" >>${TMP_LOGFILE}
+    ${_printf} "%s\n%s\n" \
+	"Compiler call:" "--------------" >${TMP_LOGFILE}
+    ${_printf} "%s" \
+	"`compiler_bin` ${_flags}" >>${TMP_LOGFILE}
+    ${_printf} "\n\n%s\n" \
+	"Got the following error messages:" >>${TMP_LOGFILE}
+    ${_printf} "%s\n" \
+	"---------------------------------" >>${TMP_LOGFILE}
     eval "`compiler_bin` ${_flags} >>${TMP_LOGFILE} 2>&1"
     if [ $? = 0 ]; then
 	log_print "$1 test compiled."
@@ -1818,14 +1875,14 @@ _compile_test()
 		print_filled_line
 		wait_for_enter
 	    else
-		${_printf} " compilation failed.\n\n"
+		${_printf} "%s\n\n" " compilation failed."
 		${_cat} ${TMP_LOGFILE} 
-		printf \
-		    "--------------------------------------------------------\n\n"
+		${_printf} "%s\n\n" \
+		    "--------------------------------------------------------"
 	    fi
 	else
 	    log_print "remark: $1 test did not compile."
-	    ${_printf} " ${4:-no.}\n"
+	    ${_printf} "%s\n" " ${4:-no.}"
 	fi
 	return 1
     fi
@@ -1854,22 +1911,22 @@ _link_run_test()
     _flags="-o ${TMP_CXX_FILE} ${TMP_CXX_FILE}.o ${_flags}"
 
     # link
-    ${_printf} 'Linker call:\n--------------\n' >${TMP_LOGFILE}
-    ${_printf} "`compiler_bin` ${_flags}" >>${TMP_LOGFILE}
-    ${_printf} "\n\nGot the following error messages:\n" >>${TMP_LOGFILE}
-    ${_printf} "---------------------------------\n" >>${TMP_LOGFILE}
+    ${_printf} "%s\n%s\n" "Linker call:" "--------------" >${TMP_LOGFILE}
+    ${_printf} "%s\n\n" "`compiler_bin` ${_flags}" >>${TMP_LOGFILE}
+    ${_printf} "%s\n" "Got the following error messages:" >>${TMP_LOGFILE}
+    ${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
     eval "`compiler_bin` ${_flags} >>${TMP_LOGFILE} 2>&1"
     i=$?
     j=1
     if [ $i = 0 ]; then 
 	log_print "$1 test linking succeeded."
 	# run
-	${_printf} \
-	    "Run program `${_basename} ${TMP_CXX_FILE}`:\n" >>${TMP_LOGFILE}
-	${_printf} \
-	    "----------------------\n" >>${TMP_LOGFILE}
-	${_printf} "\n\nGot the following output:\n" >>${TMP_LOGFILE}
-	${_printf} "---------------------------------\n" >>${TMP_LOGFILE}
+	${_printf} "%s\n" \
+	    "Run program `${_basename} ${TMP_CXX_FILE}`:" >>${TMP_LOGFILE}
+	${_printf} "%s\n\n" \
+	    "----------------------" >>${TMP_LOGFILE}
+	${_printf} "%s\n" "Got the following output:" >>${TMP_LOGFILE}
+	${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
 	eval "${TMP_CXX_FILE} >>${TMP_LOGFILE} 2>&1"
 	j=$?
 	if [ $j = 0 ]; then
@@ -1889,7 +1946,7 @@ _link_run_test()
 	fi
     fi
     if [ $j = 0 -a $i = 0 ]; then
-	${_printf} " ok.\n"
+	${_printf} "%s\n" " ok."
 	cleanup_after_link_run
 	return 0
     else
@@ -1907,13 +1964,13 @@ _link_run_test()
 		print_filled_line
 		wait_for_enter
 	    else
-		${_printf} " linking or execution failed.\n\n"
+		${_printf} "%s\n\n" " linking or execution failed."
 		${_cat} ${TMP_LOGFILE} 
-		printf \
-		    "--------------------------------------------------------\n\n"
+		printf "%s\n\n" \
+		    "--------------------------------------------------------"
 	    fi
 	else
-	    ${_printf} " no.\n"
+	    ${_printf} "%s\n" " no."
 	fi
 	cleanup_after_link_run
 	return 1
@@ -1933,14 +1990,14 @@ _link_run_test()
 #   mem_manager stuff ... ]
 test_for_leda_incl_in_sys_incl()
 {
-    ${_printf} '
+    ${_printf} "%s\n" "
     #include <LEDA/basic.h>
     int main() {
 	return 0;
-    }\n' > ${TMP_CXX_FILE}.C
+    }" > ${TMP_CXX_FILE}.C
     if _compile_test "LEDA sysincl" "${CUSTOM_CXXFLAGS} " "$1"; then
 	cleanup_after_compile
-	${_printf} " ok.\n"
+	${_printf} "%s\n" " ok."
 	NEED_EXTRA_LEDA_IDIR=''
 	return 0
     fi
@@ -1954,10 +2011,10 @@ test_for_leda_incl_in_sys_incl()
 # ($1 nonzero indicates verbosity)
 test_for_leda_lib_in_sys_lib()
 {
-    ${_printf} '
+    ${_printf} "%s\n" "
     int main() {
 	return 0;
-    }' > ${TMP_CXX_FILE}.C
+    }" > ${TMP_CXX_FILE}.C
     if _compile_test "LEDA syslibs" "${CUSTOM_CXXFLAGS} " "$1"; then
 	if _link_run_test "LEDA syslibs" \
 	    "${CUSTOM_LDFLAGS} -lP -lG -lL -lm" "$1"; then
@@ -1975,21 +2032,21 @@ test_leda()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
 	${_printf} "\n" > ${TMP_CXX_FILE}.C
-	${_printf} '
-	#include <iostream.h>
-	#include <assert.h>
-	#include <LEDA/integer.h>
-	#include <LEDA/REDEFINE_NAMES.h>
-	typedef integer I;
-	#include <LEDA/UNDEFINE_NAMES.h>
-	int main() {
-	  I a( 123456); 
-	  I b( 456789);
-
-	  assert( a + b == I( 580245));
-	  assert( a - b == I( -333333));
-	  return 0;
-	}' >> ${TMP_CXX_FILE}.C
+	${_printf} "%s\n" '
+	    #include <iostream.h>
+	    #include <assert.h>
+	    #include <LEDA/integer.h>
+	    #include <LEDA/REDEFINE_NAMES.h>
+	    typedef integer I;
+	    #include <LEDA/UNDEFINE_NAMES.h>
+	    int main() {
+	    I a( 123456); 
+	    I b( 456789);
+	    
+	    assert( a + b == I( 580245));
+	    assert( a - b == I( -333333));
+	    return 0;
+	    }' >> ${TMP_CXX_FILE}.C
 
 	if _compile_test LEDA "`leda_test_cxxflags`" $1 && \
 	    _link_run_test LEDA "`leda_test_ldflags`" $1
@@ -2016,7 +2073,7 @@ test_leda()
 # ($1 nonzero indicates verbosity)
 _test_hp_1994_stl()
 {
-    ${_printf} '
+    ${_printf} "%s\n" '
 	#include <assert.h>
 	#include <defalloc.h>
 	#include <iterator.h>
@@ -2049,7 +2106,7 @@ _test_hp_1994_stl()
 # ($1 nonzero indicates verbosity)
 _test_sgi_1996_stl()
 {
-    ${_printf} '
+    ${_printf} "%s\n" '
 	#include <assert.h>
 	#include <defalloc.h>
 	#include <iterator.h>
@@ -2086,7 +2143,7 @@ _test_sgi_1996_stl()
 # ($1 nonzero indicates verbosity)
 _test_sgi_cc_stl()
 {
-    ${_printf} '
+    ${_printf} "%s\n" '
 	#include <assert.h>
 	#include <defalloc.h>
 	#include <iterator.h>
@@ -2119,7 +2176,8 @@ _test_sgi_cc_stl()
 # ($1 nonzero indicates verbosity)
 _test_sgi_june_1997_stl()
 {
-    ${_printf} '#include <assert.h>
+    ${_printf} "%s\n" '
+	#include <assert.h>
 	#include <defalloc.h>
 	#include <iterator.h>
 	#define Allocator allocator
@@ -2155,7 +2213,8 @@ _test_sgi_june_1997_stl()
 # ($1 nonzero indicates verbosity)
 _test_sgi_3_0_stl()
 {
-    ${_printf} '#include <assert.h>
+    ${_printf} "%s\n" '
+	#include <assert.h>
 	#include <defalloc.h>
 	#include <iterator.h>
 	#define Allocator allocator
@@ -2192,7 +2251,7 @@ _test_sgi_3_0_stl()
 # ($2 gives comment for _compile_test)
 test_stl_general()
 {
-    ${_printf} '
+    ${_printf} "%s\n" '
 	#include <iostream.h>
 	#include <algo.h>
 	#include <vector.h>
@@ -2304,7 +2363,7 @@ test_stl()
 test_gmp()
 {
     if [ -n "${GMP_SUPPORT}" ]; then
-	${_printf} '
+	${_printf} "%s\n" '
 	#include <stdio.h>
 	#include "gmp.h"
 	int
@@ -2348,7 +2407,7 @@ set_ostype()
 # (i.e. including LEDA extension)
 full_ostype()
 {
-    ${_printf} "${CGAL_OS_COMPILER}${LEDA_SUPPORT}"
+    ${_printf} "%s" "${CGAL_OS_COMPILER}${LEDA_SUPPORT}"
 }
 
 # print the current os/compiler in a readable fashion
@@ -2504,7 +2563,7 @@ retrieve_compiler_settings()
 # into the config file
 _store_install_config_variable()
 {
-    ${_printf} "/* $1 = '`value_of $1`' */\n"
+    ${_printf} "%s\n" "/* $1 = '`value_of $1`' */"
 }
 
 # store the actual compiler specific settings to the
@@ -2512,27 +2571,27 @@ _store_install_config_variable()
 store_compiler_settings()
 {
     _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
-    ${_printf} \
-	"/*\n" \
+    ${_printf} "%s\n" \
+	"/*" \
 	>${_file}
-    ${_printf} \
-	"** file: `$_basename ${_file}`\n" \
+    ${_printf} "%s\n" \
+	"** file: `$_basename ${_file}`" \
 	>>${_file}
-    ${_printf} \
-	"** Configuration file for CGAL ${CGAL_VERSION}\n" \
+    ${_printf} "%s\n" \
+	"** Configuration file for CGAL ${CGAL_VERSION}" \
 	>>${_file}
-    ${_printf} \
-	"** on `extended_compiler_description`\n" \
+    ${_printf} "%s\n" \
+	"** on `extended_compiler_description`" \
 	>>${_file}
-    ${_printf} \
-	"** Automatically created by %s.\n" \
-	"`${_basename} $0` ${CGAL_INSTALL_VERSION}" \
+    ${_printf} "%s%s\n" \
+	"** Automatically created by " \
+	"`${_basename} $0` ${CGAL_INSTALL_VERSION}." \
 	>>${_file}
-    ${_printf} \
-	"** Please do not edit.\n" \
+    ${_printf} "%s\n" \
+	"** Please do not edit." \
 	>>${_file}
-    ${_printf} \
-	"*/\n\n" \
+    ${_printf} "%s\n\n" \
+	"*/" \
 	>>${_file}
     _store_install_config_variable COMPILER >>${_file}
     _store_install_config_variable CGAL_INSTALL_VERSION >>${_file}
@@ -2550,8 +2609,8 @@ store_compiler_settings()
     _store_install_config_variable CUSTOM_CXXFLAGS  >>${_file}
     _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
     _store_install_config_variable CGAL_STL_VERSION >>${_file}
-    ${_printf} \
-	"\n/* EOF */\n" \
+    ${_printf} "\n%s\n" \
+	"/* EOF */" \
 	>>${_file}
     log_print "Settings stored in ${_file}."
 }
@@ -2559,7 +2618,8 @@ store_compiler_settings()
 # just a tiny message template for test_setup
 _passed_message()
 {
-    ${_printf} "${_LEFTSPACE}$1 test has already been passed.\n"
+    ${_printf} "%s\n" \
+	"${_LEFTSPACE}$1 test has already been passed."
 }
 
 # test current setup and set SETUP_COMPLETE 
@@ -2600,9 +2660,9 @@ test_setup()
     fi
 
     SETUP_COMPLETE='y'
-    ${_printf} "${_LEFTSPACE}Saving current setup ..."
+    ${_printf} "%s" "${_LEFTSPACE}Saving current setup ..."
     store_compiler_settings
-    ${_printf} " done.\n"
+    ${_printf} "%s\n" " done."
     return 0
 }
 
@@ -2740,7 +2800,9 @@ change_dir()
     else
 	# make sure $1 is just one word:
 	go_down_lines 1
-	if [ -n "`${_printf} \"\`value_of $1\`\" | ${_awk} '{printf $2}'`" ]; then
+	if [ -n "`${_printf} \"%s\" \"\`value_of $1\`\" | \
+	    ${_awk} '{printf $2}'`" ]
+	then
 	    print_filled_line
 	    print_center_line "ERROR: String contains whitespaces."
 	else
@@ -3098,10 +3160,10 @@ gmp_menu()
 # if the command fails, exit with an error message
 _do_command()
 {
-    ${_printf} "${_LEFTSPACE}$2 ..."
+    ${_printf} "%s" "${_LEFTSPACE}$2 ..."
     if eval "$1 >${TMP_LOGFILE} 2>&1"; then
 	log_print "\"$2\" succeeded."
-	${_printf} " done.\n"
+	${_printf} "%s\n" " done."
 	${_rm} -f ${TMP_LOGFILE}
     else
 	log_print "ERROR: \"$2\" failed."
@@ -3116,16 +3178,16 @@ _do_command()
 # otherwise return 0
 _do_command_may_fail()
 {
-    ${_printf} "${_LEFTSPACE}$2 ..."
+    ${_printf} "%s" "${_LEFTSPACE}$2 ..."
     if eval "$1 >${TMP_LOGFILE} 2>&1"; then
 	log_print "\"$2\" succeeded."
-	${_printf} " done.\n"
+	${_printf} "%s\n" " done."
 	${_rm} -f ${TMP_LOGFILE}
 	return 0
     else
 	log_print "ERROR: \"$2\" failed."
-	${_printf} "\n${_LEFTSPACE}\"$2\" failed.\n"
-	${_printf} "${_LEFTSPACE}You will be shown a log now ...\n"
+	${_printf} "\n%s\n" "${_LEFTSPACE}\"$2\" failed."
+	${_printf} "%s\n" "${_LEFTSPACE}You will be shown a log now ..."
 	print_filled_line
 	wait_for_enter
 	${_cat} ${TMP_LOGFILE} | ${PAGER:-${_cat}}
@@ -3187,9 +3249,9 @@ install_gmp()
     print_filled_line
     write_buffer "\n"
     flush_buffer
-    ${_printf} "${_LEFTSPACE}OS:\t\t${SYST}\n" 
-    ${_printf} \
-	"${_LEFTSPACE}COMPILER:\t`extended_compiler_description`\n\n" 
+    ${_printf} "%s\t\t%s\n" "${_LEFTSPACE}OS:" "${SYST}" 
+    ${_printf} "%s\t%s\n\n" \
+	"${_LEFTSPACE}COMPILER:" "`extended_compiler_description`" 
 
     if [ ! -d ${GMP_VERSION} ]; then
 	# unzip
@@ -3222,11 +3284,11 @@ install_gmp()
     if _do_command_may_fail "./configure ${_host}" Configuring; then
 	if _do_command_may_fail "make CC=\"`c_compiler_bin`\"" Building
 	then
-	    ${_printf} "${_LEFTSPACE}Installing ..."
+	    ${_printf} "%s" "${_LEFTSPACE}Installing ..."
 	    _check_write ${CGAL_INCL_DIR}
 	    ${_cp} gmp.h ${CGAL_INCL_DIR}
 	    ${_mv} libgmp.a ${CGAL_LIB_DIR}/`full_ostype`
-	    ${_printf} " done.\n"
+	    ${_printf} "%s\n" " done."
 	    _do_command "make clean" "Cleaning"
 	    GMP_INSTALLATION='c'
 	fi
@@ -3256,12 +3318,12 @@ install_gmp()
 
 makefile_header()
 {
-  ${_printf} \
-    "\n#---------------------------------------------------------------------#\n"
-  ${_printf} \
-    "#                    ${1}\n"
-  ${_printf} \
-    "#---------------------------------------------------------------------#\n\n"
+  ${_printf} "\n%s\n" \
+    "#---------------------------------------------------------------------#"
+  ${_printf} "%s\n" \
+    "#                    ${1}"
+  ${_printf} "%s\n\n" \
+    "#---------------------------------------------------------------------#"
 }
 
 # print args, if string is not empty
@@ -3269,7 +3331,7 @@ makefile_header()
 makefile_print_line()
 {
     if [ -n "${*}" ]; then
-	${_printf} "\t${*} \\\\\n" 
+	${_printf} "\t%s \\\\\n" "${*}"
     fi
 }
 
@@ -3288,9 +3350,9 @@ write_compiler_flags()
   print_as_shell_comment \
     "compiler specific configuration dir" \
     >> ${FILE}
-  ${_printf} "CGAL_INCL_CONF_DIR = \\\\\n" >> ${FILE}
-  ${_printf} \
-    "\t\$(CGAL_INCL_DIR)/CGAL/config/${CGAL_OS_COMPILER}\n\n" \
+  ${_printf} "%s\\\\\n" "CGAL_INCL_CONF_DIR = " >> ${FILE}
+  ${_printf} "\t%s\n\n" \
+    "\$(CGAL_INCL_DIR)/CGAL/config/${CGAL_OS_COMPILER}" \
     >> ${FILE}
 
   #
@@ -3305,8 +3367,8 @@ write_compiler_flags()
   print_as_shell_comment \
     "(e.g. -I/usr/local/STL)" \
     >> ${FILE}
-  ${_printf} \
-    "CGAL_STL_INCLUDE_DIRECTIVE = `stl_cxxflags`\n\n" \
+  ${_printf} "%s\n\n" \
+    "CGAL_STL_INCLUDE_DIRECTIVE = `stl_cxxflags`" \
     >> ${FILE}
 
   #
@@ -3319,9 +3381,9 @@ write_compiler_flags()
     print_as_shell_comment \
       "(e.g. /usr/local/include)" \
       >> ${FILE}
-    ${_printf} "LEDA_INCL_DIR = \\\\\n" >> ${FILE}
-    ${_printf} \
-      "\t`_where_is 'LEDA_INCL_DIR'`\n\n" \
+    ${_printf} "%s\\\\\n" "LEDA_INCL_DIR = " >> ${FILE}
+    ${_printf} "\t%s\n\n" \
+      "`_where_is 'LEDA_INCL_DIR'`" \
       >> ${FILE}
   fi
 
@@ -3331,8 +3393,8 @@ write_compiler_flags()
   print_as_shell_comment \
     "*** Fill in any additional compiler flags you need ***" \
     >> ${FILE}
-  ${_printf} \
-    "CUSTOM_CXXFLAGS = ${CUSTOM_CXXFLAGS}\n\n" \
+  ${_printf} "%s\n\n" \
+    "CUSTOM_CXXFLAGS = ${CUSTOM_CXXFLAGS}" \
     >> ${FILE}
 
   #
@@ -3345,17 +3407,28 @@ write_compiler_flags()
 	print_as_shell_comment \
 	  "*** Fill in your GMP include directory ***" \
 	  >> ${FILE}
-	${_printf} "GMP_INCL_DIR = \\\\\n" >> ${FILE}
-	${_printf} \
-	  "\t`_where_is 'GMP_INCL_DIR'`\n\n" \
+	${_printf} "%s\\\\\n" "GMP_INCL_DIR = " >> ${FILE}
+	${_printf} "\t%s\n\n" \
+	  "`_where_is 'GMP_INCL_DIR'`" \
 	  >> ${FILE}
     fi
   fi
 
   #
+  # LONG_NAME_PROBLEM_CXXFLAGS
+  #
+  print_as_shell_comment \
+    "*** to work around the long-name-problem" >> ${FILE}
+  print_as_shell_comment \
+    "*** on sparc_SunOS-5.5_g++-2.8.*/egcs-1.0.*" >> ${FILE}
+  ${_printf} "%s\n\n" \
+    "LONG_NAME_PROBLEM_CXXFLAGS = ${LONG_NAME_PROBLEM_CXXFLAGS}" \
+    >> ${FILE}
+
+  #
   # CGAL_CXXFLAGS
   #
-  ${_printf} "CGAL_CXXFLAGS = \\\\\n" >> ${FILE}
+  ${_printf} "%s\\\\\n" "CGAL_CXXFLAGS = " >> ${FILE}
   makefile_print_line "\$(CUSTOM_CXXFLAGS)" >> ${FILE}
   makefile_print_line "${ADDITIONAL_CXXFLAGS}" >> ${FILE}
   makefile_print_line "\$(CGAL_STL_INCLUDE_DIRECTIVE)" >> ${FILE}
@@ -3372,20 +3445,19 @@ write_compiler_flags()
     makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX" >> ${FILE}
     if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
 	makefile_print_line "-I\$(CGAL_INCL_DIR)" >> ${FILE}
-	${_printf} "\t-I\$(LEDA_INCL_DIR)\n\n" >> ${FILE}
+	${_printf} "\t%s\n\n" "-I\$(LEDA_INCL_DIR)" >> ${FILE}
     else
-	${_printf} "\t-I\$(CGAL_INCL_DIR)\n\n" >> ${FILE}
+	${_printf} "\t%s\n\n" "-I\$(CGAL_INCL_DIR)" >> ${FILE}
     fi
   else
-    ${_printf} "\t-I\$(CGAL_INCL_DIR)\n\n" >> ${FILE}
+    ${_printf} "\t%s\n\n" "-I\$(CGAL_INCL_DIR)" >> ${FILE}
   fi
 }
 
 # write linker flags for a CGAL include makefile
 write_linker_flags()
 {
-  makefile_header "linker flags\n" \
-    >> ${FILE}
+  makefile_header "linker flags\n" >> ${FILE}
 
   #
   # LEDA_LIB_DIR
@@ -3397,9 +3469,9 @@ write_linker_flags()
     print_as_shell_comment \
       "(e.g. /usr/local/lib)" \
       >> ${FILE}
-    ${_printf} "LEDA_LIB_DIR = \\\\\n" >> ${FILE}
-    ${_printf} \
-      "\t`_where_is 'LEDA_LIB_DIR'`\n\n" \
+    ${_printf} "%s\\\\\n" "LEDA_LIB_DIR = " >> ${FILE}
+    ${_printf} "\t%s\n\n" \
+      "`_where_is 'LEDA_LIB_DIR'`" \
       >> ${FILE}
   fi
 
@@ -3416,9 +3488,9 @@ write_linker_flags()
 	print_as_shell_comment \
 	  "(e.g. /usr/local/lib)" \
 	  >> ${FILE}
-	${_printf} "GMP_LIB_DIR = \\\\\n" >> ${FILE}
-	${_printf} \
-	  "\t`_where_is 'GMP_LIB_DIR'`\n\n" \
+	${_printf} "%s\\\\\n" "GMP_LIB_DIR = " >> ${FILE}
+	${_printf} "\t%s\n\n" \
+	  "`_where_is 'GMP_LIB_DIR'`" \
 	  >> ${FILE}
     fi
   fi
@@ -3429,7 +3501,7 @@ write_linker_flags()
   print_as_shell_comment \
     "*** Fill in any additional linker flags you need ***" \
     >> ${FILE}
-  ${_printf} "CUSTOM_LDFLAGS = ${CUSTOM_LDFLAGS}\n\n" \
+  ${_printf} "%s\n\n" "CUSTOM_LDFLAGS = ${CUSTOM_LDFLAGS}" \
     >> ${FILE}
  
   #
@@ -3461,9 +3533,20 @@ write_linker_flags()
   WLIBS="${WLIBS} -lm"
 
   #
+  # LONG_NAME_PROBLEM_LDFLAGS
+  #
+  print_as_shell_comment \
+    "*** to work around the long-name-problem" >> ${FILE}
+  print_as_shell_comment \
+    "*** on sparc_SunOS-5.5_g++-2.8.*/egcs-1.0.*" >> ${FILE}
+  ${_printf} "%s\n\n" \
+    "LONG_NAME_PROBLEM_LDFLAGS = ${LONG_NAME_PROBLEM_LDFLAGS}" \
+    >> ${FILE}
+
+  #
   # CGAL_LDFLAGS
   #
-  ${_printf} "CGAL_LDFLAGS = \\\\\n" >> ${FILE}
+  ${_printf} "%s\\\\\n" "CGAL_LDFLAGS = " >> ${FILE}
   makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   makefile_print_line "${LIB_PATH}" >> ${FILE}
   if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
@@ -3471,7 +3554,7 @@ write_linker_flags()
       "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
       >> ${FILE}
   fi
-  ${_printf} "\t${LIBS}\n\n" >> ${FILE}
+  ${_printf} "\t%s\n\n" "${LIBS}" >> ${FILE}
 
   #
   # CGAL_WINDOW_LDFLAGS
@@ -3479,14 +3562,14 @@ write_linker_flags()
   if [ -n "${LEDA_SUPPORT}" ]; then
     LIB_PATH="${LIB_PATH} -L${WINDOW_DIR}"
     RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
-    ${_printf} "CGAL_WINDOW_LDFLAGS = \\\\\n" >> ${FILE}
+    ${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
     makefile_print_line "${CUSTOM_LDFLAGS}" >> ${FILE}
     makefile_print_line "${LIB_PATH}" >> ${FILE}
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
       makefile_print_line "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
 	>> ${FILE}
     fi
-    ${_printf} "\t${WLIBS}\n\n" >> ${FILE}
+    ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
   fi
 }
 
@@ -3506,23 +3589,22 @@ create_include_makefile()
   # 
   makefile_header "include directory settings" \
     >> ${FILE}
-  ${_printf} "CGAL_DIRECTORIES = \\\\\n" >> ${FILE}
-  ${_printf} "\t${CGAL_DIRFILE}\n" >> ${FILE}
-  ${_printf} "include \$(CGAL_DIRECTORIES)\n" >> ${FILE}
+  ${_printf} "%s\\\\\n" "CGAL_DIRECTORIES = " >> ${FILE}
+  ${_printf} "\t%s\n" "${CGAL_DIRFILE}" >> ${FILE}
+  ${_printf} "%s\n" "include \$(CGAL_DIRECTORIES)" >> ${FILE}
 
   # 
   # CGAL_OS_COMPILER
   # 
   makefile_header "os/compiler description" \
     >> ${FILE}
-  ${_printf} "CGAL_OS_COMPILER = `full_ostype`\n" \
-    >> ${FILE}
+  ${_printf} "%s\n" "CGAL_OS_COMPILER = `full_ostype`" >> ${FILE}
 
   # 
   # CGAL_CXX
   # 
   makefile_header "compiler" >> ${FILE}
-  ${_printf} "CGAL_CXX = ${CGAL_CXX}\n" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_CXX = ${CGAL_CXX}" >> ${FILE}
 
   write_compiler_flags
   write_linker_flags
@@ -3533,43 +3615,43 @@ create_include_makefile()
   # 
   # CGAL_LIB
   # 
-  ${_printf} "CGAL_LIB = libCGAL.a\n" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_LIB = libCGAL.a" >> ${FILE}
 
   # 
   # CGAL_LIB_CXXFLAGS
   # 
-  ${_printf} "CGAL_LIB_CXXFLAGS = \\\\\n" >> ${FILE}
+  ${_printf} "%s\\\\\n" "CGAL_LIB_CXXFLAGS = " >> ${FILE}
   makefile_print_line "${CGAL_LIB_CXXFLAGS}" >> ${FILE}
-  ${_printf} "\t\$(CGAL_CXXFLAGS)\n" >> ${FILE}
+  ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   # 
   # CGAL_LIB_LDFLAGS
   # 
-  ${_printf} "CGAL_LIB_LDFLAGS = \\\\\n" >> ${FILE}
+  ${_printf} "%s\\\\\n" "CGAL_LIB_LDFLAGS = " >> ${FILE}
   makefile_print_line "${CGAL_LIB_LDFLAGS}" >> ${FILE}
-  ${_printf} "\t\$(CUSTOM_LDFLAGS)\n" >> ${FILE}
+  ${_printf} "\t\n" >> ${FILE}
 
   # 
   # CGAL_LIB_CREATE
   # 
-  ${_printf} "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}\n\n" >> ${FILE}
+  ${_printf} "%s\n\n" "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}" >> ${FILE}
 
   # 
   # CGAL_SHARED_LIB
   # 
-  ${_printf} "CGAL_SHARED_LIB = libCGAL.so\n" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_SHARED_LIB = libCGAL.so\n" >> ${FILE}
 
   # 
   # CGAL_SHARED_LIB_CXXFLAGS
   # 
-  ${_printf} "CGAL_SHARED_LIB_CXXFLAGS = \\\\\n" >> ${FILE}
+  ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_CXXFLAGS = " >> ${FILE}
   makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS}" >> ${FILE}
-  ${_printf} "\t\$(CGAL_CXXFLAGS)\n" >> ${FILE}
+  ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
 
   # 
   # CGAL_SHARED_LIB_LDFLAGS
   # 
-  ${_printf} "CGAL_SHARED_LIB_LDFLAGS = \\\\\n" >> ${FILE}
+  ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_LDFLAGS = " >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
       makefile_print_line "-L\$(LEDA_LIB_DIR)" >> ${FILE}
@@ -3580,13 +3662,13 @@ create_include_makefile()
     fi
   fi
   makefile_print_line "${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
-  ${_printf} "\t\$(CUSTOM_LDFLAGS)\n" >> ${FILE}
+  ${_printf} "\t\n" >> ${FILE}
   
   # 
   # CGAL_SHARED_LIB_CREATE
   # 
-  ${_printf} \
-    "CGAL_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} -o\n" \
+  ${_printf} "%s\n" \
+    "CGAL_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} -o" \
     >> ${FILE}
 
   makefile_header "EOF" >> ${FILE}
@@ -3602,14 +3684,14 @@ create_include_makefile()
 replace_line()
 {
   if [ ! -f $1 ] ; then
-    ${_printf} "Error: could not open file $1 in replace_line()\n"
+    ${_printf} "%s\n" "Error: could not open file $1 in replace_line()"
     return
   fi
   if eval '${_sed} -e "/^$2/c\\
 $3" $1 > $1.TEMP' ; then
     ${_mv} $1.TEMP $1
   else
-    ${_printf} "Error sed replacement failed in replace_line()\n"
+    ${_printf} "%s\n" "Error sed replacement failed in replace_line()"
   fi
 }
 
@@ -3668,19 +3750,19 @@ generatemakefiles()
 # return 0, iff success
 _do_compile()
 {
-    ${_printf} "${_LEFTSPACE}Building CGAL_$1 ..."
+    ${_printf} "%s" "${_LEFTSPACE}Building CGAL_$1 ..."
     if [ -f ${COMPILE_LOGFILE} -a ! -w ${COMPILE_LOGFILE} ]; then
 	${_rm} -f ${COMPILE_LOGFILE} 
     fi
     if make -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
 	log_print "Compilation of $1 ${_libname} succeeded."
-	${_printf} " done.\n"
+	${_printf} "%s\n" " done."
 	ANY_LIB_COMPILED='y'
 	return 0
     else
 	log_print "Compilation of $1 ${_libname} failed."
-	${_printf} "\n${_LEFTSPACE}Compilation of CGAL_$1 failed.\n"
-	${_printf} "${_LEFTSPACE}You will be shown a log now ...\n"
+	${_printf} "\n%s\n" "${_LEFTSPACE}Compilation of CGAL_$1 failed."
+	${_printf} "%s\n" "${_LEFTSPACE}You will be shown a log now ..."
 	print_filled_line
 	wait_for_enter
 	${_cat} ${COMPILE_LOGFILE} | ${PAGER:-${_cat}}
@@ -3701,10 +3783,10 @@ make_lib_dir()
 make_makefiles()
 {
     # generate directoryfile and makefile:
-    ${_printf} "${_LEFTSPACE}Generating Makefiles ..."
+    ${_printf} "%s" "${_LEFTSPACE}Generating Makefiles ..."
     CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${_libname}
     generatemakefiles log_print
-    ${_printf} " done.\n"
+    ${_printf} "%s\n" " done."
 }
 
 write_menu_information()
@@ -3729,10 +3811,10 @@ build_cgal()
     cd ${CGAL_SRC_DIR}
     if _do_compile lib; then
 	LIB_COMPILED='ok'
-	${_printf} "`print_os_setting 'print_with_indent'`" \
+	${_printf} "%s" "`print_os_setting 'print_with_indent'`" \
 	    >> ${INSTALL_RIS_LOGFILE}
-	${_printf} \
-	"\n${_LEFTSPACE}----------------------------------------------------------\n" \
+	${_printf} "\n${_LEFTSPACE}%s\n" \
+	"----------------------------------------------------------" \
 	    >> ${INSTALL_RIS_LOGFILE}
 	_do_compile sharedlib
     fi
@@ -3762,15 +3844,15 @@ test_menu()
 {
     write_menu_information "Testing"
 
-    ${_printf} "${_LEFTSPACE}Updating `$_basename ${CGAL_TESTFILE}` ..."
+    ${_printf} "%s" "${_LEFTSPACE}Updating `$_basename ${CGAL_TESTFILE}` ..."
     _check_write ${CGAL_TESTFILE}
     replace_line ${CGAL_TESTFILE} 'run_testsuite ' ""
-    ${_printf} "run_testsuite ${CGAL_MAKE_DIR}/makefile_`full_ostype`" \
+    ${_printf} "%s" "run_testsuite ${CGAL_MAKE_DIR}/makefile_`full_ostype`" \
 	>> ${CGAL_TESTFILE}
     $_chmod 744 ${CGAL_TESTFILE}
-    ${_printf} " done.\n"
+    ${_printf} "%s\n" " done."
 
-    ${_printf} "${_LEFTSPACE}Starting ${CGAL_TESTFILE} ...\n"
+    ${_printf} "%s\n" "${_LEFTSPACE}Starting ${CGAL_TESTFILE} ..."
     cd ${CGAL_TEST_DIR}
     ${CGAL_TESTFILE}
     cleanup_after_compile
@@ -3870,7 +3952,7 @@ _check_comp_executable()
     elif [ -z "${*}" ]; then
 	exit_on_error "Missing argument"
     elif [ "`_real_dirname \"${*}\"`" != "." ]; then
-	_check_execute "${1}"
+	_check_execute ${1}
     elif [ ! -x "${1}" ]; then
 	# that was not an absolute path -> try which
 	_tmp1="`real_which ${_tmp}`"
@@ -3884,9 +3966,12 @@ _check_comp_executable()
 
 cgal_install_header()
 {
-    ${_printf} "\n--------------------------------------------------------\n"
-    ${_printf} "  This is the install script for CGAL ${CGAL_VERSION}.\n"
-    ${_printf} "--------------------------------------------------------\n\n"
+    ${_printf} "\n%s\n" \
+	"--------------------------------------------------------"
+    ${_printf} "%s\n" \
+	"  This is the install script for CGAL ${CGAL_VERSION}."
+    ${_printf} "%s\n\n" \
+	"--------------------------------------------------------"
 }
 
 
@@ -3896,11 +3981,13 @@ cgal_install_header()
 
 startup_interactive()
 {
-    ${_printf} " one moment, please\n"
+    ${_printf} "%s\n" " one moment, please"
     INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
     if [ -n "${_ANY_OPT}" ]; then
-	${_printf} "\nWARNING: In interactive mode all command line options\n"
-	${_printf} "  except for \"-i\" and \"--CGAL_DIR\" are ignored.\n\n"
+	${_printf} "\n%s\n" \
+	    "WARNING: In interactive mode all command line options"
+	${_printf} "%s\n\n" \
+	    "  except for \"-i\" and \"--CGAL_DIR\" are ignored."
 	clear_buffer
     fi
     init_logfiles
@@ -3953,7 +4040,7 @@ finish_interactive()
 # otherwise sets variable $1 to $3 and returns 0
 set_variable_from_command_line()
 {
-    _tmp=`${_printf} "$2" | ${_awk} 'BEGIN {FS="="} {printf $2}'`
+    _tmp=`${_printf} "%s\n" "$2" | ${_awk} 'BEGIN {FS="="} {printf $2}'`
     if [ -n "${_tmp}" ]; then
 	eval "$1=\"${_tmp}\""
 	write_buffer "${_LEFTSPACE}Set $1 to \"`value_of $1`\".\n" 
@@ -4062,7 +4149,7 @@ while [ ${#} -gt 0 ]; do
 	    ;;
 	*--version*|-V*|-v*)
 	    # version
-	    ${_printf} "`basename $0` is ${CGAL_INSTALL_VERSION}.\n"
+	    ${_printf} "%s\n" "`basename $0` is ${CGAL_INSTALL_VERSION}."
 	    exit 0
 	    ;;
 	--rebuild-all*|-ra*|-RA*|-rba*|-RBA*)
@@ -4091,28 +4178,28 @@ fi
 case ${_WHAT_TO_DO} in
     *non-interactive*)
 	cgal_install_header
-	${_printf} "running non interactive mode ...\n"
+	${_printf} "%s\n" "running non interactive mode ..."
 	INSTALL_INTERACTIVE=''
 	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
-	${_printf} \
-	    "\n--------------------------------------------------------\n"
-	${_printf} "Locating Utilities:\n"
-	${_printf} \
-	    "--------------------------------------------------------\n"
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Locating Utilities:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
 	check_for_utils
 	check_conf_dir
 	guess_os 'print_with_indent'
-	${_printf} \
-	    "\n--------------------------------------------------------\n"
-	${_printf} "Determining CGAL Version:\n"
-	${_printf} \
-	    "--------------------------------------------------------\n"
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Determining CGAL Version:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
 	get_cgal_version
-	${_printf} \
-	    "\n--------------------------------------------------------\n"
-	${_printf} "Settings from Command Line:\n"
-	${_printf} \
-	    "--------------------------------------------------------\n"
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Settings from Command Line:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
 	_check_comp_executable ${COMPILER}
 	INSTALL_LOGFILE_REDIRECTION='>/dev/null'
 	COMPILER="`compiler_absolute ${COMPILER}`"
@@ -4120,43 +4207,43 @@ case ${_WHAT_TO_DO} in
 	set_ostype
 	set_compiler_flags
 	flush_buffer
-	${_printf} \
-	    "\n--------------------------------------------------------\n"
-	${_printf} "Determining Compiler Specs:\n"
-	${_printf} \
-	    "--------------------------------------------------------\n"
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Determining Compiler Specs:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
 	INSTALL_LOGFILE_REDIRECTION='>/dev/null'
 	test_compiler_specifica "${INSTALL_VERBOSE}"
 	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
-	${_printf} \
-	    "\n--------------------------------------------------------\n"
-	${_printf} "Show Setup:\n"
-	${_printf} \
-	    "--------------------------------------------------------\n"
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Show Setup:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
 	print_os_setting 'print_with_indent'
-	${_printf} \
-	    "\n--------------------------------------------------------\n"
-	${_printf} "Creating Directories and Makefiles:\n" 
-	${_printf} \
-	    "--------------------------------------------------------\n"
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Creating Directories and Makefiles:" 
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
 	make_lib_dir
 	CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_`full_ostype`
 	generatemakefiles 'print_with_indent'
 	store_compiler_settings
 
-	${_printf} \
-	    "\n--------------------------------------------------------\n"
-	${_printf} \
-	    "--         DONE, please read the documentation        --\n"
-	${_printf} \
-	    "--                 on how to proceed                  --\n"
-	${_printf} \
-	    "--------------------------------------------------------\n"
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" \
+	    "--         DONE, please read the documentation        --"
+	${_printf} "%s\n" \
+	    "--                 on how to proceed                  --"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
 	;;
     *interactive*)
 	cgal_install_header
 	# start interactive part
-	${_printf} "starting interactive mode -"
+	${_printf} "%s" "starting interactive mode -"
 	startup_interactive
 	INSTALL_INTERACTIVE='y'
 	search_for_compilers
@@ -4181,14 +4268,15 @@ case ${_WHAT_TO_DO} in
 	;;
     *build-all*)
 	cgal_install_header
-	${_printf} "starting ${_WHAT_TO_DO} -"
+	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
 	startup_interactive
 	guess_os log_print
 	${_printf} "\n\n"
 	for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
 	do
+	    log_print
 	    log_print \
-		"\n--------------------------------------------------------"
+		"--------------------------------------------------------"
 	    log_print "Build on `${_basename} ${i}`:" 
 	    log_print \
 		"--------------------------------------------------------"
