@@ -287,16 +287,7 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
 //
 #if defined(_MSC_VER)
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-// using templates for the Facet_handle and Point type instead of getting these
-// from Polyhedron and Traits, respectively is required to make M$VC6 happy.  
-template <class Tr, class Traits, class HDS, class Facet_hdl, class Point>	
-void 
-ch_quickhull_3_scan(Polyhedron_3<Tr,HDS>& P,
-        std::list<Facet_hdl>& pending_facets,
-        CGAL::Unique_hash_map<Facet_hdl, std::list<Point> >& outside_sets,
-        const Traits& traits)
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 template < class Tr, class Traits, class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
@@ -309,7 +300,7 @@ ch_quickhull_3_scan(Polyhedron_3<Tr,Items,HDS,Alloc>& P,
  CGAL::Unique_hash_map<typename Polyhedron_3<Tr,Items,HDS,Alloc>::Facet_handle,
  std::list<typename Traits::Point_3> >& outside_sets, const Traits& traits
 )
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 
 #else // non-MSVC compilers can handle this more general interface
 
@@ -325,11 +316,9 @@ ch_quickhull_3_scan(
 {
  
 #if defined(_MSC_VER)
-  #ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
-     typedef Polyhedron_3<Tr,Items,HDS,Alloc>             Polyhedron;
-  #else
-     typedef Polyhedron_3<Tr, HDS>                        Polyhedron;
-  #endif // CGAL_USE_POLYHEDRON_DEGIGN_ONE
+
+  typedef Polyhedron_3<Tr,Items,HDS,Alloc>             Polyhedron;
+
 #else
   typedef Polyhedron_3                                    Polyhedron;
 #endif // _MSC_VER
@@ -458,13 +447,7 @@ ch_quickhull_3_scan(
 //
 #if defined(_MSC_VER)
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-// the use of a template parameter for Point instead of getting this from
-// the Traits class as it should be is required by M$VC6
-template <class Tr, class Traits, class HDS, class Point>	
-void non_coplanar_quickhull_3(std::list<Point>& points,
-                              Polyhedron_3<Tr,HDS>& P, const Traits& traits)
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 template < class Tr, class Traits, class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
@@ -472,7 +455,6 @@ template < class Tr, class Traits, class Items,
            class HDS, class Alloc>
 void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 	Polyhedron_3<Tr,Items,HDS,Alloc>& P, const Traits& traits)
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 
 #else // non-MSVC compilers can handle this more general interface
 
@@ -483,11 +465,9 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 
 {
 #if defined (_MSC_VER)
-  #ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
-    typedef typename Polyhedron_3<Tr,Items,HDS,Alloc>     Polyhedron;
-  #else
-    typedef typename Polyhedron_3<Tr, HDS>                Polyhedron;
-  #endif // CGAL_USE_POLYEDRON_DESIGN_ONE
+
+  typedef typename Polyhedron_3<Tr,Items,HDS,Alloc>     Polyhedron;
+
 #else
   typedef Polyhedron_3                                    Polyhedron;
 #endif // _MS_VER
@@ -553,17 +533,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 //
 #if defined(_MSC_VER)
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-template <class Tr, class HDS, class Traits, class type, class InputIterator>
-void
-ch_quickhull_polyhedron_3(std::list<type>& points, 
-			  InputIterator point1_it, 
-        InputIterator point2_it, 
-        InputIterator point3_it, 
-        Polyhedron_3<Tr,HDS>& P,
-        const Traits& traits
-        )
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 template < class InputIterator, class Tr, class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -579,7 +549,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
         Polyhedron_3<Tr,Items,HDS,Alloc>& P,
         const Traits& traits
 		)
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 
 #else // non-MSVC compilers can handle this more general interface
 
@@ -761,11 +731,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 //
 #if defined(_MSC_VER)
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-template <class InputIterator, class Tr, class Traits, class HDS>
-void convex_hull_3(InputIterator first, InputIterator beyond, 
-                   Polyhedron_3<Tr,HDS>& polyhedron,  const Traits& traits)
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 template < class InputIterator,
 		   class Tr,
 		   class Traits,
@@ -777,7 +743,6 @@ template < class InputIterator,
 void convex_hull_3(InputIterator first, InputIterator beyond, 
                    Polyhedron_3<Tr,Items,HDS,Alloc>& polyhedron,
 				   const Traits& traits)
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 
 #else // non-MSVC compilers can handle this more general version
 
@@ -830,11 +795,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 //
 #if defined(_MSC_VER)
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-template <class InputIterator, class Traits, class HDS>
-void convex_hull_3(InputIterator first, InputIterator beyond, 
-               Polyhedron_3<Traits,HDS>& polyhedron  CGAL_MSVC_DUMMY_ARGUMENT) 
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 template < class InputIterator, class Traits, class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
@@ -844,7 +805,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3<Traits,Items,HDS,Alloc>& polyhedron 
                    CGAL_MSVC_DUMMY_ARGUMENT) 
 
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 
 #else // non-MSVC compilers can handle this simpler, more general version
 
