@@ -99,27 +99,30 @@ private:
   typedef std::multimap< Coord_type, Cell_handle > Interval_cell_map;
   typedef typename Interval_cell_map::value_type   Interval_cell;
 
-  typedef Triple<Coord_type, Coord_type, Coord_type> Interval3;
 
-  typedef std::multimap< Interval3, Facet >        Interval_facet_map;
-  typedef typename Interval_facet_map::value_type  Interval_facet;
 
   //   typedef Cell_handle const const_void;
   //   typedef std::pair< const_void, int > const_Facet;
   //   typedef std::pair< const_void, int > const_Vertex;
 
-  typedef std::pair< Interval3, Edge > Interval_edge;
-  typedef std::multimap< Interval3, Edge > Interval_edge_map;
 
-  typedef std::pair< Coord_type, Coord_type > Interval2;
-  typedef std::multimap< Interval2, Vertex_handle > Interval_vertex_map;
-  typedef typename Interval_vertex_map::value_type  Interval_vertex;
+
 
   typedef std::vector< Coord_type > Alpha_spectrum;
   
   typedef std::set< Key > Marked_cell_set;
 
 public:
+
+  //the following eight typedef were private, but operator<<(ostream) needs them
+  typedef Triple<Coord_type, Coord_type, Coord_type> Interval3;
+  typedef std::pair< Interval3, Edge > Interval_edge;
+  typedef std::multimap< Interval3, Edge > Interval_edge_map;
+  typedef std::multimap< Interval3, Facet >        Interval_facet_map;
+  typedef typename Interval_facet_map::value_type  Interval_facet;
+  typedef std::pair< Coord_type, Coord_type > Interval2;
+  typedef std::multimap< Interval2, Vertex_handle > Interval_vertex_map; 
+  typedef typename Interval_vertex_map::value_type  Interval_vertex;
 
   typedef typename Alpha_spectrum::const_iterator Alpha_iterator;
   // An iterator that allow to traverse the sorted sequence of
@@ -1256,7 +1259,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 		     Alpha_shape_3<Dt>::REGULAR);
 
 	      V[(Key)&(*v)] = number_of_vertices++;
-	      os << v->point() << endl;
+	      os << v->point() << std::endl;
 	    }
 	}
   
@@ -1316,7 +1319,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 
 	      os << V[(Key)&(*s->vertex(i0))] << ' ' 
 		 << V[(Key)&(*s->vertex(i1))] << ' ' 
-		 << V[(Key)&(*s->vertex(i2))] << endl;
+		 << V[(Key)&(*s->vertex(i2))] << std::endl;
 	    }
 	}
     }
@@ -1345,7 +1348,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 	      CGAL_triangulation_assertion(A.classify(v) ==
 					   Alpha_shape_3<Dt>::REGULAR);
 	      V[(Key)&(*v)] = number_of_vertices++;
-	      os << v->point() << endl;
+	      os << v->point() << std::endl;
 	    }
 	}
  
@@ -1359,7 +1362,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 				       Alpha_shape_3<Dt>::SINGULAR);
 
 	  V[(Key)&(*v)] = number_of_vertices++;
-	  os << v->point() << endl;
+	  os << v->point() << std::endl;
 	}
  
       // the vertices are oriented counterclockwise
@@ -1418,7 +1421,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 
 		  os << V[(Key)&(*s->vertex(i0))] << ' ' 
 		     << V[(Key)&(*s->vertex(i1))] << ' ' 
-		     << V[(Key)&(*s->vertex(i2))] << endl;
+		     << V[(Key)&(*s->vertex(i2))] << std::endl;
 		  
 		}
 	      else // (pInterval->second == A.Infinity || 
@@ -1436,7 +1439,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 
 		      os << V[(Key)&(*s->vertex(i0))] << ' ' 
 			 << V[(Key)&(*s->vertex(i1))] << ' ' 
-			 << V[(Key)&(*s->vertex(i2))] << endl;
+			 << V[(Key)&(*s->vertex(i2))] << std::endl;
 		      
 		    }	
 		}
@@ -1808,7 +1811,7 @@ Alpha_shape_3<Dt>::find_optimal_alpha(const int& nb_components)
       cerr << "first : " << *first << " last : " 
            << ((first+len != last) ? *(first+len) : *(last-1))
 	   << " mid : " << *middle 
-	   << " nb comps : " << number_of_solid_components(*middle) << endl;
+	   << " nb comps : " << number_of_solid_components(*middle) << std::endl;
 #endif // DEBUG
 
       if (number_of_solid_components(*middle) > nb_components)
