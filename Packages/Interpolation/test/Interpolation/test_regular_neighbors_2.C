@@ -1,25 +1,22 @@
-// ============================================================================
+// Copyright (c) 2003   INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1998 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
-// 
-// release       :
-// release_date  :
-// 
-// file          : /test/Interpolation/test_regular_neighbors_2.C
-// package       : Interpolation
-// source        : $RCSfile$
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Julia Floetotto <Julia.Flototto@sophia.inria.fr>
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// coordinator   : 
-// ============================================================================
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Julia Floetotto
+
 #include <CGAL/basic.h>
 #include <CGAL/double.h>
 
@@ -38,10 +35,9 @@ typedef CGAL::Regular_triangulation_2<Gt1>                   Rt1;
 
 int main()
 {
-
-  std::cout << "Testing NN_neighbors_2 " << std::endl; 
+  std::cout << "Testing NN_neighbors_2 " << std::endl;
   std::cout << " with Exact_predicates_exact_constructions_kernel: " << std::endl ;
   _test_regular_neighbors_2( Rt1() );
-  
+
   return 0;
-};
+}
