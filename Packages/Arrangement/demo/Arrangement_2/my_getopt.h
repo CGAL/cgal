@@ -1,30 +1,28 @@
-#ifndef __GETOPT_H__
-#define __GETOPT_H__
-#ident "$Revision$"
+// Copyright (c) 2000  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$
+// $Name$
+//
+// Author(s)     : Efi Fogel <efif@post.tau.ac.il>
+
+#ifndef CGAL_MY_GETOPT_H
+#define CGAL_MY_GETOPT_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/*
- * Declarations for getopt(3C).
- *
- * Copyright 1990, Silicon Graphics, Inc.
- * All Rights Reserved.
- *
- * This is UNPUBLISHED PROPRIETARY SOURCE CODE of Silicon Graphics, Inc.;
- * the contents of this file may not be disclosed to third parties, copied or
- * duplicated in any form, in whole or in part, without the prior written
- * permission of Silicon Graphics, Inc.
- *
- * RESTRICTED RIGHTS LEGEND:
- * Use, duplication or disclosure by the Government is subject to restrictions
- * as set forth in subdivision (c)(1)(ii) of the Rights in Technical Data
- * and Computer Software clause at DFARS 252.227-7013, and/or in similar or
- * successor clauses in the FAR, DOD or NASA FAR Supplement. Unpublished -
- * rights reserved under the Copyright Laws of the United States.
- */
-
-// #include <standards.h>
 
 extern int getopt(int argc, char * argv[], const char * opts);
 
@@ -50,4 +48,4 @@ extern void getoptreset(void);
 }
 #endif
 
-#endif /* !__GETOPT_H__ */
+#endif
