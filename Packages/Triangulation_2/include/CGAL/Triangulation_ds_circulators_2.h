@@ -67,27 +67,11 @@ public:
   Face& operator*() const  ;
   Face* operator->() const ;
    
-  bool operator==(const Face_circulator &fc) const
-    {    return (_v == fc._v) &&  (pos == fc.pos);  }
-         
-  bool operator!=(const Face_circulator &fc) const
-  {    return ! (*this == fc);  }
-   
-  bool is_empty() const
-  {    return ((_v == NULL) || (pos == NULL));  }
-
-  bool  operator==(CGAL_NULL_TYPE n) const
-  {
-    CGAL_triangulation_assertion( n == NULL);
-    return (_v == NULL || pos == NULL);
-  }
-        
-  bool  operator!=(CGAL_NULL_TYPE n) const
-  {
-    CGAL_triangulation_assertion( n == NULL);
-    return ! (*this == NULL);
-  }
-
+  bool operator==(const Face_circulator &fc) const ;
+  bool operator!=(const Face_circulator &fc) const;
+  bool is_empty() const;
+  bool  operator==(CGAL_NULL_TYPE n) const;
+  bool  operator!=(CGAL_NULL_TYPE n) const;
 };
 
 
@@ -99,15 +83,6 @@ class Triangulation_ds_vertex_circulator_2 :
   public  Triangulation_cw_ccw_2
 {
 public:
-  // typedef Vertex                           value_type;
-//   typedef std:: ptrdiff_t                difference_type;
-//   typedef std::size_t                    size_type;
-//   typedef Vertex*                          pointer;
-//   typedef const Vertex*                    const_pointer;
-//   typedef Vertex&                          reference;
-//   typedef const Vertex&                    const_reference;
-//   typedef CGAL::Bidirectional_circulator_tag iterator_category;
-
   typedef Triangulation_ds_vertex_circulator_2<Vertex, Face> 
                                           Vertex_circulator;
 private:
@@ -126,51 +101,20 @@ public:
     :  _v(vc._v), pos(vc.pos), _ri(vc._ri)
   {}
               
-  Vertex_circulator &operator=(const Vertex_circulator &vc)
-  {
-    _v = vc._v;
-    _ri = vc._ri;
-    pos = vc.pos;
-    return *this;
-  }   
-
+  Vertex_circulator &operator=(const Vertex_circulator &vc);
+ 
   Vertex_circulator& operator++();
   Vertex_circulator  operator++(int);
   Vertex_circulator& operator--();
   Vertex_circulator  operator--(int);
-
   Vertex& operator*() const ;
   Vertex* operator->() const; 
  
-  bool operator==(const Vertex_circulator &vc) const
-  {
-    return (_v == vc._v) &&  (_ri == vc._ri) && (pos == vc.pos);
-  }
-               
-  bool operator!=(const Vertex_circulator &vc) const
-  {
-    return ! (*this == vc);
-  }
-               
-  bool is_empty() const
-  {
-    return ((_v == NULL) || (pos == NULL));
-  }
-
-
- bool operator==(CGAL_NULL_TYPE n) const
-  {
-    CGAL_triangulation_assertion( n == NULL);
-    return (_v == NULL) || (pos == NULL);
-  }
-        
-        
-  bool operator!=(CGAL_NULL_TYPE n) const
-  {
-    CGAL_triangulation_assertion( n == NULL);
-    return !(*this == NULL);
-  }
-        
+  bool operator==(const Vertex_circulator &vc) const;
+  bool operator!=(const Vertex_circulator &vc) const;
+  bool is_empty() const;
+  bool operator==(CGAL_NULL_TYPE n) const;
+  bool operator!=(CGAL_NULL_TYPE n) const;
 };
 
 
@@ -185,15 +129,6 @@ class Triangulation_ds_edge_circulator_2 :
 public:
   typedef Triangulation_ds_edge_circulator_2<Vertex,Face> Edge_circulator;
   typedef std::pair<Face*, int>         Edge;
-
-//   typedef Edge                           value_type;
-//   typedef std:: ptrdiff_t                difference_type;
-//   typedef std::size_t                    size_type;
-//   typedef Edge*                          pointer;
-//   typedef const Edge*                    const_pointer;
-//   typedef Edge&                          reference;
-//   typedef const Edge&                    const_reference;
-//   typedef CGAL::Bidirectional_circulator_tag iterator_category;
 
 private:
   int _ri;
@@ -211,49 +146,19 @@ public:
     : _ri(vc._ri), _v(vc._v), pos(vc.pos)
   {}
         
-  Edge_circulator &operator=(const Edge_circulator &vc)
-  {
-    _v = vc._v;
-    _ri = vc._ri;
-    pos = vc.pos;
-    return *this;
-  }
-
-
+  Edge_circulator &operator=(const Edge_circulator &vc);
+ 
   Edge operator*() const ;
   Edge_circulator& operator++();
   Edge_circulator operator++(int);
   Edge_circulator& operator--();
   Edge_circulator operator--(int);
  
-        
-   bool operator==(const Edge_circulator &vc) const
-  {
-    return (_v == vc._v) &&  (_ri == vc._ri) && (pos == vc.pos);
-  }
-                
-  bool operator!=(const Edge_circulator &vc) const
-  {
-    return ! (*this == vc);
-  }
-
-   bool is_empty() const
-  {
-    return ((_v == NULL) || (pos == NULL));
-  }
-
-  bool operator==(CGAL_NULL_TYPE n) const
-  {
-    CGAL_triangulation_assertion( n == NULL);
-    return (_v == NULL) || (pos == NULL);
-  }
-               
-  bool operator!=(CGAL_NULL_TYPE n) const
-  {
-    CGAL_triangulation_assertion( n == NULL);
-    return !(*this == NULL);
-  }
-         
+  bool operator==(const Edge_circulator &vc) const;
+  bool operator!=(const Edge_circulator &vc) const;
+  bool is_empty() const;
+  bool operator==(CGAL_NULL_TYPE n) const;
+  bool operator!=(CGAL_NULL_TYPE n) const;
 };
 
 
@@ -334,6 +239,48 @@ operator->() const
 
 
 template < class Vertex, class Face >
+inline bool
+Triangulation_ds_face_circulator_2<Vertex,Face> ::
+operator==(const Face_circulator &fc) const
+{    
+  return (_v == fc._v) &&  (pos == fc.pos);  
+}
+
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_face_circulator_2<Vertex,Face> ::
+operator!=(const Face_circulator &fc) const
+{    
+return ! (*this == fc);  
+}
+   
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_face_circulator_2<Vertex,Face> ::
+is_empty() const
+{    
+return ((_v == NULL) || (pos == NULL));  
+}
+
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_face_circulator_2<Vertex,Face> ::
+operator==(CGAL_NULL_TYPE n) const
+{
+  CGAL_triangulation_assertion( n == NULL);
+  return (_v == NULL || pos == NULL);
+}
+        
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_face_circulator_2<Vertex,Face> ::
+operator!=(CGAL_NULL_TYPE n) const
+{
+  CGAL_triangulation_assertion( n == NULL);
+  return ! (*this == NULL);
+}
+
+template < class Vertex, class Face >
 Triangulation_ds_vertex_circulator_2<Vertex,Face> ::
 Triangulation_ds_vertex_circulator_2 (const Vertex* v,  const Face* f)
   : _v( v ), pos(f)
@@ -347,6 +294,19 @@ Triangulation_ds_vertex_circulator_2 (const Vertex* v,  const Face* f)
   else {_ri = 1-i;}
   return;
 }
+
+template < class Vertex, class Face >
+inline 
+Triangulation_ds_vertex_circulator_2<Vertex,Face>&
+Triangulation_ds_vertex_circulator_2<Vertex,Face> ::
+operator=(const Vertex_circulator &vc)
+{
+  _v = vc._v;
+  _ri = vc._ri;
+  pos = vc.pos;
+  return *this;
+}   
+
 
 template < class Vertex, class Face >
 Triangulation_ds_vertex_circulator_2<Vertex,Face>&
@@ -428,6 +388,49 @@ operator->() const
 }
 
 template < class Vertex, class Face >
+inline bool
+Triangulation_ds_vertex_circulator_2<Vertex,Face> ::
+operator==(const Vertex_circulator &vc) const
+{
+  return (_v == vc._v) &&  (_ri == vc._ri) && (pos == vc.pos);
+}
+               
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_vertex_circulator_2<Vertex,Face> ::
+operator!=(const Vertex_circulator &vc) const
+{
+  return ! (*this == vc);
+}
+               
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_vertex_circulator_2<Vertex,Face> ::
+is_empty() const
+{
+  return ((_v == NULL) || (pos == NULL));
+}
+
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_vertex_circulator_2<Vertex,Face> ::
+operator==(CGAL_NULL_TYPE n) const
+{
+  CGAL_triangulation_assertion( n == NULL);
+  return (_v == NULL) || (pos == NULL);
+}
+        
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_vertex_circulator_2<Vertex,Face> ::        
+operator!=(CGAL_NULL_TYPE n) const
+{
+  CGAL_triangulation_assertion( n == NULL);
+  return !(*this == NULL);
+}
+        
+
+template < class Vertex, class Face >
 Triangulation_ds_edge_circulator_2<Vertex,Face> ::
 Triangulation_ds_edge_circulator_2(const Vertex* v, const Face* f)
     : _v(v), pos(f)
@@ -440,6 +443,18 @@ Triangulation_ds_edge_circulator_2(const Vertex* v, const Face* f)
   if (pos->dimension() == 2) {_ri = ccw(i);}
   else {_ri = 1-i;}
   return;
+}
+
+template < class Vertex, class Face >
+inline
+Triangulation_ds_edge_circulator_2<Vertex,Face>&
+Triangulation_ds_edge_circulator_2<Vertex,Face> ::
+operator=(const Edge_circulator &vc)
+{
+  _v = vc._v;
+  _ri = vc._ri;
+  pos = vc.pos;
+  return *this;
 }
 
 template < class Vertex, class Face >
@@ -512,6 +527,49 @@ operator--(int)
   --(*this);
   return tmp;
 }
+
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_edge_circulator_2<Vertex,Face> ::
+operator==(const Edge_circulator &vc) const
+{
+  return (_v == vc._v) &&  (_ri == vc._ri) && (pos == vc.pos);
+}
+                
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_edge_circulator_2<Vertex,Face> ::
+operator!=(const Edge_circulator &vc) const
+{
+  return ! (*this == vc);
+}
+
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_edge_circulator_2<Vertex,Face> ::
+is_empty() const
+{
+  return ((_v == NULL) || (pos == NULL));
+}
+
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_edge_circulator_2<Vertex,Face> ::
+operator==(CGAL_NULL_TYPE n) const
+{
+  CGAL_triangulation_assertion( n == NULL);
+  return (_v == NULL) || (pos == NULL);
+}
+               
+template < class Vertex, class Face >
+inline bool
+Triangulation_ds_edge_circulator_2<Vertex,Face> ::
+operator!=(CGAL_NULL_TYPE n) const
+{
+  CGAL_triangulation_assertion( n == NULL);
+  return !(*this == NULL);
+}
+       
 
 CGAL_END_NAMESPACE
 

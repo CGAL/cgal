@@ -137,21 +137,28 @@ public:
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
-
   
+  // HELPING
+  bool has_vertex(const Vertex* v) const;
+  //bool has_edge(const Vertex* v1, const Vertex* v2) const;
+  //bool has_face(const Vertex* v1, const Vertex* v2, const Vertex* v3) const;
+  //Edge has_edge(const Vertex* v1, const Vertex* v2) const;
+  //Face* has_face(const Vertex* v1, const Vertex* v2, const Vertex* v3) const;
+
+  void copy_tds(const Tds &tds);
+  Vertex* copy_tds(const Tds &tds, const Vertex*);
+
+  Vertex* file_input(std::istream& is);
+  void file_output(std::ostream& os,
+		   Vertex* v = infinite_vertex()) const;
+
 private:
   // SETTING
   void set_number_of_vertices(int n) {_number_of_vertices = n;}
   void set_dimension (int n) {_dimension = n ;}
   void set_infinite_vertex(Vertex*  v) { _infinite_vertex = v;}
 
-  //HELPING fUNCTIONS
-  std::istream& file_input(std::istream& is);
-  std::ostream& file_output(std::ostream& os,
-			    Vertex* v = infinite_vertex()) const;
-  void copy_tds(const Tds &tds);
-
-  // INFINITE FEATURES
+   // INFINITE FEATURES
   Vertex* infinite_vertex() const  {return _infinite_vertex;  }
   Face* infinite_face() const { return _infinite_vertex->face();}
   bool is_infinite(const Face* f) const;
@@ -834,21 +841,37 @@ is_valid(bool verbose, int level) const
 // 	return;
 //     }
 
+template < class Gt , class Vb, class Fb>
+bool
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+has_vertex(const Vertex* v) const
+{
+  if (v == infinite_vertex()) return true; //short cut for frequent  case
+  if (number_of_vertices() == 0) return false;
+  for (Vertex_iterator vit = vertices_begin();
+                       vit != vertices_end(); ++vit) {
+   if ( v == &(*vit)) return true;
+  }
+  return false;
+}
+
+
 
 template < class Gt , class Vb, class Fb>
-void
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-copy_tds(const Tds &tds)
+copy_tds(const Tds &tds, const Vertex* v)
 {
+  CGAL_triangulation_precondition( tds.has_vertex(v));
   _number_of_vertices = tds.number_of_vertices();
   _geom_traits = tds.geom_traits();
   //the class Geom_traits is required to have a pertinent operator=
   _dimension = tds.dimension();
 
-  if(tds.number_of_vertices() == 0){return;}
+  if(tds.number_of_vertices() == 0){return static_cast<Vertex*>(NULL);}
 
-  std::map< void*, void*, less<void*> > V;
-  std::map< void*, void*, less<void*> > F;
+  std::map< const void*, void*, less<const void*> > V;
+  std::map< const void*, void*, less<const void*> > F;
 
   Vertex*  v2;
   Face* f2;
@@ -859,7 +882,7 @@ copy_tds(const Tds &tds)
     V[&(*it)] = new Vertex( it->point() );
   }
   //set infinite_vertex
-  v2 = (Vertex*)V[tds.infinite_vertex()];
+  v2 = static_cast<Vertex*>(V[v]);
   set_infinite_vertex(v2);
   
   // create the faces
@@ -887,7 +910,20 @@ copy_tds(const Tds &tds)
  }
 
   CGAL_triangulation_postcondition( is_valid() );
-  return;
+  return v2;
+}
+
+template < class Gt , class Vb, class Fb>
+void
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+copy_tds(const Tds &tds)
+{
+  _number_of_vertices = tds.number_of_vertices();
+  _geom_traits = tds.geom_traits();
+  _dimension = tds.dimension();
+
+  if(tds.number_of_vertices() == 0){return;}
+  copy_tds(tds, tds.infinite_vertex());
 }
  
 template < class Gt , class Vb, class Fb>
@@ -948,7 +984,7 @@ clear()
 }
 
 template <class Gt , class Vb, class Fb>
-std::ostream&
+void
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
 file_output( std::ostream& os, Vertex* v) const
 {
@@ -961,7 +997,7 @@ file_output( std::ostream& os, Vertex* v) const
   int m = number_of_full_dim_faces();
   if(is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << endl;
   else     os << n << m << dimension();
-  if (n==0) return os;
+  if (n==0) return;
 
   std::map< void*, int, less<void*> > V;
   std::map< void*, int, less<void*> > F;
@@ -1008,21 +1044,24 @@ file_output( std::ostream& os, Vertex* v) const
     }
   }
 
-  return os;
+  return ;
 }
 
 
 template <class Gt , class Vb, class Fb>
-std::istream&
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
 file_input( std::istream& is)
 {
   //input from file
-  // set the first vertex as infinite_Vertex
+  //return a pointer to the first vertex
+  //set this  first vertex as infinite_Vertex
   if(number_of_vertices() != 0)    clear();
   
   int n, m, d;
   is >> n >> m >> d;
+
+  if (n==0) return NULL;
 
   set_number_of_vertices(n);
   set_dimension(d);
@@ -1058,7 +1097,8 @@ file_input( std::istream& is)
       F[i]->set_neighbor(j, F[index]);
     }
   }
-  return is;
+  
+  return V[0];
 }
 
 template <class Gt , class Vb, class Fb>
@@ -1083,7 +1123,8 @@ std::istream&
 operator>>(std::istream& is,  
 	   Triangulation_default_data_structure_2<Gt,Vb,Fb>& tds) 
 {
-  return tds.file_input(is);
+  tds.file_input(is);
+  return is;
 }
 
 
@@ -1092,7 +1133,8 @@ std::ostream&
 operator<<(std::ostream& os, 
 	   const Triangulation_default_data_structure_2<Gt,Vb,Fb>  &tds) 
 {
-   return tds.file_output(os,tds.infinite_vertex());
+   tds.file_output(os,tds.infinite_vertex());
+   return os;
 }
 
 CGAL_END_NAMESPACE 

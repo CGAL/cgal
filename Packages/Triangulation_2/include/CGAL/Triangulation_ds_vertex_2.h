@@ -51,8 +51,10 @@ public:
   Triangulation_ds_vertex_2(const Point & p) :  Vb(p)  {}
   Triangulation_ds_vertex_2(const Point & p, Face * f) : Vb(p, f )  {}
 
-
+  //SETTING
   void set_face(Face* f)  { Vb::set_face(f);  }
+
+  //ACCESS
   Face* face() const {return ( (Face *) (Vb::face()) );}
   int degree() const ;
   Vertex_circulator incident_vertices() const;

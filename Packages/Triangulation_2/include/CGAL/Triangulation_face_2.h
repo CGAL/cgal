@@ -44,8 +44,6 @@ template < class Gt, class Tds >
 class Triangulation_face_2  : public  Tds::Face
 {
 public:
-  //  typedef Tds Tds;
-
   typedef Gt  Geom_traits;
   typedef typename Geom_traits::Point Point;
   typedef typename Geom_traits::Segment Segment;
@@ -62,26 +60,22 @@ public:
   //  typedef std::pair<Face_handle, int>     Edge;
 
 
-  inline
   Triangulation_face_2()
     : Fa()
   { }
 
-  inline
   Triangulation_face_2(const Vertex_handle& v0,
-			  const Vertex_handle& v1,
-			  const Vertex_handle& v2)
+		       const Vertex_handle& v1,
+		       const Vertex_handle& v2)
     : Fa(&(*v0), &(*v1), &(*v2))
   {}
         
-    
-  inline
   Triangulation_face_2(const Vertex_handle& v0,
-			  const Vertex_handle& v1,
-			  const Vertex_handle& v2,
-			  const Face_handle& n0,
-			  const Face_handle& n1,
-			  const Face_handle& n2)
+		       const Vertex_handle& v1,
+		       const Vertex_handle& v2,
+		       const Face_handle& n0,
+		       const Face_handle& n1,
+		       const Face_handle& n2)
     : Fa(&(*v0), &(*v1), &(*v2),&(*n0), &(*n1), &(*n2)) 
   {}
         
@@ -93,7 +87,11 @@ public:
     return  ((Vertex *)(Fa::vertex(i)));
   }
     
-    
+  inline Vertex_handle opposite_vertex(int i) const
+    {
+      return ((Vertex *)(Fa::opposite_vertex(i)));
+    }
+ 
   inline bool has_vertex(const Vertex_handle& v) const
   {
         return (Fa::has_vertex( & (*v)) );
@@ -135,7 +133,11 @@ public:
     return Fa::has_neighbor( &(*f), i);
   }
 
- 
+  inline int opposite_index(int i) const
+    {
+      return Fa::opposite_index(i);
+    }
+
   inline Face_handle handle() const
   {
     return Face_handle(this);
