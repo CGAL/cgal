@@ -520,7 +520,7 @@ bool test_algo_generic(InputStream& is)
   //--------------------------------------------------------------------
   Geom_traits tr = ag.geom_traits();
   int num_vertices = ag.number_of_vertices();
-  int num_all = num_vertices + ag.number_of_hidden_vertices();
+  int num_all = num_vertices + ag.number_of_hidden_sites();
   CGAL_assertion( static_cast<unsigned int>(num_all) == wp_list.size() );
 
   Face_handle inf_f = ag.infinite_face();
@@ -766,7 +766,7 @@ bool test_algo_generic(InputStream& is)
   ag.clear();
   ag.swap(ag2);
   CGAL_assertion( ag.number_of_vertices() +
-		  ag.number_of_hidden_vertices() == wp_list.size() );
+		  ag.number_of_hidden_sites() == wp_list.size() );
   CGAL_assertion( ag2.number_of_vertices() == 0 );
 
 
