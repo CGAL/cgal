@@ -1,3 +1,8 @@
+
+Version 1.5 (11 June 01) [af]
+- added CGAL_NTS macro
+- added copy right header
+
 Version 1.4 (29 May 01) [af]
 - removed member function get_biggest_rect
 - removed struct point_bigger as it was only needed in public_set

@@ -1,3 +1,23 @@
+// ======================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : include/CGAL/Largest_empty_iso_rectangle_2.h
+// package       : Largest_empty_iso_rectangle_2
+// maintainer    : Eli Packer
+// author(s)     : Eli Packer (algorithm), Andreas Fabri (cgal conformance)
+// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+//
+// ======================================================================
 
 #ifndef CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
 #define CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
@@ -348,7 +368,7 @@ Largest_empty_iso_rectangle_2<T>::check_for_larger(const Point_2& px0,
   */
   // check if the rectangle represented by the parameters is larger 
   //than the current one
-  NT rect_size = abs(px1.x() - px0.x()) * abs(py1.y() - py0.y());
+  NT rect_size = CGAL_NTS abs(px1.x() - px0.x()) * CGAL_NTS abs(py1.y() - py0.y());
   if(do_check && rect_size > largest_rect_size) {
     largest_rect_size = rect_size;
     left_p = px0;
