@@ -1,6 +1,7 @@
-#! /net/bin/perl5 -T
+#! /sw/bin/perl5 -T
 
 use strict;
+
 
 #--------------------------------------------------------------#
 # This script scans through the mail box $MAIL_IN, using formail.
@@ -11,7 +12,7 @@ use strict;
 #--------------------------------------------------------------#
 
 # the mail boxes
-my $Scripts_directory='/projects/CGAL/submissions/autohandle/scripts';
+my $Scripts_directory='/projects/CGAL/admin_scripts';
 my $Data_directory='/projects/CGAL/submissions/autohandle/data';
 my $LOCKFILE="$Data_directory/collect_submission.lock";
 my $Mail_directory='/users/geert/PUBLIC/CGAL-submit';
@@ -19,12 +20,12 @@ my $MAIL_IN="$Mail_directory/incoming-mail";
 #my $MAIL_OUT="$Mail_directory/handled-mail";
 my $MAIL_TMP="$Mail_directory/temp-mail";
 my $SCRIPT="$Scripts_directory/collect_submissions";
-my $MAIL_PROG='/local/bin/smtp-relay';
+my $MAIL_PROG="$Scripts_directory/send_cgal_mail";
+my $treat_one_mail_program="$Scripts_directory/treat_submit_mail";
 
 # program locations
-my $FORMAIL="$Scripts_directory/formail";
-my $treat_one_mail_program ="$Scripts_directory/treat_submit_mail";
-my $LOCKCMD="$Scripts_directory/lockfile";
+my $FORMAIL="/sw/bin/formail";
+my $LOCKCMD="/sw/bin/lockfile";
 
 # the log file
 my $LOGFILE="$Data_directory/collect_submissions.log";
@@ -50,12 +51,12 @@ TOTHIER
 }
 
 my $hostname = $ENV{HOST};
-if ($hostname =~ /^\s*([-\@\w]+)\s*$/) {
+if ($hostname =~ /^\s*([-\@\w.]+)\s*$/) {
     $hostname = $1;
 } else {
     print STDERR <<"TOTHIER";
 The script $SCRIPT did not start because
-the HOST environment value has a strange value.
+the HOST environment value has a strange value ($hostname).
 TOTHIER
     exit 1;
 }
@@ -64,6 +65,7 @@ TOTHIER
 sub termination_signal_handler {
     $please_die=1;
 }
+
 
 sub initialisation()
 {
@@ -80,7 +82,7 @@ sub initialisation()
 #
 
     if ( system("$LOCKCMD", "-r", '10', "$LOCKFILE") != 0) {
-	open NOTICE, "|$MAIL_PROG -s \"collect_submissions notice\" $invoker";
+	open NOTICE, "|$MAIL_PROG  \"collect_submissions notice\" $invoker";
 	print NOTICE <<"TOTHIER";
 The script $SCRIPT could not proceed because
 it could not acquire the needed lock on file $LOCKFILE.
@@ -95,7 +97,7 @@ TOTHIER
     my $logline = `tail -1 $LOGFILE`;
     if ($logline !~ /stopped/) {
 	unlink $LOCKFILE;
-	open NOTICE, "|$MAIL_PROG -s \"collect_submissions notice\" $invoker";
+	open NOTICE, "|$MAIL_PROG \"collect_submissions notice\" $invoker";
 	print NOTICE <<"TOTHIER";
 The script $SCRIPT did not proceed because
 there seems to be another process collecting the mail messages.
@@ -141,7 +143,7 @@ sub treat_current_mail()
 		my $Save_file = new_untreated_mail_file();
 		rename($MAIL_TMP, $Save_file) or die;
 		open NOTICE,
-		    "|$MAIL_PROG -s \"collect_submissions notice\" $invoker";
+		    "|$MAIL_PROG \"collect_submissions notice\" $invoker";
 		print NOTICE <<"TOTHIER";
 The script $SCRIPT could not treat incoming mail.
 This mail was saved in $Save_file.
@@ -160,7 +162,7 @@ sub main_loop()
 	    --$tries_to_go;
 	    if ($tries_to_go < 0) {
 		open NOTICE,
-		    "|$MAIL_PROG -s \"collect_submissions notice\" $invoker";
+		    "|$MAIL_PROG \"collect_submissions notice\" $invoker";
 		print NOTICE <<"TOTHIER";
 The script $SCRIPT could not proceed because
 it could not acquire the needed lock on file $LOCKFILE.
@@ -172,7 +174,7 @@ TOTHIER
 	    $tries_to_go = $max_tries_between_warning;
 	    if ( -f $MAIL_TMP ) {
 		open NOTICE,
-		    "|$MAIL_PROG -s \"collect_submissions notice\" $invoker";
+		    "|$MAIL_PROG \"collect_submissions notice\" $invoker";
 print NOTICE <<"TOTHIER";
 The script $SCRIPT has been stopped,
 because the temporary mail box $MAIL_TMP was not emptied.

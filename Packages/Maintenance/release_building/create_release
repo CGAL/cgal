@@ -1,4 +1,4 @@
-#!/net/bin/perl5
+#!/sw/bin/perl5
 
 use strict;
 use Cwd;
@@ -46,7 +46,7 @@ my $SCRIPTDIR=
 my $MISCPACKAGEDIR=
 	'/users/www/CGAL/Members/Develop/updates/packages';
 my $LOCKCMD=
-	'/projects/CGAL/submissions/autohandle/scripts/lockfile';
+	'/sw/bin/lockfile';
 
 
 #----------------------------------------------------------------#
