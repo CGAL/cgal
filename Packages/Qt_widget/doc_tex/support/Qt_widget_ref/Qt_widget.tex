@@ -36,7 +36,8 @@ which kind of point representation do you want to use:
 
 \ccConstructor{Qt_widget(QWidget *parent = 0, const char *name =
 0);}{Constructs a widget which is a child of \ccc{parent}, with the name
-\ccc{name}. The default geometers are given by the size of the window.}
+\ccc{name}. The default geometry is xmin = -1, xmax = 1, ymin = -1,
+ymax = 1. By default the X and Y scale factors are equal.}
 
 %\ccOperations
 \ccSetThreeColumns{const_iterator}{container.begin() const;}{}
@@ -52,17 +53,17 @@ mapped to a certain interval, and the widget adjust the scaling factor
 according to that.
 
 \ccMethod{void set_window(double x_min, double x_max, double y_min, double 
-y_max);}{Map the widget coordinates to the interval defined by the rectangle 
-with given coordinates. This method should be called after \ccc{resize()} from 
-\ccStyle{QWidget}.}
+y_max, bool u = false);}{Map the widget coordinates to the interval
+defined by the rectangle with given coordinates. This method should be
+called after \ccc{resize()} from \ccStyle{QWidget}. If \ccc{u} is
+\ccc{true} the X and Y scale factors will not be equal and the widget
+will not keep the aspect ratio.}
 
 \ccMethod{void set_x_scale(double xscale);}{Set the current X scaling factor.}
 
 \ccMethod{void set_y_scale(double yscale);}{Set the current Y scaling factor.}
 
-\ccMethod{void zoom_in(double ratio);}{Multiply X and Y scaling factor by \ccc{ratio}.}
-
-\ccMethod{void zoom_out(double ratio);}{Multiply X and Y scaling factor by \ccc{1/ratio}.}
+\ccMethod{void zoom(double ratio);}{Multiply X and Y scaling factor by \ccc{ratio}.}
 
 \ccMethod{void add_to_history();}{This function adds the current
 viewport and transformations to history. You can use the public slots
@@ -143,7 +144,8 @@ rectangles \ldots}
 \ccHeading{Layers}
 
 \ccMethod{void attach(Qt_widget_layer* s);}{Add the layer s in the list of 
-layers.The last added will be on top of the screen.}
+layers.The last added will be on top of the screen. Also the events
+are forwarded to layers in the order they have been attached.}
 
 \ccMethod{void detach(Qt_widget_layer* s);}{Remove the layer s from the list. 
 s it's a pointer to an existing layer.}
@@ -222,9 +224,9 @@ the \ccc{QPixmap} object.
 
 \ccMethod{QPainter& get_painter();}{Returns the current painter.}
 
-\ccMethod{QWMatrix& get_matrix();}{Returns the current world matrix
-for the current painter. You can modify the matrix using the pointer
-to the painter.}
+%\ccMethod{QWMatrix& get_matrix();}{Returns the current world matrix
+%for the current painter. You can modify the matrix using the pointer
+%to the painter.}
 \end{ccAdvanced}
 
 %Signals

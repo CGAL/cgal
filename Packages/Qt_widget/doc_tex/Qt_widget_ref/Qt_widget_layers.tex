@@ -57,18 +57,17 @@ called by the \ccc{Qt\_widget} to which the layer is attached.}
 
 \ccMethod{virtual void draw();}{This virtual member function
  must be overloaded. This is where the drawing code goes.}
-\ccMethod{void stateChanged(int);}{This slot was provided to change
+\ccMethod{void stateChanged(int s);}{This slot is provided to change
 the layer's state from activated to deactivated and reverse if it is
-triggered. You can see this slot connected with \qt\ toggle buttons in
-the demos. If the parameter has the value 2 the layer is activated. If 
-the parameter has the value 0, the layer is deactivated.}
+triggered. The layer is activated if \ccc{s} is 2, or it is
+deactivated if \ccc{s} is 0. These values match with the signal
+\ccc{stateChanged(int)} in the \ccc{QButton} widget.}
 \ccMethod{bool activate();}{Activate and return \ccc{true} if it was not active.}
 \ccMethod{bool deactivate();}{Deactivate and return \ccc{true} if it was active.}
 
 \ccHeading{Protected}
-\ccVariable{Qt_widget *widget;}{This pointer is NULL at the
-construction time. When you attach a layer to the \ccc{Qt\_widget}
-this pointer become equal to the pointer of \ccc{Qt\_widget}.}
+\ccVariable{Qt_widget *widget;}{The widget a layer is attached to or 0 
+otherwise.}
 \ccMethod{virtual void activating();}{You should overload this
 function if you want to have initializing code for your layer. This
 function is called every time the layer is activated.}
@@ -105,16 +104,16 @@ public:
   void draw()
   {  
     Vertex_iterator it = tr.vertices_begin(), 
-		beyond = tr.vertices_end();
+                beyond = tr.vertices_end();
     *widget << CGAL::GREEN << CGAL::PointSize (3) 
-		<< CGAL::PointStyle (CGAL::DISC);    
+            << CGAL::PointStyle (CGAL::DISC);    
     while(it != beyond) {      
       *widget << (*it).point();
       ++it;
     }
   };
 private:
-  T	&tr;
+  T &tr;
   
 };//end class 
 
