@@ -1,7 +1,13 @@
-3.92   (? ?????? 2002)
+3.92   (12 August 2002)
 - Test if CGAL_ALLOCATOR is already defined before defining it.
 - Introduce CGAL_MEMORY, similar to LEDA_MEMORY.
 - Fixes for New_delete_allocator.
+- Handle_for memory leak fixed : initialize_with() now assigns instead of
+  constructing, so that it works correctly after Handle_for has been default
+  constructed.  There's a new way of constructing a Handle_for :
+  Handle_for(TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH) followed by
+  construct_with(), which is supposed to produce more efficient code.
+  Simple_handle_for also accepts it.
 
 3.91   (16 July 2002)
 - Add #include <CGAL/basic.h> on top of Object.h and Handle_for_virtual.h.

@@ -29,16 +29,27 @@ class Simple_Handle_for
 {
 public:
 
+    typedef Stored element_type;
+
+    struct TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH {};
+
     Simple_Handle_for()
+    {}
+
+    Simple_Handle_for(TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH)
     {}
 
     Simple_Handle_for(const Stored& rc)
 	: _s(rc) {}
 
-    typedef Stored element_type;
-
     void
     initialize_with(const Stored& rc)
+    {
+      _s = rc;
+    }
+
+    void
+    construct_with(const Stored& rc)
     {
       _s = rc;
     }

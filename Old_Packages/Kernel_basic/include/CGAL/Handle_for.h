@@ -20,7 +20,6 @@
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
  
-
 #ifndef CGAL_HANDLE_FOR_H
 #define CGAL_HANDLE_FOR_H
 
@@ -30,36 +29,39 @@ CGAL_BEGIN_NAMESPACE
 
 struct Ref_counted {}; // For backward compatibility.  It's obsolete.
 
-template <class U>
-struct Ref_counted2
-{
-    Ref_counted2(const U& u) : count(1), u_(u)  {}
-    Ref_counted2(const Ref_counted2& r) : count(1), u_(r.u()) {}
-
-    U* base_ptr() { return &u_; }
-
-#ifdef CGAL_USE_LEDA
-    // Speeds things up with LEDA and New_delete_allocator<>.
-    LEDA_MEMORY(Ref_counted2)
-#endif
-
-    void add_reference() { ++count; }
-    void remove_reference() { --count; }
-    bool is_shared() const { return count > 1; }
-
-private:
-
-    const U& u() const { return u_; }
-
-    unsigned int count;
-    U u_;
-};
+// There are basically 2 ways of constructing an object deriving from
+// Handle_for :
+// - call the default constructor of Handle_for<T>, then eventually use
+//   initialize_with(const T&), which uses the assignment.
+// - call the constructor
+//   Handle_for(Handle_for::TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH), then call
+//   construct_with(const T&).  You HAVE to call it.
 
 
 template <class T, class Alloc = CGAL_ALLOCATOR(T) >
 class Handle_for
 {
-    typedef Ref_counted2<T>                                     RefCounted;
+    // Wrapper that adds the reference counter.
+    struct RefCounted
+    {
+        RefCounted(const T& t) : t_(t) {}
+        RefCounted(const RefCounted& r) : t_(r.t_), count(1) {}
+
+        T* base_ptr() { return &t_; }
+        const T& t() const { return t_; }
+
+	// Speeds things up with LEDA and New_delete_allocator<>.
+        CGAL_MEMORY(RefCounted)
+
+        void add_reference()    { ++count; }
+        void remove_reference() { --count; }
+        bool is_shared() const  { return count > 1; }
+
+    private:
+
+        T t_;
+        unsigned int count;
+    };
 
 #ifndef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
     typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
@@ -72,16 +74,23 @@ class Handle_for
 
     typedef T element_type;
 
+    struct TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH {};
+
     Handle_for()
     {
-        ptr_ = allocator.allocate(1);
-	initialize_with(T());
+	CGAL_assertion_code(ptr_ = NULL;)
+	construct_with(T());
+    }
+
+    Handle_for(TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH)
+    {
+	CGAL_assertion_code(ptr_ = NULL;)
     }
 
     Handle_for(const T& t)
     {
-        ptr_ = allocator.allocate(1);
-	initialize_with(t);
+	CGAL_assertion_code(ptr_ = NULL;)
+	construct_with(t);
     }
 
     Handle_for(const Handle_for& h)
@@ -104,11 +113,17 @@ class Handle_for
         return *this;
     }
 
-// protected:
-
     void
     initialize_with(const T& t)
     {
+	*ptr() = t;
+    }
+
+    void
+    construct_with(const T& t)
+    {
+	CGAL_assertion(ptr_ == NULL);
+        ptr_ = allocator.allocate(1);
         allocator.construct(ptr_, RefCounted(t));
     }
 
@@ -177,7 +192,7 @@ private:
 	  ptr_->remove_reference();
     }
 
-    static Allocator allocator; // Should this go in RefCounted2<> ?
+    static Allocator                 allocator;
     typename Allocator::pointer      ptr_;
 };
 
