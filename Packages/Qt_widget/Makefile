@@ -31,12 +31,12 @@ DEMO_DIRS= \
 
 # make the lib and all demos
 all:
-	make -C src/CGALQt -f makefile_qt
+	make -C src/CGALQt -f makefile_Qt
 	for dir in ${DEMO_DIRS}; do make -C $$dir; done
 
 # clean all object files
 clean: 
-	make -C src/CGALQt -f makefile_qt clean
+	make -C src/CGALQt -f makefile_Qt clean
 	for dir in ${DEMO_DIRS}; do make -C $$dir clean; done
 
 # clean moc files too
