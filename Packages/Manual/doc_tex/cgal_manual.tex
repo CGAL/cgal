@@ -8,15 +8,78 @@
 
 \makeindex
 
+% Make the table of contents use two columns
+\lcHtml{\lcTwoColumnToc}
+
 \begin{document}
 
+\cgaltitlepage{User and Reference Manual: All Parts}
+
+\pagestyle{plain}
+\pagenumbering{roman}
+\setcounter{page}{0}
+\cleardoublepage
+\ifthenelse{\boolean{useminitoc}}{\lcTex{\dominitoc}}{}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+ 
 \cgalchapters{
+    \entryleftright{\part{Prolog}}{\part{Prolog Reference Manual}}
+
+    \packageleft{Preface}
+    \packageleftright{Introduction}{Introduction_ref}
+
+
+    \entryleftright{\part{Kernel User Manual}}
+                   {\part{Kernel Reference Manual}}
+
+    \packageleftright{Kernel_23}{Kernel_23_ref}
+    \packageleftright{Kernel_d}{Kernel_d_ref}
+
     \entryleftright{\part{Basic Library User Manual}}
-                   {\part{Reference Manual}}
+                   {\part{Basic Library Reference Manual}}
 
     \lcTex{\entryright{\listofrefpages}}
 
+    \packageleftright{Convex_hull_2}{Convex_hull_2_ref}
+    \packageleftright{Convex_hull_3}{Convex_hull_3_ref}
+    \packageleftright{Convex_hull_d}{Convex_hull_d_ref}
+    \packageleftright{Polygon}{Polygon_ref}
+    \packageleftright{Partition_2}{Partition_2_ref}
+    \packageleftright{Nef_2}{Nef_2_ref}
+    \packageleftright{Topological_map}{Topological_map_ref}
+    \packageleftright{Planar_map}{Planar_map_ref}
+    \packageleftright{Pm_with_intersections_2}{Pm_with_intersections_2_ref}
+    \packageleftright{Arrangement_2}{Arrangement_2_ref}
+    \packageleftright{Sweep_line_2}{Sweep_line_2_ref}
     \packageleftright{Polyhedron}{Polyhedron_ref}
+    \packageleftright{HalfedgeDS}{HalfedgeDS_ref}
+    \packageleftright{Triangulation_2}{Triangulation_2_ref}
+    \packageleftright{TDS_2}{TDS_2_ref}
+    \packageleftright{Triangulation_3}{Triangulation_3_ref}
+    \packageleftright{TriangulationDS_3}{TriangulationDS_3_ref}
+    \packageleftright{Alpha_shapes_2}{Alpha_shapes_2_ref}
+    \packageleftright{Alpha_shapes_3}{Alpha_shapes_3_ref}
+    \packageleftright{Apollonius_graph_2}{Apollonius_graph_2_ref}
+    \packageleftright{Optimisation}{Optimisation_ref}
+    \packageleftright{Point_set_2}{Point_set_2_ref}
+    \packageleftright{Interval_skip_list}{Interval_skip_list_ref}
+    \packageleftright{SearchStructures}{SearchStructures_ref}
+    \packageleftright{Spatial_searching}{Spatial_searching_ref}
+
+    \entryleftright{\part{Support Library User Manual}}
+                   {\part{Support Library Reference Manual}}
+
+    \packageleftright{NumberTypeSupport}{NumberTypeSupport_ref}
+    \packageleftright{STL_Extension}{STL_Extension_ref}
+    \packageleftright{Circulator}{Circulator_ref}
+    \packageleftright{Generator}{Generator_ref}
+    \packageleftright{Miscellany}{Miscellany_ref}
+    \packageleftright{IOstream}{IOstream_ref}
+    \packageleftright{Colors_and_windows}{Colors_and_windows_ref}
+    \packageleftright{Geomview}{Geomview_ref}
+    \packageleftright{Qt_widget}{Qt_widget_ref}
 }
 
 \bibliographystyle{alpha}
