@@ -24,6 +24,10 @@
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/Pm_Window_stream.h>
 
+#include <CGAL/Pm_default_point_location.h>
+#include <CGAL/Pm_walk_along_line_point_location.h>
+#include <CGAL/Pm_naive_point_location.h>
+
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
@@ -56,6 +60,14 @@ typedef CGAL::Planar_map_with_intersections_2<Pm>       Pmwx;
 typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
+
+typedef CGAL::Pm_default_point_location<Pm>             Trap_point_location;
+typedef CGAL::Pm_naive_point_location<Pm>               Naive_point_location;
+typedef CGAL::Pm_walk_along_line_point_location<Pm>     Walk_point_location;
+
+typedef CGAL::Bench_parse_args::TypeId                  TypeId;
+typedef CGAL::Bench_parse_args::StrategyId              StrategyId;
+typedef CGAL::Bench_parse_args::FormatId                FormatId;
 
 /*
  */
@@ -159,11 +171,13 @@ protected:
 
 /*!
  */
+template <class Strategy>
 class Increment_pmwx : public Basic_Pm {
 public:
   virtual void op()
   {
-    Pmwx pm;
+    Strategy strategy;
+    Pmwx pm(&strategy);
     CurveList::const_iterator i;
     for (i = m_curveList.begin(); i != m_curveList.end(); i++)
         pm.insert(*i);
@@ -175,15 +189,24 @@ public:
   }
 };
 
-typedef CGAL::Bench<Increment_pmwx> Increemnt_pmwx_bench;
+typedef Increment_pmwx<Trap_point_location>     Trap_inc_pmwx;
+typedef CGAL::Bench<Trap_inc_pmwx>              Trap_inc_pmwx_bench;
+
+typedef Increment_pmwx<Naive_point_location>    Naive_inc_pmwx;
+typedef CGAL::Bench<Naive_inc_pmwx>             Naive_inc_pmwx_bench;
+
+typedef Increment_pmwx<Walk_point_location>     Walk_inc_pmwx;
+typedef CGAL::Bench<Walk_inc_pmwx>              Walk_inc_pmwx_bench;
 
 /*!
  */
-class Aggregate_pm : public Basic_Pm {
+template <class Strategy>
+class Aggregate_pmwx : public Basic_Pm {
 public:
   virtual void op()
   {
-    Pm pm;
+    Strategy strategy;
+    Pm pm(&strategy);
     Traits traits;
     CGAL::sweep_to_construct_planar_map_2(m_curveList.begin(),
                                           m_curveList.end(),
@@ -192,7 +215,14 @@ public:
   }
 };
 
-typedef CGAL::Bench<Aggregate_pm> Aggregate_pm_bench;
+typedef Aggregate_pmwx<Trap_point_location>     Trap_agg_pmwx;
+typedef CGAL::Bench<Trap_agg_pmwx>              Trap_agg_pmwx_bench;
+
+typedef Aggregate_pmwx<Naive_point_location>    Naive_agg_pmwx;
+typedef CGAL::Bench<Naive_agg_pmwx>             Naive_agg_pmwx_bench;
+
+typedef Aggregate_pmwx<Walk_point_location>     Walk_agg_pmwx;
+typedef CGAL::Bench<Walk_agg_pmwx>              Walk_agg_pmwx_bench;
 
 #if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
 CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Point & p)
@@ -203,7 +233,8 @@ CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Curve & c)
 
 /*!
  */
-class Display_Pm : public Basic_Pm {
+template <class Strategy>
+class Display_pmwx : public Basic_Pm {
 private:
   typedef CGAL::Window_stream Window_stream;
 
@@ -212,7 +243,8 @@ public:
    */
   virtual void op()
   {
-    Pm pm;
+    Strategy strategy;
+    Pm pm(&strategy);
     Traits traits;
     CGAL::sweep_to_construct_planar_map_2(m_curveList.begin(),
                                           m_curveList.end(),
@@ -248,7 +280,7 @@ public:
     float y0 = m_y0 - y_margin;
     m_window->init(x0, x1, y0);   // logical window size 
 
-    m_window->set_redraw(&Display_Pm::redraw);
+    m_window->set_redraw(&Display_pmwx::redraw);
     m_window->set_mode(leda_src_mode);
     m_window->set_node_width(3);
     m_window->set_point_style(leda_cross_point);
@@ -275,7 +307,35 @@ private:
   Window_stream * m_window;
 };
 
-typedef CGAL::Bench<Display_Pm> DisplayPmBench;
+typedef Display_pmwx<Trap_point_location>     Trap_dis_pmwx;
+typedef CGAL::Bench<Trap_dis_pmwx>            Trap_dis_pmwx_bench;
+
+typedef Display_pmwx<Naive_point_location>    Naive_dis_pmwx;
+typedef CGAL::Bench<Naive_dis_pmwx>           Naive_dis_pmwx_bench;
+
+typedef Display_pmwx<Walk_point_location>     Walk_dis_pmwx;
+typedef CGAL::Bench<Walk_dis_pmwx>            Walk_dis_pmwx_bench;
+
+/*
+ */
+template <class Bench_inst, class Bench_user>
+void runBench(Bench_inst & benchInst, Bench_user & benchUser,
+              const char * fullname, FormatId format,
+              int samples, int iterations, bool verbose)
+{
+    // Bench_inst benchInst(name, seconds, false);
+    // Bench_user & benchUser = benchInst.getBenchUser();
+  benchUser.setFormat(format);
+  benchUser.setFilename(fullname);
+  benchUser.setVerbose(verbose);
+
+  if (samples > 0) benchInst.setSamples(samples);
+  else if (iterations > 0) benchInst.setIterations(iterations);
+
+  benchInst();
+
+  if (verbose) std::cout << "(" << benchInst.getSamples() << ") " << std::endl;
+}
 
 /*
  */
@@ -287,75 +347,167 @@ int main(int argc, char * argv[])
   if (rc < 0) return rc;
   
   bool verbose = parseArgs.getVerbose();
-  unsigned int benchMask = parseArgs.getBenchMask();
-  CGAL::Bench_parse_args::FormatId inputFormat = parseArgs.getInputFormat();
+  unsigned int typeMask = parseArgs.getTypeMask();
+  unsigned int strategyMask = parseArgs.getStrategyMask();
+  FormatId format = parseArgs.getInputFormat();
   int samples = parseArgs.getSamples();
   int iterations = parseArgs.getIterations();
   int seconds = parseArgs.getSeconds();
   bool printHeader = parseArgs.getPrintHeader();
   int nameLength = parseArgs.getNameLength();
   const char * filename = parseArgs.getFilename();
-  const std::string * fullname = parseArgs.getFullname();
+  const char * fullname = parseArgs.getFullname();
       
-  // Construct
-  const char * bname =
-    parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_INCREMENT);
-  Increemnt_pmwx_bench benchIncrement((std::string(bname) + " PMWX " +PM_TYPE +
-                                       "(" + std::string(filename) + ")"),
-                                      seconds, false);
-  Increment_pmwx & incerementPmwx = benchIncrement.getBenchUser();
-  incerementPmwx.setFormat(inputFormat);
-  incerementPmwx.setFilename(fullname->c_str());
-  incerementPmwx.setVerbose(verbose);
-
-  // Sweep
-  bname = parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_AGGREGATE);
-  Aggregate_pm_bench benchAggregate((std::string(bname) + " PMWX " PM_TYPE +
-                                     "(" + std::string(filename) + ")"),
-                                    seconds, false);
-  Aggregate_pm & aggregatePm = benchAggregate.getBenchUser();
-  aggregatePm.setFormat(inputFormat);
-  aggregatePm.setFilename(fullname->c_str());
-  aggregatePm.setVerbose(verbose);
+  CGAL::Bench_base::setNameLength(nameLength);
+  if (printHeader) CGAL::Bench_base::printHeader();
   
-  // Construct and Display
-  bname = parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_DISPLAY);
-  DisplayPmBench benchDisplay((std::string(bname) + " PMWX " + PM_TYPE +
-                               "(" + std::string(filename) + ")"),
-                              seconds, false);
-  Display_Pm & displayPm = benchDisplay.getBenchUser();
-  displayPm.setFormat(inputFormat);
-  displayPm.setFilename(fullname->c_str());
-  displayPm.setVerbose(verbose);
+  // Construct Incrementaly
+  TypeId typeId = CGAL::Bench_parse_args::TYPE_INCREMENT;
+  if (typeMask & (0x1 << typeId)) {
+    // Trapezoidal point location:
+    StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+      Trap_inc_pmwx_bench benchInst(name, seconds, false);
+      Trap_inc_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Trap_inc_pmwx_bench,Trap_inc_pmwx>(benchInst, benchUser,
+                                                  fullname, format,
+                                                  samples, iterations,
+                                                  verbose);
+    }
+    
+    // Naive point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_NAIVE;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+      Naive_inc_pmwx_bench benchInst(name, seconds, false);
+      Naive_inc_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Naive_inc_pmwx_bench,Naive_inc_pmwx>(benchInst, benchUser,
+                                                    fullname, format,
+                                                    samples, iterations,
+                                                    verbose);
+    }
 
-  if (samples > 0) {
-    benchIncrement.setSamples(samples);
-    benchAggregate.setSamples(samples);
-    benchDisplay.setSamples(samples);
-  } else {
-    if (iterations > 0) {
-      benchIncrement.setIterations(iterations);
-      benchAggregate.setIterations(iterations);
-      benchDisplay.setIterations(iterations);
+    // Walk point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_WALK;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+      Walk_inc_pmwx_bench benchInst(name, seconds, false);
+      Walk_inc_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Walk_inc_pmwx_bench,Walk_inc_pmwx>(benchInst, benchUser,
+                                                  fullname, format,
+                                                  samples, iterations,
+                                                  verbose);
     }
   }
 
-  CGAL::Bench_base::setNameLength(nameLength);
-  if (printHeader) CGAL::Bench_base::printHeader();
-  if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_INCREMENT))
-    benchIncrement();
-  if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_AGGREGATE))
-    benchAggregate();
-  if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_DISPLAY))
-    benchDisplay();
-  
-  // Ensure the compiler doesn't optimize the code away...
-  if (verbose) {
-    std::cout << "(" << benchIncrement.getSamples() << ")" << std::endl;
-    std::cout << "(" << benchAggregate.getSamples() << ") " << std::endl;
-    std::cout << "(" << benchDisplay.getSamples() << ") " << std::endl;
+  // Construct Aggregately
+  typeId = CGAL::Bench_parse_args::TYPE_AGGREGATE;
+  if (typeMask & (0x1 << typeId)) {
+    // Trapezoidal point location:
+    StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+      Trap_agg_pmwx_bench benchInst(name, seconds, false);
+      Trap_agg_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Trap_agg_pmwx_bench,Trap_agg_pmwx>(benchInst, benchUser,
+                                                  fullname, format,
+                                                  samples, iterations,
+                                                  verbose);
+    }
+
+    // Naive point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_NAIVE;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+      Naive_agg_pmwx_bench benchInst(name, seconds, false);
+      Naive_agg_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Naive_agg_pmwx_bench,Naive_agg_pmwx>(benchInst, benchUser,
+                                                    fullname, format,
+                                                    samples, iterations,
+                                                    verbose);
+    }
+
+    // Walk point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_WALK;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+      Walk_agg_pmwx_bench benchInst(name, seconds, false);
+      Walk_agg_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Walk_agg_pmwx_bench,Walk_agg_pmwx>(benchInst, benchUser,
+                                                  fullname, format,
+                                                  samples, iterations,
+                                                  verbose);
+    }
   }
   
+  // Construct and Display
+  typeId = CGAL::Bench_parse_args::TYPE_DISPLAY;
+  if (typeMask & (0x1 << typeId)) {
+    // Trapezoidal point location:
+    StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+      Trap_dis_pmwx_bench benchInst(name, seconds, false);
+      Trap_dis_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Trap_dis_pmwx_bench,Trap_dis_pmwx>(benchInst, benchUser,
+                                                  fullname, format,
+                                                  samples, iterations,
+                                                  verbose);
+    }
+
+    // Naive point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_NAIVE;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+      Naive_dis_pmwx_bench benchInst(name, seconds, false);
+      Naive_dis_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Naive_dis_pmwx_bench,Naive_dis_pmwx>(benchInst, benchUser,
+                                                    fullname, format,
+                                                    samples, iterations,
+                                                    verbose);
+    }
+
+    // Walk point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_WALK;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PMWX " + PM_TYPE + " (" + std::string(filename) + ")";
+      Walk_dis_pmwx_bench benchInst(name, seconds, false);
+      Walk_dis_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Walk_dis_pmwx_bench,Walk_dis_pmwx>(benchInst, benchUser,
+                                                  fullname, format,
+                                                  samples, iterations,
+                                                  verbose);
+    }
+  }
+    
   return 0;
 }
 

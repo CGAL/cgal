@@ -58,10 +58,14 @@ typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
 
-typedef CGAL::Pm_default_point_location<Planar_map>     Def_point_location;
+typedef CGAL::Pm_default_point_location<Planar_map>     Trap_point_location;
 typedef CGAL::Pm_naive_point_location<Planar_map>       Naive_point_location;
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>
                                                         Walk_point_location;
+
+typedef CGAL::Bench_parse_args::TypeId                  TypeId;
+typedef CGAL::Bench_parse_args::StrategyId              StrategyId;
+typedef CGAL::Bench_parse_args::FormatId                FormatId;
 
 /*
  */
@@ -147,7 +151,7 @@ public:
   void clean() { m_curveList.clear(); }
   void sync(){}
 
-  void setFormat(CGAL::Bench_parse_args::FormatId fmt) { m_format = fmt; }
+  void setFormat(FormatId fmt) { m_format = fmt; }
   void setFilename(const char * filename) { m_filename = filename; }
   void setVerbose(const bool verbose) { m_verbose = verbose; }
 
@@ -155,7 +159,7 @@ protected:
   const char * m_filename;
   CurveList m_curveList;
   bool m_verbose;
-  CGAL::Bench_parse_args::FormatId m_format;
+  FormatId m_format;
 
   double m_x0;
   double m_x1;
@@ -181,8 +185,8 @@ public:
   }
 };
 
-typedef Increment_pm<Def_point_location>        Def_inc_pm;
-typedef CGAL::Bench<Def_inc_pm>                 Def_inc_pm_bench;
+typedef Increment_pm<Trap_point_location>       Trap_inc_pm;
+typedef CGAL::Bench<Trap_inc_pm>                Trap_inc_pm_bench;
 
 typedef Increment_pm<Naive_point_location>      Naive_inc_pm;
 typedef CGAL::Bench<Naive_inc_pm>               Naive_inc_pm_bench;
@@ -203,8 +207,8 @@ public:
   }
 };
 
-typedef Aggregate_pm<Def_point_location>        Def_agg_pm;
-typedef CGAL::Bench<Def_agg_pm>                 Def_agg_pm_bench;
+typedef Aggregate_pm<Trap_point_location>       Trap_agg_pm;
+typedef CGAL::Bench<Trap_agg_pm>                Trap_agg_pm_bench;
 
 typedef Aggregate_pm<Naive_point_location>      Naive_agg_pm;
 typedef CGAL::Bench<Naive_agg_pm>               Naive_agg_pm_bench;
@@ -292,14 +296,35 @@ private:
   Window_stream * m_window;
 };
 
-typedef Display_pm<Def_point_location>          Def_dis_pm;
-typedef CGAL::Bench<Def_dis_pm>                 Def_dis_pm_bench;
+typedef Display_pm<Trap_point_location>         Trap_dis_pm;
+typedef CGAL::Bench<Trap_dis_pm>                Trap_dis_pm_bench;
 
 typedef Display_pm<Naive_point_location>        Naive_dis_pm;
 typedef CGAL::Bench<Naive_dis_pm>               Naive_dis_pm_bench;
 
 typedef Display_pm<Walk_point_location>         Walk_dis_pm;
 typedef CGAL::Bench<Walk_dis_pm>                Walk_dis_pm_bench;
+
+/*
+ */
+template <class Bench_inst, class Bench_user>
+void runBench(Bench_inst & benchInst, Bench_user & benchUser,
+              const char * fullname, FormatId format,
+              int samples, int iterations, bool verbose)
+{
+    // Bench_inst benchInst(name, seconds, false);
+    // Bench_user & benchUser = benchInst.getBenchUser();
+  benchUser.setFormat(format);
+  benchUser.setFilename(fullname);
+  benchUser.setVerbose(verbose);
+
+  if (samples > 0) benchInst.setSamples(samples);
+  else if (iterations > 0) benchInst.setIterations(iterations);
+
+  benchInst();
+
+  if (verbose) std::cout << "(" << benchInst.getSamples() << ") " << std::endl;
+}
 
 /*
  */
@@ -311,76 +336,157 @@ int main(int argc, char * argv[])
   if (rc < 0) return rc;
   
   bool verbose = parseArgs.getVerbose();
-  unsigned int benchMask = parseArgs.getBenchMask();
-  CGAL::Bench_parse_args::FormatId inputFormat = parseArgs.getInputFormat();
+  unsigned int typeMask = parseArgs.getTypeMask();
+  unsigned int strategyMask = parseArgs.getStrategyMask();
+  FormatId format = parseArgs.getInputFormat();
   int samples = parseArgs.getSamples();
   int iterations = parseArgs.getIterations();
   int seconds = parseArgs.getSeconds();
   bool printHeader = parseArgs.getPrintHeader();
   int nameLength = parseArgs.getNameLength();
   const char * filename = parseArgs.getFilename();
-  const std::string * fullname = parseArgs.getFullname();
+  const char * fullname = parseArgs.getFullname();
+  
+  CGAL::Bench_base::setNameLength(nameLength);
+  if (printHeader) CGAL::Bench_base::printHeader();
   
   // Construct Incrementaly
-  const char * bname =
-    parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_INCREMENT);
-  Def_inc_pm_bench benchDefInc((std::string(bname) + " PM " + PM_TYPE +
-                                    " (" + std::string(filename) + ")"),
-                                   seconds, false);
-  Def_inc_pm & defIncPm = benchDefInc.getBenchUser();
-  defIncPm.setFormat(inputFormat);
-  defIncPm.setFilename(fullname->c_str());
-  defIncPm.setVerbose(verbose);
+  TypeId typeId = CGAL::Bench_parse_args::TYPE_INCREMENT;
+  if (typeMask & (0x1 << typeId)) {
+    // Trapezoidal point location:
+    StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PM " + PM_TYPE + " (" + std::string(filename) + ")";
+      Trap_inc_pm_bench benchInst(name, seconds, false);
+      Trap_inc_pm & benchUser = benchInst.getBenchUser();
+      runBench<Trap_inc_pm_bench,Trap_inc_pm>(benchInst, benchUser,
+                                              fullname, format,
+                                              samples, iterations, verbose);
+    }
+    
+    // Naive point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_NAIVE;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PM " + PM_TYPE + " (" + std::string(filename) + ")";
+      Naive_inc_pm_bench benchInst(name, seconds, false);
+      Naive_inc_pm & benchUser = benchInst.getBenchUser();
+      runBench<Naive_inc_pm_bench,Naive_inc_pm>(benchInst, benchUser,
+                                                fullname, format,
+                                                samples, iterations, verbose);
+    }
 
-  // Construct Aggregately
-  bname =
-    parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_AGGREGATE);
-  Def_agg_pm_bench benchDefAgg((std::string(bname) + " PM " + PM_TYPE +
-                                " (" + std::string(filename) + ")"),
-                               seconds, false);
-  Def_agg_pm & defAggPm = benchDefAgg.getBenchUser();
-  defAggPm.setFormat(inputFormat);
-  defAggPm.setFilename(fullname->c_str());
-  defAggPm.setVerbose(verbose);
-
-  // Construct and Display
-  bname = parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_DISPLAY);
-  Def_dis_pm_bench benchDefDis((std::string(bname) + " PM " + PM_TYPE +
-                                " (" + std::string(filename) + ")"),
-                               seconds, false);
-  Def_dis_pm & defDisPm = benchDefDis.getBenchUser();
-  defDisPm.setFormat(inputFormat);
-  defDisPm.setFilename(fullname->c_str());
-  defDisPm.setVerbose(verbose);
-
-  if (samples > 0) {
-    benchDefInc.setSamples(samples);
-    benchDefAgg.setSamples(samples);
-    benchDefDis.setSamples(samples);
-  } else {
-    if (iterations > 0) {
-      benchDefInc.setIterations(iterations);
-      benchDefAgg.setIterations(iterations);
-      benchDefDis.setIterations(iterations);
+    // Walk point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_WALK;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PM " + PM_TYPE + " (" + std::string(filename) + ")";
+      Walk_inc_pm_bench benchInst(name, seconds, false);
+      Walk_inc_pm & benchUser = benchInst.getBenchUser();
+      runBench<Walk_inc_pm_bench,Walk_inc_pm>(benchInst, benchUser,
+                                              fullname, format,
+                                              samples, iterations, verbose);
     }
   }
 
-  CGAL::Bench_base::setNameLength(nameLength);
-  if (printHeader) CGAL::Bench_base::printHeader();
-  if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_INCREMENT))
-    benchDefInc();
-  if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_AGGREGATE))
-    benchDefAgg();
-  if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_DISPLAY))
-    benchDefDis();
+  // Construct Aggregately
+  typeId = CGAL::Bench_parse_args::TYPE_AGGREGATE;
+  if (typeMask & (0x1 << typeId)) {
+    // Trapezoidal point location:
+    StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PM " + PM_TYPE + " (" + std::string(filename) + ")";
+      Trap_agg_pm_bench benchInst(name, seconds, false);
+      Trap_agg_pm & benchUser = benchInst.getBenchUser();
+      runBench<Trap_agg_pm_bench,Trap_agg_pm>(benchInst, benchUser,
+                                              fullname, format,
+                                              samples, iterations, verbose);
+    }
+
+    // Naive point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_NAIVE;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PM " + PM_TYPE + " (" + std::string(filename) + ")";
+      Naive_agg_pm_bench benchInst(name, seconds, false);
+      Naive_agg_pm & benchUser = benchInst.getBenchUser();
+      runBench<Naive_agg_pm_bench,Naive_agg_pm>(benchInst, benchUser,
+                                                fullname, format,
+                                                samples, iterations, verbose);
+    }
+
+    // Walk point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_WALK;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PM " + PM_TYPE + " (" + std::string(filename) + ")";
+      Walk_agg_pm_bench benchInst(name, seconds, false);
+      Walk_agg_pm & benchUser = benchInst.getBenchUser();
+      runBench<Walk_agg_pm_bench,Walk_agg_pm>(benchInst, benchUser,
+                                              fullname, format,
+                                              samples, iterations, verbose);
+    }
+  }
   
-  // Ensure the compiler doesn't optimize the code away...
-  if (verbose) {
-    std::cout << "(" << benchDefInc.getSamples() << ") " << std::endl;
-    std::cout << "(" << benchDefAgg.getSamples() << ") " << std::endl;
-    std::cout << "(" << benchDefDis.getSamples() << ") " << std::endl;
+  // Construct and Display
+  typeId = CGAL::Bench_parse_args::TYPE_DISPLAY;
+  if (typeMask & (0x1 << typeId)) {
+    // Trapezoidal point location:
+    StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PM " + PM_TYPE + " (" + std::string(filename) + ")";
+      Trap_dis_pm_bench benchInst(name, seconds, false);
+      Trap_dis_pm & benchUser = benchInst.getBenchUser();
+      runBench<Trap_dis_pm_bench,Trap_dis_pm>(benchInst, benchUser,
+                                              fullname, format,
+                                              samples, iterations, verbose);
+    }
+
+    // Naive point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_NAIVE;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PM " + PM_TYPE + " (" + std::string(filename) + ")";
+      Naive_dis_pm_bench benchInst(name, seconds, false);
+      Naive_dis_pm & benchUser = benchInst.getBenchUser();
+      runBench<Naive_dis_pm_bench,Naive_dis_pm>(benchInst, benchUser,
+                                                fullname, format,
+                                                samples, iterations, verbose);
+    }
+
+    // Walk point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_WALK;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PM " + PM_TYPE + " (" + std::string(filename) + ")";
+      Walk_dis_pm_bench benchInst(name, seconds, false);
+      Walk_dis_pm & benchUser = benchInst.getBenchUser();
+      runBench<Walk_dis_pm_bench,Walk_dis_pm>(benchInst, benchUser,
+                                              fullname, format,
+                                              samples, iterations, verbose);
+    }
   }
   
   return 0;
 }
-
