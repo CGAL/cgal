@@ -2,6 +2,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/leda_real.h>
 #include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Timer.h>
 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
@@ -19,6 +20,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <list>
 
 #include <CGAL/Draw_preferences.h>
@@ -100,8 +102,7 @@ public:
       char one_line[128];
       
       skip_comments (is, one_line);
-      std::string stringvalues(one_line);
-      std::istringstream str_line (stringvalues, std::istringstream::in);
+      std::istringstream str_line (one_line);
       
       // Get the arc type.
       char     type;
@@ -324,14 +325,17 @@ int main(int argc, char * argv[])
   Naive_point_location strategy;
   Pmwx pm(&strategy);
 
-#if 1
-  pm.insert(curveList.begin(), curveList.end());
-#else
+  CGAL::Timer t;
+  t.start();
+
   CurveList::const_iterator i;
-    for (i = curveList.begin(); i != curveList.end(); i++)
-      pm.insert(*i);
-#endif
-    
+  for (i = curveList.begin(); i != curveList.end(); i++)
+    pm.insert(*i);
+ 
+  t.stop();
+  std::cout << "Construction took " 
+	    << t.time() << " seconds." << std::endl;
+  
   curveList.clear();
 
   // if map is empty
@@ -357,7 +361,8 @@ int main(int argc, char * argv[])
     
   CGAL::Window_stream * myWindow =
     new CGAL::Window_stream(static_cast<int>(width),
-                            static_cast<int>(height));
+                            static_cast<int>(height),
+			    "CGAL - Conic Arcs Arrangement Demo");
   if (!myWindow) return -1;
 
   float min_range = (x_range < y_range) ? x_range : y_range;
@@ -382,8 +387,6 @@ int main(int argc, char * argv[])
   (*myWindow) << pm;
   myWindow->set_flush(1);
   myWindow->flush();
-
-  // (*myWindow) << pm;
 
   // Point Location Queries
   myWindow->set_status_string("Enter a query point with left mouse button. "

@@ -45,8 +45,8 @@ compile_and_run()
     echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
   fi
    
-  # running io test (not for segment_circle_traits).
-  if [ $3 -ne $CGAL_SEGMENT_CIRCLE_TRAITS ]; then
+  # running io test (not for conic_traits).
+  if [ $3 -ne $CGAL_CONIC_TRAITS ]; then
     if compile test_io $2 $3 ; then
 	echo "   compilation of $1_io succeeded" >> $ERRORFILE  
 	run_io test_io $2 $3
@@ -70,7 +70,7 @@ run()
     datafiles="DATA/segments/*"
   elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
        datafiles="DATA/polylines/*"
-  elif [ $3 -eq $CGAL_SEGMENT_CIRCLE_TRAITS ]; then
+  elif [ $3 -eq $CGAL_CONIC_TRAITS ]; then
        datafiles="DATA/segment_circles/*"
   fi
 
@@ -132,8 +132,8 @@ run_io()
     SUFFIO="leda_io"
     # Avoid running test_io with leda_polyline_traits 
     return
-  elif [ $3 -eq $CGAL_SEGMENT_CIRCLE_TRAITS ]; then
-    # Avoid running test_io with segment_circle_traits 
+  elif [ $3 -eq $CGAL_CONIC_TRAITS ]; then
+    # Avoid running test_io with conic_traits 
     return
   fi
 
@@ -194,7 +194,7 @@ else
   CGAL_SEGMENT_LEDA_TRAITS=2
   CGAL_POLYLINE_TRAITS=11
   CGAL_POLYLINE_LEDA_TRAITS=12
-  CGAL_SEGMENT_CIRCLE_TRAITS=21
+  CGAL_CONIC_TRAITS=21
 
   TRAP=1  # Trapezoidal decomposition
   NAIVE=2
@@ -224,7 +224,7 @@ else
    (compile_and_run test $WALK   $CGAL_POLYLINE_LEDA_TRAITS)
    (compile_and_run test $SIMPLE $CGAL_POLYLINE_LEDA_TRAITS)
 
-  # run test with segment circle traits
-   (compile_and_run test $WALK  $CGAL_SEGMENT_CIRCLE_TRAITS)
+  # run test with segment conic traits
+   (compile_and_run test $WALK  $CGAL_CONIC_TRAITS)
 
 fi

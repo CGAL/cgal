@@ -7,9 +7,9 @@
 
 #define CGAL_SEGMENT_TRAITS        1
 #define CGAL_SEGMENT_LEDA_TRAITS   2
-#define CGAL_POLYLINE_TRAITS      11
-#define CGAL_POLYLINE_LEDA_TRAITS 12
-#define CGAL_SEGMENT_CIRCLE_TRAITS 21
+#define CGAL_POLYLINE_TRAITS       11
+#define CGAL_POLYLINE_LEDA_TRAITS  12
+#define CGAL_CONIC_TRAITS          21
 
 // Picking a default Traits class (this, with the 
 // PL flag enables the running of the test independently of cgal_make.)
@@ -18,14 +18,14 @@
 #define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_CIRCLE_TRAITS
+//#define CGAL_ARR_TEST_TRAITS CGAL_CONIC_TRAITS
 #endif
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA) && \
   (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
-   CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS)
+   CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS)
 
 int main()
 {
@@ -52,9 +52,9 @@ int main()
   #include <CGAL/leda_rational.h>
   #include <CGAL/Arr_leda_polyline_traits.h>
   #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
   #include <CGAL/leda_real.h>
-  #include <CGAL/Arr_segment_circle_traits.h>
+  #include <CGAL/Arr_conic_traits_2.h>
 #else
   #error No traits defined for test
 #endif
@@ -111,16 +111,17 @@ int main()
   typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
   typedef CGAL::Arr_leda_polyline_traits<Kernel>        Traits;
 
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
   typedef leda_real                                     NT;
-  typedef CGAL::Arr_segment_circle_traits<NT>           Traits;
+  typedef CGAL::Cartesian<NT>                           K;
+  typedef CGAL::Arr_conic_traits_2<K>                   Traits;
   typedef Traits::Segment_2                             Segment;
   typedef Traits::Circle                                Circle;
 
 #endif
 
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                               X_curve;
+typedef Traits::X_monotone_curve_2                      X_curve;
 typedef Traits::Curve_2                                 Curve;
 
 typedef CGAL::Arr_base_node<X_curve>                    Base_node;
@@ -320,7 +321,7 @@ private:
       else
       {
         file.putback(c);
-#if CGAL_ARR_TEST_TRAITS != CGAL_SEGMENT_CIRCLE_TRAITS
+#if CGAL_ARR_TEST_TRAITS != CGAL_CONIC_TRAITS
         file >> num;
         result = NT(num.numerator(), num.denominator());
 #else
@@ -344,7 +345,7 @@ private:
     // The to_long precondition is that number is indeed long
     // is supplied here since input numbers are small.
     return get_next_num(file).numerator().to_long();
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
     return (int) CGAL::to_double(get_next_num(file));
 #else
     return get_next_num(file).numerator();
@@ -409,7 +410,7 @@ private:
     return polyline;
   }
 
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
 
   Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
   {
@@ -516,7 +517,7 @@ private:
 
       curr_curve = read_polyline_curve(file, reverse_order);
 
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
 
       curr_curve = read_seg_circ_curve(file, reverse_order);
 

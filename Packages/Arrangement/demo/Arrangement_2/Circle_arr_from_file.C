@@ -10,7 +10,7 @@
 #include <CGAL/Cartesian.h>
 #include <fstream>
 #include <CGAL/Timer.h>
-#include <CGAL/Arr_circles_real_traits.h>
+#include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
@@ -29,16 +29,18 @@ int main()
 
 #include <CGAL/leda_real.h>
 #include <CGAL/IO/Window_stream.h>
-#include <CGAL/IO/Arr_circle_traits_Window_stream.h>
+#include <CGAL/IO/Conic_arc_2_Window_stream.h>
 #include <CGAL/Draw_preferences.h>
 
-typedef CGAL::Arr_circles_real_traits<leda_real> Traits; 
+typedef leda_real                                      NT;
+typedef CGAL::Cartesian<NT>                            Kernel;
+typedef CGAL::Arr_conic_traits_2<Kernel>               Traits;
 
-typedef Traits::Point                                  Point;
-typedef Traits::Curve                                  Curve; 
-typedef Traits::X_curve                                X_curve;
+typedef Traits::Point_2                                Point_2;
+typedef Traits::Curve_2                                Curve_2;
+typedef Traits::Circle_2                               Circle_2;
 
-typedef CGAL::Arr_base_node<Curve>                     Base_node;
+typedef CGAL::Arr_base_node<Curve_2>                   Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>               Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >    Arr_2;
 
@@ -59,10 +61,12 @@ Window_stream& operator<<(Window_stream& os, Arr_2 &A)
   return os;
 }
 CGAL_END_NAMESPACE
+
 // redraw function for the LEDA window. used automatically when window 
 // reappears
 void redraw(CGAL::Window_stream * wp) 
-{ wp->start_buffering();
+{ 
+  wp->start_buffering();
   wp->clear();
   // draw arragnement
   *wp << arr;
@@ -84,13 +88,16 @@ int main(int argc, char* argv[])
   std::ifstream f(argv[1]);
   f >> circles_num;
 
-  std::vector<Curve> circles;
+  std::vector<Circle_2> circles;
   
   double max_r2=1,max_x=1,min_x=-1,min_y=-1; //for adjusting the window size
-  while (circles_num--) {
+  while (circles_num--) 
+  {
     leda_real x,y,r2;
     f >> x >> y >> r2;
-    circles.push_back(Curve(x,y,r2));
+    
+    Point_2  center (x,y);
+    circles.push_back(Circle_2(center, r2, CGAL::CLOCKWISE));
 
     double dx=CGAL::to_double(x);
     double dy=CGAL::to_double(y);
@@ -110,10 +117,11 @@ int main(int argc, char* argv[])
   W.open_status_window();
   W.display();
 
-  for (unsigned int i=0; i<circles.size(); ++i) {
+  for (unsigned int i=0; i<circles.size(); ++i) 
+  {
     std::cout << "inserting circle " << i+1 << std::endl;
     insrt_t.start();
-    arr.insert(circles[i]);
+    arr.insert(Curve_2(circles[i]));
     insrt_t.stop();
   }
 
@@ -122,16 +130,17 @@ int main(int argc, char* argv[])
 
   //POINT LOCATION
   W.set_status_string( "Enter a query point with left mouse button" );
-  Point p;
+  Point_2 p;
 
   Arr_2::Halfedge_handle e;
   
-  for (;;) {
+  for (;;) 
+  {
     double x,y;
     int b=W.read_mouse(x,y);
     if (b==10) break;
     else
-      p=Point(x,y);
+      p=Point_2(x,y);
 
     W << arr;
     
@@ -139,7 +148,6 @@ int main(int argc, char* argv[])
     e = arr.locate(p,lt);
 
     Arr_2::Face_handle fh=e->face();
-    //Arr_2::Ccb_halfedge_circulator cc(e);
     Arr_2::Ccb_halfedge_circulator cc;
 
     if (fh != arr.unbounded_face()) {

@@ -23,7 +23,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
-#include "CGAL/Arrangement_2/Conic_arc_2.h"
+#include <CGAL/Arrangement_2/Conic_arc_2.h>
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
@@ -451,16 +451,29 @@ class Arr_conic_traits_2
       return (EQUAL);
 
     // Get the points on the arc with the same x co-ordinate as p.
-    int    n;
+    int      n;
     Point_2  ps[2];
 
-    n = curve.get_points_at_x (p, ps);
+    if (compare_x(p, curve.source()) == EQUAL)
+    {
+      ps[0] = curve.source();
+      n = 1;
+    }
+    else if (compare_x(p, curve.target()) == EQUAL)
+    {
+      ps[0] = curve.target();
+      n = 1;
+    }
+    else
+    {
+      n = curve.get_points_at_x (p, ps);
+    }
 
     // Make sure there is exactly one point.
     CGAL_assertion(n == 1);
 
     // Compare p with the a point of the curve with the same x co-ordinate.
-    return (_compare_y(ps[0], p));
+    return (_compare_y(p, ps[0]));
   }
 
   // Cehck whether the two points are identical.
@@ -572,12 +585,17 @@ class Arr_conic_traits_2
                                         OutputIterator o) const
   {
     // Find the points of vertical tangency and act accordingly.
-    int    n;
+    int      n;
     Point_2  ps[2];
 
     n = curve.vertical_tangency_points (ps);
 
-    CGAL_assertion (n > 0);
+    if (n == 0)
+    {    
+      // In case the given curve is already x-monotone:
+      *o++ = curve;
+      return (o);
+    }
 
     // Split the conic arc into x-monotone sub-curves. 
     if (curve.is_full_conic())
@@ -652,7 +670,7 @@ class Arr_conic_traits_2
       }
     }
 
-    return o;
+    return (o);
   }
 
   // Split the given curve into two sub-curves at the given point.

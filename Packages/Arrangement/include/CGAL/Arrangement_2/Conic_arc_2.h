@@ -56,12 +56,12 @@ enum
 //
 
 static int _conics_count = 0;
-template <class _NT> class Arr_conic_traits_2;
+template <class K> class Arr_conic_traits_2;
 
 template <class Kernel_>
 class Conic_arc_2
 {
-private:
+protected:
   typedef Conic_arc_2<Kernel_>  Self;
         
 public:
@@ -78,7 +78,7 @@ public:
 
   typedef Point_2_ex<Kernel>   My_point_2;
     
- private:
+ protected:
 
   enum
   {
@@ -157,7 +157,7 @@ public:
     return (REFLECTION_FACTOR * _conics_count);
   }
 
-  // Private constructor.
+  // Protected constructor.
   Conic_arc_2 (const Self & arc,
 	       const My_point_2& source, const My_point_2 & target,
 	       const bool& is_full) :
@@ -638,14 +638,12 @@ public:
     return ((_info & FULL_CONIC) != 0);
   }
 
-  // shai begin
-  bool is_circle() const
+  // Check whether the arc is a circular arc.
+  bool is_circular() const
   {
-    // WARNING: This is not true
-    return _conic.is_ellipse();
+    return ((_info & IS_CIRCLE) != 0);
   }
-  // shai end
-
+  
   // Check whether the curve is a sgement.
   bool is_segment () const
   {
@@ -1533,7 +1531,7 @@ public:
       return (SMALLER);
   }
 
- private:
+ protected:
 
   // Set the properties of a conic arc (for the usage of the constructors).
   // The source and the target are assumed be on the conic boundary.
@@ -2769,17 +2767,26 @@ public:
 				 My_point_2* ipts) const
   {
     // Calculate the minimal number of intersection points.
-    int          x_total = 0, y_total = 0;
     int          min_points;
+    const bool   all_approx = (n_xs == n_approx_xs) && (n_ys == n_approx_ys); 
     int          i, j;
 
-    for (i = 0; i < n_xs; i++)
-      x_total += x_mults[i];
+    if (all_approx)
+    {
+      min_points = (n_xs < n_ys) ? n_xs : n_ys;
+    }
+    else
+    {
+      int          x_total = 0, y_total = 0;
 
-    for (j = 0; j < n_ys; j++)
-      y_total += y_mults[j];
+      for (i = 0; i < n_xs; i++)
+	x_total += x_mults[i];
 
-    min_points = (x_total < y_total) ? x_total : y_total;
+      for (j = 0; j < n_ys; j++)
+	y_total += y_mults[j];
+
+      min_points = (x_total < y_total) ? x_total : y_total;
+    }
 
     // Go over all x coordinates.
     const APNT   r1 = TO_APNT(_conic.r());
@@ -2843,8 +2850,10 @@ public:
     k = 0;
     while (k < n_xs*n_ys && n_ipts < 4)
     {
-      if (n_ipts >= min_points &&
-	  eps_compare<APNT>(results[k]*results[k], 0) != EQUAL)
+      if (results[k] > 1 || 
+	  (all_approx && n_ipts == min_points) ||
+	  (n_ipts >= min_points &&
+	   eps_compare<APNT>(results[k]*results[k], 0) != EQUAL))
       {
 	break;
       }
@@ -2864,7 +2873,6 @@ public:
     return (n_ipts);
   }
 
-  // shai begin
 public:
 
   // Get a segment if the arc is indeed one.
@@ -2904,8 +2912,6 @@ public:
 
     return (Circle_2 (Point_2(x0, y0), r2));
   }
-
-  // shai end
 };
 
 #ifndef NO_OSTREAM_INSERT_CONIC_ARC_2

@@ -18,8 +18,8 @@
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
 // ======================================================================
-#ifndef CONIC_ARC_2_WINDOW_STREAM_H
-#define CONIC_ARC_2_WINDOW_STREAM_H
+#ifndef CGAL_CONIC_ARC_2_WINDOW_STREAM_H
+#define CGAL_CONIC_ARC_2_WINDOW_STREAM_H
 
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/Arrangement_2/Conic_arc_2.h>

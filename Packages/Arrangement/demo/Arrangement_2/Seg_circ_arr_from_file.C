@@ -22,47 +22,49 @@ int main()
 #else
 
 #include <CGAL/Cartesian.h>
-#include <fstream>
 #include <CGAL/Timer.h>
-
-#include <CGAL/Arr_segment_circle_traits.h>
-#include <CGAL/IO/Segment_circle_Window_stream.h>
 
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
+#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/IO/Conic_arc_2_Window_stream.h>
+#include <CGAL/IO/Window_stream.h>
+
 #include <CGAL/leda_real.h>
 #include <CGAL/Draw_preferences.h>
 
-typedef CGAL::Arr_segment_circle_traits<leda_real> Traits; 
+#include <fstream>
 
-typedef Traits::Point                                  Point;
-typedef Traits::Segment                                Segment;
-typedef Traits::Circle                                 Circle;
-typedef Traits::Conic                                  Conic;
-typedef Traits::Curve                                  Curve; 
-typedef Traits::X_curve                                X_curve;
+typedef leda_real                                   NT;
+typedef CGAL::Cartesian<NT>                         Kernel;
+typedef CGAL::Arr_conic_traits_2<Kernel>            Traits;
+typedef CGAL::Pm_default_dcel<Traits>               Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>             Pm_2;
+typedef CGAL::Planar_map_with_intersections_2<Pm_2> Pmwx_2;
 
-typedef CGAL::Arr_base_node<Curve>                     Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits>               Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >    Arr_2;
+typedef Traits::Point_2                             Point_2;
+typedef Traits::Curve_2                             Curve_2;
+typedef Traits::Circle_2                            Circle_2;
+typedef Traits::Segment_2                           Segment_2;
+typedef std::list<Curve_2>                          CurveList;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
-static Arr_2               arr;
+static Pmwx_2              arr;
 static CGAL::Window_stream W(400, 400, 
 			    "CGAL - Segments and Circular Arcs Arrangement Demo");
  
 CGAL_BEGIN_NAMESPACE
-Window_stream& operator<<(Window_stream& os, Arr_2 &A)
+Window_stream& operator<<(Window_stream& os, Pmwx_2 &A)
 {
-  My_Arr_drawer< Arr_2,
-                 Arr_2::Ccb_halfedge_circulator, 
-                 Arr_2::Holes_iterator> drawer(os);
+  My_Arr_drawer< Pmwx_2,
+                 Pmwx_2::Ccb_halfedge_circulator, 
+                 Pmwx_2::Holes_iterator> drawer(os);
   
   draw_pm(arr, drawer, os);
-  
+
   return os;
 }
 CGAL_END_NAMESPACE
@@ -105,21 +107,33 @@ int main(int argc, char* argv[])
     std::cout << "Inserting arc no. " << i_arc + 1;
 
     // A full circle (c) or a circular arc (a):
-    if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
+    if (type == 'c' || type == 'C' || type == 'a' || type == 'A' ||
+	     type == 'f' || type == 'F' || type == 'e' || type == 'E')
     {
       // Read the circle, using the format "x0 y0 r^2"
       leda_real  x0, y0, r2;
     
-      f >> x0 >> y0 >> r2;
-    
-      Circle      circle (Point (x0, y0), r2, CGAL::CLOCKWISE);
+      if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
+      {
+	f >> x0 >> y0 >> r2;
+      }
+      else
+      {
+	leda_real r, r_;
 
-      if (type == 'c' || type == 'C')
+	f >> r >> r_ >> x0 >> y0;
+	CGAL_assertion(r == r_);
+	r2 = r*r;
+      }
+
+      Circle_2   circle (Point_2 (x0, y0), r2, CGAL::CLOCKWISE);
+
+      if (type == 'c' || type == 'C' || type == 'f' || type == 'F')
       {
 	std::cout << " (full circle)." << std::endl;
 
 	insrt_t.start();
-	arr.insert (Curve(circle));
+	arr.insert (Curve_2(circle));
 	insrt_t.stop();
 
       }
@@ -132,11 +146,11 @@ int main(int argc, char* argv[])
 
 	f >> x1 >> y1 >> x2 >> y2;
 
-	Point      source (x1, y1);
-	Point      target (x2, y2);
+	Point_2      source (x1, y1);
+	Point_2      target (x2, y2);
 
 	insrt_t.start();
-	arr.insert (Curve (circle, source, target));
+	arr.insert (Curve_2 (circle, source, target));
 	insrt_t.stop();
       }
 
@@ -158,16 +172,17 @@ int main(int argc, char* argv[])
     else if (type == 's' || type == 'S')
     {
       std::cout << " (segment)." << std::endl;
+      
       // Read the end points.
       leda_real  x1, y1, x2, y2;
 
       f >> x1 >> y1 >> x2 >> y2;
 
-      Point      source (x1, y1);
-      Point      target (x2, y2);
+      Point_2      source (x1, y1);
+      Point_2      target (x2, y2);
  
       insrt_t.start();
-      arr.insert (Curve (Segment (source, target)));
+      arr.insert (Curve_2 (Segment_2 (source, target)));
       insrt_t.stop();
 
       // Check whether we need to resize the screen.
@@ -216,25 +231,25 @@ int main(int argc, char* argv[])
 
   //POINT LOCATION
   W.set_status_string( "Left mouse button - query point." );
-  Point p;
+  Point_2 p;
 
-  Arr_2::Halfedge_handle e;
+  Pmwx_2::Halfedge_handle e;
   
   for (;;) {
     double x,y;
     int b=W.read_mouse(x,y);
     if (b==10) break;
     else
-      p=Point(x,y);
+      p=Point_2(x,y);
 
     W << arr;
     
-    Arr_2::Locate_type lt;
+    Pmwx_2::Locate_type lt;
     e = arr.locate(p,lt);
 
-    Arr_2::Face_handle fh=e->face();
-    //Arr_2::Ccb_halfedge_circulator cc(e);
-    Arr_2::Ccb_halfedge_circulator cc;
+    Pmwx_2::Face_handle fh=e->face();
+    //Pmwx_2::Ccb_halfedge_circulator cc(e);
+    Pmwx_2::Ccb_halfedge_circulator cc;
 
     if (fh != arr.unbounded_face()) {
       cc=fh->halfedge_on_outer_ccb();
@@ -243,7 +258,7 @@ int main(int argc, char* argv[])
       } while (++cc != fh->halfedge_on_outer_ccb());
     }
 
-    Arr_2::Holes_iterator hit=fh->holes_begin(), eit=fh->holes_end();
+    Pmwx_2::Holes_iterator hit=fh->holes_begin(), eit=fh->holes_end();
     for (;hit!=eit;++hit) {
       cc=*hit;
       do {
