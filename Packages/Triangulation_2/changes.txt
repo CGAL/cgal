@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.64 (7 September 00)
+change dummy tempate parameter name in Triangulation_hierarchy_2.h
+
 Ver 4.63 (4 September 00)
 fixed does_conflict(..) in Delaunay_triangulation_2.h
 
