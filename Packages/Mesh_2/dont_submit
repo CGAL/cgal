@@ -8,3 +8,4 @@ Doxyfile
 stylesheet.css
 utils
 implementation.tex
+*.kdev*
