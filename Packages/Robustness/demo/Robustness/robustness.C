@@ -435,9 +435,9 @@ private slots:
     qte->resize(400, 300);
     qte->show();
     qte->setText("INFORMATION:");
-    qte->append("We compute the intersection points of segments using exact 
-                 and double arithmetic. Then we compute the convex hull of 
-                 those. If there are points that are different in different 
+    qte->append("We compute the intersection points of segments using exact \
+                 and double arithmetic. Then we compute the convex hull of \
+                 those. If there are points that are different in different \
                  arithmetic, we mark them by a red circle.");
     
     QProgressDialog progress( "Generating segments...", 
