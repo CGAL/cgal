@@ -21,7 +21,7 @@ package:
 	@echo "---- make VERSION=4.81 Version ---"
 	@echo "---- cvs commit ------------------"
 	@echo "---- make VERSION=4.81 Tag -------"
-	@echo "---- make Submit -----------------"
+	@echo "---- make VERSION=4.81 Submit ----"
 	@echo "----------------------------------"
 
 
