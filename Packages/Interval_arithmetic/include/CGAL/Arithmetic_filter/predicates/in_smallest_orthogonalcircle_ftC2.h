@@ -75,6 +75,55 @@ in_smallest_orthogonalcircleC2(
   }
 }
 
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_MEDIUM_INLINE */
+Oriented_side
+in_smallest_orthogonalcircleC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tw)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return in_smallest_orthogonalcircleC2(
+		px.interval(),
+		py.interval(),
+		pw.interval(),
+		qx.interval(),
+		qy.interval(),
+		qw.interval(),
+		tx.interval(),
+		ty.interval(),
+		tw.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Oriented_side result = in_smallest_orthogonalcircleC2(
+		px.exact(),
+		py.exact(),
+		pw.exact(),
+		qx.exact(),
+		qy.exact(),
+		qw.exact(),
+		tx.exact(),
+		ty.exact(),
+		tw.exact());
+    FPU_set_cw(backup);
+    return result;
+  }
+}
+
 struct Static_Filtered_in_smallest_orthogonalcircleC2_9
 {
   static double _bound;
@@ -211,6 +260,64 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return in_smallest_orthogonalcircleC2(
+		px.exact(),
+		py.exact(),
+		pw.exact(),
+		qx.exact(),
+		qy.exact(),
+		qw.exact(),
+		tx.exact(),
+		ty.exact(),
+		tw.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_MEDIUM_INLINE */
+Oriented_side
+in_smallest_orthogonalcircleC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tw)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_in_smallest_orthogonalcircleC2_9::_bound; )
+  CGAL_assertion(!(
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pw.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qw.to_double()) > SAF_bound ||
+	fabs(tx.to_double()) > SAF_bound ||
+	fabs(ty.to_double()) > SAF_bound ||
+	fabs(tw.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_in_smallest_orthogonalcircleC2_9::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		pw.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qw.dbl(),
+		tx.dbl(),
+		ty.dbl(),
+		tw.dbl(),
+		Static_Filtered_in_smallest_orthogonalcircleC2_9::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
     return in_smallest_orthogonalcircleC2(
 		px.exact(),
 		py.exact(),

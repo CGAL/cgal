@@ -123,6 +123,103 @@ power_testH3(
   }
 }
 
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/*  */
+Oriented_side
+power_testH3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &phx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &phy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &phz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &phw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qhx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qhy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qhz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qhw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rhx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rhy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rhz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rhw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &shx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &shy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &shz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &shw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &swt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &thx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &thy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &thz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &thw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &twt)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return power_testH3(
+		phx.interval(),
+		phy.interval(),
+		phz.interval(),
+		phw.interval(),
+		pwt.interval(),
+		qhx.interval(),
+		qhy.interval(),
+		qhz.interval(),
+		qhw.interval(),
+		qwt.interval(),
+		rhx.interval(),
+		rhy.interval(),
+		rhz.interval(),
+		rhw.interval(),
+		rwt.interval(),
+		shx.interval(),
+		shy.interval(),
+		shz.interval(),
+		shw.interval(),
+		swt.interval(),
+		thx.interval(),
+		thy.interval(),
+		thz.interval(),
+		thw.interval(),
+		twt.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Oriented_side result = power_testH3(
+		phx.exact(),
+		phy.exact(),
+		phz.exact(),
+		phw.exact(),
+		pwt.exact(),
+		qhx.exact(),
+		qhy.exact(),
+		qhz.exact(),
+		qhw.exact(),
+		qwt.exact(),
+		rhx.exact(),
+		rhy.exact(),
+		rhz.exact(),
+		rhw.exact(),
+		rwt.exact(),
+		shx.exact(),
+		shy.exact(),
+		shz.exact(),
+		shw.exact(),
+		swt.exact(),
+		thx.exact(),
+		thy.exact(),
+		thz.exact(),
+		thw.exact(),
+		twt.exact());
+    FPU_set_cw(backup);
+    return result;
+  }
+}
+
 struct Static_Filtered_power_testH3_25
 {
   static double _bound;
@@ -409,6 +506,128 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return power_testH3(
+		phx.exact(),
+		phy.exact(),
+		phz.exact(),
+		phw.exact(),
+		pwt.exact(),
+		qhx.exact(),
+		qhy.exact(),
+		qhz.exact(),
+		qhw.exact(),
+		qwt.exact(),
+		rhx.exact(),
+		rhy.exact(),
+		rhz.exact(),
+		rhw.exact(),
+		rwt.exact(),
+		shx.exact(),
+		shy.exact(),
+		shz.exact(),
+		shw.exact(),
+		swt.exact(),
+		thx.exact(),
+		thy.exact(),
+		thz.exact(),
+		thw.exact(),
+		twt.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/*  */
+Oriented_side
+power_testH3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &phx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &phy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &phz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &phw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qhx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qhy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qhz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qhw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rhx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rhy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rhz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rhw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &shx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &shy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &shz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &shw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &swt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &thx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &thy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &thz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &thw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &twt)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_power_testH3_25::_bound; )
+  CGAL_assertion(!(
+	fabs(phx.to_double()) > SAF_bound ||
+	fabs(phy.to_double()) > SAF_bound ||
+	fabs(phz.to_double()) > SAF_bound ||
+	fabs(phw.to_double()) > SAF_bound ||
+	fabs(pwt.to_double()) > SAF_bound ||
+	fabs(qhx.to_double()) > SAF_bound ||
+	fabs(qhy.to_double()) > SAF_bound ||
+	fabs(qhz.to_double()) > SAF_bound ||
+	fabs(qhw.to_double()) > SAF_bound ||
+	fabs(qwt.to_double()) > SAF_bound ||
+	fabs(rhx.to_double()) > SAF_bound ||
+	fabs(rhy.to_double()) > SAF_bound ||
+	fabs(rhz.to_double()) > SAF_bound ||
+	fabs(rhw.to_double()) > SAF_bound ||
+	fabs(rwt.to_double()) > SAF_bound ||
+	fabs(shx.to_double()) > SAF_bound ||
+	fabs(shy.to_double()) > SAF_bound ||
+	fabs(shz.to_double()) > SAF_bound ||
+	fabs(shw.to_double()) > SAF_bound ||
+	fabs(swt.to_double()) > SAF_bound ||
+	fabs(thx.to_double()) > SAF_bound ||
+	fabs(thy.to_double()) > SAF_bound ||
+	fabs(thz.to_double()) > SAF_bound ||
+	fabs(thw.to_double()) > SAF_bound ||
+	fabs(twt.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_power_testH3_25::epsilon_variant(
+		phx.dbl(),
+		phy.dbl(),
+		phz.dbl(),
+		phw.dbl(),
+		pwt.dbl(),
+		qhx.dbl(),
+		qhy.dbl(),
+		qhz.dbl(),
+		qhw.dbl(),
+		qwt.dbl(),
+		rhx.dbl(),
+		rhy.dbl(),
+		rhz.dbl(),
+		rhw.dbl(),
+		rwt.dbl(),
+		shx.dbl(),
+		shy.dbl(),
+		shz.dbl(),
+		shw.dbl(),
+		swt.dbl(),
+		thx.dbl(),
+		thy.dbl(),
+		thz.dbl(),
+		thw.dbl(),
+		twt.dbl(),
+		Static_Filtered_power_testH3_25::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
     return power_testH3(
 		phx.exact(),
 		phy.exact(),

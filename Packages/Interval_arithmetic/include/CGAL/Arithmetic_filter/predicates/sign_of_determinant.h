@@ -60,6 +60,40 @@ sign_of_determinant2x2(
   }
 }
 
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* inline */
+Sign
+sign_of_determinant2x2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a00,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a01,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a10,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a11)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return sign_of_determinant2x2(
+		a00.interval(),
+		a01.interval(),
+		a10.interval(),
+		a11.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Sign result = sign_of_determinant2x2(
+		a00.exact(),
+		a01.exact(),
+		a10.exact(),
+		a11.exact());
+    FPU_set_cw(backup);
+    return result;
+  }
+}
+
 struct Static_Filtered_sign_of_determinant2x2_4
 {
   static double _bound;
@@ -161,6 +195,44 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* inline */
 Sign
+sign_of_determinant2x2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a00,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a01,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a10,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a11)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_sign_of_determinant2x2_4::_bound; )
+  CGAL_assertion(!(
+	fabs(a00.to_double()) > SAF_bound ||
+	fabs(a01.to_double()) > SAF_bound ||
+	fabs(a10.to_double()) > SAF_bound ||
+	fabs(a11.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(
+		a00.dbl(),
+		a01.dbl(),
+		a10.dbl(),
+		a11.dbl(),
+		Static_Filtered_sign_of_determinant2x2_4::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    return sign_of_determinant2x2(
+		a00.exact(),
+		a01.exact(),
+		a10.exact(),
+		a11.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* inline */
+Sign
 sign_of_determinant3x3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a00,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a01,
@@ -202,6 +274,55 @@ sign_of_determinant3x3(
 		a20.exact(),
 		a21.exact(),
 		a22.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* inline */
+Sign
+sign_of_determinant3x3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a00,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a01,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a02,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a10,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a11,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a12,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a20,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a21,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a22)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return sign_of_determinant3x3(
+		a00.interval(),
+		a01.interval(),
+		a02.interval(),
+		a10.interval(),
+		a11.interval(),
+		a12.interval(),
+		a20.interval(),
+		a21.interval(),
+		a22.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Sign result = sign_of_determinant3x3(
+		a00.exact(),
+		a01.exact(),
+		a02.exact(),
+		a10.exact(),
+		a11.exact(),
+		a12.exact(),
+		a20.exact(),
+		a21.exact(),
+		a22.exact());
+    FPU_set_cw(backup);
+    return result;
   }
 }
 
@@ -349,6 +470,64 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* inline */
 Sign
+sign_of_determinant3x3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a00,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a01,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a02,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a10,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a11,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a12,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a20,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a21,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a22)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_sign_of_determinant3x3_9::_bound; )
+  CGAL_assertion(!(
+	fabs(a00.to_double()) > SAF_bound ||
+	fabs(a01.to_double()) > SAF_bound ||
+	fabs(a02.to_double()) > SAF_bound ||
+	fabs(a10.to_double()) > SAF_bound ||
+	fabs(a11.to_double()) > SAF_bound ||
+	fabs(a12.to_double()) > SAF_bound ||
+	fabs(a20.to_double()) > SAF_bound ||
+	fabs(a21.to_double()) > SAF_bound ||
+	fabs(a22.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_sign_of_determinant3x3_9::epsilon_variant(
+		a00.dbl(),
+		a01.dbl(),
+		a02.dbl(),
+		a10.dbl(),
+		a11.dbl(),
+		a12.dbl(),
+		a20.dbl(),
+		a21.dbl(),
+		a22.dbl(),
+		Static_Filtered_sign_of_determinant3x3_9::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    return sign_of_determinant3x3(
+		a00.exact(),
+		a01.exact(),
+		a02.exact(),
+		a10.exact(),
+		a11.exact(),
+		a12.exact(),
+		a20.exact(),
+		a21.exact(),
+		a22.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* inline */
+Sign
 sign_of_determinant4x4(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a00,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a01,
@@ -411,6 +590,76 @@ sign_of_determinant4x4(
 		a31.exact(),
 		a32.exact(),
 		a33.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* inline */
+Sign
+sign_of_determinant4x4(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a00,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a01,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a02,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a03,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a10,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a11,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a12,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a13,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a20,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a21,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a22,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a23,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a30,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a31,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a32,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a33)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return sign_of_determinant4x4(
+		a00.interval(),
+		a01.interval(),
+		a02.interval(),
+		a03.interval(),
+		a10.interval(),
+		a11.interval(),
+		a12.interval(),
+		a13.interval(),
+		a20.interval(),
+		a21.interval(),
+		a22.interval(),
+		a23.interval(),
+		a30.interval(),
+		a31.interval(),
+		a32.interval(),
+		a33.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Sign result = sign_of_determinant4x4(
+		a00.exact(),
+		a01.exact(),
+		a02.exact(),
+		a03.exact(),
+		a10.exact(),
+		a11.exact(),
+		a12.exact(),
+		a13.exact(),
+		a20.exact(),
+		a21.exact(),
+		a22.exact(),
+		a23.exact(),
+		a30.exact(),
+		a31.exact(),
+		a32.exact(),
+		a33.exact());
+    FPU_set_cw(backup);
+    return result;
   }
 }
 
@@ -607,6 +856,92 @@ re_adjust:
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
+/* inline */
+Sign
+sign_of_determinant4x4(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a00,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a01,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a02,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a03,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a10,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a11,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a12,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a13,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a20,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a21,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a22,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a23,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a30,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a31,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a32,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a33)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_sign_of_determinant4x4_16::_bound; )
+  CGAL_assertion(!(
+	fabs(a00.to_double()) > SAF_bound ||
+	fabs(a01.to_double()) > SAF_bound ||
+	fabs(a02.to_double()) > SAF_bound ||
+	fabs(a03.to_double()) > SAF_bound ||
+	fabs(a10.to_double()) > SAF_bound ||
+	fabs(a11.to_double()) > SAF_bound ||
+	fabs(a12.to_double()) > SAF_bound ||
+	fabs(a13.to_double()) > SAF_bound ||
+	fabs(a20.to_double()) > SAF_bound ||
+	fabs(a21.to_double()) > SAF_bound ||
+	fabs(a22.to_double()) > SAF_bound ||
+	fabs(a23.to_double()) > SAF_bound ||
+	fabs(a30.to_double()) > SAF_bound ||
+	fabs(a31.to_double()) > SAF_bound ||
+	fabs(a32.to_double()) > SAF_bound ||
+	fabs(a33.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_sign_of_determinant4x4_16::epsilon_variant(
+		a00.dbl(),
+		a01.dbl(),
+		a02.dbl(),
+		a03.dbl(),
+		a10.dbl(),
+		a11.dbl(),
+		a12.dbl(),
+		a13.dbl(),
+		a20.dbl(),
+		a21.dbl(),
+		a22.dbl(),
+		a23.dbl(),
+		a30.dbl(),
+		a31.dbl(),
+		a32.dbl(),
+		a33.dbl(),
+		Static_Filtered_sign_of_determinant4x4_16::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    return sign_of_determinant4x4(
+		a00.exact(),
+		a01.exact(),
+		a02.exact(),
+		a03.exact(),
+		a10.exact(),
+		a11.exact(),
+		a12.exact(),
+		a13.exact(),
+		a20.exact(),
+		a21.exact(),
+		a22.exact(),
+		a23.exact(),
+		a30.exact(),
+		a31.exact(),
+		a32.exact(),
+		a33.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
 sign_of_determinant5x5(
@@ -698,6 +1033,103 @@ sign_of_determinant5x5(
 		a42.exact(),
 		a43.exact(),
 		a44.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_LARGE_INLINE */
+Sign
+sign_of_determinant5x5(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a00,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a01,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a02,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a03,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a04,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a10,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a11,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a12,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a13,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a14,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a20,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a21,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a22,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a23,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a24,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a30,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a31,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a32,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a33,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a34,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a40,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a41,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a42,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a43,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a44)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return sign_of_determinant5x5(
+		a00.interval(),
+		a01.interval(),
+		a02.interval(),
+		a03.interval(),
+		a04.interval(),
+		a10.interval(),
+		a11.interval(),
+		a12.interval(),
+		a13.interval(),
+		a14.interval(),
+		a20.interval(),
+		a21.interval(),
+		a22.interval(),
+		a23.interval(),
+		a24.interval(),
+		a30.interval(),
+		a31.interval(),
+		a32.interval(),
+		a33.interval(),
+		a34.interval(),
+		a40.interval(),
+		a41.interval(),
+		a42.interval(),
+		a43.interval(),
+		a44.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Sign result = sign_of_determinant5x5(
+		a00.exact(),
+		a01.exact(),
+		a02.exact(),
+		a03.exact(),
+		a04.exact(),
+		a10.exact(),
+		a11.exact(),
+		a12.exact(),
+		a13.exact(),
+		a14.exact(),
+		a20.exact(),
+		a21.exact(),
+		a22.exact(),
+		a23.exact(),
+		a24.exact(),
+		a30.exact(),
+		a31.exact(),
+		a32.exact(),
+		a33.exact(),
+		a34.exact(),
+		a40.exact(),
+		a41.exact(),
+		a42.exact(),
+		a43.exact(),
+		a44.exact());
+    FPU_set_cw(backup);
+    return result;
   }
 }
 
@@ -961,6 +1393,128 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Sign
+sign_of_determinant5x5(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a00,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a01,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a02,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a03,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a04,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a10,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a11,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a12,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a13,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a14,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a20,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a21,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a22,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a23,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a24,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a30,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a31,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a32,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a33,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a34,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a40,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a41,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a42,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a43,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a44)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_sign_of_determinant5x5_25::_bound; )
+  CGAL_assertion(!(
+	fabs(a00.to_double()) > SAF_bound ||
+	fabs(a01.to_double()) > SAF_bound ||
+	fabs(a02.to_double()) > SAF_bound ||
+	fabs(a03.to_double()) > SAF_bound ||
+	fabs(a04.to_double()) > SAF_bound ||
+	fabs(a10.to_double()) > SAF_bound ||
+	fabs(a11.to_double()) > SAF_bound ||
+	fabs(a12.to_double()) > SAF_bound ||
+	fabs(a13.to_double()) > SAF_bound ||
+	fabs(a14.to_double()) > SAF_bound ||
+	fabs(a20.to_double()) > SAF_bound ||
+	fabs(a21.to_double()) > SAF_bound ||
+	fabs(a22.to_double()) > SAF_bound ||
+	fabs(a23.to_double()) > SAF_bound ||
+	fabs(a24.to_double()) > SAF_bound ||
+	fabs(a30.to_double()) > SAF_bound ||
+	fabs(a31.to_double()) > SAF_bound ||
+	fabs(a32.to_double()) > SAF_bound ||
+	fabs(a33.to_double()) > SAF_bound ||
+	fabs(a34.to_double()) > SAF_bound ||
+	fabs(a40.to_double()) > SAF_bound ||
+	fabs(a41.to_double()) > SAF_bound ||
+	fabs(a42.to_double()) > SAF_bound ||
+	fabs(a43.to_double()) > SAF_bound ||
+	fabs(a44.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_sign_of_determinant5x5_25::epsilon_variant(
+		a00.dbl(),
+		a01.dbl(),
+		a02.dbl(),
+		a03.dbl(),
+		a04.dbl(),
+		a10.dbl(),
+		a11.dbl(),
+		a12.dbl(),
+		a13.dbl(),
+		a14.dbl(),
+		a20.dbl(),
+		a21.dbl(),
+		a22.dbl(),
+		a23.dbl(),
+		a24.dbl(),
+		a30.dbl(),
+		a31.dbl(),
+		a32.dbl(),
+		a33.dbl(),
+		a34.dbl(),
+		a40.dbl(),
+		a41.dbl(),
+		a42.dbl(),
+		a43.dbl(),
+		a44.dbl(),
+		Static_Filtered_sign_of_determinant5x5_25::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    return sign_of_determinant5x5(
+		a00.exact(),
+		a01.exact(),
+		a02.exact(),
+		a03.exact(),
+		a04.exact(),
+		a10.exact(),
+		a11.exact(),
+		a12.exact(),
+		a13.exact(),
+		a14.exact(),
+		a20.exact(),
+		a21.exact(),
+		a22.exact(),
+		a23.exact(),
+		a24.exact(),
+		a30.exact(),
+		a31.exact(),
+		a32.exact(),
+		a33.exact(),
+		a34.exact(),
+		a40.exact(),
+		a41.exact(),
+		a42.exact(),
+		a43.exact(),
+		a44.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_LARGE_INLINE */
+Sign
 sign_of_determinant6x6(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a00,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &a01,
@@ -1083,6 +1637,136 @@ sign_of_determinant6x6(
 		a53.exact(),
 		a54.exact(),
 		a55.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_LARGE_INLINE */
+Sign
+sign_of_determinant6x6(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a00,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a01,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a02,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a03,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a04,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a05,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a10,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a11,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a12,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a13,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a14,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a15,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a20,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a21,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a22,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a23,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a24,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a25,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a30,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a31,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a32,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a33,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a34,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a35,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a40,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a41,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a42,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a43,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a44,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a45,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a50,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a51,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a52,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a53,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a54,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &a55)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return sign_of_determinant6x6(
+		a00.interval(),
+		a01.interval(),
+		a02.interval(),
+		a03.interval(),
+		a04.interval(),
+		a05.interval(),
+		a10.interval(),
+		a11.interval(),
+		a12.interval(),
+		a13.interval(),
+		a14.interval(),
+		a15.interval(),
+		a20.interval(),
+		a21.interval(),
+		a22.interval(),
+		a23.interval(),
+		a24.interval(),
+		a25.interval(),
+		a30.interval(),
+		a31.interval(),
+		a32.interval(),
+		a33.interval(),
+		a34.interval(),
+		a35.interval(),
+		a40.interval(),
+		a41.interval(),
+		a42.interval(),
+		a43.interval(),
+		a44.interval(),
+		a45.interval(),
+		a50.interval(),
+		a51.interval(),
+		a52.interval(),
+		a53.interval(),
+		a54.interval(),
+		a55.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Sign result = sign_of_determinant6x6(
+		a00.exact(),
+		a01.exact(),
+		a02.exact(),
+		a03.exact(),
+		a04.exact(),
+		a05.exact(),
+		a10.exact(),
+		a11.exact(),
+		a12.exact(),
+		a13.exact(),
+		a14.exact(),
+		a15.exact(),
+		a20.exact(),
+		a21.exact(),
+		a22.exact(),
+		a23.exact(),
+		a24.exact(),
+		a25.exact(),
+		a30.exact(),
+		a31.exact(),
+		a32.exact(),
+		a33.exact(),
+		a34.exact(),
+		a35.exact(),
+		a40.exact(),
+		a41.exact(),
+		a42.exact(),
+		a43.exact(),
+		a44.exact(),
+		a45.exact(),
+		a50.exact(),
+		a51.exact(),
+		a52.exact(),
+		a53.exact(),
+		a54.exact(),
+		a55.exact());
+    FPU_set_cw(backup);
+    return result;
   }
 }
 
@@ -1380,6 +2064,172 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return sign_of_determinant6x6(
+		a00.exact(),
+		a01.exact(),
+		a02.exact(),
+		a03.exact(),
+		a04.exact(),
+		a05.exact(),
+		a10.exact(),
+		a11.exact(),
+		a12.exact(),
+		a13.exact(),
+		a14.exact(),
+		a15.exact(),
+		a20.exact(),
+		a21.exact(),
+		a22.exact(),
+		a23.exact(),
+		a24.exact(),
+		a25.exact(),
+		a30.exact(),
+		a31.exact(),
+		a32.exact(),
+		a33.exact(),
+		a34.exact(),
+		a35.exact(),
+		a40.exact(),
+		a41.exact(),
+		a42.exact(),
+		a43.exact(),
+		a44.exact(),
+		a45.exact(),
+		a50.exact(),
+		a51.exact(),
+		a52.exact(),
+		a53.exact(),
+		a54.exact(),
+		a55.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_LARGE_INLINE */
+Sign
+sign_of_determinant6x6(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a00,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a01,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a02,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a03,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a04,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a05,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a10,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a11,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a12,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a13,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a14,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a15,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a20,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a21,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a22,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a23,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a24,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a25,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a30,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a31,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a32,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a33,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a34,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a35,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a40,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a41,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a42,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a43,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a44,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a45,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a50,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a51,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a52,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a53,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a54,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &a55)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_sign_of_determinant6x6_36::_bound; )
+  CGAL_assertion(!(
+	fabs(a00.to_double()) > SAF_bound ||
+	fabs(a01.to_double()) > SAF_bound ||
+	fabs(a02.to_double()) > SAF_bound ||
+	fabs(a03.to_double()) > SAF_bound ||
+	fabs(a04.to_double()) > SAF_bound ||
+	fabs(a05.to_double()) > SAF_bound ||
+	fabs(a10.to_double()) > SAF_bound ||
+	fabs(a11.to_double()) > SAF_bound ||
+	fabs(a12.to_double()) > SAF_bound ||
+	fabs(a13.to_double()) > SAF_bound ||
+	fabs(a14.to_double()) > SAF_bound ||
+	fabs(a15.to_double()) > SAF_bound ||
+	fabs(a20.to_double()) > SAF_bound ||
+	fabs(a21.to_double()) > SAF_bound ||
+	fabs(a22.to_double()) > SAF_bound ||
+	fabs(a23.to_double()) > SAF_bound ||
+	fabs(a24.to_double()) > SAF_bound ||
+	fabs(a25.to_double()) > SAF_bound ||
+	fabs(a30.to_double()) > SAF_bound ||
+	fabs(a31.to_double()) > SAF_bound ||
+	fabs(a32.to_double()) > SAF_bound ||
+	fabs(a33.to_double()) > SAF_bound ||
+	fabs(a34.to_double()) > SAF_bound ||
+	fabs(a35.to_double()) > SAF_bound ||
+	fabs(a40.to_double()) > SAF_bound ||
+	fabs(a41.to_double()) > SAF_bound ||
+	fabs(a42.to_double()) > SAF_bound ||
+	fabs(a43.to_double()) > SAF_bound ||
+	fabs(a44.to_double()) > SAF_bound ||
+	fabs(a45.to_double()) > SAF_bound ||
+	fabs(a50.to_double()) > SAF_bound ||
+	fabs(a51.to_double()) > SAF_bound ||
+	fabs(a52.to_double()) > SAF_bound ||
+	fabs(a53.to_double()) > SAF_bound ||
+	fabs(a54.to_double()) > SAF_bound ||
+	fabs(a55.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_sign_of_determinant6x6_36::epsilon_variant(
+		a00.dbl(),
+		a01.dbl(),
+		a02.dbl(),
+		a03.dbl(),
+		a04.dbl(),
+		a05.dbl(),
+		a10.dbl(),
+		a11.dbl(),
+		a12.dbl(),
+		a13.dbl(),
+		a14.dbl(),
+		a15.dbl(),
+		a20.dbl(),
+		a21.dbl(),
+		a22.dbl(),
+		a23.dbl(),
+		a24.dbl(),
+		a25.dbl(),
+		a30.dbl(),
+		a31.dbl(),
+		a32.dbl(),
+		a33.dbl(),
+		a34.dbl(),
+		a35.dbl(),
+		a40.dbl(),
+		a41.dbl(),
+		a42.dbl(),
+		a43.dbl(),
+		a44.dbl(),
+		a45.dbl(),
+		a50.dbl(),
+		a51.dbl(),
+		a52.dbl(),
+		a53.dbl(),
+		a54.dbl(),
+		a55.dbl(),
+		Static_Filtered_sign_of_determinant6x6_36::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
     return sign_of_determinant6x6(
 		a00.exact(),
 		a01.exact(),

@@ -75,6 +75,55 @@ collinearC3(
   }
 }
 
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+collinearC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rz)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return collinearC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval(),
+		rx.interval(),
+		ry.interval(),
+		rz.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    bool result = collinearC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact());
+    FPU_set_cw(backup);
+    return result;
+  }
+}
+
 struct Static_Filtered_collinearC3_9
 {
   static double _bound;
@@ -240,6 +289,66 @@ re_adjust:
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+collinearC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rz)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_collinearC3_9::_bound; )
+  CGAL_assertion(!(
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(rz.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_collinearC3_9::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		rz.dbl(),
+		Static_Filtered_collinearC3_9::_epsilon_0,
+		Static_Filtered_collinearC3_9::_epsilon_1,
+		Static_Filtered_collinearC3_9::_epsilon_2);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    return collinearC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
 Orientation
 orientationC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &px,
@@ -291,6 +400,64 @@ orientationC3(
 		sx.exact(),
 		sy.exact(),
 		sz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Orientation
+orientationC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sz)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return orientationC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval(),
+		rx.interval(),
+		ry.interval(),
+		rz.interval(),
+		sx.interval(),
+		sy.interval(),
+		sz.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Orientation result = orientationC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact(),
+		sx.exact(),
+		sy.exact(),
+		sz.exact());
+    FPU_set_cw(backup);
+    return result;
   }
 }
 
@@ -457,6 +624,76 @@ re_adjust:
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Orientation
+orientationC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sz)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_orientationC3_12::_bound; )
+  CGAL_assertion(!(
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(rz.to_double()) > SAF_bound ||
+	fabs(sx.to_double()) > SAF_bound ||
+	fabs(sy.to_double()) > SAF_bound ||
+	fabs(sz.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_orientationC3_12::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		rz.dbl(),
+		sx.dbl(),
+		sy.dbl(),
+		sz.dbl(),
+		Static_Filtered_orientationC3_12::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    return orientationC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact(),
+		sx.exact(),
+		sy.exact(),
+		sz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
 side_of_oriented_sphereC3(
@@ -518,6 +755,73 @@ side_of_oriented_sphereC3(
 		tx.exact(),
 		ty.exact(),
 		tz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_LARGE_INLINE */
+Oriented_side
+side_of_oriented_sphereC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tz)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return side_of_oriented_sphereC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval(),
+		rx.interval(),
+		ry.interval(),
+		rz.interval(),
+		sx.interval(),
+		sy.interval(),
+		sz.interval(),
+		tx.interval(),
+		ty.interval(),
+		tz.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Oriented_side result = side_of_oriented_sphereC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact(),
+		sx.exact(),
+		sy.exact(),
+		sz.exact(),
+		tx.exact(),
+		ty.exact(),
+		tz.exact());
+    FPU_set_cw(backup);
+    return result;
   }
 }
 
@@ -739,6 +1043,88 @@ re_adjust:
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
+/* CGAL_KERNEL_LARGE_INLINE */
+Oriented_side
+side_of_oriented_sphereC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tz)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_side_of_oriented_sphereC3_15::_bound; )
+  CGAL_assertion(!(
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(rz.to_double()) > SAF_bound ||
+	fabs(sx.to_double()) > SAF_bound ||
+	fabs(sy.to_double()) > SAF_bound ||
+	fabs(sz.to_double()) > SAF_bound ||
+	fabs(tx.to_double()) > SAF_bound ||
+	fabs(ty.to_double()) > SAF_bound ||
+	fabs(tz.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_side_of_oriented_sphereC3_15::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		rz.dbl(),
+		sx.dbl(),
+		sy.dbl(),
+		sz.dbl(),
+		tx.dbl(),
+		ty.dbl(),
+		tz.dbl(),
+		Static_Filtered_side_of_oriented_sphereC3_15::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    return side_of_oriented_sphereC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact(),
+		sx.exact(),
+		sy.exact(),
+		sz.exact(),
+		tx.exact(),
+		ty.exact(),
+		tz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Bounded_side
 side_of_bounded_sphereC3(
@@ -800,6 +1186,73 @@ side_of_bounded_sphereC3(
 		tx.exact(),
 		ty.exact(),
 		tz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Bounded_side
+side_of_bounded_sphereC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &sz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &tz)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return side_of_bounded_sphereC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval(),
+		rx.interval(),
+		ry.interval(),
+		rz.interval(),
+		sx.interval(),
+		sy.interval(),
+		sz.interval(),
+		tx.interval(),
+		ty.interval(),
+		tz.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Bounded_side result = side_of_bounded_sphereC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact(),
+		sx.exact(),
+		sy.exact(),
+		sz.exact(),
+		tx.exact(),
+		ty.exact(),
+		tz.exact());
+    FPU_set_cw(backup);
+    return result;
   }
 }
 
@@ -1006,6 +1459,89 @@ re_adjust:
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Bounded_side
+side_of_bounded_sphereC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tz)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_side_of_bounded_sphereC3_15::_bound; )
+  CGAL_assertion(!(
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(rz.to_double()) > SAF_bound ||
+	fabs(sx.to_double()) > SAF_bound ||
+	fabs(sy.to_double()) > SAF_bound ||
+	fabs(sz.to_double()) > SAF_bound ||
+	fabs(tx.to_double()) > SAF_bound ||
+	fabs(ty.to_double()) > SAF_bound ||
+	fabs(tz.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_side_of_bounded_sphereC3_15::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		rz.dbl(),
+		sx.dbl(),
+		sy.dbl(),
+		sz.dbl(),
+		tx.dbl(),
+		ty.dbl(),
+		tz.dbl(),
+		Static_Filtered_side_of_bounded_sphereC3_15::_epsilon_0,
+		Static_Filtered_side_of_bounded_sphereC3_15::_epsilon_1);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    return side_of_bounded_sphereC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact(),
+		sx.exact(),
+		sy.exact(),
+		sz.exact(),
+		tx.exact(),
+		ty.exact(),
+		tz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
 /* CGAL_KERNEL_INLINE */
 Comparison_result
 cmp_dist_to_pointC3(
@@ -1049,6 +1585,55 @@ cmp_dist_to_pointC3(
 		rx.exact(),
 		ry.exact(),
 		rz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_INLINE */
+Comparison_result
+cmp_dist_to_pointC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &rz)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return cmp_dist_to_pointC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval(),
+		rx.interval(),
+		ry.interval(),
+		rz.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Comparison_result result = cmp_dist_to_pointC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact());
+    FPU_set_cw(backup);
+    return result;
   }
 }
 
@@ -1192,6 +1777,64 @@ re_adjust:
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
+/* CGAL_KERNEL_INLINE */
+Comparison_result
+cmp_dist_to_pointC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rz)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_cmp_dist_to_pointC3_9::_bound; )
+  CGAL_assertion(!(
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(rz.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_cmp_dist_to_pointC3_9::epsilon_variant(
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		rz.dbl(),
+		Static_Filtered_cmp_dist_to_pointC3_9::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    return cmp_dist_to_pointC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 cmp_signed_dist_to_planeC3(
@@ -1238,6 +1881,58 @@ cmp_signed_dist_to_planeC3(
 		qx.exact(),
 		qy.exact(),
 		qz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+cmp_signed_dist_to_planeC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pa,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pd,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return cmp_signed_dist_to_planeC3(
+		pa.interval(),
+		pb.interval(),
+		pc.interval(),
+		pd.interval(),
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Comparison_result result = cmp_signed_dist_to_planeC3(
+		pa.exact(),
+		pb.exact(),
+		pc.exact(),
+		pd.exact(),
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+    FPU_set_cw(backup);
+    return result;
   }
 }
 
@@ -1391,6 +2086,68 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 cmp_signed_dist_to_planeC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pa,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pd,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_cmp_signed_dist_to_planeC3_10::_bound; )
+  CGAL_assertion(!(
+	fabs(pa.to_double()) > SAF_bound ||
+	fabs(pb.to_double()) > SAF_bound ||
+	fabs(pc.to_double()) > SAF_bound ||
+	fabs(pd.to_double()) > SAF_bound ||
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_cmp_signed_dist_to_planeC3_10::epsilon_variant(
+		pa.dbl(),
+		pb.dbl(),
+		pc.dbl(),
+		pd.dbl(),
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		Static_Filtered_cmp_signed_dist_to_planeC3_10::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
+    return cmp_signed_dist_to_planeC3(
+		pa.exact(),
+		pb.exact(),
+		pc.exact(),
+		pd.exact(),
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+cmp_signed_dist_to_planeC3(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ppx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ppy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Protected, CGAL_IA_CACHE> &ppz,
@@ -1449,6 +2206,73 @@ cmp_signed_dist_to_planeC3(
 		qx.exact(),
 		qy.exact(),
 		qz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+cmp_signed_dist_to_planeC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ppx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ppy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &ppz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pqx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pqy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pqz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &prx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &prz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, Advanced, CGAL_IA_CACHE> &qz)
+{
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+  try
+  {
+    return cmp_signed_dist_to_planeC3(
+		ppx.interval(),
+		ppy.interval(),
+		ppz.interval(),
+		pqx.interval(),
+		pqy.interval(),
+		pqz.interval(),
+		prx.interval(),
+		pry.interval(),
+		prz.interval(),
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_near);
+    Comparison_result result = cmp_signed_dist_to_planeC3(
+		ppx.exact(),
+		ppy.exact(),
+		ppz.exact(),
+		pqx.exact(),
+		pqy.exact(),
+		pqz.exact(),
+		prx.exact(),
+		pry.exact(),
+		prz.exact(),
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+    FPU_set_cw(backup);
+    return result;
   }
 }
 
@@ -1622,6 +2446,88 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
+    return cmp_signed_dist_to_planeC3(
+		ppx.exact(),
+		ppy.exact(),
+		ppz.exact(),
+		pqx.exact(),
+		pqy.exact(),
+		pqz.exact(),
+		prx.exact(),
+		pry.exact(),
+		prz.exact(),
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact());
+  }
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+cmp_signed_dist_to_planeC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ppx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ppy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ppz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pqx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pqy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pqz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &prx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &prz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_cmp_signed_dist_to_planeC3_15::_bound; )
+  CGAL_assertion(!(
+	fabs(ppx.to_double()) > SAF_bound ||
+	fabs(ppy.to_double()) > SAF_bound ||
+	fabs(ppz.to_double()) > SAF_bound ||
+	fabs(pqx.to_double()) > SAF_bound ||
+	fabs(pqy.to_double()) > SAF_bound ||
+	fabs(pqz.to_double()) > SAF_bound ||
+	fabs(prx.to_double()) > SAF_bound ||
+	fabs(pry.to_double()) > SAF_bound ||
+	fabs(prz.to_double()) > SAF_bound ||
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_cmp_signed_dist_to_planeC3_15::epsilon_variant(
+		ppx.dbl(),
+		ppy.dbl(),
+		ppz.dbl(),
+		pqx.dbl(),
+		pqy.dbl(),
+		pqz.dbl(),
+		prx.dbl(),
+		pry.dbl(),
+		prz.dbl(),
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		Static_Filtered_cmp_signed_dist_to_planeC3_15::_epsilon_0);
+  }
+  catch (Restricted_double::unsafe_comparison)
+  {
     return cmp_signed_dist_to_planeC3(
 		ppx.exact(),
 		ppy.exact(),
