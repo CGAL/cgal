@@ -174,7 +174,7 @@ typedef CGAL::Plane_separator<double> Separator;
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::Orthogonal_standard_search<Traits, Point3D_distance> 
 NN_orthogonal_search;
-typedef CGAL::General_standard_search<Traits, Point, Point3D_distance> 
+typedef CGAL::General_standard_search<Traits, Point3D_distance> 
 NN_general_search;
 
 typedef std::vector<Traits::Item> Vector;

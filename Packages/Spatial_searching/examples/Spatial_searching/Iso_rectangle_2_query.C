@@ -6,6 +6,7 @@
 #include <CGAL/Splitters.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/Fuzzy_iso_box_d.h>
 
 #include <vector>
 #include <iostream>
@@ -19,8 +20,9 @@ typedef CGAL::Creator_uniform_2<double,Point> Creator;
 typedef CGAL::Plane_separator<double> Separator;
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 
-typedef CGAL::Iso_rectangle_2<R> box;	
+typedef CGAL::Iso_rectangle_2<R> Box;
 
+typedef CGAL::Fuzzy_iso_box_d<Point,Box> Fuzzy_box;	
 
 int main() {
 
@@ -28,16 +30,15 @@ int main() {
   int bucket_size=1;
   
   const int data_point_number=160;
-  
    
   typedef std::list<Point> point_list;
-  point_list data_points,res;
+  point_list data_points, res1, res2;
   
   // generate random data points  
   CGAL::Random_points_in_square_2<Point,Creator> g( 1.0);
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
 
-  
+
   Traits tr(bucket_size, 3.0, true);
   typedef CGAL::Kd_tree<Traits> tree;
   
@@ -54,15 +55,26 @@ int main() {
   
   Point P(p[0],p[1]);
   Point Q(q[0],q[1]);
-  box r(P,Q);
+  Box r(P,Q);
 
-  // Searching the box r
-  d.search( std::back_inserter( res ), r);
+  // Searching an exact range
+  // using default value 0.0 for epsilon fuzziness paramater
+  Fuzzy_box exact_range(r);
+  d.search( std::back_inserter( res1 ), exact_range);
+
 
   std::cout << "The points in the box [0.2,0.7]x[0.2,0.7] are: " << std::endl;
-  std::copy (res.begin(),res.end(),std::ostream_iterator<Point>(std::cout,"\n") );
+  std::copy (res1.begin(),res1.end(),std::ostream_iterator<Point>(std::cout,"\n") );
   std::cout << std::endl;
   
+  // Searching a fuzzy range
+  // using value 0.1 for fuzziness paramater
+  Fuzzy_box approximate_range(r,0.1);
+  d.search( std::back_inserter( res2 ), approximate_range);
+
+  std::cout << "The points in the fuzzy box [<0.1-0.3>,<0.6-0.9>]x[<0.1-0.3>,<0.6-0.9>] are: " << std::endl;
+  std::copy (res2.begin(),res2.end(),std::ostream_iterator<Point>(std::cout,"\n") );
+  std::cout << std::endl;
   return 0;
 };
 

@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Kd_tree_node.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2003/02/01 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -131,6 +131,38 @@ namespace CGAL {
 		return it;
 	}
 
+        template <class OutputIterator, class FuzzyQueryItem>
+	OutputIterator search(OutputIterator it, const FuzzyQueryItem& q,
+			      Kd_tree_rectangle<NT>* b) {
+		if (is_leaf()) { 
+			if (n>0) 
+			for (Item_iterator i=begin(); i != end(); i++) 
+				if (q.contains(**i)) 
+                                {*it=**i; ++it;}
+                }
+		else {
+                        // after splitting b denotes the lower part of b
+			Kd_tree_rectangle<NT>* 
+			b_upper=b->split(sep.cutting_dimension(),
+					      sep.cutting_value());
+                             
+			if (q.outer_range_is_contained_by(b)) 	
+			   it=lower_ch->tree_items(it);
+			else
+		           if (q.inner_range_intersects(b)) 
+			   it=lower_ch->search(it,q,b);
+
+                        if  (q.outer_range_is_contained_by(b_upper))     
+			    it=upper_ch->tree_items(it);
+			else
+			    if (q.inner_range_intersects(b_upper)) 
+			    it=upper_ch->search(it,q,b_upper);
+		        delete b_upper;
+		};
+	        return it;				
+	}
+
+        /*
         template <class OutputIterator, class Rectangle>
 	OutputIterator tree_items_in_rectangle(OutputIterator it, 
 	Rectangle& r, Kd_tree_rectangle<NT>* b, NT eps) {
@@ -223,7 +255,7 @@ namespace CGAL {
 		}
 	return it;
 	}
-	
+	*/
 
    };
 

@@ -30,9 +30,13 @@
 #include <memory>
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/Euclidean_distance.h>
 namespace CGAL {
 
-template <class Traits, class Query_item, class Distance, class Tree=Kd_tree<Traits> >
+template <class Traits, 
+          class Distance=Euclidean_distance<typename Traits::Item>, 
+	  class Query_item=typename Traits::Item, 
+	  class Tree=Kd_tree<Traits> >
 class General_priority_search { 
 
 public:
@@ -89,7 +93,7 @@ class iterator;
     public:
 
     // constructor
-    General_priority_search(Tree& tree, Query_item& q, Distance& tr,
+    General_priority_search(Tree& tree, Query_item& q, const Distance& tr=Distance(),
     NT Eps=NT(0), bool search_nearest=true)
     {
         start = new iterator(tree,q,tr,Eps,search_nearest);
@@ -135,8 +139,8 @@ class iterator;
     }
 
     // constructor
-    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=NT(0), 
-	     bool search_nearest=true) {
+    iterator(Tree& tree, Query_item& q, const Distance& tr, NT eps, 
+	     bool search_nearest) {
         Ptr_implementation =
         new Iterator_implementation(tree, q, tr, eps, search_nearest);
     }
@@ -272,8 +276,8 @@ class Distance_smaller
     int number_of_neighbours_computed;
 
     // constructor
-    Iterator_implementation(Tree& tree, Query_item& q, Distance& tr,
-        NT Eps=NT(0), bool search_nearest=true)
+    Iterator_implementation(Tree& tree, Query_item& q,const Distance& tr,
+        NT Eps, bool search_nearest)
     {
         
 	
@@ -287,7 +291,7 @@ class Distance_smaller
 	(Distance_smaller(search_nearest));
 
 	reference_count=1;
-        Distance_instance=&tr;
+        Distance_instance=new Distance(tr);
         multiplication_factor=
 	Distance_instance->transformed_distance(NT(1)+Eps);
 
@@ -379,6 +383,7 @@ class Distance_smaller
                 Item_PriorityQueue->pop();
                 delete The_top;
         };
+	delete Distance_instance;
     }
 
     private:

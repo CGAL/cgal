@@ -1,4 +1,5 @@
 // ======================================================================
+//
 // Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
@@ -7,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Iso_rectangle_d.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2003/02/01 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -58,6 +59,21 @@ namespace CGAL {
 	  }
      }	  
     }
+  
+  // copy constructor
+  Iso_rectangle_d(const Iso_rectangle_d& b) : dim(b.dim) {
+      std::cout << "dim=" << dim << std::endl;
+      lower = new NT[dim];
+      upper = new NT[dim];
+      for (int i = 0; i < dim; ++i) {
+		lower[i]=b.lower[i]; 
+                upper[i]=b.upper[i];
+      }
+  }
+
+  Point_d min() {
+    return Point_d(dim,lower,lower+dim);
+  }
 
   bool has_on_bounded_side(const Point_d& p) const
   {

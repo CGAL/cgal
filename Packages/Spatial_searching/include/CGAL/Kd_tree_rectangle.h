@@ -271,7 +271,8 @@ namespace CGAL {
       }
       return *this;
     }
-  
+
+  /*
   template <class Point> 
   bool min_squared_Euclidean_distance_to_point_is_at_most(
 	const Point& p, const NT d) {
@@ -299,6 +300,8 @@ namespace CGAL {
 		}
 		return (distance <= d);
 	}
+*/
+
 }; // of class Kd_tree_rectangle
 
   template <class NT>

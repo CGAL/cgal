@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/General_standard_search.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -29,11 +29,14 @@
 #include <memory>
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Weighted_Minkowski_distance.h>
+#include <CGAL/Euclidean_distance.h>
 
 namespace CGAL {
 
-template <class Traits, class Query_item, class Distance, class Tree=Kd_tree<Traits> >
+template <class Traits, 
+	  class Distance=Euclidean_distance<typename Traits::Item>, 
+	  class Query_item=typename Traits::Item, 
+	  class Tree=Kd_tree<Traits> >
 
 class General_standard_search {
 
@@ -118,9 +121,9 @@ Distance* distance_instance;
 
     // constructor
     General_standard_search(Tree& tree, Query_item& q, 
-    Distance& d, int k, NT Eps, bool Search_nearest=true) {
+    const Distance& d=Distance(), int k=1, NT Eps=NT(0.0), bool Search_nearest=true) {
 
-	distance_instance=&d;
+	distance_instance=new Distance(d);
 
 	multiplication_factor=
 	distance_instance->transformed_distance(NT(1.0)+Eps);
@@ -160,6 +163,7 @@ Distance* distance_instance;
     // destructor
     ~General_standard_search() { 
 		l.clear();  
+		delete distance_instance;
    };
 
     private:

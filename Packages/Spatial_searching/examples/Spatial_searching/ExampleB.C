@@ -20,7 +20,7 @@ typedef CGAL::Plane_separator<NT> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::Euclidean_distance<Point> Distance;
-typedef CGAL::General_standard_search<Traits, Point, Distance> 
+typedef CGAL::General_standard_search<Traits, Distance> 
 Neighbour_search;
   
 int main() {

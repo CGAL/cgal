@@ -5,18 +5,23 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>
+#include <CGAL/Fuzzy_sphere_d.h>
+#include <CGAL/Fuzzy_iso_box_d.h>
 
 #include <vector>
 #include <iostream>
 
 typedef CGAL::Cartesian_d<double> R;
 typedef CGAL::Point_d<R> Point;
-typedef CGAL::Vector_d<R> Vector; // for square root onlys
+typedef CGAL::Vector_d<R> Vector; // for square roots only
 typedef Point::R::FT NT;
 
 typedef CGAL::Iso_rectangle_d<R> Rectangle;
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
+
+typedef CGAL::Fuzzy_sphere_d<Point> Sphere;
+typedef CGAL::Fuzzy_iso_box_d<Point,Rectangle> Box;
 
 // after CGAL/Kernel/function_objectsHd.h
 
@@ -59,7 +64,7 @@ int main() {
   point_vector points_in_tree;
   
   d.report_all_points(std::back_inserter(points_in_tree));
-
+  
   // define center point
   double c[dim];
   for (int i1=0; i1<dim; i1++) {
@@ -67,6 +72,8 @@ int main() {
   }
   
   Point C(dim,c,c+dim);
+  Sphere S(C,700.0,100.0);
+  d.search(std::back_inserter(points_in_spherical_range_query),S);
 
   std::cout << "all points are:" << std::endl;
   
@@ -76,7 +83,7 @@ int main() {
   }
   
   
-  d.search_within_a_radius(std::back_inserter(points_in_spherical_range_query),C,700.0,100.0);
+  
 
   std::cout << "points approximately in spherical range query are:" << std::endl;
   
@@ -86,7 +93,6 @@ int main() {
   }
  
  // define range query
-  
   double p[dim];
   double q[dim];
   for (int i2=0; i2<dim; i2++) {
@@ -98,8 +104,9 @@ int main() {
   Point Q(dim,q,q+dim);
 
   Rectangle query_rectangle(P,Q);
+  Box query(query_rectangle,100.0);
 
-  d.search(std::back_inserter(points_in_rectangular_range_query),query_rectangle,100.0);
+  d.search(std::back_inserter(points_in_rectangular_range_query),query);
 
   std::cout << "points approximately in rectangular range query [-100,900]^4 are:" << std::endl;
 
@@ -108,7 +115,6 @@ int main() {
      std::cout << points_in_rectangular_range_query[j3] << std::endl; 
   }
   
-
   return 0;
 };  
 

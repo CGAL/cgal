@@ -23,6 +23,13 @@
 
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Kd_tree_traits_point.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/algorithm.h>
+#include <CGAL/Orthogonal_standard_search.h>
+#include <CGAL/Euclidean_distance.h>
 #include <CGAL/Kd_tree_node.h>
 #include <cassert>
 #include <CGAL/Compact_container.h>
@@ -42,6 +49,7 @@ public:
 
   typedef typename Compact_container<Node>::iterator Node_handle;
   typedef typename std::vector<Item*>::iterator Item_iterator;
+
 private:
 
   Compact_container<Node> nodes;
@@ -184,6 +192,7 @@ public:
 	
   }
 
+  /*
   template <class OutputIterator, class Rectangle>
 	OutputIterator search(OutputIterator it, Rectangle& r, NT eps=NT(0)) {
                 //  Why do you create this on the heap?
@@ -199,6 +208,15 @@ public:
 		it=tree_root->tree_items_in_sphere(it, center,
 		(radius-eps)*(radius-eps), radius*radius,
                 (radius+eps)*(radius+eps), b);
+		delete b;
+		return it;
+	}
+  */
+
+  template <class OutputIterator, class FuzzyQueryItem>
+	OutputIterator search(OutputIterator it, const FuzzyQueryItem& q) {
+		Kd_tree_rectangle<NT>* b = new Kd_tree_rectangle<NT>(*bbox);
+		tree_root->search(it,q,b);
 		delete b;
 		return it;
 	}

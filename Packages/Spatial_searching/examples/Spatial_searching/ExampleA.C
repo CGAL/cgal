@@ -1,12 +1,4 @@
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/point_generators_2.h>
-#include <CGAL/algorithm.h>
-#include <CGAL/Orthogonal_standard_search.h>
-#include <CGAL/Euclidean_distance.h>
-
 
 #include <vector>
 #include <iostream>
@@ -15,14 +7,8 @@ typedef CGAL::Cartesian<double> R;
 typedef CGAL::Point_2<R> Point;
 
 typedef CGAL::Creator_uniform_2<double,Point> Creator;
-
-typedef CGAL::Plane_separator<double> Separator;
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
-typedef CGAL::Euclidean_distance<Point> Distance;
-
-
-typedef CGAL::Orthogonal_standard_search<Traits> 
-Neighbour_search;
+typedef CGAL::Orthogonal_standard_search<Traits> Neighbour_search;
 
 typedef std::vector<Traits::Item> Vector;
 typedef std::vector<Point> Query_vector;
@@ -47,7 +33,7 @@ int main() {
   Query_vector query_points;
   CGAL::copy_n( h, query_point_number, std::back_inserter(query_points));
 
-  // Distance tr_dist;
+ 
 
   std::vector<Neighbour_search::Item_with_distance> nearest_neighbour;
   

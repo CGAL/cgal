@@ -7,6 +7,7 @@
 #include <CGAL/Iso_rectangle_d.h>
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Fuzzy_iso_box_d.h>
 
 
 #include <vector>
@@ -20,7 +21,7 @@ typedef CGAL::Plane_separator<double> Separator;
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 
 typedef CGAL::Iso_cuboid_3<R> box;	
-
+typedef CGAL::Fuzzy_iso_box_d<Point,box> Fuzzy_box;	
 
 int main() {
 
@@ -32,7 +33,7 @@ int main() {
   
    
   typedef std::list<Point> point_list;
-  point_list data_points,res;
+  point_list data_points,res1,res2;
   
   // get data points
   
@@ -54,7 +55,7 @@ int main() {
   in >> data_point_number;
   
   typedef std::list<Point> point_list;
-  point_list data_points,res;
+  point_list data_points, res1, res2;
 
   for (int i = 0; i < data_point_number; i++) {
          
@@ -90,17 +91,31 @@ int main() {
   Point Q(q[0],q[1],q[2]);
   box r(P,Q);
 
-  // Searching the box r
+  Fuzzy_box exact_range(r);
+
+  // Searching the box r exactly
   t.reset();t.start();    
-  d.search( std::back_inserter( res ), r);
+  d.search( std::back_inserter( res1 ), exact_range);
   t.stop();
-  std::cout << "searching time=" << t.time() << std::endl;
+  std::cout << "time exact search=" << t.time() << std::endl;
   
   std::cout << "Number of the points in the box (0.2,0.2,0.2)-(0.7,0.7,0.7) = " <<
-  res.size();
-  // std::copy (res.begin(),res.end(),std::ostream_iterator<point>(std::cout,"\n") );
+  res1.size();
+  // std::copy (res1.begin(),res1.end(),std::ostream_iterator<point>(std::cout,"\n") );
   std::cout << std::endl;
   
+  Fuzzy_box approximate_range(r,0.1);
+
+  // Searching the box r approximately
+  t.reset();t.start();    
+  d.search( std::back_inserter( res2 ), approximate_range);
+  t.stop();
+  std::cout << "time approximate search=" << t.time() << std::endl;
+  
+  std::cout << "Number of the points in the box (0.2,0.2,0.2)-(0.7,0.7,0.7) = " <<
+  res2.size();
+  // std::copy (res.begin(),res.end(),std::ostream_iterator<point>(std::cout,"\n") );
+  std::cout << std::endl;
 
   return 0;
 };

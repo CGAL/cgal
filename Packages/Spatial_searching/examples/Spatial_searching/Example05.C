@@ -30,7 +30,7 @@ typedef CGAL::Plane_separator<NT> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::L1_distance_rectangle_point<Rectangle,Point> L1_distance;
-typedef CGAL::General_standard_search<Traits, Rectangle, L1_distance> 
+typedef CGAL::General_standard_search<Traits, L1_distance, Rectangle> 
 NN_standard_search;
   
 

@@ -35,7 +35,7 @@ typedef CGAL::Plane_separator<FT> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::L1_distance_rectangle_point<Rectangle,Point> L1_distance;
-typedef CGAL::General_priority_search<Traits, Rectangle, L1_distance> 
+typedef CGAL::General_priority_search<Traits, L1_distance, Rectangle> 
 NN_priority_search;
 
 typedef CGAL::Creator_uniform_3<RT,Point> Creator;
