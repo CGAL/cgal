@@ -64,6 +64,12 @@ class Polygon_2_edge_iterator {
     {
       return first_vertex == x.first_vertex;
     }
+    
+    bool operator!=(
+      const Polygon_2_edge_iterator<_Traits, _Container>& x) const
+    {
+      return !(first_vertex == x.first_vertex);
+    }
 
     Segment_2 operator*() {
       const_iterator second_vertex = first_vertex;
