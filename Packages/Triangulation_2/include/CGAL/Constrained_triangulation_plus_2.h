@@ -226,9 +226,7 @@ Constrained_triangulation_plus_2<Tr>::
 swap(Constrained_triangulation_plus_2 &ctp)
 {
   Tr::swap(ctp);
-  Constraint_hierarchy temp = hierarchy;
-  hierarchy = ctp.hierarchy;
-  ctp.hierarchy = temp;  
+  hierarchy.swap(ctp.hierarchy);
 }
 
 template <class Tr>

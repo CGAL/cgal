@@ -130,6 +130,8 @@ public:
   //Helping functions
   void copy(const Constraint_hierarchy_2& ch);
   void copy(const Constraint_hierarchy_2& ch, std::map<T,T>& vmap);
+  void swap(Constraint_hierarchy_2& ch);
+
 private: 
   H_edge    make_edge(T va, T vb) const;
   H_vertex_it     get_pos(T va, T vb) const;
@@ -227,6 +229,15 @@ copy(const Constraint_hierarchy_2& ch1, std::map<T,T>& vmap)
   return;
 }
 
+template <class T, class Data> 
+void
+Constraint_hierarchy_2<T,Data>::
+swap(Constraint_hierarchy_2& ch)
+{
+  c_to_sc_map.swap(ch.c_to_sc_map);
+  sc_to_c_map.swap(ch.sc_to_c_map);
+  vertex_map.swap(ch.vertex_map);
+}
 
 template <class T, class Data> 
 bool Constraint_hierarchy_2<T,Data>::

@@ -100,7 +100,7 @@ _test_cls_hierarchy_2()
   co_it++;
   assert (co_it  == h.contexts_end(v[1],v[5]));
 
-  //test clear() and copy()
+  //test clear() and copy() and swap()
   Hierarchy ch(h);
   assert( ch.number_of_constraints() == h.number_of_constraints());
   assert( ch.number_of_subconstraints() == h.number_of_subconstraints());
@@ -109,6 +109,14 @@ _test_cls_hierarchy_2()
   assert( ch.number_of_constraints() == h.number_of_constraints());
   assert( ch.number_of_subconstraints() == h.number_of_subconstraints());
   ch.clear();
+  int nc = h.number_of_constraints();
+  int nsc = h.number_of_subconstraints();
+  ch.swap(h);
+  assert (ch.number_of_constraints() == nc);
+  assert( ch.number_of_subconstraints() == nsc);
+  assert (h.number_of_constraints() == 0);
+  assert( h.number_of_subconstraints() == 0);
+  ch.swap(h);
 
   //test remove constraint
   //h.print();

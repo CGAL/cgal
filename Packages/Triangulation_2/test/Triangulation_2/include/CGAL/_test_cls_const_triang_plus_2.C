@@ -91,8 +91,8 @@ _test_cls_const_triang_plus_2( const TrP & )
   assert(trp2.number_of_constraints() == trp.number_of_constraints());
   assert(trp2.number_of_subconstraints() == trp.number_of_subconstraints());
   assert(trp3.number_of_constraints() == 0);
-  //trp2.print_hierarchy();
-  //trp3.print_hierarchy();
+  // trp2.print_hierarchy();
+  // trp3.print_hierarchy();
 
   //test remove_constraint
   std::cout << " test removal of constraint" << std::endl;
