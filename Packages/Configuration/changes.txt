@@ -1,3 +1,6 @@
+2.87 18/12/2003
+- Remove obsolete CGAL_CFG_MATCHING_BUG_2[.C] and CGAL_MSVC_DUMMY_ARGUMENT.
+
 2.86 9/12/2003
 - Simpler implementation of CGAL_WRAP().
 

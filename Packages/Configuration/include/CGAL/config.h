@@ -84,12 +84,6 @@
 #  define CGAL_VC7_BUG_PROTECTED
 #endif
 
-#ifdef CGAL_CFG_MATCHING_BUG_2
-#   define CGAL_MSVC_DUMMY_ARGUMENT , int dummy=1
-#else
-#   define CGAL_MSVC_DUMMY_ARGUMENT
-#endif
-
 #define CGAL_NULL_TMPL_ARGS <>
 
 #ifdef CGAL_CFG_NO_STDC_NAMESPACE
