@@ -166,6 +166,9 @@ private:
   };
   void move_pointi(){
     on_first = TRUE;
+    widget->cursor().setPos(widget->mapToGlobal(
+                            QPoint(widget->x_pixel(old_point.x()), 
+                            widget->y_pixel(old_point.y()))));
   };
 };
 
