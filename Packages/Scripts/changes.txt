@@ -1,3 +1,6 @@
+1.23 (29 January 2002)
++ libgmp.* instead of libgmp.a.
+
 1.22 (23 January 2002)
 + Modified create_makefile such that '-Include' is put one line later.
 
