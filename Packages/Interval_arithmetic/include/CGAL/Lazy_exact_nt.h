@@ -87,7 +87,7 @@ struct Lazy_exact_rep : public Rep
   Lazy_exact_rep (const Interval_base i)
       : in(i), et(NULL) {}
 
-  Interval_nt<> approx() const  // Better return a const ref instead ?
+  Interval_nt<true> approx() const  // Better return a const ref instead ?
   {
       return in;
   }
@@ -263,7 +263,7 @@ public :
   Self operator/ (const Self & a) const
   { return new Lazy_exact_Div<ET>(*this, a); }
 
-  Interval_nt<> approx() const  // throw() ?
+  Interval_nt<true> approx() const  // throw() ?
   { return ptr()->approx(); }
 
   Interval_nt_advanced approx_adv() const

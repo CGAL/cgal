@@ -48,7 +48,11 @@ template <class CK,
           class FK = Simple_cartesian<Interval_nt_advanced>,
 	  class C2E = Cartesian_converter<CK, EK>,
 	  class C2F = Cartesian_converter<CK, FK,
-	              Interval_converter<CGAL_TYPENAME_MSVC_NULL CK::RT> > >
+	              Interval_converter<
+#ifndef __SUNPRO_CC
+		      CGAL_TYPENAME_MSVC_NULL
+#endif
+		      CK::RT> > >
 class Filtered_kernel
 {
 public:

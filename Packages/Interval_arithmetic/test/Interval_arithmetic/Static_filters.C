@@ -51,7 +51,7 @@ int main()
     // Kf::Point_3 pf(p.x(), p.y(), p.z()), qf(q.x(), q.y(), q.z()),
     //             rf(r.x(), r.y(), r.z()), sf(s.x(), s.y(), s.z());
     // CGAL::Protect_FPU_rounding<false> Z;
-    for (int j=0; j<100000; ++j) {
+    for (int j=0; j<1000; ++j) {
       // assert( my_o(p, q, r, s) == ore(pe, qe, re, se) );
       ooo = my_o(p, q, r, s);      //  2.62 s -> 2.22 s
       ooo = my_o2(p2, q2, r2);      //  2.62 s -> 2.22 s

@@ -1,7 +1,7 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.119 on ?? September 2001
-- ..
+Version 4.119 on 27 September 2001
+- SunPro fixes.
 
 Version 4.118 on 17 September 2001
 - CGAL_IA_NEW_FILTERS and various cleanups.

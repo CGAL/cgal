@@ -13,7 +13,13 @@
 typedef leda_real        Exact_NT;
 #else
 typedef CGAL::Quotient<CGAL::MP_Float> Exact_NT; // doesn't do exact sqrt()
-namespace CGAL { Exact_NT sqrt(const Exact_NT &) { abort(); } }
+namespace CGAL {
+Exact_NT sqrt(const Exact_NT &)
+{
+  abort();
+  return Exact_NT();
+}
+}
 #endif
 
 typedef CGAL::Lazy_exact_nt<Exact_NT> NT;
