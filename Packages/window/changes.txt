@@ -1,3 +1,12 @@
+2.8.0       (17 May 2001)
+- file cgal_window added to make the package work with
+  the CGAL::window - class (port of the LEDA window,
+  that works without LEDA)
+- small changes in Window_stream.h and forward_decl_window_stream.h
+- use -D__USE_CGAL_WINDOW__ when compiling programs using Window_stream 
+  with the new CGAL::window
+
+
 2.7.1       (22 Aug 2000)
 
 - bug in documentation of Window_stream fixed, reported by H. Tangelder
