@@ -1,3 +1,6 @@
+2 November 2004 Menelaos Karavelas
+- added cgal_app.icns: icons file needed for MacOSX applications
+
 02 September Andreas Fabri
 - gmp.lib and mpfr.lib rebuilt with "--enable-alloca=malloc-rentrant".
 - Added a README file with the recipe of how the lib was built.

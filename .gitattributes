@@ -823,6 +823,7 @@ Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.fig -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.pdf -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.ps -text
+Packages/Auxiliary/auxiliary/cgal_app.icns -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/gmp-4.1.3.tar.gz -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/gcc/libgmp.a -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/gcc/libmpfr.a -text svneol=unset#unset
