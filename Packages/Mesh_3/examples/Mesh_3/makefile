@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-OTHER_CXXFLAGS?= -g
+OTHER_CXXFLAGS?= 
 
 CXXFLAGS = -I. \
            -I ../../../Mesh_2/include \
