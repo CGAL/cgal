@@ -44,7 +44,7 @@ class Regular_triangulation_3 : public Triangulation_3<Gt,Tds>
 
 public:
 
-  typedef typename Gt::Bare_point Point;
+  //  typedef typename Gt::Bare_point Point;
   typedef typename Gt::Weighted_point Weighted_point;
 
   typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
@@ -67,7 +67,6 @@ public:
       CGAL_triangulation_postcondition( is_valid() );  
     }
   
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class InputIterator >
   int
   insert(InputIterator first, InputIterator last)
@@ -79,58 +78,6 @@ public:
     }
     return number_of_vertices() - n;
   }
-#else
-#if defined(LIST_H) || defined(__SGI_STL_LIST_H)
-  int
-  insert(std::list<Point>::const_iterator first,
-         std::list<Point>::const_iterator last)
-  {
-    int n = number_of_vertices();
-    while(first != last){
-      insert(*first);
-      ++first;
-    }
-    return number_of_vertices() - n;
-  }
-#endif // LIST_H
-#if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
-  int
-  insert(std::vector<Point>::const_iterator first,
-         std::vector<Point>::const_iterator last)
-  {
-    int n = number_of_vertices();
-    while(first != last){
-      insert(*first);
-      ++first;
-    }
-    return number_of_vertices() - n;
-  }
-#endif // VECTOR_H
-#ifdef ITERATOR_H
-  int
-  insert(istream_iterator<Point, ptrdiff_t> first,
-         istream_iterator<Point, ptrdiff_t> last)
-  {
-    int n = number_of_vertices();
-    while(first != last){
-      insert(*first);
-      ++first;
-    }
-    return number_of_vertices() - n;
-  }
-#endif // ITERATOR_H
-  
-  int insert(Point* first,
-	     Point* last)
-  {
-    int n = number_of_vertices();
-    while(first != last){
-      insert(*first);
-      ++first;
-    }
-    return number_of_vertices() - n;
-  }
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 
   Vertex_handle insert( const Weighted_point &p );
 
@@ -448,7 +395,7 @@ insert(const Weighted_point & p, Cell_handle start )
 	    set_number_of_vertices(number_of_vertices()+1);
 	  }
 	  else {
-	    Point* P = new Point( p );
+	    Weighted_point* P = new Weighted_point( p );
 	    deleted_points.insert( P );
 	  }
 	  return v;
@@ -475,7 +422,7 @@ insert(const Weighted_point & p, Cell_handle start )
 	{
 	  Vertex_handle v=NULL;
 	  std::set<void*, std::less<void*> > deleted_points;
-	  Point * P;
+	  Weighted_point * P;
 	  if ( in_conflict_1(p, c) ) {
 	    v = new Vertex(p);
 	    set_number_of_vertices(number_of_vertices()+1);
@@ -488,7 +435,7 @@ insert(const Weighted_point & p, Cell_handle start )
 	      while ( ( ! is_infinite(n->vertex(1-j)) ) && 
 		      in_conflict_1( p, n->neighbor(j) ) ) {
 		if (n!=c) (void) conflicts.insert( (void *) &(*n) );
-		P = new Point( n->vertex(1-j)->point() );
+		P = new Weighted_point( n->vertex(1-j)->point() );
 		(void) deleted_points.insert((void*) P);
 		set_number_of_vertices(number_of_vertices()-1);
 		n = n->neighbor(j);
@@ -523,7 +470,7 @@ insert(const Weighted_point & p, Cell_handle start )
 	    }
 	  }
 	  else {
-	    Point* P = new Point( p );
+	    Weighted_point* P = new Weighted_point( p );
 	    deleted_points.insert( P );
 	  }
 	  return v;
@@ -567,7 +514,7 @@ star_region_delete_points(std::set<void*, std::less<void*> > & region,
   Vertex *v_tmp;
   Vertex_handle vh;
   std::set<void*, std::less<void*> > pts;
-  Point *p;
+  Weighted_point *p;
     
   // for each cell to be deleted, keep vertices
   std::set<void*, std::less<void*> >::const_iterator it;
@@ -596,7 +543,7 @@ star_region_delete_points(std::set<void*, std::less<void*> > & region,
     v_tmp = (Vertex *) *it;
     if ( (inc_vert.find( v_tmp )) == inc_vert.end() ) {
       // vertex has to be deleted and point to be stored
-      p = new Point( v_tmp->point() );
+      p = new Weighted_point( v_tmp->point() );
       pts.insert( p );
       set_number_of_vertices(number_of_vertices()-1);
       delete((Vertex *)*it);
