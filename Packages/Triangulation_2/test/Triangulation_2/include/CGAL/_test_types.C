@@ -28,24 +28,27 @@ CGAL_BEGIN_NAMESPACE
 
 // Create a mininal traits class
 class Triangulation_test_point {
-  public:
-    typedef Triangulation_test_point Point;
-  protected:
-    double _x, _y;
-  public:
-    typedef double TESTFT;
-    Triangulation_test_point() {}
-    Triangulation_test_point(const Point &p) : _x(p.test_x()), _y(p.test_y()) {}
-    Triangulation_test_point(double x, double y) : _x(x), _y(y) {}
-    Triangulation_test_point(double hx, double hy, double hw) : _x(hx/hw), _y(hy/hw) {}
+public:
+  typedef Triangulation_test_point Point;
+  typedef double TESTFT;
+protected:
+  double _x, _y;
+public:
+  Triangulation_test_point() {}
+  Triangulation_test_point(const Point &p) : _x(p.test_x()), _y(p.test_y()) {}
+  Triangulation_test_point(double x, double y) : _x(x), _y(y) {}
+  Triangulation_test_point(double hx, double hy, double hw) :
+    _x(hx/hw), _y(hy/hw) 
+    {}
 
-    TESTFT test_x() const { return _x; }
-    TESTFT test_y() const { return _y; }
-    bool   compare(const Point &p) const { return test_x()==p.test_x() && test_y()==p.test_y(); }
-    bool   uncompare(const Point &p) const { return !compare(p); }
-    Point  &operator=(const Point &p) { _x=p.test_x(); _y=p.test_y(); return *this; }
-    void   test_set(TESTFT x, TESTFT y) { _x=x; _y=y; }
-    bool operator==(const Point &p) const {return this->compare(p);}
+  TESTFT test_x() const { return _x; }
+  TESTFT test_y() const { return _y; }
+  bool   compare(const Point &p) const 
+    { return test_x()==p.test_x()  &&   test_y()==p.test_y(); }
+  bool   uncompare(const Point &p) const { return !compare(p); }
+  Point  &operator=(const Point &p) { _x=p.test_x(); _y=p.test_y(); return *this; }
+  void   test_set(TESTFT x, TESTFT y) { _x=x; _y=y; }
+  bool operator==(const Point &p) const {return this->compare(p);}
 };
 
 class Triangulation_test_segment {
