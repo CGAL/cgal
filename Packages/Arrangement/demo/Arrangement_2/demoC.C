@@ -266,7 +266,7 @@ void MyWindow::make_overlay( std::list<int> indexes ,
      {
        current = indexes.front();
        indexes.pop_front();
-	   flag = paint_flags.front();
+	     flag = paint_flags.front();
        paint_flags.pop_front();
        w_demo_p = 
          static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
@@ -279,20 +279,21 @@ void MyWindow::make_overlay( std::list<int> indexes ,
               hei != w_demo_p->m_curves_arr.edges_end(); ++hei) 
          {
            Pm_xseg_2 xcurve = hei->curve();
-		   Curve_data cd = xcurve.get_data();
+		       Curve_data cd = xcurve.get_data();
            if ( flag == 0 )
-		     cd.m_index = w_demo_p_new->index;
-		   xcurve.set_data( cd );
+		       cd.m_index = w_demo_p_new->index;
+		       xcurve.set_data( cd );
            Pm_seg_2 curve(xcurve, cd);
            seg_list.push_back(curve);
          }// for
 		 all_pm_are_empty = false;
 	   }// if //..//
-       w_demo_p_new->bbox = w_demo_p_new->bbox + w_demo_p->bbox;
+     w_demo_p_new->bbox = w_demo_p_new->bbox + w_demo_p->bbox;
        
 	   // update the vector of colors of unbounded faces
 	   ubf_colors[current] = w_demo_p->unbounded_face_color();//..//
-	 }
+	 }// while
+
 	 if (! all_pm_are_empty)//..//
 	 {
        w_demo_p_new->m_curves_arr.insert(seg_list.begin(),seg_list.end());
@@ -347,12 +348,14 @@ void MyWindow::make_overlay( std::list<int> indexes ,
 	 QCursor old = w_demo_p_new->cursor();
      w_demo_p_new->setCursor(Qt::WaitCursor);
 
+  	 std::vector<QColor> ubf_colors(20) ; // vector of colors of the unbounded faces od the planar maps //..//
+
      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p;
      
      std::list<Pm_pol_2> pol_list;
      Pm_pol_const_iter itp;
      int current,flag;
-     
+     bool all_pm_are_empty = true; //..//
      while (! indexes.empty())
      {
        current = indexes.front();
@@ -364,42 +367,61 @@ void MyWindow::make_overlay( std::list<int> indexes ,
          static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
          (myBar->page( current ));
        
-       Pol_arr::Halfedge_iterator hei;
-       for (hei = w_demo_p->m_curves_arr.halfedges_begin(); 
+   	   if (! w_demo_p->empty)//..//
+       {
+         Pol_arr::Halfedge_iterator hei;
+         for (hei = w_demo_p->m_curves_arr.halfedges_begin(); 
             hei != w_demo_p->m_curves_arr.halfedges_end(); ++hei) 
-       {
-         Pm_xpol_2 xcurve = hei->curve();
- 		 Curve_pol_data cd = xcurve.get_data();
-         if ( flag == 0 )
-		   cd.m_index = w_demo_p_new->index;
-         xcurve.set_data( cd );
-         Pm_pol_2 curve(xcurve, cd);
-         pol_list.push_back(curve);
-       }
+         {
+           Pm_xpol_2 xcurve = hei->curve();
+ 		       Curve_pol_data cd = xcurve.get_data();
+           if ( flag == 0 )
+		         cd.m_index = w_demo_p_new->index;
+           xcurve.set_data( cd );
+           Pm_pol_2 curve(xcurve, cd);
+           pol_list.push_back(curve);
+         }// for
+       }// if
        w_demo_p_new->bbox = w_demo_p_new->bbox + w_demo_p->bbox;
-     }
+   	   
+       // update the vector of colors of unbounded faces
+  	   ubf_colors[current] = w_demo_p->unbounded_face_color();//..//
+
+     }// while
      
-     w_demo_p_new->m_curves_arr.insert(
+     if (! all_pm_are_empty)//..//
+	   {
+       w_demo_p_new->m_curves_arr.insert(
                                        pol_list.begin(),pol_list.end());
-     
-     
-     if (!colors_flag)
-     {
-       // update new planner map indexes
-       Pol_arr::Halfedge_iterator hei;
-       for (hei = w_demo_p_new->m_curves_arr.halfedges_begin(); 
-            hei != w_demo_p_new->m_curves_arr.halfedges_end(); ++hei) 
+          
+       if (!colors_flag)
        {
-         Curve_pol_data cd = hei->curve().get_data();
-         cd.m_type = Curve_pol_data::INTERNAL;
-         cd.m_index = w_demo_p_new->index;
-         hei->curve().set_data( cd );
-       }
-     }
-	 w_demo_p_new->set_window(w_demo_p_new->bbox.xmin() , 
+         // update new planner map indexes
+         Pol_arr::Halfedge_iterator hei;
+         for (hei = w_demo_p_new->m_curves_arr.halfedges_begin(); 
+             hei != w_demo_p_new->m_curves_arr.halfedges_end(); ++hei) 
+         {
+           Curve_pol_data cd = hei->curve().get_data();
+           cd.m_type = Curve_pol_data::INTERNAL;
+           cd.m_index = w_demo_p_new->index;
+           hei->curve().set_data( cd );
+         }// for 
+       }// if
+	     w_demo_p_new->set_window(w_demo_p_new->bbox.xmin() , 
                  w_demo_p_new->bbox.xmax() ,w_demo_p_new->bbox.ymin() , 
 	                                         w_demo_p_new->bbox.ymax());
-	 
+     }
+	   else//..//
+	   {
+		   std::cout<<"all pm are empty...\n";
+		   w_demo_p_new->set_window(-10, 10, -10, 10);
+	   }
+
+	   // update the colors of the faces of the new PM //..//
+	   std::cout<<"overlaying faces...\n";
+	   w_demo_p_new->update_colors(ubf_colors);   
+	   std::cout<<"finished overlaying faces...\n";
+
      w_demo_p_new->setCursor(old);
 
      break;

@@ -21,6 +21,7 @@
 
 #include "cgal_types1.h"
 #include "seg_notif.h"
+#include "pol_notif.h"
 #include <CGAL/IO/pixmaps/hand.xpm>
 #include <CGAL/IO/pixmaps/holddown.xpm>
 #include <CGAL/Polygon_2.h>
@@ -322,6 +323,7 @@ public:
    *         point location if the mode is on. */
   void draw()
   {
+	  std::cout<<"drawing...\n";
     QCursor old = cursor();
     setCursor(Qt::WaitCursor);
 
@@ -338,7 +340,9 @@ public:
 	 
 	  
 	}
+	
 	visit_faces(FillFace(this));  // draw all faces (fill them with their color)
+	 std::cout<<"finished visit_faces...\n";
 
     if (snap_mode == GRID || grid)
      draw_grid();
@@ -357,11 +361,6 @@ public:
       m_tab_traits.draw_xcurve(this , ei->curve() );
     }
     
-	
-    
-	(*this) << CGAL::LineWidth(m_line_width);
-    Pm_curve_const_iter itp;
-
 	
 	
     // Go over all vertices and for each vertex check the 
@@ -574,7 +573,7 @@ void update_colors(std::vector<QColor>  colors)
 
 
   void set_face_color(Face_handle &f ,QColor& c)
-{
+{  
   f->set_info(c);
   if( ! f->does_outer_ccb_exist() || empty)
 	  set_unbounded_face_color(c);  
@@ -584,43 +583,48 @@ void update_colors(std::vector<QColor>  colors)
 template <class Function>
 void visit_faces(Function func)
 {
+	std::cout<<"visit_faces..\n";
 	Face_iterator  fi=m_curves_arr.faces_begin();
 	for( ; fi != m_curves_arr.faces_end() ; ++fi )
 	  fi->set_visited(false);
 	Face_handle ub = m_curves_arr.unbounded_face();
 	visit_face_rec (ub,func) ;
+	std::cout<<"finished visit_faces..\n";
 }
-
-
-
-
 
 
 // draw a face and all its holes recursively
 template<class Function>
 void visit_face_rec( Face_handle &f, Function func )
 {
+	std::cout<<"visit_face_rec..\n";
 	Holes_iterator hit; // holes iterator
-	//m_tab_traits.fill_face(this, f);
 	func(f);
 	f->set_visited(true);
 	for(hit= f->holes_begin() ; hit!=f->holes_end() ; ++hit)
 	{
 		Ccb_halfedge_circulator cc = *hit;
-		Halfedge he = *cc; 
-		Halfedge he2 = *(he.opposite());
-		Face_handle inner_face = he2.face(); // not sure about that  )
-		if(inner_face == he.face())  // in that case the hole is not a closed face
-			continue;	
-		// move on to next hole
-		visit_ccb_faces(inner_face,func); // TODO: how to pass the colors vector?
-	}
+		do{
+			std::cout<<"inside visit_face_rec..\n";
+			Halfedge he = *cc; 
+			Halfedge he2 = *(he.opposite());
+			Face_handle inner_face = he2.face(); // not sure about that  )
+			if(inner_face == he.face())  // in that case the hole is not a closed face
+			  continue;	
 	
-}
+			// move on to next hole
+			visit_ccb_faces(inner_face,func); 
+		  }while (++cc != *hit);
+		  std::cout<<"after inside visit_face_rec..\n";
+	}// for	
+	std::cout<<"finish visit_face_rec..\n";
+}// visit_face_rec
+
      
 template <class Function>
 void visit_ccb_faces(Face_handle & fh , Function func)
 {
+	std::cout<<"visit_ccb_faces..\n";
   visit_face_rec(fh,func);
   Ccb_halfedge_circulator cc=fh->outer_ccb();
 	do {
@@ -631,9 +635,9 @@ void visit_ccb_faces(Face_handle & fh , Function func)
 		  visit_ccb_faces( nei ,func );
 		}
 	} while (++cc != fh->outer_ccb());//created from the outer boundary of the face
-  
+	std::cout<<"finish visit_ccb_faces..\n";
 }
-      
+
 
   
   /*! draw_grid - draw the grid */
@@ -825,7 +829,7 @@ void visit_ccb_faces(Face_handle & fh , Function func)
         m_tab_traits.draw_xcurve(this, hei->curve());
         if (hei != m_curves_arr.halfedges_end() && !is_already_vertex)
 		{
-			std::cout << "\nthe split point: " << p1 << "\n";
+			//std::cout << "\nthe split point: " << p1 << "\n";
           m_tab_traits.split_edge(hei , p1 , this);
 		}
         
@@ -1260,9 +1264,6 @@ public:
  */
 bool curve_has_same_direction( Ccb_halfedge_circulator &cc)
 {
-  std::cout << "curve_has_same_direction \n" << cc->curve() <<" \n" 
-	  << cc->curve().source() << "\n"
-	  << cc->source()->point() << "\n";
   return (cc->curve().source() == cc->source()->point());
 }
 
@@ -1280,19 +1281,26 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
  */
   void fill_face(Qt_widget_demo_tab<Segment_tab_traits> * w , Face_handle f)
   {
-      if (f->does_outer_ccb_exist())  // f is not the unbounded face
-      { std::list< Coord_point > pts; // holds the points of the polygon         
+	  std::cout<<"filling face...\n";
+    if (f->does_outer_ccb_exist())  // f is not the unbounded face
+      {
+        std::list< Coord_point > pts; // holds the points of the polygon         
 	  
+	  std::cout<<" before loop...\n";
 
 	  /* running with around the outer of the face and generate from it polygon */
 	  Ccb_halfedge_circulator cc=f->outer_ccb();
         do {
-			Halfedge he = *cc;
-			Coord_type x = CGAL::to_double(he.source()->point().x());
-			Coord_type y = CGAL::to_double(he.source()->point().y());
+          std::cout<<"before crush:\n";
+          std::cout<<"$2 curve: " << cc->curve() << "\n";
+          std::cout<<"$2 source point: " << cc->source()->point() << "\n";
+			Coord_type x = CGAL::to_double(cc->source()->point().x());
+      
+	 		Coord_type y = CGAL::to_double(cc->source()->point().y());
 		    Coord_point coord_source(x , y);
             pts.push_back(coord_source );
         } while (++cc != f->outer_ccb());//created from the outer boundary of the face
+		std::cout<<" after loop...\n";
 	   
 	Polygon pgn (pts.begin() , pts.end()); // make polygon from the outer ccb of the face 'f'
 
@@ -1312,9 +1320,7 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
   
   void overlay (Qt_widget_demo_tab<Segment_tab_traits> * w , Face_handle f , std::vector<QColor> & colors)
   {
-	  std::cout << "overlay 1\n";
 	   f->assign_overlay_info(colors); 
-	  std::cout << "overlay 2\n";
 	   if (f->does_outer_ccb_exist())  // f is not the unbounded face
 	   {
 		   /* running  around the outer of the face  */
@@ -1326,39 +1332,23 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
 				                           temp_he;
 
 			 int index = d.m_index;   // getting the index of the original PM of the curve 
-			 std::cout << "overlay 3\n";
 			if(curve_has_same_direction(cc))
-			{
-				std::cout<<" overlay 3.1\n";
-				temp_he = original_he;
-			}
+				temp_he = original_he;	
 			else
-			{
-				std::cout<<" overlay 3.2\n";
-				std::cout<<"original halfedge is" << original_he->source()->point();
 				temp_he=(Halfedge_handle)original_he->opposite();	
-			}
-			    std::cout << "overlay 4\n";
-			
-			
+						
 
 			 QColor original_face_color = temp_he->face()->info();  // the original color of the face
-			  std::cout << "overlay 5\n";
 			 f->set_overlay_info( index , original_face_color);  // update the colors vector in the face
 			 colors[index] = original_face_color; // we want to update the colors vector to pass
 			                                      // the information down the recurtion process.
-			  std::cout << "overlay 6\n";
 
          } while (++cc != f->outer_ccb());
-	   std::cout << "overlay 7\n";
 	  	 QColor c = blend_colors(f->OverlayInfoBegin() , f-> OverlayInfoEnd() );  // blend the colors
-		 std::cout << "overlay 8\n";
 	     f->set_info(c);
-		 std::cout << "overlay 9\n";
 	   }  
 	   else // f is the unbounded face
 	   {  
-	      std::cout << "update unbounded face color\n";
 		  QColor c = blend_colors(colors.begin() , colors.end() );  // blend the colors
 		  f->set_info(c);
 		  w->set_unbounded_face_color(c);
@@ -1424,7 +1414,7 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
     cd.m_index = w->index;
     cd.m_ptr.m_curve = base_seg_p;
     Pm_seg_2 * seg = new Pm_seg_2( *base_seg_p, cd );
-    Halfedge_handle hh = w->m_curves_arr.insert(*seg , &seg_notif);
+    Halfedge_handle hh = w->m_curves_arr.insert(*seg, &seg_notif);
 	CGAL::Bbox_2 curve_bbox = seg->bbox();
 	w->bbox = w->bbox + curve_bbox;
 
@@ -1547,7 +1537,7 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
 	&second_curve ,Coord_point &p ,Qt_widget_demo_tab<Segment_tab_traits> *w,
 	bool move_event)
   {
-	 
+	  std::cout<<"#1\n";
     bool is_first = true;
     Coord_type min_dist = 0;
 	Halfedge_iterator hei;
@@ -1556,6 +1546,7 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
 	Vertex_iterator   vis = closest_curve->source();
 	Vertex_iterator   vit = closest_curve->target();
 	Kernel            ker;
+	 std::cout<<"#2\n";
     for (hei = w->m_curves_arr.halfedges_begin();
           hei != w->m_curves_arr.halfedges_end(); ++hei) 
     {	
@@ -1576,12 +1567,13 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
         }    
       }
 	}
+	 std::cout<<"#3\n";
 	if (is_first) // didn't find any "good" curve
-	{
 	  return;
-	}
+	
 	else if (!move_event)	  
 	{	  
+		 std::cout<<"#4\n";
 	  Pm_point_2 s1 = second_curve->source()->point();
 	  Pm_point_2 t1 = second_curve->target()->point();
 	  Base_curve * base = 0;
@@ -1595,26 +1587,34 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
 	    base = new Base_curve(t, t1);
 	  else if ( s == t1 )
             base = new Base_curve(t, s1);
+	   std::cout<<"#5\n";
       Curve_data cd;
       cd.m_type = Curve_data::LEAF;
       cd.m_index = w->index;
       cd.m_ptr.m_curve = base;
+	   std::cout<<"#6\n";
       Curve *seg = new Curve( *base, cd );
       std::list<Xcurve> xcurve_list;
 	  m_traits.curve_make_x_monotone(*seg, std::back_inserter(xcurve_list));
       Xcurve c = xcurve_list.front();
+	  std::cout<<"mergeing..."<<std::endl;
       Halfedge_handle h = w->m_curves_arr.merge_edge( closest_curve , second_curve , c); 
-      
-	  // update c1
-	  
-      Curve_data d = h->curve().get_data();
-	  if(is_curve_and_halfedge_same_direction(h , h->curve()))
-	    d.halfedge_handle = h;
-	  else
-	    d.halfedge_handle = (Halfedge_handle)h->opposite();
+      std::cout<<"source of halfedge after mereging: " << h->source()->point();
+      std::cout<<"target of halfedge after mereging: " << h->target()->point();
 
-	  //d.halfedge_handle = h;
-	  h->curve().set_data( d );
+	  std::cout<<"finished mergeing..."<<std::endl;
+      
+	  // update c
+	  
+   //   Curve_data d = c.get_data();
+	  //if(is_curve_and_halfedge_same_direction(h , c))
+	  //  d.halfedge_handle = h;
+	  //else
+	  //  d.halfedge_handle = (Halfedge_handle)h->opposite();
+
+	  ////d.halfedge_handle = h;
+	  //h->curve().set_data( d );
+	  //h->opposite()->curve().set_data( d );
 
 	}
   }
@@ -1659,31 +1659,48 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
     m_traits.curve_make_x_monotone(*seg2, std::back_inserter(xcurve_list));
     Xcurve c2 = xcurve_list.front();
 
-	// split he1 into curves : c1 ,c2 and store halfedge e1 (halfedge of c1)
+	// split hei into curves : c1 ,c2 and store halfedge e1 (halfedge of c1)
 	Halfedge_handle e1 = w->m_curves_arr.split_edge(hei , c1 , c2);
 
 	// update the halfedge_handle field in the Curve_Data of c1 ,c2 Curve_Data
 
-	// update c1
-	Curve_data d1 = e1->curve().get_data();
+	
 
-	if(is_curve_and_halfedge_same_direction(e1 , c1))
-	  d1.halfedge_handle = e1;
+	Xcurve my_c1 , my_c2;  //temp variable
+
+	if(e1->source()->point() == c1.source()) // check that e1 is indeed the halfede of c1
+	{
+		my_c1 = c1;
+		my_c2 = c2;
+	}
 	else
-	  d1.halfedge_handle = (Halfedge_handle)e1->opposite();
-		
-	e1->curve().set_data( d1 );
-
-	// update c2
-	Curve_data d2 = e1->next()->curve().get_data();
-	if(is_curve_and_halfedge_same_direction((Halfedge_handle)e1->next() , c1))
-	  d2.halfedge_handle = (Halfedge_handle)e1->next();
-	else
-	  d2.halfedge_handle = (Halfedge_handle) e1->next()->opposite();
-
-	e1->next()->curve().set_data( d2 );
+	{
+		my_c1 = c2;
+		my_c2 = c1;
+	}
 
 
+ //   // update my_c1
+	//Curve_data d1 = my_c1.get_data();
+	//	
+	//if(is_curve_and_halfedge_same_direction(e1 , my_c1))
+	//  d1.halfedge_handle = e1;
+	//else
+	//  d1.halfedge_handle = (Halfedge_handle)e1->opposite();
+	//	
+	//e1->curve().set_data( d1 );
+	//e1->opposite()->curve().set_data( d1 );
+
+	//// update my_c2
+	//Curve_data d2 = my_c2.get_data();
+	//if(is_curve_and_halfedge_same_direction((Halfedge_handle)e1->next() , my_c2))
+	//  d2.halfedge_handle = (Halfedge_handle)e1->next();
+	//else
+	//  d2.halfedge_handle = (Halfedge_handle) e1->next()->opposite();
+
+	//e1->next()->curve().set_data( d2 );
+	//e1->next()->opposite()->curve().set_data( d2 );
+	
 
   }
 
@@ -2186,6 +2203,7 @@ private:
   /*! get_polyline - create a new polyline */
   void get_polyline(Qt_widget_demo_tab<Polyline_tab_traits> * w)
   {
+    Pol_notification pol_notif;
     Pm_base_pol_2 * base_pol_p =
       new Pm_base_pol_2(points.begin(), points.end());
     Curve_pol_data cd;
@@ -2193,7 +2211,7 @@ private:
     cd.m_index = w->index;
     cd.m_ptr.m_curve = base_pol_p;
     Pm_pol_2 * pol = new Pm_pol_2( *base_pol_p, cd );
-    w->m_curves_arr.insert( *pol );
+    w->m_curves_arr.insert( *pol , &pol_notif);
 	CGAL::Bbox_2 curve_bbox = pol->bbox();
 	w->bbox = w->bbox + curve_bbox;
   }
@@ -2529,10 +2547,10 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
       cd.m_type = Curve_conic_data::LEAF;
       cd.m_index = w->index;
       cd.m_ptr.m_curve = cv;
-	  std::cout << "bbbb\n";
-	  std::cout<< *cv<<"\n";
+	  //std::cout << "bbbb\n";
+	  //std::cout<< *cv<<"\n";
       w->m_curves_arr.insert(Pm_conic_2( *cv , cd));
-      std::cout << "aaaa\n";
+      //std::cout << "aaaa\n";
       CGAL::Bbox_2 curve_bbox = cv->bbox();
 	  w->bbox = w->bbox + curve_bbox; 
       w->active = false;
