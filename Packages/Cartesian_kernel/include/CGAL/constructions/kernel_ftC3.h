@@ -100,19 +100,30 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   FT rsx = psy*qsz-psz*qsy;
   FT rsy = psz*qsx-psx*qsz;
   FT rsz = psx*qsy-psy*qsx;
-  
-  FT num_x = det3x3_by_formula(psy,psz,ps2,
-                               qsy,qsz,qs2,
-                               rsy,rsz,FT(0));
-  FT num_y = det3x3_by_formula(psx,psz,ps2,
-                               qsx,qsz,qs2,
-                               rsx,rsz,FT(0));
-  FT num_z = det3x3_by_formula(psx,psy,ps2,
-                               qsx,qsy,qs2,
-                               rsx,rsy,FT(0));
+
+  // The following determinants can be developped and simplified.
+  //
+  // FT num_x = det3x3_by_formula(psy,psz,ps2,
+  //                              qsy,qsz,qs2,
+  //                              rsy,rsz,FT(0));
+  // FT num_y = det3x3_by_formula(psx,psz,ps2,
+  //                              qsx,qsz,qs2,
+  //                              rsx,rsz,FT(0));
+  // FT num_z = det3x3_by_formula(psx,psy,ps2,
+  //                              qsx,qsy,qs2,
+  //                              rsx,rsy,FT(0));
+
+  FT num_x = ps2 * det2x2_by_formula(qsy,qsz,rsy,rsz)
+	   - qs2 * det2x2_by_formula(psy,psz,rsy,rsz);
+  FT num_y = ps2 * det2x2_by_formula(qsx,qsz,rsx,rsz)
+	   - qs2 * det2x2_by_formula(psx,psz,rsx,rsz);
+  FT num_z = ps2 * det2x2_by_formula(qsx,qsy,rsx,rsy)
+	   - qs2 * det2x2_by_formula(psx,psy,rsx,rsy);
+
   FT den   = det3x3_by_formula(psx,psy,psz,
                                qsx,qsy,qsz,
                                rsx,rsy,rsz);
+
   CGAL_kernel_assertion( den != FT(0) );
   FT inv = FT(1)/(FT(2) * den);
 
