@@ -37,9 +37,9 @@ public:
   
   Point_less_functor(Traits *traits) : m_traits(traits) {}
   
-  bool operator()(const Point& p1, const Point& p2) const 
+  bool operator()(const Point* p1, const Point* p2) const 
   { 
-    return (m_traits->compare_xy(p1,p2) == SMALLER);
+    return (m_traits->compare_xy(*p1,*p2) == SMALLER);
   }
 
 private:
@@ -77,8 +77,11 @@ public:
 
   bool compare_at(const Subcurve* c1, const Subcurve* c2)  const 
   {
-#if 1  // this may ot work with conics. Need to verify
-    const Point_2 *p = c1->get_reference_point();
+    const Point_2 *p = &(c2->get_last_point());
+    if ( m_compare_param->m_traits->compare_x(c1->get_last_point(),  
+					      c2->get_last_point()) == LARGER )
+      p = &(c1->get_last_point());
+
     Comparison_result r = 
       m_compare_param->m_traits->curves_compare_y_at_x(c1->get_curve(), 
     				   c2->get_curve(), 
@@ -87,25 +90,10 @@ public:
       return true;
     } 
     return false;
-#else
-    if (m_compare_param->m_traits->curve_compare_y_at_x(c1->getLeftEnd(),
-                                                        c2->get_curve()) ==
-        SMALLER)
-      return true;
-    return false;
-#endif
   }
 
   bool compare_right(const Subcurve* c1, const Subcurve* c2)  const 
   {
-
-    const Point_2 *p = c1->get_reference_point();
-#if 0
-    std::cout << "\t\tComparing between:" << *p << "\n"
-	      << "\t\t  " << c1->get_curve() << "\n"
-	      << "\t\t  " << c2->get_curve() << "\n";
-#endif
-    
     const X_monotone_curve_2 &cv1 = c1->get_curve();
     const X_monotone_curve_2 &cv2 = c2->get_curve();
     Traits *t = m_compare_param->m_traits;
@@ -128,15 +116,20 @@ public:
       return false;
     }
 
+    const Point_2 *p = &(c2->get_last_point());
+    if ( m_compare_param->m_traits->compare_x(c1->get_last_point(),  
+					      c2->get_last_point()) == LARGER )
+      p = &c1->get_last_point();
+
     // non of the curves is vertical... 
     Comparison_result r =  t->curves_compare_y_at_x (c1->get_curve(), 
-						  c2->get_curve(), 
-						  *p);
+						     c2->get_curve(), 
+						     *p);
 
     if (r == EQUAL)
       r = t->curves_compare_y_at_x_right(c1->get_curve(), 
-					     c2->get_curve(), 
-					     *p);
+					 c2->get_curve(), 
+					 *p);
     if ( r == SMALLER) {
       return true;
     } 

@@ -131,7 +131,7 @@ public:
 
   typedef SweepEvent Event;
   typedef Point_less_functor<Point_2, Traits> PointLess;
-  typedef std::map<Point_2, Event*, PointLess> EventQueue;
+  typedef std::map<const Point_2 *, Event*, PointLess> EventQueue; 
   typedef typename EventQueue::iterator EventQueueIter;
   typedef typename EventQueue::value_type EventQueueValueType;
   typedef std::vector<Event*> EventPtrContainer;
@@ -288,13 +288,12 @@ protected:
   void sweep(OutpoutIterator out, Op tag, bool stop_at_first_int=false)
   {
     EventQueueIter eventIter = m_queue->begin();
-    m_prevPos = eventIter->first;
-    const Point_2 *p1 = &(eventIter->first);
-    m_sweepLinePos = *p1;
+    m_prevPos = *eventIter->first;
+    m_sweepLinePos = *(eventIter->first);
 
     while ( eventIter != m_queue->end() )
     {
-      const Point_2 *p = &(eventIter->first);
+      const Point_2 *p = (eventIter->first);
       if ( m_traits->compare_x(m_sweepLinePos, *p) == SMALLER ) {
         m_prevPos = m_sweepLinePos;
 	m_verticals.clear();
@@ -303,7 +302,7 @@ protected:
       m_sweepLinePos = *p;
       m_currentPos = *p;
 
-      p = &(eventIter->first);
+      p = (eventIter->first);
       m_currentEvent = eventIter->second;
       SL_DEBUG(std::cout << "------------- " << *p << " --------------"
 	       << std::endl;
@@ -311,7 +310,7 @@ protected:
 	       m_currentEvent->Print();
       )
       
-      if ( m_traits->compare_x(eventIter->first, m_sweepLinePos) != EQUAL) {
+      if ( m_traits->compare_x(*(eventIter->first), m_sweepLinePos) != EQUAL) {
 	SL_DEBUG(std::cout << "====================== clearing miniq " 
 		 << eventIter->first  << " "
 		 << m_prevPos << "\n";)
@@ -683,7 +682,7 @@ protected:
 
       StatusLineIter slIter = m_statusLine->insert(m_status_line_insert_hint, 
 						   *firstOne);
-      (*firstOne)->set_hint(slIter);//xxx
+      (*firstOne)->set_hint(slIter);
       
       SL_DEBUG(PrintStatusLine(););
       if ( slIter != m_statusLine->begin() )
@@ -715,7 +714,7 @@ protected:
 	PRINT_INSERT(*currentOne);
 	++slIter;
 	slIter = m_statusLine->insert(slIter, *currentOne);
-	(*currentOne)->set_hint(slIter);//xxx
+	(*currentOne)->set_hint(slIter);
 	
 	SL_DEBUG(PrintStatusLine(););
 	if ( do_curves_overlap(*currentOne, *prevOne))
@@ -781,7 +780,7 @@ protected:
                                       m_status_line_insert_hint, 
 				      *(m_currentEvent->right_curves_begin()));
       
-      (*(m_currentEvent->right_curves_begin()))->set_hint(slIter); //xxx
+      (*(m_currentEvent->right_curves_begin()))->set_hint(slIter); 
       m_status_line_insert_hint = slIter; ++m_status_line_insert_hint;
       
       SL_DEBUG(PrintStatusLine(););
@@ -895,7 +894,7 @@ protected:
       
       StatusLineIter slIter = m_statusLine->insert(m_status_line_insert_hint, 
 						   *firstOne);
-      (*firstOne)->set_hint(slIter);//xxx
+      (*firstOne)->set_hint(slIter);
       
       SL_DEBUG(PrintStatusLine(););
       if ( slIter != m_statusLine->begin() )
@@ -936,7 +935,7 @@ protected:
 	PRINT_INSERT(*currentOne);
 	++slIter;
 	slIter = m_statusLine->insert(slIter, *currentOne);
-	(*currentOne)->set_hint(slIter);//xxx
+	(*currentOne)->set_hint(slIter);
 	
 	SL_DEBUG(PrintStatusLine(););
 	if ( do_curves_overlap(*currentOne, *prevOne))
@@ -1290,6 +1289,8 @@ protected:
       m_use_hint_for_erase = true;
       PRINT_ERASE((*leftCurveIter));
       m_currentPos = m_prevPos;
+      Subcurve *leftCurve = *leftCurveIter; 
+      leftCurve->set_last_point(eventPoint);
       ++leftCurveIter;
     }
 
@@ -1508,7 +1509,7 @@ init_curve(X_monotone_curve_2 &curve)
   m_subCurves.push_back(subCv);
   
   // handle the source point
-  EventQueueIter eventIter = m_queue->find(source);
+  EventQueueIter eventIter = m_queue->find(&source); 
   if ( eventIter != m_queue->end() ) {
     SL_DEBUG(std::cout << "event " << source << " already exists\n";)
     e = eventIter->second;
@@ -1518,13 +1519,13 @@ init_curve(X_monotone_curve_2 &curve)
     e->id = m_eventId++;
 #endif
     m_events.push_back(e);
-    m_queue->insert(EventQueueValueType(source, e));
+    m_queue->insert(EventQueueValueType(&(e->get_point()), e));
   }
   e->add_curve(subCv);
   PRINT_NEW_EVENT(source, e);
     
   // handle the target point
-  eventIter = m_queue->find(target);
+  eventIter = m_queue->find(&target);
   if ( eventIter != m_queue->end() ) {
     SL_DEBUG(std::cout << "event " << target << " already exists\n";)
     e = eventIter->second;
@@ -1534,7 +1535,7 @@ init_curve(X_monotone_curve_2 &curve)
     e->id = m_eventId++;
 #endif
     m_events.push_back(e);
-    m_queue->insert(EventQueueValueType(target, e));
+    m_queue->insert(EventQueueValueType(&(e->get_point()), e));
   }
   e->add_curve(subCv);
   PRINT_NEW_EVENT(target, e);
@@ -1597,7 +1598,7 @@ handle_vertical_curve_bottom(SweepLineGetSubCurves &tag)
     SL_DEBUG(std::cout<<"starting at curve \n";)
     SL_DEBUG((*slIter)->Print();)
     const Point_2 &topEnd = vcurve->get_top_end();
-    EventQueueIter topEndEventIter = m_queue->find(topEnd);
+    EventQueueIter topEndEventIter = m_queue->find(&topEnd);
     CGAL_assertion(topEndEventIter!=m_queue->end());
     Event *topEndEvent = topEndEventIter->second;
 
@@ -1631,7 +1632,7 @@ handle_vertical_curve_bottom(SweepLineGetSubCurves &tag)
       SL_DEBUG(CGAL_assertion(res==true);)
       res = 0;
       
-      EventQueueIter eqi = m_queue->find(xp);
+      EventQueueIter eqi = m_queue->find(&xp);
       Event *e = 0;
       if ( eqi == m_queue->end() )
       {
@@ -1644,7 +1645,7 @@ handle_vertical_curve_bottom(SweepLineGetSubCurves &tag)
 	e->add_curve_to_left(*slIter, m_sweepLinePos);
 	e->add_curve_to_right(*slIter);
 	PRINT_NEW_EVENT(xp, e);
-	m_queue->insert(EventQueueValueType(xp, e));
+	m_queue->insert(EventQueueValueType(&(e->get_point()), e));
 
 	lastEventCreatedHere = true;
 
@@ -1726,7 +1727,8 @@ handle_vertical_overlap_curves()
       iter = m_verticals.erase(iter);
 
     } else if (!curve->is_end_point(point)) {
-      EventQueueIter eventIter = m_queue->find(curve->get_top_end());
+
+      EventQueueIter eventIter = m_queue->find(&(curve->get_top_end()));
       CGAL_assertion(eventIter!=m_queue->end());
       (eventIter->second)->add_vertical_curve_x_point(point, true);
       m_currentEvent->mark_internal_intersection_point();
@@ -1793,12 +1795,7 @@ remove_curve_from_status_line(Subcurve *leftCurve)
   SL_DEBUG(leftCurve->Print();)
 
   StatusLineIter sliter;
-  //if ( m_use_hint_for_erase ) {
-  //  sliter = m_status_line_insert_hint;
-  //} else {
-  //  sliter = m_statusLine->find(leftCurve);
-  //}
-  sliter = leftCurve->get_hint(); //xxx
+  sliter = leftCurve->get_hint(); 
 
   m_status_line_insert_hint = sliter; ++m_status_line_insert_hint;
   if ( !leftCurve->is_end_point(m_currentEvent->get_point())) {
@@ -1907,7 +1904,7 @@ intersect(Subcurve *c1, Subcurve *c2)
     )
 
     // check to see if an event at this point already exists...
-    EventQueueIter eqi = m_queue->find(xp);
+    EventQueueIter eqi = m_queue->find(&xp);
     Event *e = 0;
     if ( eqi == m_queue->end() )
     {
@@ -1924,7 +1921,7 @@ intersect(Subcurve *c1, Subcurve *c2)
       e->add_curve_to_right(c2);
       
       PRINT_NEW_EVENT(xp, e);
-      m_queue->insert(EventQueueValueType(xp, e));
+      m_queue->insert(EventQueueValueType(&(e->get_point()), e));
       return isOverlap;
     } else 
     {
@@ -2032,12 +2029,17 @@ Sweep_line_2_impl<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
 do_curves_overlap(Subcurve *c1, Subcurve *c2)
 {
   SL_DEBUG(std::cout << "do_curves_overlap " << m_sweepLinePos << "\n" 
-	    << "\t" << c1->get_curve() << "\n"
-	    << "\t" << c2->get_curve() << "\n";)
+	             << "\t" << c1->get_curve() << "\n"
+	             << "\t" << c2->get_curve() << "\n";)
+
+  const Point_2 *p = &(c2->get_last_point());
+  if ( m_traits->compare_x(c1->get_last_point(), 
+			   c2->get_last_point()) == LARGER )
+    p = &(c1->get_last_point());
 
   if ((m_traits->curves_compare_y_at_x(c1->get_curve(),
-				    c2->get_curve(),
-				    m_sweepLinePos) != EQUAL))
+				       c2->get_curve(),
+				       *p) != EQUAL))
     return false;
 
   if ( m_traits->curves_overlap(c1->get_curve(),c2->get_curve()) )
@@ -2135,7 +2137,7 @@ handle_vertical_curve_bottom(SweepLineGetPoints &tag)
     SL_DEBUG((*slIter)->Print(););
 
     const Point_2 &topEnd = vcurve->get_top_end();
-    EventQueueIter topEndEventIter = m_queue->find(topEnd);
+    EventQueueIter topEndEventIter = m_queue->find(&topEnd);
     CGAL_assertion(topEndEventIter!=m_queue->end());
     Event *topEndEvent = topEndEventIter->second;
 
@@ -2166,7 +2168,7 @@ handle_vertical_curve_bottom(SweepLineGetPoints &tag)
 						xp, xp);
       SL_DEBUG(CGAL_assertion(res==true);)
       res = 0;
-      EventQueueIter eqi = m_queue->find(xp);
+      EventQueueIter eqi = m_queue->find(&xp); 
       Event *e = 0;
       if ( eqi == m_queue->end() )
       {
@@ -2180,7 +2182,7 @@ handle_vertical_curve_bottom(SweepLineGetPoints &tag)
 	e->add_curve_to_right(*slIter);
 
 	PRINT_NEW_EVENT(xp, e);
-	m_queue->insert(EventQueueValueType(xp, e));
+	m_queue->insert(EventQueueValueType(&(e->get_point()), e)); 
       } else {
 	e = eqi->second;
 	e->mark_internal_intersection_point();

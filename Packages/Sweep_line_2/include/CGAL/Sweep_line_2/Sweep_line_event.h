@@ -31,6 +31,7 @@
 #include <list>
 #include <set>
 
+
 CGAL_BEGIN_NAMESPACE
 
 /*! @class Sweep_line_event
@@ -143,7 +144,7 @@ public:
    *        a different ordering. Probably in case of conics.
    */
   void add_curve_to_left(SubCurve *curve, const Point_2 &ref, 
-		      bool isInitStage=false) 
+			 bool isInitStage=false) 
   {
     if ( isInitStage )
     {
@@ -192,19 +193,24 @@ public:
     {
       if ( m_traits->point_in_x_range((*iter)->get_curve(), ref))
       {
+	const Point_2 &ref_point = largest_point(curve->get_last_point(), 
+						 (*iter)->get_last_point());
         res = m_traits->curves_compare_y_at_x (cv, (*iter)->get_curve(), 
-					    ref );
-	if (res == EQUAL)
+					       ref_point);
+	if (res == EQUAL) {
 	  res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->get_curve(), 
-						   ref );
+						      ref_point);
+	}
       }
       else
       {
+	const Point_2 &ref_point = largest_point(curve->get_last_point(),
+						 (*iter)->get_last_point());
         res = m_traits->curves_compare_y_at_x (cv, (*iter)->get_curve(), 
-					    (*iter)->get_left_end());
+					       ref_point);
 	if (res == EQUAL)
 	  res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->get_curve(), 
-						   (*iter)->get_left_end());
+						      ref_point);
       }
 
       if ( res != LARGER )
@@ -221,9 +227,13 @@ public:
       if ( iter == m_leftCurves->end())
 	break;
 
-      res = m_traits->curves_compare_y_at_x (cv, (*iter)->get_curve(), ref);
+      const Point_2 &ref_point = largest_point(curve->get_last_point(), 
+					       (*iter)->get_last_point());
+      res = m_traits->curves_compare_y_at_x (cv, (*iter)->get_curve(), 
+					     ref_point);
       if (res == EQUAL)
-	res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->get_curve(), ref);
+	res = m_traits->curves_compare_y_at_x_right(cv, (*iter)->get_curve(), 
+						    ref_point);
     }
     
     // insert the curve. If the curve is already in the list, it is not added
@@ -496,7 +506,12 @@ protected:
   /*! true if any two curves passing through the event overlap. */
   bool m_containsOverlap;
 
-
+  const Point_2 &largest_point(const Point_2 &p1, const Point_2 &p2)
+  {
+    if ( m_traits->compare_x(p1, p2) == LARGER )
+      return p1;
+    return p2;
+  }
 
 #ifndef NDEBUG
 public:
