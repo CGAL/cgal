@@ -1,7 +1,12 @@
 -----
+* 2.3.3 *
++ Small fix to cgal_test
+
+-----
 * 2.3.2 *
 +Altered implementation of wdot and wcross to circumvent a bug in the
  MSVC compiler.
+
 -----
 * 2.3.1 *
 +Added typename in places (bug introduced by replacement of R_FT_return macros)

@@ -1,4 +1,8 @@
 -----
+* 2.4.1 *
++Small change in test/cgal_test
+
+-----
 * 2.4 *
 +Replaced R_FT_return and R_RT_return macros
 +Avoided forward declarations of functions returning R::FT, as this caused
