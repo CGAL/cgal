@@ -72,18 +72,18 @@
 # ----------------------- Edge nodes childrens:
 # pair indices (curve node and its edge node) for next overlapping edge node :
 0 0
-# Halfedge's indices of edge nodes
+# Halfedge indices associated with edge nodes
 0
 # Edge node curve
 3
  0/1 0/1 10/1 10/1 20/1 0/1
 # pair indices (curve node and its edge node) for next overlapping edge node :
 0 1
-# Halfedge's indices of edge nodes
+# Halfedge indices associated with edge nodes
 2
 # Edge node curve
 2
  20/1 0/1 0/1 0/1
-
+# finished current level
 # ------------------------------------- End of Arrangement
 # --------------------------------------------------------
