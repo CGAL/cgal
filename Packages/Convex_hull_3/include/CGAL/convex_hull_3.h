@@ -308,7 +308,6 @@ ch_quickhull_3_scan(
      Point_3 farthest_pt = 
           farthest_outside_point(f_handle, outside_sets[f_handle], traits);
 
-
      find_visible_set(farthest_pt, f_handle, visible_set, traits);
      // for each visible facet
      for (vis_set_it = visible_set.begin(); vis_set_it != visible_set.end();
@@ -320,7 +319,6 @@ ch_quickhull_3_scan(
                   std::back_inserter(vis_outside_set));
         //   delete this visible facet
         P.erase_facet((*(*vis_set_it)).halfedge());
-        CGAL_assertion (P.is_valid());
         outside_sets[*vis_set_it].clear();
      }
      for (hole_halfedge = P.halfedges_begin(); 
@@ -351,7 +349,7 @@ ch_quickhull_3_scan(
 
      Halfedge_handle new_halfedge;
 
-     // now walk around all the border halfedges and add a facet incidnet to
+     // now walk around all the border halfedges and add a facet incident to
      // each one to connect it to the farthest point
      while (curr_halfedge->next() != start_hole_halfedge)
      {
@@ -417,7 +415,6 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   for (f_it = P.facets_begin(); f_it != P.facets_end(); f_it++)
      if (!outside_sets[f_it].empty())
        pending_facets.push_back(f_it);
-
   ch_quickhull_3_scan(P, pending_facets, outside_sets, traits);
 
   CGAL_ch_expensive_postcondition(all_points_inside(first,beyond,P,traits));
@@ -443,11 +440,11 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   typename Traits::Construct_plane_3 construct_plane =
          traits.construct_plane_3_object();
   Plane_3 plane = construct_plane(*point3_it, *point2_it, *point1_it);
-  
   typedef typename Traits::Less_signed_distance_to_plane_3      Dist_compare; 
   Dist_compare compare_dist = 
                 traits.less_signed_distance_to_plane_3_object(plane);
   
+  typename Traits::Coplanar_3  coplanar = traits.coplanar_3_object(); 
   // find both min and max here since using signed distance.  If all points
   // are on the negative side of ths plane, the max element will be on the
   // plane.
@@ -460,15 +457,12 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   else
      max_it = min_max.second;
 
-  typename Traits::Coplanar_3  coplanar = traits.coplanar_3_object(); 
-
   // if the maximum distance point is on the plane then all are coplanar
   if (coplanar(*point1_it, *point2_it, *point3_it, *max_it)) 
      coplanar_3_hull(points.begin(), points.end(), plane, P, traits);
   else
   {
      P.make_tetrahedron(*point1_it, *point2_it, *point3_it, *max_it);
-  
      points.erase(point1_it);
      points.erase(point2_it);
      points.erase(point3_it);
