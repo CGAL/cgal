@@ -111,7 +111,6 @@ public:
 
   void  remove(Vertex_handle v );
   
-private:
   using Triangulation::cw;
   using Triangulation::ccw;
 
