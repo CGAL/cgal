@@ -19,6 +19,7 @@
 #include <qmessagebox.h> 
 #include <qcolor.h>
 #include <qpainter.h> 
+#include <qpen.h>
 
 #include "cgal_types1.h"
 #include "seg_notif.h"
@@ -51,7 +52,6 @@ public:
     mode(INSERT),
     m_line_width(2),
     m_vertex_width(3),
-    close_point(false),
     first_time(true),
     active(false),
     traits_type(t),
@@ -71,8 +71,9 @@ public:
 	draw_vertex(true),
 	fill_face_color(def_bg_color)
   {
-    *this << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
-    set_window(-10, 10, -10, 10);
+    //*this << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
+    set_window(0, 700, 0, 700);
+   
     setMouseTracking(TRUE);
     
     colors[1] = Qt::blue;
@@ -104,9 +105,6 @@ public:
   int m_line_width;
   /*! m_vertex_width - vertic width */
   int m_vertex_width;
-  /*! close_point - boolean flag, true if found a close point in the
-   *                get_point function */
-  bool close_point;
   /*! first_time - true when it is the first mouse click of the object */
   bool first_time;
   /*! active - true if the first point was inserted */
@@ -743,9 +741,9 @@ void visit_ccb_faces(Face_handle & fh , Function func)
     //int cube_size_x = std::max(1, abs(max_x - min_x)/20);
     //int cube_size_y = std::max(1, abs(max_y - min_y)/20);
 	if (cube_size < std::abs(max_x - min_x)/40 ||
-		cube_size < std::abs(max_y - min_y)/40)
+		  cube_size < std::abs(max_y - min_y)/40)
 		cube_size = std::max(std::max(1, std::abs(max_x - min_x)/20),
-				     std::max(1, std::abs(max_y - min_y)/20));
+				                 std::max(1, std::abs(max_y - min_y)/20));
 	
     int cube_size_x = cube_size;
     int cube_size_y = cube_size;
@@ -1170,8 +1168,7 @@ void visit_ccb_faces(Face_handle & fh , Function func)
     int xmax = static_cast<int> (x_max());
     int ymin = static_cast<int> (y_min());
     int ymax = static_cast<int> (y_max());
-    Coord_type d = 
-		std::max(0.5 , (x_max() - x_min())/40);
+    Coord_type d = std::max(0.5 , (x_max() - x_min())/40);
     switch ( snap_mode ) {
      case POINT:
       {
@@ -1184,15 +1181,9 @@ void visit_ccb_faces(Face_handle & fh , Function func)
        min_dist = m_tab_traits.closest_point(x,y,closest,this);                
        
        if (min_dist <= d)
-       {
-         close_point = true;
          return closest;
-       }
        else
-       {
-         close_point = false;
          return Coord_point(x , y);
-       }
        
        break;
       }
@@ -1856,7 +1847,6 @@ public:
  */
   void fill_face(Qt_widget_demo_tab<Polyline_tab_traits> * w , Face_handle f)
   {
-     // TODO : implement fil_face
     if (f->does_outer_ccb_exist())  // f is not the unbounded face
       { std::list< Coord_point > pts; // holds the points of the polygon
 	     Xcurve::const_iterator   pt_itr;
@@ -2341,10 +2331,12 @@ public:
   
   /*! coordinate scale - used in conics*/
   int COORD_SCALE;
+  int DRAW_FACTOR;
 
   /*! constructor */
   Conic_tab_traits():
-  COORD_SCALE(2)
+  COORD_SCALE(1),
+  DRAW_FACTOR(5)
   {}
   
   /*! distructor */
@@ -2376,6 +2368,8 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
 	    /* running with around the outer of the face and generate from it polygon */
 	    Ccb_halfedge_circulator cc=f->outer_ccb();
       do {
+        if(w->antenna(*cc))
+          continue;
         Xcurve c = cc->curve(); 
         // Get the co-ordinates of the curve's source and target.
         double sx = CGAL::to_double(cc->source()->point().x()),
@@ -2405,10 +2399,12 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
   
             Pm_conic_point_2 ps[2];
             int nps;
-            
+
+            pts.push_back(coord_source ); 
+
             if (is_source_left)
             {
-              for (x = x_min; x < x_max; x++)
+              for (x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR)//= COORD_SCALE)
               {
                 curr_x = (*w).x_real(x);
                 nps = c.get_points_at_x(Pm_conic_point_2(curr_x, 0), ps);
@@ -2417,11 +2413,11 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
                   curr_y = CGAL::to_double(ps[0].y());
                   pts.push_back(Coord_point(curr_x / COORD_SCALE, curr_y / COORD_SCALE));
                 }// if
-              }// for
+              }// for            
             }
             else
             {              
-              for (x = x_max; x > x_min; x--)
+              for (x = x_max; x > x_min; x-=DRAW_FACTOR)
               {
                 curr_x = (*w).x_real(x);
                 nps = c.get_points_at_x(Pm_conic_point_2(curr_x, 0), ps);
@@ -2430,8 +2426,9 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
                   curr_y = CGAL::to_double(ps[0].y());
                   pts.push_back(Coord_point(curr_x / COORD_SCALE, curr_y / COORD_SCALE));
                 }// if
-              }// for
+              }// for       
             }// else
+            pts.push_back(coord_target ); 
           }// if
           else
           {
@@ -2442,7 +2439,8 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
       } while (++cc != f->outer_ccb());//created from the outer boundary of the face
 	  
       Polygon pgn (pts.begin() , pts.end()); // make polygon from the outer ccb of the face 'f'
-
+      QPen old_penstyle = w->get_painter().pen();
+      w->get_painter().setPen(Qt::NoPen);
       w->setFilled(true);
 
 	    // fill the face according to its color (stored at any of her incidents curves)
@@ -2452,6 +2450,7 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
         w->setFillColor(f->info());
 
 	    (*w) << pgn ;  // draw the polyong 
+      w->get_painter().setPen(old_penstyle);
 	      w->setFilled(false);
     }// if
   }
@@ -2496,7 +2495,7 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
         Pm_conic_point_2 ps[2];
         int nps;
         
-        for (x = x_min + 1; x < x_max; x++)
+        for (x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR)
         {
           curr_x = (*w).x_real(x);
           nps = c.get_points_at_x(Pm_conic_point_2(curr_x, 0), ps);

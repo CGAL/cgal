@@ -474,6 +474,10 @@ void MyWindow::add_conic_tab()
     new Qt_widget_demo_tab<Conic_tab_traits>
     (CONIC_TRAITS , this , tab_number);
   init(widget);
+
+  //widget->set_window(widget->x_pixel(widget->x_min()), widget->x_pixel(widget->x_max()), 
+    //                 widget->x_pixel(widget->y_min()), widget->x_pixel(widget->y_max()));
+
 }
 
 /*! add a tab widget with polyline traits */
@@ -560,7 +564,14 @@ void MyWindow::updateTraitsType( QAction *action )
   //initialize the new tab widget
   *widget << CGAL::LineWidth(2); // << CGAL::BackgroundColor (CGAL::WHITE);
   widget->setBackgroundColor(def_bg_color);
-  widget->set_window(-10, 10, -10, 10);
+  //widget->set_window(widget->x_pixel(widget->x_min()), widget->x_pixel(widget->x_max()), 
+  //                   widget->x_pixel(widget->y_min()), widget->x_pixel(widget->y_max()));
+  //widget->set_window(-10, 10, -10, 10);
+  //std::cout << widget->x_pixel(widget->x_min()) << "\n";
+  //std::cout << widget->x_pixel(widget->x_max()) << "\n";
+  //std::cout << widget->x_pixel(widget->y_min()) << "\n";
+  //std::cout << widget->x_pixel(widget->y_max()) << "\n";
+
   widget->setMouseTracking(TRUE);
   connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
           this, SLOT(get_new_object(CGAL::Object)));

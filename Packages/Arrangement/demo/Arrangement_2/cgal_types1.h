@@ -17,8 +17,6 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Pm_with_intersections.h>
 #include <CGAL/squared_distance_2.h>
-//#include <CGAL/Polygon_2.h>
-//#include <CGAL/Polygon_traits_2.h>
 #include <CGAL/IO/Arr_iostream.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
@@ -69,13 +67,13 @@ typedef CGAL::Polygon_2< Coord_kernel> Polygon;  // polygon is usefull for filli
 
 // Planar map typedef - using rational exact number type
 
-typedef CGAL::Quotient<CGAL::MP_Float>                     NT;
-typedef CGAL::Cartesian<NT>                                Kernel;
+//typedef CGAL::Quotient<CGAL::MP_Float>                     NT;
+//typedef CGAL::Cartesian<NT>                                Kernel;
 
-/*
+
 typedef CGAL::Gmpq                                         NT;
 typedef CGAL::Cartesian<NT>                                Kernel;
-*/
+
 
 typedef CORE::BigInt                                       CfNT;
 typedef CGAL::Cartesian<CfNT>                              Int_kernel;
