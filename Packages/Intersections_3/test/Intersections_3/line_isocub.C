@@ -2,7 +2,7 @@
 #include <iostream>
 #include <CGAL/Object.h>
 #include <CGAL/Iso_cuboid_3.h>
-#include <CGAL/intersection_3_1.C>
+#include <CGAL/intersection_3_1.h>
 
 #include "numrep2.h"
 
