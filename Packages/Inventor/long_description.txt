@@ -1,0 +1,18 @@
+DESCRIPTION: Describes the classes Inventor_ostream,
+VRML_1_ostream and VRML_2_ostream based on popular formats
+OpenInventor and VRML (Virtual Reality Markup Language)
+
+CHANGES:
+
+Ver 1.2 (29 June 1998)
+- Corrected vim bugs with closing "
+
+Ver 1.1 (23 June 1998)
+- Recreated the files from CGAL 1.0 and added Tetrahedron to
+  Inventor and to VRML 1.0
+
+CONTENTS:
+
+include/CGAL/IO/Inventor_ostream.h
+include/CGAL/IO/VRML_1_ostream.h
+include/CGAL/IO/VRML_2_ostream.h
