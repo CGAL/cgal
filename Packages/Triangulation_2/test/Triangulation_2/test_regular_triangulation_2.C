@@ -38,7 +38,7 @@ int main()
 {
   cout << "Testing Regular_triangulation_2" <<endl;
   cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "<<endl;
-  cout << "using  double type coordinates " << endl;
+  cout << "using  Quotient<Gmpz>  type coordinates  and double Weight" << endl;
   typedef CGAL::Regular_triangulation_euclidean_traits_2
     <Test_rep_cartesian, double>           RGt2;
   typedef CGAL::Triangulation_vertex_base_2<RGt2>                     RVb2;
