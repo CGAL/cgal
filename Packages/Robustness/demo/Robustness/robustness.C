@@ -22,23 +22,20 @@
 
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
-#include <iostream>
-
-int main(int, char*)
-{
-
-  std::cout << "Sorry, this demo needs QT...";
-  std::cout << std::endl;
-
-  return 0;
-}
-
+  #include <iostream>
+  int main(int, char*)
+  {
+    std::cout << "Sorry, this demo needs QT...";
+    std::cout << std::endl;
+    return 0;
+  }
 #else
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -205,8 +202,6 @@ public:
     // drawing menu
     QPopupMenu * draw = new QPopupMenu( this );
     menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("&Generate segments", this, 
-		     SLOT(gen_segments()), CTRL+Key_S );
     draw->insertItem("Convex &Hull of intersection points", this, 
 		     SLOT(hull_points()), CTRL+Key_H );
     
@@ -267,7 +262,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
@@ -435,10 +430,7 @@ private slots:
     qte->resize(400, 300);
     qte->show();
     qte->setText("INFORMATION:");
-    qte->append("We compute the intersection points of segments using exact \
-                 and double arithmetic. Then we compute the convex hull of \
-                 those. If there are points that are different in different \
-                 arithmetic, we mark them by a red circle.");
+    qte->append("We compute the intersection points of segments using exact and double arithmetic. Then we compute the convex hull of those. If there are points that are different in different arithmetic, we mark them by a red circle.");
     
     QProgressDialog progress( "Generating segments...", 
       "Cancel computing", 60, NULL, "Compute random segments ...", true );
@@ -555,6 +547,8 @@ main(int argc, char **argv)
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  widget.setIcon(cgal_icon);
   widget.show();
   current_state = -1;
   return app.exec();
