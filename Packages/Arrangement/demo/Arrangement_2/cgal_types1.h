@@ -81,11 +81,14 @@ typedef CGAL::Cartesian<CoNT>                              Alg_kernel;
 template <class Info>
 class Face_with_info : public CGAL::Pm_face_base {
   Info data;
+  bool _visited;
 public:
-  Face_with_info() : CGAL::Pm_face_base(), data() {}
+  Face_with_info() : CGAL::Pm_face_base(), data(),_visited(false) {}
 
   Info info() { return data; }
+  bool visited() { return _visited; }
   void set_info(Info i) { data = i; }
+  void set_visited(bool b) { _visited = b; }
 };
 
 

@@ -40,6 +40,7 @@ public:
   
   Qt_widget_base_tab(TraitsType  t , QWidget *parent = 0, int tab_number = 1):
     CGAL::Qt_widget( parent ),
+	current_state(0),
     index(tab_number),
     snap_mode(NONE),
     mode(INSERT),
@@ -214,6 +215,26 @@ private:
   typedef typename Tab_traits::Halfedge      Halfedge;
   typedef typename Tab_traits::Face_iterator  Face_iterator;
   
+
+private:
+
+	// function object - FillFace
+	class FillFace
+	{
+	
+		Qt_widget_demo_tab<Tab_traits> *ptr;
+		public:
+
+	    //constructor
+		FillFace(Qt_widget_demo_tab<Tab_traits>* tab) : ptr(tab){}
+
+		void operator()(Qt_widget_demo_tab<Tab_traits>::Face_handle& face) 
+		
+		{
+			ptr->m_tab_traits.fill_face(ptr,face);
+		}
+	};
+
 public:
   /*! m_tab_traits - the traits object */
   Tab_traits m_tab_traits;
@@ -263,7 +284,7 @@ public:
 	  set_face_color(f,fill_face_color);
 	  
 	}
-	draw_faces();  // draw all faces (fill them with their color)
+	visit_faces(FillFace(this));  // draw all faces (fill them with their color)
 
     if (snap_mode == GRID || grid)
      draw_grid();
@@ -493,15 +514,8 @@ public:
   }
 
 
-void draw_faces()
-{
-	Face_iterator  fi=m_curves_arr.faces_begin();
-	for( ; fi != m_curves_arr.faces_end() ; ++fi )
-		draw_face_rec (fi) ;   //draw current face recursively
-}
 
-
-void set_face_color(Face_handle &f ,QColor& c)
+  void set_face_color(Face_handle &f ,QColor& c)
 {
   f->set_info(c);
   if( ! f->does_outer_ccb_exist())
@@ -509,30 +523,60 @@ void set_face_color(Face_handle &f ,QColor& c)
 }
 
 
+template <class Function>
+void visit_faces(Function func)
+{
+	Face_iterator  fi=m_curves_arr.faces_begin();
+	for( ; fi != m_curves_arr.faces_end() ; ++fi )
+	  fi->set_visited(false);
+	Face_handle ub = m_curves_arr.unbounded_face();
+	visit_face_rec (ub,func) ;
+}
+
+
+
+
+
 
 // draw a face and all its holes recursively
-void draw_face_rec( Face_handle &f)
+template<class Function>
+void visit_face_rec( Face_handle &f, Function func )
 {
 	Holes_iterator hit; // holes iterator
-	m_tab_traits.fill_face(this, f);
+	//m_tab_traits.fill_face(this, f);
+	func(f);
+	f->set_visited(true);
 	for(hit= f->holes_begin() ; hit!=f->holes_end() ; ++hit)
 	{
-		Ccb_halfedge_circulator cc,cc2 = *hit;
-		cc = *hit;
-
-
-		Halfedge he = *cc;
-		Halfedge he2 = he.opposite();
+		Ccb_halfedge_circulator cc = *hit;
+		Halfedge he = *cc; 
+		Halfedge he2 = *(he.opposite());
 		Face_handle inner_face = he2.face(); // not sure about that  )
 		if(inner_face == he.face())  // in that case the hole is not a closed face
 			continue;	
 		// move on to next hole
-		draw_face_rec(inner_face);
+		visit_ccb_faces(inner_face,func);
 	}
+	
 }
-       
+     
+template <class Function>
+void visit_ccb_faces(Face_handle & fh , Function func)
+{
+  visit_face_rec(fh,func);
+  Ccb_halfedge_circulator cc=fh->outer_ccb();
+	do {
+		Halfedge he = *cc;
+		if(! he.opposite()->face()->visited())
+		{
+          Face_handle nei = (Face_handle) he.opposite()->face();
+		  visit_ccb_faces( nei ,func );
+		}
+	} while (++cc != fh->outer_ccb());//created from the outer boundary of the face
+  
+}
       
-      
+
   
   /*! draw_grid - draw the grid */
   void draw_grid()
