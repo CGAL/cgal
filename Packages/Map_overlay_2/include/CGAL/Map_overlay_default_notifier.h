@@ -331,8 +331,9 @@ public:
             if (ccb_cir->get_first_halfedge_above() != 0){
 #ifdef CGAL_NOTF_DEBUG
               if (get_first_halfedge_above(ccb_cir)->face()->is_unbounded())
-                std::cout<< "Face (of first halfedge) 
-above begin_face->outer_ccb() is unbounded"<<std::endl;
+                std::cout<< "Face (of first halfedge)"<< 
+                  cout<<"above begin_face->outer_ccb() is unbounded"
+                         <<std::endl;
               std::cout<<"ccb_cir->get_first_halfedge_above() != 0" << 
                 std::endl;
 #endif
@@ -346,8 +347,9 @@ above begin_face->outer_ccb() is unbounded"<<std::endl;
             if (ccb_cir->get_second_halfedge_above() != 0){
 #ifdef CGAL_NOTF_DEBUG
               if (get_second_halfedge_above(ccb_cir)->face()->is_unbounded())
-                std::cout<<"Face above (ofsecond halfedge) 
-begin_face->outer_ccb() is unbounded"<<std::endl;
+                std::cout<<"Face above (ofsecond halfedge) ";
+              cout<<"begin_face->outer_ccb() is unbounded"
+                  <<std::endl;
               std::cout<<"ccb_cir->get_second_halfedge_above() != 0" << 
                 std::endl;
 #endif
@@ -367,8 +369,8 @@ begin_face->outer_ccb() is unbounded"<<std::endl;
                   begin_face->get_first_face_above() == 0){
 #ifdef CGAL_NOTF_DEBUG
                 if (get_first_face_above(ccb_cir)->is_unbounded())
-                  std::cout<<"First face above ccb_cir of 
-begin_face is unbounded"<<std::endl;
+                  std::cout<<"First face above ccb_cir of ";
+                cout<<"begin_face is unbounded"<<std::endl;
                 std::cout<<"ccb_cir->get_first_face_above() != 0" << std::endl;
 #endif
                 
@@ -383,8 +385,8 @@ begin_face is unbounded"<<std::endl;
                 {
 #ifdef CGAL_NOTF_DEBUG
                   if (get_second_face_above(ccb_cir)->is_unbounded())
-                    std::cout<<"Second face above ccb_cir of begin_face 
-is unbounded"<<std::endl;
+                    std::cout<<"Second face above ccb_cir of begin_face ";
+                  cout<<"is unbounded"<<std::endl;
                   cout<<"ccb_cir->get_second_face_above() != 0" << std::endl;
 #endif
                   
@@ -399,7 +401,8 @@ is unbounded"<<std::endl;
           if (begin_face->get_first_face_above() == 0)
             {
 #ifdef CGAL_NOTF_DEBUG
-              std::cout<<"first face above begin_face is 0 - putting unbounded"<<std::endl;
+              std::cout<<"first face above begin_face is 0 ";
+              cout<<" - putting unbounded"<<std::endl;
 #endif
               
               set_first_face_above(begin_face, first_creator_->unbounded_face());
@@ -410,8 +413,8 @@ is unbounded"<<std::endl;
           if (begin_face->get_second_face_above() == 0)
             {
 #ifdef CGAL_NOTF_DEBUG
-              std::cout<<"second face above begin_face is 0 - 
-putting unbounded"<<std::endl;
+              std::cout<<"second face above begin_face is 0 - ";
+              cout<<"putting unbounded"<<std::endl;
 #endif
               
               set_second_face_above(begin_face, 
