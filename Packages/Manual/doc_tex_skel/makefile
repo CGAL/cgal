@@ -24,7 +24,7 @@ DOC_DOWNLOAD_DIR=/ftp/pub/outgoing/CGAL
 # location of the frame set and the extra index files of the manual
 HTML_EXTRA_SOURCE=/KM/usr3/cgal/web_pages/Manual
 # location of the frame set and the extra index files of the manual
-INCLUDE_SOURCE=/KM/projects/CGAL/Work_in_Progress/releases/CGAL-2.4/
+INCLUDE_SOURCE=/KM/projects/CGAL/Work_in_Progress/CGAL_autotest/${VERSION}/
 
 all:
 	driver
@@ -33,7 +33,7 @@ all:
 	to_pdf
 
 install_all: install pack dest_zip_ps
-	
+
 install: title_html doc_html doc_ps doc_pdf install_html_extras
 	mkdir -p $(DESTINATION)
 	cp -r $(INCLUDE_SOURCE)/include $(DESTINATION)
