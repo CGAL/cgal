@@ -1,3 +1,6 @@
+2.20
++ CGAL/config/msvc7/iterators_specializations.h added for VC7.
+
 2.19
 + Removed namespace CGAL::std for msvc.
 

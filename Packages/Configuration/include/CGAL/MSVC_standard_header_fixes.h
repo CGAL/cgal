@@ -21,6 +21,10 @@
 #pragma warning(once: 4291)
 #pragma warning(once:4503)
 
+#ifdef _MSC_VER >= 1300
+#include <CGAL/config/msvc7/iterators_specializations.h>
+#endif
+
 #include <cmath>
 namespace std {
 	using ::sqrt;
