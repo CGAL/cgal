@@ -57,7 +57,8 @@ compare_xC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &l2c)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = compare_xC2(
@@ -69,11 +70,11 @@ compare_xC2(const Filtered_exact<CT,ET> &px,
 		l2a.interval(),
 		l2b.interval(),
 		l2c.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = compare_xC2(
 		px.exact(),
 		py.exact(),
@@ -104,7 +105,8 @@ compare_xC2(const Filtered_exact<CT,ET> &l1a,
 	const Filtered_exact<CT,ET> &h2c)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = compare_xC2(
@@ -120,11 +122,11 @@ compare_xC2(const Filtered_exact<CT,ET> &l1a,
 		h2a.interval(),
 		h2b.interval(),
 		h2c.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = compare_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -152,7 +154,8 @@ compare_y_at_xC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &lc)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = compare_y_at_xC2(
@@ -161,11 +164,11 @@ compare_y_at_xC2(const Filtered_exact<CT,ET> &px,
 		la.interval(),
 		lb.interval(),
 		lc.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = compare_y_at_xC2(
 		px.exact(),
 		py.exact(),
@@ -188,7 +191,8 @@ compare_y_at_xC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &l2c)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = compare_y_at_xC2(
@@ -199,11 +203,11 @@ compare_y_at_xC2(const Filtered_exact<CT,ET> &px,
 		l2a.interval(),
 		l2b.interval(),
 		l2c.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = compare_y_at_xC2(
 		px.exact(),
 		l1a.exact(),
@@ -230,7 +234,8 @@ compare_y_at_xC2(const Filtered_exact<CT,ET> &l1a,
 	const Filtered_exact<CT,ET> &hc)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = compare_y_at_xC2(
@@ -243,11 +248,11 @@ compare_y_at_xC2(const Filtered_exact<CT,ET> &l1a,
 		ha.interval(),
 		hb.interval(),
 		hc.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -279,7 +284,8 @@ compare_y_at_xC2(const Filtered_exact<CT,ET> &l1a,
 	const Filtered_exact<CT,ET> &h2c)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = compare_y_at_xC2(
@@ -295,11 +301,11 @@ compare_y_at_xC2(const Filtered_exact<CT,ET> &l1a,
 		h2a.interval(),
 		h2b.interval(),
 		h2c.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -326,7 +332,8 @@ compare_deltax_deltayC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &sy)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = compare_deltax_deltayC2(
@@ -334,11 +341,11 @@ compare_deltax_deltayC2(const Filtered_exact<CT,ET> &px,
 		qx.interval(),
 		ry.interval(),
 		sy.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = compare_deltax_deltayC2(
 		px.exact(),
 		qx.exact(),
@@ -357,7 +364,8 @@ compare_lexicographically_xyC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &qy)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = compare_lexicographically_xyC2(
@@ -365,11 +373,11 @@ compare_lexicographically_xyC2(const Filtered_exact<CT,ET> &px,
 		py.interval(),
 		qx.interval(),
 		qy.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = compare_lexicographically_xyC2(
 		px.exact(),
 		py.exact(),
@@ -390,7 +398,8 @@ orientationC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &ry)
 {
   Orientation result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = orientationC2(
@@ -400,11 +409,11 @@ orientationC2(const Filtered_exact<CT,ET> &px,
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = orientationC2(
 		px.exact(),
 		py.exact(),
@@ -427,7 +436,8 @@ collinear_are_ordered_along_lineC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &ry)
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = collinear_are_ordered_along_lineC2(
@@ -437,11 +447,11 @@ collinear_are_ordered_along_lineC2(const Filtered_exact<CT,ET> &px,
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = collinear_are_ordered_along_lineC2(
 		px.exact(),
 		py.exact(),
@@ -464,7 +474,8 @@ collinear_are_strictly_ordered_along_lineC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &ry)
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = collinear_are_strictly_ordered_along_lineC2(
@@ -474,11 +485,11 @@ collinear_are_strictly_ordered_along_lineC2(const Filtered_exact<CT,ET> &px,
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = collinear_are_strictly_ordered_along_lineC2(
 		px.exact(),
 		py.exact(),
@@ -503,7 +514,8 @@ side_of_oriented_circleC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &ty)
 {
   Oriented_side result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = side_of_oriented_circleC2(
@@ -515,11 +527,11 @@ side_of_oriented_circleC2(const Filtered_exact<CT,ET> &px,
 		ry.interval(),
 		tx.interval(),
 		ty.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = side_of_oriented_circleC2(
 		px.exact(),
 		py.exact(),
@@ -546,7 +558,8 @@ side_of_bounded_circleC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &ty)
 {
   Bounded_side result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = side_of_bounded_circleC2(
@@ -558,11 +571,11 @@ side_of_bounded_circleC2(const Filtered_exact<CT,ET> &px,
 		ry.interval(),
 		tx.interval(),
 		ty.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = side_of_bounded_circleC2(
 		px.exact(),
 		py.exact(),
@@ -587,7 +600,8 @@ cmp_dist_to_pointC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &ry)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = cmp_dist_to_pointC2(
@@ -597,11 +611,11 @@ cmp_dist_to_pointC2(const Filtered_exact<CT,ET> &px,
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = cmp_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
@@ -624,7 +638,8 @@ has_larger_dist_to_pointC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &ry)
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = has_larger_dist_to_pointC2(
@@ -634,11 +649,11 @@ has_larger_dist_to_pointC2(const Filtered_exact<CT,ET> &px,
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = has_larger_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
@@ -661,7 +676,8 @@ has_smaller_dist_to_pointC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &ry)
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = has_smaller_dist_to_pointC2(
@@ -671,11 +687,11 @@ has_smaller_dist_to_pointC2(const Filtered_exact<CT,ET> &px,
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = has_smaller_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
@@ -699,7 +715,8 @@ cmp_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &la,
 	const Filtered_exact<CT,ET> &qy)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = cmp_signed_dist_to_lineC2(
@@ -710,11 +727,11 @@ cmp_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &la,
 		py.interval(),
 		qx.interval(),
 		qy.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = cmp_signed_dist_to_lineC2(
 		la.exact(),
 		lb.exact(),
@@ -739,7 +756,8 @@ has_larger_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &la,
 	const Filtered_exact<CT,ET> &qy)
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = has_larger_signed_dist_to_lineC2(
@@ -750,11 +768,11 @@ has_larger_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &la,
 		py.interval(),
 		qx.interval(),
 		qy.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = has_larger_signed_dist_to_lineC2(
 		la.exact(),
 		lb.exact(),
@@ -779,7 +797,8 @@ has_smaller_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &la,
 	const Filtered_exact<CT,ET> &qy)
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = has_smaller_signed_dist_to_lineC2(
@@ -790,11 +809,11 @@ has_smaller_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &la,
 		py.interval(),
 		qx.interval(),
 		qy.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = has_smaller_signed_dist_to_lineC2(
 		la.exact(),
 		lb.exact(),
@@ -819,7 +838,8 @@ cmp_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &sy)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = cmp_signed_dist_to_lineC2(
@@ -831,11 +851,11 @@ cmp_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &px,
 		ry.interval(),
 		sx.interval(),
 		sy.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = cmp_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
@@ -862,7 +882,8 @@ has_larger_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &sy)
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = has_larger_signed_dist_to_lineC2(
@@ -874,11 +895,11 @@ has_larger_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &px,
 		ry.interval(),
 		sx.interval(),
 		sy.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = has_larger_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
@@ -905,7 +926,8 @@ has_smaller_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &sy)
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = has_smaller_signed_dist_to_lineC2(
@@ -917,11 +939,11 @@ has_smaller_signed_dist_to_lineC2(const Filtered_exact<CT,ET> &px,
 		ry.interval(),
 		sx.interval(),
 		sy.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = has_smaller_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),

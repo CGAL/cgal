@@ -45,7 +45,8 @@ while (<>)
     print
 "{
   $result_type result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = $function_name(
@@ -56,11 +57,11 @@ while (<>)
       else { print ");"; }
     }
     print "
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = $function_name(
 ";
     foreach (@args) {

@@ -44,7 +44,8 @@ orientationH2( const Filtered_exact<CT,ET>& phx,
 	const Filtered_exact<CT,ET>& rhw )
 {
   Orientation result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = orientationH2(
@@ -57,11 +58,11 @@ orientationH2( const Filtered_exact<CT,ET>& phx,
 		rhx.interval(),
 		rhy.interval(),
 		rhw.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = orientationH2(
 		phx.exact(),
 		phy.exact(),
@@ -90,7 +91,8 @@ leftturnH2( const Filtered_exact<CT,ET>& phx,
 	const Filtered_exact<CT,ET>& rhw )
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = leftturnH2(
@@ -103,11 +105,11 @@ leftturnH2( const Filtered_exact<CT,ET>& phx,
 		rhx.interval(),
 		rhy.interval(),
 		rhw.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = leftturnH2(
 		phx.exact(),
 		phy.exact(),
@@ -136,7 +138,8 @@ rightturnH2(const Filtered_exact<CT,ET>& phx,
 	const Filtered_exact<CT,ET>& rhw )
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = rightturnH2(
@@ -149,11 +152,11 @@ rightturnH2(const Filtered_exact<CT,ET>& phx,
 		rhx.interval(),
 		rhy.interval(),
 		rhw.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = rightturnH2(
 		phx.exact(),
 		phy.exact(),
@@ -182,7 +185,8 @@ collinearH2(const Filtered_exact<CT,ET>& phx,
 	const Filtered_exact<CT,ET>& rhw )
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = collinearH2(
@@ -195,11 +199,11 @@ collinearH2(const Filtered_exact<CT,ET>& phx,
 		rhx.interval(),
 		rhy.interval(),
 		rhw.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = collinearH2(
 		phx.exact(),
 		phy.exact(),
@@ -230,7 +234,8 @@ side_of_bounded_circleH2( const Filtered_exact<CT,ET>& qhx,
 	const Filtered_exact<CT,ET>& thw )
 {
   Bounded_side result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = side_of_bounded_circleH2(
@@ -246,11 +251,11 @@ side_of_bounded_circleH2( const Filtered_exact<CT,ET>& qhx,
 		thx.interval(),
 		thy.interval(),
 		thw.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = side_of_bounded_circleH2(
 		qhx.exact(),
 		qhy.exact(),
@@ -285,7 +290,8 @@ side_of_oriented_circleH2(const Filtered_exact<CT,ET>& qhx,
 	const Filtered_exact<CT,ET>& thw )
 {
   Oriented_side result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = side_of_oriented_circleH2(
@@ -301,11 +307,11 @@ side_of_oriented_circleH2(const Filtered_exact<CT,ET>& qhx,
 		thx.interval(),
 		thy.interval(),
 		thw.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = side_of_oriented_circleH2(
 		qhx.exact(),
 		qhy.exact(),
@@ -333,7 +339,8 @@ compare_lexicographically_xyH2(const Filtered_exact<CT,ET>& phx,
 	const Filtered_exact<CT,ET>& qhw)
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = compare_lexicographically_xyH2(
@@ -343,11 +350,11 @@ compare_lexicographically_xyH2(const Filtered_exact<CT,ET>& phx,
 		qhx.interval(),
 		qhy.interval(),
 		qhw.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = compare_lexicographically_xyH2(
 		phx.exact(),
 		phy.exact(),
@@ -368,7 +375,8 @@ compare_xH2( const Filtered_exact<CT,ET>& phx,
 	const Filtered_exact<CT,ET>& qhw )
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = compare_xH2(
@@ -376,11 +384,11 @@ compare_xH2( const Filtered_exact<CT,ET>& phx,
 		phw.interval(),
 		qhx.interval(),
 		qhw.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = compare_xH2(
 		phx.exact(),
 		phw.exact(),
@@ -425,7 +433,8 @@ collinear_are_ordered_along_lineH2(
                                        )
 {
   Comparison_result result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = collinear_are_ordered_along_lineH2(
@@ -457,11 +466,11 @@ collinear_are_ordered_along_lineH2(
 		rhy.interval(),
 		rhw.interval(),
 		.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = collinear_are_ordered_along_lineH2(
 		phx.exact(),
 		phw.exact(),
@@ -510,7 +519,8 @@ collinear_are_strictly_ordered_along_lineH2(
 	const Filtered_exact<CT,ET>& rhw)
 {
   bool result;
-  FPU_set_rounding_to_infinity();
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
   try
   {
     result = collinear_are_strictly_ordered_along_lineH2(
@@ -523,11 +533,11 @@ collinear_are_strictly_ordered_along_lineH2(
 		rhx.interval(),
 		rhy.interval(),
 		rhw.interval());
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_rounding_to_nearest();
+    FPU_set_cw(backup);
     result = collinear_are_strictly_ordered_along_lineH2(
 		phx.exact(),
 		phy.exact(),
