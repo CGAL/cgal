@@ -91,8 +91,38 @@ CGAL_BEGIN_NAMESPACE
 
 template <typename ET> class Lazy_exact_nt;
 
-// Do the operators with dynamic typing.
-// This class doesn't need to be template (?).
+/*
+ * The implementation I choose (for the moment) uses virtual functions instead
+ * of the enum dirty stuff.
+ * The base class only stores a reference counter, and has pure virtual
+ * methods:
+ * - .interval()
+ * - .exact()
+ * From this class derives one class per operation, with one constructor.
+ *
+ * The front class Lazy_exact_nt<> is just a handle to such a class.
+ */
+
+/*
+ * Other choices that have to be made about .interval():
+ * - virtual or not ?
+ * - lazy evaluation or not ?
+ *
+ * lazy        => less rounding mode changes.
+ *             => virtual.
+ * virtual     => less space for constants (for double we loose only 8bytes)
+ *                more flexibility.
+ * non virtual => no lazy
+ *
+ * For the moment, I choose to implement it lazily (=> virtual).
+ */
+
+/*
+ * Should we have a CT template parameter (with corresponding ctor) ?
+ */
+
+
+// Does this class need to be template ?
 #if 1
 template <typename ET>
 class Lazy_exact_nt_dyn_rep
@@ -101,17 +131,6 @@ class Lazy_exact_nt_dyn_rep
   unsigned int count;
 public:
   Lazy_exact_nt_dyn_rep () : count(1) {};
-  // Interval evaluation:
-  // --------------------
-  // - virtual function ?
-  // - lazy evaluation ?
-  // 
-  // - lazy        => less rounding changes.
-  // - virtual     => less space for constants (for double we loose only 8bytes)
-  // - non virtual => no lazy, no virtual calls.
-  //
-  // (rounding changes are disablable on a whole algorithm basis)
-  //  inline ?
   virtual Interval_nt interval() const = 0;
   // virtual ET exact() const = 0;
   // virtual ostream operator<<() const = 0; // ou string, comme Core ?
@@ -124,23 +143,19 @@ class Lazy_exact_nt_dyn_rep
   Interval_nt in;
 public:
   Lazy_exact_nt_dyn_rep () : count(1), in(1,0) {};
-  // Si c'est pas lazy:
+  // Si c'est lazy:
   Interval_nt interval() { return in; }
   // Si c'est pas lazy:
-  // Interval_nt interval() { if (!in.is_valid()) update_interval(); return in; }
+  // Interval_nt interval() { if (!is_valid(in)) update_interval(); return in; }
   virtual void update_interval() = 0;
   virtual ET exact() const {}; // = 0;
 
-  // Il faut aussi un destructeur virtuel, pour détruite les *op1, *op2...
+  // We also must have a virtual destructor (for *op1 and *op2).
   virtual ~Lazy_exact_nt_dyn_rep() {}; // = 0;
 };
 #endif
 
-
-// Unary operations: (probably some factorization of code is welcome...)
-// constant, abs, sqrt, square.
-
-// double Constant.
+// double constant.
 template <typename ET>
 class Lazy_exact_nt_dyn_cst : public Lazy_exact_nt_dyn_rep<ET>
 {
@@ -150,6 +165,9 @@ class Lazy_exact_nt_dyn_cst : public Lazy_exact_nt_dyn_rep<ET>
   Lazy_exact_nt_dyn_cst (const double a) : d(a) {}
   Interval_nt interval() const { return d; };
 };
+
+// Unary operations: (probably some factorization of code is welcome...)
+// constant, abs, sqrt, square.
 
 // abs.
 template <typename ET>
