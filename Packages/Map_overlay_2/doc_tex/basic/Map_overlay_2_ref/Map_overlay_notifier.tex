@@ -80,10 +80,14 @@ in the overlay components to refer the suitable faces of the creators.}
 The following methods have constant counter parts.
 
 \ccMethod{Vertex_handle get_first_vertex_above(Vertex_handle v);}
-{return the vertex handle of the first creator laying above $v$.}
+{return the vertex handle of the first creator laying above $v$.
+ If the return value equals $v$, it means there is no vertex of the first creator laying 
+above $v$.}
   
 \ccMethod{Vertex_handle get_second_vertex_above(Vertex_handle v);}
-{return the vertex handle of the second creator laying above $v$.}
+{return the vertex handle of the second creator laying above $v$.
+   If the return value equals $v$, it means there is no vertex of the second creator laying 
+   above $v$.}
   
 \ccMethod{Halfedge_handle get_first_halfedge_above(Vertex_handle v);}
 {return the halfedge handle of the first creator laying above $v$.}
@@ -98,10 +102,14 @@ The following methods have constant counter parts.
 {return the face handle of the second creator laying above $v$.}
 
 \ccMethod{Halfedge_handle get_first_halfedge_above(Halfedge_handle h);}
-{return the halfedge handle of the first creator laying above $h$.}
+{return the halfedge handle of the first creator laying above $h$.
+   If the return value equals $h$, it means there is no halfedge of the first creator laying 
+   above $h$.}
 
 \ccMethod{Halfedge_handle get_second_halfedge_above(Halfedge_handle h);}
-{return the halfedge handle of the second creator laying above $h$.}
+{return the halfedge handle of the second creator laying above $h$.
+   If the return value equals $h$, it means there is no halfedge of the second creator laying 
+   above $h$.}
 
 \ccMethod{Face_handle get_first_face_above(Halfedge_handle h);}
 {return the face handle of the first creator laying above $h$.}

@@ -55,7 +55,6 @@ int main()
 #endif
 
 #include <CGAL/leda_real.h>
-
 #include <LEDA/rat_window.h>
 #include <CGAL/IO/Pm_Window_stream.h>
 #include <CGAL/Ovl_utility.h>

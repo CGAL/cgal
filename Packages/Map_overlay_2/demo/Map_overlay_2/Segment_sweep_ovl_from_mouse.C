@@ -55,6 +55,7 @@ int main()
 #include <CGAL/Map_overlay.h>
 #endif
 
+#include <CGAL/leda_rational.h>
 #include <LEDA/rat_window.h>
 #include <CGAL/IO/Pm_Window_stream.h>
 #include <CGAL/Ovl_utility.h>

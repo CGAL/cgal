@@ -43,12 +43,11 @@ int main()
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_with_intersections.h>
 
-
 #include <CGAL/Map_overlay_default_dcel.h>
 #include <CGAL/Map_overlay.h>
 #include <CGAL/Map_overlay_incremental.h>
 
-
+#include <CGAL/leda_rational.h>
 #include <LEDA/rat_window.h>
 #include <CGAL/IO/Pm_Window_stream.h>
 #include <CGAL/Ovl_utility.h>
