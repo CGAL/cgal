@@ -38,14 +38,14 @@ partition_2_toolbar$(OBJ_EXT): partition_2_toolbar.C partition_2_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2_toolbar.C
 
 partition_2_toolbar.moc: partition_2_toolbar.h
-	$(QT_MOC) -o partition_2_toolbar.moc $<
+	$(QT_MOC) -o partition_2_toolbar.moc partition_2_toolbar.h
 
 partition_2_toolbar_layers$(OBJ_EXT): partition_2_toolbar_layers.C \
 		partition_2_toolbar_layers.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) partition_2_toolbar_layers.C
 
 partition_2_toolbar_layers.moc: partition_2_toolbar_layers.h
-	$(QT_MOC) -o partition_2_toolbar_layers.moc $<
+	$(QT_MOC) -o partition_2_toolbar_layers.moc partition_2_toolbar_layers.h
 
 partition_2.moc: partition_2.C \
 		 partition_2_toolbar$(OBJ_EXT) \
