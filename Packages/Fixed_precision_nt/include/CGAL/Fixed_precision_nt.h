@@ -25,15 +25,14 @@
 #ifndef CGAL_FIXED_PRECISION_NT_H
 #define CGAL_FIXED_PRECISION_NT_H
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 #include <iostream>
-#ifndef CGAL_TAGS_H
 #include <CGAL/tags.h>
-#endif // CGAL_TAGS_H
 #include <CGAL/enum.h>
 #include <CGAL/assertions.h>
 #include <CGAL/double.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Interval_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -130,6 +129,13 @@ public:
 inline double to_double(Fixed_precision_nt a){ return a.to_double(); }
 bool is_finite(Fixed_precision_nt) { return true; }
 bool is_valid(Fixed_precision_nt) { return true; }
+
+inline
+Interval_base
+to_interval (Fixed_precision_nt a)
+{
+  return a.to_double();
+}
 
 inline Fixed_precision_nt  operator-
 (Fixed_precision_nt a)
@@ -795,13 +801,4 @@ Oriented_side side_of_oriented_sphereC3
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_INTERVAL_ARITHMETIC_H
-#include <CGAL/Interval_arithmetic/IA_Fixed.h>
-#endif // CGAL_INTERVAL_ARITHMETIC_H
-
-
 #endif  //CGAL_FIXED_PRECISION_NT_H
-
-
-
-
