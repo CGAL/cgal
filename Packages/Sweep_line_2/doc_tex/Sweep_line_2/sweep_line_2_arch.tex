@@ -1,0 +1,32 @@
+\section{Architecture}
+
+The \ccStyle{Sweep_line_2<InputIterator,Traits>} class is parameterized with
+two objects. The sequence of input curves are obtained through the
+\ccc{InputIterator}. The type of curves processed by the
+\ccStyle{Sweep_line_2<InputIterator,Traits>} class is dictated
+by the injected traits class, a model of the \ccStyle{SweepLineTraits}
+concept. Inject the suitable traits class, to handle your desired family of
+curves. The {\em planar map with intersection} comes with a collection of
+traits classes that handle various types of curves, such as segments,
+polylines, and conics. Naturally, users may author new traits classes
+that handle other types or that possesses different carachteristics.
+
+% \subsection{Operations}
+% need to list all operations.
+
+\subsection{Traits Classes}
+The \ccStyle{Sweep_line_2<InputIterator,Traits>} class is parameterized by a
+traits class, that defines the abstract interface between the sweep-line
+algorithm and the primitive it uses. It must define three types of objects,
+namely \ccc{Curve_2}, \ccStyle{X_monotone_curve_2}, and \ccStyle{Point_2},
+where the type of the endpoints of an \ccStyle{X_monotone_curve_2}-type curve
+is \ccStyle{Point_2}. In addition, the traits class must provide a set of
+operations on these two types.
+
+The \ccc{PlanarMapWithIntersectionsTraits_2} concept is a refinement of the 
+\ccc{SweepLineTraits_2} concept, as some of the functions required to
+perform some of the {\em planar map} operations are not needed, by the sweep
+line algorithm. Hence, all the models of the
+Planar Map With Intersections Traits \ccc{PlanarMapWithIntersectionsTraits_2}
+concept are also models of the \ccc{SweepLineTraits_2} concept. 
+
