@@ -632,20 +632,23 @@ private:
             overlap=true;
           }
         }
-
-#ifdef  CGAL_SWEEP_LINE_DEBUG
-        cout<<"inserting "<<sub_cv<<endl;
-#endif
         
         if (overlap){
           // special case of overlapping:
           // We do not insert the overlapped curve. 
           // However, we have to call add_edge of the notifier in order to update attributes 
           // of the current halfedge.
-          h = find_halfedge(sub_cv, pm);
-          pm_change_notf->add_edge(sub_cv, h, true, true);
+          if (pm_change_notf){
+            h = find_halfedge(sub_cv, pm);
+            pm_change_notf->add_edge(sub_cv, h, true, true);
+          }
         }
         else {
+
+#ifdef  CGAL_SWEEP_LINE_DEBUG
+          cout<<"inserting "<<sub_cv<<endl;
+#endif
+
           prev_sub_cv = sub_cv;
           if (cv_iter->get_rightmost_point().vertex() != Vertex_handle(NULL)){
             //assert(cv_iter->get_rightmost_point().point() == 
@@ -656,26 +659,32 @@ private:
               // point_node.get_point().vertex()->point());
               
               h = pm.insert_at_vertices(sub_cv, 
-                                         cv_iter->get_rightmost_point().vertex(),
-                                         point_node.get_point().vertex());
+                                        cv_iter->get_rightmost_point().vertex(),
+                                        point_node.get_point().vertex(), 
+                                        pm_change_notf);
             }
             else
               h = pm.insert_from_vertex (sub_cv, 
-                                          //X_curve( cv_iter->get_rightmost_point().point(), point_node.get_point().point()), 
-                                          cv_iter->get_rightmost_point().vertex(), true);
+                                         //X_curve( cv_iter->get_rightmost_point().point(), point_node.get_point().point()), 
+                                         cv_iter->get_rightmost_point().vertex(), 
+                                         true,
+                                         pm_change_notf);
           }
           else if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
             //assert(point_node.get_point().point() 
             // == point_node.get_point().vertex()->point());
             
             h = pm.insert_from_vertex (sub_cv, 
-                                        // X_curve( point_node.get_point().point(), cv_iter->get_rightmost_point().point()), 
-                                        point_node.get_point().vertex(), false);
+                                       // X_curve( point_node.get_point().point(), cv_iter->get_rightmost_point().point()), 
+                                       point_node.get_point().vertex(), 
+                                       false, 
+                                       pm_change_notf);
           }
           else{
             h = pm.insert_in_face_interior (sub_cv, 
-                                             //X_curve( cv_iter->get_rightmost_point().point(), point_node.get_point().point()), 
-                                             pm.unbounded_face());
+                                            //X_curve( cv_iter->get_rightmost_point().point(), point_node.get_point().point()), 
+                                            pm.unbounded_face(),
+                                            pm_change_notf);
             
             // the point is that if the curve has no source to start the insertion from, it has to be inserted to the unbounded face, because all the curves to the right of it have not inserted yet, and in that stage of the sweep line, the curve is on the unbounded face - later on it will be updated automatically by the Planar map (Arrangement) insert functions.
             
@@ -685,7 +694,7 @@ private:
         
         // now update the vertex handle of each point.
         //if (cv_iter->get_rightmost_point().vertex() == Vertex_handle(NULL))
-        {
+        if (!overlap || pm_change_notf) {
           if (h->source()->point() == cv_iter->get_rightmost_point().point())
             //cv_iter->set_vertex_of_rightmost_point(h->source());
             cv_iter->get_rightmost_point().set_vertex(h->source());
@@ -698,7 +707,7 @@ private:
         //assert(h->source()->point() == point_node.get_point().point() || (h->target()->point() == point_node.get_point().point()));
         
         //if (point_node.get_point().vertex() == Vertex_handle(NULL))
-        {
+        if (!overlap || pm_change_notf) {
           if (h->source()->point() == point_node.get_point().point())
             point_node.get_point().set_vertex(h->source());
           else if (h->target()->point() == point_node.get_point().point())
