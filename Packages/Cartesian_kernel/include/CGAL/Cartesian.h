@@ -36,7 +36,7 @@
 
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
-#include <CGAL/triple.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>
@@ -233,7 +233,7 @@ struct Cartesian
     typedef CGAL::Handle_for<CGAL::Threetuple<FT> >	Line_handle_2;
     typedef CGAL::Handle_for<CGAL::Twotuple<Point_2> >  Ray_handle_2;
     typedef CGAL::Handle_for<CGAL::Twotuple<Point_2> >  Segment_handle_2;
-    typedef CGAL::Handle_for<triple<Point_2, FT, Orientation> >
+    typedef CGAL::Handle_for<Triple<Point_2, FT, Orientation> >
 	                                                Circle_handle_2;
     typedef CGAL::Handle_for<CGAL::Threetuple<Point_2> >    Triangle_handle_2;
     typedef CGAL::Handle_for<CGAL::Twotuple<Point_2> >  Iso_rectangle_handle_2;
@@ -248,7 +248,7 @@ struct Cartesian
     typedef CGAL::Handle_for<CGAL::Fourtuple<FT> >	Plane_handle_3;
     typedef CGAL::Handle_for<CGAL::Twotuple<Point_3> >  Ray_handle_3;
     typedef CGAL::Handle_for<CGAL::Twotuple<Point_3> >  Segment_handle_3;
-    typedef CGAL::Handle_for<triple<Point_3, FT,Orientation> > Sphere_handle_3;
+    typedef CGAL::Handle_for<Triple<Point_3, FT,Orientation> > Sphere_handle_3;
     typedef CGAL::Handle_for<CGAL::Threetuple<Point_3> > Triangle_handle_3;
     typedef CGAL::Handle_for<CGAL::Fourtuple<Point_3> > Tetrahedron_handle_3;
     typedef CGAL::Handle_for<CGAL::Twotuple<Point_3> >  Iso_cuboid_handle_3;

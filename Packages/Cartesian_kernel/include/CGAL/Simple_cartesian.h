@@ -35,7 +35,7 @@
 #include <CGAL/Threetuple.h>
 #include <CGAL/Simple_Handle_for.h>
 #include <CGAL/Handle_for_virtual.h>
-#include <CGAL/triple.h>
+#include <CGAL/utility.h>
 
 #ifdef CGAL_CFG_NO_ADVANCED_KERNEL
   // Because we cannot use Michael's scheme, we need the wrapper classes
@@ -245,7 +245,7 @@ struct Simple_cartesian
                                                        	Ray_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> >
                                                       	Segment_handle_2;
-    typedef CGAL::Simple_Handle_for<triple<Point_2, FT, Orientation> >
+    typedef CGAL::Simple_Handle_for<Triple<Point_2, FT, Orientation> >
                                                       	Circle_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Threetuple<Point_2> >
                                                        	Triangle_handle_2;
@@ -268,7 +268,7 @@ struct Simple_cartesian
                                                   	Ray_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> >
                                                    	Segment_handle_3;
-    typedef CGAL::Simple_Handle_for<triple<Point_3, FT, Orientation> >
+    typedef CGAL::Simple_Handle_for<Triple<Point_3, FT, Orientation> >
                                                     	Sphere_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Threetuple<Point_3> >
                                                   	Triangle_handle_3;

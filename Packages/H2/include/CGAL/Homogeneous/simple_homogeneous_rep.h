@@ -27,7 +27,7 @@
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
 #include <CGAL/Fourtuple.h>
-#include <CGAL/triple.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/Quotient.h>
 
@@ -159,7 +159,7 @@ class Simple_homogeneous
     typedef CGAL::Simple_Handle_for< Threetuple<RT> > Direction_handle_2;
     typedef CGAL::Simple_Handle_for< Twotuple<Point_2> > Ray_handle_2;
     typedef CGAL::Simple_Handle_for< Threetuple<Point_2> > Triangle_handle_2;
-    typedef CGAL::Simple_Handle_for< triple<Point_2, FT, Orientation> >
+    typedef CGAL::Simple_Handle_for< Triple<Point_2, FT, Orientation> >
 	                                              Circle_handle_2;
     typedef CGAL::Simple_Handle_for< Twotuple<Point_2> >
 	                                              Iso_rectangle_handle_2;
@@ -176,7 +176,7 @@ class Simple_homogeneous
 	                                              Ray_handle_3;
     typedef CGAL::Simple_Handle_for<std::pair<Point_3, Direction_3> >
 	                                              Line_handle_3;
-    typedef CGAL::Simple_Handle_for< triple<Point_3, FT, Orientation> >
+    typedef CGAL::Simple_Handle_for< Triple<Point_3, FT, Orientation> >
 	                                              Sphere_handle_3;
     typedef CGAL::Simple_Handle_for< Fourtuple<Point_3> > Tetrahedron_handle_3;
     typedef CGAL::Simple_Handle_for< Twotuple<Point_3> > Segment_handle_3;
