@@ -1,149 +1,83 @@
+Polyhedron data structures based on the concept of halfedges have been
+very successful for the design of general algorithms on meshes.
+Common practice is to develop such data structure from scratch, since
+clearly a first implementation is at the level of a students homework
+assignment. But then, these data structures consist almost entirely of
+pointers for all sort of incidence informations. Maintaining them
+consistently during mesh operations is not anymore a trivial
+linked-list update operation. So, moving from a students exercise to a
+reliable research implementation, including maintaining and optimizing
+it, is a respectable software task.
 
-% halfedge data structure has proven successful.
+What is common practice for simple data structures, such as linked
+lists, should be common practice even more so for mesh data
+structures, namely, to use a good, flexible, and efficient library
+implementation. In \CC\, the \emph{Standard Template Library}, \stl,
+is an excellent address for our analog example of the linked
+lists~\cite{Austern:1999:GPS}, and we argue in the full tutorial that
+the Polyhedron data structure in \cgal\ is such a flexible mesh data
+structure~\cite{k-ugpdd-99}, and it comes with a rich and versatile
+infrastructure for mesh algorithms. \cgal, the 
+\emph{Computational Geometry Algorithms Library}, is a 
+\CC\ library available from \path|www.cgal.org|~\cite{fgkss-dccga-00}. 
 
-3D polygon surface mesh data structures based on the concept of
-halfedges~\cite{k-ugpdd-99} have been very successful for the design
-of general algorithms on meshes. (do we mention it is a standard
-building block used for research or industry-strength softwares? we
-need adding references if so).
-
-% focus on algorithms, not on data structures.
-
-Although making a preliminary version of a halfedge-based mesh data
-structure is as a fairly simple task and is often proposed as a
-programming exercice, the time has come where we should not write our
-own mesh data structure from scratch anymore. 
-
-I list a bunch of reasons here, and let you reduce/extend them.
-
-Not reinventing the wheel, hence learning how to integrate an existing
-tool makes a real added value. Implementing a mesh data structure from
-scratch makes a zero added value to your algorithms.
-
-Using a bug-free mesh data structure eases the implementation and
-helps focusing on the end-goal, i.e. the algorithms rather than
-debugging the underlying data structure.
-
-Using a robust and optimized data structure allows to obtain fast and
-robust results. The time has gone where toy examples were sufficient
-to illustrate research results (ref. repository of big models
-standardly used in graphics). The data structure must scale linearly
-with the mesh complexity.
-
-Choose a data structure that adopts the generic programming paradigm.
-Generic programming saves time and effort and allows the reuse of
-existing data structures and algorithms. (there are many other
-argument for generic programming that we should list here - long error
-messages are not for example).
-
-Your algorithms on meshes usually needs more than a mesh data
-structure, e.g. basic geometric entities such as points, vectors,
-planes and simple operations acting upon them (distance,
-intersections, orientation).
-
-What you need is a library, flexible enough to let you elaborate your
-own algorithm on meshes while reusing all basic geometric computing
-components.
-
-Choose one library that has emerged as a standard in a community.
-Such kind of libraries usually offer support and discussion lists
-(extremely helpful before siggraph deadlines).
-
-CGAL and the demo programs accompanying this tutorial offer a viable
-solution that we present here. (we have to compare us with the
-OpenMesh project within OpenSG).
-
-% intended audience
-
-The intended audience are researchers, developers or students in the
-graphics community developing algorithms around meshes.
-
-% the solution
-
-The solution contains a flexible, powerful and efficient mesh data
-structure, examples of algorithms on meshes, such as subdivision
-surfaces, (self-) intersection tests, estimation of curvatures,
-convenient file IO with Wavefront OBJ and OFF formats, an interactive
-visualization program for inspection, debugging, experimenting, and
-support for preparing pictures for publications.
-
-% teaser 
-
-\begin{figure}[htb]
-    \centering{\includegraphics[width=12.0cm]{figs/teaser}}
-    \caption{Demo application running on Windows. A polygon mesh is 
-             subdivided using the quad-triangle subdivision 
-             scheme~\cite{sl-qts-02}.}
-    \label{fig:teaser}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figs/teaser}
+  \caption{The polyhedron viewer running on Windows. A coarse polygon 
+    mesh is subdivided using the quad-triangle subdivision scheme.}
+  \label{fig:viewer}
 \end{figure}
 
+We strongly believe that such a tutorial with its wealth of
+information will give a head start to new researches and implementations
+of mesh algorithms. We also believe that it will raise the quality of
+implementations. Firstly, it encourages the use of well tested and
+over time matured implementations, e.g., \cgalpoly\ in its current
+design is about five years publicly released and used. Secondly, it
+documents good implementation choices, e.g., the example programs can
+be used as starting points for evolutionary software development.
+Thirdly, it offers easy access to additional functionality, such as
+the efficient self intersection test, that otherwise could be
+expandable in a research prototype.
 
+The tutorial is organized around subdivision surfaces in a 
+polyhedron viewer. The polyhedron viewer
+(\figurename\ \ref{fig:viewer}) demonstrates the basic functionalities of
+the \cgalpoly\ and some extended functionalities such as file I/O,
+mesh superimposition, and trackball manipulation. Several subdivision
+surfaces are supported in the polyhedron viewer, including
+Catmull-Clark, Loop, Doo-Sabin, $\sqrt{3}$ and Quad-Triangle
+subdivisions.  The tutorial shows how to implement subdivision
+surfaces in two different mechanisms provided by \cgalpoly :
+\emph{Euler operators} and \emph{modifier callback mechanism}.  A
+$\sqrt{3}$ subdivision implementation is designed based on the Euler
+operators and a Quad-Triangle subdivision implementation is designed
+based on overloading the modifier.  Extended from the previous design,
+a \emph{combinatorial subdivision library} (CSL) is then proposed with
+increased sophistication and abstraction. CSL abstracts the geometry
+operations from the refinements. Subdivisions in CSL are build from
+refinement host with a template geometry policy. Several fundamental
+refinement schemes are provided within CSL. They are instantiated with a
+geometry policy that can be user defined.
 
-% open
+The goal of this tutorial is to show how to use \cgalpoly\ 
+on basic graphics functionalities, such as rendering and 
+interactive trackball manipulation, \emph{and} how to design and 
+implement algorithms around meshes. Since connectivity and 
+geometry operations are the primal implementation components
+in mesh algorithms, subdivisions are chosen to
+demonstrate both operations on \cgalpoly . 
+Hence, readers intended to design and implement 
+mesh algorithms other than subdivisions will also be 
+benefited from the tutorial.
 
-Open source and contributions are welcome. 
+% ------------------------------------------------------------------------
+\subsection{Intended Audience}
 
-
-
-% remainder
-
-Section 2 describes how to declare a polyhedron, read a polygon mesh
-from a file, and iterate over all facets for rendering. Example is
-shown to enrich a polyhedron with extended primitives (normals,
-colors, curvature tensors).
-
-Section 3 illustrates how to write subdivision algorithms for meshes
-(since they act on both connectivity and geometry, it is perfect for
-our training purpose). Three approaches are shown. First one is sqrt3
-subdivision using Euler operators. Second one uses the incremental
-builder (originally designed for file IO) with a control mesh as
-input. Third one offers a generic design for writing subdivision
-algorithms.
-
-
-
-% Andy
-
-%program 1: rendering and file io of a default polyhedron 
-%   context: a skeleton of a polyhedron program: declaration,
-%initialization (inc. builder) and the rendering (iteration on facet and
-%circulation of the factes)
-
-%program 2: enriched polyhedron in program 1
-%   context: extend a polyhedron: trait, item. hds? Use of the extended
-%primitives.
-
-%program 3: subdivision 1 (sqrt3)
-%   context: refinement operators. Halfedge trversal (prev(), etc...) and
-%circulators. Effect of connectivity edit on iterator and circulator.
-%Maintain the correspondence after refinement.
-
-%program 4: subdivision 2 (qt)
-%   context: inc builder revisited.
-
-%program 5: subdivisions (templated rules)
-%   context: a generic design of subdivisions.
-
-%program 2 is based on program 1 and program 3, 4, 5 are separate library
-%functions called by program 2.
-
-%The tutorial will walk though the programs. And a possible structure is
-%sect 1: intro
-%sect 2: program 1 & 2
-%sect 3: program 3 & 4 & 5
-%sect 4: conclusion 
-        
-
-
-
-
-
-
-
-% introduction to cgal
-
-%The CGAL library is a joint effort between nine European
-%institutes~\cite{fgkss-dccga-00}. The goal of CGAL is to make
-%available to users in industry and academia some efficient solutions
-%to basic geometric problems developed in the area of computational
-%geometry in a C++ software library.\\
+The intended audience of the tutorial are researchers, developers or
+students developing algorithms around polyhedron meshes. Knowledge of 
+the halfedge data structure and subdivisions are prerequisites. 
+Short introductions of these two topics are given in the tutorial.
+The tutorial assumes familiarity with the \CC\ template mechanism 
+and the key concepts of generic programming~\cite{Austern:1999:GPS}. 

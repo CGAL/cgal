@@ -1,25 +1,25 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}
 \BOOKMARK [1][-]{section.3}{Prerequisites}{}
 \BOOKMARK [1][-]{section.4}{Polyhedron Data Structure: Fundamentals}{}
-\BOOKMARK [2][-]{subsection.7}{Halfedge data structure}{section.4}
-\BOOKMARK [2][-]{subsection.28}{Polyhedron Data Structure}{section.4}
-\BOOKMARK [3][-]{subsubsection.34}{Declaration}{subsection.28}
-\BOOKMARK [3][-]{subsubsection.77}{Specialized Polyhedron}{subsection.28}
-\BOOKMARK [3][-]{subsubsection.78}{Polyhedron traversal}{subsection.28}
-\BOOKMARK [2][-]{subsection.121}{Polyhedron Editing}{section.4}
-\BOOKMARK [3][-]{subsubsection.122}{Combinatorial Modification}{subsection.121}
-\BOOKMARK [3][-]{subsubsection.144}{Modifier and Polyhedron Incremental Builder}{subsection.121}
-\BOOKMARK [3][-]{subsubsection.206}{Polyhedron Initialization}{subsection.121}
-\BOOKMARK [2][-]{subsection.208}{Advance Polyhedron Editing}{section.4}
-\BOOKMARK [3][-]{subsubsection.209}{3 Refinement}{subsection.208}
-\BOOKMARK [3][-]{subsubsection.210}{PTQ and PQQ Refinements}{subsection.208}
-\BOOKMARK [3][-]{subsubsection.211}{DQQ Refinement}{subsection.208}
-\BOOKMARK [1][-]{section.212}{Polyhedron Data Structure: Rendering and Manipulation}{}
-\BOOKMARK [2][-]{subsection.213}{Rendering}{section.212}
-\BOOKMARK [2][-]{subsection.214}{Manipulation}{section.212}
-\BOOKMARK [1][-]{section.215}{Design and Implemenation of Subdivisions}{}
-\BOOKMARK [2][-]{subsection.216}{Subdivision Surfaces}{section.215}
-\BOOKMARK [2][-]{subsection.219}{3-Subdivision using Euler Operators}{section.215}
-\BOOKMARK [2][-]{subsection.220}{Quad-triangle Subdivision using Incremental Builder}{section.215}
-\BOOKMARK [2][-]{subsection.221}{Subdivision using a rule template}{section.215}
-\BOOKMARK [1][-]{section.222}{Application demo}{}
+\BOOKMARK [2][-]{subsection.5}{Halfedge data structure}{section.4}
+\BOOKMARK [2][-]{subsection.8}{Polyhedron Data Structure}{section.4}
+\BOOKMARK [3][-]{subsubsection.9}{Declaration}{subsection.8}
+\BOOKMARK [3][-]{subsubsection.38}{Specialized Polyhedron}{subsection.8}
+\BOOKMARK [3][-]{subsubsection.39}{Polyhedron traversal}{subsection.8}
+\BOOKMARK [2][-]{subsection.77}{Polyhedron Editing}{section.4}
+\BOOKMARK [3][-]{subsubsection.78}{Combinatorial Modification}{subsection.77}
+\BOOKMARK [3][-]{subsubsection.99}{Modifier and Polyhedron Incremental Builder}{subsection.77}
+\BOOKMARK [3][-]{subsubsection.156}{Polyhedron Initialization}{subsection.77}
+\BOOKMARK [2][-]{subsection.157}{Advance Polyhedron Editing}{section.4}
+\BOOKMARK [3][-]{subsubsection.158}{3 Refinement}{subsection.157}
+\BOOKMARK [3][-]{subsubsection.159}{PTQ and PQQ Refinements}{subsection.157}
+\BOOKMARK [3][-]{subsubsection.160}{DQQ Refinement}{subsection.157}
+\BOOKMARK [1][-]{section.161}{Polyhedron Data Structure: Rendering and Manipulation}{}
+\BOOKMARK [2][-]{subsection.162}{Rendering}{section.161}
+\BOOKMARK [2][-]{subsection.163}{Manipulation}{section.161}
+\BOOKMARK [1][-]{section.164}{Design and Implemenation of Subdivisions}{}
+\BOOKMARK [2][-]{subsection.165}{Subdivision Surfaces}{section.164}
+\BOOKMARK [2][-]{subsection.168}{3-Subdivision using Euler Operators}{section.164}
+\BOOKMARK [2][-]{subsection.169}{Quad-triangle Subdivision using Incremental Builder}{section.164}
+\BOOKMARK [2][-]{subsection.170}{Subdivision using a rule template}{section.164}
+\BOOKMARK [1][-]{section.171}{Application demo}{}
