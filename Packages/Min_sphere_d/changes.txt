@@ -1,3 +1,6 @@
+23 June 2004 Sylvain Pion
+- Don't use deprecated <strstream> header.
+
 18 Feb 2004 Sylvain Pion
 - Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION workarounds.
 

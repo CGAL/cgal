@@ -39,7 +39,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
-#include <strstream>
+#include <sstream>
 #include <cassert>
 #include <CGAL/Optimisation_d_traits_d.h>
 #include <CGAL/Min_sphere_d.h>
@@ -242,11 +242,11 @@ int main ()
     int size = 100*n;
     char* buffer = new char[size];  // suffices to store the sphere
     
-    std::ostrstream ost (buffer, size);  // output string
+    std::ostringstream ost;           // output string
     set_ascii_mode (ost);
     ost << msC << msH << std::endl;      // write spheres
     
-    std::istrstream ist (buffer, size);  // input string
+    std::istringstream ist (ost.str().c_str());  // input string
     set_ascii_mode (ist);
     ist >> msC >> msH;              // read spheres
     
@@ -263,8 +263,12 @@ int main ()
 }
 
 #else
+
+#include <iostream>
+
 int main ()
 {
+  std::cerr << " NOT TESTED BECAUSE NEEDS LEDA " << std::endl;
   return 0;
 }
 #endif
