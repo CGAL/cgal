@@ -264,37 +264,27 @@ Triangulation_face_base_2<Gt> ::
 reorient()
 {
   //exchange the vertices 0 and 1
-  void* vtemp = V[0];
-  void* ftemp = N[0];
-  set_vertex(0, V[1]) ; set_vertex(1,vtemp);
-  set_neighbor(0, N[1]);set_neighbor(1,ftemp);
+  set_vertices (V[1],V[0],V[2]);
+  set_neighbors(N[1],N[0],N[2]);
 }
 
 template <class Gt>
-void 
+inline void 
 Triangulation_face_base_2<Gt> ::
 ccw_permute()
 {
-  // permutation 0->1->2->0
-  void* vtemp = V[0];
-  void* ftemp = N[0];
-  set_vertex(0, V[2]); set_neighbor(0, N[2]);
-  set_vertex(2, V[1]); set_neighbor(2, N[1]);
-  set_vertex(1, vtemp); set_neighbor(1, ftemp);
+  set_vertices (V[2],V[0],V[1]);
+  set_neighbors(N[2],N[0],N[1]);
 }
 
 
 template <class Gt>
-void 
+inline void 
 Triangulation_face_base_2<Gt> ::
 cw_permute()
 {
-  // permutation 0->2->1->0
-  void* vtemp = V[0];
-  void* ftemp = N[0];
-  set_vertex(0, V[1]); set_neighbor(0, N[1]);
-  set_vertex(1, V[2]); set_neighbor(1, N[2]);
-  set_vertex(2, vtemp); set_neighbor(2, ftemp);
+  set_vertices (V[1],V[2],V[0]);
+  set_neighbors(N[1],N[2],N[0]);
 }
 
 

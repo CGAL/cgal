@@ -107,9 +107,15 @@ public:
   int number_of_full_dim_faces() const; //number of faces stored by tds
   const Geom_traits& geom_traits() const {return _geom_traits;}
 
+  // TEST FEATURES
+  bool is_vertex(const Vertex* v) const;
+  bool is_edge(const Vertex* v1, const Vertex* v2);
+  bool is_edge(const Vertex* v1, const Vertex* v2, Face* &fr,  int &i);
+  //bool is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3) const;
+  //bool is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3,
+  //     Face* &fr) const;
 
-public:
-  // ITERATOR METHODS
+  // ITERATORS AND CIRCULATORS
   Iterator_base iterator_base_begin() const;
   Iterator_base iterator_base_end() const;
   Face_iterator faces_begin() const;
@@ -118,6 +124,10 @@ public:
   Vertex_iterator vertices_end() const;
   Edge_iterator edges_begin() const;
   Edge_iterator edges_end() const;
+
+  //Face_circulator incident_faces(Vertex* v, Face* f = NULL) const;
+  //Vertex_circulator incident_vertices(Vertex* v, Face* f = NULL) const;
+  //Edge_circulator incident_edges(Vertex* v, Face* f = NULL) const;
 
   // MODIFY
   void flip(Face* f, int i);
@@ -143,12 +153,6 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
   
   // HELPING
-  bool has_vertex(const Vertex* v) const;
-  //bool has_edge(const Vertex* v1, const Vertex* v2) const;
-  //bool has_face(const Vertex* v1, const Vertex* v2, const Vertex* v3) const;
-  //Edge has_edge(const Vertex* v1, const Vertex* v2) const;
-  //Face* has_face(const Vertex* v1, const Vertex* v2, const Vertex* v3) const;
-
   void copy_tds(const Tds &tds);
   Vertex* copy_tds(const Tds &tds, const Vertex*);
 
@@ -237,6 +241,59 @@ number_of_full_dim_faces() const
   default: return 0;
   }
 }
+
+template < class Gt , class Vb, class Fb>
+bool
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+is_vertex(const Vertex* v) const
+{
+  if (v == infinite_vertex()) return true; //short cut for frequent  case
+  if (number_of_vertices() == 0) return false;
+  for (Vertex_iterator vit = vertices_begin();
+                       vit != vertices_end(); ++vit) {
+   if ( v == &(*vit)) return true;
+  }
+  return false;
+}
+
+template <class Gt , class Vb, class Fb>
+bool
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+is_edge(const Vertex* va, const Vertex* vb)
+// returns true (false) if the line segment ab is (is not) an edge of t
+{
+  Vertex_circulator vc= va->incident_vertices(), done(vc);
+  if ( vc == 0) return false;
+  do {
+    if( vb == &(*vc) ) {return true;} 
+  } while (++vc != done);
+  return false;
+}
+ 
+
+template <class Gt , class Vb, class Fb>
+bool
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+is_edge(const Vertex* va, const Vertex* vb, Face* &fr,  int & i)
+// returns true (false) if the line segment ab is (is not) an edge of t
+// (fr,i) is the edge ab
+  // with face fr on the right of a->b
+{
+  Face* fc=va->face(), start(fc);
+  if (fc == NULL) return false;
+  int inda;
+  do {
+    inda=fc->index(va);
+    i=ccw(inda);
+    if(fc->vertex(cw(inda))==vb) {
+      fr=fc;
+      return true;
+    }
+    fc=fc->neighbor(i); //turns ccw around va
+  } while (fc != start);
+  return false;
+}
+
 
 template <class Gt , class Vb, class Fb>
 inline
@@ -872,28 +929,13 @@ is_valid(bool verbose, int level) const
 // 	return;
 //     }
 
-template < class Gt , class Vb, class Fb>
-bool
-Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-has_vertex(const Vertex* v) const
-{
-  if (v == infinite_vertex()) return true; //short cut for frequent  case
-  if (number_of_vertices() == 0) return false;
-  for (Vertex_iterator vit = vertices_begin();
-                       vit != vertices_end(); ++vit) {
-   if ( v == &(*vit)) return true;
-  }
-  return false;
-}
-
-
 
 template < class Gt , class Vb, class Fb>
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
 copy_tds(const Tds &tds, const Vertex* v)
 {
-  CGAL_triangulation_precondition( tds.has_vertex(v));
+  CGAL_triangulation_precondition( tds.is_vertex(v));
   _number_of_vertices = tds.number_of_vertices();
   _geom_traits = tds.geom_traits();
   //the class Geom_traits is required to have a pertinent operator=

@@ -72,9 +72,12 @@ public:
     set_constraints(c0,c1,c2);
   }
 
+  bool is_constrained(int i) const ;
   void set_constraints(bool c0, bool c1, bool c2) ;
   void set_constraint(int i, bool b);
-  bool is_constrained(int i) const ;
+  void reorient();
+  void ccw_permute();
+  void cw_permute();
   bool is_valid(bool verbose = false, int level = 0) const;
   
 };
@@ -104,6 +107,33 @@ Constrained_triangulation_face_base_2<Gt>::
 is_constrained(int i) const
 {
   return(C[i]);
+}
+
+template <class Gt>
+inline void
+Constrained_triangulation_face_base_2<Gt>::
+reorient()
+{
+  Fab::reorient();
+  set_constraints(C[1],C[0],C[2]);
+}
+
+template <class Gt>
+inline void
+Constrained_triangulation_face_base_2<Gt>::
+ccw_permute()
+{
+  Fab::ccw_permute();
+  set_constraints(C[2],C[0],C[1]);
+}
+
+template <class Gt>
+inline void
+Constrained_triangulation_face_base_2<Gt>::
+cw_permute()
+{
+  Fab::ccw_permute();
+  set_constraints(C[1],C[2],C[0]);
 }
   
 template <class Gt>

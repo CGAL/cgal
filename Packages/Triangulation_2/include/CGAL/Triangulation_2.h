@@ -144,14 +144,18 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
  
 
-  // TEST INFINITE FEATURES
+  // TEST INFINITE FEATURES AND OTHER FEATURES
   bool is_infinite(const Face_handle& f) const;
   bool is_infinite(const Vertex_handle& v) const; 
   bool is_infinite(const Face_handle& f, int i) const;
   bool is_infinite(const Edge& e) const;
   bool is_infinite(const Edge_circulator& ec) const;
   bool is_infinite(const All_edges_iterator& ei) const;
- 
+  bool is_edge(Vertex_handle va, Vertex_handle vb);
+  bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr,
+	       int & i);
+  bool includes_edge(Vertex_handle va, Vertex_handle & vb,
+		     Face_handle& fr, int & i);
 
  // GEOMETRIC FEATURES
   Triangle triangle(const Face_handle& f) const;
@@ -513,6 +517,73 @@ is_infinite(const All_edges_iterator& ei) const
 {
   return is_infinite(*ei);
 }
+
+template <class Gt, class Tds >
+inline bool
+Triangulation_2<Gt, Tds>::
+is_edge(Vertex_handle va, Vertex_handle vb)
+{
+  return _tds.is_edge( &(*(va)), &(*(vb)));
+}
+
+template <class Gt, class Tds >
+inline bool
+Triangulation_2<Gt, Tds>::
+is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i)
+{
+  Face* f ;
+  bool b = _tds.is_edge( &(*(va)), &(*(vb)), f, i);
+  fr = Face_handle(f);
+  return b;
+}
+
+template <class Gt, class Tds >
+bool 
+Triangulation_2<Gt, Tds>::
+includes_edge(Vertex_handle va, Vertex_handle & vb,
+	      Face_handle& fr, int & i)
+  // returns true if the line segment ab contains an edge e of t 
+  // incident to a, false otherwise
+  // if true, b becomes the vertex of e distinct from a
+  // fr is the face incident to e and e=(fr,i)
+  // fr is on the right side of a->b
+{
+  Vertex_handle v;
+  Orientation orient;
+  int indv;
+  Edge_circulator ec = va->incident_edges(), done(ec);
+  if (va != 0) {
+    do { 
+      //find the index of the other vertex of *ec
+      indv = 3 - ((*ec).first)->index(va) - (*ec).second ; 
+      v = ((*ec).first)->vertex(indv);
+      if (!is_infinite(v)) {
+	if (v==vb) {
+	  fr=(*ec).first;
+	  i= (*ec).second;
+	  return true;
+	}
+	else {
+	  orient = geom_traits().orientation(va->point(),
+					     vb->point(),
+					     v->point()); 
+	  if((orient==COLLINEAR) && 
+	     (are_ordered_along_line (va->point(),
+				      v->point(),
+				      vb->point()))) {
+	    vb=v;
+	    fr=(*ec).first;
+	    i= (*ec).second;
+	    return true;
+	  }
+	}
+      }
+    }	while (++ec != done);
+  }
+  return false;
+}
+
+
 
 template <class Gt, class Tds >
 Triangulation_2<Gt, Tds>::Triangle
