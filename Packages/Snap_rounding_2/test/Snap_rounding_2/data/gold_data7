@@ -1,9 +1,4 @@
-input segments (not const iterator)
-2/10 7/10 11/10 38/10
-1/10 48/10 17/10 41/10
-99/100 799/100 499/100 99/100
-
-input segments (const iterator)
+input segments
 2/10 7/10 11/10 38/10
 1/10 48/10 17/10 41/10
 99/100 799/100 499/100 99/100

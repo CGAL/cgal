@@ -90,17 +90,11 @@ int main(int argc,char *argv[])
 
   Snap_rounding_2 s1(seg_list.begin(),seg_list.end(),prec,true,false,3);
 
-  std::cout << "input segments (not const iterator)\n";
-  for(Segment_iterator i1 = s1.segments_begin();
-      i1 != s1.segments_end();
+  std::cout << "input segments\n";
+  for(std::list<Segment_2>::iterator i1 = seg_list.begin();
+      i1 != seg_list.end();
       ++i1)
     std::cout << *i1 << std::endl;
-
-  std::cout << "\ninput segments (const iterator)\n";
-  for(Segment_const_iterator i2 = s1.segments_begin();
-      i2 != s1.segments_end();
-      ++i2)
-    std::cout << *i2 << std::endl;
 
   std::cout << "\nthe output\n";
   print_out(s1);

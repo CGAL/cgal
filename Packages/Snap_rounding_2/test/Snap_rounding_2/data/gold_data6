@@ -1,8 +1,4 @@
-input segments (not const iterator)
-0/1 0/1 2/1 2/1
-2/1 0/1 0/1 2/1
-
-input segments (const iterator)
+input segments
 0/1 0/1 2/1 2/1
 2/1 0/1 0/1 2/1
 

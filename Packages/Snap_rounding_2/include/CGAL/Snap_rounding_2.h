@@ -177,20 +177,6 @@ public:
                   bool inp_int_output = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
 
-   //! Returns a constant iterator to the first input segment.
-  inline Segment_const_iterator segments_begin() const {
-             return(seg_2_list.begin());}
-
-  //! Returns a constant iterator to the after-the-last of the input segments.
-  inline Segment_const_iterator segments_end() const {
-    return(seg_2_list.end());}
-
-  //! Returns an iterator to the first input segment.
-  inline Segment_iterator segments_begin() {return(seg_2_list.begin());}
-
-  //! Returns an iterator to the after-the-last of the input segments.
-  inline Segment_iterator segments_end() {return(seg_2_list.end());}
-
   //! Returns a constant iterator to the output of the first input segment.
   const Polyline_const_iterator polylines_begin();
 
