@@ -1,3 +1,8 @@
+- removed test_svd2.C from the test directory
+- add hierarchy specific tests in the hierarchy test suite
+- make sure that the assignment operator and copy constructor for the
+  segment Voronoi diagram hierarchy class do not have any bugs
+- in predicates/Svd_arrangement_type_C2.h put all functions inside the class
 - update doc of storage site: add the methods source_site() and target_site()
 - add a method insert_point_no_search in the segment Voronoi diagram class
   that inserts a point without searching for the nearest neighbor;
@@ -9,7 +14,9 @@
 - remove the site set_* methods from the spec
 - use the input sites container as the container where point handles
   are gotten from
-- remove the STORE_INPUT_SITES macro
+- remove the STORE_INPUT_SITES macro; use the input point container as
+  the container for the point handles (this means that the input point
+  container must be a list)
 - the insert_point_on_segment method in the Segment_Voronoi_diagram_2
   class has a bug: it does not handle the case where ff1 or ff2 are
   infinite faces.
