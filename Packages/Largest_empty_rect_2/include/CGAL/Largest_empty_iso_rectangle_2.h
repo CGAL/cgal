@@ -612,6 +612,7 @@ Largest_empty_iso_rectangle_2<T>::remove(const Point& _p)
   Point_data *po = new Point_data(_p);
   typename Point_data_set_of_x::iterator iter1 = x_sorted.find(po);
   typename Point_data_set_of_y::iterator iter2 = y_sorted.find(po);
+  delete(po);
 
   // point does not exist or a corner point
   if(iter1 == x_sorted.end() || (*iter1)->type != REG)
