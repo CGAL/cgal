@@ -186,7 +186,7 @@ protected:
     widget->setFocusPolicy(oldpolicy);
     widget->redraw();
   };
-  void leaveEvent(QEvent *e)
+  void leaveEvent(QEvent *)
   {
     if (active)
     {

@@ -33,7 +33,7 @@ public:
     //Draw the MINIMUM PARALLELOGRAM
     widget->lock();
       Polygon pts;
-      typedef std::list<Point>::const_iterator Listconstiter;
+      typedef typename std::list<Point>::const_iterator Listconstiter;
       for (Listconstiter i = (*list_of_points).begin(); i != (*list_of_points).end(); ++i)
         pts.push_back(Point(i->x(), i->y()));
       Polygon p;
@@ -78,7 +78,7 @@ public:
     //DRAW the Line Strips
     widget->lock();
       Polygon pts;
-      typedef std::list<Point>::const_iterator Listconstiter;
+      typedef typename std::list<Point>::const_iterator Listconstiter;
       for (Listconstiter i = (*list_of_points).begin(); i != (*list_of_points).end(); ++i)
         pts.push_back(Point(i->x(), i->y()));
       Polygon p;
@@ -90,7 +90,8 @@ public:
 	CGAL::min_strip_2(
 	  p.vertices_begin(), p.vertices_end(), std::back_inserter(ll));
       *widget << CGAL::GREEN;
-      for (std::vector<Line>::iterator it = ll.begin(); it != ll.end(); ++it)
+      for (typename std::vector<Line>::iterator it = ll.begin();
+	   it != ll.end(); ++it)
 	*widget << (*it);	    
     widget->unlock();
 
@@ -121,7 +122,7 @@ public:
     //Draw the MINIMUM RECTANGLE
     widget->lock();
       Polygon pts;
-      typedef std::list<Point>::const_iterator Listconstiter;
+      typedef typename std::list<Point>::const_iterator Listconstiter;
       for (Listconstiter i = (*list_of_points).begin(); i != (*list_of_points).end(); ++i)
         pts.push_back(Point(i->x(), i->y()));
       Polygon p;
@@ -161,7 +162,7 @@ public:
     widget->lock();
       *widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
       *widget << CGAL::GREEN;
-      std::list<Point>::iterator itp = (*list_of_points).begin();
+      typename std::list<Point>::iterator itp = (*list_of_points).begin();
       while(itp!=(*list_of_points).end())
       {
 	*widget << (*itp++);

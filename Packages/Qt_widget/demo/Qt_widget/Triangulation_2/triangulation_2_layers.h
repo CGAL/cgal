@@ -123,7 +123,7 @@ public:
     oldPoint = v->point();
     first_time = FALSE;
   };
-  void leaveEvent(QEvent *e)
+  void leaveEvent(QEvent *)
   {
     widget->lock();
     RasterOp old = widget->rasterOp();	//save the initial raster mode
@@ -196,7 +196,7 @@ public:
       first_time = true;
     }
   };
-  void leaveEvent(QEvent *e)
+  void leaveEvent(QEvent *)
   {
     widget->lock();
     RasterOp old = widget->rasterOp();	//save the initial raster mode

@@ -83,7 +83,7 @@ private:
     }
   }
 
-  void leaveEvent(QEvent *e)
+  void leaveEvent(QEvent *)
   {
     if(firstpoint)
     {

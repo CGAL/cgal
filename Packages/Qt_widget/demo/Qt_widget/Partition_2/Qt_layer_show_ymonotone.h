@@ -48,7 +48,7 @@ public:
                                 polygon.vertices_end(),
                                 std::back_inserter(ymonotone));
 
-    std::list<T>::const_iterator p_it;
+    typename std::list<T>::const_iterator p_it;
     for(p_it = ymonotone.begin(); p_it != ymonotone.end(); p_it++)
     {
       *widget << CGAL::RED; 

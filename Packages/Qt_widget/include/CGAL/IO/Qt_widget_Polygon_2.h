@@ -30,7 +30,7 @@ namespace CGAL{
 template <class Tr,class Co>
 Qt_widget& operator<<(Qt_widget& w, const Polygon_2<Tr,Co>& pol)
 {
-  typedef Polygon_2<Tr,Co>::Vertex_const_iterator VI;
+  typedef typename Polygon_2<Tr,Co>::Vertex_const_iterator VI;
   QPointArray array;
 
   array.resize(pol.size());

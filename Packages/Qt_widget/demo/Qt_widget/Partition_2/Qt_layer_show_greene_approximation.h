@@ -54,7 +54,7 @@ public:
 		std::back_inserter(greene_approx_polys),
 		partition_traits);
     
-    std::list<T>::const_iterator p_it;
+    typename std::list<T>::const_iterator p_it;
     for(p_it = greene_approx_polys.begin(); 
 		p_it != greene_approx_polys.end(); p_it++)
     {

@@ -50,7 +50,7 @@ public:
                            std::back_inserter(optimal_convex),
                                             partition_traits);    
     
-    std::list<T>::const_iterator p_it;
+    typename std::list<T>::const_iterator p_it;
     for(p_it = optimal_convex.begin(); p_it != optimal_convex.end(); p_it++)
     {
       *widget << CGAL::YELLOW; 

@@ -190,7 +190,7 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
         l.push_back(D.point(D.target(fcirc)));
       }
       QPointArray array(l.size());int i=0;
-      std::list<Point>::const_iterator it = l.begin();
+      typename std::list<Point>::const_iterator it = l.begin();
       while(it!=l.end()){
         array.setPoint(i++, ws.x_pixel(to_double((*it).x())),
 		      ws.y_pixel(to_double((*it).y())));
