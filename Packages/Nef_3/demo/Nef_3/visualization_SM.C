@@ -17,7 +17,6 @@ typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron_3;
 typedef Nef_polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
 typedef Nef_polyhedron_3::Nef_polyhedron_S2 Nef_polyhedron_S2;
 
-
 int main(int argc, char* argv[]) {
   Nef_polyhedron_3 N;
   std::cin >> N;
