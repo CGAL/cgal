@@ -1,9 +1,9 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
+3.9 (20 Jun 2001)
 
      - Changes in the doc incorporating Andreas comments.
      - Fixed inclusion of old design examples in the deprecated manual.
-     - Deleted two old design examples that are identical with the new.
      - Fixed warnings in the test suite.
      - Added PolyhedronTraits_3 concept doc.
 
