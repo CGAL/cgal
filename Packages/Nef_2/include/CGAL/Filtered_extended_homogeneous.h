@@ -726,9 +726,9 @@ Extended_point<RT> intersection(
   #ifdef REDUCE_INTERSECTION_POINTS
   RT xgcd,ygcd;
   if ( x.m() == RT(0) )  xgcd = ( x.n() == 0 ? RT(1) : x.n() ); 
-  else /* != 0 */    xgcd = ( x.n() == 0 ? x.m() : CGAL_NTS gcd(x.m(),x.n()) ); 
+  else /* != 0 */    xgcd = ( x.n() == 0 ? x.m() : CGAL_NTS gcd(x.m(),x.n()) );
   if ( y.m() == RT(0) )  ygcd = ( y.n() == 0 ? RT(1) : y.n() ); 
-  else /* != 0 */    ygcd = ( y.n() == 0 ? y.m() : CGAL_NTS gcd(y.m(),y.n()) ); 
+  else /* != 0 */    ygcd = ( y.n() == 0 ? y.m() : CGAL_NTS gcd(y.m(),y.n()) );
   RT d = CGAL_NTS gcd(w,CGAL_NTS gcd(xgcd,ygcd));
   x /= d;
   y /= d;
