@@ -9,14 +9,11 @@ Alpha shape.
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/algorithm.h>
-#include <cstdio>
-#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <list>
 
-#include <CGAL/Alpha_shape_euclidean_traits_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
@@ -27,16 +24,12 @@ typedef CGAL::Filtered_kernel<SC> K;
 
 typedef K::Point_2  Point;
 typedef K::Segment_2  Segment;
-typedef K::Ray_2  Ray;
-typedef K::Line_2  Line;
-typedef K::Triangle_2  Triangle;
 
-typedef CGAL::Alpha_shape_euclidean_traits_2<K> Gt;
 
-typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
-typedef CGAL::Alpha_shape_face_base_2<Gt>  Fb;
+typedef CGAL::Alpha_shape_vertex_base_2<K> Vb;
+typedef CGAL::Alpha_shape_face_base_2<K>  Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Triangulation_2;
+typedef CGAL::Delaunay_triangulation_2<K,Tds> Triangulation_2;
 
 typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape_2;
 

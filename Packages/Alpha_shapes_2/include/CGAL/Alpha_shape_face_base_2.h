@@ -33,7 +33,7 @@ public:
   typedef typename TDS::Vertex_handle        Vertex_handle;
   typedef typename TDS::Face_handle          Face_handle;
 
-  typedef typename Gt::Coord_type                    Coord_type;
+  typedef typename Gt::FT                    Coord_type;
   typedef Triple<Coord_type, Coord_type, Coord_type> Interval_3;
 
   template < typename TDS2 >

@@ -78,11 +78,11 @@ the inherited functions. At the moment, only the static version is implemented.
 it has to derive from a  triangulation traits class.  
 For example \ccc{Dt::Point} is a Point class. 
 
-\ccTypedef{typedef Gt::Coord_type Coord_type;}{the number type for computation.}
+\ccTypedef{typedef Gt::FT FT;}{the number type for computation.}
 
 \ccNestedType{Alpha_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 the increasing sequence of different $\alpha$-values.
-\ccPrecond Its \ccc{value_type} is \ccc{Coord_type}}
+\ccPrecond Its \ccc{value_type} is \ccc{FT}}
 
 \ccNestedType{Alpha_shape_vertices_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 the vertices which belongs to the $\alpha$-shape for the current $\alpha$. 
@@ -111,7 +111,7 @@ and their vertices.}
 \ccCreation
 \ccCreationVariable{A}
 
-\ccConstructor{Alpha_shape_2(Coord_type alpha = 0,
+\ccConstructor{Alpha_shape_2(FT alpha = 0,
 				  Mode m = GENERAL);}
 {Introduces an empty $\alpha$-shape \ccVar\ for a positive $\alpha$-value
  \ccc{alpha}.
@@ -122,7 +122,7 @@ and their vertices.}
 		Alpha_shape_2(
 			InputIterator first,
 			InputIterator last,
-                const Coord_type& alpha = 0,
+                const FT& alpha = 0,
 	        Mode m = GENERAL);}
 {Initializes the family of alpha-shapes with the points in the range
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ and 
@@ -150,17 +150,17 @@ before initialization.
 	clear();}
 {Clears the structure.}
 
-\ccMethod{Coord_type
-	set_alpha(const Coord_type& alpha);}
+\ccMethod{FT
+	set_alpha(const FT& alpha);}
 {Sets the $\alpha$-value to \ccc{alpha}.
  Returns the previous $\alpha$-value.
 \ccPrecond \ccc{alpha} $\geq 0$.}
 
-\ccMethod{const Coord_type&
+\ccMethod{const FT&
 	get_alpha(void) const;}
 {Returns the current $\alpha$-value.}
 
-\ccMethod{const Coord_type&  get_nth_alpha(int n) const;}
+\ccMethod{const FT&  get_nth_alpha(int n) const;}
 {Returns the $n$-th alpha-value, sorted in an increasing order.
  \ccPrecond \ccc{n} $<$ number of alphas.}
 
@@ -226,26 +226,26 @@ an interior face of the $\alpha$-shape.}
 
 \ccMethod{Classification_type
            classify(const Point& p, 
-	const Coord_type& alpha = get_alpha()) const;}
+	const FT& alpha = get_alpha()) const;}
 {Locates a point  \ccc{p} in the underlying triangulation and Classifies the 
 associated k-face with respect to \ccVar.}
 
 \ccMethod{Classification_type
-           classify(Face_handle f, const Coord_type& alpha = get_alpha()) const;}
+           classify(Face_handle f, const FT& alpha = get_alpha()) const;}
 {Classifies the face \ccc{f} of the underlying triangulation with respect to \ccVar.}
 
 \ccMethod{Classification_type
-           classify(Edge e, const Coord_type& alpha = get_alpha()) const;}
+           classify(Edge e, const FT& alpha = get_alpha()) const;}
 {Classifies the edge \ccc{e} of the underlying triangulation with respect to \ccVar.}
 
 \ccMethod{Classification_type
-           classify(Face_handle f, int i, const Coord_type& alpha = get_alpha()) const;}
+           classify(Face_handle f, int i, const FT& alpha = get_alpha()) const;}
 {Classifies the edge of the face \ccc{f} opposite to the vertex with index
 \ccc{i} 
 of the underlying triangulation with respect to \ccVar.}	
 
 \ccMethod{Classification_type
-           classify(Vertex_handle v, const Coord_type& alpha = get_alpha()) const;}
+           classify(Vertex_handle v, const FT& alpha = get_alpha()) const;}
 {Classifies the vertex \ccc{v} of the underlying triangulation with respect to \ccVar.}
 
 
@@ -258,22 +258,22 @@ sorted sequence of $\alpha$-values of the family of alpha shapes.}
 \ccMethod{Alpha_iterator alpha_end() const;}
 {Returns the corresponding past-the-end iterator.}
 
-\ccMethod{Alpha_iterator alpha_find(const Coord_type& alpha) const;}
+\ccMethod{Alpha_iterator alpha_find(const FT& alpha) const;}
 {Returns an iterator pointing to an element with $\alpha$-value
 \ccc{alpha}, or the corresponding past-the-end iterator if such 
 an element is not found.}
 
-\ccMethod{Alpha_iterator alpha_lower_bound(const Coord_type& alpha) const;}
+\ccMethod{Alpha_iterator alpha_lower_bound(const FT& alpha) const;}
 {Returns an iterator pointing to the first element with
 $\alpha$-value not less than \ccc{alpha}.}
 
-\ccMethod{Alpha_iterator alpha_upper_bound(const Coord_type& alpha) const;}
+\ccMethod{Alpha_iterator alpha_upper_bound(const FT& alpha) const;}
 {Returns an iterator pointing to the first element with $\alpha$-value
 greater than \ccc{alpha}.}
 
 \ccHeading{Operations}
 
-\ccMethod{int number_of_solid_components(const Coord_type& alpha = get_alpha()) const;}
+\ccMethod{int number_of_solid_components(const FT& alpha = get_alpha()) const;}
 {Returns the number of solid components of \ccVar, that is, the number of
 components of its 
 regularized version.}

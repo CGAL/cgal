@@ -36,7 +36,7 @@ public:
   typedef typename TDS::Vertex_handle     Vertex_handle;
   typedef typename TDS::Face_handle       Face_handle;
 
-  typedef typename Gt::Coord_type                Coord_type;
+  typedef typename Gt::FT                Coord_type;
   typedef std::pair< Coord_type, Coord_type >    Interval2;
   typedef typename Vb::Point                   Point;
 

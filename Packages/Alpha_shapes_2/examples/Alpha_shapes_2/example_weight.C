@@ -7,8 +7,6 @@ the weighted Alpha Shape.
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
-#include <cstdio>
-#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -27,9 +25,6 @@ typedef CGAL::Filtered_kernel<SC> K;
 typedef K::Point_2 Point_base;
 typedef CGAL::Weighted_point<Point_base,coord_type>  Point;
 typedef K::Segment_2  Segment;
-typedef K::Ray_2  Ray;
-typedef K::Line_2  Line;
-typedef K::Triangle_2  Triangle;
 
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<K> Gt;
 typedef CGAL::Regular_triangulation_vertex_base_2<Gt> Rvb;

@@ -63,11 +63,11 @@ public:
   typedef typename Dt::Geom_traits Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 
-  typedef typename Gt::Coord_type Coord_type;
-  typedef typename Gt::Point Point;
-  typedef typename Gt::Segment Segment;
-  typedef typename Gt::Ray Ray;
-  typedef typename Gt::Line Line;
+  typedef typename Gt::FT Coord_type;
+  typedef typename Gt::Point_2 Point;
+  typedef typename Gt::Segment_2 Segment;
+  typedef typename Gt::Ray_2 Ray;
+  typedef typename Gt::Line_2 Line;
 
   typedef typename Dt::Face_handle Face_handle;
   typedef typename Dt::Vertex_handle Vertex_handle;

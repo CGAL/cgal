@@ -46,7 +46,7 @@ public:
 
   result_type operator()(const T& p, const T& q, const T& r)
   {
-    typedef typename  K::Coord_type FT;
+    typedef typename  K::FT FT;
     FT px(p.point().x());
     FT py(p.point().y());
     FT pw(p.weight());
@@ -66,7 +66,7 @@ public:
 
   result_type operator()(const T& p, const T& q)
     {
-      typedef typename  K::Coord_type FT;
+      typedef typename  K::FT FT;
       FT px(p.point().x());
       FT py(p.point().y());
       FT pw(p.weight());
@@ -91,7 +91,7 @@ public:
   typedef typename K::Point Point;
   result_type operator()(const Point& p, const Point& q, const Point& t)
   {  
-    typedef typename K::Coord_type FT;
+    typedef typename K::FT FT;
     FT px(p.point().x());
     FT py(p.point().y());
     FT pw(p.weight());
@@ -118,12 +118,12 @@ Regular_triangulation_euclidean_traits_2<R, typename R::FT>
 public: 
   
   typedef Weighted_alpha_shape_euclidean_traits_2<R> Self;
-  typedef typename R::FT Coord_type;
+  typedef typename R::FT FT;
   typedef typename 
    Regular_triangulation_euclidean_traits_2<R, typename R::FT>::Weighted_point 
      Point;
 
-  typedef CGAL::Compute_squared_radius_orthogonalcircleC2<Coord_type, Self>
+  typedef CGAL::Compute_squared_radius_orthogonalcircleC2<FT, Self>
   Compute_squared_radius_orthogonalcircle_2;
   typedef CGAL::Side_of_bounded_orthogonalcircleC2<Self>
   Side_of_bounded_orthogonalcircle_2;
