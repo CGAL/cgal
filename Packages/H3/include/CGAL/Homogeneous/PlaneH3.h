@@ -291,7 +291,7 @@ PlaneH3<R>::perpendicular_line(const typename PlaneH3<R>::Point_3& p) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::Plane_3
+typename PlaneH3<R>::Plane_3
 PlaneH3<R>::opposite() const
 { return PlaneH3<R>(-a(), -b(), -c(), -d() ); }
 
@@ -387,7 +387,7 @@ PlaneH3<R>::orthogonal_vector() const
 { return Vector_3(a(), b(), c() ); }
 
 template < class R >
-typename R::Plane_3
+typename PlaneH3<R>::Plane_3
 PlaneH3<R>::transform(const typename PlaneH3<R>::Aff_transformation_3& t) const
 {
  return t.transform(*this);
