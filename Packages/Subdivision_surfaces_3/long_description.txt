@@ -1,0 +1,18 @@
+Subdivision Surfaces Package
+---------------------------------------------------------------------
+
+- Subdivision_surfaces_3.h
+  
+  Refinement hosts for subdivision surfaces on Polyhedron_3.
+  Supported schemes: PQQ, PTQ, DQQ and Sqrt(3).
+
+- Subdivision_surfaces_rules_3.h
+
+  Stencil policies for subdivision surfaces on Polyhedron_3.
+  Supported schemes: Averaging, Catmull-Clark, Loop, Doo-Sabin and
+  Sqrt(3) subdivisions
+ 
+- Polyhedron_decorator_3.h
+
+  A decorator of Polyhedron_3 to provide easier use connectivity 
+  editing.

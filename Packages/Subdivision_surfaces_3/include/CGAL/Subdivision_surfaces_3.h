@@ -295,7 +295,7 @@ void Subdivision_surfaces_3<_P>::PTQ_1step(_P& p, _S<_P> rule) {
     Halfedge_around_facet_circulator hcir = hcir_begin;
     
     // After linsub, the facet valence = 6
-    ASSERTION_MSG(circulator_size(hcir)==6, "(ERROR) Non-triangle facet!");
+    CGAL_assertion(circulator_size(hcir)==6);
     
     Halfedge_handle e1 = ++hcir;
     ++hcir;

@@ -1,1 +1,1 @@
-Generic subdivision-surface algorithms on 3D meshes, such as Polyhedron_3.
+Generic subdivision surfaces on Polyhedron_3.
