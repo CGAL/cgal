@@ -115,14 +115,28 @@ public:
   }
 #endif // CGAL_TEMPLATE_MEMBER_FUNCTIONS
 
-  Vertex_handle insert(const Point & p)
+  Vertex_handle insert(const Point & p )
+  {
+    Cell_handle start;
+    if ( dimension() >= 1 ) {
+      // there is at least one finite "cell" (or facet or edge)
+      start = infinite_vertex()->cell()
+	->neighbor( infinite_vertex()->cell()->index( infinite_vertex()) );
+    }
+    else {
+      start = NULL;
+    }
+    return insert( p, start );
+  }
+
+  Vertex_handle insert(const Point & p, Cell_handle start)
   {
     switch (dimension()) {
     case 3:
       {
 	Locate_type lt;
 	int li, lj;
-	Cell_handle c = locate( p, lt, li, lj);
+	Cell_handle c = locate( p, start, lt, li, lj);
 	switch (lt) {
 	case OUTSIDE_CONVEX_HULL:
 	  c = c->neighbor(li);
@@ -151,7 +165,7 @@ public:
       {
 	Locate_type lt;
 	int li, lj;
-	Cell_handle c = locate( p, lt, li, lj);
+	Cell_handle c = locate( p, start, lt, li, lj);
 	switch (lt) {
 	case OUTSIDE_CONVEX_HULL:
 	  c = c->neighbor(3-li-lj);
