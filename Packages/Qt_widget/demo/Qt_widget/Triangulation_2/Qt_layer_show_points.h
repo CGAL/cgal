@@ -30,30 +30,30 @@ namespace CGAL {
 template <class T>
 class Qt_layer_show_points : public Qt_widget_layer {
 public:
-  typedef typename T::Point		Point;
-  typedef typename T::Segment		Segment;
-  typedef typename T::Vertex		Vertex;
+  typedef typename T::Point           Point;
+  typedef typename T::Segment         Segment;
+  typedef typename T::Vertex          Vertex;
   typedef typename T::Vertex_iterator	Vertex_iterator;
 
   Qt_layer_show_points(T &t) : tr(t){};
 
   void draw()
-  {
-    Vertex v;
+  {  
+    Vertex *v;
     Vertex_iterator it = tr.vertices_begin(), 
 		beyond = tr.vertices_end();
     *widget << CGAL::GREEN << CGAL::PointSize (3) 
-		<< CGAL::PointStyle (CGAL::DISC);
+		<< CGAL::PointStyle (CGAL::DISC);    
     while(it != beyond)
-    {
-      v = *it;
-      //*widget << v.point();
+    {      
+      v = &(*it);
+      *widget << v->point();
       ++it;
     }
   };
 private:
   T	&tr;
-
+  
 };//end class 
 
 } // namespace CGAL
