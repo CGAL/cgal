@@ -274,10 +274,9 @@ private:
       Conflict_tester_3(const Point &pt, Self *tr)
 	  : p(pt), t(tr) {}
 
-      bool operator()(const typename Tds::Cell *c) const
+      bool operator()(const Cell_handle c) const
       {
-	  return t->side_of_sphere((Cell_handle)(Cell*)c, p)
-	      == ON_BOUNDED_SIDE;
+	  return t->side_of_sphere(c, p) == ON_BOUNDED_SIDE;
       }
   };
 
@@ -291,10 +290,9 @@ private:
       Conflict_tester_2(const Point &pt, Self *tr)
 	  : p(pt), t(tr) {}
 
-      bool operator()(const typename Tds::Cell *c) const
+      bool operator()(const Cell_handle c) const
       {
-	  return t->side_of_circle((Cell_handle)(Cell*)c, 3, p)
-	      == ON_BOUNDED_SIDE;
+	  return t->side_of_circle(c, 3, p) == ON_BOUNDED_SIDE;
       }
   };
 };
@@ -315,7 +313,7 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
 
       set_number_of_vertices(number_of_vertices()+1);
       Conflict_tester_3 tester(p, this);
-      v = (Vertex *) _tds.insert_conflict(&(*v), &(*c), tester); 
+      v = insert_conflict(&(*v), &(*c), tester); 
       v->set_point(p);
       return v;
     }// dim 3
@@ -332,7 +330,7 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
 	{
 	  set_number_of_vertices(number_of_vertices()+1);
           Conflict_tester_2 tester(p, this);
-	  v = (Vertex *) _tds.insert_conflict(&(*v), &(*c), tester); 
+	  v = insert_conflict(&(*v), &(*c), tester); 
 	  v->set_point(p);
 	  return v;
 	}

@@ -165,14 +165,14 @@ private:
       Conflict_tester_3(const Weighted_point &pt, Self *tr)
 	  : p(pt), t(tr) {}
 
-      bool operator()(const typename Tds::Cell *c) const
+      bool operator()(const Cell_handle c) const
       {
 	  // We mark the vertices so that we can find the deleted ones easily.
-	  if (t->in_conflict_3(p, (Cell_handle)(Cell*)c))
+	  if (t->in_conflict_3(p, c))
 	  {
 	      for (int i=0; i<4; i++)
 	      {
-		  Vertex_handle v = ((Cell_handle)(Cell*)c)->vertex(i);
+		  Vertex_handle v = c->vertex(i);
 		  if (v->cell() != NULL)
 		  {
 		      cv.push_back(v);
@@ -201,13 +201,13 @@ private:
       Conflict_tester_2(const Weighted_point &pt, Self *tr)
 	  : p(pt), t(tr) {}
 
-      bool operator()(const typename Tds::Cell *c) const
+      bool operator()(const Cell_handle c) const
       {
-	  if (t->in_conflict_2(p, (Cell_handle)(Cell*)c, 3))
+	  if (t->in_conflict_2(p, c, 3))
 	  {
 	      for (int i=0; i<3; i++)
 	      {
-		  Vertex_handle v = ((Cell_handle)(Cell*)c)->vertex(i);
+		  Vertex_handle v = c->vertex(i);
 		  if (v->cell() != NULL)
 		  {
 		      cv.push_back(v);
@@ -366,7 +366,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  return NULL;
       // Should I mark c's vertices too ?
       Conflict_tester_3 tester(p, this);
-      v = (Vertex *) _tds.insert_conflict(&(*v), &(*c), tester);
+      v = insert_conflict(&(*v), &(*c), tester);
       v->set_point(p);
       for( typename std::vector<Vertex_handle>::iterator
 		it = tester.conflict_vector().begin();
@@ -399,7 +399,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  if (! in_conflict_2(p, c, 3))
 	      return NULL;
 	  Conflict_tester_2 tester(p, this);
-	  v = (Vertex *) _tds.insert_conflict(&(*v), &(*c), tester);
+	  v = insert_conflict(&(*v), &(*c), tester);
 	  v->set_point(p);
           for( typename std::vector<Vertex_handle>::iterator
 		it = tester.conflict_vector().begin();

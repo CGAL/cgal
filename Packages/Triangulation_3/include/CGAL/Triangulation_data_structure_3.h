@@ -269,74 +269,170 @@ public:
 				     Vertex* star = NULL,
 				     bool reorient = false);
 
-private:
-  template < class Conflict_test >
-  void
-  find_conflicts(Cell* c, Cell* &ac, int &i, const Conflict_test &tester) const
+  // Facets->first is in conflict, and we walk inside the hole.
+  //
+  // Note #1 : If we can merge the FacetIt loops, then maybe we can get rid
+  // of the corresponding container by just walking over the boundary ?
+  // Thinking a bit more about that : I think it's either we have a container
+  // of facets, or we have a recursive function over the boundary... (?)
+  template <class FacetIt>
+  void star_hole_3(Vertex* newv, FacetIt facet_begin, FacetIt facet_end)
   {
-    // The semantic of the flag is the following :
-    // 0  -> never went on the cell
-    // 1  -> cell is in conflict
-    // 2  -> cell is not in conflict
+      CGAL_triangulation_precondition(dimension()==3);
 
-    CGAL_triangulation_precondition( dimension()>=2 );
-    CGAL_triangulation_precondition( tester(c) );
+      // Would be nice if there were already room reserved in the facet
+      // vector.
+      std::vector<Cell *> V;
+      V.reserve(std::distance(facet_begin, facet_end));
 
-    temp_cells.push_back(c);
-    c->set_in_conflict_flag(1);
-
-    for ( int j=0; j<=dimension(); j++ ) {
-      Cell * test = c->neighbor(j);
-      if (test->get_in_conflict_flag() != 0)
-        continue; // test was already tested.
-      if ( tester(test) )
-        find_conflicts(test, ac, i, tester);
-      else {
-        test->set_in_conflict_flag(2);
-        ac = c;
-        i = j;
+      // For each facet on the boundary :
+      // - create a new cell, link its vertices and one cell pointer.
+      for (FacetIt fit = facet_begin; fit != facet_end; ++fit) {
+	  Cell *old = &*(fit->first);
+	  Cell *bound = old->neighbor(fit->second);
+	  // Note that the initial orientation of the new cells is positive,
+	  // as we copy it from an existing one.
+	  Cell *newc = create_cell(old->vertex(0),
+		                   old->vertex(1),
+		                   old->vertex(2),
+		                   old->vertex(3));
+	  newc->set_vertex(fit->second, newv);
+	  set_adjacency(newc, bound, fit->second, bound->index(old));
+	  newc->vertex(0)->set_cell(newc);
+	  newc->vertex(1)->set_cell(newc);
+	  newc->vertex(2)->set_cell(newc);
+	  newc->vertex(3)->set_cell(newc);
+	  V.push_back(newc);
       }
-    }
+
+      // For each facet on the boundary, for each of the 3 edges :
+      // - we must find the neighbor facet
+      // - link the 2 corresponding new cells.
+      int zz = -1;
+      for (FacetIt fit = facet_begin; fit != facet_end; ++fit) {
+	  ++zz;
+	  Cell *old = &*(fit->first);
+	  Cell *newc = V[zz];
+
+	  for (int i=0; i<=3; ++i) {
+	      // We must avoid i == fit->second, but the following
+	      // test will avoid it too.
+	      if (newc->neighbor(i) != NULL)
+		  continue;
+
+	      // Now we turn around the edge inside the hole.
+	      // To recognize when we hit the boundary, we look at the
+	      // neighbor, and see if it doesn't point back to us, in which
+	      // case it's the boundary cell we are looking for.
+	      Cell *t = old;
+	      Vertex * k = t->vertex(fit->second);
+	      int j = i;
+	      Cell *newt = t->neighbor(j);
+	      int z;
+	      while (newt->has_neighbor(t, z)) {
+		  j = newt->index(k);
+		  k = newt->vertex(z);
+		  t = newt;
+		  newt = t->neighbor(j);
+	      };
+
+	      // Compute the address of the corresponding new cell.
+	      Cell *back;
+	      for (int l=0;; ++l) {
+	          back = newt->neighbor(l);
+		  if (l==3)
+		      break;
+	          // The vertices are those of t except vertex(j) = newv.
+		  if (back->vertex(j)   == newv &&
+		      back->vertex(j^1) == t->vertex(j^1) &&
+		      back->vertex(j^2) == t->vertex(j^2) &&
+		      back->vertex(j^3) == t->vertex(j^3))
+		      break;
+	      }
+
+	      set_adjacency(newc, back, i, back->index(k));
+	  }
+      }
   }
 
-  // FIXME : This stuff will probably be replaced by an iterator somehow.
-  mutable std::vector<Cell *> temp_cells;
-
-  Cell * create_star_3(Vertex* v, Cell* c, int li,
-	               Cell * prev_c = NULL, Vertex * prev_v = NULL);
-  Cell * create_star_2(Vertex* v, Cell* c, int li );
-
-public:
-
-  // This one takes a function object to recursively determine the cells in
-  // conflict, then inserts by starring.
-  template < class Conflict_test >
-  Vertex * insert_conflict( Vertex * w, Cell *c, const Conflict_test &tester)
+  // Note : the code is entirely duplicated, just to have dimension() a
+  // constant.  That's not nice.
+  template <class FacetIt>
+  void star_hole_2(Vertex* newv, FacetIt facet_begin, FacetIt facet_end)
   {
-    CGAL_triangulation_precondition( dimension() >= 2 );
-    CGAL_triangulation_precondition( c != NULL );
-    CGAL_triangulation_precondition( tester(c) );
+      CGAL_triangulation_precondition(dimension()==2);
 
-    if ( w == NULL ) 
-      w = create_vertex();
+      // Would be nice if there were already room reserved in the facet
+      // vector.
+      std::vector<Cell *> V;
+      V.reserve(std::distance(facet_begin, facet_end));
 
-    // Find the cells in conflict.
-    Cell *ccc;
-    int i;
-    find_conflicts(c, ccc, i, tester);
+      // For each facet on the boundary :
+      // - create a new cell, link its vertices and one cell pointer.
+      for (FacetIt fit = facet_begin; fit != facet_end; ++fit) {
+	  Cell *old = &*(fit->first);
+	  Cell *bound = old->neighbor(fit->second);
+	  // Note that the initial orientation of the new cells is positive,
+	  // as we copy it from an existing one.
+	  Cell *newc = create_cell(old->vertex(0),
+		                   old->vertex(1),
+		                   old->vertex(2),
+		                   NULL);
+	  newc->set_vertex(fit->second, newv);
+	  set_adjacency(newc, bound, fit->second, bound->index(old));
+	  newc->vertex(0)->set_cell(newc);
+	  newc->vertex(1)->set_cell(newc);
+	  newc->vertex(2)->set_cell(newc);
+	  V.push_back(newc);
+      }
 
-    // Create the new cells, and returns one of them.
-    Cell * nouv = (dimension() == 3) ? create_star_3( w, ccc, i )
-	                             : create_star_2( w, ccc, i );
-    w->set_cell( nouv );
+      // For each facet on the boundary, for each of the 3 edges :
+      // - we must find the neighbor facet
+      // - link the 2 corresponding new cells.
+      int zz = -1;
+      for (FacetIt fit = facet_begin; fit != facet_end; ++fit) {
+	  ++zz;
+	  Cell *old = &*(fit->first);
+	  Cell *newc = V[zz];
 
-    for(typename std::vector<Cell *>::iterator cit = temp_cells.begin();
-	cit != temp_cells.end(); ++cit)
-	delete_cell(*cit);
+	  for (int i=0; i<=2; ++i) {
+	      // We must avoid i == fit->second, but the following
+	      // test will avoid it too.
+	      if (newc->neighbor(i) != NULL)
+		  continue;
 
-    temp_cells.clear();
+	      // Now we turn around the edge inside the hole.
+	      // To recognize when we hit the boundary, we look at the
+	      // neighbor, and see if it doesn't point back to us, in which
+	      // case it's the boundary cell we are looking for.
+	      Cell *t = old;
+	      Vertex * k = t->vertex(fit->second);
+	      int j = i;
+	      Cell *newt = t->neighbor(j);
+	      int z;
+	      while (newt->has_neighbor(t, z)) {
+		  j = newt->index(k);
+		  k = newt->vertex(z);
+		  t = newt;
+		  newt = t->neighbor(j);
+	      };
 
-    return w;
+	      // Compute the address of the corresponding new cell.
+	      Cell *back;
+	      for (int l=0;; ++l) {
+	          back = newt->neighbor(l);
+		  if (l==2)
+		      break;
+	          // The vertices are those of t except vertex(j) = newv.
+		  if (back->vertex(j)      == newv &&
+		      back->vertex(cw(j))  == t->vertex(cw(j)) &&
+		      back->vertex(ccw(j)) == t->vertex(ccw(j)))
+		      break;
+	      }
+
+	      set_adjacency(newc, back, i, back->index(k));
+	  }
+      }
   }
 
   // ITERATOR METHODS
@@ -469,6 +565,26 @@ public:
   void clear_cells_only();
 
 private:
+
+  void set_adjacency(Cell *c0, Cell *c1, int i0, int i1) const
+  {
+      CGAL_triangulation_assertion(i0 <= dimension() && i1 <= dimension());
+      CGAL_triangulation_assertion(c0 != c1);
+      c0->set_neighbor(i0,c1);
+      c1->set_neighbor(i1,c0);
+  }
+
+  // Change the orientation of the cell by swapping indices 0 and 1.
+  static void change_orientation(Cell *c)
+  {
+      Vertex * tmp_v = c->vertex(0);
+      c->set_vertex(0, c->vertex(1));
+      c->set_vertex(1, tmp_v);
+      Cell * tmp_c = c->neighbor(0);
+      c->set_neighbor(0, c->neighbor(1));
+      c->set_neighbor(1, tmp_c);
+  }
+
   Cell_container & cell_container()             { return _cell_container; }
   const Cell_container & cell_container() const { return _cell_container; }
 
@@ -876,33 +992,23 @@ flip_really( Cell* c, int i, Cell* n, int in )
   int in2 = n->index(c->vertex(i2));
   int in3 = n->index(c->vertex(i3));
 
-  c->set_neighbor( i, n->neighbor(in3) );
-  n->neighbor(in3)->set_neighbor( n->neighbor(in3)->index(n), c );
+  set_adjacency(c, n->neighbor(in3), i, n->neighbor(in3)->index(n));
   c->set_vertex( i3, n->vertex(in) );
 
-  n->set_neighbor( in, c->neighbor(i1) );
-  c->neighbor(i1)->set_neighbor( c->neighbor(i1)->index(c), n );
+  set_adjacency(n, c->neighbor(i1), in, c->neighbor(i1)->index(c));
   n->set_vertex( in1, c->vertex(i) );
 
-  Cell* cnew;
-  if ( (i%2) == 0 ) 
-    cnew = create_cell( c->vertex(i), c->vertex(i1),
-			n->vertex(in), n->vertex(in3), 
-			n->neighbor(in2), n,
-			c->neighbor(i2), c );
-  else
-    cnew = create_cell( c->vertex(i1), c->vertex(i),
-			n->vertex(in), n->vertex(in3),
-			n, n->neighbor(in2), 
-			c->neighbor(i2), c );
+  Cell* cnew = create_cell(c->vertex(i), c->vertex(i1),
+			   n->vertex(in), n->vertex(in3));
 
-  c->neighbor(i2)->set_neighbor( c->neighbor(i2)->index(c), cnew);
-  n->neighbor(in2)->set_neighbor( n->neighbor(in2)->index(n), cnew);
-  
-  c->set_neighbor( i1, n );
-  c->set_neighbor( i2, cnew );
-  n->set_neighbor( in2, cnew );
-  n->set_neighbor( in3, c );
+  set_adjacency(cnew, n->neighbor(in2), 0, n->neighbor(in2)->index(n));
+  set_adjacency(cnew, n, 1, in2);
+  set_adjacency(cnew, c->neighbor(i2), 2, c->neighbor(i2)->index(c));
+  set_adjacency(cnew, c, 3, i2);
+  set_adjacency(c, n, i1, in3);
+
+  if (i&1 != 0)
+      change_orientation(cnew);
 
   c->vertex(i1)->set_cell(cnew);
   c->vertex(i2)->set_cell(c);
@@ -1047,18 +1153,13 @@ flip_really( Cell* c, int i, int j,
   c2->set_vertex( i2, v2 );
   v2->set_cell(c2);
 
-  c1->set_neighbor( next1, c2->neighbor(j2) );
-  c2->neighbor(j2)->set_neighbor( c2->neighbor(j2)->index(c2), c1 );
-  c2->set_neighbor( c2->index(v1), c1->neighbor(i1) );
-  c1->neighbor(i1)->set_neighbor( c1->neighbor(i1)->index(c1), c2 );
+  set_adjacency(c1,c2->neighbor(j2), next1, c2->neighbor(j2)->index(c2));
+  set_adjacency(c2,c1->neighbor(i1),c2->index(v1),c1->neighbor(i1)->index(c1));
 
-  c1->set_neighbor( i1, c2 );
-  c2->set_neighbor( j2, c1 );
+  set_adjacency(c1, c2, i1, j2);
 
-  c1->set_neighbor( 6-i1-j1-next1 , c->neighbor(j) );
-  c->neighbor(j)->set_neighbor( c->neighbor(j)->index(c), c1 );
-  c2->set_neighbor( next2, c->neighbor(i) );
-  c->neighbor(i)->set_neighbor( c->neighbor(i)->index(c), c2 );
+  set_adjacency(c1, c->neighbor(j), 6-i1-j1-next1, c->neighbor(j)->index(c));
+  set_adjacency(c2, c->neighbor(i), next2, c->neighbor(i)->index(c));
 
   v3->set_cell( c2 );
 
@@ -1074,68 +1175,28 @@ read_cells(std::istream& is, std::map< int, Vertex* > &V,
   // creation of the cells and neighbors
   switch (dimension()) {
   case 3:
-    {
-      is >> m;
-
-      int i0, i1, i2, i3;
-      for(int i = 0; i < m; i++) {
-	is >> i0 >> i1 >> i2 >> i3;
-	Cell *c = create_cell(V[i0], V[i1], V[i2], V[i3]);
-	C[i] = c;
-	V[i0]->set_cell(c);
-	V[i1]->set_cell(c);
-	V[i2]->set_cell(c);
-	V[i3]->set_cell(c);
-      }
-      for(int j = 0; j < m; j++) {
-        is >> i0 >> i1 >> i2 >> i3;
-        Cell *c = C[j];
-        c->set_neighbor(0, C[i0]);
-        c->set_neighbor(1, C[i1]);
-        c->set_neighbor(2, C[i2]);
-        c->set_neighbor(3, C[i3]);
-      }
-      break;
-    }
   case 2:
-    {
-      is >> m;
-
-      int i0, i1, i2;
-      for(int i = 0; i < m; i++) {
-	is >> i0 >> i1 >> i2;
-	Cell *c = create_cell(V[i0], V[i1], V[i2], NULL);
-	C[i] = c;
-	V[i0]->set_cell(c);
-	V[i1]->set_cell(c);
-	V[i2]->set_cell(c);
-      }
-      for(int j = 0; j < m; j++) {
-        is >> i0 >> i1 >> i2;
-	Cell *c = C[j];
-        c->set_neighbor(0, C[i0]);
-        c->set_neighbor(1, C[i1]);
-        c->set_neighbor(2, C[i2]);
-      }
-      break;
-    }
   case 1:
     {
       is >> m;
 
-      int i0, i1;
       for(int i = 0; i < m; i++) {
-	is >> i0 >> i1;
-	Cell *c = create_cell(V[i0], V[i1], NULL, NULL);
+	Cell *c = create_cell();
+	for (int k=0; k<=dimension(); ++k) {
+	    int ik;
+	    is >> ik;
+	    c->set_vertex(k, V[ik]);
+	    V[ik]->set_cell(c);
+	}
 	C[i] = c;
-	V[i0]->set_cell(c);
-	V[i1]->set_cell(c);
       }
       for(int j = 0; j < m; j++) {
-        is >> i0 >> i1;
-	Cell *c = C[j];
-        c->set_neighbor(0, C[i0]);
-        c->set_neighbor(1, C[i1]);
+        Cell *c = C[j];
+	for (int k=0; k<=dimension(); ++k) {
+	    int ik;
+	    is >> ik;
+	    c->set_neighbor(k, C[ik]);
+	}
       }
       break;
     }
@@ -1315,22 +1376,23 @@ insert_in_cell( Vertex * v, Cell* c )
   Cell* n3 = c->neighbor(3);
 
   // c will be modified to have v,v1,v2,v3 as vertices
-  Cell* c3 = create_cell(v0,v1,v2,v,c,NULL,NULL,n3);
-  Cell* c2 = create_cell(v0,v1,v,v3,c,NULL,n2,c3);
-  Cell* c1 = create_cell(v0,v,v2,v3,c,n1,c2,c3);
+  Cell* c3 = create_cell(v0,v1,v2,v);
+  Cell* c2 = create_cell(v0,v1,v,v3);
+  Cell* c1 = create_cell(v0,v,v2,v3);
 
-  c3->set_neighbor(1,c1);
-  c3->set_neighbor(2,c2);
-  c2->set_neighbor(1,c1);
+  set_adjacency(c3, c, 0, 3);
+  set_adjacency(c2, c, 0, 2);
+  set_adjacency(c1, c, 0, 1);
 
-  n1->set_neighbor(n1->index(c),c1);
-  n2->set_neighbor(n2->index(c),c2);
-  n3->set_neighbor(n3->index(c),c3);
+  set_adjacency(c2, c3, 3, 2);
+  set_adjacency(c1, c3, 3, 1);
+  set_adjacency(c1, c2, 2, 1);
+
+  set_adjacency(n1, c1, n1->index(c), 1);
+  set_adjacency(n2, c2, n2->index(c), 2);
+  set_adjacency(n3, c3, n3->index(c), 3);
 
   c->set_vertex(0,v);
-  c->set_neighbor(1,c1);
-  c->set_neighbor(2,c2);
-  c->set_neighbor(3,c3);
 
   if( v0->cell() == c  ) {  v0->set_cell(c1); }
   v->set_cell(c);
@@ -1378,20 +1440,18 @@ insert_in_facet(Vertex * v, Cell* c, int i)
 
       // new cell with v in place of i1
       Cell* nc = c->neighbor(i1);
-      Cell* cnew1 = create_cell(vi,v,v2,v3,
-				NULL,nc,NULL,c);
-      nc->set_neighbor(nc->index(c),cnew1);
-      c->set_neighbor(i1,cnew1);
+      Cell* cnew1 = create_cell(vi,v,v2,v3);
+      set_adjacency(cnew1, nc, 1, nc->index(c));
+      set_adjacency(cnew1, c, 3, i1);
 
       v3->set_cell(cnew1);
 
       // new cell with v in place of i2
       nc = c->neighbor(i2);
-      Cell* cnew2 = create_cell(vi,v1,v,v3,
-				NULL,cnew1,nc,c);
-      nc->set_neighbor(nc->index(c),cnew2);
-      c->set_neighbor(i2,cnew2);
-      cnew1->set_neighbor(2,cnew2); // links to previous cell
+      Cell* cnew2 = create_cell(vi,v1,v,v3);
+      set_adjacency(cnew2, nc, 2, nc->index(c));
+      set_adjacency(cnew2, c, 3, i2);
+      set_adjacency(cnew1, cnew2, 2, 1);
 
       // v replaces i3 in c
       c->set_vertex(i3,v);
@@ -1407,20 +1467,19 @@ insert_in_facet(Vertex * v, Cell* c, int i)
 
       // new cell with v in place of j1
       Cell* nd = d->neighbor(j1);
-      Cell* dnew1 = create_cell(d->vertex(j),v,v3,v2,
-				cnew1,nd,d,NULL);
-      nd->set_neighbor(nd->index(d),dnew1);
-      d->set_neighbor(j1,dnew1);
-      cnew1->set_neighbor(0,dnew1);
-	  
+      Cell* dnew1 = create_cell(d->vertex(j),v,v3,v2);
+      set_adjacency(dnew1, nd, 1, nd->index(d));
+      set_adjacency(dnew1, d, 2, j1);
+      set_adjacency(dnew1, cnew1, 0, 0);
+
       // new cell with v in place of j2
       nd = d->neighbor(j2);
-      Cell* dnew2 = create_cell(d->vertex(j),v1,v3,v,
-				cnew2,dnew1,d,nd);
-      nd->set_neighbor(nd->index(d),dnew2);
-      d->set_neighbor(j2,dnew2);
-      cnew2->set_neighbor(0,dnew2);
-      dnew1->set_neighbor(3,dnew2);
+      Cell* dnew2 = create_cell(d->vertex(j),v1,v3,v);
+
+      set_adjacency(dnew2, nd, 3, nd->index(d));
+      set_adjacency(dnew2, d, 2, j2);
+      set_adjacency(dnew2, cnew2, 0, 0);
+      set_adjacency(dnew1, dnew2, 3, 1);
 
       // v replaces i3 in d
       d->set_vertex(j3,v);
@@ -1432,18 +1491,16 @@ insert_in_facet(Vertex * v, Cell* c, int i)
     {
       CGAL_triangulation_expensive_precondition( is_facet(c,i) );
       Cell* n = c->neighbor(2);
-      Cell* cnew = create_cell(c->vertex(0),c->vertex(1),v,NULL,
-			       c, NULL,n,NULL);
-      n->set_neighbor(n->index(c),cnew);
-      c->set_neighbor(2,cnew);
+      Cell* cnew = create_cell(c->vertex(0),c->vertex(1),v,NULL);
+      set_adjacency(cnew, n, 2, n->index(c));
+      set_adjacency(cnew, c, 0, 2);
       c->vertex(0)->set_cell(cnew);
 
       n = c->neighbor(1);
-      Cell* dnew = create_cell(c->vertex(0),v,c->vertex(2),NULL,
-			       c,n,cnew,NULL);
-      n->set_neighbor(n->index(c),dnew);
-      c->set_neighbor(1,dnew);
-      cnew->set_neighbor(1,dnew);
+      Cell* dnew = create_cell(c->vertex(0),v,c->vertex(2),NULL);
+      set_adjacency(dnew, n, 1, n->index(c));
+      set_adjacency(dnew, c, 0, 1);
+      set_adjacency(dnew, cnew, 2, 1);
 
       c->set_vertex(0,v);
       v->set_cell(c);
@@ -1486,9 +1543,8 @@ insert_in_edge(Vertex * v, Cell* c, int i, int j)
       vj->set_cell(cnew);
       v->set_cell(c);
       c->neighbor(i)->set_neighbor(c->neighbor(i)->index(c),cnew);
-      c->set_neighbor(i,cnew);
       cnew->set_vertex(i,v);
-      cnew->set_neighbor(j,c);
+      set_adjacency(c, cnew, i, j);
 
       // the code here duplicates a large part of the code 
       // of Triangulation_ds_cell_circulator_3
@@ -1509,22 +1565,19 @@ insert_in_edge(Vertex * v, Cell* c, int i, int j)
 	// and vertex i of cnew
 	ctmp->set_vertex(j,v);
 	ctmp->neighbor(i)->set_neighbor(ctmp->neighbor(i)->index(ctmp),cnew);
-	ctmp->set_neighbor(i,cnew);
 	cnew->set_vertex(i,v);
-	cnew->set_neighbor(j,ctmp);
+	set_adjacency(ctmp, cnew, i, j);
 
 	// neighbor relations of all cells are used
 	// to find relations between new cells
-	cnew->set_neighbor(ctmp->index(cprev),cnewprev);
-	cnewprev->set_neighbor(cprev->index(ctmp),cnew);
+	set_adjacency(cnew, cnewprev, ctmp->index(cprev), cprev->index(ctmp));
 
 	cnewprev = cnew;
 	cprev = ctmp;
 	ctmp = ctmp->neighbor( next_around_edge(i,j) );
       }
       cnew = c->neighbor(c->index(vi));
-      cnew->set_neighbor(c->index(cprev),cnewprev);
-      cnewprev->set_neighbor(cprev->index(c),cnew);
+      set_adjacency(cnew, cnewprev, c->index(cprev), cprev->index(c));
       break;
     }
 
@@ -1551,19 +1604,15 @@ insert_in_edge(Vertex * v, Cell* c, int i, int j)
       dnew->set_vertex(kd,d->vertex(kd));
       d->set_vertex(id,v);
 
-      cnew->set_neighbor(i,c);
       Cell* nj = c->neighbor(j);
-      cnew->set_neighbor(j,nj);
-      nj->set_neighbor(nj->index(c),cnew);
-      c->set_neighbor(j,cnew);
-      cnew->set_neighbor(k,dnew);
+      set_adjacency(cnew, c, i, j);
+      set_adjacency(cnew, nj, j, nj->index(c));
 
-      dnew->set_neighbor(id,d);
       nj = d->neighbor(jd);
-      dnew->set_neighbor(jd,nj);
-      nj->set_neighbor(nj->index(d),dnew);
-      d->set_neighbor(jd,dnew);
-      dnew->set_neighbor(kd,cnew);
+      set_adjacency(dnew, d, id, jd);
+      set_adjacency(dnew, nj, jd, nj->index(d));
+
+      set_adjacency(cnew, dnew, k, kd);
 
       v->set_cell(cnew);
       break;
@@ -1572,12 +1621,11 @@ insert_in_edge(Vertex * v, Cell* c, int i, int j)
   case 1:
     {
       CGAL_triangulation_expensive_precondition( is_edge(c,i,j) );
-      cnew = create_cell(v,c->vertex(1),NULL,NULL,
-			 c->neighbor(0),c,NULL,NULL);
+      cnew = create_cell(v,c->vertex(1),NULL,NULL);
       c->vertex(1)->set_cell(cnew);
       c->set_vertex(1,v);
-      c->neighbor(0)->set_neighbor(1,cnew);
-      c->set_neighbor(0,cnew);
+      set_adjacency(cnew, c->neighbor(0), 0, 1);
+      set_adjacency(cnew, c, 1, 0);
 
       v->set_cell(cnew); 
       break;
@@ -1624,7 +1672,7 @@ insert_increase_dimension(Vertex * v, // new vertex
       // insertion of the first vertex
       // ( geometrically : infinite vertex )
     {
-      Cell *c = create_cell( v, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+      Cell *c = create_cell( v, NULL, NULL, NULL);
       v->set_cell(c);
       break;
     }
@@ -1633,10 +1681,9 @@ insert_increase_dimension(Vertex * v, // new vertex
     // insertion of the second vertex
     // ( geometrically : first finite vertex )
     {
-      Cell *d = create_cell( v, NULL, NULL, NULL,
-		             star->cell(), NULL, NULL, NULL );
+      Cell *d = create_cell( v, NULL, NULL, NULL);
       v->set_cell(d);
-      star->cell()->set_neighbor(0,d);
+      set_adjacency(d, star->cell(), 0, 0);
       break;
     }
 
@@ -1650,23 +1697,20 @@ insert_increase_dimension(Vertex * v, // new vertex
       if (reorient) {
 	c->set_vertex(0,d->vertex(0));
 	c->set_vertex(1,star);
-	c->set_neighbor(1,d);
 	d->set_vertex(1,d->vertex(0));
 	d->set_vertex(0,v);
-	d->set_neighbor(0,c);
-	Cell *e = create_cell( star, v, NULL, NULL,
-			       d, c, NULL, NULL );
-	c->set_neighbor(0,e);
-	d->set_neighbor(1,e);
+	set_adjacency(c, d, 1, 0);
+	Cell *e = create_cell( star, v, NULL, NULL);
+	set_adjacency(e, d, 0, 1);
+	set_adjacency(e, c, 1, 0);
       }
       else {
 	c->set_vertex(1,d->vertex(0));
 	d->set_vertex(1,v);
 	d->set_neighbor(1,c);
-	Cell *e = create_cell( v, star, NULL, NULL,
-			       c, d, NULL, NULL );
-	c->set_neighbor(1,e);
-	d->set_neighbor(0,e);
+	Cell *e = create_cell( v, star, NULL, NULL);
+	set_adjacency(e, c, 0, 1);
+	set_adjacency(e, d, 1, 0);
       }
 	
       v->set_cell(d);
@@ -1694,49 +1738,33 @@ insert_increase_dimension(Vertex * v, // new vertex
 	enew->set_vertex(j,e->vertex(i));
 	enew->set_vertex(2,star);
 	  
-	enew->set_neighbor(i,cnew);
-	cnew->set_neighbor(j,enew); 
+	set_adjacency(enew, cnew, i, j);
 	// false at the first iteration of the loop where it should
 	// be neighbor 2 
 	// it is corrected after the loop
-	enew->set_neighbor(2,e);
+	set_adjacency(enew, e, 2, 2);
 	// neighbor j will be set during next iteration of the loop
 	  
 	e->set_vertex(2,v);
-	e->set_neighbor(2,enew);
 
 	e = e->neighbor(i);
 	cnew = enew;
       }
 	
       d->set_vertex(2,v);
-      d->set_neighbor(2,enew);
-      enew->set_neighbor(j,d);
-	
+      set_adjacency(enew, d, j, 2);
+
       // corrections for star->cell() :
       c = star->cell();
       c->set_neighbor(2,c->neighbor(i)->neighbor(2));
       c->set_neighbor(j,d);
-	
+
       v->set_cell(d);
-	
+
       if (reorient) {
 	// reorientation of all the cells
-	Vertex* vtmp;
-	Cell* ctmp;
-	Facet_iterator fit = facets_begin();
-
-	while(fit != facets_end()) {
-	  vtmp = (*fit).first->vertex(1);
-	  (*fit).first->set_vertex(1,(*fit).first->vertex(0));
-	  (*fit).first->set_vertex(0,vtmp);
-
-	  ctmp = (*fit).first->neighbor(1);
-	  (*fit).first->set_neighbor(1,(*fit).first->neighbor(0));
-	  (*fit).first->set_neighbor(0,ctmp);
-
-	  ++fit;
-	}
+	for (Facet_iterator fit = facets_begin(); fit != facets_end(); ++fit)
+	  change_orientation((*fit).first);
       }
       break;
     }
@@ -1763,10 +1791,9 @@ insert_increase_dimension(Vertex * v, // new vertex
 	it->set_vertex(3,v);
 	if ( ! it->has_vertex(star) ) {
 	  Cell *cnew = create_cell( it->vertex(0), it->vertex(2),
-			            it->vertex(1), star,
-			            NULL, NULL, NULL, &(*it));
+			            it->vertex(1), star);
+	  set_adjacency(cnew, &*it, 3, 3);
 	  new_cells.push_back(cnew);
-	  it->set_neighbor(3,cnew);
 	}
       }
 
@@ -1789,166 +1816,19 @@ insert_increase_dimension(Vertex * v, // new vertex
 	  }
 	  else {
 	    // star is a vertex of n->neighbor(i)
-	    (*ncit)->set_neighbor(j, n->neighbor(i));
-	    n->neighbor(i)->set_neighbor(3, *ncit); // neighbor opposite to v
+	    set_adjacency(*ncit, n->neighbor(i), j, 3);//neighbor opposite to v
 	  }
 	}
       }
 	
       // reorientation of all the cells
-      if (reorient) {
-	Vertex* vtmp;
-	Cell* ctmp;
-	for(it = cells_begin(); it != cells_end(); ++it) {
-	  vtmp = it->vertex(1);
-	  it->set_vertex(1,it->vertex(0));
-	  it->set_vertex(0,vtmp);
-
-	  ctmp = it->neighbor(1);
-	  it->set_neighbor(1,it->neighbor(0));
-	  it->set_neighbor(0,ctmp);
-	}
-      }
+      if (reorient)
+	  for(it = cells_begin(); it != cells_end(); ++it)
+	      change_orientation(&*it);
     }
   }// end switch
     
   return v;
-}
-
-template <class Vb, class Cb >
-Triangulation_data_structure_3<Vb,Cb>::Cell*
-Triangulation_data_structure_3<Vb,Cb>::
-create_star_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
-{
-    CGAL_triangulation_assertion( dimension() == 3);
-
-    unsigned char i[3] = {(li+1)&3, (li+2)&3, (li+3)&3};
-    if ( (li&1) == 0 )
-      std::swap(i[0], i[1]);
-
-    Vertex *v0 = c->vertex(i[0]);
-    Vertex *v1 = c->vertex(i[1]);
-    Vertex *v2 = c->vertex(i[2]);
-    Cell * cnew = create_cell(v0, v1, v2, v);
-    v0->set_cell(cnew);
-    v1->set_cell(cnew);
-    v2->set_cell(cnew);
-    Cell * c_li = c->neighbor(li);
-    cnew->set_neighbor(3, c_li);
-    c_li->set_neighbor(c_li->index(c), cnew);
-
-    // Look for the other three neighbors of cnew.
-    for (int ii=0; ii<3; ii++) {
-      if ( prev_v == c->vertex(i[ii]) ) {
-        cnew->set_neighbor(ii, prev_c);
-        continue;
-      }
-      // Indices of the vertices of cnew such that i[ii],j1,j2,li positive.
-      int j1 = next_around_edge(i[ii],li);
-      int j2 = 6-li-i[ii]-j1;
-      const Vertex *vj1 = c->vertex(j1);
-      const Vertex *vj2 = c->vertex(j2);
-      Cell *cur = c;
-      Cell *n = c->neighbor(i[ii]);
-      // turn around the oriented edge j1 j2
-      while ( n->get_in_conflict_flag() == 1) {
-	// The main loop is free from orientation problems.
-	// It remains only before and after...  It could probably be done.
-	CGAL_triangulation_assertion( n != c );
-        if (n->neighbor(0) != cur &&
-            n->vertex(0) != vj1 && n->vertex(0) != vj2)
-          cur = n, n = n->neighbor(0);
-        else
-        if (n->neighbor(1) != cur &&
-            n->vertex(1) != vj1 && n->vertex(1) != vj2)
-          cur = n, n = n->neighbor(1);
-        else
-        if (n->neighbor(2) != cur && 
-            n->vertex(2) != vj1 && n->vertex(2) != vj2)
-          cur = n, n = n->neighbor(2);
-        else
-	  cur = n, n = n->neighbor(3);
-      }
-      // Now n is outside region, cur is inside.
-      n->set_in_conflict_flag(0);
-      Cell *nnn;
-      int kkk;
-      if (n->has_neighbor(cur, kkk)) {
-	// Neighbor relation is reciprocal, ie
-	// the cell we are looking for is not yet created.
-        Vertex * next_prev;
-        if (kkk != 0 && n->vertex(0) != vj1 && n->vertex(0) != vj2)
-           next_prev = n->vertex(0);
-        else if (kkk != 1 && n->vertex(1) != vj1 && n->vertex(1) != vj2)
-           next_prev = n->vertex(1);
-        else if (kkk != 2 && n->vertex(2) != vj1 && n->vertex(2) != vj2)
-           next_prev = n->vertex(2);
-        else
-           next_prev = n->vertex(3);
-
-	nnn = create_star_3(v, cur, cur->index(n), cnew, next_prev);
-      }
-      else
-      {
-        // else the cell we are looking for was already created
-        int jj1 = n->index( vj1 );
-        int jj2 = n->index( vj2 );
-        nnn = n->neighbor( next_around_edge(jj2,jj1) );
-      }
-      cnew->set_neighbor(ii, nnn);
-    }
-
-    return cnew;
-}
-
-template <class Vb, class Cb >
-Triangulation_data_structure_3<Vb,Cb>::Cell*
-Triangulation_data_structure_3<Vb,Cb>::
-create_star_2(Vertex* v, Cell* c, int li )
-{
-  CGAL_triangulation_assertion( dimension() == 2 );
-  Cell* cnew;
-
-  // i1 i2 such that v,i1,i2 positive
-  int i1=ccw(li);
-  // traversal of the boundary of region in ccw order to create all
-  // the new facets
-  Cell* bound = c;
-  Vertex* v1 = c->vertex(i1);
-  int ind = c->neighbor(li)->index(c); // to be able to find the
-                                       // first cell that will be created 
-  Cell* cur;
-  Cell* pnew = NULL;
-  do {
-    cur = bound;
-    // turn around v2 until we reach the boundary of region
-    while ( cur->neighbor(cw(i1))->get_in_conflict_flag() == 1 ) {
-      // neighbor in conflict
-      cur = cur->neighbor(cw(i1));
-      i1 = cur->index( v1 );
-    }
-    cur->neighbor(cw(i1))->set_in_conflict_flag(0);
-    // here cur has an edge on the boundary of region
-    cnew = create_cell( v, v1, cur->vertex( ccw(i1) ), NULL,
-			cur->neighbor(cw(i1)), NULL, pnew, NULL);
-    cur->neighbor(cw(i1))->set_neighbor
-      ( cur->neighbor(cw(i1))->index(cur), cnew );
-    // pnew is null at the first iteration
-    v1->set_cell(cnew);
-    //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
-    if (pnew) { pnew->set_neighbor( 1, cnew );}
-
-    bound = cur;
-    i1 = ccw(i1);
-    v1 = bound->vertex(i1);
-    pnew = cnew;
-    //} while ( ( bound != c ) || ( li != cw(i1) ) );
-  } while ( v1 != c->vertex(ccw(li)) );
-  // missing neighbors between the first and the last created cells
-  cur = c->neighbor(li)->neighbor(ind); // first created cell
-  cnew->set_neighbor( 1, cur );
-  cur->set_neighbor( 2, cnew );
-  return cnew;
 }
 
 template <class Vb, class Cb >
