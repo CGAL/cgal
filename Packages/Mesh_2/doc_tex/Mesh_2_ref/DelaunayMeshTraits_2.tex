@@ -26,6 +26,14 @@ with smallest quality first.
   points $a$, $b$, $c$ satisfies the wanted criteria for mesh
   triangles.}
 
+\ccNestedType{Construct_circum_center_2} {Constructor object. Must provide
+  the operator \ccc{Point_3 operator()(const Point_3&p, 
+                                       const Point_3&q, 
+                                       const Point_3&);}
+  that computes the center of the circle passing through the points $p$,
+  $q$ and $r$.
+  \ccPrecond $p$, $q$ and $r$ are not collinear.}
+
 \ccCreationVariable{traits}
 
 \ccHeading{Access to predicate and constructor objects}
