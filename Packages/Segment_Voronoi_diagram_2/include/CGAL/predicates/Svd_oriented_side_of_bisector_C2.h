@@ -1,391 +1,284 @@
 #ifndef CGAL_SVD_ORIENTED_SIDE_OF_BISECTOR_C2_H
 #define CGAL_SVD_ORIENTED_SIDE_OF_BISECTOR_C2_H
 
+#include <CGAL/Cartesian/distance_predicates_2.h>
+#include <CGAL/predicates/Svd_basic_predicates_C2.h>
 #include <CGAL/predicates/Svd_are_same_points_C2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template<class FT, class Method_tag>
-Comparison_result
-svd_compare_distance_ftC2(const FT& qx, const FT& qy,
-			  const FT& sx, const FT& sy,
-			  const FT& tx, const FT& ty,
-			  const FT& px, const FT& py, Method_tag)
-{
-  // first check if (qx,qy) is inside, the boundary or at the exterior
-  // of the band of the segment s
-
-  //  must_be_filtered(qx);
-
-  FT dx = sx - tx;
-  FT dy = sy - ty;
-
-
-  FT d1x = qx - sx;
-  FT d1y = qy - sy;
-  FT d2x = qx - tx;
-  FT d2y = qy - ty;
-#if 0
-  std::cout << "inside svd_compare_distance_ftC2" << std::endl;
-  std::cout << "px: " << px << std::endl;
-  std::cout << "py: " << py << std::endl;
-  std::cout << "sx: " << sx << std::endl;
-  std::cout << "sy: " << sy << std::endl;
-  std::cout << "tx: " << tx << std::endl;
-  std::cout << "ty: " << ty << std::endl;
-#endif
-
-  if ( px == sx && py == sy ) {
-#if 0
-    std::cout << "point is same as segment's endpoint 1" << std::endl;
-#endif
-    FT o = dx * d1x + dy * d1y;
-    if ( o >= FT(0) ) {
-      return LARGER;
-    }
-  }
-
-  if ( px == tx && py == ty ) {
-#if 0
-    std::cout << "point is same as segment's endpoint 2" << std::endl;
-#endif
-    FT o = dx * d2x + dy * d2y;
-    if ( o <= FT(0) ) {
-      return LARGER;
-    }
-  }
-
-
-  FT d2_from_p = CGAL::square (qx-px) + CGAL::square(qy-py);
-
-  FT dot1 = dx * d1x + dy * d1y;
-  if ( dot1 >= FT(0) ) {
-    // q is outside (or the boundary of) the band on the side of s.
-    FT d2_from_s = CGAL::square(d1x) + CGAL::square(d1y);
-    return CGAL::compare(d2_from_s, d2_from_p);
-  }
-
-  FT dot2 = dx * d2x + dy * d2y;
-  if ( dot2 <= FT(0) ) {
-    // q is outside (or the boundary of) the band on the side of t.
-    FT d2_from_t = CGAL::square(d2x) + CGAL::square(d2y);
-    return CGAL::compare(d2_from_t, d2_from_p);
-  }
-
-  // q is strictly in the interior of the band, so I have to compare
-  // its distance from the supporting line.
-  FT c = sx * ty - sy * tx;
-  FT n = CGAL::square(dx) + CGAL::square(dy);
-  FT d2_from_l = CGAL::square(qx * dy - qy * dx + c);
-  return CGAL::compare(d2_from_l, d2_from_p * n);
-}
-
-template<class FT, class Method_tag>
-Comparison_result
-svd_compare_distance_ftC2(const FT& qx, const FT& qy,
-			  const FT& s1x, const FT& s1y,
-			  const FT& t1x, const FT& t1y,
-			  const FT& s2x, const FT& s2y,
-			  const FT& t2x, const FT& t2y, Method_tag)
-{
-  // first check if (qx,qy) is inside, the boundary or at the exterior
-  // of the band of the segments s1, s2
-
-  must_be_filtered(qx);
-
-  FT d1x = s1x - t1x;
-  FT d1y = s1y - t1y;
-
-  FT d2x = s2x - t2x;
-  FT d2y = s2y - t2y;
-
-  FT dqs1x = qx - s1x;
-  FT dqs1y = qy - s1y;
-  FT dqt1x = qx - t1x;
-  FT dqt1y = qy - t1y;
-
-  FT dqs2x = qx - s2x;
-  FT dqs2y = qy - s2y;
-  FT dqt2x = qx - t2x;
-  FT dqt2y = qy - t2y;
-
-  FT dot_s1 = d1x * dqs1x + d1y * dqs1y;
-  int idx1; // 0 for s1, 1 for interior of 1, 2 for t1;
-
-  if ( qx == s1x && qy == s1y ) {
-    idx1 = 0;
-  } else if ( qx == t1x && qy == t1y ) {
-    idx1 = 2;
-  } else if ( dot_s1 >= FT(0) ) {
-    // q is outside (or the boundary of) the band of 1 on the side of s1.
-    idx1 = 0;
-  } else {
-    FT dot_t1 = d1x * dqt1x + d1y * dqt1y;
-    if ( dot_t1 <= FT(0) ) {
-      // q is outside (or the boundary of) the band of 1 on the side of t1.
-      idx1 = 2;
-    } else {
-      idx1 = 1;
-    }
-  }
-
-  FT dot_s2 = d2x * dqs2x + d2y * dqs2y;
-  int idx2; // 0 for s2, 1 for interior of 2, 2 for t2;
-
-  if ( qx == s2x && qy == s2y ) {
-    idx2 = 0;
-  } else if ( qx == t2x && qy == t2y ) {
-    idx2 = 2;
-  } else if ( dot_s2 >= FT(0) ) {
-    // q is outside (or the boundary of) the band of 2 on the side of s2.
-    idx2 = 0;
-  } else {
-    FT dot_t2 = d2x * dqt2x + d2y * dqt2y;
-    if ( dot_t2 <= FT(0) ) {
-      // q is outside (or the boundary of) the band of 2 on the side of t2.
-      idx2 = 2;
-    } else {
-      idx2 = 1;
-    }
-  }
-
-  if ( idx1 == 0 ) {
-    FT d2_from_s1 = CGAL::square(dqs1x) + CGAL::square(dqs1y);
-    //    if ( qx == s1x && qy == s1y ) { d2_from_s1 = FT(0); }
-    if ( idx2 == 0 ) {
-      FT d2_from_s2 = CGAL::square(dqs2x) + CGAL::square(dqs2y);
-      //      if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
-
-      if ( s1x == s2x && s1y == s2y ) { return EQUAL; }
-
-      return CGAL::compare(d2_from_s1, d2_from_s2);
-    } else if ( idx2 == 2 ) {
-
-      FT d2_from_t2 = CGAL::square(dqt2x) + CGAL::square(dqt2y);
-      //      if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
-
-      if ( s1x == t2x && s1y == t2y ) { return EQUAL; }
-
-      return CGAL::compare(d2_from_s1, d2_from_t2);
-    } else { // idx2 == 1
-      FT c2 = s2x * t2y - s2y * t2x;
-      FT n2 = CGAL::square(d2x) + CGAL::square(d2y);
-      FT d2_from_l2 = CGAL::square(qx * d2y - qy * d2x + c2);
-
-      return CGAL::compare(d2_from_s1 * n2, d2_from_l2);
-    }
-  } else if ( idx1 == 2 ) {
-     FT d2_from_t1 = CGAL::square(dqt1x) + CGAL::square(dqt1y);
-     //     if ( qx == t1x && qy == t1y ) { d2_from_t1 = FT(0); }
-
-     if ( idx2 == 0 ) {
-       FT d2_from_s2 = CGAL::square(dqs2x) + CGAL::square(dqs2y);
-       //       if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
-
-       if ( t1x == s2x && t1y == s2y ) { return EQUAL; }
-
-       return CGAL::compare(d2_from_t1, d2_from_s2);
-     } else if ( idx2 == 2 ) {
-       FT d2_from_t2 = CGAL::square(dqt2x) + CGAL::square(dqt2y);
-       //       if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
-
-       if ( t1x == t2x && t1y == t2y ) { return EQUAL; }
-
-       return CGAL::compare(d2_from_t1, d2_from_t2);
-    } else { // idx2 == 1
-      FT c2 = s2x * t2y - s2y * t2x;
-      FT n2 = CGAL::square(d2x) + CGAL::square(d2y);
-      FT d2_from_l2 = CGAL::square(qx * d2y - qy * d2x + c2);
-
-      return CGAL::compare(d2_from_t1 * n2, d2_from_l2);
-    }
-  } else { // idx1 == 1
-    FT c1 = s1x * t1y - s1y * t1x;
-    FT n1 = CGAL::square(d1x) + CGAL::square(d1y);
-    FT d2_from_l1 = CGAL::square(qx * d1y - qy * d1x + c1);
-    if ( idx2 == 0 ) {
-      FT d2_from_s2 = CGAL::square(dqs2x) + CGAL::square(dqs2y);
-      //      if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
-
-      return CGAL::compare(d2_from_l1, d2_from_s2 * n1);
-    } else if ( idx2 == 2 ) {
-      FT d2_from_t2 = CGAL::square(dqt2x) + CGAL::square(dqt2y);
-      //      if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
-
-      return CGAL::compare(d2_from_l1, d2_from_t2 * n1);
-    } else { // idx2 == 1
-      FT c2 = s2x * t2y - s2y * t2x;
-      FT n2 = CGAL::square(d2x) + CGAL::square(d2y);
-      FT d2_from_l2 = CGAL::square(qx * d2y - qy * d2x + c2);
-
-      return CGAL::compare(d2_from_l1 * n2, d2_from_l2 * n1);
-    }
-  }
-}
-
-
-template<class K, class Method_tag>
-inline Comparison_result
-svd_compare_distance_2(const typename K::Point_2& q,
-		       const typename K::Segment_2& s,
-		       const typename K::Point_2& p,
-		       Cartesian_tag, Method_tag method_tag)
-{
-  return svd_compare_distance_ftC2(q.x(), q.y(),
-				   s[0].x(), s[0].y(),
-				   s[1].x(), s[1].y(),
-				   p.x(), p.y(), method_tag);
-}
-
-template<class K, class Method_tag>
-inline Comparison_result
-svd_compare_distance_2(const typename K::Point_2& q,
-		       const typename K::Segment_2& s,
-		       const typename K::Point_2& p,
-		       Homogeneous_tag, Method_tag method_tag)
-{
-  return svd_compare_distanceH2(q.hx(), q.hy(), q.hw(),
-				s[0].hx(), s[0].hy(), s[0].hw(),
-				s[1].hx(), s[1].hy(), s[1].hw(),
-				p.hx(), p.hy(), p.hw(), method_tag);
-}
-
-
-template<class K, class Method_tag>
-inline Comparison_result
-svd_compare_distance_2(const typename K::Point_2& q,
-		       const typename K::Segment_2& s1,
-		       const typename K::Segment_2& s2,
-		       Cartesian_tag, Method_tag method_tag)
-{
-  return svd_compare_distance_ftC2(q.x(), q.y(),
-				   s1[0].x(), s1[0].y(),
-				   s1[1].x(), s1[1].y(),
-				   s2[0].x(), s2[0].y(),
-				   s2[1].x(), s2[1].y(), method_tag);
-}
-
-template<class K, class Method_tag>
-inline Comparison_result
-svd_compare_distance_2(const typename K::Point_2& q,
-		       const typename K::Segment_2& s1,
-		       const typename K::Segment_2& s2,
-		       Homogeneous_tag, Method_tag method_tag)
-{
-  return svd_compare_distanceH2(q.hx(), q.hy(), q.hw(),
-				s1[0].hx(), s1[0].hy(), s1[0].hw(),
-				s1[1].hx(), s1[1].hy(), s1[1].hw(),
-				s2[0].hx(), s2[0].hy(), s2[0].hw(),
-				s2[1].hx(), s2[1].hy(), s2[1].hw(),
-				method_tag);
-}
-
-
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 class Svd_oriented_side_of_bisector_C2
+  : public Svd_basic_predicates_C2<K>
 {
+private:
+  typedef Svd_basic_predicates_C2<K>   Base;
+  typedef Svd_are_same_points_C2<K>    Are_same_points_C2;
+  typedef typename Base::Line_2     Line_2;
+  typedef typename Base::RT         RT;
+  typedef typename Base::FT         FT;
+
 public:
-  typedef typename K::Site_2     Site_2;
+  typedef typename Base::Site_2     Site_2;
+  typedef typename Base::Point_2    Point_2;
+  typedef typename Base::Segment_2  Segment_2;
+
   typedef Oriented_side          result_type;
 
-  typedef typename K::Point_2    Point_2;
-  typedef typename K::Segment_2  Segment_2;
-  typedef typename K::Rep_tag    Rep_tag;
-  typedef Svd_are_same_points_C2<K>  Are_same_points_C2;
-
 private:
-  Comparison_result
-  operator()(const Point_2& q,
-	     const Point_2& p1, const Point_2& p2) const
+  bool same_segments(const Site_2& s1, const Site_2& s2) const
   {
-    CGAL_precondition( p1 != p2 );
+    CGAL_precondition( s1.is_segment() && s2.is_segment() );
+    return
+      ( are_same(s1.source_site(), s2.source_site()) &&
+	are_same(s1.target_site(), s2.target_site()) ) ||
+      ( are_same(s1.source_site(), s2.target_site()) &&
+	are_same(s1.target_site(), s2.source_site()) );
+  }
+
+  bool is_endpoint(const Site_2& p, const Site_2& s) const
+  {
+    CGAL_precondition( p.is_point() && s.is_segment() );
+    return
+      are_same(p, s.source_site()) || are_same(p, s.target_site());
+  }
+
+  bool is_degenerate(const Site_2& s) const
+  {
+    CGAL_precondition( s.is_segment() );    
+    return are_same( s.source_site(), s.target_site() );
+  }
+
+  //-----------------------------------------------------------------
+
+  Comparison_result
+  compare_distances_pp(const Site_2& p1, const Site_2& p2,
+		       const Site_2& q) const
+  {
+    CGAL_precondition( p1.is_point() && p2.is_point() );
+    CGAL_precondition( !are_same(p1,p2) );
 
     if ( are_same(q, p1) ) { return SMALLER; }
     if ( are_same(q, p2) ) { return LARGER; }
     
-    return compare_distance_to_point(q, p1, p2);
-  }
-
-  Comparison_result
-  operator()(const Point_2& q,
-	     const Point_2& p, const Segment_2& s) const
-  {
-    CGAL_precondition( !s.is_degenerate() );
-
     return
-      opposite( svd_compare_distance_2<K>(q, s, p, Rep_tag(), Method_tag()) );
+      compare_distance_to_point(q.point(), p1.point(), p2.point());
   }
 
+  //-----------------------------------------------------------------
+
   Comparison_result
-  operator()(const Point_2& q,
-	     const Segment_2& s, const Point_2& p) const
+  compare_distances_sp(const Site_2& s, const Site_2& p,
+		       const Site_2& q) const
   {
+    CGAL_precondition( s.is_segment() && p.is_point() );
+    CGAL_precondition( !is_degenerate(s) );
+
     if ( are_same(q, p) ) { return LARGER; }
-    if ( are_same(q, s.source()) ) { return SMALLER; }
-    if ( are_same(q, s.target()) ) { return SMALLER; }
+    if ( are_same(q, s.source_site()) ) { return SMALLER; }
+    if ( are_same(q, s.target_site()) ) { return SMALLER; }
 
-    return svd_compare_distance_2<K>(q, s, p, Rep_tag(), Method_tag());
+
+    bool is_src = are_same(p, s.source_site());
+    bool is_trg = are_same(p, s.target_site());
+
+    if ( is_src || is_trg ) {
+      Line_2 ls = compute_supporting_line(s.supporting_segment());
+      Line_2 lp = compute_perpendicular(ls, p.point());
+
+      if ( is_trg ) {
+	lp = opposite_line(lp);
+      }
+
+      Oriented_side os = oriented_side_of_line(lp, q.point());
+
+      if ( os == ON_POSITIVE_SIDE ) {
+	return LARGER;
+      } else if ( os == ON_NEGATIVE_SIDE) {
+	return SMALLER;
+      } else {
+	return EQUAL;
+      }
+    }
+
+    Point_2 pp = p.point(), qq = q.point();
+
+    RT d2_p = compute_squared_distance(pp, qq);
+
+    Point_2 ssrc = s.source(), strg = s.target();
+
+    Line_2 ls = compute_supporting_line(s.supporting_segment());
+    Line_2 lsrc = compute_perpendicular(ls, ssrc);
+    Line_2 ltrg = compute_perpendicular(ls, strg);
+
+    Oriented_side os_src = oriented_side_of_line(lsrc, qq);
+    if ( os_src != ON_NEGATIVE_SIDE ) {
+      RT d2_s = compute_squared_distance(qq, ssrc);
+      return CGAL::compare(d2_s, d2_p);
+    } else {
+      Oriented_side os_trg = oriented_side_of_line(ltrg, qq);
+      if ( os_trg != ON_POSITIVE_SIDE ) {
+	RT d2_s = compute_squared_distance(qq, strg);
+	return CGAL::compare(d2_s, d2_p);
+      } else {
+	std::pair<RT,RT> d2_s = compute_squared_distance(qq, ls);
+	return CGAL::compare(d2_s.first, d2_p * d2_s.second);
+      }
+    }
   }
 
+  //-----------------------------------------------------------------
+
   Comparison_result
-  operator()(const Point_2& q,
-	     const Segment_2& s1, const Segment_2& s2) const
+  compare_distances_ss(const Site_2& s1, const Site_2& s2,
+		       const Site_2& q) const
   {
-    CGAL_precondition( !s1.is_degenerate() );
-    CGAL_precondition( !s2.is_degenerate() );
+    CGAL_precondition( s1.is_segment() && s2.is_segment() );
+    CGAL_precondition( !is_degenerate(s1) );
+    CGAL_precondition( !is_degenerate(s2) );
 
-    if (  ( are_same(q, s1.source()) && are_same(q, s2.source()) ) ||
-	  ( are_same(q, s1.source()) && are_same(q, s2.target()) ) ||
-	  ( are_same(q, s1.target()) && are_same(q, s2.source()) ) ||
-	  ( are_same(q, s1.target()) && are_same(q, s2.target()) )  ) {
+    bool is_on_s1 = is_endpoint(q, s1);
+    bool is_on_s2 = is_endpoint(q, s2);
+
+    if ( is_on_s1 && is_on_s2 ) {
       return EQUAL;
-    }
-
-    if (  ( are_same(q, s1.source()) || are_same(q, s1.target()) ) &&
-	  ( !are_same(q, s2.source()) && !are_same(q, s2.target()) )  ) {
+    } else if ( is_on_s1 && !is_on_s2 ) {
       return SMALLER;
-    }
-
-    if (  ( are_same(q, s2.source()) || are_same(q, s2.target()) ) &&
-	  ( !are_same(q, s1.source()) && !are_same(q, s1.target()) )  ) {
+    } else if ( !is_on_s1 && is_on_s2 ) {
       return LARGER;
     }
 
-    if (  ( are_same(s1.source(), s2.source()) &&
-	    are_same(s1.target(), s2.target()) ) ||
-	  ( are_same(s1.source(), s2.target()) &&
-	    are_same(s1.target(), s2.source()) )  ) {
+    if ( same_segments(s1, s2) ) {
       return EQUAL;
     }
 
-    return svd_compare_distance_2<K>(q, s1, s2, Rep_tag(), Method_tag());
+
+    Point_2 qq = q.point();
+    
+    Point_2 ssrc1 = s1.source(), strg1 = s1.target();
+
+    Line_2 ls1 = compute_supporting_line(s1.supporting_segment());
+    Line_2 lsrc1 = compute_perpendicular(ls1, ssrc1);
+    Line_2 ltrg1 = compute_perpendicular(ls1, strg1);
+
+    Point_2 ssrc2 = s2.source(), strg2 = s2.target();
+
+    Line_2 ls2 = compute_supporting_line(s2.supporting_segment());
+    Line_2 lsrc2 = compute_perpendicular(ls2, ssrc2);
+    Line_2 ltrg2 = compute_perpendicular(ls2, strg2);
+
+    // idx1 and idx2 indicate if q is to the left (source endpoint
+    // side), the right side (target endpoint side) or inside 
+    // the band of s1 and s2 respectively; if q is on the boundary of
+    // the band we assign it to the adjacent halfplane; for left
+    // halfplane the value is -1; for the band the value is 0; for the
+    // right halfplane the value is 1.
+    int idx1(0), idx2(0);
+
+    Oriented_side os_src1 = oriented_side_of_line(lsrc1, qq);
+    if ( os_src1 != ON_NEGATIVE_SIDE ) {
+      idx1 = -1;
+    } else {
+      Oriented_side os_trg1 = oriented_side_of_line(ltrg1, qq);
+      if ( os_trg1 != ON_POSITIVE_SIDE ) {
+	idx1 = 1;
+      }
+    }
+
+    Oriented_side os_src2 = oriented_side_of_line(lsrc2, qq);
+    if ( os_src2 != ON_NEGATIVE_SIDE ) {
+      idx2 = -1;
+    } else {
+      Oriented_side os_trg2 = oriented_side_of_line(ltrg2, qq);
+      if ( os_trg2 != ON_POSITIVE_SIDE ) {
+	idx2 = 1;
+      }
+    }
+
+    CGAL_assertion( idx1 >= -1 && idx1 <= 1 );
+    CGAL_assertion( idx2 >= -1 && idx2 <= 1 );
+
+    if ( idx1 == -1 ) {
+      RT d2_s1 = compute_squared_distance(qq, ssrc1);
+      if ( idx2 == -1 ) {
+	if ( are_same(s1.source_site(), s2.source_site()) ) {
+	  return EQUAL;
+	}
+	RT d2_s2 = compute_squared_distance(qq, ssrc2);
+	return CGAL::compare(d2_s1, d2_s2);
+      } else if ( idx2 == 1 ) {
+	if ( are_same(s1.source_site(), s2.target_site()) ) {
+	  return EQUAL;
+	}
+	RT d2_s2 = compute_squared_distance(qq, strg2);
+	return CGAL::compare(d2_s1, d2_s2);
+      } else {
+	std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
+	return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
+      }
+    } else if ( idx1 == 1 ) {
+      RT d2_s1 = compute_squared_distance(qq, strg1);
+      if ( idx2 == -1 ) {
+	if ( are_same(s1.target_site(), s2.source_site()) ) {
+	  return EQUAL;
+	}
+	RT d2_s2 = compute_squared_distance(qq, ssrc2);
+	return CGAL::compare(d2_s1, d2_s2);
+      } else if ( idx2 == 1 ) {
+	if ( are_same(s1.target_site(), s2.target_site()) ) {
+	  return EQUAL;
+	}
+	RT d2_s2 = compute_squared_distance(qq, strg2);
+	return CGAL::compare(d2_s1, d2_s2);
+      } else {
+	std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
+	return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
+      }
+    } else {
+      std::pair<RT,RT> d2_s1 = compute_squared_distance(qq, ls1);
+      if ( idx2 == -1 ) {
+	RT d2_s2 = compute_squared_distance(qq, ssrc2);
+	return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
+      } else if ( idx2 == 1 ) {
+	RT d2_s2 = compute_squared_distance(qq, strg2);
+	return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
+      } else {
+	std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
+	return CGAL::compare(d2_s1.first * d2_s2.second,
+			     d2_s2.first * d2_s1.second);
+      }
+    }
   }
 
-protected:
+  //-----------------------------------------------------------------
+  //-----------------------------------------------------------------
+
   Oriented_side
-  operator()(const Site_2& t1, const Site_2& t2,
-	     const Point_2& q) const
+  compare_distances(const Site_2& t1, const Site_2& t2,
+		    const Site_2& q) const
   {
     Comparison_result r;
 
     if ( t1.is_point() && t2.is_point() ) {
-      r = operator()(q, t1.point(), t2.point());
+      r = compare_distances_pp(t1, t2, q);
       if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
       if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
       return ON_ORIENTED_BOUNDARY;
     } else if ( t1.is_segment() && t2.is_point() ) {
-      r = operator()(q, t1.segment(), t2.point());
+      r = compare_distances_sp(t1, t2, q);
       if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
       if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
       return ON_NEGATIVE_SIDE;
     } else if ( t1.is_point() && t2.is_segment() ) {
-      r = operator()(q, t1.point(), t2.segment());
+      r = opposite( compare_distances_sp(t2, t1, q) );
       if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
       if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
       return ON_POSITIVE_SIDE;
     } else {
-      r = operator()(q, t1.segment(), t2.segment());
+      r = compare_distances_ss(t1, t2, q);
       if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
       if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
       return ON_ORIENTED_BOUNDARY;
@@ -397,7 +290,7 @@ public:
   operator()(const Site_2& t1, const Site_2& t2,
 	     const Site_2& q) const
   {
-#if 1
+#if 0
     std::cout << "inside oriented side of bisector top "
 	      << "level operator()" << std::endl;
     std::cout << "t1: " << t1 << std::endl;
@@ -405,7 +298,7 @@ public:
     std::cout << "q: " << q << std::endl;
 #endif
     CGAL_precondition( q.is_point() );
-    return operator()(t1, t2, q.point());
+    return compare_distances(t1, t2, q);
   }
 
 

@@ -218,7 +218,7 @@ public:
 		  const Site_2& r, const Site_2& s,
 		  const Site_2& t, Sign sgn) const
   {
-    debug_info("finite_edge_interior_2 (5)::", p);
+    //    debug_info("finite_edge_interior_2 (5)::", p);
     return
       svd_finite_edge_conflict_ftC2<K,Method_tag>(p, q, r, s, t,
 						  sgn, Method_tag());

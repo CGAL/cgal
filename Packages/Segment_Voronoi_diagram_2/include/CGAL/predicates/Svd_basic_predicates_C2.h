@@ -242,6 +242,21 @@ public:
     return Line_2(-l.a(), -l.b(), -l.c());
   }
 
+  static
+  RT compute_squared_distance(const Point_2& p, const Point_2& q)
+  {
+    return CGAL::square(p.x() - q.x()) + CGAL::square(p.y() - q.y());
+  }
+
+  static
+  std::pair<RT,RT>
+  compute_squared_distance(const Point_2& p, const Line_2& l)
+  {
+    RT d2 = CGAL::square(l.a() * p.x() + l.b() * p.y() + l.c());
+    RT n2 = CGAL::square(l.a()) + CGAL::square(l.b());
+    return std::pair<RT,RT>(d2, n2);
+  }
+
 public:
   //-------------------------------------------------------------------
   // BASIC PREDICATES
