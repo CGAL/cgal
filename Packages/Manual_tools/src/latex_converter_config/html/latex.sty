@@ -1651,7 +1651,6 @@
     \newcommand{\lciFirstBibItem}{}%
     \lciOpenFile{\lciBibFilename}%
     \lciBibFileHeader
-    \lcNoLinkBegin
 }{%
     \lcNoLinkEnd
     \lciBibFileFooter
@@ -1686,10 +1685,11 @@
 }}
 
 \newcommand{\bibitem}[1]{\lciFirstBibItem
-    \newcommand{\lciFirstBibItem}{\lcRawHtml{</TD></TR>}}%
+    \newcommand{\lciFirstBibItem}{\lcNoLinkEnd\lcRawHtml{</TD></TR>}}%
     \lcRawHtml{<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
         <A NAME="Biblio_#C1"></A><B>[#C1]</B></TD>
     <TD ALIGN=LEFT VALIGN=TOP>}%
+    \lcNoLinkBegin  
 }
 \newcommand{\bibitem@om}{\bibcite{#2}{#1}\bibitem{#2}}
 
