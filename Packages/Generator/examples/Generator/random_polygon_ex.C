@@ -7,10 +7,7 @@
 #include <CGAL/random_polygon_2.h>
 #include <CGAL/Random.h>
 #include <CGAL/copy_n.h>
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer RT;
-#else
+
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz RT;
@@ -20,7 +17,7 @@ typedef CGAL::Gmpz RT;
 #include <CGAL/double.h>
 typedef double RT;
 #endif
-#endif
+
 
 #include <fstream>
 #include <list>
