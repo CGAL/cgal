@@ -41,7 +41,8 @@ public:
   typedef typename Kernel::FT           CoNT;
 
   typedef Tag_true                      Has_left_category;
-   
+  typedef Tag_false                     Has_reflect_category;
+  
   // The difference between Curve_2 and X_monotone_curve_2 is semantical only,
   // NOT syntactical.
   typedef Conic_arc_2<CfNT, Kernel>   Curve_2;
