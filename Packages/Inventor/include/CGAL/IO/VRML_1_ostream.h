@@ -12,7 +12,7 @@
 // date          :
 //
 // file          : include/CGAL/IO/VRML_1_ostream.h
-// source        : web/Inventor_ostream.fw
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
