@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.79 on 20 March 2001
+- Last minute reverse.
+
 Version 4.78 on 20 March 2001
 - VC++ work around
 - Undo last predicate.
