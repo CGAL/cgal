@@ -157,8 +157,8 @@ Output_file_stack output_file_stack;
 Anchor_file_stack anchor_file_stack;
 
 void push_current_output() {
-        if (contents_stream)
-            (*contents_stream) << flush;
+    if (contents_stream)
+        (*contents_stream) << flush;
     current_output = Output_file( current_ostream, current_filename);
     output_file_stack.push_front( current_output);
     anchor_file_stack.push_front( anchor_stream);

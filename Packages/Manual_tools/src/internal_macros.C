@@ -1037,7 +1037,6 @@ string
 open_file( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     remove_separator( param[0]);
-    push_current_output();
     push_current_output_w_filename( expandFirstMacro(param[0]));
     return string();
 }

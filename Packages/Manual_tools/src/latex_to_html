@@ -341,7 +341,7 @@ anchor_filter() {
 
 convert() {
     # check if file exists
-    if [[ ! -r ${1}.tex || ! -r ${1} ]]; then
+    if [[ ! -r ${1}.tex && ! -r ${1} ]]; then
         error 1 "LaTeX filename '${1}' does not exist."
     fi
 
