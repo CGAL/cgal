@@ -232,7 +232,7 @@ public:
 
   void process_one_edge();
   void process_one_face();
-  void refine_step();
+  bool refine_step();
   //CHECK
   bool is_encroached(const Vertex_handle va, 
 		     const Vertex_handle vb,
@@ -879,7 +879,6 @@ is_encroached(const Vertex_handle va, const Vertex_handle vb) const
       vi++;
     }
   return false;
-
 }
 
 // ?????????????
@@ -1049,7 +1048,7 @@ process_one_face()
 
 template <class Tr>
 inline
-void Mesh_2<Tr>::
+bool Mesh_2<Tr>::
 refine_step()
 {
   if( !c_edge_queue.empty() )
@@ -1057,6 +1056,9 @@ refine_step()
   else
     if ( !Bad_faces.empty() )
       process_one_face();
+    else
+      return false;
+  return true;
 }
 
 template <class Tr>
@@ -1084,7 +1086,6 @@ mark_facets(It begin, It end)
     {
       std::queue<Face_handle> face_queue;
       Face_handle fh=locate(*it);
-      CGAL_warning_msg(fh==NULL,"Point lies outside affine hull.");
       if(fh!=NULL)
       {
 	face_queue.push(fh);

@@ -36,7 +36,8 @@ int main(int, char*)
 #include <CGAL/IO/pixmaps/polygon.xpm>
 #include <CGAL/IO/pixmaps/point.xpm>
 #include <CGAL/IO/pixmaps/points.xpm>
-#include <CGAL/IO/pixmaps/constrained.xpm>
+#include "contraints.xpm"
+#include "marked.xpm"
 #include <CGAL/IO/pixmaps/circle.xpm>
 #include <CGAL/IO/pixmaps/triangulation.xpm>
 
@@ -92,6 +93,31 @@ CGAL::Qt_widget& operator<< (CGAL::Qt_widget& w, const Mesh& mesh)
   return w;
 }
 
+template <class M>
+class Show_marked_faces : public CGAL::Qt_widget_layer
+{
+  M &mesh;
+  CGAL::Color color;
+public:
+  Show_marked_faces(Mesh &m, CGAL::Color c=CGAL::GREEN) : mesh(m), color(c) {};
+
+  typedef typename M::Finite_faces_iterator Face_iterator;
+
+  void draw()
+  {
+    QColor old_fill_color = widget->fillColor();
+    int old_line_width = widget->lineWidth();
+    *widget << CGAL::FillColor(CGAL::GREEN) << CGAL::LineWidth(0);
+    for(Face_iterator fit=mesh.finite_faces_begin();
+	fit!=mesh.finite_faces_end();
+	++fit)
+      if(fit->is_marked())
+	*widget << mesh.triangle(fit);
+    widget->setFillColor(old_fill_color);
+    widget->setLineWidth(old_line_width);
+  }
+};
+
 namespace {
 
   class Seeds_wrapper_point : public Point {
@@ -141,15 +167,21 @@ public:
 							 CGAL::CROSS);
       show_triangulation = 
 	new CGAL::Qt_layer_show_triangulation<Mesh>(mesh);
+      show_marked = 
+	new Show_marked_faces<Mesh>(mesh);
       show_constraints = 
 	new CGAL::Qt_layer_show_triangulation_constraints<Mesh>(mesh);
       show_circles = 
 	new CGAL::Qt_layer_show_circles<Mesh>(mesh, *aspect_ratio_label);
       show_mouse = new CGAL::Qt_layer_mouse_coordinates(*this);
+
+      // layers order, first attached are "under" last attached
+      widget->attach(show_marked);
       widget->attach(show_triangulation);
       widget->attach(show_constraints);
       widget->attach(show_circles);
       widget->attach(show_points);
+      widget->attach(show_seeds);
       widget->attach(show_mouse);
 
       show_circles->deactivate();
@@ -196,8 +228,7 @@ public:
       connect(timer, SIGNAL(timeout()),
 	      this, SLOT(refineMeshStep()));
 
-      QPushButton *pbMeshTimer = 
-	new QPushButton("Auto step", toolBarActions);
+      pbMeshTimer = new QPushButton("Auto step", toolBarActions);
       pbMeshTimer->setToggleButton(true);
       connect(pbMeshTimer, SIGNAL(stateChanged(int)),
 	      this, SLOT(updateTimer(int)));
@@ -282,7 +313,7 @@ public:
 	      show_triangulation, SLOT(stateChanged(int)));
 
       QToolButton *pbShowConstraints 
-	= new QToolButton(QPixmap( (const char**)constrained_xpm ),
+	= new QToolButton(QPixmap( (const char**)contraints_xpm ),
 			  "Show constraints", "Display mesh constraints edges",
 			  this, SLOT(fake_slot()), 
 			  toolbarLayers,
@@ -291,6 +322,18 @@ public:
       pbShowConstraints->setOn(true);
       connect(pbShowConstraints, SIGNAL(stateChanged(int)),
 	      show_constraints, SLOT(stateChanged(int)));
+
+      QToolButton *pbShowMarked 
+	= new QToolButton(QPixmap( (const char**)marked_xpm ),
+			  "Show marked faces", 
+			  "Display faces that will be refined",
+			  this, SLOT(fake_slot()), 
+			  toolbarLayers,
+			  "show marked");
+      pbShowMarked->setToggleButton(true);
+      pbShowMarked->setOn(true);
+      connect(pbShowMarked, SIGNAL(stateChanged(int)),
+	      show_marked, SLOT(stateChanged(int)));
 
       QToolButton *pbShowCircles
 	= new QToolButton(QPixmap( (const char**)circle_xpm ),
@@ -308,6 +351,7 @@ public:
       QButtonGroup *bgLayers = 
 	new QButtonGroup("Layers", 0, "layers");
       bgLayers->insert(pbShowPoints);
+      bgLayers->insert(pbShowMarked);
       bgLayers->insert(pbShowTriangulation);
       bgLayers->insert(pbShowConstraints);
       bgLayers->insert(pbShowSeeds);
@@ -370,7 +414,10 @@ public slots:
       
       if(CGAL::assign(p,obj))
 	if(get_seed->is_active())
-	  seeds.push_back(p);
+	  {
+	    seeds.push_back(p);
+	    mesh.mark_facets(seeds.begin(), seeds.end());
+	  }
 	else
 	  mesh.insert(p);
       else
@@ -382,25 +429,25 @@ public slots:
       widget->redraw();
     }
 
-  void redraw_win()
-    {
-      widget->lock();
-      widget->clear();
+//   void redraw_win()
+//     {
+//       widget->lock();
+//       widget->clear();
 
-      for(Mesh::Edge_iterator it=mesh.edges_begin();
-	  it!=mesh.edges_end();
-	  it++)
-	if(mesh.is_constrained(*it))
-	  *widget << CGAL::RED << mesh.segment(*it);
-	else
-	  *widget << CGAL::BLUE << mesh.segment(*it);
-      *widget << CGAL::GREEN;
-      for(Mesh::Vertex_iterator it=mesh.vertices_begin();
-	  it!=mesh.vertices_end();
-	  it++)
-	*widget << it->point();
-      widget->unlock();
-    }
+//       for(Mesh::Edge_iterator it=mesh.edges_begin();
+// 	  it!=mesh.edges_end();
+// 	  it++)
+// 	if(mesh.is_constrained(*it))
+// 	  *widget << CGAL::RED << mesh.segment(*it);
+// 	else
+// 	  *widget << CGAL::BLUE << mesh.segment(*it);
+//       *widget << CGAL::GREEN;
+//       for(Mesh::Vertex_iterator it=mesh.vertices_begin();
+// 	  it!=mesh.vertices_end();
+// 	  it++)
+// 	*widget << it->point();
+//       widget->unlock();
+//     }
 
     //insert a bounding box around the mesh
   void insert_bounding_box()
@@ -441,7 +488,7 @@ public slots:
       if(!is_mesh_initialized)
 	{
 	  saveTriangulationUrgently("last_input.edg");
-	  mesh.init();
+	  mesh.init(seeds.begin(), seeds.end());
 	  is_mesh_initialized=true;
 	}
       mesh.conform();
@@ -452,11 +499,12 @@ public slots:
     {
       if(!is_mesh_initialized)
 	{
-	  mesh.init();
+	  mesh.init(seeds.begin(), seeds.end());
 	  is_mesh_initialized=true;
 	  saveTriangulationUrgently("last_input.edg");
 	}
-      mesh.refine_step();
+      if(!mesh.refine_step())
+	pbMeshTimer->setOn(false);
       widget->redraw();
     }
 
@@ -483,6 +531,7 @@ public slots:
   void clearMesh()
     {
       mesh.reset();
+      seeds.clear();
       is_mesh_initialized=false;
       widget->redraw();
     }
@@ -495,6 +544,7 @@ public slots:
         return;
       std::ifstream f(s);
       mesh.read(f);
+      seeds.clear();
       is_mesh_initialized=false;
       widget->redraw();
     }
@@ -537,9 +587,11 @@ private:
   CGAL::Qt_layer_show_triangulation_constraints<Mesh>* show_constraints;
   CGAL::Qt_layer_show_circles<Mesh>* show_circles;
   CGAL::Qt_layer_mouse_coordinates* show_mouse;
+  Show_marked_faces<Mesh>* show_marked;
 
   QLabel* aspect_ratio_label;
   QTimer* timer;
+  QPushButton *pbMeshTimer;
   int timer_interval;
 };
 
