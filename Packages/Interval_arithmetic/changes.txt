@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.77 on 20 March 2001
+- Add tst_static_adaptatif.C again.
+
 Version 4.76 on 20 March 2001
 - Update new predicates side_of_bounded_sphere.
 - Enable new static filters for GCC.
