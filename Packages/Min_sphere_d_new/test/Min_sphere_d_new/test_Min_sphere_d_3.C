@@ -73,7 +73,7 @@
 // comparing (needs LEDA)
 #ifdef CGAL_USE_LEDA
   typedef  CGAL::Homogeneous<leda_integer>     K_3;
-  typedef  CGAL::Optimisation_d_traits_3<R_3>  Traits_3;
+  typedef  CGAL::Optimisation_d_traits_3<K_3>  Traits_3;
   typedef  CGAL::Min_sphere_d<Traits_1>        Min_sphere_d;
   typedef  CGAL::Min_sphere_d<Traits_3>        O_Min_sphere_d;
 #endif
