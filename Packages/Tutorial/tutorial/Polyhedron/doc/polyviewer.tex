@@ -1,21 +1,53 @@
-The tutorial starts with an implementation of a basic polyhedron
-viewer based on the \cgalpoly\ with the default configuration.  This
-basic viewer is based on OpenGL and demonstrates basic functionalities
-of a \cgalpoly . We describe how to import a polyhedron file in the
-OBJ format based on the \italic{modifier callback mechanism} and the
-\italic{incremental builder}. We also show the mesh traversal based on
-the \italic{iterators} and the \italic{circulators} for rendering and
-the OBJ file exporting.
+% viewer
 
-An extended polyhedron viewer is then introduced by customizing the
-\poly\ with extra attributes and functionalities. This enriched
-polyhedron supports facet and vertex normals for rendering, supports
-the axis-aligned bounding box of the polyhedron, and provides geometry
-items specialized with algorithmic flags.  The superimposition of the
-control mesh on the subdivision surfaces is implemented with the flags
-of the halfedge items (\figurename\ \ref{fig:quad-triangle}).
+% show how to 
+% iterate
+% circulate
+% enrich primitives
 
-The tutorial also features a trackball to interactively manipulate the
-polyhedron, a snapshot function of the camera viewpoint and the
-transformation states, a raster output to the clipboard, and the
-vectorial output to a postscript file.
+This tutorial implements an interactive basic polyhedron viewer based
+on the \cgalpoly\ with the default configuration.  This viewer
+demonstrates basic functionalities of a \cgalpoly . We show the mesh
+traversal based on the \italic{iterators} and the \italic{circulators}
+during the assembly of facet polygons for basic OpenGL rendering. The
+viewer is then extended by customizing the \poly\ with extra
+attributes and functionalities. This enriched polyhedron supports
+facet and vertex normals for rendering, an axis-aligned bounding box
+of the polyhedron, and provides geometry items specialized with
+algorithmic flags. A number of rendering modes are available to the
+user depending on the choices of lighting, shading and edge
+superimposing. The superimposition of the control mesh on the
+subdivision surfaces is implemented for the quad-triangle scheme with
+a boolean flag of the halfedge item, this flag being automatically
+propagated to the subdivided edges during subdivision (\figurename\
+\ref{fig:quad-triangle}).
+
+% basic combinatorial algorithms
+
+The tutorial demonstrates basic combinatorial algorithms on the
+connectivity of the polyhedron by counting the number of connected
+components and boundaries, and deducing the combinatorial genus of the
+active polyhedron.
+
+% OBJ format import/export
+
+Although \cgal already features OFF file import and export, we show
+how to import a polyhedron file in the OBJ format based on the
+\italic{modifier callback mechanism} and the \italic{incremental
+builder}. The OBJ file exporting is rather simply based on mesh
+traversal.
+
+% camera
+
+The camera and transformation states are automatically adjusted when a
+new polyhedron is loaded so as to originally view the model in all. A
+function snapshots the camera and transformation states for the sake
+of comparing two models with the same viewpoint.
+
+% goodies 
+
+The viewer also features a raster output of the current client image
+to the clipboard, as well as a vectorial output to a postscript
+file. Note however that the latter functionality is not based on the
+painter algorithm and performs instead a simple z-sorting of the
+polygons based on each facet barycenter and the current viewpoint.

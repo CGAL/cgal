@@ -4,10 +4,7 @@ Levin~\cite{l-pg-03}, then Stam and Loop~\cite{qts}. It applies
 to polygon meshes and basically features Loop subdivision on triangles
 and Catmull-Clark subdivision on polygons of the control mesh (see
 Fig.\ref{fig:quad-triangle}). After one iteration of subdivision the
-subdivided model is only composed of triangles and quads. A simple
-solution for implementing such a scheme is to use the
-\italic{incremental builder} concept featured by CGAL 
-Polyhedron.
+subdivided model is only composed of triangles and quads. 
 
 
 % quad-triangle subdivision scheme
@@ -18,9 +15,23 @@ Polyhedron.
     \label{fig:quad-triangle}
 \end{figure}
 
-{ \scriptsize
-\begin{verbatim}
+A simple solution for implementing such a scheme is to use the
+\italic{incremental builder} concept featured by CGAL 
+Polyhedron. The polyhedron provides a backdoor access to the
+underlying halfedge data structure with the \CodeFmt{CGAL::Modifier}
+class to the underlying halfedge data structure, and checks the
+integrity of the data structure when this access finishes. The prime
+example for this backdoor use is an alternative way of describing
+meshes in the indexed-facet-set format that is common in file formats:
+First, points are defined with their coordinates, then facets are
+defined as sequence of indices to the points on their boundary.\\
 
+In the example below we make use of the incremental builder to
+assembly a subdivided polyhedron from an input one. Our implementation
+requires to enrich the halfedge, vertex and facet primitives with an
+integer tag to recover the vertex indices of the subdivided model.
+
+\begin{lstlisting}
 #include "enriched_polyhedron.h"
 #include "builder.h"
 
@@ -61,10 +72,7 @@ private:
   // this tutorial.
   
 };
-\end{verbatim}}
 
-{ \scriptsize
-\begin{verbatim}
 template <class Polyhedron,class kernel>
 class CSubdivider_quad_triangle
 {
@@ -91,4 +99,5 @@ public:
     builder.smooth(&NewMesh,smooth_boundary);
   }
 };
-\end{verbatim}}
+\end{lstlisting}
+
