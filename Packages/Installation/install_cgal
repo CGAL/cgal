@@ -5717,22 +5717,6 @@ create_include_makefile()
     >> ${FILE}
 
   # 
-  # CGAL_EXTRA_OBJECTS
-  # 
-  case ${SYST} in
-    *IRIX*-5) 
-	${_printf} "%s\n" \
-	"CGAL_EXTRA_OBJECTS = workaround_4_irix.o" \
-	>> ${FILE}
-	;;
-    *IRIX*-6*) 
-	${_printf} "%s\n" \
-	"CGAL_EXTRA_OBJECTS = workaround_4_irix6.o" \
-	>> ${FILE}
-	;;
-  esac
-
-  # 
   # CGAL_(WIN)LIB
   # 
   ${_printf} "%s\n" "CGAL_LIB = ${CGAL_LIBNAME}" >> ${FILE}

@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: CGAL_EXTRA_OBJECTS is not needed anymore.
 GLOB: New options --build <config> and --rebuild <config>.
 GLOB: Update list of supported compilers.
 GLOB: New interactive option "Register new compiler".
