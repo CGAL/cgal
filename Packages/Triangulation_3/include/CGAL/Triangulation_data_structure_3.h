@@ -51,21 +51,20 @@
 
 #include <CGAL/Triangulation_short_names_3.h>
 
+// TODO:
+// - remove the old code create_star() (Regular still uses it).
+// - use the new one in insert_outside_convex_hull() too.
+// - improve memory management (use a list of cell arrays instead, etc...)
+
 CGAL_BEGIN_NAMESPACE
 
-template <class TDS>
-class Triangulation_ds_cell_iterator_3;
-template <class TDS>
-class Triangulation_ds_facet_iterator_3;
-template <class TDS>
-class Triangulation_ds_edge_iterator_3;
-template <class TDS>
-class Triangulation_ds_vertex_iterator_3;
+template <class TDS> class Triangulation_ds_cell_iterator_3;
+template <class TDS> class Triangulation_ds_facet_iterator_3;
+template <class TDS> class Triangulation_ds_edge_iterator_3;
+template <class TDS> class Triangulation_ds_vertex_iterator_3;
 
-template <class TDS>
-class Triangulation_ds_cell_circulator_3;
-template <class TDS>
-class Triangulation_ds_facet_circulator_3;
+template <class TDS> class Triangulation_ds_cell_circulator_3;
+template <class TDS> class Triangulation_ds_facet_circulator_3;
 
 template <class Vb, class Cb>
 class Triangulation_data_structure_3;
@@ -378,21 +377,97 @@ public:
 
   typedef std::set<void *> Conflict_set;
 
-  // Maybe we need _2 and _3 versions ?
-  template < class Conflict_test >
-  void insert_conflict(Vertex & w, Cell *c, const Conflict_test &test);
   // This one takes a function object to recursively determine the cells in
   // conflict, then inserts by starring.
+  // Maybe we need _2 and _3 versions ?
+  template < class Conflict_test >
+  void insert_conflict(Vertex & w, Cell *c, const Conflict_test &tester)
+  {
+    CGAL_triangulation_precondition( tester(c) );
+
+    if (dimension() == 3)
+    {
+      // Find the cells in conflict.
+      Cell *ccc;
+      int i;
+      find_conflicts_3(c, ccc, i, tester);
+
+      // Create the new cells, and returns one of them.
+      Cell * nouv;
+      nouv = create_star2_3( &w, ccc, i );
+      w.set_cell( nouv );
+
+      move_temporary_free_cells_to_free_list();
+    }
+    else // dim == 2
+    {
+      // Find the cells in conflict.
+      Cell *ccc;
+      int i;
+      find_conflicts_2(c, ccc, i, tester);
+
+      // Create the new cells, and returns one of them.
+      Cell * nouv;
+      nouv = create_star2_2( &w, ccc, i );
+      w.set_cell( nouv );
+
+      move_temporary_free_cells_to_free_list();
+    }
+  }
 
 private:
   // The two find_conflicts_[23] below could probably be merged ?
+  // The only difference between them is the test "j<3" instead of "j<4"...
   template < class Conflict_test >
   void
-  find_conflicts_3(Cell *c, Cell * &ac, int &i, const Conflict_test &tester);
+  find_conflicts_3(Cell *c, Cell * &ac, int &i, const Conflict_test &tester)
+  {
+    // The semantic of the flag is the following :
+    // 0  -> never went on the cell
+    // 1  -> cell is in conflict
+    // -1 -> cell is not in conflict
+
+    CGAL_triangulation_precondition( tester(c) );
+
+    move_cell_to_temporary_free_list(c);
+    c->set_in_conflict_flag(1);
+
+    for ( int j=0; j<4; j++ ) {
+      Cell * test = c->neighbor(j);
+      if (test->get_in_conflict_flag() != 0)
+        continue; // test was already tested.
+      if ( tester(test) )
+        find_conflicts_3(test, ac, i, tester);
+      else {
+        test->set_in_conflict_flag(-1);
+        ac = c;
+        i = j;
+      }
+    }
+  }
 
   template < class Conflict_test >
   void
-  find_conflicts_2(Cell *c, Cell * &ac, int &i, const Conflict_test &tester);
+  find_conflicts_2(Cell *c, Cell * &ac, int &i, const Conflict_test &tester)
+  {
+    CGAL_triangulation_precondition( tester(c) );
+
+    move_cell_to_temporary_free_list(c);
+    c->set_in_conflict_flag(1);
+
+    for ( int j=0; j<3; j++ ) {
+      Cell * test = c->neighbor(j);
+      if (test->get_in_conflict_flag() != 0)
+        continue; // test was already tested.
+      if ( tester(test) )
+        find_conflicts_2(test, ac, i, tester);
+      else {
+        test->set_in_conflict_flag(-1);
+        ac = c;
+        i = j;
+      }
+    }
+  }
 
   Cell * create_star2_3(Vertex* v, Cell* c, int li,
 	                Cell * prev_c = NULL, Vertex * prev_v = NULL);
@@ -490,7 +565,7 @@ public:
   }
 
   //facets around an edge
-    Facet_circulator incident_facets(const Edge & e) const
+  Facet_circulator incident_facets(const Edge & e) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     return Facet_circulator(this, e);
@@ -548,7 +623,7 @@ public:
 private:
   // in dimension i, number of vertices >= i+2 
   // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
-  int _dimension; // 
+  int _dimension;
   int _number_of_vertices;
   
   // we maintain the list of cells to be able to traverse the triangulation
@@ -2077,115 +2152,6 @@ insert_increase_dimension(const Vertex & w, // new vertex
     
   return v;
 } // end insert_increase_dimension
-
-// Status : it's working, and already way faster than before.
-// - remove the old code (regular still uses it).
-// - improve memory management (new/delete in TDS, with a free_list)
-// - try to improve locate() by choosing a cell that is more "towards" the
-//   target (ie vertices are closer).
-
-// This one takes a function object to recursively determine the cells in
-// conflict, then inserts by starring.
-template < class Vb, class Cb >
-template < class Conflict_test >
-void
-Triangulation_data_structure_3<Vb,Cb>::
-insert_conflict(Vertex & w, Cell *c, const Conflict_test &tester)
-{
-  CGAL_triangulation_precondition( tester(c) );
-
-  if (dimension() == 3)
-  {
-  // Call the recursive find_conflict().
-  // Probably this will go to the trash if both steps are merged... later.
-  Cell *ccc;
-  int i;
-  find_conflicts_3(c, ccc, i, tester);
-
-  // Create the new cells, and returns one of them.
-  Cell * nouv;
-  nouv = create_star2_3( &w, ccc, i );
-  w.set_cell( nouv );
-
-  move_temporary_free_cells_to_free_list();
-  }
-  else // dim == 2
-  {
-  // Call the recursive find_conflict().
-  // Probably this will go to the trash if both steps are merged... later.
-  Cell *ccc;
-  int i;
-  find_conflicts_2(c, ccc, i, tester);
-
-  // Create the new cells, and returns one of them.
-  Cell * nouv;
-  nouv = create_star2_2( &w, ccc, i );
-  w.set_cell( nouv );
-
-  move_temporary_free_cells_to_free_list();
-  }
-}
-
-template <class Vb, class Cb >
-template < class Conflict_test >
-void
-Triangulation_data_structure_3<Vb,Cb>::
-find_conflicts_3(Cell *c, Cell * &ac, int &i, const Conflict_test &tester)
-{
-  // The semantic of the flag is the following :
-  // 0  -> never went on the cell
-  // 1  -> cell is in conflict
-  // -1 -> cell is not in conflict
-
-  CGAL_triangulation_precondition( tester(c) );
-
-  move_cell_to_temporary_free_list(c);
-  c->set_in_conflict_flag(1);
-
-  for ( int j=0; j<4; j++ ) {
-    Cell * test = c->neighbor(j);
-    if (test->get_in_conflict_flag() != 0)
-      continue; // test was already tested.
-    if ( tester(test) )
-      find_conflicts_3(test, ac, i, tester);
-    else {
-      test->set_in_conflict_flag(-1);
-      ac = c;
-      i = j;
-    }
-  }
-}
-
-// The only difference with the above is the test "j<3" instead of "j<4"...
-template <class Vb, class Cb >
-template < class Conflict_test >
-void
-Triangulation_data_structure_3<Vb,Cb>::
-find_conflicts_2(Cell *c, Cell * &ac, int &i, const Conflict_test &tester)
-{
-  // The semantic of the flag is the following :
-  // 0  -> never went on the cell
-  // 1  -> cell is in conflict
-  // -1 -> cell is not in conflict
-
-  CGAL_triangulation_precondition( tester(c) );
-
-  move_cell_to_temporary_free_list(c);
-  c->set_in_conflict_flag(1);
-
-  for ( int j=0; j<3; j++ ) {
-    Cell * test = c->neighbor(j);
-    if (test->get_in_conflict_flag() != 0)
-      continue; // test was already tested.
-    if ( tester(test) )
-      find_conflicts_2(test, ac, i, tester);
-    else {
-      test->set_in_conflict_flag(-1);
-      ac = c;
-      i = j;
-    }
-  }
-}
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*

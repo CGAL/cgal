@@ -1,3 +1,6 @@
+Version 1.47 (?? Mar 01)
+- member template definition in class body for VC++.
+
 Version 1.46 (3 Mar 01)
 - violates() optimization (remove() speed up). [syl]
 - new insert_conflict() in the TDS. [syl]
