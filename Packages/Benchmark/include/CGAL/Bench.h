@@ -154,7 +154,7 @@ public:
 
   /*!
    */
-  void print_results()
+  virtual void print_results()
   {
     fflush(stdout);
     if (!m_header_printed && m_print_header) print_header();
