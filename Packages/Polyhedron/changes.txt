@@ -1,6 +1,14 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.26 (09 Apr 2002)
+
+     - Made 'hds' a protected member instead of private.
+     - Fixed bug in prev() member function of Halfedges. It cannot
+       any longer be implemented using the decorator, since HDS
+       here referes only to the _types base class that does not have
+       the Support... tags.
+
 3.25 (05 Apr 2002)
 
      - Extended Polyhedron_incremental_builder with absolute indexing

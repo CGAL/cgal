@@ -231,13 +231,32 @@ public:
     // Change semantic of prev: it is always available at this level.
     // If the HDS does not provide a prev-function, the previous
     // halfedge will be searched around the incident facet.
+private:
+    Halfedge_handle       find_prev( Halfedge_handle,       Tag_true) {
+        return Base::prev();
+    }
+    Halfedge_const_handle find_prev( Halfedge_const_handle, Tag_true) const {
+        return Base::prev();
+    }
+    Halfedge_handle find_prev( Halfedge_handle h, Tag_false) const {
+        CGAL_precondition( &*h != this); // we have at least 2-gons
+        while ( &*(h->next()) != this)
+            h = h->next();
+        return h;
+    }
+    Halfedge_const_handle find_prev( Halfedge_const_handle h, Tag_false) const{
+        CGAL_precondition( &*h != this); // we have at least 2-gons
+        while ( &*(h->next()) != this)
+            h = h->next();
+        return h;
+    }
+
+public:
     Halfedge_handle       prev() {
-        HalfedgeDS_items_decorator<HDS> decorator;
-        return decorator.find_prev( HDS::halfedge_handle(this));
+        return find_prev( next(), Supports_halfedge_prev());
     }
     Halfedge_const_handle prev() const {
-        HalfedgeDS_items_decorator<HDS> decorator;
-        return decorator.find_prev( HDS::halfedge_handle(this));
+        return find_prev( next(), Supports_halfedge_prev());
     }
 
     // Make face-functions also available as facet-functions.
@@ -560,7 +579,7 @@ public:
 
 
 
-private:
+protected:
     HDS     hds;  // the boundary representation.
     Traits  m_traits;
 
