@@ -20,6 +20,7 @@ SRC : Added copy constructors/assignment for iterators on gcc-2.
 SRC : Fixed typename bug for msvc.
 SRC : Moved to Kernel_basic.
 TEST: Fixed "this" problem on msvc7.
+TEST: Fixed Triple/Quadruple test.
 TEST: Fixed double -> int conversion warning.
 
 //---------------------------------------------------------------------
