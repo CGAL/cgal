@@ -103,10 +103,20 @@ template <class T>
 bool
 assign(T& t, const Object& o)
 {
-  const Wrapper<T> *wp = dynamic_cast<const Wrapper<T> *>(o.Ptr());
-  if ( wp == static_cast<Wrapper<T> *>(0) )
-      return false;
-  t = *(wp);
+#ifdef _MSC_VER
+  try {
+#endif
+    const Wrapper<T> *wp = dynamic_cast<const Wrapper<T> *>(o.Ptr());
+    if ( wp == static_cast<Wrapper<T> *>(0) )
+        return false;
+    t = *(wp);
+#ifdef _MSC_VER
+  }
+  catch (...) {
+      std::cerr << "ERROR : YOUR COMPILER MUST SUPPORT RTTI" << std::endl;
+      abort();
+  }
+#endif
   return true;
 }
 
