@@ -25,7 +25,6 @@
 
 #include <CGAL/config.h>
 #include <CGAL/kdtree_d.h>
-#include <CGAL/Vector_2.h>
 
 template<class NT,class SAVED_OBJECT>
 class my_point : public CGAL::Point_2<CGAL::Cartesian<NT> > {
@@ -102,13 +101,13 @@ private:
        {return(max(max(max(x1,x2),
                 max(x3,x4)),max(x5,x6)));}
 
-  int get_kd_num(std::pair<std::pair<NT,NT>,std::pair<NT,NT> > &seg,int n)
+  int get_kd_num(Segment seg,int n)
   {
     int i;
-    double x1 = seg.first.first.to_double();
-    double y1 = seg.first.second.to_double();
-    double x2 = seg.second.first.to_double();
-    double y2 = seg.second.second.to_double();
+    double x1 = seg.source().x().to_double();
+    double y1 = seg.source().y().to_double();
+    double x2 = seg.target().x().to_double();
+    double y2 = seg.target().y().to_double();
     double alpha = atan((y2 -y1)/(x2 - x1));
 
     if(alpha < 0)
@@ -125,14 +124,14 @@ private:
   }
 
   void check_kd(int *kd_counter,int number_of_trees,
-       std::list<std::pair<std::pair<NT,NT>,std::pair<NT,NT> > > &seg_list)
+       std::list<Segment> &seg_list)
   {
     for(int i = 0;i < number_of_trees;++i)
       kd_counter[i] = 0;
 
     int kd_num;
-    for(typename std::list<std::pair<std::pair<NT,NT>,std::pair<NT,NT> > >::
-        iterator iter = seg_list.begin();iter != seg_list.end();++iter) {
+    for(typename std::list<Segment>::iterator iter =
+        seg_list.begin();iter != seg_list.end();++iter) {
       kd_num = get_kd_num(*iter,number_of_trees);
       kd_counter[kd_num]++;
     }
@@ -141,8 +140,7 @@ private:
 public:
   Multiple_kd_tree(std::list<std::pair<std::pair<NT,NT>,SAVED_OBJECT> > 
                    &inp_points_list,int inp_number_of_trees,
-                   std::list<std::pair<std::pair<NT,NT>,std::pair<NT,NT> > >
-                   &seg_list) : 
+                   std::list<Segment> &seg_list) : 
     pi(3.1415),half_pi(1.57075),epsilon(0.001),rad_to_deg(57.297),
     number_of_trees(inp_number_of_trees),input_points_list(inp_points_list)
   {
@@ -275,7 +273,10 @@ public:
 
   void rotate(Point &p,NT angle)
   {
+    // using the below rotation is mandatory because the rotation is done
+    // with the predefined sines under angle_to_sines_appr
     int tranc_angle = int(angle.to_double() * rad_to_deg);
+    // $$$$ the next two functions are not generic !!!
     NT x = p.x() * angle_to_sines_appr[90 - tranc_angle] -
            p.y() * angle_to_sines_appr[tranc_angle],
        y = p.x() * angle_to_sines_appr[tranc_angle] +
@@ -296,7 +297,7 @@ public:
             s.target().x(),y2 = s.target().y();
 
     // determine right kd-tree to work on, depending on the segment's slope
-    double alpha_double = atan((y2.to_double() -y1.to_double()) /
+    double alpha_double = atan((y2.to_double() - y1.to_double()) /
                                (x2.to_double() - x1.to_double()));
 
     if(alpha_double < 0)

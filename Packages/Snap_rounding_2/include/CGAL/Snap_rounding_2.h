@@ -81,11 +81,7 @@ public:
   Segment_2 segment() const {return(Segment_2(p,q));}
   Point_2 source() const {return(p);}
   Point_2 target() const {return(q);}
-  NT get_x1() const;
-  NT get_y1() const;
-  NT get_x2() const;
-  NT get_y2() const;
-  inline void set_data(NT inp_x1,NT inp_y1,NT inp_x2,NT inp_y2);
+  inline void set_data(Point_2 inp_p,Point_2 inp_q);
   void determine_direction();
   bool equal(Segment_2 s);
   Segment_data(const Segment_data &other);
@@ -279,7 +275,7 @@ private:
   std::list<Segment_data<Rep> > seg_list;
   std::list<std::list<Point_2> > segments_output_list;
   int number_of_segments,number_of_kd_trees;
-  Multiple_kd_tree<NT,Hot_Pixel<Rep> *> *mul_kd_tree;
+  Multiple_kd_tree<Rep,Hot_Pixel<Rep> *> *mul_kd_tree;
   bool wheteher_to_do_isr;
   Pmwx pm;// @@@@
 
@@ -317,23 +313,10 @@ Segment_data<Rep_>::Segment_data(const Segment_data& other)
 }
 
 template<class Rep_>
-typename Rep_::FT Segment_data<Rep_>::get_x1() const {return(p.x());}
-
-template<class Rep_>
-typename Rep_::FT Segment_data<Rep_>::get_y1() const {return(p.y());}
-
-template<class Rep_>
-typename Rep_::FT Segment_data<Rep_>::get_x2() const {return(q.x());}
-
-template<class Rep_>
-typename Rep_::FT Segment_data<Rep_>::get_y2() const {return(q.y());}
-
-template<class Rep_>
-inline void Segment_data<Rep_>::set_data(NT inp_x1,NT inp_y1,NT inp_x2,
-            NT inp_y2)
+inline void Segment_data<Rep_>::set_data(Point_2 inp_p,Point_2 inp_q)
 {
-  p = Point_2(inp_x1,inp_y1);
-  q = Point_2(inp_x2,inp_y2);
+  p = inp_p;
+  q = inp_q;
 }
 
 template<class Rep_>
@@ -429,7 +412,8 @@ Hot_Pixel<Rep_>::~Hot_Pixel()
   }
 
 template<class Rep_>
-inline Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center() const {return(p);}
+inline Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center() const
+    {return(p);}
 
 template<class Rep_>
 inline typename Rep_::FT Hot_Pixel<Rep_>::get_x() const {return(p.x());}
@@ -521,8 +505,10 @@ bool Hot_Pixel<Rep_>::intersect_bot(Segment_2 &seg) const
 
     if(CGAL::assign(p,result)) {
       Comparison_result c_p = _gt.compare_x_2_object()(p,p_right);
-      Comparison_result c_target = _gt.compare_x_2_object()(seg.target(),p_right);
-      Comparison_result c_source = _gt.compare_x_2_object()(seg.source(),p_right);
+      Comparison_result c_target = _gt.compare_x_2_object()
+            (seg.target(),p_right);
+      Comparison_result c_source = _gt.compare_x_2_object()
+            (seg.source(),p_right);
 
       return(c_p != EQUAL || Snap_rounding_2<Rep_>::get_direction() ==
              Snap_rounding_2<Rep_>::UP_LEFT && c_target != EQUAL ||
@@ -681,16 +667,12 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
 
     // create kd multiple tree
     // create simple_list from seg_list
-    std::list<std::pair<std::pair<NT,NT>,std::pair<NT,NT> > > simple_seg_list;
+    std::list<Segment_2> simple_seg_list;
     for(typename std::list<Segment_data<Rep_> >::iterator iter =
-        seg_list.begin();iter != seg_list.end();++iter) {
-      std::pair<NT,NT> first(iter->get_x1(),iter->get_y1()),
-   	          second(iter->get_x2(),iter->get_y2());
-      simple_seg_list.push_back(std::pair<std::pair<NT,NT>,std::pair<NT,NT> >(
-                                first,second));
-    }
+        seg_list.begin();iter != seg_list.end();++iter)
+      simple_seg_list.push_back(Segment_2(iter->source(),iter->target()));
 
-    mul_kd_tree = new Multiple_kd_tree<NT,Hot_Pixel<Rep_> *>(hot_pixels_list,
+    mul_kd_tree = new Multiple_kd_tree<Rep,Hot_Pixel<Rep_> *>(hot_pixels_list,
                   number_of_kd_trees,simple_seg_list);
   }
 
@@ -755,8 +737,8 @@ void Snap_rounding_2<Rep_>::reroute_isr(std::set<Hot_Pixel<Rep_> *,
           hot_pixel_iter != before_last_hot_pixel_iter;++hot_pixel_iter) {
         next_hot_pixel_iter = hot_pixel_iter;
         ++next_hot_pixel_iter;
-        seg.set_data((*hot_pixel_iter)->get_x(),(*hot_pixel_iter)->get_y(),
-            (*next_hot_pixel_iter)->get_x(),(*next_hot_pixel_iter)->get_y());
+        seg.set_data((*hot_pixel_iter)->get_center(),
+                     (*next_hot_pixel_iter)->get_center());
         seg.determine_direction();
         find_intersected_hot_pixels(seg,hot_pixels_intersected_set,
             number_of_intersections);
@@ -1024,7 +1006,7 @@ void Snap_rounding_2<Rep_>::do_isr(bool inp_do_isr)
     need_sr = true;
   }
 
-template<class Rep_>
+/*template<class Rep_>
 template<class Out> void Snap_rounding_2<Rep_>::output(Out &o)
   {
     o << number_of_segments << std::endl;
@@ -1038,6 +1020,7 @@ template<class Out> void Snap_rounding_2<Rep_>::output(Out &o)
       o << std::endl;
     }
   }
+*/
 
 template<class Rep>
 typename Snap_rounding_2<Rep>::Direction Snap_rounding_2<Rep>::seg_dir;
