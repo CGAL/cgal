@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998,1999 The CGAL Consortium
+// Copyright (c) 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -24,19 +24,13 @@
 #ifndef CGAL_CL_SFLOAT_H
 #define CGAL_CL_SFLOAT_H
 
-#include <CGAL/number_utils.h>
-#include <CGAL/number_type_tags.h>
-#include <CGAL/IO/io_tags.h>
-
-#define WANT_OBFUSCATING_OPERATORS
+#include <CGAL/CLN/common.h>
 #include <cl_sfloat.h>
 
 CGAL_BEGIN_NAMESPACE
 
 // Requirements.
 
-inline bool	is_valid	(const cl_SF & ) { return true; } 
-inline bool	is_finite	(const cl_SF & ) { return true; } 
 inline double	to_double	(const cl_SF &I) { return cl_double_approx(I); }
 
 // Specialized utilities.
@@ -46,11 +40,6 @@ inline bool is_positive		(const cl_SF &I) { return plusp(I); }
 inline bool is_zero		(const cl_SF &I) { return zerop(I); }
 inline Comparison_result compare (const cl_SF &I, const cl_SF &J)
 { return Comparison_result(cl_compare(I,J)); }
-
-// Tags.
-
-inline io_Operator io_tag         (const cl_SF&) { return io_Operator(); }
-inline Number_tag number_type_tag (const cl_SF&) { return Number_tag(); }
 
 CGAL_END_NAMESPACE
 
