@@ -22,6 +22,8 @@ CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
            $(EXTRA_FLAGS) -Wall -W
 
+# REMOVE THE LINE WITH -DCGAL_CFG_NO_ADVANCED_KERNEL TO TRY MICHAEL'S DESIGN
+
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
