@@ -1,0 +1,44 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: iterator_distance
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Revision$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefFunction}{iterator_distance}
+
+\ccDefinition
+
+\ccSetThreeColumns{iterator_traits<IC>::difference_type;}{XXX}{}
+
+The following function returns the distance between either two
+iterators or two circulators. The return type is {\tt ptrdiff\_t} for
+compilers not supporting iterator traits yet.
+
+\ccInclude{CGAL/circulator.h}
+
+\ccGlobalFunction{template <class IC> iterator_traits<IC>::difference_type
+  iterator_distance(IC ic1, IC ic2);}
+
+\ccSeeAlso
+
+\ccc{circulator_size},
+\ccc{circulator_distance},
+\ccc{is_empty_range},
+\ccc{Circulator_tag},\\
+\ccc{Assert_circulator_or_iterator},
+\ccc{CGAL_For_all},
+\ccc{Circulator}.
+
+
+\end{ccRefFunction}
+
+% +-----------------------------------------------------+
+% EOF
