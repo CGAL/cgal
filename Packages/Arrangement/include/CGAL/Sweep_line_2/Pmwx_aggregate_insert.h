@@ -180,7 +180,9 @@ protected:
 	       m_currentEvent->Print();
       )
 
-      if ( m_traits->compare_x(*((*eventIter).first), m_sweepLinePos) != EQUAL) {
+      if ( m_traits->compare_x(*((*eventIter).first), m_sweepLinePos) !=
+           EQUAL)
+      {
 	SL_DEBUG(std::cout << "clearing miniq " 
 		           << (*eventIter).first  << " "
 		           << m_prevPos << "\n";)
