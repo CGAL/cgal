@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Map_overlay_algorithm.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: ovl (Map_overlay_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+% enabling the advanced brackets before reference name
+% simply putting \begin{ccAdvanced} will not do, since there will be
+% a page break because of the ccRef...
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefConcept}{MapOverlayAlgorithm_2}
+%{Map_overlay_base<Subdivision,Notifier>}
+\label{OVL_sec:base}
+%\begin{ccAdvanced}
+\ccDefinition
+\ccRefName\ is the map overlay construction strategy used by \ccc{Map_Overlay_2<Subdivision, Notifier>}.
+
+In order for the advanced user to write a model of a~\ccRefName\ 
+the user class should inherit the \cgal\/ supplied class 
+\ccc{Map_overlay_base<Subdivision,Notifier>}.
+This class is an abstract base class for the different overlay 
+construction strategies including the supplied ones.
+
+\ccc{Map_overlay_2<Subdivision,Notifier>} is the
+type that aggregates the strategy. The return values of the queries
+are given in terms that the \ccc{Map_overlay_2<Subdivision,Notifier>} handles.
+The \ccRefName\ should contain the following method.
+
+\ccInclude{CGAL/Map_overlay_base.h}
+
+\ccOperations
+\ccCreationVariable{algo}
+
+\ccMethod{virtual void map_overlay(const Subdivision &creator1, 
+   const Subdivision &creator2, 
+   Notifier *notifier, 
+   Subdivision &result)=0;}
+   {Constructs the overlay of \ccStyle{creator1} and \ccStyle{creator2} when 
+      using \ccStyle{notifier} in order to update the overlay components.
+      The resulting overlay is written to \ccStyle{result}.}
+
+\ccHasModels
+   \ccc{Map_overlay_incremental<Subdivision,Notifier>}\\
+   \ccc{Map_overlay_sweep<Subdivision,Notifier>}\\
+
+%%\ccHasModels
+%\end{ccAdvanced} % point location strategies
+\end{ccRefConcept}
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
