@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,10 +6,10 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: V $
+// release_date  : $CGAL_Date: 1998, July 17 $
 //
 // file          : config/testfiles/CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION.C
 // source        :
@@ -19,7 +19,7 @@
 //
 // coordinator   : Utrecht University
 //
-// ============================================================================
+// ======================================================================
 
 // CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION.C
 // ---------------------------------------------------------------------

@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,10 +6,10 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-0.9-I-03 $
-// release_date  : $CGAL_Date: 1997/12/01 $
+// release       : $CGAL_Revision: V $
+// release_date  : $CGAL_Date: 1998, July 17 $
 //
 // file          : config/testfiles/CGAL_CFG_NO_TEMPLATE_FUNCTION_MATCHING.C
 // source        :
@@ -19,7 +19,7 @@
 //
 // coordinator   : Utrecht University
 //
-// ============================================================================
+// ======================================================================
 
 // CGAL_CFG_NO_TEMPLATE_FUNCTION_MATCHING.C
 // ---------------------------------------------------------------------
@@ -30,8 +30,8 @@
 
 //| Some compilers (like g++ 2.7.2) follow the old rules for argument matching
 //| stated in the ARM: template functions have to match exactly. In particular,
-//| derived classes don't match to base class parameters in a template function.
-//| The following flag is set if this is the case.
+//| derived classes don't match to base class parameters in a template
+//| function. The following flag is set if this is the case.
 
 template <class T>
 class B
