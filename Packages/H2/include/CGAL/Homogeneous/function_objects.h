@@ -961,7 +961,6 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
     typedef typename K::Line_2     Line_2;
-    typedef typename K::Segment_2  Segment_2;
   public:
     typedef Comparison_result      result_type;
     typedef Arity_tag< 2 >         Arity;
@@ -993,17 +992,7 @@ namespace HomogeneousKernelFunctors {
       Point_2 hip = gp_linear_intersection( h1, h2 );
       return compare_x( lip, hip );
     } // FIXME
-
-    // The 2 following are undocumented temporary stuff for TAU.
-    Comparison_result
-    operator()( const Segment_2& s1, int i1,
-                const Segment_2& s2, int i2) const
-    { return operator()(s1.vertex(i1), s2.vertex(i2)); }
-
-    Comparison_result
-    operator()( const Segment_2& s1, int i1, const Point_2 &p) const
-    { return operator()(s1.vertex(i1), p); }
-   };
+  };
 
   template <typename K>
   class Compare_x_3
