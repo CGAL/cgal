@@ -250,11 +250,18 @@ test_script()
 	cd ../test_${2}
 	make_global_makefile
 	log ${ACTUAL_LOGFILE}.${1} "Testing on ${1} with ${2}"
-	remote_command ${1} \
+        if [ "${NUMBER_OF_PROCESSORS} = "1" ] ; then
+          remote_command ${1} \
+                "CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
+                export CGAL_MAKEFILE;cd ${CGAL_DIR}/test_${2};
+                nice -19 make >> ${ACTUAL_LOGFILE}.${1} 2>&1
+        else 
+	  remote_command ${1} \
 		"CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
 		export CGAL_MAKEFILE;cd ${CGAL_DIR}/test_${2}; 
 		nice -19 make -j ${NUMBER_OF_PROCESSORS}" \
-	    >> ${ACTUAL_LOGFILE}.${1} 2>&1 
+	        >> ${ACTUAL_LOGFILE}.${1} 2>&1 
+        fi
 	log_done ${ACTUAL_LOGFILE}.${1}
     #PLATFORM=`basename $CGAL_MAKEFILE | sed -e "s/makefile_//g"`
 	#
@@ -336,7 +343,7 @@ copy_old_stuff()
     # copy config install files
 
     cd ${CGAL_DIR}
-    ./install_cgal --upgrade ${OLD_CGAL_DIR} >> ${ACTUAL_LOGFILE}
+    install_cgal --upgrade ${OLD_CGAL_DIR} >> ${ACTUAL_LOGFILE}
 
     log_done ${ACTUAL_LOGFILE}
 }

@@ -1,5 +1,5 @@
-06 May 2004 Sylvain Pion
-- autotest_cgal : don't assume "." is in $PATH.
+11 May 2004 Radu Ursu
+- for platforms having only one processor I use make without -j option
 
 04 May 2004 Radu Ursu
 - SUN has a problem when export is on the same call with the assignement,
