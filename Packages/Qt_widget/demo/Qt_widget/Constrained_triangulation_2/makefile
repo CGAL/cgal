@@ -27,15 +27,13 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_QT_LDFLAGS) 
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-                constrained$(EXE_EXT) 
+all:constrained$(EXE_EXT) 
 
 constrained.moc:  constrained.C
 	$(QT_MOC) -o constrained.moc $<
