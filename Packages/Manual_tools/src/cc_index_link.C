@@ -33,13 +33,13 @@ pList AddToList(pList list , const int n, const char *l) {
   if (list==NULL) {
      list = new Lines;
      list->number = n;
-     list->text= new char[strlen(l)];
+     list->text= new char[strlen(l)+1];
      strcpy(list->text,l);
      list->next = NULL;
   } else {
      pList p = new Lines;
      p->number = n;
-     p->text= new char[strlen(l)];
+     p->text= new char[strlen(l)+1];
      strcpy(p->text,l);
      p->next = list;
      list = p;
