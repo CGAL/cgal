@@ -85,16 +85,16 @@ typedef Random_points_in_square_2< Point, Creator >
 #ifdef CGAL_CFG_NO_NAMESPACE
 template < class P,
            class Creator =
-           CGAL_STD::Creator_uniform_2< typename P::FT, P > >
+           CGAL_STD::Creator_uniform_2< typename P::R::FT, P > >
 class Random_p_clusters_2 : public CGAL_STD::Random_generator_base< P > {
 #else
 template < class P,
            class Creator =
-           CGAL::Creator_uniform_2< CGAL_TYPENAME_MSVC_NULL P::FT, P > >
+           CGAL::Creator_uniform_2< CGAL_TYPENAME_MSVC_NULL P::R::FT, P > >
 class Random_p_clusters_2 : public CGAL::Random_generator_base< P > {
 #endif // CGAL_CFG_NO_NAMESPACE
   void generate_point() {
-    typedef typename P::FT FT;
+    typedef typename P::R::FT FT;
     double p = _rnd.get_double();
     Creator creator;
     if (p <= 1.0 / n)
