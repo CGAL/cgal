@@ -32,16 +32,16 @@
 #include <CGAL/Kd_tree_rectangle.h>
 namespace CGAL {
 
-template <class Tree_traits, class Query_item, class Distance>
-class General_priority_search {
+template <class Traits, class Query_item, class Distance, class Tree=Kd_tree<Traits> >
+class General_priority_search { 
 
 public:
 
-typedef typename Tree_traits::Item Item;
-typedef typename Tree_traits::NT NT;
-typedef Kd_tree<Tree_traits>::Item_iterator Item_iterator;
-typedef Kd_tree<Tree_traits>::Node_handle Node_handle;
-typedef Kd_tree<Tree_traits> Tree;
+typedef typename Traits::Item Item;
+typedef typename Traits::NT NT;
+typedef typename Tree::Item_iterator Item_iterator;
+typedef typename Tree::Node_handle Node_handle;
+
 typedef Kd_tree_rectangle<NT> Node_box;   
 
 class Cell 

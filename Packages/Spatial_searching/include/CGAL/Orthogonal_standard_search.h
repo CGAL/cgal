@@ -33,7 +33,7 @@
 
 namespace CGAL {
 
-template <class Traits, class Query_item, class Distance>
+template <class Traits, class Query_item, class Distance, class Tree=Kd_tree<Traits> >
 class Orthogonal_standard_search {
 
 public:
@@ -42,8 +42,7 @@ typedef typename Traits::Item Item;
 typedef typename Traits::NT NT;
 typedef std::pair<Item*,NT> Item_with_distance;
 
-typedef Kd_tree<Traits> Tree;
-typedef Tree::Node_handle Node_handle;
+typedef typename Tree::Node_handle Node_handle;
 
 //private:
 

@@ -31,26 +31,21 @@
 
 namespace CGAL {
 
-template <class Traits, class Query_item, class Distance>
+template <class Traits, class Query_item, class Distance, class Tree=Kd_tree<Traits> >
 class Orthogonal_priority_search {
 
 public:
 
 typedef typename Traits::Item Item;
 typedef typename Traits::NT NT;
-typedef Kd_tree<Traits>::Item_iterator Item_iterator;
-typedef Kd_tree<Traits>::Node_handle Node_handle;
-typedef Kd_tree<Traits> Tree;
-
+typedef typename Tree::Item_iterator Item_iterator;
+typedef typename Tree::Node_handle Node_handle;
 
 typedef std::pair<Item*,NT> Item_with_distance;
 typedef std::pair<Node_handle,NT> Node_with_distance;
 
-
-
 // this forward declaration may cause problems for g++ 
 class iterator;
-
 
 
     typedef std::vector<Node_with_distance*> Node_with_distance_vector;
