@@ -1,3 +1,6 @@
+2.47 (08 May 2003) [lk]
+- Fixed demos: removed superfluous default traits file of Polyhedron_3.
+
 2.46 (07 May 2003) [lk]
 - Fixed test, examples, and demos to use default parameter of polyhedron.
 
