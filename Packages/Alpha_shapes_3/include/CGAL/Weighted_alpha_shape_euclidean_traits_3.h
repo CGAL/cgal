@@ -102,66 +102,8 @@ public:
     }
 };
 
-//-------------------------------------------------------------------
 
-template < class K >
-class Side_of_bounded_orthogonal_sphere_3
-{
-public:
-  typedef typename K::Point Point;
-  typedef typename K::FT FT;
-  typedef Bounded_side result_type;
-  typedef Arity_tag< 4 >   Arity;
-
-  result_type
-  operator()(const Point& p, const Point& q, const Point& r,
-	     const Point& t) const
-  {  
-    FT px(p.point().x());
-    FT py(p.point().y());
-    FT pz(p.point().z());
-    FT pw(p.weight());
-    FT qx(q.point().x());
-    FT qy(q.point().y());
-    FT qz(q.point().z());
-    FT qw(q.weight());
-    FT rx(r.point().x());
-    FT ry(r.point().y());
-    FT rz(r.point().z());
-    FT rw(r.weight());
-    FT tx(t.point().x());
-    FT ty(t.point().y());
-    FT tz(t.point().z());
-    FT tw(t.weight());
-    
-    return in_smallest_orthogonal_sphereC3(px, py, pz, pw,
-					  qx, qy, qz, qw,
-					  rx, ry, rz, rw,
-					  tx, ty, tz, tw);
-  }
-
-  result_type
-  operator()(const Point& p, const Point& q, const Point& r) const
-    {  
-    FT px(p.point().x());
-    FT py(p.point().y());
-    FT pz(p.point().z());
-    FT pw(p.weight());
-    FT qx(q.point().x());
-    FT qy(q.point().y());
-    FT qz(q.point().z());
-    FT qw(q.weight());
-    FT rx(r.point().x());
-    FT ry(r.point().y());
-    FT rz(r.point().z());
-    FT rw(r.weight());
-     return in_smallest_orthogonal_sphereC3(px, py, pz, pw,
-					   qx, qy, qz, qw,
-					   rx, ry, rz, rw);
-  }
-
-};
-  
+   
 //------------------ Traits class -------------------------------------
 
 template <class R>
@@ -171,19 +113,18 @@ Regular_triangulation_euclidean_traits_3<R>
 public:
  
   typedef Weighted_alpha_shape_euclidean_traits_3<R> Self;
+  typedef Regular_triangulation_euclidean_traits_3<R> Base;
   typedef R Rep;
   typedef typename R::FT Coord_type;
 
-  typedef typename 
-    Regular_triangulation_euclidean_traits_3<R>::Bare_point Bare_Point;
-  typedef typename 
-    Regular_triangulation_euclidean_traits_3<R>::Weighted_point Weighted_point;
+  typedef typename Base::Bare_point      Bare_Point;
+  typedef typename Base::Weighted_point  Weighted_point;
   typedef Weighted_point Point_3;
   typedef Weighted_point Point;
 
   typedef CGAL::Compute_squared_radius_orthogonal_sphere_3<Self> 
     Compute_squared_radius_orthogonal_sphere_3;
-  typedef CGAL::Side_of_bounded_orthogonal_sphere_3<Self> 
+  typedef CGAL::Side_of_bounded_orthogonal_sphere_3<R> 
     Side_of_bounded_orthogonal_sphere_3;
 
   //---------------------------------------------------------------------

@@ -5,7 +5,7 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.4.23_g++-3.3.2
+#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.4.23_g++-3.3.2
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#

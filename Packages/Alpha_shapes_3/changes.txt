@@ -1,8 +1,12 @@
+
+2 April 2004 Mariette Yvinec
+- fixes in Weighted_alpha_shape_euclidean_traits_3.h
+
 25 March 2004 Radu Ursu
 - changed doc to work with the current manual tools implementation
 
 25 February 2004 MY
-- sMade find_alpha_solid faster even faster
+- Made find_alpha_solid faster even faster
 
 25 February 2004 af
 - Replaced the set/map in the traversal and the I/O with a Unique_hash_map
