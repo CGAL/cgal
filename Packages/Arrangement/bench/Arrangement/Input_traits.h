@@ -56,6 +56,7 @@ struct Input_traits<CGAL::Gmpz> {
   typedef CGAL::Gmpz                            Input_rat_type;
 };
 
+#ifdef CGAL_LEDA_INTEGER_H
 /*! leda_integer */
 template <>
 struct Input_traits<leda_integer> {
@@ -63,6 +64,7 @@ struct Input_traits<leda_integer> {
   typedef leda_integer                          Input_float_type;
   typedef leda_integer                          Input_rat_type;
 };
+#endif
 
 #ifdef _CORE_BIGINT_H_
 /*! CORE::BigInt */
@@ -120,6 +122,7 @@ struct Input_traits<CGAL::Gmpq> {
   typedef CGAL::Gmpq                            Input_rat_type;
 };
 
+#ifdef CGAL_LEDA_RATIONAL_H
 /*! leda_rational */
 template <>
 struct Input_traits<leda_rational> {
@@ -127,6 +130,7 @@ struct Input_traits<leda_rational> {
   typedef leda_integer                          Input_float_type;
   typedef leda_integer                          Input_rat_type;
 };
+#endif
 
 #ifdef CGAL_LAZY_EXACT_NT_H
 /*! CGAL::Lazy_exact_nt<leda_rational> */

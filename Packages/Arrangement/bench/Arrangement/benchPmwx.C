@@ -15,6 +15,7 @@ enum MaxFilesNumber {
     BENCH_TRAITS != CK_CONIC_TRAITS
 #define POSTSCRIPT_SUPPORTED 1
 #endif
+#undef POSTSCRIPT_SUPPORTED
 
 // Kernel:
 #if BENCH_KERNEL == LEDA_KERNEL
@@ -147,7 +148,7 @@ enum MaxFilesNumber {
 #endif
 
 #include <CGAL/IO/Pm_iostream.h>
-#include <CGAL/IO/Pm_Window_stream.h>
+// #include <CGAL/IO/Pm_Window_stream.h>
 #if defined(POSTSCRIPT_SUPPORTED)
 #include <CGAL/IO/Pm_Postscript_file_stream.h>
 #endif
