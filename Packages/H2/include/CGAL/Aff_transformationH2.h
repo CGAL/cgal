@@ -36,46 +36,49 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class FT, class RT>
+template <class R>
 class Aff_transformationH2;
 
-template <class FT, class RT>
+template <class R>
 class Aff_transformation_repH2;
 
-template <class FT, class RT>
-Aff_transformationH2<FT,RT>
-_general_transformation_composition( Aff_transformation_repH2<FT,RT> l,
-                                     Aff_transformation_repH2<FT,RT> r);
+template <class R>
+Aff_transformationH2<R>
+_general_transformation_composition( Aff_transformation_repH2<R> l,
+                                     Aff_transformation_repH2<R> r);
 
-template <class FT, class RT>
+template <class R>
 class Aff_transformation_rep_baseH2 : public Ref_counted
 {
   public:
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
 
     virtual             ~Aff_transformation_rep_baseH2(){}
 
-    virtual  PointH2<FT,RT>
-                        transform(const PointH2<FT,RT>& p) const = 0;
-    virtual  VectorH2<FT,RT>
-                        transform(const VectorH2<FT,RT>& v) const = 0;
-    virtual  DirectionH2<FT,RT>
-                        transform(const DirectionH2<FT,RT>& d) const = 0;
-    virtual  Aff_transformationH2<FT,RT>
+    virtual  PointH2<R>
+                        transform(const PointH2<R>& p) const = 0;
+    virtual  VectorH2<R>
+                        transform(const VectorH2<R>& v) const = 0;
+    virtual  DirectionH2<R>
+                        transform(const DirectionH2<R>& d) const = 0;
+    virtual  Aff_transformationH2<R>
                         inverse() const = 0;
-    virtual  Aff_transformation_repH2<FT,RT>
+    virtual  Aff_transformation_repH2<R>
                         general_form() const = 0;
     virtual  bool       is_even() const = 0;
 
     virtual  RT         homogeneous(int i, int j) const = 0;
     virtual  FT         cartesian(int i, int j) const = 0;
-
-
 };
 
-template < class FT, class RT >
-class Aff_transformation_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
+template < class R >
+class Aff_transformation_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
+
              Aff_transformation_repH2()
              {}
 
@@ -89,42 +92,42 @@ class Aff_transformation_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
              {}
 
 
-    virtual  PointH2<FT,RT>
-             transform(const PointH2<FT,RT>& p) const
+    virtual  PointH2<R>
+             transform(const PointH2<R>& p) const
              {
-               return PointH2<FT,RT>( a * p.hx() + b * p.hy() + c * p.hw(),
+               return PointH2<R>( a * p.hx() + b * p.hy() + c * p.hw(),
                                       d * p.hx() + e * p.hy() + f * p.hw(),
                                       g * p.hw() );
              }
 
-    virtual  VectorH2<FT,RT>
-             transform(const VectorH2<FT,RT>& v) const
+    virtual  VectorH2<R>
+             transform(const VectorH2<R>& v) const
              {
-               return VectorH2<FT,RT>( a * v.hx() + b * v.hy(),
+               return VectorH2<R>( a * v.hx() + b * v.hy(),
                                        d * v.hx() + e * v.hy(),
                                        g * v.hw() );
              }
 
-    virtual  DirectionH2<FT,RT>
-             transform(const DirectionH2<FT,RT>& dir) const
+    virtual  DirectionH2<R>
+             transform(const DirectionH2<R>& dir) const
              {
                const RT RT0(0);
                if ( g > RT0 )
                {
-                   return DirectionH2<FT,RT>( a * dir.x() + b * dir.y(),
+                   return DirectionH2<R>( a * dir.x() + b * dir.y(),
                                               d * dir.x() + e * dir.y() );
                }
                else if ( g < RT0 )
                {
-                   return - DirectionH2<FT,RT>(a * dir.x() + b * dir.y(),
+                   return - DirectionH2<R>(a * dir.x() + b * dir.y(),
                                                d * dir.x() + e * dir.y() );
                }
-               return DirectionH2<FT,RT>( a * dir.x() + b * dir.y(),
+               return DirectionH2<R>( a * dir.x() + b * dir.y(),
                                           d * dir.x() + e * dir.y(),
                                           g );
              }
 
-    virtual  Aff_transformationH2<FT,RT>
+    virtual  Aff_transformationH2<R>
              inverse() const
              {
                 RT  ai =   e*g;
@@ -134,13 +137,13 @@ class Aff_transformation_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
                 RT  ei =   a*g;
                 RT  fi =   d*c - a*f;
                 RT  gi =   a*e - b*d;
-                return Aff_transformationH2<FT,RT>( ai, bi, ci,
+                return Aff_transformationH2<R>( ai, bi, ci,
                                                     di, ei, fi,
                                                             gi) ;
              }
 
 
-    virtual   Aff_transformation_repH2<FT,RT>
+    virtual   Aff_transformation_repH2<R>
               general_form() const
               { return *this; }
 
@@ -159,15 +162,15 @@ class Aff_transformation_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
     RT    f;
     RT    g;
 
-  friend Aff_transformationH2<FT,RT>
+  friend Aff_transformationH2<R>
          _general_transformation_composition CGAL_NULL_TMPL_ARGS (
-                                   Aff_transformation_repH2<FT,RT> l,
-                                   Aff_transformation_repH2<FT,RT> r
+                                   Aff_transformation_repH2<R> l,
+                                   Aff_transformation_repH2<R> r
                                                                  );
 };
 
-template < class FT, class RT >
-class Identity_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
+template < class R >
+class Identity_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
              Identity_repH2()
@@ -177,32 +180,32 @@ class Identity_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
              {}
 
 
-    virtual  PointH2<FT,RT>
-             transform(const PointH2<FT,RT> & p) const
+    virtual  PointH2<R>
+             transform(const PointH2<R> & p) const
              { return p; }
 
-    virtual  VectorH2<FT,RT>
-             transform(const VectorH2<FT,RT> & v) const
+    virtual  VectorH2<R>
+             transform(const VectorH2<R> & v) const
              { return v; }
 
-    virtual  DirectionH2<FT,RT>
-             transform(const DirectionH2<FT,RT> & d) const
+    virtual  DirectionH2<R>
+             transform(const DirectionH2<R> & d) const
              { return d; }
 
-    virtual  Aff_transformationH2<FT,RT>
+    virtual  Aff_transformationH2<R>
              inverse() const
-             { return Aff_transformationH2<FT,RT>(IDENTITY); }
+             { return Aff_transformationH2<R>(IDENTITY); }
 
     virtual  bool
              is_even() const
              { return true; }
 
-    virtual  Aff_transformation_repH2<FT,RT>
+    virtual  Aff_transformation_repH2<R>
              general_form() const
              {
                const RT RT0(0);
                const RT RT1(1);
-               return Aff_transformation_repH2<FT,RT>(  RT1, RT0, RT0,
+               return Aff_transformation_repH2<R>(  RT1, RT0, RT0,
                                                         RT0, RT1, RT0,
                                                                   RT1 );
              }
@@ -215,44 +218,47 @@ class Identity_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
              { return (i==j) ? FT(1) : FT(0); }
 };
 
-template < class FT, class RT >
-class Translation_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
+template < class R >
+class Translation_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
+      typedef typename R::RT RT;
+      typedef typename R::FT FT;
+
              Translation_repH2()
              {}
 
-             Translation_repH2(const VectorH2<FT,RT> & tv) : _tv(tv)
+             Translation_repH2(const VectorH2<R> & tv) : _tv(tv)
              {}
 
     virtual  ~Translation_repH2()
              {}
 
-    virtual  PointH2<FT,RT>
-             transform(const PointH2<FT,RT> & p) const
+    virtual  PointH2<R>
+             transform(const PointH2<R> & p) const
              { return (p + _tv); }
 
-    virtual  VectorH2<FT,RT>
-             transform(const VectorH2<FT,RT> & v) const
+    virtual  VectorH2<R>
+             transform(const VectorH2<R> & v) const
              { return (v); }
 
-    virtual  DirectionH2<FT,RT>
-             transform(const DirectionH2<FT,RT> & d) const
+    virtual  DirectionH2<R>
+             transform(const DirectionH2<R> & d) const
              { return (d); }
 
-    virtual  Aff_transformationH2<FT,RT>
+    virtual  Aff_transformationH2<R>
              inverse() const
-             { return Aff_transformationH2<FT,RT>(TRANSLATION, - _tv); }
+             { return Aff_transformationH2<R>(TRANSLATION, - _tv); }
 
     virtual  bool
              is_even() const
              { return true; }
 
-    virtual  Aff_transformation_repH2<FT,RT>
+    virtual  Aff_transformation_repH2<R>
              general_form() const
              {
                return
-               Aff_transformation_repH2<FT,RT>( _tv.hw(),  RT(0)  ,  _tv.hx(),
+               Aff_transformation_repH2<R>( _tv.hw(),  RT(0)  ,  _tv.hx(),
                                                RT(0)  ,   _tv.hw(),  _tv.hy(),
                                                                      _tv.hw() );
              }
@@ -262,12 +268,15 @@ class Translation_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
 
 
   private:
-    VectorH2<FT,RT> _tv;
+    VectorH2<R> _tv;
 };
-template < class FT, class RT >
-class Rotation_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
+template < class R >
+class Rotation_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
+      typedef typename R::RT RT;
+      typedef typename R::FT FT;
+
              Rotation_repH2()
              {
              }
@@ -285,30 +294,30 @@ class Rotation_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
              {
              }
 
-    virtual  PointH2<FT,RT>
-             transform(const PointH2<FT,RT> & p) const
+    virtual  PointH2<R>
+             transform(const PointH2<R> & p) const
              {
-               return PointH2<FT,RT>( p.hx()*_cos  - p.hy()*_sin,
+               return PointH2<R>( p.hx()*_cos  - p.hy()*_sin,
                                            p.hx()*_sin  + p.hy()*_cos,
                                            p.hw()*_den );
              }
-    virtual  VectorH2<FT,RT>
-             transform(const VectorH2<FT,RT> & v) const
+    virtual  VectorH2<R>
+             transform(const VectorH2<R> & v) const
              {
-               return VectorH2<FT,RT>( v.hx()*_cos  - v.hy()*_sin,
+               return VectorH2<R>( v.hx()*_cos  - v.hy()*_sin,
                                             v.hx()*_sin  + v.hy()*_cos,
                                             v.hw()*_den );
              }
-    virtual  DirectionH2<FT,RT>
-             transform(const DirectionH2<FT,RT> & d) const
+    virtual  DirectionH2<R>
+             transform(const DirectionH2<R> & d) const
              {
-               return DirectionH2<FT,RT>( d.x()*_cos  - d.y()*_sin,
+               return DirectionH2<R>( d.x()*_cos  - d.y()*_sin,
                                                d.x()*_sin  + d.y()*_cos);
              }
-    virtual  Aff_transformationH2<FT,RT>
+    virtual  Aff_transformationH2<R>
              inverse() const
              {
-               return Aff_transformationH2<FT,RT>(ROTATION,
+               return Aff_transformationH2<R>(ROTATION,
                                                        - _sin, _cos, _den);
              }
     virtual  bool
@@ -316,10 +325,10 @@ class Rotation_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
              {
                return true;
              }
-    virtual  Aff_transformation_repH2<FT,RT>
+    virtual  Aff_transformation_repH2<R>
              general_form() const
              {
-               return Aff_transformation_repH2<FT,RT>(
+               return Aff_transformation_repH2<R>(
                            _cos,  - _sin,  RT(0)  ,
                            _sin,    _cos,  RT(0)  ,
                                            _den );
@@ -334,10 +343,13 @@ class Rotation_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
     RT  _cos;
     RT  _den;
 };
-template < class FT, class RT >
-class Scaling_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
+template < class R >
+class Scaling_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
+      typedef typename R::RT RT;
+      typedef typename R::FT FT;
+
              Scaling_repH2()
              {}
 
@@ -355,37 +367,37 @@ class Scaling_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
     virtual  ~Scaling_repH2()
              {}
 
-    virtual  PointH2<FT,RT>
-             transform(const PointH2<FT,RT> & p) const
+    virtual  PointH2<R>
+             transform(const PointH2<R> & p) const
              {
-               return PointH2<FT,RT>( p.hx() * _sf_num,
+               return PointH2<R>( p.hx() * _sf_num,
                                       p.hy() * _sf_num,
                                       p.hw() * _sf_den );
              }
-    virtual  VectorH2<FT,RT>
-             transform(const VectorH2<FT,RT> & v) const
+    virtual  VectorH2<R>
+             transform(const VectorH2<R> & v) const
              {
-               return VectorH2<FT,RT>( v.hx() * _sf_num,
+               return VectorH2<R>( v.hx() * _sf_num,
                                        v.hy() * _sf_num,
                                        v.hw() * _sf_den );
              }
-    virtual  DirectionH2<FT,RT>
-             transform(const DirectionH2<FT,RT> & d) const
+    virtual  DirectionH2<R>
+             transform(const DirectionH2<R> & d) const
              { return (d); }
 
-    virtual  Aff_transformationH2<FT,RT>
+    virtual  Aff_transformationH2<R>
              inverse() const
-             { return Aff_transformationH2<FT,RT>(SCALING, _sf_den, _sf_num); }
+             { return Aff_transformationH2<R>(SCALING, _sf_den, _sf_num); }
 
     virtual  bool
              is_even() const
              { return true; }
 
-    virtual  Aff_transformation_repH2<FT,RT>
+    virtual  Aff_transformation_repH2<R>
              general_form() const
              {
                return
-               Aff_transformation_repH2<FT,RT>(_sf_num, RT(0)  , RT(0)  ,
+               Aff_transformation_repH2<R>(_sf_num, RT(0)  , RT(0)  ,
                                                RT(0)  , _sf_num, RT(0)  ,
                                                                  _sf_den );
              }
@@ -398,48 +410,51 @@ class Scaling_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
     RT  _sf_num;
     RT  _sf_den;
 };
-template < class FT, class RT >
-class Reflection_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
+template < class R >
+class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
-             Reflection_repH2(const LineH2<FT,RT>& l_) : l(l_) {}
+      typedef typename R::RT RT;
+      typedef typename R::FT FT;
+
+             Reflection_repH2(const LineH2<R>& l_) : l(l_) {}
 
     virtual  ~Reflection_repH2()
              {}
 
-    virtual  PointH2<FT,RT>
-             transform(const PointH2<FT,RT> & p) const
+    virtual  PointH2<R>
+             transform(const PointH2<R> & p) const
              {
-               PointH2<FT,RT> pp = l.projection(p);
+               PointH2<R> pp = l.projection(p);
                return p + (pp - p)*RT(2);
              }
 
-    virtual  VectorH2<FT,RT>
-             transform(const VectorH2<FT,RT> & v) const
+    virtual  VectorH2<R>
+             transform(const VectorH2<R> & v) const
              {
-               LineH2<FT,RT> l0( l.a(), l.b(), RT(0));
-               PointH2<FT,RT> p = ORIGIN + v;
-               PointH2<FT,RT> pp = l0.projection(p);
+               LineH2<R> l0( l.a(), l.b(), RT(0));
+               PointH2<R> p = ORIGIN + v;
+               PointH2<R> pp = l0.projection(p);
                return (p + (pp - p)*RT(2)) - ORIGIN;
              }
 
-    virtual  DirectionH2<FT,RT>
-             transform(const DirectionH2<FT,RT> & d) const
-             { return transform( VectorH2<FT,RT>(d) ).direction(); }
+    virtual  DirectionH2<R>
+             transform(const DirectionH2<R> & d) const
+             { return transform( VectorH2<R>(d) ).direction(); }
 
-    virtual  Aff_transformationH2<FT,RT>
+    virtual  Aff_transformationH2<R>
              inverse() const
              {
-               return Aff_transformationH2<FT,RT>(
-                   static_cast< Aff_transformation_rep_baseH2<FT,RT>* >
-                   ( const_cast< Reflection_repH2<FT,RT>*> (this) )  );
+               return Aff_transformationH2<R>(
+                   static_cast< Aff_transformation_rep_baseH2<R>* >
+                   ( const_cast< Reflection_repH2<R>*> (this) )  );
              }
 
     virtual  bool
              is_even() const
              { return false; }
 
-    virtual  Aff_transformation_repH2<FT,RT>
+    virtual  Aff_transformation_repH2<R>
              general_form() const
              {
                const RT mRT2 = - RT(2);
@@ -453,7 +468,7 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
                RT ac = a*c* mRT2;
                RT bc = b*c* mRT2;
                return
-               Aff_transformation_repH2<FT,RT>( aa, ab, ac,
+               Aff_transformation_repH2<R>( aa, ab, ac,
                                                 ab, bb, bc,
                                                         de );
              }
@@ -463,18 +478,19 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<FT,RT>
 
 
   private:
-    LineH2<FT,RT>   l;
+    LineH2<R>   l;
 };
 
 
-
-
-template < class FT, class RT >
+template < class R_ >
 class Aff_transformationH2
-  : public Handle_for< Aff_transformation_rep_baseH2<FT,RT>,
-                       No_op_allocator< Aff_transformation_rep_baseH2<FT,RT> > >
+  : public R_::Aff_transformation_handle_2
 {
   public:
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
           Aff_transformationH2();
 
           // Identity:
@@ -483,7 +499,7 @@ class Aff_transformationH2
 
           // Translation:
 
-          Aff_transformationH2(const Translation, const VectorH2<FT,RT>& v);
+          Aff_transformationH2(const Translation, const VectorH2<R>& v);
 
           // Scaling:
 
@@ -493,7 +509,7 @@ class Aff_transformationH2
                                               const RT& ya, const RT& yb);
 
           // Reflection:
-          Aff_transformationH2(const Reflection, const LineH2<FT,RT>& l);
+          Aff_transformationH2(const Reflection, const LineH2<R>& l);
 
           // Rational Rotation:
 
@@ -503,13 +519,13 @@ class Aff_transformationH2
                                const RT& denominator);
 
           Aff_transformationH2(const Rotation,
-                               const DirectionH2<FT,RT>& dir,
+                               const DirectionH2<R>& dir,
                                const RT& n,
                                const RT& d = RT(1)   );
 
           // Orthogonal Transformation:
 
-          Aff_transformationH2(const VectorH2<FT,RT>& v,
+          Aff_transformationH2(const VectorH2<R>& v,
                                const RT& sine,
                                const RT& cosine,
                                const RT& denominator,
@@ -529,20 +545,20 @@ class Aff_transformationH2
                                const RT& d, const RT& e,
                                                          const RT& g = RT(1)  );
 
-          Aff_transformationH2( Aff_transformation_rep_baseH2<FT,RT>* _ptr);
+          Aff_transformationH2( Aff_transformation_rep_baseH2<R>* _ptr);
 
 
           ~Aff_transformationH2();
 
 
-    PointH2<FT,RT>     transform(const PointH2<FT,RT>& p) const;
-    VectorH2<FT,RT>    transform(const VectorH2<FT,RT>& v) const;
-    DirectionH2<FT,RT> transform(const DirectionH2<FT,RT>& d) const;
+    PointH2<R>     transform(const PointH2<R>& p) const;
+    VectorH2<R>    transform(const VectorH2<R>& v) const;
+    DirectionH2<R> transform(const DirectionH2<R>& d) const;
 #ifndef CGAL_NO_LINE_TRANSFORM_IN_AT
-    LineH2<FT,RT>      transform(const LineH2<FT,RT>& l) const;
+    LineH2<R>      transform(const LineH2<R>& l) const;
 #endif // CGAL_NO_LINE_TRANSFORM_IN_AT
 
-    Aff_transformationH2<FT,RT>
+    Aff_transformationH2<R>
                             inverse() const;
     bool                    is_even() const;
     bool                    is_odd()  const;
@@ -555,64 +571,64 @@ class Aff_transformationH2
     RT                      hm(int i, int j) const
                             { return homogeneous(i,j); }
 
-    Aff_transformation_repH2<FT,RT>
+    Aff_transformation_repH2<R>
                             general_form() const;
 
-//  friend   Aff_transformationH2<FT,RT>
+//  friend   Aff_transformationH2<R>
 //    operator* CGAL_NULL_TMPL_ARGS
-//              (const Aff_transformationH2<FT,RT>& left_argument,
-//               const Aff_transformationH2<FT,RT>& right_argument );
+//              (const Aff_transformationH2<R>& left_argument,
+//               const Aff_transformationH2<R>& right_argument );
 
-    Aff_transformationH2<FT,RT>
-    operator*(const Aff_transformationH2<FT,RT>& right_argument ) const;
+    Aff_transformationH2<R>
+    operator*(const Aff_transformationH2<R>& right_argument ) const;
 
 };
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::Aff_transformationH2()
-{ ptr = new Aff_transformation_repH2<FT,RT>(); }
+template < class R >
+Aff_transformationH2<R>::Aff_transformationH2()
+{ ptr = new Aff_transformation_repH2<R>(); }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::
+template < class R >
+Aff_transformationH2<R>::
 Aff_transformationH2(const Identity_transformation)
-{ ptr = new Identity_repH2<FT,RT>(); }
+{ ptr = new Identity_repH2<R>(); }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::
-Aff_transformationH2(const Translation,const VectorH2<FT,RT>& v)
-{ ptr = new Translation_repH2<FT,RT>( v ); }
+template < class R >
+Aff_transformationH2<R>::
+Aff_transformationH2(const Translation,const VectorH2<R>& v)
+{ ptr = new Translation_repH2<R>( v ); }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::
+template < class R >
+Aff_transformationH2<R>::
 Aff_transformationH2(const Scaling, const RT& a, const RT& b)
-{ ptr = new Scaling_repH2<FT,RT>( a, b); }
+{ ptr = new Scaling_repH2<R>( a, b); }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::
+template < class R >
+Aff_transformationH2<R>::
 Aff_transformationH2( const Scaling, const RT& xa, const RT& xb,
                                      const RT& ya, const RT& yb)
 {
-  ptr = new Aff_transformation_repH2<FT,RT>(xa*yb,  RT(0),  RT(0)  ,
+  ptr = new Aff_transformation_repH2<R>(xa*yb,  RT(0),  RT(0)  ,
                                             RT(0),  ya*xb,  RT(0)  ,
                                                             xb*yb  );
 }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::
-Aff_transformationH2(const Reflection, const LineH2<FT,RT>& l)
-{ ptr = new Reflection_repH2<FT,RT>( l); }
+template < class R >
+Aff_transformationH2<R>::
+Aff_transformationH2(const Reflection, const LineH2<R>& l)
+{ ptr = new Reflection_repH2<R>( l); }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::
+template < class R >
+Aff_transformationH2<R>::
 Aff_transformationH2(const Rotation,
                      const RT& sine,
                      const RT& cosine,
                      const RT& denominator)
-{ ptr = new Rotation_repH2<FT,RT>(sine, cosine,
+{ ptr = new Rotation_repH2<R>(sine, cosine,
                                                         denominator); }
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::Aff_transformationH2(const Rotation,
-                                                  const DirectionH2<FT,RT>& dir,
+template < class R >
+Aff_transformationH2<R>::Aff_transformationH2(const Rotation,
+                                                  const DirectionH2<R>& dir,
                                                   const RT& n,
                                                   const RT& d)
 {
@@ -624,148 +640,148 @@ Aff_transformationH2<FT,RT>::Aff_transformationH2(const Rotation,
  RT   den;
 
  rational_rotation_approximation(dir.x(), dir.y(), sin, cos, den, n, d);
- ptr = new Rotation_repH2<FT,RT>( sin, cos, den );
+ ptr = new Rotation_repH2<R>( sin, cos, den );
 }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::Aff_transformationH2(const VectorH2<FT,RT>& v,
-                                                  const RT& sine,
-                                                  const RT& cosine,
-                                                  const RT& denominator,
-                                                  const RT& scaling_numerator,
-                                                  const RT& scaling_denominator )
+template < class R >
+Aff_transformationH2<R>::Aff_transformationH2(const VectorH2<R>& v,
+                                              const typename R::RT& sine,
+                                              const typename R::RT& cosine,
+                                    const typename R::RT& denominator,
+                                    const typename R::RT& scaling_numerator,
+                                    const typename R::RT& scaling_denominator )
 {
-  Aff_transformationH2<FT,RT> scaling(SCALING,scaling_numerator,scaling_denominator);
-  Aff_transformationH2<FT,RT> combination =
-        Aff_transformationH2<FT,RT>(TRANSLATION, scaling.inverse().transform(-v) )
+  Aff_transformationH2<R> scaling(SCALING,scaling_numerator,scaling_denominator);
+  Aff_transformationH2<R> combination =
+        Aff_transformationH2<R>(TRANSLATION, scaling.inverse().transform(-v) )
       * scaling
-      * Aff_transformationH2<FT,RT>(ROTATION, sine, cosine, denominator)
-      * Aff_transformationH2<FT,RT>(TRANSLATION, v ) ;
+      * Aff_transformationH2<R>(ROTATION, sine, cosine, denominator)
+      * Aff_transformationH2<R>(TRANSLATION, v ) ;
 
   *this = combination;
 
 }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::
+template < class R >
+Aff_transformationH2<R>::
 Aff_transformationH2( const RT& a, const RT& b, const RT& c,
                       const RT& d, const RT& e, const RT& f,
                                                 const RT& g)
 {
-  ptr = new Aff_transformation_repH2<FT,RT>( a,   b,   c,
+  ptr = new Aff_transformation_repH2<R>( a,   b,   c,
                                              d,   e,   f,
                                                        g  );
 }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::
+template < class R >
+Aff_transformationH2<R>::
 Aff_transformationH2( const RT& a, const RT& b,
                       const RT& d, const RT& e,
                                                  const RT& g)
 {
-  ptr = new Aff_transformation_repH2<FT,RT>( a,   b,   RT(0),
+  ptr = new Aff_transformation_repH2<R>( a,   b,   RT(0),
                                              d,   e,   RT(0),
                                                        g  );
 }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::
-Aff_transformationH2( Aff_transformation_rep_baseH2<FT,RT>* _ptr )
+template < class R >
+Aff_transformationH2<R>::
+Aff_transformationH2( Aff_transformation_rep_baseH2<R>* _ptr )
 {
  ptr = _ptr;
  ptr->add_reference();
 }
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>::~Aff_transformationH2()
+template < class R >
+Aff_transformationH2<R>::~Aff_transformationH2()
 {}
 
-template < class FT, class RT >
-PointH2<FT,RT>
-Aff_transformationH2<FT,RT>::transform(const PointH2<FT,RT>& p) const
+template < class R >
+PointH2<R>
+Aff_transformationH2<R>::transform(const PointH2<R>& p) const
 { return ptr->transform(p); }
 
 
-template < class FT, class RT >
-VectorH2<FT,RT>
-Aff_transformationH2<FT,RT>::transform( const VectorH2<FT,RT>& v) const
+template < class R >
+VectorH2<R>
+Aff_transformationH2<R>::transform( const VectorH2<R>& v) const
 { return ptr->transform(v); }
 
-template < class FT, class RT >
-DirectionH2<FT,RT>
-Aff_transformationH2<FT,RT>::transform( const DirectionH2<FT,RT>& d) const
+template < class R >
+DirectionH2<R>
+Aff_transformationH2<R>::transform( const DirectionH2<R>& d) const
 { return ptr->transform(d); }
 
 #ifndef CGAL_NO_LINE_TRANSFORM_IN_AT
-template < class FT, class RT >
-LineH2<FT,RT>
-Aff_transformationH2<FT,RT>::transform(const LineH2<FT,RT>& l) const
-{ return LineH2<FT,RT>( transform( l.point(0)), transform( l.point(1)) ); }
+template < class R >
+LineH2<R>
+Aff_transformationH2<R>::transform(const LineH2<R>& l) const
+{ return LineH2<R>( transform( l.point(0)), transform( l.point(1)) ); }
 #endif // CGAL_NO_LINE_TRANSFORM_IN_AT
 
-template < class FT, class RT >
-Aff_transformationH2<FT,RT>
-Aff_transformationH2<FT,RT>::
+template < class R >
+Aff_transformationH2<R>
+Aff_transformationH2<R>::
 inverse() const
 { return ptr->inverse(); }
 
-template < class FT, class RT >
+template < class R >
 bool
-Aff_transformationH2<FT,RT>::
+Aff_transformationH2<R>::
 is_even() const
 { return ptr->is_even(); }
 
-template < class FT, class RT >
+template < class R >
 bool
-Aff_transformationH2<FT,RT>::
+Aff_transformationH2<R>::
 is_odd() const
 { return !( ptr->is_even() ); }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-Aff_transformationH2<FT,RT>::
+typename R::FT
+Aff_transformationH2<R>::
 cartesian(int i, int j) const
 { return ptr->cartesian(i,j); }
 
-template < class FT, class RT >
+template < class R >
 inline
-RT
-Aff_transformationH2<FT,RT>::
+typename R::RT
+Aff_transformationH2<R>::
 homogeneous(int i, int j) const
 { return ptr->homogeneous(i,j); }
 
-template < class FT, class RT >
-Aff_transformation_repH2<FT,RT>
-Aff_transformationH2<FT,RT>::
+template < class R >
+Aff_transformation_repH2<R>
+Aff_transformationH2<R>::
 general_form() const
 { return ptr->general_form(); }
-template <class FT, class RT>
-Aff_transformationH2<FT,RT>
-//operator*(const Aff_transformationH2<FT,RT>& left_argument,
-//          const Aff_transformationH2<FT,RT>& right_argument )
-Aff_transformationH2<FT,RT>::
-operator*(const Aff_transformationH2<FT,RT>& right_argument) const
+template <class R>
+Aff_transformationH2<R>
+//operator*(const Aff_transformationH2<R>& left_argument,
+//          const Aff_transformationH2<R>& right_argument )
+Aff_transformationH2<R>::
+operator*(const Aff_transformationH2<R>& right_argument) const
 {
   return _general_transformation_composition(
                   ptr->general_form(),
                   right_argument.ptr->general_form() );
 }
 
-template <class FT, class RT>
-Aff_transformationH2<FT,RT>
-_general_transformation_composition( Aff_transformation_repH2<FT,RT> l,
-                                     Aff_transformation_repH2<FT,RT> r )
+template <class R>
+Aff_transformationH2<R>
+_general_transformation_composition( Aff_transformation_repH2<R> l,
+                                     Aff_transformation_repH2<R> r )
 {
-return Aff_transformationH2<FT,RT>(
+return Aff_transformationH2<R>(
        l.a*r.a + l.b*r.d,   l.a*r.b + l.b*r.e,   l.a*r.c + l.b*r.f + l.c*r.g,
        l.d*r.a + l.e*r.d,   l.d*r.b + l.e*r.e,   l.d*r.c + l.e*r.f + l.f*r.g,
                                                  l.g*r.g                     );
 }
 
-template < class FT, class RT >
-RT
-Aff_transformation_repH2<FT,RT>::homogeneous(int i, int j) const
+template < class R >
+typename R::RT
+Aff_transformation_repH2<R>::homogeneous(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
   switch (i)
@@ -792,17 +808,18 @@ Aff_transformation_repH2<FT,RT>::homogeneous(int i, int j) const
   return RT(0);
 }
 
-template < class FT, class RT >
-FT
-Aff_transformation_repH2<FT,RT>::cartesian(int i, int j) const
+template < class R >
+typename R::FT
+Aff_transformation_repH2<R>::cartesian(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
   if ( (i == 2) && (j == 2) )  return FT(1);
   return FT(homogeneous(i,j)) / FT(g);
 }
-template < class FT, class RT >
-RT
-Translation_repH2<FT,RT>::homogeneous(int i, int j) const
+
+template < class R >
+typename R::RT
+Translation_repH2<R>::homogeneous(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
   switch (i)
@@ -829,9 +846,9 @@ Translation_repH2<FT,RT>::homogeneous(int i, int j) const
   return RT(0);
 }
 
-template < class FT, class RT >
-FT
-Translation_repH2<FT,RT>::cartesian(int i, int j) const
+template < class R >
+typename R::FT
+Translation_repH2<R>::cartesian(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
   switch (i)
@@ -858,9 +875,9 @@ Translation_repH2<FT,RT>::cartesian(int i, int j) const
   return FT(0);
 }
 
-template < class FT, class RT >
-RT
-Rotation_repH2<FT,RT>::
+template < class R >
+typename R::RT
+Rotation_repH2<R>::
 homogeneous(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
@@ -888,9 +905,9 @@ homogeneous(int i, int j) const
   return RT(0);
 }
 
-template < class FT, class RT >
-FT
-Rotation_repH2<FT,RT>::
+template < class R >
+typename R::FT
+Rotation_repH2<R>::
 cartesian(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
@@ -918,9 +935,9 @@ cartesian(int i, int j) const
   return FT(0);
 }
 
-template < class FT, class RT >
-RT
-Scaling_repH2<FT,RT>::
+template < class R >
+typename R::RT
+Scaling_repH2<R>::
 homogeneous(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
@@ -948,9 +965,9 @@ homogeneous(int i, int j) const
   return RT(0);
 }
 
-template <class FT, class RT>
-FT
-Scaling_repH2<FT,RT>::
+template <class R>
+typename R::FT
+Scaling_repH2<R>::
 cartesian(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
@@ -977,9 +994,9 @@ cartesian(int i, int j) const
   }
   return FT(0);
 }
-template < class FT, class RT >
-RT
-Reflection_repH2<FT,RT>::
+template < class R >
+typename R::RT
+Reflection_repH2<R>::
 homogeneous(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
@@ -1008,9 +1025,9 @@ homogeneous(int i, int j) const
   return RT(0);
 }
 
-template <class FT, class RT>
-FT
-Reflection_repH2<FT,RT>::
+template <class R>
+typename R::FT
+Reflection_repH2<R>::
 cartesian(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );

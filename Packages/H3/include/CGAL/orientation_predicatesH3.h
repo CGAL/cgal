@@ -30,14 +30,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 Orientation
-orientation( const PointH3<FT,RT>& p,
-             const PointH3<FT,RT>& q,
-             const PointH3<FT,RT>& r,
-             const PointH3<FT,RT>& s)
+orientation( const PointH3<R>& p,
+             const PointH3<R>& q,
+             const PointH3<R>& r,
+             const PointH3<R>& s)
 {
+  typedef typename R::RT RT;
   RT det = det4x4_by_formula(
                p.hx(), p.hy(), p.hz(), p.hw(),
                q.hx(), q.hy(), q.hz(), q.hw(),
@@ -68,40 +69,40 @@ orientation( const PointH3<FT,RT>& p,
   }
 }
 
-template < class FT, class RT>
+template < class R>
 inline
 bool
-are_positive_oriented( const PointH3<FT,RT>& p,
-                            const PointH3<FT,RT>& q,
-                            const PointH3<FT,RT>& r,
-                            const PointH3<FT,RT>& s)
+are_positive_oriented( const PointH3<R>& p,
+                            const PointH3<R>& q,
+                            const PointH3<R>& r,
+                            const PointH3<R>& s)
 { return (orientation(p,q,r,s) == POSITIVE); }
 
-template < class FT, class RT>
+template < class R>
 inline
 bool
-are_negative_oriented( const PointH3<FT,RT>& p,
-                       const PointH3<FT,RT>& q,
-                       const PointH3<FT,RT>& r,
-                       const PointH3<FT,RT>& s)
+are_negative_oriented( const PointH3<R>& p,
+                       const PointH3<R>& q,
+                       const PointH3<R>& r,
+                       const PointH3<R>& s)
 { return (orientation(p,q,r,s) == NEGATIVE); }
 
-template < class FT, class RT>
+template < class R>
 inline
 bool
-coplanar( const PointH3<FT,RT>& p,
-          const PointH3<FT,RT>& q,
-          const PointH3<FT,RT>& r,
-          const PointH3<FT,RT>& s)
+coplanar( const PointH3<R>& p,
+          const PointH3<R>& q,
+          const PointH3<R>& r,
+          const PointH3<R>& s)
 { return (orientation(p,q,r,s) == COPLANAR); }
 
 
-template <class FT, class RT>
+template <class R>
 Orientation
-coplanar_orientation(const PointH3<FT,RT>& p,
-                     const PointH3<FT,RT>& q,
-                     const PointH3<FT,RT>& r,
-                     const PointH3<FT,RT>& s)
+coplanar_orientation(const PointH3<R>& p,
+                     const PointH3<R>& q,
+                     const PointH3<R>& r,
+                     const PointH3<R>& s)
 // p,q,r,s supposed to be coplanar
 // p, q, r supposed to be non collinear
 // tests whether s is on the same side of p,q as r

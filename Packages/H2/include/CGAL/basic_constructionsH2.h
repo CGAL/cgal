@@ -31,21 +31,23 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
-PointH2<FT,RT>
-gp_linear_intersection(const LineH2<FT,RT>& l1, const LineH2<FT,RT>& l2)
+PointH2<R>
+gp_linear_intersection(const LineH2<R>& l1, const LineH2<R>& l2)
 {
-  return PointH2<FT,RT>( l1.b()*l2.c() - l2.b()*l1.c(),
+  return PointH2<R>( l1.b()*l2.c() - l2.b()*l1.c(),
                          l2.a()*l1.c() - l1.a()*l2.c(),
                          l1.a()*l2.b() - l2.a()*l1.b() );
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
-LineH2<FT,RT>
-bisector( const PointH2<FT,RT>& p, const PointH2<FT,RT>& q )
+LineH2<R>
+bisector( const PointH2<R>& p, const PointH2<R>& q )
 {
+  typedef typename R::RT RT;
+
  // Bisector equation is based on equation
  // ( X - p.x())^2 + (Y - p.y())^2 == ( X - q.x())^2 + (Y - q.y())
  // and x() = hx()/hw() ...
@@ -61,14 +63,17 @@ bisector( const PointH2<FT,RT>& p, const PointH2<FT,RT>& q )
   RT b = RT(2) * ( qhy*qhw*phw*phw - phy*phw*qhw*qhw );
   RT c = phx*phx*qhw*qhw + phy*phy*qhw*qhw - qhx*qhx*phw*phw - qhy*qhy*phw*phw;
 
-  return LineH2<FT,RT>( a, b, c );
+  return LineH2<R>( a, b, c );
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
-FT
-squared_distance( const PointH2<FT,RT>& p, const PointH2<FT,RT>& q )
+typename R::FT
+squared_distance( const PointH2<R>& p, const PointH2<R>& q )
 {
+  typedef typename R::RT RT;
+  typedef typename R::FT FT;
+
   const RT phx = p.hx();
   const RT phy = p.hy();
   const RT phw = p.hw();
@@ -90,11 +95,12 @@ squared_distance( const PointH2<FT,RT>& p, const PointH2<FT,RT>& q )
   return FT( sq_dist_numerator ) / FT( sq_dist_denominator );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-PointH2<FT,RT>
-midpoint( PointH2<FT,RT> const& p, PointH2<FT,RT> const& q )
+PointH2<R>
+midpoint( PointH2<R> const& p, PointH2<R> const& q )
 {
+    typedef typename R::RT RT;
     const RT phw( p.hw());
     const RT qhw( q.hw());
 
@@ -102,17 +108,18 @@ midpoint( PointH2<FT,RT> const& p, PointH2<FT,RT> const& q )
     RT hy( p.hy()*qhw + q.hy()*phw);
     RT hw( phw * qhw * RT( 2));
 
-    return( PointH2<FT,RT>( hx, hy, hw));
+    return( PointH2<R>( hx, hy, hw));
 }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_LARGE_INLINE
-PointH2<FT,RT>
-circumcenter( const PointH2<FT,RT>& p,
-              const PointH2<FT,RT>& q,
-              const PointH2<FT,RT>& r )
+PointH2<R>
+circumcenter( const PointH2<R>& p,
+              const PointH2<R>& q,
+              const PointH2<R>& r )
 {
+  typedef typename R::RT RT;
   RT phx = p.hx();
   RT phy = p.hy();
   RT phw = p.hw();
@@ -157,13 +164,15 @@ circumcenter( const PointH2<FT,RT>& p,
   RT vvy = rx_px * px2_py2_qx2_qy_2 - qx_px * px2_py2_rx2_ry_2;
   RT vvw = RT(2) * ( qx_px * ry_py - rx_px * qy_py );
 
-  return PointH2<FT,RT>( vvx, vvy, vvw );
+  return PointH2<R>( vvx, vvy, vvw );
 }
 
-template <class FT, class RT>
-FT
-area(const TriangleH2<FT,RT>& t)
+template <class R>
+typename R::FT
+area(const TriangleH2<R>& t)
 {
+  typedef typename R::RT RT;
+  typedef typename R::FT FT;
   RT num = determinant_3x3_by_formula(
                t.vertex(0).hx(), t.vertex(0).hy(), t.vertex(0).hw(),
                t.vertex(1).hx(), t.vertex(1).hy(), t.vertex(1).hw(),

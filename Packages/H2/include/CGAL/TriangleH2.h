@@ -30,16 +30,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class FT, class RT>
+template <class R>
 class Triangle_repH2 : public Ref_counted
 {
   public:
 
     Triangle_repH2() {}
 
-    Triangle_repH2(const PointH2<FT,RT> v1,
-                   const PointH2<FT,RT> v2,
-                   const PointH2<FT,RT> v3)
+    Triangle_repH2(const PointH2<R> v1,
+                   const PointH2<R> v2,
+                   const PointH2<R> v3)
     {
         A[0] = v1;
         A[1] = v2;
@@ -47,96 +47,101 @@ class Triangle_repH2 : public Ref_counted
         _orientation = CGAL::orientation(v1,v2,v3);
     }
 
- friend class TriangleH2<FT,RT>;
+ friend class TriangleH2<R>;
 
  private:
-            PointH2<FT,RT>   A[3];
+            PointH2<R>   A[3];
             Orientation      _orientation;
 };
 
-template <class FT, class RT>
-class TriangleH2 : public Handle_for<Triangle_repH2< FT,RT> >
+template <class R_>
+class TriangleH2
+  : public R_::Triangle_handle_2
 {
 public:
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
                        TriangleH2();
-                       TriangleH2(const PointH2<FT,RT>& p,
-                                  const PointH2<FT,RT>& q,
-                                  const PointH2<FT,RT>& r);
+                       TriangleH2(const PointH2<R>& p,
+                                  const PointH2<R>& q,
+                                  const PointH2<R>& r);
 
     Bbox_2             bbox() const;
 
-    TriangleH2<FT,RT>  opposite() const;
-    TriangleH2<FT,RT>  transform(const Aff_transformationH2<FT,RT>&) const;
+    TriangleH2<R>  opposite() const;
+    TriangleH2<R>  transform(const Aff_transformationH2<R>&) const;
 
     Orientation        orientation() const;
 
-    Oriented_side      oriented_side(const PointH2<FT,RT>& ) const;
-    Bounded_side       bounded_side(const PointH2<FT,RT>& ) const;
-    bool               has_on_positive_side( const PointH2<FT,RT>& ) const;
-    bool               has_on_negative_side( const PointH2<FT,RT>& ) const;
-    bool               has_on_boundary( const PointH2<FT,RT>& ) const;
-    bool               has_on_bounded_side( const PointH2<FT,RT>& ) const;
-    bool               has_on_unbounded_side(const PointH2<FT,RT>& )const;
+    Oriented_side      oriented_side(const PointH2<R>& ) const;
+    Bounded_side       bounded_side(const PointH2<R>& ) const;
+    bool               has_on_positive_side( const PointH2<R>& ) const;
+    bool               has_on_negative_side( const PointH2<R>& ) const;
+    bool               has_on_boundary( const PointH2<R>& ) const;
+    bool               has_on_bounded_side( const PointH2<R>& ) const;
+    bool               has_on_unbounded_side(const PointH2<R>& )const;
     bool               is_degenerate() const;
 
-    bool               operator==( const TriangleH2<FT,RT>& ) const;
-    bool               operator!=( const TriangleH2<FT,RT>& ) const;
+    bool               operator==( const TriangleH2<R>& ) const;
+    bool               operator!=( const TriangleH2<R>& ) const;
 
-    // bool               oriented_equal( const TriangleH2<FT,RT>& ) const;
-    // bool               unoriented_equal( const TriangleH2<FT,RT>& ) const;
+    // bool               oriented_equal( const TriangleH2<R>& ) const;
+    // bool               unoriented_equal( const TriangleH2<R>& ) const;
 
-    PointH2<FT,RT>     vertex(int i) const;
-    PointH2<FT,RT>     operator[](int i) const;
+    PointH2<R>     vertex(int i) const;
+    PointH2<R>     operator[](int i) const;
 
     FT                 area() const;
 };
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-TriangleH2<FT,RT>::TriangleH2()
- : Handle_for< Triangle_repH2<FT,RT> >( Triangle_repH2<FT,RT>() )
+TriangleH2<R>::TriangleH2()
+ : Handle_for< Triangle_repH2<R> >( Triangle_repH2<R>() )
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-TriangleH2<FT,RT>::TriangleH2(const PointH2<FT,RT>& p,
-                              const PointH2<FT,RT>& q,
-                              const PointH2<FT,RT>& r)
- : Handle_for< Triangle_repH2<FT,RT> >( Triangle_repH2<FT,RT>(p,q,r) )
+TriangleH2<R>::TriangleH2(const PointH2<R>& p,
+                              const PointH2<R>& q,
+                              const PointH2<R>& r)
+ : Handle_for< Triangle_repH2<R> >( Triangle_repH2<R>(p,q,r) )
 {}
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-PointH2<FT,RT>
-TriangleH2<FT,RT>::vertex(int i) const
+PointH2<R>
+TriangleH2<R>::vertex(int i) const
 { return ptr->A[ i % 3 ]; }
 
-template <class FT, class RT>
+template <class R>
 inline
-PointH2<FT,RT>
-TriangleH2<FT,RT>::operator[](int i) const
+PointH2<R>
+TriangleH2<R>::operator[](int i) const
 { return vertex(i); }
 
-template <class FT, class RT>
+template <class R>
 inline
-FT
-TriangleH2<FT,RT>::area() const
+typename R::FT
+TriangleH2<R>::area() const
 { 
-   VectorH2<FT,RT> v1 = vertex(1) - vertex(0);
-   VectorH2<FT,RT> v2 = vertex(2) - vertex(0);
+   VectorH2<R> v1 = vertex(1) - vertex(0);
+   VectorH2<R> v2 = vertex(2) - vertex(0);
 
    return (v1.hx()*v2.hy() - v2.hx()*v1.hy())/(2*(v1.hw() * v2.hw()));
 }
 
-template <class FT, class RT>
+template <class R>
 inline
 Orientation
-TriangleH2<FT,RT>::orientation() const
+TriangleH2<R>::orientation() const
 { return ptr->_orientation; }
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
-TriangleH2<FT,RT>::oriented_side( const PointH2<FT,RT>& p) const
+TriangleH2<R>::oriented_side( const PointH2<R>& p) const
 {
   Orientation o12 = CGAL::orientation( vertex(1), vertex(2), p);
   Orientation o23 = CGAL::orientation( vertex(2), vertex(3), p);
@@ -182,30 +187,30 @@ TriangleH2<FT,RT>::oriented_side( const PointH2<FT,RT>& p) const
   }
 }
 
-template <class FT, class RT>
+template <class R>
 inline
 bool
-TriangleH2<FT,RT>::
-has_on_positive_side( const PointH2<FT,RT>& p) const
+TriangleH2<R>::
+has_on_positive_side( const PointH2<R>& p) const
 { return ( oriented_side(p) == ON_POSITIVE_SIDE ); }
 
-template <class FT, class RT>
+template <class R>
 inline
 bool
-TriangleH2<FT,RT>::has_on_boundary(const PointH2<FT,RT>& p) const
+TriangleH2<R>::has_on_boundary(const PointH2<R>& p) const
 { return oriented_side(p) == ON_ORIENTED_BOUNDARY; }
 
-template <class FT, class RT>
+template <class R>
 inline
 bool
-TriangleH2<FT,RT>::
-has_on_negative_side( const PointH2<FT,RT>& p) const
+TriangleH2<R>::
+has_on_negative_side( const PointH2<R>& p) const
 { return  oriented_side(p) == ON_NEGATIVE_SIDE; }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
-TriangleH2<FT,RT>::bounded_side(const PointH2<FT,RT>& p) const
+TriangleH2<R>::bounded_side(const PointH2<R>& p) const
 {
   CGAL_kernel_precondition( ! is_degenerate() );
 
@@ -226,10 +231,10 @@ TriangleH2<FT,RT>::bounded_side(const PointH2<FT,RT>& p) const
   return ON_BOUNDARY;
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-TriangleH2<FT,RT>::has_on_bounded_side(const PointH2<FT,RT>& p) const
+TriangleH2<R>::has_on_bounded_side(const PointH2<R>& p) const
 {
   CGAL_kernel_precondition( ! is_degenerate() );
 
@@ -241,10 +246,10 @@ TriangleH2<FT,RT>::has_on_bounded_side(const PointH2<FT,RT>& p) const
   return  ( (o12 == ori) && (o23 == ori) && (o31 == ori) );
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-TriangleH2<FT,RT>::has_on_unbounded_side(const PointH2<FT,RT>& p)
+TriangleH2<R>::has_on_unbounded_side(const PointH2<R>& p)
                                                                           const
 {
   CGAL_kernel_precondition( ! is_degenerate() );
@@ -257,37 +262,37 @@ TriangleH2<FT,RT>::has_on_unbounded_side(const PointH2<FT,RT>& p)
   return  ( (o12 == opp) || (o23 == opp) || (o31 == opp) );
 }
 
-template <class FT, class RT>
+template <class R>
 inline
 bool
-TriangleH2<FT,RT>::is_degenerate() const
+TriangleH2<R>::is_degenerate() const
 { return (ptr->_orientation == COLLINEAR); }
 
-template <class FT, class RT>
+template <class R>
 inline
 Bbox_2
-TriangleH2<FT,RT>::bbox() const
+TriangleH2<R>::bbox() const
 { return vertex(0).bbox() + vertex(1).bbox() + vertex(2).bbox(); }
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-TriangleH2<FT,RT>
-TriangleH2<FT,RT>::
-transform( const Aff_transformationH2<FT,RT>& t) const
+TriangleH2<R>
+TriangleH2<R>::
+transform( const Aff_transformationH2<R>& t) const
 {
-  return TriangleH2<FT,RT>(t.transform(ptr->A[0]),
+  return TriangleH2<R>(t.transform(ptr->A[0]),
                            t.transform(ptr->A[1]),
                            t.transform(ptr->A[2]) );
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-TriangleH2<FT,RT>
-TriangleH2<FT,RT>::opposite() const
-{ return TriangleH2<FT,RT>(ptr->A[0], ptr->A[2], ptr->A[1]); }
-template <class FT, class RT>
+TriangleH2<R>
+TriangleH2<R>::opposite() const
+{ return TriangleH2<R>(ptr->A[0], ptr->A[2], ptr->A[1]); }
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-TriangleH2<FT,RT>::operator==(const TriangleH2<FT,RT>& t) const
+TriangleH2<R>::operator==(const TriangleH2<R>& t) const
 {
   int j = 0;
   while ( (t.vertex(0) != vertex(j)) && (j < 3) ) j++;
@@ -302,16 +307,16 @@ TriangleH2<FT,RT>::operator==(const TriangleH2<FT,RT>& t) const
   return false;
 }
 
-template <class FT, class RT>
+template <class R>
 inline
 bool
-TriangleH2<FT,RT>::operator!=(const TriangleH2<FT,RT>& t) const
+TriangleH2<R>::operator!=(const TriangleH2<R>& t) const
 { return !(*this == t); }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEH2
-template < class FT, class RT >
+template < class R >
 std::ostream &
-operator<<(std::ostream &os, const TriangleH2<FT,RT> &t)
+operator<<(std::ostream &os, const TriangleH2<R> &t)
 {
   switch(os.iword(IO::mode))
   {
@@ -326,13 +331,13 @@ operator<<(std::ostream &os, const TriangleH2<FT,RT> &t)
 #endif // CGAL_NO_OSTREAM_INSERT_TRIANGLEH2
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLEH2
-template < class FT, class RT >
+template < class R >
 std::istream &
-operator>>(std::istream &is, TriangleH2<FT,RT> &t)
+operator>>(std::istream &is, TriangleH2<R> &t)
 {
-  PointH2<FT,RT> p, q, r;
+  PointH2<R> p, q, r;
   is >> p >> q >> r;
-  t = TriangleH2<FT,RT>(p, q, r);
+  t = TriangleH2<R>(p, q, r);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEH2

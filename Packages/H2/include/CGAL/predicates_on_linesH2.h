@@ -25,76 +25,69 @@
 #ifndef CGAL_PREDICATES_ON_LINESH2_H
 #define CGAL_PREDICATES_ON_LINESH2_H
 
-#ifndef CGAL_POINTH2_H
 #include <CGAL/PointH2.h>
-#endif // CGAL_POINTH2_H
-#ifndef CGAL_LINEH2_H
 #include <CGAL/LineH2.h>
-#endif // CGAL_LINEH2_H
-#ifndef CGAL_PREDICATES_ON_POINTSH2_H
 #include <CGAL/predicates_on_pointsH2.h>
-#endif // CGAL_PREDICATES_ON_POINTSH2_H
-#ifndef CGAL_BASIC_CONSTRUCTIONSH2_H
 #include <CGAL/basic_constructionsH2.h>
-#endif // CGAL_BASIC_CONSTRUCTIONSH2_H
 
 CGAL_BEGIN_NAMESPACE
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_x(const PointH2<FT,RT>& p,
-          const LineH2<FT,RT>& l1,
-          const LineH2<FT,RT>& l2)
+compare_x(const PointH2<R>& p,
+          const LineH2<R>& l1,
+          const LineH2<R>& l2)
 {
-  PointH2<FT,RT> ip = gp_linear_intersection( l1, l2 );
+  PointH2<R> ip = gp_linear_intersection( l1, l2 );
   return compare_x( p, ip );
 }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_x(const LineH2<FT,RT>& l1,
-          const LineH2<FT,RT>& l2,
-          const LineH2<FT,RT>& h1,
-          const LineH2<FT,RT>& h2)
+compare_x(const LineH2<R>& l1,
+          const LineH2<R>& l2,
+          const LineH2<R>& h1,
+          const LineH2<R>& h2)
 {
-  PointH2<FT,RT> lip = gp_linear_intersection( l1, l2 );
-  PointH2<FT,RT> hip = gp_linear_intersection( h1, h2 );
+  PointH2<R> lip = gp_linear_intersection( l1, l2 );
+  PointH2<R> hip = gp_linear_intersection( h1, h2 );
   return compare_x( lip, hip );
 }
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_y(const PointH2<FT,RT>& p,
-          const LineH2<FT,RT>& l1,
-          const LineH2<FT,RT>& l2)
+compare_y(const PointH2<R>& p,
+          const LineH2<R>& l1,
+          const LineH2<R>& l2)
 {
-  PointH2<FT,RT> ip = gp_linear_intersection( l1, l2 );
+  PointH2<R> ip = gp_linear_intersection( l1, l2 );
   return compare_y( p, ip );
 }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_y(const LineH2<FT,RT>& l1,
-          const LineH2<FT,RT>& l2,
-          const LineH2<FT,RT>& h1,
-          const LineH2<FT,RT>& h2)
+compare_y(const LineH2<R>& l1,
+          const LineH2<R>& l2,
+          const LineH2<R>& h1,
+          const LineH2<R>& h2)
 {
-  PointH2<FT,RT> lip = gp_linear_intersection( l1, l2 );
-  PointH2<FT,RT> hip = gp_linear_intersection( h1, h2 );
+  PointH2<R> lip = gp_linear_intersection( l1, l2 );
+  PointH2<R> hip = gp_linear_intersection( h1, h2 );
   return compare_y( lip, hip );
 }
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-compare_y_at_x(const PointH2<FT,RT>& p,
-               const LineH2<FT,RT>& h)
+compare_y_at_x(const PointH2<R>& p,
+               const LineH2<R>& h)
 {
+  typedef typename R::RT RT;
   CGAL_kernel_precondition( ! h.is_vertical() );
   Oriented_side ors = h.oriented_side( p );
   if ( h.b() < RT(0) )
@@ -108,38 +101,38 @@ compare_y_at_x(const PointH2<FT,RT>& p,
   return ( ors == ON_NEGATIVE_SIDE ) ? SMALLER : EQUAL;
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_y_at_x(const PointH2<FT,RT>& p,
-               const LineH2<FT,RT>& h1,
-               const LineH2<FT,RT>& h2)
+compare_y_at_x(const PointH2<R>& p,
+               const LineH2<R>& h1,
+               const LineH2<R>& h2)
 { return CGAL_NTS compare(h1.y_at_x( p.x() ), h2.y_at_x( p.x() )); }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_y_at_x(const LineH2<FT,RT>& l1,
-               const LineH2<FT,RT>& l2,
-               const LineH2<FT,RT>& h)
+compare_y_at_x(const LineH2<R>& l1,
+               const LineH2<R>& l2,
+               const LineH2<R>& h)
 { return compare_y_at_x( gp_linear_intersection( l1, l2 ), h); }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_y_at_x(const LineH2<FT,RT>& l1,
-               const LineH2<FT,RT>& l2,
-               const LineH2<FT,RT>& h1,
-               const LineH2<FT,RT>& h2)
+compare_y_at_x(const LineH2<R>& l1,
+               const LineH2<R>& l2,
+               const LineH2<R>& h1,
+               const LineH2<R>& h2)
 { return compare_y_at_x( gp_linear_intersection( l1, l2 ), h1, h2 ); }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-compare_x_at_y(const PointH2<FT,RT>& p,
-               const LineH2<FT,RT>& h)
+compare_x_at_y(const PointH2<R>& p,
+               const LineH2<R>& h)
 {
   CGAL_kernel_precondition( ! h.is_horizontal() );
   Oriented_side ors = h.oriented_side( p );
@@ -154,31 +147,31 @@ compare_x_at_y(const PointH2<FT,RT>& p,
   return ( ors == ON_NEGATIVE_SIDE ) ? SMALLER : EQUAL;
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_x_at_y(const PointH2<FT,RT>& p,
-               const LineH2<FT,RT>& h1,
-               const LineH2<FT,RT>& h2)
+compare_x_at_y(const PointH2<R>& p,
+               const LineH2<R>& h1,
+               const LineH2<R>& h2)
 { return CGAL_NTS compare(h1.x_at_y( p.y() ), h2.x_at_y( p.y() )); }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_x_at_y(const LineH2<FT,RT>& l1,
-               const LineH2<FT,RT>& l2,
-               const LineH2<FT,RT>& h)
+compare_x_at_y(const LineH2<R>& l1,
+               const LineH2<R>& l2,
+               const LineH2<R>& h)
 { return compare_x_at_y( gp_linear_intersection( l1, l2 ), h); }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_x_at_y(const LineH2<FT,RT>& l1,
-               const LineH2<FT,RT>& l2,
-               const LineH2<FT,RT>& h1,
-               const LineH2<FT,RT>& h2)
+compare_x_at_y(const LineH2<R>& l1,
+               const LineH2<R>& l2,
+               const LineH2<R>& h1,
+               const LineH2<R>& h2)
 { return compare_x_at_y( gp_linear_intersection( l1, l2 ), h1, h2 ); }
 
 CGAL_END_NAMESPACE

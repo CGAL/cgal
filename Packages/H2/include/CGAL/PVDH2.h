@@ -32,25 +32,33 @@
 #include <CGAL/Threetuple.h>
 #include <CGAL/homogeneous_classes.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Bbox_2.h>
 
 #include <CGAL/point_vector_declarationsH2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class FT, class RT >
-class PointH2 : public Handle_for< Threetuple<RT> >
+template < class R_ >
+class PointH2
+  : public R_::Point_handle_2
 {
-
 public:
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
+  typedef typename R::Point_handle_2            Point_handle_2_;
+  typedef typename Point_handle_2_::element_type        Point_ref_2;
+
             PointH2();
             PointH2(const Origin & o);
-            PointH2(const PointH2<FT,RT> & p);
+            PointH2(const PointH2<R> & p);
             PointH2(const RT& hx, const RT& hy );
             PointH2(const RT& hx, const RT& hy, const RT& hw );
             ~PointH2();
 
-    bool    operator==( const PointH2<FT,RT>& p) const;
-    bool    operator!=( const PointH2<FT,RT>& p) const;
+    bool    operator==( const PointH2<R>& p) const;
+    bool    operator!=( const PointH2<R>& p) const;
 
     FT      x()  const;
     FT      y()  const;
@@ -71,32 +79,40 @@ public:
     int     dimension() const;
     Bbox_2  bbox() const;
 
-    PointH2<FT,RT> transform( const Aff_transformationH2<FT,RT> & t) const;
-    DirectionH2<FT,RT>
+    PointH2<R> transform( const Aff_transformationH2<R> & t) const;
+    DirectionH2<R>
             direction() const;
 
-            PointH2(const VectorH2<FT,RT>& v);
+            PointH2(const VectorH2<R>& v);
  friend CGAL_FRIEND_INLINE
-        PointH2<FT,RT>
-        CGAL_SCOPE origin_plus_vector CGAL_NULL_TMPL_ARGS ( const VectorH2<FT,RT> & v);
+        PointH2<R>
+        CGAL_SCOPE origin_plus_vector CGAL_NULL_TMPL_ARGS ( const VectorH2<R> & v);
  friend CGAL_FRIEND_INLINE
-        PointH2<FT,RT>
-        CGAL_SCOPE origin_minus_vector CGAL_NULL_TMPL_ARGS (const VectorH2<FT,RT> & v);
+        PointH2<R>
+        CGAL_SCOPE origin_minus_vector CGAL_NULL_TMPL_ARGS (const VectorH2<R> & v);
 };
 
-template < class FT, class RT >
-class VectorH2 : public Handle_for<Threetuple<RT> >
+template < class R_ >
+class VectorH2
+  : public R_::Vector_handle_2
 {
 public:
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
+  typedef typename R::Vector_handle_2           Vector_handle_2_;
+  typedef typename Vector_handle_2_::element_type  Vector_ref_2;
+
             VectorH2();
-            VectorH2(const VectorH2<FT,RT>& v);
+            VectorH2(const VectorH2<R>& v);
             VectorH2(const Null_vector &);
             VectorH2(const RT& x, const RT& y);
             VectorH2(const RT& x, const RT& y, const RT& w );
             ~VectorH2();
 
-    bool    operator==( const VectorH2<FT,RT>& v) const;
-    bool    operator!=( const VectorH2<FT,RT>& v) const;
+    bool    operator==( const VectorH2<R>& v) const;
+    bool    operator!=( const VectorH2<R>& v) const;
     bool    operator==( const Null_vector&) const;
     bool    operator!=( const Null_vector& v) const;
 
@@ -110,95 +126,103 @@ public:
     FT      operator[](int i)  const;
 
     int     dimension() const;
-    DirectionH2<FT,RT>
+    DirectionH2<R>
             direction() const;
-    VectorH2<FT,RT>
-            transform(const Aff_transformationH2<FT,RT>& t ) const;
-    VectorH2<FT,RT>
+    VectorH2<R>
+            transform(const Aff_transformationH2<R>& t ) const;
+    VectorH2<R>
             perpendicular(const Orientation& o ) const;
 
-    VectorH2<FT,RT>
+    VectorH2<R>
             operator-() const;
 
-    VectorH2<FT,RT>
+    VectorH2<R>
             opposite() const;
 
 // undocumented:
-            VectorH2(const DirectionH2<FT,RT> & dir);
+            VectorH2(const DirectionH2<R> & dir);
 protected:
-            VectorH2(const PointH2<FT,RT> & p);
+            VectorH2(const PointH2<R> & p);
 // friends:
 
 friend CGAL_FRIEND_INLINE
-       VectorH2<FT,RT>
-       CGAL_SCOPE point_minus_origin CGAL_NULL_TMPL_ARGS ( const PointH2<FT,RT>& p);
+       VectorH2<R>
+       CGAL_SCOPE point_minus_origin CGAL_NULL_TMPL_ARGS ( const PointH2<R>& p);
 friend CGAL_FRIEND_INLINE
-       VectorH2<FT,RT>
-       CGAL_SCOPE origin_minus_point CGAL_NULL_TMPL_ARGS ( const PointH2<FT,RT>& p);
+       VectorH2<R>
+       CGAL_SCOPE origin_minus_point CGAL_NULL_TMPL_ARGS ( const PointH2<R>& p);
 /*
 friend CGAL_FRIEND_INLINE
-       PointH2<FT,RT>
-       origin_minus_vector CGAL_NULL_TMPL_ARGS ( const VectorH2<FT,RT>& v);
+       PointH2<R>
+       origin_minus_vector CGAL_NULL_TMPL_ARGS ( const VectorH2<R>& v);
 
 friend CGAL_FRIEND_INLINE
-       PointH2<FT,RT>
+       PointH2<R>
        operator+ CGAL_NULL_TMPL_ARGS ( const Origin &,
-                                       const VectorH2<FT,RT>& v );
+                                       const VectorH2<R>& v );
 friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH2<FT,RT>
-       operator- CGAL_NULL_TMPL_ARGS ( const VectorH2<FT,RT>& v1,
-                                       const VectorH2<FT,RT>& v2 );
+       VectorH2<R>
+       operator- CGAL_NULL_TMPL_ARGS ( const VectorH2<R>& v1,
+                                       const VectorH2<R>& v2 );
 */
 
 friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH2<FT,RT>
-       operator+ CGAL_NULL_TMPL_ARGS ( const VectorH2<FT,RT>&,
-                                       const VectorH2<FT,RT>& );
+       VectorH2<R>
+       operator+ CGAL_NULL_TMPL_ARGS ( const VectorH2<R>&,
+                                       const VectorH2<R>& );
 friend CGAL_KERNEL_FRIEND_INLINE
        FT
-       operator* CGAL_NULL_TMPL_ARGS ( const VectorH2<FT,RT>&,
-                                       const VectorH2<FT,RT>& );
+       operator* CGAL_NULL_TMPL_ARGS ( const VectorH2<R>&,
+                                       const VectorH2<R>& );
 friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH2<FT,RT>
-       operator* CGAL_NULL_TMPL_ARGS ( const VectorH2<FT,RT>&,
+       VectorH2<R>
+       operator* CGAL_NULL_TMPL_ARGS ( const VectorH2<R>&,
                                        const RT& );
 friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH2<FT,RT>
+       VectorH2<R>
        operator* CGAL_NULL_TMPL_ARGS ( const RT&,
-                                       const VectorH2<FT,RT>& );
+                                       const VectorH2<R>& );
 friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH2<FT,RT>
-       operator/ CGAL_NULL_TMPL_ARGS ( const VectorH2<FT,RT>&,
+       VectorH2<R>
+       operator/ CGAL_NULL_TMPL_ARGS ( const VectorH2<R>&,
                                        const RT& );
 };
 
-template < class FT, class RT >
-class DirectionH2 : public Handle_for<Threetuple<RT> >
+template < class R_ >
+class DirectionH2
+  : public R_::Direction_handle_2
 {
 public:
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
+
+  typedef typename R::Direction_handle_2        Direction_handle_2_;
+  typedef typename Direction_handle_2_::element_type  Direction_ref_2;
+
             DirectionH2();
-            DirectionH2(const DirectionH2<FT,RT>& d );
-            DirectionH2(const PointH2<FT,RT> & p );
-            DirectionH2(const VectorH2<FT,RT> & v );
+            DirectionH2(const DirectionH2<R>& d );
+            DirectionH2(const PointH2<R> & p );
+            DirectionH2(const VectorH2<R> & v );
             DirectionH2(const RT& x, const RT& y);
             DirectionH2(const RT& x, const RT& y, const RT& w );
             ~DirectionH2();
 
-    bool    operator==( const DirectionH2<FT,RT>& d) const;
-    bool    operator!=( const DirectionH2<FT,RT>& d) const;
-    bool    operator< ( const DirectionH2<FT,RT>& d) const;
-    bool    operator<=( const DirectionH2<FT,RT>& d) const;
-    bool    operator> ( const DirectionH2<FT,RT>& d) const;
-    bool    operator>=( const DirectionH2<FT,RT>& d) const;
-    bool    counterclockwise_in_between( const DirectionH2<FT,RT>& d1,
-                                         const DirectionH2<FT,RT>& d2 ) const;
+    bool    operator==( const DirectionH2<R>& d) const;
+    bool    operator!=( const DirectionH2<R>& d) const;
+    bool    operator< ( const DirectionH2<R>& d) const;
+    bool    operator<=( const DirectionH2<R>& d) const;
+    bool    operator> ( const DirectionH2<R>& d) const;
+    bool    operator>=( const DirectionH2<R>& d) const;
+    bool    counterclockwise_in_between( const DirectionH2<R>& d1,
+                                         const DirectionH2<R>& d2 ) const;
 
-    DirectionH2<FT,RT>
+    DirectionH2<R>
             operator-() const;
 
 
-    VectorH2<FT,RT>    to_vector() const;
-    // VectorH2<FT,RT>    vector() const;
+    VectorH2<R>    to_vector() const;
+    // VectorH2<R>    vector() const;
 
     RT      x() const;
     RT      y() const;
@@ -207,38 +231,38 @@ public:
     RT      dx() const;
     RT      dy() const;
 
-    DirectionH2<FT,RT>
+    DirectionH2<R>
           perpendicular(const Orientation &o) const;
-    DirectionH2<FT,RT>
-          transform(const Aff_transformationH2<FT,RT> &) const ;
+    DirectionH2<R>
+          transform(const Aff_transformationH2<R> &) const ;
 
 };
 
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointH2<FT,RT>::PointH2()
- : Handle_for< Threetuple<RT> >( Threetuple<RT>()) {}
+PointH2<R>::PointH2()
+ : Point_handle_2_ ( Point_ref_2()) {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointH2<FT,RT>::PointH2(const Origin&)
- : Handle_for< Threetuple<RT> >( Threetuple<RT>( RT(0), RT(0), RT(1))) {}
+PointH2<R>::PointH2(const Origin&)
+ : Point_handle_2_ ( Point_ref_2( RT(0), RT(0), RT(1))) {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointH2<FT,RT>::PointH2(const PointH2<FT,RT>& p)
-  : Handle_for<Threetuple<RT> >(p)
+PointH2<R>::PointH2(const PointH2<R>& p)
+  : Point_handle_2_ (p)
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointH2<FT,RT>::PointH2(const RT& hx, const RT& hy)
- : Handle_for< Threetuple<RT> >( Threetuple<RT>( hx, hy, RT(1) )) {}
+PointH2<R>::PointH2(const RT& hx, const RT& hy)
+ : Point_handle_2_ ( Point_ref_2( hx, hy, RT(1) )) {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointH2<FT,RT>::PointH2(const RT& hx, const RT& hy, const RT& hw)
+PointH2<R>::PointH2(const RT& hx, const RT& hy, const RT& hw)
 {
    if ( hw >= RT(0)   )
    { initialize_with( Threetuple<RT>( hx, hy, hw)); }
@@ -246,65 +270,65 @@ PointH2<FT,RT>::PointH2(const RT& hx, const RT& hy, const RT& hw)
    { initialize_with( Threetuple<RT>(-hx,-hy,-hw)); }
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH2<FT,RT>::~PointH2()
+PointH2<R>::~PointH2()
 {}
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointH2<FT,RT>::PointH2(const VectorH2<FT,RT>& v)
-  : Handle_for<Threetuple<RT> >(v)
+PointH2<R>::PointH2(const VectorH2<R>& v)
+  : Point_handle_2_ (v)
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-PointH2<FT,RT>::operator==( const PointH2<FT,RT>& p) const
+PointH2<R>::operator==( const PointH2<R>& p) const
 {
   return (  (hx() * p.hw() == p.hx() * hw() )
           &&(hy() * p.hw() == p.hy() * hw() ) );
 }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-PointH2<FT,RT>::operator!=( const PointH2<FT,RT>& p) const
+PointH2<R>::operator!=( const PointH2<R>& p) const
 { return !(*this == p); }   /* XXX */
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-PointH2<FT,RT>::x()  const
+typename R::FT
+PointH2<R>::x()  const
 { return ( FT( hx() ) / FT( hw() )); }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-PointH2<FT,RT>::y()  const
+typename R::FT
+PointH2<R>::y()  const
 { return ( FT( hy() ) / FT( hw() )); }
 
-template < class FT, class RT >
+template < class R >
 inline
-RT
-PointH2<FT,RT>::hx() const
+typename R::RT
+PointH2<R>::hx() const
 { return  ptr->e0 ; }
 
-template < class FT, class RT >
+template < class R >
 inline
-RT
-PointH2<FT,RT>::hy() const
+typename R::RT
+PointH2<R>::hy() const
 { return  ptr->e1 ; }
 
-template < class FT, class RT >
+template < class R >
 inline
-RT
-PointH2<FT,RT>::hw() const
+typename R::RT
+PointH2<R>::hw() const
 { return  ptr->e2; }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-FT
-PointH2<FT,RT>::cartesian(int i) const
+typename R::FT
+PointH2<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i==0 || i==1) );
   switch (i)
@@ -315,10 +339,10 @@ PointH2<FT,RT>::cartesian(int i) const
   return FT(RT());
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-RT
-PointH2<FT,RT>::homogeneous(int i) const
+typename R::RT
+PointH2<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
   switch (i)
@@ -330,69 +354,69 @@ PointH2<FT,RT>::homogeneous(int i) const
   return RT();
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-PointH2<FT,RT>::operator[](int i) const
+typename R::FT
+PointH2<R>::operator[](int i) const
 { return cartesian(i); }
 
-template < class FT, class RT >
+template < class R >
 inline
-const RT&
-PointH2<FT,RT>::hx_ref() const
+const typename R::RT&
+PointH2<R>::hx_ref() const
 { return  ptr->e0 ; }
 
-template < class FT, class RT >
+template < class R >
 inline
-const RT&
-PointH2<FT,RT>::hy_ref() const
+const typename R::RT&
+PointH2<R>::hy_ref() const
 { return  ptr->e1 ; }
 
-template < class FT, class RT >
+template < class R >
 inline
-const RT&
-PointH2<FT,RT>::hw_ref() const
+const typename R::RT&
+PointH2<R>::hw_ref() const
 { return  ptr->e2; }
 
 
-template < class FT, class RT >
+template < class R >
 inline
 int
-PointH2<FT,RT>::dimension() const
+PointH2<R>::dimension() const
 { return 2; }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-DirectionH2<FT,RT>
-PointH2<FT,RT>::direction() const
-{ return DirectionH2<FT,RT>(*this); }
+DirectionH2<R>
+PointH2<R>::direction() const
+{ return DirectionH2<R>(*this); }
 
 
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorH2<FT,RT>::VectorH2()
- : Handle_for< Threetuple<RT> >( Threetuple<RT>()) {}
+VectorH2<R>::VectorH2()
+ : Vector_handle_2_ ( Vector_ref_2()) {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorH2<FT,RT>::VectorH2(const Null_vector &)
- : Handle_for< Threetuple<RT> >( Threetuple<RT>(RT(0), RT(0), RT(1) )) {}
+VectorH2<R>::VectorH2(const Null_vector &)
+ : Vector_handle_2_ ( Vector_ref_2(RT(0), RT(0), RT(1) )) {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorH2<FT,RT>::VectorH2(const VectorH2<FT,RT>& v)
-  : Handle_for<Threetuple<RT> >(v)
+VectorH2<R>::VectorH2(const VectorH2<R>& v)
+  : Vector_handle_2_ (v)
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorH2<FT,RT>::VectorH2(const RT& x, const RT& y)
- : Handle_for< Threetuple<RT> >( Threetuple<RT>( x,  y,  RT(1) )) {}
+VectorH2<R>::VectorH2(const RT& x, const RT& y)
+ : Vector_handle_2_ ( Vector_ref_2( x,  y,  RT(1) )) {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorH2<FT,RT>::VectorH2(const RT& x, const RT& y, const RT& w)
+VectorH2<R>::VectorH2(const RT& x, const RT& y, const RT& w)
 {
   if ( w >= RT(0)   )
   { initialize_with( Threetuple<RT>( x,  y,  w)); }
@@ -400,85 +424,90 @@ VectorH2<FT,RT>::VectorH2(const RT& x, const RT& y, const RT& w)
   { initialize_with( Threetuple<RT>(-x, -y, -w)); }
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-VectorH2<FT,RT>::~VectorH2()
+VectorH2<R>::~VectorH2()
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorH2<FT,RT>::VectorH2(const PointH2<FT,RT> & p)
-  : Handle_for<Threetuple<RT> >( p)
+VectorH2<R>::VectorH2(const PointH2<R> & p)
+  : Vector_handle_2_ ( p)
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorH2<FT,RT>::VectorH2(const DirectionH2<FT,RT> & dir)
-  : Handle_for<Threetuple<RT> >( dir)
+VectorH2<R>::VectorH2(const DirectionH2<R> & dir)
+  : Vector_handle_2_ ( dir)
 {}
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-VectorH2<FT,RT>::operator==( const Null_vector&) const
+VectorH2<R>::operator==( const Null_vector&) const
 { return (hx() == RT(0)) && (hy() == RT(0)); }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-VectorH2<FT,RT>::operator!=( const Null_vector& v) const
+VectorH2<R>::operator!=( const Null_vector& v) const
 { return !(*this == v); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-VectorH2<FT,RT>::operator==( const VectorH2<FT,RT>& v) const
+VectorH2<R>::operator==( const VectorH2<R>& v) const
 {
   return (  (hx() * v.hw() == v.hx() * hw() )
           &&(hy() * v.hw() == v.hy() * hw() ) );
 }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-VectorH2<FT,RT>::operator!=( const VectorH2<FT,RT>& v) const
+VectorH2<R>::operator!=( const VectorH2<R>& v) const
 { return !(*this == v); }  /* XXX */
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-VectorH2<FT,RT>::x()  const
-{ return FT(ptr->e0 )/FT(ptr->e2 ) ; }
+typename R::FT
+VectorH2<R>::x()  const
+{
+    typedef typename R::FT FT;
+    return FT(ptr->e0 )/FT(ptr->e2 ) ;
+}
 
-
-template < class FT, class RT >
+template < class R >
 inline
-FT
-VectorH2<FT,RT>::y()  const
-{ return FT(ptr->e1 )/FT(ptr->e2 ) ; }
+typename R::FT
+VectorH2<R>::y()  const
+{
+    typedef typename R::FT FT;
+    return FT(ptr->e1 )/FT(ptr->e2 ) ;
+}
 
-template < class FT, class RT >
+template < class R >
 inline
-RT
-VectorH2<FT,RT>::hx() const
+typename R::RT
+VectorH2<R>::hx() const
 { return  ptr->e0 ; }
 
-template < class FT, class RT >
+template < class R >
 inline
-RT
-VectorH2<FT,RT>::hy() const
+typename R::RT
+VectorH2<R>::hy() const
 { return  ptr->e1 ; }
 
-template < class FT, class RT >
+template < class R >
 inline
-RT
-VectorH2<FT,RT>::hw() const
+typename R::RT
+VectorH2<R>::hw() const
 { return  ptr->e2 ; }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-FT
-VectorH2<FT,RT>::cartesian(int i) const
+typename R::FT
+VectorH2<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i==0 || i==1) );
   switch (i)
@@ -489,10 +518,10 @@ VectorH2<FT,RT>::cartesian(int i) const
   return FT(RT());
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-RT
-VectorH2<FT,RT>::homogeneous(int i) const
+typename R::RT
+VectorH2<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
   switch (i)
@@ -504,66 +533,66 @@ VectorH2<FT,RT>::homogeneous(int i) const
   return RT();
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-VectorH2<FT,RT>::operator[](int i) const
+typename R::FT
+VectorH2<R>::operator[](int i) const
 { return cartesian(i); }
 
-template < class FT, class RT >
+template < class R >
 inline
 int
-VectorH2<FT,RT>::dimension() const
+VectorH2<R>::dimension() const
 { return 2; }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-DirectionH2<FT,RT>
-VectorH2<FT,RT>::direction() const
-{ return DirectionH2<FT,RT>(*this); }
-template < class FT, class RT >
+DirectionH2<R>
+VectorH2<R>::direction() const
+{ return DirectionH2<R>(*this); }
+template < class R >
 inline
-VectorH2<FT,RT>
-VectorH2<FT,RT>::operator-() const
-{ return VectorH2<FT,RT>(- hx(), - hy(), hw() ); }
+VectorH2<R>
+VectorH2<R>::operator-() const
+{ return VectorH2<R>(- hx(), - hy(), hw() ); }
 
-template < class FT, class RT >
+template < class R >
 inline
-VectorH2<FT,RT>
-VectorH2<FT,RT>::opposite() const
-{ return VectorH2<FT,RT>(- hx(), - hy(), hw() ); }
+VectorH2<R>
+VectorH2<R>::opposite() const
+{ return VectorH2<R>(- hx(), - hy(), hw() ); }
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<FT,RT>::DirectionH2()
- : Handle_for< Threetuple<RT> >( Threetuple<RT>()) {}
+DirectionH2<R>::DirectionH2()
+ : Direction_handle_2_ ( Direction_ref_2()) {}
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<FT,RT>::DirectionH2(const DirectionH2<FT,RT>& d )
-  : Handle_for<Threetuple<RT> >( d )
+DirectionH2<R>::DirectionH2(const DirectionH2<R>& d )
+  : Direction_handle_2_ ( d )
 {}
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<FT,RT>::DirectionH2(const PointH2<FT,RT> & p )
-  : Handle_for<Threetuple<RT> >( p)
+DirectionH2<R>::DirectionH2(const PointH2<R> & p )
+  : Direction_handle_2_ ( p)
 {}
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<FT,RT>::DirectionH2(const VectorH2<FT,RT> & v )
-  : Handle_for<Threetuple<RT> >( v)
+DirectionH2<R>::DirectionH2(const VectorH2<R> & v )
+  : Direction_handle_2_ ( v)
 {}
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<FT,RT>::DirectionH2(const RT& x, const RT& y)
- : Handle_for< Threetuple<RT> >( Threetuple<RT>( x, y, RT(1) )) {}
+DirectionH2<R>::DirectionH2(const RT& x, const RT& y)
+ : Direction_handle_2_ ( Direction_ref_2( x, y, RT(1) )) {}
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<FT,RT>::DirectionH2(const RT& x, const RT& y, const RT& w )
+DirectionH2<R>::DirectionH2(const RT& x, const RT& y, const RT& w )
 {
   if (w > RT(0)   )
   { initialize_with( Threetuple<RT>( x, y, w)); }
@@ -571,49 +600,50 @@ DirectionH2<FT,RT>::DirectionH2(const RT& x, const RT& y, const RT& w )
   { initialize_with( Threetuple<RT>(-x,-y,-w)); }
 }
 
-template <class FT, class RT >
+template <class R >
 inline
-DirectionH2<FT,RT>::~DirectionH2()
+DirectionH2<R>::~DirectionH2()
 {}
 
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_INLINE
 bool
-DirectionH2<FT,RT>::operator==( const DirectionH2<FT,RT>& d) const
+DirectionH2<R>::operator==( const DirectionH2<R>& d) const
 {
   return (  ( x() * d.y() == y() * d.x() )
           &&( CGAL_NTS sign( x() ) == CGAL_NTS sign( d.x() ) )
           &&( CGAL_NTS sign( y() ) == CGAL_NTS sign( d.y() ) ) );
 }
 
-template <class FT, class RT >
+template <class R >
 inline
 bool
-DirectionH2<FT,RT>::operator!=( const DirectionH2<FT,RT>& d) const
+DirectionH2<R>::operator!=( const DirectionH2<R>& d) const
 { return !(*this == d); }
 
-template <class FT, class RT >
+template <class R >
 inline
-DirectionH2<FT,RT>
-DirectionH2<FT,RT>::operator-() const
-{ return DirectionH2<FT,RT>( - x(), - y() ); }
-template <class FT, class RT >
+DirectionH2<R>
+DirectionH2<R>::operator-() const
+{ return DirectionH2<R>( - x(), - y() ); }
+
+template <class R >
 inline
-RT
-DirectionH2<FT,RT>::dx() const
+typename R::RT
+DirectionH2<R>::dx() const
 { return ptr->e0; }
 
-template <class FT, class RT >
+template <class R >
 inline
-RT
-DirectionH2<FT,RT>::dy() const
+typename R::RT
+DirectionH2<R>::dy() const
 { return ptr->e1; }
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_INLINE
-RT
-DirectionH2<FT,RT>::delta(int i) const
+typename R::RT
+DirectionH2<R>::delta(int i) const
 {
   CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
   if (i == 0)
@@ -623,141 +653,143 @@ DirectionH2<FT,RT>::delta(int i) const
   return dy();
 }
 
-template <class FT, class RT >
+template <class R >
 inline
-RT
-DirectionH2<FT,RT>::x() const
+typename R::RT
+DirectionH2<R>::x() const
 { return ptr->e0; }
 
-template <class FT, class RT >
+template <class R >
 inline
-RT
-DirectionH2<FT,RT>::y() const
+typename R::RT
+DirectionH2<R>::y() const
 { return ptr->e1; }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator+(const VectorH2<FT,RT>& u, const VectorH2<FT,RT>& v)
+VectorH2<R>
+operator+(const VectorH2<R>& u, const VectorH2<R>& v)
 {
-  return VectorH2<FT,RT>( u.hx()*v.hw() + v.hx()*u.hw(),
+  return VectorH2<R>( u.hx()*v.hw() + v.hx()*u.hw(),
                           u.hy()*v.hw() + v.hy()*u.hw(),
                           u.hw()*v.hw() );
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator-(const VectorH2<FT,RT>& u, const VectorH2<FT,RT>& v)
+VectorH2<R>
+operator-(const VectorH2<R>& u, const VectorH2<R>& v)
 {
-  return VectorH2<FT,RT>( u.hx()*v.hw() - v.hx()*u.hw(),
+  return VectorH2<R>( u.hx()*v.hw() - v.hx()*u.hw(),
                           u.hy()*v.hw() - v.hy()*u.hw(),
                           u.hw()*v.hw() );
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-FT
-operator*(const VectorH2<FT,RT>& u, const VectorH2<FT,RT>& v)
+typename R::FT
+operator*(const VectorH2<R>& u, const VectorH2<R>& v)
 {
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
   return (   FT( RT(u.hx()*v.hx() + u.hy()*v.hy()) )  /
              FT( RT(u.hw()*v.hw() ) )    );
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator/(const VectorH2<FT,RT>& v, const RT& f)
-{ return VectorH2<FT,RT>( v.hx(), v.hy(), v.hw()*f ); }
+VectorH2<R>
+operator/(const VectorH2<R>& v, const typename R::RT& f)
+{ return VectorH2<R>( v.hx(), v.hy(), v.hw()*f ); }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator*(const VectorH2<FT,RT>& v, const RT& f)
-{ return VectorH2<FT,RT>( v.hx()*f, v.hy()*f, v.hw() ); }
+VectorH2<R>
+operator*(const VectorH2<R>& v, const typename R::RT& f)
+{ return VectorH2<R>( v.hx()*f, v.hy()*f, v.hw() ); }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator*(const RT& f, const VectorH2<FT,RT>& v)
-{ return VectorH2<FT,RT>( v.hx()*f, v.hy()*f, v.hw() ); }
+VectorH2<R>
+operator*(const typename R::RT& f, const VectorH2<R>& v)
+{ return VectorH2<R>( v.hx()*f, v.hy()*f, v.hw() ); }
 
-template <class FT, class RT>
+template <class R>
 inline
-PointH2<FT,RT>
-origin_plus_vector(const VectorH2<FT,RT>& v)
-{ return PointH2<FT,RT>( v ); }
+PointH2<R>
+origin_plus_vector(const VectorH2<R>& v)
+{ return PointH2<R>( v ); }
 
-template <class FT, class RT>
+template <class R>
 inline
-PointH2<FT,RT>
-operator+(const Origin&, const VectorH2<FT,RT>& v)
+PointH2<R>
+operator+(const Origin&, const VectorH2<R>& v)
 { return origin_plus_vector( v ); }
 
-template <class FT, class RT>
+template <class R>
 inline
-PointH2<FT,RT>
-origin_minus_vector(const VectorH2<FT,RT>& v)
-{ return PointH2<FT,RT>( v.opposite() ); }
+PointH2<R>
+origin_minus_vector(const VectorH2<R>& v)
+{ return PointH2<R>( v.opposite() ); }
 
-template <class FT, class RT>
+template <class R>
 inline
-PointH2<FT,RT>
-operator-(const Origin&, const VectorH2<FT,RT>& v)
+PointH2<R>
+operator-(const Origin&, const VectorH2<R>& v)
 { return origin_minus_vector( v ); }
 
-template <class FT, class RT>
+template <class R>
 inline
-VectorH2<FT,RT>
-point_minus_origin(const PointH2<FT,RT>& p)
-{ return VectorH2<FT,RT>( p ); }
+VectorH2<R>
+point_minus_origin(const PointH2<R>& p)
+{ return VectorH2<R>( p ); }
 
-template <class FT, class RT>
+template <class R>
 inline
-VectorH2<FT,RT>
-operator-(const PointH2<FT,RT>& p, const Origin&)
+VectorH2<R>
+operator-(const PointH2<R>& p, const Origin&)
 { return point_minus_origin( p ); }
 
-template <class FT, class RT>
+template <class R>
 inline
-VectorH2<FT,RT>
-origin_minus_point(const PointH2<FT,RT>& p)
-{ return  VectorH2<FT,RT>( p ).opposite(); }
+VectorH2<R>
+origin_minus_point(const PointH2<R>& p)
+{ return  VectorH2<R>( p ).opposite(); }
 
-template <class FT, class RT>
+template <class R>
 inline
-VectorH2<FT,RT>
-operator-(const Origin&, const PointH2<FT,RT>& p)
+VectorH2<R>
+operator-(const Origin&, const PointH2<R>& p)
 { return  origin_minus_point( p ); }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-PointH2<FT,RT>
-operator+(const PointH2<FT,RT>& p, const VectorH2<FT,RT>& v)
+PointH2<R>
+operator+(const PointH2<R>& p, const VectorH2<R>& v)
 {
-  return PointH2<FT,RT>( p.hx()*v.hw() + v.hx()*p.hw(),
+  return PointH2<R>( p.hx()*v.hw() + v.hx()*p.hw(),
                          p.hy()*v.hw() + v.hy()*p.hw(),
                          p.hw()*v.hw() );
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-PointH2<FT,RT>
-operator-(const PointH2<FT,RT>& p, const VectorH2<FT,RT>& v)
+PointH2<R>
+operator-(const PointH2<R>& p, const VectorH2<R>& v)
 {
-  return PointH2<FT,RT>( p.hx()*v.hw() - v.hx()*p.hw(),
+  return PointH2<R>( p.hx()*v.hw() - v.hx()*p.hw(),
                          p.hy()*v.hw() - v.hy()*p.hw(),
                          p.hw()*v.hw() );
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator-(const PointH2<FT,RT>& p, const PointH2<FT,RT>& q)
+VectorH2<R>
+operator-(const PointH2<R>& p, const PointH2<R>& q)
 {
-  return VectorH2<FT,RT>( p.hx()*q.hw() - q.hx()*p.hw(),
+  return VectorH2<R>( p.hx()*q.hw() - q.hx()*p.hw(),
                           p.hy()*q.hw() - q.hy()*p.hw(),
                           p.hw()*q.hw() );
 }
@@ -768,36 +800,36 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-template <class FT, class RT >
+template <class R >
 inline
 bool
-DirectionH2<FT,RT>::operator< (const DirectionH2<FT,RT>& d) const
+DirectionH2<R>::operator< (const DirectionH2<R>& d) const
 { return (compare_angles_with_x_axis(*this,d) == SMALLER); }
 
-template <class FT, class RT >
+template <class R >
 inline
 bool
-DirectionH2<FT,RT>::operator> (const DirectionH2<FT,RT>& d) const
+DirectionH2<R>::operator> (const DirectionH2<R>& d) const
 { return (compare_angles_with_x_axis(*this,d) == LARGER); }
 
-template <class FT, class RT >
+template <class R >
 inline
 bool
-DirectionH2<FT,RT>::operator>= (const DirectionH2<FT,RT>& d) const
+DirectionH2<R>::operator>= (const DirectionH2<R>& d) const
 { return !(compare_angles_with_x_axis(*this,d) == SMALLER); }
 
-template <class FT, class RT >
+template <class R >
 inline
 bool
-DirectionH2<FT,RT>::operator<= (const DirectionH2<FT,RT>& d) const
+DirectionH2<R>::operator<= (const DirectionH2<R>& d) const
 { return !(compare_angles_with_x_axis(*this,d) == LARGER); }
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_INLINE
 bool
-DirectionH2<FT,RT>::
-counterclockwise_in_between( const DirectionH2<FT,RT>& d1,
-                             const DirectionH2<FT,RT>& d2) const
+DirectionH2<R>::
+counterclockwise_in_between( const DirectionH2<R>& d1,
+                             const DirectionH2<R>& d2) const
 {
   if ( d1 < *this)
   {
@@ -817,10 +849,10 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Bbox_2
-PointH2<FT,RT>::bbox() const
+PointH2<R>::bbox() const
 {
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::swap;
@@ -842,16 +874,16 @@ PointH2<FT,RT>::bbox() const
   return Bbox_2(xmin, ymin, xmax, ymax);
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH2<FT,RT>
-PointH2<FT,RT>::transform(const Aff_transformationH2<FT,RT>& t) const
+PointH2<R>
+PointH2<R>::transform(const Aff_transformationH2<R>& t) const
 { return t.transform(*this); }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_POINTH2
-template < class FT, class RT >
+template < class R >
 std::ostream &
-operator<<(std::ostream &os, const PointH2<FT,RT> &p)
+operator<<(std::ostream &os, const PointH2<R> &p)
 {
   switch(os.iword(IO::mode))
   {
@@ -871,11 +903,11 @@ operator<<(std::ostream &os, const PointH2<FT,RT> &p)
 #endif // CGAL_NO_OSTREAM_INSERT_POINTH2
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_POINTH2
-template < class FT, class RT >
+template < class R >
 std::istream &
-operator>>(std::istream &is, PointH2<FT,RT> &p)
+operator>>(std::istream &is, PointH2<R> &p)
 {
-  RT hx, hy, hw;
+  typename R::RT hx, hy, hw;
   switch(is.iword(IO::mode))
   {
     case IO::ASCII :
@@ -891,38 +923,38 @@ operator>>(std::istream &is, PointH2<FT,RT> &p)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
   }
-  p = PointH2<FT,RT>(hx, hy, hw);
+  p = PointH2<R>(hx, hy, hw);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_POINTH2
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-VectorH2<FT,RT>::perpendicular(const Orientation& o) const
+VectorH2<R>
+VectorH2<R>::perpendicular(const Orientation& o) const
 {
   CGAL_kernel_precondition(o != COLLINEAR);
   if (o == COUNTERCLOCKWISE)
   {
-      return VectorH2<FT,RT>(-hy(), hx(), hw());
+      return VectorH2<R>(-hy(), hx(), hw());
   }
   else
   {
-      return VectorH2<FT,RT>(hy(), -hx(), hw());
+      return VectorH2<R>(hy(), -hx(), hw());
   }
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-VectorH2<FT,RT>
-VectorH2<FT,RT>::transform(const Aff_transformationH2<FT,RT>& t) const
+VectorH2<R>
+VectorH2<R>::transform(const Aff_transformationH2<R>& t) const
 { return t.transform(*this); }
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_VECTORH2
-template < class FT, class RT >
+template < class R >
 std::ostream &
-operator<<(std::ostream &os, const VectorH2<FT,RT> &p)
+operator<<(std::ostream &os, const VectorH2<R> &p)
 {
   switch(os.iword(IO::mode))
   {
@@ -942,11 +974,11 @@ operator<<(std::ostream &os, const VectorH2<FT,RT> &p)
 #endif // CGAL_NO_OSTREAM_INSERT_VECTORH2
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_VECTORH2
-template < class FT, class RT >
+template < class R >
 std::istream &
-operator>>(std::istream &is, VectorH2<FT,RT> &p)
+operator>>(std::istream &is, VectorH2<R> &p)
 {
-  RT hx, hy, hw;
+  typename R::RT hx, hy, hw;
   switch(is.iword(IO::mode))
   {
     case IO::ASCII :
@@ -962,45 +994,45 @@ operator>>(std::istream &is, VectorH2<FT,RT> &p)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
   }
-  p = VectorH2<FT,RT>(hx, hy, hw);
+  p = VectorH2<R>(hx, hy, hw);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_VECTORH2
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_INLINE
-DirectionH2<FT,RT>
-DirectionH2<FT,RT>::perpendicular(const Orientation& o) const
+DirectionH2<R>
+DirectionH2<R>::perpendicular(const Orientation& o) const
 {
   CGAL_kernel_precondition(o != COLLINEAR);
   if (o == COUNTERCLOCKWISE)
   {
-      return DirectionH2<FT,RT>(-dy(), dx());
+      return DirectionH2<R>(-dy(), dx());
   }
   else
   {
-      return DirectionH2<FT,RT>(dy(), -dx());
+      return DirectionH2<R>(dy(), -dx());
   }
 }
 
-template <class FT, class RT >
+template <class R >
 inline
-DirectionH2<FT,RT>
-DirectionH2<FT,RT>::
-transform(const Aff_transformationH2<FT,RT>& t) const
+DirectionH2<R>
+DirectionH2<R>::
+transform(const Aff_transformationH2<R>& t) const
 { return t.transform(*this); }
 
-template <class FT, class RT >
+template <class R >
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-DirectionH2<FT,RT>::to_vector() const
-{ return VectorH2<FT,RT>( x(), y() ); }
+VectorH2<R>
+DirectionH2<R>::to_vector() const
+{ return VectorH2<R>( x(), y() ); }
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONH2
-template < class FT, class RT >
+template < class R >
 std::ostream &
-operator<<(std::ostream &os, const DirectionH2<FT,RT> &p)
+operator<<(std::ostream &os, const DirectionH2<R> &p)
 {
   switch(os.iword(IO::mode))
   {
@@ -1018,11 +1050,11 @@ operator<<(std::ostream &os, const DirectionH2<FT,RT> &p)
 #endif // CGAL_NO_OSTREAM_INSERT_DIRECTIONH2
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTIONH2
-template < class FT, class RT >
+template < class R >
 std::istream &
-operator>>(std::istream &is, DirectionH2<FT,RT> &p)
+operator>>(std::istream &is, DirectionH2<R> &p)
 {
-  RT x, y;
+  typename R::RT x, y;
   switch(is.iword(IO::mode))
   {
     case IO::ASCII :
@@ -1037,7 +1069,7 @@ operator>>(std::istream &is, DirectionH2<FT,RT> &p)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
   }
-  p = DirectionH2<FT,RT>(x, y);
+  p = DirectionH2<R>(x, y);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONH2

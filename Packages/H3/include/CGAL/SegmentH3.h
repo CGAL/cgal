@@ -29,191 +29,196 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class FT, class RT >
+template < class R >
 class Segment_repH3 : public Ref_counted
 {
 public:
    Segment_repH3() {}
-   Segment_repH3(const PointH3<FT,RT>& sp, const PointH3<FT,RT>& ep)
+   Segment_repH3(const PointH3<R>& sp, const PointH3<R>& ep)
      : startpoint(sp), endpoint(ep)
    {}
 
-   PointH3<FT,RT>  start() const;
-   PointH3<FT,RT>  end()   const;
+   PointH3<R>  start() const;
+   PointH3<R>  end()   const;
 
 private:
-   PointH3<FT,RT>  startpoint;
-   PointH3<FT,RT>  endpoint;
+   PointH3<R>  startpoint;
+   PointH3<R>  endpoint;
 };
 
-template < class FT, class RT >
-class SegmentH3 : public Handle_for< Segment_repH3<FT,RT> >
+template < class R_ >
+class SegmentH3
+  : public R_::Segment_handle_3
 {
 public:
+  typedef R_               R;
+  typedef typename R::RT   RT;
+  typedef typename R::FT   FT;
+
   SegmentH3();
-  SegmentH3( const PointH3<FT,RT>& sp, const PointH3<FT,RT>& ep);
+  SegmentH3( const PointH3<R>& sp, const PointH3<R>& ep);
 
-  PointH3<FT,RT>    source() const;
-  PointH3<FT,RT>    target() const;
+  PointH3<R>    source() const;
+  PointH3<R>    target() const;
 
-  PointH3<FT,RT>    start() const;
-  PointH3<FT,RT>    end() const;
-  PointH3<FT,RT>    min() const;
-  PointH3<FT,RT>    max() const;
-  PointH3<FT,RT>    vertex(int i) const;
-  PointH3<FT,RT>    point(int i) const;
-  PointH3<FT,RT>    operator[](int i) const;
+  PointH3<R>    start() const;
+  PointH3<R>    end() const;
+  PointH3<R>    min() const;
+  PointH3<R>    max() const;
+  PointH3<R>    vertex(int i) const;
+  PointH3<R>    point(int i) const;
+  PointH3<R>    operator[](int i) const;
 
   FT                squared_length() const;
-  DirectionH3<FT,RT>
+  DirectionH3<R>
                     direction() const;
-  LineH3<FT,RT>     supporting_line() const;
-  SegmentH3<FT,RT>  opposite() const;
-  SegmentH3<FT,RT>  transform( const Aff_transformationH3<FT,RT> & t) const;
+  LineH3<R>     supporting_line() const;
+  SegmentH3<R>  opposite() const;
+  SegmentH3<R>  transform( const Aff_transformationH3<R> & t) const;
   Bbox_3            bbox() const;
-  bool              has_on(const PointH3<FT,RT> p) const;
-  bool              collinear_has_on(const PointH3<FT,RT> p) const;
+  bool              has_on(const PointH3<R> p) const;
+  bool              collinear_has_on(const PointH3<R> p) const;
   bool              is_degenerate() const;
 
-  bool              operator==(const SegmentH3<FT,RT>& s) const;
-  bool              operator!=(const SegmentH3<FT,RT>& s) const;
+  bool              operator==(const SegmentH3<R>& s) const;
+  bool              operator!=(const SegmentH3<R>& s) const;
 
 };
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-Segment_repH3<FT,RT>::start() const
+PointH3<R>
+Segment_repH3<R>::start() const
 { return startpoint; }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-Segment_repH3<FT,RT>::end() const
+PointH3<R>
+Segment_repH3<R>::end() const
 { return endpoint; }
 
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-SegmentH3<FT,RT>::SegmentH3()
- : Handle_for< Segment_repH3<FT,RT> >( Segment_repH3<FT,RT>() )
+SegmentH3<R>::SegmentH3()
+ : Handle_for< Segment_repH3<R> >( Segment_repH3<R>() )
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-SegmentH3<FT,RT>::SegmentH3( const PointH3<FT,RT>& sp,
-                             const PointH3<FT,RT>& ep)
- : Handle_for< Segment_repH3<FT,RT> >( Segment_repH3<FT,RT>(sp,ep) )
+SegmentH3<R>::SegmentH3( const PointH3<R>& sp,
+                             const PointH3<R>& ep)
+ : Handle_for< Segment_repH3<R> >( Segment_repH3<R>(sp,ep) )
 {}
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-SegmentH3<FT,RT>::source() const
+PointH3<R>
+SegmentH3<R>::source() const
 { return ptr->start(); }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-SegmentH3<FT,RT>::target() const
+PointH3<R>
+SegmentH3<R>::target() const
 { return ptr->end(); }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-SegmentH3<FT,RT>::start() const
+PointH3<R>
+SegmentH3<R>::start() const
 { return ptr->start(); }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-SegmentH3<FT,RT>::end() const
+PointH3<R>
+SegmentH3<R>::end() const
 { return ptr->end(); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-PointH3<FT,RT>
-SegmentH3<FT,RT>::min() const
+PointH3<R>
+SegmentH3<R>::min() const
 {
   return
   lexicographically_xyz_smaller(target(),source()) ? target() : source();
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-PointH3<FT,RT>
-SegmentH3<FT,RT>::max() const
+PointH3<R>
+SegmentH3<R>::max() const
 {
   return
   lexicographically_xyz_smaller_or_equal(source(),target()) ?
                                                          target() : source();
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-SegmentH3<FT,RT>::vertex(int i) const
+PointH3<R>
+SegmentH3<R>::vertex(int i) const
 { return ( i%2 == 0 ) ? start() : end() ; }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-SegmentH3<FT,RT>::point(int i) const
+PointH3<R>
+SegmentH3<R>::point(int i) const
 { return ( i%2 == 0 ) ? start() : end() ; }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-SegmentH3<FT,RT>::operator[](int i) const
+PointH3<R>
+SegmentH3<R>::operator[](int i) const
 { return ( i%2 == 0 ) ? start() : end() ; }
 
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-FT
-SegmentH3<FT,RT>::squared_length() const
+typename R::FT
+SegmentH3<R>::squared_length() const
 {
   return  (ptr->end() - ptr->start()) *
           (ptr->end() - ptr->start())   ;
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-DirectionH3<FT,RT>
-SegmentH3<FT,RT>::direction() const
-{ return DirectionH3<FT,RT>( ptr->end() - ptr->start() ); }
+DirectionH3<R>
+SegmentH3<R>::direction() const
+{ return DirectionH3<R>( ptr->end() - ptr->start() ); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-LineH3<FT,RT>
-SegmentH3<FT,RT>::supporting_line() const
-{ return LineH3<FT,RT>(ptr->start(), ptr->end()); }
+LineH3<R>
+SegmentH3<R>::supporting_line() const
+{ return LineH3<R>(ptr->start(), ptr->end()); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-SegmentH3<FT,RT>
-SegmentH3<FT,RT>::opposite() const
-{ return SegmentH3<FT,RT>(ptr->end(), ptr->start()); }
+SegmentH3<R>
+SegmentH3<R>::opposite() const
+{ return SegmentH3<R>(ptr->end(), ptr->start()); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-SegmentH3<FT,RT>
-SegmentH3<FT,RT>::
-transform( const Aff_transformationH3<FT,RT>& t) const
+SegmentH3<R>
+SegmentH3<R>::
+transform( const Aff_transformationH3<R>& t) const
 {
-  return SegmentH3<FT,RT>(t.transform(ptr->start()),
+  return SegmentH3<R>(t.transform(ptr->start()),
                                t.transform(ptr->end())   );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 Bbox_3
-SegmentH3<FT,RT>::bbox() const
+SegmentH3<R>::bbox() const
 { return source().bbox() + target().bbox(); }
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTH3
-template < class FT, class RT >
-std::ostream &operator<<(std::ostream &os, const SegmentH3<FT,RT> &s)
+template < class R >
+std::ostream &operator<<(std::ostream &os, const SegmentH3<R> &s)
 {
   switch(os.iword(IO::mode))
   {
@@ -229,65 +234,65 @@ std::ostream &operator<<(std::ostream &os, const SegmentH3<FT,RT> &s)
 #endif // CGAL_NO_OSTREAM_INSERT_SEGMENTH3
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTH3
-template < class FT, class RT >
-std::istream &operator>>(std::istream &is, SegmentH3<FT,RT> &s)
+template < class R >
+std::istream &operator>>(std::istream &is, SegmentH3<R> &s)
 {
-  PointH3<FT,RT> p, q;
+  PointH3<R> p, q;
   is >> p >> q;
-  s = SegmentH3<FT,RT>(p, q);
+  s = SegmentH3<R>(p, q);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTH3
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-SegmentH3<FT,RT>::is_degenerate() const
+SegmentH3<R>::is_degenerate() const
 { return  source()==target(); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-SegmentH3<FT,RT>::has_on(const PointH3<FT,RT> p) const
+SegmentH3<R>::has_on(const PointH3<R> p) const
 {
   return( ( p == start() )
        || ( p == end() )
        || (  ( collinear(p,source(),target() )
-           &&( DirectionH3<FT,RT>( p - ptr->start())
+           &&( DirectionH3<R>( p - ptr->start())
                !=
-               DirectionH3<FT,RT>( p - ptr->end()))
+               DirectionH3<R>( p - ptr->end()))
              )
           )
        );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-SegmentH3<FT,RT>::collinear_has_on(const PointH3<FT,RT> p) const
+SegmentH3<R>::collinear_has_on(const PointH3<R> p) const
 {
   return( ( p == start() )
        || ( p == end() )
-       || ( DirectionH3<FT,RT>( p - ptr->start())
+       || ( DirectionH3<R>( p - ptr->start())
             !=
-            DirectionH3<FT,RT>( p - ptr->end())
+            DirectionH3<R>( p - ptr->end())
           )
         );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-SegmentH3<FT,RT>::operator==(const SegmentH3<FT,RT>& s) const
+SegmentH3<R>::operator==(const SegmentH3<R>& s) const
 {
   return ( (start() == s.start() )
          &&(end()   == s.end()   ) );
 }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-SegmentH3<FT,RT>::operator!=(const SegmentH3<FT,RT>& s) const
+SegmentH3<R>::operator!=(const SegmentH3<R>& s) const
 { return ( !operator==(s) ); }
 
 CGAL_END_NAMESPACE

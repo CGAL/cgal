@@ -30,26 +30,28 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 bool
-less_x(const PointH2<FT,RT>& p,
-       const PointH2<FT,RT>& q)
+less_x(const PointH2<R>& p,
+       const PointH2<R>& q)
 { return ( p.hx()*q.hw() == q.hx()*p.hw() ); }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 bool
-less_y(const PointH2<FT,RT>& p,
-       const PointH2<FT,RT>& q)
+less_y(const PointH2<R>& p,
+       const PointH2<R>& q)
 { return ( p.hy()*q.hw() == q.hy()*p.hw() ); }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 bool
-equal_xy(const PointH2<FT,RT>& p,
-         const PointH2<FT,RT>& q)
+equal_xy(const PointH2<R>& p,
+         const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -67,12 +69,14 @@ equal_xy(const PointH2<FT,RT>& p,
   return ( pV == qV ) ? true : false;
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_lexicographically_xy(const PointH2<FT,RT>& p,
-                             const PointH2<FT,RT>& q)
+compare_lexicographically_xy(const PointH2<R>& p,
+                             const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -98,12 +102,14 @@ compare_lexicographically_xy(const PointH2<FT,RT>& p,
 }
 
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_xy_smaller_or_equal(const PointH2<FT,RT>& p,
-                                           const PointH2<FT,RT>& q)
+lexicographically_xy_smaller_or_equal(const PointH2<R>& p,
+                                           const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -127,12 +133,14 @@ lexicographically_xy_smaller_or_equal(const PointH2<FT,RT>& p,
   return ( pV <= qV );
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_xy_smaller(const PointH2<FT,RT>& p,
-                                  const PointH2<FT,RT>& q)
+lexicographically_xy_smaller(const PointH2<R>& p,
+                                  const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -155,12 +163,14 @@ lexicographically_xy_smaller(const PointH2<FT,RT>& p,
   return ( pV < qV );
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_xy_larger(const PointH2<FT,RT>& p,
-                                 const PointH2<FT,RT>& q)
+lexicographically_xy_larger(const PointH2<R>& p,
+                                 const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -182,12 +192,14 @@ lexicographically_xy_larger(const PointH2<FT,RT>& p,
   qV = qhy * phw;
   return ( qV < pV  );
 }
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_lexicographically_yx(const PointH2<FT,RT>& p,
-                             const PointH2<FT,RT>& q)
+compare_lexicographically_yx(const PointH2<R>& p,
+                             const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -212,12 +224,14 @@ compare_lexicographically_yx(const PointH2<FT,RT>& p,
   }
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_yx_smaller_or_equal(const PointH2<FT,RT>& p,
-                                           const PointH2<FT,RT>& q)
+lexicographically_yx_smaller_or_equal(const PointH2<R>& p,
+                                           const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -240,12 +254,14 @@ lexicographically_yx_smaller_or_equal(const PointH2<FT,RT>& p,
   return ( pV <= qV );
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_yx_smaller(const PointH2<FT,RT>& p,
-                                  const PointH2<FT,RT>& q)
+lexicographically_yx_smaller(const PointH2<R>& p,
+                                  const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -268,12 +284,14 @@ lexicographically_yx_smaller(const PointH2<FT,RT>& p,
   return ( pV < qV );
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_yx_larger(const PointH2<FT,RT>& p,
-                                 const PointH2<FT,RT>& q)
+lexicographically_yx_larger(const PointH2<R>& p,
+                                 const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -297,12 +315,14 @@ lexicographically_yx_larger(const PointH2<FT,RT>& p,
 }
 
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_x(const PointH2<FT,RT>& p,
-          const PointH2<FT,RT>& q)
+compare_x(const PointH2<R>& p,
+          const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phw = p.hw_ref();
   const RT& qhx = q.hx_ref();
@@ -320,12 +340,14 @@ compare_x(const PointH2<FT,RT>& p,
   return EQUAL;
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_y(const PointH2<FT,RT>& p,
-          const PointH2<FT,RT>& q)
+compare_y(const PointH2<R>& p,
+          const PointH2<R>& q)
 {
+  typedef typename R::RT RT;
+
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
   const RT& qhy = q.hy_ref();
@@ -343,13 +365,15 @@ compare_y(const PointH2<FT,RT>& p,
   return EQUAL;
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Orientation
-orientation( const PointH2<FT,RT>& p,
-                  const PointH2<FT,RT>& q,
-                  const PointH2<FT,RT>& r)
+orientation( const PointH2<R>& p,
+                  const PointH2<R>& q,
+                  const PointH2<R>& r)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -394,13 +418,15 @@ orientation( const PointH2<FT,RT>& p,
   }
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-leftturn( const PointH2<FT,RT>& p,
-               const PointH2<FT,RT>& q,
-               const PointH2<FT,RT>& r)
+leftturn( const PointH2<R>& p,
+               const PointH2<R>& q,
+               const PointH2<R>& r)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -437,13 +463,15 @@ leftturn( const PointH2<FT,RT>& p,
   return ( RT0 < det );
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-rightturn( const PointH2<FT,RT>& p,
-                const PointH2<FT,RT>& q,
-                const PointH2<FT,RT>& r)
+rightturn( const PointH2<R>& p,
+                const PointH2<R>& q,
+                const PointH2<R>& r)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -480,13 +508,15 @@ rightturn( const PointH2<FT,RT>& p,
   return ( det < RT0 );
 }
 
-template < class FT, class RT>
+template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-collinear( const PointH2<FT,RT>& p,
-                const PointH2<FT,RT>& q,
-                const PointH2<FT,RT>& r)
+collinear( const PointH2<R>& p,
+                const PointH2<R>& q,
+                const PointH2<R>& r)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -519,17 +549,18 @@ collinear( const PointH2<FT,RT>& p,
   }
 */
 
-
   return ( det == RT0 );
 }
-template <class FT, class RT>
+
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
-side_of_bounded_circle( const PointH2<FT,RT>& q,
-                             const PointH2<FT,RT>& r,
-                             const PointH2<FT,RT>& s,
-                             const PointH2<FT,RT>& t)
+side_of_bounded_circle( const PointH2<R>& q,
+                             const PointH2<R>& r,
+                             const PointH2<R>& s,
+                             const PointH2<R>& t)
 {
+  typedef typename R::RT RT;
 
   const RT& qhx = q.hx_ref();
   const RT& qhy = q.hy_ref();
@@ -593,14 +624,15 @@ side_of_bounded_circle( const PointH2<FT,RT>& q,
   }
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
-side_of_oriented_circle( const PointH2<FT,RT>& q,
-                              const PointH2<FT,RT>& r,
-                              const PointH2<FT,RT>& s,
-                              const PointH2<FT,RT>& t)
+side_of_oriented_circle( const PointH2<R>& q,
+                              const PointH2<R>& r,
+                              const PointH2<R>& s,
+                              const PointH2<R>& t)
 {
+  typedef typename R::RT RT;
 
   const RT& qhx = q.hx_ref();
   const RT& qhy = q.hy_ref();
@@ -659,13 +691,15 @@ side_of_oriented_circle( const PointH2<FT,RT>& q,
       return (RT0 < det ) ? ON_POSITIVE_SIDE : ON_ORIENTED_BOUNDARY;
   }
 }
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-collinear_are_ordered_along_line( const PointH2<FT,RT>& p,
-                                       const PointH2<FT,RT>& q,
-                                       const PointH2<FT,RT>& r )
+collinear_are_ordered_along_line( const PointH2<R>& p,
+                                       const PointH2<R>& q,
+                                       const PointH2<R>& r )
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -695,12 +729,12 @@ collinear_are_ordered_along_line( const PointH2<FT,RT>& p,
 }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 bool
-are_ordered_along_line( const PointH2<FT,RT>& p,
-              const PointH2<FT,RT>& q,
-              const PointH2<FT,RT>& r )
+are_ordered_along_line( const PointH2<R>& p,
+              const PointH2<R>& q,
+              const PointH2<R>& r )
 {
   if ( collinear(p,q,r) )
   {
@@ -712,13 +746,15 @@ are_ordered_along_line( const PointH2<FT,RT>& p,
   }
 }
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-collinear_are_strictly_ordered_along_line( const PointH2<FT,RT>& p,
-                                                const PointH2<FT,RT>& q,
-                                                const PointH2<FT,RT>& r )
+collinear_are_strictly_ordered_along_line( const PointH2<R>& p,
+                                                const PointH2<R>& q,
+                                                const PointH2<R>& r )
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -746,12 +782,12 @@ collinear_are_strictly_ordered_along_line( const PointH2<FT,RT>& p,
 }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
 bool
-are_strictly_ordered_along_line( const PointH2<FT,RT>& p,
-                                      const PointH2<FT,RT>& q,
-                                      const PointH2<FT,RT>& r )
+are_strictly_ordered_along_line( const PointH2<R>& p,
+                                      const PointH2<R>& q,
+                                      const PointH2<R>& r )
 {
   if ( collinear(p,q,r) )
   {
@@ -762,25 +798,29 @@ are_strictly_ordered_along_line( const PointH2<FT,RT>& p,
      return false;
   }
 }
-template <class FT, class RT>
+
+template <class R>
 inline
 bool
-x_equal( const PointH2<FT,RT>& p,
-              const PointH2<FT,RT>& q )
+x_equal( const PointH2<R>& p,
+              const PointH2<R>& q )
 { return ( p.hx_ref()*q.hw_ref() == q.hx_ref()*p.hw_ref() ); }
 
-template <class FT, class RT>
+template <class R>
 inline
 bool
-y_equal( const PointH2<FT,RT>& p,
-              const PointH2<FT,RT>& q )
+y_equal( const PointH2<R>& p,
+              const PointH2<R>& q )
 { return ( p.hy_ref()*q.hw_ref() == q.hy_ref()*p.hw_ref() ); }
-template <class FT, class RT>
+
+template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
-_where_wrt_L_wedge( const PointH2<FT,RT>& p,
-                         const PointH2<FT,RT>& q )
+_where_wrt_L_wedge( const PointH2<R>& p,
+                         const PointH2<R>& q )
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phy = p.hy_ref();
   const RT& phw = p.hw_ref();
@@ -802,14 +842,16 @@ _where_wrt_L_wedge( const PointH2<FT,RT>& p,
   return ON_ORIENTED_BOUNDARY;
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-compare_deltax_deltay(const PointH2<FT,RT>& p,
-                      const PointH2<FT,RT>& q,
-                      const PointH2<FT,RT>& r,
-                      const PointH2<FT,RT>& s)
+compare_deltax_deltay(const PointH2<R>& p,
+                      const PointH2<R>& q,
+                      const PointH2<R>& r,
+                      const PointH2<R>& s)
 {
+  typedef typename R::RT RT;
+
   const RT& phx = p.hx_ref();
   const RT& phw = p.hw_ref();
   const RT& qhx = q.hx_ref();

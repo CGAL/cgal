@@ -27,10 +27,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class FT, class RT>
-PointH3<FT,RT>
-_projection(const PointH3<FT,RT>& p, const PlaneH3<FT,RT>& pl)
+template <class R>
+PointH3<R>
+_projection(const PointH3<R>& p, const PlaneH3<R>& pl)
 {
+  typedef typename R::RT RT;
   if ( pl.has_on(p) ) return p;
 
   RT A = pl.a();
@@ -45,33 +46,33 @@ _projection(const PointH3<FT,RT>& p, const PlaneH3<FT,RT>& pl)
   RT num = A * phx  +  B * phy  +  C * phz  +  D * phw;
   RT den = A * A    +  B * B    +  C * C;
 
-  return PointH3<FT,RT>( num * A  -  den * phx,
+  return PointH3<R>( num * A  -  den * phx,
                               num * B  -  den * phy,
                               num * C  -  den * phz,
                              -den );
 }
 
-template <class FT, class RT>
-PointH3<FT,RT>
-midpoint( const PointH3<FT,RT>& p,
-               const PointH3<FT,RT>& q )
+template <class R>
+PointH3<R>
+midpoint( const PointH3<R>& p, const PointH3<R>& q )
 {
+  typedef typename R::RT RT;
   RT phw = p.hw();
   RT qhw = q.hw();
-  return PointH3<FT,RT>( p.hx()*qhw + q.hx()*phw,
+  return PointH3<R>( p.hx()*qhw + q.hx()*phw,
                               p.hy()*qhw + q.hy()*phw,
                               p.hz()*qhw + q.hz()*phw,
                               RT(2) * phw * qhw );
 }
 
 
-template <class FT, class RT>
-PointH3<FT,RT>
-gp_linear_intersection(const PlaneH3<FT,RT> &f,
-                       const PlaneH3<FT,RT> &g,
-                       const PlaneH3<FT,RT> &h)
+template <class R>
+PointH3<R>
+gp_linear_intersection(const PlaneH3<R> &f,
+                       const PlaneH3<R> &g,
+                       const PlaneH3<R> &h)
 {
-  return PointH3<FT,RT>(
+  return PointH3<R>(
                       det3x3_by_formula(-f.d(), f.b(), f.c(),
                                         -g.d(), g.b(), g.c(),
                                         -h.d(), h.b(), h.c()),
@@ -87,27 +88,29 @@ gp_linear_intersection(const PlaneH3<FT,RT> &f,
 }
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-FT
-squared_distance( PointH3<FT,RT> const& p, PointH3<FT,RT> const& q)
+typename R::FT
+squared_distance( PointH3<R> const& p, PointH3<R> const& q)
 { return (p-q)*(p-q); }
 
 
-template <class FT, class RT>
+template <class R>
 inline
-PlaneH3<FT,RT>
-bisector( PointH3<FT,RT> const& p,
-          PointH3<FT,RT> const& q)
-{ return PlaneH3<FT,RT>( midpoint(p,q), q-p); }
+PlaneH3<R>
+bisector( PointH3<R> const& p,
+          PointH3<R> const& q)
+{ return PlaneH3<R>( midpoint(p,q), q-p); }
 
-template <class FT, class RT>
-PointH3<FT,RT>
-circumcenter( PointH3<FT,RT> const& p,
-              PointH3<FT,RT> const& q,
-              PointH3<FT,RT> const& r,
-              PointH3<FT,RT> const& s)
+template <class R>
+PointH3<R>
+circumcenter( PointH3<R> const& p,
+              PointH3<R> const& q,
+              PointH3<R> const& r,
+              PointH3<R> const& s)
 {
+  typedef typename R::RT RT;
+
   RT phw( p.hw() );
   RT qhw( q.hw() );
   RT rhw( r.hw() );
@@ -165,21 +168,21 @@ circumcenter( PointH3<FT,RT> const& p,
                                    rhx, rhy, rhz, rhw,
                                    shx, shy, shz, shw );
 
- return PointH3<FT,RT>( chx, -chy, chz, RT(2)*chw);
+ return PointH3<R>( chx, -chy, chz, RT(2)*chw);
 }
-template <class FT, class RT>
+
+template <class R>
 CGAL_KERNEL_INLINE
-PointH3<FT,RT>
-circumcenter( PointH3<FT,RT> const& p,
-              PointH3<FT,RT> const& q,
-              PointH3<FT,RT> const& r)
+PointH3<R>
+circumcenter( PointH3<R> const& p,
+              PointH3<R> const& q,
+              PointH3<R> const& r)
 {
-  return gp_linear_intersection( PlaneH3<FT,RT>(p,q,r),
+  return gp_linear_intersection( PlaneH3<R>(p,q,r),
                                  bisector(p,q),
                                  bisector(p,r));
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_BASIC_CONSTRUCTIONSH3_H

@@ -31,30 +31,35 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class FT, class RT>
-class Iso_cuboidH3 : public Handle_for< Twotuple< PointH3<FT,RT> > >
+template <class R_>
+class Iso_cuboidH3
+  : public R_::Iso_cuboid_handle_3
 {
 public:
+  typedef R_                R;
+  typedef typename R::RT    RT;
+  typedef typename R::FT    FT;
+
   Iso_cuboidH3();
-  Iso_cuboidH3(const PointH3<FT,RT>& p, const PointH3<FT,RT>& q);
+  Iso_cuboidH3(const PointH3<R>& p, const PointH3<R>& q);
   ~Iso_cuboidH3();
 
-  bool      operator==(const Iso_cuboidH3<FT,RT>& s) const;
-  bool      operator!=(const Iso_cuboidH3<FT,RT>& s) const;
+  bool      operator==(const Iso_cuboidH3<R>& s) const;
+  bool      operator!=(const Iso_cuboidH3<R>& s) const;
 
-  PointH3<FT,RT>  min() const;
-  PointH3<FT,RT>  max() const;
-  PointH3<FT,RT>  vertex(int i) const;
-  PointH3<FT,RT>  operator[](int i) const;
+  PointH3<R>  min() const;
+  PointH3<R>  max() const;
+  PointH3<R>  vertex(int i) const;
+  PointH3<R>  operator[](int i) const;
 
-  Iso_cuboidH3<FT,RT>
-            transform(const Aff_transformationH3<FT,RT>& t) const;
+  Iso_cuboidH3<R>
+            transform(const Aff_transformationH3<R>& t) const;
   Bounded_side
-            bounded_side(const PointH3<FT,RT>& p) const;
-  bool      has_on(const PointH3<FT,RT>& p) const;
-  bool      has_on_boundary(const PointH3<FT,RT>& p) const;
-  bool      has_on_bounded_side(const PointH3<FT,RT>& p) const;
-  bool      has_on_unbounded_side(const PointH3<FT,RT>& p) const;
+            bounded_side(const PointH3<R>& p) const;
+  bool      has_on(const PointH3<R>& p) const;
+  bool      has_on_boundary(const PointH3<R>& p) const;
+  bool      has_on_bounded_side(const PointH3<R>& p) const;
+  bool      has_on_unbounded_side(const PointH3<R>& p) const;
   bool      is_degenerate() const;
   Bbox_2    bbox() const;
   FT        xmin() const;
@@ -68,16 +73,16 @@ public:
 
 };
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-Iso_cuboidH3<FT,RT>::Iso_cuboidH3()
- : Handle_for< Twotuple< PointH3<FT,RT> > >( Twotuple< PointH3<FT,RT> >())
+Iso_cuboidH3<R>::Iso_cuboidH3()
+ : Handle_for< Twotuple< PointH3<R> > >( Twotuple< PointH3<R> >())
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_LARGE_INLINE
-Iso_cuboidH3<FT,RT>::
-Iso_cuboidH3(const PointH3<FT,RT>& p, const PointH3<FT,RT>& q)
+Iso_cuboidH3<R>::
+Iso_cuboidH3(const PointH3<R>& p, const PointH3<R>& q)
 {
   bool px_k_qx = ( p.hx()*q.hw() < q.hx()*p.hw() );
   bool py_k_qy = ( p.hy()*q.hw() < q.hy()*p.hw() );
@@ -122,120 +127,119 @@ Iso_cuboidH3(const PointH3<FT,RT>& p, const PointH3<FT,RT>& q)
       maxz = p.hz()*q.hw();
   }
   initialize_with(
-      Twotuple<PointH3<FT,RT> >( PointH3<FT,RT>(minx, miny, minz, minw),
-                                 PointH3<FT,RT>(maxx, maxy, maxz, maxw) ));
+      Twotuple<PointH3<R> >( PointH3<R>(minx, miny, minz, minw),
+                                 PointH3<R>(maxx, maxy, maxz, maxw) ));
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-Iso_cuboidH3<FT,RT>::~Iso_cuboidH3()
+Iso_cuboidH3<R>::~Iso_cuboidH3()
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-Iso_cuboidH3<FT,RT>::
-operator==(const Iso_cuboidH3<FT,RT>& r) const
+Iso_cuboidH3<R>::
+operator==(const Iso_cuboidH3<R>& r) const
 { return  (min() == r.min()) && (max() == r.max()); }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-Iso_cuboidH3<FT,RT>::
-operator!=(const Iso_cuboidH3<FT,RT>& r) const
+Iso_cuboidH3<R>::
+operator!=(const Iso_cuboidH3<R>& r) const
 { return !(*this == r); }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-Iso_cuboidH3<FT,RT>::min() const
+PointH3<R>
+Iso_cuboidH3<R>::min() const
 { return  ptr->e0; }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-Iso_cuboidH3<FT,RT>::max() const
+PointH3<R>
+Iso_cuboidH3<R>::max() const
 { return  ptr->e1; }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-Iso_cuboidH3<FT,RT>::xmin() const
+typename R::FT
+Iso_cuboidH3<R>::xmin() const
 { return  FT( min().hx() ) / FT( min().hw() ); }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-Iso_cuboidH3<FT,RT>::ymin() const
+typename R::FT
+Iso_cuboidH3<R>::ymin() const
 { return  FT( min().hy() ) / FT( min().hw() ); }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-Iso_cuboidH3<FT,RT>::zmin() const
+typename R::FT
+Iso_cuboidH3<R>::zmin() const
 { return  FT( min().hz() ) / FT( min().hw() ); }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-Iso_cuboidH3<FT,RT>::xmax() const
+typename R::FT
+Iso_cuboidH3<R>::xmax() const
 { return  FT( max().hx() ) / FT( max().hw() ); }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-Iso_cuboidH3<FT,RT>::ymax() const
+typename R::FT
+Iso_cuboidH3<R>::ymax() const
 { return  FT( max().hy() ) / FT( max().hw() ); }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-Iso_cuboidH3<FT,RT>::zmax() const
+typename R::FT
+Iso_cuboidH3<R>::zmax() const
 { return  FT( max().hz() ) / FT( max().hw() ); }
 
-template < class FT, class RT >
+template < class R >
 inline
-FT
-Iso_cuboidH3<FT,RT>::volume() const
+typename R::FT
+Iso_cuboidH3<R>::volume() const
 { return  (xmax() - xmin()) * (ymax() - ymin()) * (zmax() - zmin()); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_LARGE_INLINE
-PointH3<FT,RT>
-Iso_cuboidH3<FT,RT>::vertex(int i) const
+PointH3<R>
+Iso_cuboidH3<R>::vertex(int i) const
 {
   switch (i%8)
   {
     case 0: return min();
-    case 1: return PointH3<FT,RT>( max().hx(), min().hy(),
+    case 1: return PointH3<R>( max().hx(), min().hy(),
 		                   min().hz(), min().hw() );
-    case 2: return PointH3<FT,RT>( max().hx(), max().hy(),
+    case 2: return PointH3<R>( max().hx(), max().hy(),
 		                   min().hz(), min().hw() );
-    case 3: return PointH3<FT,RT>( min().hx(), max().hy(),
+    case 3: return PointH3<R>( min().hx(), max().hy(),
 		                   min().hz(), min().hw() );
-    case 4: return PointH3<FT,RT>( min().hx(), max().hy(),
+    case 4: return PointH3<R>( min().hx(), max().hy(),
 		                   max().hz(), min().hw() );
-    case 5: return PointH3<FT,RT>( min().hx(), min().hy(),
+    case 5: return PointH3<R>( min().hx(), min().hy(),
 		                   max().hz(), min().hw() );
-    case 6: return PointH3<FT,RT>( max().hx(), min().hy(),
+    case 6: return PointH3<R>( max().hx(), min().hy(),
 		                   max().hz(), min().hw() );
     case 7: return max();
   }
-  return PointH3<FT,RT>();
+  return PointH3<R>();
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-PointH3<FT,RT>
-Iso_cuboidH3<FT,RT>::operator[](int i) const
+PointH3<R>
+Iso_cuboidH3<R>::operator[](int i) const
 { return vertex(i); }
 
-
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
-Iso_cuboidH3<FT,RT>::
-bounded_side(const PointH3<FT,RT>& p) const
+Iso_cuboidH3<R>::
+bounded_side(const PointH3<R>& p) const
 {
   if (    (p.hx()*min().hw() < min().hx()*p.hw() )
         ||(p.hy()*min().hw() < min().hy()*p.hw() )
@@ -255,63 +259,63 @@ bounded_side(const PointH3<FT,RT>& p) const
   { return ON_BOUNDED_SIDE; }
 }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-Iso_cuboidH3<FT,RT>::has_on_boundary(const PointH3<FT,RT>& p) const
+Iso_cuboidH3<R>::has_on_boundary(const PointH3<R>& p) const
 { return ( bounded_side(p) == ON_BOUNDARY ); }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-Iso_cuboidH3<FT,RT>::has_on(const PointH3<FT,RT>& p) const
+Iso_cuboidH3<R>::has_on(const PointH3<R>& p) const
 { return ( bounded_side(p) == ON_BOUNDARY ); }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-Iso_cuboidH3<FT,RT>::
-has_on_bounded_side(const PointH3<FT,RT>& p) const
+Iso_cuboidH3<R>::
+has_on_bounded_side(const PointH3<R>& p) const
 { return ( bounded_side(p) == ON_BOUNDED_SIDE ); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-Iso_cuboidH3<FT,RT>::
-has_on_unbounded_side(const PointH3<FT,RT>& p) const
+Iso_cuboidH3<R>::
+has_on_unbounded_side(const PointH3<R>& p) const
 {
   return (   ( lexicographically_xyz_smaller(p,min() ))
            ||( lexicographically_xyz_smaller(max(),p ))  );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-Iso_cuboidH3<FT,RT>::is_degenerate() const
+Iso_cuboidH3<R>::is_degenerate() const
 {
   return (  ( min().hx() == max().hx() )
          || ( min().hy() == max().hy() )
          || ( min().hz() == max().hz() ) );
 }
-template < class FT, class RT >
+template < class R >
 inline
 Bbox_2
-Iso_cuboidH3<FT,RT>::bbox() const
+Iso_cuboidH3<R>::bbox() const
 { return  min().bbox() + max().bbox(); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-Iso_cuboidH3<FT,RT>
-Iso_cuboidH3<FT,RT>::
-transform(const Aff_transformationH3<FT,RT>&t) const
+Iso_cuboidH3<R>
+Iso_cuboidH3<R>::
+transform(const Aff_transformationH3<R>&t) const
 {
-  return Iso_cuboidH3<FT,RT>(t.transform(min() ),
+  return Iso_cuboidH3<R>(t.transform(min() ),
                              t.transform(max() ) );
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOIDH3
-template < class FT, class RT >
-std::ostream& operator<<(std::ostream& os, const Iso_cuboidH3<FT,RT>& r)
+template < class R >
+std::ostream& operator<<(std::ostream& os, const Iso_cuboidH3<R>& r)
 {
   switch(os.iword(IO::mode))
   {
@@ -326,12 +330,12 @@ std::ostream& operator<<(std::ostream& os, const Iso_cuboidH3<FT,RT>& r)
 #endif // CGAL_NO_OSTREAM_INSERT_ISO_CUBOIDH3
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDH3
-template < class FT, class RT >
-std::istream& operator>>(std::istream& is, Iso_cuboidH3<FT,RT>& r)
+template < class R >
+std::istream& operator>>(std::istream& is, Iso_cuboidH3<R>& r)
 {
-  PointH3<FT,RT> p, q;
+  PointH3<R> p, q;
   is >> p >> q;
-  r = Iso_cuboidH3<FT,RT>(p, q);
+  r = Iso_cuboidH3<R>(p, q);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDH3

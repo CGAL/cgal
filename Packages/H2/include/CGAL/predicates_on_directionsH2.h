@@ -30,12 +30,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class FT, class RT>
+template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Comparison_result
-compare_angles_with_x_axis(const DirectionH2<FT,RT>& d1,
-                           const DirectionH2<FT,RT>& d2)
+compare_angles_with_x_axis(const DirectionH2<R>& d1,
+                           const DirectionH2<R>& d2)
 {
+  typedef typename R::RT  RT;
   CGAL_kernel_precondition( (
         (Comparison_result)COUNTERCLOCKWISE == LARGER
       &&(Comparison_result)COLLINEAR        == EQUAL
@@ -43,12 +44,12 @@ compare_angles_with_x_axis(const DirectionH2<FT,RT>& d1,
 
   const RT RT0(0);
 
-  CGAL::VectorH2<FT,RT> dirvec1(d1.x(), d1.y());      // Added
-  CGAL::PointH2<FT,RT>   p1 = CGAL::ORIGIN + dirvec1; // Added
-  CGAL::VectorH2<FT,RT> dirvec2(d2.x(), d2.y());      // Added
-  PointH2<FT,RT>   p2 = ORIGIN + dirvec2;             // Added
-//  PointH2<FT,RT>   p1 = ORIGIN + d1.vector(); // Commented out
-//  PointH2<FT,RT>   p2 = ORIGIN + d2.vector(); // Commented out
+  CGAL::VectorH2<R> dirvec1(d1.x(), d1.y());      // Added
+  CGAL::PointH2<R>   p1 = CGAL::ORIGIN + dirvec1; // Added
+  CGAL::VectorH2<R> dirvec2(d2.x(), d2.y());      // Added
+  PointH2<R>   p2 = ORIGIN + dirvec2;             // Added
+//  PointH2<R>   p1 = ORIGIN + d1.vector(); // Commented out
+//  PointH2<R>   p2 = ORIGIN + d2.vector(); // Commented out
 
   CGAL_kernel_precondition( RT0 < p1.hw_ref() );
   CGAL_kernel_precondition( RT0 < p2.hw_ref() );
@@ -63,7 +64,7 @@ compare_angles_with_x_axis(const DirectionH2<FT,RT>& d1,
       return (0 < y_sign1 ) ? SMALLER : LARGER;
   }
 
-  PointH2<FT,RT>   origin( RT0  , RT0   );
+  PointH2<R>   origin( RT0  , RT0   );
 
   if ( 0 < y_sign1 * y_sign2 )
   {

@@ -29,20 +29,28 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class FT, class RT >
-class LineH2 : public Handle_for< Threetuple< RT> >
+template < class R_ >
+class LineH2
+  : public R_::Line_handle_2
 {
 public:
-                   LineH2();
-                   LineH2(const PointH2<FT,RT>& p, const PointH2<FT,RT>& q);
-                   LineH2(const RT& a, const RT& b, const RT& c);
-                   LineH2(const SegmentH2<FT,RT>& s);
-                   LineH2(const RayH2<FT,RT>& r);
-                   LineH2(const PointH2<FT,RT>& p,
-                          const DirectionH2<FT,RT>& d);
+  typedef R_                                    R;
+  typedef typename R::FT                        FT;
+  typedef typename R::RT                        RT;
 
-    bool           operator==(const LineH2<FT,RT>& l) const ;
-    bool           operator!=(const LineH2<FT,RT>& l) const ;
+  typedef typename R::Line_handle_2             Line_handle_2_;
+  typedef typename Line_handle_2_::element_type Line_ref_2;
+
+                   LineH2();
+                   LineH2(const PointH2<R>& p, const PointH2<R>& q);
+                   LineH2(const RT& a, const RT& b, const RT& c);
+                   LineH2(const SegmentH2<R>& s);
+                   LineH2(const RayH2<R>& r);
+                   LineH2(const PointH2<R>& p,
+                          const DirectionH2<R>& d);
+
+    bool           operator==(const LineH2<R>& l) const ;
+    bool           operator!=(const LineH2<R>& l) const ;
 
     RT             a() const;
     RT             b() const;
@@ -54,39 +62,38 @@ public:
     FT             x_at_y(FT y) const;
     FT             y_at_x(FT x) const;
 
-    LineH2<FT,RT>  perpendicular(const PointH2<FT,RT>& p ) const;
-    LineH2<FT,RT>  opposite() const;
-    PointH2<FT,RT> point() const;
-    PointH2<FT,RT> point(int i) const;
-    PointH2<FT,RT> projection(const PointH2<FT,RT>& p) const;
-    DirectionH2<FT,RT>
+    LineH2<R>  perpendicular(const PointH2<R>& p ) const;
+    LineH2<R>  opposite() const;
+    PointH2<R> point() const;
+    PointH2<R> point(int i) const;
+    PointH2<R> projection(const PointH2<R>& p) const;
+    DirectionH2<R>
                    direction() const;
-    Oriented_side  oriented_side( const PointH2<FT,RT>& p ) const;
-    bool           has_on( const PointH2<FT,RT>& p ) const;
-    bool           has_on_boundary( const PointH2<FT,RT>& p ) const;
-    bool           has_on_positive_side( const PointH2<FT,RT>& p ) const;
-    bool           has_on_negative_side( const PointH2<FT,RT>& p ) const;
+    Oriented_side  oriented_side( const PointH2<R>& p ) const;
+    bool           has_on( const PointH2<R>& p ) const;
+    bool           has_on_boundary( const PointH2<R>& p ) const;
+    bool           has_on_positive_side( const PointH2<R>& p ) const;
+    bool           has_on_negative_side( const PointH2<R>& p ) const;
     bool           is_horizontal() const;
     bool           is_vertical()   const;
     bool           is_degenerate() const;
 
-    LineH2<FT,RT>  transform(const Aff_transformationH2<FT,RT>&) const;
+    LineH2<R>  transform(const Aff_transformationH2<R>&) const;
 
 };
 
 
-
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-LineH2<FT,RT>::LineH2()
- : Handle_for< Threetuple<RT> >( Threetuple<RT>() )
+LineH2<R>::LineH2()
+ : Line_handle_2_ ( Line_ref_2() )
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
-LineH2<FT,RT>::LineH2(const PointH2<FT,RT>& p,
-                      const PointH2<FT,RT>& q)
- : Handle_for< Threetuple<RT> >( Threetuple<RT>(
+LineH2<R>::LineH2(const PointH2<R>& p,
+                      const PointH2<R>& q)
+ : Line_handle_2_ ( Line_ref_2(
   //  a() * X + b() * Y + c() * W() == 0
   //      |    X        Y       W     |
   //      |  p.hx()   p.hy()  p.hw()  |
@@ -97,157 +104,157 @@ LineH2<FT,RT>::LineH2(const PointH2<FT,RT>& p,
             p.hx()*q.hy() - p.hy()*q.hx()       ))
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-LineH2<FT,RT>::LineH2(const RT& a, const RT& b, const RT& c)
- : Handle_for< Threetuple<RT> >( Threetuple<RT>(a,b,c) )
+LineH2<R>::LineH2(const RT& a, const RT& b, const RT& c)
+ : Line_handle_2_ ( Line_ref_2(a,b,c) )
 {}
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-LineH2<FT,RT>::LineH2(const SegmentH2<FT,RT>& s)
+LineH2<R>::LineH2(const SegmentH2<R>& s)
 {
-  PointH2<FT,RT> p = s.start();
-  PointH2<FT,RT> q = s.end();
+  PointH2<R> p = s.start();
+  PointH2<R> q = s.end();
   initialize_with( Threetuple<RT> (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() ) );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-LineH2<FT,RT>::LineH2(const RayH2<FT,RT>& r)
+LineH2<R>::LineH2(const RayH2<R>& r)
 {
-  PointH2<FT,RT> p = r.start();
-  PointH2<FT,RT> q = r.second_point();
+  PointH2<R> p = r.start();
+  PointH2<R> q = r.second_point();
   initialize_with( Threetuple<RT> (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() ) );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_CTOR_INLINE
-LineH2<FT,RT>::LineH2(const PointH2<FT,RT>& p,
-                      const DirectionH2<FT,RT>& d)
+LineH2<R>::LineH2(const PointH2<R>& p,
+                      const DirectionH2<R>& d)
 {
-  PointH2<FT,RT> q = p + VectorH2<FT,RT>(d);
+  PointH2<R> q = p + VectorH2<R>(d);
   initialize_with( Threetuple<RT> (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() ) );
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-RT
-LineH2<FT,RT>::a() const
+typename R::RT
+LineH2<R>::a() const
 { return ptr->e0; }
 
-template < class FT, class RT >
+template < class R >
 inline
-RT
-LineH2<FT,RT>::b() const
+typename R::RT
+LineH2<R>::b() const
 { return ptr->e1; }
 
-template < class FT, class RT >
+template < class R >
 inline
-RT
-LineH2<FT,RT>::c() const
+typename R::RT
+LineH2<R>::c() const
 { return ptr->e2; }
 
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-FT
-LineH2<FT,RT>::x_at_y(FT y) const
+typename R::FT
+LineH2<R>::x_at_y(FT y) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return (FT(-b())*y - FT(c()) )/FT(a());
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-FT
-LineH2<FT,RT>::y_at_x(FT x) const
+typename R::FT
+LineH2<R>::y_at_x(FT x) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return (FT(-a())*x - FT(c()) )/FT(b());
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-LineH2<FT,RT>
-LineH2<FT,RT>::perpendicular(const PointH2<FT,RT>& p ) const
+LineH2<R>
+LineH2<R>::perpendicular(const PointH2<R>& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return LineH2<FT,RT>( -b()*p.hw(), a()*p.hw(), b()*p.hx() - a()*p.hy() );
+  return LineH2<R>( -b()*p.hw(), a()*p.hw(), b()*p.hx() - a()*p.hy() );
 }
 
-template < class FT, class RT >
+template < class R >
 inline
-LineH2<FT,RT>
-LineH2<FT,RT>::opposite() const
-{ return LineH2<FT,RT>( -a(), -b(), -c() ); }
+LineH2<R>
+LineH2<R>::opposite() const
+{ return LineH2<R>( -a(), -b(), -c() ); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-PointH2<FT,RT>
-LineH2<FT,RT>::point() const
+PointH2<R>
+LineH2<R>::point() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   if (is_vertical() )
   {
-      return PointH2<FT,RT>(-c(), RT(0)  , a() );
+      return PointH2<R>(-c(), RT(0)  , a() );
   }
   else
   {
-      return PointH2<FT,RT>(RT(0)  , -c(), b() );
+      return PointH2<R>(RT(0)  , -c(), b() );
   }
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-PointH2<FT,RT>
-LineH2<FT,RT>::point(int i) const
+PointH2<R>
+LineH2<R>::point(int i) const
 { return point() + RT(i) * (direction().to_vector()); }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-PointH2<FT,RT>
-LineH2<FT,RT>::projection(const PointH2<FT,RT>& p) const
+PointH2<R>
+LineH2<R>::projection(const PointH2<R>& p) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  LineH2<FT,RT>  l( p, DirectionH2<FT,RT>( a(), b() ));
-  return PointH2<FT,RT>( b()*l.c() - l.b()*c(),
+  LineH2<R>  l( p, DirectionH2<R>( a(), b() ));
+  return PointH2<R>( b()*l.c() - l.b()*c(),
                               l.a()*c() - a()*l.c(),
                               a()*l.b() - l.a()*b() );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-DirectionH2<FT,RT>
-LineH2<FT,RT>::direction() const
+DirectionH2<R>
+LineH2<R>::direction() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return DirectionH2<FT,RT>( b(), -a() );
+  return DirectionH2<R>( b(), -a() );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
-LineH2<FT,RT>
-LineH2<FT,RT>::transform(const Aff_transformationH2<FT,RT>& t) const
+LineH2<R>
+LineH2<R>::transform(const Aff_transformationH2<R>& t) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  PointH2<FT,RT> p = point() + direction().to_vector();
-  return LineH2<FT,RT>( t.transform(point() ), t.transform(p) );
+  PointH2<R> p = point() + direction().to_vector();
+  return LineH2<R>( t.transform(point() ), t.transform(p) );
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_LINEH2
-template < class FT, class RT >
+template < class R >
 std::ostream &
-operator<<(std::ostream &os, const LineH2<FT,RT> &l)
+operator<<(std::ostream &os, const LineH2<R> &l)
 {
   switch(os.iword(IO::mode))
   {
@@ -265,11 +272,11 @@ operator<<(std::ostream &os, const LineH2<FT,RT> &l)
 #endif // CGAL_NO_OSTREAM_INSERT_LINEH2
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_LINEH2
-template < class FT, class RT >
+template < class R >
 std::istream &
-operator>>(std::istream &is, LineH2<FT,RT> &p)
+operator>>(std::istream &is, LineH2<R> &p)
 {
-  RT a, b, c;
+  typename R::RT a, b, c;
   switch(is.iword(IO::mode))
   {
     case IO::ASCII :
@@ -285,51 +292,51 @@ operator>>(std::istream &is, LineH2<FT,RT> &p)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
   }
-  p = LineH2<FT,RT>(a, b, c);
+  p = LineH2<R>(a, b, c);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_LINEH2
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-LineH2<FT,RT>::has_on( const PointH2<FT,RT>& p ) const
+LineH2<R>::has_on( const PointH2<R>& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return ( ( a()*p.hx() + b()*p.hy() + c()*p.hw() ) == RT(0)   );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-LineH2<FT,RT>::has_on_boundary( const PointH2<FT,RT>& p ) const
+LineH2<R>::has_on_boundary( const PointH2<R>& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return ( ( a()*p.hx() + b()*p.hy() + c()*p.hw() ) == RT(0)   );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-LineH2<FT,RT>::has_on_positive_side( const PointH2<FT,RT>& p ) const
+LineH2<R>::has_on_positive_side( const PointH2<R>& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return ( ( a()*p.hx() + b()*p.hy() + c()*p.hw() ) > RT(0)   );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 bool
-LineH2<FT,RT>::has_on_negative_side( const PointH2<FT,RT>& p ) const
+LineH2<R>::has_on_negative_side( const PointH2<R>& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return ( ( a()*p.hx() + b()*p.hy() + c()*p.hw() ) < RT(0)   );
 }
 
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_INLINE
 Oriented_side
-LineH2<FT,RT>::oriented_side( const PointH2<FT,RT>& p ) const
+LineH2<R>::oriented_side( const PointH2<R>& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   RT v = a()*p.hx() + b()*p.hy() + c()*p.hw();
@@ -343,27 +350,27 @@ LineH2<FT,RT>::oriented_side( const PointH2<FT,RT>& p ) const
   }
 }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-LineH2<FT,RT>::is_horizontal() const
+LineH2<R>::is_horizontal() const
 { return ( a() == RT(0)   ); }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-LineH2<FT,RT>::is_vertical() const
+LineH2<R>::is_vertical() const
 { return ( b() == RT(0)   ); }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-LineH2<FT,RT>::is_degenerate() const
+LineH2<R>::is_degenerate() const
 { return (a() == RT(0)  )&&(b() == RT(0)  ) ; }
-template < class FT, class RT >
+template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-LineH2<FT,RT>::operator==(const LineH2<FT,RT>& l) const
+LineH2<R>::operator==(const LineH2<R>& l) const
 {
   if (  (a() * l.c() != l.a() * c() )
       ||(b() * l.c() != l.b() * c() ) )
@@ -391,10 +398,10 @@ LineH2<FT,RT>::operator==(const LineH2<FT,RT>& l) const
   }
 }
 
-template < class FT, class RT >
+template < class R >
 inline
 bool
-LineH2<FT,RT>::operator!=(const LineH2<FT,RT>& l) const
+LineH2<R>::operator!=(const LineH2<R>& l) const
 { return !(*this == l); }
 
 CGAL_END_NAMESPACE

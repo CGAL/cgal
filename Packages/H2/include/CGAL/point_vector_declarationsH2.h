@@ -26,77 +26,71 @@
 #ifndef CGAL_POINT_VECTOR_DECLARATIONSH2_H
 #define CGAL_POINT_VECTOR_DECLARATIONSH2_H
 
-#ifndef CGAL_HOMOGENEOUS_CLASSES_H
 #include <CGAL/homogeneous_classes.h>
-#endif // #ifndef CGAL_HOMOGENEOUS_CLASSES_H
-
 
 CGAL_BEGIN_NAMESPACE
 
-template <class FT, class RT>
+template <class R>
 inline
-PointH2<FT,RT>
-origin_plus_vector(const VectorH2<FT,RT>& v);
+PointH2<R>
+origin_plus_vector(const VectorH2<R>& v);
 
-template <class FT, class RT>
+template <class R>
 inline
-PointH2<FT,RT>
-origin_minus_vector(const VectorH2<FT,RT>& v);
+PointH2<R>
+origin_minus_vector(const VectorH2<R>& v);
 
-template <class FT, class RT>
+template <class R>
 inline
-VectorH2<FT,RT>
-point_minus_origin(const PointH2<FT,RT>& p);
+VectorH2<R>
+point_minus_origin(const PointH2<R>& p);
 
-template <class FT, class RT>
+template <class R>
 inline
-VectorH2<FT,RT>
-origin_minus_point(const PointH2<FT,RT>& p);
+VectorH2<R>
+origin_minus_point(const PointH2<R>& p);
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-PointH2<FT,RT>
-operator-(const PointH2<FT,RT>& p, const VectorH2<FT,RT>& v);
+PointH2<R>
+operator-(const PointH2<R>& p, const VectorH2<R>& v);
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator-(const PointH2<FT,RT>& p, const PointH2<FT,RT>& q);
+VectorH2<R>
+operator-(const PointH2<R>& p, const PointH2<R>& q);
 
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator+(const VectorH2<FT,RT>& u, const VectorH2<FT,RT>& v);
+VectorH2<R>
+operator+(const VectorH2<R>& u, const VectorH2<R>& v);
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator-(const VectorH2<FT,RT>& u, const VectorH2<FT,RT>& v);
+VectorH2<R>
+operator-(const VectorH2<R>& u, const VectorH2<R>& v);
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-FT
-operator*(const VectorH2<FT,RT>& u, const VectorH2<FT,RT>& v);
+typename R::FT
+operator*(const VectorH2<R>& u, const VectorH2<R>& v);
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator/(const VectorH2<FT,RT>& v, const RT& f);
+VectorH2<R>
+operator/(const VectorH2<R>& v, const typename R::RT& f);
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator*(const VectorH2<FT,RT>& v, const RT& f);
+VectorH2<R>
+operator*(const VectorH2<R>& v, const typename R::RT& f);
 
-template <class FT, class RT>
+template <class R>
 CGAL_KERNEL_INLINE
-VectorH2<FT,RT>
-operator*(const RT& f, const VectorH2<FT,RT>& v);
-
-
+VectorH2<R>
+operator*(const typename R::RT& f, const VectorH2<R>& v);
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_POINT_VECTOR_DECLARATIONS_2_H
