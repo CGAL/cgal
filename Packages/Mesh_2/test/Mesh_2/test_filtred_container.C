@@ -1,5 +1,5 @@
 #include <CGAL/basic.h>
-#include <CGAL/Filtered_container.h>
+#include <CGAL/Mesh_2/Filtered_queue_container.h>
 #include <CGAL/Random.h>
 
 #include <list>
@@ -13,11 +13,11 @@ public:
     }
 };
 
-typedef CGAL::Filtered_container<std::list<int>, Is_odd> List;
+typedef CGAL::Mesh_2::Filtered_queue_container<int, Is_odd> Queue;
 
 int main(int, char**)
 {
-  List l;
+  Queue q;
 
   int
     real_number_of_odds=0,
@@ -27,13 +27,13 @@ int main(int, char**)
     {
       int i=CGAL::default_random.get_int(0,1000);
       if((i%2)==1) ++real_number_of_odds;
-      l.push_back(i);
+      q.add_element(i);
     }
 
-  while(!l.empty())
+  while(!q.empty())
     {
       ++detected_number_of_odds;
-      l.pop_front();
+      q.remove_next_element();
     }
 
   std::cout << "detected = " << detected_number_of_odds << std::endl
