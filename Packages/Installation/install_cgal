@@ -3627,9 +3627,10 @@ create_include_makefile()
   # 
   # CGAL_LIB_LDFLAGS
   # 
-  ${_printf} "%s\\\\\n" "CGAL_LIB_LDFLAGS = " >> ${FILE}
-  makefile_print_line "${CGAL_LIB_LDFLAGS}" >> ${FILE}
-  ${_printf} "\t\n" >> ${FILE}
+  ${_printf} "%s\n" \
+    "CGAL_LIB_LDFLAGS = ${CGAL_LIB_LDFLAGS}" \
+    >> ${FILE}
+  ${_printf} "\n" >> ${FILE}
 
   # 
   # CGAL_LIB_CREATE
