@@ -1,3 +1,6 @@
+version 1.40 [af]
+- Added doc_tex/basic/Optimisation/Optimisation_ref/main_Largest_empty_is_rectangle_2.tex
+
 version 1.39 [af]
 - Moved doc from Optimization_ref to Optimisation_ref
 
