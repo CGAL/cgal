@@ -183,7 +183,7 @@ public:
   // polygon. Its regularized version is formed by the set of
   // regular edges and their vertices
 
-  //--------------------- private VARIABLES -----------------------
+  //------------------------ private VARIABLES -------------------------
 
 private:
 
@@ -699,7 +699,7 @@ Classification_type  classify( Face_handle f,
 
 //---------------------------------------------------------------------
   
-Classification_type  classify( std::pair< Face_handle, int > edge) const 
+Classification_type  classify( std::pair< Face_handle, int > edge) const
 {  
   return classify(edge.first, edge.second, get_alpha());
 }
@@ -762,7 +762,7 @@ private:
 
 Coord_type find_alpha_solid() const;
 
-//--------------------- PREDICATES ------------------------------------
+//---------------------- PREDICATES ------------------------------------
 
 private:
   
@@ -776,7 +776,7 @@ bool is_attached(const Face_handle& f, int i) const
   return (b == ON_BOUNDED_SIDE) ? true : false;
 }
   
-//------------------- GEOMETRIC PRIMITIVES ----------------------------
+//-------------------- GEOMETRIC PRIMITIVES ----------------------------
 
 Coord_type squared_radius(const Face_handle& f) const 
 {
@@ -809,7 +809,7 @@ Alpha_shape_2& operator=(const Alpha_shape_2& A)
 
 };
 
-//---------------------------MEMBER FUNCTIONS-----------------------------
+//----------------------- MEMBER FUNCTIONS -----------------------------
 
 template < class Dt >
 void 
@@ -988,7 +988,7 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map(void)
 		     _interval_face_map.back().first :
 		     0);
 
-      //-------------- examine incident edges --------------------------
+      //----------------- examine incident edges --------------------------
       /*
 	// if we used Edelsbrunner and Muecke's definition
 	// singular means not incident to any higher-dimensional face
@@ -1151,7 +1151,8 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum(void)
 //-------------------------------------------------------------------------
 
 template < class Dt >
-std::back_insert_iterator< std::list<typename Alpha_shape_2<Dt>::Vertex_handle> >
+std::back_insert_iterator
+                  < std::list< typename Alpha_shape_2<Dt>::Vertex_handle > >
 Alpha_shape_2<Dt>::get_alpha_shape_vertices
 (std::back_insert_iterator< std::list< Vertex_handle > > result) const 
 {
@@ -1311,7 +1312,8 @@ Alpha_shape_2<Dt>::get_alpha_shape_edges
 
 template < class Dt >
 Alpha_shape_2<Dt>::Classification_type  
-Alpha_shape_2<Dt>::classify(Face_handle f, int i, const Coord_type& alpha) const 
+Alpha_shape_2<Dt>::classify(Face_handle f, int i, 
+			    const Coord_type& alpha) const
 {
   // Classifies the edge `e' of the underlying Delaunay
   // triangulation with respect to `A'.
@@ -1823,8 +1825,8 @@ Alpha_shape_2<Dt>::op_vect_seg(Vect_seg& V) const
 	      // visualize the boundary
 	    
  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-					(*edge_alpha_it).second.second) ==
-			       Alpha_shape_2<Dt>::REGULAR));
+					(*edge_alpha_it).second.second)
+			       == Alpha_shape_2<Dt>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // thus we would write to many vertices
@@ -1910,7 +1912,7 @@ operator<<(std::ostream& os, const Alpha_shape_2<Dt>& A)
 
 template < class Dt >
 typename Alpha_shape_2<Dt>::Vect_seg& 
-operator<<(typename Alpha_shape_2<Dt>::Vect_seg& V, const Alpha_shape_2<Dt>& A)
+operator<<(typename Alpha_shape_2<Dt>::Vect_seg& V,const Alpha_shape_2<Dt>& A)
 {
   return A.op_vect_seg(V);
 }
