@@ -220,6 +220,14 @@ public:
                            const X_curve_2_iterator & end,
                            Change_notification * en = NULL)
   {
+    return non_intersecting_insert(begin, end, en);
+  }
+
+  template <class X_curve_2_iterator>
+  Halfedge_iterator non_intersecting_insert(const X_curve_2_iterator & begin,
+					    const X_curve_2_iterator & end,
+					    Change_notification * en = NULL)
+  {
     PointLessFunctor  event_queue_pred(traits);
     Event_queue event_queue(event_queue_pred);
     init_for_insert(begin, end, event_queue);
