@@ -159,30 +159,30 @@ void test(const int n,const FT& tol) {
     S.push_back(Sphere(coord,static_cast<FT>(uniform())));
   }
   
-  cout << " constructor with balls:" << endl;
+  cout << " constructor with balls..." << endl;
   Min_sphere  ms1(S.begin(),S.end());
   checkCondition(ms1.is_valid(),"Minsphere not valid.");
 
-  cout << " default constructor and set():" << endl;
+  cout << " default constructor and set()..." << endl;
   Min_sphere  ms2;
   ms2.set(S.begin(),S.end());
   checkCondition(ms2.is_valid(),"Minsphere not valid.");
   compare<D,Min_sphere,FT>(tol,ms1,ms2,is_exact(tol));
 
-  cout << " default constructor and insert():" << endl;
+  cout << " default constructor and insert()..." << endl;
   Min_sphere  ms3;
   ms3.insert(S.begin(),S.end());
   checkCondition(ms3.is_valid(),"Minsphere not valid.");
   compare<D,Min_sphere,FT>(tol,ms1,ms3,is_exact(tol));
 
-  cout << " default constructor and multiple insert()'s:" << endl;
+  cout << " default constructor and multiple insert()'s..." << endl;
   Min_sphere  ms4;
   for (unsigned int i=0; i<S.size(); ++i)
     ms4.insert(S[i]);
   checkCondition(ms4.is_valid(),"Minsphere not valid.");
   compare<D,Min_sphere,FT>(tol,ms1,ms4,is_exact(tol));
 
-  cout << " clearing and multiple insert()'s:" << endl;
+  cout << " clearing and multiple insert()'s..." << endl;
   ms2.clear();
   for (unsigned int i=0; i<S.size(); ++i)
     ms2.insert(S[i]);
