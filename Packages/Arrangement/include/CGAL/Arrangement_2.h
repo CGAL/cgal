@@ -1077,10 +1077,10 @@ public:
       cn->levels.push_back(In_place_list<Subcurve_node,true>());
 
       //cut cv into x_monotone curves and insert them into l
-      std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve> x_list;
+      std::list<typename Traits::X_curve> x_list;
       traits->curve_make_x_monotone(cv, std::back_inserter(x_list));
 
-      typename std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve>::iterator 
+      typename std::list<typename Traits::X_curve>::iterator 
         lit=x_list.begin();
       for (; lit!=x_list.end(); ++lit) {
         Subcurve_node* scn=new Subcurve_node;
@@ -1146,10 +1146,10 @@ public:
     cn->levels.push_back(In_place_list<Subcurve_node,true>());
 
     //cut cv into x_monotone curves and insert them into l
-    std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve> x_list;
+    std::list<typename Traits::X_curve> x_list;
     traits->curve_make_x_monotone(cv, std::back_inserter(x_list));
 
-    typename std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve>::iterator 
+    typename std::list<typename Traits::X_curve>::iterator 
       lit=x_list.begin();
     for (; lit!=x_list.end(); ++lit) {
       Subcurve_node* scn=new Subcurve_node;
@@ -1842,9 +1842,9 @@ protected:
     Curve_iterator root(curr);
     
     //step 0: define the past_end levels
-    std::vector<CGAL_TYPENAME_MSVC_NULL 
+    std::vector<typename
       In_place_list<Subcurve_node,true>::iterator > level_begin;
-    std::vector<CGAL_TYPENAME_MSVC_NULL 
+    std::vector<typename
       In_place_list<Subcurve_node,true>::iterator > level_end;
     
     Edge_node* past_end_edge;

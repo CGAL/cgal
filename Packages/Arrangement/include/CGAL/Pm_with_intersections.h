@@ -1148,9 +1148,8 @@ public:
 //    {
     Vertex_handle         src, tgt;
     Halfedge_handle last_he;
-    std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_monotone_curve_2> x_list;
-    typename std::list<
-      CGAL_TYPENAME_MSVC_NULL Traits::X_monotone_curve_2>::const_iterator it;
+    std::list<typename Traits::X_monotone_curve_2> x_list;
+    typename std::list<typename Traits::X_monotone_curve_2>::const_iterator it;
     traits->curve_make_x_monotone(c, std::back_inserter(x_list));
     src = source_vertex;
     tgt = target_vertex;

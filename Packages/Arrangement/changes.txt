@@ -1,5 +1,6 @@
 100.22 (18 Jan 2004)
 - Remove obsolete workarounds for CGAL_CFG_NO_ITERATOR_TRAITS.
+- Replace obsolete CGAL_TYPENAME_MSVC_NULL by typename.
 
 100.19 (27 Nov 2003) [rursu]
 - I_Polyhedron_iterator -> I_HalfedgeDS_iterator
