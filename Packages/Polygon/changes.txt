@@ -1,3 +1,6 @@
+4.14 (17 May 2003) [af]
++ Bug fix in Polygon_2_circulator.h after change in package Circulator
+
 4.13 (6 April 2003) [sp]
 + Another couple of 'this->' and other missing 'std::' for g++ 3.4.
 
