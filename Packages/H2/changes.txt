@@ -1,3 +1,9 @@
+8 March 2005 Sylvain Pion
+- Fix for mpz_class : no implicit conversion from expression-template
+  to Quotient<mpz_class>, it seems.
+
+=============================== CGAL 3.1 ========================
+
 11 August 2004 Sylvain Pion
 - Qualify min/max calls by CGAL_NTS.
 

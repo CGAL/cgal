@@ -1336,7 +1336,7 @@ namespace HomogeneousKernelFunctors {
 
       // first compute (vec1.hw * vec2.hw * vec3.hw * det(vec1, vec2, vec3))
       // then divide by (6 * vec1.hw * vec2.hw * vec3.hw)
-      const FT w123 = vec1.hw() * vec2.hw() * vec3.hw();
+      const FT w123 (vec1.hw() * vec2.hw() * vec3.hw());
       const FT& hx1 =  vec1.hx();
       const FT& hy1 =  vec1.hy();
       const FT& hz1 =  vec1.hz();
