@@ -38,7 +38,7 @@ void  QPE_basis_inverse<ET_,Is_LP_>::
 set( int n, int m, int nr_equalities)
 {
     CGAL_qpe_precondition( n > 0);
-    CGAL_qpe_precondition( m > 0);
+    //CGAL_qpe_precondition( m > 0);
     b = s = 0;
     // l is the maximum size of the basis in phase I
     l = std::min( n+nr_equalities+1, m);
