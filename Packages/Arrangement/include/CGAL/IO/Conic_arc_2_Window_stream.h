@@ -66,8 +66,8 @@ Window_stream& operator<<(Window_stream& ws,
       for (x = x_min + 1; x < x_max; x++)
       {
 	curr_x = ws.pix_to_real(x);
-	nps = cv.get_points_at_x (Conic_arc_2<Kernel>::Point_2(typename Kernel::FT(curr_x), 0), 
-				  ps);
+	nps = cv.get_points_at_x
+          (Conic_arc_2<Kernel>::Point_2(typename Kernel::FT(curr_x), 0), ps);
 	if (nps == 1)
 	{
 	  curr_y = CGAL::to_double(ps[0].y());

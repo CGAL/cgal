@@ -40,12 +40,12 @@ template <class CurveInputIterator, class SweepLineTraits_2,
           class PM_, class Change_notification_>
 class Pmwx_aggregate_insert_impl :
   public Sweep_line_base_2<CurveInputIterator, SweepLineTraits_2,
-       Pmwx_sweep_line_event<SweepLineTraits_2, 
-                             Pmwx_sweep_line_curve<SweepLineTraits_2, 
-                                              typename PM_::Vertex_handle, 
-                                              typename PM_::Halfedge_handle> > ,
-       Pmwx_sweep_line_curve<SweepLineTraits_2, typename  PM_::Vertex_handle, 
-                             typename PM_::Halfedge_handle> >
+    Pmwx_sweep_line_event<SweepLineTraits_2, 
+      Pmwx_sweep_line_curve<SweepLineTraits_2, 
+                            typename PM_::Vertex_handle, 
+                            typename PM_::Halfedge_handle> > ,
+        Pmwx_sweep_line_curve<SweepLineTraits_2, typename PM_::Vertex_handle, 
+                              typename PM_::Halfedge_handle> >
 {
 public:
   typedef SweepLineTraits_2 Traits;
@@ -353,8 +353,8 @@ protected:
 	const X_curve_2 &cv1 = vcurve->getCurve();
 	const X_curve_2 &cv2 = (*slIter)->getCurve();
 	Point_2 p;
-	bool res =
-	  m_traits->nearest_intersection_to_right(cv1, cv2, currentPoint, p, p);
+	bool res = m_traits->nearest_intersection_to_right(cv1, cv2,
+                                                           currentPoint, p, p);
 	SL_DEBUG(assert(res==true);)
 	  res = 0;
       
@@ -393,9 +393,9 @@ protected:
 
   /*!
    *  Handle a vertical curve when the event being processed is the top end 
-   *  of the curve. In this situation, the event contains a list of intersection
-   *  points on the vertical curve. We go through this list and outpt the 
-   *  subcurves induced by these intersection points.
+   *  of the curve. In this situation, the event contains a list of
+   *  intersection points on the vertical curve. We go through this list and
+   *  outpt the subcurves induced by these intersection points.
    *  If the curve is not vertical, returns without doing anything.
    * 
    *  @param out an iterator to the output
@@ -731,10 +731,6 @@ private:
   }
   
 };
-
-
-
-
 
 CGAL_END_NAMESPACE
 
