@@ -47,6 +47,13 @@ double
 to_double(int i)
 { return static_cast<double>(i); }
 
+inline 
+std::pair<double,double>
+to_interval(int i)
+{
+  return std::pair<double,double>(i, i);
+}
+
 inline
 bool
 is_finite(int)
@@ -203,6 +210,13 @@ inline
 double
 to_double(short int i)
 { return static_cast<double>(i); }
+
+inline 
+std::pair<double,double>
+to_interval(short int i)
+{
+  return std::pair<double,double>(i, i);
+}
 
 inline
 bool

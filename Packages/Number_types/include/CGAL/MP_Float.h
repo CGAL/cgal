@@ -270,7 +270,7 @@ sqrt(const MP_Float &d);
 double
 to_double(const MP_Float &b);
 
-Interval_base
+std::pair<double,double>
 to_interval(const MP_Float &b);
 
 inline

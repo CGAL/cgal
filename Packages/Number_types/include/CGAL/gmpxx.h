@@ -177,14 +177,17 @@ compare(const mpf_class& e1, const mpf_class& e2)
 
 #if 0 // Unfinished
 inline
-Interval_base
+std::pair<double,double>
 to_interval (const mpq_class & e)
 {
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
   double approx = to_double(e);
   double rel_error = e.get_double_error();
   FPU_set_cw(CGAL_FE_UPWARD);
-  return ( Interval_nt_advanced(-rel_error,rel_error) + 1 ) * approx;
+  Interval_nt_advanced ina = (-rel_error,rel_error);
+  ina += 1;
+  ina *= approx;
+  return ina.pair();
 }
 #endif
 

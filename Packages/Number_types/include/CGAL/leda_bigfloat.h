@@ -60,14 +60,15 @@ io_tag(const leda_bigfloat &)
 { return io_Operator(); }
 
 inline
-Interval_base
+std::pair<double,double>
 to_interval (const leda_bigfloat & z)
 {
   // assuming leda_bigfloat guarantee 1 bit error max
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
   Interval_nt_advanced approx (CGAL_LEDA_SCOPE::to_double(z));
   FPU_set_cw(CGAL_FE_UPWARD);
-  return approx + Interval_base::Smallest;
+  approx += Interval_nt<false>::smallest();
+  return approx.pair();
 }
 
 CGAL_END_NAMESPACE

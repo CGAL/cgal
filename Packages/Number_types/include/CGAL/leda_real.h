@@ -78,14 +78,17 @@ compare(const leda_real& r1, const leda_real& r2)
 #endif // CGAL_CFG_NO_NAMESPACE
 
 inline
-Interval_base
+std::pair<double>
 to_interval (const leda_real & z)
 {
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
   double approx = z.to_double();
   double rel_error = z.get_double_error();
   FPU_set_cw(CGAL_FE_UPWARD);
-  return ( Interval_nt_advanced(-rel_error,rel_error) + 1 ) * approx;
+  Interval_nt_advanced ina(-rel_error,rel_error);
+  ina += 1;
+  ina *= approx;
+  return ina.pair();
 }
 
 namespace NTS {

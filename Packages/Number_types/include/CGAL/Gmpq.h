@@ -421,11 +421,12 @@ operator>>(std::istream& is, Gmpq &z)
 }
 
 inline
-Interval_base
+std::pair<double,double>
 to_interval (const Gmpq& z)
 {
-  return Interval_nt<>(CGAL::to_interval(z.numerator())) /
-         Interval_nt<>(CGAL::to_interval(z.denominator()));
+  Interval_nt<> quot = Interval_nt<>(CGAL::to_interval(z.numerator())) /
+                       Interval_nt<>(CGAL::to_interval(z.denominator()));
+  return  quot.pair();
 }
 
 

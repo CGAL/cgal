@@ -48,6 +48,15 @@ double
 to_double(float f)
 { return static_cast<double>(f); }
 
+
+inline 
+std::pair<double,double>
+to_interval(float f)
+{
+  return std::pair<double,double>(f, f);
+}
+
+
 #ifdef __sgi
 
 inline

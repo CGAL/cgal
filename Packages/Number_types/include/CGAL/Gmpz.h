@@ -585,7 +585,7 @@ operator>>(std::istream& is, Gmpz &z)
 }
 
 inline
-Interval_base
+std::pair<double,double>
 to_interval (const Gmpz & z)
 {
   // GMP returns the closest double (seen in the code).
@@ -593,9 +593,11 @@ to_interval (const Gmpz & z)
   double app = CGAL::to_double(z);
   // If it's lower than 2^53, then it's exact.
   if (CGAL_CLIB_STD::fabs(app) < double(1<<26)*double(1<<27))
-      return app;
+      return to_interval(app);
   FPU_set_cw(CGAL_FE_UPWARD);
-  return Interval_nt_advanced(app) + Interval_base::Smallest;
+  Interval_nt<false> approx(app);
+  approx += Interval_nt<false>::smallest();
+  return approx.pair();
 }
 
 namespace NTS {

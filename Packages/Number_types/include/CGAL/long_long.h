@@ -98,13 +98,14 @@ inline unsigned long long abs(unsigned long long i) { return i; }
 } // namespace NTS
 
 inline
-Interval_base
+std::pair<double,double>
 to_interval (const long long & z)
 {
   Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-  Interval_nt_advanced approx ((double) z);
+  Interval_nt<false> approx ((double) z);
   FPU_set_cw(CGAL_FE_UPWARD);
-  return approx + Interval_nt_advanced(Interval_base::Smallest);
+  approx += Interval_nt<false>::smallest();
+  return approx.pair();
 }
 
 

@@ -32,7 +32,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/double.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Interval_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -136,10 +135,11 @@ inline bool is_finite(Fixed_precision_nt) { return true; }
 inline bool is_valid(Fixed_precision_nt) { return true; }
 
 inline
-Interval_base
+std::pair<double,double>
 to_interval (Fixed_precision_nt a)
 {
-  return a.to_double();
+  double d = a.to_double();
+  return std::make_pair(d,d);
 }
 
 inline Fixed_precision_nt operator- (Fixed_precision_nt a)

@@ -72,17 +72,19 @@ div( const leda_integer& n1, const leda_integer& n2)
 }
 
 inline
-Interval_base
+std::pair<double,double>
 to_interval (const leda_integer & n)
 {
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
   double cn = CGAL::to_double(n);
   leda_integer pn = ( n>0 ? n : -n);
   if ( pn.iszero() || log(pn) < 53 )
-      return Interval_base(cn);
+      return to_interval(cn);
   else {
     FPU_set_cw(CGAL_FE_UPWARD);
-    return Interval_nt_advanced(cn)+Interval_nt_advanced::Smallest;
+    Interval_nt_advanced ina(cn);
+    ina += Interval_nt_advanced::smallest();
+    return ina.pair();
   }
 }
 

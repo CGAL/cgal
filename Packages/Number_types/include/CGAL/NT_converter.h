@@ -38,12 +38,12 @@ struct NT_converter
 };
 
 
-// A number type converter to Interval_base, using to_interval().
+// A number type converter to std::pair<double,double>, using to_interval().
 
 template < class NT >
 struct Interval_converter
 {
-    Interval_base
+    std::pair<double,double>
     operator()(const NT &a) const
     {
         return to_interval(a);

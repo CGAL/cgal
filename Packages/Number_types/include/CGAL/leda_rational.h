@@ -76,7 +76,7 @@ sign(const leda_rational& r)
 #endif // CGAL_CFG_NO_NAMESPACE
 
 inline
-Interval_base
+std::pair<double,double>
 to_interval (const leda_rational & z)
 {
   // There's no guarantee about the error of to_double(), so I add 3 ulps...
@@ -84,8 +84,10 @@ to_interval (const leda_rational & z)
   Interval_nt_advanced approx (z.to_double());
   FPU_set_cw(CGAL_FE_UPWARD);
 
-  return ( (approx + Interval_base::Smallest) + Interval_base::Smallest)
-         + Interval_base::Smallest;
+  approx += Interval_nt<false>::smallest();
+  approx += Interval_nt<false>::smallest();
+  approx += Interval_nt<false>::smallest();
+  return approx.pair();
 }
 
 CGAL_END_NAMESPACE

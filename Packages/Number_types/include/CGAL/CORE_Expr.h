@@ -76,14 +76,15 @@ compare(const CORE::Expr& e1, const CORE::Expr& e2)
 
 #if 0 // Unfinished
 inline
-Interval_base
+std::pair<double,double>
 to_interval (const CORE::Expr & e)
 {
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
   double approx = to_double(e);
   double rel_error = e.get_double_error();
   FPU_set_cw(CGAL_FE_UPWARD);
-  return ( Interval_nt_advanced(-rel_error,rel_error) + 1 ) * approx;
+  Interval_nt_advanced ina =  (Interval_nt_advanced(-rel_error,rel_error) + 1 ) * approx;
+  return ina.pair();
 }
 #endif
 
