@@ -75,7 +75,9 @@ copy constructor, and assignment operator.
           of $pnt$. Returns \ccStyle{LARGER} if $cv1(x(q)) > cv2(x(q))$;
           \ccStyle{SMALLER} if $cv1(x(q)) < cv2(x(q))$; \ccStyle{EQUAL}
 	  otherwise.
-          \ccPrecond{$cv1$ and $cv2$ are defined at $pnt$'s $x$-coordinate.}}
+          \ccPrecond{$cv1$ and $cv2$ are defined at $pnt$'s
+          $x$-coordinate.}
+	  \ccPrecond{$cv1$ or $cv2$ contain $pnt$.}}
 
 \ccMethod{Comparison_result
   curves_compare_y_at_x_right(const X_monotone_curve_2& cv1,
@@ -84,11 +86,12 @@ copy constructor, and assignment operator.
          {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the
 	   right of the $x$-coordinate of $pnt$.
            \ccPrecond{$cv1$ and $cv2$ meet at $pnt$ $x$-coordinate.}
-           \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
+           \ccPrecond{$cv1$ and $cv2$ are defined to the right of $pnt$'s
              $x$-coordinate.}}
     
-\ccMethod{Comparison_result curve_compare_y_at_x(const Point_2& pnt,
-                                                 const X_monotone_curve_2& cv);}
+\ccMethod{Comparison_result
+  curve_compare_y_at_x(const Point_2& pnt,
+                       const X_monotone_curve_2& cv);}
          {compares the $y$-coordinates of $pnt$ and the vertical projection of
 	   $pnt$ on $cv$. Returns \ccStyle{SMALLER} if $y(p) < cv(x(p))$;
 	   \ccStyle{LARGER} if $y(p) > cv(x(p))$;
