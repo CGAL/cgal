@@ -17,8 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_NUMBER_UTILS_H
@@ -37,7 +36,7 @@ bool
 is_zero(const NT& x)
 {
   bool is_zero_is_obsolete__qualify_call_by_CGAL_NTS;
-  return x == NT(0);
+  return x == 0;
 }
 
 template <class NT>
@@ -46,7 +45,7 @@ bool
 is_one(const NT& x)
 {
   bool is_one_is_obsolete__qualify_call_by_CGAL_NTS;
-  return x == NT(1);
+  return x == 1;
 }
 
 template <class NT>
@@ -55,7 +54,7 @@ bool
 is_negative(const NT& x)
 {
   bool is_negative_is_obsolete__qualify_call_by_CGAL_NTS;
-  return x < NT(0);
+  return x < 0;
 }
 
 template <class NT>
@@ -64,7 +63,7 @@ bool
 is_positive(const NT& x)
 {
   bool is_positive_is_obsolete__qualify_call_by_CGAL_NTS;
-  return NT(0) < x;
+  return 0 < x;
 }
 
 template <class NT>
@@ -73,7 +72,7 @@ Sign
 sign(const NT& x)
 {
   bool sign_is_obsolete__qualify_call_by_CGAL_NTS;
-  return (x < NT(0)) ? NEGATIVE : (NT(0) < x) ? POSITIVE : ZERO;
+  return (x < 0) ? NEGATIVE : (0 < x) ? POSITIVE : ZERO;
 }
 
 template <class NT>
@@ -82,22 +81,18 @@ NT
 abs(const NT& x)
 {
   bool abs_is_obsolete__qualify_call_by_CGAL_NTS;
-  return (x < NT(0)) ? -x: x;
+  return (x < 0) ? -x : x;
 }
 
-// for min and max see <CGAL/basic.h>
+// for min and max see <CGAL/number_type_basic.h>
 
-template <class NT>
+template <class NT1, class NT2>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare(const NT& n1, const NT& n2)
+compare(const NT1& n1, const NT2& n2)
 {
   bool compare_is_obsolete__qualify_call_by_CGAL_NTS;
-  if (n1 < n2)
-  {
-    return SMALLER ;
-  }
-  return (n2 < n1) ? LARGER : EQUAL;
+  return (n1 < n2) ? SMALLER : (n2 < n1) ? LARGER : EQUAL;
 }
 
 template <class NT>
@@ -115,41 +110,37 @@ template <class NT>
 inline
 bool
 is_zero(const NT& x)
-{ return x == NT(0); }
+{ return x == 0; }
 
 template <class NT>
 inline
 bool
 is_one(const NT& x)
-{ return x == NT(1); }
+{ return x == 1; }
 
 template <class NT>
 inline
 bool
 is_negative(const NT& x)
-{ return x < NT(0); }
+{ return x < 0; }
 
 template <class NT>
 inline
 bool
 is_positive(const NT& x)
-{ return NT(0) < x; }
+{ return 0 < x; }
 
 template <class NT>
 CGAL_KERNEL_INLINE
 Sign
 sign(const NT& x)
-{ return (x < NT(0)) ? NEGATIVE : (NT(0) < x) ? POSITIVE : ZERO; }
+{ return (x < 0) ? NEGATIVE : (0 < x) ? POSITIVE : ZERO; }
 
 template <class NT>
 CGAL_KERNEL_INLINE
 NT
 abs(const NT& x)
-{
-    if (x < NT(0))
-	return -x;
-    return x;
-}
+{ return (x < 0) ? -x : x; }
 
 template <class NT>
 CGAL_KERNEL_INLINE
@@ -163,17 +154,11 @@ const NT&
 max(const NT& x, const NT& y)
 { return (x < y) ? y : x; }
 
-template <class NT>
+template <class NT1, class NT2>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare(const NT& n1, const NT& n2)
-{
-  if (n1 < n2)
-  {
-    return SMALLER ;
-  }
-  return (n2 < n1) ? LARGER : EQUAL;
-}
+compare(const NT1& n1, const NT2& n2)
+{ return (n1 < n2) ? SMALLER : (n2 < n1) ? LARGER : EQUAL; }
 
 template <class NT>
 inline
@@ -215,7 +200,7 @@ template <class NT>
 inline
 NT
 gcd( const NT& n1, const NT& n2)
-{ 
+{
   CGAL_precondition(!CGAL_NTS is_zero(n2));
   NT x = CGAL_NTS abs(n1);
   NT y = CGAL_NTS abs(n2);

@@ -76,6 +76,18 @@ div( const leda_integer& n1, const leda_integer& n2)
   return n1 / n2;
 }
 
+// missing mixed operators
+inline
+bool
+operator==(int a, const leda_integer& b)
+{ return b == a; }
+
+inline
+bool
+operator!=(int a, const leda_integer& b)
+{ return b != a; }
+
+
 inline
 std::pair<double,double>
 to_interval (const leda_integer & n)

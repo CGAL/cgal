@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 2002 The CGAL Consortium
+// Copyright (c) 2002, 2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -14,11 +14,11 @@
 // file          : utilites.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Michael Hoffmann
+// author(s)     : Michael Hoffmann, Sylvain Pion
 //
 // coordinator   : MPI, Saarbruecken
 // ============================================================================
- 
+
 #ifndef CGAL_TEST_UTILITIES_H
 #define CGAL_TEST_UTILITIES_H
 
@@ -28,7 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 // Used to shut down some warnings about unused variables.
-template < class T > 
+template < class T >
 void use(const T&) {}
 
 template < class NT >
@@ -63,7 +63,7 @@ test_gcd(NT , CGAL::Tag_true)
   if (CGAL_NTS div(eleven, three) != three) return false;
   CGAL::Div<NT> d;
   if (d(eleven, three) != three) return false;
-  
+
   // gcd
   NT x(2737);
   NT y(5083);
@@ -91,18 +91,20 @@ template < class NT >
 bool
 test_basic_operators(const NT&)
 {
+  std::cout << "  basic operators" << std::endl;
   NT zero(0);
   NT one(1);
 
   NT a = zero + one;
-  use(a);
   NT b = zero - one;
   a = zero * one;
   a += b;
   a -= b;
   a *= b;
-  a =  -b;
-  use(a);
+  a += 1;
+  a -= 1;
+  a *= 1;
+  a = -b;
 
   bool d;
   d = a<b;
@@ -111,9 +113,71 @@ test_basic_operators(const NT&)
   d = a>=b;
   d = a==b;
   d = a!=b;
-  use(d);
 
-return true;
+  use(a); use(b); use(d);
+
+  return true;
+}
+
+template < class NT >
+bool
+test_mixed_operators(NT x)
+{
+  std::cout << "  mixed operators" << std::endl;
+
+  NT zero = 0;
+  NT one  = 1;
+
+  // Comparison operators.
+  if (   zero != 0  ) return false;
+  if (   0 != zero  ) return false;
+  if (! (zero == 0) ) return false;
+  if (! (0 == zero) ) return false;
+
+  if (   zero < 0   ) return false;
+  if (   0 < zero   ) return false;
+  if (! (zero >= 0) ) return false;
+  if (! (0 >= zero) ) return false;
+
+  if (! (zero <= 0) ) return false;
+  if (! (0 <= zero) ) return false;
+  if (   zero > 0   ) return false;
+  if (   0 > zero   ) return false;
+
+  // More tests for the semantics...
+  if (! (zero != 1) ) return false;
+  if (! (1 != zero) ) return false;
+  if (   zero == 1  ) return false;
+  if (   1 == zero  ) return false;
+
+  if (! (zero < 1)  ) return false;
+  if (   1 < zero   ) return false;
+  if (   zero >= 1  ) return false;
+  if (! (1 >= zero) ) return false;
+
+  if (! (zero <= 1) ) return false;
+  if (   1 <= zero  ) return false;
+  if (   zero > 1   ) return false;
+  if (! (1 > zero)  ) return false;
+
+  // compare()
+  if (CGAL_NTS compare(zero, 1)        != CGAL::SMALLER) return false;
+  if (CGAL_NTS compare(1, zero)        != CGAL::LARGER)  return false;
+  // Same, for expression templates
+  if (CGAL_NTS compare(zero + zero, 1) != CGAL::SMALLER) return false;
+  if (CGAL_NTS compare(1, zero + zero) != CGAL::LARGER)  return false;
+
+  // The other operators +, -, *, /.
+  if (zero + 1 != 1 ) return false;
+  if (1 + zero != 1 ) return false;
+  if (zero - 1 !=-1 ) return false;
+  if (1 - zero != 1 ) return false;
+  if (zero * 1 != 0 ) return false;
+  if (1 * zero != 0 ) return false;
+  if (zero / 1 != 0 ) return false;
+  if (1 / one  != 1 ) return false;
+
+  return true;
 }
 
 template < class NT >
@@ -166,7 +230,7 @@ test_utilities(NT x)
   if (CGAL_NTS abs(mone) != one &&
       CGAL_NTS abs(mone) != mone) // unsigned types :-)
     return false;
-  if (ab(mone) != one && ab(mone) != mone) 
+  if (ab(mone) != one && ab(mone) != mone)
     return false;
   if (ab(mone) != CGAL_NTS abs(mone) || ab(one) != CGAL_NTS abs(one))
     return false;
@@ -187,7 +251,10 @@ test_utilities(NT x)
   if (CGAL::to_double(one)  != 1.0) return false;
 
   // basic operators +,-,...
-  test_basic_operators(zero);
+  if (!test_basic_operators(zero)) return false;
+
+  // mixed operators +,-,...
+  if (!test_mixed_operators(zero)) return false;
 
   // is_finite, is_valid
   std::cout << "  is_finite()" << std::endl;
@@ -212,6 +279,8 @@ test_utilities(NT x)
   if (CGAL_NTS sign(mone+mone) != CGAL::NEGATIVE) return false;
   if (CGAL_NTS abs(mone+mone) != one+one) return false;
   if (CGAL_NTS compare(zero+zero, one-zero) != CGAL::SMALLER) return false;
+  if (CGAL_NTS compare(zero, one-zero) != CGAL::SMALLER) return false;
+  if (CGAL_NTS compare(zero+zero, one) != CGAL::SMALLER) return false;
   if (CGAL::to_double(zero+zero) != 0.0) return false;
   if (! CGAL::is_finite(zero+zero)) return false;
   if (! CGAL::is_valid(zero+zero)) return false;

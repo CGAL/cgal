@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2002 The CGAL Consortium
+// Copyright (c) 2002,2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -15,7 +15,7 @@
 // package       : Number_types
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri
+// author(s)     : Andreas Fabri, Sylvain Pion
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
@@ -200,28 +200,8 @@ public:
     return Gmpz(mpq_denref(mpq()));
     
   }
-  
-  bool operator==(const Gmpq &z) const;
-
-  bool operator!=(const Gmpq &z) const;
-
-  bool operator<(const Gmpq &z) const;
-
-  bool operator<=(const Gmpq &z) const;
-
-  bool operator>(const Gmpq &z) const;
-
-  bool operator>=(const Gmpq &z) const;
 
   Gmpq operator-() const;
-
-  Gmpq operator+(const Gmpq &z) const;
-
-  Gmpq operator-(const Gmpq &z) const;
-
-  Gmpq operator*(const Gmpq &z) const;
-
-  Gmpq operator/(const Gmpq &z) const;
 
   Gmpq& operator+=(const Gmpq &z);
 
@@ -242,38 +222,96 @@ public:
 
 inline
 bool
-Gmpq::operator==(const Gmpq &z) const
-{ return mpq_equal(mpq(), z.mpq()); }
+operator==(const Gmpq &a, const Gmpq &b)
+{ return mpq_equal(a.mpq(), b.mpq()); }
 
 inline
 bool
-Gmpq::operator<(const Gmpq &z) const
-{ return mpq_cmp(mpq(), z.mpq()) < 0; }
-
-
+operator<(const Gmpq &a, const Gmpq &b)
+{ return mpq_cmp(a.mpq(), b.mpq()) < 0; }
 
 inline
 bool
-Gmpq::operator<=(const Gmpq &z) const
-{ return mpq_cmp(mpq(), z.mpq()) <= 0; }
-
-
-inline
-bool
-Gmpq::operator>(const Gmpq &z) const
-{ return mpq_cmp(mpq(), z.mpq()) > 0; }
-
+operator<=(const Gmpq &a, const Gmpq &b)
+{ return ! (b < a); }
 
 inline
 bool
-Gmpq::operator>=(const Gmpq &z) const
-{ return mpq_cmp(mpq(), z.mpq()) >= 0; }
-
+operator>(const Gmpq &a, const Gmpq &b)
+{ return b < a; }
 
 inline
 bool
-Gmpq::operator!=(const Gmpq &z) const
-{ return ! (*this == z); }
+operator>=(const Gmpq &a, const Gmpq &b)
+{ return ! (a < b); }
+
+inline
+bool
+operator!=(const Gmpq &a, const Gmpq &b)
+{ return ! (a == b); }
+
+
+// mixed operators.
+inline
+bool
+operator<(const Gmpq &a, int b)
+{ return mpq_cmp_si(a.mpq(), b, 1) < 0; }
+
+inline
+bool
+operator<(int a, const Gmpq &b)
+{ return mpq_cmp_si(b.mpq(), a, 1) > 0; }
+
+inline
+bool
+operator==(const Gmpq &a, int b)
+{ return mpq_cmp_si(a.mpq(), b, 1) == 0; }
+
+inline
+bool
+operator==(int a, const Gmpq &b)
+{ return b == a; }
+
+inline
+bool
+operator<=(const Gmpq &a, int b)
+{ return ! (b < a); }
+
+inline
+bool
+operator<=(int a, const Gmpq &b)
+{ return ! (b < a); }
+
+inline
+bool
+operator>(const Gmpq &a, int b)
+{ return b < a; }
+
+inline
+bool
+operator>(int a, const Gmpq &b)
+{ return b < a; }
+
+inline
+bool
+operator>=(const Gmpq &a, int b)
+{ return ! (a < b); }
+
+inline
+bool
+operator>=(int a, const Gmpq &b)
+{ return ! (a < b); }
+
+inline
+bool
+operator!=(const Gmpq &a, int b)
+{ return ! (a == b); }
+
+inline
+bool
+operator!=(int a, const Gmpq &b)
+{ return ! (a == b); }
+
 
 
 inline
@@ -287,10 +325,10 @@ Gmpq::operator-() const
 
 inline
 Gmpq
-Gmpq::operator+(const Gmpq &z) const
+operator+(const Gmpq &a, const Gmpq &b)
 {
     Gmpq Res;
-    mpq_add(Res.mpq(), mpq(), z.mpq());
+    mpq_add(Res.mpq(), a.mpq(), b.mpq());
     return Res;
 }
 
@@ -306,10 +344,10 @@ Gmpq::operator+=(const Gmpq &z)
 
 inline
 Gmpq
-Gmpq::operator-(const Gmpq &z) const
+operator-(const Gmpq &a, const Gmpq &b)
 {
     Gmpq Res;
-    mpq_sub(Res.mpq(), mpq(), z.mpq());
+    mpq_sub(Res.mpq(), a.mpq(), b.mpq());
     return Res;
 }
 
@@ -324,10 +362,10 @@ Gmpq::operator-=(const Gmpq &z)
 
 inline
 Gmpq
-Gmpq::operator*(const Gmpq &z) const
+operator*(const Gmpq &a, const Gmpq &b)
 {
     Gmpq Res;
-    mpq_mul(Res.mpq(), mpq(), z.mpq());
+    mpq_mul(Res.mpq(), a.mpq(), b.mpq());
     return Res;
 }
 
@@ -342,10 +380,10 @@ Gmpq::operator*=(const Gmpq &z)
 
 inline
 Gmpq
-Gmpq::operator/(const Gmpq &z) const
+operator/(const Gmpq &a, const Gmpq &b)
 {
     Gmpq Res;
-    mpq_div(Res.mpq(), mpq(), z.mpq());
+    mpq_div(Res.mpq(), a.mpq(), b.mpq());
     return Res;
 }
 

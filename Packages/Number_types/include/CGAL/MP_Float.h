@@ -55,6 +55,11 @@ CGAL_BEGIN_NAMESPACE
 
 class MP_Float;
 
+MP_Float operator+(const MP_Float &a, const MP_Float &b);
+MP_Float operator-(const MP_Float &a, const MP_Float &b);
+MP_Float operator*(const MP_Float &a, const MP_Float &b);
+MP_Float operator/(const MP_Float &a, const MP_Float &b);
+
 Comparison_result
 compare_noinline (const MP_Float & a, const MP_Float & b);
 
@@ -125,11 +130,14 @@ public:
     // Creates zero.
   }
 
+#if 0
+  // Causes ambiguities
   MP_Float(limb i)
   : v(1,i), exp(0)
   {
     remove_leading_zeros();
   }
+#endif
 
   MP_Float(limb2 i)
   : v(2), exp(0)
@@ -146,60 +154,10 @@ public:
     return MP_Float() - *this;
   }
 
-  MP_Float operator+(const MP_Float &) const;
-  MP_Float operator-(const MP_Float &) const;
-  MP_Float operator*(const MP_Float &) const;
-  MP_Float operator/(const MP_Float &) const;
-
-  MP_Float& operator+=(const MP_Float &a)
-  {
-    return *this = *this + a;
-  }
-
-  MP_Float& operator-=(const MP_Float &a)
-  {
-    return *this = *this - a;
-  }
-
-  MP_Float& operator*=(const MP_Float &a)
-  {
-    return *this = *this * a;
-  }
-
-  MP_Float& operator/=(const MP_Float &a)
-  {
-    return *this = *this / a;
-  }
-
-  bool operator<(const MP_Float &b) const
-  {
-      return CGAL_NTS compare(*this, b) == SMALLER;
-  }
-
-  bool operator>(const MP_Float &f) const
-  {
-      return f<*this;
-  }
-
-  bool operator>=(const MP_Float &f) const
-  {
-      return !(*this<f);
-  }
-
-  bool operator<=(const MP_Float &f) const
-  {
-      return !(*this>f);
-  }
-
-  bool operator==(const MP_Float &b) const
-  {
-    return (v == b.v) && (v.empty() || (exp == b.exp));
-  }
-
-  bool operator!=(const MP_Float &b) const
-  {
-    return ! (*this == b);
-  }
+  MP_Float& operator+=(const MP_Float &a) { return *this = *this + a; }
+  MP_Float& operator-=(const MP_Float &a) { return *this = *this - a; }
+  MP_Float& operator*=(const MP_Float &a) { return *this = *this * a; }
+  MP_Float& operator/=(const MP_Float &a) { return *this = *this / a; }
 
   int max_exp() const
   {
@@ -223,11 +181,6 @@ public:
     return v.empty();
   }
 
-  bool is_one() const
-  {
-    return v.size() == 1 && v.back() == 1;
-  }
-
   Sign sign() const
   {
     if (v.empty())
@@ -241,6 +194,30 @@ public:
   V v;
   int exp;
 };
+
+inline
+bool operator<(const MP_Float &a, const MP_Float &b)
+{ return CGAL_NTS compare(a, b) == SMALLER; }
+
+inline
+bool operator>(const MP_Float &a, const MP_Float &b)
+{ return b < a; }
+
+inline
+bool operator>=(const MP_Float &a, const MP_Float &b)
+{ return ! (a < b); }
+
+inline
+bool operator<=(const MP_Float &a, const MP_Float &b)
+{ return ! (a > b); }
+
+inline
+bool operator==(const MP_Float &a, const MP_Float &b)
+{ return (a.v == b.v) && (a.v.empty() || (a.exp == b.exp)); }
+
+inline
+bool operator!=(const MP_Float &a, const MP_Float &b)
+{ return ! (a == b); }
 
 MP_Float square(const MP_Float&);
 
@@ -266,7 +243,7 @@ MP_Float
 sqrt(const MP_Float &d);
 
 // to_double() returns, not the closest double, but a one bit error is allowed.
-// We guarantee : to_double(MPI(double d)) == d.
+// We guarantee : to_double(MP_Float(double d)) == d.
 double
 to_double(const MP_Float &b);
 

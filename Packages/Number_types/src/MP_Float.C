@@ -145,47 +145,47 @@ Add_Sub(const MP_Float &a, const MP_Float &b, const BinOp &op)
 }
 
 MP_Float
-MP_Float::operator+(const MP_Float &b) const
+operator+(const MP_Float &a, const MP_Float &b)
 {
-  if (is_zero())
+  if (a.is_zero())
     return b;
   if (b.is_zero())
-    return *this;
+    return a;
 
-  return Add_Sub(*this, b, std::plus<limb2>());
+  return Add_Sub(a, b, std::plus<MP_Float::limb2>());
 }
 
 MP_Float
-MP_Float::operator-(const MP_Float &b) const
+operator-(const MP_Float &a, const MP_Float &b)
 {
   if (b.is_zero())
-    return *this;
+    return a;
 
-  return Add_Sub(*this, b, std::minus<limb2>());
+  return Add_Sub(a, b, std::minus<MP_Float::limb2>());
 }
 
 MP_Float
-MP_Float::operator*(const MP_Float &b) const
+operator*(const MP_Float &a, const MP_Float &b)
 {
-  if (is_zero() || b.is_zero())
+  if (a.is_zero() || b.is_zero())
     return MP_Float();
 
-  if (this == &b)
-    return square(*this);
+  if (&a == &b)
+    return square(a);
 
   MP_Float r;
-  r.exp = exp + b.exp;
-  r.v.assign(v.size() + b.v.size(), 0);
-  for(unsigned i=0; i<v.size(); i++)
+  r.exp = a.exp + b.exp;
+  r.v.assign(a.v.size() + b.v.size(), 0);
+  for(unsigned i = 0; i < a.v.size(); ++i)
   {
     unsigned j;
-    limb2 carry = 0;
-    for(j=0; j<b.v.size(); j++)
+    MP_Float::limb2 carry = 0;
+    for(j = 0; j < b.v.size(); ++j)
     {
-      limb2 tmp = carry + (limb2) r.v[i+j]
-                        + std::multiplies<limb2>()(v[i], b.v[j]);
+      MP_Float::limb2 tmp = carry + (MP_Float::limb2) r.v[i+j]
+                        + std::multiplies<MP_Float::limb2>()(a.v[i], b.v[j]);
       r.v[i+j] = tmp;
-      carry = higher_limb(tmp);
+      carry = MP_Float::higher_limb(tmp);
     }
     r.v[i+j] = carry;
   }
@@ -264,10 +264,10 @@ Integer reciprocal(const Integer A, Integer k) {
 */
 
 MP_Float
-MP_Float::operator/(const MP_Float &d) const
+operator/(const MP_Float &a, const MP_Float &b)
 {
-  CGAL_assertion_msg(! d.is_zero(), " Division by zero");
-  return MP_Float(CGAL::to_double(*this)/CGAL::to_double(d));
+  CGAL_assertion_msg(! b.is_zero(), " Division by zero");
+  return MP_Float(CGAL::to_double(a)/CGAL::to_double(b));
 }
 
 MP_Float

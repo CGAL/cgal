@@ -1,3 +1,6 @@
+4.104 (24 July 2003)
+- Add mixed operators with int.
+
 4.103 (20 July 2003)
 - better handling of mpz_class and mpq_class by dealing with the expression
   templates.  Adding some tests for that.
