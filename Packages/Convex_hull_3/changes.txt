@@ -1,3 +1,7 @@
+2.13    (19 June 2001)
+- fixed bugs with facet circulator 
+- removed predicates that are now in kernel traits
+
 2.12    (19 June 2001)
 - incorporated changes to work for new polyhedron design
 
