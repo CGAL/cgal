@@ -36,6 +36,7 @@
 #include <CGAL/Filter_predicate.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/MP_Float.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,7 +44,7 @@ CGAL_BEGIN_NAMESPACE
 // EK = exact kernel called when needed by the filter.
 // FK = filtering kernel
 template <class CK,
-          class EK,
+          class EK = Simple_cartesian<MP_Float>,
           class FK = Simple_cartesian<Interval_nt_advanced>,
 	  class C2E_Converter = Cartesian_converter<CK, EK>,
 	  class C2F_Converter = Cartesian_converter<CK, FK,

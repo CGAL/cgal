@@ -22,8 +22,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 
 #if 1
-typedef CGAL::Filtered_kernel<CGAL::Cartesian<double>,
-                              CGAL::Simple_cartesian<CGAL::MP_Float> > Rep;
+typedef CGAL::Filtered_kernel<CGAL::Cartesian<double> > Rep;
 #else
 typedef CGAL::Homogeneous<int> K1;
 typedef CGAL::Homogeneous<CGAL::MP_Float> K2;
