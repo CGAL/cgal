@@ -274,6 +274,7 @@ operator!=(const Iterator_base& fi) const
 }
 
 template<class Tds>
+inline
 Triangulation_dsul_iterator_base_2<Tds>&
 Triangulation_dsul_iterator_base_2<Tds> ::
 operator++()
@@ -284,6 +285,7 @@ operator++()
 }
 
 template<class Tds>
+inline
 Triangulation_dsul_iterator_base_2<Tds>&
 Triangulation_dsul_iterator_base_2<Tds> ::
 operator--()
@@ -295,6 +297,7 @@ operator--()
 }
         
 template<class Tds>
+inline
 Triangulation_dsul_iterator_base_2<Tds>
 Triangulation_dsul_iterator_base_2<Tds> ::
 operator++(int)
@@ -305,6 +308,7 @@ operator++(int)
 }
         
 template<class Tds>
+inline
 Triangulation_dsul_iterator_base_2<Tds>
 Triangulation_dsul_iterator_base_2<Tds> ::        
 operator--(int)
@@ -314,25 +318,6 @@ operator--(int)
   return tmp;
 }
         
-// template<class Tds>
-// inline 
-// typename Tds::Face& 
-// Triangulation_dsul_iterator_base_2<Tds> ::
-// operator*() const
-// {
-//   CGAL_triangulation_precondition(pos != NULL);
-//   return const_cast<Face&>(*pos);
-// }
-    
-// template<class Tds>
-// inline 
-// typename Tds::Face* 
-// Triangulation_dsul_iterator_base_2<Tds> ::
-// operator->() const
-// {
-//   CGAL_triangulation_precondition(pos != NULL);
-//   return const_cast<Face*>(pos);
-// }
 
 // Face iterator implementation
 template<class Tds>
@@ -402,7 +387,8 @@ Triangulation_dsul_vertex_iterator_2(const Tds * tds)
 }
 
 template<class Tds>
-void   
+inline
+void  
 Triangulation_dsul_vertex_iterator_2<Tds> ::
 increment()
 {
@@ -419,6 +405,7 @@ increment()
 }
 
 template<class Tds>
+inline
 void   
 Triangulation_dsul_vertex_iterator_2<Tds> ::
 decrement()
@@ -446,6 +433,7 @@ associated_vertex()
 }
    
 template<class Tds>
+inline
 Triangulation_dsul_vertex_iterator_2<Tds>&
 Triangulation_dsul_vertex_iterator_2<Tds> ::
 operator++()
@@ -457,6 +445,7 @@ operator++()
 }
     
 template<class Tds>
+inline
 Triangulation_dsul_vertex_iterator_2<Tds>&
 Triangulation_dsul_vertex_iterator_2<Tds> ::    
 operator--()
@@ -469,6 +458,7 @@ operator--()
 }
     
 template<class Tds>
+inline
 Triangulation_dsul_vertex_iterator_2<Tds>
 Triangulation_dsul_vertex_iterator_2<Tds> ::      
 operator++(int)
@@ -479,6 +469,7 @@ operator++(int)
 }
 
 template<class Tds>
+inline
 Triangulation_dsul_vertex_iterator_2<Tds>
 Triangulation_dsul_vertex_iterator_2<Tds> ::      
 operator--(int)
@@ -489,6 +480,7 @@ operator--(int)
 }
     
 template<class Tds>
+inline
 bool
 Triangulation_dsul_vertex_iterator_2<Tds> :: 
 operator==(const Vertex_iterator& fi) const
@@ -506,32 +498,6 @@ operator!=(const Vertex_iterator& fi) const
   return !(*this == fi);
 }
     
-// template<class Tds>
-// inline 
-// typename Tds::Vertex&
-// Triangulation_dsul_vertex_iterator_2<Tds> :: 
-// operator*() const
-// {
-//   CGAL_triangulation_assertion( pos != NULL);
-//   if (pos == (Face*)1) {// only one vertex;
-//       return *(_tds->infinite_vertex());
-//   }
-//   return *(pos->vertex(index));
-// }
-    
-// template<class Tds>
-// inline 
-// typename Tds::Vertex*
-// Triangulation_dsul_vertex_iterator_2<Tds> :: 
-// operator->() const
-// {
-//   CGAL_triangulation_assertion( pos != NULL);
-//   if (pos == (Face*)1) {// only one vertex;
-//       return _tds->infinite_vertex();
-//   }
-//   return pos->vertex(index);
-// }
-
 
 // Edge iterator implementation
 
@@ -550,6 +516,7 @@ Triangulation_dsul_edge_iterator_2(const Tds * tds)
 
 
 template<class Tds>
+inline
 bool
 Triangulation_dsul_edge_iterator_2<Tds> ::
 operator==(const Edge_iterator& fi) const
@@ -560,6 +527,7 @@ operator==(const Edge_iterator& fi) const
 }
 
 template<class Tds>
+inline
 void
 Triangulation_dsul_edge_iterator_2<Tds> ::
 increment()
@@ -579,6 +547,7 @@ increment()
 }
 
 template<class Tds>
+inline
 void
 Triangulation_dsul_edge_iterator_2<Tds> ::
 decrement()
@@ -596,6 +565,7 @@ decrement()
 }
 
 template<class Tds>
+inline
 bool
 Triangulation_dsul_edge_iterator_2<Tds> ::
 associated_edge()
@@ -605,6 +575,7 @@ associated_edge()
 }
 
 template<class Tds>
+inline
 Triangulation_dsul_edge_iterator_2<Tds>&
 Triangulation_dsul_edge_iterator_2<Tds> ::
 operator++()
@@ -617,6 +588,7 @@ operator++()
     
 
 template<class Tds>
+inline
 Triangulation_dsul_edge_iterator_2<Tds>&
 Triangulation_dsul_edge_iterator_2<Tds> ::
 operator--()
@@ -629,6 +601,7 @@ operator--()
 
     
 template<class Tds>
+inline
 Triangulation_dsul_edge_iterator_2<Tds>
 Triangulation_dsul_edge_iterator_2<Tds> ::    
 operator++(int)
@@ -639,6 +612,7 @@ operator++(int)
 }
     
 template<class Tds>
+inline
 Triangulation_dsul_edge_iterator_2<Tds>
 Triangulation_dsul_edge_iterator_2<Tds> ::     
 operator--(int)
@@ -648,14 +622,6 @@ operator--(int)
   return tmp;
 }
     
-// template<class Tds>
-// typename Tds::Edge
-// Triangulation_dsul_edge_iterator_2<Tds> ::     
-// operator*() const
-// {
-//   return std::make_pair(const_cast<Face*>(pos), index);
-// }
-
 
 CGAL_END_NAMESPACE
 
