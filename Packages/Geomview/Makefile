@@ -35,8 +35,7 @@ submit:
 	--exclude=CVS --exclude=wrapper.tex --exclude=makefile \
 	--exclude=TODO --exclude=run_testsuite\
 	version maintainer description.txt changes.txt \
-	include src\
-	doc_tex doc_ps
+	include src test doc_tex doc_ps
 	cp -f Geomview.tar.gz *.txt version $(WWW_dir)
 	cp -f doc_ps/Geomview.ps.gz $(WWW_dir)/doc_ps/
 	echo > $(TMP_file)
