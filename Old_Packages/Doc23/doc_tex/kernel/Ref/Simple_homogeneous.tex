@@ -1,0 +1,24 @@
+\begin{ccRefClass}{Simple_homogeneous<RingNumberType>}
+\ccInclude{CGAL/Simple_homogeneous.h}
+
+\ccDefinition
+A model for a \ccc{Kernel} using homogeneous coordinates to represent the
+geometric objects. 
+
+\ccRefines
+\ccc{Kernel}
+
+\ccTexHtml{\ccSetThreeColumns{typedef Quotient<RingNumberType>}{}{\hspace*{8.5cm}}}{}
+\ccTypes
+\ccTypedef{typedef Quotient<RingNumberType> FT;}{}
+\ccGlue
+\ccTypedef{typedef RingNumberType RT;}{}
+
+\ccImplementation In contrast to \ccc{Homogeneous}, no reference counting
+is used internally. This eases debugging, but may slow down algorithms
+that copy objects intensively, or slightly speed up others.
+
+\ccSeeAlso
+\ccc{Cartesian<FieldNumberType>}, \ccc{Homogeneous<RingNumberType>},
+\ccc{Simple_cartesian<FieldNumberType>}
+\end{ccRefClass}

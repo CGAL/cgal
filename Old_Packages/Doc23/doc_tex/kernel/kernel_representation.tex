@@ -108,9 +108,10 @@ costs. CGAL also provides \ccc{Simple_cartesian<FieldNumberType>}, a kernel
 that uses \ccHtmlNoLinksFrom{Cartesian} representation but no reference counting. 
 Debugging is easier with \ccc{Simple_cartesian<FieldNumberType>}, since the coordinates
 are stored within the class and hence direct access to the coordinates is
-possible.
+possible.  Depending on the algorithm, it can also be slightly more or less
+efficient than \ccc{Cartesian<FieldNumberType>}.
 With \ccc{Simple_cartesian<FieldNumberType>}, both \ccc{Simple_cartesian<FieldNumberType>::FT}
-and \ccc{Simple_cartesian<FieldNumberType>::RT} are mapped to number type \ccc{FieldNumberType}, too.
+and \ccc{Simple_cartesian<FieldNumberType>::RT} are mapped to number type \ccc{FieldNumberType}.
 
 \section{Homogeneous Kernel}
 As we mentioned before, homogeneous coordinates permit to avoid 
@@ -133,6 +134,18 @@ Thereby, divisions are circumvented.
 With \ccc{Homogeneous<RingNumberType>}, \ccc{Homogeneous<RingNumberType>::FT} is
 equal to \ccStyle{Quotient<RingNumberType>} while 
 \ccc{Homogeneous<RingNumberType>::RT} is equal to \ccc{RingNumberType}.
+
+\ccc{Homogeneous<RingNumberType>} uses reference counting internally to save
+copying costs. CGAL also provides \ccc{Simple_homogeneous<RingNumberType>}, a
+kernel that uses \ccHtmlNoLinksFrom{homogeneous} representation but no reference
+counting.  Debugging is easier with \ccc{Simple_homogeneous<RingNumberType>},
+since the coordinates are stored within the class and hence direct access to
+the coordinates is possible.  Depending on the algorithm, it can also be
+slightly more or less efficient than \ccc{Homogeneous<RingNumberType>}.
+With \ccc{Simple_homogeneous<RingNumberType>},
+\ccc{Simple_homogeneous<RingNumberType>::FT} is equal to
+\ccStyle{Quotient<RingNumberType>} while
+\ccc{Simple_homogeneous<RingNumberType>::RT} is equal to \ccc{RingNumberType}.
 
 \section{Naming conventions}
 
@@ -216,7 +229,8 @@ crash or compute incorrect results due to accumulated rounding errors.
 You need to include a representation class first before you include any of
 the geometric objects of the kernel that you would like to use with
 the representation class, i.e., one or several of 
-\ccc{CGAL/Cartesian.h}, \ccc{CGAL/Homogeneous.h}, and \ccc{CGAL/Simple_cartesian.h},
+\ccc{CGAL/Cartesian.h}, \ccc{CGAL/Homogeneous.h}, \ccc{CGAL/Simple_cartesian.h},
+and \ccc{CGAL/Simple_homogeneous.h}
 before \ccc{CGAL/..._2.h} and \ccc{CGAL/..._3.h}.
 
 \ccExample

@@ -1,5 +1,6 @@
-2.9     (?? Feb 2001)
+2.9     (?? Mar 2001)
 - Add doc for Construct_cross_product_vector_3.
+- Add doc for Simple_homogeneous.
 
 2.8     (14 Feb 2001)
 
