@@ -54,6 +54,10 @@ int main(int argc, char *argv[])
 #include <CGAL/Segment_2_Segment_2_intersection.h>
 #include <CGAL/geowin_support.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 typedef CGAL::Cartesian<double>   K;
 typedef K::Segment_2              Segment;
 typedef K::Point_2                Point;

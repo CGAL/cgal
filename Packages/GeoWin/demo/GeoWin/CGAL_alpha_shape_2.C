@@ -66,6 +66,10 @@ int main(int argc, char *argv[])
 #include <CGAL/Alpha_shape_2.h>
 #include <CGAL/geowin_support.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 typedef double                                     coord_type;
 typedef CGAL::Cartesian<coord_type>                K;
 typedef K::Point_2                                 Point;

@@ -56,6 +56,10 @@ int main(int argc, char *argv[])
 #include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 typedef double                                               NT;
 typedef CGAL::Cartesian<NT>                                  K;
 typedef K::Point_3                                           Point_3;

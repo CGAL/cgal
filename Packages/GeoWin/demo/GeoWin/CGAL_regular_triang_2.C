@@ -74,6 +74,10 @@ typedef Regular_triangulation_2::Edge_iterator                 Edge_iterator;
 
 #include <CGAL/geowin_support.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 class geo_reg_triang : public geowin_update<std::list<Circle>, std::list<Segment> >
 {
 public:

@@ -74,6 +74,10 @@ typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >::Vertex          Vertex;
 
 #include <CGAL/geowin_support.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 Arr_2 arr;
 
 class geo_locate : public geowin_update<std::list<Point>,std::list<Segment> >

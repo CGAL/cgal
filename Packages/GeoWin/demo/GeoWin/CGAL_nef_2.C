@@ -50,8 +50,16 @@ int main(int argc, char *argv[])
 }
 #else 
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#else
+#ifndef LEDA_NAMESPACE_NAME
+#define LEDA_NAMESPACE_NAME
+#endif
+#endif
+
 #include <CGAL/leda_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_2.h>
@@ -59,16 +67,13 @@ int main(int argc, char *argv[])
 #include <CGAL/IO/Nef_polyhedron_2_Window_stream.h>
 #include <CGAL/geowin_support.h>
 
-#if !defined(LEDA_NAMESPACE)
-#define LEDA_NAMESPACE
-#endif
 
 template <>
 struct ring_or_field<leda_integer> {
   typedef ring_with_gcd kind;
   typedef leda_integer RT;
   static RT gcd(const RT& r1, const RT& r2) 
-  { return LEDA_NAMESPACE::gcd(r1,r2); }
+  { return LEDA_NAMESPACE_NAME::gcd(r1,r2); }
 };
 
 typedef CGAL::Extended_homogeneous<leda_integer>              EK;

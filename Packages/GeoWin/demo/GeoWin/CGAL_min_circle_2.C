@@ -55,6 +55,10 @@ int main(int argc, char *argv[])
 #include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/geowin_support.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 typedef  CGAL::Cartesian<double>         K;
 typedef  K::Point_2                      Point;
 typedef  K::Circle_2                     Circle;

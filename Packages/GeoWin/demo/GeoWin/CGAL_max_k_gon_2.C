@@ -59,6 +59,10 @@ int main(int argc, char *argv[])
 #include<vector>
 #include <CGAL/geowin_support.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 typedef CGAL::Cartesian<double>           K;
 typedef CGAL::Polygon_traits_2<K>         Traits;
 typedef K::Segment_2                      Segment;

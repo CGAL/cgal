@@ -57,6 +57,10 @@ int main(int argc, char *argv[])
 
 #include <CGAL/leda_rational.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 //typedef double                                       NT;
 typedef leda_rational                                NT;
 

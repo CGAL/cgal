@@ -51,8 +51,6 @@ int main(int argc, char *argv[])
 #else 
 
 #include <CGAL/Cartesian.h>
-//#include <CGAL/squared_distance_2.h> 
-//#include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -76,6 +74,10 @@ typedef Triangulation_2::Edge_iterator  Edge_iterator;
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/geowin_support.h>
+
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
 
 class geo_triang : public geowin_update<std::list<Point>, std::list<Segment> >
 {

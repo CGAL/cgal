@@ -61,6 +61,10 @@ int main(int argc, char *argv[])
 #include <CGAL/geowin_support.h>
 #include <CGAL/leda_rational.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 //#if !defined(_MSC_VER)
 //typedef leda_rational coord_type;
 //#else

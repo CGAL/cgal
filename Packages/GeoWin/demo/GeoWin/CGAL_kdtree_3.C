@@ -54,7 +54,11 @@ int main(int argc, char *argv[])
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/geowin_support.h>
-#include  <CGAL/kdtree_d.h>
+#include <CGAL/kdtree_d.h>
+
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
 
 typedef CGAL::Cartesian<double>                 K;
 typedef K::Point_3                              Point;

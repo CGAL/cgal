@@ -51,12 +51,14 @@ int main(int argc, char *argv[])
 #else 
 
 #include <CGAL/Cartesian.h>
-//#include <CGAL/squared_distance_2.h>   
-//#include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/geowin_support.h>
+
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
 
 typedef double coord_type;
 typedef CGAL::Cartesian<coord_type>                            K;

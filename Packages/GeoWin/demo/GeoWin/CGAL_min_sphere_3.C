@@ -63,6 +63,10 @@ int main(int argc, char *argv[])
 #include <LEDA/d3_sphere.h>
 #include <LEDA/d3_hull.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 using namespace std;
 
 //#if !defined(_MSC_VER)

@@ -57,6 +57,10 @@ int main(int argc, char *argv[])
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/predicates_on_points_3.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 // we use double coordinates for input/visualization
 // but we calculate with leda_rational coordinates to
 // get robustness ...

@@ -54,6 +54,10 @@ int main(int argc, char *argv[])
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/geowin_support.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
+
 typedef CGAL::Cartesian<double>                      K;
 typedef K::Point_2                                   Point;
 typedef CGAL::Polygon_traits_2<K>                    PTraits;

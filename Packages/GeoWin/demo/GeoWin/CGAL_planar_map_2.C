@@ -61,6 +61,9 @@ int main(int argc, char *argv[])
 #include <CGAL/geowin_support.h>
 #include <CGAL/distance_predicates_2.h>
 
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
 
 typedef double                                            number_type;
 typedef CGAL::Cartesian<number_type>                      K;
