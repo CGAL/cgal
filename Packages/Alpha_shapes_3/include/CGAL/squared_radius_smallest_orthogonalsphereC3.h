@@ -17,6 +17,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+//                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -39,15 +40,16 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-template< class FT >
+template< class K >
 CGAL_KERNEL_MEDIUM_INLINE
-FT 
+typename K::FT 
 squared_radius_orthogonalsphere(
-  const Weighted_point<Point_3< Cartesian<FT> >, FT> &p,
-  const Weighted_point<Point_3< Cartesian<FT> >, FT> &q,
-  const Weighted_point<Point_3< Cartesian<FT> >, FT> &r,
-  const Weighted_point<Point_3< Cartesian<FT> >, FT> &s) 
+  const Weighted_point<Point_3<K>, typename K::FT> &p,
+  const Weighted_point<Point_3<K>, typename K::FT> &q,
+  const Weighted_point<Point_3<K>, typename K::FT> &r,
+  const Weighted_point<Point_3<K>, typename K::FT> &s) 
 {  
+  typedef typename K::FT FT;
   FT px(p.point().x());
   FT py(p.point().y());
   FT pz(p.point().z());
@@ -70,14 +72,15 @@ squared_radius_orthogonalsphere(
 					   sx, sy, sz, sw);
 }
 
-template< class FT >
+template< class K >
 CGAL_KERNEL_MEDIUM_INLINE
-FT 
+typename K::FT 
 squared_radius_smallest_orthogonalsphere(
-  const Weighted_point<Point_3< Cartesian<FT> >, FT> &p,
-  const Weighted_point<Point_3< Cartesian<FT> >, FT> &q,
-  const Weighted_point<Point_3< Cartesian<FT> >, FT> &r) 
+  const Weighted_point<Point_3<K>, typename K::FT> &p,
+  const Weighted_point<Point_3<K>, typename K::FT> &q,
+  const Weighted_point<Point_3<K>, typename K::FT> &r) 
 {   
+  typedef typename K::FT FT;
   FT px(p.point().x());
   FT py(p.point().y());
   FT pz(p.point().z());
@@ -96,13 +99,14 @@ squared_radius_smallest_orthogonalsphere(
 						    rx, ry, rz, rw);
 }
 
-template< class FT >
+template< class K >
 CGAL_KERNEL_MEDIUM_INLINE
-FT 
+typename K::FT 
 squared_radius_smallest_orthogonalsphere(
-   const Weighted_point<Point_3< Cartesian<FT> >, FT> &p,
-   const Weighted_point<Point_3< Cartesian<FT> >, FT> &q) 
+   const Weighted_point<Point_3<K>, typename K::FT> &p,
+   const Weighted_point<Point_3<K>, typename K::FT> &q) 
 {
+  typedef typename K::FT FT;
   FT px(p.point().x());
   FT py(p.point().y());
   FT pz(p.point().z());

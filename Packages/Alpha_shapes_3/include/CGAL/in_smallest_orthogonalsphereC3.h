@@ -17,6 +17,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+//                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -39,17 +40,16 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-template< class FT >
+template< class K >
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
 in_smallest_orthogonalsphere(
-			     const Weighted_point<Point_3< Cartesian<FT> >, FT > &p,
-			     const Weighted_point<Point_3< Cartesian<FT> >, FT > &q, 
-			     const Weighted_point<Point_3< Cartesian<FT> >, FT > &r,
-			     const Weighted_point<Point_3< Cartesian<FT> >, FT > &t) 
+			     const Weighted_point<Point_3<K>, typename K::FT > &p,
+			     const Weighted_point<Point_3<K>, typename K::FT > &q, 
+			     const Weighted_point<Point_3<K>, typename K::FT > &r,
+			     const Weighted_point<Point_3<K>, typename K::FT > &t) 
 {
-
- 
+  typedef typename K::FT FT;
   FT px(p.point().x());
   FT py(p.point().y());
   FT pz(p.point().z());
