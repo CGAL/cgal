@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: removed explicit support for "external" STL.
+GLOB: internal tests now use standard headers and namespace.
 ALL : Update for CGAL-2.0.
 GLOB: Show whether compiler is supported.
 GLOB: Create redirection header files in correct dir.
@@ -17,6 +19,11 @@ GLOB: added namespace disabling for SGI-7.2.1 in tests.
 GLOB: removed geomview support (now in geomview package).
 GLOB: added geomview support,
 GLOB: included fixes from CGAL-1-1-patch.
+DOCS: sample installation now with egcs
+DOCS: removed support for "external" STL
+DOCS: removed obsolete paragraph about LEDA/STL problems
+DOCS: updated upgrade section.
+DOCS: updated list of supported compilers.
 DOCS: adopted to new html-converter.
 SRC : added Fixed_precision_nt.o.
 SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.

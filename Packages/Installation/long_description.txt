@@ -4,6 +4,18 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.35
+//---------------------------------------------------------------------
+
+GLOB: removed explicit support for "external" STL.
+GLOB: internal tests now use standard headers and namespace.
+DOCS: sample installation now with egcs
+DOCS: removed support for "external" STL
+DOCS: removed obsolete paragraph about LEDA/STL problems
+DOCS: updated upgrade section.
+DOCS: updated list of supported compilers.
+
+//---------------------------------------------------------------------
 //	revision 1.34
 //---------------------------------------------------------------------
 
