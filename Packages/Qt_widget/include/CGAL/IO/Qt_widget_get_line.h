@@ -23,6 +23,7 @@
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <qcursor.h>
 
 #ifndef CGAL_QT_WIDGET_GET_POINT_BUTTON
 #define CGAL_QT_WIDGET_GET_POINT_BUTTON Qt::LeftButton
@@ -45,6 +46,8 @@ public:
     firsttime = true;
   }
 private:
+  QCursor oldcursor;
+
   void mousePressEvent(QMouseEvent *e)
   {
     if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON && !firstpoint)

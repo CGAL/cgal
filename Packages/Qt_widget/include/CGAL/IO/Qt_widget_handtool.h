@@ -28,7 +28,7 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <qrect.h>
-
+#include <qcursor.h>
 
 #ifndef CGAL_QT_WIDGET_GET_POINT_BUTTON
 #define CGAL_QT_WIDGET_GET_POINT_BUTTON Qt::LeftButton
@@ -43,6 +43,8 @@ public:
   Qt_widget_handtool() : wasrepainted(TRUE), on_first(FALSE){};
 
 private:
+  QCursor oldcursor;
+
   void draw(){
     wasrepainted = TRUE;
   };

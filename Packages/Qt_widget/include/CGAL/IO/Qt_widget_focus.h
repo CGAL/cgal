@@ -35,6 +35,7 @@
 #include <qtimer.h>
 #include <qpixmap.h>
 #include <qbitmap.h>
+#include <qcursor.h>
 
 
 namespace CGAL {
@@ -51,6 +52,7 @@ private:
 			*cursor3;
   QBitmap	cb, cm;
   int		cycle;
+  QCursor oldcursor;
 
 public:
   Qt_widget_focus() : cycle(0) {
@@ -95,7 +97,6 @@ public:
 private:  
   void mousePressEvent(QMouseEvent *e)
   {
-    const double ratios=2.0;
     double
       x=widget->x_real(e->x()),
       y=widget->y_real(e->y());

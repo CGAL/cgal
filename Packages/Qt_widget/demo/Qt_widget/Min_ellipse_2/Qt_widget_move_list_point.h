@@ -27,6 +27,7 @@
 #include <qobject.h>
 #include <qpopupmenu.h>
 #include <qmessagebox.h> 
+#include <qcursor.h>
 
 #include <CGAL/squared_distance_2.h> 
 
@@ -68,6 +69,8 @@ public:
     l_of_p = l;
   }
 private:
+  QCursor oldcursor;
+
   void widget_repainted(){
       wasrepainted = TRUE;
   };

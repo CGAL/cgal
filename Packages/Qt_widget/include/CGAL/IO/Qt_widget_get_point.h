@@ -23,6 +23,7 @@
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <qcursor.h>
 
 #ifndef CGAL_QT_WIDGET_GET_POINT_BUTTON
 #define CGAL_QT_WIDGET_GET_POINT_BUTTON Qt::LeftButton
@@ -62,6 +63,7 @@ private:
   };
 
   QCursor cursor;
+  QCursor oldcursor;
 };
 
 } // namespace CGAL

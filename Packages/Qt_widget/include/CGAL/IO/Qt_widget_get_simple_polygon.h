@@ -26,6 +26,7 @@
 #include <CGAL/Segment_2_Segment_2_intersection.h>  
 #include <list>
 
+#include <qcursor.h>
 
 namespace CGAL {
 template <class Polygon>
@@ -219,6 +220,7 @@ protected:
 		  rubber_old; //the old point of the rubber band
   Polygon poly;	      //the polygon
   QWidget::FocusPolicy	oldpolicy;
+  QCursor oldcursor;
 };
 
 } // namespace CGAL

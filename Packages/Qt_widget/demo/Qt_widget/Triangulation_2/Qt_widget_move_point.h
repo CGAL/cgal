@@ -29,6 +29,7 @@
 
 #include <qobject.h>
 #include <qpopupmenu.h>
+#include <qcursor.h>
 
 namespace CGAL {
   class Qt_widget_movepoint_helper : public Qt_widget_layer
@@ -70,6 +71,8 @@ namespace CGAL {
     };
     void set_Delaunay (T *t) {dt = t;}
   private:
+    QCursor oldcursor;
+
     void draw(){
       wasrepainted = true;
     };

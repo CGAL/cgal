@@ -24,7 +24,7 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <qrect.h>
-
+#include <qcursor.h>
 
 
 #ifndef CGAL_QT_WIDGET_ZOOMRECT_BUTTON
@@ -44,6 +44,8 @@ public:
   Qt_widget_zoomrect() : widgetrepainted(TRUE), on_first(FALSE) {};
 
 private:
+  QCursor oldcursor;
+
   void draw(){
     widgetrepainted = TRUE;
   };
