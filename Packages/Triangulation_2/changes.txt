@@ -1,8 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.85 (??/??/01)
+Ver 4.85 (17/04/01)
 - Fix warning in Pointer.h for operator==(CGAL_NULL_TYPE).
+- Fix warning in Triangulation_line_face_circulator_2.h
+- added typename in _test_line_face_circulators
 
 Ver 4.84 (14/03/01)
 - pass the private constructor of Line_face_circulator

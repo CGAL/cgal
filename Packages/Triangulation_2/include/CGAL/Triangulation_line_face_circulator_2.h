@@ -181,7 +181,9 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
   
   // now vt is finite and to the left of pq
   Vertex_handle vr = fc-> vertex(ccw(ic));
-  Orientation pqr;
+  Orientation pqr = RIGHTTURN;
+  // this initialisation means nothing; just there to avoid the
+  // warning "pqr might be used uninitialized"
   while ( (!_tr->is_infinite(vr)) &&
 	  (pqr = _tr->orientation(p, q, vr->point()))== LEFTTURN ) {
     --fc;

@@ -18,6 +18,8 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+#include <vector>
+
 template <class Triangulation>
 void
 _test_line_face_circulator( const Triangulation & )
@@ -83,10 +85,10 @@ _test_line_face_circulator( const Triangulation & )
  m.push_back(m1); m.push_back(m2); m.push_back(m3); m.push_back(m4);
 
  Cls tr;
- std::vector<Point>::iterator pit;
- std::vector<Point>::iterator qit;
- std::vector<Point>::iterator mit;
- std::vector<Point>::iterator tit;
+ typename std::vector<Point>::iterator pit;
+ typename std::vector<Point>::iterator qit;
+ typename std::vector<Point>::iterator mit;
+ typename std::vector<Point>::iterator tit;
  int i; 
  Locate_type(lt);
 

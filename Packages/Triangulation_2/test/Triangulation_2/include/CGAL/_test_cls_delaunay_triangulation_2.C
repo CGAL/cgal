@@ -68,6 +68,16 @@ _test_cls_delaunay_triangulation_2( const Del & del)
       T3.insert( Point(pt[m]) );
   assert( T3.is_valid() );
  
+
+  // test nearest_vertex
+
+
+  // test find_conflicts
+  //std::list<Face_handle> conflicts;
+  //assert(T2.find_conflicts(Point(1,1,2), conflicts);
+
+
+
   /********************/
   /***** Duality ******/
   std::cout << "    duality" << std::endl;
