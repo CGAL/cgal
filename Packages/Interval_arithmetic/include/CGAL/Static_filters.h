@@ -72,9 +72,11 @@ CGAL_BEGIN_NAMESPACE
 
 // The K_base argument is supposed to provide exact primitives.
 template < typename K_base >
-struct Static_filters : public K_base
+class Static_filters : public K_base
 {
   typedef Static_filters<K_base>                    Self;
+
+public:
 
   typedef CommonKernelFunctors::Left_turn_2<Self>   Left_turn_2;
   typedef CartesianKernelFunctors::Less_xy_2<Self>  Less_xy_2;
