@@ -1,86 +1,61 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-# CGAL_CXX=$(HOME)/egcs/$(UNAME)/bin/g++
-# Pour utiliser Purify:
-# CGAL_CXX=purify g++
-# CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
-              # -L$(GMP_LIB_DIR) -lgmp -lm \
-
 CXXFLAGS = \
-	-I../../include \
-	$(TESTSUITE_CXXFLAGS) \
-	$(CGAL_CXXFLAGS) \
-	-W -Wall -O2 # -pedantic
-	# -g -W -Wall -Winline
-	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
-	# -O2 -W -Winline -Wunused -malign-double
-	# -I$(CGAL)/include_advanced    # Advanced kernel, cf config.h aussi.
-	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
-	# -mcpu=ultrasparc -mtune=ultrasparc
-	# -fomit-frame-pointer
-	# -fprofile-arcs -ftest-coverage # for GCOV
-	# -fpermissive
-	# -fno-enforce-eh-specs # for GCC 3
-	# -fhonor-std
-	# -frepo
-	# -pedantic
-	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
-	# -I../../../Triangulation/include \
-	# -I../../../Triangulation3/include \
-	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
-	# /Fatst1.s
-	# /Op /Oi /Od /Za /O2 /Ox
-	# -DCGAL_CHECK_EXPENSIVE \
-	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
-	# -DCGAL_NO_WARNINGS \
-	# -DLOOPS=10000000
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LDFLAGS = ./Geomview_stream.o \
-         $(TESTSUITE_LDFLAGS) \
-         $(CGAL_LDFLAGS)
+LIBPATH = \
+          $(CGAL_LIBPATH)
+
+LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-.PRECIOUS: %$(OBJ_EXT) tst1 %$(EXE_EXT)
-.SUFFIXES: .test
-.PHONY: %.test test
+all:            \
+                input$(EXE_EXT) \
+                kernel$(EXE_EXT) \
+                terrain$(EXE_EXT) 
 
-%$(EXE_EXT) : %.C
+input$(EXE_EXT): input$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)input input$(OBJ_EXT) $(LDFLAGS)
 
-%$(OBJ_EXT) : %.C
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+kernel$(EXE_EXT): kernel$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)kernel kernel$(OBJ_EXT) $(LDFLAGS)
 
-%.s : %.C
-	$(CGAL_CXX) $(CXXFLAGS) -S $<
+terrain$(EXE_EXT): terrain$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)terrain terrain$(OBJ_EXT) $(LDFLAGS)
 
-%$(EXE_EXT) : %$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)$@ $+ $(LDFLAGS)
-	./$@
+clean: \
+                   input.clean \
+                   kernel.clean \
+                   terrain.clean 
 
-%.test : %$(EXE_EXT)
-	./$<
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
 
-SOURCES  := $(wildcard  *.C)
-OBJECTS  := $(SOURCES:.C=$(OBJ_EXT))
-PROGRAMS := $(SOURCES:.C=$(EXE_EXT))
-TEST_RUN := $(SOURCES:.C=.test)
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
-all: ../../src/Geomview_stream.o $(PROGRAMS)
-
-test: $(TEST_RUN)
-
-clean:
-	rm -f *.o $(PROGRAMS) *.bb *.bbg *.da *.gcov core *.rpo .pure
-	rm -f *.obj *.exe
