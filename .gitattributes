@@ -1436,8 +1436,10 @@ Packages/Qt_widget/demo/Qt_widget/basic/tutorial7/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/basic/tutorial8/demo.dsp -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/triangulation.eps -text
 Packages/Qt_widget/doc_tex/support/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/support/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/support/Qt_widget/triangulation.eps -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/back.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/circle.xpm -text
