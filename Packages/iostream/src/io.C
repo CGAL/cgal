@@ -1,0 +1,99 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+
+// release       : $CGAL_Revision: CGAL-0.9-I-04 $
+// release_date  : $CGAL_Date: 1997/12/15 $
+//
+// file          : src/io.C
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Andreas Fabri
+//
+// coordinator   : Mariette.Yvinec (Mariette.Yvinec@sophia.inria.fr)
+//
+// ============================================================================
+
+
+#ifndef CGAL_IO_C
+#define CGAL_IO_C
+
+#include <CGAL/basic.h>
+#include <CGAL/IO/io.h>
+
+CGAL_BEGIN_NAMESPACE
+
+int IO::mode = ios::xalloc();
+
+
+IO::Mode
+get_mode(ios& i)
+{
+    return CGAL_static_cast(IO::Mode,i.iword(IO::mode));
+}
+
+IO::Mode
+set_ascii_mode(ios& i)
+{
+    IO::Mode m = get_mode(i);
+    i.iword(IO::mode) = IO::ASCII;
+    return m;
+}
+
+
+IO::Mode
+set_binary_mode(ios& i)
+{
+    IO::Mode m = get_mode(i);
+    i.iword(IO::mode) = IO::BINARY;
+    return m;
+}
+
+
+IO::Mode
+set_pretty_mode(ios& i)
+{
+    IO::Mode m = get_mode(i);
+    i.iword(IO::mode) = IO::PRETTY;
+    return m;
+}
+
+
+IO::Mode
+set_mode(ios& i, IO::Mode m)
+{
+    IO::Mode old = get_mode(i);
+    i.iword(IO::mode) = m;
+    return old;
+}
+
+bool
+is_pretty(ios& i)
+{
+    return i.iword(IO::mode) == IO::PRETTY;
+}
+
+bool
+is_ascii(ios& i)
+{
+    return i.iword(IO::mode) == IO::ASCII;
+}
+
+
+bool
+is_binary(ios& i)
+{
+    return i.iword(IO::mode) == IO::BINARY;
+}
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_IO_C
