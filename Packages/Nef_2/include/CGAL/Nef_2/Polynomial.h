@@ -340,10 +340,6 @@ template <class pNT> class Polynomial :
     return ptr()->coeff[i]; }
   //{\Marrop the coefficient $a_i$ of the polynomial.}
 
-  const NT& operator[](unsigned int i) 
-  { CGAL_assertion( i<(ptr()->coeff.size()) );
-    return ptr()->coeff[i]; }
-
   NT operator()(unsigned int i) const
   { 
     if(i<(ptr()->coeff.size()))
@@ -683,10 +679,6 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
     return ptr()->coeff[i]; }
   /*{\Xarrop the coefficient $a_i$ of the polynomial.}*/
 
-  const int& operator[](unsigned int i) 
-  { CGAL_assertion( i<(ptr()->coeff.size()) );
-    return ptr()->coeff[i]; }
-
   int eval_at(const int& r) const
   /*{\Xop evaluates the polynomial at |r|.}*/
   { CGAL_assertion( degree()>=0 );
@@ -993,10 +985,6 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { CGAL_assertion( i<(ptr()->coeff.size()) );
     return ptr()->coeff[i]; }
   /*{\Xarrop the coefficient $a_i$ of the polynomial.}*/
-
-  const double& operator[](unsigned int i) 
-  { CGAL_assertion( i<(ptr()->coeff.size()) );
-    return ptr()->coeff[i]; }
 
   double eval_at(const double& r) const
   /*{\Xop evaluates the polynomial at |r|.}*/
