@@ -1,6 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.25 (?? ??? ????)
+     - added missing dereferences in modification operators
+
 1.24 (12 Aug 2002)
      - replaced LEFTTURN and friends by LEFT_TURN and friends
 

@@ -588,16 +588,16 @@ public:
   { return complement(); }
    
   Nef_polyhedron_2<T>& operator*=(const Nef_polyhedron_2<T>& N1)
-  { this = intersection(N1); return *this; }
+  { *this = intersection(N1); return *this; }
 
   Nef_polyhedron_2<T>& operator+=(const Nef_polyhedron_2<T>& N1)
-  { this = join(N1); return *this; }
+  { *this = join(N1); return *this; }
 
   Nef_polyhedron_2<T>& operator-=(const Nef_polyhedron_2<T>& N1)
-  { this = difference(N1); return *this; }
+  { *this = difference(N1); return *this; }
 
   Nef_polyhedron_2<T>& operator^=(const Nef_polyhedron_2<T>& N1)
-  { this = symmetric_difference(N1); return *this; }
+  { *this = symmetric_difference(N1); return *this; }
 
   /*{\Mtext There are also comparison operations like |<,<=,>,>=,==,!=|
   which implement the relations subset, subset or equal, superset, superset
