@@ -76,7 +76,7 @@ public:
   bool      has_on_bounded_side(const Point_3& p) const;
   bool      has_on_unbounded_side(const Point_3& p) const;
   bool      is_degenerate() const;
-  Bbox_2    bbox() const;
+  Bbox_3    bbox() const;
   FT        xmin() const;
   FT        ymin() const;
   FT        zmin() const;
@@ -376,7 +376,7 @@ Iso_cuboidH3<R>::is_degenerate() const
 
 template < class R >
 inline
-Bbox_2
+Bbox_3
 Iso_cuboidH3<R>::bbox() const
 { return  min().bbox() + max().bbox(); }
 
