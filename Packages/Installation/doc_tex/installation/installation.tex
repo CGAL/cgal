@@ -67,7 +67,7 @@
 %%\newcommand{\compilerpage}{\path'http://www.cs.uu.nl/CGAL/Compilers/'}
 %%\newcommand{\faqpage}{\path'http://www.cs.uu.nl/CGAL/FAQ/'}
 %%\newcommand{\hpstlpage}{\path'http://www.cs.rpi.edu/~musser/stl.html'}
-\newcommand{\sgistlpage}{\path'http://www.sgi.com/Technology/STL/'}
+\newcommand{\sgistlpage}{\path'http://www.sgi.com/tech/stl/'}
 \newcommand{\stlportpage}{\path'http://www.stlport.org/'}
 \newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
 \newcommand{\gmppage}{\path'http://www.gnu.org/software/gmp'}
@@ -98,9 +98,9 @@ In order to build the \cgal\ libraries you need a \CC\ compiler.
 Currently only a small number of recent compilers on Unix platforms
 and \mswin\ are supported. The reason is that most compilers do not
 conform to the ISO 14882 standard for \lcTex{\CC\footnote{see e.g.
-    \path~http://reality.sgi.com/austern/std-c++/faq.html\#PartB~ for
+    \path~http://www.research.att.com/~austern/csc/faq.html\#PartB~ for
     information}} \lcHtml{\CC\footnote{see e.g.
-    \path~http://reality.sgi.com/austern/std-c++/faq.html#PartB~ for
+    \path~http://www.research.att.com/~austern/csc/faq.html\#PartB~ for
     information}} and some of them have so many limitations/bugs that
 we could not work around all of them.
 
@@ -109,7 +109,7 @@ targeted for this OS and is described in
 section~\ref{sec:wininst}\footnote{see also the file
   \texttt{install.txt} in the root directory of the installation}; the
 other is using
-Cygwin\footnote{\path~http://sourceware.cygnus.com/cygwin~} and the
+Cygwin\footnote{\path~http://sources.redhat.com/cygwin~} and the
 generic installation procedure for Unix-like environments described in
 section~\ref{sec:sample-inst} and subsequent sections.  If you are
 going to install \cgal\ using Cygwin, please read section
@@ -129,9 +129,6 @@ systems:
     \kcc{4} \footnotemark[8]                 
     & Solaris 2.6+\\\hline
     \Gcc{2.95} (and later) \footnotemark[9]            
-    & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / 
-      \mswin\ 95/98/2000/NT4\footnotemark[12]\\\hline
-    \egcs{1.1.2} (and later) \footnotemark[9]
     & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / 
       \mswin\ 95/98/2000/NT4\footnotemark[12]\\\hline
     \msvc{6.0} \footnotemark[10]           
@@ -196,7 +193,7 @@ After you have downloaded the file containing the \cgal\ library, you
 have to decompress it. For the zipfile use the
 command\footnote{\texttt{unzip} for \mswin\ 
 can be downloaded, for instance, from
-\texttt{http://www.itribe.net/virtunix/}}.
+\texttt{http://virtunix.itribe.net/}}.
 
 \begin{verbatim}
       unzip <filename>.zip
@@ -986,10 +983,10 @@ Cygwin is a free Unix-like environment for MS-Windows, distributed by
 Cygnus Solutions. For our tests we have used version $\beta$-20.1.
 
 It consists of a port of a large number of GNU tools, such as bash,
-make, gcc (egcs), gas, file utilities, etc, as well as tools ensuring
-an ability to emulate Unix-like access to resources, for instance
-mount.  For a comprehensive introduction and details, see
-\path~http://sourceware.cygnus.com/cygwin/~ .
+make, gcc, gas, file utilities, etc, as well as tools ensuring an
+ability to emulate Unix-like access to resources, for instance mount.
+For a comprehensive introduction and details, see
+\path~http://sources.redhat.com/cygwin/~ .
 
 \subsection{Pathnames}
 \index{Cygwin!pathnames}
@@ -1532,7 +1529,7 @@ A solution is to install the \gnu -binutils\footnote{see
 compiler that it shall use the \gnu-- instead of the native tools.
 From the compiler-menu (described in section \ref{sec:compiler-menu})
 you can set the corresponding option through the custom compiler
-flags, i.e. for \texttt{gcc}/\texttt{egcs} you would add
+flags, i.e. for \texttt{gcc} you would add
 \begin{alltt}
   -B/my/path/to/gnu/binutils/bin
 \end{alltt}
