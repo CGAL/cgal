@@ -6,7 +6,7 @@
 //---------------------------------------------------------------------
 //	actual revision
 //---------------------------------------------------------------------
-
+GLOB: Added mingw specific compiler flags
 GLOB: removed stlport from LICENSE
 GLOB: update installation.tex wrt outdated stuff
 GLOB: document more options in install_cgal's --help option.
