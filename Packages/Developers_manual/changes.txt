@@ -1,0 +1,3 @@
+18 Feb 2004 Sylvain Pion
+- Add changes.txt
+- Remove mention of CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
