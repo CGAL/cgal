@@ -1,6 +1,24 @@
+// ======================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 4.0.2
+// release_date  : 13 Dec 1999
+//
+// file          : include/CGAL/Cartesian/Tetrahedron_3.C
+// package       : C3 (4.0.2)
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
+// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
+//
+// ======================================================================
 
 #ifndef CGAL_CARTESIAN_TETRAHEDRON_3_C
 #define CGAL_CARTESIAN_TETRAHEDRON_3_C
@@ -68,13 +86,7 @@ struct Less_xyzC3 {
   // cannot reuse it from predicate_classes, because of
   // problems with file inclusions...
   bool operator() (Point_3 const &p, Point_3 const &q) {
-      if (p.x()<q.x()) return true;
-      if (q.x()<p.x()) return false;
-      if (p.y()<q.y()) return true;
-      if (q.y()<p.y()) return false;
-      if (p.z()<q.z()) return true;
-      if (q.z()<p.z()) return false;
-      return false;
+      return lexicographically_xyz_smaller_or_equal(p,q);
     }
 };
 

@@ -1,5 +1,7 @@
-Version 4.0.? (December ? 1999)
+Version 4.0.3 (December 14 1999)
 - Forgot a typename in Tetrahedron_3
+- Use lexicographical comparison in Tetrahedron (instead of
+  reimplementing it)
 
 Version 4.0.2 (November 23 1999)
 - Various cleanups [syl & herve].
