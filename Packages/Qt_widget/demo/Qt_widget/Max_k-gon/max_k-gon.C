@@ -91,9 +91,9 @@ public:
   Qt_layer_show_ch(){};
 
 
-  void draw(CGAL::Qt_widget &win)
+  void draw(CGAL::Qt_widget &widget)
   {
-    win.lock();
+    widget.lock();
       
       //MAXIMUM INSCRIBED 3-GON
       Polygonvec  outpol;
@@ -102,29 +102,29 @@ public:
       if (outpol.size()>2)
 	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),outpol.vertices_end(),3, std::back_inserter(kg));
       
-      RasterOp old = win.rasterOp();	//save the initial raster mode
-      win.setRasterOp(XorROP);
-      win << CGAL::FillColor(CGAL::BLUE);      
-      win << kg;
-      win.setRasterOp(old);
+      RasterOp old = widget.rasterOp();	//save the initial raster mode
+      widget.setRasterOp(XorROP);
+      widget << CGAL::FillColor(CGAL::BLUE);      
+      widget << kg;
+      widget.setRasterOp(old);
 
       //MAXIMUM INSCRIBED 5-GON
       Polygonvec  kg1;
       if (outpol.size()>2)
 	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),outpol.vertices_end(),5, std::back_inserter(kg1));
       
-      old = win.rasterOp();	//save the initial raster mode
-      win.setRasterOp(XorROP);
-      win << CGAL::FillColor(CGAL::GRAY);      
-      win << kg1;
-      win.setRasterOp(old);  
+      old = widget.rasterOp();	//save the initial raster mode
+      widget.setRasterOp(XorROP);
+      widget << CGAL::FillColor(CGAL::GRAY);      
+      widget << kg1;
+      widget.setRasterOp(old);  
 
       //VERTICES
-      win << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
-      win << CGAL::GREEN;
+      widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
+      widget << CGAL::GREEN;
       std::list<Point>::iterator itp = list_of_points.begin();
       while(itp!=list_of_points.end())
-	win << (*itp++);
+	widget << (*itp++);
           
 
       //CONVEX HULL
@@ -146,14 +146,14 @@ public:
 	}
 	Sl.push_back(Segment(pakt,pstart));
 
-	win << CGAL::RED;
+	widget << CGAL::RED;
 	std::list<Segment>::iterator its = Sl.begin();
 	while(its!=Sl.end())
-	  win << (*its++);
+	  widget << (*its++);
       }
       
       
-    win.unlock();
+    widget.unlock();
   };	
   
 };//end class 
@@ -162,67 +162,66 @@ class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  MyWindow(int w, int h): win(this) {
-  setCentralWidget(&win);
+  MyWindow(int w, int h){
+    widget = new CGAL::Qt_widget(this);
+    setCentralWidget(widget);
     
-	//create a timer for checking if somthing changed
-  QTimer *timer = new QTimer( this );
-  connect( timer, SIGNAL(timeout()),
+    //create a timer for checking if somthing changed
+    QTimer *timer = new QTimer( this );
+    connect( timer, SIGNAL(timeout()),
            this, SLOT(timer_done()) );
-  timer->start( 200, FALSE );
+    timer->start( 200, FALSE );
 
+    // file menu
+    QPopupMenu * file = new QPopupMenu( this );
+    menuBar()->insertItem( "&File", file );
+    file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
+    file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
+    file->insertSeparator();
+    file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
+    file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
 
-  // file menu
-  QPopupMenu * file = new QPopupMenu( this );
-  menuBar()->insertItem( "&File", file );
-  file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
-  file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
-  file->insertSeparator();
-  file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
-  file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
+    // drawing menu
+    QPopupMenu * draw = new QPopupMenu( this );
+    menuBar()->insertItem( "&Draw", draw );
+    draw->insertItem("&Generate points", this, SLOT(gen_points()), CTRL+Key_G );
 
+    // help menu
+    QPopupMenu * help = new QPopupMenu( this );
+    menuBar()->insertItem( "&Help", help );
+    help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
+    help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
-  // drawing menu
-  QPopupMenu * draw = new QPopupMenu( this );
-  menuBar()->insertItem( "&Draw", draw );
-  draw->insertItem("&Generate points", this, SLOT(gen_points()), CTRL+Key_G );
-
-  // help menu
-  QPopupMenu * help = new QPopupMenu( this );
-  menuBar()->insertItem( "&Help", help );
-  help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
-  help->insertItem("About &Qt", this, SLOT(aboutQt()) );
-
-  //the new tools toolbar
-  setUsesBigPixmaps(TRUE);
-  newtoolbar = new CGAL::Tools_toolbar(&win, this, &list_of_points);	
-  //the standard toolbar
-  stoolbar = new CGAL::Standard_toolbar (&win, this);
-  this->addToolBar(stoolbar->toolbar(), Top, FALSE);
-  this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
+    //the new tools toolbar
+    setUsesBigPixmaps(TRUE);
+    newtoolbar = new CGAL::Tools_toolbar(widget, this, &list_of_points);	
+    //the standard toolbar
+    stoolbar = new CGAL::Standard_toolbar (widget, this);
+    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+    this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   
+    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
   
-  win << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
-  
+    resize(w,h);
+    widget->show();
 
-  resize(w,h);
-  win.show();
-
-  win.setMouseTracking(TRUE);
+    widget->setMouseTracking(TRUE);
 	
-  //connect the widget to the main function that receives the objects
-  connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), 
+    //connect the widget to the main function that receives the objects
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
     this, SLOT(get_new_object(CGAL::Object)));
 
-  //application flag stuff
-  old_state = 0;
+    //application flag stuff
+    old_state = 0;
 
-  //layers
-  win.attach(&testlayer);
+    //layers
+    widget->attach(&testlayer);
   };
 
   ~MyWindow()
   {
+    delete newtoolbar;
+    delete stoolbar;
   };
 
   
@@ -232,15 +231,15 @@ private:
 public slots:
   void set_window(double xmin, double xmax, double ymin, double ymax)
   {
-    win.set_window(xmin, xmax, ymin, ymax);
+    widget->set_window(xmin, xmax, ymin, ymax);
   }
   void new_instance()
   {
-    win.detach_current_tool();
-    win.lock();
+    widget->detach_current_tool();
+    widget->lock();
     list_of_points.clear();
-    win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
-    win.unlock();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->unlock();
     something_changed();
   }
 
@@ -277,14 +276,14 @@ private slots:
   void timer_done()
   {
     if(old_state!=current_state){
-      win.redraw();
+      widget->redraw();
       old_state = current_state;
     }
   }	
 
   void gen_points()
   {
-    win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
 
     // send resizeEvent only on show.
     CGAL::Random_points_in_disc_2<Point> g(0.5);
@@ -297,7 +296,7 @@ private slots:
 	
 
 private:
-  CGAL::Qt_widget	  win;		
+  CGAL::Qt_widget	  *widget;		
   CGAL::Tools_toolbar	  *newtoolbar;
   CGAL::Standard_toolbar  *stoolbar;
   int			  old_state;  	
@@ -314,13 +313,13 @@ main(int argc, char **argv)
     app.setStyle( new QPlatinumStyle );
     QPalette p( QColor( 250, 215, 100 ) );
     app.setPalette( p, TRUE );
-  MyWindow win(800,800); // physical window size
-  app.setMainWidget(&win);
-  win.setCaption(my_title_string);
-  win.setMouseTracking(TRUE);
-  win.show();
+  MyWindow widget(800,800); // physical window size
+  app.setMainWidget(&widget);
+  widget.setCaption(my_title_string);
+  widget.setMouseTracking(TRUE);
+  widget.show();
   // because Qt send resizeEvent only on show.
-  win.set_window(-1, 1, -1, 1);
+  widget.set_window(-1, 1, -1, 1);
   current_state = -1;
   return app.exec();
 }
