@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.10.2 on 19-Mar-2001
+- moved to cvs-server
+
 Version 3.10.1 on 18-Sep-2000
 - updated/fixed usage of namespace `std'.
 
