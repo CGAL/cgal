@@ -1,0 +1,33 @@
+#-----------------------------------------------------------
+# Data block
+#-----------------------------------------------------------
+# Number of curves
+3
+a 0 0 1 -1 0 1 0
+s 0 0 1 1
+s 0 0 0 0.5
+#-----------------------------------------------------------
+# Number of "stand alone" points
+8
+-2 1
+-1 0.5
+0 -1
+0 0.5
+0 0.25
+0 1
+1 0
+1 1
+#-----------------------------------------------------------
+# Execution block
+#-----------------------------------------------------------
+curve_get_point_status 0 0 CURVE_NOT_IN_RANGE.
+curve_get_point_status 0 1 ABOVE_CURVE.
+curve_get_point_status 0 2 UNDER_CURVE.
+curve_get_point_status 0 5 ON_CURVE.
+curve_get_point_status 1 1 CURVE_NOT_IN_RANGE.
+curve_get_point_status 1 6 UNDER_CURVE.
+curve_get_point_status 1 7 ON_CURVE.
+curve_get_point_status 2 2 UNDER_CURVE.
+curve_get_point_status 2 3 ON_CURVE.
+curve_get_point_status 2 4 ON_CURVE.
+curve_get_point_status 2 5 ABOVE_CURVE.
