@@ -1,3 +1,6 @@
+31 May 2004:  Menelaos Karavelas
+- fix bug in insert_segment in Segment_Voronoi_diagram_2.C
+
 30 May 2004:  Menelaos Karavelas
 - added test suite for one-level and hierarchy algorithms
 Documentation:
