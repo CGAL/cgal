@@ -730,8 +730,7 @@ void Snap_rounding_2<Rep_>::reroute_sr(std::set<Hot_Pixel<Rep_> *,
     ++hot_pixel_iter;
 
     while(hot_pixel_iter != inp_hot_pixels_intersected_set.end()) {
-      seg_output.push_back(Point_2((*hot_pixel_iter)->get_x(),
-                           (*hot_pixel_iter)->get_y()));
+      seg_output.push_back((*hot_pixel_iter)->get_center());
       ++hot_pixel_iter;
     }
 
@@ -768,8 +767,7 @@ void Snap_rounding_2<Rep_>::reroute_isr(std::set<Hot_Pixel<Rep_> *,
       // insert second hot pixel
       hot_pixel_iter = inp_hot_pixels_intersected_set.begin();
       ++hot_pixel_iter;
-      seg_output.push_back(Point_2((*hot_pixel_iter)->get_x(),
-          (*hot_pixel_iter)->get_y()));
+      seg_output.push_back((*hot_pixel_iter)->get_center());
     }
   }
 
@@ -799,13 +797,12 @@ void Snap_rounding_2<Rep_>::iterate()
       if(hot_pixel_iter == hot_pixels_intersected_set.end()) {
         // segment entirely inside a pixel
         hp = new Hot_Pixel<Rep_>(iter->source(),pixel_size);
-        seg_output.push_back(Point_2(hp->get_x(),hp->get_y()));
+        seg_output.push_back(hp->get_center());
         erase_hp = true;
         delete(hp);
         erase_hp = false;
       } else {
-        seg_output.push_back(Point_2((*hot_pixel_iter)->get_x(),
-                             (*hot_pixel_iter)->get_y()));
+        seg_output.push_back((*hot_pixel_iter)->get_center());
         if(number_of_intersections > 1) {
           // segments that have at most one intersecting hot pixel are
           // done(it was inserted)
