@@ -1,9 +1,7 @@
 // file : example/Triangulation_2/terrain.C
-#include <CGAL/basic.h>
-#include <fstream>
-
-#include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
+#include <fstream>
+#include <CGAL/Gmpz.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
