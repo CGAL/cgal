@@ -1,516 +1,246 @@
-// ======================================================================
-//
-// Copyright (c) 1997 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------
-//
-// release       : $CGAL_Revision: CGAL-2.3-I-26 $
-// release_date  : $CGAL_Date: 2001/01/05 $
-//
-// file          : include/CGAL/Pm_segment_traits_2.h
-// package       : pm (5.43)
-// maintainer    : Eyal Flato <flato@math.tau.ac.il>
-// source        : 
-// revision      : 
-// revision_date : 
-// author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
-//                 Eyal Flato
-//                 Oren Nechushtan <theoren@math.tau.ac.il>
-//                 Shai Hirsch <shaihi@post.tau.ac.il>
-//                 Efi Fogel <efifogel@post.tau.ac.il>
-//
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
-//
-// Chapter       : 
-// ======================================================================
 #ifndef CGAL_PM_SEGMENT_TRAITS_2_H
 #define CGAL_PM_SEGMENT_TRAITS_2_H
 
-#ifndef CGAL_POINT_2_H
-#include <CGAL/Point_2.h>
-#endif
-#ifndef CGAL_SEGMENT_2_H
-#include <CGAL/Segment_2.h>
-#endif
+#include <CGAL/Planar_map_2/Pm_segment_utilities_2.h>
+// #include <CGAL/Planar_map_2/Pm_point_utilities_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
-class Pm_segment_traits_2
+template <class Kernel_>
+class Pm_segment_traits_2 : public Kernel_
 {
 public:
+  typedef Kernel_                         Kernel;
 
-  typedef typename R::Segment_2 X_curve_2;
-  typedef typename R::Point_2   Point_2;
-  typedef typename R::Vector_2  Vector_2;
+  // Traits objects
+  typedef typename Kernel::Point_2        Point_2;
+  typedef typename Kernel::Segment_2      X_curve_2;
 
-  // Obsolete, for backward compatibility
-  typedef X_curve_2             X_curve;
-  typedef Point_2               Point;
-  typedef Vector_2              Vector;
-  
+  // Backward compatability    
+  typedef Point_2                         Point;
+  typedef X_curve_2                       X_curve;
+
+  // Currently, I leave this in the traits
+  // Maybe we can change the usage inside Planar_map_2
   typedef enum
   {
-    UNDER_CURVE = -1,
-    ABOVE_CURVE = 1,
-    ON_CURVE = 2,
-    CURVE_NOT_IN_RANGE = 0
+    UNDER_CURVE        = -1,
+    CURVE_NOT_IN_RANGE =  0,
+    ABOVE_CURVE        =  1,
+    ON_CURVE           =  2
+
   } Curve_point_status;	
 
-protected:
+private:
+  // Functors:
+  typedef typename Kernel::Is_vertical_2        Is_vertical_2;
+  typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
+  typedef typename Kernel::Less_x_2             Less_x_2;
+    
+  typedef CGAL::Counterclockwise_in_between_for_segments_2<Kernel, X_curve>
+                                                Counterclockwise_in_between_2;
 
-  // This is an implementation type
-  typedef enum 
-  {
-    CURVE_VERTICAL_UP = 0,
-    CURVE_VERTICAL_DOWN = 2,
-    CURVE_LEFT = 3,
-    CURVE_RIGHT = 1
-  } Curve_status;
+  inline Counterclockwise_in_between_2 counterclockwise_in_between_2_object()
+    const
+  { return Counterclockwise_in_between_2(); }
 
 public:
+  // Creation
   Pm_segment_traits_2() {}
-  
-  Point_2 curve_source(const X_curve_2 & cv) const 
-  { 
-    return cv.source(); 
-  }
-  
-  Point_2 curve_target(const X_curve_2 & cv) const 
-  {
-    return cv.target(); 
-  }
-  
+
+  // Operations
+  // ----------
+    
+  /*! compare_x() compares the x-coordinates of two given points
+   * \param p1 the first point
+   * \param p2 the second point
+   * \return LARGER if x(p1) > x(p2), SMALLER if x(p1) < x(p2), or else EQUAL
+   *
+   * \todo replace indirect use compare_x() with compare_x_2()
+   */
+  Comparison_result compare_x(const Point_2 & p1, const Point_2 & p2) const
+  { return compare_x_2_object()(p1, p2); }
+
+  /*! compare_y() compares the y-coordinates of two given points
+   * \param p1 the first point
+   * \param p2 the second point
+   * \return LARGER if y(p1) > y(p2), SMALLER if y(p1) < y(p2), or else EQUAL
+   *
+   * \todo replace indirect use compare_y() with compare_y_2()
+   */
+  Comparison_result compare_y(const Point_2 & p1, const Point_2 & p2) const
+  { return compare_y_2_object()(p1, p2); }
+
+  /*! curve_is_vertical()
+   * \param cv the curve
+   * \return true iff the curve is vertical
+   *
+   * \todo replace indirect use curve_is_vertical() with is_vertical_2()
+   */
   bool curve_is_vertical(const X_curve_2 & cv) const 
-  {
-    return is_same_x(cv.source(), cv.target()); 
-  }
-  
+  { return is_vertical_2_object()(cv); }
+
+  /*! curve_is_in_x_range()
+   * \param cv the curve
+   * \param q the point
+   * \return true if q is in the x range of cv
+   *
+   * \todo Intorduce Is_in_x_range_2() or perhaps Is_in_x_closed_range_2()
+   * in kernel. Currently, this is implemented using existing traits (kernel)
+   * functions (curve_source(), curve_target()) that return the source and
+   * target points by value, which is not as efficient as possible.
+   */
   bool curve_is_in_x_range(const X_curve_2 & cv, const Point_2 & q) const
-  { 
-    return !( is_right(q, rightmost(cv.source(), cv.target())) ||
-              is_left(q, leftmost(cv.source(), cv.target()))	 );
-  }
-  
-  bool curve_is_in_y_range(const X_curve_2 &cv, const Point_2 & q) const
-  { 
-    bool r = !( is_lower(q, lowest(cv.source(), cv.target())) ||
-                is_higher(q, highest(cv.source(), cv.target())) );
-    return r;
-  }
-
-  
-  Curve_point_status 
-  curve_get_point_status(const X_curve_2 &cv, const Point_2 & p) const
   {
-    if (!curve_is_in_x_range(cv, p))
-      return CURVE_NOT_IN_RANGE;
-	if (!curve_is_vertical(cv))
-	{
-		int res = compare_y(p, curve_calc_point(cv, p));
-		if (res == SMALLER) return UNDER_CURVE;
-		if (res == LARGER)	return ABOVE_CURVE;
-		//if (res == EQUAL) 
-		return ON_CURVE;
-	}
-	else
-	{
-		if (is_lower(p,lowest(curve_source(cv),curve_target(cv))))
-			return UNDER_CURVE;
-		if (is_higher(p,highest(curve_source(cv),curve_target(cv))))
-			return ABOVE_CURVE;
-		// if (curve_is_in_y_range(cv,p))
-		return ON_CURVE;
-	}
+    Construct_vertex_2 construct_vertex = construct_vertex_2_object();
+    const Point_2 & source = construct_vertex(cv, 0);
+    const Point_2 & target = construct_vertex(cv, 1);
+    Less_x_2 less_x = less_x_2_object();
+    return !((less_x(source, q) && less_x(target, q)) ||
+             (less_x(q, source) && less_x(q, target)));
   }
-  
-  Comparison_result 
-  curve_compare_at_x(const X_curve_2 & cv1, 
-                     const X_curve_2 & cv2, 
-                     const Point_2   & q)    const 
+
+  /*! curve_compare_at_x() compares the y-coordinate of two given curves at
+   * the x-coordinate of a given point
+   * \param cv1 the first curve
+   * \param cv2 the second curve
+   * \param q the point
+   * \return EQUAL if at least one of cv1 and cv2 is not defined at q's
+   * x-coordinate x(q). Otherwise, LARGER if cv1(x(q)) > cv2(x(q)), SMALLER if
+   * cv1(x(q)) < cv2(x(q), or else EQUAL.
+   * \todo replace indirect use curve_compare_at_x() with compare_y_at_x_2()
+   */
+  Comparison_result curve_compare_at_x(const X_curve_2 & cv1, 
+				       const X_curve_2 & cv2, 
+				       const Point_2 & q) const
+  { return compare_y_at_x_2_object()(q, cv1, cv2); }
+
+  /*! curve_compare_at_x_left() compares the y value of two curves in an
+   * epsilon environment to the left of the x value of the input point
+   */
+  Comparison_result curve_compare_at_x_left(const X_curve & cv1,
+                                            const X_curve & cv2, 
+                                            const Point_2 & q) const 
   {
-    //CGAL_assertion (curve_is_in_x_range(cv1, q));
-    //CGAL_assertion (curve_is_in_x_range(cv2, q));
-    if ((!curve_is_in_x_range(cv1, q)) || (!curve_is_in_x_range(cv2, q)))
-      return EQUAL;
-    
-    X_curve_2 cv1_ = cv1;
-    X_curve_2 cv2_ = cv2;
-    if (compare_lexicographically_xy(cv1.source(), cv1.target()) == LARGER)
-      cv1_ = curve_flip(cv1);
-    if (compare_lexicographically_xy(cv2.source(), cv2.target()) == LARGER)
-      cv2_ = curve_flip(cv2);
-    
-    Point_2 p1 = curve_calc_point(cv1_, q);
-    Point_2 p2 = curve_calc_point(cv2_, q);
-    
-    if (curve_is_vertical(cv1_))
-      {
-        if (curve_is_vertical(cv2_))
-          {
-            // both cv1 and cv2 are vertical
-            if ( is_lower(cv1_.target(), cv2_.source()) )
-              return SMALLER;
-            if ( is_higher(cv1_.source(), cv2_.target()) )
-              return LARGER;
-            return SMALLER;
-          }
-        // cv1 is vertical and cv2 not
-        if ( is_lower(cv1_.target(), p2) )
-          return SMALLER;
-        if ( is_higher(cv1_.source(), p2) )
-          return LARGER;
-        return EQUAL;
-      }
-    
-    if (curve_is_vertical(cv2_))
-      {
-        // cv2 is vertical and cv1- not
-         /*        bug fix (Oren)
-        if (is_lower(cv2.target(), p1) )
-          return LARGER;
-        if ( is_higher(cv2.source(), p1) )
-          return SMALLER;
- 
-        if ( is_higher(cv2.source(), p1) ) // bug fix (Oren)
-        The answer should be independent of the curve's orientation !!
+    // If one of the curves is vertical then return EQUAL.
+    Is_vertical_2 is_vertical = is_vertical_2_object();
+    if (is_vertical(cv1) || (is_vertical(cv2))) return EQUAL;
 
-     p1 x--x               p1 x--x
-        |                     /\
-        |           versus    |
-        \/cv2                 |cv2
-        x                     x
-
-        p                     p
-
-        */
-        if (is_lower(cv2_.target(), p1) )
-          return LARGER;
-        if (is_higher(cv2_.source(), p1) )
-          return SMALLER;
-        return EQUAL;
-      }
+    // If one of the curves is not defined at q then return EQUAL.
+    Construct_vertex_2 construct_vertex = construct_vertex_2_object();
+    Less_x_2 less_x = less_x_2_object();
+    const Point_2 & source1 = construct_vertex(cv1, 0);
+    const Point_2 & target1 = construct_vertex(cv1, 1);
+    if (!(less_x(source1, q) || less_x(target1, q))) return EQUAL;
     
-    // both are not vertical
-    if (is_higher(p1, p2)) return LARGER;
-    if (is_lower(p1, p2)) return SMALLER;
-    return EQUAL;
-  }
-  
-  
-  Comparison_result 
-  curve_compare_at_x_left(const X_curve_2 &cv1, const X_curve_2 &cv2, 
-                          const Point_2 &q) const 
-  {
-    // cases  in which the function isn't defined
-    //CGAL_assertion(!curve_is_vertical(cv1));
-    //CGAL_assertion(!curve_is_vertical(cv2));
-    //CGAL_assertion(is_left(leftmost(cv1.source(), cv1.target()), q));
-    //CGAL_assertion(is_left(leftmost(cv2.source(), cv2.target()), q));
+    const Point_2 & source2 = construct_vertex(cv2, 0);
+    const Point_2 & target2 = construct_vertex(cv2, 1);
+    if (!(less_x(source2, q) || less_x(target2, q))) return EQUAL;
     
-    if (curve_is_vertical(cv1) || (curve_is_vertical(cv2))) return EQUAL;
-    if (!is_left(leftmost(cv1.source(), cv1.target()), q)) return EQUAL;
-    if (!is_left(leftmost(cv2.source(), cv2.target()), q)) return EQUAL;
-    
-    Comparison_result r = curve_compare_at_x(cv1, cv2, q);
-        
-    if ( r != EQUAL)
-      return r;     // since the curve is continous 
+    // since the curve is continous 
+    Comparison_result r = compare_y_at_x_2_object()(q, cv1, cv2);
+    if (r != EQUAL) return r;     
     
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
     // compare their derivatives
-    return compare_value(curve_derivative(cv2), curve_derivative(cv1));
-    }
-  
-  Comparison_result 
-  curve_compare_at_x_right(const X_curve_2 &cv1, const X_curve_2 &cv2, 
-			   const Point_2 & q) const 
+    return compare_slope_2_object()(cv2, cv1);
+  }
+
+  /*! curve_compare_at_x_right() compares the y value of two curves in an
+   * epsilon environment to the right of the x value of the input point
+   */
+  Comparison_result curve_compare_at_x_right(const X_curve & cv1,
+                                             const X_curve & cv2, 
+                                             const Point_2 & q) const 
   {
-    // cases  in which the function isn't defined
-    //CGAL_assertion(!curve_is_vertical(cv1));
-    //CGAL_assertion(!curve_is_vertical(cv2));
-    //CGAL_assertion(is_right(rightmost(cv1.source(), cv1.target()), q));
-    //CGAL_assertion(is_right(rightmost(cv2.source(), cv2.target()), q));
-    
-    if (curve_is_vertical(cv1) || (curve_is_vertical(cv2))) return EQUAL;
-    if (!is_right(rightmost(cv1.source(), cv1.target()), q)) return EQUAL;
-    if (!is_right(rightmost(cv2.source(), cv2.target()), q)) return EQUAL;
-    
+    // If one of the curves is vertical then return EQUAL.
+    Is_vertical_2 is_vertical = is_vertical_2_object();
+    if (is_vertical(cv1) || (is_vertical(cv2))) return EQUAL;
+
+    // If one of the curves is not defined at q then return EQUAL.
+    Construct_vertex_2 construct_vertex = construct_vertex_2_object();
+    Less_x_2 less_x = less_x_2_object();
+    const Point_2 & source1 = construct_vertex(cv1, 0);
+    const Point_2 & target1 = construct_vertex(cv1, 1);
+    if (!(less_x(q, source1) || less_x(q, target1))) return EQUAL;
+
+    const Point_2 & source2 = construct_vertex(cv2, 0);
+    const Point_2 & target2 = construct_vertex(cv2, 1);
+    if (!(less_x(q, source2) || less_x(q, target2))) return EQUAL;
+
+    // since the curve is continous (?)
     Comparison_result r = curve_compare_at_x(cv1, cv2, q);
-    
-    if ( r != EQUAL)
-      return r;     // since the curve is continous (?)
+    if (r != EQUAL) return r;     
     
     // <cv1> and <cv2> meet at a point with the same x-coordinate as q
     // compare their derivatives
-    return compare_value(curve_derivative(cv1), curve_derivative(cv2));
+    return compare_slope_2_object()(cv1, cv2);
   }
-
-  
-  X_curve_2 curve_flip(const X_curve_2 &cv) const
-  {
-    return X_curve_2(cv.target(), cv.source());
-  }
-  
-  bool curve_is_between_cw(const X_curve_2 &cv, 
-                           const X_curve_2 &first, 
-                           const X_curve_2 &second, 
-                           const Point_2 &point)	const
-    // TRUE if cv is between first and second in cw direction
-    // precondition: this, first and second have a common endpoint
-    // precondition: first, second, this are pairwise interior disjoint
-  {
-    // CGAL_assertion(is_intersection_simple(first, second);
-    // CGAL_assertion(is_intersection_simple(first, *this);
-    // CGAL_assertion(is_intersection_simple(*this, second);
     
-    Curve_status cv0_status, cv1_status, cvx_status;
-    int cv0_cv1, cv0_cvx, cv1_cvx;
-    cv0_cv1 = cv0_cvx = cv1_cvx = -1;
-
-    Point_2 cp = point;
-    
-    X_curve_2 cv0 = first;
-    X_curve_2 cv1 = second;
-    X_curve_2 cvx = cv;
-    
-    if ( !is_same(cv0.source(),cp) ) cv0 = curve_flip(cv0);
-    if ( !is_same(cv1.source(),cp) ) cv1 = curve_flip(cv1);
-    if ( !is_same(cvx.source(),cp) ) cvx = curve_flip(cvx);
-
-    cv0_status = curve_get_status(cv0);
-    cv1_status = curve_get_status(cv1);
-    cvx_status = curve_get_status(cvx);
-		
-    //	the circle:				    0
-    //						 ** | **
-    //						*	*
-    //					     3 *	 * 1
-    //						*	*
-    //						 ** | **
-    //						    2
-    
-    if (cv0_status == cv1_status)
-      {
-        if (cv0_status == CURVE_RIGHT)
-          cv0_cv1 = curve_compare_at_x_right(cv0, cv1, cp);
-        if (cv0_status == CURVE_LEFT)
-          cv0_cv1 = curve_compare_at_x_left(cv0, cv1, cp);
-      }
-    if (cv0_status == cvx_status)
-      {
-        if (cv0_status == CURVE_RIGHT)
-          cv0_cvx = curve_compare_at_x_right(cv0, cvx, cp);
-        if (cv0_status == CURVE_LEFT)
-          cv0_cvx = curve_compare_at_x_left(cv0, cvx, cp);
-      }
-    if (cv1_status == cvx_status)
-      {
-        if (cv1_status == CURVE_RIGHT)
-          cv1_cvx = curve_compare_at_x_right(cv1, cvx, cp);
-        if (cv1_status == CURVE_LEFT)
-          cv1_cvx = curve_compare_at_x_left(cv1, cvx, cp);
-      }
-    
-    if (cv0_status == cv1_status)
-      {
-        if (cv0_status == CURVE_LEFT)
-          {
-            if ( ((cv0_cv1==1) && (cvx_status==cv0_status) && 
-                  ((cv0_cvx==-1) || (cv1_cvx==1))) ||
-                 ((cv0_cv1==1) && (cvx_status!=cv0_status)) ||
-                 ((cv0_cv1==-1) && (cvx_status==cv0_status) && 
-                  ((cv0_cvx==-1) && (cv1_cvx==1))) )
-              return true;
-          }
-        if (cv0_status == CURVE_RIGHT)
-          {
-            if ( ((cv0_cv1==1) && (cvx_status==cv0_status) && 
-                  ((cv0_cvx==1) && (cv1_cvx==-1))) ||
-                 ((cv0_cv1==-1) && (cvx_status!=cv0_status)) ||
-                 ((cv0_cv1==-1) && (cvx_status==cv0_status) && 
-                  ((cv0_cvx==1) || (cv1_cvx==-1))) )
-              return true;
-          }
-        return false;
-      }
-    // else do the following
-    
-    if (cv0_status == cvx_status)
-      {
-        if ( ((cv0_status == CURVE_LEFT) && (cv0_cvx==-1)) ||
-             ((cv0_status == CURVE_RIGHT) && (cv0_cvx==1)) )
-          return true;
-
-        //Addition by iddo for enabeling addition of null segments - testing
-        if ( (cv0_status==CURVE_VERTICAL_DOWN)&&
-             ((cv0.source()==cv0.target())||(cvx.source()==cvx.target())) )
-          return true; //a null segment (=point) 
-
-        return false;
-      }
-    
-    if (cv1_status == cvx_status)
-      {
-        if ( ((cv1_status == CURVE_LEFT) && (cv1_cvx==1)) ||
-             ((cv1_status == CURVE_RIGHT) && (cv1_cvx==-1)) )
-          return true;
-
-        //Addition by iddo for enabeling addition of null segments - testing
-        if ( (cv1_status==CURVE_VERTICAL_DOWN)&&
-             ((cv1.source()==cv1.target())||(cvx.source()==cvx.target())) )
-          return true; //a null segment (=point)  
-
-        return false;
-      }
-    
-    // cv1 and cv0 are on diffrent part of the circle - it is easy
-    if ( ((cv1_status - cv0_status + 4)%4) < 
-         ((cvx_status - cv0_status + 4)%4) )
-      return false;
-    else
-      // if there is an equality or inequality to the other side
-      // everything is ok
-      return true;
-  }
-  
-  Comparison_result compare_x(const Point_2 &p1, const Point_2 &p2) const
-  { return compare_value(p1.x(), p2.x()); }
-  Comparison_result compare_y(const Point_2 &p1, const Point_2 &p2) const
-  { return compare_value(p1.y(), p2.y()); }
-public:
-  Point_2 point_to_left(const Point_2& p) const {
-    return p+Vector_2(-1,0);}
-  Point_2 point_to_right(const Point_2& p) const {return p+Vector_2(1,0);}
-  bool curve_is_same(const X_curve_2 &cv1, const X_curve_2 &cv2) const
-  {
-	return is_same(curve_source(cv1),curve_source(cv2))&&
-		is_same(curve_target(cv1),curve_target(cv2));
-  }
-  bool is_point_on_curve(const X_curve_2 &cv, const Point_2& p) const //check
+  /*! Return the curve-point status of the input objects
+   * \todo Remove curve_get_point_status() from wrapper. Verify that
+   * curve_is_in_x_range() and compare_y_at_x_2() are required in the
+   * traits, and use directly.
+   */
+  Curve_point_status 
+  curve_get_point_status(const X_curve_2 & cv, const Point_2 & p) const
   {
     if (!curve_is_in_x_range(cv, p))
-      return false;
-    if (curve_is_vertical(cv))
-      {
-        if (curve_is_in_y_range(cv,p))
-          return true;
-        else
-          return false;
-      }
-    int res = compare_y(p, curve_calc_point(cv, p));
-    if (res == EQUAL)
-      return true;
-    return false;
-  }
-private:
-  bool is_left(const Point_2 &p1, const Point_2 &p2) const 
-  { return (compare_x(p1, p2) == SMALLER); }
-  bool is_right(const Point_2 &p1, const Point_2 &p2) const 
-  { return (compare_x(p1, p2) == LARGER); }
-  bool is_same_x(const Point_2 &p1, const Point_2 &p2) const 
-  { return (compare_x(p1, p2) == EQUAL); }
-  bool is_lower(const Point_2 &p1, const Point_2 &p2) const 
-  { return (compare_y(p1, p2) == SMALLER); }
-  bool is_higher(const Point_2 &p1, const Point_2 &p2) const 
-  { return (compare_y(p1, p2) == LARGER); }
-  bool is_same_y(const Point_2 &p1, const Point_2 &p2) const 
-  { return (compare_y(p1, p2) == EQUAL); }
-  bool is_same(const Point_2 &p1, const Point_2 &p2) const
-  {
-    return (compare_x(p1, p2) == EQUAL) &&
-      (compare_y(p1, p2) == EQUAL);
-  }
-  const Point_2& leftmost(const Point_2 &p1, const Point_2 &p2) const
-  { return (is_left(p1, p2) ? p1 : p2); }
-
-  const Point_2& rightmost(const Point_2 &p1, const Point_2 &p2) const
-  { return (is_right(p1, p2) ? p1 : p2); }
-  
-  const Point_2& lowest(const Point_2 &p1, const Point_2 &p2) const
-  { return (is_lower(p1, p2) ? p1 : p2); }
-  
-  const Point_2& highest(const Point_2 &p1, const Point_2 &p2) const
-  { return (is_higher(p1, p2) ? p1 : p2); }
-  
-private:
-  Point_2 curve_calc_point(const X_curve_2 &cv, const Point_2 & q) const
-  {
-    // CGAL_assertion (!curve_is_in_s_range(cv, q));
-    if ( !curve_is_in_x_range(cv, q) )
-      return cv.source();
+      return CURVE_NOT_IN_RANGE;
     
-    if (curve_is_vertical(cv))
-      return cv.source();
+    Comparison_result res = compare_y_at_x_2_object()(p, cv);
     
-    //return Point_2(q.x(), cv.source().y() + 
-    //             (cv.target().y() - cv.source().y()) / 
-    //             (cv.target().x() - cv.source().x()) * 
-    //             (q.x() - cv.source().x()) );
+    if ( res == LARGER ) return ABOVE_CURVE;
+    else if ( res == SMALLER ) return UNDER_CURVE;
     
-    const Point_2 & a = cv.source();
-    const Point_2 & b = cv.target();
-    return Point_2((b.hx() * a.hw() - a.hx() * b.hw()) * q.hx() * a.hw(),
-                   (b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hy() + 
-                   (b.hy() * a.hw() - a.hy() * b.hw()) * 
-                   (q.hx() * a.hw() - a.hx() * q.hw()),  
-                   (b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hw());
-  }
-  
-  typename R::FT curve_derivative(const X_curve_2 &cv) const
-  {
-    CGAL_assertion(!curve_is_vertical(cv));
-    
-    return ( (cv.target()).y() - cv.source().y()) / 
-      (cv.target().x() - cv.source().x());
-  }
-  
-  typename R::FT curve_b_const(const X_curve_2 &cv)const
-  {
-    CGAL_assertion (!curve_is_vertical(cv));
-    return ((cv.target().x() * cv.source().y() - 
-             cv.target().y()*cv.source().x())     / 
-            (cv.target().x() - cv.source().x()));
-  }
-  
-  Comparison_result compare_value(const typename R::FT &v1, 
-                                       const typename R::FT &v2) const
-  {
-    typename R::FT d = v1 - v2;
-    typename R::FT z(0);
-    if (d == z)
-      return EQUAL;
-    if (z < d)
-      return LARGER;
-    else
-      return SMALLER;
+    return ON_CURVE;
   }
 
-  Curve_status curve_get_status(const X_curve_2 &cv) const
+  /*! \todo Degenerate cases may not work! Talk with Eyal to fix the actual
+   * code in Pmwx to use the same consisting definitions of
+   * curve_is_between_cw(), counterclockwise_in_between_2_object(), and
+   * the kernel function that is used to implement the later.
+   */
+  bool curve_is_between_cw(const X_curve_2 & cv, 
+                           const X_curve_2 & first, 
+                           const X_curve_2 & second, 
+                           const Point_2 & point) const
   {
-    if (curve_is_vertical(cv)) 
-      {
-        if ( is_higher(cv.target(), cv.source()) )
-          return CURVE_VERTICAL_UP;
-        else
-          return CURVE_VERTICAL_DOWN;
-      }
-    else
-      {
-        if ( is_right(cv.target(), cv.source()) )
-          return CURVE_RIGHT;
-        else
-          return CURVE_LEFT;
-      }
+    // Notice the change in order of first and second
+    return counterclockwise_in_between_2_object()(point, cv, second, first);
   }
 
+  /*! \todo replace indirect use curve_is_same() with equal_2()
+   */
+  bool curve_is_same(const X_curve_2 & cv1,const X_curve_2 & cv2) const
+  { return equal_2_object()(cv1, cv2); }
+
+  /*! \todo replace indirect use point_is_same() with equal_2()
+   */
+  bool point_is_same(const Point_2 & p1, const Point_2 & p2) const
+  { return equal_2_object()(p1, p2); }
+  
+  /*! \todo replace indirect use curve_source() with construct_vertex_2()
+   */
+  Point_2 curve_source(const X_curve_2 & cv) const 
+  { return construct_vertex_2_object()(cv, 0); }
+
+  /*! \todo replace indirect use curve_source() with construct_vertex_2()
+   */
+  Point_2 curve_target(const X_curve_2 & cv) const 
+  { return construct_vertex_2_object()(cv, 1); }
+
+  /*! \todo replace indirect use point_is_left() with less_x_2() 
+   */
+  bool point_is_left(const Point_2 & p1, const Point_2 & p2) const
+  { return less_x_2_object()(p1, p2); }
+
+  /*! \todo replace indirect use point_is_right() with less_x_2()
+   */
+  bool point_is_right(const Point_2 & p1, const  Point_2 & p2) const
+  { return less_x_2_object()(p2, p1); }
 };
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_PM_SEGMENT_TRAITS_2_H
-// EOF
+#endif

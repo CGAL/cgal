@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 1999, October 13
 //
-// file          : include/CGAL/Planar_map_2/Planar_map_misc_slim.h
+// file          : include/CGAL/Planar_map_2/Planar_map_misc.h
 // package       : pm (4.08)
 // source        :
 // revision      :
@@ -99,6 +99,10 @@ public:
                            const X_curve &second, 
                            const Point_2 &point) const
   {
+    return counterclockwise_in_between_2_object()(cv, first, second, point);
+  }
+    /*
+  {
     Direction_2 d  = construct_direction_2_object()(cv,     point);
     Direction_2 d1 = construct_direction_2_object()(first , point);
     Direction_2 d2 = construct_direction_2_object()(second, point);
@@ -112,6 +116,7 @@ public:
 
     return counterclockwise_in_between_2_object()(d, d1, d2);
   }
+    */
 
   // Compares the x value of two points
   Comparison_result compare_x(const Point_2 &p1, const Point_2 &p2) const
@@ -227,7 +232,7 @@ public:
   { return (point_is_higher(p1, p2) ? p1 : p2); }
   const Point_2& point_leftlow_most(const Point_2 &p1, const Point_2 &p2) const
   { return (point_is_left_low(p1, p2) ? p1 : p2); }
-  const Point_2& point_righttop_most(const Point_2 &p1, const Point_2 &p2)const
+  const Point_2& point_righttop_most(const Point_2 &p1, const Point_2 &p2) const
   { return (point_is_right_top(p1, p2) ? p1 : p2); }
   Point_2 curve_leftmost(const X_curve& cv) const 
   {
