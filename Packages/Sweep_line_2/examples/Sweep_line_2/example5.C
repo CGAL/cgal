@@ -1,6 +1,7 @@
 // examples/Sweep_line/example5.C
 // ------------------------------
 #include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/leda_real.h>
 #include <CGAL/Arr_segment_exact_traits.h>
@@ -17,14 +18,15 @@
 #include <CGAL/IO/cgal_window.h>  //used for visualization.
 
 
-typedef double                              NT;
-typedef CGAL::Cartesian<NT>                 R;
-typedef CGAL::Arr_segment_exact_traits<R>   Traits;
-typedef Traits::Point                       Point;
-typedef Traits::X_curve                     X_curve;
-typedef Traits::Curve                       Curve;
-typedef CGAL::Pm_default_dcel<Traits>       Dcel;   
-typedef CGAL::Planar_map_2<Dcel, Traits>    PM;
+typedef CGAL::Quotient<CGAL::MP_Float>         NT;
+typedef CGAL::Cartesian<NT>                    Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel> Traits;
+
+typedef Traits::Point                          Point;
+typedef Traits::Curve                          Curve;
+
+typedef CGAL::Pm_default_dcel<Traits>          Dcel;   
+typedef CGAL::Planar_map_2<Dcel, Traits>       PM;
 
 
 int main()
@@ -33,18 +35,23 @@ int main()
   int                 num_segments;
   std::vector<Curve>  segments;
   
-  std::cout << " * * * Demonstrating a trivial usage of the sweep line algorithm" << std::endl << std::endl;
+  std::cout << " * * * Demonstrating a trivial usage of the sweep line algorithm";
+  std::cout << std::endl << std::endl;
   
+  // Read input
+
   std::cin >> num_segments;
   
-  while (num_segments--) {
-    
+  while (num_segments--) 
+  {
     Curve cv;
     
     std::cin >> cv;
 
     segments.push_back(cv);
   }    
+
+  // Use a sweep to find the points induced in the arrangement  
   
   std::vector<Point> points;
   Traits traits;
@@ -53,7 +60,10 @@ int main()
                                   traits, 
                                   std::back_inserter(points));
 
-  std::cout << " * * * Printing list of all points in the arrangemen induced by the input segments" << std::endl;
+  // Write output
+
+  std::cout << " * * * Printing list of all points in the arrangement ";
+  std::cout << "induced by the input segments" << std::endl;
   
   for (vector<Point>::iterator p_iter = points.begin();
        p_iter != points.end(); ++p_iter)

@@ -1,6 +1,7 @@
 // examples/Sweep_line/example4.C
 // ------------------------------
 #include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h> 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
@@ -9,15 +10,13 @@
 #include <iostream>
 #include <vector>
 
-typedef CGAL::Quotient<int>                  NT;
-typedef CGAL::Cartesian<NT>                  R;
-typedef CGAL::Arr_polyline_traits<R>         Traits;
+typedef CGAL::Quotient<CGAL::MP_Float>       NT;
+typedef CGAL::Cartesian<NT>                  Kernel;
+
+typedef CGAL::Arr_polyline_traits<Kernel>    Traits;
+
 typedef Traits::Point                        Point;
-typedef Traits::X_curve                      X_curve;
 typedef Traits::Curve                        Curve;
-
-using namespace CGAL;
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -55,11 +54,12 @@ std::istream&  operator>>(std::istream& in,
 
 CGAL_END_NAMESPACE
 
+// Read polylines from the input
 
 template <class Container>
 void read_polylines(Container& curves)
 {
-  int      num_polylines = 0;
+  int  num_polylines = 0;
 
   std::cin >> num_polylines;
   std::cout<<"number of polylines is : " << num_polylines<<std::endl;
@@ -77,14 +77,20 @@ void read_polylines(Container& curves)
 
 int main()
 {
+  // Read input
+
   std::list<Curve>      polylines;
     
   read_polylines(polylines);
   
+  // Use a sweep to create the sub curves  
+
   Traits traits;
   std::list<Curve> subcurves;
   CGAL::sweep_to_produce_subcurves_2(polylines.begin(),polylines.end(), 
                                      traits, std::back_inserter(subcurves));
+
+  // Write output
   
   for (std::list<Curve>::iterator scv_iter = subcurves.begin(); 
        scv_iter != subcurves.end(); scv_iter++)    
