@@ -51,10 +51,10 @@ class Arr_conic_traits_2
 
   enum Curve_point_status
   {
-    UNDER_CURVE = -1,
-    ABOVE_CURVE = 1,
-    ON_CURVE = 2,
+    UNDER_CURVE        = -1,
     CURVE_NOT_IN_RANGE = 0,
+    ABOVE_CURVE        = 1,
+    ON_CURVE           = 2
   };
 
   // Obsolete, for backward compatibility

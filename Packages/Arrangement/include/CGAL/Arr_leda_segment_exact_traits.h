@@ -26,7 +26,7 @@
 #include <list>
 
 #include <CGAL/LEDA_basic.h>
-#include <CGAL/Pm_leda_segment_exact_traits.h>
+#include <CGAL/Pm_leda_segment_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -41,7 +41,7 @@ public:
                 : Pm_leda_segment_traits_2() {}
 
 public:
-  typedef Pm_leda_segment_exact_traits Base;
+  typedef Pm_leda_segment_traits_2     Base;
   
   typedef Base::Point_2                Point_2;
   typedef Base::X_curve_2              X_curve_2;

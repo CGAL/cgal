@@ -46,10 +46,12 @@ enum
 };
 
 template <class R>
-class Point_2_ex : public Point_2<R>
+class Point_2_ex : public R::Point_2
 {
- public:
-  
+public:
+  typedef typename R::Point_2 Base;
+  typedef typename R::RT      RT;
+
   enum Type
   {
     User_defined,
@@ -60,12 +62,12 @@ class Point_2_ex : public Point_2<R>
     Ray_shooting_approx
   };
 
- private:
+private:
   Type       _type;
   int        conic_id1;
   int        conic_id2;
 
- public:
+public:
 
   // Constructors.
   Point_2_ex () :
@@ -77,7 +79,7 @@ class Point_2_ex : public Point_2<R>
 
   Point_2_ex (const RT& hx, const RT& hy, const RT& hz,
 	      const Type& type) :
-    Point_2<R>(hx,hy,hz),
+    Base(hx,hy,hz),
     _type(type),
     conic_id1(0),
     conic_id2(0)
@@ -1126,7 +1128,7 @@ class Conic_arc_2
       inter.id1 = id1 < id2 ? id1 : id2;
       inter.id2 = id1 > id2 ? id1 : id2;
     
-      std::list<Intersections>::iterator iter;
+      typename std::list<Intersections>::iterator iter;
       for (iter = inter_list_P->begin(); iter != inter_list_P->end(); iter++)
       {
 	if ((*iter).id1 == inter.id1 && (*iter).id2 == inter.id2)
