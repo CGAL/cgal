@@ -99,9 +99,11 @@ int test()
 
   CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL_FE_UPWARD);
   CGAL::Interval_nt_advanced nt = jj.interval();
+  CGAL::Interval_nt_advanced nt2 = ii.interval();
   CGAL::FPU_set_cw(backup);
 
   std::cout << nt << std::endl;
+  std::cout << nt2 << std::endl;
 #endif // CGAL_USE_LEDA
 #endif // CGAL_CFG_MATCHING_BUG_2
   px=1; py=2; la=3; lb=4; lc=5;
