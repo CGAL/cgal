@@ -33,7 +33,7 @@ void use(const T&) {}
 
 template < class NT >
 bool
-test_sqrt(NT, CGAL::Tag_true)
+test_sqrt(const NT&, CGAL::Tag_true)
 {
   NT sixteen(16);
   NT four(4);
@@ -47,14 +47,14 @@ test_sqrt(NT, CGAL::Tag_true)
 
 template < class NT >
 bool
-test_sqrt(NT, CGAL::Tag_false)
+test_sqrt(const NT&, CGAL::Tag_false)
 {
   return true;
 }
 
 template < class NT >
 bool
-test_gcd(NT , CGAL::Tag_true)
+test_gcd(const NT&, CGAL::Tag_true)
 {
   // div
   NT eleven(11);
@@ -79,7 +79,7 @@ test_gcd(NT , CGAL::Tag_true)
 
 template < class NT >
 bool
-test_gcd(NT x, CGAL::Tag_false)
+test_gcd(const NT &x, CGAL::Tag_false)
 {
   typedef typename CGAL::Number_type_traits<NT>::Has_sqrt Has_sqrt;
   Has_sqrt has_sqrt = Has_sqrt();
@@ -121,7 +121,7 @@ test_basic_operators(const NT&)
 
 template < class NT >
 bool
-test_mixed_operators(NT x)
+test_mixed_operators(const NT&)
 {
   std::cout << "  mixed operators" << std::endl;
 
@@ -182,7 +182,7 @@ test_mixed_operators(NT x)
 
 template < class NT >
 bool
-test_utilities(NT x)
+test_utilities(const NT& x)
 {
   NT zero(0);
   NT one(1);
