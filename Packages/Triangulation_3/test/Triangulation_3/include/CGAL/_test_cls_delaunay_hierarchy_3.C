@@ -39,7 +39,9 @@ _test_cls_delaunay_hierarchy_3( const Dh & )
 
   dh.locate(Point(0.,0.,0.));
 
-  std::cout << " REMOVE IS NOT TESTED !!!!!!!!!!!!!!!!!!!! " << std::endl;
-  // while( dh.number_of_vertices() >0)
-    // dh.remove(dh.finite_vertices_begin());
+  while( dh.number_of_vertices() >0)
+  {
+    std::cout << "number of vertices : " << dh.number_of_vertices() << std::endl;
+    dh.remove(dh.finite_vertices_begin());
+  }
 }
