@@ -151,7 +151,7 @@ struct To_double : public CGAL_STD::unary_function< NT, double > {
 
   double
   operator()( const NT& x) const
-  { return CGAL::to_double( x ); }
+  { return CGAL_NTS to_double( x ); }
 };
 
 template < class NT >
@@ -162,7 +162,7 @@ struct To_interval
 
   std::pair<double, double>
   operator()( const NT& x) const
-  { return CGAL::to_interval( x ); }
+  { return CGAL_NTS to_interval( x ); }
 };
 
 CGAL_END_NAMESPACE
