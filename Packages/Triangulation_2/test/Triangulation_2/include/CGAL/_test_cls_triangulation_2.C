@@ -183,6 +183,7 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
   // when the whole procedure is leaved
   Vertex_handle v0_2_0(new Vertex(p0));
   T0_2.insert_first(v0_2_0);
+
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
   assert( T0_2.is_valid() );
