@@ -83,8 +83,8 @@ will be able to construct the planar map by updating directly the
 \ccc{Dcel} without using the insertion functions of the \ccc{Planar
 map}.  Consequently, the reading function constructs the planar map
 very efficiently. Obviously, for very big maps or for repetitive use
-of the same map it would be exteremly faster to build the map only
-once (incrementaly or via a sweep line utility), save it and reload
+of the same map it would be extremely faster to build the map only
+once (incrementally or via a sweep line utility), save it and reload
 the ready map when necessary.
 
 Reading a planar map from the standard input or printing it to the
@@ -151,7 +151,7 @@ have the same order of the halfedges on the connected component.
 The format of the list of the holes is first the number of holes followed by the connected 
 components per each hole, the format of each connected components resembles the format 
 of the outer boundary specified above.
-\item Lines begining with '\#' serve as comments and are ignored.
+\item Lines beginning with '\#' serve as comments and are ignored.
 \item The format does not differentiate between spaces and new lines, 
 except new lines which belong to commented lines. 
 And hence, writing the planar in one single line having no comments is also considered legal. 
@@ -177,7 +177,7 @@ one triangle with the coordinates {\em (0,0)}, {\em (1,1)} and {\em
 (2,0)}.  The \ccc{Planar_map_2} instance that was used to produce this
 example was templated with the \ccStyle{Pm_segment_exact_traits}
 class, which in turn was templated with the representation class
-\ccStyle{Cartesian<leda_rational>}.  The first line specifys that the
+\ccStyle{Cartesian<leda_rational>}.  The first line specifies that the
 planar map has three vertices, six halfedges, and 2 faces (the
 triangle and the unbounded face).  The list of vertices each
 represented by its associated point follows, as shown in the output
@@ -341,6 +341,57 @@ additional functions, namely to model the \ccc{PlanarMapBoundingBoxTraits_2} con
 %% add \ccInheritFrom{Pm_bounding_box_base<Planar_map>} to each
 %% of these classes
 \end{ccAdvanced}
+
+\subsection{Accelerating Work with Planar Maps}
+
+This section presents some tips on how to tune
+\ccc{Planar_map_2<Dcel,Traits>} for best performance.
+
+Before the specific tips, it should be reminded that compiling
+programs with debug flags turned off and with optimization flags
+significantly reduces running time.
+
+\begin{enumerate}
+   \item The default point location strategy (i.e. using
+   \ccc{trapezoidal decomposition}) is the fastest one when queries
+   are concerned. However, since it has to build a search structure it
+   might slow down the incremental building process of the map. If it
+   is known in advance that there will not be many point location or
+   vertical ray shoot queries use another point location strategy
+   (such as the \ccc{walk} or \ccc{simple} strategies) which does not
+   slow down the building process (no search structure is being
+   built).
+
+   \item Prior knowledge of the combinatorial structure of the map can
+   be used to accelerate insertion time. The specialized insertion
+   functions, i.e \ccc{insert_in_face_interior},
+   \ccc{insert_from_vertex} or \ccc{insert_at_vertices} should be used
+   according to this information. The insert function performs point
+   location queries and then calls one of the other update functions
+   and therefore takes more time.  The function
+   \ccc{insert_in_face_interior} even takes constant time. The other
+   two are linear in the worst case, but should be much faster most of
+   the time.
+
+   Insertion of a polygon, which is represented by a list of segments
+   along its boundary, into an empty planar map should be done in the
+   following way. First, some segment should be inserted using
+   \ccc{insert_in_face_interior} with the unbounded face. Then a
+   segment with a common end point can be inserted using
+   \ccc{insert_from_vertex} and so on with the rest of the segments
+   but last. The last segment can be inserted using
+   \ccc{insert_at_vertices} since both it endpoints are represented as
+   vertices of the map and are known in advanced.
+ 
+   \item If the user has \leda\/ installed it is recommended to use
+   the specialized traits classes \ccc{Pm_leda_segment_exact_traits}
+   or \ccc{Arr_leda_polyline_traits}. These traits classes are much
+   faster since they are specialized for \leda\/'s \ccc{rational
+   geometric kernel}.  Note that these traits classes are models of
+   \ccc{PlanarMapTraits_2} since they model its refinement, the
+   \ccc{ArrangementTraits_2} concept.
+
+\end{enumerate}
 
 \begin{ccTexOnly}
 
