@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+26 March 2004 Radu Ursu
+-made doc work with the current implementation of the Manual tools
+
 - Added Min_sphere_of_spheres_d to the manuals
 
 Version 1.0.17 on 29-Oct-2003
