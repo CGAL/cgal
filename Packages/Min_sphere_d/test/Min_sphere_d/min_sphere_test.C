@@ -34,8 +34,6 @@
 #include<CGAL/basic.h>
 
 // only do something if LEDA available
-#ifdef CGAL_USE_LEDA
-
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
@@ -43,11 +41,11 @@
 #include <cassert>
 #include <CGAL/Optimisation_d_traits_d.h>
 #include <CGAL/Min_sphere_d.h>
-#include <CGAL/leda_rational.h>
+#include <CGAL/Gmpq.h>
 
 using namespace CGAL;
 
-typedef leda_rational                       NT;
+typedef Gmpq                                NT;
 typedef NT                                  FT;
 typedef NT                                  RT;
 typedef Cartesian_d<FT>                     C;
@@ -254,18 +252,6 @@ int main ()
     
     return 0;
 }
-
-#else
-
-#include <iostream>
-
-int main ()
-{
-  std::cerr << " NOT TESTED BECAUSE NEEDS LEDA " << std::endl;
-  return 0;
-}
-#endif
-
 
 
 // ===== EOF ==================================================================

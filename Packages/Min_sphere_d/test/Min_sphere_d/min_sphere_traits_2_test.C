@@ -34,7 +34,6 @@
 #include <CGAL/basic.h>
 
 // only do something if LEDA available
-#ifdef CGAL_USE_LEDA
 
 #include <cassert>
 #include<CGAL/Random.h>
@@ -44,11 +43,11 @@
 #include<CGAL/Min_sphere_d.h>
 #include<CGAL/Min_circle_2.h>
 #include<CGAL/Min_circle_2_traits_2.h>  //why is this not in Min_circle_2.h
-#include<CGAL/leda_rational.h>
+#include<CGAL/Gmpq.h>
 
 using namespace CGAL;
 
-typedef leda_rational                               NT;
+typedef Gmpq                                        NT;
 typedef NT                                          FT;
 typedef NT                                          RT;
 typedef Cartesian<FT>                               C;
@@ -145,16 +144,6 @@ int main ()
 
     return 0;
 }
-
-#else
-
-int main()
-{
-  return 0;
-}
-
-#endif
-
 
 
 // ===== EOF ==================================================================
