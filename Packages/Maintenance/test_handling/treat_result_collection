@@ -168,5 +168,3 @@ while( $i=readdir($dir_h)){
   }    
 }
 closedir($dir_h);
-
-
