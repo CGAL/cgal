@@ -1,3 +1,6 @@
+2.3.14 (1 October 2003) [af]
+- Moved \chapter to main.tex
+
 2.3.13 new headers
 
 2.3.12 Added #include <CGAL/squared_distance_2_1.h> to nearest_neighbor_delaunay_2.h  [af]
