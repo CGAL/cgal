@@ -44,7 +44,7 @@ class CGAL_Filtering
 public:
   CT value;
 
-  CGAL_Filtering ()      : value()   {}
+  CGAL_Filtering () {}
   CGAL_Filtering (int i) : value(i)  {}
   CGAL_Filtering (CT ct) : value(ct) {}
 
