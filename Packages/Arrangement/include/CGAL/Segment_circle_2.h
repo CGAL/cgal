@@ -178,8 +178,7 @@ class Segment_circle_2
   }
 
   // Construct a circular arc from a circle and two points on that circle
-  // (the orientation of the circle is assumed to be positive: i.e. we move
-  // in a clockwise direction from the source to the target).
+  // (the orientation of the arc preserves the orientation of the circle).
   // The source and the target must be on the conic boundary and must
   // not be the same.
   Segment_circle_2 (const Circle& circle,
@@ -199,21 +198,38 @@ class Segment_circle_2
     // Produce the correponding conic: if the circle centre is (x0,y0)
     // and it radius is r, that its equation is:
     //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - r^2) = 0
+    // Since this equation describes a curve with a negative orientation,
+    // we multiply it by -1 if necessary to preserve the original orientation
+    // of the input circle.
     static const NT _zero = 0;
     static const NT _one = 1;
+    static const NT _minus_one = -1;
+    static const NT _two = 2;
     static const NT _minus_two = -2;
     const NT    x0 = circle.center().x();
     const NT    y0 = circle.center().y();
     const NT    r_squared = circle.squared_radius();
 
-    _conic.set (_one, _one,                  // r = s = 1
-		_zero,                       // t = 0
-		_minus_two*x0,
-		_minus_two*y0,
-		x0*x0 + y0*y0 - r_squared);
+    if (circle.orientation() == CGAL::COUNTERCLOCKWISE)
+    {
+      _conic.set (_minus_one, _minus_one,      // r = s = -1
+		  _zero,                       // t = 0
+		  _two*x0,
+		  _two*y0,
+		  r_squared - x0*x0 - y0*y0);
+    }
+    else
+    {
+      _conic.set (_one, _one,                  // r = s = 1
+		  _zero,                       // t = 0
+		  _minus_two*x0,
+		  _minus_two*y0,
+		  x0*x0 + y0*y0 - r_squared);
+    }
   }
 
-  // Construct an arc which is basically a full circle.
+  // Construct an arc which is basically a full circle
+  // (the orientation of the arc preserves the orientation of the circle).
   Segment_circle_2 (const Circle& circle) :
     _deg(2),
     _is_full(true)
@@ -221,18 +237,34 @@ class Segment_circle_2
     // Produce the correponding conic: if the circle centre is (x0,y0)
     // and it radius is r, that its equation is:
     //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - r^2) = 0
+    // Since this equation describes a curve with a negative orientation,
+    // we multiply it by -1 if necessary to preserve the original orientation
+    // of the input circle.
     static const NT _zero = 0;
     static const NT _one = 1;
+    static const NT _minus_one = -1;
+    static const NT _two = 2;
     static const NT _minus_two = -2;
     const NT    x0 = circle.center().x();
     const NT    y0 = circle.center().y();
     const NT    r_squared = circle.squared_radius();
 
-    _conic.set (_one, _one,                    // r = s = 1
-		_zero,                         // t = 0
-		_minus_two*x0,
-		_minus_two*y0,
-		x0*x0 + y0*y0 - r_squared);
+    if (circle.orientation() == CGAL::COUNTERCLOCKWISE)
+    {
+      _conic.set (_minus_one, _minus_one,      // r = s = -1
+		  _zero,                       // t = 0
+		  _two*x0,
+		  _two*y0,
+		  r_squared - x0*x0 - y0*y0);
+    }
+    else
+    {
+      _conic.set (_one, _one,                  // r = s = 1
+		  _zero,                       // t = 0
+		  _minus_two*x0,
+		  _minus_two*y0,
+		  x0*x0 + y0*y0 - r_squared);
+    }
 
     // Set a fictitious source and destination.
     _source = Point(x0 + CGAL::sqrt(r_squared), y0);
