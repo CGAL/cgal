@@ -3,7 +3,6 @@
 #include <iostream.h>
 #include <fstream.h>
 #include <CGAL/basic.h>
-#include <CGAL/predicates_on_pointsC2.h> // for the orientation
 
 #include "points.h"
 

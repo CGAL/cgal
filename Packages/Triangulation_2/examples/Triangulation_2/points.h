@@ -263,8 +263,8 @@ istream& operator>>(istream& is, PVector &pv)
 
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/basic_constructionsC2.h>
-#include <CGAL/predicates_on_pointsC2.h>
+
+#include <CGAL/predicates/kernel_ftC2.h>
 
 
 
