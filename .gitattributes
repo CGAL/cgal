@@ -117,6 +117,18 @@ Packages/Developers_manual/pictures/title.eps -text
 Packages/Developers_manual/pictures/title.gif -text svneol=unset#unset
 Packages/Developers_manual/pictures/use_real.eps -text
 Packages/Developers_manual/pictures/use_real.gif -text svneol=unset#unset
+Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.eps -text
+Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.fig -text
+Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.gif -text svneol=unset#unset
+Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.eps -text
+Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.fig -text
+Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.gif -text svneol=unset#unset
+Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.eps -text
+Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.fig -text
+Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/ExternalMemoryStructures_ref/rtree-classes4.gif -text svneol=unset#unset
+Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/rtree-classes4.eps -text
+Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/rtree-classes4.fig -text
+Packages/ExternalMemoryStructures/doc_tex/basic/ExternalMemoryStructures/rtree-classes4.gif -text svneol=unset#unset
 Packages/Generator/doc_ps/Generator.ps.gz svneol=native#unset
 Packages/Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/Segment_generator_prog1.ps -text
@@ -363,6 +375,50 @@ Packages/Polyhedron/examples/Polyhedron/corner.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
+Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/d-range.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/d-segment.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/range2.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/rsd.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/segment2.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/segment_ex2.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/segment_ex4.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/SearchStructures/d-range.eps -text
+Packages/SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/d-segment.eps -text
+Packages/SearchStructures/doc_tex/SearchStructures/d-segment.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/range2.eps -text
+Packages/SearchStructures/doc_tex/SearchStructures/range2.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/rangesegmentdesign.eps -text
+Packages/SearchStructures/doc_tex/SearchStructures/rsd.eps -text
+Packages/SearchStructures/doc_tex/SearchStructures/rsd.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/segment2.eps -text
+Packages/SearchStructures/doc_tex/SearchStructures/segment2.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/segment_ex2.eps -text
+Packages/SearchStructures/doc_tex/SearchStructures/segment_ex2.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/segment_ex4.eps -text
+Packages/SearchStructures/doc_tex/SearchStructures/segment_ex4.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/d-range.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/d-segment.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/range2.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/rsd.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/segment2.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/segment_ex2.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/segment_ex4.gif svneol=native#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/d-range.eps -text
+Packages/SearchStructures/doc_tex/basic/SearchStructures/d-range.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/d-segment.eps -text
+Packages/SearchStructures/doc_tex/basic/SearchStructures/d-segment.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/range2.eps -text
+Packages/SearchStructures/doc_tex/basic/SearchStructures/range2.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/rangesegmentdesign.eps -text
+Packages/SearchStructures/doc_tex/basic/SearchStructures/rsd.eps -text
+Packages/SearchStructures/doc_tex/basic/SearchStructures/rsd.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/segment2.eps -text
+Packages/SearchStructures/doc_tex/basic/SearchStructures/segment2.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex2.eps -text
+Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex2.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex4.eps -text
+Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex4.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/Embedding.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.ipe -text
