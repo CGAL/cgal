@@ -86,7 +86,8 @@ namespace CGAL {
         it++;
         history_list.erase(it, history_list.end());
       }
-      History_atom atom(xmin, xmax, ymin, ymax, xcenter, ycenter, xscal, yscal);
+      History_atom atom(xmin, xmax, ymin, ymax, xcenter,
+		                ycenter, xscal, yscal);
       history_list.push_back(atom);
       nr_of_items = history_list.size();
       current_item = nr_of_items;
