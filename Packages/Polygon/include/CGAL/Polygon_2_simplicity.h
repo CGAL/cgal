@@ -301,7 +301,7 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
     switch(orientation_2(point(prev_vt), point(mid_vt), point(next_vt))) {
       case LEFT_TURN: left_turn = true; break;
       case RIGHT_TURN: left_turn = false; break;
-      case COLLINEAR: return false;
+      default: return false;
       
     }
     Edge_data<Less_segs>
