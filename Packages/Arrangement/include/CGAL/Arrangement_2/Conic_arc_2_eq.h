@@ -808,7 +808,7 @@ void _mod_polynomials (const NT* a_coeffs, const int& a_deg,
 		       const NT* b_coeffs, const int& b_deg,
 		       NT* r_coeffs, int& r_deg)
 {
-  const static NT _zero = 0;
+  static const    NT _zero = 0;
   NT              work[5];
   int             deg = a_deg;
   NT              factor;
@@ -917,7 +917,7 @@ bool factor_root (const NT* p_coeffs, const int& p_deg,
 		  const NT& alpha,
 		  NT* q_coeffs, int& q_deg)
 {
-  const static NT _zero = 0;
+  static const    NT _zero = 0;
   NT              coeff = p_coeffs[p_deg];
   int             k;
 
