@@ -24,8 +24,8 @@ int main(int, char*)
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
 
-#include <CGAL/IO/Qt_Widget.h>
-#include <CGAL/IO/Qt_Widget_Get_point.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_get_point.h>
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
