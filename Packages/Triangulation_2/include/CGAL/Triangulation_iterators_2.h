@@ -33,6 +33,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class Gt, class Tds> class Triangulation_2;
+
 template < class Gt, class Tds>
 class Triangulation_all_faces_iterator_2 
   : public Tds::Face_iterator

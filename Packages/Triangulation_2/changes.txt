@@ -3,6 +3,7 @@ constrained and regular triangulations with  tests and examples.
 
 Ver 4.93 (??/5/01)
 - Triangulation_hierarchy doc fixes.
+- Fixed a bug in Line_face_circulator and extend the testsuit
 
 Ver 4.92 (21/5/01)
 - add function star_hole in Triangulation_default_data_structure_2

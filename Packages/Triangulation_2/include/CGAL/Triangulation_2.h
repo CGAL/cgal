@@ -135,27 +135,27 @@ protected:
 
  //  to be used as adaptators from iterators with Edge value_type
  //   to an iterator with Tds::Edge as value type
-  template<class I>
-  class To_tds_edge_iterator : public I {
+  template<class It>
+  class To_tds_edge_iterator : public It {
   public:
     typedef typename Triangulation_data_structure::Edge  Tds_Edge;
     To_tds_edge_iterator() {}
-    To_tds_edge_iterator(I i) : I(i) {} 
+    To_tds_edge_iterator(It i) : It(i) {} 
     Tds_Edge  operator*() {
-      Edge e = I::operator*();
+      Edge e = It::operator*();
       return Tds_Edge( &*(e.first), e.second);
     }
   };
 
  //  to be used as adaptators from iterators with Face_jhandle value_type
  //   to an iterator with Tds::Face* as value type
-  template<class I>
-  class To_tds_face_iterator : public I {
+  template<class It>
+  class To_tds_face_iterator : public It {
   public:
     typedef typename Triangulation_data_structure::Face  Tds_Face;
     To_tds_face_iterator() {}
-    To_tds_face_iterator(I i) : I(i) {} 
-    Tds_Face* operator*() { return  &*(I::operator*() ); }
+    To_tds_face_iterator(It i) : It(i) {} 
+    Tds_Face* operator*() { return  &*(It::operator*() ); }
   };
 
 protected:
