@@ -1,3 +1,6 @@
+2.55 (rursu)
+- removed couple lines from config.h used for cl1200
+
 2.53 [af]
 - Refined the test  in CGAL_CFG_NO_LIMITS, as Sun CC 5.4 has a bug in limits
 
