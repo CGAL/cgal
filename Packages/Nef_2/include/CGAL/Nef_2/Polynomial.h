@@ -39,28 +39,19 @@
 #undef _DEBUG
 #define _DEBUG 3
 #include <CGAL/Nef_2/debug.h>
-
-#if (defined(_MSC_VER) && (_MSC_VER <= 1200)) || \
-      defined(__SUNPRO_CC) // || defined(__BORLANDC__)
-#include <CGAL/Nef_2/vector_MSC.h>
-#define CGAL_SIMPLE_NEF_INTERFACE
-#define SNIHACK ,char,char
-#define SNIINST ,'c','c'
-#else
 #include <vector>
-#if (!defined(_MSC_VER))
-#if defined( __BORLANDC__)
-#define SNIHACK ,char,char
-#define SNIINST ,'c','c'
-#else
-#define SNIHACK
-#define SNIINST
-#endif
-#else
-#define SNIHACK ,char,char
-#define SNIINST ,'c','c'
-#endif
-#endif
+
+
+
+#  if (!defined(_MSC_VER))
+#    
+#      define SNIHACK
+#      define SNIINST
+#  else
+#    define SNIHACK ,char,char
+#    define SNIINST ,'c','c'
+#  endif
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -76,7 +67,7 @@ CGAL_TEMPLATE_NULL class Polynomial<double> ;
 // SPECIALIZE_CLASS(NT,int double) END
 
 /*{\Mtext \headerline{Range template}}*/
-#ifndef CGAL_SIMPLE_NEF_INTERFACE
+
 
 template <class Forward_iterator>
 typename std::iterator_traits<Forward_iterator>::value_type 
@@ -119,23 +110,7 @@ where |++it == ite| and |NT| is the value type of |Forward_iterator|.
   if (res==0) res = 1;
   return res;
 }
-#else
 
-template <class NT>
-NT
-get_gcd(const NT& n1, const NT& n2, Tag_true)
-{
-   return CGAL_NTS gcd(n1, n2);
-}
-
-template <class NT>
-NT
-get_gcd(const NT& n1, const NT& n2, Tag_false)
-{
-   return NT(1);
-}
-
-#endif // CGAL_SIMPLE_NEF_INTERFACE
 
 
 template <class NT>  Polynomial<NT>
@@ -151,10 +126,8 @@ template <class NT> inline Polynomial<NT>
 template <class NT> inline Polynomial<NT>
   operator % (const Polynomial<NT>&, const Polynomial<NT>&);
 
-#if ! defined(_MSC_VER)
 template<class NT> CGAL::Sign 
   sign(const Polynomial<NT>& p);
-#endif // collides with global CGAL sign
 
 template <class NT> double 
   to_double(const Polynomial<NT>& p) ;
@@ -168,7 +141,7 @@ template<class NT>
 template <class NT>  
   std::istream& operator >> (std::istream& is, Polynomial<NT>& p);
 
-#if ! defined(_MSC_VER) || _MSC_VER >= 1300
+
   // lefthand side
 template<class NT> inline Polynomial<NT> operator + 
   (const NT& num, const Polynomial<NT>& p2);
@@ -222,15 +195,14 @@ template<class NT> inline bool operator >
 template<class NT> inline bool operator >=
   (const Polynomial<NT>& p, const NT& num);
 
-#endif // _MSC_VER
+
 
 template <class pNT> class Polynomial_rep { 
   typedef pNT NT;
-  #ifndef CGAL_SIMPLE_NEF_INTERFACE
+
   typedef std::vector<NT> Vector;
-  #else
-  typedef CGAL::vector_MSC<NT> Vector;
-  #endif
+
+
   typedef typename Vector::size_type      size_type;
   typedef typename Vector::iterator       iterator;
   typedef typename Vector::const_iterator const_iterator;
@@ -244,19 +216,11 @@ template <class pNT> class Polynomial_rep {
     { coeff[0]=a; coeff[1]=b; coeff[2]=c; }
   Polynomial_rep(size_type s) : coeff(s,NT(0)) {}
 
-  #ifndef CGAL_SIMPLE_NEF_INTERFACE
 
   template <class Forward_iterator>
   Polynomial_rep(Forward_iterator first, Forward_iterator last SNIHACK) 
     : coeff(first,last) {}
 
-  #else
-  template <class Forward_iterator>
-  Polynomial_rep(Forward_iterator first, Forward_iterator last SNIHACK) 
-    : coeff() 
-  { while (first!=last) coeff.push_back(*first++); }
-
-  #endif
 
   void reduce() 
   { while ( coeff.size()>1 && coeff.back()==NT(0) ) coeff.pop_back(); }
@@ -294,7 +258,6 @@ template <class pNT> class Polynomial :
   /*{\Mtypes 5}*/
   public:
   typedef pNT NT;
-
   typedef typename Number_type_traits<NT>::Has_gcd Has_gcd;
  
   typedef Handle_for< Polynomial_rep<NT> > Base;
@@ -339,7 +302,6 @@ template <class pNT> class Polynomial :
   the polynomial $a_0 + a_1 x + a_2 x^2$. }*/
     : Base(Polynomial_rep<NT>(a0,a1,a2)) { reduce(); }
 
-  #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
   Polynomial(Forward_iterator first, Forward_iterator last) 
   /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| representing
@@ -349,19 +311,6 @@ template <class pNT> class Polynomial :
   \ldots a_d x^d$.}*/
     : Base(Polynomial_rep<NT>(first,last SNIINST)) { reduce(); }
 
-  #else
-  #define RPOL(I)\
-  Polynomial(I first, I last) : \
-  Base(Polynomial_rep<NT>(first,last SNIINST)) { reduce(); }
-  RPOL(const NT*)
-  // KILL int START
-  RPOL(const int*)
-  // KILL int END
-  // KILL double START
-  RPOL(const double*)
-  // KILL double END
-  #undef RPOL
-  #endif // CGAL_SIMPLE_NEF_INTERFACE
 
   // KILL double START
   Polynomial(double n) : Base(Polynomial_rep<NT>(NT(n))) { reduce(); }
@@ -437,7 +386,6 @@ template <class pNT> class Polynomial :
   otherwise.}*/
   { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
 
-#ifndef CGAL_SIMPLE_NEF_INTERFACE
 
   NT content() const
   /*{\Mop returns the content of |\Mvar| (the gcd of its coefficients).}*/
@@ -445,19 +393,6 @@ template <class pNT> class Polynomial :
     return gcd_of_range(ptr()->coeff.begin(),ptr()->coeff.end());
   }
 
-#else // CGAL_SIMPLE_NEF_INTERFACE
-
-  NT content() const
-  { CGAL_assertion( degree()>=0 );
-    const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
-    NT res = *its++;
-    for(; its!=ite; ++its)
-        res = (*its==0 ? res : get_gcd(res, *its, Has_gcd()));
-    if (res==0) res = 1;
-    return res;
-  }
-
-#endif
 
   static void set_R(const NT& R) { R_ = R; }
 
@@ -715,7 +650,7 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
   the polynomial $a_0 + a_1 x + a_2 x^2$. }*/
     : Base(Polynomial_rep<int>(a0,a1,a2)) { reduce(); }
 
-  #ifndef CGAL_SIMPLE_NEF_INTERFACE
+
   template <class Forward_iterator>
   Polynomial(Forward_iterator first, Forward_iterator last ) 
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
@@ -725,16 +660,7 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
   \ldots a_d x^d$.}*/
     : Base(Polynomial_rep<int>(first,last SNIINST)) { reduce(); }
 
-  #else
-  #define RPOL(I)\
-  Polynomial(I first, I last) : \
-  Base(Polynomial_rep<int>(first,last SNIINST)) { reduce(); }
-  RPOL(const int*)
-  // KILL double START
-  RPOL(const double*)
-  // KILL double END
-  #undef RPOL
-  #endif // CGAL_SIMPLE_NEF_INTERFACE
+
 
   // KILL double START
   Polynomial(double n) : Base(Polynomial_rep<int>(int(n))) { reduce(); }
@@ -797,8 +723,6 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
   otherwise.}*/
   { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
 
-  #ifndef CGAL_SIMPLE_NEF_INTERFACE
-
   int content() const
   /*{\Xop returns the content of |\Mvar| (the gcd of its coefficients).
   \precond Requires |int| to provide a |gcd| operation.}*/
@@ -806,19 +730,6 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
     return gcd_of_range(ptr()->coeff.begin(),ptr()->coeff.end());
   }
 
-  #else // CGAL_SIMPLE_NEF_INTERFACE
-
-  int content() const
-  { CGAL_assertion( degree()>=0 );
-    const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
-    int res = *its++;
-    for(; its!=ite; ++its) res = 
-      (*its==0 ? res : get_gcd(res, *its, Has_gcd()));
-    if (res==0) res = 1;
-    return res;
-  }
-
-  #endif
 
   static void set_R(const int& R) { R_ = R; }
 
@@ -1052,7 +963,6 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the polynomial $a_0 + a_1 x + a_2 x^2$. }*/
     : Base(Polynomial_rep<double>(a0,a1,a2)) { reduce(); }
 
-  #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
   Polynomial(Forward_iterator first, Forward_iterator last ) 
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
@@ -1062,16 +972,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   \ldots a_d x^d$.}*/
     : Base(Polynomial_rep<double>(first,last SNIINST)) { reduce(); }
 
-  #else
-  #define RPOL(I)\
-  Polynomial(I first, I last) : \
-  Base(Polynomial_rep<double>(first,last SNIINST)) { reduce(); }
-  RPOL(const double*)
-  // KILL int START
-  RPOL(const int*)
-  // KILL int END
-  #undef RPOL
-  #endif // CGAL_SIMPLE_NEF_INTERFACE
+
 
   // KILL int START
   Polynomial(int n) : Base(Polynomial_rep<double>(double(n))) { reduce(); }
@@ -1134,7 +1035,6 @@ determines the sign for the limit process $x \rightarrow \infty$.
   otherwise.}*/
   { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
 
-  #ifndef CGAL_SIMPLE_NEF_INTERFACE
 
   double content() const
   /*{\Xop returns the content of |\Mvar| (the gcd of its coefficients).
@@ -1143,19 +1043,6 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return gcd_of_range(ptr()->coeff.begin(),ptr()->coeff.end());
   }
 
-  #else // CGAL_SIMPLE_NEF_INTERFACE
-
-  double content() const
-  { CGAL_assertion( degree()>=0 );
-    const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
-    double res = *its++;
-    for(; its!=ite; ++its)
-      res = (*its==0 ? res : get_gcd(res, *its, Has_gcd()));
-    if (res==0) res = 1;
-    return res;
-  }
-
-  #endif
 
   static void set_R(const double& R) { R_ = R; }
 
@@ -1358,10 +1245,7 @@ Polynomial<NT> operator - (const Polynomial<NT>& p)
   return res;
 }
 
-#if defined(_MSC_VER)
-Polynomial<int> operator - (const Polynomial<int>& p);
-Polynomial<double> operator - (const Polynomial<double>& p);
-#endif
+
 
 template <class NT> 
 Polynomial<NT> operator + (const Polynomial<NT>& p1, 
@@ -1419,6 +1303,7 @@ Polynomial<NT> operator / (const Polynomial<NT>& p1,
                            const Polynomial<NT>& p2)
 { return divop(p1,p2, typename Number_type_traits<NT>::Has_gcd()); }
 
+
 template <class NT> inline
 Polynomial<NT> operator % (const Polynomial<NT>& p1,
 			   const Polynomial<NT>& p2)
@@ -1430,8 +1315,11 @@ Polynomial<NT> divop (const Polynomial<NT>& p1,
                        const Polynomial<NT>& p2,
                        Tag_false)
 { CGAL_assertion(!p2.is_zero());
-  if (p1.is_zero()) return 0;
-  Polynomial<NT> q,r;
+  if (p1.is_zero()) {
+	return 0;
+  }
+  Polynomial<NT> q;
+  Polynomial<NT> r;
   Polynomial<NT>::euclidean_div(p1,p2,q,r);
   CGAL_postcondition( (p2*q+r==p1) );
   return q;
@@ -1505,13 +1393,11 @@ template <class NT> bool operator >=
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
   { return ( (p1-p2).sign() != CGAL::NEGATIVE ); }    
 
-#if ! defined(_MSC_VER)
+
 template <class NT> CGAL::Sign 
   sign(const Polynomial<NT>& p)
   { return p.sign(); }
-#endif // collides with global CGAL sign
 
-#if ! defined(_MSC_VER) || _MSC_VER >= 1300
 //------------------------------------------------------------------
 // SPECIALIZE_FUNCTION(NT,int double) START
 // SPECIALIZING inline to :
@@ -1898,7 +1784,6 @@ template <class NT> CGAL::Sign
 
 // SPECIALIZE_FUNCTION(NT,int double) END
 //------------------------------------------------------------------
-#endif // _MSC_VER CGAL_CFG_MATCHING_BUG_2
 
 
 template <class NT> 
@@ -2035,10 +1920,16 @@ void Polynomial<NT>::euclidean_div(
   const Polynomial<NT>& f, const Polynomial<NT>& g,
   Polynomial<NT>& q, Polynomial<NT>& r)
 {
-  r = f; r.copy_on_write();
-  int rd=r.degree(), gd=g.degree(), qd;
-  if ( rd < gd ) { q = Polynomial<NT>(NT(0)); }
-  else { qd = rd-gd+1; q = Polynomial<NT>(std::size_t(qd)); }
+  r = f; 
+  r.copy_on_write();
+  int rd = r.degree();
+  int gd = g.degree(), qd;
+  if ( rd < gd ) { 
+    q = Polynomial<NT>(NT(0)); 
+  } else { 
+    qd = rd - gd + 1;
+    q = Polynomial<NT>(std::size_t(qd)); 
+  }
   while ( rd >= gd ) {
     NT S = r[rd] / g[gd];
     qd = rd-gd;
@@ -2086,8 +1977,7 @@ void Polynomial<NT>::pseudo_div(
 template <class NT> 
 Polynomial<NT> Polynomial<NT>::gcd(
   const Polynomial<NT>& p1, const Polynomial<NT>& p2)
-{ 
-  TRACEN("gcd("<<p1<<" , "<<p2<<")");
+{ TRACEN("gcd("<<p1<<" , "<<p2<<")");
   if ( p1.is_zero() )
     if ( p2.is_zero() ) return Polynomial<NT>(NT(1));
     else return p2.abs();
