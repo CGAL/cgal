@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.8 on 12-Apr-2003
+- G++ 3.4 fixes by Sylvain.
+
 Version 0.9.7 on 19-Mar-2002
 - Introduced Number_type_traits.
 - VC7 fixes by Radu.

@@ -823,10 +823,10 @@ class Basis_inverse__entry_iterator {
               return matrix[ col][ row+i];
           return matrix[ row+i][ col]; }
 
-    bool   operator <  ( const Self&) const { return ( row <  it.row); }
-    bool   operator >  ( const Self&) const { return ( row >  it.row); }
-    bool   operator <= ( const Self&) const { return ( row <= it.row); }
-    bool   operator >= ( const Self&) const { return ( row >= it.row); }
+    bool   operator <  ( const Self& it) const { return ( row <  it.row); }
+    bool   operator >  ( const Self& it) const { return ( row >  it.row); }
+    bool   operator <= ( const Self& it) const { return ( row <= it.row); }
+    bool   operator >= ( const Self& it) const { return ( row >= it.row); }
 
   private:
     const Matrix&  matrix;

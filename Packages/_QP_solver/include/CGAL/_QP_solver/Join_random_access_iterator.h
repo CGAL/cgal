@@ -75,10 +75,10 @@ class Join_random_access_iterator_1 {
 
     Val    operator [] ( int i) const { return op( it1[ i]); }
 
-    bool   operator <  ( const Self&) const { return ( it1 <  it.it1); }
-    bool   operator >  ( const Self&) const { return ( it1 >  it.it1); }
-    bool   operator <= ( const Self&) const { return ( it1 <= it.it1); }
-    bool   operator >= ( const Self&) const { return ( it1 >= it.it1); }
+    bool   operator <  ( const Self& it) const { return ( it1 <  it.it1); }
+    bool   operator >  ( const Self& it) const { return ( it1 >  it.it1); }
+    bool   operator <= ( const Self& it) const { return ( it1 <= it.it1); }
+    bool   operator >= ( const Self& it) const { return ( it1 >= it.it1); }
 
   private:
     RndAccIt   it1;

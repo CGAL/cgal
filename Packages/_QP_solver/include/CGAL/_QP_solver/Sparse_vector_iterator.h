@@ -89,10 +89,10 @@ class Sparse_vector_iterator {
 	    return zero;
 	}
 
-    bool   operator <  ( const Self&) const { return ( curr <  it.curr); }
-    bool   operator >  ( const Self&) const { return ( curr >  it.curr); }
-    bool   operator <= ( const Self&) const { return ( curr <= it.curr); }
-    bool   operator >= ( const Self&) const { return ( curr >= it.curr); }
+    bool   operator <  ( const Self& it) const { return ( curr <  it.curr); }
+    bool   operator >  ( const Self& it) const { return ( curr >  it.curr); }
+    bool   operator <= ( const Self& it) const { return ( curr <= it.curr); }
+    bool   operator >= ( const Self& it) const { return ( curr >= it.curr); }
 
     // additional operations
     void  push_back( const Entry& entry) { entries.push_back( entry); }
