@@ -46,6 +46,11 @@ template <class Planar_map_>
 class Pm_point_location_base;
 
 template <class Planar_map_>
+struct Pm_token {
+  virtual void rebuild_bounding_box(const Pm_point_location_base<Planar_map_>*) const {};
+};
+
+template <class Planar_map_>
 class Pm_bounding_box_base {
 public:
   typedef Planar_map_ Planar_map;
@@ -60,10 +65,8 @@ public:
 
   typedef Pm_point_location_base<Planar_map> Point_location_base;
   
-  struct Token {
-    virtual void rebuild_bounding_box(const Point_location_base*) const {};
-  };
-  
+  typedef Pm_token<Planar_map> Token;
+
   Pm_bounding_box_base() {}
   
   virtual void init(Planar_map& pmp, Traits& tr) = 0;
