@@ -1,3 +1,6 @@
+4.3 (10 September 2001)
++ Fixed bug in polygon area computation.
+
 4.2.3 (31 July 2001)
 + Susan moved Polygon_2_ref directory up one level
 
