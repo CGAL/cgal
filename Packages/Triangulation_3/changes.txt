@@ -1,3 +1,6 @@
+Version 1.132 (6 Feb 03)
+- VC7 fixes from Radu.
+
 Version 1.131 (30 Jan 03)
 - Make remove() return bool (always true) for backward compatibility.
 

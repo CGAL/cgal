@@ -681,8 +681,16 @@ side_of_oriented_sphere(const Point &p0, const Point &p1, const Point &p2,
     // We are now in a degenerate case => we do a symbolic perturbation.
 
     // We sort the points lexicographically.
+#if defined _MSC_VER && _MSC_VER >= 1300 // FIXME : Should use proper macro
+    std::vector<const Point*> points;
+    points.push_back(&p0); points.push_back(&p1);
+    points.push_back(&p2); points.push_back(&p3);
+    points.push_back(&p);
+    std::sort(points.begin(), points.end(), Perturbation_order(this));
+#else
     const Point * points[5] = {&p0, &p1, &p2, &p3, &p};
     std::sort(points, points+5, Perturbation_order(this) );
+#endif
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
@@ -725,8 +733,15 @@ coplanar_side_of_bounded_circle(const Point &p0, const Point &p1,
     // We are now in a degenerate case => we do a symbolic perturbation.
 
     // We sort the points lexicographically.
+#if defined _MSC_VER && _MSC_VER >= 1300 // FIXME : should use the right macro
+    std::vector<const Point*> points;
+    points.push_back(&p0); points.push_back(&p1);
+    points.push_back(&p2); points.push_back(&p);
+    std::sort(points.begin(), points.end(), Perturbation_order(this));
+#else
     const Point * points[4] = {&p0, &p1, &p2, &p};
     std::sort(points, points+4, Perturbation_order(this) );
+#endif
 
     Orientation local = coplanar_orientation(p0, p1, p2);
 
