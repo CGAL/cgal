@@ -84,18 +84,6 @@ of a geometric computation. As in any event driven {\sc Gui} application, you ha
 a draw callback so that the window system can update the drawing whenever necessary. This is the topic
 of the next example.
 
-% \subsection{Example: Hello CGAL Objects}
-% 
-% In this example you can see how can you use \ccStyle{Qt\_widget} like a stream, to draw 
-% all kind of \cgal\ objects.
-
-% \ccIncludeExampleCode{../../../demo/Qt_widget/basic/tutorial1/tutorial1.C}
-
-% In this example as you see, you can use \ccStyle{Qt\_widget} like a stream for output \cgal\ objects.
-%  There are some limitations in this example. When you resize the window, you will notice that what you have drawn will no longer be there. Like all
-% the others window applications the code for drawing must be in a redraw function, in order
-%to work when you will make modifications on the window. In the next example you will see what you have to do to resolve this problem.
-
 \subsection{Example: A Triangulation}
 
 This example is slightly more involved. The user can enter points and the application
@@ -129,7 +117,8 @@ attached will be drawn on top.
 Also a layer can be {\em activated} and {\em deactivated}. Only active
 layers are drawn, and by default a layer is activated when it gets
 attached.  Note that deactivating and activating do not influence the
-order of layers.
+order of layers. You can change the order only by attaching and
+detaching it.
 
 
 \cgal\ provides some predefined layer classes as well as a base class
@@ -152,6 +141,16 @@ screen.
 Try to remove the line \ccStyle{attach(&v);} from the constructor to
 see what happens. The application will no longer display anything. Try
 to deactivate and activate the \ccStyle{layer} to see what happens.
+
+\begin{ccAdvanced}
+In the previous section I promised to explain why it is needed
+Qt\_widget::redraw(); if you provide a redraw function. The
+\ccStyle{Qt\_widget} paint all the layers in his \ccStyle{redraw()} member
+function. If you overload this function, and you'll not call
+Qt\_widget::redraw(), no layer will be shown on the screen. We
+strongly encourage people to use layers instead of overloading
+\ccStyle{redraw()}, even for less complex computations.
+\end{ccAdvanced}
 
 
 \section{Tools}

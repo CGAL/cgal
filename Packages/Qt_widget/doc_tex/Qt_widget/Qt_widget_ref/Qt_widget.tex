@@ -51,7 +51,7 @@ widget adjust the scales according to that.
 
 \ccMethod{void set_window(double x_min, double x_max, double y_min, double 
 y_max);}{Map the widget coordinates to the interval defined by the rectangle 
-with given coordinates. This method should be called before \ccc{show()} from 
+with given coordinates. This method should be called after \ccc{show()} from 
 \ccStyle{QWidget}.}
 \ccMethod{void set_x_scale(double xscale);}{Set the current X scale.}
 \ccMethod{void set_y_scale(double yscale);}{Set the current Y scale.}
@@ -96,7 +96,7 @@ widget to be c.}
 %TOOLS
 \ccHeading{Tools}
 \ccMethod{void attach(Qt_widget_tool& tool);}{Attaches a tool to the widget. If another
-tool is already attached this ges detached first.}
+tool is already attached this gets detached first.}
 
 \ccMethod{bool has_tool() const;}{Returns true if a tool is attached.}
 
@@ -120,6 +120,7 @@ redraw the layers, clears the screen. Also calls \ccc{widget\_repainted()} for
 current tool.}
 
 %Cgal
+\ccHeading{New CGAL Objects}
 \ccMethod{void new_object(CGAL::Object obj);}{This function should be called 
 by the tools that create \cgal\ objects. It then emits the signal 
 \ccc{new_cgal_object(CGAL::Object)}. Other components may catch this signal through a 

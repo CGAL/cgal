@@ -37,6 +37,17 @@ Circle_2<R>& c);}{Outputs a circle.}
 \ccFunction{template<class Tr, class Co> Qt_widget& operator<<(Qt_widget& w, 
 const Polygon_2<Tr,Co>& pol);}{Outputs a polygon.}
 
+\ccFunction{template<class Traits_> Qt_widget& operator<<( Qt_widget
+&w, const Min_ellipse_2<Traits_>& min_ellipse);}{Outputs a minimum
+ellipse \cgal\ object.}
+
+\ccFunction{template<class Traits_> Qt_widget& operator<<( Qt_widget
+&w, const Optimisation_ellipse_2<Traits_>& oe);}{Outputs a
+optimisation ellipse \cgal\ object.}
+
+\ccFunction{template<class R> Qt_widget& operator<<( Qt_widget& w,
+const Conic_2<R>& c);}{Outputs a \cgal\ conic.}
+
 \ccFunction{template <class Gt, class Tds> Qt_widget& operator<<(Qt_widget& w, 
 const Triangulation_2<Gt, Tds>& t);}{Outputs a triangulation.}
 
@@ -49,6 +60,7 @@ triangulation.}
 
 \ccFunction{template<class Gt, class Tds> Qt_widget& operator<<(Qt_widget& w,
  const Regular_triangulation_2<Gt, Tds>& t);}{Outputs a regular triangulation.}
+
 
 % +-----------------------------------------------------+
 % EOF
