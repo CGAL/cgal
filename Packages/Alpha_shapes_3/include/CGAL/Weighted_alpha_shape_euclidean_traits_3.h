@@ -119,7 +119,8 @@ public:
   typedef Arity_tag< 4 >   Arity;
 
   result_type
-  operator()(const Point& p, const Point& q, const Point& r, const Point& t) const
+  operator()(const Point& p, const Point& q, const Point& r,
+	     const Point& t) const
   {  
     FT px(p.point().x());
     FT py(p.point().y());
