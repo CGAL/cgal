@@ -1,7 +1,6 @@
 #ifndef CGAL_apply_to_range_h
 #define CGAL_apply_to_range_h
 
-#include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Unique_hash_map.h>
 #include <stack>
