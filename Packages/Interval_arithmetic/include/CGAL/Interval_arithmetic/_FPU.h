@@ -292,7 +292,8 @@ enum CGAL_FPU_rounding_mode
 // -1+epsilon		-1+ulp	-1	-1+ulp	-1
 // ----------------------------------------------------
 
-static CGAL_FPU_rounding_mode CGAL_FPU_get_rounding_mode ()
+// Warning: it should not be inlined, but if not => in libCGAL.so.
+static inline CGAL_FPU_rounding_mode CGAL_FPU_get_rounding_mode ()
 {
     // If not marked "volatile", the result is false when optimizing
     // because the constants are pre-computed at compile time !!!
@@ -307,5 +308,25 @@ static CGAL_FPU_rounding_mode CGAL_FPU_get_rounding_mode ()
     if (z == ze) return CGAL_FPU_MINUS_INFINITY;
     return CGAL_FPU_ZERO;
 }
+
+// Ok, first implementation based on the old one.
+static inline void CGAL_FPU_set_rounding_mode (CGAL_FPU_rounding_mode mode)
+{
+    switch (mode) {
+	case CGAL_FPU_PLUS_INFINITY:
+	    CGAL_FPU_set_rounding_to_infinity();
+	    break;
+	case CGAL_FPU_NEAREST:
+	    CGAL_FPU_set_rounding_to_nearest();
+	    break;
+	case CGAL_FPU_MINUS_INFINITY:
+	    CGAL_FPU_set_rounding_to_minus_infinity();
+	    break;
+	case CGAL_FPU_ZERO:
+	    CGAL_FPU_set_rounding_to_zero();
+	    break;
+    };
+}
+
 
 #endif // CGAL_FPU_H
