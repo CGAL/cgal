@@ -542,7 +542,7 @@ star_region_delete_points(std::set<void*, std::less<void*> > & region,
   _tds.star_region( region, v, c, li );
     
   // get the vertices incident to v
-  std::set<Vertex*, std::less<Vertex*> > inc_vert;
+  std::set<Vertex_handle, std::less<Vertex_handle> > inc_vert;
   incident_vertices(v, inc_vert);
     
   // for each vertex, check if it is a vertex incident to v

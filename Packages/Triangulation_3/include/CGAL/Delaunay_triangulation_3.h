@@ -346,7 +346,7 @@ make_hole_3D( Vertex_handle v,
 {
   CGAL_triangulation_precondition( ! test_dim_down(v) );
 
-  typedef std::set<Cell*, std::less<Cell*> > Hole_cells;
+  typedef std::set<Cell_handle, std::less<Cell_handle> > Hole_cells;
   Hole_cells cells;
   incident_cells( v, cells );
   int i, indv;
