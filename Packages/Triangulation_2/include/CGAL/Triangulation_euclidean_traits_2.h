@@ -41,7 +41,8 @@ public:
 
   bool compare(const Point &p, const Point &q) const
   {
-    return (x(p)==x(q)) &&  (y(p)==y(q));
+    return (CGAL_compare_x(p, q)== CGAL_EQUAL &&  
+	    (CGAL_compare_x(p, q)== CGAL_EQUAL);
   }
 
     CGAL_Orientation orientation(const Point &p,
@@ -60,7 +61,7 @@ public:
         if (compare(p,r)) return CGAL_COLLINEAR;
         if (compare(r,q)) return CGAL_COLLINEAR;
     
-        return CGAL_orientationC2(x(p), y(p), x(q), y(q), x(r), y(r));
+        return CGAL_orientation(p, q, r);
       }
     
     CGAL_Oriented_side side_of_oriented_circle(const Point &p,
@@ -72,11 +73,14 @@ public:
         if (compare(q,s)) return CGAL_ON_ORIENTED_BOUNDARY;
         if (compare(r,s)) return CGAL_ON_ORIENTED_BOUNDARY;
     
-        return CGAL_side_of_oriented_circleC2(x(p), y(p),
-                                              x(q), y(q),
-                                              x(r), y(r),
-                                              x(s), y(s));
-      } 
+        return CGAL_side_of_oriented_circle(p, q, r, s);
+      }
+
+     Point circumcenter(const Point &p, const Point &q, const Point &r) const
+    {
+        return CGAL_circumcenter(p, q, r);
+    }
+
 };
 
 
