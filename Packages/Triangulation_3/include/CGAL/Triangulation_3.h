@@ -164,6 +164,8 @@ protected:
       insert_increase_dimension(p3);
     } 
 
+  bool test_dim_down(Vertex_handle v);
+
 public:
 
   // CONSTRUCTORS
@@ -348,6 +350,15 @@ public:
   //QUERIES
 
   bool is_vertex(const Point & p, Vertex_handle & v) const;
+
+  bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;
+  bool has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const;
+  bool has_vertex(const Facet & f, Vertex_handle v) const;
+  bool has_vertex(Cell_handle c, int i, Vertex_handle v) const;
+
+  bool are_equal(Cell_handle c, int i, Cell_handle n, int j) const;
+  bool are_equal(const Facet & f, const Facet & g) const;
+  bool are_equal(const Facet & f, Cell_handle n, int j) const;
 
   Cell_handle locate(const Point & p) const;
 
@@ -580,6 +591,7 @@ private:
   // c belongs to the hat of v and has a facet on its boundary
   // traverses the boundary of the hat and finds adjacencies
   // traversal is done counterclockwise as seen from v
+
 public:
 
   Vertex_handle
@@ -1125,6 +1137,42 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
 }
 
 template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+test_dim_down(Vertex_handle v)
+{
+  // tests whether removing v decreases the dimension of the triangulation 
+  // true iff
+  // v is incident to all finite cells
+  // and all the other vertices are coplanar
+  CGAL_triangulation_precondition(dimension() == 3);
+  CGAL_triangulation_precondition(! is_infinite(v) );
+
+  Cell_iterator cit = finite_cells_begin();
+  Cell_iterator cdone = cells_end();
+
+  int i, iv;
+  if ( ! cit->has_vertex(v,iv) ) return false;
+  Point p1=cit->vertex((iv+1)&3)->point();  
+  Point p2=cit->vertex((iv+2)&3)->point();  
+  Point p3=cit->vertex((iv+3)&3)->point();
+  ++cit;
+  
+  while ( cit != cdone ) {
+    if ( ! cit->has_vertex(v,iv) )
+      return false;
+    for ( i=1; i<4; i++ ) {
+	if ( geom_traits().orientation
+	     (p1,p2,p3,cit->vertex((iv+i)&3)->point()) != COPLANAR )
+	  return false;
+    }
+    ++cit;
+  }
+
+  return true;
+}// test_dim_down
+
+template < class GT, class Tds >
 int
 Triangulation_3<GT,Tds>::
 number_of_finite_cells() const 
@@ -1400,6 +1448,57 @@ is_vertex(const Point & p, Vertex_handle & v) const
     return true;
   }
   return false;
+}
+
+template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+has_vertex(const Facet & f, Vertex_handle v, int & j) const
+{
+  return( _tds.has_vertex(&*(f.first), f.second, &*v, j) );
+}
+template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const
+{
+  return( _tds.has_vertex(&*c, i, &*v, j) );
+}
+template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+has_vertex(const Facet & f, Vertex_handle v) const
+{
+  return( _tds.has_vertex(&*(f.first), f.second, &*v) );
+}
+template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+has_vertex(Cell_handle c, int i, Vertex_handle v) const
+{
+  return( _tds.has_vertex(&*c, i, &*v) );
+}
+
+template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+are_equal(Cell_handle c, int i, Cell_handle n, int j) const
+{
+  return( _tds.are_equal(&*c, i, &*n, j) );
+}
+template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+are_equal(const Facet & f, const Facet & g) const
+{
+  return( _tds.are_equal(&*(f.first), f.second, &*(g.first), g.second) );
+}
+template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+are_equal(const Facet & f, Cell_handle n, int j) const
+{
+  return( _tds.are_equal(&*(f.first), f.second, &*n, j) );
 }
 
 template < class GT, class Tds >
