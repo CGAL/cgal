@@ -174,11 +174,11 @@ Distance* distance_instance;
 		
                 if (!(N->is_leaf())) {
                         number_of_internal_nodes_visited++;
-                        int new_cut_dim=N->separator()->cutting_dimension();
+                        int new_cut_dim=N->cutting_dimension();
                         NT old_off, new_rd;
                         NT new_off =
                         (*query_object)[new_cut_dim] - 
-					N->separator()->cutting_value();
+					N->cutting_value();
                         if ( ((new_off < NT(0.0)) && (search_nearest)) ||
                         (( new_off >= NT(0.0)) && (!search_nearest))  ) {
 				compute_neighbours_orthogonally(N->lower(),rd);

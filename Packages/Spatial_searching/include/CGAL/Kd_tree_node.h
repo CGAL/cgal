@@ -52,7 +52,7 @@ namespace CGAL {
 
     	Kd_tree_node* lower_ch;
   	Kd_tree_node* upper_ch;
-  	Separator* sep;
+  	Separator sep;
 
 	// private variables for extended internal nodes
 	NT low_val;
@@ -63,13 +63,7 @@ namespace CGAL {
 	// default constructor
 	Kd_tree_node() {};
 
-	// constructor for leaf node
-        /*
-        Kd_tree_node(Point_container<Item>& c) :
-    		n(c.size()), data(new Item*[c.size()]) {
-		the_node_type=LEAF;
-    		std::copy(c.begin(), c.end(), data);
-  	}; */
+	
 
         Kd_tree_node(Point_container<Item>& c) :
     		n(c.size()) {
@@ -95,9 +89,9 @@ namespace CGAL {
 			c_low = Point_container<Item>(c.dimension());
 			Kd_tree_rectangle<NT> bbox(c.bounding_box());
                 
-    		sep = t.split(c, c_low);
+    		t.split(sep, c, c_low);
 	        
-    		int cd  = sep->cutting_dimension();
+    		int cd  = sep.cutting_dimension();
 
 		if (use_extension) {
     			low_val = bbox.min_coord(cd);
@@ -130,7 +124,15 @@ namespace CGAL {
 	// members for internal node and extended internal node
 	inline Kd_tree_node* lower() const { return lower_ch; }
   	inline Kd_tree_node* upper() const { return upper_ch; }
-  	inline Separator* separator() const {return sep; }
+  	
+  	// inline Separator& separator() {return sep; }
+  	// use instead
+  	
+  	inline NT cutting_value() const 
+  	{return sep.cutting_value();}
+  	
+  	inline int cutting_dimension() const 
+  	{return sep.cutting_dimension();}
 
 	// members for extended internal node only
 	inline NT low_value() const { return low_val; }
@@ -143,10 +145,10 @@ namespace CGAL {
 			     	break;
 
 			case INTERNAL: { 
-				delete sep; delete lower_ch; delete upper_ch;}
+				delete lower_ch; delete upper_ch;}
 				break;
 			case EXTENDED_INTERNAL:
-				delete sep; delete lower_ch; delete upper_ch;
+				delete lower_ch; delete upper_ch;
 				break;	
 			default:{
 				std::cerr << "Node corrupted\n";
@@ -196,8 +198,8 @@ namespace CGAL {
 		else {
                         // after splitting b denotes the lower part of b
 			Kd_tree_rectangle<NT>* 
-			b_upper=b->split(sep->cutting_dimension(),
-					      sep->cutting_value());
+			b_upper=b->split(sep.cutting_dimension(),
+					      sep.cutting_value());
                              
 			if (b->is_enclosed_by_dilated_rectangle(r,eps)) 	
 			   it=lower_ch->tree_items(it);
@@ -244,8 +246,8 @@ namespace CGAL {
 		else {
                              // after splitting b denotes the lower part of b
 			     Kd_tree_rectangle<NT>* 
-			     b_upper=b->split(sep->cutting_dimension(),
-					      sep->cutting_value());
+			     b_upper=b->split(sep.cutting_dimension(),
+					      sep.cutting_value());
                              
                              
 			     if // maximal range query encloses b

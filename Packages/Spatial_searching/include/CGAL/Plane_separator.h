@@ -31,7 +31,7 @@ template < class NT> class Plane_separator {
   NT cutting_val;
 
   inline int cutting_dimension() const { return cutting_dim;}
-  inline const NT& cutting_value() const { return cutting_val;}
+  inline NT cutting_value() const { return cutting_val;}
 
   void set_cutting_dim(int d) {
 	  cutting_dim=d;

@@ -32,8 +32,10 @@ namespace CGAL {
   class Kd_tree_traits_point {
 
   public:
-    typedef Separator_ Separator;
+    // typedef Separator_ Separator;
+    // typedef Item_ Item;
     typedef Item_ Item;
+    typedef Separator_ Separator;
     typedef Item** Item_iterator;
     // CGAL dependency typedef typename Kernel_traits<Item>::Kernel K;
     // CGAL dependency typedef typename K::FT NT;
@@ -43,7 +45,6 @@ namespace CGAL {
   private:
 
     unsigned int the_bucket_size;
-    
     NT the_aspect_ratio;
     bool use_extended_nodes_option;
 
@@ -66,15 +67,12 @@ namespace CGAL {
 	bool use_extended_nodes() const {return use_extended_nodes_option;}
 
 	// split c0 in c0 and c1
-    	Separator* split(Point_container<Item>& c0, Point_container<Item>& c1) 
+    	void split(Separator& sep,
+    	           Point_container<Item>& c0, Point_container<Item>& c1) 
 	{
-		Separator* sep;
-
 		Splitter S;
-		sep=S.split(c0,c1,the_aspect_ratio);
-                
-		return sep;
-    }
+		S.split(sep,c0,c1,the_aspect_ratio);
+    	}
 
   };
 

@@ -256,7 +256,7 @@ namespace CGAL {
 
       // note that splitting is restricted to the built coordinate
       template <class Separator>
-      void split_container(Point_container<Item>& c, Separator* sep,  
+      void split_container(Point_container<Item>& c, Separator& sep,  
 	bool sliding=false) {
 
 	//assert(dimension()==c.dimension());
@@ -269,8 +269,8 @@ namespace CGAL {
         c.bbox=bbox;
         // bool test_validity=false;
 
-        const int split_coord = sep->cutting_dimension();
-        const NT cutting_value = sep->cutting_value();
+        const int split_coord = sep.cutting_dimension();
+        const NT cutting_value = sep.cutting_value();
 
         built_coord=split_coord;
 	c.built_coord=split_coord;

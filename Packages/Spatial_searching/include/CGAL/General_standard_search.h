@@ -170,8 +170,8 @@ Distance* distance_instance;
 		
                 if (!(N->is_leaf())) {
                         number_of_internal_nodes_visited++;
-                        int new_cut_dim=N->separator()->cutting_dimension();
-			NT  new_cut_val=N->separator()->cutting_value();
+                        int new_cut_dim=N->cutting_dimension();
+			NT  new_cut_val=N->cutting_value();
 
 			Kd_tree_rectangle<NT>* r_lower = 
 			new Kd_tree_rectangle<NT>(*r);
