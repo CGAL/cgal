@@ -5,30 +5,28 @@
 # $Id$
 # ---------------------------------------------------------------------
 # 
-# Copyright (c) 1998, 1999, 2000 The CGAL Consortium
+# Copyright (c) 1998-2000 The CGAL Consortium
 #
-# This software and related documentation is part of the
-# Computational Geometry Algorithms Library (CGAL).
+# This software and related documentation is part of the Computational
+# Geometry Algorithms Library (CGAL).
 #
-# Every use of CGAL requires a license. Licenses come in three kinds:
+# This software and documentation is provided "as-is" and without warranty
+# of any kind. In no event shall the CGAL Consortium be liable for any
+# damage of any kind. 
 #
-# - For academic research and teaching purposes, permission to use and
-#   copy the software and its documentation is hereby granted free of  
-#   charge, provided that
-#   (1) it is not a component of a commercial product, and
-#   (2) this notice appears in all copies of the software and
-#       related documentation.
-# - Development licenses grant access to the source code of the library 
-#   to develop programs. These programs may be sold to other parties as 
-#   executable code. To obtain a development license, please contact
-#   the CGAL Consortium (at contact@cgal.org).
-# - Commercialization licenses grant access to the source code and the
-#   right to sell development licenses. To obtain a commercialization 
-#   license, please contact the CGAL Consortium (at contact@cgal.org).
+# Every use of CGAL requires a license. 
 #
-# This software and documentation is provided "as-is" and without
-# warranty of any kind. In no event shall the CGAL Consortium be
-# liable for any damage of any kind.
+# Academic research and teaching license
+# - For academic research and teaching purposes, permission to use and copy
+#   the software and its documentation is hereby granted free of charge,
+#   provided that it is not a component of a commercial product, and this
+#   notice appears in all copies of the software and related documentation. 
+#
+# Commercial licenses
+# - A commercial license is available through Algorithmic Solutions, who 
+#   also  markets LEDA (http://www.algorithmic-solutions.de). 
+# - Commercial users may apply for an evaluation license by writing to
+#   Algorithmic Solutions (contact@algorithmic-solutions.com). 
 #
 # The CGAL Consortium consists of Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland), Free University of Berlin (Germany),
@@ -277,6 +275,7 @@ print_usage_information()
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
       [--CLN_INCL_DIR <dir>] [--CLN_LIB_DIR <dir>]
+      [--CUSTOM_CXXFLAGS <flags>] [--CUSTOM_LDFLAGS <flags>]
 
   -leda        enables LEDA support
   -gmp         enables support for GNU GMP
@@ -792,7 +791,7 @@ set_compiler_flags()
 	    SEPARATE_LIBPATH="y"
             LIB_CREATION_COMMANDS="tlib @borland_lib_creation"
 	    ;;
-	*CL*|*cl*)
+	*CL.*|*cl.*)
 	    #### settings Microsoft Visual C++ compiler 
 	    WINDOWS_COMPILER="y"
 	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo `include_dir_option ${CGAL_DIR}/stlport`"
@@ -1128,7 +1127,7 @@ csignal signal.h
 csetjmp setjmp.h
 complex complex.h
 cmath math.h
-clocales locales.h
+clocale locale.h
 climits limits.h
 ciso646 iso646.h
 cfloat float.h
@@ -1625,7 +1624,7 @@ get_compiler_version()
     case `_real_basename ${1:-${COMPILER}}` in
 	*bcc32*|*BCC32*)
 		_borland_version "$*";;
-	*CL*|*cl*)
+	*CL.*|*cl.*)
 		_microsoft_vc_version "$*";;
 	*KCC*)
 		_kcc_version "$*";;
@@ -1652,7 +1651,7 @@ get_compiler_description()
 	    ${_printf} "%s" "Borland";;
 	*KCC*)
 	    ${_printf} "%s" "KAI CC";;
-	*CL*|*cl*)
+	*CL.*|*cl.*)
 	    ${_printf} "%s" "VC++";;
 	*CC*-32*)
 	    ${_printf} "%s" "MIPSPRO (o32)";;
@@ -1889,7 +1888,7 @@ compiler_absolute()
     ${_printf} "%s" "${_tmp}"
     # concat options - replace space by "-":
     _tmp1=`${_printf} "%s\n" "${*}" | ${_sed} 's/"//g;s/ -/-/g' | \
-	${_sed} "s/'//g;s/ /-/g"`
+	${_sed} "s/'//g;s/ /-/g;s#/#-#g"`
     if [ -n "${_tmp1}" ]; then
 	${_printf} "%s" "${_tmp1}"
     fi
@@ -2578,7 +2577,7 @@ _link_run_test()
     # link
     _link=`compiler_bin`
     case ${COMPILER} in
-	*CL*|*cl*) _link="link";;
+	*CL.*|*cl.*) _link="link";;
     esac
     ${_printf} "%s\n%s\n" "Linker call:" "--------------" >${TMP_LOGFILE}
     ${_printf} "%s\n\n" "${_link} ${_flags}" >>${TMP_LOGFILE}
@@ -5170,6 +5169,18 @@ while [ ${#} -gt 0 ]; do
 		shift
 	    fi
 	    CLN_INSTALLATION='e'
+	    ;;
+	--custom_cxxflags*|--CUSTOM_CXXFLAGS*|-CUSTOM_CXXFLAGS*|-custom_cxxflags*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'CUSTOM_CXXFLAGS' "$1" "$2"; then
+		shift
+	    fi
+	    ;;
+	--custom_ldflags*|--CUSTOM_LDFLAGS*|-CUSTOM_LDFLAGS*|-custom_ldflags*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'CUSTOM_LDFLAGS' "$1" "$2"; then
+		shift
+	    fi
 	    ;;
 	-LEDA*|-leda*|--leda*|--LEDA*)
 	    _ANY_OPT='y'
