@@ -1,3 +1,8 @@
+0.9.4 some changes for LEDA 4.2 included
+      some changes for VC 6
+      demos changed
+      faster rat_segment/rat_segment intersection ...
+
 0.9.3 some kernel extensions were included
       (Do_intersect_to_right_2 and Do_intersect_to_left_2)
       changes in the predicate templates for VC 
