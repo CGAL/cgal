@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -55,6 +55,20 @@ public:
   {}
 
   Twotuple(const T & a0, const T &a1) : e0(a0), e1(a1)
+  {}
+};
+
+template < class T >
+class Simple_Twotuple
+{
+public:
+  T  e0, e1;
+
+  Simple_Twotuple()
+  {}
+
+  Simple_Twotuple(const T & a0, const T &a1)
+  : e0(a0), e1(a1)
   {}
 };
 
