@@ -1,0 +1,1 @@
+class CGAL_Polygon_2
