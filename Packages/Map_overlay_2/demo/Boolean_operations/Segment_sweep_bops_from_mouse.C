@@ -80,15 +80,16 @@ typedef Traits::X_curve                             X_curve;
 typedef CGAL::Bop_default_dcel<Traits>              Dcel;
 typedef CGAL::Planar_map_2<Dcel, Traits>            PM;
 
-typedef CGAL::Map_overlay_default_notifier<PM>                  Ovl_change_notification;
-typedef CGAL::Map_overlay<PM, Ovl_change_notification>          MapOverlay;
-typedef CGAL::Boolean_operations<MapOverlay>                    Bops;
+typedef CGAL::Map_overlay_default_notifier<PM>           
+                                                Ovl_change_notification;
+typedef CGAL::Map_overlay_2<PM, Ovl_change_notification>     MapOverlay;
+typedef CGAL::Boolean_operations_2<MapOverlay>               Bops;
 
 typedef Bops::Faces_container                      Faces_container;
 typedef Bops::Halfedges_container                  Halfedges_container;
 typedef Bops::Vertices_container                   Vertices_container;
 
-typedef CGAL::Pm_walk_along_line_point_location<PM>             PmWalkPL;
+typedef CGAL::Pm_walk_along_line_point_location<PM>         PmWalkPL;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
