@@ -1,3 +1,6 @@
+29 March 2004 Radu Ursu
+- rolled back some changes in doc_tex/IOstream/main.tex and doc_tex/IOstream_ref/main.tex
+
 28 March 2004 Radu Ursu
 - removed \ccHtmlIndexC from Mode.tex 
 - removed wrapper.tex from doc_tex/IOstream
