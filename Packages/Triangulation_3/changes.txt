@@ -1,3 +1,10 @@
+Version 1.125 (14 Jan 03)
+- template ctor added to all triangulation classes taking an iterator range
+  over points.
+- Regular_3 now hides vertices (and updates itself) when inserting a coinciding
+  point with greater weight.  This required a new predicate.
+- Add tds.delete_vertices(first, last).
+
 Version 1.124 (13 Dec 02)
 - Geomview_stream output operator uses the new gv.draw_triangles() function.
 
