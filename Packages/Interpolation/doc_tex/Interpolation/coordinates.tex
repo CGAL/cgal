@@ -2,9 +2,9 @@
 \subsection{Introduction}
 Natural neighbor interpolation has been introduced by Sibson
 \cite{s-bdnni-81} to interpolate multivariate scattered data.  Given
-the set of data points $\mathcal{P}$, the natural neighbor coordinates
+a set of data points $\mathcal{P}$, the natural neighbor coordinates
 associated to $\mathcal{P}$ are defined from the Voronoi diagram of
-$\mathcal{P}$.  When simulating the insertion of the query point
+$\mathcal{P}$.  When simulating the insertion of a query point
 $\mathbf{x}$ into the Voronoi diagram of $\mathcal{P}$, the potential
 Voronoi cell of $\mathbf{x}$ ``steals'' some parts from the existing
 cells. 
@@ -22,7 +22,7 @@ Let $\pi(\mathbf{x})$ denote the volume of the potential Voronoi cell
 of $\mathbf{x}$ and $\pi_i(\mathbf{x})$ denote the volume of the
 sub-cell that would be stolen from the cell of $\mathbf{p_i}$ by the
 cell of $\mathbf{x}$.  The natural neighbor coordinate of $\mathbf{x}$
-with respect to the data point $\mathbf{p_i}$ is defined by
+with respect to the data point $\mathbf{p_i}\in \mathcal{P}$ is defined by
 $$
 \lambda_i(\mathbf{x}) =
 \frac{\pi_i(\mathbf{x})}{\pi(\mathbf{x})}.$$
@@ -36,7 +36,7 @@ the natural neighbor coordinates have the following properties:
   \begin{itemize}
   \item[(i)] $\mathbf{x} = \sum_{i=1}^n \lambda_i(\mathbf{x}) \mathbf{p_i}$
     (barycentric coordinate property).
-  \item[(ii)] For any $i \leq n, \lambda_i(\mathbf{p_j})= \delta_{ij}$, where
+  \item[(ii)] For any $i,j \leq n, \lambda_i(\mathbf{p_j})= \delta_{ij}$, where
     $\delta_{ij}$ is the Kronecker symbol.
   \item[(iii)] $\sum_{i=1}^n \lambda_i(\mathbf{x}) = 1$ (partition of unity
     property).
@@ -61,8 +61,7 @@ the natural neighbor coordinates have the following properties:
 
 \subsection{Implementation}
 Given a Delaunay triangulation or a Regular triangulation, the
-vertices in conflict with the query point are determined. The areas of
-conflict zone are computed by triangulating the Voronoi sub-cells. The
+vertices in conflict with the query point are determined. The area $\pi_i(\mathbf{x})$ are computed by triangulating the Voronoi sub-cells. The
 normalization factor $\pi(\mathbf{x})$ is also returned. If the query
 point is already located and/or the boundary edges of the conflict
 zone are already determined, alternative functions allow to avoid the
