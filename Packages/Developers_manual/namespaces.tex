@@ -102,14 +102,6 @@ added to namespace \ccc{CGAL}.  (Some people use the macros
 in place of the \texttt{namespace CGAL \{} and
 \texttt{\} // namespace CGAL}, respectively for better readability.)
 
-Some compilers don't like \texttt{CGAL::} qualification in
-namespace \ccc{CGAL}. In other cases, \eg, template friend declarations,%
-\ccIndexSubitem{friend declaration}{function template}
-\ccIndexSubsubitem{template}{function}{friend declarations}
-compilers need to see \texttt{CGAL::} qualification. To resolve this
-dilemma, use \texttt{CGAL\_SCOPE} instead of \texttt{CGAL::} in such cases. 
-\index{cgal_scope macro@{\tt CGAL\_SCOPE} macro}
-
 \section{Name lookup}
 The process of searching for a definition of a name detected in
 some scope is called name lookup.\ccIndexMainItemDef{name lookup}
