@@ -97,10 +97,12 @@ public:
       
       //MAXIMUM INSCRIBED 3-GON
       Polygonvec  outpol;
-	CGAL::convex_hull_points_2(list_of_points.begin(), list_of_points.end(), std::back_inserter(outpol));
+	CGAL::convex_hull_points_2(list_of_points.begin(), 
+			list_of_points.end(), std::back_inserter(outpol));
       Polygonvec  kg;
       if (outpol.size()>2)
-	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),outpol.vertices_end(),3, std::back_inserter(kg));
+	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),
+			outpol.vertices_end(),3, std::back_inserter(kg));
       
       RasterOp old = widget.rasterOp();	//save the initial raster mode
       widget.setRasterOp(XorROP);
@@ -111,7 +113,8 @@ public:
       //MAXIMUM INSCRIBED 5-GON
       Polygonvec  kg1;
       if (outpol.size()>2)
-	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),outpol.vertices_end(),5, std::back_inserter(kg1));
+	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),
+			outpol.vertices_end(),5, std::back_inserter(kg1));
       
       old = widget.rasterOp();	//save the initial raster mode
       widget.setRasterOp(XorROP);
@@ -130,7 +133,8 @@ public:
       //CONVEX HULL
       std::list<Point>  out;
       std::list<Segment>  Sl;
-      CGAL::convex_hull_points_2(list_of_points.begin(), list_of_points.end(), std::back_inserter(out));
+      CGAL::convex_hull_points_2(list_of_points.begin(), 
+				list_of_points.end(), std::back_inserter(out));
       if( out.size() > 1 ) {
 	Point pakt,prev,pstart;
 
