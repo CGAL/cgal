@@ -13,7 +13,6 @@ include $(CGAL_MAKEFILE)
               # -L$(GMP_LIB_DIR) -lgmp -lm \
 
 CXXFLAGS = \
-	-I../../../Cartesian_kernel/include \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
@@ -35,20 +34,14 @@ CXXFLAGS = \
 	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
 	# /Fatst1.s
 	# /Op /Oi /Od /Za /O2 /Ox
-	# -DCGAL_IA_NEW_FILTERS \
 	# -DCGAL_CHECK_EXPENSIVE \
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
 	# -DCGAL_NO_WARNINGS \
-	# -DCGAL_IA_DONT_STOP_CONSTANT_PROPAGATION \
-	# -DCGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT \
 	# -DLOOPS=10000000
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
-
-# LDFLAGS = Interval_arithmetic$(OBJ_EXT)
-# LDFLAGS = ../../src/Interval_arithmetic/workaround_4_ms.obj
 
 LDFLAGS = \
          $(TESTSUITE_LDFLAGS) \
