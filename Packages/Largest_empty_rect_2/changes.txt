@@ -1,3 +1,6 @@
+Version 1.41 [af]
+- Fixed typos in LaTeX
+
 version 1.40 [af]
 - Added doc_tex/basic/Optimisation/Optimisation_ref/main_Largest_empty_is_rectangle_2.tex
 
