@@ -13,7 +13,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/Window_stream.h>  /* only for visualization used */
+#include <CGAL/IO/leda_window.h>  /* only used for visualization */
 
 typedef CGAL_Cartesian<double>                R;
 typedef CGAL_Point_2<R>                       Point;
@@ -28,11 +28,11 @@ int main()
 
     /* Prepare point generator for the horizontal segment, length 200. */
     typedef  CGAL_Random_points_on_segment_2<Point,Pt_creator>  P1;
-    P1 p1( Point(-100,0), Point(100,0));
+    P1 p1( Point( -0.4, 0), Point( 0.4, 0));
     
     /* Prepare point generator for random points on circle, radius 250. */
     typedef  CGAL_Random_points_on_circle_2<Point,Pt_creator>  P2;
-    P2 p2( 250);
+    P2 p2( 1.0);
     
     /* Create 200 segments. */
     typedef CGAL_Creator_uniform_2< Point, Segment> Seg_creator;
@@ -40,17 +40,14 @@ int main()
     Seg_iterator g( p1, p2);
     CGAL_copy_n( g, 200, back_inserter( segs));
 
-    /* Visualize segments. Can be omitted, see example programs */
-    /* in the CGAL source code distribution. */
-    CGAL_Window_stream W(512, 512);
-    W.init(-256.0, 255.0, -256.0);
-    W << CGAL_BLACK;
-    for( typename vector<Segment>::iterator i = segs.begin(); i != segs.end(); i++)
-	W << *i;
+    /* Visualize segments. */
+    leda_window* window = CGAL_create_and_display_demo_window();
+    for( vector<Segment>::iterator i = segs.begin(); i != segs.end(); i++)
+	*window << *i;
 
     /*  Wait for mouse click in window. */
     Point p;
-    W >> p;
-
+    *window >> p;
+    delete window;
     return 0;
 }

@@ -12,7 +12,7 @@
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/Counting_iterator.h>
 #include <CGAL/IO/Ostream_iterator.h>
-#include <CGAL/IO/Window_stream.h>
+#include <CGAL/IO/leda_window.h>
 
 typedef CGAL_Cartesian<double>                            R;
 typedef CGAL_Point_2<R>                                   Point;
@@ -26,9 +26,8 @@ typedef CGAL_Counting_iterator<Segm_iterator,Segment>     Count_iterator;
 int main()
 {
     /* Open window. */
-    CGAL_Window_stream W(512, 512);
-    W.init(-256.0, 255.0, -256.0);
-    W << CGAL_BLACK;
+    leda_window* window = CGAL_create_and_display_demo_window();
+    window->init(-256.0, 255.0, -256.0);
 
     /* A horizontal like fan. */
     PG p1( Point(-250, -50), Point(-250, 50),50);     /* Point generator. */
@@ -37,7 +36,7 @@ int main()
     Count_iterator t1_begin( t1);                     /* Finite range. */
     Count_iterator t1_end( 50);
     copy( t1_begin, t1_end, 
-	  CGAL_Ostream_iterator<Segment,CGAL_Window_stream>(W));
+	  CGAL_Ostream_iterator<Segment,CGAL_Window_stream>(*window));
 
     /* A vertical like fan. */
     PG p3( Point( -50,-250), Point(  50,-250),50);
@@ -46,10 +45,11 @@ int main()
     Count_iterator t2_begin( t2);
     Count_iterator t2_end( 50);
     copy( t2_begin, t2_end, 
-	  CGAL_Ostream_iterator<Segment,CGAL_Window_stream>(W));
+	  CGAL_Ostream_iterator<Segment,CGAL_Window_stream>(*window));
 
     /*  Wait for mouse click in window. */
     Point p;
-    W >> p;
+    *window >> p;
+    delete window;
     return 0;
 }

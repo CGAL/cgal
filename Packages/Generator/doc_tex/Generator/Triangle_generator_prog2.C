@@ -12,7 +12,7 @@
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/Counting_iterator.h>
 #include <CGAL/IO/Ostream_iterator.h>
-#include <CGAL/IO/Window_stream.h>
+#include <CGAL/IO/leda_window.h>  /* only used for visualization */
 
 typedef CGAL_Cartesian<double>                            R;
 typedef CGAL_Point_2<R>                                   Point;
@@ -26,9 +26,9 @@ typedef CGAL_Counting_iterator<Triang_iterator,Triangle>  Count_iterator;
 int main()
 {
     /* Prepare point generator for three segments. */
-    PG p1( Point( 125, 217), Point(-125, 217), 50);
-    PG p2( Point(-250,   0), Point(-125,-217), 50);
-    PG p3( Point( 125,-217), Point( 250,   0), 50);
+    PG p1( Point(  0.50,  0.90), Point( -0.50,  0.90), 50);
+    PG p2( Point( -0.95,  0.00), Point( -0.50, -0.90), 50);
+    PG p3( Point(  0.50, -0.90), Point(  0.95,  0.00), 50);
 
     /* Create triangle generating iterator. */
     Triang_iterator ti( p1, p2, p3);
@@ -36,14 +36,13 @@ int main()
     Count_iterator  t_end( 50);
 
     /* Open window and copy 50 triangles into window. */
-    CGAL_Window_stream W(512, 512);
-    W.init(-256.0, 255.0, -256.0);
-    W << CGAL_BLACK;
+    leda_window* window = CGAL_create_and_display_demo_window();
     copy( t_begin, t_end, 
-	  CGAL_Ostream_iterator<Triangle,CGAL_Window_stream>(W));
+	  CGAL_Ostream_iterator<Triangle,CGAL_Window_stream>(*window));
 
     /*  Wait for mouse click in window. */
     Point p;
-    W >> p;
+    *window >> p;
+    delete window;
     return 0;
 }

@@ -13,7 +13,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/Window_stream.h>  /* only for visualization used */
+#include <CGAL/IO/leda_window.h>  /* only used for visualization */
 
 typedef CGAL_Cartesian<double>                R;
 typedef CGAL_Point_2<R>                       Point;
@@ -22,15 +22,15 @@ typedef CGAL_Triangle_2<R>                    Triangle;
 
 int main()
 {
-    /* Create test segment set. Prepare a vector for 20 triangles. */
+    /* Create test triangle set. Prepare a vector for 20 triangles. */
     vector<Triangle> triang;
     triang.reserve(20);
 
     /* Prepare point generator for random points in a disc. */
     typedef  CGAL_Random_points_in_disc_2<Point,Pt_creator>  RP;
-    RP p1( 250);
-    RP p2( 250);
-    RP p3( 250);
+    RP p1( 1.0);
+    RP p2( 1.0);
+    RP p3( 1.0);
     
     /* Create 20 triangles. */
     typedef CGAL_Creator_uniform_3< Point, Triangle> T_creator;
@@ -38,17 +38,14 @@ int main()
     Triang_iterator ti( p1, p2, p3);
     CGAL_copy_n( ti, 20, back_inserter( triang));
 
-    /* Visualize triangles. Can be omitted, see example programs */
-    /* in the CGAL source code distribution. */
-    CGAL_Window_stream W(512, 512);
-    W.init(-256.0, 255.0, -256.0);
-    W << CGAL_BLACK;
-    for( typename vector<Triangle>::iterator i = triang.begin(); i != triang.end(); i++)
-	W << *i;
+    /* Visualize triangles. */
+    leda_window* window = CGAL_create_and_display_demo_window();
+    for( vector<Triangle>::iterator i = triang.begin(); i != triang.end(); i++)
+        *window << *i;
 
     /*  Wait for mouse click in window. */
     Point p;
-    W >> p;
-
+    *window >> p;
+    delete window;
     return 0;
 }

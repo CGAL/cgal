@@ -10,7 +10,7 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/Window_stream.h>  /* only for visualization used */
+#include <CGAL/IO/leda_window.h>  /* only used for visualization */
 
 typedef CGAL_Cartesian<double>                R;
 typedef CGAL_Point_2<R>                       Point;
@@ -42,17 +42,15 @@ int main()
     /* Check that we have really created 500 points. */
     assert( points.size() == 500);
 
-    /* Visualize point set. Can be omitted, see example programs */
-    /* in the CGAL source code distribution. */
-    CGAL_Window_stream W(524, 524);
-    W.init(-262.0, 261.0, -262.0);
-    W << CGAL_BLACK;
-    for( typename vector<Point>::iterator i = points.begin(); i != points.end(); i++)
-	W << *i;
+    /* Visualize point set. */
+    leda_window* window = CGAL_create_and_display_demo_window();
+    window->init(-262.0, 261.0, -262.0);
+    for( vector<Point>::iterator i = points.begin(); i != points.end(); i++)
+	*window << *i;
 
     /*  Wait for mouse click in window. */
     Point p;
-    W >> p;
-
+    *window >> p;
+    delete window;
     return 0;
 }
