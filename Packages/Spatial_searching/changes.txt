@@ -1,3 +1,6 @@
+Version 4.9 (17 October 2003) [af]
+- Added \label to the chapters
+
 Version 4.18 (7 October 2003) [af]
 - Prefix intro.tex with "Spatial_searching/"
 
