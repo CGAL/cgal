@@ -2426,7 +2426,7 @@ compare_y_at_x_segment_C2(
 struct Static_Filtered_compare_y_at_x_segment_C2_9
 {
   static double _bound;
-  static double _epsilon_0,_epsilon_1,_epsilon_2;
+  static double ;
 
   static Comparison_result update_epsilon(
 	const Static_filter_error &px,
@@ -2437,38 +2437,54 @@ struct Static_Filtered_compare_y_at_x_segment_C2_9
 	const Static_filter_error &s2sx,
 	const Static_filter_error &s2sy,
 	const Static_filter_error &s2tx,
-	const Static_filter_error &s2ty,
-	double & epsilon_0,
-	double & epsilon_1,
-	double & epsilon_2)
+	const Static_filter_error &s2ty,)
   {
     typedef Static_filter_error FT;
   
       
       
-      CGAL_kernel_precondition(s1sx != s1tx);
-      CGAL_kernel_precondition(s2sx != s2tx);
-      if (s1sx < s1tx)
-          CGAL_kernel_precondition(s1sx <= px && px <= s1tx);
-      else
-          CGAL_kernel_precondition(s1tx <= px && px <= s1sx);
-      if (s2sx < s2tx)
-          CGAL_kernel_precondition(s2sx <= px && px <= s2tx);
-      else
-          CGAL_kernel_precondition(s2tx <= px && px <= s2sx);
+      
+      
+      
   
-      FT s1stx = s1sx-s1tx;
-      FT s2stx = s2sx-s2tx;
+      CGAL_kernel_precondition(px >= min(s1sx, s1tx) && px <= max(s1sx, s1tx));
+      CGAL_kernel_precondition(px >= min(s2sx, s2tx) && px <= max(s2sx, s2tx));
   
-      return Comparison_result(
-  	CGAL_NTS Static_Filtered_compare_2::update_epsilon(s1sx, s1tx,
+      if (s1sx != s1tx && s2sx != s2tx) {
+  	FT s1stx = s1sx-s1tx;
+  	FT s2stx = s2sx-s2tx;
+  
+  	return Comparison_result(
+  	    CGAL_NTS Static_Filtered_compare_2::update_epsilon(s1sx, s1tx,
   		epsilon_0) *
-  	CGAL_NTS Static_Filtered_compare_2::update_epsilon(s2sx, s2tx,
+  	    CGAL_NTS Static_Filtered_compare_2::update_epsilon(s2sx, s2tx,
   		epsilon_1) *
-  	CGAL_NTS Static_Filtered_compare_2::update_epsilon(-(s1sx-px)*(s1sy-s1ty)*s2stx,
-  		         (s2sy-s1sy)*s2stx*s1stx
-  		         -(s2sx-px)*(s2sy-s2ty)*s1stx ,
+  	    CGAL_NTS Static_Filtered_compare_2::update_epsilon(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+  		             (s2sy-s1sy)*s2stx*s1stx
+  		             -(s2sx-px)*(s2sy-s2ty)*s1stx ,
   		epsilon_2));
+      }
+      else {
+  	if (s1sx == s1tx) { 
+  	    Comparison_result c1, c2;
+  	    c1 = Static_Filtered_compare_y_at_xC2_6::update_epsilon(px, s1sy, s2sx, s2sy, s2tx, s2ty,
+  		epsilon_);
+  	    c2 = Static_Filtered_compare_y_at_xC2_6::update_epsilon(px, s1ty, s2sx, s2sy, s2tx, s2ty,
+  		epsilon_);
+  	    if (c1 == c2)
+  		return c1;
+  	    return EQUAL;
+  	}
+  	
+  	Comparison_result c3, c4;
+  	c3 = Static_Filtered_compare_y_at_xC2_6::update_epsilon(px, s2sy, s1sx, s1sy, s1tx, s1ty,
+  		epsilon_);
+  	c4 = Static_Filtered_compare_y_at_xC2_6::update_epsilon(px, s2ty, s1sx, s1sy, s1tx, s1ty,
+  		epsilon_);
+  	if (c3 == c4)
+  	    return opposite(c3);
+  	return EQUAL;
+      }
   }
 
   // Call this function from the outside to update the context.
@@ -2477,7 +2493,7 @@ struct Static_Filtered_compare_y_at_x_segment_C2_9
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
-    (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,);
     // TODO: We should verify that all epsilons have really been updated.
   }
 
@@ -2490,38 +2506,54 @@ struct Static_Filtered_compare_y_at_x_segment_C2_9
 	const Restricted_double &s2sx,
 	const Restricted_double &s2sy,
 	const Restricted_double &s2tx,
-	const Restricted_double &s2ty,
-	const double & epsilon_0,
-	const double & epsilon_1,
-	const double & epsilon_2)
+	const Restricted_double &s2ty,)
   {
     typedef Restricted_double FT;
   
       
       
-      CGAL_kernel_precondition(s1sx != s1tx);
-      CGAL_kernel_precondition(s2sx != s2tx);
-      if (s1sx < s1tx)
-          CGAL_kernel_precondition(s1sx <= px && px <= s1tx);
-      else
-          CGAL_kernel_precondition(s1tx <= px && px <= s1sx);
-      if (s2sx < s2tx)
-          CGAL_kernel_precondition(s2sx <= px && px <= s2tx);
-      else
-          CGAL_kernel_precondition(s2tx <= px && px <= s2sx);
+      
+      
+      
   
-      FT s1stx = s1sx-s1tx;
-      FT s2stx = s2sx-s2tx;
+      CGAL_kernel_precondition(px >= min(s1sx, s1tx) && px <= max(s1sx, s1tx));
+      CGAL_kernel_precondition(px >= min(s2sx, s2tx) && px <= max(s2sx, s2tx));
   
-      return Comparison_result(
-  	CGAL_NTS Static_Filtered_compare_2::epsilon_variant(s1sx, s1tx,
+      if (s1sx != s1tx && s2sx != s2tx) {
+  	FT s1stx = s1sx-s1tx;
+  	FT s2stx = s2sx-s2tx;
+  
+  	return Comparison_result(
+  	    CGAL_NTS Static_Filtered_compare_2::epsilon_variant(s1sx, s1tx,
   		epsilon_0) *
-  	CGAL_NTS Static_Filtered_compare_2::epsilon_variant(s2sx, s2tx,
+  	    CGAL_NTS Static_Filtered_compare_2::epsilon_variant(s2sx, s2tx,
   		epsilon_1) *
-  	CGAL_NTS Static_Filtered_compare_2::epsilon_variant(-(s1sx-px)*(s1sy-s1ty)*s2stx,
-  		         (s2sy-s1sy)*s2stx*s1stx
-  		         -(s2sx-px)*(s2sy-s2ty)*s1stx ,
+  	    CGAL_NTS Static_Filtered_compare_2::epsilon_variant(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+  		             (s2sy-s1sy)*s2stx*s1stx
+  		             -(s2sx-px)*(s2sy-s2ty)*s1stx ,
   		epsilon_2));
+      }
+      else {
+  	if (s1sx == s1tx) { 
+  	    Comparison_result c1, c2;
+  	    c1 = Static_Filtered_compare_y_at_xC2_6::epsilon_variant(px, s1sy, s2sx, s2sy, s2tx, s2ty,
+  		epsilon_);
+  	    c2 = Static_Filtered_compare_y_at_xC2_6::epsilon_variant(px, s1ty, s2sx, s2sy, s2tx, s2ty,
+  		epsilon_);
+  	    if (c1 == c2)
+  		return c1;
+  	    return EQUAL;
+  	}
+  	
+  	Comparison_result c3, c4;
+  	c3 = Static_Filtered_compare_y_at_xC2_6::epsilon_variant(px, s2sy, s1sx, s1sy, s1tx, s1ty,
+  		epsilon_);
+  	c4 = Static_Filtered_compare_y_at_xC2_6::epsilon_variant(px, s2ty, s1sx, s1sy, s1tx, s1ty,
+  		epsilon_);
+  	if (c3 == c4)
+  	    return opposite(c3);
+  	return EQUAL;
+      }
   }
 };
 
@@ -2593,10 +2625,7 @@ compare_y_at_x_segment_C2(
 		s2sx.dbl(),
 		s2sy.dbl(),
 		s2tx.dbl(),
-		s2ty.dbl(),
-		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_0,
-		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_1,
-		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_2);
+		s2ty.dbl(),);
   }
   catch (...)
   {
@@ -2667,10 +2696,7 @@ compare_y_at_x_segment_C2(
 		s2sx.dbl(),
 		s2sy.dbl(),
 		s2tx.dbl(),
-		s2ty.dbl(),
-		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_0,
-		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_1,
-		Static_Filtered_compare_y_at_x_segment_C2_9::_epsilon_2);
+		s2ty.dbl(),);
   }
   catch (...)
   {
@@ -3288,8 +3314,8 @@ struct Static_Filtered_compare_slopesC2_8
   		epsilon_1);
   
         if (cmp_x2 == EQUAL) return SMALLER;
-        return Comparison_result ( CGAL_NTS Static_Filtered_sign_1::update_epsilon((s2_src_y - s2_tgt_y) *
-                                                 (s2_src_x - s2_tgt_x),
+        return Comparison_result (- CGAL_NTS Static_Filtered_sign_1::update_epsilon((s2_src_y - s2_tgt_y) *
+                                                  (s2_src_x - s2_tgt_x),
   		epsilon_2) );
      }
   
@@ -3381,8 +3407,8 @@ struct Static_Filtered_compare_slopesC2_8
   		epsilon_1);
   
         if (cmp_x2 == EQUAL) return SMALLER;
-        return Comparison_result ( CGAL_NTS Static_Filtered_sign_1::epsilon_variant((s2_src_y - s2_tgt_y) *
-                                                 (s2_src_x - s2_tgt_x),
+        return Comparison_result (- CGAL_NTS Static_Filtered_sign_1::epsilon_variant((s2_src_y - s2_tgt_y) *
+                                                  (s2_src_x - s2_tgt_x),
   		epsilon_2) );
      }
   
