@@ -1,3 +1,7 @@
+29 September 2004 Sylvain Pion
+- Remove obsolete tst_static_adaptatif.C.
+- Make Static_filter_error::ulp() work with optimization.
+
 24 September 2004 Sylvain Pion
 - Interval_nt : Introduce comparison functions/operators in namespace
   CGAL::Certified which do not throw but return the guarantee-ness as a bool.
