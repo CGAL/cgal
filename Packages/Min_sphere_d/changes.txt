@@ -103,3 +103,6 @@ Changes from 2.15:
    - manual rewritten to new style;
    - a couple of std:: added
    - exmple program improved (using-directives removed).
+
+Changes from 2.25:
+   - concept names fixed in documentation
