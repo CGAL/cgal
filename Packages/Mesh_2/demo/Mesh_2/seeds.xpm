@@ -1,5 +1,5 @@
 /* XPM */
-static char * seeds_xpm[] = {
+char * seeds_xpm[] = {
 "32 32 4 1",
 " 	c None",
 ".	c #FF0000",

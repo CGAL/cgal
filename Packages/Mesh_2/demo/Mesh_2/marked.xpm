@@ -1,5 +1,5 @@
 /* XPM */
-static char * marked_xpm[] = {
+char * marked_xpm[] = {
 "32 32 4 1",
 " 	c None",
 ".	c #000080",

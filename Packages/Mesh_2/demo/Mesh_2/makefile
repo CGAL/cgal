@@ -44,6 +44,8 @@ all:            \
 		mesh$(EXE_EXT) \
 		conform$(EXE_EXT)
 
+icons$(OBJ_EXT): seeds.xpm marked.xpm contraints.xpm
+
 icons$(EXE_EXT): icons$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)icons icons$(OBJ_EXT) $(LDFLAGS)
 

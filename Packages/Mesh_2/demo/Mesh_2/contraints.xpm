@@ -1,5 +1,5 @@
 /* XPM */
-static char * contraints_xpm[] = {
+char * contraints_xpm[] = {
 "32 32 2 1",
 " 	c None",
 ".	c #FF0000",
