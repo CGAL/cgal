@@ -38,7 +38,7 @@ LDFLAGSQT = \
 #---------------------------------------------------------------------#
 
 all:            \
-                arrangments$(EXE_EXT) 
+                arrangements$(EXE_EXT) 
 #		shortest_path$(EXE_EXT) \
 #                visibility_graph$(EXE_EXT) 
 
@@ -63,7 +63,7 @@ Show_pseudo_triangulation.moc:  Show_pseudo_triangulation.h
 
 Show_pseudo_triangulation$(OBJ_EXT): Show_pseudo_triangulation.moc Show_pseudo_triangulation.C
 
-arrangments$(OBJ_EXT): arrangments.moc \
+arrangements$(OBJ_EXT): arrangements.moc \
 	Show_pseudo_triangulation.h \
 	Show_antichain.h \
 	Show_lines_base.h \
@@ -72,17 +72,17 @@ arrangments$(OBJ_EXT): arrangments.moc \
 	Show_nearest_vertex.h \
 	Show_pseudo_triangulation.h
 
-arrangments.moc:  arrangments.C
-	$(QT_MOC) -o arrangments.moc arrangments.C
+arrangements.moc:  arrangements.C
+	$(QT_MOC) -o arrangements.moc arrangements.C
 
-arrangments$(OBJ_EXT): arrangments.moc
+arrangements$(OBJ_EXT): arrangements.moc
 
-arrangments$(EXE_EXT): arrangments$(OBJ_EXT) \
+arrangements$(EXE_EXT): arrangements$(OBJ_EXT) \
 		Show_points$(OBJ_EXT) \
 		Show_lines_base$(OBJ_EXT) \
 		Qt_widget_styled_layer$(OBJ_EXT) \
 		Show_pseudo_triangulation$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangments arrangments$(OBJ_EXT) Show_points$(OBJ_EXT) Show_lines_base$(OBJ_EXT) Qt_widget_styled_layer$(OBJ_EXT) Show_pseudo_triangulation$(OBJ_EXT) $(LDFLAGSQT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangements arrangements$(OBJ_EXT) Show_points$(OBJ_EXT) Show_lines_base$(OBJ_EXT) Qt_widget_styled_layer$(OBJ_EXT) Show_pseudo_triangulation$(OBJ_EXT) $(LDFLAGSQT)
 
 shortest_path$(EXE_EXT): shortest_path$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)shortest_path shortest_path$(OBJ_EXT) $(LDFLAGS)
@@ -97,7 +97,7 @@ clean: \
                    Qt_widget_styled_layer.clean \
                    Show_points.clean \
                    Show_pseudo_triangulation.clean \
-                   arrangments.clean \
+                   arrangements.clean \
                    shortest_path.clean \
                    visibility_graph.clean \
                    visibility_graph_of_points.clean

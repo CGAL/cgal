@@ -164,7 +164,7 @@ public:
       dt_of_bitangents()
     {
       // title
-      setCaption("Visibility_complex. Arrangments");
+      setCaption("Visibility_complex. Arrangements");
 
       // member datas
       list_of_points = new List_of_points();
