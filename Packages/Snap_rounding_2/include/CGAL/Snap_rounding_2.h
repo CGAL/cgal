@@ -174,9 +174,7 @@ private:
   static const int default_number_of_kd_trees = 1;
 
   void find_intersected_hot_pixels(Segment_data & seg,
-                                   std::set<Hot_pixel<Traits> *,
-                                   Hot_pixel_dir_cmp<Traits> >
-                                   &hot_pixels_intersected_set,
+                                   Hot_pixel_set &hot_pixels_intersected_set,
                                    int &number_of_intersections,
                                    NT pixel_size,
                                    Multiple_kd_tree * mul_kd_tree);
