@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.66 (09 Jul 2003)
+   - replaced Leda based demo with Qt based demo (rursu)
+
 2.65 (6  Apr 2003)
    - G++ 3.4 support : add missing "this->".
 
