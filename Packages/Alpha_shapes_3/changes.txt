@@ -1,5 +1,12 @@
+19 novembre 2004 Mariette
+- changed authors
+
 18 September 2004 Andreas Fabri
 - Changed the data file for example_big_alpha.C
+
+27 August 2004 Mariette
+- add Alpha_shapes_3/examples/Alpha_shapes_3/example_big_alpha.C 
+  in CVS repository
 
 25 August 2004 Mariette
 - make function set_alpha_min_of_vertices a template 
