@@ -1,3 +1,6 @@
+11 August 2004 Andreas Fabri
+- bug fix in operator>>(istream, Gmpz)
+
 9 August 2004 Sylvain Pion
 - Use std::ios instead of std::ios_base to please g++ 2.95.
 

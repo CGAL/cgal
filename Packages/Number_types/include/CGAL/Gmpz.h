@@ -594,10 +594,13 @@ operator>>(std::istream& is, Gmpz &z)
         is.putback(c);
   if (sign(tmp) != ZERO && negative)
       tmp = -tmp;
-  if (!good)
-      is.setstate(std::ios::failbit);
-  if (is)
+  if (good){
       z = tmp;
+      if(is.eof() && is.fail() && (! is.bad())){
+	is.clear(std::ios::eofbit);
+      }
+  } else
+      is.setstate(std::ios::failbit);
   return is;
 }
 
