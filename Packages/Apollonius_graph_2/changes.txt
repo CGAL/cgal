@@ -1,3 +1,8 @@
+26 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- CC-5.30_SunOS-5.8 was complaining about the static constants of the
+  Parabola_2 and Hyperbola_ray_2 classes; these constants are now given
+  my static methods
+
 25 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - changes in the traits: moved the various functors from
   predicates/Apollonius_graph_predicates_C2.h to separate files named

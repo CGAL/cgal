@@ -44,7 +44,11 @@ public:
   //  typedef CGAL::Ray_2< Cartesian<double> >       Ray_2;
 
 protected:
-  static const FT OFFSET;
+  static const FT& OFFSET()
+  {
+    static FT offset_(10000);
+    return offset_;
+  }
 
   template< class Stream >
   inline
@@ -69,9 +73,9 @@ public:
   {
     FT t1 = t(this->p1);
     if ( direction == POSITIVE ) {
-      this->p2 = f(t1 + this->STEP * OFFSET);
+      this->p2 = f(t1 + this->STEP * OFFSET());
     } else {
-      this->p2 = f(t1 - this->STEP * OFFSET);
+      this->p2 = f(t1 - this->STEP * OFFSET());
     }
   }
 
@@ -96,9 +100,9 @@ public:
 
     FT t1 = t(this->p1);
     if ( _dir == POSITIVE ) {
-      this->p2 = f(t1 + this->STEP * OFFSET);
+      this->p2 = f(t1 + this->STEP * OFFSET());
     } else {
-      this->p2 = f(t1 - this->STEP * OFFSET);
+      this->p2 = f(t1 - this->STEP * OFFSET());
     }
     
     Hyperbola_segment_2< Gt >::draw(s);
@@ -118,10 +122,6 @@ public:
   }
   
 };
-
-template < class Gt >
-const typename Hyperbola_ray_2<Gt>::FT
-Hyperbola_ray_2<Gt>::OFFSET = 10000;
 
 
 

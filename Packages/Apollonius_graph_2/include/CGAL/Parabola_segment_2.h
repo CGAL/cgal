@@ -85,20 +85,20 @@ public:
 
       p.push_back( this->o );
       k = 1;
-      tt = -this->STEP;
+      tt = -this->STEP();
       while ( CGAL::compare(tt, s[0]) == LARGER ) {
 	p.insert( p.begin(), f(tt) );
 	k--;
-	tt = -FT(k * k) * this->STEP;
+	tt = -FT(k * k) * this->STEP();
       }
       p.insert( p.begin(), f(s[0]) );
 
       k = 1;
-      tt = this->STEP;
+      tt = this->STEP();
       while ( CGAL::compare(tt, s[1]) == SMALLER ) {
 	p.push_back( f(tt) );
 	k++;
-	tt = FT(k * k) * this->STEP;
+	tt = FT(k * k) * this->STEP();
       }
       p.push_back( f(s[1]) );
     } else if ( !(CGAL::is_negative(s[0])) &&
@@ -110,13 +110,13 @@ public:
       p.push_back( f(s[0]) );
 
       tt = s[0];
-      k = int(CGAL::to_double(CGAL::sqrt(tt / this->STEP)));
+      k = int(CGAL::to_double(CGAL::sqrt(tt / this->STEP())));
 
       while ( CGAL::compare(tt, s[1]) == SMALLER ) {
 	if ( CGAL::compare(tt, s[0]) != SMALLER )
 	  p.push_back( f(tt) );
 	k++;
-	tt = FT(k * k) * this->STEP;
+	tt = FT(k * k) * this->STEP();
       }
       p.push_back( f(s[1]) );
     } else {
@@ -126,13 +126,13 @@ public:
       p.push_back( f(s[1]) );
 
       tt = s[1];
-      k = int(CGAL::to_double(-CGAL::sqrt(-tt / this->STEP)));
+      k = int(CGAL::to_double(-CGAL::sqrt(-tt / this->STEP())));
 
       while ( CGAL::compare(tt, s[0]) == LARGER ) {
 	if ( CGAL::compare(tt, s[1]) != LARGER )
 	  p.push_back( f(tt) );
 	k--;
-	tt = -FT(k * k) * this->STEP;
+	tt = -FT(k * k) * this->STEP();
       }
       p.push_back( f(s[0]) );
     }

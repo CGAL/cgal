@@ -43,7 +43,11 @@ public:
 
 protected:
   // static stuff
-  static const FT STEP;
+  static const FT& STEP()
+  {
+    static FT step_(2);
+    return step_;
+  }
 
   inline static
   FT square(const FT &x)
@@ -256,7 +260,7 @@ public:
     pright.push_back(o);
 
     for (int i = 1; i <= 100; i++) {
-      p = compute_points(i * i * STEP);
+      p = compute_points(i * i * STEP());
 
       W << p[0];
       W << p[1];
@@ -283,9 +287,6 @@ public:
     W << o;
   }
 };
-
-template < class Gt >
-const typename Parabola_2<Gt>::FT  Parabola_2<Gt>::STEP = 2;
 
 template< class Stream, class Gt >
 inline
