@@ -66,6 +66,30 @@ typedef CGAL::Bench_parse_args::TypeId                  TypeId;
 typedef CGAL::Bench_parse_args::StrategyId              StrategyId;
 typedef CGAL::Bench_parse_args::FormatId                FormatId;
 
+#if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
+inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
+                                        const Point & p)
+{ return os << leda_point(p.xcoordD(), p.ycoordD()); }
+
+inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
+                                        const Curve & c)
+{
+  return os << leda_segment(c.xcoord1D(), c.ycoord1D(),
+                            c.xcoord2D(), c.ycoord2D());
+}
+
+inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
+                                        Planar_map & pm)
+{
+  Planar_map::Edge_iterator ei;
+  for (ei = pm.edges_begin(); ei != pm.edges_end(); ++ei) os << (*ei).curve();
+  Planar_map::Vertex_iterator vi;
+  for (vi = pm.vertices_begin(); vi != pm.vertices_end(); ++vi)
+    os << (*vi).point();
+  return os;
+}
+#endif
+
 /*
  */
 class Basic_pm {
@@ -214,13 +238,6 @@ typedef CGAL::Bench<Naive_agg_pm>               Naive_agg_pm_bench;
 
 typedef Aggregate_pm<Walk_point_location>       Walk_agg_pm;
 typedef CGAL::Bench<Walk_agg_pm>                Walk_agg_pm_bench;
-
-#if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
-CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Point & p)
-{ return os << leda_point(p.xcoordD(), p.ycoordD()); } 
-CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Curve & c)
-{ return os << leda_segment(c.xcoord1D(),c.ycoord1D(),c.xcoord2D(),c.ycoord2D()); }
-#endif
 
 /*!
  */
