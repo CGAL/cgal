@@ -36,8 +36,6 @@ typedef R::Plane_3   				Plane_3;
 typedef CGAL::Creator_uniform_3<double,Point_3>               Creator;
 typedef CGAL::Random_points_in_sphere_3<Point_3,Creator>      Generator;
 
-const unsigned int num = 500;
-
 void test_coplanar_xy()
 {
    std::list<Point_3>  points;
