@@ -1,3 +1,6 @@
+Version 11.39
+- Demo use icon defined in Qt_widget package [rursu]
+
 Version 11.38
 - Simplified traits classes [af]
 

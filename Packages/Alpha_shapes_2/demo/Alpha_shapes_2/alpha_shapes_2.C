@@ -45,7 +45,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_helpwindow.h>
-
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 //STL headers
 #include <fstream>
@@ -468,6 +468,8 @@ main(int argc, char **argv)
   app.setMainWidget(&win);
   win.setCaption(my_title_string);
   win.setMouseTracking(TRUE);
+  QPixmap cgal_icon = QPixmap(demoicon_xpm);
+  win.setIcon(cgal_icon);
   win.show();
   win.init_coordinates();
   current_state = -1;
