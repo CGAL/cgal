@@ -249,8 +249,8 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Triangulation,\n"
-  		"Copyright CGAL @2001");
+		"This is a demo for Maximum inscribed k-gon,\n"
+  		"Copyright CGAL @2002");
   };
 
   void aboutQt()
