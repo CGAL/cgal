@@ -1,0 +1,339 @@
+
+----------------------------- Release 2.3 ------------------------------------
+
+Version 2.3 differs from version 2.3 in the platforms that are supported and
+in functionality.
+
+Additional supported platforms:
+
+   Gnu g++ 3.0 on Solaris, Linux 
+
+The following functionality has been added:
+
+Kernels:
+
+   - The 2D and 3D kernels now serve as models of the new kernel concept
+     described in the recent paper, "An Adaptable and Extensible Geometry
+     Kernel" by Susan Hert, Micheal Hoffmann, Lutz Kettner, Sylvain Pion, 
+     and Michael Seel to be presented at WAE 2001 (and soon available as
+     a technical report).  This new kernel is completely compatible with 
+     the previous design but is more flexible in that it allows geometric 
+     predicates as well as objects to be easily exchanged and adapted 
+     individually to users' needs.
+
+   - A new kernel called Simple_homogeneous<> is available. It is equivalent 
+     to Homogeneous<> but without reference-counted objects.
+
+   - A new kernel called Filtered_kernel<> is available that allows one to 
+     build kernel traits classes that use exact and efficient predicates.
+
+   - There are two classes, Cartesian_converter<> and Homogeneous_converter
+     that allows one to convert objects between different Cartesian and
+     homogeneous kernels, respectively. 
+ 
+   - A new d-dimensional kernel, Kernel_d is available.  It provides diverse 
+     kernel objects, predicates and constructions in d dimensions with two 
+     representations based on the kernel families Cartesean_d and Homogeneous_d
+ 
+Basic Library:
+
+   Almost all packages in the basic library have been adapted to the
+   new kernel design to realize the flexibility this design makes possible.
+   In several packages, this means that the traits class requirements have
+   changed to conform to the function objects offered in the kernels so the
+   kernels themselves can be used as traits classes in many instances.
+
+   2D Convex Hull 
+     - The traits requirements have changed slightly.
+
+   3D Convex Hull 
+     - The convex_hull_3 function now uses a new implementation of the 
+       quickhull algorithm that no longer requires LEDA.
+     - A new convex_hull_incremental_3 function based on the new d-dimensional
+       convex hull class is available for comparison purposes
+
+  Convex_hull_d, Delaunay_d
+     Two new application classes offering the calculation of d-dimensional
+     convex hulls and delaunay triangulations
+
+  Polygon
+
+    - The traits class requirements have been changed.
+    - The simplicity test has a completely new implementation.
+    - Properties like convexity, simplicity and area can now be cached by
+      polygons. You need to set a flag to select this behaviour.
+
+  Planar Nef Polyhedra
+     A new class (Nef_polyhedron_2) representing planar Nef polyhedra = 
+     rectilinearly bounded points sets that are the result of binary and 
+     topological operations starting from halfplanes.
+
+  Planar Polygon Partitioning
+     New package offering functions to partition planar polygons into
+     convex and y-monotone pieces.
+
+  Planar Maps and Arrangements 
+
+     - A new class Planar_map_with_intersections_2<Planar_map> for planar maps
+       of possibly intersecting, possibly non-x-monotone, possibly overlapping
+       curves (like Arrangement_2 but without the hierarchy tree).
+
+     - I/O utilities for planar maps and arrangements for textual and
+       graphical streams. (It is possible to save and later reload built
+       planar maps or arrangements.) 
+
+     - New arrangement traits class for line segments and circular arcs
+       (Arr_segment_circle_traits<NT>). 
+
+     - New faster traits for polylines specialized for using the LEDA
+       rational kernel (Arr_leda_polylines_traits). The LEDA traits for
+       segments was also made faster.
+
+     - A new point location strategy (Pm_simple_point_location<Planar_map>).
+
+  Halfedge Data Structure 
+     The halfedge data structure has been completely revised. The new design
+     is more in line with the STL naming scheme and it provides a safe and
+     coherent type system throughout the whole design (no void* pointers
+     anymore), which allows for better extendibility. A user can add new
+     incidences in the mesh easily. The new design also uses standard
+     allocators with a new template parameter that has a suitable default.
+         
+     The old design is still available, but its use is deprecated, see the
+     manual of deprecated packages for its documentation. Reported bugs in
+     copying the halfedge data structure (and therefore also polyhedral
+     surfaces) have been fixed in both designs. Copying a list based 
+     representation is now based on hash maps instead of std::map and
+     therefore considerably faster.
+
+  Polyhedral Surface
+     The polyhedral surface has been rewritten to work with the new
+     halfedge data structure design. The user level interface of the
+     CGAL::Polyhedron_3 class is almost backwards compatible with the
+     previous class. The exceptions are the template parameter list,
+     everything that relies on the flexibility of the underlying
+     halfedge data structure, such as a self written facet class, and
+     that the distinction between supported normals and supported planes
+     has been removed. Only planes are supported. See the manuals for
+     suggestions how to handle normals instead of planes.
+         
+     More example programs are provided with polyhedral surfaces,
+     for example, one about Euler operator and one computing a subdivision
+     surface given a control mesh as input.
+         
+     The old design is still available for backwards compatibility and to
+     support older compiler, such as MSVC++6.0. For the polyhedral surface,
+     old and new design cannot be used simultaneously (they have identical
+     include file names and class names). The include files select
+     automatically the old design for MSVC++6.0 and the new design
+     otherwise. This automatism can be overwritten by defining appropriate
+     macros before the include files. The old design is selected with the
+     CGAL_USE_POLYHEDRON_DESIGN_ONE macro. The new design is selected with
+     the CGAL_USE_POLYHEDRON_DESIGN_TWO macro.
+
+
+  2D Triangulation
+
+     The geometric traits class requirements have been changed to conform
+     to the new CGAL kernels.  CGAL kernel classes can be used as traits
+     classes for all 2D triangulations except for regular triangulations.
+
+     Additionnal functionality:
+        - dual method for regular triangulations (to build a power diagram)
+        - unified names and signatures for various "find_conflicts()" 
+          member functions in Delaunay and constrained Delaunay triangulation.
+        - As an alternative to the simple insert() member function,
+          insertion of points in those triangulation can be performed using the
+          combination of find_conflicts() and star_hole() which eventually
+          allows the user to keep track of deleted faces.
+
+     More demos and examples
+
+  3D Triangulation
+
+     Major improvements 
+       - A new class Triangulation_hierarchy_3 that allows a faster point 
+         location, and thus construction of the Delaunay triangulation
+       - A new method for removing a vertex from a Delaunay triangulation 
+         that solves all degenerate cases
+       - Running time of the usual location and insertion methods improved 
+
+     A bit more functionality, such as
+        - New geomview output 
+        - dual methods in Delaunay triangulations to draw the Voronoi diagram
+
+     More demos and examples 
+
+     Changes in interface
+        - Traits classes requirements have been modified 
+        - The kernel can be used directly as a traits class (except for 
+          regular triangulation)
+        - insert methods in Triangulation_data_structure have a new interface 
+
+  3D Alpha shapes
+     A new class (Alpha_shapes_3) that computes Alpha shapes of point sets
+     in 3D is available.
+
+  Geometric Optimisation
+
+     The traits requirements for Matrix_search and Min_quadrilateral_2
+     have been changed to bring them in line with the CGAL kernels.
+
+  Point_set_2
+
+    - now independent of LEDA, based on the CGAL Delaunay triangulation and
+      converted to kernel traits
+    - function template versions of the provided query operations
+
+
+Support Library:
+----------------
+  In_place_list has a new third template parameter 
+        (with a suitable default) for an STL-compliant allocator.
+
+  Unique_hash_map is a new support class. 
+
+  Geomview_stream :
+    - Geomview version 1.8.1 is now required.
+    - no need to have a ~/.geomview file anymore.
+    - new output operators for triangulations.
+    - new output operators for Ray_2, Line_2, Ray_3, Line_3, Sphere_3.
+    - various new manipulators.
+
+  Number types :
+    - Lazy_exact_nt<NT> is a new number type wrapper to speed up exact 
+      number types.
+    - MP_Float is a new multiprecision floating point number type. It can 
+      do exact additions, subtractions and multiplications over 
+      floating point values.
+
+  Window stream
+    In cooperation with Algorithmic Solutions, GmBH (distributors of
+    the LEDA library), we can now offer a visualization package 
+    downloadable in binary form that support visualization on a ported
+    version of the LEDA window lib.
+
+
+----------------------------- Release 2.2 ------------------------------------
+
+Version 2.2 differs from version 2.2 in the platforms that are supported and
+in functionality.
+
+Additional supported platforms:
+
+   - the KAI compiler (4.0) on Solaris 5.8
+   - Borland C++ (5.5)
+
+The following functionality has been added:
+
+  -  There is a new, non-reference-counted kernel, Simple_cartesian. Because
+     reference counting is not used, and thus coordinates are stored within a
+     class, debugging is easier using this kernel.  This kernel can also be
+     faster in some cases than the reference-counted Cartesian kernel.
+
+  -  New optimisation algorithms:
+
+         --  Min_annulus_d - Algorithm for computing the smallest enclosing 
+             annulus of points in arbitrary dimension
+         --  Polytope_distance_d - Algorithm for computing the (squared) 
+             distance between two convex polytopes in arbitrary dimension
+         --  Width_3 - Algorithm for computing the (squared) width of points 
+             sets in three dimensions
+
+  -  2D Triangulations
+     
+        --  There are now two triangulation data structures available in CGAL.
+            The new one uses a list to store the faces and allows one to 
+            represent two-dimensional triangulations embedded in three spaces 
+            as well as planar triangulations.
+        --  The triangulation hierarchy which allows fast location query
+            is now available.
+
+  -  Inifinite objects can now be included in planar maps.
+
+  -  Removal as well as insertions of vertices for 3D Delaunay triangulations 
+     is now possible.
+
+  -  A generator for ``random'' simple polygons is now available.
+
+  -  In directory demo/Robustness, programs that demonstrate typical robustness
+     problems in geometric computing are presented along with the solutions to
+     these problems that CGAL provides.
+
+The following functionality has been removed:
+
+   --  The binary operations on polygons (union, intersection ...) have been 
+       removed since the code could not be adapted to all supported 
+       platforms.  Arrangements can often be used as a substitute.
+
+--------------------------------- Release 2.1 --------------------------------
+
+Version 2.1 differs from version 2.0 in the platforms that are supported and
+in functionality.
+
+Supported platforms:
+
+     -  the newest gnu compiler (2.95.2) on Sun, SGI, Linux and Windows.
+     -  the Microsoft Visual C++ compiler, version 6.
+     -  the mips CC compiler version 7.3 under Irix.
+
+Support for the old g++ compiler (2.8) and for mips CC 7.2 has been dropped.
+
+The following functionality has been added:
+
+  -  Alpha shapes and weighted alpha shapes in 2D. Alpha shapes are a
+     generalization of the convex hull of a point set.
+  -  Arrangements in 2D. Arrangements are related to and based on planar maps.
+     The major difference between the two is that curves are allowed to 
+     intersect in the case of arrangements.
+  -  Extensions to triangulations in 2D.  Constrained triangulations are now 
+     dynamic: they support insertions of new constraint as well as removal of 
+     existing constraints.  There are also constrained Delaunay triangulations.
+  -  Triangulations in 3D were added, both Delaunay triangulations and regular
+     triangulations.
+  -  Min_quadrilateral optimisations have been added.  These are algorithms to 
+     compute the minimum enclosing rectangle/parallelogram (arbitrary 
+     orientation) and the minimum enclosing strip of a convex point set. 
+  -  2d Point_set is a package for 2d range search operations, Delaunay
+     triangulation, nearest neighbor queries. This package works only if 
+     LEDA is installed.
+  -  Support for GeoWin visualization library. This also depends on LEDA.
+  -  Support for using the CLN number type together with CGAL.
+
+----------------------------- Release 2.0 ------------------------------------
+
+The main difference from release 1.2 is the introduction of namespaces -- 
+namespace std for code from the standard library and namespace CGAL for
+the CGAL library.
+
+----------------------------- Release 1.2 ------------------------------------
+
+Additions to release 1.1 include: 
+     - topological map 
+     - planar map overlay 
+     - regular and constrained triangulations 
+
+----------------------------- Release 1.1 ------------------------------------
+
+Additions to release 1.0 include:
+
+     - 3D intersections 
+     - kD points 
+     - 3D convex hull 
+     - kD smallest enclosing sphere
+
+
+----------------------------- Release 1.0 ------------------------------------
+
+Additions to release 0.9 include:
+
+     - Polyhedral surfaces 
+     - Halfedge Data Structure
+     - Planar maps 
+
+----------------------------- Release 0.9 ------------------------------------
+
+Initial (beta) release of the CGAL library.
+
+------------------------------------------------------------------------------
+EOF
