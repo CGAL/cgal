@@ -131,6 +131,8 @@ class Homogeneous : public Homogeneous_base< Homogeneous<RT_,FT_>, RT_, FT_ >
     typedef typename KernelBase::Triangle_2            Triangle_2;
     typedef typename KernelBase::Iso_rectangle_2       Iso_rectangle_2;
     typedef typename KernelBase::Aff_transformation_2  Aff_transformation_2;
+    typedef typename KernelBase::Object_2              Object_2;
+    typedef typename KernelBase::Object_3              Object_3;
 
     typedef PointH3< R >                             Point_3_base;
     typedef VectorH3< R >                            Vector_3_base;
