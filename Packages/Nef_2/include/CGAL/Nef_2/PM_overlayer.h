@@ -31,7 +31,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Partition.h>
+#include <CGAL/Union_find.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_2/geninfo.h>
 #undef _DEBUG
@@ -503,13 +503,13 @@ call operator\\[[bool operator()(Halfedge_handle e)]]\\that allows to
 avoid the simplification for edge pairs referenced by |e|.}*/
 {
   TRACEN("simplifying"); 
-  typedef typename CGAL::Partition<Face_handle>::item partition_item;
-  CGAL::Unique_hash_map<Face_iterator,partition_item> Pitem;
-  CGAL::Partition<Face_handle> FP;
+  typedef typename CGAL::Union_find<Face_handle>::handle Union_find_handle;
+  CGAL::Unique_hash_map< Face_iterator, Union_find_handle> Pitem;
+  CGAL::Union_find<Face_handle> unify_faces;
 
   Face_iterator f, fend = faces_end();
   for (f = faces_begin(); f!= fend; ++f) { 
-     Pitem[f] = FP.make_block(f);
+     Pitem[f] = unify_faces.make_set(f);
      clear_face_cycle_entries(f);
   }
 
@@ -521,10 +521,10 @@ avoid the simplification for edge pairs referenced by |e|.}*/
     if ( mark(e) == mark(face(e)) &&
          mark(e) == mark(face(twin(e))) ) {
         TRACEN("deleting "<<PE(e));
-      if ( !FP.same_block(Pitem[face(e)],
-                          Pitem[face(twin(e))]) ) {
-        FP.union_blocks( Pitem[face(e)],
-                         Pitem[face(twin(e))] );
+      if ( !unify_faces.same_set(Pitem[face(e)],
+                                 Pitem[face(twin(e))]) ) {
+        unify_faces.unify_sets( Pitem[face(e)],
+                                Pitem[face(twin(e))] );
         TRACEN("unioning disjoint faces");
       }
       if ( is_closed_at_source(e) )       set_face(source(e),face(e));
@@ -538,7 +538,7 @@ avoid the simplification for edge pairs referenced by |e|.}*/
     if ( linked[e] ) continue;
     Halfedge_around_face_circulator hfc(e),hend(hfc);
     Halfedge_handle e_min = e;
-    Face_handle f = FP.inf(FP.find(Pitem[face(e)]));
+    Face_handle f = *(unify_faces.find(Pitem[face(e)]));
     CGAL_For_all(hfc,hend) {
       set_face(hfc,f);
       if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
@@ -573,8 +573,8 @@ avoid the simplification for edge pairs referenced by |e|.}*/
   Face_iterator fn;
   for (f = faces_begin(); f != fend; f=fn) {
     fn=f; ++fn;
-    partition_item pit = Pitem[f];
-    if ( FP.find(pit) != pit ) delete_face(f);
+    Union_find_handle pit = Pitem[f];
+    if ( unify_faces.find(pit) != pit ) delete_face(f);
   }
 
 

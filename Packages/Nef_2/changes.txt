@@ -1,7 +1,12 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.3 (19 Mar 2002)
+
+     - PM_overlayer.h: changed use of Partition to Union_find.
+
 1.2 (19 Mar 2002)
+
      - added some CGAL_LEDA_SCOPEs to make conversion to LEDA version
        with namespaces
      - added missing CGAL:: in demo program
