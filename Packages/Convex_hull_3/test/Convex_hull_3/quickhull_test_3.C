@@ -4,7 +4,6 @@
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Object.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Filtered_exact.h>
 #include <vector>
 #include <cassert>
 #ifdef CGAL_USE_LEDA
@@ -61,7 +60,7 @@ int main()
 {
   test_small_hull();
   std::vector<Point_3> points;
-  Generator g(5000);
+  Generator g(500);
   CGAL::copy_n( g, num, std::back_inserter(points));
 
   assert(points.size() == num);
@@ -74,6 +73,7 @@ int main()
 
   Polyhedron_3 polyhedron;
 
-  assert( assign(segment, ch_object) || assign(polyhedron, ch_object) );
+  assert( CGAL::assign(segment, ch_object) || 
+          CGAL::assign(polyhedron, ch_object) );
   return 0;
 }
