@@ -3488,7 +3488,7 @@ web file.
         "Min_ellipse_2","Optimisation/Min_ellipse_2",
         "$Revision$","$Date$",
         "Sven Schönherr, Bernd Gärtner",
-        "Sven Schönherr <sven@@inf.fu-berlin.de>",
+        "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
 @end

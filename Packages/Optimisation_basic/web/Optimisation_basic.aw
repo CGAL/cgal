@@ -434,7 +434,7 @@ web file.
         "Optimisation_basic","Optimisation/optimisation_basic",
         "$Revision$","$Date$",
         "Sven Schönherr",
-        "Sven Schönherr <sven@@inf.fu-berlin.de>",
+        "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
 @end
@@ -447,7 +447,7 @@ web file.
         "Optimisation_basic","Optimisation/optimisation_basic",
         "$Revision$","$Date$",
         "@3, Sven Schönherr",
-        "Sven Schönherr <sven@@inf.fu-berlin.de>",
+        "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
 @end

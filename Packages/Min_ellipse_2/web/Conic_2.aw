@@ -3375,7 +3375,7 @@ web file.
         "Min_ellipse_2","Optimisation/Conic_2",
         "$Revision$","$Date$",
         "Bernd Gärtner, Sven Schönherr",
-        "Sven Schönherr <sven@@inf.fu-berlin.de>",
+        "Sven Schönherr <sven@@inf.ethz.ch>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
 @end
