@@ -1,3 +1,7 @@
+18 December 2004 Sylvain Pion
+- Fix header in demo files.
+- Remove Matthias as maintainer.
+
 25 July 2004 Sylvain Pion
 - Fixes for when LEDA is supported.
 
