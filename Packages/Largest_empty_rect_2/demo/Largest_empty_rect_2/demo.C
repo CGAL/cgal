@@ -5,7 +5,7 @@
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include <CGAL/Largest_empty_iso_rectangle_2.h>
+#include "../../include/CGAL/Largest_empty_iso_rectangle_2.h"
 
 #define MIN_X 0
 #define MIN_Y 0
@@ -94,7 +94,7 @@ int main(int argc,char *argv[])
   if(argc == 1) {
     // initialize window
     W.init(-2,13,-2);
-    W.set_mode(CGAL::src_mode);
+    W.set_mode(leda_src_mode);
     W.set_node_width(3);
     W.button("Show Biggest Empty Rectangle",1);
     W.button("Clear",2);
@@ -138,7 +138,7 @@ int main(int argc,char *argv[])
 
     //double x1_double = x1.to_double(),x2_double = x2.to_double(),y1_double = y1.to_double(),y2_double = y2.to_double();
     W.init(x1 - 2,x2 - x1 > y2 - y1 ? x2 + 2 : y2 - y1 + x1 + 2,y1 - 2);
-    W.set_mode(CGAL::src_mode);
+    W.set_mode(leda_src_mode);
     W.set_node_width(3);
   }
 
@@ -196,8 +196,12 @@ int main(int argc,char *argv[])
 	// *********************************************
 	// The next two lines are only for checking
 	// cctor and operator + . Should be removed later
-	Largest_empty_rect empty_rectangle2(empty_rectangle);
-	empty_rectangle2 = empty_rectangle;
+	// Largest_empty_rect empty_rectangle2(empty_rectangle);
+	// b = empty_rectangle2.get_largest_empty_iso_rectangle();
+	// std::cout << "\nCCTOR :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
+	// empty_rectangle2 = empty_rectangle;
+	// b = empty_rectangle2.get_largest_empty_iso_rectangle();
+	// std::cout << "\noperator= :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
 	// *********************************************
 
       } else if(mouse_input == 4) {
