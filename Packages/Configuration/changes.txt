@@ -1,3 +1,8 @@
+6 March 2005 Sylvain Pion
+- Add CGAL_CFG_NO_LONG_DOUBLE_IO.C and CGAL_LONG_DOUBLE_IO for pgCC.
+
+=========================== CGAL 3.1 =============================
+
 28 September 2004 Andreas Fabri
 - Add CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG.C
 

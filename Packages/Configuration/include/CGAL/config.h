@@ -72,6 +72,12 @@
 #  define CGAL_USE_LONG_LONG
 #endif
 
+#ifdef CGAL_CFG_NO_LONG_DOUBLE_IO
+#  define CGAL_LONG_DOUBLE_IO (double)
+#else
+#  define CGAL_LONG_DOUBLE_IO
+#endif
+
 // FIXME: what is the problem with Sun 5.5? MATCHING_BUG_4 is not
 // triggered, but there are runtime errors, e.g., with Distance_3,
 // that do not appear when using the wrapper...
