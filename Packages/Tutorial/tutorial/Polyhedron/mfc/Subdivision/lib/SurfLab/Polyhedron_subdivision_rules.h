@@ -259,15 +259,15 @@ public:
 template <class _Poly>
 class dualize_rule {
 public:
-  typedef _Poly                                         Polyhedron;
+  typedef _Poly                                        Polyhedron;
+  typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
+
   typedef typename Polyhedron::Traits                  Traits;
   typedef typename Traits::Kernel                      Kernel;
-  typedef typename Polyhedron::Halfedge_around_facet_circulator  
-                                            Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Point_3                 Point;
 
 public:
-  void point_rule(Halfedge_around_facet_circulator cir, Point& pt) {};
+  void point_rule(Halfedge_handle edge, Point& pt) {};
 };
 
 
@@ -276,18 +276,20 @@ public:
 template <class _Poly>
 class DooSabin_rule : public dualize_rule<_Poly> {
 public:
-  typedef _Poly                                         Polyhedron;
-  
-  typedef typename Polyhedron::Traits                  Traits;
-  typedef typename Traits::Kernel                      Kernel;
-
+  typedef _Poly                                        Polyhedron;
+  typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
   typedef typename Polyhedron::Halfedge_around_facet_circulator  
                                             Halfedge_around_facet_circulator;
+
+  typedef typename Polyhedron::Traits                  Traits;
+  typedef typename Traits::Kernel                      Kernel;
   typedef typename Polyhedron::Point_3                 Point;
-  typedef CGAL::Vector_3<Kernel>                        Vector;
+  typedef CGAL::Vector_3<Kernel>                       Vector;
 
 public:
-  void point_rule(Halfedge_around_facet_circulator cir, Point& pt) {
+  void point_rule(Halfedge_handle edge, Point& pt) {
+    Halfedge_around_facet_circulator cir = edge->facet()->facet_begin();
+
     int n =  CGAL::circulator_size(cir); 
 
     Vector cv(0,0,0), t;
