@@ -1,7 +1,7 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-
+Ver 7.92 (16/06/03)
 - moved the definition of Infinite_tester for Regular_triangulation as well
 
 Ver 7.91 (13/06/03)
