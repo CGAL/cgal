@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.120 on 3 October 2001
+- Added Side_of_oriented_circle_2 to Static_filters.
+- New macro CGAL_PROFILER().
+
 Version 4.119 on 27 September 2001
 - SunPro fixes.
 
