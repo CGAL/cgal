@@ -1,4 +1,9 @@
 -----
+* 2.1.8 *
++Replaced using declarations by explicit qualification in test files.
+ So, instead of using std::cout; , use std::cout everywhere.
+
+-----
 * 2.1.7 *
 +cgal_test now writes to ProgramOutput* file
 
