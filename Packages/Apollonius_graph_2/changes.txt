@@ -1,3 +1,6 @@
+1.64 (19 January 2004) [mk]
+- removed the macro CGAL_CFG_MATCHING_BUG_2
+
 1.63 (16 January 2004) [mk]
 - updated the doc for the changes in the previous submission
 

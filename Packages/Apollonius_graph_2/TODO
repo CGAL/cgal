@@ -1,16 +1,8 @@
-* check TODO file in include/CGAL
 - restore the changes in the examples directory (example3.C and example4.C)
-- update doc for vertex base and face base when the new design arrives
 - "number_of_hidden_weighted_points()" in vertex base should return size_t;
-  also add this in the spec.
+  also add this in the spec. all number_of*() methods should now
+  return size_t;
 - rewrite the face base class so that the additional edges are provided
   by an adaptor.
-- check if I can replace the Compare_x_2 and Compare_y_2 predicates by
-  the Compare_xy_2 predicate.
-- in the doc of Vertex_conflict_2 predicate (ApolloniusGraphTraits_2)
-  write something about the perturbation scheme.
-- in the reference doc for the classes add the types for the template
-  parameters.
-- rewrite some of the example programs to do deletions and nearest
-  neighbor queries.
-- write doc, code and example with the filtered traits.
+- to decrease memory usage remove the two arrays of pairs of Edges and
+  integers from the face base class

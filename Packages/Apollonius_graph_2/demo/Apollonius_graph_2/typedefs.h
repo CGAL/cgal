@@ -3,19 +3,7 @@
 
 #include <CGAL/basic.h>
 
-#if 1
-
 //-------- choosing number type --- start ---------
-
-
-// Workaround for buggy compilers.
-#ifdef CGAL_CFG_MATCHING_BUG_2
-#define CGAL_IA_CT double
-#define CGAL_IA_PROTECTED true
-#define CGAL_IA_CACHE No_Filter_Cache
-#define CGAL_IA_ET CGAL::MP_Float
-#endif
-
 
 #include <CGAL/MP_Float.h>
 typedef CGAL::MP_Float  exact_type;
@@ -32,27 +20,6 @@ typedef CGAL::Filtered_exact< inexact_type, exact_type >  number_type;
 #include <CGAL/Simple_cartesian.h>
 
 typedef CGAL::Simple_cartesian< number_type >        Rep;
-
-
-#else
-
-#include <CGAL/Filtered_kernel.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
-//#include <CGAL/leda_real.h>
-
-
-typedef CGAL::Simple_cartesian<double>    CK;
-typedef CGAL::Simple_cartesian<CGAL::MP_Float>  EK;
-//typedef CGAL::Simple_cartesian<leda_real>  EK;
-
-//typedef CGAL::Filtered_kernel<CK,EK>      Rep;
-typedef CGAL::Filtered_kernel<CK>      Rep;
-// non-filtered kernel
-//typedef CK  Rep;
-
-
-#endif
 
 
 #include <CGAL/Apollonius_graph_2.h>

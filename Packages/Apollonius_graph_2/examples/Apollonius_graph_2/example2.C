@@ -7,8 +7,6 @@
 #include <cassert>
 
 
-
-
 #if defined CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
 #elif defined CGAL_USE_CORE
@@ -16,22 +14,7 @@
 #endif
 
 #if defined CGAL_USE_LEDA || defined CGAL_USE_CORE
-
-// Workaround for buggy compilers.
-#ifdef CGAL_CFG_MATCHING_BUG_2
-#  define CGAL_IA_CT double
-#  define CGAL_IA_PROTECTED true
-#  define CGAL_IA_CACHE No_Filter_Cache
-#  ifdef CGAL_USE_LEDA
-#    define CGAL_IA_ET leda_real
-#  elif defined CGAL_USE_CORE
-#    define CGAL_IA_ET CORE::Expr
-#  endif
-#endif
-
-#include <CGAL/Filtered_exact.h>
-
-
+#  include <CGAL/Filtered_exact.h>
 #endif
 
 
