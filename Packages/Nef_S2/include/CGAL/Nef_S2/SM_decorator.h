@@ -45,14 +45,15 @@ template <typename Map_>
 class SM_decorator
 { 
 public:
-typedef  Map_              Map;
+typedef Map_              Map;
+typedef Map_              Sphere_map;
 typedef SM_decorator<Map> Self;
 typedef SM_decorator_traits<Map>  Decorator_traits;
 /*{\Mdefinition ...}*/
 
 /*{\Mtypes 5}*/
 
-typedef SM_const_decorator<Map>  SM_const_decorator;
+typedef SM_const_decorator<Map>   SM_const_decorator;
 
 typedef typename Map::Sphere_kernel    Sphere_kernel;
 /*{\Mtypemember spherical geometry.}*/
@@ -81,7 +82,8 @@ enum { BEFORE = -1, AFTER = 1 };
 typedef typename Sphere_kernel::Aff_transformation_3 Aff_transformation_3;
 
 typedef void*  GenPtr;
-typedef typename Map::Constructor_parameter     Constructor_parameter;
+//typedef typename Map::Constructor_parameter        Constructor_parameter;
+//typedef typename Map::Constructor_const_parameter  Constructor_const_parameter;
 typedef typename Map::SVertex                   SVertex;
 typedef typename Map::SVertex_handle            SVertex_handle;
 typedef typename Map::SVertex_iterator          SVertex_iterator;
@@ -116,7 +118,7 @@ handles |SVertex_handle|, |SHalfedge_handle|, or
 |SHalfloop_handle|.}*/
 
 protected: 
-  Constructor_parameter psm_;
+  Map* psm_;
 
 public:
 /*{\Mcreation 3}*/
@@ -124,12 +126,14 @@ SM_decorator() : psm_(0) {}
 SM_decorator(const Self& D) : psm_(D.psm_) {}
 Self& operator=(const Self& D) { psm_=D.psm_; return *this; }
 
-SM_decorator(Constructor_parameter M) : psm_(M) {}
+SM_decorator(Map* M) : psm_(M) {}
  
 /*{\Moperations 4 4}*/
 
-Constructor_parameter center_vertex() const { return psm_; }
-Map* map() const { return psm_->map(); }
+Map* sphere_map() const { return psm_; }
+
+Map* map() { return psm_; }
+const Map* map() const { return psm_; }
 
 SVertex_const_handle source(SHalfedge_const_handle e) const
 { return e->source(); }
@@ -279,7 +283,7 @@ SFace_cycle_iterator sface_cycles_begin(SFace_handle f) const
 /*{\Mop returns an iterator for all bounding face cycles of |f|.
 The iterator is is convertable to |SVertex_handle|, 
 |SHalfloop_handle|, or |SHalfedge_handle|.}*/
-{ return f->boundary_entry_objects_.begin(); }
+{ return f->boundary_entry_objects().begin(); }
 
 SFace_cycle_iterator sface_cycles_end(SFace_handle f) const
 /*{\Mop returns the past the end iterator of |f|.}*/
@@ -314,43 +318,43 @@ template <typename H>
 void make_twins(H h1, H h2) const
 { h1->twin() = h2; h2->twin() = h1; }
 
-SVertex_handle new_svertex(const Sphere_point& p = Sphere_point()) const
+SVertex_handle new_svertex(const Sphere_point& p = Sphere_point())
 /*{\Mop creates a new vertex.}*/
 { return map()->new_svertex(p); }
 
-SHalfedge_handle new_shalfedge_pair() const {
+SHalfedge_handle new_shalfedge_pair() {
 /*{\Xop creates a new edge pair. No connectivity is provided.}*/
   return map()->new_shalfedge_pair();
 }
 
-SHalfloop_handle new_shalfloop_pair() const
+SHalfloop_handle new_shalfloop_pair()
 /*{\Mop creates a new loop pair.
 \precond No sloop pair exists in the local graph.}*/ 
 { CGAL_assertion(!has_shalfloop());
   return map()->new_shalfloop_pair(); 
 }
 
-SFace_handle new_sface() const
+SFace_handle new_sface()
 /*{\Mop creates a new face.}*/
 { return map()->new_sface(); }
 
-void delete_vertex_only(SVertex_handle v) const
+void delete_vertex_only(SVertex_handle v)
 /*{\Mop deletes |v| without any connectivity update.}*/
 { map()->delete_svertex(v); }
 
-void delete_edge_pair_only(SHalfedge_handle e) const
+void delete_edge_pair_only(SHalfedge_handle e)
 /*{\Mop deletes |e| and its twin without any connectivity update.}*/
 { map()->delete_shalfedge_pair(e); }
 
-void delete_halfedge_only(SHalfedge_handle e) const
+void delete_halfedge_only(SHalfedge_handle e)
 /*{\Mop deletes |e| without its twin and without any connectivity update.}*/
 { map()->delete_shalfedge(e); }
 
-void delete_face_only(SFace_handle f) const
+void delete_face_only(SFace_handle f) 
 /*{\Mop deletes |f| without any connectivity update.}*/
 { map()->delete_sface(f); }
 
-void delete_loop_only() const
+void delete_loop_only()
 /*{\Mop deletes the loop and its twin without any connectivity update.}*/ 
 { map()->delete_shalfloop_pair(); }
 
@@ -359,21 +363,21 @@ bool is_boundary_object(H h) const
 { return map()->is_boundary_object(h); }
 
 template <typename H>
-void store_boundary_object(H h, SFace_handle f) const {
+void store_boundary_object(H h, SFace_handle f) {
   CGAL_assertion(!map()->is_boundary_object(h));
-  f->boundary_entry_objects_.push_back(Object_handle(h));
-  map()->store_sm_boundary_item(h, --(f->sface_cycles_end()));
+  f->boundary_entry_objects().push_back(Object_handle(h));
+  map()->store_boundary_item(h, --(f->sface_cycles_end()));
 }
 
 template <typename H>
-void undo_boundary_object(H h, SFace_handle f) const
+void undo_boundary_object(H h, SFace_handle f)
 { CGAL_assertion(map()->is_boundary_object(h));
-  SFace_cycle_iterator it = map()->sm_boundary_item(h);
-  map()->undef_sm_boundary_item(h);
-  f->boundary_entry_objects_.erase(it);
+  SFace_cycle_iterator it = map()->boundary_item(h);
+  map()->undef_boundary_item(h);
+  f->boundary_entry_objects().erase(it);
 }
 
-void link_as_face_cycle(SHalfedge_handle e, SFace_handle f) const
+void link_as_face_cycle(SHalfedge_handle e, SFace_handle f)
 /*{\Mop creates a new face cycle of |f| and 
    makes |e| the entry point of it.}*/
 {
@@ -382,40 +386,40 @@ void link_as_face_cycle(SHalfedge_handle e, SFace_handle f) const
   store_boundary_object(e,f);
 } 
 
-void link_as_loop(SHalfloop_handle l, SFace_handle f) const
+void link_as_loop(SHalfloop_handle l, SFace_handle f)
 /*{\Mop creates a new trivial face cycle of |f| and 
    makes |l| the singular object of it.}*/
 { store_boundary_object(l,f); l->incident_sface() = f; } 
 
-void link_as_isolated_vertex(SVertex_handle v, SFace_handle f) const
+void link_as_isolated_vertex(SVertex_handle v, SFace_handle f)
 /*{\Mop creates a new trivial face cycle of |f|.
    (makes |v| an isolated vertex within |f|).}*/
 { store_boundary_object(v,f); v->incident_sface() = f; } 
 
-void unlink_as_face_cycle(SHalfedge_handle e) const
+void unlink_as_face_cycle(SHalfedge_handle e)
 /*{\Mop removes the face cycle defined by |e| from |face(e)|.
     Does not update the face links of the corresponding face cycle
     edges. \precond |e| is the entry object of the face cycle.}*/
 { undo_boundary_object(e,face(e)); }
   
-void unlink_as_loop(SHalfloop_handle l) const
+void unlink_as_loop(SHalfloop_handle l)
 /*{\Mop removes the trivial face cycle defined by |l| from
    |face(l)|. Does not update |l|'s face link.}*/
 { undo_boundary_object(l,face(l)); }
 
-void unlink_as_isolated_vertex(SVertex_handle v) const
+void unlink_as_isolated_vertex(SVertex_handle v)
 /*{\Mop removes the trivial face cycle defined by |v| from
    |face(v)|. Does not update |v|'s face link.
    \precond |v| is a trivial face cycle of |face(v)|.}*/
 { undo_boundary_object(v,face(v)); }
 
-void clear_face_cycle_entries(SFace_handle f) const
-{ map()->reset_sm_object_list(f->boundary_entry_objects_);
+void clear_face_cycle_entries(SFace_handle f)
+{ map()->reset_object_list(f->boundary_entry_objects());
   // removes entries of list and the hashed membership
 }
 
 SHalfedge_handle new_shalfedge_pair(SVertex_handle v1,
-			            SVertex_handle v2) const
+			            SVertex_handle v2)
 /*{\Mop creates a new pair of edges |(e1,e2)| representing |(v1,v2)| 
   by appending the |ei| to |A(vi)| $(i=1,2)$.}*/
 { SHalfedge_handle e1 = new_shalfedge_pair();
@@ -436,7 +440,7 @@ SHalfedge_handle new_shalfedge_pair(SVertex_handle v1,
 
 SHalfedge_handle new_shalfedge_pair(SHalfedge_handle e1, 
 			            SHalfedge_handle e2,
-			            int pos1 = AFTER, int pos2 = AFTER) const
+			            int pos1 = AFTER, int pos2 = AFTER)
 /*{\Mop creates a new pair of edges |(es1,es2)| representing the uedge
   |\{source(e1),source(e2)\}| by inserting the |esi| before or after |ei| 
   into the cyclic adjacency list of |source(ei)| depending on |posi| 
@@ -462,7 +466,7 @@ SHalfedge_handle new_shalfedge_pair(SHalfedge_handle e1,
 }
 
 SHalfedge_handle new_shalfedge_pair(SHalfedge_handle e, SVertex_handle v,
-                               int pos = AFTER) const
+                               int pos = AFTER)
 /*{\Mop creates a new pair of edges  |(e1,e2)| representing the uedge
   |\{source(e),v\}| by inserting |e1| before or after |e| into cyclic 
   adjacency list of |source(e)| depending on |pos| from |\Mname::BEFORE|,
@@ -487,11 +491,11 @@ SHalfedge_handle new_shalfedge_pair(SHalfedge_handle e, SVertex_handle v,
 
 
 SHalfedge_handle new_shalfedge_pair(SVertex_handle v, SHalfedge_handle e,
-                                    int pos = AFTER) const
+                                    int pos = AFTER)
 /*{\Mop symmetric to the previous one.}*/
 { return twin(new_shalfedge_pair(e,v,pos)); }
 
-void delete_edge_pair(SHalfedge_handle e) const
+void delete_edge_pair(SHalfedge_handle e)
 /*{\Mop deletes |e| and its twin and maintains the adjacency at its source 
         and its target.}*/
 { remove_from_adj_list_at_source(e);
@@ -499,7 +503,7 @@ void delete_edge_pair(SHalfedge_handle e) const
   delete_edge_pair_only(e);
 }
 
-void delete_vertex(SVertex_handle v) const
+void delete_vertex(SVertex_handle v)
 /*{\Mop deletes |v| and all outgoing edges |A(v)| as well as their twins. 
    Updates the adjacency at the targets of the edges in |A(v)|.}*/
 { 
@@ -512,7 +516,7 @@ void delete_vertex(SVertex_handle v) const
   delete_vertex_only(v);
 }
 
-void delete_face(SFace_handle f) const
+void delete_face(SFace_handle f)
 /*{\Mop deletes the face |f| without consideration of topological 
    linkage.}*/
 { clear_face_cycle_entries(f); delete_face_only(f); }
@@ -526,13 +530,13 @@ bool has_outdeg_two(SVertex_handle v) const
   return (e1!=e2 && e2==cas(e1));
 }
 
-void link_as_prev_next_pair(SHalfedge_handle e1, SHalfedge_handle e2) const 
+void link_as_prev_next_pair(SHalfedge_handle e1, SHalfedge_handle e2)
 /*{\Xop makes |e1| and |e2| adjacent in the face cycle 
    $\ldots-|e1-e2|-\ldots$.
    Afterwards |e1 = previous(e2)| and |e2 = next(e1)|.}*/
 { e1->snext() = e2; e2->sprev() = e1; }
 
-void merge_edge_pairs_at_target(SHalfedge_handle e) const
+void merge_edge_pairs_at_target(SHalfedge_handle e)
 /*{\Mop merges the edge pairs at |v = target(e)|. |e| and |twin(e)| 
   are preserved, |next(e)|, |twin(next(e))| and |v| are deleted
   in the merger. \precond |v| has outdegree two. The adjacency at 
@@ -568,7 +572,7 @@ void merge_edge_pairs_at_target(SHalfedge_handle e) const
   TRACEN("END "<<PH(previous(e))<<PH(e)<<PH(next(e)));
 }
 
-void convert_edge_to_loop(SHalfedge_handle e) const
+void convert_edge_to_loop(SHalfedge_handle e)
 /*{\Mop converts the edge at |v = target(e)| to the unique
   loop |l| of |\Mvar|. |e|, |twin(e)| and |v| are deleted
   in the conversion. \precond there was no loop in |\Mvar|.
@@ -590,7 +594,7 @@ void convert_edge_to_loop(SHalfedge_handle e) const
   delete_edge_pair_only(e);
 }
 
-void flip_diagonal(SHalfedge_handle e) const
+void flip_diagonal(SHalfedge_handle e)
 { SHalfedge_handle r = twin(e);
   SHalfedge_handle en = next(e), enn= next(en);
   SHalfedge_handle rn = next(r), rnn= next(rn);
@@ -618,7 +622,7 @@ SHalfedge_handle new_shalfedge_pair_at_source
 }
 
 SHalfedge_handle new_shalfedge_pair_at_source
-  (SVertex_handle v, int pos = AFTER) const
+  (SVertex_handle v, int pos = AFTER)
 /*{\Mop creates a new pair of edges  |(e1,e2)| representing |(v,())| 
   by inserting |e1| at the beginning (BEFORE) or end (AFTER)
   of adjacency list of |v|.}*/
@@ -643,7 +647,7 @@ void delete_edge_pair_at_source(SHalfedge_handle e) const
   delete_edge_pair_only(e);
 }
 
-void link_as_target_and_append(SVertex_handle v, SHalfedge_handle e) const
+void link_as_target_and_append(SVertex_handle v, SHalfedge_handle e)
 /*{\Mop makes |v| the target of |e| appends |twin(e)| to the adjacency list
    of |v|.}*/
 { if (!is_isolated(v)) 
@@ -664,8 +668,7 @@ void link_as_target_of(SHalfedge_handle e, SVertex_handle v) const
   in edge if |v| was isolated before.}*/
 { link_as_source_of(twin(e),v); }
 
-void set_adjacency_at_source_between(SHalfedge_handle e, SHalfedge_handle en) 
-  const 
+void set_adjacency_at_source_between(SHalfedge_handle e, SHalfedge_handle en)
 /*{\Mop makes |e| and |en| neigbors in the cyclic ordered adjacency list 
     around |v=source(e)|. \precond |source(e)==source(en)|.}*/
 { CGAL_assertion(source(e)==source(en));
@@ -674,7 +677,7 @@ void set_adjacency_at_source_between(SHalfedge_handle e, SHalfedge_handle en)
 
 void set_adjacency_at_source_between(SHalfedge_handle e1, 
                                      SHalfedge_handle e_between, 
-                                     SHalfedge_handle e2) const 
+                                     SHalfedge_handle e2)
 /*{\Mop inserts |e_between| into the adjacency list around |source(e1)| 
   between |e1| and |e2| and makes |source(e1)| the source of |e_between|. 
   \precond |source(e1)==source(e2)|.}*/
@@ -684,14 +687,14 @@ void set_adjacency_at_source_between(SHalfedge_handle e1,
   set_adjacency_at_source_between(e_between,e2);
 }
 
-void close_tip_at_source(SHalfedge_handle e, SVertex_handle v) const 
+void close_tip_at_source(SHalfedge_handle e, SVertex_handle v) 
 /*{\Mop sets |v| as source of |e| and closes the tip by setting the 
   corresponding pointers such that |prev(e) == twin(e)| and
   |next(twin(e)) == e|.}*/
 { link_as_source_of(e,v); 
   link_as_prev_next_pair(twin(e),e); }
 
-void close_tip_at_target(SHalfedge_handle e, SVertex_handle v) const 
+void close_tip_at_target(SHalfedge_handle e, SVertex_handle v) 
 /*{\Mop sets |v| as target of |e| and closes the tip by setting the 
   corresponding pointers such that |prev(twin(e)) == e| and 
   |next(e) == twin(e)|.}*/
@@ -699,7 +702,7 @@ void close_tip_at_target(SHalfedge_handle e, SVertex_handle v) const
   link_as_prev_next_pair(e,twin(e)); }
 
 
-void remove_from_adj_list_at_source(SHalfedge_handle e) const
+void remove_from_adj_list_at_source(SHalfedge_handle e)
 /*{\Mop removes a halfedge pair |(e,twin(e)| from the adjacency list
 of |source(e)|. Afterwards |next(prev(e))==next(twin(e))| and
 |first_out_edge(source(e))| is valid if |degree(source(v))>1| before
@@ -813,6 +816,7 @@ The macros are then |CGAL_forall_svertices_of(v,V)|,
 |CGAL_forall_sfaces_of(f,V)|, |CGAL_forall_sface_cycles_of(fc,F)|.}*/
 
 void transform( const Aff_transformation_3& linear) {
+  //  TRACEN("transform sphere map of vertex" << center_vertex()->point());
   TRACEN("transform sphere map of vertex" << center_vertex()->point());
     // The affine transformation is linear, i.e., no translation part.
     CGAL_precondition( linear.hm(0,3) == 0 && 

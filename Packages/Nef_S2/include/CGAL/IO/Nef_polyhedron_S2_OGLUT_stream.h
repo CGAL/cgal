@@ -34,11 +34,11 @@ struct OGLUT_stream { // dummy class
 
 static OGLUT_stream ogl;
 
-template <typename T>
+template <typename K,typename I>
 CGAL::OGLUT_stream& operator<<(CGAL::OGLUT_stream& ogls, 
-			       const Nef_polyhedron_S2<T>& P)
+			       const Nef_polyhedron_S2<K,I>& P)
 {
-  typedef Nef_polyhedron_S2<T> Polyhedron;
+  typedef Nef_polyhedron_S2<K,I> Polyhedron;
   typedef typename Polyhedron::Sphere_map Sphere_map;
   typedef typename Polyhedron::Sphere_kernel Sphere_kernel;
   typedef CGAL::SM_visualizor<Sphere_map,Sphere_kernel> Visualizor;

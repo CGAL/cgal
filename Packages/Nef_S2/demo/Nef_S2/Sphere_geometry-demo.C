@@ -7,7 +7,7 @@
 #include <CGAL/point_generators_3.h>
 #include <LEDA/param_handler.h>
 #include <LEDA/random.h>
-#include <CGAL/Nef_S2/leda_sphere_map.h>
+// #include <CGAL/Nef_S2/leda_sphere_map.h>
 #include <CGAL/Nef_S2/Sphere_geometry_OGL.h>
 
 typedef leda_integer                  RT;

@@ -55,15 +55,15 @@ struct SM_subdivision {
   SM_subdivision(Triangulator Ti, 
                  CGAL::Unique_hash_map<IT,INFO>& Mi) : T(Ti), M(Mi) {}
 
-Vertex_handle new_vertex(const Point& p) const
+Vertex_handle new_vertex(const Point& p)
 { Vertex_handle v = T.new_svertex(p); T.assoc_info(v);
   return v;
 }
 
-void link_as_target_and_append(Vertex_handle v, Halfedge_handle e) const
+void link_as_target_and_append(Vertex_handle v, Halfedge_handle e)
 { T.link_as_target_and_append(v,e); }
 
-Halfedge_handle new_halfedge_pair_at_source(Vertex_handle v) const
+Halfedge_handle new_halfedge_pair_at_source(Vertex_handle v)
 { Halfedge_handle e = 
   T.new_shalfedge_pair_at_source(v,Decorator_::BEFORE); 
   T.assoc_info(e);
@@ -137,7 +137,6 @@ public:
   CGAL_USING(Object_handle);
   CGAL_USING(SHalfedge_around_svertex_circulator);
   CGAL_USING(SHalfedge_around_sface_circulator);
-  CGAL_USING(Map);
   typedef std::pair<SHalfedge_handle,SHalfedge_handle> SHalfedge_pair;
 
   /*{\Mtypes 3}*/
@@ -291,8 +290,8 @@ public:
   void partition_to_halfsphere(Iterator start, Iterator end,
     Seg_list& L, CGAL::Unique_hash_map<Iterator,T>& M, int pos) const;
 
-  void merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2) const;
-  void merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2) const;
+  void merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2);
+  void merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2);
   void complete_support(SVertex_iterator v_start, SVertex_iterator v_end, 
 			Mark mohs) const;
 
@@ -529,7 +528,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
 
 template <typename Decorator_>
 void SM_triangulator<Decorator_>::
-merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2) const
+merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2)
 {
   SVertex_handle v1 = source(e1), v2 = target(e2);
   TRACEN("merge_nodes "<<PH(v1)<<PH(v2));
@@ -547,7 +546,7 @@ merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2) const
 
 template <typename Decorator_>
 void SM_triangulator<Decorator_>::
-merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2) const
+merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2)
 { TRACEN("merging halfspheres "<<PH(v1)<<PH(v2));
   CGAL_assertion(point(v1)==point(v2));
   std::list<SHalfedge_pair> L_equator;

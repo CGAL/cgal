@@ -14,6 +14,8 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -I/home/hachenb/CGAL/Nef_S2/include \
+           -I/home/hachenb/CGAL/Nef_3/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            -Iinclude \

@@ -124,16 +124,16 @@ struct SMO_from_sm {
               CGAL::Unique_hash_map<IT,INFO>& Mi) : 
     G(Gi), pGI(pGIi), M(Mi) {}
 
-Vertex_handle new_vertex(const Point& p) const
+Vertex_handle new_vertex(const Point& p)
 { Vertex_handle v = G.new_svertex(p);
   G.assoc_info(v);
   return v;
 }
 
-void link_as_target_and_append(Vertex_handle v, Halfedge_handle e) const
+void link_as_target_and_append(Vertex_handle v, Halfedge_handle e)
 { G.link_as_target_and_append(v,e); }
 
-Halfedge_handle new_halfedge_pair_at_source(Vertex_handle v) const
+Halfedge_handle new_halfedge_pair_at_source(Vertex_handle v)
 { Halfedge_handle e = 
   G.new_shalfedge_pair_at_source(v,SM_overlayer::BEFORE); 
   G.assoc_info(e);
@@ -296,8 +296,8 @@ public:
   typedef CGAL::SM_const_decorator<Map>         SM_const_decorator;
   typedef SM_point_locator<SM_const_decorator>  SM_point_locator;
 
-  typedef typename SM_const_decorator::Constructor_parameter 
-                                       Constructor_const_parameter;
+  //  typedef typename SM_const_decorator::Constructor_parameter 
+  //                                       Constructor_const_parameter;
   typedef typename SM_const_decorator::SVertex_const_handle SVertex_const_handle;
   typedef typename SM_const_decorator::SHalfedge_const_handle SHalfedge_const_handle;
   typedef typename SM_const_decorator::SHalfloop_const_handle SHalfloop_const_handle;
@@ -306,7 +306,7 @@ public:
   typedef typename SM_const_decorator::SHalfedge_const_iterator SHalfedge_const_iterator;
   typedef typename SM_const_decorator::SFace_const_iterator SFace_const_iterator;
 
-  typedef typename Base::Constructor_parameter Constructor_parameter;
+  //  typedef typename Base::Constructor_parameter Constructor_parameter;
   typedef typename Base::SVertex_handle SVertex_handle;
   typedef typename Base::SHalfedge_handle SHalfedge_handle;
   typedef typename Base::SHalfloop_handle SHalfloop_handle;
@@ -467,7 +467,7 @@ public:
   SFace_handle determine_face(SHalfedge_handle e, 
     const std::vector<SHalfedge_handle>& MinimalSHalfedge,
     const CGAL::Unique_hash_map<SHalfedge_handle,int>& SFaceCycle,
-    const Below_accessor& D) const
+    const Below_accessor& D)
   { TRACEN("determine_face "<<PH(e));
     int fc = SFaceCycle[e];
     SHalfedge_handle e_min = MinimalSHalfedge[fc];
@@ -519,8 +519,8 @@ public:
 
   /*{\Mcreation 6}*/
 
-  SM_overlayer(Constructor_parameter v, 
-    const Sphere_kernel& G = Sphere_kernel()) : Base(v), K(G) {}
+  SM_overlayer(Map* M, 
+    const Sphere_kernel& G = Sphere_kernel()) : Base(M), K(G) {}
   /*{\Mcreate |\Mvar| is a decorator object manipulating the map
   of |v|.}*/
 
@@ -534,8 +534,7 @@ public:
   |Forward_iterator| has value type |Sphere_segment|.}*/
 
   template <typename Forward_iterator>
-  void create_from_circles(
-    Forward_iterator start, Forward_iterator end) const; 
+  void create_from_circles(Forward_iterator start, Forward_iterator end);
   /*{\Mop produces the sphere map which is the overlay of the
   circles from the iterator range |[start,end)|.  \precond
   |Forward_iterator| has value type |Sphere_circle|.}*/
@@ -544,7 +543,7 @@ public:
   /*{\Mop produces the sphere map which consists of one loop
   and the two halfspheres incident to it.}*/
 
-  void subdivide(Constructor_const_parameter M0, Constructor_const_parameter M1);
+  void subdivide(const Map* M0, const Map* M1);
   /*{\Mop constructs the overlay of the sphere maps |M0| and |M1| in
   |M|, where all objects (vertices, halfedges, faces) of |M| are
   \emph{enriched} by the marks of the supporting objects of the two
@@ -565,7 +564,7 @@ public:
   )|. The additional marks are invalidated afterwards.
   \precond subdivide() was called before.}*/
 
-  void simplify() const;
+  void simplify();
   /*{\Mop simplifies the structure of |M| according to the marks of
   its objects. An edge |e| separating two faces |f1| and |f2| and equal
   marks |mark(e) == mark(f1) == mark(f2)| is removed and the faces are
@@ -585,16 +584,16 @@ public:
 
   template <typename Mark_accessor>
   void merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2,
-    const Mark_accessor& D) const;
+    const Mark_accessor& D);
   template <typename Mark_accessor>
   void merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2,
-    const Mark_accessor& D) const;
+    const Mark_accessor& D);
 
   template <typename Below_accessor, typename Halfsphere_geometry>
   void create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
 			   SVertex_iterator v_start, SVertex_iterator v_end,
 			   const Below_accessor& D, 
-			   const Halfsphere_geometry& SG) const;
+			   const Halfsphere_geometry& SG);
 
   template <typename Below_accessor>
   void complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
@@ -679,7 +678,7 @@ create_from_segments(Forward_iterator start, Forward_iterator end) const
 template <typename Map>
 template <typename Forward_iterator>
 void SM_overlayer<Map>::
-create_from_circles(Forward_iterator start, Forward_iterator end) const
+create_from_circles(Forward_iterator start, Forward_iterator end)
 {
   TRACEN("creating from circle iterator range");
   Seg_list L;
@@ -890,7 +889,7 @@ create(const Sphere_circle& c) const
 
 template <typename Map>
 void SM_overlayer<Map>::
-subdivide(Constructor_const_parameter M0, Constructor_const_parameter M1)
+subdivide(const Map* M0, const Map* M1)
 {
   PI[0] = SM_const_decorator(M0); 
   PI[1] = SM_const_decorator(M1);
@@ -925,8 +924,8 @@ subdivide(Constructor_const_parameter M0, Constructor_const_parameter M1)
     }
   }
 
-  typename Seg_list::iterator it;
-  CGAL_forall_iterators(it,L) TRACEN("  "<<*it);
+  CGAL_assertion_code(typename Seg_list::iterator it);
+  CGAL_assertion_code(CGAL_forall_iterators(it,L) TRACEN("  "<<*it));
 
   bool compute_halfsphere[3][2];
   int cs = check_sphere(L, compute_halfsphere);
@@ -995,12 +994,14 @@ subdivide(Constructor_const_parameter M0, Constructor_const_parameter M1)
 
   // DEBUG CODE: to do: have all svertices a halfedge below associated?
   TRACEN("Vertex info before swep");
-  SVertex_iterator svi;
-  for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
-    GenPtr i = info(svi);
-    TRACEN("vertex "<<point(svi)<<" info "<<i<<
-	   " marks "<<mark(svi,0)<<" "<<mark(svi,1));
-  }
+  CGAL_assertion_code(SVertex_iterator svi);
+  CGAL_assertion_code(
+    for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
+      GenPtr i = info(svi);
+      TRACEN("vertex "<<point(svi)<<" info "<<i<<
+	     " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+    }
+  )
   
   if(compute_halfsphere[cs][0]) {
     Positive_halfsphere_sweep SP(
@@ -1042,8 +1043,8 @@ subdivide(Constructor_const_parameter M0, Constructor_const_parameter M1)
   }
 
   std::vector<Mark> mohs(4);
-  SM_point_locator L0(PI[0].center_vertex());
-  SM_point_locator L1(PI[1].center_vertex());
+  SM_point_locator L0(M0);
+  SM_point_locator L1(M1);
   
   L0.marks_of_halfspheres(mohs, 0, cs);
   L1.marks_of_halfspheres(mohs, 2, cs);
@@ -1055,11 +1056,13 @@ subdivide(Constructor_const_parameter M0, Constructor_const_parameter M1)
 
   // DEBUG CODE: to do: have all svertices a halfedge below associated?
   TRACEN("Vertex info after swep");
-  for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
-    GenPtr i = info(svi);
-    TRACEN("vertex "<<point(svi)<<" info "<<i<<
-	   " marks "<<mark(svi,0)<<" "<<mark(svi,1));
-  }
+  CGAL_assertion_code(
+    for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
+      GenPtr i = info(svi);
+      TRACEN("vertex "<<point(svi)<<" info "<<i<<
+	     " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+    }
+  )
 
   if(compute_halfsphere[cs][0] && compute_halfsphere[cs][1])
     merge_halfsphere_maps(svertices_begin(),v,O);
@@ -1069,9 +1072,7 @@ subdivide(Constructor_const_parameter M0, Constructor_const_parameter M1)
   check_integrity_and_topological_planarity();
 
   TRACEN("subdivided");
-  CGAL_forall_svertices(v,*this) {
-    TRACEN(PH(v));
-  }
+  CGAL_assertion_code(CGAL_forall_svertices(v,*this) TRACEN(PH(v)));
 }
 
 template <typename Map>
@@ -1199,7 +1200,7 @@ void SM_overlayer<Map>::
 create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
   SVertex_iterator v_start, SVertex_iterator v_end,
   const Below_accessor& D, 
-  const Halfsphere_geometry& SG) const
+  const Halfsphere_geometry& SG)
 {
   TRACEN("create_face_objects()");
   if(e_start != e_end) {
@@ -1364,7 +1365,7 @@ template <typename Map>
 template <typename Mark_accessor>
 void SM_overlayer<Map>::
 merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2,
-  const Mark_accessor& D) const
+  const Mark_accessor& D)
 {
   SVertex_handle v1 = source(e1), v2 = target(e2);
   TRACEN("merge_nodes "<<PH(v1)<<PH(v2));
@@ -1383,7 +1384,7 @@ template <typename Map>
 template <typename Mark_accessor>
 void SM_overlayer<Map>::
 merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2,
-  const Mark_accessor& D) const
+  const Mark_accessor& D)
 { TRACEN("merging halfspheres "<<PH(v1)<<PH(v2));
   CGAL_assertion(point(v1)==point(v2));
   std::list<SHalfedge_pair> L_equator;
@@ -1439,7 +1440,7 @@ select(const Selection& SP) const
 }
 
 template <typename Map>
-void SM_overlayer<Map>::simplify() const
+void SM_overlayer<Map>::simplify()
 {
   TRACEN("simplifying"); 
 

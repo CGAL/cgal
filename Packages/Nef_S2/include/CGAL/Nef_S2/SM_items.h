@@ -36,29 +36,16 @@ CGAL_BEGIN_NAMESPACE
 template <typename K, typename I> class Sphere_map;
 template <typename SM> class SM_const_decorator;
 template <typename SM> class SM_decorator;
-template <typename EH> struct move_edge_around_svertex;
-template <typename EH> struct move_edge_around_sface;
 
-template <typename Kernel_, typename Mark_>
 struct SM_items {
 public:
-  typedef Kernel_                                Kernel;
-  typedef Mark_                                  Mark;
-  typedef SM_items<Kernel_,Mark_>                Self;
-  typedef CGAL::Sphere_geometry<Kernel>          Sphere_kernel;
-  typedef typename Sphere_kernel::Sphere_point   Sphere_point;
-  typedef typename Sphere_kernel::Sphere_segment Sphere_segment;
-  typedef typename Sphere_kernel::Sphere_circle  Sphere_circle;
-  typedef void*                                  GenPtr;
 
   template <typename Refs>
   class SVertex : public CGAL::In_place_list_base< SVertex<Refs> >
   { 
-    typedef typename Refs::Items Items;
-    friend class Sphere_map<Kernel_, Items>;
-    friend class SM_const_decorator<Refs>;
-    friend class SM_decorator<Refs>;
-
+    typedef void* GenPtr;
+    typedef typename Refs::Mark             Mark;
+    typedef typename Refs::Sphere_point     Sphere_point;
     typedef typename Refs::SVertex_handle   SVertex_handle;
     typedef typename Refs::SHalfedge_handle SHalfedge_handle;
     typedef typename Refs::SFace_handle     SFace_handle;
@@ -125,19 +112,13 @@ public:
   template <typename Refs>
   class SHalfedge : public CGAL::In_place_list_base< SHalfedge<Refs> >
   { 
-    typedef typename Refs::Items Items;
+    typedef void* GenPtr;
+    typedef typename Refs::Mark             Mark;
+    typedef typename Refs::Sphere_circle    Sphere_circle;
     typedef typename Refs::SVertex_handle   SVertex_handle;
     typedef typename Refs::SHalfedge_handle SHalfedge_handle;
     typedef typename Refs::SHalfedge_const_handle SHalfedge_const_handle;
     typedef typename Refs::SFace_handle     SFace_handle;
-
-    friend class Sphere_map<Kernel_, Items>;
-    friend class SM_const_decorator<Refs>;
-    friend class SM_decorator<Refs>;
-    friend class move_edge_around_svertex<SHalfedge_handle>;
-    friend class move_edge_around_sface<SHalfedge_handle>;
-    friend class move_edge_around_svertex<SHalfedge_const_handle>;
-    friend class move_edge_around_sface<SHalfedge_const_handle>;
 
     // Role within local graph:
     Sphere_circle      circle_;
@@ -221,13 +202,11 @@ public:
   template <typename Refs> 
   class SHalfloop : public CGAL::In_place_list_base< SHalfloop<Refs> >
   {
+    typedef void* GenPtr;
+    typedef typename Refs::Mark             Mark;
+    typedef typename Refs::Sphere_circle    Sphere_circle;
     typedef typename Refs::SHalfloop_handle SHalfloop_handle;
-    typedef typename Refs::SFace_handle SFace_handle;
-    typedef typename Refs::Items Items;
-    friend class Sphere_map<Kernel_, Items>;
-    friend class SM_const_decorator<Refs>;
-    friend class SM_decorator<Refs>;
-    friend class Self::SVertex<Refs>;
+    typedef typename Refs::SFace_handle     SFace_handle;
 
     Sphere_circle   circle_;
     Mark            mark_;
@@ -291,16 +270,13 @@ public:
   template <typename Refs>
   class SFace : public CGAL::In_place_list_base< SFace<Refs> >
   { 
-    typedef typename Refs::Items Items;
-    friend class Sphere_map<Kernel_, Items>;
-    friend class SM_const_decorator<Refs>;
-    friend class SM_decorator<Refs>;
-
-    typedef typename Refs::Object_handle Object_handle;
-    typedef typename Refs::Object_list Object_list;
-    typedef typename Refs::SFace_cycle_iterator SFace_cycle_iterator;
+    typedef void* GenPtr;
+    typedef typename Refs::Mark                  Mark;
+    typedef typename Refs::Object_handle         Object_handle;
+    typedef typename Refs::Object_list           Object_list;
+    typedef typename Refs::SFace_cycle_iterator  SFace_cycle_iterator;
     typedef typename Refs::SFace_cycle_const_iterator 
-      SFace_cycle_const_iterator;
+                           SFace_cycle_const_iterator;
 
     Mark             mark_;
     Object_list      boundary_entry_objects_; 

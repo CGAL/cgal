@@ -15,7 +15,8 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
+// Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
+//                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_SPHERE_MAP_H
 #define CGAL_SPHERE_MAP_H
@@ -57,11 +58,10 @@ the HDS design of Kettner.}*/
 
 public:
   /*{\Mtypes 7}*/
-  typedef Kernel_ Sphere_kernel;
-  typedef Items_  Items;
   typedef Sphere_map<Kernel_, Items_>   Self;
-  //  typedef SM_items<Kernel_,bool> Items;
-  
+  typedef Kernel_                       Sphere_kernel;
+  typedef Items_                        Items;
+
   friend class SM_const_decorator<Self>;
   friend class SM_decorator<Self>;
 
@@ -73,7 +73,7 @@ public:
   /*{\Mtypemember segments on the unit sphere.}*/
   typedef typename Sphere_kernel::Sphere_direction Sphere_direction;
   /*{\Mtypemember directions on the unit sphere.}*/
-  typedef typename Items::Mark                     Mark;
+  typedef bool                                     Mark;
   /*{\Mtypemember selective attributes of all objects.}*/
   typedef size_t   Size_type;
   /*{\Mtypemember size type.}*/
@@ -128,8 +128,6 @@ public:
 
   typedef Sphere_map*       Constructor_parameter;
   typedef const Sphere_map* Constructor_const_parameter;
-
-  Sphere_map* map() { return this; }
 
   class SFace_cycle_iterator : public Object_iterator 
   /*{\Mtypemember a generic iterator to an object in the boundary
@@ -260,19 +258,19 @@ public:
   }
 
   template <typename H>
-  bool is_boundary_object(H h) 
+  bool is_boundary_object(H h) const
   { return boundary_item_[h]!=undef_; }
 
   template <typename H>
-  Object_iterator& sm_boundary_item(H h)
+  Object_iterator& boundary_item(H h)
   { return boundary_item_[h]; }
 
   template <typename H>
-  void store_sm_boundary_item(H h, Object_iterator o)
+  void store_boundary_item(H h, Object_iterator o)
   { boundary_item_[h] = o; }
 
   template <typename H>
-  void undef_sm_boundary_item(H h)
+  void undef_boundary_item(H h)
   { CGAL_assertion(boundary_item_[h]!=undef_);
     boundary_item_[h] = undef_; }
 
@@ -280,12 +278,12 @@ public:
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
-    if ( assign(se,*it) ) { undef_sm_boundary_item(se); return; }
-    if ( assign(sl,*it) ) { undef_sm_boundary_item(sl); return; }
-    if ( assign(sv,*it) ) { undef_sm_boundary_item(sv); return; }
+    if ( assign(se,*it) ) { undef_boundary_item(se); return; }
+    if ( assign(sl,*it) ) { undef_boundary_item(sl); return; }
+    if ( assign(sv,*it) ) { undef_boundary_item(sv); return; }
   }
 
-  void reset_sm_object_list(Object_list& L)
+  void reset_object_list(Object_list& L)
   { Object_iterator oit;
     CGAL_forall_iterators(oit,L) reset_iterator_hash(oit);
     L.clear();
@@ -549,13 +547,13 @@ pointer_update(const Sphere_map<K, I>& D)
 	fci != f->boundary_entry_objects().end(); ++fci) {
       if ( fci.is_svertex() ) 
       { v = SVertex_handle(fci);
-	*fci = Object_handle(VM[v]); store_sm_boundary_item(v,fci); }
+	*fci = Object_handle(VM[v]); store_boundary_item(v,fci); }
       else if ( fci.is_shalfedge() ) 
       { e = SHalfedge_handle(fci);
-	*fci = Object_handle(EM[e]); store_sm_boundary_item(e,fci); }
+	*fci = Object_handle(EM[e]); store_boundary_item(e,fci); }
       else if ( fci.is_shalfloop() ) 
       { l = SHalfloop_handle(fci);
-	*fci = Object_handle(LM[l]); store_sm_boundary_item(l,fci); }
+	*fci = Object_handle(LM[l]); store_boundary_item(l,fci); }
       else CGAL_assertion_msg(0,"damn wrong boundary item in face.");
     }
   }

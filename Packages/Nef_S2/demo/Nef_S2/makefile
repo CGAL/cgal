@@ -30,12 +30,17 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = \
+CXXFLAGS = -g \
+           -I/home/hachenb/CGAL/Nef_2/include \
+           -I/home/hachenb/CGAL/Nef_S2/include \
+           -I/home/hachenb/CGAL/Nef_3/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            -Iinclude -I$(X_DIR)/include -I$(X_GLUTDIR)/include\
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) $(DEBUG_OPT)
+
+CXX = g++-3.3.2
 
 #---------------------------------------------------------------------#
 #                    linker flags

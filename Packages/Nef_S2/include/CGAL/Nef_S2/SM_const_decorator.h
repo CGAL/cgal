@@ -38,11 +38,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename Map>
+template <typename Map_>
 class SM_const_decorator { 
 
-  typedef SM_const_decorator<Map> Self;
+  typedef SM_const_decorator<Map_> Self;
 public:
+
+  typedef Map_                       Map;
+  typedef const Map_                 Sphere_map;
   typedef SM_decorator_const_traits<Map>  Decorator_traits;
 
 /*{\Mdefinition ...}*/
@@ -72,7 +75,7 @@ typedef size_t Size_type;
 
 typedef void*  GenPtr;
 
-typedef typename Map::Constructor_const_parameter Constructor_parameter;
+// typedef typename Map::Constructor_const_parameter Constructor_parameter;
 typedef typename Map::SVertex_const_handle SVertex_const_handle;
 typedef typename Map::SVertex_const_iterator SVertex_const_iterator;
 typedef typename Map::SHalfedge_const_handle SHalfedge_const_handle; 
@@ -105,9 +108,9 @@ handles |SVertex_const_handle|, |SHalfedge_const_handle|, or
 |SHalfloop_const_handle|.}*/
 
 protected: 
-  Constructor_parameter psm_;
+  const Map* psm_;
 
-  void set_sm(Constructor_parameter W) {
+  void set_sm(const Map* W) {
     psm_ = W;
   }
 
@@ -118,12 +121,12 @@ SM_const_decorator() : psm_(0) {}
 SM_const_decorator(const Self& D) : psm_(D.psm_) {}
 Self& operator=(const Self& D) { psm_=D.psm_; return *this; }
 
-SM_const_decorator(Constructor_parameter M) : psm_(M) {}
+SM_const_decorator(const Map* M) : psm_(M) {}
 /*{\Mcreate constructs a plane map decorator exploring |M|.}*/
 
 /*{\Moperations 4 4}*/
 
-Constructor_parameter center_vertex() const { return psm_; }
+const Map* sphere_map() const { return psm_; }
 
 SVertex_const_handle source(SHalfedge_const_handle e) const
 /*{\Mop returns the source of |e|.}*/

@@ -52,7 +52,7 @@ class SM_point_locator : public SM_decorator {
 protected:
   typedef SM_decorator                                  Base;
   typedef SM_point_locator<SM_decorator>                Self;
-  typedef typename SM_decorator::Constructor_parameter  Constructor_parameter;
+  typedef typename SM_decorator::Sphere_map             Sphere_map;
 
 public:
   /*{\Mtypes 5}*/
@@ -163,7 +163,7 @@ public:
   SM_point_locator() : Base() {}
 
   /*{\Moptions constref=yes}*/
-  SM_point_locator(Constructor_parameter cp) : Base(cp) {}
+  SM_point_locator(Sphere_map* cp) : Base(cp) {}
   /*{\Mcreate constructs a point locator working on |P|.}*/
   /*{\Moptions constref=no}*/
   /*{\Moperations 2.5 0.5}*/

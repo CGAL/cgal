@@ -5,6 +5,7 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/IO/Nef_polyhedron_S2_OGLUT_stream.h>
+#include <CGAL/Nef_S2/SM_items.h>
 #include <fstream>
 
 typedef CGAL::Gmpz NT;
@@ -12,7 +13,8 @@ typedef CGAL::Homogeneous<NT> Kernel;
 typedef Kernel::Point_3       Point_3;
 typedef Kernel::Plane_3       Plane_3;
 
-typedef CGAL::Nef_polyhedron_S2<Kernel> Nef_polyhedron_S2;
+typedef CGAL::SM_items<Kernel, bool>      SM_items;
+typedef CGAL::Nef_polyhedron_S2<SM_items> Nef_polyhedron_S2;
 typedef Nef_polyhedron_S2::Sphere_point   Sphere_point;
 typedef Nef_polyhedron_S2::Sphere_segment Sphere_segment;
 typedef Nef_polyhedron_S2::Sphere_circle  Sphere_circle;
@@ -55,13 +57,13 @@ int main(int argc, char **argv)
   // output log:
   std::ofstream output("nef2.log");
   std::list<Sphere_circle>::iterator it;
-  CGAL_forall_iterators(it,L) output << *it << ' ';
+  CGAL_forall_iterators(it,L) output << *it << std::endl;
   output << std::endl;
   output.close();
 
   // partition input into two lists
   Nef_polyhedron_S2 Ni, N;
-  bool first(false);
+  bool first(true);
   CGAL_forall_iterators(it,L) {
     if ( first ) {
       N = Nef_polyhedron_S2(*it);
