@@ -81,7 +81,7 @@ public:
   typedef _R                               R;
   typedef typename R::FT                   FT;
   typedef typename R::FT                   RT;
-  typedef Aff_transformation_rep_baseC3<R> Base;
+  typedef Aff_transformation_rep_baseC3<R> Aff_t_base;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef Aff_transformationC3<R,Cartesian_tag> Self;
   typedef typename R::Point_3              Point_3;
@@ -101,8 +101,8 @@ public:
 
   friend Self
   _general_transformation_composition CGAL_NULL_TMPL_ARGS(
-                                 const Base &l,
-                                 const Base &r );
+                                 const Aff_t_base &l,
+                                 const Aff_t_base &r );
 
   friend Self operator* CGAL_NULL_TMPL_ARGS(
                                  const Self &a,
@@ -167,7 +167,7 @@ public:
   FT          hm(int i, int j) const { return cartesian(i,j); }
 
 private:
-  Base*       ptr() const { return  (Base*)PTR; }
+  Aff_t_base*       ptr() const { return  (Aff_t_base*)PTR; }
 };
 
 CGAL_END_NAMESPACE

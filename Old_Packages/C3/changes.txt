@@ -1,3 +1,6 @@
+Version 3.2.5 ((September 2 1999)
+- Forgot include/CGAL/Cartesian/Aff_transformation_3.h
+
 Version 3.2.4 ((September 2 1999)
 - Changed all the typename R::FT into typename ClassC2<>::FT
   for M$VC++
