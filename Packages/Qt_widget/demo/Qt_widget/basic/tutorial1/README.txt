@@ -17,8 +17,8 @@ and Qt_widget.
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    CGAL::Qt_widget W;
-    app.setMainWidget( &W );
+    CGAL::Qt_widget * W = new CGAL::Qt_widget();
+    app.setMainWidget( W );
     W.resize(600, 600);
     W.set_window(0, 600, 0, 600);
     W.show();
@@ -42,17 +42,17 @@ You will run the Qt application with the line:
 To use Qt_widget you need an instance and tell the application to use
 that instance:
 
-    CGAL::Qt_widget W;
-    app.setMainWidget( &W );
+    CGAL::Qt_widget *W = new CGAL::Qt_widget();
+    app.setMainWidget( W );
 
 To resize and set the scales of the window you'll use:
 
-    W.resize(600, 600);
-    W.set_window(0, 600, 0, 600);
+    W->resize(600, 600);
+    W->set_window(0, 600, 0, 600);
 
 At the end you need to show the window when the initialization have been done:
 
-    W.show();
+    W->show();
 
 All the drawing code should be put betwen Qt_Widget's lock() and
 unlock() functions. See the manual reference pages of Qt_widget. Doing
