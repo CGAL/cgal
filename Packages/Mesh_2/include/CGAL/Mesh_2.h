@@ -206,9 +206,10 @@ private:
   void split_face(const Face_handle& f, const Point& circum_center);
 
   // overrideen functions that inserts the point p in the edge
-  // (fh,edge_index)  
-  Vertex_handle virtual_insert_in_the_edge(Face_handle fh, const int edge_index,
-				   const Point& p);
+  // (fh,edge_index)
+  Vertex_handle virtual_insert_in_the_edge(Face_handle fh,
+					   const int edge_index,
+					   const Point& p);
 
   // -- helping computing functions -- 
 

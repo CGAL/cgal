@@ -12,7 +12,9 @@
 #include <CGAL/Filter_circulator.h>
 
 #ifdef CGAL_USE_BOOST
-#include <boost/iterator_adaptors.hpp>
+#  include <boost/iterator_adaptors.hpp>
+#else
+#  include <CGAL/Iterator_project.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -130,7 +132,6 @@ protected:
 
   typedef std::multimap<Vertex_handle, Cluster> Cluster_map;
 
-#ifdef CGAL_USE_BOOST
 private:
   template <class Pair>
   struct Pair_get_first: public std::unary_function<Pair,
@@ -143,6 +144,7 @@ private:
     }
   };
 
+#ifdef CGAL_USE_BOOST
 public:
   typedef typename boost::projection_iterator_generator<
     Pair_get_first<typename Cluster_map::value_type>,
@@ -157,7 +159,7 @@ public:
     Pair_get_first<typename Cluster_vertices_map::value_type>,
     typename Cluster_vertices_map::const_iterator>::type
   Vertices_in_cluster_iterator;
-#endif
+#endif // CGAL_USE_BOOST
 
   // -- conform criteria --
 public:
@@ -241,14 +243,12 @@ public:
 
   Cluster_vertices_iterator clusters_vertices_begin() const
   {
-    return Cluster_vertices_iterator(cluster_map.begin(),
-      Pair_get_first<typename Cluster_map::value_type>());
+    return Cluster_vertices_iterator(cluster_map.begin());
   }
 
   Cluster_vertices_iterator clusters_vertices_end() const
   {
-    return Cluster_vertices_iterator(cluster_map.end(),
-      Pair_get_first<typename Cluster_map::value_type>());
+    return Cluster_vertices_iterator(cluster_map.end());
   }
 
   unsigned int number_of_clusters_at_vertex(Vertex_handle vh)
@@ -274,10 +274,9 @@ public:
     std::advance(first, n);
     const Cluster& c = first->second;
 
-    return std::make_pair(Vertices_in_cluster_iterator(c.vertices.begin(),
-						       Get_first()),
-			  Vertices_in_cluster_iterator(c.vertices.end(),
-						       Get_first()));
+    return
+      std::make_pair(Vertices_in_cluster_iterator(c.vertices.begin()),
+		     Vertices_in_cluster_iterator(c.vertices.end()));
   }
 
 #endif
@@ -733,6 +732,7 @@ update_edges_to_be_conformed(Vertex_handle va,
 			     const Is_locally_conform& is_locally_conform)
 {
   Face_circulator fc = incident_faces(vm), fcbegin(fc);
+  if( fc == 0 ) return;
 
   do {
     for(int i = 0; i<3; i++) {
