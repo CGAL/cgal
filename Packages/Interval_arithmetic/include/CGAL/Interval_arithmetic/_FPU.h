@@ -190,17 +190,18 @@ enum {
 #endif //_MSC_VER
 
 
+// This one should be easily portable to any platform using GNU libc.
 #ifdef __powerpc__
 #ifdef CGAL_IA_USE_ASSEMBLY
 #define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
 #define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
 #endif
-typedef unsigned long FPU_CW_t;
-enum {
-    FPU_cw_zero = _FPU_RC_ZERO,
-    FPU_cw_near = _FPU_RC_NEAREST,
-    FPU_cw_up   = _FPU_RC_UP,
-    FPU_cw_down = _FPU_RC_DOWN
+typedef fpu_control_t FPU_CW_t;
+enum {         // rounding        | def.mask
+    FPU_cw_zero = _FPU_RC_ZERO    | _FPU_DEFAULT,
+    FPU_cw_near = _FPU_RC_NEAREST | _FPU_DEFAULT,
+    FPU_cw_up   = _FPU_RC_UP      | _FPU_DEFAULT,
+    FPU_cw_down = _FPU_RC_DOWN    | _FPU_DEFAULT
 };
 #endif // __powerpc__
 
