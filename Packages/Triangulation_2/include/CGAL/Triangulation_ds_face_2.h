@@ -210,7 +210,10 @@ is_valid(bool verbose, int level) const
   bool result = Fb::is_valid(verbose, level);
   for(int i = 0; i <= dimension(); i++) {
     Face_handle n = neighbor(i);
-    int in = n->index(this->handle());
+    // MK: this needs to be changed so that we get the correct index
+    // when we have two faces with two common edges
+    //    int in = n->index(this->handle());
+    int in = n->index(mirror_vertex(i));
     result = result && ( this->handle() == n->neighbor(in) );
     switch(dimension()) {
     case 0 : 
