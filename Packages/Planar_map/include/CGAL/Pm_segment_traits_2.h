@@ -61,7 +61,7 @@ public:
 
   } Curve_point_status;	
 
-private:
+protected:
   // Functors:
   typedef typename Kernel::Is_vertical_2        Is_vertical_2;
   typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
