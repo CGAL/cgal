@@ -44,7 +44,11 @@ Snap_rounding_traits()
     init_angle_appr();
   }
 
-void snap(Point_2 p,NT pixel_size,NT &x,NT &y)
+/*! Functor
+ */
+class Snap_2 {
+ public:
+  void operator()(Point_2 p,NT pixel_size,NT &x,NT &y)
   {
     NT x_tmp = p.x() / pixel_size;
     NT y_tmp = p.y() / pixel_size;
@@ -52,8 +56,15 @@ void snap(Point_2 p,NT pixel_size,NT &x,NT &y)
     x = floor(x_tmp.to_double()) * pixel_size + pixel_size / 2.0;
     y = floor(y_tmp.to_double()) * pixel_size + pixel_size / 2.0;
   }
+};
 
-Point_2 integer_grid_point(Point_2 p,NT pixel_size) const
+Snap_2 snap_2_object() const { return Snap_2(); }
+
+/*! Functor
+ */
+class Integer_grid_point_2 {
+ public:
+  Point_2 operator()(Point_2 p,NT pixel_size)
   {
     NT x = p.x() - pixel_size / 2.0 / pixel_size;
     NT y = p.y() - pixel_size / 2.0 / pixel_size;
@@ -61,8 +72,15 @@ Point_2 integer_grid_point(Point_2 p,NT pixel_size) const
 
     return(out_p);
   }
+};
 
-double segment_direction(Segment_2 s)
+Integer_grid_point_2 integer_grid_point_2_object() const { return Integer_grid_point_2(); }
+
+/*! Functor
+ */
+class Segment_direction_2 {
+ public:
+  double operator()(Segment_2 s)
   {
     double x1 = s.source().x().to_double();
     double y1 = s.source().y().to_double();
@@ -71,8 +89,15 @@ double segment_direction(Segment_2 s)
 
     return(atan((y2 - y1)/(x2 - x1)));
   }
+};
 
-Point_2 rotate_point(Point_2 p,NT angle)
+Segment_direction_2 segment_direction_2_object() const {return Segment_direction_2(); }
+
+/*! Functor
+ */
+class Rotate_point_2 {
+ public:
+  Point_2 operator()(Point_2 p,NT angle)
   {
     int tranc_angle = int(angle.to_double() * rad_to_deg);
     NT cosine_val = angle_to_sines_appr[90 - tranc_angle],
@@ -84,14 +109,67 @@ Point_2 rotate_point(Point_2 p,NT angle)
     return(Point_2(x,y));
   }
 
-Iso_rectangle_2 get_bounding_of_minkowsi_sum(
-                Segment_2 s,
-                NT unit_squere,
-		NT angle)
+  //  Rotate_point_2()
+    //  {
+    //    init_angle_appr();
+    //    }
+
+};
+
+Rotate_point_2 rotate_point_2_object() const {return Rotate_point_2(); }
+
+/*! Functor
+ */
+
+class Box_of_minkowski_sum_2 {
+ private:
+  const Snap_rounding_traits<base_rep>* _gt;
+  Box_of_minkowski_sum_2(const Snap_rounding_traits<base_rep>* gt) : _gt(gt) {}
+
+  Point_2 small_x_point(Point_2 p1,Point_2 p2)
+  {
+    Comparison_result c = _gt->compare_x_2_object()(p1,p2);
+    if(c == SMALLER)
+      return(p1);
+    else
+      return(p2);
+  }
+
+  Point_2 big_x_point(Point_2 p1,Point_2 p2)
+  {
+    Comparison_result c = _gt->compare_x_2_object()(p1,p2);
+    if(c == SMALLER)
+      return(p2);
+    else
+      return(p1);
+  }
+
+  Point_2 small_y_point(Point_2 p1,Point_2 p2)
+  {
+    Comparison_result c = _gt->compare_y_2_object()(p1,p2);
+    if(c == SMALLER)
+      return(p1);
+    else
+      return(p2);
+  }
+
+  Point_2 big_y_point(Point_2 p1,Point_2 p2)
+  {
+    Comparison_result c = _gt->compare_y_2_object()(p1,p2);
+    if(c == SMALLER)
+      return(p2);
+    else
+      return(p1);
+  }
+
+ public:
+  Iso_rectangle_2 operator()(Segment_2 s,
+                             NT unit_squere,
+		             NT angle)
   {
     Point_2 ms1,ms2,ms3,ms4,ms5,ms6;// minkowski sum points
 
-    Comparison_result cx = compare_x_2_object()(s.source(),s.target());
+    Comparison_result cx =  _gt->compare_x_2_object()(s.source(),s.target());
     NT x1 = s.source().x(),y1 = s.source().y(),x2 =
        s.target().x(),y2 = s.target().y();
 
@@ -115,12 +193,12 @@ Iso_rectangle_2 get_bounding_of_minkowsi_sum(
       ms6 = Point_2(x2 - 0.6 * unit_squere,y2 - 0.6 * unit_squere);
     }
 
-    rotate_point(ms1,angle);
-    rotate_point(ms2,angle);
-    rotate_point(ms3,angle);
-    rotate_point(ms4,angle);
-    rotate_point(ms5,angle);
-    rotate_point(ms6,angle);
+    _gt->rotate_point_2_object()(ms1,angle);
+    _gt->rotate_point_2_object()(ms2,angle);
+    _gt->rotate_point_2_object()(ms3,angle);
+    _gt->rotate_point_2_object()(ms4,angle);
+    _gt->rotate_point_2_object()(ms5,angle);
+    _gt->rotate_point_2_object()(ms6,angle);
 
     // query
     Point_2 point_left,point_right,point_bot,point_top;
@@ -154,47 +232,16 @@ Iso_rectangle_2 get_bounding_of_minkowsi_sum(
     return(rec);
   }
 
+  friend class Snap_rounding_traits<base_rep>;
+};
+
+Box_of_minkowski_sum_2 box_of_minkowski_sum_2_object() const {return Box_of_minkowski_sum_2(this); }
+
  private:
   static const double rad_to_deg = 57.297;
-  std::map<const int,NT> angle_to_sines_appr;
+  static std::map<const int,NT> angle_to_sines_appr;
 
-Point_2 small_x_point(Point_2 p1,Point_2 p2)
-  {
-     Comparison_result c = compare_x_2_object()(p1,p2);
-     if(c == SMALLER)
-       return(p1);
-     else
-       return(p2);
-  }
-
-Point_2 small_y_point(Point_2 p1,Point_2 p2)
-  {
-     Comparison_result c = compare_y_2_object()(p1,p2);
-     if(c == SMALLER)
-       return(p1);
-     else
-       return(p2);
-  }
-
-Point_2 big_x_point(Point_2 p1,Point_2 p2)
-  {
-     Comparison_result c = compare_x_2_object()(p1,p2);
-     if(c == SMALLER)
-       return(p2);
-     else
-       return(p1);
-  }
-
-Point_2 big_y_point(Point_2 p1,Point_2 p2)
-  {
-     Comparison_result c = compare_y_2_object()(p1,p2);
-     if(c == SMALLER)
-       return(p2);
-     else
-       return(p1);
-  }
-
-void init_angle_appr()
+  void init_angle_appr()
   {
     angle_to_sines_appr[0] = NT(0);
     angle_to_sines_appr[1] = NT(115) / NT(6613);
@@ -287,9 +334,12 @@ void init_angle_appr()
     angle_to_sines_appr[88] = NT(1624) / NT(1625);
     angle_to_sines_appr[89] = NT(6612) / NT(6613);
     angle_to_sines_appr[90] = NT(1);
-  }
+    }
 
 };
+
+template<class base_rep>
+std::map<const int,typename base_rep::FT> Snap_rounding_traits<base_rep>::angle_to_sines_appr;
 
 CGAL_END_NAMESPACE
 

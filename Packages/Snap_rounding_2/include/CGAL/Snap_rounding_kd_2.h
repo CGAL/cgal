@@ -80,7 +80,7 @@ private:
 
       Point_2 p(iter->first);
 
-      _gt.rotate_point(p,angle);
+      _gt.rotate_point_2_object()(p,angle);
 
       my_point<NT,SAVED_OBJECT> rotated_point(p,iter->first,iter->second);
 
@@ -109,7 +109,7 @@ private:
 
   int get_kd_num(Segment seg,int n)
   {
-    double alpha = _gt.segment_direction(seg);
+    double alpha = _gt.segment_direction_2_object()(seg);
 
     int i;
 
@@ -185,7 +185,7 @@ public:
               inp_s.target() : inp_s.source());
 
     // determine right kd-tree to work on, depending on the segment's slope
-    double alpha_double = _gt.segment_direction(s);
+    double alpha_double = _gt.segment_direction_2_object()(s);
 
     if(alpha_double < 0)
       alpha_double += pi / 2.0;
@@ -216,7 +216,7 @@ public:
       --right_iter;
     }
 
-    Iso_rectangle_2 rec = _gt.get_bounding_of_minkowski_sum(s,unit_squere,
+    Iso_rectangle_2 rec = _gt.box_of_minkowski_sum_2_object()(s,unit_squere,
 			  right_iter->second);
 
     Point_2 p1 = rec.vertex(0);

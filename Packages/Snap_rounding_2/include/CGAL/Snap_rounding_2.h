@@ -380,7 +380,7 @@ Hot_Pixel<Rep_>::Hot_Pixel(Point_2 inp_point,NT inp_pixel_size) :
                            pixel_size(inp_pixel_size)
   {
     NT x,y;
-    _gt.snap(inp_point,pixel_size,x,y);
+    _gt.snap_2_object()(inp_point,pixel_size,x,y);
 
     p = Point_2(x,y);
     p_left = Point_2(x - pixel_size / 2.0,y);
@@ -426,7 +426,7 @@ inline typename Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center(
             bool int_output) const
   {
     if(int_output) {
-      Point_2 out_p = _gt.integer_grid_point(p,pixel_size);
+      Point_2 out_p = _gt.integer_grid_point_2_object()(p,pixel_size);
       return(out_p);
     } else
       return(p);
