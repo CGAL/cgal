@@ -308,7 +308,7 @@ main(int argc, char* argv[])
 }
 
 
-// moc_source_file: demo.C
+// moc_source_file: apollonius_graph_2.C
 
 #else
 
