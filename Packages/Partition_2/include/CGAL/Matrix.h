@@ -39,18 +39,18 @@ template <class T>
 class  Matrix : public std::vector< std::vector<T> > 
 {
 public:
-   Matrix(size_t x = 0, size_t y = 0) : 
+   Matrix(std::size_t x = 0, std::size_t y = 0) : 
       std::vector< std::vector<T> > (x, std::vector<T>(y)), 
       _rows(x), _columns(y) 
    {}
 
-   size_t rows() const { return _rows; }
-   size_t columns() const { return _columns; }
+   std::size_t rows() const { return _rows; }
+   std::size_t columns() const { return _columns; }
 
 
 protected:
-   size_t _rows;
-   size_t _columns;
+   std::size_t _rows;
+   std::size_t _columns;
 };
 
 template <class T> 

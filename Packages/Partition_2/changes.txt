@@ -1,3 +1,6 @@
+1.27 (23 Jan 2002)
+  - added a std:: to size_t in Matrix.h
+
 1.26 (17 Jan 2002)
   - removed typos left over from the last change
   - remove ch_utils.h include
