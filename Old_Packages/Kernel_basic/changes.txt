@@ -1,4 +1,4 @@
-3.91   (?? ?? ????)
+3.91   (16 July 2002)
 - Add #include <CGAL/basic.h> on top of Object.h and Handle_for_virtual.h.
 
 -------------------------- CGAL 2.4 released ---------------------------
