@@ -7,7 +7,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : config/testfiles/CGAL_CFG_NO_NAMESPACE.C
+// file          : config/testfiles/CGAL_CFG_NO_STD_NAMESPACE.C
 // source        :
 // revision      : 1.11
 // revision_date : 29 Mar 1998
@@ -17,7 +17,7 @@
 //
 // ======================================================================
 
-// CGAL_CFG_NO_NAMESPACE.C
+// CGAL_CFG_NO_STD_NAMESPACE.C
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
 // This program is used by cgal_configure.
