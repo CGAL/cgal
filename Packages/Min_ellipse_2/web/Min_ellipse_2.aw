@@ -1258,11 +1258,11 @@ The class interface looks as follows.
 @macro <Optimisation_ellipse_2 interface> = @begin
     template < class _R >
     class Optimisation_ellipse_2 {
+        /*
         friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS (
             std::ostream&, const Optimisation_ellipse_2<_R>&);
         friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS (
             std::istream&, Optimisation_ellipse_2<_R> &);
-        /*
         friend  CGAL::Window_stream& operator << CGAL_NULL_TMPL_ARGS (
             CGAL::Window_stream&, const Optimisation_ellipse_2<_R>&);
         */
@@ -1617,13 +1617,10 @@ one.
 
 @macro <Optimisation_ellipse_2 I/O operators declaration> = @begin
     /*
-    class std::ostream;
-    class std::istream;
-
     template < class _R >
     std::ostream&
     operator << ( std::ostream&, const CGAL::Optimisation_ellipse_2<_R>&);
-    */
+
     template < class _R >
     std::istream&
     operator >> ( std::istream&, CGAL::Optimisation_ellipse_2<_R>&);
@@ -1632,6 +1629,7 @@ one.
     CGAL::Window_stream&
     operator << ( CGAL::Window_stream&,
                   const CGAL::Optimisation_ellipse_2<_R>&);
+    */
 @end
 
 @macro <Optimisation_ellipse_2 I/O operators> = @begin
