@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ >
 class LineC3
 {
-  typedef typename R_::FT                   FT;
+  typedef typename R_::RT                   RT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Direction_3          Direction_3;
@@ -122,9 +122,7 @@ template < class R >
 inline
 typename LineC3<R>::Point_3
 LineC3<R>::point(int i) const
-{
-  return point_on_line(i, *this);
-}
+{ return point() + to_vector()*RT(i); }
 
 template < class R >
 inline
@@ -140,7 +138,7 @@ inline
 typename LineC3<R>::Line_3
 LineC3<R>::opposite() const
 {
-  return LineC3<R>(point(), -to_vector());
+  return Line_3(point(), -to_vector());
 }
 
 template < class R >
@@ -149,7 +147,7 @@ typename LineC3<R>::Point_3
 LineC3<R>::
 projection(const typename LineC3<R>::Point_3 &p) const
 {
-  return projection_line(p, *this);
+  return R().construct_projected_point_3_object()(*this, p);
 }
 
 template < class R >

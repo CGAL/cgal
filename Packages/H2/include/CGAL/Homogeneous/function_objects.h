@@ -38,6 +38,7 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Are_parallel_3;
   using CartesianKernelFunctors::Compute_squared_area_3;
   using CartesianKernelFunctors::Collinear_3;
+  using CartesianKernelFunctors::Construct_line_3;
 
   template <typename K>
   class Angle_2
@@ -1872,52 +1873,6 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Construct_line_3
-  {
-    typedef typename K::Point_3                   Point_3;
-    typedef typename K::Direction_3               Direction_3;
-    typedef typename K::Segment_3                 Segment_3;
-    typedef typename K::Ray_3                     Ray_3;
-    typedef typename K::Line_3                    Line_3;
-    typedef typename K::Construct_vector_3        Construct_vector_3;
-    typedef typename K::Construct_direction_3     Construct_direction_3;
-    typedef typename K::Construct_point_on_3      Construct_point_on_3;
-    Construct_vector_3 cv;
-    Construct_direction_3 cd;
-    Construct_point_on_3 cp;
-  public:
-    typedef Line_3            result_type;
-    typedef Arity_tag< 2 >    Arity;
-
-    Construct_line_3() {}
-    Construct_line_3(const Construct_vector_3& cv_,
-		     const Construct_direction_3& cd_,
-		     const Construct_point_on_3& cp_) 
-      : cv(cv_), cd(cd_), cp(cp_) 
-    {}
-
-    Line_3
-    operator()() const
-    { return Line_3(); }
-
-    Line_3
-    operator()(const Point_3& p, const Point_3& q) const
-    { return Line_3(p, cd(cv(p, q))); }
-
-    Line_3
-    operator()(const Point_3& p, const Direction_3& d) const
-    { return Line_3(p, d); }
-
-    Line_3
-    operator()(const Segment_3& s) const
-    { return Line_3(cp(s,0), cd(cv(cp(s,1), cp(s,0)))); }
-
-    Line_3
-    operator()(const Ray_3& r) const
-    { return Line_3(cp(r,0), cd(cv(cp(r,1), cp(r,0)))); }
-  };
-
-  template <typename K>
   class Construct_midpoint_2
   {
     typedef typename K::FT        FT;
@@ -2006,6 +1961,45 @@ namespace HomogeneousKernelFunctors {
     {
       return operator()(Plane_3(p, q, r));
     }
+  };
+
+  template <typename K>
+  class Construct_projected_point_3
+  {
+    typedef typename K::RT         RT;
+    typedef typename K::Point_3    Point_3;
+    typedef typename K::Plane_3    Plane_3;
+    typedef typename K::Line_3     Line_3;
+    typedef typename K::Vector_3   Vector_3;
+  public:
+    typedef Point_3          result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Point_3
+    operator()( const Line_3& l, const Point_3& p ) const
+    {
+      if ( l.has_on(p) )
+          return p;
+      Vector_3  v = p - l.point();
+      const RT&  vx = v.hx();
+      const RT&  vy = v.hy();
+      const RT&  vz = v.hz();
+      const RT&  vw = v.hw();
+      Vector_3 dir = l.to_vector();
+      const RT&  dx = dir.hx();
+      const RT&  dy = dir.hy();
+      const RT&  dz = dir.hz();
+      const RT&  dw = dir.hw();
+
+      RT lambda_num = (vx*dx + vy*dy + vz*dz)*dw; // *dw
+      RT lambda_den = (dx*dx + dy*dy + dz*dz)*vw; // *dw
+
+      return l.point() + ( (lambda_num * dir)/lambda_den );
+    }
+
+    Point_3
+    operator()( const Plane_3& h, const Point_3& p ) const
+    { return h.projection(p); }
   };
 
   template <typename K>

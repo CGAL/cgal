@@ -45,7 +45,7 @@
 #include <CGAL/Homogeneous/Aff_transformationH3.h>
 #include <CGAL/Homogeneous/DirectionH3.h>
 #include <CGAL/Homogeneous/Iso_cuboidH3.h>
-#include <CGAL/Homogeneous/LineH3.h>
+#include <CGAL/Cartesian/Line_3.h>
 #include <CGAL/Homogeneous/PlaneH3.h>
 #include <CGAL/Homogeneous/PointH3.h>
 #include <CGAL/Homogeneous/RayH3.h>
@@ -98,7 +98,7 @@ struct Homogeneous_base
     typedef DirectionH3<Kernel>                     Direction_3;
     typedef SegmentC3<Kernel>                       Segment_3;
     typedef PlaneH3<Kernel>                         Plane_3;
-    typedef LineH3<Kernel>                          Line_3;
+    typedef LineC3<Kernel>                          Line_3;
     typedef RayH3<Kernel>                           Ray_3;
     typedef TriangleC3<Kernel>                      Triangle_3;
     typedef TetrahedronC3<Kernel>                   Tetrahedron_3;

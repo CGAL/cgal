@@ -904,25 +904,6 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
-  class Construct_projected_point_3
-  {
-    typedef typename K::Point_3    Point_3;
-    typedef typename K::Plane_3    Plane_3;
-    typedef typename K::Line_3     Line_3;
-  public:
-    typedef Point_3          result_type;
-    typedef Arity_tag< 2 >   Arity;
-
-    Point_3
-    operator()( const Line_3& l, const Point_3& p ) const
-    { return l.projection(p); }
-
-    Point_3
-    operator()( const Plane_3& h, const Point_3& p ) const
-    { return h.projection(p); }
-  };
-
-  template <typename K>
   class Construct_projected_xy_point_2
   {
     typedef typename K::Point_2    Point_2;

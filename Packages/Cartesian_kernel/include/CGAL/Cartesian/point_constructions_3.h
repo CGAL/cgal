@@ -53,31 +53,6 @@ centroid(const PointC3<K> &p,
 template <class K>
 CGAL_KERNEL_LARGE_INLINE
 PointC3<K>
-point_on_line(int i, const LineC3<K> &l)
-{
-  typename K::FT x, y, z;
-  point_on_lineC3(l.point().x(), l.point().y(), l.point().z(),
-                  l.direction().dx(), l.direction().dy(), l.direction().dz(),
-                  i, x, y, z);
-  return PointC3<K>(x, y, z);
-}
-
-template <class K>
-CGAL_KERNEL_LARGE_INLINE
-PointC3<K>
-projection_line(const PointC3<K> &p, const LineC3<K> &l)
-{
-  typename K::FT x, y, z;
-  projection_lineC3(p.x(), p.y(), p.z(),
-		    l.point().x(), l.point().y(), l.point().z(),
-                    l.direction().dx(), l.direction().dy(), l.direction().dz(),
-                    x, y, z);
-  return PointC3<K>(x, y, z);
-}
-
-template <class K>
-CGAL_KERNEL_LARGE_INLINE
-PointC3<K>
 point_on_plane(const PlaneC3<K> &p)
 {
   typename K::FT x, y, z;

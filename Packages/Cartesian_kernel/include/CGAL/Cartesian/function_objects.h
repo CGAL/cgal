@@ -1266,7 +1266,6 @@ namespace CartesianKernelFunctors {
     typedef typename K::Construct_direction_3     Construct_direction_3;
     typedef typename K::Construct_point_on_3      Construct_point_on_3;
     Construct_vector_3 cv;
-    Construct_direction_3 cd;
     Construct_point_on_3 cp;
   public:
     typedef Line_3            result_type;
@@ -1274,9 +1273,8 @@ namespace CartesianKernelFunctors {
 
     Construct_line_3() {}
     Construct_line_3(const Construct_vector_3& cv_,
-		     const Construct_direction_3& cd_,
 		     const Construct_point_on_3& cp_) 
-      : cv(cv_), cd(cd_), cp(cp_) 
+      : cv(cv_), cp(cp_) 
     {}
 
     Line_3
@@ -1285,11 +1283,11 @@ namespace CartesianKernelFunctors {
 
     Line_3
     operator()(const Point_3& p, const Point_3& q) const
-    { return Line_3(p, cd(cv(p, q))); }
+    { return Line_3(p, cv(p, q)); }
 
     Line_3
     operator()(const Point_3& p, const Direction_3& d) const
-    { return this->operator()(p, cv(d.dx(), d.dy(), d.dz())); }
+    { return operator()(p, cv(d.dx(), d.dy(), d.dz())); }
 
     Line_3
     operator()(const Point_3& p, const Vector_3& v) const
@@ -1297,11 +1295,11 @@ namespace CartesianKernelFunctors {
 
     Line_3
     operator()(const Segment_3& s) const
-    { return Line_3(cp(s,0), cd(cv(cp(s,0), cp(s,1)))); }
+    { return Line_3(cp(s,0), cv(cp(s,0), cp(s,1))); }
 
     Line_3
     operator()(const Ray_3& r) const
-    { return Line_3(cp(r,0), cd(cv(cp(r,0), cp(r,1)))); }
+    { return Line_3(cp(r,0), cv(cp(r,0), cp(r,1))); }
   };
 
   template <typename K>
@@ -1400,6 +1398,41 @@ namespace CartesianKernelFunctors {
       
       return construct_vector(vx, vy, vz); 
     }
+  };
+
+  template <typename K>
+  class Construct_projected_point_3
+  {
+    typedef typename K::Point_3    Point_3;
+    typedef typename K::Plane_3    Plane_3;
+    typedef typename K::Line_3     Line_3;
+    typedef typename K::FT         FT;
+  public:
+    typedef Point_3          result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Point_3
+    operator()( const Line_3& l, const Point_3& p ) const
+    {
+      // projects p on the line l
+      FT lpx = l.point().x();
+      FT lpy = l.point().y();
+      FT lpz = l.point().z();
+      FT ldx = l.direction().dx();
+      FT ldy = l.direction().dy();
+      FT ldz = l.direction().dz();
+      FT dpx = p.x()-lpx;
+      FT dpy = p.y()-lpy;
+      FT dpz = p.z()-lpz;
+      FT lambda = (ldx*dpx+ldy*dpy+ldz*dpz) / (ldx*ldx+ldy*ldy+ldz*ldz);
+      return Point_3(lpx + lambda * ldx,
+                     lpy + lambda * ldy,
+                     lpz + lambda * ldz);
+    }
+
+    Point_3
+    operator()( const Plane_3& h, const Point_3& p ) const
+    { return h.projection(p); }
   };
 
   template <typename K>

@@ -236,37 +236,6 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
         + CGAL_NTS square(num_z)) / CGAL_NTS square<FT>(FT(2) * den);
 }
 
-template <class FT>
-CGAL_KERNEL_MEDIUM_INLINE
-void
-point_on_lineC3(const FT &lpx, const FT &lpy, const FT &lpz,
-                const FT &ldx, const FT &ldy, const FT &ldz,
-		int i,
-                FT &x, FT &y, FT &z)
-{
-  x = lpx + ldx*FT(i);
-  y = lpy + ldy*FT(i);
-  z = lpz + ldz*FT(i);
-}
-
-template <class FT>
-CGAL_KERNEL_MEDIUM_INLINE
-void
-projection_lineC3(const FT &px, const FT &py, const FT &pz,
-                  const FT &lpx, const FT &lpy, const FT &lpz,
-                  const FT &ldx, const FT &ldy, const FT &ldz,
-                  FT &x, FT &y, FT &z)
-{
-  // projects p on the line l
-  FT dpx = px-lpx;
-  FT dpy = py-lpy;
-  FT dpz = pz-lpz;
-  FT lambda = (ldx*dpx+ldy*dpy+ldz*dpz) / (ldx*ldx+ldy*ldy+ldz*ldz);
-  x = lpx + lambda * ldx;
-  y = lpy + lambda * ldy;
-  z = lpz + lambda * ldz;
-}
-
 template <class FT> 
 CGAL_KERNEL_MEDIUM_INLINE
 void            
