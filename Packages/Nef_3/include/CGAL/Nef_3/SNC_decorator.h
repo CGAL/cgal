@@ -60,9 +60,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   typedef SNC_decorator<SNC_structure>                 Self;
   typedef SNC_const_decorator<SNC_structure>           Base;
   typedef Base                                         SNC_const_decorator;
-  typedef SNC_constructor<SNC_structure>               SNC_constructor;
-  typedef SM_decorator<Sphere_map>                     SM_decorator;
-  typedef SM_const_decorator<Sphere_map>               SM_const_decorator;
+  typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
+  typedef CGAL::SM_decorator<Sphere_map>               SM_decorator;
+  typedef CGAL::SM_const_decorator<Sphere_map>         SM_const_decorator;
   typedef SNC_SM_overlayer<SM_decorator>               SM_overlayer;
   typedef SM_point_locator<SM_const_decorator>         SM_point_locator;
   typedef SNC_intersection<SNC_structure>              SNC_intersection;
@@ -218,7 +218,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   SNC_decorator() : Base(), sncp_() {}
   SNC_decorator(SNC_structure& W) 
     : Base(W), sncp_(&W) {}
-  SNC_decorator(const SNC_decorator& S) {
+  SNC_decorator(const Self& S) {
     sncp_ = S.sncp_;
   }
 
@@ -411,11 +411,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   }
 
   struct Shell_volume_setter {
-    const SNC_decorator D;
+    const Self D;
     Volume_handle c;
     typedef Unique_hash_map< SFace_handle, bool> SFace_map;
     SFace_map linked;
-    Shell_volume_setter(const SNC_decorator& Di)
+    Shell_volume_setter(const Self& Di)
       : D(Di), linked(false) {}
     void visit(SFace_handle h) { 
       TRACEN(D.point(D.vertex(h))); 
@@ -851,7 +851,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     Halfedge_handle e;
     Halffacet_handle f;
     Volume_handle c;
-    SNC_decorator D(result);
+    Self D(result);
     Object_handle o = pl1->locate(p);
     if( assign( v, o)) {
       TRACEN("<-> vertex local view on "<<point(v));
@@ -923,7 +923,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #endif      
 
       if( assign( e, o1)) {
-	SNC_decorator D(result);
+	Self D(result);
 	Vertex_handle v0, v1;
 	v0 = D.create_local_view_on( p, e0);
 	v1 = D.create_local_view_on( p, e);

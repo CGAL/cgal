@@ -259,9 +259,8 @@ class sort_sloops : public SNC_decorator<T> {
 template <typename T>
 class sort_sface_cycle_entries : public SNC_decorator<T> {
   
-  typedef T SNC_structure;  
-  typedef SNC_decorator<T>             Base;
-  typedef typename T::SNC_structure     SNC_structure;
+  typedef T                             SNC_structure;  
+  typedef SNC_decorator<T>              Base;
   typedef typename T::SM_decorator      SM_decorator;
   typedef typename T::Object_handle Object_handle;
   typedef typename T::SVertex_handle  SVertex_handle;

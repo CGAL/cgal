@@ -766,7 +766,7 @@ class SNC_items {
     SVertex_const_handle source() const { return source_; }
 
     SVertex_handle& target() { return twin()->source(); }
-    SVertex_handle target() const { return twin()->source(); }
+    SVertex_const_handle target() const { return twin()->source(); }
 
     SHalfedge_handle& prev() { return prev_; }
     SHalfedge_const_handle prev() const { return prev_; }
@@ -951,17 +951,16 @@ class SNC_items {
   class SFace { 
     typedef void* GenPtr;
     typedef typename Refs::Mark  Mark;
-    typedef typename Refs::Vertex_handle  Vertex_handle;
+    typedef typename Refs::Vertex_handle        Vertex_handle;
     typedef typename Refs::Vertex_const_handle  Vertex_const_handle;
-    typedef typename Refs::SFace_handle   SFace_handle;
+    typedef typename Refs::SFace_handle         SFace_handle;
     typedef typename Refs::SFace_const_handle   SFace_const_handle;
-    typedef typename Refs::Volume_handle  Volume_handle;
+    typedef typename Refs::Volume_handle        Volume_handle;
     typedef typename Refs::Volume_const_handle  Volume_const_handle;
-    typedef typename Refs::Object_list   Object_list;
-    typedef typename Refs::SFace_cycle_iterator 
-                                          SFace_cycle_iterator;
+    typedef typename Refs::Object_list          Object_list;
+    typedef typename Refs::SFace_cycle_iterator SFace_cycle_iterator;
     typedef typename Refs::SFace_cycle_const_iterator 
-                                          SFace_cycle_const_iterator;
+                                                SFace_cycle_const_iterator;
     Vertex_handle  center_vertex_;
     Volume_handle  incident_volume_;
     //    Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
