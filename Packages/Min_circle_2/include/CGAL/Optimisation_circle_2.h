@@ -21,9 +21,7 @@
 #define CGAL_OPTIMISATION_CIRCLE_2_H
 
 // includes
-#ifndef CGAL_POINT_2_H
-#  include <CGAL/Point_2.h>
-#endif
+
 #ifndef CGAL_BASIC_CONSTRUCTIONS_2_H
 #  include <CGAL/basic_constructions_2.h>
 #endif
@@ -45,7 +43,7 @@ class Optimisation_circle_2 {
   public:
     // types
     typedef           K_                K;
-    typedef           CGAL::Point_2<K>  Point;
+    typedef typename  K::Point_2        Point;
     typedef typename  K_::FT            Distance;
     
     /**************************************************************************
