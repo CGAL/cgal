@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------
 
 DEMO: New User-Interface with different Generators.
+ALL : Replaced selfmade timer by CGAL::Timer.
 DEMO: Prefixed leda_drawing_mode.
 DEMO: fixed for LEDA-3.8 (the point_set<I> data structure vanished)
 DEMO: Now nearest neighbor queries are done brute-force.
@@ -22,6 +23,7 @@ DOCS: fixed preconditions in replace_column (reported by Mariette).
 SRC : Added std:: to vector in several places in extremal_polygon_2.h.
 SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).
 SRC : New linear 2- and 3-center algorithm.
+TEST: Removed "warning" from program output.
 TEST: Use Intervall_arithmetic number type.
 TEST: Added LONG_NAME_PROBLEM flags to makefile
 
