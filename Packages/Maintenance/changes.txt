@@ -1,3 +1,8 @@
+21 August 2004 Sylvain Pion
+- create_testresult_page :
+  - remove obsolete print_header() function.
+  - add <blink> for the documentation link.
+  
 14 August 2004 Radu Ursu
 - create_testresults_page: tried to fix warnings of this type:
     Use of uninitialized value in numeric le (<=) at ./create_testresult_page line 70. 
