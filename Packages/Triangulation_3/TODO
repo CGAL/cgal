@@ -1,10 +1,6 @@
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
 - Why are the iterators friend in the ds_cell ?
-- Facet_circulator a l'air bugue (et lent) d'apres F&D quand on specifie une
-  facet de depart.  Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
-  deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
-  d'etre plus rapide, non ?
 - coplanar_orientation()... faire marche arriere et recuperer l'ancienne
   interface (ie sans Vector) ?
 - remove() : ca plante dans le prog de test de la hierarchie... a investiguer.
@@ -18,3 +14,41 @@
   peut-etre prendre la premiere cellule de la liste, qui a de bonnes chances
   d'y avoir ete mise recemment, et donc d'etre plus pret... ?
 - Faire des benchs/profiles de points non-randoms...
+- Facet_circulator a l'air bugue (et lent) d'apres F&D quand on specifie une
+  facet de depart.  Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
+  deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
+  d'etre plus rapide, non ?  Voila le code que Frank utilise a la place :
+
+  typedef CGAL::triple< void*, int, int > void_Edge;
+  typedef std::pair< void_Edge, int > Edge_IFacet;
+
+//---------------------------------------------------------------------
+
+inline Edge_IFacet inc_facet_circ(const Edge_IFacet& e)
+{
+  Cell_handle c = (Cell*) e.first.first;
+  int i = e.second;
+  int i1 = e.first.second, i2 = e.first.third;
+  int i3 = (6 - e.second - i1 - i2);
+
+  Cell_handle n = c->neighbor(i);
+  int j1 = n->index(c->vertex(i1)), j2 = n->index(c->vertex(i2));
+  int j =  n->index(c->vertex(i3));
+  return Edge_IFacet(void_Edge((void*) &*n, j1, j2), j);
+}
+
+//---------------------------------------------------------------------
+
+inline Edge_IFacet dec_facet_circ(const Edge_IFacet& e)
+{
+  Cell_handle c = (Cell*) e.first.first;
+  int i = e.second;
+  int i1 = e.first.second, i2 = e.first.third;
+  int i3 = (6 - e.second - i1 - i2);
+
+  Cell_handle n = c->neighbor(i3);
+  int j1 = n->index(c->vertex(i1)), j2 = n->index(c->vertex(i2));
+  int j =  n->index(c->vertex(i));
+  return Edge_IFacet(void_Edge((void*) &*n, j1, j2), j);
+}
+
