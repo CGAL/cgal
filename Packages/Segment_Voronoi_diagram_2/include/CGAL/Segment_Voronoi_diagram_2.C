@@ -250,7 +250,13 @@ Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
 insert_point(const Point_2& p, Vertex_handle vnear)
 {
 #if 1
-  
+  if ( number_of_vertices() == 0 ) {
+    return insert_first(p);
+  } else if ( number_of_vertices() == 1 ) {
+    return insert_second(p);
+  } else if ( number_of_vertices() == 2 ) {
+    return insert_third(p);
+  }
 
   Site_2 t(p);
   Storage_site_2 ss = create_storage_site(p);
