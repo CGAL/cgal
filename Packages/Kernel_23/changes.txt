@@ -1,3 +1,7 @@
+1.16 (17 January 2003)
+- Add CGAL/LEDA_basic.h at the beginning, otherwise the dirty LEDA macros add
+  a non-consistent mess.
+
 1.15 (15 January 2003)
 - docs added for the kernel archetype
 - some names changed for the kernel archetype

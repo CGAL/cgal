@@ -39,11 +39,12 @@
 #  define CGAL_BIG_ENDIAN 1
 #endif
 
-#ifndef CGAL_USE_LEDA
-#  define CGAL_USE_CGAL_WINDOW
-#else
+#ifdef CGAL_USE_LEDA
+#  include <CGAL/LEDA_basic.h>
 // The following is needed for LEDA 4.4 due to min/max problems...
 #  define LEDA_NO_MIN_MAX_TEMPL
+#else
+#  define CGAL_USE_CGAL_WINDOW
 #endif
 
 #include <CGAL/assertions.h>
