@@ -1,3 +1,6 @@
+3.45 (09 Jul 2003)
+- rursu: replaced Leda based demo with Qt based demo
+
 3.44 (22 Apr 2003)
 - Fix typo.
 
