@@ -951,12 +951,13 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
     if ( FaceCycle[e] >= 0 ) continue; // already assigned
     SHalfedge_around_sface_circulator hfc(e),hend(hfc);
     SHalfedge_handle e_min = e;
+    TRACEN(""); 
     TRACEN("  face cycle numbering "<<i);
     CGAL_For_all(hfc,hend) {
       FaceCycle[hfc]=i; // assign face cycle number
       if ( SG.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
         e_min = hfc;
-      TRACE(PH(hfc));
+      TRACEN(PH(hfc));
     } TRACEN("");
     MinimalHalfedge.push_back(e_min);
     ++i;

@@ -79,7 +79,7 @@ CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
     x = gcd(x,h.d());
   TRACEN(x);
  
-  x = x.abs();
+  x = CGAL_NTS abs(x);
 
   RT pa = h.a()/x;
   RT pb = h.b()/x;

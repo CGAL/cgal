@@ -705,7 +705,7 @@ public:
     O1.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
-    //    SETDTHREAD(43*19*37);
+    // SETDTHREAD(43*19*131);
 
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
 
@@ -886,8 +886,8 @@ public:
     // synthesis of spatial structure
 
     //    SETDTHREAD(19*43*41);
-    //    SNC_io_parser<SNC_structure> Op(std::cout, result);
-    //    Op.print();
+    // SNC_io_parser<SNC_structure> Op(std::cout, result);
+    // Op.print();
 
     SNC_constructor C(result);
     C.pair_up_halfedges();

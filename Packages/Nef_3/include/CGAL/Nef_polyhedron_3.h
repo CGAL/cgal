@@ -106,56 +106,6 @@ class Nef_polyhedron_3_rep : public Ref_counted
   ~Nef_polyhedron_3_rep() { snc_.clear(); }
 };
 
-template <typename T>
-struct circle_lt {
-  
-  int max;
-  typedef typename T::Point_3                   Point_3;
-  typedef typename T::RT                        RT;
-
-  circle_lt(int m) :max(m) {};
-  bool operator()(const Point_3& p1, const Point_3& p2) const { 
-        
-    const Quotient<RT> zero(RT(0));
-    Quotient<RT> x[2];
-    Quotient<RT> y[2];
-
-    switch(max) {
-    case 0:
-      x[0] = p1.y(); 
-      y[0] = p1.z();
-      x[1] = p2.y(); 
-      y[1] = p2.z();  
-      break;
-    case 1:
-      x[0] = p1.x(); 
-      y[0] = p1.z();
-      x[1] = p2.x(); 
-      y[1] = p2.z();  
-      break;
-    case 2:
-      x[0] = p1.x(); 
-      y[0] = p1.y();
-      x[1] = p2.x(); 
-      y[1] = p2.y();  
-      break;
-    }
-    
-    if(y[0] >= zero) {
-      if(y[1] < zero) return false;
-      if(x[0] != x[1]) return (x[0]<x[1]);
-      if(x[0] < zero) return (y[0]<y[1]);
-      else return (y[0]>y[1]);
-    }
-    else {
-      if(y[1] >= zero) return true;
-      if(x[0]!=x[1]) return(x[0]>x[1]);
-      if(x[0] > zero) return (y[0]<y[1]);
-      else return  (y[0]>y[1]);
-    }
-  }
-};
-
 /*{\Manpage {Nef_polyhedron_3} {T} {Nef Polyhedra in Space}{N}}*/
 
 /*{\Mdefinition
@@ -184,7 +134,7 @@ static  T EK; // static extended kernel
 
   typedef bool Mark;
   /*{\Xtypemember marking set membership or exclusion.}*/
-
+ 
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
   /*{\Menum construction selection.}*/
 
@@ -243,6 +193,9 @@ protected:
   USING(SHalfedge_around_facet_circulator);
   USING(SHalfedge_around_facet_const_circulator);
   USING(Halffacet_cycle_iterator);
+  USING(Infi_box);
+
+  typedef typename Kernel::RT                       RT;
 
   typedef typename SM_decorator::SVertex_handle    SVertex_handle;
   typedef typename SM_decorator::SHalfedge_handle  SHalfedge_handle;
@@ -305,157 +258,6 @@ protected:
     C.create_box_corner(-INT_MAX, INT_MAX,-INT_MAX, space );
     C.create_box_corner( INT_MAX,-INT_MAX,-INT_MAX, space );
     C.create_box_corner(-INT_MAX,-INT_MAX,-INT_MAX, space );
-  }
-
-  void create_vertices_of_box_with_plane(const Plane_3& h, Boundary b) {
-
-    // SETDTHREAD(19*43*11);
-
-    typedef typename Kernel::RT::NT NT;
-    typedef typename Kernel::RT     RT;
-
-    Point_3 loc(-h.d(),0,0,h.a());
-    Vector_3 orth = h.orthogonal_vector();
-    
-    NT orth_coords[3];
-    orth_coords[0] = orth.hx()[0];
-    orth_coords[1] = orth.hy()[0];
-    orth_coords[2] = orth.hz()[0];
-
-    int add_corners = 0;
-    while(orth_coords[add_corners] == 0) add_corners++;
-    CGAL_assertion(add_corners < 3);
-
-    std::list<Point_3> points;
-    for(int dir=0; dir<3;++dir) {
-
-      NT cnst[3];
-      for(int i=0; i<3;i++)
-	cnst[i] = (i==dir? -h.d()[0] : 0);
-
-      NT cross[4][4];
-      cross[0][dir] = -orth_coords[(dir+1)%3]-orth_coords[(dir+2)%3];
-      cross[1][dir] =  orth_coords[(dir+1)%3]-orth_coords[(dir+2)%3];
-      cross[2][dir] =  orth_coords[(dir+1)%3]+orth_coords[(dir+2)%3];  
-      cross[3][dir] = -orth_coords[(dir+1)%3]+orth_coords[(dir+2)%3];
-  
-      for(int i=0;i<4;++i)
-	cross[i][3] = orth_coords[dir];
-
-      cross[0][(dir+1)%3] = cross[3][(dir+1)%3] =  orth_coords[dir];
-      cross[1][(dir+1)%3] = cross[2][(dir+1)%3] = -orth_coords[dir];
-      
-      cross[0][(dir+2)%3] = cross[1][(dir+2)%3] =  orth_coords[dir];
-      cross[2][(dir+2)%3] = cross[3][(dir+2)%3] = -orth_coords[dir];
-
-      for(int i=0; i<4; ++i)
-	if(CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) < CGAL_NTS abs(RT(0,orth_coords[dir])) ||
-	   (CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) == CGAL_NTS abs(RT(0,orth_coords[dir])) && dir == add_corners))
-	  points.push_back(Kernel::epoint(cross[i][0],cnst[0],cross[i][1],cnst[1],cross[i][2],cnst[2],cross[i][3]));
-      
-    }
-
-    for(int i=0;i<2;i++)
-      orth_coords[i] = CGAL_NTS abs(orth_coords[i]);
-
-    int max = 0;
-    if(orth_coords[1] > orth_coords[0])
-      max = 1;
-    if(orth_coords[2] > orth_coords[max])
-      max = 2;   
-
-    int min = 0;
-    if(orth_coords[1] < orth_coords[0])
-      min = 1;
-    if(orth_coords[2] < orth_coords[min])
-      min = 2;   
-
-    SNC_constructor C(snc());
-    points.sort(circle_lt<Point_3>(max));
-
-    typename std::list<Point_3>::const_iterator p,prev,next;
-    for(p=points.begin();p!=points.end();p++)
-      TRACEN(*p);
-
-    for(p=points.begin();p!=points.end();p++){
-
-      if(p==points.begin()) prev = --points.end();
-      else { prev = p; prev--;}
-      if(p==--points.end()) next=points.begin();
-      else {next = p; ++next;}
-      TRACEN("points " << *prev << "           " << *p << "      " << *next);
-
-      Vector_3 v= *prev - *p;
-      Sphere_point sp1(v);
-      TRACEN(sp1);
-      sp1 = sp1.normalized();
-      TRACEN(sp1);
-      CGAL_assertion(sp1.hx().degree() == 0);
-      CGAL_assertion(sp1.hy().degree() == 0);
-      CGAL_assertion(sp1.hz().degree() == 0);
-      CGAL_assertion(sp1.hw().degree() == 0);
-
-      v= *next - *p;
-      Sphere_point sp2(v);
-      TRACEN(sp2);
-      sp2 = sp2.normalized();
-      TRACEN(sp2);
-      CGAL_assertion(sp2.hx().degree() == 0);
-      CGAL_assertion(sp2.hy().degree() == 0);
-      CGAL_assertion(sp2.hz().degree() == 0);
-      CGAL_assertion(sp2.hw().degree() == 0);
-
-      TRACEN("sps " << sp1 << "     " << sp2);
-      TRACEN(orth_coords[min] << "|" << orth_coords[(min+1)%3] << "|" << orth_coords[(min+2)%3]);
-
-      if(orth_coords[min]==0 && orth_coords[(min+1)%3] == orth_coords[(min+2)%3] && h.d() == 0) 
-	C.create_degenerate_corner_frame_point(*p,sp1,sp2,min, max, (b==INCLUDED));
-      else if(CGAL_NTS abs(p->hx()) == CGAL_NTS abs(p->hy()) && CGAL_NTS abs(p->hz()) == CGAL_NTS abs(p->hy()))
-	C.create_corner_frame_point(*p,sp1,sp2,max,(b==INCLUDED));
-      else
-	C.create_frame_point(*p,sp1,sp2,h,(b==INCLUDED));
-    }
-
-    RT sum= h.a()+h.b()+h.c(); 
-    if(h.d()!=0 || sum!= 0) { 
-      TRACEN(sum); 
-      C.create_extended_box_corner( 1, 1, 1, (sum<0 || (sum == 0 && h.d()<0)));
-    }
-    sum=-h.a()+h.b()+h.c(); 
-    if(h.d()!=0 || sum!= 0) { 
-      TRACEN(sum); 
-      C.create_extended_box_corner(-1, 1, 1, (sum<0 || (sum == 0 && h.d()<0)));
-    }
-    sum= h.a()-h.b()+h.c(); 
-    if(h.d()!=0 || sum!= 0) { 
-      TRACEN(sum); 
-      C.create_extended_box_corner( 1,-1, 1, (sum<0 || (sum == 0 && h.d()<0)));
-    }
-    sum=-h.a()-h.b()+h.c(); 
-    if(h.d()!=0 || sum!= 0) { 
-      TRACEN(sum); 
-      C.create_extended_box_corner(-1,-1, 1, (sum<0 || (sum == 0 && h.d()<0)));
-    }
-    sum= h.a()+h.b()-h.c(); 
-    if(h.d()!=0 || sum!= 0) { 
-      TRACEN(sum); 
-      C.create_extended_box_corner( 1, 1,-1, (sum<0 || (sum == 0 && h.d()<0)));
-    }
-    sum=-h.a()+h.b()-h.c(); 
-    if(h.d()!=0 || sum!= 0) { 
-      TRACEN(sum); 
-      C.create_extended_box_corner(-1, 1,-1, (sum<0 || (sum == 0 && h.d()<0)));
-    }
-    sum= h.a()-h.b()-h.c(); 
-    if(h.d()!=0 || sum!= 0) { 
-      TRACEN(sum); 
-      C.create_extended_box_corner( 1,-1,-1, (sum<0 || (sum == 0 && h.d()<0)));
-    }
-    sum=-h.a()-h.b()-h.c(); 
-    if(h.d()!=0 || sum!= 0) { 
-      TRACEN(sum); 
-      C.create_extended_box_corner(-1,-1,-1, (sum<0 || (sum == 0 && h.d()<0)));
-    }
   }
 
   /*
@@ -1098,7 +900,9 @@ Nef_polyhedron_3<T>::
 Nef_polyhedron_3(const Plane_3& h, Boundary b) : Base(Nef_rep()) {
   TRACEN("construction from plane "<<h);
   //  initialize_extended_cube_vertices(EMPTY);
-  create_vertices_of_box_with_plane(h,b);
+  SNC_constructor C(snc());
+  // C.create_vertices_of_box_with_plane(h,b);
+  Infi_box::create_vertices_of_box_with_plane(C,h,(b==INCLUDED));
   //  add_box_corners(h, b);
   build_external_structure();
 }
@@ -1118,14 +922,15 @@ void Nef_polyhedron_3<T>::extract_complement() {
   if( is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
-  CGAL_nef3_forall_vertices(v,D) D.mark(v) = !D.mark(v); 
-  Halfedge_iterator e;
-  CGAL_nef3_forall_halfedges(e,D) D.mark(e) = !D.mark(e);
+  CGAL_nef3_forall_vertices(v,D){
+    D.mark(v) = !D.mark(v); 
+    SM_decorator SM(v);
+    SM.extract_complement();
+  }
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = !D.mark(f); 
   Volume_iterator c;
   CGAL_nef3_forall_volumes(c,D) D.mark(c) = !D.mark(c);
-  clear_box_marks();
 }
 
 
@@ -1135,13 +940,21 @@ void Nef_polyhedron_3<T>::extract_interior() {
   if (is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
-  CGAL_nef3_forall_vertices(v,D) D.mark(v) = false;
-  Halfedge_iterator e;
-  CGAL_nef3_forall_halfedges(e,D) D.mark(e) = false;
+  CGAL_nef3_forall_vertices(v,D){
+    if(Infi_box::is_standard(v->point())) {
+      D.mark(v) = false;
+      SM_decorator SM(v);
+      SM.extract_interior();
+    }
+  }
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = false;
+  int count = 0;
   Volume_iterator c;
-  CGAL_nef3_forall_volumes(c,D) D.mark(c) = true;
+  CGAL_nef3_forall_volumes(c,D) {
+    count++;
+    if(count > 2) D.mark(c) = true;
+  }
   simplify();
 }
 
@@ -1151,9 +964,11 @@ void Nef_polyhedron_3<T>::extract_boundary() {
   if (is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
-  CGAL_nef3_forall_vertices(v,D) D.mark(v) = true;
-  Halfedge_iterator e;
-  CGAL_nef3_forall_halfedges(e,D) D.mark(e) = true;
+  CGAL_nef3_forall_vertices(v,D) {
+    D.mark(v) = true;
+    SM_decorator SM(v);
+    SM.extract_boundary();
+  }
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = true;
   Volume_iterator c;
@@ -1182,6 +997,27 @@ std::istream& operator>>
   I.check_integrity();
   return is;
 }
+
+
+/*
+template<class T, class SNC_items_>
+class NP_3 : public Nef_polyhedron_3<SNC_items_> {
+  
+  
+};
+
+template<class SNC_items_>
+class NP_3<Tag_true, SNC_items_> : public Nef_polyhedron_3<SNC_items_>{
+  
+  
+};
+
+template<class SNC_items_>
+class NPX : public NP_3<typename Is_extended_kernel<typename SNC_items_::Kernel>::value_type, SNC_items_> {
+  
+};
+*/
+
 
 CGAL_END_NAMESPACE
 

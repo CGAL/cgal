@@ -156,6 +156,7 @@ public:
   USING(Sphere_direction);
 
   USING(Mark);
+  USING(Infi_box);
   #undef USING
 
   #define DECUSING(t) typedef typename SM_decorator::t t
@@ -219,6 +220,7 @@ public:
 	return Object_handle(v);
       }
     }
+
     Halfedge_handle e;
     CGAL_nef3_forall_edges( e, *sncp()) {
       if ( does_contain_internally( segment(e), p) ) {
@@ -233,9 +235,10 @@ public:
 	return Object_handle(f);
       }
     }
-    /* lets be |s| be the segment that connects |p| to any fixed vertex |va| */
-    Vertex_handle va = --(sncp()->vertices_end()); 
-    Segment_3 s( p, point(va));
+    /* let |s| be the segment that connects |p| to any fixed vertex |va| */
+    //    Vertex_handle va = --(sncp()->vertices_end()); 
+    //    Segment_3 s( p, point(va));
+    Segment_3 s( p, Infi_box::target_for_ray_shot(this,p));
     /* prune |s| by |o| if |o| intersects |s| in its relative interior */
     Object_handle o = shoot(s);
     /* determine the volume that contains |s| from the last pruning object */
@@ -257,6 +260,7 @@ public:
     s = Segment_3( s.source(), p); 
     TRACEN("shooted ray "<<s);
   }
+
   bool does_contain_internally(const Segment_3& s, const Point_3& p) const {
     TRACEN("dci begin");
     if(!s.has_on(p))
@@ -277,6 +281,7 @@ public:
   bool does_intersect_internally( const Segment_3& s1, 
 				  const Segment_3& s2, 
 				  Point_3& p) const  {
+    TRACEN("does intersect internally with  LINE3_LINE3_INTERSECTION");
     if ( s1.is_degenerate() || s2.is_degenerate())
       /* the segment is degenerate so there is not internal intersection */
       return false;
@@ -295,6 +300,7 @@ public:
   bool does_intersect_internally( const Segment_3& s1, 
 				  const Segment_3& s2, 
 				  Point_3& p) const {
+    TRACEN("does intersect internally without  LINE3_LINE3_INTERSECTION");
     if ( s1.is_degenerate() || s2.is_degenerate())
       /* the segment is degenerate so there is not internal intersection */
       return false;

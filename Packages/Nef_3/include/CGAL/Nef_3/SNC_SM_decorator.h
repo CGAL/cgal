@@ -933,6 +933,52 @@ void transform( const Aff_transformation_3& linear) {
     }
 }
 
+void extract_complement() {
+
+  SVertex_handle sv;
+  CGAL_nef3_forall_svertices_of(sv,this) mark(sv) = !mark(sv);
+  SHalfedge_handle she;
+  CGAL_nef3_forall_shalfedges_of(she,this) mark(she) = !mark(she);
+  SHalfloop_handle shl;
+  if(has_loop()) { 
+    shl = shalfloop(); 
+    mark(shl) = !mark(shl);
+  }
+  SFace_handle sf;
+  CGAL_nef3_forall_sfaces_of(sf,this) mark(sf) = !mark(sf);
+}
+
+void extract_interior() {
+
+  SVertex_handle sv;
+  CGAL_nef3_forall_svertices_of(sv,this) mark(sv) = false;
+  SHalfedge_handle she;
+  CGAL_nef3_forall_shalfedges_of(she,this) mark(she) = false;
+  SHalfloop_handle shl;
+  if(has_loop()) { 
+    shl = shalfloop(); 
+    mark(shl) = false;
+  }
+  //  SFace_handle sf;
+  //  CGAL_nef3_forall_sfaces_of(sf,this) mark(sf) = true;
+}
+
+void extract_boundary() {
+
+  SVertex_handle sv;
+  CGAL_nef3_forall_svertices_of(sv,this) mark(sv) = true;
+  SHalfedge_handle she;
+  CGAL_nef3_forall_shalfedges_of(she,this) mark(she) = true;
+  SHalfloop_handle shl;
+  if(has_loop()) { 
+    shl = shalfloop(); 
+    mark(shl) = true;
+  }
+  SFace_handle sf;
+  CGAL_nef3_forall_sfaces_of(sf,this) mark(sf) = false;
+}
+
+
 bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
 	       Unique_hash_map<SHalfedge_handle,bool>& se_hash,
 	       Unique_hash_map<SFace_handle,bool>& sf_hash,

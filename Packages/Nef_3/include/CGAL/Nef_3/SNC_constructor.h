@@ -54,6 +54,56 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <typename T>
+struct circle_lt {
+  
+  int max;
+  typedef typename T::Point_3                   Point_3;
+  typedef typename T::RT                        RT;
+
+  circle_lt(int m) :max(m) {};
+  bool operator()(const Point_3& p1, const Point_3& p2) const { 
+        
+    const Quotient<RT> zero(RT(0));
+    Quotient<RT> x[2];
+    Quotient<RT> y[2];
+
+    switch(max) {
+    case 0:
+      x[0] = p1.y(); 
+      y[0] = p1.z();
+      x[1] = p2.y(); 
+      y[1] = p2.z();  
+      break;
+    case 1:
+      x[0] = p1.x(); 
+      y[0] = p1.z();
+      x[1] = p2.x(); 
+      y[1] = p2.z();  
+      break;
+    case 2:
+      x[0] = p1.x(); 
+      y[0] = p1.y();
+      x[1] = p2.x(); 
+      y[1] = p2.y();  
+      break;
+    }
+    
+    if(y[0] >= zero) {
+      if(y[1] < zero) return false;
+      if(x[0] != x[1]) return (x[0]<x[1]);
+      if(x[0] < zero) return (y[0]<y[1]);
+      else return (y[0]>y[1]);
+    }
+    else {
+      if(y[1] >= zero) return true;
+      if(x[0]!=x[1]) return(x[0]>x[1]);
+      if(x[0] > zero) return (y[0]<y[1]);
+      else return  (y[0]>y[1]);
+    }
+  }
+};
+
 template <typename Point, typename Edge, class Decorator>
 struct Halfedge_key {
   typedef Halfedge_key<Point,Edge,Decorator> Self;
@@ -127,6 +177,7 @@ public:
   typedef typename Infi_box::Standard_kernel            Standard_kernel;
   typedef typename SNC_structure_::Kernel               Kernel;
   typedef typename Kernel::RT                           RT;
+  typedef typename Infi_box::NT                     NT;
   typedef CGAL::SNC_constructor<SNC_structure>          Self;
   typedef CGAL::SNC_decorator<SNC_structure>            Base;
   typedef CGAL::SNC_decorator<SNC_structure>            SNC_decorator;
@@ -369,6 +420,7 @@ public:
     return f_below;
   }
   
+  void create_vertices_of_box_with_plane(const Plane_3& h, bool b);
   void create_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2, 
 			  Plane_3 h, bool boundary) const;
   void create_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2, 
@@ -377,6 +429,154 @@ public:
 					    int min,int max,bool boundary) const;
 
 }; // SNC_constructor<SNC>
+
+
+template <typename SNC_>
+void
+SNC_constructor<SNC_>::
+create_vertices_of_box_with_plane(const Plane_3& h, bool b) {
+
+    // SETDTHREAD(19*43*11);
+
+    Point_3 loc(-h.d(),0,0,h.a());
+    Vector_3 orth = h.orthogonal_vector();
+    
+    NT orth_coords[3];
+    orth_coords[0] = orth.hx()[0];
+    orth_coords[1] = orth.hy()[0];
+    orth_coords[2] = orth.hz()[0];
+
+    int add_corners = 0;
+    while(orth_coords[add_corners] == 0) add_corners++;
+    CGAL_assertion(add_corners < 3);
+
+    std::list<Point_3> points;
+    for(int dir=0; dir<3;++dir) {
+
+      NT cnst[3];
+      for(int i=0; i<3;i++)
+	cnst[i] = (i==dir? -h.d()[0] : 0);
+
+      NT cross[4][4];
+      cross[0][dir] = -orth_coords[(dir+1)%3]-orth_coords[(dir+2)%3];
+      cross[1][dir] =  orth_coords[(dir+1)%3]-orth_coords[(dir+2)%3];
+      cross[2][dir] =  orth_coords[(dir+1)%3]+orth_coords[(dir+2)%3];  
+      cross[3][dir] = -orth_coords[(dir+1)%3]+orth_coords[(dir+2)%3];
+  
+      for(int i=0;i<4;++i)
+	cross[i][3] = orth_coords[dir];
+
+      cross[0][(dir+1)%3] = cross[3][(dir+1)%3] =  orth_coords[dir];
+      cross[1][(dir+1)%3] = cross[2][(dir+1)%3] = -orth_coords[dir];
+      
+      cross[0][(dir+2)%3] = cross[1][(dir+2)%3] =  orth_coords[dir];
+      cross[2][(dir+2)%3] = cross[3][(dir+2)%3] = -orth_coords[dir];
+
+      for(int i=0; i<4; ++i)
+	if(CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) < CGAL_NTS abs(RT(0,orth_coords[dir])) ||
+	   (CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) == CGAL_NTS abs(RT(0,orth_coords[dir])) && dir == add_corners))
+	  points.push_back(Kernel::epoint(cross[i][0],cnst[0],cross[i][1],cnst[1],cross[i][2],cnst[2],cross[i][3]));
+      
+    }
+
+    for(int i=0;i<2;i++)
+      orth_coords[i] = CGAL_NTS abs(orth_coords[i]);
+
+    int max = 0;
+    if(orth_coords[1] > orth_coords[0])
+      max = 1;
+    if(orth_coords[2] > orth_coords[max])
+      max = 2;   
+
+    int min = 0;
+    if(orth_coords[1] < orth_coords[0])
+      min = 1;
+    if(orth_coords[2] < orth_coords[min])
+      min = 2;   
+
+    //    SNC_constructor C(snc());
+    points.sort(circle_lt<Point_3>(max));
+
+    typename std::list<Point_3>::const_iterator p,prev,next;
+    for(p=points.begin();p!=points.end();p++)
+      TRACEN(*p);
+
+    for(p=points.begin();p!=points.end();p++){
+
+      if(p==points.begin()) prev = --points.end();
+      else { prev = p; prev--;}
+      if(p==--points.end()) next=points.begin();
+      else {next = p; ++next;}
+      TRACEN("points " << *prev << "           " << *p << "      " << *next);
+
+      Vector_3 v= *prev - *p;
+      Sphere_point sp1(v);
+      sp1 = sp1.normalized();
+      CGAL_assertion(Infi_box::degree(sp1.hx()) == 0);
+      CGAL_assertion(Infi_box::degree(sp1.hy()) == 0);
+      CGAL_assertion(Infi_box::degree(sp1.hz()) == 0);
+      CGAL_assertion(Infi_box::degree(sp1.hw()) == 0);
+
+      v= *next - *p;
+      Sphere_point sp2(v);
+      sp2 = sp2.normalized();
+      CGAL_assertion(Infi_box::degree(sp2.hx()) == 0);
+      CGAL_assertion(Infi_box::degree(sp2.hy()) == 0);
+      CGAL_assertion(Infi_box::degree(sp2.hz()) == 0);
+      CGAL_assertion(Infi_box::degree(sp2.hw()) == 0);
+
+      TRACEN("sps " << sp1 << "     " << sp2);
+      TRACEN(orth_coords[min] << "|" << orth_coords[(min+1)%3] << "|" << orth_coords[(min+2)%3]);
+
+      if(orth_coords[min]==0 && orth_coords[(min+1)%3] == orth_coords[(min+2)%3] && h.d() == 0) 
+	create_degenerate_corner_frame_point(*p,sp1,sp2,min, max, b);
+      else if(CGAL_NTS abs(p->hx()) == CGAL_NTS abs(p->hy()) && CGAL_NTS abs(p->hz()) == CGAL_NTS abs(p->hy()))
+	create_corner_frame_point(*p,sp1,sp2,max,b);
+      else
+	create_frame_point(*p,sp1,sp2,h,b);
+    }
+
+    RT sum= h.a()+h.b()+h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      create_extended_box_corner( 1, 1, 1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum=-h.a()+h.b()+h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      create_extended_box_corner(-1, 1, 1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum= h.a()-h.b()+h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      create_extended_box_corner( 1,-1, 1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum=-h.a()-h.b()+h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      create_extended_box_corner(-1,-1, 1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum= h.a()+h.b()-h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      create_extended_box_corner( 1, 1,-1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum=-h.a()+h.b()-h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      create_extended_box_corner(-1, 1,-1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum= h.a()-h.b()-h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      create_extended_box_corner( 1,-1,-1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum=-h.a()-h.b()-h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      create_extended_box_corner(-1,-1,-1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+  }
 
 template <typename SNC_>
 void
