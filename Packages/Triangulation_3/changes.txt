@@ -1,6 +1,8 @@
 Version 1.43 (?? ???? 00)
 - Regular 3D compile for simple cartesian kernels too. [syl]
 - Geomview output. [syl]
+- minor optimization in side_of_tetrahedron(). [syl]
+- gcc 2.97 stuff. [syl]
 
 Version 1.42 (26 sept 00)
 Minor modifications :
