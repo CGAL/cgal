@@ -197,7 +197,7 @@ public:
 
  //ACCESS FUNCTIONS
   inline
-  const GT & gt() const 
+  const GT & geom_traits() const 
     { return _gt;}
   
   inline
@@ -249,8 +249,8 @@ public:
 
   void swap(CGAL_Triangulation_3 &tr)
   {
-    GT t = gt();
-    _gt = tr.gt();
+    GT t = geom_traits();
+    _gt = tr.geom_traits();
     tr._gt = t; 
 
     Vertex* inf = infinite_vertex();
@@ -271,7 +271,7 @@ public:
     if (dimension() == 3 ) {
       Cell_iterator it;
       for ( it = finite_cells_begin(); it != cells_end(); ++it ) {
-	if ( gt().orientation(it->vertex(0)->point(),
+	if ( geom_traits().orientation(it->vertex(0)->point(),
 			      it->vertex(1)->point(),
 			      it->vertex(2)->point(),
 			      it->vertex(3)->point()) != CGAL_LEFTTURN ) {
@@ -546,7 +546,7 @@ public:
     Locate_type lt;
     int li,lj; 
     CGAL_triangulation_precondition
-      ( (gt().orientation( p, 
+      ( (geom_traits().orientation( p, 
 			   c->vertex((i+1)&3)->point(),
 			   c->vertex((i+2)&3)->point(),
 			   c->vertex((i+3)&3)->point() ) == CGAL_COPLANAR)
@@ -602,7 +602,7 @@ public:
     Locate_type lt;
     int li;
     CGAL_triangulation_precondition
-      ( gt().collinear( c->vertex(i)->point(),
+      ( geom_traits().collinear( c->vertex(i)->point(),
 			p,
 			c->vertex(j)->point() )
 	&&
@@ -844,7 +844,7 @@ public:
 	Cell_handle c = infinite_cell();
 	Cell_handle n = c->neighbor(c->index(infinite_vertex()));
 	CGAL_triangulation_precondition
-	  ( ! gt().collinear(p,
+	  ( ! geom_traits().collinear(p,
 			     n->vertex(0)->point(),
 			     n->vertex(1)->point()) );
 	// no reorientation : the first non-collinear point determines
@@ -857,11 +857,11 @@ public:
 	Cell_handle c = infinite_cell();
 	Cell_handle n = c->neighbor(c->index(infinite_vertex()));
 	CGAL_triangulation_precondition
-	  ( gt().orientation(n->vertex(0)->point(),
+	  ( geom_traits().orientation(n->vertex(0)->point(),
 			     n->vertex(1)->point(),
 			     n->vertex(2)->point(),
 			     p) != CGAL_COPLANAR );
-	reorient = ( gt().orientation( n->vertex(0)->point(),
+	reorient = ( geom_traits().orientation( n->vertex(0)->point(),
 				       n->vertex(1)->point(),
 				       n->vertex(2)->point(),
 				       p ) == CGAL_NEGATIVE );
@@ -1046,7 +1046,7 @@ public:
       {
 	//first tests whether p is coplanar with the current triangulation
 	Facet_iterator finite_fit = finite_facets_begin();
-	if ( gt().orientation( p, 
+	if ( geom_traits().orientation( p, 
 			       (*finite_fit).first->vertex(0)->point(),
 			       (*finite_fit).first->vertex(1)->point(),
 			       (*finite_fit).first->vertex(2)->point() ) 
@@ -1123,7 +1123,7 @@ public:
       {
 	//first tests whether p is collinear with the current triangulation
 	Edge_iterator finite_eit = finite_edges_begin();
-	if ( ! gt().collinear(p,
+	if ( ! geom_traits().collinear(p,
 			      (*finite_eit).first->vertex(0)->point(),
 			      (*finite_eit).first->vertex(1)->point()) ) {
 	  lt = OUTSIDE_AFFINE_HULL;
@@ -1295,29 +1295,29 @@ public:
     // CGAL_ON_UNBOUNDED_SIDE if p lies strictly outside the edge
     {
       CGAL_triangulation_precondition
-	( ! gt().equal(p0,p1) );
+	( ! geom_traits().equal(p0,p1) );
       CGAL_triangulation_precondition
-	( gt().collinear(p,p0,p1) );
+	( geom_traits().collinear(p,p0,p1) );
       
-      CGAL_Comparison_result c = gt().compare_x(p0,p1);
+      CGAL_Comparison_result c = geom_traits().compare_x(p0,p1);
       CGAL_Comparison_result c0;
       CGAL_Comparison_result c1;
 
       if ( c == CGAL_EQUAL ) {
-	c = gt().compare_y(p0,p1);
+	c = geom_traits().compare_y(p0,p1);
 	if ( c == CGAL_EQUAL ) {
-	  c = gt().compare_z(p0,p1);
-	  c0 = gt().compare_z(p0,p);
-	  c1 = gt().compare_z(p,p1);
+	  c = geom_traits().compare_z(p0,p1);
+	  c0 = geom_traits().compare_z(p0,p);
+	  c1 = geom_traits().compare_z(p,p1);
 	}
 	else {
-	  c0 = gt().compare_y(p0,p);
-	  c1 = gt().compare_y(p,p1);
+	  c0 = geom_traits().compare_y(p0,p);
+	  c1 = geom_traits().compare_y(p,p1);
 	}
       }
       else {
-	c0 = gt().compare_x(p0,p);
-	c1 = gt().compare_x(p,p1);
+	c0 = geom_traits().compare_x(p0,p);
+	c1 = geom_traits().compare_x(p,p1);
       }
       
       //      if ( (c0 == CGAL_SMALLER) && (c1 == CGAL_SMALLER) ) {
@@ -1363,12 +1363,12 @@ public:
 			       lt, li);
       }
       else { // infinite edge
-	if ( gt().equal( p, c->vertex(i)->point() ) ) {
+	if ( geom_traits().equal( p, c->vertex(i)->point() ) ) {
 	  lt = VERTEX;
 	  li = i;
 	  return CGAL_ON_BOUNDARY;
 	}
-	if ( gt().equal( p, c->vertex(j)->point() ) ) {
+	if ( geom_traits().equal( p, c->vertex(j)->point() ) ) {
 	  lt = VERTEX;
 	  li = j;
 	  return CGAL_ON_BOUNDARY;
@@ -1381,25 +1381,25 @@ public:
 	Vertex_handle
 	  v0 = n->vertex(0),
 	  v1 = n->vertex(1);
-	CGAL_Comparison_result c = gt().compare_x(v0->point(),
+	CGAL_Comparison_result c = geom_traits().compare_x(v0->point(),
 						  v1->point());
 	CGAL_Comparison_result cp;
 	if ( c == CGAL_EQUAL ) {
-	  c = gt().compare_y(v0->point(),
+	  c = geom_traits().compare_y(v0->point(),
 			     v1->point());
 	  if ( i_e == 0 ) {
-	    cp = gt().compare_y( v1->point(), p );
+	    cp = geom_traits().compare_y( v1->point(), p );
 	  }
 	  else {
-	    cp = gt().compare_y( p, v0->point() );
+	    cp = geom_traits().compare_y( p, v0->point() );
 	  }
 	}
 	else {
 	  if ( i_e == 0 ) {
-	    cp = gt().compare_x( v1->point(), p );
+	    cp = geom_traits().compare_x( v1->point(), p );
 	  }
 	  else {
-	    cp = gt().compare_x( p, v0->point() );
+	    cp = geom_traits().compare_x( p, v0->point() );
 	  }
 	}
 	if ( c == cp ) {
@@ -1436,16 +1436,16 @@ public:
     // CGAL_ON_UNBOUNDED_SIDE if p lies strictly outside the triangle
     {
       CGAL_triangulation_precondition
-	( ! gt().collinear(p0,p1,p2) );
+	( ! geom_traits().collinear(p0,p1,p2) );
       CGAL_triangulation_precondition
-	( gt().orientation(p,p0,p1,p2) == CGAL_COPLANAR );
+	( geom_traits().orientation(p,p0,p1,p2) == CGAL_COPLANAR );
 
       // edge p0 p1 :
-      CGAL_Orientation o0 = gt().orientation_in_plane(p,p0,p1,p2);
+      CGAL_Orientation o0 = geom_traits().orientation_in_plane(p,p0,p1,p2);
       // edge p1 p2 :
-      CGAL_Orientation o1 = gt().orientation_in_plane(p,p1,p2,p0);
+      CGAL_Orientation o1 = geom_traits().orientation_in_plane(p,p1,p2,p0);
       // edge p2 p0 :
-      CGAL_Orientation o2 = gt().orientation_in_plane(p,p2,p0,p1);
+      CGAL_Orientation o2 = geom_traits().orientation_in_plane(p,p2,p0,p1);
 
       if ( (o0 == CGAL_NEGATIVE) ||
 	   (o1 == CGAL_NEGATIVE) ||
@@ -1596,7 +1596,7 @@ public:
 	Cell_handle n = c->neighbor(inf);
 	// n must be a finite cell
 	CGAL_Orientation o =
-	  gt().orientation_in_plane( p,
+	  geom_traits().orientation_in_plane( p,
 				     v1->point(), 
 				     v2->point(), 
 				     n->vertex(n->index(c))->point() );
@@ -1679,12 +1679,12 @@ public:
     // ?? locate type...
     {
       CGAL_triangulation_precondition
-	( gt().orientation(p0,p1,p2,p3) == CGAL_POSITIVE );
+	( geom_traits().orientation(p0,p1,p2,p3) == CGAL_POSITIVE );
 				      
-      CGAL_Orientation o0 = gt().orientation(p,p1,p2,p3);
-      CGAL_Orientation o1 = gt().orientation(p0,p,p2,p3);
-      CGAL_Orientation o2 = gt().orientation(p0,p1,p,p3);
-      CGAL_Orientation o3 = gt().orientation(p0,p1,p2,p);
+      CGAL_Orientation o0 = geom_traits().orientation(p,p1,p2,p3);
+      CGAL_Orientation o1 = geom_traits().orientation(p0,p,p2,p3);
+      CGAL_Orientation o2 = geom_traits().orientation(p0,p1,p,p3);
+      CGAL_Orientation o3 = geom_traits().orientation(p0,p1,p2,p);
 
       if ( (o0 == CGAL_NEGATIVE) ||
 	   (o1 == CGAL_NEGATIVE) ||
@@ -1780,13 +1780,13 @@ public:
 	  v2=c->vertex((inf+2)&3), 
 	  v3=c->vertex((inf+3)&3);
 	if ( inf%2 == 0 ) {
-	  o = gt().orientation(p,
+	  o = geom_traits().orientation(p,
 			       v1->point(),
 			       v2->point(),
 			       v3->point());
 	}
 	else {
-	  o =  gt().orientation(v3->point(),
+	  o =  geom_traits().orientation(v3->point(),
 				p,
 				v1->point(),
 				v2->point());
