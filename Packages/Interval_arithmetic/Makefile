@@ -49,16 +49,13 @@ clean:
 	rm -f $(Package).tar.gz
 	rm -f src/.pure src/*.o
 
-# --exclude=tstlink is here because I don't want to provide a makefile for
-# the test-suite.
 # --exclude=tst6.C because it's supposed to warn at compile time, but it
 # actually breaks at run time.
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
-	--exclude=TODO --exclude=tstlink1.C --exclude=tstlink2.C \
-	--exclude=tst6.C \
+	--exclude=TODO --exclude=tst6.C \
 	version description.txt changes.txt \
 	src include doc_tex doc_ps test scripts
 
