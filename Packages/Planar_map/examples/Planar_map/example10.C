@@ -10,6 +10,7 @@
 #include <CGAL/Pm_segment_exact_traits.h>
 
 #include <CGAL/IO/Pm_iostream.h>
+#include <CGAL/IO/write_pm.h>
 #include <iostream>
 #include<string>
 
@@ -95,7 +96,7 @@ typedef PM::Vertex_iterator                Vertex_iterator;
 int main(int argc, char* argv[])
 {
   PM pm;
-  cin >> pm;
+  std::cin >> pm;
  
   // updating the colors for halfedge and vertex.
   for (Vertex_iterator v_iter = pm.vertices_begin(); 
@@ -104,8 +105,8 @@ int main(int argc, char* argv[])
     v_iter->set_color("BLUE");
 
  //printing pm to output stream with the user attributes.
-  CGAL::Pm_my_file_writer<PM>  writer(cout, pm); 
-  write_pm(pm, writer, cout);
+  CGAL::Pm_my_file_writer<PM>  writer(std::cout, pm); 
+  write_pm(pm, writer, std::cout);
 
   return 0;
 }

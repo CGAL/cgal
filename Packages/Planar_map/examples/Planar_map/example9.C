@@ -12,6 +12,7 @@
 #include <CGAL/Pm_segment_exact_traits.h>
 
 #include <CGAL/IO/Pm_iostream.h>
+#include <CGAL/IO/write_pm.h>
 #include <iostream.h>
 
 //uncomment if you have LEDA installed.
@@ -37,12 +38,12 @@ int main()
   std::cout << pm;
     
   std::cout<<"Presenting the use of verbose format"<<std::endl;
-  CGAL::Pm_file_writer<PM>  verbose_writer(cout, pm, true);
-  write_pm(pm, verbose_writer, cout);
+  CGAL::Pm_file_writer<PM>  verbose_writer(std::cout, pm, true);
+  write_pm(pm, verbose_writer, std::cout);
   
   std::cout<<"Demonstrating the use of the writer class interface."<<std::endl;
   std::cout<<"Printing all halfedges in non verbose format"<<std::endl;
-  CGAL::Pm_file_writer<PM>  writer(cout, pm);
+  CGAL::Pm_file_writer<PM>  writer(std::cout, pm);
   writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
   std::cout<<"Printing all halfedges in a verbose format"<<std::endl;
   verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
