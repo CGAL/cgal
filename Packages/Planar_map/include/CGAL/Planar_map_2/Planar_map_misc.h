@@ -30,6 +30,7 @@
 #define CGAL_PLANAR_MAP_MISC_H
 
 #include <CGAL/config.h>
+#include <CGAL/tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -48,10 +49,12 @@ public:
 //  typedef  typename I::Info_edge       Info_edge;
 //  typedef  typename I::Info_face       Info_face;
   
-  typedef PlanarMapTraits_2             Base;
-  typedef typename Base::X_curve_2      X_curve_2;
-  typedef typename Base::Point_2        Point_2;
-  
+  typedef PlanarMapTraits_2                     Base;
+  typedef typename Base::X_curve_2              X_curve_2;
+  typedef typename Base::Point_2                Point_2;
+
+  typedef typename Base::Has_left_category      Has_left_category;
+    
   // Creators:
   // ---------
   Planar_map_traits_wrap() : Base() {}
@@ -293,6 +296,38 @@ public:
     return (c != EQUAL) ? c : compare_y(p,q);
   }
     
+  /*! curve_compare_at_x_left() is implemented based on the Has_left category
+   * If the category indicates that the "left" version is available, it calls
+   * the function with same name defined in the base class. Otherwise, it
+   * reflects the given point and curves about the origin, and calls the
+   * "right" version.
+   */
+  Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1,
+                                            const X_curve_2 & cv2, 
+                                            const Point_2 & q) const 
+  {
+    return curve_compare_at_x_left_imp(cv1, cv2, q, Has_left_category());
+  }
+
+    
+  Comparison_result curve_compare_at_x_left_imp(const X_curve_2 & cv1,
+                                                const X_curve_2 & cv2, 
+                                                const Point_2 & q,
+                                                Tag_true) const
+  {
+    return Base::curve_compare_at_x_left(cv1, cv2, q);
+  }
+    
+  Comparison_result curve_compare_at_x_left_imp(const X_curve_2 & cv1,
+                                                const X_curve_2 & cv2, 
+                                                const Point_2 & q,
+                                                Tag_false) const 
+  {
+    Point_2 rq = point_reflect_in_x_and_y(q);
+    X_curve_2 rcv1 = curve_reflect_in_x_and_y(cv1);
+    X_curve_2 rcv2 = curve_reflect_in_x_and_y(cv2);
+    return curve_compare_at_x_right(rcv1, rcv2, rq);
+  }
 };
 
 CGAL_END_NAMESPACE
