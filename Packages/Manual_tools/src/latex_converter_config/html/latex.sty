@@ -966,15 +966,14 @@
 <H2>}#C2\lcRawHtml{</H2>
 }%
     \edef\lciOut{\lciOutputFilename}%
-    \lciPushOutput{toc}%
-    \lciIfEqualExpanded{\lciIfMultipleParts}{\lcTrue}{\lcRawHtml{<TR><TD>}}{} 
+    \lciPushOutput{toc}% 
     \lcRawHtml{        <UL><LI><A HREF="}\lcRawHtmlExpanded{\lciOut}%
     \lcRawHtml{##Section_}%
     \lciSectionAnchorCounter\lcRawHtml{">}#C1\lcRawHtml{</A></UL> }%       
-    \lciIfEqualExpanded{\lciIfMultipleParts}{\lcTrue}{\lcRawHtml{</TD></TR>}}{ }%
     \lciPopOutput}
 \newcommand{\section*}[1]{\lcRawHtml{<H2>}#C1\lcRawHtml{</H2>
 }}
+
 
 
 \newcommand{\subsection}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}
