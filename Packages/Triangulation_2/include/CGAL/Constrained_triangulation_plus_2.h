@@ -240,8 +240,9 @@ inline void
 Constrained_triangulation_plus_2<Tr,I_tag>::
 insert(Vertex_handle va, Vertex_handle vb)
 {
-  hierarchy.insert_constraint(va, vb);
-  if (va != vb) insert_subconstraint(va,vb); //insert_part(va,vb,va,vb);
+  // protects against inserting twice the same constraint
+  bool no_twice = hierarchy.insert_constraint(va, vb);
+  if (va != vb && no_twice )  insert_subconstraint(va,vb); 
   return;
 }
 

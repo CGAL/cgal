@@ -111,7 +111,7 @@ public:
 
   // insert/remove
   void add_Steiner(T va, T vb, T vx);
-  void insert_constraint(T va, T vb);
+  bool insert_constraint(T va, T vb);
   void remove_constraint(T va, T vb);
   void split_constraint(T va, T vb, T vc);
   
@@ -298,7 +298,7 @@ when a constraint is inserted,
 it is, at first, both  a constraint and a subconstraint
  */
 template <class T, class Data>
-void Constraint_hierarchy_2<T,Data>::
+bool Constraint_hierarchy_2<T,Data>::
 insert_constraint(T va, T vb){
   H_edge        he = make_edge(va, vb);
   H_vertex_list*  children = new H_vertex_list; 
@@ -306,13 +306,16 @@ insert_constraint(T va, T vb){
 
   children->push_front(he.first);
   children->push_back(he.second);
-  c_to_sc_map.insert(make_pair(he,children));
-  
-  H_context ctxt;
-  ctxt.enclosing = children;
-  ctxt.pos     = children->begin();
-  fathers->push_front(ctxt);
-   sc_to_c_map.insert(make_pair(he,fathers));
+  bool insert_ok = (c_to_sc_map.insert(make_pair(he,children))).second;
+  if (insert_ok) {
+    H_context ctxt;
+    ctxt.enclosing = children;
+    ctxt.pos     = children->begin();
+    fathers->push_front(ctxt);
+    sc_to_c_map.insert(make_pair(he,fathers));
+    return true;
+  }
+  return false; //duplicate constraint - no insertion
 }
 
 
@@ -561,14 +564,18 @@ Constraint_hierarchy_2<T,Data>::
 print() const
 {
   H_c_iterator hcit;
-  std::map<T,int>  num_vertex;
+  std::map<T,int>  vertex_num;
   int num = 0;
   for(hcit = c_begin(); hcit != c_end();  hcit++) {
     H_vertex_it vit = (*hcit).second->begin();
     for (; vit != (*hcit).second->end(); vit++){
-      num ++;
-      num_vertex.insert(make_pair((*vit), num));
+      //num ++;
+      vertex_num.insert(make_pair((*vit), num));
     }
+  }
+  std::map<T,int>::iterator vnit = vertex_num.begin();
+  for(; vnit != vertex_num.end(); vnit++) {
+    vnit->second = ++num;
   }
 
   H_c_iterator cit=c_begin();
@@ -577,30 +584,30 @@ print() const
   for(; cit != c_end();  cit++){
     std::cout << std::endl ;
     std::cout << "constraint " ;
-    std::cout << num_vertex[cit->first.first]  << " " 
-	      <<  num_vertex[cit->first.second];
+    std::cout << vertex_num[cit->first.first]  << " " 
+	      <<  vertex_num[cit->first.second];
     std::cout << "  subconstraints " ;
     H_vertex_it vit = cit->second->begin();
     for(; vit != cit->second->end(); vit++){
-      std::cout << num_vertex[*vit]  <<" ";
+      std::cout << vertex_num[*vit]  <<" ";
     }
   }
-  
+  std::cout << std::endl ;
   for(;scit != sc_end(); scit++){
-    std::cout << std::endl ;
     std::cout << "subconstraint " ;
-    std::cout << num_vertex[scit->first.first] << " " 
-	      << num_vertex[scit->first.second];
+    std::cout << vertex_num[scit->first.first] << " " 
+	      << vertex_num[scit->first.second];
     H_constraint_list  hcl;
     enclosing_constraints( scit->first.first, scit->first.second,
 			   hcl);
     H_constraint_it hcit=hcl.begin();
+    std::cout << "  enclosing " ;
     for(; hcit != hcl.end(); hcit++) { 
-      std::cout << "  enclosing " ;
-      std::cout << num_vertex[hcit->first] <<" " 
-		<< num_vertex[hcit->second] ;
-      std::cout << std::endl << "                 " ;
+      std::cout << vertex_num[hcit->first] <<" " 
+		<< vertex_num[hcit->second] ;
+      std::cout <<  "   " ;
     }
+    std::cout << std::endl ;
   }
   return; 
 }
