@@ -40,7 +40,7 @@ Wherever the handles appear in function parameter lists, the appropriate iterato
 
 \ccNestedType{Vertex_handle}{handle to the \ccc{Planar map} vertex.}
 \ccNestedType{Halfedge_handle}{handle to the \ccc{Planar map} halfedge.}
-\ccNestedType{Face_handle}{handle to the \ccc{Planar map} face}.
+\ccNestedType{Face_handle}{handle to the \ccc{Planar map} face.}
 \ccNestedType{Vertex_iterator}{a bidirectional iterator over the vertices of the \ccc{Planar map}.}
 \ccNestedType{Halfedge_iterator}{a bidirectional iterator over the halfedges of the \ccc{Planar map}.}
 \ccNestedType{Face_iterator}{a bidirectional iterator over the faces of the \ccc{Planar map}.}
@@ -84,8 +84,8 @@ comments are defined only if the comments flag is set to true:
 \ccMethod{void write_value (unsigned int val, 
                             char delimiter = newline);}
 {writing an integer value followed by a delimiter to the output stream.
- The delimiter has a default value set to the newline character 
- '$\backslash$n'.}
+ The delimiter has a default value set to the \ccc{newline} character
+ (\ccTexHtml{$\backslash$n}{\n}).}
 
 \ccMethod{ostream& out();}
 {returns the output stream the \ccc{Planar map} is written to.} 
@@ -118,18 +118,3 @@ comments are defined only if the comments flag is set to true:
 \ccRefPageEnd
 % EOF
 % +------------------------------------------------------------------------+
-
-
-
-
-
-
-
-
-
-
-
-%%% Local Variables: 
-%%% mode: latex
-%%% TeX-master: "Pm_drawer"
-%%% End: 
