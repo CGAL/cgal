@@ -118,8 +118,11 @@ typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::delta(int i) const
 {
   CGAL_kernel_precondition( i >= 0 && i <= 2 );
-  return (i==0) ? dx() :
-         (i==1) ? dy() : dz() ;
+  // return (i==0) ? dx() :
+//          (i==1) ? dy() : dz() ;
+  if (i==0) return dx();
+  else if (i==1) return dy();
+  return dz() ;
 }
 
 template < class R >

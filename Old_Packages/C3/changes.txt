@@ -1,3 +1,11 @@
+Version 4.0.4 (Janvier 27 2000)
+- make the changed required by Dima in Point_3.C Vector_3.C and Direction_3.C
+  that is changed the 
+	return (cond) ? foo : bar;
+  into
+	if (cond) return foo;
+	return bar;
+
 Version 4.0.3 (December 14 1999)
 - Forgot a typename in Tetrahedron_3
 - Use lexicographical comparison in Tetrahedron (instead of

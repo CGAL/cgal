@@ -144,8 +144,11 @@ typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
-  return (i==0) ? x() :
-         (i==1) ? y() : z();
+  // return (i==0) ? x() :
+//          (i==1) ? y() : z();
+  if (i==0) return x();
+  else if (i==1) return y();
+  return z();
 }
 
 template < class R >
@@ -193,7 +196,9 @@ typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::homogeneous(int i) const
 {
   CGAL_kernel_precondition((i>=0) && (i<=3));
-  return (i<3) ? cartesian(i) : FT(1);
+  //return (i<3) ? cartesian(i) : FT(1);
+  if (i<3) return cartesian(i);
+  return FT(1);
 }
 
 template < class R >

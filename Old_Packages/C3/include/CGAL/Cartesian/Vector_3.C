@@ -158,8 +158,11 @@ typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<3) );
-  return (i==0) ? x() :
-         (i==1) ? y() : z();
+  // return (i==0) ? x() :
+//          (i==1) ? y() : z();
+  if (i==0) return x();
+  else if (i==1) return y();
+  return z();
 }
 
 template < class R >
@@ -213,7 +216,9 @@ template < class R >
 typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::homogeneous(int i) const
 {
-  return (i==3) ? FT(1) : cartesian(i);
+  //return (i==3) ? FT(1) : cartesian(i);
+  if (i==3) return FT(1);
+  return cartesian(i);
 }
 
 template < class R >
