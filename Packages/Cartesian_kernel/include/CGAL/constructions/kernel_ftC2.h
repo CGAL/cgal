@@ -110,11 +110,31 @@ line_from_pointsC2(const FT &px, const FT &py,
                    const FT &qx, const FT &qy,
                    FT &a, FT &b, FT &c) 
 {
-  a = py - qy;
-  b = qx - px;
-  // Suggested by Serge Pashkov (psw@rt.kiam.ru) for better numeric stability.
-  c = -px*a - py*b;
-  // c = px*qy - py*qx;
+  // The horizontal and vertical line get a special treatment
+  // in order to make the intersection code robust for doubles 
+  if(py == qy){
+    a = 0 ;
+    if(qx > px){
+      b = 1;
+      c = -py;
+    } else {
+      b = -1;
+      c = py;
+}
+  } else if(qx == px){
+    b = 0;
+    if(qy > py){
+      a = 1;
+      c = -px;
+    } else {
+      a = -1;
+      c = px;
+    }
+  } else {
+    a = py - qy;
+    b = qx - px;
+    c = -px*a - py*b;
+  }
 }
 
 template < class FT >

@@ -1,3 +1,5 @@
+16 April 2004 Andreas Fabri
+- Special treatment for horizontal and vertical line in line_from_pointsC2
 
 16 March 2004 Andreas Fabri
 - Move the following to the new scheme :
