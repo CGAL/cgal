@@ -23,79 +23,29 @@
 #ifndef CGAL_SEGMENT_2_H
 #define CGAL_SEGMENT_2_H
 
-#include <CGAL/Point_2.h>
-#include <CGAL/Line_2.h>
-#include <CGAL/Direction_2.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Segment_2 : public R_::Segment_2_base
 {
+  typedef typename R_::RT                    RT;
+  typedef typename R_::Point_2               Point_2;
+  typedef typename R_::Segment_2_base  RSegment_2;
 public:
   typedef  R_                               R;
-  typedef typename R::RT                    RT;
-  typedef typename R::FT                    FT;
-  typedef typename R::Segment_2_base  RSegment_2;
 
-  Segment_2()     // doesn't the default constructor do the same ???
-    : RSegment_2()  // does the handle stuff
-  {}
+  Segment_2()
+    : RSegment_2() {}
 
   Segment_2(const CGAL::Segment_2<R>& s)
-    : RSegment_2(static_cast<const RSegment_2&>(s))  // does the handle stuff
-  {}
+    : RSegment_2(static_cast<const RSegment_2&>(s)) {}
 
-  Segment_2(const CGAL::Point_2<R> &sp, const CGAL::Point_2<R> &ep)
-    :  RSegment_2(sp,ep)
-  {}
+  Segment_2(const Point_2 &sp, const Point_2 &ep)
+    :  RSegment_2(sp,ep) {}
 
   // conversion from implementation class object to interface class object
   Segment_2(const RSegment_2& s)
-    : RSegment_2(s)  // does the handle stuff
-  {}
-
-  CGAL::Point_2<R>     start() const
-  { return RSegment_2::start(); }
-
-  CGAL::Point_2<R>     end() const
-  { return RSegment_2::end(); }
-
-  CGAL::Point_2<R>     source() const
-  { return RSegment_2::source(); }
-
-  CGAL::Point_2<R>     target() const
-  { return RSegment_2::target(); }
-
-  CGAL::Point_2<R>     min() const
-  { return RSegment_2::min(); }
-
-  CGAL::Point_2<R>     max() const
-  { return RSegment_2::max(); }
-
-  CGAL::Point_2<R>     vertex(int i) const
-  { return RSegment_2::vertex(i); }
-
-  CGAL::Point_2<R>     point(int i) const
-  { return RSegment_2::vertex(i); }
-
-  CGAL::Point_2<R>     operator[](int i) const
-  { return vertex(i); }
-
-  CGAL::Direction_2<R> direction() const
-  { return RSegment_2::direction(); }
-
-  CGAL::Segment_2<R>  opposite() const
-  { return CGAL::Segment_2<R>(target(),source()); }
-
-  // this makes use of the constructor of the interface class
-  // taking an object of the implemetation class as argument.
-
-  CGAL::Segment_2<R>   transform(const CGAL::Aff_transformation_2<R> &t) const
-  { return  RSegment_2::transform(t); }
-
-  CGAL::Line_2<R>      supporting_line() const
-  { return RSegment_2::supporting_line(); }
+    : RSegment_2(s) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SEGMENT_2

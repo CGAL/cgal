@@ -15,100 +15,59 @@
 // package       : _3
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri
-//                 Stefan Schirra
+// author(s)     : Andreas Fabri, Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 #ifndef CGAL_PLANE_3_H
 #define CGAL_PLANE_3_H
-
-#include <CGAL/Line_3.h>
-#include <CGAL/Point_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Plane_3 : public R_::Plane_3_base
 {
+  typedef typename R_::RT                    RT;
+  typedef typename R_::Point_3               Point_3;
+  typedef typename R_::Direction_3           Direction_3;
+  typedef typename R_::Vector_3              Vector_3;
+  typedef typename R_::Segment_3             Segment_3;
+  typedef typename R_::Line_3                Line_3;
+  typedef typename R_::Ray_3                 Ray_3;
+  typedef typename R_::Plane_3_base  RPlane_3;
 public:
   typedef          R_                       R;
-  typedef typename R::RT                    RT;
-  typedef typename R::FT                    FT;
-  typedef typename R::Plane_3_base  RPlane_3;
 
-  Plane_3() : RPlane_3()
-  {}
+  Plane_3()
+      : RPlane_3() {}
 
-  Plane_3(const CGAL::Plane_3<R>& p) : RPlane_3(p)
-  {}
+  Plane_3(const CGAL::Plane_3<R>& p)
+      : RPlane_3(p) {}
 
-  Plane_3(const RPlane_3&  p) : RPlane_3(p)
-  {}
+  Plane_3(const RPlane_3& p)
+      : RPlane_3(p) {}
 
-  Plane_3(const CGAL::Point_3<R>& p,
-          const CGAL::Point_3<R>& q,
-          const CGAL::Point_3<R>& r)
-    : RPlane_3(p,q,r)
-  {}
+  Plane_3(const Point_3& p, const Point_3& q, const Point_3& r)
+    : RPlane_3(p,q,r) {}
 
-  Plane_3(const CGAL::Point_3<R>& p, const CGAL::Direction_3<R>& d)
-    : RPlane_3(p,d)
-  {}
+  Plane_3(const Point_3& p, const Direction_3& d)
+    : RPlane_3(p,d) {}
 
-  Plane_3(const CGAL::Point_3<R>& p, const CGAL::Vector_3<R>& v)
-    : RPlane_3(p,v)
-  {}
+  Plane_3(const Point_3& p, const Vector_3& v)
+    : RPlane_3(p,v) {}
 
   Plane_3(const RT& a, const RT& b, const RT& c, const RT& d)
-    : RPlane_3(a,b,c,d)
-  {}
+    : RPlane_3(a,b,c,d) {}
 
-  Plane_3(const CGAL::Line_3<R>& l, const CGAL::Point_3<R>& p)
-    : RPlane_3(l,p)
-  {}
+  Plane_3(const Line_3& l, const Point_3& p)
+    : RPlane_3(l,p) {}
 
-  Plane_3(const CGAL::Segment_3<R>& s, const CGAL::Point_3<R>& p)
-    : RPlane_3(s,p)
-  {}
+  Plane_3(const Segment_3& s, const Point_3& p)
+    : RPlane_3(s,p) {}
 
-  Plane_3(const CGAL::Ray_3<R>& r, const CGAL::Point_3<R>& p)
-    : RPlane_3(r,p)
-  {}
-
-  CGAL::Line_3<R>       perpendicular_line(const CGAL::Point_3<R>& p) const
-  { return RPlane_3::perpendicular_line(p); }
-
-  CGAL::Plane_3<R>      opposite() const
-  { return RPlane_3::opposite(); }
-
-  CGAL::Point_3<R>      projection(const CGAL::Point_3<R>& p) const
-  { return RPlane_3::projection(p); }
-
-  CGAL::Point_3<R>      point() const
-  { return RPlane_3::point(); }
-
-  CGAL::Vector_3<R>     orthogonal_vector() const
-  { return RPlane_3::orthogonal_vector(); }
-
-  CGAL::Direction_3<R>  orthogonal_direction() const
-  { return RPlane_3::orthogonal_direction(); }
-
-  CGAL::Vector_3<R>     base1() const
-  { return RPlane_3::base1(); }
-
-  CGAL::Vector_3<R>     base2() const
-  { return RPlane_3::base2(); }
-
-  CGAL::Point_2<R>      to_2d(const CGAL::Point_3<R>& p) const
-  { return RPlane_3::to_2d(p); }
-
-  CGAL::Point_3<R>      to_3d(const CGAL::Point_2<R>& p) const
-  { return RPlane_3::to_3d(p); }
-
-  CGAL::Plane_3<R>      transform(const CGAL::Aff_transformation_3<R>& t) const
-  { return CGAL::Plane_3<R>( RPlane_3::transform(t) ); }
+  Plane_3(const Ray_3& r, const Point_3& p)
+    : RPlane_3(r,p) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANE_3

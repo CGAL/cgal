@@ -15,10 +15,9 @@
 // package       : _3
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri
-//                 Stefan Schirra
+// author(s)     : Andreas Fabri, Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 #ifndef CGAL_PREDICATES_ON_POINTS_3_H

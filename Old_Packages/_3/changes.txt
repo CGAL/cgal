@@ -1,3 +1,7 @@
+3.30 (22 January 2002)
+- Remove global functions and member functions, these are obtained by
+  derivation.
+
 3.29 (29 October 2001)
 - Submission bug.
 

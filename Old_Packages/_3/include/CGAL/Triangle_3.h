@@ -15,59 +15,36 @@
 // package       : _3
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri
-//                 Stefan Schirra
+// author(s)     : Andreas Fabri, Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_TRIANGLE_3_H
 #define CGAL_TRIANGLE_3_H
-
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Triangle_3 : public R_::Triangle_3_base
 {
+  typedef typename R_::RT                    RT;
+  typedef typename R_::Point_3               Point_3;
+  typedef typename R_::Triangle_3_base  RTriangle_3;
 public:
   typedef          R_                       R;
-  typedef typename R::RT                    RT;
-  typedef typename R::FT                    FT;
-  typedef typename R::Triangle_3_base  RTriangle_3;
 
-  Triangle_3() : RTriangle_3()
-  {}
+  Triangle_3()
+      : RTriangle_3() {}
 
-  Triangle_3(const CGAL::Triangle_3<R>& t) : RTriangle_3(t)
-  {}
+  Triangle_3(const CGAL::Triangle_3<R>& t)
+      : RTriangle_3(t) {}
 
-  Triangle_3(const RTriangle_3&  t) : RTriangle_3(t)
-  {}
+  Triangle_3(const RTriangle_3& t)
+      : RTriangle_3(t) {}
 
-  Triangle_3(const CGAL::Point_3<R>& p,
-                  const CGAL::Point_3<R>& q,
-                  const CGAL::Point_3<R>& r)
-    : RTriangle_3(p,q,r)
-  {}
-
-  CGAL::Plane_3<R>     supporting_plane() const
-  {
-      return CGAL::Plane_3<R>(RTriangle_3::supporting_plane());
-  }
-
-  CGAL::Triangle_3<R>  transform(const CGAL::Aff_transformation_3<R>& t) const
-  {
-      return CGAL::Triangle_3<R>(RTriangle_3::transform( t ));
-  }
-
-  CGAL::Point_3<R>     vertex(int i) const
-  { return RTriangle_3::vertex(i); }
-
-  CGAL::Point_3<R>     operator[](int i) const
-  { return vertex(i); }
+  Triangle_3(const Point_3& p, const Point_3& q, const Point_3& r)
+    : RTriangle_3(p,q,r) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_3

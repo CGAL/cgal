@@ -17,53 +17,13 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 #ifndef CGAL_PREDICATES_CLASSES_2_H
 #define CGAL_PREDICATES_CLASSES_2_H
 
 CGAL_BEGIN_NAMESPACE
-
-template <class Point>      struct X_equal_2;
-template <class Point>      struct Y_equal_2;
-template <class Point>      struct Compare_x_2;
-template <class Point>      struct Compare_y_2;
-template <class Point>      struct Compare_deltax_deltay_2;
-template <class Point>      struct Compare_xy_2;
-template <class Point>      struct Less_xy_2;
-template <class Point>      struct Compare_yx_2;
-template <class Point>      struct Less_yx_2;
-template <class Point>      struct Are_ordered_along_line_2 ;
-template <class Point>      struct Collinear_are_ordered_along_line_2;
-template <class Point>      struct Are_strictly_ordered_along_line_2;
-template <class Point>      struct Collinear_are_strictly_ordered_along_line_2;
-template <class Point>      struct Collinear_2;
-template <class Point>      struct Left_turn_2;
-template <class Point>      struct Right_turn_2;
-#ifndef CGAL_NO_DEPRECATED_CODE
-template <class Point>      struct Leftturn_2;
-template <class Point>      struct Rightturn_2;
-#endif
-template <class Point>      struct Orientation_2;
-template <class Point>      struct Side_of_oriented_circle_2;
-template <class Point>      struct Side_of_bounded_circle_2;
-template <class Point>      class  Compare_distance_to_point_2;
-template <class Point>      class  Less_distance_to_point_2;
-template <class Point, class Line> class  Compare_signed_distance_to_line_2;
-template <class Point, class Line> class  Less_signed_distance_to_line_2;
-template <class Point>      class Compare_signed_distance_to_implicit_line_2;
-template <class Point>      class Less_signed_distance_to_implicit_line_2;
-template <class Point, class Line> struct Compare_y_at_point_2;
-template <class Line>       struct Compare_y_at_implicit_point_2;
-template <class Point, class Line> struct Compare_y_of_lines_at_point_2;
-template <class Line>       struct Compare_y_of_lines_at_implicit_point_2;
-template <class Point, class Line> struct Compare_x_implicit_point_2;
-template <class Line>       struct Compare_x_implicit_points_2;
-template <class Line>       struct Compare_x_implicit_points_same_line_2;
-template <class Point, class Line> struct Compare_y_implicit_point_2;
-template <class Line>       struct Compare_y_implicit_points_2;
-template <class Line>       struct Compare_y_implicit_points_same_line_2;
 
 template <class Point>
 struct X_equal_2

@@ -23,86 +23,43 @@
 #ifndef CGAL_LINE_2_H
 #define CGAL_LINE_2_H
 
-#include <CGAL/Segment_2.h>
-#include <CGAL/Ray_2.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Line_2 : public R_::Line_2_base
 {
+  typedef typename R_::RT                    RT;
+  typedef typename R_::Point_2               Point_2;
+  typedef typename R_::Segment_2             Segment_2;
+  typedef typename R_::Ray_2                 Ray_2;
+  typedef typename R_::Direction_2           Direction_2;
+  typedef typename R_::Line_2_base  RLine_2;
 public:
   typedef  R_   R;
-  typedef typename R::RT                    RT;
-  typedef typename R::FT                    FT;
-  typedef typename R::Line_2_base  RLine_2;
 
   Line_2()
-    : RLine_2()
-  {}
+    : RLine_2() {}
 
   Line_2(const CGAL::Line_2<R>  &l)
-    : RLine_2(static_cast<const RLine_2&>(l))
-  {}
+    : RLine_2(static_cast<const RLine_2&>(l)) {}
 
-  Line_2(const CGAL::Point_2<R> &p, const CGAL::Point_2<R> &q)
-    : RLine_2(p,q)
-  {}
+  Line_2(const Point_2 &p, const Point_2 &q)
+    : RLine_2(p,q) {}
 
   Line_2(const RT &a, const RT &b, const RT &c)
-    : RLine_2(a,b,c)
-  {}
+    : RLine_2(a,b,c) {}
 
   Line_2(const RLine_2& l)  // conversion impl -> interface class
-    : RLine_2(l)
-  {}
+    : RLine_2(l) {}
 
-  Line_2(const CGAL::Segment_2<R>& s)
-    : RLine_2(s)
-  {}
+  Line_2(const Segment_2& s)
+    : RLine_2(s) {}
 
-  Line_2(const CGAL::Ray_2<R>& r)
-    : RLine_2(r)
-  {}
+  Line_2(const Ray_2& r)
+    : RLine_2(r) {}
 
-  Line_2(const CGAL::Point_2<R> &p, const CGAL::Direction_2<R> &d)
-    : RLine_2(p,d)
-  {}
-
-  CGAL::Line_2<R> perpendicular(const CGAL::Point_2<R> &p) const
-  {
-    return RLine_2::perpendicular(p);
-  }
-
-  CGAL::Line_2<R> opposite() const
-  {
-    return RLine_2::opposite();
-  }
-
-  CGAL::Point_2<R> point(int i) const
-  {
-    return RLine_2::point(i);
-  }
-
-  CGAL::Point_2<R> projection(const CGAL::Point_2<R> &p) const
-  {
-    return RLine_2::projection(p);
-  }
-
-  CGAL::Point_2<R> point() const
-  {
-    return RLine_2::point();
-  }
-
-  CGAL::Direction_2<R> direction() const
-  {
-    return RLine_2::direction();
-  }
-
-  CGAL::Line_2<R> transform(const CGAL::Aff_transformation_2<R> &t) const
-  {
-    return  RLine_2::transform(t);
-  }
+  Line_2(const Point_2 &p, const Direction_2 &d)
+    : RLine_2(p,d) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_LINE_2

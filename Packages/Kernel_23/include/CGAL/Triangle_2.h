@@ -24,44 +24,27 @@
 #ifndef CGAL_TRIANGLE_2_H
 #define CGAL_TRIANGLE_2_H
 
-#include <CGAL/Point_2.h>
-#include <CGAL/Aff_transformation_2.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Triangle_2 : public R_::Triangle_2_base
 {
+  typedef typename R_::Point_2          Point_2;
+  typedef typename R_::Triangle_2_base  RTriangle_2;
 public:
   typedef  R_                          R;
-  typedef typename R::RT               RT;
-  typedef typename R::FT               FT;
-  typedef typename R::Triangle_2_base  RTriangle_2;
 
-  Triangle_2() : RTriangle_2() {}
+  Triangle_2()
+      : RTriangle_2() {}
 
-  Triangle_2(const CGAL::Triangle_2<R> &t) : RTriangle_2((RTriangle_2&)t) {}
+  Triangle_2(const CGAL::Triangle_2<R> &t)
+      : RTriangle_2((RTriangle_2&)t) {}
 
-  Triangle_2(const RTriangle_2& t) : RTriangle_2(t) {}
+  Triangle_2(const RTriangle_2& t)
+      : RTriangle_2(t) {}
 
-  Triangle_2(const CGAL::Point_2<R> &p,
-             const CGAL::Point_2<R> &q,
-             const CGAL::Point_2<R> &r) : RTriangle_2(p,q,r) {}
-
-  CGAL::Point_2<R>
-  vertex(int i) const
-  { return RTriangle_2::vertex(i); }
-
-  CGAL::Point_2<R>
-  operator[](int i) const
-  { return vertex(i); }
-
-  CGAL::Triangle_2<R>
-  transform(const CGAL::Aff_transformation_2<R> &t) const
-  { return  RTriangle_2::transform(t); }
-
-  CGAL::Triangle_2<R>  opposite() const
-  { return  CGAL::Triangle_2<R>(vertex(0), vertex(2), vertex(1)); }
+  Triangle_2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
+      : RTriangle_2(p,q,r) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_2

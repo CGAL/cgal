@@ -15,63 +15,40 @@
 // package       : _3
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri
-//                 Stefan Schirra
+// author(s)     : Andreas Fabri, Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 #ifndef CGAL_RAY_3_H
 #define CGAL_RAY_3_H
-
-#include <CGAL/Point_3.h>
-#include <CGAL/Direction_3.h>
-#include <CGAL/Line_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Ray_3 : public R_::Ray_3_base
 {
+  typedef typename R_::RT                    RT;
+  typedef typename R_::Point_3               Point_3;
+  typedef typename R_::Direction_3           Direction_3;
+  typedef typename R_::Ray_3_base  RRay_3;
 public:
   typedef          R_                       R;
-  typedef typename R::RT                    RT;
-  typedef typename R::FT                    FT;
-  typedef typename R::Ray_3_base  RRay_3;
 
-  Ray_3() : RRay_3()
-  {}
+  Ray_3()
+      : RRay_3() {}
 
-  Ray_3(const CGAL::Ray_3<R>& r) : RRay_3(r)
-  {}
+  Ray_3(const CGAL::Ray_3<R>& r)
+      : RRay_3(r) {}
 
-  Ray_3(const RRay_3&  r) : RRay_3(r)
-  {}
+  Ray_3(const RRay_3& r)
+      : RRay_3(r) {}
 
-  Ray_3(const CGAL::Point_3<R>& sp, const CGAL::Point_3<R>& secondp)
-    : RRay_3(sp, secondp)
-  {}
+  Ray_3(const Point_3& sp, const Point_3& secondp)
+    : RRay_3(sp, secondp) {}
 
-  Ray_3(const CGAL::Point_3<R>& sp, const CGAL::Direction_3<R>& d)
-    : RRay_3(sp, d)
-  {}
-
-  CGAL::Point_3<R>     start() const
-  { return RRay_3::start(); }
-  CGAL::Point_3<R>     source() const
-  { return RRay_3::source(); }
-  CGAL::Point_3<R>     second_point() const
-  { return RRay_3::second_point(); }
-  CGAL::Point_3<R>     point(int i) const
-  { return RRay_3::point(i); }
-  CGAL::Direction_3<R> direction() const
-  { return RRay_3::direction(); }
-  CGAL::Line_3<R>      supporting_line() const
-  { return RRay_3::supporting_line(); }
-  CGAL::Ray_3<R>       opposite() const
-  { return RRay_3::opposite(); }
-  CGAL::Ray_3<R>       transform(const CGAL::Aff_transformation_3<R>& t) const
-  { return RRay_3::transform(t); }
+  Ray_3(const Point_3& sp, const Direction_3& d)
+    : RRay_3(sp, d) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAY_3

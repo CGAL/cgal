@@ -17,48 +17,43 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 #ifndef CGAL_ISO_CUBOID_3_H
 #define CGAL_ISO_CUBOID_3_H
-
-#include <CGAL/Point_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Iso_cuboid_3 : public R_::Iso_cuboid_3_base
 {
+  typedef typename R_::RT                 RT;
+  typedef typename R_::Point_3            Point_3;
+  typedef typename R_::Iso_cuboid_3_base  RIso_cuboid_3;
 public:
   typedef          R_                    R;
-  typedef typename R::RT                 RT;
-  typedef typename R::FT                 FT;
-  typedef typename R::Iso_cuboid_3_base  RIso_cuboid_3;
 
   Iso_cuboid_3() : RIso_cuboid_3()
   {}
 
-  Iso_cuboid_3(const CGAL::Iso_cuboid_3<R>& r) : RIso_cuboid_3(r)
-  {}
+  Iso_cuboid_3(const CGAL::Iso_cuboid_3<R>& r)
+      : RIso_cuboid_3(r) {}
 
-  Iso_cuboid_3(const RIso_cuboid_3&  r) : RIso_cuboid_3(r)
-  {}
+  Iso_cuboid_3(const RIso_cuboid_3&  r)
+      : RIso_cuboid_3(r) {}
 
-  Iso_cuboid_3(const CGAL::Point_3<R>& p, const CGAL::Point_3<R>& q)
-   : RIso_cuboid_3(p,q)
-  {}
+  Iso_cuboid_3(const Point_3& p, const Point_3& q)
+   : RIso_cuboid_3(p,q) {}
 
   Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz, 
                const RT& hw)
-   : RIso_cuboid_3(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz, hw)
-  {}
+   : RIso_cuboid_3(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz, hw) {}
 
   Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz)
-   : RIso_cuboid_3(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz)
-  {}
+   : RIso_cuboid_3(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOID_3
