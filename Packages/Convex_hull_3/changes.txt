@@ -1,4 +1,4 @@
-2,49 (14 October 2003) [af]
+2.49 (14 October 2003) [af]
 - Simplified examples
 - Moved examples from \section to \subsection level
 
