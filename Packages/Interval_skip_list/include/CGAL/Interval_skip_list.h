@@ -74,7 +74,7 @@ namespace CGAL {
     IntervalSLnode* get_next();
 
     // find intervals overlapping V
-    IntervalList<Interval>* findIntervals(const Value& searchKey); 
+    IntervalList<Interval>* find_intervals(const Value& searchKey); 
 
 
     void print(std::ostream& os) const;
@@ -159,15 +159,27 @@ namespace CGAL {
     friend class IntervalSLnode<Interval>;
 
     Interval_skip_list();  // constructor
+
+    
+    template <class InputIterator>
+    Interval_skip_list(InputIterator b, InputIterator e)
+    {
+      for(; b!= e; ++b){
+	insert(*b);
+      }
+    }
+
     IntervalSLnode<Interval>* search(const Value& searchKey);  
     // return node containing
     // Value if found, otherwise null
-    IntervalList<Interval>* findIntervals(const Value& searchKey); 
+
+
+    IntervalList<Interval>* find_intervals(const Value& searchKey); 
     // find intervals overlapping V
 
     template <class OutputIterator>
     OutputIterator 
-    findIntervals(const Value& searchKey, OutputIterator out )
+    find_intervals(const Value& searchKey, OutputIterator out )
     {
       //   IntervalList* L = new IntervalList();
       
@@ -190,10 +202,24 @@ namespace CGAL {
     }
     
 
-    Interval_handle insert(const Interval& I);
+    void insert(const Interval& I);
+
+    template <class InputIterator>
+    int insert(InputIterator b, InputIterator e)
+    {
+      int i = 0;
+      for(; b!= e; ++b){
+	insert(*b);
+	++i;
+      }
+      return i;
+    }
+
+
     void remove(const Interval& I);  // delete an interval from list
     void print(std::ostream& os) const;
     void printOrdered(std::ostream& os) const;
+
 
     typedef std::list<Interval>::const_iterator const_iterator;
 
@@ -763,7 +789,7 @@ template <class Interval>
 
   template <class Interval>
   IntervalList<Interval>* 
-  Interval_skip_list<Interval>::findIntervals(const Value& searchKey)
+  Interval_skip_list<Interval>::find_intervals(const Value& searchKey)
     // return list of intervals overlapping V
   {
     IntervalList<Interval>* L = new IntervalList<Interval>();
@@ -802,13 +828,12 @@ template <class Interval>
   }
 
   template <class Interval>
-  Interval_skip_list<Interval>::Interval_handle
+  void
   Interval_skip_list<Interval>::insert(const Interval& I)
   {
     container.push_front(I);
     Interval_handle ihandle = container.begin();
     insert(ihandle);
-    return ihandle;
   }
 
 
