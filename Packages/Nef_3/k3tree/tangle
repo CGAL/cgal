@@ -1,0 +1,9 @@
+#!/bin/sh
+
+sources="k3_tree.nw point_locator.nw"
+files="K3_tree.h SNC_k3_tree_traits.h SNC_point_locator.h"
+
+for file in $files; do
+	notangle -L'#line %L "%F"%N' -R$file $sources | \
+	cpif ../include/CGAL/Nef_3/$file
+done
