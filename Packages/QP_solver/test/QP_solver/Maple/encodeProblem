@@ -215,7 +215,7 @@ end proc;
 
 
 encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
-				d::Matrix, fpath::string)
+				d::Matrix, desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -224,6 +224,8 @@ encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	
 
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
+	
+	writeDescription(fd, desc);
 	    
 	writeTags(fd, "i", 0, isSymmetric(d),
 		hasNoInequalities(a, rel, m));
@@ -270,7 +272,7 @@ encodeQpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 end proc;
 
 encodeLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
-				fpath::string)
+				desc::string, fpath::string)
 	local m, n, i, j, fd, Dimensions;
 
 	Dimensions := LinearAlgebra[Dimensions];
@@ -279,6 +281,8 @@ encodeLpIntProblem:=proc(a::Matrix, rel::Matrix, b::Matrix, c::Matrix,
 	
 
 	m:= Dimensions(a)[1]; n := Dimensions(a)[2];
+	
+	writeDescription(fd, desc);
 	    
 	writeTags(fd, "i", 1, 1,
 		hasNoInequalities(a, rel, m));
