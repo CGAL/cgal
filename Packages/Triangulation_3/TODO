@@ -27,7 +27,9 @@ General
 - insure
 - Pointer -> Comparable_iterator quand Comparable_iterator sera mis dans 
   STL extensions
-- virer ->handle() pour les iterateurs et circulateurs
+- const handle, const it, const circ ...
+- utiliser le cell_container_iterator partout ou c'est possible 
+  (unifier le code pour differentes dimensions) 
 
 TEST SUITE
 - faire tourner GCOV sur la test-suite, et rajouter ce qu'il faut pour
