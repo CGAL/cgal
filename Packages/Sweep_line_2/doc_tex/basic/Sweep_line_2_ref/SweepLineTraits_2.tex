@@ -25,15 +25,17 @@ primitive operations used by the sweep line functions.
 
 \ccTypes
 
-  \ccNestedType{Point_2}{}
-  \ccNestedType{X_curve_2}{}
-  \ccNestedType{Curve_2}{
-   curve type, this type should be {\it syntactically} identical to
-   the \ccc{X_curve_2} type (i.e., it should {\em be} the same type).
-   However, {\it semantically} it differs from the \ccc{X_curve_2} in
-   that it is not necessarily $x$-monotone. In the following methods
-   when we require an \ccc{X_curve_2} as a parameter, we assume that the
-   curve is $x$-monotone.}
+  \ccNestedType{Point_2}{The point type for the endpoints of the curves. }
+  \ccNestedType{X_curve_2}{The x-montone curve type}
+  \ccNestedType{Curve_2}{The curve type on which the sweep line functions
+                         operates.}
+
+  The curve type \ccc{Curve_2} should be {\it syntactically} identical
+  to the \ccc{X_curve_2} type (i.e., it should {\em be} the same
+  type).  However, {\it semantically} it differs from the
+  \ccc{X_curve_2} in that it is not necessarily $x$-monotone. In the
+  following methods when we require an \ccc{X_curve_2} as a parameter,
+  we assume that the curve is $x$-monotone.
 
 \ccCreationVariable{tr} 
 
