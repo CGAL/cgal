@@ -1,3 +1,24 @@
+// ============================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Delaunay_remove_tds_3.h
+// revision      : $Revision$
+//
+// author(s)     : Monique Teillaud, Andreas Fabri
+//
+// coordinator   : INRIA Sophia Antipolis
+//
+// ============================================================================
 
 #ifndef CGAL_DELAUNAY_REMOVE_TDS_3_H
 #define CGAL_DELAUNAY_REMOVE_TDS_3_H
