@@ -1,3 +1,5 @@
+1.0.5  fix for SunPro CC added in  _base_window.C
+
 1.0.4  cursorfont.h changed
 
 1.0.3  Lman manual pages in the header files updated
