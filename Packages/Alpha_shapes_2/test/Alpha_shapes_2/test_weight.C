@@ -70,7 +70,7 @@ alpha_edges(InputIterator begin, InputIterator end,
 	    OutputIterator out)
   // Generate Alpha Shape
 { 
-  std::vector<Gt::Segment_2> V_seg;
+  std::vector<Segment> V_seg;
   Alpha_shape_2 A(begin,end);
   
   if (mode) 
@@ -120,7 +120,7 @@ int main()
 {
   std::list<Point> points;
   file_input(points);
-  std::vector<Gt::Segment_2> segments;
+  std::vector<Segment> segments;
   alpha_edges(points.begin(), points.end(),
 	      coord_type(10000),Alpha_shape_2::GENERAL,
 	      std::back_inserter(segments));
