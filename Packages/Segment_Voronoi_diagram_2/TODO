@@ -1,3 +1,10 @@
+- add a method insert_point_no_search in the segment Voronoi diagram class
+  that inserts a point without searching for the nearest neighbor;
+  the assumption here is that the nearest neighbor given is already known
+  and we do not need to search again; the insert_point method should be 
+  rewritten so that it uses insert_point_no_search as a subroutine; the
+  segment Voronoi diagram hierarchy needs this method when inserting a point:
+  the nearest neighbors of the point at all levels are known...
 - remove the old code about the definitions of the predicates in the
   filtered traits class
 - remove the site set_* methods from the spec; remove the macro USE_SET_METHODS
