@@ -1,5 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.73 (11 Oct 2002)
+  - copy necessary functors from [23]D Kernel since they have changed.
+    (include/CGAL/Kernel_d/function_objects.h)
+
 0.9.72 (22 Aug 2002)
   - removed obsolete Ref_counted class derivations
   - proteced assignment operator for Matrx_ and Vector_ when copying

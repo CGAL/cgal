@@ -28,7 +28,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/representation_tags.h>
-#include <CGAL/Kernel/function_objects.h>
+#include <CGAL/Kernel_d/function_objects.h>
 #include <CGAL/Linear_algebraHd.h>
 #include <vector>
 #endif

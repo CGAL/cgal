@@ -27,7 +27,7 @@
 #ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/representation_tags.h>
-#include <CGAL/Kernel/function_objects.h>
+#include <CGAL/Kernel_d/function_objects.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <vector>
 #endif
