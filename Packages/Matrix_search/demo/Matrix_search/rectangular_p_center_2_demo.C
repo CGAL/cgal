@@ -1,3 +1,5 @@
+#line 645 "pcenter.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,6 +26,9 @@
 // Demo: 2-4-Centering Axis-Parallel 2D-Rectangles
 // ============================================================================
 
+#line 649 "pcenter.aw"
+#line 185 "pc_testprog.awi"
+#line 12 "pc_testprog.awi"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Point_2.h>
@@ -32,7 +37,7 @@
 #include <CGAL/IO/Istream_iterator.h>
 #include <CGAL/rectangular_p_center_2.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Arithmetic_filter.h>
+//#include <CGAL/Arithmetic_filter.h>
 #include <CGAL/leda_real.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
@@ -42,18 +47,20 @@
 #include <functional>
 #include <cstdlib>
 
+#ifndef _MSC_VER
+using std::atoi;
+using std::atof;
+#endif
 using std::vector;
 using std::copy;
 using std::back_inserter;
 using std::ostream_iterator;
 using std::transform;
 using std::bind2nd;
-using std::atoi;
-using std::atof;
+using std::cin;
 using std::cout;
 using std::cerr;
 using std::endl;
-using CGAL::Filtered_exact;
 using CGAL::Cartesian;
 using CGAL::rectangular_p_center_2;
 using CGAL::Random;
@@ -63,6 +70,7 @@ using CGAL::Random_points_in_disc_2;
 using CGAL::Istream_iterator;
 using CGAL::Ostream_iterator;
 using CGAL::set_pretty_mode;
+using CGAL::set_ascii_mode;
 using CGAL::cgalize;
 using CGAL::Timer;
 using CGAL::BLUE;
@@ -70,6 +78,7 @@ using CGAL::RED;
 using CGAL::ORANGE;
 using CGAL::GREEN;
 
+#line 103 "pc_testprog.awi"
 #ifdef _MSC_VER
 // that compiler cannot even distinguish between global
 // and class scope, so ...
@@ -149,11 +158,12 @@ private:
 #ifdef _MSC_VER
 #undef Base
 #endif // _MSC_VER
+#line 62 "pc_testprog.awi"
 
 // typedefs
-typedef Filtered_exact< double, leda_real > FT;
+//typedef Filtered_exact< double, leda_real > FT;
 //typedef double FT;
-//typedef leda_real FT;
+typedef leda_real                           FT;
 typedef Cartesian< FT >                     R;
 typedef CGAL::Point_2< R >                  Point;
 typedef CGAL::Iso_rectangle_2< R >          Square_2;
@@ -172,7 +182,9 @@ typedef Istream_iterator< Point, leda_window>
   Istream_iterator_point;
 
 
+#line 186 "pc_testprog.awi"
 
+#line 87 "pc_testprog.awi"
 // function class to construct a box
 // around a point p with radius r
 template < class Point, class FT, class Box >
@@ -186,6 +198,7 @@ struct Build_box
                Point(p.x() + r, p.y() + r));
   }
 };
+#line 188 "pc_testprog.awi"
 
 int
 main(int argc, char* argv[])
@@ -207,16 +220,18 @@ main(int argc, char* argv[])
   cgalize(W);
   W.set_node_width(2);
   W.init(-1.5, 1.5, -1.2);
-  int gensq_button = W.button("Square",
-                              "Generate points from the unit square.");
-  int gendsk_button = W.button("Disc",
-                               "Generate points from the unit disc.");
-  int gencl_button = W.button("Cluster",
-                              "Generate points from p clusters.");
+  int gensq_button   = W.button("Square",
+                                "Generate points from the unit square.");
+  int gendsk_button  = W.button("Disc",
+                                "Generate points from the unit disc.");
+  int gencl_button   = W.button("Cluster",
+                                "Generate points from p clusters.");
   int compute_button = W.button("Compute", "Compute the p-centers.");
-  int clear_button = W.button("Clear", "Clear window.");
-  int ps_button = W.button("PS", "Generate postscript output.");
-  int end_button = W.button("Quit", "Leave the program.");
+  int clear_button   = W.button("Clear", "Clear window.");
+  int ps_button      = W.button("PS", "Generate postscript output.");
+  int ascii_button   = W.button("ASCII",
+                                "Generate ascii output of input points.");
+  int end_button     = W.button("Quit", "Leave the program.");
   W.int_item("n", number_of_points, "Number of points.");
   W.int_item("p", number_of_clusters, "Number of clusters.");
   W.double_item("Cluster Size", c_size,
@@ -227,8 +242,9 @@ main(int argc, char* argv[])
 #endif // CGAL_PCENTER_NO_SHOW
   set_pretty_mode(cout);
   set_pretty_mode(cerr);
-  cout.precision(20);
-  cerr.precision(20);
+  set_ascii_mode(cin);
+  cout.precision(10);
+  cerr.precision(10);
   Ostream_iterator_point        cout_p(cerr, "\n");
   Ostream_iterator_square       cout_s(cerr, "\n");
 
@@ -277,6 +293,26 @@ main(int argc, char* argv[])
       }
     }
     cerr << "random seed is " << random_seed << endl;
+  } else if (argc >= 2 && argv[1][0] == 'i') {
+#ifndef _MSC_VER
+    #line 867 "pc_testprog.awi"
+    // read parameters
+    int p;
+    cin >> p;
+    int n;
+    cin >> n;
+    cout << "Computing " << p << "-centers of " << n << " points." << endl;
+    
+    // read input points
+    for (int i = 0; i < n; ++i) {
+      Point p;
+      cin >> p;
+      input_points.push_back(p);
+    }
+#line 285 "pc_testprog.awi"
+    number_of_points = n;
+    number_of_clusters = p;
+#endif
   }
 
 #ifndef CGAL_PCENTER_NO_SHOW
@@ -303,9 +339,9 @@ main(int argc, char* argv[])
         result,
         number_of_clusters);
       t.stop();
-      cout << "[time: " << t.time() << " msec]" << endl;
+      cout << "[time: " << t.time() << " sec]" << endl;
       int number_of_piercing_points(centers.size());
-      cerr << "Finished with diameter " << result
+      cerr << "Finished with diameter " << CGAL::to_double(result)
            << " and " << number_of_piercing_points
            << " points." << endl;
 #ifdef CGAL_PCENTER_CHECK
@@ -325,29 +361,75 @@ main(int argc, char* argv[])
         } while (j != centers.end());
       }
 #endif // CGAL_PCENTER_CHECK
+
+#ifndef CGAL_PCENTER_NO_SHOW
+      // show center points
+      W << RED;
+      copy(centers.begin(), centers.end(), wout_p);
+#endif // CGAL_PCENTER_NO_SHOW
+#ifndef _MSC_VER
+      copy(centers.begin(), centers.end(), cout_p);
+      cerr << endl;
+#endif // _MSC_VER
+
+      // ... and the corresponding squares:
+#ifndef CGAL_PCENTER_NO_SHOW
+      W << ORANGE;
+      transform(centers.begin(),
+                centers.end(),
+                wout_s,
+                bind2nd(Build_square(), result / FT(2)));
+#endif // CGAL_PCENTER_NO_SHOW
+#ifndef _MSC_VER
+      transform(centers.begin(),
+                centers.end(),
+                cout_s,
+                bind2nd(Build_square(), result / FT(2)));
+      cerr << endl;
+#endif // _MSC_VER
+
+#ifdef CGAL_PCENTER_CHECK
+      // check that there is at least one square with two points
+      // on opposite sides
+      CGAL::Signed_x_distance_2< R > xdist;
+      CGAL::Signed_y_distance_2< R > ydist;
+      bool boundary = false;
+      for (iterator i = centers.begin(); i != centers.end(); ++i) {
+        int left = 0, right = 0, bottom = 0, top = 0;
+        for (iterator j = input_points.begin(); j != input_points.end(); ++j) {
+          if (xdist(*i, *j) == result / FT(2)) {
+            ++left;
+#ifndef CGAL_PCENTER_NO_SHOW
+            W << CGAL::GREEN << *j;
+#endif // CGAL_PCENTER_NO_SHOW
+          }
+          if (xdist(*j, *i) == result / FT(2)) {
+            ++right;
+#ifndef CGAL_PCENTER_NO_SHOW
+            W << CGAL::GREEN << *j;
+#endif // CGAL_PCENTER_NO_SHOW
+          }
+          if (ydist(*j, *i) == result / FT(2)) {
+            ++top;
+#ifndef CGAL_PCENTER_NO_SHOW
+            W << CGAL::GREEN << *j;
+#endif // CGAL_PCENTER_NO_SHOW
+          }
+          if (ydist(*i, *j) == result / FT(2)) {
+            ++bottom;
+#ifndef CGAL_PCENTER_NO_SHOW
+            W << CGAL::GREEN << *j;
+#endif // CGAL_PCENTER_NO_SHOW
+          }
+        }
+        if (left > 0 && right > 0 || top > 0 && bottom > 0)
+          boundary = true;
+      }
+      if (!boundary)
+        cerr << "Error: No square has two points on boundary." << endl;
+
+#endif // CGAL_PCENTER_CHECK
     } // if (!input_points.empty())
-
-#ifndef CGAL_PCENTER_NO_SHOW
-    // show center points
-    W << RED;
-    copy(centers.begin(), centers.end(), wout_p);
-#endif // CGAL_PCENTER_NO_SHOW
-    copy(centers.begin(), centers.end(), cout_p);
-    cerr << endl;
-
-    // ... and the corresponding squares:
-#ifndef CGAL_PCENTER_NO_SHOW
-    W << ORANGE;
-    transform(centers.begin(),
-              centers.end(),
-              wout_s,
-              bind2nd(Build_square(), result / FT(2)));
-#endif // CGAL_PCENTER_NO_SHOW
-    transform(centers.begin(),
-              centers.end(),
-              cout_s,
-              bind2nd(Build_square(), result / FT(2)));
-    cerr << endl;
 
 #ifndef CGAL_PCENTER_NO_SHOW
     double x, y;
@@ -388,6 +470,24 @@ main(int argc, char* argv[])
         W << p;
       } else if (input == compute_button || input == MOUSE_BUTTON(2)) {
         break;
+      } else if (input == ascii_button) {
+        set_ascii_mode(cerr);
+        cerr << number_of_clusters << endl;
+        cerr << input_points.size() << endl;
+        for (iterator i = input_points.begin();
+             i != input_points.end();
+             ++i)
+          cerr << CGAL::to_double(i->x()) << " "
+               << CGAL::to_double(i->y()) << "\n";
+        cerr << CGAL::to_double(result) << "\n";
+#ifndef _MSC_VER
+        for (iterator i = centers.begin(); i != centers.end(); ++i)
+#else
+        for (i = centers.begin(); i != centers.end(); ++i)
+#endif
+          cerr << CGAL::to_double(i->x()) << " "
+               << CGAL::to_double(i->y()) << endl;
+        set_pretty_mode(cerr);
       } else if (input == ps_button) {
         iterator xmin = std::min_element(input_points.begin(),
                                          input_points.end(),
@@ -405,7 +505,7 @@ main(int argc, char* argv[])
         const int size = 500;
         const int border = 20;
         cout << "%!PS-Adobe-2.0 EPSF-1.2\n"
-             << "%%Creator: rectangular_3_center_demo\n"
+             << "%%Creator: rectangular_p_center_2_demo\n"
              << "%%BoundingBox: 0 0 " << size << " " << size << "\n"
              << "%%Pages: 1\n"
              << "%%EndComments\n"
@@ -444,7 +544,11 @@ main(int argc, char* argv[])
                  << " 2 circle\n";
           }
           cout << "\n% covering squares:\n";
+#ifndef _MSC_VER
         for (iterator i = centers.begin();
+#else
+        for (i = centers.begin();
+#endif
              i != centers.end();
              ++i)
           {
@@ -476,7 +580,11 @@ main(int argc, char* argv[])
     } while (!done);
   } while (!done);
 #endif // CGAL_PCENTER_NO_SHOW
+
+  return 0;
 }
+#line 650 "pcenter.aw"
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------
