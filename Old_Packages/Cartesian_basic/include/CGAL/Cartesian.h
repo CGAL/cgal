@@ -27,6 +27,8 @@ struct Cartesian_base :
     typedef _FT                                           RT;
     typedef _FT                                           FT;
     typedef Cartesian_tag                                 Rep_tag;
+    typedef Cartesian_tag                                 Kernel_tag;
+
 
     // All the classes are inherited, but because we inherit from a
     // template parameter, we need to explicitly write the inheritance
@@ -83,6 +85,7 @@ struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
     typedef _FT                                           RT;
     typedef _FT                                           FT;
     typedef Cartesian_tag                                 Rep_tag;
+    typedef Cartesian_tag                                 Kernel_tag;
 
     typedef Cartesian<FT>                                 Self;
     typedef Cartesian_base<Self,FT>                       Kernel_base;

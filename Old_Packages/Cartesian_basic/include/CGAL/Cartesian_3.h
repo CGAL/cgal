@@ -27,6 +27,7 @@ struct Cartesian_base_3
     typedef _FT                                   RT;
     typedef _FT                                   FT;
     typedef Cartesian_tag                         Rep_tag;
+    typedef Cartesian_tag                         Kernel_tag;
     typedef CGAL::Object                          Object_3;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     typedef CGAL::Point_2<R,Rep_tag>               Point_2;
@@ -140,6 +141,7 @@ struct Cartesian_3 :
     typedef _FT                                   RT;
     typedef _FT                                   FT;
     typedef Cartesian_tag                         Rep_tag;
+    typedef Cartesian_tag                         Kernel_tag;
 
     typedef Cartesian_3<_FT>                      Self;
     typedef Cartesian_base_3<Self,_FT>            Kernel_base;
