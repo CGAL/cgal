@@ -196,7 +196,6 @@ namespace CGAL {
       tbox = bbox;
 
       // build list 
-      p_list.clear();
       Iter it;
       for (it=begin; it != end; ++it) p_list.push_back(&(*it));
 
@@ -262,9 +261,6 @@ namespace CGAL {
 	//assert(dimension()==c.dimension());
 		
         Point_list l_lower, l_upper;
-
-	l_lower.clear();
-	l_upper.clear();
 
         c.bbox=bbox;
         // bool test_validity=false;
@@ -382,9 +378,8 @@ template <class Item_, class Value>
     };
 
 
-    ~Point_container() { 
-			p_list.clear(); 
-    }
+    ~Point_container()
+    {}
 
     inline bool empty() const { return the_size == 0;}
      
