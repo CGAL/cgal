@@ -41,7 +41,7 @@ public:
     std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this,
 						       "Standard Toolbar");
 
-    connect(widget, SIGNAL(custom_redraw()),
+    connect(widget, SIGNAL(redraw_on_back()),
 	    this, SLOT(redraw_win()) );
   }
 
