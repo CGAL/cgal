@@ -25,11 +25,11 @@
 
 #include <assert.h>
 
-template<class Traits, class Point>
+template<class Traits>
 void
-CGAL__test_cls_distance(Point p[34],const Traits &)
+CGAL__test_cls_distance(typename Traits::Point p[34],const Traits &)
 {
-  // typedef CGAL_Distance_2<Traits> Distance;
+
   typedef typename Traits::Distance Distance;
   typedef typename Traits::Point  Point;
   //test for constructors
