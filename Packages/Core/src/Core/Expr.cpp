@@ -41,20 +41,9 @@ unsigned int rootBoundHitCounter = 0;
 unsigned int computeBoundCallsCounter = 0;
 #endif
 
-static const long BIG = (1L << 30);
 const char* Add::name = "+";
 const char* Sub::name = "-";
 
-static const double log_5 = log(double(5))/log(double(2));
-
-// Returns the ceil of log_2(5^a).
-extLong ceilLg5(const extLong & a) {
-#if defined( _MSC_VER) || defined(__sgi) 
-  return (int) ::ceil(log_5 * a.toLong());
-#else
-  return (int) std::ceil(log_5 * a.toLong());
-#endif
-}
 
 /********************************************************
  *  class Expr
