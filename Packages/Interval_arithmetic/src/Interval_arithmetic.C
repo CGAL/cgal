@@ -23,20 +23,24 @@
  
 #include <CGAL/basic.h>
 
+#ifndef _MSC_VER
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/predicates/kernel_ftC3.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/predicates/Regular_triangulation_ftC2.h>
 #include <CGAL/predicates/Regular_triangulation_ftC3.h>
 #include <CGAL/predicates/Regular_triangulation_rtH2.h>
-#include <CGAL/predicates/Regular_triangulation_rtH3.h>
+#include <CGAL/predicates/Regular_triangulation_rtH3.h> // -> Quotient
+#endif
 
 #include <CGAL/Arithmetic_filter.h>
 
 CGAL_BEGIN_NAMESPACE
 
 // Static variables:
+#ifndef _MSC_VER
 #include <CGAL/Arithmetic_filter/static_infos/dispatch.h>
+#endif
 
 unsigned Interval_nt_advanced::number_of_failures = 0;
 
