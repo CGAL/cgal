@@ -209,10 +209,18 @@ protected:
 
   //templated member function
 public:
+  // the int parameter is a work around for VC7 to compile
   template < class InputIterator >
-  int insert(InputIterator first, InputIterator last)
+#ifdef _MSC_VER
+  #if _MSC_VER>1200
+   int insert(InputIterator first, InputIterator last, int i = 0)
+  #endif
+   int insert(InputIterator first, InputIterator last) 
+#else
+   int insert(InputIterator first, InputIterator last) 
+#endif
     {
-      int n = number_of_vertices();
+      int n = number_of_vertices(); 
       while(first != last){
 	insert(*first);
 	++first;

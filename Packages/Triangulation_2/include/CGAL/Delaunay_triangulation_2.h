@@ -148,14 +148,13 @@ public:
   insert(InputIterator first, InputIterator last)
     {
       int n = number_of_vertices();
-      while(first != last){
+        while(first != last){
 	insert(*first);
 	++first;
       }
       return number_of_vertices() - n;
     }
 
-  //
   template <class Out_it1, class Out_it2> 
   bool 
   get_conflicts_and_boundary (const Point  &p, 
