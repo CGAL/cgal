@@ -55,7 +55,24 @@
     vertices="1129" halfedges="3916" faces="831"></file>
 
   <bench samples="10" enable="true">
-    <benchPmwxQuotientCartesianSegmentCached file="onebig_100_x.dat" header="true"/>
+    <benchPmwxLedaRatSimpleCartesianSegmentCached file="onebig_100_x.dat" header="true"/>
+    <benchPmwxLazyCgalGmpqCartesianSegmentCached file="onebig_100_x.dat"/>
+    <benchPmwxLazyQuotientCartesianSegmentCached file="onebig_100_x.dat"/>
+    <benchPmwxLazyRatCartesianSegmentCached file="onebig_100_x.dat"/>
+    <benchPmwxLedaRatCartesianSegmentCached file="onebig_100_x.dat"/>
+    <benchPmwxLedaRatLedaSegmentCached file="onebig_100_x.dat"/>
+    <benchPmwxQuotientCartesianSegmentCached file="onebig_100_x.dat"/>
+    <benchPmwxQuotientCgalGmpzCartesianSegmentCached file="onebig_100_x.dat"/>
+  </bench>
+
+  <bench samples="10" enable="true">
+    <benchPmwxLedaRatSimpleCartesianSegmentCached file="random_segments_100_x.dat" header="true"/>
+    <benchPmwxLazyCgalGmpqCartesianSegmentCached file="random_segments_100_x.dat"/>
+    <benchPmwxLazyQuotientCartesianSegmentCached file="random_segments_100_x.dat"/>
+    <benchPmwxLazyRatCartesianSegmentCached file="random_segments_100_x.dat"/>
+    <benchPmwxLedaRatCartesianSegmentCached file="random_segments_100_x.dat"/>
+    <benchPmwxLedaRatLedaSegmentCached file="random_segments_100_x.dat"/>
     <benchPmwxQuotientCartesianSegmentCached file="random_segments_100_x.dat"/>
+    <benchPmwxQuotientCgalGmpzCartesianSegmentCached file="random_segments_100_x.dat"/>
   </bench>
 </bench>
