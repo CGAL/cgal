@@ -59,9 +59,8 @@ public:
   typedef typename SubcurveContainer::iterator SubCurveIter;
   typedef typename SubcurveContainer::reverse_iterator SubCurveRevIter;
 
-  typedef typename CurveWrap::PmwxInsertInfo PmwxInsertInfo;
-
-  
+    
+  typedef typename SubCurve::PmwxInsertInfo        PmwxInsertInfo;
   typedef typename PmwxInsertInfo::Halfedge_handle Halfedge_handle;
 
   using Base::m_rightCurves;
@@ -161,7 +160,7 @@ public:
   }
   
 
-private:
+protected:
   PmwxInsertInfo m_insertInfo;
 };
 
