@@ -64,21 +64,21 @@ class Construct
     template <class A> 
     ToBeConstructed
     operator()( const A& a1, const A& a2, const A& a3,
-                const A& a4, const A& a5, const A& a6 )
+                const A& a4, const A& a5, const A& a6 ) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6); }
 
     template <class A> 
     ToBeConstructed
     operator()( const A& a1, const A& a2, const A& a3,
                 const A& a4, const A& a5, const A& a6,
-                const A& a7 )
+                const A& a7 ) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6,a7); }
 
     template <class A> 
     ToBeConstructed
     operator()( const A& a1, const A& a2, const A& a3,
                 const A& a4, const A& a5, const A& a6,
-                const A& a7, const A& a8, const A& a9)
+                const A& a7, const A& a8, const A& a9) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6,a7,a8,a9); }
 
     template <class A> 
@@ -86,7 +86,7 @@ class Construct
     operator()( const A& a1, const A& a2, const A& a3,
                 const A& a4, const A& a5, const A& a6,
                 const A& a7, const A& a8, const A& a9,
-                const A& a10)
+                const A& a10) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10); }
 
     template <class A> 
@@ -94,7 +94,7 @@ class Construct
     operator()( const A& a1, const A& a2, const A& a3,
                 const A& a4, const A& a5, const A& a6,
                 const A& a7, const A& a8, const A& a9,
-                const A& a10,const A& a11,const A& a12)
+                const A& a10,const A& a11,const A& a12) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12); }
 
     template <class A> 
@@ -103,7 +103,7 @@ class Construct
                 const A& a4, const A& a5, const A& a6,
                 const A& a7, const A& a8, const A& a9,
                 const A& a10,const A& a11,const A& a12,
-                const A& a13)
+                const A& a13) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13); }
 
 };
@@ -289,7 +289,8 @@ class pl_Bisector
     typedef Line           result_type;
 
     Line
-    operator()(const Point& p, const Point& q) const { return bisector(p,q); }
+    operator()(const Point& p, const Point& q) const
+    { return bisector(p,q); }
 };
 
 template <class Vector>
@@ -932,7 +933,9 @@ template <class Plane, class Point>
 class Less_signed_distance_to_plane
 {
   public:
-    bool operator()( const Plane & p, const Point& q, const Point& r)
+    typedef bool           result_type;
+
+    bool operator()( const Plane & p, const Point& q, const Point& r) const
     { return has_smaller_signed_dist_to_plane(p,q,r); }
 };
 
@@ -986,7 +989,7 @@ class Call_transform
  public:
     template <class Transformation, class ArgumentType>
     ArgumentType
-    operator()( const ArgumentType& a, const Transformation& t)
+    operator()( const ArgumentType& a, const Transformation& t) const
     { return a.transform(t); }
 };
 #endif // CGAL_NO_DEPRECATED_CODE
