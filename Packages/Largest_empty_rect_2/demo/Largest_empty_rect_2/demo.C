@@ -90,6 +90,8 @@ int main(int argc,char *argv[])
     W.button("Remove points",6);
     W.button("Exit",7);
     W.display();
+    W.disable_button(4);
+    W.disable_button(5);
   } else {
     std::cerr << "Syntax : EmptyRect [input file name]\n";
     return(1);
@@ -220,15 +222,25 @@ int main(int argc,char *argv[])
       // change to automatic mode
       automatic_show = true;
       show_biggest_rec(empty_rectangle,W);
+      W.enable_button(4);
+      W.disable_button(3);
+      W.disable_button(1);
       biggest_rect_shown = true;
     } else if(mouse_input == 4) {
       // change to manual mode
       automatic_show = false;
+      W.enable_button(1);
+      W.enable_button(3);
+      W.disable_button(4);
       biggest_rect_shown = false;
       redraw(empty_rectangle,W);
     } else if(mouse_input == 5) {
+      W.enable_button(6);
+      W.disable_button(5);
       remove_points = false;
     } else if(mouse_input == 6) {
+      W.enable_button(5);
+      W.disable_button(6);
       remove_points = true;
     } else if(mouse_input == 7)
       // finish
