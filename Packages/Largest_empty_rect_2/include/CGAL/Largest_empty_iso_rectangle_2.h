@@ -52,12 +52,12 @@ CGAL_BEGIN_NAMESPACE
 
   The algorithm checks all the empty rectangles that are bounded by either
   points or edges of the bounding box (other empty rectangles can be enlarged
-  and remain empty). There are O(n^2) such rectangles. It is done in three phases.
-  In the first one empty rectangles that are bounded by two opposite edges of
-  the bounding box are checked. In the second one, other empty rectangles that
-  are bounded by one or two edges of the bounding box are checked. In the
-  third phase, all other empty rectangles, namely the ones that are bounded
-  by four points, are checked.
+  and remain empty). There are O(n^2) such rectangles. It is done in three
+  phases. In the first one empty rectangles that are bounded by two opposite
+  edges of the bounding box are checked. In the second one, other empty
+  rectangles that are bounded by one or two edges of the bounding box are
+  checked. In the third phase, all other empty rectangles, namely the ones
+  that are bounded by four points, are checked.
 */
 
 template<class T>
@@ -93,11 +93,12 @@ public:
 
   const Traits & traits() const {return _gt;};
 
-  //! A constructor given two points parameters. The parameters are two opposite
-  //! corners of the bounding box.
+  //! A constructor given two points parameters. The parameters are two
+  //! opposite corners of the bounding box.
   Largest_empty_iso_rectangle_2(const Point_2& bl, const Point_2& tr);
 
-  //! Constructor given an Iso Rectangle parameter. The parameter is the bounding box.
+  //! Constructor given an Iso Rectangle parameter. The parameter is
+  //! the bounding box.
   Largest_empty_iso_rectangle_2(const Iso_rectangle_2 &b);
 
   //! A parameter-less constructor
