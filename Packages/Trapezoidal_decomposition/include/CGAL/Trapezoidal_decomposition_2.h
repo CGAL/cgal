@@ -1311,8 +1311,9 @@ output: trapezoid iterator
 #endif
         
         if (traits->is_degenerate_point(*curr))
-				// point seperation
+				// point node conditional (separation)
           {
+            // extract point from trapezoid
             pp=&curr->left();
             if (traits->point_is_left_low(p,*pp))
               {
@@ -1327,14 +1328,21 @@ output: trapezoid iterator
             else if (traits->point_is_same(*pp,p))
               {
                 if (!cv)
-                  {
+                {
+                  if ( up == EQUAL ) { // point found!
                     if (curr->is_active()) return POINT;
                     curr=curr.left();
-                    continue;
                   }
+                  else if ( up = LARGER ) { // vertical ray shut up
+                    curr=curr.right();                      
+                  }
+                  else /*if ( up == SMALLER ) */ {
+                    curr=curr.left();     // vertical ray shut down
+                  }
+                  continue;
+                }
                 else
                   {
-                    
 #ifndef CGAL_TD_DEBUG
                     
                     CGAL_warning(
@@ -1363,6 +1371,8 @@ output: trapezoid iterator
                     
                     curr=traits->point_is_same(traits->curve_leftlow_most(*cv),
                                                p) ? curr.right() : curr.left();
+                    // (Oren 14/4/02) ??
+                    
                     continue;
                   }
               }
@@ -1427,8 +1437,18 @@ output: trapezoid iterator
 #endif
                 if (!cv)
                   {
-                    if (curr->is_active()) return CURVE;
-                    curr=curr.left();
+                    // For a vertical curve, we always visit it after visiting one of its endpoints.
+                    if ((up == EQUAL) || traits->is_vertical(*curr)) {
+                      std::cout << "EQUAL or VERTICAL" << std::endl;
+                      if (curr->is_active()) return CURVE;
+                      curr=curr.left();
+                    }
+                    else if (up==LARGER) {
+                      curr=curr.right();
+                    }
+                    else /* if (up==SMALLER) */ {
+                      curr=curr.left();
+                    }
                     continue;
                   }
                 else
@@ -2180,24 +2200,29 @@ public:
 	
 	curve_const_ref vertical_ray_shoot(const Point& p,Locate_type &t,const bool up_direction=true) const
 	{
-		
 #ifdef CGAL_TD_DEBUG
-		
 		CGAL_assertion(traits);
-		
 #endif
+
+		// We replace the following locate with a direct call to 
+                // search_using_data_structure because we need to deal
+                // with cases where the source of shoot is a point/curve.
+                // reference t_p = locate(p,t);
 		
-		reference t_p = locate(p,t);
-		
-		//		std::cout << "t_p" << t_p << "\n";
+		Data_structure curr=*DS;
+#ifdef CGAL_TD_DEBUG
+		CGAL_precondition(!!curr);
+#endif
+
+                t = search_using_data_structure(curr, traits, p, NULL, 
+                                                up_direction ? CGAL::LARGER : CGAL::SMALLER);
+                reference t_p = *curr;
+
+                std::cout << "t" << t << "\n";
 
 #ifdef CGAL_TD_DEBUG
-
-		
 		CGAL_warning(t_p.get_node());
-		
 #endif
-		
 		reference tr = **t_p.get_node();
 
 		//		std::cout << "tr" << tr << "\n";
@@ -2215,7 +2240,7 @@ public:
 		 p
 		 x------x
 		*/
-		
+
 		if (up_direction && !tr.is_right_unbounded() && traits->point_is_same_x(p,tr.right()) && 
 		    (tr.is_left_unbounded() || !traits->point_is_same(tr.left(),tr.right())) ||
 		     !up_direction && !tr.is_left_unbounded() && traits->point_is_same_x(p,tr.left()) && 
@@ -2224,12 +2249,19 @@ public:
 			// recalculate vertical ray shoot using locate on point
 			return up_direction ? locate(tr.right(),t).top() : locate(tr.left(),t).bottom();
 		}
-		curve_const_ref c = up_direction ? tr.top() : tr.bottom();
+                curve_const_ref c = up_direction ? tr.top() : tr.bottom();
 		if (up_direction ? tr.is_top_unbounded() : tr.is_bottom_unbounded())
 		{
 			t=UNBOUNDED_TRAPEZOID;
 		}
-		else t = (traits->point_is_same(p,traits->curve_source(c)) || traits->point_is_same(p,traits->curve_target(c))) ? POINT : CURVE;
+		else
+                {
+                  // Now we know that the trapezoid is bounded on in the
+                  // direction of the shoot.
+                  t = (traits->point_is_same(p,traits->curve_source(c)) || 
+                       traits->point_is_same(p,traits->curve_target(c))) ? 
+                    POINT : CURVE;
+                }
 		return c;
 	}
 	
