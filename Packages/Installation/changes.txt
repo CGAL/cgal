@@ -1,3 +1,6 @@
+11 September 2004 Sylvain Pion
+- Replace test_stl_general() function by CGAL_CFG_NO_STL.C.
+
 1 September 2004 Sylvain Pion
 - upgrade_copy does not override files in .../CGAL/...
 
