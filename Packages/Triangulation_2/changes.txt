@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+8 noovembre
+- made nearest_vertex(p,f) function in Delaunay triangulation conforms
+  to the documentation that is f is assumed to be just a hint for point 
+  location.
+
 19 octobre 2004 Mariette
 - made propagate_conflicts of  Constrained_Delaunay_triangulation_2.h
   public

@@ -316,9 +316,7 @@ Delaunay_triangulation_2<Gt,Tds>::
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
   CGAL_triangulation_precondition(this->dimension() == 2);
-  if (f == Face_handle()) f = locate(p);
-  else
-    CGAL_triangulation_precondition(oriented_side(f,p)!=ON_NEGATIVE_SIDE);
+  f = locate(p,f);
 
   typename Geom_traits::Compare_distance_2 
     compare_distance =  this->geom_traits().compare_distance_2_object();
