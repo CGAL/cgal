@@ -93,6 +93,33 @@ area_2( ForwardIterator first, ForwardIterator last,
 }
 
 template <class ForwardIterator, class Traits>
+typename Traits::FT 
+area_2( ForwardIterator first, ForwardIterator last,
+   //	typename std::iterator_traits<ForwardIterator>::value_type::FT& result,
+        const Traits& traits)
+{
+   typedef typename Traits::FT FT;
+   FT result = FT(0);
+   // check if the polygon is empty
+   if (first == last) return result;
+   ForwardIterator second = first; ++second;
+   // check if the polygon has only one point
+   if (second == last) return result;
+   typename Traits::Compute_area_2 compute_area_2 =
+            traits.compute_area_2_object();
+   typename Traits::Construct_triangle_2 construct_triangle_2 =
+            traits.construct_triangle_2_object();
+   ForwardIterator third = second;
+   while (++third != last) {
+	result = result + compute_area_2(
+                    construct_triangle_2(*first, *second, *third));
+	second = third;
+   }
+   result = result / FT(2);
+   return result;
+}
+
+template <class ForwardIterator, class Traits>
 bool is_convex_2(ForwardIterator first,
                       ForwardIterator last,
                       const Traits& traits);
@@ -291,4 +318,5 @@ CGAL_END_NAMESPACE
 #endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif // CGAL_POLYGON_2_ALGORITHMS_H
+
 
