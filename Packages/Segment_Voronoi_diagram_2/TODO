@@ -1,9 +1,21 @@
+- add two different storage sites, one for the case of intersecting
+  segments and one for the case of non-intersecting segments
+- add boolean parameter in Segment_Voronoi_diagram_2 class that indicates
+  how to treat intersecting segments
+- add boolean in the hierarchy class that indicates whether to insert segments
+  in the upper levels of the hierarchy or not
 - create the class Triangulation_face_base_with_edges_2 and move the
   functionality there; this class should also be (or not be used)
   in the Apollonius_graph_2 package)
-- move the definition of the
-  Segment_Voronoi_diagram_hierarchy_vertex_base_2 class in a separate
-  file
+- change the doc so that the requirement for the face base is the
+  Triangulation_face_base_2 class
+- replace the vertex base class of both the Apollonius_graph_2 and
+  the Segment_Voronoi_diagram_2 packages by a common base class and
+  derive from that; the base class should accomodate different sites, other
+  than points, and also have the capability of having a different type
+  for storage and the actual site. Then derive from that.
+- move the definition of the Segment_Voronoi_diagram_hierarchy_vertex_base_2
+  class in a separate file
 - add the methods insert_polyline and insert_polygon that do some
   optimized insertion for polylines and polygons; add these in both
   the one-level and hierarchy classes
