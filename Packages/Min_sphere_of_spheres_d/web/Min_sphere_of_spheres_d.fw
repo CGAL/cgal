@@ -320,8 +320,7 @@ approximation of~\code{x}.
 ball-type. Semantically, an instance of this type must have a center
 $c$ (consisting of $d$ Euclidean coordinates) and a radius $\rho\ge
 0$.  The type of the individual coordinates and of the radius must be
-\code{T::FT}.  (The package will never construct instances of type
-\code{T::Sphere}.)
+\code{T::FT}.  The type \code{T::Sphere} must provide a copy constructor.
 %
 \item The integer \code{static const int Traits::D} specifies the
 dimension $d$ of your balls.
@@ -486,14 +485,7 @@ to~$S$).
 \begin{fdescitem}{l}{%
 void insert(const Sphere\& b);}{$O(n)$}%
 %
-Adds the ball~\code{b} to the instance's set~$S$.  The variable $b$
-must exist and must not change until this instance of class
-\code{Min\_sphere\_of\_spheres\_d\angl{T}} is
-destructed.\footnote{This requirement is needed because the class
-  \code{Min\_sphere\_of\_spheres\_d\angl{T}}, in order to save some
-  space, only maintains pointers to the added balls.}  If you cannot
-guarantee this, you should make a copy of \code{b} and add the latter.
-\par
+Adds the ball~\code{b} to the instance's set~$S$.\par
 %
 \emph{Note:} It is okay if some of the added balls are identical (i.e.\ if
 the set $S$ is a multiset).
@@ -505,10 +497,7 @@ void insert(InputIterator begin,InputIterator end)}{$O(n)$}%
 %
 Adds the $n$ balls from the range \code{[begin,end)} to the instance's
 set~$S$ by calling \code{insert(b)} for every ball~\code{b} in the
-range.  Each ball~$b$ in the range must exist and must not change
-until this instance is destructed.  If you cannot guarantee this, you
-should make copies of the balls and add these.  (This method
-automatically calls \code{prepare()}.)\par
+range.\par
 %
 \emph{Note:} It is okay if some of the added balls are identical (i.e.\ if
 the set $S$ is a multiset).
@@ -1142,8 +1131,8 @@ bool contains(InputIterator c,const FT& r,
 %
 For the formulation of the farthest-first heuristic we need a method
 to finds us in a given range $[\code{from},\code{to})$ of the list
-\code{l} (holding pointers to balls) the one ball with maximal excess
-with respect to the ball stored in~\code{ss}.
+\code{l} the one ball with maximal excess with respect to the ball
+stored in~\code{ss}.
 %
 % (Again, we want to do this up to a relative error of
 % $\varepsilon=1-\code{tol}$%
@@ -1188,12 +1177,12 @@ bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from,int to,
   for (int k=from; k<to; ++k) {
     // compute the (squared) distance from c1 to c2:
     const FT dist = inner_product_n<D>(ss.begin(),
-      t.center_cartesian_begin(*l[k]),0.0,std::plus<FT>(),
+      t.center_cartesian_begin(l[k]),0.0,std::plus<FT>(),
       Subtract_and_square<FT>());
 
     // compute excess:
     using std::sqrt;
-    const FT ex = sqrt(dist)+t.radius(*l[k]);
+    const FT ex = sqrt(dist)+t.radius(l[k]);
 
     // compare with current maximum:
     if (ex > maximum) { // (*)
@@ -1254,13 +1243,13 @@ bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from,int to,
   for (int k=from; k<to; ++k) {
     // compute the (squared) distance from c1 to c2:
     const double dist = inner_product_n<D>(center,
-       t.center_cartesian_begin(*l[k]),0.0,std::plus<double>(),
+       t.center_cartesian_begin(l[k]),0.0,std::plus<double>(),
        Subtract_and_square_to_double<FT>());
 
     // compute excess:
     using std::sqrt;
     const double ex = sqrt(dist) +
-       CGAL_MINIBALL_NTS to_double(t.radius(*l[k]));
+       CGAL_MINIBALL_NTS to_double(t.radius(l[k]));
 
     // compare with current maximum:
     if (ex > maximum) { // (*)
@@ -1271,8 +1260,8 @@ bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from,int to,
 
   // return whether B doesn't contain the ball l[i]:
   return maximum > radius &&
-         !ss.contains(t.center_cartesian_begin(*l[i]),
-                      t.radius(*l[i]),Tol,Is_exact());
+         !ss.contains(t.center_cartesian_begin(l[i]),
+                      t.radius(l[i]),Tol,Is_exact());
 }
 @}\par\medskip
 %
@@ -1354,11 +1343,11 @@ bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from,int to,
   for (int k=from; k<to; ++k) {
     // compute the (squared) distance from c1 to c2:
     const FT dist = inner_product_n<D>(ss.begin(),
-      t.center_cartesian_begin(*l[k]),0.0,std::plus<FT>(),
+      t.center_cartesian_begin(l[k]),0.0,std::plus<FT>(),
       Subtract_and_square<FT>());
 
-    if (compare(max,maxp,t.radius(*l[k]),dist)) {
-      max   = t.radius(*l[k]);
+    if (compare(max,maxp,t.radius(l[k]),dist)) {
+      max   = t.radius(l[k]);
       maxp  = dist;
       i     = k;
       found = true;
@@ -1387,10 +1376,10 @@ bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from,int to,
   for (int k=from; k<to; ++k) {
     // compute the (squared) distance from c1 to c2:
     const double dist = inner_product_n<D>(center,
-       t.center_cartesian_begin(*l[k]),0.0,std::plus<double>(),
+       t.center_cartesian_begin(l[k]),0.0,std::plus<double>(),
        Subtract_and_square_to_double<FT>());
 
-    const double r = CGAL_MINIBALL_NTS to_double(t.radius(*l[k]));
+    const double r = CGAL_MINIBALL_NTS to_double(t.radius(l[k]));
     if (compare(max,maxp,r,dist)) {
       max   = r;
       maxp  = dist;
@@ -1401,8 +1390,8 @@ bool Min_sphere_of_spheres_d<Traits>::find_farthest(int from,int to,
 
   // return whether B doesn't contain the ball l[i]:
   return found &&
-         !ss.contains(t.center_cartesian_begin(*l[i]),
-                      t.radius(*l[i]),Tol,Is_exact());
+         !ss.contains(t.center_cartesian_begin(l[i]),
+                      t.radius(l[i]),Tol,Is_exact());
 }
 @}
 %
@@ -2614,7 +2603,7 @@ not contained in~$\MB(C)$, and we are to produce a basis~$C'$ of
 $C\cup\{D\}$.  In the setup of \code{pivot()} the basis~$C$ as well as
 the ball~$D$ are given implicitly.  (We will come to that later during
 the discussion of the LP-algorithm and the heuristic.)  There is a
-vector \code{l} of pointers to balls and an integer $0\le e\le d+1$
+vector \code{l} of balls and an integer $0\le e\le d+1$
 such that the balls \code{l[$0$..$(e-1)$]} constitute the basis~$C$.
 The ball $D$ is given implictly as \code{l[D]}.  When \code{pivot()}
 returns, the variable $e$ will be adjusted and the elements in the
@@ -2740,7 +2729,7 @@ bool Min_sphere_of_spheres_d<Traits>::pivot(const int D) {
 
   // reset basis to {D}:
   ss.reset();
-  ss.push(*l[D]);
+  ss.push(l[D]);
 
   // try all subsets:
   std::bitset<Traits::D+1> T;
@@ -2755,7 +2744,7 @@ bool Min_sphere_of_spheres_d<Traits>::pivot(const int D) {
       if (up)
         ++pos;
       else
-        if (ss.push(*l[pos])) {
+        if (ss.push(l[pos])) {
           T.set(pos,true);
           ++pos;
           up = true;
@@ -2794,7 +2783,7 @@ std::cerr << '!';
 // revert basis:
 ss.reset();
 for (int i=0; i<e; ++i)
-  ss.push(*l[i]);
+  ss.push(l[i]);
 ss.is_spanning();
 
 // signal that we failed:
@@ -2816,15 +2805,15 @@ encloses all balls from~$C$.\par\medskip
 bool isEnclosingSupporting = ss.is_spanning();
 if (isEnclosingSupporting)
   for(int i=0; i<e; ++i)
-    if (!T.test(i) && !ss.contains(t.center_cartesian_begin(*l[i]),
-                                   t.radius(*l[i]),
+    if (!T.test(i) && !ss.contains(t.center_cartesian_begin(l[i]),
+                                   t.radius(l[i]),
                                    Tol,Is_exact())) {
       isEnclosingSupporting = false;
       break;
     }
 
 if (isEnclosingSupporting) {
-  // rearrange pointers:
+  // rearrange balls:
   int next = 0;
   for(int i=0; i<e; ++i)
     if (T.test(i))
@@ -2920,7 +2909,7 @@ implement.\par\medskip
 without recursion (right).}
 \end{figure}
 %
-We store pointers to the checked-in balls in a list \code{l} and
+We store  the checked-in balls in a list \code{l} and
 allocate a single instance of class \code{Support\_set} for use by
 routine \code{pivot()}; it is also this instance which finally
 encapsulates the center and the radius of the computed miniball.
@@ -2954,7 +2943,7 @@ public: // iterators:
   typedef const Result *Cartesian_const_iterator; // coordinate iterator
 
   class Support_iterator {
-    typedef typename std::vector<const Sphere*>::const_iterator It;
+    typedef typename std::vector<Sphere>::const_iterator It;
     It it;
 
   private:
@@ -3045,12 +3034,12 @@ private:
                      Tag_false use_sqrt,Tag_true is_exact);
 
 private:
-  std::vector<const Sphere*> l; // list of pointers to the added bals
+  std::vector<Sphere> l;        // list of the added bals
   Support_set<Traits> ss;       // current support set
   int e;                        // l[0..(e-1)] is a basis
 
 private: // forbid copy constructing and assignment (because our
-         // pointers would be wrong then):
+         // pointers in ss would be wrong then):
   Min_sphere_of_spheres_d(const Min_sphere_of_spheres_d&);
   Min_sphere_of_spheres_d& operator=(const Min_sphere_of_spheres_d&);
 };@}\par\medskip%
@@ -3074,8 +3063,8 @@ void Min_sphere_of_spheres_d<Traits>::update(LP_algorithm) {
       std::swap(l[j],l[e+random(j+1-e)]);
 
     for (i=e; i<n; ++i)
-      if (!ss.contains(t.center_cartesian_begin(*l[i]),
-                       t.radius(*l[i]),Tol,Is_exact())) {
+      if (!ss.contains(t.center_cartesian_begin(l[i]),
+                       t.radius(l[i]),Tol,Is_exact())) {
         pivot(i);
         k = i+1;
         break;
@@ -3306,8 +3295,8 @@ inequality.)\par\medskip
 @$@<fail if miniball is not enclosing@>==@{@-
 // check that the miniball is enclosing:
 for (int i=0; i<l.size(); ++i)
-  if (!ss.contains(t.center_cartesian_begin(*l[i]),
-                   t.radius(*l[i]),Tol,Is_exact())) {
+  if (!ss.contains(t.center_cartesian_begin(l[i]),
+                   t.radius(l[i]),Tol,Is_exact())) {
     cerr << "Min_sphere_of_spheres_d: miniball not enclosing." << endl
          << "Please contact the author <kf@@iaeth.ch>." << endl;
     return false;
@@ -3320,13 +3309,13 @@ typedef Pair<FT> P;
 bool isSupporting = true;
 for (int i=0; i<e; ++i) {
   // check radii:
-  const P rd = ss.radius()-t.radius(*l[i]);
+  const P rd = ss.radius()-t.radius(l[i]);
   if (is_neg(rd,ss.disc()))
     isSupporting = false;
 
   // compute the (squared) distance from ss.begin() to l[i]'s center:
   const P dist = inner_product_n<D>(ss.begin(),
-    t.center_cartesian_begin(*l[i]),P(0,0),std::plus<P>(),
+    t.center_cartesian_begin(l[i]),P(0,0),std::plus<P>(),
     Subtract_and_square_pair<FT>(ss.disc()));
 
   // compute the square of rd:
@@ -3383,7 +3372,7 @@ matrix of system~(\ref{valid_coeffs_sys}).\par\medskip
 // set up initial system's coefficient matrix:
 FT (*m)[D+1] = new FT[e][D+1];
 for (int j=0; j<e; ++j)
-  copy_n<D>(t.center_cartesian_begin(*l[j]),m[j]);
+  copy_n<D>(t.center_cartesian_begin(l[j]),m[j]);
 for (int j=0; j<e; ++j)
   m[j][D] = FT(1);
 
@@ -3705,7 +3694,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   template<class Traits>
   void Min_sphere_of_spheres_d<Traits>::insert(const Sphere& b) {
     CGAL_MINIBALL_ASSERT(t.radius(b) >= FT(0));
-    l.push_back(&b);
+    l.push_back(b);
     is_up_to_date = false;
   }
 

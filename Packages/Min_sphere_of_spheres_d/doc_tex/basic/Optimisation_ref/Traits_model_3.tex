@@ -61,7 +61,7 @@ In addition to the types required by the concept
 \ccNestedType{Sphere}{is a typedef to
   \ccc{CGAL::Weighted_point<Point,Weight>}.}
 
-\ccNestedType{Coordinate_iterator}{is a typedef to
+\ccNestedType{Cartesian_const_iterator}{is a typedef to
 \ccc{Point::Cartesian_const_iterator}.}
 
 
@@ -76,7 +76,7 @@ routines of class \ccc{Weighted_point<Point,Weight>}:
 \ccMemberFunction{ FT radius(const
 Sphere& s);}{ maps to \ccc{s.weight()}.}
 
-\ccMemberFunction{ Coordinate_iterator begin(const
+\ccMemberFunction{ Cartesian_const_iterator center_cartesian_begin(const
 Sphere& s);}{ maps to \ccc{s.cartesian_begin()}.}
 
 \end{ccRefClass}

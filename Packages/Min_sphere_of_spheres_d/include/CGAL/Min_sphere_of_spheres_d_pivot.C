@@ -74,7 +74,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
     // reset basis to {D}:
     ss.reset();
-    ss.push(*l[D]);
+    ss.push(l[D]);
   
     // try all subsets:
     std::bitset<Traits::D+1> T;
@@ -85,15 +85,15 @@ namespace CGAL_MINIBALL_NAMESPACE {
         bool isEnclosingSupporting = ss.is_spanning();
         if (isEnclosingSupporting)
           for(int i=0; i<e; ++i)
-            if (!T.test(i) && !ss.contains(t.center_cartesian_begin(*l[i]),
-                                           t.radius(*l[i]),
+            if (!T.test(i) && !ss.contains(t.center_cartesian_begin(l[i]),
+                                           t.radius(l[i]),
                                            Tol,Is_exact())) {
               isEnclosingSupporting = false;
               break;
             }
         
         if (isEnclosingSupporting) {
-          // rearrange pointers:
+          // rearrange balls:
           int next = 0;
           for(int i=0; i<e; ++i)
             if (T.test(i))
@@ -109,7 +109,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
         if (up)
           ++pos;
         else
-          if (ss.push(*l[pos])) {
+          if (ss.push(l[pos])) {
             T.set(pos,true);
             ++pos;
             up = true;
@@ -132,7 +132,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     // revert basis:
     ss.reset();
     for (int i=0; i<e; ++i)
-      ss.push(*l[i]);
+      ss.push(l[i]);
     ss.is_spanning();
     
     // signal that we failed:
