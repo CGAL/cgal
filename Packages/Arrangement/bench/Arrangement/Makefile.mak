@@ -77,6 +77,9 @@ ifeq ($(USE_CGAL_WINDOW), 1)
 LCPPDEFS+= -DUSE_CGAL_WINDOW
 TARGET0 := $(TARGET0)CgalWindow
 LOBJDIR :=$(LOBJDIR)_cgal_window
+else
+LLDLIBS+= -lCGALQt -lqt
+LLDOPTS+= -L$(QTDIR)/lib
 endif
 
 ifeq ($(NT), RATIONAL_NT)
