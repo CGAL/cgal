@@ -610,7 +610,8 @@ intersect(Face_handle f, int i,
   const Point& pd = f->vertex(ccw(i))->point();
   Point pi;
   Itag itag = Itag();
-  bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
+  CGAL_triangulation_assertion_code( bool ok = )
+  intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
   CGAL_triangulation_assertion(ok);
   Vertex_handle vi = virtual_insert(pi, Triangulation::EDGE, f, i);
   return vi; 

@@ -416,8 +416,10 @@ intersect(Face_handle f, int i,
   Vertex_handle  vcc, vdd;
   vcc = f->vertex(cw(i));
   vdd = f->vertex(ccw(i));
-  bool b1=hierarchy.enclosing_constraint(vcc,vdd,vc,vd);
-  bool b2=hierarchy.enclosing_constraint(vaa,vbb,va,vb);
+  CGAL_triangulation_assertion_code( bool b1 = )
+  hierarchy.enclosing_constraint(vcc,vdd,vc,vd);
+  CGAL_triangulation_assertion_code( bool b2 = )
+  hierarchy.enclosing_constraint(vaa,vbb,va,vb);
   CGAL_triangulation_assertion(b1);
   CGAL_triangulation_assertion(b2);
 
@@ -427,7 +429,8 @@ intersect(Face_handle f, int i,
   const Point& pd = vd->point();
   Point pi;
   Intersection_tag itag = Intersection_tag();
-  bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
+  CGAL_triangulation_assertion_code( bool ok = )
+  intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
   CGAL_triangulation_assertion(ok);
 
   Vertex_handle vi = insert(pi, Triangulation::EDGE, f, i);
@@ -497,7 +500,8 @@ remove_constraint(Vertex_handle va, Vertex_handle vb)
       ++it){
     Face_handle fh;
     int i;
-    bool b = Triangulation::is_edge(*it, *succ, fh, i);
+    CGAL_triangulation_assertion_code( bool b = )
+    Triangulation::is_edge(*it, *succ, fh, i);
     CGAL_triangulation_assertion(b);
     // this does also flipping if necessary.
     Triangulation::remove_constrained_edge(fh,i); 
