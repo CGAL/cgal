@@ -17,17 +17,21 @@
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_QT_WIDGET_NEF_2_H
-#define CGAL_QT_WIDGET_NEF_2_H
+#ifndef CGAL_QT_WIDGET_CONIC_ARC_2_H
+#define CGAL_QT_WIDGET_CONIC_ARC_2_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Arrangement_2/Conic_arc_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Kernel>
-Qt_widget & operator<<(Qt_widget & ws, const Conic_arc_2<Kernel> & cv)
+template <class Int_kernel, class Alg_kernel>
+Qt_widget & operator<< (Qt_widget & ws, 
+		        const Conic_arc_2<Int_kernel, Alg_kernel>& cv)
 {
+  typedef typename Alg_kernel::FT                               CoNT;
+  typedef typename Conic_arc_2<Int_kernel, Alg_kernel>::Point_2 Point_2;
+
   // Get the co-ordinates of the curve's source and target.
   double sx = CGAL::to_double(cv.source().x()),
          sy = CGAL::to_double(cv.source().y()),
@@ -41,10 +45,11 @@ Qt_widget & operator<<(Qt_widget & ws, const Conic_arc_2<Kernel> & cv)
     return (ws); 
   }
 
-  // The arc is circular
-  // If the curve is monotone, than its source and its target has the
-  // extreme x co-ordinates on this curve.
-  if (cv.is_x_monotone()) {
+  // Draw a non-linear conic arc.
+  if (cv.is_x_monotone()) 
+  {
+    // If the curve is monotone, than its source and its target has the
+    // extreme x co-ordinates on this curve.
     bool is_source_left = (sx < tx);
     int  x_min = is_source_left ? ws.x_pixel(sx) : ws.x_pixel(tx);
     int  x_max = is_source_left ? ws.x_pixel(tx) : ws.x_pixel(sx);
@@ -54,17 +59,20 @@ Qt_widget & operator<<(Qt_widget & ws, const Conic_arc_2<Kernel> & cv)
     double curr_x, curr_y;
     int x;
 
-    typename Conic_arc_2<Kernel>::Point_2 ps[2];
-    int nps;
+    Point_2   ps[2];
+    Point_2   q;
+    int       nps;
 
     ws.get_painter().moveTo(x_min, ws.y_pixel(prev_y));
       
-    for (x = x_min + 1; x < x_max; x++) {
+    for (x = x_min + 1; x < x_max; x++)
+    {
       curr_x = ws.x_real(x);
-      nps =
-        cv.get_points_at_x(Conic_arc_2<Kernel>::
-                           Point_2(typename Kernel::FT(curr_x), 0), ps);
-      if (nps == 1) {
+      q = Point_2 (CoNT(curr_x), CoNT(0));
+      nps = cv.get_points_at_x (q, ps);
+
+      if (nps == 1)
+      {
         curr_y = CGAL::to_double(ps[0].y());
         ws.get_painter().lineTo(x, ws.y_pixel(curr_y));
       }
@@ -73,9 +81,20 @@ Qt_widget & operator<<(Qt_widget & ws, const Conic_arc_2<Kernel> & cv)
     ws.get_painter().lineTo(ws.x_pixel(end_x), ws.y_pixel(end_y));
     return (ws); 
   }
+  else
+  {
+    // Break the arc into x-monotone sub-curves and draw each one separately.
+    Arr_conic_traits_2<Int_kernel, Alg_kernel>       traits; 
+    std::list<Conic_arc_2<Int_kernel, Alg_kernel> >  x_mon_curves;
+    typename std::list<Conic_arc_2<Int_kernel, Alg_kernel> >::iterator xit;
 
-  // We should never reach here.
-  CGAL_assertion(false);
+    traits.curve_make_x_monotone (cv,
+				  std::back_inserter (x_mon_curves));
+
+    for (xit = x_mon_curves.begin(); xit != x_mon_curves.end(); xit++)
+      ws << *xit;
+  }
+
   return (ws); 
 }
 
