@@ -5669,20 +5669,9 @@ create_include_makefile()
   # 
   # CGAL_SHARED_LIB_LDFLAGS
   # 
-  if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-    ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_LDFLAGS = " >> ${FILE}
-    makefile_print_line "${LIBPATH_OPT}\$(LEDA_LIB_DIR)" >> ${FILE}
-    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-      makefile_print_line "${RUNTIME_LINKER_FLAG}\$(LEDA_LIB_DIR)" \
-	>> ${FILE}
-    fi
-    ${_printf} "\t%s\n" "`leda_lib_option L`${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
-  else
-    ${_printf} "%s\n" \
-	"CGAL_SHARED_LIB_LDFLAGS = ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
-  fi
-  ${_printf} "\n" >> ${FILE}
-  
+  ${_printf} "%s\n" \
+       "CGAL_SHARED_LIB_LDFLAGS = ${CGAL_SHARED_LIB_LDFLAGS}" "\n" >> ${FILE}
+
   # 
   # CGAL_SHARED_LIB_CREATE
   # 
