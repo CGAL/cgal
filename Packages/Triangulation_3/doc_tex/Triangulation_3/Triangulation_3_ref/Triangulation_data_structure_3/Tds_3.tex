@@ -105,7 +105,7 @@ incident to a given edge. They are bidirectional and non-mutable.
 
 \ccCreation
 \ccCreationVariable{tds}  %% choose variable name
-\ccThree{Tds_3<Triangulation_vb_3,Triangulation_cb_3>}{tds.set_number_of_vertices()}{}
+\ccThree{Tds_3<Triangulation_vb_3,Triangulation_cb_3>();}{tds.set_number_of_vertices()}{}
 
 \ccConstructor{Tds_3<Triangulation_vb_3,Triangulation_cb_3>();}
 {A default constructor.}
@@ -117,6 +117,8 @@ incident to a given edge. They are bidirectional and non-mutable.
 {Assignment. All the vertices and cells are duplicated.}
 
 The previous two methods are equivalent.
+
+\ccThree{Tds_3<Tvb,Tcb>}{tds.set_number_of_vertices()}{}
 
 \ccMethod{void swap(Tds_3 & tds1);} 
 {Swaps \ccVar\ and \ccc{tds1}. There is no copy of cells and vertices,
