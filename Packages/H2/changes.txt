@@ -1,5 +1,6 @@
 2.15   (?? ??? 2001)
 - Macro cleanups.
+- area() functions added
 
 2.14   (18 Jan 2001)
 - Remove Triangle_repH2 copy ctor, since it caused a warning.

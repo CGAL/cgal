@@ -47,6 +47,8 @@ public:
   PointH2<FT,RT>  vertex(int i) const;
   PointH2<FT,RT>  operator[](int i) const;
 
+
+
   Iso_rectangleH2<FT,RT>
             transform(const Aff_transformationH2<FT,RT>& t) const;
 
@@ -66,6 +68,7 @@ public:
   FT        xmax() const;
   FT        ymax() const;
 
+  FT        area() const;
 
 };
 
@@ -158,6 +161,12 @@ inline
 FT
 Iso_rectangleH2<FT,RT>::ymax() const
 { return  FT( max().hy() ) / FT( max().hw() ); }
+
+template < class FT, class RT >
+inline
+FT
+Iso_rectangleH2<FT,RT>::area() const
+{ return  (xmax() - xmin()) * (ymax() - ymin()); }
 
 template < class FT, class RT >
 CGAL_KERNEL_INLINE

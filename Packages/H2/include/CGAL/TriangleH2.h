@@ -85,11 +85,10 @@ public:
     // bool               oriented_equal( const TriangleH2<FT,RT>& ) const;
     // bool               unoriented_equal( const TriangleH2<FT,RT>& ) const;
 
-    PointH2<FT,RT>
-                       vertex(int i) const;
-    PointH2<FT,RT>
-                       operator[](int i) const;
+    PointH2<FT,RT>     vertex(int i) const;
+    PointH2<FT,RT>     operator[](int i) const;
 
+    FT                 area() const;
 };
 
 template < class FT, class RT >
@@ -105,6 +104,7 @@ TriangleH2<FT,RT>::TriangleH2(const PointH2<FT,RT>& p,
                               const PointH2<FT,RT>& r)
  : Handle_for< Triangle_repH2<FT,RT> >( Triangle_repH2<FT,RT>(p,q,r) )
 {}
+
 template <class FT, class RT>
 CGAL_KERNEL_INLINE
 PointH2<FT,RT>
@@ -116,6 +116,17 @@ inline
 PointH2<FT,RT>
 TriangleH2<FT,RT>::operator[](int i) const
 { return vertex(i); }
+
+template <class FT, class RT>
+inline
+FT
+TriangleH2<FT,RT>::area() const
+{ 
+   VectorH2<FT,RT> v1 = vertex(1) - vertex(0);
+   VectorH2<FT,RT> v2 = vertex(2) - vertex(0);
+
+   return (v1.hx()*v2.hy() - v2.hx()*v1.hy())/(2*(v1.hw() * v2.hw()));
+}
 
 template <class FT, class RT>
 inline
