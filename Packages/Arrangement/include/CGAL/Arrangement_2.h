@@ -57,12 +57,9 @@
 #include <CGAL/IO/Arr_file_scanner.h>
 #endif // CGAL_IO_ARR_FILE_SCANNER_H
 
-
 #include <vector>
 
-
 CGAL_BEGIN_NAMESPACE
-
 
 template <class _Dcel, class _Traits, class Base_node>
 class Arrangement_2 {
@@ -117,7 +114,6 @@ public:
   class Vertex;
   class Halfedge;
   class Face;
-
 
   ///////////////////////////////////////////////////////////////////////
   //          ITERATOR DEFINITIONS
@@ -2367,32 +2363,40 @@ Subcurve_iterator replace(Subcurve_iterator          sc,
 //                 Scanning Arrangement.
 ///////////////////////////////////////////////////////////////////////// 
 private:
-void  copy_hierarchy_tree(const Self& arr)
+void copy_hierarchy_tree(const Self& arr)
 {
   typedef std::map<const void*, void*> ConnectMap;
   typedef std::map<void*, Halfedge_iterator> Pointer_halfedge_Map;
-  //  typedef std::map<void*, Halfedge_const_iterator> Pointer_const_halfedge_Map;
   
   // mapping all halfedges pointers of the two arrangements.
   ConnectMap  cross_halfedges;
   Halfedge_iterator h_iter1;
   Halfedge_const_iterator h_iter2;
-  ConnectMap  all_edges_map; // we need this for overlapping edge nodes which share pointers to edge nodes on different hirarchies trees.
+  // we need this for overlapping edge nodes which share pointers to
+  // edge nodes on different hirarchies trees.
+  ConnectMap  all_edges_map; 
   
   // assuming that the two containers are in the SAME order.
   for (h_iter1 = halfedges_begin(), h_iter2 = arr.halfedges_begin(); 
-       h_iter1 != halfedges_end() && h_iter2 != arr.halfedges_end(); ++h_iter1, ++h_iter2)
-    cross_halfedges.insert(ConnectMap::value_type((const void*) &(*h_iter2), (void*) &(*h_iter1)));
+       h_iter1 != halfedges_end() && h_iter2 != arr.halfedges_end(); 
+       ++h_iter1, ++h_iter2)
+    cross_halfedges.insert(ConnectMap::value_type((const void*) &(*h_iter2), 
+                                                  (void*) &(*h_iter1)));
   
   // mapping the arrangement halfedges pointers to halfedges handles.
   Pointer_halfedge_Map  current_halfedges_pointers;
   for (h_iter1 = halfedges_begin(); h_iter1 != halfedges_end(); ++h_iter1)
-    current_halfedges_pointers.insert(Pointer_halfedge_Map::value_type((void*) &(*h_iter1), h_iter1));
+  {
+    current_halfedges_pointers.insert(
+      Pointer_halfedge_Map::value_type((void*) &(*h_iter1), h_iter1));
+  }
   
   // for each curve node
   Curve_const_iterator cv_iter;
-  for (cv_iter = arr.curve_list.begin(); cv_iter != arr.curve_list.end() ; ++cv_iter){
-
+  for (cv_iter = arr.curve_list.begin(); 
+       cv_iter != arr.curve_list.end(); 
+       ++cv_iter)
+  {
     // first creating the curve node.
     Curve_node* cn = new Curve_node;
     cn->assign(*cv_iter);
@@ -2401,8 +2405,10 @@ void  copy_hierarchy_tree(const Self& arr)
     ConnectMap  scn_map;
     unsigned int i;
     // for each level
-    for (i = 0; i < cv_iter->levels.size(); ++i){
-      In_place_list<Subcurve_node,true> level; // the current level to be created
+    for (i = 0; i < cv_iter->levels.size(); ++i)
+    {
+      // the current level to be created
+      In_place_list<Subcurve_node,true> level; 
       // for each subcurve node
       Subcurve_const_iterator scv_iter;
       for (scv_iter = cv_iter->levels[i].begin(); 
@@ -2411,27 +2417,35 @@ void  copy_hierarchy_tree(const Self& arr)
         
         scn->assign(*scv_iter);
         
-        //scn_map.insert(ConnectMap::value_type((const void*)&(*scv_iter), (void*)scn));
-
         level.push_back(*scn);
       }
       // inserting the i'th level to current curve node.
       cn->levels.push_back(level);
 
-      // copy the original items in cn->levels[i] - otherwise makes a copy.
-      // Notice that the vector of levels is NOT in place and hence mapping the scn pointers instead
-      // of the original values will cause a bug!.
+      // copy the original items in cn->levels[i] - otherwise makes a
+      // copy.  Notice that the vector of levels is NOT in place and
+      // hence mapping the scn pointers instead of the original values
+      // will cause a bug!.
       Subcurve_iterator new_scv_iter;
-      for (scv_iter = cv_iter->levels[i].begin(), new_scv_iter = cn->levels[i].begin(); 
-           scv_iter != cv_iter->levels[i].end() && new_scv_iter != cn->levels[i].end(); ++scv_iter, ++new_scv_iter)
-        scn_map.insert(ConnectMap::value_type((const void*)&(*scv_iter), (void*) &(*new_scv_iter)));
+      for (scv_iter = cv_iter->levels[i].begin(), 
+             new_scv_iter = cn->levels[i].begin(); 
+           scv_iter != cv_iter->levels[i].end() && 
+             new_scv_iter != cn->levels[i].end(); 
+           ++scv_iter, ++new_scv_iter)
+      {
+        scn_map.insert(ConnectMap::value_type((const void*)&(*scv_iter), 
+                                              (void*) &(*new_scv_iter)));
+      }
       
-      // Notice that arrangement uses the pointers of end() at each level, instead of the expected NULL pointer.
-      scn_map.insert(ConnectMap::value_type((const void*) cv_iter->levels[i].end().operator->(), 
-                                            (void*) (cn->levels[i].end().operator->()) ));
+      // Notice that arrangement uses the pointers of end() at each
+      // level, instead of the expected NULL pointer.
+      scn_map.insert(ConnectMap::value_type(
+                       (const void*) cv_iter->levels[i].end().operator->(), 
+                     (void*) (cn->levels[i].end().operator->()) ));
     }
     
-    // creating edge nodes mapping, we use it (in spite we have all_edge_nodes) for efficientcy.
+    // creating edge nodes mapping, we use it (in spite we have
+    // all_edge_nodes) for efficientcy.
     ConnectMap  edge_map;
     ConnectMap  halfedge_edge_map;
     Edge_const_iterator edge_iter;
@@ -2441,83 +2455,86 @@ void  copy_hierarchy_tree(const Self& arr)
       
       en->assign(*edge_iter);
       
-      //edge_map.insert(ConnectMap::value_type((const void*) &(*edge_iter), (void*) en));
-      halfedge_edge_map.insert(ConnectMap::value_type((const void*) &(*edge_iter), (void*) &*(edge_iter->halfedge()) ));
+      halfedge_edge_map.insert(
+        ConnectMap::value_type((const void*) &(*edge_iter), 
+                               (void*) &*(edge_iter->halfedge()) ));
       cn->edge_level.push_back(*en);
     }
     
     Edge_iterator new_edge_iter;
-    for (edge_iter = cv_iter->edge_level.begin(), new_edge_iter = cn->edge_level.begin(); 
-         edge_iter != cv_iter->edge_level.end() && new_edge_iter != cn->edge_level.end(); ++edge_iter, ++new_edge_iter){
-      edge_map.insert(ConnectMap::value_type((const void*) &(*edge_iter), (void*) &(*new_edge_iter)));
-      all_edges_map.insert(ConnectMap::value_type((const void*) &(*edge_iter), (void*) &(*new_edge_iter)));
+    for (edge_iter = cv_iter->edge_level.begin(), 
+           new_edge_iter = cn->edge_level.begin(); 
+         edge_iter != cv_iter->edge_level.end() && 
+           new_edge_iter != cn->edge_level.end(); 
+         ++edge_iter, ++new_edge_iter)
+    {
+      edge_map.insert(ConnectMap::value_type((const void*) &(*edge_iter), 
+                                             (void*) &(*new_edge_iter)));
+      all_edges_map.insert(ConnectMap::value_type((const void*) &(*edge_iter),
+                                                  (void*) &(*new_edge_iter)));
     }
     
-    edge_map.insert(ConnectMap::value_type((const void*) cv_iter->edge_level.end().operator->(), 
-                                               (void*) (cn->edge_level.end().operator->()) ));
-    all_edges_map.insert(ConnectMap::value_type((const void*) cv_iter->edge_level.end().operator->(), 
-                                           (void*) (cn->edge_level.end().operator->()) ));
+    edge_map.insert(ConnectMap::value_type(
+                      (const void*) cv_iter->edge_level.end().operator->(), 
+                    (void*) (cn->edge_level.end().operator->()) ));
+    all_edges_map.insert(ConnectMap::value_type(
+                           (const void*)cv_iter->edge_level.end().operator->(),
+                         (void*) (cn->edge_level.end().operator->()) ));
     
-    // updating all edge nodes vector - we need this for overlapping edge nodes which share pointers to edge nodes 
-    // on different hirarchies trees.
-    //all_edge_nodes.push_back(edge_map);
+    // updating all edge nodes vector - we need this for overlapping
+    // edge nodes which share pointers to edge nodes on different
+    // hirarchies trees. 
     
     // updating pointers between sub curve nodes.
-    for (i = 0; i < cv_iter->levels.size(); ++i){
+    for (i = 0; i < cv_iter->levels.size(); ++i)
+    {
       Subcurve_const_iterator scv_iter;
       Subcurve_iterator new_scv_iter;
-      for (scv_iter = cv_iter->levels[i].begin(), new_scv_iter = cn->levels[i].begin(); 
-           scv_iter != cv_iter->levels[i].end() && new_scv_iter != cn->levels[i].end(); 
-           ++scv_iter, ++new_scv_iter){
-
-        //Subcurve_node* scn = (Subcurve_node*)(scn_map.find((const void*) &*scv_iter)->second);
-
+      for (scv_iter = cv_iter->levels[i].begin(), 
+             new_scv_iter = cn->levels[i].begin(); 
+           scv_iter != cv_iter->levels[i].end() && 
+             new_scv_iter != cn->levels[i].end(); 
+           ++scv_iter, ++new_scv_iter)
+      {
         Subcurve_node* scn = &*new_scv_iter;
-        // if it's the first level, than the father pointer is to the curve node cn;
+        // if it's the first level, than the father pointer is to the
+        // curve node cn;
         if (i == 0)
           scn->ftr = cn;
         else {
-          Subcurve_node* scn_ftr = (Subcurve_node*)(scn_map.find((const void*) &*(scv_iter->ftr))->second);
+          Subcurve_node* scn_ftr = 
+            (Subcurve_node*)(scn_map.find(
+                               (const void*) &*(scv_iter->ftr))->second);
           scn->ftr = scn_ftr;
         }
         
-        //cout<<"cv_iter->levels.size()="<<cv_iter->levels.size()<<endl;
-        
         // if the level is not the last one.
-        if (i+1 < cv_iter->levels.size()){
+        if (i+1 < cv_iter->levels.size())
+        {
           Subcurve_node* scn_begin_child = 
-            (Subcurve_node*)(scn_map.find((const void*) scv_iter->begin_child)->second);
+            (Subcurve_node*)(scn_map.find(
+                               (const void*) scv_iter->begin_child)->second);
           scn->begin_child = scn_begin_child;
-          
-          //cout<<"scv_iter->begin_child->curve()"<<scv_iter->begin_child->curve()<<endl;
-          //cout<<"scn_begin_child->curve()"<<scn_begin_child->curve()<<endl;
           
           // pay attention to the fact that the past_end_child can be end().
           Subcurve_node* scn_past_end_child = 
-            (Subcurve_node*)(scn_map.find((const void*) scv_iter->past_end_child)->second);
+            (Subcurve_node*)(scn_map.find(
+                              (const void*) scv_iter->past_end_child)->second);
           scn->past_end_child = scn_past_end_child;
-          
-          //cout<<"scv_iter->past_end_child->curve()"<<scv_iter->past_end_child->curve()<<endl;
-          //cout<<"scn_past_end_child->curve()"<<scn_past_end_child->curve()<<endl;
-         
         }
-        else{ // last level - the next level is the edge node.
+        else
+        {
+          // last level - the next level is the edge node.
           Edge_node* scn_begin_child = 
-            (Edge_node*)(edge_map.find((const void*) scv_iter->begin_child)->second);
+            (Edge_node*)(edge_map.find(
+                          (const void*) scv_iter->begin_child)->second);
           scn->begin_child = scn_begin_child;
-          
-          //cout<<"scv_iter->begin_child->curve()"<<scv_iter->begin_child->curve()<<endl;
-          //cout<<"scn_begin_child->curve()"<<scn_begin_child->curve()<<endl;
 
           // pay attention to the fact that the past_end_child can be end(). 
           Edge_node* scn_past_end_child = 
-            (Edge_node*)(edge_map.find((const void*) scv_iter->past_end_child)->second);
+            (Edge_node*)(edge_map.find(
+                           (const void*) scv_iter->past_end_child)->second);
           scn->past_end_child = scn_past_end_child;
-          
-          /*if (scv_iter->past_end_child != 0)
-            cout<<"scv_iter->past_end_child->curve()"<<scv_iter->past_end_child->curve()<<endl;
-            if (scn_past_end_child != 0)
-            cout<<"scn_past_end_child->curve()"<<scn_past_end_child->curve()<<endl;*/
         }
       }
     }
@@ -2525,15 +2542,19 @@ void  copy_hierarchy_tree(const Self& arr)
     // updating the father pointer of edge node.
     new_edge_iter = cn->edge_level.begin();
     edge_iter = cv_iter->edge_level.begin();
-    for (edge_iter = cv_iter->edge_level.begin(), new_edge_iter = cn->edge_level.begin(); 
-         edge_iter != cv_iter->edge_level.end() && new_edge_iter != cn->edge_level.end(); 
-         ++edge_iter, ++new_edge_iter){
+    for (edge_iter = cv_iter->edge_level.begin(), 
+           new_edge_iter = cn->edge_level.begin(); 
+         edge_iter != cv_iter->edge_level.end() && 
+           new_edge_iter != cn->edge_level.end(); 
+         ++edge_iter, ++new_edge_iter)
+    {
       Edge_node* en = &*new_edge_iter;
 
       if (cn->levels.size() == 0)
         en->ftr = cn;
       else
-        en->ftr = (Subcurve_node*) (scn_map.find((const void*) edge_iter->ftr)->second);
+        en->ftr = (Subcurve_node*) (scn_map.find(
+                                      (const void*) edge_iter->ftr)->second);
     }
     
     // updating cn begin and end children pointers.
@@ -2550,34 +2571,36 @@ void  copy_hierarchy_tree(const Self& arr)
   }
   
   // running on both curve lists and upfdating edge node pointers.
-  // Notice that when updating edge node childrens we need all edge nodes to be defined 
-  // since when there are overlappings edge nodes will points to other edge nodes on different curve lists.
+  // Notice that when updating edge node childrens we need all edge
+  // nodes to be defined since when there are overlappings edge nodes
+  // will points to other edge nodes on different curve lists.
   Curve_iterator new_cv_iter;
   for (cv_iter = arr.curve_list.begin(), new_cv_iter = curve_list.begin(); 
-       cv_iter != arr.curve_list.end() && new_cv_iter != curve_list.end(); ++cv_iter, ++new_cv_iter){
+       cv_iter != arr.curve_list.end() && new_cv_iter != curve_list.end(); 
+       ++cv_iter, ++new_cv_iter){
     
     Edge_iterator new_edge_iter = new_cv_iter->edge_level.begin();
     Edge_const_iterator edge_iter = cv_iter->edge_level.begin();
-    for (edge_iter = cv_iter->edge_level.begin(), new_edge_iter = new_cv_iter->edge_level.begin(); 
-         edge_iter != cv_iter->edge_level.end() && new_edge_iter != new_cv_iter->edge_level.end(); 
-         ++edge_iter, ++new_edge_iter){
+    for (edge_iter = cv_iter->edge_level.begin(), 
+           new_edge_iter = new_cv_iter->edge_level.begin(); 
+         edge_iter != cv_iter->edge_level.end() && 
+           new_edge_iter != new_cv_iter->edge_level.end(); 
+         ++edge_iter, ++new_edge_iter)
+    {
       Edge_node* en = &*new_edge_iter;
       
-      Edge_node* en_begin_child = (Edge_node*)(all_edges_map.find((const void*) &*(edge_iter->begin_child))->second);
+      Edge_node* en_begin_child = 
+        (Edge_node*)(all_edges_map.find(
+                       (const void*) &*(edge_iter->begin_child))->second);
       en->begin_child = en_begin_child;
       
-      //cout<<"edge_iter->begin_child->curve()"<<edge_iter->begin_child->curve()<<endl;
-      //cout<<"en_begin_child->curve()"<<en_begin_child->curve()<<endl;
-      
-      Edge_node* en_past_end_child = (Edge_node*)(all_edges_map.find((const void*) &*(edge_iter->past_end_child))->second); 
+      Edge_node* en_past_end_child = 
+        (Edge_node*)(all_edges_map.find(
+                       (const void*) &*(edge_iter->past_end_child))->second); 
       en->past_end_child = en_past_end_child;
-      
-      //cout<<"edge_iter->past_end_child->curve()"<<edge_iter->past_end_child->curve()<<endl;
-      //if (en_past_end_child != 0)
-      //  cout<<"en_past_end_child->curve()"<<en_past_end_child->curve()<<endl;
 
-      //const void* h = (const void*)(halfedge_edge_map.find((const void*) &*(edge_iter))->second);
-      Halfedge* hp = (Halfedge*) (cross_halfedges.find( &*(edge_iter->halfedge() ))->second);
+      Halfedge* hp = 
+        (Halfedge*)(cross_halfedges.find( &*(edge_iter->halfedge() ))->second);
       Halfedge_handle curr_h = current_halfedges_pointers.find(hp)->second;
 
       curr_h->set_edge_node(en);
@@ -2954,8 +2977,5 @@ Curve_iterator last_updated;
 
 CGAL_END_NAMESPACE
 
-#endif
-
-
-
-
+#endif // CGAL_ARRANGEMENT_2_H
+// EOF
