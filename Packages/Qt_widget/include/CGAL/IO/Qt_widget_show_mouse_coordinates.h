@@ -25,7 +25,7 @@
 #include <qobject.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
-#include <cstdio>
+#include <qstring.h>
 
 namespace CGAL {
 
@@ -37,14 +37,13 @@ public:
   void draw(){};
   void mouseMoveEvent(QMouseEvent *e)
   {
-    char xsir[40], ysir[40], final[80];
+    QString s("x=%1 y=%2");
     double xcoord, ycoord;
     widget->x_real(e->x(), xcoord);
     widget->y_real(e->y(), ycoord);
-    CGAL_CLIB_STD::sprintf(xsir, "%.15f", xcoord);
-    CGAL_CLIB_STD::sprintf(ysir, "%.15f", ycoord);
-    CGAL_CLIB_STD::sprintf(final, "x=%s  y=%s", xsir, ysir);
-    qmw.statusBar()->message(final);
+    qmw.statusBar()->message(s.arg(xcoord, -20, 'g', 15).
+			     arg(ycoord, -20,'g', 15));
+
   };
 private:
   void deactivating(){
