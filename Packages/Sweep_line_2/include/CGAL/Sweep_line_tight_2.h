@@ -1619,7 +1619,7 @@ inline bool
 Sweep_line_tight_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
 DoCurvesOverlap(Subcurve *c1, Subcurve *c2)
 {
-if 0
+#if 0
 // improve here...
   if ( m_traits->curve_compare_at_x_right(c1->getCurve(),
 					  c2->getCurve(),
