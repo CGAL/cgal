@@ -104,6 +104,7 @@ public:
     const char * root = getenv("ROOT");
     if (root) m_dirs.add(std::string(root) + "/data/Segments_2");
     if (root) m_dirs.add(std::string(root) + "/data/Conics_2");
+    if (root) m_dirs.add(std::string(root) + "/data/Polylines_2");
   }
 
   /*!
