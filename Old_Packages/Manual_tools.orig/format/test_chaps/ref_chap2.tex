@@ -1,0 +1,18 @@
+\chapter{Second chapter}
+
+The second chapter of the reference manual defines \ccc{operator*}.
+
+\gdef\ccTagOperatorLayout{\ccTrue}
+\begin{ccRefFunction}{operator*}
+\ccTexHtml{\ccSetThreeColumns{Vector_2<R>X }{}{\hspace*{8.0cm}}}{}
+
+\ccInclude{CGAL/Vector_2.h}
+
+\ccFunction{Vector_2<R> operator*(const R::RT &s, const Vector_2<R> &w);}
+       {Multiplication with a scalar from the left.}
+
+\ccInclude{CGAL/Vector_3.h}
+
+\ccFunction{Vector_3<R> operator*(const R::RT &s, const Vector_3<R> &w);}
+       {Multiplication with a scalar from the left.}
+\end{ccRefFunction}

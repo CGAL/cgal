@@ -1,0 +1,35 @@
+% +------------------------------------------------------------------------+
+% | main.tex
+% +------------------------------------------------------------------------+
+
+\chapter{Example User Manual}
+\ccChapterRelease{\ccRevision. \ \ccDate}\\
+\ccChapterAuthor{Lutz Kettner and Susan Hert}
+
+As of release 3.11 of the manual tools, it is possible to create more than    
+one manual in a single document that share a table of contents, bibliography
+and index.  This allows for easy hyperlinking between the different manuals
+while keeping them logically separate.  This example illustrates the creation
+of a user and reference manual from a set of files whose names are distinct
+and thus do not require the use of the \texttt{-extended} option for the
+HTML conversion.
+
+Creation of the manual with \LaTeX\ is done via
+\begin{verbatim}
+   latex manual.tex
+\end{verbatim}
+The HTML version is created with
+\begin{verbatim}
+   cc_manual_to_html -o html manual.tex
+\end{verbatim}
+Notice that this simple conversion is possible with HTML because the two
+chapter commands appear in files with differnet names (\texttt{main.tex} 
+in subdirectory \texttt{Example} and \texttt{intro.tex} in subdirectory
+\texttt{Example\_ref}).  If the chapter command for the reference pages
+were in the file \texttt{Example\_ref/main.tex}, one would have to use
+the \texttt{-extended} option of \texttt{cc\_manual\_to\_html} to avoid
+name collisions and the \texttt{-ref\_manual} option to generate the two
+separate manuals.  See the directory \texttt{../two\_manuals\_ext\_html} for an
+example using these options.  The directory \texttt{../one\_manual} contains
+an example of the creation of a single manual containing both the user
+and reference manuals with the same directory structure as this one.

@@ -1,0 +1,28 @@
+#!/bin/csh -f
+
+../../cc_gif_creator -m A
+../../cc_gif_creator -m B 
+../../cc_gif_creator -m C 
+../../cc_gif_creator -m D 
+../../cc_gif_creator -m E 
+../../cc_gif_creator -m F 
+../../cc_gif_creator -m G 
+../../cc_gif_creator -m H
+../../cc_gif_creator -m I
+../../cc_gif_creator -m J
+../../cc_gif_creator -m K
+../../cc_gif_creator -m L
+../../cc_gif_creator -m M
+../../cc_gif_creator -m N
+../../cc_gif_creator -m O
+../../cc_gif_creator -m P
+../../cc_gif_creator -m Q
+../../cc_gif_creator -m R
+../../cc_gif_creator -m S
+../../cc_gif_creator -m T
+../../cc_gif_creator -m U
+../../cc_gif_creator -m V
+../../cc_gif_creator -m W
+../../cc_gif_creator -m X
+../../cc_gif_creator -m Y
+../../cc_gif_creator -m Z

@@ -1,0 +1,31 @@
+The files in this directory, except intro.tex and main.tex, were created
+using cc_ref_wizard in this directory.  In particular:
+
+    cc_ref_wizard -p Example Concept               Circulator
+    cc_ref_wizard -p Example Class                 Circulator_traits
+    cc_ref_wizard -p Example Enum                  Orientation
+    cc_ref_wizard -p Example Function              is_empty_range
+    cc_ref_wizard -p Example FunctionObjectConcept Kernel::Less_xy_2
+    cc_ref_wizard -p Example FunctionObjectClass   Less_xy_2
+    cc_ref_wizard -p Example Constant              ORIGIN
+    cc_ref_wizard -p Example Macro                 For_all
+
+For the Circulator concept, ccRefPageBegin and ccRefPageEnd commands
+were redefined so the concept would be marked as advanced.  A template 
+parameter <C> has been added later on to the class Circulator_traits. 
+Also, page breaks were added to show the page headings that appear for 
+concepts and classes.  The enum example Orientation has been edited to
+include two meaningful tags and the necessary declarations to get them
+hyperlinked.  The other reference pages have not been edited.
+
+The configuration file $HOME/.cc_ref_wizard_rc (or the environment)
+contained the following two variable settings while creating the
+reference pages.
+
+    set  REF_WIZARD_AUTHOR = "Lutz Kettner"
+    set  REF_WIZARD_SUBDIR = "DIR"
+
+The Example_ref/main.tex file has been created with cc_make_ref_pages
+in the directory containing Example_ref/:
+
+    cc_make_ref_pages Example_ref

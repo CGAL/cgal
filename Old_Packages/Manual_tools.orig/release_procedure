@@ -1,0 +1,31 @@
+#
+# make sure the scripts in release_scripts are available in the execution path
+#
+# this updates the RCS version numbers of all files under RCS 
+Tools_update . 
+
+# install the new version locally
+follow instructions in Tools/INSTALLATION
+
+src/make
+src/make install
+src/make cleanall
+src/test/prepare_test
+# there will be some error messages such as this:
+#    error 1 in line 1451 in test.tex: in TeX-code: nesting 0: parse error.
+# they can be ignored as far as I can figure
+src/test/test_suite
+
+src/test_html/extended/convert
+src/test_html/extended_with_ref/convert
+
+# this creates the documentation, compiles the examples and copies all files 
+# for the release to the package directory
+Tools_package . ../package
+
+cd ../package
+tar zcvf Tools-M.m.tar.gz Tools
+mv Tools-M.m.tar.gz /www/pub/homepage/hert/CGAL/Tools/
+
+mail cgal-develop@cs.uu.nl...
+

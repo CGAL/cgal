@@ -1,0 +1,609 @@
+% ----------------------------------------------------------------------
+\clearpage
+\appendix
+\section{Quick Reference Guide}
+\newcommand{\Indent}{\hspace*{15pt}}
+
+\normalsize
+In this appendix we summarize the various commands defined in
+{\tt cc\_manual\_index.sty} and {\tt cc\_manual.sty} that produce
+index entries and provide either an example of the result or a
+brief explanation of what the command does.  In what follows $p$ is the
+page number corresponding to the location of the command, or, in the case
+of an environment, it is the page number on which the environment begins.
+The page number on which an environment ends is denoted $q$.
+
+\small
+\tablehead{
+\hline
+&  \\
+{\large \bf Command} & {\large \bf Example and/or Result} \\
+& \\ \hline \hline
+}
+\tabletail{\hline}
+
+\begin{supertabular}{|p{7.4cm}|p{7.4cm}|} 
+\verb|\ccAutoIndexingOff| 
+& Turns off the automatic indexing done with the \verb|\cc*| formatting commands
+\ccIndexEntry{AutoIndexingOff}  \\ \hline
+
+\verb|\ccAutoIndexingOn| 
+& Turns on the automatic indexing done with the \verb|\cc*| formatting commands
+(default)
+\ccIndexEntry{AutoIndexingOn}  \\ \hline
+
+\verb|\begin{ccClass}{|\VarText{class\_name}\verb|}|
+                            &\verb|\begin{ccClass}{My_class}| \\
+\VarText{class description} & ... \\
+\verb|\end{ccClass}|         &\verb|\end{ccClass}| \\
+& \\
+& \ccc{My_class}, $p$ -- $q$ 
+\Eindex{ccClass} \\ \hline
+
+\verb|\begin{ccClassTemplate}{|\VarText{class\_name}\verb|}|
+                            & \verb|\begin{ccClassTemplate}{Gnu<T>}| \\
+\VarText{class description} & ... \\
+\verb|\end{ccClassTemplate}| & \verb|\end{ccClassTemplate}| \\
+& \\
+& \ccc{Gnu<T>}, $p$ -- $q$
+\Eindex{ccClassTemplate} \\ \hline
+
+\verb|\ccCrossRefOff| 
+& Disables all automatic cross referencing
+\ccIndexEntry{CrossRefOff}  \\ \hline
+
+\verb|\ccCrossRefOn| 
+& Enables automatic cross referencing (default)
+\ccIndexEntry{CrossRefOn}  \\ \hline
+
+\verb|\ccEnum{|\VarText{enum\_decl}\verb|}{|\VarText{comment}\verb|}|
+&\verb|\ccEnum{ enum E { E1, E2};}{comment}| \\
+& \\
+&\ccc{E}, $p$ \\
+&\ccc{E1}, $p$ \\
+&\ccc{E2}, $p$ 
+\ccIndexEntry{Enum} \\ \hline
+
+\verb|\ccFunction{|\VarText{header}\verb|}{|\VarText{comment}\verb|}|
+&\verb|\ccFunction{int foo( float d);}{comment}| \\
+& \\
+&\ccc{foo}, $p$
+\ccIndexEntry{Function} \\ \hline
+
+\verb|\ccIndexAbbreviation{|\VarText{ABBR}\verb|}%|
+\Indent\verb|{|\VarText{unabbreviated}\verb|}| 
+& \verb|\ccIndexAbbreviation{CH}{convex hull}| \\
+& CH, {\em see} convex hull
+\ccIndexEntry{IndexAbbreviation}  \\ \hline
+
+& \verb|\being{ccClass}{Polygon_2}|\\
+\verb|\ccIndexAssertionFlag[|\VarText{package}\verb|]|
+& \verb|\ccIndexAssertionFlag[polygon, 2D]| \\
+& \\
+& assertion flags \\
+&\Indent polygon, 2D, $p$ \\
+& ...\\
+& \ccc{Polygon_2} \\
+&\Indent assertion flags, $p$
+\ccIndexEntry{IndexAssertionFlag} \\ \hline
+
+\verb|\ccIndexAssertionFlagName{|\VarText{FLAG}\verb|}|
+& \verb|\ccIndexAssertionFlagName{%| \\
+& \Indent \verb|CGAL_CH_CHECK_EXPENSIVE}| \\
+& \\
+& \ccc{CGAL_CH_CHECK_EXPENSIVE}, $p$ 
+\ccIndexEntry{IndexAssertionFlagName}  \\ \hline
+
+\verb|\ccIndexAssertionFlagsUse| 
+& assertion flags, $p$
+\ccIndexEntry{IndexAssertionFlagsUse}  \\ \hline
+
+\verb|\ccIndexClassName| 
+& the name of the current class being indexed
+\ccIndexEntry{IndexClassName}  \\ \hline
+
+\verb|\begin{ccIndexClass}{|\VarText{class\_name}\verb|}| 
+& \verb|\begin{ccIndexClass}{Polygon_2}|\\ 
+\VarText{class description} & ... \\
+\verb|\end{ccIndexClass}| & \verb|\end{ccIndexClass}| \\
+& \\
+& \ccc{Polygon_2}, $p$--$q$ 
+\Eindex{ccIndexClass}  \\ \hline 
+
+& \verb|\being{ccClass}{Polygon_2}|\\
+\verb|\ccIndexClassCreation| 
+& \verb|\ccIndexClassCreation| \\
+& \\
+& \ccc{Polygon_2} \\
+& \Indent creation, $p$
+\ccIndexEntry{IndexClassCreation}  \\ \hline
+
+& \verb|\being{ccClass}{Polygon_2}|\\
+\verb|\ccIndexClassDefault|  
+& \verb|\ccIndexClassDefault| \\
+& \\
+& \ccc{Polygon_2} \\
+& \Indent default, $p$
+\ccIndexEntry{IndexClassDefault} \\ \hline
+
+
+& \verb|\being{ccClass}{Polygon_2}|\\
+\verb|\ccIndexClassTypes| 
+& \verb|\ccIndexClassTypes| \\
+& \\
+& \ccc{Polygon_2} \\
+& \Indent types, $p$
+\ccIndexEntry{IndexClassTypes} \\ \hline
+
+& \verb|\being{ccClass}{Polygon_2}|\\
+\verb|\ccIndexDesign| 
+& \verb|\ccIndexDesign| \\
+& \\
+& \ccc{Polygon_2} \\
+& \Indent design, $p$
+\ccIndexEntry{IndexDesign} \\ \hline
+
+\verb|\ccIndexEnum{|\VarText{enum\_name}\verb|}| 
+& \verb|\ccIndexEnum{Orientation}|\\
+& \\
+& \ccc{Orientation}, $p$ 
+\ccIndexEntry{IndexEnum} \\ \hline
+
+\verb|\ccIndexEnumTag{|\VarText{ENUM\_TAG}\verb|}| 
+& \verb|\ccIndexEnumTag{CLOCKWISE}| \\
+& \\
+& \ccc{CLOCKWISE}, $p$ 
+\ccIndexEntry{IndexEnumTag} \\ \hline
+
+\verb|\ccIndexGlobalFunction{|\VarText{func\_name}\verb|}| 
+& \verb|\ccIndexGlobalFunction{ch_jarvis}| \\
+& \\
+& \ccc{ch_jarvis}, $p$ 
+\ccIndexEntry{IndexGlobalFunction}  \\ \hline
+
+& \verb|\begin{ccClass}{Polygon_2}| \\
+\verb|\ccIndexGlobalFunctionGroup{|\VarText{group}\verb|}|
+& \verb|\ccIndexGlobalFunctionGroup{input}|\\
+& \\
+& \ccc{Polygon_2} \\
+& \Indent global functions \\
+& \Indent\Indent input, $p$ 
+\ccIndexEntry{IndexGlobalFunctionGroup} \\ \hline
+
+& \verb|\begin{ccClass}{Polygon_2}| \\
+\verb|\begin{ccIndexGlobalFunctions}| 
+& \verb|\begin{ccIndexGlobalFunctions}| \\
+\VarText{global functions}  & ...\\
+\verb|\end{ccIndexGlobalFunctions}| 
+& \verb|\end{ccIndexGlobalFunctions}|  \\
+& \\
+& \ccc{Polygon_2}\\ 
+& \Indent global functions, $p$--$q$ 
+\Eindex{ccIndexGlobalFunctions} \\ \hline
+
+
+\verb|\ccIndexGlobalOperator{|\VarText{operator}\verb|}%| & \\
+\Indent \verb|{|\VarText{class\_name}\verb|}| 
+& \verb|\ccIndexGlobalOperator{<<}{Point_2}| \\
+& \\
+& \ccc{<<} \\
+& \Indent\ccc{Point_2}, $p$ 
+\ccIndexEntry{IndexGlobalOperator}  \\ \hline
+
+\verb|\ccIndexGlobalStruct{|\VarText{struct\_name}\verb|}| 
+& \verb|\ccIndexGlobalStruct{my_struct}| \\
+& \\
+& \ccc{my_struct}, $p$  
+\ccIndexEntry{IndexGlobalStruct} \\ \hline
+
+\verb|\ccIndexGlobalVariable{|\VarText{var\_name}\verb|}|
+& \verb|\ccIndexGlobalVariable{some_var}|  \\
+& \\
+& \ccc{some_var}, $p$
+\ccIndexEntry{IndexGlobalVariable}  \\ \hline
+
+\verb|\ccIndexHintAsSubitem[|\VarText{category}\verb|]%| & \\
+\Indent \verb|{|\VarText{item}\verb|}{|\VarText{hint}\verb|}|
+& \verb|\ccIndexHintAsSubitem[C]{Polygon_2}%| \\
+& \Indent\verb|{partitioning}| \\
+& \\
+& \ccc{Polygon_2} \\
+& \Indent partitioning, $p$
+\ccIndexEntry{IndexHintAsSubitem}  \\ \hline
+
+\verb|\ccIndexHintAsSubsubitem[|\VarText{category}\verb|]%| & \\
+\Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}{|\VarText{hint}\verb|}|
+& \verb|\ccIndexHintAsSubsubitem%| \\
+& \Indent \verb|{\ccFont Point_2}{subitem}{hint}|\\
+& \\
+& \ccc{Point_2} \\
+& \Indent subitem \\
+& \Indent\Indent hint, $p$
+\ccIndexEntry{IndexHintAsSubsubitem} \\ \hline
+
+&\verb|\begin{ccClass}{Polygon_2}| \\
+\verb|\ccIndexImplementation| 
+& \verb|\ccIndexImplementation|  \\
+& \\
+& \ccc{Polygon_2} \\
+& \Indent implementation, $p$ \\
+\ccIndexEntry{IndexImplementation} & \\ \hline
+
+\verb|\ccIndexingOff| 
+& causes all indexing commands defined in {\tt cc\_manual\_index.sty} to have no effect
+\ccIndexEntry{IndexingOff} \\ \hline
+
+\verb|\ccIndexingOn| 
+& activates the indexing commands (default)
+\ccIndexEntry{IndexingOn} \\ \hline
+
+
+\verb|\ccIndexMacro{|\VarText{macro\_name}\verb|}|
+& \verb|\ccIndexMacro{for_all}| \\
+& \\
+& \ccc{for_all}, $p$ 
+\ccIndexEntry{IndexMacro} \\ \hline
+
+\verb|\ccIndexMainItem[|\VarText{category}\verb|]{|\VarText{item}\verb|}|
+& \verb|\ccIndexMainItem[p]{new package}| \\
+&\\
+& new package, $p$ 
+\ccIndexEntry{IndexMainItem} \\ \hline
+
+\verb|\ccIndexMainItemBegin[|\VarText{category}\verb|]{|\VarText{item}\verb|}|
+& \verb|\ccIndexMainItemBegin{\em item}| \\
+& ...\\
+& \verb|\ccIndexMainItemEnd{\em item}| \\
+& \\
+& {\em item}, $p$ -- $q$
+\ccIndexEntry{IndexMainItemBegin} \\ \hline
+
+%\verb|\ccIndexMainItemDef[|\VarText{category}\verb|]%| & \\
+%\Indent\verb|{|\VarText{item}\verb|}|
+\verb|\ccIndexMainItemDef[|\VarText{category}\verb|]{|\VarText{item}\verb|}|
+& \verb|\ccIndexMainItemDef{defined item}|  \\
+& \\
+& defined item, {\bf p}
+\ccIndexEntry{IndexMainItemDef} \\ \hline
+
+%\verb|\ccIndexMainItemEnd[|\VarText{category}\verb|]%| & \\
+%\Indent\verb|{|\VarText{item}\verb|}|
+\verb|\ccIndexMainItemEnd[|\VarText{category}\verb|]{|\VarText{item}\verb|}|
+& see \verb|\ccIndexMainItemBegin|
+\ccIndexEntry{IndexMainItemEnd} \\ \hline
+
+& \verb|\begin{ccClass}{Polygon_2}| \\
+\verb|\ccIndexMemberFunction{|\VarText{func\_name}\verb|}|
+& \verb|\ccIndexMemberFunction{is_simple}|  \\
+& \\
+& \ccc{is_simple} \\
+& \Indent\ccc{Polygon_2} 
+\ccIndexEntry{IndexMemberFunction} \\ \hline
+
+& \verb|\begin{ccClass}{Polygon_2}| \\
+\verb|\ccIndexMemberFunctionGroup{|\VarText{group}\verb|}|
+& \verb|\ccIndexMemberFunctionGroup{modifiers}| \\
+& \\
+& \ccc{Polygon_2} \\
+& \Indent member functions \\
+& \Indent\Indent modifiers, $p$
+\ccIndexEntry{IndexMemberFunctionGroup}  \\ \hline
+
+& \verb|\begin{ccClass}{Polygon_2}| \\
+\verb|\begin{ccIndexMemberFunctions}| & 
+\verb|\begin{ccIndexMemberFunctions}| \\ 
+\VarText{member functions} & ... \\
+\verb|\end{ccIndexMemberFunctions}| &
+\verb|\end{ccIndexMemberFunctions}|  \\
+& \\
+& \ccc{Polygon_2} \\
+& \Indent member functions, $p$ -- $q$ 
+\Eindex{ccIndexMemberFunctions} \\ \hline 
+
+& \verb|\begin{ccClass}{Polygon_2}| \\
+\verb|\ccIndexNestedClasses| 
+& \verb|\ccIndexNestedClasses| \\
+& \\
+& \ccc{Polygon_2} \\
+& \Indent nested classes, $p$
+\ccIndexEntry{IndexNestedClasses} \\ \hline
+
+\verb|\ccIndexPackageName|
+& name of the current package being indexed 
+\ccIndexEntry{IndexPackageName} \\ \hline
+
+
+& \verb|\begin{ccClass}{Polygon_2}| \\
+\verb|\ccIndexRequirements| 
+& \verb|\ccIndexRequirements| \\
+&  \\
+& \ccc{Polygon_2} \\
+& \Indent requirements, $p$ 
+\ccIndexEntry{IndexRequirements} \\ \hline
+
+\verb|\ccIndexSubitem[|\VarText{category}\verb|]{|\VarText{item}\verb|}%| & \\
+\Indent\verb|{|\VarText{subitem}\verb|}|
+& \verb|\ccIndexSubitem{\bf item}{\em subitem}| \\
+& \\
+& {\bf item} \\
+& \Indent {\em subitem}, $p$
+\ccIndexEntry{IndexSubitem} \\ \hline
+
+\verb|\ccIndexSubitemBegin[|\VarText{category}\verb|]%| & \\
+\Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}|
+& \verb|\ccIndexSubitemBegin[t]{term}{subitem}| \\
+& ... \\
+& \verb|\ccIndexSubitemEnd[t]{term}{subitem}| \\
+& \\
+& term \\
+& \Indent subitem, $p$ -- $q$
+\ccIndexEntry{IndexSubitemBegin} \\ \hline
+
+\verb|\ccIndexSubitemDef[|\VarText{category}\verb|]%| & \\
+\Indent\verb|{|\VarText{item}\verb|}{|\VarText{defined subitem}\verb|}|
+& \verb|\ccIndexSubitemDef{item}{subitem}| \\
+& \\
+& item \\
+& \Indent subitem, {\bf p}
+\ccIndexEntry{IndexSubitemDef} \\ \hline
+
+\verb|\ccIndexSubitemEnd[|\VarText{category}\verb|]%| & \\
+\Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}|
+& see \verb|\ccIndexSubitemBegin|
+\ccIndexEntry{IndexSubitemEnd}  \\ \hline
+
+\verb|\ccIndexSubitemSeeAlso[|\VarText{category}\verb|]%| & \\
+\Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}|
+& \verb|\ccIndexSubitemSeeAlso[c]{concept}%| \\
+& \Indent\verb|{cross-ref}| \\
+& \\
+& concept \\
+& \Indent {\em see also} cross-ref
+\ccIndexEntry{IndexSubitemSeeAlso} \\ \hline
+
+\verb|\ccIndexSubsubitem[|\VarText{category}\verb|]%| & \\
+\Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}{|\VarText{subsubitem}\verb|}|
+& \verb|\ccIndexSubsubitem{item}{subitem}%| \\
+& \Indent\verb|{subsubitem}| \\
+& \\
+& item \\
+& \Indent subitem \\
+& \Indent\Indent subsubitem, $p$
+\ccIndexEntry{IndexSubsubitem}  \\ \hline
+
+\verb|\ccIndexSubsubitemBegin[|\VarText{category}\verb|]%| & \\
+\Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}{|\VarText{subsubitem}\verb|}|
+& \verb|\ccIndexSubsubitemBegin[C]{ident}%| \\
+& \Indent\verb|{subitem}{subsubitem}| \\
+& ... \\
+& \verb|\ccIndexSubsubitemEnd[C]{ident}%| \\
+& \Indent\verb|{subitem}{subsubitem}| \\
+& \\
+& \ccc{ident} \\
+& \Indent subitem \\
+& \Indent\Indent subsubitem, $p$
+\ccIndexEntry{IndexSubsubitemBegin} \\ \hline
+
+\verb|\ccIndexSubsubitemDef[|\VarText{category}\verb|]%| & \\
+\Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}{|\VarText{subsubitem}\verb|}|
+& \verb|\ccIndexSubsubitemDef[t]{term}%| \\
+& \Indent\verb|{subitem}{defined subsubitem}| \\
+& \\
+& term \\
+& \Indent subitem \\
+& \Indent\Indent defined subsubitem, {\bf p}
+\ccIndexEntry{IndexSubsubitemDef} \\ \hline
+
+\verb|\ccIndexSubsubitemEnd[|\VarText{category}\verb|]%| & \\
+\Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}{|\VarText{subsubitem}\verb|}|
+& see \verb|\ccIndexSubsubitemBegin|
+\ccIndexEntry{IndexSubsubitemEnd} \\ \hline
+
+\verb|\ccIndexSubsubitemSeeAlso[|\VarText{category}\verb|]%| & \\
+\Indent\verb|{|\VarText{item}\verb|}{|\VarText{subitem}\verb|}{|\VarText{subsubitem}\verb|}|
+& \verb|\ccIndexSubsubitemSeeAlso{item}%| \\
+& \Indent\verb|{subitem}{cross-ref}| \\
+& \\
+& item \\
+& \Indent subitem \\
+& \Indent\Indent {\em see also} cross-ref
+\ccIndexEntry{IndexSubsubitemSeeAlso} \\ \hline
+
+\verb|\ccIndexTraitsClassBegin{|\VarText{class}\verb|}%| & \\
+\Indent\verb|{|\VarText{class list}\verb|}{|\VarText{package list}\verb|}| 
+& \verb|\ccIndexTraitsClassBegin{K_Traits}%| \\
+& \Indent\verb|{class1; class2}| \\
+& ...\\
+& \verb|\ccIndexTraitsClassEnd{K_Traits}%|\\
+& \Indent\verb|{class1; class2}| \\
+& \\
+& \ccc{class1} \\
+& \Indent traits class \\
+& \Indent\Indent {\em see also} \ccc{K_Traits} \\
+& \ccc{class2} \\
+& \Indent traits class \\
+& \Indent\Indent {\em see also} \ccc{K_Traits} \\
+& ... \\
+& \ccc{K_Traits}, $p$ -- $q$
+\ccIndexEntry{IndexTraitsClassBegin} \\ \hline
+
+
+\verb|\ccIndexTraitsClassDefault[|\VarText{p\_or\_C}\verb|]%| & \\
+\Indent \verb|{|\VarText{class or package}\verb|}| 
+& \verb|\ccIndexTraitsClassDefault[p]%| \\
+& \Indent\verb|{convex hull}| \\
+& \\
+& convex hull \\
+& \Indent traits class \\
+& \Indent\Indent default, $p$
+\ccIndexEntry{IndexTraitsClassDefault} \\ \hline
+
+\verb|\ccIndexTraitsClassEnd{|\VarText{class}\verb|}%| & \\
+\Indent\verb|{|\VarText{class list}\verb|}{|\VarText{package list}\verb|}| 
+& see \verb|\ccIndexTraitsClassBegin|
+\ccIndexEntry{IndexTraitsClassEnd} \\ \hline
+
+\verb|\ccIndexTraitsClassRequirements%| & \\
+\Indent\verb|[|\VarText{p\_or\_C}\verb|]{|\VarText{class or package}\verb|}| 
+& \verb|\ccIndexTraitsClassRequirements[p]%| \\
+& \Indent\verb|{convex hull}| \\
+& \\
+& convex hull \\
+& \Indent traits class \\
+& \Indent\Indent requirements, $p$
+\ccIndexEntry{IndexTraitsClassRequirements} \\ \hline
+
+\verb|\ccIndexTypedef{|\VarText{type\_name}\verb|}|
+& \verb|\ccIndexTypedef{Sleep}| \\
+& \\
+& \ccc{Sleep}, $p$ 
+\ccIndexEntry{IndexTypedef} \\ \hline
+
+&\verb+\begin{ccClassTemplate}{Gnu<T>}+ \\
+\verb|\ccMemberFunction{|\VarText{declaration}\verb|}%|
+&\verb+\ccMemberFunction{ int f(X x);}{comment}+ \\
+\Indent\Indent\verb|{|\VarText{comment}\verb|}| & \\
+& \\
+& \ccc{gnat} \\ 
+& \Indent \ccc{Gnu<T>}, $p$
+\ccIndexEntry{MemberFunction} \\ \hline
+
+\verb|\ccMethod{|\VarText{declaration}\verb|}{|\VarText{comment}\verb|}|
+& see \verb|\ccMemberFunction|
+\ccIndexEntry{Method}\\ \hline
+
+\verb|\ccModifierCrossRefOff|
+& turns off automatic cross referencing of words that come after a comma in
+the main text of an indexing command
+\ccIndexEntry{ModifierCrossRefOff} \\ \hline
+
+\verb|\ccModifierCrossRefOn| 
+& turns on automatic cross referencing of words that come after a comma in
+the main text of an indexing command (default)
+\ccIndexEntry{ModifierCrossRefOn} \\ \hline
+
+\verb|\ccNonmodifierCrossRefOff| 
+& turns off all automatic cross referencing except for words that come after 
+a comma in the main text of an indexing command
+\ccIndexEntry{NonmodifierCrossRefOff} \\ \hline
+
+\verb|\ccNonmodifierCrossRefOn| 
+& turns on automatic cross referencing done by some of the commands (default)
+\ccIndexEntry{NonmodifierCrossRefOn} \\ \hline
+
+\verb|\begin{ccPackage}{|\VarText{package name}\verb|}|
+                              & \verb|\begin{ccPackage}{convex hull}|\\
+\VarText{package description} & ... \\
+\verb|\end{ccPackage}|        & \verb|\end{ccPackage}| \\
+& \\
+& convex hull, $p$ -- $q$
+\Eindex{ccPackage} \\ \hline
+
+\verb|\begin{ccRefClass}[|\VarText{scope}\verb|]{|\VarText{class\_name}\verb|}|
+                             &\verb+\begin{ccRefClass}{A_class<C>}+  \\
+\VarText{class description}  & ... \\
+\verb|\end{ccRefClass}|      & \verb|\end{ccRefClass}|\\
+& \\
+& \ccc{A_class<C>}, $p$ -- $q$
+\Eindex{ccRefClass} \\ \hline
+
+\verb|\begin{ccRefConcept}[|\VarText{scope}\verb|]%|
+& \verb+\begin{ccRefConcept}{Circulator}+ \\
+\Indent\Indent \verb|{|\VarText{concept name}\verb|}|  & \\
+           \VarText{concept description} & ...\\
+\verb|\end{ccRefConcept}|                &  \verb|\end{ccRefConcept}| \\
+& \\
+& Circulator, $p$ -- $q$
+\Eindex{ccRefConcept}\\ \hline
+
+\verb|\begin{ccRefEnum}[|\VarText{scope}\verb|]|\verb|{|\VarText{enum\_name}\verb|}|
+                            & \verb+\begin{ccRefEnum}{Orientation}+  \\
+\VarText{enum description}  & ...\\
+\verb|\end{ccRefEnum}|      & \verb+\end{ccRefEnum}+ \\
+& \\
+& \ccc{Orientation}, $p$ -- $q$
+\Eindex{ccRefEnum}\\ \hline
+
+
+\verb|\begin{ccRefFunction}[|\VarText{scope}\verb|]%|
+                               & \verb+\begin{ccRefFunction}{ch_jarvis}+ \\
+\Indent\Indent\verb|{|\VarText{function name}\verb|}|   & \\
+\VarText{function description} &  ... \\
+\verb|\end{ccRefFunction}|  & \verb|\end{ccRefFunction}|   \\
+& \\
+& \ccc{ch_jarvis}, $p$ -- $q$
+\Eindex{ccRefFunction}\\ \hline
+
+\verb|\begin{ccRefMacro}[|\VarText{scope}\verb|]{|\VarText{macro}\verb|}|
+& \verb+\begin{ccRefMacro}{For_all}+ \\
+\VarText{macro description} & ... \\
+\verb|\end{ccRefMacro}| &  \verb|\end{ccRefMacro}| \\
+& \\
+& \ccc{For_all}, $p$ -- $q$
+\Eindex{ccRefMacro}\\ \hline
+
+\verb|\begin{ccRefVariable}[|\VarText{scope}\verb|]%|
+& \verb+\begin{ccRefVariable}{ORIGIN}+ \\
+\Indent\Indent\verb|{|\VarText{variable name}\verb|}| & \\
+\VarText{variable description} &  ...\\
+\verb|\end{ccRefVariable}|  & \verb|\end{ccRefVariable}|  \\
+& \\
+& \ccc{ORIGIN}, $p$
+\Eindex{ccRefVariable}\\ \hline
+
+\verb|\ccStruct{|\VarText{struct\_decl}\verb|}{|\VarText{comment}\verb|}|
+&\verb+\ccStruct{ struct S { int i;};}{comment}+ \\
+& \\
+&\ccc{S}, $p$ 
+\ccIndexEntry{Struct}\\ \hline
+
+\verb|\begin{ccTraitsClass}{|\VarText{traits\_class}\verb|}%| & \\
+\Indent\verb|{|\VarText{class list}\verb|}{|\VarText{package list}\verb|}|
+& \verb|\begin{ccTraitsClass}{good_traits}%| \\
+& \Indent\verb|{class1; class2}{package}| \\
+\VarText{class description} & ... \\
+\verb|\end{ccTraitsClass}| & \verb|\end{ccTraitsClass}| \\
+& \\
+& \ccc{class1}  \\
+& \Indent traits class \\
+& \Indent\Indent {\em see also} \ccc{good_traits} \\
+& \ccc{class2}  \\
+& \Indent traits class \\
+& \Indent\Indent {\em see also} \ccc{good_traits} \\
+& ... \\
+& \ccc{package}  \\
+& \Indent traits class \\
+& \Indent\Indent {\em see also} \ccc{good_traits} \\
+& ... \\
+& \ccc{good_traits}, $p$ -- $q$ 
+\Eindex{ccTraitsClass} \\ \hline
+
+\verb|\begin{ccTraitsClassTemplate}{|\VarText{t\_class}\verb|}%| & \\
+\Indent\verb|{|\VarText{class list}\verb|}{|\VarText{package list}\verb|}|
+& \verb|\begin{ccTraitsClass}{better_traits<T>}%| \\
+& \Indent\verb|{}{p1;p2}| \\
+\VarText{class description} & ... \\
+\verb|\end{ccTraitsClassTemplate}| & \\
+& \\
+& \ccc{p1}  \\
+& \Indent traits class \\
+& \Indent\Indent {\em see also} \ccc{better_traits<T>} \\
+& \ccc{p2}  \\
+& \Indent traits class \\
+& \Indent\Indent {\em see also} \ccc{better_traits<T>} \\
+& ... \\
+& \ccc{better_traits<T>}, $p$ -- $q$ 
+\Eindex{ccTraitsClassTemplate} \\ \hline
+
+
+\verb|\ccTypedef{|\VarText{typedef}\verb|}{|\VarText{comment}\verb|}|
+&\verb+\ccTypedef{ typedef A Sleep;}{comment}+ \\
+& \\
+&\ccc{Sleep}, $p$
+\ccIndexEntry{Typedef}\\ \hline
+
+\verb|\ccVariable{|\VarText{declaration}\verb|}{|\VarText{comment}\verb|}|
+&\verb+\ccVariable{ const int i = 42;}{comment}+ \\
+&\ccc{i}, $p$ 
+\ccIndexEntry{Variable}\\ \hline
+\end{supertabular}
