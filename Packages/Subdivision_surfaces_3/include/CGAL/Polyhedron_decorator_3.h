@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2002 SurfLab of CISE of University of Florida
+// Copyright (c) 2005 by Le-Jeng Shiue.  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -17,6 +17,7 @@
 // $Name$
 //
 // Author(s): Le-Jeng Shiue <sle-jeng@cise.ufl.edu>
+//                          <SurfLab, CISE, University of Florida>
 //
 // ======================================================================
 
