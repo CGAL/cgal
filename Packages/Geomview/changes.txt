@@ -1,5 +1,9 @@
 CHANGES to the Geomview package.
 
+Ver 3.23 (20 September 2001)
+- Move code dependent on non-standard <strstream> to src/Geomview_stream.C
+  to avoid warnings.
+
 Ver 3.22 (15 August 2001)
 - Removed a "const" for SunPro.
 

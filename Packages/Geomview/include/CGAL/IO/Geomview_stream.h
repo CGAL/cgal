@@ -29,13 +29,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Color.h>
 
-// #include <CGAL/Iso_rectangle_2.h>
-// #include <CGAL/intersections.h>
-
 #include <map>
 #include <string>
-#include <strstream> // deprecated
-// #include <sstream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -173,12 +168,7 @@ public:
 	return !binary_flag;
     }
 
-    std::string get_new_id(const std::string & s)
-    {
-	std::ostrstream str;
-	str << s << id[s]++ << std::ends;
-	return str.str();
-    }
+    std::string get_new_id(const std::string & s);
 
     const Bbox_3 & get_bbox()
     {
@@ -194,6 +184,9 @@ private:
     void setup_geomview(const char *machine, const char *login);
     void frame(const Bbox_3 &bbox);
     void pickplane(const Bbox_3 &bbox);
+    char* nth(char* s, int count) const;
+    void parse_point(const char* pickpoint,
+		     double &x, double &y, double &z, double &w) const;
 
     Bbox_3 bb;
     Color vertex_color, edge_color, face_color;
@@ -490,25 +483,6 @@ operator<<(Geomview_stream &gv, const Bbox_2 &bbox);
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_3 &bbox);
 
-char*
-nth(char* s, int count);
-
-#ifdef CGAL_POINT_3_H
-template < class R >
-void
-parse_point(const char* pickpoint, Point_3<R> &point)
-{
-    // std::stringstream ss;
-    std::strstream ss;
-    ss << pickpoint << std::ends;
-
-    double x, y, z, w;
-    char parenthesis;
-    ss >> parenthesis >> x >> y >> z >> w;
-    point = Point_3<R>(x, y, z, w);
-}
-#endif
-
 #if defined CGAL_POINT_3_H && !defined CGAL_GV_IN_POINT_3_H
 #define CGAL_GV_IN_POINT_3_H
 template < class R >
@@ -525,9 +499,11 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
     char sexpr[1024];
     gv >> sexpr;  // this reads a gcl expression
 
-    const char* pickpoint = nth(sexpr, 3);
+    const char* pickpoint = gv.nth(sexpr, 3);
     // this gives something as: (0.0607123 0.0607125 4.76837e-07 0.529628)
-    parse_point(pickpoint, point);
+    double x, y, z, w;
+    gv.parse_point(pickpoint, x, y, z, w);
+    point = Point_3<R>(x, y, z, w);
 
     // we echo the input
     if (gv.get_echo())

@@ -463,7 +463,7 @@ Geomview_stream::operator>>(char *expr)
 // It's either a word terminated by ' ' or ')', or a well parenthesed
 // expression, or a quoted "string".
 char*
-nth(char* s, int count)
+Geomview_stream::nth(char* s, int count) const
 {
     s++; // skip first character (always a parenthesis)
  
@@ -497,6 +497,26 @@ nth(char* s, int count)
  
     s[j] = '\0';
     return s;
+}
+
+void
+Geomview_stream::parse_point(const char* pickpoint,
+		     double &x, double &y, double &z, double &w) const
+{
+    // std::stringstream ss;
+    std::strstream ss;
+    ss << pickpoint << std::ends;
+
+    char parenthesis;
+    ss >> parenthesis >> x >> y >> z >> w;
+}
+
+std::string
+Geomview_stream::get_new_id(const std::string & s)
+{
+    std::ostrstream str;
+    str << s << id[s]++ << std::ends;
+    return str.str();
 }
 
 CGAL_END_NAMESPACE
