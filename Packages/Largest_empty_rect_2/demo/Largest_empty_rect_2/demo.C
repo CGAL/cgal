@@ -173,8 +173,8 @@ int main(int argc,char *argv[])
   // main loop over input points
   for (;;) {
     mouse_input = W.read_mouse(x,y);
-    if(mouse_input == -1 && x >= MIN_X && x <= MAX_X &&
-       y >= MIN_Y && y <= MAX_Y) {
+    if(mouse_input == -1 && x >= x1 && x <= x2 &&
+       y >= y1 && y <= y2) {
       if(biggest_rect_shown) {
         // remove biggest rectangle
         biggest_rect_shown = false;
