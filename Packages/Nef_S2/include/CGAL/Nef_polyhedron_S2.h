@@ -172,7 +172,9 @@ public:
                                                     SHalfloop_const_iterator;
   typedef typename Const_decorator::SFace_const_iterator     
                                                     SFace_const_iterator;
-
+  typedef typename Const_decorator::Size_type Size_type;
+  typedef Size_type size_type;
+  
   typedef std::list<Sphere_segment>  SS_list;
   typedef typename SS_list::const_iterator SS_iterator;
 
@@ -473,16 +475,16 @@ protected:
   { return complement(); }
    
   Self& operator*=(const Self& N1)
-  { this = intersection(N1); return *this; }
+  { *this = intersection(N1); return *this; }
 
   Self& operator+=(const Self& N1)
-  { this = join(N1); return *this; }
+  { *this = join(N1); return *this; }
 
   Self& operator-=(const Self& N1)
-  { this = difference(N1); return *this; }
+  { *this = difference(N1); return *this; }
 
   Self& operator^=(const Self& N1)
-  { this = symmetric_difference(N1); return *this; }
+  { *this = symmetric_difference(N1); return *this; }
 
   /*{\Mtext There are also comparison operations like |<,<=,>,>=,==,!=|
   which implement the relations subset, subset or equal, superset, superset
