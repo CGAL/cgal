@@ -59,7 +59,7 @@ namespace CGAL {
   private:
     Point_list p_list; // list of pointers to points
     int built_coord;    // a coordinate for which the pointer list is built
-    int the_size;
+    unsigned int the_size;
     Kd_tree_rectangle<NT> bbox;       // bounding box, i.e. rectangle of node
     Kd_tree_rectangle<NT> tbox;       // tight bounding box, 
 				      // i.e. minimal enclosing bounding
@@ -171,7 +171,7 @@ namespace CGAL {
 	}
 
     //  points
-    inline int size() const {
+    inline unsigned int size() const {
     	return the_size;
     }
     
@@ -188,7 +188,7 @@ namespace CGAL {
     // building the container from a sequence of points
     template <class Iter>
     Point_container(const int d, Iter begin, Iter end) :
-      bbox(d), tbox(d) {
+       bbox(d), tbox(d)  {
 
         
 
@@ -207,7 +207,7 @@ namespace CGAL {
 
 	// building an empty container 
 	Point_container(int d) :
-	bbox(d), tbox(d), the_size(0) {}
+	the_size(0), bbox(d), tbox(d)  {}
 
 	void swap(Point_container<Item>& c) {
 
