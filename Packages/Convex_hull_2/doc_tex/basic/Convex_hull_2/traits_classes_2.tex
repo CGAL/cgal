@@ -1,0 +1,29 @@
+\section{Traits Classes}
+
+Each of the functions used to compute convex hulls or extreme points
+is paramterized by a traits class, which specifies the types and geometric
+primitives to be used in the computation.  There are several implementations 
+of 2D traits classes provided in the library.  The class
+\ccc{Convex_hull_traits_2<R>}\ccIndexMainItem[C]{Convex_hull_traits_2}
+corresponds to the default traits class that provides the types and 
+predicates presented in the 2-dimensional \cgal\ kernel in which the input 
+points lie.  The class 
+\ccc{Convex_hull_constructive_traits<R>}\ccIndexMainItem[C]{Convex_hull_constructive_traits}
+is a second traits class based on \cgal\ primitives but differs from
+\ccc{Convex_hull_traits_2} in that some of its primitives reuse
+intermediate results to speed up computation.
+There are also two traits classes defined for the two geometry kernels
+provided in \leda\ \cite{mn-l-99} 
+(\ccc{Convex_hull_leda_traits_2}\ccIndexMainItem[C]{Convex_hull_leda_traits_2}
+and 
+\ccc{Convex_hull_rat_leda_traits_2}\ccIndexMainItem[C]{Convex_hull_rat_leda_traits_2}), which provide an easy means of comparison with these kernels.
+In addition, there are three projective traits classes 
+(\ccc{Convex_hull_projective_xy_traits_2}, 
+\ccc{Convex_hull_projective_xz_traits_2}, and 
+\ccc{Convex_hull_projective_yz_traits_2}), %
+\ccIndexMainItem[C]{Convex_hull_projective_xy_traits_2}%
+\ccIndexMainItem[C]{Convex_hull_projective_xz_traits_2}%
+\ccIndexMainItem[C]{Convex_hull_projective_yz_traits_2}%
+which may be used to compute the convex hull of a set of three-dimensional
+points projected into each of the three coordinate planes.
+

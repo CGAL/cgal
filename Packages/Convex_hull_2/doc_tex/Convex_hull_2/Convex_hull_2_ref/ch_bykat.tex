@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ch_bykat.tex
+% +------------------------------------------------------------------------+
+% | 09.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% | 
+% +------------------------------------------------------------------------+
+
+%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+\begin{ccRefFunction}{ch_bykat}  
+\ccIndexSubitemBegin{convex hull, 2D}{Bykat algorithm}
+
+\ccDefinition
+  
+The function \ccRefName\ generates the counterclockwise sequence of extreme
+points from a given set of input points.
+
+
+\ccInclude{CGAL/ch_bykat.h}
+
+\ccFunction{template <class InputIterator, class OutputIterator, class Traits>
+            OutputIterator
+            ch_bykat( InputIterator  first,
+                              InputIterator  beyond,
+                              OutputIterator result,
+                              const Traits & ch_traits = Default_traits);}
+            {generates the counterclockwise sequence of extreme points
+            of the points in the range [\ccc{first},\ccc{beyond}).
+            The resulting sequence is placed starting at position
+            \ccc{result}, and the past-the-end iterator for the resulting
+            sequence is returned. It is not specified at which point the
+            cyclic sequence of extreme points is cut into a linear sequence.
+            \ccPrecond %\ccIndexSubitem[C]{ch_bykat}{preconditions}
+            The source range [\ccc{first},\ccc{beyond}) does not contain
+            \ccc{result}.}
+
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{ForwardIteartor::value_type} is defined.
+
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{InputIterator::value_type} and 
+            \ccc{OutputIterator::value_type}
+            are equivalent to \ccc{Traits::Point_2}.
+   \item    \ccc{Traits} defines the following subset of types from
+            the concept ConvexHullTraits\_2 and their corresponding member
+            %\ccIndexMainItem[c]{ConvexHullTraits_2}
+            functions that return instances of these types:
+            \begin{itemize}
+                \item \ccc{Traits::Point_2},
+                \item \ccc{Traits::Less_signed_distance_to_line_2},
+                \item \ccc{Traits::Left_of_line_2}, 
+                \item \ccc{Traits::Less_xy_2}.
+            \end{itemize}
+\end{enumerate}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::ch_akl_toussaint} \\
+\ccRefIdfierPage{CGAL::ch_eddy} \\
+\ccRefIdfierPage{CGAL::ch_graham_andrew} \\
+\ccRefIdfierPage{CGAL::ch_jarvis} \\
+\ccRefIdfierPage{CGAL::ch_melkman} \\
+\ccRefIdfierPage{CGAL::convex_hull_2} 
+
+\ccImplementation
+This function implements the non-recursive varitaion of
+Eddy's algorithm \cite{e-nchap-77} described in \cite{b-chfsp-78}.
+This algorithm requires $O(n h)$ time 
+in the worst case for $n$ input points with $h$ extreme points.  
+
+\ccIndexSubitemEnd{convex hull, 2D}{Bykat algorithm}
+\end{ccRefFunction}
+%\renewcommand{\ccRefPageBegin}{}
+%\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

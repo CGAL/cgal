@@ -1,3 +1,6 @@
+3.14    (17 Jul 2001)
+- changed doc to split 2D, 3D, and dD into 3 chapters
+
 3.13    (11 Jul 2001)
 - really fixed the makefiles for windows
 

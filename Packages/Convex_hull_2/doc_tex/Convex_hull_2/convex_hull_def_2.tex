@@ -1,0 +1,18 @@
+\section{Introduction}
+
+A subset $S \subseteq \R^2$ is convex if for any two points $p$ and $q$
+in the set the line segment with endpoints $p$ and $q$ is contained
+in $S$. The convex hull\ccIndexMainItemDef{convex hull} of a set $S$ 
+is the smallest convex set containing
+$S$. The convex hull of a set of points $P$ is a convex 
+polygon with vertices in $P$. A point in $P$ is an extreme point 
+(with respect to $P$)\ccIndexMainItemDef{extreme point} if it is a vertex of 
+the convex hull of $P$.  A set of points is said to be strongly convex %
+\ccIndexMainItemDef{strongly convex} if it consists of only extreme points.
+
+This chapter describes the functions provided in
+\cgal\ for producing convex hulls in two dimensions as well as
+functions for checking if sets of points are strongly convex are not.  
+There are also a number of functions described for computing particular 
+extreme points and subsequences of hull points, such as the lower and 
+upper hull of a set of points.

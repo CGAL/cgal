@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ch_n_point.tex
+% +------------------------------------------------------------------------+
+% | 09.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% | 
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{ch_n_point}  %% add template arg's if necessary
+\ccIndexSubitemBegin{extreme points, 2D}{in coordinate directions}
+
+\ccDefinition
+  
+The function \ccRefName\ finds a point in a given set  
+of input points with maximal $y$ coordinate.
+
+\ccInclude{CGAL/ch_selected_extreme_points_2.h}
+
+\ccFunction{template <class ForwardIterator>
+            void
+            ch_n_point( ForwardIterator first, ForwardIterator beyond,
+                        ForwardIterator& n,
+                        const Traits & ch_traits = Default_traits);}
+           {traverses the range [\ccc{first},\ccc{beyond}).
+            After execution, the value of
+            \ccc{n} is an iterator in the range such that \ccc{*n} $\ge_{yx}$
+            \ccc{*it} for all iterators \ccc{it} in the range.}
+
+
+The default traits class \ccc{Default_traits} is the kernel in which the type
+\ccc{ForwardIteartor::value_type} is defined.
+
+\ccHeading{Requirements}
+\ccc{Traits} defines the type \ccc{Traits::Less_yx_2} as specified in
+the concept ConvexHullTraits\_2 and the corresponding member
+function that returns an instance of this type.
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::ch_e_point} \\
+\ccRefIdfierPage{CGAL::ch_nswe_point} \\
+\ccRefIdfierPage{CGAL::ch_ns_point} \\
+\ccRefIdfierPage{CGAL::ch_s_point} \\
+\ccRefIdfierPage{CGAL::ch_w_point} \\
+\ccRefIdfierPage{CGAL::ch_we_point} 
+
+\ccIndexSubitemEnd{extreme points, 2D}{in coordinate directions}
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
