@@ -17,6 +17,12 @@
 
 
 CGAL_BEGIN_NAMESPACE
+
+bool dummy(bool b) {
+  CGAL_assertion( b );
+  return b;
+}
+
 #if defined(__INTEL_COMPILER)
 template<class Traits>
 bool test_traits_base(const Traits& = Traits());
@@ -521,7 +527,9 @@ bool test_algo_generic(InputStream& is)
   Geom_traits tr = ag.geom_traits();
   int num_vertices = ag.number_of_vertices();
   int num_all = num_vertices + ag.number_of_hidden_sites();
-  CGAL_assertion( static_cast<unsigned int>(num_all) == wp_list.size() );
+  // passing this to a dummy function to avoid warning when
+  // CGAL_NO_ASSERTIONS is defined.
+  dummy( static_cast<unsigned int>(num_all) == wp_list.size() );
 
   Face_handle inf_f = ag.infinite_face();
   Vertex_handle v1 = ag.infinite_vertex();
