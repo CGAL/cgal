@@ -11,12 +11,15 @@ typedef CGAL::Segment_2<Rep> Segment;
 
 int main( int argc, char **argv )
 {
-  QApplication app( argc, argv );
-  CGAL::Qt_widget *W = new CGAL::Qt_widget();
-    app.setMainWidget( W );
+printf("3\n");
+QApplication app( argc, argv );
+printf("2\n");
+CGAL::Qt_widget *W = new CGAL::Qt_widget();
+printf("1\n");
+app.setMainWidget( W );
     W->resize(600, 600);
     W->set_window(0, 600, 0, 600);
-    W->show();
+W->show();
     W->lock();
     *W << CGAL::BackgroundColor(CGAL::ORANGE) << CGAL::RED;
     *W << Segment(Point(100,100), Point(400,400));
