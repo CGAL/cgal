@@ -87,9 +87,9 @@ CGAL__test_cls_geom_traits( typename Traits::Point p[34], const Traits & )
 //    circumcenter
 //               p[30], p[31], p[32] --> p[33]
 
-template <class Traits, class Point >
+template <class Traits>
 void
-CGAL__test_cls_delaunay_geom_traits( Point p[34], const Traits & )
+CGAL__test_cls_delaunay_geom_traits(typename Traits::Point p[34], const Traits & )
 {
   // All the other requirements
   CGAL__test_cls_geom_traits(p, Traits() );
