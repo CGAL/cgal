@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<bench name_length="64" header="false" type_mask="0x2" strategy_mask="0x6">
+<bench name_length="64" header="false" type_mask="0x2" strategy_mask="0x8">
   <class name="cls111" key="naive PMWX Segments Cartesian Leda Rat"/>
   <class name="cls112" key="walk PMWX Segments Cartesian Leda Rat"/>
   <class name="cls121" key="naive PMWX Segments Leda Leda Rat"/>
