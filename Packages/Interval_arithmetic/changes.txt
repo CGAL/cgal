@@ -1,3 +1,7 @@
+Version 4.174 on 29 July 2003
+- Replaced _MSC_VER check in Filtered_predicate.h avec CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG that seems it is needed for SunPro 5 and VC7.0
+
+
 Version 4.173 on 24 July 2003
 - Move Arithmetic_filter.h to Filtered_exact.h.
 

@@ -80,7 +80,7 @@ public:
   template <class A1>
   result_type
   operator()(const A1 &a1) const
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
   {
@@ -100,7 +100,7 @@ public:
   template <class A1, class A2>
   result_type
   operator()(const A1 &a1, const A2 &a2) const
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
   {
@@ -120,7 +120,7 @@ public:
   template <class A1, class A2, class A3>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
   {
@@ -140,7 +140,7 @@ public:
   template <class A1, class A2, class A3, class A4>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
   {
@@ -163,7 +163,7 @@ public:
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5) const
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
   {
@@ -186,7 +186,7 @@ public:
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5, const A6 &a6) const
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
   {
@@ -210,7 +210,7 @@ public:
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5, const A6 &a6, const A7 &a7) const
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
   {
@@ -232,7 +232,7 @@ public:
   // Idem for more than 7 arguments.  Do it on demand.
 };
 
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 template <class EP, class AP, class C2E, class C2F, bool Protection>
   template <class A1>
 typename Filtered_predicate<EP,AP,C2E,C2F,Protection>::result_type
