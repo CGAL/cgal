@@ -82,7 +82,6 @@ public:
   using Base::m_currentPos;
   using Base::m_currentEvent;
   using Base::m_miniq;
-  using Base::m_prevPos;
   using Base::m_use_hint_for_erase;
   using Base::m_statusLine;
   using Base::m_tmpOut;
