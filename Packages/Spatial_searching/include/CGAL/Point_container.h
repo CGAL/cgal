@@ -34,13 +34,14 @@ namespace CGAL {
 
   template <class Item> class Point_container;
 
+  /* problem with platform sparc_SunOS-5.6_CC-5.30
   template <class Item> struct comp_coord_val {
     int coord; 
     comp_coord_val(const int i) : coord(i) {}
     bool operator() (const Item *a, const Item *b) {
       return (*a)[coord] < (*b)[coord];
     }
-  };
+  }; */
 
   template <class Item>
     std::ostream& operator<< (std::ostream& s, Point_container<Item>& c) {
@@ -56,7 +57,7 @@ namespace CGAL {
   private:
     Point_list p_list; // list of pointers to points
     int built_coord;    // a coordinate for which the pointer list is built
-    Kd_tree_rectangle<NT> bbox;       // bounding box, i.e. cell of node
+    Kd_tree_rectangle<NT> bbox;       // bounding box, i.e. rectangle of node
     Kd_tree_rectangle<NT> tbox;       // tight bounding box, i.e. minimal enclosing bounding
 	                	      // box of points
   public:
@@ -300,11 +301,18 @@ namespace CGAL {
         // assert(c.is_valid());
     }
 
-	NT median(const int split_coord) {
-      /* if (p_list.empty()) {
-         // copy p_list[built_coord] to p_list[split_coord]
-         p_list[split_coord]=p_list[built_coord]; */
-         // sort p_list[split_coord]
+template <class Item_>
+	struct comp_coord_val {
+    		int coord; 
+    		comp_coord_val(const int i) : coord(i) {}
+    		bool operator() (const Item_ *a, const Item_ *b) {
+      		return (*a)[coord] < (*b)[coord];
+    		}
+  	};
+
+
+      NT median(const int split_coord) {
+        
       p_list.sort(comp_coord_val<Item>(split_coord));
       // }
       typename Point_list::iterator 
