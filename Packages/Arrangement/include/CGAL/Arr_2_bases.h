@@ -116,6 +116,7 @@ public:
   virtual void assign(const Arr_2_halfedge_base<Base_node> &e)
   {
     //bn = new Base_node(*e.bn);
+    (void) e; // Avoid unused parameter warning
   }
 
 protected:
@@ -183,6 +184,7 @@ public:
   // assign function for non-connectivity data
   virtual void assign(const  Arr_2_face_base &f)
   {
+    (void) f; // Avoid unused parameter warning  
   }
 
 protected:
