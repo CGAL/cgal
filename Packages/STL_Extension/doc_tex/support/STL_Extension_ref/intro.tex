@@ -11,7 +11,7 @@
 %% =============================================================================
 
 \chapter{\stl\ Extensions for \cgal}
-\label{chapterDataStructures_ref}\label{chapterStlExtensions_ref}
+\label{chapterDataStructures}\label{chapterStlExtensions}
 
 \RCSdef{\stlExtensionRev}{$Revision$}
 \RCSdefDate{\stlExtensionDate}{$Date$}
@@ -87,7 +87,7 @@ these bind and compose adaptors are limited to unary and binary
 functors only, and these functors must not be overloaded.
 
 Since there are a number of functors in \cgal\ that take more than two
-arguments, and since functors may also be overloaded, i.e. accept
+arguments, and since functors may also be overloaded, i.e., accept
 several different sets of arguments, we have to define our own
 adaptors to be used with \cgal\ functors.
 
@@ -108,7 +108,14 @@ adaptors to be used with \cgal\ functors.
 \ccRefIdfierPage{CGAL::Compose_shared<F0,F1,F2,F3>}\\
 \ccRefConceptPage{AdaptableFunctor}\\
 \ccRefIdfierPage{CGAL::Arity_tag<int>}\\
-\ccRefIdfierPage{CGAL::Arity_traits<F>}
+\ccRefIdfierPage{CGAL::Arity_traits<F>}\\
+\ccRefIdfierPage{CGAL::Set_arity<F,a>}\\
+\ccRefIdfierPage{CGAL::set_arity_0}\\
+\ccRefIdfierPage{CGAL::set_arity_1}\\
+\ccRefIdfierPage{CGAL::set_arity_2}\\
+\ccRefIdfierPage{CGAL::set_arity_3}\\
+\ccRefIdfierPage{CGAL::set_arity_4}\\
+\ccRefIdfierPage{CGAL::set_arity_5}
 
 \subsection*{Projection Function Objects.}
 

@@ -1,6 +1,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/functional.h>
 
+using CGAL::set_arity_0;
+using CGAL::set_arity_1;
+using CGAL::set_arity_2;
+using CGAL::set_arity_3;
+using CGAL::set_arity_4;
+using CGAL::set_arity_5;
 using CGAL::swap_1;
 using CGAL::swap_2;
 using CGAL::swap_3;
@@ -61,6 +67,14 @@ int main()
   F3 f3;
   F4 f4;
   F5 f5;
+
+  // test set arity
+  cout << set_arity_0(f0)() << endl;
+  cout << set_arity_1(f1)(1) << endl;
+  cout << set_arity_2(f2)(1, 2) << endl;
+  cout << set_arity_3(f3)(1, 2, 3) << endl;
+  cout << set_arity_4(f4)(1, 2, 3, 4) << endl;
+  cout << set_arity_5(f5)(1, 2, 3, 4, 5) << endl;
 
   // test binders
   cout << bind_1(f1, 2)() << endl;

@@ -40,7 +40,7 @@
   operations anywhere within the sequence. The functionality is
   similar to the \ccStyle{list<T>} in the \stl.
   
-  The \ccClassTemplateName\ manages the items in place, i.e.~inserted
+  The \ccClassTemplateName\ manages the items in place, i.e., inserted
   items are not copied. Two pointers of type \ccStyle{T*} are expected
   to be reserved in \ccc{T} for the list management. The base class
   \ccStyle{In_place_list_base<T>} can be used to obtain such pointers.
@@ -972,7 +972,7 @@
   $f$. The first argument $f_0$ always denotes the base functor, for
   which the remaining functors $f_1,\,\ldots,\,f_n$ provide the
   arguments. If we denote the arity of a functor $f$ by $ar(f)$, then
-  $ar(f) = \sum_{i=1}^n ar(f_i)$, i.e. the arguments of $f$ are
+  $ar(f) = \sum_{i=1}^n ar(f_i)$, i.e., the arguments of $f$ are
   distributed among $f_1,\,\ldots,\,f_n$ according to their respective
   arity. Between one and three functors can be composed into the base
   functor, giving raise to a functor of arity at most five.
@@ -1091,7 +1091,7 @@
 
 \begin{ccRefClass}{Bind<F,A,i>}
   \ccDefinition The class \ccRefName\ is used to specify the type of a
-  bound functor of type \ccc{F}, i.e. where the \ccc{i}-th argument is
+  bound functor of type \ccc{F}, i.e., where the \ccc{i}-th argument is
   bound to some object of type \ccc{A}. The class is used in
   conjunction with the \ccc{bind} functions.
 
@@ -1116,7 +1116,7 @@
 
 \begin{ccRefClass}{Compose<F0,F1,F2,F3>}
   \ccDefinition The class \ccRefName\ is used to specify the type of a
-  composed functor, i.e. the functor that results from composing
+  composed functor, i.e., the functor that results from composing
   functors of type \ccc{F1}, \ccc{F2}, and \ccc{F3}, into a functor of
   type \ccc{F0}. The arguments \ccc{F2} and \ccc{F3} are optional,
   such that between two and four functors can participate in the
@@ -1141,7 +1141,7 @@
 
 \begin{ccRefClass}{Compose_shared<F0,F1,F2,F3>}
   \ccDefinition The class \ccRefName\ is used to specify the type of a
-  composed functor, i.e. the functor that results from composing
+  composed functor, i.e., the functor that results from composing
   functors of type \ccc{F1}, \ccc{F2}, and \ccc{F3}, into a functor of
   type \ccc{F0}. The arguments \ccc{F2} and \ccc{F3} are optional,
   such that between two and four functors can participate in the
@@ -1167,17 +1167,16 @@
 \begin{ccRefFunctionObjectConcept}{AdaptableFunctor}
   
   \ccDefinition The concept \ccRefName\ defines an adaptable functor,
-  i.e. a functor that can be used with function object adaptors such
+  i.e., a functor that can be used with function object adaptors such
   as binders and composers.
 
   \ccTypes 
   
-  \ccTwo{Arity}{}
-  \ccNestedType{result_type}{return type of the functor.}
-  \ccNestedType{Arity}{defines the arity of the functor, i.e. the
-    number of arguments it takes. The class has to be a specialization
-    of \ccc{CGAL::Arity_tag<int>}, where the template parameter
-    corresponds to the arity of the functor, e.g.
+  \ccTwo{Arity}{} \ccNestedType{result_type}{return type of the
+    functor.}  \ccNestedType{Arity}{defines the arity of the functor,
+    i.e., the number of arguments it takes. The class has to be a
+    specialization of \ccc{CGAL::Arity_tag<int>}, where the template
+    parameter corresponds to the arity of the functor, e.g.
     \ccc{CGAL::Arity_tag<2>} for binary functors.}
   
   \ccOperations
@@ -1193,18 +1192,30 @@
   the functors from the standard library.
   
   \ccHasModels All functors from the standard library, and all
-  functors from the CGAL kernels which have a well-defined arity.
+  functors from the lower dimensional CGAL kernels. For all kernel
+  functors, their arity is listed in the documentation. Some (few) of
+  them are overloaded with operators of different arities; in this
+  case one of these arities has been chosen as default arity. If you
+  want to adapt the functor to a different arity, use the functor
+  adaptor \ccc{CGAL::Set_arity<F,a>}.
   
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::Arity_tag<int>}\\
-  \ccRefIdfierPage{CGAL::Arity_traits<F>}
+  \ccRefIdfierPage{CGAL::Arity_traits<F>}\\
+  \ccRefIdfierPage{CGAL::Set_arity<F,a>}\\
+  \ccRefIdfierPage{CGAL::set_arity_0}\\
+  \ccRefIdfierPage{CGAL::set_arity_1}\\
+  \ccRefIdfierPage{CGAL::set_arity_2}\\
+  \ccRefIdfierPage{CGAL::set_arity_3}\\
+  \ccRefIdfierPage{CGAL::set_arity_4}\\
+  \ccRefIdfierPage{CGAL::set_arity_5}
 
 \end{ccRefFunctionObjectConcept}
 
 \begin{ccRefClass}{Arity_tag<int>}
   
   \ccDefinition The class \ccRefName\ is used to define the arity of a
-  functor, i.e. the number of arguments it takes. It is used as a
+  functor, i.e., the number of arguments it takes. It is used as a
   compile time tag only, that is objects of this type are never
   created anywhere.
 
@@ -1218,7 +1229,7 @@
 \begin{ccRefClass}{Arity_traits<F>}
   
   \ccDefinition The class \ccRefName\ is used to define the arity of a
-  functor class \ccc{F}, i.e. the number of arguments it takes. It is
+  functor class \ccc{F}, i.e., the number of arguments it takes. It is
   used as a compile time tag only, that is objects of this type are
   never created anywhere. Specializations of \ccRefName\ can be
   defined, where existing functors cannot be changed easily to contain
@@ -1233,6 +1244,182 @@
   \ccRefIdfierPage{CGAL::Arity_tag<int>}
 
 \end{ccRefClass}
+
+\begin{ccRefClass}{Set_arity<F,a>}
+  \ccDefinition The class \ccRefName\ is used to specify the type of a
+  functor of type \ccc{F} whose arity has been set explicitly to
+  \ccc{a}. The class is used in conjunction with the \ccc{set_arity}
+  functions.
+
+  \ccInclude{CGAL/functional.h}
+  
+  \ccTypes
+  \ccNestedType{Type}{the functor type.}
+  
+  \ccHeading{Notes} This class encapsulates the differences in
+  implementation across various platforms. But in any case, \ccc{Type}
+  refers to a model of \ccc{AdaptableFunctor} with arity \ccc{a}.
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::set_arity_0}\\
+  \ccRefIdfierPage{CGAL::set_arity_1}\\
+  \ccRefIdfierPage{CGAL::set_arity_2}\\
+  \ccRefIdfierPage{CGAL::set_arity_3}\\
+  \ccRefIdfierPage{CGAL::set_arity_4}\\
+  \ccRefIdfierPage{CGAL::set_arity_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefClass}
+
+\begin{ccRefFunction}{set_arity_0}
+  \ccDefinition The function \ccRefName\ is used to set the arity of a
+  functor to zero. The result is a functor that takes no arguments and
+  calls the original functor with no arguments.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Set_arity< F, 0 >::Type}{set_arity_0}{}
+  
+  \ccFunction{template < class F > Set_arity< F, 0 >::Type
+    set_arity_0(const F& f);}{returns a functor equivalent to \ccc{f},
+    but which has arity zero.
+    \ccRequire F is a model for \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Set_arity<F,a>}\\
+  \ccRefIdfierPage{CGAL::set_arity_1}\\
+  \ccRefIdfierPage{CGAL::set_arity_2}\\
+  \ccRefIdfierPage{CGAL::set_arity_3}\\
+  \ccRefIdfierPage{CGAL::set_arity_4}\\
+  \ccRefIdfierPage{CGAL::set_arity_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{set_arity_1}
+  \ccDefinition The function \ccRefName\ is used to set the arity of a
+  functor to one. The result is a functor that takes one argument and
+  calls the original functor with this argument.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Set_arity< F, 1 >::Type}{set_arity_1}{}
+  
+  \ccFunction{template < class F > Set_arity< F, 1 >::Type
+    set_arity_1(const F& f);}{returns a functor equivalent to \ccc{f},
+    but which has arity one.
+    \ccRequire F is a model for \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Set_arity<F,a>}\\
+  \ccRefIdfierPage{CGAL::set_arity_0}\\
+  \ccRefIdfierPage{CGAL::set_arity_2}\\
+  \ccRefIdfierPage{CGAL::set_arity_3}\\
+  \ccRefIdfierPage{CGAL::set_arity_4}\\
+  \ccRefIdfierPage{CGAL::set_arity_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{set_arity_2}
+  \ccDefinition The function \ccRefName\ is used to set the arity of a
+  functor to two. The result is a functor that takes two arguments and
+  calls the original functor with these arguments.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Set_arity< F, 2 >::Type}{set_arity_2}{}
+  
+  \ccFunction{template < class F > Set_arity< F, 2 >::Type
+    set_arity_2(const F& f);}{returns a functor equivalent to \ccc{f},
+    but which has arity two.
+    \ccRequire F is a model for \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Set_arity<F,a>}\\
+  \ccRefIdfierPage{CGAL::set_arity_0}\\
+  \ccRefIdfierPage{CGAL::set_arity_1}\\
+  \ccRefIdfierPage{CGAL::set_arity_3}\\
+  \ccRefIdfierPage{CGAL::set_arity_4}\\
+  \ccRefIdfierPage{CGAL::set_arity_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{set_arity_3}
+  \ccDefinition The function \ccRefName\ is used to set the arity of a
+  functor to three. The result is a functor that takes three arguments
+  and calls the original functor with these arguments.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Set_arity< F, 3 >::Type}{set_arity_3}{}
+  
+  \ccFunction{template < class F > Set_arity< F, 3 >::Type
+    set_arity_3(const F& f);}{returns a functor equivalent to \ccc{f},
+    but which has arity three.
+    \ccRequire F is a model for \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Set_arity<F,a>}\\
+  \ccRefIdfierPage{CGAL::set_arity_0}\\
+  \ccRefIdfierPage{CGAL::set_arity_1}\\
+  \ccRefIdfierPage{CGAL::set_arity_2}\\
+  \ccRefIdfierPage{CGAL::set_arity_4}\\
+  \ccRefIdfierPage{CGAL::set_arity_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{set_arity_4}
+  \ccDefinition The function \ccRefName\ is used to set the arity of a
+  functor to four. The result is a functor that takes four arguments
+  and calls the original functor with these arguments.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Set_arity< F, 4 >::Type}{set_arity_4}{}
+  
+  \ccFunction{template < class F > Set_arity< F, 4 >::Type
+    set_arity_4(const F& f);}{returns a functor equivalent to \ccc{f},
+    but which has arity four.
+    \ccRequire F is a model for \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Set_arity<F,a>}\\
+  \ccRefIdfierPage{CGAL::set_arity_0}\\
+  \ccRefIdfierPage{CGAL::set_arity_1}\\
+  \ccRefIdfierPage{CGAL::set_arity_2}\\
+  \ccRefIdfierPage{CGAL::set_arity_3}\\
+  \ccRefIdfierPage{CGAL::set_arity_5}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{set_arity_5}
+  \ccDefinition The function \ccRefName\ is used to set the arity of a
+  functor to five. The result is a functor that takes five arguments
+  and calls the original functor with these arguments.
+  
+  \ccInclude{CGAL/functional.h}
+  
+  \ccThree{Set_arity< F, 5 >::Type}{set_arity_5}{}
+  
+  \ccFunction{template < class F > Set_arity< F, 5 >::Type
+    set_arity_5(const F& f);}{returns a functor equivalent to \ccc{f},
+    but which has arity five.
+    \ccRequire F is a model for \ccc{AdaptableFunctor}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Set_arity<F,a>}\\
+  \ccRefIdfierPage{CGAL::set_arity_0}\\
+  \ccRefIdfierPage{CGAL::set_arity_1}\\
+  \ccRefIdfierPage{CGAL::set_arity_2}\\
+  \ccRefIdfierPage{CGAL::set_arity_3}\\
+  \ccRefIdfierPage{CGAL::set_arity_4}\\ 
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
 
 %% +=========================================================================+
 

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997, 1998, 1999, 2000 The CGAL Consortium
+// Copyright (c) 1997-2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -30,6 +30,106 @@
 #define CGAL_FUNCTIONAL_MSVC_H 1
 
 CGAL_BEGIN_NAMESPACE
+
+namespace CGALi {
+
+  template < class F, int a >
+  struct Set_arity_helper {
+    typedef Arity_tag< a >           Arity;
+    typedef typename F::result_type  result_type;
+
+    Set_arity_helper(const F& f) : f_(f) {}
+
+    result_type operator()() const { return f_(); }
+
+    template < class A1 >
+    result_type operator()(const A1& a1) const { return f_(a1); }
+
+    template < class A1, class A2 >
+    result_type operator()(const A1& a1, const A2& a2) const
+    { return f_(a1, a2); }
+
+    template < class A1, class A2, class A3 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3) const
+    { return f_(a1, a2, a3); }
+
+    template < class A1, class A2, class A3, class A4 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
+    { return f_(a1, a2, a3, a4); }
+
+    template < class A1, class A2, class A3, class A4, class A5 >
+    result_type operator()
+    (const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5)
+    const
+    { return f_(a1, a2, a3, a4, a5); }
+
+  protected:
+    F f_;
+  };
+
+} // namespace CGALi
+
+template < class F, int a >
+struct Set_arity {
+  typedef CGALi::Set_arity_helper< F, a > Type;
+};
+
+template < class F >
+inline
+typename Set_arity< F, 0 >::Type
+set_arity_0(const F& f)
+{
+  typedef typename Set_arity< F, 0 >::Type Type;
+  return Type(f);
+}
+
+template < class F >
+inline
+typename Set_arity< F, 1 >::Type
+set_arity_1(const F& f)
+{
+  typedef typename Set_arity< F, 1 >::Type Type;
+  return Type(f);
+}
+
+template < class F >
+inline
+typename Set_arity< F, 2 >::Type
+set_arity_2(const F& f)
+{
+  typedef typename Set_arity< F, 2 >::Type Type;
+  return Type(f);
+}
+
+template < class F >
+inline
+typename Set_arity< F, 3 >::Type
+set_arity_3(const F& f)
+{
+  typedef typename Set_arity< F, 3 >::Type Type;
+  return Type(f);
+}
+
+template < class F >
+inline
+typename Set_arity< F, 4 >::Type
+set_arity_4(const F& f)
+{
+  typedef typename Set_arity< F, 4 >::Type Type;
+  return Type(f);
+}
+
+template < class F >
+inline
+typename Set_arity< F, 5 >::Type
+set_arity_5(const F& f)
+{
+  typedef typename Set_arity< F, 5 >::Type Type;
+  return Type(f);
+}
+
 
 // helper classes for arity
 namespace CGALi {
