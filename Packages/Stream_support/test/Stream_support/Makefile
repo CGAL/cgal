@@ -1,3 +1,4 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -13,17 +14,23 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../include \
            $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           -g
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
+          $(CGAL_LIBPATH)
+
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -31,20 +38,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_support 
+                test_support$(EXE_EXT) 
 
-test_support: test_support.o
-	$(CGAL_CXX) -o test_support test_support.o $(LDFLAGS)
+test_support$(EXE_EXT): test_support$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_support test_support$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	rm -f *.o \
-                   test_support \
-                   core
+clean: \
+                   test_support.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 

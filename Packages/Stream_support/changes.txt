@@ -1,5 +1,8 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
+2.13 (5 June 01)
+- Recreate the makefile for BCC support.
+
 2.12 (30 Jan 01)
 - Readded some of the old code.
 
