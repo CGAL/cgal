@@ -1,6 +1,6 @@
 /* mpfr.h -- Include file for mpfr.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -23,9 +23,17 @@ MA 02111-1307, USA. */
 #define __MPFR_H
 
 /* check if stdio.h is included */
-#if defined (FILE) || defined (H_STDIO) || defined (_H_STDIO) \
- || defined (_STDIO_H) || defined (_STDIO_H_) || defined (__STDIO_H__) \
- || defined (_STDIO_INCLUDED) || defined (__dj_include_stdio_h_)
+#if defined (FILE)                                              \
+  || defined (H_STDIO)                                          \
+  || defined (_H_STDIO)               /* AIX */                 \
+  || defined (_STDIO_H)               /* glibc, Sun, SCO */     \
+  || defined (_STDIO_H_)              /* BSD, OSF */            \
+  || defined (__STDIO_H)              /* Borland */             \
+  || defined (__STDIO_H__)            /* IRIX */                \
+  || defined (_STDIO_INCLUDED)        /* HPUX */                \
+  || defined (__dj_include_stdio_h_)  /* DJGPP */               \
+  || defined (_FILE_DEFINED)          /* Microsoft */           \
+  || defined (__STDIO__)              /* Apple MPW MrC */
 #define _MPFR_H_HAVE_FILE 1
 #endif
 
@@ -38,7 +46,7 @@ MA 02111-1307, USA. */
 
 /* Definition of exponent limits */
 
-#define MPFR_EMAX_DEFAULT ((mp_exp_t) (((unsigned long) 1 << 31) - 1))
+#define MPFR_EMAX_DEFAULT ((mp_exp_t) (((unsigned long) 1 << 30) - 1))
 #define MPFR_EMIN_DEFAULT (-(MPFR_EMAX_DEFAULT))
 
 #define MPFR_EMIN_MIN MPFR_EMIN_DEFAULT
@@ -63,21 +71,21 @@ typedef unsigned long int mp_prec_t; /* easy to change if necessary */
 
 typedef int mp_rnd_t;
 
-typedef struct {  
+typedef struct {
   mp_prec_t _mpfr_prec; /* WARNING : for the mpfr type, the precision */
                               /* should be understood as the number of BITS,*/
 			      /* not the number of mp_limb_t's. This means  */
 			      /* that the corresponding number of allocated
 				 limbs is >= ceil(_mp_prec/BITS_PER_MP_LIMB) */
-  mp_size_t _mpfr_size;         /* MPFR_ABSSIZE(.) is the number of allocated 
+  mp_size_t _mpfr_size;         /* MPFR_ABSSIZE(.) is the number of allocated
 				 limbs the field _mp_d points to.
 				 The sign is that of _mpfr_size.
 				 The number 0 is such that _mp_d[k-1]=0
 				 where k = ceil(_mp_prec/BITS_PER_MP_LIMB) */
-  mp_exp_t _mpfr_exp; 
+  mp_exp_t _mpfr_exp;
   mp_limb_t *_mpfr_d;
 }
-__mpfr_struct; 
+__mpfr_struct;
 
 /*
    The number represented is
@@ -93,8 +101,8 @@ __mpfr_struct;
    We must also have the last k*BITS_PER_MP_LIMB-_mp_prec bits set to zero.
 */
 
-typedef __mpfr_struct mpfr_t[1]; 
-typedef __mpfr_struct *mpfr_ptr; 
+typedef __mpfr_struct mpfr_t[1];
+typedef __mpfr_struct *mpfr_ptr;
 typedef __gmp_const __mpfr_struct *mpfr_srcptr;
 
 #define MPFR_SIGN(x) (((x)->_mpfr_size >> 31) ? -1 : 1)
@@ -116,11 +124,11 @@ typedef __gmp_const __mpfr_struct *mpfr_srcptr;
 
 #if defined (__cplusplus)
 extern "C" {
-#endif  
+#endif
 
-extern unsigned int __mpfr_flags;
-extern mp_exp_t __mpfr_emin;
-extern mp_exp_t __mpfr_emax;
+extern unsigned int __gmpfr_flags;
+extern mp_exp_t __gmpfr_emin;
+extern mp_exp_t __gmpfr_emax;
 mp_exp_t mpfr_get_emin _PROTO ((void));
 int mpfr_set_emin _PROTO ((mp_exp_t));
 mp_exp_t mpfr_get_emax _PROTO ((void));
@@ -130,7 +138,7 @@ void mpfr_clear_underflow _PROTO ((void));
 void mpfr_clear_overflow _PROTO ((void));
 void mpfr_clear_nanflag _PROTO ((void));
 void mpfr_clear_inexflag _PROTO ((void));
-int mpfr_check_range _PROTO ((mpfr_ptr, mp_rnd_t));
+int mpfr_check_range _PROTO ((mpfr_ptr, int, mp_rnd_t));
 int mpfr_underflow_p _PROTO ((void));
 int mpfr_overflow_p _PROTO ((void));
 int mpfr_nanflag_p _PROTO ((void));
@@ -138,28 +146,37 @@ int mpfr_inexflag_p _PROTO ((void));
 
 void mpfr_init2 _PROTO ((mpfr_ptr, mp_prec_t));
 void mpfr_init _PROTO ((mpfr_ptr));
-int mpfr_round_prec _PROTO ((mpfr_ptr, mp_rnd_t, mp_prec_t));
+int mpfr_prec_round _PROTO ((mpfr_ptr, mp_prec_t, mp_rnd_t));
+#define mpfr_round_prec(x,r,p) mpfr_prec_round(x,p,r) /* compatibility 2.0.1 */
 int mpfr_can_round _PROTO ((mpfr_ptr, mp_exp_t, mp_rnd_t, mp_rnd_t,
 			    mp_prec_t));
-int mpfr_set_d _PROTO ((mpfr_ptr, double, mp_rnd_t)); 
-int mpfr_set_z _PROTO ((mpfr_ptr, mpz_srcptr, mp_rnd_t)); 
+mp_exp_t mpfr_get_exp _PROTO ((mpfr_srcptr));
+int mpfr_set_exp _PROTO ((mpfr_ptr, mp_exp_t));
+int mpfr_set_d _PROTO ((mpfr_ptr, double, mp_rnd_t));
+int mpfr_set_ld _PROTO ((mpfr_ptr, long double, mp_rnd_t));
+int mpfr_set_z _PROTO ((mpfr_ptr, mpz_srcptr, mp_rnd_t));
 void mpfr_set_nan _PROTO ((mpfr_ptr));
 void mpfr_set_inf _PROTO ((mpfr_ptr, int));
-mp_exp_t mpfr_get_z_exp _PROTO ((mpz_ptr, mpfr_srcptr)); 
-int mpfr_set_q _PROTO ((mpfr_ptr, mpq_srcptr, mp_rnd_t)); 
-double mpfr_get_d1 _PROTO ((mpfr_srcptr));
+mp_exp_t mpfr_get_z_exp _PROTO ((mpz_ptr, mpfr_srcptr));
+int mpfr_set_q _PROTO ((mpfr_ptr, mpq_srcptr, mp_rnd_t));
 double mpfr_get_d _PROTO ((mpfr_srcptr, mp_rnd_t));
+long double mpfr_get_ld _PROTO ((mpfr_srcptr, mp_rnd_t));
+double mpfr_get_d1 _PROTO ((mpfr_srcptr));
+double mpfr_get_d_2exp _PROTO ((long *, mpfr_srcptr, mp_rnd_t));
+long mpfr_get_si _PROTO ((mpfr_srcptr, mp_rnd_t));
+unsigned long mpfr_get_ui _PROTO ((mpfr_srcptr, mp_rnd_t));
 int mpfr_set_f _PROTO ((mpfr_ptr, mpf_srcptr, mp_rnd_t));
 int mpfr_set_si _PROTO ((mpfr_ptr, long, mp_rnd_t));
 int mpfr_set_ui _PROTO ((mpfr_ptr, unsigned long, mp_rnd_t));
-void mpfr_print_binary _PROTO ((mpfr_srcptr)); 
 void mpfr_random _PROTO ((mpfr_ptr));
-void mpfr_random2 _PROTO ((mpfr_ptr, mp_size_t, mp_exp_t)); 
-void mpfr_urandomb _PROTO ((mpfr_ptr, gmp_randstate_t)); 
-void mpfr_clear _PROTO ((mpfr_ptr)); 
-void mpfr_set_str_raw _PROTO ((mpfr_ptr, char *));
+void mpfr_random2 _PROTO ((mpfr_ptr, mp_size_t, mp_exp_t));
+int mpfr_urandomb _PROTO ((mpfr_ptr, gmp_randstate_t));
+void mpfr_clear _PROTO ((mpfr_ptr));
+void mpfr_nextabove _PROTO ((mpfr_ptr));
+void mpfr_nextbelow _PROTO ((mpfr_ptr));
+void mpfr_nexttoward _PROTO ((mpfr_ptr, mpfr_srcptr));
 int mpfr_set_str _PROTO ((mpfr_ptr, __gmp_const char *, int, mp_rnd_t));
-int mpfr_init_set_str _PROTO ((mpfr_ptr, char *, int, mp_rnd_t));
+int mpfr_init_set_str _PROTO ((mpfr_ptr, __gmp_const char *, int, mp_rnd_t));
 char* mpfr_get_str _PROTO ((char *, mp_exp_t *, int, size_t, mpfr_srcptr, mp_rnd_t));
 #ifdef _MPFR_H_HAVE_FILE
 size_t mpfr_inp_str _PROTO ((mpfr_ptr, FILE *, int, mp_rnd_t));
@@ -170,9 +187,9 @@ int mpfr_pow_ui _PROTO ((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
 int mpfr_ui_pow_ui _PROTO ((mpfr_ptr, unsigned long int, unsigned long int,
 			     mp_rnd_t));
 int mpfr_div _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
-void mpfr_agm _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_agm _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_sqrt _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
-int mpfr_sqrt_ui _PROTO ((mpfr_ptr, unsigned long, mp_rnd_t));  
+int mpfr_sqrt_ui _PROTO ((mpfr_ptr, unsigned long, mp_rnd_t));
 int mpfr_add _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_add_ui _PROTO ((mpfr_ptr, mpfr_srcptr, unsigned long, mp_rnd_t));
 int mpfr_sub_ui _PROTO ((mpfr_ptr, mpfr_srcptr, unsigned long, mp_rnd_t));
@@ -180,8 +197,8 @@ int mpfr_add_one_ulp _PROTO ((mpfr_ptr, mp_rnd_t));
 int mpfr_sub _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_ui_sub _PROTO ((mpfr_ptr, unsigned long, mpfr_srcptr, mp_rnd_t));
 void mpfr_reldiff _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
-void mpfr_const_pi _PROTO ((mpfr_ptr, mp_rnd_t));
-void mpfr_const_log2 _PROTO ((mpfr_ptr, mp_rnd_t));
+int mpfr_const_pi _PROTO ((mpfr_ptr, mp_rnd_t));
+int mpfr_const_log2 _PROTO ((mpfr_ptr, mp_rnd_t));
 int mpfr_const_euler _PROTO ((mpfr_ptr, mp_rnd_t));
 int mpfr_log _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_exp _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
@@ -191,26 +208,25 @@ int mpfr_sin_cos _PROTO ((mpfr_ptr, mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_cos _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_tan _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_mul_ui _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
-void mpfr_set_machine_rnd_mode _PROTO ((mp_rnd_t));
-int mpfr_cmp_ui_2exp _PROTO ((mpfr_srcptr, unsigned long int, int));
-int mpfr_cmp_si_2exp _PROTO ((mpfr_srcptr, long int, int));
+int mpfr_cmp_ui_2exp _PROTO ((mpfr_srcptr, unsigned long int, mp_exp_t));
+int mpfr_cmp_si_2exp _PROTO ((mpfr_srcptr, long int, mp_exp_t));
 int mpfr_mul_2exp _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
 int mpfr_div_2exp _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
 int mpfr_mul_2ui _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
 int mpfr_div_2ui _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
 int mpfr_mul_2si _PROTO((mpfr_ptr, mpfr_srcptr, long int, mp_rnd_t));
 int mpfr_div_2si _PROTO((mpfr_ptr, mpfr_srcptr, long int, mp_rnd_t));
-int mpfr_set_prec _PROTO((mpfr_ptr, mp_prec_t));
+void mpfr_set_prec _PROTO((mpfr_ptr, mp_prec_t));
 void mpfr_set_prec_raw _PROTO((mpfr_ptr, mp_prec_t));
 void mpfr_set_default_prec _PROTO((mp_prec_t));
 mp_prec_t mpfr_get_default_prec _PROTO((void));
-extern mp_prec_t __mpfr_default_fp_bit_precision;
-extern mp_rnd_t __gmp_default_rounding_mode;
-char * mpfr_print_rnd_mode _PROTO((mp_rnd_t)); 
-int mpfr_neg _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
+extern mp_prec_t __gmpfr_default_fp_bit_precision;
+extern mp_rnd_t __gmpfr_default_rounding_mode;
+__gmp_const char * mpfr_print_rnd_mode _PROTO((mp_rnd_t));
+int mpfr_neg _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_sub_one_ulp _PROTO((mpfr_ptr, mp_rnd_t));
-int mpfr_div_ui _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t)); 
-int mpfr_ui_div _PROTO((mpfr_ptr, unsigned long int, mpfr_srcptr, mp_rnd_t)); 
+int mpfr_div_ui _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
+int mpfr_ui_div _PROTO((mpfr_ptr, unsigned long int, mpfr_srcptr, mp_rnd_t));
 mp_prec_t mpfr_get_prec _PROTO((mpfr_srcptr));
 void mpfr_set_default_rounding_mode _PROTO((mp_rnd_t));
 int mpfr_eq _PROTO((mpfr_srcptr, mpfr_srcptr, unsigned long));
@@ -219,87 +235,108 @@ int mpfr_round _PROTO((mpfr_ptr, mpfr_srcptr));
 int mpfr_trunc _PROTO((mpfr_ptr, mpfr_srcptr));
 int mpfr_ceil _PROTO((mpfr_ptr, mpfr_srcptr));
 int mpfr_floor _PROTO((mpfr_ptr, mpfr_srcptr));
+int mpfr_frac _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_ulong_p _PROTO((mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_slong_p _PROTO((mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_uint_p _PROTO((mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_sint_p _PROTO((mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_ushort_p _PROTO((mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_sshort_p _PROTO((mpfr_srcptr, mp_rnd_t));
 void mpfr_extract _PROTO((mpz_ptr, mpfr_srcptr, unsigned int));
 void mpfr_swap _PROTO((mpfr_ptr, mpfr_ptr));
 void mpfr_dump _PROTO((mpfr_srcptr, mp_rnd_t));
 int mpfr_set4 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t, int));
 int mpfr_cmp3 _PROTO ((mpfr_srcptr, mpfr_srcptr, int));
+int mpfr_cmp_d _PROTO ((mpfr_srcptr, double));
+int mpfr_cmpabs _PROTO ((mpfr_srcptr, mpfr_srcptr));
+#define mpfr_cmp_abs mpfr_cmpabs /* keep for compatibility with mpfr-2.0.1 */
 int mpfr_nan_p _PROTO((mpfr_srcptr));
 int mpfr_inf_p _PROTO((mpfr_srcptr));
 int mpfr_number_p _PROTO((mpfr_srcptr));
 int mpfr_acos _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_asin _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_atan _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_erf _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
-int mpfr_sinh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
+int mpfr_sinh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_tanh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_factorial _PROTO ((mpfr_ptr, unsigned long int, mp_rnd_t));
 int mpfr_ui_pow _PROTO ((mpfr_ptr, unsigned long int, mpfr_srcptr, mp_rnd_t));
 
-int mpfr_atanh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
-int mpfr_acosh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
-int mpfr_asinh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
+int mpfr_atanh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_acosh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_asinh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
-int mpfr_cosh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
-int mpfr_sinh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
+int mpfr_cosh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_sinh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_tanh _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_asin _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_atan _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_fac_ui _PROTO ((mpfr_ptr, unsigned long int, mp_rnd_t));
 int mpfr_fma _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_hypot _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
-int mpfr_pow _PROTO ((mpfr_ptr, mpfr_srcptr,mpfr_srcptr, mp_rnd_t)); 
-int mpfr_pow_si _PROTO ((mpfr_ptr, mpfr_srcptr, long int, mp_rnd_t)); 
-int mpfr_isinteger _PROTO ((mpfr_srcptr));
-int mpfr_log2 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
-int mpfr_log10 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
-int mpfr_log1p _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
-int mpfr_expm1 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
-int mpfr_cbrt _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
+int mpfr_pow _PROTO ((mpfr_ptr, mpfr_srcptr,mpfr_srcptr, mp_rnd_t));
+int mpfr_pow_si _PROTO ((mpfr_ptr, mpfr_srcptr, long int, mp_rnd_t));
+int mpfr_integer_p _PROTO ((mpfr_srcptr));
+int mpfr_log2 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_log10 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_log1p _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_expm1 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_cbrt _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_gamma _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_zeta _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
 int mpfr_min _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_max _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_dim _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_copysign _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 
-int mpfr_mul_z _PROTO ((mpfr_ptr, mpfr_srcptr, mpz_srcptr, mp_rnd_t)); 
-int mpfr_div_z _PROTO ((mpfr_ptr, mpfr_srcptr, mpz_srcptr, mp_rnd_t)); 
-int mpfr_add_z _PROTO ((mpfr_ptr, mpfr_srcptr, mpz_srcptr, mp_rnd_t)); 
-int mpfr_sub_z _PROTO ((mpfr_ptr, mpfr_srcptr, mpz_srcptr, mp_rnd_t)); 
+int mpfr_mul_z _PROTO ((mpfr_ptr, mpfr_srcptr, mpz_srcptr, mp_rnd_t));
+int mpfr_div_z _PROTO ((mpfr_ptr, mpfr_srcptr, mpz_srcptr, mp_rnd_t));
+int mpfr_add_z _PROTO ((mpfr_ptr, mpfr_srcptr, mpz_srcptr, mp_rnd_t));
+int mpfr_sub_z _PROTO ((mpfr_ptr, mpfr_srcptr, mpz_srcptr, mp_rnd_t));
 
-int mpfr_mul_q _PROTO ((mpfr_ptr, mpfr_srcptr, mpq_srcptr, mp_rnd_t)); 
-int mpfr_div_q _PROTO ((mpfr_ptr, mpfr_srcptr, mpq_srcptr, mp_rnd_t)); 
-int mpfr_add_q _PROTO ((mpfr_ptr, mpfr_srcptr, mpq_srcptr, mp_rnd_t)); 
-int mpfr_sub_q _PROTO ((mpfr_ptr, mpfr_srcptr, mpq_srcptr, mp_rnd_t)); 
+int mpfr_mul_q _PROTO ((mpfr_ptr, mpfr_srcptr, mpq_srcptr, mp_rnd_t));
+int mpfr_div_q _PROTO ((mpfr_ptr, mpfr_srcptr, mpq_srcptr, mp_rnd_t));
+int mpfr_add_q _PROTO ((mpfr_ptr, mpfr_srcptr, mpq_srcptr, mp_rnd_t));
+int mpfr_sub_q _PROTO ((mpfr_ptr, mpfr_srcptr, mpq_srcptr, mp_rnd_t));
+
+int mpfr_greater_p _PROTO ((mpfr_srcptr, mpfr_srcptr));
+int mpfr_greaterequal_p _PROTO ((mpfr_srcptr, mpfr_srcptr));
+int mpfr_less_p _PROTO ((mpfr_srcptr, mpfr_srcptr));
+int mpfr_lessequal_p _PROTO ((mpfr_srcptr, mpfr_srcptr));
+int mpfr_lessgreater_p _PROTO ((mpfr_srcptr, mpfr_srcptr));
+int mpfr_equal_p _PROTO ((mpfr_srcptr, mpfr_srcptr));
+int mpfr_unordered_p _PROTO ((mpfr_srcptr, mpfr_srcptr));
 
 #if defined (__cplusplus)
 }
-#endif  
+#endif
 
 /* prevent from using mpfr_get_e{min,max} as lvalues */
-#define mpfr_get_emin() (__mpfr_emin + 0)
-#define mpfr_get_emax() (__mpfr_emax + 0)
+#define mpfr_get_emin() (__gmpfr_emin + 0)
+#define mpfr_get_emax() (__gmpfr_emax + 0)
 
 #define mpfr_clear_flags() \
-  ((void) (__mpfr_flags = 0))
+  ((void) (__gmpfr_flags = 0))
 #define mpfr_clear_underflow() \
-  ((void) (__mpfr_flags &= MPFR_FLAGS_ALL ^ MPFR_FLAGS_UNDERFLOW))
+  ((void) (__gmpfr_flags &= MPFR_FLAGS_ALL ^ MPFR_FLAGS_UNDERFLOW))
 #define mpfr_clear_overflow() \
-  ((void) (__mpfr_flags &= MPFR_FLAGS_ALL ^ MPFR_FLAGS_OVERFLOW))
+  ((void) (__gmpfr_flags &= MPFR_FLAGS_ALL ^ MPFR_FLAGS_OVERFLOW))
 #define mpfr_clear_nanflag() \
-  ((void) (__mpfr_flags &= MPFR_FLAGS_ALL ^ MPFR_FLAGS_NAN))
+  ((void) (__gmpfr_flags &= MPFR_FLAGS_ALL ^ MPFR_FLAGS_NAN))
 #define mpfr_clear_inexflag() \
-  ((void) (__mpfr_flags &= MPFR_FLAGS_ALL ^ MPFR_FLAGS_INEXACT))
+  ((void) (__gmpfr_flags &= MPFR_FLAGS_ALL ^ MPFR_FLAGS_INEXACT))
 #define mpfr_underflow_p() \
-  ((int) (__mpfr_flags & MPFR_FLAGS_UNDERFLOW))
+  ((int) (__gmpfr_flags & MPFR_FLAGS_UNDERFLOW))
 #define mpfr_overflow_p() \
-  ((int) (__mpfr_flags & MPFR_FLAGS_OVERFLOW))
+  ((int) (__gmpfr_flags & MPFR_FLAGS_OVERFLOW))
 #define mpfr_nanflag_p() \
-  ((int) (__mpfr_flags & MPFR_FLAGS_NAN))
+  ((int) (__gmpfr_flags & MPFR_FLAGS_NAN))
 #define mpfr_inexflag_p() \
-  ((int) (__mpfr_flags & MPFR_FLAGS_INEXACT))
+  ((int) (__gmpfr_flags & MPFR_FLAGS_INEXACT))
 
-#define mpfr_round(a,b) mpfr_rint((a), (b), GMP_RNDN)
+#define mpfr_round(a,b) mpfr_rint((a), (b), -1)
 #define mpfr_trunc(a,b) mpfr_rint((a), (b), GMP_RNDZ)
 #define mpfr_ceil(a,b)  mpfr_rint((a), (b), GMP_RNDU)
 #define mpfr_floor(a,b) mpfr_rint((a), (b), GMP_RNDD)
