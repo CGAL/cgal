@@ -9,6 +9,7 @@ sub usage() {
     print STDERR<<"EOF";
 usage:
   $0 (-h|-r) 
+             [-n version number]
              [-d releasedir] [-a allpackagesdir] 
              [-s scriptsdir]
              [-l lockfile] [-p packagesfile] 
@@ -17,13 +18,14 @@ Exactly one of the options -h or -r must be present.
     -h show this message and quit
     -r release version to be created
 
+    -n version number
     -d releasedir, default releasedir is the current dir
     -a allpackagesdir, default is releasedir/All
     -s scriptsdir, default is releasedir
     -l lockfile, default is releasedir/release_creation.lock
     -p packagesfile, default is releasedir/include_in_release
 
-
+   The version number is stored in include/CGAL/config.h.
    The RELEASEDIR is the place where the new release will be created.
    The ALLPACKAGESDIR is the directory that contains the checked out packages from the CVS. Could be a taged version (<<current_submission>>) or some other version.
    The SCRIPTSDIR is the place where you have the create_makefile script. This script you can take it from CVS/Scripts/scripts/create_makefile. You need this script to create the default makefiles for examples and tests.
@@ -49,6 +51,7 @@ my $TEMPFILE="TEMPFILE.$$";
 
 my (
     $VERSION,
+    $VERSION_NR,
     $LOCKFILE,
     $ALLPACKAGESDIR,
     $RELEASEDIR,
@@ -196,7 +199,7 @@ sub set_version_in_config()
     open(TEMPFILE, ">tempfile") or die;
     while ( <SOURCE_FILE> ) {
 	s|^\s*\#\s*define\s+CGAL_VERSION\b.*$|#define CGAL_VERSION $VERSION|;
-	s|^\s*\#\s*define\s*CGAL_VERSION_NR\b.*$|#define CGAL_VERSION_NR $VERSION|;
+	s|^\s*\#\s*define\s*CGAL_VERSION_NR\b.*$|#define CGAL_VERSION_NR $VERSION_NR|;
 	print TEMPFILE $_;
     }
     close SOURCE_FILE || die "Error closing config.h_with_dir: $!";
@@ -773,7 +776,7 @@ sub file_header_setting
 
 sub main(){
 
-getopts('hr:a:d:l:p:s:');
+getopts('hr:a:d:l:p:s:n:');
 if ($::opt_h ) {
   usage();
   die "\n";
@@ -788,6 +791,11 @@ if ($::opt_d){
 
 if ($::opt_r){
   $VERSION = $::opt_r;
+  if ($::opt_n){
+    $VERSION_NR = $::opt_n;
+  } else {
+    $VERSION_NR = $VERSION;
+  }
 } else {
   usage();
   die "\n";
