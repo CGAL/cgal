@@ -3,7 +3,7 @@
 #include <CGAL/Orthogonal_standard_search.h>
 #include <CGAL/Fuzzy_iso_box_d.h>
 
-#include <vector> 
+#include <vector>  
 #include <iostream>
 
 // create own Point type
@@ -58,6 +58,7 @@ public:
     vec[ k ] = x;
   }
   
+
   FT  & operator[](int k)  
   {
     return  vec[ k ];
@@ -118,37 +119,37 @@ double distance(const Point& p1, const Point& p2) const
     return distx*distx+disty*disty+distz*distz;
 }
 
-double min_distance_to_queryitem(const Point& p,
+double min_distance_to_queryitem(const Point& q,
                                         const CGAL::Kd_tree_rectangle<double>& b) const 
 {   double distance(0.0);
     double h;
-    h=p.x();
+    h=q.x();
     if (h < b.min_coord(0)) distance += (b.min_coord(0)-h)*(b.min_coord(0)-h);
     if (h > b.max_coord(0)) distance += (h-b.max_coord(0))*(h-b.max_coord(0));
-    h=p.y();
+    h=q.y();
     if (h < b.min_coord(1)) distance += (b.min_coord(1)-h)*(b.min_coord(1)-h);
     if (h > b.max_coord(1)) distance += (h-b.max_coord(1))*(h-b.min_coord(1));
-    h=p.z();
+    h=q.z();
     if (h < b.min_coord(2)) distance += (b.min_coord(2)-h)*(b.min_coord(2)-h);
     if (h > b.max_coord(2)) distance += (h-b.max_coord(2))*(h-b.max_coord(2));
     return distance;
 }
 
-double max_distance_to_queryitem(const Point& p,
+double max_distance_to_queryitem(const Point& q,
                                         const CGAL::Kd_tree_rectangle<double>& b) const 
 {   double distance(0.0);
     double h;
-    h=p.x();
+    h=q.x();
     if (h >= (b.min_coord(0)+b.max_coord(0))/2.0) 
                 distance += (h-b.min_coord(0))*(h-b.min_coord(0)); 
 	  else
                 distance += (b.max_coord(0)-h)*(b.max_coord(0)-h);
-    h=p.y();
+    h=q.y();
     if (h >= (b.min_coord(1)+b.max_coord(1))/2.0) 
                 distance += (h-b.min_coord(1))*(h-b.min_coord(1)); 
 	  else
                 distance += (b.max_coord(1)-h)*(b.max_coord(1)-h);
-    h=p.z();
+    h=q.z();
     if (h >= (b.min_coord(2)+b.max_coord(2))/2.0) 
                 distance += (h-b.min_coord(2))*(h-b.min_coord(2)); 
 	  else
@@ -173,11 +174,11 @@ double inverse_of_transformed_distance(double d) const {
 
 typedef R::Point_3 My_point;
 typedef CGAL::Creator_uniform_3<double,My_point> Creator;
-typedef CGAL::Kd_tree_traits_point<My_point> Traits;
-typedef CGAL::Orthogonal_standard_search<Traits, Point3D_distance<My_point> > 
+typedef CGAL::Kd_tree_traits_point<My_point> TreeTraits;
+typedef CGAL::Orthogonal_standard_search<TreeTraits, Point3D_distance<My_point> > 
 NN_orthogonal_search;
 
-typedef std::vector<Traits::Point> Vector;
+typedef std::vector<TreeTraits::Point> Vector;
 
 int main() {
 
@@ -192,8 +193,8 @@ int main() {
   CGAL::Random_points_in_cube_3<My_point,Creator> g( 1.0);
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
-  Traits tr(bucket_size);
-  typedef CGAL::Kd_tree<Traits> Tree;
+  TreeTraits tr(bucket_size);
+  typedef CGAL::Kd_tree<TreeTraits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
 
   // generate random query points

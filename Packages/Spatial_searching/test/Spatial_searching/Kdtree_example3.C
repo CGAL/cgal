@@ -100,6 +100,7 @@ namespace CGAL {
   // Specialize CGAL::Kernel_traits<> for my point type(s).
   template <int dim>
   class Kernel_traits < Point_float_d<dim> > {
+    public:
     typedef My_kernel<dim> Kernel;
   };
 }
