@@ -58,7 +58,7 @@ struct Rep {
     //    typedef  CGAL::QPE_const_value_iterator<Row_type>  Row_type_iterator;
     
 
-    typedef  CGAL::Tag_true  Is_linear;
+    typedef  CGAL::Tag_false  Is_linear;
     typedef  CGAL::Tag_true  Is_symmetric;
     typedef  CGAL::Tag_true  Has_no_inequalities;
 };
@@ -69,67 +69,130 @@ main( int argc, char** argv)
     int verbose = 0;
     if ( argc > 1) verbose = atoi( argv[ 1]);
 
-    Matrix  A( 3);
-    Vector  b;
-    Vector  c;
-    Matrix  D( 3);
+//     {
+//       Matrix  A( 3);
+//       Vector  b;
+//       Vector  c;
+//       Matrix  D( 3);
 
-    A[ 0].push_back( 3); A[ 1].push_back( 2); A[ 2].push_back( 0);
-    A[ 0].push_back( 0); A[ 1].push_back( 2); A[ 2].push_back( 1);
+//       A[ 0].push_back( 3); A[ 1].push_back( 2); A[ 2].push_back( 0);
+//       A[ 0].push_back( 0); A[ 1].push_back( 2); A[ 2].push_back( 1);
 
-    b.push_back( 1);
-    b.push_back( 2);
+//       b.push_back( 1);
+//       b.push_back( 2);
 
-    c.push_back( 1); c.push_back( 2); c.push_back( 3);
-    /*
-    D[ 0].push_back( 3); D[ 0].push_back( 1); D[ 0].push_back( -9);
-    D[ 1].push_back( 1); D[ 1].push_back( -2); D[ 1].push_back( 2);
-    D[ 2].push_back( -9); D[ 2].push_back( 2); D[ 2].push_back( 1);
-    */
-    //*
-    D[ 0].push_back(  2); D[ 0].push_back( -5); D[ 0].push_back( -5);
-    D[ 1].push_back( -5); D[ 1].push_back( 11); D[ 1].push_back( -12);
-    D[ 2].push_back( -5); D[ 2].push_back( -12); D[ 2].push_back( -11);
-    //*/
+//       c.push_back( 1); c.push_back( 2); c.push_back( 3);
+//       /*
+// 	D[ 0].push_back( 3); D[ 0].push_back( 1); D[ 0].push_back( -9);
+// 	D[ 1].push_back( 1); D[ 1].push_back( -2); D[ 1].push_back( 2);
+// 	D[ 2].push_back( -9); D[ 2].push_back( 2); D[ 2].push_back( 1);
+//       */
+//       //*
+//       D[ 0].push_back(  2); D[ 0].push_back( -5); D[ 0].push_back( -5);
+//       D[ 1].push_back( -5); D[ 1].push_back( 11); D[ 1].push_back( -12);
+//       D[ 2].push_back( -5); D[ 2].push_back( -12); D[ 2].push_back( -11);
+//       //*/
 
-    Rep::Row_type*  row_types = new Rep::Row_type[ 2];
-    row_types[ 0] = Rep::EQUAL;
-    row_types[ 1] = Rep::EQUAL;
+//       Rep::Row_type*  row_types = new Rep::Row_type[ 2];
+//       row_types[ 0] = Rep::EQUAL;
+//       row_types[ 1] = Rep::EQUAL;
 
-    CGAL::QPE_solver<Rep>              solver;
-    solver.set_verbosity( verbose);
-    solver.set( 3, 2,
-		Vector_iterator( A.begin(), Begin()), b.begin(),
-		c.begin(), Vector_iterator( D.begin(), Begin()),
-		row_types);
+//       CGAL::QPE_solver<Rep>              solver;
+//       solver.set_verbosity( verbose);
+//       solver.set( 3, 2,
+// 		  Vector_iterator( A.begin(), Begin()), b.begin(),
+// 		  c.begin(), Vector_iterator( D.begin(), Begin()),
+// 		  row_types);
+//       {
+// 	CGAL::QPE_full_exact_pricing<Rep>  strategy;
+// 	solver.set_pricing_strategy( strategy);
+// 	solver.init();
+// 	solver.solve();
+// 	std::cerr << "-----------------------------------------------------\n";
+//       }
+//       {
+// 	CGAL::QPE_partial_exact_pricing<Rep>  strategy;
+// 	solver.set_pricing_strategy( strategy);
+// 	solver.init();
+// 	solver.solve();
+// 	std::cerr << "-----------------------------------------------------\n";
+//       }
+//       {
+// 	CGAL::QPE_full_filtered_pricing<Rep>  strategy;
+// 	solver.set_pricing_strategy( strategy);
+// 	solver.init();
+// 	solver.solve();
+// 	std::cerr << "-----------------------------------------------------\n";
+//       }
+//       {
+// 	CGAL::QPE_partial_filtered_pricing<Rep>  strategy;
+// 	solver.set_pricing_strategy( strategy);
+// 	solver.init();
+// 	solver.solve();
+// 	std::cerr << "-----------------------------------------------------\n";
+//       }
+//   }
+
     {
+      Matrix  A( 2);
+      Vector  b;
+      Vector  c;
+      Matrix  D( 2);
+
+      A[ 0].push_back( 1); A[ 1].push_back( -1); 
+
+      b.push_back( 0);
+ 
+      c.push_back( 0); c.push_back( 0);
+      /*
+	D[ 0].push_back( 3); D[ 0].push_back( 1); D[ 0].push_back( -9);
+	D[ 1].push_back( 1); D[ 1].push_back( -2); D[ 1].push_back( 2);
+	D[ 2].push_back( -9); D[ 2].push_back( 2); D[ 2].push_back( 1);
+      */
+      //*
+      D[ 0].push_back(  1); D[ 0].push_back( -1); 
+      D[ 1].push_back( -1); D[ 1].push_back(  1); 
+      //*/
+
+      Rep::Row_type*  row_types = new Rep::Row_type[ 1];
+      row_types[ 0] = Rep::EQUAL;
+
+      CGAL::QPE_solver<Rep>              solver;
+      solver.set_verbosity( verbose);
+      solver.set( 2, 1,
+		  Vector_iterator( A.begin(), Begin()), b.begin(),
+		  c.begin(), Vector_iterator( D.begin(), Begin()),
+		  row_types);
+      {
 	CGAL::QPE_full_exact_pricing<Rep>  strategy;
 	solver.set_pricing_strategy( strategy);
 	solver.init();
 	solver.solve();
 	std::cerr << "-----------------------------------------------------\n";
-    }
-    {
+      }
+      {
 	CGAL::QPE_partial_exact_pricing<Rep>  strategy;
 	solver.set_pricing_strategy( strategy);
 	solver.init();
 	solver.solve();
 	std::cerr << "-----------------------------------------------------\n";
-    }
-    {
+      }
+      {
 	CGAL::QPE_full_filtered_pricing<Rep>  strategy;
 	solver.set_pricing_strategy( strategy);
 	solver.init();
 	solver.solve();
 	std::cerr << "-----------------------------------------------------\n";
-    }
-    {
+      }
+      {
 	CGAL::QPE_partial_filtered_pricing<Rep>  strategy;
 	solver.set_pricing_strategy( strategy);
 	solver.init();
 	solver.solve();
 	std::cerr << "-----------------------------------------------------\n";
+      }
     }
+
     return 0;
 }
 
