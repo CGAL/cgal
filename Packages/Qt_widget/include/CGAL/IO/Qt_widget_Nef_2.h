@@ -27,8 +27,6 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Qt_widget.h>
 
-#include <qnamespace.h>
-
 typedef CGAL::Cartesian<double>::Point_2 Draw_point;
 typedef CGAL::Cartesian<double>::Segment_2 Segment;
 
@@ -58,18 +56,18 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     typedef typename T::Standard_segment_2 Standard_segment_2;
     typedef typename T::Standard_ray_2 Standard_ray_2;
 
-    typedef Nef_polyhedron_2<T>::Vertex_const_handle
+    typedef typename TExplorer::Vertex_const_handle
       Vertex_const_handle;
-    typedef Nef_polyhedron_2<T>::Halfedge_const_handle
+    typedef typename TExplorer::Halfedge_const_handle
       Halfedge_const_handle;
-    typedef Nef_polyhedron_2<T>::Face_const_handle
+    typedef typename TExplorer::Face_const_handle
       Face_const_handle;
 
-    typedef Nef_polyhedron_2<T>::Vertex_const_iterator
+    typedef typename TExplorer::Vertex_const_iterator
       Vertex_const_iterator;
-    typedef Nef_polyhedron_2<T>::Halfedge_const_iterator
+    typedef typename TExplorer::Halfedge_const_iterator
       Halfedge_const_iterator;
-    typedef Nef_polyhedron_2<T>::Face_const_iterator
+    typedef typename TExplorer::Face_const_iterator
       Face_const_iterator;
 
     T traits;
