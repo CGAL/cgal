@@ -93,13 +93,13 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 		  P.planes_begin(), Facet_plane_3());
   SNC_decorator D(S);
 
-  Progress_indicator_clog progress
-    ( P.size_of_vertices(),
-      "polyhedron_3_to_nef_3: constructing local view of vertices...");
+  //  Progress_indicator_clog progress
+  //    ( P.size_of_vertices(),
+  //      "polyhedron_3_to_nef_3: constructing local view of vertices...");
 
   typename Polyhedron::Vertex_iterator pvi;
   for( pvi = P.vertices_begin(); pvi != P.vertices_end(); ++pvi ) {
-    progress++;
+    //    progress++;
     typename Polyhedron::Vertex pv = *pvi;
     Vertex_handle nv = S.new_vertex();
     D.point(nv) = pv.point();

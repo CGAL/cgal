@@ -820,7 +820,6 @@ public:
     O.subdivide( v0, v1);
     O.select( BOP);
     O.simplify();
-    O.check_integrity_and_topological_planarity();
 
 #ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
     TRACEN(" result sphere map:");
@@ -990,9 +989,9 @@ public:
     CGAL_nef3_assertion( result.is_empty());
     CGAL_nef3_assertion( pl1 != NULL);
 
-    Progress_indicator_clog v_qualifying
-      (sncp()->number_of_vertices()+snc1i.number_of_vertices(),
-       "binary_operator: qualifying vertices...");
+    //    Progress_indicator_clog v_qualifying
+    //      (sncp()->number_of_vertices()+snc1i.number_of_vertices(),
+    //       "binary_operator: qualifying vertices...");
 
     Unique_hash_map<Vertex_handle, bool> ignore(false);
     Vertex_iterator v0, v1;
@@ -1014,7 +1013,7 @@ public:
 
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
     CGAL_nef3_forall_vertices( v0, *sncp()) {
-      v_qualifying++;
+      //      v_qualifying++;
       CGAL_nef3_assertion(!ignore[v0]);
       Point_3 p0(point(v0));
       Vertex_handle v;
@@ -1059,7 +1058,7 @@ public:
 
     TRACEN("=> for all v1 in snc1, qualify v1 with respect snc0");
     CGAL_nef3_forall_vertices( v1, snc1i) {
-      v_qualifying++;
+      //      v_qualifying++;
       if(ignore[v1]) continue;
       Point_3 p1(point(v1));
       Vertex_handle v;
@@ -1107,9 +1106,9 @@ public:
 
     Halfedge_iterator e0, e1;
 
-    Progress_indicator_clog ee_intersections
-      (sncp()->number_of_edges(),
-       "binary_operator: finding edge-edge intersections...");
+    //    Progress_indicator_clog ee_intersections
+    //      (sncp()->number_of_edges(),
+    //       "binary_operator: finding edge-edge intersections...");
 
     Intersection_call_back<Selection> call_back0
       ( *sncp(), snc1i, BOP, result);
@@ -1118,26 +1117,26 @@ public:
 
     TRACEN("=> finding edge-edge intersections...");
     CGAL_nef3_forall_edges( e0, *sncp()) {
-      ee_intersections++;
+      //      ee_intersections++;
       pl1->intersect_with_edges( e0, call_back0);
     }
     TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
-    Progress_indicator_clog ef_intersections
-      (sncp()->number_of_edges()+snc1i.number_of_edges(),
-       "binary_operator: finding edge-facet intersections...");
+    //    Progress_indicator_clog ef_intersections
+    //      (sncp()->number_of_edges()+snc1i.number_of_edges(),
+    //       "binary_operator: finding edge-facet intersections...");
 
     TRACEN("number of vertices (so far...) = "<<result.number_of_vertices());
     TRACEN("=> finding edge0-facet1 intersections...");
     CGAL_nef3_forall_edges( e0, *sncp()) {
-      ef_intersections++;
+      //      ef_intersections++;
       pl1->intersect_with_facets( e0, call_back0);
     }
     TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     TRACEN("=> finding edge1-facet0 intersections...");
     CGAL_nef3_forall_edges( e1, snc1i) {
-      ef_intersections++;
+      //      ef_intersections++;
       pl()->intersect_with_facets( e1, call_back1);
     }
     TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
