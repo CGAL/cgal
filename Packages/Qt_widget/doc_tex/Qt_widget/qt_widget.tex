@@ -76,7 +76,7 @@ without the views and tools.
 
 \subsection{Example: Hello Segment}
 The first example draws a red segment on an orange background.
-\ccIncludeExampleCode{../../../test/hellosegment.C}
+\ccIncludeExampleCode{../../../test/Qt_widget/hellosegment.C}
 
 There is a severe limitation in this example: When you resize the window it is empty, as nothing is
 redrawn, that is this style of programs makes only sense, if you quickly want to validate output
@@ -194,7 +194,7 @@ the tool creates a point and passes it to the widget. The widget then
 creates a signal that gets passed to the connected slot
 \ccc{My_Window::get_new_object(CGAL::Object)}.
 
-\ccIncludeExampleCode{../../../test/tool.C}
+\ccIncludeExampleCode{../../../test/Qt_widget/tool.C}
 
 The \ccStyle{Qt_widget} forwards all event callbacks to the attached tool.
 
@@ -303,7 +303,7 @@ button, or you press the arrow button that deselects the active tool,
 no matter what tool it is.
 
 \ccExample
-\ccIncludeExampleCode{../../../test/standard_toolbar.C}
+\ccIncludeExampleCode{../../../test/Qt_widget/standard_toolbar.C}
 
 This example generates 100 points and inserts them in a Delaunay
 triangulation. Using the standard toolbar you can zoom in, zoom out,
