@@ -1,4 +1,4 @@
-2.16    (?? June 2001)
+2.16    (11 July 2001)
 - fixed degenerate quickhull test so it generates precise numbers instead
   of doubles
 - added some missing typenames
