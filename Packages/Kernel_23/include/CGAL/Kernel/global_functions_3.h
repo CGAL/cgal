@@ -410,7 +410,8 @@ inline
 typename K::Point_3
 operator-(const Point_3<K> &p, const Vector_3<K> &v)
 {
-  return K().construct_translated_point_3_object()(p, K().construct_opposite_vector_3_object()(v));
+  return K().construct_translated_point_3_object()
+               (p, K().construct_opposite_vector_3_object()(v));
 }
 
 template < class K >
@@ -418,7 +419,8 @@ inline
 typename K::Point_3
 operator-(const Origin &o, const Vector_3<K> &v)
 {
-  return K().construct_translated_point_3_object()(o, K().construct_opposite_vector_3_object()(v));
+  return K().construct_translated_point_3_object()
+               (o, K().construct_opposite_vector_3_object()(v));
 }
 
 template < class K >
