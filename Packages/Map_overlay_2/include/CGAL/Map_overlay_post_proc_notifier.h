@@ -67,7 +67,7 @@ public:
   {
     //mapOverlay   tmp_ovl;
     
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
     std::cout<<"in add_edge" << std::endl;
 #endif
 
@@ -184,7 +184,7 @@ public:
                   const X_curve& c1, 
                   const X_curve& c2)
   {
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
     std::cout<<"is split_edge" << std::endl;
     if (new_edge->get_first_halfedge_above() != 0)
       cout<<"new blue edge ";
@@ -213,7 +213,7 @@ public:
                                 get_second_halfedge_above(orig_edge));
     }
 
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
     if (orig_edge->get_first_halfedge_above() != 0)
       cout<<"blue edge ";
     if (orig_edge->get_second_halfedge_above() != 0)
@@ -250,6 +250,14 @@ public:
     set_first_face_above(unbounded, first_creator_->unbounded_face());
     set_second_face_above(unbounded, second_creator_->unbounded_face());
     unbounded->set_color(Face::BLACK);
+    
+#ifdef CGAL_NOTF_DEBUG
+    write_face(get_first_face_above(unbounded));
+    write_face(get_second_face_above(unbounded));
+#endif
+    
+    update_halfedges_along_face(unbounded);
+    update_vertices_along_face(unbounded);
 
     for (Holes_iterator hit = unbounded->holes_begin(); 
          hit != unbounded->holes_end(); ++hit) {
@@ -266,7 +274,7 @@ public:
           
           do{
             if (ccb_cir->get_first_halfedge_above() != 0){
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
               if (get_first_halfedge_above(ccb_cir)->face()->is_unbounded())
                 std::cout<<"Face (of first halfedge) above begin_face->outer_ccb() is unbounded"<<std::endl;
               std::cout<<"ccb_cir->get_first_halfedge_above() != 0" << std::endl;
@@ -277,7 +285,7 @@ public:
               //begin_face->set_first_face_above(((Halfedge*) ccb_cir->get_first_halfedge_above())->face().operator->());
             }
             if (ccb_cir->get_second_halfedge_above() != 0){
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
               if (get_second_halfedge_above(ccb_cir)->face()->is_unbounded())
                 std::cout<<"Face above (ofsecond halfedge) begin_face->outer_ccb() is unbounded"<<std::endl;
               std::cout<<"ccb_cir->get_second_halfedge_above() != 0" << std::endl;
@@ -293,7 +301,7 @@ public:
           do{
             if (ccb_cir->get_first_face_above() != 0 && 
                 begin_face->get_first_face_above() == 0){
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
               if (get_first_face_above(ccb_cir)->is_unbounded())
                 std::cout<<"First face above ccb_cir of begin_face is unbounded"<<std::endl;
               std::cout<<"ccb_cir->get_first_face_above() != 0" << std::endl;
@@ -306,7 +314,7 @@ public:
             
             else if (ccb_cir->get_second_face_above() != 0 &&  
                      begin_face->get_second_face_above() == 0){
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
               if (get_second_face_above(ccb_cir)->is_unbounded())
                 std::cout<<"Second face above ccb_cir of begin_face is unbounded"<<std::endl;
               cout<<"ccb_cir->get_second_face_above() != 0" << std::endl;
@@ -320,7 +328,7 @@ public:
           
           // checking wether one of the face pointer is 0 - if it is - it must be under an unbounded creator face.
           if (begin_face->get_first_face_above() == 0){
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
             std::cout<<"first face above begin_face is 0 - putting unbounded"<<std::endl;
 #endif
             
@@ -329,7 +337,7 @@ public:
           }
    
           if (begin_face->get_second_face_above() == 0){
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
             std::cout<<"second face above begin_face is 0 - putting unbounded"<<std::endl;
 #endif
             
@@ -345,13 +353,13 @@ public:
           begin_face->set_color(Face::GRAY);
           faces_queue.push_back(begin_face);
           
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
           cout<<"Starting BFS\n";
 #endif
           while ( !(faces_queue.empty()) ){
             Face_handle  face = faces_queue.front();
             
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
             cout<<"got queue face\n";
 #endif
             for (Holes_iterator face_h_it = face->holes_begin(); 
@@ -505,13 +513,18 @@ public:
             face->set_color(Face::BLACK);
             faces_queue.pop_front();
             
-#ifdef CGAL_SWEEP_LINE_DEBUG
+#ifdef CGAL_NOTF_DEBUG
             cout<<"face was poped\n";
 #endif
           }
         } //end if (the begin_face was white).
       } while (++begin_halfedge != *hit);
     }
+    
+#ifdef CGAL_NOTF_DEBUG
+    write_face(get_first_face_above(unbounded));
+    write_face(get_second_face_above(unbounded));
+#endif
   }
 
   /***************************************** new functions **********************************************************/
@@ -629,7 +642,7 @@ public:
   }
 
   // getting the vertex above.
-  Vertex_handle get_first_vertex_above(Vertex_handle v) {
+  Vertex_handle get_first_vertex_above(Vertex_handle v) const {
     Vertex* vp = (Vertex*) v->get_first_vertex_above() ;
     
     if (vp){
@@ -640,7 +653,7 @@ public:
       return v;
   }
     
-  Vertex_handle get_second_vertex_above(Vertex_handle v) {
+  Vertex_handle get_second_vertex_above(Vertex_handle v) const {
     Vertex* vp = (Vertex*) v->get_second_vertex_above() ;
     
     if (vp){
@@ -651,7 +664,7 @@ public:
       return v;
   }
   
-  Vertex_const_handle get_first_vertex_above(Vertex_const_handle v) {
+  Vertex_const_handle get_first_vertex_above(Vertex_const_handle v) const {
     Vertex* vp = (Vertex*) v->get_first_vertex_above() ;
     
     if (vp){
@@ -662,7 +675,7 @@ public:
       return v;
   }
   
-  Vertex_const_handle get_second_vertex_above(Vertex_const_handle v) {
+  Vertex_const_handle get_second_vertex_above(Vertex_const_handle v) const {
     Vertex* vp = (Vertex*) v->get_second_vertex_above() ;
     
     if (vp){
@@ -674,7 +687,7 @@ public:
   }
   
   // getting the halfedge above.
-  Halfedge_handle get_first_halfedge_above(Vertex_handle v) {
+  Halfedge_handle get_first_halfedge_above(Vertex_handle v) const {
     Halfedge* hp = (Halfedge*) v->get_first_halfedge_above() ;
     
     if (hp){
@@ -685,7 +698,7 @@ public:
       return v->incident_halfedges();
   }
    
-  Halfedge_handle get_second_halfedge_above(Vertex_handle v) {
+  Halfedge_handle get_second_halfedge_above(Vertex_handle v) const {
     Halfedge* hp = (Halfedge*) v->get_second_halfedge_above() ;
 
     if (hp){
@@ -696,7 +709,7 @@ public:
       return v->incident_halfedges();
   }
   
-  Halfedge_const_handle get_first_halfedge_above(Vertex_const_handle v) {
+  Halfedge_const_handle get_first_halfedge_above(Vertex_const_handle v) const {
     Halfedge* hp = (Halfedge*) v->get_first_halfedge_above() ;
     
     if (hp){
@@ -707,7 +720,7 @@ public:
       return v->incident_halfedges();
   }
    
-  Halfedge_const_handle get_second_halfedge_above(Vertex_const_handle v) {
+  Halfedge_const_handle get_second_halfedge_above(Vertex_const_handle v) const {
     Halfedge* hp = (Halfedge*) v->get_second_halfedge_above() ;
     
     if (hp){
@@ -718,7 +731,7 @@ public:
       return v->incident_halfedges();
   }
 
-  Halfedge_handle get_first_halfedge_above(Halfedge_handle h) {
+  Halfedge_handle get_first_halfedge_above(Halfedge_handle h) const {
     Halfedge* hp = (Halfedge*) h->get_first_halfedge_above() ;
     
     if (hp){
@@ -729,7 +742,7 @@ public:
       return h;
   }
    
-  Halfedge_handle get_second_halfedge_above(Halfedge_handle h) {
+  Halfedge_handle get_second_halfedge_above(Halfedge_handle h) const {
     Halfedge* hp = (Halfedge*) h->get_second_halfedge_above() ;
 
     if (hp){
@@ -740,7 +753,7 @@ public:
       return h;
   }
 
-  Halfedge_const_handle get_first_halfedge_above(Halfedge_const_handle h) {
+  Halfedge_const_handle get_first_halfedge_above(Halfedge_const_handle h) const {
     Halfedge* hp = (Halfedge*) h->get_first_halfedge_above() ;
     
     if (hp){
@@ -751,7 +764,7 @@ public:
       return h;
   }
    
-  Halfedge_const_handle get_second_halfedge_above(Halfedge_const_handle h) {
+  Halfedge_const_handle get_second_halfedge_above(Halfedge_const_handle h) const {
     Halfedge* hp = (Halfedge*) h->get_second_halfedge_above() ;
     
     if (hp){
@@ -764,7 +777,7 @@ public:
 
   // getting the face above.
 
-  Face_handle get_first_face_above(Vertex_handle v) {
+  Face_handle get_first_face_above(Vertex_handle v) const {
     Face* fp = (Face*) v->get_first_face_above() ;
     
     if (fp){
@@ -775,7 +788,7 @@ public:
       return v->incident_halfedges()->face();
   }
   
-  Face_handle get_second_face_above(Vertex_handle v) {
+  Face_handle get_second_face_above(Vertex_handle v) const {
     Face* fp = (Face*) v->get_second_face_above() ;
     
     if (fp){
@@ -786,7 +799,7 @@ public:
       return v->incident_halfedges()->face();
   }
 
-  Face_const_handle get_first_face_above(Vertex_const_handle v) {
+  Face_const_handle get_first_face_above(Vertex_const_handle v) const {
     Face* fp=(Face*) v->get_first_face_above() ;
     
     if (fp){
@@ -797,7 +810,7 @@ public:
       return v->incident_halfedges()->face();
   }
   
-  Face_const_handle get_second_face_above(Vertex_const_handle v) {
+  Face_const_handle get_second_face_above(Vertex_const_handle v) const {
     Face* fp=(Face*) v->get_second_face_above() ;
     
     if (fp){
@@ -808,7 +821,7 @@ public:
       return v->incident_halfedges()->face();
   }
 
-  Face_handle get_first_face_above(Halfedge_handle h) {
+  Face_handle get_first_face_above(Halfedge_handle h) const {
     Face* fp = (Face*) h->get_first_face_above() ;
     
     if (fp){
@@ -819,7 +832,7 @@ public:
       return h->face();
   }
   
-  Face_handle get_second_face_above(Halfedge_handle h) {
+  Face_handle get_second_face_above(Halfedge_handle h) const {
     Face* fp = (Face*) h->get_second_face_above() ;
     
     if (fp){
@@ -830,7 +843,7 @@ public:
       return h->face();
   }
 
-  Face_const_handle get_first_face_above(Halfedge_const_handle h) {
+  Face_const_handle get_first_face_above(Halfedge_const_handle h) const {
     Face* fp=(Face*) h->get_first_face_above() ;
     
     if (fp){
@@ -841,7 +854,7 @@ public:
       return h->face();
   }
   
-  Face_const_handle get_second_face_above(Halfedge_const_handle h) {
+  Face_const_handle get_second_face_above(Halfedge_const_handle h) const {
     Face* fp=(Face*) h->get_second_face_above() ;
     
     if (fp){
@@ -852,7 +865,7 @@ public:
       return h->face();
   }
 
-  Face_handle get_first_face_above(Face_handle f) {
+  Face_handle get_first_face_above(Face_handle f) const {
     Face* fp = (Face*) f->get_first_face_above() ;
     
     if (fp){
@@ -863,7 +876,7 @@ public:
       return f;
   }
   
-  Face_handle get_second_face_above(Face_handle f) {
+  Face_handle get_second_face_above(Face_handle f) const {
     Face* fp = (Face*) f->get_second_face_above() ;
     
     if (fp){
@@ -874,7 +887,7 @@ public:
       return f;
   }
   
-  Face_const_handle get_first_face_above(Face_const_handle f) {
+  Face_const_handle get_first_face_above(Face_const_handle f) const {
     Face* fp = (Face*) f->get_first_face_above() ;
     
     if (fp){
@@ -885,7 +898,7 @@ public:
       return f;
   }
   
-  Face_const_handle get_second_face_above(Face_const_handle f) {
+  Face_const_handle get_second_face_above(Face_const_handle f) const {
     Face* fp=(Face*) f->get_second_face_above() ;
  
     if (fp){
@@ -901,32 +914,83 @@ public:
 private:
   // Update the faces above the halfedges of the new face.
   void  update_halfedges_along_face(Face_handle f){
-     Ccb_halfedge_circulator  ccb_cir = f->outer_ccb();
-    do{
-      if (f->get_first_face_above())
-        set_first_face_above (ccb_cir, get_first_face_above(f));
-      
-      if (f->get_second_face_above())
-        set_second_face_above (ccb_cir, get_second_face_above(f));
-      
-      ++ccb_cir;
-    } while (ccb_cir != f->outer_ccb());
+    for (Holes_iterator hit = f->holes_begin(); 
+         hit != f->holes_end(); ++hit) {
+      Ccb_halfedge_circulator h(*hit);
+      do {
+        set_first_face_above (h, get_first_face_above(f));
+        set_second_face_above (h, get_second_face_above(f));
+      } while (++h != *hit);
+    }
+    
+    if (! f->is_unbounded()){
+      Ccb_halfedge_circulator  ccb_cir = f->outer_ccb();
+      do{
+        if (f->get_first_face_above())
+          set_first_face_above (ccb_cir, get_first_face_above(f));
+        
+        if (f->get_second_face_above())
+          set_second_face_above (ccb_cir, get_second_face_above(f));
+        
+        ++ccb_cir;
+      } while (ccb_cir != f->outer_ccb());
+    }
   }
 
   // Update the faces above the vertices of the new face.
   void  update_vertices_along_face(Face_handle f){
-    Ccb_halfedge_circulator  ccb_cir = f->outer_ccb();
-    do{
-      if (f->get_first_face_above())
-        set_first_face_above (ccb_cir->source(), get_first_face_above(f));
-      
-      if (f->get_second_face_above())
-        set_second_face_above (ccb_cir->source(), get_second_face_above(f));
-      
-      ++ccb_cir;
-    } while (ccb_cir != f->outer_ccb());
+    for (Holes_iterator hit = f->holes_begin(); 
+         hit != f->holes_end(); ++hit) {
+      Ccb_halfedge_circulator h(*hit);
+      do {
+        set_first_face_above (h->source(), get_first_face_above(f));
+        set_second_face_above (h->source(), get_second_face_above(f));
+      } while (++h != *hit);
+    }
+
+    if (! f->is_unbounded()){
+      Ccb_halfedge_circulator  ccb_cir = f->outer_ccb();
+      do{
+        if (f->get_first_face_above())
+          set_first_face_above (ccb_cir->source(), get_first_face_above(f));
+        
+        if (f->get_second_face_above())
+          set_second_face_above (ccb_cir->source(), get_second_face_above(f));
+        
+        ++ccb_cir;
+      } while (ccb_cir != f->outer_ccb());
+    }
   }
 
+  /**** debugging ***/
+  void write_face(Face_const_handle f) {
+    
+    std::cout<<"writing face"<<std::endl;
+    
+    if (f->is_unbounded()){
+      std::cout<<"UNBOUNDED"<<std::endl;
+      std::cout<<"number halfedges on outer boundary"<<std::endl;
+      std::cout<<"0"<<std::endl;
+    }
+    else {
+      std::cout<<"outer ccb"<<std::endl;
+      
+      Ccb_halfedge_const_circulator first = f->outer_ccb(), iter = first;
+
+      std::size_t n = 0;
+      do {
+        std::cout<<iter->curve()<<" ";
+        n++;
+        iter++;
+      } while (iter != first);
+
+      std::cout<<"number halfedges on outer boundary"<<std::endl;
+      std::cout<< n <<std::endl;
+      
+      std::cout << std::endl;
+    }
+  }
+  
   bool                   first_halfedge;
   Halfedge_const_handle  orig_halfedge1, orig_halfedge2;
   Arr_const_pointer      first_creator_, second_creator_;
@@ -935,3 +999,7 @@ private:
 CGAL_END_NAMESPACE
 
 #endif
+
+
+
+
