@@ -1,5 +1,15 @@
 Changes done to the CLN package.
 
+Version 2.1 on 20 November 2000.
+- Removed CGAL/CLN/cl_complex.h, as CGAL doesn't deal with complex numbers.
+- Removed cl_dfloat.h cl_ffloat.h cl_lfloat.h cl_sfloat.h, which are basically
+  the equivalent of the basic floating point types.
+- Removed cl_float.h cl_number.h cl_real.h, which are useless abstract base
+  classes.
+- Added to_interval().
+
+-------------  CGAL 2.2 is released -------------
+
 Version 2.0 on 23 August 2000.
 - Fixed CGAL_NTS compare in the example file.
 

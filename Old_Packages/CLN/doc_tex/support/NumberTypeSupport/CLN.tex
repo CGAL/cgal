@@ -3,11 +3,11 @@
 
 % \ccChapterAuthor{Sylvain Pion}
 
-\cgal\ defines the functions needed to use the number types provided by
-{\sc Cln}, the Class Library for Numbers~\cite{cln}.
-To use {\sc Cln} with \cgal, just install \cgal\ with {\sc Cln} support,
-and include the corresponding {\sc Cln} file but with the prefix
-\ccc{CGAL/CLN/}.
+\cgal\ defines the functions needed to use the number types \ccc{cl_integer}
+and \ccc{cl_rational} provided by {\sc Cln}, the Class Library for
+Numbers~\cite{cln}.  To use {\sc Cln} with \cgal, just install \cgal\ with
+{\sc Cln} support, and include the corresponding {\sc Cln} file but with the
+prefix \ccc{CGAL/CLN/}.
 
 \ccInclude{CGAL/CLN/cl_integer.h}
 
@@ -16,12 +16,5 @@ The class \ccc{cl_I}~: exact multiprecision integers.
 \ccInclude{CGAL/CLN/cl_rational.h}
 
 The class \ccc{cl_RA}~: exact multiprecision rationals.
-
-And similarly for the 10 ordinary number type classes provided by {\sc Cln}~:
-\ccc{cl_SF, cl_FF, cl_DF, cl_LF, cl_I, cl_RA, cl_F, cl_R, cl_N, cl_number}.
-
-For doing IOs, you need to include, for example~:
-
-\ccInclude{cl_integer_io.h}
 
 See the {\sc Cln} documentation for additionnal details.
