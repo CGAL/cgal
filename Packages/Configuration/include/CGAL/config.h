@@ -38,6 +38,10 @@
 //             do some post processing for the flags
 //----------------------------------------------------------------------//
 
+#ifdef CGAL_CFG_NO_STL
+#  error "This compiler does not have a working STL"
+#endif
+
 #ifdef CGAL_CFG_NO_NAMESPACE
 #  define CGAL_USING_NAMESPACE_STD
 #  define CGAL_STD
