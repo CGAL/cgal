@@ -97,7 +97,7 @@ for DIR in $DOCDIRS; do
 
    if [ -f htmlfiles ]; then
       echo "copying html files now..."
-      cp `cat htmlfiles` html
+      cp `cat htmlfiles | dos2unix` html
    fi
 
    for SUB_DIR
@@ -106,7 +106,7 @@ for DIR in $DOCDIRS; do
        if [ -f $SUB_DIR/htmlfiles ]
        then
 	   (cd $SUB_DIR;
-	   cp `cat htmlfiles` ../html/$SUB_DIR
+	   cp `cat htmlfiles | dos2unix` ../html/$SUB_DIR
            cd ..
 	   ) 
        fi
