@@ -1,5 +1,7 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+10 February 2004 Radu Ursu
+-Updated headers in examples
 
 3.21 (10 Dec 2003) [rursu]
 - Files with common functionality were moved to Stream_support package

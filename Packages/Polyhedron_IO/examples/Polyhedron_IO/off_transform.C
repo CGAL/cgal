@@ -1,26 +1,10 @@
-// ============================================================================
+// Copyright (c) 1997  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1997 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       : $CGAL_Revision: $
-// release_date  : $CGAL_Date: $
-//
-// file          : examples/Polyhedron_IO/off_transform.C
-// package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@@inf.ethz.ch>
-//
-// coordinator   : Herve Bronnimann  <Herve.Bronnimann@sophia.inria.fr>
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
 //
 // Applies translation and scaling to an OFF object.
-// ============================================================================
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Verbose_ostream.h>
