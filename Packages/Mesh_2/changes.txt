@@ -1,0 +1,10 @@
+[af]
+- Added many const& 
+- insert(Point, Point) -> insert_constraint to make it work 
+  with the Triangulation_hierarchy
+- Added some typename
+- std::queue only works with std::list not with std::deque on VC++6
+- had to add Triangulation_ds_vertex_circulator::operator=(Self) for
+  bcc. That means this CEP will not work with Rel 2.4 without patch
+- Q: Can one change in Constrained_triangulation_2::limit_intersection
+     plenty of const& for Gt::Line_2 ???
