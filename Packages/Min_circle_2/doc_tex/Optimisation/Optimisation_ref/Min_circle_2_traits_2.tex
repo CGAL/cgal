@@ -1,0 +1,86 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Optimisation
+% Section: 2D Smallest Enclosing Circle
+% Subsec.: Traits Class Implementation using the CGAL 2D Kernel
+% -----------------------------------------------------------------------------
+% file  : doc_tex/basic/Optimisation/Min_circle_2_traits_2.tex
+% author: Sven Schönherr (sven@inf.fu-berlin.de)
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% =============================================================================
+
+\begin{ccClassTemplate}{CGAL_Min_circle_2_traits_2<R>}
+%\ccSubsection{Traits Class Implementation using the two-dimensional
+%  CGAL Kernel}
+\ccTexHtml{%
+  \subsection[Traits Class Impl.\ using the 2D CGAL Kernel
+               (\protect\ccPrintSingleTokenSemi \ccPureClassTemplateName;)]%
+             {Traits Class Implementation using the two-dimensional CGAL
+               Kernel (\ccClassTemplateName)}}{
+  <H2> Traits Class Implementation using the two-dimensional CGAL Kernel
+          (<I>CGAL_Min_circle_2_traits_2</I>)
+  </H2> <P>}
+\label{sec:min_circle_2_traits_impl_2D_kernel}
+
+\cgalColumnLayout
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccClassTemplateName\ interfaces the 2D optimisation
+algorithm for smallest enclosing circles with the \cgal\ 2D kernel.
+
+\ccInclude{CGAL/Min_circle_2_traits_2.h}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSetThreeColumnsByHand{typedef CGAL_Optimisation_circle_2<R>}{Circle;}{}
+
+\ccTypedef{typedef  CGAL_Point_2<R>                 Point;  }{}
+\ccTypedef{typedef  CGAL_Optimisation_circle_2<R>   Circle; }{}
+
+\cgalColumnLayout
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{ CGAL_Min_circle_2_traits_2( );}{}
+
+\ccConstructor{ CGAL_Min_circle_2_traits_2(
+                    const CGAL_Min_circle_2_traits_2<R>&);}{}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+\ccMemberFunction{ CGAL_Orientation  orientation( const Point& p,
+                                                  const Point& q,
+                                                  const Point& r) const;}{
+        returns \ccc{CGAL_orientation( p, q, r)}.}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccc{CGAL_Min_circle_2}
+  \ccTexHtml{(Section~\ref{sec:min_circle_2_spec})}{},
+\ccc{CGAL_Min_circle_2_adapterC2}
+  \ccTexHtml{(Section~\ref{sec:min_circle_2_traits_adapterC2})}{},
+\linebreakByHand \ccc{CGAL_Min_circle_2_adapterH2}
+  \ccTexHtml{(Section~\ref{sec:min_circle_2_traits_adapterH2})}{},
+Requirements of Traits Classes for 2D Smallest Enclosing Circle
+  (Section~\ref{sec:min_circle_2_traits_req}).
+
+% -----------------------------------------------------------------------------
+\ccExample
+
+See example \ccTexHtml{in Section~\ref{sec:min_circle_2_spec}}{for
+  CGAL_Min_circle_2}.
+
+% -----------------------------------------------------------------------------
+
+\end{ccClassTemplate}
+
+% ===== EOF ===================================================================
