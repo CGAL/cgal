@@ -34,22 +34,17 @@ inline
 Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const leda_bigfloat & z)
 {
-#ifdef CGAL_IA_DEBUG
-	CGAL_warning(FPU_get_cw() == FPU_cw_up);
-#endif
+	CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
 	FPU_set_cw(FPU_cw_near);
 	double approx = CGAL::to_double(z);
 	FPU_set_cw(FPU_cw_up);
 	Interval_nt_advanced result = approx + CGAL_IA_SMALLEST;
-#ifdef CGAL_IA_DEBUG
-	FPU_set_cw(FPU_cw_near);
-	CGAL_warning( leda_bigfloat(result.inf()) <= z &&
-		      leda_bigfloat(result.sup()) >= z);
-	FPU_set_cw(FPU_cw_up);
-#endif
+	CGAL_expensive_assertion_code(FPU_set_cw(FPU_cw_near);)
+	CGAL_expensive_assertion( leda_bigfloat(result.inf()) <= z &&
+		                  leda_bigfloat(result.sup()) >= z);
+	CGAL_expensive_assertion_code(FPU_set_cw(FPU_cw_up);)
 	return result;
 }
-
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template <>
@@ -61,7 +56,6 @@ struct converter<Interval_nt_advanced,leda_bigfloat>
     }
 };
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-
 
 CGAL_END_NAMESPACE
 

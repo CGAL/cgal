@@ -34,13 +34,10 @@ inline
 Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const Quotient<RT> & z)
 {
-#ifdef CGAL_IA_DEBUG
-	CGAL_warning(FPU_get_cw() == FPU_cw_up);
-#endif
-	return  convert_to<Interval_nt_advanced>(z.numerator()) /
-		convert_to<Interval_nt_advanced>(z.denominator());
+	CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
+	return  convert_from_to(Interval_nt_advanced(), z.numerator()) /
+		convert_from_to(Interval_nt_advanced(), z.denominator());
 }
-
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template <class RT>
@@ -52,7 +49,6 @@ struct converter<Interval_nt_advanced,Quotient<RT> >
     }
 };
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-
 
 CGAL_END_NAMESPACE
 

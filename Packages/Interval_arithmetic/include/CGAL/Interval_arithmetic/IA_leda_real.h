@@ -30,21 +30,17 @@ inline
 Interval_nt_advanced
 convert_from_to (const Interval_nt_advanced&, const leda_real & z)
 {
-#ifdef CGAL_IA_DEBUG
-    CGAL_warning(FPU_get_cw() == FPU_cw_up);
-#endif
+    CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
     FPU_set_cw(FPU_cw_near);
     double approx = CGAL::to_double(z);
     double rel_error = z.get_double_error();
     FPU_set_cw(FPU_cw_up);
     Interval_nt_advanced result = approx
 	* ( Interval_nt_advanced(-rel_error,rel_error) + 1 );
-#ifdef CGAL_IA_DEBUG
-    FPU_set_cw(FPU_cw_near);
-    CGAL_warning(leda_real(result.inf()) <= z &&
-		 leda_real(result.sup()) >= z );
-    FPU_set_cw(FPU_cw_up);
-#endif
+    CGAL_expensive_assertion_code(FPU_set_cw(FPU_cw_near);)
+    CGAL_expensive_assertion( leda_real(result.inf()) <= z &&
+		              leda_real(result.sup()) >= z );
+    CGAL_expensive_assertion_code(FPU_set_cw(FPU_cw_up);)
     return result;
 }
 
