@@ -1,4 +1,6 @@
-#include <CGAL/basic.h>
+//
+// file: examples/Convex_hull_2/ch_example_timing.C
+//
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
 

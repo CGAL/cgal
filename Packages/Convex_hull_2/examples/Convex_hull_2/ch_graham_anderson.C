@@ -1,6 +1,7 @@
-#include <CGAL/basic.h>
+//
+// file: examples/Convex_hull_2/ch_graham_anderson.C
+//
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/ch_graham_andrew.h>
 #include <vector>
 #include <algorithm>
