@@ -14,7 +14,6 @@
 // file          : point_generators_2.h
 // chapter       : $CGAL_Chapter: Geometric Object Generators $
 // package       : $CGAL_Package: Generator 2.12 (28 Jul 1999) $
-// source        : generators.fw
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -26,10 +25,9 @@
 
 #ifndef CGAL_POINT_GENERATORS_2_H
 #define CGAL_POINT_GENERATORS_2_H 1
-#ifndef CGAL_GENERATORS_H
 #include <CGAL/generators.h>
-#endif
 #include <iterator>
+#include <CGAL/number_type_basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,7 +60,7 @@ template < class P, class Creator >
 void
 Random_points_in_disc_2<P,Creator>::
 generate_point() {
-    double alpha = _rnd.get_double() * 2.0 * M_PI;
+    double alpha = _rnd.get_double() * 2.0 * CGAL_PI;
     double r     = d_range * CGAL_CLIB_STD::sqrt( _rnd.get_double());
     Creator creator;
     d_item = creator( r * CGAL_CLIB_STD::cos(alpha), 
@@ -99,7 +97,7 @@ template < class P, class Creator >
 void
 Random_points_on_circle_2<P,Creator>::
 generate_point() {
-    double a = _rnd.get_double() * 2.0 * M_PI;
+    double a = _rnd.get_double() * 2.0 * CGAL_PI;
     Creator creator;
     d_item = creator( d_range * CGAL_CLIB_STD::cos(a), 
                       d_range * CGAL_CLIB_STD::sin(a));

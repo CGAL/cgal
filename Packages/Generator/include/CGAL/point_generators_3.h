@@ -14,7 +14,6 @@
 // file          : point_generators_3.h
 // chapter       : $CGAL_Chapter: Geometric Object Generators $
 // package       : $CGAL_Package: Generator 2.12 (28 Jul 1999) $
-// source        : generators.fw
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -26,12 +25,9 @@
 
 #ifndef CGAL_POINT_GENERATORS_3_H
 #define CGAL_POINT_GENERATORS_3_H 1
-#ifndef CGAL_GENERATORS_H
 #include <CGAL/generators.h>
-#endif
-#ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
-#endif
+#include <CGAL/number_type_basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -104,7 +100,7 @@ template < class P, class Creator >
 void
 Random_points_on_sphere_3<P,Creator>::
 generate_point() {
-    double alpha = _rnd.get_double() * 2.0 * M_PI;
+    double alpha = _rnd.get_double() * 2.0 * CGAL_PI;
     double z     = 2 * _rnd.get_double() - 1.0;
     double r     = std::sqrt( 1 - z * z);
     Creator creator;
