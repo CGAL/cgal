@@ -48,15 +48,7 @@
 //   a free/used/boundary element.
 
 // TODO :
-// - CC_iterator<>'s default ctor initializing to NULL ?
-// - For the block_size : increment it linearly, so that for N elements,
-//   we get O(sqrt(N)) blocks of O(sqrt(N)) elements each ?
-//   This way we will obtain the asymptotic memory complexity we claim.
-//   However, in order to allocate large blocks, we need to be able to
-//   specify the block size with a member function.
 // - Add .reserve() and .resize() (and proper copy of capacity_).
-// - Submit Insert_iterator (and reference it in the doc).
-// - Write a test and an example program, documentation in STL_extension.
 // - Add preconditions in input that real pointers need to have clean bits.
 //   Also for the allocated memory alignment, and sizeof().
 // - Do a benchmark before/after.
@@ -195,16 +187,8 @@ public:
   iterator begin() { return iterator(first_item); }
   iterator end()   { return iterator(last_item, 0); }
 
-#if 0
   const_iterator begin() const { return const_iterator(first_item); }
   const_iterator end()   const { return const_iterator(last_item, 0); }
-#else
-  // We have to cheat, because Triangulation_[23] is not const-correct.
-  // The cheating should be moved to the TDS_[23] level, I guess.
-  // TODO : I can commit the changes to TDS_[23] already now...
-  iterator begin() const { return const_cast<Self&>(*this).begin(); }
-  iterator end()   const { return const_cast<Self&>(*this).end(); }
-#endif
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
   reverse_iterator rend()   { return reverse_iterator(begin()); }
@@ -222,7 +206,7 @@ public:
     pointer ret = free_list;
     free_list = clean_pointee(ret);
     alloc.construct(ret, t);
-    Traits::pointer(*ret) = NULL; // FIXME : assertion instead ?
+    CGAL_assertion(Traits::pointer(*ret) == NULL);
     ++size_;
     return iterator(ret, 0);
   }
@@ -260,29 +244,6 @@ public:
   // Merge the content of d into *this.  d gets cleared.
   // The complexity is O(size(free list = capacity-size)).
   void merge(Self &d);
-
-  // Historical Cruft for TDS :
-  // But compared to insert(), we used to avoid a copy
-  // => benchmark before using it (however, TDS can now use non default ctors)
-  // pointer get_new_element()
-  // {
-  // return &*insert(T());
-  // }
-
-  // Historical cruft for TDS.
-  void release_element(pointer x)
-  {
-    erase(iterator(x, 0));
-  }
-
-  // Historical cruft for TDS.  It should go in TDS.
-  bool is_element(const_pointer x) const
-  {
-    for (const_iterator it = begin(); it != end(); ++it)
-      if (&*it == x)
-        return true;
-    return false;
-  }
 
   size_type size() const
   {
@@ -545,7 +506,7 @@ namespace CGALi {
     typedef typename DSC::difference_type             difference_type;
     typedef std::bidirectional_iterator_tag           iterator_category;
 
-    CC_iterator() {}
+    CC_iterator() : p() {}
 
     // Either a harmless copy-ctor,
     // or a conversion from iterator to const_iterator.
@@ -559,11 +520,8 @@ namespace CGALi {
     // Only Compact_container should access these constructors.
     friend class Compact_container<value_type, typename DSC::allocator_type>;
 
-  public:
-    // the following should be private and explicit, but TDS needs it now...
-
     // For begin()
-    CC_iterator(pointer ptr)
+    explicit CC_iterator(pointer ptr)
     : p(ptr)
     {
       if (p == NULL) // empty container.
@@ -681,7 +639,6 @@ namespace CGALi {
   {
     return &*rhs != &*lhs;
   }
-
 
   // The following comparison operator is here so that the iterators
   // can be put directly in set/map (i.e. std::less<> just works).

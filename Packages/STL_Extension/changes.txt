@@ -2,6 +2,9 @@
 //	Revision History for package STL_Extension
 //=====================================================================
 
+Version 2.77 (16 May 2003)
+Compact_container clean ups.
+
 Version 2.76 (15 May 2003)
 Nested_iterator and Concatenate_iterator fixes for MipsPro.
 
