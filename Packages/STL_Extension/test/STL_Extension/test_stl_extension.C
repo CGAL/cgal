@@ -31,6 +31,7 @@
 #include <cstddef>
 #include <list>
 #include <vector>
+#include <CGAL/iterator.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Iterator_identity.h>
 #include <CGAL/Circulator_identity.h>
@@ -38,12 +39,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Circulator_project.h>
 #include <CGAL/Circulator_on_node.h>
-#include <CGAL/N_step_adaptor.h>
-#include <CGAL/N_step_adaptor_derived.h>
 #include <CGAL/function_objects.h>
-#include <CGAL/Inverse_index.h>
-#include <CGAL/Random_access_adaptor.h>
-#include <CGAL/Random_access_value_adaptor.h>
 
 using namespace CGAL;
 
@@ -8004,6 +8000,27 @@ void test_Random_access_adaptor() {
   }
   }
 }
+void test_Emptyset_iterator()
+{
+  Emptyset_iterator e;
+  Assert_output_category(e);
+  Emptyset_iterator f(e);
+  Emptyset_iterator g = f;
+  *g++ = 2;
+  *g = 3.0;
+  ++g;
+}
+void test_Oneset_iterator()
+{
+  int i = 1;
+  Oneset_iterator<int> e(i);
+  Assert_output_category(e);
+  Oneset_iterator<int> f(e);
+  Oneset_iterator<int> g = f;
+  *g++ = 2;
+  *g = 3.0;
+  ++g;
+}
 
 int main() {
   init_global_data();
@@ -8016,6 +8033,8 @@ int main() {
   test_N_step_adaptor_derived();
   test_Inverse_index();
   test_Random_access_adaptor();
+  test_Emptyset_iterator();
+  test_Oneset_iterator();
   clean_global_data();
   return 0;
 }
