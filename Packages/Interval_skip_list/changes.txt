@@ -1,3 +1,7 @@
+1.7 (22 September 2003) [af]
+- Prefixed preprocessor macros with CGAL
+- Compact_container changed, so we can't use it
+
 1.6 (19 September 2003) [af]
 - New license headers
 
