@@ -1,0 +1,409 @@
+Package triangulation: provides triangulations Delaunay triangulations, 
+constrained and regular triangulations with  tests and examples.
+
+Ver 4.26 (10 Dec 99)
+fixed demo.C for VC++ and borland
+added include <list> in Regular_triangulation_face_base_2
+
+Ver 4.23 (2 Dec 99)
+add a creator to Face_handle with a Line_face_circulator as argument
+add #include segment_esgment_intersection in euclidean_geom_traits 
+(to deal  with intersecting constraints)
+change demo/Triangulation/makefile for vc++
+
+Ver 4.22 (26 novembre 99)
+make patches suggested by Dima for bcc
+
+Ver 4.21 (12 novembre 99)
+Changed the copy constructor of Triangulation_ds_face_2
+to fix a bug in refinements of Delaunay Triangulation
+
+Ver 4.20 (8 novembre 99)
+Same as previous.
+I simply had forgot to do the previous change
+
+Ver 4.19 (4 novembre 99)
+suppress the usenamespace CGAL in examples/colored_face.C
+
+Ver 4.18 (28 october 99)
+fixed a bug in regular triangulation
+
+Ver 4.17 (28 october 99)
+fixed examples : regular.C and terrain.C
+
+Ver 4.16 (25 octobre 99)
+fix the return values of examples
+set li in all cases of locate
+remove unused parameter of fill_hole
+renam fill_hole into fill_hole_regular in regular triangulations
+
+
+Ver 4.15 (21 octobre 99)
+fixed the istream-iterators
+added some examples
+
+Ver 4.14 (18 octobre 99)
+added some std:: in example files
+moves the definition of nested class in Constrained_triangulation_sweep_2
+to please MSVC
+
+Ver 4.13 (14 octobre 99)
+a few bug fixes
+
+Ver 4.12 (11 octobre 99)
+added the insert and remove function in Constrained triangulations
+added Constrained_Delaunay_triangulation
+omnly insert has been tested
+
+Ver 4.11 (7 octobre 99)
+changes Distance subtypes in Triangulation_euclidean_traits_xy_3.h
+and the likes
+changes return types in dual(Face_handle)
+changes show_face() in Triangulation_2
+
+Ver 4.10 (5 octobre 99)
+details for MSVC
+
+Ver 4.9
+details for MSVC
+
+Ver 4.8
+A few std:: added and typedefs to please MIPS Pro 7.3
+
+Ver 4.7
+corrections for Visual C++
+added a few functions to Triangulation_2 and Triangulation_default_data_structure_2
+to be used by dynamic constrained triangulations
+
+Ver 4.6 = Ver 4.5 (Sorry)
+
+Ver 4.5 (24 septembre)
+added a few typedef typenames to please MIPS Pro 7.3
+
+Ver 4.4 (24 Septembre)
+resubmit the changes of includes file names in Triangulation_euclidean_xx_3
+(had forgot to commit)
+
+Ver 4.3 (9 Septembre)
+fixed names of include files in Triangulation_eclidean_xx_3.h
+to adapt to new kernel
+
+Ver 4.2 (1 Septembre)
+Changes made in Dagsthul to comply to MSVC++
+rechanged Triangulation_window_stream to triangulation_window_stream
+Changes power_test in regular euclidean traits.
+
+Ver 4.1 (25 August 1999)
+readded file CGAL/IO/triangulation_Window_stream.h for backward compatibility.
+Debugged the example "Triangulation with colored faces" of the manual.
+Add this example (colored_face.C) in examples/Triangulation.
+
+Ver 4.0 (18 August 1999)
+A new version of triangulation based on a new version of 
+the triangulation data structure with a more coherent representation 
+of degenerate 0-dimensional and 1-dimensional triangulations.
+From the user point of view this new version should mostly
+achieved backward compatibility. The main changes concern the iterators
+on the faces, edges and vertices of the triangulation. 
+They now come with two flavours : the "Finite" iterators iterate only on finite 
+features while the "All" iterators iterate on all (finite or infinite) features
+of the triangulation. Old iterator types and functions are still present for
+backward compatibility.
+
+Ver 3.25 (5 August 1999)
+Make a few modifications required by MIPSPRO 7.3 :
+added a few typedefs in derived class
+added using std in testsuite 
+
+Ver 3.24 (9 July 1999)
+Make the test suite programs systematically tests 
+Homogeneous and Cartesin points using default Euclidean traits class.
+Corrected the include files.
+Commented the test of duality which yields a compiler internal error with eg++.
+
+Ver 3.23 (6 July 1999)
+Change number types definition in testsuite to adapt to
+Gmpz or not Gmpz
+
+Ver 3.22 (2 July 1999)
+Change number types in testsuite to Leda integer and Quotient<leda_integer>
+because Gmpz does not compile on visual C++.
+Change class Weighted_point_2 to Weight_Point
+
+Ver 3.21 (24 June 1999)
+Distance_2.h and Pointer.h cleaned by Sylvain
+
+Ver 3.20 (22 Juin 1999)
+Added systenatically the argument verbose and levels to is_valid() functions to avoid warning
+Rewrite the compare() member function of Distance_2 to use the kernel's predicate
+Suppress the name of unused argument in constructor of Distance_2 (to avoid) warning
+
+Ver 3.19 forgotten number, sorry
+
+Ver 3.18 (21 Juin 99)
+Separate into subdirectory predicates,
+the kernel-like predicates used in regular triangulations.
+Added a test for regular triangulation with homogeneous coordinates in the testsuite.
+
+
+Ver 3.17 (28 Mai 99)
+added Point as value_type of Triangulation to get a back_inserter
+
+Ver 3.16 (28 Mai 99)
+include .gif files in doc_tex for figures in html manual
+
+Ver 3.15 (21 Mai 99)
+add a makefile to examples
+
+Ver 3.14 (17 Mai 99)
+same as 3.13
+
+Ver 3.13 (14 Mai 99)
+corrected a few typos in the doc
+
+Ver 3.12 (12 Mai 99)
+idem as 3.12 but without a few parasite files
+
+Ver 3.11 (12 Mai 99)
+corrected a few typos in the doc
+
+Ver 3.10 (12 Mai 99)
+cleaned some file : Triangulation_2.h Delaunay_triangulation_2.h
+added set_ascii to input/ouput tests (for MIPS compiler)
+suppress one of the creator of V2p_adaptor in testsuite (for MIPS compiler)
+
+Ver 3.9 (6 Mai 99)
+Fixed some bugs in 
+Triangulation_euclidian_traits_xy_3.h 
+Triangulation_euclidian_traits_xz_3.h 
+Triangulation_euclidian_traits_yz_3.h 
+
+Ver 3.8 (1 Mai 99)
+fixed some bugs related to MIPS CC after CGAL Meeting in Zurich
+
+Ver 3.7 (18 April 99)
+fixed a small bug related to g++ 2.8.1 (std:: versus CGAL_STD)
+
+Ver 3.6 (14 April 99)
+fixed a bug
+Make the testsuite run with g++ 2.8.1.
+However the problen of compare() is not quite settled.
+The test suite runs with g++ 2.8.1 because it uses either
+a special test_traits which does not use compare()
+or the euclidean traits with gmpz arithmetic.
+The examples do not run because they use euclidean traits with  double
+and then the clash of compare() appears
+
+Ver 3.5 (9 April 99)
+namespaces introduced in examples and demos
+
+Ver 3.4 (8 april 99)
+reactiveated the short names for egcs compiler. No more problems with long names
+did not correct the bug with  CGAL_triangulation_assertion (see previous)
+
+Ver 3.3 (31 March 99)
+Correced a few bugs related to preconditions
+Remains one bug with precondition in Constrained_triangulation_sweep ...Etc
+(had to comment a line CGAL_triangulation_assertion(false) in a subclass
+Remains a problem with longnames 
+#define is not convenient with namespaces
+The bug in circumcenter has been fixed (a problem of number type)
+
+Ver 3.2 (27 March 99)
+A few bugs related to namespace corrected
+Class Triangulation_line_face_circulator is no longer a subclass of Triangulation
+It remains a bug to be fixed in circumcenter....
+
+Ver 3.1 (March 99, the 11th)
+Fixed bugs related to namespaces
+
+Ver 3.0 (Feb 99) intoduction of namespaces  and new header files
+
+Ver 2.10 (Janv. 99)
+Corrected a few details.
+
+Ver 2.9 (Jan 99)
+Corrected a few small details related to
+warning "unused variable ..." when compiling without preconditions
+ans warning "possibly uninitialised variable" when compiling with -O2
+
+Ver 2.8 (Dec 98)
+Added #include CGAL/Triangulation_short_names_2.h
+to some files where it was missing to make it hidden from the user
+Fixed a bug related with default parameter and the previous move
+of function definitions.
+
+Ver 2.7 (Dec 98)
+Change the implementation of cw() and ccw().
+
+Ver 2.6 (Dec 98)
+Change the names of some (dummy) template parameter in Constrained Triangulation
+to make test_suite compile with CC
+Put the definition of complicated function outside class definition
+to prevent them from being inlined.
+
+Ver 2.5 (Dec 98)
+Change template parameters because CC does not support typename in parameter type declaration.
+Changed cgal_test to suppress the test of test_constrained_triangulation_2.C
+which does not compile on CC
+
+Ver 2.4 (Nov 98)
+Added some test for constrained Triangulations
+Fixed a few bugs in the test suite.
+
+Ver 2.1 (Oct 98)
+Added some missing header files.
+Fixed a small bug in increment decrement operators of Line_face_circulator
+Added a demo for triangulations and Delaunay triangulations and examples.
+There is still no demo, nor examples, nor testsuite
+for constrained and regular triangulations
+(to come soon). 
+The dual functions (asking for Voronoi dual) dont work with the terrain traits class
+(CGAL_Triangulation_euclidean_traits_xy_3) and the like.
+
+Ver 2.0 (Sep 1998)
+A new version of the triangulation package.
+The triangulation  classes are now implemented along a three levels structure
+analog to the scheme used in the polyhedron package and in the planar map package.
+
+From the user point of view, the main changes reside in the following fact :
+the triangulation classes (CGAL_Triangulation_2, CGAL_Delaunay_triangulation_2,
+CGAL_Constrained_triangulation_2 etc.) are now templated with two parameters
+(a geometric traits class and triangulation data structure class).
+
+The test_suite concerns only the classes CGAL_Triangulation_2 and CGAL_Delaunay_triangulation_2.
+The other triangulation classes CGAL_Regular_triangulation_2 and CGAL_Constrained_triangulation_2
+have not yet been thoroughly tested.
+
+
+
+Ver 1.23 (Jul 1998)
+- removed warning (count not used) in example/Triangulation/example.C
+- removed pointer chapter from the documentation
+- added include <CGAL/IO/File_writer_OFF.h> in triangulation_print_OFF.h
+- added examples to the documentation and to the demo subdirectory
+
+Ver 1.22 (Jul 1998)
+- examples/points: added compare to Euclidean_2, and fixed CGAL_orientationC2
+- Eliminated some warnings in Triangulation_2.h(1968)::clear(), and
+  Triangulation_face_iterator.h(150)
+- accelerated test suite by compacting into two files tst2.C and tst3.C
+
+Ver 1.21 (25 Jun 1998)
+- Updated documentation, include files were wrong
+- added typename in triangulation_print_OFF.h
+
+Ver 1.20 (23 Jun 1998)
+- changed CGAL_orientation(FT ...) to CGAL_orientationC2(FT ...)
+  in euclidean_traits_*_3 [due to a change in C2 package]
+- changed ==(Point,Point) to traits().compare(Point,Point)
+  This is due to the comparison of points not being the same as
+  the == operator, e.g. for Euclidean_traits_3 (== checks x,y,z
+  coordinates, but triangulation expects only x and y)
+- re-added copy constructor to CGAL_Pointer
+
+Ver 1.19 (19 Jun 1998)
+- added value_type to allow back_inserter(Triangulation &)
+- changed doc for bug in example files and added include directives
+- reformatted doc completely, so that it is nicer.
+
+Ver 1.18 (30 Apr 1998)
+- added demo/ to package (was not present as a mistake)
+
+Ver 1.17 (21 Apr 1998)
+- added #include <CGAL/predicates_on_pointsC2.h>
+  in Triangulation_euclidean_traits_[xyz]*_3.h which made the 
+  test suite failed on tst27, tst37 and tst39
+- add Delaunay::dual(Face), dual(edge)
+- corrected bug in Face::remove()
+- added types Line, Ray, Direction to traits classes
+- added copy constructor to CGAL_Pointer
+- moved back test/ExamplesTriangulation into examples/Triangulation
+- fixed examples so that they return 0 (and the test suite works)
+- added demo/ to package
+- added Inventor_stream.h into demos, so that points3D can compile
+- added two demos (voronoi and crust)
+
+Ver 1.16 (11 Mar 1998)
+- added handles in Triangulation_euclidean_traits_[xyz]*_3.h
+- changed #include's in Triangulation_euclidean_traits_[xyz]*_3.h
+- moved examples/Triangulation into test/ExamplesTriangulation
+- moved doc_tex/basic/* into doc_tex/basic/Triangulation (for Geert-Jan's
+  scripts)
+- edited documentation
+
+Ver 1.15 (26 Feb 1998)
+- fixed the _xy euclidean traits classes and tst27, tst37
+- removed the input in examples, so that they can be run in the testsuite
+
+Ver 1.14 (25 Feb 1998)
+- introduced separation between demo and examples 
+- fixed the examples
+
+Ver 1.13 (17 Feb 1998)
+- added operator<<(..., Constrained_Triangulation ...)
+- added documentation in the new format (doc_tex/basic)
+- added documentation in html format (doc_html/basic/Triangulation)
+
+Ver 1.12 (12 Feb 1998)
+- modified CGAL_CFG_ flags
+- added typenames, CGAL_NULL_TEMPLATE_ARGS, and other compiler helps
+- added leda_color (for LEDA-3.6)
+- corrected a few bugs and fixed the test suite
+- straightened for g++ 2.8.0
+- There still is a bug with Constrained_triangulation, we're working on it.
+  For now, we release the code, the documentation, and the examples, but it
+  is not yet in the test suite.
+
+Ver  1.11 (19 Dec 1997)
+- CGAL_Pointer<>::pointer() renamed to ptr() to avoid name clash with
+     typedef T* CGAL_Bidirectional_circulator_base<T,.,.>::pointer
+- Handles introduced in class Triangulation_2
+- class Triangulation_2, Delaunay_triangulation_2
+- traits classes Euclidean_traits_2, Euclidean_traits_xy_3, yz_3, and xz_3
+
+CONTENTS:
+
+description.txt
+long_description.txt
+
+doc_ps/ contains all the documentation (postscript)
+             triangulation.ps
+             pointer.ps
+
+include/CGAL: contains the following files
+             Constrained_triangulation_2.h
+             Constrained_triangulation_face.h
+             Constrained_triangulation_sweep.h
+             Constrained_triangulation_traits_2.h
+             Constrained_triangulation_vertex.h
+             Triangulation_euclidean_traits_xy_3.h
+             Triangulation_euclidean_traits_yz_3.h
+             Triangulation_euclidean_traits_xz_3.h
+             Pointer.h
+             Delaunay_triangulation_2.h
+             Distance_2.h
+             Triangulation_2.h
+             Triangulation_2_edge_iterator.h
+             Triangulation_2_face_iterator.h
+             Triangulation_2_vertex_iterator.h
+             Triangulation_edge_circulator.h
+             Triangulation_euclidean_traits_2.h
+             Triangulation_face.h
+             Triangulation_face_circulator.h
+             Triangulation_vertex.h
+             Triangulation_vertex_circulator.h
+             triangulation_assertions.h
+             Triangulation_euclidean_traits_3.h
+
+examples/Triangulation contains the following examples:
+	     points.C
+	     example.C
+
+demo/Triangulation contains the following examples:
+	     constraint.C
+             demo.C
+             lfc.C
+	     points3D.C
+
+test/Triangulation/ contains the test suite for the triangulation
