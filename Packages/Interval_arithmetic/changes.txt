@@ -1,3 +1,6 @@
+Version 4.148 on 6 November 2002
+- filtered_predicate_generator.pl : ${CGAL} qualify Dynamic and Static.
+
 Version 4.147 on 30 October 2002
 - Document Lazy_exact_nt::exact().
 

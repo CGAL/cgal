@@ -118,7 +118,7 @@ sub print_CGAL_header {
 # Print dynamic versions
 sub print_dynamic {
   my ($CGAL, $t, $inline, $ret_type, $fct_name, $e, $b, $n, @args)=@_;
-  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,"
+  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, ${CGAL}Dynamic,"
              ." CGAL_IA_PROTECTED, CGAL_IA_CACHE>";
   my $args_call  = join ",", map "\n    $type &$_", @args;
   my $args_inter = join ",", map "\n\t\t$_.interval()", @args;
@@ -217,7 +217,7 @@ sub print_static {
       @args)=@_;
 
   my $predicate_class_name = "Static_Filtered_$fct_name\_".($#args+1);
-  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static,"
+  my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, ${CGAL}Static,"
             ." $adv, CGAL_IA_CACHE>";
   my $args_call     = join ",", map "\n    $type &$_", @args;
   my $args_dbl      = join ",", map "\n\t\t$_.dbl()", @args;
