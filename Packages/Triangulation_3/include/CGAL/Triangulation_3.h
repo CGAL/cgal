@@ -30,17 +30,14 @@
 #include <iostream>
 #include <list>
 #include <map> 
-
 #include <utility>
 
-#include <CGAL/Triangulation_utils_3.h>
-// #include <CGAL/Random.h>
-#include <CGAL/triple.h>
+#include <CGAL/Triangulation_short_names_3.h>
 
+#include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/triple.h>
 #include <CGAL/Pointer.h>
 #include <CGAL/circulator.h>
-
-//#include <CGAL/predicates_on_points_3.h>
 
 #include <CGAL/triangulation_assertions.h>
 
@@ -52,26 +49,15 @@
 #include <CGAL/Triangulation_iterators_3.h>
 #include <CGAL/Triangulation_circulators_3.h>
 
-#include <CGAL/Triangulation_short_names_3.h>
-
 CGAL_BEGIN_NAMESPACE
 
-template < class GT, class Tds>
-class Triangulation_cell_iterator_3;
-template < class GT, class Tds>
-class Triangulation_vertex_iterator_3;
-template < class GT, class Tds>
-class Triangulation_edge_iterator_3;
-template < class GT, class Tds>
-class Triangulation_facet_iterator_3;
-
-template < class GT, class Tds>
-class Triangulation_cell_circulator_3;
-template < class GT, class Tds>
-class Triangulation_facet_circulator_3;
-
-template < class GT, class Tds>
-class Triangulation_cell_3;
+template < class GT, class Tds> class Triangulation_cell_iterator_3;
+template < class GT, class Tds> class Triangulation_vertex_iterator_3;
+template < class GT, class Tds> class Triangulation_edge_iterator_3;
+template < class GT, class Tds> class Triangulation_facet_iterator_3;
+template < class GT, class Tds> class Triangulation_cell_circulator_3;
+template < class GT, class Tds> class Triangulation_facet_circulator_3;
+template < class GT, class Tds> class Triangulation_cell_3;
 
 template < class GT, class Tds > std::istream& operator>> 
 (std::istream& is, Triangulation_3<GT,Tds> &tr);
