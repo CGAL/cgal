@@ -1145,18 +1145,15 @@ svd_is_degenerate_edge_ftC2(const typename K::Site_2& p,
 template<class FT, class MTag, class ITag>
 struct Svd_arrangement_type_ftC2
 {
+  typedef Simple_cartesian<FT>                                Rep;
+  typedef Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
+  typedef Svd_arrangement_type_C2<Kernel>                     Predicate;
+  typedef typename Predicate::result_type                     result_type;
+  typedef typename Kernel::Site_2                             Site_2;
 
-  inline
-  std::pair<int,int>
+  inline result_type
   operator()(const FT v[], const char site_types[]) const
   {
-    typedef Simple_cartesian<FT>                 Rep;
-    typedef
-      CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
-
-    typedef typename Kernel::Site_2                   Site_2;
-    typedef Svd_arrangement_type_C2<Kernel>           Predicate;
-
     must_be_filtered(FT());
 
     Site_2 t[2];
@@ -1172,7 +1169,9 @@ struct Svd_arrangement_type_ftC2
 
 template<class K, class Method_tag>
 inline
-std::pair<int,int>
+typename
+Svd_arrangement_type_ftC2<typename K::FT,Method_tag,
+			  typename K::Intersections_tag>::result_type
 svd_arrangement_type_C2(const typename K::Site_2& p,
 			const typename K::Site_2& q,
 			const Method_tag& mtag)
