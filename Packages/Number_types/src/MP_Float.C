@@ -267,6 +267,13 @@ to_interval(const MP_Float &b)
 std::ostream &
 operator<< (std::ostream & os, const MP_Float &b)
 {
+  os << CGAL::to_double(b);
+  return os;
+}
+
+std::ostream &
+print (std::ostream & os, const MP_Float &b)
+{
   // Binary format would be nice and not hard to have too (useful ?).
   if (b.is_zero())
     return os << 0 << " [ double approx == " << 0.0 << " ]";

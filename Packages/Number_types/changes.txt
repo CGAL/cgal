@@ -1,3 +1,6 @@
+4.29	 (23 July 01)
+- operator<<(MP_Float) now prints a double approximation.
+
 4.28	 (18 July 01)
 - Add Lazy_exact_nt documentation.
 

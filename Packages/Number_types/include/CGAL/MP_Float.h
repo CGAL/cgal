@@ -294,6 +294,10 @@ number_type_tag(const MP_Float &)
 std::ostream &
 operator<< (std::ostream & os, const MP_Float &b);
 
+// This one is for debug.
+std::ostream &
+print (std::ostream & os, const MP_Float &b);
+
 std::istream &
 operator>> (std::istream & is, MP_Float &b);
 
