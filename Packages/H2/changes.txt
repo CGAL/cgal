@@ -1,3 +1,6 @@
+22 June 2004 Sylvain Pion
+- Undeprecate construction functors from NTs.
+
 20 June 2004 Sylvain Pion
 - Add missing this->.
 - Replace some CGAL:: by CGAL_NTS.

@@ -1214,11 +1214,11 @@ namespace CartesianKernelFunctors {
     operator()() const
     { return Line_2(); }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+// #ifndef CGAL_NO_DEPRECATED_CODE
     Line_2
     operator()(const RT& a, const RT& b, const RT& cc) const
     { return Line_2(a, b, cc); }
-#endif // CGAL_NO_DEPRECATED_CODE
+// #endif // CGAL_NO_DEPRECATED_CODE
 
     Line_2
     operator()(const Point_2& p, const Point_2& q) const
@@ -1562,7 +1562,7 @@ namespace CartesianKernelFunctors {
     operator()( Null_vector) const
     { return Vector_2(FT(0), FT(0)); }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+// #ifndef CGAL_NO_DEPRECATED_CODE
     Vector_2
     operator()( const RT& x, const RT& y) const
     { return Vector_2(x, y); }
@@ -1570,7 +1570,7 @@ namespace CartesianKernelFunctors {
     Vector_2
     operator()( const RT& x, const RT& y, const RT& w) const
     { return Vector_2(x, y, w); }
-#endif // CGAL_NO_DEPRECATED_CODE
+// #endif // CGAL_NO_DEPRECATED_CODE
   };
 
   template <typename K>
@@ -1625,7 +1625,7 @@ namespace CartesianKernelFunctors {
     operator()( const Null_vector&) const
     { return Vector_3(FT(0), FT(0), FT(0)); }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+// #ifndef CGAL_NO_DEPRECATED_CODE
     Vector_3
     operator()( const RT& x, const RT& y, const RT& z) const
     { return Vector_3(x, y, z); }
@@ -1633,7 +1633,7 @@ namespace CartesianKernelFunctors {
     Vector_3
     operator()( const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Vector_3(x, y, z, w); }
-#endif // CGAL_NO_DEPRECATED_CODE
+// #endif // CGAL_NO_DEPRECATED_CODE
   };
 
   template <typename K>
