@@ -1,3 +1,6 @@
+Version 4.146 on 9 October 2002
+- Update changes to CGAL_Kernel_pred/cons.
+
 Version 4.145 on 11 September 2002
 - Kernel_checker : add support for predicates taking only 1 argument.
 - Kernel_checker : Predicate_checker now stores objects, not const ref

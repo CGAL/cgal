@@ -172,10 +172,8 @@ class Kernel_checker
     typedef Predicate_checker<typename K1::X, typename K2::X, Conv> X; \
     X Y() const { return X(K1::Y(), k2.Y()); }
 
-#define CGAL_Kernel_pred(X,Y,Z) CGAL_check_pred(Y, Z)
-#define CGAL_Kernel_cons(X,Y,Z)
-#define CGAL_Kernel_pred2(W,X,Y,Z) CGAL_check_pred(Y, Z)
-#define CGAL_Kernel_cons2(W,X,Y,Z)
+#define CGAL_Kernel_pred(Y,Z) CGAL_check_pred(Y, Z)
+#define CGAL_Kernel_cons(Y,Z)
 
 public:
 

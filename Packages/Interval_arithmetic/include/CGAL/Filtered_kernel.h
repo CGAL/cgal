@@ -120,10 +120,8 @@ public:
     CGAL_Filter_type(Iso_cuboid_3)
     // CGAL_Filter_type(Aff_transformation_3)
 
-#define CGAL_Kernel_pred(X,Y,Z) CGAL_Filter_pred(Y,Z)
-#define CGAL_Kernel_cons(X,Y,Z) CGAL_Filter_cons(Y,Z)
-#define CGAL_Kernel_pred2(W,X,Y,Z) CGAL_Filter_pred(Y,Z)
-#define CGAL_Kernel_cons2(W,X,Y,Z) CGAL_Filter_cons(Y,Z)
+#define CGAL_Kernel_pred(Y,Z) CGAL_Filter_pred(Y,Z)
+#define CGAL_Kernel_cons(Y,Z) CGAL_Filter_cons(Y,Z)
 
 #include <CGAL/Kernel/interface_macros.h>
 
