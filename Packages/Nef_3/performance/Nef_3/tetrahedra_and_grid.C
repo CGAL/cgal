@@ -76,7 +76,7 @@ typedef CGAL::grid_generator<Nef_polyhedron> ggen;
 
 int main(int argc, char* argv[]) {
 
-  assert(argc>1 && argc < 6);
+  assert(argc>1 && argc < 7);
   
   int nx = argc>2 ? std::atoi(argv[2]) : 2;
   int ny = argc>3 ? std::atoi(argv[3]) : 2;
@@ -98,7 +98,10 @@ int main(int argc, char* argv[]) {
 
   std::ostringstream out2;
   tgen t2(out2);
-  t2.create_tetrahedra(nx+1,ny+1,nz+1,s);
+  if(argc>5)
+    t2.create_tetrahedra(nx+1,ny+1,nz+1,s,std::atoi(argv[5]));
+  else
+    t2.create_tetrahedra(nx+1,ny+1,nz+1,s); 
   std::istringstream in2(out2.str());
   Nef_polyhedron N2;
   in2 >> N2;
