@@ -62,7 +62,7 @@ namespace CGAL {
 	    end = construct_it(p,1);
 	  dim = end - begin;
 
-	  Iso_box_d box = SearchTraits::Construct_iso_box_d()(p,q);
+	  Iso_box_d box = typename SearchTraits::Construct_iso_box_d()(p,q);
 	  Construct_vertex_d construct_vertex_d;
 	  min = construct_vertex_d(box, 0);
 	  max = construct_vertex_d(box, (1<<dim)-1);
