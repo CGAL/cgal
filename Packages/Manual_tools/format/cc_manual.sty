@@ -145,12 +145,8 @@
 
 % define macros for the vertical structuring
 % ------------------------------------------
+% These three commands are subject to change for \ccGlueBegin and \ccGlueEnd.
 \newcommand{\ccTopSkip}{\smallskip}
-\newcommand{\ccReverseTopSkip}{\vspace{-\smallskipamount}}
-\newcommand{\ccReturnSkip}{\par\hspace*{\ccwIndent}\hspace*{\ccwFirst}%
-                      \hspace*{\ccwBetween}}
-\newcommand{\ccMiddleSkip}{\par\hspace*{1cm}\hfill} % aligns commentblock 
-                                                    % to the right
 \newcommand{\ccBottomSkip}{%
     \par\smallskip
     \def\ccTagBottomBigSkipUsed{\ccFalse}%
@@ -159,6 +155,12 @@
     \par\bigskip
     \def\ccTagBottomBigSkipUsed{\ccTrue}%
 }
+
+\newcommand{\ccReverseTopSkip}{\vspace{-\smallskipamount}}
+\newcommand{\ccReturnSkip}{\par\hspace*{\ccwIndent}\hspace*{\ccwFirst}%
+                      \hspace*{\ccwBetween}}
+\newcommand{\ccMiddleSkip}{\par\hspace*{1cm}\hfill} % aligns commentblock 
+                                                    % to the right
 \newcommand{\ccReverseBottomSkip}{\vspace{-\smallskipamount}}
 \newcommand{\ccReverseBottomBigSkip}{\vspace{-\bigskipamount}}
 
@@ -170,12 +172,46 @@
 %\newcommand{\ccTagBottomBigSkipUsed}{\ccFalse}
 \def\ccTagBottomBigSkipUsed{\ccFalse}
 
+% The layout for comments with multiple lines differ from the layout with 
+% single line comments. The following tag is true if the most recently
+% formatted comment had multiple lines.
+\newcommand{\ccTagMultipleLineComment}{\ccFalse}
+\def\ccTagMultipleLineComment{\ccFalse}
+
 \newcommand{\ccGlueDeclarations}{%
     \ifnum\ccTagBottomBigSkipUsed=\ccTrue
-      \ccReverseBottomBigSkip\vspace{-\parskip}%
+      \ccReverseTopSkip\ccReverseBottomBigSkip\vspace{-\parskip}\medskip%
     \else
-      \ccReverseTopSkip\ccReverseBottomSkip\vspace{-\parskip}%
+      \ifnum\ccTagMultipleLineComment=\ccTrue
+        \ccReverseTopSkip\ccReverseBottomSkip\vspace{-\parskip}\medskip%
+      \else
+        \ccReverseTopSkip\ccReverseBottomSkip\vspace{-\parskip}%
+      \fi
     \fi
+}
+
+\newdimen\ccwParskipTmp  
+
+\newcommand{\ccGlueBegin}{%
+    \ccwParskipTmp = \parskip
+    \parskip=0pt
+    \renewcommand{\ccTopSkip}{\smallskip}
+    \renewcommand{\ccBottomSkip}{\par}
+    \renewcommand{\ccBottomBigSkip}{\par}
+}
+
+\newcommand{\ccGlueEnd}{%
+    \parskip = \ccwParskipTmp
+    \renewcommand{\ccTopSkip}{\smallskip}
+    \renewcommand{\ccBottomSkip}{%
+        \par\smallskip
+        \def\ccTagBottomBigSkipUsed{\ccFalse}%
+    }
+    \renewcommand{\ccBottomBigSkip}{%
+        \par\bigskip
+        \def\ccTagBottomBigSkipUsed{\ccTrue}%
+    }
+    ~
 }
 
 % abbreviations
@@ -579,29 +615,48 @@
                          \ccPureClassTemplateName;)]{#1 (\ccClassTemplateName)}
                    \label{#1}}
 
+\newcommand{\ccInclude}[1]{\noindent\ccc{##include <#1>}}
+
+
 \newcommand{\ccHeading}[1]{\bigskip\pagebreak[1]
                     {\bf #1}
                     \par\nopagebreak }
-\newcommand{\ccCommentHeading}[1]{\par{\it #1}: }
+\newcommand{\ccCommentHeading}[1]{%
+    \def\ccTagMultipleLineComment{\ccFalse}%
+    \par{\it #1}: }
 
 
 \newcommand{\ccDefinition     }{\ccHeading{Definition}}
+\newcommand{\ccInheritsFrom   }{\ccHeading{Inherits From}}
 \newcommand{\ccParameters     }{\ccHeading{Parameters}}
 \newcommand{\ccConstants      }{\ccHeading{Constants}}
 \newcommand{\ccTypes          }{\ccHeading{Types}}
-\newcommand{\ccCreation       }{\ccHeading{Creation} }
+\newcommand{\ccCreation       }{\ccHeading{Creation}}
 \newcommand{\ccOperations     }{\ccHeading{Operations}}
+\newcommand{\ccAccessFunctions}{\ccHeading{Access Functions}}
+\newcommand{\ccPredicates     }{\ccHeading{Predicates}}
+\newcommand{\ccModifiers      }{\ccHeading{Modifiers}}
 \newcommand{\ccImplementation }{\ccHeading{Implementation}}
 \newcommand{\ccExample        }{\ccHeading{Example}}
 
-\newcommand{\ccPrecond  }{
-    % make the precond as wide as the postcond
-    \par
-    {\setbox0=\hbox{\mbox{{\it Postcondition}: }}%
-      \parbox{\wd0}{{\it Precondition}: }%
-    }%
-}
+%\newcommand{\ccPrecond  }{
+%    % make the precond as wide as the postcond
+%    \par
+%    {\setbox0=\hbox{\mbox{{\it Postcondition}: }}%
+%      \makebox[\wd0][l]{{\it Precondition}: }%
+%    }%
+%}
+\newcommand{\ccPrecond  }{\ccCommentHeading{Precondition}}
 \newcommand{\ccPostcond }{\ccCommentHeading{Postcondition}}
+
+\newenvironment{ccAdvanced}{\par
+    \hspace*{-1.2cm}\rule[-5mm]{0.3mm}{5mm}\rule{5cm}{0.2mm}%
+    \vspace*{-\parskip}\par
+}{
+    \vspace*{-\parskip}\par
+    \hspace*{-1.2cm}\rule{0.3mm}{5mm}\rule{5cm}{0.2mm}%
+}
+
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -834,7 +889,7 @@
                            \ccFont\ccPrintTokens ::\ccEnd}%
                        \setbox\functioncallbox=\hbox{\unhcopy\callnamebox
                            \ \ccFont\ccPrintTokens #1\ccEnd}%
-                       \ccLayoutThreeColumns{}{}{}{#2}%
+                       \ccLayoutThreeColumns{}{#1)}{}{#2}%
                      }
 % Enum's are formatted like constructors. There is exact one matching
 % pair of braces in the declaration.
@@ -912,6 +967,7 @@
                        \catcode`\\=12
                   }
 \newcommand{\ccHtmlDefCatcode}{%
+                       \catcode`\@=11\relax
                        \catcode`\|=0
                        \catcode`\[=1
                        \catcode`\]=2
@@ -962,6 +1018,7 @@
 \newcount\ccBool              % either 0 for false or 1 for true.
 \newcount\ccFalse \ccFalse=0  % This must be constant 0 !!!
 \newcount\ccTrue  \ccTrue=1   % This must be constant 1 !!!
+\newcount\ccAuto  \ccAuto=2   % This must be constant 2 !!! Used for Tags.
 
 % A small macro to invert \ccBool
 \def\ccInvert {%
@@ -1287,6 +1344,8 @@
 %                        For methods, the variable is just prepended.
 %   o  \functioncallbox  contains the complete functioncall incl. parameters
 %                        as a oneliner.
+\newbox\ccInternalCommentBox
+
 \def\ccLayoutThreeColumns #1#2#3#4{%
                        \ccTopSkip
                        \hspace*{\ccwIndent}%
@@ -1299,6 +1358,7 @@
                                \hspace*{\ccwBetween}%
                            \fi
                        \fi
+                       \def\ccTagMultipleLineComment{\ccFalse}%
                        \ifdim\wd\functioncallbox>\ccwSecondLong
                            % Operators are assumed to fit in \ccwSecondLong.
                            % Otherwise, they are formatted as functions.
@@ -1351,9 +1411,15 @@
                            \else
                                \ccBottomSkip
                            \fi
-                        \else
+                       \else
                            \parbox[t]{\ccwSecond}{\unhbox\functioncallbox}%
                            \hspace*{\ccwBetween}%
+                             % test for multiple line comment:
+                           \setbox\ccInternalCommentBox=\hbox{\sloppy #4}%
+                           \ifdim\wd\ccInternalCommentBox>\ccwComment
+                               \def\ccTagMultipleLineComment{\ccTrue}%
+                           \fi
+                           % format comment
                            \parbox[t]{\ccwComment}{\sloppy #4}%
                              %\hspace*{\ccwRightMargin}\hfill
                            \ccBottomSkip
