@@ -108,11 +108,30 @@ SOURCE=.\Qt_widget_toolbar_layers.C
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\..\include\CGAL\IO\icons.h
-# End Source File
-# Begin Source File
+SOURCE=.\partition_2.h
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_widget_get_simple_polygon.h
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\partition_2.h
+
+"partition_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o partition_2.moc partition_2.C
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\partition_2.h
+
+"partition_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o partition_2.moc partition_2.C
+
+# End Custom Build
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -120,21 +139,22 @@ SOURCE=.\Qt_widget_toolbar.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
 
+# Begin Custom Build
+InputPath=.\Qt_widget_toolbar.h
+
+"Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
 # Begin Custom Build
 InputPath=.\Qt_widget_toolbar.h
 
-BuildCmds= \
-	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h" \
-	$(QTDIR)\bin\moc.exe -o partition_2.moc partition_2.C \
-	
-
 "Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
 
-"partition_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
 # End Custom Build
 
 !ENDIF 
@@ -145,6 +165,14 @@ BuildCmds= \
 SOURCE=.\Qt_widget_toolbar_layers.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_toolbar_layers.h
+
+"Qt_widget_toolbar_layers.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar_layers.moc" "Qt_widget_toolbar_layers.h"
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 

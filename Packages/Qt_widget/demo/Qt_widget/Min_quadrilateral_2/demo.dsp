@@ -52,7 +52,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  $(QTDIR)\lib\qt-mt230nc.lib $(QTDIR)\lib\qtmain.lib $(CGALROOT)\lib\msvc6\CGAL.lib $(CGALROOT)\lib\msvc6\CGALQt.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcmtd"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(QTDIR)\lib\qt-mt230nc.lib $(QTDIR)\lib\qtmain.lib $(CGALROOT)\lib\msvc6\CGAL.lib $(CGALROOT)\lib\msvc6\CGALQt.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcmtd"
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
@@ -111,6 +111,33 @@ SOURCE=.\Qt_widget_toolbar_layers.C
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\min_quadrilateral_2.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\min_quadrilateral_2.h
+
+"min_quadrilateral_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o min_quadrilateral_2.moc min_quadrilateral_2.C
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\min_quadrilateral_2.h
+
+"min_quadrilateral_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o min_quadrilateral_2.moc min_quadrilateral_2.C
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\min_quadrilateral_layers.h
 # End Source File
 # Begin Source File
@@ -118,6 +145,14 @@ SOURCE=.\min_quadrilateral_layers.h
 SOURCE=.\Qt_widget_move_list_point.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_move_list_point.h
+
+"Qt_widget_move_list_point.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
@@ -138,21 +173,22 @@ SOURCE=.\Qt_widget_toolbar.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
 
+# Begin Custom Build
+InputPath=.\Qt_widget_toolbar.h
+
+"Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
 # Begin Custom Build
 InputPath=.\Qt_widget_toolbar.h
 
-BuildCmds= \
-	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h" \
-	$(QTDIR)\bin\moc.exe -o min_quadrilateral_2.moc min_quadrilateral_2.C \
-	
-
 "Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
 
-"min_quadrilateral_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
 # End Custom Build
 
 !ENDIF 
@@ -163,6 +199,14 @@ BuildCmds= \
 SOURCE=.\Qt_widget_toolbar_layers.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_toolbar_layers.h
+
+"Qt_widget_toolbar_layers.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
@@ -176,14 +220,6 @@ InputPath=.\Qt_widget_toolbar_layers.h
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Zoom.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Zoomrect.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
