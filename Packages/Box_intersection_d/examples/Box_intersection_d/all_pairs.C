@@ -23,8 +23,10 @@ void callback( const Box& a, const Box& b ) {
 };
 
 int main() {
-    std::vector<Box> a;
-    fill_boxes( 100, a );
-    CGAL::box_self_intersection_d( a.begin(), a.end(), callback );
+    std::vector<Box> a, b;
+    fill_boxes( 10, a );
+    fill_boxes( 10, b );
+    CGAL::box_intersection_all_pairs_d( a.begin(), a.end(),
+                                        b.begin(), b.end(), callback );
 }
 
