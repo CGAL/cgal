@@ -53,7 +53,7 @@ typename K::RT wdot_tag(const typename K::Point_2 &p,
 			const typename K::Point_2 &q,
 			const typename K::Point_2 &r,
 			const K&,
-			const Cartesian_tag)
+			const Cartesian_tag&)
 {
   return  (p.x() - q.x()) * (r.x() - q.x())
           + (p.y() - q.y()) * (r.y() - q.y());
@@ -65,7 +65,7 @@ typename K::RT wdot_tag(const typename K::Point_2 &p,
 			const typename K::Point_2 &q,
 			const typename K::Point_2 &r,
 			const K&,
-			const Homogeneous_tag)
+			const Homogeneous_tag&)
 {
   return  (p.hx() * q.hw() - q.hx() * p.hw())
           * (r.hx() * q.hw() - q.hx() * r.hw())
