@@ -99,6 +99,15 @@ sub collect_results()
 }
 
 
+sub print_platforms_extended()
+{
+    my ($filename, @result,@filenames);
+    @filenames = glob("results_*.info");
+    foreach $_ (@filenames) {
+	($filename) =  m/results_(.*?)\.info\s*/;
+	push(@result, $filename) if $filename;
+    }
+}
 
 sub print_resultpage()
 {
@@ -173,92 +182,107 @@ EOF
 
 sub choose_platforms()
 {
-    my (%av_pf, %kn_pf, $pf);
+    my (%platform_index, $pf);
     @available_platforms = list_platforms();
     my $index = 0;
-    for ($index=0; $index < @known_platforms; $index += 2) {
+    for ($index=0; $index < @known_platforms; $index += 1) {
 	$pf = $known_platforms[$index];
-	$kn_pf{$pf} = 1;
+	$platform_index{$pf} = 1;
     }
-    foreach $pf (@available_platforms) {
-	$av_pf{$pf} = 1;
-    }
-    @platforms_to_do = ();
-    for ($index=0; $index < @known_platforms; $index += 2) {
-	$pf = $known_platforms[$index];
-	if (exists $av_pf{$pf}) {
-	    push(@platforms_to_do, $pf);;
-	}
-    }
-    foreach $pf (@available_platforms) {
-	if (!exists $kn_pf{$pf}) {
+
+    foreach (@available_platforms) {
+	$pf = $_;
+	$pf =~ s/^[^_]*_//;
+	$pf =~ s/_LEDA$//;
+	if (!exists $platform_index{$pf}) {
 	    print STDERR
-		"Warning: Platform $pf is unknown and not treated!\n";
+		"Warning: Platform $_ is unknown!\n";
+	    $platform_index{$pf} = 1;
+	    push(@known_platforms,$pf); # ???
 	}
     }
-    
+
+# Make a list of all the platforms that are to be treated, in the order they
+# appear in the list of known_platforms.
+    @platforms_to_do = ();
+    for ($index=0; $index < @known_platforms; $index += 1) {
+	$pf = $known_platforms[$index];
+	my $ind2 = 0;
+	foreach (@available_platforms) {
+	    my $apf = $_;
+	    $apf =~ s/^[^_]*_//;
+	    $apf =~ s/_LEDA$//;
+	    if ($apf eq $pf) {
+	    	push(@platforms_to_do, $_);
+	    }
+	}
+    }
+
+}
+
+sub print_platform_descriptions()
+{
+    my ($i,$pf_no,$pf) = (0,1);
+    print OUTPUT <<'EOF';
+<TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >
+<TR ALIGN=CENTER>
+<TD COLSPAN=2><B>OS and compiler</B></TD>
+<TD><B>tester</B></TD>
+<TD><B>LEDA</B></TD>
+<TD><B>GMP</B></TD>
+<TD><B>CLN</B></TD>
+</TR>
+EOF
+    foreach $pf (@platforms_to_do) {
+	print OUTPUT "<TR>\n<TD>$pf_no</TD>\n";
+	$pf_no++;
+	my $pf_short = $pf;
+	$pf_short =~ s/^[^_]*_//;
+	$pf_short =~ s/_LEDA$//;
+	print OUTPUT "<TD NOWRAP><B>$pf_short</B></TD>\n";
+        if (open (PLATFORM_INFO, "results_${pf}.info")) {
+	    $_ = <PLATFORM_INFO>;
+	    $_ = <PLATFORM_INFO>;
+	    chomp;
+	    $_ = email_address_in_html_format($_);
+	    print OUTPUT "<TD NOWRAP><B>$_</B></TD>\n";
+	    my $index = 3;
+	    while ($index) {
+	        $index--;
+		$_ = <PLATFORM_INFO>;
+		chomp;
+		print OUTPUT "<TD ALIGN=CENTER NOWRAP><B>$_</B></TD>\n";
+	    }
+	} else {
+	    print OUTPUT "<TD NOWRAP><B>?</B></TD>\n";
+	    print OUTPUT "<TD NOWRAP><B>?</B></TD>\n";
+	    print OUTPUT "<TD NOWRAP><B>?</B></TD>\n";
+	    print OUTPUT "<TD NOWRAP><B>?</B></TD>\n";
+	}
+    }
+    print OUTPUT "</TABLE>\n";
 }
 
 sub print_platforms()
 {
-    my ($i,$p) = (0,1);
+    my ($pf_no,$pf) = (1,"");
     print OUTPUT <<'EOF';
 <TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >
 <TR ALIGN=CENTER>
 <TD COLSPAN=2><B>Test Platform</B></TD>
-<TD><B>Test site</B></TD>
-<TD><B>Contact person</B></TD>
 <TD class=ok>y</TD>
 <TD class=warning>w</TD>
 <TD class=error>n</TD>
 </TR>
 EOF
-
     my ($platform_num)=(0);
-    foreach (@platforms_to_do) {
-	print OUTPUT "<TR>\n<TD>$p</TD>\n";
-	$p++;
-	print OUTPUT "<TD NOWRAP><B>$_</B></TD>\n";
-	while ($known_platforms[$i] ne $_) {
-	    $i += 2;
-	    die if $i >= @known_platforms;
-	}
-	my $responsible = $known_platforms[$i+1];
-	if (!defined($responsible)) {
-	    print STDERR "Unknown responsible person.\n";
-	    print OUTPUT "<TD>?</TD><TD>?</TD>\n";
-	} elsif ($responsible eq 'Matthias') {
-	    print OUTPUT "<TD>Halle</TD>\n",
-		'<TD><A HREF="mailto:baesken\@infsn2.informatik.uni-halle.de">',
-		"Matthias Baesken</A></TD>\n";
-	} elsif ($responsible eq 'Sylvain') {
-	    print OUTPUT "<TD>INRIA Sophia-Antipolis</TD>\n",
-		'<TD><A HREF="mailto:Sylvain.Pion\@sophia.inria.fr">',
-		"Sylvain Pion</A></TD>\n";
-	} elsif ($responsible eq 'Francois') {
-	    print OUTPUT "<TD>INRIA Sophia-Antipolis</TD>\n",
-		'<TD><A HREF="mailto:Francois.Rebufat\@sophia.inria.fr">',
-		"Fran&ccedil;ois Rebufat</A></TD>\n";
-	} elsif ($responsible eq 'Geert') {
-	    print OUTPUT "<TD>Utrecht University</TD>\n",
-		'<TD><A HREF="mailto:geert\@cs.uu.nl">',
-		"Geert-Jan Giezeman</A></TD>\n";
-	} elsif ($responsible eq 'Dima') {
-	    print OUTPUT "<TD>Utrecht University</TD>\n",
-		'<TD><A HREF="mailto:dima\@cs.uu.nl">',
-		"Dima Pasechnik</A></TD>\n";
-	} elsif ($responsible eq 'Michael') {
-	    print OUTPUT "<TD>ETH Z&uuml;rich</TD>\n",
-		'<TD><A HREF="mailto:hoffmann\@inf.ethz.ch">',
-		"Michael Hoffmann</A></TD>\n";
-	} elsif ($responsible eq 'Stefan') {
-	    print OUTPUT "<TD>MPI Saarbr&uuml;cken</TD>\n",
-		'<TD><A HREF="mailto:stschirr\@mpi-sb.mpg.de">',
-		"Stefan Schirra</A></TD>\n";
-	} else {
-	    print STDERR "Unknown responsible person.\n";
-	    print OUTPUT "<TD>?</TD><TD>?</TD>\n";
-	}
+    foreach $pf (@platforms_to_do) {
+	print OUTPUT "<TR>\n<TD>$pf_no</TD>\n";
+	$pf_no++;
+	my $pf_short = $pf;
+	$pf_short =~ s/^[^_]*_//;
+	$pf_short =~ s/_LEDA$//;
+	print OUTPUT "<TD NOWRAP><B>$pf_short</B></TD>\n";
 	my $count;
 	$count = $testresults[$platform_num]->{"y"};
 	print OUTPUT "<TD>$count</TD>\n"; 
@@ -345,6 +369,10 @@ Look at the output to be sure!</B>
 <LI><A HREF="#testresults">Test Results</A> </LI>
 EOF
 
+    print OUTPUT<<"EOF";
+<LI><A HREF="http://www.mpi-sb.mpg.de/~hert/CGAL/${release_name}.manual_test.html">
+The documentation of this release</A></LI>
+EOF
     if (defined($opt_p)) {
 	my $prev_page = result_filename($opt_p);
 	print OUTPUT<<"EOF";
@@ -410,69 +438,69 @@ sub main()
     print OUTPUT "<P>\n";
     print_platforms();
     print OUTPUT "<P>\n";
+    print_platform_descriptions();
+    print OUTPUT "<P>\n";
     print OUTPUT `$SCRIPTDIR/print_cgal_trailer`;
     close OUTPUT;
     chdir "..";
     rename $TEMPPAGE, $WWWPAGE;
     chmod 0664, $WWWPAGE;
     system("chgrp cgal $WWWPAGE");
+    system("cp $WWWPAGE results.html");
 }
 
+sub email_address_in_html_format($)
+{
+	my $responsible = shift;
+	if (!defined($responsible)) {
+	    print STDERR "Undefined responsible person.\n";
+	    return "?";
+	} elsif ($responsible eq 'baesken') {
+	    return 
+		'<A HREF="mailto:baesken\@infsn2.informatik.uni-halle.de">'.
+		"Matthias Baesken</A>";
+	} elsif ($responsible eq 'Sylvain') {
+	    return '<A HREF="mailto:Sylvain.Pion\@sophia.inria.fr">'.
+		"Sylvain Pion</A>";
+	} elsif ($responsible eq 'Francois') {
+	    return 
+		'<A HREF="mailto:Francois.Rebufat\@sophia.inria.fr">'.
+		"Fran&ccedil;ois Rebufat</A>";
+	} elsif ($responsible eq 'geert') {
+	    return 
+		'<A HREF="mailto:geert\@cs.uu.nl">'.
+		"Geert-Jan Giezeman</A>";
+	} elsif ($responsible eq 'dima') {
+	    return 
+		'<A HREF="mailto:dima\@cs.uu.nl">'.
+		"Dima Pasechnik</A>";
+	} elsif ($responsible eq 'hoffmann') {
+	    return 
+		'<A HREF="mailto:hoffmann\@inf.ethz.ch">'.
+		"Michael Hoffmann</A>";
+	} elsif ($responsible eq 'stschirr') {
+	    return 
+		'<A HREF="mailto:stschirr\@mpi-sb.mpg.de">'.
+		"Stefan Schirra</A>";
+	} else {
+	    print STDERR "Unknown responsible person $responsible.\n";
+	    return "?";
+	}
+}
 
 @known_platforms = (
-    'i686_Linux-2.0.29_eg++-egcs-2.90.27_LEDA', 'Sylvain',
-    'i686_Linux-2.0.35_eg++-egcs-2.91.57_LEDA', 'Sylvain',
-    'i686_Linux-2.0.29_eg++-egcs-2.91.57', 'Sylvain',
-    'i686_Linux-2.0.29_eg++-egcs-2.91.57_LEDA', 'Sylvain',
-    'mips_IRIX-5.3_g++-egcs-2.90.29_LEDA', 'Geert',
-    'sparc_SunOS-5.5_g++-egcs-2.90.27_LEDA', 'Michael',
-    'sparc_SunOS-5.6_g++-egcs-2.91.57', 'Michael',
-    'sparc_SunOS-5.6_g++-egcs-2.91.57_LEDA', 'Michael',
-    'sparc_SunOS-5.6_g++-egcs-2.91.60', 'Michael',
-    'sparc_SunOS-5.6_g++-egcs-2.91.60_LEDA', 'Michael',
-    'i686_Linux-2.0.35_g++-egcs-2.91.60_LEDA', 'Sylvain',
-    'i686_Linux-2.0.35_eg++-egcs-2.91.60_LEDA', 'Sylvain',
-    'i686_Linux-2.0.36_eg++-egcs-2.91.60_LEDA', 'Francois',
-    'mips_IRIX-5.3_g++-egcs-2.91.60_LEDA', 'Geert',
-    'sparc_SunOS-5.5.1_g++-egcs-2.91.66_LEDA','Matthias',
-    'sparc_SunOS-5.6_g++-egcs-2.91.66_LEDA_GJ', 'Geert',
-    'sparc_SunOS-5.6_g++-egcs-2.91.66', 'Geert',
-    'sparc_SunOS-5.6_g++-egcs-2.91.66_LEDA', 'Michael',
-    'sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA', 'Sylvain',
-    'i586_Linux-2.0.35_eg++-egcs-2.91.66_LEDA', 'Francois',
-    'i686_Linux-2.0.36_eg++-egcs-2.91.66_LEDA', 'Francois',
-    'i686_Linux-2.0.36_eg++-egcs-2.91.66', 'Francois',
-    'i686_Linux-2.2.7_eg++-egcs-2.91.66', 'Francois',
-    'i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA', 'Francois',
-    'i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA_EX', 'Sylvain',
-    'i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA_W', 'Sylvain',
-    'ppc_Linux-2.2.7_g++-egcs-2.91.66_LEDA', 'Sylvain',
-    'sparc_SunOS-5.6_g++-gcc-2.95.', 'Francois',
-    'i686_Linux-2.2.7_g++-2.95._LEDA', 'Francois',
-    'i686_Linux-2.2.7_g++-2.95.1_LEDA', 'Francois',
-    'sparc_SunOS-5.6_g++-2.95.1', 'Geert',
-    'i686_Linux-2.0.29_g++-2.8.1_LEDA', 'Sylvain',
-    'i686_Linux-2.0.35_g++-2.8.1_LEDA', 'Sylvain',
-    'i686_Linux-2.0.35_g++-2.8.1', 'Sylvain',
-    'i686_Linux-2.0.36_g++-2.8.1_LEDA', 'Francois',
-    'sparc_SunOS-5.5_g++-2.8.1_LEDA', 'Michael',
-    'sparc_SunOS-5.6_g++-2.8.1_LEDA', 'Michael',
-    'mips_IRIX-6.2_CC-n32-7.20_LEDA', 'Michael',
-    'mips_IRIX64-6.2_CC-n32-7.20_LEDA', 'Michael',
-    'mips_IRIX-6.5_CC-n32-7.2.1.1m_LEDA', 'Michael',
-    'mips_IRIX64-6.5_CC-n32-7.2.1.2m_LEDA', 'Michael',
-    'mips_IRIX64-6.5_CC-n32-7.2.1.3m_LEDA', 'Michael',
-    'mips_IRIX-6.5_CC-n32-7.2.1.3m_LEDA', 'Michael',
-    'mips_IRIX64-6.2_CC-64-7.20_LEDA', 'Michael',
-    'mips_IRIX64-6.5_CC-n32-7.30_LEDA', 'Michael',
-    'sparc_SunOS-5.5_CC-4.2_LEDA', 'Michael',
-    'sparc_SunOS-5.6_CC-4.2_LEDA', 'Michael',
-    'sparc_SunOS-5.6_CC-5.0', 'Stefan',
-    'sparc_SunOS-5.6_g++-2.95.1_LEDA', 'Stefan',
-    'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168', 'Geert',
-    'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168_cp', 'Dima',
-    'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168_LEDA', 'Dima',
-    'i686_CYGWINNT-4.0-20.1_g++-egcs-2.91.57_LEDA', 'Dima'
+    'sparc_SunOS-5.5.1_g++-egcs-2.91.66',
+    'sparc_SunOS-5.6_g++-egcs-2.91.66',
+    'sparc_SunOS-5.6_eg++-egcs-2.91.66',
+    'i686_Linux-2.2.7_eg++-egcs-2.91.66',
+    'ppc_Linux-2.2.7_g++-egcs-2.91.66',
+    'i686_Linux-2.2.7_g++-2.95.1',
+    'sparc_SunOS-5.6_g++-2.95.1',
+    'i686_Linux-2.0.36_g++-2.8.1',
+    'sparc_SunOS-5.6_g++-2.8.1',
+    'mips_IRIX64-6.5_CC-n32-7.30',
+    'sparc_SunOS-5.6_CC-5.0',
+    'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168',
 );
-main();
 
+main();
