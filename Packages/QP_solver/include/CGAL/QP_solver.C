@@ -1353,7 +1353,12 @@ check_basis_inverse()
 
     // diagnostic output
     CGAL_qpe_debug {
-	if ( ok) vout4 << "ok" << std::endl;
+	if ( ok) {
+	    vout4 << "check ok";
+	} else {
+	    vout4 << "check failed";
+	}
+	vout4 << std::endl;
     }
 
     return ok;
@@ -1366,7 +1371,7 @@ check_basis_inverse( Tag_true)
     CGAL_qpe_debug {
 	vout4 << std::endl;
     }
-
+    bool res = true;
     unsigned int    row, rows =   C.size();
     unsigned int    col, cols = B_O.size();
     Index_iterator  i_it = B_O.begin();
@@ -1394,17 +1399,19 @@ check_basis_inverse( Tag_true)
 		}
 		std::cerr << "failed ( row=" << row << " | col=" << col << " )"
 		          << std::endl;
+		res = false;
 	    }
 	}
     }
 
-    return true;
+    return res;
 }
 
 template < class Rep_ >                                         // QP case
 bool  QPE_solver<Rep_>::
 check_basis_inverse( Tag_false)
 {
+    bool res = true;
     unsigned int    row, rows =   C.size();
     unsigned int    col, cols = B_O.size();
     Value_iterator  v_it;
@@ -1463,6 +1470,7 @@ check_basis_inverse( Tag_false)
 		std::cerr << "failed ( row=" << row << " | col=" << col << " )"
 		          << std::endl;
 		//		return false;
+		res = false;
 	    }
 	}
 	v_it = std::find_if( q_x_O.begin(), q_x_O.begin()+cols,
@@ -1474,6 +1482,7 @@ check_basis_inverse( Tag_false)
 	    std::cerr << "failed ( row=" << rows+(v_it-q_x_O.begin())
 		      << " | col=" << col << " )" << std::endl;
 	    // ToDo: return false;
+	    res = false;
 	}
     }
     vout4 << "= = = = = = = = = =" << std::endl;
@@ -1513,6 +1522,7 @@ check_basis_inverse( Tag_false)
 	    std::cerr << "failed ( row=" << v_it-q_lambda.begin()
 		      << " | col=" << col << " )" << std::endl;
 	    //	    return false;
+	    res = false;
 	}
 	v_it = q_x_O.begin();
 	for ( row = 0; row < cols; ++row, ++v_it) {
@@ -1523,10 +1533,11 @@ check_basis_inverse( Tag_false)
 		std::cerr << "failed ( row=" << row+rows << " | col="
 			  << col << " )" << std::endl;
 		//		return false;
+		res = false;
 	    }
 	}
     }
-    return true;
+    return res;
 }
 
 // setting the pricing strategy
