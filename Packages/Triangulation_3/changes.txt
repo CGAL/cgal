@@ -1,11 +1,14 @@
+Version 1.61 (?? June 01)
+- Remove one "new Cell" in Triangulation_3.
+- Privatize some member functions of TDS.
+
 Version 1.60 (14 June 01)
 - Short names for the hierarchy.
 - More test-suite cleanups.
 
 Version 1.59 (14 June 01)
 - Test-suite cleanups.
-- Change prototype of tds::clear_cells_only() to avoid unnecessary vector
-  copy.
+- Change prototype of tds::clear_cells_only() to avoid unnecessary vector copy.
 
 Version 1.58 (7  June 01)
 - Cleanup vertex_3 and cell_3.
