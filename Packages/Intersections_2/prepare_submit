@@ -19,5 +19,6 @@ fi
 
 make xsrcs
 
+cd ..
 cvs -q commit -m "" src include
 
