@@ -1,18 +1,22 @@
-// ======================================================================
+// Copyright (c) 1998  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// Copyright (c) 1998 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
-// ----------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : 
-// release_date  : 
-// date          : 21 Apr 1998
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : config/testfiles/CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION.C
-// author(s)     : various
-// coordinator   : Utrecht University
-//
-// ======================================================================
+// Author(s)     : various
 
 // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION.C
 // ---------------------------------------------------------------------
