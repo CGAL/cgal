@@ -71,14 +71,9 @@ public:
     Vb::set_cell(c);
   }
 
-  void set_point(const Point & p)
-  {
-    Vb::set_point(p);
-  }
-
   // CHECKING
 
-   bool is_valid(bool verbose = false, int level = 0) const;
+  bool is_valid(bool verbose = false, int level = 0) const;
 
   // used for symbolic perturbation in remove_vertex for Delaunay
   // undocumented
@@ -93,15 +88,15 @@ public:
       return _order_of_creation;
   }
   
+private:
   int _order_of_creation;
 };
 
 template < class VH>
 class Vertex_tds_compare_order_of_creation {
 public:
-  bool operator()(VH u, VH v){
-    return ( u->get_order_of_creation()
-	     < v->get_order_of_creation() );
+  bool operator()(VH u, VH v) const {
+    return u->get_order_of_creation() < v->get_order_of_creation();
   }
 };
 

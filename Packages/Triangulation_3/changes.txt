@@ -1,6 +1,7 @@
-Version 1.73 (?? July 01)
+Version 1.73 (13 July 01)
 - print_cells and read_cells small cleanup.
 - With VC++, MP_Float.h must be included before Filtered_exact.h.
+- Small cleanups for order_of_creation.
 
 Version 1.72 (10 July 01)
 - New functions : TDS.create_vertex() and TDS.delete_vertex().

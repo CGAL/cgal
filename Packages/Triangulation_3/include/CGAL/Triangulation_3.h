@@ -28,7 +28,7 @@
 #include <CGAL/basic.h>
 
 #include <iostream>
-#include <list>
+#include <set>
 #include <map> 
 #include <utility>
 
@@ -738,15 +738,6 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   return is;
 }
     
-template < class VH>
-class Vertex_handle_compare_order_of_creation {
-public:
-  bool operator()(VH u, VH v){
-    return ( (&(*u))->get_order_of_creation()
-	     < (&(*v))->get_order_of_creation() );
-  }
-};
-
 template < class GT, class Tds >
 std::ostream & 
 operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
@@ -791,7 +782,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   CGAL_triangulation_assertion( i == n+1 ); 
 
   std::sort(TV.begin(), TV.end(), 
-	    Vertex_handle_compare_order_of_creation<Vertex_handle>()); 
+	    Vertex_tds_compare_order_of_creation<Vertex_handle>()); 
 
   CGAL_triangulation_assertion( tr.is_infinite(TV[0]) );
 
