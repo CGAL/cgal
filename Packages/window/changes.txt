@@ -1,3 +1,6 @@
+2.8.24 (21 March 2002)
+- manual split
+
 2.8.23 (20 March 2002)
 - changes in PS - support (support of leda namespace)
 
