@@ -1,6 +1,10 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
 
+3.8 (02 Jul 2001)
+
+     - Try changed order of scan_OFF declarations for Borland.
+
 3.7 (02 Jul 2001)
 
      - Added allocators to HalfedgeDS and Polyhedron.

@@ -64,22 +64,6 @@ template < class Traits,
            template < class T, class I, class A>
 #endif
            class HDS, class Alloc>
-void scan_OFF( std::istream& in, Polyhedron_3<Traits,Items,HDS,Alloc>& P,
-               bool verbose = false) {
-    // reads a polyhedron from `in' and appends it to P.
-    typedef Polyhedron_3<Traits,Items,HDS,Alloc> Polyhedron;
-    typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
-    typedef Polyhedron_scan_OFF<HalfedgeDS> Scanner;
-    Scanner scanner( in, verbose);
-    P.delegate(scanner);
-}
-
-template < class Traits,
-           class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-           class HDS, class Alloc>
 void scan_OFF( std::istream& in,
                Polyhedron_3<Traits,Items,HDS,Alloc>& P,
                File_header_OFF& header) {
@@ -91,6 +75,22 @@ void scan_OFF( std::istream& in,
     Scanner scanner( in, header.verbose());
     P.delegate(scanner);
     header = scanner.header();
+}
+
+template < class Traits,
+           class Items,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+           template < class T, class I, class A>
+#endif
+           class HDS, class Alloc>
+void scan_OFF( std::istream& in, Polyhedron_3<Traits,Items,HDS,Alloc>& P,
+               bool verbose = false) {
+    // reads a polyhedron from `in' and appends it to P.
+    typedef Polyhedron_3<Traits,Items,HDS,Alloc> Polyhedron;
+    typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
+    typedef Polyhedron_scan_OFF<HalfedgeDS> Scanner;
+    Scanner scanner( in, verbose);
+    P.delegate(scanner);
 }
 
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
