@@ -9,6 +9,22 @@
 \newcount\nestinglevel  % counts nesting levels of template parameters
 \newcount\xnestinglevel % counts nesting levels of template parameters
 \newcount\spaceflag     % result, weather a parameter starts with a space
+\newcount\emptyflag     % result, weather a parameter is empty (besides spaces)
+
+\newcount\NParameters   % counts number of parameters for operators
+\newbox\parameterX      % first parameter
+\newbox\parameterXX     % second parameter
+\newbox\parameterXXX    % third and rest of parameters
+
+\def\CCfont{\em}        % font or style changing command in which all C++
+                        % tokens will be typeset, including the variable names.
+\def\CCendfont{\/}      % will be used after a C++ text. For slanted fonts,
+                        % here should stay \/ macro.
+
+\def\CCopenangle  {\CCendfont {\tt <}}
+\def\CCcloseangle {\CCendfont {\tt >}}
+\def\CCampersand  {\CCendfont {\tt \&}}
+\def\CCunderscore {\_}
 
 % These macros allow the characterwise parsing of an argument, where normally
 % the spaces are ignored.
@@ -27,21 +43,31 @@
 \def\compareAndCopySpace #1#2#3\end{%
     \def\xxparams{#1}\def\xxxparams{#2#3}\ifx\xxparams\xxxparams\else\ \fi}
 
+% This macro test wheather its argument is empty or contains only spaces.
+\def\testEmpty #1{%
+    \testEmptyX #1;\end}
+\def\testEmptyX #1#2\end{%
+    \def\xparams{#2}\ifx\xparams\empty\emptyflag=1 \else\emptyflag=0 \fi}
+
 \newenvironment{class}[1]{%
                    \gdef\pureclassname{#1}%
                    \gdef\puretemplatename{#1}%
                    \gdef\pureparameters{}%
-                   \gdef\classname{\hbox{{\em \CCprintTokens #1 ;\/}}}%
-                   \gdef\classtemplatename{\hbox{{\em \CCprintTokens #1 ;}}}%
+                   \gdef\classname{\hbox{{\CCfont 
+                           \CCprintTokens #1\end\CCendfont}}}%
+                   \gdef\classtemplatename{\hbox{{\CCfont
+                           \CCprintTokens #1\end\CCendfont}}}%
                    }{}
 
 \newenvironment{classtemplate}[2]{%
                    \gdef\pureclassname{#1}%
                    \gdef\puretemplatename{#1<#2>}%
                    \gdef\pureparameters{#2}%
-                   \gdef\classname{\hbox{{\em \CCprintSingleToken #1;\/}}}%
-                   \gdef\classtemplatename{\hbox{{\em \CCprintTokens #1 ;}%
-                           \/{\tt <}{\em #2}\/{\tt >}}}%
+                   \gdef\classname{\hbox{{\CCfont
+                           \CCprintSingleToken #1;\CCendfont}}}%
+                   \gdef\classtemplatename{\hbox{{\CCfont
+                           \CCprintTokens #1\end}%
+                           \CCendfont{\tt <}{\CCfont #2}\CCendfont{\tt >}}}%
                    }{}
 
 \def\CCsection #1{%
@@ -49,8 +75,11 @@
                            {#1 (\classname)}
                    \label{#1}}
 
-\def\creationvariable #1{\creation #1}
-\def\threecolumns #1#2{\typewidth=#1  % compare to setopdims
+\def\creationvariable #1{%
+                   \gdef\var{$#1$}
+                   \gdef\purevar{#1}}
+
+\def\threecolumns #1#2{\typewidth=#1
                    \callwidth=#2
                    \descriptwidth=\textwidth
                    \advance\descriptwidth-\typewidth
@@ -64,10 +93,10 @@
 
 % Print a character of a C++ declaration. Special handling of _<>&.
 \def\CCprintChar #1{%
-                   \if_#1\_%
-                   \else\if<#1\/{\tt <}%
-                   \else\if>#1\/{\tt >}%
-                   \else\if&#1\/{\tt \&}%
+                   \if_#1\CCunderscore
+                   \else\if<#1\CCopenangle
+                   \else\if>#1\CCcloseangle
+                   \else\if&#1\CCampersand
                    \else #1%
                    \fi\fi\fi\fi}
 
@@ -82,15 +111,20 @@
                    \xnext}
 
 % Print C++ tokens (separated with spaces). Skip leading spaces.
-% The tokens have to be delimited by " ;".
-\def\CCprintTokens #1#2 #3;{%
-                   \CCprintSingleToken #1#2;%
-                   \def\params{#3}\ifx\params\empty%
-                   \else\ \CCprintTokens #3;%
-                   \fi}
+% The tokens have to be delimited by "\end".
+\def\CCprintTokens #1#2\end{%
+                   \CCprintChar #1%
+                   \def\xbody{\CCprintTokens #2\end}%
+                   \testEmpty{#2}\ifnum\emptyflag=1
+                       \let\xnext=\relax
+                   \else
+                       \compareAndCopySpace{#2}#2\end
+                       \let\xnext=\xbody
+                   \fi
+                   \xnext}
 
 % Print one parameter in C++ style (including spaces).
-\def\CCstyle #1{{\em \CCprintTokens #1 ;\/}}
+\def\CCstyle #1{{\CCfont \CCprintTokens #1\end\CCendfont}}
 
 % Print a parameter where "const ...&" pairs are eliminated. Strips a
 % leading type that equals the \classname. It is a three step process:
@@ -102,16 +136,18 @@
 % The parameter has to be delimited with "<>;".
 % Ignore leading spaces.
 \def\CCprintOwnClassParameter #1#2<#3#4;{%
-        \if>#3%
+        \ifx\pureparameters\empty
+            \CCprintOwnClassX  #1#2 ;% no template case
+        \else\if>#3%
             \CCprintOwnClassX  #1#2 ;% no template case
         \else
             \CCprintOwnClassXX{#1#2}<#3#4;% template case ?
-        \fi}
+        \fi\fi}
 \def\CCprintOwnClassX #1 #2;{% check for \classname
         \def\xparams{#1}\ifx\xparams\pureclassname
-            \CCprintTokens #2;%
+            \CCprintTokens #2\end%
         \else
-            \CCprintTokens #1 #2;%
+            \CCprintTokens #1 #2\end%
         \fi}
 \def\CCprintOwnClassXX #1#2<>;{% strip the unneccessary <> from the end
         \CCprintOwnClassXXX {#2}#1 ;}
@@ -125,7 +161,7 @@
                 \xnestinglevel=0
                 \CCprintOwnClassXXXX #1;% strip the template parameters
             \else
-                \CCprintTokens #2#1 ;% nothing stripped
+                \CCprintTokens #2#1\end% nothing stripped
             \fi
         \else
             \errhelp{The allowed syntax is: name< params...}%
@@ -136,7 +172,7 @@
                    \if<#1\advance\xnestinglevel by1  \fi
                    \if>#1\advance\xnestinglevel by-1 \fi
                    \ifnum\xnestinglevel=0
-                       \CCprintTokens #2 ;%
+                       \CCprintTokens #2\end%
                        \let\xnext=\relax
                    \else
                        \def\xparams{#2}%
@@ -161,6 +197,18 @@
         \if&#2\CCprintParameter #1#3&#4#5;%
         \else
         \CCprintParameter #1#2#3 #4#5;%
+        \fi
+    \fi}
+
+% Print a C++ function or method return type. Strips a matching
+% "const ...&" pair.
+% The parameter has to be delimited with "const.&.;".
+\def\CCprintReturnType #1const#2#3&#4#5;{%
+    \if.#2\CCprintTokens #1\end%
+    \else
+        \if&#2\CCprintReturnType #1#3&#4#5;%
+        \else
+        \CCprintReturnType #1#2#3 #4#5;%
         \fi
     \fi}
 
@@ -220,12 +268,86 @@
                    \else\let\xxnext=\xxbody\fi
                    \xxnext}
 
+% Extract up to three parameters from a C++ parameter list 
+% (separated with commatas) within the \paramterX.. boxes.
+\def\CCextractParamList #1{%
+        \nestinglevel=0
+        \NParameters=0
+        \def\xparams{#1}\ifx\xparams\empty\else
+            \CCextractParamListX{}#1;\fi}
+% Support function:
+%   o  The first parameter accumulates the so far parsed first parameter.
+%   o  The second parameter contains the next character.
+%   o  The third parameter contains the rest.
+% The parsing process iterates characterwise.
+% The parameter list has to be terminated with ";".
+\def\CCextractParamListX #1#2#3;{%
+                   \testSpace{#3}%
+                   \if<#2\advance\nestinglevel by1 \fi
+                   \if>#2\advance\nestinglevel by-1 \fi
+                   \if,#2%
+                       \ifnum\nestinglevel=0 
+                           \advance\NParameters by1
+                           \ifnum\NParameters=1 \setbox\parameterX=%
+                                   \hbox{\CCprintParameter #1const.&.;}%
+                               \def\xxxbody{\CCextractParamListX{}#3;}%
+                           \else\advance\NParameters by1
+                               \setbox\parameterXX=%
+                                   \hbox{\CCprintParameter #1const.&.;}%
+                               \setbox\parameterXXX=%
+                                   \hbox{\CCprintParamList{#3}}%
+                               \def\xxxbody{\relax}%
+                           \fi
+                       \else\ifnum\nestinglevel<0
+                           \def\errhelp{Look for unbalanced angles in 
+                           template types in the C++ parameter list.}%
+                           \errmessage{Unbalanced angles detected.}%
+                           \def\xxxbody{\CCextractParamListX{}#3;}%
+                       \else% comma within template parameter detected
+                           \ifnum\spaceflag=1
+                               \def\xxxbody{\CCextractParamListX
+                                   {#1#2 }#3;}%
+                           \else
+                               \def\xxxbody{\CCextractParamListX
+                                   {#1#2}#3;}%
+                           \fi
+                       \fi
+                       \fi
+                   \else\def\xxxparams{#3}\ifx\xxxparams\empty%
+                       \ifnum\nestinglevel=0
+                           \advance\NParameters by1
+                           \ifnum\NParameters=1 \setbox\parameterX=%
+                                   \hbox{\CCprintParameter #1#2const.&.;}%
+                           \else\ifnum\NParameters=2 \setbox\parameterXX=%
+                                   \hbox{\CCprintParameter #1#2const.&.;}%
+                           \else\setbox\parameterXXX=%
+                                   \hbox{\CCprintParameter #1#2const.&.;}%
+                           \fi\fi
+                       \else\def\errhelp{Look for unbalanced angles in 
+                           template types in the C++ parameter list.}%
+                           \errmessage{Unbalanced angles detected.}%
+                       \fi
+                       \def\xxxbody{\CCextractParamListX{}#3;}%
+                   \else
+                       \ifnum\spaceflag=1
+                           \def\xxxbody{\CCextractParamListX
+                               {#1#2 }#3;}%
+                       \else
+                           \def\xxxbody{\CCextractParamListX
+                               {#1#2}#3;}%
+                       \fi
+                   \fi
+                   \fi
+                   \def\xxxparams{#3}\ifx\xxxparams\empty\let\xxxnext=\relax
+                       \else\let\xxxnext=\xxxbody\fi
+                   \xxxnext}
+
 
 \def\constructorcall #1(#2)#3 \par {%
                    \def\params{#2}\ifx\params\empty%
-                   \mbox{\classtemplatename\ \ \var;}%
+                   \mbox{\classtemplatename\ \ \CCfont\purevar ;}%
                    \else\mbox{\classtemplatename
-                       \ \ \var{\em (\CCprintParamList{#2});}}%
+                       \ \ {\CCfont \purevar(\CCprintParamList{#2});}}%
                    \fi\par }
 \def\constructor #1#2{%
                        \constructorcall #1 \par
@@ -234,17 +356,178 @@
                        \bigskip
                        }
 
+% The method/fct. call is checked for the operator keyword.
+%   o  The first parameter contains a 0 for a method call, a 1 for a function.
+%   o  The second parameter contains the (maybe empty) parameter list.
+%   o  The third to fifth parameters parse the name.
+% The declaration has to be terminated with "operator;\end".
+\def\CCcheckOperator #1#2#3operator#4#5\end{%
+                       \if;#4\ifnum#1=0 \purevar.\fi
+                           \CCprintSingleToken #3;%
+                           (\def\params{#2}\ifx\params\empty
+                               \else\CCprintParamList{#2}\fi
+                           )%
+                       \else
+                           \ifnum#1=0
+                               \CCprintOperator{#1}{\purevar,}{#2}#4#5\end
+                           \else
+                               \CCprintOperator{#1}{}{#2}#4#5\end
+                           \fi
+                       \fi}
+
+
+% An operator is detected and can be printed.
+%   o  The first parameter contains a 0 for a method call, a 1 for a function.
+%   o  The second parameter contains the \purevar if it is a method.
+%   o  The third parameter contains the (maybe empty) parameter list.
+%   o  The fourth parameter is the first character of the operator.
+%   o  The fifth parameter contains the rest of the operator.
+%   o  The sixth parameter is the ";".
+% The declaration ends with "operator;\end".
+\newcount\operatorerror
+\def\CCprintOperator #1#2#3#4#5operator#6\end{%
+                       \CCextractParamList{#2#3}%
+                       \operatorerror=1
+                       \def\xparams{#5}%
+                       \ifx\xparams\empty 
+                           % single character operations
+                           \ifcase\NParameters         % no parameter
+                           \or                         % 1 parameter
+                               \if~#4\CCoperatorpraefix{\tilde{}}\fi
+                               \if!#4\CCoperatorpraefix{#4}\fi
+                               \if-#4\CCoperatorpraefix{#4}\fi
+                               \if+#4\CCoperatorpraefix{#4}\fi
+                               \if&#4\CCoperatorpraefix{\mbox{{\CCfont
+                                       \CCampersand}}}\fi
+                               \if*#4\CCoperatorpraefix{#4}\fi
+                           \or                         % 2 parameters
+                               \if*#4\CCoperatorinfix{#4}\fi
+                               \if/#4\CCoperatorinfix{\,#4}\fi
+                               \if\%#4\CCoperatorinfix{#4}\fi
+                               \if+#4\CCoperatorinfix{#4}\fi
+                               \if-#4\CCoperatorinfix{#4}\fi
+                               \if<#4\CCoperatorinfix{#4}\fi
+                               \if>#4\CCoperatorinfix{#4}\fi
+                               \if&#4\CCoperatorinfix{\mbox{{\CCfont
+                                       \CCampersand}}}\fi
+                               \if^#4\CCoperatorinfix{\hat{}}\fi
+                               \if|#4\CCoperatorinfix{#4}\fi
+                               \if=#4\CCoperatorinfix{#4}\fi
+                               \if,#4\CCoperatorinfix{#4}\fi
+                           \else                       % 3 parameters
+                           \fi
+                       \else
+                           % two or more character operations
+                           \CCprintOperatorTwo #4#5\end
+                       \fi
+                       \ifnum\operatorerror=1 \def\errhelp{Look out
+                           for the legal operator overloading in C++.
+                           Maybe, not all operators are currently supported
+                           by this style, sorry.}\errmessage{Unknown operator
+                           detected. Go ahead, and I format it as a 
+                           function.}%
+                           \CCprintSingleToken operator#4#5;%
+                           (\def\params{#3}\ifx\params\empty
+                               \else\CCprintParamList{#3}\fi
+                           )%
+                       \fi
+                     }
+
+% An operator with two or more characters is detected and can be printed.
+%   o  The first parameter is the first character of the operator.
+%   o  The second parameter is the second character of the operator.
+%   o  The third parameter contains the rest of the operator.
+% The declaration ends with "\end".
+\def\CCprintOperatorTwo #1#2#3\end{%
+                   \def\xparams{#3}%
+                   \ifx\xparams\empty 
+                       % two character operations
+                       \ifcase\NParameters         % no parameter
+                       \or                         % 1 parameter
+                           \if-#1\if>#2\CCoperatorpostfix{\:#1\!\!\!#2}\fi\fi
+                           \if(#1\if)#2\CCoperatorparX{(}{)}\fi\fi
+                           \if+#1\if+#2\CCoperatorpraefix{#1\!#2}\fi\fi
+                           \if-#1\if-#2\CCoperatorpraefix{#1\!#2}\fi\fi
+                       \or                         % 2 parameters
+                           \if[#1\if]#2\CCoperatorparXX{[}{]}\fi\fi
+                           \if(#1\if)#2\CCoperatorparXX{(}{)}\fi\fi
+                           \if+#1\if+#2\CCoperatorpostfix{#1\!#2}\fi\fi
+                           \if-#1\if-#2\CCoperatorpostfix{#1\!#2}\fi\fi
+                           \if>#1\if>#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if<#1\if<#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if<#1\if=#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if>#1\if=#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if=#1\if=#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if!#1\if=#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if&#1\if&#2\CCoperatorinfix{\mbox{{\CCfont
+                                       \CCampersand}}\mbox{{\CCfont
+                                       \CCampersand}}}\fi\fi
+                           \if|#1\if|#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if*#1\if=#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if/#1\if=#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if\%#1\if=#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if+#1\if=#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if-#1\if=#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if&#1\if=#2\CCoperatorinfix{\mbox{{\CCfont
+                                       \CCampersand}}#2}\fi\fi
+                           \if|#1\if=#2\CCoperatorinfix{#1#2}\fi\fi
+                           \if^#1\if=#2\CCoperatorinfix{\hat{}#2}\fi\fi
+                       \else                       % 3 parameters
+                           \if(#1\if)#2\CCoperatorparXXX{(}{)}\fi\fi
+                       \fi
+                   \else
+                       % three or more character operations
+                       \ifcase\NParameters         % no parameter
+                       \or                         % 1 parameter
+                           \if-#1\if>#2\CCoperatorpostfix{\:#1\!\!\!#2#3}\fi\fi
+                       \or                         % 2 parameters
+                           \if#1n\if#2e\CCoperatornew{#1#2#3}\fi\fi
+                           \if#1d\if#2e\CCoperatordelete{#1#2#3}\fi\fi
+                           \if>#1\if>#2\CCoperatorinfix{#1#2#3}\fi\fi
+                           \if<#1\if<#2\CCoperatorinfix{#1#2#3}\fi\fi
+                       \else                       % 3 parameters
+                       \fi
+                   \fi
+                 }
+
+
+\def\CCoperatorpraefix #1{%
+    $#1 \mbox{\box\parameterX}$\operatorerror=0 }
+\def\CCoperatorinfix #1{%
+    $\mbox{\box\parameterX} #1 \mbox{\box\parameterXX}$\operatorerror=0 }
+\def\CCoperatorpostfix #1{%
+    $\mbox{\box\parameterX} #1$\operatorerror=0 }
+\def\CCoperatorappend #1#2{%
+    $\mbox{\box\parameterX} #1#2$\operatorerror=0 }
+\def\CCoperatorparX #1#2{%
+    \box\parameterX#1#2\operatorerror=0 }
+\def\CCoperatorparXX #1#2{%
+    \box\parameterX#1\box\parameterXX#2\operatorerror=0 }
+\def\CCoperatorparXXX #1#2{%
+    \box\parameterX\CCendfont#1\box\parameterXX,
+    \box\parameterXXX#2\operatorerror=0 }
+\def\CCoperatornew #1{%
+    $ * \mbox{{\CCfont ptr\_}\box\parameterX} = \mbox{{\CCfont #1}
+              \box\parameterX}$\operatorerror=0 }
+\def\CCoperatordelete #1{%
+    $ \mbox{{\CCfont #1} {\CCfont ptr\_}\box\parameterX}$\operatorerror=0 }
+
 % The first argument accumulates the type until only one token 
 % without separating spaces remains (i.e. the method name).
 \def\extracttype #1#2 #3;{\def\params{#3}%
-                       \ifx\params\empty \CCprintTokens #1 ;%
-                       \else\extracttype{#1\ #2}#3;\fi}
+                       \ifx\params\empty \CCprintReturnType #1const.&.;%
+                       \else\extracttype{#1 #2}#3;\fi}
 
-% strip leading tokens until only one token
-% without separating spaces remains (i.e. the method name).
-\def\extractname #1 #2;{\def\params{#2}%
-                       \ifx\params\empty \CCprintSingleToken #1;%
-                       \else\extractname #2;\fi}
+% strip leading tokens (from a possible longer return type) until only
+% one token without separating spaces remains (i.e. the method/fct. name).
+%   o  The first parameter contains a 0 for a method call, a 1 for a function.
+%   o  The second parameter contains the (maybe empty) parameter list.
+%   o  The third and fourth parameters parse the name.
+% The functionname has to be terminated with " ;".
+\def\functionname #1#2#3 #4;{\def\params{#4}%
+                       \ifx\params\empty 
+                           \CCcheckOperator{#1}{#2}#3operator;\end%
+                       \else\functionname{#1}{#2}#4;\fi}
 
 % Formats a method or a function call.
 %   o  The first parameter contains a 0 for a method call, a 1 for a function.
@@ -255,23 +538,36 @@
 % The declaration has to be terminated with ";;\end" where the first ";"
 % has to be from the original call notation. The sixth parameter is there
 % to check for this ";".
+\newbox\functioncallbox
+% internal macro
+\def\checkOperatorPar #1#2\end{
+    \if(#1\emptyflag=0 \else\emptyflag=1 \fi}
 \def\functioncall #1#2 #3(#4)#5;#6\end{%
                        \def\xparam{#6}\ifx\xparam\empty\def\errhelp{A method
                            or function declaration has to end with a ";".}%
                            \errmessage{Missing ";" at the end of the 
                            declaration. Go ahead, I've inserted one.}%
                        \fi
-                       \parbox[t]{\typewidth}{\sloppy 
-                           {\em \extracttype {#2}#3 ;}}
-                       \setbox0=\hbox{\mbox{
-                               \ifnum#1=0 \var.\fi{\em \extractname #3 ;%
-                               (\def\params{#4}\ifx\params\empty\else%
-                                   \CCprintParamList{#4}\fi)}    
-                           }}
-                       \ifdim\wd0>\callwidth 
-                            \parbox[t]{\callwidthl}{\box0}\hfill\par
-                            \hspace*{1cm}\hfill
-                       \else\parbox[t]{\callwidth}{\box0}\hfill
+                       % Check, weather #5 contains another (), then the
+                       % functioncall is supposed to be an operator()(...).
+                       \testEmpty{#5}\ifnum\emptyflag=0 
+                           \checkOperatorPar #5\end
+                       \fi
+                       % result: emptyflag = 0 --> #5 starts with (
+                       \ifnum\emptyflag=0 \functioncall #1#2 {#3(#4)}#5;#6\end
+                       \else
+                           \parbox[t]{\typewidth}{\sloppy 
+                               {\CCfont \extracttype {#2}#3 ;}}
+                           \setbox\functioncallbox=\hbox{\mbox{
+                                   {\CCfont \functionname{#1}{#4}#3 ;}%
+                               }}
+                           \ifdim\wd\functioncallbox>\callwidth 
+                                \parbox[t]{\callwidthl}{\box\functioncallbox
+                                    }\hfill\par
+                                \hspace*{1cm}\hfill
+                           \else\parbox[t]{\callwidth}{\box\functioncallbox
+                                    }\hfill
+                           \fi
                        \fi}
 \def\method #1#2{%
                        \smallskip
@@ -306,27 +602,17 @@
 \parindent 0pt
 
 
-\def\manual{\footnotesize}
 
-\def\3{\ss{}}
+
+\def\manual{\footnotesize}
 
 \def\boxit#1{\vbox{\hrule\hbox{\vrule\kern3pt\vbox{#1}\kern3pt\vrule}\hrule}}
 
-\def\abs {|}
-
-\def\co{\hbox{\tt //\ }}
-\def\'{\hbox{\tt "}}
-\def\<{\hbox{\tt <}}
-\def\>{\hbox{\tt >}}
-\def\CC{C\raise.08ex\hbox{\tt ++\ }}
-\def\CCC{C\raise.08ex\hbox{\tt ++}}
+\def\CC{C\raise.08ex\hbox{\tt ++}}
 \def\gg{g\hbox{\tt ++\ }}
 \def\nat{\hbox{\rm\vrule\kern-0.045em N}}
 \def\real{\hbox{\rm\vrule\kern-0.035em R}}
 \def\tildeop{\tilde{}}
-\def\'{^\prime}
-\def\+{$+$}
-
 
 \newdimen\typewidth
 \typewidth=2.5cm
@@ -351,229 +637,27 @@
 \descriptwidth=\textwidth
 \advance\descriptwidth -\typewidth
 \advance\descriptwidth -\callwidth
-\advance\descriptwidth -0.5cm
-
-\def\setopdims #1 #2   {\typewidth=#1cm
-                        \callwidth=#2cm
-                        \descriptwidth=\textwidth
-                        \advance\descriptwidth-\typewidth
-                        \advance\descriptwidth-\callwidth
-                        \advance\descriptwidth-0.5cm
-                        \callwidthl=\textwidth 
-                        \advance\callwidthl-\typewidth
-                        \advance\callwidthl-0.5cm
-                        }
-
-\def\manpage #1 #2 #3 {\section{#3 (#1)} \label{#3}%
-                       \def\params{#2}\ifx\params\empty%
-                       \gdef\name{\hbox{$#1$}}%
-                       \else\gdef\name{\hbox{$#1${\tt <}$#2${\tt >}}}%
-                       \fi }
- 
+\advance\descriptwidth -0.5cm 
  
 \def\definition       {\bigskip\pagebreak[1]
                        {\bf 1. Definition}
                        \par\nopagebreak }
 
-
-
-\def\creation #1      {\gdef\var {$#1$}
-                       \bigskip\pagebreak[1]
+\def\creation         {\bigskip\pagebreak[1]
                        {\bf 2. Creation}
                        \par\nopagebreak }
 
-
-
-\def\operations #1 #2 {\bigskip\pagebreak[1]
+\def\operations       {\bigskip\pagebreak[1]
                        {\bf 3. Operations}
-                       \setopdims #1 #2
                        \par\nopagebreak }
-
-
 
 \def\implementation   {\bigskip\pagebreak[1]
                        {\bf 4. Implementation}
                        \par\nopagebreak }
 
-
-
 \def\example          {\bigskip\pagebreak[1]
                        {\bf 5. Example}
                        \par\nopagebreak }
 
-
-
-\def\create #1 #2     { \mbox{\name\ \ \var$#1$;}\par
-                       \hspace*{1cm}\hfill
-                       \parbox[t]{\createtextwidth}{\sloppy #2}\par
-                       \bigskip }
-
-
-
-\def\op #1 #2 #3 #4    {\smallskip
-                       \parbox[t]{\typewidth}{\sloppy $#1$}
-                       \parbox[t]{\callwidth}{\sloppy \var.#2$#3$}\hfill
-                       \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
-                       \smallskip}
-
-\def\opl #1 #2 #3 #4   {\smallskip
-                       \parbox[t]{\typewidth}{\sloppy $#1$}
-                       \parbox[t]{\callwidthl}{\sloppy \var.#2$#3$}\hfill\par
-                       \hspace*{1cm}\hfill
-                       \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
-                       \smallskip}
-
-\def\func #1 #2 #3 #4  {\smallskip
-                       \parbox[t]{\typewidth}{\sloppy $#1$}
-                       \parbox[t]{\callwidth}{\sloppy #2$#3$}\hfill
-                       \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
-                       \smallskip}
-
-\def\funcl #1 #2 #3 #4 {\smallskip
-                       \parbox[t]{\typewidth}{\sloppy $#1$}
-                       \parbox[t]{\callwidthl}{\sloppy #2$#3$}\hfill\par
-                       \hspace*{1cm}\hfill
-                       \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
-                       \smallskip}
-
-
-%binary operator function
-\def\binopfunc #1 #2 #3{\smallskip
-                       \parbox[t]{\typewidth}{\sloppy $#1$}
-                       \parbox[t]{\callwidthl}{\sloppy $#2$}\hfill\par
-                       \hspace*{1cm}\hfill
-                       \parbox[t]{\descriptwidth}{\sloppy #3}\hfill\par
-                       \smallskip}
-
-
-
-
-%binary operator
-\def\binop #1 #2 #3 #4 {\smallskip
-                        \parbox[t]{\typewidth}{\sloppy $#1$}
-                        \parbox[t]{\callwidth}{\sloppy \var\ \ $#2\ \ #3$}\hfill
-                        \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
-                        \smallskip}
-
-
-%unary operator
-\def\unop #1 #2 #3    {\smallskip
-                        \parbox[t]{\typewidth}{\sloppy $#1$}
-                        \parbox[t]{\callwidth}{\sloppy $#2$\ \var}\hfill
-                        \parbox[t]{\descriptwidth}{\sloppy \sloppy #3}\hfill\par
-                        \smallskip}
-
-\def\postunop #1 #2 #3 {\smallskip
-                        \parbox[t]{\typewidth}{\sloppy $#1$}
-                        \parbox[t]{\callwidth}{\sloppy \var\ $#2$}\hfill
-                        \parbox[t]{\descriptwidth}{\sloppy \sloppy #3}\hfill\par
-                        \smallskip}
-
-
-%operator[]
-\def\arrop #1 #2 #3    {\smallskip
-                        \parbox[t]{\typewidth}{\sloppy $#1$}
-                        \parbox[t]{\callwidth}{\sloppy \var\ $[#2]$}\hfill
-                        \parbox[t]{\descriptwidth}{\sloppy #3}\hfill\par
-                        \smallskip}
-
-
-%%operator()
-\def\funop #1 #2 #3    {\smallskip
-                        \parbox[t]{\typewidth}{\sloppy $#1$}
-                        \parbox[t]{\callwidth}{\sloppy \var\ $(#2)$}\hfill
-                        \parbox[t]{\descriptwidth}{\sloppy #3}\hfill\par
-                        \smallskip}
-
-
-%stream operator
-\def\strop #1 #2 #3 #4 {\smallskip
-                        \parbox[t]{\typewidth}{\sloppy $#1$}
-                        \parbox[t]{\callwidth}{\sloppy $#3\ \ #2$\ \ \var}\hfill
-                        \parbox[t]{\descriptwidth}{\sloppy #4}\hfill\par
-                        \smallskip}
-
-
-
-\let\Mpage             \manpage
-\let\Manpage           \manpage
-\let\Mdefinition       \definition
-\let\Mcreation         \creation
-
-\let\Moperations       \operations
-\let\Mimplementation   \implementation
-\let\Mexample          \example
-
-\let\Mcreate           \create
-
-\let\Mop               \footnotesize
-\let\Mopl              \footnotesize
-\let\Mfunc             \footnotesize
-\let\Mbinop            \footnotesize
-\let\Marrop            \footnotesize
-\let\Mfunop            \footnotesize
-\let\Munop             \footnotesize
-\let\Mstrop            \footnotesize
-
-
 \def\precond {{\it Precondition}: }
-
-
-\def\If       {{\bf if} }
-\def\Fi       {{\bf fi} }
-\def\Then     {{\bf then} }
-\def\Else     {{\bf else} }
-\def\Do       {{\bf do} }
-\def\Od       {{\bf od} }
-\def\For      {{\bf for} }
-\def\While    {{\bf while} }
-\def\Return   {{\bf return} }
-\def\Break    {{\bf return} }
-\def\Continue {{\bf continue} }
-\def\Case     {{\bf case} }
-\def\Switch   {{\bf switch} }
-\def\Class    {{\bf class} }
-\def\Struct   {{\bf struct} }
-\def\Public   {{\bf public} }
-\def\Friend   {{\bf friend} }
-\def\Typedef  {{\bf typedef} }
-
-\def\n {\backslash n}
-
-\def\Item #1  {\hbox{{\tt <}$#1${\tt >}\ }}
-
-
-% LEDA macros:
-
-\def\Forall         {{\bf forall} }
-\def\Forallnodes    {{\bf forall\_nodes} }
-\def\Foralledges    {{\bf forall\_edges} }
-\def\Foralladjnodes {{\bf forall\_adj\_nodes} }
-\def\Foralladjedges {{\bf forall\_adj\_edges} }
-
-
-% verbatim
-
-\font\ttbig= cmtt10 scaled \magstephalf
-
-\chardef\other=12
-\def\ttverbatim {
-\parskip 5pt
-\catcode`\&=\other \catcode`\{=\other \catcode`\}=\other
-%\catcode'\\=\other 
-\catcode`\$=\other \catcode`\&=\other
-\catcode`\#=\other \catcode`\%=\other \catcode`\~=\other
-\catcode`\_=\other \catcode`\^=\other
-\obeyspaces \obeylines}
-
-% usage:
-%
-%\begingroup
-% \ttbig
-% {\obeyspaces\gdef {\ }}
-% \ttverbatim
-%
-% ...
-%
-%\endgroup
 
