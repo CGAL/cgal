@@ -249,6 +249,28 @@
 				RelativePath="..\..\include\Cgal\Square_border_parametizer_3.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="OpenNL"
+			Filter="">
+			<File
+				RelativePath="..\..\..\OpenNL\include\OpenNL\bicgstab.h">
+			</File>
+			<File
+				RelativePath="..\..\..\OpenNL\include\OpenNL\blas.h">
+			</File>
+			<File
+				RelativePath="..\..\..\OpenNL\include\OpenNL\conjugate_gradient.h">
+			</File>
+			<File
+				RelativePath="..\..\..\OpenNL\include\OpenNL\full_vector.h">
+			</File>
+			<File
+				RelativePath="..\..\..\OpenNL\include\OpenNL\linear_solver.h">
+			</File>
+			<File
+				RelativePath="..\..\..\OpenNL\include\OpenNL\sparse_matrix.h">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

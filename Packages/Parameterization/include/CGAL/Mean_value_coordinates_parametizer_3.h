@@ -41,23 +41,28 @@ class Mean_value_coordinates_parametizer_3
 // Public types
 public:
 				// Export Mesh_Adaptor_3, BorderParametizer_3 and SparseLinearAlgebraTraits_d types and subtypes
-				typedef MeshAdaptor_3											Mesh_adaptor_3;
-				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode		ErrorCode;
-				typedef typename MeshAdaptor_3::NT								NT;
-				typedef typename MeshAdaptor_3::Face							Face;
-				typedef typename MeshAdaptor_3::Vertex							Vertex;
-				typedef typename MeshAdaptor_3::Point_3							Point_3;
-				typedef typename MeshAdaptor_3::Point_2							Point_2;
-				typedef typename MeshAdaptor_3::Vector_3						Vector_3;
-				typedef typename MeshAdaptor_3::Face_iterator					Face_iterator;
-				typedef typename MeshAdaptor_3::Vertex_iterator					Vertex_iterator;
-				typedef typename MeshAdaptor_3::Border_vertex_iterator			Border_vertex_iterator;
-				typedef typename MeshAdaptor_3::Vertex_around_face_circulator	Vertex_around_face_circulator;
-				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator	Vertex_around_vertex_circulator;
-				typedef BorderParametizer_3										Border_parametizer_3;
-				typedef SparseLinearAlgebraTraits_d								Sparse_linear_algebra_traits_d;
-				typedef typename SparseLinearAlgebraTraits_d::Vector			Vector;
-				typedef typename SparseLinearAlgebraTraits_d::Matrix			Matrix;
+				typedef MeshAdaptor_3													Mesh_adaptor_3;
+				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
+				typedef typename MeshAdaptor_3::NT										NT;
+				typedef typename MeshAdaptor_3::Face									Face;
+				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Point_3									Point_3;
+				typedef typename MeshAdaptor_3::Point_2									Point_2;
+				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
+				typedef typename MeshAdaptor_3::Face_iterator							Face_iterator;
+				typedef typename MeshAdaptor_3::Face_const_iterator						Face_const_iterator;
+				typedef typename MeshAdaptor_3::Vertex_iterator							Vertex_iterator;
+				typedef typename MeshAdaptor_3::Vertex_const_iterator					Vertex_const_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_iterator					Border_vertex_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_const_iterator			Border_vertex_const_iterator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_circulator			Vertex_around_face_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_const_circulator		Vertex_around_face_const_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator			Vertex_around_vertex_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_const_circulator	Vertex_around_vertex_const_circulator;
+				typedef BorderParametizer_3												Border_parametizer_3;
+				typedef SparseLinearAlgebraTraits_d										Sparse_linear_algebra_traits_d;
+				typedef typename SparseLinearAlgebraTraits_d::Vector					Vector;
+				typedef typename SparseLinearAlgebraTraits_d::Matrix					Matrix;
 
 // Public operations
 public:
@@ -74,19 +79,8 @@ public:
 // Protected stuff
 protected:
 				// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i 
-				virtual NT  compute_wij(MeshAdaptor_3& mesh, Vertex& main_vertex_Vi, Vertex_around_vertex_circulator neighbor_vertex_Vj) 
+				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, const Vertex& main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj)
 				{
-					//Vector u = pHalfedge->prev()->vertex()->point()-pHalfedge->vertex()->point();
-					//Vector v = pHalfedge->next()->vertex()->point()-pHalfedge->vertex()->point();
-					//Vector w = pHalfedge->opposite()->next()->vertex()->point()-pHalfedge->vertex()->point();
-					//double len = My_kernel::len(u);
-					//double alpha = My_kernel::evaluate_angle_rad(u,v);
-					//double beta = My_kernel::evaluate_angle_rad(u,w);
-					//double weight = 0.0;
-					//if(len != 0.0)
-					//weight = (tan(0.5*alpha)+tan(0.5*beta))/len;
-								
-
 					Point_3	position_Vi = mesh.get_vertex_position(main_vertex_Vi);
 					Point_3	position_Vj = mesh.get_vertex_position(*neighbor_vertex_Vj);
 
@@ -96,13 +90,13 @@ protected:
 
 					// Compute angle of corner specified by Vj,Vi,Vk points (ie tangent of Vi corner)
 					// if Vk is the vertex before Vj when circulating around Vi
-					Vertex_around_vertex_circulator previous_vertex_Vk = neighbor_vertex_Vj; previous_vertex_Vk --;
+					Vertex_around_vertex_const_circulator previous_vertex_Vk = neighbor_vertex_Vj; previous_vertex_Vk --;
 					Point_3	position_Vk = mesh.get_vertex_position(*previous_vertex_Vk);
 					double gamma_ij  = compute_angle_rad(position_Vj, position_Vi, position_Vk);
 
 					// Compute angle of corner specified by Vl,Vi,Vj points (ie tangent of Vi corner)
 					// if Vl is the vertex after Vj when circulating around Vi
-					Vertex_around_vertex_circulator next_vertex_Vl = neighbor_vertex_Vj; next_vertex_Vl ++;
+					Vertex_around_vertex_const_circulator next_vertex_Vl = neighbor_vertex_Vj; next_vertex_Vl ++;
 					Point_3	position_Vl = mesh.get_vertex_position(*next_vertex_Vl);
 					double delta_ij = compute_angle_rad(position_Vl, position_Vi, position_Vj);
 

@@ -80,11 +80,13 @@ public:
 
   // data access
   std::list<HALFEDGE_HANDLE>* halfedges() { return &m_halfedges; }
+  const std::list<HALFEDGE_HANDLE>* halfedges() const { return &m_halfedges; }
   std::list<unsigned int>* index_samples() { return &m_index_samples; }
+  const std::list<unsigned int>* index_samples() const { return &m_index_samples; }
 
   // misc
-  bool is_closed() { return (m_begin == m_end); }
-  bool has_no_corner() { return (m_begin == NULL && m_end == NULL); }
+  bool is_closed() const { return (m_begin == m_end); }
+  bool has_no_corner() const { return (m_begin == NULL && m_end == NULL); }
   VERTEX_HANDLE begin()  { return m_begin; }
   VERTEX_HANDLE end()    { return m_end;   }
   void begin(VERTEX_HANDLE hVertex)  { m_begin = hVertex; }

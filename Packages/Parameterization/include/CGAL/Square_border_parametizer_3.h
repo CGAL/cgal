@@ -25,7 +25,7 @@
 
 #include <cfloat>
 #include <climits>
-#include <map>
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,7 +45,25 @@ class Square_border_parametizer_3
 {
 // Public types
 public:
-				typedef MeshAdaptor_3									Mesh_adaptor_3;
+				// Export Mesh_Adaptor_3 type and subtypes
+				typedef MeshAdaptor_3													Mesh_adaptor_3;
+				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
+				typedef typename MeshAdaptor_3::NT										NT;
+				typedef typename MeshAdaptor_3::Face									Face;
+				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Point_3									Point_3;
+				typedef typename MeshAdaptor_3::Point_2									Point_2;
+				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
+				typedef typename MeshAdaptor_3::Face_iterator							Face_iterator;
+				typedef typename MeshAdaptor_3::Face_const_iterator						Face_const_iterator;
+				typedef typename MeshAdaptor_3::Vertex_iterator							Vertex_iterator;
+				typedef typename MeshAdaptor_3::Vertex_const_iterator					Vertex_const_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_iterator					Border_vertex_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_const_iterator			Border_vertex_const_iterator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_circulator			Vertex_around_face_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_const_circulator		Vertex_around_face_const_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator			Vertex_around_vertex_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_const_circulator	Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
@@ -61,19 +79,15 @@ public:
 
 // Private types
 private:
-				typedef typename MeshAdaptor_3::Border_vertex_iterator	Border_vertex_iterator;
-				typedef typename MeshAdaptor_3::Point_2					Point_2;
-				typedef typename MeshAdaptor_3::Vector_3				Vector_3;
-				typedef typename std::map<int, double>					Offset_map; 
-				typedef typename std::pair<int, double>					Offset_pair;
+				typedef typename std::vector<double>									Offset_map; 
 
 // Private operations
 private:
 				// compute  total length of boundary
-				double compute_boundary_length(MeshAdaptor_3* mesh);
+				double compute_boundary_length(const MeshAdaptor_3& mesh);
 
 				// Compute mesh iterator whose offset is closest to 'value'
-				Border_vertex_iterator closest_iterator(/*const*/ MeshAdaptor_3& mesh, /*const*/ Offset_map& offsets, double value);
+				Border_vertex_iterator closest_iterator(MeshAdaptor_3* mesh, const Offset_map& offsets, double value);
 };
 
 
@@ -84,21 +98,21 @@ private:
 // compute  total length of boundary
 template <class MeshAdaptor_3>
 inline 
-double Square_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(MeshAdaptor_3* mesh)
+double Square_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(const MeshAdaptor_3& mesh)
 {
 	double len = 0.0;
-	for(Border_vertex_iterator it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
+	for(Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
 	{
-		CGAL_parameterization_assertion(mesh->is_vertex_on_border(*it));
+		CGAL_parameterization_assertion(mesh.is_vertex_on_border(*it));
 
 		// Get next iterator (looping)
-		Border_vertex_iterator next = it; 
+		Border_vertex_const_iterator next = it; 
 		next++;
-		if(next == mesh->mesh_border_vertices_end())
-			next = mesh->mesh_border_vertices_begin();
+		if(next == mesh.mesh_border_vertices_end())
+			next = mesh.mesh_border_vertices_begin();
 
 		// Add length of it -> next vector to 'len'
-		Vector_3 v = mesh->get_vertex_position(*next) - mesh->get_vertex_position(*it);
+		Vector_3 v = mesh.get_vertex_position(*next) - mesh.get_vertex_position(*it);
 		len += std::sqrt(v*v);
 	}
 	return len;
@@ -118,7 +132,7 @@ bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdapto
 		return false;
 
 	// compute the total boundary length	
-	double total_len = compute_boundary_length(mesh);
+	double total_len = compute_boundary_length(*mesh);
 	std::cerr << "  total boundary len: " << total_len << std::endl;
 	CGAL_parameterization_assertion(total_len != 0);
 
@@ -126,13 +140,13 @@ bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdapto
 	std::cerr << "  map on a square...";
  	double len = 0.0;											// current position on square in [0, total_len[
 	Offset_map offsets;											// vertex index -> offset map
+	offsets.reserve(mesh->count_mesh_vertices());
 	Border_vertex_iterator it;
 	for(it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
 	{
 		CGAL_parameterization_assertion(mesh->is_vertex_on_border(*it));
 
-		offsets.insert( Offset_pair(mesh->get_vertex_index(*it), 
-								    4.0f*len/total_len) );		// current position on square in [0,4[ 
+		offsets[mesh->get_vertex_index(*it)] = 4.0f*len/total_len;// current position on square in [0,4[ 
 
 		// Get next iterator (looping)
 		Border_vertex_iterator next = it; 
@@ -147,9 +161,9 @@ bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdapto
 
 	// First square corner is mapped to first vertex. Find closest points for three other corners.
 	Border_vertex_iterator it0 = mesh->mesh_border_vertices_begin();
- 	Border_vertex_iterator it1 = closest_iterator(*mesh, offsets, 1.0);
- 	Border_vertex_iterator it2 = closest_iterator(*mesh, offsets, 2.0);
- 	Border_vertex_iterator it3 = closest_iterator(*mesh, offsets, 3.0);
+ 	Border_vertex_iterator it1 = closest_iterator(mesh, offsets, 1.0);
+ 	Border_vertex_iterator it2 = closest_iterator(mesh, offsets, 2.0);
+ 	Border_vertex_iterator it3 = closest_iterator(mesh, offsets, 3.0);
  	assert(it1 != it0);
  	assert(it1 != it2);
  	assert(it2 != it3);
@@ -201,14 +215,14 @@ bool Square_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdapto
 template <class MeshAdaptor_3>
 inline 
 typename Square_border_parametizer_3<MeshAdaptor_3>::Border_vertex_iterator 
-Square_border_parametizer_3<MeshAdaptor_3>::closest_iterator(/*const*/ MeshAdaptor_3& mesh, /*const*/ Offset_map& offsets, double value)
+Square_border_parametizer_3<MeshAdaptor_3>::closest_iterator(MeshAdaptor_3* mesh, const Offset_map& offsets, double value)
 {
-	Border_vertex_iterator best;								// CAUTION: uninitialized iterator or iterator pointing to NULL?
+	Border_vertex_iterator best;							// CAUTION: uninitialized iterator or iterator pointing to NULL?
 	double min = DBL_MAX;										// distance for 'best'
 
-	for (Border_vertex_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
+	for (Border_vertex_iterator it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
 	{
-		double d = fabs(offsets[mesh.get_vertex_index(*it)] - value);
+		double d = fabs(offsets[mesh->get_vertex_index(*it)] - value);
 		if (d < min)
 		{
 			best = it;

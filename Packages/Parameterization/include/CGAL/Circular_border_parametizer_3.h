@@ -41,7 +41,25 @@ class Circular_border_parametizer_3
 {
 // Public types
 public:
-				typedef MeshAdaptor_3									Mesh_adaptor_3;
+				// Export Mesh_Adaptor_3 type and subtypes
+				typedef MeshAdaptor_3													Mesh_adaptor_3;
+				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
+				typedef typename MeshAdaptor_3::NT										NT;
+				typedef typename MeshAdaptor_3::Face									Face;
+				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Point_3									Point_3;
+				typedef typename MeshAdaptor_3::Point_2									Point_2;
+				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
+				typedef typename MeshAdaptor_3::Face_iterator							Face_iterator;
+				typedef typename MeshAdaptor_3::Face_const_iterator						Face_const_iterator;
+				typedef typename MeshAdaptor_3::Vertex_iterator							Vertex_iterator;
+				typedef typename MeshAdaptor_3::Vertex_const_iterator					Vertex_const_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_iterator					Border_vertex_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_const_iterator			Border_vertex_const_iterator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_circulator			Vertex_around_face_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_const_circulator		Vertex_around_face_const_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator			Vertex_around_vertex_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_const_circulator	Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
@@ -55,16 +73,10 @@ public:
 				// Indicate if border's shape is convex
 				bool  is_border_convex () { return true; }
 
-// Private types
-private:
-				typedef typename MeshAdaptor_3::Border_vertex_iterator	Border_vertex_iterator;
-				typedef typename MeshAdaptor_3::Point_2					Point_2;
-				typedef typename MeshAdaptor_3::Vector_3				Vector_3;
-
 // Private operations
 private:
 				// compute  total length of boundary
-				double compute_boundary_length(MeshAdaptor_3* mesh);
+				double compute_boundary_length(const MeshAdaptor_3& mesh);
 };
 
 
@@ -75,26 +87,23 @@ private:
 // compute  total length of boundary
 template <class MeshAdaptor_3>
 inline 
-double Circular_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(MeshAdaptor_3* mesh)
+double Circular_border_parametizer_3<MeshAdaptor_3>::compute_boundary_length(const MeshAdaptor_3& mesh)
 {
-//std::cerr << "  compute boundary length: boundary vertices are...";
 	double len = 0.0;
-	for(Border_vertex_iterator it = mesh->mesh_border_vertices_begin(); it != mesh->mesh_border_vertices_end(); it++)
+	for(Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
 	{
-		CGAL_parameterization_assertion(mesh->is_vertex_on_border(*it));
-//std::cerr << " (" << mesh->get_vertex_position(*it).x() << "," << mesh->get_vertex_position(*it).y() << "," << mesh->get_vertex_position(*it).z() << ")";
+		CGAL_parameterization_assertion(mesh.is_vertex_on_border(*it));
 
 		// Get next iterator (looping)
-		Border_vertex_iterator next = it; 
+		Border_vertex_const_iterator next = it; 
 		next++;
-		if(next == mesh->mesh_border_vertices_end())
-			next = mesh->mesh_border_vertices_begin();
+		if(next == mesh.mesh_border_vertices_end())
+			next = mesh.mesh_border_vertices_begin();
 
 		// Add length of it -> next vector to 'len'
-		Vector_3 v = mesh->get_vertex_position(*next) - mesh->get_vertex_position(*it);
+		Vector_3 v = mesh.get_vertex_position(*next) - mesh.get_vertex_position(*it);
 		len += std::sqrt(v*v);
 	}
-//std::cerr << " done" << std::endl;
 	return len;
 }
 
@@ -112,7 +121,7 @@ bool Circular_border_parametizer_3<MeshAdaptor_3>::parameterize_border (MeshAdap
 		return false;
 
 	// compute the total boundary length	
-	double total_len = compute_boundary_length(mesh);
+	double total_len = compute_boundary_length(*mesh);
 	std::cerr << "  total boundary len: " << total_len << std::endl;
 	CGAL_parameterization_assertion(total_len != 0);
 

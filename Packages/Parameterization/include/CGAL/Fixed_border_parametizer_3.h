@@ -50,23 +50,28 @@ class Fixed_border_parametizer_3 : public Parametizer_3<MeshAdaptor_3>
 // Public types
 public:
 				// Export Mesh_Adaptor_3, BorderParametizer_3 and SparseLinearAlgebraTraits_d types and subtypes
-				typedef MeshAdaptor_3											Mesh_adaptor_3;
-				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode		ErrorCode;
-				typedef typename MeshAdaptor_3::NT								NT;
-				typedef typename MeshAdaptor_3::Face							Face;
-				typedef typename MeshAdaptor_3::Vertex							Vertex;
-				typedef typename MeshAdaptor_3::Point_3							Point_3;
-				typedef typename MeshAdaptor_3::Point_2							Point_2;
-				typedef typename MeshAdaptor_3::Vector_3						Vector_3;
-				typedef typename MeshAdaptor_3::Face_iterator					Face_iterator;
-				typedef typename MeshAdaptor_3::Vertex_iterator					Vertex_iterator;
-				typedef typename MeshAdaptor_3::Border_vertex_iterator			Border_vertex_iterator;
-				typedef typename MeshAdaptor_3::Vertex_around_face_circulator	Vertex_around_face_circulator;
-				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator	Vertex_around_vertex_circulator;
-				typedef BorderParametizer_3										Border_parametizer_3;
-				typedef SparseLinearAlgebraTraits_d								Sparse_linear_algebra_traits_d;
-				typedef typename SparseLinearAlgebraTraits_d::Vector			Vector;
-				typedef typename SparseLinearAlgebraTraits_d::Matrix			Matrix;
+				typedef MeshAdaptor_3													Mesh_adaptor_3;
+				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
+				typedef typename MeshAdaptor_3::NT										NT;
+				typedef typename MeshAdaptor_3::Face									Face;
+				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Point_3									Point_3;
+				typedef typename MeshAdaptor_3::Point_2									Point_2;
+				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
+				typedef typename MeshAdaptor_3::Face_iterator							Face_iterator;
+				typedef typename MeshAdaptor_3::Face_const_iterator						Face_const_iterator;
+				typedef typename MeshAdaptor_3::Vertex_iterator							Vertex_iterator;
+				typedef typename MeshAdaptor_3::Vertex_const_iterator					Vertex_const_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_iterator					Border_vertex_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_const_iterator			Border_vertex_const_iterator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_circulator			Vertex_around_face_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_const_circulator		Vertex_around_face_const_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator			Vertex_around_vertex_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_const_circulator	Vertex_around_vertex_const_circulator;
+				typedef BorderParametizer_3												Border_parametizer_3;
+				typedef SparseLinearAlgebraTraits_d										Sparse_linear_algebra_traits_d;
+				typedef typename SparseLinearAlgebraTraits_d::Vector					Vector;
+				typedef typename SparseLinearAlgebraTraits_d::Matrix					Matrix;
 
 // Public operations
 public:
@@ -94,7 +99,7 @@ public:
 protected:
 				// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
 				// Implementation note: usually, subclasses of Fixed_border_parametizer_3 need only to implement compute_wij()
-				virtual	NT  compute_wij(MeshAdaptor_3& mesh, Vertex& main_vertex_Vi, Vertex_around_vertex_circulator neighbor_vertex_Vj) = 0;
+				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, const Vertex& main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj) = 0;
 
 				// Check parameterize() preconditions:
 				// * 'mesh' must be a surface with 1 connected component and no hole
@@ -110,7 +115,7 @@ protected:
 				// * vertices must be indexed
 				// * vertex i musn't be already parameterized
 				// * line i of A must contains only zeros
-				virtual ErrorCode  parameterize_inner_vertex (MeshAdaptor_3& mesh, Vertex* vertex, 
+				virtual ErrorCode  parameterize_inner_vertex (const MeshAdaptor_3& mesh, const Vertex& vertex, 
 															  Matrix* A, Vector* Bu, Vector* Bv);
 
 				// Check parameterize() postconditions:
@@ -141,7 +146,7 @@ private:
 				// * vertices must be indexed
 				// * A, Bu and Bv must be allocated
 				// * border vertices must be parameterized
-				void  initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv, MeshAdaptor_3& mesh);
+				void  initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv, const MeshAdaptor_3& mesh);
 
 				// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
 				void  set_mesh_uv_from_system (MeshAdaptor_3* mesh, const Vector& Xu, const Vector& Xv);
@@ -214,7 +219,7 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 		if( ! mesh->is_vertex_on_border(*vertexIt) )
 		{
 			// Compute the line i of matrix A for i inner vertex
-			status = parameterize_inner_vertex (*mesh, &*vertexIt, &A, &Bu, &Bv);
+			status = parameterize_inner_vertex (*mesh, *vertexIt, &A, &Bu, &Bv);
 			if (status != OK)
 				return status;
 		}
@@ -300,13 +305,13 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
 inline 
 void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::initialize_system_from_mesh_border(Matrix* A, Vector* Bu, Vector* Bv, 
-																																	 MeshAdaptor_3& mesh) 
+																																	 const MeshAdaptor_3& mesh) 
 {
 	CGAL_parameterization_assertion(A != NULL);
 	CGAL_parameterization_assertion(Bu != NULL);
 	CGAL_parameterization_assertion(Bv != NULL);
 
-	for (Border_vertex_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
+	for (Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
 	{
 		CGAL_parameterization_assertion(mesh.is_vertex_parameterized(*it));
 
@@ -334,23 +339,22 @@ void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinear
 template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
 inline 
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
-Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::parameterize_inner_vertex(MeshAdaptor_3& mesh, Vertex* vertex, 
+Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::parameterize_inner_vertex(const MeshAdaptor_3& mesh, const Vertex& vertex, 
 																													   Matrix* A, Vector* Bu, Vector* Bv) 
 {
-	CGAL_parameterization_assertion(vertex != NULL);
-	CGAL_parameterization_assertion( ! mesh.is_vertex_on_border(*vertex) );
-	CGAL_parameterization_assertion( ! mesh.is_vertex_parameterized(*vertex) );
+	CGAL_parameterization_assertion( ! mesh.is_vertex_on_border(vertex) );
+	CGAL_parameterization_assertion( ! mesh.is_vertex_parameterized(vertex) );
 
-	int i = mesh.get_vertex_index(*vertex);
+	int i = mesh.get_vertex_index(vertex);
 
-	// circulate over vertices around *vertex to compute Wii and Wijs
+	// circulate over vertices around vertex to compute Wii and Wijs
 	NT Wii = 0;
-	Vertex_around_vertex_circulator neighborIt = mesh.vertices_around_vertex_begin(*vertex),
-	                                end = neighborIt;
+	Vertex_around_vertex_const_circulator neighborIt = mesh.vertices_around_vertex_begin(vertex),
+										  end = neighborIt;
 	CGAL_For_all(neighborIt, end)
 	{
 		// Call to virtual method to do the actual coefficient computation
-		NT Wij = compute_wij(mesh, *vertex, neighborIt);
+		NT Wij = compute_wij(mesh, vertex, neighborIt);
 
 		// Wii = - sum of Wij
 		Wii -= Wij;

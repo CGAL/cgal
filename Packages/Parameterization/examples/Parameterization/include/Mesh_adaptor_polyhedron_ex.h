@@ -98,22 +98,33 @@ public:
 				typedef Polyhedron_ex::Traits::Point_2						Point_2;
 				typedef Polyhedron_ex::Traits::Point_3						Point_3;
 				typedef Polyhedron_ex::Traits::Vector_3						Vector_3;
+				// Iterator over all mesh faces
 				typedef Polyhedron_ex::Facet_iterator						Face_iterator;
+				typedef Polyhedron_ex::Facet_const_iterator					Face_const_iterator;
+				// Iterator over all mesh vertices
 				typedef Polyhedron_ex::Vertex_iterator						Vertex_iterator;
+				typedef Polyhedron_ex::Vertex_const_iterator				Vertex_const_iterator;
 				// Iterator over mesh boundary vertices
 				typedef CGAL::Iterator_project<std::list<Halfedge_handle>::iterator, 
 											   CGAL::Project_vertex<Halfedge_handle> >	
 																			Border_vertex_iterator;
+				typedef CGAL::Iterator_project<std::list<Halfedge_handle>::const_iterator, 
+											   CGAL::Project_vertex<Halfedge_handle> >	
+																			Border_vertex_const_iterator;
 				// Circulator over a face's vertices
 				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_facet_circulator, 
-												 CGAL::Project_vertex<Halfedge>, 
-												 Vertex&,
-												 Vertex*>					Vertex_around_face_circulator;
+												 CGAL::Project_vertex<Halfedge>, Vertex&, Vertex*>					
+																			Vertex_around_face_circulator;
+				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_facet_const_circulator, 
+											     CGAL::Project_vertex<Halfedge>, const Vertex&, const Vertex*>					
+																			Vertex_around_face_const_circulator;
 				// Circulator over the vertices incident to a vertex
 				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_vertex_circulator, 
-												 CGAL::Project_opposite_vertex<Halfedge>,
-												 Vertex&,
-												 Vertex*>					Vertex_around_vertex_circulator;
+												 CGAL::Project_opposite_vertex<Halfedge>, Vertex&, Vertex*>					
+																			Vertex_around_vertex_circulator;
+				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_vertex_const_circulator, 
+												 CGAL::Project_opposite_vertex<Halfedge>, const Vertex&, const Vertex*>					
+																			Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
@@ -154,18 +165,26 @@ public:
 				Vertex_iterator  mesh_vertices_begin () {
 					return m_mesh->vertices_begin();
 				}
+				Vertex_const_iterator  mesh_vertices_begin () const {
+					return m_mesh->vertices_begin();
+				}
+
 				// Get iterator over past-the-end vertex of mesh
 				Vertex_iterator  mesh_vertices_end () {
 					return m_mesh->vertices_end();
 				}
+				Vertex_const_iterator  mesh_vertices_end () const {
+					return m_mesh->vertices_end();
+				}
 
 				// Count the number of vertices of the mesh
-				int  count_mesh_vertices () /*const*/ {
+				int  count_mesh_vertices () const {
 					int index = 0;
-					for (Vertex_iterator it = mesh_vertices_begin(); it != mesh_vertices_end(); it++) 
+					for (Vertex_const_iterator it = mesh_vertices_begin(); it != mesh_vertices_end(); it++) 
 						index++;
 					return index;
 				}
+
 				// Index vertices of the mesh for 0 to count_mesh_vertices()-1
 				void  index_mesh_vertices () {
 					int index = 0;
@@ -174,19 +193,20 @@ public:
 				}
 
 				// Return true of all mesh's faces are triangles
-				bool  is_mesh_triangular () /*const*/ {
-					for (Face_iterator it = mesh_faces_begin(); it != mesh_faces_end(); it++) 
+				bool  is_mesh_triangular () const {
+					for (Face_const_iterator it = mesh_faces_begin(); it != mesh_faces_end(); it++) 
 						if (count_face_vertices(*it) != 3)
 							return false;
 					return true;						// mesh is triangular if we reach this point
 				}
 
 				// Compute the genus of the mesh
-				int  get_mesh_genus () /*const*/ {
+				int  get_mesh_genus () const {
 					return m_mesh->genus();
 				}
+
 				// Count the number of boundaries of the mesh
-				int  count_mesh_boundaries () /*const*/ {
+				int  count_mesh_boundaries () const {
 					return m_mesh->nb_boundaries();
 				}
 
@@ -198,6 +218,14 @@ public:
 					std::list<Halfedge_handle>::iterator pHalfedge = pHalfedges->begin();
 					return pHalfedge;
 				}
+				Border_vertex_const_iterator  mesh_border_vertices_begin () const {
+					const Backbone *pBackbone = m_mesh->get_seaming_backbone();
+					assert(pBackbone != NULL);
+					const std::list<Halfedge_handle>* pHalfedges = pBackbone->halfedges();
+					std::list<Halfedge_handle>::const_iterator pHalfedge = pHalfedges->begin();
+					return pHalfedge;
+				}
+
 				// Get iterator over past-the-end vertex of mesh's border.
 				Border_vertex_iterator  mesh_border_vertices_end () {
 					Backbone *pBackbone = m_mesh->get_seaming_backbone();
@@ -206,20 +234,34 @@ public:
 					std::list<Halfedge_handle>::iterator pHalfedge = pHalfedges->end();
 					return pHalfedge;
 				}
+				Border_vertex_const_iterator  mesh_border_vertices_end () const {
+					const Backbone *pBackbone = m_mesh->get_seaming_backbone();
+					assert(pBackbone != NULL);
+					const std::list<Halfedge_handle>* pHalfedges = pBackbone->halfedges();
+					std::list<Halfedge_handle>::const_iterator pHalfedge = pHalfedges->end();
+					return pHalfedge;
+				}
 
 				// Get iterator over first face of mesh
 				Face_iterator  mesh_faces_begin () {
 					return m_mesh->facets_begin();
 				}
+				Face_const_iterator  mesh_faces_begin () const {
+					return m_mesh->facets_begin();
+				}
+
 				// Get iterator over past-the-end face of mesh
 				Face_iterator  mesh_faces_end () {
 					return m_mesh->facets_end();
 				}
+				Face_const_iterator  mesh_faces_end () const {
+					return m_mesh->facets_end();
+				}
 
 				// Count the number of faces of the mesh
-				int  count_mesh_faces () /*const*/ {
+				int  count_mesh_faces () const {
 					int index = 0;
-					for (Face_iterator it = mesh_faces_begin(); it != mesh_faces_end(); it++) 
+					for (Face_const_iterator it = mesh_faces_begin(); it != mesh_faces_end(); it++) 
 						index++;
 					return index;
 				}
@@ -229,14 +271,18 @@ public:
 				//
 
 				// Get circulator over face's vertices
-				Vertex_around_face_circulator  face_vertices_begin (Face& face) {
-					return Vertex_around_face_circulator(face.facet_begin());
+				Vertex_around_face_circulator  face_vertices_begin (Face* face) {
+					return face->facet_begin();
 				}
+				Vertex_around_face_const_circulator  face_vertices_begin (const Face& face) const {
+					return face.facet_begin();
+				}
+
 				// Count the number of vertices of a face
-				int  count_face_vertices (Face& face) /*const*/ {
+				int  count_face_vertices (const Face& face) const {
 					int index = 0;
-					Vertex_around_face_circulator cir_begin = face_vertices_begin(face), 
-						                          cir_end = cir_begin;
+					Vertex_around_face_const_circulator cir_begin = face_vertices_begin(face), 
+														cir_end   = cir_begin;
 					CGAL_For_all(cir_begin, cir_end) { 
 						index++;
 					}
@@ -248,12 +294,12 @@ public:
 				//
 
 				// Get the 3D position of a vertex
-				Point_3  get_vertex_position (/*const*/ Vertex& vertex) /*const*/ {
+				Point_3  get_vertex_position (const Vertex& vertex) const {
 					return vertex.point();	
 				}
 
 				// Get the 2D position of a vertex
-				Point_2  get_vertex_uv (/*const*/ Vertex& vertex) /*const*/ {
+				Point_2  get_vertex_uv (const Vertex& vertex) const {
 					return Point_2(vertex.u(), vertex.v());		
 				}
 				// Set the 2D position of a vertex
@@ -267,7 +313,7 @@ public:
 					vertex->halfedge()->is_parameterized(parameterized);
 				}
 				// Indicate if a vertex is already parameterized
-				bool  is_vertex_parameterized (/*const*/ Vertex& vertex) /*const*/ {
+				bool  is_vertex_parameterized (const Vertex& vertex) const {
 					return vertex.halfedge()->is_parameterized();
 				}
 
@@ -276,21 +322,25 @@ public:
 					vertex->index(new_index);
 				}
 				// Get the index of a vertex
-				int  get_vertex_index (/*const*/ Vertex& vertex) /*const*/ {
+				int  get_vertex_index (const Vertex& vertex) const {
 					return vertex.index();		
 				}
+
 				// Return true if a vertex belongs to the mesh's boundary
-				bool  is_vertex_on_border (/*const*/ Vertex& vertex) /*const*/ {
+				bool  is_vertex_on_border (const Vertex& vertex) const {
 					return m_mesh->is_border(vertex);
 				}
 
 				// Get circulator over the vertices incident to 'vertex'
-				Vertex_around_vertex_circulator  vertices_around_vertex_begin (Vertex& vertex) {
-					return Vertex_around_vertex_circulator(vertex.vertex_begin());
+				Vertex_around_vertex_circulator  vertices_around_vertex_begin (Vertex* vertex) {
+					return vertex->vertex_begin();
+				}
+				Vertex_around_vertex_const_circulator  vertices_around_vertex_begin (const Vertex& vertex) const {
+					return vertex.vertex_begin();
 				}
 
 private:
-				// 
+				// Extract semaing backbone
 				bool prepare()
 				{
 					// init

@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Class Parametizer_3
-// Base class and concept of parameterization objects for a given type of mesh (MeshAdaptor_3)
+// Base class of parameterization objects for a given type of mesh (MeshAdaptor_3)
 template <class MeshAdaptor_3>				// 3D surface
 class Parametizer_3 
 {
@@ -46,19 +46,11 @@ public:
 					ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,	// cannot solve a sparse linear system (bug or bad matrix conditioning)
 				};
 
-				// MeshAdaptor_3 type and subtypes
+				// Export MeshAdaptor_3 type and few subtypes
 				typedef MeshAdaptor_3											Mesh_adaptor_3;
 				typedef typename MeshAdaptor_3::NT								NT;
-				typedef typename MeshAdaptor_3::Face							Face;
-				typedef typename MeshAdaptor_3::Vertex							Vertex;
 				typedef typename MeshAdaptor_3::Point_3							Point_3;
-				typedef typename MeshAdaptor_3::Point_2							Point_2;
 				typedef typename MeshAdaptor_3::Vector_3						Vector_3;
-				typedef typename MeshAdaptor_3::Face_iterator					Face_iterator;
-				typedef typename MeshAdaptor_3::Vertex_iterator					Vertex_iterator;
-				typedef typename MeshAdaptor_3::Border_vertex_iterator			Border_vertex_iterator;
-				typedef typename MeshAdaptor_3::Vertex_around_face_circulator	Vertex_around_face_circulator;
-				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator	Vertex_around_vertex_circulator;
 
 // Public operations
 public:

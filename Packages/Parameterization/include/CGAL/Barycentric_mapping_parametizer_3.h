@@ -40,23 +40,28 @@ class Barycentric_mapping_parametizer_3
 // Public types
 public:
 				// Export Mesh_Adaptor_3, BorderParametizer_3 and SparseLinearAlgebraTraits_d types and subtypes
-				typedef MeshAdaptor_3											Mesh_adaptor_3;
-				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode		ErrorCode;
-				typedef typename MeshAdaptor_3::NT								NT;
-				typedef typename MeshAdaptor_3::Face							Face;
-				typedef typename MeshAdaptor_3::Vertex							Vertex;
-				typedef typename MeshAdaptor_3::Point_3							Point_3;
-				typedef typename MeshAdaptor_3::Point_2							Point_2;
-				typedef typename MeshAdaptor_3::Vector_3						Vector_3;
-				typedef typename MeshAdaptor_3::Face_iterator					Face_iterator;
-				typedef typename MeshAdaptor_3::Vertex_iterator					Vertex_iterator;
-				typedef typename MeshAdaptor_3::Border_vertex_iterator			Border_vertex_iterator;
-				typedef typename MeshAdaptor_3::Vertex_around_face_circulator	Vertex_around_face_circulator;
-				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator	Vertex_around_vertex_circulator;
-				typedef BorderParametizer_3										Border_parametizer_3;
-				typedef SparseLinearAlgebraTraits_d								Sparse_linear_algebra_traits_d;
-				typedef typename SparseLinearAlgebraTraits_d::Vector			Vector;
-				typedef typename SparseLinearAlgebraTraits_d::Matrix			Matrix;
+				typedef MeshAdaptor_3													Mesh_adaptor_3;
+				typedef typename Parametizer_3<MeshAdaptor_3>::ErrorCode				ErrorCode;
+				typedef typename MeshAdaptor_3::NT										NT;
+				typedef typename MeshAdaptor_3::Face									Face;
+				typedef typename MeshAdaptor_3::Vertex									Vertex;
+				typedef typename MeshAdaptor_3::Point_3									Point_3;
+				typedef typename MeshAdaptor_3::Point_2									Point_2;
+				typedef typename MeshAdaptor_3::Vector_3								Vector_3;
+				typedef typename MeshAdaptor_3::Face_iterator							Face_iterator;
+				typedef typename MeshAdaptor_3::Face_const_iterator						Face_const_iterator;
+				typedef typename MeshAdaptor_3::Vertex_iterator							Vertex_iterator;
+				typedef typename MeshAdaptor_3::Vertex_const_iterator					Vertex_const_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_iterator					Border_vertex_iterator;
+				typedef typename MeshAdaptor_3::Border_vertex_const_iterator			Border_vertex_const_iterator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_circulator			Vertex_around_face_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_face_const_circulator		Vertex_around_face_const_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_circulator			Vertex_around_vertex_circulator;
+				typedef typename MeshAdaptor_3::Vertex_around_vertex_const_circulator	Vertex_around_vertex_const_circulator;
+				typedef BorderParametizer_3												Border_parametizer_3;
+				typedef SparseLinearAlgebraTraits_d										Sparse_linear_algebra_traits_d;
+				typedef typename SparseLinearAlgebraTraits_d::Vector					Vector;
+				typedef typename SparseLinearAlgebraTraits_d::Matrix					Matrix;
 
 // Public operations
 public:
@@ -73,7 +78,7 @@ public:
 // Protected stuff
 protected:
 				// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i 
-				virtual NT  compute_wij(MeshAdaptor_3& mesh, Vertex& main_vertex_Vi, Vertex_around_vertex_circulator neighbor_vertex_Vj) 
+				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, const Vertex& main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj)
 				{
 					// Tutte algorithm is the most simple one: Wij = 1 for j neighbor vertex of i
 					return 1;

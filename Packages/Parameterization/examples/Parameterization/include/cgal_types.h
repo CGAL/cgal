@@ -173,12 +173,9 @@ public:
   void *facet_locate() { return m_pFacetLocate; }
 
   // coordinates
-  double x() { return m_coord[0]; }
-  double y() { return m_coord[1]; }
-  double z() { return m_coord[2]; }
-  const double x() const { return m_coord[0]; }
-  const double y() const { return m_coord[1]; }
-  const double z() const { return m_coord[2]; }
+  double x() const { return m_coord[0]; }
+  double y() const { return m_coord[1]; }
+  double z() const { return m_coord[2]; }
   void x(double x) { m_coord[0] = x; }
   void y(double y) { m_coord[1] = y; }
   void z(double z) { m_coord[2] = z; }
@@ -198,17 +195,15 @@ public:
     m_coord[1] = coord[1];
     m_coord[2] = coord[2];
   }
-  double operator[](unsigned int i)
+  double operator[](unsigned int i) const
   {
     CGAL_assertion(i <= 2);
     return m_coord[i];
   }
 
   // parametric coordinates
-  double u() { return m_u; }
-  double v() { return m_v; }
-  const double u() const { return m_u; }
-  const double v() const { return m_v; }
+  double u() const { return m_u; }
+  double v() const { return m_v; }
   void u(double u) { m_u = u; }
   void v(double v) { m_v = v; }
   void uv(double u,double v)
@@ -218,24 +213,19 @@ public:
   }
 
   // density
-  double density_uv() { return m_density_uv; }
-  const double density_uv() const { return m_density_uv; }
+  double density_uv() const { return m_density_uv; }
   void density_uv(double density_uv) { m_density_uv = density_uv; }
 
   // for univariate lloyd
-  double alpha() { return m_alpha; }
-  const double alpha() const { return m_alpha; }
-  void alpha(const double alpha) { m_alpha = alpha; }
+  double alpha() const { return m_alpha; }
+  void alpha(double alpha) { m_alpha = alpha; }
 
-  int index_halfedge() { return m_index_halfedge; }
-  const int index_halfedge() const { return m_index_halfedge; }
-  void index_halfedge(const int index_halfedge) { m_index_halfedge = index_halfedge; }
+  int index_halfedge() const { return m_index_halfedge; }
+  void index_halfedge(int index_halfedge) { m_index_halfedge = index_halfedge; }
 
   // location and type
-  location_t location() { return m_location; }
-  type_t type() { return m_type; }
-  const location_t location() const { return m_location; }
-  const type_t type() const { return m_type; }
+  location_t location() const { return m_location; }
+  type_t type() const { return m_type; }
 };
 
 // Two functors to compute the normals:  We assume the
@@ -379,45 +369,40 @@ public:
   const Point& center() const { return m_center; }
 
   // area
-  double area() { return m_area; }
+  double area() const { return m_area; }
   void area(double a) { m_area = a; }
-  const double area() const { return m_area; }
 
   // area_uv
-  double area_uv() { return m_area_uv; }
+  double area_uv() const { return m_area_uv; }
   void area_uv(double a) { m_area_uv = a; }
-  const double area_uv() const { return m_area_uv; }
 
   // stretching
-  double stretching() { return m_stretching; }
+  double stretching() const { return m_stretching; }
   void stretching(double s) { m_stretching = s; }
 
   // geometry
-  double geometry() { return m_geometry; }
+  double geometry() const { return m_geometry; }
   void geometry(double g) { m_geometry = g; }
   void add_geometry(double x) { m_geometry_corrected += x; }
-  const double geometry() const { return m_geometry; }
 
-  double geometry_corrected() { return m_geometry_corrected; }
-  const double geometry_corrected() const { return m_geometry_corrected; }
+  double geometry_corrected() const { return m_geometry_corrected; }
   void geometry_corrected(double g) { m_geometry_corrected = g; }
 
   // color
-  void color(CGAL::Color &color) { m_color = color; }
   CGAL::Color& color() { return m_color; }
   const CGAL::Color& color() const { return m_color; }
+  void color(CGAL::Color &color) { m_color = color; }
   void color(unsigned char r,unsigned char g,unsigned char b)
   {
     m_color = CGAL::Color(r,g,b);
   }
 
   // tag
-  int tag() { return m_tag; }
-  const int tag() const { return m_tag; }
+  int tag() const { return m_tag; }
   void tag(int tag) { m_tag = tag; }
 
   // distance
-  double distance(Point *pPoint)
+  double distance(Point *pPoint) const 
   {
     Vector vec = (*pPoint-m_center);
     return My_kernel::len(vec);
@@ -469,24 +454,23 @@ public:
   }
 
   // tag
-  int tag() { return m_tag; }
-  const int tag() const { return m_tag; }
+  int tag() const { return m_tag; }
   void tag(int tag) { m_tag = tag; }
 
   // sharpness
-  bool is_sharp() { return m_is_sharp; }
+  bool is_sharp() const { return m_is_sharp; }
   void is_sharp(bool sharp) { m_is_sharp = sharp; }
 
   // seaming backbone
-  bool is_seaming() { return m_is_seaming; }
+  bool is_seaming() const { return m_is_seaming; }
   void is_seaming(bool is_seaming) { m_is_seaming = is_seaming; }
 
   // edge superimposing
-  char superimpose() { return m_superimpose; }
+  char superimpose() const { return m_superimpose; }
   void superimpose(char s) { m_superimpose = s; }
 
   // precomputed distance
-  float distance() { return m_distance; }
+  float distance() const { return m_distance; }
   void distance(float distance) { m_distance = distance; }
 
   // normal
@@ -495,37 +479,35 @@ public:
   const Normal_3& normal() const { return m_normal; }
 
   // texture coordinates
-  double u() { return m_u; }
-  double v() { return m_v; }
+  double u() const { return m_u; }
+  double v() const { return m_v; }
   void u(double u) { m_u = u; }
   void v(double v) { m_v = v; }
   void uv(double u,double v) { m_u = u; m_v = v; }
-  double len_uv()
+  double len_uv() const 
   {
     double pu = prev()->u();
     double pv = prev()->v();
     return sqrt((pu-m_u)*(pu-m_u)+(pv-m_v)*(pv-m_v));
   }
-  double len() { return m_len; }
+  double len() const { return m_len; }
   void len(double l) { m_len = l; }
 
   // param.
-  bool is_parameterized()  { return m_is_parameterized; }
+  bool is_parameterized() const { return m_is_parameterized; }
   void is_parameterized(bool is)  { m_is_parameterized = is; }
 
   // index
-  int index() { return m_index; }
+  int index() const { return m_index; }
   void index(int i) { m_index = i; }
 
   // geometry
-  double geometry() { return m_geometry; }
+  double geometry() const { return m_geometry; }
   void geometry(double g) { m_geometry = g; }
   void add_geometry(double x) { m_geometry_corrected += x; }
-  const double geometry() const { return m_geometry; }
 
-  double geometry_corrected() { return m_geometry_corrected; }
+  double geometry_corrected() const { return m_geometry_corrected; }
   void geometry_corrected(double g) { m_geometry_corrected = g; }
-  const double geometry_corrected() const { return m_geometry_corrected; }
 };
 
 
@@ -595,18 +577,18 @@ public:
   void direction(void *pDirection) { m_pDirection = pDirection; }
 
   // anisotropic data
-  double kmin() { return m_kmin; }
-  double kmax() { return m_kmax; }
-  double orientation_kmax() { return m_orientation_kmax; }
+  double kmin() const { return m_kmin; }
+  double kmax() const { return m_kmax; }
+  double orientation_kmax() const { return m_orientation_kmax; }
   void kmin(double kmin) { m_kmin = kmin; }
   void kmax(double kmax) { m_kmax = kmax; }
   void orientation_kmax(double o) { m_orientation_kmax = o; }
+  double area_around() const { return m_area_around; }
   void area_around(double area) { m_area_around = area; }
-  double area_around() { return m_area_around; }
 
   // stretching
   void stretching(double stretching) { m_stretching = stretching; }
-  double stretching() { return m_stretching; }
+  double stretching() const { return m_stretching; }
 
   void init()
   {
@@ -626,29 +608,29 @@ public:
 
   // sharp degree / corner
   void is_corner(bool is) { m_is_corner = is; }
-  bool is_corner() { return m_is_corner; }
+  bool is_corner() const { return m_is_corner; }
   void is_crease(bool is) { m_is_crease = is; }
-  bool is_crease() { return m_is_crease; }
-  bool is_feature() { return m_is_crease || m_is_corner; }
+  bool is_crease() const { return m_is_crease; }
+  bool is_feature() const { return m_is_crease || m_is_corner; }
   void sharp_degree(int d) { m_sharp_degree = d; }
-  int sharp_degree() { return m_sharp_degree; }
+  int sharp_degree() const { return m_sharp_degree; }
 
   // inner vertex for the parametrization
-  bool is_inner_param() { return m_is_inner_param; }
+  bool is_inner_param() const { return m_is_inner_param; }
   void is_inner_param(bool inner) { m_is_inner_param = inner; }
 
   // multiplicity
-  unsigned char multiplicity() { return m_multiplicity; }
+  unsigned char multiplicity() const { return m_multiplicity; }
   void multiplicity(unsigned char m) { m_multiplicity = m; }
   void increase_multiplicity() { m_multiplicity++; }
 
   // index
-  int index() { return m_index; }
+  int index() const { return m_index; }
   void index(int i) { m_index = i; }
 
   // texture coordinates
-  double u() { return m_u; }
-  double v() { return m_v; }
+  double u() const { return m_u; }
+  double v() const { return m_v; }
   void u(double u) { m_u = u; }
   void v(double v) { m_v = v; }
   void uv(double u,double v) { m_u = u; m_v = v; }
@@ -663,9 +645,9 @@ public:
   const Vector& meanCurvatureNormal() const { return m_meanCurvatureNormal; }
 
   // density
-  double density() { return m_density; }
+  double density() const { return m_density; }
   void density(double density) { m_density = density; }
-  double density_uv() { return m_density_uv; }
+  double density_uv() const { return m_density_uv; }
   void density_uv(double density_uv) { m_density_uv = density_uv; }
 
   // color
@@ -673,14 +655,12 @@ public:
   const CGAL::Color& color() const { return m_color; }
 
   // tag
-  int tag() { return m_tag; }
-  const int tag() const { return m_tag; }
+  int tag() const { return m_tag; }
   void tag(int tag) { m_tag = tag; }
 
   // curvature
-  double meanCurvature() { return m_meanCurvature; }
   void meanCurvature(double mc) { m_meanCurvature = mc; }
-  const double meanCurvature() const { return m_meanCurvature; }
+  double meanCurvature() const { return m_meanCurvature; }
 };
 
 struct My_items : public CGAL::Polyhedron_items_3
@@ -760,7 +740,9 @@ class Polyhedron_ex : public Polyhedron
 
     // data access
     skeleton* get_skeleton() { return &m_skeleton; }
+    const skeleton* get_skeleton() const { return &m_skeleton; }
     backbone* get_seaming_backbone() { return &m_seaming_backbone; }
+    const backbone* get_seaming_backbone() const { return &m_seaming_backbone; }
   
     // life cycle
     //********************************

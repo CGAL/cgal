@@ -1483,7 +1483,6 @@ Packages/Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#u
 Packages/Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#unset
 Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
-Packages/Parameterization/examples/Parameterization/data/dashboard.gif -text svneol=unset#unset
 Packages/Parameterization/examples/Parameterization/data/nefertiti.off -text
 Packages/Parameterization/examples/Parameterization/data/parameterization.mtl -text
 Packages/Parameterization/examples/Parameterization/data/rotor.off -text

@@ -73,7 +73,7 @@ public:
 // Protected stuff
 protected:
 				// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
-				virtual NT  compute_wij(MeshAdaptor_3& mesh, Vertex& main_vertex_Vi, Vertex_around_vertex_circulator neighbor_vertex_Vj) 
+				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, const Vertex& main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj)
 				{
 					Point_3	position_Vi = mesh.get_vertex_position(main_vertex_Vi);
 					Point_3	position_Vj = mesh.get_vertex_position(*neighbor_vertex_Vj);
@@ -84,13 +84,13 @@ protected:
 
 					// Compute cotangent of corner specified by Vk,Vj,Vi points (ie cotan of Vj corner)
 					// if Vk is the vertex before Vj when circulating around Vi
-					Vertex_around_vertex_circulator previous_vertex_Vk = neighbor_vertex_Vj; previous_vertex_Vk --;
+					Vertex_around_vertex_const_circulator previous_vertex_Vk = neighbor_vertex_Vj; previous_vertex_Vk --;
 					Point_3	position_Vk = mesh.get_vertex_position(*previous_vertex_Vk);
 					double cotg_psi_ij  = cotangent(position_Vk, position_Vj, position_Vi);
 
 					// Compute cotangent of corner specified by Vi,Vj,Vl points (ie cotan of Vj corner)
 					// if Vl is the vertex after Vj when circulating around Vi
-					Vertex_around_vertex_circulator next_vertex_Vl = neighbor_vertex_Vj; next_vertex_Vl ++;
+					Vertex_around_vertex_const_circulator next_vertex_Vl = neighbor_vertex_Vj; next_vertex_Vl ++;
 					Point_3	position_Vl = mesh.get_vertex_position(*next_vertex_Vl);
 					double cotg_theta_ij = cotangent(position_Vi, position_Vj, position_Vl);
 
