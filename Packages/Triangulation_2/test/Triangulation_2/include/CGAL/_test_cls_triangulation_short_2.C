@@ -368,6 +368,7 @@ _test_cls_triangulation_short_2( const Triangulation & )
 			   f->vertex(f->ccw(li))->point(),
 			   f->vertex(f->cw(li))->point())
 	    == CGAL::COUNTERCLOCKWISE);
+  f = T2_3.locate(p13,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   f = T2_3.locate(p14,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   assert( T2_3.orientation(p14,
 			  f->vertex(f->ccw(li))->point(),
