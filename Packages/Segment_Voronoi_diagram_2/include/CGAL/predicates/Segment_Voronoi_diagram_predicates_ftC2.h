@@ -250,26 +250,26 @@ template<template<class Kernel> class Predicate_t,
 Return_t
 svd_predicate_ftC2(const FT v[], const char site_types[])
 {
-   typedef Simple_cartesian<FT>                 Rep;
-   typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+  typedef Simple_cartesian<FT>                 Rep;
+  typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
 
-   typedef typename Kernel::Site_2                   Site_2;
-   typedef Predicate_t<Kernel>                       Predicate;
+  typedef typename Kernel::Site_2                   Site_2;
+  typedef Predicate_t<Kernel>                       Predicate;
 
-   typedef Svd_predicate_caller<Return_t, Predicate, Num_sites> Caller;
+  typedef Svd_predicate_caller<Return_t, Predicate, Num_sites> Caller;
 
-   must_be_filtered(FT());
+  must_be_filtered(FT());
 
 
-   Site_2 t[Num_sites];
+  Site_2 t[Num_sites];
 
-   for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
-     t[i] = get_site<Kernel>(v, k, site_types, j);
-   }
+  for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+    t[i] = get_site<Kernel>(v, k, site_types, j);
+  }
 
-   Return_t result = Caller()(t);
+  Return_t result = Caller()(t);
 
-   return result;
+  return result;
 }
 
 template<template<class Kernel, class MTag> class Predicate_t,
@@ -278,26 +278,26 @@ template<template<class Kernel, class MTag> class Predicate_t,
 Return_t
 svd_predicate_ftC2(const FT v[], const char site_types[])
 {
-   typedef Simple_cartesian<FT>                 Rep;
-   typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+  typedef Simple_cartesian<FT>                 Rep;
+  typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
 
-   typedef typename Kernel::Site_2                   Site_2;
-   typedef Predicate_t<Kernel,Method_tag>            Predicate;
+  typedef typename Kernel::Site_2                   Site_2;
+  typedef Predicate_t<Kernel,Method_tag>            Predicate;
 
-   typedef Svd_predicate_caller<Return_t, Predicate, Num_sites> Caller;
+  typedef Svd_predicate_caller<Return_t, Predicate, Num_sites> Caller;
 
-   must_be_filtered(FT());
+  must_be_filtered(FT());
 
 
-   Site_2 t[Num_sites];
+  Site_2 t[Num_sites];
 
-   for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
-     t[i] = get_site<Kernel>(v, k, site_types, j);
-   }
+  for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+    t[i] = get_site<Kernel>(v, k, site_types, j);
+  }
 
-   Return_t result = Caller()(t);
+  Return_t result = Caller()(t);
 
-   return result;
+  return result;
 }
 
 template<template<class Kernel, class MTag> class Predicate_t,
@@ -306,26 +306,26 @@ template<template<class Kernel, class MTag> class Predicate_t,
 Return_t
 svd_predicate_ftC2(const FT v[], const char site_types[], Data data)
 {
-   typedef Simple_cartesian<FT>                 Rep;
-   typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+  typedef Simple_cartesian<FT>                 Rep;
+  typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
 
-   typedef typename Kernel::Site_2                   Site_2;
-   typedef Predicate_t<Kernel,Method_tag>            Predicate;
+  typedef typename Kernel::Site_2                   Site_2;
+  typedef Predicate_t<Kernel,Method_tag>            Predicate;
 
-   typedef Svd_predicate_caller<Return_t, Predicate, Num_sites> Caller;
+  typedef Svd_predicate_caller<Return_t, Predicate, Num_sites> Caller;
 
-   must_be_filtered(FT());
+  must_be_filtered(FT());
 
 
-   Site_2 t[Num_sites];
+  Site_2 t[Num_sites];
 
-   for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
-     t[i] = get_site<Kernel>(v, k, site_types, j);
-   }
+  for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+    t[i] = get_site<Kernel>(v, k, site_types, j);
+  }
 
-   Return_t result = Caller()(t, data);
+  Return_t result = Caller()(t, data);
 
-   return result;
+  return result;
 }
 
 //--------------------------------------------------------------------------
