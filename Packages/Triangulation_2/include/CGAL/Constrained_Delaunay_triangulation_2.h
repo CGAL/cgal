@@ -426,7 +426,14 @@ insert(const Point & a, const Point & b)
   insert(va, vb, new_vertices);
 }
 
-
+template < class Gt, class Tds >
+inline void
+Constrained_Delaunay_triangulation_2<Gt,Tds>::
+insert(Vertex_handle  va, Vertex_handle vb)
+{
+  List_vertices new_vertices;
+  insert(va, vb, new_vertices);
+}
 
 template < class Gt, class Tds >
 inline void
