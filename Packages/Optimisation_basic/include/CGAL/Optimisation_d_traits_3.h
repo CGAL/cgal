@@ -67,11 +67,11 @@ class Optimisation_d_traits_3 {
     typedef  typename K::RT             RT;
     typedef  typename K::FT             FT;
 
-    typedef  Access_dimension_3<K>      Access_dimension_d;
-    typedef  Access_coordinates_begin_3<K>
+    typedef  CGAL::Access_dimension_3<K>      Access_dimension_d;
+    typedef  CGAL::Access_coordinates_begin_3<K>
                                         Access_coordinates_begin_d;
 
-    typedef  Construct_point_3<K>       Construct_point_d;
+    typedef  typename K::Construct_point_3    Construct_point_d;
 
     // creation
     Optimisation_d_traits_3( ) { }

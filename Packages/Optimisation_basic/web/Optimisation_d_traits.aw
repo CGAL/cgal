@@ -224,11 +224,11 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_2<K,ET,NT>}.3.
         typedef  typename K::RT             RT;
         typedef  typename K::FT             FT;
 
-        typedef  Access_dimension_2<K>      Access_dimension_d;
-        typedef  Access_coordinates_begin_2<K>
+        typedef  CGAL::Access_dimension_2<K>  Access_dimension_d;
+        typedef  CGAL::Access_coordinates_begin_2<K>
                                             Access_coordinates_begin_d;
 
-        typedef  Construct_point_2<K>       Construct_point_d;
+        typedef  typename K::Construct_point_2     Construct_point_d;
 
         // creation
         Optimisation_d_traits_2( ) { }
@@ -291,11 +291,11 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_3<K,ET,NT>}.4.
         typedef  typename K::RT             RT;
         typedef  typename K::FT             FT;
 
-        typedef  Access_dimension_3<K>      Access_dimension_d;
-        typedef  Access_coordinates_begin_3<K>
+        typedef  CGAL::Access_dimension_3<K>      Access_dimension_d;
+        typedef  CGAL::Access_coordinates_begin_3<K>
                                             Access_coordinates_begin_d;
 
-        typedef  Construct_point_3<K>       Construct_point_d;
+        typedef  typename K::Construct_point_3    Construct_point_d;
 
         // creation
         Optimisation_d_traits_3( ) { }
@@ -358,11 +358,11 @@ Section~\ref{ccRef_CGAL::Optimisation_d_traits_d<K,ET,NT>}.5.
         typedef  typename K::RT             RT;
         typedef  typename K::FT             FT;
 
-        typedef  Access_dimension_d<K>      Access_dimension_d;
-        typedef  Access_coordinates_begin_d<K>
+        typedef  CGAL::Access_dimension_d<K>      Access_dimension_d;
+        typedef  CGAL::Access_coordinates_begin_d<K>
                                             Access_coordinates_begin_d;
 
-        typedef  Construct_point_d<K>       Construct_point_d;
+        typedef  CGAL::Construct_point_d<K>       Construct_point_d;
 
         // creation
         Optimisation_d_traits_d( ) { }
