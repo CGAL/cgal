@@ -74,6 +74,16 @@ public:
       use_delete_notf = true;*/
   }
 
+   Map_overlay(Point_location_base *pl_ptr) : 
+     arr_(pl_ptr), 
+     sub_division1(0), 
+     sub_division2(0), 
+    ovl_change_notf(new Change_notification),  
+    ovl_alg(new Map_ovl_sweep), 
+    use_delete_notf(true), 
+    use_delete_ovl(true) {
+  }
+  
   Map_overlay (const Arrangement &arr) : arr_(arr), 
     sub_division1(0), sub_division2(0),  
     ovl_change_notf(new Change_notification),  
@@ -185,7 +195,29 @@ public:
     //sub_division2 = (Self *) &ovl2;
   }
 
-  Map_overlay (const Self &ovl1, const Self &ovl2, Map_ovl_base *ovl_ptr) :
+   Map_overlay (const Self &ovl1, 
+                const Self &ovl2, 
+                Point_location_base* pl_ptr,
+                Change_notification* pmwx_change_notf) :  
+     arr_(pl_ptr), 
+     sub_division1(&ovl1), sub_division2(&ovl2),
+     ovl_change_notf(pmwx_change_notf), ovl_alg(new Map_ovl_sweep),
+     use_delete_notf(false), use_delete_ovl(true)
+  {
+    // ovl_alg = new Map_ovl_sweep;
+    //use_delete_ovl = true;
+    //use_delete_notf = false;
+
+    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, arr_);
+
+    //sub_division1 = (Self *) &ovl1;
+    //sub_division2 = (Self *) &ovl2;
+  }
+
+  
+  Map_overlay (const Self &ovl1, 
+               const Self &ovl2, 
+               Map_ovl_base *ovl_ptr) :
     sub_division1(&ovl1), sub_division2(&ovl2),
     ovl_change_notf(new Change_notification(&(ovl1.subdivision()), 
                                             &(ovl2.subdivision()) )),
@@ -205,8 +237,50 @@ public:
   
   Map_overlay (const Self &ovl1, 
                const Self &ovl2, 
+               Point_location_base* pl_ptr, 
+               Map_ovl_base *ovl_ptr) :
+    arr_(pl_ptr),
+    sub_division1(&ovl1), sub_division2(&ovl2),
+    ovl_change_notf(new Change_notification(&(ovl1.subdivision()), 
+                                            &(ovl2.subdivision()) )),
+    ovl_alg(ovl_ptr), 
+    use_delete_notf(true), use_delete_ovl(false)
+  {
+    //ovl_change_notf = new Change_notification( &(ovl1.subdivision()), 
+    //                                         &(ovl2.subdivision()) );
+    //use_delete_notf = true;
+    //use_delete_ovl = false;
+
+    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, arr_);
+    
+    //sub_division1 = (Self *) &ovl1;
+    //sub_division2 = (Self *) &ovl2;
+  }
+  
+  
+  Map_overlay (const Self &ovl1, 
+               const Self &ovl2, 
                Change_notification* pmwx_change_notf, 
                Map_ovl_base *ovl_ptr) :
+    sub_division1(&ovl1), sub_division2(&ovl2),
+    ovl_change_notf(pmwx_change_notf), ovl_alg(ovl_ptr),
+    use_delete_notf(false), use_delete_ovl(false)
+  {
+    //use_delete_notf = false;
+    //use_delete_ovl = false;
+
+    ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, arr_);
+    
+    //sub_division1 = (Self *) &ovl1;
+    //sub_division2 = (Self *) &ovl2;
+  }
+
+  Map_overlay (const Self &ovl1, 
+               const Self &ovl2, 
+               Point_location_base* pl_ptr,
+               Change_notification* pmwx_change_notf, 
+               Map_ovl_base *ovl_ptr) :
+    arr_(pl_ptr),
     sub_division1(&ovl1), sub_division2(&ovl2),
     ovl_change_notf(pmwx_change_notf), ovl_alg(ovl_ptr),
     use_delete_notf(false), use_delete_ovl(false)
