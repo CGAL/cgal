@@ -247,13 +247,15 @@ int main(int argc,char *argv[])
       W.disable_button(5);
       remove_points = false;
       redraw(empty_rectangle,W);
-      show_biggest_rec(empty_rectangle,W);
+      if(automatic_show)
+        show_biggest_rec(empty_rectangle,W);
     } else if(mouse_input == 6) {
       W.enable_button(5);
       W.disable_button(6);
       remove_points = true;
       redraw(empty_rectangle,W);
-      show_biggest_rec(empty_rectangle,W);
+      if(automatic_show)
+        show_biggest_rec(empty_rectangle,W);
     } else if(mouse_input == 7) {
       // finish
       break;
