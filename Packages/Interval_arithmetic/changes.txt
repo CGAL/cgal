@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.98 on 7 June 2001
+- Move MP_Float to the Number_types package.
+
 Version 4.97 on 6 June 2001
 - Workaround bugs and misfeatures of GCC 3 in FPU.h.
   Unfortunately at a performance cost :((
