@@ -948,6 +948,86 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
 
 
 
+template <class Surface>
+void
+write_in_file_stl_selected_facets(char* foutput, const Surface& S)
+{
+
+  typedef typename Surface::Triangulation_3 Triangulation_3;
+  typedef typename Surface::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Surface::Finite_facets_iterator Finite_facets_iterator;
+  typedef typename Surface::Vertex_handle Vertex_handle;
+  typedef typename Surface::Cell_handle Cell_handle;
+  Triangulation_3& T = S.triangulation();
+
+
+  char foutput_tmp[100];
+  AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
+
+  CGAL_CLIB_STD::strcat(foutput_tmp, ".stl");
+  std::ofstream os(foutput_tmp, std::ios::out);
+
+  if(os.fail())
+    std::cerr << "+++unable to open file for output" << std::endl;
+  else
+    std::cout << ">> file for output : " << foutput_tmp << std::endl;
+
+  os.clear();
+
+  CGAL::set_ascii_mode(os);
+  
+  // Header.
+  os << "solid" << std::endl;
+ 
+  for(Finite_facets_iterator f_it = T.finite_facets_begin(); 
+      f_it != T.finite_facets_end(); 
+      f_it++)
+    {
+      Cell_handle n, c = (*f_it).first;
+      int ni, ci = (*f_it).second;
+
+      bool selected = false;
+      if(c->is_selected_facet(ci)){
+	selected = true;
+      } else {
+	n = c->neighbor(ci);
+	ni = n->index(c);
+	if(n->is_selected_facet(ni)) {
+	  selected = true;
+	  c = n;
+	  ci = ni;
+	}
+      }
+      
+      if(selected){
+	int i1, i2 ,i3;
+
+	i1 = (ci+1) & 3;
+	i2 = (ci+2) & 3;
+	i3 = (ci+3) & 3;
+
+        Point p = c->vertex(i1)->point();
+        Point q = c->vertex(i2)->point();
+        Point r = c->vertex(i3)->point();
+        // compute normal
+        Vector n = CGAL::cross_product( q-p, r-p);
+        Vector norm = n / sqrt( n * n);
+	os << "outer loop" << std::endl;
+	os << "facet normal " << norm << std::endl;
+	os << "vertex " << p << std::endl;
+	os << "vertex " << q << std::endl;
+	os << "vertex " << r << std::endl;
+      os << "endloop\nendfacet" << std::endl;
+      }
+      
+    }
+
+  os << "endsolid" << std::endl;
+
+  std::cout << "-- wrl result written." << std::endl;
+}
+
+
 //---------------------------------------------------------------------
 template <class Surface>
 void
@@ -980,6 +1060,9 @@ write_in_file_selected_facets(char* foutput, const Surface& S,
       return;
     case 4:
       write_in_file_iv_selected_facets(foutput, S, boundary);
+      return;
+    case 5:
+      write_in_file_stl_selected_facets(foutput, S);
       return;
     }
 }
