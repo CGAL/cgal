@@ -149,9 +149,9 @@ class Bitangent_line
   // or the left bitangent line of the inverted weighted point u1 and
   // u2, oriented from u1 to u2
 public:
-  typedef Weighted_point<Point, Weight>            Weighted_point;
-  typedef Inverted_weighted_point<Point, Weight>   Inverted_weighted_point;
-  typedef typename Point::R::FT                    FT;
+  typedef Weighted_point<Point, Weight>             Weighted_point;
+  typedef Inverted_weighted_point<Point, Weight>    Inverted_weighted_point;
+  typedef typename Kernel_traits<Point>::Kernel::FT    FT;
 protected:
   FT _a1, _a2;
   FT _b1, _b2;

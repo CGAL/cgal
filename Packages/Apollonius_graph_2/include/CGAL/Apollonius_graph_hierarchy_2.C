@@ -382,7 +382,7 @@ Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
 swap(Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>& agh)
 {
   Ag_base* temp;
-  Ag_base::swap(tr);
+  Ag_base::swap(agh);
   for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i){
     temp = hierarchy[i];
     hierarchy[i] = agh.hierarchy[i];

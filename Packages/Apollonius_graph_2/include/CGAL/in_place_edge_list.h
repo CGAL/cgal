@@ -49,7 +49,7 @@ private:
   }
 
 public:
-  bool is_valid() const {}
+  bool is_valid() const { return true; }
 
   inline unsigned int size() const {
     return _size;

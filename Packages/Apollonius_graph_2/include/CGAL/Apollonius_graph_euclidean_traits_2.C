@@ -1224,7 +1224,7 @@ ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
   typedef typename Kernel_traits<Pt>::Kernel::RT  RT;
   return
     ad_infinite_edge_testH2(p2.hx(), p2.hy(), p2.hw(),
-			    RT(p1.weight()),
+			    RT(p2.weight()),
 			    p3.hx(), p3.hy(), p3.hw(),
 			    RT(p3.weight()),
 			    p4.hx(), p4.hy(), p4.hw(),

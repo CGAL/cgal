@@ -1,3 +1,5 @@
+#ifdef CGAL_USE_QT
+
 #include <qapplication.h>
 #include <qmainwindow.h>
 
@@ -283,3 +285,19 @@ main(int argc, char* argv[])
 
 
 // moc_source_file: demo.C
+
+#else
+
+#include <iostream>
+
+int
+main(int argc, char* argv[])
+{
+  std::cerr << "This demo needs CGAL's Qt_widget installed "
+	    << "in order to run..."
+	    << std::endl << std::endl;
+  return 0;
+}
+
+
+#endif
