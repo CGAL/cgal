@@ -392,7 +392,7 @@ public:
 	if(!potential_intern_vertices.empty()){
 	  //determine the hidden vertices:
 	  //set containing the boundary vertices
-	  set_difference (potential_intern_vertices.begin(), 
+	  std::set_difference (potential_intern_vertices.begin(), 
 			  potential_intern_vertices.end(),
 			  boundary_vertices.begin(),
 			  boundary_vertices.end(),
