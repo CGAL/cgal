@@ -14,7 +14,7 @@
 
 \begin{ccRefClass}{Compact_container_base}
 
-  \ccDefinition The class \ccClassName\ can be used as a base class for
+  \ccDefinition The class \ccRefName\ can be used as a base class for
   your own type \ccc{T}, so that \ccc{T} can be used directly within
   \ccc{Compact_container<T, Allocator>}.  This class stores a \ccc{void *}
   pointer only for this purpose, so it may not be the most memory efficient
@@ -24,13 +24,16 @@
   particular type \ccc{T} that you want to use.
 
   \ccInclude{CGAL/Compact_container.h}
-  \ccSetThreeColumns{void *}{for_compact_container ;}{}
+  \ccSetThreeColumns{void *&}{ccb.for_compact_container() const;}{}
   \ccCreationVariable{ccb}
+  \ccTagFullDeclarations
+
+  \ccOperations
 
   \ccMethod{void * for_compact_container() const;}
   { Returns the pointer necessary for \ccc{Compact_container_traits<T>}. }
   \ccGlue
-  \ccVariable{void * & for_compact_container();}
+  \ccMethod{void * & for_compact_container();}
   { Returns a reference to the pointer necessary for
     \ccc{Compact_container_traits<T>}. }
 \end{ccRefClass}
@@ -51,20 +54,30 @@
   types \ccc{T} to make them usable with the default \ccClassTemplateName.
 
   \ccInclude{CGAL/Compact_container.h}
-  \ccSetThreeColumns{void *}{for_compact_container ;}{}
+
+  \ccSetThreeColumns{static void *&}{cct.pointer(const T &t)  ;}{}
   \ccCreationVariable{cct}
+  \ccTagFullDeclarations
+
+  \ccParameters
+
+  \ccc{T} is any type providing the following member functions:\\
+  \ccc{void * t.for_compact_container() const;}\\
+  \ccc{void *& t.for_compact_container();}.
+
+  \ccOperations
 
   \ccMethod{static void * pointer(const T &t);}
-  {returns the pointer hold by \ccc{t}.
-   The template version defines this function as
+  {Returns the pointer hold by \ccc{t}.
+   The template version defines this function as:\\
   \ccc{
     return t.for_compact_container();
   }
   }
   \ccGlue
   \ccMethod{static void * & pointer(T &t);}
-  {sets the pointer of \ccc{*t} to be \ccc{p}.
-   The template version defines this function as
+  {Returns a reference to the pointer hold by \ccc{t}.
+   The template version defines this function as:\\
   \ccc{
     return t.for_compact_container();
   }
@@ -248,7 +261,7 @@
   %% +-----------------------------------+
   \ccHeading{Removal}
 
-  \ccGlue\ccMethod{void erase(iterator pos);}
+  \ccMethod{void erase(iterator pos);}
   {removes the item pointed by \ccc{pos} from~\ccVar.}
 
   \ccMethod{void erase(iterator first, iterator last);}
@@ -266,7 +279,7 @@
 
   \ccMethod{void merge(Compact_container<T, Allocator> &cc);}
   {adds the items of \ccc{cc} to the end of \ccVar\ and \ccc{cc} becomes empty.
-   The time complexity is \ccc{O(\ccVar.capacity()-\ccVar.size())}.
+   The time complexity is O(\ccVar.\ccc{capacity()}-\ccVar.\ccc{size()}).
    \ccPrecond \ccc{cc} must not be the same as \ccVar,
    and the allocators of \ccVar\ and \ccc{cc} need to be compatible :
    \ccVar.\ccc{get_allocator() == cc.get_allocator()}.}
@@ -280,19 +293,19 @@
    same size and if their corresponding elements are equal.}
 
   \ccMethod{bool operator!=(const Compact_container<T, Allocator> &cc) const;}
-  {test for inequality: returns \ccc{!(\ccVar\ == cc)}.}
+  {test for inequality: returns !(\ccVar\ \ccc{== cc}).}
 
   \ccMethod{bool operator<(const Compact_container<T, Allocator> &cc) const;}
   {compares in lexicographical order.}
 
   \ccMethod{bool operator>(const Compact_container<T, Allocator> &cc) const;}
-  {returns \ccc{cc < \ccVar}.}
+  {returns \ccc{cc <} \ccVar.}
 
   \ccMethod{bool operator<=(const Compact_container<T, Allocator> &cc) const;}
-  {returns \ccc{!(\ccVar\ > cc)}.}
+  {returns !(\ccVar\ \ccc{> cc}).}
 
   \ccMethod{bool operator>=(const Compact_container<T, Allocator> &cc) const;}
-  {returns \ccc{!(\ccVar\ < cc)}.}
+  {returns !(\ccVar\ \ccc{< cc}).}
 
 %% TBD
 %%  \newpage
