@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_data_structure_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationdatastructureRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationdatastructureDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_data_structure_3<Vb,Cb>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+The class \ccRefName\ stores a 3D-triangulation data structure
+(see Section~\ref{TDS3-sec-concept}) and provides the optional
+geometric functionalities to be used as a parameter for a 
+3D-geometric triangulation (see Chapter~\ref{chapter-Triangulation3}. 
+It is templated by base classes for
+vertices and cells (see Section~\ref{TDS3-sec-concept-Base}).
+
+\ccInheritsFrom{\ccc{Triangulation_utils_3}}
+
+\ccc{Triangulation_utils_3} class defines basic computations on
+indices of vertices and neighbors of cells. (See
+Section~\ref{Triangulation3-sec-class-Utils} of
+Chapter~\ref{chapter-Triangulation3}.)
+
+\ccInclude{CGAL/Triangulation_data_structure_3.h}
+
+\ccIsModel
+
+\ccc{Tds_3}
+
+\ccSeeAlso
+
+\ccc{Some_other_class},
+\ccc{some_other_function}.
+
+%% \ccExample
+
+
+%% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_data_structure_3_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
