@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_basic' package
 
+Version 3.8.12 on 19-Mar-2002
+- Use Kernel_d point.
+
 Version 3.8.11 on 18-Mar-2002
 - Added a couple of CGAL::, K::, resp..
 

@@ -1,3 +1,6 @@
+4.47     (19 March 02)
+- Introduce Number_type_traits.
+
 4.46     (19 March 02)
 - include/CGAL/leda_* -files were changed to support
   LEDA versions with a namespace
