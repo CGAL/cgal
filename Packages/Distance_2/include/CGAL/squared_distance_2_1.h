@@ -487,10 +487,11 @@ namespace CGALi {
 		   const typename CGAL_WRAP(K)::Ray_2 &ray2,
 		   const K& k)
   {
+    typedef typename K::Vector_2 Vector_2;
     typedef typename K::FT FT;
-    const Vector_2<K> &ray1dir = ray1.direction().vector();
-    const Vector_2<K> &ray2dir = ray2.direction().vector();
-    Vector_2<K> diffvec(ray2.source()-ray1.source());
+    const Vector_2 &ray1dir = ray1.direction().vector();
+    const Vector_2 &ray2dir = ray2.direction().vector();
+    Vector_2 diffvec(ray2.source()-ray1.source());
 
     bool crossing1, crossing2;
     Orientation dirorder;
