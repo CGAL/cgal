@@ -83,43 +83,10 @@ class Bounding_box_of_minkowski_sum_2 {
   Bounding_box_of_minkowski_sum_2(
       const Snap_rounding_traits<base_rep>* gt) : _gt(gt) {}
 
-  Point_2 small_x_point(Point_2 p1,Point_2 p2)
-  {
-    Comparison_result c = _gt->compare_x_2_object()(p1,p2);
-    if(c == SMALLER)
-      return(p1);
-    else
-      return(p2);
-  }
-
-  Point_2 big_x_point(Point_2 p1,Point_2 p2)
-  {
-    Comparison_result c = _gt->compare_x_2_object()(p1,p2);
-    if(c == SMALLER)
-      return(p2);
-    else
-      return(p1);
-  }
-
-  Point_2 small_y_point(Point_2 p1,Point_2 p2)
-  {
-    Comparison_result c = _gt->compare_y_2_object()(p1,p2);
-    if(c == SMALLER)
-      return(p1);
-    else
-      return(p2);
-  }
-
-  Point_2 big_y_point(Point_2 p1,Point_2 p2)
-  {
-    Comparison_result c = _gt->compare_y_2_object()(p1,p2);
-    if(c == SMALLER)
-      return(p2);
-    else
-      return(p1);
-  }
-
-  void minkowski_sum(std::list<Point_2>& points_list,Segment_2 s,NT unit_squere)
+ public:
+  void operator()(std::list<Point_2>& points_list,
+                             Segment_2 s,
+                             NT unit_squere)
   {
      Comparison_result cx =  _gt->compare_x_2_object()(s.source(),s.target());
      NT x1 = s.source().x(),y1 = s.source().y(),x2 =
@@ -152,38 +119,6 @@ class Bounding_box_of_minkowski_sum_2 {
      points_list.push_back(ms4);
      points_list.push_back(ms5);
      points_list.push_back(ms6);
-  }
-
- public:
-  Iso_rectangle_2 operator()(Segment_2 s,
-                             NT unit_squere,
-		             NT angle)
-  {
-    std::list<Point_2> points_list;
-
-    minkowski_sum(points_list,s,unit_squere);
-
-    static Snap_rounding_rotation<base_rep> r;
-
-    typename std::list<Point_2>::iterator iter;
-
-    for(iter = points_list.begin();iter != points_list.end();++iter)
-      r(*iter,angle);
-
-    // query
-    iter = points_list.begin();
-    Point_2 point_left,point_right,point_bot,point_top;
-    point_left = point_right = point_bot = point_top = *iter;
-    for(++iter;iter != points_list.end();++iter) {
-      point_left = small_x_point(point_left,*iter);
-      point_right = big_x_point(point_right,*iter);
-      point_bot = small_y_point(point_bot,*iter);
-      point_top = big_y_point(point_top,*iter);
-    }
-
-    Iso_rectangle_2 rec(point_left,point_right,point_bot,point_top);
-
-    return(rec);
   }
 
   friend class Snap_rounding_traits<base_rep>;

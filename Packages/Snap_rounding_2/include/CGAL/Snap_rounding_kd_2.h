@@ -225,6 +225,42 @@ public:
     }
   }
 
+  Point_2 small_x_point(Point_2 p1,Point_2 p2)
+  {
+    Comparison_result c = _gt.compare_x_2_object()(p1,p2);
+    if(c == SMALLER)
+      return(p1);
+    else
+      return(p2);
+  }
+
+  Point_2 big_x_point(Point_2 p1,Point_2 p2)
+  {
+    Comparison_result c = _gt.compare_x_2_object()(p1,p2);
+    if(c == SMALLER)
+      return(p2);
+    else
+      return(p1);
+  }
+
+  Point_2 small_y_point(Point_2 p1,Point_2 p2)
+  {
+    Comparison_result c = _gt.compare_y_2_object()(p1,p2);
+    if(c == SMALLER)
+      return(p1);
+    else
+      return(p2);
+  }
+
+  Point_2 big_y_point(Point_2 p1,Point_2 p2)
+  {
+    Comparison_result c = _gt.compare_y_2_object()(p1,p2);
+    if(c == SMALLER)
+      return(p2);
+    else
+      return(p1);
+  }
+
   void get_intersecting_points(list<SAVED_OBJECT> &result_list,
                                Segment_2 s,
                                NT unit_squere)
@@ -249,8 +285,33 @@ public:
     else
       --iter;
 
-    Iso_rectangle_2 rec = _gt.bounding_box_of_minkowski_sum_2_object()
-        (s,unit_squere,iter->second.second);
+    std::list<Point_2> points_list;
+    _gt.bounding_box_of_minkowski_sum_2_object()
+      (points_list,s,unit_squere);
+
+    static Snap_rounding_rotation<Rep> r;
+
+    typename std::list<Point_2>::iterator points_iter;
+
+    for(points_iter = points_list.begin();
+        points_iter != points_list.end();
+        ++points_iter)
+      r(*points_iter,iter->second.second);
+
+    // query
+    points_iter = points_list.begin();
+    Point_2 point_left,point_right,point_bot,point_top;
+    point_left = point_right = point_bot = point_top = *points_iter;
+    for(++points_iter;
+        points_iter != points_list.end();
+        ++points_iter) {
+      point_left = small_x_point(point_left,*points_iter);
+      point_right = big_x_point(point_right,*points_iter);
+      point_bot = small_y_point(point_bot,*points_iter);
+      point_top = big_y_point(point_top,*points_iter);
+    }
+
+    Iso_rectangle_2 rec(point_left,point_right,point_bot,point_top);
 
     Point_2 p1 = rec.vertex(0);
     Point_2 p2 = rec.vertex(2);

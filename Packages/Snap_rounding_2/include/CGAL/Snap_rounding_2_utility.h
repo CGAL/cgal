@@ -37,6 +37,8 @@ private:
 
  public:
 
+  !!! remove this file, change doc_tex of bounding_box + its name
+
 Snap_rounding_rotation()
 {
   angle_to_sines_appr[0] = NT(0);
