@@ -11,8 +11,8 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Cartesian/Aff_transformation_rep_3.h
-// source        : include/CGAL/Cartesian/Aff_transformation_rep_3.h
+// file          : include/CGAL/Cartesian/Aff_transformation_rep_3.C
+// source        : include/CGAL/Cartesian/Aff_transformation_rep_3.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
