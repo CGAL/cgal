@@ -151,13 +151,13 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
   public: // modification:
     void reset();
+    bool pivot(std::vector<const typename Traits::Sphere *>& l,
+	       int& e,const int d);
+  
+  private: // modification:
     bool push(const Sphere& ball);
     inline void pop();
     bool is_spanning();
-  
-    bool pivot(std::vector<const typename Traits::Sphere *>& l,
-	       int& e,
-	       const int d);
   
   private: // utility:
     inline bool find_radius(const Tag_false is_exact);
