@@ -1,0 +1,70 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PolygonBopsTraits.tex (Map_overlay)
+% +------------------------------------------------------------------------+
+% |
+% | Package: ovl (Map_overlay)
+% |
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   PolygonBopsTraits
+% +========================================================================+
+\begin{ccRefConcept}{PolygonBopsTraits_2}
+
+\ccDefinition
+   A model for the \ccRefName\ defines the geometric types and
+   primitive operations used in the Polygon Bops.
+
+\ccRefines
+\ccc{SweepLineTraits_2} 
+\lcTex{(\ccRefPage{SweepLineTraits_2})}.
+
+   %The \ccRefName\ concept is a refinement of the \ccc{PlanarMapTraits_2}
+   %concept \lcTex{(\ccRefPage{PlanarMapTraits_2})}.
+   %The requirements of the latter
+   %are requirements for the former.
+   %The additional requirements are the following types and methods.
+   %The \ccStyle{Point_2} can be implemented for non-linear curves as the
+   %intersection of 2 curves.
+
+\ccTypes
+  \ccNestedType{Point_2}{same as \ccc{SweepLineTraits_2::Point_2}.}
+  \ccNestedType{X_curve_2}{same as \ccc{SweepLineTraits_2::X_curve_2}.}
+  \ccNestedType{Curve_2}{same as \ccc{SweepLineTraits_2::X_curve_2}.}
+
+\ccOperations
+
+\ccCreationVariable{polygons_bops_traits}
+
+\ccMethod{
+   Point_2 calc_hitting_point(const X_curve_2& cv,const Point_2& p);}{
+   Returns the hitting point of a vertical ray emanating from p 
+   toward cv, and cv.}
+
+\ccHasModels
+%  The package does not supply specific implementations of the planar
+%  map with intersections traits concept. However, since the
+%  \ccc{Arrangement Traits} concept is a refinment of the \ccRefName\
+%  concept, all of the models of the former are models of the latter.
+The following classes are models of the of the \ccRefName\ concept. 
+
+\ccc{Polygon_bops_traits<R>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
