@@ -79,8 +79,8 @@ class Min_ellipse_2 {
     Min_ellipse_2( const Traits& traits = Traits());
     Min_ellipse_2( const Point&  p,
                    const Traits& traits = Traits());
-    Min_ellipse_2( const Point&  p,
-                   const Point&  q,
+    Min_ellipse_2( Point  p,
+                   Point  q,
                    const Traits& traits = Traits());
     Min_ellipse_2( const Point&  p1,
                    const Point&  p2,
@@ -405,8 +405,10 @@ class Min_ellipse_2 {
     }
     
     // constructor for two points
+    // This was const Point& but then Intel 7.0/.net2003 messes it up 
+    // with the constructor taking an iterator range
     inline
-    Min_ellipse_2( const Point& p1, const Point& p2,
+    Min_ellipse_2( Point p1, Point p2,
                    const Traits& traits = Traits())
         : tco( traits)
     {
