@@ -11,7 +11,8 @@ This chapter describes briefly what interval arithmetic is, its implementation
 in {\cgal}, and its possible use by geometric programs.
 The main reason for having interval arithmetic in {\cgal} is its integration
 into the filtered robust and fast predicates scheme, but we also provide a
-number type so that you can use it separately if you find any use for it.
+number type so that you can use it separately if you find any use for it
+(such as interval analysis, or to represent data with tolerance).
 
 % This control is
 % provided via the comparison operators.  When there is an unsafe comparison
@@ -54,12 +55,16 @@ an interval that does not contain zero, then you can safely determine its sign.
 \ccConstructor{Interval_nt(double i, double s);}
 {introduces the interval [i;s].}
 
-Several functions \ccc{convert_to<Interval_nt>(NT)} provide a cast
-from all supported numerical types, to an interval \ccc{Interval_nt}
-containing the value.  The following types are supported: \ccc{leda_real},
-\ccc{leda_rational}, \ccc{leda_integer}, \ccc{leda_bigfloat}, \ccc{Gmpz},
-\ccc{Fixed_precision_nt}, and all built-in types.
-The user can add such functions for his own number types.
+\ccFunction{Interval_nt convert_to<Interval_nt>(NT);}
+{Several such functions provide a cast from the following numerical types
+to an \ccc{Interval_nt} containing the value.  The following types are
+supported: \ccc{leda_real}, \ccc{leda_rational}, \ccc{leda_integer},
+\ccc{leda_bigfloat}, \ccc{Gmpz}, \ccc{Fixed_precision_nt}, all built-in
+types that fit exactly in a \ccc{double} (which excludes \ccc{long double}
+and 64 bits integers, which must be treated separately), and all
+\ccc{Quotient<RT>} where RT is a type listed above.
+The user can add such functions for his own number types, see the files
+\ccc{CGAL/Interval_arithmetic/IA_*.h} for examples.}
 
 
 \ccOperations
@@ -68,7 +73,7 @@ The user can add such functions for his own number types.
 All functions required by a class to be considered as a {\cgal} number type
 (see~\ref{Numbertype}) are present, as well as the utility functions,
 sometimes with a particular semantic which is described below.  There are also
-access functions to the bounds of the intervals.
+a few additional functions.
 
 \ccCreationVariable{I}
 
@@ -76,7 +81,7 @@ access functions to the bounds of the intervals.
 [$-\infty$;$+\infty$] when the denominator contains 0.}
 
 \ccFunction{Interval_nt sqrt(Interval_nt I);} {returns
-[0;sqrt(upper\_bound(I))] when only the lower bound is negative (expectable
+[0;$\sqrt{upper\_bound(I)}$] when only the lower bound is negative (expectable
 case with roundoff errors), and is unspecified when the upper bound also is
 negative (unexpected case).}
 
@@ -85,6 +90,21 @@ middle of the interval, as a double approximation of the interval.}
 
 \ccMethod{double lower_bound();} {returns the lower bound of the interval.}
 \ccMethod{double upper_bound();} {returns the upper bound of the interval.}
+\ccMethod{bool is_point();} {returns whether both bounds are equal.}
+\ccMethod{bool is_same(Interval_nt J);} {returns whether both intervals have
+the same bounds.}
+\ccMethod{bool overlap(Interval_nt J);} {returns whether both intervals have a
+non empty intersection.}
+
+The two following operators can be used for interval analysis, they are not
+directly useful for \ccc{Interval_nt} as a number type.
+
+\ccMethod{Interval_nt operator||(Interval_nt J);} {returns the smallest
+interval containing the two intervals.}
+\ccMethod{Interval_nt operator&&(Interval_nt J);} {returns the biggest
+interval contained in the two intervals.  The result is unspecified if
+the two intervals don't intersect.}
+
 
 The comparison operators ($<$, $>$, $<=$, $>=$, $==$, $!=$, \ccc{sign()}
 and \ccc{compare()}) have the following semantic: it is the intuitive
@@ -123,49 +143,6 @@ see Section~\ref{interval-adv}.  Nearly all operations on
 (which is the default),
 and leave it in this state if they have to modify it internally.
 
-% \ccExample
-% 
-% Here a simple example is given showing how to make safe and fast predicates.
-% This kind of problem is going to be resolved automatically by a predicate
-% compiler, but before it is available, you can do it by hand.
-% Let's consider the \ccc{orientation} predicate:
-% 
-% \begin{verbatim}
-% template < class FT >
-% Orientation orientation(const FT &px, const FT &py,
-                                  % const FT &qx, const FT &qy,
-                                  % const FT &rx, const FT &ry)
-% {
-  % FT d1 = (px-qx)*(qy-ry);
-  % FT d2 = (py-qy)*(qx-rx);
-  % return  (d1 < d2) ? RIGHTTURN
-       % : ((d1 == d2)? COLLINEAR : LEFTTURN);
-% }
-% \end{verbatim}
-% 
-% This function becomes approximately the following, if you want it to be exact~:
-% 
-% \begin{verbatim}
-% #include <CGAL/Interval_arithmetic.h>
-% typedef Interval_nt Dis;
-% 
-% Orientation orientation(const FT &px, const FT &py,
-                                  % const FT &qx, const FT &qy,
-                                  % const FT &rx, const FT &ry)
-% {
-  % Dis d1 = ((Dis)px-(Dis)qx)*((Dis)qy-(Dis)ry);
-  % Dis d2 = ((Dis)py-(Dis)qy)*((Dis)qx-(Dis)rx);
-% 
-  % if (d1 == d2) {
-    % return orientation((leda_real) px, (leda_real) py,
-			    % (leda_real) qx, (leda_real) qy,
-			    % (leda_real) rx, (leda_real) ry);
-  % } else {
-    % return (d1 < d2) ? RIGHTTURN : LEFTTURN;
-  % };
-% }
-% \end{verbatim}
-
 \end{ccClass}
 
 \begin{ccAdvanced}
@@ -196,12 +173,26 @@ requirements concerning the rounding mode as other functions.
 % FPU rounding modes~:
 
 We provide the following functions to change the rounding mode:
-\begin{itemize}
-\item \ccc{FPU_set_rounding_to_zero()}
-\item \ccc{FPU_set_rounding_to_nearest()}
-\item \ccc{FPU_set_rounding_to_infinity()}
-\item \ccc{FPU_set_rounding_to_minus_infinity()}
-\end{itemize}
+
+\ccEnum{enum FPU_CW_t {FPU_cw_near, FPU_cw_zero, FPU_cw_up, FPU_cw_down};}
+       {The different selectors for the rounding mode (respectively to the
+       nearest, to zero, to plus infinity, and to minus infinity).}
+\ccFunction{void FPU_set_cw (FPU_CW_t R);}
+       {To set the rounding mode to \ccc{R}.}
+\ccFunction{FPU_CW_t FPU_get_cw (void);}
+       {To get the current rounding mode.}
+
+\ccExample
+
+The correct way to protect an area of code that uses operations on the class
+\ccc{Interval_nt_advanced} is the following:
+
+\begin{verbatim}
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
+  ... // The code to be protected.
+  FPU_set_cw(backup);
+\end{verbatim}
 
 \ccImplementation
 
@@ -238,34 +229,8 @@ this, he must take care to reset it to 'round to the nearest' before them.
 Platform support:\\
 This part of {\cgal} must be explicitly ported to each non yet supported
 platform.  For Intel, Sparc and Mips, only the GNU compilers use assembly
-code.  The MipsPro compiler uses the slow C code instead, and do not
+code.  The MipsPro compiler uses the slow C code instead, and does not
 support the construction \ccc{convert_to<>()} right now.
-
-% Here is the current state of supported platforms:
-% 
-% \begin{itemize}
-% \item Sparc
-% %\begin{itemize}\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt
-% \begin{itemize}
-% \item g++ uses the assembly versions, independent of the OS (Solaris tested).
-% \item CC (Solaris) uses the C library functions to change the rounding modes.
-% \end{itemize}
-% \item Intel
-% \begin{itemize}
-% \item g++ uses the assembly versions, independent of the OS (tested for Linux).
-% \item For Windows (NT, 95), Solaris, and others the code is not (yet) ported.
-% \end{itemize}
-% \item Alpha
-% \begin{itemize}
-% \item g++ 2.8 supports the "-mfp-rounding-mode=d" command line option
-      % to set the dynamic rounding mode.
-% \item For CC the situation is unknown (try command line option like "-fprm d").
-% \end{itemize}
-% \item Mips
-% \begin{itemize}
-% \item g++ and CC use the C library functions.
-% \end{itemize}
-% \end{itemize}
 
 \end{ccClass}
 
@@ -298,18 +263,12 @@ Section~\ref{interval-adv}).  Here are the necessary requirements:
       in the predicates called.
 \item A \ccc{convert_to<Interval_nt_advanced>(CT)} function must
       be provided, that returns an interval containing the value of the
-      argument of type \ccc{CT}.
-      This conversion function has to be as fast as possible, and exact (in the
-      sense that the interval must contain surely the initial value).  This
-      function is provided for the usual types \ccc{Gmpz}, \ccc{leda_real},
-      \ccc{leda_rational}, \ccc{leda_bigfloat}, \ccc{leda_integer}, and the
-      built-in types.  The user can add his own types.
-%      (Note: This might become an additional requirement for number types).
+      argument of type \ccc{CT}, see Section~\ref{interval}.
 \item A \ccc{convert_to<ET>(CT)} function must also be provided, that
       returns a number of type \ccc{ET} representing exactly the argument of
       type \ccc{CT}.  It's a conversion function that is used for the exact
       computation, when the filter fails.
-      This conversion has to be done exactly.
+      This conversion has to be done exactly to ensure robustness.
 \end{itemize}
 
 \ccExample
@@ -343,9 +302,12 @@ use:
     typedef Filtered_exact<double, Gmpz> NT;
 \end{verbatim}
 
+As a general rule, we advise the use of
+\ccc{Filtered_exact<double, leda_real>}.
+
 \ccImplementation
 
-The template definition of the low level predicates of CGAL are overloaded for
+The template definition of the low level predicates of \cgal are overloaded for
 the type \ccc{Filtered_exact<CT,ET>}.  It is a partial specialisation,
 which implies that this is not supported by the compilers that do not support
 this C++ feature (MipsPro 7.2).
@@ -369,9 +331,11 @@ overloaded code the following way:
 
 \ccExample
 
-The low level template predicates of CGAL are in files named
-\ccc{CGAL/predicates_on_ftC2.h} (resp. ftC3, rtH2, rtH3), the script is used
-to produce the files \ccc{CGAL/Arithmetic_filter/predicates_on_ftC2.h} (resp.
-ftC3, rtH2, rtH3).
+The low level template predicates of \cgal are in files named
+\ccc{CGAL/predicates_on_ftC2.h} (resp. ftC3), the script is used
+to produce the files \ccc{CGAL/Arithmetic_filter/predicates_on_ftC2.h}
+(resp. ftC3).
+
+For the moment, only the cartesian predicates are supported.
 
 \end{ccClass}
