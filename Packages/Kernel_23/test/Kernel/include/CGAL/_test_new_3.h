@@ -24,21 +24,7 @@
 #ifndef CGAL_TEST_NEW_3_H
 #define CGAL_TEST_NEW_3_H
 
-#include <CGAL/Point_3.h>
-#include <CGAL/Vector_3.h>
-#include <CGAL/Direction_3.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Ray_3.h>
-#include <CGAL/Line_3.h>
-#include <CGAL/Plane_3.h>
-#include <CGAL/Sphere_3.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/Tetrahedron_3.h>
-#include <CGAL/Iso_cuboid_3.h>
-#include <CGAL/Aff_transformation_3.h>
 #include <CGAL/intersections.h>
-#include <CGAL/predicates_on_points_3.h>
-#include <CGAL/distance_predicates_3.h>
 #include <CGAL/squared_distance_3.h>
 
 void use(bool) {}
@@ -233,6 +219,7 @@ test_new_3(const R& rep)
   typename R::Construct_circumcenter_3 construct_circumcenter
         = rep.construct_circumcenter_3_object();
           tmp4 = construct_circumcenter(p2,p3,p4,p5);
+          tmp4 = construct_circumcenter(p2,p3,p4);
 
   typename R::Construct_centroid_3 construct_centroid
         = rep.construct_centroid_3_object();

@@ -1,3 +1,6 @@
+3.28   (?? June 2001)
+- Really test circumcenter(3 Point_3).
+
 3.27   (20 June 2001)
 - added Construct_orthogonal_vector_3 and Construct_opposite_vector_[23]
 

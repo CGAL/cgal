@@ -25,17 +25,15 @@
 #ifndef CGAL__TEST_FCT_CONSTRUCTIONS_3_C
 #define CGAL__TEST_FCT_CONSTRUCTIONS_3_C
 
-#ifndef CGAL__TEST_FCT_CONSTRUCTIONS_3_H
 #include <CGAL/_test_fct_constructions_3.h>
-#endif // CGAL__TEST_FCT_CONSTRUCTIONS_3_H
 
 template <class R>
 bool
 _test_fct_constructions_3(const R&)
 {
   typedef typename R::RT     RT;
-  typedef CGAL::Point_3<R>   Point;
-  typedef CGAL::Vector_3<R>  Vector;
+  typedef typename R::Point_3   Point;
+  typedef typename R::Vector_3  Vector;
 
   RT RT0(0);
   RT RT1(1);
@@ -54,6 +52,10 @@ _test_fct_constructions_3(const R&)
   Point p110 = p + Vector( RT1, RT1,-RT1 );
   Point p010 = p + Vector(-RT1, RT1,-RT1 );
 
+  Point p2   = p + Vector(-RT1, RT0, RT0 );
+  Point p3   = p + Vector( RT1, RT0, RT0 );
+  Point p4   = p + Vector( RT0, RT1, RT0 );
+
   // midpoint
   assert( CGAL::midpoint( p111, p000) == p);
   assert( CGAL::midpoint( p110, p001) == p);
@@ -65,6 +67,8 @@ _test_fct_constructions_3(const R&)
   assert( CGAL::circumcenter( p101, p001, p010, p100) == p);
   assert( CGAL::circumcenter( p001, p000, p110, p100) == p);
 
+  assert( CGAL::circumcenter( p2, p3, p4) == p);
+
   // centroid
   Point p_11 = p + Vector(RT0, RT1, RT1);
   assert( CGAL::centroid( p111, p010, p101, p000) == p);
@@ -74,6 +78,5 @@ _test_fct_constructions_3(const R&)
 
   return true;
 }
-
 
 #endif // CGAL__TEST_FCT_CONSTRUCTIONS_3_C
