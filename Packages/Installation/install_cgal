@@ -46,7 +46,7 @@
 # CGAL specific:
 
 # ---------------------------------------------
-CGAL_VERSION='2.1'
+CGAL_VERSION='2.2'
 # ---------------------------------------------
 CGAL_INSTALL_CGAL="`basename ${0}`"
 # ---------------------------------------------
@@ -379,7 +379,7 @@ _real_dirname()
 
 _real_options()
 {
-    ${_basename} "`${_printf} \"${*}\" | ${_awk} '{ for (i=2; i<=NF; ++i) if (substr($i,0,1) == \"-\") printf \"%s\",$i }'`"
+    ${_printf} "${*}" | ${_awk} '{ for (i=2; i<=NF; ++i) if (substr($i,0,1) == "-") printf "%s",$i }'
 }
 
 # print to logfile
