@@ -1,3 +1,9 @@
+1.29 (21 February 2003)
+- New test programs Filtered_cartesian.C and Filtered_homogeneous.C
+- Remove some unused variables
+- Add (undocumented) Conic_2 to Type_equality_wrapper.
+- Add CGAL/Kernel/Wutils.h
+
 1.28 (19 February 2003)
 - Remove default template argument to Type_equality_wrapper.
 
