@@ -808,6 +808,9 @@ public:
   typedef typename Base::Event_queue                 Event_queue;
   typedef typename Base::Status_line                 Status_line;
  
+  typedef typename Event_queue::value_type           Event_queue_value_type;
+  typedef typename Status_line::value_type           Status_line_value_type;
+  
 
   void  sweep_curves_to_subcurves(Curve_iterator curves_begin, 
                                   Curve_iterator curves_end, 
@@ -876,9 +879,8 @@ public:
        
       if (edge_point == event_queue.end() || 
           edge_point->second.get_point() != source_point_node.get_point())
-        event_queue.insert(typename Event_queue::
-                           value_type(traits.curve_source(cv), 
-                                      source_point_node));
+        event_queue.insert(Event_queue_value_type(traits.curve_source(cv), 
+						  source_point_node));
       else
         edge_point->second.merge(source_point_node);
       
@@ -890,9 +892,8 @@ public:
 
       if (edge_point == event_queue.end() || 
           edge_point->second.get_point() != target_point_node.get_point())
-        event_queue.insert(typename Event_queue::
-                           value_type(traits.curve_target(cv), 
-                                      target_point_node));
+        event_queue.insert(Event_queue_value_type(traits.curve_target(cv), 
+						  target_point_node));
       else
         edge_point->second.merge(target_point_node);
     }
@@ -1023,8 +1024,7 @@ public:
             for (typename std::list<Curve_node>::iterator  
                    ovlp_iter = overlapping_curves.begin(); 
                  ovlp_iter != overlapping_curves.end();  ovlp_iter++)
-              status.insert(typename Status_line::
-                            value_type(*ovlp_iter, ovlp_iter->get_curve()));
+              status.insert(Status_line_value_type(*ovlp_iter, ovlp_iter->get_curve()));
           }
         }
         
@@ -1115,8 +1115,7 @@ public:
           for (typename std::list<Curve_node>::iterator  ovlp_iter = 
                  overlapping_curves.begin(); 
                ovlp_iter != overlapping_curves.end();  ovlp_iter++)
-            status.insert(typename Status_line::
-                          value_type(*ovlp_iter, ovlp_iter->get_curve()));
+            status.insert(Status_line_value_type(*ovlp_iter, ovlp_iter->get_curve()));
         }
       }
       
