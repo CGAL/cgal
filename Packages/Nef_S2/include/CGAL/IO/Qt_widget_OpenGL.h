@@ -71,7 +71,7 @@ protected:
   virtual void mouseReleaseEvent( QMouseEvent* event);
 
 public:
-  Qt_widget_OpenGL(int width, int height, long double scale);
+  Qt_widget_OpenGL(int width, int height, double scale);
   virtual void paintGL();
   virtual void initializeGL();
   virtual void resizeGL(int w, int h);
