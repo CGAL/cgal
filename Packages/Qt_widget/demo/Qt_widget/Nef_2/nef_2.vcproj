@@ -111,6 +111,9 @@
 				RelativePath="Qt_widget_toolbar.C">
 			</File>
 			<File
+				RelativePath="Qt_widget_toolbar_layers.C">
+			</File>
+			<File
 				RelativePath="nef_2.C">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -135,6 +138,16 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="Qt_widget_toolbar_layers.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h"
+						Outputs="Qt_widget_toolbar_layers.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="cgal_types.h">
 			</File>
 			<File
@@ -147,6 +160,9 @@
 "
 						Outputs="nef_2.moc"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="nef_2_layers.h">
 			</File>
 		</Filter>
 		<Filter
