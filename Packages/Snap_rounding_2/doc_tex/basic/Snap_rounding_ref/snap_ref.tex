@@ -79,22 +79,6 @@ The sixth parameter denotes the number of KD trees to use (see \cite{isr-2002} f
 The default, $1$, is ussually the best one to use.
 }
 
-\ccConstructor{snap_rounding(NT pixel_size,bool do_isr = true,bool use_integer_mode = true,int 
-number_of_kd_trees = 1);}{
-The same as the constructor above but here the instance is initialized with no segments.
-}
-
-\ccConstructor{snap_rounding(const snap_rounding &other);}{
-Copy constructor
-}
-
-\ccOperations
-\ccHeading{Assignment}
-
-\ccMethod{snap_rounding
-	operator=(const snap_rounding & s);}
-{}
-
 \ccAccessFunctions
 
 \ccMethod{Snap_rounding_2<Rep>::Segment_const_iterator segments_begin() const;}{

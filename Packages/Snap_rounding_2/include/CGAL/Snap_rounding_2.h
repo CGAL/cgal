@@ -177,18 +177,6 @@ public:
                   bool inp_int_output = true,
                   int inp_number_of_kd_trees = default_number_of_kd_trees);
 
-  //! A constructor
-  Snap_rounding_2(NT inp_pixel_size,
-                  bool inp_do_isr = true,
-                  bool inp_int_output = true,
-                  int inp_number_of_kd_trees = default_number_of_kd_trees);
-
-  //! A copy constructor
-  Snap_rounding_2(const Snap_rounding_2& other);
-
-  //! An operator =
-  Snap_rounding_2& operator =(const Snap_rounding_2& other);
-
    //! Returns a constant iterator to the first input segment.
   inline Segment_const_iterator segments_begin() const {
              return(seg_2_list.begin());}
@@ -280,7 +268,6 @@ private:
                    &inp_hot_pixels_intersected_set,std::list<Point_2>
                    &seg_output,int number_of_intersections,bool first_time);
   void iterate();
-  void copy(const Snap_rounding_2<Rep_>& other);
   static inline Direction get_direction() {return(seg_dir);}
   static inline void set_direction(Direction dir) {seg_dir = dir;}
 };
@@ -814,55 +801,6 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
       ++number_of_segments;
       ++begin;
     }
-  }
-
-template<class Rep_>
-void Snap_rounding_2<Rep_>::copy(const Snap_rounding_2<Rep_>& other)
-  {
-    erase_hp = false;
-    wheteher_to_do_isr = other.wheteher_to_do_isr;
-    int_output = other.int_output;
-    pixel_size = other.pixel_size;
-    number_of_segments = other.number_of_segments;
-    number_of_kd_trees = other.number_of_kd_trees;
-    need_sr = true;
-    seg_list = other.seg_list;
-    seg_2_list = other.seg_2_list;
-
-  }
-
-// cctor
-template<class Rep_>
-Snap_rounding_2<Rep_>::Snap_rounding_2(const Snap_rounding_2<Rep_>& other)
-  {
-    copy(other);
-  }
-
-// operator =
-template<class Rep_>
-Snap_rounding_2<Rep_>&
-Snap_rounding_2<Rep_>::operator =(const Snap_rounding_2<Rep_>& other)
-  {
-    copy(other);
-
-    return(*this);
-  }
-
-template<class Rep_>
-Snap_rounding_2<Rep_>::Snap_rounding_2(
-  NT inp_pixel_size,
-  bool inp_do_isr,
-  bool inp_int_output,
-  int inp_number_of_kd_trees)
-  {
-    // initialize approximation angles map
-    need_sr = true;
-    erase_hp = false;
-    wheteher_to_do_isr = inp_do_isr;
-    int_output = inp_int_output;
-    pixel_size = inp_pixel_size;
-    number_of_segments = 0;
-    number_of_kd_trees = inp_number_of_kd_trees;
   }
 
 template<class Rep_>
