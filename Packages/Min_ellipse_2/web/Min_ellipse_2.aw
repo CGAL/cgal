@@ -1410,6 +1410,28 @@ its boundary points.
     {
         return( n_boundary_points);
     }
+
+    CGAL_Conic_2< CGAL_Cartesian< double > >
+    to_double( ) const
+    {
+        CGAL_optimisation_precondition( ! is_degenerate());
+
+        double t = 0.0;
+        
+        if ( n_boundary_points == 4)
+            t = conic1.vol_minimum( dr, ds, dt, du, dv, dw);
+        
+        CGAL_Conic_2<R> c( conic1);
+        CGAL_Conic_2< CGAL_Cartesian<double> > e;
+        e.set( CGAL_to_double( c.r()) + t*CGAL_to_double( dr),
+               CGAL_to_double( c.s()) + t*CGAL_to_double( ds),
+               CGAL_to_double( c.t()) + t*CGAL_to_double( dt),
+               CGAL_to_double( c.u()) + t*CGAL_to_double( du),
+               CGAL_to_double( c.v()) + t*CGAL_to_double( dv),
+               CGAL_to_double( c.w()) + t*CGAL_to_double( dw));
+
+        return( e);
+    }
 @end
 
 @! ----------------------------------------------------------------------------
@@ -3024,6 +3046,12 @@ end of each file.
 
     // Class interface
     // ===============
+
+    // the following include is needed by `to_double()'
+    #ifndef CGAL_CARTESIAN_H
+    #  include <CGAL/Cartesian.h>
+    #endif
+
     // includes
     #ifndef CGAL_POINT_2_H
     #  include <CGAL/Point_2.h>
