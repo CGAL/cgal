@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.38 on 15 November 1999
+- Fix the test-suite for VC++ without LEDA.
+
 Version 4.37 on 11 November 1999
 - Removed stupid Borland warning.
 
