@@ -157,12 +157,6 @@ operator!=(const SphereC3<R CGAL_CTAG> &t) const
 }
 
 template < class R >
-int SphereC3<R CGAL_CTAG>::id() const
-{
-  return (int)PTR;
-}
-
-template < class R >
 inline
 typename SphereC3<R CGAL_CTAG>::Point_3
 SphereC3<R CGAL_CTAG>::center() const
@@ -381,4 +375,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIAN_SPHERE_3_H
+#endif // CGAL_CARTESIAN_SPHERE_3_C
