@@ -1,0 +1,25 @@
+// Package: wininst
+//
+// Compiler specific configuration file
+// System: i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168
+//
+// Used for Windows-specific installation
+//
+// This file was automatically generated during installation.
+// It wraps a standard header file that did not exist for this compiler
+// and adds its symbols to namespace std.
+// The existence of this file indicates that your compiler does not
+// conform to the ISO/IEC standard 14882 for C++.
+
+#include <ostream.h>
+
+#if defined(CGAL_CFG_NO_STDIO_NAMESPACE) && !defined(CGAL_NO_STDIO_NAMESPACE)
+
+namespace std {
+	using ::ostream;
+	using ::ostream_withassign;
+}
+
+#endif // CGAL_CFG_NO_STDIO_NAMESPACE && !CGAL_NO_STDIO_NAMESPACE
+
+// EOF //
