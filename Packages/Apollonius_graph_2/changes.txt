@@ -1,3 +1,6 @@
+24 June 2004:  Menelaos Karavelas
+- added fix for SGI compiler for the kernel wrapper
+
 5 June 2004:  Menelaos Karavelas
 - changed name of line argument in Parabola_2 constructor to avoid
   warning of SunPro CC compiler
