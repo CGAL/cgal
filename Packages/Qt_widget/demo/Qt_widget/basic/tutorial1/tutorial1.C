@@ -8,17 +8,19 @@
 #include <qapplication.h>
 #include <CGAL/IO/Qt_widget.h>
 
-typedef CGAL::Cartesian<int> Rep;
-typedef CGAL::Point_2<Rep> Point;
-typedef CGAL::Circle_2<Rep> Circle;
-typedef CGAL::Segment_2<Rep> Segment;
-typedef CGAL::Line_2<Rep> Line;
-typedef CGAL::Ray_2<Rep> Ray;
-typedef CGAL::Triangle_2<Rep> Triangle;
-typedef CGAL::Iso_rectangle_2<Rep> Rectangle;
-typedef CGAL::Bbox_2 BBox;
-typedef std::list<Point> Container;
-typedef CGAL::Polygon_2<Rep,Container> Polygon;
+typedef CGAL::Cartesian<int>   Rep;
+typedef CGAL::Point_2<Rep>     Point;
+typedef CGAL::Circle_2<Rep>    Circle;
+typedef CGAL::Segment_2<Rep>   Segment;
+typedef CGAL::Line_2<Rep>      Line;
+typedef CGAL::Ray_2<Rep>       Ray;
+typedef CGAL::Triangle_2<Rep>  Triangle;
+typedef CGAL::Iso_rectangle_2<Rep>
+                               Cgal_Rectangle;
+typedef CGAL::Bbox_2           BBox;
+typedef std::list<Point>       Container;
+typedef CGAL::Polygon_2<Rep,Container>
+                               Cgal_Polygon;
 
 int main( int argc, char **argv )
 {
@@ -45,10 +47,10 @@ int main( int argc, char **argv )
     *W << RED << Triangle(Point(150,300),
 				   Point(150,350),
 				   Point(100,325));
-    *W << FillColor(RED) << Rectangle(Point(320,220),
+    *W << FillColor(RED) << Cgal_Rectangle(Point(320,220),
 					       Point(350,240));
     *W << DEEPBLUE << BBox(100,80,260,140);
-    Polygon p;
+    Cgal_Polygon p;
     p.push_back(Point(300,30));
     p.push_back(Point(400,30));
     p.push_back(Point(500,130));
