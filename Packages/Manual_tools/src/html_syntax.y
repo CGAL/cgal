@@ -207,6 +207,7 @@ extern bool mbox_within_math;
 %type  <pBuffer>    cc_stmts cc_stmt cc_stmts_skip_space
 %type  <pText>      comment_group  comment_sequence  
 %type  <pText>      nested_token_sequence nested_token
+%type  <pText>      nested_tex_token_sequence nested_tex_token
 %type  <pText>      compound_comment  full_comment_sequence  
 %type  <pText>      non_empty_comment_sequence
 
@@ -413,7 +414,7 @@ string_token:     STRING       {
 				  $$->add( $1.text, $1.len);
 				  $$->add( "]");
                                 }
-                | HTMLINDEX  '{' nested_token_sequence '}'     {
+                | HTMLINDEX  '{' nested_tex_token_sequence '}'     {
 		                  char* s = text_block_to_string(* $3);
 				  delete $3;
                                   const char* p = handleHtmlIndex( $1.text, s);
@@ -439,15 +440,15 @@ string_token:     STRING       {
                                   $$ = new Buffer;
 				  $$->add( p);
                                 }
-                | CITE     '{' nested_token_sequence '}'     {
+                | CITE     '{' nested_tex_token_sequence '}'     {
 		                  set_INITIAL = 1;
 		                  char* s = text_block_to_string(* $3);
                                   $$ = handleCite( s);
 				  delete[] s;
 				  delete $3;
 				}
-                | CITE     '[' nested_token_sequence ']'
-		           '{' nested_token_sequence '}'     {
+                | CITE     '[' nested_tex_token_sequence ']'
+		           '{' nested_tex_token_sequence '}'     {
 		                  set_INITIAL = 1;
 		                  char* s = text_block_to_string(* $3);
 		                  char* p = text_block_to_string(* $6);
@@ -457,8 +458,8 @@ string_token:     STRING       {
 				  delete $3;
 				  delete $6;
 				}
-                | BIBCITE  '{' nested_token_sequence '}'
-                           '{' nested_token_sequence '}'     {
+                | BIBCITE  '{' nested_tex_token_sequence '}'
+                           '{' nested_tex_token_sequence '}'     {
 		                  set_INITIAL = 1;
 		                  char* s = text_block_to_string(* $3);
 		                  char* p = text_block_to_string(* $6);
@@ -467,15 +468,15 @@ string_token:     STRING       {
 				  delete[] s;
 				  delete $3;
 				}
-                | BIBITEM  '{' nested_token_sequence '}'     {
+                | BIBITEM  '{' nested_tex_token_sequence '}'     {
 		                  set_INITIAL = 1;
 		                  char* s = text_block_to_string(* $3);
                                   $$ = handleBibItem( s);
 				  delete[] s;
 				  delete $3;
 				}
-                | BIBITEM  '[' nested_token_sequence ']'
-		           '{' nested_token_sequence '}'     {
+                | BIBITEM  '[' nested_tex_token_sequence ']'
+		           '{' nested_tex_token_sequence '}'     {
 		                  set_INITIAL = 1;
 		                  char* s = text_block_to_string(* $3);
 		                  char* p = text_block_to_string(* $6);
@@ -682,7 +683,7 @@ global_tagged_declarator:
 		                          handleString( "</H4>\n");
 					  delete $2;
 		                      }
-                | BEGINBIBLIO  '{' nested_token_sequence '}'
+                | BEGINBIBLIO  '{' nested_tex_token_sequence '}'
                                       {   set_INITIAL = 1;
 				          delete $3;
                                       }
@@ -1014,6 +1015,57 @@ nested_token:       string      {
 				  $$ = $2;
 		                }
 		  | '(' nested_token_sequence ')' {
+		                  $2->cons(   *new TextToken( "(", 1));
+		                  $2->append( *new TextToken( ")", 1));
+				  $$ = $2;
+		                }
+;
+
+/* Parsing of a TeX expression/statement with nested expressions */
+/* ============================================================= */
+nested_tex_token_sequence:
+		    /* empty */ {
+		                  $$ = new Text(managed);
+		                }
+		  | nested_tex_token_sequence nested_tex_token
+		                {
+				  $1->append( * $2);
+				  $$ = $1;
+				}
+;
+
+nested_tex_token:   string      {
+                                  $$ = new Text(*new TextToken( 
+						    $1->string(),
+						    $1->length()),
+						managed);
+				  delete $1;
+                                }
+                  | SPACE       {
+                                  $$ = new Text(*new TextToken( 
+						    $1.text,
+						    $1.len,
+						    true),
+						managed);
+		  }
+                  | NEWLINE     {
+                                  $$ = new Text(*new TextToken( "\n", 1, true),
+						managed);
+                                }
+		  | '{' nested_tex_token_sequence '}' {
+				  $$ = $2;
+		                }
+		  | blockintro nested_tex_token_sequence '}' {
+                                  $$ = blockintroProcessing( $1.text,
+							     $1.len, 
+							     $2); 
+		                }
+		  | '[' nested_tex_token_sequence ']' {
+		                  $2->cons(   *new TextToken( "[", 1));
+		                  $2->append( *new TextToken( "]", 1));
+				  $$ = $2;
+		                }
+		  | '(' nested_tex_token_sequence ')' {
 		                  $2->cons(   *new TextToken( "(", 1));
 		                  $2->append( *new TextToken( ")", 1));
 				  $$ = $2;
