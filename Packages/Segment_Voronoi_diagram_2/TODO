@@ -1,3 +1,11 @@
+- change the return type of the do_intersect predicate (and potentially
+  its name) to be a char instead of std::pair<int,int>; the char should
+  encode the type of arrangement
+- in the predicate classes, instead of the kernel's orientation use the
+  orientation class taylored for sites (it does geometric filtering)
+- in class Svd_basic_constructions_C2.h, inside method to_ft, check
+  if sqrt is supported by the number type; actually this is ok for predicates
+  but constructions also need to use this too.
 - in the doc change the name of the template parameter for the
   point container from SC to PC.
 - add tag in the hierarchy class that indicates whether to insert segments
