@@ -21,28 +21,30 @@
 \ccDefinition
 The class \ccClassTemplateName\ provides boolean operations 
 on two given subdivisions. 
-An object $bops$ of the class \ccClassTemplateName\ is constructed by two input subdivisions. 
-Their overlay is constructed by the creation of $bops$, in order to make all boolean 
-operations, on the two input subdivisions, available for users.
+An object $bops$ of the class \ccClassTemplateName\ is constructed by two input 
+subdivisions. 
+Their overlay is constructed by the creation of $bops$, in order to compute 
+all boolean operations, on the two input subdivisions, available for users.
+
 \ccc{Self} is an abbreviation of the \ccRefName\ type hereafter.
 
 \ccInclude{CGAL/Boolean_operations_2.h}
 
 \ccTypes
 
-  \ccNestedType{Map_overlay}{map overlay class.}
+  \ccNestedType{Map_overlay}{map overlay type.}
   \ccGlue
   \ccNestedType{Vertex_container}
-  {a container of all vertices corresponding to the boolean operation performed on the two input subdivisions.}
+  {a container of vertices. Serves to store the output vertices.}
   \ccGlue
   \ccNestedType{Halfedges_container}
-  {a container of all halfedges corresponding to the boolean operation performed on the two input subdivisions.}
+  {a container of halfedges. Serves to store the output halfedges.}
   \ccGlue
   \ccNestedType{Faces_container}
-  {a container of all faces corresponding to the boolean operation performed on the two input subdivisions.}
+  {a container of faces. Serves to store the output faces.}
 
   \ccTypedef{typedef typename Map_overlay::Subdivision  Subdivision;}
-  {the subdivision presenting the overlay and the two input subdivisions.}
+  {the subdivision type presenting the overlay and the two input subdivisions.}
   %\ccGlue
   %\ccTypedef{typedef typename Map_overlay::Change_notification  Change_notification;}
   %{the notifier class of the overlay induced by the two input subdivisions.}
@@ -69,57 +71,63 @@ The \ccClassTemplateName\ defines an assignment operator.
 
 \ccHeading{Employing Map-Overlay}
 
-A Boolean Operation object can be constructed out of a Map Overlay object.
-In this case, users may construct a Map Overlay object out of two input subdivision, 
-where the a choice of the notifier class, the overlay construction algorithm, or the point location strategy 
-can be taken, as described in \ccRefPage{CGAL::MapOverlay<Subdivision,Notifier>}. 
-When constructing a Boolean Operation object out of two input subdivision, as described above,
-the Map Overlay object maintained in the \ccClassTemplateName\ class,
-is constructed, when taking the default notifier class, overlay construction algorithm and point location.
-As described in~\ref{Ovl_Ref_intro}, the default choices are not always 
-the most efficient. Hence, users may provide their own Map Overlay object, defined under the optimal choices, 
-and then, they may construct the Boolean Operations object defined over their Map Overlay object. 
+A \ccStyle{Boolean_operations_2} object can be constructed out of a 
+\ccSttyle{Map_overlay_2} object.
+In this case, users may construct a \ccStyle{Map_overlay_2} object out of two 
+input subdivision, where the a choice of the notifier class, the overlay 
+construction algorithm, or the point location strategy can be taken, 
+as described in \ccRefPage{CGAL::Map_overlay_2<Subdivision,Notifier>}. 
+When constructing a \ccStyle{Boolean_operations_2} object out of two input 
+subdivision, as described above, the \ccStyle{Map_overlay_2} object maintained in 
+the \ccClassTemplateName\ class, is constructed, when taking the default notifier 
+class, overlay construction algorithm and point location.
+As described in \ccRefPage{Ovl_Ref_intro}, the default choices are not always 
+the most efficient. Hence, users may provide their own 
+\ccStyle{Map_overlay_2} object, defined under the optimal choices, 
+and then, they may construct the \ccStyle{Boolean_operations_2} object defined 
+over their \ccStyle{Map_overlay_2} object. 
 
-\ccConstructor{Boolean_operations_2<Map_overlay>(const Map_overlay& ovl>);}
+\ccConstructor{Boolean_operations_2<Map_overlay>(Map_overlay& ovl>);}
 {constructs a boolean operations object from $ovl$;}
 
 \end{ccAdvanced}
 %\ccThree{Halfedge_handle}{}{\hspace*{11cm}}
 
 
-The \ccClassTemplateName\ class contains methods performing 
-boolean operations of the input subdivisions.
-In each such method, we return, as output, all vertices, halfedge, and faces 
-contained in the subdivision, induced by the boolean operation performed 
-on the two input subdivisions. All these three output parameters are optional 
-in our methods.
+The \ccClassTemplateName\ class contains methods which perform
+boolean operations over the input subdivisions.
+In each such method, we return all vertices, halfedge, and faces 
+resulted. 
+All these three output parameters are optional 
+in our methods, and it is possible for users to call these methods 
+only with a subset of the three output parameters.
 
 \ccMethod{void intersection (Faces_container& list_of_faces,
    Halfedges_container& list_of_halfedges, 
-   Vertices_container& list_of_vertices) const;}
+   Vertices_container& list_of_vertices);}
 {returns all vertices, halfedges and faces in the intersection of the two input subdivisions.}
 
 \ccMethod{void Union (Faces_container& list_of_faces,
    Halfedges_container& list_of_halfedges, 
-   Vertices_container& list_of_vertices) const;}
+   Vertices_container& list_of_vertices);}
 {returns all vertices, halfedges and faces in the union of the two input subdivisions.}
 
 \ccMethod{void  symmetric_difference (Faces_container& list_of_faces,
    Halfedges_container& list_of_halfedges, 
-   Vertices_container& list_of_vertices) const;}
+   Vertices_container& list_of_vertices);}
 {returns all vertices, halfedges and faces in the symmetric difference of the two input subdivisions.}
 
 \ccMethod{void  difference (Faces_container& list_of_faces,
    Halfedges_container& list_of_halfedges, 
    Vertices_container& list_of_vertices,
-   bool first = true) const;}
+   bool first = true);}
 {returns all vertices, halfedges and faces in the difference of the two input subdivisions.
    if $first$ is set to $true$, then the difference is computed as the first input subdivision 
    minus the second one. Otherwise, the difference is computed vise versa}
 
 \ccSeeAlso
-\ccc{MapOverlay<Subdivision>}\lcTex{ 
-   (\ccRefPage{CGAL::MapOverlay<Subdivision,Notifier>})}
+\ccc{Map_overlay_2<Subdivision, Notifier>}\lcTex{ 
+   (\ccRefPage{CGAL::Map_overlay_2<Subdivision,Notifier>})}
 
 \end{ccRefClass}
 
