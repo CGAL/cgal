@@ -49,7 +49,8 @@ public:
     typedef typename Refs::Halfedge              Halfedge;
     // Additional tags required by Polyhedron.
     typedef Tag_false                            Supports_face_plane;
-    typedef Tag_false                            Supports_face_normal;
+    struct Plane_not_supported {};
+    typedef Plane_not_supported                  Plane;
 };
 
 CGAL_END_NAMESPACE

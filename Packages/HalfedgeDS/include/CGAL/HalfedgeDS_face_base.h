@@ -56,6 +56,8 @@ public:
     typedef typename Refs::Halfedge              Halfedge;
     // Additional tags required by Polyhedron.
     typedef Tag_false                            Supports_face_plane;
+    struct Plane_not_supported {};
+    typedef Plane_not_supported                  Plane;
     // No longer required.
     // typedef Tag_false                            Supports_face_normal;
 };
@@ -76,6 +78,8 @@ public:
     typedef typename Refs::Halfedge              Halfedge;
     // Additional tags required by Polyhedron.
     typedef Tag_false                            Supports_face_plane;
+    struct Plane_not_supported {};
+    typedef Plane_not_supported                  Plane;
     // No longer required.
     //typedef Tag_false                            Supports_face_normal;
 private:
@@ -172,7 +176,8 @@ public:
 
 template < class Pln>
 struct I_HalfedgeDS_face_base_plane {
-    typedef Pln  Plane;
+    typedef Tag_true Supports_plane;
+    typedef Pln      Plane;
     // No longer required.
     //typedef Trts                                 Traits;
     //typedef typename Traits::Plane               Plane;
@@ -180,16 +185,15 @@ struct I_HalfedgeDS_face_base_plane {
     Plane plane;
     I_HalfedgeDS_face_base_plane() {}
     I_HalfedgeDS_face_base_plane( const Plane& pl) : plane(pl) {}
-    typedef Tag_true Supports_plane;
 };
 template <>
 struct I_HalfedgeDS_face_base_plane<Tag_false> {
     typedef Tag_false Supports_plane;
+    struct Plane_not_supported {};
+    typedef Plane_not_supported Plane;
     // No longer required.
     //struct Normal_not_supported {};
     //typedef Normal_not_supported Normal;
-    struct Plane_not_supported {};
-    typedef Plane_not_supported Plane;
 };
 
 template < class Refs, class T = Tag_true, class Pln = Tag_false>
