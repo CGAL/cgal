@@ -1,4 +1,4 @@
-2.46
+2.47
 - Remove warning in CGAL_CFG_MATCHING_BUG_2.C
 
 2.45 (rursu)
