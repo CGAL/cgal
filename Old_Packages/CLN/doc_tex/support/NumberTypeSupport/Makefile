@@ -1,14 +1,13 @@
 .PHONY: dvi ps
 
 all: ps
-	cp CLN.ps ../../../doc_ps
 
-ps: CLN.ps
+ps: ../../../doc_ps/CLN.ps
 
 dvi: wrapper.dvi
 
-CLN.ps: wrapper.dvi
-	dvips -o CLN.ps wrapper.dvi
+../../../doc_ps/CLN.ps: wrapper.dvi
+	dvips -o ../../../doc_ps/CLN.ps wrapper.dvi
 
 wrapper.dvi: CLN.tex wrapper.tex cgal.bib
 	latex wrapper.tex
