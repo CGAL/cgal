@@ -20,10 +20,10 @@
 // ============================================================================
 #include <CGAL/basic.h>
 
-#include <cstring>
+//#include <cstring>
 #include <iostream>
-#include <fstream>
-#include <strstream.h>
+//#include <fstream>
+//#include <strstream.h>
 
 #include <list>
 #include <vector>
