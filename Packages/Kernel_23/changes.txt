@@ -1,3 +1,10 @@
+1.56 (8 August 2003)
+- Handle_for : optimize the default constructor using a static instance.
+- *Handle_for : remove the unused TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH stuff
+  (obsoleted by previous change)
+- *Handle_for : add swap() member and global functions.
+- *Handle_for : initialize_with() is deprecated, use operator=(T) instead.
+
 1.55 (7 August 2003)
 - Interval_converter -> To_interval.
 

@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999,2001 The CGAL Consortium
+// Copyright (c) 1999,2001,2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -26,15 +26,6 @@
 #include <CGAL/memory.h>
 
 CGAL_BEGIN_NAMESPACE
-
-// There are basically 2 ways of constructing an object deriving from
-// Handle_for :
-// - call the default constructor of Handle_for<T>, then eventually use
-//   initialize_with(const T&), which uses the assignment.
-// - call the constructor
-//   Handle_for(Handle_for::TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH), then call
-//   construct_with(const T&).  You HAVE to call it.
-
 
 template <class T, class Alloc = CGAL_ALLOCATOR(T) >
 class Handle_for
@@ -67,28 +58,25 @@ class Handle_for
 
     typedef T element_type;
 
-    struct TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH {};
-
     Handle_for()
     {
-	CGAL_assertion_code(ptr_ = NULL;)
-	construct_with(T());
-    }
-
-    Handle_for(TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH)
-    {
-	CGAL_assertion_code(ptr_ = NULL;)
+        // Use a unique static instance to speed up default construction.
+        // It's a static variable of a function instead of the class to
+        // avoid the requirement of a default constructor for T().
+        static const Handle_for def = Handle_for(T());
+        ptr_ = def.ptr_;
+        ptr_->add_reference();
     }
 
     Handle_for(const T& t)
+      : ptr_(allocator.allocate(1))
     {
-	CGAL_assertion_code(ptr_ = NULL;)
-	construct_with(t);
+        allocator.construct(ptr_, RefCounted(t));
     }
 
     Handle_for(const Handle_for& h)
+      : ptr_(h.ptr_)
     {
-        ptr_ = h.ptr_;
         ptr_->add_reference();
     }
 
@@ -100,24 +88,27 @@ class Handle_for
     Handle_for&
     operator=(const Handle_for& h)
     {
-        h.ptr_->add_reference();
-	remove_reference();
-        ptr_ = h.ptr_;
+        Handle_for tmp(h);
+        swap(tmp);
+        return *this;
+    }
+
+    Handle_for&
+    operator=(const T &t)
+    {
+        if (is_shared())
+            *this = Handle_for(t);
+        else
+            *ptr() = t;
+
         return *this;
     }
 
     void
     initialize_with(const T& t)
     {
-	*ptr() = t;
-    }
-
-    void
-    construct_with(const T& t)
-    {
-	CGAL_assertion(ptr_ == NULL);
-        ptr_ = allocator.allocate(1);
-        allocator.construct(ptr_, RefCounted(t));
+        // kept for backward compatibility.  Use operator=(t) instead.
+        *this = t;
     }
 
     bool
@@ -147,6 +138,12 @@ class Handle_for
     is_shared() const
     {
 	return ptr_->is_shared();
+    }
+
+    void
+    swap(Handle_for& h)
+    {
+      std::swap(ptr_, h.ptr_);
     }
 
 protected:
@@ -193,6 +190,14 @@ private:
 template <class T, class Allocator>
 typename Handle_for<T, Allocator>::Allocator
 Handle_for<T, Allocator>::allocator;
+
+template <class T, class Allocator>
+inline
+void
+swap(Handle_for<T, Allocator> &h1, Handle_for<T, Allocator> &h2)
+{
+    h1.swap(h2);
+}
 
 CGAL_END_NAMESPACE
 

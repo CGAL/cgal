@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2001,2002,2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -15,7 +15,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Sylvain Pion
-// coordinator   : MPI, Saarbruecken  (<Susan.Hert@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 //
 // ======================================================================
 
@@ -31,25 +31,21 @@ public:
 
     typedef Stored element_type;
 
-    struct TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH {};
-
     Simple_Handle_for()
-    {}
-
-    Simple_Handle_for(TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH)
     {}
 
     Simple_Handle_for(const Stored& rc)
 	: _s(rc) {}
 
-    void
-    initialize_with(const Stored& rc)
+    Simple_Handle_for&
+    operator=(const Stored& rc)
     {
       _s = rc;
+      return *this;
     }
 
     void
-    construct_with(const Stored& rc)
+    initialize_with(const Stored& rc)
     {
       _s = rc;
     }
@@ -80,13 +76,24 @@ public:
 	return false;
     }
 
-private:
     void
-    copy_on_write()
-    {}
+    swap(Simple_Handle_for &h)
+    {
+        using std::swap;
+        swap(_s, h._s);
+    }
 
+private:
     Stored _s;
 };
+
+template < class Stored >
+inline
+void
+swap(Simple_Handle_for<Stored> &h1, Simple_Handle_for<Stored> &h2)
+{
+    h1.swap(h2);
+}
 
 CGAL_END_NAMESPACE
 
