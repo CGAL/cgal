@@ -27,9 +27,10 @@
 #  include <CGAL/leda_real.h>
 typedef leda_real exact_NT;
 #else
+#  include <CGAL/Lazy_exact_nt.h>
 #  include <CGAL/MP_Float.h>
 #  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float>  exact_NT;
+typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >  exact_NT;
 #endif
 #include <CGAL/segment_intersection_points_2.h>
 #include <CGAL/point_generators_2.h>
@@ -42,14 +43,7 @@ typedef CGAL::Quotient<CGAL::MP_Float>  exact_NT;
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/Cartesian_converter.h>
 
-// Workaround for VC++
-#ifdef CGAL_CFG_MATCHING_BUG_2
-#define CGAL_IA_CT double
-#define CGAL_IA_PROTECTED true
-#define CGAL_IA_ET exact_NT
-#define CGAL_IA_CACHE No_Filter_Cache
-#endif
-#include <CGAL/Filtered_exact.h>
+#include <CGAL/Filtered_kernel.h>
 
 #if defined(CGAL_USE_CGAL_WINDOW)
 #define leda_window  CGAL::window
@@ -104,8 +98,7 @@ main( int argc, char** argv)
 
   typedef CGAL::Cartesian<double>       C_double;
   typedef CGAL::Cartesian<exact_NT>    C_real;
-  typedef CGAL::Cartesian<CGAL::Filtered_exact< double, exact_NT> >
-                                                           C_filtered;
+  typedef CGAL::Filtered_kernel<C_double, C_real> C_filtered;
   typedef C_double::Point_2             double_Point;
   typedef C_double::Segment_2           double_Segment;
   typedef C_real::Point_2               real_Point;
@@ -158,7 +151,6 @@ main( int argc, char** argv)
 
 
   std::vector<C_filtered_Segment >  filtered_segments;
-  typedef CGAL::Filtered_exact< double, exact_NT>  Filtered;
   CGAL::Cartesian_converter<C_double, C_filtered>  Fconverter;
   std::transform( double_segments.begin(),
                   double_segments.end(),
@@ -213,8 +205,8 @@ main( int argc, char** argv)
   W.read_mouse();
 
   W0.draw_text(25,100,
-      leda_string("Cartesian< Filtered_exact< double, exact_NT> >"));
-  std::cout << "Next with Cartesian< Filtered_exact< double, exact_NT> > ";
+      leda_string("Filtered_kernel<Cartesian<double>, Cartesian<exact_NT> >"));
+  std::cout << "Next with Filtered_kernel<Cartesian<double>, Cartesian<exact_NT> > ";
   std::cout << std::endl;
   DT_filtered FTD;
   std::copy( filtered_intersection_points.begin(),
