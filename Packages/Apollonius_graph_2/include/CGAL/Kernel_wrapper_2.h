@@ -28,6 +28,7 @@
 #define CGAL_KERNEL_WRAPPER_2_H
 
 
+#include <CGAL/Object.h>
 #include <CGAL/Weighted_point.h>
 #include <CGAL/Cartesian_converter.h>
 
@@ -36,11 +37,12 @@ CGAL_BEGIN_NAMESPACE
 template<class Kernel_base_2>
 class Kernel_wrapper_2 : public Kernel_base_2
 {
-protected:
-  typedef typename Kernel_base_2::RT          Weight;
-  typedef typename Kernel_base_2::Point_2     Point;
 public:
-  typedef CGAL::Weighted_point<Point,Weight>  Weighted_point_2;
+  typedef
+  CGAL::Weighted_point<typename Kernel_base_2::Point_2,
+		       typename Kernel_base_2::RT>       Weighted_point_2;
+
+  typedef CGAL::Object                                   Object_2;
 };
 
 

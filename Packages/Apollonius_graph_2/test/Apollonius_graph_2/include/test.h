@@ -26,8 +26,8 @@ bool test_traits()
 
   // testing typedefs
   //--------------------------------------------------------------------
-  typedef typename Traits::Bare_point            Bare_point;
-  typedef typename Traits::Weighted_point        Weighted_point;
+  typedef typename Traits::Bare_point_2          Point_2;
+  typedef typename Traits::Weighted_point_2      Weighted_point_2;
   typedef typename Traits::Site                  Site;
   typedef typename Traits::Line_2                Line_2;
   typedef typename Traits::Ray_2                 Ray_2;
@@ -115,11 +115,11 @@ bool test_traits()
   // testing correctness of predicates;
   //--------------------------------------------------------------------
   bool b;
-  Weighted_point
-    wp1(Bare_point(10.0,-10),20),
-    wp2(Bare_point(9,-9),19.),
-    wp3(Bare_point(1000000,-1000000),0),
-    wp4(Bare_point(10.0,5.0),5),
+  Weighted_point_2
+    wp1(Point_2(10.0,-10),20),
+    wp2(Point_2(9,-9),19.),
+    wp3(Point_2(1000000,-1000000),0),
+    wp4(Point_2(10.0,5.0),5),
     wp5;
 
   // testing coordinate comparison
@@ -143,7 +143,7 @@ bool test_traits()
 
   // testing oriented_side_of_bisector
   //--------------------------------------------------------------------
-  Bare_point p = wp2.point();
+  Point_2 p = wp2.point();
   CGAL_assertion( oriented_side_of_bisector(wp1, wp3, p) ==
 		  ON_POSITIVE_SIDE );
 
@@ -152,57 +152,57 @@ bool test_traits()
   //--------------------------------------------------------------------
 
   // first we consider the case where all vertices are finite
-  wp1 = Weighted_point(Bare_point(0,0),0);
-  wp2 = Weighted_point(Bare_point(1,1),1);
-  wp3 = Weighted_point(Bare_point(2,4),4);
-  wp4 = Weighted_point(Bare_point(3,9),9);
+  wp1 = Weighted_point_2(Point_2(0,0),0);
+  wp2 = Weighted_point_2(Point_2(1,1),1);
+  wp3 = Weighted_point_2(Point_2(2,4),4);
+  wp4 = Weighted_point_2(Point_2(3,9),9);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == ZERO );
   CGAL_assertion( vertex_conflict(wp2, wp3, wp4, wp1) == ZERO );
 
-  wp4 = Weighted_point(Bare_point(3,9),9.0001);
+  wp4 = Weighted_point_2(Point_2(3,9),9.0001);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == NEGATIVE );
   CGAL_assertion( vertex_conflict(wp2, wp3, wp4, wp1) == POSITIVE );
 
 
   // then we consider the case where v3 is the vertex at infinity
-  wp1 = Weighted_point(Bare_point(1,100),49);
-  wp2 = Weighted_point(Bare_point(0,-100),50);
+  wp1 = Weighted_point_2(Point_2(1,100),49);
+  wp2 = Weighted_point_2(Point_2(0,-100),50);
   
-  wp3 = Weighted_point(Bare_point(0,0),0);
+  wp3 = Weighted_point_2(Point_2(0,0),0);
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
 
-  wp3 = Weighted_point(Bare_point(-100000,0),0);
+  wp3 = Weighted_point_2(Point_2(-100000,0),0);
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
 
-  wp3 = Weighted_point(Bare_point(100000,0),1000);
+  wp3 = Weighted_point_2(Point_2(100000,0),1000);
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
 
-  wp3 = Weighted_point(Bare_point(-1,0),51);
+  wp3 = Weighted_point_2(Point_2(-1,0),51);
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
 
-  wp3 = Weighted_point(Bare_point(-1,200),51);
+  wp3 = Weighted_point_2(Point_2(-1,200),51);
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
 
-  wp3 = Weighted_point(Bare_point(-1,-200),51);
+  wp3 = Weighted_point_2(Point_2(-1,-200),51);
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
 
 
   // testing finite_edge_interior_conflict
   //--------------------------------------------------------------------
 
-  wp1 = Weighted_point(Bare_point(0,-100),50);
-  wp2 = Weighted_point(Bare_point(0,100),51);
-  wp3 = Weighted_point(Bare_point(-150,0),49);
-  wp4 = Weighted_point(Bare_point(150,0),48);
+  wp1 = Weighted_point_2(Point_2(0,-100),50);
+  wp2 = Weighted_point_2(Point_2(0,100),51);
+  wp3 = Weighted_point_2(Point_2(-150,0),49);
+  wp4 = Weighted_point_2(Point_2(150,0),48);
 
 
   // first we look at the case where all vertices of the edge are
   // finite...
 
   // endpoints are not in conflict but the interior is
-  wp5 = Weighted_point(Bare_point(0,-49),0);
+  wp5 = Weighted_point_2(Point_2(0,-49),0);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp5) == POSITIVE );
   CGAL_assertion( vertex_conflict(wp1, wp4, wp2, wp5) == POSITIVE );
@@ -212,7 +212,7 @@ bool test_traits()
   CGAL_assertion( b );
 
   // both endpoints and interior are in conflict
-  wp5 = Weighted_point(Bare_point(0,-49),10);
+  wp5 = Weighted_point_2(Point_2(0,-49),10);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp5) == NEGATIVE );
   CGAL_assertion( vertex_conflict(wp1, wp4, wp2, wp5) == NEGATIVE );
@@ -222,7 +222,7 @@ bool test_traits()
   CGAL_assertion( b );
 
   // endpoints are in conflict but the interior isn't
-  wp5 = Weighted_point(Bare_point(0,-150),99);
+  wp5 = Weighted_point_2(Point_2(0,-150),99);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp5) == NEGATIVE );
   CGAL_assertion( vertex_conflict(wp1, wp4, wp2, wp5) == NEGATIVE );
@@ -233,7 +233,7 @@ bool test_traits()
 
   // finally endpoints are not in conflict and interior is not in
   // conflict
-  wp5 = Weighted_point(Bare_point(0,-150),70);
+  wp5 = Weighted_point_2(Point_2(0,-150),70);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp5) == POSITIVE );
   CGAL_assertion( vertex_conflict(wp1, wp4, wp2, wp5) == POSITIVE );
@@ -244,12 +244,12 @@ bool test_traits()
 
 
   // then we consider the case where v4 is the vertex at infinity
-  wp1 = Weighted_point(Bare_point(0,-100),50);
-  wp2 = Weighted_point(Bare_point(1,100),49);
-  wp3 = Weighted_point(Bare_point(-150,0),51);
+  wp1 = Weighted_point_2(Point_2(0,-100),50);
+  wp2 = Weighted_point_2(Point_2(1,100),49);
+  wp3 = Weighted_point_2(Point_2(-150,0),51);
 
   // endpoints are not in conflict but interior is
-  wp4 = Weighted_point(Bare_point(0,-48),0);
+  wp4 = Weighted_point_2(Point_2(0,-48),0);
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == POSITIVE );
   CGAL_assertion( vertex_conflict(wp2, wp1, wp4) == POSITIVE );
 
@@ -257,7 +257,7 @@ bool test_traits()
   CGAL_assertion( b );
 
   // both endpoints and interior are in conflict
-  wp4 = Weighted_point(Bare_point(-1,0),51);
+  wp4 = Weighted_point_2(Point_2(-1,0),51);
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == NEGATIVE );
   CGAL_assertion( vertex_conflict(wp2, wp1, wp4) == NEGATIVE );
 
@@ -265,7 +265,7 @@ bool test_traits()
   CGAL_assertion( b );
 
   // endpoints are in conflict but interior isn't
-  wp4 = Weighted_point(Bare_point(-1,200),149);
+  wp4 = Weighted_point_2(Point_2(-1,200),149);
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == NEGATIVE );
   CGAL_assertion( vertex_conflict(wp2, wp1, wp4) == NEGATIVE );
 
@@ -273,7 +273,7 @@ bool test_traits()
   CGAL_assertion( !b );
 
   // neither the endpoints nor the interior are in conflict
-  wp4 = Weighted_point(Bare_point(-1,200),51);
+  wp4 = Weighted_point_2(Point_2(-1,200),51);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == POSITIVE );
   CGAL_assertion( vertex_conflict(wp2, wp1, wp4) == POSITIVE );
@@ -285,11 +285,11 @@ bool test_traits()
   // finally consider the case where both v3 and v4 are the vertex at
   // infinity.
 
-  wp1 = Weighted_point(Bare_point(10,0),5);
-  wp2 = Weighted_point(Bare_point(100,0),50);
+  wp1 = Weighted_point_2(Point_2(10,0),5);
+  wp2 = Weighted_point_2(Point_2(100,0),50);
 
   // endpoints are not in conflict but the interior is
-  wp3 = Weighted_point(Bare_point(20,0),0);
+  wp3 = Weighted_point_2(Point_2(20,0),0);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
   CGAL_assertion( vertex_conflict(wp2, wp1, wp3) == POSITIVE );
@@ -298,7 +298,7 @@ bool test_traits()
   CGAL_assertion( b );
 
   // endpoints are in conflict and so is the interior
-  wp3 = Weighted_point(Bare_point(20,0),10);
+  wp3 = Weighted_point_2(Point_2(20,0),10);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
   CGAL_assertion( vertex_conflict(wp2, wp1, wp3) == NEGATIVE );
@@ -307,7 +307,7 @@ bool test_traits()
   CGAL_assertion( b );
 
   // both the endpoints and the interior are not in conflict
-  wp3 = Weighted_point(Bare_point(4,0),2);
+  wp3 = Weighted_point_2(Point_2(4,0),2);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
   CGAL_assertion( vertex_conflict(wp2, wp1, wp3) == POSITIVE );
@@ -316,7 +316,7 @@ bool test_traits()
   CGAL_assertion( !b );
 
   // the endpoints are in conflict but the interior isn't
-  wp3 = Weighted_point(Bare_point(4,0),3);
+  wp3 = Weighted_point_2(Point_2(4,0),3);
 
   CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
   CGAL_assertion( vertex_conflict(wp2, wp1, wp3) == NEGATIVE );
@@ -328,12 +328,12 @@ bool test_traits()
   //--------------------------------------------------------------------
 
   
-  wp2 = Weighted_point(Bare_point(0,0),100);
-  wp3 = Weighted_point(Bare_point(-100,200),5);
-  wp4 = Weighted_point(Bare_point(100,300),4);
+  wp2 = Weighted_point_2(Point_2(0,0),100);
+  wp3 = Weighted_point_2(Point_2(-100,200),5);
+  wp4 = Weighted_point_2(Point_2(100,300),4);
 
   // the endpoints are not in conflict but the interior is
-  wp5 = Weighted_point(Bare_point(0,-150),2);
+  wp5 = Weighted_point_2(Point_2(0,-150),2);
   
   CGAL_assertion( vertex_conflict(wp2, wp3, wp5) == POSITIVE );
   CGAL_assertion( vertex_conflict(wp4, wp2, wp5) == POSITIVE );
@@ -343,7 +343,7 @@ bool test_traits()
 
 
   // the endpoints are in conflict but the interior isn't
-  wp5 = Weighted_point(Bare_point(0,150),150);
+  wp5 = Weighted_point_2(Point_2(0,150),150);
   
   CGAL_assertion( vertex_conflict(wp2, wp3, wp5) == NEGATIVE );
   CGAL_assertion( vertex_conflict(wp4, wp2, wp5) == NEGATIVE );
@@ -353,7 +353,7 @@ bool test_traits()
 
 
   // the endpoints are in conflict as well as the interior
-  wp5 = Weighted_point(Bare_point(0,-150),150);
+  wp5 = Weighted_point_2(Point_2(0,-150),150);
   
   CGAL_assertion( vertex_conflict(wp2, wp3, wp5) == NEGATIVE );
   CGAL_assertion( vertex_conflict(wp4, wp2, wp5) == NEGATIVE );
@@ -363,7 +363,7 @@ bool test_traits()
 
 
   // neither the endpoints nor the interior are in conflict
-  wp5 = Weighted_point(Bare_point(0,150),50);
+  wp5 = Weighted_point_2(Point_2(0,150),50);
   
   CGAL_assertion( vertex_conflict(wp2, wp3, wp5) == POSITIVE );
   CGAL_assertion( vertex_conflict(wp4, wp2, wp5) == POSITIVE );
@@ -375,19 +375,19 @@ bool test_traits()
 
   // testing is_degenerate_edge
   //--------------------------------------------------------------------
-  wp1 = Weighted_point(Bare_point(2,4),4);
-  wp2 = Weighted_point(Bare_point(10,100),100);
-  wp3 = Weighted_point(Bare_point(5,25),25);
-  wp4 = Weighted_point(Bare_point(20,400),400);
+  wp1 = Weighted_point_2(Point_2(2,4),4);
+  wp2 = Weighted_point_2(Point_2(10,100),100);
+  wp3 = Weighted_point_2(Point_2(5,25),25);
+  wp4 = Weighted_point_2(Point_2(20,400),400);
 
   b = is_degenerate_edge(wp1, wp2, wp3, wp4);
 
   CGAL_assertion( b );
 
-  wp1 = Weighted_point(Bare_point(2,4),4);
-  wp2 = Weighted_point(Bare_point(10,100),100);
-  wp3 = Weighted_point(Bare_point(5,25),25);
-  wp4 = Weighted_point(Bare_point(20,400),399);
+  wp1 = Weighted_point_2(Point_2(2,4),4);
+  wp2 = Weighted_point_2(Point_2(10,100),100);
+  wp3 = Weighted_point_2(Point_2(5,25),25);
+  wp4 = Weighted_point_2(Point_2(20,400),399);
 
   b = is_degenerate_edge(wp1, wp2, wp3, wp4);
 
@@ -406,8 +406,8 @@ bool test_algo(InputStream& is)
   //--------------------------------------------------------------------
   typedef typename Apollonius_graph::Data_structure   Data_structure;
   typedef typename Apollonius_graph::Geom_traits      Geom_traits;
-  typedef typename Apollonius_graph::Point            Point;
-  typedef typename Apollonius_graph::Weighted_point   Weighted_point;
+  typedef typename Apollonius_graph::Point_2          Point_2;
+  typedef typename Apollonius_graph::Weighted_point_2 Weighted_point_2;
   typedef typename Apollonius_graph::Weight           Weight;
 
   typedef typename Apollonius_graph::Edge             Edge;
@@ -440,8 +440,8 @@ bool test_algo(InputStream& is)
   Apollonius_graph ag1(Traits());
   Apollonius_graph ag2(ag);
 
-  std::vector<Weighted_point> wp_list;
-  Weighted_point wp;
+  std::vector<Weighted_point_2> wp_list;
+  Weighted_point_2 wp;
   while ( is >> wp ) {
     wp_list.push_back(wp);
   }
@@ -621,7 +621,7 @@ bool test_algo(InputStream& is)
   CGAL_assertion( ag.is_valid() );
 
   ag.clear();
-  typename std::vector<Weighted_point>::iterator it;
+  typename std::vector<Weighted_point_2>::iterator it;
   for (it = wp_list.begin(); it != wp_list.end(); ++it) {
     ag.insert(*it);
   }
@@ -630,7 +630,7 @@ bool test_algo(InputStream& is)
   {
     ag.clear();
     Vertex_handle v;
-    typename std::vector<Weighted_point>::iterator it;
+    typename std::vector<Weighted_point_2>::iterator it;
     for (it = wp_list.begin(); it != wp_list.end(); ++it) {
       if ( it == wp_list.begin() ) {
 	v = ag.insert(*it);
@@ -661,7 +661,7 @@ bool test_algo(InputStream& is)
   CGAL_assertion( ag.is_valid() );
   for (fvit = ag.finite_vertices_begin();
        fvit != ag.finite_vertices_end(); ++fvit) {
-    Weighted_point wp = fvit->point();
+    Weighted_point_2 wp = fvit->point();
     Vertex_handle nn = ag.nearest_neighbor(wp);
     CGAL_assertion( wp == nn->point() );
   }

@@ -26,17 +26,17 @@ AG_2 ag;
 //************************************
 // conversion functions
 //************************************
-inline Weighted_point
-to_weighted_point(const Circle &c)
+inline Weighted_point_2
+to_weighted_point(const Circle_2 &c)
 {
   double r = CGAL_NTS sqrt(CGAL_NTS to_double(c.squared_radius()));
-  return  Weighted_point(c.center(), Rep::RT(r));
+  return  Weighted_point_2(c.center(), Rep::RT(r));
 }
 
-inline Circle
-to_circle(const Weighted_point &wp)
+inline Circle_2
+to_circle(const Weighted_point_2 &wp)
 {
-  return Circle(wp.point(), CGAL_NTS square(wp.weight()) );
+  return Circle_2(wp.point(), CGAL_NTS square(wp.weight()) );
 }
 
 
@@ -125,7 +125,7 @@ private slots:
   {
     if ( is_remove_mode ) {
       if ( ag.number_of_vertices() == 0 ) { return; }
-      Point p;
+      Point_2 p;
       if ( CGAL::assign(p, obj) ) {
 	Vertex_handle v = ag.nearest_neighbor(p);
 #if 0
@@ -157,13 +157,13 @@ private slots:
       widget->redraw();
       return;
     }
-    Circle c;
-    Point p;
+    Circle_2 c;
+    Point_2 p;
     if ( CGAL::assign(c, obj) ) {
-      Weighted_point wp = to_weighted_point(c);
+      Weighted_point_2 wp = to_weighted_point(c);
       ag.insert(wp);
     } else if ( CGAL::assign(p, obj) ) {
-      Weighted_point wp(p, Weight(0));
+      Weighted_point_2 wp(p, Weight(0));
       ag.insert(wp);
     }
     ag.is_valid(false, 1);
@@ -209,7 +209,7 @@ private slots:
 
       int n;
       f >> n;
-      Weighted_point wp;
+      Weighted_point_2 wp;
 
       int counter = 0;
       std::cout << std::endl;

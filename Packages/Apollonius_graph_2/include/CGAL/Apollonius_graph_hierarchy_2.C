@@ -128,11 +128,11 @@ is_valid(bool verbose, int level) const
   //verify correctness of triangulation at all levels
   for(int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
     if ( verbose ) {
-      std::cout << "Level " << i << ": " << std::flush;
+      std::cerr << "Level " << i << ": " << std::flush;
     }
     result = result && hierarchy[i]->is_valid(verbose, level);
     if ( verbose ) {
-      std::cout << std::endl;
+      std::cerr << std::endl;
     }
   }
   //verify that lower level has no down pointers
@@ -156,7 +156,7 @@ is_valid(bool verbose, int level) const
 template <class Gt, bool StoreHidden, class Agds>
 typename Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
-insert(const Weighted_point &p)
+insert(const Weighted_point_2 &p)
 {
   int vertex_level = random_level();
 
@@ -204,7 +204,7 @@ insert(const Weighted_point &p)
   CGAL_assertion( vnear[0] != NULL );
 
   // check if it is hidden
-  Weighted_point wp_nearest = vnear[0]->point();
+  Weighted_point_2 wp_nearest = vnear[0]->point();
   if ( is_hidden(wp_nearest, p) ) {
     vnear[0]->add_hidden_weighted_point(p);
     return Vertex_handle(NULL);
@@ -367,7 +367,7 @@ remove(Vertex_handle v)
 template <class Gt, bool StoreHidden, class Agds>
 typename Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::Vertex_handle 
 Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
-nearest_neighbor(const Point& p) const
+nearest_neighbor(const Point_2& p) const
 {
   Vertex_handle vnear[ag_hierarchy_2__maxlevel];
   nearest_neighbor(p, vnear);
@@ -396,7 +396,7 @@ swap(Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>& agh)
 template <class Gt, bool StoreHidden, class Agds>
 void
 Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
-nearest_neighbor(const Point& p,
+nearest_neighbor(const Point_2& p,
 		 Vertex_handle vnear[ag_hierarchy_2__maxlevel])
   const
 {

@@ -63,12 +63,12 @@ private:
   typedef typename Ag_base::Weighted_point_list   Weighted_point_list;
 
 public:
-  typedef Agds                         Data_structure;
-  typedef Gt                           Geom_traits;
-  typedef typename Gt::Weighted_point  Weighted_point;
-  typedef typename Gt::Bare_point      Point;
-  typedef typename Gt::Site            Site;
-  typedef typename Gt::Weight          Weight;
+  typedef Agds                           Data_structure;
+  typedef Gt                             Geom_traits;
+  typedef typename Gt::Weighted_point_2  Weighted_point_2;
+  typedef typename Gt::Bare_point_2      Point_2;
+  typedef typename Gt::Site              Site;
+  typedef typename Gt::Weight            Weight;
 
   typedef typename Ag_base::Vertex_handle    Vertex_handle;
   typedef typename Ag_base::Face_handle      Face_handle;
@@ -146,9 +146,9 @@ public:
     wp_list.clear();
   }
 
-  Vertex_handle insert(const Weighted_point& p);
-  inline Vertex_handle insert(const Weighted_point& p,
-		       Vertex_handle vnear) {
+  Vertex_handle insert(const Weighted_point_2& p);
+  inline Vertex_handle insert(const Weighted_point_2& p,
+			      Vertex_handle vnear) {
     return insert(p);
   }
 
@@ -161,8 +161,8 @@ public:
   // NEAREST NEIGHBOR LOCATION
   //--------------------------
 public:
-  Vertex_handle nearest_neighbor(const Point& p) const;
-  inline Vertex_handle nearest_neighbor(const Point& p,
+  Vertex_handle nearest_neighbor(const Point_2& p) const;
+  inline Vertex_handle nearest_neighbor(const Point_2& p,
 					Vertex_handle vnear) const {
     return nearest_neighbor(p);
   }
@@ -181,7 +181,7 @@ public:
 private:
   // private methods
   void
-  nearest_neighbor(const Point& p,
+  nearest_neighbor(const Point_2& p,
 		   Vertex_handle vnear[ag_hierarchy_2__maxlevel]) const; 
 
   int random_level();

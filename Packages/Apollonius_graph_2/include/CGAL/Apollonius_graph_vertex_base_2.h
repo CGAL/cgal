@@ -42,10 +42,10 @@ public:
   // TYPES
   //------
   typedef Gt                               Geom_traits;
-  typedef typename Gt::Weighted_point      Weighted_point;
+  typedef typename Gt::Weighted_point_2    Weighted_point_2;
 private:
   // local types
-  typedef std::list<Weighted_point>        Container;
+  typedef std::list<Weighted_point_2>      Container;
   typedef Triangulation_vertex_base_2<Gt>  Vbase;
 public:
   // TYPES (continued)
@@ -58,7 +58,7 @@ public:
   //---------
   Apollonius_graph_vertex_base_2() : Vbase() {}
 
-  Apollonius_graph_vertex_base_2(const Weighted_point& p, void* f = NULL) 
+  Apollonius_graph_vertex_base_2(const Weighted_point_2& p, void* f = NULL) 
     : Vbase(p, f) {}
 
   ~Apollonius_graph_vertex_base_2()
@@ -69,7 +69,7 @@ public:
 
   // ACCESS METHODS
   //---------------
-  inline Weighted_point point() const { return Vbase::point(); }
+  inline Weighted_point_2 point() const { return Vbase::point(); }
 
   inline void* face() const { return Vbase::face(); }
 
@@ -90,14 +90,14 @@ public:
 public:
   // SETTING AND UNSETTING
   //----------------------
-  inline void set_point(const Weighted_point& p) {
+  inline void set_point(const Weighted_point_2& p) {
     Vbase::set_point(p);
   }
 
   inline void set_face(void* f) { Vbase::set_face(f); }
 
   inline
-  void add_hidden_weighted_point(const Weighted_point & p)
+  void add_hidden_weighted_point(const Weighted_point_2& p)
   {
     if ( StoreHidden ) {
       weighted_point_list.push_back(p);

@@ -50,10 +50,10 @@ typedef CGAL::Filtered_kernel<CK>      Rep;
 typedef
 CGAL::Apollonius_graph_euclidean_traits_2<Rep,CGAL::Ring_tag>  Gt;
 
-typedef Gt::Bare_point                        Point;
-typedef Rep::Circle_2                         Circle;
+typedef Gt::Bare_point_2                      Point_2;
+typedef Rep::Circle_2                         Circle_2;
 typedef Gt::Weight                            Weight;
-typedef Gt::Weighted_point                    Weighted_point;
+typedef Gt::Weighted_point_2                  Weighted_point_2;
 
 
 //typedef CGAL::Apollonius_graph_2<Gt> AG_2;

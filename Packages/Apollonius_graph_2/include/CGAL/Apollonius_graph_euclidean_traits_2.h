@@ -79,21 +79,22 @@ public:
   typedef R                                             Rep;
   typedef MTag                                          Method_tag;
   typedef typename Kernel::RT                           Weight;
-  typedef typename Kernel::Point_2                      Bare_point;
-  typedef typename Kernel::Weighted_point_2             Weighted_point;
+  typedef typename Kernel::Point_2                      Bare_point_2;
+  typedef typename Kernel::Weighted_point_2             Weighted_point_2;
   // I must add the following for some reason, otherwise it uses the
   // definition of Point_2 from the Triangulation_euclidean_traits_2
-  typedef Weighted_point                                Point_2;
+  typedef Weighted_point_2                              Point_2;
   //
-  typedef Weighted_point                                Site;
+  typedef Weighted_point_2                              Site;
   typedef typename Kernel::Line_2                       Line_2;
   typedef typename Kernel::Ray_2                        Ray_2;
   typedef typename Kernel::Segment_2                    Segment_2;
-  typedef CGAL::Parabola_segment_2<Bare_point,Weight,Line_2>
+  typedef CGAL::Parabola_segment_2<Bare_point_2,Weight,Line_2>
   /*                                                 */ Parabola_segment_2;
-  typedef CGAL::Hyperbola_2<Bare_point,Weight>          Hyperbola_2;
-  typedef CGAL::Hyperbola_ray_2<Bare_point,Weight>      Hyperbola_ray_2;
-  typedef CGAL::Hyperbola_segment_2<Bare_point,Weight>  Hyperbola_segment_2;
+  typedef CGAL::Hyperbola_2<Bare_point_2,Weight>        Hyperbola_2;
+  typedef CGAL::Hyperbola_ray_2<Bare_point_2,Weight>    Hyperbola_ray_2;
+  typedef CGAL::Hyperbola_segment_2<Bare_point_2,Weight>
+  /*                                                 */ Hyperbola_segment_2;
 
 public:
   // CONSTRUCTIONS
@@ -264,67 +265,68 @@ public:
   // BASIC TYPES
   //------------
   typedef Kernel_wrapper_2< Filtered_kernel<CK,EK,FK,C2E,C2F> >  Kernel;
-  typedef Kernel                                        Rep;
-  typedef MTag                                          Method_tag;
-  typedef typename Kernel::RT                           Weight;
-  typedef typename Kernel::Point_2                      Bare_point;
-  typedef typename Kernel::Weighted_point_2             Weighted_point;
+  typedef Kernel                                         Rep;
+  typedef MTag                                           Method_tag;
+  typedef typename Kernel::RT                            Weight;
+  typedef typename Kernel::Point_2                       Bare_point_2;
+  typedef typename Kernel::Weighted_point_2              Weighted_point_2;
   // I must add the following for some reason, otherwise it uses the
   // definition of Point_2 from the Triangulation_euclidean_traits_2
-  typedef Weighted_point                                Point_2;
+  typedef Weighted_point_2                               Point_2;
   //
-  typedef Weighted_point                                Site;
-  typedef typename Kernel::Line_2                       Line_2;
-  typedef typename Kernel::Ray_2                        Ray_2;
-  typedef typename Kernel::Segment_2                    Segment_2;
-  typedef Parabola_segment_2<Bare_point,Weight,Line_2>  Parabola_segment_2;
-  typedef Hyperbola_2<Bare_point,Weight>                Hyperbola_2;
-  typedef Hyperbola_ray_2<Bare_point,Weight>            Hyperbola_ray_2;
-  typedef Hyperbola_segment_2<Bare_point,Weight>        Hyperbola_segment_2;
+  typedef Weighted_point_2                               Site;
+  typedef typename Kernel::Line_2                        Line_2;
+  typedef typename Kernel::Ray_2                         Ray_2;
+  typedef typename Kernel::Segment_2                     Segment_2;
+  typedef CGAL::Parabola_segment_2<Bare_point_2,Weight,Line_2>
+  /*                                                  */ Parabola_segment_2;
+  typedef CGAL::Hyperbola_2<Bare_point_2,Weight>         Hyperbola_2;
+  typedef CGAL::Hyperbola_ray_2<Bare_point_2,Weight>     Hyperbola_ray_2;
+  typedef CGAL::Hyperbola_segment_2<Bare_point_2,Weight> Hyperbola_segment_2;
 
 private:
   // Types for the construction kernel
-  typedef typename CK::RT                                CK_weight;
-  typedef typename CK::Point_2                           CK_bare_point;
-  typedef CGAL::Weighted_point<CK_bare_point,CK_weight>  CK_weighted_point;
+  typedef typename CK::RT                      CK_weight;
+  typedef typename CK::Point_2                 CK_bare_point;
+  typedef typename CK::Weighted_point_2        CK_weighted_point;
 
   // Types for the exact kernel
-  typedef typename EK::RT                                EK_weight;
-  typedef typename EK::Point_2                           EK_bare_point;
-  typedef CGAL::Weighted_point<EK_bare_point,EK_weight>  EK_weighted_point;
+  typedef typename EK::RT                      EK_weight;
+  typedef typename EK::Point_2                 EK_bare_point;
+  typedef typename EK::Weighted_point_2        EK_weighted_point;
 
   // Types for the filtering kernel
-  typedef typename FK::RT                                FK_weight;
-  typedef typename FK::Point_2                           FK_bare_point;
-  typedef CGAL::Weighted_point<FK_bare_point,FK_weight>  FK_weighted_point;
+  typedef typename FK::RT                      FK_weight;
+  typedef typename FK::Point_2                 FK_bare_point;
+  typedef typename FK::Weighted_point_2        FK_weighted_point;
 
 public:
   // CONSTRUCTIONS
   //--------------
   // vertex and weighted point
-  typedef CGAL::Construct_Apollonius_vertex_2<Rep>
+  typedef CGAL::Construct_Apollonius_vertex_2<Kernel>
   /*                                      */ Construct_Apollonius_vertex_2;
-  typedef CGAL::Construct_Apollonius_weighted_point_2<Rep>
+  typedef CGAL::Construct_Apollonius_weighted_point_2<Kernel>
   /*                              */ Construct_Apollonius_weighted_point_2;
 
   // bisectors and subsets
-  typedef CGAL::Construct_Apollonius_bisector_2<Rep>
+  typedef CGAL::Construct_Apollonius_bisector_2<Kernel>
   /*                                    */ Construct_Apollonius_bisector_2;
-  typedef CGAL::Construct_Apollonius_bisector_ray_2<Rep>
+  typedef CGAL::Construct_Apollonius_bisector_ray_2<Kernel>
   /*                                */ Construct_Apollonius_bisector_ray_2;
-  typedef CGAL::Construct_Apollonius_bisector_segment_2<Rep>
+  typedef CGAL::Construct_Apollonius_bisector_segment_2<Kernel>
   /*                            */ Construct_Apollonius_bisector_segment_2;
 
   // primal edges
-  typedef CGAL::Construct_Apollonius_primal_ray_2<Rep>
+  typedef CGAL::Construct_Apollonius_primal_ray_2<Kernel>
   /*                                   */ Construct_Apollonius_primal_ray_2;
-  typedef CGAL::Construct_Apollonius_primal_segment_2<Rep>
+  typedef CGAL::Construct_Apollonius_primal_segment_2<Kernel>
   /*                               */ Construct_Apollonius_primal_segment_2;
 
 
 private:
   // Predicates for the construction kernel
-  typedef CGAL::Compare_weight_2<EK>                   CK_compare_weight_2;
+  typedef CGAL::Compare_weight_2<CK>                   CK_compare_weight_2;
   typedef CGAL::Is_hidden_2<CK,MTag>                   CK_is_hidden_2;
   typedef CGAL::Oriented_side_of_bisector_2<CK,MTag> 
   /*                                      */ CK_oriented_side_of_bisector_2;
