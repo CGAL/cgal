@@ -50,13 +50,13 @@ int main()
 #include <CGAL/Arr_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 #include <CGAL/leda_rational.h>
-#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
-#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
+#include <CGAL/Arr_leda_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
 #include <CGAL/Arr_polyline_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-//#error Currently not supported (July 2000)
 #include <CGAL/leda_rational.h>
+#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
 #include <CGAL/Arr_leda_polyline_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
 #include <CGAL/leda_real.h>
@@ -110,28 +110,30 @@ int main()
 //#define  CGAL_PMWX_TEST_SWEEP 
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
-  typedef CGAL::Quotient<int>                   NT;
-  typedef CGAL::Cartesian<NT>                   R;
-  typedef CGAL::Arr_segment_traits_2<R>         Traits;
+  typedef CGAL::Quotient<int>                           NT;
+  typedef CGAL::Cartesian<NT>                           R;
+  typedef CGAL::Arr_segment_traits_2<R>                 Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-  typedef leda_rational                         NT;
-  typedef CGAL::leda_rat_kernel_traits          Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel>    Traits;
+  typedef leda_rational                                 NT;
+  typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
+  typedef CGAL::Arr_leda_segment_traits_2<Kernel>       Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  typedef CGAL::Quotient<int>                   NT;
-  typedef CGAL::Cartesian<NT>                   R;
-  typedef CGAL::Arr_polyline_traits<R>          Traits;
+  typedef CGAL::Quotient<int>                           NT;
+  typedef CGAL::Cartesian<NT>                           R;
+  typedef CGAL::Arr_polyline_traits<R>                  Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-  typedef leda_rational                         NT;
-  typedef CGAL::Arr_leda_polyline_traits<NT>    Traits;
+  typedef leda_rational                                 NT;
+  typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
+  typedef CGAL::Arr_leda_polyline_traits<Kernel>        Traits;
+
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
-  typedef leda_real                             NT;
-  typedef CGAL::Arr_segment_circle_traits<NT>   Traits;
-  typedef Traits::Segment                       Segment;
-  typedef Traits::Circle                        Circle;
+  typedef leda_real                                     NT;
+  typedef CGAL::Arr_segment_circle_traits<NT>           Traits;
+  typedef Traits::Segment                               Segment;
+  typedef Traits::Circle                                Circle;
 #endif
 
 typedef Traits::Point_2                         Point;
