@@ -27,8 +27,7 @@
 #include <CGAL/basic.h>
 #include <utility>
 #include <cmath>
-#if defined(_MSC_VER) || defined(__BORLANDC__) || \
-    defined(CGAL_MASK_FINITE_VALID) || defined __PGI
+#ifdef CGAL_CFG_IEEE_754_BUG
 #  include <CGAL/IEEE_754_unions.h>
 #endif
 #ifdef __sgi
@@ -100,8 +99,7 @@ bool is_valid(double d)
     return false; // NOT REACHED
 }
 
-#elif defined(_MSC_VER) || defined(__BORLANDC__) || \
-      defined(CGAL_MASK_FINITE_VALID) || defined __PGI
+#elif defined CGAL_CFG_IEEE_754_BUG
 
 #define CGAL_EXPONENT_DOUBLE_MASK   0x7ff00000
 #define CGAL_MANTISSA_DOUBLE_MASK   0x000fffff

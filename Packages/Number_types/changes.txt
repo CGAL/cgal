@@ -1,3 +1,6 @@
+27 Apr 2004 Sylvain Pion
+- Replace explicit compilers tests by CGAL_CFG_IEEE_754_BUG.
+
 17 Apr 2004 Sylvain Pion
 - MP_Float : Do not use an implementation-defined behavior (conversion to
              signed integral type), which was making PGCC unhappy.
