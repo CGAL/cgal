@@ -2,6 +2,9 @@
 //	Revision History for package Min_quadrilateral_2
 //=====================================================================
 
+22 June 2004  Sylvain Pion
+- Add some missing "using base::member;" and others for g++ 3.4.
+
 May 17 2004:  Menelaos Karavelas
 - replaced Point by Point_2 in the demo in order to resolve clash with
   the Mac version of Qt

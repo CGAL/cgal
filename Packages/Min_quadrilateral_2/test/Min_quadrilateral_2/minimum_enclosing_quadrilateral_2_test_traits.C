@@ -92,6 +92,7 @@ struct MyTraits {
     typedef CGAL::Arity_tag<2> Arity;
     bool operator()(const Rectangle_2& d, const Rectangle_2& e) const
     {
+      using CGAL::square;
       return
       (d.dd.xd * (d.pp3.yc - d.pp1.yc) +
        d.dd.yd * (d.pp1.xc - d.pp3.xc)) *
@@ -131,6 +132,7 @@ struct MyTraits {
     typedef CGAL::Arity_tag<2> Arity;
     bool operator()(const Strip_2& d, const Strip_2& e) const
     {
+      using CGAL::square;
       return
       (d.dd.xd * (d.pp2.yc - d.pp1.yc) + d.dd.yd * (d.pp1.xc - d.pp2.xc)) *
         (CGAL_NTS square(e.dd.xd) + CGAL_NTS square(e.dd.yd)) <

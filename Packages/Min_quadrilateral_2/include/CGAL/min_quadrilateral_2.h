@@ -263,6 +263,11 @@ namespace Optimisation {
     typedef typename Base::Construct_line_2             Construct_line_2;
     typedef typename Base::Compare_angle_with_x_axis_2  CAWXA;
 
+    using Traits::has_on_negative_side_2_object;
+    using Traits::construct_line_2_object;
+    using Traits::construct_vector_2_object;
+    using Traits::compare_angle_with_x_axis_2_object;
+
     Min_quadrilateral_traits_wrapper(const Traits& bt) : Base(bt) {}
 
     // ---------------------------------------------------------------
