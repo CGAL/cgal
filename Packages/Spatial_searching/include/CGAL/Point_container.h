@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Point_container.h
 // package       : ASPAS
-// revision      : 1.4 
+// revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -88,12 +88,14 @@ namespace CGAL {
     // coordinate of the maximal tight span
     inline int max_tight_span_coord() const { return tbox.max_span_coord(); }
 
-    inline NT  max_span_lower() const { return bbox.min_coord(max_span_coord());}
+    inline NT  max_span_lower() const 
+	{ return bbox.min_coord(max_span_coord());}
 
     inline NT  max_tight_span_lower() const {
       return tbox.min_coord(max_tight_span_coord());}
 
-    inline NT  max_span_upper() const { return bbox.max_coord(max_span_coord());}
+    inline NT  max_span_upper() const 
+	{ return bbox.max_coord(max_span_coord());}
 
     inline NT  max_tight_span_upper() const {
       return tbox.max_coord(max_tight_span_coord());}
@@ -137,10 +139,13 @@ namespace CGAL {
 	}
 
 	NT balanced_fair(int d, NT Aspect_ratio) {
-		NT small_piece = max_span_upper_without_dim(d) / Aspect_ratio;
-		NT low_cut = bbox.min_coord(d) + small_piece; // lowest legal cut;
-		NT high_cut = bbox.max_coord(d) - small_piece; //highest legal cut;
-		// assert (high_cut >= low_cut);
+	  	NT small_piece = 
+		max_span_upper_without_dim(d) / Aspect_ratio;
+	  	NT low_cut = 
+		bbox.min_coord(d) + small_piece; // lowest legal cut;
+	  	NT high_cut = 
+		bbox.max_coord(d) - small_piece; //highest legal cut;
+	  	// assert (high_cut >= low_cut);
         	NT split_value = median(d);
 		if (split_value < low_cut) split_value=low_cut;
 		if (split_value > high_cut) split_value=high_cut;
@@ -148,9 +153,12 @@ namespace CGAL {
 	}
 
 	NT balanced_sliding_fair(int d, NT Aspect_ratio) {
-		NT small_piece = max_span_upper_without_dim(d) / Aspect_ratio;
-		NT low_cut = bbox.min_coord(d) + small_piece; // lowest legal cut;
-		NT high_cut = bbox.max_coord(d) - small_piece; //highest legal cut;
+		NT small_piece = 
+		max_span_upper_without_dim(d) / Aspect_ratio;
+		NT low_cut = 
+		bbox.min_coord(d) + small_piece; // lowest legal cut;
+		NT high_cut = 
+		bbox.max_coord(d) - small_piece; //highest legal cut;
 		// assert (high_cut >= low_cut);
                 NT split_value = median(d);
 		NT max_span_lower = tbox.min_coord(d);
@@ -266,9 +274,9 @@ namespace CGAL {
 	
 	if (sliding) { // avoid empty lists 
 		if (l_lower.empty()) {
-			  typename Point_list::iterator pt_min=l_upper.begin();
-			  NT min_value=bbox.max_coord(built_coord);
-			  for (pt=l_upper.begin(); (pt != l_upper.end()); ++pt) {
+		  typename Point_list::iterator pt_min=l_upper.begin();
+		  NT min_value=bbox.max_coord(built_coord);
+		  for (pt=l_upper.begin(); (pt != l_upper.end()); ++pt) {
 				if ( (*(*pt))[split_coord] < min_value) {
 					min_value=(*(*pt))[split_coord];
 					pt_min=pt;
@@ -277,9 +285,9 @@ namespace CGAL {
 			l_lower.splice(l_lower.end(), l_upper, pt_min);
 		}
 		if (l_upper.empty()) {
-			typename Point_list::iterator pt_max=l_lower.begin();
-			NT max_value=bbox.min_coord(built_coord);
-			for (pt=l_lower.begin(); (pt != l_lower.end()); ++pt) {
+		  typename Point_list::iterator pt_max=l_lower.begin();
+		  NT max_value=bbox.min_coord(built_coord);
+		  for (pt=l_lower.begin(); (pt != l_lower.end()); ++pt) {
 				if ( (*(*pt))[split_coord] > max_value) {
 					max_value=(*(*pt))[split_coord];
 					pt_max=pt;

@@ -12,7 +12,7 @@
 //
 // file          : include/CGAL/Kd_tree_rectangle.h
 // package       : ASPAS
-// revision      : 1.4 
+// revision      : 2.4 
 // revision_date : 2003/02/01 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -233,22 +233,28 @@ namespace CGAL {
     return 1;
   } */
 
-  // checks whether an epsilon eroded iso rectangle r intersects the kd_tree rectangle   
+  // checks whether an epsilon eroded iso rectangle r
+  // intersects the kd_tree rectangle   
   template <class R>
-  inline bool intersects_eroded_rectangle(const Iso_rectangle_d<R>& r, const NT eps) 
+  inline bool intersects_eroded_rectangle(
+	const Iso_rectangle_d<R>& r, const NT eps) 
   {
     for (int i = 0; i < dim; ++i) {
-        if ( (r.max_coord(i)-eps < lower_[i]) || (r.min_coord(i)+eps > upper_[i]) ) return 0;
+        if ( (r.max_coord(i)-eps < lower_[i]) 
+	|| (r.min_coord(i)+eps > upper_[i]) ) return 0;
     }
     return 1;
   } 
 
-  // checks whether an epsilon dilated iso rectangle r encloses the kd_tree rectangle
+  // checks whether an epsilon dilated iso rectangle r 
+  // encloses the kd_tree rectangle
   template <class R>
-  inline bool is_enclosed_by_dilated_rectangle(const Iso_rectangle_d<R>& r, const NT eps) 
+  inline bool is_enclosed_by_dilated_rectangle(
+	const Iso_rectangle_d<R>& r, const NT eps) 
   {
     for (int i = 0; i < dim; ++i) {
-        if (  (r.max_coord(i)+eps < upper_[i]) || (r.min_coord(i)-eps > lower_[i]) ) return 0;
+        if (  (r.max_coord(i)+eps < upper_[i]) 
+	|| (r.min_coord(i)-eps > lower_[i]) ) return 0;
     }
     return 1;
   } 
@@ -264,7 +270,8 @@ namespace CGAL {
     }
   
   template <class Point> 
-  bool min_squared_Euclidean_distance_to_point_is_at_most(const Point& p, const NT d) {
+  bool min_squared_Euclidean_distance_to_point_is_at_most(
+	const Point& p, const NT d) {
 		NT distance = NT(0);
 		
 		for (int i = 0; (i < dim) && (distance <= d); ++i) {
@@ -276,8 +283,9 @@ namespace CGAL {
 		return (distance <= d);
 	}
 
-        template <class Point>
-	bool max_squared_Euclidean_distance_to_point_is_at_most(const Point& p, const NT d) {
+  template <class Point>
+  bool max_squared_Euclidean_distance_to_point_is_at_most
+	(const Point& p, const NT d) {
 		NT distance=NT(0);
 		
 		for (int i = 0; (i < dim) && (distance <= d) ; ++i) {

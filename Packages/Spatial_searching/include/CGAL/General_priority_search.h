@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/General_priority_search.h
 // package       : ASPAS
-// revision      : 1.4 
+// revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -135,7 +135,8 @@ class iterator;
     }
 
     // constructor
-    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=NT(0), bool search_nearest=true) {
+    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=NT(0), 
+	     bool search_nearest=true) {
         Ptr_implementation =
         new Iterator_implementation(tree, q, tr, eps, search_nearest);
     }
@@ -349,10 +350,14 @@ class Distance_smaller
     // Print statistics of the general priority search process.
     void statistics () {
     	std::cout << "General priority search statistics:" << std::endl;
-    	std::cout << "Number of internal nodes visited:" << number_of_internal_nodes_visited << std::endl;
-    	std::cout << "Number of leaf nodes visited:" << number_of_leaf_nodes_visited << std::endl;
-    	std::cout << "Number of items visited:" << number_of_items_visited << std::endl;
-        std::cout << "Number of neighbours computed:" << number_of_neighbours_computed << std::endl;
+    	std::cout << "Number of internal nodes visited:" << 
+		      number_of_internal_nodes_visited << std::endl;
+    	std::cout << "Number of leaf nodes visited:" << 
+	number_of_leaf_nodes_visited << std::endl;
+    	std::cout << "Number of items visited:" << 
+	number_of_items_visited << std::endl;
+        std::cout << "Number of neighbours computed:" << 
+	number_of_neighbours_computed << std::endl;
     }
 
     //destructor
@@ -476,10 +481,12 @@ else {
                         rd = PriorityQueue->top()->second;
                         if (search_nearest_neighbour)
 				next_neighbour_found =
-                  (multiplication_factor*rd > Item_PriorityQueue->top()->second);
+                  (multiplication_factor*rd > 
+		   Item_PriorityQueue->top()->second);
                         else
 				next_neighbour_found =
-                  (multiplication_factor*rd < Item_PriorityQueue->top()->second);
+                  (multiplication_factor*rd < 
+		   Item_PriorityQueue->top()->second);
                   }
                   else // priority queue empty => last neighbour found
                   {

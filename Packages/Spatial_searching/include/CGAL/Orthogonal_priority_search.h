@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Orthogonal_priority_search.h
 // package       : ASPAS
-// revision      : 1.4 
+// revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -323,18 +323,23 @@ class iterator;
 
     // Print statistics of the general priority search process.
     void statistics () {
-    	std::cout << "Orthogonal priority search statistics:" << std::endl;
-    	std::cout << "Number of internal nodes visited:" << number_of_internal_nodes_visited << std::endl;
-    	std::cout << "Number of leaf nodes visited:" << number_of_leaf_nodes_visited << std::endl;
-    	std::cout << "Number of items visited:" << number_of_items_visited << std::endl;
-        std::cout << "Number of neighbours computed:" << number_of_neighbours_computed << std::endl;
+    	std::cout << "Orthogonal priority search statistics:" 
+	<< std::endl;
+    	std::cout << "Number of internal nodes visited:" 
+	<< number_of_internal_nodes_visited << std::endl;
+    	std::cout << "Number of leaf nodes visited:" 
+	<< number_of_leaf_nodes_visited << std::endl;
+    	std::cout << "Number of items visited:" 
+	<< number_of_items_visited << std::endl;
+        std::cout << "Number of neighbours computed:" 
+	<< number_of_neighbours_computed << std::endl;
     }
 
 
     //destructor
     ~Iterator_implementation() {
 
-        // std::cout << "called iterator implementation destructor" << std::endl;
+        
 	while (PriorityQueue->size()>0) {
                 Node_with_distance* The_top=PriorityQueue->top();
                 PriorityQueue->pop();
@@ -347,7 +352,7 @@ class iterator;
         };
         delete PriorityQueue;
         delete Item_PriorityQueue;
-        // std::cout << "iterator implementation destructor ready " << std::endl;
+        
     }
 
     private:
@@ -384,8 +389,10 @@ class iterator;
                         NT new_off =
                         (*query_point)[new_cut_dim] -
                         N->separator()->cutting_value();
-                        if ( ((new_off < NT(0.0)) && (search_nearest_neighbour)) ||
-                        (( new_off >= NT(0.0)) && (!search_nearest_neighbour))  ) {
+                        if ( ((new_off < NT(0.0)) && 
+			(search_nearest_neighbour)) ||
+                        (( new_off >= NT(0.0)) && (!search_nearest_neighbour))  
+			) {
 				old_off=
                                 (*query_point)[new_cut_dim]-N->low_value();
                                 if (old_off>NT(0.0)) old_off=NT(0.0);
@@ -429,10 +436,12 @@ class iterator;
                         rd = PriorityQueue->top()->second;
                         if (search_nearest_neighbour)
 				next_neighbour_found =
-                  (multiplication_factor*rd > Item_PriorityQueue->top()->second);
+                  (multiplication_factor*rd > 
+		   Item_PriorityQueue->top()->second);
                         else
 				next_neighbour_found =
-                  (multiplication_factor*rd < Item_PriorityQueue->top()->second);
+                  (multiplication_factor*rd < 
+		   Item_PriorityQueue->top()->second);
                   }
                   else // priority queue empty => last neighbour found
                   {

@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Kd_tree_traits_point.h
 // package       : ASPAS
-// revision      : 1.4 
+// revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -52,7 +52,8 @@ namespace CGAL {
        
         
 	Kd_tree_traits_point(unsigned int bucket_size=1, 
-			     split_rule Selected_split_rule=Split_rules::SLIDING_MIDPOINT,
+			     split_rule Selected_split_rule=
+			     Split_rules::SLIDING_MIDPOINT,
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
 		the_bucket_size = bucket_size;
@@ -62,7 +63,8 @@ namespace CGAL {
 	}
 
     	NT aspect_ratio() const {return the_aspect_ratio;}
-	split_rule  selected_split_rule() const {return the_selected_split_rule;}
+	split_rule  selected_split_rule() 
+	const {return the_selected_split_rule;}
 
         unsigned int bucket_size() const {return the_bucket_size;}
 	bool use_extended_nodes() const {return use_extended_nodes_option;}

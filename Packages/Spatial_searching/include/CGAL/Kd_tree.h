@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Kd_tree.h
 // package       : ASPAS
-// revision      : 1.4 
+// revision      : 2.4 
 // revision_date : 2003/02/01 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -84,7 +84,9 @@ public:
   template <class OutputIterator>
 	void search(OutputIterator it, Item& center, NT radius, NT eps=NT(0)) {
 		Kd_tree_rectangle<NT>* b = new Kd_tree_rectangle<NT>(*bbox);
-		tree_root->tree_items_in_sphere(it,center,(radius-eps)*(radius-eps),radius*radius,(radius+eps)*(radius+eps),b);
+		tree_root->tree_items_in_sphere(it, center,
+		(radius-eps)*(radius-eps), radius*radius,
+                (radius+eps)*(radius+eps), b);
 		delete b;
 	}
 

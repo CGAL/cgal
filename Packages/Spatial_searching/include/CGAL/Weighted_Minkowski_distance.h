@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Weighted_Minkowski_distance.h
 // package       : ASPAS
-// revision      : 1.4 
+// revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -56,20 +56,20 @@ namespace CGAL {
     // default constructor
     // default case dim=2, L2.
     
-    Weighted_Minkowski_distance() : p(NT(2.0)), The_dimension(2) 
+    Weighted_Minkowski_distance() : p(NT(2)), The_dimension(2) 
     { 
          The_weights = new Weight_vector(2);
-         (*The_weights)[0]=NT(1.0);
-         (*The_weights)[1]=NT(1.0);
+         (*The_weights)[0]=NT(1);
+         (*The_weights)[1]=NT(1);
     }
 
 	Weighted_Minkowski_distance (NT power, int dim,
 		Weight_vector Weights) : p(power), The_dimension(dim)
 	{
-		assert(p >= NT(0.0));
+		assert(p >= NT(0));
 		assert(The_dimension==Weights.size());
 		for (unsigned int i = 0; i < Weights.size(); ++i)
-                assert(Weights[i]>=NT(0.0));
+                assert(Weights[i]>=NT(0));
 		The_weights = new Weight_vector(Weights.size());
 		for (unsigned int i = 0; i < Weights.size(); ++i) 
 		(*The_weights)[i]=Weights[i];
@@ -80,11 +80,11 @@ namespace CGAL {
 	};
 
 	inline NT distance(const Query_item& p1, const Item& p2) {
-		NT distance = NT(0.0);
-		if (p == NT(0.0)) {
-				for (unsigned int i = 0; i < The_dimension; ++i)
-			        if ((*The_weights)[i] * fabs(p1[i] - p2[i]) > distance)
-				distance = (*The_weights)[i] * fabs(p1[i]-p2[i]);
+	        NT distance = NT(0);
+		if (p == NT(0)) {
+			for (unsigned int i = 0; i < The_dimension; ++i)
+			if ((*The_weights)[i] * fabs(p1[i] - p2[i]) > distance)
+			distance = (*The_weights)[i] * fabs(p1[i]-p2[i]);
 		}
 		else
 			for (unsigned int i = 0; i < The_dimension; ++i)
@@ -95,24 +95,30 @@ namespace CGAL {
 
 
 	inline NT min_distance_to_queryitem(const Query_item& Point,
-					      const Kd_tree_rectangle<NT>& r) {
-		NT distance = NT(0.0);
-		if (p == NT(0.0))
+					    const Kd_tree_rectangle<NT>& r) {
+		NT distance = NT(0);
+		if (p == NT(0))
 		{
-			for (int i = 0; i < r.dimension(); ++i) {
-				if ((*The_weights)[i]*(r.min_coord(i) - Point[i]) > distance)
-					distance = (*The_weights)[i] * (r.min_coord(i)-Point[i]);
-				if ((*The_weights)[i] * (Point[i] - r.max_coord(i)) > distance)
-					distance = (*The_weights)[i] * (Point[i]-r.max_coord(i));
+		    for (int i = 0; i < r.dimension(); ++i) {
+			if ((*The_weights)[i]*(r.min_coord(i) - 
+				Point[i]) > distance)
+				distance = (*The_weights)[i] * (r.min_coord(i)-
+				Point[i]);
+			if ((*The_weights)[i] * (Point[i] - r.max_coord(i)) > 
+				distance)
+				distance = (*The_weights)[i] * 
+				(Point[i]-r.max_coord(i));
 			}
 		}
 		else
 		{
 			for (int i = 0; i < r.dimension(); ++i) {
 				if (Point[i] < r.min_coord(i))
-					distance += (*The_weights)[i] * pow(r.min_coord(i)-Point[i],p);
+					distance += (*The_weights)[i] * 
+					pow(r.min_coord(i)-Point[i],p);
 				if (Point[i] > r.max_coord(i))
-					distance += (*The_weights)[i] * pow(Point[i]-r.max_coord(i),p);
+					distance += (*The_weights)[i] * 
+					pow(Point[i]-r.max_coord(i),p);
 			}
 		};
 		return distance;
@@ -120,16 +126,21 @@ namespace CGAL {
 
 	inline NT max_distance_to_queryitem(const Query_item& Point,
 					      const Kd_tree_rectangle<NT>& r) {
-		NT distance=NT(0.0);
-		if (p == NT(0.0))
+		NT distance=NT(0);
+		if (p == NT(0))
 		{
 			for (int i = 0; i < r.dimension(); ++i) {
-				if (Point[i] >= (r.min_coord(i) + r.max_coord(i))/NT(2.0))
-					if ((*The_weights)[i] * (Point[i] - r.min_coord(i)) > distance)
-						distance = (*The_weights)[i] * (Point[i]-r.min_coord(i));
+				if (Point[i] >= (r.min_coord(i) + 
+						r.max_coord(i))/NT(2.0))
+				if ((*The_weights)[i] * (Point[i] - 
+					r.min_coord(i)) > distance)
+					distance = (*The_weights)[i] * 
+					(Point[i]-r.min_coord(i));
 				else
-					if ((*The_weights)[i] * (r.max_coord(i) - Point[i]) > distance)
-						distance = (*The_weights)[i] * ( r.max_coord(i)-Point[i]);
+					if ((*The_weights)[i] * 
+					(r.max_coord(i) - Point[i]) > distance)
+					distance = (*The_weights)[i] * 
+					( r.max_coord(i)-Point[i]);
 			}
 		}
 		else
@@ -147,30 +158,32 @@ namespace CGAL {
 	inline NT new_distance(NT& dist, NT old_off, NT new_off,
 			int cutting_dimension)  {
 		NT new_dist;
-		if (p == NT(0.0))
+		if (p == NT(0))
 		{
-			if ((*The_weights)[cutting_dimension]*fabs(new_off) > dist) 
-				new_dist= (*The_weights)[cutting_dimension]*fabs(new_off);
+			if ((*The_weights)[cutting_dimension]*fabs(new_off) 
+				> dist) 
+			new_dist= 
+			(*The_weights)[cutting_dimension]*fabs(new_off);
 			else new_dist=dist;
 		}
 		else
 		{
 			new_dist = dist + (*The_weights)[cutting_dimension] * 
-					(pow(fabs(new_off),p)-pow(fabs(old_off),p));
+				(pow(fabs(new_off),p)-pow(fabs(old_off),p));
 		}
                 return new_dist;
 	}
 
   inline NT transformed_distance(NT d) {
 
-		if (p <= NT(0.0)) return d;
+		if (p <= NT(0)) return d;
 		else return pow(d,p);
 
 	}
 
   inline NT inverse_of_transformed_distance(NT d) {
 
-		if (p <= NT(0.0)) return d;
+		if (p <= NT(0)) return d;
 		else return pow(d,1/p);
 
 	}

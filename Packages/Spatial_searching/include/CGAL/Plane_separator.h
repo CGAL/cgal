@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Plane_separator.h
 // package       : ASPAS
-// revision      : 1.4 
+// revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -51,7 +51,8 @@ template < class NT> class Plane_separator {
 	else  {return ON_POSITIVE_SIDE;}
   } */
 
-  template <class Item>  inline bool has_on_negative_side(const Item& i) {
+  template <class Item>  
+  inline bool has_on_negative_side(const Item& i) {
     return i[cutting_dimension()] < cutting_value();
   }
 

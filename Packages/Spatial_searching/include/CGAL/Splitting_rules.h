@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Splitting_rules.h
 // package       : ASPAS
-// revision      : 1.4 
+// revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -97,8 +97,10 @@ public:
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
               (c.max_span_upper() + c.max_span_lower())/NT(2));
-	NT max_span_lower = c.tight_bounding_box().min_coord(c.max_span_coord());
-	NT max_span_upper = c.tight_bounding_box().max_coord(c.max_span_coord());
+	NT max_span_lower = 
+	c.tight_bounding_box().min_coord(c.max_span_coord());
+	NT max_span_upper = 
+	c.tight_bounding_box().max_coord(c.max_span_coord());
 	if (max_span_upper <= sep->cutting_value()) {
 		sep->set_cutting_val(max_span_upper); 
 	}

@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/L1_distance_rectangle_point.h
 // package       : ASPAS
-// revision      : 1.4 
+// revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -61,8 +61,10 @@ namespace CGAL {
     inline NT distance(const Query_item& q, const Item& p) {
 		NT distance = NT(0);
 		for (unsigned int i = 0; i < The_dimension; ++i) {
-			if (p[i]>q.max_coord(i)) distance += (p[i]-q.max_coord(i)); 
-			if (p[i]<q.min_coord(i)) distance += (q.min_coord(i)-p[i]);	
+			if (p[i]>q.max_coord(i)) distance += 
+			(p[i]-q.max_coord(i)); 
+			if (p[i]<q.min_coord(i)) distance += 
+			(q.min_coord(i)-p[i]);	
 		}
         	return distance;
     }
@@ -72,8 +74,10 @@ namespace CGAL {
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance = NT(0);
 		for (unsigned int i = 0; i < The_dimension; ++i)  {
-			if (r.min_coord(i)>q.max_coord(i)) distance += (r.min_coord(i)-q.max_coord(i)); 
-			if (r.max_coord(i)<q.min_coord(i)) distance += (q.min_coord(i)-r.max_coord(i));
+			if (r.min_coord(i)>q.max_coord(i)) distance += 
+			(r.min_coord(i)-q.max_coord(i)); 
+			if (r.max_coord(i)<q.min_coord(i)) distance += 
+			(q.min_coord(i)-r.max_coord(i));
 	        }
 		return distance;
 	}
@@ -82,7 +86,8 @@ namespace CGAL {
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance=NT(0);
 		for (unsigned int i = 0; i < The_dimension; ++i)
-			if ( r.max_coord(i)-q.min_coord(i) > q.max_coord(i)-r.min_coord(i) )  
+			if ( r.max_coord(i)-q.min_coord(i) > 
+			     q.max_coord(i)-r.min_coord(i) )  
 				distance += (r.max_coord(i)-q.min_coord(i));
 			else 
 				distance += (q.max_coord(i)-r.min_coord(i));
