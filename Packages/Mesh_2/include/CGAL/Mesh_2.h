@@ -49,9 +49,6 @@ public:
 
   typedef typename Tr::Locate_type            Locate_type;
   
-  typedef std::pair<Vertex_handle,Vertex_handle>
-                                              Constrained_edge;
-
   typedef typename Tr::Point                  Point;
 
   typedef typename Tr::List_constraints       List_constraints;
@@ -176,8 +173,6 @@ public:
       edges_to_be_conformed(is_really_a_constrained_edge)
     {
       while(first != last){
-	// af: added "_constraint", otherwise it does not 
-	// work with hierarchy
 	insert_constraint((*first).first, (*first).second);
 	++first;
       }
@@ -240,6 +235,8 @@ public:
 
 private:
   // PRIVATE TYPES
+  typedef std::pair<Vertex_handle,Vertex_handle>
+                                              Constrained_edge;
   typedef std::list<Edge> List_of_edges;
   typedef std::list<Face_handle> List_of_face_handles;
   typedef CGAL::Triple<Vertex_handle,
@@ -556,10 +553,10 @@ inline
 bool Mesh_2<Tr>::
 is_bad(const Face_handle f) const
 {
-  const Point&
-    a = f->vertex(0)->point(),
-    b = f->vertex(1)->point(),
-    c = f->vertex(2)->point();
+  const Point
+    & a = f->vertex(0)->point(),
+    & b = f->vertex(1)->point(),
+    & c = f->vertex(2)->point();
 
   return geom_traits().is_bad_object()(a,b,c);
 }
@@ -580,10 +577,10 @@ inline
 double Mesh_2<Tr>::
 squared_minimum_sine(const Face_handle fh) const
 {
-  const Vertex_handle&
-    va = fh->vertex(0),
+  const Vertex_handle
+    & va = fh->vertex(0),
     & vb = fh->vertex(1),
-    vc = fh->vertex(2);
+    & vc = fh->vertex(2);
   return squared_minimum_sine(va, vb, vc);
 }
 
@@ -829,6 +826,8 @@ template <class Tr>
 void Mesh_2<Tr>::
 propagate_marks(const Face_handle fh, bool mark)
 {
+  // std::queue only works with std::list on VC++6, and not with
+  // std::deque, wichi is the default
   std::queue<Face_handle, std::list<Face_handle> > face_queue;
   fh->set_marked(mark);
   face_queue.push(fh);
@@ -936,7 +935,7 @@ construct_cluster(Vertex_handle v,
   if(begin==end)
     all_edges_in_cluster=true;
 
-  const Point& vp = v->point(); // af: why not const?
+  const Point& vp = v->point();
   
   FT greatest_cosine = 
     squared_cosine_of_angle_times_4(c.smallest_angle.first->point(),
@@ -1175,7 +1174,7 @@ template <class Tr>
 void Mesh_2<Tr>::
 refine_face(const Face_handle f)
 {
-  const Point& pc = circumcenter(f); // af: why not const&
+  const Point& pc = circumcenter(f);
 
   List_of_edges zone_of_pc_boundary;
   List_of_face_handles zone_of_pc;
@@ -1197,8 +1196,8 @@ refine_face(const Face_handle f)
     {
       const Face_handle& fh = it->first;
       const int& i = it->second;
-      const Vertex_handle&
-	va = fh->vertex(cw(i)),
+      const Vertex_handle
+	& va = fh->vertex(cw(i)),
 	& vb = fh->vertex(ccw(i));
       if(fh->is_constrained(i) && is_encroached(va,vb,pc))
 	{
@@ -1237,8 +1236,8 @@ refine_face(const Face_handle f)
 	}
     }; // after here edges_to_be_conformed contains edges encroached by pc
 
-  const Vertex_handle&
-    va = f->vertex(0),
+  const Vertex_handle
+    & va = f->vertex(0),
     & vb = f->vertex(1),
     & vc = f->vertex(2);
 
@@ -1259,7 +1258,7 @@ refine_face(const Face_handle f)
 template <class Tr>
 bool Mesh_2<Tr>::
 is_encroached(const Vertex_handle va, const Vertex_handle vb,
-	      const Point& p) const // af: why not &
+	      const Point& p) const
 {
   Angle_2 angle = geom_traits().angle_2_object();
 
@@ -1339,18 +1338,18 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
   else
     {
       const Point
-	&a = va->point(),
-	&b = vb->point(),
-	&m = midpoint(a, b);
+	& a = va->point(),
+	& b = vb->point(),
+	& m = midpoint(a, b);
 
 
 
       Vector_2 v = vector(a,m);
       v = scaled_vector(v,CGAL_NTS sqrt(c.minimum_squared_length /
 				      squared_distance(a,b)));
-      Point i = translate(a,v), 
-	    i2(i); 
-	
+
+      Point i = translate(a,v), i2(i);
+
       do {
 	i = translate(a,v);
 	v = scaled_vector(v,FT(2));
@@ -1378,8 +1377,8 @@ insert_middle(Face_handle f, int i)
   Construct_midpoint_2
     midpoint = geom_traits().construct_midpoint_2_object();
 
-  const Vertex_handle& 
-    va = f->vertex(cw(i)),
+  const Vertex_handle
+    & va = f->vertex(cw(i)),
     & vb = f->vertex(ccw(i));
 
   const Point& mp = midpoint(va->point(), vb->point());
@@ -1432,8 +1431,8 @@ insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // insert the point p in the edge (fh, edge_index). It updates seeds 
   // too.
 {
-  const Vertex_handle&
-    va = fh->vertex(cw(edge_index)),
+  const Vertex_handle
+    & va = fh->vertex(cw(edge_index)),
     & vb = fh->vertex(ccw(edge_index));
 
   bool 
@@ -1505,8 +1504,8 @@ shortest_edge_squared_length(Face_handle f)
 {
   Compute_squared_distance_2 squared_distance = 
     geom_traits().compute_squared_distance_2_object();
-  const Point & 
-    pa = (f->vertex(0))->point(),
+  const Point 
+    & pa = (f->vertex(0))->point(),
     & pb = (f->vertex(1))->point(),
     & pc = (f->vertex(2))->point();
   FT a, b, c;
