@@ -31,7 +31,7 @@
 
 #include <CGAL/predicates/Segment_Voronoi_diagram_predicates_C2.h>
 #include <CGAL/predicates/check_filter.h>
-
+#include <CGAL/Segment_Voronoi_diagram_kernel_wrapper_2.h>
 
 
 CGAL_BEGIN_NAMESPACE
