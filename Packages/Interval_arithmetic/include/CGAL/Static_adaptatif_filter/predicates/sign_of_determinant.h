@@ -60,7 +60,7 @@ sign_of_determinant2x2(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_sign_of_determinant2x2_4_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -79,7 +79,7 @@ letstry:
 		Restricted_double(a01.value()),
 		Restricted_double(a10.value()),
 		Restricted_double(a11.value()),
-		Filter_epsilon_sign_of_determinant2x2_4_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -101,7 +101,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_sign_of_determinant2x2_4_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
@@ -172,7 +172,7 @@ sign_of_determinant3x3(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_sign_of_determinant3x3_9_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -201,7 +201,7 @@ letstry:
 		Restricted_double(a20.value()),
 		Restricted_double(a21.value()),
 		Restricted_double(a22.value()),
-		Filter_epsilon_sign_of_determinant3x3_9_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -233,7 +233,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_sign_of_determinant3x3_9_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
@@ -332,7 +332,7 @@ sign_of_determinant4x4(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_sign_of_determinant4x4_16_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -375,7 +375,7 @@ letstry:
 		Restricted_double(a31.value()),
 		Restricted_double(a32.value()),
 		Restricted_double(a33.value()),
-		Filter_epsilon_sign_of_determinant4x4_16_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -421,7 +421,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_sign_of_determinant4x4_16_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
@@ -556,7 +556,7 @@ sign_of_determinant5x5(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_sign_of_determinant5x5_25_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -617,7 +617,7 @@ letstry:
 		Restricted_double(a42.value()),
 		Restricted_double(a43.value()),
 		Restricted_double(a44.value()),
-		Filter_epsilon_sign_of_determinant5x5_25_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -681,7 +681,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_sign_of_determinant5x5_25_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
@@ -860,7 +860,7 @@ sign_of_determinant6x6(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_sign_of_determinant6x6_36_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -943,7 +943,7 @@ letstry:
 		Restricted_double(a53.value()),
 		Restricted_double(a54.value()),
 		Restricted_double(a55.value()),
-		Filter_epsilon_sign_of_determinant6x6_36_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1029,7 +1029,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_sign_of_determinant6x6_36_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 

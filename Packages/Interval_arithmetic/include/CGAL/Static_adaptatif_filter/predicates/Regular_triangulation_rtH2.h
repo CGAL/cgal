@@ -144,7 +144,7 @@ power_testH2(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_power_testH2_16_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -187,7 +187,7 @@ letstry:
 		Restricted_double(thy.value()),
 		Restricted_double(thw.value()),
 		Restricted_double(twt.value()),
-		Filter_epsilon_power_testH2_16_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -233,7 +233,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_power_testH2_16_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
@@ -381,8 +381,8 @@ power_testH2(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_power_testH2_12_0 = -1.0;
-  static double Filter_epsilon_power_testH2_12_1 = -1.0;
+  static double _epsilon_0;
+  static double _epsilon_1;
 
 letstry:
   try
@@ -417,8 +417,8 @@ letstry:
 		Restricted_double(thy.value()),
 		Restricted_double(thw.value()),
 		Restricted_double(twt.value()),
-		Filter_epsilon_power_testH2_12_0,
-		Filter_epsilon_power_testH2_12_1);
+		_epsilon_0,
+		_epsilon_1);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -456,8 +456,8 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_power_testH2_12_0,
-		Filter_epsilon_power_testH2_12_1);
+		_epsilon_0,
+		_epsilon_1);
 
       // We should verify that all epsilons have really been updated.
 

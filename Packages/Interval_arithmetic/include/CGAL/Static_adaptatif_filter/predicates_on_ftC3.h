@@ -97,9 +97,9 @@ collinearC3(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_collinearC3_9_0 = -1.0;
-  static double Filter_epsilon_collinearC3_9_1 = -1.0;
-  static double Filter_epsilon_collinearC3_9_2 = -1.0;
+  static double _epsilon_0;
+  static double _epsilon_1;
+  static double _epsilon_2;
 
 letstry:
   try
@@ -128,9 +128,9 @@ letstry:
 		Restricted_double(rx.value()),
 		Restricted_double(ry.value()),
 		Restricted_double(rz.value()),
-		Filter_epsilon_collinearC3_9_0,
-		Filter_epsilon_collinearC3_9_1,
-		Filter_epsilon_collinearC3_9_2);
+		_epsilon_0,
+		_epsilon_1,
+		_epsilon_2);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -162,9 +162,9 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_collinearC3_9_0,
-		Filter_epsilon_collinearC3_9_1,
-		Filter_epsilon_collinearC3_9_2);
+		_epsilon_0,
+		_epsilon_1,
+		_epsilon_2);
 
       // We should verify that all epsilons have really been updated.
 
@@ -249,7 +249,7 @@ orientationC3(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_orientationC3_12_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -284,7 +284,7 @@ letstry:
 		Restricted_double(sx.value()),
 		Restricted_double(sy.value()),
 		Restricted_double(sz.value()),
-		Filter_epsilon_orientationC3_12_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -322,7 +322,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_orientationC3_12_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
@@ -453,7 +453,7 @@ side_of_oriented_sphereC3(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_side_of_oriented_sphereC3_15_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -494,7 +494,7 @@ letstry:
 		Restricted_double(tx.value()),
 		Restricted_double(ty.value()),
 		Restricted_double(tz.value()),
-		Filter_epsilon_side_of_oriented_sphereC3_15_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -538,7 +538,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_side_of_oriented_sphereC3_15_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
@@ -654,8 +654,8 @@ side_of_bounded_sphereC3(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_side_of_bounded_sphereC3_15_0 = -1.0;
-  static double Filter_epsilon_side_of_bounded_sphereC3_15_1 = -1.0;
+  static double _epsilon_0;
+  static double _epsilon_1;
 
 letstry:
   try
@@ -696,8 +696,8 @@ letstry:
 		Restricted_double(tx.value()),
 		Restricted_double(ty.value()),
 		Restricted_double(tz.value()),
-		Filter_epsilon_side_of_bounded_sphereC3_15_0,
-		Filter_epsilon_side_of_bounded_sphereC3_15_1);
+		_epsilon_0,
+		_epsilon_1);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -741,8 +741,8 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_side_of_bounded_sphereC3_15_0,
-		Filter_epsilon_side_of_bounded_sphereC3_15_1);
+		_epsilon_0,
+		_epsilon_1);
 
       // We should verify that all epsilons have really been updated.
 
@@ -822,7 +822,7 @@ cmp_dist_to_pointC3(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_cmp_dist_to_pointC3_9_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -851,7 +851,7 @@ letstry:
 		Restricted_double(rx.value()),
 		Restricted_double(ry.value()),
 		Restricted_double(rz.value()),
-		Filter_epsilon_cmp_dist_to_pointC3_9_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -883,7 +883,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_cmp_dist_to_pointC3_9_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
@@ -960,7 +960,7 @@ cmp_signed_dist_to_planeC3(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_cmp_signed_dist_to_planeC3_10_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -991,7 +991,7 @@ letstry:
 		Restricted_double(qx.value()),
 		Restricted_double(qy.value()),
 		Restricted_double(qz.value()),
-		Filter_epsilon_cmp_signed_dist_to_planeC3_10_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1025,7 +1025,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_cmp_signed_dist_to_planeC3_10_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
@@ -1128,7 +1128,7 @@ cmp_signed_dist_to_planeC3(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_cmp_signed_dist_to_planeC3_15_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -1169,7 +1169,7 @@ letstry:
 		Restricted_double(qx.value()),
 		Restricted_double(qy.value()),
 		Restricted_double(qz.value()),
-		Filter_epsilon_cmp_signed_dist_to_planeC3_15_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -1213,7 +1213,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_cmp_signed_dist_to_planeC3_15_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 

@@ -91,7 +91,7 @@ in_smallest_orthogonalcircleC2(
 {
   bool tried = false;
   static double _bound = -1.0;
-  static double Filter_epsilon_in_smallest_orthogonalcircleC2_9_0 = -1.0;
+  static double _epsilon_0;
 
 letstry:
   try
@@ -120,7 +120,7 @@ letstry:
 		Restricted_double(tx.value()),
 		Restricted_double(ty.value()),
 		Restricted_double(tw.value()),
-		Filter_epsilon_in_smallest_orthogonalcircleC2_9_0);
+		_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
   {
@@ -152,7 +152,7 @@ letstry:
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
 		Static_filter_error(_bound,0,1),
-		Filter_epsilon_in_smallest_orthogonalcircleC2_9_0);
+		_epsilon_0);
 
       // We should verify that all epsilons have really been updated.
 
