@@ -1711,6 +1711,7 @@ Packages/Triangulation_2/doc_tex/Triangulation_2/walk.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/walls.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2_ref/constraints.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2_ref/insert1.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2_ref/insert2.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2_ref/insert3.gif -text svneol=unset#unset
@@ -1788,6 +1789,7 @@ Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walk.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walls.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/constraints.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/infinite_vertex.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/infinite_vertex.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert1.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert2.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert3.gif -text svneol=unset#unset
