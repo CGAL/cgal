@@ -243,8 +243,8 @@ CGAL_KERNEL_INLINE
 Bounded_side
 SphereH3<FT,RT>::bounded_side(const PointH3<FT,RT>& p) const
 {
-  return Bounded_side(CGAL::compare(squared_radius(),
-                                    squared_distance(center(),p)));
+  return Bounded_side(CGAL_NTS compare(squared_radius(),
+                                       squared_distance(center(),p)));
 }
 template <class FT, class RT>
 inline
