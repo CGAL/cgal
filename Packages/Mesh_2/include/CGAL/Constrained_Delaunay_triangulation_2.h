@@ -181,7 +181,7 @@ public:
       return number_of_vertices() - n;
     }
 
-#warning "Patched file!"
+#warning "File patched by Laurent Rineau, for Mesh_2 robustness!"
 
   template <class Out_it1, class Out_it2> 
   bool 
