@@ -52,7 +52,7 @@ public:
   typedef Pmwx_sweep_line_curve<Traits, HalfedgeHandle> Self;
 
   typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
-  typedef std::set<Self*, StatusLineCurveLess,CGAL_ALLOCATOR(int)> StatusLine;
+  typedef std::set<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
 
@@ -61,18 +61,15 @@ public:
 
   Pmwx_sweep_line_curve(){}
 
-  Pmwx_sweep_line_curve( X_monotone_curve_2 &curve,
-			SweepLineTraits_2 *traits) : 
-    Base( curve,traits),
-    m_lastEvent(0)
+  Pmwx_sweep_line_curve( X_monotone_curve_2 &curve): Base( curve),
+                                                     m_lastEvent(0)
   {
   }
 
   
-  void init(X_monotone_curve_2 &curve,
-			SweepLineTraits_2 *traits)
+  void init(X_monotone_curve_2 &curve)
   {
-    Base::init(curve,traits);
+    Base::init(curve);
     m_lastEvent  = 0;
   }
 

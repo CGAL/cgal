@@ -72,12 +72,12 @@ public:
   
   typedef typename PmwxInsertInfo::Halfedge_handle Halfedge_handle;
 
-  Pmwx_sweep_line_event():m_isCurveInPm(1)
+  Pmwx_sweep_line_event()
   {}
 
   /*! Constructor */
-  Pmwx_sweep_line_event(const Point_2 &point, Traits *traits) :
-    Base(point, traits)
+  Pmwx_sweep_line_event(const Point_2 &point) :
+    Base(point)
   {}
 
 
@@ -86,9 +86,9 @@ public:
   {}
 
 
-  void init(const Point_2 &point, Traits *traits)
+  void init(const Point_2 &point)
   {
-    Base::init(point,traits);
+    Base::init(point);
   }
 
   PmwxInsertInfo *get_insert_info()

@@ -83,11 +83,11 @@ public:
 
   Pmwx_aggregate_insert() : 
     Base(), m_change_not(NULL)
-    {
-    }
+    {}
   
   Pmwx_aggregate_insert(Traits *traits_) : 
-    Base(traits_), m_change_not(NULL) {} 
+    Base(traits_), m_change_not(NULL) 
+    {} 
   
   virtual ~Pmwx_aggregate_insert() {}
   
