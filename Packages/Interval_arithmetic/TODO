@@ -1,6 +1,6 @@
 Concerning the new filters:
 ---------------------------
-- What to do with branches (collinearC3() and power_test()):
+- What to do with branches (e.g. collinearC3() and power_test()):
   - The epsilon computation type should return ZERO/EQUAL as default.
     This way, collinearC3() works.
   - The user can provide the epsilon variant inside the source code, delimited
