@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.87 (6 August 2003) [af]
+- Replaced In_place_list by srd::list in the Regular_complex_d
+
 0.9.86 (17 July 2003) [rursu]
 - In include/Kernel_d/Vector__.h 
 	patched the constructor of Vector_ for VC7.0 that can't handle:
