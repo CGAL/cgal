@@ -124,7 +124,15 @@ e=(f,i) and f is the face lying to the right of the oriented edge (va,vb). }
 
 
 \ccMethod{void remove(Vertex_handle & v);}
-{ Removes vertex v. }
+{ Removes vertex v. 
+}\ccPrecond Vertex \ccc{v}  is not incident to a constrained edge.
+
+\ccMethod{ void remove_incident_constraints(Vertex_handle  v);}
+{Make the edges incident to vertex \ccc{v} unconstrained edges.}
+
+\ccMethod{void remove_constraint(const Face_handle & f, int i);}
+{ Edge \ccc{e}=\ccc{(f,i)}=\ccc{(g,j)} is no longer constrained.}
+
 
 \ccHeading{Queries}
 The following template member functions query the

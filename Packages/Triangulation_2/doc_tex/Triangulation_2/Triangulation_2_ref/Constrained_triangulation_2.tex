@@ -106,6 +106,19 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
  is \ccc{Constraint}.}
 
+\ccHeading{Queries}
+\ccMethod{ bool is_constrained(Edge e);}
+{Returns true if edge \ccc{e} is a constrained edge.}
+\ccMethod{bool are_there_incident_constraints(Vertex_handle v);}
+{Returns true if at least one of the edges incident to vertex \ccc{v}
+is constrained.}
+\ccMethod{template<class OutputIterator>
+  bool are_there_incident_constraints(Vertex_handle v, 
+ OutputIterator out) const;}
+{Same as above. In addition the constrained edges incident to \ccc{v}
+are inserted in the sequence pointed to by the output iterator \ccc{out}.}
+
+
 \ccHeading{Insertion and removal}
 
 \ccMethod{Vertex_handle insert(Point a);}
@@ -146,7 +159,11 @@ and the index \ccc{i}  of the vertex of \ccc{fr} opposite to
 the list \ccc{new\_edges}.} 
 
 \ccMethod{void remove(const Vertex_handle & v);}
-{ Removes a vertex v. All constraints incident to the removed vertex are removed. }
+{ Removes a vertex v. 
+\ccPrecond Vertex \ccc{v}  is not incident to a constrained edge.}
+
+\ccMethod{ void remove_incident_constraints(Vertex_handle  v);}
+{Make the edges incident to vertex \ccc{v} unconstrained edges.}
 
 \ccMethod{void remove_constraint(const Face_handle & f, int i);}
 { Edge \ccc{e}=\ccc{(f,i)}=\ccc{(g,j)} is no longer constrained.}
