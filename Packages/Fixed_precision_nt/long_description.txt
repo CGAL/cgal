@@ -1,0 +1,68 @@
+Package Fixed_precision_nt:
+Provides arithmetic on numbers with 24 bits fixed precision.
+Upper bound on numbers has to be specified.
+
+Package contains basic arithmetic operations
+and optimized specialized versions of some geometric
+predicates.
+
+
+
+Versions
+1.0 (Nov 98)
+  Predicates :
+    CGAL_orientationC2
+    CGAL_side_of_oriented_circleC2
+
+    Thus everything necessary for 2D Delaunay triangulation.
+
+  Predicates :
+    CGAL_orientationC3
+    CGAL_side_of_oriented_sphereC3
+  are waiting for predicates_on_ftC3.h
+
+1.2 (26 Nov 98)
+  correct minor bugs
+
+1.3 (27 Nov 98)
+  change the name from Fixed to Fixed_precision_nt
+
+1.4 (3 Dec 98)
+  bugs in makefiles
+1.5 (3 Dec 98)
+  errors in headers
+
+1.6 (9 Dec 98)
+  warnings removal. CGAL_warning, cast of CGAL_Sign for printing
+1.7 (16 Dec 98)
+  warnings removal. CGAL_warning, cast of CGAL_Sign for printing
+
+2.0 (20 Apr 99)
+  namespace CGAL
+
+CONTENTS:
+
+description.txt
+long_description.txt
+
+doc_tex : contains  the documentation
+             doc_tex/basic/Fixed_precision_nt/fixed.tex
+
+include/CGAL: contains the following file
+             Fixed_precision_nt.h
+
+demo/Fixed_precision_nt contains the following examples:
+	     makefile
+             delaunay.C      2D Delaunay triangulation (with leda window)
+
+examples/Fixed_precision_nt contains the following examples:
+	     makefile
+             delaunay.C      2D Delaunay triangulation
+
+test/Fixed_precision_nt/ contains the test suite for fixed package
+             cgal_test
+	     makefile
+             test_fixed.C
+		
+
+
