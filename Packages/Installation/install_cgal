@@ -4582,18 +4582,6 @@ create_include_makefile()
 	"CGAL_EXTRA_OBJECTS = workaround_4_irix6.o" \
 	>> ${FILE}
 	;;
-    *CYGWIN*)
-	case `compiler_description` in
-	    *VC++*)
-		${_printf} "%s\n" \
-		    "CGAL_EXTRA_OBJECTS = workaround_4_ms.obj" >> ${FILE}
-	    ;;
-	    *GNU*)
-		${_printf} "%s\n" \
-		    "CGAL_EXTRA_OBJECTS = workaround_4_ms.o" >> ${FILE}
-	    ;;
-	esac
-	;;
   esac
 
   # 
