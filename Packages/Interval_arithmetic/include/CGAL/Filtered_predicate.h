@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Filter_predicate.h
+// file          : include/CGAL/Filtered_predicate.h
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval Arithmetic
@@ -44,7 +44,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 template <class EP, class AP, class EC, class AC, bool Protection = true>
-class Filter_predicate
+class Filtered_predicate
 {
   EP Exact_predicate;
   AP Approx_predicate;
@@ -56,19 +56,19 @@ public:
   typedef typename AP::result_type  result_type;
   // Should be the same type as EP::result_type.
 
-  Filter_predicate()
+  Filtered_predicate()
   {}
 
   // These constructors are used for constructive predicates.
   // You should try to avoid constructive predicates, as they will construct
   // the exact values systematically (in the ctor), rather than lazily.
   template <class O>
-  Filter_predicate(const O &o1)
+  Filtered_predicate(const O &o1)
     : Exact_predicate(To_Exact(o1)), Approx_predicate(To_Approx(o1))
   {}
 
   template <class O>
-  Filter_predicate(const O &o1, const O &o2)
+  Filtered_predicate(const O &o1, const O &o2)
     : Exact_predicate(To_Exact(o1), To_Exact(o2)),
       Approx_predicate(To_Approx(o1), To_Approx(o2))
   {}
@@ -231,8 +231,8 @@ public:
 #ifndef _MSC_VER
 template <class EP, class AP, class EC, class AC, bool Protection>
   template <class A1>
-Filter_predicate<EP,AP,EC,AC,Protection>::result_type
-Filter_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
+Filtered_predicate<EP,AP,EC,AC,Protection>::
   operator()(const A1 &a1) const
 {
     try
@@ -249,8 +249,8 @@ Filter_predicate<EP,AP,EC,AC,Protection>::
 
 template <class EP, class AP, class EC, class AC, bool Protection>
   template <class A1, class A2>
-Filter_predicate<EP,AP,EC,AC,Protection>::result_type
-Filter_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
+Filtered_predicate<EP,AP,EC,AC,Protection>::
   operator()(const A1 &a1, const A2 &a2) const
 {
     try
@@ -267,8 +267,8 @@ Filter_predicate<EP,AP,EC,AC,Protection>::
 
 template <class EP, class AP, class EC, class AC, bool Protection>
   template <class A1, class A2, class A3>
-Filter_predicate<EP,AP,EC,AC,Protection>::result_type
-Filter_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
+Filtered_predicate<EP,AP,EC,AC,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
 {
     try
@@ -285,8 +285,8 @@ Filter_predicate<EP,AP,EC,AC,Protection>::
 
 template <class EP, class AP, class EC, class AC, bool Protection>
   template <class A1, class A2, class A3, class A4>
-Filter_predicate<EP,AP,EC,AC,Protection>::result_type
-Filter_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
+Filtered_predicate<EP,AP,EC,AC,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
 {
     try
@@ -305,8 +305,8 @@ Filter_predicate<EP,AP,EC,AC,Protection>::
 
 template <class EP, class AP, class EC, class AC, bool Protection>
   template <class A1, class A2, class A3, class A4, class A5>
-Filter_predicate<EP,AP,EC,AC,Protection>::result_type
-Filter_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
+Filtered_predicate<EP,AP,EC,AC,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5) const
 {
@@ -326,8 +326,8 @@ Filter_predicate<EP,AP,EC,AC,Protection>::
 
 template <class EP, class AP, class EC, class AC, bool Protection>
   template <class A1, class A2, class A3, class A4, class A5, class A6>
-Filter_predicate<EP,AP,EC,AC,Protection>::result_type
-Filter_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
+Filtered_predicate<EP,AP,EC,AC,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5, const A6 &a6) const
 {

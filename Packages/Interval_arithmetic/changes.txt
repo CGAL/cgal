@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.111 on 19 July 2001
+- Rename Filter_predicate to Filtered_predicate.
+
 Version 4.110 on 19 July 2001
 - Filetered_kernel now has Simple_cartesian<MP_Float> as default value for the
   exact kernel parameter.

@@ -33,7 +33,7 @@
 // - the kernel only works with traits only and as a pure traits only.
 
 #include <CGAL/basic.h>
-#include <CGAL/Filter_predicate.h>
+#include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/MP_Float.h>
@@ -69,7 +69,7 @@ public:
     typedef typename CK::X X;
 
 #define CGAL_Filter_pred(P, Pf) \
-    typedef Filter_predicate<typename EK::P, typename FK::P, \
+    typedef Filtered_predicate<typename EK::P, typename FK::P, \
 	                     C2E_Converter, C2F_Converter> P; \
     P Pf() const { return P(); }
 
