@@ -100,7 +100,7 @@ public:
    Vertex_visibility_graph_2(ForwardIterator first, ForwardIterator beyond):
      leftturn_2(Traits().leftturn_2_object()), 
      orientation_2(Traits().orientation_2_object()), 
-     collinear_ordered_2(Traits().collinear_are_ordered_along_line_2_object()), 
+     collinear_ordered_2(Traits().collinear_are_ordered_along_line_2_object()),
      are_strictly_ordered_along_line_2(
            Traits().are_strictly_ordered_along_line_2_object()),
      less_xy_2(Traits().less_xy_2_object()),
@@ -120,20 +120,22 @@ public:
       Vertex_map  vertex_map;
       initialize_vertex_map(polygon, vertex_map);
    
-      std::stack<Tree_iterator> s;
-      s.push(tree.rightmost_point_ref());   // push on p_0, the rightmost point
+      // NOTE:  use the std::list as the basis here because otherwise the basis
+      //        is a deque, which is buggy under MSVC++
+      std::stack<Tree_iterator, std::list<Tree_iterator> > stack;
+      stack.push(tree.rightmost_point_ref());   // push on p_0, the rightmost point
    
       Tree_iterator p, p_r, q, z;
-      while (!s.empty())
+      while (!stack.empty())
       {
-         p = s.top();
+         p = stack.top();
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
          if (p != tree.end())
             std::cout << "p = " << *p << std::endl;
          else
             std::cout << "p == NULL" << std::endl;
 #endif
-         s.pop();
+         stack.pop();
          p_r = tree.right_sibling(p);
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
          if (p_r != tree.end())
@@ -185,26 +187,28 @@ public:
 #endif
             }
             tree.set_rightmost_child(p,z);
-            if (!s.empty() && z == s.top())
+            if (!stack.empty() && z == stack.top())
             {
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-               std::cout << "popping " << *z << " from top of stack "<<std::endl;
+               std::cout << "popping " << *z << " from top of stack "
+                         << std::endl;
 #endif
-               z = s.top();
-               s.pop();
+               z = stack.top();
+               stack.pop();
             }
          }
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
          std::cout << " p is now " << *p << std::endl;
 #endif
-         if (tree.left_sibling(p) == tree.end() && !tree.parent_is_p_infinity(p))
+         if (tree.left_sibling(p) == tree.end() && 
+             !tree.parent_is_p_infinity(p))
          {
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
             std::cout << "pushing " << *p << std::endl;
 #endif
-            s.push(p);
+            stack.push(p);
          }
-         if (p_r != tree.end()) s.push(p_r);
+         if (p_r != tree.end()) stack.push(p_r);
       }
    //   print_edge_set(edges);
    }
