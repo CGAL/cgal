@@ -21,7 +21,6 @@
 //
 // ============================================================================
 
-
 #ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_2_H
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_2_H
 
@@ -29,8 +28,9 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <set>
+#include <stack>
 #include <vector>
-
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
@@ -43,6 +43,8 @@
 #include <CGAL/Triangulation_ds_iterators_2.h>
 #include <CGAL/Triangulation_ds_circulators_2.h>
 
+#include <CGAL/IO/File_header_OFF.h>
+#include <CGAL/IO/File_scanner_OFF.h>
 
 CGAL_BEGIN_NAMESPACE 
 template < class Vb, class Fb>
@@ -270,9 +272,9 @@ public:
 			  Face_handle f3);
   Face_handle create_face(Face_handle f); //calls copy constructor of Face
   Face_handle create_face();
-
-  void  delete_face(Face_handle);
-  void  delete_vertex(Vertex_handle);
+  void set_adjacency(Face_handle f0, int i0, Face_handle f1, int i1) const;
+  void delete_face(Face_handle);
+  void delete_vertex(Vertex_handle);
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
@@ -285,14 +287,25 @@ private:
   Face* past_end() {return &(_dummy);}
   void  add_face(Face_handle newf);
 
+  typedef std::pair<Vertex_handle,Vertex_handle> Vh_pair;
+  void  set_adjacency(Face_handle fh, 
+		      int ih, 
+		      std::map< Vh_pair, Edge>& edge_map);
+  void reorient_faces();
+
 public:
   void copy_tds(const Tds &tds);
   Vertex_handle copy_tds(const Tds &tds, const Vertex_handle);
 
+  // I/O
   Vertex_handle file_input(std::istream& is, bool skip_first=false);
   void file_output(std::ostream& os,
 		   Vertex_handle v = Vertex_handle(),
 		   bool skip_first=false) const;
+  Vertex_handle off_file_input(std::istream& is, bool verbose=false);
+  void  vrml_output(std::ostream& os,
+		    Vertex_handle v = Vertex_handle(),
+		    bool skip_first=false) const;
 
 
   // SETTING (had to make them public for use in remove from Triangulations)
@@ -697,7 +710,7 @@ insert_in_edge(Face_handle f, int i)
 template <  class Vb, class Fb>
 typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
 Triangulation_data_structure_2<Vb,Fb>::
-insert_dim_up(Vertex_handle w, bool orient)
+insert_dim_up(Vertex_handle w,  bool orient)
 {
   // the following function insert 
   // a vertex  v which is outside the affine  hull of Tds
@@ -1119,6 +1132,18 @@ create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
 template <class Vb, class Fb>
 inline void
 Triangulation_data_structure_2<Vb,Fb>::
+set_adjacency(Face_handle f0, int i0, Face_handle f1, int i1) const
+{
+  CGAL_triangulation_assertion(i0 >= 0 && i0 <= dimension());
+  CGAL_triangulation_assertion(i1 >= 0 && i1 <= dimension());
+  CGAL_triangulation_assertion(f0 != f1);
+  f0->set_neighbor(i0,f1);
+  f1->set_neighbor(i1,f0);
+}
+
+template <class Vb, class Fb>
+inline void
+Triangulation_data_structure_2<Vb,Fb>::
 delete_face(Face_handle f)
 {
   f->previous()->set_next(f->next());
@@ -1417,7 +1442,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     V[v] = inum++;
     if( ! skip_first){
     os << v->point();
-    if(is_ascii(os))  os << ' ';
+    if(is_ascii(os))  os << std::endl;
     }
   }
   
@@ -1426,10 +1451,10 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     if ( vit->handle() != v) {
 	V[vit->handle()] = inum++;
 	os << vit->point();
-	if(is_ascii(os)) os << ' ';
+	if(is_ascii(os)) os << std::endl;
     }
   }
-  if(is_ascii(os)) os << "\n";
+  //if(is_ascii(os)) os << "\n";
 
   // vertices of the faces
   inum = 0;
@@ -1469,7 +1494,7 @@ file_input( std::istream& is, bool skip_first)
 {
   //input from file
   //return a pointer to the first input vertex
-  // if no_first is true, a first vertex is added (infinite_vertex)
+  // if skip_first is true, a first vertex is added (infinite_vertex)
   //set this  first vertex as infinite_Vertex
   if(number_of_vertices() != 0)    clear();
   
@@ -1527,6 +1552,224 @@ file_input( std::istream& is, bool skip_first)
 }
 
 
+template < class Vb, class Fb>
+void
+Triangulation_data_structure_2<Vb,Fb>::
+vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
+{
+  // ouput to a vrml file style
+  // Point are assumed to be 3d points with a stream oprator <<
+  // if non NULL, v is the vertex to be output first
+  // if skip_inf is true, the point in the first vertex is not output
+  // and the faces incident to v are not output
+  // (it may be for instance the infinite vertex of the terrain)
+  os << "#VRML V2.0 utf8" << endl;
+  os << "Shape {" << endl;
+  os << "\tgeometry IndexedFaceSet {" << endl;
+  os << "\t\tcoord Coordinate {" << endl;
+  os << "\t\t\tpoint [" << endl;
+
+  std::map<Vertex_handle,int> vmap;
+  Vertex_iterator vit;
+  Face_iterator fit;
+
+  //first vertex
+  int inum = 0;
+  if ( v != NULL) {
+    vmap[v] = inum++;
+    if( ! skip_infinite)  os << "\t\t\t\t" << vit->point() << std::endl;
+  }
+
+  //other vertices
+   for( Vertex_iterator vit= vertices_begin(); vit != vertices_end() ; ++vit) {
+     if ( vit->handle() != v) {
+       vmap[vit->handle()] = inum++;
+       os << "\t\t\t\t" << vit->point() << std::endl;
+     }
+  }
+
+   os << "\t\t\t]" << endl;
+   os << "\t\t}" << endl;
+   os << "\t\tcoordIndex [" << endl;
+
+   // faces
+   for(fit= faces_begin(); fit != faces_end(); ++fit) {
+     if (!skip_infinite || !fit->has_vertex(v)) {
+   	os << "\t\t\t";
+	os << vmap[(*fit).vertex(0)] << ", ";
+	os << vmap[(*fit).vertex(1)] << ", ";
+	os << vmap[(*fit).vertex(2)] << ", ";
+	os << "-1, " << endl;  
+     }
+   }
+   os << "\t\t]" << endl;
+   os << "\t}" << endl;
+   os << "}" << endl;
+   return;
+}
+
+template < class Vb, class Fb>
+typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
+Triangulation_data_structure_2<Vb,Fb>::
+off_file_input( std::istream& is, bool verbose)
+{
+  // input from an OFF file
+  // assume a dimension 2 triangulation
+  // create an infinite-vertex and  infinite faces with the
+  // boundary edges if any.
+  // return the infinite vertex if created
+  Vertex_handle vinf(NULL);
+  File_scanner_OFF scanner(is, verbose);
+  if (! is) {
+    if (scanner.verbose()) {
+         std::cerr << " " << std::endl;
+	 std::cerr << "TDS::off_file_input" << std::endl;
+	 std::cerr << " input error: file format is not OFF." << std::endl;
+    }
+    return vinf;
+  }
+
+  if(number_of_vertices() != 0)    clear();
+  int dim = 2;
+  set_dimension(dim);
+
+  std::vector<Vertex_handle > vvh(scanner.size_of_vertices());
+  std::map<Vh_pair, Edge> edge_map;
+  typedef typename Vb::Point   Point;
+
+  // read vertices
+  int i;
+  for ( i = 0; i < scanner.size_of_vertices(); i++) {
+    Point p;
+    file_scan_vertex( scanner, p);
+    vvh[i] = create_vertex();
+    vvh[i]->set_point(p);
+    scanner.skip_to_next_vertex( i);
+  }
+  if ( ! is ) {
+    is.clear( std::ios::badbit);
+    return vinf;
+  }
+  vinf = vvh[0];
+
+  // create the facets
+  for ( i = 0; i < scanner.size_of_facets(); i++) {
+    Face_handle fh = create_face();
+    Integer32 no;
+    scanner.scan_facet( no, i);
+    if( ! is || no != 3) {
+      if ( scanner.verbose()) {
+	std::cerr << " " << std::endl;
+	std::cerr << "TDS::off_file_input" << std::endl;
+	std::cerr << "facet " << i << "does not have  3 vertices." 
+		  << std::endl;
+      }
+      is.clear( std::ios::badbit);
+      return vinf;
+    }
+
+    for ( int j = 0; j < no; ++j) {
+      Integer32 index;
+      scanner.scan_facet_vertex_index( index, i);
+      fh->set_vertex(j, vvh[index]);
+      vvh[index]->set_face(fh);
+    }
+
+    for (int ih  = 0; ih < no; ++ih) {
+	set_adjacency(fh, ih, edge_map);
+    }
+  }
+
+  // deal with  boundaries
+  if ( !edge_map.empty()) {
+    vinf = create_vertex();
+    std::map<Vh_pair, Edge> inf_edge_map;
+   while (!edge_map.empty()) {
+     Face_handle fh = edge_map.begin()->second.first;
+     int ih = edge_map.begin()->second.second;
+     Face_handle fn = create_face( vinf, 
+				   fh->vertex(cw(ih)), 
+				   fh->vertex(ccw(ih)));
+     set_adjacency(fn, 0, fh, ih);
+     set_adjacency(fn, 1, inf_edge_map);
+     set_adjacency(fn, 2, inf_edge_map);
+     edge_map.erase(edge_map.begin());
+   }
+   CGAL_triangulation_assertion(inf_edge_map.empty());
+  }
+  
+  
+  // coherent orientation
+  reorient_faces();
+  return vinf;
+}
+
+
+template < class Vb, class Fb>
+void
+Triangulation_data_structure_2<Vb,Fb>::
+set_adjacency(Face_handle fh, 
+	      int ih, 
+	      std::map< Vh_pair, Edge>& edge_map)
+{
+  // set adjacency to (fh,ih) using the the map edge_map
+  // or insert (fh,ih) in edge map
+  Vertex_handle vhcw  =  fh->vertex(cw(ih));
+  Vertex_handle vhccw =  fh->vertex(ccw(ih)); 
+  Vh_pair  vhp =  vhcw < vhccw ?  
+                  std::make_pair(vhcw, vhccw) 
+                : std::make_pair(vhccw, vhcw) ;
+  std::map<Vh_pair, Edge>::iterator emit = edge_map.find(vhp);
+  if (emit == edge_map.end()) {// not found, insert edge
+    edge_map.insert(std::make_pair(vhp, Edge(fh,ih)));
+  }
+  else { //found set adjacency and erase
+    Edge e = emit->second;
+    set_adjacency( fh,ih, e.first, e.second);
+    edge_map.erase(emit);
+  } 
+}
+
+
+
+template < class Vb, class Fb>
+void
+Triangulation_data_structure_2<Vb,Fb>::
+reorient_faces()
+{
+  // reorient the faces of a triangulation 
+  // needed for example in off_file_input
+  // because the genus is not known, the number of faces 
+  std::set<Face_handle> oriented_set;
+  std::stack<Face_handle>  st;
+  Face_iterator fit = faces_begin();
+  int nf  = std::distance(faces_begin(),faces_end());
+
+  while (static_cast<int>(oriented_set.size()) != nf) {
+    while ( oriented_set.find(fit->handle()) != oriented_set.end()){
+      ++fit; // find a germ for  non oriented components 
+    }
+    // orient component
+    oriented_set.insert(fit->handle());
+    st.push(fit->handle());
+    while ( ! st.empty()) {
+      Face_handle fh = st.top();
+      st.pop();
+      for(int ih = 0 ; ih < 3 ; ++ih){
+	Face_handle fn = fh->neighbor(ih);
+	if (oriented_set.find(fn) == oriented_set.end()){
+	  int in = fh->mirror_index(ih);
+	  if (fn->vertex(cw(in)) != fh->vertex(ccw(ih))) fn->reorient();
+	  oriented_set.insert(fn);
+	  st.push(fn);
+	}
+      }
+    }
+
+  }
+  return;
+}
+	  
 
 template <  class Vb, class Fb>
 std::istream&

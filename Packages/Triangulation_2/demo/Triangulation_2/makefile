@@ -38,11 +38,10 @@ all:            \
                 constrained$(EXE_EXT) \
                 constrained_wi$(EXE_EXT) \
                 demo$(EXE_EXT) \
-                parse$(EXE_EXT) \
                 regular_demo$(EXE_EXT) 
 
-Delaunay$(EXE_EXT): Delaunay$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay Delaunay$(OBJ_EXT) $(LDFLAGS)
+Delaunay$(EXE_EXT): Delaunay$(OBJ_EXT) parse$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay Delaunay$(OBJ_EXT) parse$(OBJ_EXT) $(LDFLAGS)
 
 constrained$(EXE_EXT): constrained$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constrained constrained$(OBJ_EXT) $(LDFLAGS)
@@ -50,11 +49,8 @@ constrained$(EXE_EXT): constrained$(OBJ_EXT)
 constrained_wi$(EXE_EXT): constrained_wi$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constrained_wi constrained_wi$(OBJ_EXT) $(LDFLAGS)
 
-demo$(EXE_EXT): demo$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) $(LDFLAGS)
-
-parse$(EXE_EXT): parse$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)parse parse$(OBJ_EXT) $(LDFLAGS)
+demo$(EXE_EXT): demo$(OBJ_EXT) parse$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) parse$(OBJ_EXT)  $(LDFLAGS)
 
 regular_demo$(EXE_EXT): regular_demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular_demo regular_demo$(OBJ_EXT) $(LDFLAGS)
@@ -64,7 +60,6 @@ clean: \
                    constrained.clean \
                    constrained_wi.clean \
                    demo.clean \
-                   parse.clean \
                    regular_demo.clean 
 
 #---------------------------------------------------------------------#

@@ -19,20 +19,23 @@
 \ccDefinition
   
 The concept \ccRefName\ defines the requirements for the traits
-class of the constrained triangulation \ccc{Triangulation}
+class of the triangulation \ccc{Tr}
 plugged as first template argument of the class
-\ccc{Constrained_Triangulation_Plus_2<Tiangulation,Itag>}.
-The triangulation class \ccc{Triangulation} is either
-a \ccc{Constrained_Triangulation_2<Traits,Tds>}
-or a \ccc{Constrained_Delaunay_Triangulation_2<Traits,Tds>}.
-However, if intersection of constraints are allowed
+\ccc{Constrained_Triangulation_Plus_2<Tr,Itag>}.
+The template parameter \ccc{Tr} has to be instantiated
+by a constrained or Delaunay constrained triangulation
+class, i. e. either by
+\ccc{Constrained_Triangulation_2<Traits,Tds>}
+or by \ccc{Constrained_Delaunay_Triangulation_2<Traits,Tds>}.
+If intersections of input constraints are allowed
 (i.e. the \ccc{Itag} template parameter
 is either  \ccc{Tag_exact_intersections} or
 \ccc{Tag_exact_predicates}),  the traits
- class  of \ccc{Triangulation}  has to provide
+ class  \ccc{Traits}  of the base triangulation class
+has to provide
 an object function to compute the intersection of two
-constraint segment. Therefore, the concept
-\ccRefName is a refinement of the
+constrained segments. Therefore, the concept
+\ccRefName\ is a refinement of the
 the traits  concept
 (\ccc{TriangulationTraits_2} or \ccc{DelaunayTriangulationTraits_2})
 of the base triangulation  class.
@@ -47,10 +50,11 @@ ThisConcept generalizes one of the following concept\\
 \ccTypes
 
 \ccNestedType{Intersect_2}{A function object whose operator()
-computes the intersection of two segments :
+computes the intersection of two segments : \\
 \ccc{Object_2 operator()(Segment s1, Segment s2);}
-{Returns the intersection of \ccc{s1} and \ccc{s2}.}
-}
+Returns the intersection of \ccc{s1} and \ccc{s2}.}
+
+
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name

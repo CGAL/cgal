@@ -935,7 +935,7 @@ and build a Delaunay constrained triangulation.
 \ccIncludeExampleCode{Triangulation_2/constrained.C}
 
 
-\section{Augmented Constrained Triangulations}
+\section{Constrained Triangulations Plus}
 
 The class \ccc{Constrained_triangulation_plus_2<Tr,Itag>}
 implements a constrained triangulation that 
@@ -944,22 +944,25 @@ The class allows as input a set of constraint segments which may be
 intersecting, overlapping or partially
 overlapping segments. 
 The class  \ccc{Constrained_triangulation_plus_2<Tr,Itag>}
- constructs a triangulated arrangement
+ constructs a triangulation  of the  arrangement
 of these constraints.
-A vertex is introduced at each intersection point,
+To this purpose, a vertex  is introduced at each intersection point,
 thus refining the input constraints into subconstraints
-which are edges of the triangulation.
-In addition, the class \ccc{Constrained_triangulation_plus_2<Tr,Itag>} 
-is equipped
-with a data structure called  the constraint hierarchy that
- allows to retrieve, 
-for each input constraint, the 
+which are edges (more precisely constrained edges) of the
+triangulation.
+
+The class \ccc{Constrained_triangulation_plus_2<Tr,Itag>} 
+is equipped with a data structure called  the constraint hierarchy 
+that keeps track of  the input constraints and of their refinement
+in the triangulation.
+Thus it is possible to retrieve, for each input constraint, the 
 sequence of intersection vertices added on this constraint
-and for each constrained edge of the
-triangulation the set of input constraints that overlap it.
+and, for each constrained edge of the
+triangulation, the set of input constraints that overlap it.
 
 The class has two template parameters.  The first one has to be
-instantiated by a constrained or Delaunay constrained triangulation
+instantiated by a constrained triangulation or 
+a Delaunay constrained triangulation
 class. The second parameter is an intersection tag
  which allows to choose different
 strategies to deal with constraint intersections. 
@@ -968,21 +971,24 @@ the type \ccc{Tag_no_intersection} disallows intersections of
  input constraints,\\
 the type \ccc{Tag_exact_intersections} is to be used in conjonction
 with an exact aritmetic type \\
-the type \ccc{Tag_exact_predicates} is to be used when the triangulation traits
+the type \ccc{Tag_exact_predicates} is to be used when the traits
+class
+of the base triangulation class
 provide exact predicates but approximate constructions of the
 intersection points.
 
-When constraint intersection are allowed, the traits class of the
-triangulation is required to provide the type
+When intersection of input constraints are allowed, the traits class of the
+base triangulation class is required to provide the type
 \ccc{Intersect_2},  a function object whose operator()
 compute the intersection of two segments.
 
 
 \subsection{Example : Building a triangulated arrangement of constraint}
 
-The following code inputs a set of intersecting segments
-form a file and builds the triangulated arrangement of these
-segments.
+The following code inputs a set of intersecting constraint segments
+and count the number of constrained edges of the
+resulting triangulation.
+
 
 \ccIncludeExampleCode{Triangulation_2/constrained_plus.C}
 

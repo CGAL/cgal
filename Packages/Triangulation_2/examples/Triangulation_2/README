@@ -32,6 +32,10 @@ constrained
 input constraining edges from a file and build the Delaunay
 constrained triangulation that conforms to these constraining edges.
 
+constrained_plus
+Intersecting constraints are entered in a triangulation.
+The number of resulting subconstraints is output;
+
 points:
 Illustrates how to input user defined points and a user provided traits
 class in a Triangulation 

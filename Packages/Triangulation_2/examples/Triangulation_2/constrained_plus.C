@@ -31,11 +31,11 @@ main( )
   CDTplus  tr;
   int  nc = 0, nsubc=0;
   for(int j=0; j<11; j+=2){
-    nc += 1;
+    ++nc;
     tr.insert(pt[j],pt[j+1]);
   }
-  CDTplus::Subconstraint_iterator sit=tr.subconstraints_begin();
-  for( ; sit != tr.subconstraints_end(); ++sit) nsubc += 1;
+
+  nsubc = std::distance(tr.subconstraints_begin(), tr.subconstraints_end());
   std::cerr << nc << " constraints inserted" << std::endl;
   std::cerr << nsubc << " resulting subconstraints" << std::endl;
   return 0;

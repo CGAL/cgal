@@ -23,4 +23,7 @@ When clicking left, a point is input and the connected component containing
 this point is shown.
 You can try several points. Click right to terminate.
 
+constrained_plus
+Enter constraints with the mouse. They may intersect.
+Their arrangement is triangulated
 

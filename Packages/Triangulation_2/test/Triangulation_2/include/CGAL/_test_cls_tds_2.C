@@ -330,6 +330,11 @@ _test_cls_tds_2( const Tds &, const Gt &)
   Tds tds4f; if4 >> tds4f ;   
   assert( tds4f.is_valid());
 
+  // vrml input-output
+  std::ofstream os("vrml_tds4");
+  CGAL::set_ascii_mode(os);
+  tds4.vrml_output(os);
+
   // test destructor and return
   std::cout << "    destructors and return" << std::endl;
 }
