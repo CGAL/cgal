@@ -345,7 +345,8 @@ protected:
       texCoord[3] = 1.0;
     }
 
-    SoMaterialBindingElement::Binding bind = SoMaterialBindingElement::get(action->getState());
+    SoMaterialBindingElement::Binding bind = 
+      SoMaterialBindingElement::get(action->getState());
     float complexity = this->getComplexityValue(action);
 
     // We'll use this macro to make the code easier. It uses the
