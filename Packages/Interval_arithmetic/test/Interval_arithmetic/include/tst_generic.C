@@ -55,8 +55,7 @@ int square_root_test()
   {
     IA b = sqrt(a);
     DEBUG( cout << a-1 << endl; )
-    if ( (b.lower_bound() == a.lower_bound()) &&
-         (b.upper_bound() == a.upper_bound()) )
+    if ( b.is_same(a) )
       break;
     a = b;
   };
@@ -81,20 +80,24 @@ int overflow_test()
   IA a (2), b(2.1);
   IA c (-2,2), d(-2.1,2.1);
 
+  DEBUG( cout << "+infinity = " << HUGE_VAL; )
+  DEBUG( cout << "  maxdouble = " << IA::max_double << endl; )
+  DEBUG( cout << "CGAL_largest = " << IA::largest << endl; )
+  DEBUG( cout << "CGAL_smallest = " << IA::smallest << endl; )
   while (++i < 20)
   {
     a *= a;
     b = b * b;
     c *= c;
     d = d * d;
-    // DEBUG( cout << a << b << c << d << endl; )
-    DEBUG( cout << a << endl; )
+    DEBUG( cout << a << b << c << d << endl; )
+    // DEBUG( cout << a << endl; )
   }
 
-  return ( (a.lower_bound() !=  HUGE_VAL) && (a.upper_bound() == HUGE_VAL) &&
-           (b.lower_bound() !=  HUGE_VAL) && (b.upper_bound() == HUGE_VAL) &&
-           (c.lower_bound() == -HUGE_VAL) && (c.upper_bound() == HUGE_VAL) &&
-           (d.lower_bound() == -HUGE_VAL) && (d.upper_bound() == HUGE_VAL) );
+  return a.is_same(IA(IA::max_double, HUGE_VAL)) &&
+         b.is_same(IA(IA::max_double, HUGE_VAL)) &&
+         c.is_same(IA::largest) &&
+         d.is_same(IA::largest);
 }
 
 
@@ -108,6 +111,7 @@ int underflow_test()
   int i=0;
   IA a (0.5), b(-0.5,0.5);
 
+  DEBUG( cout << IA::min_double << endl;)
   while (++i < 20)
   {
     a *= a;
@@ -115,8 +119,7 @@ int underflow_test()
     DEBUG( cout << a << b << endl; )
   }
 
-  return ( (a.lower_bound() ==  0) && (a.upper_bound() != 0) &&
-           (b.lower_bound() !=  0) && (b.upper_bound() != 0) );
+  return a.is_same(IA(0, IA::min_double)) && b.is_same(IA::smallest);
 }
 
 
@@ -136,10 +139,7 @@ int division_test()
     b = ((IA)1/d + d)/4 + 0.5;
     a = ((IA)-1/e -e*1)/-4 - 0.5; // make it complicated to test more cases.
     DEBUG( cout << d << e << endl; )
-    if ( (b.lower_bound() == d.lower_bound()) &&
-         (b.upper_bound() == d.upper_bound()) &&
-         (a.upper_bound() == e.upper_bound()) &&
-         (a.upper_bound() == e.upper_bound()) )
+    if ( b.is_same(d) && a.is_same(e) )
       break;
     d = b;
     e = a;
@@ -147,12 +147,11 @@ int division_test()
   DEBUG( cout << d << e << i << endl; )
   DEBUG( cout << d-1 << e+1 << endl; )
 
-  return ( (c.lower_bound() == -HUGE_VAL) &&
-           (c.upper_bound() ==  HUGE_VAL) && (i == 54) );
+  return c.is_same(IA::largest) && (i == 54);
 }
 
 
-// Here it's just to have a 100% coverage for the test-suite.
+// Here it's mainly to have a 100% coverage for the test-suite.
 
 int multiplication_test()
 {
