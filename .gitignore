@@ -10,6 +10,15 @@ Packages/Mesh_2/demo/Mesh_2/last_input.edg
 Packages/Mesh_2/demo/Mesh_2/mesh
 Packages/Mesh_2/demo/Mesh_2/mesh_demo
 Packages/Mesh_2/demo/Mesh_2/semantic.cache
+Packages/Mesh_2/doc_html
+Packages/Mesh_2/doc_pdf
+Packages/Mesh_2/doc_ps
+Packages/Mesh_2/doc_tex/*.blg
+Packages/Mesh_2/doc_tex/*.cgallog
+Packages/Mesh_2/doc_tex/*.ilg
+Packages/Mesh_2/doc_tex/*.log
+Packages/Mesh_2/doc_tex/*.out
+Packages/Mesh_2/doc_tex/*.pdflg
 Packages/Mesh_2/doc_tex/Mesh_2/*.aux
 Packages/Mesh_2/doc_tex/Mesh_2/*.core
 Packages/Mesh_2/doc_tex/Mesh_2/*.dvi
