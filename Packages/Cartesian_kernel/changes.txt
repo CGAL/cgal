@@ -1,3 +1,6 @@
+ 9 Mar 2003 Andreas Fabri
+- Added missing typename
+
  8 Mar 2003 Andreas Fabri
 - Added functor and function for constructing orthogilnal vector of three points
 

@@ -1268,7 +1268,7 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Construct_orthogonal_vector_3
   {
-    typedef K::FT FT;
+    typedef typename K::FT FT;
     typedef typename K::Point_3     Point_3;
     typedef typename K::Vector_3    Vector_3;
     typedef typename K::Plane_3     Plane_3;
