@@ -70,7 +70,7 @@ public:
      * Constructor from a segment.
      * \param seg The segment.
      */
-    My_segment_cached_2 (const Segment_2& seg)
+    My_segment_cached_2 (const Segment_2 & seg)
     {
       Kernel_   kernel;
       
@@ -89,7 +89,7 @@ public:
      * \param source The source point.
      * \param target The target point.
      */
-    My_segment_cached_2 (const Point_2& source, const Point_2& target)
+    My_segment_cached_2 (const Point_2 & source, const Point_2 & target)
     {
       Kernel_   kernel;
       
@@ -100,6 +100,38 @@ public:
       pt = target;
     }
 
+    /*!
+     * Copy constructor
+     * \param seg the source segment to copy from
+     */
+    My_segment_cached_2 operator+(const My_segment_cached_2 & seg)
+    {
+      line = seg.line;
+      is_vert = seg.is_vert;
+      ps = seg.ps;
+      pt = seg.pt;
+      return *this;                   
+    }
+
+    /*!
+     * Copy constructor
+     * \param seg the source segment to copy from
+     */
+    My_segment_cached_2 operator+(const Segment_2 & seg)
+    {
+      Kernel_   kernel;
+      
+      line = kernel.construct_line_2_object()(seg);
+      is_vert = kernel.is_vertical_2_object()(seg);
+      
+      typename Kernel_::Construct_vertex_2 
+	construct_vertex = kernel.construct_vertex_2_object();
+
+      ps = construct_vertex(seg, 0);
+      pt = construct_vertex(seg, 1);
+      return *this;                   
+    }
+    
     friend class Arr_segment_cached_traits_2;
   };
 
@@ -220,11 +252,11 @@ public:
 	// Compare two vertical segments.
 	Compare_y_2       compare_y = compare_y_2_object();
 	Comparison_result res1 = compare_y (cv1.ps, cv1.pt);
-	const Point_2&    lower1 = (res1 == SMALLER) ? cv1.ps : cv1.pt;
-	const Point_2&    upper1 = (res1 == SMALLER) ? cv1.pt : cv1.ps;
+	const Point_2 &   lower1 = (res1 == SMALLER) ? cv1.ps : cv1.pt;
+	const Point_2 &   upper1 = (res1 == SMALLER) ? cv1.pt : cv1.ps;
 	Comparison_result res2 = compare_y (cv2.ps, cv2.pt);
-	const Point_2&    lower2 = (res2 == SMALLER) ? cv2.ps : cv2.pt;
-	const Point_2&    upper2 = (res2 == SMALLER) ? cv2.pt : cv2.ps;
+	const Point_2 &   lower2 = (res2 == SMALLER) ? cv2.ps : cv2.pt;
+	const Point_2 &   upper2 = (res2 == SMALLER) ? cv2.pt : cv2.ps;
 
 	if (compare_y(upper1, lower2) == SMALLER)
 	  // cv1 is entirely below cv2:
@@ -418,7 +450,7 @@ public:
    * \param cv The curve.
    * \return The source point.
    */
-  const Point_2& curve_source(const X_monotone_curve_2 & cv) const 
+  const Point_2 & curve_source(const X_monotone_curve_2 & cv) const 
   { 
     return (cv.ps);
   }
@@ -428,7 +460,7 @@ public:
    * \param cv The curve.
    * \return The target point.
    */
-  const Point_2& curve_target(const X_monotone_curve_2 & cv) const 
+  const Point_2 & curve_target(const X_monotone_curve_2 & cv) const 
   { 
     return (cv.pt);
   }
@@ -455,7 +487,7 @@ public:
    * \return The past-the-end iterator
    */
   template<class OutputIterator>
-  OutputIterator curve_make_x_monotone(const Curve_2& cv,
+  OutputIterator curve_make_x_monotone(const Curve_2 & cv,
                                        OutputIterator o) const
   {
     *o++ = cv;
@@ -487,9 +519,9 @@ public:
    * \param p the split point.
    * \pre p lies on cv but is not one of its end-points.
    */
-  void curve_split(const X_monotone_curve_2& cv, 
-		   X_monotone_curve_2& c1, X_monotone_curve_2& c2, 
-                   const Point_2& p) const
+  void curve_split(const X_monotone_curve_2 & cv, 
+		   X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
+                   const Point_2 & p) const
   {
     // Check preconditions.
     CGAL_precondition(curve_compare_y_at_x(p, cv) == EQUAL);
@@ -702,10 +734,10 @@ private:
    * intersection segment.
    * \return (true) if an intersectio has been found.
    */
-  bool _find_intersection (const X_monotone_curve_2& cv1,
-			   const X_monotone_curve_2& cv2,
-                           bool& is_overlap,
-			   Point_2& p1, Point_2& p2) const
+  bool _find_intersection (const X_monotone_curve_2 & cv1,
+			   const X_monotone_curve_2 & cv2,
+                           bool & is_overlap,
+			   Point_2 & p1, Point_2 & p2) const
   {
     // Computing the orientation ahead and checking whether the end points of
     // one curve are in opposite orientations with respect to the other seems
@@ -749,8 +781,8 @@ private:
 
       // Clip the first segment with respect to cv2.
       Comparison_result res = comp_xy(cv2.ps, cv2.pt);
-      const Point_2&    left2 = (res == SMALLER) ? cv2.ps : cv2.pt;
-      const Point_2&    right2 = (res == LARGER) ? cv2.ps : cv2.pt;
+      const Point_2 &   left2 = (res == SMALLER) ? cv2.ps : cv2.pt;
+      const Point_2 &   right2 = (res == LARGER) ? cv2.ps : cv2.pt;
 
       if (comp_xy(p2, left2) == SMALLER)
 	return (false);
@@ -831,7 +863,7 @@ class Segment_cached_2 :
    * Constructor from a segment.
    * \param seg The segment.
    */
-  Segment_cached_2 (const Segment_2& seg) :
+  Segment_cached_2 (const Segment_2 & seg) :
     Base(seg)
   {}
 
@@ -840,7 +872,7 @@ class Segment_cached_2 :
    * \param source The source point.
    * \param target The target point.
    */
-  Segment_cached_2 (const Point_2& source, const Point_2& target) :
+  Segment_cached_2 (const Point_2 & source, const Point_2 & target) :
     Base(source,target)
   {}
 
@@ -864,7 +896,7 @@ class Segment_cached_2 :
   /*!
    * Get the segment source.
    */
-  const Point_2& source() const 
+  const Point_2 & source() const 
   { 
     return ps; 
   }
@@ -872,20 +904,32 @@ class Segment_cached_2 :
   /*!
    * Get the segment target.
    */
-  const Point_2& target() const
+  const Point_2 & target() const
   { 
     return pt;
   }
 };
 
 /*!
- * Output operator for a cached segment.
+ * Exporter for a cached segment.
  */
 template <class Kernel_, class Stream_>
-Stream_ & operator<< (Stream_ & os, const Segment_cached_2<Kernel_>& seg)
+Stream_ & operator<<(Stream_ & os, const Segment_cached_2<Kernel_> & seg)
 {
   os << static_cast<typename Kernel_::Segment_2>(seg);
   return (os);
+}
+
+/*!
+ * Importer for a cached segment.
+ */
+template <class Kernel_, class Stream_>
+Stream_ & operator>>(Stream_ & is, Segment_cached_2<Kernel_> & seg)
+{
+  typename Kernel_::Segment_2 kernel_seg;
+  is >> kernel_seg;
+  seg = kernel_seg;
+  return is;
 }
 
 CGAL_END_NAMESPACE
