@@ -1,3 +1,7 @@
+22 September 2004:  Menelaos Karavelas
+- added specializations of the non-filtered traits classes for the
+  Filtered_kernel
+
 20 September 2004:  Menelaos Karavelas
 - added missing sites2.cin data file in examples/data directory
 - added missing svd-join_split.* files needed for documentation of the
