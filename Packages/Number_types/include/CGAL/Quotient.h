@@ -70,8 +70,8 @@ class Quotient
   
   Quotient<NT>&    normalize();
   
-  NT   numerator() const;
-  NT   denominator() const;
+  const NT&   numerator() const;
+  const NT&   denominator() const;
 
  public:
   NT   num;
@@ -290,13 +290,13 @@ io_tag(const Quotient<NumberType>&)
 
 template <class NumberType>
 inline
-NumberType
+const NumberType&
 Quotient<NumberType>::numerator() const
 { return num; }
 
 template <class NumberType>
 inline
-NumberType
+const NumberType&
 Quotient<NumberType>::denominator() const
 { return den; }
 
