@@ -109,33 +109,6 @@ SOURCE=.\tutorial8.C
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_Widget.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_widget_layer.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
-
-!IF  "$(CFG)" == "demo - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
-
-# Begin Custom Build
-InputPath=..\..\..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
-
-"../../../../src/Qt_widget/Qt_widget_standard_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../../src/Qt_widget/Qt_widget_standard_toolbar.moc" "../../../../Include/CGAL/IO/Qt_widget_standard_toolbar.h"
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
 # End Group
 # Begin Group "Resource Files"
 

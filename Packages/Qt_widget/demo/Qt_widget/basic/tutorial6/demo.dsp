@@ -109,18 +109,6 @@ SOURCE=.\tutorial6.C
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_Widget.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_widget_layer.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
-# End Source File
 # End Group
 # Begin Group "Resource Files"
 

@@ -100,6 +100,7 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
   painter->end();  // end painting on pixmap
   pixmap->resize(size());
   painter->begin(pixmap); // begin again painting on pixmap
+  clear();
   painter->setWorldMatrix(bm);
 
   // restore paint state
