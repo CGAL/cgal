@@ -35,6 +35,7 @@
 #include "Qt_layer_show_circum_circle.h"
 
 #include <qobject.h>
+#include <qmainwindow.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qstatusbar.h>

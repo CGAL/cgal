@@ -52,6 +52,7 @@
 
 
 #include <qobject.h>
+#include <qmainwindow.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qstatusbar.h>

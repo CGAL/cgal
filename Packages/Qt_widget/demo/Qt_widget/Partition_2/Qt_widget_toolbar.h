@@ -53,9 +53,9 @@
 
 
 #include <qobject.h>
+#include <qmainwindow.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
-#include <qmainwindow.h>
 #include <qbuttongroup.h>
 
 
