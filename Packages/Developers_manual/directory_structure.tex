@@ -15,17 +15,17 @@
 \ccIndexSubitemBegin{submitting}{directory structure for}
 \ccChapterRelease{Chapter Version: 1.1} \\
 \ccChapterAuthor{Geert-Jan Giezeman ({\tt geert@cs.uu.nl}) \& 
-                 Susan Hert ({\tt hert@mpi-sb.mpg.de})}
+                 Susan Hert ({\tt hert@mpi-sb.mpg.de}) \&
+                 Sylvain Pion ({\tt Sylvain.Pion@sophia.inria.fr}) }
 
 In order for code, demos, documentation, {\em etc.} developed for \cgal\ to 
 be included in an automated way into the internal (and public) releases of the 
 library, the files must be organized in a specific directory structure, which 
 we describe here.  We describe the entire directory structure for a package. 
 Not every package will have all the parts described here. Only the files
-{\tt version}, {\tt maintainer}, {\tt changes.txt} and {\tt description.txt} 
+{\tt maintainer}, {\tt changes.txt} and {\tt description.txt} 
 are obligatory.
 \index{maintainer file@{\tt maintainer} file}
-\index{version file@{\tt version} file}
 \ccIndexMainItem{\tt changes.txt}\ccIndexMainItem{\tt description.txt}
 Submissions should not contain files in other places than described here.
 Packages may be rejected if they do, and the contents won't go into releases.
@@ -56,8 +56,6 @@ The directory structure of a submission should be as follows:
       |- description.txt
       |
       |- long_description.txt
-      |
-      |- version
       |
       |- maintainer
 \end{verbatim}
@@ -93,11 +91,10 @@ The directory structure of a submission should be as follows:
        usable on all platforms. Demo programs may depend on platform-specific
        software and may require user interaction.  They are compiled but not
        run in the test suite. See Section~\ref{sec:demo_subdirectory} for a
-       more detailed description of this subdirectory
+       more detailed description of this subdirectory.
   \item[{\tt auxiliary}]\index{auxiliary directory@{\tt auxiliary} directory}
-       contains auxiliary software for CGAL. For instance,
-       GMP goes here, as does a special-purpose STL, and other things. The 
-       average package won't have this directory.
+       contains auxiliary software for CGAL. For instance, GMP goes here,
+       and other things. The average package won't have this directory.
   \item[{\tt scripts}]\index{scripts directory@{\tt scripts} directory}
        contains scripts that are useful for users of CGAL.
   \item[{\tt developer\_scripts}]\index{developers_scripts directory@{\tt developers\_scripts} directory}
@@ -107,34 +104,22 @@ The directory structure of a submission should be as follows:
   \item[\ccAnchor{example/changes.txt}{{\tt changes.txt}}]%
        \ccIndexMainItem{\tt changes.txt}
        should be used to document important changes between 
-       subsequent versions. Each entry in this file should include the new
-       version number and the date it was submitted together with the 
-       description of the changes.
+       subsequent versions. Each entry in this file should include
+       the date it was committed and the name of the commiter, as well as
+       a one line description of the change (most recent entries at the top),
+       in the following format, for example:
+       \begin{verse}
+       2 Feb 2004  Sylvain Pion\\
+       - Fix a memory-leak in file.h.\\
+       - Optimized function A::f().
+       \end{verse}
+
   \item[{\tt description.txt}]%
        \ccIndexMainItem{\tt description.txt}
        should give a very short description of the contents of the package. 
-       See the last column in the table on the 
-       \ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html}{packages web page}\begin{ccTexOnly} (\path|http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html|)\end{ccTexOnly} for example descriptions.
   \item[{\tt long\_description.txt}]%
        \ccIndexMainItem[c]{\tt long_description.txt}
        may be added with more detailed information about the submission. 
-       Follow the links from the fourth column in the table on the 
-       \ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html}{packages web page}
-        \begin{ccTexOnly} (\path|http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html|)\end{ccTexOnly} 
-        for example descriptions.
-  \item[\ccAnchor{example/version}{{\tt version}}]
-       \index{version file@{\tt version} file} should contain 
-       the version number and the date in the following format:
-       \begin{verse}
-       {\it version} ({\it date}) 
-       \end{verse}
-       For example:
-       \begin{verse}
-       2.3.3 (1 Sep 1999)
-       \end{verse}
-
-       The version number may contain only digits and dots. It should start and 
-       end with a digit. The date must be between parentheses.
   \item[\ccAnchor{example/maintainer}{{\tt maintainer}}]%
        \index{maintainer file@{\tt maintainer} file}
        should be used to names the maintainers of the package. The file should
