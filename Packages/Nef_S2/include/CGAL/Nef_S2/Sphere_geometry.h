@@ -117,7 +117,7 @@ bool is_degenerate(const Segment_2& s) const
 { return s.is_degenerate(); }
 
 int compare_xy(const Point_2& p1, const Point_2& p2) const {
-  TRACEN("compare_xy " << axis << ":" << p1 << " / " << p2);
+  CGAL_NEF_TRACEN("compare_xy " << axis << ":" << p1 << " / " << p2);
   return CGAL::spherical_compare(p1,p2,axis,+1);
 }
 

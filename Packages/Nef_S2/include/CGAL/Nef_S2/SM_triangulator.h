@@ -300,7 +300,7 @@ public:
 			Mark mohs) const;
 
   void correct_triangle_at(SVertex_handle v)
-  { TRACEN("correct_triangle_at "<<PH(v));
+  { CGAL_NEF_TRACEN("correct_triangle_at "<<PH(v));
     if ( !has_outdeg_two(v) ) return;
     SHalfedge_handle e = first_out_edge(v);
     CGAL_assertion(next(next(next(e)))==e);
@@ -341,7 +341,7 @@ public:
 
 template <typename Decorator_>
 void SM_triangulator<Decorator_>::triangulate()
-{ TRACEN("triangulate");
+{ CGAL_NEF_TRACEN("triangulate");
   // first create sphere segments from isoverts, edges, loops
   Seg_list L;
   Seg_map From;
@@ -512,7 +512,7 @@ template <typename Iterator, typename T>
 void SM_triangulator<Decorator_>::
 partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L, 
   CGAL::Unique_hash_map<Iterator,T>& M, int pos) const
-{ TRACEN("partition_to_halfsphere ");
+{ CGAL_NEF_TRACEN("partition_to_halfsphere ");
   CGAL_assertion(pos!=0);
   bool add_cross = true;
   Sphere_segment s1,s2;
@@ -535,9 +535,9 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   typename Seg_list::iterator it, itl;
 
   bool part_in_hemisphere(false);
-  CGAL_forall_iterators(it,L) { TRACEN("  "<<*it);
+  CGAL_forall_iterators(it,L) { CGAL_NEF_TRACEN("  "<<*it);
     if ( equal_as_sets(it->sphere_circle(),xycircle) ) {
-      TRACEN("  splitting xy seg "<<*it);
+      CGAL_NEF_TRACEN("  splitting xy seg "<<*it);
       int n1 =  it->intersection(yzcircle,s1,s2);
       if (n1 > 1 && !s2.is_degenerate()) 
       { M[ L.insert(it,s2) ] = M[it]; }
@@ -556,7 +556,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
   }
   CGAL_forall_iterators(it,L) {
     if ( it->is_halfcircle() ) {
-      TRACEN("  splitting halfcircle "<<*it);
+      CGAL_NEF_TRACEN("  splitting halfcircle "<<*it);
       Sphere_segment s1,s2;
       it->split_halfcircle(s1,s2);
       *it = s2; 
@@ -585,7 +585,7 @@ void SM_triangulator<Decorator_>::
 merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2)
 {
   SVertex_handle v1 = source(e1), v2 = target(e2);
-  TRACEN("merge_nodes "<<PH(v1)<<PH(v2));
+  CGAL_NEF_TRACEN("merge_nodes "<<PH(v1)<<PH(v2));
   CGAL_assertion(point(v1)==point(v2));
   SHalfedge_handle ep1 = previous(e1), en2 = next(e2);
   SHalfedge_around_svertex_circulator eav(out_edges(v2)),ee(eav);
@@ -601,7 +601,7 @@ merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2)
 template <typename Decorator_>
 void SM_triangulator<Decorator_>::
 merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2)
-{ TRACEN("merging halfspheres "<<PH(v1)<<PH(v2));
+{ CGAL_NEF_TRACEN("merging halfspheres "<<PH(v1)<<PH(v2));
   CGAL_assertion(point(v1)==point(v2));
   std::list<SHalfedge_pair> L_equator;
   SHalfedge_around_sface_circulator 
@@ -615,7 +615,7 @@ merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2)
   CGAL_forall_iterators(it,L_equator) { 
     SHalfedge_handle e1 = it->first, e2 = it->second;
     SHalfedge_handle e1t = twin(e1), e2t = twin(e2);
-    TRACEV(PH(e1));TRACEV(PH(e2));
+    CGAL_NEF_TRACEV(PH(e1));CGAL_NEF_TRACEV(PH(e2));
     SHalfedge_handle e2tp = previous(e2t);
     SHalfedge_handle e2tn = next(e2t);
     link_as_prev_next_pair(e2tp,e1);
@@ -635,10 +635,10 @@ template <typename Decorator_>
 void SM_triangulator<Decorator_>::
 complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
 		 Mark mohs) const
-{ TRACEN("complete_support");
+{ CGAL_NEF_TRACEN("complete_support");
   Mark m_buffer(mohs); 
   for (SVertex_iterator v = v_start; v != v_end; ++v) { 
-    TRACEN(" vertex = "<<PH(v));
+    CGAL_NEF_TRACEN(" vertex = "<<PH(v));
     SHalfedge_handle e_below = halfedge_below(v);
     if ( v != v_start )
       if ( e_below != SHalfedge_handle() ) {
@@ -650,7 +650,7 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
 	//	  ( pos > 0 ? (point(v).x() >= 0) : (point(v).x()<=0)) );
 	m_buffer = incident_mark(previous(first_out_edge(v)));
       } 
-    TRACEN(" face mark below "<<m_buffer);
+    CGAL_NEF_TRACEN(" face mark below "<<m_buffer);
 
     Object_handle o = support(v);
     SVertex_const_handle vs;
@@ -667,20 +667,20 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
     }
     else if ( CGAL::assign(ls,o) ) { mark(v) = E_->mark(ls); }
     else CGAL_assertion_msg(0,"damn wrong support.");
-    TRACEN(" face mark at "<<mark(v));
+    CGAL_NEF_TRACEN(" face mark at "<<mark(v));
 
     if ( is_isolated(v) ) continue;
 
     SHalfedge_around_svertex_circulator e(first_out_edge(v)), hend(e);
     CGAL_For_all(e,hend) {
-      TRACEN("  edge "<<PH(e));
+      CGAL_NEF_TRACEN("  edge "<<PH(e));
       if ( !is_forward(e) ) break;
       if ( support(e) != NULL ) {
         SHalfedge_const_handle ei;
         if ( CGAL::assign(ei,support(e)) ) { 
           if ( E_->circle(ei) != circle(e) ) { ei = E_->twin(ei); }
           CGAL_assertion( E_->circle(ei) == circle(e) ); 
-          TRACEN("  supporting edge "<<PH(ei));
+          CGAL_NEF_TRACEN("  supporting edge "<<PH(ei));
           incident_mark(twin(e)) = E_->mark(E_->face(E_->twin(ei)));
           mark(e) = E_->mark(ei);
           incident_mark(e) = m_buffer = E_->mark(E_->face(ei)); 
@@ -689,20 +689,20 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
         if ( CGAL::assign(li,support(e)) ) { 
           if ( E_->circle(li) != circle(e) ) { li = E_->twin(li); }
           CGAL_assertion( E_->circle(li) == circle(e) ); 
-          TRACEN("  supporting loop "<<PH(li));
+          CGAL_NEF_TRACEN("  supporting loop "<<PH(li));
           incident_mark(twin(e)) = E_->mark(E_->face(E_->twin(li)));
           mark(e) = E_->mark(li);
           incident_mark(e) = m_buffer = E_->mark(E_->face(li));
         }
-      } else { TRACEN("  support from face below ");
+      } else { CGAL_NEF_TRACEN("  support from face below ");
         incident_mark(twin(e)) = mark(e) = 
         incident_mark(e) = m_buffer;
       }
-      TRACEN("  new face mark "<<m_buffer);
+      CGAL_NEF_TRACEN("  new face mark "<<m_buffer);
 
     } // CGAL_For_all(e,hend)
 
-    TRACEN(" mark of "<<PH(v));
+    CGAL_NEF_TRACEN(" mark of "<<PH(v));
   }
 
 }

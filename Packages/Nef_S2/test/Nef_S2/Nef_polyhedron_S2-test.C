@@ -27,7 +27,7 @@ typedef Nef_polyhedron::Object_handle Object_handle;
 int main(int argc, char **argv)
 {
   CGAL::set_pretty_mode ( std::cerr );
-  SETDTHREAD(911);
+  CGAL_NEF_SETDTHREAD(911);
   std::cerr << CGAL::sweepversion << std::endl;
 
   // Sphere_map 109

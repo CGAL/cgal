@@ -29,7 +29,7 @@ bool operator()(bool b1, bool b2) const
 int main(int argc, char **argv)
 {
   CGAL::set_pretty_mode ( std::cerr );
-  SETDTHREAD(131);
+  CGAL_NEF_SETDTHREAD(131);
   // Sphere_geometry 11 
   // Sphere_geometry_OGL 13
   // Segment_overlay 23

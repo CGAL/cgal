@@ -30,6 +30,7 @@
 #include <CGAL/Nef_S2/SM_io_parser.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_S2/SM_overlayer.h>
+#include <CGAL/Modifier_base.h>
 
 #include <vector>
 #include <list>
@@ -154,6 +155,11 @@ public:
   typedef typename Decorator::SHalfloop_handle       SHalfloop_handle;
   typedef typename Decorator::SFace_handle           SFace_handle;
 
+  typedef typename Sphere_map::SVertex_base          SVertex;
+  typedef typename Sphere_map::SHalfedge_base        SHalfedge;
+  typedef typename Sphere_map::SHalfloop             SHalfloop;
+  typedef typename Sphere_map::SFace_base            SFace;
+
   typedef typename Decorator::SVertex_const_handle   SVertex_const_handle;
   typedef typename Decorator::SHalfedge_const_handle SHalfedge_const_handle;
   typedef typename Decorator::SHalfloop_const_handle SHalfloop_const_handle;
@@ -202,7 +208,7 @@ public:
   |circle==EXCLUDED|.}*/  
     
     set_sm(&sphere_map());
-    TRACEN("Nef_polyhedron_S2(): construction from circle "<<c);
+    CGAL_NEF_TRACEN("Nef_polyhedron_S2(): construction from circle "<<c);
     Decorator D(&sphere_map());
     Overlayer O(&sphere_map()); 
     O.create(c);
@@ -224,7 +230,7 @@ public:
     boundary if |b = INCLUDED| and excludes the boundary
     otherwise. |Forward_iterator| has to be an iterator with value
     type |Sphere_segment|.}*/
-  { TRACEN("Nef_polyhedron_S2(): creation from segment range");
+  { CGAL_NEF_TRACEN("Nef_polyhedron_S2(): creation from segment range");
     CGAL_assertion(first!=beyond);
     set_sm(&sphere_map());
     Overlayer D(&sphere_map());
@@ -275,6 +281,13 @@ public:
     D.simplify();
   }
 
+ void delegate( Modifier_base<Sphere_map>& modifier) {
+   // calls the `operator()' of the `modifier'. Precondition: The
+   // `modifier' returns a consistent representation.
+   modifier(sphere_map());
+   //   CGAL_expensive_postcondition( is_valid());
+ }
+
 protected:
   Nef_polyhedron_S2(const Sphere_map& H, bool clone=true) : Base(Nef_rep()) 
   /*{\Xcreate makes |\Mvar| a new object.  If |clone==true| then the
@@ -298,7 +311,7 @@ protected:
   bool is_empty() const
   /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
   { Const_decorator D(&sphere_map());
-    TRACEN("is_empty()"<<*this);
+    CGAL_NEF_TRACEN("is_empty()"<<*this);
     SFace_const_iterator f = D.sfaces_begin();
     return (D.number_of_svertices()==0 &&
             D.number_of_sedges()==0 &&
@@ -319,7 +332,7 @@ protected:
   }
 
   void extract_complement()
-  { TRACEN("extract complement");
+  { CGAL_NEF_TRACEN("extract complement");
     if ( this->is_shared() ) clone_rep();
     Overlayer D(&sphere_map());
     SVertex_iterator v;
@@ -334,7 +347,7 @@ protected:
   }
 
   void extract_interior()
-  { TRACEN("extract interior");
+  { CGAL_NEF_TRACEN("extract interior");
     if ( this->is_shared() ) clone_rep();
     Overlayer D(&sphere_map());
     SVertex_iterator v;
@@ -347,7 +360,7 @@ protected:
 
 
   void extract_boundary()
-  { TRACEN("extract boundary");
+  { CGAL_NEF_TRACEN("extract boundary");
     if ( this->is_shared() ) clone_rep();
     Overlayer D(&sphere_map());
     SVertex_iterator v;
@@ -362,7 +375,7 @@ protected:
 
   void extract_closure()
   /*{\Xop converts |\Mvar| to its closure. }*/
-  { TRACEN("extract closure");
+  { CGAL_NEF_TRACEN("extract closure");
     extract_complement();
     extract_interior();
     extract_complement();
@@ -370,7 +383,7 @@ protected:
 
   void extract_regularization()
   /*{\Xop converts |\Mvar| to its regularization. }*/
-  { TRACEN("extract regularization");
+  { CGAL_NEF_TRACEN("extract regularization");
     extract_interior();
     extract_closure();
   }

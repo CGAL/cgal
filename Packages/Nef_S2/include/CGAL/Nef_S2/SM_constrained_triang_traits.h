@@ -135,7 +135,7 @@ public:
       : Base(out), K(k), event_Q(lt_pnts_xy(*this,K)), 
         SL(lt_edges_in_sweepline(p_sweep,e_low,e_high,*this,K)),
         SLItem(SL.end()), v_first(in.first), v_beyond(in.second)
-    { TRACEN("Constrained Triangulation Sweep"); }
+    { CGAL_NEF_TRACEN("Constrained Triangulation Sweep"); }
 
   /* |treat_new_sedge| is used to forward information that exists
      at input edges of the triangulation as such it spreads input
@@ -146,7 +146,7 @@ public:
   { assoc_info(e);
     mark(e) = incident_mark(e) = incident_mark(twin(e)) = 
       incident_mark(next(e));
-    TRACEN(" treat_new_edge "<<PH(e));
+    CGAL_NEF_TRACEN(" treat_new_edge "<<PH(e));
   }
 
   SHalfedge_handle new_bi_edge(SVertex_handle v1, SVertex_handle v2)
@@ -187,38 +187,38 @@ public:
 
   void triangulate_up(SHalfedge_handle& e_apex)
   {
-    TRACEN("triangulate_up "<<segment(e_apex));
+    CGAL_NEF_TRACEN("triangulate_up "<<segment(e_apex));
     SVertex_handle v_apex = source(e_apex);
     while (true) {
       SHalfedge_handle e_vis = previous(twin(e_apex));
       bool in_sweep_line = (SLItem[e_vis] != SL.end()); 
       bool not_visible = !edge_is_visible_from(v_apex,e_vis);
-        TRACEN(" checking "<<in_sweep_line<<not_visible<<" "<<segment(e_vis));
+        CGAL_NEF_TRACEN(" checking "<<in_sweep_line<<not_visible<<" "<<segment(e_vis));
       if ( in_sweep_line || not_visible) {
-        TRACEN("  STOP"); return;
+        CGAL_NEF_TRACEN("  STOP"); return;
       }
       SHalfedge_handle e_back = new_bi_edge(e_apex,e_vis);
       e_apex = e_back;
-      TRACEN(" produced " << segment(e_apex));
+      CGAL_NEF_TRACEN(" produced " << segment(e_apex));
     }
   }
 
   void triangulate_down(SHalfedge_handle& e_apex)
   {
-    TRACEN("triangulate_down "<<segment(e_apex));
+    CGAL_NEF_TRACEN("triangulate_down "<<segment(e_apex));
     SVertex_handle v_apex = source(e_apex);
     while (true) {
       SHalfedge_handle e_vis = next(e_apex);
       bool in_sweep_line = (SLItem[e_vis] != SL.end());
       bool not_visible = !edge_is_visible_from(v_apex,e_vis);
-        TRACEN(" checking "<<in_sweep_line<<not_visible<<" "<<segment(e_vis));
+        CGAL_NEF_TRACEN(" checking "<<in_sweep_line<<not_visible<<" "<<segment(e_vis));
       if ( in_sweep_line || not_visible) {
-          TRACEN("  STOP"); return;
+          CGAL_NEF_TRACEN("  STOP"); return;
       }
       SHalfedge_handle e_vis_rev = twin(e_vis);
       SHalfedge_handle e_forw = new_bi_edge(e_vis_rev,e_apex);
       e_apex = twin(e_forw);
-      TRACEN(" produced " << segment(e_apex));
+      CGAL_NEF_TRACEN(" produced " << segment(e_apex));
     }
   }
 
@@ -227,23 +227,23 @@ public:
     // we triangulate the interior of the whole chain between
     // target(e_upper) and target(e_lower)
     assert(source(e_upper)==source(e_lower));
-    TRACE("triangulate_between\n   "<<segment(e_upper));
-    TRACEN("\n   "<<segment(e_lower));
+    CGAL_NEF_TRACE("triangulate_between\n   "<<segment(e_upper));
+    CGAL_NEF_TRACEN("\n   "<<segment(e_lower));
     SHalfedge_handle e_end = twin(e_lower);
     while (true) {
       SHalfedge_handle e_vis =  next(e_upper);
       SHalfedge_handle en_vis = next(e_vis);
-      TRACEN(" working on base e_vis " << segment(e_vis));
-      TRACEN(" next is " << segment(en_vis));
+      CGAL_NEF_TRACEN(" working on base e_vis " << segment(e_vis));
+      CGAL_NEF_TRACEN(" next is " << segment(en_vis));
       if (en_vis == e_end) return;
       e_upper = twin(new_bi_edge(twin(e_vis),e_upper));
-      TRACEN(" produced " << segment(e_upper));
+      CGAL_NEF_TRACEN(" produced " << segment(e_upper));
     } 
   }
 
   void process_event() 
   {
-      TRACEN("\nPROCESS_EVENT " << p_sweep);
+      CGAL_NEF_TRACEN("\nPROCESS_EVENT " << p_sweep);
     SHalfedge_handle e, ep, eb_low, eb_high, e_end;
     if ( !is_isolated(event) ) {
       e = last_out_edge(event);
@@ -256,7 +256,7 @@ public:
        ingoing and outgoing => e is lowest in ingoing bundle */
     eb_high = e_end = ep;
     eb_low = e;
-    TRACEN("determining handle in SL");
+    CGAL_NEF_TRACEN("determining handle in SL");
     if ( e != SHalfedge_handle() ) {
       point(target(e_search)) = p_sweep; // degenerate loop edge
       sit_pred = SLItem[e];
@@ -271,7 +271,7 @@ public:
     while ( e != SHalfedge_handle() ) { // walk adjacency list clockwise
       if ( SLItem[e] != SL.end() ) 
       {
-        TRACEN("ending " << segment(e));
+        CGAL_NEF_TRACEN("ending " << segment(e));
         if (ending_edges) triangulate_between(e,cyclic_adj_succ(e));
         ending_edges = true;
         SL.erase(SLItem[e]);
@@ -280,7 +280,7 @@ public:
       }
       else
       {
-        TRACEN("starting "<<segment(e));
+        CGAL_NEF_TRACEN("starting "<<segment(e));
         sit = SL.insert(sit,ss_pair(e,e));
         link_bi_edge_to(e,sit);
         if ( !starting_edges ) eb_high = cyclic_adj_succ(e);
@@ -295,7 +295,7 @@ public:
       SHalfedge_handle e_vis = sit_pred->second;
       SHalfedge_handle e_vis_n = cyclic_adj_succ(e_vis);
       eb_low = eb_high = new_bi_edge(event,e_vis_n); 
-      TRACEN(" producing link "<<segment(eb_low)<<
+      CGAL_NEF_TRACEN(" producing link "<<segment(eb_low)<<
 	     "\n    before "<<segment(e_vis_n));
     }
 
@@ -323,7 +323,7 @@ public:
 
   void initialize_structures()
   {
-      TRACEN("initialize_structures ");
+      CGAL_NEF_TRACEN("initialize_structures ");
     
     for ( event = v_first; event != v_beyond; ++event )
       event_Q.insert(event); // sorted order of vertices
@@ -336,7 +336,7 @@ public:
       SHalfedge_around_svertex_circulator 
         e(first_out_edge(event)), eend(e);
       CGAL_For_all(e,eend) {
-        TRACEN("init with "<<PH(e));
+        CGAL_NEF_TRACEN("init with "<<PH(e));
         ss_iterator sit = SL.insert(ss_pair(e,e)).first;
         link_bi_edge_to(e,sit);
       }
@@ -362,7 +362,7 @@ public:
     // we move to the second vertex:
     procede_to_next_event();
     event_exists(); // sets p_sweep for check invariants
-    TRACEN("EOF initialization");
+    CGAL_NEF_TRACEN("EOF initialization");
   }
 
   void complete_structures() 

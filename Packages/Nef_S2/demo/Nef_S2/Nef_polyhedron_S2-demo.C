@@ -27,7 +27,7 @@ typedef CGAL::Random_points_in_cube_3<Point_3,Creator> Point_source;
 int main(int argc, char **argv)
 {
   CGAL::set_pretty_mode ( std::cerr );
-  SETDTHREAD(911);
+  CGAL_NEF_SETDTHREAD(911);
   // Sphere_geometry 11 
   // Sphere_geometry_OGL 13
   // Segment_overlay 23

@@ -342,7 +342,7 @@ template <typename SM_>
 void SM_const_decorator<SM_>::
 check_integrity_and_topological_planarity(bool faces) const
 {
-  TRACEN("check_integrity_and_topological_planarity:");
+  CGAL_NEF_TRACEN("check_integrity_and_topological_planarity:");
   using CGAL::Object_index;
   Object_index<SVertex_const_iterator>   
     VI(svertices_begin(),svertices_end(),'v');
@@ -363,7 +363,7 @@ check_integrity_and_topological_planarity(bool faces) const
     } else {
       CGAL_assertion_msg(first_out_edge(v) != SHalfedge_const_handle(),
       VI(v).c_str());
-      TRACEN(point(v)<<" "<<EI(first_out_edge(v)));
+      CGAL_NEF_TRACEN(point(v)<<" "<<EI(first_out_edge(v)));
       CGAL_assertion_msg(source(first_out_edge(v)) == v,
 			 VI(v).c_str());
     }
@@ -413,13 +413,13 @@ check_integrity_and_topological_planarity(bool faces) const
 		      iso_vert_num 
 		      + number_of_sloops());
   CGAL_assertion_code(int f_num = number_of_sface_cycles() - c_num + 1);
-  CGAL_assertion_code(TRACEV(fc_num));
-  CGAL_assertion_code(TRACEV(iv_num));
-  CGAL_assertion_code(TRACEV(iso_vert_num));
-  CGAL_assertion_code(TRACEV(v_num));
-  CGAL_assertion_code(TRACEV(e_num));
-  CGAL_assertion_code(TRACEV(c_num));
-  CGAL_assertion_code(TRACEV(f_num));
+  CGAL_assertion_code(CGAL_NEF_TRACEV(fc_num));
+  CGAL_assertion_code(CGAL_NEF_TRACEV(iv_num));
+  CGAL_assertion_code(CGAL_NEF_TRACEV(iso_vert_num));
+  CGAL_assertion_code(CGAL_NEF_TRACEV(v_num));
+  CGAL_assertion_code(CGAL_NEF_TRACEV(e_num));
+  CGAL_assertion_code(CGAL_NEF_TRACEV(c_num));
+  CGAL_assertion_code(CGAL_NEF_TRACEV(f_num));
   /* this means all face cycles and all isolated vertices are 
      indeed referenced from a face */
   /* every isolated vertex increases the component count

@@ -543,7 +543,7 @@ void merge_edge_pairs_at_target(SHalfedge_handle e)
   If |next(e)| was entry point of |face(e)| then |e| takes this role.
   The same holds for |twin(next(e))| and |face(twin(e))|.}*/
 {
-  TRACEN("merge_edge_pairs_at_target "<<PH(e));
+  CGAL_NEF_TRACEN("merge_edge_pairs_at_target "<<PH(e));
   SHalfedge_handle en = next(e), eno = twin(en), enn, enno,
                eo = twin(e) ;
   if ( is_closed_at_target(en) ) { enn = eo; enno=e; }
@@ -568,7 +568,7 @@ void merge_edge_pairs_at_target(SHalfedge_handle e)
   { undo_sm_boundary_object(eno,f2); store_sm_boundary_object(eo,f2); }
   delete_vertex_only(v);
   delete_edge_pair_only(en);
-  TRACEN("END "<<PH(previous(e))<<PH(e)<<PH(next(e)));
+  CGAL_NEF_TRACEN("END "<<PH(previous(e))<<PH(e)<<PH(next(e)));
 }
 
 void convert_edge_to_loop(SHalfedge_handle e)
@@ -576,7 +576,7 @@ void convert_edge_to_loop(SHalfedge_handle e)
   loop |l| of |\Mvar|. |e|, |twin(e)| and |v| are deleted
   in the conversion. \precond there was no loop in |\Mvar|.
   As |e| was entry point of |face(e)| then |l| takes this role.}*/
-{ TRACEN("convert_edge_to_loop "<<PH(e));
+{ CGAL_NEF_TRACEN("convert_edge_to_loop "<<PH(e));
   CGAL_assertion( source(e)==target(e) );
   CGAL_assertion( !has_shalfloop() );
   SHalfloop_handle l = new_shalfloop_pair();
@@ -597,8 +597,8 @@ void flip_diagonal(SHalfedge_handle e)
 { SHalfedge_handle r = twin(e);
   SHalfedge_handle en = next(e), enn= next(en);
   SHalfedge_handle rn = next(r), rnn= next(rn);
-  TRACEN(PH(e)<<PH(en)<<PH(enn));
-  TRACEN(PH(r)<<PH(rn)<<PH(rnn));
+  CGAL_NEF_TRACEN(PH(e)<<PH(en)<<PH(enn));
+  CGAL_NEF_TRACEN(PH(r)<<PH(rn)<<PH(rnn));
   CGAL_assertion( next(enn)==e && next(rnn)==r );
   remove_from_adj_list_at_source(e);
   remove_from_adj_list_at_source(r);
@@ -632,7 +632,8 @@ SHalfedge_handle new_shalfedge_pair_at_source
       set_adjacency_at_source_between(cap(ef),e1,ef);
       set_first_out_edge(v,e1);
     } else {
-      set_adjacency_at_source_between(ef,e1,cas(ef));
+      //      set_adjacency_at_source_between(ef,e1,cas(ef));
+      set_adjacency_at_source_between(cap(ef),e1,ef);
     }
   } else
     close_tip_at_source(e1,v);
@@ -815,13 +816,13 @@ The macros are then |CGAL_forall_svertices_of(v,V)|,
 |CGAL_forall_sfaces_of(f,V)|, |CGAL_forall_sface_cycles_of(fc,F)|.}*/
 
 void transform( const Aff_transformation_3& linear) {
-  //  TRACEN("transform sphere map of vertex" << center_vertex()->point());
+  //  CGAL_NEF_TRACEN("transform sphere map of vertex" << center_vertex()->point());
     // The affine transformation is linear, i.e., no translation part.
     CGAL_precondition( linear.hm(0,3) == 0 && 
                        linear.hm(1,3) == 0 && 
                        linear.hm(2,3) == 0);
 
-    //    TRACEN(linear);
+    //    CGAL_NEF_TRACEN(linear);
     for (SVertex_iterator i = svertices_begin(); i != svertices_end(); ++i)
       point(i) = normalized(Sphere_point( point(i).transform( linear)));
     for (SHalfedge_iterator i = shalfedges_begin(); i !=shalfedges_end(); ++i)

@@ -137,8 +137,8 @@ void draw_map() const
   CGAL_forall_shalfedges(e,*this) {
     if ( Done[e] ) continue;
     SHalfedge_const_handle en(next(e)),enn(next(en));
-    TRACEV(Base::incident_triangle(e));
-    TRACEN(incident_mark(e)<<incident_mark(en)<<incident_mark(enn));
+    CGAL_NEF_TRACEV(Base::incident_triangle(e));
+    CGAL_NEF_TRACEN(incident_mark(e)<<incident_mark(en)<<incident_mark(enn));
     CGAL_assertion(Base::incident_mark(e)==Base::incident_mark(en) &&
 		   Base::incident_mark(en)==Base::incident_mark(enn));
     Mark m = Base::incident_mark(e);
