@@ -1,3 +1,5 @@
+2.2.25 Add #include <iterator> to please GCC 3.1.
+
 2.2.20 moved _ref directory up one level and removed some undefined commands
 
 2.2.19 put reference pages in SearchStructures_ref directory

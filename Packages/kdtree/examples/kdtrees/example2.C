@@ -9,6 +9,7 @@
 #include <CGAL/Cartesian.h>
 
 #include <iostream>
+#include <iterator>
 #include <ctime>
 #include <cassert>
 #include <list>
