@@ -129,13 +129,13 @@ Orientation
 orientationC3(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &py,
 	const Filtered_exact<CT,ET> &pz,
-	                   const Filtered_exact<CT,ET> &qx,
+	              const Filtered_exact<CT,ET> &qx,
 	const Filtered_exact<CT,ET> &qy,
 	const Filtered_exact<CT,ET> &qz,
-	                   const Filtered_exact<CT,ET> &rx,
+	              const Filtered_exact<CT,ET> &rx,
 	const Filtered_exact<CT,ET> &ry,
 	const Filtered_exact<CT,ET> &rz,
-	                   const Filtered_exact<CT,ET> &sx,
+	              const Filtered_exact<CT,ET> &sx,
 	const Filtered_exact<CT,ET> &sy,
 	const Filtered_exact<CT,ET> &sz)
 {
@@ -507,10 +507,10 @@ bool
 has_smaller_dist_to_pointC3(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &py,
 	const Filtered_exact<CT,ET> &pz,
-	                                 const Filtered_exact<CT,ET> &qx,
+	                            const Filtered_exact<CT,ET> &qx,
 	const Filtered_exact<CT,ET> &qy,
 	const Filtered_exact<CT,ET> &qz,
-	                                 const Filtered_exact<CT,ET> &rx,
+	                            const Filtered_exact<CT,ET> &rx,
 	const Filtered_exact<CT,ET> &ry,
 	const Filtered_exact<CT,ET> &rz)
 {

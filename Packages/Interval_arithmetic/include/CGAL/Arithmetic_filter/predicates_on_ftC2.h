@@ -48,7 +48,6 @@ template < class CT, class ET >
 // CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_xC2(const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
 	            const Filtered_exact<CT,ET> &l1a,
 	const Filtered_exact<CT,ET> &l1b,
 	const Filtered_exact<CT,ET> &l1c,
@@ -63,7 +62,6 @@ compare_xC2(const Filtered_exact<CT,ET> &px,
   {
     result = compare_xC2(
 		px.interval(),
-		py.interval(),
 		l1a.interval(),
 		l1b.interval(),
 		l1c.interval(),
@@ -77,7 +75,6 @@ compare_xC2(const Filtered_exact<CT,ET> &px,
     FPU_set_cw(backup);
     result = compare_xC2(
 		px.exact(),
-		py.exact(),
 		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
@@ -328,7 +325,7 @@ template < class CT, class ET >
 Comparison_result
 compare_deltax_deltayC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &qx,
-	                             const Filtered_exact<CT,ET> &ry,
+	                        const Filtered_exact<CT,ET> &ry,
 	const Filtered_exact<CT,ET> &sy)
 {
   Comparison_result result;
@@ -506,11 +503,11 @@ template < class CT, class ET >
 Oriented_side
 side_of_oriented_circleC2(const Filtered_exact<CT,ET> &px,
 	const Filtered_exact<CT,ET> &py,
-	                               const Filtered_exact<CT,ET> &qx,
+	                          const Filtered_exact<CT,ET> &qx,
 	const Filtered_exact<CT,ET> &qy,
-	                               const Filtered_exact<CT,ET> &rx,
+	                          const Filtered_exact<CT,ET> &rx,
 	const Filtered_exact<CT,ET> &ry,
-	                               const Filtered_exact<CT,ET> &tx,
+	                          const Filtered_exact<CT,ET> &tx,
 	const Filtered_exact<CT,ET> &ty)
 {
   Oriented_side result;
