@@ -1,7 +1,7 @@
 // Triangulation_3/example_simple.C
 #include <CGAL/Cartesian.h>
 
-// Workaround for buggy compilers.
+// Workaround for VC++ necessary for Filtered_exact.
 #ifdef CGAL_CFG_MATCHING_BUG_2
 #  define CGAL_IA_CT double
 #  define CGAL_IA_PROTECTED true
