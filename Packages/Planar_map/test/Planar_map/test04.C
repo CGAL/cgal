@@ -1,3 +1,5 @@
+#include <CGAL/basic.h>
+
 #ifndef VOID_TEST
 #include "numrep1.h"
 #include <cassert>
@@ -118,11 +120,3 @@ int main()
 
   return 0;
 }
-
-
-
-
-
-
-
-

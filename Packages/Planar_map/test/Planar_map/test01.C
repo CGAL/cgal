@@ -1,3 +1,5 @@
+#include <CGAL/basic.h>
+
 #ifndef VOID_TEST
 #include "numrep1.h"
 #include <cassert>
@@ -95,10 +97,11 @@ int main()
      Halfedge_handle e = Pm.locate(p,lt);
     
     if (lt==Pm.UNBOUNDED_FACE) std::cout << "Unbounded face" << std::endl;
-    else if (lt==Pm.FACE) std::cout << "Face that is left of " << e->curve() << std::endl;
+    else if (lt==Pm.FACE) std::cout << "Face that is left of " << e->curve()
+                                    << std::endl;
     else if (lt==Pm.EDGE) std::cout << e->curve() << std::endl;
     //    else if (lt==Pm.VERTEX) std::cout << e.source().point() << std::endl;
-    else if (lt==Pm.VERTEX) std::cout << e->target()->point() << std::endl; //changed 
+    else if (lt==Pm.VERTEX) std::cout << e->target()->point() << std::endl;
     else std::cout << "Unknown locate type" << std::endl;
   }
 
@@ -117,9 +120,11 @@ int main()
     std::cout << "Above" << std::endl;
     if (lt==Pm.UNBOUNDED_FACE) std::cout << "Unbounded face" << std::endl;
     //    else if (lt==Pm.EDGE) std::cout << e1->curve() << std::endl;
-    else if (lt==Pm.EDGE) std::cout << e1->curve() << " (oriented toward " << e1->target()->point() << ")" << std::endl;
-    //    else if (lt==Pm.VERTEX) std::cout << e1.source().point() << std::endl;
-    else if (lt==Pm.VERTEX) std::cout << e1->target()->point() << std::endl; //changed
+    else if (lt==Pm.EDGE) std::cout << e1->curve() << " (oriented toward "
+                                    << e1->target()->point() << ")"
+                                    << std::endl;
+    //   else if (lt==Pm.VERTEX) std::cout << e1.source().point() << std::endl;
+    else if (lt==Pm.VERTEX) std::cout << e1->target()->point() << std::endl;
     else std::cout << "Unknown locate type" << std::endl;
 
     Halfedge_handle e2 = Pm.vertical_ray_shoot(p,lt,false);
@@ -127,8 +132,10 @@ int main()
     std::cout << "Below" << std::endl;
     if (lt==Pm.UNBOUNDED_FACE) std::cout << "Unbounded face" << std::endl;
     //    else if (lt==Pm.EDGE) std::cout << e2->curve() << std::endl;
-    else if (lt==Pm.EDGE) std::cout << e2->curve() << " (oriented toward " << e2->target()->point() << ")" << std::endl;
-    //    else if (lt==Pm.VERTEX) std::cout << e2.source().point() << std::endl;
+    else if (lt==Pm.EDGE) std::cout << e2->curve() << " (oriented toward "
+                                    << e2->target()->point() << ")"
+                                    << std::endl;
+    //   else if (lt==Pm.VERTEX) std::cout << e2.source().point() << std::endl;
     else if (lt==Pm.VERTEX) std::cout << e2->target()->point() << std::endl;
     else std::cout << "Unknown locate type" << std::endl;    
   }
@@ -138,4 +145,3 @@ int main()
 
   return 0;
 }
- 
