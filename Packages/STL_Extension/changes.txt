@@ -9,6 +9,7 @@
 
 ALL : New functor adaptors (bind/compose).
 ALL : Removed Compose for Projection objects.
+ALL : Added Allocators to In_place_list acc. to Lutz.
 ALL : Added compose_shared.
 ALL : Fixed Arity_traits problem.
 ALL : Fixed Inverse_index for buggy gcc-3 map acc. to Eti.
