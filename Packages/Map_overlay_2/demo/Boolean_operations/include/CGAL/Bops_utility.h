@@ -65,7 +65,7 @@ public:
         std::cout<<"The number of resulting vertices is "<<vertices_result.size()<<std::endl;
         
         W.set_line_width(3);
-        for (list<typename PM::Face_const_handle>::iterator  f_iter = faces_result.begin(); 
+        for (typename std::list<typename PM::Face_const_handle>::iterator  f_iter = faces_result.begin(); 
              f_iter != faces_result.end(); ++f_iter){
           typename PM::Face_const_handle fh = *f_iter;
           if (fh->is_unbounded())
@@ -104,7 +104,7 @@ public:
           } while (++cc != fh->outer_ccb());
         }
         
-        for (list<typename PM::Halfedge_const_handle>::iterator h_iter = halfedges_result.begin(); 
+        for (typename std::list<typename PM::Halfedge_const_handle>::iterator h_iter = halfedges_result.begin(); 
              h_iter != halfedges_result.end(); ++h_iter, ++h_iter){
           typename PM::Halfedge_const_handle h = *h_iter;
           
@@ -113,7 +113,7 @@ public:
           W << h->curve();
         }
         
-        for (list<typename PM::Vertex_const_handle>::iterator  v_iter = vertices_result.begin(); 
+        for (typename std::list<typename PM::Vertex_const_handle>::iterator  v_iter = vertices_result.begin(); 
              v_iter != vertices_result.end(); ++v_iter){
           W.set_node_width(4);
           
