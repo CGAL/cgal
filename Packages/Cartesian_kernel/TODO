@@ -3,9 +3,6 @@ Stuff to look at, as time permits:
 
 - New NT requirement about greatest common divisor.
 
-- Have unique global functions calling the kernel traits function objects,
-  instead of the contrary.
-
 - Why Ray_3 and Line_3 don't have the same internal representation ???
 
 - Mariette would like Circle intersection.
@@ -14,9 +11,6 @@ Stuff to look at, as time permits:
     Tomas Möller. A fast triangle-triangle intersection test. Journal of
     Graphics Tools, 2(2):25-30, 1997
               A Fast Triangle-Triangle Intersection Test,  tompa@clarus.se
-
-- det3x3_by_formula speeds up T3D a lot when it's inline.
-  CGAL_KERNEL_MEDIUM_INLINE should be settable to inline from the outside...
 
 - Stefan voudrait un tag :
   > > > As for the tag, I would like to distinguish the tag used to trigger
@@ -82,20 +76,6 @@ Backward
     on the command line, and not in config.h... ?
   - Have a separate (top-level) kernel for the advanced cartesian ? 
 
-- Remove operator!=() definitions, and use STL ?
-- Move include/CGAL/Kernel_common_traits.h to
-  include/CGAL/Kernel/common_traits.h ?
-- Use CGAL_TYPENAME_MSVC_NULL where needed.
-  Only in the template parameters depending on a template parameter, right ?
-  See empirically where it breaks with VC++.
-- Iso_rectangleC2 should store a twotuple of _non_ ref-counted points ?
-  whereas now it's a twotuple of ref-counted points, which is a pure lost.
-  (all local, temporary objects don't need any ref-counting)
-  Well, when you ask for the point outside, you get a handled point, so...
-  Same thing for Circle/Sphere, BTW.
-- Why can't we simply have : typedef Iso_rectangleC2<double> Bbox_2;  ?
-  - Iso_rectangleC2 stores a Twotuple<Point_2>, which means they are
-    ref-counted, which is sub-optimal...  See above.
 - ::bbox() robustness issues : it's not robust, since basically, we use
   to_double().
   The homogeneous kernel uses an epsilon to get this right, in the case
@@ -115,15 +95,6 @@ Backward
 {
   return Bbox_2(CGAL::to_interval(x()), CGAL::to_interval(y()));
 }
-- Orientation of Circle_2 and Sphere_3.  I wonder if it's used anywhere.
-  Wouldn't it have been better if the kernel circles and spheres were not
-  oriented, and if someone needs an orientation, he will be able to build one
-  using the kernel's as a base or something.  Because right now, Weighted_point
-  need to be defined in regular triangulations (check if it's the same
-  representation, square_radius wise...)...  It seems even more strange in 3D.
-  Maybe it's too late for a change, but maybe not ?
-  Or maybe worth having a separate Non_oriented_Circle in the kernel ?
-  (the oriented one using code from the non-oriented one...)
 - Put the predicates that are marked /*CGAL_NO_FILTER*/ in a separate file,
   say <predicates/no_filter_kernel_ftC2.h> ?  This will simplify the script
   somehow, but how will it work for those damn static filters ?
@@ -155,16 +126,9 @@ Backward
     const RT&     hw_ref() const;
   Probably a good idea ?  Or is it worse with doubles ?  Let's try.
   Why do Point.x(), y(), hx(), hy(), hw() return FT instead of a "const FT &" ?
-- Status of the test/ directories in the old C2, C3, Cartesian_basic ?
-  What's in it ?  Should it be kept or thrown ?
 - include/CGAL/smallest_radiusC2.h should use the kernel code.
   Check if it's ok (correct and as efficient), and tell Frank to do so.
   The name of this file doesn't have anything to do with what is inside anyway.
 - Herve complains that the design of the CGAL kernel is too
   cartesian/homogeneous oriented, whereas it could be made more general (think
   polar kernel).  Anyone with a concrete proposal ? :)
-
-Notes:
-------
-- To run the test-suite, go in the Kernel_test package, and add the correct
-  "-I../../../Cartesian_kernel/include" line in the makefile.
