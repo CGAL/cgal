@@ -1928,7 +1928,8 @@ set_expr()
 _read()
 {
     _tmp=${IFS}
-    IFS='\n'
+    IFS='
+'
     read KEY
     IFS=${_tmp}
 }
