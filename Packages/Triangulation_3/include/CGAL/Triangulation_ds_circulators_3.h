@@ -15,8 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : INRIA Sophia Antipolis
-//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
+// coordinator   : INRIA Sophia Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 

@@ -15,7 +15,8 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Triangulation3
-// author(s)     : Olivier Devillers, Sylvain Pion
+// author(s)     : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
+//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //

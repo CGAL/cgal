@@ -14,7 +14,7 @@
 // file          : include/CGAL/IO/Triangulation_geomview_ostream_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Sylvain Pion
+// author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //

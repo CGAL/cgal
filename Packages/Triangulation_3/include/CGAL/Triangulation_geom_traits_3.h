@@ -14,10 +14,10 @@
 // file          : include/CGAL/Triangulation_geom_traits_3.h
 // revision      : $Revision$
 // 
-// author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+// author(s)     : Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
+//                 Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : INRIA Sophia Antipolis 
-//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
+// coordinator   : INRIA Sophia Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 //

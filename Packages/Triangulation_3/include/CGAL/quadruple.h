@@ -15,8 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
 //
-// coordinator   : INRIA Sophia Antipolis 
-//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
+// coordinator   : INRIA Sophia Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 

@@ -14,9 +14,10 @@
 // file          : include/CGAL/Delaunay_remove_tds_3.h
 // revision      : $Revision$
 //
-// author(s)     : Monique Teillaud, Andreas Fabri
+// author(s)     :  Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
+//                  Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : INRIA Sophia Antipolis
+// coordinator   : INRIA Sophia Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 

@@ -15,9 +15,10 @@
 // revision      : $Revision$
 //
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+//                 Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
 //
-// coordinator   : INRIA Sophia Antipolis 
-//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
+// coordinator   : INRIA Sophia Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 
@@ -757,9 +758,10 @@ dual(Cell_handle c, int i) const
   CGAL_triangulation_precondition( ! is_infinite(c,i) );
 
   if ( dimension() == 2 ) {
-    const Point& p = c->vertex((i+1)&3)->point();
-    const Point& q = c->vertex((i+2)&3)->point();
-    const Point& r = c->vertex((i+3)&3)->point();
+    CGAL_triangulation_precondition( i == 3 );
+    const Point& p = c->vertex(0)->point();
+    const Point& q = c->vertex(1)->point();
+    const Point& r = c->vertex(2)->point();
     return make_object( construct_circumcenter(p,q,r) );
   }
 
@@ -771,26 +773,25 @@ dual(Cell_handle c, int i) const
   }
 
   // either n or c is infinite
-  Cell_handle cfin; // finite cell
-  int ifin; // (cfin,ifin) finite facet
+  int in;
   if ( is_infinite(c) ) {
-    cfin = n;
-    ifin = n->index(c);
+    in = n->index(c);
   }
   else {
-    cfin = c;
-    ifin = i;
+    n = c;
+    in = i;
   }
-  unsigned char ind[3] = {(ifin+1)&3,(ifin+2)&3,(ifin+3)&3};
-  if ( (ifin&1) == 1 )
+  // n now denotes a finite cell, either c or c->neighbor(i)
+  unsigned char ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
+  if ( (in&1) == 1 )
       std::swap(ind[0], ind[1]);
-  const Point& p = cfin->vertex(ind[0])->point();
-  const Point& q = cfin->vertex(ind[1])->point();
-  const Point& r = cfin->vertex(ind[2])->point();
+  const Point& p = n->vertex(ind[0])->point();
+  const Point& q = n->vertex(ind[1])->point();
+  const Point& r = n->vertex(ind[2])->point();
   
   Line l = construct_perpendicular_line(construct_plane(p,q,r),
 					construct_circumcenter(p,q,r));
-  Ray ray = construct_ray(dual(cfin),construct_direction_of_line(l));
+  Ray ray = construct_ray(dual(n),construct_direction_of_line(l));
   return make_object(ray);
 }
 
