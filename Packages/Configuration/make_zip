@@ -1,0 +1,3 @@
+#!/bin/sh
+
+zip -r Configuration.zip version description.txt long_description.txt config include test
