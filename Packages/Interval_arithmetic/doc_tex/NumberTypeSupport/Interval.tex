@@ -368,6 +368,10 @@ predicates for it.  To do so, just define the macros \ccc{CGAL_IA_CT} and
 #define CGAL_IA_PROTECTED true
 \end{verbatim}
 
+Note that you may run into other problems if you use Visual C++.  We recommend
+that you use \ccc{Filtered_kernel} if you run into compilation problems with
+Visual C++.
+
 For each predicate file, the overloaded code is generated automatically by a
 \ccc{PERL} script (\ccc{scripts/filtered_predicates_generator.pl}) that you can
 use for your own predicates.
