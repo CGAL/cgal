@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.40 (16 May 00)
+added  :typedef const value_type&    const_reference; 
+in Triangulation_2 class 
+
 Ver 4.39 (16 May 00)
 fixed the doc : paths for included example files
 
