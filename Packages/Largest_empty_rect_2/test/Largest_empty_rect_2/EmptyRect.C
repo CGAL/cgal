@@ -24,6 +24,10 @@ int main(int /*argc*/,char */*argv[]*/)
 
   Largest_empty_rect empty_rectangle(b);
 
+  Largest_empty_rect er(empty_rectangle);
+
+  Largest_empty_rect er2 = er;
+
   std::vector<Point> V;
   V[0] = Point(2,2);
   
