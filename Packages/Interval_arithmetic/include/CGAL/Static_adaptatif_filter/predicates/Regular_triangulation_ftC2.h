@@ -43,18 +43,20 @@ power_testC2_SAF(
     const Static_filter_error &twt,
     double & epsilon_0)
 {
+  typedef Static_filter_error FT;
+
     
 
     
-    Static_filter_error dpx = px - tx;
-    Static_filter_error dpy = py - ty;
-    Static_filter_error dpz = square(dpx) + square(dpy) - pwt + twt;
-    Static_filter_error dqx = qx - tx;
-    Static_filter_error dqy = qy - ty;
-    Static_filter_error dqz = square(dqx) + square(dqy) - qwt + twt;
-    Static_filter_error drx = rx - tx;
-    Static_filter_error dry = ry - ty;
-    Static_filter_error drz = square(drx) + square(dry) - rwt + twt;
+    FT dpx = px - tx;
+    FT dpy = py - ty;
+    FT dpz = square(dpx) + square(dpy) - pwt + twt;
+    FT dqx = qx - tx;
+    FT dqy = qy - ty;
+    FT dqz = square(dqx) + square(dqy) - qwt + twt;
+    FT drx = rx - tx;
+    FT dry = ry - ty;
+    FT drz = square(drx) + square(dry) - rwt + twt;
 
     return Oriented_side(sign_of_determinant3x3_SAF(dpx, dpy, dpz,
                                                 dqx, dqy, dqz,
@@ -78,18 +80,20 @@ power_testC2_SAF(
     const Restricted_double &twt,
     const double & epsilon_0)
 {
+  typedef Restricted_double FT;
+
     
 
     
-    Restricted_double dpx = px - tx;
-    Restricted_double dpy = py - ty;
-    Restricted_double dpz = square(dpx) + square(dpy) - pwt + twt;
-    Restricted_double dqx = qx - tx;
-    Restricted_double dqy = qy - ty;
-    Restricted_double dqz = square(dqx) + square(dqy) - qwt + twt;
-    Restricted_double drx = rx - tx;
-    Restricted_double dry = ry - ty;
-    Restricted_double drz = square(drx) + square(dry) - rwt + twt;
+    FT dpx = px - tx;
+    FT dpy = py - ty;
+    FT dpz = square(dpx) + square(dpy) - pwt + twt;
+    FT dqx = qx - tx;
+    FT dqy = qy - ty;
+    FT dqz = square(dqx) + square(dqy) - qwt + twt;
+    FT drx = rx - tx;
+    FT dry = ry - ty;
+    FT drz = square(drx) + square(dry) - rwt + twt;
 
     return Oriented_side(sign_of_determinant3x3_SAF(dpx, dpy, dpz,
                                                 dqx, dqy, dqz,
@@ -228,13 +232,15 @@ power_testC2_SAF(
     double & epsilon_2,
     double & epsilon_3)
 {
+  typedef Static_filter_error FT;
+
     
-    Static_filter_error dpx = px - tx;
-    Static_filter_error dpy = py - ty;
-    Static_filter_error dpz = square(dpx) + square(dpy) - pwt + twt;
-    Static_filter_error dqx = qx - tx;
-    Static_filter_error dqy = qy - ty;
-    Static_filter_error dqz = square(dqx) + square(dqy) - qwt + twt;
+    FT dpx = px - tx;
+    FT dpy = py - ty;
+    FT dpz = square(dpx) + square(dpy) - pwt + twt;
+    FT dqx = qx - tx;
+    FT dqy = qy - ty;
+    FT dqz = square(dqx) + square(dqy) - qwt + twt;
 
     
     Comparison_result cmpx = CGAL::compare_SAF(px, qx, epsilon_0);
@@ -263,13 +269,15 @@ power_testC2_SAF(
     const double & epsilon_2,
     const double & epsilon_3)
 {
+  typedef Restricted_double FT;
+
     
-    Restricted_double dpx = px - tx;
-    Restricted_double dpy = py - ty;
-    Restricted_double dpz = square(dpx) + square(dpy) - pwt + twt;
-    Restricted_double dqx = qx - tx;
-    Restricted_double dqy = qy - ty;
-    Restricted_double dqz = square(dqx) + square(dqy) - qwt + twt;
+    FT dpx = px - tx;
+    FT dpy = py - ty;
+    FT dpz = square(dpx) + square(dpy) - pwt + twt;
+    FT dqx = qx - tx;
+    FT dqy = qy - ty;
+    FT dqz = square(dqx) + square(dqy) - qwt + twt;
 
     
     Comparison_result cmpx = CGAL::compare_SAF(px, qx, epsilon_0);

@@ -47,25 +47,27 @@ power_testH2_SAF(
     const Static_filter_error &twt,
     double & epsilon_0)
 {
-    Static_filter_error dphx = phx*phw;
-    Static_filter_error dphy = phy*phw;
-    Static_filter_error dphw = square(phw);
-    Static_filter_error dpz = square(phx) + square(phy) - pwt*dphw;
+  typedef Static_filter_error RT;
 
-    Static_filter_error dqhx = qhx*qhw;
-    Static_filter_error dqhy = qhy*qhw;
-    Static_filter_error dqhw = square(qhw);
-    Static_filter_error dqz = square(qhx) + square(qhy) - qwt*dqhw;
+    RT dphx = phx*phw;
+    RT dphy = phy*phw;
+    RT dphw = square(phw);
+    RT dpz = square(phx) + square(phy) - pwt*dphw;
 
-    Static_filter_error drhx = rhx*rhw;
-    Static_filter_error drhy = rhy*rhw;
-    Static_filter_error drhw = square(rhw);
-    Static_filter_error drz = square(rhx) + square(rhy) - rwt*drhw;
+    RT dqhx = qhx*qhw;
+    RT dqhy = qhy*qhw;
+    RT dqhw = square(qhw);
+    RT dqz = square(qhx) + square(qhy) - qwt*dqhw;
 
-    Static_filter_error dthx = thx*thw;
-    Static_filter_error dthy = thy*thw;
-    Static_filter_error dthw = square(thw);
-    Static_filter_error dtz = square(thx) + square(thy) - twt*dthw;
+    RT drhx = rhx*rhw;
+    RT drhy = rhy*rhw;
+    RT drhw = square(rhw);
+    RT drz = square(rhx) + square(rhy) - rwt*drhw;
+
+    RT dthx = thx*thw;
+    RT dthy = thy*thw;
+    RT dthw = square(thw);
+    RT dtz = square(thx) + square(thy) - twt*dthw;
 
     return Oriented_side(sign_of_determinant4x4_SAF(dphx, dphy, dpz, dphw,
 	                                        dqhx, dqhy, dqz, dqhw,
@@ -94,25 +96,27 @@ power_testH2_SAF(
     const Restricted_double &twt,
     const double & epsilon_0)
 {
-    Restricted_double dphx = phx*phw;
-    Restricted_double dphy = phy*phw;
-    Restricted_double dphw = square(phw);
-    Restricted_double dpz = square(phx) + square(phy) - pwt*dphw;
+  typedef Restricted_double RT;
 
-    Restricted_double dqhx = qhx*qhw;
-    Restricted_double dqhy = qhy*qhw;
-    Restricted_double dqhw = square(qhw);
-    Restricted_double dqz = square(qhx) + square(qhy) - qwt*dqhw;
+    RT dphx = phx*phw;
+    RT dphy = phy*phw;
+    RT dphw = square(phw);
+    RT dpz = square(phx) + square(phy) - pwt*dphw;
 
-    Restricted_double drhx = rhx*rhw;
-    Restricted_double drhy = rhy*rhw;
-    Restricted_double drhw = square(rhw);
-    Restricted_double drz = square(rhx) + square(rhy) - rwt*drhw;
+    RT dqhx = qhx*qhw;
+    RT dqhy = qhy*qhw;
+    RT dqhw = square(qhw);
+    RT dqz = square(qhx) + square(qhy) - qwt*dqhw;
 
-    Restricted_double dthx = thx*thw;
-    Restricted_double dthy = thy*thw;
-    Restricted_double dthw = square(thw);
-    Restricted_double dtz = square(thx) + square(thy) - twt*dthw;
+    RT drhx = rhx*rhw;
+    RT drhy = rhy*rhw;
+    RT drhw = square(rhw);
+    RT drz = square(rhx) + square(rhy) - rwt*drhw;
+
+    RT dthx = thx*thw;
+    RT dthy = thy*thw;
+    RT dthw = square(thw);
+    RT dtz = square(thx) + square(thy) - twt*dthw;
 
     return Oriented_side(sign_of_determinant4x4_SAF(dphx, dphy, dpz, dphw,
 	                                        dqhx, dqhy, dqz, dqhw,
@@ -277,9 +281,11 @@ power_testH2_SAF(
     double & epsilon_0,
     double & epsilon_1)
 {
+  typedef Static_filter_error RT;
+
     
     
-    Static_filter_error pa, qa, ta;
+    RT pa, qa, ta;
 
     if (phx * qhw != qhx * phw )
     {
@@ -294,14 +300,14 @@ power_testH2_SAF(
 	ta = thy*thw;
     }
 
-    Static_filter_error dphw = square(phw);
-    Static_filter_error dpz = square(phx) + square(phy) - pwt*dphw;
+    RT dphw = square(phw);
+    RT dpz = square(phx) + square(phy) - pwt*dphw;
 
-    Static_filter_error dqhw = square(qhw);
-    Static_filter_error dqz = square(qhx) + square(qhy) - qwt*dqhw;
+    RT dqhw = square(qhw);
+    RT dqz = square(qhx) + square(qhy) - qwt*dqhw;
 
-    Static_filter_error dthw = square(thw);
-    Static_filter_error dtz = square(thx) + square(thy) - twt*dthw;
+    RT dthw = square(thw);
+    RT dtz = square(thx) + square(thy) - twt*dthw;
 
     return Oriented_side(CGAL::compare_SAF(pa, qa, epsilon_0) *
 	                 sign_of_determinant3x3_SAF(pa, dpz, dphw,
@@ -327,9 +333,11 @@ power_testH2_SAF(
     const double & epsilon_0,
     const double & epsilon_1)
 {
+  typedef Restricted_double RT;
+
     
     
-    Restricted_double pa, qa, ta;
+    RT pa, qa, ta;
 
     if (phx * qhw != qhx * phw )
     {
@@ -344,14 +352,14 @@ power_testH2_SAF(
 	ta = thy*thw;
     }
 
-    Restricted_double dphw = square(phw);
-    Restricted_double dpz = square(phx) + square(phy) - pwt*dphw;
+    RT dphw = square(phw);
+    RT dpz = square(phx) + square(phy) - pwt*dphw;
 
-    Restricted_double dqhw = square(qhw);
-    Restricted_double dqz = square(qhx) + square(qhy) - qwt*dqhw;
+    RT dqhw = square(qhw);
+    RT dqz = square(qhx) + square(qhy) - qwt*dqhw;
 
-    Restricted_double dthw = square(thw);
-    Restricted_double dtz = square(thx) + square(thy) - twt*dthw;
+    RT dthw = square(thw);
+    RT dtz = square(thx) + square(thy) - twt*dthw;
 
     return Oriented_side(CGAL::compare_SAF(pa, qa, epsilon_0) *
 	                 sign_of_determinant3x3_SAF(pa, dpz, dphw,

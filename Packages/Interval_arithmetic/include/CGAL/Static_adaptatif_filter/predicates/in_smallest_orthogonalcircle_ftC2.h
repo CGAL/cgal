@@ -40,11 +40,13 @@ in_smallest_orthogonalcircleC2_SAF(
     const Static_filter_error &tw,
     double & epsilon_0)
 {
-  Static_filter_error dpx = px-qx;
-  Static_filter_error dpy = py-qy;
-  Static_filter_error dtx = tx-qx;
-  Static_filter_error dty = ty-qy;
-  Static_filter_error dpz = square(dpx)+square(dpy);
+  typedef Static_filter_error FT;
+
+  FT dpx = px-qx;
+  FT dpy = py-qy;
+  FT dtx = tx-qx;
+  FT dty = ty-qy;
+  FT dpz = square(dpx)+square(dpy);
  
   return Oriented_side (sign_SAF((square(dtx)+square(dty)-tw+qw)*dpz
 			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty), epsilon_0));
@@ -64,11 +66,13 @@ in_smallest_orthogonalcircleC2_SAF(
     const Restricted_double &tw,
     const double & epsilon_0)
 {
-  Restricted_double dpx = px-qx;
-  Restricted_double dpy = py-qy;
-  Restricted_double dtx = tx-qx;
-  Restricted_double dty = ty-qy;
-  Restricted_double dpz = square(dpx)+square(dpy);
+  typedef Restricted_double FT;
+
+  FT dpx = px-qx;
+  FT dpy = py-qy;
+  FT dtx = tx-qx;
+  FT dty = ty-qy;
+  FT dpz = square(dpx)+square(dpy);
  
   return Oriented_side (sign_SAF((square(dtx)+square(dty)-tw+qw)*dpz
 			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty), epsilon_0));

@@ -42,12 +42,14 @@ collinearC3_SAF(
     double & epsilon_1,
     double & epsilon_2)
 {
-  Static_filter_error dpx = px-rx;
-  Static_filter_error dpy = py-ry;
-  Static_filter_error dpz = pz-rz;
-  Static_filter_error dqx = qx-rx;
-  Static_filter_error dqy = qy-ry;
-  Static_filter_error dqz = qz-rz;
+  typedef Static_filter_error FT;
+
+  FT dpx = px-rx;
+  FT dpy = py-ry;
+  FT dpz = pz-rz;
+  FT dqx = qx-rx;
+  FT dqy = qy-ry;
+  FT dqz = qz-rz;
   return (sign_of_determinant2x2_SAF(dpx,dqx,dpy,dqy, epsilon_0) == ZERO)
       && (sign_of_determinant2x2_SAF(dpx,dqx,dpz,dqz, epsilon_1) == ZERO)
       && (sign_of_determinant2x2_SAF(dpy,dqy,dpz,dqz, epsilon_2) == ZERO);
@@ -69,12 +71,14 @@ collinearC3_SAF(
     const double & epsilon_1,
     const double & epsilon_2)
 {
-  Restricted_double dpx = px-rx;
-  Restricted_double dpy = py-ry;
-  Restricted_double dpz = pz-rz;
-  Restricted_double dqx = qx-rx;
-  Restricted_double dqy = qy-ry;
-  Restricted_double dqz = qz-rz;
+  typedef Restricted_double FT;
+
+  FT dpx = px-rx;
+  FT dpy = py-ry;
+  FT dpz = pz-rz;
+  FT dqx = qx-rx;
+  FT dqy = qy-ry;
+  FT dqz = qz-rz;
   return (sign_of_determinant2x2_SAF(dpx,dqx,dpy,dqy, epsilon_0) == ZERO)
       && (sign_of_determinant2x2_SAF(dpx,dqx,dpz,dqz, epsilon_1) == ZERO)
       && (sign_of_determinant2x2_SAF(dpy,dqy,dpz,dqz, epsilon_2) == ZERO);
@@ -200,6 +204,8 @@ orientationC3_SAF(
     const Static_filter_error &sz,
     double & epsilon_0)
 {
+  typedef Static_filter_error FT;
+
   return Orientation(sign_of_determinant3x3_SAF(qx-px,rx-px,sx-px,
                                             qy-py,ry-py,sy-py,
                                             qz-pz,rz-pz,sz-pz, epsilon_0));
@@ -222,6 +228,8 @@ orientationC3_SAF(
     const Restricted_double &sz,
     const double & epsilon_0)
 {
+  typedef Restricted_double FT;
+
   return Orientation(sign_of_determinant3x3_SAF(qx-px,rx-px,sx-px,
                                             qy-py,ry-py,sy-py,
                                             qz-pz,rz-pz,sz-pz, epsilon_0));
@@ -362,22 +370,24 @@ side_of_oriented_sphereC3_SAF(
     const Static_filter_error &tz,
     double & epsilon_0)
 {
-  Static_filter_error ptx = px - tx;
-  Static_filter_error pty = py - ty;
-  Static_filter_error ptz = pz - tz;
-  Static_filter_error pt2 = square(ptx) + square(pty) + square(ptz);
-  Static_filter_error qtx = qx - tx;
-  Static_filter_error qty = qy - ty;
-  Static_filter_error qtz = qz - tz;
-  Static_filter_error qt2 = square(qtx) + square(qty) + square(qtz);
-  Static_filter_error rtx = rx - tx;
-  Static_filter_error rty = ry - ty;
-  Static_filter_error rtz = rz - tz;
-  Static_filter_error rt2 = square(rtx) + square(rty) + square(rtz);
-  Static_filter_error stx = sx - tx;
-  Static_filter_error sty = sy - ty;
-  Static_filter_error stz = sz - tz;
-  Static_filter_error st2 = square(stx) + square(sty) + square(stz);
+  typedef Static_filter_error FT;
+
+  FT ptx = px - tx;
+  FT pty = py - ty;
+  FT ptz = pz - tz;
+  FT pt2 = square(ptx) + square(pty) + square(ptz);
+  FT qtx = qx - tx;
+  FT qty = qy - ty;
+  FT qtz = qz - tz;
+  FT qt2 = square(qtx) + square(qty) + square(qtz);
+  FT rtx = rx - tx;
+  FT rty = ry - ty;
+  FT rtz = rz - tz;
+  FT rt2 = square(rtx) + square(rty) + square(rtz);
+  FT stx = sx - tx;
+  FT sty = sy - ty;
+  FT stz = sz - tz;
+  FT st2 = square(stx) + square(sty) + square(stz);
   return Oriented_side(sign_of_determinant4x4_SAF(ptx,pty,ptz,pt2,
                                               rtx,rty,rtz,rt2,
                                               qtx,qty,qtz,qt2,
@@ -404,22 +414,24 @@ side_of_oriented_sphereC3_SAF(
     const Restricted_double &tz,
     const double & epsilon_0)
 {
-  Restricted_double ptx = px - tx;
-  Restricted_double pty = py - ty;
-  Restricted_double ptz = pz - tz;
-  Restricted_double pt2 = square(ptx) + square(pty) + square(ptz);
-  Restricted_double qtx = qx - tx;
-  Restricted_double qty = qy - ty;
-  Restricted_double qtz = qz - tz;
-  Restricted_double qt2 = square(qtx) + square(qty) + square(qtz);
-  Restricted_double rtx = rx - tx;
-  Restricted_double rty = ry - ty;
-  Restricted_double rtz = rz - tz;
-  Restricted_double rt2 = square(rtx) + square(rty) + square(rtz);
-  Restricted_double stx = sx - tx;
-  Restricted_double sty = sy - ty;
-  Restricted_double stz = sz - tz;
-  Restricted_double st2 = square(stx) + square(sty) + square(stz);
+  typedef Restricted_double FT;
+
+  FT ptx = px - tx;
+  FT pty = py - ty;
+  FT ptz = pz - tz;
+  FT pt2 = square(ptx) + square(pty) + square(ptz);
+  FT qtx = qx - tx;
+  FT qty = qy - ty;
+  FT qtz = qz - tz;
+  FT qt2 = square(qtx) + square(qty) + square(qtz);
+  FT rtx = rx - tx;
+  FT rty = ry - ty;
+  FT rtz = rz - tz;
+  FT rt2 = square(rtx) + square(rty) + square(rtz);
+  FT stx = sx - tx;
+  FT sty = sy - ty;
+  FT stz = sz - tz;
+  FT st2 = square(stx) + square(sty) + square(stz);
   return Oriented_side(sign_of_determinant4x4_SAF(ptx,pty,ptz,pt2,
                                               rtx,rty,rtz,rt2,
                                               qtx,qty,qtz,qt2,
@@ -580,6 +592,8 @@ side_of_bounded_sphereC3_SAF(
     double & epsilon_0,
     double & epsilon_1)
 {
+  typedef Static_filter_error FT;
+
   Oriented_side s = side_of_oriented_sphereC3_SAF(px, py, pz,
                                               qx, qy, qz,
                                               rx, ry, rz,
@@ -613,6 +627,8 @@ side_of_bounded_sphereC3_SAF(
     const double & epsilon_0,
     const double & epsilon_1)
 {
+  typedef Restricted_double FT;
+
   Oriented_side s = side_of_oriented_sphereC3_SAF(px, py, pz,
                                               qx, qy, qz,
                                               rx, ry, rz,
@@ -775,6 +791,8 @@ cmp_dist_to_pointC3_SAF(
     const Static_filter_error &rz,
     double & epsilon_0)
 {
+  typedef Static_filter_error FT;
+
   return CGAL::compare_SAF(squared_distanceC3(px,py,pz,qx,qy,qz),
                        squared_distanceC3(px,py,pz,rx,ry,rz), epsilon_0);
 }
@@ -793,6 +811,8 @@ cmp_dist_to_pointC3_SAF(
     const Restricted_double &rz,
     const double & epsilon_0)
 {
+  typedef Restricted_double FT;
+
   return CGAL::compare_SAF(squared_distanceC3(px,py,pz,qx,qy,qz),
                        squared_distanceC3(px,py,pz,rx,ry,rz), epsilon_0);
 }
@@ -909,6 +929,8 @@ cmp_signed_dist_to_planeC3_SAF(
     const Static_filter_error &qz,
     double & epsilon_0)
 {
+  typedef Static_filter_error FT;
+
   return CGAL::compare_SAF(scaled_distance_to_planeC3(pa,pb,pc,pd,px,py,pz),
                        scaled_distance_to_planeC3(pa,pb,pc,pd,qx,qy,qz), epsilon_0);
 }
@@ -928,6 +950,8 @@ cmp_signed_dist_to_planeC3_SAF(
     const Restricted_double &qz,
     const double & epsilon_0)
 {
+  typedef Restricted_double FT;
+
   return CGAL::compare_SAF(scaled_distance_to_planeC3(pa,pb,pc,pd,px,py,pz),
                        scaled_distance_to_planeC3(pa,pb,pc,pd,qx,qy,qz), epsilon_0);
 }
@@ -1055,6 +1079,8 @@ cmp_signed_dist_to_planeC3_SAF(
     const Static_filter_error &qz,
     double & epsilon_0)
 {
+  typedef Static_filter_error FT;
+
   return CGAL::compare_SAF(
            scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,
                                       prx,pry,prz,psx,psy,psz,
@@ -1084,6 +1110,8 @@ cmp_signed_dist_to_planeC3_SAF(
     const Restricted_double &qz,
     const double & epsilon_0)
 {
+  typedef Restricted_double FT;
+
   return CGAL::compare_SAF(
            scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,
                                       prx,pry,prz,psx,psy,psz,

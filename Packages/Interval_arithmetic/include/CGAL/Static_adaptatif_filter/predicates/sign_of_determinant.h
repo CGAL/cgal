@@ -34,7 +34,9 @@ sign_of_determinant2x2_SAF(
     const Static_filter_error &a10,
     const Static_filter_error &a11,
     double & epsilon_0)
-{ return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0))); }
+{
+  typedef Static_filter_error FT;
+ return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0))); }
 
 inline
 Sign
@@ -44,7 +46,9 @@ sign_of_determinant2x2_SAF(
     const Restricted_double &a10,
     const Restricted_double &a11,
     const double & epsilon_0)
-{ return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0))); }
+{
+  typedef Restricted_double FT;
+ return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0))); }
 
 inline
 Sign
@@ -127,6 +131,8 @@ sign_of_determinant3x3_SAF(
     const Static_filter_error &a22,
     double & epsilon_0)
 {
+  typedef Static_filter_error FT;
+
   return CGAL::sign_SAF(det3x3_by_formula(a00, a01, a02,
                                       a10, a11, a12,
                                       a20, a21, a22), epsilon_0);
@@ -146,6 +152,8 @@ sign_of_determinant3x3_SAF(
     const Restricted_double &a22,
     const double & epsilon_0)
 {
+  typedef Restricted_double FT;
+
   return CGAL::sign_SAF(det3x3_by_formula(a00, a01, a02,
                                       a10, a11, a12,
                                       a20, a21, a22), epsilon_0);
@@ -269,6 +277,8 @@ sign_of_determinant4x4_SAF(
     const Static_filter_error &a33,
     double & epsilon_0)
 {
+  typedef Static_filter_error FT;
+
   return CGAL::sign_SAF(det4x4_by_formula(a00, a01, a02, a03,
                                       a10, a11, a12, a13,
                                       a20, a21, a22, a23,
@@ -296,6 +306,8 @@ sign_of_determinant4x4_SAF(
     const Restricted_double &a33,
     const double & epsilon_0)
 {
+  typedef Restricted_double FT;
+
   return CGAL::sign_SAF(det4x4_by_formula(a00, a01, a02, a03,
                                       a10, a11, a12, a13,
                                       a20, a21, a22, a23,
@@ -471,6 +483,8 @@ sign_of_determinant5x5_SAF(
     const Static_filter_error &a44,
     double & epsilon_0)
 {
+  typedef Static_filter_error FT;
+
   return CGAL::sign_SAF(det5x5_by_formula(a00, a01, a02, a03, a04,
                                       a10, a11, a12, a13, a14,
                                       a20, a21, a22, a23, a24,
@@ -508,6 +522,8 @@ sign_of_determinant5x5_SAF(
     const Restricted_double &a44,
     const double & epsilon_0)
 {
+  typedef Restricted_double FT;
+
   return CGAL::sign_SAF(det5x5_by_formula(a00, a01, a02, a03, a04,
                                       a10, a11, a12, a13, a14,
                                       a20, a21, a22, a23, a24,
@@ -749,6 +765,8 @@ sign_of_determinant6x6_SAF(
     const Static_filter_error &a55,
     double & epsilon_0)
 {
+  typedef Static_filter_error FT;
+
   return CGAL::sign_SAF(det6x6_by_formula(a00, a01, a02, a03, a04, a05,
                                       a10, a11, a12, a13, a14, a15,
                                       a20, a21, a22, a23, a24, a25,
@@ -798,6 +816,8 @@ sign_of_determinant6x6_SAF(
     const Restricted_double &a55,
     const double & epsilon_0)
 {
+  typedef Restricted_double FT;
+
   return CGAL::sign_SAF(det6x6_by_formula(a00, a01, a02, a03, a04, a05,
                                       a10, a11, a12, a13, a14, a15,
                                       a20, a21, a22, a23, a24, a25,
