@@ -39,6 +39,7 @@ namespace CGAL {
     typedef typename K::Cartesian_const_iterator_2 Cartesian_const_iterator_d;
     typedef typename K::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator_d;
 
+    typedef typename K::Construct_vertex_2 Construct_vertex_d;
     typedef typename K::Construct_center_2 Construct_center_d;
     typedef typename K::Compute_squared_radius_2 Compute_squared_radius_d;
 

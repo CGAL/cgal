@@ -27,6 +27,7 @@ specialized for the point type.
 \ccTypes
 \ccNestedType{Point_d}{Point type.}
 \ccNestedType{Iso_box_d}{Iso box type.}
+\ccNestedType{Sphere_d}{Sphere type.}
 
 \ccNestedType{FT}{The number type of the \ccHtmlNoLinksFrom{Cartesian} coordinates of type \ccc{Point_d}.}
 
@@ -39,7 +40,14 @@ first and the past-the-end iterator for the \ccHtmlNoLinksFrom{Cartesian} coordi
 
 \ccNestedType{Construct_iso_box_d}{Functor with operator to construct the iso box from two points.}
 
-\ccCreationVariable{p}  %% choose variable name
+\ccNestedType {Construct_center_d;}{Functor with operator to construct 
+the center of an object of type \ccc{Sphere_d}.}
+
+\ccNestedType {Construct_squared_radius_d;}{Functor with operator to compute 
+the squared radius of a an object of type \ccc{Sphere_d}.}
+
+\ccNestedType {Construct_vertex_d;}{Functor with operator to construct 
+the vertices with index $0$ and $2^d-1$ of an object of type \ccc{Iso_box_d}.}
 
 
 
