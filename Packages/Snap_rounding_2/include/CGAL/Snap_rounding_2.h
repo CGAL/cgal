@@ -19,7 +19,7 @@
 //
 // ======================================================================
 #ifndef CGAL_SR_2_H
-#define CGAL_SR_2_Ha
+#define CGAL_SR_2_H
 
 #include <CGAL/leda_rational.h> 
 

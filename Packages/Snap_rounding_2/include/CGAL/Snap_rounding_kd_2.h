@@ -22,9 +22,15 @@
 #define CGAL_SR_KD_2_H
 
 #include <list>
-
 #include <CGAL/config.h>
 #include <CGAL/kdtree_d.h>
+#include <CGAL/predicates_on_points_2.h>
+#include <CGAL/leda_rational.h> 
+#include <iostream>
+#include <CGAL/predicates_on_points_2.h>
+#include <CGAL/utility.h>
+
+CGAL_BEGIN_NAMESPACE
 
 template<class NT,class SAVED_OBJECT>
 class my_point : public CGAL::Point_2<CGAL::Cartesian<NT> > {
@@ -54,6 +60,7 @@ typedef typename kd_tree::Box Box;
 typedef std::list<my_point<NT,SAVED_OBJECT> > Points_List; 
 
 private:
+  Rep_   _gt;
   static std::map<const int,NT> angle_to_sines_appr;
   static bool map_done;
   const double pi,half_pi,epsilon,rad_to_deg;
@@ -102,12 +109,13 @@ private:
 
   int get_kd_num(Segment seg,int n)
   {
+    // $$$$ this function is intended to kernel
     int i;
     double x1 = seg.source().x().to_double();
     double y1 = seg.source().y().to_double();
     double x2 = seg.target().x().to_double();
     double y2 = seg.target().y().to_double();
-    double alpha = atan((y2 -y1)/(x2 - x1));
+    double alpha = atan((y2 - y1)/(x2 - x1));
 
     if(alpha < 0)
       alpha += pi / 2.0;
@@ -288,12 +296,13 @@ public:
                                Segment inp_s,
                                NT unit_squere)
   {
-    Segment s((inp_s.source().y() < inp_s.target().y()) ?
-               inp_s.source() : inp_s.target(),
-              (inp_s.source().y() < inp_s.target().y()) ?
-               inp_s.target() : inp_s.source());
+    Comparison_result cy = _gt.compare_y_2_object()(inp_s.source(),inp_s.target());
+    Segment s(cy == SMALLER ?
+              inp_s.source() : inp_s.target(),
+              cy == SMALLER ?
+              inp_s.target() : inp_s.source());
     NT x1 = s.source().x(),y1 = s.source().y(),x2 =
-            s.target().x(),y2 = s.target().y();
+       s.target().x(),y2 = s.target().y();
 
     // determine right kd-tree to work on, depending on the segment's slope
     double alpha_double = atan((y2.to_double() - y1.to_double()) /
@@ -332,7 +341,8 @@ public:
     Point p1,p2,ms1,ms2,ms3,ms4,ms5,ms6;// minkowski sum points
     list<my_point<NT,SAVED_OBJECT> > res;
 
-    if(x1 < x2) {
+    Comparison_result cx = _gt.compare_x_2_object()(s.source(),s.target());
+    if(cx == SMALLER) {
       // we use unit_squere instead of unit_squere / 2 in order to
       // find tangency points which are not supported by kd-tree
       ms1 = Point(x1 - 0.6 * unit_squere,y1 - 0.6 * unit_squere);
@@ -388,5 +398,7 @@ bool Multiple_kd_tree<NT,SAVED_OBJECT>::map_done(false);
 template<class Rep,class SAVED_OBJECT>
   std::map<const int,typename Rep::FT> 
       Multiple_kd_tree<Rep,SAVED_OBJECT>::angle_to_sines_appr;
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_SR_KD_2_H
