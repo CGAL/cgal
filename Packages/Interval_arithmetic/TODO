@@ -94,7 +94,6 @@ Concerning the script:
 
 Concerning the doc:
 -------------------
-- Documentation seriously needs to be updated before the next public release !
 - In the 2.0 HTML doc, my enums are indexed twice.
   probably a cc_manual compliance bug from me.
   Idem, my fct to_double(Ia) is not the same as the others...

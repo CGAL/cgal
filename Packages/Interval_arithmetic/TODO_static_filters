@@ -1,6 +1,6 @@
 Special TODO list for the static filters.
 -----------------------------------------
-It's lot's of work here for a "minor" optimization, so it's "low" priority,
+It's a lot of work here for a "minor" optimization, so it's "low" priority,
 except we could merge stuff with Olivier's Fixed !
 
 - Known problems with the current approach:
@@ -14,7 +14,7 @@ except we could merge stuff with Olivier's Fixed !
     - Checks that the epsilons have been updated (which will not prove that
       it's correct, but is better than nothing).
 - Or use G++'s interface as a parser ?  See gcc mail archives, 15 august 2000,
-  "XML output for GCC".
+  "XML output for GCC".  An XML description for predicates ?
 - /*DEGREE=2*/ attribute to the arguments ?
 - # of bounds  : one per predicate, or one per argument ?  give choice.
 - # of epsilons: one per predicate, or one set per sub-predicate ?  choice.
