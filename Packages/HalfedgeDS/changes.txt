@@ -1,5 +1,13 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+3.23 (21 Mar 2002)
+
+     - Split typedef and static section of HalfedgeDS_list and 
+       HalfedgeDS_vector into a base class and a derived class
+       to help VC7 untangle the dependencies. (The Support_... tags
+       proved difficult.) The vector version won't work until we
+       get our own vector.
+
 3.22 (18 Dec 2001)
 
      - Added check for CGAL_CFG_SUNPRO_PARTIAL_SPEC_BUG in the 

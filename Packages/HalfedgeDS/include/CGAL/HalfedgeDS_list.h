@@ -94,20 +94,17 @@ public:
     }
 };
 
-
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-template < class Traits_, class HalfedgeDSItems, 
-           class Alloc = CGAL_ALLOCATOR(int)>
-class HalfedgeDS_list {
+template < class Traits_, class HalfedgeDSItems, class Alloc>
+class HalfedgeDS_list_types {
 public:
-    typedef HalfedgeDS_list<Traits_, HalfedgeDSItems, Alloc> Self;
+    typedef HalfedgeDS_list_types<Traits_, HalfedgeDSItems, Alloc> Self;
 #else
-struct HalfedgeDS_list {
-template < class Traits_, class HalfedgeDSItems, 
-           class Alloc = CGAL_ALLOCATOR(int)>
+struct HalfedgeDS_list_types {
+template < class Traits_, class HalfedgeDSItems, class Alloc>
 class HDS {
 public:
-    typedef HDS<Traits_, HalfedgeDSItems, Alloc>       Self;
+    typedef HDS<Traits_, HalfedgeDSItems, Alloc> Self;
 #endif
     typedef Traits_                                    Traits;
     typedef HalfedgeDSItems                            Items;
@@ -157,24 +154,6 @@ public:
     typedef typename Halfedge_list::size_type          size_type;
     typedef typename Halfedge_list::difference_type    difference_type;
     typedef std::bidirectional_iterator_tag            iterator_category;
-    typedef Tag_true                                   Supports_removal;
-
-    typedef typename Vertex::Supports_vertex_halfedge Supports_vertex_halfedge;
-    typedef typename Halfedge::Supports_halfedge_prev Supports_halfedge_prev;
-    typedef typename Halfedge::Supports_halfedge_vertex
-                                                      Supports_halfedge_vertex;
-    typedef typename Halfedge::Supports_halfedge_face
-                                                      Supports_halfedge_face;
-    typedef typename Face::Supports_face_halfedge     Supports_face_halfedge;
-
-    // Halfedges are allocated in pairs. Here is the type for that.
-    typedef std::pair<Halfedge,Halfedge>              Halfedge_pair;
-
-    typedef typename Allocator::template rebind< Halfedge_pair>
-                                                       Edge_alloc_rebind;
-    typedef typename Edge_alloc_rebind::other          Edge_allocator;
-
-
     static inline Vertex_handle vertex_handle( Vertex_base* v) {
         Vertex* vv = 0;
         vv = (Vertex*)((char*) v - (ptrdiff_t)((Vertex_base*)vv));
@@ -210,6 +189,72 @@ public:
         ff = (const Face*)((const char*)f - (ptrdiff_t)((const Face_base*)ff));
         return ff;
     }
+};
+
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+template < class Traits_, class HalfedgeDSItems, 
+           class Alloc = CGAL_ALLOCATOR(int)>
+class HalfedgeDS_list
+    : public HalfedgeDS_list_types<Traits_, HalfedgeDSItems, Alloc> {
+public:
+    typedef HalfedgeDS_list<Traits_, HalfedgeDSItems, Alloc> Self;
+#else
+struct HalfedgeDS_list {
+template < class Traits_, class HalfedgeDSItems, 
+           class Alloc = CGAL_ALLOCATOR(int)>
+class HDS : public HalfedgeDS_list_types<Traits_, HalfedgeDSItems, Alloc> {
+public:
+    typedef HDS<Traits_, HalfedgeDSItems, Alloc> Self;
+#endif
+public:
+    typedef HalfedgeDS_list_types<Traits_, HalfedgeDSItems, Alloc> Types;
+    typedef typename Types::Traits                     Traits;
+    typedef typename Types::Items                      Items;
+    typedef typename Types::Allocator                  Allocator;
+    typedef typename Types::allocator_type             allocator_type;
+
+    typedef typename Types::Vertex                     Vertex;
+    typedef typename Types::Halfedge                   Halfedge;
+    typedef typename Types::Face                       Face;
+
+    typedef typename Types::Vertex_list                Vertex_list;
+    typedef typename Types::Vertex_handle              Vertex_handle;
+    typedef typename Types::Vertex_const_handle        Vertex_const_handle;
+    typedef typename Types::Vertex_iterator            Vertex_iterator;
+    typedef typename Types::Vertex_const_iterator      Vertex_const_iterator;
+
+    typedef typename Types::Halfedge_list              Halfedge_list;
+    typedef typename Types::Halfedge_handle            Halfedge_handle;
+    typedef typename Types::Halfedge_const_handle      Halfedge_const_handle;
+    typedef typename Types::Halfedge_iterator          Halfedge_iterator;
+    typedef typename Types::Halfedge_const_iterator    Halfedge_const_iterator;
+
+    typedef typename Types::Face_list                  Face_list;
+    typedef typename Types::Face_handle                Face_handle;
+    typedef typename Types::Face_const_handle          Face_const_handle;
+    typedef typename Types::Face_iterator              Face_iterator;
+    typedef typename Types::Face_const_iterator        Face_const_iterator;
+
+    typedef typename Types::size_type                  size_type;
+    typedef typename Types::difference_type            difference_type;
+    typedef typename Types::iterator_category          iterator_category;
+
+    typedef Tag_true                                   Supports_removal;
+
+    typedef typename Vertex::Supports_vertex_halfedge Supports_vertex_halfedge;
+    typedef typename Halfedge::Supports_halfedge_prev Supports_halfedge_prev;
+    typedef typename Halfedge::Supports_halfedge_vertex
+                                                      Supports_halfedge_vertex;
+    typedef typename Halfedge::Supports_halfedge_face
+                                                      Supports_halfedge_face;
+    typedef typename Face::Supports_face_halfedge     Supports_face_halfedge;
+
+    // Halfedges are allocated in pairs. Here is the type for that.
+    typedef std::pair<Halfedge,Halfedge>              Halfedge_pair;
+
+    typedef typename Allocator::template rebind< Halfedge_pair>
+                                                       Edge_alloc_rebind;
+    typedef typename Edge_alloc_rebind::other          Edge_allocator;
 
 protected:
     // Changed from static to local variable
@@ -310,11 +355,11 @@ public:
        nb_border_edges( hds.nb_border_edges),
        border_halfedges( hds.border_halfedges)
     {
-	// goal is halfedges = hds.halfedges, but we have pairs here
-	Halfedge_const_iterator i = hds.halfedges_begin();
-	for ( ; i != hds.halfedges_end(); ++ ++ i) {
-	    edges_push_back( *i);
-	}
+        // goal is halfedges = hds.halfedges, but we have pairs here
+        Halfedge_const_iterator i = hds.halfedges_begin();
+        for ( ; i != hds.halfedges_end(); ++ ++ i) {
+            edges_push_back( *i);
+        }
         pointer_update( hds);
     }
 
@@ -322,12 +367,12 @@ public:
         if ( this != &hds) {
             clear();
             vertices            = hds.vertices;
-	    // goal is halfedges = hds.halfedges, but we have pairs here
-	    halfedges = Halfedge_list();
-	    Halfedge_const_iterator i = hds.halfedges_begin();
-	    for ( ; i != hds.halfedges_end(); ++ ++ i) {
-		edges_push_back( *i);
-	    }
+            // goal is halfedges = hds.halfedges, but we have pairs here
+            halfedges = Halfedge_list();
+            Halfedge_const_iterator i = hds.halfedges_begin();
+            for ( ; i != hds.halfedges_end(); ++ ++ i) {
+                edges_push_back( *i);
+            }
             faces               = hds.faces;
             nb_border_halfedges = hds.nb_border_halfedges;
             nb_border_edges     = hds.nb_border_edges;
@@ -597,7 +642,7 @@ pointer_update( const CGAL__HDS_IP_List<Traits_,HalfedgeDSItems,Alloc>& hds) {
     HalfedgeDS_items_decorator<Self> D;
     for ( Halfedge_iterator h = halfedges_begin(); h != halfedges_end(); ++h) {
         h->HBase::set_next( h_map[ h->next()]);
-	// Superfluous and false: opposite pointer get set upon creation
+        // Superfluous and false: opposite pointer get set upon creation
         // h->HBase_base::set_opposite( h_map[ h->opposite()]);
         if ( check_tag( Supports_halfedge_prev()))
             D.set_prev( h, h_map[ D.get_prev(h)]);

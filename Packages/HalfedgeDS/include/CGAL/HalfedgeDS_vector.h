@@ -39,16 +39,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
+
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-template < class Traits_, class HalfedgeDSItems, 
-           class Alloc = CGAL_ALLOCATOR(int)>
-class HalfedgeDS_vector {
+template < class Traits_, class HalfedgeDSItems, class Alloc>
+class HalfedgeDS_vector_types {
 public:
-    typedef HalfedgeDS_vector<Traits_,HalfedgeDSItems,Alloc> Self;
+    typedef HalfedgeDS_vector_types<Traits_,HalfedgeDSItems,Alloc> Self;
 #else
 struct HalfedgeDS_vector {
-template < class Traits_, class HalfedgeDSItems, 
-           class Alloc = CGAL_ALLOCATOR(int)>
+template < class Traits_, class HalfedgeDSItems, class Alloc>
 class HDS {
 public:
     typedef HDS<Traits_,HalfedgeDSItems,Alloc>         Self;
@@ -104,6 +103,75 @@ public:
     typedef typename Halfedge_vector::size_type        size_type;
     typedef typename Halfedge_vector::difference_type  difference_type;
     typedef std::random_access_iterator_tag            iterator_category;
+
+    static inline Vertex_handle vertex_handle( Vertex* v) {
+        return Vertex_I(v);
+    }
+    static inline Vertex_const_handle vertex_handle( const Vertex* v) {
+        return Vertex_CI(v);
+    }
+    static inline Halfedge_handle halfedge_handle( Halfedge* h) {
+        return Halfedge_I(h);
+    }
+    static inline Halfedge_const_handle halfedge_handle( const Halfedge* h) {
+        return Halfedge_CI(h);
+    }
+    static inline Face_handle face_handle( Face* f) {
+        return Face_I(f);
+    }
+    static inline Face_const_handle face_handle( const Face* f) {
+        return Face_CI(f);
+    }
+};
+
+
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+template < class Traits_, class HalfedgeDSItems, 
+           class Alloc = CGAL_ALLOCATOR(int)>
+class HalfedgeDS_vector
+    : public HalfedgeDS_vector_types<Traits_, HalfedgeDSItems, Alloc> {
+public:
+    typedef HalfedgeDS_vector<Traits_,HalfedgeDSItems,Alloc> Self;
+#else
+struct HalfedgeDS_vector {
+template < class Traits_, class HalfedgeDSItems, 
+           class Alloc = CGAL_ALLOCATOR(int)>
+class HDS : public HalfedgeDS_vector_types<Traits_, HalfedgeDSItems, Alloc> {
+public:
+    typedef HDS<Traits_,HalfedgeDSItems,Alloc>         Self;
+#endif
+    typedef HalfedgeDS_vector_types<Traits_, HalfedgeDSItems, Alloc> Types;
+    typedef typename Types::Traits                     Traits;
+    typedef typename Types::Items                      Items;
+    typedef typename Types::Allocator                  Allocator;
+    typedef typename Types::allocator_type             allocator_type;
+
+    typedef typename Types::Vertex                     Vertex;
+    typedef typename Types::Halfedge                   Halfedge;
+    typedef typename Types::Face                       Face;
+
+    typedef typename Types::Vertex_vector              Vertex_vector;
+    typedef typename Types::Vertex_handle              Vertex_handle;
+    typedef typename Types::Vertex_const_handle        Vertex_const_handle;
+    typedef typename Types::Vertex_iterator            Vertex_iterator;
+    typedef typename Types::Vertex_const_iterator      Vertex_const_iterator;
+
+    typedef typename Types::Halfedge_vector            Halfedge_vector;
+    typedef typename Types::Halfedge_handle            Halfedge_handle;
+    typedef typename Types::Halfedge_const_handle      Halfedge_const_handle;
+    typedef typename Types::Halfedge_iterator          Halfedge_iterator;
+    typedef typename Types::Halfedge_const_iterator    Halfedge_const_iterator;
+
+    typedef typename Types::Face_vector                Face_vector;
+    typedef typename Types::Face_handle                Face_handle;
+    typedef typename Types::Face_const_handle          Face_const_handle;
+    typedef typename Types::Face_iterator              Face_iterator;
+    typedef typename Types::Face_const_iterator        Face_const_iterator;
+
+    typedef typename Types::size_type                  size_type;
+    typedef typename Types::difference_type            difference_type;
+    typedef typename Types::iterator_category          iterator_category;
+
     typedef Tag_false                                  Supports_removal;
 
     typedef typename Vertex::Supports_vertex_halfedge Supports_vertex_halfedge;
@@ -137,26 +205,6 @@ private:
         // as given as parameters v_old, h_old, f_old.
 
 public:
-
-    static inline Vertex_handle vertex_handle( Vertex* v) {
-        return Vertex_I(v);
-    }
-    static inline Vertex_const_handle vertex_handle( const Vertex* v) {
-        return Vertex_CI(v);
-    }
-    static inline Halfedge_handle halfedge_handle( Halfedge* h) {
-        return Halfedge_I(h);
-    }
-    static inline Halfedge_const_handle halfedge_handle( const Halfedge* h) {
-        return Halfedge_CI(h);
-    }
-    static inline Face_handle face_handle( Face* f) {
-        return Face_I(f);
-    }
-    static inline Face_const_handle face_handle( const Face* f) {
-        return Face_CI(f);
-    }
-
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     HalfedgeDS_vector()
