@@ -13,6 +13,7 @@ ALL : Fixed leading underscore names.
 SRC : Replace reverse_bidirectional_iterator by reverse_iterator.
 SRC : Fixed composition class/functions.
 TEST: Initial revision
+TEST: Fixed std::distance(...) calls.
 
 //---------------------------------------------------------------------
 //	 CGAL-2.1

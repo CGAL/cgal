@@ -544,8 +544,7 @@ public:
     // range [`first, last').
     if (first != last) {
       if (&x != this) {
-        difference_type n = 0;
-        std::distance(first, last, n);
+        difference_type n = std::distance(first, last);
         x.length -= n;
         length += n;
       }
