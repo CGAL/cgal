@@ -1,4 +1,10 @@
 //-----------------------------------------------------------------------//
+// Changes in 1.26
+
+Removed some unneccessary testfiles and the corresponding postprocessing in
+config.h.
+
+//-----------------------------------------------------------------------//
 // Changes in 1.25
 
 Removed the code in config.h that disables namespaces under MIPSPRO

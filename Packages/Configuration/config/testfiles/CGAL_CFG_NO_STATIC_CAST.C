@@ -30,7 +30,7 @@ int main()
 {
   // SUNPRO 4.2 has problems with references:
   long _i( 1);
-  long& i( _i);
+  long (& i) ( _i);
   double e( static_cast< double >( i));
 
   return 0;

@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,10 +6,10 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-0.9-I-05 $
-// release_date  : $CGAL_Date: 1997/12/17 $
+// release       : $CGAL_Revision: CGAL-2.0-I-1 $
+// release_date  : $CGAL_Date: 1999/02/09 $
 //
 // file          : include/CGAL/config.h
 // source        :
@@ -20,7 +20,7 @@
 //
 // coordinator   : Utrecht University
 //
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
@@ -69,30 +69,6 @@
 
 #ifdef CGAL_CFG_NO_MUTABLE
 #  define mutable
-#endif
-
-// unset the flag CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS if it is
-// just the missing typename keyword that gives problems
-#ifdef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
-#  ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS_NO_TYPENAME
-#    undef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
-#  endif
-#endif
-
-// unset the flag CGAL_CFG_RETURN_TYPE_BUG_1 if it is
-// just the missing typename keyword that gives problems
-#ifdef CGAL_CFG_RETURN_TYPE_BUG_1
-#  ifndef CGAL_CFG_RETURN_TYPE_BUG_1_NO_TYPENAME
-#   undef CGAL_CFG_RETURN_TYPE_BUG_1
-#  endif
-#endif
-
-// unset the flag CGAL_CFG_INCOMPLETE_TYPE_BUG_4 if it is
-// just the missing typename keyword that gives problems
-#ifdef CGAL_CFG_INCOMPLETE_TYPE_BUG_4
-#  ifndef CGAL_CFG_INCOMPLETE_TYPE_BUG_4_NO_TYPENAME
-#    undef CGAL_CFG_INCOMPLETE_TYPE_BUG_4
-#  endif
 #endif
 
 #ifdef CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION

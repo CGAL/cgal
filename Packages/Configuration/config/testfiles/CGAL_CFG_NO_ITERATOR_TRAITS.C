@@ -73,11 +73,11 @@ inline
 int discr( bidirectional_iterator_tag tag) { return 42; }
 
 int main() {
-    vector<int> v;
+    std::vector<int> v;
     v.push_back(32);
     v.push_back(33);
     v.push_back(42);
-    Adaptor< vector<int>::iterator> i( v.begin());
+    Adaptor< std::vector<int>::iterator> i( v.begin());
     ++i;
     assert( *i == 33);
     ++i;
