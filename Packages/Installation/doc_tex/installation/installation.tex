@@ -42,7 +42,9 @@
 
 %% macro for Kai Compiler
 \newcommand{\kcc}[1]{\textsc{Kai}~\texttt{C++}~{\rm #1}}
-\newcommand{\kccurl}{\path'http://www.kai.com/C\_plus\_plus'}
+%\newcommand{\kccurl}{\path'http://www.kai.com/C\_plus\_plus'}
+\newcommand{\kccurl}{\ccAnchor{http://www.kai.com/C_plus_plus}
+{\texttt{http://www.kai.com/C\_plus\_plus}}}
 
 %% macro for Microsoft Windows
 \newcommand{\mswin}{\textsc{MS}~Windows}
@@ -61,8 +63,14 @@
 
 %% macros for WWW pages
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org'}
-\newcommand{\cgalwinlibmsvc}{\path'http://www.cgal.org/download/CGALWin/MS\_windows/Visual\_C++/CGALWin\_msvc\_native.zip'}
-\newcommand{\cgalwinlibbcc}{\path'http://www.cgal.org/download/CGALWin/MS\_windows/Borland/CGALWin\_bcc\_native.zip'}
+\newcommand{\cgalwinlibmsvc}{\ccAnchor
+{http://www.cgal.org/download/CGALWin/MS_windows/Visual_C++/CGALWin_msvc_native.zip}
+{\texttt{http://www.cgal.org/download/CGALWin/MS\_windows/Visual\_C++/CGALWin\_msvc\_native.zip}}
+}
+\newcommand{\cgalwinlibbcc}{\ccAnchor
+{http://www.cgal.org/download/CGALWin/MS_windows/Borland/CGALWin_bcc_native.zip}
+{\texttt{http://www.cgal.org/download/CGALWin/MS\_windows/Borland/CGALWin\_bcc\_native.zip}}}
+
 \newcommand{\cgalwinlibpage}{\path'http://www.cgal.org/download/CGALWin/'}
 \newcommand{\sgistlpage}{\path'http://www.sgi.com/tech/stl/'}
 \newcommand{\stlportpage}{\path'http://www.stlport.org/'}
@@ -1078,7 +1086,7 @@ It consists of a port of a large number of GNU tools, such as bash,
 make, gcc, gas, file utilities, etc, as well as tools ensuring an
 ability to emulate Unix-like access to resources, for instance mount.
 For a comprehensive introduction and details, see
-\path~http://sources.redhat.com/cygwin/~ .
+\path~http://www.cygwin.com/~ .
 
 Make sure that the link \texttt{/bin/sh.exe} exists. If not, create
 it:
