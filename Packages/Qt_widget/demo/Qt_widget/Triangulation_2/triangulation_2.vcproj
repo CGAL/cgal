@@ -47,7 +47,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe triangulation_2.C -o triangulation_2.moc"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -97,7 +98,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe triangulation_2.C -o triangulation_2.moc"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -113,52 +115,52 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="Qt_widget_move_point.C">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="Qt_widget_toolbar.C">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="Qt_widget_toolbar_layers.C">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="triangulation_2.C">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="triangulation_2_edit_vertex.C">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="triangulation_2_toolbar.C">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="2"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="triangulation_2_toolbar_layers.C">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -177,79 +179,66 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc">
 			<File
-				RelativePath="Qt_widget_move_point.h">
+				RelativePath="cgal_types.h">
+			</File>
+			<File
+				RelativePath="triangulation_2_edit_vertex.h">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_point.moc Qt_widget_move_point.h
+						CommandLine="$(QTDIR)/bin/moc.exe -o triangulation_2_edit_vertex.moc triangulation_2_edit_vertex.h
 "
-						Outputs="Qt_widget_move_point.moc"/>
+						Outputs="triangulation_2_edit_vertex.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_point.moc Qt_widget_move_point.h
+						CommandLine="$(QTDIR)/bin/moc.exe -o triangulation_2_edit_vertex.moc triangulation_2_edit_vertex.h
 "
-						Outputs="Qt_widget_move_point.moc"/>
+						Outputs="triangulation_2_edit_vertex.moc"/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Qt_widget_toolbar.h">
+				RelativePath="triangulation_2_layers.h">
+			</File>
+			<File
+				RelativePath="triangulation_2_toolbar.h">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
+						CommandLine="$(QTDIR)/bin/moc.exe -o triangulation_2_toolbar.moc triangulation_2_toolbar.h
 "
-						Outputs="Qt_widget_toolbar.moc"/>
+						Outputs="triangulation_2_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
+						CommandLine="$(QTDIR)/bin/moc.exe -o triangulation_2_toolbar.moc triangulation_2_toolbar.h
 "
-						Outputs="Qt_widget_toolbar.moc"/>
+						Outputs="triangulation_2_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Qt_widget_toolbar_layers.h">
+				RelativePath="triangulation_2_toolbar_layers.h">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
+						CommandLine="$(QTDIR)/bin/moc.exe -o triangulation_2_toolbar_layers.moc triangulation_2_toolbar_layers.h
 "
-						Outputs="Qt_widget_toolbar_layers.moc"/>
+						Outputs="triangulation_2_toolbar_layers.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
+						CommandLine="$(QTDIR)/bin/moc.exe -o triangulation_2_toolbar_layers.moc triangulation_2_toolbar_layers.h
 "
-						Outputs="Qt_widget_toolbar_layers.moc"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="triangulation_2.h">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o triangulation_2.moc triangulation_2.C
-"
-						Outputs="triangulation_2.moc"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o triangulation_2.moc triangulation_2.C
-"
-						Outputs="triangulation_2.moc"/>
+						Outputs="triangulation_2_toolbar_layers.moc"/>
 				</FileConfiguration>
 			</File>
 		</Filter>
