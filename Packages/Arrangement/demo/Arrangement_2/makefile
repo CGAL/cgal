@@ -39,34 +39,34 @@ all: demo1
 
 demo1$(OBJ_EXT): demo1.C 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) demo1.C
-	
+
 moc_demo1$(OBJ_EXT): moc_demo1.C 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moc_demo1.C
 
 moc_demo1.C: demo1.h
-	/a/home/cc/cs/efif/cone/qt/qt/bin/moc $< -o $@
+	moc $< -o $@
 
 forms$(OBJ_EXT): forms.C 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) forms.C
-	
+
 moc_forms$(OBJ_EXT): moc_forms.C 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moc_forms.C
 
 moc_forms.C: forms.h
-	/a/home/cc/cs/efif/cone/qt/qt/bin/moc $< -o $@
-	
+	moc $< -o $@
+
 qt_layer$(OBJ_EXT): qt_layer.C 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) qt_layer.C
 
 demo1$(EXE_EXT): demo1$(OBJ_EXT) moc_demo1$(OBJ_EXT) \
-				 forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
-				 qt_layer$(OBJ_EXT) demo_tab.h
+	forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
+	qt_layer$(OBJ_EXT) demo_tab.h
 	$(CGAL_CXX) $(EXE_OPT)demo1 demo1$(OBJ_EXT) moc_demo1$(OBJ_EXT) \
-								forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
-								qt_layer$(OBJ_EXT) $(LDFLAGS)
+	forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
+	qt_layer$(OBJ_EXT) $(LDFLAGS)
 
 clean: demo1.clean \
-	   
+
 demo1.o : cgal_types1.h demo_tab.h
 
 #---------------------------------------------------------------------#
@@ -75,4 +75,3 @@ demo1.o : cgal_types1.h demo_tab.h
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-
