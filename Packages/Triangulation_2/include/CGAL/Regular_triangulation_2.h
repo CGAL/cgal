@@ -85,7 +85,8 @@ public:
 private:
   void regularize(Vertex_handle v);
   void remove_2D(Vertex_handle v);
-  void fill_hole( Vertex_handle v, std::list<Edge> & hole);
+  //void fill_hole( Vertex_handle v, std::list<Edge> & hole);
+  void fill_hole(std::list<Edge> & hole);
   void update_hidden_points_3_1(const Face_handle& f1, const Face_handle& f2, 
 				const Face_handle& f3);
   void update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2);
@@ -534,7 +535,8 @@ remove_2D(Vertex_handle v)
   else {
     std::list<Edge> hole;
     make_hole(v, hole);
-    fill_hole(v, hole);
+    //fill_hole(v, hole);
+    fill_hole(hole);
     delete &(*v);
     set_number_of_vertices(number_of_vertices()-1);
   }
@@ -545,7 +547,8 @@ remove_2D(Vertex_handle v)
 template < class Gt, class Tds >
 void
 Regular_triangulation_2<Gt,Tds>::
-fill_hole(Vertex_handle v, std::list<Edge> & first_hole)
+//fill_hole(Vertex_handle v, std::list<Edge> & first_hole)
+fill_hole(std::list<Edge> & first_hole)
 {
   typedef std::list<Edge> Hole;
   typedef std::list<Hole> Hole_list;

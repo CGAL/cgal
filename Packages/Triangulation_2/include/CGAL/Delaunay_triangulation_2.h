@@ -409,7 +409,8 @@ remove_2D(Vertex_handle v)
   else {
     std::list<Edge> hole;
     make_hole(v, hole);
-    fill_hole_delaunay(v, hole);
+    //fill_hole_delaunay(v,hole);
+    fill_hole_delaunay(hole);
     delete &(*v);
     set_number_of_vertices(number_of_vertices()-1);
   }

@@ -274,7 +274,8 @@ protected:
   bool test_dim_down(Vertex_handle v);
   void make_hole(Vertex_handle v, std::list<Edge> & hole);
   void fill_hole(Vertex_handle v, std::list<Edge> & hole);
-  void fill_hole_delaunay(Vertex_handle v, std::list<Edge> & hole);
+  //void fill_hole_delaunay(Vertex_handle v, std::list<Edge> & hole);
+  void fill_hole_delaunay(std::list<Edge> & hole);
 
   Face_handle add_face(Face_handle f1, int i1,
 		       Face_handle f2, int i2,
@@ -1162,7 +1163,8 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 template <class Gt, class Tds >
 void
 Triangulation_2<Gt, Tds>::
-fill_hole_delaunay(Vertex_handle v, std::list<Edge> & first_hole)
+//fill_hole_delaunay(Vertex_handle v, std::list<Edge> & first_hole)
+fill_hole_delaunay(std::list<Edge> & first_hole)
 {
   typedef std::list<Edge> Hole;
   typedef std::list<Hole> Hole_list;
