@@ -47,6 +47,5 @@ $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO --exclude="*~" --exclude="*.old" \
-	version maintainer \
-	long_description.txt description.txt changes.txt \
+	version maintainer description.txt changes.txt \
 	include

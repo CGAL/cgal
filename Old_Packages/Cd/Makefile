@@ -38,8 +38,7 @@ rtag:
 
 submit: package
 	cp $(Package).tar.gz version maintainer \
-	description.txt long_description.txt \
-	   changes.txt $(WWW_dir)
+	description.txt changes.txt $(WWW_dir)
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
@@ -55,6 +54,5 @@ $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO --exclude="*~" --exclude="*.old" \
-	version maintainer \
-	long_description.txt description.txt changes.txt \
+	version maintainer description.txt changes.txt \
 	include test
