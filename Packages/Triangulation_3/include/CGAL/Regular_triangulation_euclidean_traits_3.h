@@ -108,7 +108,7 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Cartesian_tag)
 {
-  typedef typename pt::FT FT;
+  typedef typename pt::R::FT FT;
     return power_testC3(p.x(), p.y(), p.z(), FT(p.weight()),
                         q.x(), q.y(), q.z(), FT(q.weight()),
                         r.x(), r.y(), r.z(), FT(r.weight()),
@@ -125,7 +125,7 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Cartesian_tag)
 {
-  typedef typename pt::FT FT;
+  typedef typename pt::R::FT FT;
     return power_testC3(p.x(), p.y(), p.z(), FT(p.weight()),
                         q.x(), q.y(), q.z(), FT(q.weight()),
                         r.x(), r.y(), r.z(), FT(r.weight()),
@@ -140,7 +140,7 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Cartesian_tag)
 {
-  typedef typename pt::FT FT;
+  typedef typename pt::R::FT FT;
     return power_testC3(p.x(), p.y(), p.z(), FT(p.weight()),
                         q.x(), q.y(), q.z(), FT(q.weight()),
                         t.x(), t.y(), t.z(), FT(t.weight()));
@@ -158,7 +158,7 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Homogeneous_tag)
 {
-  typedef typename pt::RT RT;
+  typedef typename pt::R::RT RT;
     return power_testH3(p.hx(), p.hy(), p.hz(), p.hw(), RT(p.weight()),
                         q.hx(), q.hy(), q.hz(), q.hw(), RT(q.weight()),
                         r.hx(), r.hy(), r.hz(), r.hw(), RT(r.weight()),
@@ -178,7 +178,7 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Homogeneous_tag)
 {
-    typedef typename pt::FT FT;
+    typedef typename pt::R::FT FT;
     return power_testC3(p.x(), p.y(), p.z(), FT(p.weight()),
                         q.x(), q.y(), q.z(), FT(q.weight()),
                         r.x(), r.y(), r.z(), FT(r.weight()),
@@ -193,7 +193,7 @@ power_test(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &t,
 	   Homogeneous_tag)
 {
-    typedef typename pt::FT FT;
+    typedef typename pt::R::FT FT;
     return power_testC3(p.x(), p.y(), p.z(), FT(p.weight()),
                         q.x(), q.y(), q.z(), FT(q.weight()),
                         t.x(), t.y(), t.z(), FT(t.weight()));
