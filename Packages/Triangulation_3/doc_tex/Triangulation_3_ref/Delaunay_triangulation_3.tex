@@ -50,21 +50,23 @@ construction of the Voronoi diagram:
 \ccCreationVariable{dt}  %% choose variable name
 \ccThree{Vertex_handle}{dt.remove(Point p)toto}{}
 
-\ccConstructor{Delaunay_triangulation_3();}{default constructor.}
-
-
-\ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>()}
-{Creates an empty Delaunay triangulation.}
-
 \ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>
-(const DelaunayTriangulationTraits_3 & traits)}
-{Creates an empty Delaunay triangulation with traits class
+(const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3())}
+{Creates an empty Delaunay triangulation, eventually specifying a traits class
 \ccc{traits}.}
 
 \ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>
 (const
 Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3> & dt1)}
 {Copy constructor.}
+
+\ccConstructor{template < class InputIterator >
+       Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>
+(InputIterator first, InputIterator last,
+ const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3())}
+{Creates a Delaunay triangulation of the points specified by the iterator range
+\ccc{[first,last)} of value type \ccc{Point}, eventually specifying a traits
+class \ccc{traits}.}
 
 \ccOperations
 

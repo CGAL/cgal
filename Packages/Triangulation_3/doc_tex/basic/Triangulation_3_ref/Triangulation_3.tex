@@ -133,6 +133,13 @@ infinite vertex.}
 Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);} 
 {Copy constructor. All vertices and faces are duplicated.}
 
+\ccConstructor{template < class InputIterator>
+       Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>
+       (InputIterator first, InputIterator last,
+        const TriangulationTraits_3 & traits = TriangulationTraits_3() );}
+{Introduces a triangulation \ccVar\ constructed by the repeated insertion
+of the iterator range \ccc{[first,last)} of value type \ccc{Point}.} 
+
 \ccFunction{void ~t();}
 {Destructor. All vertices (including the infinite vertex) and cells are
 deleted.}

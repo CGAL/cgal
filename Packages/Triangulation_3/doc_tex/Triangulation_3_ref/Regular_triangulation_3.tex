@@ -61,18 +61,23 @@ Inherits the types of \ccc{Triangulation_3<RegularTriangulationTraits_3,Triangul
 \ccThree{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}
 {rt( RegularTriangulationTraits_3 traits );xxx}{}
 
-\ccConstructor{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>()}
-{Creates an empty regular triangulation.}
-
 \ccConstructor{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>
-(const RegularTriangulationTraits_3 & traits)}
-{Creates an empty regular triangulation with traits class
+(const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3())}
+{Creates an empty regular triangulation, eventually specifying a traits class
 \ccc{traits}.}
 
 \ccConstructor{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>
 (const
 Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3> & rt1)}
 {Copy constructor.}
+
+\ccConstructor{template < class InputIterator >
+               Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>
+               (InputIterator first, InputIterator last,
+ const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3())}
+{Creates a regular triangulation of the points specified by the iterator range
+\ccc{[first,last)} of value type \ccc{Point}, eventually specifying a traits
+class \ccc{traits}.}
 
 \ccOperations
 
