@@ -124,6 +124,12 @@ operators. 2D objects are embedded in the \ccc{xy}-plane.
           operator<<(Geomview_stream& G, const Bbox_3& b);}
 {Inserts the bounding box \ccc{b} into the stream \ccVar.}
 
+\ccMethod{template < class InputIterator >
+    void draw_triangles(InputIterator begin, InputIterator end);}
+{[\ccc{begin};\ccc{end}) is an iterator range with value type
+\ccc{Triangle_3<R>}.  This method uses the OFF format to draw several triangles
+at once, which is much faster than drawing them one by one.}
+
 
 \ccHeading{Input Operators for CGAL Kernel Classes}
 

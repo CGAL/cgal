@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.33 (11 December 2002)
+- Add gv.draw_triangles(InputIterator begin, end) using OFF to be fast.
+
 Ver 3.32 (29 April 2002)
 - split of reference and user manual
 

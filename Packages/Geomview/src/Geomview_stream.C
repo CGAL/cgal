@@ -244,6 +244,26 @@ Geomview_stream::operator<<(int i)
 }
 
 Geomview_stream&
+Geomview_stream::operator<<(unsigned int i)
+{
+    // Depending on the mode chosen
+    if (get_binary_mode()) {
+        // we write raw binary data to the stream.
+        unsigned int num = i;
+        I_swap_to_big_endian(num);
+        ::write(out, (char*)&num, sizeof(num));
+        trace(i);
+    } else {
+        // transform the int in a character sequence and put whitespace around
+        std::ostrstream str;
+        str << i << ' ' << std::ends;
+        *this << str.str();
+    }
+
+    return *this;
+}
+
+Geomview_stream&
 Geomview_stream::operator<<(double d)
 {
     float f = d;

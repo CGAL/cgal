@@ -28,9 +28,14 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/IO/Ostream_iterator.h>
 
 #include <map>
+#include <vector>
+#include <utility>
 #include <string>
+#include <iterator>
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,7 +50,12 @@ public:
     Geomview_stream &operator<<(const Color &c);
     Geomview_stream &operator<<(std::string s);
     Geomview_stream &operator<<(int i);
+    Geomview_stream &operator<<(unsigned int i);
     Geomview_stream &operator<<(double d);
+
+    template < class InputIterator >
+    void
+    draw_triangles(InputIterator begin, InputIterator end);
 
     Geomview_stream &operator>>(char *expr);
 
@@ -145,6 +155,11 @@ public:
             std::cerr << d << ' ';
     }
     void trace(int i) const
+    {
+        if (get_trace())
+            std::cerr << i << ' ';
+    }
+    void trace(unsigned int i) const
     {
         if (get_trace())
             std::cerr << i << ' ';
@@ -320,6 +335,54 @@ output_triangle(Geomview_stream &gv, const Triangle &triangle)
     gv << 3 << 0 << 1 << 2 << 4 << gv.fcr() << gv.fcg() << gv.fcb() << 1.0
        << "}})";
     gv.set_ascii_mode(ascii_bak);
+}
+
+// Draws a set of triangles as OFF format (it's faster than one by one).
+template < class InputIterator >
+void
+Geomview_stream::draw_triangles(InputIterator begin, InputIterator end)
+{
+    typedef typename std::iterator_traits<InputIterator>::value_type  Triangle;
+    typedef typename Kernel_traits<Triangle>::Kernel                  Kernel;
+    typedef typename Kernel::Point_3                                  Point;
+    typedef typename Kernel::Less_xyz_3                               Comp;
+
+    // Put the points in a map and a vector.
+    // The index of a point in the vector is the value associated
+    // to it in the map.
+    std::map<Point, int, Comp> point_map(Kernel().less_xyz_3_object());
+    std::vector<Point> points;
+    for (InputIterator i = begin; i != end; ++i)
+        for (int j = 0; j < 3; ++j)
+	    if (point_map.insert(std::make_pair(i->vertex(j),
+					        points.size())).second)
+                points.push_back(i->vertex(j));
+
+    bool ascii_bak = get_ascii_mode();
+    bool raw_bak = set_raw(true);
+
+    // Header.
+    set_binary_mode();
+    (*this) << "(geometry " << get_new_id("triangles")
+            << " {appearance {}{ OFF BINARY\n"
+            << points.size() << std::distance(begin, end) << 0;
+
+    // Points coordinates.
+    std::copy(points.begin(), points.end(),
+              Ostream_iterator<Point, Geomview_stream>(*this));
+
+    // Triangles vertices indices.
+    for (InputIterator tit = begin; tit != end; ++tit) {
+        (*this) << 3;
+	for (int j = 0; j < 3; ++j)
+	    (*this) << point_map[tit->vertex(j)];
+        (*this) << 0; // without color.
+    }
+    // Footer.
+    (*this) << "}})";
+
+    set_raw(raw_bak);
+    set_ascii_mode(ascii_bak);
 }
 
 #if defined CGAL_TRIANGLE_2_H && \
