@@ -33,6 +33,8 @@
 #define DEBUG_STAR   0
 #define DEBUG_SIDE_OF_SPHERE   0
 
+CGAL_BEGIN_NAMESPACE
+
 template < class Gt, class Tds>
 class Regular_triangulation_3 : public Triangulation_3<Gt,Tds>
 {
@@ -545,5 +547,7 @@ public:
 // +++  Insertion  +++ //
 
 // +++  Determination de la region en conflit  +++ //
+
+CGAL_END_NAMESPACE
 
 #endif CGAL_REGULAR_TRIANGULATION_3_H
