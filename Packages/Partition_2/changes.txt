@@ -1,3 +1,7 @@
+1.38 (12 Aug 2002)
+  - replace LEFTTURN and relatives by LEFT_TURN and relatives.
+
+-------------------------------- Release 2.4 ----------------------------------
 1.37 (6 May 2002)
   - use std::vector in Rotation_tree for Borland as well (something not
     working with the std::unique call there it seems)
