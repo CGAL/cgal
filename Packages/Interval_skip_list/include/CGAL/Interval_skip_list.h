@@ -24,9 +24,12 @@
 #ifndef CGAL_INTERVAL_SKIP_LIST_H
 #define CGAL_INTERVAL_SKIP_LIST_H
 
+#include <list>
 #include <cassert>
 #include <iostream>
 #include <CGAL/Random.h>
+//#define CCC
+#define ISL_LIST
 
 #include <CGAL/Compact_container.h>
 
@@ -125,10 +128,14 @@ class Interval_for_container : public Interval_
     typedef typename Interval::Value Value;
     Random rand;
 
+#ifdef ISL_LIST
+    std::list<Interval> container;
+    typedef typename std::list<Interval>::iterator Interval_handle;
+#else
     Compact_container<Interval_for_container<Interval> > container;
     typedef Compact_container<Interval_for_container<Interval> >::iterator 
       Interval_handle;
-
+#endif
 
 #ifdef CCC
     typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
@@ -291,10 +298,13 @@ class Interval_for_container : public Interval_
     void print(std::ostream& os) const;
     void printOrdered(std::ostream& os) const;
 
+#ifdef ISL_LIST
+    typedef std::list<Interval>::const_iterator const_iterator;
+#else
     typedef typename 
     Compact_container<Interval_for_container<Interval> >::iterator iterator;
     typedef const iterator const_iterator;
-
+#endif
     const_iterator begin() const
     {
       return container.begin();
@@ -314,9 +324,13 @@ class Interval_for_container : public Interval_
     typedef Interval_ Interval;
     typedef typename Interval::Value Value;
     //typedef Interval* Interval_handle;
+#ifdef ISL_LIST
+    typedef std::list<Interval>::iterator Interval_handle;
+#else
     typedef Compact_container<Interval_for_container<Interval> >::iterator 
       Interval_handle;
-    
+#endif
+
 #ifdef CCC
     typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
 #else
@@ -326,7 +340,10 @@ class Interval_for_container : public Interval_
 
     ILE_handle header;
 
+#ifdef CCC
     static Compact_container<IntervalListElt<Interval> > compact_container;
+#endif
+    std::allocator<IntervalListElt<Interval> > alloc;
 
   public:
 
@@ -350,7 +367,10 @@ class Interval_for_container : public Interval_
       ILE_handle it = compact_container.insert(e);
       return it;
 #else
-      return new IntervalListElt<Interval>(I);
+      IntervalListElt<Interval> *elt_ptr = alloc.allocate(1);
+      alloc.construct(elt_ptr, I);
+      return elt_ptr;
+      //return new IntervalListElt<Interval>(I);
 #endif
     }
 
@@ -359,7 +379,9 @@ class Interval_for_container : public Interval_
 #ifdef CCC
       compact_container.erase(I);
 #else
-      delete I;
+      alloc.destroy(I);
+      alloc.deallocate(I,1);
+      //delete I;
 #endif
     }
 
@@ -392,11 +414,11 @@ class Interval_for_container : public Interval_
     ~IntervalList();
   };
 
-
+#ifdef CCC
   template <class Interval_>
   Compact_container<IntervalListElt<Interval_> > 
      IntervalList<Interval_>::compact_container;
-
+#endif
  
 
 
@@ -405,8 +427,13 @@ class Interval_for_container : public Interval_
   class IntervalListElt
   {
     typedef Interval_ Interval;
+#ifdef ISL_LIST
+    typedef std::list<Interval>::iterator Interval_handle;
+#else
     typedef Compact_container<Interval_for_container<Interval> >::iterator 
       Interval_handle;
+#endif
+
 #ifdef CCC
     typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
 #else
@@ -415,14 +442,18 @@ class Interval_for_container : public Interval_
 
     Interval_handle I;
     ILE_handle next;
+#ifdef CCC
     void* p;
+#endif
   public:
+#ifdef CCC
     void *   for_compact_container() const { return p; }
     void * & for_compact_container()       { return p; }
-    
+#endif
+
     bool operator==(const IntervalListElt& e)
     {
-      return ( ((*I) == (*(e.I))) && (next == e.next) && (p == e.p));
+      return ( ((*I) == (*(e.I))) && (next == e.next));
     }
     
     friend class IntervalList<Interval>;
@@ -1002,10 +1033,14 @@ template <class Interval>
   void
   Interval_skip_list<Interval>::insert(const Interval& I)
   {
+#ifdef ISL_LIST
+    container.push_front(I);
+    Interval_handle ih = container.begin();
+#else
     Interval_for_container<Interval> ifc(I);
     Interval_handle ih = container.insert(ifc);
+#endif
     insert(ih);
-
   }
 
 
