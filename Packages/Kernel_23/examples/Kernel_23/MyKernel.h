@@ -7,7 +7,7 @@
 
 
 #include "MyPointC2.h"
-#include "MysegmentC2.h"
+#include "MySegmentC2.h"
 
 
 

@@ -1,5 +1,5 @@
 #include <CGAL/basic.h>
-#include <CGAl/Filtered_kernel.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/squared_distance_2.h>
 
