@@ -1,0 +1,20 @@
+Manual/TO_DO
+==================
+
+-- Document and maybe improve cgal_manual on how to release the 
+   manuals, i.e., mainly how to pack them properly with subdirs
+   see ./makefile
+
+-- Would it be possible to replace the requirement that the Manual/
+   directory is placed side by side with the package we want to build the
+   doc, by an environment variable (which could default to "../..") ?
+
+-- debug option to keep all temp files
+
+-- letter option for letter size paper in PS
+
+-- alternative for creating PDF (some options seem to be missing for 
+   good font support though, -ups, -Ppdf???)
+
+   dvips -t letter -o pdf_wrapper.ps pdf_wrapper
+   ps2pdf pdf_wrapper.ps
