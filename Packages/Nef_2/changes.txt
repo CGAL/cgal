@@ -1,5 +1,8 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+3 April 2004 Sylvain Pion
+- Remove debug options from testsuite makefile to please PGCC.
+
 25 March 2004 Radu Ursu
 - made the doc work with the new implementation of Manual tools
 
