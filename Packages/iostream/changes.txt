@@ -13,6 +13,9 @@ src/io.C
 
 
 CHANGES:
+Version 2.1 (27 Mai 99)
+- introduced std:: namespaces
+
 Version 2.0 (11 Mar 1999)
 - Converted to namespace CGAL.
 
