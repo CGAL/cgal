@@ -52,6 +52,7 @@
 #include <qtoolbar.h>
 #include <qstatusbar.h>
 #include <qbuttongroup.h>
+#include <qmainwindow.h>
 
 namespace CGAL {
 
