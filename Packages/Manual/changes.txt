@@ -1,3 +1,6 @@
+(9 Aug 2004) [mk]
+- added one more missing reference for the segment Voronoi diagram package
+
 (7 Aug 2004) [mk]
 - fixed typos in the references added on Aug. 4th
 
