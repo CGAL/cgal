@@ -94,6 +94,8 @@ public:
     }
 };
 
+// Fix allocator to CGAL default allocator since rebind doesn't work here.
+
 template <class Traits_>
 class HalfedgeDS_ipl_MSC_base {
 public:
@@ -104,16 +106,18 @@ public:
   typedef CGALMSC::Halfedge_<Self,Traits> Halfedge_base;
   typedef CGALMSC::Face_<Self,Traits>     Face_base;
 
-  typedef HalfedgeDS_in_place_list_vertex<Vertex_base> Vertex;
-  typedef CGAL::In_place_list<Vertex,false>            Vertex_list;
-  typedef CGAL::CGALi::In_place_list_iterator<Vertex>  Vertex_handle;
-  typedef CGAL::CGALi::In_place_list_iterator<Vertex>  Vertex_iterator;
+  typedef HalfedgeDS_in_place_list_vertex<Vertex_base>   Vertex;
+  typedef CGAL_ALLOCATOR(Vertex)                         Vertex_alloc;
+  typedef CGAL::In_place_list<Vertex,false,Vertex_alloc> Vertex_list;
+  typedef CGAL::CGALi::In_place_list_iterator<Vertex>    Vertex_handle;
+  typedef CGAL::CGALi::In_place_list_iterator<Vertex>    Vertex_iterator;
   typedef CGAL::CGALi::In_place_list_const_iterator<Vertex> 
       Vertex_const_handle;
   typedef CGAL::CGALi::In_place_list_const_iterator<Vertex> 
       Vertex_const_iterator;
 
   typedef HalfedgeDS_in_place_list_vertex<Halfedge_base> Halfedge;
+  // A halfedge allocator is never used. Halfedges are allocates in pairs.
   typedef CGAL::In_place_list<Halfedge,false>            Halfedge_list;
   typedef CGAL::CGALi::In_place_list_iterator<Halfedge>  Halfedge_handle;
   typedef CGAL::CGALi::In_place_list_iterator<Halfedge>  Halfedge_iterator;
@@ -123,7 +127,8 @@ public:
       Halfedge_const_iterator;
 
   typedef HalfedgeDS_in_place_list_vertex<Face_base> Face;
-  typedef CGAL::In_place_list<Face,false>            Face_list;
+  typedef CGAL_ALLOCATOR(Face)                       Face_alloc;
+  typedef CGAL::In_place_list<Face,false,Face_alloc> Face_list;
   typedef CGAL::CGALi::In_place_list_iterator<Face>  Face_handle;
   typedef CGAL::CGALi::In_place_list_iterator<Face>  Face_iterator;
   typedef CGAL::CGALi::In_place_list_const_iterator<Face> 
@@ -139,38 +144,41 @@ template < class Traits_>
 class HalfedgeDS_ipl_MSC : 
   public HalfedgeDS_ipl_MSC_base<Traits_> {
 public:
-  typedef Traits_  Traits;
-  typedef HalfedgeDS_ipl_MSC_base<Traits_> Base;
-  typedef HalfedgeDS_ipl_MSC<Traits_> Self;
+  typedef Traits_                                Traits;
+  typedef HalfedgeDS_ipl_MSC_base<Traits_>       Base;
+  typedef HalfedgeDS_ipl_MSC<Traits_>            Self;
 
-  typedef typename Base::Vertex_base Vertex_base;
-  typedef typename Base::Vertex Vertex;
-  typedef typename Base::Vertex_list Vertex_list;
-  typedef typename Base::Vertex_handle Vertex_handle;
-  typedef typename Base::Vertex_const_handle Vertex_const_handle;
-  typedef typename Base::Vertex_iterator Vertex_iterator;
-  typedef typename Base::Vertex_const_iterator Vertex_const_iterator;
+  typedef typename Base::Vertex_base             Vertex_base;
+  typedef typename Base::Vertex                  Vertex;
+  typedef typename Base::Vertex_alloc            Vertex_alloc;
+  typedef typename Base::Vertex_list             Vertex_list;
+  typedef typename Base::Vertex_handle           Vertex_handle;
+  typedef typename Base::Vertex_const_handle     Vertex_const_handle;
+  typedef typename Base::Vertex_iterator         Vertex_iterator;
+  typedef typename Base::Vertex_const_iterator   Vertex_const_iterator;
 
-  typedef typename Base::Halfedge_base Halfedge_base;
-  typedef typename Base::Halfedge Halfedge;
-  typedef typename Base::Halfedge_list Halfedge_list;
-  typedef typename Base::Halfedge_handle Halfedge_handle;
-  typedef typename Base::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Base::Halfedge_iterator Halfedge_iterator;
+  typedef typename Base::Halfedge_base           Halfedge_base;
+  typedef typename Base::Halfedge                Halfedge;
+  // A halfedge allocator is never used. Halfedges are allocates in pairs.  
+  typedef typename Base::Halfedge_list           Halfedge_list;
+  typedef typename Base::Halfedge_handle         Halfedge_handle;
+  typedef typename Base::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename Base::Halfedge_iterator       Halfedge_iterator;
   typedef typename Base::Halfedge_const_iterator Halfedge_const_iterator;
 
-  typedef typename Base::Face_base Face_base;
-  typedef typename Base::Face Face;
-  typedef typename Base::Face_list Face_list;
-  typedef typename Base::Face_handle Face_handle;
-  typedef typename Base::Face_const_handle Face_const_handle;
-  typedef typename Base::Face_iterator Face_iterator;
-  typedef typename Base::Face_const_iterator Face_const_iterator;
+  typedef typename Base::Face_base               Face_base;
+  typedef typename Base::Face                    Face;
+  typedef typename Base::Face_alloc              Face_alloc;
+  typedef typename Base::Face_list               Face_list;
+  typedef typename Base::Face_handle             Face_handle;
+  typedef typename Base::Face_const_handle       Face_const_handle;
+  typedef typename Base::Face_iterator           Face_iterator;
+  typedef typename Base::Face_const_iterator     Face_const_iterator;
 
-  typedef typename Halfedge_list::size_type          size_type;
-  typedef typename Halfedge_list::difference_type    difference_type;
-  typedef std::bidirectional_iterator_tag            iterator_category;
-  typedef CGAL::Tag_true                             Supports_removal;
+  typedef typename Halfedge_list::size_type           size_type;
+  typedef typename Halfedge_list::difference_type     difference_type;
+  typedef std::bidirectional_iterator_tag             iterator_category;
+  typedef CGAL::Tag_true                              Supports_removal;
 
   typedef typename Vertex::Supports_vertex_halfedge   Supports_vertex_halfedge;
   typedef typename Halfedge::Supports_halfedge_prev   Supports_halfedge_prev;
@@ -185,6 +193,7 @@ public:
         Halfedge_pair( const Halfedge& h, const Halfedge& g)
             : first(h), second(g) {}
     };
+    typedef CGAL_ALLOCATOR(Halfedge_pair)  Edge_alloc;
 
     static inline Vertex_handle vertex_handle( Vertex_base* v) {
         Vertex* vv = 0;
@@ -225,6 +234,54 @@ public:
     }
 
 protected:
+    Vertex_alloc vertex_allocator;
+    Edge_alloc   edge_allocator;  // allocates pairs of halfedges
+    Face_alloc   face_allocator;
+    
+    Vertex* get_vertex_node( const Vertex& t) {
+        Vertex* p = vertex_allocator.allocate(1);
+        vertex_allocator.construct(p, t);
+        return p;
+    }
+    void put_vertex_node( Vertex* p) {
+        vertex_allocator.destroy( p);
+        vertex_allocator.deallocate( p, 1);
+    }
+
+    Halfedge* get_edge_node( const Halfedge& h, const Halfedge& g) {
+        // creates a new pair of opposite border halfedges.
+        Halfedge_pair* hpair = edge_allocator.allocate(1);
+        edge_allocator.construct(hpair, Halfedge_pair( h, g));
+        Halfedge* h2 = &(hpair->first);
+        Halfedge* g2 = &(hpair->second);
+        CGAL_assertion( h2 == (Halfedge*)hpair);
+        CGAL_assertion( g2 == h2 + 1);
+        h2->set_opposite(g2);
+        g2->set_opposite(h2);
+        return h2;
+    }
+    void put_edge_node( Halfedge* h) {
+        // deletes the pair of opposite halfedges h and h->opposite().
+        Halfedge_handle g = h->opposite();
+        Halfedge_pair* hpair = (Halfedge_pair*)(&*h);
+        if ( &*h > &*g)
+            hpair = (Halfedge_pair*)(&*g);
+        CGAL_assertion( &(hpair->first) == (Halfedge*)hpair);
+        edge_allocator.destroy( hpair);
+        edge_allocator.deallocate( hpair, 1);
+    }
+
+    Face* get_face_node( const Face& t) {
+        Face* p = face_allocator.allocate(1);
+        face_allocator.construct(p, t);
+        return p;
+    }
+    void put_face_node( Face* p) {
+        face_allocator.destroy( p);
+        face_allocator.deallocate( p, 1);
+    }
+
+protected:
     Vertex_list        vertices;
     Halfedge_list      halfedges;
     Face_list          faces;
@@ -252,18 +309,30 @@ public:
 
     HalfedgeDS_ipl_MSC(const Self& hds)
     :  vertices( hds.vertices),
-       halfedges( hds.halfedges),
+       //halfedges( hds.halfedges), // BUG!, see fct. body
        faces( hds.faces),
        nb_border_halfedges( hds.nb_border_halfedges),
        nb_border_edges( hds.nb_border_edges),
        border_halfedges( hds.border_halfedges)
-    { pointer_update( hds); }
+    {
+        // goal is halfedges = hds.halfedges, but we have pairs here
+        Halfedge_const_iterator i = hds.halfedges_begin();
+        for ( ; i != hds.halfedges_end(); ++ ++ i) {
+            edges_push_back( *i);
+        }
+        pointer_update( hds);
+    }
 
     Self& operator=( const Self& hds)  {
         if ( this != &hds) {
             clear();
             vertices            = hds.vertices;
-            halfedges           = hds.halfedges;
+            // goal is halfedges = hds.halfedges, but we have pairs here
+            halfedges = Halfedge_list();
+            Halfedge_const_iterator i = hds.halfedges_begin();
+            for ( ; i != hds.halfedges_end(); ++ ++ i) {
+                edges_push_back( *i);
+            }
             faces               = hds.faces;
             nb_border_halfedges = hds.nb_border_halfedges;
             nb_border_edges     = hds.nb_border_edges;
@@ -318,24 +387,18 @@ public:
 // opposite pointers are automatically set.
 
     Vertex_handle vertices_push_back( const Vertex& v) {
-        vertices.push_back( * new Vertex(v));
+        vertices.push_back( * get_vertex_node(v));
         Vertex_handle vh = vertices.end();
         return --vh;
     }
 
     Halfedge_handle edges_push_back( const Halfedge& h, const Halfedge& g) {
         // creates a new pair of opposite border halfedges.
-        Halfedge_pair* hpair = new Halfedge_pair( h, g);
-        Halfedge* h2 = &(hpair->first);
-        Halfedge* g2 = &(hpair->second);
-        CGAL_assertion( h2 == (Halfedge*)hpair);
-        CGAL_assertion( g2 == h2 + 1);
-        h2->set_opposite(g2);
-        g2->set_opposite(h2);
-        halfedges.push_back( *h2);
+        Halfedge* ptr = get_edge_node( h, g);
+        halfedges.push_back( *ptr);
         Halfedge_handle hh = halfedges.end();
         --hh;
-        halfedges.push_back( *g2);
+        halfedges.push_back( *(ptr->opposite()));
         return hh;
     }
 
@@ -345,7 +408,7 @@ public:
     }
 
     Face_handle faces_push_back( const Face& f) {
-        faces.push_back( * new Face(f));
+        faces.push_back( * get_face_node(f));
         Face_handle fh = faces.end();
         return --fh;
     }
@@ -360,16 +423,17 @@ public:
     void vertices_pop_front() {
         Vertex* v = &(vertices.front());
         vertices.pop_front();
-        delete v;
+        put_vertex_node( v);
     }
     void vertices_pop_back() {
         Vertex* v = &(vertices.back());
         vertices.pop_back();
-        delete v;
+        put_vertex_node( v);
     }
     void vertices_erase( Vertex_handle v) {
+        Vertex* ptr = &*v;
         vertices.erase(v);
-        delete &*v;
+        put_vertex_node( ptr);
     }
     void vertices_erase( Vertex_iterator first, Vertex_iterator last) {
         while (first != last)
@@ -381,11 +445,7 @@ public:
         Halfedge_handle g = h->opposite();
         halfedges.erase(h);
         halfedges.erase(g);
-        Halfedge_pair* hpair = (Halfedge_pair*)(&*h);
-        if ( &*h > &*g)
-            hpair = (Halfedge_pair*)(&*g);
-        CGAL_assertion( &(hpair->first) == (Halfedge*)hpair);
-        delete hpair;
+        put_edge_node(&*h);
     }
     void edges_pop_front() { edges_erase( halfedges.begin()); }
     void edges_pop_back()  {
@@ -394,40 +454,47 @@ public:
     }
     void edges_erase( Halfedge_iterator first, Halfedge_iterator last) {
         while (first != last) {
-	    Halfedge_iterator tmp = first;
-            ++first;
-            CGAL_assertion( first != last);
-            ++first;
-            edges_erase(tmp);
+            Halfedge_iterator nxt = first;
+            ++nxt;
+            CGAL_assertion( nxt != last);
+            ++nxt;
+            edges_erase(first);
+            first = nxt;
         }
     }
 
     void faces_pop_front() {
         Face* f = &(faces.front());
         faces.pop_front();
-        delete f;
+        put_face_node( f);
     }
     void faces_pop_back() {
         Face* f = &(faces.back());
         faces.pop_back();
-        delete f;
+        put_face_node( f);
     }
     void faces_erase( Face_handle f) {
+        Face* ptr = &*f;
         faces.erase(f);
-        delete &*f;
+        put_face_node( ptr);
     }
     void faces_erase( Face_iterator first, Face_iterator last) {
         while (first != last)
             faces_erase(first++);
     }
 
-    void clear() {
-        vertices.destroy();
+    void vertices_clear() { vertices.destroy(); }
+    void edges_clear() {
         edges_erase( halfedges.begin(), halfedges.end());
-        faces.destroy();
         nb_border_halfedges = 0;
         nb_border_edges = 0;
         border_halfedges = Halfedge_handle();
+    }
+    void faces_clear() { faces.destroy(); }
+    void clear() {
+        vertices_clear();
+        edges_clear();
+        faces_clear();
     }
 
 // Operations with Border Halfedges

@@ -1,6 +1,17 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.1 (18 Mar 2002)
+
+     - include/CGAL/HalfedgeDS_default_MSC.h: Fixed bug in copy
+       constructor and assignment operator to copy pairs instead of 
+       single halfedges. Bug reported by Xiangmin Jiao and fixed in 
+       original HalfedgeDS 3.4 (15 Jun 2001).
+     - include/CGAL/HalfedgeDS_default_MSC.h: Added use of 
+       CGAL_ALLOCATOR, otherwise the default allocator used in
+       In_place_list that could be incompatible with new/delete
+       would have created problems.
+
 0.9 (9 Sept 2000)
 
      initial release
