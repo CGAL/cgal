@@ -306,6 +306,7 @@ public:
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
     using Base_trapezoid_circulator::curr;
+    using Base_trapezoid_circulator::traits;
 #endif
 
   protected:
