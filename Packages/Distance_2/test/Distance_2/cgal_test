@@ -27,7 +27,7 @@ one_run()
     then
 	if [ -r ${goodresult} ]
 	then
-	    if diff output ${goodresult} > /dev/null
+	    if diff -b output ${goodresult} > /dev/null
 	    then
 		succes=ja
 	    else
