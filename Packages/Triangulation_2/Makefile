@@ -6,7 +6,7 @@ PACKAGE=Triangulation
 WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Triangulation_2
 TMP_file=/tmp/submit-mail
-CGAL_MAKEFILE=/u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
+CGAL_MAKEFILE=/u/alcor/0/prisme_util/CGAL/CGAL-last/make/makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
 TEXINPUTS=.:../../../examples:/0/prisme_util/latex:/u/procyon/0/prisme/yvinec/tex/inputs:
 LATEX_CONV_INPUTS=.:../../../examples:/u/procyon/0/prisme/yvinec/Cgal/Triangulation/examples:
 
