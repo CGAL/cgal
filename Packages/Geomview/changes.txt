@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.36 (8 January 2003)
+- Workaround for SunPRO.
+
 Ver 3.35 (20 December 2002)
 - Make draw_triangles() only require an InputIterator, not a ForwardIterator.
 

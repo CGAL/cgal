@@ -356,11 +356,12 @@ Geomview_stream::draw_triangles(InputIterator begin, InputIterator end)
     // Put the points in a map and a vector.
     // The index of a point in the vector is the value associated
     // to it in the map.
-    std::map<Point, int, Comp> point_map(Kernel().less_xyz_3_object());
-    std::vector<Point> points;
+    typedef std::map<Point, int, Comp>  Point_map;
+    Point_map           point_map(Kernel().less_xyz_3_object());
+    std::vector<Point>  points;
     for (Tit i = triangles.begin(); i != triangles.end(); ++i)
         for (int j = 0; j < 3; ++j)
-	    if (point_map.insert(std::make_pair(i->vertex(j),
+	    if (point_map.insert(typename Point_map::value_type(i->vertex(j),
 					        points.size())).second)
                 points.push_back(i->vertex(j));
 
