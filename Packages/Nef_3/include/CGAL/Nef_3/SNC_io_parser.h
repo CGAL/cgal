@@ -128,6 +128,7 @@ class sort_facets : public SNC_decorator<T> {
   typedef typename T::SHalfedge_handle SHalfedge_handle;
   typedef typename T::Vector_3         Vector_3;
   typedef typename T::Plane_3          Plane_3;
+
  public:
   sort_facets(T& D) : Base(D) {}
   
@@ -333,7 +334,7 @@ class sort_volumes : public SNC_decorator<T> {
   typedef T SNC_structure;
   typedef SNC_decorator<T>          Base;
   typedef typename T::Volume_handle Volume_handle;
-  typedef typename T::SFace_handle          SFace_handle;
+  typedef typename T::SFace_handle  SFace_handle;
   
  public:
   sort_volumes(T& D) : Base(D) {}

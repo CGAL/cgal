@@ -489,7 +489,7 @@ public:
                                           Halffacet_cycle_iterator;
     typedef typename Refs::Halffacet_cycle_const_iterator
                                           Halffacet_cycle_const_iterator;
-  public: // TO REMOVE!!!
+  public: // TODO: TO REMOVE!!!
 
 
     Plane_3              supporting_plane_;
