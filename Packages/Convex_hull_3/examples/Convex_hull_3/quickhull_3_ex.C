@@ -1,16 +1,29 @@
 //
 // file: examples/Convex_hull_3/ch_quickhull_3_ex.C
 //
-#include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <vector>
-
-// NOTE: the choice of double here for a number type may cause problems 
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer RT;
+#else
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz RT;
+#else
+// NOTE: the choice of double here for a number type may cause problems
 //       for degenerate point sets
-typedef CGAL::Cartesian<double>                   K;
+#include <CGAL/double.h>
+typedef double RT;
+#endif
+#endif
+
+
+typedef CGAL::Homogeneous<RT>                     K;
 typedef CGAL::Convex_hull_traits_3<K>             Traits;
 typedef Traits::Polyhedron_3                      Polyhedron_3;
 typedef K::Segment_3                              Segment_3;

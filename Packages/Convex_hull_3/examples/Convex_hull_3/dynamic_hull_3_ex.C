@@ -5,11 +5,24 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/copy_n.h>
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer RT;
+#else
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz RT;
+#else
+// NOTE: the choice of double here for a number type may cause problems
+//       for degenerate point sets
+#include <CGAL/double.h>
+typedef double RT;
+#endif
+#endif
+
 #include <set>
 
-// NOTE: the choice of double here for a number type may cause problems 
-//       for degenerate point sets
-typedef CGAL::Cartesian<double>                     K;
+typedef CGAL::Cartesian<RT>                         K;
 typedef K::Point_3                                  Point_3;
 typedef CGAL::Triangulation_cell_base_3<K>          Cb;
 typedef CGAL::Triangulation_vertex_base_3<K>        Vb;
