@@ -8,17 +8,19 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 1999, October 13
+// release       : $CGAL_Revision: CGAL-2.3-I-44 $
+// release_date  : $CGAL_Date: 2001/03/09 $
 //
 // file          : include/CGAL/Planar_map_2.h
-// package       : pm (4.08)
+// package       : pm (5.45)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 
 // revision      : 
 // revision_date : 
 // author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
 //                 Eyal Flato
 //                 Oren Nechushtan <theoren@math.tau.ac.il>
+//                 Eti Ezra <estere@post.tau.ac.il>
 //
 //
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
@@ -40,11 +42,30 @@
 #ifndef CGAL_PM_DEFAULT_POINT_LOCATION_H
 #include <CGAL/Pm_default_point_location.h>
 #endif
+
+#ifndef CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_H
+#include <CGAL/Pm_walk_along_line_point_location.h>
+#endif
+
+#ifndef CGAL_PM_NAIVE_POINT_LOCATION_H
+#include <CGAL/Pm_naive_point_location.h>
+#endif
 #else // CGAL_NO_PM_DEFAULT_POINT_LOCATION
 #ifndef CGAL_PM_POINT_LOCATION_BASE_H
 #include <CGAL/Pm_point_location_base.h>
 #endif
 #endif // CGAL_NO_PM_DEFAULT_POINT_LOCATION
+
+
+/*#ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
+#ifndef CGAL_PM_DEFAULT_POINT_LOCATION_H
+#include <CGAL/Pm_default_point_location.h>
+#endif
+#else // CGAL_NO_PM_DEFAULT_POINT_LOCATION
+#ifndef CGAL_PM_POINT_LOCATION_BASE_H
+#include <CGAL/Pm_point_location_base.h>
+#endif
+#endif // CGAL_NO_PM_DEFAULT_POINT_LOCATION*/
 
 // default bounding box for finite curves
 #ifndef CGAL_PM_UNBOUNDING_BOX_H
@@ -55,6 +76,10 @@
 #ifndef CGAL_PM_DYNAMIC_CLOSED_BOUNDING_BOX_H
 #include <CGAL/Pm_dynamic_open_bounding_box.h>
 #endif
+
+#ifndef CGAL_IO_PM_FILE_SCANNER_H
+#include <CGAL/IO/Pm_file_scanner.h>
+#endif // CGAL_IO_PM_FILE_SCANNER_H
 
 #include <list>
 
@@ -228,6 +253,73 @@ public:
         bb->init(*this,*traits);
       }
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////
+  //                                 Copy constructor.
+  ///////////////////////////////////////////////////////////////////////////////////
+  Planar_map_2(const Self& pm){
+    // doing the same as Planar_map_2(pm.get_traits(), pm.get_point_location(), pm.get_point_bbox());
+    
+    traits = new Traits_wrap();
+    use_delete_traits = true;
+
+    if (Pm_naive_point_location<Self>* tmp_pl = dynamic_cast<Pm_naive_point_location<Self>*>(pm.pl) ){
+      //cout<<"Naive"<<std::endl;
+      pl = new Pm_naive_point_location<Self>;
+    }
+    else if (Pm_walk_along_line_point_location<Self>* tmp_pl = dynamic_cast<Pm_walk_along_line_point_location<Self>*>(pm.pl) ){
+      pl = new Pm_walk_along_line_point_location<Self>;
+      //cout<<"Walk"<<std::endl;
+    }
+    else{
+      //cout<<"Default"<<std::endl;
+#ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
+      pl = new Pm_default_point_location<Self>;
+#else
+      assert(0); 
+      // if no default PL is defined you must supply a pl.
+#endif
+    }
+    use_delete_pl = true;
+    pl->init(*this,*traits);
+    
+    bb=init_default_bounding_box((Traits*)traits);
+    use_delete_bb=true;
+    bb->init(*this,*traits);
+    
+    assign(pm);
+    
+    Halfedge_iterator h_iter;
+    for (h_iter = halfedges_begin(); h_iter != halfedges_end(); h_iter++, h_iter++)
+      pl->insert(h_iter, h_iter->curve());
+    
+    for (Vertex_iterator v_iter = vertices_begin(); v_iter != vertices_end(); v_iter++)
+      bb->insert(v_iter->point());
+    
+    for (h_iter = halfedges_begin(); h_iter !=  halfedges_end(); h_iter++, h_iter++)
+      bb->insert(h_iter->curve());
+  }
+  
+  /////////////////////////////////////////////////////////////////////////////
+  //                  Reading Planar map functions. 
+  ////////////////////////////////////////////////////////////////////////////
+  bool read (std::istream &in)
+  {
+    clear();
+    
+    Pm_file_scanner<Self>  scanner(in); 
+    
+    return scan_planar_map(scanner);
+  }    
+
+  template <class Scanner>
+  bool read (std::istream &in, Scanner& scanner)
+  {
+    clear(); 
+    
+    return scan_planar_map(scanner);
+  } 
+  
   /*
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
     
@@ -992,17 +1084,37 @@ public:
 		// pl->assign(pm->pl);
 	}
 
-	Self& operator=(const Self& pm)
+  /*Self& operator=(const Self& pm)
     {
-		if (this != &pm)
-		{
-			X_curve_container l;
-			pm.x_curve_container(l);
-			clear();
-			insert(l.begin(), l.end());
-		}
-		return *this;
+    if (this != &pm)
+    {
+    X_curve_container l;
+    pm.x_curve_container(l);
+    clear();
+    insert(l.begin(), l.end());
     }
+    return *this;
+    }
+  */
+  
+  Self& operator=(const Self& pm)
+   {
+               if (this != &pm) {
+                 clear();
+                 assign(pm);
+                 
+                 Halfedge_iterator h_iter;
+                 for (h_iter = halfedges_begin(); h_iter != halfedges_end(); h_iter++, h_iter++)
+                   pl->insert(h_iter, h_iter->curve());
+                 
+                 for (Vertex_iterator v_iter = vertices_begin(); v_iter != vertices_end(); v_iter++)
+                   bb->insert(v_iter->point());
+                 
+                 for (h_iter = halfedges_begin(); h_iter !=  halfedges_end(); h_iter++, h_iter++)
+                   bb->insert(h_iter->curve());
+               }
+               return *this;
+   }
 	
 	// used in implementation of operator=(
 	void clear() 
@@ -1043,12 +1155,301 @@ public:
 	{
 		if (pl) (pl->debug());
 	}
+
+#endif	
 	
-#else
-	
+private:
+///////////////////////////////////////////////////////////////////////////
+//                 Scanning Arrangement.
+///////////////////////////////////////////////////////////////////////// 
+template <class Scanner>
+bool  scan_planar_map (Scanner& scanner){
+  if (!build_dcel(scanner))
+    return false;
+
+  return true;
+}
+  
+template <class Scanner>
+bool  build_dcel (Scanner& scanner) {
+  typedef typename Dcel::Vertex	                  D_vertex;
+  typedef typename Dcel::Halfedge                 D_halfedge;
+  typedef typename Dcel::Face	                  D_face;
+  
+  typedef typename  Dcel::Vertex_iterator          D_vetrex_iterator;
+  typedef typename  Dcel::Vertex_const_iterator    D_vetrex_const_iterator;
+  typedef typename  Dcel::Halfedge_iterator        D_halfedge_iterator;
+  typedef typename  Dcel::Halfedge_const_iterator  D_halfedge_const_iterator;
+  typedef typename  Dcel::Face_iterator            D_face_iterator;
+  typedef typename  Dcel::Face_const_iterator      D_face_const_iterator;
+
+  std::vector<D_halfedge* >  halfedges_vec;  // keeping a vector of halfedges (to access them easily by their indices).
+  std::vector<D_vertex* >    vertices_vec; 
+ 
+  if ( ! scanner.in())
+    return 0;
+
+  scanner.scan_pm_vhf_sizes();
+  if ( ! scanner.in()){
+    std::cerr << "can't read vhf values"<<std::endl;
+    clear();
+    return false;
+  }
+
+  // read in all vertices
+  unsigned int  i;
+  for (i = 0; i < scanner.number_of_vertices(); i++) {
+    D_vertex* nv = d.new_vertex();
+    Point p;
+
+    /*scanner.scan_vertex_attributes (nv);
+    if ( ! scanner.in()){
+      std::cerr << "can't read vertex attributes"<<std::endl;
+      clear();
+      return false;
+      }*/
+
+    scanner.scan_vertex (nv);
+    if ( ! scanner.in()){
+      std::cerr << "can't read vertex"<<std::endl;
+      clear();
+      return false;
+    }
+    //nv->set_point(p);
+
+    // for debug.
+    //std::cout<<"Reading vertex no " <<i<<" point is "<<nv->point()<<std::endl;
+
+    vertices_vec.push_back(nv);
+
+    bb->insert(nv->point());
+    
+    //scanner.skip_to_next_vertex();
+    //if ( ! scanner.in()){
+    //  std::cerr << "can't skip to next vertex"<<std::endl;
+    //  scanner.in().clear( std::ios::badbit);
+    //  clear();
+    //  return false;
+    // }
+  }
+  
+  for (unsigned i = 0; i < scanner.number_of_halfedges(); i++, i++){
+    D_halfedge *nh = NULL;
+    void  *nv1, *nv2;
+    std::size_t index1, index2;
+    X_curve cv;
+
+    //std::cout<<"Reading Edge no " <<i<<std::endl;
+
+    nh = d.new_edge();
+    
+    /*scanner.scan_halfedge_attributes (nh);
+    if ( ! scanner.in()){
+      std::cerr << "can't read halfedge attributes"<<std::endl;
+      clear();
+      return false;
+      }*/
+
+    scanner.scan_index(index1);
+    if ( ! scanner.in()){
+      std::cerr << "can't read source of halfedge"<<std::endl;
+      clear();
+      return false;
+    }
+    cv = scanner.scan_halfedge(nh);
+    if ( ! scanner.in()){
+      std::cerr << "can't read halfedge"<<std::endl;
+      clear();
+      return false;
+    }
+    //nh->set_curve(cv);
+
+    /*scanner.scan_halfedge_attributes (nh->opposite());
+    if ( ! scanner.in()){
+      std::cerr << "can't read halfedge attributes"<<std::endl;
+      clear();
+      return false;
+      }*/
+
+    scanner.scan_index (index2);
+    if ( ! scanner.in()){
+      std::cerr << "can't read source of halfedge"<<std::endl;
+      clear();
+      return false;
+    }
+    scanner.scan_halfedge(nh->opposite());
+    if ( ! scanner.in()){
+      std::cerr << "can't read halfedge"<<std::endl;
+      clear();
+      return false;
+    }
+    //nh->opposite()->set_curve(cv);
+
+    nv1 = vertices_vec[index1];
+    ((D_vertex*) nv1)->set_halfedge(nh); 
+    nh->set_vertex((D_vertex*) nv1);
+    //for debug
+    //std::cout<<((D_vertex*) nv1)->point()<<std::endl;
+    
+    nv2 = vertices_vec[index2];
+    ((D_vertex*) nv2)->set_halfedge(nh->opposite()); 
+    nh->opposite()->set_vertex((D_vertex*) nv2);
+    //for debug
+    //std::cout<<((D_vertex*) nv2)->point()<<std::endl;
+
+    pl->insert(D_halfedge_iterator(nh->opposite()), cv);
+    bb->insert(cv);
+    
+    halfedges_vec.push_back(nh);
+    halfedges_vec.push_back(nh->opposite());
+
+    //scanner.skip_to_next_halfedge();
+    //if ( ! scanner.in()){
+    //  std::cerr << "can't skip to next halfedge"<<std::endl;
+    //  scanner.in().clear( std::ios::badbit);
+    //  clear();
+    //  return false;
+    //} 
+  }
+  
+  // read in all facets
+  for (unsigned i = 0; i < scanner.number_of_faces(); i++) {
+    //std::size_t  num_of_holes, num_halfedges_on_outer_ccb;
+    
+    //std::cout<<"Reading Face no " <<i<<std::endl;
+   
+    D_face* nf = u_face; //this is the unbounded face.
+    if (i > 0)  // else - allocate the bounded face.
+      nf = d.new_face();
+
+    scanner.scan_face(nf);
+    if ( ! scanner.in()){
+      std::cerr << "can't read face"<<std::endl;
+      clear();
+      return false;
+    }
+    
+    /*
+    //if (i > 0){ // not an unbounded face. Scanning the outer ccb.
+    scanner.scan_face_number(num_halfedges_on_outer_ccb, i);
+    if ( ! scanner.in()){
+    std::cerr << "can't read face number"<<std::endl;
+    scanner.in().clear( std::ios::badbit);
+    clear();
+    return false;
+    }
+    
+    // not an unbounded face. Scanning the outer ccb.
+    if (num_halfedges_on_outer_ccb > 0) {
+    std::size_t  index, prev_index, first_index;
+    for (unsigned int j = 0; j < num_halfedges_on_outer_ccb; j++) {
+    
+    scanner.scan_index(index);
+    if ( ! scanner.in()){
+    std::cerr << "can't read halfedge's index on face"<<std::endl;
+    scanner.in().clear( std::ios::badbit);
+    clear();
+    return false;
+    }
+    
+    D_halfedge* nh = halfedges_vec[index];
+    
+    // for debugging.
+    //std::cout<<"source of haledge : "<<nh->vertex()->point()<<std::endl;
+        
+    if (j > 0) {
+    D_halfedge* prev_nh = halfedges_vec[prev_index];
+    prev_nh->set_next(nh);
+    }
+    else {
+    nf->set_halfedge(nh);
+    first_index = index;
+    }
+    
+    nh->set_face(nf); 
+    
+    prev_index = index;
+    }
+    
+    // making the last halfedge point to the first one (cyclic order).
+    D_halfedge* nh = halfedges_vec[first_index];
+    D_halfedge* prev_nh = halfedges_vec[prev_index];
+      prev_nh->set_next(nh);
+      }
+      
+    scanner.scan_face_number(num_of_holes, i);
+    if ( ! scanner.in()){
+    std::cerr << "can't read number holes in face"<<std::endl;
+    scanner.in().clear( std::ios::badbit);
+    clear();
+    return false;
+    }
+    
+    // take care the hols.
+    for (unsigned int k = 0; k < num_of_holes; k++){
+    std::size_t  num_halfedges_on_inner_ccb;
+      
+    scanner.scan_face_number(num_halfedges_on_inner_ccb, i);
+    if ( ! scanner.in()){
+    std::cerr << "can't read number of halfedges in hole"<<std::endl;
+    scanner.in().clear( std::ios::badbit);
+    clear();
+    return false;
+    }
+    
+      std::size_t  index, prev_index, first_index;
+      for (unsigned int j = 0; j < num_halfedges_on_inner_ccb; j++) {
+      scanner.scan_index(index);
+      if ( ! scanner.in()){
+      std::cerr << "can't read halfedge's index on hole"<<std::endl;
+      scanner.in().clear( std::ios::badbit);
+      clear();
+      return false;
+      }
+      
+      D_halfedge* nh = halfedges_vec[index];
+        
+      // for debugging.
+      //std::cout<<"source of haledge : "<<nh->vertex()->point()<<std::endl;
+      
+      if (j > 0) {
+      D_halfedge* prev_nh = halfedges_vec[prev_index];
+      prev_nh->set_next(nh);
+      }
+      else {
+      nf->add_hole(nh);
+      first_index = index;
+      }
+      
+      nh->set_face(nf); 
+        
+      prev_index = index;
+      }
+      
+      // making the last halfedge point to the first one (cyclic order).
+      D_halfedge* nh = halfedges_vec[first_index];
+      D_halfedge* prev_nh = halfedges_vec[prev_index];
+      prev_nh->set_next(nh);
+      }
+      scanner.skip_to_next_face(i);
+      if ( ! scanner.in()){
+      std::cerr << "can't skip to next face"<<std::endl;
+      scanner.in().clear( std::ios::badbit);
+      clear();
+      return false;
+      }*/
+  }
+  
+  if ( ! scanner.in() ) {
+    scanner.in().clear( std::ios::badbit);
+    return false;
+  } 
+  
+  return true;
+}	
+  
+  // #else was removed by eti.
 protected:
-	
-#endif
 	
   Point_location_base *pl;
   Bounding_box_base *bb;
@@ -1063,3 +1464,11 @@ CGAL_END_NAMESPACE
 
 
 #endif
+
+
+
+
+
+
+
+
