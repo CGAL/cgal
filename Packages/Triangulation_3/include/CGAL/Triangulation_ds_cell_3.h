@@ -173,14 +173,14 @@ public:
 
 private:
 
-  unsigned _in_conflict_flag;
+  unsigned char _in_conflict_flag;
   
-  void set_in_conflict_flag(unsigned f)
+  void set_in_conflict_flag(unsigned char f)
   {
       _in_conflict_flag = f;
   }
 
-  unsigned get_in_conflict_flag() const
+  unsigned char get_in_conflict_flag() const
   {
       return _in_conflict_flag;
   }
