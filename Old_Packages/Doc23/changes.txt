@@ -1,5 +1,6 @@
-2.32    (?? July 2001)
+2.32    (20 July 2001)
 - restored Less_distance_to_point_[23] with default constructors
+- changed other predicates in kernel traits to use default constructors
 
 2.31    (12 July 2001)
 - Kernel_traits<>

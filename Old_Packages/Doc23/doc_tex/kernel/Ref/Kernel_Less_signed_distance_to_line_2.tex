@@ -3,11 +3,9 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
-\ccConstructor{Kernel::Less_signed_distance_to_line_2(const Kernel::Point_2&p, 
-                                      const Kernel::Point_2&q);}
-{}
- 
-\ccMemberFunction{bool operator()(const Kernel::Point_2&r,
+\ccMemberFunction{bool operator()(const Kernel::Point_2& p,
+                                  const Kernel::Point_2& q,
+                                  const Kernel::Point_2&r,
                                   const Kernel::Point_2&s);}
 {returns true iff the distance of $r$ to the oriented line 
 through $p$ and $q$, where $p$ and $q$ are the points passed

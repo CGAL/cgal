@@ -3,10 +3,8 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
-\ccConstructor{Kernel::Less_rotate_ccw_2(const Kernel::Point_2&p);} 
-{}
- 
-\ccMemberFunction{bool operator()(const Kernel::Point_2&q,
+\ccMemberFunction{bool operator()(const Kernel::Point_2&p,
+                                  const Kernel::Point_2&q,
                                   const Kernel::Point_2&r);}
 {returns true iff the three points \ccStyle{p}, \ccStyle{q} 
 and \ccStyle{r} form a left turn or if they are collinear and
