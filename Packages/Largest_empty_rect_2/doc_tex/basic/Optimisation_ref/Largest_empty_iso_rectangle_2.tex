@@ -90,21 +90,25 @@ and (1,1) respectively is the bounding rectangle.}
 (const Largest_empty_iso_rectangle_2<Traits> tr);}
 {Copy constructor.} 
 
-\ccConstructor{void ~Largest_empty_iso_rectangle_2<Traits>();}
-{Destructor.}
-
+%\ccConstructor{\tilde Largest_empty_iso_rectangle_2<Traits>();}
+%{Destructor.}
+%
 \ccOperations
 \ccSetThreeColumns{const_iterator}{container.begin() const;}{}
 
 \ccHeading{Assignment}
 
-\ccMethod{Largest_empty_iso_rectangle_2<Traits>
-	operator=(const Largest_empty_iso_rectangle_2<Traits> & tr);}
+\ccMethod{Largest_empty_iso_rectangle_2<T>
+	operator=(const Largest_empty_iso_rectangle_2<T> & tr);}
 {}
 
 
 
 \ccAccessFunctions
+
+
+
+
 
 \ccMethod{const Traits & traits() const;}
 {Returns a const reference to the traits object.}

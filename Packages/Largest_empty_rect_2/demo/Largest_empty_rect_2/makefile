@@ -35,17 +35,12 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                demo2$(EXE_EXT) \
                 demo$(EXE_EXT) 
-
-demo2$(EXE_EXT): demo2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo2 demo2$(OBJ_EXT) $(LDFLAGS)
 
 demo$(EXE_EXT): demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   demo2.clean \
                    demo.clean 
 
 #---------------------------------------------------------------------#
