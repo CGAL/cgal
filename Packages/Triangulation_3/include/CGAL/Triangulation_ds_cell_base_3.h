@@ -46,17 +46,17 @@ public:
     set_neighbors();
   }
 
-  Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
-                               Vertex_handle v2, Vertex_handle v3)
+  Triangulation_ds_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
+                               const Vertex_handle& v2, const Vertex_handle& v3)
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors();
   }
 
-  Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
-                               Vertex_handle v2, Vertex_handle v3,
-                               Cell_handle   n0, Cell_handle   n1,
-                               Cell_handle   n2, Cell_handle   n3)
+  Triangulation_ds_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
+                               const Vertex_handle& v2, const Vertex_handle& v3,
+                               const Cell_handle&   n0, const Cell_handle&   n1,
+                               const Cell_handle&   n2, const Cell_handle&   n3)
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors(n0, n1, n2, n3);
@@ -64,18 +64,18 @@ public:
 
   // ACCESS FUNCTIONS
 
-  const Vertex_handle vertex(int i) const
+  const Vertex_handle& vertex(int i) const
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3 );
     return V[i];
   } 
 
-  bool has_vertex(const Vertex_handle v) const
+  bool has_vertex(const Vertex_handle& v) const
   {
     return (V[0] == v) || (V[1] == v) || (V[2]== v) || (V[3]== v);
   }
     
-  bool has_vertex(const Vertex_handle v, int & i) const
+  bool has_vertex(const Vertex_handle& v, int & i) const
     {
       if (v == V[0]) { i = 0; return true; }
       if (v == V[1]) { i = 1; return true; }
@@ -84,7 +84,7 @@ public:
       return false;
     }
     
-  int index(const Vertex_handle v) const
+  int index(const Vertex_handle& v) const
   {
     if (v == V[0]) { return 0; }
     if (v == V[1]) { return 1; }
@@ -93,18 +93,18 @@ public:
     return 3;
   }
 
-  Cell_handle neighbor(int i) const
+  const Cell_handle& neighbor(int i) const
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
     return N[i];
   }
     
-  bool has_neighbor(const Cell_handle n) const
+  bool has_neighbor(const Cell_handle& n) const
   {
     return (N[0] == n) || (N[1] == n) || (N[2] == n) || (N[3] == n);
   }
     
-  bool has_neighbor(const Cell_handle n, int & i) const
+  bool has_neighbor(const Cell_handle& n, int & i) const
   {
     if(n == N[0]){ i = 0; return true; }
     if(n == N[1]){ i = 1; return true; }
@@ -113,7 +113,7 @@ public:
     return false;
   }
     
-  int index(const Cell_handle n) const
+  int index(const Cell_handle& n) const
   {
     if (n == N[0]) return 0;
     if (n == N[1]) return 1;
@@ -124,13 +124,13 @@ public:
  
   // SETTING
 
-  void set_vertex(int i, Vertex_handle v)
+  void set_vertex(int i, const Vertex_handle& v)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
     V[i] = v;
   }
     
-  void set_neighbor(int i, Cell_handle n)
+  void set_neighbor(int i, const Cell_handle& n)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
     N[i] = n;
@@ -141,8 +141,8 @@ public:
     V[0] = V[1] = V[2] = V[3] = NULL;
   }
     
-  void set_vertices(Vertex_handle v0, Vertex_handle v1,
-                    Vertex_handle v2, Vertex_handle v3)
+  void set_vertices(const Vertex_handle& v0, const Vertex_handle& v1,
+                    const Vertex_handle& v2, const Vertex_handle& v3)
   {
     V[0] = v0;
     V[1] = v1;
@@ -155,8 +155,8 @@ public:
     N[0] = N[1] = N[2] = N[3] = NULL;
   }
     
-  void set_neighbors(Cell_handle n0, Cell_handle n1,
-                     Cell_handle n2, Cell_handle n3)
+  void set_neighbors(const Cell_handle& n0, const Cell_handle& n1,
+                     const Cell_handle& n2, const Cell_handle& n3)
   {
     N[0] = n0;
     N[1] = n1;

@@ -282,13 +282,13 @@ private:
   void remove_3D_new(Vertex_handle v);
 
   Bounded_side
-  side_of_sphere(Vertex_handle v0, Vertex_handle v1,
-		 Vertex_handle v2, Vertex_handle v3,
+  side_of_sphere(const Vertex_handle& v0, const Vertex_handle& v1,
+		 const Vertex_handle& v2, const Vertex_handle& v3,
 		 const Point &p, bool perturb) const;
 public:
 
   Bounded_side
-  side_of_sphere( Cell_handle c, const Point & p, bool perturb = false) const
+  side_of_sphere( const Cell_handle& c, const Point & p, bool perturb = false) const
   {
       return side_of_sphere(c->vertex(0), c->vertex(1),
                             c->vertex(2), c->vertex(3), p, perturb);
@@ -301,11 +301,11 @@ public:
   }
 
   Bounded_side
-  side_of_circle( Cell_handle c, int i, const Point & p,
+  side_of_circle( const Cell_handle& c, int i, const Point & p,
 	          bool perturb = false) const;
 
   Vertex_handle
-  nearest_vertex_in_cell(const Point& p, Cell_handle c) const;
+  nearest_vertex_in_cell(const Point& p, const Cell_handle& c) const;
 
   Point dual(Cell_handle c) const;
 
@@ -1027,8 +1027,8 @@ coplanar_side_of_bounded_circle(const Point &p0, const Point &p1,
 template < class Gt, class Tds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds>::
-side_of_sphere(Vertex_handle v0, Vertex_handle v1,
-	       Vertex_handle v2, Vertex_handle v3,
+side_of_sphere(const Vertex_handle& v0, const Vertex_handle& v1,
+	       const Vertex_handle& v2, const Vertex_handle& v3,
 	       const Point &p, bool perturb) const
 {
     CGAL_triangulation_precondition( dimension() == 3 );
@@ -1075,7 +1075,7 @@ side_of_sphere(Vertex_handle v0, Vertex_handle v1,
 template < class Gt, class Tds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds>::
-side_of_circle(Cell_handle c, int i, const Point & p, bool perturb) const
+side_of_circle(const Cell_handle& c, int i, const Point & p, bool perturb) const
   // precondition : dimension >=2
   // in dimension 3, - for a finite facet
   // returns ON_BOUNDARY if the point lies on the circle,
@@ -1166,7 +1166,7 @@ side_of_circle(Cell_handle c, int i, const Point & p, bool perturb) const
 template < class Gt, class Tds >
 typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds>::
-nearest_vertex_in_cell(const Point& p, Cell_handle c) const
+nearest_vertex_in_cell(const Point& p, const Cell_handle& c) const
 // Returns the finite vertex of the cell c which is the closest to p.
 {
     CGAL_triangulation_precondition(dimension() >= 1);
