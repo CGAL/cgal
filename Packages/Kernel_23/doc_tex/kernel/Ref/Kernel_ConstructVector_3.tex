@@ -14,6 +14,15 @@ A model for this must provide:
                                               const Kernel::Point_3 &b);}
             {introduces the vector $b-a$.}
 
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Segment_3 &s);}
+            {introduces the vector $s.target()-s.source()$.}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Ray_3 &r);}
+            {introduces a vector having the same direction as $r$.}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Line_3 &l);}
+            {introduces a vector having the same direction as $l$.}
+
 \ccMemberFunction{Kernel::Vector_3 operator()(const Null_vector &NULL_VECTOR);}
             {introduces a null vector .}
 

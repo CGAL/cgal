@@ -23,6 +23,14 @@ in a  point called the {\em source} of  \ccStyle{r} and goes to infinity.
             {introduces a ray \ccVar\ starting at source $p$ with 
              direction $d$.}
 
+\ccConstructor{Ray_2(const Point_2<Kernel> &p, const Vector_2<Kernel> &v)}
+            {introduces a ray \ccVar\ starting at source $p$ with 
+             the direction of $v$.}
+
+\ccConstructor{Ray_2(const Point_2<Kernel> &p, const Line_2<Kernel> &l)}
+            {introduces a ray \ccVar\ starting at source $p$ with 
+             the same direction as $l$.}
+
 \ccOperations
 
 \ccHidden \ccMethod{Ray_2<Kernel> &operator=(const Ray_2<Kernel> &s);}
@@ -45,6 +53,9 @@ in a  point called the {\em source} of  \ccStyle{r} and goes to infinity.
 
 \ccMethod{Direction_2<Kernel> direction() const;}
        {returns the direction of \ccVar.}
+
+\ccMethod{Vector_2<Kernel> to_vector() const;}
+       {returns a vector giving the direction of \ccVar.}
 
 \ccMethod{Line_2<Kernel>      supporting_line() const;}
        {returns the line supporting \ccVar\ which has the same direction.}

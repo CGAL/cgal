@@ -50,6 +50,10 @@ _test_cls_ray_2(const R& )
  CGAL::Point_2<R> p4( n10, n8, n2);
  CGAL::Direction_2<R> d12( p2 - p1);
  CGAL::Direction_2<R> d24( p4 - p2);
+ CGAL::Line_2<R> l12( p1, p2);
+ CGAL::Line_2<R> l24( p2, p4);
+ CGAL::Vector_2<R> v12( p2 - p1);
+ CGAL::Vector_2<R> v24( p4 - p2);
 
  CGAL::Ray_2<R> r1( p1, p2);
  CGAL::Ray_2<R> r2( p1, d12);
@@ -57,6 +61,10 @@ _test_cls_ray_2(const R& )
  CGAL::Ray_2<R> r4( p2, d24);
  CGAL::Ray_2<R> r5( p2, p4);
  CGAL::Ray_2<R> r6( p1, p4);
+ CGAL::Ray_2<R> r7( p1, l12);
+ CGAL::Ray_2<R> r8( p1, l24);
+ CGAL::Ray_2<R> r7v( p1, v12);
+ CGAL::Ray_2<R> r8v( p1, v24);
  r0 = r3;
 
  std::cout << '.';
@@ -76,6 +84,7 @@ _test_cls_ray_2(const R& )
  assert( r1.direction() == d12 );
  assert( r2.direction() == d12 );
  assert( r3.direction() == r1.direction() );
+ assert( r3.to_vector().direction() == r1.to_vector().direction() );
 
  std::cout << '.';
 
@@ -85,6 +94,10 @@ _test_cls_ray_2(const R& )
  assert( r4.opposite() == CGAL::Ray_2<R>( p2, -d24 ) );
  assert( r1.opposite() == CGAL::Ray_2<R>( p1, -d12 ) );
  assert( r2.opposite().opposite() == r2 );
+ assert( r2 == r7 );
+ assert( r4 == r8 );
+ assert( r2 == r7v );
+ assert( r4 == r8v );
 
  assert( r6.is_horizontal() );
  assert( ! r0.is_horizontal() );

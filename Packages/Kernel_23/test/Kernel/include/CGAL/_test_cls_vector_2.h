@@ -84,6 +84,21 @@ _test_cls_vector_2(const R& )
  assert( v0.dimension() == 2 );
  assert( v4.homogeneous( v4.dimension() ) == v4.hw() );
 
+ CGAL::Point_2<R> p0(4,2,1);
+ CGAL::Point_2<R> p1(2,4,1);
+ CGAL::Segment_2<R> s1(p0, p1);
+ CGAL::Ray_2<R> r1(p0, p1);
+ CGAL::Line_2<R> l1(p0, p1);
+ CGAL::Vector_2<R> v8(p0, p1);
+ CGAL::Vector_2<R> v9(s1);
+ CGAL::Vector_2<R> v10(r1);
+ CGAL::Vector_2<R> v11(l1);
+
+ assert( v8 == (p1-p0) );
+ assert( v8 == v9 );
+ assert( v10.direction() == v8.direction() );
+ assert( v11.direction() == v8.direction() );
+
  std::cout << "done" << std::endl;
  return true;
 }

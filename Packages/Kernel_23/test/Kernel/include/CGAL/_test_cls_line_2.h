@@ -65,6 +65,14 @@ _test_cls_line_2(const R& )
  CGAL::Line_2<R>  ld12(p1, d12);
  CGAL::Line_2<R>  ld21(p2, d21);
 
+ CGAL::Vector_2<R> v12 (p2 - p1);
+ CGAL::Vector_2<R> v21 (p1 - p2);
+ CGAL::Line_2<R>  ld12v(p1, v12);
+ CGAL::Line_2<R>  ld21v(p2, v21);
+
+ assert(ld12 == ld12v);
+ assert(ld21 == ld21v);
+
  std::cout << '.';
 
  assert( l12 == l12 );
@@ -94,6 +102,9 @@ _test_cls_line_2(const R& )
  assert( ld21.direction() == d21 );
  assert( ld21.direction() ==  - ld12.direction() );
  assert( labc.direction() == CGAL::Direction_2<R>(labc.b(), - labc.a() ) );
+
+ assert( ld12v.to_vector() == v12 );
+ assert( ld21v.to_vector() == v21 );
 
  std::cout << '.';
 

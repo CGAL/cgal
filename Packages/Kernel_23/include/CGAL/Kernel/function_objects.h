@@ -780,6 +780,7 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::RT           RT;
     typedef typename K::Point_3      Point_3;
+    typedef typename K::Vector_3     Vector_3;
     typedef typename K::Direction_3  Direction_3;
     typedef typename K::Line_3       Line_3;
     typedef typename K::Ray_3        Ray_3;
@@ -804,6 +805,10 @@ namespace CommonKernelFunctors {
     Plane_3
     operator()(const Point_3& p, const Direction_3& d) const
     { return Plane_3(p, d); }
+
+    Plane_3
+    operator()(const Point_3& p, const Vector_3& v) const
+    { return Plane_3(p, v); }
 
     Plane_3
     operator()(const Line_3& l, const Point_3& p) const
@@ -979,7 +984,9 @@ namespace CommonKernelFunctors {
   class Construct_ray_2
   {
     typedef typename K::Point_2      Point_2;
+    typedef typename K::Vector_2     Vector_2;
     typedef typename K::Direction_2  Direction_2;
+    typedef typename K::Line_2       Line_2;
     typedef typename K::Ray_2        Ray_2;
   public:
     typedef Ray_2            result_type;
@@ -994,15 +1001,25 @@ namespace CommonKernelFunctors {
     {  return Ray_2(p, q); }
 
     Ray_2
+    operator()(const Point_2& p, const Vector_2& v) const
+    {  return Ray_2(p, v); }
+
+    Ray_2
     operator()(const Point_2& p, const Direction_2& d) const
     {  return Ray_2(p, d); }
+
+    Ray_2
+    operator()(const Point_2& p, const Line_2& l) const
+    {  return Ray_2(p, l); }
   };
 
   template <typename K>
   class Construct_ray_3
   {
     typedef typename K::Point_3      Point_3;
+    typedef typename K::Vector_3     Vector_3;
     typedef typename K::Direction_3  Direction_3;
+    typedef typename K::Line_3       Line_3;
     typedef typename K::Ray_3        Ray_3;
   public:
     typedef Ray_3            result_type;
@@ -1017,8 +1034,16 @@ namespace CommonKernelFunctors {
     {  return Ray_3(p, q); }
 
     Ray_3
+    operator()(const Point_3& p, const Vector_3& v) const
+    {  return Ray_3(p, v); }
+
+    Ray_3
     operator()(const Point_3& p, const Direction_3& d) const
     {  return Ray_3(p, d); }
+
+    Ray_3
+    operator()(const Point_3& p, const Line_3& l) const
+    {  return Ray_3(p, l); }
   };
 
   template <typename K>

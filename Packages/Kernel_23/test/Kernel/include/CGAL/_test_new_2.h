@@ -110,6 +110,7 @@ test_new_2(const R& rep)
   Ray_2 r1 = construct_ray();
   Ray_2 r2 = construct_ray(p2,p5);
   Ray_2 r3 = construct_ray(p2,d3);
+  Ray_2 r4 = construct_ray(p2,v3);
 
   typename R::Construct_line_2 construct_line
         = rep.construct_line_2_object();
@@ -123,11 +124,20 @@ test_new_2(const R& rep)
   Line_2 l4 = construct_line(p2,d3);
   Line_2 l5 = construct_line(s2);
   Line_2 l6 = construct_line(r2);
+  Line_2 l7 = construct_line(p2,v3);
 
   // remaining construct_direction tests
   Direction_2 d4 = construct_direction(l3);
   Direction_2 d5 = construct_direction(r2);
   Direction_2 d6 = construct_direction(s2);
+
+  // remaining construct_ray tests
+  Ray_2 r5 = construct_ray(p2, l3);
+
+  // remaining construct_vector tests
+  Vector_2 v7 = construct_vector(s2);
+  Vector_2 v8 = construct_vector(r2);
+  Vector_2 v9 = construct_vector(l2);
   
   typename R::Construct_circle_2 construct_circle
         = rep.construct_circle_2_object();
@@ -597,6 +607,7 @@ test_new_2(const R& rep)
   use(v1); use(v4); use(r1);
   use(d4); use(d5);
   use(c4); use(c11);
+  use(r4); use(l7); use(r5); use(v7); use(v8); use(v9);
   use(rec3);
   use(tmp8a); use(tmp8b);
   use(tmp9); use(tmp10); use(tmp11); use(tmp12); use(tmp12a);

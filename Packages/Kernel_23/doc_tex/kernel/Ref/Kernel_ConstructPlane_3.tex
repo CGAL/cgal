@@ -32,6 +32,11 @@ Notice that  is degenerate if the points are collinear.}
 {introduces a plane  that passes through point \ccStyle{p} and
  that has as an orthogonal direction equal to \ccStyle{d}.}
 
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Point_3 &p,
+                          const Kernel::Vector_3 &v);}
+{introduces a plane that passes through point \ccStyle{p} and
+ that is orthogonal to \ccStyle{v}.}
+
 \ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Line_3 &l,
                           const Kernel::Point_3 &p);}
 {introduces a plane  that is defined through the  three points 

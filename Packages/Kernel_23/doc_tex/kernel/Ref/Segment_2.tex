@@ -75,6 +75,9 @@ number types, which is expensive, and may not be exact.
 \ccMethod{Direction_2<Kernel> direction() const;}
        {returns the direction from source to target of \ccVar.}
 
+\ccMethod{Vector_2<Kernel> to_vector() const;}
+       {returns the vector \ccc{\ccVar.target() - \ccVar.source()}.}
+
 
 \ccMethod{Segment_2<Kernel> opposite() const; }
        {returns a segment with source and target point interchanged.}

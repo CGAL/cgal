@@ -53,6 +53,8 @@ _test_cls_ray_3(const R& )
  CGAL::Ray_3<R> r4( r2 );
  r1 = r4;
  CGAL::Direction_3<R> dir( p2 - p1 );
+ CGAL::Vector_3<R> vec( p2 - p1 );
+ CGAL::Line_3<R> l( p1, p2 );
  CGAL::Ray_3<R> r7(p1, dir);
 
  assert( r1 == r1 );
@@ -61,6 +63,12 @@ _test_cls_ray_3(const R& )
  assert( r1 == r2 );
  assert( r7 == r2 );
  assert( r2 != r3 );
+
+ CGAL::Ray_3<R> r7l(p1, l);
+ CGAL::Ray_3<R> r7v(p1, vec);
+
+ assert(r7 == r7l);
+ assert(r7 == r7v);
 
  std::cout <<'.';
 
@@ -81,6 +89,7 @@ _test_cls_ray_3(const R& )
  assert( r7.direction() == dir );
  assert( r2.direction() == CGAL::Direction_3<R>(r2.point(2) - r2.point(1) ));
  assert( r2.direction() == r3.opposite().direction() );
+ assert( r2.to_vector().direction() == r3.opposite().to_vector().direction() );
  assert( r1.supporting_line() == r2.supporting_line() );
  CGAL::Line_3<R> lin(p1,p2);
  assert( r2.supporting_line() == lin );

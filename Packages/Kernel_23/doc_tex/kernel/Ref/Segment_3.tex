@@ -68,6 +68,9 @@ number types, which is expensive, and may not be exact.
 \ccMethod{Kernel::FT squared_length() const;}
        {returns the squared length of \ccVar. }
 
+\ccMethod{Vector_3<Kernel> to_vector() const;}
+       {returns the vector \ccc{\ccVar.target() - \ccVar.source()}.}
+
 \ccMethod{Direction_3<Kernel> direction() const;}
        {returns the direction from source to target.}
 

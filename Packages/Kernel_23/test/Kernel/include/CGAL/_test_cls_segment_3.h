@@ -53,6 +53,9 @@ _test_cls_segment_3(const R& )
  CGAL::Segment_3<R> s4( s2 );
  s1 = s4;
 
+ CGAL::Vector_3<R> v0(p1, p2);
+ assert( v0 == s2.to_vector() );
+
  assert( s1 == s1 );
  assert( s4 == s2 );
  assert( s1 == s4 );

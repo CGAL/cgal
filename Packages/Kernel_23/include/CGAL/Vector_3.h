@@ -31,6 +31,9 @@ template <class R_>
 class Vector_3 : public R_::Kernel_base::Vector_3
 {
   typedef typename R_::RT                    RT;
+  typedef typename R_::Segment_3             Segment_3;
+  typedef typename R_::Ray_3                 Ray_3;
+  typedef typename R_::Line_3                Line_3;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Direction_3           Direction_3;
   typedef typename R_::Kernel_base::Vector_3         RVector_3;
@@ -45,6 +48,15 @@ public:
 
   Vector_3(const Point_3& a, const Point_3& b)
     : RVector_3(a, b) {}
+
+  Vector_3(const Segment_3& s)
+      : RVector_3(s) {}
+
+  Vector_3(const Ray_3& r)
+      : RVector_3(r) {}
+
+  Vector_3(const Line_3& l)
+      : RVector_3(l) {}
 
   Vector_3(const RVector_3& v)
       : RVector_3(v) {}

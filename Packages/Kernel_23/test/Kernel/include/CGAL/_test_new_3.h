@@ -114,6 +114,7 @@ test_new_3(const R& rep)
   Ray_3 r1 = construct_ray();
   Ray_3 r2 = construct_ray(p2,p4);
   Ray_3 r3 = construct_ray(p2,d3);
+  Ray_3 r4 = construct_ray(p2,v3);
 
   typename R::Construct_line_3 construct_line
         = rep.construct_line_3_object();
@@ -123,11 +124,20 @@ test_new_3(const R& rep)
   Line_3 l4 = construct_line(p2,d4);
   Line_3 l5 = construct_line(s2);
   Line_3 l6 = construct_line(r2);
+  Line_3 l7 = construct_line(p2,v4);
 
   // remaining construct_direction tests
   Direction_3 d5 = construct_direction(l3);
   Direction_3 d6 = construct_direction(r2);
   Direction_3 d7 = construct_direction(s2);
+
+  // remaining construct_ray tests
+  Ray_3 r5 = construct_ray(p2, l3);
+
+  // remaining construct_vector tests
+  Vector_3 v7 = construct_vector(s2);
+  Vector_3 v8 = construct_vector(r2);
+  Vector_3 v9 = construct_vector(l2);
   
   typename R::Construct_plane_3 construct_plane
         = rep.construct_plane_3_object();
@@ -138,6 +148,7 @@ test_new_3(const R& rep)
   Plane_3 h5 = construct_plane(l2,p4);
   Plane_3 h6 = construct_plane(r2,p4);
   Plane_3 h7 = construct_plane(s2,p4);
+  Plane_3 h8 = construct_plane(p2,v3);
 
   typename R::Construct_sphere_3 construct_sphere
         = rep.construct_sphere_3_object();
@@ -686,6 +697,7 @@ test_new_3(const R& rep)
   use(tmp7); use(tmp71); use(sp1a); use(tmp72);
   use(tmp12a); use(tmp12b);
   use(bb1); use(bb2); use(bb3); use(bb4); use(bb5); use(bb6); 
+  use(r4); use(r5); use(l7); use(v8); use(v9); use(h8);
 
   return true;
 }

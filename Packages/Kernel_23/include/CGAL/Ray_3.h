@@ -31,7 +31,9 @@ class Ray_3 : public R_::Kernel_base::Ray_3
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Direction_3           Direction_3;
-  typedef typename R_::Kernel_base::Ray_3  RRay_3;
+  typedef typename R_::Vector_3              Vector_3;
+  typedef typename R_::Line_3                Line_3;
+  typedef typename R_::Kernel_base::Ray_3    RRay_3;
 public:
   typedef          R_                       R;
 
@@ -47,8 +49,14 @@ public:
   Ray_3(const Point_3& sp, const Point_3& secondp)
     : RRay_3(sp, secondp) {}
 
+  Ray_3(const Point_3& sp, const Vector_3& v)
+    : RRay_3(sp, v) {}
+
   Ray_3(const Point_3& sp, const Direction_3& d)
     : RRay_3(sp, d) {}
+
+  Ray_3(const Point_3& sp, const Line_3& l)
+    : RRay_3(sp, l) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAY_3

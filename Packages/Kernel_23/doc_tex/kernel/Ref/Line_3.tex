@@ -22,6 +22,10 @@ straight line in the three-dimensional Euclidean space $\E^3$.
             {introduces a line \ccVar\ passing through point $p$ with 
              direction $d$.}
 
+\ccConstructor{Line_3(const Point_3<Kernel> &p, const Vector_3<Kernel>&v)}
+            {introduces a line \ccVar\ passing through point $p$ and
+             oriented by $v$.}
+
 \ccConstructor{Line_3(const Segment_3<Kernel> &s);}
             {returns the line supporting the segment $s$,
 	    oriented from source to target.}
@@ -65,6 +69,9 @@ straight line in the three-dimensional Euclidean space $\E^3$.
 
 \ccMethod{Line_3<Kernel>      opposite() const;}
        {returns the line with opposite direction.}
+
+\ccMethod{Vector_3<Kernel>    to_vector() const;}
+       {returns a vector having the same direction as \ccVar.}
 
 \ccMethod{Direction_3<Kernel> direction() const;}
        {returns the direction of \ccVar.}

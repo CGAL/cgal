@@ -48,6 +48,11 @@ Notice that \ccVar\ is degenerate if the points are collinear.}
 
 
 \ccConstructor{Plane_3(const Point_3<Kernel> &p,
+                       const Vector_3<Kernel> &v)}
+{introduces a plane \ccVar\ that passes through point \ccStyle{p} and
+ that is orthogonal to \ccStyle{v}.}
+
+\ccConstructor{Plane_3(const Point_3<Kernel> &p,
                           const Direction_3<Kernel>&d)}
 {introduces a plane \ccVar\ that passes through point \ccStyle{p} and
  that has as an orthogonal direction equal to \ccStyle{d}.}

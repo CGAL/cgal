@@ -32,6 +32,7 @@ class Line_2 : public R_::Kernel_base::Line_2
   typedef typename R_::Point_2               Point_2;
   typedef typename R_::Segment_2             Segment_2;
   typedef typename R_::Ray_2                 Ray_2;
+  typedef typename R_::Vector_2              Vector_2;
   typedef typename R_::Direction_2           Direction_2;
   typedef typename R_::Kernel_base::Line_2  RLine_2;
 public:
@@ -60,6 +61,9 @@ public:
 
   Line_2(const Point_2 &p, const Direction_2 &d)
     : RLine_2(p,d) {}
+
+  Line_2(const Point_2 &p, const Vector_2 &v)
+    : RLine_2(p,v) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_LINE_2

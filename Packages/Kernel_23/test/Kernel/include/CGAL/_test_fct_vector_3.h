@@ -130,6 +130,23 @@ _test_fct_vector_3(const R& )
  assert( CGAL::cross_product(v1,v4) == vs2 );
  assert( CGAL::cross_product(v1,mv4) == - vs2 );
 
+ {
+  CGAL::Point_3<R> p0(4,2,1,1);
+  CGAL::Point_3<R> p1(2,4,1,1);
+  CGAL::Segment_3<R> s1(p0, p1);
+  CGAL::Ray_3<R> r1(p0, p1);
+  CGAL::Line_3<R> l1(p0, p1);
+  CGAL::Vector_3<R> v8(p0, p1);
+  CGAL::Vector_3<R> v9(s1);
+  CGAL::Vector_3<R> v10(r1);
+  CGAL::Vector_3<R> v11(l1);
+
+  assert( v8 == (p1-p0) );
+  assert( v8 == v9 );
+  assert( v10.direction() == v8.direction() );
+  assert( v11.direction() == v8.direction() );
+ }
+
  std::cout << "done" << std::endl;
  return true;
 }

@@ -61,6 +61,11 @@ _test_cls_line_3(const R& )
  CGAL::Line_3<R> l4(p3, dir);
  assert( l2 != l4);
 
+ CGAL::Vector_3<R> vec( n9, n3, n1);
+ CGAL::Line_3<R> l4v(p3, vec);
+ assert( l4 == l4v);
+ assert( l4.to_vector() == vec);
+
  CGAL::Segment_3<R> seg(p1,p2);
  CGAL::Ray_3<R>     ray(p2,p1);
  CGAL::Line_3<R>    l5(seg);

@@ -41,6 +41,10 @@ The positive side is to the left of \ccc{l}.
             {introduces a line \ccVar\ passing through point $p$ with 
              direction $d$.}
 
+\ccConstructor{Line_2(const Point_2<Kernel> &p, const Vector_2<Kernel>&v);}
+            {introduces a line \ccVar\ passing through point $p$ and
+             oriented by $v$.}
+
 \ccConstructor{Line_2(const Segment_2<Kernel> &s);}
             {introduces a line \ccVar\ supporting the segment $s$,
             oriented from source to target.}
@@ -127,6 +131,9 @@ For convenience we provide the following boolean functions:
        {}
 
 \ccHeading{Miscellaneous}
+
+\ccMethod{Vector_2<Kernel> to_vector() const;}
+       {returns a vector having the direction of \ccVar.}
 
 \ccMethod{Direction_2<Kernel> direction() const;}
        {returns the direction of \ccVar.}

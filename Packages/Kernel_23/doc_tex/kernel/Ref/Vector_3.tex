@@ -25,6 +25,15 @@ instead of a vector initialized with zeros.
 \ccConstructor{Vector_3(const Point_3<Kernel> &a, const Point_3<Kernel> &b);}
             {introduces the vector $b-a$.}
 
+\ccConstructor{Vector_3(const Segment_3<Kernel> &s);}
+            {introduces the vector $s.target()-s.source()$.}
+
+\ccConstructor{Vector_3(const Ray_3<Kernel> &r);}
+            {introduces a vector having the same direction as $r$.}
+
+\ccConstructor{Vector_3(const Line_3<Kernel> &l);}
+            {introduces a vector having the same direction as $l$.}
+
 \ccConstructor{Vector_3(const Null_vector &NULL_VECTOR);}
             {introduces a null vector \ccVar.}
 

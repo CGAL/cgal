@@ -9,12 +9,18 @@ A model for this must provide:
 \ccHidden \ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Line_3 &h);}
             {copy constructor.}
 
-\ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Point_3 &p, const Kernel::Point_3 &q);}
+\ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Point_3 &p,
+                                            const Kernel::Point_3 &q);}
             {introduces a line  passing through the points $p$ and $q$. 
              Line  is directed from $p$ to $q$.}
 
+\ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Point_3 &p,
+                                            const Kernel::Vector_3&v);}
+            {introduces a line  passing through point $p$ and
+             oriented by $v$.}
 
-\ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Point_3 &p, const Kernel::Direction_3&d);}
+\ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Point_3 &p,
+                                            const Kernel::Direction_3&d);}
             {introduces a line  passing through point $p$ with 
              direction $d$.}
 

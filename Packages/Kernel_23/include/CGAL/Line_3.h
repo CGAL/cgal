@@ -34,7 +34,8 @@ class Line_3 : public R_::Kernel_base::Line_3
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Direction_3           Direction_3;
-  typedef typename R_::Kernel_base::Line_3  RLine_3;
+  typedef typename R_::Vector_3              Vector_3;
+  typedef typename R_::Kernel_base::Line_3   RLine_3;
 public:
   typedef          R_                       R;
 
@@ -59,6 +60,9 @@ public:
 
   Line_3(const Point_3 & p, const Direction_3 & d)
       : RLine_3( p, d ) {}
+
+  Line_3(const Point_3 & p, const Vector_3 & v)
+      : RLine_3( p, v ) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_LINE_3

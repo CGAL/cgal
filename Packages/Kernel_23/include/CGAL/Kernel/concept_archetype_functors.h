@@ -1006,6 +1006,7 @@ class Construct_line_2
 {
     typedef typename K::RT           RT;
     typedef typename K::Point_2      Point_2;
+    typedef typename K::Vector_2     Vector_2;
     typedef typename K::Direction_2  Direction_2;
     typedef typename K::Segment_2    Segment_2;
     typedef typename K::Ray_2        Ray_2;
@@ -1027,6 +1028,10 @@ public:
     { return Line_2(); }
 
     Line_2
+    operator()(const Point_2&, const Vector_2&) const
+    { return Line_2(); }
+
+    Line_2
     operator()(const Segment_2&) const
     { return Line_2(); }
 
@@ -1040,6 +1045,7 @@ class Construct_line_3
 {
     typedef typename K::Point_3      Point_3;
     typedef typename K::Direction_3  Direction_3;
+    typedef typename K::Vector_3     Vector_3;
     typedef typename K::Segment_3    Segment_3;
     typedef typename K::Ray_3        Ray_3;
     typedef typename K::Line_3       Line_3;
@@ -1057,6 +1063,10 @@ public:
 
     Line_3
     operator()(const Point_3&, const Direction_3&) const
+    { return Line_3(); }
+
+    Line_3
+    operator()(const Point_3&, const Vector_3&) const
     { return Line_3(); }
 
     Line_3
@@ -1572,7 +1582,9 @@ template <typename K>
 class Construct_ray_2
 {
     typedef typename K::Point_2      Point_2;
+    typedef typename K::Vector_2     Vector_2;
     typedef typename K::Direction_2  Direction_2;
+    typedef typename K::Line_2       Line_2;
     typedef typename K::Ray_2        Ray_2;
 public:
      typedef Ray_2            result_type;
@@ -1587,7 +1599,15 @@ public:
      {  return Ray_2(); }
 
      Ray_2
+     operator()(const Point_2&, const Vector_2&) const
+     {  return Ray_2(); }
+
+     Ray_2
      operator()(const Point_2&, const Direction_2&) const
+     {  return Ray_2(); }
+
+     Ray_2
+     operator()(const Point_2&, const Line_2&) const
      {  return Ray_2(); }
 };
 
@@ -1595,7 +1615,9 @@ template <typename K>
 class Construct_ray_3
 {
     typedef typename K::Point_3      Point_3;
+    typedef typename K::Vector_3     Vector_3;
     typedef typename K::Direction_3  Direction_3;
+    typedef typename K::Line_3       Line_3;
     typedef typename K::Ray_3        Ray_3;
 public:
      typedef Ray_3            result_type;
@@ -1610,7 +1632,15 @@ public:
      {  return Ray_3(); }
 
      Ray_3
+     operator()(const Point_3&, const Vector_3&) const
+     {  return Ray_3(); }
+
+     Ray_3
      operator()(const Point_3&, const Direction_3&) const
+     {  return Ray_3(); }
+
+     Ray_3
+     operator()(const Point_3&, const Line_3&) const
      {  return Ray_3(); }
 };
 
@@ -1865,6 +1895,9 @@ template <typename K>
 class Construct_vector_2
 {
     typedef typename K::RT           RT;
+    typedef typename K::Segment_2    Segment_2;
+    typedef typename K::Ray_2        Ray_2;
+    typedef typename K::Line_2       Line_2;
     typedef typename K::Vector_2     Vector_2;
     typedef typename K::Point_2      Point_2;
 public:
@@ -1880,6 +1913,18 @@ public:
     { return Vector_2(); }
 
     Vector_2
+    operator()( const Segment_2&) const
+    { return Vector_2(); }
+
+    Vector_2
+    operator()( const Ray_2&) const
+    { return Vector_2(); }
+
+    Vector_2
+    operator()( const Line_2&) const
+    { return Vector_2(); }
+
+    Vector_2
     operator()( Null_vector) const
     { return Vector_2(); }
 };
@@ -1888,6 +1933,9 @@ template <typename K>
 class Construct_vector_3
 {
     typedef typename K::RT           RT;
+    typedef typename K::Segment_3    Segment_3;
+    typedef typename K::Ray_3        Ray_3;
+    typedef typename K::Line_3       Line_3;
     typedef typename K::Vector_3     Vector_3;
     typedef typename K::Point_3      Point_3;
 public:
@@ -1900,6 +1948,18 @@ public:
 
     Vector_3
     operator()( const Point_3&, const Point_3&) const
+    { return Vector_3(); }
+
+    Vector_3
+    operator()( const Segment_3&) const
+    { return Vector_3(); }
+
+    Vector_3
+    operator()( const Ray_3&) const
+    { return Vector_3(); }
+
+    Vector_3
+    operator()( const Line_3&) const
     { return Vector_3(); }
 
     Vector_3
