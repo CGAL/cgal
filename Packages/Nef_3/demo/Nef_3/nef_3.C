@@ -40,6 +40,8 @@
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_3/Visualizor.h>
 #include <CGAL/Nef_polyhedron_3.h>
+#include <CGAL/Nef_3/Decomposition_mark.h>
+#include <CGAL/Nef_3/SNC_items.h>
 
 #include <iostream>
 #include <fstream>
@@ -70,17 +72,18 @@ const char *kernelversion = "Extended homogeneous 3d kernel.";
 #else // #elif CGAL_USE_SIMPLE_KERNEL
 // typedef CGAL::Lazy_exact_nt<NT>  LNT;
 // typedef CGAL::Simple_homogeneous<LNT>  Kernel;
-typedef CGAL::Simple_homogeneous<NT> Kernel;
+typedef CGAL::Homogeneous<NT> Kernel;
 const char *kernelversion = "Simple homogeneous kernel.";
 #endif
 
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
-typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
+typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_items>     Nef_polyhedron;
+//typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_items,CGAL::Decomposition_mark>     Nef_polyhedron;
 // typedef Nef_polyhedron::Explorer           Explorer;
 typedef std::vector< Nef_polyhedron>       Nef_vector;
 typedef Nef_vector::iterator               Iterator;
 #ifdef CGAL_NEF3_VISUALIZOR
-typedef CGAL::Visualizor<Nef_polyhedron>         Visualizor;
+typedef CGAL::Visualizor_OpenGL_3<Nef_polyhedron>         Visualizor;
 #endif 
 
 // Global data
