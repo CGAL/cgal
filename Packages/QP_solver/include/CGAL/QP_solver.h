@@ -268,7 +268,11 @@ private:
     // auxiliary problem    
     A_art                    art_A;     // artificial part of constraint matrix
     S_art                    art_s;     // special artificial column for slacks
-    int                      art_s_i;   // index of special artificial column
+    int                      art_s_i;   // art_s_i>=0 ->index of special artificial
+    					// column
+					// art_s_i == -1 -> no sp. art. col
+					// art_s_i == -2 -> sp. art. col removed
+					// after it left basis 
     int                      art_basic; // number of basic artificial variables
     C_aux                    aux_c;     // objective function for phase I
     					// initially has the same size as A_art
@@ -708,10 +712,12 @@ private:
     public:
     bool is_solution_feasible();
     bool is_solution_feasible_aux();
-    bool is_solution_optimal();
+    bool is_solution_optimal(Tag_false is_linear);
+    bool is_solution_optimal(Tag_true is_linear);
     bool is_solution_optimal_aux();
     bool is_solution_valid();
-    bool is_solution_unbounded();
+    bool is_solution_unbounded(Tag_false is_linear);
+    bool is_solution_unbounded(Tag_true is_linear);
 
 // ----------------------------------------------------------------------------
 
@@ -1229,8 +1235,11 @@ replace_variable( Tag_false)
 	    // (like all artificial variables) not needed
 	    // anymore once it leaves the basis. Note:
 	    // regular artificial variables are only removed
-	    // from the problem after phase I 
-	    art_s_i = -art_A.back().first;
+	    // from the problem after phase I
+	    // art_s_i == -1 -> there is no special artificial variable
+	    // art_s_i == -2 -> there was a special artificial variable, 
+	    // but has been removed  
+	    art_s_i = -2;
 	    art_A.pop_back();
 	    in_B.pop_back();
 	} else {
