@@ -54,9 +54,13 @@ public:
     TYPE_INCREMENT = 0,
     TYPE_AGGREGATE,
     TYPE_DISPLAY,
+    TYPE_SUBCURVES,
+    TYPE_POINTS,
     TYPE_I,
     TYPE_A,
-    TYPE_D
+    TYPE_D,
+    TYPE_C,
+    TYPE_P
   };
 
   /*!
@@ -316,6 +320,12 @@ private:
         case TYPE_DISPLAY:
         case TYPE_D:
           m_typeMask = 0x1 << TYPE_DISPLAY; return 0;
+        case TYPE_SUBCURVES:
+        case TYPE_C:
+	  m_typeMask = 0x1 << TYPE_SUBCURVES; return 0;
+        case TYPE_POINTS:
+        case TYPE_P:
+	  m_typeMask = 0x1 << TYPE_POINTS; return 0;
       }
     }
     std::cerr << "Unrecognized Bench Name option '" << optarg << "'!"
