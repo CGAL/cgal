@@ -7,9 +7,9 @@ smaller or if they are equal.
 
 \ccInclude{CGAL/number_utils.h}
 
-\ccFunction{Comparison_result compare(const NT &n1, const NT &n2);}
-{returns \ccc{LARGER} iff $n1>n2$, \ccc{EQUAL} iff $n1=n2$, and \ccc{SMALLER} i
-ff $n1<n2$.}
-
+\ccFunction{template <class NT1, class NT2>
+            Comparison_result compare(const NT1 &n1, const NT2 &n2);}
+{returns \ccc{LARGER} iff $n1>n2$, \ccc{SMALLER} iff $n1<n2$, and \ccc{EQUAL}
+otherwise.}
 
 \end{ccRefFunction}
