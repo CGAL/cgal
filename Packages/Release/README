@@ -1,4 +1,23 @@
 This is what you need to do to create a release:
+------------------------------------------------
+
+CVS Release Branch:
+-------------------
+
+Before releasing proper, you need to create a branch, and run the internal
+release process on this branch for some time.  Experience shows (at least in
+3.1) that there is very few development (on the packages to be released) on the
+trunc.  So it seems best to branch as late as possible, in order to avoid the
+(small) pain of commiting things twice during the final stabilization phase.
+
+For branching, you need to :
+  - have write access to all packages
+  - cvs co All
+  - cvs tag CGAL_M_m_branch_tag
+  - cvs tag -b CGAL_M_m_branch
+
+Releasing:
+----------
 
 For the library:
 
@@ -12,15 +31,9 @@ Let <release_dir> be the directory in which you plan to build the release.
           in the script
       5.  cd CGAL-M.m
       6.  run the script release_scripts/make_public_release to
-               Remove the test directory.
-               Remove developer_scripts dir
-               Remove doc_tex dir
-               Remove winutils dir
-               Remove examples/*/cgal_test, demo/*/cgal_test
+               Remove non-public parts.
                Find all .C and .h files and collect them in a file
                Edit include/CGAL/version.h
-                   #define CGAL_VERSION ...
-                   #define CGAL_VERSION_NR ...
       7.  Copy Release/CHANGES
 
 For the manuals:
@@ -52,8 +65,7 @@ Package the code:
            gzip CGAL-M.m.tar
            zip -r CGAL-M.m.zip CGAL-M.m
       3.  The .zip file for the code needs to be repackaged for use with
-          InstallShield.  Contact the person in charge of Windows support
-          (currently Radu Ursu <rursu@geometryfactory.com>).
+          InstallShield.  Contact the person in charge of Windows support.
 
 For the web pages:
       1.  edit the following web pages (at least)
@@ -86,17 +98,7 @@ Install everything:
       4.  install the new web pages, i.e., make a cvs commit in Web_pages/,
           and a 'cvs up' in /www/pub/www.cgal.org/
       5.  cp cgi-bin/cgal_download.pl /www/pub/cgi-bin/www.cgal.org/
-
-      6.  [obsolete with CGAL-3.0.1 since we tag before release making, Lutz]
-          tag all the packages included in the release with the new
-          release tag CGAL_M_m_release and create a branch tag with
-          the name CGAL_M_m_branch.
-	  cvs -z9 co All -rcurrent_submission
-	  cd All
-	  cvs tag CGAL_M_m_release
-	  cvs tag -b CGAL_M_m_branch
-	  Notes : (1) it takes a while,
-	          (2) you need write access to all packages.
+      6.  tag CVS : cvs tag CGAL_M_m_release
 
 Then finally ...
       7.  announce the release (see announcement directory)

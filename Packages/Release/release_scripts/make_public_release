@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-my ($major,$minor) = (3,0);
+my ($major,$minor) = (3,1);
 #my $release_date_option = "-d '2000, January 11'";
 my $release_date_option = "";
 
@@ -10,15 +10,10 @@ Take the latest internal release. Unpack it and go to its main directory.
 Alter the second line above, such that the major and minor release
 number are ok.
 Run this script. This does the following:
-    Remove the test directory.
-    Remove developer_scripts dir
-    Remove doc_tex dir
-    Remove winutils dir
-    Remove top-level maintainer file
-    Remove examples/*/cgal_test, demo/*/cgal_test, 
-           examples/*/version demo/*/version
+    Remove directories : test, Packages, developer_scripts, doc_tex, winutils.
+    Remove examples/*/cgal_test, demo/*/cgal_test.
     Find all .C and .h files and collect them in a file
-    Edit include/CGAL/config.h
+    Edit include/CGAL/version.h
 	#define CGAL_VERSION ...
 	#define CGAL_VERSION_NR ...
 
@@ -43,18 +38,16 @@ die if $minor < 0;
 die "Quitting: No include/CGAL directory under current directory\n"
 if (! -d 'include/CGAL' );
 system ("rm -rf test");
+system ("rm -rf Packages");
 system ("rm -rf developer_scripts");
 system ("rm -rf doc_tex");
 system ("rm -rf winutils");
-system ("rm -f maintainer");
 system ("rm -f examples/*/cgal_test");
 system ("rm -f demo/*/cgal_test");
-system ("rm -f examples/*/version");
-system ("rm -f demo/*/version");
 system("find . -name '*.[hC]' -print > filenames");
 unlink 'filenames';
 my $version_nr = sprintf "1%03d%03d100",$major,$minor;
-my $config_file = 'include/CGAL/config.h';
+my $config_file = 'include/CGAL/version.h';
 die if ! -r $config_file;
 open TMPFILE, ">tmp_config$$";
 open CONFIGFILE, "$config_file";
