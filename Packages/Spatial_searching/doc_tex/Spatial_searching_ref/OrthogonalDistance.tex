@@ -1,0 +1,74 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: OrthogonalDistance.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSOrthogonalDistanceRev}{$Revision$}
+\RCSdefDate{\RCSOrthogonalDistanceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{OrthogonalDistance<QueryItem, Item>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+Requirements of an orthogonal distance class supporting incremental distance updates.
+To optimize distance computations transformed distances are used. 
+E.g., for an Euclidian distance the transformed distance is the squared Euclidean distance.
+
+\ccRefines
+
+GeneralDistance
+
+\ccParameters
+
+Expects for the parameter \ccc{QueryItem} as well for the parameter \ccc{Item}
+a $d$-dimensional point, for example \ccc{CGAL::Point_d}.
+
+\ccTypes
+
+\ccCreation
+\ccCreationVariable{d}  %% choose variable name
+
+\ccConstructor{OrthogonalDistance();}{Default constructor.}
+
+\ccHeading{Member Functions}
+\ccMethod{NT transformed_distance(NT d);} {Returns the transformed distance.}
+
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns the inverse of the transformed distance.}
+
+\ccMethod{NT distance(QueryItem& q, Item& p);}{Returns the transformed distance between \ccc{q} and \ccc{p}.}
+
+\ccMethod{NT min_distance_to_rectangle(QueryItem& q, Kd_tree_rectangle<NT>& r;);}
+{Returns the transformed distance between \ccc{q} and
+the point on the boundary of \ccc{r} closest to \ccc{q}.}
+
+\ccMethod{NT max_distance_to_rectangle(QueryItem& q, Kd_tree_rectangle<NT>& r;);}
+{Returns the transformed distance between \ccc{q} and
+the point on the boundary of \ccc{r} farthest to \ccc{q}.}
+
+\ccMethod{NT new_distance(NT dist, NT old_off, NT new_off, int cutting_dimension);} {Updates 
+\ccc{dist} incrementally and returns the updated distance.}
+
+\ccHasModels
+
+\ccc{Weighted_Minkowski_distance}.
+
+\ccSeeAlso
+
+Distance,
+\ccc{Weighted_Minkowski_distance}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TreeTraits.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSTreeTraitsRev}{$Revision$}
+\RCSdefDate{\RCSTreeTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TreeTraits<Separator,Item>}
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for a tree traits class, which is used as
+a template class for the construction of a $k$-$d$  tree by the class \ccc{Kd_tree}.
+
+\ccCreation
+\ccCreationVariable{tr}  %% choose variable name
+
+\ccConstructor{TreeTraits();}{Default constructor.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{Separator* split(Point_container<Item>& c0, Point_container<Item>& c1);}
+{Splits \ccc{c0} into \ccc{c0} and \ccc{c1}.}
+ 
+\ccHasModels
+
+\ccc{Kd_tree_traits_point}
+
+\ccSeeAlso
+
+\ccc{Kd_tree_traits_point},
+\ccc{Kd_tree}.
+
+\end{ccRefConcept}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

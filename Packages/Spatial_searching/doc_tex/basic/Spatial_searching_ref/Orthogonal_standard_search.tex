@@ -11,15 +11,15 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Orthogonal_standard_search<Traits, Query_item, Distance>}  %% add template arg's if necessary
+\begin{ccRefClass}{Orthogonal_standard_search<Traits, QueryItem, Distance>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
 
-The class \ccRefName\ implements approximate $k$-nearest and $k$-furthest neighbour searching
-using standard search on a $k$-$d$ tree using a general distance
+The class \ccRefName\ implements approximate $k$-nearest neighbour searching
+using standard search on a $k$-$d$ tree using an orthogonal distance
 class. It is required that he $k$-$d$ tree is built with extended nodes.
 
 \ccInclude{CGAL/Orthogoanl_standard_search.h}
@@ -27,8 +27,8 @@ class. It is required that he $k$-$d$ tree is built with extended nodes.
 \ccParameters
 
 Expects for the parameter \ccc{Traits} an implementation of the concept TreeTraits.
-Expects for the parameter \ccc{Query_item}  an implementation of the
-\ccc{Point} concept, for example \ccc{CGAL::Point_d<NT>}.
+Expects for the parameter \ccc{QueryItem}  an implementation
+of a $d$-dimensional point, for example \ccc{CGAL::Point_d<NT>}.
 or an implementation of a spatial object, for
 example \ccc{CGAL::Kd_tree_rectangle<NT>} implementing iso-rectangles.
 Expects for the parameter \ccc{Distance} an implementation of the
@@ -46,7 +46,7 @@ concept OrthogonalDistance.
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
-\ccConstructor{Orthogonal_standard_search(Tree& tree, Query_item& q, Distance& d, int k, NT Eps,
+\ccConstructor{Orthogonal_standard_search(Tree& tree, QueryItem& q, Distance& d, int k, NT Eps,
 bool Search_nearest=true);}
 {Constructor for searching approximately $k$ neighbours of the query item \ccc{q}
 in the items stored in the $k$-$d$ tree \ccc{tree} using an orthogonal distance

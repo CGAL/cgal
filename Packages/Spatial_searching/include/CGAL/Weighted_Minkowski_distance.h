@@ -94,7 +94,7 @@ namespace CGAL {
 	}
 
 
-	inline NT min_distance_to_rectangle(const Query_item& Point,
+	inline NT min_distance_to_queryitem(const Query_item& Point,
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance = 0.0;
 		if (p == 0.0)
@@ -118,7 +118,7 @@ namespace CGAL {
 		return distance;
 	}
 
-	inline NT max_distance_to_rectangle(const Query_item& Point,
+	inline NT max_distance_to_queryitem(const Query_item& Point,
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance=0.0;
 		if (p == 0.0)

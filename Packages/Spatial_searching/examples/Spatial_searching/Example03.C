@@ -1,4 +1,4 @@
-// Example03.C
+// Approximate spatial searching: Example03.C
 // Example illustrating for each separate splitting rule
 // building a kd-tree 
 

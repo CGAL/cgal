@@ -19,9 +19,9 @@
 \ccDefinition
   
 The class \ccRefName\ defines a model of tree traits class, which is used as
-a template class for the construction of a binary search tree by the class \ccc{Binary_Search_Tree}.
+a template class for the construction of a $k$-$d$ tree by the class \ccc{Kd_tree}.
 The parameters \ccc{selected_split_rule}, \ccc{aspect_ratio}, \ccc{bucket_size}, and \ccc{use_extended_nodes}  
-define the way in which the binary search tree is constructed.
+define the way in which $k$-$d$ tree is constructed.
 
 
 \ccInclude{CGAL/Kd_tree_traits_point.h}
@@ -34,8 +34,8 @@ TreeTraits.
 
 Expects for the parameter \ccc{Separator} an implementation of a separator, for
 example \ccc{Plane_separator}.
-Expects for the parameter \ccc{Item} an implementation of the
-\ccc{Point} concept, for example \ccc{CGAL::Point_d}.
+Expects for the parameter \ccc{Item} an implementation of a $d$-dimensional point, \\
+for example \ccc{CGAL::Point_d}.
 
 
 \ccTypes
@@ -78,9 +78,9 @@ TreeTraits,
 \ccc{Fair},
 \ccc{Sliding_fair},
 \ccc{Sliding_midpoint},
-\ccc{Median_of_box},
-\ccc{MidpPoint_of_max_spread},
-\ccc{Midpoint_of_box},
+\ccc{Median_of_rectangle},
+\ccc{Midpoint_of_max_spread},
+\ccc{Midpoint_of_rectangle},
 \ccc{Kd_tree}.
 
 \end{ccRefClass}

@@ -163,20 +163,20 @@ Distance* distance_instance;
                         if (search_nearest) { 
 
                         	distance_to_lower_half = 
-                        	distance_instance -> min_distance_to_rectangle(*query_object, *r_lower);
+                        	distance_instance -> min_distance_to_queryitem(*query_object, *r_lower);
 
                         	distance_to_upper_half = 
-                        	distance_instance -> min_distance_to_rectangle(*query_object, *r_upper);
+                        	distance_instance -> min_distance_to_queryitem(*query_object, *r_upper);
 
 			} 
 			else
 			{ 
 
                         	distance_to_lower_half = 
-                        	distance_instance -> max_distance_to_rectangle(*query_object, *r_lower);
+                        	distance_instance -> max_distance_to_queryitem(*query_object, *r_lower);
 
                         	distance_to_upper_half = 
-                        	distance_instance -> max_distance_to_rectangle(*query_object, *r_upper);
+                        	distance_instance -> max_distance_to_queryitem(*query_object, *r_upper);
 
 			}
 

@@ -11,14 +11,15 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{L1_distance_rectangle_point<Query_item,Item>}  %% add template arg's if necessary
+\begin{ccRefClass}{L1_distance_rectangle_point<QueryItem,Item>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
 
-The class \ccRefName\ provides an implementation of the GeneralDistance concept
+The class \ccRefName\ provides an implementation of \\
+the GeneralDistance concept
 for the L1 distance between two iso-rectangles and the L1 distance between an iso-rectangle
 and a point.
 
@@ -26,11 +27,11 @@ and a point.
 
 \ccParameters
 
-Expects for the parameter \ccc{Query_item}
+Expects for the parameter \ccc{QueryItem}
 \ccc{item} an implementation of iso-rectangles
 for example \ccc{CGAL::Kd_tree_rectangle<NT>}.
-Expects for the parameter \ccc{Item} an implementation of the
-\ccc{Point} concept, for example \ccc{CGAL::Point_d<NT>}.
+Expects for the parameter \ccc{Item} an implementation
+of a $d$-dimensional point, for example \ccc{CGAL::Point_d}.
 
 \ccIsModel
 
@@ -56,13 +57,13 @@ $d$-dimensional iso-rectangles.}
 
 \ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $d$.}
 
-\ccMethod{NT distance(Query_Item& q, Item&p);}{Returns the distance between \ccc{q} and \ccc{p}.}
+\ccMethod{NT distance(QueryItem& q, Item&p);}{Returns the distance between \ccc{q} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_rectangle(Query_item& q, Kd_tree_rectangle<NT>& r;);}
+\ccMethod{NT min_distance_to_queryitem(QueryItem& q, Kd_tree_rectangle<NT>& r;);}
 {Returns the minimal distance between a point from \ccc{q} and a point from
 \ccc{r}}
 
-\ccMethod{NT max_distance_to_rectangle(Query_item& q, Kd_tree_rectangle<NT>& r;);}
+\ccMethod{NT max_distance_to_queryitem(QueryItem& q, Kd_tree_rectangle<NT>& r;);}
 {Returns the maximal distance between the iso-rectangle \ccc{q} and
 a point from \ccc{r} furthest to \ccc{q}.}
 

@@ -29,8 +29,8 @@ In these searching problems a set $P$ of data points in $d$-dimensional
 space is given.
 These points are preprocessed into a $k$-$d$ tree data structure, so that given
 any query item $q$ the points of $P$ can be browsed efficiently.
-ASPAS is designed for data sets that are small enough to store
-the search structure in main menory (in contrast to approaches
+The approximate spatial searching package is designed for data sets that are small enough to store
+the search structure in main memory (in contrast to approaches
 from databases that assume that the data reside in secondary storage).
 
 \subsection{Incremental Nearest Neighbour Searching and Distance Browsing}
@@ -43,7 +43,7 @@ Hence, the number of nearest neighbours has to be
 guessed. If the guess is too large redundant computations are performed.
 If the number is too small the computation has to be  
 reinvoked for a larger number of neighbours, thereby performing redundant computations.
-The second approach is incremental in the sence that having obtained
+The second approach is incremental in the sense that having obtained
 the $k$ nearest neighbours, the $k$ + 1$^{st}$ neighbour can be obtained without
 having to calculate the $k$ + 1 nearest neighbour from scratch.
 The incremental approach is useful when processing queries where
@@ -68,7 +68,7 @@ contained in the query item.
 \subsection{Approximate Searching}
 
 The approximate spatial searching package supports both exact and approximate browsing, by
-specifying an approximation facter $\epsilon \geq 0$ with the query.
+specifying an approximation factor $\epsilon \geq 0$ with the query.
 
 \subsection{The $k$-$d$ tree}
 
@@ -88,14 +88,14 @@ Therefore, such a hyperplane, defined by a splitting dimension
 and a splitting value, is called a separator.
 These two parts are then associated
 with the two child nodes in the tree. The process of partitioning space continues until the number of data
-points in the rectangle falls below some given treshold. The rectangles associated with the leaf nodes
+points in the rectangle falls below some given threshold. The rectangles associated with the leaf nodes
 are called {\it buckets}, and they define a subdivision of the space into rectangles.
 Data points are only stored in the leaf nodes of the tree, not in the internal nodes.
 
 Friedmann, Bentley and Finkel \cite{fbf-afbml-77} described the standard
 search algorithm to find the $k$th nearest neighbour by searching a $k$-$d$ tree recursively.
 
-When encountering a node of the kd-tree the algorithm first visits the child that is closest
+When encountering a node of the $k$-$d$ tree the algorithm first visits the child that is closest
 to the query point. On return, if the rectangle containing  the other child lies within
 1/ (1+$\epsilon$) times the distance to the $k$th nearest neighbours so far, then
 the other child is visited recursively.
@@ -107,20 +107,22 @@ Priority search supports next neighbour search, standard search does not.
 
 \subsection {Splitting Rules}
 
-ASPAS provides the following different splitting rules,
+The approximate spatial searching package provides the following different splitting rules,
 which determine how a separating hyperplane is selected:
 
 \begin{itemize}
 
-\item {\bf Midpoint of rectangle}
+\item \ccc{Midpoint_of_rectangle}
+
 This splitting rule cuts a rectangle through its midpoint orthogonal
 to the longest side.
 
-\item {\bf Midpoint of max spread}
+\item \ccc{Midpoint_of_max_spread}
+
 This splitting rule cuts a rectangle through $Mind+Maxd/2$ orthogonal
 to the dimension with the maximum point spread $[Mind,Maxd]$.
 
-\item {\bf Sliding midpoint}
+\item \ccc{Sliding_midpoint}
 
 This is a modification of the midpoint of rectangle splitting rule.
 It first attempts to perform a midpoint of rectangle split as
@@ -130,19 +132,20 @@ the midpoint of rectangle rule. If the data points lie only on one
 side it avoids this by sliding the separator, computed by
 the midpoint of rectangle rule, to the nearest datapoint.
 
-\item {\bf Median of rectangle}
-
-The splitting dimension is the dimension of the longest side of the rectangle.
-The splitting value is defined by the median of the coordintes of the data points
-along this dimension.
-
-\item {\bf Median of max spread}
+\item \ccc{Median_of_rectangle}
 
 The splitting dimension is the dimension of the longest side of the rectangle.
 The splitting value is defined by the median of the coordinates of the data points
 along this dimension.
 
-\item {\bf Fair}
+\item \ccc{Median_of_max_spread}
+
+The splitting dimension is the dimension of the longest side of the rectangle.
+The splitting value is defined by the median of the coordinates of the data points
+along this dimension.
+
+\item \ccc{Fair}
+
 This splitting rule is a compromise between the median of rectangle splitting rule
 and the midpoint of rectangle splitting rule. This splitting rule maintains an upper
 bound on the maximal allowed ratio of the longest and shortest side of
@@ -152,7 +155,8 @@ the one in which the points have the largest spread.
 It then splits the points in the most even manner possible, subject
 to maintaining the bound on the ratio of the resulting rectangles.
 
-\item {\bf Sliding fair}
+\item \ccc{Sliding_fair}
+
 This splitting rule is a compromise between the fair splitting rule
 and the sliding midpoint rule.
 Sliding fair-split is based on the theory that there are
@@ -167,7 +171,7 @@ fair splitting rule). Among the splits that satisfy this bound, it selects
 the one one in which the points have the largest spread.
 It then considers the most extreme cuts that would be allowed by the
 aspect ratio bound. This is done by dividing the longest side of
-the rectangle by the acpect ratio bound. If the median cut lies
+the rectangle by the aspect ratio bound. If the median cut lies
 between these extreme cuts, then we use the median cut. If not,
 then consider the extreme cut that is closer to the median.
 If all the points lie to one side of this cut, then we slide the cut
@@ -176,17 +180,20 @@ This may violate the aspect ratio bound, but will never generate empty cells.
 
 \end{itemize}
 
-Also, a user of ASPAS may provide an implementation of his own
+Also, a user may provide an implementation of his own
 splitting rule.
 
 \section{Software Design}
+
+\subsection{Classes}
 
 The approximate spatial searching package consists of the following classes:
 
 \begin{itemize}
 
 \item
-The class \ccc{Kd_tree_rectangle} implements $d$-dimensional iso-rectangles, methods to compute bounding boxes
+The class \ccc{Kd_tree_rectangle} implements $d$-dimensional iso-rectangles, 
+methods to compute bounding boxes
 of point sets and methods to split iso-rectangles.
 
 \item
@@ -240,30 +247,75 @@ like the $L1$ distance for iso-rectangles.
   \leavevmode
   \vspace*{6cm}
   \hspace*{-2cm}
-  \scalebox{.7}{\includegraphics{Fig1.eps}}
+  \scalebox{.7}{\includegraphics{./Fig1.eps}}
   \end{center}
   \vspace*{-8cm}
-  \caption{Overiew of use of traits classes.}
+  \caption{Overview of use of traits classes.}
+  \label{ASPAS:Fig1}
 \end{figure}
 
 \end{ccTexOnly}
 
 %for html
-%\lcHtml{\label{KDT_fig:kdtree}}
+\lcHtml{\label{ASPAS:Fig1}}
 \begin{ccHtmlOnly}
 <P>
-<center><img border=0 src="Fig1.gif" alt=" "><br>
+<center><img border=0 src="./Fig1.gif" alt=" "><br>
 Overview of use of traits classes</center>
 \end{ccHtmlOnly}
 
+% \subsection{Concepts}
+
+% The approximate spatial searching package supports the following concepts:
+
+% \begin{itemize}
+
+% \item
+% QueryItem
+
+% \item
+% Separator
+
+% \item
+% TreeTraits
+
+% \item
+% GeneralDistance
+
+% \item
+% OrthogonalDistance
+
+% \end{itemize}
+
+\subsection{Use of traits classes}
+
+Figure \ref{ASPAS:Fig1} shows an overview of the use of the traits classes.
+
+The parameter \ccc{NT} should provide a number type.
+
+The parameter \ccc{Item} should provide an implementation of a $d$-dimensional point, 
+for example \ccc{CGAL::Point_d}.
+
+The parameter \ccc{Query_item} should provide an implementation a spatial object
+as specified by the concept \ccc{CGAL::QueryItem}
+for example \ccc{CGAL::Kd_tree_rectangle}, that implements $d$-dimensional iso rectangles.
+
+The parameter \ccc{Separator} should provide an implementation of a $d-1$-dimensional
+subspace as specified by the concept \ccc{CGAL::Separator}.
+
+The parameter \ccc{Traits} should provide an implementation of the concept \ccc{CGAL::TreeTraits}
+specifying the parameters and the splitting rule used in the construction of a $k$-$d$ tree.
+
+The parameter \ccc{Distance} should provide an implementation of a distance.
+For the implementation of nearest neighbour searching with efficient incremental
+distance computation this distance class should meet the requirements of the concept
+\ccc{CGAL::OrthogonalDistance}. Otherwise the distance class has only to meet the
+requirements of the concept \ccc{CGAL::GeneralDistance}.
+
 \section{Example Programs}
 
-\subsection{K-Nearest Neighbour Searching}
-
-{\bf Example program to be extended.}
-
-The first example program illustrates building $k$-$d$ trees using 1000
-100-dimensional points.
+The first example program illustrates searching for the nearest and the farthest neighbour using the
+same $k$-$d$ tree.
 The way the $k$-$d$ tree is build is defined by the traits variable \ccc{tr(bucket_size, s, 3.0 true)}.
 In the example the \ccc{bucket_size} is set to 10.
 Hence, each leaf nodes stores at most 10 points.
@@ -273,16 +325,34 @@ the maximal allowed ratio between the largest and smallest side of a rectangle.
 This aspect ratio is set to 3.0. The boolean value true indicates that
 extended internal nodes are used.
 
-\ccIncludeExampleCode{Example03.C}
+The nearest neighbour is searched using orthogonal standard search and
+the farthest neighhour is searched using general standard search, because the
+incremental distance update technique works only for nearest neighbour searching.
 
-\subsection{Incremental Nearest Neighbour Searching}
+In this example the user provides an implementation of 3-dimensional points and an
+implementation of the Euclidean distance.
 
-{\bf Example program to be provided.}
+\ccIncludeExampleCode{ExampleA.C}
 
-\subsection{Distance Browsing}
+The second example program illustrates approximate nearest neighbour searching
+using orthogonal standard search using the point class \ccc{CGAL::Point_d}
+and the distance class \ccc{CGAL::Weighted_Minkowski_distance}.
+ 
+\ccIncludeExampleCode{ExampleB.C}
 
-{\bf Example program to be provided.}
+The third example program illustrates range querying using general priority search.
+A range query is defined by a $d$-dimensional iso-rectangle implemented by
+the class \ccc{CGAL::Kd_tree_rectangle}. The appropriate distance is defined by
+the class \ccc{CGAL::L1_distance_rectangle_point}.
 
-\subsection{Range Querying}
+\ccIncludeExampleCode{ExampleC.C}
 
-{\bf Example program to be provided.}
+The fourth example program illustrates browsing for $4$-dimensional points with
+a positive first coordinate using orthogonal priority search
+using the point class \ccc{CGAL::Point_d}
+and the distance class \ccc{CGAL::Weighted_Minkowski_distance}.
+ 
+
+\ccIncludeExampleCode{ExampleD.C}
+
+

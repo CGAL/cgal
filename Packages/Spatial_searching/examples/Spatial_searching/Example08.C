@@ -1,4 +1,4 @@
-// Example08.C
+// Approximate spatial searching: Example08.C
 // Example illustrating for each separate splitting rule
 // building a kd-tree 
 
@@ -119,7 +119,7 @@ inline double distance(const Point& p1, const Point& p2)
         return distx*distx+disty*disty+distz*distz;
 }
 
-inline double min_distance_to_rectangle(const Point& p,
+inline double min_distance_to_queryitem(const Point& p,
 					      const CGAL::Kd_tree_rectangle<double>& b) 
 {   double distance(0.0);
     double h;
@@ -135,7 +135,7 @@ inline double min_distance_to_rectangle(const Point& p,
     return distance;
 }
 
-inline double max_distance_to_rectangle(const Point& p,
+inline double max_distance_to_queryitem(const Point& p,
 					      const CGAL::Kd_tree_rectangle<double>& b) 
 {   double distance(0.0);
     double h;

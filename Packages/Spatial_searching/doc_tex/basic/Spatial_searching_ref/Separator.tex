@@ -19,7 +19,9 @@
 \ccDefinition
   
 The concept \ccRefName\ defines the requirements for a separator.
-A separator is a $d-1$-dimensional subspace that separates a $d$-dimensional space into two parts.
+A separator is a ($d$-1)-dimensional subspace that separates a $d$-dimensional space into two parts.
+One part of space is said to be on the negative side of the separator and the other part of space is 
+said to be on the positive side of the separator.
 
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
@@ -28,8 +30,8 @@ A separator is a $d-1$-dimensional subspace that separates a $d$-dimensional spa
 
 {\bf Member functions}
 \ccMethod{template <class Item>
-bool below(Item& i);}
-{Returns true if and only if the item value in the cutting dimension is smaller than the cutting value.}
+bool on_negative_side(Item& i);}
+{Returns true if and only if the item value on the negative side of the separator.}
 
 
 \ccHasModels

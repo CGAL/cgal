@@ -1,4 +1,4 @@
-// Example04.C
+// Approximate spatial searching: Example04.C
 // Example illustrating for each separate splitting rule
 // building a kd-tree 
 
@@ -15,9 +15,10 @@
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>
 #include <CGAL/Splitting_rules.h>
-#include <CGAL/Standard_search.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/Orthogonal_standard_search.h>
+#include <CGAL/General_standard_search.h>
 
 // create own Point type (adapted from example3.C from kdtree and Point_3.h)
  
@@ -118,7 +119,7 @@ inline double distance(const Point& p1, const Point& p2)
         return distx*distx+disty*disty+distz*distz;
 }
 
-inline double min_distance_to_rectangle(const Point& p,
+inline double min_distance_to_queryitem(const Point& p,
 					      const CGAL::Kd_tree_rectangle<double>& b) 
 {   double distance(0.0);
     double h;
@@ -134,7 +135,7 @@ inline double min_distance_to_rectangle(const Point& p,
     return distance;
 }
 
-inline double max_distance_to_rectangle(const Point& p,
+inline double max_distance_to_queryitem(const Point& p,
 					      const CGAL::Kd_tree_rectangle<double>& b) 
 {   double distance(0.0);
     double h;
@@ -175,8 +176,10 @@ typedef CGAL::Creator_uniform_3<double,Point> Creator;
 
 typedef CGAL::Plane_separator<double> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Standard_search<Traits, Point, Point3D_distance> 
-NN_standard_search;
+typedef CGAL::Orthogonal_standard_search<Traits, Point, Point3D_distance> 
+NN_orthogonal_search;
+typedef CGAL::General_standard_search<Traits, Point, Point3D_distance> 
+NN_general_search;
 
 typedef std::vector<Traits::Item> Vector;
 typedef std::vector<Point> Query_vector;
@@ -225,7 +228,7 @@ int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
   Point3D_distance tr_dist;
 
   // nearest neighbour searching using extended nodes
-  std::vector<NN_standard_search::Item_with_distance> nearest_neighbours1;
+  std::vector<NN_orthogonal_search::Item_with_distance> nearest_neighbours1;
   nearest_neighbours1.reserve(query_point_number+1);
   
   /*
@@ -236,15 +239,15 @@ int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
      NN.the_k_nearest_neighbours(std::back_inserter(nearest_neighbours1));
   }*/
   // nearest neighbour searching using no extended nodes
-  std::vector<NN_standard_search::Item_with_distance> nearest_neighbours2;
+  std::vector<NN_general_search::Item_with_distance> nearest_neighbours2;
   nearest_neighbours2.reserve(query_point_number+1);
   
   for (int i=1; i < query_point_number+1; ++i) { 
-     NN_standard_search NN1(d1, query_points[i], tr1, tr_dist, 1, 0.0, false);
+     NN_orthogonal_search NN1(d1, query_points[i], tr_dist, 1, 0.0, false);
      std::cout << "neighbour searching statistics using extended nodes: " << std::endl;
      NN1.statistics();
      NN1.the_k_neighbours(std::back_inserter(nearest_neighbours1));
-     NN_standard_search NN2(d2, query_points[i], tr2, tr_dist, 1, 0.0, false);
+     NN_general_search NN2(d2, query_points[i], tr_dist, 1, 0.0, false);
      std::cout << "neighbour searching statistics using no extended nodes: " << std::endl;
      NN2.statistics();
      NN2.the_k_neighbours(std::back_inserter(nearest_neighbours2));

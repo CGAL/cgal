@@ -292,9 +292,9 @@ class Distance_smaller
 
 
         if (search_nearest) distance_to_root=
-        Distance_instance->min_distance_to_rectangle(q,*bounding_box);
+        Distance_instance->min_distance_to_queryitem(q,*bounding_box);
         else distance_to_root=
-   	Distance_instance->max_distance_to_rectangle(q,*bounding_box);
+   	Distance_instance->max_distance_to_queryitem(q,*bounding_box);
 
         
 
@@ -410,9 +410,9 @@ class Distance_smaller
 			delete B;
 			if (search_nearest) {
 NT distance_to_box_lower =
-Distance_instance->min_distance_to_rectangle(*query_point, *lower_box);
+Distance_instance->min_distance_to_queryitem(*query_point, *lower_box);
 NT distance_to_box_upper =
-Distance_instance->max_distance_to_rectangle(*query_point, *upper_box);
+Distance_instance->max_distance_to_queryitem(*query_point, *upper_box);
 if (distance_to_box_lower <= distance_to_box_upper) {
 	Cell* C_upper = new Cell(upper_box, N->upper());
 	Cell_with_distance *Upper_Child =
@@ -432,9 +432,9 @@ else {
                         }
 			else { // search furthest
 NT distance_to_box_lower =
-Distance_instance->max_distance_to_rectangle(*query_point, *lower_box);
+Distance_instance->max_distance_to_queryitem(*query_point, *lower_box);
 NT distance_to_box_upper =
-Distance_instance->max_distance_to_rectangle(*query_point, *upper_box);
+Distance_instance->max_distance_to_queryitem(*query_point, *upper_box);
 if (distance_to_box_lower >= distance_to_box_upper) {
 	Cell* C_upper = new Cell(upper_box, N->upper());
 	Cell_with_distance *Upper_Child =

@@ -1,0 +1,48 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: QueryItem.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSQueryItemRev}{$Revision$}
+\RCSdefDate{\RCSQueryItemDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{QueryItem}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for a 
+$d$-dimensional spatial object.
+
+\ccCreation
+\ccCreationVariable{q}  %% choose variable name
+
+\ccConstructor{QueryItem();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{int dimension();}
+{Returns the dimension of the spatial object.}
+
+\ccHasModels
+
+\ccc{Kd_tree_rectangle}.
+
+\ccSeeAlso
+
+GeneralDistance, OrthogonalDistance.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

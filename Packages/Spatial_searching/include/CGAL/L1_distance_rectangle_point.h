@@ -68,7 +68,7 @@ namespace CGAL {
     }
 
 
-    inline NT min_distance_to_rectangle(const Query_item& q,
+    inline NT min_distance_to_queryitem(const Query_item& q,
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance = 0.0;
 		for (unsigned int i = 0; i < The_dimension; ++i)  {
@@ -78,7 +78,7 @@ namespace CGAL {
 		return distance;
 	}
 
-    inline NT max_distance_to_rectangle(const Query_item& q,
+    inline NT max_distance_to_queryitem(const Query_item& q,
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance=0.0;
 		for (unsigned int i = 0; i < The_dimension; ++i)
