@@ -217,7 +217,7 @@ main(int argc, char* argv[])
 
 #ifdef CGAL_USE_LEDA
     // check that all points are covered
-    CGAL::Infinity_distance_2< K > dist;
+    CGAL::I_Infinity_distance_2< K > dist;
     #ifdef _MSC_VER
     {
     #endif
@@ -242,8 +242,8 @@ main(int argc, char* argv[])
     
     // check that there is at least one square with two points
     // on opposite sides
-    CGAL::Signed_x_distance_2< K > xdist;
-    CGAL::Signed_y_distance_2< K > ydist;
+    CGAL::I_Signed_x_distance_2< K > xdist;
+    CGAL::I_Signed_y_distance_2< K > ydist;
     bool boundary = false;
     #ifdef _MSC_VER
     {

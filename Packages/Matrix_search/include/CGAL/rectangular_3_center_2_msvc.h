@@ -110,7 +110,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
       Point bpt = constraint_empty ? first_uncovered :
       minx()(first_uncovered, v(constraint, 0));
       return v(rect(bpt, v(bbox, 2)), 3);
@@ -128,7 +128,7 @@ public:
     {
       Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
       Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
       Point bpt = constraint_empty ? v(bbox, 2) : v(constraint, 0);
       return v(rect(bpt, v(bbox, 2)), 3);
   #else
@@ -156,7 +156,7 @@ public:
     {
       Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
       Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
       Point bpt = constraint_empty ? first_uncovered :
       miny()(first_uncovered, v(constraint, 0));
       return v(rect(v(bbox, 2), bpt), 1);
@@ -174,7 +174,7 @@ public:
     {
       Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
       Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
       Point bpt = constraint_empty ? v(bbox, 2) : v(constraint, 0);
       return v(rect(v(bbox, 2), bpt), 1);
   #else
@@ -311,7 +311,7 @@ public:
   {
       Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
       Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? first_uncovered :
     maxx()(first_uncovered, v(constraint, 2));
     return v(rect(bpt, v(bbox, 3)), 2);
@@ -329,7 +329,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? v(bbox, 0) : v(constraint, 2);
     return v(rect(bpt, v(bbox, 3)), 2);
   #else
@@ -358,7 +358,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? first_uncovered :
     miny()(first_uncovered, v(constraint, 0));
     return v(rect(v(bbox, 3), bpt), 0);
@@ -376,7 +376,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? v(bbox, 2) : v(constraint, 0);
     return v(rect(v(bbox, 3), bpt), 0);
   #else
@@ -510,7 +510,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? first_uncovered :
     maxx()(first_uncovered, v(constraint, 2));
     return v(rect(bpt, v(bbox, 0)), 1);
@@ -528,7 +528,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? v(bbox, 0) : v(constraint, 2);
     return v(rect(bpt, v(bbox, 0)), 1);
   #else
@@ -557,7 +557,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? first_uncovered :
     maxy()(first_uncovered, v(constraint, 2));
     return v(rect(v(bbox, 0), bpt), 3);
@@ -575,7 +575,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? v(bbox, 0) : v(constraint, 2);
     return v(rect(v(bbox, 0), bpt), 3);
   #else
@@ -709,7 +709,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? first_uncovered :
     minx()(first_uncovered, v(constraint, 0));
     return v(rect(bpt, v(bbox, 1)), 0);
@@ -727,7 +727,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? v(bbox, 2) : v(constraint, 0);
     return v(rect(bpt, v(bbox, 1)), 0);
   #else
@@ -756,7 +756,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? first_uncovered :
     maxy()(first_uncovered, v(constraint, 2));
     return v(rect(v(bbox, 1), bpt), 2);
@@ -774,7 +774,7 @@ public:
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #ifdef __BORLANDC__
+  #if defined(__BORLANDC__) || defined(__SUNPRO_CC)
     Point bpt = constraint_empty ? v(bbox, 0) : v(constraint, 2);
     return v(rect(v(bbox, 1), bpt), 2);
   #else

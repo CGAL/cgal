@@ -232,7 +232,7 @@ struct Staircases : public Loc_domain< Traits_ > {
 #if defined(__sun) && defined(__SUNPRO_CC)
     // I get linker errors otherweise,  the call from above
     // does not seem to suffice :-(
-    { Base bb(e, e, t); }
+    { Base bb(b, e, t); }
 #endif // defined(__sun) && defined(__SUNPRO_CC)
 #ifndef CGAL_CFG_NO_NAMESPACE
     using std::sort;
