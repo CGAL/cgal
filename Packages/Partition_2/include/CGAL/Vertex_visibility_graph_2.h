@@ -123,7 +123,8 @@ public:
       // NOTE:  use the std::list as the basis here because otherwise the basis
       //        is a deque, which is buggy under MSVC++
       std::stack<Tree_iterator, std::list<Tree_iterator> > stack;
-      stack.push(tree.rightmost_point_ref());   // push on p_0, the rightmost point
+      // push on p_0, the rightmost point
+      stack.push(tree.rightmost_point_ref());   
    
       Tree_iterator p, p_r, q, z;
       while (!stack.empty())
