@@ -75,7 +75,7 @@ public:
   typedef typename Point_d_base::Cartesian_const_iterator Cartesian_const_iterator_d;
 
   template <typename K>
-  class Construct_Cartesian_const_iterator
+  class Construct_cartesian_const_iterator
   {    
     typedef typename K::Point_d Point_d;
     typedef typename K::Cartesian_const_iterator_d  Cartesian_const_iterator_d;
@@ -97,14 +97,35 @@ public:
     }
   };
 
+ template <typename K>
+  class Construct_vertex
+  {    
+    typedef typename K::Point_d Point_d;
+    typedef typename K::Iso_box_d Iso_box_d;
+    typedef typename K::Cartesian_const_iterator_d  Cartesian_const_iterator_d;
+  public:
+    typedef Point_d result_type;
+    typedef Arity_tag< 2> Arity;
 
-    typedef Construct_Cartesian_const_iterator<Self> 
-                           Construct_Cartesian_const_iterator_d;
+    Point_d operator()(const Iso_box_d&  b, int i)
+    {
+      if(i == 0){
+	return b.min();
+      }
+      return b.max();
+    }
+  };
+  
 
-  Construct_Cartesian_const_iterator_d
-  construct_Cartesian_const_iterator_d_object() const
+  typedef Construct_vertex<Self> Construct_vertex_d;
+
+    typedef Construct_cartesian_const_iterator<Self> 
+                           Construct_cartesian_const_iterator_d;
+
+  Construct_cartesian_const_iterator_d
+  construct_cartesian_const_iterator_d_object() const
   {
-    return Construct_Cartesian_const_iterator_d();
+    return Construct_cartesian_const_iterator_d();
   }
 
   // meta types (fit both kernels):
