@@ -18,8 +18,8 @@
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
 
-#ifndef CGAL_CURVE_DATA_TRAITS_2_H
-#define CGAL_CURVE_DATA_TRAITS_2_H
+#ifndef CGAL_CURVE_ORIGIN_TRAITS_2_H
+#define CGAL_CURVE_ORIGIN_TRAITS_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,25 +37,25 @@ template <class Traits_>
 class Arr_curve_origin_traits_2 : public Traits_ {
 public:
   typedef Traits_                               Traits;
-  typedef typename Traits::Curve_2              curve_2;
+  typedef typename Traits::Curve_2              Curve_2;
   typedef typename Traits::X_monotone_curve_2   Org_x_monotone_curve_2;
   typedef typename Traits::Point_2              Point_2;
 
   class X_monotone_curve_2 : public Org_x_monotone_curve_2 {
   private:
-    Curve_2 * m_origin;
+	const Curve_2 * m_origin;
 
   public:
     X_monotone_curve_2() {}
     
-    X_monotone_curve_2(const Org_x_monotone_curve_2 & cv, Curve_2 * origin) :
+    X_monotone_curve_2(const Org_x_monotone_curve_2 & cv, const Curve_2 * origin) :
       Org_x_monotone_curve_2(cv),
       m_origin(origin)
     {}
 
-    Curve_2 * get_origin() const { return m_origin; }
+    const Curve_2 * get_origin() const { return m_origin; }
 
-    void set_origin(Curve_2 * origin) { m_origin = origin; }
+    // void set_origin(Curve_2 * origin) { m_origin = origin; }
   };
 
   // For backward compatibility:
@@ -99,7 +99,7 @@ public:
    * \pre p lies on cv but is not one of its end-points.
    */
   void curve_split(const X_monotone_curve_2 & cv, 
-		   X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
+                   X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
                    const Point_2 & p) const
   {
     Org_x_monotone_curve_2 org_c1, org_c2;
