@@ -1,4 +1,4 @@
-// Copyright (c) 1999, 2000  ETH Zurich (Switzerland).
+// Copyright (c) 1999-2003  ETH Zurich (Switzerland).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under

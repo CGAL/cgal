@@ -1,4 +1,4 @@
-// Copyright (c) 1999, 2000  ETH Zurich (Switzerland).
+// Copyright (c) 1999-2003  ETH Zurich (Switzerland).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -21,7 +21,9 @@
 #if ! (CGAL_MINIMUM_ENCLOSING_QUADRILATERAL_TRAITS_2_H)
 #define CGAL_MINIMUM_ENCLOSING_QUADRILATERAL_TRAITS_2_H 1
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/Min_quadrilateral_traits_2.h>
+#endif // CGAL_NO_DEPRECATED_CODE
 
 #endif // ! (CGAL_MINIMUM_ENCLOSING_QUADRILATERAL_TRAITS_2_H)
 

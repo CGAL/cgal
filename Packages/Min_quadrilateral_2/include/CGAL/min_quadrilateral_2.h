@@ -1,4 +1,4 @@
-// Copyright (c) 1999, 2000  ETH Zurich (Switzerland).
+// Copyright (c) 1999-2003  ETH Zurich (Switzerland).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -734,6 +734,7 @@ min_rectangle_2(ForwardIterator f,
   return min_rectangle_2(f, l, o, t);
 } // min_rectangle_2(f, l, o)
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 // backwards compatibility
 template < class ForwardIterator, class OutputIterator >
 inline
@@ -742,6 +743,7 @@ minimum_enclosing_rectangle_2(ForwardIterator f,
                        ForwardIterator l,
                        OutputIterator o)
 { return min_rectangle_2(f, l, o); }
+#endif // CGAL_NO_DEPRECATED_CODE
 template < class ForwardIterator, class OutputIterator >
 inline
 OutputIterator
@@ -755,6 +757,7 @@ min_parallelogram_2(ForwardIterator f,
   return min_parallelogram_2(f, l, o, t);
 } // min_parallelogram_2(f, l, o)
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 // backwards compatibility
 template < class ForwardIterator, class OutputIterator >
 inline
@@ -763,6 +766,7 @@ minimum_enclosing_parallelogram_2(ForwardIterator f,
                        ForwardIterator l,
                        OutputIterator o)
 { return min_parallelogram_2(f, l, o); }
+#endif // CGAL_NO_DEPRECATED_CODE
 template < class ForwardIterator, class OutputIterator >
 inline
 OutputIterator
@@ -776,6 +780,7 @@ min_strip_2(ForwardIterator f,
   return min_strip_2(f, l, o, t);
 } // min_strip_2(f, l, o)
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 // backwards compatibility
 template < class ForwardIterator, class OutputIterator >
 inline
@@ -784,6 +789,7 @@ minimum_enclosing_strip_2(ForwardIterator f,
                        ForwardIterator l,
                        OutputIterator o)
 { return min_strip_2(f, l, o); }
+#endif // CGAL_NO_DEPRECATED_CODE
 
 #endif // CGAL_REP_CLASS_DEFINED
 

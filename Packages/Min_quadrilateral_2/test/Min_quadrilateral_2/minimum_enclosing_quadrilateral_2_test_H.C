@@ -1,30 +1,22 @@
-// ============================================================================
+// Copyright (c) 1999-2003  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1999, 2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       : $CGAL_Revision $
-// release_date  : $CGAL_Date $
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : minimum_enclosing_quadrilateral_2_test_H.C
-// chapter       : $CGAL_Chapter: Geometric Optimisation $
-// package       : $CGAL_Package: Min_quadrilaterals $
-// source        : oops.aw
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
+// Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
 //                 Emo Welzl <emo@inf.ethz.ch>
-//
-// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
-// coordinator   : ETH
-//
-// Test Program: Computing minimum enclosing quadrilaterals
-// ============================================================================
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Point_2.h>
@@ -32,27 +24,21 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
 #include <CGAL/min_quadrilateral_2.h>
-#include <vector>
 #include <iostream>
 
 
-using CGAL::Creator_uniform_2;
-using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
 using CGAL::min_rectangle_2;
 using CGAL::min_parallelogram_2;
 using CGAL::min_strip_2;
 using std::back_inserter;
-using std::vector;
 using std::cout;
 using std::endl;
 typedef CGAL::Homogeneous< double >                       Kernel;
-typedef Kernel::Point_2                             Point_2;
-typedef Kernel::Line_2                              Line_2;
-typedef vector<Point_2>                             Cont;
-typedef CGAL::Polygon_2<Kernel,Cont>                Polygon_2;
-typedef Creator_uniform_2<double,Point_2>           Creator;
-typedef Random_points_in_square_2<Point_2,Creator>  Point_generator;
+typedef Kernel::Point_2                           Point_2;
+typedef Kernel::Line_2                            Line_2;
+typedef CGAL::Polygon_2<Kernel>                   Polygon_2;
+typedef CGAL::Random_points_in_square_2<Point_2>  Point_generator;
 
 int main()
 {
