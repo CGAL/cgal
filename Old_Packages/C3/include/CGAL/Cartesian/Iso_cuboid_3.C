@@ -195,8 +195,8 @@ Bounded_side
 Iso_cuboidC3<R CGAL_CTAG>::
 bounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  Comparison_result m = dominates(p,min());
-  Comparison_result M = is_dominated(p,max());
+  Comparison_result m = compare_dominance(p,min());
+  Comparison_result M = compare_submittance(p,max());
   if (m == SMALLER) return ON_UNBOUNDED_SIDE;
   if (M == SMALLER) return ON_UNBOUNDED_SIDE;
   if (m == LARGER && M == LARGER) return ON_BOUNDED_SIDE;

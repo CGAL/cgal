@@ -70,11 +70,11 @@ compare_dominance(const PointC3<R CGAL_CTAG> &p,
 
 template < class R >
 Comparison_result
-compare_is_dominated(const PointC3<R CGAL_CTAG> &p,
-                     const PointC3<R CGAL_CTAG> &q)
+compare_submittance(const PointC3<R CGAL_CTAG> &p,
+                    const PointC3<R CGAL_CTAG> &q)
 {
-  return compare_is_dominatedC3(p.x(),p.y(),p.z(),
-                                q.x(),q.y(),q.z());
+  return compare_submittanceC3(p.x(),p.y(),p.z(),
+                               q.x(),q.y(),q.z());
 }
 
 template < class R >

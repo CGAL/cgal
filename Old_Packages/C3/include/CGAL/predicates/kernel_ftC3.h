@@ -46,8 +46,8 @@ template < class FT >
 /*CGAL_NO_FILTER*/
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-compare_is_dominatedC3(const FT &px, const FT &py, const FT &pz,
-                       const FT &qx, const FT &qy, const FT &qz)
+compare_submittanceC3(const FT &px, const FT &py, const FT &pz,
+                      const FT &qx, const FT &qy, const FT &qz)
 {
   Comparison_result cx = CGAL::compare(px, qx);
   Comparison_result cy = CGAL::compare(py, qy);
