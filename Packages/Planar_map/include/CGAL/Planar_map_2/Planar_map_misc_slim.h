@@ -227,7 +227,7 @@ public:
   { return (point_is_higher(p1, p2) ? p1 : p2); }
   const Point_2& point_leftlow_most(const Point_2 &p1, const Point_2 &p2) const
   { return (point_is_left_low(p1, p2) ? p1 : p2); }
-  const Point_2& point_righttop_most(const Point_2 &p1, const Point_2 &p2) const
+  const Point_2& point_righttop_most(const Point_2 &p1, const Point_2 &p2)const
   { return (point_is_right_top(p1, p2) ? p1 : p2); }
   Point_2 curve_leftmost(const X_curve& cv) const 
   {

@@ -62,20 +62,25 @@ public:
 
 	/*	typedef typename Traits::Bounding_box Bounding_box;
 	typedef typename Traits::Boundary_type Boundary_type;
-	typedef typename Traits::Point_boundary_container Point_boundary_container;
-	typedef typename Traits::X_curve_boundary_container X_curve_boundary_container;
+	typedef typename Traits::Point_boundary_container 
+        Point_boundary_container;
+	typedef typename Traits::X_curve_boundary_container 
+        X_curve_boundary_container;
 	*/
 	typedef typename Planar_map::Halfedge_handle Halfedge_handle;
 	typedef typename Planar_map::Face_handle Face_handle;
 	typedef typename Planar_map::Vertex_handle Vertex_handle;
 	typedef typename Planar_map::Vertex_const_handle Vertex_const_handle;
-	typedef typename Planar_map::Halfedge_const_handle Halfedge_const_handle;
+	typedef typename Planar_map::Halfedge_const_handle 
+                                                         Halfedge_const_handle;
 	typedef typename Planar_map::Face_const_handle Face_const_handle;
 	typedef typename Planar_map::Vertex_iterator Vertex_iterator;
 	typedef typename Planar_map::Halfedge_iterator Halfedge_iterator;
 	typedef typename Planar_map::Face_iterator Face_iterator;
-	typedef typename Planar_map::Vertex_const_iterator Vertex_const_iterator;
-	typedef typename Planar_map::Halfedge_const_iterator Halfedge_const_iterator;
+	typedef typename Planar_map::Vertex_const_iterator 
+                                                         Vertex_const_iterator;
+	typedef typename Planar_map::Halfedge_const_iterator 
+                                                       Halfedge_const_iterator;
 	typedef typename Planar_map::Face_const_iterator Face_const_iterator;
 	typedef typename Planar_map::Locate_type Locate_type;
 	
@@ -96,10 +101,12 @@ public:
 	typedef Pm_point_location_base<Base> Point_location_base;
 	//  typedef std::list<X_curve> X_curve_container;
 	//  typedef Topological_map<_Dcel> TPM;
-	typedef typename Base::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
+	typedef typename Base::Halfedge_around_vertex_circulator 
+	Halfedge_around_vertex_circulator;
 	typedef typename Base::Holes_iterator Holes_iterator;
 	typedef typename Base::Holes_const_iterator Holes_const_iterator;
-	typedef typename Base::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
+	typedef typename Base::Ccb_halfedge_const_circulator 
+	Ccb_halfedge_const_circulator;
 	typedef typename Base::Ccb_halfedge_circulator Ccb_halfedge_circulator;
 	typedef typename Base::Size Size;
 	*/	
@@ -134,7 +141,8 @@ public:
           {return true;}
 	/* The point location query function may updates the resulting 
 	halfedge handle and locate type as expected from the bounding box */
-	bool locate(const Point& p, Locate_type& lt,Halfedge_handle& h){return true;}	
+	bool locate(const Point& p, Locate_type& lt,Halfedge_handle& h)
+        {return true;}	
 	bool vertical_ray_shoot(const Point& p, Locate_type& lt, bool up,
 		Halfedge_handle& h){return true;}
 	

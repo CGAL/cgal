@@ -62,7 +62,7 @@ public:
   typedef typename Planar_map::Vertex_handle Vertex_handle;
   typedef typename Planar_map::Halfedge_handle Halfedge_handle;
   typedef typename Planar_map::Face_handle Face_handle;
-  typedef typename Planar_map::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
+  typedef typename Planar_map::Ccb_halfedge_circulator Ccb_halfedge_circulator;
   typedef typename Planar_map::Holes_iterator Holes_iterator;
   typedef typename Planar_map::Halfedge_around_vertex_circulator Avc;
   typedef typename Planar_map::Halfedge_iterator Halfedge_iterator;

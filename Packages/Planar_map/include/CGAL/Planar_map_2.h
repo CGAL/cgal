@@ -634,11 +634,13 @@ public:
     
     // Notifying change.
     if (en != NULL) {
-      Face_handle orig_face = (! prev1_before_prev2) ? h->face() : h->twin()->face();
+      Face_handle orig_face = 
+	(! prev1_before_prev2) ? h->face() : h->twin()->face();
       
       en->add_edge(cv, h, true, false);
       
-      // After fixing the notifier we won't have to check that since h->face() will be surely the new face.
+      // After fixing the notifier we won't have to check that since
+      // h->face() will be surely the new face.
       if (h->face() == orig_face)
         en->split_face(h->face(), 
                        h->twin()->face());
@@ -926,8 +928,8 @@ public:
 			traits->point_is_same(traits->curve_source(cv),
 					      e2->target()->point())) );
 		
-    // problematic: since we assume e1 will be the new merged halfedge after merging.
-    // en->merge(e1,e2,cv);
+    // problematic: since we assume e1 will be the new merged halfedge
+    // after merging.  en->merge(e1,e2,cv);
     
     X_curve c1(e1->curve()), c2(e2->curve());
 		
