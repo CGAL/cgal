@@ -1611,11 +1611,13 @@ handle_vertical_curve_bottom(SweepLineGetSubCurves &tag)
       // handle a curve that goes through the interior of the vertical curve
       const X_monotone_curve_2 &cv1 = vcurve->get_curve();
       const X_monotone_curve_2 &cv2 = (*slIter)->get_curve();
+
+      Object res = m_traits->nearest_intersection_to_right(cv1, cv2,
+                                                           currentPoint);
+      CGAL_assertion(!res.is_empty());
       Point_2 xp;
-      bool res = m_traits->nearest_intersection_to_right(cv1, cv2,
-                                                         currentPoint, xp, xp);
-      SL_DEBUG(CGAL_assertion(res==true);)
-      res = 0;
+      if (!CGAL::assign(xp, res))
+        CGAL_assertion(0);
       
       EventQueueIter eqi = m_queue->find(&xp);
       Event *e = 0;
@@ -1664,9 +1666,6 @@ handle_vertical_curve_bottom(SweepLineGetSubCurves &tag)
 
   SL_DEBUG(std::cout<<"Done Handling vertical\n";)
 }
-
-
-
 
 /*!
  * Handles overlapping vertical curves. 
@@ -1866,16 +1865,22 @@ intersect(Subcurve *c1, Subcurve *c2)
 
   bool isOverlap = false;
 
-  Point_2 xp, xp1;
-  if ( m_traits->nearest_intersection_to_right(cv1, cv2, 
-					       m_currentEvent->get_point(), 
-					       xp, xp1))
+  Object res =
+    m_traits->nearest_intersection_to_right(cv1, cv2, 
+                                            m_currentEvent->get_point());
+  if (!res.is_empty())
   {
-    if ( !m_traits->point_equal(xp, xp1)) {
-      if ( m_traits->compare_x(xp1, xp) == LARGER )
-	xp = xp1;
-      SL_DEBUG(std::cout << "overlap detected\n";)
-      isOverlap = true;
+    Point_2 xp;
+    if (!CGAL::assign(xp, res)) {
+      X_monotone_curve_2 cv;
+      if (CGAL::assign(cv, res)) {
+        xp = m_traits->curve_source(cv);
+        Point_2 xp1 = m_traits->curve_target(cv);
+        if ( m_traits->compare_x(xp1, xp) == LARGER )
+          xp = xp1;
+        SL_DEBUG(std::cout << "overlap detected\n";)
+          isOverlap = true;
+      }
     }
 
     SL_DEBUG(
@@ -2145,14 +2150,15 @@ handle_vertical_curve_bottom(SweepLineGetPoints &tag)
 	continue;
       }
 
-      Point_2 xp;
-      bool res = 
+      Object res = 
 	m_traits->nearest_intersection_to_right(vcurve->get_curve(), 
 						(*slIter)->get_curve(), 
-						currentPoint, 
-						xp, xp);
-      SL_DEBUG(CGAL_assertion(res==true);)
-      res = 0;
+						currentPoint);
+      CGAL_assertion(!res.is_empty());
+      Point_2 xp;
+      if (!CGAL::assign(xp, res))
+        CGAL_assertion(0);
+
       EventQueueIter eqi = m_queue->find(&xp); 
       Event *e = 0;
       if ( eqi == m_queue->end() )
