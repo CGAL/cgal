@@ -28,7 +28,7 @@
 #include <CGAL/Arr_segment_cached_traits_2.h>
 #elif defined(USE_POLYLINE_TRAITS)
 #include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_segment_cached_traits_2.h>
 #else
 #include <CGAL/Arr_segment_traits_2.h>
 #endif
@@ -94,13 +94,9 @@ typedef CGAL::Arr_leda_segment_traits_2<Kernel>         Traits;
 typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Traits;
 #define TRAITS_TYPE "Cached Segments"
 #elif defined(USE_POLYLINE_TRAITS)
-typedef CGAL::Arr_segment_traits_2<Kernel>              SegmentTraits;
-typedef SegmentTraits::Curve_2                          Segment_2;
+typedef CGAL::Arr_segment_cached_traits_2<Kernel>       SegmentTraits;
 typedef CGAL::Arr_polyline_traits_2<SegmentTraits>      Traits;
 #define TRAITS_TYPE "Polylines"
-#elif defined(USE_LEDA_POLYLINE_TRAITS)
-typedef CGAL::Arr_leda_polyline_traits_2<Kernel>        Traits;
-#define TRAITS_TYPE "Leda Polylines"
 #else
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 #define TRAITS_TYPE "Segments"
@@ -159,6 +155,7 @@ inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
   return os;
 }
 #endif
+
 #endif
 
 #if defined(USE_POLYLINE_TRAITS)
@@ -170,7 +167,7 @@ inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
 
   while (pt != cv.end())
   {
-    os << Segment_2(*ps, *pt);
+    os << Kernel::Segment_2(*ps, *pt);
     ps++; pt++;
   }
   return (os);
