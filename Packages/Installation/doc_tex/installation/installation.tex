@@ -84,20 +84,19 @@
 \lcHtml{\chapter{Installation}}
 \section{Introduction}
 
-\cgal\ is a \textit{Computational Geometry Algorithms Library\/} written
-in \CC, which is developed in an {\sc Esprit Ltr} project. The goal is
-to make the large body of geometric algorithms developed in the field
-of computational geometry available for industrial application.
+\cgal\ stands for \textit{Computational Geometry Algorithms Library}.
+It is a software library written in \CC, whose development started in
+an {\sc Esprit Ltr} project. The goal of \cgal\ is to make the large
+body of geometric algorithms developed in the field of computational
+geometry available for industrial application.
 
 This document describes how to install \cgal\ on Unix-like systems.
 Besides that, you will find some information about the makefile
-structure of \cgal\ and the support for simultaneously using \cgal\ 
-and \leda, the Library of Efficient Datatypes and
-Algorithms\footnote{\ledapage} Multiple Precision library
-GMP\footnote{\gmppage}, the Class Library for Numbers
-(CLN)\footnote{\clnpage}, and Trolltech\footnote{\trolltechpage} Qt
+structure of \cgal\ and the support for using \cgal\ together with
+other libraries, such as \leda, the Library of Efficient Datatypes and
+Algorithms\footnote{\ledapage}, the \gnu\ Multiple Precision library
+GMP\footnote{\gmppage}, and Trolltech's\footnote{\trolltechpage} Qt
 toolkit.
-
 
 \section{Prerequisites}\label{sec:prerequisites}
 
@@ -327,7 +326,6 @@ A menu similar to the following will appear on your screen.\index{main
   **   LEDA:                not supported.                      **
   **   GMP:                 not supported.                      **
   **   GMPXX:               not supported.                      **
-  **   CLN:                 not supported.                      **
   **                                                            **
   **   Compiler is supported by CGAL.                           **
   **   The setup has been tested ok.                            **
@@ -337,7 +335,6 @@ A menu similar to the following will appear on your screen.\index{main
   **   <C>  Compiler Menu                                       **
   **   <L>  LEDA Menu                                           **
   **   <G>  GMP Menu                                            **
-  **   <M>  CLN Menu                                            **
   **   <K>  Qt Menu                                             **
   **   <T>  Test (and save) setup                               **
   **   <A>  Run all setup tests (no cache)                      **
@@ -352,11 +349,10 @@ A menu similar to the following will appear on your screen.\index{main
 \end{alltt}}
 
 The first lines below the headline contain some kind of status report:
-current OS and compiler, are \leda, GMP, GMPXX (GMP's built-in C++ interface)
-and CLN supported etc.
-Moreover you can see that the current setup has been tested and that
-there do not exist \cgal\ libraries for this OS/compiler combination
-in the \cgal\ lib directory by now.
+current OS and compiler, are \leda, GMP, or GMPXX (GMP's built-in C++
+interface) supported etc. Moreover you can see that the current setup
+has been tested and that there do not exist \cgal\ libraries for this
+OS/compiler combination in the \cgal\ lib directory by now.
 
 The fact that your setup has been tested implies that the current
 settings have been saved to a file in the directory \cgalinstconfdir.
@@ -394,7 +390,6 @@ the error messages from compiler or linker).
   LEDA:         not supported
   GMP:          not supported
   GMPXX:        not supported
-  CLN:          not supported
 
   Generating Makefiles ... done.
   Building CGAL_lib ... done.
@@ -410,12 +405,12 @@ the error messages from compiler or linker).
 That's all, it's done. Press ``\texttt{<ENTER>}'' to return to the
 main menu and proceed by installing for a different compiler (go to
 the compiler menu and choose ``\texttt{c}'' to get a list of supported
-compilers detected on your system) or with \leda, GMP, CLN or Qt
-support (go to the \leda, GMP, CLN, or Qt menu resp.) or simply quit
-the install script by typing ``\texttt{q}''. When leaving the script,
-you get a list of successful builds during the session. Furthermore,
-the script prints the setting of \texttt{CGAL\_MAKEFILE} for the last
-active configuration. Remember to set this environment variable before
+compilers detected on your system) or with \leda, GMP, or Qt support
+(go to the \leda, GMP, or Qt menu resp.) or simply quit the install
+script by typing ``\texttt{q}''. When leaving the script, you get a
+list of successful builds during the session. Furthermore, the script
+prints the setting of \texttt{CGAL\_MAKEFILE} for the last active
+configuration. Remember to set this environment variable before
 compiling \cgal\ applications. On bourne shell derivatives, you would
 type in our example
 \begin{alltt}
@@ -505,24 +500,22 @@ where you can choose the compiler you want to work with and set custom
 compiler or linker options.  The compiler menu is described in section
 \ref{sec:compiler-menu}.
 
-If you want to use \leda, GMP, CLN or Qt with \cgal, you will have to go
-to the \textit{leda menu}, \textit{gmp menu}, \textit{cln menu} or
-\textit{qt menu}.
+If you want to use \leda, GMP, or Qt with \cgal, you will have to go
+to the \textit{leda menu}, \textit{gmp menu}, or \textit{qt menu}.
 These are described in section \ref{sec:leda-menu},
-\ref{sec:gmp-menu}, \ref{sec:cln-menu}, respectively.
+\ref{sec:gmp-menu}, \ref{sec:qt-menu}, respectively.
 
 Finally you can build the \cgal\ libraries by typing \texttt{b}.
 However, it is recommended to run the \textit{setup test} which is
 available in all menus as option \texttt{t} before. The setup test
-includes an \stl\ test, a \leda\ test, a GMP test, a CLN test and a Qt
-test. But
+includes an \stl\ test, a \leda\ test, a GMP test, and a Qt test. But
 not all tests are performed always; e.g. the \leda\ test is only done,
 if you enabled \leda\ support. The install script keeps track of the
 tests passed and only tests again, if you change the setup in a way
 that might affect the test result. If you want to redo \textit{all}
 tests, you have to choose option ``\texttt{a}'' from the main menu.
-This also retests for \leda/GMP/CLN/Qt installation in system directories
-which otherwise is only done the first time you enable \leda/GMP/CLN/Qt
+This also retests for \leda/GMP/Qt installation in system directories
+which otherwise is only done the first time you enable \leda/GMP/Qt
 support for an OS/compiler combination.
 
 \subsection{Files created during installation}\label{sec:filescreated}
@@ -681,51 +674,6 @@ from the CGAL tree, GMP will be configured with C++ support.
 \end{minipage}
 \hfill}
 
-\subsection{The CLN Menu}\label{sec:cln-menu}
-\index{CLN!menu}\index{menus!CLN}
-
-This menu is to set CLN (Class Library for Numbers) specific options,
-if you plan to use CLN together with \cgal . Note that for use with
-\cgal, CLN version 1.0.3 is required.  CLN versions 1.1 and above are not
-supported at the moment (the interface is different, it uses a namespace
-among other changes).
-In order to enable
-CLN support in \cgal, CLN has to be installed on your system first.
-Unlike for GMP, there is no option to install CLN from the \cgal\ 
-installation script.  For information on CLN, please refer to
-\begin{quote}
-  \clnpage
-\end{quote}
-
-If CLN support is enabled the first time, the script tests whether CLN
-is installed in standard system directories. If this test does not
-succeed, you have to supply directories containing the CLN header
-files (\texttt{CLN\_INCL\_DIR})\TTindex{CLN\_INCL\_DIR} and CLN
-libraries ({\tt CLN\_LIB\_DIR})\TTindex{CLN\_LIB\_DIR}. Even if the
-tests are passed, you still have the option to set these directories
-differently.\bigskip
-
-\fbox{
-\begin{minipage}{.95\linewidth}
-\vspace{2pt}
-\centerline{{\large{\bf CLN Menu}}}
-\vspace{2pt}
-\begin{description}
-\item[$<$G$>$] Enable/Disable CLN support in \cgal.\index{CLN!enable
-    support}
-\item[$<$I$>$] (\textit{present if CLN support is enabled)} Set the
-  include directory for CLN.
-\item[$<$L$>$] (\textit{present if CLN support is enabled)} Set the
-  directory containing the CLN libraries.
-\item[$<$M$>$] (\textit{present if CLN support is enabled, there is a
-    CLN installation in system directories and {\tt CLN\_INCL\_DIR} or
-    \texttt{CLN\_LIB\_DIR} have been set)} Use CLN installation from
-  system directories.
-\end{description}
-\vspace{2pt}
-\end{minipage}
-\hfill}
-
 \subsection{The Qt Menu}\label{sec:qt-menu}
 \index{Qt!menu}\index{menus!Qt}
 
@@ -856,8 +804,6 @@ more of the following conditions apply to you:
   \ref{sec:gmp-setup}) \textit{or}
 \item you want to use \gnu\ GMP's built-in C++ interface together with \cgal\
   (section \ref{sec:gmpxx-setup}) \textit{or}
-\item you want to use CLN together with \cgal\ (section
-  \ref{sec:cln-setup}).
 \item you want to use Qt together with \cgal\ (section
   \ref{sec:qt-setup}).
 \end{itemize}
@@ -925,18 +871,6 @@ By default there is no support for GMPXX, GMP's built-in C++ interface, but
 you can change this easily by use of the command line option
 ``\texttt{-gmpxx}''.  The only requirement for this to work is that GMP
 support is enable correctly.
-
-\subsection{Setting up support for CLN}\label{sec:cln-setup}
-\index{CLN!enable support}
-
-By default there is no support for CLN, but you can change this easily
-by use of the command line option ``\texttt{-cln}''. If CLN is
-installed in system directories on your system, you are already done
-now. If this is not the case, you have to supply the directories
-containing the CLN header files (``\texttt{--CLN\_INCL\_DIR}
-\textit{$<$dir$>$}'')\TTindex{CLN\_INCL\_DIR} and the CLN library
-(``\texttt{--CLN\_LIB\_DIR}
-\textit{$<$dir$>$}'')\TTindex{CLN\_LIB\_DIR}.
 
 \subsection{Setting up support for Qt}\label{sec:qt-setup}
 \index{Qt!enable support}
