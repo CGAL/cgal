@@ -144,24 +144,26 @@ public:
 
   typedef void* GenPtr;
 
+  SNC_ray_shooter() {}
+  void initialize(SNC_structure* W) { Base::initialize(W); }
+
   SNC_ray_shooter(SNC_structure& W) : Base(W) {}
   /*{\Mcreate makes |\Mvar| a ray shooter on |W|.}*/
 
-  Volume_handle determine_volume(Ray_3& ray) const {
-    
+ private:
+  Volume_handle determine_volume(const Ray_3& ray) const {
+    CGAL_nef3_precondition( !ray.is_degenerate());
     Object_handle o = shoot(ray);
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f, f_below;
-    TRACEN("get_facet_below");
     if( assign(v, o)) {
       TRACEN("facet below from from vertex...");
       f_below = get_visible_facet(v, ray);
       if(f_below != Halffacet_handle())
 	return volume(f_below);
       SM_decorator SD(v);
-      CGAL_nef3_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
-      CGAL_nef3_assertion( is_empty_range( ++(SD.sfaces_begin()), SD.sfaces_end()));
+      CGAL_nef3_assertion( SD.number_of_sfaces() == 1);
       return volume(SD.sfaces_begin());
     }
     else if( assign(e, o)) {
@@ -183,8 +185,10 @@ public:
     return Base(*this).volumes_begin();
   }
 
-  Object_handle shoot( Ray_3& ray) const 
+ public:
+  Object_handle shoot(const Ray_3& ray) const
      /*{\Mop returns the nearest object hit by a ray |ray|. }*/ {
+    CGAL_nef3_precondition( !ray.is_degenerate());
     bool hit = false;
     Point_3 end_of_seg;
     SNC_intersection is(*sncp());
@@ -194,12 +198,12 @@ public:
     Vertex_handle v;
     CGAL_nef3_forall_vertices( v, *sncp()) {
       if ( ray.source() != point(v) && ray.has_on(point(v))) {
-	if(hit && !Segment_3(ray.source(), end_of_seg).has_on(point(v)))
-	  continue;
-	TRACEN("ray hit vertex case "<<point(v));
-	end_of_seg = point(v);
-	hit = true;
-	o = Object_handle(v);
+        if(hit && !Segment_3(ray.source(), end_of_seg).has_on(point(v)))
+          continue;
+        TRACEN("ray hit vertex case "<<point(v));
+        end_of_seg = point(v);
+        hit = true;
+        o = Object_handle(v);
       }
     }
 
@@ -207,12 +211,13 @@ public:
     CGAL_nef3_forall_edges( e, *sncp()) {
       Point_3 q;
       if( is.does_intersect_internally( ray, segment(e), q)) {
-	if (!hit || has_smaller_distance_to_point(ray.source(),q, end_of_seg)) {
-	  TRACEN("ray hit edge case " << segment(e) << " in " << q);
-	  end_of_seg = q; 
-	  hit = true;
-	  o = Object_handle(e);
-	}
+        if (!hit || 
+	    has_smaller_distance_to_point(ray.source(),q, end_of_seg)) {
+          TRACEN("ray hit edge case " << segment(e) << " in " << q);
+          end_of_seg = q;
+          hit = true;
+          o = Object_handle(e);
+        }
       }
     }
 
@@ -220,23 +225,21 @@ public:
     CGAL_nef3_forall_halffacets( f, *sncp()) {
       Point_3 q;
       if( is.does_intersect_internally( ray, f, q) ) {
-	if(!hit || has_smaller_distance_to_point(ray.source(), q, end_of_seg)) {
-	TRACEN("ray hit facet "<<plane(f)<<" on "<<q);
-	end_of_seg = q;
-	hit = true; 
-	o = Object_handle(f);
-	}
+        if(!hit || 
+	   has_smaller_distance_to_point(ray.source(), q, end_of_seg)) {
+        TRACEN("ray hit facet "<<plane(f)<<" on "<<q);
+        end_of_seg = q;
+        hit = true;
+        o = Object_handle(f);
+        }
       }
     }
-
     return o;
   }
 
   Object_handle locate( const Point_3& p) const
-    //{\Mop returns the lowest dimension object on an SNC structure
-    //  which contais |p| in its interior. }
-    {
-      //            SETDTHREAD(37*19*47);
+    /*{\Mop returns the lowest dimension object on an SNC structure
+      which contais |p| in its interior. }*/ {
 
     SNC_intersection is(*sncp());
 
@@ -265,52 +268,11 @@ public:
       }
     }
 
-    // let |s| be the segment that connects |p| to any fixed vertex |va| 
-    Vertex_handle va = --(sncp()->vertices_end()); 
-    TRACEN("target of shooting is " << point(va));
-    Ray_3 s( p, point(va));
-    return Object_handle(determine_volume(s));
+    Ray_3 r( p, Direction_3( -1, 0, 0));
+    return Object_handle(determine_volume(r));
+  }   
 
-    /*
-    // SNC_decorator D(*this);
-    //    Ray_3 s = Infi_box::get_ray(D ,p);
-    // prune |s| by |o| if |o| intersects |s| in its relative interior 
-    Object_handle o = shoot(s);
-    // determine the volume that contains |s| from the last pruning object 
-
-    Halffacet_handle hf;
-    if( assign( v, o)) {
-      hf = get_visible_facet( v, s);
-      CGAL_nef3_assertion(hf != Halffacet_handle());
-      //      if(hf==Halffacet_handle()) {
-      //	SM_decorator SD(v);
-      //	CGAL_nef3_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
-      //	CGAL_nef3_assertion( is_empty_range( ++(SD.sfaces_begin()), SD.sfaces_end()));
-      //	return volume(SD.sfaces_begin());
-      //      }
-    }
-    else if( assign( e, o))
-      hf = get_visible_facet( e, s);
-    else if( assign( f, o)) {
-      hf = get_visible_facet( f, s);
-      CGAL_nef3_assertion(hf!=Halffacet_handle());
-    }
-    else CGAL_nef3_assertion_msg(0, "where is our point, eh?");
-    
-    if(hf!=Halffacet_handle())
-      return Object_handle(volume(hf));
-
-    if( assign( e, o))
-      v = source(e);
-
-    SM_decorator SD(v);
-    CGAL_nef3_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
-    CGAL_nef3_assertion( is_empty_range( ++(SD.sfaces_begin()), SD.sfaces_end()));
-    return volume(SD.sfaces_begin());
-    */
-  }  
-
-}; // SNC_ray_shoot
+}; // SNC_ray_shooter
 
 CGAL_END_NAMESPACE
 
