@@ -1,0 +1,115 @@
+#!/net/bin/perl5
+
+@source_files = glob("*.C");
+@object_files = map {substr($_, 0,-1) . "o"} @source_files;
+$, = " \\\n";
+
+open MFLIB, ">makefile_lib";
+
+print MFLIB <<'EOF';
+# This is the makefile for compiling the CGAL object library libCGAL.a.
+#
+# N.B. There are different makefiles for creating the object library
+# and the shared object library, because the suffix rules (in particular:
+# the compiler flags) for these libraries are different.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = $(CGAL_LIB_CXXFLAGS) \
+           -g
+
+#---------------------------------------------------------------------#
+# Object files
+#---------------------------------------------------------------------#
+
+CGAL_OBJECTS = \
+EOF
+
+print MFLIB @object_files;
+print MFLIB "\n";
+
+print MFLIB <<'EOF';
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+lib: $(CGAL_OBJECTS)
+	$(CGAL_LIB_CREATE) $(CGAL_LIB) $(CGAL_OBJECTS) $(CGAL_LIB_LDFLAGS)
+	mv $(CGAL_LIB) $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)
+	rm $(CGAL_OBJECTS)
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C.o:
+	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
+
+EOF
+
+close MFLIB;
+
+open MFSHARED, ">makefile_sharedlib";
+
+print MFSHARED <<'EOF';
+# This is the makefile for compiling the CGAL shared object library libCGAL.so.
+#
+# N.B. There are different makefiles for creating the object library
+# and the shared object library, because the suffix rules (in particular:
+# the compiler flags) for these libraries are different.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS) \
+           -g
+
+#---------------------------------------------------------------------#
+#                    object files
+#---------------------------------------------------------------------#
+
+CGAL_OBJECTS = \
+EOF
+
+print MFSHARED @object_files;
+print MFSHARED "\n";
+
+print MFSHARED <<'EOF';
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+lib: $(CGAL_OBJECTS)
+	$(CGAL_SHARED_LIB_CREATE) $(CGAL_SHARED_LIB) $(CGAL_OBJECTS) $(CGAL_SHARED_LIB_LDFLAGS)
+	mv $(CGAL_SHARED_LIB) $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)
+	rm $(CGAL_OBJECTS)
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C.o:
+	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
+
+EOF

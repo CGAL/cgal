@@ -12,28 +12,40 @@ use File::Find;
 #                     initialization                             #
 #----------------------------------------------------------------#
 
-$::TEMPFILE="TEMPFILE.$$";
-@::package_versions = ();
+my $TEMPFILE="TEMPFILE.$$";
+my @package_versions = ();
 
-$::TESTING = 0;
+my (
+    $PACKAGEDIR,
+    $ALL_RESULTS_DIR,
+    $LOCKFILE,
+    $last_version_file,
+    $VERSION_NR,
+    $VERSION,
+    $MAIN_DIR,
+    $PARENT_DIR,
+    $release_date
+ ); 
 
-if ($::TESTING) {
-    $::PACKAGEDIR='/users/geert/CGAL/tmp/packages';
-    $::ALL_RESULTS_DIR='/users/geert/CGAL/tmp/results';
-    $::LOCKFILE='/users/geert/CGAL/tmp/collect_submission.lock';
-    $::last_version_file = '/users/geert/CGAL/tmp/last_internal_release'; 
+my $TESTING = 1;
+
+if ($TESTING) {
+    $PACKAGEDIR='/users/geert/CGAL/tmp/packages';
+    $ALL_RESULTS_DIR='/users/geert/CGAL/tmp/results';
+    $LOCKFILE='/users/geert/CGAL/tmp/collect_submission.lock';
+    $last_version_file = '/users/geert/CGAL/tmp/last_internal_release'; 
 } else {
-    $::PACKAGEDIR='/users/www/CGAL/Members/Develop/updates/packages';
-    $::ALL_RESULTS_DIR='/users/www/CGAL/Members/Develop/testsuite';
-    $::LOCKFILE='/projects/CGAL/submissions/autohandle/data/collect_submission.lock';
-    $::last_version_file = '/projects/CGAL/lib/last_internal_release'; 
+    $PACKAGEDIR='/users/www/CGAL/Members/Develop/updates/packages';
+    $ALL_RESULTS_DIR='/users/www/CGAL/Members/Develop/testsuite';
+    $LOCKFILE='/projects/CGAL/submissions/autohandle/data/collect_submission.lock';
+    $last_version_file = '/projects/CGAL/lib/last_internal_release'; 
 }
 
-$::SCRIPTDIR=
+my $SCRIPTDIR=
 	'/users/www/CGAL/Members/Develop/scripts';
-$::MISCPACKAGEDIR=
+my $MISCPACKAGEDIR=
 	'/users/www/CGAL/Members/Develop/updates/packages';
-$::LOCKCMD=
+my $LOCKCMD=
 	'/projects/CGAL/submissions/autohandle/scripts/lockfile';
 
 
@@ -75,9 +87,9 @@ sub check_and_update_file($$)
     my $header_type = 0;
     my $lines_exceeding_length = 0;
     my $has_line_directives = 0;
-    unlink $::TEMPFILE;
+    unlink $TEMPFILE;
     open SOURCE_FILE, "<$filename" || die "Error opening $filename_with_dir: $!\n";
-    open TEMPFILE, ">$::TEMPFILE" || die;
+    open TEMPFILE, ">$TEMPFILE" || die;
     while ( <SOURCE_FILE> ) {
 	$header_type = 1
 	    if m|^Copyright \(c\) \d{4](,\s?\d{4})* The CGAL Consortium|;
@@ -86,14 +98,14 @@ sub check_and_update_file($$)
 	$lines_exceeding_length +=1 if length $_ > 80;
 	$has_line_directives = 1 if m|^\s*#\s*line\s|;
 	s<^\s*//\s*file\s*:.*$><// file          : $filename_with_dir>;
-	s<^\s*// release\b.*$><// release       : \$CGAL_Revision: $::VERSION \$>;
-	s<^\s*// release_date.*$><$::release_date>;
+	s<^\s*// release\b.*$><// release       : \$CGAL_Revision: $VERSION \$>;
+	s<^\s*// release_date.*$><$release_date>;
 	print TEMPFILE $_;
     }
     close SOURCE_FILE || die "Error closing $filename_with_dir: $!";
     close TEMPFILE || die "Error closing temporary file: $!\n";
-    rename($::TEMPFILE, $filename )
-    || system('mv', "$::TEMPFILE", "$filename")
+    rename($TEMPFILE, $filename )
+    || system('mv', "$TEMPFILE", "$filename")
     || warn "Could not update file $filename_with_dir\n";
     if ($header_type == 0) {
 	print FILE_CHECKS "$filename_with_dir has unrecognised header.\n";
@@ -116,14 +128,14 @@ sub check_and_update_file($$)
 sub set_file_headers()
 {
     print "Setting file headers...\n";
-    chdir $::MAIN_DIR;
-    $::release_date =
+    chdir $MAIN_DIR;
+    $release_date =
 	`date '+// release_date  : \$CGAL_Date: %Y/%m/%d \$'`;
-    chomp($::release_date);
-    open(FILE_CHECKS,">$::PARENT_DIR/code_check_$::VERSION");
+    chomp($release_date);
+    open(FILE_CHECKS,">$PARENT_DIR/code_check_$VERSION");
     find(\&file_header_setting, 'include', 'src', 'config/testfiles');
     close FILE_CHECKS;
-    chdir $::MAIN_DIR;
+    chdir $MAIN_DIR;
 }
 
 sub file_header_setting
@@ -145,19 +157,19 @@ sub file_header_setting
 
 sub set_version_in_config()
 {
-    my $V = substr($::VERSION,5);
-    chdir "$::MAIN_DIR/include/CGAL" or die;
+    my $V = substr($VERSION,5);
+    chdir "$MAIN_DIR/include/CGAL" or die;
     open(SOURCE_FILE, '<config.h') or die "Error opening config.h: $!";
-    open(TEMPFILE, ">$::TEMPFILE") or die;
+    open(TEMPFILE, ">$TEMPFILE") or die;
     while ( <SOURCE_FILE> ) {
 	s|^\s*\#\s*define\s+CGAL_VERSION\b.*$|#define CGAL_VERSION $V|;
-	s|^\s*\#\s*define\s*CGAL_VERSION_NR\b.*$|#define CGAL_VERSION_NR $::VERSION_NR|;
+	s|^\s*\#\s*define\s*CGAL_VERSION_NR\b.*$|#define CGAL_VERSION_NR $VERSION_NR|;
 	print TEMPFILE $_;
     }
     close SOURCE_FILE || die "Error closing config.h_with_dir: $!";
     close TEMPFILE || die "Error closing temporary file: $!\n";
-    rename($::TEMPFILE, 'config.h' )
-    || system('mv', "$::TEMPFILE", 'config.h')
+    rename($TEMPFILE, 'config.h' )
+    || system('mv', "$TEMPFILE", 'config.h')
     || warn "Could not update file config.h";
     chdir '../..' or die;
 }
@@ -213,7 +225,7 @@ sub install_packages()
 {
     my ($filenaam, $direc, %is_permitted_package, $package_name);
     print "Installing packages ...\n";
-    open PACKAGES_TO_INCLUDE, "$::PACKAGEDIR/include_in_release" or die;
+    open PACKAGES_TO_INCLUDE, "$PACKAGEDIR/include_in_release" or die;
     while (<PACKAGES_TO_INCLUDE>) {
 	chomp;
 	s/\s*//g;
@@ -221,10 +233,10 @@ sub install_packages()
 	$is_permitted_package{$_}=1;
     }
     close PACKAGES_TO_INCLUDE;
-    opendir PACKAGEDIR, $::PACKAGEDIR or return;
+    opendir PACKAGEDIR, $PACKAGEDIR or return;
     while (defined($package_name = readdir(PACKAGEDIR)) ) {
 	next unless $is_permitted_package{$package_name};
-	$filenaam = "$::PACKAGEDIR/$package_name/$package_name.zip";
+	$filenaam = "$PACKAGEDIR/$package_name/$package_name.zip";
 	if (! -f $filenaam) {
 	    print STDERR "WARNING: $filenaam does not exist.\n";
 	    next;
@@ -236,7 +248,7 @@ sub install_packages()
 	    while (<CUR_VERSION>) {
 		next if /^\s*$/;
 		chomp;
-		push @::package_versions, "$package_name : $_\n";
+		push @package_versions, "$package_name : $_\n";
 		last;
 	    }
 	    close CUR_VERSION;
@@ -261,12 +273,26 @@ sub install_packages()
 
 sub install_misc()
 {
-  system 'unzip', '-oqq', "$::MISCPACKAGEDIR/Auxiliary/Auxiliary.zip";
-  system 'unzip', '-oqq', "$::MISCPACKAGEDIR/Configuration/Configuration.zip";
-  system 'unzip', '-oqq', "$::MISCPACKAGEDIR/Installation/Installation.zip";
-  system 'unzip', '-oqq', "$::MISCPACKAGEDIR/Scripts/Scripts.zip";
+  system 'unzip', '-oqq', "$MISCPACKAGEDIR/Auxiliary/Auxiliary.zip";
+  system 'unzip', '-oqq', "$MISCPACKAGEDIR/Configuration/Configuration.zip";
+  system 'unzip', '-oqq', "$MISCPACKAGEDIR/Installation/Installation.zip";
+  system 'unzip', '-oqq', "$MISCPACKAGEDIR/Scripts/Scripts.zip";
 
   unlink 'version', 'description.txt', 'long_description.txt', 'changes.txt';
+}
+
+
+#---------------------------------------------------------------#
+# make_src_makefiles
+#---------------------------------------------------------------#
+
+sub make_src_makefiles()
+{
+    my ($DIR, $BASEDIR);
+    $BASEDIR = cwd();
+    chdir 'src';
+    system("$SCRIPTDIR/create_src_makefiles");
+    chdir $BASEDIR;
 }
 
 #---------------------------------------------------------------#
@@ -284,11 +310,11 @@ sub make_testscripts()
 	    chdir $DIR;
 	    if ( ! -f 'makefile' ) {
 		print "creating makefile ...\n";
-		system("$::SCRIPTDIR/create_makefile", '-t');
+		system("$SCRIPTDIR/create_makefile", '-t');
 	    }
 	    if ( ! -f 'cgal_test' ) {
 		print "creating cgal_test ...\n";
-		system("$::SCRIPTDIR/create_cgal_test");
+		system("$SCRIPTDIR/create_cgal_test");
 	    }
 	    chdir '..';
 	}
@@ -307,15 +333,15 @@ sub make_testscripts()
 sub make_results_page()
 {
     my $direc;
-    $::THIS_RELEASE_RESULTS = "$::ALL_RESULTS_DIR/$::VERSION";
-    mkdir "$::THIS_RELEASE_RESULTS", 0775
+    my $THIS_RELEASE_RESULTS = "$ALL_RESULTS_DIR/$VERSION";
+    mkdir "$THIS_RELEASE_RESULTS", 0775
     || die "Cannot create test results directory";
-    chdir ("$::MAIN_DIR/test") or return;
+    chdir ("$MAIN_DIR/test") or return;
     foreach $direc (glob("*")) {
 	if ( -d "$direc" &&  -f "$direc/version" ) {
-	    mkdir("$::THIS_RELEASE_RESULTS/$direc", 0775);
-	    copy("$direc/version", "$::THIS_RELEASE_RESULTS/$direc")
-	    or warn "Could not copy test/$direc/version to $::THIS_RELEASE_RESULTS/$direc $!";
+	    mkdir("$THIS_RELEASE_RESULTS/$direc", 0775);
+	    copy("$direc/version", "$THIS_RELEASE_RESULTS/$direc")
+	    or warn "Could not copy test/$direc/version to $THIS_RELEASE_RESULTS/$direc $!";
 	}
     }
 }
@@ -346,18 +372,18 @@ sub check_call()
 	$major = $major + 0;
 	$minor = $minor + 0;
 	$internal = $internal + 0;
-	$::VERSION_NR = ((1000 + $major)*1000 + $minor)*1000 + $internal;
-	$::VERSION = "CGAL-$major.$minor-I-$internal";
+	$VERSION_NR = ((1000 + $major)*1000 + $minor)*1000 + $internal;
+	$VERSION = "CGAL-$major.$minor-I-$internal";
     } else {
 	wrong_usage();
 	die "Illegal version number $ARGV[0]";
     }
-    print "Version: $::VERSION ($::VERSION_NR)\n";
-    open VERSION, $::last_version_file or return;
+    print "Version: $VERSION ($VERSION_NR)\n";
+    open VERSION, $last_version_file or return;
     $_ = <VERSION>;
-    defined($_) or die "corrupted file $::last_version_file";
+    defined($_) or die "corrupted file $last_version_file";
     close VERSION;
-    /\s*(\d+)\s*(\d+)\s*(\d+)\s*$/ or die "corrupted file $::last_version_file";
+    /\s*(\d+)\s*(\d+)\s*(\d+)\s*$/ or die "corrupted file $last_version_file";
     die "major version number too low" if ( $major < $1);
     if ($major == $1) {
 	die "minor version number too low" if ( $minor < $2);
@@ -365,22 +391,22 @@ sub check_call()
 	    die "internal version number too low" if ( $internal <= $3);
 	}
     }
-    open VERSION, ">$::last_version_file" or die;
+    open VERSION, ">$last_version_file" or die;
     print VERSION "$major $minor $internal\n" or die;
     close VERSION or die;
 }
 
 sub termination_signal_handler {
-    unlink $::LOCKFILE;
+    unlink $LOCKFILE;
     exit 1;
 }
 
 sub lock()
 {
-    if (system("$::LOCKCMD", "-r", '10', "$::LOCKFILE") != 0) {
+    if (system("$LOCKCMD", "-r", '10', "$LOCKFILE") != 0) {
 	print STDERR <<"TOTHIER";
 The script could not proceed because
-it could not acquire the needed lock on file $::LOCKFILE.
+it could not acquire the needed lock on file $LOCKFILE.
 TOTHIER
 	exit 1;
     }
@@ -390,36 +416,37 @@ TOTHIER
 
 sub unlock()
 {
-    unlink $::LOCKFILE;
+    unlink $LOCKFILE;
     $SIG{INT} = 'DEFAULT';
     $SIG{TERM} = 'DEFAULT';
 }
 
 
-$::PARENT_DIR=cwd();
+$PARENT_DIR=cwd();
 
 umask(002);
-if ($::PARENT_DIR ne '/private/CGAL') {
+if ($PARENT_DIR ne '/private/CGAL') {
     die "$0 should only be called from directory /private/CGAL on goya.\n";
 }
 check_call;
-mkdir "$::VERSION",0775 or die;
-open VERSIONS, ">versions_$::VERSION";
-chdir $::VERSION or die;
-$::MAIN_DIR=cwd();
+mkdir "$VERSION",0775 or die;
+open VERSIONS, ">versions_$VERSION";
+chdir $VERSION or die;
+$MAIN_DIR=cwd();
 lock;
 
 install_packages();
 install_misc;
 unlock;
-print VERSIONS sort @::package_versions;
+print VERSIONS sort @package_versions;
 close VERSIONS;
+make_src_makefiles;
 CreateExampleTestDirs;
 make_testscripts;
-set_file_headers if !$::TESTING;
+set_file_headers if !$TESTING;
 set_version_in_config;
 make_results_page;
-chdir $::PARENT_DIR or die;
-system("tar cf - $::VERSION | gzip > $::VERSION.tar.gz");
+chdir $PARENT_DIR or die;
+system("tar cf - $VERSION | gzip > $VERSION.tar.gz");
  
 
