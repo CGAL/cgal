@@ -1,4 +1,4 @@
-2.40 (18 September 2003)
+2.41 (18 September 2003)
 - New headers.
 
 2.39 (25 July 2003)

@@ -1,3 +1,6 @@
+Version 4.181 on 18 September 2003
+- New headers
+
 Version 4.180 on 10 September 2003
 - Interval_nt : move operator+-*/ out of the class, and add mixed operators
   with int and double.  Add ctor from int.

@@ -1,3 +1,6 @@
+1.72 (18 September 2003)
+- New headers
+
 1.71 (17 September 2003) [af]
 - Changed CartesianCoordinateConstIterator to CartesianConstIterator
 

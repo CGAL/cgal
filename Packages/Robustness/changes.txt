@@ -1,3 +1,6 @@
+1.22    (18 Sep 2003)
+- New headers
+
 1.21    (10 Sep 2003) [rursu]
 - Qt_help_window class is in the CGAL namespace now
 

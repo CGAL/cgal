@@ -1,3 +1,5 @@
+1.0.5 new headers
+
 1.0.4 fixed typo [af]
 
 1.0.3 LEDA_NO_MIN_MAX_TEMPL definition added to LEDA_basic.h
