@@ -1412,7 +1412,8 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 		  if (A.classify(s) == Alpha_shape_3<Dt>::EXTERIOR)
 		    { 
 		      // take the reverse cell
-		      typename Alpha_shape_3<Dt>::Cell_handle pNeighbor = s->neighbor(i);
+		      typename Alpha_shape_3<Dt>::Cell_handle 
+			pNeighbor = s->neighbor(i);
 		      i = pNeighbor->index(s);
 		      s = pNeighbor;
 		    }
