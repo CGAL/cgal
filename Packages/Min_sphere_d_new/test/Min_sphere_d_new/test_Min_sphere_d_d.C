@@ -49,7 +49,7 @@
 // test variant 1 (needs LEDA)
 #ifdef CGAL_USE_LEDA
 # include <CGAL/leda_integer.h>
-  typedef  CGAL::Cartesian_d<leda_integer>       K_1;
+  typedef  CGAL::Cartesian_d<leda_integer>     K_1;
   typedef  CGAL::Optimisation_d_traits_d<K_1>  Traits_1;
 # define TEST_VARIANT_1 \
     "Optimisation_d_traits_d< Cartesian_d<leda_integer> >"
@@ -59,7 +59,7 @@
 // test variant 2 (needs GMP)
 #ifdef CGAL_USE_GMP
 # include <CGAL/_QP_solver/Double.h>
-  typedef  CGAL::Cartesian_d< int >                                 K_2;
+  typedef  CGAL::Cartesian_d< int >                               K_2;
   typedef  CGAL::Optimisation_d_traits_d<K_2,GMP::Double,double>  Traits_2;
 # define TEST_VARIANT_2 \
     "Optimisation_d_traits_d< Cartesian_d<int>, GMP::Double, double >"
@@ -68,7 +68,7 @@
 
 // comparing (needs LEDA)
 #ifdef CGAL_USE_LEDA
-  typedef  CGAL::Homogeneous_d<leda_integer>     K_3;
+  typedef  CGAL::Homogeneous_d<leda_integer>   K_3;
   typedef  CGAL::Optimisation_d_traits_d<K_3>  Traits_3;
   typedef  CGAL::Min_sphere_d<Traits_1>        Min_sphere_d;
   typedef  CGAL::Min_sphere_d<Traits_3>        O_Min_sphere_d;
@@ -173,8 +173,10 @@ main( int argc, char* argv[])
             int          d = points_1[ 0].dimension();
             unsigned int i;
             for ( i = 0; i < points_1.size(); ++i) {
-                points_3.push_back( K_3::Point_d( d, points_1[ i].begin(),
-                                                     points_1[ i].end()));
+                points_3.push_back( 
+		  K_3::Point_d( d, 
+				points_1[ i].homogeneous_begin(),
+				points_1[ i].homogeneous_end()));
             }
         }
     
