@@ -17,6 +17,9 @@
 %% macro for GMP
 \newcommand{\gmp}{\textsc{Gmp}}
 
+%% macro for Core
+\newcommand{\core}{\textsc{Core}}
+
 %% macro for Windows-specific installation
 \newcommand{\MSInst}{Windows-specific Installation}
 
@@ -61,8 +64,9 @@
 
 %% macros for WWW pages
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org'}
-\newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
 \newcommand{\gmppage}{\path'http://www.gnu.org/software/gmp'}
+\newcommand{\corepage}{\path'http://www.cs.nyu.edu/exact/core/'}
+\newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
 \newcommand{\trolltechpage}{\path'http://www.trolltech.com'}
 \newcommand{\qtpage}{\path'http://doc.trolltech.com/'}
 \newcommand{\qtmocpage}{\path'http://doc.trolltech.com/moc.html'}
@@ -84,17 +88,17 @@ geometry available for industrial application.
 This document describes how to install \cgal\ on Unix-like systems.
 Besides that, you will find some information about the makefile
 structure of \cgal\ and the support for using \cgal\ together with
-other libraries, such as \leda, the Library of Efficient Datatypes and
-Algorithms\footnote{\ledapage}, the \gnu\ Multiple Precision library
-GMP\footnote{\gmppage}, and Trolltech's\footnote{\trolltechpage} \qt\ 
-toolkit.
+other software libraries, such as the \gnu\ Multiple Precision library
+\gmp\footnote{\gmppage}, the \core\ library\footnote{\corepage} for
+robust numerical and geometric computation, \leda, the Library of
+Efficient Datatypes and Algorithms\footnote{\ledapage}, or
+Trolltech's\footnote{\trolltechpage} \qt\ toolkit.
 
 \section{Prerequisites}\label{sec:prerequisites}
 
-In order to build the \cgal\ libraries you need a \CC\ compiler.
-Most recent compilers on Unix platforms and \mswin\ are supported,
-provided that they reasonnably conform to the ISO 14882 standard
-(\CC\ standard).
+In order to build the \cgal\ libraries you need a \CC\ compiler.  Most
+recent compilers on Unix platforms and \mswin\ are supported, provided
+that they reasonnably conform to the ISO 14882 standard for \CC.
 
 \cgaldir\ supports the following compilers/operating systems:
 
@@ -108,7 +112,7 @@ provided that they reasonnably conform to the ISO 14882 standard
     \Gcc{2.95.3, 3.0, 3.1, 3.2, 3.3} \footnotemark[9]            
     & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / 
       \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
-    \sunprocc{5.3, 5.4} \footnotemark[11]                 
+    \sunprocc{5.3, 5.4, 5.5} \footnotemark[11]                 
     & Solaris 2.6+\\\hline
     \msvc{7.0, 7.1} (\textsc{.NET}) \footnotemark[12]           
     & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
@@ -135,11 +139,9 @@ Section~\ref{sec:cygwin} first.
 For the \sunprocc{5.3} compiler, the latest patch set, in particular
 Patch 111685-05, is required. You can check with \texttt{CC~-V} which
 compiler version you have installed. It should read 
-\begin{center}
 \begin{verbatim}
-  CC: Sun WorkShop 6 update 2 C++ 5.3 Patch 111685-05 2002/02/03
+      CC: Sun WorkShop 6 update 2 C++ 5.3 Patch 111685-05 2002/02/03
 \end{verbatim}
-\end{center}
 or later.
 
 Note that \Gcc{2.96/97} are not official \texttt{gcc} releases that
@@ -193,6 +195,13 @@ contains the following subdirectories:\index{directories!structure}
   \end{tabular}
 \end{center}
 
+The directory \texttt{auxiliary} contains a distribution of the \gnu\ 
+Multiple Precision library \gmp\footnote{\gmppage}. The directory
+\texttt{src/Core} contains a distribution of the \core\ 
+library\footnote{\corepage} for robust numerical and geometric
+computation. Both libraries are not part of \cgal\ and have their own
+licenses.
+
 \subsection{Visualization}\label{sec:vis}
 
 The programs in the \texttt{demo} directory provide visual output.
@@ -233,7 +242,7 @@ section~\ref{sec:leda}.
 \section{A Sample Installation}\label{sec:sample-inst}
 
 In this section we sketch an example installation on a \textsc{Sun}
-running Solaris 2.6 with the \Gcc{2.95} compiler. For a complete
+running Solaris~2.9 with the \Gcc{3.3} compiler. For a complete
 description of the different menus and their options refer to section
 \ref{sec:interactive-mode}.
 
@@ -259,27 +268,18 @@ dots written to the screen indicating progress.
 --------------------------------------------------------
 
 starting interactive mode - one moment, please
-......
+.......
 
-  Choosing compiler GNU gcc-2.95.3
-  Testing for STL ... ok.
-  ...
-  <tests for several compiler features>
-  ...
-  Saving current setup ... done.
-.
+  Choosing compiler GNU 3.3.0.
+
 \end{alltt}}
   
 If there is any compiler installed on your system and accessible
 through your \texttt{PATH} environment variable that is supported by
-\cgal, one of these compilers is chosen and a number of tests are done
-to check whether your compiler supports certain language constructs
-respectively has specific bugs. There are quite a number of these
-tests, so this step may take some time. For each test you should get a
-message what particularly is tested at the moment and what the result
-is. If there is more than one compiler installed on your system (and
-supported by \cgal), you may later choose to use a different compiler
-from the compiler menu.
+\cgal, one of these compilers is chosen. If there is more than one
+compiler installed on your system (and supported by \cgal), you may
+choose to use a different compiler from the compiler menu (cf.
+Section~\ref{sec:compiler-menu}).
 
 A menu similar to the following will appear on your screen.\index{main
   menu}\index{menus!main}
@@ -290,21 +290,17 @@ A menu similar to the following will appear on your screen.\index{main
   **              CGAL 3.0 Installation Main Menu               **
   **              -------------------------------               **
   **                                                            **
-  **   OS:                  sparc_SunOS-5.6                     **
-  **   Compiler:            GNU gcc-2.95.3                      **
-  **   LEDA:                not supported.                      **
-  **   GMP:                 not supported.                      **
-  **   GMPXX:               not supported.                      **
+  **   OS:                  sparc_SunOS-5.9                     **
+  **   Compiler:            GNU 3.3.0                           **
+  **   Support for:         no other library.                   **
   **                                                            **
   **   Compiler is supported by CGAL.                           **
-  **   The setup has been tested ok.                            **
+  **   The setup has not been tested.                           **
   **                                                            **
   **   There are no libs for this os/compiler.                  **
   **                                                            **
   **   <C>  Compiler Menu                                       **
-  **   <L>  LEDA Menu                                           **
-  **   <G>  GMP Menu                                            **
-  **   <K>  Qt Menu                                             **
+  **   <S>  Support Menu                                        **
   **   <T>  Test (and save) setup                               **
   **   <A>  Run all setup tests (no cache)                      **
   **                                                            **
@@ -318,17 +314,47 @@ A menu similar to the following will appear on your screen.\index{main
 \end{alltt}}
 
 The first lines below the headline contain some kind of status report:
-current OS and compiler, are \leda, GMP, or GMPXX (GMP's built-in C++
-interface) supported etc. Moreover you can see that the current setup
-has been tested and that there do not exist \cgal\ libraries for this
-OS/compiler combination in the \cgal\ lib directory by now.
+current OS and compiler, and which third-party software libraries are
+supported (such as \gmp, \core, \leda, or \qt). Moreover you can see
+that the current setup has not yet been tested, and that there do not
+exist \cgal\ libraries for this OS/compiler combination in the \cgal\ 
+lib directory by now.
 
-The fact that your setup has been tested implies that the current
-settings have been saved to a file in the directory \cgalinstconfdir.
-Thus, if you run the install script a second time for this
-OS/compiler, you will not have to go through the whole config-/test
-cycle again, but the configuration will be retrieved from the
-corresponding config file instead.
+\subsection{Building the \cgal\ libraries}\label{sec:test-the-setup}
+
+In a first step, you should test the current setup by typing ``{\tt
+  t}''. Then a number of tests are done to check whether your compiler
+supports certain language constructs or has specific bugs. There is
+quite a number of these tests, so this step may take a while. For each
+test you should get a message what particularly is tested at the
+moment and what the result is.
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+  ****************************************************************
+  **   The following lines show results of configuration tests. **
+  **   Some of the tests might fail, since many compilers are   **
+  **   still not completely ANSI/ISO compliant.                 **
+  **   Since we worked around the arising problems,             **
+  **             *** CGAL will work fine ***                    **
+  **   regardless of the outcome of these tests.                **
+  ****************************************************************
+  Checking for standard header files
+  algorithm ... ok.
+
+  <many lines omitted>
+
+  Testing for VC7_PRIVATE_TYPE_BUG ... ok.
+  Saving current setup ... done.
+\end{verbatim}
+}
+
+If all these tests have been completed successfully, the current
+settings are saved into a file that resides in the directory
+\cgalinstconfdir. Thus, if you run the install script a second time
+for this OS/compiler, you will not have to go through the whole
+config-/test cycle again, but the configuration will be retrieved from
+the corresponding config file instead.
 
 \subsection{Building the \cgal\ libraries}\label{sec:build-the-libs}
 
@@ -342,8 +368,8 @@ to start compilation. Building consists of three steps:
 The include makefile\index{include makefile} encapsulates the OS-- and
 compiler-specific settings and should be included (hence the name) in
 all makefiles that compile \cgal\ applications. If everything went ok,
-the output should look as follows (if not, you should have a look at
-the error messages from compiler or linker).
+the output should look as follows. (Otherwise, you should have a look
+at the error messages from compiler or linker.)
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
@@ -354,11 +380,13 @@ the error messages from compiler or linker).
   **                                                            **
   ****************************************************************
 
-  OS:           sparc_SunOS-5.6
-  COMPILER:     GNU gcc-2.95.3
-  LEDA:         not supported
+  OS:           sparc_SunOS-5.9
+  COMPILER:     GNU 3.3.0
   GMP:          not supported
   GMPXX:        not supported
+  CORE:         not supported
+  LEDA:         not supported
+  Qt:           not supported
 
   Generating Makefiles ... done.
   Building CGAL_lib ... done.
@@ -374,13 +402,14 @@ the error messages from compiler or linker).
 That's all, it's done. Press ``\texttt{<ENTER>}'' to return to the
 main menu and proceed by installing for a different compiler (go to
 the compiler menu and choose ``\texttt{c}'' to get a list of supported
-compilers detected on your system) or with \leda, GMP, or \qt\ support
-(go to the \leda, GMP, or \qt\ menu resp.) or simply quit the install
-script by typing ``\texttt{q}''. When leaving the script, you get a
-list of successful builds during the session. Furthermore, the script
-prints the setting of \texttt{CGAL\_MAKEFILE} for the last active
+compilers detected on your system), or with \gmp, \core, \leda, or
+\qt\ support (go to the \gmp, \core, \leda, or \qt\ menu,
+respectively). Another option is to simply quit the install script by
+typing ``\texttt{q}''. When leaving the script, you get a list of
+successful builds during the session.  Furthermore, the script prints
+the setting of \texttt{CGAL\_MAKEFILE} for the last active
 configuration. Remember to set this environment variable before
-compiling \cgal\ applications. On bourne shell derivatives, you would
+compiling \cgal\ applications.  On bourne shell derivatives, you would
 type in our example
 \begin{alltt}
       export CGAL_MAKEFILE=\cgaldir/make/makefile_sparc_SunOS-5.6_g++-2.95.3
@@ -423,26 +452,28 @@ into the \cgal\ installation \textit{main menu} (see page
 From the main menu you can reach a number of different sub-menus, of
 which the most important maybe is the \textit{compiler menu}. This is
 where you can choose the compiler you want to work with and set custom
-compiler or linker options.  The compiler menu is described in section
-\ref{sec:compiler-menu}.
+compiler or linker options. The compiler menu is described in
+Section~\ref{sec:compiler-menu}.
 
-If you want to use \leda, GMP, or \qt\ with \cgal, you will have to go
-to the \textit{leda menu}, \textit{gmp menu}, or \textit{qt menu}.
-These are described in section \ref{sec:leda-menu},
-\ref{sec:gmp-menu}, \ref{sec:qt-menu}, respectively.
+If you want to use \gmp, \core, \leda, or \qt\ with \cgal, you will
+have to go to the \textit{gmp menu} (cf. Section~\ref{sec:gmp-menu}),
+\textit{core menu} (cf. Section~\ref{sec:core-menu}), \textit{leda
+  menu} (cf. Section~\ref{sec:leda-menu}), or \textit{qt menu} (cf.
+Section~\ref{sec:qt-menu}), respectively.
 
 Finally you can build the \cgal\ libraries by typing \texttt{b}.
-However, it is recommended to run the \textit{setup test} which is
-available in all menus as option \texttt{t} before. The setup test
-includes an \stl\ test, a \leda\ test, a GMP test, and a \qt\ test.
-But not all tests are performed always; e.g. the \leda\ test is only
-done, if you enabled \leda\ support. The install script keeps track of
-the tests passed and only tests again, if you change the setup in a
-way that might affect the test result. If you want to redo
-\textit{all} tests, you have to choose option ``\texttt{a}'' from the
-main menu.  This also retests for \leda/GMP/\qt\ installation in
-system directories which otherwise is only done the first time you
-enable \leda/GMP/\qt\ support for an OS/compiler combination.
+However, it is recommended to run the \textit{setup test} -- which is
+available in all menus as option \texttt{t} -- before. The setup test
+includes an \stl\ test, a \gmp\ test, a \core\ test, a \leda\ test,
+and a \qt\ test.  But not all tests are performed always; e.g., the
+\gmp\ test is only done, if you enabled \gmp\ support. The install
+script keeps track of the tests passed and only tests again, if you
+change the setup in a way that might affect the test result. If you
+want to redo \textit{all} tests, you have to choose option
+``\texttt{a}'' from the main menu.  This also retests for
+\gmp/\leda/\qt\ installations in system directories. Otherwise, this
+is only done the first time you enable gmp/\leda/\qt\ support for an
+OS/compiler combination.
 
 \subsection{Files created during installation}\label{sec:filescreated}
 
@@ -509,11 +540,141 @@ compiler or linker flags.\bigskip
 \end{minipage}
 \hfill}
 
+\subsection{The Support Menu}\label{sec:support-menu}
+\index{support menu}\index{menus!support}
+
+This menu provides the starting point to setup the support for
+third-party software libraries such as \gmp, \core, \leda, or \qt.
+\bigskip
+
+\fbox{
+\begin{minipage}{.95\linewidth}
+\vspace{2pt}
+\centerline{{\large{\bf Support Menu}}}
+\vspace{2pt}
+\begin{description}
+\item[$<$G$>$] Setup support for the \gnu\ Multiple Precision library
+  \gmp.\index{GMP@\gmp!enable support}
+\item[$<$C$>$] Setup support for the \core\ library for robust
+  numerical and geometric computation.\index{CORE@\core!enable
+    support}
+\item[$<$L$>$] Setup support for \leda, the Library of Efficient
+  Datatypes and Algorithms.\index{LEDA@\leda!enable support}
+\item[$<$K$>$] Setup support for Trolltech's \qt\ 
+  toolkit.\index{Qt!enable support}
+\end{description}
+\vspace{2pt}
+\end{minipage}
+\hfill}
+
+\subsection{The GMP Menu}\label{sec:gmp-menu}
+\index{GMP@\gmp!menu}\index{menus!\gmp}
+
+This menu is to set \gmp\ (\gnu\ Multiple Precision Library) specific
+options, if you plan to use \gmp\ together with \cgal. In case you do
+not already have \gmp\ installed on your system, a \gmp\ distribution
+is shipped with \cgal. You can find it in the {\tt auxiliary}
+directory. The menu provides an option to install \gmp\ in your \cgal\ 
+directory tree\footnote{This option on \msvc\ just unpacks a
+  pre-compiled library that comes with \cgal.}, but -- of course --
+you can also install \gmp\ independently from \cgal.
+
+If \gmp\ support is enabled for the first time, the script tests
+whether \gmp\ is installed in standard system directories or in the
+\cgal\ tree.  If this test does not succeed, you have to supply
+directories containing the \gmp\ header files
+(\texttt{GMP\_INCL\_DIR})\TTindex{GMP\_INCL\_DIR} and \gmp\ libraries
+({\tt GMP\_LIB\_DIR})\TTindex{GMP\_LIB\_DIR}.  Even if the tests are
+passed, you still have the option to set these directories
+differently.
+
+If you decide to install the \gmp\ distribution shipped with \cgal\ 
+from the install script, \gmp\ will be configured by calling its
+\textit{configure} script. \gmp\ being a C library, it requires a C
+compiler. Its \textit{configure} script usually does a good job at
+finding a C compiler on the system, but it also gives the possibility
+to specify it by setting the environment variable \textit{CC} before
+calling \textit{configure}.  If you want the \cgal\ install script to
+build \gmp\ and specify the C compiler to be used, you can also to the
+same, by setting the \textit{CC} environment variable (see the \gmp\ 
+installation documentation for details).  If you need a more complex
+configuration of \gmp, we recommend that you install \gmp\ yourself
+separately.
+
+If \gmp\ support is enabled, you may additionnally enable support for
+GMPXX, \gmp's built-in C++ interface, from the \gmp\ menu. Note that
+this is not supported by all C++ compilers, you should check the \gmp\ 
+manual for more information.  Once you choose to have GMPXX support,
+then if you install \gmp\ from the CGAL tree, \gmp\ will be configured
+with C++ support.\bigskip
+
+\index{GMP@\gmp!installing}\index{GMP@\gmp!enable support}
+\fbox{
+\begin{minipage}{.95\linewidth}
+\vspace{2pt}
+\centerline{{\large{\bf GMP Menu}}}
+\vspace{2pt}
+\begin{description}
+\item[$<$C$>$] Install the \gmp\ distribution shipped with \cgal\ in
+  the \cgal\ directory tree.
+\item[$<$G$>$] Enable/Disable \gmp\ support in \cgal.
+\item[$<$X$>$] Enable/Disable GMPXX support in \cgal.
+\item[$<$I$>$] (\textit{present if \gmp\ support is enabled)} Set the
+  include directory for \gmp.
+\item[$<$L$>$] (\textit{present if \gmp\ support is enabled)} Set the
+  directory containing the \gmp\ libraries.
+\item[$<$M$>$] (\textit{present if \gmp\ support is enabled, there is a \gmp\
+    installation in system directories or in the \cgal\ tree and {\tt
+      GMP\_INCL\_DIR} or \texttt{GMP\_LIB\_DIR} have been set)} Use \gmp\
+  installation from system directories / \cgal\ tree.
+\end{description}
+\vspace{2pt}
+\end{minipage}
+\hfill}
+
+\subsection{The CORE Menu}\label{sec:core-menu}
+\index{CORE@\core!menu}\index{menus!\core}
+
+This menu is to set \core\ specific options, if you plan to use \core\ 
+together with \cgal. Since \core\ requires \gmp, you have to enable
+\gmp\ support together with \core\ support. Refer to
+Section~\ref{sec:gmp-menu} for how to setup \gmp\ support for \cgal.
+
+The current \core\ release is shipped together with \cgal. If \core\ 
+support is enabled, the \core\ library is built and installed together
+with the \cgal\ libraries. Hence, if you enable \core\ support, you
+have to (re)build the \cgal\ libraries afterwards (cf.
+Section~\ref{sec:build-the-libs}). Another option is to use a \core\ 
+installation that is independent from \cgal. For this you have to
+supply directories containing the \core\ header files
+(\texttt{CORE\_INCL\_DIR})\TTindex{CORE\_INCL\_DIR} and the \core\ 
+library ({\tt CORE\_LIB\_DIR})\TTindex{CORE\_LIB\_DIR}. \bigskip
+
+\index{CORE@\core!installing}\index{CORE@\core!enable support}
+\fbox{
+\begin{minipage}{.95\linewidth}
+\vspace{2pt}
+\centerline{{\large{\bf CORE Menu}}}
+\vspace{2pt}
+\begin{description}
+\item[$<$C$>$] Enable/Disable \core\ support in \cgal.
+\item[$<$I$>$] (\textit{present if \core\ support is enabled)} Set the
+  include directory for \core.
+\item[$<$L$>$] (\textit{present if \core\ support is enabled)} Set the
+  directory containing the \core\ library.
+\item[$<$Z$>$] (\textit{present if \core\ support is enabled and {\tt
+      CORE\_INCL\_DIR} or \texttt{CORE\_LIB\_DIR} have been set)} Use
+  \core\ installation from \cgal\ directories.
+\end{description}
+\vspace{2pt}
+\end{minipage}
+\hfill}
+
 \subsection{The \leda\ Menu}\label{sec:leda-menu}
 \index{LEDA@\leda!menu}\index{menus!\leda}
 
 This is the place to set \leda\ specific options, if you plan to use
-\leda\ together with \cgal\ (see also section \ref{sec:leda}). In
+\leda\ together with \cgal\ (see also Section~\ref{sec:leda}). In
 order to enable \leda\ support in \cgal, \leda\ has to be installed on
 your system.
 
@@ -550,75 +711,13 @@ directories differently.\bigskip
 \end{minipage}
 \hfill}
 
-\subsection{The GMP Menu}\label{sec:gmp-menu}
-\index{GMP@\gmp!menu}\index{menus!\gmp}
-
-This menu is to set GMP (\gnu\ Multiple Precision Library) specific
-options, if you plan to use GMP together with \cgal . In the {\tt
-  auxiliary} directory you can find a GMP distribution, if you do not
-already have it installed on your system. This menu contains an option
-to install GMP in your \cgal\ directory tree\footnote{This option is
-  on \msvc\ just unpacks the corresponding pre-compiled library that
-  comes with \cgal\ distribution.}, but of course you can also install
-it independently from \cgal .
-
-If GMP support is enabled the first time, the script tests whether GMP
-is installed in standard system directories or in the \cgal\ tree. If
-this test does not succeed, you have to supply directories containing
-the GMP header files (\texttt{GMP\_INCL\_DIR})\TTindex{GMP\_INCL\_DIR}
-and GMP libraries ({\tt GMP\_LIB\_DIR})\TTindex{GMP\_LIB\_DIR}.  Even
-if the tests are passed, you still have the option to set these
-directories differently.
-
-If you decide to install the GMP distribution shipped with \cgal\ from the
-install script, GMP will be configured by calling its \textit{configure}
-script.  GMP being a C library, it requires a C compiler.  Its
-\textit{configure} script usually does a good job at finding a C compiler on
-the system, but it also gives the possibility to specify it by setting the
-environment variable \textit{CC} before calling \textit{configure}.  If you
-want the \cgal\ install script to build GMP and specify the C compiler to be
-used, you can also to the same, by setting the \textit{CC} environment variable
-(see the GMP installation documentation for details).  If you need a more
-complex configuration of GMP, we recommend that you install GMP yourself
-separately.
-
-If GMP support is enabled, you may additionnally enable support for GMPXX,
-GMP's built-in C++ interface, from the GMP menu.  Note that this is not
-supported by all C++ compilers, you should check the GMP manual for more
-information.  Once you choose to have GMPXX support, then if you install GMP
-from the CGAL tree, GMP will be configured with C++ support.\bigskip
-
-\index{GMP@\gmp!installing}\index{GMP@\gmp!enable support}
-\fbox{
-\begin{minipage}{.95\linewidth}
-\vspace{2pt}
-\centerline{{\large{\bf GMP Menu}}}
-\vspace{2pt}
-\begin{description}
-\item[$<$C$>$] Install the GMP distribution shipped with \cgal\ in the
-  \cgal\ directory tree.
-\item[$<$G$>$] Enable/Disable GMP support in \cgal.
-\item[$<$X$>$] Enable/Disable GMPXX support in \cgal.
-\item[$<$I$>$] (\textit{present if GMP support is enabled)} Set the
-  include directory for GMP.
-\item[$<$L$>$] (\textit{present if GMP support is enabled)} Set the
-  directory containing the GMP libraries.
-\item[$<$M$>$] (\textit{present if GMP support is enabled, there is a GMP
-    installation in system directories or in the \cgal\ tree and {\tt
-      GMP\_INCL\_DIR} or \texttt{GMP\_LIB\_DIR} have been set)} Use GMP
-  installation from system directories / \cgal\ tree.
-\end{description}
-\vspace{2pt}
-\end{minipage}
-\hfill}
-
 \subsection{The Qt Menu}\label{sec:qt-menu}
 \index{Qt!menu}\index{menus!Qt}
 
 This menu is to set \qt\ specific options, if you plan to use \qt\ 
 together with \cgal . Note that for use with \cgal, \qt\ version 2.2
 (or later) if required. In order to enable \qt\ support in \cgal, \qt\ 
-has to be installed on your system first.  Unlike for GMP, there is no
+has to be installed on your system first. Unlike for \gmp, there is no
 option to install \qt\ from the \cgal\ installation script.  For
 information on \qt, please refer to
 \begin{quote}
@@ -736,14 +835,16 @@ your \cgal\ setup which are discussed below. You should read the
 corresponding paragraphs before you continue, especially if one or
 more of the following conditions apply to you:
 \begin{itemize}
-\item you want to use \leda\ together with \cgal\ (section
-  \ref{sec:leda-setup}),
-\item you want to use \gnu\ GMP together with \cgal\ (section
-  \ref{sec:gmp-setup}) \textit{or}
-\item you want to use \gnu\ GMP's built-in C++ interface together with \cgal\
-  (section \ref{sec:gmpxx-setup}) \textit{or}
-\item you want to use \qt\ together with \cgal\ (section
-  \ref{sec:qt-setup}).
+\item you want to use \gmp\ together with \cgal\ 
+  (Section~\ref{sec:gmp-setup}),
+\item you want to use \gmp's built-in C++ interface together with
+  \cgal\ (Section~\ref{sec:gmpxx-setup}),
+\item you want to use \core\ together with \cgal\ 
+  (Section~\ref{sec:core-setup}),
+\item you want to use \leda\ together with \cgal\ 
+  (Section~\ref{sec:leda-setup}),
+\item you want to use \qt\ together with \cgal\ 
+  (Section~\ref{sec:qt-setup}).
 \end{itemize}
 
 Once you started the script, it should give you a message indicating
@@ -752,10 +853,10 @@ the non-interactive mode. Then it proceeds by locating some utility
 programs, determining your OS and compiler version and displaying the
 settings you gave via command line. Your compiler is also checked for
 a number of bugs resp. support of certain language features; a message
-\texttt{ok} always indicates that your compiler works as it should
-i.e. a feature is supported resp. a bug is \textit{not} present. On
-the other hand \texttt{no} resp.  \texttt{unfortunately} indicate a
-lack of support resp. presence of a bug.
+\texttt{ok} always indicates that your compiler works as it should,
+that is, a feature is supported or a bug is \textit{not} present. On
+the other hand, \texttt{no} or \texttt{unfortunately} indicate a lack
+of support or the presence of a bug.
 
 Finally the current setup is summarized, system specific directories
 for makefiles and libraries are created (if they did not exist before)
@@ -771,10 +872,50 @@ shared object library. If you want to make changes to the makefiles
 first, see section \ref{sec:makefiles} for an explanation of the
 makefile structure of \cgal.
 
-When this is finished it would be a good idea to print and read the
-`Getting Started with \cgal'\index{CGAL@\cgal!getting started} document
-\texttt{getting\_started.ps} that can be found in the \texttt{doc\_ps}
-directory.
+If you enabled \core\ support and want to use the \core\ distribution
+shipped with \cgal, go to the \texttt{src/Core} directory and type
+\texttt{make -f makefile\_Core} to compile the \core\ library.
+
+If you enabled \qt\ support, go to the \texttt{src/CGALQt} directory
+and type \texttt{make -f makefile\_Qt} to compile the \cgal\ \qt\ 
+support library.
+
+%%When this is finished it would be a good idea to print and read the
+%%`Getting Started with \cgal'\index{CGAL@\cgal!getting started} document
+%%\texttt{getting\_started.ps} that can be found in the \texttt{doc\_ps}
+%%directory.
+
+\subsection{Setting up support for GMP}\label{sec:gmp-setup}
+\index{GMP@\gmp!enable support}
+
+By default there is no support for \gmp, but you can change this
+easily by use of the command line option ``\texttt{-gmp}''. If \gmp\ is
+installed in system directories on your system, you are already done
+now. If this is not the case, you have to supply the directories
+containing the \gmp\ header files (``\texttt{--GMP\_INCL\_DIR}
+\textit{$<$dir$>$}'')\TTindex{GMP\_INCL\_DIR} and the \gmp\ library
+(``\texttt{--GMP\_LIB\_DIR}
+\textit{$<$dir$>$}'')\TTindex{GMP\_LIB\_DIR}.
+
+\subsection{Setting up support for GMPXX}\label{sec:gmpxx-setup}
+\index{GMPXX@\texttt{GMPXX}!enable support}
+
+By default there is no support for GMPXX, \gmp's built-in C++
+interface, but you can change this easily by use of the command line
+option ``\texttt{-gmpxx}''.  The only requirement for this to work is
+that \gmp\ support is enabled correctly.
+
+\subsection{Setting up support for CORE}\label{sec:core-setup}
+\index{CORE@\core!enable support}
+
+By default there is no support for \core, but you can change this
+easily by use of the command line option ``\texttt{-core}''. If you
+want to use the \core\ distribution shipped with \cgal, this is all
+you have to do. Otherwise, you also have to supply the directories
+containing the \core\ header files (``\texttt{--CORE\_INCL\_DIR}
+\textit{$<$dir$>$}'')\TTindex{CORE\_INCL\_DIR} and the \core\ library
+(``\texttt{--CORE\_LIB\_DIR}
+\textit{$<$dir$>$}'')\TTindex{CORE\_LIB\_DIR}.
 
 \subsection{Setting up \leda\ support}\label{sec:leda-setup}
 \index{LEDA@\leda!enable support}
@@ -790,26 +931,6 @@ the \leda\ header files (``\texttt{--LEDA\_INCL\_DIR}
 libraries for your compiler (``\texttt{--LEDA\_LIB\_DIR} {\it
   $<$dir$>$}''\TTindex{LEDA\_LIB\_DIR}).
 
-\subsection{Setting up support for GMP}\label{sec:gmp-setup}
-\index{GMP@\gmp!enable support}
-
-By default there is no support for GMP, but you can change this easily
-by use of the command line option ``\texttt{-gmp}''. If GMP is
-installed in system directories on your system, you are already done
-now. If this is not the case, you have to supply the directories
-containing the GMP header files (``\texttt{--GMP\_INCL\_DIR}
-\textit{$<$dir$>$}'')\TTindex{GMP\_INCL\_DIR} and the GMP library
-(``\texttt{--GMP\_LIB\_DIR}
-\textit{$<$dir$>$}'')\TTindex{GMP\_LIB\_DIR}.
-
-\subsection{Setting up support for GMPXX}\label{sec:gmpxx-setup}
-\index{GMPXX@\texttt{GMPXX}!enable support}
-
-By default there is no support for GMPXX, GMP's built-in C++ interface, but
-you can change this easily by use of the command line option
-``\texttt{-gmpxx}''.  The only requirement for this to work is that GMP
-support is enabled correctly.
-
 \subsection{Setting up support for Qt}\label{sec:qt-setup}
 \index{Qt!enable support}
 
@@ -822,7 +943,7 @@ directory (``\texttt{--QT\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_DIR}
 if your \qt\ installation is standard, either directories containing
 the \qt\ header files
 (``\texttt{--QT\_INCL\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_INCL\_DIR}
-and the Qt library
+and the \qt\ library
 (``\texttt{--QT\_LIB\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_LIB\_DIR},
 and the path to the MOC\footnote{\qtmocpage} executable
 (``\texttt{--QT\_MOC} \textit{$<$exe$>$}'')\TTindex{QT\_MOC} if your
@@ -859,11 +980,11 @@ to determine your \cgal-OS description\index{OS description} (see section
 \ref{sec:os-compiler-id}). The compiler can either be given by an
 absolute path like
 \begin{verbatim}
-./install_cgal -os /usr/local/gcc-2.95.3/sun/bin/g++
+  ./install_cgal -os /usr/local/gcc-2.95.3/sun/bin/g++
 \end{verbatim}
 or just by denoting its basename, as long as it is on your path:
 \begin{verbatim}
-./install_cgal -os CC
+  ./install_cgal -os CC
 \end{verbatim}
 The option is intended for testing purposes and automatic detection of
 the correct include makefile (see also section \ref{sec:makefiles}).
@@ -883,9 +1004,9 @@ to be passed.
 \label{sec:upgrade}\index{upgrading \cgal}\index{CGAL@\cgal!upgrade}
 
 In case you already have a previous release of \cgal\ installed on
-your system, you might like to reuse your configuration files and GMP
-installations. Simply use the following command to copy them into the
-right place:\TTsubindex{install\_cgal}{upgrade option}
+your system, you might like to reuse your configuration files and
+\gmp\ installations. Simply use the following command to copy them
+into the right place:\TTsubindex{install\_cgal}{upgrade option}
 \begin{verbatim}
 ./install_cgal --upgrade <OLD_CGAL_DIR>
 \end{verbatim}
@@ -1224,11 +1345,11 @@ description of the problem. In case of trouble with one of the
 \texttt{CGAL\_CFG} flags, it is a good idea to take a look at it.
 
 Within \cgal, the file \texttt{<CGAL/basic.h>}
-\index{files!\texttt{basic.h}} manages all configuration problems.
-This file includes \texttt{CGAL/compiler\_config.h}. It is therefore
-\textbf{important that \texttt{<CGAL/basic.h>} is always included
-  before any other file}. In most cases you do not have to do anything
-special for this, because many \cgal\ files (in particular,
+\index{files!\texttt{basic.h}} manages all configuration problems. In
+particular, it includes the file \texttt{CGAL/compiler\_config.h}. It
+is therefore \textbf{important that \texttt{<CGAL/basic.h>} is always
+  included before any other file}. In most cases you do not have to do
+anything special for this, because many \cgal\ files (in particular,
 \texttt{<CGAL/Cartesian.h>} and \texttt{<CGAL/Homogeneous.h>}) already
 take care of including \texttt{<CGAL/basic.h>} first. Nevertheless it
 is a good idea to always start your \cgal\ programs with including
@@ -1286,6 +1407,39 @@ a look at the \cgal\ homepage:
 \cgalhomepage
 \end{alltt}
 or send an email to \texttt{contact@cgal.org}.
+
+\subsection{Compiler version test execution failed}
+\label{sec:compvertestfails}
+\index{Compiler version test}\index{compilers!version test}
+
+Possibly already during the startup of the install script, the
+execution of the compiler version test might fail with the following
+(or similar) error message.
+\begin{verbatim}
+  ld.so.1: ./tmp_test: fatal: libstdc++.so.5: 
+    open failed: No such file or directory
+\end{verbatim}
+This means that the standard \CC\ library for your compiler is
+installed in a directory that is not on your current runtime linker
+path. You can solve this problem by adding the directory containing
+\texttt{libstdc++.so} to your runtime linker path, usually
+represented by the environment variable \texttt{LD\_LIBRARY\_PATH}.
+
+For example, if you have a standard \texttt{gcc} installation below
+\texttt{/software/gcc-3.3.0/}, you would type 
+\begin{alltt}
+      export LD_LIBRARY_PATH=/software/gcc-3.3.0/lib:$LD_LIBRARY_PATH
+\end{alltt}
+for bourne shell alikes, while for \texttt{csh} descendants the syntax
+is
+\begin{alltt}
+      setenv LD_LIBRARY_PATH /software/gcc-3.3.0/lib:$LD_LIBRARY_PATH
+\end{alltt}
+You might want to add this command to your shell startup file.
+
+Alternatively, you can build the runtime linker path into the
+executables by setting corresponding custom linker flags (cf.
+Section~\ref{sec:compiler-menu}).
 
 \subsection{The ``Long-Name-Problem'' on IRIX6}\label{sec:longnameirix}
 \index{problems with long names}\index{long name problem}
