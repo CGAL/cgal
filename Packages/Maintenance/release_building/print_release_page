@@ -26,6 +26,12 @@ Download the latest internal release:
 EOF
 echo "<FONT SIZE=\"+1\"><A HREF=\"$RELEASE.tar.gz\">$RELEASE.tar.gz</A></FONT> ."
 
+if [ -r "$PATCHFILE" ]
+then
+echo "";
+echo "Or get the <A href=\"diffs_$RELEASE.gz\">patches</A> from the previous release ($PREV_RELEASE)"
+fi
+
 echo '<H2><A NAME="differences">Differences</A></H2>'
 
 echo "The differences of release $RELEASE with respect to release $PREV_RELEASE are:"
@@ -95,13 +101,15 @@ read RELEASE PREV_RELEASE < $DATA_DIR/version_info
 RELEASE_SIZE="2.6 Mb"
 
 rm -f $TEMPPAGE
+RESULTDIR=/users/www/CGAL/Members/Develop/testsuite/${RELEASE}
+RESULTPAGE=${RESULTDIR}/announce.html
+PATCHFILE=${RESULTDIR}/diffs_${RELEASE}.gz
+echo "patchfile: $PATCHFILE"
 $SCRIPTDIR/print_cgal_header "CGAL Internal Release Page" > $TEMPPAGE
 print_header >> $TEMPPAGE
 print_index >> $TEMPPAGE
 print_newrelease >> $TEMPPAGE
 $SCRIPTDIR/print_cgal_trailer >> $TEMPPAGE
-RESULTDIR=/users/www/CGAL/Members/Develop/testsuite/${RELEASE}
-RESULTPAGE=${RESULTDIR}/announce.html
 echo "creating file $RESULTPAGE ..." >&2
 cp $TEMPPAGE $RESULTPAGE
 chmod 664 $RESULTPAGE
