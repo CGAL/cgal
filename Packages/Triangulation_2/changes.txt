@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 6.07 (31/1/02)
+- fixed references to leda_color in demo/Delaunay.C
+- fixed warning for unused variables in demoa
+
+
 Ver 6.06 (31/1/02)
 - fixed the clean target of test/Triangulation_2_constrained
 - added missing typenames in  Constrained_triangulation_plus_2.h
