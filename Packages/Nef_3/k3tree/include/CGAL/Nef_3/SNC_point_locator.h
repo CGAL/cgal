@@ -58,7 +58,7 @@ public:
   USING(Point_3);
   USING(Segment_3);
   USING(Ray_3);
-  USING(Direction_3);
+  USING(Vector_3);
   USING(Triangle_3);
   USING(Aff_transformation_3);
   #undef USING
@@ -141,7 +141,7 @@ public:
   USING(Point_3);
   USING(Segment_3);
   USING(Ray_3);
-  USING(Direction_3);
+  USING(Vector_3);
   USING(Triangle_3);
   USING(Aff_transformation_3);
   #undef USING
@@ -376,7 +376,7 @@ public:
     if( !found) {
       _TRACEN("point not found in 2-skeleton");
       _TRACEN("shooting ray to determine the volume");
-      Ray_3 r( p, Direction_3( -1, 0, 0));
+      Ray_3 r( p, Vector_3( -1, 0, 0));
       result = Object_handle(determine_volume(r));
     }
     TIMER(pl_t.stop());
@@ -538,7 +538,6 @@ public:
   USING(Point_3);
   USING(Segment_3);
   USING(Ray_3);
-  USING(Direction_3);
   USING(Triangle_3);
   #undef USING
 

@@ -1,4 +1,4 @@
-#line 907 "k3_tree.nw"
+#line 906 "k3_tree.nw"
 #ifndef SNC_K3_TREE_TRAITS_H
 #define SNC_K3_TREE_TRAITS_H
 
@@ -39,53 +39,9 @@ public:
   Oriented_side operator()( const Plane_3& pl, Halffacet_handle f);
   Oriented_side operator()( const Plane_3& pl, Halffacet_triangle_handle f);
 
-  Oriented_side
-  Side_of_plane<SNCstructure>::oriented_side(const Plane_3& pl, const Point_3& pnt) {
-
-    RT s;
-    switch(swtch) {
-    case 0 : s = (pnt.x()+pl.d()).numerator(); break;
-    case 1 : s = (pnt.y()+pl.d()).numerator(); break;
-    case 2 : s = (pnt.z()+pl.d()).numerator(); break;
-    default:
-        int i=0;	
-	Vector_3 o(pl.orthogonal_vector());
-    	if(o.hx() == FT(0)) i+=4;
-    	if(o.hy() == FT(0)) i+=2;
-    	if(o.hz() == FT(0)) i+=1;
-
-    	switch(i) { 
-    	case 3 : if(o.hx() == FT(1)) 
-               	   s = (pnt.x()+pl.d()).numerator();
-             	 else 
-               	   return pl.oriented_side(pnt);
-	     	 break;
-    	case 5 : if(o.hy() == FT(1)) 
-                   s = (pnt.y()+pl.d()).numerator();
-                 else 
-                   return pl.oriented_side(pnt);
-	         break;
-    	case 6 : if(o.hz() == FT(1)) 
-                   s = (pnt.z()+pl.d()).numerator();
-                 else 
-                   return pl.oriented_side(pnt);
-	         break;
-        default: return pl.oriented_side(pnt);
-        }    
-    }
-
-    if(s>0)
-      return ON_POSITIVE_SIDE;
-    if(s<0)
-    return ON_NEGATIVE_SIDE;
-    return ON_ORIENTED_BOUNDARY;
-  }
-
   typedef typename SNCstructure::SNC_decorator SNC_decorator;
   SNC_decorator D;
   Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
-  int swtch;
-  Side_of_plane(int depth = -1) : swtch(depth) {}
 };
 
 template <class SNCstructure>
@@ -145,7 +101,6 @@ public:
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::Ray_3 Ray_3;
   typedef typename Kernel::Vector_3 Vector_3;
-  typedef typename Kernel::Direction_3 Direction_3;
   typedef typename Kernel::Plane_3 Plane_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
   typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
@@ -199,7 +154,7 @@ Oriented_side
 Side_of_plane<SNCstructure>::operator()
 ( const Plane_3& pl, Vertex_handle v) {
   if(!OnSideMap.is_defined(v))
-    OnSideMap[v] = oriented_side(pl, D.point(v));
+    OnSideMap[v] = pl.oriented_side(D.point(v));
   return OnSideMap[v];
 }
 
@@ -215,9 +170,9 @@ Oriented_side
 Side_of_plane<SNCstructure>::operator()
 ( const Plane_3& pl, Halfedge_handle e) {
   if(!OnSideMap.is_defined(D.source(e)))
-    OnSideMap[D.source(e)] = oriented_side(pl, D.point(D.source(e)));  
+    OnSideMap[D.source(e)] = pl.oriented_side(D.point(D.source(e)));  
   if(!OnSideMap.is_defined(D.target(e)))
-    OnSideMap[D.target(e)] = oriented_side(pl, D.point(D.target(e)));  
+    OnSideMap[D.target(e)] = pl.oriented_side(D.point(D.target(e)));  
   Oriented_side src_side = OnSideMap[D.source(e)];
   Oriented_side tgt_side = OnSideMap[D.target(e)];
   if( src_side == tgt_side)
@@ -279,7 +234,7 @@ Side_of_plane<SNCstructure>::operator()
   Oriented_side facet_side;
   do {
     if(!OnSideMap.is_defined(D.vertex(sc)))
-      OnSideMap[D.vertex(sc)] = oriented_side(pl, D.point(D.vertex(sc)));  
+      OnSideMap[D.vertex(sc)] = pl.oriented_side(D.point(D.vertex(sc)));  
     facet_side = OnSideMap[D.vertex(sc)];
     ++sc;
   }
@@ -289,7 +244,7 @@ Side_of_plane<SNCstructure>::operator()
   CGAL_assertion( facet_side != ON_ORIENTED_BOUNDARY);
   while( sc != send) {
     if(!OnSideMap.is_defined(D.vertex(sc)))
-      OnSideMap[D.vertex(sc)] = oriented_side(pl, D.point(D.vertex(sc)));  
+      OnSideMap[D.vertex(sc)] = pl.oriented_side(D.point(D.vertex(sc)));  
     Oriented_side point_side = OnSideMap[D.vertex(sc)];
     ++sc;
     if( point_side == ON_ORIENTED_BOUNDARY)

@@ -223,14 +223,14 @@ public:
   public:
     Objects_along_ray( const K3_tree& k, const Ray_3& r) {
       TRACEN("Objects_along_ray: input ray: "<<r);
-      CGAL_assertion( r.direction() == Direction_3( -1, 0, 0));
+      CGAL_assertion( Vector_3(r.direction()) == Vector_3( -1, 0, 0));
       // First of all, we need to find out wheather we are working over an extended kernel or on a standard kernel. As precondition we have that ray is oriented in the minus x axis direction.  When having an extended kernel, the ray can be subtituted by a segment with the endpoint on the 'intersection' between the ray and the bounding infimaximal box.  In the presence of a standard kernel, the intersection is computed with the bounding box with the vertices of the Nef polyhedron.
       Point_3 p(r.source()), q;
       Bounding_box_3 b = k.bounding_box;
       Point_3 pt_on_minus_x_plane = quotient_coordinates_to_homogeneous_point<Kernel>
 	( b.xmin(), b.ymin(), b.zmin());
       // We compute the intersection between a plane with normal vector in the minus x direction and located at the minimum point of the bounding box, and the input ray.  When the ray does not intersect the bounding volume, there won't be any object hit, so it is safe to construct a segment that simply lay in the unbounded side of the bounding box.  This approach is taken instead of somehow (efficiently) report that there was no hit object, in order to mantain a clear interface with the Iterator class.
-      Plane_3 pl_on_minus_x( pt_on_minus_x_plane, Direction_3( -1, 0, 0));
+      Plane_3 pl_on_minus_x( pt_on_minus_x_plane, Vector_3( -1, 0, 0));
       Object o = traits.intersect_object()( pl_on_minus_x, r);
       if( !assign( q, o) || pl_on_minus_x.has_on(p))
 	q = r.source() + Vector_3( -1, 0, 0);
@@ -293,7 +293,6 @@ typedef typename Traits::Point_3 Point_3;
 typedef typename Traits::Segment_3 Segment_3;
 typedef typename Traits::Ray_3 Ray_3;
 typedef typename Traits::Vector_3 Vector_3;
-typedef typename Traits::Direction_3 Direction_3;
 typedef typename Traits::Plane_3 Plane_3;
 typedef typename Traits::Triangle_3 Triangle_3;
 typedef typename Traits::Aff_transformation_3 Aff_transformation_3;
@@ -386,7 +385,7 @@ bool classify_objects( const Object_list& O, Plane_3 partition_plane, int depth,
   size_t on_oriented_boundary = 0;
   typename Object_list::const_iterator o;
   
-  Side_of_plane sop(depth%3);
+  Side_of_plane sop;
   for( o = O.begin(); o != O.end(); ++o) {
     Oriented_side side = sop( partition_plane, *o);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
@@ -442,9 +441,9 @@ Plane_3 construct_splitting_plane( const Object_list& O, Depth depth) {
   Explorer D;
   Point_3 p(D.point(*median));
   switch( depth % 3) {
-  case 0: return Plane_3( p, Direction_3( 1, 0, 0)); break;
-  case 1: return Plane_3( p, Direction_3( 0, 1, 0)); break;
-  case 2: return Plane_3( p, Direction_3( 0, 0, 1)); break;
+  case 0: return Plane_3( p, Vector_3( 1, 0, 0)); break;
+  case 1: return Plane_3( p, Vector_3( 0, 1, 0)); break;
+  case 2: return Plane_3( p, Vector_3( 0, 0, 1)); break;
   }
   CGAL_assertion_msg( 0, "never reached");
   return Plane_3();
@@ -944,53 +943,9 @@ public:
   Oriented_side operator()( const Plane_3& pl, Halffacet_handle f);
   Oriented_side operator()( const Plane_3& pl, Halffacet_triangle_handle f);
 
-  Oriented_side
-  Side_of_plane<SNCstructure>::oriented_side(const Plane_3& pl, const Point_3& pnt) {
-
-    RT s;
-    switch(swtch) {
-    case 0 : s = (pnt.x()+pl.d()).numerator(); break;
-    case 1 : s = (pnt.y()+pl.d()).numerator(); break;
-    case 2 : s = (pnt.z()+pl.d()).numerator(); break;
-    default:
-        int i=0;	
-	Vector_3 o(pl.orthogonal_vector());
-    	if(o.hx() == FT(0)) i+=4;
-    	if(o.hy() == FT(0)) i+=2;
-    	if(o.hz() == FT(0)) i+=1;
-
-    	switch(i) { 
-    	case 3 : if(o.hx() == FT(1)) 
-               	   s = (pnt.x()+pl.d()).numerator();
-             	 else 
-               	   return pl.oriented_side(pnt);
-	     	 break;
-    	case 5 : if(o.hy() == FT(1)) 
-                   s = (pnt.y()+pl.d()).numerator();
-                 else 
-                   return pl.oriented_side(pnt);
-	         break;
-    	case 6 : if(o.hz() == FT(1)) 
-                   s = (pnt.z()+pl.d()).numerator();
-                 else 
-                   return pl.oriented_side(pnt);
-	         break;
-        default: return pl.oriented_side(pnt);
-        }    
-    }
-
-    if(s>0)
-      return ON_POSITIVE_SIDE;
-    if(s<0)
-    return ON_NEGATIVE_SIDE;
-    return ON_ORIENTED_BOUNDARY;
-  }
-
   typedef typename SNCstructure::SNC_decorator SNC_decorator;
   SNC_decorator D;
   Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
-  int swtch;
-  Side_of_plane(int depth = -1) : swtch(depth) {}
 };
 
 template <class SNCstructure>
@@ -1050,7 +1005,6 @@ public:
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::Ray_3 Ray_3;
   typedef typename Kernel::Vector_3 Vector_3;
-  typedef typename Kernel::Direction_3 Direction_3;
   typedef typename Kernel::Plane_3 Plane_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
   typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
@@ -1104,7 +1058,7 @@ Oriented_side
 Side_of_plane<SNCstructure>::operator()
 ( const Plane_3& pl, Vertex_handle v) {
   if(!OnSideMap.is_defined(v))
-    OnSideMap[v] = oriented_side(pl, D.point(v));
+    OnSideMap[v] = pl.oriented_side(D.point(v));
   return OnSideMap[v];
 }
 
@@ -1120,9 +1074,9 @@ Oriented_side
 Side_of_plane<SNCstructure>::operator()
 ( const Plane_3& pl, Halfedge_handle e) {
   if(!OnSideMap.is_defined(D.source(e)))
-    OnSideMap[D.source(e)] = oriented_side(pl, D.point(D.source(e)));  
+    OnSideMap[D.source(e)] = pl.oriented_side(D.point(D.source(e)));  
   if(!OnSideMap.is_defined(D.target(e)))
-    OnSideMap[D.target(e)] = oriented_side(pl, D.point(D.target(e)));  
+    OnSideMap[D.target(e)] = pl.oriented_side(D.point(D.target(e)));  
   Oriented_side src_side = OnSideMap[D.source(e)];
   Oriented_side tgt_side = OnSideMap[D.target(e)];
   if( src_side == tgt_side)
@@ -1184,7 +1138,7 @@ Side_of_plane<SNCstructure>::operator()
   Oriented_side facet_side;
   do {
     if(!OnSideMap.is_defined(D.vertex(sc)))
-      OnSideMap[D.vertex(sc)] = oriented_side(pl, D.point(D.vertex(sc)));  
+      OnSideMap[D.vertex(sc)] = pl.oriented_side(D.point(D.vertex(sc)));  
     facet_side = OnSideMap[D.vertex(sc)];
     ++sc;
   }
@@ -1194,7 +1148,7 @@ Side_of_plane<SNCstructure>::operator()
   CGAL_assertion( facet_side != ON_ORIENTED_BOUNDARY);
   while( sc != send) {
     if(!OnSideMap.is_defined(D.vertex(sc)))
-      OnSideMap[D.vertex(sc)] = oriented_side(pl, D.point(D.vertex(sc)));  
+      OnSideMap[D.vertex(sc)] = pl.oriented_side(D.point(D.vertex(sc)));  
     Oriented_side point_side = OnSideMap[D.vertex(sc)];
     ++sc;
     if( point_side == ON_ORIENTED_BOUNDARY)
