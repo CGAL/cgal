@@ -643,7 +643,8 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
          else 
          {
-            std::cout << "p sees something in direction of q that's closer than q; p doesn't see  q" << std::endl;
+            std::cout << "p sees something in direction of q that's closer "
+                      << "than q; p doesn't see  q" << std::endl;
          }
 #endif 
       }
@@ -687,7 +688,7 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
 template <class Traits>
 void Vertex_visibility_graph_2<Traits>::update_collinear_visibility(
                                                     Vertex_map_iterator p_it,
-                                                    Vertex_map_iterator q_it, 
+                                                    Vertex_map_iterator q_it,
                                                     const Polygon& polygon)
 {
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG

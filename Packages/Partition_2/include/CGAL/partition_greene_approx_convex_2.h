@@ -202,8 +202,8 @@ void visible(Polygon& polygon,
                if (less_yx(*(stack.front()),*bottom_chain.front())) 
                {
 #ifdef CGAL_GREENE_APPROX_DEBUG
-                  std::cout << "visible:  reversing stack and swapping chains " 
-                       << std::endl;
+                  std::cout << "visible:  reversing stack and swapping chains "
+                            << std::endl;
 #endif
                   stack.push_front(bottom_chain.front()); 
                                                // reverse stack direction
@@ -257,7 +257,7 @@ void visible(Polygon& polygon,
                // point can see stack bottom
             }
         } while (!done && !big_angle_at_stack && !is_visible);
-        if (big_angle_at_stack)  // previous point is placed on bottom of stack 
+        if (big_angle_at_stack)  // previous point is placed on bottom of stack
         {
            stack.push_back(bottom_chain.front()); 
            bottom_chain.push_back(bottom_chain.front());
@@ -277,7 +277,7 @@ void stack_extend(Polygon& polygon,
 {
 #ifdef CGAL_GREENE_APPROX_DEBUG
    std::cout << "stack_extend" << std::endl;
-   std::cout << "stack_extend:  stack.before_front() " << *stack.before_front() 
+   std::cout << "stack_extend:  stack.before_front() " << *stack.before_front()
     << " stack.front " << *stack.front() << " point_ref " << *point_ref 
     << std::endl;
 #endif
@@ -567,7 +567,7 @@ void make_polygons_from_stack(Polygon& polygon,
    {
        new_Polygon_2 new_polygon;
 #ifdef CGAL_GREENE_APPROX_DEBUG
-       std::cout << "make_polygons_from_stack: stack.back " << *stack.back() 
+       std::cout << "make_polygons_from_stack: stack.back " << *stack.back()
                  << std::endl;
 #endif
        if (bottom_chain.direction() == CLOCKWISE) 
@@ -647,7 +647,7 @@ BidirectionalCirculator next_vertex(BidirectionalCirculator& ccw_current,
   BidirectionalCirculator cw_next = cw_current;
   cw_next--;
 #ifdef CGAL_GREENE_APPROX_DEBUG
-  std::cout << "next_vertex: ccw_next " << *ccw_next << " cw_next " << *cw_next 
+  std::cout << "next_vertex: ccw_next " << *ccw_next << " cw_next " << *cw_next
             << std::endl;
 #endif
   

@@ -409,7 +409,7 @@ public:
           else
           {
              // find the previous vertex in this vertex's list
-             next_v_it =(*v_it).second.next_ccw_edge_info(prev_v_it).endpoint();
+             next_v_it=(*v_it).second.next_ccw_edge_info(prev_v_it).endpoint();
              if (next_v_it != first)
              {
 #ifdef CGAL_PARTITION_CHECK_DEBUG

@@ -56,9 +56,9 @@ int partition_opt_cvx_debug_list_count = 0;
 
 
 template <class Polygon, class Traits>
-int partition_opt_cvx_best_so_far(Partition_opt_cvx_vertex& pivot_vertex, 
-                                  unsigned int extension, 
-                                  Polygon& polygon, const Traits& traits, 
+int partition_opt_cvx_best_so_far(Partition_opt_cvx_vertex& pivot_vertex,
+                                  unsigned int extension,
+                                  Polygon& polygon, const Traits& traits,
                                   Partition_opt_cvx_diagonal_list& diag_list)
 {
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
@@ -116,7 +116,7 @@ int partition_opt_cvx_best_so_far(Partition_opt_cvx_vertex& pivot_vertex,
 
 template <class Polygon, class Traits>
 void partition_opt_cvx_load(int current, 
-                            ::std::vector< Partition_opt_cvx_vertex >& v_list, 
+                            ::std::vector< Partition_opt_cvx_vertex >& v_list,
                             Polygon& polygon, 
                             Matrix<Partition_opt_cvx_edge>& edges, 
                             const Traits& traits)
@@ -147,7 +147,7 @@ void partition_opt_cvx_load(int current,
                                   v_list[current].vertex_num(), polygon, 
                                   edges, traits, diag_list1) + 
                         partition_opt_cvx_best_so_far(v_list[previous], 
-                                                  v_list[current].vertex_num(), 
+                                                  v_list[current].vertex_num(),
                                                   polygon, traits, diag_list2);
          diag_list1.splice(diag_list1.end(), diag_list2);
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
@@ -165,7 +165,7 @@ void partition_opt_cvx_load(int current,
 }
 
 template <class Polygon, class Traits>
-int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2, 
+int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
                                 Polygon& polygon, 
                                 Matrix<Partition_opt_cvx_edge>& edges, 
                                 const Traits& traits, 
@@ -251,7 +251,7 @@ int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
 // implementation of the naive n^3 visibility algorithm
 //
 template <class Polygon, class Traits>
-bool partition_opt_cvx_is_visible_n3(const Polygon& polygon, unsigned int i, 
+bool partition_opt_cvx_is_visible_n3(const Polygon& polygon, unsigned int i,
                                      unsigned int j, const Traits& traits)
 {
    typedef typename Traits::R             R;
@@ -392,7 +392,7 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
    Matrix<Partition_opt_cvx_edge> edges(polygon.size(), polygon.size());
    partition_opt_cvx_preprocessing(polygon, edges, traits);
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-   std::cout << "after preprocessing edges are (done, valid, visible, value): " 
+   std::cout << "after preprocessing edges are (done, valid, visible, value): "
              << std::endl;
    std::cout << edges << std::endl;
 #endif
