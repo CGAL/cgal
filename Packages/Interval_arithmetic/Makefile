@@ -20,7 +20,7 @@ Version:
 	cvs commit -m "- Bump for $(CGAL_VERSION)" version
 	cvs tag -c $(TAG_VERSION)
 
-submit: doc specific clean Version $(Package).tar.gz
+submit: specific clean Version $(Package).tar.gz
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
 	   changes.txt $(WWW_dir)
 	rm -f $(WWW_dir)/$(Package).ps.gz
@@ -40,7 +40,7 @@ clean:
 	$(MAKE) -C test/$(Package) clean
 	rm -f $(Package).tar.gz src/.pure src/*.o
 
-$(Package).tar.gz:
+$(Package).tar.gz: doc
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile --exclude=TODO \
 	--exclude="*".swp --exclude=tst_Static_filter_error.C \
