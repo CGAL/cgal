@@ -89,11 +89,11 @@ points of $S$ lying inside $B$.
 
 Several data structures were suggested for that problem. 
 Foremost among those, at least theoreticly, is the range-tree data structure
-with $O(n \log^d{(n)})$ preprocessing time, $O(n\log^{d-1}(n))$ space,
-and $O(\log^{d}(n) + k)$ query time, where $k$ is the output size of
+with $O(n \log^{d-1} n)$ preprocessing time, $O(n\log^{d-1} n)$ space,
+and $O(\log^{d} n + k)$ query time, where $k$ is the output size of
 the query.
 %See \Chapter{Range:Trees} for the the {\cgal}implementation of range-trees.
-A theoreticly inferior data structure is the \kdt, which offers $O(n
+A theoreticaly inferior data structure is the \kdt, which offers $O(n
 \log{n})$ preprocessing time, $O(n)$ space, and $O(n^{1-1/d})$ query
 time. The {\kdt}  is a binary tree constructed as follows: we compute
 the point $p_i$ of $S$ such that its first coordinate is the median

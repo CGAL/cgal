@@ -1,3 +1,5 @@
+2.2.15 Small corrections in documentation
+
 2.2.13 Hans Tangelder adapted style of documentation by
 using reference pages for KD-tree and included modifications
 in documentation as suggested by Susan Hert.
