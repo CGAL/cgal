@@ -1,3 +1,6 @@
+Version 3.3.10 (6 mars 2000)
+-added forgotten include for Iso_cuboid_3.h and .C in Cartesian_3.h [my]
+
 Version 3.3.9 (28 February 2000)
 - fixed Iso_cuboid_3 stuff [my]
 
