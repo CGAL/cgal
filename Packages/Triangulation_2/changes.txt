@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.04
+- fixed details in Triangulation_ds_face_2.h
+
 Ver 7.03 (4/03/02)
 - fixed details
 

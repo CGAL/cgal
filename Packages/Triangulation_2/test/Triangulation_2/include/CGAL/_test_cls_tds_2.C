@@ -354,6 +354,12 @@ template< class Tds>
 void
 _test_tds_circulators( const Tds&  tds)
 {
+  typedef typename Tds::Edge     Edge;
+  typedef typename Tds::Vertex   Vertex;
+  typedef typename Tds::Face     Face;
+  typedef typename Tds::Vertex_handle   Vertex_handle;
+  typedef typename Tds::Face_handle     Face_handle;
+
   typedef typename Tds::Vertex_iterator   Vertex_iterator;
   typedef typename Tds::Face_iterator     Face_iterator;
   typedef typename Tds::Edge_iterator     Edge_iterator;
@@ -367,12 +373,21 @@ _test_tds_circulators( const Tds&  tds)
   int countv = 0;
   int countvv = 0;
 
+  Vertex v;
+  Face f;
+  Edge e;
+  Face_handle fh;
+  Vertex_handle vh;
+
   for( Vertex_iterator vit = tds.vertices_begin();
 	               vit != tds.vertices_end(); vit++) {
     
     Face_circulator fc = vit->incident_faces(), fdone(fc);
     if (! fc.is_empty()) {
       do {
+	f = *fc;
+	fh = fc;
+	vh = fc->vertex(0);
 	countf +=1;
       } while (++fc != fdone);
     }
@@ -380,6 +395,8 @@ _test_tds_circulators( const Tds&  tds)
     Edge_circulator ec = vit->incident_edges(), edone(ec);
     if (! ec.is_empty()) {
       do {
+	e = *ec;
+	fh = ec->first;
 	counte +=1;
       } while (++ec != edone);
     }
@@ -388,6 +405,9 @@ _test_tds_circulators( const Tds&  tds)
     Vertex_circulator vc = vit->incident_vertices(), vdone(vc);
     if (! vc.is_empty()) {
       do {
+	v = *vc;
+	vh = vc;
+	fh = vc->face();
 	countv +=1;
 	countvv +=1;
       } while (++vc != vdone);
@@ -409,6 +429,8 @@ _test_tds_iterators( const Tds&  tds)
   typedef typename Tds::Edge     Edge;
   typedef typename Tds::Vertex   Vertex;
   typedef typename Tds::Face     Face;
+  typedef typename Tds::Vertex_handle   Vertex_handle;
+  typedef typename Tds::Face_handle     Face_handle;
 
   typedef typename Tds::Vertex_iterator   Vertex_iterator;
   typedef typename Tds::Face_iterator     Face_iterator;
@@ -421,25 +443,15 @@ _test_tds_iterators( const Tds&  tds)
   Vertex v;
   Face f;
   Edge e;
-
-//   for (Iterator_base itbp = tds.iterator_base_begin();
-//        itbp != tds.iterator_base_end();
-//        ++itbp) {
-//    f = *itbp;
-//    nb += 1;
-//   }
-//   assert(nb == tds.number_of_full_dim_faces());
-//   for (Iterator_base itbm = tds.iterator_base_end();
-//        itbm != tds.iterator_base_begin();
-//        --itbm) {
-//     nb -= 1;
-//   }
-//   assert(nb == 0);
+  Face_handle fh;
+  Vertex_handle vh;
 
   for (Vertex_iterator vitp = tds.vertices_begin();
        vitp != tds.vertices_end();
        ++vitp) {
    v = *vitp;
+   vh = vitp;
+   fh = vitp->face();
    nv += 1;
   }
   assert(nv == tds.number_of_vertices());
@@ -455,6 +467,8 @@ _test_tds_iterators( const Tds&  tds)
        fitp != tds.faces_end();
        ++fitp) {
     f = *fitp;
+    fh = fitp;
+    vh = fitp->vertex(0);
     nf += 1;
   }
   assert(nf == tds.number_of_faces());
@@ -469,6 +483,7 @@ _test_tds_iterators( const Tds&  tds)
        eitp != tds.edges_end();
        ++eitp) {
     e = *eitp;
+    fh = eitp->first;
     ne += 1;
   }
   assert(ne == tds.number_of_edges());
