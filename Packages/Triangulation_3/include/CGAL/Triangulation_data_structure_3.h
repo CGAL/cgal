@@ -222,8 +222,8 @@ public:
   template <class It>
   void delete_cells(It begin, It end)
   {
-      for(It i = begin; i != end; ++i)
-	  delete_cell(*i);
+      for(; begin != end; ++begin)
+	  delete_cell((*begin)->handle());
   }
 
   // QUERIES
@@ -1398,7 +1398,7 @@ print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
 }
 
 template <class Vb, class Cb >
-Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
+typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb>::
 insert_in_cell( Vertex_handle v, Cell_handle c )
 {
@@ -1445,7 +1445,7 @@ insert_in_cell( Vertex_handle v, Cell_handle c )
 }
 
 template <class Vb, class Cb >
-Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
+typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb>::
 insert_in_facet(Vertex_handle v, Cell_handle c, int i)
 { // inserts v in the facet opposite to vertex i of cell c
@@ -1557,7 +1557,7 @@ insert_in_facet(Vertex_handle v, Cell_handle c, int i)
 // end insert_in_facet
 
 template <class Vb, class Cb >
-Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
+typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb>::
 insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)   
   // inserts v in the edge of cell c with vertices i and j
@@ -1649,7 +1649,7 @@ insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)
 }// end insert_in_edge
 
 template <class Vb, class Cb >
-Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
+typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb>::
 insert_increase_dimension(Vertex_handle v, // new vertex
 			  Vertex_handle star,
@@ -2040,7 +2040,7 @@ is_valid(bool verbose, int level ) const
 }
 
 template <class Vb, class Cb >
-Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
+typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb>::
 copy_tds(const Tds & tds, Vertex_handle vert )
   // returns the new vertex corresponding to vert in the new tds 

@@ -47,7 +47,7 @@ class Power_test_3
 {
 public:
   typedef Oriented_side  result_type;
-  typedef Weighted_point <Point, Weight>        Weighted_point;
+  typedef CGAL::Weighted_point <Point, Weight>        Weighted_point;
 
   Oriented_side operator() ( const Weighted_point & p,
 			     const Weighted_point & q,
@@ -80,16 +80,16 @@ class Regular_triangulation_euclidean_traits_3
   : public Repres
 {
 public:
-  typedef typename Repres::Point_3 Bare_point;
-  typedef Weighted_point <Bare_point, Weight>   Weighted_point;
-  typedef Weighted_point                        Point_3;
+  typedef typename Repres::Point_3                   Bare_point;
+  typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
+  typedef Weighted_point                             Point_3;
 
   // The next typedef is there for backward compatibility
   // Some users take their point type from the traits class.
   // Before this type was Point
   typedef Point_3 Point;
 
-  typedef Power_test_3<Bare_point, Weight> Power_test_3;
+  typedef CGAL::Power_test_3<Bare_point, Weight> Power_test_3;
   
   Power_test_3 
   power_test_3_object() const

@@ -411,13 +411,33 @@ public:
     }
 
   // MODIFIERS
-  bool flip(const Facet &f);
+  bool flip(const Facet &f)
+  // returns false if the facet is not flippable
+  // true other wise and
+  // flips facet i of cell c
+  // c will be replaced by one of the new cells
+  {
+    return flip( f.first, f.second);
+  }
   bool flip(Cell_handle c, int i);
-  void flip_flippable(const Facet &f);
+  void flip_flippable(const Facet &f)
+  {
+    return flip_flippable( f.first, f.second);
+  }
   void flip_flippable(Cell_handle c, int i);
-  bool flip(const Edge &e);
+  bool flip(const Edge &e)
+  // returns false if the edge is not flippable
+  // true otherwise and
+  // flips edge i,j of cell c
+  // c will be deleted
+  {
+    return flip( e.first, e.second, e.third );
+  }
   bool flip(Cell_handle c, int i, int j);
-  void flip_flippable(const Edge &e);
+  void flip_flippable(const Edge &e)
+  {
+    return flip_flippable( e.first, e.second, e.third );
+  }
   void flip_flippable(Cell_handle c, int i, int j);
 
   //INSERTION 
@@ -1959,19 +1979,6 @@ side_of_edge(const Point & p,
 }
 
 template < class GT, class Tds >
-inline
-bool
-Triangulation_3<GT,Tds>::
-flip(const Facet &f)
-  // returns false if the facet is not flippable
-  // true other wise and
-  // flips facet i of cell c
-  // c will be replaced by one of the new cells
-{
-  return flip( f.first, f.second);
-}
-
-template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds>::
 flip( Cell_handle c, int i )
@@ -2020,15 +2027,6 @@ flip( Cell_handle c, int i )
 
   _tds.flip_flippable(c, i);
   return true;
-}
-
-template < class GT, class Tds >
-inline
-void
-Triangulation_3<GT,Tds>::
-flip_flippable(const Facet &f)
-{
-  return flip_flippable( f.first, f.second);
 }
 
 template < class GT, class Tds >
@@ -2082,19 +2080,6 @@ flip_flippable( Cell_handle c, int i )
 }
 
 template < class GT, class Tds >
-inline
-bool
-Triangulation_3<GT,Tds>::
-flip(const Edge &e)
-  // returns false if the edge is not flippable
-  // true otherwise and
-  // flips edge i,j of cell c
-  // c will be deleted
-{
-  return flip( e.first, e.second, e.third );
-}
-
-template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds>::
 flip( Cell_handle c, int i, int j )
@@ -2135,15 +2120,6 @@ flip( Cell_handle c, int i, int j )
 
   _tds.flip_flippable(c, i, j);
   return true;
-}
-
-template < class GT, class Tds >
-inline
-void
-Triangulation_3<GT,Tds>::
-flip_flippable(const Edge &e)
-{
-  return flip_flippable( e.first, e.second, e.third );
 }
 
 template < class GT, class Tds >

@@ -3,6 +3,7 @@ Version 1.88 (?? September 01)
 - New internal function in Delaunay : nearest_vertex_in_cell().
 - Compare_distance_3 is now required by Delaunay (moved from Hierarchy).
 - Compare_[xyz]_3 and Equal_3 are replaced by Compare_xyz_3.
+- SunPro fixes.
 
 Version 1.87 (11 September 01)
 - Remove deprecated code.
