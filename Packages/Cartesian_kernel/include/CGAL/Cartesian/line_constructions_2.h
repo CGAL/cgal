@@ -27,48 +27,46 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
+template < class K >
 inline
-LineC2<R>
-line_from_points(const PointC2<R> &p,
-                 const PointC2<R> &q)
+LineC2<K>
+line_from_points(const PointC2<K> &p,
+                 const PointC2<K> &q)
 {
-  typename R::FT a, b, c;
+  typename K::FT a, b, c;
   line_from_pointsC2(p.x(), p.y(), q.x(), q.y(), a, b, c);
-  return LineC2<R>(a, b, c);
+  return LineC2<K>(a, b, c);
 }
 
-template < class R >
+template < class K >
 inline
-LineC2<R>
-line_from_point_direction(const PointC2<R> &p,
-                          const DirectionC2<R> &d)
+LineC2<K>
+line_from_point_direction(const PointC2<K> &p,
+                          const DirectionC2<K> &d)
 {
-  typename R::FT a, b, c;
+  typename K::FT a, b, c;
   line_from_point_directionC2(p.x(), p.y(), d.dx(), d.dy(), a, b, c);
-  return LineC2<R>(a, b, c);
+  return LineC2<K>(a, b, c);
 }
 
-template < class R >
+template < class K >
 inline
-LineC2<R>
-bisector(const PointC2<R> &p,
-         const PointC2<R> &q)
+LineC2<K>
+bisector(const PointC2<K> &p,
+         const PointC2<K> &q)
 {
-  typename R::FT a, b, c;
-  bisector_of_pointsC2(p.x(), p.y(), q.x(), q.y(), a, b, c);
-  return LineC2<R>(a, b, c);
+  return K().construct_bisector_2_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
-LineC2<R>
-perpendicular_through_point(const LineC2<R> &l,
-                            const PointC2<R> &p)
+LineC2<K>
+perpendicular_through_point(const LineC2<K> &l,
+                            const PointC2<K> &p)
 {
-  typename R::FT a, b, c;
+  typename K::FT a, b, c;
   perpendicular_through_pointC2(l.a(), l.b(), p.x(), p.y(), a, b, c);
-  return LineC2<R>(a, b, c);
+  return LineC2<K>(a, b, c);
 }
 
 CGAL_END_NAMESPACE

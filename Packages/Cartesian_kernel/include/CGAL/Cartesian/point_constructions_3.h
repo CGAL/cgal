@@ -27,124 +27,103 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-typename R::Point_3
-midpoint(const PointC3<R> &p,
-         const PointC3<R> &q)
+template < class K >
+inline
+typename K::Point_3
+midpoint(const PointC3<K> &p,
+         const PointC3<K> &q)
 {
-  typename R::FT x, y, z;
-  typedef typename R::Point_3 Point_3;
-  midpointC3(p.x(), p.y(), p.z(), q.x(), q.y(), q.z(), x, y, z);
-  return Point_3(x, y, z);
+  return K().construct_midpoint_3_object()(p, q);
 }
 
-template < class R >
-PointC3<R>
-centroid(const PointC3<R> &p,
-         const PointC3<R> &q,
-         const PointC3<R> &r,
-         const PointC3<R> &s)
+template < class K >
+inline
+PointC3<K>
+centroid(const PointC3<K> &p,
+         const PointC3<K> &q,
+         const PointC3<K> &r,
+         const PointC3<K> &s)
 {
-  typename R::FT x, y, z;
-  centroidC3(p.x(), p.y(), p.z(),
-             q.x(), q.y(), q.z(),
-             r.x(), r.y(), r.z(),
-             s.x(), s.y(), s.z(),
-             x, y, z);
-  return PointC3<R>(x, y, z);
+  return K().construct_centroid_3_object()(p, q, r, s);
 }
 
-template < class R >
-PointC3<R>
-centroid(const PointC3<R> &p,
-         const PointC3<R> &q,
-         const PointC3<R> &r)
+template < class K >
+inline
+PointC3<K>
+centroid(const PointC3<K> &p,
+         const PointC3<K> &q,
+         const PointC3<K> &r)
 {
-  typename R::FT x, y, z;
-  centroidC3(p.x(), p.y(), p.z(),
-             q.x(), q.y(), q.z(),
-             r.x(), r.y(), r.z(),
-             x, y, z);
-  return PointC3<R>(x, y, z);
+  return K().construct_centroid_3_object()(p, q, r);
 }
 
-template < class R >
-PointC3<R>
-circumcenter(const PointC3<R> &p,
-             const PointC3<R> &q,
-             const PointC3<R> &r,
-             const PointC3<R> &s)
+template < class K >
+inline
+PointC3<K>
+circumcenter(const PointC3<K> &p,
+             const PointC3<K> &q,
+             const PointC3<K> &r,
+             const PointC3<K> &s)
 {
-  typename R::FT x, y, z;
-  circumcenterC3(p.x(), p.y(), p.z(),
-                 q.x(), q.y(), q.z(),
-                 r.x(), r.y(), r.z(),
-                 s.x(), s.y(), s.z(),
-                 x, y, z);
-  return PointC3<R>(x, y, z);
+  return K().construct_circumcenter_3_object()(p, q, r, s);
 }
 
-template < class R >
-PointC3<R>
-circumcenter(const PointC3<R> &p,
-             const PointC3<R> &q,
-             const PointC3<R> &r)
+template < class K >
+inline
+PointC3<K>
+circumcenter(const PointC3<K> &p,
+             const PointC3<K> &q,
+             const PointC3<K> &r)
 {
-  typename R::FT x, y, z;
-  circumcenterC3(p.x(), p.y(), p.z(),
-                 q.x(), q.y(), q.z(),
-                 r.x(), r.y(), r.z(),
-                 x, y, z);
-  return PointC3<R>(x, y, z);
+  return K().construct_circumcenter_3_object()(p, q, r);
 }
 
-template <class R>
+template <class K>
 CGAL_KERNEL_LARGE_INLINE
-PointC3<R>
-point_on_line(int i, const LineC3<R> &l)
+PointC3<K>
+point_on_line(int i, const LineC3<K> &l)
 {
-  typename R::FT x, y, z;
+  typename K::FT x, y, z;
   point_on_lineC3(l.point().x(), l.point().y(), l.point().z(),
                   l.direction().dx(), l.direction().dy(), l.direction().dz(),
                   i, x, y, z);
-  return PointC3<R>(x, y, z);
+  return PointC3<K>(x, y, z);
 }
 
-template <class R>
+template <class K>
 CGAL_KERNEL_LARGE_INLINE
-PointC3<R>
-projection_line(const PointC3<R> &p, const LineC3<R> &l)
+PointC3<K>
+projection_line(const PointC3<K> &p, const LineC3<K> &l)
 {
-  typename R::FT x, y, z;
+  typename K::FT x, y, z;
   projection_lineC3(p.x(), p.y(), p.z(),
 		    l.point().x(), l.point().y(), l.point().z(),
                     l.direction().dx(), l.direction().dy(), l.direction().dz(),
                     x, y, z);
-  return PointC3<R>(x, y, z);
+  return PointC3<K>(x, y, z);
 }
 
-template <class R>
+template <class K>
 CGAL_KERNEL_LARGE_INLINE
-PointC3<R>
-point_on_plane(const PlaneC3<R> &p)
+PointC3<K>
+point_on_plane(const PlaneC3<K> &p)
 {
-  typename R::FT x, y, z;
+  typename K::FT x, y, z;
   point_on_planeC3(p.a(), p.b(), p.c(), p.d(), x, y, z);
-  return PointC3<R>(x, y, z);
+  return PointC3<K>(x, y, z);
 }
 
-template <class R>
+template <class K>
 CGAL_KERNEL_LARGE_INLINE
-PointC3<R>
-projection_plane(const PointC3<R> &p,
-                 const PlaneC3<R> &h)
+PointC3<K>
+projection_plane(const PointC3<K> &p,
+                 const PlaneC3<K> &h)
 {
-  typename R::FT x, y, z;
+  typename K::FT x, y, z;
   projection_planeC3(h.a(), h.b(), h.c(), h.d(),
                      p.x(), p.y(), p.z(),
                      x, y, z);
-  return PointC3<R>(x, y, z);
+  return PointC3<K>(x, y, z);
 }
 
 CGAL_END_NAMESPACE

@@ -28,38 +28,30 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
+template < class K >
+inline
 Comparison_result
-compare_slopes(const SegmentC2<R> &s1,
-               const SegmentC2<R> &s2)
+compare_slopes(const SegmentC2<K> &s1, const SegmentC2<K> &s2)
 {
-   return compare_slopesC2(s1.source().x(), s1.source().y(),
-                           s1.target().x(), s1.target().y(),
-                           s2.source().x(), s2.source().y(),
-                           s2.target().x(), s2.target().y());
+  return K().compare_slope_2_object()(s1, s2);
 }
 
-template < class R >
+template < class K >
+inline
 Comparison_result
-compare_y_at_x(const PointC2<R> &p,
-               const SegmentC2<R> &s)
+compare_y_at_x(const PointC2<K> &p, const SegmentC2<K> &s)
 {
-    return compare_y_at_xC2(p.x(), p.y(),
-	                    s.source().x(), s.source().y(),
-	                    s.target().x(), s.target().y());
+  return K().compare_y_at_x_2_object()(p, s);
 }
 
-template < class R >
+template < class K >
+inline
 Comparison_result
-compare_y_at_x(const PointC2<R> &p,
-               const SegmentC2<R> &s1,
-               const SegmentC2<R> &s2)
+compare_y_at_x(const PointC2<K> &p,
+               const SegmentC2<K> &s1,
+               const SegmentC2<K> &s2)
 {
-    return compare_y_at_x_segment_C2(p.x(),
-	                    s1.source().x(), s1.source().y(),
-	                    s1.target().x(), s1.target().y(),
-	                    s2.source().x(), s2.source().y(),
-	                    s2.target().x(), s2.target().y());
+  return K().compare_y_at_x_2_object()(p, s1, s2);
 }
 
 CGAL_END_NAMESPACE

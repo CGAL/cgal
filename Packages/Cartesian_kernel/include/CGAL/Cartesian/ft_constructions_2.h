@@ -24,64 +24,64 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
+template < class K >
 inline
-typename R::FT
-squared_distance(const PointC2<R> &p,
-                 const PointC2<R> &q)
+typename K::FT
+squared_distance(const PointC2<K> &p,
+                 const PointC2<K> &q)
 {
   return squared_distanceC2(p.x(), p.y(), q.x(), q.y());
 }
 
-template < class R >
+template < class K >
 inline
-typename R::FT
-scaled_distance_to_line(const LineC2<R> &l,
-                        const PointC2<R> &p)
+typename K::FT
+scaled_distance_to_line(const LineC2<K> &l,
+                        const PointC2<K> &p)
 {
   return scaled_distance_to_lineC2(l.a(), l.b(), l.c(), p.x(), p.y());
 }
 
-template < class R >
+template < class K >
 inline
-typename R::FT
-scaled_distance_to_line(const PointC2<R> &p,
-                        const PointC2<R> &q,
-                        const PointC2<R> &r)
+typename K::FT
+scaled_distance_to_line(const PointC2<K> &p,
+                        const PointC2<K> &q,
+                        const PointC2<K> &r)
 {
   return scaled_distance_to_lineC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
-template < class R >
+template < class K >
 inline
-typename R::FT
-line_y_at_x(const LineC2<R> &l, const typename R::FT &x)
+typename K::FT
+line_y_at_x(const LineC2<K> &l, const typename K::FT &x)
 {
   return line_y_at_xC2(l.a(), l.b(), l.c(), x);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::FT
-line_x_at_y(const LineC2<R> &l, const typename R::FT &y)
+typename K::FT
+line_x_at_y(const LineC2<K> &l, const typename K::FT &y)
 {
   return line_y_at_xC2(l.b(), l.a(), l.c(), y);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::FT
-squared_radius(const PointC2<R> &p, const PointC2<R> &q, const PointC2<R> &r)
+typename K::FT
+squared_radius(const PointC2<K> &p, const PointC2<K> &q, const PointC2<K> &r)
 {
-  return squared_radiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
+  return K().compute_squared_radius_2_object()(p, q, r);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::FT
-squared_radius(const PointC2<R> &p, const PointC2<R> &q)
+typename K::FT
+squared_radius(const PointC2<K> &p, const PointC2<K> &q)
 {
-  return squared_radiusC2(p.x(), p.y(), q.x(), q.y());
+  return K().compute_squared_radius_2_object()(p, q);
 }
 
 CGAL_END_NAMESPACE

@@ -70,11 +70,6 @@ public:
       initialize_with(rep(hx, hy));
   }
 
-  bool operator==(const VectorC2 &v) const;
-  bool operator!=(const VectorC2 &v) const;
-  bool operator==(const Null_vector &) const;
-  bool operator!=(const Null_vector &p) const;
-
   const FT & x() const
   {
       return Ptr()->e0;
@@ -123,36 +118,50 @@ public:
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
-VectorC2<R>::operator==(const VectorC2<R> &v) const
+bool 
+operator==(const VectorC2<R> &v, const VectorC2<R> &w)
 {
-  if (identical(v))
-      return true;
-  return x() == v.x() && y() == v.y();
+  return w.x() == v.x() && w.y() == v.y();
+}
+
+template < class R >
+inline
+bool 
+operator!=(const VectorC2<R> &v, const VectorC2<R> &w)
+{
+  return !(v == w);
 }
 
 template < class R >
 inline
 bool
-VectorC2<R>::operator!=(const VectorC2<R> &v) const
+operator==(const VectorC2<R> &v, const Null_vector &)
 {
-  return !(*this == v);
+  return CGAL_NTS is_zero(v.x()) && CGAL_NTS is_zero(v.y());
 }
 
 template < class R >
 inline
 bool
-VectorC2<R>::operator==(const Null_vector &) const
+operator==(const Null_vector &n, const VectorC2<R> &v)
 {
-  return CGAL_NTS is_zero(x()) && CGAL_NTS is_zero(y());
+  return v == n;
 }
 
 template < class R >
 inline
 bool
-VectorC2<R>::operator!=(const Null_vector &v) const
+operator!=(const VectorC2<R> &v, const Null_vector &n)
 {
-  return !(*this == v);
+  return !(v == n);
+}
+
+template < class R >
+inline
+bool
+operator!=(const Null_vector &n, const VectorC2<R> &v)
+{
+  return !(v == n);
 }
 
 template < class R >
@@ -197,11 +206,11 @@ VectorC2<R>::operator-(const VectorC2<R> &w) const
 }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 typename VectorC2<R>::Vector_2
 VectorC2<R>::operator-() const
 {
-  return VectorC2<R>(-x(), -y());
+  return R().construct_opposite_vector_2_object()(*this);
 }
 
 template < class R >

@@ -70,12 +70,6 @@ public:
       initialize_with(rep(x, y, z));
   }
 
-  bool operator==(const VectorC3 &p) const;
-  bool operator!=(const VectorC3 &p) const;
-
-  bool operator==(const Null_vector &) const;
-  bool operator!=(const Null_vector &) const;
-
   const FT & x() const
   {
       return Ptr()->e0;
@@ -131,36 +125,50 @@ public:
 template < class R >
 inline
 bool
-VectorC3<R>::operator==(const VectorC3<R> &v) const
+operator==(const VectorC3<R> &v, const VectorC3<R> &w)
 {
-  if (identical(v))
-      return true;
-  return x() == v.x() && y() == v.y() && z() == v.z();
+  return w.x() == v.x() && w.y() == v.y() && w.z() == v.z();
 }
 
 template < class R >
 inline
 bool
-VectorC3<R>::operator!=(const VectorC3<R> &v) const
+operator!=(const VectorC3<R> &v, const VectorC3<R> &w)
 {
-  return !(*this == v);
+  return !(v == w);
 }
 
 template < class R >
 inline
 bool
-VectorC3<R>::operator==(const Null_vector &) const
+operator==(const VectorC3<R> &v, const Null_vector &) 
 {
-  return CGAL_NTS is_zero(x()) && CGAL_NTS is_zero(y()) &&
-         CGAL_NTS is_zero(z());
+  return CGAL_NTS is_zero(v.x()) && CGAL_NTS is_zero(v.y()) &&
+         CGAL_NTS is_zero(v.z());
 }
 
 template < class R >
 inline
 bool
-VectorC3<R>::operator!=(const Null_vector &v) const
+operator==(const Null_vector &n, const VectorC3<R> &v) 
 {
-  return !(*this == v);
+  return v == n;
+}
+
+template < class R >
+inline
+bool
+operator!=(const VectorC3<R> &v, const Null_vector &n)
+{
+  return !(v == n);
+}
+
+template < class R >
+inline
+bool
+operator!=(const Null_vector &n, const VectorC3<R> &v)
+{
+  return !(v == n);
 }
 
 template < class R >
@@ -212,7 +220,7 @@ inline
 typename VectorC3<R>::Vector_3
 VectorC3<R>::operator-() const
 {
-  return Vector_3(-x(), -y(), -z());
+  return R().construct_opposite_vector_3_object()(*this);
 }
 
 template < class R >

@@ -26,20 +26,20 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
+template < class K >
 inline
 Oriented_side
-side_of_oriented_plane(const PlaneC3<R> &h,
-                       const PointC3<R> &p)
+side_of_oriented_plane(const PlaneC3<K> &h,
+                       const PointC3<K> &p)
 { 
   return side_of_oriented_planeC3(h.a(), h.b(), h.c(), h.d(),
 	                          p.x(), p.y(), p.z());
 }
 
-template < class R >
+template < class K >
 inline
 bool
-equal_plane(const PlaneC3<R> &h, const PlaneC3<R> &p)
+equal_plane(const PlaneC3<K> &h, const PlaneC3<K> &p)
 { 
   return equal_planeC3(h.a(), h.b(), h.c(), h.d(),
 	               p.a(), p.b(), p.c(), p.d());

@@ -28,86 +28,80 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-CGAL_KERNEL_LARGE_INLINE
+template < class K >
+inline
 Comparison_result
-compare_distance_to_point(const PointC3<R> &p,
-                          const PointC3<R> &q,
-                          const PointC3<R> &r)
+compare_distance_to_point(const PointC3<K> &p,
+                          const PointC3<K> &q,
+                          const PointC3<K> &r)
 {
-  return cmp_dist_to_pointC3(p.x(), p.y(), p.z(),
-                             q.x(), q.y(), q.z(),
-                             r.x(), r.y(), r.z());
+  return K().compare_distance_3_object()(p, q, r);
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 bool
-has_larger_distance_to_point(const PointC3<R> &p,
-                             const PointC3<R> &q,
-                             const PointC3<R> &r)
+has_larger_distance_to_point(const PointC3<K> &p,
+                             const PointC3<K> &q,
+                             const PointC3<K> &r)
 {
   return has_larger_dist_to_pointC3(p.x(), p.y(), p.z(),
                                     q.x(), q.y(), q.z(),
                                     r.x(), r.y(), r.z());
 }
 
-template < class R >
-CGAL_KERNEL_LARGE_INLINE
+template < class K >
+inline
 bool
-has_smaller_distance_to_point(const PointC3<R> &p,
-                              const PointC3<R> &q,
-                              const PointC3<R> &r)
+has_smaller_distance_to_point(const PointC3<K> &p,
+                              const PointC3<K> &q,
+                              const PointC3<K> &r)
 {
-  return has_smaller_dist_to_pointC3(p.x(), p.y(), p.z(),
-                                     q.x(), q.y(), q.z(),
-                                     r.x(), r.y(), r.z());
+  return K().less_distance_to_point_3_object()(p, q, r);
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 Comparison_result
-compare_signed_distance_to_plane(const PlaneC3<R> &h,
-                                 const PointC3<R> &p,
-                                 const PointC3<R> &q)
+compare_signed_distance_to_plane(const PlaneC3<K> &h,
+                                 const PointC3<K> &p,
+                                 const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return cmp_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
                                         p.x(), p.y(), p.z(),
                                         q.x(), q.y(), q.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 bool
-has_larger_signed_distance_to_plane(const PlaneC3<R> &h,
-                                    const PointC3<R> &p,
-                                    const PointC3<R> &q)
+has_larger_signed_distance_to_plane(const PlaneC3<K> &h,
+                                    const PointC3<K> &p,
+                                    const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return has_larger_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
                                                p.x(), p.y(), p.z(),
                                                q.x(), q.y(), q.z());
 }
 
-template < class R >
-CGAL_KERNEL_LARGE_INLINE
+template < class K >
+inline
 bool
-has_smaller_signed_distance_to_plane(const PlaneC3<R> &h,
-                                     const PointC3<R> &p,
-                                     const PointC3<R> &q)
-{ // FIXME : probably not compiled by the test-suite.
-  return has_smaller_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
-                                                p.x(), p.y(), p.z(),
-                                                q.x(), q.y(), q.z());
+has_smaller_signed_distance_to_plane(const PlaneC3<K> &h,
+                                     const PointC3<K> &p,
+                                     const PointC3<K> &q)
+{ 
+  return K().less_signed_distance_to_plane_3_object()(h, p, q);
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 Comparison_result
-compare_signed_distance_to_plane(const PointC3<R> &hp,
-                                 const PointC3<R> &hq,
-                                 const PointC3<R> &hr,
-                                 const PointC3<R> &p,
-                                 const PointC3<R> &q)
+compare_signed_distance_to_plane(const PointC3<K> &hp,
+                                 const PointC3<K> &hq,
+                                 const PointC3<K> &hr,
+                                 const PointC3<K> &p,
+                                 const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return cmp_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
                                     hq.x(), hq.y(), hq.z(),
@@ -116,14 +110,14 @@ compare_signed_distance_to_plane(const PointC3<R> &hp,
                                     q.x(),  q.y(),  q.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 bool
-has_larger_signed_distance_to_plane(const PointC3<R> &hp,
-                                    const PointC3<R> &hq,
-                                    const PointC3<R> &hr,
-                                    const PointC3<R> &p,
-                                    const PointC3<R> &q)
+has_larger_signed_distance_to_plane(const PointC3<K> &hp,
+                                    const PointC3<K> &hq,
+                                    const PointC3<K> &hr,
+                                    const PointC3<K> &p,
+                                    const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return has_larger_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
                                            hq.x(), hq.y(), hq.z(),
@@ -132,14 +126,14 @@ has_larger_signed_distance_to_plane(const PointC3<R> &hp,
                                            q.x(),  q.y(),  q.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 bool
-has_smaller_signed_distance_to_plane(const PointC3<R> &hp,
-                                     const PointC3<R> &hq,
-                                     const PointC3<R> &hr,
-                                     const PointC3<R> &p,
-                                     const PointC3<R> &q)
+has_smaller_signed_distance_to_plane(const PointC3<K> &hp,
+                                     const PointC3<K> &hq,
+                                     const PointC3<K> &hr,
+                                     const PointC3<K> &p,
+                                     const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return has_smaller_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
                                             hq.x(), hq.y(), hq.z(),
@@ -149,86 +143,86 @@ has_smaller_signed_distance_to_plane(const PointC3<R> &hp,
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 Comparison_result
-cmp_dist_to_point(const PointC3<R> &p,
-                  const PointC3<R> &q,
-                  const PointC3<R> &r)
+cmp_dist_to_point(const PointC3<K> &p,
+                  const PointC3<K> &q,
+                  const PointC3<K> &r)
 {
   return cmp_dist_to_pointC3(p.x(), p.y(), p.z(),
                              q.x(), q.y(), q.z(),
                              r.x(), r.y(), r.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 bool
-has_larger_dist_to_point(const PointC3<R> &p,
-                         const PointC3<R> &q,
-                         const PointC3<R> &r)
+has_larger_dist_to_point(const PointC3<K> &p,
+                         const PointC3<K> &q,
+                         const PointC3<K> &r)
 {
   return has_larger_dist_to_pointC3(p.x(), p.y(), p.z(),
                                     q.x(), q.y(), q.z(),
                                     r.x(), r.y(), r.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 bool
-has_smaller_dist_to_point(const PointC3<R> &p,
-                          const PointC3<R> &q,
-                          const PointC3<R> &r)
+has_smaller_dist_to_point(const PointC3<K> &p,
+                          const PointC3<K> &q,
+                          const PointC3<K> &r)
 {
   return has_smaller_dist_to_pointC3(p.x(), p.y(), p.z(),
                                      q.x(), q.y(), q.z(),
                                      r.x(), r.y(), r.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 Comparison_result
-cmp_signed_dist_to_plane(const PlaneC3<R> &h,
-                         const PointC3<R> &p,
-                         const PointC3<R> &q)
+cmp_signed_dist_to_plane(const PlaneC3<K> &h,
+                         const PointC3<K> &p,
+                         const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return cmp_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
                                         p.x(), p.y(), p.z(),
                                         q.x(), q.y(), q.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 bool
-has_larger_signed_dist_to_plane(const PlaneC3<R> &h,
-                                const PointC3<R> &p,
-                                const PointC3<R> &q)
+has_larger_signed_dist_to_plane(const PlaneC3<K> &h,
+                                const PointC3<K> &p,
+                                const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return has_larger_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
                                                p.x(), p.y(), p.z(),
                                                q.x(), q.y(), q.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 bool
-has_smaller_signed_dist_to_plane(const PlaneC3<R> &h,
-                                 const PointC3<R> &p,
-                                 const PointC3<R> &q)
+has_smaller_signed_dist_to_plane(const PlaneC3<K> &h,
+                                 const PointC3<K> &p,
+                                 const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return has_smaller_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
                                                 p.x(), p.y(), p.z(),
                                                 q.x(), q.y(), q.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 Comparison_result
-cmp_signed_dist_to_plane(const PointC3<R> &hp,
-                         const PointC3<R> &hq,
-                         const PointC3<R> &hr,
-                         const PointC3<R> &p,
-                         const PointC3<R> &q)
+cmp_signed_dist_to_plane(const PointC3<K> &hp,
+                         const PointC3<K> &hq,
+                         const PointC3<K> &hr,
+                         const PointC3<K> &p,
+                         const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return cmp_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
                                     hq.x(), hq.y(), hq.z(),
@@ -237,14 +231,14 @@ cmp_signed_dist_to_plane(const PointC3<R> &hp,
                                     q.x(),  q.y(),  q.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 bool
-has_larger_signed_dist_to_plane(const PointC3<R> &hp,
-                                const PointC3<R> &hq,
-                                const PointC3<R> &hr,
-                                const PointC3<R> &p,
-                                const PointC3<R> &q)
+has_larger_signed_dist_to_plane(const PointC3<K> &hp,
+                                const PointC3<K> &hq,
+                                const PointC3<K> &hr,
+                                const PointC3<K> &p,
+                                const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return has_larger_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
                                            hq.x(), hq.y(), hq.z(),
@@ -253,14 +247,14 @@ has_larger_signed_dist_to_plane(const PointC3<R> &hp,
                                            q.x(),  q.y(),  q.z());
 }
 
-template < class R >
+template < class K >
 CGAL_KERNEL_LARGE_INLINE
 bool
-has_smaller_signed_dist_to_plane(const PointC3<R> &hp,
-                                 const PointC3<R> &hq,
-                                 const PointC3<R> &hr,
-                                 const PointC3<R> &p,
-                                 const PointC3<R> &q)
+has_smaller_signed_dist_to_plane(const PointC3<K> &hp,
+                                 const PointC3<K> &hq,
+                                 const PointC3<K> &hr,
+                                 const PointC3<K> &p,
+                                 const PointC3<K> &q)
 { // FIXME : probably not compiled by the test-suite.
   return has_smaller_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
                                             hq.x(), hq.y(), hq.z(),

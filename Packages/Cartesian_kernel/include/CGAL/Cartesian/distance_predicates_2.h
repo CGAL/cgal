@@ -26,208 +26,208 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R >
+template <class K >
 inline
 Comparison_result
-compare_distance_to_point(const PointC2<R>& p,
-                          const PointC2<R>& q,
-                          const PointC2<R>& r)
+compare_distance_to_point(const PointC2<K>& p,
+                          const PointC2<K>& q,
+                          const PointC2<K>& r)
 {
-  return cmp_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
+  return K().compare_distance_2_object()(p, q, r);
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_larger_distance_to_point(const PointC2<R>& p,
-                             const PointC2<R>& q,
-                             const PointC2<R>& r)
+has_larger_distance_to_point(const PointC2<K>& p,
+                             const PointC2<K>& q,
+                             const PointC2<K>& r)
 {
   return has_larger_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_smaller_distance_to_point(const PointC2<R>& p,
-                              const PointC2<R>& q,
-                              const PointC2<R>& r)
+has_smaller_distance_to_point(const PointC2<K>& p,
+                              const PointC2<K>& q,
+                              const PointC2<K>& r)
 {
-  return has_smaller_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
+  return K().less_distance_to_point_2_object()(p, q, r);
 }
 
-template <class R>
+template <class K>
 inline
 Comparison_result
-compare_signed_distance_to_line(const LineC2<R>&  l,
-                                const PointC2<R>& p,
-                                const PointC2<R>& q)
+compare_signed_distance_to_line(const LineC2<K>&  l,
+                                const PointC2<K>& p,
+                                const PointC2<K>& q)
 {
   return cmp_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
                                         q.x(), q.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_larger_signed_distance_to_line(const LineC2<R>&  l,
-                                   const PointC2<R>& p,
-                                   const PointC2<R>& q)
+has_larger_signed_distance_to_line(const LineC2<K>&  l,
+                                   const PointC2<K>& p,
+                                   const PointC2<K>& q)
 {
   return has_larger_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
                                                q.x(), q.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_smaller_signed_distance_to_line(const LineC2<R>&  l,
-                                    const PointC2<R>& p,
-                                    const PointC2<R>& q)
+has_smaller_signed_distance_to_line(const LineC2<K>&  l,
+                                    const PointC2<K>& p,
+                                    const PointC2<K>& q)
 {
   return has_smaller_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
                                                 q.x(), q.y());
 }
 
-template <class R>
+template <class K>
 inline
 Comparison_result
-compare_signed_distance_to_line(const PointC2<R>& p,
-                                const PointC2<R>& q,
-                                const PointC2<R>& r,
-                                const PointC2<R>& s)
+compare_signed_distance_to_line(const PointC2<K>& p,
+                                const PointC2<K>& q,
+                                const PointC2<K>& r,
+                                const PointC2<K>& s)
 {
   return cmp_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
                                    r.x(), r.y(), s.x(), s.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_smaller_signed_distance_to_line(const PointC2<R>& p,
-                                    const PointC2<R>& q,
-                                    const PointC2<R>& r,
-                                    const PointC2<R>& s)
+has_smaller_signed_distance_to_line(const PointC2<K>& p,
+                                    const PointC2<K>& q,
+                                    const PointC2<K>& r,
+                                    const PointC2<K>& s)
 {
   return has_smaller_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
                                            r.x(), r.y(), s.x(), s.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_larger_signed_distance_to_line(const PointC2<R>& p,
-                                   const PointC2<R>& q,
-                                   const PointC2<R>& r,
-                                   const PointC2<R>& s)
+has_larger_signed_distance_to_line(const PointC2<K>& p,
+                                   const PointC2<K>& q,
+                                   const PointC2<K>& r,
+                                   const PointC2<K>& s)
 {
   return has_larger_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
                                           r.x(), r.y(), s.x(), s.y());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-template <class R >
+template <class K >
 inline
 Comparison_result
-cmp_dist_to_point(const PointC2<R>& p,
-                  const PointC2<R>& q,
-                  const PointC2<R>& r)
+cmp_dist_to_point(const PointC2<K>& p,
+                  const PointC2<K>& q,
+                  const PointC2<K>& r)
 {
   bool THIS_FUNCTION_IS_DEPRECATED; // Use compare_distance_to_point instead
   return cmp_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_larger_dist_to_point(const PointC2<R>& p,
-                         const PointC2<R>& q,
-                         const PointC2<R>& r)
+has_larger_dist_to_point(const PointC2<K>& p,
+                         const PointC2<K>& q,
+                         const PointC2<K>& r)
 {
   bool THIS_FUNCTION_IS_DEPRECATED; // Use has_larger_distance_to_point instead
   return has_larger_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_smaller_dist_to_point(const PointC2<R>& p,
-                          const PointC2<R>& q,
-                          const PointC2<R>& r)
+has_smaller_dist_to_point(const PointC2<K>& p,
+                          const PointC2<K>& q,
+                          const PointC2<K>& r)
 {
   bool THIS_FUNCTION_IS_DEPRECATED; // Use has_smaller_distance_to_point
   return has_smaller_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
-template <class R>
+template <class K>
 inline
 Comparison_result
-cmp_signed_dist_to_line(const LineC2<R>&  l,
-                        const PointC2<R>& p,
-                        const PointC2<R>& q)
+cmp_signed_dist_to_line(const LineC2<K>&  l,
+                        const PointC2<K>& p,
+                        const PointC2<K>& q)
 {
   bool THIS_FUNCTION_IS_DEPRECATED; // Use compare_signed_distance_to_line
   return cmp_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
                                         q.x(), q.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_larger_signed_dist_to_line(const LineC2<R>&  l,
-                               const PointC2<R>& p,
-                               const PointC2<R>& q)
+has_larger_signed_dist_to_line(const LineC2<K>&  l,
+                               const PointC2<K>& p,
+                               const PointC2<K>& q)
 {
   bool THIS_FUNCTION_IS_DEPRECATED; // Use has_larger_signed_distance_to_line
   return has_larger_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
                                                q.x(), q.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_smaller_signed_dist_to_line(const LineC2<R>&  l,
-                                const PointC2<R>& p,
-                                const PointC2<R>& q)
+has_smaller_signed_dist_to_line(const LineC2<K>&  l,
+                                const PointC2<K>& p,
+                                const PointC2<K>& q)
 {
   bool THIS_FUNCTION_IS_DEPRECATED; // Use has_smaller_signed_distance_to_line
   return has_smaller_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
                                                 q.x(), q.y());
 }
 
-template <class R>
+template <class K>
 inline
 Comparison_result
-cmp_signed_dist_to_line(const PointC2<R>& p,
-                        const PointC2<R>& q,
-                        const PointC2<R>& r,
-                        const PointC2<R>& s)
+cmp_signed_dist_to_line(const PointC2<K>& p,
+                        const PointC2<K>& q,
+                        const PointC2<K>& r,
+                        const PointC2<K>& s)
 {
   bool THIS_FUNCTION_IS_DEPRECATED; // Use compare_signed_distance_to_line
   return cmp_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
                                    r.x(), r.y(), s.x(), s.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_smaller_signed_dist_to_line(const PointC2<R>& p,
-                                const PointC2<R>& q,
-                                const PointC2<R>& r,
-                                const PointC2<R>& s)
+has_smaller_signed_dist_to_line(const PointC2<K>& p,
+                                const PointC2<K>& q,
+                                const PointC2<K>& r,
+                                const PointC2<K>& s)
 {
   bool THIS_FUNCTION_IS_DEPRECATED; // Use has_smaller_signed_distance_to_line
   return has_smaller_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
                                            r.x(), r.y(), s.x(), s.y());
 }
 
-template <class R>
+template <class K>
 inline
 bool
-has_larger_signed_dist_to_line(const PointC2<R>& p,
-                               const PointC2<R>& q,
-                               const PointC2<R>& r,
-                               const PointC2<R>& s)
+has_larger_signed_dist_to_line(const PointC2<K>& p,
+                               const PointC2<K>& q,
+                               const PointC2<K>& r,
+                               const PointC2<K>& s)
 {
   bool THIS_FUNCTION_IS_DEPRECATED; // Use has_larger_signed_distance_to_line
   return has_larger_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),

@@ -26,415 +26,361 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
+template < class K >
 inline
 bool
-x_equal(const PointC3<R> &p, const PointC3<R> &q)
+x_equal(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return p.x() == q.x();
+  return K().equal_x_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-y_equal(const PointC3<R> &p, const PointC3<R> &q)
+y_equal(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return p.y() == q.y();
+  return K().equal_y_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-z_equal(const PointC3<R> &p, const PointC3<R> &q)
+z_equal(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return p.z() == q.z();
+  return K().equal_z_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-less_x(const PointC3<R> &p, const PointC3<R> &q)
+less_x(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return p.x() < q.x();
+  return K().less_x_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-less_y(const PointC3<R> &p, const PointC3<R> &q)
+less_y(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return p.y() < q.y();
+  return K().less_y_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-less_z(const PointC3<R> &p, const PointC3<R> &q)
+less_z(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return p.z() < q.z();
+  return K().less_z_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 Comparison_result
-compare_x(const PointC3<R> &p, const PointC3<R> &q)
+compare_x(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return CGAL_NTS compare(p.x(), q.x());
+  return K().compare_x_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 Comparison_result
-compare_y(const PointC3<R> &p, const PointC3<R> &q)
+compare_y(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return CGAL_NTS compare(p.y(), q.y());
+  return K().compare_y_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 Comparison_result
-compare_z(const PointC3<R> &p, const PointC3<R> &q)
+compare_z(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return CGAL_NTS compare(p.z(), q.z());
+  return K().compare_z_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-equal_xy(const PointC3<R> &p, const PointC3<R> &q)
+equal_xy(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return p.x() == q.x() && p.y() == q.y();
+  return K().equal_xy_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-equal_xyz(const PointC3<R> &p, const PointC3<R> &q)
+equal_xyz(const PointC3<K> &p, const PointC3<K> &q)
 {
   return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
 }
 
-template < class R >
+template < class K >
 inline
 Comparison_result
-compare_xy(const PointC3<R> &p, 
-	   const PointC3<R> &q)
+compare_xy(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return compare_lexicographically_xyC2(p.x(), p.y(), q.x(), q.y()); 
+  return K().compare_xy_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 Comparison_result
-compare_lexicographically_xy(const PointC3<R> &p, 
-			     const PointC3<R> &q)
+compare_lexicographically_xy(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return compare_lexicographically_xyC2(p.x(), p.y(), q.x(), q.y()); 
+  return K().compare_xy_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-lexicographically_xy_smaller_or_equal(const PointC3<R> &p, 
-				      const PointC3<R> &q)
+lexicographically_xy_smaller_or_equal(const PointC3<K> &p, 
+				      const PointC3<K> &q)
 { 
   return compare_lexicographically_xy(p, q) != LARGER;
 }
 
-template < class R >
+template < class K >
 inline
 bool
-lexicographically_xy_smaller(const PointC3<R> &p, 
-			     const PointC3<R> &q)
+lexicographically_xy_smaller(const PointC3<K> &p, 
+			     const PointC3<K> &q)
 { 
-  return compare_lexicographically_xy(p, q) == SMALLER;
+  return K().less_xy_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
+inline
 Comparison_result
-compare_xyz(const PointC3<R> &p,
-                              const PointC3<R> &q)
+compare_xyz(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return compare_lexicographically_xyzC3(p.x(), p.y(), p.z(),
-                                         q.x(), q.y(), q.z());
+  return K().compare_xyz_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
+inline
 Comparison_result
-compare_lexicographically_xyz(const PointC3<R> &p,
-                              const PointC3<R> &q)
+compare_lexicographically_xyz(const PointC3<K> &p,
+                              const PointC3<K> &q)
 {
-  return compare_lexicographically_xyzC3(p.x(), p.y(), p.z(),
-                                         q.x(), q.y(), q.z());
+  return K().compare_xyz_3_object()(p, q);
 }
 
-template < class R >
+template < class K >
 bool
-lexicographically_xyz_smaller_or_equal(const PointC3<R> &p,
-                                       const PointC3<R> &q)
+lexicographically_xyz_smaller_or_equal(const PointC3<K> &p,
+                                       const PointC3<K> &q)
 {
   return compare_lexicographically_xyz(p, q) != LARGER;
 }
 
-template < class R >
-bool
-lexicographically_xyz_smaller(const PointC3<R> &p,
-                              const PointC3<R> &q)
-{
-  return compare_lexicographically_xyz(p, q) == SMALLER;
-}
-
-template < class R >
+template < class K >
 inline
 bool
-strict_dominance(const PointC3<R> &p,
-		 const PointC3<R> &q)
+lexicographically_xyz_smaller(const PointC3<K> &p,
+                              const PointC3<K> &q)
+{
+  return K().less_xyz_3_object()(p, q);
+}
+
+template < class K >
+inline
+bool
+strict_dominance(const PointC3<K> &p,
+		 const PointC3<K> &q)
 {
   return strict_dominanceC3(p.x(), p.y(), p.z(),
 			    q.x(), q.y(), q.z());
 }
 
-template < class R >
+template < class K >
 inline
 bool
-dominance(const PointC3<R> &p,
-	  const PointC3<R> &q)
+dominance(const PointC3<K> &p,
+	  const PointC3<K> &q)
 {
   return dominanceC3(p.x(), p.y(), p.z(),
 		     q.x(), q.y(), q.z());
 }
 
-template < class R >
+template < class K >
 inline
 bool
-collinear(const PointC3<R> &p,
-          const PointC3<R> &q,
-          const PointC3<R> &r)
+collinear(const PointC3<K> &p,
+          const PointC3<K> &q,
+          const PointC3<K> &r)
 {
-  return collinearC3(p.x(), p.y(), p.z(),
-                     q.x(), q.y(), q.z(),
-                     r.x(), r.y(), r.z());
+    return K().collinear_3_object()(p, q, r);
 }
 
-template < class R >
+template < class K >
 inline
 Orientation
-orientation(const PointC3<R> &p,
-            const PointC3<R> &q,
-            const PointC3<R> &r,
-            const PointC3<R> &s)
+orientation(const PointC3<K> &p,
+            const PointC3<K> &q,
+            const PointC3<K> &r,
+            const PointC3<K> &s)
 {
-  return orientationC3(p.x(), p.y(), p.z(),
-                       q.x(), q.y(), q.z(),
-                       r.x(), r.y(), r.z(),
-                       s.x(), s.y(), s.z());
+  return K().orientation_3_object()(p, q, r, s);
 }
 
-template < class R >
+template < class K >
 inline
 Angle
-angle(const PointC3<R> &p,
-      const PointC3<R> &q,
-      const PointC3<R> &r)
+angle(const PointC3<K> &p,
+      const PointC3<K> &q,
+      const PointC3<K> &r)
 {
-    return angleC3(p.x(), p.y(), p.z(),
-	           q.x(), q.y(), q.z(),
-		   r.x(), r.y(), r.z());
+  return K().angle_3_object()(p, q, r);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-coplanar(const PointC3<R> &p,
-         const PointC3<R> &q,
-         const PointC3<R> &r,
-         const PointC3<R> &s)
+coplanar(const PointC3<K> &p,
+         const PointC3<K> &q,
+         const PointC3<K> &r,
+         const PointC3<K> &s)
 {
-  return orientation(p, q, r, s) == COPLANAR;
+  return K().coplanar_3_object()(p, q, r, s);
 }
 
-template < class R >
+template < class K >
 inline
 Orientation
-coplanar_orientation(const PointC3<R> &p,
-                     const PointC3<R> &q,
-                     const PointC3<R> &r,
-                     const PointC3<R> &s)
+coplanar_orientation(const PointC3<K> &p,
+                     const PointC3<K> &q,
+                     const PointC3<K> &r,
+                     const PointC3<K> &s)
 {
-  // p,q,r,s supposed to be coplanar
-  // p,q,r supposed to be non collinear
-  // tests whether s is on the same side of p,q as r
-  // returns :
-  // COLLINEAR if pqr collinear
-  // POSITIVE if qrp and qrs have the same orientation
-  // NEGATIVE if qrp and qrs have opposite orientations
-  CGAL_kernel_exactness_precondition( ! collinear(p, q, r) );
-  CGAL_kernel_exactness_precondition( coplanar(p, q, r, s) );
-  return coplanar_orientationC3(p.x(), p.y(), p.z(),
-                                q.x(), q.y(), q.z(),
-                                r.x(), r.y(), r.z(),
-                                s.x(), s.y(), s.z());
+  return K().coplanar_orientation_3_object()(p, q, r, s);
 }
 
-template < class R >
+template < class K >
 inline
 Orientation
-coplanar_orientation(const PointC3<R> &p,
-                     const PointC3<R> &q,
-                     const PointC3<R> &r)
+coplanar_orientation(const PointC3<K> &p,
+                     const PointC3<K> &q,
+                     const PointC3<K> &r)
 {
-  // Returns an Orientation which is coherent for all (p,q,r) in a same plane.
-  return coplanar_orientationC3(p.x(), p.y(), p.z(),
-                                q.x(), q.y(), q.z(),
-                                r.x(), r.y(), r.z());
+  return K().coplanar_orientation_3_object()(p, q, r);
 }
 
-template < class R >
+template < class K >
 inline
 Bounded_side
-coplanar_side_of_bounded_circle(const PointC3<R> &p,
-                                const PointC3<R> &q,
-                                const PointC3<R> &r,
-                                const PointC3<R> &t)
+coplanar_side_of_bounded_circle(const PointC3<K> &p,
+                                const PointC3<K> &q,
+                                const PointC3<K> &r,
+                                const PointC3<K> &t)
 {
-  // p,q,r,t are supposed to be coplanar.
-  // p,q,r determine an orientation of this plane (not collinear).
-  // returns the equivalent of side_of_bounded_circle(p,q,r,t) in this plane
-  CGAL_kernel_exactness_precondition( coplanar(p,q,r,t) );
-  CGAL_kernel_exactness_precondition( !collinear(p,q,r) );
-  return coplanar_side_of_bounded_circleC3(p.x(), p.y(), p.z(),
-                                           q.x(), q.y(), q.z(),
-                                           r.x(), r.y(), r.z(),
-                                           t.x(), t.y(), t.z());
+  return K().coplanar_side_of_bounded_circle_3_object()(p, q, r, t);
 }
 
-template < class R>
+template < class K>
 inline
 bool
-are_positive_oriented(const PointC3<R>& p,
-                      const PointC3<R>& q,
-                      const PointC3<R>& r,
-                      const PointC3<R>& s)
+are_positive_oriented(const PointC3<K>& p,
+                      const PointC3<K>& q,
+                      const PointC3<K>& r,
+                      const PointC3<K>& s)
 {
   return orientation(p, q, r, s) == POSITIVE;
 }
 
-template < class R>
+template < class K>
 inline
 bool
-are_negative_oriented(const PointC3<R>& p,
-                      const PointC3<R>& q,
-                      const PointC3<R>& r,
-                      const PointC3<R>& s)
+are_negative_oriented(const PointC3<K>& p,
+                      const PointC3<K>& q,
+                      const PointC3<K>& r,
+                      const PointC3<K>& s)
 {
   return orientation(p, q, r, s) == NEGATIVE;
 }
 
-template < class R >
+template < class K >
 inline
 bool
-are_ordered_along_line(const PointC3<R> &p,
-                       const PointC3<R> &q,
-                       const PointC3<R> &r)
+are_ordered_along_line(const PointC3<K> &p,
+                       const PointC3<K> &q,
+                       const PointC3<K> &r)
 {
-  return collinear(p, q, r) ? collinear_are_ordered_along_line(p, q, r)
-                            : false;
+  return K().are_ordered_along_line_3_object()(p, q, r);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-collinear_are_ordered_along_line(const PointC3<R> &p,
-                                 const PointC3<R> &q,
-                                 const PointC3<R> &r)
+collinear_are_ordered_along_line(const PointC3<K> &p,
+                                 const PointC3<K> &q,
+                                 const PointC3<K> &r)
 {
-  CGAL_kernel_exactness_precondition( collinear(p, q, r) );
-  return collinear_are_ordered_along_lineC3(p.x(), p.y(), p.z(),
-                                            q.x(), q.y(), q.z(),
-                                            r.x(), r.y(), r.z());
+  return K().collinear_are_ordered_along_line_3_object()(p, q, r);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-are_strictly_ordered_along_line(const PointC3<R> &p,
-                                const PointC3<R> &q,
-                                const PointC3<R> &r)
+are_strictly_ordered_along_line(const PointC3<K> &p,
+                                const PointC3<K> &q,
+                                const PointC3<K> &r)
 {
-  return (collinear(p, q, r))
-         ? collinear_are_strictly_ordered_along_line(p, q, r)
-         : false;
+  return K().are_strictly_ordered_along_line_3_object()(p, q, r);
 }
 
-template < class R >
+template < class K >
 inline
 bool
-collinear_are_strictly_ordered_along_line(const PointC3<R> &p,
-                                          const PointC3<R> &q,
-                                          const PointC3<R> &r)
+collinear_are_strictly_ordered_along_line(const PointC3<K> &p,
+                                          const PointC3<K> &q,
+                                          const PointC3<K> &r)
 {
-  CGAL_kernel_exactness_precondition( collinear(p, q, r) );
-  return collinear_are_strictly_ordered_along_lineC3(p.x(), p.y(), p.z(),
-                                                     q.x(), q.y(), q.z(),
-                                                     r.x(), r.y(), r.z());
+  return K().collinear_are_strictly_ordered_along_line_3_object()(p, q, r);
 }
 
-template <class R >
+template <class K >
 inline
 Oriented_side
-side_of_oriented_sphere(const PointC3<R> &p,
-                        const PointC3<R> &q,
-                        const PointC3<R> &r,
-                        const PointC3<R> &s,
-                        const PointC3<R> &test)
+side_of_oriented_sphere(const PointC3<K> &p,
+                        const PointC3<K> &q,
+                        const PointC3<K> &r,
+                        const PointC3<K> &s,
+                        const PointC3<K> &test)
 {
-  return side_of_oriented_sphereC3(p.x(), p.y(), p.z(),
-                                   q.x(), q.y(), q.z(),
-                                   r.x(), r.y(), r.z(),
-                                   s.x(), s.y(), s.z(),
-                                   test.x(), test.y(), test.z());
+  return K().side_of_oriented_sphere_3_object()(p, q, r, s, test);
 }
 
-template <class R >
+template <class K >
 inline
 Bounded_side
-side_of_bounded_sphere(const PointC3<R> &p,
-                       const PointC3<R> &q,
-                       const PointC3<R> &test)
+side_of_bounded_sphere(const PointC3<K> &p,
+                       const PointC3<K> &q,
+                       const PointC3<K> &test)
 {
-  return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
-                                  q.x(), q.y(), q.z(),
-                                  test.x(), test.y(), test.z());
+  return K().side_of_bounded_sphere_3_object()(p, q, test);
 }
 
-template <class R >
+template <class K >
 inline
 Bounded_side
-side_of_bounded_sphere(const PointC3<R> &p,
-                       const PointC3<R> &q,
-                       const PointC3<R> &r,
-                       const PointC3<R> &test)
+side_of_bounded_sphere(const PointC3<K> &p,
+                       const PointC3<K> &q,
+                       const PointC3<K> &r,
+                       const PointC3<K> &test)
 {
-  return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
-                                  q.x(), q.y(), q.z(),
-                                  r.x(), r.y(), r.z(),
-                                  test.x(), test.y(), test.z());
+  return K().side_of_bounded_sphere_3_object()(p, q, r, test);
 }
 
-template <class R >
+template <class K >
 inline
 Bounded_side
-side_of_bounded_sphere(const PointC3<R> &p,
-                       const PointC3<R> &q,
-                       const PointC3<R> &r,
-                       const PointC3<R> &s,
-                       const PointC3<R> &test)
+side_of_bounded_sphere(const PointC3<K> &p,
+                       const PointC3<K> &q,
+                       const PointC3<K> &r,
+                       const PointC3<K> &s,
+                       const PointC3<K> &test)
 {
-  return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
-                                  q.x(), q.y(), q.z(),
-                                  r.x(), r.y(), r.z(),
-                                  s.x(), s.y(), s.z(),
-                                  test.x(), test.y(), test.z());
+  return K().side_of_bounded_sphere_3_object()(p, q, r, s, test);
 }
 
 CGAL_END_NAMESPACE

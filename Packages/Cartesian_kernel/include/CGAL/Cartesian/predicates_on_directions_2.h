@@ -24,22 +24,22 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
+template < class K >
 inline
 bool
-equal_direction(const DirectionC2<R> &d1,
-                const DirectionC2<R> &d2)
+equal_direction(const DirectionC2<K> &d1,
+                const DirectionC2<K> &d2)
 {
   return equal_directionC2(d1.dx(), d1.dy(), d2.dx(), d2.dy());
 }
 
-template < class R >
-CGAL_KERNEL_LARGE_INLINE
+template < class K >
+inline
 Comparison_result
-compare_angle_with_x_axis(const DirectionC2<R> &d1,
-                          const DirectionC2<R> &d2)
+compare_angle_with_x_axis(const DirectionC2<K> &d1,
+                          const DirectionC2<K> &d2)
 {
-  return compare_angle_with_x_axisC2(d1.dx(), d1.dy(), d2.dx(), d2.dy());
+  return K().compare_angle_with_x_axis_2_object()(d1, d2);
 }
 
 CGAL_END_NAMESPACE

@@ -27,13 +27,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-typename R::Vector_3
-cross_product(const VectorC3<R> &v, const VectorC3<R> &w)
+template < class K >
+inline
+typename K::Vector_3
+cross_product(const VectorC3<K> &v, const VectorC3<K> &w)
 {
-    return VectorC3<R>(v.y() * w.z() - v.z() * w.y(),
-                       v.z() * w.x() - v.x() * w.z(),
-                       v.x() * w.y() - v.y() * w.x());
+  return K().construct_cross_product_vector_3_object()(v, w);
 }
 
 CGAL_END_NAMESPACE

@@ -24,76 +24,76 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
+template < class K >
 inline
-typename R::Point_3
-operator+(const PointC3<R> &p, const VectorC3<R> &v)
+typename K::Point_3
+operator+(const PointC3<K> &p, const VectorC3<K> &v)
 {
-  return PointC3<R>(p.x() + v.x(), p.y() + v.y(), p.z() + v.z());
+  return K().construct_translated_point_3_object()(p, v);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Point_3
-operator-(const PointC3<R> &p, const VectorC3<R> &v)
+typename K::Point_3
+operator-(const PointC3<K> &p, const VectorC3<K> &v)
 {
-  return PointC3<R>(p.x() - v.x(), p.y() - v.y(), p.z() - v.z());
+  return PointC3<K>(p.x() - v.x(), p.y() - v.y(), p.z() - v.z());
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Point_3
-operator+(const Origin &, const VectorC3<R> &v)
+typename K::Point_3
+operator+(const Origin &, const VectorC3<K> &v)
 {
-  return PointC3<R>(v);
+  return PointC3<K>(v);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Point_3
-operator-(const Origin &, const VectorC3<R> &v)
+typename K::Point_3
+operator-(const Origin &, const VectorC3<K> &v)
 {
-  return PointC3<R>(-v);
+  return PointC3<K>(-v);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Vector_3
-operator-(const PointC3<R> &p, const PointC3<R> &q)
+typename K::Vector_3
+operator-(const PointC3<K> &p, const PointC3<K> &q)
 {
-  return VectorC3<R>(p.x() - q.x(), p.y() - q.y(), p.z() - q.z());
+  return VectorC3<K>(p.x() - q.x(), p.y() - q.y(), p.z() - q.z());
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Vector_3
-operator-(const PointC3<R> &p, const Origin &)
+typename K::Vector_3
+operator-(const PointC3<K> &p, const Origin &)
 {
-  return VectorC3<R>(p);
+  return VectorC3<K>(p);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Vector_3
-operator-(const Origin &, const PointC3<R> &p)
+typename K::Vector_3
+operator-(const Origin &, const PointC3<K> &p)
 {
-  return VectorC3<R>(-p.x(), -p.y(), -p.z());
+  return VectorC3<K>(-p.x(), -p.y(), -p.z());
 }
 
-template < class R >
-CGAL_KERNEL_INLINE
-typename R::Vector_3
-operator*(const typename R::FT &c, const VectorC3<R> &w)
+template < class K >
+inline
+typename K::Vector_3
+operator*(const typename K::FT &c, const VectorC3<K> &w)
 {
-   return VectorC3<R>(c * w.x(), c * w.y(), c * w.z());
+  return K().construct_scaled_vector_3_object()(w, c);
 }
 
-template < class R >
-CGAL_KERNEL_INLINE
-typename R::Vector_3
-operator*(const VectorC3<R> &w, const typename R::FT &c)
+template < class K >
+inline
+typename K::Vector_3
+operator*(const VectorC3<K> &w, const typename K::FT &c)
 {
-   return VectorC3<R>(c * w.x(), c * w.y(), c * w.z());
+  return K().construct_scaled_vector_3_object()(w, c);
 }
 
 CGAL_END_NAMESPACE

@@ -24,76 +24,76 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
+template < class K >
 inline
-typename R::Point_2
-operator+(const PointC2<R> &p, const VectorC2<R> &v)
+typename K::Point_2
+operator+(const PointC2<K> &p, const VectorC2<K> &v)
 {
-  return PointC2<R>(p.x() + v.x(), p.y() + v.y());
+  return K().construct_translated_point_2_object()(p, v);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Point_2
-operator-(const PointC2<R> &p, const VectorC2<R> &v)
+typename K::Point_2
+operator-(const PointC2<K> &p, const VectorC2<K> &v)
 {
-  return PointC2<R>(p.x() - v.x(), p.y() - v.y());
+  return PointC2<K>(p.x() - v.x(), p.y() - v.y());
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Point_2
-operator+(const Origin &, const VectorC2<R> &v)
+typename K::Point_2
+operator+(const Origin &, const VectorC2<K> &v)
 {
-  return PointC2<R>(v);
+  return PointC2<K>(v);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Point_2
-operator-(const Origin &, const VectorC2<R> &v)
+typename K::Point_2
+operator-(const Origin &, const VectorC2<K> &v)
 {
-  return PointC2<R>(-v);
+  return PointC2<K>(-v);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Vector_2
-operator-(const PointC2<R> &p, const PointC2<R> &q)
+typename K::Vector_2
+operator-(const PointC2<K> &p, const PointC2<K> &q)
 {
-  return VectorC2<R>(p.x() - q.x(), p.y() - q.y());
+  return VectorC2<K>(p.x() - q.x(), p.y() - q.y());
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Vector_2
-operator-(const PointC2<R> &p, const Origin &)
+typename K::Vector_2
+operator-(const PointC2<K> &p, const Origin &)
 {
-  return VectorC2<R>(p);
+  return VectorC2<K>(p);
 }
 
-template < class R >
+template < class K >
 inline
-typename R::Vector_2
-operator-(const Origin &, const PointC2<R> &p)
+typename K::Vector_2
+operator-(const Origin &, const PointC2<K> &p)
 {
-  return VectorC2<R>(-p.x(), -p.y());
+  return VectorC2<K>(-p.x(), -p.y());
 }
 
-template < class R >
-CGAL_KERNEL_INLINE
-typename R::Vector_2
-operator*(const typename R::FT &c, const VectorC2<R> &w)
+template < class K >
+inline
+typename K::Vector_2
+operator*(const typename K::FT &c, const VectorC2<K> &w)
 {
-   return VectorC2<R>(c * w.x(), c * w.y());
+  return K().construct_scaled_vector_2_object()(w, c);
 }
 
-template < class R >
-CGAL_KERNEL_INLINE
-typename R::Vector_2
-operator*(const VectorC2<R> &w, const typename R::FT &c)
+template < class K >
+inline
+typename K::Vector_2
+operator*(const VectorC2<K> &w, const typename K::FT &c)
 {
-   return VectorC2<R>(c * w.x(), c * w.y());
+  return K().construct_scaled_vector_2_object()(w, c);
 }
 
 CGAL_END_NAMESPACE
