@@ -90,7 +90,8 @@ public:
   typedef typename Tds::Face                      Face;
   typedef typename Tds::Vertex                    Vertex;
   typedef typename Tds::Face_handle               Face_handle;
-  typedef typename Tds::Vertex_handle             Vertex_handle;                                     
+  typedef typename Tds::Vertex_handle             Vertex_handle; 
+
 private:
   const Vertex* _v;
   const Face* pos;

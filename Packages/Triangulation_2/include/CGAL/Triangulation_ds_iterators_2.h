@@ -85,7 +85,8 @@ public:
 
   Face& operator*() const
     {
-      CGAL_triangulation_precondition(pos != NULL && pos != &*(_tds->past_end()));
+      CGAL_triangulation_precondition(pos != NULL && 
+				  pos != &*(_tds->past_end()));
       return const_cast<Face&>(*pos);
     }
 
@@ -170,7 +171,8 @@ public:
 
   Vertex& operator*() const  
     {
-      CGAL_triangulation_assertion( pos != NULL && pos != &*(_tds->past_end()));
+      CGAL_triangulation_assertion( pos != NULL && 
+				 pos != &*(_tds->past_end()));
       return *(pos->vertex(index));
     }
 
