@@ -12,6 +12,11 @@
 
 typedef TESTED_TYPE IA_nt;
 
+void empty_handler(const char*, const char*, const char*, int, const char *)
+{
+  // Do nothing.
+}
+
 // This test program computes the coordinates of a sequence of points drawing
 // a spiral.  It tests, using Interval Arithmetic, whether we fall back on an
 // axis.  With double precision, the first possible solution is 396.
@@ -231,39 +236,81 @@ bool utility_test()
 
 // Test the is_valid() function.
 
-double zero = 0.0;
+double zero = 0.0; // I put it here to avoid compiler warnings.
 
 bool is_valid_test()
 {
+  CGAL::Failure_behaviour backup = CGAL::set_error_behaviour(CGAL::CONTINUE);
+  CGAL::Failure_function prev    = CGAL::set_error_handler(empty_handler);
+
   bool tmpflag, flag = true;
-  const double plus_inf = 1.0/zero;
-  const double nan = 0.0 * plus_inf;
+  const double inf = 1.0/zero;
+  const double nan = 0.0 * inf;
   const IA_nt a(nan, nan), b(0,nan), c(nan, 0), d(1,0);
   const IA_nt e(0,1), f(0,0);
 
   tmpflag = is_valid(a);
-  std::cout << std::endl;
-  std::cout << "is_valid( " << a << " ) = " << tmpflag << std::endl;
-  flag = flag && tmpflag;
+  DEBUG( std::cout << std::endl; )
+  DEBUG( std::cout << "is_valid( " << a << " ) = " << tmpflag << std::endl; )
+  flag = flag && !tmpflag;
 
   tmpflag = is_valid(b);
-  std::cout << "is_valid( " << b << " ) = " << tmpflag << std::endl;
-  flag = flag && tmpflag;
+  DEBUG( std::cout << "is_valid( " << b << " ) = " << tmpflag << std::endl; )
+  flag = flag && !tmpflag;
 
   tmpflag = is_valid(c);
-  std::cout << "is_valid( " << c << " ) = " << tmpflag << std::endl;
-  flag = flag && tmpflag;
+  DEBUG( std::cout << "is_valid( " << c << " ) = " << tmpflag << std::endl; )
+  flag = flag && !tmpflag;
 
   tmpflag = is_valid(d);
-  std::cout << "is_valid( " << d << " ) = " << tmpflag << std::endl;
-  flag = flag && tmpflag;
+  DEBUG( std::cout << "is_valid( " << d << " ) = " << tmpflag << std::endl; )
+  flag = flag && !tmpflag;
 
   tmpflag = is_valid(e);
-  std::cout << "is_valid( " << e << " ) = " << tmpflag << std::endl;
+  DEBUG( std::cout << "is_valid( " << e << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
   tmpflag = is_valid(f);
-  std::cout << "is_valid( " << f << " ) = " << tmpflag << std::endl;
+  DEBUG( std::cout << "is_valid( " << f << " ) = " << tmpflag << std::endl; )
+  flag = flag && tmpflag;
+
+  CGAL::set_error_handler(prev);
+  CGAL::set_error_behaviour(backup);
+  return flag;
+}
+
+// Test the is_finite() function.
+
+bool is_finite_test()
+{
+  bool tmpflag, flag = true;
+  const double inf = 1.0/zero;
+  const IA_nt a(inf, inf), b(-inf,inf), c(-inf, 0), d(0,inf);
+  const IA_nt e(0,1), f(0,0);
+
+  tmpflag = is_finite(a);
+  DEBUG( std::cout << std::endl; )
+  DEBUG( std::cout << "is_finite( " << a << " ) = " << tmpflag << std::endl; )
+  flag = flag && !tmpflag;
+
+  tmpflag = is_finite(b);
+  DEBUG( std::cout << "is_finite( " << b << " ) = " << tmpflag << std::endl; )
+  flag = flag && !tmpflag;
+
+  tmpflag = is_finite(c);
+  DEBUG( std::cout << "is_finite( " << c << " ) = " << tmpflag << std::endl; )
+  flag = flag && !tmpflag;
+
+  tmpflag = is_finite(d);
+  DEBUG( std::cout << "is_finite( " << d << " ) = " << tmpflag << std::endl; )
+  flag = flag && !tmpflag;
+
+  tmpflag = is_finite(e);
+  DEBUG( std::cout << "is_finite( " << e << " ) = " << tmpflag << std::endl; )
+  flag = flag && tmpflag;
+
+  tmpflag = is_finite(f);
+  DEBUG( std::cout << "is_finite( " << f << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
   return flag;
@@ -306,6 +353,7 @@ int main()
   TEST_MACRO(multiplication_test);
   TEST_MACRO(utility_test);
   TEST_MACRO(is_valid_test);
+  TEST_MACRO(is_finite_test);
 
   print_res(0.0 < IA_nt(1));
 
