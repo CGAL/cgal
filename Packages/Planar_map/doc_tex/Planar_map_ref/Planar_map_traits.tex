@@ -141,9 +141,14 @@
           to $second$. }
 
 
-       \ccMethod{bool curve_is_same(const X_curve_2 &cv1, const X_cur
-          ve &cv2);}{returns \ccc{true} if \ccc{cv1} is the same as \ccc{cv2}.}
+       \ccMethod{bool curve_is_same(const X_curve_2 & cv1,
+                                    const X_curve_2 & cv2);}
+       {returns \ccc{true} if \ccc{cv1} is the same as \ccc{cv2}.}
 
+       \ccMethod{bool point_is_same(const Point_2 & p1,
+                                    const Point_2 & p2);}
+       {returns \ccc{true} if \ccc{p1} is the same as \ccc{p2}.}
+	  
 %construction function
 %---------------------   
 
