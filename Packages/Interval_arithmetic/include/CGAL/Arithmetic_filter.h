@@ -78,12 +78,11 @@ class Filtered_exact
   { return inter; }
   IA give_interval (const No_Filter_Cache &) const
   {
-#if !defined(CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION) \
- && !defined(CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION)
+#ifndef CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
     return convert_to<Interval_nt_advanced>(_value);
 #else
     return convert_from_to(Interval_nt_advanced(), _value);
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#endif // CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   }
 
   void compute_cache (const No_Filter_Cache &) const
@@ -114,12 +113,11 @@ public:
   IA interval() const { return give_interval(_cache); }
   ET exact()    const
   {
-#if !defined(CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION) \
- && !defined(CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION)
+#ifndef CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
     return convert_to<ET>(_value);
 #else
     return convert_from_to(ET(), _value);
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#endif // CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   }
   double to_double() const { return to_double(_value); }
   Restricted_double dbl() const { return Restricted_double(to_double()); }

@@ -50,7 +50,6 @@ convert_from_to (const Interval_nt_advanced&, const Gmpz & z)
 	return result;
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template <>
 struct converter<Interval_nt_advanced,Gmpz>
 {
@@ -59,8 +58,6 @@ struct converter<Interval_nt_advanced,Gmpz>
 	return convert_from_to(Interval_nt_advanced(), z);
     }
 };
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-
 
 // Now we also have an exact converter from double to Quotient<Gmpz>, so that
 // Filtered_exact<double, Quotient<Gmpz> > is useful.
@@ -82,14 +79,12 @@ convert_from_to (const Quotient<Gmpz>&, const double& d)
   return Quotient<Gmpz>(Gmpz(num), Gmpz(den));
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template <>
 struct converter<Quotient<Gmpz>,double>
 {
   static inline Quotient<Gmpz> do_it (const double & z)
   { return convert_from_to(Quotient<Gmpz>(), z); }
 };
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 
 CGAL_END_NAMESPACE
 

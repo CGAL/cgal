@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.48 on ?? June 2000
+- Removed obsolete (and buggy) references to
+  CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION.
+
 Version 4.47 on 13 June 2000
 - Removed useless "template <>" before full specializations of function
   templates.

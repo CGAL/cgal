@@ -43,7 +43,6 @@ convert_from_to (const Interval_nt_advanced&, const leda_real & z)
     return result;
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template <>
 struct converter<Interval_nt_advanced,leda_real>
 {
@@ -52,8 +51,7 @@ struct converter<Interval_nt_advanced,leda_real>
 	return convert_from_to(Interval_nt_advanced(), z);
     }
 };
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 
 CGAL_END_NAMESPACE
 
-#endif	 // CGAL_IA_LEDA_REAL_H
+#endif // CGAL_IA_LEDA_REAL_H

@@ -492,8 +492,7 @@ Number_tag
 number_type_tag (const Lazy_exact_nt<ET>&)
 { return Number_tag(); }
 
-#if !defined(CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION) \
- && !defined(CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION)
+#ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 template <typename ET>
 struct converter<ET, Lazy_exact_nt<ET> >
 {

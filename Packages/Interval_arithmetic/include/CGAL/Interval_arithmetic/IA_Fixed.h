@@ -25,7 +25,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// The Fixed is in fact a float => trivial conversion.
+// Fixed is in fact a float => trivial conversion.
 
 inline
 Interval_nt_advanced
@@ -34,16 +34,13 @@ convert_from_to (const Interval_nt_advanced&, const Fixed_precision_nt & z)
     return to_double(z);
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template <>
 struct converter<Interval_nt_advanced,Fixed_precision_nt>
 {
     static inline Interval_nt_advanced do_it (const Fixed_precision_nt & z)
     { return to_double(z); }
 };
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-
 
 CGAL_END_NAMESPACE
 
-#endif	 // CGAL_IA_FIXED_H
+#endif // CGAL_IA_FIXED_H
