@@ -1,123 +1,31 @@
 %% =============================================================================
-%% The CGAL Reference Manual
-%% Chapter: STL Extensions - Introduction
+%% The CGAL Manual
+%% Chapter: STL Extensions
 %% -----------------------------------------------------------------------------
-%% file  : doc_tex/support/STL_Extension/STL_Extension_ref/intro.tex
-%% author: Michael Hoffmann, Lutz Kettner 
+%% file  : doc_tex/support/STL_Extension/main.tex
+%% author: Michael Hoffmann 
 %% -----------------------------------------------------------------------------
 %% $CGAL_Chapter: STL_Extension $
 %% $Revision$
 %% $Date$
 %% =============================================================================
 
-\chapter{\stl\ Extensions for \cgal}
-\label{chapterDataStructures}\label{chapterStlExtensions}
+%% +------------------------------------------------------------------------+
+\ccParDims
+%%\marginparsep7mm
+%%\marginparwidth15mm
+%%\gdef\ccNewRefManualStyle{\ccTrue}
+%%\gdef\ccPureGlobalScope{CGAL::}
+%%\newcommand{\ccRequire}{\ccCommentHeading{Requirements}}
+%%\newcommand{\ccRequirements}{\ccHeading{Requirements}}
+%% +------------------------------------------------------------------------+
 
-\RCSdef{\stlExtensionRev}{$Revision$}
-\RCSdefDate{\stlExtensionDate}{$Date$}
-\ccChapterRelease{\stlExtensionRev. \ \stlExtensionDate}\ccTexHtml{\\}{<BR>}
-\ccChapterAuthor{Michael Hoffmann}\ccTexHtml{\\}{<BR>}
-\ccChapterAuthor{Lutz Kettner}
+%%\ccTexHtml{\thispagestyle{empty}}{}
 
-%% +=========================================================================+
+%% =============================================================================
+%% reference pages
+%% =============================================================================
 
-\section{Introduction}
+\input{STL_Extension_ref/main.tex}
 
-\cgal\ is designed in the spirit of the generic programming paradigm
-to work together with the Standard Template Library (\stl)
-\cite{ansi-is14882,a-gps-98}. This chapter documents non-geometric
-\stl-like components that are not provided in the \stl\ standard but
-in \cgal: a doubly-connected list managing items in place (where
-inserted items are not copied), generic algorithms, iterators, functor
-adaptors for binding and swapping arguments and for composition,
-functors for projection and creation and adaptor classes around
-iterators and circulators. See also circulators in
-Chapter~\ref{chap:Handles_and_Circs}.
-
-\section{Doubly-Connected List Managing Items in Place}
-
-The class \ccStyle{In_place_list<T,&T::next,&T::prev>} manages a
-sequence of items in place in a doubly-connected list. Its goals are
-the flexible handling of memory management and performance
-optimization. The item type is supposed to provide the two necessary
-pointers \ccc{&T::next_link} and \ccc{&T::prev_link}. One possibility
-to obtain these pointers is to inherit them from the base class
-\ccStyle{In_place_list_base<T>}.
-
-The class \ccStyle{In_place_list<T>} is a container and quite similar
-to \stl\ containers, with the advantage that it is able to handle the
-stored elements by reference instead of copying them. It is possible
-to delete an element only knowing its address and no iterator to it.
-This simplifies mutually pointered data structures like a halfedge
-data structure for planar maps or polyhedral surfaces. The usual
-iterators are also available.  Another container with this property of
-working with pointers to objects is the \stl\ vector (at least in the
-current \stl\ implementations).
-
-\section{Generic Algorithms}
-
-\cgal\ provides a number of generic algorithms similar to algorithms from
-the \stl\ including a \ccc{copy_n} function to copy a certain number of 
-items from an input iterator to an output iterator, a function
-\ccc{min_max_element} to find the minimum and maximum element in a range
-of elements using only one pass through the elements, and functions
-\ccc{min_element_if} and \ccc{max_element_if} to find minimum and maximum
-elements satisfying a certain predicate in a range of items.
-
-\section{Iterators and Iterator/Circulator Adaptors}
-
-Certain useful iterators and adaptors for iterators and circulators are also
-provided.  These include an \ccc{Emptyset_iterator} that ignores everything
-written to it (as if it were connected to \texttt{/dev/null}) and a
-\ccc{Counting_iterator} that adds a counter to an input iterator and defines
-equlaity of two instances in terms of this counter.  This can be useful for
-creating finite sequences of possibly infinite values.  The \ccc{N_step_adaptor}
-class can be used to change the step width of an iterator or circulator.
-The iterator adaptor \ccc{Filter_iterator} can be used to iterate over a
-sequence while ignoring iterators for which a give predicate is true.
-\ccc{Join_input_iterator_1} is an adaptor class for an input iterator that 
-can be used to read objects from a stream and then provide a creator
-function object to that object when it advances.  An inverse index for a
-range of iterators or circulators can be constructed using the class
-\ccc{Inverse_index} and adaptors providing random access for data structures
-are provided through the classes \ccc{Random_access_adaptor} and
-\ccc{Random_access_value_adaptor}.
-
-\section{Functor Adaptors}
-
-The standard library contains some adaptors for binding functors, that
-is, fixing one argument of a functor to a specific value thereby
-creating a new functor that takes one argument less than the original
-functor.  Also, though non-standard, some STL implementations (such as
-SGI) provide adaptors to compose function objects. Unfortunately,
-these bind and compose adaptors are limited to unary and binary
-functors only, and these functors must not be overloaded.
-
-Since there are a number of functors in \cgal\ that take more than two
-arguments, and since functors may also be overloaded, i.e. accept
-several different sets of arguments, we have to define our own
-adaptors to be used with \cgal\ functors.
-
-\section{Projection Function Objects}
-
-Several models of a concept Projection\_object that is modeled after the
-STL concept \ccc{UnaryFunction} are provided.  This concept differs from the
-STL concept in that (const) references are also taken care of.
-
-
-\section{Creator Function Objects}
-
-A number of function objects for creating objects from a certain number of
-arguments are provided in \cgal.  These include creators from arguments
-of varying types (e.g., \ccc{Creator_2<Arg1, Arg2, Result>}) and creators
-from arguments of the same time (e.g., \ccc{Creator_uniform_2<Arg, Result>}.
-Creator function objects for 1 up to 5 arguments of varying types or 2 up to
-9 arguments of the same type are provided.
-
-\section{Utilities}
-
-We provide generalizations of \ccc{std::pair<T1, T2>} template in the form of
-the templates \ccc{CGAL::Triple<T1, T2, T3>} and 
-\ccc{CGAL::Quadruple<T1, T2, T3, T4>}.
-
-%% EOF
+%% ===== EOF ===================================================================

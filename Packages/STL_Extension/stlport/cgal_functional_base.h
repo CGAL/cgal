@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997, 1998, 1999, 2000 The CGAL Consortium
+// Copyright (c) 1997-2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -124,118 +124,147 @@ template < class T >
 struct Arity_traits< std::plus< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::minus< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::multiplies< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::divides< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::modulus< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::negate< T > > {
   typedef Arity_tag< 1 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::equal_to< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::not_equal_to< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::greater< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::less< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::greater_equal< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::less_equal< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::logical_and< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::logical_or< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::logical_not< T > > {
   typedef Arity_tag< 1 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::unary_negate< T > > {
   typedef Arity_tag< 1 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::binary_negate< T > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::binder1st< T > > {
   typedef Arity_tag< 1 > Arity;
 };
+    
 template < class T >
 struct Arity_traits< std::binder2nd< T > > {
   typedef Arity_tag< 1 > Arity;
 };
+    
 template < class T1, class T2 >
 struct Arity_traits< std::pointer_to_unary_function< T1, T2 > > {
   typedef Arity_tag< 1 > Arity;
 };
+    
 template < class T1, class T2, class T3 >
 struct Arity_traits< std::pointer_to_binary_function< T1, T2, T3 > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T1, class T2 >
 struct Arity_traits< std::mem_fun_t< T1, T2 > > {
   typedef Arity_tag< 1 > Arity;
 };
+    
 template < class T1, class T2, class T3 >
 struct Arity_traits< std::mem_fun1_t< T1, T2, T3 > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T1, class T2 >
 struct Arity_traits< std::mem_fun_ref_t< T1, T2 > > {
   typedef Arity_tag< 1 > Arity;
 };
+    
 template < class T1, class T2, class T3 >
 struct Arity_traits< std::mem_fun1_ref_t< T1, T2, T3 > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T1, class T2 >
 struct Arity_traits< std::const_mem_fun_t< T1, T2 > > {
   typedef Arity_tag< 1 > Arity;
 };
+    
 template < class T1, class T2, class T3 >
 struct Arity_traits< std::const_mem_fun1_t< T1, T2, T3 > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 template < class T1, class T2 >
 struct Arity_traits< std::const_mem_fun_ref_t< T1, T2 > > {
   typedef Arity_tag< 1 > Arity;
 };
+    
 template < class T1, class T2, class T3 >
 struct Arity_traits< std::const_mem_fun1_ref_t< T1, T2, T3 > > {
   typedef Arity_tag< 2 > Arity;
 };
+    
 
 #endif // ! CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 #endif // ! _MSC_VER

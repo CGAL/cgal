@@ -71,9 +71,9 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run test_In_place_list
-  compile_and_run test_vector
   compile_and_run test_composition
   compile_and_run test_new_binders1
   compile_and_run test_stl_extension
+  compile_and_run test_vector
 fi
 
