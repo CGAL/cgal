@@ -81,6 +81,46 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   z = sz + num_z*inv;
 }
 
+template < class FT >
+void
+circumcenterC3( const FT &px, const FT &py, const FT &pz,
+                const FT &qx, const FT &qy, const FT &qz,
+                const FT &sx, const FT &sy, const FT &sz,
+                FT &x, FT &y, FT &z)
+{
+  // Translate s to origin to simplify the expression.
+  FT psx = px-sx;
+  FT psy = py-sy;
+  FT psz = pz-sz;
+  FT ps2 = CGAL_NTS square(psx) + CGAL_NTS square(psy) + CGAL_NTS square(psz);
+  FT qsx = qx-sx;
+  FT qsy = qy-sy;
+  FT qsz = qz-sz;
+  FT qs2 = CGAL_NTS square(qsx) + CGAL_NTS square(qsy) + CGAL_NTS square(qsz);
+  FT rsx = psy*qsz-psz*qsy;
+  FT rsy = psx*qsy-psx*qsz;
+  FT rsz = psx*qsy-psy*qsx;
+
+  FT num_x = det3x3_by_formula(psy,psz,ps2,
+                               qsy,qsz,qs2,
+                               rsy,rsz,rs2);
+  FT num_y = det3x3_by_formula(psx,psz,ps2,
+                               qsx,qsz,qs2,
+                               rsx,rsz,rs2);
+  FT num_z = det3x3_by_formula(psx,psy,ps2,
+                               qsx,qsy,qs2,
+                               rsx,rsy,rs2);
+  FT den   = det3x3_by_formula(psx,psy,psz,
+                               qsx,qsy,qsz,
+                               rsx,rsy,rsz);
+  CGAL_kernel_assertion( den != FT(0) );
+  FT inv = FT(1)/(FT(2) * den);
+
+  x = sx + num_x*inv;
+  y = sy - num_y*inv;
+  z = sz + num_z*inv;
+}
+
 template <class FT>
 CGAL_KERNEL_MEDIUM_INLINE
 void
