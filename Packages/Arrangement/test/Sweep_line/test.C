@@ -17,7 +17,10 @@
 #define Td_traits Tdt
 #endif
 
+#include <iostream>
 #include <fstream>
+#include <string>
+
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 
@@ -49,8 +52,8 @@
 // PL flag enables the running of the test independently of cgal_make.)
 #ifndef CGAL_ARR_TEST_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
-//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
-#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
+#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
+//#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
 #endif
 
@@ -162,6 +165,9 @@ typedef Pmwx::Pmwx_change_notification         Notifier;
  
 // we use the namespace std for compatability with MSVC
 typedef std::list<Point>                     Point_list;
+
+using namespace std;
+
 
 template <class PM>
 class Pm_polyline_traits_test
@@ -442,10 +448,8 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order = false)
 
   //#ifdef CGAL_PM_TEST_SWEEP
   void read_file_build_pm(std::ifstream& file, bool sweep_to_subcurves)
-  {
-    //typedef  CGAL::Sweep_line<list<Curve>::iterator, PM>  SWEEP_LINE;
-    
-    NT    x,y; 
+  { 
+    NT          x,y;
     list<Curve> curves;
     Curve curr_curve;
     //SWEEP_LINE         sweep_line;
