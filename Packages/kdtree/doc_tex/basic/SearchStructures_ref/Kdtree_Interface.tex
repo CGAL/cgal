@@ -1,11 +1,11 @@
-\begin{ccRefClass}{Kdtree_Interface<Point>}
+\begin{ccRefClass}{Kdtree_interface<Point>}
 
 {\cgal}  contains a default implementation for the Kdtree\_d traits
 class, that
 may be applied to any
 standard class of point provided by \cgal.
 
-The default traits class \ccStyle{Kdtree_Interface<Point>} is
+The default traits class \ccStyle{Kdtree_interface<Point>} is
 templated with a parameter \ccStyle{Point}, which is required to
 supply the following methods:
 
@@ -19,8 +19,8 @@ supply the following methods:
     coordinates between points.
 \end{itemize}
 
-There are two other default traits classes \ccStyle{Kdtree_Interface_2d<Point>} 
-and \ccStyle{Kdtree_Interface_3d<Point>} which should be used when using 
+There are two other default traits classes \ccStyle{Kdtree_interface_2d<Point>} 
+and \ccStyle{Kdtree_interface_3d<Point>} which should be used when using 
 2D and 3D points from the {\cgal} kernel. This is done since the points in the
 kernel do not support changing their coordinates through direct access. 
 
