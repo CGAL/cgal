@@ -53,21 +53,12 @@ class Arr_segment_circle_traits
   typedef typename Curve::Circle  Circle;
   typedef typename Curve::Conic   Conic;
 
-#ifndef __GNUC__
   enum Curve_point_status {
-    UNDER_CURVE = -1,
-    ABOVE_CURVE = 1,
-    ON_CURVE = 2,
+    UNDER_CURVE        = -1,
     CURVE_NOT_IN_RANGE = 0,
+    ABOVE_CURVE        = 1,
+    ON_CURVE           = 2
   };
-#else
-  //workaround for egcs, otherwise we get an ICE
-  typedef int Curve_point_status;
-  static const int UNDER_CURVE = -1;
-  static const int ABOVE_CURVE = 1;
-  static const int ON_CURVE = 2;
-  static const int CURVE_NOT_IN_RANGE = 0;
-#endif
 
   // Constructor.
   Arr_segment_circle_traits()
