@@ -88,7 +88,6 @@ area_2( ForwardIterator first, ForwardIterator last,
                     construct_triangle_2(*first, *second, *third));
 	second = third;
    }
-   result = result / FT(2);
 }
 
 template <class ForwardIterator, class Traits>
@@ -113,7 +112,6 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
                     construct_triangle_2(*first, *second, *third));
 	second = third;
    }
-   result = result / FT(2);
    return result;
 }
 
