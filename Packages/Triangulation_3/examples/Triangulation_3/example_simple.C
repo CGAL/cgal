@@ -15,25 +15,25 @@ typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > my_K;
 // This is just to shorten some symbol names for VC++
 struct K : public my_K {};
 
-typedef CGAL::Triangulation_3<K> Triangulation;
+typedef CGAL::Triangulation_3<K>      Triangulation;
 
-typedef Triangulation::Cell_handle Cell_handle;
-typedef Triangulation::Vertex_handle Vertex_handle;
-typedef Triangulation::Locate_type Locate_type;
+typedef Triangulation::Cell_handle    Cell_handle;
+typedef Triangulation::Vertex_handle  Vertex_handle;
+typedef Triangulation::Locate_type    Locate_type;
 
-typedef K::Point_3 Point;
+typedef K::Point_3                    Point;
 
 int main()
 {
-  Triangulation T;
-
-  // insertion from a list :
+  // construction from a list of points :
   std::list<Point> L;
   L.push_front(Point(0,0,0));
   L.push_front(Point(1,0,0));
   L.push_front(Point(0,1,0));
 
-  int n = T.insert(L.begin(), L.end());
+  Triangulation T(L.begin(), L.end());
+
+  int n = T.number_of_vertices();
 
   // insertion from a vector :
   std::vector<Point> V(3);
