@@ -1506,7 +1506,7 @@ file_input( std::istream& is, bool skip_first)
   //set this  first vertex as infinite_Vertex
   if(number_of_vertices() != 0)    clear();
   
-  size_type n, m, d;
+  int n, m, d;
   is >> n >> m >> d;
 
   if (n==0){ return Vertex_handle();}
