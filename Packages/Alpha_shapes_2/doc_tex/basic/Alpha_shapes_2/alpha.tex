@@ -45,31 +45,72 @@
 
 %----------------------------------------------------------------------
 
-\chapter{Alpha-Shapes 2D} \label{I1_ChapterAlphashapes2D}
+\chapter{2D Alpha Shapes} \label{I1_ChapterAlphashapes2D}
 
 %\ccChapterSubTitle{\alphashapeRevision, \alphashapeDate}
+\begin{ccTexOnly}
+\vspace*{-2cm}
+\includegraphics{alphashape.eps} 
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<img border=0 src="./alphashape.gif"  align=center>
+\end{ccHtmlOnly}
 
-\section{Introduction}
+Assume we are given a set $S$ of points in 2D or 3D and we'd like to
+have something like ``the shape formed by these points.'' This is
+quite a vague notion and there are probably many possible
+interpretations, the $\alpha$-shape being one of them. Alpha shapes
+can be used for shape reconstruction from a dense unorganized set of
+data points. Indeed, an $\alpha$-shape is demarcated by a frontier,
+which is a linear approximation of the original contour \cite{bb-srmua-97t}.
 
-This chapter presents a framework for alpha shapes. The description is based on
-the articles \cite{em-tdas-94,e-was-92}. Alpha shapes are
-the generalization of the convex hull of a point set. Let $S$ be a finite set of
-points in $\R^d$, $d = 2,3$ and $\alpha$ a parameter with $0 \leq \alpha \leq
-\infty$. For $\alpha = \infty$, the $\alpha$-shape is the convex hull of $S$. As 
-$\alpha$ decreases, the $\alpha$-shape shrinks and develops cavities, as soon as 
-a sphere of radius $\sqrt{\alpha}$ can be put inside.
-Finally, for $\alpha = 0$, the $\alpha$-shape is the set $S$ itself.
+As mentionned in Edelsbrunner's and M\"ucke's paper \cite{em-tdas-94},
+one can intuitively think of an $\alpha$-shape as the
+following. Imagine a huge mass of ice-cream making up the space $\R^3$
+and containing the points as ``hard'' chocolate pieces. Using one of
+these sphere-formed ice-cream spoons we carve out all parts of the
+ice-cream block we can reach without bumping into chocolate pieces,
+thereby even carving out holes in the inside (eg. parts not reachable
+by simply moving the spoon from the outside). We will eventually end
+up with a (not necessarily convex) object bounded by caps, arcs and
+points. If we now straighten all ``round'' faces to triangles and line
+segments, we have an intuitive description of what is called the
+$\alpha$-shape of $S$. Here's an example for this process in 2D (where
+our ice-cream spoon is simply a circle):
+                                                                        
+And what is $\alpha$ in the game?  $\alpha$ is the radius of the
+carving spoon. A very small value will allow us to eat up all of the
+ice-cream except the chocolate points themselves. Thus we already see
+that the $\alpha$-shape of degenerates to the point-set $S$ for
+$\alpha \rightarrow 0$. On the other hand, a huge value of $\alpha$
+will prevent us even from moving the spoon between two points since
+it's way too large. So we will never spoon up ice-cream lying in the
+inside of the convex hull of $S$, and hence the $\alpha$-shape for
+$\alpha \rightarrow \infty$ is the convex hull of $S$.
 
-We distinguish two versions of alpha shapes, one is based on the Delaunay
-triangulation and the other on its generalization, the regular triangulation,
-replacing the natural distance by the power to weighted points. The metric used
-determines an underlying triangulation of the alpha shape and thus, the version
-computed. 
-In one hand, there is the {\em classic alpha shapes}
-(cf. \ref{I1_SectClassicAS2D}) associated with the Delaunay triangulations
-(cf. \ref{I1_Sect_Delaunay}), in the other hand, the {\em weighted alpha shapes}
-(cf. \ref{I1_SectWeightedAS2D}) associated with the regular triangulations
-(cf. \ref{I1_Sect_Regular}). 
+
+\section{Definitions}
+
+% Alpha shapes are the generalization of the convex hull of a point
+% set. Let $S$ be a finite set of points in $\R^d$, $d = 2,3$ and
+% $\alpha$ a parameter with $0 \leq \alpha \leq
+% \infty$. For $\alpha = \infty$, the $\alpha$-shape is the convex hull of $S$. As 
+% $\alpha$ decreases, the $\alpha$-shape shrinks and develops cavities,
+% as soon as a sphere of radius $\sqrt{\alpha}$ can be put inside.
+% Finally, for $\alpha = 0$, the $\alpha$-shape is the set $S$ itself.
+
+We distinguish two versions of alpha shapes.  {\em Basic alpha shapes}
+are based on the Delaunay triangulation.  {\em Weighted alpha shapes}
+are based on its generalization, the regular triangulation, replacing
+the natural distance by the power to weighted points. The metric used
+determines an underlying triangulation of the alpha shape and thus,
+the version computed.
+
+% The {\em basic alpha shapes} (cf. \ref{I1_SectClassicAS2D}) associated
+% with the Delaunay triangulations (cf. \ref{I1_Sect_Delaunay}), in the
+% other hand, the {\em weighted alpha shapes}
+% (cf. \ref{I1_SectWeightedAS2D}) associated with the regular
+% triangulations (cf. \ref{I1_Sect_Regular}).
 
 There is a close connection between alpha shapes and the underlying
 triangulations. More precisely, the $\alpha$-complex of $S$ is a
@@ -82,8 +123,8 @@ $\alpha$-shape is defined as the underlying interior space of the
 $\alpha$-complex. 
 
 In general, an $\alpha$-complex is a non-connected and non-pure polytope, it
-means, that one $k$-simplice, $0 \leq k \leq d-1$ is not necessary adjacent to
-a $(k+1)$-simplice.
+means, that one $k$-simplex, $0 \leq k \leq d-1$ is not necessary adjacent to
+a $(k+1)$-simplex.
 
 The $\alpha$-shapes of $S$ form a discrete family, even though they
 are defined for all real numbers $\alpha$ with $0 \leq \alpha
@@ -91,217 +132,134 @@ are defined for all real numbers $\alpha$ with $0 \leq \alpha
 of $S$ by the underlying triangulation of $S$. In this representation
 each $k$-simplex of the underlying triangulation is associated with an
 interval that specifies for which values of $\alpha$ the $k$-simplex
-belongs to the $\alpha$-shape. Relying on this result, the family of
+belongs to the $\alpha$-shape. Relying on this fact, the family of
 $\alpha$-shapes can be computed efficiently and relatively
 easily. Furthermore, we can select an appropriate $\alpha$-shape from a
 finite number of different $\alpha$-shapes and corresponding
 $\alpha$-values.
 
-\subsection*{Main Application}
 
-Alpha shapes can be used for shape reconstruction from a dense unorganized set
-of data points. Indeed, an  $\alpha$-shape is demarcated by a frontier, which is
-a linear approximation of the original contour, under conditions described for
-the classic version, in \cite{bb-srmua-97t}.
 
 %----------------------------------------------------------------------
 
-\section{Generic Alpha-Shapes of Points in a Plane \label{I1_SectAlpha_Shape_2}}
+\section{Functionality \label{I1_SectAlpha_Shape_2}}
 
 The class \ccc{Alpha_shape_2<Dt>} represents the family of
 $\alpha$-shapes of points in a plane for {\em all} positive
 $\alpha$. It maintains the underlying triangulation \ccc{Dt} which
 represents connectivity and order among its faces. Each
-$k$-dimensional face of the \ccc{Dt} is associated with
-an interval that specifies for which values of $\alpha$ the face
-belongs to the $\alpha$-shape. There are links between the intervals
-and the $k$-dimensional faces of the triangulation.
+$k$-dimensional face of the \ccc{Dt} is associated with an interval
+that specifies for which values of $\alpha$ the face belongs to the
+$\alpha$-shape. There are links between the intervals and the
+$k$-dimensional faces of the triangulation.
 
-The main class of this package is documented in the Reference Manual
-\ccRefPage{CGAL::Alpha_shape_2<Dt>} and can be included from~: 
 
-\ccInclude{CGAL/Alpha_shape_2.h}
+The class \ccc{CGAL::Alpha_shape_2<Dt>} allows to .....
+
 
 %----------------------------------------------------------------------
 
-\section{Requirements for the Underlying Triangulation\label{I1_SectDtClass2D}}
+\section{Concepts and Models\label{I1_SectDtClass2D}}
 
-For the \ccc{Dt} class, you have to choose between a Delaunay or a regular
-triangulation, depending the version of alpha shapes, you want.
+
+We currently do not specify concepts for the underlying triangulation
+type. It must be a \ccc{CGAL::Delaunay_triangulation_2}
+ or a \ccc{Regular_triangulation_2}, or a \ccc{Triangulation_hierarchy_2}
+templatized with a Delaunay triangulation.
+
+The same holds for the vertex and face type, where we only
+provide the models \ccc{Alpha_shape_vertex_base_2<Gt, Tv} and
+\ccc{Alpha_shape_face_base_2<Tf>}. They have functions that allow
+to get and set alpha values. We will define concepts as soon
+as more models appear.
+
+Finally there is the alpha shape traits class. Again we do not
+define the concept but only refer to the model \ccc{CGAL::Alpha_shape_traits_2}.
 
 The class \ccc{Dt} must be parameterized with a special alpha shape
 traits class and a simple triangulation data structure, with no more requirements as
 for a simple triangulation class, but parameterized by a special vertex base
 class and a special face base class.
 
-\subsection*{The Alpha-Shape Traits Class (\mbox{\it Gt})\label{I1_ASTraits2D}} 
-
-\subsection{Requirements for the Alpha-Shape Traits Class}
-
-First, this traits class has the same requirements as the 
-triangulation traits class, for the \ccc{Dt} triangulation, you opted.
-
-Furthermore, you have also to provide specific methods to compute Alpha-Shapes~:\\
-as two constructions to compute the minimum squared radius for a face and for an
-edge, and a predicate to certify if a point is in the smallest circle associated
-with an edge or not. You can find the complete description in the Reference
-Manual \ccRefPage{CGAL::Alpha_shape_traits_2}.
-
-\subsection*{Triangulation Data Structure Class (\mbox{\it Tds}) for an Alpha-Shape}
-
-The underlying triangulation \ccc{Dt} is parameterized with her
-triangulation data structure class \ccc{Tds}, that has no additional
-requirements. In fact, the requirements are on the \ccc{Tds} parameters.
-
-She requires to be templated by special \ccc{Alpha_shape_vertex_base_2} and
-\ccc{Alpha_shape_face_base_2<Df>}, to store the alpha values associated. Thus, we need to
-define the requirements of such \ccc{Alpha_shape_vertex_base_2} and
-\ccc{Alpha_shape_face_base_2<Df>} classes.
-
-\subsection{Requirements for the \protect \ccc{Vertex_base} Class of an
-Alpha-Shape\label{I1_SectVertexAS2D}} 
-
-The information about the alpha values associated  are accessible by the 
-vertices of the alpha shape. Thus the nested \ccc{Alpha_shape_vertex_base_2}
-type of an alpha shape offers additional functionalities to deal with these
-methods.  
-
-This additional functionalities related to the alpha shape
-are requirements which have to be fulfilled by the base vertex for an alpha
-shape. You can find the complete description in the Reference Manual
-\ccRefPage{CGAL::Alpha_shape_vertex_base_2}.  
-
-\subsection{Requirements for the \protect \ccc{Face_base} Class of an Alpha-Shape}
-
-The information about the alpha values, associated to the face herself and the
-incident edges, are accessible by the 
-faces of the alpha shape. Thus the nested \ccc{Alpha_shape_face_base_2<Df>}
-type of an alpha shape offers additional functionalities to deal with these
-methods.
-
-This additional functionalities related to the alpha shape are requirements
-which have to be fulfilled by the base face  for an alpha shape. You can find
-the complete description in the Reference Manual
-\ccRefPage{CGAL::Alpha_shape_face_base_2<Df>}.
 
 %----------------------------------------------------------------------
 
-\section{Classic Version of Alpha-Shapes\label{I1_SectClassicAS2D}}
+\section{Example for Basic Alpha-Shapes\label{I1_SectClassicAS2D}}
 
-\subsection*{The Underlying Triangulation~: a Delaunay Triangulation}
+The basic alpha shape needs a Delaunay triangulation as
+underlying triangulation \ccc{Dt}.  The Delaunay triangulation class is
+parameterized with a geometric and a triangulation datastructure traits.
 
-For a simple alpha shape, you have to choose a Delaunay triangulation as
-underlying triangulation \ccc{Dt} and follow the requirements listed above.
+For the geometric traits class we can use the \ccc{Alpha_shape_traits_2}
+class, which in turn is parameterized with a kernel.
 
-\ccInclude{CGAL/Delaunay_triangulation_2.h}
+For the triangulation datastructure traits, we have to
+choose the vertex and face classes needed for alpha shapes,
+namely \ccc{Alpha_shape_vertex_base_2<Gt, Dv>} and \ccc{Alpha_shape_face_base_2<Gt,Df>}.
+As default vertex and face type they use \ccc{Triangulation_vertex_base_2<Gt>}
+and  \ccc{Triangulation_face_base_2<Gt>} respectively.
 
-\subsection*{Predefined Geometric Traits Class (\mbox{\it Gt})}
-
-Of course, \cgal\ provides a default \ccc{Alpha_shape_traits_2} class in this
-case, with an implementation of the appropriate predicate and constructions.
-The class \ccc{Alpha_shape_euclidean_traits_2<Rp>} simply derived from 
-\ccc{Triangulation_euclidean_traits_2<Rp>}.
-
-\ccInclude{CGAL/Alpha_shape_euclidean_traits_2.h}
-
-\subsection*{Predefined \protect \ccc{Vertex_base} Class}
-
-\cgal\ provides a default \ccc{Vertex_base} class
-for the Alpha Shape. The class
-\ccc{Alpha_shape_vertex_base_2<Gt>} simply derived from 
-\ccc{Triangulation_vertex_base_2<Gt>}.
-
-\ccInclude{CGAL/Alpha_shape_vertex_base_2.h}
-
-\subsection*{Predefined \protect \ccc{Face_base} Class}
-
-\cgal\ provides a default \ccc{Face_base} class
-for the Alpha Shape. The class
-\ccc{Alpha_shape_face_base_2<Gt,Df>} simply derived from 
-\ccc{Df}, which can be instantiated with \ccc{Triangulation_face_base_2<Gt>}.
-
-\ccInclude{CGAL/Triangulation_face_base_2.h}
-
-\ccInclude{CGAL/Alpha_shape_face_base_2.h}
-
-\subsection*{To Do a Classic Alpha-Shape}
-
-And last, you have to include~:
-
-\ccInclude{CGAL/Alpha_shape_2.h}
 
 \ccExample
-The following code details the different steps to create 
-a classic version of alpha shape with the defaults.
+The following code sniplet shows how to obtain a basic
+alpha shape type.
 
 \begin{cprog}
 typedef CGAL::Cartesian<double> Rp;
 typedef CGAL::Alpha_shape_euclidean_traits_2<Rp> Gt;
-typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
-typedef CGAL::Triangulation_face_base_2<Gt> Df;
-typedef CGAL::Alpha_shape_face_base_2<Gt,Df> Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef CGAL::Alpha_shape_vertex_base_2<Gt> Av;
+typedef CGAL::Triangulation_face_base_2<Gt> Tf;
+typedef CGAL::Alpha_shape_face_base_2<Gt,Tf> Af;
+typedef CGAL::Triangulation_default_data_structure_2<Gt,Av,Af> Tds;
 typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Dt;
 typedef CGAL::Alpha_shape_2<Dt> Alpha_shape_2;
 \end{cprog}
 
+
+\section{Example for Basic Alpha-Shapes with many Points.
+         \label{I1_SectClassicAS2DHier}}
+
+When the input data set is huge, say more than 10.000 points, it pays
+off to use a triangulation hierarchy. It has the same API as the
+Delaunay triangulation and differs only in the types of the vertices
+and faces.
+
+Therefore, the only part that changes are the typedefs in the beginning.
+
+\begin{cprog}
+typedef CGAL::Cartesian<double> Rp;
+typedef CGAL::Alpha_shape_euclidean_traits_2<Rp> Gt;
+typedef Triangulation_vertex_base_2<Gt> Tv;
+typedef Triangulation_hierarchy_vertex_base_2<Hv> 
+typedef CGAL::Alpha_shape_vertex_base_2<Gt,Hv> Av;
+
+typedef CGAL::Triangulation_face_base_2<Gt> Tf;
+typedef CGAL::Alpha_shape_face_base_2<Gt,Tf> Af;
+
+typedef CGAL::Triangulation_default_data_structure_2<Gt,Av,Af> Tds;
+typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Dt;
+typedef CGAL::Triangulation_hierarchy_2<Dt> Ht;
+typedef CGAL::Alpha_shape_2<Ht> Alpha_shape_2;
+\end{cprog}
+
+
 %----------------------------------------------------------------------
 
-\section{Weighted Version of Alpha-Shapes\label{I1_SectWeightedAS2D}}
+\section{Example for Weighted Alpha-Shapes\label{I1_SectWeightedAS2D}}
 
-\subsection*{The Underlying Triangulation~: a Regular Triangulation}
-
-For a weighted alpha shape, you have to choose a regular triangulation as
+A weighted alpha shape, needs a regular triangulation as
 underlying triangulation \ccc{Dt} and follow the requirements listed above.
 
-\ccInclude{CGAL/Regular_triangulation_2.h}
 
-\subsection*{Predefined Geometric Traits Class (\mbox{\it Gt})}
-
-Of course, \cgal\ provides a default \ccc{Alpha_shape_traits_2} class in this
-case, with an implementation of the appropriate predicate and constructions.
-The class \ccc{Weighted_alpha_shape_euclidean_traits_2<Rp>} simply derived from 
-\ccc{Regular_triangulation_euclidean_traits_2<Rp>}.
-
-\ccInclude{CGAL/Weighted_alpha_shape_euclidean_traits_2.h}
-
-\subsection*{Predefined \protect \ccc{Vertex_base} Class}
-
-\cgal\ provides a default \ccc{Vertex_base} class
-for the Alpha Shape. The class
-\ccc{Alpha_shape_vertex_base_2<Gt>} simply derived from 
-\ccc{Triangulation_vertex_base_2<Gt>}.
-
-\ccInclude{CGAL/Alpha_shape_vertex_base_2.h}
-
-\subsection*{Predefined \protect \ccc{Face_base} Class}
-
-\cgal\ provides a default \ccc{Face_base} class
-for the Alpha Shape. The class
-\ccc{Alpha_shape_face_base_2<Gt,Df>} simply derived from 
-\ccc{Df}, which can be instantiated with \ccc{Regular_triangulation_face_base_2<Gt>}.
-
-\ccInclude{CGAL/Regular_triangulation_face_base_2.h}
-
-\ccInclude{CGAL/Alpha_shape_face_base_2.h}
-
-\subsection*{To Do a Weighted Alpha-Shape}
-
-And last, you have to include~:
-
-\ccInclude{CGAL/Alpha_shape_2.h}
-
-\ccExample
-The following code details the different steps to create 
-a weighted version of alpha shape with the defaults.
+Note that there is no special alpha shape class.
 
 \begin{cprog}
 typedef CGAL::Cartesian<double> Rp;
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<Rp> Gt;
-typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
+typedef CGAL::Alpha_shape_vertex_base_2<Gt> Av;
 typedef CGAL::Regular_triangulation_face_base_2<Gt> Rf;
-typedef CGAL::Alpha_shape_face_base_2<Gt,Rf>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef CGAL::Alpha_shape_face_base_2<Gt,Rf>  Af;
+typedef CGAL::Triangulation_default_data_structure_2<Gt,Av,Af> Tds;
 typedef CGAL::Regular_triangulation_2<Gt,Tds> Rt;
 typedef CGAL::Alpha_shape_2<Rt> Alpha_shape_2;
 \end{cprog}
