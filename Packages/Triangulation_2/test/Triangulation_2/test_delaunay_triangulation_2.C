@@ -20,12 +20,11 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 #include <CGAL/basic.h>
-#include <utility>
-#include <list>
-#include <vector>
+#include <iostream>
+//#include <vector>
 
 #include <CGAL/_test_types.h>
-
+#include <CGAL/Cartesian.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_default_data_structure_2.h>
@@ -39,6 +38,8 @@ int main()
     cout << "Testing Delaunay Triangulation_2 "; 
   cout << " with Euclidean cartesian points : " << endl;
   
+  //typedef double coord_type;
+  //typedef CGAL::Cartesian<coord_type>  Test_rep_cartesian;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
   typedef CGAL::Triangulation_vertex_base_2<Gt1>                  Vb1;
   typedef CGAL::Triangulation_face_base_2<Gt1>                    Fb1;
@@ -48,8 +49,8 @@ int main()
   _test_cls_delaunay_triangulation_2( Cls1() );
 
 
-  cout << "Testing Delaunay Triangulation_2 "; 
-  cout << " with Euclidean homogeneous points : " << endl;
+  // cout << "Testing Delaunay Triangulation_2 "; 
+  //cout << " with Euclidean homogeneous points : " << endl;
   
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Gt2;
   typedef CGAL::Triangulation_vertex_base_2<Gt2>                  Vb2;
@@ -62,8 +63,7 @@ int main()
 
   cout << "Testing Delaunay Triangulation_2 "; 
   cout << " with Triangulation_test_traits : " << endl;
-  cout << " this use double type coordinates " << endl;
-
+  
   typedef CGAL::_Triangulation_test_traits                       Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
   typedef CGAL::Triangulation_face_base_2<Gt>                    Fb;
