@@ -1,6 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+0.106 (18 Nov 2003) [af]
+- Removed erroneous precondition in PointHd.h and VectorHd.h
+
 0.105 (17 Nov 2003)
 - Changed license header for basic library files.
 
