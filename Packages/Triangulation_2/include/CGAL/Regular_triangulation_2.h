@@ -57,6 +57,12 @@ public:
   typedef typename Base::All_faces_iterator    All_faces_iterator;
   typedef typename Base::Face::Vertex_list     Vertex_list;
   typedef typename Vertex_list::iterator       Vertex_list_iterator;
+
+ //for backward compatibility
+  typedef Finite_faces_iterator                Face_iterator;
+  typedef Finite_edges_iterator                Edge_iterator;
+  typedef Finite_vertices_iterator             Vertex_iterator;
+
  
 private:
   typedef std::list<Face_handle>      Faces_around_stack; 
@@ -109,6 +115,8 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
     operator Vertex_handle() const { return Base::base(); }
+
+    
  };
 
   class Hidden_vertices_iterator :
