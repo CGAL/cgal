@@ -1100,7 +1100,7 @@ fill_facette_map()
   for(Finite_faces_iterator fit = finite_faces_begin();
       fit != finite_faces_end();
       ++fit)
-    if( is_bad(fit))
+    if( is_bad(fit) && fit->is_marked() )
       push_in_bad_faces(fit);
 }
 
@@ -1111,7 +1111,7 @@ compute_new_bad_faces(Vertex_handle v)
   Face_circulator fc = v->incident_faces(), fcbegin(fc);
   do {
     if(!is_infinite(fc))
-      if(is_bad(fc))
+      if( is_bad(fc) && fc->is_marked() )
 	push_in_bad_faces(fc);
     fc++;
   } while(fc!=fcbegin);
