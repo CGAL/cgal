@@ -3,24 +3,7 @@
 //constructs a segment arrangement from CGAL window.
 // We use the leda traits (therefore we are using leda functions).
 
-#include <CGAL/config.h> // needed for the LONGNAME flag
-
-#ifdef CGAL_CFG_NO_LONGNAME_PROBLEM
-// Define shorter names to please linker (g++/egcs)
-#define Arrangement_2 Ar
-#define Arr_leda_segment_exact_traits Alset
-#define Arr_2_default_dcel A2d
-#define In_place_list_iterator IPLI
-#define Arr_2_vertex_base Avb
-#define Arr_2_halfedge_base Ahb
-#define Arr_2_face_base Afb
-#define Point_2 pT
-#define Segment_2 sT
-#define Topological_map TpM
-#define _List_iterator Lit
-#define Halfedge hE
-#define Forward_circulator_tag Fct
-#endif
+#include "short_names.h"
 
 #include <CGAL/basic.h>
 

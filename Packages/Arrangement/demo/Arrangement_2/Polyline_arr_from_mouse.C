@@ -2,32 +2,7 @@
 //
 //constructs an arrangement of polylines from user input
 
-#include <CGAL/config.h> // needed for the LONGNAME flag
-
-#ifdef CGAL_CFG_NO_LONGNAME_PROBLEM
-// Define shorter names to please linker (g++/egcs)
-#define Arrangement_2 Ar
-#define Cartesian cR
-#define Arr_polyline_traits ARPT
-#define Arr_2_default_dcel A2d
-#define In_place_list_iterator IPLI
-#define Arr_2_vertex_base Avb
-#define Arr_2_halfedge_base Ahb
-#define Arr_2_face_base Afb
-#define Td_X_trapezoid TdXt
-#define Td_traits Tdt
-#define Planar_map_traits_wrap Pmtw
-#define PL_X_curve_plus PXcp
-#define Point_2 pT
-#define allocator aR
-#define Arr_base_node Abn
-#define Topological_map TpM
-#define _Arr_face_circ Afc
-#define _Pm_Halfedge PmH
-#define _List_iterator Lit
-#define Halfedge hE
-#define Forward_circulator_tag Fct
-#endif
+#include "short_names.h"
 
 //constructs a ployline arrangement from CGAL window.
 // We use the leda traits (therefore we use leda functions).

@@ -2,30 +2,7 @@
 //
 //constructs a segment arrangement from file.
 
-#include <CGAL/config.h> // needed for the LONGNAME flag
-
-#ifdef CGAL_CFG_NO_LONGNAME_PROBLEM
-// Define shorter names to please linker (g++/egcs)
-#define Arrangement_2 Ar
-#define Arr_leda_segment_exact_traits Alset
-#define Arr_2_default_dcel A2d
-#define In_place_list_iterator IPLI
-#define Arr_2_vertex_base Avb
-#define Arr_2_halfedge_base Ahb
-#define Arr_2_face_base Afb
-#define Point_2 pT
-#define Segment_2 sT
-#define Topological_map TpM
-#define _List_iterator Lit
-#define Halfedge hE
-#define Forward_circulator_tag Fct
-#define Homogeneous Ho
-#define Quotient Qu
-#define _In_place_list_iterator IPLI
-#define Arrangement_2 Ar
-#define Arr_segment_exact_traits ASET
-#define Arr_base_node ABN
-#endif
+#include "short_names.h"
 
 //File format is (coordinates should be between [-400,400] to be in window):
 //#number_of_segments
