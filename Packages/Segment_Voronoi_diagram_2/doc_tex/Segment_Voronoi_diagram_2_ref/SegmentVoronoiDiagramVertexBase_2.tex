@@ -32,6 +32,11 @@ requirements for the vertex base class of the
 site of the segment Voronoi diagram and provides access to one of its
 incident faces through a \ccc{Face_handle}.
 
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
 \ccTypes
 %\ccTwo{SegmentVoronoiDiagramVertexBase_2::Point_container+}{}
 \ccThree{typedef typename Point_container::iterator+}{Point_handle+}{}
@@ -40,31 +45,28 @@ incident faces through a \ccc{Face_handle}.
 the site. \ccPrecond{The type \ccc{Geom_traits} must
 define the type \ccc{Site_2}.}}
 %
-\ccGlue
-\ccNestedType{Point_container}{A type for a container of points.}
+%\ccGlue
+%\ccNestedType{Point_container}{A type for a container of points.}
 %  \ccPrecond{This type must satisfy the requirements of the concept
 %   \ccc{SimpleContainer}.}}
 %
-\ccGlue
-\ccTypedef{typedef typename Point_container::iterator Point_handle;}
-{A handle type for the points in the point container.}
+%\ccGlue
+%\ccTypedef{typedef typename Point_container::iterator Point_handle;}
+%{A handle type for the points in the point container.}
 %
 \ccGlue
-\ccNestedType{Site_2}{A type for the site.
-\ccPrecond{This type must coincide with the type
-\ccc{Geom_traits::Site_2}.}}
+\ccNestedType{Site_2}{A type for the site. This type must coincide
+  with the type \ccc{Geom_traits::Site_2}.}
 %
 \ccGlue
 \ccNestedType{Storage_site_tag}{A type that indicates what kind of
-  storage type to use.
-  \ccPrecond{\ccc{Storage_site_tag} must either be
-    \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.}}
+  storage type to use. \ccc{Storage_site_tag} must either be
+    \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.}
 %
 \ccGlue
 \ccNestedType{Storage_site_2}{A type for the internal representation
-  of sites.
-\ccPrecond{This type must satisfy the requirements of the concept
-\ccc{SegmentVoronoiDiagramStorageSite_2}.}}
+  of sites. This type must satisfy the requirements of the concept
+\ccc{SegmentVoronoiDiagramStorageSite_2}.}
 %
 \ccGlue
 \ccNestedType{Segment_Voronoi_diagram_data_structure_2}{A type for the
@@ -84,8 +86,12 @@ define the type \ccc{Site_2}.}}
 
 \ccTwo{SegmentVoronoiDiagramVertexBase_2 v(Storage_site_2 ss);++}{}
 %
-\ccConstructor{SegmentVoronoiDiagramVertexBase_2();}{Default constructor.}
-\ccGlue
+%\ccConstructor{SegmentVoronoiDiagramVertexBase_2();}{Default constructor.}
+%\ccGlue
+
+In addition to the default and copy constructors and following
+constructors are required:
+
 \ccConstructor{SegmentVoronoiDiagramVertexBase_2(Storage_site_2 ss);}
 {Constructs a vertex associated with the site represented by the
   storage site \ccc{ss}.}

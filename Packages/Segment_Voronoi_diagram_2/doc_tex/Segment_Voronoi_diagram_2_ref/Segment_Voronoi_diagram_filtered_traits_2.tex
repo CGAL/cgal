@@ -38,11 +38,19 @@ kernel \ccc{EK} and a filtering kernel \ccc{FK}. The geometric
 constructions associated provided by this class are equivalent
 to those provided by the traits class
 \ccc{Segment_Voronoi_diagram_traits_2<CK,CM>}, which means that
-they may be inexact.
+they may be inexact depending on the choice of the \ccc{CK} kernel.
 
 This class has six template parameters. The first, third and fifth
 template parameters must be a models of the \ccc{Kernel} concept. The
-second, fourth and sixth template parameters correspond to how
+parameter \ccc{CK} is the construction kernel and it is the kernel
+that will be used for constructions. The parameter \ccc{FK} is the
+filtering kernel; this kernel will be used for performing the
+arithmetic filtering for the predicates involved in the computation of
+the segment Voronoi diagram. Finally, the parameter \ccc{EK} is the
+exact kernel; this kernel will be used for computing the predicates if
+the filtering kernel fails to produce an answer.
+
+The second, fourth and sixth template parameters correspond to how
 predicates are evaluated. There are two predefined possible values for
 these parameters, namely \ccc{CGAL::Sqrt_field_tag} and
 \ccc{CGAL::Field_tag}. The first one must be used when the number type
@@ -55,7 +63,8 @@ must be set to \ccc{CGAL::Sqrt_field_tag} and the number type in
 (as well as the other three basic operations of course).
 %
 The way the predicates are evaluated is discussed in
-\cite{b-ecvdl-96,cgal:k-reisv-04}.
+\cite{b-ecvdl-96} and \cite{cgal:k-reisv-04} (the geometric filtering
+part).
 
 The default values for the template parameters are as follows:
 \ccc{CM = CGAL::Sqrt_field_tag} (it is assumed that

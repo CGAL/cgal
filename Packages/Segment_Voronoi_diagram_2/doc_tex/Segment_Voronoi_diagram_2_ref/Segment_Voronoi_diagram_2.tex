@@ -42,9 +42,14 @@ CGAL::Triangulation_face_base_2<Gt> >}.
 
 \ccInclude{CGAL/Segment_Voronoi_diagram_2.h}
 
+\ccIsModel
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
 \ccTypes
 
-\ccThree{typedef typename DS::size_type}{Point_container+}{}
+\ccThree{typedef typename Point_container::iterator}{Point_container+}{}
 %
 \ccTypedef{typedef Gt Geom_traits;}{A type for the geometric traits.}
 \ccGlue
@@ -63,8 +68,8 @@ point defined in the geometric traits.}
 \ccGlue
 \ccTypedef{typedef std::list<Point_2> Point_container;}{A type for the container of points.}
 \ccGlue
-\ccTypedef{typedef typename PC::iterator Point_handle;}{A handle for
-  points in the point container.}
+\ccTypedef{typedef typename Point_container::iterator Point_handle;}
+{A handle for points in the point container.}
 %
 
 % MK:: in the following copy text from TDS
@@ -135,7 +140,7 @@ In addition to iterators and circulators for vertices and faces,
 iterators for sites are provided. In particular there are iterators
 for the set of input sites and the set of output sites. The set of
 input sites is the set of sites inserted by the user using the
-\ccc{insert} method of this class. If a site is inserted multiple
+\ccc{insert} methods of this class. If a site is inserted multiple
 times, every instance of this site will be reported. The set of output
 sites is the set of sites in the segment Voronoi diagram. The value
 type of these iterators is \ccc{Site_2}.
@@ -155,6 +160,10 @@ type of these iterators is \ccc{Site_2}.
 \ccThree{Segment_Voronoi_diagram_2<Gt,DS>}{svd(Gt gt=Gt());}{}
 \ccThreeToTwo
 %
+
+In addition to the default and copy constructors the following
+constructors are defined:
+
 \ccConstructor{Segment_Voronoi_diagram_2(Gt gt=Gt());}{Creates the
   dual of the segment Voronoi diagram using \ccc{gt} as geometric
   traits.}
@@ -169,20 +178,20 @@ geometric traits and inserts all sites in the range
 \ccc{InputIterator}. The value type of
 \ccc{Input_iterator} must be either \ccc{Point_2} or \ccc{Site_2}.}}
 %
-\ccConstructor{Segment_Voronoi_diagram_2(const
-  Segment_Voronoi_diagram_2<Gt,DS>& other)}
-{Copy constructor. All faces and vertices are duplicated. After the
-  construction, 
-  \ccVar\ and \ccc{other} refer to two different segment Voronoi diagrams~: if
-  \ccc{other} is modified, \ccVar\ is not.}
-%
-\ccMethod{Segment_Voronoi_diagram_2<Gt,DS>
-operator=(const Segment_Voronoi_diagram_2<Gt,DS>& other);}
-{Assignment. If \ccc{svd} and \ccc{other} are the same object
-  nothing is done. Otherwise, all the vertices and faces are
-  duplicated. After the assignment, \ccVar\ and \ccc{other} refer to
-  different segment Voronoi diagrams~: if \ccc{other} is modified,
-  \ccVar\ is not.}
+%% \ccConstructor{Segment_Voronoi_diagram_2(const
+%%   Segment_Voronoi_diagram_2<Gt,DS>& other)}
+%% {Copy constructor. All faces and vertices are duplicated. After the
+%%   construction, 
+%%   \ccVar\ and \ccc{other} refer to two different segment Voronoi
+%%   diagrams~: if \ccc{other} is modified, \ccVar\ is not.}
+%% %
+%% \ccMethod{Segment_Voronoi_diagram_2<Gt,DS>
+%% operator=(const Segment_Voronoi_diagram_2<Gt,DS>& other);}
+%% {Assignment. If \ccc{svd} and \ccc{other} are the same object
+%%   nothing is done. Otherwise, all the vertices and faces are
+%%   duplicated. After the assignment, \ccVar\ and \ccc{other} refer to
+%%   different segment Voronoi diagrams~: if \ccc{other} is modified,
+%%   \ccVar\ is not.}
 
 
 
@@ -489,7 +498,7 @@ vnear);}{Inserts the segment whose endpoints are \ccc{p1} and \ccc{p2}
   \ccc{Vertex_handle insert(Point_2 p)} and \ccc{Vertex_handle
     insert(Point_2 p1, Point_2 p2)}, depending on whether \ccc{s}
   represents a point or a segment respectively.
-\ccPrecond{\ccc{s.is_exact()} must be \ccc{true}.}}
+\ccPrecond{\ccc{s.is_input()} must be \ccc{true}.}}
 %
 \ccGlue
 \ccMethod{Vertex_handle insert(Site_2 s, Vertex_handle
@@ -498,7 +507,8 @@ associated with \ccc{vnear} as an estimate for the nearest neighbor of
 \ccc{s}, if \ccc{s} is a point, or the first endpoint of \ccc{s}, if
 \ccc{s} is a segment. The vertex handle returned has the same
 semantics as the vertex handle returned by the method
-\ccc{Vertex_handle insert(Site_2 s)}.}
+\ccc{Vertex_handle insert(Site_2 s)}.
+\ccPrecond{\ccc{s.is_input()} must be \ccc{true}.}}
 
 
 \ccHeading{Nearest neighbor location}

@@ -38,11 +38,20 @@ kernel \ccc{EK} and a filtering kernel \ccc{FK}. The geometric
 constructions associated provided by this class are equivalent
 to those provided by the traits class
 \ccc{Segment_Voronoi_diagram_traits_without_intersections_2<CK,CM>},
-which means that they may be inexact.
+which means that they may be inexact, depending on the choice of the
+\ccc{CK} kernel.
 
-This class has six template parameters. 
-The first, third and fifth template parameters must be a models of the
-\ccc{Kernel} concept. The second, fourth and sixth template parameters
+This class has six template parameters. The first, third and fifth
+template parameters must be a models of the \ccc{Kernel} concept. The
+parameter \ccc{CK} is the construction kernel and it is the kernel
+that will be used for constructions. The parameter \ccc{FK} is the
+filtering kernel; this kernel will be used for performing the
+arithmetic filtering for the predicates involved in the computation of
+the segment Voronoi diagram. Finally, the parameter \ccc{EK} is the
+exact kernel; this kernel will be used for computing the predicates if
+the filtering kernel fails to produce an answer.
+
+The second, fourth and sixth template parameters
 correspond to how predicates are evaluated. There are two predefined
 possible values for these parameters, namely \ccc{CGAL::Sqrt_field_tag}
 and \ccc{CGAL::Ring_tag}. The first one must be used when the number
@@ -56,7 +65,8 @@ in \ccc{CK} must support operations involing divisions and square
 roots (as well as the other three basic operations of course).
 %
 The way the predicates are evaluated is discussed in
-\cite{b-ecvdl-96,cgal:k-reisv-04}.
+\cite{b-ecvdl-96} and \cite{cgal:k-reisv-04} (the geometric filtering
+part).
 
 The default values for the template parameters are as follows:
 \ccc{CM = CGAL::Sqrt_field_tag} (it is assumed that
@@ -68,7 +78,7 @@ will be the entry for the template parameter \ccc{CK}),
 installed with \cgal, the template parameter \ccc{EK} has the default
 value: \ccc{EK = CGAL::Simple_cartesian<CGAL::Gmpq>}, otherwise its
 default value is
-\ccc{EK = CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> >}.
+\ccc{EK = CGAL::Simple_cartesian<CGAL::MP_Float>}.
 
 
 \ccInclude{CGAL/Segment_Voronoi_diagram_filtered_traits_2.h}
@@ -122,7 +132,7 @@ defines the following types:
 \ccc{CGAL::Sqrt_field_tag}\\
 \ccc{CGAL::Segment_Voronoi_diagram_2<Gt,DS>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
 

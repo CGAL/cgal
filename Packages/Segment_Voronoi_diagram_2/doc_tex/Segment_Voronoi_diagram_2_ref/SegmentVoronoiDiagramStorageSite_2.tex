@@ -26,7 +26,7 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
-  
+
 The concept \ccc{SegmentVoronoiDiagramStorageSite_2} provides the
 requirements for the storage sites of a segment Voronoi diagram. The
 storage sites are sites that are used to store the information of a
@@ -34,22 +34,31 @@ site in a more compact form (that uses less storage). This is achieved
 by storing handles to points instead of points.
 
 
-\ccTwo{SegmentVoronoiDiagramStorageSite_2::Point_handle+}{}
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
+\ccThree{typedef typename std::list<typename Site_2::Point_2>::iterator}
+{Point_handle+}{}
+\ccThreeToTwo
 \ccTypes
 \ccNestedType{Site_2}{The site type.}
 \ccGlue
-\ccNestedType{Point_handle;}{The type for a handle to a point.}
+\ccTypedef{typedef typename std::list<typename Site_2::Point_2>::iterator
+Point_handle;}{The type for a handle to a point.}
 
 
 
 \ccCreation
-\ccTwo{SegmentVoronoiDiagramStorageSite_2 ss()+}{}
+\ccTwo{SegmentVoronoiDiagramStorageSite_2 ss(Point_handle hp)++}{}
 
 
 \ccCreationVariable{ss}  %% choose variable name
-\ccConstructor{SegmentVoronoiDiagramStorageSite2 ss()}{Default constructor}
-%
-\ccGlue
+
+In addition to the default and copy constructors, the following
+constructors should be defined:
+
 \ccConstructor{SegmentVoronoiStorageSite2(Point_handle hp)}{Constructor from a
   point handle.}
 %
@@ -72,13 +81,10 @@ by storing handles to points instead of points.
   Point_handle hp2, Point_handle hq1, Point_handle hq2, Point_handle
   hr1, Point_handle hr2)}{Constructor from six
   point handles.}
-%
-\ccGlue
-\ccConstructor{SegmentVoronoiDiagramStorageSite_2(SegmentVoronoiDiagramStorageSite_2
-  other)}{Copy constructor.}
+
 
 \ccPredicates
-\ccThree{bool}{ss.is_exact(unsigned int i)+}{}
+\ccThree{bool}{ss.is_input(unsigned int i)+}{}
 \ccMethod{bool is_defined();}{Returns \ccc{true} if the storage site
   represents a valid point or segment.}
 %
@@ -91,14 +97,14 @@ by storing handles to points instead of points.
   represents a segment.}
 %
 \ccGlue
-\ccMethod{bool is_exact();}{Returns \ccc{true} if the storage site
-  represents an input point or an input segment. Returns \ccc{false}
-  if it represents a point of intersection of two segments, or if it
-  represents a segment, at least one endpoint of which is a point of
-  intersection of two segments.}
+\ccMethod{bool is_input();}{Returns \ccc{true} if the storage site
+  represents an input point or a segment defined by two input
+  points. Returns \ccc{false} if it represents a point of intersection
+  of two segments, or if it represents a segment, at least one
+  endpoint of which is a point of intersection of two segments.}
 %
 \ccGlue
-\ccMethod{bool is_exact(unsigned int i);}{Returns \ccc{true} if the
+\ccMethod{bool is_input(unsigned int i);}{Returns \ccc{true} if the
   \ccc{i}-th endpoint of the corresponding site is an input
   point. Returns \ccc{false} if the \ccc{i}-th endpoint of the
   corresponding site is the intersection of two segments.
@@ -114,63 +120,76 @@ by storing handles to points instead of points.
 \ccMethod{Point_handle handle(unsigned int i) const;}{
   Returns the \ccc{i}-th point handle of the site's
   representation. The valid values for \ccc{i} are $0$ through the
-  number of points in the constructor or the
-  \ccc{set_point}/\ccc{set_segment} methods used to
-  construct or define, respectively the site.
+  number of handles in the constructor used to construct the site.
   \ccPrecond{\ccc{i} must be at most $5$. The storage site must be of
     the correct type in order to access the corresponding point handle.}}
 %
 \ccGlue
 \ccMethod{SegmentVoronoiDiagramStorageSite_2 supporting_site();}
-	 {Returns a storage site object representing the exact segment
-	   that supports the segment represented by the storage site.
-  \ccPrecond{\ccc{ss.is_segment()} must be \ccc{true}.}
-  \ccPostcond{The returned storage site represents an exact site.}}
+         {Returns a storage site object representing the segment
+           that supports the segment represented by the storage site.
+           The returned storage site represents a site, both endpoints
+           of which are input points.
+  \ccPrecond{\ccc{ss.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{SegmentVoronoiDiagramStorageSite_2 source_site();}
+{Returns a storage site that represents the first endpoint of the
+  represented segment.
+  \ccPrecond{\ccc{ss.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{SegmentVoronoiDiagramStorageSite_2 target_site();}
+{Returns a storage site that represents the second endpoint of the
+  represented segment.
+  \ccPrecond{\ccc{ss.is_segment()} must be \ccc{true}.}}
 %
 \ccGlue
 \ccMethod{SegmentVoronoiDiagramStorageSite_2 supporting_site(unsigned int i);}
-	 {Returns a storage site object representing the \ccc{i}-th
-	   exact segment that supports the point of intersection represented
-	   by the storage site.
+         {Returns a storage site object representing the \ccc{i}-th
+           segment that supports the point of intersection represented
+           by the storage site.
+           The returned storage site represents a site, both endpoints
+           of which are input points.
   \ccPrecond{\ccc{i} must be at most $1$, \ccc{ss.is_point()} must be
-    \ccc{true} and \ccc{ss.is_exact()} must be \ccc{false}.}
-  \ccPostcond{The returned storage site represents an exact site.}}
+    \ccc{true} and \ccc{ss.is_input()} must be \ccc{false}.}}
 %
 \ccGlue
 \ccMethod{SegmentVoronoiDiagramStorageSite_2 crossing_site(unsigned int i);}
-	 {Returns a storage site object representing the \ccc{i}-th exact
-	   segment that supports the $i$-th endpoint of the site
-	   which is not the supporting segment of the site.
-	   \ccPrecond{\ccc{i} must be at most $1$,
-	     \ccc{ss.is_segment()} must be \ccc{true} and
-	     \ccc{ss.is_exact(i)} must be \ccc{false}.}
-	   \ccPostcond{The returned site represents and exact site.}}
+         {Returns a storage site object representing the \ccc{i}-th
+           segment that supports the $i$-th endpoint of the site
+           which is not the supporting segment of the site.
+           The returned storage site represents a site, both endpoints
+           of which are input points.
+           \ccPrecond{\ccc{i} must be at most $1$,
+             \ccc{ss.is_segment()} must be \ccc{true} and
+             \ccc{ss.is_input(i)} must be \ccc{false}.}}
 %
 \ccGlue
 \ccMethod{Site_2 site();}{Returns the site represented by the storage
   site.}
 
 
-\ccHeading{Set methods}
-\ccThree{void}{s.set_point(Point_handle hp)+}{}
-%\ccThree{void}{s.set_segment(Point_2 p1, Point_2 p2)+}{}
-\ccMethod{void set_point(Point_handle hp);}{}
-%
-\ccGlue
-\ccMethod{void set_point(Point_handle hp1, Point_handle hp2,
-  Point_handle hq1, Point_handle hq2);}{}
-%
-\ccGlue
-\ccMethod{void set_segment(Point_handle hp1, Point_handle hp2);}{}
-%
-\ccGlue
-\ccMethod{void set_segment(Point_handle hp1, Point_handle hp2,
-  Point_handle hq1, Point_handle hq2, bool b);}{}
-%
-\ccGlue
-\ccMethod{void set_segment(Point_handle hp1, Point_handle hp2,
-  Point_handle hq1, Point_handle hq2, Point_handle hr1,
-  Point_handle hr2);}{}
+%% \ccHeading{Set methods}
+%% \ccThree{void}{s.set_point(Point_handle hp)+}{}
+%% %\ccThree{void}{s.set_segment(Point_2 p1, Point_2 p2)+}{}
+%% \ccMethod{void set_point(Point_handle hp);}{}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_point(Point_handle hp1, Point_handle hp2,
+%%   Point_handle hq1, Point_handle hq2);}{}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_segment(Point_handle hp1, Point_handle hp2);}{}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_segment(Point_handle hp1, Point_handle hp2,
+%%   Point_handle hq1, Point_handle hq2, bool b);}{}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_segment(Point_handle hp1, Point_handle hp2,
+%%   Point_handle hq1, Point_handle hq2, Point_handle hr1,
+%%   Point_handle hr2);}{}
 
 
 

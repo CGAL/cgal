@@ -50,23 +50,20 @@ done as follows: at the top most level we find the nearest neighbor of
 $p$ as in the \ccc{Segment_Voronoi_diagram_2<Gt,DS>} class. At
 every subsequent level $i$ we use the nearest neighbor found at level
 $i+1$ to find the nearest neighbor at level $i$. This is a variant of
-the corresponding hierarchy for points found in \cite{d-iirdt-98}. The
+the corresponding hierarchy for points found in \cite{cgal:d-dh-02}. The
 details are described in \cite{cgal:k-reisv-04}.
 
-The class has four template parameters. The first, third and fourth
+The class has three template parameters. The first and third
 have essentially the same semantics as in the
 \ccc{Segment_Voronoi_diagram_2<Gt,DS>} class. The
 first template parameter must be a model of the
-\ccc{SegmentVoronoiDiagramTraits_2} concept.
-The third template parameter must be a model of the
-\ccc{SimpleContainer} concept. The fourth template parameter must be a
-model of the \ccc{SegmentVoronoiDiagramDataStructure_2}
-concept. However, the vertex base class that is to be used in the
-segment Voronoi diagram data structure must
-be a model of the \ccc{SegmentVoronoiDiagramHierarchyVertexBase_2}
+\ccc{SegmentVoronoiDiagramTraits_2} concept. The third template
+parameter must be a model of the
+\ccc{SegmentVoronoiDiagramDataStructure_2} concept. However, the
+vertex base class that is to be used in the segment Voronoi diagram
+data structure must be a model of the
+\ccc{SegmentVoronoiDiagramHierarchyVertexBase_2}
 concept. The third template parameter defaults to
-\ccc{CGAL::Simple_container_wrapper< std::list<typename Gt::Point_2>
->}, whereas the fourth template parameter defaults to
 \ccc{Segment_Voronoi_diagram_data_structure_2<
 Segment_Voronoi_diagram_hierarchy_vertex_base_2< 
 Segment_Voronoi_diagram_vertex_base_2<Gt> >,
@@ -76,7 +73,8 @@ levels of the hierarchy. It's possible values are \ccc{CGAL::Tag_true}
 and \ccc{CGAL::Tag_false}. If it is set to \ccc{CGAL::Tag_true},
 segments are also inserted in the upper levels of the hierarchy. The
 value \ccc{CGAL::Tag_false} indicates that only points are to be
-inserted in the upper levels of the hierarchy.
+inserted in the upper levels of the hierarchy. The default value for
+the second template parameter is \ccc{CGAL::Tag_false}.
 
 
 The \ccRefName\ class derives publicly from the
@@ -88,6 +86,10 @@ and methods defined are documented.
 \ccInclude{CGAL/Segment_Voronoi_diagram_hierarchy_2.h}
 
 
+\ccIsModel
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
 
 \ccInheritsFrom
 \ccc{CGAL::Segment_Voronoi_diagram_2<Gt,DS>}
@@ -104,7 +106,7 @@ introduced by its base class
   \ccc{STag} template parameter.}
 \ccGlue
 \ccTypedef{typedef CGAL::Segment_Voronoi_diagram_2<Gt,DS> Base;}
-	  {A type for the base class.}
+          {A type for the base class.}
 
 \ccCreation
 \ccCreationVariable{svdh}
@@ -113,7 +115,10 @@ introduced by its base class
 {svdh(Gt gt=Gt());}{}
 \ccThreeToTwo
 \ccTwo{Segment_Voronoi_diagram_hierarchy}{}
-%
+
+In addition to the copy constructor, the following constructors are
+defined:
+
 \ccConstructor{Segment_Voronoi_diagram_hierarchy_2(Gt
 gt=Gt())}{Creates a hierarchy of segment Voronoi diagrams using
   \ccc{gt} as geometric traits.}
@@ -128,23 +133,23 @@ range [\ccc{first}, \ccc{beyond}). \ccc{Input_iterator} must be a
   model of \ccc{InputIterator}. The value type of \ccc{Input_iterator}
   must be either \ccc{Point_2} or \ccc{Site_2}.}
 %
-\ccGlue
-\ccConstructor{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>
-(Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS> other)}
-{Copy constructor. All faces, vertices and inter-level pointers
-are duplicated. After the construction, \ccVar\ and \ccc{other} refer
-to two different hierarchies: if \ccc{other} is modified, \ccVar\ is
-not.}
-%
-\ccThree{Segment_Voronoi_diagram_hierarchy<Gt,STag,PC,DS>++}{svdh = other;}{}
-\ccThreeToTwo
-\ccGlue
-\ccMethod{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>
-operator=(Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>
-other);}{Assignment. All faces, vertices and inter-level pointers
-are duplicated. After the construction, \ccVar\ and \ccc{other} refer
-to two different hierarchies: if \ccc{other} is modified, \ccVar\ is
-not.}
+%% \ccGlue
+%% \ccConstructor{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>
+%% (Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS> other)}
+%% {Copy constructor. All faces, vertices and inter-level pointers
+%% are duplicated. After the construction, \ccVar\ and \ccc{other} refer
+%% to two different hierarchies: if \ccc{other} is modified, \ccVar\ is
+%% not.}
+%% %
+%% \ccThree{Segment_Voronoi_diagram_hierarchy<Gt,STag,PC,DS>++}{svdh = other;}{}
+%% \ccThreeToTwo
+%% \ccGlue
+%% \ccMethod{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>
+%% operator=(Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>
+%% other);}{Assignment. All faces, vertices and inter-level pointers
+%% are duplicated. After the construction, \ccVar\ and \ccc{other} refer
+%% to two different hierarchies: if \ccc{other} is modified, \ccVar\ is
+%% not.}
 
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramDataStructure_2}\\

@@ -27,15 +27,20 @@
 \ccDefinition
 
 The concept \ccc{SegmentVoronoiDiagramTraits_2} provides the traits
-requirements for the \ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} and
-\ccc{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>} classes. In
+requirements for the \ccc{Segment_Voronoi_diagram_2<Gt,DS>} and
+\ccc{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>} classes. In
 particular, it provides a type \ccc{Site_2}, which must be a model of
 the concept \ccc{SegmentVoronoiDiagramSite_2}. It also provides
 constructions for sites and several function object
 types for the predicates.
 
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
 \ccTypes
-\ccTwo{SegmentVoronoiDiagramTraits_2::Segment_2+}{}
+\ccTwo{SegmentVoronoiDiagramTraits_2::Arrangement_type+}{}
 %
 \ccNestedType{Intersections_tag}{Indicates or not whether the
   intersecting segments are to be supported. The tag must either be
@@ -114,7 +119,7 @@ types for the predicates.
 %and its weight is infinite.
 %}
 %
-\ccTwo{SegmentVoronoiDiagram_2}{}
+\ccTwo{SegmentVoronoiDiagramTraits_2}{}
 %
 \ccGlue
 \ccNestedType{Compare_x_2}{A predicate object type. Must
@@ -167,7 +172,10 @@ lies on the bisector of \ccc{s1} and \ccc{s2}.}
 Must provide \ccc{Sign operator()(Site_2 s1, Site_2
 s2, Site_2 s3, Site_2 q)}, which
 returns the sign of the distance of \ccc{q} from the Voronoi circle
-of \ccc{s1}, \ccc{s2}, \ccc{s3}.
+of \ccc{s1}, \ccc{s2}, \ccc{s3} (the Voronoi circle of three sites
+\ccc{s1}, \ccc{s2}, \ccc{s3} is a circle co-tangent to all three
+sites, that touches them in that order as we walk on its circumference
+in the counter-clockwise sense).
 \ccPrecond{the Voronoi circle of \ccc{s1}, \ccc{s2},
 \ccc{s3} must exist.}\\
 Must also provide \ccc{Sign operator()(Site_2 s1,
@@ -272,20 +280,21 @@ is not in conflict with the Voronoi edge.}
 %
  
 
-\ccCreation
 \ccCreationVariable{gt}  %% choose variable name
 
-\ccThree{SegmentVoronoiDiagramTraits_2}{ traits = other}{}
-\ccThreeToTwo
-%
-\ccConstructor{ SegmentVoronoiDiagramTraits_2(); }{Default constructor.}
-\ccGlue
-\ccConstructor{SegmentVoronoiDiagramTraits_2(SegmentVoronoiDiagramTraits_2
-other);}{Copy constructor.}
-\ccGlue
-\ccMethod{SegmentVoronoiDiagramTraits_2
-  operator=(SegmentVoronoiDiagramTraits_2 other);}
-{Assignment operator.}
+%% \ccCreation
+
+%% \ccThree{SegmentVoronoiDiagramTraits_2}{ traits = other}{}
+%% \ccThreeToTwo
+%% %
+%% \ccConstructor{ SegmentVoronoiDiagramTraits_2(); }{Default constructor.}
+%% \ccGlue
+%% \ccConstructor{SegmentVoronoiDiagramTraits_2(SegmentVoronoiDiagramTraits_2
+%% other);}{Copy constructor.}
+%% \ccGlue
+%% \ccMethod{SegmentVoronoiDiagramTraits_2
+%%   operator=(SegmentVoronoiDiagramTraits_2 other);}
+%% {Assignment operator.}
 
 
 
@@ -300,7 +309,7 @@ other);}{Copy constructor.}
 \ccGlue
 \ccMethod{Orientation_2 orientation_2_object();}{}
 \ccGlue
-\ccMethod{Are_same_points_2 are_same_points_2_object();}{}
+\ccMethod{Equal_2 equal_2_object();}{}
 \ccGlue
 \ccMethod{Are_parallel_2 are_parallel_2_object();}{}
 \ccGlue
@@ -310,10 +319,10 @@ oriented_side_of_bisector_test_2_object();}{}
 \ccMethod{Vertex_conflict_2 vertex_conflict_2_object();}{}
 \ccGlue
 \ccMethod{Finite_edge_interior_conflict_2
-	finite_edge_interior_conflict_2_object();}{}
+        finite_edge_interior_conflict_2_object();}{}
 \ccGlue
 \ccMethod{Infinite_edge_interior_conflict_2
-	infinite_edge_interior_conflict_2_object();}{}
+        infinite_edge_interior_conflict_2_object();}{}
 \ccGlue
 \ccMethod{Oriented_side_2 oriented_side_2_object();}{}
 \ccGlue

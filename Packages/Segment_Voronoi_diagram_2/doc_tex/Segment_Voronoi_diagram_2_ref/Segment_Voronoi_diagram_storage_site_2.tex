@@ -20,7 +20,7 @@
 
 
 
-\begin{ccRefClass}{Segment_Voronoi_diagram_storage_site_2<Gt,PC>}
+\begin{ccRefClass}{Segment_Voronoi_diagram_storage_site_2<Gt>}
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -29,13 +29,9 @@
 \ccDefinition
   
 The class \ccRefName\ is a model for the concept
-\ccc{SegmentVoronoiDiagramStorageSite_2}. It is parametrized by two
-template parameters: \ccc{Gt}, which must be a model of the
-\ccc{SegmentVoronoiDiagramTraits_2} concept, and \ccc{PC}, which must
-a model for the concept \ccc{SimpleContainer}. \ccc{PC} must be the
-same as the template parameter in the
-\ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} and
-\ccc{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>} classes.
+\ccc{SegmentVoronoiDiagramStorageSite_2}. It is parametrized by a single
+template parameter \ccc{Gt}, which must be a model of the
+\ccc{SegmentVoronoiDiagramTraits_2} concept.
 
 \ccInclude{CGAL/Segment_Voronoi_diagram_storage_site_2.h}
 
@@ -47,43 +43,35 @@ same as the template parameter in the
 The class \ccRefName\ introduces the following type in addition to the
 types in the concept \ccc{SegmentVoronoiDiagramStorageSite_2}.
 
-\ccThree{typedef typename PC::iterator}{Point_container+}{}
+\ccThree{typedef Gt}{Geom_traits+}{}
 \ccTypedef
 {typedef Gt Geom_traits;}{A type for the template parameter \ccc{Gt}.}
-\ccGlue
-\ccTypedef
-{typedef PC Point_container;}
-{A type for the template parameter \ccc{PC}.}
-\ccGlue
-\ccTypedef
-{typedef typename PC::iterator Point_handle;}
-{A type for a point handle.}
 
+%% \ccCreation
+%% \ccTwo{Segment_Voronoi_diagram_storage_site_2<Gt,H> ss(Point_handle hp)+}{}
+%% \ccCreationVariable{ss}  %% choose variable name
 
-\ccCreation
-\ccTwo{Segment_Voronoi_diagram_storage_site_2<Gt,H> ss(Point_handle hp)+}{}
-\ccCreationVariable{ss}  %% choose variable name
-\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>()}{Default
-  constructor}
-%\ccGlue
-\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
-  hp)}{}
-%\ccGlue
-\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
-  hp1, Point_handle hp2)}{} 
-%\ccGlue
-\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
-  hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2)}{}
-%\ccGlue
-\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
-  hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2, bool b)}{}
-%\ccGlue
-\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
-  hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2,
-  Point_handle hr1, Point_handle hr2)}{}
-%\ccGlue
-\ccConstructor{Segment_Voronoi_diagram_site_2<Gt,H>(
-  Segment_Voronoi_diagram_storage_site_2<Gt,PH> other)}{Copy constructor.}
+%% \ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>()}{Default
+%%   constructor}
+%% %\ccGlue
+%% \ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
+%%   hp)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
+%%   hp1, Point_handle hp2)}{} 
+%% %\ccGlue
+%% \ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
+%%   hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
+%%   hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2, bool b)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
+%%   hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2,
+%%   Point_handle hr1, Point_handle hr2)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Voronoi_diagram_site_2<Gt,H>(
+%%   Segment_Voronoi_diagram_storage_site_2<Gt,PH> other)}{Copy constructor.}
 
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramSite_2}\\

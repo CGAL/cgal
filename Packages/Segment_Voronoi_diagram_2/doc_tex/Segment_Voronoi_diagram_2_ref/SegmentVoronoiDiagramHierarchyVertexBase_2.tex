@@ -50,20 +50,25 @@ any types in addition to those of
 \ccCreationVariable{v}  %% choose variable name
 \ccTwo{SegmentVoronoiDiagramHierarchyVertexBase_2 v;+++}{}
 %
-\ccConstructor{SegmentVoroniDiagramHierarchyVertexBase_2();}{Default
-constructor.}
-\ccGlue
-\ccConstructor{ApolloniusGraphHierarchyVertexBase_2(Storage_site_2 ss);}
-{Constructs a vertex associated with the site represented by the
-  storage site \ccc{ss}.}
-%
-\ccGlue
-\ccConstructor
-{segmentVoronoiDiagramHierarchyVertexBase_2(Storage_site_2 s,
-  Face_handle f);}
-{Constructs a vertex associated with
-the site represented by the storage site \ccc{ss} and pointing to the
-face associated with the face handle \ccc{f}.}
+
+The \ccc{SegmentVoronoiDiagramHierarchyVertexBase_2} concept does not
+introduce any constructors in addition to those of the
+\ccc{SegmentVoronoiDiagramVertexBase_2} concept.
+
+%% In addition to the default and copy constructors the following
+%% constructors must be defined.
+
+%% \ccConstructor{ApolloniusGraphHierarchyVertexBase_2(Storage_site_2 ss);}
+%% {Constructs a vertex associated with the site represented by the
+%%   storage site \ccc{ss}.}
+%% %
+%% \ccGlue
+%% \ccConstructor
+%% {segmentVoronoiDiagramHierarchyVertexBase_2(Storage_site_2 s,
+%%   Face_handle f);}
+%% {Constructs a vertex associated with
+%% the site represented by the storage site \ccc{ss} and pointing to the
+%% face associated with the face handle \ccc{f}.}
 
 
 \ccOperations

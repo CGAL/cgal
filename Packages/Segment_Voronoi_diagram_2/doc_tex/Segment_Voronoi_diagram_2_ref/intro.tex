@@ -26,16 +26,14 @@
 
 \cgal\ provides the class
 \ccc{CGAL::Segment_Voronoi_diagram_2<Gt,DS>} for
-computing the 2D Voronoi diagram of segments and points. The three
+computing the 2D Voronoi diagram of segments and points. The two
 template parameters must be models of the
 \ccc{SegmentVoronoiDiagramTraits_2} and
 \ccc{SegmentVoronoiDiagramDataStructure_2} concepts. The first concept
 is related to the geometric objects and predicates associated with
-segment Voronoi diagrams, whereas the third concept refers to the data
+segment Voronoi diagrams, whereas the second concept refers to the data
 structure used to represent the dual of the segment Voronoi
-diagram. The second concept refers to the container that stores the
-points or segments inserted in the segment Voronoi diagram. The
-classes \ccc{Segment_Voronoi_diagram_traits_2<K,MTag>},
+diagram. The classes \ccc{Segment_Voronoi_diagram_traits_2<K,MTag>},
 \ccc{Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}
 \ccc{Segment_Voronoi_diagram_filtered_traits_2<K,MTag>}
 \ccc{Segment_Voronoi_diagram_filtered_traits_without_intersections_2<K,MTag>}
