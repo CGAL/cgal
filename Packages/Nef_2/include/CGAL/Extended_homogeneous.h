@@ -250,8 +250,8 @@ on the extended geometric objects.}*/
     // now we are on the square frame
     RT rx = p.hx();
     RT ry = p.hy();
-    int sx = sign(rx);
-    int sy = sign(ry);
+    int sx = CGAL_NTS sign(rx);
+    int sy = CGAL_NTS sign(ry);
     if (sx < 0) rx = -rx;
     if (sy < 0) ry = -ry;
     if (rx>ry) {

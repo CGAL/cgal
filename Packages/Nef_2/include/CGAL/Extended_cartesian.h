@@ -190,8 +190,8 @@ Point_type type(const Point_2& p) const
   // now we are on the square frame
   FT rx = p.x();
   FT ry = p.y();
-  int sx = sign(rx);
-  int sy = sign(ry);
+  int sx = CGAL_NTS sign(rx);
+  int sy = CGAL_NTS sign(ry);
   if (sx < 0) rx = -rx;
   if (sy < 0) ry = -ry;
   if (rx>ry) {

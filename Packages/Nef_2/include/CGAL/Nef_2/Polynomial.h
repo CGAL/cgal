@@ -40,7 +40,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 #if (defined(_MSC_VER) && (_MSC_VER <= 1200)) || \
-     defined(__BORLANDC__) || defined(__SUNPRO_CC)
+      defined(__SUNPRO_CC) // || defined(__BORLANDC__)
 #include <CGAL/Nef_2/vector_MSC.h>
 #define CGAL_SIMPLE_NEF_INTERFACE
 #define SNIHACK ,char,char
@@ -48,8 +48,13 @@
 #else
 #include <vector>
 #if (!defined(_MSC_VER))
+#if defined( __BORLANDC__)
+#define SNIHACK ,char,char
+#define SNIINST ,'c','c'
+#else
 #define SNIHACK
 #define SNIINST
+#endif
 #else
 #define SNIHACK ,char,char
 #define SNIINST ,'c','c'
@@ -315,7 +320,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the constant polynomial $a_0$.}*/
     : Base(Polynomial_rep<NT>(a0)) { reduce(); }
 
-  Polynomial(const NT& a0, const NT& a1)
+  Polynomial(NT a0, NT a1) //af 
   /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial $a_0 + a_1 x$. }*/
     : Base(Polynomial_rep<NT>(a0,a1)) { reduce(); }
@@ -327,7 +332,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last SNIHACK)
+  Polynomial(Forward_iterator first, Forward_iterator last) // af removed SNIHACK
   /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
@@ -416,7 +421,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   otherwise.}*/
   { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
 
-  #ifndef CGAL_SIMPLE_NEF_INTERFACE
+#ifndef CGAL_SIMPLE_NEF_INTERFACE
 
   NT content() const
   /*{\Mop returns the content of |\Mvar| (the gcd of its coefficients).}*/
@@ -663,7 +668,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the constant polynomial $a_0$.}*/
     : Base(Polynomial_rep<int>(a0)) { reduce(); }
 
-  Polynomial(const int& a0, const int& a1)
+  Polynomial(int a0, int a1) // af: was const&
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial $a_0 + a_1 x$. }*/
     : Base(Polynomial_rep<int>(a0,a1)) { reduce(); }
@@ -675,7 +680,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last SNIHACK)
+  Polynomial(Forward_iterator first, Forward_iterator last ) // af removed SNIHACK
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
@@ -996,7 +1001,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last SNIHACK)
+  Polynomial(Forward_iterator first, Forward_iterator last ) // af: removed SNIHACK
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
@@ -1271,17 +1276,35 @@ template <class NT> /*CGAL_KERNEL_INLINE*/ CGAL::io_Operator
   { return CGAL::io_Operator(); }
 
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+template <class NT> 
 Polynomial<NT> operator - (const Polynomial<NT>& p)
 {
   CGAL_assertion(p.degree()>=0);
-  Polynomial<NT> res(p.coeffs().begin(),p.coeffs().end() SNIINST);
+  Polynomial<NT> res(p.coeffs().begin(),p.coeffs().end()); // af removed SNIINST
   typename Polynomial<NT>::iterator it, ite=res.coeffs().end();
   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
   return res;
 }
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+Polynomial<int> operator - (const Polynomial<int>& p)
+{
+  CGAL_assertion(p.degree()>=0);
+  Polynomial<int> res(p.coeffs().begin(),p.coeffs().end() SNIINST);
+  Polynomial<int>::iterator it, ite=res.coeffs().end();
+  for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
+  return res;
+}
+
+Polynomial<double> operator - (const Polynomial<double>& p)
+{
+  CGAL_assertion(p.degree()>=0);
+  Polynomial<double> res(p.coeffs().begin(),p.coeffs().end() SNIINST);
+  Polynomial<double>::iterator it, ite=res.coeffs().end();
+  for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
+  return res;
+}
+
+template <class NT> 
 Polynomial<NT> operator + (const Polynomial<NT>& p1, 
                             const Polynomial<NT>& p2)
 { 
@@ -1819,7 +1842,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p)
       else {
         typename Polynomial<NT>::Vector coeffs(d+1);
         for(i=0; i<=d; ++i) is >> coeffs[i];
-        p = Polynomial<NT>(coeffs.begin(),coeffs.end() SNIINST);
+        p = Polynomial<NT>(coeffs.begin(),coeffs.end() ); // af removed SNIINST
       }
       break;
     case CGAL::IO::BINARY :
@@ -1829,7 +1852,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p)
         typename Polynomial<NT>::Vector coeffs(d+1);
         for(i=0; i<=d; ++i) 
         { CGAL::read(is,c); coeffs[i]=c; }
-        p = Polynomial<NT>(coeffs.begin(),coeffs.end() SNIINST);
+        p = Polynomial<NT>(coeffs.begin(),coeffs.end() ); // af removed SNIINST
       }
       break;
     default:
@@ -1849,7 +1872,7 @@ void Polynomial<int>::euclidean_div(
   Polynomial<int>& q, Polynomial<int>& r)
 {
   r = f; r.copy_on_write();
-  int rd=r.degree(), gd=g.degree(), qd(0);
+  int rd=r.degree(), gd=g.degree(), qd;
   if ( rd < gd ) { q = Polynomial<int>(int(0)); }
   else { qd = rd-gd+1; q = Polynomial<int>(std::size_t(qd)); }
   while ( rd >= gd ) {
@@ -1933,7 +1956,7 @@ void Polynomial<double>::euclidean_div(
   Polynomial<double>& q, Polynomial<double>& r)
 {
   r = f; r.copy_on_write();
-  int rd=r.degree(), gd=g.degree(), qd(0);
+  int rd=r.degree(), gd=g.degree(), qd;
   if ( rd < gd ) { q = Polynomial<double>(double(0)); }
   else { qd = rd-gd+1; q = Polynomial<double>(std::size_t(qd)); }
   while ( rd >= gd ) {
@@ -2014,7 +2037,7 @@ void Polynomial<NT>::euclidean_div(
   Polynomial<NT>& q, Polynomial<NT>& r)
 {
   r = f; r.copy_on_write();
-  int rd=r.degree(), gd=g.degree(), qd(0);
+  int rd=r.degree(), gd=g.degree(), qd;
   if ( rd < gd ) { q = Polynomial<NT>(NT(0)); }
   else { qd = rd-gd+1; q = Polynomial<NT>(std::size_t(qd)); }
   while ( rd >= gd ) {

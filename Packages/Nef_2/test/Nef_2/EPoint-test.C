@@ -5,17 +5,17 @@
 #include <CGAL/Filtered_extended_homogeneous.h>
 #include <CGAL/test_macros.h>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer Integer;
-#include <CGAL/leda_real.h>
-typedef leda_real Real;
-#else
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 #include <CGAL/Quotient.h>
 typedef CGAL::Gmpz Integer;
 typedef CGAL::Quotient<Integer> Real;
+#else
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+#include <CGAL/leda_real.h>
+typedef leda_integer Integer;
+typedef leda_real Real;
 #else
 typedef long   Integer;
 typedef double Real;

@@ -1,6 +1,15 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.11 (23 Apr 2002)
+     - do not use simple interface for Borland
+     - do use SNIHACK for Boralnd, which has touble distinguishing templated
+       constructor from specialization
+     - removed some const & for the same reason.
+     - removed unneeded variable initialization
+     - added missing CGAL_NTS before sign
+     - added specialization of operator - for Polynomial<int> and <double>
+
 1.10 (22 Apr 2002)
      - added function for gcd in content() to distinguish between number types
        with gcd and those without (using Number_type_traits).  Rather a hack.
