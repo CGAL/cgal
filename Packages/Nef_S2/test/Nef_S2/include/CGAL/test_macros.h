@@ -3,7 +3,7 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
-#include <strstream>
+#include <sstream>
 #include <vector>
 
 #define CGAL_TEST_START int cgal_test_res=0
