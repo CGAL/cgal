@@ -7,7 +7,9 @@
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
+#include <CGAL/leda_rational.h>
 typedef leda_integer Integer;
+typedef leda_rational Rational;
 #else
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
