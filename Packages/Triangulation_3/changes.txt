@@ -1,3 +1,6 @@
+Version 1.168 (10 September 03)
+- Doc updates.
+
 Version 1.167 (27 August 03)
 - New example program : example_linking_2d_and_3d.
 
