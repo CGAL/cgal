@@ -1,26 +1,6 @@
-// ============================================================================
-//
-// Copyright (c) 1998, 1999 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       :
-// release_date  :
-//
-// file          : include/CGAL/Cartesian/Direction_2.C
-// source        : include/CGAL/Cartesian/Direction_2.C
-// package       : C2
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann
-//
-// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
-//
-// ============================================================================
 
 #ifndef CGAL_CARTESIAN_DIRECTION_2_C
 #define CGAL_CARTESIAN_DIRECTION_2_C

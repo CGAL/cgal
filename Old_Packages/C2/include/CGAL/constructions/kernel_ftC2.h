@@ -1,26 +1,6 @@
-// ============================================================================
-//
-// Copyright (c) 1997, 1998, 1999 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       :
-// release_date  :
-//
-// file          : include/CGAL/constructions/kernel_ftC2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Sven Schoenherr (sven@inf.fu-berlin.de)
-//                 Herve Bronnimann (hbronni@sophia.inria.fr)
-//                 Sylvain Pion (Sylvain.Pion@sophia.inria.fr)
-//
-// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
-//
-// ============================================================================
 
 
 #ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC2_H

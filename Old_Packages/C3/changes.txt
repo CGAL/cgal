@@ -1,5 +1,5 @@
 Version 4.0.2 (?? ?? 1999)
-- Various cleanups [syl].
+- Various cleanups [syl & herve].
 
 Version 4.0.1 (October 28 1999)
 - Filter related typo in kernel_ftC3.h [Sylvain]
