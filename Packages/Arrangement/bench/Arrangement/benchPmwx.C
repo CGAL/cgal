@@ -3,8 +3,13 @@
 #include "short_names.h"
 
 #include <CGAL/basic.h>
-#include <CGAL/leda_rational.h>
 
+#if defined(USE_CONIC_TRAITS)
+#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/leda_real.h>
+#include <CGAL/IO/Conic_arc_2_Window_stream.h>
+#else
+#include <CGAL/leda_rational.h>
 #if defined(USE_LEDA_KERNEL)
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -14,6 +19,7 @@
 #else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#endif
 #endif
 #endif
 
@@ -35,11 +41,24 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include <fstream>
 #include <list>
 
-typedef leda_rational                                   NT;
+#if defined(USE_CONIC_TRAITS)
+#include "Conic_reader.h"
+#else
+#include "Segment_reader.h"
+#endif
 
+#if defined(USE_CONIC_TRAITS)
+typedef leda_real                                       NT;
+#else
+typedef leda_rational                                   NT;
+#endif
+
+#if defined(USE_CONIC_TRAITS)
+typedef CGAL::Arr_conic_traits<NT>                      Traits;
+#define PM_TYPE "Conics"
+#else
 #if defined(USE_LEDA_KERNEL)
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
@@ -52,6 +71,7 @@ typedef CGAL::Arr_leda_segment_exact_traits             Traits;
 typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
 #define PM_TYPE "CGAL Kernel"
+#endif
 #endif
 #endif
 
@@ -85,10 +105,11 @@ inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os,
 inline CGAL::Window_stream & operator<<(CGAL::Window_stream & os, Pmwx & pm)
 {
   Pmwx::Edge_iterator ei;
-  for (ei = pm.edges_begin(); ei != pm.edges_end(); ++ei) os << (*ei).curve();
+  for (ei = pm.edges_begin(); ei != pm.edges_end(); ++ei)
+      os << (*ei).curve();
   Pmwx::Vertex_iterator vi;
   for (vi = pm.vertices_begin(); vi != pm.vertices_end(); ++vi)
-    os << (*vi).point();
+      os << (*vi).point();
   return os;
 }
 #endif
@@ -99,8 +120,8 @@ class Basic_Pm {
 public:
   /*
    */
-  Basic_Pm() : m_filename(0), m_verbose(false),
-    m_x0(0), m_x1(0), m_y0(0), m_y1(0) {}
+  Basic_Pm() : m_filename(0), m_verbose(false), m_bbox(0.0,0.0,0.0,0.0) { }
+
   virtual ~Basic_Pm() {}
   
   /*
@@ -109,64 +130,15 @@ public:
 
   /*
    */
-  void setExtreme(double x, double y)
-  {
-    m_x0 = x;
-    m_y0 = y;
-    m_x1 = x;
-    m_y1 = y;
-  }
-
-  /*
-   */
-  void compareExtreme(double x, double y)
-  {
-    if (x < m_x0) m_x0 = x;
-    if (y < m_y0) m_y0 = y;
-    if (m_x1 < x) m_x1 = x;
-    if (m_y1 < y) m_y1 = y;
-  }
-    
-  /*
-   */
   int init()
   {
-    std::ifstream inp(m_filename);
-    if (!inp.is_open()) {
-      std::cerr << "Cannot open file " << m_filename << "!" << std::endl;
-      return -1;
-    }
-    int count;
-    inp >> count;
-    
-    int i;
-    for (i = 0; i < count; i++) {
-      leda_rational x0, y0, x1, y1;
-      if (m_format == CGAL::Bench_parse_args::FORMAT_RAT) {
-        inp >> x0 >> y0 >> x1 >> y1;
-      } else if (m_format == CGAL::Bench_parse_args::FORMAT_INT) {
-        int ix0, iy0, ix1, iy1;
-        inp >> ix0 >> iy0 >> ix1 >> iy1;
-        x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
-      } else if (m_format == CGAL::Bench_parse_args::FORMAT_FLT) {
-        float ix0, iy0, ix1, iy1;
-        inp >> ix0 >> iy0 >> ix1 >> iy1;
-        x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
-      } else {
-        std::cerr << "Illegal format!" << std::endl;
-        return -1;
-      }
-
-      Point p1(x0, y0);
-      Point p2(x1, y1);
-      // if (p1 == p2) continue;
-      Curve curve(p1, p2);
-      m_curveList.push_back(curve);
-      if (i == 0) setExtreme(CGAL::to_double(x0), CGAL::to_double(y0));
-      else compareExtreme(CGAL::to_double(x0), CGAL::to_double(y0));
-      compareExtreme(CGAL::to_double(x1), CGAL::to_double(y1));
-    }
-    inp.close();
+#if defined(USE_CONIC_TRAITS)
+    Conic_reader<Traits> reader;
+#else
+    Segment_reader<Traits> reader;
+#endif
+    int rc = reader.ReadData(m_filename, m_curveList, m_format, m_bbox);
+    if (rc < 0) return rc;
     if (m_verbose) std::cout << m_curveList.size() << " curves" << std::endl;
 
     return 0;
@@ -186,11 +158,7 @@ protected:
   CurveList m_curveList;
   bool m_verbose;
   CGAL::Bench_parse_args::FormatId m_format;
-
-  double m_x0;
-  double m_x1;
-  double m_y0;
-  double m_y1;
+  CGAL::Bbox_2 m_bbox;
 };
 
 /*!
@@ -230,6 +198,9 @@ class Aggregate_pmwx : public Basic_Pm {
 public:
   virtual void op()
   {
+    if (m_verbose) {
+      std::cout << "Inserting Aggregate" << std::endl;
+    }
     Strategy strategy;
     Pmwx pm(&strategy);
     pm.insert(m_curveList.begin(), m_curveList.end());
@@ -286,8 +257,8 @@ public:
     int rc = Basic_Pm::init();
     if (rc < 0) return rc;
 
-    float x_range = m_x1 - m_x0;
-    float y_range = m_y1 - m_y0;
+    float x_range = m_bbox.xmax() - m_bbox.xmin();
+    float y_range = m_bbox.ymax() - m_bbox.ymin();
     float width = 640;
     float height = (y_range * width) / x_range;
     
@@ -299,9 +270,9 @@ public:
     float x_margin = min_range / 4;
     float y_margin = (height * x_margin) / width;
         
-    float x0 = m_x0 - x_margin;
-    float x1 = m_x1 + x_margin;
-    float y0 = m_y0 - y_margin;
+    float x0 = m_bbox.xmin() - x_margin;
+    float x1 = m_bbox.xmax() + x_margin;
+    float y0 = m_bbox.ymin() - y_margin;
     m_window->init(x0, x1, y0);   // logical window size 
 
     m_window->set_redraw(&Display_pmwx::redraw);

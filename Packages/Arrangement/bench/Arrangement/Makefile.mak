@@ -6,6 +6,11 @@ INSTALLDIR0 = $(BINDIR)
 CPPSOURCES = benchPmwx.C
 
 LOBJDIR =
+ifeq ($(USE_CONIC_TRAITS), 1)
+TARGET0 = benchPmwxConics$(EXEFILESUFFIX)
+LCPPDEFS+= -DUSE_CONIC_TRAITS
+LOBJDIR :=$(LOBJDIR)_conics
+else
 ifeq ($(USE_LEDA_KERNEL), 1)
 TARGET0 = benchPmwxLedaKernel$(EXEFILESUFFIX)
 LCPPDEFS+= -DUSE_LEDA_KERNEL
@@ -19,6 +24,8 @@ else
 TARGET0 = benchPmwx$(EXEFILESUFFIX)
 endif
 endif
+endif
+LOBJDIR :=$(LOBJDIR)_gcc$(GCC_VER)
 
 LCPPINCS = -I$(BASEDIR)/../../include
 LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
@@ -35,3 +42,6 @@ use_leda_kernel:
 
 use_my_kernel:
 	$(MAKEF) "USE_MY_KERNEL=1"
+
+use_conic_traits:
+	$(MAKEF) "USE_CONIC_TRAITS=1"
