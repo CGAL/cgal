@@ -398,7 +398,7 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
   switch (dimension()) {
   case 3:
     {
-      if ( lt == this->VERTEX )
+      if ( lt == Tr_Base::VERTEX )
 	  return c->vertex(li);
 
       Conflict_tester_3 tester(p, this);
@@ -409,19 +409,19 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
   case 2:
     {
       switch (lt) {
-      case this->OUTSIDE_CONVEX_HULL:
-      case this->CELL:
-      case this->FACET:
-      case this->EDGE:
+      case Tr_Base::OUTSIDE_CONVEX_HULL:
+      case Tr_Base::CELL:
+      case Tr_Base::FACET:
+      case Tr_Base::EDGE:
 	{
           Conflict_tester_2 tester(p, this);
 	  Vertex_handle v = insert_conflict_2(c, tester);
 	  v->set_point(p);
 	  return v;
 	}
-      case this->VERTEX:
+      case Tr_Base::VERTEX:
 	return c->vertex(li);
-      case this->OUTSIDE_AFFINE_HULL:
+      case Tr_Base::OUTSIDE_AFFINE_HULL:
 	  // if the 2d triangulation is Delaunay, the 3d
 	  // triangulation will be Delaunay
 	return Tr_Base::insert_outside_affine_hull(p); 

@@ -400,7 +400,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
       // In case the point is completely equal (including weight), then we need
       // to discard it (don't update the triangulation, nor hide it), right ?
       if (! in_conflict_3(p, c)) {  // new point is hidden
-          if (lt == this->VERTEX)
+          if (lt == Tr_Base::VERTEX)
               return c->vertex(li); // by coinciding point
           else
               return NULL;          // by cell
@@ -426,14 +426,14 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
   case 2:
     {
       switch (lt) {
-      case this->OUTSIDE_CONVEX_HULL:
-      case this->CELL:
-      case this->FACET:
-      case this->EDGE:
-      case this->VERTEX:
+      case Tr_Base::OUTSIDE_CONVEX_HULL:
+      case Tr_Base::CELL:
+      case Tr_Base::FACET:
+      case Tr_Base::EDGE:
+      case Tr_Base::VERTEX:
 	{
           if (! in_conflict_2(p, c, 3)) {  // new point is hidden
-              if (lt == this->VERTEX)
+              if (lt == Tr_Base::VERTEX)
                   return c->vertex(li); // by coinciding point
               else
                   return NULL;          // by face
@@ -454,7 +454,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 	  }
 	  return v;
 	}
-      case this->OUTSIDE_AFFINE_HULL:
+      case Tr_Base::OUTSIDE_AFFINE_HULL:
 	{
 	  // if the 2d triangulation is Regular, the 3d
 	  // triangulation will be Regular
@@ -465,12 +465,12 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
   case 1:
     {
       switch (lt) {
-      case this->OUTSIDE_CONVEX_HULL:
-      case this->EDGE:
-      case this->VERTEX:
+      case Tr_Base::OUTSIDE_CONVEX_HULL:
+      case Tr_Base::EDGE:
+      case Tr_Base::VERTEX:
 	{
           if (! in_conflict_1(p, c)) {  // new point is hidden
-              if (lt == this->VERTEX)
+              if (lt == Tr_Base::VERTEX)
                   return c->vertex(li); // by coinciding point
               else
                   return NULL;          // by edge
@@ -512,10 +512,10 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 	  tds().delete_vertices(hidden_vertices.begin(), hidden_vertices.end());
 	  return v;
 	}
-      case this->OUTSIDE_AFFINE_HULL:
+      case Tr_Base::OUTSIDE_AFFINE_HULL:
 	return Tr_Base::insert_outside_affine_hull(p);
-      case this->FACET:
-      case this->CELL:
+      case Tr_Base::FACET:
+      case Tr_Base::CELL:
 	// impossible in dimension 1
         CGAL_assertion(false);
 	return NULL;
@@ -524,7 +524,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
   case 0:
     {
         // We need to compare the weights when the points are equal.
-        if (lt == this->VERTEX && in_conflict_0(p, c)) {
+        if (lt == Tr_Base::VERTEX && in_conflict_0(p, c)) {
             CGAL_assertion(li == 0);
             c->vertex(li)->set_point(p); // replace by heavier point
         }
