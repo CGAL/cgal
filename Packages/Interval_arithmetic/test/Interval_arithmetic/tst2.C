@@ -1,4 +1,4 @@
-#include <iostream.h>
+#define CGAL_IA_NO_WARNINGS
 #include <CGAL/Interval_arithmetic.h>
 
 //typedef CGAL_Interval_nt		IA;
@@ -13,7 +13,8 @@ int main()
 {
   int i;
   IA x_i, y_i, x_ip1, y_ip1, length;
-  IA a(0.,1.);
+//  IA a(0.,1.);
+//  IA b(1.,0.);
 
   CGAL_FPU_set_rounding_to_infinity();
 

@@ -12,8 +12,9 @@
 // release_date  :
 //
 // file          : include/CGAL/_FPU.h
-// revision      : 1.5
-// revision_date : 26 February 1998
+// revision      : 1.6
+// revision_date : 10 May 1998
+// package       : Interval Arithmetic
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Herve.Bronnimann@sophia.inria.fr>)

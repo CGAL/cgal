@@ -1,56 +1,72 @@
-\chapter{Interval Arithmetic}
-\ccChapterAuthor{Sylvain Pion}
+\begin{ccClass} {CGAL_Interval_nt}
+\ccSubsection{Interval Arithmetic}
+\label{interval}
+%\ccChapterAuthor{Sylvain Pion}
 
-\section{Introduction}
-
-This chapter describes quickly what interval arithmetic is, its implementation
-in \cgal\ and its possible use by geometric programs.
-
-The main reason for having interval arithmetic in \cgal\ is its integration
+This chapter describes briefly what interval arithmetic is, its implementation
+in {\cgal}, and its possible use by geometric programs.
+The main reason for having interval arithmetic in {\cgal} is its integration
 into a geometric predicate pre-compiler, but we also provide a number type so
 that the users can use it separately if they find any use for it.
-
-The purpose of interval arithmetic is here to provide an efficient way to
+The purpose of interval arithmetic is to provide an efficient way to
 control the errors made by floating point computations.
 
-Interval arithmetic is a large concept and we will only consider here a simple
-arithmetic based on intervals which bounds are {\it double}s.
+This type is nothing more than doubles, but you can, when you ask for it, have
+a control on the computation error.  By default, when the flag
+\ccc{CGAL_IA_NO_WARNINGS} is not defined, warnings will be emitted if you try
+to compare two overlapping intervals.  This means that if you do the same
+computation with doubles, there is a chance that the comparison may return a
+false result, otherwise the computation with doubles will be safe.
+
+You can select the behaviour of the algorithm in such cases, when you program
+filtered predicates for example.  You can find more information on this topic
+in \cite{bbp-ia-98}.
+
+\ccDefinition
+Interval arithmetic is a large concept and we will only consider here a 
+simple arithmetic based on intervals whose bounds are {\it double}s.
 So each variable is an interval representing any value inside the interval.
-All arithmetic operations made on intervals give a result that contain all
+All arithmetic operations made on intervals give a result that contains all
 possible values.
-
-\smallskip
-
-For example, if the final result of a sequence of arithmetic operations is an
-interval that does not contain zero, then you can surely decide the sign of the
-result.
-
-\section{\cgal\ classes}
-
-\subsection {Class CGAL\_Interval\_nt}
-
-\begin{ccClass} {CGAL_Interval_nt}
+For example, if the final result of a sequence of arithmetic operations is
+an interval that does not contain zero, then you can surely decide the sign 
+of the result.
 
 \ccInclude{CGAL/Interval_arithmetic.h}
 
-\ccTypes
+\ccCreation
 
-The two following classes provide the same functionality (in fact, the
-first one derives from the second one).
+\ccConstructor{CGAL_Interval_nt(const double& d = 0);} {introduces an interval
+whose bounds are \ccc{d}.}
 
-\ccTypedef{class CGAL_Interval_nt;} {Represents the interval number type.}
+\ccConstructor{CGAL_Interval_nt(const double& d, const double& e);}
+{introduces the interval [d;e].}
 
-\ccTypedef{class CGAL_Interval_nt_advanced;} {Is faster but requires more work
-from the user.}
+Several functions should provide a cast from any numerical type used by {\cgal},
+to an interval \ccc{CGAL_Interval_nt}.
 
-All functions required by a class to be considered a \cgal\ number type are
+
+%\ccTypes
+
+%The two following classes provide the same functionality (in fact, the
+%first one derives from the second one).
+
+%\ccTypedef{class CGAL_Interval_nt;} {Represents the interval number type.}
+
+%\ccTypedef{class CGAL_Interval_nt_advanced;} {Is faster but requires more 
+%work from the user.}
+
+\ccOperations
+\ccSetThreeColumns{CGAL_Interval_nt}{}{\hspace*{8cm}}
+
+All functions required by a class to be considered a {\cgal} number type are
 present, sometimes with a particular semantic, notably~:
 
 \ccCreationVariable{I}
 
 \ccMethod{CGAL_Interval_nt operator/(CGAL_Interval_nt J);} {is defined with the
 following meaning for the degenerate case where the denominator is an interval
-containing zero~: it returns the interval ]$-\infty$;$+\infty$[ (the 'division
+containing zero: it returns the interval ]$-\infty$;$+\infty$[ (the `division
 by zero' exception can be raised, but the default is to ignore it, see next
 paragraph for details).}
 
@@ -69,106 +85,138 @@ previous ones}
 \ccMethod{bool operator>=(CGAL_Interval_nt J);} {idem}
 \ccMethod{bool operator!=(CGAL_Interval_nt J);} {idem}
 
-\ccFunction{double CGAL\_to\_double(const CGAL_Interval_nt& I);} {returns the
+\ccFunction{double CGAL_to_double(const CGAL_Interval_nt& I);} {returns the
 middle of the interval, as a double approximation of the interval.}
 
 \ccMethod{double lower_bound();} {returns the lower bound of the interval.}
 \ccMethod{double upper_bound();} {returns the upper bound of the interval.}
 
-\smallskip
+\ccImplementation
 
-\ccCreation
+\ccc{CGAL_Interval_nt} derives from \ccc{CGAL_Interval_nt_advanced}, 
+see Section~\ref{interval-adv}.
 
-\ccConstructor{CGAL_Interval_nt(const double& d = 0);} {introduces an interval
-which bounds are \ccc{d}.}
+\ccExample
 
-\ccConstructor{CGAL_Interval_nt(const double& d, const double& e);}
-{introduces the interval [d;e].}
+Here a simple example is given showing how to make safe and fast predicates.
+This kind of problem is going to be resolved automatically by a predicate
+compiler, but before it is available, you can do it by hand.
+Let's consider the \ccc{CGAL_orientation} predicate:
 
-Several functions should provide a cast from any numerical type used by \cgal,
-to an interval CGAL\_Interval\_nt.
+\begin{verbatim}
+template < class FT >
+CGAL_Orientation CGAL_orientation(const FT &px, const FT &py,
+                                  const FT &qx, const FT &qy,
+                                  const FT &rx, const FT &ry)
+{
+  FT d1 = (px-qx)*(qy-ry);
+  FT d2 = (py-qy)*(qx-rx);
+  return  (d1 < d2) ? CGAL_RIGHTTURN
+       : ((d1 == d2)? CGAL_COLLINEAR : CGAL_LEFTTURN);
+}
+\end{verbatim}
+
+This function becomes the following, if you want it to be exact~:
+
+\begin{verbatim}
+#include <CGAL/Interval_arithmetic.h>
+typedef CGAL_Interval_nt Dis;
+
+CGAL_Orientation CGAL_orientation(const FT &px, const FT &py,
+                                  const FT &qx, const FT &qy,
+                                  const FT &rx, const FT &ry)
+{
+  Dis d1 = ((Dis)px-(Dis)qx)*((Dis)qy-(Dis)ry);
+  Dis d2 = ((Dis)py-(Dis)qy)*((Dis)qx-(Dis)rx);
+
+  if (d1 == d2) {
+    return CGAL_orientation((leda_real) px, (leda_real) py,
+			    (leda_real) qx, (leda_real) qy,
+			    (leda_real) rx, (leda_real) ry);
+  } else {
+    return (d1 < d2) ? CGAL_RIGHTTURN : CGAL_LEFTTURN;
+  };
+}
+\end{verbatim}
 
 \end{ccClass}
 
-\subsection {Class CGAL\_Interval\_nt\_advanced}
+\begin{ccAdvanced}
 
-{\it CGAL\_Interval\_nt} derives from {\it CGAL\_Interval\_nt\_advanced},
-which allows you to make faster computations, but you need to set the correct
+\begin{ccClass} {CGAL_Interval_nt_advanced}
+\ccSubsection {Advanced Interval Arithmetic}
+\label{interval-adv}
+
+\ccc{CGAL_Interval_nt} derives from \ccc{CGAL_Interval_nt_advanced}.
+It allows you to make faster computations, but you need to set the correct
 rounding mode of the FPU (towards infinity) before doing any computation with
-this number type.  See below for details, and the tests programs.
+this number type.  
+See for details above, and in the test programs.
 
+\ccInclude{CGAL/Interval_arithmetic.h}
 
-\section{Implementation details}
+\ccImplementation
 
-The basic idea is to use the directed rounding modes specified by the {\it
-IEEE 754} standard, which are implemented by almost all processors nowadays.
-
+The basic idea is to use the directed rounding modes specified by the 
+{\it IEEE 754} standard, which are implemented by almost all processors 
+nowadays.
 It states that you have the possibility, concerning the basic floating point
 operations ($+,-,*,/,\sqrt{}$) to specify the rounding mode of each operation
-instead of using the default which is usually to round to the nearest.
-
+instead of using the default, which is usually to round to the nearest.
 This feature allows us to compute easily on intervals.  For example, to add
 the two intervals [a.i;a.s] and [b.i;b.s], compute $c.i=a.i+b.i$ rounded
 towards minus infinite, and $c.s=a.s+b.s$ rounded towards plus infinite, and
 the result is the interval [c.i;c.s].  This method can be extended easily to
 the other operations.
 
-\smallskip
-
 The problem is that we have to change the rounding mode very often, and the
 functions of the C library doing this operation are slow and different from
 one architecture to another.  That's why assembly versions are used as often
 as possible.
-
 Another trick is to compute the opposite of the lower bound, instead of the
 normal lower bound, which allows us to change the rounding mode once less.
-
-Therefore, all basic operations, which are in the class {\it
-CGAL\_Interval\_nt\_advanced} assume that the rounding mode is set to positive
-infinite, and everything work with this correctly set.  The class {\it
-CGAL\_Interval\_nt} takes care of this, but is a bit slower.
-
-\smallskip
+Therefore, all basic operations, which are in the class 
+\ccc{CGAL_Interval_nt_advanced} assume that the rounding mode is set to 
+positive infinite, and everything works with this correctly set.  
+The class \ccc{CGAL_Interval_nt} takes care of this, but is a bit slower.
 
 Note also that NaNs are not handled, so be careful with that
-(especially if you 'divide by zero').
+(especially if you `divide by zero').
 
+FPU rounding modes~:
 
-\section{FPU rounding modes}
-
-We provide functions (in C or assembly) to change the rounding mode, these are~:
+We provide the following functions (in C or assembly) to change the 
+rounding mode.
 \begin{itemize}
-\item CGAL\_FPU\_set\_rounding\_to\_zero()
-\item CGAL\_FPU\_set\_rounding\_to\_nearest()
-\item CGAL\_FPU\_set\_rounding\_to\_infinity()
-\item CGAL\_FPU\_set\_rounding\_to\_minus\_infinity()
+\item \ccc{CGAL_FPU_set_rounding_to_zero()}
+\item \ccc{CGAL_FPU_set_rounding_to_nearest()}
+\item \ccc{CGAL_FPU_set_rounding_to_infinity()}
+\item \ccc{CGAL_FPU_set_rounding_to_minus_infinity()}
 \end{itemize}
 
-\section{Platform support state}
+Platform support~:
 
-This part of \cgal\ must be ported to each non-supported platform, because of
-the use of directed rounding modes.  Here is the current state of the
-supported platforms~:
+This part of {\cgal} must be ported to each non-supported platform, because
+of the use of directed rounding modes.  
+Here is the current state of supported platforms:
 
 \begin{itemize}
 \item Sparc
+%\begin{itemize}\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt
 \begin{itemize}
-\item g++ uses the assembly versions, independant of the OS.
-\item CC uses the C library functions to change the rounding modes.  Works
-      under Solaris (SunOS doesn't use the same files, sorry).
+\item g++ uses the assembly versions, independent of the OS (Solaris tested).
+\item CC (Solaris) uses the C library functions to change the rounding modes.
 \end{itemize}
 \item Intel
 \begin{itemize}
-\item g++ uses the assembly versions, independant of the OS (Linux tested).
-\item I don't know about Windows (NT, 95), nor Solaris or others.
+\item g++ uses the assembly versions, independent of the OS (tested for Linux).
+\item For Windows (NT, 95), Solaris, and others the code is not (yet) ported.
 \end{itemize}
 \item Alpha
 \begin{itemize}
-\item g++ 2.7.2 doesn't support (g++ 2.8 and egcs do) the necessary command line
-	option (to set the dynamic rounding mode).  There are several
-	possibilities to make it work, but all of them are painful.
-\item CC: I don't know, but cc works when you specify the command line option
-      "-fprm d".
+\item g++ 2.8 supports the "-mfp-rounding-mode=d" command line option
+      to set the dynamic rounding mode.
+\item For CC the situation is unknown (try command line option like "-fprm d").
 \end{itemize}
 \item Mips
 \begin{itemize}
@@ -177,60 +225,20 @@ supported platforms~:
 \end{itemize}
 
 
-\section{Example}
+%\newpage
 
-I give here a simple example about how to make safe and fast predicates.
-This kind of problem is going to be resolved automatically by a predicate
-compiler, but before it is available, you can do it by hand.
-Let's consider the {\it which\_side} predicate~:
+%\subsection{Files}
 
-\begin{verbatim}
-int which_side(Point<double> P, Point<double> Q, Point<double> R)
-{
-  double a = P.x-R.x;
-  double b = Q.x-R.x;
-  double c = P.y-R.y;
-  double d = Q.y-R.y;
-  double det = a*d-b*c;
+%The files involved are~:
+%\begin{itemize}
+%\item {\it CGAL/Interval\_arithmetic.h} contains the definition of the
+%      two classes.
+%\item {\it CGAL/\_FPU.h} contains the C and assembly definitions for the
+%      rounding mode selection.
+%\end{itemize}
 
-  return (det>0) ? 1 : ( (det<0) ? -1 : 0 );
-}
-\end{verbatim}
+%Note that symbols in \_FPU.h are all prefixed by {\it CGAL\_FPU\_}.
 
-This function becomes the following, if you want it to be exact~:
+\end{ccClass}
 
-\begin{verbatim}
-#include "CGAL/Interval_arithmetic.h"
-typedef CGAL_Interval_nt Dis;
-
-int which_side(Point<double> P, Point<double> Q, Point<double> R)
-{
-  Dis a = (Dis) P.x - (Dis) R.x;
-  Dis b = (Dis) Q.x - (Dis) R.x;
-  Dis c = (Dis) P.y - (Dis) R.y;
-  Dis d = (Dis) Q.y - (Dis) R.y;
-  Dis det = a*d-b*c;
-
-  if (det == 0)
-  {
-    // Note: this doesn't work, but the idea is here.
-    return which_side((Point<LEDA_Real>) P, (Point<LEDA_Real>) Q, (Point<LEDA_Real>) R);
-  }
-  else return (det>0) ? 1 : -1;
-}
-\end{verbatim}
-
-
-\section{Files}
-
-The files involved are~:
-\begin{itemize}
-\item {\it CGAL/Interval\_arithmetic.h} contains the definition of the
-      two classes.
-\item {\it CGAL/\_FPU.h} contains the C and assembly definitions for the
-      rounding mode selection.
-\end{itemize}
-
-\bigskip
-
-Note that symbols in \_FPU.h are all prefixed by {\it CGAL\_FPU\_}.
+\end{ccAdvanced}
