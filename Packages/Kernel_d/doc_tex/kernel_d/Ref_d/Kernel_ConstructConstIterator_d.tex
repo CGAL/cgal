@@ -1,0 +1,24 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructCartesianConstIterator_d}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccMemberFunction{Kernel::Cartesian_const_iterator_d operator()(const Kernel::Point_d
+  &p);} {returns an iterator on the 0'th \ccHtmlNoLinksFrom{Cartesian}  coordinate of \ccc{p}.}
+
+\ccMemberFunction{Kernel::Cartesian_const_iterator_d operator()(const Kernel::Point_d
+  &p, int);} {returns the past the end iterator of the \ccHtmlNoLinksFrom{Cartesian} coordinates of \ccc{p}.}
+
+
+
+
+\ccRefines
+AdaptableFunctor (with one argument)
+
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::CartesianConstIterator_d} \\
+
+
+\end{ccRefFunctionObjectConcept}
