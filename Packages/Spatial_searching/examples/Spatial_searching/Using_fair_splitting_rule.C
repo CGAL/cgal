@@ -26,10 +26,12 @@ main() {
   
   // generator for random data points in the square ( (-1,-1), (1,1) ) 
   Random_points_iterator rpit( 1.0);
-  
+
+  Splitter fair(5); // bucket size=5
   // Insert number_of_data_points in the tree
   Tree tree(N_Random_points_iterator(rpit,0),
-	    N_Random_points_iterator(N));
+	    N_Random_points_iterator(N),
+	    splitter);
 
   Point query(0,0);
   
