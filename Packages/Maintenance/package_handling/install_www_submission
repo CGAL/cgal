@@ -10,7 +10,8 @@ my $testing=0;
 my $MAIL_PROG='/projects/CGAL/admin_scripts/send_cgal_mail';
 
 my ($sender, $submission, $packagedir, $oldpackagedir, $download_dir,
-    $maintainer, $console_output, $tempdir, $check_source_file_prog);
+    $administrator, $maintainer, $console_output,
+    $tempdir, $check_source_file_prog);
 my $WGET;
 
 my $LOCKCMD="/sw/bin/lockfile";
@@ -23,15 +24,15 @@ sub init_variables()
 	$packagedir='/users/geert/tmp/inst_www/packages';
 	$oldpackagedir='/users/geert/tmp/inst_www/old_packages';
 	$download_dir='/users/geert/tmp/inst_www/download';
-	$maintainer='geert@cs.uu.nl';
+	$administrator='geert@cs.uu.nl';
 	$console_output=1;
 	$check_source_file_prog=
-	'/users/geert/CGAL/Geert/maintenance/check_headers';
+	'/users/geert/CGAL/Geert/maintenance/package_handling/check_headers';
     } else {
 	$packagedir='/users/www/CGAL/Members/Develop/updates/packages';
 	$oldpackagedir='/projects/CGAL/old_packages';
 	$download_dir='/projects/CGAL/submissions/download';
-	$maintainer='geert@cs.uu.nl';
+	$administrator='geert@cs.uu.nl';
 	$console_output=0;
 	$check_source_file_prog= '/projects/CGAL/admin_scripts/check_headers';
     }
@@ -131,11 +132,11 @@ sub unpack_package($)
     $full_file_name = shift;
     chdir $tempdir;
     if ( $full_file_name =~ /\.tar\s*$/) {
-	system 'tar', 'xf', "$full_file_name";
+	system 'gtar', 'xf', "$full_file_name";
     } elsif ($full_file_name =~ /\.zip\s*$/) {
 	system('unzip', '-oqq', "$full_file_name");
     } elsif ($full_file_name =~ /\.tgz\s*$/ or $full_file_name =~ /\.tar.gz\s*$/) {
-	system("gunzip -c $full_file_name | tar xf -");
+	system("gunzip -c $full_file_name | gtar xf -");
     } else {
 	return 0;
     }
@@ -158,7 +159,7 @@ sub compress_psfiles()
 
 sub get_version($)
 {
-    my ($version_string, $date, $maintainer);
+    my ($version_string, $date);
     open VERSION, $_[0] or return ();
     while (<VERSION>) {
 	next if (/^\s*$/);
@@ -167,7 +168,7 @@ sub get_version($)
             $date = $2;
             $_ = <VERSION>;
 	    close VERSION;
-	    if (/^\s*maintainer\s*:\s*(.*)$/ ) {
+	    if (/^\s*[Mm]aintainer\s*:\s*(.*)$/ ) {
 	        return ($version_string,$date, $1);
 	    } else {
 	        return ($version_string,$date);
@@ -184,7 +185,7 @@ sub check_version($)
 {
     my $package_name = shift;
     my ($new_version_string, $new_date, $package_maintainer,
-        $old_version_string, $old_date,
+        $old_version_string, $old_date, $old_package_maintainer,
         @nversion, @oversion);
     ($new_version_string, $new_date,$package_maintainer) = get_version('version');
     if (!defined($new_version_string)) {
@@ -196,7 +197,7 @@ sub check_version($)
 	return ();
 #$package_maintainer = '?';
     }
-    ($old_version_string, $old_date) =
+    ($old_version_string, $old_date, $old_package_maintainer) =
 	get_version("$packagedir/$package_name/version");
     if (!defined($old_version_string)) {
 	return ($new_version_string, $old_version_string, $package_maintainer);
@@ -204,22 +205,35 @@ sub check_version($)
     my ($new_nr,$old_nr);
     @nversion = split /\./, $new_version_string;
     @oversion = split /\./, $old_version_string;
+    my $version_ok = 0;
     while (@nversion) {
 	$new_nr = shift @nversion;
 	$old_nr = shift @oversion;
 	$old_nr = 0 if !defined($old_nr);
 	if ($new_nr < $old_nr) {
-	    log_msg
-	"Version $new_version_string is not bigger than $old_version_string";
-	    return ();
+            last;
 	}
 	if ($new_nr > $old_nr) {
-	    return ($new_version_string,$old_version_string, $package_maintainer);
+	    $version_ok = 1;
+	    last;
 	}
     }
-    log_msg
-	"Version $new_version_string is not bigger than $old_version_string";
-    return ();
+    if (defined($old_package_maintainer)) {
+        if ($old_package_maintainer =~ /\<(.*)\>/) {
+            $maintainer = $1;
+	}
+    }
+    if ( $package_maintainer ne $old_package_maintainer) {
+        log_msg "Alert: Maintainer changed from '$old_package_maintainer'" .
+              " to '$package_maintainer'";
+    }
+    if ($version_ok ) {
+	return ($new_version_string,$old_version_string, $package_maintainer);
+    } else {
+        log_msg
+	  "Version $new_version_string is not bigger than $old_version_string";
+        return ();
+    }
 }
 
 my @source_files_to_check;
@@ -497,9 +511,12 @@ foreach $submission ( @ARGV) {
 
 close LOGFILE;
 $ARGV[0] =~ s|.*/||;
-system "cat $ACTUAL_LOGFILE | $MAIL_PROG \"CGAL submission $ARGV[0]\" $maintainer" if !$testing;
+system "cat $ACTUAL_LOGFILE | $MAIL_PROG \"CGAL submission $ARGV[0]\" $administrator" if !$testing;
 system "cat $ACTUAL_LOGFILE | $MAIL_PROG \"CGAL submission $ARGV[0]\" $sender";
 
+if (defined($maintainer) && $maintainer ne $sender) {
+system "cat $ACTUAL_LOGFILE | $MAIL_PROG \"CGAL submission $ARGV[0]\" $maintainer";
+}
 
 unlink $ACTUAL_LOGFILE;
 
