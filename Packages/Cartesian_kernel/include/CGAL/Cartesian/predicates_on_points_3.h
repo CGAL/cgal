@@ -282,6 +282,25 @@ Oriented_side
 coplanar_side_of_oriented_circle(const PointC3<R CGAL_CTAG> &p,
                                  const PointC3<R CGAL_CTAG> &q,
                                  const PointC3<R CGAL_CTAG> &r,
+                                 const PointC3<R CGAL_CTAG> &t)
+{
+  // p,q,r,t are supposed to be coplanar.
+  // p,q,r determine an orientation of this plane (not collinear).
+  // returns the equivalent of side_of_oriented_circle(p,q,r,t) in this plane
+  CGAL_kernel_exactness_precondition( coplanar(p,q,r,t) );
+  CGAL_kernel_exactness_precondition( !collinear(p,q,r) );
+  return coplanar_side_of_oriented_circleC3(p.x(), p.y(), p.z(),
+                                            q.x(), q.y(), q.z(),
+                                            r.x(), r.y(), r.z(),
+                                            t.x(), t.y(), t.z());
+}
+
+template < class R >
+inline
+Oriented_side
+coplanar_side_of_oriented_circle(const PointC3<R CGAL_CTAG> &p,
+                                 const PointC3<R CGAL_CTAG> &q,
+                                 const PointC3<R CGAL_CTAG> &r,
                                  const PointC3<R CGAL_CTAG> &t,
                                  const VectorC3<R CGAL_CTAG> &v)
 {

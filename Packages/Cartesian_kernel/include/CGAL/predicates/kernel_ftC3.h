@@ -141,7 +141,6 @@ coplanar_orientation_vectorC3(const FT &px, const FT &py, const FT &pz,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
 CGAL_KERNEL_LARGE_INLINE
 Oriented_side
 coplanar_side_of_oriented_circleC3(const FT &px, const FT &py, const FT &pz,
@@ -164,6 +163,46 @@ coplanar_side_of_oriented_circleC3(const FT &px, const FT &py, const FT &pz,
   FT rty = ry - ty;
   FT rtz = rz - tz;
   FT rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty) + CGAL_NTS square(rtz);
+  FT v2 = CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz);
+  return Oriented_side(sign_of_determinant4x4(ptx,pty,ptz,pt2,
+                                              rtx,rty,rtz,rt2,
+                                              qtx,qty,qtz,qt2,
+                                              vx,vy,vz,v2));
+}
+
+template < class FT >
+CGAL_KERNEL_LARGE_INLINE
+Oriented_side
+coplanar_side_of_oriented_circleC3(const FT &px, const FT &py, const FT &pz,
+                                   const FT &qx, const FT &qy, const FT &qz,
+                                   const FT &rx, const FT &ry, const FT &rz,
+                                   const FT &tx, const FT &ty, const FT &tz)
+{
+  // The approach is to compute side_of_oriented_sphere(p,q,r,t+v,t),
+  // with v = pq ^ pr.
+  // Note : since the circle defines the orientation of the plane, it can not
+  // be considered oriented/bounded.
+  FT ptx = px - tx;
+  FT pty = py - ty;
+  FT ptz = pz - tz;
+  FT pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty) + CGAL_NTS square(ptz);
+  FT qtx = qx - tx;
+  FT qty = qy - ty;
+  FT qtz = qz - tz;
+  FT qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty) + CGAL_NTS square(qtz);
+  FT rtx = rx - tx;
+  FT rty = ry - ty;
+  FT rtz = rz - tz;
+  FT rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty) + CGAL_NTS square(rtz);
+  FT pqx = qx - px;
+  FT pqy = qy - py;
+  FT pqz = qz - pz;
+  FT prx = rx - px;
+  FT pry = ry - py;
+  FT prz = rz - pz;
+  FT vx = pqy*prz - pqz*pry;
+  FT vy = pqz*prx - pqx*prz;
+  FT vz = pqx*pry - pqy*prx;
   FT v2 = CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz);
   return Oriented_side(sign_of_determinant4x4(ptx,pty,ptz,pt2,
                                               rtx,rty,rtz,rt2,

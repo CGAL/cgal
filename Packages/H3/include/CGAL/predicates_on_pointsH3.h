@@ -535,6 +535,19 @@ side_of_bounded_sphere(const PointH3<R> &p,
   return ON_BOUNDARY;  // Pls, no warnings anylonger
 }
 
+template < class R >
+CGAL_KERNEL_MEDIUM_INLINE
+Oriented_side
+coplanar_side_of_oriented_circle(const PointH3<R> &p,
+                                 const PointH3<R> &q,
+                                 const PointH3<R> &r,
+                                 const PointH3<R> &t)
+{
+    CGAL_kernel_precondition( coplanar(p,q,r,t) );
+    CGAL_kernel_precondition( !collinear(p,q,r) );
+    return side_of_oriented_sphere(p, q, r, t+cross_product(q-p, r-p), t);
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PREDICATES_ON_POINTSH3_H
