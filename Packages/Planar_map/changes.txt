@@ -1,3 +1,6 @@
+1 October 2004 Andreas Fabri
+- In demo: Retrieve type RasterOp with a 'typedef' and not with a 'using'
+
 21 September 2004
 - Changes for g++-3.4
 
