@@ -79,7 +79,7 @@ Qt_widget_xpm_icons$(OBJ_EXT):
 
 Qt_widget_OpenGL$(OBJ_EXT): Qt_widget_OpenGL.C \
 			../../include/CGAL/IO/Qt_OpenGL.h
-	$(QT_MOC) ../../include/CGAL/IO/Qt_OpenGL.h -o Qt_widget_OpenGL.moc
+	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_OpenGL.h -o Qt_widget_OpenGL.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_OpenGL.C
 
 .C$(OBJ_EXT):
