@@ -36,7 +36,6 @@ class Vector_3 : public R_::Kernel_base::Vector_3
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Line_3                Line_3;
   typedef typename R_::Point_3               Point_3;
-  typedef typename R_::Direction_3           Direction_3;
   typedef typename R_::Kernel_base::Vector_3         RVector_3;
 public:
   typedef          R_                       R;
