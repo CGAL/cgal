@@ -12,7 +12,7 @@
 // release_date  : $CGAL_Date: 2000/12/29 $
 //
 // file          : include/CGAL/Snap_rounding_2.h
-// package       : arr (1.73)
+// package       : sr (1.73)
 // maintainer    : Eli Packer <elip@post.tau.ac.il>
 // author(s)     : Eli Packer
 // coordinator   : Dan Halperin Tel-Aviv University
@@ -35,9 +35,8 @@
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/intersection_2.h>
-//#include <CGAL/Sweep_line_tight_2.h>
 #include <CGAL/Sweep_line_2.h>
-#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_segment_cached_traits_2.h>
 #include <list>
 #include <set>
 #include <CGAL/leda_real.h>
@@ -140,7 +139,7 @@ struct hot_pixel_dir_cmp
 template<class Rep_>
 class Snap_rounding_2 {
 
-typedef CGAL::Arr_segment_traits_2<Rep_ >            Traits;
+typedef CGAL::Arr_segment_cached_traits_2<Rep_ >     Traits;
 typedef Rep_                                         Rep;
 typedef typename Rep::FT                             NT;
 typedef typename Traits::X_curve                     X_curve;
@@ -502,25 +501,12 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees(
     for(iter1 = seg_list.begin();iter1 != seg_list.end();++iter1)
       segments.push_back(X_curve(iter1->source(),iter1->target()));
 
-    //    PM pm(new Pm_naive_point_location<PM>);
-    // sweep_to_construct_planar_map(segments.begin(), segments.end(), pm);
     std::list<X_curve>  subcurves;
 
-    /*    sweep_to_produce_planar_map_subcurves(segments.begin(), 
-					  segments.end(),  
-					  traits, 
-					  subcurves);*/
-
-    /*// get subcurves with overlapping ********** 
-//    CGAL::Sweep_line_tight_2<CurveContainerIter, Traits, Event, SubCurve> sl;
-    Sweep_line_2<CurveContainerIter, Traits> sl;
-    sl.get_subcurves(segments.begin(), segments.end(),
-    std::back_inserter(subcurves));*/
 
     // get intersection points (with endpoints)
     PointList mypointlist;
-    //    CGAL::Sweep_line_tight_2<CurveContainerIter, Traits,
-    //                             Event, SubCurve> sl;
+
     Sweep_line_2<CurveContainerIter, Traits> sl;
     sl.get_intersection_points(segments.begin(), segments.end(),
                              std::back_inserter(mypointlist));
