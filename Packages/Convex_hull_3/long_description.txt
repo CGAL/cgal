@@ -1,2 +1,0 @@
-3D Convex Hull based on LEP dd_geo_kernel
-

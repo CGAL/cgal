@@ -1,3 +1,11 @@
+2.7     (22 May 2001)
+
+- added doc_tex directory with new documentation style.
+- changed convex_hull_3 to use the new quickhull implementation.
+- replaced use of dd_geo extension package with Michael Seel's 
+  d-dim. convex hull code with d = 3; implemented as function
+  convex_hull_3_from_d.
+
 2.6     (21 Aug 2000)
 
 - typenames in chull.C's d3_surface_map used for CHTRAITS::IPOINT

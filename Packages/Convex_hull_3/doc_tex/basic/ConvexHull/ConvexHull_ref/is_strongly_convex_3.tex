@@ -1,0 +1,62 @@
+\begin{ccRefFunction}{is_strongly_convex_3}
+\ccIndexSubitemBegin{strongly convex}{polyhedron}
+\ccIndexSubitemBegin{polyhedron}{strongly convex}
+\ccIndexSubitem[C]{convex_hull_3}{postcondition}
+
+The function \ccRefName\ implements the tests described in 
+\cite{mnssssu-cgpvg-96} to 
+determine if the vertices of a given polyhedron represents a strongly convex 
+set of points or not.  
+%This test requires $O(???)$ time ??? for a polyhedron
+%with $n$ vertices.
+
+
+\ccInclude{CGAL/convexity_check_3.h}
+
+\ccFunction{
+template<class Polyhedron, class Traits>
+bool is_strongly_convex_3(Polyhedron& P, 
+                          const Traits& traits = Default_traits);
+}
+{
+determines if the set of vertices of the polyhedron \ccc{P} represent
+a strongly convex set of points or not.
+\ccPrecond%\ccIndexSubitem[C]{is_strongly_convex_3}{preconditions}
+The equations of the facet planes of the polyhedron must have
+already been computed.
+}
+
+The default traits class is the \cgal\ \ccc{Kernel_traits_3} class,%
+with the representation determined by \ccc{InputIterator::value_type}.
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item \ccc{Polyhedron::Point} should be \ccc{Traits::Point_3}.
+   \item \ccc{Traits} is a model of the concept IsStronlyConvexTraits\_3
+         %\ccIndexMainItem[c]{IsStronglyConvexTraits_3}.
+  \item \ccc{Polyhedron} must define the following types:
+        \begin{itemize}
+          \item \ccc{Polyhedron::Facet_iterator}
+          \item \ccc{Polyhedron::Vertex_iterator}
+        \end{itemize}
+        and the following member functions:
+        \begin{itemize}
+          \item \ccc{facets_begin()}
+          \item \ccc{facets_end()}
+          \item \ccc{vertices_begin()}
+          \item \ccc{vertices_end()}
+        \end{itemize}
+        The vertex type of \ccc{Polyhedron} must be a model of 
+        \ccc{CGAL::Polyhedron_Vertex};
+        the facet type must be a model of \ccc{CGAL::Polyhedron_Facet}.
+\end{enumerate}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::is_ccw_strongly_convex_2} \\
+\ccRefIdfierPage{CGAL::is_cw_strongly_convex_2} \\
+
+\ccIndexSubitemEnd{polyhedron}{strongly convex}
+\ccIndexSubitemEnd{strongly convex}{polyhedron}
+\end{ccRefFunction}
