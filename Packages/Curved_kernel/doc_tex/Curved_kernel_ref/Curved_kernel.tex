@@ -1,0 +1,115 @@
+\begin{ccRefClass}{Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}
+
+\ccDefinition
+
+\ccInclude{CGAL/Curved_kernel.h}
+
+\ccIsModel{CircularKernel, ConicKernel}
+
+
+\ccParameters
+
+The curved kernel is parameterized by a \ccc{BasicGeometricKernel} parameter
+(and derives from it), in order to reuse all needed functionalities on
+basic linear objects provided by one of the CGAL kernels. It also
+allows other implementations of these basic functionalities.
+
+The second parameter, \ccc{AlgebraicKernel}, is meant to provide the
+curved kernel with all the algebraic functionalities required for the
+manipulation of algebraic curves. 
+\footnote{default arguments?}
+
+\ccInheritsFrom
+
+\ccc{BasicGeometricKernel}
+
+\ccTypes
+
+\ccThree{typedef Circular_arc_endpoint_2<Curved-Kernel>}{Root_of_4xxx}{}
+\ccThreeToTwo
+
+The curved kernel takes its basic number type from either the basic geometric kernel or the algebraic kernel. 
+\ccTypedef{typedef AlgebraicKernel::RT RT;}{Ring number type RT.}
+or\\
+\ccTypedef{typedef BasicGeometricKernel::RT RT;}{Ring number type RT.}
+Therefore, these two number types must coincide. In the same way,
+\ccTypedef{typedef AlgebraicKernel::RT FT;}{Ring number type FT.}
+and\\
+\ccTypedef{typedef BasicGeometricKernel::FT FT;}{Ring number type FT.}
+must coincide. 
+
+
+The types of \ccc{BasicGeometricKernel} are inherited by the curved kernel.
+Some types are taken from the \ccc{AlgebraicKernel} parameter, and
+some types are defined by the \ccc{Curved_kernel} itself.
+
+\ccc{Curved_kernel} will be a model of \ccc{CircularKernel} if the 
+\ccc{AlgebraicKernel} parameter follows the requirements of the 
+concept \ccc{AlgebraicKernel_2_2}. The following types will then be usable. 
+
+\ccTypedef{typedef Circle_2<Curved_kernel> Circle_2;}{} 
+\ccGlue
+\ccTypedef{typedef Circular_arc_2<Curved_kernel> Circular_arc_2;}{}
+\ccGlue
+\ccTypedef{typedef Circular_arc_endpoint_2<Curved_kernel> Circular_arc_endpoint_2;}{}
+
+\footnote{I assume here that Circle\_2 will be moved to Curved kernel}
+
+\ccc{Curved_kernel} will be a model of \ccc{ConicKernel} if the 
+\ccc{AlgebraicKernel} parameter follows the requirements of the 
+concept \ccc{AlgebraicKernel_4_2}. The following types will then be usable.
+
+\ccTypedef{typedef Conic_2<Curved_kernel> Conic_2;}{}
+\ccGlue
+\ccTypedef{typedef Conic_arc_2<Curved_kernel> Conic_arc_2;}{}
+\ccGlue
+\ccTypedef{typedef Conic_arc_endpoint_2<Curved_kernel> Conic_arc_endpoint_2;}{}
+
+\ccNestedType{Compare_x_2;}{Model of \ccc{CurvedKernel::CompareX_2}.}
+\ccGlue
+\ccNestedType{Compare_y_2;}{Model of \ccc{CurvedKernel::CompareY_2}.}
+\ccGlue
+\ccNestedType{Compare_xy_2;}{Model of \ccc{CurvedKernel::CompareXY_2}.}
+
+\ccNestedType{Construct_circle_2;}{Model of ...}
+
+!!!!!!!!!!!!!!!!!! a faire !!!!!!!!!!!!!!!!
+
+\ccCreation
+\ccCreationVariable{CK}
+
+\ccConstructor{Curved_kernel()}{}
+
+\ccPredicates
+
+\ccMethod{Compare_x_2 compare_x_2_object() const;}{}
+\ccGlue
+\ccMethod{Compare_y_2 compare_y_2_object() const;}{}
+\ccGlue
+\ccMethod{Compare_xy_2 compare_xy_2_object() const;}{}
+
+\ccHeading{Constructions}
+
+\ccMethod{Construct_circle_2 construct_circle_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_circular_arc_2 construct_circular_arc_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_circular_arc_endpoint_2 construct_circular_arc_endpoint_2_object() const;}{}
+
+\ccMethod{Construct_conic_2 construct_conic_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_conic_arc_2 construct_conic_arc_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_conic_arc_endpoint_2 construct_conic_arc_endpoint_2_object() const;}{}
+
+\ccMethod{Make_x_monotone_2 make_x_monotone_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_intersections_2 construct_intersections_2_object() const;}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{BasicGeometricKernel}\\
+\ccRefIdfierPage{AlgebraicKernel_2_2}\\
+\ccRefIdfierPage{AlgebraicKernel_4_2}
+
+\end{ccRefClass}

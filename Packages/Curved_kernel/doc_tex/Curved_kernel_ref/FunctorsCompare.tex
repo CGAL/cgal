@@ -1,0 +1,78 @@
+\begin{ccRefConcept}{CompareX_2} 
+
+\ccDefinition
+
+\ccRefines
+
+\ccc{CGAL::Kernel::CompareX_2}
+
+\ccCreationVariable{cmpx}
+
+An object \ccVar\ of this type must provide in addition: 
+
+\ccMethod{Comparison_result operator()
+	(const CurvedKernel::Circular_arc_endpoint_2 &p,
+         const CurvedKernel::Circular_arc_endpoint_2 &q );}
+{Compares the $x$-coordinates of $p$ and $q$.}
+
+\ccHasModels
+
+\ccc{Curved_kernel::Compare_x_2;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_x}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{CompareY_2} 
+
+\ccDefinition
+
+\ccRefines
+
+\ccc{CGAL::Kernel::CompareY_2}
+
+\ccCreationVariable{cmpy}
+
+An object \ccVar\ of this type must provide in addition: 
+
+\ccMethod{Comparison_result operator()
+	(const CurvedKernel::Circular_arc_endpoint_2 &p,
+         const CurvedKernel::Circular_arc_endpoint_2 &q );}
+{Compares the $y$-coordinates of $p$ and $q$.}
+
+\ccHasModels
+
+\ccc{Curved_kernel::Compare_y_2;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_y}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{CompareXY_2} 
+
+\ccDefinition
+
+\ccRefines
+
+\ccc{CGAL::Kernel::CompareXY_2}
+
+\ccCreationVariable{cmpxy}
+
+An object \ccVar\ of this type must provide in addition: 
+
+\ccMethod{Comparison_result operator()
+	(const CurvedKernel::Circular_arc_endpoint_2 &p,
+         const CurvedKernel::Circular_arc_endpoint_2 &q );}
+{Compares $p$ and $q$ according to the lexicographic ordering on $x$- and $y$-coordinates.}
+
+\ccHasModels
+
+\ccc{Curved_kernel::Compare_xy_2;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_xy}
+
+\end{ccRefConcept}

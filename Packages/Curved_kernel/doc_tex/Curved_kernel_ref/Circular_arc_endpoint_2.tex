@@ -1,0 +1,50 @@
+\begin{ccRefClass}{Circular_arc_endpoint_2<CircularKernel>}
+
+\ccDefinition
+
+\ccInclude{CGAL/Circular_arc_endpoint_2.h}
+
+\ccParameters
+
+\ccc{CircularKernel}
+
+\ccCreation
+\ccCreationVariable{cae}
+
+Default constructible, copy constructible.
+
+\ccThree{Circular_arc_endpoint_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\footnote{quid de constructeur a partir de Point\_2 ?}
+
+\ccConstructor{Circular_arc_endpoint_2(
+		const CircularKernel::Circle_2 & c1, 
+		const CircularKernel::Circle_2 & c2, 
+		const int i)}
+{Constructs an endpoint defined as the $i^{th}$ intersection (for the 
+order given by the $x$-coordinates) of the two circles \ccc{c1} and \ccc{c2}.} 
+\footnote{definition plus intrinseque...? a creuser}
+
+\ccAccessFunctions
+
+\ccThree{CircularKernel::Root_of_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccMethod{const CircularKernel::Root_of_2 & x();}{$x$-coordinate of the endpoint.}
+\ccGlue
+\ccMethod{const CircularKernel::Root_of_2 & y();}{$y$-coordinate of the endpoint.}
+
+\ccMethod{const CircularKernel::Circle_2 & circle(int i);}
+{\ccPrecond{\ccc{i}==0 or \ccc{i}==1}. 
+Returns one of the two circles defining the endpoint.}
+\ccGlue
+\ccMethod{int index();}{Returns the index (in lexicographic order)
+of the endpoint among the intersections between the two circles
+defining it.}
+
+\ccHeading{I/O}
+
+\ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_endpoint_2 &ce);}{}
+
+\end{ccRefClass}

@@ -1,0 +1,61 @@
+\begin{ccRefClass}{Circular_arc_2<CircularKernel>}
+
+\ccDefinition
+
+\ccInclude{CGAL/Circular_arc_2.h}
+
+\ccParameters
+
+\ccc{CircularKernel} 
+
+\ccCreation
+\ccCreationVariable{ca}
+
+Default constructible, copy constructible.
+
+\ccThree{Circular_arc_endpoint_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccConstructor{Circular_arc_2(const CircularKernel::Circle_2 &c)}
+{Constructs an arc from a full circle.}
+
+\ccConstructor{Circular_arc_2(const CircularKernel::Circle_2 &c, 
+		   const CircularKernel::Circle_2 &c1, int i1,
+		   const CircularKernel::Circle_2 &c2, int i2)}
+{Constructs a circular arc whose supporting circle is \ccc{c}, 
+whose source endpoint is the $i1^{th}$ intersection of \ccc{c} and \ccc{c1},
+and whose target is the $i2^{th}$ intersection of \ccc{c} and \ccc{i2},
+where intersections are ordered lexicographically.}
+
+\ccAccessFunctions
+
+\ccThree{CircularKernel::Circular_arc_endpoint_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccMethod{CircularKernel::Circle_2 supporting_circle();}{}
+
+A circular arc is supposed to be oriented counterclockwise, from 
+\ccc{begin} to \ccc{end}. 
+
+\ccMethod{CircularKernel::Circular_arc_endpoint_2 begin();}{}
+\ccGlue
+\ccMethod{CircularKernel::Circular_arc_endpoint_2 end();}{}
+
+When an arc is monotone, its left and right endpoints can be accessed directly:
+
+\ccMethod{CircularKernel::Circular_arc_endpoint_2 left();}{\ccPrecond{\ccc{\ccVar.is_x_monotone()}}.}
+\ccGlue
+\ccMethod{CircularKernel::Circular_arc_endpoint_2 right();}{\ccPrecond{\ccc{\ccVar.is_x_monotone()}}.}
+
+
+\ccQueryFunctions
+
+\ccMethod{bool is_x_monotone();}{Tests whether the arc is monotone.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (std::istream& is, Circular_arc_2 & ca);}{}
+\ccGlue
+\ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_2 & ca);}{}
+
+\end{ccRefClass}

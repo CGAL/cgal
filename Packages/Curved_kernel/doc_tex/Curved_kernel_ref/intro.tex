@@ -1,0 +1,90 @@
+\chapter{Curved Kernel}
+
+\textbf{DRAFT - Monique - supervised by Sylvain...}
+
+The main class is: 
+
+\ccRefIdfierPage{CGAL::Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Concepts}
+
+\ccRefConceptPage{CircularKernel_2}\\
+\ccRefConceptPage{ConicKernel_2}
+
+\ccRefConceptPage{BasicGeometricKernel}
+
+\ccRefConceptPage{AlgebraicKernel_2_2}\\
+\ccRefConceptPage{AlgebraicKernel_4_2}\\
+\ccRefConceptPage{RootOf_2}\\
+\ccRefConceptPage{RootOf_4}\\
+\ccRefConceptPage{PolynomialCircle_2_2}\\
+\ccRefConceptPage{Polynomial_2_2}
+
+\textit{Remark about the suffix \ccc{_x_y}: \ccc{_x} stands 
+for the degree of the polynomials and the algebraic numbers, and
+\ccc{_y} stands for the number of variables, which is analogous to the
+dimension for geometric objects.}
+
+	\subsubsection*{Functors} 
+\ccRefConceptPage{CompareX_2}\\
+\ccRefConceptPage{CompareY_2}\\
+\ccRefConceptPage{CompareXY_2}
+
+\ccRefConceptPage{ConstructCircle_2}\\
+\ccRefConceptPage{ConstructCircularArc_2}\\
+\ccRefConceptPage{ConstructCircularArcEndpoint_2}\\
+\ccRefConceptPage{ConstructConic_2}\\
+\ccRefConceptPage{ConstructConicArc_2}\\
+\ccRefConceptPage{ConstructConicArcEndpoint_2}
+
+\ccRefConceptPage{CircularKernel::MakeXMonotone_2}\\
+\ccRefConceptPage{ConicKernel::MakeXMonotone_2}\\
+\ccRefConceptPage{CircularKernel::ConstructIntersections_2}\\
+\ccRefConceptPage{ConicKernel::ConstructIntersections_2}
+
+\ccRefConceptPage{AlgebraicKernel_2_2::ConstructPolynomialCircle_2_2}\\
+\ccRefConceptPage{AlgebraicKernel_4_2::ConstructPolynomial_2_2}
+
+\ccRefConceptPage{AlgebraicKernel_2_2::Solve}\\
+\ccRefConceptPage{AlgebraicKernel_4_2::Solve}\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Classes}
+
+	\subsubsection*{Curves and Surfaces}
+\ccRefIdfierPage{CGAL::Circle_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Conic_2<ConicKernel>}\\
+\ccRefIdfierPage{CGAL::Sphere_3<CurvedKernel>}
+
+	\subsubsection*{Arcs}
+\ccRefIdfierPage{CGAL::Circular_arc_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Conic_arc_2<ConicKernel>}
+
+	\subsubsection*{Points}
+\ccRefIdfierPage{CGAL::Circular_arc_endpoint_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Conic_arc_endpoint_2<ConicKernel>}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Functions}
+
+	\subsubsection*{Predicates}
+\ccRefIdfierPage{CGAL::compare_x}\\
+\ccRefIdfierPage{CGAL::compare_y}\\
+\ccRefIdfierPage{CGAL::compare_xy}
+
+	\subsubsection*{Constructions}
+
+\ccRefIdfierPage{CGAL::make_root_of_2}\\
+\ccRefIdfierPage{CGAL::make_root_of_4}
+
+\ccRefIdfierPage{CGAL::make_x_monotone}\\
+\ccRefIdfierPage{CGAL::construct_intersections}
+
+\ccRefIdfierPage{CGAL::solve}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Traits class}
+
+\ccRefIdfierPage{CGAL::Circular_arc_traits}\\
+\ccRefIdfierPage{CGAL::Conic_arc_traits}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section*{Enums}

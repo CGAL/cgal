@@ -1,0 +1,133 @@
+\begin{ccRefFunction}{compare_x}
+
+\ccDefinition
+
+\ccFunction{template < class CircularKernel > 
+	Comparison_result compare_x
+	(const Circular_arc_endpoint_2<CircularKernel> &p,
+	const Circular_arc_endpoint_2<CircularKernel> &q);}
+        {Calls the operator() of \ccc{CircularKernel::CompareX_2}.}
+
+\ccFunction{template < class ConicKernel > 
+	Comparison_result compare_x
+	(const Conic_arc_endpoint_2<ConicKernel> &p,
+	const Conic_arc_endpoint_2<ConicKernel> &q);}
+        {Calls the operator() of \ccc{ConicKernel::CompareX_2}.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{CompareX_2}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{compare_y}
+
+\ccDefinition
+
+\ccFunction{template < class CircularKernel > 
+	Comparison_result compare_y
+	(const Circular_arc_endpoint_2<CircularKernel> &p,
+	const Circular_arc_endpoint_2<CircularKernel> &q);}
+        {Calls the operator() of \ccc{CircularKernel::CompareY_2}.}
+
+\ccFunction{template < class ConicKernel > 
+	Comparison_result compare_y
+	(const Conic_arc_endpoint_2<ConicKernel> &p,
+	const Conic_arc_endpoint_2<ConicKernel> &q);}
+        {Calls the operator() of \ccc{ConicKernel::CompareY_2}.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{CompareY_2}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{compare_xy}
+
+\ccDefinition
+
+\ccFunction{template < class CircularKernel > 
+	Comparison_result compare_xy
+	(const Circular_arc_endpoint_2<CircularKernel> &p,
+	const Circular_arc_endpoint_2<CircularKernel> &q);}
+        {Calls the operator() of \ccc{CircularKernel::CompareXY_2}.}
+
+\ccFunction{template < class ConicKernel > 
+	Comparison_result compare_xy
+	(const Conic_arc_endpoint_2<ConicKernel> &p,
+	const Conic_arc_endpoint_2<ConicKernel> &q);}
+        {Calls the operator() of \ccc{ConicKernel::CompareXY_2}.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{CompareXY_2}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{make_x_monotone}
+
+\ccDefinition
+
+\ccFunction{template < class CircularKernel, class OutputIterator >
+    OutputIterator make_x_monotone
+	(const Circular_arc_2<CircularKernel> &ca,
+	OutputIterator res);}
+        {Calls the operator() of \ccc{CircularKernel::MakeXMonotone_2}.}
+
+\ccFunction{template < class ConicKernel, class OutputIterator >
+    OutputIterator make_x_monotone
+	(const Conic_arc_2<ConicKernel> &ca,
+	OutputIterator res);}
+        {Calls the operator() of \ccc{ConicKernel::MakeXMonotone_2}.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{CircularKernel::MakeXMonotone_2}\\
+\ccRefConceptPage{ConicKernel::MakeXMonotone_2}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{construct_intersections}
+
+\ccDefinition
+
+\ccFunction{template < class CircularKernel, class OutputIterator >
+    OutputIterator construct_intersections
+	(const Circular_arc_2<CircularKernel> &ca1,
+	const Circular_arc_2<CircularKernel> &ca2, 
+	OutputIterator res);}
+        {Calls the operator() of \ccc{CircularKernel::ConstructIntersections_2}.}
+
+\ccFunction{template < class ConicKernel, class OutputIterator >
+    OutputIterator construct_intersections
+	(const Circular_arc_2<ConicKernel> &ca1,
+	const Circular_arc_2<ConicKernel> &ca2, 
+	OutputIterator res);}
+        {Calls the operator() of \ccc{ConicKernel::ConstructIntersections_2}.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{CircularKernel::ConstructIntersections_2}\\
+\ccRefConceptPage{ConicKernel::ConstructIntersections_2}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{solve}
+
+\ccDefinition
+
+\ccFunction{template < class AlgebraicKernel_2_2, class OutputIterator >
+	OutputIterator solve
+	(const AlgebraicKernel_2_2::Polynomial_circle_2_2 &p1,
+	const AlgebraicKernel_2_2::Polynomial_circle_2_2 &p2,
+	OutputIterator res);}
+	{Calls the operator() of \ccc{AlgebraicKernel_2_2::Solve}.}
+
+\ccFunction{template < class AlgebraicKernel_4_2, class OutputIterator >
+	OutputIterator solve
+	(const AlgebraicKernel_4_2::Polynomial_2_2 &p1,
+	const AlgebraicKernel_4_2::Polynomial_2_2 &p2,
+	OutputIterator res);}
+	{Calls the operator() of \ccc{AlgebraicKernel_4_2::Solve}.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{AlgebraicKernel_2_2::Solve}\\
+\ccRefConceptPage{AlgebraicKernel_4_2::Solve}
+
+\end{ccRefFunction}
