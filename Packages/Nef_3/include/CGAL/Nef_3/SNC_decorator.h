@@ -48,7 +48,7 @@
 #endif // CGAL_NEF3_SM_VISUALIZOR
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 19
-#include <CGAL/Nef_3/debug.h>
+#include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
 

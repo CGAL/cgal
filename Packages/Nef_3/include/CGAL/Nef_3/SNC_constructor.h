@@ -45,7 +45,7 @@
 #include <list>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 43
-#include <CGAL/Nef_3/debug.h>
+#include <CGAL/Nef_2/debug.h>
 #include <CGAL/Nef_3/Progress_indicator.h>
 
 CGAL_BEGIN_NAMESPACE

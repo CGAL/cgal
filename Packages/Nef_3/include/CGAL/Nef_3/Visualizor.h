@@ -37,7 +37,7 @@
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 157
-#include <CGAL/Nef_3/debug.h>
+#include <CGAL/Nef_2/debug.h>
 
 #define CGAL_NEF3_MARKED_VERTEX_COLOR 183,232,92
 #define CGAL_NEF3_MARKED_EDGE_COLOR 171,216,86

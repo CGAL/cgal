@@ -15,7 +15,7 @@
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 509
-#include <CGAL/Nef_3/debug.h>
+#include <CGAL/Nef_2/debug.h>
 
 #undef _TRACEN
 #define _TRACEN(msg) TRACEN( "SNC_point_locator: " << msg);

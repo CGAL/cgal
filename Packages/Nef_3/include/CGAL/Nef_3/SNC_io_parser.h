@@ -34,7 +34,7 @@
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 293
-#include <CGAL/Nef_3/debug.h>
+#include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
 
