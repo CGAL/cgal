@@ -32,6 +32,7 @@
 #define CORE_EXPR_NT                    12
 #define NIX_LEDA_FIELD_WITH_SQRT_NT     13
 #define NIX_CORE_FIELD_WITH_SQRT_NT     14
+#define LAZY_GMPZ_NT                    15
 
 // Default value based on dependencies:
 #if BENCH_KERNEL == LEDA_KERNEL

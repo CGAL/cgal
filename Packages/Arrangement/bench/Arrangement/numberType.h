@@ -69,6 +69,10 @@
 #error "Core not supported!"
 #endif
 
+#elif BENCH_NT == LAZY_GMPZ_NT
+#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/gmpxx.h>
+
 #else
 #error No Number Type (NT) specified! 
 #endif
@@ -180,6 +184,12 @@ typedef NiX::CORE_arithmetic_traits                     Arithmetic_traits;
 typedef Arithmetic_traits::Field_with_sqrt              NT;
 typedef NT                                              WNT;
 #define NUMBER_TYPE "NiX Core Expr"
+
+#elif BENCH_NT == LAZY_GMPZ_NT
+typedef ::mpz_class                                     NT;
+typedef CGAL::Lazy_exact_nt<NT>                         WNT;
+typedef ::mpz_class                                     RT;
+#define NUMBER_TYPE "Lazy Gmpz"
 
 #else
 #error No Number Type (NT) Specified
