@@ -1,0 +1,65 @@
+\section{Number Types Provided by GNU}
+
+\cgal\ provides wrapper classes for number types defined in the 
+{\sc Gnu} Multiple Precision Arithmetic Library~\cite{g-gmpal-96}.
+The file {\tt  CGAL/Gmpz.h} provides the class \ccStyle{Gmpz}, 
+a wrapper class for the integer type \ccc{mpz_t}, that is compliant to the 
+CGAL number type requirements.
+To use this, the {\sc Gnu} Multiple Precision Arithmetic Library must be 
+installed.
+
+\begin{ccClass} {Gmpz}
+\label{Gmpz}
+\ccSubsection{GNU Multiple Precision Integer}
+
+\ccDefinition
+
+An object of the class \ccStyle{Gmpz} is an arbitrary precision integer 
+based on the {\sc Gnu} Multiple Precision Arithmetic Library. 
+
+\ccInclude{CGAL/Gmpz.h}
+
+\ccCreation
+\ccCreationVariable{q}
+
+\ccConstructor{Gmpz();}
+             {creates an uninitialized multiple precision integer \ccVar.}
+
+\ccHidden \ccConstructor{Gmpz(const Gmpz& q);}
+ 	    {copy constructor.}
+
+\ccConstructor{Gmpz(int i)}
+            {creates an multiple precision integer initialized with
+             \ccStyle{i}.}
+
+\ccConstructor{Gmpz(double d)}
+            {creates an multiple precision integer initialized with
+             the integral part of \ccStyle{d}.}
+
+\ccOperations
+
+The arithmetic operations $+,\ -,\ *,\ /,\ +=,\ -=,\ *=,\ /=,\ -$(unary),
+the comparison operations $<,\ <=,\ >,\  >=,\ ==,\ !=$ and the stream 
+operations are all available.
+
+\ccSetThreeColumns{io_Operator }{}{\hspace*{8cm}}
+
+The following functions are added to fulfill the {\cgal} requirements
+on number types.
+
+\ccFunction{double to_double(const Gmpz& g);}
+       {returns some double approximation to \ccStyle{g}.}
+
+\ccFunction{bool  is_valid(const Gmpz& g);}
+       {returns true}
+
+\ccFunction{bool  is_finite(const Gmpz& g);}
+       {returns true}
+
+\ccFunction{io_Operator  io_tag(const Gmpz& g);}
+       {}
+
+\ccImplementation
+\ccc{Gmpz}s are reference counted.
+\end{ccClass} 
+
