@@ -10,8 +10,8 @@
 # coordinator   : Utrecht University
 # =============================================================================
 #
-# This script creates a cgal_test script with entries for all .C files in the
-# current test directory.
+# This script creates a cgal_test script with entries for all .C and .cpp 
+# files in the current test directory.
 
 VERSION=1.1
 
@@ -67,6 +67,7 @@ compile_and_run()
     fi
     echo "Executing \$1 ... "
     echo
+    ulimit -t 1200
     if eval \$COMMAND > \$OUTPUTFILE 2>&1 ; then
       echo "   succesful execution   of \$1" >> \$ERRORFILE
     else
@@ -97,6 +98,9 @@ EOF
   for file in `ls *.C` ; do
     echo "  compile_and_run `basename $file .C`"
   done
+  for file in `ls *.cpp` ; do
+    echo "  compile_and_run `basename $file .cpp`"
+  done
   echo "fi"
   echo
 }
@@ -107,5 +111,5 @@ if [ -f cgal_test ] ; then
   mv -f cgal_test cgal_test.bak
 fi
 create_script > cgal_test
-chmod 744 cgal_test
+chmod 755 cgal_test
 echo "created cgal_test ..."

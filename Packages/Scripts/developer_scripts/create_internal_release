@@ -773,7 +773,7 @@ sub make_testscripts()
 		system("$SCRIPTSDIR/create_makefile", $options);
 	    }
 	    if ( ! -f 'cgal_test' ) {
-	      create_test();
+		system("$SCRIPTSDIR/create_cgal_test");
 	    }
 	    chdir '..';
 	}
