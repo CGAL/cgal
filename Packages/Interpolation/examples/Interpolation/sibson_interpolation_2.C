@@ -66,7 +66,9 @@ int main()
 	      << a + bx * p.x()+ by * p.y()+ c*(p.x()*p.x()+p.y()*p.y()) 
 	      << std::endl;
   else
-    std::cout << "C^1 Interpolation not successful." << std::endl;
+    std::cout << "C^1 Interpolation not successful." << std::endl 
+	      << " not all gradients for provided."  << std::endl 
+	      << " You may resort to linear interpolation." << std::endl;
   
   return 0; 
 };
