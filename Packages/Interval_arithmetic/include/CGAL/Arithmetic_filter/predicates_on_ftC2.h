@@ -61,8 +61,7 @@ compare_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_xC2(
@@ -112,8 +111,7 @@ compare_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_xC2(
@@ -164,8 +162,7 @@ compare_y_at_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -205,8 +202,7 @@ compare_y_at_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -252,8 +248,7 @@ compare_y_at_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hb,  
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hc)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -307,8 +302,7 @@ compare_y_at_xC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -358,8 +352,7 @@ compare_deltax_deltayC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_deltax_deltayC2(
@@ -393,8 +386,7 @@ compare_lexicographically_xyC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_lexicographically_xyC2(
@@ -431,8 +423,7 @@ orientationC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Orientation result = orientationC2(
@@ -473,8 +464,7 @@ collinear_are_ordered_along_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = collinear_are_ordered_along_lineC2(
@@ -515,8 +505,7 @@ collinear_are_strictly_ordered_along_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = collinear_are_strictly_ordered_along_lineC2(
@@ -560,8 +549,7 @@ side_of_oriented_circleC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Oriented_side result = side_of_oriented_circleC2(
@@ -609,8 +597,7 @@ side_of_bounded_circleC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Bounded_side result = side_of_bounded_circleC2(
@@ -655,8 +642,7 @@ cmp_dist_to_pointC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = cmp_dist_to_pointC2(
@@ -697,8 +683,7 @@ has_larger_dist_to_pointC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_larger_dist_to_pointC2(
@@ -739,8 +724,7 @@ has_smaller_dist_to_pointC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_smaller_dist_to_pointC2(
@@ -782,8 +766,7 @@ cmp_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = cmp_signed_dist_to_lineC2(
@@ -827,8 +810,7 @@ has_larger_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_larger_signed_dist_to_lineC2(
@@ -872,8 +854,7 @@ has_smaller_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_smaller_signed_dist_to_lineC2(
@@ -918,8 +899,7 @@ cmp_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = cmp_signed_dist_to_lineC2(
@@ -967,8 +947,7 @@ has_larger_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_larger_signed_dist_to_lineC2(
@@ -1016,8 +995,7 @@ has_smaller_signed_dist_to_lineC2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_smaller_signed_dist_to_lineC2(
