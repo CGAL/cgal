@@ -491,10 +491,9 @@ typedef double NT;
 // using Filtered_exact number type is advised :
 // 
 // #include <CGAL/Arithmetic_filter.h>
-// #include <CGAL/leda_real.h>
-// #include <CGAL/double.h>
+// #include <CGAL/MP_Float.h>
 // 
-// typedef CGAL::Filtered_exact<double, leda_real> NT;
+// typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
 
 typedef CGAL::Cartesian<NT> Repr;
 typedef CGAL::Triangulation_geom_traits_3<Repr> Gt;
