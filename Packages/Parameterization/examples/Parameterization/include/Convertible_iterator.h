@@ -34,7 +34,10 @@ class Convertible_iterator : public Iter
 
 public:
 	Convertible_iterator() {}
-	Convertible_iterator(Base b) : Base(b) {}
+	Convertible_iterator(Base toCopy) : Base(toCopy) {}
+	
+	Convertible_iterator(const Self& toCopy) : Base(toCopy) {}
+	Self& operator=(const Self& toCopy) { Base::operator=(toCopy); return *this; }
 
 	Self & operator++()		{ Base::operator++(); return *this; }
 	Self & operator--()		{ Base::operator--(); return *this; }

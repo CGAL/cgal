@@ -61,8 +61,9 @@ class Mesh_adaptor_polyhedron_ex
 private:
 				// Forward references
 				typedef Polyhedron_ex::Halfedge								Vertex;	
-				template <class Node> struct								Project_adaptor_vertex;
-				template <class Node> struct								Project_opposite_adaptor_vertex;
+				struct														Project_halfedge_vertex;
+				struct														Project_halfedge_handle_vertex;
+				struct														Project_opposite_halfedge_vertex;
 				struct														Ignored;
 				// Halfedge
 				typedef Polyhedron_ex::Halfedge								Halfedge;
@@ -71,32 +72,30 @@ private:
 				typedef Polyhedron_ex::Halfedge_iterator					Halfedge_iterator;
 				typedef Polyhedron_ex::Halfedge_const_iterator				Halfedge_const_iterator;
 				typedef Polyhedron_ex::Halfedge_around_vertex_circulator	Halfedge_around_vertex_circulator;
-				// Backbone
-				typedef Feature_backbone<Polyhedron_ex::Vertex_handle, Halfedge_handle>	Backbone;
 				// Iterator over all mesh vertices
 				typedef CGAL::Filter_iterator<Halfedge_iterator, Ignored>	Vertex_iterator_base;
 				typedef CGAL::Filter_iterator<Halfedge_const_iterator, Ignored> Vertex_const_iterator_base;
 				// Iterator over mesh boundary vertices
 				typedef CGAL::Iterator_project<std::list<Halfedge_handle>::iterator, 
-											   Project_adaptor_vertex<Halfedge_handle> >	
+											   Project_halfedge_handle_vertex>	
 																			Border_vertex_iterator_base;
 				typedef CGAL::Iterator_project<std::list<Halfedge_handle>::const_iterator, 
-											   Project_adaptor_vertex<Halfedge_handle> >	
+											   Project_halfedge_handle_vertex>	
 																			Border_vertex_const_iterator_base;
 				// Circulator over a face's vertices
 				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_facet_circulator, 
-												 Project_adaptor_vertex<Halfedge>, Vertex&, Vertex*>					
+												 Project_halfedge_vertex, Vertex&, Vertex*>					
 																			Vertex_around_face_circulator_base;
 				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_facet_const_circulator, 
-											     Project_adaptor_vertex<Halfedge>, const Vertex&, const Vertex*>					
+											     Project_halfedge_vertex, const Vertex&, const Vertex*>					
 																			Vertex_around_face_const_circulator_base;
 				// Circulator over the vertices incident to a vertex
 				// @@@ INONDATION
 				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_vertex_circulator, 
-												 Project_opposite_adaptor_vertex<Halfedge>, Vertex&, Vertex*>					
+												 Project_opposite_halfedge_vertex, Vertex&, Vertex*>					
 																			Vertex_around_vertex_circulator_base;
 				typedef CGAL::Circulator_project<Polyhedron_ex::Halfedge_around_vertex_const_circulator, 
-												 Project_opposite_adaptor_vertex<Halfedge>, const Vertex&, const Vertex*>					
+												 Project_opposite_halfedge_vertex, const Vertex&, const Vertex*>					
 																			Vertex_around_vertex_const_circulator_base;
 	
 // Public types
@@ -243,18 +242,18 @@ public:
 
 				// Get iterator over first vertex of mesh's border.
 				Border_vertex_iterator  mesh_border_vertices_begin () {
-					return m_boundary.begin();
+					return (Border_vertex_iterator_base) m_boundary.begin();
 				}
 				Border_vertex_const_iterator  mesh_border_vertices_begin () const {
-					return m_boundary.begin();
+					return (Border_vertex_const_iterator_base) m_boundary.begin();
 				}
 
 				// Get iterator over past-the-end vertex of mesh's border.
 				Border_vertex_iterator  mesh_border_vertices_end () {
-					return m_boundary.end();
+					return (Border_vertex_iterator_base) m_boundary.end();
 				}
 				Border_vertex_const_iterator  mesh_border_vertices_end () const {
-					return m_boundary.end();
+					return (Border_vertex_const_iterator_base) m_boundary.end();
 				}
 
 				// Get iterator over first face of mesh
@@ -288,11 +287,11 @@ public:
 				// Get circulator over face's vertices
 				Vertex_around_face_circulator  face_vertices_begin (Face_handle face) {
 					assert(is_valid(face));
-					return face->facet_begin();
+					return (Vertex_around_face_circulator_base) face->facet_begin();
 				}
 				Vertex_around_face_const_circulator  face_vertices_begin (Face_const_handle face) const {
 					assert(is_valid(face));
-					return face->facet_begin();
+					return (Vertex_around_face_const_circulator_base) face->facet_begin();
 				}
 
 				// Count the number of vertices of a face
@@ -358,46 +357,46 @@ public:
 				// @@@ INONDATION
 				Vertex_around_vertex_circulator  vertices_around_vertex_begin (Vertex_handle adaptor_vertex) {
 					assert(is_valid(adaptor_vertex));
-					return adaptor_vertex->vertex_begin();
+					return (Vertex_around_vertex_circulator) adaptor_vertex->vertex_begin();
 				}
 				Vertex_around_vertex_const_circulator  vertices_around_vertex_begin (Vertex_const_handle adaptor_vertex) const {
 					assert(is_valid(adaptor_vertex));
-					return adaptor_vertex->vertex_begin();
+					return (Vertex_around_vertex_const_circulator) adaptor_vertex->vertex_begin();
 				}
 
 // Private types
 private:
 				// Utility class to generate the Vertex_around_face_circulator type
-				template <class Node> struct Project_adaptor_vertex {
-					typedef Node								argument_type;
+				struct Project_halfedge_vertex {
+					typedef Halfedge							argument_type;
 					typedef Mesh_adaptor_polyhedron_ex::Vertex	Vertex;
 					typedef Vertex								result_type;
 					typedef CGAL::Arity_tag<1>					Arity;
-					// Convert a Node h into an adaptor vertex (default implementation is for Node = Polyhedron_ex::Halfedge)
-					Vertex&       operator()( Node& x)       const { return *(get_adaptor_vertex(&x)); }
-					const Vertex& operator()( const Node& x) const { return *(get_adaptor_vertex(&x)); }
+					// Get the adaptor vertex of the halfedge 'h'
+					Vertex&       operator()(Halfedge& h)       const { return *(get_adaptor_vertex(&h)); }
+					const Vertex& operator()(const Halfedge& h) const { return *(get_adaptor_vertex(&h)); }
 				};
 
 				// Utility class to generate the Border_vertex_iterator type
-				template <>	struct Project_adaptor_vertex<Halfedge_handle> {
+				struct Project_halfedge_handle_vertex {
 					typedef Halfedge_handle						argument_type;
 					typedef Mesh_adaptor_polyhedron_ex::Vertex	Vertex;
 					typedef Vertex								result_type;
 					typedef CGAL::Arity_tag<1>					Arity;
-					// Convert an Halfedge_handle h into an adaptor vertex
-					Vertex&       operator()( Halfedge_handle& h)       const { return *(get_adaptor_vertex(h)); }
-					const Vertex& operator()( const Halfedge_handle& h) const { return *(get_adaptor_vertex(h)); }
+					// Get the adaptor vertex of the halfedge handle 'h'
+					Vertex&       operator()(Halfedge_handle& h)       const { return *(get_adaptor_vertex(h)); }
+					const Vertex& operator()(const Halfedge_handle& h) const { return *(get_adaptor_vertex(h)); }
 				};
 
 				// Utility class to generate the Vertex_around_vertex_circulator type
-				template <class Node> struct Project_opposite_adaptor_vertex {
-					typedef Node								argument_type;
+				struct Project_opposite_halfedge_vertex {
+					typedef Halfedge							argument_type;
 					typedef Mesh_adaptor_polyhedron_ex::Vertex	Vertex;
 					typedef Vertex								result_type;
 					typedef CGAL::Arity_tag<1>					Arity;
-					// Get adaptor vertex of the halfedge opposite to h (default implementation is for Node = Halfedge)
-					Vertex&       operator()( Node& h)       const { return *(get_adaptor_vertex(h.opposite())); }
-					const Vertex& operator()( const Node& h) const { return *(get_adaptor_vertex(h.opposite())); }
+					// Get the adaptor vertex of the halfedge opposite to h
+					Vertex&       operator()(Halfedge& h)       const { return *(get_adaptor_vertex(h.opposite())); }
+					const Vertex& operator()(const Halfedge& h) const { return *(get_adaptor_vertex(h.opposite())); }
 				};
 
 				// Utility class to generate the Vertex_iterator type
@@ -414,6 +413,7 @@ private:
 				// Extract mesh UNIQUE boundary
 				static std::list<Halfedge_handle> extract_unique_boundary(Polyhedron_ex* mesh)
 				{
+					typedef Feature_backbone<Polyhedron_ex::Vertex_handle, Halfedge_handle>	Backbone;
 					assert(mesh != NULL);
 					std::list<Halfedge_handle> boundary;	// returned list
 					mesh->free_skeleton();
@@ -487,6 +487,9 @@ private:
 				inline static Vertex_handle get_adaptor_vertex(Halfedge_handle halfedge) {
 					Vertex_const_handle adaptor_vertex = get_adaptor_vertex( (Halfedge_const_handle)halfedge );
 					return (Vertex*) (&*adaptor_vertex);
+				}
+				inline static Vertex_handle get_adaptor_vertex(Halfedge* halfedge) {
+					return get_adaptor_vertex( (Halfedge_handle)halfedge );
 				}
 
 				// Check if variables are valid (for debug purpose)
