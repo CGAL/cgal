@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.19 (22/10/03)
+- doc fixes in Delaunay_triangulation_2.tex
+
 ver 8.18 (15/10/03)
 - changes of VertexHandle  and Face handle :
    they no longer proper classes but typedef to iterator [af]
