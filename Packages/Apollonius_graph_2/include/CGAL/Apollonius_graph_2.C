@@ -354,7 +354,7 @@ bool
 Apollonius_graph_2<Gt,Agds,LTag>::
 is_degree_2(const Vertex_handle& v) const
 {
-  Face_circulator fc = v->incident_faces();
+  Face_circulator fc = incident_faces(v);
   Face_circulator fc1 = fc;
   ++(++fc1);
   return ( fc == fc1 );
@@ -413,7 +413,7 @@ remove_degree_3(Vertex_handle v, Face_handle f) // af:was Face*
 remove_degree_3(Vertex_handle v, Face* f)
 #endif
 {
-  CGAL_triangulation_precondition( v->degree() == 3 );
+  CGAL_triangulation_precondition( degree(v) == 3 );
   this->_tds.remove_degree_3(v, f);
 }
 
@@ -614,7 +614,7 @@ insert(const Site_2& p, Vertex_handle vnear)
   // find the first conflict
 
   // first look for conflict with vertex
-  Face_circulator fc_start = vnearest->incident_faces();
+  Face_circulator fc_start = incident_faces(vnearest);
   Face_circulator fc = fc_start;
   Face_handle start_f;
   Sign s;
@@ -632,7 +632,7 @@ insert(const Site_2& p, Vertex_handle vnear)
   // we are not in conflict with an Apollonius vertex, so we have to
   // be in conflict with the interior of an Apollonius edge
   if ( s != NEGATIVE ) {
-    Edge_circulator ec_start = vnearest->incident_edges();
+    Edge_circulator ec_start = incident_edges(vnearest);
     Edge_circulator ec = ec_start;
 
     bool interior_in_conflict(false);
@@ -701,7 +701,7 @@ find_conflict_region_remove(const Vertex_handle& v,
   // find the first conflict
 
   // first look for conflict with vertex
-  Face_circulator fc_start = vnearest->incident_faces();
+  Face_circulator fc_start = incident_faces(vnearest);
   Face_circulator fc = fc_start;
   Face_handle start_f;
   Sign s;
@@ -722,7 +722,7 @@ find_conflict_region_remove(const Vertex_handle& v,
   // we are not in conflict with an Apollonius vertex, so we have to
   // be in conflict with the interior of an Apollonius edge
   if ( s != NEGATIVE ) {
-    Edge_circulator ec_start = vnearest->incident_edges();
+    Edge_circulator ec_start = incident_edges(vnearest);
     Edge_circulator ec = ec_start;
 
     bool interior_in_conflict(false);
@@ -1661,11 +1661,11 @@ Apollonius_graph_2<Gt,Agds,LTag>::
 remove_third(Vertex_handle v)
 {
   if ( is_degree_2(v) ) {
-    Face_handle fh(v->incident_faces());
+    Face_handle fh( incident_faces(v) );
     int i = fh->index(v);
     flip(fh, i);
-  } else if ( v->degree() == 4 ) {
-    Edge_circulator ec = v->incident_edges();
+  } else if ( degree(v) == 4 ) {
+    Edge_circulator ec = incident_edges(v);
     for (int i = 0; i < 4; i++) {
       Edge e = *ec;
       Edge sym = sym_edge(e);
@@ -1694,7 +1694,7 @@ remove(Vertex_handle v)
   Vertex_handle vnear;
   if ( /*StoreHidden*/ true ) {
     if ( number_of_vertices() > 10 ) {
-      Vertex_circulator vc_start = v->incident_vertices();
+      Vertex_circulator vc_start = incident_vertices(v);
       Vertex_circulator vc = vc_start;
       do {
 	if ( !is_infinite(vc) ) {
@@ -1721,10 +1721,10 @@ remove(Vertex_handle v)
   } else if ( n == 3 ) {
     remove_third(v);
   } else {
-    int degree = v->degree();
-    if ( degree == 2 ) {
+    int deg = degree(v);
+    if ( deg == 2 ) {
       remove_degree_2(v);
-    } else if ( degree == 3 ) {
+    } else if ( deg == 3 ) {
       remove_degree_3(v);
     } else {
       remove_degree_d_vertex(v);
@@ -1745,7 +1745,7 @@ Apollonius_graph_2<Gt,Agds,LTag>::
 remove_degree_d_vertex(Vertex_handle v)
 {
   minimize_degree(v);
-  int deg = v->degree();
+  int deg = degree(v);
   if ( deg == 3 ) {
     remove_degree_3(v);
     return;
@@ -1759,8 +1759,8 @@ remove_degree_d_vertex(Vertex_handle v)
 
   std::map<Vertex_handle,Vertex_handle> vmap;
 
-  Vertex_circulator vc_start = v->incident_vertices();
-  Vertex_circulator vc = v->incident_vertices();
+  Vertex_circulator vc_start = incident_vertices(v);
+  Vertex_circulator vc = incident_vertices(v);
   Vertex_handle vh_large, vh_small;
   do {
     vh_large = Vertex_handle(vc);
@@ -1778,7 +1778,7 @@ remove_degree_d_vertex(Vertex_handle v)
 
   if ( ag_small.number_of_vertices() == 2 ) {
     CGAL_assertion( deg == 4 );
-    Edge_circulator ec = v->incident_edges();
+    Edge_circulator ec = incident_edges(v);
     for (int i = 0; i < 4; i++) {
       Edge e = *ec;
       Edge sym = sym_edge(e);
@@ -1816,7 +1816,7 @@ remove_degree_d_vertex(Vertex_handle v)
     Vh_triple *vhq = flipped_edges[num_fe - i - 1];
 
     bool found(false);
-    ec = v->incident_edges();
+    ec = incident_edges(v);
     Edge_circulator ec_start = ec;
     do {
       Edge e = *ec;
@@ -1833,7 +1833,7 @@ remove_degree_d_vertex(Vertex_handle v)
 
     CGAL_assertion( found );
   }
-  CGAL_triangulation_precondition( v->degree() == 3 );
+  CGAL_triangulation_precondition( degree(v) == 3 );
 
 #ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
   this->_tds.remove_degree_3( v, Face_handle() );
@@ -1852,10 +1852,10 @@ void
 Apollonius_graph_2<Gt,Agds,LTag>::
 minimize_degree(Vertex_handle v)
 {
-  CGAL_precondition ( v->degree() > 3 );
+  CGAL_precondition ( degree(v) > 3 );
 
-  Face_circulator fc_start = v->incident_faces();
-  Face_circulator fc = v->incident_faces();
+  Face_circulator fc_start = incident_faces(v);
+  Face_circulator fc = incident_faces(v);
   bool found(false);
   do {
     Face_handle f = Face_handle(fc);
@@ -1878,7 +1878,7 @@ minimize_degree(Vertex_handle v)
 	CGAL_assertion( f->has_vertex(v) );
       }
 
-      fc = --( v->incident_faces(f) );
+      fc = --( incident_faces(v,f) );
       fc_start = fc;
       found = true;
     } else {

@@ -624,7 +624,7 @@ bool test_algo_generic(InputStream& is)
       vc++;
     } while ( vc != vc_start );
 
-    CGAL_assertion( deg == v->degree() );
+    CGAL_assertion( deg == ag.data_structure().degree(v) );
   }
 
   for (avit = ag.all_vertices_begin();
@@ -639,7 +639,7 @@ bool test_algo_generic(InputStream& is)
       vc++;
     } while ( vc != vc_start );
 
-    CGAL_assertion( deg == v->degree() );
+    CGAL_assertion( deg == ag.data_structure().degree(v) );
   }
 
   // face circulators
@@ -655,7 +655,7 @@ bool test_algo_generic(InputStream& is)
       fc++;
     } while ( fc != fc_start );
 
-    CGAL_assertion( deg == v->degree() );
+    CGAL_assertion( deg == ag.data_structure().degree(v) );
   }
 
   for (avit = ag.all_vertices_begin();
@@ -670,7 +670,7 @@ bool test_algo_generic(InputStream& is)
       fc++;
     } while ( fc != fc_start );
 
-    CGAL_assertion( deg == v->degree() );
+    CGAL_assertion( deg == ag.data_structure().degree(v) );
   }
 
   // edge circulators
@@ -686,7 +686,7 @@ bool test_algo_generic(InputStream& is)
       ec++;
     } while ( ec != ec_start );
 
-    CGAL_assertion( deg == v->degree() );
+    CGAL_assertion( deg == ag.data_structure().degree(v) );
   }
 
   for (avit = ag.all_vertices_begin();
@@ -701,7 +701,7 @@ bool test_algo_generic(InputStream& is)
       ec++;
     } while ( ec != ec_start );
 
-    CGAL_assertion( deg == v->degree() );
+    CGAL_assertion( deg == ag.data_structure().degree(v) );
   }
 
 

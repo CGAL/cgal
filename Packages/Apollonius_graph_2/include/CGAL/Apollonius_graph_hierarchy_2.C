@@ -217,7 +217,7 @@ insert(const Site_2 &p)
 
   // find the first conflict
   typename Apollonius_graph_base::Face_circulator fc_start =
-    vnear[0]->incident_faces();
+    hierarchy[0]->incident_faces(vnear[0]);
   typename Apollonius_graph_base::Face_circulator fc = fc_start;
 
   Face_handle start_f;
@@ -235,7 +235,7 @@ insert(const Site_2 &p)
 
   if ( s != NEGATIVE ) {
     typename Apollonius_graph_base::Edge_circulator ec_start = 
-      vnear[0]->incident_edges();
+      hierarchy[0]->incident_edges(vnear[0]);
     typename Apollonius_graph_base::Edge_circulator ec = ec_start;
 
     bool interior_in_conflict(false);

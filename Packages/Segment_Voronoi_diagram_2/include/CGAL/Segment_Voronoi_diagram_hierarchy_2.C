@@ -341,7 +341,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // find the first conflict
 
   // first look if there are intersections...
-  Vertex_circulator vc = vertices[0]->incident_vertices();
+  Vertex_circulator vc = hierarchy[0]->incident_vertices(vertices[0]);
   Vertex_circulator vc_start = vc;
   do {
     Vertex_handle vv(vc);
@@ -452,7 +452,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   } while ( vc != vc_start );
 
   // first look for conflict with vertex
-  Face_circulator fc_start = vertices[0]->incident_faces();
+  Face_circulator fc_start = hierarchy[0]->incident_faces(vertices[0]);
   Face_circulator fc = fc_start;
   Face_handle start_f;
   Sign s;

@@ -352,7 +352,7 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 
 #ifndef CGAL_NO_ASSERTIONS
   // verify that there are no intersections...
-  Vertex_circulator vc = vnearest->incident_vertices();
+  Vertex_circulator vc = incident_vertices(vnearest);
   Vertex_circulator vc_start = vc;
   do {
     Vertex_handle vv(vc);
@@ -364,7 +364,7 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 #endif
 
   // first look for conflict with vertex
-  Face_circulator fc_start = vnearest->incident_faces();
+  Face_circulator fc_start = incident_faces(vnearest);
   Face_circulator fc = fc_start;
   Face_handle start_f;
   Sign s;
@@ -388,7 +388,7 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
   // we are not in conflict with a Voronoi vertex, so we have to
   // be in conflict with the interior of a Voronoi edge
   if ( s != NEGATIVE ) {
-    Edge_circulator ec_start = vnearest->incident_edges();
+    Edge_circulator ec_start = incident_edges(vnearest);
     Edge_circulator ec = ec_start;
 
     bool interior_in_conflict(false);
@@ -686,7 +686,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // find the first conflict
 
   // first look if there are intersections...
-  Vertex_circulator vc = vnearest->incident_vertices();
+  Vertex_circulator vc = incident_vertices(vnearest);
   Vertex_circulator vc_start = vc;
   do {
     Vertex_handle vv(vc);
@@ -751,7 +751,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   } while ( vc != vc_start );
 
   // first look for conflict with vertex
-  Face_circulator fc_start = vnearest->incident_faces();
+  Face_circulator fc_start = incident_faces(vnearest);
   Face_circulator fc = fc_start;
   Face_handle start_f;
   Sign s;

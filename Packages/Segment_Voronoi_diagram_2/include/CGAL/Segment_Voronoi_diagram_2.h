@@ -729,6 +729,12 @@ protected:
   // HELPER METHODS FOR COMBINATORIAL OPERATIONS ON THE DATA STRUCTURE
   //------------------------------------------------------------------
 
+  // getting the degree of a vertex
+  inline
+  typename Data_structure::size_type degree(const Vertex_handle& v) const {
+    return this->_tds.degree(v);
+  }
+
   // getting the symmetric edge
   inline Edge sym_edge(const Edge e) const {
     return sym_edge(e.first, e.second);
@@ -756,7 +762,7 @@ protected:
   }
 
   inline bool is_degree_2(const Vertex_handle& v) const {
-    Face_circulator fc = v->incident_faces();
+    Face_circulator fc = incident_faces(v);
     Face_circulator fc1 = fc;
     ++(++fc1);
     return ( fc == fc1 );
@@ -1463,7 +1469,7 @@ protected:
   Vertex_handle first_endpoint_of_segment(const Vertex_handle& v) const {
     CGAL_assertion( v->is_segment() );
     Site_2 fe = v->site().source_site();
-    Vertex_circulator vc_start = v->incident_vertices();
+    Vertex_circulator vc_start = incident_vertices(v);
     Vertex_circulator vc = vc_start;
     do {
       // Vertex_handle vv(vc);
@@ -1483,7 +1489,7 @@ protected:
   Vertex_handle second_endpoint_of_segment(const Vertex_handle& v) const {
     CGAL_assertion( v->is_segment() );
     Site_2 fe = v->site().target_site();
-    Vertex_circulator vc_start = v->incident_vertices();
+    Vertex_circulator vc_start = incident_vertices(v);
     Vertex_circulator vc = vc_start;
     do {
       //      Vertex_handle vv(vc);

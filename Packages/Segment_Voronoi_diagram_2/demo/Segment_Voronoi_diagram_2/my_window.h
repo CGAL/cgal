@@ -109,7 +109,7 @@ private:
     if ( CGAL::assign(p, obj) ) {
       SVD_2::Vertex_handle v = svd.nearest_neighbor(p);
 #if 1
-      std::cout << "degree: " << v->degree() << std::endl;
+      std::cout << "degree: " << svd.data_structure().degree(v) << std::endl;
       if ( v->site().is_segment() &&
 	   !v->site().is_input() ) {
 	std::cout << "site: " << v->site() << std::endl;
@@ -132,7 +132,8 @@ private:
 	       (vv->site().point() == v->site().source() ||
 		vv->site().point() == v->site().target()) ) {
 	    std::cout << "degree of endpoint " << vv->site()
-		      << " : " << vv->degree() << std::endl;
+		      << " : " << svd.data_structure().degree(vv)
+		      << std::endl;
 	  }
 	  ++vc;
 	} while ( vc_start != vc );

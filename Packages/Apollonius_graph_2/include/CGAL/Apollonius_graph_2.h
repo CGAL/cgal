@@ -284,6 +284,8 @@ public:
     return DG::geom_traits();
   }
 
+  const Data_structure& data_structure() const { return this->_tds; }
+
   int dimension() const {
     return this->_tds.dimension();
   }
@@ -918,6 +920,11 @@ protected:
 
 protected:
   // wrappers for combinatorial operations on the data structure
+
+  // getting the degree of a vertex
+  typename Data_structure::size_type degree(const Vertex_handle& v) {
+    return this->_tds.degree(v);
+  }
 
   // getting the symmetric edge
   Edge sym_edge(const Edge e) const {
