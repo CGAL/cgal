@@ -120,8 +120,12 @@ public:
   const Storage_site_2& storage_site() const { return ss_; }
   Site_2                site()         const { return ss_.site(); }
 
+#if 1
+  // MK::ERROR: these must be removed; one may use the storage site to
+  // get access to this info...
   bool is_segment() const { return ss_.is_segment(); }
   bool is_point()   const { return ss_.is_point(); }
+#endif
 
   //the following trivial is_valid to allow
   // the user of derived face base classes 

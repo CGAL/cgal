@@ -33,6 +33,7 @@
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>
 #else
+#include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
 #endif
 
@@ -62,12 +63,12 @@ template<class CK_t,
 #ifdef CGAL_USE_GMP
 	 class EK_t    = Simple_cartesian< Gmpq >,
 #else
-	 class EK_t    = Simple_cartesian< MP_Float >,
+	 class EK_t    = Simple_cartesian< Quotient<MP_Float> >,
 #endif
 	 class EK_MTag = Ring_tag,
 	 class ITag    = Tag_true,
 	 class FK_t    = Simple_cartesian< Interval_nt<false> >,
-	 class FK_MTag = CK_MTag,
+	 class FK_MTag = Sqrt_field_tag,
 	 class C2E_t   = Cartesian_converter<CK_t, EK_t>,
 	 class C2F_t   =
 	 Cartesian_converter<CK_t, FK_t, To_interval<typename CK_t::RT> >
@@ -138,11 +139,15 @@ public:
   typedef CK_MTag                       Method_tag;
   typedef ITag                          Intersections_tag;
 
+  typedef CK_t                          Construction_kernel;
+  typedef FK_t                          Filtering_kernel;
+  typedef EK_t                          Exact_kernel;
+
   typedef CK_traits                     Construction_traits;
   typedef FK_traits                     Filtering_traits;
   typedef EK_traits                     Exact_traits;
 
-  typedef FK_MTag                       Construction_traits_method_tag;
+  typedef CK_MTag                       Construction_traits_method_tag;
   typedef FK_MTag                       Filtering_traits_method_tag;
   typedef EK_MTag                       Exact_traits_method_tag;
 

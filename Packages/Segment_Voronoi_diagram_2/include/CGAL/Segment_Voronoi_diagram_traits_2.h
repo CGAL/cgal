@@ -396,8 +396,6 @@ public:
   typedef typename Kernel::FT                     FT;
   typedef typename Kernel::RT                     RT;
 
-  typedef typename Kernel::Rep_tag                Rep_tag;
-
 public:
 // OBJECT CONSTRUCTION & ASSIGNMENT
   //-------------------------------
