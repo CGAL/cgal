@@ -165,8 +165,8 @@ public:
                            fn->vertex(fn->ccw(in))))->handle();
           last->set_neighbor(2,newf); newf->set_neighbor(1,last);
           fn->set_neighbor(in, newf); newf->set_neighbor(0,fn);
-          newf->set_constrained(1, last->is_constrained(2));
-          newf->set_constrained(0, fn->is_constrained(in));
+          newf->set_constraint(1, last->is_constrained(2));
+          newf->set_constraint(0, fn->is_constrained(in));
           // delete fn if flat and removable
           if (is_removable(fn)) { remove_flat(fn);}
           last=newf;
@@ -191,8 +191,8 @@ public:
             newf = (new Face(v,cwin,ccwin))->handle();
             last->set_neighbor(2,newf); newf->set_neighbor(1,last);
             fn->set_neighbor(in, newf); newf->set_neighbor(0,fn);
-            newf->set_constrained(1, last->is_constrained(2));
-            newf->set_constrained(0, fn->is_constrained(in));
+            newf->set_constraint(1, last->is_constrained(2));
+            newf->set_constraint(0, fn->is_constrained(in));
             // delete fn if flat and removable
             if (is_removable(fn)) { remove_flat(fn);}
             last=newf;
@@ -219,8 +219,8 @@ public:
             newf = (new Face(v,cwin,ccwin))->handle();
             first->set_neighbor(1,newf); newf->set_neighbor(2,first);
             fn->set_neighbor(in, newf); newf->set_neighbor(0,fn);
-            newf->set_constrained(2, first->is_constrained(1));
-            newf->set_constrained(0, fn->is_constrained(in));
+            newf->set_constraint(2, first->is_constrained(1));
+            newf->set_constraint(0, fn->is_constrained(in));
             // delete fn if flat and removable
             if (is_removable(fn)) { remove_flat(fn);}
             first=newf;
@@ -406,7 +406,7 @@ treat_in_edges(const Event_queue::iterator & event,
        w->point() == ((*loc).first).first  &&
        v->point() == ((*loc).first).second ) {
     // vw is a constraint
-    newf->set_constrained(true,true,true);
+    newf->set_constraints(true,true,true);
   }
   Neighbor_list* nl = pch->down_list();
   Face_handle first;
@@ -416,7 +416,7 @@ treat_in_edges(const Event_queue::iterator & event,
   while( loc!= status.end() && ((*event).first == ((*loc).first).second ) ) {
   nl= pch->up_list();
   last = nl->up_visit_without_test(v,last);
-  last->set_constrained(2,true);
+  last->set_constraint(2,true);
   loc++;
   if (loc == status.end()) { pch = &upper_chain;}
   else { pch = (Chain *)((*loc).second);}
@@ -559,7 +559,7 @@ set_infinite_faces()
   newf = (new Face( infinite, fn->vertex(fn->cw(in)),
                    fn->vertex(fn->ccw(in))))->handle();
   fn->set_neighbor(in,newf); newf->set_neighbor(0,fn);
-  newf->set_constrained(0, fn->is_constrained(in));
+  newf->set_constraint(0, fn->is_constrained(in));
   if (lower_list->is_removable(fn)) { lower_list->remove_flat(fn); }
   first = last = newf;
 
@@ -571,7 +571,7 @@ set_infinite_faces()
                     fn->vertex(fn->ccw(in))))->handle();
     fn->set_neighbor(in,newf); newf->set_neighbor(0,fn);
     last->set_neighbor(2,newf);newf->set_neighbor(1,last);
-    newf->set_constrained(0, fn->is_constrained(in));
+    newf->set_constraint(0, fn->is_constrained(in));
     if (lower_list->is_removable(fn)) { lower_list->remove_flat(fn); }
     (newf->vertex(2))->set_face(newf->neighbor(0));
     last=newf;
