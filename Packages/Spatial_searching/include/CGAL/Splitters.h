@@ -39,7 +39,7 @@ public:
   			     Point_container<Item>& c1, 
   			     NT Aspect_ratio=NT(3)) {        
         sep=Plane_separator<NT>(c0.max_tight_span_coord(),NT(0));
-        sep.set_cutting_val(c0.median(sep->cutting_dimension()));
+        sep.set_cutting_val(c0.median(sep.cutting_dimension()));
         c0.split_container(c1,sep,true);
   }
 };
@@ -54,7 +54,7 @@ public:
 	// find legal cut with max spread
         sep=Plane_separator<NT>(c0.max_tight_span_coord_balanced(Aspect_ratio),
 				NT(0));
-        sep.set_cutting_val(c0.balanced_fair(sep->cutting_dimension(),
+        sep.set_cutting_val(c0.balanced_fair(sep.cutting_dimension(),
 				Aspect_ratio));
         c0.split_container(c1,sep);
   }
@@ -72,7 +72,7 @@ public:
     sep=Plane_separator<NT>(c0.max_tight_span_coord_balanced(Aspect_ratio),
 			    NT(0));
     
-    sep.set_cutting_val(c0.balanced_sliding_fair(sep->cutting_dimension(),
+    sep.set_cutting_val(c0.balanced_sliding_fair(sep.cutting_dimension(),
 			 Aspect_ratio));
     c0.split_container(c1,sep,true);
   }
@@ -112,7 +112,7 @@ public:
   			     NT Aspect_ratio=NT(3))
   {
     sep=Plane_separator<NT>(c0.max_span_coord(),NT(0));
-    sep->set_cutting_val(c0.median(sep->cutting_dimension()));
+    sep.set_cutting_val(c0.median(sep.cutting_dimension()));
     c0.split_container(c1,sep,true);
   }
 };
