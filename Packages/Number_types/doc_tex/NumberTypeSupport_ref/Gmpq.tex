@@ -1,0 +1,86 @@
+\ccDefGlobalScope{}
+\begin{ccRefClass} {Gmpq}
+\label{Gmpq}
+
+\ccDefinition
+
+An object of the class \ccStyle{Gmpq} is an arbitrary precision rational
+number based on the {\sc Gnu} Multiple Precision Arithmetic Library. 
+
+\ccInclude{CGAL/Gmpq.h}
+
+\ccIsModel
+FieldNumberType
+
+\ccTypes
+
+\ccNestedType{NT}{the field type, which is \ccc{Gmpz}.  }
+
+\ccCreation
+\ccCreationVariable{q}
+
+\ccConstructor{Gmpq();}
+             {creates an uninitialized multiple precision rational number \ccVar.}
+
+\ccHidden \ccConstructor{Gmpq(const Gmpq& q);}
+            {copy constructor.}
+
+\ccConstructor{Gmpq(int i)}
+            {creates a multiple-precision rational number initialized with
+             \ccStyle{i}.}
+
+\ccConstructor{Gmpq(Gmpz n)}
+            {creates a multiple-precision rational number initialized with
+             \ccStyle{n}.}
+
+\ccConstructor{Gmpq(signed long n, unsigned long d)}
+            {creates a multiple-precision rational number initialized with
+             \ccStyle{n/d}.}
+
+\ccConstructor{Gmpq(unsigned long n, unsigned long d)}
+            {creates a multiple-precision rational number initialized with
+             \ccStyle{n/d}.}
+
+\ccConstructor{Gmpq(Gmpz n, Gmpz d)}
+            {creates a multiple-precision rational number initialized with
+             \ccStyle{n/d}.}
+
+\ccConstructor{Gmpq(double d)}
+            {creates a multiple-precision rational number initialized with
+             \ccStyle{d}.}
+
+\ccConstructor{Gmpq(const char* const str)}
+            {creates a multiple-precision rational number initialized with
+             \ccStyle{str}.}
+
+\ccConstructor{Gmpq(const char* const str, int base)}
+            {creates a multiple-precision rational number initialized with
+             \ccStyle{str}.}
+
+%\ccSetTwoOfThreeColumns{5cm}{4cm}
+\ccSetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
+
+\ccOperations
+
+There are two access functions, namely to the
+numerator and the denominator of a ratioanal.
+Note that these values are not uniquely defined. 
+It is guaranteed that \ccStyle{q.numerator()} and 
+\ccStyle{q.denominator()} return values \ccStyle{nt_num} and
+\ccStyle{nt_den} such that \ccStyle{q = nt_num/nt_den}, only
+if  \ccStyle{q.numerator()} and \ccStyle{q.denominator()} are called
+consecutively wrt \ccStyle{q}, i.e.~\ccStyle{q} is not involved in 
+any other operation between these calls.
+
+
+\ccMethod{Gmpz numerator() const;}
+       {returns the numerator of \ccStyle{q}.}
+\ccGlue
+\ccMethod{Gmpz denominator() const;}
+       {returns the denominator of \ccStyle{q}.}
+
+\ccImplementation
+\ccc{Gmpq}s are reference counted.
+
+\end{ccRefClass} 
+\ccDefGlobalScope{CGAL::}

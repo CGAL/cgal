@@ -1,0 +1,22 @@
+\begin{ccRefClass}{Rational_traits<NT>}
+
+\ccDefinition
+
+The class \ccRefName\ can be used to determine the type of the numerator
+and denominator of a rational number type as \ccc{Quotient}, \ccc{Gmpq},
+ \ccc{mpq_class} or \ccc{leda_rational}.  
+
+\ccInclude{CGAL/Rational_traits.h}
+
+\ccTypes
+
+\ccNestedType{RT}{the type of the numerator and denominator.}
+
+\ccOperations
+
+\ccMethod{RT numerator   (const Rational & r) const}{returns the numerator of \ccc{r}.}
+\ccMethod{RT denominator (const Rational & r) const}{returns the denominator of \ccc{r}.}
+
+\ccMethod{Rational make_rational(const RT & n, const RT & d) const}{constructs a rational number.}
+
+\end{ccRefClass}
