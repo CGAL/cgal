@@ -1,3 +1,5 @@
+9 Apr 2004 Sylvain Pion
+- Fix doc typo : Leftturn_2 -> Left_turn_2.
 
 16 March 2004 Andreas Fabri
 - Move the following to the new scheme :
