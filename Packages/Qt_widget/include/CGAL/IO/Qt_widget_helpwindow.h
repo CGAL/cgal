@@ -63,12 +63,12 @@ public:
     HelpWindow( const QString& home_,  const QString& path, 
                 QWidget* parent = 0, const char *name=0 );
     ~HelpWindow();
+public slots:
+    void print();
+
 private slots:
     void setBackwardAvailable( bool );
     void setForwardAvailable( bool );
-
-    void print();
-
     void pathSelected( const QString & );
     void histChosen( int );
 
