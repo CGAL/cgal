@@ -1,4 +1,4 @@
-Version 1.75 (?? July 01)
+Version 1.75 (18 July 01)
 - Fix return type of Compare_distance_3 in the HierarchyTraits_3 doc.
 - Remove constructors for vertices in the doc.
 - Fix mirror_vertex() and mirror_index().
