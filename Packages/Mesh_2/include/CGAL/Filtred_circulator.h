@@ -20,13 +20,15 @@ public:
 
   Self& operator=(const Self& c)
     {
-      this->Circ::operator=(c);//*this = c;
+      //this->Circ::operator=(c); // This does not work with bcc
+      //*this = c;  // This does not work with VC++6
+      static_cast<Circ&>(*this) = static_cast<const Circ&>(c);
       is_null=c.is_null;
       test=c.test;
       return *this;
     }
 
-  Filtred_circulator(const Circ& c, const Pred p=Pred())
+  Filtred_circulator(const Circ& c, const Pred& p=Pred())
     : Circ(c), is_null(false), test(p)
     {
       if(test(**this))
