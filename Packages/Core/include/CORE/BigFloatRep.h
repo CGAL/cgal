@@ -110,14 +110,14 @@ private:
   int compareMExp(const BigFloatRep&) const;
   
   //  builtin functions
-  extLong lMSB() const;      //inline
-  extLong uMSB() const;      //inline
-  extLong MSB() const;       //inline
-  extLong flrLgErr() const;  //inline
-  extLong clLgErr() const;   //inline
+  CORE_INLINE extLong lMSB() const;      //inline
+  CORE_INLINE extLong uMSB() const;      //inline
+  CORE_INLINE extLong MSB() const;       //inline
+  CORE_INLINE extLong flrLgErr() const;  //inline
+  CORE_INLINE extLong clLgErr() const;   //inline
   
-  bool    isZeroIn() const;  //inline
-  int     signM() const;     //inline
+  CORE_INLINE bool    isZeroIn() const;  //inline
+  CORE_INLINE int     signM() const;     //inline
 
   //  cast functions
   double toDouble() const;
