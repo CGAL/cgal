@@ -11,7 +11,7 @@
 % $Date$
 % =============================================================================
 
-\begin{ccClass}{CGAL_Random}
+\begin{ccClass}{Random}
 \ccSection{Random Numbers Generator}
 
 % -----------------------------------------------------------------------------
@@ -36,7 +36,7 @@ deterministically or using the state functions as described below.
 % -----------------------------------------------------------------------------
 \ccHeading{Global Variables}
 
-\ccVariable{ CGAL_Random CGAL_random;}{
+\ccVariable{ Random random;}{
           This global variable is used as the
           default random numbers generator.}
 
@@ -50,16 +50,16 @@ deterministically or using the state functions as described below.
 \ccCreation
 \ccCreationVariable{random}
 
-\ccConstructor{ CGAL_Random( );}{
+\ccConstructor{ Random( );}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.}
 
-\ccConstructor{ CGAL_Random( long seed);}{
+\ccConstructor{ Random( long seed);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName\
         and initializes its internal state using \ccc{seed}. Equal
         values for \ccc{seed} result in equal sequences of random
         numbers.}
 
-\ccConstructor{ CGAL_Random( State state);}{
+\ccConstructor{ Random( State state);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName\
         and initializes its internal state with \ccc{state}.}
 
@@ -93,7 +93,7 @@ deterministically or using the state functions as described below.
 % -----------------------------------------------------------------------------
 \ccHeading{Equality Test}
 
-\ccMemberFunction{ bool  operator == ( CGAL_Random const& random2) const;}{
+\ccMemberFunction{ bool  operator == ( Random const& random2) const;}{
         returns \ccc{true}, iff \ccVar\ and \ccc{random2} have equal
         internal states.}
 
