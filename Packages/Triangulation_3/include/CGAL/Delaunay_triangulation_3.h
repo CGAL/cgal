@@ -83,9 +83,11 @@ public:
   typedef typename Tr_Base::Vertex_iterator Vertex_iterator;
 
   typedef typename Tr_Base::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename Tr_Base::Finite_cells_iterator   Finite_cells_iterator;
-  typedef typename Tr_Base::Finite_facets_iterator  Finite_facets_iterator;
-  typedef typename Tr_Base::Finite_edges_iterator   Finite_edges_iterator;
+  typedef typename Tr_Base::Finite_cells_iterator    Finite_cells_iterator;
+  typedef typename Tr_Base::Finite_facets_iterator   Finite_facets_iterator;
+  typedef typename Tr_Base::Finite_edges_iterator    Finite_edges_iterator;
+
+  typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
   typedef typename Tr_Base::Locate_type Locate_type;
 
@@ -797,7 +799,7 @@ remove_3D_new(Vertex_handle v)
   }
   // Grow inside the hole, by extending the surface
   while(! outer_map.empty()){
-    Vertex_triple_Facet_map::iterator oit = outer_map.begin();
+    typename Vertex_triple_Facet_map::iterator oit = outer_map.begin();
     while(is_infinite(oit->first.first) ||
 	  is_infinite(oit->first.second) ||
 	  is_infinite(oit->first.third)){
@@ -805,20 +807,21 @@ remove_3D_new(Vertex_handle v)
       // otherwise the lookup in the inner_map fails
       // because the infinite vertices are different
     }
-    Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+    typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
     Cell_handle o_ch = o_vt_f_pair.second.first;
     unsigned int o_i = o_vt_f_pair.second.second;
 
-    Vertex_triple_Facet_map::iterator iit = inner_map.find(o_vt_f_pair.first);
+    typename Vertex_triple_Facet_map::iterator iit =
+             inner_map.find(o_vt_f_pair.first);
     CGAL_triangulation_assertion(iit != inner_map.end());
-    Vertex_triple_Facet_map::value_type i_vt_f_pair = *iit;
+    typename Vertex_triple_Facet_map::value_type i_vt_f_pair = *iit;
     Cell_handle i_ch = i_vt_f_pair.second.first;
     unsigned int i_i = i_vt_f_pair.second.second;
     
     // create a new cell and glue it to the outer surface
     Cell_handle new_ch = _tds.create_cell();
     new_ch->set_vertices(vmap[i_ch->vertex(0)], vmap[i_ch->vertex(1)],
-			vmap[i_ch->vertex(2)],vmap[i_ch->vertex(3)]);
+			 vmap[i_ch->vertex(2)], vmap[i_ch->vertex(3)]);
     
     o_ch->set_neighbor(o_i,new_ch);
     new_ch->set_neighbor(i_i, o_ch);
@@ -830,13 +833,13 @@ remove_3D_new(Vertex_handle v)
 	Vertex_triple vt = make_vertex_triple(f);
 	make_canonical(vt);
 	std::swap(vt.second,vt.third);
-	Vertex_triple_Facet_map::iterator oit2 = outer_map.find(vt);
+	typename Vertex_triple_Facet_map::iterator oit2 = outer_map.find(vt);
 	if(oit2 == outer_map.end()){
 	  std::swap(vt.second,vt.third);
 	  outer_map[vt]= f;
 	} else {
 	  // glue the faces
-	  Vertex_triple_Facet_map::value_type o_vt_f_pair2 = *oit2;
+	  typename Vertex_triple_Facet_map::value_type o_vt_f_pair2 = *oit2;
 	  Cell_handle o_ch2 = o_vt_f_pair2.second.first;
 	  int o_i2 = o_vt_f_pair2.second.second;
 	  o_ch2->set_neighbor(o_i2,new_ch);
