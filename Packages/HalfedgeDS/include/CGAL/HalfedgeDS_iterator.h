@@ -352,11 +352,12 @@ public:
 
 template < class T> struct HalfedgeDS_circulator_traits {};
 
-CGAL_TEMPLATE_NULL
+template <>
 struct HalfedgeDS_circulator_traits<Tag_true> {
     typedef Bidirectional_circulator_tag  iterator_category;
 };
-CGAL_TEMPLATE_NULL
+
+template <>
 struct HalfedgeDS_circulator_traits<Tag_false> {
     typedef Forward_circulator_tag  iterator_category;
 };

@@ -1,6 +1,9 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.39 (18 Jan 2004)
+- Rename CGAL_TEMPLATE_NULL to "template <>".
+
 3.38 (18 Jan 2004)
 - Remove traces of CGAL_CFG_NO_ITERATOR_TRAITS.
 

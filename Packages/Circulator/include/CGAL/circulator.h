@@ -86,15 +86,18 @@ template <class C>
 struct I_Circulator_traits {
     typedef  Iterator_tag  category;
 };
-CGAL_TEMPLATE_NULL
+
+template <>
 struct I_Circulator_traits<Forward_circulator_tag> {
     typedef  Circulator_tag  category;
 };
-CGAL_TEMPLATE_NULL
+
+template <>
 struct I_Circulator_traits<Bidirectional_circulator_tag> {
     typedef  Circulator_tag  category;
 };
-CGAL_TEMPLATE_NULL
+
+template <>
 struct I_Circulator_traits<Random_access_circulator_tag> {
     typedef  Circulator_tag  category;
 };
@@ -130,16 +133,19 @@ template <class CCtg>
 struct I_Iterator_from_circulator_traits {
     typedef CCtg iterator_category;
 };
-CGAL_TEMPLATE_NULL
+
+template <>
 struct I_Iterator_from_circulator_traits< Forward_circulator_tag> {
     typedef  std::forward_iterator_tag  iterator_category;
 };
-CGAL_TEMPLATE_NULL
+
+template <>
 struct I_Iterator_from_circulator_traits<
     Bidirectional_circulator_tag> {
     typedef  std::bidirectional_iterator_tag  iterator_category;
 };
-CGAL_TEMPLATE_NULL
+
+template <>
 struct I_Iterator_from_circulator_traits<
     Random_access_circulator_tag> {
     typedef  std::random_access_iterator_tag  iterator_category;
@@ -149,15 +155,18 @@ template <class ICtg>
 struct I_Circulator_from_iterator_traits {
     typedef ICtg iterator_category;
 };
-CGAL_TEMPLATE_NULL
+
+template <>
 struct I_Circulator_from_iterator_traits< std::forward_iterator_tag> {
     typedef  Forward_circulator_tag  iterator_category;
 };
-CGAL_TEMPLATE_NULL
+
+template <>
 struct I_Circulator_from_iterator_traits<std::bidirectional_iterator_tag> {
     typedef  Bidirectional_circulator_tag  iterator_category;
 };
-CGAL_TEMPLATE_NULL
+
+template <>
 struct I_Circulator_from_iterator_traits<std::random_access_iterator_tag> {
     typedef  Random_access_circulator_tag  iterator_category;
 };
