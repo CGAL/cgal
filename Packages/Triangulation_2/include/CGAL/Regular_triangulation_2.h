@@ -85,8 +85,7 @@ public:
 private:
   void regularize(Vertex_handle v);
   void remove_2D(Vertex_handle v);
-  //void fill_hole( Vertex_handle v, std::list<Edge> & hole);
-  void fill_hole(std::list<Edge> & hole);
+  void fill_hole_regular(std::list<Edge> & hole);
   void update_hidden_points_3_1(const Face_handle& f1, const Face_handle& f2, 
 				const Face_handle& f3);
   void update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2);
@@ -101,8 +100,8 @@ private:
 		      Faces_around_stack &faces_around);
   void stack_flip_2_2(Face_handle f, int i, 
 		      Faces_around_stack &faces_around);
-  void stack_flip_dim1(Face_handle f, int i, 
-		       Faces_around_stack &faces_around); 
+  void stack_flip_dim1(Face_handle f, int i);
+		       
 
 
 public:
@@ -535,8 +534,7 @@ remove_2D(Vertex_handle v)
   else {
     std::list<Edge> hole;
     make_hole(v, hole);
-    //fill_hole(v, hole);
-    fill_hole(hole);
+    fill_hole_regular(hole);
     delete &(*v);
     set_number_of_vertices(number_of_vertices()-1);
   }
@@ -547,8 +545,7 @@ remove_2D(Vertex_handle v)
 template < class Gt, class Tds >
 void
 Regular_triangulation_2<Gt,Tds>::
-//fill_hole(Vertex_handle v, std::list<Edge> & first_hole)
-fill_hole(std::list<Edge> & first_hole)
+fill_hole_regular(std::list<Edge> & first_hole)
 {
   typedef std::list<Edge> Hole;
   typedef std::list<Hole> Hole_list;
@@ -882,7 +879,7 @@ stack_flip(Vertex_handle v, Faces_around_stack &faces_around)
 				   f->vertex(1-i)->point(),
 				   n->vertex(n->index(f))->point()) ==
 	 ON_NEGATIVE_SIDE) return;
-    stack_flip_dim1(f,i,faces_around);
+    stack_flip_dim1(f,i);
     return;
   }  
 
@@ -1001,7 +998,8 @@ stack_flip_2_2(Face_handle f, int i, Faces_around_stack & faces_around)
 template < class Gt, class Tds >
 void
 Regular_triangulation_2<Gt,Tds>::
-stack_flip_dim1(Face_handle f, int i, Faces_around_stack &faces_around)
+//stack_flip_dim1(Face_handle f, int i, Faces_around_stack &faces_around)
+stack_flip_dim1(Face_handle f, int i)
 {
   Face_handle n= f->neighbor(i);
   int in = n->index(f);
