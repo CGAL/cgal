@@ -40,37 +40,39 @@ public:
   typedef Triangulation_face_base_2<Gt> Fbase;
   typedef Regular_triangulation_face_base_2<Gt> Regular_face_base;
   typedef typename Gt::Weighted_point   Weighted_point;
-  typedef std::list<Weighted_point>     Weighted_point_list;
-
+  typedef std::list<void*>              Vertex_list;
 protected:
- Weighted_point_list  plist;
+  Vertex_list vlist;
 
 public:
  Regular_triangulation_face_base_2()
-    : Fbase(), plist()
+   : Fbase(),  vlist()
   {}
 
   Regular_triangulation_face_base_2(void* v0, void* v1, void* v2)
-    : Fbase(v0,v1,v2),plist() 
+    : Fbase(v0,v1,v2), vlist()
   { }
 
   Regular_triangulation_face_base_2(void* v0, void* v1, void* v2,
 				    void* n0, void* n1, void* n2)
-    : Fbase(v0,v1,v2,n0,n1,n2), plist()
+    : Fbase(v0,v1,v2,n0,n1,n2),  vlist()
   { }
 
   ~Regular_triangulation_face_base_2()
   { 
-    plist.clear();
+    vlist.clear();
   }
 
-  Weighted_point_list& point_list()
+
+  Vertex_list& vertex_list()
   {
-    return plist;
+    return vlist;
   }
+
 
 };
 
 CGAL_END_NAMESPACE 
 
 #endif // CGAL_REGULAR_TRIANGULATION_FACE_BASE_2_H
+
