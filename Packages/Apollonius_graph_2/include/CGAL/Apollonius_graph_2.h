@@ -89,7 +89,7 @@ public:
 
 protected:
   // some more local types
-  typedef typename Agds::Vertex_base       Vertex_base;
+  typedef typename Agds::Vertex            Vertex;
 
   // point lists
   typedef std::vector<Apollonius_site_2>   Site_list;
@@ -391,7 +391,7 @@ public:
       str << wp << std::endl;
       // now write the hidden vertices
       if ( StoreHidden ) {
-	typename Vertex_base::Hidden_weighted_point_iterator wpit;
+	typename Vertex::Hidden_weighted_point_iterator wpit;
 	for (wpit = vit->hidden_weighted_points_begin();
 	     wpit != vit->hidden_weighted_points_end(); ++wpit) {
 	  str << (*wpit) << std::endl;
@@ -410,7 +410,7 @@ public:
 
     for (; vit != finite_vertices_end(); ++vit) {
       if ( vit->number_of_hidden_weighted_points() > 0 ) {
-	typename Vertex_base::Hidden_weighted_point_iterator wpit;
+	typename Vertex::Hidden_weighted_point_iterator wpit;
 	for (wpit = vit->hidden_weighted_points_begin();
 	     wpit != vit->hidden_weighted_points_end(); ++wpit) {
 	  Apollonius_site_2 wp = *wpit;
@@ -432,7 +432,7 @@ public:
 
     for (; vit != finite_vertices_end(); ++vit) {
       if ( vit->number_of_hidden_weighted_points() > 0 ) {
-	typename Vertex_base::Hidden_weighted_point_iterator wpit;
+	typename Vertex::Hidden_weighted_point_iterator wpit;
 	for (wpit = vit->hidden_weighted_points_begin();
 	     wpit != vit->hidden_weighted_points_end(); ++wpit) {
 	  Apollonius_site_2 wp = *wpit;

@@ -971,7 +971,7 @@ void
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 move_hidden_weighted_points(Vertex_handle& vold, Vertex_handle& vnew)
 {
-  typename Vertex_base::Hidden_weighted_point_iterator wpit;
+  typename Vertex::Hidden_weighted_point_iterator wpit;
 
   for (wpit = vold->hidden_weighted_points_begin();
        wpit != vold->hidden_weighted_points_end(); ++wpit) {
@@ -1043,7 +1043,7 @@ retriangulate_conflict_region(const Apollonius_site_2& p,	List& l,
       Vertex_handle vhidden = (*vmit).first;
 
       wp_list.push_back(vhidden->point());
-      typename Vertex_base::Hidden_weighted_point_iterator it;
+      typename Vertex::Hidden_weighted_point_iterator it;
       for (it = vhidden->hidden_weighted_points_begin();
 	   it != vhidden->hidden_weighted_points_end(); ++it) {
 	wp_list.push_back(*it);
@@ -1073,7 +1073,7 @@ retriangulate_conflict_region(const Apollonius_site_2& p,	List& l,
       Vertex_handle vhidden = (*vmit).first;
 
       wp_list.push_back(vhidden->point());
-      typename Vertex_base::Hidden_weighted_point_iterator it;
+      typename Vertex::Hidden_weighted_point_iterator it;
       for (it = vhidden->hidden_weighted_points_begin();
 	   it != vhidden->hidden_weighted_points_end(); ++it) {
 	wp_list.push_back(*it);
@@ -1092,7 +1092,7 @@ retriangulate_conflict_region(const Apollonius_site_2& p,	List& l,
 
     Apollonius_site_2 p1 = non_hidden->point();
     Site_list wp_list1;
-    typename Vertex_base::Hidden_weighted_point_iterator it;
+    typename Vertex::Hidden_weighted_point_iterator it;
     for (it = non_hidden->hidden_weighted_points_begin();
 	 it != non_hidden->hidden_weighted_points_end(); ++it) {
       wp_list1.push_back(*it);
@@ -1753,7 +1753,7 @@ remove(Vertex_handle v)
   }
 
   Site_list wp_list;
-  typename Vertex_base::Hidden_weighted_point_iterator wpit;
+  typename Vertex::Hidden_weighted_point_iterator wpit;
   for (wpit = v->hidden_weighted_points_begin();
        wpit != v->hidden_weighted_points_end(); ++wpit) {
     wp_list.push_back(*wpit);

@@ -346,7 +346,7 @@ remove(Vertex_handle v)
 
   // get the hidden circles
   typename Apollonius_graph_base::Site_list wp_list;
-  typename Vertex_base::Hidden_weighted_point_iterator wpit;
+  typename Vertex::Hidden_weighted_point_iterator wpit;
 
   for (wpit = v->hidden_weighted_points_begin();
        wpit != v->hidden_weighted_points_end(); ++wpit) {

@@ -91,7 +91,7 @@ public:
 
 protected:
   // some local types
-  typedef typename Ag_base::Vertex_base       Vertex_base;
+  typedef typename Ag_base::Vertex       Vertex;
 
 public:
   // CREATION
