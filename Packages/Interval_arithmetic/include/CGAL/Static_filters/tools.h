@@ -45,6 +45,12 @@ inline bool diff_was_exact(double a, double b, double ab)
 // - naming : is_representable_in_double() ?
 //            is_representable<T>() for representable in T ?
 
+// Current semantics :  bool fit_in_double(const NT& n)
+//
+// - returns true means that "n" is exactly representable by a double,
+//   _and_ that to_double(n) returns this value.
+// - it is fine to return false conservatively.
+
 template < typename T >
 inline bool fit_in_double(const T&) { return false; }
 
