@@ -148,7 +148,7 @@ Visibility_complex_2<_Gtr,It,Flip>::
 Visibility_complex_2(InputIterator first, InputIterator last ,
 		     ConstraintIt  firstc,ConstraintIt  lastc)
 {
-    typedef Antichain::Minimals_iterator Minimals_iterator;
+    typedef typename Antichain::Minimals_iterator Minimals_iterator;
 
     // -------------------------------------------------------------------------
     // The antichain used to sweep the complex.
@@ -165,7 +165,7 @@ Visibility_complex_2(InputIterator first, InputIterator last ,
     Sweep_iterator v(_antichain) , vend(_antichain,0);
     for ( ; v != vend ; ++v ) vertices.push_back(&(*v));
 
-    for(std::list<Vertex*>::const_iterator vit = cw_initial_minimals.begin();
+    for(typename std::list<Vertex*>::const_iterator vit = cw_initial_minimals.begin();
         vit != cw_initial_minimals.end();
         ++vit)
       vertices.push_back(*vit);

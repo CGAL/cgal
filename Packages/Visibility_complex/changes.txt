@@ -1,3 +1,7 @@
+14 October 2004 Laurent Rineau
+- Added back include/CGAL/predicates/Visibility_complex_ftC2.h.
+- Added typenames.
+
 18 May 2004 Radu Ursu
 - modified doc in doc_tex/Visibility_complex to made it work with the new 
   Manual tools

@@ -24,7 +24,7 @@
 #include <CGAL/Circle_by_radius_2.h>
 #include <CGAL/Arc_2.h>
 #include <CGAL/Circle_2_Bitangent_2_intersection.h>
-#include <CGAL/predicates/kernel_ftC2.h>
+#include <CGAL/predicates/Visibility_complex_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
 

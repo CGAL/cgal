@@ -1,1 +1,8 @@
 Aren't symbols starting with underscore reserved !!!! [af]
+
+As regards the Edge, Face, and Vertex members, what is the difference
+between the antichain and the visibility complex. For example, for a
+Vertex, is ccw_source_edge() the ccw source edge in the complex or only in
+the antichain? -- Laurent Rineau, Michel Pocchiola, 2004/09/28
+
+Remove opposite(Sign) -- Laurent Rineau, 2004/10/14

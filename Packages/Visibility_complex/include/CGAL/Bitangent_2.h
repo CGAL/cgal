@@ -394,11 +394,11 @@ public:
     typedef typename R::FT                         FT;
     typedef Circle_by_radius_2<R_>                 Disk;
     typedef Bitangent_base<Disk>               Base;
-    typedef Base::Disk_handle                   Disk_handle;
+    typedef typename Base::Disk_handle                   Disk_handle;
     typedef Arc_2<Disk>                 Arc_2;
     typedef typename R::Segment_2                  Segment_2;
     typedef typename R::Point_2                    Point_2;
-    typedef Base::Type                             Type;
+    typedef typename Base::Type                             Type;
     // -------------------------------------------------------------------------
 public:
     // Constructeurs -----------------------------------------------------------
