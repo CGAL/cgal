@@ -14,6 +14,7 @@ int main(int, char*)
 #else
 
 #include <CGAL/basic.h>
+#include <climits>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
@@ -57,6 +58,7 @@ int main(int, char*)
 #include <qtimer.h>
 #include <qcursor.h>
 #include <qslider.h>
+#include <qspinbox.h>
 
 typedef CGAL::Simple_cartesian<double>  K1;
 typedef CGAL::Filtered_kernel<K1>       Kernel;
@@ -255,28 +257,40 @@ public:
 
       QPushButton *pbConform = 
 	new QPushButton("Conform", toolBarActions);
-      connect(pbConform, SIGNAL(clicked()), this, SLOT(conformMesh()));
+      connect(pbConform, SIGNAL(clicked()), this,
+	      SLOT(conformMesh()));
 
-      QPushButton *pbMeshStep = 
-	new QPushButton("Mesh step", toolBarActions);
+      QToolBar *toolBarSteps = new QToolBar("Step actions",this);
+
+      pbMeshStep = 
+	new QPushButton("Mesh 1 step", toolBarSteps);
       connect(pbMeshStep, SIGNAL(clicked()), this,
 	      SLOT(refineMeshStep()));
+
+      QSpinBox *sbStepLenght = 
+	new QSpinBox(1, INT_MAX, 1, toolBarSteps);
+      sbStepLenght->setValue(1);
+      step_lenght = 1;
+      connect(sbStepLenght, SIGNAL(valueChanged(int)), 
+	      this, SLOT(updateStepLenght(int)));
 
       // TIMER
       timer = new QTimer(this);
       connect(timer, SIGNAL(timeout()),
 	      this, SLOT(refineMeshStep()));
 
-      pbMeshTimer = new QPushButton("Auto step", toolBarActions);
+      pbMeshTimer = new QPushButton("Auto step", toolBarSteps);
       pbMeshTimer->setToggleButton(true);
       connect(pbMeshTimer, SIGNAL(stateChanged(int)),
 	      this, SLOT(updateTimer(int)));
 
-      QLineEdit *leTimerInterval = 
-	new QLineEdit("1000",toolBarActions);
+      QSpinBox *sbTimerInterval = 
+	new QSpinBox(0, INT_MAX, 10, toolBarSteps);
+      sbTimerInterval->setValue(1000);
+      sbTimerInterval->setSuffix("ms");
       timer_interval=1000;
-      connect(leTimerInterval, SIGNAL(textChanged(const QString&)),
-	      this, SLOT(updateTimerInterval(const QString&)));
+      connect(sbTimerInterval, SIGNAL(valueChanged(int)),
+	      this, SLOT(updateTimerInterval(int)));
 
       // Inputs: polygons or points
       QToolBar *toolbarInputs = new QToolBar("Inputs",this);
@@ -625,6 +639,7 @@ public slots:
 
   void refineMeshStep()
     {
+      int counter = step_lenght;
       switch_to_mesh();
       if(!is_mesh_initialized)
 	{
@@ -632,8 +647,15 @@ public slots:
 	  is_mesh_initialized=true;
 	  saveTriangulationUrgently("last_input.edg");
 	}
-      if(!mesh->refine_step())
-	pbMeshTimer->setOn(false);
+      while(counter>0)
+	{
+	  if(!mesh->refine_step())
+	    {
+	      pbMeshTimer->setOn(false);
+	      counter = 0;
+	    }
+	  --counter;
+	}
       updatePointCouter();
       widget->redraw();
     }
@@ -646,16 +668,21 @@ public slots:
 	timer->start(timer_interval);
     }
 
-  void updateTimerInterval(const QString& s)
+  void updateStepLenght(int i)
     {
-      bool ok;
-      int interval = s.toInt(&ok);
-      if(ok)
-	{
-	  timer_interval=interval;
-	  if(timer->isActive())
-	    timer->changeInterval(timer_interval);
-	}
+      step_lenght = i;
+      QString s;
+      s = "Mesh " + QString::number(i) + " step";
+      if(i > 1)
+	s+="s";
+      pbMeshStep->setText(s);
+    }
+
+  void updateTimerInterval(int i)
+    {
+      timer_interval=i;
+      if(timer->isActive())
+	timer->changeInterval(timer_interval);
     }
 
   void clearMesh()
@@ -814,7 +841,9 @@ private:
   QLabel *nbre_de_points;
   QTimer* timer;
   QPushButton *pbMeshTimer;
+  QPushButton *pbMeshStep;
   int timer_interval;
+  int step_lenght;
 };
 
 const QString MyWindow::my_filters =
