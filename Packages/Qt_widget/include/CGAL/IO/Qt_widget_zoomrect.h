@@ -40,7 +40,7 @@ public:
   int   first_x, first_y, x2, y2;
   bool  widgetrepainted;
   bool  on_first;
-
+  QWidget::FocusPolicy	oldpolicy;
   Qt_widget_zoomrect(QObject* parent = 0, const char* name = 0)
     : Qt_widget_layer(parent, name), widgetrepainted(TRUE),
       on_first(FALSE) {};
@@ -67,9 +67,9 @@ private:
     {
       if (!on_first)
       {
-	      first_x = e->x();
+        first_x = e->x();
         first_y = e->y();
-        on_first = TRUE;
+        on_first = true;
       }
     }
   };
@@ -101,20 +101,19 @@ private:
   {
     if(on_first)
     {
-      int
-	      x = e->x(),
-	      y = e->y();
-			*widget << noFill;
+      int x = e->x();
+      int y = e->y();
+      *widget << noFill;
       RasterOp old = widget->rasterOp();	//save the initial raster mode
       QColor old_color=widget->color();
       widget->setRasterOp(XorROP);
       widget->lock();
       widget->setColor(Qt::green);
       if(!widgetrepainted)
-	      widget->get_painter().drawRect(first_x, first_y, 
-										 x2 - first_x, y2 - first_y);
+        widget->get_painter().drawRect(first_x, first_y, 
+                                       x2 - first_x, y2 - first_y);
       widget->get_painter().drawRect(first_x, first_y, x - first_x,
-									 y - first_y);
+                                     y - first_y);
       widget->unlock();
       widget->setColor(old_color);
       widget->setRasterOp(old);
@@ -122,20 +121,72 @@ private:
       //save the last coordinates to redraw the screen
       x2 = x;
       y2 = y;
-      widgetrepainted = FALSE;
+      widgetrepainted = false;
     }
   };
 
+  void keyPressEvent(QKeyEvent *e)
+  {
+    switch ( e->key() ) {
+      case Key_Escape:			// key_escape
+         if (on_first)
+         {
+           widget->lock();
+           *widget << noFill;
+           RasterOp old = widget->rasterOp();	//save the initial raster mode
+           QColor old_color=widget->color();
+           widget->setRasterOp(XorROP);
+           *widget << CGAL::GREEN;
+           if(!widgetrepainted)
+             widget->get_painter().drawRect(first_x, first_y, 
+                                       x2 - first_x, y2 - first_y);
+           widget->setColor(old_color);
+           widget->setRasterOp(old);
+           widgetrepainted = true;
+
+           widget->unlock();
+	   on_first = false;
+         }
+         break;
+    }//endswitch
+  }
+
+  void leaveEvent(QEvent *)
+  {
+    if (on_first)
+    {
+      widget->lock();
+      *widget << noFill;
+      RasterOp old = widget->rasterOp();	//save the initial raster mode
+      QColor old_color=widget->color();
+      widget->setRasterOp(XorROP);
+      *widget << CGAL::GREEN;
+      if(!widgetrepainted)
+        widget->get_painter().drawRect(first_x, first_y, 
+                                       x2 - first_x, y2 - first_y);
+      widget->setColor(old_color);
+      widget->setRasterOp(old);
+      widgetrepainted = true;
+
+      widget->unlock();
+    }
+  }
+
   void activating()
   {
+    oldpolicy = widget->focusPolicy();
+    widget->setFocusPolicy(QWidget::StrongFocus);
     oldcursor = widget->cursor();
     widget->setCursor(crossCursor);
-    widgetrepainted = TRUE;
+    widgetrepainted = true;
   };
 
   void deactivating()
   {
     widget->setCursor(oldcursor);
+    widget->setFocusPolicy(oldpolicy);
+    on_first = false;
+    widget->redraw();
   };
 };//end class 
 
