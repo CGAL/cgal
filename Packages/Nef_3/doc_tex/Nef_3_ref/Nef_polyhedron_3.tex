@@ -21,8 +21,8 @@ An instance of data type \ccc{Nef_polyhedron_3<Traits>} is a subset of the
 3-dimensional space that is the result of forming complements and intersections
 starting from a finite set \ccc{H} of
 3-dimensional halfspaces. \ccc{Nef_polyhedron_3} is closed under all binary set
-operations \ccc{intersection}, \ccc{union}, \ccc{difference},
-\ccc{complement} and under the topological operations \ccc{boundary},
+operations, i.e. \ccc{intersection}, \ccc{union}, \ccc{difference},
+\ccc{complement}, and under the topological operations \ccc{boundary},
 \ccc{closure}, and \ccc{interior}.
 
 Nef_S2
@@ -38,7 +38,13 @@ Extended_kernel
     \ccc{class Nef_polyhedron_3;}
 \end{tabbing}
 
-The first parameter requires an exact CGAL kernel, i.e. 
+The first parameter requires one of the following exact kernels:
+\ccc{Homogeneous}, \ccc{Simple_homogeneous}, \ccc{Extended_homogeneous_3} 
+parametrized with \ccc{Gmpz}, \ccc{leda_integer} or any other number type
+modeling \Z, or \ccc{Cartesian}, \ccc{Simple_cartesian}, 
+\ccc{Extended_cartesian_3} parametrized with \ccc{Gmpq}, \ccc{leda_rational},
+\ccc{Quotient<Gmpz>} or any other number type modeling \Q.
+
 The second parameter expects a model of the concept \ccc{Nef_polyhedronItems_3}.
 By default, the class \ccc{CGAL::SNC_items} is preseleted.
 
@@ -54,37 +60,21 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 
 \ccNestedType{Mark} {}
 
-\ccNestedType{Vertex}{vertex type.}
+\ccNestedType{Vertex_const_handle}{non-mutable handle to a vertex.}
 \ccGlue
-\ccNestedType{Halfedge}{halfedge type.}
+\ccNestedType{Halfedge_const_handle}{non-mutable handle to a halfedge.}
 \ccGlue
-\ccNestedType{Halffacet}{halffacet type.}
+\ccNestedType{Halffacet_const_handle}{non-mutable handle to a halffacet.}
 \ccGlue
-\ccNestedType{Volume}{volume type.}
+\ccNestedType{Volume_const_handle}{non-mutable handle to a volume.}
 \ccGlue
-\ccNestedType{SVertex}{svertex type.}
+\ccNestedType{SVertex_const_handle}{non-mutable handle to a svertex.}
 \ccGlue
-\ccNestedType{SHalfedge}{shalfedge type.}
+\ccNestedType{SHalfedge_const_handle}{non-mutable handle to a shalfedge.}
 \ccGlue
-\ccNestedType{SHalfloop}{shalfloop type.}
+\ccNestedType{SHalfloop_const_handle}{non-mutable handle to a shalfloop.}
 \ccGlue
-\ccNestedType{SFace}{sface type.}
-
-\ccNestedType{Vertex_const_handle}{non-mutable handle to vertex.}
-\ccGlue
-\ccNestedType{Halfedge_const_handle}{non-mutable handle to halfedge.}
-\ccGlue
-\ccNestedType{Halffacet_const_handle}{non-mutable handle to halffacet.}
-\ccGlue
-\ccNestedType{Volume_const_handle}{non-mutable handle to volume.}
-\ccGlue
-\ccNestedType{SVertex_const_handle}{non-mutable handle to svertex.}
-\ccGlue
-\ccNestedType{SHalfedge_const_handle}{non-mutable handle to shalfedge.}
-\ccGlue
-\ccNestedType{SHalfloop_const_handle}{non-mutable handle to shalfloop.}
-\ccGlue
-\ccNestedType{SFace_const_handle}{non-mutable handle to sface.}
+\ccNestedType{SFace_const_handle}{non-mutable handle to a sface.}
 
 \ccNestedType{Vertex_const_iterator}{non-mutable iterator over all vertices.}
 \ccGlue
@@ -136,7 +126,7 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 \ccGlue
 \ccNestedType{Vector_3}{direction of a halfedge.}
 \ccGlue
-\ccNestedType{Plane_3}{plane a halffacet lies in.}
+\ccNestedType{Plane_3}{plane of a halffacet lies in.}
 \ccGlue
 \ccNestedType{Aff_transformation_3}{affine transformation.}
 
@@ -147,7 +137,6 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 \ccNestedType{Nef_polyhedron_S2}{a sphere map.}
 
 \ccNestedType{Polyhedron}{a polyhedral surface.}
-
 
 
 \ccCreation
@@ -174,68 +163,91 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 \ccConstrcutor{Nef_polyhedron_3(const char* filename);}{
   loads a Nef polyhedron from the \ccc}filename}.}
 
-operator<< 
-operator>>
-
-\ccConstrcutor{Nef_polyhedron_3(const Nef_polyhedron_3<Traits>& N1);}
-{}
-\ccMethod{Nef_polyhedron_3<Traits> operator=(const Nef_polyhedron_3<Tratis>& N1);}{}
 
 \ccOperations
 
-\ccMethod{bool is_empty() const;}{returns true if \ccVar\ is empty.}
-\ccMethod{bool is_space() const;}{}
-\ccMethod{bool is_valid() const;}{}
-\ccMethod{bool is_simple() const;}{}
+\ccMethod{bool is_empty() const;}{returns true, if \ccVar\ is the 
+                                  empty point set.}
+\ccGlue
+\ccMethod{bool is_space() const;}{returns true, if \ccVar\ is the 
+                                  complete 3D space.}
+\ccGlue
+\ccMethod{bool is_simple() const;}{return true, if \ccVar\ is a 2-manifold.}
 
-\ccMethod{bool operator==(const Nef_polyhedron_3<Traits>& N1) const;}{}
-\ccMethod{bool operator!=(const Nef_polyhedron_3<Traits>& N1) const;}{}
-\ccMethod{bool operator<(const Nef_polyhedron_3<Traits>& N1) const;}{}
-\ccMethod{bool operator>(const Nef_polyhedron_3<Traits>& N1) const;}{}
-\ccMethod{bool operator<=(const Nef_polyhedron_3<Traits>& N1) const;}{}
-\ccMethod{bool operator>=(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{bool is_valid() const;}{checks the integrity of \ccVar\.}
 
-\ccMethod{Size_type number_of_vertices() const;}{}  
-\ccMethod{Size_type number_of_halfedges() const;}{} 
-\ccMethod{Size_type number_of_edges() const;}{}     
-\ccMethod{Size_type number_of_halffacets() const;}{}   
-\ccMethod{Size_type number_of_facets() const;}{}    
-\ccMethod{Size_type number_of_volumes() const;}{}   
+\ccMethod{bool operator==(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ and N1 comprise the same point sets.}
+\ccMethod{bool operator!=(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ and N1 comprise different point sets. }
+\ccMethod{bool operator<(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ is a proper subset of N1. }
+\ccMethod{bool operator>(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ is a proper superset of N1. }
+\ccMethod{bool operator<=(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ is a subset of N1. }
+\ccMethod{bool operator>=(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ is a superset of N1. }
 
-\ccMethod{Nef_polyhedron_3<Traits> complement() const;}{}
-\ccMethod{Nef_polyhedron_3<Traits> interior() const;}{}
-\ccMethod{Nef_polyhedron_3<Traits> boundary() const;}{}
-\ccMethod{Nef_polyhedron_3<Traits> closure() const;}{}
-\ccMethod{Nef_polyhedron_3<Traits> regularization() const;}{}
+\ccMethod{Size_type number_of_vertices() const;}
+{returns the number of vertices.}  
+\ccMethod{Size_type number_of_halfedges() const;}
+{return the number of halfedges.} 
+\ccMethod{Size_type number_of_edges() const;}
+{returns the number of halfedge pairs.}     
+\ccMethod{Size_type number_of_halffacets() const;}
+{returns the number of halffacets.}   
+\ccMethod{Size_type number_of_facets() const;}
+{returns the number of halffacet pairs.}    
+\ccMethod{Size_type number_of_volumes() const;}
+{returns the number of volumes.}   
 
-\ccMethod{Nef_polyhedron_3<Traits> intersection(const Nef_polyhedron_3<Traits>& N1) const;}{}
-\ccMethod{Nef_polyhedron_3<Traits> join(const Nef_polyhedron_3<Traits>& N1) const;}{}
-\ccMethod{Nef_polyhedron_3<Traits> difference(const Nef_polyhedron_3<Traits>& N1) const;}{}
-\ccMethod{Nef_polyhedron_3<Traits> symmetric_difference(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{Nef_polyhedron_3<Traits> complement() const;}
+{returns the complement of \ccVar\.}
+\ccMethod{Nef_polyhedron_3<Traits> interior() const;}
+{returns the interior of \ccVar\.}
+\ccMethod{Nef_polyhedron_3<Traits> boundary() const;}
+{returns the boundary of \ccVar\.}
+\ccMethod{Nef_polyhedron_3<Traits> closure() const;}
+{returns the closure of \ccVar\.}
+\ccMethod{Nef_polyhedron_3<Traits> regularization() const;}
+{returns the regularization, i.e. the closure of the interior, of \ccVar\.}
 
-\ccMethod{Nef_polyhedron_3<Traits> operator*(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccMethod{void operator!();}
+{returns the complement of \ccVar\.}
+
+\ccMethod{Nef_polyhedron_3<Traits> intersection(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the intersection of \ccVar\ and N1.}
+\ccMethod{Nef_polyhedron_3<Traits> join(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the union of \ccVar\ and N1. (Note that ''union'' is a C++ keyword and cannot be used for this operation.)}
+\ccMethod{Nef_polyhedron_3<Traits> difference(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the difference between \ccVar\ and N1.}
+\ccMethod{Nef_polyhedron_3<Traits> symmetric_difference(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the symmetric difference of \ccVar\ and N1.}
+
+\ccMethod{Nef_polyhedron_3<Traits> operator*(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the intersection of \ccVar\ and N1.}
 \ccMethod{Nef_polyhedron_3<Traits> operator+(const Nef_polyhedron_3<Traits>& N1) const;}{}
+{return the union of \ccVar\ and N1.}
 \ccMethod{Nef_polyhedron_3<Traits> operator-(const Nef_polyhedron_3<Traits>& N1) const;}{}
+{return the difference between \ccVar\ and N1.}
 \ccMethod{Nef_polyhedron_3<Traits> operator^(const Nef_polyhedron_3<Traits>& N1) const;}{}
-
-\ccMethod{Object_handle locate(const Point_3& p) const;}{}
-%\ccMethod{bool contains(Object_handle h) const;}{}
-%\ccMethod{bool contained_in_boundary(Object_handle h) const;}{}
-
-\ccMethod{void clear(Content space = EMPTY);}{}
-
-\ccMethod{void extract_complement();}{}
-\ccMethod{void extract_interior();}{}
-\ccMethod{void extract_boundary();}{}
-\ccMethod{void extract_closure();}{}
-\ccMethod{void extract_regularization();}{}
-
-\ccMethod{void operator!();}{}
+{return the symmetric difference of \ccVar\ and N1.}
 
 \ccMethod{void operator*=(const Nef_polyhedron_3<Traits>& N1);}{}
 \ccMethod{void operator+=(const Nef_polyhedron_3<Traits>& N1);}{}
 \ccMethod{void operator-=(const Nef_polyhedron_3<Traits>& N1);}{}
 \ccMethod{void operator^=(const Nef_polyhedron_3<Traits>& N1);}{}
+
+\ccMethod{Object_handle locate(const Point_3& p) const;}
+{returns a generic handle to the object (vertex, edge, facet or volume) that
+  contains the point p in its relative interior.}
+%\ccMethod{bool contains(Object_handle h) const;}{}
+%\ccMethod{bool contained_in_boundary(Object_handle h) const;}{}
+
+\ccMethod{void clear(Content space = EMPTY);}
+{make \ccVar\ the empty set if \ccc{space == EMPTY} and
+ the complete 3D space if \ccc{space == COMPLETE}.}
 
 \ccMethod{void transform(const Aff_transformation_3& aff);}{}
 
@@ -291,15 +303,16 @@ operator>>
 \ccMethod{void visit_shell_objects(SFace_const_handle f, Visitor& V) const;}{}
 
 \ccMethod{const Point_3& point(Vertex_const_handle v) const;}{}
-\ccMethod{const Plane_3& plane(Halffacet_const_handle f) const;}{}
 \ccMethod{Segment_3 segment(Halfedge_const_handle e) const;}{}
 \ccMethod{Vector_3 vector(Halfedge_const_handle e) const;}{}
+\ccMethod{const Plane_3& plane(Halffacet_const_handle f) const;}{}
 
 \ccMethod{static bool is_standard(const Vertex_const_handle v);}{}
 \ccMethod{static bool is_standard(const Halffacet_const_handle v);}{}
 \ccMethod{static bool is_standard_kernel() { return Infi_box::standard_kernel();}{}
 \ccMethod{static bool is_extended_kernel() { return Infi_box::extended_kernel();}{}
 \ccMethod{static void set_size_of_infimaximal_box(const typename Infi_box::NT& size);}{}
+
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+
