@@ -116,7 +116,8 @@ public:
     // drawing menu
     QPopupMenu * draw = new QPopupMenu( this );
     menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("&Generate points", this, SLOT(gen_points()), CTRL+Key_G );
+    draw->insertItem("&Generate points", this,
+				SLOT(gen_points()), CTRL+Key_G );
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -163,7 +164,8 @@ public slots:
     widget->detach_current_tool();
     widget->lock();
     list_of_points.clear();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
+		// set the Visible Area to the Interval
     widget->unlock();
     something_changed();
   }
@@ -208,7 +210,8 @@ private slots:
 
   void gen_points()
   {
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+		// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
     CGAL::Random_points_in_disc_2<Point> g(0.5);
