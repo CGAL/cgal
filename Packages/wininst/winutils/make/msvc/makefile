@@ -1,9 +1,7 @@
 # This file contains CGAL makefile settings for the following platform:
-# OS:		i686_CYGWINNT-4.0-20.1
-# COMPILER:	VC++ 12.00.8168
-# LEDA:		supported
+# OS:		Win32
+# COMPILER:	VC++ 12.00.*
 # GMP:		supported
-# CLN:		not supported
 
 #---------------------------------------------------------------------#
 #                    make and other utilities to use
@@ -23,18 +21,12 @@ CGAL_INCL_DIR = $(CGAL_ROOT)\include
 CGAL_LIB_DIR = $(CGAL_ROOT)\lib
 
 #---------------------------------------------------------------------#
-#                    os/compiler description
-#---------------------------------------------------------------------#
-
-#CGAL_OS_COMPILER = i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168_LEDA
-
-#---------------------------------------------------------------------#
 #                    filename related flags
 #---------------------------------------------------------------------#
 
 OBJ_EXT = .obj
-#EXE_EXT = .exe
-EXE_EXT =
+EXE_EXT = .exe
+#EXE_EXT =
 LIB_SUFFIX = .lib
 
 #---------------------------------------------------------------------#
@@ -100,6 +92,9 @@ CGAL_CXXFLAGS = \
 	$(LE_CXXFLAGS) \
 
 
+CGAL_WINLIB_CXXFLAGS = \
+	$(CGAL_LIB_CXXFLAGS) 
+
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
@@ -126,7 +121,7 @@ CGAL_LD_LIBPATH = \
 CGAL_LDFLAGS = $(CUSTOM1_LDFLAGS) \
 	-link $(CGAL_LD_LIBPATH) -nologo \
 	$(CUSTOM_LDFLAGS) \
-	CGAL.lib  $(LE_LIBS_LIST)  gmp.lib  
+	CGAL.lib  $(LE_LIBS_LIST) CGALWin.lib  gmp.lib  
 
 CGAL_WINDOW_LIBPATH = 
 
@@ -136,12 +131,11 @@ CGAL_LD_WINDOW_LIBPATH = \
 CGAL_WINDOW_LDFLAGS = $(CUSTOM1_LDFLAGS) \
 	-link $(CGAL_LD_WINDOW_LIBPATH) -nologo \
 	$(CUSTOM_LDFLAGS) \
-	CGAL.lib  libW.lib libP.lib libG.lib libL.lib ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib gmp.lib  
+	CGAL.lib  CGALWin.lib ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib gmp.lib  
 
-CGAL_GEOWIN_LDFLAGS = $(CUSTOM1_LDFLAGS) \
-	-link $(CGAL_LD_WINDOW_LIBPATH) -nologo \
-	$(CUSTOM_LDFLAGS) \
-	CGAL.lib  libGeoW.lib libD3.lib libW.lib libP.lib libG.lib libL.lib ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib gmp.lib  
+CGAL_GEOWIN_LDFLAGS = \
+	$(CGAL_WINDOW_LDFLAGS)
+
 
 
 #---------------------------------------------------------------------#
@@ -150,6 +144,8 @@ CGAL_GEOWIN_LDFLAGS = $(CUSTOM1_LDFLAGS) \
 
 CGAL_EXTRA_OBJECTS = workaround_4_ms.obj
 CGAL_LIB = CGAL.lib
+CGAL_WIN_LIB = CGALWin.lib
+CGAL_WIN_EXTRA_DIR = mswin
 CGAL_LIB_CXXFLAGS = \
 	$(CGAL_CXXFLAGS)
 CGAL_LIB_LDFLAGS = 

@@ -1,3 +1,13 @@
+# Copyright (c) 1999,2001 The CGAL Consortium
+#
+# Package: wininst
+#
+# Used for Windows-specific installation
+#
+#
+# This software and related documentation is part of the
+# Computational Geometry Algorithms Library (CGAL).
+#
 # This is the nmake makefile for compiling the CGAL object library 
 # CGAL.lib using MSVC compiler
 #
@@ -22,8 +32,6 @@ Bbox_2$(OBJ_EXT) \
 Bbox_2_intersections$(OBJ_EXT) \
 Bbox_3_intersections$(OBJ_EXT) \
 Color$(OBJ_EXT) \
-Double$(OBJ_EXT) \
-Double_eps$(OBJ_EXT) \
 File_header_OFF$(OBJ_EXT) \
 File_header_extended_OFF$(OBJ_EXT) \
 File_scanner_OFF$(OBJ_EXT) \
@@ -31,10 +39,9 @@ File_writer_OFF$(OBJ_EXT) \
 File_writer_VRML_2$(OBJ_EXT) \
 File_writer_inventor$(OBJ_EXT) \
 File_writer_wavefront$(OBJ_EXT) \
-Fixed_precision_nt$(OBJ_EXT) \
-Float$(OBJ_EXT) \
 Geomview_stream$(OBJ_EXT) \
 Interval_arithmetic$(OBJ_EXT) \
+MP_Float$(OBJ_EXT) \
 Origin$(OBJ_EXT) \
 Random$(OBJ_EXT) \
 Triangulation_3$(OBJ_EXT) \
@@ -52,8 +59,6 @@ $(CGAL_OBJ_PREFIX)Bbox_2$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Bbox_2_intersections$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Bbox_3_intersections$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Color$(OBJ_EXT) \
-$(CGAL_OBJ_PREFIX)Double$(OBJ_EXT) \
-$(CGAL_OBJ_PREFIX)Double_eps$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)File_header_OFF$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)File_header_extended_OFF$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)File_scanner_OFF$(OBJ_EXT) \
@@ -61,10 +66,9 @@ $(CGAL_OBJ_PREFIX)File_writer_OFF$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)File_writer_VRML_2$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)File_writer_inventor$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)File_writer_wavefront$(OBJ_EXT) \
-$(CGAL_OBJ_PREFIX)Fixed_precision_nt$(OBJ_EXT) \
-$(CGAL_OBJ_PREFIX)Float$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Geomview_stream$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Interval_arithmetic$(OBJ_EXT) \
+$(CGAL_OBJ_PREFIX)MP_Float$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Origin$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Random$(OBJ_EXT) \
 $(CGAL_OBJ_PREFIX)Triangulation_3$(OBJ_EXT) \

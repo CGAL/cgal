@@ -1,12 +1,14 @@
-// Package: wininst
+// Copyright (c) 1999,2001 The CGAL Consortium
 //
-// Compiler specific configuration file
-// System: i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168
+// Package: wininst
 //
 // Used for Windows-specific installation
 //
-// This file was automatically generated during installation.
-// It wraps a standard header file that did not exist for this compiler
+//
+// This software and related documentation is part of the
+// Computational Geometry Algorithms Library (CGAL).
+//
+// This file wraps a standard header file that did not exist for this compiler
 // and adds its symbols to namespace std.
 // The existence of this file indicates that your compiler does not
 // conform to the ISO/IEC standard 14882 for C++.
