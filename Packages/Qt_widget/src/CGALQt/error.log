@@ -1,0 +1,76 @@
+/usr/local/qt/bin/moc ../../include/CGAL/IO/Qt_widget.h -o Qt_widget.moc
+/usr/local/bin/g++ -O    -ftemplate-depth-25  -DCGAL_USE_QT   '-I/usr/local/qt/include'  '-I/u/papillon/1/prisme/rursu/CGAL_RELEASES/CGAL-2.4-I-49/include/CGAL/config/sparc_SunOS-5.6_g++-2.95'  '-I/u/papillon/1/prisme/rursu/CGAL_RELEASES/CGAL-2.4-I-49/include' -fpermissive -I/usr/openwin/include -DCGAL_USE_CGAL_HEADERS -DCGAL_USE_QT -I"../../include" -c Qt_widget.C
+*** Error code 1
+In file included from /usr/local/qt/include/qmetaobject.h:42,
+                 from Qt_widget.moc:17,
+                 from Qt_widget.C:455:
+/usr/local/qt/include/qconnection.h:46: warning: ANSI C++ forbids declaration `CGAL_MOC_FROM' with no type
+/usr/local/qt/include/qconnection.h:46: warning: initialization to `int' from `const char *' lacks a cast
+/usr/local/qt/include/qconnection.h:46: syntax error before `typedef'
+/usr/local/qt/include/qconnection.h:52: type specifier omitted for parameter
+/usr/local/qt/include/qconnection.h:58: syntax error before `*'
+/usr/local/qt/include/qconnection.h: In method `bool QConnection::isConnected() const':
+/usr/local/qt/include/qconnection.h:55: `obj' undeclared (first use this function)
+/usr/local/qt/include/qconnection.h:55: (Each undeclared identifier is reported only once
+/usr/local/qt/include/qconnection.h:55: for each function it appears in.)
+/usr/local/qt/include/qconnection.h: At top level:
+/usr/local/qt/include/qconnection.h:59: extraneous `char' ignored
+/usr/local/qt/include/qconnection.h:59: non-member function `memberName()' cannot have `const' method qualifier
+/usr/local/qt/include/qconnection.h: In function `const class QConnection * memberName()':
+/usr/local/qt/include/qconnection.h:59: `mbr_name' undeclared (first use this function)
+/usr/local/qt/include/qconnection.h: At top level:
+/usr/local/qt/include/qconnection.h:60: non-member function `numArgs()' cannot have `const' method qualifier
+/usr/local/qt/include/qconnection.h: In function `int numArgs()':
+/usr/local/qt/include/qconnection.h:60: `nargs' undeclared (first use this function)
+/usr/local/qt/include/qconnection.h: At top level:
+/usr/local/qt/include/qconnection.h:62: parse error before `private'
+/usr/local/qt/include/qconnection.h:64: syntax error before `;'
+/usr/local/qt/include/qconnection.h:65: `const char * mbr_name' used prior to declaration
+/usr/local/qt/include/qconnection.h:66: `int nargs' used prior to declaration
+/usr/local/qt/include/qconnection.h:68: parse error before `private'
+/usr/local/qt/include/qconnection.h:71: `operator =(const QConnection &)' must be a nonstatic member function
+/usr/local/qt/include/qconnection.h:73: parse error before `}'
+In file included from Qt_widget.moc:17,
+                 from Qt_widget.C:455:
+/usr/local/qt/include/qmetaobject.h:51: syntax error before `;'
+/usr/local/qt/include/qmetaobject.h:102: syntax error before `;'
+/usr/local/qt/include/qmetaobject.h:103: syntax error before `;'
+/usr/local/qt/include/qmetaobject.h:104: syntax error before `;'
+/usr/local/qt/include/qmetaobject.h:105: syntax error before `;'
+/usr/local/qt/include/qmetaobject.h: In method `bool QMetaProperty::writable() const':
+/usr/local/qt/include/qmetaobject.h:237: `set' undeclared (first use this function)
+/usr/local/qt/include/qmetaobject.h: In method `bool QMetaProperty::isValid() const':
+/usr/local/qt/include/qmetaobject.h:243: `get' undeclared (first use this function)
+In file included from Qt_widget.C:455:
+Qt_widget.moc: In function `static class QMetaObject * CGAL::Qt_widget::staticMetaObject()':
+Qt_widget.moc:86: `struct QMetaData' has no member named `ptr'
+Qt_widget.moc:86: `QMember' undeclared (first use this function)
+Qt_widget.moc:86: parse error before `;'
+Qt_widget.moc:88: `struct QMetaData' has no member named `ptr'
+Qt_widget.moc:88: parse error before `;'
+Qt_widget.moc:90: `struct QMetaData' has no member named `ptr'
+Qt_widget.moc:90: parse error before `;'
+Qt_widget.moc:92: `struct QMetaData' has no member named `ptr'
+Qt_widget.moc:92: parse error before `;'
+Qt_widget.moc:94: `struct QMetaData' has no member named `ptr'
+Qt_widget.moc:94: parse error before `;'
+Qt_widget.moc:96: `struct QMetaData' has no member named `ptr'
+Qt_widget.moc:96: parse error before `;'
+In file included from Qt_widget.C:455:
+Qt_widget.moc: In method `void CGAL::Qt_widget::mousePressed(QMouseEvent *)':
+Qt_widget.moc:133: no matching function for call to `QConnection::numArgs ()'
+Qt_widget.moc:138: no matching function for call to `QConnection::member ()'
+Qt_widget.moc:146: no matching function for call to `QConnection::member ()'
+Qt_widget.moc: In method `void CGAL::Qt_widget::mouseReleased(QMouseEvent *)':
+Qt_widget.moc:172: no matching function for call to `QConnection::numArgs ()'
+Qt_widget.moc:177: no matching function for call to `QConnection::member ()'
+Qt_widget.moc:185: no matching function for call to `QConnection::member ()'
+Qt_widget.moc: In method `void CGAL::Qt_widget::mouseMoved(QMouseEvent *)':
+Qt_widget.moc:211: no matching function for call to `QConnection::numArgs ()'
+Qt_widget.moc:216: no matching function for call to `QConnection::member ()'
+Qt_widget.moc:224: no matching function for call to `QConnection::member ()'
+Qt_widget.moc: In method `void CGAL::Qt_widget::new_cgal_object(CGAL::Object)':
+Qt_widget.moc:256: no matching function for call to `QConnection::numArgs ()'
+Qt_widget.moc:261: no matching function for call to `QConnection::member ()'
+Qt_widget.moc:269: no matching function for call to `QConnection::member ()'
+make: Fatal error: Command failed for target `Qt_widget.o'
