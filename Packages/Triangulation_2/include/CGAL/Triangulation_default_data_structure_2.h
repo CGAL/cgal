@@ -307,7 +307,7 @@ public:
     _number_of_vertices++;
   }
 
-  void remove(Vertex* v)
+  void remove_degree_3(Vertex* v, Face* f = NULL)
     // remove a vertex of degree 3
   {
     CGAL_triangulation_assertion(v != NULL);
@@ -322,7 +322,8 @@ public:
 //       return;
 //     }
 
-    Face* f = v->face();
+    if (f == NULL) {f= v->face();}
+    else { CGAL_triangulation_assertion( f->has_vertex(v));}
     // take care of _finite_vertex data member
     if (finite_vertex() == v){
       int i=f->index(v);
