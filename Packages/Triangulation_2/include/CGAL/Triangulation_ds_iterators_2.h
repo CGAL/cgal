@@ -36,8 +36,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// The  iterator_base visits all the faces of the Tds
-// whatever may be the dimension
+// The  iterator_base visits all the full dimensional faces 
+// of the Tds
+// whatever may be the dimension of the Tds
 
 template <class Tds>
 class Triangulation_ds_iterator_base_2
@@ -75,13 +76,13 @@ public:
      :  _tds(tds), pos(NULL)
  {}
 
-  Triangulation_ds_iterator_base_2(const Tds* tds, Face* f)
+  Triangulation_ds_iterator_base_2(const Tds* tds, const Face* f)
     : _tds(tds), pos(f)
   {}
    
 protected:
-        const Tds*  _tds;
-        Face* pos;
+  const Tds*  _tds;
+  const Face* pos;
 
   void increment();
   void decrement();
@@ -101,8 +102,7 @@ public:
 };
 
 
-// The following iterator visit all the faces
-// of a 2-dimensional Tds
+// The following iterator visit the 2-faces
 
 template<class Tds>
 class Triangulation_ds_face_iterator_2
@@ -112,11 +112,9 @@ public:
   typedef Triangulation_ds_iterator_base_2<Tds> Iterator_base;
   typedef Triangulation_ds_face_iterator_2<Tds> Face_iterator;
 
-  Triangulation_ds_face_iterator_2()
-    : Iterator_base()
-    {}
-  Triangulation_ds_face_iterator_2(Tds * tds)
-    : Iterator_base(tds)
+  Triangulation_ds_face_iterator_2() : Iterator_base() {}
+   
+  Triangulation_ds_face_iterator_2(Tds * tds) : Iterator_base(tds)
     {
       if (tds->dimension() <2) pos=NULL;
     }
@@ -129,37 +127,13 @@ public:
     : Iterator_base(fi._tds, fi.pos)
     {}
         
-  Face_iterator&   operator=(const Face_iterator& fi)
-    {
-      Iterator_base::operator=(fi);
-      return *this;
-    }
+  Face_iterator&   operator=(const Face_iterator& fi);
 
-  Face_iterator&  operator++()
-    {
-       Iterator_base::operator++();    
-       return *this;           
-    }
+  Face_iterator&  operator++();
+  Face_iterator&  operator--();
+  Face_iterator   operator++(int);
+  Face_iterator   operator--(int);
 
-  Face_iterator&   operator--()
-    {
-	Iterator_base::operator--();    
-       return *this;           
-    }
-
-  Face_iterator   operator++(int)
-    {
-      Face_iterator tmp(*this);
-      ++(*this);
-      return tmp;
-    }
-        
-  Face_iterator   operator--(int)
-    {
-      Face_iterator tmp(*this);
-      --(*this);
-      return tmp;
-    }
 };
 
 
@@ -431,10 +405,9 @@ Triangulation_ds_iterator_base_2<Tds>&
 Triangulation_ds_iterator_base_2<Tds> ::
 operator--()
 {
-  CGAL_triangulation_precondition( pos != NULL &&
-				   pos != _tds->infinite_face());
-  // past the end or first face, can't decrement
-  decrement(); 
+  CGAL_triangulation_precondition( pos != NULL ); //past the end
+  if(pos != _tds->infinite_face())   pos = NULL; //first, return past the end
+  else decrement(); 
   return *this;
 }
         
@@ -465,7 +438,7 @@ Triangulation_ds_iterator_base_2<Tds> ::
 operator*() const
 {
   CGAL_triangulation_precondition(pos != NULL);
-  return *pos;
+  return const_cast<Face&>(*pos);
 }
     
 template<class Tds>
@@ -475,7 +448,60 @@ Triangulation_ds_iterator_base_2<Tds> ::
 operator->() const
 {
   CGAL_triangulation_precondition(pos != NULL);
-  return pos;
+  return const_cast<Face*>(pos);
+}
+
+// Face iterator implementation
+template<class Tds>
+inline 
+Triangulation_ds_face_iterator_2<Tds>&
+Triangulation_ds_face_iterator_2<Tds>::
+operator=(const Face_iterator& fi)
+{
+  Iterator_base::operator=(fi);
+  return *this;
+}
+
+template<class Tds>
+inline 
+Triangulation_ds_face_iterator_2<Tds>&
+Triangulation_ds_face_iterator_2<Tds>::
+operator++()
+{
+  Iterator_base::operator++();    
+  return *this;           
+}
+
+template<class Tds>
+inline 
+Triangulation_ds_face_iterator_2<Tds>&
+Triangulation_ds_face_iterator_2<Tds>::
+operator--()
+{
+  Iterator_base::operator--();    
+  return *this;           
+}
+
+template<class Tds>
+inline 
+Triangulation_ds_face_iterator_2<Tds>
+Triangulation_ds_face_iterator_2<Tds>::
+operator++(int)
+{
+  Face_iterator tmp(*this);
+  ++(*this);
+  return tmp;
+}
+        
+template<class Tds>
+inline 
+Triangulation_ds_face_iterator_2<Tds>
+Triangulation_ds_face_iterator_2<Tds>::
+operator--(int)
+{
+  Face_iterator tmp(*this);
+  --(*this);
+  return tmp;
 }
 
 
@@ -560,14 +586,20 @@ Triangulation_ds_vertex_iterator_2<Tds>&
 Triangulation_ds_vertex_iterator_2<Tds> ::    
 operator--()
 {
-   CGAL_triangulation_assertion(pos != NULL &&
-				pos != (Face*)1  &&  // only one vertex
-				! (pos == _tds->infinite_face() && index == 0));
-     // past the end or first position, cannot decrease
+   CGAL_triangulation_assertion(pos != NULL);
+   if(pos == (Face*)1 || (pos==_tds->infinite_face() && index==0)) {
+     pos = NULL;
+     return *this;
+   }
+     
    decrement();
-   while ( ! associated_vertex() &&
-	   ! (pos == _tds->infinite_face() && index == 0)) decrement();
-   if(!associated_vertex()) pos=NULL; // complete tour
+   while ( ! associated_vertex()) {
+     if (pos == _tds->infinite_face() && index == 0) {
+       pos = NULL;
+       return *this;
+     }
+     else decrement();
+   }
    return *this;
 }
     
@@ -702,7 +734,7 @@ Triangulation_ds_edge_iterator_2<Tds> ::
 associated_edge()
 {
   if (_tds->dimension() == 1) {return true;}
-  return less<Face*>()(pos, pos->neighbor(index));
+  return less<const Face*>()(pos, pos->neighbor(index));
 }
 
 template<class Tds>
@@ -738,20 +770,25 @@ operator--()
   CGAL_triangulation_assertion(pos != NULL);
   switch(_tds->dimension()){
   case 1:
-    CGAL_triangulation_assertion(pos !=  _tds->infinite_face()); 
-    decrement(); 
-    return *this;
+    if (pos !=  _tds->infinite_face()) { pos = NULL; }
+    else decrement();
+    break;
   case 2:
-    CGAL_triangulation_assertion (pos == _tds->infinite_face() && index == 0);
-    do{
-      decrement();
-      if ( pos == _tds->infinite_face() && index == 0){
+    if (pos == _tds->infinite_face() && index == 0) { 
+      pos = NULL; 
+      return *this;
+    }
+    decrement();
+    while ( ! associated_edge()){
+      if ( pos == _tds->infinite_face() && index == 0) {
 	pos = NULL;   // complete tour
 	return *this;
       }
-    }while ( ! associated_edge());
-    return *this;
+      else decrement();
+    }
+    break;
   }
+  return this;
 }
     
 template<class Tds>
