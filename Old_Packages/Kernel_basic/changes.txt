@@ -1,3 +1,6 @@
+3.85   (20 March 2002)
+- added CGAL_LEDA_SCOPEs where needed for in kernel_to_kernel.h
+
 3.84   (20 March 2002)
 - removed Point_d; better number type stuff
 
