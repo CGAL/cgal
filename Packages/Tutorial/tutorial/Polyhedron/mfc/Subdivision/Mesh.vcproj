@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding = "Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="7.00"
 	Name="Mesh"
 	ProjectGUID="{83571301-4A1D-4C64-B89E-656467112D87}"
 	Keyword="MFCProj">
@@ -19,9 +19,9 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/GR /Zm900"
+				AdditionalOptions="/GR"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\cl1310&quot;;&quot;$(CGALROOT)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\cl1300&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;NOMINMAX;CGAL_USE_POLYHEDRON_DESIGN_TWO"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)/lib/cl1310/MT/CGALd.lib"
+				AdditionalOptions="$(CGALROOT)/lib/msvc7/mt/CGAL.lib"
 				AdditionalDependencies="opengl32.lib glu32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -59,13 +59,7 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
 				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -80,7 +74,6 @@
 				GlobalOptimizations="TRUE"
 				EnableIntrinsicFunctions="TRUE"
 				FavorSizeOrSpeed="1"
-				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\cl1310&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;NOMINMAX;CGAL_USE_POLYHEDRON_DESIGN_TWO"
@@ -121,17 +114,9 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
 				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
-	<References>
-	</References>
 	<Files>
 		<Filter
 			Name="App Source Files"
@@ -159,6 +144,12 @@
 				RelativePath=".\StaticView.cpp">
 			</File>
 			<File
+				RelativePath=".\TextualStatusBar.cpp">
+			</File>
+			<File
+				RelativePath=".\lib\Texture.cpp">
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -172,12 +163,6 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="1"/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\TextualStatusBar.cpp">
-			</File>
-			<File
-				RelativePath=".\lib\Texture.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -209,19 +194,34 @@
 				RelativePath=".\StaticView.h">
 			</File>
 			<File
-				RelativePath=".\stdafx.h">
-			</File>
-			<File
 				RelativePath=".\TextualStatusBar.h">
 			</File>
 			<File
 				RelativePath=".\lib\Texture.h">
+			</File>
+			<File
+				RelativePath=".\stdafx.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File
+				RelativePath=".\res\Mesh.ico">
+			</File>
+			<File
+				RelativePath=".\Mesh.rc">
+			</File>
+			<File
+				RelativePath=".\res\Mesh.rc2">
+			</File>
+			<File
+				RelativePath=".\res\MeshDoc.ico">
+			</File>
+			<File
+				RelativePath=".\res\Toolbar.bmp">
+			</File>
 			<File
 				RelativePath=".\res\idb0.bmp">
 			</File>
@@ -248,21 +248,6 @@
 			</File>
 			<File
 				RelativePath=".\res\idb8.bmp">
-			</File>
-			<File
-				RelativePath=".\res\Mesh.ico">
-			</File>
-			<File
-				RelativePath=".\Mesh.rc">
-			</File>
-			<File
-				RelativePath=".\res\Mesh.rc2">
-			</File>
-			<File
-				RelativePath=".\res\MeshDoc.ico">
-			</File>
-			<File
-				RelativePath=".\res\Toolbar.bmp">
 			</File>
 		</Filter>
 		<Filter
