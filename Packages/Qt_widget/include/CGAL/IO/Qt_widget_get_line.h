@@ -47,7 +47,7 @@ public:
   void draw(){
     firsttime = true;
   }
-private:
+protected:
   bool is_pure(Qt::ButtonState s){
     if((s & Qt::ControlButton) ||
        (s & Qt::ShiftButton) ||
@@ -89,7 +89,7 @@ private:
       case Key_Escape:			// key_escape
          if(firstpoint)
          {
-	   firstpoint = false;
+           firstpoint = false;
            RasterOp old_raster = widget->rasterOp();
            QColor old_color = widget->color();
            widget->lock();
@@ -99,7 +99,7 @@ private:
            widget->setRasterOp(old_raster);
            widget->setColor(old_color);
            widget->unlock();
-	   firsttime = true;
+           firsttime = true;
          }
          break;
     }//endswitch

@@ -71,7 +71,7 @@ private:
       for(it = poly.edges_begin(); it != before_last_it; it++)
       {
         if(do_intersect(*it, rubber_segment))
-	  return false;
+        return false;
       }
       //if I'm out of this means that all the edges, 
       //didn't intersect the last one
@@ -79,9 +79,9 @@ private:
       Object o = intersection(*it, rubber_segment);
       Point_2 p;
       if(assign(p, o))
-	return true;
+        return true;
       else
-	return false;
+        return false;
     }
     else
       return true;

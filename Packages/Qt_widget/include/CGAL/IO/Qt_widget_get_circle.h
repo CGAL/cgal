@@ -49,7 +49,7 @@ public:
     firsttime = true;
   }
 
-private:
+protected:
   bool is_pure(Qt::ButtonState s){
     if((s & Qt::ControlButton) ||
        (s & Qt::ShiftButton) ||
@@ -90,7 +90,7 @@ private:
       case Key_Escape:			// key_escape
          if(firstpoint)
          {
-	   firstpoint = false;
+           firstpoint = false;
            RasterOp old_raster = widget->rasterOp();
            QColor old_color = widget->color();
            widget->lock();
@@ -101,7 +101,7 @@ private:
            widget->setRasterOp(old_raster);
            widget->setColor(old_color);
            widget->unlock();
-	   firsttime = true;
+           firsttime = true;
          }
          break;
     }//endswitch
@@ -116,7 +116,7 @@ private:
       
       widget->lock();
         widget->setRasterOp(XorROP);
-	*widget << CGAL::GREEN;
+        *widget << CGAL::GREEN;
         *widget << Circle(Point(x1,y1),
         squared_distance(Point(x1, y1), Point(x2,y2)));
       widget->unlock();
@@ -139,7 +139,7 @@ private:
       widget->lock();
       *widget << CGAL::GREEN;
       if(!firsttime)
-	*widget << Circle(Point(x1,y1),
+        *widget << Circle(Point(x1,y1),
 		  squared_distance(Point(x1, y1), Point(x2,y2)));
       *widget << Circle(Point(x1,y1),
 		  squared_distance(Point(x1, y1), Point(x,y)));
@@ -174,7 +174,7 @@ private:
 
   FT    x1, //the X of the first point
         y1; //the Y of the first point
-  FT	x2, //the old second point's X
+  FT    x2, //the old second point's X
         y2; //the old second point's Y
   bool	firstpoint, //true if the user left clicked once
 	firsttime;  //true if the line is not drawn

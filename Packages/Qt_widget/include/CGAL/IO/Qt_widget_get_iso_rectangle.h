@@ -52,8 +52,11 @@ public:
 			      QObject* parent = 0, const char* name = 0)
     : Qt_widget_layer(parent, name),  cursor(c), widgetrepainted(true),
       on_first(false) {};
-  
-private:
+  void draw(){
+    widgetrepainted = true;
+  };
+
+protected:
   bool is_pure(Qt::ButtonState s){
     if((s & Qt::ControlButton) ||
        (s & Qt::ShiftButton) ||
@@ -63,9 +66,6 @@ private:
       return 1;
   }
 
-  void draw(){
-    widgetrepainted = TRUE;
-  };
   void mousePressEvent(QMouseEvent *e)
   {
     if(e->button() == CGAL_QT_LEFT_BUTTON
@@ -77,7 +77,7 @@ private:
         first_y = e->y();
         on_first = true;
       } else {
-	if((e->x() != first_x) && (e->y() != first_y)) {
+          if((e->x() != first_x) && (e->y() != first_y)) {
           RT x, y, xfirst2, yfirst2;
           widget->x_real(e->x(), x);
           widget->y_real(e->y(), y);
@@ -89,12 +89,12 @@ private:
           if(y < yfirst2) {ymin = y; ymax = yfirst2;}
           else {ymin = yfirst2; ymax = y;};
 
-	  widget->new_object(
+          widget->new_object(
                      make_object(Iso_rectangle_2(xmin, ymin, 
                                                  xmax, ymax)));
-	  on_first = false;
-	  widgetrepainted = true;
-	}
+          on_first = false;
+          widgetrepainted = true;
+        }
       }
     }
   };

@@ -44,7 +44,7 @@ public:
     : Qt_widget_layer(parent, name), cursor(c), firstpoint(false),
       firsttime(true){};
 
-private:
+protected:
   bool is_pure(Qt::ButtonState s){
     if((s & Qt::ControlButton) ||
        (s & Qt::ShiftButton) ||
