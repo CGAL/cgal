@@ -7,7 +7,7 @@
 
 
 typedef MyKernel<double>      MK;
-typedef CGAL::Filtered_kernel<MK> K;
+typedef CGAL::Filtered_kernel_without_type_equality<MK> K;
 typedef CGAL::Delaunay_triangulation_2<K> Delaunay_triangulation_2;
 
 
