@@ -396,6 +396,7 @@ test_new_2(const R& rep)
         = rep.compute_area_2_object();
   FT tmp22a = compute_area_2(tmp18);
   FT tmp22b = compute_area_2(rec2);
+     tmp22b = compute_area_2(p3, p4, p5);
 
   typename R::Compute_squared_distance_2 Compute_squared_distance
         = rep.compute_squared_distance_2_object();

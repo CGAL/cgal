@@ -219,9 +219,14 @@ namespace CommonKernelFunctors {
     typedef typename K::FT                FT;
     typedef typename K::Iso_rectangle_2   Iso_rectangle_2;
     typedef typename K::Triangle_2        Triangle_2;
+    typedef typename K::Point_2           Point_2;
   public:
     typedef FT               result_type;
     typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()( const Point_2& p, const Point_2& q, const Point_2& r ) const
+    { return area(p, q, r); }
 
     FT
     operator()( const Iso_rectangle_2& r ) const

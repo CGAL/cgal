@@ -239,6 +239,12 @@ _test_fct_point_2(const R& )
 
  std::cout << '.';
 
+ assert( CGAL::area(p1, p2, p3) == FT(0) );
+ assert( CGAL::area(p2, p3, p6) == FT(1) );
+ assert( CGAL::area(p2, p6, p3) == FT(-1) );
+ 
+ std::cout << '.';
+
  std::cout << "done" << std::endl;
  return true;
 }

@@ -542,9 +542,14 @@ class Compute_area_2
     typedef typename K::FT                FT;
     typedef typename K::Iso_rectangle_2   Iso_rectangle_2;
     typedef typename K::Triangle_2        Triangle_2;
+    typedef typename K::Point_2           Point_2;
 public:
     typedef FT               result_type;
     typedef Arity_tag< 1 >   Arity;
+
+    FT
+    operator()( const Point_2&, const Point_2&, const Point_2&) const
+    { FT val = 0; return val; }
 
     FT
     operator()( const Iso_rectangle_2&) const
