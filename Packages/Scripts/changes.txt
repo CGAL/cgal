@@ -1,3 +1,6 @@
+18 March 2004 Michael Hoffmann
+- Added ranlib call to src/makefile... in create_internal_release
+
 15 March 2004 Radu Ursu
 - introduced lock file in autotest_cgal
 
