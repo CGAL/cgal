@@ -75,7 +75,7 @@ public:
       if(pHalfedge->tag() != -1)
         continue;
 
-      // simple edge bissection
+      // simple edge bisection
       const Point& p1 = pHalfedge->vertex()->point();
       const Point& p2 = pHalfedge->opposite()->vertex()->point();
       Point point = Point(0.5f*(p1.x()+p2.x()),
