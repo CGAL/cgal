@@ -60,6 +60,16 @@ by the base face.
 The base face of a constrained triangulation
 has to be a model of the concept
 \ccc{ConstrainedTriangulationFaceBase_2}.
+\cgal provides a defaults. If \ccc{Gt} is the geometric traits
+parameter,
+the default  for
+\ccc{ConstrainedTriangulationFaceBase_2}  is the class
+\ccc{CGAL::Constrained_triangulation_face_base_2<Gt>}
+and the default for the
+triangulation data structure parameter is the class
+\ccc{CGAL::Triangulation_data_structure_using_list_2 <
+                       CGAL::Triangulation_vertex_base_2<Gt>,
+		       CGAL::Constrained_triangulation_face_base_2<Gt> >}.
 
 \ccInclude{CGAL/Constrained_triangulation_2.h} 
  
