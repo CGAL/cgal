@@ -84,9 +84,10 @@ class test {
 
 private:
   bool cubes_tested;
+  bool isolated_edge_tested;
 
 public:
-  test() {cubes_tested=false;};
+  test() {cubes_tested=false; isolated_edge_tested=false;};
 
 private:
 
@@ -195,6 +196,22 @@ private:
     }
   }
 
+  void intersect_with_isolated_edge() {
+    if(!isolated_edge_tested) {
+      Nef_polyhedron N1 = load_nef3("single_edge.nef3.SH");
+      N1.is_valid(0,0);
+      Nef_polyhedron N2 = load_nef3("intersWithIsolatedEdge.nef3.SH");
+      N2.is_valid(0,0);
+      Nef_polyhedron N3 = N1.intersection(N2);
+      N3.is_valid(0,0);
+      CGAL_assertion(does_nef3_equals_file(N3,"intersWithIsolatedEdgeRef1.nef3.SH"));
+//      N3 = N1.symmetric_difference(N2);
+//      N3.is_valid(0,0);
+//      CGAL_assertion(does_nef3_equals_file(N3,"intersWithIsolatedEdgeRef2.nef3.SH"));
+      isolated_edge_tested = true;
+    }
+  }
+  
   void loadSave() {
 
     test_cubes();
@@ -1001,6 +1018,8 @@ private:
     N2 = N2.difference(S);
     CGAL_assertion(N2.is_valid(0,0));
     CGAL_assertion(does_nef3_equals_file(N2,"synthesis.nef3.SH"));
+
+    intersect_with_isolated_edge();
   }
 
   void unary_operations() {
@@ -1102,7 +1121,6 @@ private:
     
 public:
   void run_test() {
-    
     loadSave();
     newell();
     construction();
