@@ -60,6 +60,8 @@ typedef double                          Coord_type;
 typedef CGAL::Cartesian<Coord_type>     Rep;
 
 typedef CGAL::Point_2<Rep>              Point;
+typedef CGAL::Creator_uniform_2<double,Point>
+                                        Creator; 
 
 //global flags and variables
 int current_state;
@@ -125,6 +127,8 @@ public:
 				SLOT(on_square()), CTRL+Key_E );
     generate->insertItem("&Points on circle", this,
 				SLOT(on_circle()), CTRL+Key_C );
+    generate->insertItem("&Points on square grid", this,
+				SLOT(on_square_grid()), CTRL+Key_G );
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -239,6 +243,19 @@ private slots:
     for(int count=0; count<200; count++) {
       list_of_points.push_back(*g++);
     }
+    something_changed();
+  }
+
+  void on_square_grid()
+  {
+    widget->clear_history();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    // set the Visible Area to the Interval
+
+    CGAL::points_on_square_grid_2(1, 100, 
+				  std::back_inserter(list_of_points), 
+				  Creator());
+
     something_changed();
   }
 
