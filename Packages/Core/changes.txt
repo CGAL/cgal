@@ -1,5 +1,9 @@
+Version 0.11 (12 September 2003) [af]
+- bug fix for VC7.1
+- Added some CORE_INLINEs
+
 Version 0.10 (6 August 03) [af]
-Added assignment operator and bug in destructor of Sturm.h
+- Added assignment operator and bug in destructor of Sturm.h
 
 Version 0.9 (30 July 03) [af]
 - Fixed typo in makefile_Core
