@@ -1,6 +1,10 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
 
+2.9 (10 Jan 2003)
+
+     - Added Metrowerks support (patch by Radu Ursu).
+
 2.7 (29 Apr 2002)
      - split of user and reference manuals
 
