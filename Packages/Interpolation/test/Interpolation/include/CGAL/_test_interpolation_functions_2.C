@@ -217,6 +217,11 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
   typedef std::map<Point, Vector, typename Gt::Less_xy_2 >      
     Point_vector_map;
   
+  typedef std::vector< std::pair< Point, Coord_type > >
+                                                  Point_coordinate_vector;
+
+ 
+
   std::cout << "NN2: Testing random points." << std::endl; 
   //test random points in a square of length r:
   std::vector<Point> points;
@@ -288,11 +293,15 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
   
   //INTERPOLATION OF RANDOM POINTS:
   Coord_type exact_value, res, norm;
-  std::vector< std::pair< Point, Coord_type > > coords;
+  Point_coordinate_vector coords;
   for(int j=n;j<n+m;j++){
-    norm = 
+    CGAL::Triple<
+      std::back_insert_iterator<Point_coordinate_vector>, 
+      Coord_type, bool> coordinate_result = 
       CGAL::natural_neighbor_coordinates_2(T, points[j],
-					   std::back_inserter(coords)).second;
+					   std::back_inserter(coords));
+    assert(coordinate_result.third);
+    norm = coordinate_result.second;
     
     assert(norm>0);  
     assert(test_norm( coords.begin(), coords.end(),norm));
