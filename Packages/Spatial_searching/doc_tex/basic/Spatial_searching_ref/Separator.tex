@@ -1,0 +1,49 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Separator.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSSeparatorRev}{$Revision$}
+\RCSdefDate{\RCSSeparatorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Separator<NT>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for a separator.
+A separator is a $d-1$-dimensional subspace that separates a $d$-dimensional space into two parts.
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{Separator();}{Default constructor.}
+
+{\bf Member functions}
+\ccMethod{template <class Item>
+bool below(Item& i);}
+{Returns true if and only if the item value in the cutting dimension is smaller than the cutting value.}
+
+
+\ccHasModels
+
+\ccc{Plane_separator}.
+
+\ccSeeAlso
+
+\ccc{Plane_separator}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
