@@ -168,7 +168,7 @@ signals:
   void s_mouseMoveEvent(QMouseEvent *e);
   void s_paintEvent(QPaintEvent *e);
   void s_resizeEvent(QResizeEvent *e);
-  void s_wheelEvent(QMouseEvent *e);
+  void s_wheelEvent(QWheelEvent *e);
   void s_mouseDoubleClickEvent(QMouseEvent *e);
   void s_keyPressEvent(QKeyEvent *e);
   void s_keyReleaseEvent(QKeyEvent *e);
