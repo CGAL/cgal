@@ -416,4 +416,4 @@ insert_old_inst:
 include $(BASEDIR)/segments.mak
 include $(BASEDIR)/polylines.mak
 include $(BASEDIR)/conics.mak
-
+include $(BASEDIR)/pm_segments.mak
