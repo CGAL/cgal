@@ -18,6 +18,7 @@ CXXFLAGS = \
            $(EXTRA_FLAGS) \
            -Iinclude \
            $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
@@ -30,6 +31,7 @@ LIBPATH = \
 
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -37,14 +39,15 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                _test_Double \
-                _test_sign \
-                _test_valid_finite_double \
-                _test_valid_finite_float \
-                _test_to_interval \
-                doubletst \
-                floattst \
-                quotient_io 
+                _test_Double$(EXE_EXT) \
+                _test_sign$(EXE_EXT) \
+                _test_to_interval$(EXE_EXT) \
+                _test_valid_finite_double$(EXE_EXT) \
+                _test_valid_finite_float$(EXE_EXT) \
+                cln_io$(EXE_EXT) \
+                doubletst$(EXE_EXT) \
+                floattst$(EXE_EXT) \
+                quotient_io$(EXE_EXT) 
 
 _test_Double$(EXE_EXT): _test_Double$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_Double _test_Double$(OBJ_EXT) $(LDFLAGS)
@@ -52,14 +55,17 @@ _test_Double$(EXE_EXT): _test_Double$(OBJ_EXT)
 _test_sign$(EXE_EXT): _test_sign$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_sign _test_sign$(OBJ_EXT) $(LDFLAGS)
 
+_test_to_interval$(EXE_EXT): _test_to_interval$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_to_interval _test_to_interval$(OBJ_EXT) $(LDFLAGS)
+
 _test_valid_finite_double$(EXE_EXT): _test_valid_finite_double$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_valid_finite_double _test_valid_finite_double$(OBJ_EXT) $(LDFLAGS)
 
 _test_valid_finite_float$(EXE_EXT): _test_valid_finite_float$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_valid_finite_float _test_valid_finite_float$(OBJ_EXT) $(LDFLAGS)
 
-_test_to_interval$(EXE_EXT): _test_to_interval$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_to_interval _test_to_interval$(OBJ_EXT) $(LDFLAGS)
+cln_io$(EXE_EXT): cln_io$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)cln_io cln_io$(OBJ_EXT) $(LDFLAGS)
 
 doubletst$(EXE_EXT): doubletst$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)doubletst doubletst$(OBJ_EXT) $(LDFLAGS)
@@ -71,10 +77,12 @@ quotient_io$(EXE_EXT): quotient_io$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quotient_io quotient_io$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   _test_Double.clean \
                    _test_sign.clean \
+                   _test_to_interval.clean \
                    _test_valid_finite_double.clean \
                    _test_valid_finite_float.clean \
-                   _test_to_interval.clean \
+                   cln_io.clean \
                    doubletst.clean \
                    floattst.clean \
                    quotient_io.clean 
