@@ -374,7 +374,16 @@ deletion_event(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
     Vertex_index cur_vt = (td_prev.is_left_to_right) ? mid_vt : prev_vt;
     It seg_above = prev_seg;
     ++seg_above;
-    if (seg_above == mid_seg) ++seg_above;
+    if (seg_above == mid_seg) {
+        ++seg_above;
+    } else {
+        // mid_seg was not above prev_seg, so prev_seg should be above mid_seg
+        // We check this to see if the edges are really neighbors in the tree.
+        It prev_seg_copy = mid_seg;
+        ++prev_seg_copy;
+        if (prev_seg_copy != prev_seg)
+            return false;
+    }
     tree->erase(prev_seg);
     td_prev.is_in_tree = false;
     tree->erase(mid_seg);
