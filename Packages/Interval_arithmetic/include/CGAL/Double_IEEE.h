@@ -27,6 +27,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/double.h>
 #include <CGAL/number_utils.h>
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -35,9 +36,6 @@ class Double_IEEE
   double _d;
 
   typedef Double_IEEE Self;
-
-  friend std::istream& operator>>(std::istream&, Self& );
-  friend std::ostream& operator<<(std::ostream&, const Self);
 
 public:
   Double_IEEE() {}
@@ -48,19 +46,6 @@ public:
   {
     return _d;
   }
-#if 1
-    // The copy constructors/assignment: useless.
-    // The default ones are ok, but these are faster...
-    // [check that]
-  Double_IEEE(const Self d)
-    : _d(d._d) {}
-    
-  Self & operator=(const Self & d)
-  {
-      _d = d._d;
-      return *this;
-  }
-#endif
 
   operator double() const
   {
@@ -69,48 +54,48 @@ public:
 
   Self operator-() const
   {
-    return Self(-_d);
+    return -_d;
   }
 
   Self operator+(const Self d) const
   {
-    return Self(_d + d._d);
+    return _d + d._d;
   }
 
   Self operator-(const Self d) const
   {
-    return Self(_d - d._d);
+    return _d - d._d;
   }
 
   Self operator*(const Self d) const
   {
-    return Self(_d * d._d);
+    return _d * d._d;
   }
 
   Self operator/(const Self d) const
   {
-    return Self(_d / d._d);
+    return _d / d._d;
   }
 
-  Self&  operator+=(const Self d)
+  Self& operator+=(const Self d)
   {
     _d += d._d;
     return *this;
   }
 
-  Self&  operator-=(const Self d)
+  Self& operator-=(const Self d)
   {
     _d -= d._d;
     return *this;
   }
 
-  Self&  operator*=(const Self d)
+  Self& operator*=(const Self d)
   {
     _d *= d._d;
     return *this;
   }
 
-  Self&  operator/=(const Self d)
+  Self& operator/=(const Self d)
   {
     _d /= d._d;
     return *this;
@@ -118,7 +103,7 @@ public:
 
   bool operator==(const Self d) const
   {
-    return _d = d._d;
+    return _d == d._d;
   }
 
   bool operator!=(const Self d) const
@@ -149,21 +134,21 @@ public:
 
 inline
 bool
-is_valid(const Double_IEEE &d)
+is_valid(const Double_IEEE d)
 {
     return is_valid(d.d());
 }
 
 inline
 bool
-is_finite(const Double_IEEE &d)
+is_finite(const Double_IEEE d)
 {
     return is_finite(d.d());
 }
 
 inline
 double
-to_double(const Double_IEEE &d)
+to_double(const Double_IEEE d)
 {
     return d.d();
 }
@@ -182,9 +167,23 @@ io_tag(const Double_IEEE &)
   return io_Operator();
 }
 
-extern std::ostream  &operator<<(std::ostream& os, const Self);
+inline
+std::ostream &
+operator<<(std::ostream& os, const Double_IEEE d)
+{
+    return os << d.d();
+}
+
+inline
+std::istream &
+operator>>(std::istream& is, Double_IEEE & d)
+{
+    double db;
+    is >> db;
+    d = db;
+    return is;
+}
 
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_DOUBLE_IEEE_H
-
