@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+DEMO: New User-Interface with different Generators.
 DEMO: fixed for LEDA-3.8 (the point_set<I> data structure vanished)
 DEMO: Now nearest neighbor queries are done brute-force.
 ALL : added std:: in a number of places where it was missing
@@ -15,12 +16,15 @@ ALL : use standard header files
 ALL : Initial revision
 DOCS: fixed "cal" problem with html converter
 DOCS: fixed preconditions in replace_column (reported by Mariette).
+SRC : New linear 2- and 3-center algorithm.
+TEST: Use Intervall_arithmetic number type.
 TEST: Added LONG_NAME_PROBLEM flags to makefile
 
 //---------------------------------------------------------------------
 //	 CGAL-1.2
 //---------------------------------------------------------------------
 
+DEMO: New User-Interface with different Generators.
 ALL : some minor changes to prevent warnings for gcc -Wall.
 DEMO: Initial revision
 SRC : fix signed <-> unsigned comparison warning on gcc.
