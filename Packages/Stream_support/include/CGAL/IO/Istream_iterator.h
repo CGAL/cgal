@@ -63,6 +63,10 @@ public:
     bool      operator==( const Self& i) const {
                   return stream == i.stream;
     }
+   bool      operator!=( const Self& i) const {
+                  return stream != i.stream;
+    }
+
     reference operator*()  const { return value; }
 #ifdef  CGAL_ARROW_OPERATOR
     pointer   operator->() const { return &(operator*()); }
