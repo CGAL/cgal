@@ -73,10 +73,27 @@ public:
   operator()(const typename K1::Site_2& t) const
   {
     if ( t.is_point() ) {
-      return K2_Site_2( Base::operator()(t.point()) );
+      if ( t.is_exact() ) {
+	return K2_Site_2( Base::operator()(t.point()) );
+      } else {
+	K2_Segment_2 s1 = Base::operator()(t.supporting_segment(0));
+	K2_Segment_2 s2 = Base::operator()(t.supporting_segment(1));
+	return K2_Site_2(s1, s2);
+      }
     }
 
-    return K2_Site_2( Base::operator()(t.segment()) );
+    if ( t.is_exact() ) {
+      return K2_Site_2( Base::operator()(t.segment()) );
+    } else {
+      K2_Segment_2 supp = Base::operator()(t.supporting_segment());
+      if ( t.is_exact(0) ) {
+	K2_Segment_2 s = Base::operator()(t.crossing_segment(1));
+	return K2_Site_2(supp, s, true);
+      } else {
+	K2_Segment_2 s = Base::operator()(t.crossing_segment(0));
+	return K2_Site_2(supp, s, false);
+      }
+    }
   }
 
 

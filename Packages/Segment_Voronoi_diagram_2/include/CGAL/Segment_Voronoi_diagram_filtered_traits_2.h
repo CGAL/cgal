@@ -299,6 +299,7 @@ public:
 
   // PREDICATES
   //-----------
+
   Compare_x_2
   compare_x_2_object() const {
     return Compare_x_2();

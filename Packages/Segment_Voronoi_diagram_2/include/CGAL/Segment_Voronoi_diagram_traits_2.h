@@ -98,7 +98,6 @@ public:
   struct Arity {};
 
 public:
-
   bool operator()(const Site_2& p, const Site_2& q) const
   {
     return svd_are_parallel_C2(p, q);
@@ -112,173 +111,28 @@ public:
 //-----------------------------------------------------------------------
 
 template<class K, class Method_tag>
-inline Comparison_result
-svd_compare_distance_2(const typename K::Point_2& q,
-		       const typename K::Segment_2& s,
-		       const typename K::Point_2& p,
-		       Cartesian_tag, Method_tag method_tag)
-{
-  return svd_compare_distance_ftC2(q.x(), q.y(),
-				   s[0].x(), s[0].y(),
-				   s[1].x(), s[1].y(),
-				   p.x(), p.y(), method_tag);
-}
-
-template<class K, class Method_tag>
-inline Comparison_result
-svd_compare_distance_2(const typename K::Point_2& q,
-		       const typename K::Segment_2& s,
-		       const typename K::Point_2& p,
-		       Homogeneous_tag, Method_tag method_tag)
-{
-  return svd_compare_distanceH2(q.hx(), q.hy(), q.hw(),
-				s[0].hx(), s[0].hy(), s[0].hw(),
-				s[1].hx(), s[1].hy(), s[1].hw(),
-				p.hx(), p.hy(), p.hw(), method_tag);
-}
-
-
-template<class K, class Method_tag>
-inline Comparison_result
-svd_compare_distance_2(const typename K::Point_2& q,
-		       const typename K::Segment_2& s1,
-		       const typename K::Segment_2& s2,
-		       Cartesian_tag, Method_tag method_tag)
-{
-  return svd_compare_distance_ftC2(q.x(), q.y(),
-				   s1[0].x(), s1[0].y(),
-				   s1[1].x(), s1[1].y(),
-				   s2[0].x(), s2[0].y(),
-				   s2[1].x(), s2[1].y(), method_tag);
-}
-
-template<class K, class Method_tag>
-inline Comparison_result
-svd_compare_distance_2(const typename K::Point_2& q,
-		       const typename K::Segment_2& s1,
-		       const typename K::Segment_2& s2,
-		       Homogeneous_tag, Method_tag method_tag)
-{
-  return svd_compare_distanceH2(q.hx(), q.hy(), q.hw(),
-				s1[0].hx(), s1[0].hy(), s1[0].hw(),
-				s1[1].hx(), s1[1].hy(), s1[1].hw(),
-				s2[0].hx(), s2[0].hy(), s2[0].hw(),
-				s2[1].hx(), s2[1].hy(), s2[1].hw(),
-				method_tag);
-}
-
-
-template<class K, class Method_tag>
 class Svd_oriented_side_of_bisector_2
 {
 public:
   typedef typename K::Site_2     Site_2;
   typedef Oriented_side          result_type;
 
-  typedef typename K::Point_2    Point_2;
-  typedef typename K::Segment_2  Segment_2;
-  typedef typename K::Rep_tag    Rep_tag;
+  //  typedef typename K::Point_2    Point_2;
+  //  typedef typename K::Segment_2  Segment_2;
+  //  typedef typename K::Rep_tag    Rep_tag;
 
   struct Arity {};
 
-private:
-  inline Comparison_result
-  operator()(const Point_2& q,
-	     const Point_2& p1, const Point_2& p2) const
-  {
-    CGAL_precondition( p1 != p2 );
-
-    if ( q == p1 ) { return SMALLER; }
-    if ( q == p2 ) { return LARGER; }
-    
-    return compare_distance_to_point(q, p1, p2);
-  }
-
-  inline Comparison_result
-  operator()(const Point_2& q,
-	     const Point_2& p, const Segment_2& s) const
-  {
-    CGAL_precondition( !s.is_degenerate() );
-
-    return
-      opposite( svd_compare_distance_2<K>(q, s, p, Rep_tag(), Method_tag()) );
-  }
-
-  inline Comparison_result
-  operator()(const Point_2& q,
-	     const Segment_2& s, const Point_2& p) const
-  {
-    if ( q == p ) { return LARGER; }
-    if ( q == s.source() ) { return SMALLER; }
-    if ( q == s.target() ) { return SMALLER; }
-
-    return svd_compare_distance_2<K>(q, s, p, Rep_tag(), Method_tag());
-  }
-
-  inline Comparison_result
-  operator()(const Point_2& q,
-	     const Segment_2& s1, const Segment_2& s2) const
-  {
-    CGAL_precondition( !s1.is_degenerate() );
-    CGAL_precondition( !s2.is_degenerate() );
-
-    if (  ( q == s1.source() && q == s2.source() ) ||
-	  ( q == s1.source() && q == s2.target() ) ||
-	  ( q == s1.target() && q == s2.source() ) ||
-	  ( q == s1.target() && q == s2.target() )  ) {
-      return EQUAL;
-    }
-
-    if (  ( q == s1.source() || q == s1.target() ) &&
-	  ( q != s2.source() && q != s2.target() )  ) {
-      return SMALLER;
-    }
-
-    if (  ( q == s2.source() || q == s2.target() ) &&
-	  ( q != s1.source() && q != s1.target() )  ) {
-      return LARGER;
-    }
-
-    if ( (s1.source() == s2.source() && s1.target() == s2.target()) ||
-	 (s1.source() == s2.target() && s1.target() == s2.source()) ) {
-      return EQUAL;
-    }
-
-    return svd_compare_distance_2<K>(q, s1, s2, Rep_tag(), Method_tag());
-  }
-
 public:
-  inline Oriented_side
+  Oriented_side
   operator()(const Site_2& t1, const Site_2& t2,
-	     const Point_2& q) const
+	     const Site_2& q) const
   {
-    Comparison_result r;
-
-    if ( t1.is_point() && t2.is_point() ) {
-      r = operator()(q, t1.point(), t2.point());
-      if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
-      if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
-      return ON_ORIENTED_BOUNDARY;
-    } else if ( t1.is_segment() && t2.is_point() ) {
-      r = operator()(q, t1.segment(), t2.point());
-      if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
-      if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
-      return ON_NEGATIVE_SIDE;
-    } else if ( t1.is_point() && t2.is_segment() ) {
-      r = operator()(q, t1.point(), t2.segment());
-      if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
-      if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
-      return ON_POSITIVE_SIDE;
-    } else {
-      r = operator()(q, t1.segment(), t2.segment());
-      if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
-      if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
-      return ON_ORIENTED_BOUNDARY;
-    }
+    return svd_oriented_side_of_bisector_ftC2<K,Method_tag>
+      (t1, t2, q, Method_tag());
   }
 
 };
-
 
 //-----------------------------------------------------------------------
 //                           vertex conflict
@@ -302,7 +156,6 @@ public:
       svd_vertex_conflict_ftC2<K,Method_tag>(q, p, t, Method_tag());
   }
 
-  inline
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t) const
   {
@@ -325,8 +178,6 @@ public:
   struct Arity {};
 
 public:
-  
-  inline
   bool operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& t, Sign sgn) const
   {
@@ -336,7 +187,6 @@ public:
   }
 
 
-  inline
   bool operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t, Sign sgn) const
   {
@@ -345,7 +195,6 @@ public:
 						  sgn, Method_tag());
   }
 
-  inline
   bool operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& s,
 		  const Site_2& t, Sign sgn) const
@@ -373,8 +222,6 @@ public:
   struct Arity {};
 
 public:
-  
-  inline
   bool operator()(const Site_2& q, const Site_2& r, const Site_2& s,
 		  const Site_2& t, Sign sgn) const
   {
@@ -399,8 +246,6 @@ public:
   struct Arity {};
 
 public:
-  
-  inline
   bool operator()(const Site_2& p, const Site_2& q, const Site_2& r,
 		  const Site_2& s) const
   {
@@ -423,7 +268,6 @@ public:
   struct Arity {};
 
 public:
-  
   result_type
   operator()(const Site_2& p, const Site_2& q) const
   {
@@ -447,7 +291,6 @@ public:
   struct Arity {};
 
 public:
-  
   result_type
   operator()(const Site_2& s1, const Site_2& s2, const Site_2& s3,
 	     const Site_2& s, const Site_2& p) const
@@ -542,6 +385,7 @@ public:
 
   // PREDICATES
   //-----------
+
   Compare_x_2
   compare_x_2_object() const {
     return Compare_x_2();

@@ -527,7 +527,7 @@ protected:
   //   ON_ORIENTED_BOUNDARY if q is on the bisector of t1 and t2
   Oriented_side side_of_bisector(const Site &t1,
 				 const Site &t2,
-				 const Point &q) const;
+				 const Site &q) const;
 
   Sign incircle(const Site &t1, const Site &t2,
 		const Site &t3, const Site &q) const;

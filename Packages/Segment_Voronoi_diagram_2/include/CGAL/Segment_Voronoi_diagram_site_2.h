@@ -213,8 +213,8 @@ public:
     initialize_site(support, s1, s2);
   }
 
-  void set_point(const Segment_2& support, Segment_2& s,
-		 bool is_first_exact) {
+  void set_segment(const Segment_2& support, Segment_2& s,
+		   bool is_first_exact) {
     initialize_site(support, s, is_first_exact);
   }
 

@@ -36,27 +36,25 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 template<class K>
-bool svd_are_same_points_C2(const typename K::Site_2 t[],
-			    unsigned int num_sites)
+void svd_predicate_push_back_C2(const typename K::Site_2& t,
+				std::vector<typename K::FT>& v,
+				std::vector<char>& site_types)
 {
-  typedef typename K::FT   FT;
-  char site_types[4];
-  int k(0);
-
-  std::vector<FT> v;
-
-  for (unsigned int i = 0; i < num_sites; i++) {
-    site_types[k] = 'p';
-    if ( t[i].is_exact() ) {
-      v.push_back( t[i].point().x() );
-      v.push_back( t[i].point().y() );
-      site_types[k+1] = 'e';
+  if ( t.is_point() ) {
+    site_types.push_back('p');
+    if ( t.is_exact() ) {
+      site_types.push_back('e');
+      v.push_back( t.point().x() );
+      v.push_back( t.point().y() );
     } else {
-      typename K::Segment_2 s1 = t[i].supporting_segment(0);
-      typename K::Segment_2 s2 = t[i].supporting_segment(1);
+      site_types.push_back('i');
+      typename K::Segment_2 s1 = t.supporting_segment(0);
+      typename K::Segment_2 s2 = t.supporting_segment(1);
       v.push_back( s1.source().x() );
       v.push_back( s1.source().y() );
       v.push_back( s1.target().x() );
@@ -65,296 +63,357 @@ bool svd_are_same_points_C2(const typename K::Site_2 t[],
       v.push_back( s2.source().y() );
       v.push_back( s2.target().x() );
       v.push_back( s2.target().y() );
-      site_types[k+1] = 'i';
     }
-    k += 2;
-  }
+  } else {
+    site_types.push_back('s');
+    if ( t.is_exact() ) {
+      site_types.push_back('e');
+      v.push_back( t.source().x() );
+      v.push_back( t.source().y() );
+      v.push_back( t.target().x() );
+      v.push_back( t.target().y() );
+    } else {
+      typename K::Segment_2 supp = t.supporting_segment();
+      v.push_back( supp.source().x() );
+      v.push_back( supp.source().y() );
+      v.push_back( supp.target().x() );
+      v.push_back( supp.target().y() );
 
-  return svd_are_same_points_ftC2(v, site_types, num_sites);
+      typename K::Segment_2 cs, cs2;
+      char stype;
+      if ( t.is_exact(0) ) {
+	stype = '0';
+	cs = t.crossing_segment(1);
+      } else if ( t.is_exact(1) ) {
+	stype = '1';
+	cs = t.crossing_segment(0);
+      } else {
+	stype = 'i';
+	cs = t.crossing_segment(0);
+	cs2 = t.crossing_segment(1);
+      }
+
+      site_types.push_back( stype );
+      v.push_back( cs.source().x() );
+      v.push_back( cs.source().y() );
+      v.push_back( cs.target().x() );
+      v.push_back( cs.target().y() );
+
+      if ( stype == 'i' ) {
+	v.push_back( cs2.source().x() );
+	v.push_back( cs2.source().y() );
+	v.push_back( cs2.target().x() );
+	v.push_back( cs2.target().y() );
+      }
+    }
+  }
 }
 
+
 template<class K>
+typename K::Site_2
+get_site(const std::vector<typename K::FT>& v, unsigned int& k,
+	 const std::vector<char>& site_types, unsigned int& j)
+{
+  typedef typename K::Point_2             Point_2;
+  typedef typename K::Segment_2           Segment_2;
+  typedef typename K::Site_2              Site_2;
+
+  Site_2 t;
+
+  unsigned int step(0);
+
+  if ( site_types[j] == 'p' ) {
+    if ( site_types[j+1] == 'e' ) {
+      Point_2 p(v[k], v[k+1]);
+      t.set_point(p);
+      step = 2;
+    } else {
+      Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+      Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
+      Segment_2 s1(p1, p2), s2(p3, p4);
+      t.set_point(s1, s2);
+      step = 8;
+    }
+  } else {
+    if ( site_types[j+1] == 'e' ) {
+      Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+      Segment_2 s(p1, p2);
+      t.set_segment(s);
+      step = 4;
+    } else {
+      if ( site_types[j+1] != 'i' ) {
+	Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+	Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
+	Segment_2 supp(p1, p2);
+	Segment_2 cs(p3, p4);
+	t.set_segment(supp, cs, (site_types[j+1] == '0'));
+	step = 8;
+      } else {
+	Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+	Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
+	Point_2 p5(v[k+8], v[k+9]), p6(v[k+10], v[k+11]);
+	Segment_2 supp(p1, p2);
+	Segment_2 s1(p3, p4), s2(p5, p6);
+	t.set_segment(supp, s1, s2);
+	step = 12;
+      }
+    }
+  }
+
+  j += 2;
+  k += step;
+
+  return t;
+}
+
+//--------------------------------------------------------------------------
+
+template<typename Result_t, class Predicate, unsigned int Arity>
+struct Svd_predicate_caller;
+
+template<typename Result_t, class Predicate>
+struct Svd_predicate_caller<Result_t, Predicate, 2>
+{
+  template<class S>
+  Result_t operator()(const S t[]) const
+    {
+      return Predicate()(t[0], t[1]);
+    }
+};
+
+template<typename Result_t, class Predicate>
+struct Svd_predicate_caller<Result_t, Predicate, 3>
+{
+  template<class S>
+  Result_t operator()(const S t[]) const
+    {
+      return Predicate()(t[0], t[1], t[2]);
+    }
+
+  template<class S, typename Data>
+  Result_t operator()(const S t[], Data data) const
+    {
+      return Predicate()(t[0], t[1], t[2], data);
+    }
+};
+
+template<typename Result_t, class Predicate>
+struct Svd_predicate_caller<Result_t, Predicate, 4>
+{
+  template<class S>
+  Result_t operator()(const S t[]) const
+    {
+      return Predicate()(t[0], t[1], t[2], t[3]);
+    }
+
+  template<class S, typename Data>
+  Result_t operator()(const S t[], Data data) const
+    {
+      return Predicate()(t[0], t[1], t[2], t[3], data);
+    }
+};
+
+template<typename Result_t, class Predicate>
+struct Svd_predicate_caller<Result_t, Predicate, 5>
+{
+  template<class S>
+  Result_t operator()(const S t[]) const
+    {
+      return Predicate()(t[0], t[1], t[2], t[3], t[4]);
+    }
+
+  template<class S, typename Data>
+  Result_t operator()(const S t[], Data data) const
+    {
+      return Predicate()(t[0], t[1], t[2], t[3], t[4], data);
+    }
+};
+
+
+//--------------------------------------------------------------------------
+
+template<template<class Kernel> class Predicate_t,
+	 typename Return_t, class FT,
+	 unsigned int Num_sites>
+Return_t
+svd_predicate_ftC2(const std::vector<FT>& v,
+		   const std::vector<char>& site_types)
+{
+   typedef Simple_cartesian<FT>                 Rep;
+   typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+
+   typedef typename Kernel::Site_2                   Site_2;
+   typedef Predicate_t<Kernel>                       Predicate;
+
+   typedef Svd_predicate_caller<Return_t, Predicate, Num_sites> Caller;
+
+   must_be_filtered(FT());
+
+
+   Site_2 t[Num_sites];
+
+   for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+     t[i] = get_site<Kernel>(v, k, site_types, j);
+   }
+
+   Return_t result = Caller()(t);
+
+   return result;
+}
+
+template<template<class Kernel, class MTag> class Predicate_t,
+	 typename Return_t, class FT,
+	 class Method_tag, unsigned int Num_sites>
+Return_t
+svd_predicate_ftC2(const std::vector<FT>& v,
+		   const std::vector<char>& site_types)
+{
+   typedef Simple_cartesian<FT>                 Rep;
+   typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+
+   typedef typename Kernel::Site_2                   Site_2;
+   typedef Predicate_t<Kernel,Method_tag>            Predicate;
+
+   typedef Svd_predicate_caller<Return_t, Predicate, Num_sites> Caller;
+
+   must_be_filtered(FT());
+
+
+   Site_2 t[Num_sites];
+
+   for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+     t[i] = get_site<Kernel>(v, k, site_types, j);
+   }
+
+   Return_t result = Caller()(t);
+
+   return result;
+}
+
+template<template<class Kernel, class MTag> class Predicate_t,
+	 typename Return_t, class FT,
+	 class Method_tag, typename Data, unsigned int Num_sites>
+Return_t
+svd_predicate_ftC2(const std::vector<FT>& v,
+		   const std::vector<char>& site_types, Data data)
+{
+   typedef Simple_cartesian<FT>                 Rep;
+   typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+
+   typedef typename Kernel::Site_2                   Site_2;
+   typedef Predicate_t<Kernel,Method_tag>            Predicate;
+
+   typedef Svd_predicate_caller<Return_t, Predicate, Num_sites> Caller;
+
+   must_be_filtered(FT());
+
+
+   Site_2 t[Num_sites];
+
+   for (unsigned int i = 0, k = 0, j = 0; i < Num_sites; i++) {
+     t[i] = get_site<Kernel>(v, k, site_types, j);
+   }
+
+   Return_t result = Caller()(t, data);
+
+   return result;
+}
+
+//--------------------------------------------------------------------------
+
+template<template<class Kernel> class Predicate,
+	 typename Return_t, class K,
+	 unsigned int Num_sites>
+Return_t
+svd_predicate_C2(const typename K::Site_2 t[])
+{
+  typedef typename K::FT   FT;
+
+  std::vector<FT> v;
+  std::vector<char> site_types;
+
+  for (unsigned int i = 0; i < Num_sites; i++) {
+    svd_predicate_push_back_C2<K>(t[i], v, site_types);
+  }
+
+  return
+    svd_predicate_ftC2<Predicate,Return_t,FT,Num_sites>(v, site_types);
+}
+
+template<template<class Kernel, class MTag> class Predicate,
+	 typename Return_t, class K,
+	 class Method_tag, unsigned int Num_sites>
+Return_t
+svd_predicate_C2(const typename K::Site_2 t[])
+{
+  typedef typename K::FT   FT;
+
+  std::vector<FT> v;
+  std::vector<char> site_types;
+
+  for (unsigned int i = 0; i < Num_sites; i++) {
+    svd_predicate_push_back_C2<K>(t[i], v, site_types);
+  }
+
+  return svd_predicate_ftC2<Predicate,Return_t,FT,
+    Method_tag,Num_sites>(v, site_types);
+}
+
+template<template<class Kernel, class MTag> class Predicate,
+	 typename Return_t, class K,
+	 class Method_tag, typename Data, unsigned int Num_sites>
+Return_t
+svd_predicate_C2(const typename K::Site_2 t[], Data data)
+{
+  typedef typename K::FT   FT;
+
+  std::vector<FT> v;
+  std::vector<char> site_types;
+
+  for (unsigned int i = 0; i < Num_sites; i++) {
+    svd_predicate_push_back_C2<K>(t[i], v, site_types);
+  }
+
+  return svd_predicate_ftC2<Predicate,Return_t,FT,
+    Method_tag, Data, Num_sites>(v, site_types, data);
+}
+
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+
+template<class K>
+inline
 bool svd_are_same_points_C2(const typename K::Site_2& p,
 			    const typename K::Site_2& q)
 {
   typename K::Site_2 site_vec[] = {p, q};
-  return svd_are_same_points_C2<K>(site_vec, 2);
+  return svd_predicate_C2<Svd_are_same_points_C2,bool,K,2>(site_vec);
 }
-
-template<class FT>
-bool
-svd_are_same_points_ftC2(const std::vector<FT>& v,
-			 char site_types[], unsigned int num_sites)
-{
-   CGAL_precondition( num_sites == 2 );
-
-   must_be_filtered(FT());
-
-   typedef Simple_cartesian<FT>                 Rep;
-   typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
-
-   typedef typename Kernel::Point_2             Point_2;
-   typedef typename Kernel::Segment_2           Segment_2;
-   typedef typename Kernel::Site_2              Site_2;
-   typedef Svd_are_same_points_C2<Kernel>       Are_same_points_2;
-
-   Site_2 t[2];
-
-   for (unsigned int i = 0, k = 0, j = 0; i < num_sites; i++, j += 2) {
-     if ( site_types[j] == 'p' && site_types[j+1] == 'e' ) {
-       Point_2 p(v[k], v[k+1]);
-       t[i].set_point(p);
-     } else {
-       Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
-       Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
-       Segment_2 s1(p1, p2), s2(p3, p4);
-       t[i].set_point(s1, s2);
-     }
-     k += ( (site_types[j+1] == 'e') ? 2 : 8 );
-   }
-
-   bool b = Are_same_points_2()(t[0], t[1]);
-   return b;
-}
-
 
 //--------------------------------------------------------------------------
-
-template<class FT, class Method_tag>
-Comparison_result
-svd_compare_distance_ftC2(const FT& qx, const FT& qy,
-			  const FT& sx, const FT& sy,
-			  const FT& tx, const FT& ty,
-			  const FT& px, const FT& py, Method_tag)
-{
-  // first check if (qx,qy) is inside, the boundary or at the exterior
-  // of the band of the segment s
-
-  must_be_filtered(qx);
-
-  FT dx = sx - tx;
-  FT dy = sy - ty;
-
-
-  FT d1x = qx - sx;
-  FT d1y = qy - sy;
-  FT d2x = qx - tx;
-  FT d2y = qy - ty;
-
-  if ( px == sx && py == sy ) {
-    FT o = dx * d1x + dy * d1y;
-    if ( o >= FT(0) ) {
-      return LARGER;
-    }
-  }
-
-  if ( px == tx && py == ty ) {
-    FT o = dx * d2x + dy * d2y;
-    if ( o <= FT(0) ) {
-      return LARGER;
-    }
-  }
-
-
-  FT d2_from_p = CGAL::square (qx-px) + CGAL::square(qy-py);
-
-  FT dot1 = dx * d1x + dy * d1y;
-  if ( dot1 >= FT(0) ) {
-    // q is outside (or the boundary of) the band on the side of s.
-    FT d2_from_s = CGAL::square(d1x) + CGAL::square(d1y);
-    return CGAL::compare(d2_from_s, d2_from_p);
-  }
-
-  FT dot2 = dx * d2x + dy * d2y;
-  if ( dot2 <= FT(0) ) {
-    // q is outside (or the boundary of) the band on the side of t.
-    FT d2_from_t = CGAL::square(d2x) + CGAL::square(d2y);
-    return CGAL::compare(d2_from_t, d2_from_p);
-  }
-
-  // q is strictly in the interior of the band, so I have to compare
-  // its distance from the supporting line.
-  FT c = sx * ty - sy * tx;
-  FT n = CGAL::square(dx) + CGAL::square(dy);
-  FT d2_from_l = CGAL::square(qx * dy - qy * dx + c);
-  return CGAL::compare(d2_from_l, d2_from_p * n);
-}
-
-template<class FT, class Method_tag>
-Comparison_result
-svd_compare_distance_ftC2(const FT& qx, const FT& qy,
-			  const FT& s1x, const FT& s1y,
-			  const FT& t1x, const FT& t1y,
-			  const FT& s2x, const FT& s2y,
-			  const FT& t2x, const FT& t2y, Method_tag)
-{
-  // first check if (qx,qy) is inside, the boundary or at the exterior
-  // of the band of the segments s1, s2
-
-  must_be_filtered(qx);
-
-  FT d1x = s1x - t1x;
-  FT d1y = s1y - t1y;
-
-  FT d2x = s2x - t2x;
-  FT d2y = s2y - t2y;
-
-  FT dqs1x = qx - s1x;
-  FT dqs1y = qy - s1y;
-  FT dqt1x = qx - t1x;
-  FT dqt1y = qy - t1y;
-
-  FT dqs2x = qx - s2x;
-  FT dqs2y = qy - s2y;
-  FT dqt2x = qx - t2x;
-  FT dqt2y = qy - t2y;
-
-  FT dot_s1 = d1x * dqs1x + d1y * dqs1y;
-  int idx1; // 0 for s1, 1 for interior of 1, 2 for t1;
-
-  if ( qx == s1x && qy == s1y ) {
-    idx1 = 0;
-  } else if ( qx == t1x && qy == t1y ) {
-    idx1 = 2;
-  } else if ( dot_s1 >= FT(0) ) {
-    // q is outside (or the boundary of) the band of 1 on the side of s1.
-    idx1 = 0;
-  } else {
-    FT dot_t1 = d1x * dqt1x + d1y * dqt1y;
-    if ( dot_t1 <= FT(0) ) {
-      // q is outside (or the boundary of) the band of 1 on the side of t1.
-      idx1 = 2;
-    } else {
-      idx1 = 1;
-    }
-  }
-
-  FT dot_s2 = d2x * dqs2x + d2y * dqs2y;
-  int idx2; // 0 for s2, 1 for interior of 2, 2 for t2;
-
-  if ( qx == s2x && qy == s2y ) {
-    idx2 = 0;
-  } else if ( qx == t2x && qy == t2y ) {
-    idx2 = 2;
-  } else if ( dot_s2 >= FT(0) ) {
-    // q is outside (or the boundary of) the band of 2 on the side of s2.
-    idx2 = 0;
-  } else {
-    FT dot_t2 = d2x * dqt2x + d2y * dqt2y;
-    if ( dot_t2 <= FT(0) ) {
-      // q is outside (or the boundary of) the band of 2 on the side of t2.
-      idx2 = 2;
-    } else {
-      idx2 = 1;
-    }
-  }
-
-  if ( idx1 == 0 ) {
-    FT d2_from_s1 = CGAL::square(dqs1x) + CGAL::square(dqs1y);
-    //    if ( qx == s1x && qy == s1y ) { d2_from_s1 = FT(0); }
-    if ( idx2 == 0 ) {
-      FT d2_from_s2 = CGAL::square(dqs2x) + CGAL::square(dqs2y);
-      //      if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
-
-      if ( s1x == s2x && s1y == s2y ) { return EQUAL; }
-
-      return CGAL::compare(d2_from_s1, d2_from_s2);
-    } else if ( idx2 == 2 ) {
-
-      FT d2_from_t2 = CGAL::square(dqt2x) + CGAL::square(dqt2y);
-      //      if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
-
-      if ( s1x == t2x && s1y == t2y ) { return EQUAL; }
-
-      return CGAL::compare(d2_from_s1, d2_from_t2);
-    } else { // idx2 == 1
-      FT c2 = s2x * t2y - s2y * t2x;
-      FT n2 = CGAL::square(d2x) + CGAL::square(d2y);
-      FT d2_from_l2 = CGAL::square(qx * d2y - qy * d2x + c2);
-
-      return CGAL::compare(d2_from_s1 * n2, d2_from_l2);
-    }
-  } else if ( idx1 == 2 ) {
-     FT d2_from_t1 = CGAL::square(dqt1x) + CGAL::square(dqt1y);
-     //     if ( qx == t1x && qy == t1y ) { d2_from_t1 = FT(0); }
-
-     if ( idx2 == 0 ) {
-       FT d2_from_s2 = CGAL::square(dqs2x) + CGAL::square(dqs2y);
-       //       if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
-
-       if ( t1x == s2x && t1y == s2y ) { return EQUAL; }
-
-       return CGAL::compare(d2_from_t1, d2_from_s2);
-     } else if ( idx2 == 2 ) {
-       FT d2_from_t2 = CGAL::square(dqt2x) + CGAL::square(dqt2y);
-       //       if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
-
-       if ( t1x == t2x && t1y == t2y ) { return EQUAL; }
-
-       return CGAL::compare(d2_from_t1, d2_from_t2);
-    } else { // idx2 == 1
-      FT c2 = s2x * t2y - s2y * t2x;
-      FT n2 = CGAL::square(d2x) + CGAL::square(d2y);
-      FT d2_from_l2 = CGAL::square(qx * d2y - qy * d2x + c2);
-
-      return CGAL::compare(d2_from_t1 * n2, d2_from_l2);
-    }
-  } else { // idx1 == 1
-    FT c1 = s1x * t1y - s1y * t1x;
-    FT n1 = CGAL::square(d1x) + CGAL::square(d1y);
-    FT d2_from_l1 = CGAL::square(qx * d1y - qy * d1x + c1);
-    if ( idx2 == 0 ) {
-      FT d2_from_s2 = CGAL::square(dqs2x) + CGAL::square(dqs2y);
-      //      if ( qx == s2x && qy == s2y ) { d2_from_s2 = FT(0); }
-
-      return CGAL::compare(d2_from_l1, d2_from_s2 * n1);
-    } else if ( idx2 == 2 ) {
-      FT d2_from_t2 = CGAL::square(dqt2x) + CGAL::square(dqt2y);
-      //      if ( qx == t2x && qy == t2y ) { d2_from_t2 = FT(0); }
-
-      return CGAL::compare(d2_from_l1, d2_from_t2 * n1);
-    } else { // idx2 == 1
-      FT c2 = s2x * t2y - s2y * t2x;
-      FT n2 = CGAL::square(d2x) + CGAL::square(d2y);
-      FT d2_from_l2 = CGAL::square(qx * d2y - qy * d2x + c2);
-
-      return CGAL::compare(d2_from_l1 * n2, d2_from_l2 * n1);
-    }
-  }
-}
-
-
-
+//--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 inline
-Sign
-svd_vertex_conflict_ftC2(const typename K::Site_2 t[],
-			 unsigned int num_sites, Method_tag mtag)
+Oriented_side
+svd_oriented_side_of_bisector_ftC2(const typename K::Site_2& p,
+				   const typename K::Site_2& q,
+				   const typename K::Site_2& t,
+				   Method_tag mtag)
 {
-  typedef typename K::FT   FT;
-  char site_types[4];
-
-  std::vector<FT> v;
-
-  for (unsigned int i = 0; i < num_sites; i++) {
-    if ( t[i].is_point() ) {
-      v.push_back( t[i].point().x() );
-      v.push_back( t[i].point().y() );
-      site_types[i] = 'p';
-    } else {
-      v.push_back( t[i].source().x() );
-      v.push_back( t[i].source().y() );
-      v.push_back( t[i].target().x() );
-      v.push_back( t[i].target().y() );
-      site_types[i] = 's';
-    }
-  }
-
-  return svd_vertex_conflict_ftC2(v, site_types, num_sites, mtag);
+  typename K::Site_2 site_vec[] = {p, q, t};
+  return svd_predicate_C2<Svd_oriented_side_of_bisector_C2,
+    Oriented_side,K,Method_tag,3>(site_vec);
 }
-	
+
+
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 inline
@@ -366,9 +425,10 @@ svd_vertex_conflict_ftC2(const typename K::Site_2& p,
 {
   typename K::Site_2 site_vec[] = {p, q, t};
   return
-    svd_vertex_conflict_ftC2<K,Method_tag>(site_vec, 3, mtag);
+    svd_predicate_C2<Svd_incircle_2,Sign,K,Method_tag,3>(site_vec);
 }
 
+//--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 inline
@@ -381,92 +441,12 @@ svd_vertex_conflict_ftC2(const typename K::Site_2& p,
 {
   typename K::Site_2 site_vec[] = {p, q, r, t};
   return
-    svd_vertex_conflict_ftC2<K,Method_tag>(site_vec, 4, mtag);
+    svd_predicate_C2<Svd_incircle_2,Sign,K,Method_tag,4>(site_vec);
 }
-
-
-template<class FT, class Method_tag>
-inline
-Sign
-svd_vertex_conflict_ftC2(const std::vector<FT>& v,
-			 char site_types[], unsigned int num_sites,
-			 Method_tag)
-{
-  CGAL_precondition( num_sites == 3 || num_sites == 4 );
-
-  must_be_filtered(FT());
-  
-  typedef Simple_cartesian<FT>                 Rep;
-  typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
-
-  typedef typename Kernel::Point_2             Point_2;
-  typedef typename Kernel::Segment_2           Segment_2;
-  typedef typename Kernel::Site_2              Site_2;
-  typedef Svd_incircle_2<Kernel,Method_tag>    Incircle;
-
-
-  Site_2* t = new Site_2[4];
-
-  for (unsigned int i = 0, k = 0; i < num_sites; i++) {
-    if ( site_types[i] == 'p' ) {
-      Point_2 p(v[k], v[k+1]);
-      t[i].set_point( p );
-    } else if ( site_types[i] == 's' ) {
-      Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
-      Segment_2 s(p1, p2);
-      t[i].set_segment( s );
-    } else {
-      CGAL_assertion( site_types[i] == 'p' ||
-		      site_types[i] == 's' );
-    }
-    k += ( (site_types[i] == 'p') ? 2 : 4 );
-  }
-
-  Sign res(ZERO);
-
-  if ( num_sites == 3 ) {
-    res = Incircle()(t[0], t[1], t[2]);
-  } else {
-    res = Incircle()(t[0], t[1], t[2], t[3]);
-  }
-
-  delete[] t;
-  return res;
-}
-
 
 //--------------------------------------------------------------------------
-
-template<class K, class Method_tag>
-inline
-bool
-svd_finite_edge_conflict_ftC2(const typename K::Site_2 t[],
-			      Sign sgn, unsigned int num_sites,
-			      Method_tag mtag)
-{
-  typedef typename K::FT   FT;
-  char site_types[5];
-
-  std::vector<FT> v;
-
-  for (unsigned int i = 0; i < num_sites; i++) {
-    if ( t[i].is_point() ) {
-      v.push_back( t[i].point().x() );
-      v.push_back( t[i].point().y() );
-      site_types[i] = 'p';
-    } else {
-      v.push_back( t[i].source().x() );
-      v.push_back( t[i].source().y() );
-      v.push_back( t[i].target().x() );
-      v.push_back( t[i].target().y() );
-      site_types[i] = 's';
-    }
-  }
-
-  return svd_finite_edge_conflict_ftC2(v, sgn, site_types,
-				       num_sites, mtag);
-}
-	
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 inline
@@ -477,10 +457,11 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2& p,
 			      Sign sgn, Method_tag mtag)
 {
   typename K::Site_2 site_vec[] = {p, q, t};
-  return
-    svd_finite_edge_conflict_ftC2<K,Method_tag>(site_vec, sgn, 3, mtag);
+  return svd_predicate_C2<Svd_finite_edge_interior_2,bool,K,
+    Method_tag,Sign,3>(site_vec, sgn);
 }
 
+//--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 inline
@@ -492,13 +473,12 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2& p,
 			      Sign sgn, Method_tag mtag)
 {
   typename K::Site_2 site_vec[] = {p, q, r, t};
-  return
-    svd_finite_edge_conflict_ftC2<K,Method_tag>(site_vec, sgn, 4, mtag);
+  return svd_predicate_C2<Svd_finite_edge_interior_2,bool,K,
+    Method_tag,Sign,4>(site_vec, sgn);
 }
 
 
-
-
+//--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 inline
@@ -511,93 +491,13 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2& p,
 			      Sign sgn, Method_tag mtag)
 {
   typename K::Site_2 site_vec[] = {p, q, r, s, t};
-  return
-    svd_finite_edge_conflict_ftC2<K,Method_tag>(site_vec, sgn, 5, mtag);
-}
-
-template<class FT, class Method_tag>
-inline
-bool
-svd_finite_edge_conflict_ftC2(const std::vector<FT>& v, Sign sgn,
-			      char site_types[], unsigned int num_sites,
-			      Method_tag)
-{
-  CGAL_precondition( num_sites >= 3 || num_sites <= 5 );
-
-  must_be_filtered(FT());
-  
-  typedef Simple_cartesian<FT>                           Rep;
-  typedef Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
-
-  typedef typename Kernel::Point_2             Point_2;
-  typedef typename Kernel::Segment_2           Segment_2;
-  typedef typename Kernel::Site_2              Site_2;
-  typedef Svd_finite_edge_interior_2<Kernel,Method_tag>  Edge_interior_test;
-
-
-  Site_2* t = new Site_2[5];
-
-  for (unsigned int i = 0, k = 0; i < num_sites; i++) {
-    if ( site_types[i] == 'p' ) {
-      Point_2 p(v[k], v[k+1]);
-      t[i].set_point( p );
-    } else if ( site_types[i] == 's' ) {
-      Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
-      Segment_2 s(p1, p2);
-      t[i].set_segment( s );
-    } else {
-      CGAL_assertion( site_types[i] == 'p' ||
-		      site_types[i] == 's' );
-    }
-    k += ( (site_types[i] == 'p') ? 2 : 4 );
-  }
-
-  bool res(false);
-
-  if ( num_sites == 3 ) {
-    res = Edge_interior_test()(t[0], t[1], t[2], sgn);
-  } else if ( num_sites == 4 ) {
-    res = Edge_interior_test()(t[0], t[1], t[2], t[3], sgn);
-  } else {
-    res = Edge_interior_test()(t[0], t[1], t[2], t[3], t[4], sgn);
-  }
-
-  delete[] t;
-  return res;
+  return svd_predicate_C2<Svd_finite_edge_interior_2,bool,K,
+    Method_tag,Sign,5>(site_vec, sgn);
 }
 
 //--------------------------------------------------------------------------
-
-template<class K, class Method_tag>
-inline
-bool
-svd_infinite_edge_conflict_ftC2(const typename K::Site_2 t[],
-				Sign sgn, unsigned int num_sites,
-				Method_tag mtag)
-{
-  typedef typename K::FT   FT;
-  char site_types[4];
-
-  std::vector<FT> v;
-
-  for (unsigned int i = 0; i < num_sites; i++) {
-    if ( t[i].is_point() ) {
-      v.push_back( t[i].point().x() );
-      v.push_back( t[i].point().y() );
-      site_types[i] = 'p';
-    } else {
-      v.push_back( t[i].source().x() );
-      v.push_back( t[i].source().y() );
-      v.push_back( t[i].target().x() );
-      v.push_back( t[i].target().y() );
-      site_types[i] = 's';
-    }
-  }
-
-  return svd_infinite_edge_conflict_ftC2(v, sgn, site_types,
-					 num_sites, mtag);
-}
-	
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 inline
@@ -609,87 +509,13 @@ svd_infinite_edge_conflict_ftC2(const typename K::Site_2& q,
 				Sign sgn, Method_tag mtag)
 {
   typename K::Site_2 site_vec[] = {q, r, s, t};
-  return
-    svd_infinite_edge_conflict_ftC2<K,Method_tag>(site_vec, sgn, 4, mtag);
-}
-
-
-template<class FT, class Method_tag>
-inline
-bool
-svd_infinite_edge_conflict_ftC2(const std::vector<FT>& v, Sign sgn,
-				char site_types[], unsigned int num_sites,
-				Method_tag)
-{
-  CGAL_precondition( num_sites == 4 );
-
-  must_be_filtered(FT());
-  
-  typedef Simple_cartesian<FT>                           Rep;
-  typedef Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
-
-  typedef typename Kernel::Point_2                       Point_2;
-  typedef typename Kernel::Segment_2                     Segment_2;
-  typedef typename Kernel::Site_2                        Site_2;
-  typedef
-    Svd_infinite_edge_interior_2<Kernel,Method_tag>  Edge_interior_test;
-
-
-  Site_2* t = new Site_2[num_sites];
-
-  for (unsigned int i = 0, k = 0; i < num_sites; i++) {
-    if ( site_types[i] == 'p' ) {
-      Point_2 p(v[k], v[k+1]);
-      t[i].set_point( p );
-    } else if ( site_types[i] == 's' ) {
-      Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
-      Segment_2 s(p1, p2);
-      t[i].set_segment( s );
-    } else {
-      CGAL_assertion( site_types[i] == 'p' ||
-		      site_types[i] == 's' );
-    }
-    k += ( (site_types[i] == 'p') ? 2 : 4 );
-  }
-
-
-  bool res = Edge_interior_test()(t[0], t[1], t[2], t[3], sgn);
-
-  delete[] t;
-  return res;
+  return svd_predicate_C2<Svd_infinite_edge_interior_2,bool,K,
+    Method_tag,Sign,4>(site_vec, sgn);
 }
 
 //--------------------------------------------------------------------------
-
-template<class K, class Method_tag>
-inline
-bool
-svd_is_degenerate_edge_ftC2(const typename K::Site_2 t[],
-			    unsigned int num_sites, Method_tag mtag)
-{
-  typedef typename K::FT   FT;
-  char site_types[4];
-
-  std::vector<FT> v;
-
-  for (unsigned int i = 0; i < num_sites; i++) {
-    if ( t[i].is_point() ) {
-      v.push_back( t[i].point().x() );
-      v.push_back( t[i].point().y() );
-      site_types[i] = 'p';
-    } else {
-      v.push_back( t[i].source().x() );
-      v.push_back( t[i].source().y() );
-      v.push_back( t[i].target().x() );
-      v.push_back( t[i].target().y() );
-      site_types[i] = 's';
-    }
-  }
-
-  return svd_is_degenerate_edge_ftC2(v, site_types,
-				     num_sites, mtag);
-}
-	
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 inline
@@ -701,53 +527,12 @@ svd_is_degenerate_edge_ftC2(const typename K::Site_2& p,
 			    Method_tag mtag)
 {
   typename K::Site_2 site_vec[] = {p, q, r, t};
-  return svd_is_degenerate_edge_ftC2<K,Method_tag>(site_vec, 4, mtag);
+  return
+    svd_predicate_C2<Svd_is_degenerate_edge_2,bool,K,Method_tag,4>(site_vec);
 }
 
-
-template<class FT, class Method_tag>
-inline
-bool
-svd_is_degenerate_edge_ftC2(const std::vector<FT>& v,
-			    char site_types[], unsigned int num_sites,
-			    Method_tag)
-{
-  CGAL_precondition( num_sites == 4 );
-
-  must_be_filtered(FT());
-  
-  typedef Simple_cartesian<FT>                           Rep;
-  typedef Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
-
-  typedef typename Kernel::Point_2             Point_2;
-  typedef typename Kernel::Segment_2           Segment_2;
-  typedef typename Kernel::Site_2              Site_2;
-  typedef Svd_is_degen_edge_2<Kernel,Method_tag> Is_degenerate_edge;
-
-
-  Site_2* t = new Site_2[4];
-
-  for (unsigned int i = 0, k = 0; i < num_sites; i++) {
-    if ( site_types[i] == 'p' ) {
-      Point_2 p(v[k], v[k+1]);
-      t[i].set_point( p );
-    } else if ( site_types[i] == 's' ) {
-      Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
-      Segment_2 s(p1, p2);
-      t[i].set_segment( s );
-    } else {
-      CGAL_assertion( site_types[i] == 'p' ||
-		      site_types[i] == 's' );
-    }
-    k += ( (site_types[i] == 'p') ? 2 : 4 );
-  }
-
-  bool res = Is_degenerate_edge()(t[0], t[1], t[2], t[3]);
-
-  delete[] t;
-  return res;
-}
-
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
@@ -757,44 +542,13 @@ svd_do_intersect_C2(const typename K::Site_2& p,
 		    const typename K::Site_2& q,
 		    Method_tag mtag)
 {
-  typedef typename K::Segment_2  Segment_2;
-
-  CGAL_precondition( p.is_segment() && q.is_segment() );
-
-  Segment_2 s1 = p.segment();
-  Segment_2 s2 = q.segment();
-
-  return svd_do_intersect_ftC2(s1.source().x(),	s1.source().y(),
-			       s1.target().x(),	s1.target().y(),
-			       s2.source().x(),	s2.source().y(),
-			       s2.target().x(),	s2.target().y(),
-			       mtag);
+  typename K::Site_2 site_vec[2] = {p, q};
+  return
+    svd_predicate_C2<Svd_do_intersect_C2,std::pair<int,int>,K,2>(site_vec);
 }
 
-
-template<class FT, class Method_tag>
-std::pair<int,int>
-svd_do_intersect_ftC2(const FT& x1, const FT& y1,
-		      const FT& x2, const FT& y2,
-		      const FT& x3, const FT& y3,
-		      const FT& x4, const FT& y4, Method_tag)
-{
-  must_be_filtered(FT());
-
-  typedef Simple_cartesian<FT>                           Rep;
-  typedef Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
-
-  typedef typename Kernel::Point_2                       Point_2;
-  typedef typename Kernel::Segment_2                     Segment_2;
-
-  typedef Svd_do_intersect_C2<Kernel>                    Do_intersect;
-
-  Point_2 p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4);
-  Segment_2 s1(p1, p2), s2(p3, p4);
-
-  return Do_intersect()(s1, s2);
-}
-
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
 template<class K>
@@ -834,35 +588,8 @@ svd_are_parallel_ftC2(const FT& x1, const FT& y1,
 }
 
 //--------------------------------------------------------------------------
-
-template<class K, class Method_tag>
-inline
-Oriented_side
-svd_oriented_side_ftC2(const typename K::Site_2 t[],
-		       unsigned int num_sites, Method_tag mtag)
-{
-  typedef typename K::FT   FT;
-  char site_types[5];
-
-  std::vector<FT> v;
-
-  for (unsigned int i = 0; i < num_sites; i++) {
-    if ( t[i].is_point() ) {
-      v.push_back( t[i].point().x() );
-      v.push_back( t[i].point().y() );
-      site_types[i] = 'p';
-    } else {
-      v.push_back( t[i].source().x() );
-      v.push_back( t[i].source().y() );
-      v.push_back( t[i].target().x() );
-      v.push_back( t[i].target().y() );
-      site_types[i] = 's';
-    }
-  }
-
-  return svd_oriented_side_ftC2(v, site_types, num_sites, mtag);
-}
-	
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 inline
@@ -875,56 +602,14 @@ svd_oriented_side_ftC2(const typename K::Site_2& s1,
 		       Method_tag mtag)
 {
   typename K::Site_2 site_vec[] = {s1, s2, s3, s, p};
-  return
-    svd_oriented_side_ftC2<K,Method_tag>(site_vec, 5, mtag);
+  return svd_predicate_C2<Svd_oriented_side_C2,Oriented_side,K,
+    Method_tag,5>(site_vec);
 }
-
-
-template<class FT, class Method_tag>
-inline
-Oriented_side
-svd_oriented_side_ftC2(const std::vector<FT>& v,
-		       char site_types[], unsigned int num_sites,
-		       Method_tag)
-{
-  CGAL_precondition( num_sites == 5 );
-
-  must_be_filtered(FT());
-  
-  typedef Simple_cartesian<FT>                 Rep;
-  typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
-
-  typedef typename Kernel::Point_2                 Point_2;
-  typedef typename Kernel::Segment_2               Segment_2;
-  typedef typename Kernel::Site_2                  Site_2;
-  typedef Svd_oriented_side_C2<Kernel,Method_tag>  Oriented_side_2;
-
-
-  Site_2* t = new Site_2[5];
-
-  for (unsigned int i = 0, k = 0; i < num_sites; i++) {
-    if ( site_types[i] == 'p' ) {
-      Point_2 p(v[k], v[k+1]);
-      t[i].set_point( p );
-    } else if ( site_types[i] == 's' ) {
-      Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
-      Segment_2 s(p1, p2);
-      t[i].set_segment( s );
-    } else {
-      CGAL_assertion( site_types[i] == 'p' ||
-		      site_types[i] == 's' );
-    }
-    k += ( (site_types[i] == 'p') ? 2 : 4 );
-  }
-
-  Oriented_side os = Oriented_side_2()(t[0], t[1], t[2], t[3], t[4]);
-
-  delete[] t;
-  return os;
-}
-
 
 //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
 
 CGAL_END_NAMESPACE
 

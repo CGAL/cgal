@@ -30,6 +30,7 @@
 
 #include <CGAL/predicates/Segment_Voronoi_diagram_vertex_C2.h>
 #include <CGAL/predicates/Svd_are_same_points_C2.h>
+#include <CGAL/predicates/Svd_oriented_side_of_bisector_C2.h>
 #include <CGAL/predicates/Svd_incircle_2.h>
 #include <CGAL/predicates/Svd_finite_edge_interior_2.h>
 #include <CGAL/predicates/Svd_infinite_edge_interior_2.h>

@@ -178,6 +178,7 @@ class Svd_do_intersect_C2
 public:
   //  typedef typename K::Point_2      Point_2;
   typedef typename K::Segment_2    Segment_2;
+  typedef typename K::Site_2       Site_2;
 
   //  typedef std::pair<Intersection_type,Intersection_type>  result_type;
   typedef std::pair<int,int>       result_type;
@@ -189,8 +190,13 @@ public:
 
 public:
   result_type
-  operator()(const Segment_2& s1, const Segment_2& s2) const
+  operator()(const Site_2& p, const Site_2& q) const
   {
+    CGAL_precondition( p.is_segment() && q.is_segment() );
+
+    Segment_2 s1 = p.segment();
+    Segment_2 s2 = q.segment();
+
     std::pair<int,int> res =
       svd_do_intersect_C2( s1.source().x(), s1.source().y(),
 			   s1.target().x(), s1.target().y(),

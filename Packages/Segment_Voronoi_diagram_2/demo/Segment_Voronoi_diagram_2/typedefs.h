@@ -3,6 +3,9 @@
 
 #include <CGAL/basic.h>
 
+//#include <CGAL/Filtered_exact.h>
+//typedef CGAL::Filtered_exact<double,CGAL::Gmpq> NT;
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 
@@ -10,8 +13,9 @@
 #include <CGAL/Segment_Voronoi_diagram_hierarchy_2.h>
 #include <CGAL/Segment_Voronoi_diagram_filtered_traits_2.h>
 
-//struct Rep : public CGAL::Simple_cartesian<double> {};
-struct Rep : public CGAL::Simple_cartesian<CGAL::Gmpq> {};
+struct Rep : public CGAL::Simple_cartesian<double> {};
+//struct Rep : public CGAL::Simple_cartesian<CGAL::Gmpq> {};
+//struct Rep : public CGAL::Simple_cartesian<NT> {};
 
 namespace CGAL {
   CGAL::Gmpq sqrt(const CGAL::Gmpq& x)
@@ -20,11 +24,11 @@ namespace CGAL {
   }
 }
 
-//struct Gt
-//  : public CGAL::Segment_Voronoi_diagram_filtered_traits_2<Rep> {};
-
 struct Gt
-  : public CGAL::Segment_Voronoi_diagram_traits_2<Rep,CGAL::Ring_tag> {};
+  : public CGAL::Segment_Voronoi_diagram_filtered_traits_2<Rep> {};
+
+//struct Gt
+//  : public CGAL::Segment_Voronoi_diagram_traits_2<Rep,CGAL::Ring_tag> {};
 
 
 typedef Gt::Point_2            Point;

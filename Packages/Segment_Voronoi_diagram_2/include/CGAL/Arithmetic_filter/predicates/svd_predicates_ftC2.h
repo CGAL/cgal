@@ -43,6 +43,131 @@
 
 CGAL_BEGIN_NAMESPACE
 
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+
+static unsigned int num_svd_predicate_failures = 0;
+
+//----------------------------------------------------------------------------
+#if 1
+template < template<class Kernel> class Predicate_t,
+	   class CT, class ET, bool Protected, class Cache,
+	   typename Return_t, 
+	   unsigned int Num_sites>
+Return_t
+svd_predicate_ftC2(const std::vector<
+		   Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
+		   const std::vector<char>& site_types)
+{
+  try {
+    Protect_FPU_rounding<Protected> Protection;
+
+    std::vector<Interval_nt_advanced> v_IT(v.size());
+
+    for (unsigned int i = 0; i < v.size(); i++) {
+      v_IT[i] = v[i].interval();
+    }
+    return svd_predicate_ftC2<Predicate_t,Return_t,CT,
+      Num_sites>(v_IT, site_types);
+  }
+  catch (Interval_nt_advanced::unsafe_comparison) {
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+    num_svd_predicate_failures++;
+
+    std::vector<ET> v_ET(v.size());
+
+    for (unsigned int i = 0; i < v.size(); i++) {
+      v_ET[i] = v[i].exact();
+    }
+
+    return svd_predicate_ftC2<Predicate_t,Return_t,ET,
+      Num_sites>(v_ET, site_types);
+  }
+}
+
+//----------------------------------------------------------------------------
+
+template < template<class Kernel, class MTag> class Predicate_t,
+	   class CT, class ET, bool Protected, class Cache,
+	   typename Return_t,
+	   class Method_tag, unsigned int Num_sites>
+Return_t
+svd_predicate_ftC2(const std::vector<
+		   Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
+		   const std::vector<char>& site_types)
+{
+  try {
+    Protect_FPU_rounding<Protected> Protection;
+
+    std::vector<Interval_nt_advanced> v_IT(v.size());
+
+    for (unsigned int i = 0; i < v.size(); i++) {
+      v_IT[i] = v[i].interval();
+    }
+    return svd_predicate_ftC2<Predicate_t,Return_t,CT,Method_tag,
+      Num_sites>(v_IT, site_types);
+  }
+  catch (Interval_nt_advanced::unsafe_comparison) {
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+    num_svd_predicate_failures++;
+
+    std::vector<ET> v_ET(v.size());
+
+    for (unsigned int i = 0; i < v.size(); i++) {
+      v_ET[i] = v[i].exact();
+    }
+
+    return svd_predicate_ftC2<Predicate_t,Return_t,ET,Method_tag,
+      Num_sites>(v_ET, site_types);
+  }
+}
+
+//----------------------------------------------------------------------------
+
+template < template<class Kernel, class MTag> class Predicate_t,
+	   class CT, class ET, bool Protected, class Cache,
+	   typename Return_t,
+	   class Method_tag, typename Data, unsigned int Num_sites>
+Return_t
+svd_predicate_ftC2(const std::vector<
+		   Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
+		   const std::vector<char>& site_types, Data data)
+{
+  try {
+    Protect_FPU_rounding<Protected> Protection;
+
+    std::vector<Interval_nt_advanced> v_IT(v.size());
+
+    for (unsigned int i = 0; i < v.size(); i++) {
+      v_IT[i] = v[i].interval();
+    }
+    return svd_predicate_ftC2<Predicate_t,Return_t,CT,Method_tag,Data,
+      Num_sites>(v_IT, site_types, data);
+  }
+  catch (Interval_nt_advanced::unsafe_comparison) {
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+    num_svd_predicate_failures++;
+
+    std::vector<ET> v_ET(v.size());
+
+    for (unsigned int i = 0; i < v.size(); i++) {
+      v_ET[i] = v[i].exact();
+    }
+
+    return svd_predicate_ftC2<Predicate_t,Return_t,ET,Method_tag,Data,
+      Num_sites>(v_ET, site_types, data);
+  }
+}
+#endif
+
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+
 static unsigned int num_failures_are_same_points = 0;
 static unsigned int num_failures_side_of_bisector = 0;
 static unsigned int num_failures_vertex_conflict = 0;
@@ -116,9 +241,9 @@ svd_compare_distance_ftC2
     Interval_nt_advanced px_it = px.interval();
     Interval_nt_advanced py_it = py.interval();
 
-    return svd_compare_distanceC2(qx_it, qy_it, sx_it, sy_it,
-				  tx_it, ty_it, px_it, py_it,
-				  method_tag);
+    return svd_compare_distance_ftC2(qx_it, qy_it, sx_it, sy_it,
+				     tx_it, ty_it, px_it, py_it,
+				     method_tag);
   }
   catch (Interval_nt_advanced::unsafe_comparison) {
     Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
@@ -137,9 +262,9 @@ svd_compare_distance_ftC2
     ET px_et = px.exact();
     ET py_et = py.exact();
 
-    return svd_compare_distanceC2(qx_et, qy_et, sx_et, sy_et,
-				  tx_et, ty_et, px_et, py_et,
-				  method_tag);
+    return svd_compare_distance_ftC2(qx_et, qy_et, sx_et, sy_et,
+				     tx_et, ty_et, px_et, py_et,
+				     method_tag);
 
   }
 }
@@ -178,10 +303,10 @@ svd_compare_distance_ftC2
     Interval_nt_advanced t2x_it = t2x.interval();
     Interval_nt_advanced t2y_it = t2y.interval();
 
-    return svd_compare_distanceC2(qx_it, qy_it,
-				  s1x_it, s1y_it, t1x_it, t1y_it,
-				  s2x_it, s2y_it, t2x_it, t2y_it,
-				  method_tag);
+    return svd_compare_distance_ftC2(qx_it, qy_it,
+				     s1x_it, s1y_it, t1x_it, t1y_it,
+				     s2x_it, s2y_it, t2x_it, t2y_it,
+				     method_tag);
   }
   catch (Interval_nt_advanced::unsafe_comparison) {
     Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
@@ -215,10 +340,10 @@ svd_compare_distance_ftC2
 	      << CGAL::to_double(t2y_et) << std::endl;
 #endif
 
-    return svd_compare_distanceC2(qx_et, qy_et,
-				  s1x_et, s1y_et, t1x_et, t1y_et,
-				  s2x_et, s2y_et, t2x_et, t2y_et,
-				  method_tag);
+    return svd_compare_distance_ftC2(qx_et, qy_et,
+				     s1x_et, s1y_et, t1x_et, t1y_et,
+				     s2x_et, s2y_et, t2x_et, t2y_et,
+				     method_tag);
 
   }
 }

@@ -1149,7 +1149,7 @@ nearest_neighbor(const Point& p,
       if ( v1 != vclosest /*&& !is_infinite(v1)*/ ) {
 	Site t0 = vclosest->site();
 	Site t1 = v1->site();
-	if ( side_of_bisector(t0, t1, p) == ON_NEGATIVE_SIDE ) {
+	if ( side_of_bisector(t0, t1, Site_2(p)) == ON_NEGATIVE_SIDE ) {
 	  vclosest = v1;
 	}
       }
@@ -1166,7 +1166,7 @@ nearest_neighbor(const Point& p,
       if ( !is_infinite(vc) ) {
 	Vertex_handle v1(vc);
 	Site t1 = v1->site();
-	if ( side_of_bisector(t0, t1, p) == ON_NEGATIVE_SIDE ) {
+	if ( side_of_bisector(t0, t1, Site_2(p)) == ON_NEGATIVE_SIDE ) {
 	  v = v1;
 	  break;
 	}
@@ -1196,7 +1196,7 @@ are_same_points(const Site_2& p, const Site_2& q) const
 template< class Gt, class Svdds >
 Oriented_side
 Segment_Voronoi_diagram_2<Gt,Svdds>::
-side_of_bisector(const Site &t1, const Site &t2, const Point &q) const
+side_of_bisector(const Site &t1, const Site &t2, const Site &q) const
 {
   return geom_traits().oriented_side_of_bisector_2_object()(t1, t2, q);
 }
