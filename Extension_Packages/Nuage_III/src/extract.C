@@ -18,7 +18,7 @@
 // Kernel
 #include <CGAL/Simple_cartesian.h>
 
-#if 1
+#if 0
 #include <CGAL/Filtered_kernel.h>
 #else
 #include <CGAL/Static_filters.h>
@@ -45,7 +45,7 @@
 typedef double coord_type;
 typedef double NT;
 
-#if 1
+#if 0
 struct Kernel : public CGAL::Filtered_kernel<CGAL::Simple_cartesian<NT> > {};
 #else
 struct Kernel : public CGAL::Static_filters<CGAL::Simple_cartesian<NT> > {};
@@ -78,7 +78,7 @@ CGAL::Timer t1;
 #include <NUAGE/iofile_manipulator.h>
 
 void
-file_output(char* foutput, std::vector<Point>& L)
+file_output(char* foutput, std::vector<Point>& points)
 {
   std::ofstream os(foutput, std::ios::out);
 
@@ -91,15 +91,15 @@ file_output(char* foutput, std::vector<Point>& L)
 
   CGAL::set_ascii_mode(os);
 
-  for(std::vector<Point>::iterator L_it=L.begin();
-      L_it!=L.end(); L_it++)
-    os << *L_it;
+  for(std::vector<Point>::iterator it = points.begin();
+      it != points.end(); it++)
+    os << *it;
 }
 
 //---------------------------------------------------------------------
 
 bool
-file_input(const Options& opt, std::vector<Point>& L)
+file_input(const Options& opt, std::vector<Point>& points)
 {
   const char* finput = opt.finname;
   int number_of_points =  opt.number_of_points;
@@ -118,7 +118,7 @@ file_input(const Options& opt, std::vector<Point>& L)
       return false;
     }
   else
-    std::cout << ">> input from file : " << finput << std::endl;
+    std::cout << "Input from file : " << finput << std::endl;
 
 // pour selectionner le mode de lecture souhaite...
 //   is.setf(std::ifstream::scientific);
@@ -131,27 +131,27 @@ file_input(const Options& opt, std::vector<Point>& L)
   if(! xyz){
     is >> n;
     std::cout << "   reading " << n << " points" << std::endl;
-    L.reserve(n);
-    CGAL::copy_n(std::istream_iterator<Point>(is), n, std::back_inserter(L));
+    points.reserve(n);
+    CGAL::copy_n(std::istream_iterator<Point>(is), n, std::back_inserter(points));
   } else {
     // we do not know beforehand how many points we will read
     std::istream_iterator<Point> it(is), eof;
     while(it!= eof){
-      L.push_back(*it);
+      points.push_back(*it);
       it++;
     }
-    n = L.size();
+    n = points.size();
   }
 
   if(opt.shuffle) {
-    std::cout << "   random shuffling" << std::endl;
-    std::random_shuffle(L.begin(), L.end());
+    std::cout << "Random shuffling" << std::endl;
+    std::random_shuffle(points.begin(), points.end());
   }
 
 
   if ( (number_of_points > 0 ) && (number_of_points < n ))
     {
-      L.erase(L.begin()+number_of_points, L.begin()+n);
+      points.erase(points.begin()+number_of_points, points.begin()+n);
 
       std::cout << std::endl 
 		<< "   and randomize a sub-sample of " << number_of_points 
@@ -164,7 +164,7 @@ file_input(const Options& opt, std::vector<Point>& L)
 //---------------------------------------------------------------------
 
 bool
-section_file_input(char* finput, const int& number_of_points, std::vector<Point>& L)
+section_file_input(char* finput, const int& number_of_points, std::vector<Point>& points)
 {
   std::ifstream is(finput, std::ios::in);
 
@@ -213,7 +213,7 @@ section_file_input(char* finput, const int& number_of_points, std::vector<Point>
 	    is.putback(c);
 	    is >> p;
 	    points_num++;
-	    L.push_back(Point (p.x(), p.y(), h));
+	    points.push_back(Point (p.x(), p.y(), h));
 	  }
       }
 
@@ -221,16 +221,16 @@ section_file_input(char* finput, const int& number_of_points, std::vector<Point>
     i++;
   } while (i < N); 
 
-  std::cout << "   reading " << points_num << " points";
+  std::cout << "Reading " << points_num << " points";
 
-  std::random_shuffle(L.begin(), L.end());
+  std::random_shuffle(points.begin(), points.end());
 
   if ( (number_of_points > 0 ) && (number_of_points < points_num ))
     {
-      L.erase(L.begin()+number_of_points, L.begin()+points_num);
+      points.erase(points.begin()+number_of_points, points.begin()+points_num);
 
       std::cout << std::endl 
-		<< "   and randomize a sub-sample of " << number_of_points 
+		<< "Randomize a sub-sample of " << number_of_points 
 		<< " points." <<
 	std::endl << std::endl;
     }
@@ -241,7 +241,7 @@ void
 construct_delaunay(const std::vector<Point> &V_p,
 		   Triangulation_3& T)
 {
-  std::cout << "   Compute Delaunay Tetrahedrization " << std::endl; 
+  std::cout << "Compute Delaunay Tetrahedrization " << std::endl; 
   t1.start();
   {
     for(std::vector<Point>::const_iterator v_it = V_p.begin();
@@ -253,7 +253,7 @@ construct_delaunay(const std::vector<Point> &V_p,
   t1.stop();
   std::cout << "   Inserted " << T.number_of_vertices() << " points, "
 	    <<  T.number_of_cells() << " cells computed in "
-	    << t1.time() << " secondes." << std::endl;
+	    << t1.time() << " sec." << std::endl;
   if (T.dimension() < 3)
     {
       std::cout << "-- 2D sample of points ???"  << std::endl;
@@ -273,7 +273,7 @@ int main(int argc,  char* argv[])
   t2.start();
   //parse command line
   Options opt;
-  std::cout << ">> option line for this execution is :" << std::endl;
+  std::cout << "Option line for this execution is :" << std::endl;
   if (!parse(argc, argv, opt))
     CGAL_CLIB_STD::exit(0);
   std::cout << std::endl << std::endl;
@@ -287,74 +287,48 @@ int main(int argc,  char* argv[])
   else
     section_file_input(opt.finname, opt.number_of_points, points);
 
-  std::cout << "Time for reading"  << t2.time() << " sec" << std::endl;
+  std::cout << "Time for reading "  << t2.time() << " sec." << std::endl;
   construct_delaunay(points, T);
   
   points.clear();
-  int size_before_postprocessing = T.number_of_vertices();
+
   bool re_init = false;
   int number_of_connected_comp = 0;
-  double  total_time = 0;
+  double  postprocessing_time = 0;
 
   Surface S(T,opt.DELTA);
-  do
+  do 
     {
       number_of_connected_comp++;
-      double sum_time=0;
-      if (re_init)
-	std::cout << ">> searching another grain [init " <<
-	  number_of_connected_comp << "] : "
-		  << std::endl;
 
-      bool result_init = S.init(re_init);
-
-      if (result_init)
+      if (S.init(re_init))
 	{
+	  re_init = false;
+	  std::cout << "Growing connected component " << number_of_connected_comp << std::endl;
 	  S.extend(opt.K_init, opt.K_step, opt.K);
 
-	  std::cout << "S.number_of_facets() == " << S.number_of_facets() << std::endl;
-	  std::cout <<" size_before_postprocessing ==  " << size_before_postprocessing << std::endl;
+	  std::cout << "Number of facets: " << S.number_of_facets() << std::endl;
 	  
-	  // debut du processus extend + postprocessing
-	  if ((S.number_of_facets() > size_before_postprocessing)&&
+	  if ((S.number_of_facets() > T.number_of_vertices())&&
 	      (opt.NB_BORDER_MAX > 0))
 	    // en principe 2*nb_sommets = nb_facettes: y a encore de la marge!!!
 	    {
 	      t1.reset();
-	      bool postprocess;
-	      do {
-		postprocess = S.postprocessing(opt.NB_BORDER_MAX);
-
-		if (postprocess) {
-		  S.extend(opt.K_init, opt.K_step, opt.K);
-		  
-		}
-	      } while(postprocess);
-	      sum_time += t1.time();
+	      while(S.postprocessing(opt.NB_BORDER_MAX)){
+		re_init = true;
+		S.extend(opt.K_init, opt.K_step, opt.K);
+	      }
 	    }
 
-	    total_time += sum_time;
+	    postprocessing_time += t1.time();
 
-	    std::cout << std::endl;
-	    std::cout << "T.number_of_vertices() == " << T.number_of_vertices() << std::endl;
-	    std::cout << "S.number_of_vertices() == " << S.number_of_vertices() << std::endl;
-	    char c;
-	    std::cout << "continue?" << std::endl;
-	    std::cin >> c;
-	    re_init = (c == 'y');
-	    //re_init = (T.number_of_vertices()- S.number_of_vertices()) > 4;
-      
-	} else {
-	  std::cout << "-- no grains...."
-		    << std::endl << std::endl;
-	  re_init = false;
-	}
+	} 
     }while(re_init &&
 	   ((number_of_connected_comp < opt.max_connected_comp)||
 	    (opt.max_connected_comp < 0)));
 
  
-  std::cout << "Total time: " << t2.time() << "sec" << std::endl; 
+  std::cout << "Total time: " << t2.time() << " sec." << std::endl; 
   write_in_file_selected_facets(opt.foutname, S, opt.contour, opt.out_format);
 
 

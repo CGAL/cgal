@@ -134,11 +134,13 @@ parse(int argc, char* argv[], Options &opt)
 	std::cerr << "Argument for the number of connected components must be a number"
 		  << std::endl;
       }
+      /*
       if(opt.max_connected_comp < 1) {
 	std::cerr << "Argument for the number of connected components must be a positive number"
 		  << "It is set to 1" << std::endl;
 	opt.max_connected_comp = 1;
       }
+      */
       argv += 2;
       argc -= 2;
       std::cout << "-m " << opt.max_connected_comp << " ";
