@@ -1102,15 +1102,15 @@ public:
   {
     int dim = dimension();
     int nb = number_of_vertices();
-    Cell *l = list_of_cells().next_cell;
+    Cell *l = list_of_cells()._next_cell;
 
     set_dimension(tds.dimension());
     set_number_of_vertices(tds.number_of_vertices());
-    _list_of_cells.next_cell = tds.list_of_cells().next_cell;
+    _list_of_cells._next_cell = tds.list_of_cells()._next_cell;
 
     tds._dimension = dim;
     tds._number_of_vertices = nb;
-    tds._list_of_cells.next_cell = l;
+    tds._list_of_cells._next_cell = l;
   }
 
   void clear()
