@@ -287,7 +287,7 @@ public:
   typedef CGAL::Vector_3<Kernel>                       Vector;
 
 public:
-  void point_rule(Halfedge_handle edge, Point& pt) {
+  void point_rule(Halfedge_handle he, Point& pt) {
     int n =  CGAL::circulator_size(he->facet()->facet_begin()); 
 
     Vector cv(0,0,0);
