@@ -57,7 +57,7 @@ new applications.
 \section{Qt\_widget}
 \label{Qt_widget}
 
-The class \ccStyle{Qt_widget} is a derived from the \qt\ class \ccStyle{QWidget}%
+The class \ccStyle{Qt_widget} is derived from the \qt\ class \ccStyle{QWidget}%
 \footnote{A widget is the atom of the user interface: It receives mouse, keyboard and other 
 events from the window system, and paints a representation of itself on the 
 screen. Every widget is rectangular, and they are sorted in a Z-order. A 
@@ -127,13 +127,17 @@ class My_Window : public CGAL::Qt_widget {
 public:
   My_Window(int x, int y){ resize(x,y); };
 private:
-  
+  void redraw()
+  {
+    Qt_widget::redraw();
+    *this << dt;
+  }  
   // mouse events get dispatched to this function
   void mousePressEvent(QMouseEvent *e)
   {
+    Qt_widget::mousePressEvent(e);
     dt.insert(Point(x_real(e->x()), y_real(e->y())));
-    clear();
-    *this << dt;
+    redraw();
   }
 };
 
@@ -154,48 +158,75 @@ int main( int argc, char **argv )
 \label{Qt_widget_views}
 
 In the examples from the previous section the code for drawing on the
-widget was in the main function, or in the function that handled the
-mouse event.  As soon as the applications are more involved it is
-better to delegate the drawing task to {\em views}. For example, if
-the application displays a Delaunay triangulation, the corresponding
-Voronoi diagram, and the circumcircles of the triangles, it makes
-sense to have three independent views.
+widget was in the redraw() function. As soon as the applications are more 
+involved it is better to delegate the drawing task to {\em views}. 
+For example, if the application displays a Delaunay triangulation, the corresponding Voronoi diagram, and the nearest vertex to the mouse coordinates, it 
+makes
+sense to have three independent views. The great advantage of views is that you
+ can decide what views you want to see at the runtime, and the other great 
+advantage is that views can be reused.
 
-A view can be attached to a \ccc{Qt_widget}. It can be activated and
-deactivated. The widget calls the method \ccc{Qt_view::draw()} of all
-attached and activated views, in the order that they were attached.
+A view can be attached to a \ccc{Qt_widget}. The widget calls the method \ccc{Qt_widget_view::draw_view()} of all attached views, in the order 
+that they were attached. It is a very simple rule, the last view attached will 
+be on top.
 
 \cgal\ provides some predefined view classes as well as a base class
 so that you can more easily write new views.
 
-{\bf af: Is it possible to connect a signal to a view to (de-)activate it?}
+{\bf In the near future: It will be possible to activate and deactivate the views so the order will remain the same.}
 
-\subsection{Example: Delaunay, Voronoi, and Circumcircle}
+\subsection{Example: Delaunay, Voronoi, and NearestVertex}
 
 {\bf af: to be done.}
 
 \begin{ccExampleCode}
-#include <CGAL/IO/Qt_triangulation_view.h>
+#include <CGAL/IO/Qt_view_show_triangulation.h>
+#include <CGAL/IO/Qt_view_show_voronoi.h>
 #include <CGAL/IO/Qt_Widget.h>
 
 Delaunay t;
 CGAL::Qt_widget  *widget;
-CGAL::Qt_triangulation_view < Delaunay >  *showT;
-showT   = new Qt_triangulation_view< Delaunay >(t);
+CGAL::Qt_view_show_triangulation < Delaunay >  *showT;
+showT   = new Qt_view_show_triangulation < Delaunay >(t);
+CGAL::Qt_view_show_voronoi < Delaunay >  *showV;
+showT   = new Qt_view_show_voronoi < Delaunay >(t);
+CGAL::Qt_view_show_nearest_vertex <Delaunay > *showNV;
+showNV  = new Qt_view_show_nearest_vertex < Delaunay >(t);
 
-showT->activate();
 widget->attach(showT);
-
+widget->attach(showV);
+widget->attach(showNV);
 \end{ccExampleCode}
 
 
 \subsection{How Views Work}
 
-In the previous example we have seen how the \ccc{Qt_triangulation_view<T>}
+In the previous example we have seen how the \ccc{Qt_view_show_voronoi<T>}
 can be used. Here we show how its implementation looks like.
 
 \begin{ccExampleCode}
-...
+#include <qobject.h>
+#include <CGAL/IO/Qt_widget_view.h>
+
+namespace CGAL {
+
+template <class T>
+class Qt_view_show_voronoi : public Qt_widget_view
+{
+    //Q_OBJECT
+public:
+  Qt_view_show_voronoi(T &t1) : tr(t1){};
+
+  void draw_view(Qt_widget &widget)
+  {
+    widget << CGAL::RED ;
+    tr.draw_dual(widget);
+  };
+	
+private:
+  T	&tr;
+};//end class 
+
 \end{ccExampleCode}
 
 
@@ -213,12 +244,10 @@ and out, or panning.
 \ccStyle{Qt_widget_tool} for making it easier to develop new tools.
 
 Only one tool at the time can be attached to a widget.
-{\bf af: Well, for zooming and panning, I could imagine that I can control
-that with +, -, and cursor movement keys, independently from object input functions.}
 
 We first show how to use tools and then how they work.
 
-\subsection{Example: Delaunay, Voronoi, and Circum Circle (contd.)}
+\subsection{Example}
 
 The example in the previous section, did not allow to add a point to the triangulation.
 That is where {\em  tools} come in. We attach the predefined tool \ccc{Qt_widget_get_point}
@@ -226,8 +255,6 @@ to the widget, and connect the signal emitted by the widget to the function that
 handles the input.  When the user clicks with the left mouse button, the tool creates
 a point and passes it to the widget. The widget then creates a signal that gets passed
 to the connected slot \ccc{My_Window::get_new_object(CGAL::Object)}.
-
-{\bf af: Who tells the views that they should redraw now??} 
 
 \begin{ccExampleCode}
 #include <CGAL/Cartesian.h>
@@ -245,11 +272,12 @@ class My_Window : public CGAL::Qt_widget {
 public:
   My_Window(int x, int y){
     resize(x,y);
-    attach(new Qt_widget_get_point());
+    attach(pointbut);
     connect(this, SIGNAL(new_cgal_object(CGAL::Object)), 
             this, SLOT(get_new_object(CGAL::Object)));
   };
-   
+private:
+  CGAL::Qt_widget_get_point<Rep> pointbut;   
 private slots:
   void get_new_object(CGAL::Object obj)
   {
@@ -257,9 +285,10 @@ private slots:
     if (CGAL::assign(p, obj)) { 
       dt.insert(p);
     }
-    // af: I guess here we need a redraw(), don't we?
+    redraw();
   }
-};
+
+}//endclass;
 
 int main( int argc, char **argv )
 {
@@ -271,9 +300,6 @@ int main( int argc, char **argv )
     return app.exec();
 }
 \end{ccExampleCode}
-
-
-
 
 The \ccStyle{Qt_widget} forwards all event callbacks to the attached tool.
 
@@ -322,9 +348,8 @@ private:
   };
 
   QCursor cursor;
-};
-
-} // namespace CGAL
+}//endclass;
+}//namespace CGAL
 \end{ccExampleCode}
 
 The \ccc{Qt_widget} forwards mouse and keyboard events to the attached tool.

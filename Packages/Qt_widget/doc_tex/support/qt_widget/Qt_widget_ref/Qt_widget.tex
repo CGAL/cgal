@@ -21,8 +21,6 @@ only for 2D \cgal\ objects.
 
 
 
-
-
 \ccInclude{CGAL/Qt_widget.h}
 \ccGlue
 
@@ -31,7 +29,7 @@ only for 2D \cgal\ objects.
 The widget class also defines the following enum type to specify
 which case occurs when locating a point in the triangulation. 
 
-\ccEnum{enum PointStyle {X=0};}{}
+\ccEnum{enum PointStyle { PIXEL, CROSS, PLUS, CIRCLE, DISC, RECT, BOX };}{}
 
 \ccCreation
 \ccCreationVariable{win}
@@ -72,11 +70,12 @@ after calling this member function.}
 refreshed. If you lock the widget you should verify that you unlock it 
 somewhere else. The number of \ccc{lock()} calls should be the same with the 
 number of \ccc{unlock()} calls.}
-\ccMethod{void unlock();}{Unlocks the widget, and call \ccc{do_paint()}. 
-{\bf af: Why was this in a comment?}}
+\ccMethod{void unlock();}{Unlocks the widget, and call \ccc{do_paint()}}
 
 \ccMethod{void do_paint();}{Refresh the widget calling 
-\ccc{paintEvent(QPaintEvent *e)} for the \ccc{Qt_widget}.}
+\ccc{paintEvent(QPaintEvent *e)} for the \ccc{Qt_widget} only if the widget is 
+unlocked. This mean that redraw() is called if and only if the widget is 
+unlocked.}
 
 %properties
 %\ccHeading{Properties}
@@ -104,11 +103,13 @@ tool is already attached this ges detached first.}
 \ccMethod{void detach_current_tool();}{Detaches the current tool from the widget.}
 
 %VIEWS
-%\ccHeading{Views}
-\ccMethod{void add_view(Qt_widget_view* s);}{Add the view s in the list of 
+\ccHeading{Views}
+\ccMethod{void attach(Qt_widget_view* s);}{Add the view s in the list of 
 views.The last added will be on top of the screen.}
-\ccMethod{void remove_view(Qt_widget_view* s);}{Remove the view s from the list.}
-\ccMethod{void redraw();}{Redraw the views situated in the list. Before 
+\ccMethod{void detach(Qt_widget_view* s);}{Remove the view s from the list.}
+\ccMethod{void redraw();}{If you derive from \ccc{Qt_widget} you have to 
+overload this function and put your code for drawing here if you don't use 
+\ccc{views}. Redraw the views situated in the list. Before 
 redraw the views, clears the screen. Also calls \ccc{widget\_repainted()} for 
 current tool.}
 
@@ -163,7 +164,7 @@ QPainter defined in \ccStyle{Qt_widget} that uses as a paint device the \ccc{QPi
 
 \ccMethod{QPixmap& get_pixmap();}{Returns the current pixmap.}
 
-\ccMethod{QPainter& painter();}{Returns the current painter. {\bf af: Should be \ccc{get_painter}.}}
+\ccMethod{QPainter& painter();}{Returns the current painter.}
 \end{ccAdvanced}
 
 %Signals
