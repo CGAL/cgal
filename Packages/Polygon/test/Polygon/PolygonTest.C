@@ -74,6 +74,11 @@ void test_default_methods(      vector<Point>& pvec0,
 //                          test_iterators
 //-----------------------------------------------------------------------//
 
+void is_input_iterator(std::input_iterator_tag )
+{
+    return ;
+}
+
 void test_iterators(ListPolygon& p, const ListPolygon& q)
 {
   typedef ListPolygon::Vertex_circulator VC;
@@ -87,9 +92,8 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
 
   {
     VC v = p.vertices_circulator();
-    std::iterator_category(v);
-    std::value_type(v);
-    std::distance_type(v);
+    std::iterator_traits<VC>::iterator_category ic1;
+    is_input_iterator(ic1);
 
     VC vstart(v);
     if (v != 0)
@@ -102,9 +106,8 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
       cout << *vi << endl;
 
     EC e = p.edges_circulator();
-    std::iterator_category(e);
-    std::value_type(e);
-    std::distance_type(e);
+    std::iterator_traits<VC>::iterator_category ic2;
+    is_input_iterator(ic2);
 
     EC estart(e);
     if (e != 0)
@@ -120,9 +123,8 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
   //-------------------------------------------------------------------//
   {
     VCC v = q.vertices_circulator();
-    std::iterator_category(v);
-    std::value_type(v);
-    std::distance_type(v);
+    std::iterator_traits<VC>::iterator_category ic3;
+    is_input_iterator(ic3);
 
     VCC vstart(v);
     if (v != 0)
@@ -135,9 +137,8 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
       cout << *vi << endl;
 
     EC e = q.edges_circulator();
-    std::iterator_category(e);
-    std::value_type(e);
-    std::distance_type(e);
+    std::iterator_traits<VC>::iterator_category ic4;
+    is_input_iterator(ic4);
 
     EC estart(e);
     if (e != 0)
