@@ -39,38 +39,38 @@ class Constrained_Delaunay_triangulation_2
   : public  Constrained_triangulation_2<Gt, Tds> 
 {
 public:
-  typedef Constrained_triangulation_2<Gt, Tds>             Ct;
+  typedef Constrained_triangulation_2<Gt, Tds>             Ctr;
   typedef Constrained_Delaunay_triangulation_2<Gt, Tds>    CDt;
-  typedef typename Ct::Geom_traits   Geom_traits;
+  typedef typename Ctr::Geom_traits   Geom_traits;
 
-  typedef typename Ct::Constraint    Constraint;
-  typedef typename Ct::Vertex_handle Vertex_handle;
-  typedef typename Ct::Face_handle   Face_handle;
-  typedef typename Ct::Edge          Edge;
-  typedef typename Ct::Finite_faces_iterator Finite_faces_iterator;
-  typedef typename Ct::Face_circulator       Face_circulator;
-  typedef typename Ct::Locate_type           Locate_type;
+  typedef typename Ctr::Constraint    Constraint;
+  typedef typename Ctr::Vertex_handle Vertex_handle;
+  typedef typename Ctr::Face_handle   Face_handle;
+  typedef typename Ctr::Edge          Edge;
+  typedef typename Ctr::Finite_faces_iterator Finite_faces_iterator;
+  typedef typename Ctr::Face_circulator       Face_circulator;
+  typedef typename Ctr::Locate_type           Locate_type;
  
-  typedef typename Ct::List_edges List_edges;  
-  typedef typename Ct::List_faces List_faces;
-  typedef typename Ct::List_vertices  List_vertices;
-  typedef typename Ct::List_constraints List_constraints;
+  typedef typename Ctr::List_edges List_edges;  
+  typedef typename Ctr::List_faces List_faces;
+  typedef typename Ctr::List_vertices  List_vertices;
+  typedef typename Ctr::List_constraints List_constraints;
   //typedef std::list<Constraint> List_constraints;
-  typedef typename Ct::Less_edge less_edge;
-  typedef typename Ct::Edge_set Edge_set;
+  typedef typename Ctr::Less_edge less_edge;
+  typedef typename Ctr::Edge_set Edge_set;
 
   typedef typename Geom_traits::Point_2  Point;
 
 
   Constrained_Delaunay_triangulation_2(const Geom_traits& gt=Geom_traits()) 
-    : Ct(gt) { }
+    : Ctr(gt) { }
 
   Constrained_Delaunay_triangulation_2(const CDt& cdt)
-    : Ct(cdt) {}
+    : Ctr(cdt) {}
 
   Constrained_Delaunay_triangulation_2(List_constraints& lc, 
 				       const Geom_traits& gt=Geom_traits())
-    : Ct(gt) 
+    : Ctr(gt) 
     {   
       typename List_constraints::iterator itc = lc.begin();
       for( ; itc != lc.end(); ++itc) {
@@ -83,7 +83,7 @@ public:
   Constrained_Delaunay_triangulation_2(InputIterator first,
 				       InputIterator last,
 				       const Geom_traits& gt=Geom_traits() )
-    : Ct(gt) 
+    : Ctr(gt) 
     {
       while(first != last){
 	insert((*first).first, (*first).second);
@@ -272,8 +272,8 @@ propagating_flip(List_edges & edges)
   int i, ii, indf, indn;
   Face_handle ni, f,ff;
   Edge ei,eni; 
-  typename Ct::Edge_set edge_set;
-  typename Ct::Less_edge less_edge;
+  typename Ctr::Edge_set edge_set;
+  typename Ctr::Less_edge less_edge;
   Edge e[4];
   typename List_edges::iterator itedge=edges.begin();
 
@@ -394,7 +394,7 @@ insert(const Point & a)
 // constrained edges are updated
 // Delaunay property is restored
 {
-  Vertex_handle va= Ct::insert(a);
+  Vertex_handle va= Ctr::insert(a);
   flip_around(va); 
   return va;
 }
@@ -407,7 +407,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 // constrained edges are updated
 // Delaunay property is restored
 {
-  Vertex_handle va= Ct::insert(a,lt,loc,li);
+  Vertex_handle va= Ctr::insert(a,lt,loc,li);
   flip_around(va); 
   return va;
 }
@@ -434,7 +434,7 @@ Constrained_Delaunay_triangulation_2<Gt,Tds>::
 insert(Vertex_handle  va, Vertex_handle vb, List_vertices& new_vertices)
 {
   List_edges new_edges;
-  Ct::insert(va,vb,new_vertices,new_edges);
+  Ctr::insert(va,vb,new_vertices,new_edges);
   propagating_flip(new_edges);
   flip_around(new_vertices);
 }
@@ -450,7 +450,7 @@ triangulate_hole(List_faces& intersected_faces,
 		 List_edges& new_edges,
 		 Vertex_handle vbb)
 {
-  Ct::triangulate_hole(intersected_faces,
+  Ctr::triangulate_hole(intersected_faces,
 		       conflict_boundary_ab,
 		       conflict_boundary_ba,
 		       new_edges,
@@ -470,7 +470,7 @@ remove(Vertex_handle v)
   CGAL_triangulation_precondition( ! v.is_null() );
   CGAL_triangulation_precondition( !is_infinite(v));
     
-  if  (dimension() <= 1)    Ct::remove(v);
+  if  (dimension() <= 1)    Ctr::remove(v);
   else  remove_2D(v);
   return;
 }
@@ -498,7 +498,7 @@ bool
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 is_valid(bool verbose, int level) const
 {
-  bool result = Ct::is_valid(verbose, level);
+  bool result = Ctr::is_valid(verbose, level);
   CGAL_triangulation_assertion( result );
 
     Finite_faces_iterator fit= finite_faces_begin();
