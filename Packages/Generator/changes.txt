@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.72 (22 Sep 2003)
+- new headers
+
 2.71 (17 Sep 2003) [af]
    - Removed Polygon_traits_2
 

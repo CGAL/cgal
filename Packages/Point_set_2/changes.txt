@@ -1,3 +1,5 @@
+2.3.13 new headers
+
 2.3.12 Added #include <CGAL/squared_distance_2_1.h> to nearest_neighbor_delaunay_2.h  [af]
 
 2.3.11 Added #include <CGAL/squared_distance_2_1.h> to Point_set_2.h  [af]

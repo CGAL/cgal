@@ -1,6 +1,9 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.33 (22 Sep 2003)
+- new headers
+
 3.32 (05 May 2003)
 
      - Removed CGAL_USE_POLYHEDRON_DESIGN_ONE parts.

@@ -1,5 +1,9 @@
 Modifier Package: Release changes:
 ---------------------------------------------------------------------
+1.3.7 (22 Sep 2003)
+- new headers
+
+============================ Release 2.4 ===================================
 1.3.6 (29 Apr 2002)
   - split of user and reference manuals
 
