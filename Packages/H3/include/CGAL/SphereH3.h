@@ -17,8 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -75,15 +74,16 @@ template <class R_>
 class SphereH3
   : public R_::Sphere_handle_3
 {
+    typedef typename R_::RT    RT;
+    typedef typename R_::FT    FT;
+    typedef typename R_::Kernel_base::Point_3              Point_3;
+    typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+
+    typedef typename R_::Sphere_handle_3            Sphere_handle_3_;
+    typedef typename Sphere_handle_3_::element_type Sphere_ref_3;
+
   public:
     typedef R_                R;
-    typedef typename R::RT    RT;
-    typedef typename R::FT    FT;
-    typedef typename R::Kernel_base::Point_3  Point_3;
-    typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
-
-      typedef typename R::Sphere_handle_3           Sphere_handle_3_;
-      typedef typename Sphere_handle_3_::element_type Sphere_ref_3;
 
       SphereH3()
         : Sphere_handle_3_() {}
@@ -155,8 +155,8 @@ class SphereH3
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& center,
-                          const FT& squared_radius,
-                          const Orientation& o)
+                      const FT& squared_radius,
+                      const Orientation& o)
 {
   CGAL_kernel_precondition( !( squared_radius < FT(0))
                           &&( o != COLLINEAR) );
@@ -166,7 +166,7 @@ SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& center,
 template <class R>
 CGAL_KERNEL_CTOR_INLINE
 SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& center,
-                          const Orientation& o)
+                      const Orientation& o)
 {
   CGAL_kernel_precondition( ( o != COLLINEAR) );
   initialize_with( Sphere_ref_3(center, FT(0), o));
@@ -175,8 +175,8 @@ SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& center,
 template <class R>
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
 SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
-                          const typename SphereH3<R>::Point_3& q,
-                          const Orientation& o)
+                      const typename SphereH3<R>::Point_3& q,
+                      const Orientation& o)
 {
   CGAL_kernel_precondition( o != COLLINEAR);
   Point_3 center = midpoint(p,q);
@@ -187,9 +187,9 @@ SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
 template <class R>
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
 SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
-                          const typename SphereH3<R>::Point_3& q,
-                          const typename SphereH3<R>::Point_3& r,
-                          const Orientation& o)
+                      const typename SphereH3<R>::Point_3& q,
+                      const typename SphereH3<R>::Point_3& r,
+                      const Orientation& o)
 {
   CGAL_kernel_precondition( o != COLLINEAR);
   Point_3 center = circumcenter(p,q,r);
@@ -200,9 +200,9 @@ SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
 template <class R>
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
 SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
-                          const typename SphereH3<R>::Point_3& q,
-                          const typename SphereH3<R>::Point_3& r,
-                          const typename SphereH3<R>::Point_3& s)
+                      const typename SphereH3<R>::Point_3& q,
+                      const typename SphereH3<R>::Point_3& r,
+                      const typename SphereH3<R>::Point_3& s)
 {
   Orientation o = CGAL::orientation(p,q,r,s);
   CGAL_kernel_precondition( o != COLLINEAR);

@@ -17,8 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 #ifndef CGAL_PREDICATES_ON_LINESH2_H

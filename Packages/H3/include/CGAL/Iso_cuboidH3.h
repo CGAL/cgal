@@ -17,8 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -33,12 +32,13 @@ template <class R_>
 class Iso_cuboidH3
   : public R_::Iso_cuboid_handle_3
 {
+  typedef typename R_::RT    RT;
+  typedef typename R_::FT    FT;
+  typedef typename R_::Kernel_base::Point_3              Point_3;
+  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+
 public:
   typedef R_                R;
-  typedef typename R::RT    RT;
-  typedef typename R::FT    FT;
-  typedef typename R::Kernel_base::Point_3  Point_3;
-  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R::Iso_cuboid_handle_3  Iso_cuboid_handle_3_;
   typedef typename Iso_cuboid_handle_3_::element_type Iso_cuboid_ref_3;

@@ -17,8 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -67,17 +66,18 @@ template < class R_ >
 class SegmentH3
   : public R_::Segment_handle_3
 {
+  typedef typename R_::RT   RT;
+  typedef typename R_::FT   FT;
+  typedef typename R_::Kernel_base::Point_3              Point_3;
+  typedef typename R_::Kernel_base::Direction_3          Direction_3;
+  typedef typename R_::Kernel_base::Line_3               Line_3;
+  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+
+  typedef typename R_::Segment_handle_3            Segment_handle_3_;
+  typedef typename Segment_handle_3_::element_type Segment_ref_3;
+
 public:
   typedef R_               R;
-  typedef typename R::RT   RT;
-  typedef typename R::FT   FT;
-  typedef typename R::Kernel_base::Point_3           Point_3;
-  typedef typename R::Kernel_base::Direction_3       Direction_3;
-  typedef typename R::Kernel_base::Line_3            Line_3;
-  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
-
-  typedef typename R::Segment_handle_3          Segment_handle_3_;
-  typedef typename Segment_handle_3_::element_type Segment_ref_3;
  
   SegmentH3()
     : Segment_handle_3_(Segment_ref_3()) {}

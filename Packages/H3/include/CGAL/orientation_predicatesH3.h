@@ -17,15 +17,14 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
 #ifndef CGAL_ORIENTATION_PREDICATESH3_H
 #define CGAL_ORIENTATION_PREDICATESH3_H
 
-#include <CGAL/PVDH3.h>
+#include <CGAL/PointH3.h>
 #include <CGAL/predicates_on_rtH2.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 

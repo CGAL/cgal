@@ -17,15 +17,16 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
 #ifndef CGAL_PREDICATES_ON_DIRECTIONSH2_H
 #define CGAL_PREDICATES_ON_DIRECTIONSH2_H
 
-#include <CGAL/PVDH2.h>
+#include <CGAL/PointH2.h>
+#include <CGAL/VectorH2.h>
+#include <CGAL/DirectionH2.h>
 #include <CGAL/predicates_on_pointsH2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -44,10 +45,10 @@ compare_angle_with_x_axis(const DirectionH2<R>& d1,
 
   const RT RT0(0);
 
-  CGAL::VectorH2<R> dirvec1(d1.x(), d1.y());      // Added
-  CGAL::PointH2<R>   p1 = CGAL::ORIGIN + dirvec1; // Added
-  CGAL::VectorH2<R> dirvec2(d2.x(), d2.y());      // Added
-  PointH2<R>   p2 = ORIGIN + dirvec2;             // Added
+  VectorH2<R> dirvec1(d1.x(), d1.y());      // Added
+  PointH2<R>   p1 = CGAL::ORIGIN + dirvec1; // Added
+  VectorH2<R> dirvec2(d2.x(), d2.y());      // Added
+  PointH2<R>   p2 = ORIGIN + dirvec2;       // Added
 //  PointH2<R>   p1 = ORIGIN + d1.vector(); // Commented out
 //  PointH2<R>   p2 = ORIGIN + d2.vector(); // Commented out
 

@@ -1,6 +1,8 @@
 2.37   (? October 2001)
 - Replace Handle/Rep by Handle_for/Ref_counted.
 - Hardcoded dependencies between classes removed.
+- Point, Vector, Direction classes now in their own files
+- made typedefs in kernel object classes private
 
 2.36   (2 October 2001)
 - Access functions of objects (like .x() ) now return const references.

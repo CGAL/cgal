@@ -17,8 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -31,19 +30,20 @@ template < class R_ >
 class TriangleH3
   : public R_::Triangle_handle_3
 {
+  typedef typename R_::RT    RT;
+  typedef typename R_::FT    FT;
+  typedef typename R_::Kernel_base::Point_3              Point_3;
+  typedef typename R_::Kernel_base::Plane_3              Plane_3;
+  typedef typename R_::Kernel_base::Vector_3             Vector_3;
+  typedef typename R_::Kernel_base::Segment_3            Segment_3;
+  typedef typename R_::Kernel_base::Tetrahedron_3        Tetrahedron_3;
+  typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
+
+  typedef typename R_::Triangle_handle_3            Triangle_handle_3_;
+  typedef typename Triangle_handle_3_::element_type Triangle_ref_3;
+
 public:
   typedef R_                R;
-  typedef typename R::RT    RT;
-  typedef typename R::FT    FT;
-  typedef typename R::Kernel_base::Point_3          Point_3;
-  typedef typename R::Kernel_base::Plane_3          Plane_3;
-  typedef typename R::Kernel_base::Vector_3         Vector_3;
-  typedef typename R::Kernel_base::Segment_3        Segment_3;
-  typedef typename R::Kernel_base::Tetrahedron_3    Tetrahedron_3;
-  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
-
-  typedef typename R::Triangle_handle_3         Triangle_handle_3_;
-  typedef typename Triangle_handle_3_::element_type Triangle_ref_3;
 
   TriangleH3()
     : Triangle_handle_3_(Triangle_ref_3()) {}

@@ -17,15 +17,14 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
 #ifndef CGAL_PREDICATES_ON_POINTSH3_H
 #define CGAL_PREDICATES_ON_POINTSH3_H
 
-#include <CGAL/PVDH3.h>
+#include <CGAL/PointH3.h>
 
 CGAL_BEGIN_NAMESPACE
 

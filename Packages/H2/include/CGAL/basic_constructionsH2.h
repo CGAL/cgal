@@ -18,7 +18,7 @@
 // author(s)     : Sven Schoenherr
 //                 Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 

@@ -58,17 +58,18 @@ template < class R_ >
 class SegmentH2
   : public R_::Segment_handle_2
 {
+  typedef typename R_::FT                                FT;
+  typedef typename R_::RT                                RT;
+  typedef typename R_::Kernel_base::Point_2              Point_2;
+  typedef typename R_::Kernel_base::Line_2               Line_2;
+  typedef typename R_::Kernel_base::Direction_2          Direction_2;
+  typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
+
+  typedef typename R_::Segment_handle_2            Segment_handle_2_;
+  typedef typename Segment_handle_2_::element_type Segment_ref_2;
+
 public:
   typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
-  typedef typename R::Kernel_base::Point_2       Point_2;
-  typedef typename R::Kernel_base::Line_2        Line_2;
-  typedef typename R::Kernel_base::Direction_2   Direction_2;
-  typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
-
-  typedef typename R::Segment_handle_2          Segment_handle_2_;
-  typedef typename Segment_handle_2_::element_type Segment_ref_2;
 
     SegmentH2()
       : Segment_handle_2_(Segment_ref_2()) {}

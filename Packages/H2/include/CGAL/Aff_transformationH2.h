@@ -17,8 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -505,14 +504,15 @@ template < class R_ >
 class Aff_transformationH2
   : public R_::Aff_transformation_handle_2
 {
-  public:
+  typedef typename R_::FT                        FT;
+  typedef typename R_::RT                        RT;
+  typedef typename R_::Kernel_base::Point_2      Point_2;
+  typedef typename R_::Kernel_base::Vector_2     Vector_2;
+  typedef typename R_::Kernel_base::Direction_2  Direction_2;
+  typedef typename R_::Kernel_base::Line_2       Line_2;
+
+public:
   typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
-  typedef typename R::Kernel_base::Point_2      Point_2;
-  typedef typename R::Kernel_base::Vector_2     Vector_2;
-  typedef typename R::Kernel_base::Direction_2  Direction_2;
-  typedef typename R::Kernel_base::Line_2       Line_2;
 
           Aff_transformationH2();
 
@@ -640,8 +640,8 @@ Aff_transformationH2( const Scaling, const RT& xa, const RT& xb,
                                      const RT& ya, const RT& yb)
 {
   initialize_with(Aff_transformation_repH2<R>(xa*yb,  RT(0),  RT(0),
-                                        RT(0),  ya*xb,  RT(0),
-                                        xb*yb  ));
+                                              RT(0),  ya*xb,  RT(0),
+                                              xb*yb  ));
 }
 
 template < class R >
@@ -683,8 +683,8 @@ Aff_transformationH2( const RT& a, const RT& b, const RT& c,
                                                 const RT& g)
 {
   initialize_with(Aff_transformation_repH2<R>( a,   b,   c,
-                                         d,   e,   f,
-                                         g  ));
+                                               d,   e,   f,
+                                               g  ));
 }
 
 template < class R >
@@ -694,8 +694,8 @@ Aff_transformationH2( const RT& a, const RT& b,
                       const RT& g)
 {
   initialize_with(Aff_transformation_repH2<R>( a,   b,   RT(0),
-                                         d,   e,   RT(0),
-                                         g  ));
+                                               d,   e,   RT(0),
+                                               g  ));
 }
 
 template < class R >

@@ -17,8 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -85,16 +84,17 @@ template <class R_>
 class TriangleH2
   : public R_::Triangle_handle_2
 {
+    typedef typename R_::FT                                FT;
+    typedef typename R_::RT                                RT;
+    typedef typename R_::Kernel_base::Point_2              Point_2;
+    typedef typename R_::Kernel_base::Vector_2             Vector_2;
+    typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
+
+    typedef typename R_::Triangle_handle_2            Triangle_handle_2_;
+    typedef typename Triangle_handle_2_::element_type Triangle_ref_2;
+
 public:
     typedef R_                                    R;
-    typedef typename R::FT                        FT;
-    typedef typename R::RT                        RT;
-    typedef typename R::Kernel_base::Point_2              Point_2;
-    typedef typename R::Kernel_base::Vector_2             Vector_2;
-    typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
-
-    typedef typename R::Triangle_handle_2         Triangle_handle_2_;
-    typedef typename Triangle_handle_2_::element_type Triangle_ref_2;
 
     TriangleH2()
       : Triangle_handle_2_(Triangle_ref_2()) {}
