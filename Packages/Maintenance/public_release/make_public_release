@@ -22,7 +22,6 @@ Run this script. This does the following:
 
 The rest is done manually still.
 Add README file.
-Edit install_cgal script: remove the "y" in INTERNAL_RELEASE='y'.
 Rename the current directory to CGAL-x.y.
 Do
   find CGAL-x.y -exec touch 01221530 {} \;
