@@ -752,7 +752,7 @@ set_compiler_flags()
     LIBPATH_OPT="-L"
     DEBUG_OPT="-g"
     EXE_OPT="-o "
-    SAVE_THE_BLANK=""
+    SAVE_THE_BLANK="\$(SAVESTHEBLANK)"
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
     CGAL_WIN_LIBNAME="libCGALWin.a"
@@ -782,6 +782,7 @@ set_compiler_flags()
             LEDA_LIB_OPT="lib"
 	    DEBUG_OPT=""
 	    EXE_OPT="-e"
+	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_WIN_LIBNAME="CGALWin.lib"
@@ -811,6 +812,7 @@ set_compiler_flags()
 	    LIBPATH_OPT="-LIBPATH:"
 	    DEBUG_OPT="-Z7"
 	    EXE_OPT="-Fp"
+	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_WIN_LIBNAME="CGALWin.lib"
@@ -864,7 +866,6 @@ set_compiler_flags()
             WINDOW_DIR="/usr/openwin/lib"
             RUNTIME_LINKER_FLAG="-R "
             PRINT_STACKTRACE_PROGRAM="dbx"
-	    SAVE_THE_BLANK="\$(SAVESTHEBLANK)"
             ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
