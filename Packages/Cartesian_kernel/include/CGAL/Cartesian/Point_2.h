@@ -99,12 +99,12 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const 
   {
-    return Cartesian_const_iterator(static_cast<const Point_2* const>(this),0);
+    return Cartesian_const_iterator(static_cast<Point_2* const>(this),0);
   }
 
   Cartesian_const_iterator cartesian_end() const 
   {
-    return Cartesian_const_iterator(static_cast<const Point_2* const>(this), 2);
+    return Cartesian_const_iterator(static_cast<Point_2* const>(this), 2);
   }
 
   int dimension() const
