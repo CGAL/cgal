@@ -2,6 +2,11 @@
 #define CGAL_SPHERE_PREDICATES_H
 
 #include <CGAL/basic.h>
+#undef _DEBUG
+#define _DEBUG 23
+#include <CGAL/Nef_2/debug.h>
+
+#include <vector>
 
 #undef CGAL_forall_iterators
 #define CGAL_forall_iterators(x,L)\
@@ -35,33 +40,60 @@ and the z-axis into the equatorial plane. */
 
 template <class R>
 int spherical_compare(const Sphere_point<R>& p1, 
-                      const Sphere_point<R>& p2,
-                      int pos)
-{
-  Sphere_point<R> pS(0,-1,0),pN(0,1,0);
+		      const Sphere_point<R>& p2,
+		      int axis, int pos) {
+  
+  Sphere_point<R> pS, pN;
+  switch(axis) {
+  case 0:
+    pS=Sphere_point<R>(0,-1,0);
+    pN=Sphere_point<R>(0,1,0);
+    break;
+  case 1:
+    pS=Sphere_point<R>(0,0,1);
+    pN=Sphere_point<R>(0,0,-1);
+    break;
+  case 2: 
+    pS=Sphere_point<R>(0,-1,0);
+    pN=Sphere_point<R>(0,1,0);
+    break;
+  }
   CGAL::Direction_3<R> d1(p1-CGAL::ORIGIN), d2(p2-CGAL::ORIGIN),
                        dS(pS-CGAL::ORIGIN), dN(pN-CGAL::ORIGIN);
   if (d1 == d2) return 0;
   if (d1 == dS || d2 == dN) return -1;
   if (d1 == dN || d2 == dS) return  1;
   // now no more special cases 
-  if ( (p1.hz()==static_cast<typename R::RT>(0)) && 
-       (p2.hz()==static_cast<typename R::RT>(0)) ) { 
-    // both in xy-plane, pi.hx() can't be zero 
+  if (axis==0 && (p1.hx()==static_cast<typename R::RT>(0) && 
+		  p2.hx()==static_cast<typename R::RT>(0))) {
+      int s1 = CGAL_NTS sign(p1.hz());
+      int s2 = CGAL_NTS sign(p2.hz());
+      if ( s1 != s2 ) return pos * -s1;
+      // now s1 == s2
+      return -s1 * CGAL::spherical_orientation(p1,Sphere_point<R>(1,0,0),p2);
+  } else 
+  if (axis==1 && (p1.hy()==static_cast<typename R::RT>(0) && 
+		  p2.hy()==static_cast<typename R::RT>(0))) {
+    int s1 = CGAL_NTS sign(p1.hx());
+    int s2 = CGAL_NTS sign(p2.hx());
+    if ( s1 != s2 ) return pos * s1;
+    // now s1 == s2
+    return s1 * CGAL::spherical_orientation(p1,Sphere_point<R>(0,1,0),p2);
+  } else 
+  if (axis==2 && (p1.hz()==static_cast<typename R::RT>(0) && 
+		  p2.hz()==static_cast<typename R::RT>(0))) { 
     int s1 = CGAL_NTS sign(p1.hx());
     int s2 = CGAL_NTS sign(p2.hx());
     if ( s1 != s2 ) return pos * s1;
     // now s1 == s2
     return s1 * CGAL::spherical_orientation(p1,Sphere_point<R>(0,0,1),p2);
-    
-  } else { // not in xy-plane
-    int sor = CGAL::spherical_orientation(pS,p1,p2);
-    if ( sor ) return sor;
-    else // sor == 0 => on the same sweep line
-      return CGAL::spherical_orientation(Sphere_point<R>(-pos,0,0),p2,p1);
   }
+  int sor = CGAL::spherical_orientation(pS,p1,p2);
+  if ( sor ) return sor;
+  if(axis==0)
+    return CGAL::spherical_orientation(Sphere_point<R>(0,0,pos),p2,p1);
+  return CGAL::spherical_orientation(Sphere_point<R>(-pos,0,0),p2,p1);
 }
-
 
 /* the next two functions partition the segments in a list into a list
 that carries the segment parts that are only part of a halfspace.
@@ -131,6 +163,97 @@ $h^{0+}$ then we return a trivial segment.
 
 */
 
+/*
+template <typename R> 
+int Sphere_segment<R>::
+intersection(const CGAL::Sphere_circle<R>& c, std::vector<Sphere_segment<R> >& s) const {  
+
+  TRACEN("    intersection "<<*this<<" "<<c);
+  if ( is_degenerate() ) { 
+    TRACEN("    degenerate");
+    s.push_back(*this); 
+    return 1;
+  }
+
+  CGAL::Oriented_side or1 = c.oriented_side(source());
+  CGAL::Oriented_side or2 = c.oriented_side(target());
+
+  TRACEN("    Orientation " << or1 << " " << or2);
+
+  if ( or1 == CGAL::opposite(or2) && or1 != or2 ) { 
+    // it is sure that $s$ intersects $h$ in its interior. the
+    //   question is which part is in the halfspace $h^+$.
+    TRACEN("    opposite");
+    Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
+    if ( !has_on(i1) ) 
+      i1 = i1.antipode();
+    s.push_back(Sphere_segment<R>(source(),i1,sphere_circle()));
+    s.push_back(Sphere_segment<R>(i1,target(),sphere_circle()));
+    return 2;
+  }
+  else if ( or1 == CGAL::ON_ORIENTED_BOUNDARY && 
+            or2 == CGAL::ON_ORIENTED_BOUNDARY ) { 
+    // if both ends of $s$ are part of $h$ then $s$ is a halfcircle or
+    //   $s$ is fully part of $h$.  In this case we have to check if the
+    //   halfcircle is not part of $h^-$.  This can be formulated by an
+    //   orientation test of the point $p$ at the tip of the normal of
+    //   |s.sphere_circle()| with respect to the plane through the
+    //   endpoints of $s$ and the tip of the normal of $h$.
+    TRACEN("    both in plane");
+    s.push_back(*this); 
+    return 1;
+  }
+  else if ( or1 != CGAL::ON_NEGATIVE_SIDE && 
+            or2 != CGAL::ON_NEGATIVE_SIDE ) { 
+    // this case covers the endpoints of $s$ as part of the closed
+    //   oriented halfspace $h^{0+}$. At least one is part of
+    //   $h^{+}$. If $s$ is not long then the segment must be fully part
+    //   of $h^{0+}$. Otherwise if $s$ is long, then we at both ends
+    //   there are subsegments as part of $h^{0+}$ (one might be
+    //   degenerate). 
+    if ( is_long() ) { 
+      Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
+      Sphere_point<R> i2 = i1.antipode();
+      Sphere_segment<R> so(i1,i2,sphere_circle());
+      if ( so.has_on(source()) && so.has_on(target()) )
+	std::swap(i1,i2);
+      // now source(),i1,i2,target() are circularly ordered
+      s.push_back(Sphere_segment(source(),i1,sphere_circle()));
+      s.push_back(Sphere_segment(i1,i2,sphere_circle()));
+      s.push_back(Sphere_segment(i2,target(),sphere_circle()));
+      //      TRACEN("    both >= plane, long "<<s1<<s2);
+      return 3;
+    } // now short:
+    TRACEN("    both >= plane, short ");
+    s.push_back(*this); 
+    return 1; 
+  } 
+  else if ( or1 != CGAL::ON_POSITIVE_SIDE && 
+            or2 != CGAL::ON_POSITIVE_SIDE ) { 
+    // either both endpoints of $s$ are in $h^-$ or one is in $h^-$
+    //   and one on $h^0$. 
+    if ( is_long() ) { 
+      Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
+      Sphere_point<R> i2 = i1.antipode();
+      Sphere_segment so(i1,i2,sphere_circle());
+      //      TRACEN("    both <= plane, long"<<so);
+      if ( so.has_on(source()) && so.has_on(target()) )
+      { so = so.complement(); }
+      //      TRACEN("    both <= plane, long"<<so);
+      s.push_back(Sphere_segment(source(),so.source(),sphere_circle()));
+      s.push_back(so);
+      s.push_back(Sphere_segment(so.target(),target(),sphere_circle()));
+      return 3;
+    } // now short
+    TRACEN("    both <= plane, short");
+    s.push_back(*this);
+    return 1;
+  }
+
+  CGAL_assertion_msg(0,"Oops, forgot some case.");
+  return -1;
+}
+*/
 
 template <typename R> 
 int Sphere_segment<R>::
@@ -146,8 +269,8 @@ intersection(const CGAL::Sphere_circle<R>& c,
   CGAL::Oriented_side or1 = c.oriented_side(source());
   CGAL::Oriented_side or2 = c.oriented_side(target());
   if ( or1 == CGAL::opposite(or2) && or1 != or2 ) { 
-    /* it is sure that $s$ intersects $h$ in its interior. the
-       question is which part is in the halfspace $h^+$.*/
+// it is sure that $s$ intersects $h$ in its interior. the
+//       question is which part is in the halfspace $h^+$.
     TRACEN("    opposite");
     Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
     if ( !has_on(i1) ) i1 = i1.antipode();
@@ -160,12 +283,12 @@ intersection(const CGAL::Sphere_circle<R>& c,
   }
   else if ( or1 == CGAL::ON_ORIENTED_BOUNDARY && 
             or2 == CGAL::ON_ORIENTED_BOUNDARY ) { 
-    /* if both ends of $s$ are part of $h$ then $s$ is a halfcircle or
-       $s$ is fully part of $h$.  In this case we have to check if the
-       halfcircle is not part of $h^-$.  This can be formulated by an
-       orientation test of the point $p$ at the tip of the normal of
-       |s.sphere_circle()| with respect to the plane through the
-       endpoints of $s$ and the tip of the normal of $h$. */
+// if both ends of $s$ are part of $h$ then $s$ is a halfcircle or
+//    $s$ is fully part of $h$.  In this case we have to check if the
+//    halfcircle is not part of $h^-$.  This can be formulated by an
+//    orientation test of the point $p$ at the tip of the normal of
+//    |s.sphere_circle()| with respect to the plane through the
+//   endpoints of $s$ and the tip of the normal of $h$. 
     TRACEN("    both in plane");
     if ( source() != target().antipode() ) {
       s1 = *this; return 1;
@@ -186,12 +309,12 @@ intersection(const CGAL::Sphere_circle<R>& c,
   }
   else if ( or1 != CGAL::ON_NEGATIVE_SIDE && 
             or2 != CGAL::ON_NEGATIVE_SIDE ) { 
-    /* this case covers the endpoints of $s$ as part of the closed
-       oriented halfspace $h^{0+}$. At least one is part of
-       $h^{+}$. If $s$ is not long then the segment must be fully part
-       of $h^{0+}$. Otherwise if $s$ is long, then we at both ends
-       there are subsegments as part of $h^{0+}$ (one might be
-       degenerate). */
+// this case covers the endpoints of $s$ as part of the closed
+//   oriented halfspace $h^{0+}$. At least one is part of
+//   $h^{+}$. If $s$ is not long then the segment must be fully part
+//   of $h^{0+}$. Otherwise if $s$ is long, then we at both ends
+//   there are subsegments as part of $h^{0+}$ (one might be
+//   degenerate).
     if ( is_long() ) { 
       Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
       Sphere_point<R> i2 = i1.antipode();
@@ -209,8 +332,8 @@ intersection(const CGAL::Sphere_circle<R>& c,
   } 
   else if ( or1 != CGAL::ON_POSITIVE_SIDE && 
             or2 != CGAL::ON_POSITIVE_SIDE ) { 
-    /* either both endpoints of $s$ are in $h^-$ or one is in $h^-$
-       and one on $h^0$. */
+// either both endpoints of $s$ are in $h^-$ or one is in $h^-$
+//     and one on $h^0$.
     if ( is_long() ) { 
       Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
       Sphere_point<R> i2 = i1.antipode();
@@ -232,7 +355,6 @@ intersection(const CGAL::Sphere_circle<R>& c,
   CGAL_assertion_msg(0,"Oops, forgot some case.");
   return -1;
 }
-
 
 CGAL_END_NAMESPACE
 
