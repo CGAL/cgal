@@ -18,9 +18,9 @@
 #ifdef USE_RATIONAL
 #include <CGAL/leda_rational.h>
 #endif
-#include <CGAL/Pm_straight_exact_traits.h>
+#include <CGAL/Pm_straight_traits_2.h>
 #include <CGAL/IO/Straight_2_stream.h>
-#include <CGAL/IO/Pm_straight_exact_traits_stream.h>
+#include <CGAL/IO/Pm_straight_traits_2_Window_stream.h>
 
 #ifdef CGAL_PM_DEBUG
 #include <CGAL/Pm_segment_traits_2.h>
@@ -52,7 +52,7 @@ typedef CGAL::Cartesian<number_type>            Rep;
 typedef Rep::FT                                 FT;
 typedef Rep::RT					RT;
 
-typedef CGAL::Pm_straight_exact_traits<Rep>      Traits;
+typedef CGAL::Pm_straight_traits_2<Rep>         Traits;
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
 typedef Planar_map::Traits_wrap	Traits_wrap;

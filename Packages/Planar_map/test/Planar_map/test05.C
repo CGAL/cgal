@@ -9,7 +9,7 @@
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/IO/Straight_2_stream.h>
-#include <CGAL/Pm_straight_exact_traits.h>
+#include <CGAL/Pm_straight_traits_2.h>
 
 #if STRATEGY == 2
 #include <CGAL/Pm_naive_point_location.h>

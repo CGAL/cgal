@@ -10,7 +10,7 @@
 //   - 8   : TestrepH
 
 // tests 01-04 use Pm_segment_traits_2
-// test  05    uses Pm_straight_exact_traits_2
+// test  05    uses Pm_straight_traits_2
 
 // A default TESTR is was not set yet
 #ifndef TESTR
@@ -125,10 +125,3 @@ void usage(){
   std::cout << "Test is not performed.\n";
 }
 #endif
-
-
-
-
-
-
-

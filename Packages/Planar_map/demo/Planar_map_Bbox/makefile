@@ -103,7 +103,7 @@ demo.rational.naive$(EXE_EXT): demo.rational.naive$(OBJ_EXT) draw_map.rational.n
 demo.leda.rational.naive$(EXE_EXT): demo.leda.rational.naive$(OBJ_EXT) draw_map.leda.rational.naive$(OBJ_EXT) 
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo.leda.rational.naive demo.leda.rational.naive$(OBJ_EXT) draw_map.leda.rational.naive$(OBJ_EXT) $(LDFLAGS)
 
-draw_map_h = draw_map.h ../../include/CGAL/Pm_straight_exact_traits.h
+draw_map_h = draw_map.h ../../include/CGAL/Pm_straight_traits_2.h
 
 voronoi_h = voronoi.h ../../include/CGAL/Pm_dynamic_open_bounding_box.h ../../include/CGAL/Pm_dynamic_closed_bounding_box.h
 

@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/Pm_straight_exact_traits.h
+// file          : include/CGAL/Pm_straight_traits_2.C
 // source        : 
 // revision      : 
 // revision_date : 
@@ -23,10 +23,31 @@
 //
 // Chapter       : 
 // ============================================================================
-#ifndef CGAL_PM_STRAIGHT_EXACT_TRAITS_H
-#define CGAL_PM_STRAIGHT_EXACT_TRAITS_H
+#ifndef CGAL_PM_STRAIGHT_TRAITS_2_C
+#define CGAL_PM_STRAIGHT_TRAITS_2_C
 
+#ifndef CGAL_PM_STRAIGHT_TRAITS_2_H
 #include <CGAL/Pm_straight_traits_2.h>
-#define Pm_straight_exact_traits Pm_straight_traits_2
+#endif
 
-#endif // CGAL_PM_STRAIGHT_EXACT_TRAITS_H
+CGAL_BEGIN_NAMESPACE
+
+template <class R_>
+const typename Pm_straight_traits_2<R_>::Bounding_box 
+Pm_straight_traits_2<R_>::unbounded_box()
+{
+  static const typename Pm_straight_traits_2<R_>::Bounding_box 
+    unbounded_box_;
+  return unbounded_box_;
+}
+
+template <class R_>
+const typename Pm_straight_traits_2<R_>::Bounding_box 
+Pm_straight_traits_2<R_>::unbounded_box_;
+// unbounded_box_ initialized to default Bounding_box
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_PM_STRAIGHT_TRAITS_2_C
+// EOF
+
