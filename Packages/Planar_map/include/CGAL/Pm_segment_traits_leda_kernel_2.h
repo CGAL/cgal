@@ -6,16 +6,83 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*!
+ */
+template< class FT_ >
+class Direction_2 : public leda_rat_point {
+public:
+public:
+  typedef FT_                                   RT;
+  typedef FT_                                   FT;
+  Direction_2(const leda_rat_point & p) : leda_rat_point(p) {}
+
+  /*!
+   */
+  Sign sign_of_determinant2x2(const FT & a00, const FT & a01,
+                              const FT & a10, const FT & a11) const
+  {
+    return
+      static_cast<Sign>(static_cast<int>(CGAL_NTS compare( a00*a11, a10*a01)));
+  }
+    
+  /*!
+   */
+  Comparison_result
+  compare_angle_with_x_axis_2(const FT & dx1, const FT & dy1,
+                              const FT & dx2, const FT & dy2) const
+  {
+    // angles are in [-pi,pi], and the angle between Ox and d1 is compared
+    // with the angle between Ox and d2
+    int quadrant_1 = (dx1 >= FT(0)) ? ((dy1 >= FT(0))?1:4)
+      : ((dy1 >= FT(0))?2:3);
+    int quadrant_2 = (dx2 >= FT(0)) ? ((dy2 >= FT(0))?1:4)
+      : ((dy2 >= FT(0))?2:3);
+    // We can't use CGAL_NTS compare(quadrant_1,quadrant_2) because in case
+    // of tie, we need additional computation
+    if (quadrant_1 > quadrant_2) return LARGER;
+    else if (quadrant_1 < quadrant_2) return SMALLER;
+    return Comparison_result(-sign_of_determinant2x2(dx1,dy1,dx2,dy2));
+  }
+      
+  /*!
+   */
+  Comparison_result
+  compare_angle_with_x_axis(const Direction_2 & d1,
+                            const Direction_2 & d2) const
+  { return compare_angle_with_x_axis_2(d1.xcoord(), d1.ycoord(),
+                                       d2.xcoord(), d2.ycoord()); }
+
+  /*!
+   */
+  bool operator<(const Direction_2 & d) const
+  { return compare_angle_with_x_axis(*this, d) == SMALLER; }
+
+  /*!
+   */
+  bool operator<=(const Direction_2 & d) const
+  { return compare_angle_with_x_axis(*this, d) != LARGER; }
+      
+  /*!
+   */
+  bool counterclockwise_in_between(const Direction_2 & d1,
+                                     const Direction_2 & d2) const
+  {
+    if (d1 <*this) return (*this < d2 || d2 <= d1);
+    return (*this < d2 && d2 <= d1);
+  }
+};
+
 template< class FT_ >
 class Pm_segment_traits_leda_kernel_2 {
 private:
-  typedef Pm_segment_traits_leda_kernel_2       Self;
+  typedef Pm_segment_traits_leda_kernel_2<FT_>  Self;
     
 public:
   typedef FT_                                   RT;
   typedef FT_                                   FT;
   typedef leda_rat_point                        Point_2;
   typedef leda_rat_segment                      Segment_2;
+  typedef Direction_2<FT>                       Direction_2;
 
   /*! Functor
    */
@@ -203,73 +270,10 @@ public:
 
   /*!
    */
-  class Direction_2 : public Point_2 {
-  public:
-    Direction_2(const Point_2 & p) : Point_2(p) {}
-
-    /*!
-     */
-    Sign
-    sign_of_determinant2x2(const FT & a00, const FT & a01,
-                           const FT & a10, const FT & a11) const
-    {
-      return
-      static_cast<Sign>(static_cast<int>(CGAL_NTS compare( a00*a11, a10*a01)));
-    }
-    
-    /*!
-     */
-    Comparison_result
-    compare_angle_with_x_axis_2(const FT & dx1, const FT & dy1,
-                                const FT & dx2, const FT & dy2) const
-    {
-      // angles are in [-pi,pi], and the angle between Ox and d1 is compared
-      // with the angle between Ox and d2
-      int quadrant_1 = (dx1 >= FT(0)) ? ((dy1 >= FT(0))?1:4)
-        : ((dy1 >= FT(0))?2:3);
-      int quadrant_2 = (dx2 >= FT(0)) ? ((dy2 >= FT(0))?1:4)
-        : ((dy2 >= FT(0))?2:3);
-      // We can't use CGAL_NTS compare(quadrant_1,quadrant_2) because in case
-      // of tie, we need additional computation
-      if (quadrant_1 > quadrant_2) return LARGER;
-      else if (quadrant_1 < quadrant_2) return SMALLER;
-      return Comparison_result(-sign_of_determinant2x2(dx1,dy1,dx2,dy2));
-    }
-      
-    /*!
-     */
-    Comparison_result
-    compare_angle_with_x_axis(const Direction_2 & d1,
-                              const Direction_2 & d2) const
-    { return compare_angle_with_x_axis_2(d1.xcoord(), d1.ycoord(),
-                                         d2.xcoord(), d2.ycoord()); }
-
-    /*!
-     */
-    bool operator<(const Direction_2 & d) const
-    { return compare_angle_with_x_axis(*this, d) == SMALLER; }
-
-    /*!
-     */
-    bool operator<=(const Direction_2 & d) const
-    { return compare_angle_with_x_axis(*this, d) != LARGER; }
-      
-    /*!
-     */
-    bool counterclockwise_in_between(const Direction_2 & d1,
-                                     const Direction_2 & d2) const
-    {
-      if (d1 <*this) return (*this < d2 || d2 <= d1);
-      return (*this < d2 && d2 <= d1);
-    }
-  };
-
-  /*!
-   */
   class Counterclockwise_in_between_2 {
   public:
-    bool operator()(const Self::Direction_2 & d, const Self::Direction_2 & d1,
-                    const Self::Direction_2 & d2) const
+    bool operator()(const Direction_2 & d,
+                    const Direction_2 & d1, const Direction_2 & d2) const
     {
       return d.counterclockwise_in_between(d1, d2);
     }
@@ -279,16 +283,16 @@ public:
    */
   class Construct_direction_2 {
   public:
-    Self::Direction_2 operator()(const Segment_2 & cv) const
-    { return Self::Direction_2(cv.target() - cv.source()); }
+    Direction_2 operator()(const Segment_2 & cv) const
+    { return Direction_2(cv.target() - cv.source()); }
   };
 
   /*!
    */
   class Construct_opposite_direction_2 {
   public:
-    Self::Direction_2 operator()(const Segment_2 & cv) const
-    { return Self::Direction_2(cv.source() - cv.target()); }
+    Direction_2 operator()(const Segment_2 & cv) const
+    { return Direction_2(cv.source() - cv.target()); }
   };
 
   // creators:
