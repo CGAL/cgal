@@ -21,7 +21,6 @@
  
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
 #include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/ch_assertions.h>
@@ -33,20 +32,18 @@ typedef double                                     NumberType;
 typedef CGAL::Cartesian<NumberType>                R;
 typedef CGAL::Polyhedron_default_traits_3<R>       PolyTraits;
 typedef CGAL::Polyhedron_3<PolyTraits>             Polyhedron;
-typedef CGAL::Point_3<RepCls>                      Point;
+typedef CGAL::Point_3<R>                           Point_3;
 
-int
-main()
+int main()
 {
   /* read points from file */
   std::ifstream F("Point_3_list.txt");
-  std::vector<Point> V;
-  std::copy( std::istream_iterator<Point>(F),
-             std::istream_iterator<Point>(),
+  std::vector<Point_3> V;
+  std::copy( std::istream_iterator<Point_3>(F),
+             std::istream_iterator<Point_3>(),
              std::back_inserter(V));
 
-  /* define polyhedron to hold convex hull */
-  Polyhedron P;
+  Polyhedron P; /* define polyhedron to hold convex hull */
 
   /* compute convex hull */
   CGAL::convex_hull_3( V.begin(), V.end(), P);

@@ -1,4 +1,4 @@
-2.30   (?? June 2001)
+2.30   (19 June 2001)
 - fixed bug in centroid
 
 2.29   (19 June 2001)
