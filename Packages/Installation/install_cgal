@@ -5,7 +5,7 @@
 # $Id$
 # ---------------------------------------------------------------------
 # 
-# Copyright (c) 1998, 1999 The CGAL Consortium
+# Copyright (c) 1998, 1999, 2000 The CGAL Consortium
 #
 # This software and related documentation is part of the
 # Computational Geometry Algorithms Library (CGAL).
@@ -720,6 +720,7 @@ set_compiler_flags()
     # defaults:
     ADDITIONAL_CXXFLAGS=""
     ADDITIONAL_LDFLAGS=""
+    LONG_NAME_PROBLEM_LDFLAGS=""
     CGAL_LIB_CXXFLAGS=""
     CGAL_LIB_LDFLAGS=""
     CGAL_LIB_CREATE="ar cr ''"
@@ -829,6 +830,7 @@ set_compiler_flags()
 	*IRIX*g++*)
 	    #### settings for egcs/gcc2.8 on irix
 	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
+	    LONG_NAME_PROBLEM_LDFLAGS="-U -s"
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    RUNTIME_LINKER_FLAG="-rpath "
@@ -857,6 +859,7 @@ set_compiler_flags()
 	*SunOS*5.*g++*)
 	    #### settings for egcs/gcc2.8 on solaris
 	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
+	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
@@ -4191,7 +4194,7 @@ write_linker_flags()
   print_as_shell_comment \
     "*** to work around the long-name-problem with sun as/ld" >> ${FILE}
   if [ -n "${LONG_NAME_PROBLEM}" ]; then
-    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_LDFLAGS = -z nodefs -s" \
+    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_LDFLAGS = ${LONG_NAME_PROBLEM_LDFLAGS}" \
     >> ${FILE}
   else
     ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_LDFLAGS =" >> ${FILE}

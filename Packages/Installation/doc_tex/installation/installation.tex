@@ -1404,7 +1404,8 @@ If you cannot (or do not want to) install \gnu -binutils, there is a
 workaround that lets you compile, link and run your programs, but it
 prevents debugging, since the executables have to be stripped. In
 short the workaround is to compile with \texttt{-g} and to link with
-\texttt{-z nodefs -s}. 
+\texttt{-z nodefs -s} on Solaris, \texttt{-U -s} on Irix,
+respectively.
 
 In order to still have portable makefiles (see
 section\ref{sec:makefiles}), we define flags
