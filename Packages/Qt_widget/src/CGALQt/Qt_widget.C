@@ -28,7 +28,7 @@
 namespace CGAL {
 
 Qt_widget::Qt_widget(QWidget *parent, const char *name) :
-  QWidget(parent, name), set_scales_to_be_done(false), Locked(0),
+  QFrame(parent, name), set_scales_to_be_done(false), Locked(0),
   _pointSize(4), _pointStyle(DISC) 
 { 
   setCaption("CGAL::Qt_widget");
@@ -51,7 +51,7 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   pixmap = new QPixmap;
   matrix = new QWMatrix;
 
-  pixmap->resize(size());
+  pixmap->resize(contentsRect().size());
   painter->begin(pixmap);
   painter->setWorldMatrix(*matrix);
 
@@ -74,7 +74,7 @@ void Qt_widget::set_scales()
 
   if(!constranges)
     {
-      double tempmin = min(width(), height());
+      double tempmin = min(contentsRect().width(), contentsRect().height());
 	    double tempmax = max(xmax-xmin, ymax-ymin);
       
       xscal=yscal=(tempmin - 1)/(tempmax);
@@ -82,8 +82,8 @@ void Qt_widget::set_scales()
     }
   else
     {
-      xscal=geometry().width()/(xmax-xmin);
-      yscal=geometry().height()/(ymax-ymin);
+      xscal=contentsRect().width()/(xmax-xmin);
+      yscal=contentsRect().height()/(ymax-ymin);
     }
   add_to_history();
   configure_history_buttons();
@@ -94,15 +94,15 @@ void Qt_widget::set_scale_center(const double xc, const double yc)
   if (set_scales_to_be_done) return;
 
   if(xscal<1) {
-    xmin = xc - (int)(geometry().width()/xscal)/2;
-    xmax = xc + (int)(geometry().width()/xscal)/2;
-    ymin = yc - (int)(geometry().height()/yscal)/2;
-    ymax = yc + (int)(geometry().height()/yscal)/2;
+    xmin = xc - (int)(contentsRect().width()/xscal)/2;
+    xmax = xc + (int)(contentsRect().width()/xscal)/2;
+    ymin = yc - (int)(contentsRect().height()/yscal)/2;
+    ymax = yc + (int)(contentsRect().height()/yscal)/2;
   } else {
-    xmin = xc - (geometry().width()/xscal)/2;
-    xmax = xc + (geometry().width()/xscal)/2;
-    ymin = yc - (geometry().height()/yscal)/2;
-    ymax = yc + (geometry().height()/yscal)/2;
+    xmin = xc - (contentsRect().width()/xscal)/2;
+    xmax = xc + (contentsRect().width()/xscal)/2;
+    ymin = yc - (contentsRect().height()/yscal)/2;
+    ymax = yc + (contentsRect().height()/yscal)/2;
   }
   redraw();
 }
@@ -117,7 +117,7 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
   QWMatrix bm = painter->worldMatrix();
 
   painter->end();  // end painting on pixmap
-  pixmap->resize(size());
+  pixmap->resize(contentsRect().size());
   painter->begin(pixmap); // begin again painting on pixmap
   clear();
   painter->setWorldMatrix(bm);
@@ -157,7 +157,8 @@ void Qt_widget::paintEvent(QPaintEvent *e)
 
 
   painter->end();  // end painting on pixmap
-  bitBlt(this, 0, 0, pixmap); // copy pixmap to the Qt_widget
+  bitBlt(this, contentsRect().topLeft(),
+	 pixmap); // copy pixmap to the Qt_widget
   painter->begin(pixmap); // begin again painting on pixmap
   painter->setWorldMatrix(bm);
 
@@ -567,7 +568,9 @@ void Qt_widget::clear() {
       QPainter *painter_for_printer = new QPainter(printer);
       painter = painter_for_printer;
       painter->setClipping(true);
-      painter->setClipRect(0, 0, geometry().width(), geometry().height());
+      painter->setClipRect(0, 0, 
+			   contentsRect().width(),
+			   contentsRect().height());
       lock();
         std::list<Qt_widget_layer*>::iterator it;
 		    for(it = qt_layers.begin(); it!= qt_layers.end(); it++)

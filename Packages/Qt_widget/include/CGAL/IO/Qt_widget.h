@@ -41,10 +41,10 @@
 #include <map>
 
 #include <qwidget.h>
+#include <qframe.h>
 #include <qpainter.h>
 #include <qcolor.h>
 #include <qpixmap.h>
-#include <qmessagebox.h>
 #include <qprinter.h>
 
 
@@ -56,7 +56,7 @@ namespace CGAL {
 class Qt_widget_layer;
 enum PointStyle { PIXEL, CROSS, PLUS, CIRCLE, DISC, RECT, BOX };
 
-class Qt_widget : public QWidget {
+class Qt_widget : public QFrame {
   Q_OBJECT
 public:
   // constructor
