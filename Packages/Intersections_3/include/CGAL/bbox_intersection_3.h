@@ -1,4 +1,3 @@
-
 // Copyright (c) 1997  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -29,15 +28,14 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Object.h>
 
-
 CGAL_BEGIN_NAMESPACE
 
-extern Object
+Object
 intersection_bl(const Bbox_3 &box,
-        double lx1, double ly1, double lz1,
-        double lx2, double ly2, double lz2,
-        bool min_infinite, bool max_infinite);
-CGAL_END_NAMESPACE
+                double lx1, double ly1, double lz1,
+                double lx2, double ly2, double lz2,
+                bool min_infinite, bool max_infinite);
 
+CGAL_END_NAMESPACE
 
 #endif // CGAL_BBOX_INTERSECTION_3_H
