@@ -144,19 +144,23 @@ struct Static_Filtered_power_testC3_20
       FT dpx = px - tx;
       FT dpy = py - ty;
       FT dpz = pz - tz;
-      FT dpt = square(dpx) + square(dpy) + square(dpz) - pwt + twt;
+      FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+               CGAL_NTS square(dpz) - pwt + twt;
       FT dqx = qx - tx;
       FT dqy = qy - ty;
       FT dqz = qz - tz;
-      FT dqt = square(dqx) + square(dqy) + square(dqz) - qwt + twt;
+      FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
+               CGAL_NTS square(dqz) - qwt + twt;
       FT drx = rx - tx;
       FT dry = ry - ty;
       FT drz = rz - tz;
-      FT drt = square(drx) + square(dry) + square(drz) - rwt + twt;
+      FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) + 
+               CGAL_NTS square(drz) - rwt + twt;
       FT dsx = sx - tx;
       FT dsy = sy - ty;
       FT dsz = sz - tz;
-      FT dst = square(dsx) + square(dsy) + square(dsz) - swt + twt;
+      FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) + 
+               CGAL_NTS square(dsz) - swt + twt;
   
       return Oriented_side( - Static_Filtered_sign_of_determinant4x4_16::update_epsilon(dpx, dpy, dpz, dpt,
   						   dqx, dqy, dqz, dqt,
@@ -205,19 +209,23 @@ struct Static_Filtered_power_testC3_20
       FT dpx = px - tx;
       FT dpy = py - ty;
       FT dpz = pz - tz;
-      FT dpt = square(dpx) + square(dpy) + square(dpz) - pwt + twt;
+      FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+               CGAL_NTS square(dpz) - pwt + twt;
       FT dqx = qx - tx;
       FT dqy = qy - ty;
       FT dqz = qz - tz;
-      FT dqt = square(dqx) + square(dqy) + square(dqz) - qwt + twt;
+      FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
+               CGAL_NTS square(dqz) - qwt + twt;
       FT drx = rx - tx;
       FT dry = ry - ty;
       FT drz = rz - tz;
-      FT drt = square(drx) + square(dry) + square(drz) - rwt + twt;
+      FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) + 
+               CGAL_NTS square(drz) - rwt + twt;
       FT dsx = sx - tx;
       FT dsy = sy - ty;
       FT dsz = sz - tz;
-      FT dst = square(dsx) + square(dsy) + square(dsz) - swt + twt;
+      FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) + 
+               CGAL_NTS square(dsz) - swt + twt;
   
       return Oriented_side( - Static_Filtered_sign_of_determinant4x4_16::epsilon_variant(dpx, dpy, dpz, dpt,
   						   dqx, dqy, dqz, dqt,
@@ -233,26 +241,26 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /*  */
 Oriented_side
 power_testC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &rz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &rwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &sx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &sy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &sz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &swt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &twt)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &rz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &rwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &sz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &swt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &tz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &twt)
 {
 //   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_power_testC3_20::_bound;
@@ -369,26 +377,26 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /*  */
 Oriented_side
 power_testC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &sz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &swt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &twt)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &rz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &rwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &sy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &sz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &swt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &tz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &twt)
 {
   CGAL_assertion_code(
     const double SAF_bound = Static_Filtered_power_testC3_20::_bound; )
@@ -575,15 +583,18 @@ struct Static_Filtered_power_testC3_16
       FT dpx = px - tx;
       FT dpy = py - ty;
       FT dpz = pz - tz;
-      FT dpt = square(dpx) + square(dpy) + square(dpz) - pwt + twt;
+      FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+               CGAL_NTS square(dpz) - pwt + twt;
       FT dqx = qx - tx;
       FT dqy = qy - ty;
       FT dqz = qz - tz;
-      FT dqt = square(dqx) + square(dqy) + square(dqz) - qwt + twt;
+      FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) + 
+               CGAL_NTS square(dqz) - qwt + twt;
       FT drx = rx - tx;
       FT dry = ry - ty;
       FT drz = rz - tz;
-      FT drt = square(drx) + square(dry) + square(drz) - rwt + twt;
+      FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) + 
+               CGAL_NTS square(drz) - rwt + twt;
       Sign cmp;
   
       
@@ -657,15 +668,18 @@ struct Static_Filtered_power_testC3_16
       FT dpx = px - tx;
       FT dpy = py - ty;
       FT dpz = pz - tz;
-      FT dpt = square(dpx) + square(dpy) + square(dpz) - pwt + twt;
+      FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+               CGAL_NTS square(dpz) - pwt + twt;
       FT dqx = qx - tx;
       FT dqy = qy - ty;
       FT dqz = qz - tz;
-      FT dqt = square(dqx) + square(dqy) + square(dqz) - qwt + twt;
+      FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) + 
+               CGAL_NTS square(dqz) - qwt + twt;
       FT drx = rx - tx;
       FT dry = ry - ty;
       FT drz = rz - tz;
-      FT drt = square(drx) + square(dry) + square(drz) - rwt + twt;
+      FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) + 
+               CGAL_NTS square(drz) - rwt + twt;
       Sign cmp;
   
       
@@ -705,22 +719,22 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /*  */
 Oriented_side
 power_testC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &rz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &rwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &twt)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &rz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &rwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &tz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &twt)
 {
 //   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_power_testC3_16::_bound;
@@ -826,22 +840,22 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /*  */
 Oriented_side
 power_testC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &rwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &twt)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &rz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &rwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &tz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &twt)
 {
   CGAL_assertion_code(
     const double SAF_bound = Static_Filtered_power_testC3_16::_bound; )
@@ -1005,29 +1019,31 @@ struct Static_Filtered_power_testC3_12
       FT dpx = px - tx;
       FT dpy = py - ty;
       FT dpz = pz - tz;
-      FT dpt = square(dpx) + square(dpy) + square(dpz) - pwt + twt;
+      FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+               CGAL_NTS square(dpz) - pwt + twt;
       FT dqx = qx - tx;
       FT dqy = qy - ty;
       FT dqz = qz - tz;
-      FT dqt = square(dqx) + square(dqy) + square(dqz) - qwt + twt;
+      FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) + 
+               CGAL_NTS square (dqz) - qwt + twt;
       Comparison_result cmp;
   
       
-      cmp = CGAL::Static_Filtered_compare_2::update_epsilon(px, qx,
+      cmp = CGAL_NTS Static_Filtered_compare_2::update_epsilon(px, qx,
   		epsilon_0);
       if (cmp != EQUAL)
           return Oriented_side(cmp * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(dpx, dpt, dqx, dqt,
   		epsilon_1));
   
       
-      cmp = CGAL::Static_Filtered_compare_2::update_epsilon(py, qy,
+      cmp = CGAL_NTS Static_Filtered_compare_2::update_epsilon(py, qy,
   		epsilon_2);
       if (cmp != EQUAL)
           return Oriented_side(cmp * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(dpy, dpt, dqy, dqt,
   		epsilon_3));
   
       
-      cmp = CGAL::Static_Filtered_compare_2::update_epsilon(pz, qz,
+      cmp = CGAL_NTS Static_Filtered_compare_2::update_epsilon(pz, qz,
   		epsilon_4);
       return Oriented_side(cmp * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(dpz, dpt, dqz, dqt,
   		epsilon_5));
@@ -1070,29 +1086,31 @@ struct Static_Filtered_power_testC3_12
       FT dpx = px - tx;
       FT dpy = py - ty;
       FT dpz = pz - tz;
-      FT dpt = square(dpx) + square(dpy) + square(dpz) - pwt + twt;
+      FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+               CGAL_NTS square(dpz) - pwt + twt;
       FT dqx = qx - tx;
       FT dqy = qy - ty;
       FT dqz = qz - tz;
-      FT dqt = square(dqx) + square(dqy) + square(dqz) - qwt + twt;
+      FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) + 
+               CGAL_NTS square (dqz) - qwt + twt;
       Comparison_result cmp;
   
       
-      cmp = CGAL::Static_Filtered_compare_2::epsilon_variant(px, qx,
+      cmp = CGAL_NTS Static_Filtered_compare_2::epsilon_variant(px, qx,
   		epsilon_0);
       if (cmp != EQUAL)
           return Oriented_side(cmp * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(dpx, dpt, dqx, dqt,
   		epsilon_1));
   
       
-      cmp = CGAL::Static_Filtered_compare_2::epsilon_variant(py, qy,
+      cmp = CGAL_NTS Static_Filtered_compare_2::epsilon_variant(py, qy,
   		epsilon_2);
       if (cmp != EQUAL)
           return Oriented_side(cmp * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(dpy, dpt, dqy, dqt,
   		epsilon_3));
   
       
-      cmp = CGAL::Static_Filtered_compare_2::epsilon_variant(pz, qz,
+      cmp = CGAL_NTS Static_Filtered_compare_2::epsilon_variant(pz, qz,
   		epsilon_4);
       return Oriented_side(cmp * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(dpz, dpt, dqz, dqt,
   		epsilon_5));
@@ -1105,18 +1123,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /*  */
 Oriented_side
 power_testC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &twt)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &tz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &twt)
 {
 //   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_power_testC3_12::_bound;
@@ -1206,18 +1224,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /*  */
 Oriented_side
 power_testC3(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qwt,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tz,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &twt)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qwt,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &tz,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &twt)
 {
   CGAL_assertion_code(
     const double SAF_bound = Static_Filtered_power_testC3_12::_bound; )

@@ -100,10 +100,11 @@ struct Static_Filtered_in_smallest_orthogonalcircleC2_9
     FT dpy = py-qy;
     FT dtx = tx-qx;
     FT dty = ty-qy;
-    FT dpz = square(dpx)+square(dpy);
+    FT dpz = CGAL_NTS square(dpx)+CGAL_NTS square(dpy);
    
-    return Bounded_side (CGAL::Static_Filtered_sign_1::update_epsilon(-(square(dtx)+square(dty)-tw+qw)*dpz
-  				  +(dpz-pw+qw)*(dpx*dtx+dpy*dty),
+    return Bounded_side 
+      (CGAL_NTS Static_Filtered_sign_1::update_epsilon(-(CGAL_NTS square(dtx)+CGAL_NTS square(dty)-tw+qw)*dpz
+  		   +(dpz-pw+qw)*(dpx*dtx+dpy*dty),
   		epsilon_0));
   }
 
@@ -136,10 +137,11 @@ struct Static_Filtered_in_smallest_orthogonalcircleC2_9
     FT dpy = py-qy;
     FT dtx = tx-qx;
     FT dty = ty-qy;
-    FT dpz = square(dpx)+square(dpy);
+    FT dpz = CGAL_NTS square(dpx)+CGAL_NTS square(dpy);
    
-    return Bounded_side (CGAL::Static_Filtered_sign_1::epsilon_variant(-(square(dtx)+square(dty)-tw+qw)*dpz
-  				  +(dpz-pw+qw)*(dpx*dtx+dpy*dty),
+    return Bounded_side 
+      (CGAL_NTS Static_Filtered_sign_1::epsilon_variant(-(CGAL_NTS square(dtx)+CGAL_NTS square(dty)-tw+qw)*dpz
+  		   +(dpz-pw+qw)*(dpx*dtx+dpy*dty),
   		epsilon_0));
   }
 };
@@ -150,15 +152,15 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /* CGAL_MEDIUM_INLINE */
 Bounded_side
 in_smallest_orthogonalcircleC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &pw,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &qw,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Protected, CGAL_IA_CACHE> &tw)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &qw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &tw)
 {
 //   bool re_adjusted = false;
   const double SAF_bound = Static_Filtered_in_smallest_orthogonalcircleC2_9::_bound;
@@ -231,15 +233,15 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /* CGAL_MEDIUM_INLINE */
 Bounded_side
 in_smallest_orthogonalcircleC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &pw,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &qw,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, Advanced, CGAL_IA_CACHE> &tw)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &qw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &tw)
 {
   CGAL_assertion_code(
     const double SAF_bound = Static_Filtered_in_smallest_orthogonalcircleC2_9::_bound; )

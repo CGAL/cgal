@@ -23,6 +23,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace NTS { // because the script transforms CGAL_NTS sign() into ...
+
 struct Static_Filtered_sign_1
 {
   static double _bound;
@@ -112,6 +114,8 @@ struct Static_Filtered_lexicographical_sign_2
     throw Interval_nt_advanced::unsafe_comparison();
   }
 };
+
+} // namespace NTS
 
 CGAL_END_NAMESPACE
 

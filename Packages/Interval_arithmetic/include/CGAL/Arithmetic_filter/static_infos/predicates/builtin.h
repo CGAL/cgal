@@ -23,13 +23,13 @@
 #ifndef CGAL_ARITHMETIC_FILTER_STATIC_INFOS_BUILTIN_H
 #define CGAL_ARITHMETIC_FILTER_STATIC_INFOS_BUILTIN_H
 
-double CGAL::Static_Filtered_sign_1::_bound=-1.0;
-double CGAL::Static_Filtered_sign_1::_epsilon_0;
+double CGAL_NTS Static_Filtered_sign_1::_bound=-1.0;
+double CGAL_NTS Static_Filtered_sign_1::_epsilon_0;
 
-double CGAL::Static_Filtered_compare_2::_bound=-1.0;
-double CGAL::Static_Filtered_compare_2::_epsilon_0;
+double CGAL_NTS Static_Filtered_compare_2::_bound=-1.0;
+double CGAL_NTS Static_Filtered_compare_2::_epsilon_0;
 
-double CGAL::Static_Filtered_lexicographical_sign_2::_bound=-1.0;
-double CGAL::Static_Filtered_lexicographical_sign_2::_epsilon_0;
+double CGAL_NTS Static_Filtered_lexicographical_sign_2::_bound=-1.0;
+double CGAL_NTS Static_Filtered_lexicographical_sign_2::_epsilon_0;
 
 #endif // CGAL_ARITHMETIC_FILTER_STATIC_INFOS_BUILTIN_H
