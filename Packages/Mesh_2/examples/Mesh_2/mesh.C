@@ -6,7 +6,6 @@
 #include <CGAL/Filtered_kernel.h>
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_hierarchy_2.h>
 
 #include <CGAL/Mesh_2.h>
 #include <CGAL/Mesh_face_base_2.h>
@@ -16,15 +15,12 @@ typedef CGAL::Simple_cartesian<double> K1;
 typedef CGAL::Filtered_kernel<K1> K2;
 struct K : public K2 {};
 
-typedef CGAL::Triangulation_vertex_base_2<K> Vb1;
-typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vb1>  Vb;
+typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
 typedef CGAL::Mesh_default_traits_2<K> Meshtraits;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
-  CGAL::Exact_predicates_tag> CDT;
-
-typedef CGAL::Triangulation_hierarchy_2<CDT> Tr;
+  CGAL::Exact_predicates_tag> Tr;
 
 typedef CGAL::Mesh_2<Tr> Mesh;
 
