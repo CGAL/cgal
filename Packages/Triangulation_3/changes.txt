@@ -1,3 +1,6 @@
+Version 1.11 (17 sept 99)
+trying new special macro for MSVC typename bug
+
 Version 1.10 (15 sept 99)
 a few more typenames in Regular triangulation
 a few more std:: in the test suite
