@@ -1,3 +1,6 @@
+2.37    (29 Oct 2001)
+- fixed return type for xmin, xmax, ect. functions in Iso_rectangle_2
+
 2.36    (25 July 2001)
 - fixed title page in html and LaTeX
 

@@ -64,25 +64,25 @@ the user.
 \ccMethod{Point_2<R> max() const;}
        {returns the upper right vertex of \ccVar\ (= \ccStyle{vertex(2)}).}
 
-\ccMethod{Point_2<R> xmin() const;}
+\ccMethod{FT xmin() const;}
        {returns the $x$ coordinate of lower left vertex of \ccVar.}
 \ccGlue
-\ccMethod{Point_2<R> ymin() const;}
+\ccMethod{FT ymin() const;}
        {returns the $y$ coordinate of lower left vertex of \ccVar.}
 \ccGlue
-\ccMethod{Point_2<R> xmax() const;}
+\ccMethod{FT xmax() const;}
        {returns the $x$ coordinate of upper right vertex of \ccVar.}
 \ccGlue
-\ccMethod{Point_2<R> ymax() const;}
+\ccMethod{FT ymax() const;}
        {returns the $y$ coordinate of upper right vertex of \ccVar.}
 
-\ccMethod{Point_2<R> min_coord(int i) const;}
+\ccMethod{FT min_coord(int i) const;}
        {returns the $i$'th \ccHtmlNoLinksFrom{Cartesian} coordinate of the
         lower left vertex of \ccVar. 
 %        (\ccc{min_coord(0) == xmin()}; \ccc{min_coord(1) == ymin()})
         \ccPrecond $0 \leq i \leq 1$.}
 
-\ccMethod{Point_2<R> max_coord(int i) const;}
+\ccMethod{FT max_coord(int i) const;}
        {returns the $i$'th \ccHtmlNoLinksFrom{Cartesian} coordinate of the
         upper right vertex of \ccVar. 
 %        (\ccc{max_coord(0) == xmin()}; \ccc{max_coord(1) == ymin()})
