@@ -242,11 +242,15 @@
 \ccHeading{Reading Arrangement}
 
 \ccMethod{bool read (istream &in);}
-{reading \ccRefName\ from a given input stream.} 
+{reading \ccRefName\ from a given input stream.
+ The input stream should support the extractor operator (\ccc{>>}) for the \ccStyle{Point} 
+ and \ccStyle{Curve} types of \ccc{Arrangement}. } 
 
 \ccStyle{template <class Scanner>}
 \ccMethod{bool read (istream &in, Scanner& scanner);}
-{reading \ccRefName\ from a given input stream when taking the scanner class as a parameter.}
+{reading \ccRefName\ from a given input stream when taking the scanner class as a parameter.
+ The input stream should support the extractor operator (\ccc{>>}) for the \ccStyle{Point}
+ and \ccStyle{Curve} types of \ccc{Arrangement}. }
 
 \end{ccAdvanced}    
 
