@@ -292,39 +292,37 @@ int main(int argc,char *argv[])
     if(mouse_input == -1 && 
        x3 >= x1 && x3 <= x2 &&
        y3 >= y1 && y3 <= y2) {
-      mouse_input = W.read_mouse_seg(x3,y3,x4,y4);
-      if(x4 >= x1 && x4 <= x2 &&
-         y4 >= y1 && y4 <= y2) {
-        if(sr_shown) {
-          // remove biggest rectangle
-          sr_shown = false;
-          redraw(s,W);
-        }
-      }
-
-      if(remove_segments) {// !!!! need a point
-	/*        double min_dist = -1,dist;
-        Snap_rounding_2::const_iterator closest_iter =
+      if(remove_segments) {
+	Number_Type min_dist = -1,dist;
+        Segment_iterator closest_iter =
                 s.segments_end();
         for(Segment_iterator i1 = s.segments_begin();
             i1 != s.segments_end();
             ++i1) {
-          dist = sqrt(CGAL::squared_distance(Point(x,y),*i1));
+          dist = CGAL::squared_distance(Point_2(x3,y3),*i1);
 
           if(min_dist == -1 || dist < min_dist) {
             min_dist = dist;
-            closest_iter = iter;
+            closest_iter = i1;
 	  }
 	}
         
         if(closest_iter != s.segments_end())
           s.remove(*closest_iter);
 
-	  redraw(empty_rectangle,W);*/
+	redraw(s,W);
       } else {
         //x_type = x;
         //y_type = y;
         // add a segment
+        mouse_input = W.read_mouse_seg(x3,y3,x4,y4);
+        if(x4 >= x1 && x4 <= x2 &&
+           y4 >= y1 && y4 <= y2) {
+          if(sr_shown) {
+            sr_shown = false;
+            redraw(s,W);
+          }
+        }
         W << CGAL::BLACK;
         Segment_2 tmp1(Point_2(x3,y3),Point_2(x4,y4));
         s.insert(tmp1);
