@@ -1,0 +1,91 @@
+%% Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $Source$
+%% $Revision$ $Date$
+%% $Name$
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+
+\begin{ccRefClass}{Segment_Voronoi_diagram_storage_site_2<Gt,PH>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model for the concept
+\ccc{SegmentVoronoiDiagramStorageSite_2}. It is parametrized by two
+template parameters: \ccc{Gt}, which must be a model of the
+\ccc{SegmentVoronoiDiagramTraits_2} concept, and \ccc{PH}, which must
+be identical to the type \ccc{PC::iterator}, where \ccc{PC} is the
+same as the template parameter in the
+\ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} and
+\ccc{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>} classes.
+
+\ccInclude{CGAL/Segment_Voronoi_diagram_storage_site_2.h}
+
+\ccIsModel
+\ccc{SegmentVoronoiDiagramStorageSite_2}
+
+\ccTypes
+
+The class \ccRefName\ introduces the following type in addition to the
+types in the concept \ccc{SegmentVoronoiDiagramStorageSite_2}.
+
+\ccTypedef
+{typedef Gt Geom_traits;}{A type for the template parameter \ccc{Gt}.}
+
+
+\ccCreation
+\ccTwo{Segment_Voronoi_diagram_storage_site_2<Gt,H> ss(Point_handle hp)+}{}
+\ccCreationVariable{ss}  %% choose variable name
+\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>()}{Default
+  constructor}
+%\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
+  hp)}{}
+%\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
+  hp1, Point_handle hp2)}{} 
+%\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
+  hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2)}{}
+%\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
+  hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2, bool b)}{}
+%\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_storage_site_2<Gt,H>(Point_handle
+  hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2,
+  Point_handle hr1, Point_handle hr2)}{}
+%\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_site_2<Gt,H>(
+  Segment_Voronoi_diagram_storage_site_2<Gt,PH> other)}{Copy constructor.}
+
+\ccSeeAlso
+\ccc{SegmentVoronoiDiagramSite_2}\\
+\ccc{SegmentVoronoiDiagramTraits_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
