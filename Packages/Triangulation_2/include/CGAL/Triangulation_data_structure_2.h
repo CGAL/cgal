@@ -112,8 +112,9 @@ public:
   typedef Fb                                         Face_base;
   typedef Triangulation_ds_vertex_2<Tds>             Vertex;
   typedef Triangulation_ds_face_2<Tds>               Face;
-  typedef CGAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Face)    Face_handle;
-  typedef CGAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Vertex)  Vertex_handle;
+  typedef CGAL_TRIVIAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Face)   Face_handle;
+  typedef CGAL_TRIVIAL_COMPARABLE_ITERATOR_CHECKER_POINTER(Vertex)
+                                                     Vertex_handle;
   typedef std::pair<Face_handle, int>                Edge;
   
   typedef DS_Container<Face>                         Face_container;

@@ -2,6 +2,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.49 (??/10/02)
+- Comparable_iterator renamed Trivial_comparable_iterator.
+
 Ver 7.48 (07/10/02)
 - added _size member in DS_Container
 
