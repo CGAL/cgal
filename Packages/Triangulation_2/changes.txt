@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.11 (26/08/03)
+- suprresed cgal_test in examples
+- add #include <cassert> in examples
+- update the doc
+
 ver 8.10 (22/08/03)
 - plug the input-output operator for faces in file_input() file_ouput
   of tds. Remains to be done in other I/0 member functions
