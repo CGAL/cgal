@@ -1,3 +1,6 @@
+2.14
++ Added a __value_type (const T&) function for sunpro.
+
 2.13
 + Added std::distance for sunpro.
 + Added iterator_traits fake to CGAL_CFG_NO_ITERATOR_TRAITS.
