@@ -1,0 +1,81 @@
+2.6     (21 Aug 2000)
+
+- typenames in chull.C's d3_surface_map used for CHTRAITS::IPOINT
+  and CHTRAITS::PLANE; this makes the CGAL_TYPENAME_MSVC_NULL obsolete
+  (see 2.5) and fixes a Borland problem
+
+2.5     (09 Aug 2000)
+
+- typename in chull.C replaced by CGAL_TYPENAME_MSVC_NULL
+  (as suggested by Dima)
+- unused variable edge elast "removed"
+
+2.4     (14 Jul 2000)
+
+- fixed a bug in chull::d3_surface_map() (for a set of coplanar points)
+  which caused a bug in convex_hull_3() (reported by Matthias) 
+
+2.3     (01 Feb 2000)
+
+- CGAL_const_cast replaced by const_cast<>
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.2.2 -> 2.2.3  (10 Dec 99)
+- typename removed in _test_cls_chull_traits.C with std::vector<Point>
+
+2.2.1 -> 2.2.2  (03 Dec 99)
+- typename added in chull_traits (detected by  -pedantic)
+
+2.2   -> 2.2.1  (12 Nov 99)
+- return 0; added to int main() in manual_example.C
+
+2.1   -> 2.2    (05 Oct 99)
+- _test_cls_chull_traits_3.C: using std::vector removed; std::vector used;
+- CGAL_TYPENAME_MSVC_NULL in chull.h with default template arguments
+
+2.0.6 -> 2.1    (01 Oct 99)
+- missing file convex_hull_3.h added to package again
+
+2.0.5 -> 2.0.6  (29 Sep 99)
+- modified makefile to use CGAL_WINDOW_FLAGS
+
+2.0.4 -> 2.0.5  (01 Sep 99)
+- removed test/makefile
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.0.3 -> 2.0.4  (28 Apr 99)
+- added workaround for LEDA::before to dd_geo, LEDA_PREFIXLI
+
+2.0.2 -> 2.0.3  (28 Apr 99)
+- fixed a bug in submission scripts
+
+2.0.1 -> 2.0.2  (30 Mar 99)
+- to_double() prefixed by CGAL::
+
+2.0   -> 2.0.1  (22 Mar 99)
+- name conflict for orientation in chull_traits_[23] resolved by 'prefixing'
+  calls of orientation() with CGAL::   (egcs didn't complain, but produced 
+  a segmentation fault - egcs should be less fault-tolerant! )
+
+1.1.3 -> 2.0    (22 Mar 99)
+- namespace CGAL introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.1.2 -> 1.1.3
+- WINDOW_LDFLAGS added in test/ConvexHull3D/makefile
+
+1.1.1 -> 1.1.2
+- DDGEO_STL_ITERATORS always undefined (since it works for g++/egcs,
+  but not with SunPro 4.2 nor with mips 7.2.
+
+1.1 -> 1.1.1
+- LONG_NAME_PROBLEM_[CXX|LD]FLAGS added to makefile in testsuite
+
+1.0 -> 1.1
+- added workaround for a problem with forall_nodes - loops and prefixing 
+  in LEDA prior to 3.6.2 (= current beta-version of LEDA at MPI).
+  examples/manual_example.C now compiles with 3.6.1 as well.
+
