@@ -76,7 +76,7 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   CGAL_kernel_assertion( den != FT(0) );
   FT inv = FT(1)/(FT(2) * den);
 
-  x = sx + num_x*inv;
+   x = sx + num_x*inv;
   y = sy - num_y*inv;
   z = sz + num_z*inv;
 }
@@ -98,19 +98,18 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   FT qsz = qz-sz;
   FT qs2 = CGAL_NTS square(qsx) + CGAL_NTS square(qsy) + CGAL_NTS square(qsz);
   FT rsx = psy*qsz-psz*qsy;
-  FT rsy = psx*qsy-psx*qsz;
+  FT rsy = psz*qsx-psx*qsz;
   FT rsz = psx*qsy-psy*qsx;
-  FT rs2 = CGAL_NTS square(rsx) + CGAL_NTS square(rsy) + CGAL_NTS square(rsz);
-
+  
   FT num_x = det3x3_by_formula(psy,psz,ps2,
                                qsy,qsz,qs2,
-                               rsy,rsz,rs2);
+                               rsy,rsz,FT(0));
   FT num_y = det3x3_by_formula(psx,psz,ps2,
                                qsx,qsz,qs2,
-                               rsx,rsz,rs2);
+                               rsx,rsz,FT(0));
   FT num_z = det3x3_by_formula(psx,psy,ps2,
                                qsx,qsy,qs2,
-                               rsx,rsy,rs2);
+                               rsx,rsy,FT(0));
   FT den   = det3x3_by_formula(psx,psy,psz,
                                qsx,qsy,qsz,
                                rsx,rsy,rsz);
