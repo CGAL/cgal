@@ -280,21 +280,21 @@ int main(int argc,  char* argv[])
   
   Triangulation_3 T;
 
-  std::vector<Point> L;
+  std::vector<Point> points;
 
   if (!opt.Section_file)
-    file_input(opt, L);
+    file_input(opt, points);
   else
-    section_file_input(opt.finname, opt.number_of_points, L);
+    section_file_input(opt.finname, opt.number_of_points, points);
 
   std::cout << "Time for reading"  << t2.time() << " sec" << std::endl;
-  construct_delaunay(L, T);
+  construct_delaunay(points, T);
   
-  L.clear();
+  points.clear();
   int size_before_postprocessing = T.number_of_vertices();
-  bool re_init(false);
-  int number_of_connected_comp(0);
-  double  total_time(0);
+  bool re_init = false;
+  int number_of_connected_comp = 0;
+  double  total_time = 0;
 
   Surface S(T,opt.DELTA);
   do
@@ -320,19 +320,17 @@ int main(int argc,  char* argv[])
 	      (opt.NB_BORDER_MAX > 0))
 	    // en principe 2*nb_sommets = nb_facettes: y a encore de la marge!!!
 	    {
+	      t1.reset();
 	      bool postprocess;
-	      do
-		{
-		  t1.reset();
-		  postprocess = S.postprocessing(opt.NB_BORDER_MAX);
+	      do {
+		postprocess = S.postprocessing(opt.NB_BORDER_MAX);
 
-		  if (postprocess)
-		    {
-		      S.extend(opt.K_init, opt.K_step, opt.K);
-		      sum_time += t1.time();
-		    }
+		if (postprocess) {
+		  S.extend(opt.K_init, opt.K_step, opt.K);
+		  
 		}
-	      while(postprocess);
+	      } while(postprocess);
+	      sum_time += t1.time();
 	    }
 
 	    total_time += sum_time;
