@@ -1,7 +1,6 @@
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Sven Schoenherr (sven@inf.fu-berlin.de)
-
+// author(s)     : Sven Schoenherr, Hervé Brönnimann, Sylvain Pion
 
 #ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC2_H
 #define CGAL_CONSTRUCTIONS_KERNEL_FTC2_H
