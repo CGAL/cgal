@@ -1,3 +1,17 @@
+Version 4.5 (20 April 2000)
+- removed leading underscores in variables names
+- added newly tested functionalities :
+   Object_3
+   Assign_3
+   Equal_xyz_3
+   Compare_xy_3
+   Equal_xy_3
+   Less_x_3
+   Less_y_3
+   Less_z_3
+   Less_xy_3
+   Less_distance_to_point_3
+
 Version 4.4  (6 April 2000) [my]
 - added a typename in Cartesian/Iso_cuboid_3.C
 
