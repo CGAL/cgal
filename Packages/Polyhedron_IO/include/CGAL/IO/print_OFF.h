@@ -60,13 +60,6 @@ void print_polyhedron_OFF( std::ostream& out,
 
 // Deprecated global functions, replaced with functions above
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-template <class Traits, class HDS>
-void
-print_OFF( std::ostream& out,
-           const Polyhedron_3<Traits,HDS>& P,
-           bool verbose = false) {
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -77,7 +70,6 @@ void
 print_OFF( std::ostream& out,
            const Polyhedron_3<Traits,Items,HDS,Alloc>& P,
            bool verbose = false) {
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     File_writer_OFF  writer( verbose);
     writer.header().set_binary( is_binary( out));
     writer.header().set_no_comments( ! is_pretty( out));
@@ -86,13 +78,6 @@ print_OFF( std::ostream& out,
     generic_print_polyhedron( out, P, writer);
 }
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-template <class Traits, class HDS>
-void
-print_OFF( std::ostream& out,
-           const Polyhedron_3<Traits,HDS>& P,
-           const File_header_OFF& header) {
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -103,7 +88,6 @@ void
 print_OFF( std::ostream& out,
            const Polyhedron_3<Traits,Items,HDS,Alloc>& P,
            const File_header_OFF& header) {
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     File_writer_OFF  writer( header);
     writer.header().set_polyhedral_surface( true);
     writer.header().set_halfedges( P.size_of_halfedges());

@@ -37,11 +37,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-template <class Traits, class HDS>
-VRML_2_ostream&
-operator<<( VRML_2_ostream& out, const Polyhedron_3<Traits,HDS>& P) {
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -51,7 +46,6 @@ template < class Traits,
 VRML_2_ostream&
 operator<<( VRML_2_ostream& out,
             const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     File_writer_VRML_2  writer;
     generic_print_polyhedron( out.os(), P, writer);
     return out;

@@ -34,31 +34,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-
-template <class Traits, class HDS> inline
-void scan_OFF( std::istream& in, Polyhedron_3<Traits,HDS>& P,
-               bool verbose = false) {
-    // reads a polyhedron from `in' and appends it to P.
-    typedef Polyhedron_scan_OFF<HDS> Scanner;
-    Scanner scanner( in, verbose);
-    P.delegate(scanner);
-}
-
-template <class Traits, class HDS> inline
-void scan_OFF( std::istream& in,
-               Polyhedron_3<Traits,HDS>& P,
-               File_header_OFF& header) {
-    // reads a polyhedron from `in' and appends it to P.
-    // Returns also the File_header_OFF structure of the object.
-    typedef Polyhedron_scan_OFF<HDS> Scanner;
-    Scanner scanner( in, header.verbose());
-    P.delegate(scanner);
-    header = scanner.header();
-}
-
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
-
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -93,8 +68,6 @@ void scan_OFF( std::istream& in, Polyhedron_3<Traits,Items,HDS,Alloc>& P,
     Scanner scanner( in, verbose);
     P.delegate(scanner);
 }
-
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 
 
 CGAL_END_NAMESPACE

@@ -1,6 +1,14 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
 
+3.13 (05 May 2003)
+
+     - Changed <strstream> to <sstream>.
+     - Removed CGAL_USE_POLYHEDRON_DESIGN_ONE parts.
+     - Removed cgal_test and makefile from test and example directories.
+     - Changed suffix() and format_name() to return std::string in 
+       File_header_extended_OFF.
+
 3.12 (27 Mar 2003)
 
      - Fix example/terr_trian.C for MipsPro.

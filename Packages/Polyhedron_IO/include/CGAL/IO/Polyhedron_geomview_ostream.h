@@ -69,11 +69,6 @@ public:
 };
 
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-template < class Traits, class HDS >
-Geomview_stream&
-operator<<( Geomview_stream &gv, const Polyhedron_3<Traits,HDS> &P) {
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -83,7 +78,6 @@ template < class Traits,
 Geomview_stream&
 operator<<( Geomview_stream &gv,
             const Polyhedron_3<Traits,Items,HDS,Alloc> &P) {
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     Polyhedron_writer_geomview  writer(gv);
     generic_print_polyhedron( std::cerr, P, writer); // note: cerr not used.
     return gv;

@@ -83,12 +83,8 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
                      scanner.size_of_facets(),
                      scanner.size_of_halfedges());
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-    typedef typename HDS::Point Point;
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     typedef typename HDS::Traits     Traits;
     typedef typename Traits::Point_3 Point;
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 
     // read in all vertices
     int  i;
