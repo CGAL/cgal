@@ -39,7 +39,6 @@
 #include "Qt_layer_show_triangulation.h"
 #include "Qt_layer_show_voronoy.h"
 #include "Qt_layer_show_points.h"
-
 #include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
 //Qt
@@ -47,6 +46,7 @@
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qstatusbar.h>
+#include <qbuttongroup.h>
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
@@ -67,31 +67,23 @@ public:
 
 	QToolBar*	toolbar(){return maintoolbar;};
 
-signals:
-	void new_object(CGAL::Object);
-	
-	
-private slots:
-	void draw_voronoi();
-	void draw_triangulation();
-	void show_coordinates();
-	void draw_points();
-
 
 private:
-	QToolBar		*maintoolbar;
-	QToolButton		*but[10];
-	Qt_widget		*widget;
-	QMainWindow		*window;
-	Delaunay		*dt;
+	QToolBar      *maintoolbar;
+	
+  QToolButton   *but[10];
+  QButtonGroup  *button_group;
+	Qt_widget     *widget;
+	QMainWindow   *window;
+	//Delaunay      *dt;
 	
 	int			nr_of_buttons;
 	
 
-	CGAL::Qt_layer_show_triangulation < Delaunay >	*showT;
-	CGAL::Qt_layer_show_voronoi < Delaunay >		*showV;
-	CGAL::Qt_layer_show_points < Delaunay >		*showP;
-	CGAL::Qt_layer_mouse_coordinates			*showMC;
+	CGAL::Qt_layer_show_triangulation < Delaunay >  *showT;
+	CGAL::Qt_layer_show_voronoi < Delaunay >        *showV;
+	CGAL::Qt_layer_show_points < Delaunay >         *showP;
+	CGAL::Qt_layer_mouse_coordinates                *showMC;
 };//end class
 
 };//end namespace

@@ -42,6 +42,7 @@
 #include <qobject.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
+#include <qbuttongroup.h>
 #include <qmainwindow.h>
 
 typedef double Coord_type;
@@ -52,7 +53,6 @@ typedef CGAL::Triangulation_face_base_2<Gt>	  Df;
 typedef CGAL::Alpha_shape_face_base_2<Gt, Df>	  Fb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
 typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Delaunay;
-
 
 
 namespace CGAL {
@@ -69,25 +69,13 @@ signals:
   void new_object(CGAL::Object);
   void was_repainted();
 
-private slots:
-  void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
-
-  void pointtool();
-  void notool();
-
-  void toggle_button();
-
 private:
-  QToolBar		*maintoolbar;
-  QToolButton		*but[10];
-  Qt_widget		*widget;
-  int			activebutton;
-  bool			is_active;
-  void			setActiveButton(int i);
-  void			addToolButton(QToolButton *b);
+  QToolBar      *maintoolbar;
+  QToolButton   *but[10];
+  Qt_widget     *widget;
+  QButtonGroup  *button_group;
   int			nr_of_buttons;
 	
-  Delaunay			    *dt;
   CGAL::Qt_widget_get_point<Rp>	    pointbut;
 };//end class
 

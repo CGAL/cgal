@@ -36,6 +36,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_Alpha_shape_2.h>
 #include "Qt_widget_toolbar.h"
 
 
@@ -89,23 +90,23 @@ typedef Alpha_shape::Alpha_iterator Alpha_iterator;
 const QString my_title_string("Alpha_shapes_2 Demo with"
 			      " CGAL Qt_widget");
 
-Delaunay	tr1;
-CGALPointlist	L;
-Alpha_shape	A;
-int		current_state;
-double		alpha_index;
+Delaunay      tr1;
+CGALPointlist L;
+Alpha_shape   A;
+int           current_state;
+double        alpha_index;
 
 class Qt_layer_show_alpha_shape : public CGAL::Qt_widget_layer
 {
 public:
   show_alpha_shape(){};
 private:
-  void draw(CGAL::Qt_widget &win){
+  void draw(){
     alpha_index = 1000;
     A.set_alpha(alpha_index);
     A.set_mode(Alpha_shape::GENERAL);
-    win << CGAL::RED;
-    win << A;
+    *widget << CGAL::RED;
+    *widget << A;
   }
 };
 
@@ -191,7 +192,6 @@ public slots:
   }
   void new_instance()
   {
-    win.detach_current_tool();
     win.lock();
     win.clear();
     tr1.clear();
@@ -310,7 +310,7 @@ main(int argc, char **argv)
     app.setStyle( new QPlatinumStyle );
     QPalette p( QColor( 250, 215, 100 ) );
     app.setPalette( p, TRUE );
-  MyWindow win(800,800); // physical window size
+  MyWindow win(600, 600); // physical window size
   app.setMainWidget(&win);
   win.setCaption(my_title_string);
   win.setMouseTracking(TRUE);

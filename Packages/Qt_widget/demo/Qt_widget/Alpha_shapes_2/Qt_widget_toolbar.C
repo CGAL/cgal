@@ -32,13 +32,15 @@
 
 namespace CGAL {
   Tools_toolbar::Tools_toolbar(Qt_widget *w, 
-				QMainWindow *mw, Delaunay *t) : dt(t)
+				QMainWindow *mw, Delaunay *t)
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
     //set the widget
     widget = w;
-    is_active = FALSE;
+    w->attach(&pointbut);
+    pointbut.deactivate();
+
 
 #if QT_VERSION < 300
 		// for Qt 2.3 and before
@@ -51,63 +53,24 @@ namespace CGAL {
 #endif
 		
 
-  but[0] = new QToolButton(QPixmap( (const char**)arrow_xpm ),
-			     "Detach current tool", 
-			     0, 
-			     this, 
-			     SLOT(notool()), 
-			     maintoolbar, 
-			     "Detach current tool");
+  but[0] = new QToolButton(maintoolbar, "notool");
+  but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
+  but[1] = new QToolButton(maintoolbar, "pointtool");
+  but[1]->setPixmap(QPixmap( (const char**)point_xpm ));
 
-  but[1] = new QToolButton(QPixmap( (const char**)point_xpm ),
-			     "Point Tool", 
-			     0, 
-			     this, 
-			     SLOT(pointtool()), 
-			     maintoolbar, 
-			     "Point Tool");
-				
-		
-  
-  but[1]->setToggleButton(TRUE);
-  
   
   nr_of_buttons = 2;
 
-  connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
+  button_group = new QButtonGroup(0, "My_group");
+  for(int i = 0; i<nr_of_buttons; i++) {
+    button_group->insert(but[i]);
+    but[i]->setToggleButton(true);
+  }
+  button_group->setExclusive(true);
+  
+  connect(but[1], SIGNAL(stateChanged(int)),
+        &pointbut, SLOT(stateChanged(int)));
 };
-
-      
-	
-  //the definition of the slots
-  void Tools_toolbar::toggle_button ()
-  {
-    if(is_active) {
-      but[activebutton]->toggle();
-      is_active = false;
-    }
-  }	
-  void Tools_toolbar::pointtool()
-  {
-    if (but[1]->isOn())
-    {
-      widget->attach(&pointbut);
-      activebutton = 1;
-      is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_tool();
-    }
-  }
-  void Tools_toolbar::notool()
-  {
-    if(is_active) {
-      widget->detach_current_tool();
-      is_active = false;
-    }
-  }
   
 
 }//end namespace

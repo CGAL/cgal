@@ -33,8 +33,9 @@
 
 namespace CGAL {
   Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t) : 
-    dt(t), nr_of_buttons(0)
+    nr_of_buttons(0)
   {
+   
     showT   = new Qt_layer_show_triangulation< Delaunay >(*t);
     showV   = new Qt_layer_show_voronoi< Delaunay >(*t);
     showP   = new Qt_layer_show_points< Delaunay >(*t);
@@ -49,97 +50,43 @@ namespace CGAL {
     widget->attach(showV);
     widget->attach(showP);
     widget->attach(showMC);
-    widget->deactivate(showV);
+    showV->deactivate();
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 		
 
-    but[0] = new QToolButton(QPixmap( (const char**)triangulation_xpm ),
-			     "Show triangulation", 
-			     0, 
-			     this, 
-			     SLOT(draw_triangulation()), 
-			     maintoolbar, 
-			     "Show triangulation");
-		
-    but[1] = new QToolButton(QPixmap( (const char**)voronoi_xpm ),
-			     "Show Voronoi Diagram", 
-			     0, 
-			     this, 
-			     SLOT(draw_voronoi()), 
-			     maintoolbar, 
-			     "Show Voronoi Diagram");
-		
-    but[2] = new QToolButton(QPixmap( (const char**)points_xpm ),
-				"Show Triangulation Points", 
-				0, 
-				this, 
-				SLOT(draw_points()), 
-				maintoolbar, 
-				"Show Triangulation Points");
-		
-    but[3] = new QToolButton(QPixmap( (const char**)mouse_coord_xpm ),
-				"Show Mouse Coordinates", 
-				0, 
-				this, 
-				SLOT(show_coordinates()), 
-				maintoolbar, 
-				"Show Mouse Coordinates");
-		
+    but[0] = new QToolButton(maintoolbar, "triangulation");
+    but[0]->setPixmap(QPixmap( (const char**)triangulation_xpm ));
+    but[1] = new QToolButton(maintoolbar, "voronoi");
+    but[1]->setPixmap(QPixmap( (const char**)voronoi_xpm ));
+    but[2] = new QToolButton(maintoolbar, "vertices");
+    but[2]->setPixmap(QPixmap( (const char**)points_xpm ));
+    but[3] = new QToolButton(maintoolbar, "mouse_coord");
+    but[3]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
+
+
     nr_of_buttons = 4;
-	
+	  button_group = new QButtonGroup(0, "nonexclusive");
     for(int i =0; i<nr_of_buttons; i++)
     {
-	but[i]->setToggleButton(TRUE);
-	but[i]->toggle();
+      but[i]->setToggleButton(TRUE);
+      but[i]->toggle();
+      button_group->insert(but[i]);
     }
     but[1]->toggle();
-  }
-  void Layers_toolbar::draw_triangulation()
-  {
-    if (but[0]->isOn())
-    {
-      widget->activate(showT);
-    } else {
-      widget->deactivate(showT);
-    }
-    widget->redraw();
-  }
-
-  void Layers_toolbar::draw_voronoi()
-  {
-    if (but[1]->isOn())
-    {
-      widget->activate(showV);
-    } else {
-      widget->deactivate(showV);
-    }
-    widget->redraw();
-  }
-  void Layers_toolbar::draw_points()
-  {
-    if (but[2]->isOn())
-    {
-      widget->activate(showP);
-    } else {
-      widget->deactivate(showP);
-    }
-    widget->redraw();
-  }
-	
-  void Layers_toolbar::show_coordinates()
-  {
-    if (but[3]->isOn())
-    {
-      widget->activate(showMC);
-      window->statusBar();
-    } else {
-      widget->deactivate(showMC);
-      window->statusBar()->clear();
-    }
-  }
-
-  
+    connect(button_group, SIGNAL(clicked(int)),
+          widget, SLOT(redraw()));
+    
+    connect(but[0], SIGNAL(stateChanged(int)),
+        showT, SLOT(stateChanged(int)));
+    connect(but[1], SIGNAL(stateChanged(int)),
+        showV, SLOT(stateChanged(int)));
+    connect(but[2], SIGNAL(stateChanged(int)),
+        showP, SLOT(stateChanged(int)));
+    connect(but[3], SIGNAL(stateChanged(int)),
+        showMC, SLOT(stateChanged(int)));
+    
+  }  
 }//end namespace
 
 #include "Qt_widget_toolbar_layers.moc"
