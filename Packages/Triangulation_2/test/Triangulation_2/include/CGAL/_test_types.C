@@ -298,7 +298,8 @@ public:
 
 std::istream &operator>>(std::istream &is, Triangulation_test_point &p)
 {
-  Triangulation_test_point::TESTFT x,y;
+  typedef Triangulation_test_point::TESTFT FT;
+  FT x,y;
   is >> x >> y;
   p.test_set(x,y);
   return is;
@@ -306,7 +307,8 @@ std::istream &operator>>(std::istream &is, Triangulation_test_point &p)
 
 std::istream &operator>>(std::istream &is, Triangulation_test_triangle &t)
 {
-  Triangulation_test_triangle::Point p,q,r;
+  typedef Triangulation_test_triangle::Point Point;
+  Point p,q,r;
   is >> p >> q >> r ;
   t.test_set(p,q,r);
   return is;
