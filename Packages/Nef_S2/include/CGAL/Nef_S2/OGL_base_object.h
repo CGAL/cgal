@@ -1,3 +1,22 @@
+// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
+
 #ifndef CGAL_OGL_BASE_OBJECT_H
 #define CGAL_OGL_BASE_OBJECT_H
 
@@ -16,7 +35,7 @@ namespace OGL {
     typedef Double_kernel::Segment_3             Double_segment;
     typedef Double_kernel::Aff_transformation_3  Affine_3;
 
-    virtual void draw() const  = 0;
+    virtual void draw(double z_vec[3]) const  = 0;
     virtual void init() = 0;
     virtual void toggle(int) = 0;
     virtual void set_style(int) = 0;

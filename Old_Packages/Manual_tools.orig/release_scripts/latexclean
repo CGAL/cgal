@@ -1,3 +1,0 @@
-#!/bin/sh
-
-\rm -f *.aux *.bbl *.blg *.dvi *.idx *.ilg *.ind *.ind.unfixed *.log *.toc

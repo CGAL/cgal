@@ -303,7 +303,7 @@ class SNC_items {
     const GenPtr& info() const { return info_; }
 
     ~Vertex() {
-      TRACEN("  destroying Vertex item "<<&*this);
+      CGAL_NEF_TRACEN("  destroying Vertex item "<<&*this);
     }
 
   public:
@@ -410,7 +410,7 @@ class SNC_items {
       info_(), point_() {}
 
     ~SVertex() {
-      TRACEN("  destroying Halfedge item "<<&*this);
+      CGAL_NEF_TRACEN("  destroying Halfedge item "<<&*this);
     }
 
     SVertex(const SVertex<Refs>& e) 
@@ -530,14 +530,14 @@ class SNC_items {
       supporting_plane_(h), mark_(m) {}
 
     ~Halffacet() {
-      TRACEN("  destroying Halffacet item "<<&*this);
+      CGAL_NEF_TRACEN("  destroying Halffacet item "<<&*this);
     }
 
     Halffacet(const Halffacet<Refs>& f)
     { supporting_plane_ = f.supporting_plane_;
       mark_ = f.mark_;
       twin_ = f.twin_;
-      TRACEN("VOLUME const");
+      CGAL_NEF_TRACEN("VOLUME const");
       volume_ = f.volume_;
       boundary_entry_objects_ = f.boundary_entry_objects_;
     }
@@ -547,7 +547,7 @@ class SNC_items {
       supporting_plane_ = f.supporting_plane_;
       mark_ = f.mark_;
       twin_ = f.twin_;
-      TRACEN("VOLUME op=");
+      CGAL_NEF_TRACEN("VOLUME op=");
       volume_ = f.volume_;
       boundary_entry_objects_ = f.boundary_entry_objects_;
       return *this;
@@ -630,7 +630,7 @@ class SNC_items {
     Volume(Mark m) : mark_(m) {}
 
     ~Volume() {
-      TRACEN("  destroying Volume item "<<&*this);
+      CGAL_NEF_TRACEN("  destroying Volume item "<<&*this);
     }
 
     Volume(const Volume<Refs>& v)
@@ -723,7 +723,7 @@ class SNC_items {
      info_(), mark_(), circle_() {}
 
     ~SHalfedge() {
-      TRACEN("  destroying SHalfedge item "<<&*this);
+      CGAL_NEF_TRACEN("  destroying SHalfedge item "<<&*this);
     }
 
     SHalfedge(const SHalfedge<Refs>& e)
@@ -874,7 +874,7 @@ class SNC_items {
       info_(), mark_(), circle_() {}
 
     ~SHalfloop() {
-      TRACEN("  destroying SHalfloop item "<<&*this);
+      CGAL_NEF_TRACEN("  destroying SHalfloop item "<<&*this);
     }
     SHalfloop(const SHalfloop<Refs>& l)
     { twin_ = l.twin_;
@@ -975,7 +975,7 @@ class SNC_items {
     SFace() : center_vertex_(), volume_(), info_(), mark_() {}
 
     ~SFace() {
-      TRACEN("  destroying SFace item "<<&*this);
+      CGAL_NEF_TRACEN("  destroying SFace item "<<&*this);
     }
 
     SFace(const SFace<Refs>& f)

@@ -27,7 +27,7 @@ typedef PM_dec::Point_const_iterator Point_const_iterator;
 
 int main()
 {
-  SETDTHREAD(13);
+  CGAL_NEF_SETDTHREAD(13);
   HDS  H;
   PM_dec D(H);
   v_handle v1 = D.new_vertex(Vertex_base(Point(30,30)));

@@ -340,12 +340,12 @@ on the extended geometric objects.}*/
 
   void simplify(Point_2& p) const
   /*{\Xop only used internally.}*/
-  { TRACEN("simplify("<<p<<")");
+  { CGAL_NEF_TRACEN("simplify("<<p<<")");
     RT x=p.hx(), y=p.hy(), w=p.hw();
     RT common = x.is_zero() ? y : (RT) RT::gcd(x,y);
     common = RT::gcd(common,w);
     p = Point_2(x/common,y/common,w/common);
-    TRACEN("canceled="<<p);
+    CGAL_NEF_TRACEN("canceled="<<p);
   }
 
   Line_2 construct_line(const Standard_line_2& l)  const
@@ -355,12 +355,12 @@ on the extended geometric objects.}*/
   Line_2 construct_line(const Point_2& p1, const Point_2& p2) const
   /*{\Xop only used internally.}*/
   { Line_2 l(p1,p2);
-      TRACEN("eline("<<p1<<p2<<")="<<l);
+      CGAL_NEF_TRACEN("eline("<<p1<<p2<<")="<<l);
     RT a=l.a(), b=l.b(), c=l.c();
     RT common = a.is_zero() ? b : (RT) RT::gcd(a,b);
     common = RT::gcd(common,c);
     l =  Line_2(a/common,b/common,c/common);
-      TRACEN("canceled="<<l);
+      CGAL_NEF_TRACEN("canceled="<<l);
     return l; 
   }
 

@@ -1,3 +1,10 @@
+19 December 2004 Sylvain Pion
+- Fix warnings
+- Use Gmpq instead of double for testing.
+
+4 December 2004 Sylvain Pion
+- Fix memleak in LA::Vector_d.
+
 17 September 2004 Andreas Fabri
 - Added a parameter to one of two Tuple_d constructors with three parameters to help Intel compiler
 

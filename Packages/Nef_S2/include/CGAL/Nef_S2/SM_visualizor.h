@@ -1,3 +1,23 @@
+// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
+//                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
+
 #ifndef SM_VISUALIZOR_H
 #define SM_VISUALIZOR_H
 
@@ -118,8 +138,8 @@ void draw_map() const
   CGAL_forall_shalfedges(e,*this) {
     if ( Done[e] ) continue;
     SHalfedge_const_handle en(next(e)),enn(next(en));
-    TRACEV(Base::incident_triangle(e));
-    TRACEN(incident_mark(e)<<incident_mark(en)<<incident_mark(enn));
+    CGAL_NEF_TRACEV(Base::incident_triangle(e));
+    CGAL_NEF_TRACEN(incident_mark(e)<<incident_mark(en)<<incident_mark(enn));
     CGAL_assertion(Base::incident_mark(e)==Base::incident_mark(en) &&
 		   Base::incident_mark(en)==Base::incident_mark(enn));
     Mark m = Base::incident_mark(e);

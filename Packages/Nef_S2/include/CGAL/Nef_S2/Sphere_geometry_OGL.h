@@ -1,3 +1,22 @@
+// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
+
 #ifndef CGAL_SPHERE_GEOMETRY_OGL_H
 #define CGAL_SPHERE_GEOMETRY_OGL_H
 
@@ -82,7 +101,7 @@ class Approximator {
     if ( seg_is_halfcircle ) units = units_per_halfcircle;
     else if ( !seg_is_short ) {
       units = 2*units_per_halfcircle - (units+1);
-    } TRACEV(units); TRACEV(cosalpha); TRACEV(alpha);
+    } CGAL_NEF_TRACEV(units); CGAL_NEF_TRACEV(cosalpha); CGAL_NEF_TRACEV(alpha);
     
     v0 = v0 / v0l;
     v1 = v1 / v1l;
@@ -104,9 +123,9 @@ class Approximator {
     else
       S[units] = VPoint(cosalpha, -sinalpha, 0);
     VSegment::iterator it;
-    for(it = S.begin(); it != S.end(); ++it) { TRACEN(*it<<" "<<T(*it));
+    for(it = S.begin(); it != S.end(); ++it) { CGAL_NEF_TRACEN(*it<<" "<<T(*it));
     *it = T(*it); 
-    } TRACEN("");
+    } CGAL_NEF_TRACEN("");
     return S;
   }
 
@@ -152,7 +171,7 @@ class Approximator {
     angle[0] = acos((t[0]-CGAL::ORIGIN)*(t[1]-CGAL::ORIGIN));
     angle[1] = acos((t[1]-CGAL::ORIGIN)*(t[2]-CGAL::ORIGIN));
     angle[2] = acos((t[2]-CGAL::ORIGIN)*(t[0]-CGAL::ORIGIN));
-    TRACEN("refine "<<angle[0]<<" "<<angle[1]<<" "<<angle[2]);
+    CGAL_NEF_TRACEN("refine "<<angle[0]<<" "<<angle[1]<<" "<<angle[2]);
     if ( angle[1] > angle[0] ) {
       if ( angle[2] > angle[1] ) i=2;
       else                       i=1;
@@ -189,7 +208,7 @@ class Approximator {
     DTriangle td(approximate(t.point(0)), 
 		 approximate(t.point(1)),
 		 approximate(t.point(2)));
-    TRACEN("approximate " << td);
+    CGAL_NEF_TRACEN("approximate " << td);
     refine(td,T);
     return T;
   }
@@ -272,7 +291,7 @@ public:
   { return new Sphere_segment<R>(*this); }
 
   virtual void draw() const
-  { TRACEN("draw "<<s_);
+  { CGAL_NEF_TRACEN("draw "<<s_);
     if ( size() == 1 ) {
       glPointSize(5*w_);
       glColor3ub(c_.red(),c_.green(),c_.blue());
@@ -325,7 +344,7 @@ public:
   { return new Sphere_circle<R>(*this); }
 
   virtual void draw() const
-  { TRACEN("draw "<<s_);
+  { CGAL_NEF_TRACEN("draw "<<s_);
     glLineWidth(w_);
     glColor3ub(c_.red(),c_.green(),c_.blue()); 
     glBegin(GL_LINE_LOOP);
@@ -373,7 +392,7 @@ public:
   { return new Sphere_triangle<R>(*this); }
 
   virtual void draw() const { 
-    TRACEN("draw "<<t_ << " in " << c_);
+    CGAL_NEF_TRACEN("draw "<<t_ << " in " << c_);
     VTriangle::const_iterator it;
     VPoint p;
     glColorMaterial(GL_FRONT, GL_DIFFUSE);
@@ -471,7 +490,7 @@ void print() const
 }
 
 Unit_sphere(const Unit_sphere& S) : switches(2)
-{ TRACEN("copyconstruction");
+{ CGAL_NEF_TRACEN("copyconstruction");
   sphere_ = gluNewQuadric();
   initialized_ = S.initialized_;
   style_ = S.style_;
@@ -482,7 +501,7 @@ Unit_sphere(const Unit_sphere& S) : switches(2)
 
 
 Unit_sphere& operator=(const Unit_sphere& S)
-{ TRACEN("assignment");
+{ CGAL_NEF_TRACEN("assignment");
   initialized_ = S.initialized_;
   style_ = S.style_;
   switches[0] = S.switches[0];
@@ -635,8 +654,8 @@ void construct()
 
 public:
 
-//void draw(GLdouble z_vec[3]) const
-void draw() const
+void draw(GLdouble z_vec[3]) const
+// void draw() const
 { 
   gluQuadricDrawStyle(sphere_,GLenum(GLU_FILL));
   glEnable(GL_LIGHTING);
@@ -744,8 +763,8 @@ class NefS2_to_UnitSphere
     CGAL_forall_shalfedges(e,T_) {
       if ( Done[e] ) continue;
       SHalfedge_const_handle en(e->snext()),enn(en->snext());
-      TRACEV(T_.incident_triangle(e));
-      TRACEN(T_.incident_mark(e)<<T_.incident_mark(en)<<T_.incident_mark(enn));
+      CGAL_NEF_TRACEV(T_.incident_triangle(e));
+      CGAL_NEF_TRACEN(T_.incident_mark(e)<<T_.incident_mark(en)<<T_.incident_mark(enn));
       CGAL_assertion(T_.incident_mark(e)==T_.incident_mark(en) &&
 		     T_.incident_mark(en)==T_.incident_mark(enn));
       Mark m = T_.incident_mark(e);

@@ -61,7 +61,7 @@ MyWindow::MyWindow(int w, int h)
   testlayer = new Qt_layer( myBar );
   colors_flag = true;
   statusBar();
-  strategy = TRAP;  // the first tab will be created with trapezoidal point location
+  strategy = WALK;  // the first tab will be created with 'walk' point location
 
   m_scailing_factor = 2;
   

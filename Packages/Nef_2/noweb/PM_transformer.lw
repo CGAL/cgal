@@ -12,7 +12,7 @@ template <typename PMDEC, typename GEOM>
 void PM_transformer<PMDEC,GEOM>::
   transform(const Aff_transformation& t) const
 {
-  TRACEN("transforming"); 
+  CGAL_NEF_TRACEN("transforming"); 
   <<determine and store infimaximal frame corners>>
   <<invert map if transformation is odd>>
   <<transform vertices and reduce representation>>

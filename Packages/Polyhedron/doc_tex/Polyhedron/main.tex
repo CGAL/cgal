@@ -15,26 +15,32 @@
 
 \chapter{3D Polyhedral Surfaces}
 \label{chapterPolyhedron}
-\ccChapterRelease{\polyhedronRev. \ \polyhedronDate}\\
+\ccChapterRelease{\polyhedronRev. \ \polyhedronDate}
 \ccChapterAuthor{Lutz Kettner}
 
-\vspace*{-15mm}
-\minitoc
-\vspace*{30mm}
+\begin{ccTexOnly}
+    \setlength{\unitlength}{1mm}
+    \begin{picture}(0,0)(0.0,0.0)
+      \put (78,25){% textwidth = 156mm
+          \includegraphics[width=0.5\textwidth]{Polyhedron/fig/shark}
+      }
+    \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
+\end{ccTexOnly}
 
+\minitoc
 
 % +------------------------------------------------------------------------+
 \section{Introduction}
 \label{sectionPolyIntro}
 
-\begin{ccTexOnly}
-    \vspace*{-50mm}
-    \begin{flushright}~\hspace{1cm}
-      \parbox{0.5\textwidth}{%
-          \includegraphics[width=0.5\textwidth]{Polyhedron/fig/shark}%
-      }%
-    \end{flushright}
-\end{ccTexOnly}
+% \begin{ccTexOnly}
+%     \vspace*{-50mm}
+%     \begin{flushright}~\hspace{1cm}
+%       \parbox{0.5\textwidth}{%
+%           \includegraphics[width=0.5\textwidth]{Polyhedron/fig/shark}%
+%       }%
+%     \end{flushright}
+% \end{ccTexOnly}
 
 Polyhedral surfaces in three dimensions are composed of vertices,
 edges, facets and an incidence relationship on them. The organization

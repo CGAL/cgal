@@ -1,3 +1,23 @@
+// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
+//                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
+
 #ifndef CGAL_SPHERE_PREDICATES_H
 #define CGAL_SPHERE_PREDICATES_H
 
@@ -103,9 +123,9 @@ Halfcircles are again divided into two equally sized pieces. */
 template <class R, class I>
 void partition(const Sphere_circle<R>& c, I start, I beyond, 
                std::list< Sphere_segment<R> >& Lpos)
-{ TRACEN("partition ");
+{ CGAL_NEF_TRACEN("partition ");
   Sphere_segment<R> s1,s2,s3;
-  while ( start != beyond ) { TRACEN("  "<<*start);
+  while ( start != beyond ) { CGAL_NEF_TRACEN("  "<<*start);
     int i = start->intersection(c,s1,s2);
     if (i>1) Lpos.push_back(s2);
     if (i>0) Lpos.push_back(s1);
@@ -123,11 +143,11 @@ void partition_xy(I start, I beyond,
   if (pos > 0)  partition(xy_circle,start,beyond,L);
   else partition(xy_circle.opposite(),start,beyond,L);
   typename std::list< Sphere_segment<R> >::iterator it,itl;
-  TRACEN("partition_xy ");
+  CGAL_NEF_TRACEN("partition_xy ");
   CGAL_forall_iterators(it,L) {
-    TRACEN("  "<<*it);
+    CGAL_NEF_TRACEN("  "<<*it);
     if ( equal_as_sets(it->sphere_circle(),xy_circle) ) {
-      TRACEN("  splitting xy seg "<<*it);
+      CGAL_NEF_TRACEN("  splitting xy seg "<<*it);
       int n1 =  it->intersection(yz_circle,s1,s2);
       if (n1 > 1 && !s2.is_degenerate()) L.insert(it,s2);
       if (n1 > 0 && !s1.is_degenerate()) L.insert(it,s1);
@@ -140,7 +160,7 @@ void partition_xy(I start, I beyond,
   }
   CGAL_forall_iterators(it,L) {
     if ( it->is_halfcircle() ) {
-      TRACEN("  splitting halfcircle "<<*it);
+      CGAL_NEF_TRACEN("  splitting halfcircle "<<*it);
       Sphere_segment<R> s1,s2;
       it->split_halfcircle(s1,s2);
       *it = s2; L.insert(it,s1);
@@ -169,9 +189,9 @@ template <typename R>
 int Sphere_segment<R>::
 intersection(const CGAL::Sphere_circle<R>& c, std::vector<Sphere_segment<R> >& s) const {  
 
-  TRACEN("    intersection "<<*this<<" "<<c);
+  CGAL_NEF_TRACEN("    intersection "<<*this<<" "<<c);
   if ( is_degenerate() ) { 
-    TRACEN("    degenerate");
+    CGAL_NEF_TRACEN("    degenerate");
     s.push_back(*this); 
     return 1;
   }
@@ -179,12 +199,12 @@ intersection(const CGAL::Sphere_circle<R>& c, std::vector<Sphere_segment<R> >& s
   CGAL::Oriented_side or1 = c.oriented_side(source());
   CGAL::Oriented_side or2 = c.oriented_side(target());
 
-  TRACEN("    Orientation " << or1 << " " << or2);
+  CGAL_NEF_TRACEN("    Orientation " << or1 << " " << or2);
 
   if ( or1 == CGAL::opposite(or2) && or1 != or2 ) { 
     // it is sure that $s$ intersects $h$ in its interior. the
     //   question is which part is in the halfspace $h^+$.
-    TRACEN("    opposite");
+    CGAL_NEF_TRACEN("    opposite");
     Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
     if ( !has_on(i1) ) 
       i1 = i1.antipode();
@@ -200,7 +220,7 @@ intersection(const CGAL::Sphere_circle<R>& c, std::vector<Sphere_segment<R> >& s
     //   orientation test of the point $p$ at the tip of the normal of
     //   |s.sphere_circle()| with respect to the plane through the
     //   endpoints of $s$ and the tip of the normal of $h$.
-    TRACEN("    both in plane");
+    CGAL_NEF_TRACEN("    both in plane");
     s.push_back(*this); 
     return 1;
   }
@@ -222,10 +242,10 @@ intersection(const CGAL::Sphere_circle<R>& c, std::vector<Sphere_segment<R> >& s
       s.push_back(Sphere_segment(source(),i1,sphere_circle()));
       s.push_back(Sphere_segment(i1,i2,sphere_circle()));
       s.push_back(Sphere_segment(i2,target(),sphere_circle()));
-      //      TRACEN("    both >= plane, long "<<s1<<s2);
+      //      CGAL_NEF_TRACEN("    both >= plane, long "<<s1<<s2);
       return 3;
     } // now short:
-    TRACEN("    both >= plane, short ");
+    CGAL_NEF_TRACEN("    both >= plane, short ");
     s.push_back(*this); 
     return 1; 
   } 
@@ -237,16 +257,16 @@ intersection(const CGAL::Sphere_circle<R>& c, std::vector<Sphere_segment<R> >& s
       Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
       Sphere_point<R> i2 = i1.antipode();
       Sphere_segment so(i1,i2,sphere_circle());
-      //      TRACEN("    both <= plane, long"<<so);
+      //      CGAL_NEF_TRACEN("    both <= plane, long"<<so);
       if ( so.has_on(source()) && so.has_on(target()) )
       { so = so.complement(); }
-      //      TRACEN("    both <= plane, long"<<so);
+      //      CGAL_NEF_TRACEN("    both <= plane, long"<<so);
       s.push_back(Sphere_segment(source(),so.source(),sphere_circle()));
       s.push_back(so);
       s.push_back(Sphere_segment(so.target(),target(),sphere_circle()));
       return 3;
     } // now short
-    TRACEN("    both <= plane, short");
+    CGAL_NEF_TRACEN("    both <= plane, short");
     s.push_back(*this);
     return 1;
   }
@@ -261,8 +281,8 @@ int Sphere_segment<R>::
 intersection(const CGAL::Sphere_circle<R>& c,
              Sphere_segment<R>& s1, Sphere_segment<R>& s2) const
 {  
-  TRACEN("    intersection "<<*this<<" "<<c);
-  if ( is_degenerate() ) { TRACEN("    degenerate");
+  CGAL_NEF_TRACEN("    intersection "<<*this<<" "<<c);
+  if ( is_degenerate() ) { CGAL_NEF_TRACEN("    degenerate");
     if ( !c.has_on_negative_side(source()) ) 
     { s1 = *this; return 1; }
     return 0;
@@ -272,7 +292,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
   if ( or1 == CGAL::opposite(or2) && or1 != or2 ) { 
 // it is sure that $s$ intersects $h$ in its interior. the
 //       question is which part is in the halfspace $h^+$.
-    TRACEN("    opposite");
+    CGAL_NEF_TRACEN("    opposite");
     Sphere_point<R> i1 = CGAL::intersection(this->ptr()->c_,c);
     if ( !has_on(i1) ) i1 = i1.antipode();
     if ( or1 == CGAL::ON_POSITIVE_SIDE ) 
@@ -290,7 +310,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
 //    orientation test of the point $p$ at the tip of the normal of
 //    |s.sphere_circle()| with respect to the plane through the
 //   endpoints of $s$ and the tip of the normal of $h$. 
-    TRACEN("    both in plane");
+    CGAL_NEF_TRACEN("    both in plane");
     if ( source() != target().antipode() ) {
       s1 = *this; return 1;
     } 
@@ -300,7 +320,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
 			 CGAL::ORIGIN + c.orthogonal_vector(),
 			 CGAL::ORIGIN + sphere_circle().orthogonal_vector())
        != CGAL::POSITIVE);
-    TRACE("    ");TRACEV(halfcircle_notin_hminus);
+    CGAL_NEF_TRACE("    ");CGAL_NEF_TRACEV(halfcircle_notin_hminus);
     if ( halfcircle_notin_hminus ) { s1 = *this; return 1; }
     else { 
       s1 = Sphere_segment(source(),source(),sphere_circle());
@@ -325,10 +345,10 @@ intersection(const CGAL::Sphere_circle<R>& c,
       // now source(),i1,i2,target() are circularly ordered
       s1 = Sphere_segment(source(),i1,sphere_circle());
       s2 = Sphere_segment(i2,target(),sphere_circle());
-      TRACEN("    both >= plane, long "<<s1<<s2);
+      CGAL_NEF_TRACEN("    both >= plane, long "<<s1<<s2);
       return 2;
     } // now short:
-    TRACEN("    both >= plane, short ");
+    CGAL_NEF_TRACEN("    both >= plane, short ");
     s1=*this; return 1; 
   } 
   else if ( or1 != CGAL::ON_POSITIVE_SIDE && 
@@ -339,13 +359,13 @@ intersection(const CGAL::Sphere_circle<R>& c,
       Sphere_point<R> i1 = CGAL::intersection(this->ptr()->c_,c);
       Sphere_point<R> i2 = i1.antipode();
       Sphere_segment<R> so(i1,i2,sphere_circle());
-      TRACEN("    both <= plane, long"<<so);
+      CGAL_NEF_TRACEN("    both <= plane, long"<<so);
       if ( so.has_on(source()) && so.has_on(target()) )
       { so = so.complement(); }
-      TRACEN("    both <= plane, long"<<so);
+      CGAL_NEF_TRACEN("    both <= plane, long"<<so);
       s1 = so; return 1;
     } // now short
-    TRACEN("    both <= plane, short");
+    CGAL_NEF_TRACEN("    both <= plane, short");
     if ( or1 == CGAL::ON_ORIENTED_BOUNDARY ) 
     { s1 = Sphere_segment<R>(source(),source(),sphere_circle()); return 1; }
     if ( or2 == CGAL::ON_ORIENTED_BOUNDARY ) 

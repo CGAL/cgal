@@ -1,3 +1,6 @@
+18 December 2004 Sylvain Pion
+- Update headers of demo files.
+
 26 August 2004 Andreas Fabri
 - changes in doc_tex for pdflatex
 

@@ -329,7 +329,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
     sv->point() = p; 
     sv->mark() = m;
     sv->center_vertex() = Vertex_handle((SNC_in_place_list_sm<Self>*) this);
-    TRACEN("new_svertex "<<&*sv);
+    CGAL_NEF_TRACEN("new_svertex "<<&*sv);
     return sv;
   }
 

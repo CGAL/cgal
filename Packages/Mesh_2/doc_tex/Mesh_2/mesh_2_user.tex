@@ -91,7 +91,60 @@ printed.
 
 \ccIncludeExampleCode{Mesh_2/conforming.C}
 
-\textbf{TODO: insert a figure from the demo?}
+See figures~\ref{Conform-example-conform},
+\ref{Conform-example-conform-Delaunay}
+and~\ref{Conform-example-conform-Gabriel}.
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=8cm]{Mesh_2/example-conform}
+\end{center}
+\end{ccTexOnly}
+\caption{Initial triangulation.}
+\label{Conform-example-conform}
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./example-conform.png"
+     align=center title="Initial triangulation.">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=8cm]{Mesh_2/example-conform-Delaunay}
+\end{center}
+\end{ccTexOnly}
+\caption{The corresponding conforming Delaunay triangulation.}
+\label{Conform-example-conform-Delaunay}
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./example-conform-Delaunay.png"
+     align=center title="The corresponding conforming Delaunay triangulation.">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=8cm]{Mesh_2/example-conform-Gabriel}
+\end{center}
+\end{ccTexOnly}
+\caption{The corresponding conforming Gabriel triangulation.}
+\label{Conform-example-conform-Gabriel}
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./example-conform-Gabriel.png"
+     align=center title="The corresponding conforming Gabriel triangulation.">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
 
 \section{Meshes}
 \label{sec:Mesh_2_meshes}
@@ -121,8 +174,80 @@ user can override this default by providing a set of seed points. Either
 seed points mark components to be meshed or they mark components not to be
 meshed (holes).
 
-\textbf{TODO: Insert figures: PSLG, its mesh. The same PSLG with seeds, and
-its mesh.}
+See figures~\ref{Domain} and~\ref{Domain-mesh} for an example of a domain
+defined without using seed points, and a possible mesh of it. See
+figure~\ref{Domain-seeds} for another domain defined with the same {\sc
+  Pslg} and two seed points. The two seed points define two holes in the
+domain. In the corresponding mesh (figure~\ref{Domain-seeds-mesh}), these
+two holes are triangulated but not meshed.
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=8cm]{Mesh_2/domain}
+\end{center}
+\end{ccTexOnly}
+\caption{A domain defined without seed points.}
+\label{Domain}
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./domain.png"
+     align=center title="A domain defined without seed points.">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=8cm]{Mesh_2/domain-mesh}
+\end{center}
+\end{ccTexOnly}
+\caption{A mesh of the domain defined without seed points.}
+\label{Domain-mesh}
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./domain-mesh.png"
+     align=center title="A mesh of the domain defined without seed points.">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=8cm]{Mesh_2/domain-seeds}
+\end{center}
+\end{ccTexOnly}
+\caption{A domain with two seeds points defining holes.}
+\label{Domain-seeds}
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./domain-seeds.png"
+     align=center title="A domain with two seeds points defining holes.">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=8cm]{Mesh_2/domain-seeds-mesh}
+\end{center}
+\end{ccTexOnly}
+\caption{A mesh of the domain with seeds defining holes.}
+\label{Domain-seeds-mesh}
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./domain-seeds-mesh.png"
+     align=center title="A mesh of the domain with seeds defining holes.">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
 
 \subsection{Shape and Size Criteria}
 \label{sec:Mesh_2_criteria}
@@ -223,7 +348,7 @@ unbounded component.
 
 \ccIncludeExampleCode{Mesh_2/mesh_global.C}
 
-\subsection{Example Using the Class \ccc{Delaunay_mesher_2<CDT>}}
+\subsection{Example Using the Class \protect\ccc{Delaunay_mesher_2<CDT>}}
 
 This example uses the class \ccc{Delaunay_mesher_2<CDT>} and calls
   the \ccc{refine_mesh()} member function twice changing the size and
@@ -241,8 +366,6 @@ defines a domain by using one seed. The size and shape criteria are the
 defaults provided by the criteria class \ccc{Delaunay_mesh_criteria_2<K>}.
 
 \ccIncludeExampleCode{Mesh_2/mesh_with_seeds.C}
-
-\textbf{TODO: insert figures from the demo?}
 
 %%% For emacs/AucTeX:
 %%% Local Variables: ***

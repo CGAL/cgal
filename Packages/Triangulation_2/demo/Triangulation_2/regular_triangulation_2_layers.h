@@ -1,23 +1,21 @@
-// ============================================================================
+// Copyright (c) 1997-2002  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// file          : demo/Qt_widget/Triangulation_2/triangulation_2_layers.h
-// package       : Qt_widget
-// author(s)     : Radu Ursu
-// release       : 
-// release_date  : 
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
-//
-//
-// ============================================================================
+// Author(s)     : Radu Ursu
 
 #ifndef CGAL_REGULAR_TRIANGULATION_2_LAYERS_H
 #define CGAL_REGULAR_TRIANGULATION_2_LAYERS_H
@@ -36,12 +34,12 @@ public:
   Qt_layer_show_triangulation(T &t) : tr(t){};
   void draw()
   {
-    *widget << CGAL::BLUE; 
+    *widget << CGAL::BLUE;
     *widget << tr;
   };
 private:
   T &tr;
-};//end class 
+};//end class
 
 template <class T>
 class Qt_layer_show_voronoi : public CGAL::Qt_widget_layer
@@ -55,12 +53,12 @@ public:
   };
 private:
   T	&tr;
-};//end class 
+};//end class
 
 template <class T>
 class Qt_layer_show_points : public CGAL::Qt_widget_layer {
 public:
-  typedef typename T::Point           Point;  
+  typedef typename T::Point           Point;
   typedef typename T::Segment         Segment;
   typedef typename T::Vertex          Vertex;
   typedef typename T::Finite_vertices_iterator
@@ -70,12 +68,12 @@ public:
 
   Qt_layer_show_points(T &t) : rt(t){};
   void draw()
-  {  
-    Finite_vertices_iterator it = rt.finite_vertices_begin(), 
+  {
+    Finite_vertices_iterator it = rt.finite_vertices_begin(),
                     beyond = rt.finite_vertices_end();
-    *widget << CGAL::GREEN << CGAL::PointSize (3) 
-		<< CGAL::PointStyle (CGAL::DISC);    
-    while(it != beyond) {      
+    *widget << CGAL::GREEN << CGAL::PointSize (3)
+		<< CGAL::PointStyle (CGAL::DISC);
+    while(it != beyond) {
       *widget << (*it).point();
       *widget << Circle((*it).point().point(), (*it).point().weight());
       ++it;
@@ -83,9 +81,9 @@ public:
 
     Hidden_verticex_iterator hit=rt.hidden_vertices_begin(),
                        hbeyond = rt.hidden_vertices_end();
-    *widget << CGAL::YELLOW << CGAL::PointSize (3) 
-		<< CGAL::PointStyle (CGAL::DISC);  
-    while(hit != hbeyond) {      
+    *widget << CGAL::YELLOW << CGAL::PointSize (3)
+		<< CGAL::PointStyle (CGAL::DISC);
+    while(hit != hbeyond) {
       *widget << (*hit).point();
       *widget << Circle((*hit).point().point(), (*hit).point().weight());
       ++hit;
@@ -93,7 +91,7 @@ public:
   };
 private:
   T	&rt;
-};//end class 
+};//end class
 
 
 #endif

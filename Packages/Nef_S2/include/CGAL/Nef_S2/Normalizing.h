@@ -138,17 +138,17 @@ class Normalizing<Homogeneous_tag> {
 			 : h.b())
       : h.a();
       
-    TRACE("gcd... i"<<' ');
+    CGAL_NEF_TRACE("gcd... i"<<' ');
     
     if(h.b() != 0)
       x = CGAL_NTS gcd(x,h.b());
-    TRACE(x<<' ');
+    CGAL_NEF_TRACE(x<<' ');
     if(h.c() != 0)
       x = CGAL_NTS gcd(x,h.c());
-    TRACE(x<<' ');
+    CGAL_NEF_TRACE(x<<' ');
     if(h.d() !=0)
       x = CGAL_NTS gcd(x,h.d());
-    TRACEN(x);
+    CGAL_NEF_TRACEN(x);
     
     x = CGAL_NTS abs(x);
     
@@ -157,7 +157,7 @@ class Normalizing<Homogeneous_tag> {
     RT pc = h.c()/x;
     RT pd = h.d()/x;
     
-    TRACEN("  after normalizing "  << CGAL::Plane_3<R>(pa,pb,pc,pd));
+    CGAL_NEF_TRACEN("  after normalizing "  << CGAL::Plane_3<R>(pa,pb,pc,pd));
     return CGAL::Plane_3<R>(pa,pb,pc,pd);
   }
 
@@ -246,7 +246,7 @@ class Normalizing<Cartesian_tag> {
     FT pc = h.c()/x;
     FT pd = h.d()/x;
     
-    TRACEN("  after normalizing "  << CGAL::Plane_3<R>(pa,pb,pc,pd));
+    CGAL_NEF_TRACEN("  after normalizing "  << CGAL::Plane_3<R>(pa,pb,pc,pd));
     return CGAL::Plane_3<R>(pa,pb,pc,pd);
   }
 

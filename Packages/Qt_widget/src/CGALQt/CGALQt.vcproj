@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="CGALQt"
 	ProjectGUID="{C1F788D5-DC18-4223-B77D-924CBAED2201}"
 	Keyword="Win32Proj">
@@ -48,6 +48,12 @@
 				Name="VCResourceCompilerTool"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -62,7 +68,7 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(QTDIR)/include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;CGAL_USE_GMP;CGAL_USE_QT"
+				PreprocessorDefinitions="WIN32;_LIB;CGAL_USE_GMP;CGAL_USE_QT;DNDEBUG"
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
 				EnableFunctionLevelLinking="TRUE"
@@ -89,12 +95,23 @@
 				Name="VCResourceCompilerTool"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
+			<File
+				RelativePath="Qt_help_window.C">
+			</File>
 			<File
 				RelativePath="Qt_widget.C">
 				<FileConfiguration
@@ -103,9 +120,6 @@
 						Name="VCCLCompilerTool"
 						CompileAs="2"/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="Qt_help_window.C">
 			</File>
 			<File
 				RelativePath="Qt_widget_history.C">
@@ -118,6 +132,9 @@
 						Name="VCCLCompilerTool"
 						CompileAs="2"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Qt_widget_OpenGL.C">
 			</File>
 			<File
 				RelativePath="Qt_widget_standard_toolbar.C">
@@ -148,25 +165,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc">
 			<File
-				RelativePath="..\..\include\CGAL\IO\Qt_widget.h">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget.moc $(CGALROOT)/include/CGAL/IO/Qt_widget.h
-"
-						Outputs="Qt_widget.moc"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget.moc $(CGALROOT)/include/CGAL/IO/Qt_widget.h
-"
-						Outputs="Qt_widget.moc"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\..\include\CGAL\IO\Qt_help_window.h">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -183,6 +181,25 @@
 						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_help_window.moc $(CGALROOT)/include/CGAL/IO/Qt_help_window.h
 "
 						Outputs="Qt_help_window.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\include\CGAL\IO\Qt_widget.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget.moc $(CGALROOT)/include/CGAL/IO/Qt_widget.h
+"
+						Outputs="Qt_widget.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget.moc $(CGALROOT)/include/CGAL/IO/Qt_widget.h
+"
+						Outputs="Qt_widget.moc"/>
 				</FileConfiguration>
 			</File>
 			<File
@@ -221,6 +238,16 @@
 						CommandLine="$(QTDIR)/bin/moc.exe $(CGALROOT)/include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc
 "
 						Outputs="Qt_widget_layer.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\include\Cgal\Io\Qt_widget_OpenGL.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_OpenGL.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_OpenGL.h"
+						Outputs="Qt_widget_OpenGL.moc"/>
 				</FileConfiguration>
 			</File>
 			<File

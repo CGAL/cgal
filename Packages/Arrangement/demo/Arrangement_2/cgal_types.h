@@ -57,7 +57,7 @@ enum ConicType  { CIRCLE , SEGMENT ,ELLIPSE , PARABOLA , HYPERBOLA};
 enum Strategy   { NAIVE , SIMPLE , TRAP , WALK };
 
 // default background color
-const QColor def_bg_color(236,236,236);
+const QColor def_bg_color(0,0,0);
 
 // Coordinate related typedef - using inexact number type
 typedef float                                              Coord_type;

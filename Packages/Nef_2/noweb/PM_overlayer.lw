@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------------
 %KILLSTART DISS REP
-%LDEL TRACE.*?\)\;
+%LDEL CGAL_NEF_TRACE.*?\)\;
 %LDEL LEDA_MEMORY.*?\)\;
 \documentclass[a4paper]{article}
 \usepackage{MyLweb,version}
@@ -515,7 +515,7 @@ the three last operations are called for each non-trivial segment
 created vertex |v|. 
 \precond |Forward_iterator| has value type |Segment|.}*/
 {
-  TRACEN("creating from iterator range");
+  CGAL_NEF_TRACEN("creating from iterator range");
   typedef PMO_from_segs<Self,Forward_iterator,Object_data_accessor> 
     Output_from_segments;
   typedef Segment_overlay_traits<
@@ -1114,11 +1114,11 @@ information from bottom to top (on forward-oriented edges).
 unbounded face. This holds for $P$, $P_0$, and $P_1$.
 \end{itemize}
 <<transfering the marks of supporting objects>>=
-TRACEN("transfering marks");
+CGAL_NEF_TRACEN("transfering marks");
 <<initialize the outer face object>>
 Vertex_iterator v, vend = vertices_end();
 for (v = vertices_begin(); v != vend; ++v) {
-  TRACEN("mark at "<<PV(v));
+  CGAL_NEF_TRACEN("mark at "<<PV(v));
   <<determine mark of face below v>>
   <<complete marks of vertex v>>
   <<handle all forward oriented edges starting in v>>
@@ -1241,14 +1241,14 @@ Halfedge_around_vertex_circulator
   e(first_out_edge(v)), hend(e);
 CGAL_For_all(e,hend) {
   if ( is_forward(e) ) {
-    TRACEN("   halfedge "<<PE(e));
+    CGAL_NEF_TRACEN("   halfedge "<<PE(e));
     Halfedge_const_handle ei;
     bool supported;
     for (int i=0; i<2; ++i) {
       supported = ( supp_halfedge(e,i) != Halfedge_const_handle() );
       if ( supported ) {
         ei = supp_halfedge(e,i);
-        TRACEN("   supp halfedge "<<i<<" "<<PE(ei));
+        CGAL_NEF_TRACEN("   supp halfedge "<<i<<" "<<PE(ei));
         incident_mark(twin(e),i) = 
           PI[i].mark(PI[i].face(PI[i].twin(ei)));
         mark(e,i) = PI[i].mark(ei);
@@ -1363,7 +1363,7 @@ concept |Below_info| of the Figures \figref{PMO_from_segs} and
 template <typename Below_info>
 void create_face_objects(const Below_info& D) const
 {
-  TRACEN("create_face_objects()");
+  CGAL_NEF_TRACEN("create_face_objects()");
   CGAL::Unique_hash_map<Halfedge_handle,int> FaceCycle(-1);
   std::vector<Halfedge_handle>  MinimalHalfedge;
   <<link halfedges to face cycles and determine minimal halfedges>>
@@ -1382,14 +1382,14 @@ for (e=halfedges_begin(); e != eend; ++e) {
   if ( FaceCycle[e] >= 0 ) continue; // already assigned
   Halfedge_around_face_circulator hfc(e),hend(hfc);
   Halfedge_handle e_min = e;
-  TRACE("face cycle "<<i<<"\n");
+  CGAL_NEF_TRACE("face cycle "<<i<<"\n");
   CGAL_For_all(hfc,hend) {
     FaceCycle[hfc]=i; // assign face cycle number
     if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
       e_min = hfc;
-    TRACE(PE(hfc));
+    CGAL_NEF_TRACE(PE(hfc));
   } 
-  TRACEN("");
+  CGAL_NEF_TRACEN("");
   MinimalHalfedge.push_back(e_min); ++i;
 }
 
@@ -1408,12 +1408,12 @@ information slots expanded.
 Face_handle f_outer = new_face();
 for (int j=0; j<i; ++j) {
   Halfedge_handle e = MinimalHalfedge[j];
-    TRACEN("  face cycle "<<j);TRACEN("  minimal halfedge "<<PE(e));
+    CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
   Point p1 = point(source(e)), 
         p2 = point(target(e)), 
         p3 = point(target(next(e)));
   if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
-      TRACEN("  creating new face object");
+      CGAL_NEF_TRACEN("  creating new face object");
     Face_handle f = new_face();
     link_as_outer_face_cycle(f,e);
   }
@@ -1432,7 +1432,7 @@ all face objects know their bounding face cycles.
 <<link holes and isolated vertices to face objects>>=
 for (e = halfedges_begin(); e != eend; ++e) {
   if ( face(e) != Face_handle() ) continue;
-  TRACEN("linking hole "<<PE(e));
+  CGAL_NEF_TRACEN("linking hole "<<PE(e));
   Face_handle f = determine_face(e,MinimalHalfedge,FaceCycle,D);
   link_as_hole(f,e);
 }
@@ -1471,7 +1471,7 @@ Face_handle determine_face(Halfedge_handle e,
   const std::vector<Halfedge_handle>& MinimalHalfedge,
   const CGAL::Unique_hash_map<Halfedge_handle,int>& FaceCycle,
   const Below_info& D) const
-{ TRACEN("determine_face "<<PE(e));
+{ CGAL_NEF_TRACEN("determine_face "<<PE(e));
   Halfedge_handle e_min = MinimalHalfedge[FaceCycle[e]];
   Halfedge_handle e_below = D.halfedge_below(target(e_min));
   if ( e_below == Halfedge_handle() ) // below is nirwana
@@ -1620,7 +1620,7 @@ and the edges are unified. The data accessor |keep| requires the function
 call operator\\[[bool operator()(Halfedge_handle e)]]\\that allows to
 avoid the simplification for edge pairs referenced by |e|.}*/
 {
-  TRACEN("simplifying"); 
+  CGAL_NEF_TRACEN("simplifying"); 
   typedef typename CGAL::Partition<Face_handle>::item partition_item;
   CGAL::Unique_hash_map<Face_iterator,partition_item> Pitem;
   CGAL::Partition<Face_handle> FP;
@@ -1659,12 +1659,12 @@ for(; en=e, ++(++en), e != eend; e=en) {
   if ( keep(e) ) continue;
   if ( mark(e) == mark(face(e)) &&
        mark(e) == mark(face(twin(e))) ) {
-      TRACEN("deleting "<<PE(e));
+      CGAL_NEF_TRACEN("deleting "<<PE(e));
     if ( !FP.same_block(Pitem[face(e)],
                         Pitem[face(twin(e))]) ) {
       FP.union_blocks( Pitem[face(e)],
                        Pitem[face(twin(e))] );
-      TRACEN("unioning disjoint faces");
+      CGAL_NEF_TRACEN("unioning disjoint faces");
     }
     if ( is_closed_at_source(e) )       set_face(source(e),face(e));
     if ( is_closed_at_source(twin(e)) ) set_face(target(e),face(e));
@@ -1713,7 +1713,7 @@ chunk $\langle$\textit{simplify via non-separating halfedges}$\rangle$
 when the last incident edge was deleted.
 <<simplify via vertices>>=
 Vertex_iterator v, vn, vend = vertices_end();
-for(v = vertices_begin(); v != vend; v=vn) { TRACEN("at vertex "<<PV(v));
+for(v = vertices_begin(); v != vend; v=vn) { CGAL_NEF_TRACEN("at vertex "<<PV(v));
   vn=v; ++vn;
   if ( is_isolated(v) ) {
     if ( mark(v) == mark(face(v)) ) delete_vertex_only(v);

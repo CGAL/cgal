@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------------
 %KILLSTART DISS REP
-%LDEL TRACE.*?\)\;
+%LDEL CGAL_NEF_TRACE.*?\)\;
 %LDEL CGAL_assertion\(.*?\)\;
 \documentclass[a4paper]{article}
 \usepackage{MyLweb,version}
@@ -1080,7 +1080,7 @@ Nef_polyhedron_2(const Line& l, Boundary line = INCLUDED) : Base(Nef_rep())
 /*{\Mcreate creates a Nef polyhedron |\Mvar| containing the half-plane
 left of |l| including |l| if |line==INCLUDED|, excluding |l| if 
 |line==EXCLUDED|.}*/  
-{   TRACEN("Nconstruction from line "<<l);
+{   CGAL_NEF_TRACEN("Nconstruction from line "<<l);
   ES_list L;
   fill_with_frame_segs(L);
   Extended_point ep1 = EK.construct_opposite_point(l);
@@ -1308,7 +1308,7 @@ specified in Lemma \ref{local view properties}. Thus, we do not have
 to simplify here.
 <<nef interface operations>>=
 void extract_complement()
-{ TRACEN("extract complement");
+{ CGAL_NEF_TRACEN("extract complement");
   if ( is_shared() ) clone_rep();
   Overlayer D(pm());
   Vertex_iterator v, vend = D.vertices_end();
@@ -1339,7 +1339,7 @@ a removal of edges is only executed on edges that partition the
 interior of the frame box.
 <<nef interface operations>>=
 void extract_interior()
-{ TRACEN("extract interior");
+{ CGAL_NEF_TRACEN("extract interior");
   if ( is_shared() ) clone_rep();
   Overlayer D(pm());
   Vertex_iterator v, vend = D.vertices_end();
@@ -1359,7 +1359,7 @@ selecting all low-dimensional objects and then deselecting all
 2-faces. Finally we cope with the frame and simplify the structure.
 <<nef interface operations>>=
 void extract_boundary()
-{ TRACEN("extract boundary");
+{ CGAL_NEF_TRACEN("extract boundary");
   if ( is_shared() ) clone_rep();
   Overlayer D(pm());
   Vertex_iterator v, vend = D.vertices_end();
@@ -1380,7 +1380,7 @@ P$.
 <<nef interface operations>>=
 void extract_closure()
 /*{\Xop converts |\Mvar| to its closure. }*/
-{ TRACEN("extract closure");
+{ CGAL_NEF_TRACEN("extract closure");
   extract_complement();
   extract_interior();
   extract_complement();
@@ -1388,7 +1388,7 @@ void extract_closure()
 
 void extract_regularization()
 /*{\Xop converts |\Mvar| to its regularization. }*/
-{ TRACEN("extract regularization");
+{ CGAL_NEF_TRACEN("extract regularization");
   extract_interior();
   extract_closure();
 }
@@ -2615,7 +2615,7 @@ void unop(int i)
   std::ofstream log("nef-demo.log");
   if ( !log ) CGAL_assertion_msg(0,"no output log nef-demo.log");
   log << 1 << std::endl << N << std::endl;
-  TRACEN("writing nef to log");
+  CGAL_NEF_TRACEN("writing nef to log");
   log.close();
   switch (i) {
    case 40: op="interior";   *pN = N.interior(); break;

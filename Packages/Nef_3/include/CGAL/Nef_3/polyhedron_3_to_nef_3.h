@@ -65,8 +65,8 @@ struct Facet_plane_3 {
     Circulator point_cir( f.facet_begin());
     Vector plane_orthogonal_vector;
     normal_vector_newell_3( point_cir, point_cir, plane_orthogonal_vector);
-    TRACEN( *point_cir);
-    TRACEN(Plane( *point_cir, Vector( plane_orthogonal_vector)));
+    CGAL_NEF_TRACEN( *point_cir);
+    CGAL_NEF_TRACEN(Plane( *point_cir, Vector( plane_orthogonal_vector)));
     return( Plane( *point_cir, Vector( plane_orthogonal_vector)));
   }
 };
@@ -90,7 +90,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
                                Halfedge_around_vertex_const_circulator;
                                   
-  TRACEN("  calculating facet's planes...");
+  CGAL_NEF_TRACEN("  calculating facet's planes...");
   std::transform( P.facets_begin(), P.facets_end(),
 		  P.planes_begin(), Facet_plane_3());
   SNC_decorator D(S);
@@ -106,7 +106,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     Vertex_handle nv = S.new_vertex();
     D.point(nv) = pv.point();
     D.mark(nv) = true;
-    TRACEN("v "<<pv.point());
+    CGAL_NEF_TRACEN("v "<<pv.point());
 
     SM_decorator SM(&*nv);
     Halfedge_around_vertex_const_circulator pe = pv.vertex_begin(), pe_prev(pe);
@@ -135,9 +135,9 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       SVertex_handle sv = SM.new_svertex(sp);
       SM.mark(sv) = true;
       
-      TRACEN(pe_prev->facet()->plane());
-      TRACEN(pe_target);
-      TRACEN(pe_prev->opposite()->vertex()->point());
+      CGAL_NEF_TRACEN(pe_prev->facet()->plane());
+      CGAL_NEF_TRACEN(pe_target);
+      CGAL_NEF_TRACEN(pe_prev->opposite()->vertex()->point());
       CGAL_assertion(!pe_prev->facet()->plane().is_degenerate());
       CGAL_assertion(pe_prev->facet()->plane().
 		     has_on(pe_prev->opposite()->vertex()->point()));
@@ -168,9 +168,9 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     CGAL_assertion(pe_prev->vertex()->point()==pv.point());
     CGAL_assertion(pe_0->vertex()->point()==pv.point());
     
-    TRACEN(pe_prev->facet()->plane());
-    TRACEN(pe_target_0);
-    TRACEN(pe_prev->opposite()->vertex()->point());
+    CGAL_NEF_TRACEN(pe_prev->facet()->plane());
+    CGAL_NEF_TRACEN(pe_target_0);
+    CGAL_NEF_TRACEN(pe_prev->opposite()->vertex()->point());
     CGAL_assertion(!pe_prev->facet()->plane().is_degenerate());
     CGAL_assertion(pe_prev->facet()->plane().
 		   has_on(pe_prev->opposite()->vertex()->point()));

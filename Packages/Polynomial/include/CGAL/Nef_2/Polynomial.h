@@ -1932,7 +1932,7 @@ void Polynomial<NT>::pseudo_div(
   const Polynomial<NT>& f, const Polynomial<NT>& g, 
   Polynomial<NT>& q, Polynomial<NT>& r, NT& D)
 {
-  TRACEN("pseudo_div "<<f<<" , "<< g);
+  CGAL_NEF_TRACEN("pseudo_div "<<f<<" , "<< g);
   int fd=f.degree(), gd=g.degree();
   if ( fd<gd ) 
   { q = Polynomial<NT>(0); r = f; D = 1; 
@@ -1944,7 +1944,7 @@ void Polynomial<NT>::pseudo_div(
   NT G = g[gd]; // highest order coeff of g
   D = G; while (--delta) D*=G; // D = G^delta
   Polynomial<NT> res = Polynomial<NT>(D)*f;
-  TRACEN("  pseudo_div start "<<res<<" "<<qd<<" "<<q.degree());
+  CGAL_NEF_TRACEN("  pseudo_div start "<<res<<" "<<qd<<" "<<q.degree());
   while (qd >= 0) {
     NT F = res[rd]; // highest order coeff of res
     NT t = F/G;     // ensured to be integer by multiplication of D
@@ -1956,14 +1956,14 @@ void Polynomial<NT>::pseudo_div(
   }
   r = res;
   CGAL_postcondition(Polynomial<NT>(D)*f==q*g+r);
-  TRACEN("  returning "<<q<<", "<<r<<", "<< D);
+  CGAL_NEF_TRACEN("  returning "<<q<<", "<<r<<", "<< D);
 }
 
 
 template <class NT> 
 Polynomial<NT> Polynomial<NT>::gcd(
   const Polynomial<NT>& p1, const Polynomial<NT>& p2)
-{ TRACEN("gcd("<<p1<<" , "<<p2<<")");
+{ CGAL_NEF_TRACEN("gcd("<<p1<<" , "<<p2<<")");
   if ( p1.is_zero() )
     if ( p2.is_zero() ) return Polynomial<NT>(NT(1));
     else return p2.abs();
@@ -1980,12 +1980,12 @@ Polynomial<NT> Polynomial<NT>::gcd(
   while ( ! f2.is_zero() ) { 
     Polynomial<NT>::pseudo_div(f1,f2,q,r,D);
     if (!first) M*=D;
-    TRACEV(f1);TRACEV(f2);TRACEV(q);TRACEV(r);TRACEV(M);
+    CGAL_NEF_TRACEV(f1);CGAL_NEF_TRACEV(f2);CGAL_NEF_TRACEV(q);CGAL_NEF_TRACEV(r);CGAL_NEF_TRACEV(M);
     r /= r.content();
     f1=f2; f2=r;
     first=false;
   }
-  TRACEV(f1.content());
+  CGAL_NEF_TRACEV(f1.content());
   return Polynomial<NT>(F)*f1.abs();
 }
 

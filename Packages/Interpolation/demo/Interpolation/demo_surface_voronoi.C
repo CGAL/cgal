@@ -1,31 +1,29 @@
-// ============================================================================
+// Copyright (c) 2003   INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1998-1999 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       :
-// release_date  :
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : demo/Interpolation/demo_voronoi_intersection_2_3.C
-// revision      : $Revision$
-// author(s)     : Julia Floetotto
-//
-// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
-//
-// ============================================================================
+// Author(s)     : Julia Floetotto
 
-// Geomview doesn't work on M$ at the moment, so we don't compile this file.
-#if defined(__BORLANDC__) || defined(_MSC_VER)
+#include <CGAL/basic.h>
+
+#ifndef CGAL_USE_GEOMVIEW
 #include <iostream>
 int main()
 {
-  std::cerr << "Geomview doesn't work on Windows, so this demo doesn't work"
-            << std::endl;
+  std::cerr << "Geomview doesn't work on this platform" << std::endl;
   return 0;
 }
 #else
@@ -40,11 +38,11 @@ int main()
 #include <CGAL/Voronoi_intersection_2_traits_3.h>
 #include <CGAL/Regular_triangulation_2.h>
 
-#include <CGAL/point_generators_3.h> 
-#include <CGAL/point_generators_2.h> 
+#include <CGAL/point_generators_3.h>
+#include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
 
-#include <CGAL/squared_distance_2.h> 
+#include <CGAL/squared_distance_2.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/aff_transformation_tags.h>
@@ -73,11 +71,11 @@ typedef std::vector<Point>                       Point_vector;
 typedef std::vector<Point_2>                     Point_2_vector;
 
 typedef CGAL::Aff_transformation_3<K>            Transformation;
- 
 
-////////////////////// 
+
+//////////////////////
 // VISU GEOMVIEW
-////////////////////// 
+//////////////////////
 template<class Point_vector>
 void visu_points(CGAL::Geomview_stream & os, const Point_vector & points)
 {
@@ -86,71 +84,71 @@ void visu_points(CGAL::Geomview_stream & os, const Point_vector & points)
     os << points[i];
 }
 
-//point generation: 
+//point generation:
 // on a sphere:
-void generate_sphere_points(const int& n, 
+void generate_sphere_points(const int& n,
 			    const double& r,
 			    Point_vector& points,
 			    //the test point + normal
-			    Point &p, Vector &normal){ 
+			    Point &p, Vector &normal){
   CGAL::Random_points_on_sphere_3<Point> g(r);
   CGAL::copy_n( g, n, std::back_inserter(points));
-  p = Point(0,0, r); 
+  p = Point(0,0, r);
   normal = Vector(p - CGAL::ORIGIN);
 }
 
 // on a cylinder
-void generate_cylinder_points(const int& n, 
+void generate_cylinder_points(const int& n,
 			      const double& r,
 			      const double& height,
 			      Point_vector& points,
 			      //the test point + normal
-			      Point &p, Vector &normal){ 
-  
+			      Point &p, Vector &normal){
+
   Point_2_vector points_2;
   points_2.reserve(n);
   CGAL::Random_points_on_circle_2<Point_2> g(r);
   CGAL::copy_n( g, n , std::back_inserter(points_2));
   CGAL::Random random;
-    
+
   double h;
   for(int i=0; i< n; i++){
     h = random.get_double(0.0,height);
-    points.push_back(Point(points_2[i].x(),points_2[i].y(),h)); 
+    points.push_back(Point(points_2[i].x(),points_2[i].y(),h));
     random.get_double(0.0,height);
   }
-  p = Point(r,0,0.5*height); 
+  p = Point(r,0,0.5*height);
   normal = Vector(p.x(), p.y(),0);
 }
 
 // on a cube
-void generate_cube_points(const int& n, 
+void generate_cube_points(const int& n,
 			  const double& r,
 			  Point_vector& points,
 			  //the test point + normal
-			  Point &p, Vector &normal){ 
-  
+			  Point &p, Vector &normal){
+
   Point_2_vector points_2;
   int m=n/6;
   points_2.reserve(m);
-  CGAL::points_on_square_grid_2(r,m,std::back_inserter(points_2), 
-				CGAL::Creator_uniform_2<Coord_type,Point_2>()); 
+  CGAL::points_on_square_grid_2(r,m,std::back_inserter(points_2),
+				CGAL::Creator_uniform_2<Coord_type,Point_2>());
   //take the tangent plane to the sphere:
   for(int i=0; i < m; i++){
     points.push_back(Point(points_2[i].x(), points_2[i].y(), -r));
-    points.push_back(Point(points_2[i].x(), points_2[i].y(), r));   
+    points.push_back(Point(points_2[i].x(), points_2[i].y(), r));
     points.push_back(Point(-r, points_2[i].x(), points_2[i].y()));
     points.push_back(Point(r, points_2[i].x(), points_2[i].y()));
     points.push_back(Point(points_2[i].x(), -r, points_2[i].y()));
     points.push_back(Point(points_2[i].x(), r, points_2[i].y()));
-  } 
-  p = Point(0,0,r); 
+  }
+  p = Point(0,0,r);
   normal = Vector(0,0,1);
 }
 
 
 
-////////////////////// 
+//////////////////////
 
 int main()
 {
@@ -160,11 +158,11 @@ int main()
 
   int n=150;
   double r = 5.0;
-  
-  // Create test point set. Prepare a vector for 100 points.  
+
+  // Create test point set. Prepare a vector for 100 points.
   int d;
   std::cout<<"Choose type of surface: 0 -- sphere, 1 -- cylinder,"
-	   << "2 -- cube "<< std::endl; 
+	   << "2 -- cube "<< std::endl;
   std::cin>> d;
   Point_vector points;
   points.reserve(n);
@@ -175,63 +173,62 @@ int main()
   case 1: generate_cylinder_points(n,r, 4*r, points, p, normal); break;
   case 2: generate_cube_points(n,r,points, p, normal); break;
   }
-  
-  
+
+
   Transformation transform;
   std::cout <<"Choose type of affine transformation: 0 -- identity,"<<
-    " 1 -- rotation, 2 -- translation " << std::endl; 
+    " 1 -- rotation, 2 -- translation " << std::endl;
   std::cin >> d;
   switch(d){
-  case 0:  transform = Transformation(CGAL::IDENTITY); 
+  case 0:  transform = Transformation(CGAL::IDENTITY);
     break;
-  case 1: 
+  case 1:
     transform = Transformation(Coord_type(1),Coord_type(0),Coord_type(0),
 			       Coord_type(0),
 			       Coord_type(0),Coord_type(0.9063),
 			       Coord_type(-0.42261826),Coord_type(0),
 			       Coord_type(0),Coord_type(0.42261826),
-			       Coord_type(0.9063),Coord_type(0)); 
+			       Coord_type(0.9063),Coord_type(0));
     break;
-  case 2:  
+  case 2:
     transform = Transformation(CGAL::TRANSLATION, Vector(2,3,-1));
     break;
   }
   //apply affine transformation to points
   Point_vector pts;
-  std::transform( points.begin(),points.end(), std::back_inserter(pts), 
+  std::transform( points.begin(),points.end(), std::back_inserter(pts),
 		  transform);
   points=pts;
   p= transform(p);
   normal =transform(normal);
-  
+
   //define the triangulation:
   Gt traits = Gt(p,normal);
   Regular_triangulation T(traits);
   //insert the points:
   T.insert(points.begin(), points.end());
-  
+
   char ch;
-  gv << CGAL::VIOLET; 
+  gv << CGAL::VIOLET;
   visu_points(gv,points);
-  
+
   gv << CGAL::RED << Segment(p, p+ 0.3*normal);
   gv << CGAL::ORANGE <<p;
-  
+
   std::cout << "Visualizing the intersection of "
-	    << "3D Voronoi diagram with tangent plane at " 
-	    << p << "." << std::endl; 
+	    << "3D Voronoi diagram with tangent plane at "
+	    << p << "." << std::endl;
   gv << CGAL::BLUE;
   T.draw_dual(gv);
-  Face_iterator fit = T.finite_faces_begin(), 
+  Face_iterator fit = T.finite_faces_begin(),
     fend = T.finite_faces_end();
   for(;fit != fend;fit++)
     gv <<CGAL::BLACK<<T.dual(fit);
 
   std::cout << "Enter any character to quit" << std::endl;
   std::cin >> ch;
-  
+
   return 1;
 }
 
-#endif // if defined(__BORLANDC__) || defined(_MSC_VER)
- 
+#endif // CGAL_USE_GEOMVIEW

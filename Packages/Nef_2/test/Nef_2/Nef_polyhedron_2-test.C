@@ -26,7 +26,7 @@ typedef double Rational;
 
 int main()
 {
-  SETDTHREAD(911); // 911
+  CGAL_NEF_SETDTHREAD(911); // 911
   CGAL::set_pretty_mode ( std::cerr );
   std::cerr << "using " << CGAL::pointlocationversion << std::endl;
   std::cerr << "using " << CGAL::sweepversion << std::endl;

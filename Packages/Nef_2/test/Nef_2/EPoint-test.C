@@ -27,7 +27,7 @@ using namespace CGAL;
 
 int main()
 {
-  SETDTHREAD(41);
+  CGAL_NEF_SETDTHREAD(41);
   CGAL_TEST_START;
 {
   typedef CGAL::Extended_homogeneous<Integer> EDec;

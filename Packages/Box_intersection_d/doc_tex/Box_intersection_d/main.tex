@@ -13,9 +13,19 @@
 
 \chapter{Intersecting Sequences of Iso-oriented Boxes}
 \label{chapterBoxIntersection}
-\ccChapterRelease{\BoxIntersectionRev. \ \BoxIntersectionDate}\\
-\ccChapterAuthor{Lutz Kettner, Andreas Meyer, and Afra Zomorodian}
+\ccChapterRelease{\BoxIntersectionRev. \ \BoxIntersectionDate}
+\ccChapterAuthor{Lutz Kettner \and Andreas Meyer \and Afra Zomorodian}
 
+\begin{ccTexOnly}
+    \setlength{\unitlength}{1mm}
+    \begin{picture}(0,0)(0.0,0.0)
+      \put (90,20){
+          \includegraphics[width=70mm]{Box_intersection_d/fig/box_inters}
+      }
+    \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
+\end{ccTexOnly}
+
+\minitoc
 
 % +------------------------------------------------------------------------+
 \section{Introduction}
@@ -30,6 +40,13 @@ axis-aligned bounding boxes, runs a suitable modification of the
 algorithm on the boxes, and whenever a pair of boxes has an
 interesting interaction, only then the exact answer is computed on the
 complicated geometric primitives contained in the boxes.
+
+\begin{ccHtmlOnly}
+    <CENTER>
+        <img src="./fig/box_inters.gif" alt="Two intersecting curves with
+        approximating boxes."><P>
+    </CENTER>
+\end{ccHtmlOnly}
 
 We provide an efficient algorithm~\cite{cgal:ze-fsbi-02} for finding all
 intersecting pairs for large numbers of iso-oriented boxes, i.e.,
@@ -465,7 +482,7 @@ remainder of the example stays the same and we omit the part from the
 previous example for brevity that illustrates the half-open box topology.
 
 The requirements for the box implementation are best studied on
-page~\ccRefPage{BoxIntersectionBox_d} in the Reference Manual. In a
+page~\pageref{ccRef_BoxIntersectionBox_d} in the Reference Manual. In a
 nutshell, we have to define the type \ccc{NT} for the box coordinates
 and the type \ccc{ID} for the \ccc{id}-number. Member functions
 give access to the coordinates and the \ccc{id}-number. A static
@@ -492,7 +509,7 @@ from above, i.e., points are reported if their distance is smaller
 than \ccc{2*eps}.
 
 The requirements for the box traits class are best studied on
-page~\ccRefPage{BoxIntersectionTraits_d} in the Reference Manual. In a
+page~\pageref{ccRef_BoxIntersectionTraits_d} in the Reference Manual. In a
 nutshell, we have to define the type \ccc{NT} for the box coordinates,
 the type \ccc{ID} for the \ccc{id}-number, and the type \ccc{Box_parameter}
 similar to the box handle, here \ccc{Point_3*} since we work with the pointers.
@@ -524,7 +541,7 @@ some questions, and we are grateful to the help of Afra Zomorodian in
 answering our questions during his visit. We thank Steve Robbins for
 an excellent review for this package. Steve Robbins provided an
 independent and earlier implementation of this algorithm,
-however, we learned to late about this implementation.
+however, we learned too late about this implementation.
 
 
 %% EOF %%

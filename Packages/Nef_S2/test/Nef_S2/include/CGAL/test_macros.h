@@ -22,12 +22,12 @@ OS.freeze(0); }}
    
 #define CGAL_TEST_END return cgal_test_res
 
-#undef TRACE
-#undef TRACEN
-#undef TRACEV
-#define TRACE(t)  std::cerr << t
-#define TRACEN(t) std::cerr << t << std::endl
-#define TRACEV(t) std::cerr << #t << " = " << (t) << std::endl
+#undef CGAL_NEF_TRACE
+#undef CGAL_NEF_TRACEN
+#undef CGAL_NEF_TRACEV
+#define CGAL_NEF_TRACE(t)  std::cerr << t
+#define CGAL_NEF_TRACEN(t) std::cerr << t << std::endl
+#define CGAL_NEF_TRACEV(t) std::cerr << #t << " = " << (t) << std::endl
 
 template <class T>
 std::vector<T> make_vector(const T& t1, const T& t2)

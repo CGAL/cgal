@@ -132,7 +132,7 @@ public:
   If |d| extends along a edge then |e| is this edge. If |d| extends
   into the interior of such a wedge then |e| is the first edge hit
   when |d| is rotated clockwise. \precond |v| is not isolated.}*/
-  { TRACEN("out_wedge "<<PV(v));
+  { CGAL_NEF_TRACEN("out_wedge "<<PV(v));
     assert(!is_isolated(v));
     collinear=false;
     Point p = point(v);
@@ -143,12 +143,12 @@ public:
       if ( K.strictly_ordered_ccw(d_res, direction(el), d) )
         e_res = el; d_res = direction(e_res);
     }
-    TRACEN("  determined "<<PE(e_res)<<" "<<d_res);
+    CGAL_NEF_TRACEN("  determined "<<PE(e_res)<<" "<<d_res);
     if ( direction(cyclic_adj_succ(e_res)) == d ) {
       e_res = cyclic_adj_succ(e_res);
       collinear=true;
     }
-    TRACEN("  wedge = "<<PE(e_res)<<" "<<collinear);
+    CGAL_NEF_TRACEN("  wedge = "<<PE(e_res)<<" "<<collinear);
     return e_res;
   }
 
@@ -190,7 +190,7 @@ public:
   face) of the underlying plane map |P| which contains the point |p =
   s.source()| in its relative interior. |s.target()| must be a point
   such that |s| intersects the $1$-skeleton of |P|.}*/
-  { TRACEN("locate naivly "<<s);
+  { CGAL_NEF_TRACEN("locate naivly "<<s);
     if (this->number_of_vertices() == 0) 
       CGAL_assertion_msg(0,"PM_naive_point_locator: plane map is empty.");
     Point p = K.source(s);
@@ -212,7 +212,7 @@ public:
     for(vit = this->vertices_begin(); vit != this->vertices_end(); ++vit) {
       Point p_res, vp = point(vit);
       if ( K.contains(ss,vp) ) {
-        TRACEN(" location via vertex at "<<vp);
+        CGAL_NEF_TRACEN(" location via vertex at "<<vp);
         ss = K.construct_segment(p,vp); // we shrink the segment
         if ( is_isolated(vit) ) {
           v_res = vit; e_res = Halfedge_const_handle();
@@ -227,7 +227,7 @@ public:
           if ( K.orientation(p,vp,point(target(e_res))) < 0 ) // right turn
             e_res = previous(e_res);
           // correction to make e_res visible from p
-          TRACEN("  determined "<<PE(e_res));
+          CGAL_NEF_TRACEN("  determined "<<PE(e_res));
         }
       }
     }
@@ -241,14 +241,14 @@ public:
       if ( o1 == -o2 && // internal intersection
            K.orientation(se,te,K.source(ss)) != 
            K.orientation(se,te,K.target(ss)) ) { 
-          TRACEN(" location via halfedge "<<segment(eit));
+          CGAL_NEF_TRACEN(" location via halfedge "<<segment(eit));
         Point p_res = K.intersection(s,segment(eit));
         ss = K.construct_segment(p,p_res); 
         e_res = (o2 > 0 ? eit : twin(eit));
         // o2>0 => te left of s and se right of s => p left of e
         visited[eit] = visited[twin(eit)] = true;
-        TRACEN("  determined "<<PE(e_res)<<" "<<mark(e_res));
-        TRACEN("             "<<mark(face(e_res)));
+        CGAL_NEF_TRACEN("  determined "<<PE(e_res)<<" "<<mark(e_res));
+        CGAL_NEF_TRACEN("             "<<mark(face(e_res)));
       }
     }
 
@@ -270,7 +270,7 @@ public:
   minimal distance to |s.source()| and |M(h)| holds on the converted
   object. The operation returns the null handle |NULL| if the ray shoot
   along |s| does not hit any object |h| of |P| with |M(h)|.}*/
-  { TRACEN("naive ray_shoot "<<s);
+  { CGAL_NEF_TRACEN("naive ray_shoot "<<s);
     assert( !K.is_degenerate(s) );
     Point p = K.source(s);
     Segment ss(s);
@@ -283,11 +283,11 @@ public:
          assign(e,h) && M(e) ||
          assign(f,h) && M(f) ) return h;
     h = Object_handle(); 
-    TRACEN("not contained");
+    CGAL_NEF_TRACEN("not contained");
     for (v = this->vertices_begin(); v != this->vertices_end(); ++v) {
       Point pv = point(v);
       if ( !K.contains(ss,pv) ) continue;
-      TRACEN("candidate "<<pv);
+      CGAL_NEF_TRACEN("candidate "<<pv);
       if ( M(v) ) {
         h = Object_handle(v);     // store vertex
         ss = K.construct_segment(p,pv); // shorten
@@ -318,7 +318,7 @@ public:
            K.orientation(es, K.source(ss)) ==
            - K.orientation(es, K.target(ss)) ) {
         // internal intersection
-        TRACEN("candidate "<<es);
+        CGAL_NEF_TRACEN("candidate "<<es);
         Point p_res = K.intersection(s,es);
         e_res = (o2 > 0 ? e : twin(e));
         // o2 > 0 => te left of s and se right of s => p left of e
@@ -433,12 +433,12 @@ public:
       if ( Po.is_isolated(vo) ) f = Po.face(vo);
       geninfo<VF_pair>::create(info(vn));
       geninfo<VF_pair>::access(info(vn)) = VF_pair(vo,f); 
-      TRACEN("linking to org "<<PV(vn));
+      CGAL_NEF_TRACEN("linking to org "<<PV(vn));
     }
     void operator()(Halfedge_handle hn, Halfedge_const_handle ho) const
     { geninfo<EF_pair>::create(info(hn));
       geninfo<EF_pair>::access(info(hn)) = EF_pair(ho,Po.face(ho));
-      TRACEN("linking to org "<<PE(hn));
+      CGAL_NEF_TRACEN("linking to org "<<PE(hn));
     }
   };
 
@@ -515,13 +515,13 @@ protected:
 
       geninfo<EF_pair>::access(info(e)).second = 
       geninfo<EF_pair>::access(info(twin(e))).second = f;
-      TRACEN("CT_new_edge "<<PE(e));
+      CGAL_NEF_TRACEN("CT_new_edge "<<PE(e));
     }
   };
 
   void triangulate_CT() const
   {
-    TRACEN("triangulate_CT");
+    CGAL_NEF_TRACEN("triangulate_CT");
     typedef CGAL::Constrained_triang_traits<
       Decorator,Geometry,CT_new_edge> NCTT;
     typedef CGAL::generic_sweep<NCTT> Constrained_triang_sweep;
@@ -530,7 +530,7 @@ protected:
   }
 
   void minimize_weight_CT() const
-  { TRACEN("minimize_weight_CT");
+  { CGAL_NEF_TRACEN("minimize_weight_CT");
     if ( this->number_of_vertices() < 2 ) return;
     std::list<Halfedge_handle> S;
     /* We maintain a stack |S| of edges containing diagonals 
@@ -564,7 +564,7 @@ protected:
         continue;
 
       if ( this->K.first_pair_closer_than_second(b,d,a,c) ) { // flip
-        TRACEN("flipping diagonal of quadilateral"<<a<<b<<c<<d);
+        CGAL_NEF_TRACEN("flipping diagonal of quadilateral"<<a<<b<<c<<d);
         Halfedge_handle e2 = next(e1);
         Halfedge_handle e4 = next(e3);
         S.push_back(e1); 
@@ -577,7 +577,7 @@ protected:
 
 
     }
-    TRACEN("  flipped "<<flip_count);
+    CGAL_NEF_TRACEN("  flipped "<<flip_count);
   }
 
 public:
@@ -639,7 +639,7 @@ public:
   distance to |s.source()| and |M(h)| holds on the converted object. The
   operation returns the null handle |NULL| if the ray shoot along |s|
   does not hit any object |h| of |P| with |M(h)|.}*/
-  { TRACEN("ray_shoot "<<s);
+  { CGAL_NEF_TRACEN("ray_shoot "<<s);
     CGAL_assertion( !this->K.is_degenerate(s) );
     Point p = this->K.source(s), q = this->K.target(s);
     Direction d = this->K.construct_direction(p,q); 
@@ -648,15 +648,15 @@ public:
     object_kind current;
     Object_handle h = LOCATE_IN_TRIANGULATION(p);
     if ( assign(v,h) ) {
-      TRACEN("located vertex "<<PV(v));
+      CGAL_NEF_TRACEN("located vertex "<<PV(v));
       current = VERTEX;
     }  
 
     if ( assign(e,h) ) {
-      TRACEN("located edge "<<PE(e));
+      CGAL_NEF_TRACEN("located edge "<<PE(e));
       int orientation_ = this->K.orientation( segment(e), p);
       if ( orientation_ == 0 ) { // p on segment
-        TRACEN("on edge "<<PE(e));
+        CGAL_NEF_TRACEN("on edge "<<PE(e));
         if ( d == CT.direction(e) ) 
         { current = EDGE_COLLINEAR; }
         else if ( d == CT.direction(CT.twin(e)) ) 
@@ -670,7 +670,7 @@ public:
       } else { // p not on segment, thus in triangle
         if ( orientation_ < 0  ) e = CT.twin(e);
         // now p left of e
-        TRACEN("in face at "<<PE(e));
+        CGAL_NEF_TRACEN("in face at "<<PE(e));
         if ( M(input_face(e)) ) // face mark
           return Object_handle(input_face(e));
 
@@ -699,7 +699,7 @@ public:
 
     while (true) switch ( current ) {
       case VERTEX:
-        { TRACEN("vertex "<<CT.point(v));
+        { CGAL_NEF_TRACEN("vertex "<<CT.point(v));
           Vertex_const_handle v_org = input_vertex(v);
           if ( M(v_org) ) return Object_handle(v_org);
           if ( CT.point(v) == q ) return Object_handle();
@@ -717,7 +717,7 @@ public:
 
         break;
       case EDGE_CROSSING:
-        { TRACEN("crossing edge "<<segment(e));
+        { CGAL_NEF_TRACEN("crossing edge "<<segment(e));
           if ( this->K.orientation(CT.segment(e),q) == 0 ) 
             return Object_handle();
           Halfedge_const_handle e_org = input_halfedge(e);
@@ -726,7 +726,7 @@ public:
             if ( M(face(e_org)) ) return Object_handle(face(e_org));
           }
           Vertex_const_handle v_cand = CT.target(CT.next(e));
-          TRACEN("v_cand "<<PV(v_cand));
+          CGAL_NEF_TRACEN("v_cand "<<PV(v_cand));
           int orientation_ = this->K.orientation(p,q,CT.point(v_cand));
           switch( orientation_ ) {
             case 0: 
@@ -740,7 +740,7 @@ public:
 
         break;
       case EDGE_COLLINEAR:
-        { TRACEN("collinear edge "<<CT.segment(e));
+        { CGAL_NEF_TRACEN("collinear edge "<<CT.segment(e));
           Halfedge_const_handle e_org = input_halfedge(e);
           if ( e_org == Halfedge_const_handle() ) { // a CT edge
             if ( M(input_face(e)) ) 
@@ -779,7 +779,7 @@ PM_point_locator<PMD,GEO>::
 PM_point_locator(const Plane_map& P, const Geometry& k) :
   Base(P,k), CT(*(new Plane_map),k)
 
-{ TRACEN("PM_point_locator construction");
+{ CGAL_NEF_TRACEN("PM_point_locator construction");
   CT.clone_skeleton(P,CT_link_to_original(CT,*this));
   triangulate_CT();
   minimize_weight_CT();
@@ -792,7 +792,7 @@ PM_point_locator(const Plane_map& P, const Geometry& k) :
 template <typename PMD, typename GEO>
 PM_point_locator<PMD,GEO>::
 ~PM_point_locator()
-{ TRACEN("clear_static_point_locator");
+{ CGAL_NEF_TRACEN("clear_static_point_locator");
   Vertex_iterator vit, vend = CT.vertices_end();
   for (vit = CT.vertices_begin(); vit != vend; ++vit) {
     geninfo<VF_pair>::clear(CT.info(vit));
@@ -812,7 +812,7 @@ template <typename PMD, typename GEO>
 typename PM_point_locator<PMD,GEO>::Object_handle  
 PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
 { 
-  TRACEN("walk in triangulation "<<q);
+  CGAL_NEF_TRACEN("walk in triangulation "<<q);
   Vertex_const_handle v = CT.vertices_begin();
   Halfedge_const_handle e;
   Point p = CT.point(v);
@@ -823,7 +823,7 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
   while (true) switch ( current ) {
     case VERTEX:
       { 
-        TRACEN("vertex "<<CT.point(v));
+        CGAL_NEF_TRACEN("vertex "<<CT.point(v));
         if ( CT.point(v) == q ) 
           return Object_handle(v); // stop walking at q
         bool collinear;
@@ -836,7 +836,7 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
 
       break;
     case EDGE_CROSSING:
-      { TRACEN("crossing edge "<<CT.segment(e));
+      { CGAL_NEF_TRACEN("crossing edge "<<CT.segment(e));
         if ( !(this->K.orientation(CT.segment(e),q) > 0) ) // q not left of e
           return Object_handle(e);
         Vertex_const_handle v_cand = CT.target(CT.next(e));
@@ -855,7 +855,7 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
 
       break;
     case EDGE_COLLINEAR:
-      { TRACEN("collinear edge "<<CT.segment(e));
+      { CGAL_NEF_TRACEN("collinear edge "<<CT.segment(e));
         if ( this->K.strictly_ordered_along_line(
                CT.point(CT.source(e)),q,CT.point(CT.target(e))) ) 
           return Object_handle(e);

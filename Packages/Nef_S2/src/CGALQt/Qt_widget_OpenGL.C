@@ -125,7 +125,10 @@ void Qt_widget_OpenGL::paintGL() {
                      rotation.m(0,3), rotation.m(1,3), rotation.m(2,3), 1.0};
   glMultMatrixd( M);
   glScaled(s,s,s);
-  object_->draw();
+  GLdouble z_vec[3] = { rotation.m(2,0) / s,
+                        rotation.m(2,1) / s,
+                        rotation.m(2,2) / s};
+  object_->draw(z_vec);
   glPopMatrix();
 }
 

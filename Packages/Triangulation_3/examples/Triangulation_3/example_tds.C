@@ -41,7 +41,8 @@ int main()
   // cell incident to PV[0]
   Cell_handle c = PV[0]->cell();
   int ind;
-  assert( c->has_vertex( PV[0], ind ) );
+  bool check = c->has_vertex( PV[0], ind );
+  assert( check );
   // PV[0] is the vertex of index ind in c
 
   // insertion of a new vertex in the facet opposite to PV[0]

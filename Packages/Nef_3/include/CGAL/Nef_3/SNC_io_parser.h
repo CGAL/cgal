@@ -189,10 +189,10 @@ class sort_sedges : public SNC_decorator<T> {
   sort_sedges(T& D) : Base(D) {}
   
   bool operator() (SHalfedge_handle se1, SHalfedge_handle se2) const {
-    TRACEN("sort sedges");
+    CGAL_NEF_TRACEN("sort sedges");
     if(se1 == se2) return false;
     sort_vertices<T> SORT(*this->sncp());
-    TRACEN("  center verices: " << source(se1)->point() << " , " << source(se2)->point());
+    CGAL_NEF_TRACEN("  center verices: " << source(se1)->point() << " , " << source(se2)->point());
     if(source(se1) != source(se2))
       return SORT(source(se1),source(se2));
     SM_decorator SD;
@@ -215,11 +215,11 @@ class sort_sedges : public SNC_decorator<T> {
     if(SORT(vertex(twin(ssource(twin(se2)))), 
 	    vertex(twin(ssource(se2)))))
       se2 = twin(se2);
-    TRACEN("  ssources " << vertex(twin(ssource(se1)))->point() 
+    CGAL_NEF_TRACEN("  ssources " << vertex(twin(ssource(se1)))->point() 
 	   << " , " << vertex(twin(ssource(se2)))->point());
     if(ssource(se1) != ssource(se2))
       return SORT(vertex(twin(ssource(se1))), vertex(twin(ssource(se2))));
-    TRACEN("  starget " << target(se1)->point() << " , " << target(se2)->point());
+    CGAL_NEF_TRACEN("  starget " << target(se1)->point() << " , " << target(se2)->point());
     if(target(se1) != target(se2))
       return SORT(target(se1), target(se2));
 
@@ -274,7 +274,7 @@ class sort_sface_cycle_entries : public SNC_decorator<T> {
   sort_sface_cycle_entries(T D) : Base(D) {}
   
   bool operator() (Object_handle o1, Object_handle o2) const {
-    TRACEN("sort sface cycles ");
+    CGAL_NEF_TRACEN("sort sface cycles ");
     SVertex_handle sv1, sv2;
     SHalfedge_handle se1, se2;
     SHalfloop_handle sl1, sl2;
@@ -298,7 +298,7 @@ class sort_sface_cycle_entries : public SNC_decorator<T> {
       return false;
 
     if(se1 != SHalfedge_handle() && se2 != SHalfedge_handle()) {
-      TRACEN("  sedges " << &*se1 << " , " << &*se2);
+      CGAL_NEF_TRACEN("  sedges " << &*se1 << " , " << &*se2);
       sort_sedges<SNC_structure> SORT(*this->sncp());
       return SORT(se1,se2);
       /*
@@ -349,12 +349,12 @@ class sort_sfaces : public SNC_decorator<T> {
   sort_sfaces(T& D) : Base(D) {}
 
   bool operator() (SFace_handle sf1, SFace_handle sf2) const {
-    TRACEN("sort sfaces");
+    CGAL_NEF_TRACEN("sort sfaces");
     if(&*sf1 == &*sf2) return false;
     
     sort_vertices<T> SORT(*this->sncp());
     
-    TRACEN("  vertices " << vertex(sf1)->point() << " , " << vertex(sf2)->point());
+    CGAL_NEF_TRACEN("  vertices " << vertex(sf1)->point() << " , " << vertex(sf2)->point());
     if(vertex(sf1) != vertex(sf2))
       return SORT(vertex(sf1), vertex(sf2));
 
@@ -367,7 +367,7 @@ class sort_sfaces : public SNC_decorator<T> {
 
     SFace_cycle_iterator fc;
   
-    TRACEN("  sface 1");
+    CGAL_NEF_TRACEN("  sface 1");
 
     SHalfedge_handle se1;
     SHalfloop_handle sl1;
@@ -376,7 +376,7 @@ class sort_sfaces : public SNC_decorator<T> {
 	SHalfedge_handle se(fc);
 	SHalfedge_around_sface_circulator ec(se),ee(se);
 	CGAL_For_all(ec,ee) {
-	  TRACEN("     " << SD.point(ssource(ec)) << 
+	  CGAL_NEF_TRACEN("     " << SD.point(ssource(ec)) << 
 		 " | " << SD.circle(ec).orthogonal_vector());
 	  if(ml(ec, se1) == -1)
 	    se1 = ec;
@@ -388,7 +388,7 @@ class sort_sfaces : public SNC_decorator<T> {
 	CGAL_assertion(fc.is_svertex());
     }
 
-    TRACEN("  sface 2");
+    CGAL_NEF_TRACEN("  sface 2");
   
     SHalfedge_handle se2;
     SHalfloop_handle sl2;
@@ -397,7 +397,7 @@ class sort_sfaces : public SNC_decorator<T> {
 	SHalfedge_handle se(fc);
 	SHalfedge_around_sface_circulator ec(se),ee(se);
 	CGAL_For_all(ec,ee) { 
-	  TRACEN("     " << SD.point(ssource(ec)) << 
+	  CGAL_NEF_TRACEN("     " << SD.point(ssource(ec)) << 
 		 " | " << SD.circle(ec).orthogonal_vector());
 	  if(ml(ec, se2) == -1)
 	    se2 = ec;
@@ -409,7 +409,7 @@ class sort_sfaces : public SNC_decorator<T> {
 	CGAL_assertion(fc.is_svertex());
     }
   
-    TRACEN("  sedge cycles existing? " << (se1 != SHalfedge_handle()) 
+    CGAL_NEF_TRACEN("  sedge cycles existing? " << (se1 != SHalfedge_handle()) 
 	   << " , " << (se2 != SHalfedge_handle()));
 
     if(se1 != SHalfedge_handle() && se2 == SHalfedge_handle())
@@ -420,7 +420,7 @@ class sort_sfaces : public SNC_decorator<T> {
     if(se1 == SHalfedge_handle() && se2 == SHalfedge_handle()) {
       Vector_3 vec1 = SD.circle(sl1).orthogonal_vector();
       Vector_3 vec2 = SD.circle(sl2).orthogonal_vector();
-      TRACEN("  sloops " << vec1 << " , " << vec2);
+      CGAL_NEF_TRACEN("  sloops " << vec1 << " , " << vec2);
       if(vec1.x() != vec2.x())
 	return vec1.x() < vec2.x();
       else if(vec1.y() != vec2.y())
@@ -431,11 +431,11 @@ class sort_sfaces : public SNC_decorator<T> {
     
     CGAL_assertion(se1 != SHalfedge_handle() && se2 != SHalfedge_handle());
 
-    TRACEN("  minimal sedge in sface 1:" << SD.point(ssource(se1)) << 
+    CGAL_NEF_TRACEN("  minimal sedge in sface 1:" << SD.point(ssource(se1)) << 
 	   " , " << SD.circle(se1).orthogonal_vector());
-    TRACEN("  minimal sedge in sface 2:" << SD.point(ssource(se2)) << 
+    CGAL_NEF_TRACEN("  minimal sedge in sface 2:" << SD.point(ssource(se2)) << 
 	   " , " << SD.circle(se2).orthogonal_vector());
-    TRACEN("result " << ml(se1,se2));
+    CGAL_NEF_TRACEN("result " << ml(se1,se2));
     switch(ml(se1, se2)) {
     case -1: return true;
     case  1: return false;
@@ -457,7 +457,7 @@ class sort_volumes : public SNC_decorator<T> {
   sort_volumes(T& D) : Base(D) {}
   
   bool operator() (Volume_handle c1, Volume_handle c2) const {
-    TRACEN("sort volumes");
+    CGAL_NEF_TRACEN("sort volumes");
     SFace_handle sf1 = SFace_handle(c1->shells_begin()); 
     SFace_handle sf2 = SFace_handle(c2->shells_begin()); 
 

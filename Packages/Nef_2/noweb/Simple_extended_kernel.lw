@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------------
 %KILLSTART DISS REP
-%LDEL TRACE.*?\)\;
+%LDEL CGAL_NEF_TRACE.*?\)\;
 %LDEL CGAL_NTS\ 
 \documentclass[a4paper]{article}
 \usepackage{MyLweb}
@@ -804,12 +804,12 @@ Segment_2 construct_segment(const Point_2& p, const Point_2& q) const
 
 void simplify(Point_2& p) const
 /*{\Xop only used internally.}*/
-{ TRACEN("simplify("<<p<<")");
+{ CGAL_NEF_TRACEN("simplify("<<p<<")");
   RT x=p.hx(), y=p.hy(), w=p.hw();
   RT common = x.is_zero() ? y : RT::gcd(x,y);
   common = RT::gcd(common,w);
   p = Point_2(x/common,y/common,w/common);
-  TRACEN("canceled="<<p);
+  CGAL_NEF_TRACEN("canceled="<<p);
 }
 
 Line_2 construct_line(const Standard_line_2& l)  const
@@ -819,12 +819,12 @@ Line_2 construct_line(const Standard_line_2& l)  const
 Line_2 construct_line(const Point_2& p1, const Point_2& p2) const
 /*{\Xop only used internally.}*/
 { Line_2 l(p1,p2);
-    TRACEN("eline("<<p1<<p2<<")="<<l);
+    CGAL_NEF_TRACEN("eline("<<p1<<p2<<")="<<l);
   RT a=l.a(), b=l.b(), c=l.c();
   RT common = a.is_zero() ? b : RT::gcd(a,b);
   common = RT::gcd(common,c);
   l =  Line_2(a/common,b/common,c/common);
-    TRACEN("canceled="<<l);
+    CGAL_NEF_TRACEN("canceled="<<l);
   return l; 
 }
 
@@ -1293,7 +1293,7 @@ Line_2 construct_line(const Standard_line_2& l)  const
 Line_2 construct_line(const Point_2& p1, const Point_2& p2) const
 /*{\Xop returns a line through the two extended points |p1| and |p2|.}*/
 { Line_2 l(p1,p2);
-    TRACEN("eline("<<p1<<p2<<")="<<l);
+    CGAL_NEF_TRACEN("eline("<<p1<<p2<<")="<<l);
   RT a=l.a(), b=l.b(), c=l.c();
   l =  Line_2(a,b,c);
   return l; 
@@ -1666,12 +1666,12 @@ int main() {
   Point ep1 = D.construct_point(l);
   Point ep2 = D.construct_point(p2,p3);
   Point ep3 = D.construct_point(p2);
-  TRACEV(ep1); TRACEV(ep2); TRACEV(ep3);
+  CGAL_NEF_TRACEV(ep1); CGAL_NEF_TRACEV(ep2); CGAL_NEF_TRACEV(ep3);
   Atra T(CGAL::ROTATION,1,0);
   Point ep10 = D.transform(ep1,T);
   Point ep20 = D.transform(ep2,T);
   Point ep30 = D.transform(ep3,T);
-  TRACEV(ep10); TRACEV(ep20); TRACEV(ep30);
+  CGAL_NEF_TRACEV(ep10); CGAL_NEF_TRACEV(ep20); CGAL_NEF_TRACEV(ep30);
 }
 
 @ \begin{ignore}

@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
+//                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_SNC_SM_OVERLAYER_H
 #define CGAL_SNC_SM_OVERLAYER_H
@@ -75,7 +76,7 @@ public:
 template <typename Map>
 void SNC_SM_overlayer<Map>::simplify()
 {
-  TRACEN("simplifying"); 
+  CGAL_NEF_TRACEN("simplifying"); 
 
   typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
   CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
@@ -99,20 +100,20 @@ void SNC_SM_overlayer<Map>::simplify()
   SHalfedge_iterator e, en;
   for(e = this->shalfedges_begin(); e != this->shalfedges_end(); e = en) { 
     en = e; ++en; if ( en==twin(e) ) ++en;
-    TRACEN("can simplify ? " << PH(e));
+    CGAL_NEF_TRACEN("can simplify ? " << PH(e));
     if(!Infi_box::is_sedge_on_infibox(e)) {
-      TRACEN(mark(e) << " " << mark(face(e)) << " " << mark(face(twin(e))));
+      CGAL_NEF_TRACEN(mark(e) << " " << mark(face(e)) << " " << mark(face(twin(e))));
       if (( mark(e) == mark(face(e)) && mark(e) == mark(face(twin(e))))){
-	TRACEN("deleting "<<PH(e));
+	CGAL_NEF_TRACEN("deleting "<<PH(e));
 	if ( !UF.same_set(Pitem[face(e)],
 			  Pitem[face(twin(e))]) ) {
 	  
 	  UF.unify_sets( Pitem[face(e)],
 			 Pitem[face(twin(e))] );
-	  TRACEN("unioning disjoint faces");
+	  CGAL_NEF_TRACEN("unioning disjoint faces");
 	}
 	
-	TRACEN("is_closed_at_source " << is_closed_at_source(e) << 
+	CGAL_NEF_TRACEN("is_closed_at_source " << is_closed_at_source(e) << 
 	       " " << is_closed_at_source(twin(e)));
 	
 	if ( is_closed_at_source(e) )
@@ -142,16 +143,16 @@ void SNC_SM_overlayer<Map>::simplify()
     
       if(Vitem[v] != NULL) {
 	set_face(v,*(UF.find(Vitem[v])));
-	TRACEN("incident face of " << PH(v) << " set to " << &*(face(v)));
+	CGAL_NEF_TRACEN("incident face of " << PH(v) << " set to " << &*(face(v)));
       }
       else {
 	set_face(v, *(UF.find(Pitem[face(v)])));
-	TRACEN("isolated svertex " << PH(v) << 
+	CGAL_NEF_TRACEN("isolated svertex " << PH(v) << 
 	       " already has incident face " << &*(face(v)));
       }
 
       if ( mark(v) == mark(face(v)) ) {
-        TRACEN("removing isolated vertex"<<PH(v));
+        CGAL_NEF_TRACEN("removing isolated vertex"<<PH(v));
         delete_vertex_only(v);  
       } 
       else 
@@ -161,9 +162,9 @@ void SNC_SM_overlayer<Map>::simplify()
       if ( has_outdeg_two(v) &&
            mark(v) == mark(e1) && mark(v) == mark(e2) &&
            circle(e1) == circle(e2) ) {
-        TRACEN("collinear at "<<PH(v)<<PH(e1)<<PH(e2));
-        if ( e1 == e2 ){ TRACEN("edge_to_loop"); convert_edge_to_loop(e1);}
-        else {TRACEN("merge_edge_pairs"); merge_edge_pairs_at_target(e1); } 
+        CGAL_NEF_TRACEN("collinear at "<<PH(v)<<PH(e1)<<PH(e2));
+        if ( e1 == e2 ){ CGAL_NEF_TRACEN("edge_to_loop"); convert_edge_to_loop(e1);}
+        else {CGAL_NEF_TRACEN("merge_edge_pairs"); merge_edge_pairs_at_target(e1); } 
       }
     }
   }
@@ -173,23 +174,23 @@ void SNC_SM_overlayer<Map>::simplify()
     ++fn;
     Union_find_handle pit = Pitem[f];
     if ( UF.find(pit) != pit ) {
-      TRACEN("delete face " << &*f);
+      CGAL_NEF_TRACEN("delete face " << &*f);
       delete_face_only(f);
     }
   }
 
-  TRACEN(" ");
-  TRACEN("resulting vertex ");
+  CGAL_NEF_TRACEN(" ");
+  CGAL_NEF_TRACEN("resulting vertex ");
     
   CGAL_forall_svertices(vn, *this)
-    TRACEN("|" << vn->point() << "|" << vn->mark());
-  TRACEN(" ");
+    CGAL_NEF_TRACEN("|" << vn->point() << "|" << vn->mark());
+  CGAL_NEF_TRACEN(" ");
   
   CGAL_forall_shalfedges(en,*this)
-    TRACEN("|" << en->circle() <<
+    CGAL_NEF_TRACEN("|" << en->circle() <<
 	   "|" << en->mark() << 
 	   " " << en->incident_sface()->mark());
-  TRACEN("---------------------");
+  CGAL_NEF_TRACEN("---------------------");
 
 }
 

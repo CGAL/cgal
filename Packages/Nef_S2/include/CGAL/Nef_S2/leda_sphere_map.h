@@ -1,3 +1,22 @@
+// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
+
 #ifndef LEDA_SPHERE_MAP_H
 #define LEDA_SPHERE_MAP_H
 
@@ -118,11 +137,11 @@ typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
   typedef typename PHS_traits::INPUT Input_range;
   Positive_halfsphere_sweep SP(Input_range(Lp.begin(),Lp.end()),O);
   SP.sweep();
-  TRACEN("POS SWEEP\n"<<(dump(std::cerr),""));
+  CGAL_NEF_TRACEN("POS SWEEP\n"<<(dump(std::cerr),""));
   v1=G.first_node(); v2=G.last_node();
   Negative_halfsphere_sweep SM(Input_range(Lm.begin(),Lm.end()),O);
   SM.sweep();
-  TRACEN("NEG SWEEP\n"<<(dump(std::cerr),""));
+  CGAL_NEF_TRACEN("NEG SWEEP\n"<<(dump(std::cerr),""));
   v2 = G.succ_node(v2);
   // now two CCs of sphere graph calculated
   // v1 = first node of CC in positive xy-sphere
@@ -164,7 +183,7 @@ void merging_halfspheres(leda_node v1, leda_node v2)
 // the faces are left of edges
 // edges are embedded orderpreserving ccw
 {
-  TRACEN("Merging Halfspheres");  
+  CGAL_NEF_TRACEN("Merging Halfspheres");  
   leda_edge e1,e2,e3,e4,e1n,e2n;
   forall_sadj_edges(e1,v1) 
     if ( G[target(e1)].hz()==0 && G[target(e1)].hx()<0 ) break;
@@ -173,7 +192,7 @@ void merging_halfspheres(leda_node v1, leda_node v2)
   e3 = G.face_cycle_pred(e1);
   e4 = e2; e2 = G.face_cycle_pred(e2);
   while ( e1 != e3 || e2 != e4 ) {
-      TRACEN(G[source(e1)]<<" "<< G[target(e2)]);
+      CGAL_NEF_TRACEN(G[source(e1)]<<" "<< G[target(e2)]);
     e1n = G.face_cycle_succ(e1); e2n = G.face_cycle_pred(e2);
     merge_nodes(e1,e2);
     e1 = e1n; e2 = e2n;
@@ -197,7 +216,7 @@ void clean_trivial_sface_cycles()
       continue;
     // e in trivial face cycle
     L.append(e); L.append(en);
-    TRACEN("tivial cycle "<<G[source(e)]<<G[target(e)]);
+    CGAL_NEF_TRACEN("tivial cycle "<<G[source(e)]<<G[target(e)]);
     known[e] = known[en] = true;
     leda_edge er = G.reversal(e);
     leda_edge enr = G.reversal(en);
@@ -216,9 +235,9 @@ void compute_faces()
   leda_face f;
   leda_edge e;
   forall_sfaces(f,G) {
-    TRACEN("FACE:");
+    CGAL_NEF_TRACEN("FACE:");
     forall_sface_edges(e,f) 
-      TRACEN("  "<<SSegment_2(G[source(e)],G[target(e)]));
+      CGAL_NEF_TRACEN("  "<<SSegment_2(G[source(e)],G[target(e)]));
   }
 }
 

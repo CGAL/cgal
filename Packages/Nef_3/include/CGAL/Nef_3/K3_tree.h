@@ -1,4 +1,23 @@
 #line 15 "k3_tree.nw"
+// Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
+
 #ifndef K3_TREE_H
 #define K3_TREE_H
 
@@ -61,7 +80,7 @@ public:
 
 public:
   
-#line 283 "k3_tree.nw"
+#line 302 "k3_tree.nw"
 typedef typename Traits::SNC_decorator SNC_decorator;
 typedef typename Traits::Infimaximal_box Infimaximal_box;
 typedef typename Traits::Vertex_handle Vertex_handle;
@@ -90,7 +109,7 @@ typedef typename Traits::Objects_bbox Objects_bbox;
 typedef typename Traits::Kernel Kernel;
 typedef typename Kernel::RT RT;
 
-#line 467 "k3_tree.nw"
+#line 486 "k3_tree.nw"
 class Node {
   friend class K3_tree<Traits>;
 public:
@@ -117,7 +136,7 @@ public:
     }
   }
   
-#line 793 "k3_tree.nw"
+#line 812 "k3_tree.nw"
 friend std::ostream& operator<<
   (std::ostream& os, const Node* node) {
   CGAL_assertion( node != 0);
@@ -135,18 +154,18 @@ friend std::ostream& operator<<
   return os;
 }
 
-#line 493 "k3_tree.nw"
+#line 512 "k3_tree.nw"
   
-#line 568 "k3_tree.nw"
+#line 587 "k3_tree.nw"
 ~Node() {
-  TRACEN("~Node: deleting node...");
+  CGAL_NEF_TRACEN("~Node: deleting node...");
   if( !is_leaf()) {
     delete left_node;
     delete right_node;
   }
 }
 
-#line 494 "k3_tree.nw"
+#line 513 "k3_tree.nw"
 private:
   Node* parent_node;
   Node* left_node;
@@ -157,7 +176,7 @@ private:
 
 
 
-#line 78 "k3_tree.nw"
+#line 97 "k3_tree.nw"
 public:
   class Objects_around_segment 
   {
@@ -172,13 +191,13 @@ public:
     Objects_around_segment() : initialized(false) {}
     Objects_around_segment( const K3_tree& k, const Segment_3& s) : 
       root_node(k.root), segment(s), initialized(true) {
-      TRACEN("Objects_around_segment: input segment: "<<segment);
+      CGAL_NEF_TRACEN("Objects_around_segment: input segment: "<<segment);
     }
     void initialize( const K3_tree& k, const Segment_3& s) {
       root_node = k.root;
       segment = s;
       initialized = true;
-      TRACEN("Objects_around_segment: input segment: "<<s<<" (initialize)");
+      CGAL_NEF_TRACEN("Objects_around_segment: input segment: "<<s<<" (initialize)");
     }
   public:
     Iterator begin() const {
@@ -213,7 +232,7 @@ public:
       }
       Self& operator++() {
         
-#line 863 "k3_tree.nw"
+#line 882 "k3_tree.nw"
 if( S.empty())
   node = 0; // end of the iterator
 else {
@@ -226,12 +245,12 @@ else {
       CGAL_assertion_code(
       if( first_segment) {
         first_segment = false;
-        TRACEN("operator++: prev_segment=(none), segment="<<s);
+        CGAL_NEF_TRACEN("operator++: prev_segment=(none), segment="<<s);
       }
       else {
         CGAL_assertion( prev_segment.target() == s.source());
         CGAL_assertion( prev_segment.direction() == s.direction());
-        TRACEN("operator++: prev_segment="<<prev_segment<<", segment="<<s);
+        CGAL_NEF_TRACEN("operator++: prev_segment="<<prev_segment<<", segment="<<s);
       }
       prev_segment = s);
 #endif
@@ -239,8 +258,8 @@ else {
       break;
     }
     else {
-      TRACEN("find next intersected cell: segment: "<<s);
-      TRACEN("find next intersected cell: node plane: "<<n->plane() <<
+      CGAL_NEF_TRACEN("find next intersected cell: segment: "<<s);
+      CGAL_NEF_TRACEN("find next intersected cell: node plane: "<<n->plane() <<
              ", point: "<<n->plane().point());
       Oriented_side src_side = n->plane().oriented_side(s.source());
       Oriented_side tgt_side = n->plane().oriented_side(s.target());
@@ -262,7 +281,7 @@ else {
   }
 }
 
-#line 133 "k3_tree.nw"
+#line 152 "k3_tree.nw"
         return *this;
       }
       bool operator==(const Self& i) const { 
@@ -277,7 +296,7 @@ else {
         return node;
       }
       
-#line 724 "k3_tree.nw"
+#line 743 "k3_tree.nw"
 inline 
 const Node* get_child_by_side( const Node* node, Oriented_side side) {
   CGAL_assertion( node != NULL);
@@ -303,7 +322,7 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
   CGAL_assertion( s2.direction() == s.direction());
 }
 
-#line 147 "k3_tree.nw"
+#line 166 "k3_tree.nw"
     };
   };
 
@@ -314,7 +333,7 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
     Traits traits;	
   public:
     Objects_along_ray( const K3_tree& k, const Ray_3& r) {
-      TRACEN("Objects_along_ray: input ray: "<<r);
+      CGAL_NEF_TRACEN("Objects_along_ray: input ray: "<<r);
       Vector_3 vec(r.to_vector());
       CGAL_assertion(vec == Vector_3( -1, 0, 0));
       // First of all, we need to find out wheather we are working over an extended kernel or on a standard kernel. As precondition we have that ray is oriented in the minus x axis direction.  When having an extended kernel, the ray can be subtituted by a segment with the endpoint on the 'intersection' between the ray and the bounding infimaximal box.  In the presence of a standard kernel, the intersection is computed with the bounding box with the vertices of the Nef polyhedron.
@@ -342,20 +361,20 @@ private:
 public:
   K3_tree(Object_list& objects, Object_iterator& v_end) {
     
-#line 266 "k3_tree.nw"
+#line 285 "k3_tree.nw"
 typename Object_list::difference_type n_vertices = std::distance(objects.begin(),v_end);
-TRACEN("K3_tree(): n_vertices = " << std::distance(objects.begin(),v_end));
+CGAL_NEF_TRACEN("K3_tree(): n_vertices = " << std::distance(objects.begin(),v_end));
 frexp( (double) n_vertices, &max_depth);
 
-#line 185 "k3_tree.nw"
+#line 204 "k3_tree.nw"
     
-#line 274 "k3_tree.nw"
+#line 293 "k3_tree.nw"
 // TODO: in the presence of a infimaximal bounding box, the bounding box does not have to be computed
 Objects_bbox objects_bbox = traits.objects_bbox_object();
 bounding_box = objects_bbox(objects);
-//TRACEN("bounding box:"<<objects_bbox);
+//CGAL_NEF_TRACEN("bounding box:"<<objects_bbox);
 
-#line 186 "k3_tree.nw"
+#line 205 "k3_tree.nw"
     root = build_kdtree( objects, v_end, 0);
   }
   const Object_list& objects_around_point( const Point_3& p) const {
@@ -367,7 +386,7 @@ bounding_box = objects_bbox(objects);
   Object_list objects_around_segment( const Segment_3& s) const {
     Object_list O;
     
-#line 817 "k3_tree.nw"
+#line 836 "k3_tree.nw"
 Objects_around_segment objects( *this, s);
 Unique_hash_map< Vertex_handle, bool> v_mark(false);
 Unique_hash_map< Halfedge_handle, bool> e_mark(false);
@@ -413,7 +432,7 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
   }
 }
 
-#line 197 "k3_tree.nw"
+#line 216 "k3_tree.nw"
     return O;
   }
   bool is_point_on_cell( const Point_3& p, const typename Objects_around_segment::Iterator& target) const {
@@ -468,7 +487,7 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
   }
 
   
-#line 750 "k3_tree.nw"
+#line 769 "k3_tree.nw"
 #ifdef CODE_DOES_NOT_WORK_WITH_BOTH_KERNELS_AT_THE_SAME_TIME
 template <typename T>
 friend std::ostream& operator<<
@@ -511,9 +530,9 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
   return os.str();
 }
 
-#line 251 "k3_tree.nw"
+#line 270 "k3_tree.nw"
   
-#line 506 "k3_tree.nw"
+#line 525 "k3_tree.nw"
 bool update( Unique_hash_map<Vertex_handle, bool>& V, 
              Unique_hash_map<Halfedge_handle, bool>& E, 
              Unique_hash_map<Halffacet_handle, bool>& F) {
@@ -560,37 +579,37 @@ bool update( Node* node,
   }
   // TODO: protect the code below from optimizations!
   bool left_updated = update( node->left_node, V, E, F);
-  TRACEN("k3_tree::update(): left node updated? "<<left_updated);
+  CGAL_NEF_TRACEN("k3_tree::update(): left node updated? "<<left_updated);
   bool right_updated = update( node->right_node, V, E, F);
-  TRACEN("k3_tree::update(): right node updated? "<<right_updated);
+  CGAL_NEF_TRACEN("k3_tree::update(): right node updated? "<<right_updated);
   return (left_updated || right_updated);
 }
 
-#line 252 "k3_tree.nw"
+#line 271 "k3_tree.nw"
   
-#line 562 "k3_tree.nw"
+#line 581 "k3_tree.nw"
 ~K3_tree() {
-  TRACEN("~K3_tree: deleting root...");
+  CGAL_NEF_TRACEN("~K3_tree: deleting root...");
   delete root;
 }
 
-#line 253 "k3_tree.nw"
+#line 272 "k3_tree.nw"
 private:
   
-#line 319 "k3_tree.nw"
+#line 338 "k3_tree.nw"
 template <typename Depth>
 Node* build_kdtree(Object_list& O, Object_iterator v_end, 
 	           Depth depth, Node* parent=0, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
-  TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
-  TRACEN( "build_kdtree: "<<dump_object_list(O));
+  CGAL_NEF_TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
+  CGAL_NEF_TRACEN( "build_kdtree: "<<dump_object_list(O));
   if( !can_set_be_divided(O.begin(), v_end, depth)) {
-    TRACEN("build_kdtree: set cannot be divided");
+    CGAL_NEF_TRACEN("build_kdtree: set cannot be divided");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
   Object_iterator median; 
   Plane_3 partition_plane = construct_splitting_plane(O.begin(), v_end, median, depth);
-  TRACEN("build_kdtree: plane: "<<partition_plane<< " " << partition_plane.point());
+  CGAL_NEF_TRACEN("build_kdtree: plane: "<<partition_plane<< " " << partition_plane.point());
   Object_list O1, O2;
   Vertex_handle vm,vx;
   CGAL::assign(vm,*median);
@@ -614,7 +633,7 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
                                     std::back_inserter(O1), 
                                     std::back_inserter(O2));
   if( !splitted) {
-    TRACEN("build_kdtree: splitting plane not found");
+    CGAL_NEF_TRACEN("build_kdtree: splitting plane not found");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
 
@@ -626,7 +645,7 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
   else
     non_efective_splits = 0;
   if( non_efective_splits > 2) {
-    TRACEN("build_kdtree: non efective splits reached maximum");
+    CGAL_NEF_TRACEN("build_kdtree: non efective splits reached maximum");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
   Node *node = new Node( parent, 0, 0, partition_plane, Object_list());
@@ -635,7 +654,7 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
   return node;
 }
 
-#line 380 "k3_tree.nw"
+#line 399 "k3_tree.nw"
 template <typename Depth>
 bool can_set_be_divided(Object_iterator start, Object_iterator end, Depth depth) {
   if( depth >= max_depth)
@@ -645,7 +664,7 @@ bool can_set_be_divided(Object_iterator start, Object_iterator end, Depth depth)
   return true;
 }
 
-#line 395 "k3_tree.nw"
+#line 414 "k3_tree.nw"
 template <typename OutputIterator>
 bool classify_objects(Object_iterator start, Object_iterator end, 
                       Plane_3 partition_plane, int depth,
@@ -670,7 +689,7 @@ bool classify_objects(Object_iterator start, Object_iterator end,
   return (on_oriented_boundary != std::distance(start,end));
 }
 
-#line 423 "k3_tree.nw"
+#line 442 "k3_tree.nw"
 template <typename Object, typename Vertex, typename Explorer, typename Coordinate>
 class Vertex_smaller_than
 {
@@ -711,9 +730,9 @@ Plane_3 construct_splitting_plane(Object_iterator start, Object_iterator end,
   return Plane_3();
 }
 
-#line 255 "k3_tree.nw"
+#line 274 "k3_tree.nw"
   
-#line 582 "k3_tree.nw"
+#line 601 "k3_tree.nw"
 const Node *locate_cell_containing( const Point_3& p, const Node* node) const {
   CGAL_precondition( node != 0);
   if( node->is_leaf())
@@ -748,7 +767,7 @@ bool is_point_on_cell( const Point_3& p, const Node* target, const Node* current
           is_point_on_cell( p, target, current->right()));
 }
 
-#line 256 "k3_tree.nw"
+#line 275 "k3_tree.nw"
 };
 
 CGAL_END_NAMESPACE

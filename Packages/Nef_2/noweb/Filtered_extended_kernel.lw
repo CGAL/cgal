@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------------
 %KILLSTART DISS REP
-%LDEL TRACE.*?\)\;
+%LDEL CGAL_NEF_TRACE.*?\)\;
 \documentclass[a4paper]{article}
 \usepackage{MyLweb}
 \input{defs}
@@ -518,7 +518,7 @@ template <typename RT>
 int orientation(const Extended_point<RT>& p1, 
                 const Extended_point<RT>& p2, 
                 const Extended_point<RT>& p3) 
-{ TRACEN("orientation "<<p1<<p2<<p3);
+{ CGAL_NEF_TRACEN("orientation "<<p1<<p2<<p3);
   int res;
   try { INCTOTAL(or2); Protect_FPU_rounding<true> Protection;
     res = orientation_coeff2(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
@@ -1296,11 +1296,11 @@ Standard_FT abscissa_distance(const Standard_line_2& l) const
 
 Point_type determine_type(const Standard_line_2& l) const
 {
-  // TRACEN("determine_type "<<l);
+  // CGAL_NEF_TRACEN("determine_type "<<l);
   Standard_RT adx = CGAL_NTS abs(dx(l)), ady = CGAL_NTS abs(dy(l));
   int sdx = CGAL_NTS sign(dx(l)), sdy = CGAL_NTS sign(dy(l));
   int cmp_dx_dy = CGAL_NTS compare(adx,ady), s(1);
-  // TRACEN("   "<<cmp_dx_dy<<" "<<sdx<<" "<<sdy);
+  // CGAL_NEF_TRACEN("   "<<cmp_dx_dy<<" "<<sdx<<" "<<sdy);
   if (sdx < 0 && ( cmp_dx_dy > 0 || cmp_dx_dy == 0 && 
       sdy != (s=CGAL_NTS sign(abscissa_distance(l))))) {
     if (0 == s) return ( sdy < 0 ? SWCORNER : NWCORNER );
@@ -1333,7 +1333,7 @@ Point_2 construct_point(const Standard_point_2& p) const
 Point_2 construct_point(const Standard_line_2& l, Point_type& t) const
 {
   t = determine_type(l);
-  // TRACEN("construct_point(line)"<<l<<" "<<t);
+  // CGAL_NEF_TRACEN("construct_point(line)"<<l<<" "<<t);
   Point_2 res;
   switch (t) {
     case SWCORNER:   res = epoint(-1, 0, -1, 0, 1); break;

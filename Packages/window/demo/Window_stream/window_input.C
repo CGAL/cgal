@@ -1,24 +1,26 @@
-// ============================================================================
+// Copyright (c) 1999  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// Copyright (c) 1999 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
-// 
-// release       :
-// release_date  :
-// 
-// file          : demo/Window_stream/window_input.C
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Stefan Schirra
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
-// ============================================================================
+// Author(s)     : Stefan Schirra
+
  
 #ifndef CGAL_USE_LEDA
 #include <iostream>
@@ -48,7 +50,7 @@ typedef CGAL::Triangle_2<RepCls>              Triangle;
 typedef CGAL::Circle_2<RepCls>                Circle;
 
 
-#if defined(CGAL_USE_CGAL_WINDOW) 
+#if defined(CGAL_USE_CGAL_WINDOW)
 #define leda_red     CGAL::red
 #define leda_yellow  CGAL::yellow
 #endif

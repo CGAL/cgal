@@ -15,20 +15,19 @@
 
 \chapter{Halfedge Data Structures}
 \label{chapterHalfedgeDS}
-\ccChapterRelease{\hdsRev. \ \hdsDate}\\
+\ccChapterRelease{\hdsRev. \ \hdsDate}
 \ccChapterAuthor{Lutz Kettner}
 
+\begin{ccTexOnly}
+    \setlength{\unitlength}{1mm}
+    \begin{picture}(0,0)(0.0,0.0)
+      \put (91,35){% textwidth = 156mm
+          \includegraphics[width=65mm]{HalfedgeDS/fig/halfedge}
+      }
+    \end{picture}\vspace{-4mm}% compensate for some vspace added by picture
+\end{ccTexOnly}
+
 \minitoc
-
-% +------------------------------------------------------------------------+
-\section{Release Note}
-
-Beginning with \cgal\ R2.3, this package has a new design.  The old
-design is still available for backwards compatibility and to support
-older compiler, such as MSVC++6.0. However its use is deprecated and
-the manual pages are not converted into this new manual
-format. Instead, see its old documentation in the manual of 
-deprecated packages. The two designs are not interchangeable.
 
 % +------------------------------------------------------------------------+
 \section{Introduction}
@@ -45,15 +44,15 @@ variants of the halfedge data structure can omit some of these
 informations, for example the halfedge pointers in faces or the
 storage of faces at all.
 
-\begin{ccTexOnly}
-    \vspace{-4mm}
-    \begin{center}
-      \parbox{0.4\textwidth}{%
-          \includegraphics[width=0.4\textwidth]{HalfedgeDS/fig/halfedge}%
-      }
-    \end{center}
-    \vspace{-3mm}
-\end{ccTexOnly}
+% \begin{ccTexOnly}
+%     \vspace{-4mm}
+%     \begin{center}
+%       \parbox{0.4\textwidth}{%
+%           \includegraphics[width=0.4\textwidth]{HalfedgeDS/fig/halfedge}%
+%       }
+%     \end{center}
+%     \vspace{-3mm}
+% \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
     <CENTER>

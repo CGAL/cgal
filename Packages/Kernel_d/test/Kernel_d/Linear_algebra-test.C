@@ -8,28 +8,29 @@
 #define MAT_DIM 10
 
 #ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer RT;
-#else
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz RT;
-#else
-typedef double RT;
-#endif
-#endif
 
-#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
 #include <CGAL/leda_rational.h>
+typedef leda_integer  RT;
 typedef leda_rational FT;
-#else
-#ifdef CGAL_USE_GMP
+
+#elif defined CGAL_USE_GMP
+
 #include <CGAL/Gmpz.h>
-#include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::Gmpz> FT;
+#include <CGAL/Gmpq.h>
+typedef CGAL::Gmpz RT;
+typedef CGAL::Gmpq FT;
+
 #else
+
+// The following are too slow :
+// #include <CGAL/MP_Float.h>
+// #include <CGAL/Quotient.h>
+// typedef CGAL::MP_Float     RT;
+// typedef CGAL::Quotient<RT> FT;
+typedef double RT;
 typedef double FT;
-#endif
+
 #endif
 
 int main(int argc, char* argv[])

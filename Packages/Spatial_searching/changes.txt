@@ -1,3 +1,7 @@
+
+19 December 2004 Andreas Fabri
+- Updated file headers in the demos
+
 8 November 2004 Andreas Fabri
 - In Weighted_minkowski_distance.h: Bug fix: Added missing initialisation of a data member
 

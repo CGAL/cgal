@@ -217,31 +217,21 @@ Oriented_side oriented_side_2(ForwardIterator first,
                                         const Point& point,
                                         const Traits& traits)
 {
-  Oriented_side result;
-
   Orientation o = orientation_2(first, last, traits);
   CGAL_polygon_assertion(o != COLLINEAR);
 
   Bounded_side b = bounded_side_2(first, last, point, traits);
   switch (b) {
     case ON_BOUNDARY:
-      result = ON_ORIENTED_BOUNDARY;
-      break;
+      return ON_ORIENTED_BOUNDARY;
 
     case ON_BOUNDED_SIDE:
-      result = (o == CLOCKWISE) ?
-               ON_NEGATIVE_SIDE :
-               ON_POSITIVE_SIDE;
-      break;
+      return (o == CLOCKWISE) ?  ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
 
-    case ON_UNBOUNDED_SIDE:
-      result = (o == CLOCKWISE) ?
-               ON_POSITIVE_SIDE :
-               ON_NEGATIVE_SIDE;
-      break;
+    default:
+    //case ON_UNBOUNDED_SIDE:
+      return (o == CLOCKWISE) ?  ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
   }
-
-  return result;
 }
 
 //-----------------------------------------------------------------------//

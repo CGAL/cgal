@@ -1,30 +1,23 @@
-// ============================================================================
+// Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
-/// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// ----------------------------------------------------------------------------
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// release       : $CGAL_Revision: $
-// release_date  : $CGAL_Date: $
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESISGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// file          : demo/Nef_3/nef_3.h
-// package       : Nef_3
-// chapter       : 3D-Nef Polyhedra
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Lutz Kettner    <kettner@mpi-sb.mpg.de>
-// maintainer    : Susan Hert      <hert@mpi-sb.mpg.de>
-//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
-// coordinator   : MPI Saarbruecken
-//
-// Demo program maintaining a stack of Nef polyhedra in the space and
-// a manipulation language for stack ops, file loading and saving, etc.
-// ============================================================================
+// Author(s)     : Lutz Kettner       <kettner@mpi-sb.mpg.de>
+//                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
+
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_homogeneous.h>

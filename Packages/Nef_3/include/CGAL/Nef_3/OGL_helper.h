@@ -1,3 +1,22 @@
+// Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
+
 #ifndef CGAL_NEF_OPENGL_HELPER_H
 #define CGAL_NEF_OPENGL_HELPER_H
 
@@ -14,8 +33,10 @@
 #define CGAL_NEF3_UNMARKED_EDGE_COLOR 255,236,94
 #define CGAL_NEF3_UNMARKED_FACET_COLOR 249,215,44
 
-#ifndef _WIN32
-#define CALLBACK
+#ifdef _WIN32
+#define CGAL_GLU_TESS_CALLBACK CALLBACK
+#else
+#define CGAL_GLU_TESS_CALLBACK 
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -187,25 +208,25 @@ namespace OGL {
 // OGL Drawable Polyhedron:
 // ----------------------------------------------------------------------------
 
-  inline void beginCallback(GLenum which)
+  void CGAL_GLU_TESS_CALLBACK beginCallback(GLenum which)
   { glBegin(which); }
 
-  inline void endCallback(void)
+  void CGAL_GLU_TESS_CALLBACK endCallback(void)
   { glEnd(); }
 
-  inline void errorCallback(GLenum errorCode)
+  void CGAL_GLU_TESS_CALLBACK errorCallback(GLenum errorCode)
   { const GLubyte *estring;
     estring = gluErrorString(errorCode);
     fprintf(stderr, "Tessellation Error: %s\n", estring);
     exit (0);
   }
 
-  inline void vertexCallback(GLvoid* vertex,
+  void CGAL_GLU_TESS_CALLBACK vertexCallback(GLvoid* vertex,
 			     GLvoid* user)
   { GLdouble* pc(static_cast<GLdouble*>(vertex));
     GLdouble* pu(static_cast<GLdouble*>(user));
-    //    TRACEN("vertexCallback coord  "<<pc[0]<<","<<pc[1]<<","<<pc[2]);
-    //    TRACEN("vertexCallback normal "<<pu[0]<<","<<pu[1]<<","<<pu[2]);
+    //    CGAL_NEF_TRACEN("vertexCallback coord  "<<pc[0]<<","<<pc[1]<<","<<pc[2]);
+    //    CGAL_NEF_TRACEN("vertexCallback normal "<<pu[0]<<","<<pu[1]<<","<<pu[2]);
     glNormal3dv(pu);
     glVertex3dv(pc); 
   }
@@ -309,7 +330,7 @@ namespace OGL {
     Bbox_3& bbox()       { return bbox_; }
 
     void draw(Vertex_iterator v) const { 
-      //      TRACEN("drawing vertex "<<*v);
+      //      CGAL_NEF_TRACEN("drawing vertex "<<*v);
       CGAL::Color cf(CGAL_NEF3_MARKED_VERTEX_COLOR), 
 	ct(CGAL_NEF3_UNMARKED_VERTEX_COLOR); // more blue-ish
       CGAL::Color c = v->mark() ? ct : cf;
@@ -321,7 +342,7 @@ namespace OGL {
     }
 
     void draw(Edge_iterator e) const { 
-      //      TRACEN("drawing edge "<<*e);
+      //      CGAL_NEF_TRACEN("drawing edge "<<*e);
       Double_point p = e->source(), q = e->target();
       CGAL::Color cf(CGAL_NEF3_MARKED_EDGE_COLOR), 
 	ct(CGAL_NEF3_UNMARKED_EDGE_COLOR); // more blue-ish
@@ -335,16 +356,16 @@ namespace OGL {
     }
 
     void draw(Halffacet_iterator f) const { 
-      //      TRACEN("drawing facet "<<(f->debug(),""));
+      //      CGAL_NEF_TRACEN("drawing facet "<<(f->debug(),""));
       GLUtesselator* tess_ = gluNewTess();
       gluTessCallback(tess_, GLenum(GLU_TESS_VERTEX_DATA),
-		      (GLvoid (CALLBACK *)()) &vertexCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &vertexCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_BEGIN),
-		      (GLvoid (CALLBACK *)()) &beginCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &beginCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_END),
-		      (GLvoid (CALLBACK *)()) &endCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &endCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_ERROR),
-		      (GLvoid (CALLBACK *)()) &errorCallback);
+		      (GLvoid (CGAL_GLU_TESS_CALLBACK *)()) &errorCallback);
       gluTessProperty(tess_, GLenum(GLU_TESS_WINDING_RULE),
 		      GLU_TESS_WINDING_POSITIVE);
 
@@ -354,24 +375,24 @@ namespace OGL {
       CGAL::Color c = (f->mark() ? ct : cf);
       glColor3ub(c.red(),c.green(),c.blue());
       gluTessBeginPolygon(tess_,f->normal());
-      //      TRACEN(" ");
-      //      TRACEN("Begin Polygon");
+      //      CGAL_NEF_TRACEN(" ");
+      //      CGAL_NEF_TRACEN("Begin Polygon");
       gluTessNormal(tess_,f->dx(),f->dy(),f->dz());
       // forall facet cycles of f:
       for(unsigned i = 0; i < f->number_of_facet_cycles(); ++i) {
         gluTessBeginContour(tess_);
-	//	TRACEN("  Begin Contour");
+	//	CGAL_NEF_TRACEN("  Begin Contour");
 	// put all vertices in facet cycle into contour:
 	for(cit = f->facet_cycle_begin(i); 
 	    cit != f->facet_cycle_end(i); ++cit) {
 	  gluTessVertex(tess_, *cit, *cit);
-	  //	  TRACEN("    add Vertex");
+	  //	  CGAL_NEF_TRACEN("    add Vertex");
 	}
         gluTessEndContour(tess_);
-	//	TRACEN("  End Contour");
+	//	CGAL_NEF_TRACEN("  End Contour");
       }
       gluTessEndPolygon(tess_);
-      //      TRACEN("End Polygon");
+      //      CGAL_NEF_TRACEN("End Polygon");
       gluDeleteTess(tess_);
     }
 
@@ -445,7 +466,7 @@ namespace OGL {
     }
 
 
-    void draw() const
+    void draw(GLdouble z_vec[3]) const
     { 
       if (!is_initialized()) const_cast<Polyhedron&>(*this).init();
       double l = std::max( std::max( bbox().xmax() - bbox().xmin(),
@@ -464,8 +485,8 @@ namespace OGL {
       }
       // move edges and vertices a bit towards the view-point, 
       // i.e., 1/100th of the unit vector in camera space
-      //      double f = l / 4.0 / 100.0;
-      //      glTranslated( z_vec[0] * f, z_vec[1] * f, z_vec[2] * f);
+      double f = l / 4.0 / 100.0;
+      glTranslated( z_vec[0] * f, z_vec[1] * f, z_vec[2] * f);
       glCallList(object_list_+1); // edges
       glCallList(object_list_);   // vertices
       if (switches[SNC_AXES]) glCallList(object_list_+3); // axis
@@ -532,7 +553,7 @@ namespace OGL {
     static void draw(Vertex_const_handle v, const Nef_polyhedron& N, 
 		     CGAL::OGL::Polyhedron& P) { 
       Point_3 bp = N.point(v);
-      //    TRACEN("vertex " << bp);
+      //    CGAL_NEF_TRACEN("vertex " << bp);
       P.push_back(double_point(bp), N.mark(v)); 
     }
     
@@ -541,7 +562,7 @@ namespace OGL {
       Vertex_const_handle s = e->source();
       Vertex_const_handle t = e->twin()->source();
       Segment_3 seg(N.point(s),N.point(t));
-      //    TRACEN("edge " << seg);
+      //    CGAL_NEF_TRACEN("edge " << seg);
       P.push_back(double_segment(seg), N.mark(e)); 
     }
     
@@ -556,7 +577,7 @@ namespace OGL {
 	  SHalfedge_around_facet_const_circulator hc(h), he(hc);
 	  CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
 	    Point_3 sp = hc->source()->source()->point();
-	    //	      TRACEN(" ");TRACEN("facet" << sp);
+	    //	      CGAL_NEF_TRACEN(" ");CGAL_NEF_TRACEN("facet" << sp);
 	    g.push_back_vertex(double_point(sp));
 	  }
 	}
@@ -603,7 +624,7 @@ namespace OGL {
       if(size < bbox.zmin()) size = bbox.zmin();
       if(size < bbox.zmax()) size = bbox.zmax();
       N.set_size_of_infimaximal_box(size*50);
-      //    TRACEN("set infi box size to " << size);
+      //    CGAL_NEF_TRACEN("set infi box size to " << size);
       Vertex_const_iterator vi;
       CGAL_forall_vertices(vi, N)
 	if(N.is_standard(vi))
@@ -629,7 +650,5 @@ namespace OGL {
 } // namespace OGL
 
 CGAL_END_NAMESPACE
-#ifndef _WIN32
-#undef CALLBACK
-#endif
+
 #endif // CGAL_NEF_OPENGL_HELPER_H

@@ -1,2 +1,0 @@
-Functions required to use the ordinary number types provided by CLN
-(http://clisp.cons.org/~haible/packages-cln.html).

@@ -1,3 +1,6 @@
+2 December 2004 Sylvain Pion
+- Doc : clarify that RT/FT are coming from Kernel::.
+
 20 November 2004 Sylvain Pion
 - x86_64 porting.
 

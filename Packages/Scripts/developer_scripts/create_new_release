@@ -26,7 +26,7 @@ CVS_TAG=""
 #CVS_TAG="-A"
 
 #TMPDIR="/tmp"
-TMPDIR="${HOME}/CGAL/internal_release_making"
+TMPDIR="${HOME}/CGAL/internal_release_making-3.1-branch"
 
 cd ${TMPDIR} || return
 if [ -r "version_number" ]; then
@@ -44,15 +44,7 @@ if [ -r "version_number" ]; then
     echo "${release_number}" >> ${LOGFILE} 2>&1
     cd All
     cvs -q update -P ${CVS_TAG} >> ${LOGFILE} 2>&1
-    NEW_TAG=`echo $release_name | sed -e "s/[-.]/_/g"`
-    echo "Tagging All with $NEW_TAG" >> ${LOGFILE} 2>&1
-    # Now we tag.  One directory at a time otherwise the repository
-    # gets locked for an hour...
-    # cvs -q tag $NEW_TAG >> ${LOGFILE} 2>&1
-    for dir in *
-    do
-      [ "$dir" != "CVS" ] && cvs -q tag $NEW_TAG $dir >> ${LOGFILE} 2>&1
-    done
+
     cd ..
     ./create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
     cd ${TMPDIR}
@@ -73,11 +65,23 @@ ${URL}/${release_name}.tar.gz
 
 EOF
 
+    # Now we tag.
+    cd All
+    NEW_TAG=`echo $release_name | sed -e "s/[-.]/_/g"`
+    echo "Tagging All with $NEW_TAG" >> ${LOGFILE} 2>&1
+    # One directory at a time otherwise the repository
+    # gets locked for an hour...
+    # cvs -q tag $NEW_TAG >> ${LOGFILE} 2>&1
+    for dir in *
+    do
+      [ "$dir" != "CVS" ] && cvs -q tag $NEW_TAG $dir >> ${LOGFILE} 2>&1
+    done
 
-#we will call the create_modules script
-#All directory is the CVSDIR directory
+    # We now call the create_modules script
+    # The All directory is the CVSDIR directory
 
-./create_modules -u n -c n -r ${release_name} -n ${release_number} -d "${TMPDIR}/All" -i "${HTML_DIR}" >> ${LOGFILE} 2>&1
+    cd ${TMPDIR}
+    ./create_modules -u n -c n -r ${release_name} -n ${release_number} -d "${TMPDIR}/All" -i "${HTML_DIR}" >> ${LOGFILE} 2>&1
 
 fi
 

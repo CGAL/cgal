@@ -1,22 +1,22 @@
-// ============================================================================
+// Copyright (c) 2002  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// file          : max_k-gon.C
-// package       : Qt_widget
-// author(s)     : Radu Ursu
-// release       : 
-// release_date  : 
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
-//
-// ============================================================================
+// Author(s)     : Radu Ursu
+
 
 
 // if QT is not installed, a message will be issued in runtime.

@@ -1,35 +1,36 @@
-// ============================================================================
+// Copyright (c) 2003   INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 2003 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// release       :
-// release_date  :
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// file          : demo_2/
-// revision      : $Revision$
-// author(s)     : Julia Floetotto
-// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
-//
-// ============================================================================
+// Author(s)     : Julia Floetotto
+
+
 // Geomview doesn't work on M$ at the moment, so we don't compile this
 // file.
 //**********************
 //demo 2D Interpolation over the plane - using 2D natural neighbors
 //**********************
 
+#include <CGAL/basic.h>
 
-#if defined(__BORLANDC__) || defined(_MSC_VER)
+#ifndef CGAL_USE_GEOMVIEW
 #include <iostream>
 int main()
 {
-  std::cerr << "Geomview doesn't work on Windows, so this demo doesn't work"
-            << std::endl;
+  std::cerr << "Geomview doesn't work on this platform" << std::endl;
   return 0;
 }
 #else
@@ -50,7 +51,7 @@ int main()
 #include <CGAL/Interpolation_traits_2.h>
 #include <CGAL/interpolation_functions.h>
 
-#include <CGAL/point_generators_2.h> 
+#include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
 
 #include <CGAL/IO/Geomview_stream.h>
@@ -80,9 +81,9 @@ typedef std::vector< std::pair< K::Point_2, K::FT  > >
                                                        Point_coordinate_vector;
 
 
-////////////////////// 
+//////////////////////
 // VISU GEOMVIEW
-////////////////////// 
+//////////////////////
 
 template<class Point_vector>
 void visu_points(CGAL::Geomview_stream & gv, const Point_vector & points)
@@ -93,13 +94,13 @@ void visu_points(CGAL::Geomview_stream & gv, const Point_vector & points)
 }
 template < class Point_vector>
 void
-visu_graph(CGAL::Geomview_stream & gv, const Point_vector& points, int m) 
+visu_graph(CGAL::Geomview_stream & gv, const Point_vector& points, int m)
 {
 
   //generate list of triangles:
   std::vector< Triangle_3 > tr;
   tr.reserve(2*(m-1)*(m-1));
-  
+
   //indices
   for(int i=0; i< m-1;i++)
     for(int j=0; j< m-1; j++){
@@ -108,21 +109,21 @@ visu_graph(CGAL::Geomview_stream & gv, const Point_vector& points, int m)
 			      points[(j+1) + (i+1)*m]));
       tr.push_back(Triangle_3(points[i*m + j],points[(j+1) + (i+1)*m],
 			      points[j + (i+1)*m]));
-    } 
-  gv.draw_triangles(tr.begin(), tr.end());  
+    }
+  gv.draw_triangles(tr.begin(), tr.end());
 }
 
 //////////////////////////////////////////////////////////////////////////
 ////POINT GENERATION:
-void generate_grid_points(Point_vector_2& points, int m, float h) 
+void generate_grid_points(Point_vector_2& points, int m, float h)
 {
-  
+
   //int n = (m+1)*(m+1);
   int n = m*m;
   points.clear();
   points.reserve(n);
 
-  std::cout <<" generate " <<n   << " grid points in square of height " 
+  std::cout <<" generate " <<n   << " grid points in square of height "
 	    << h <<std::endl;
   // Create n points from a 16 x 16 grid. Note that the double
   // arithmetic _is_ sufficient to produce exact integer grid points.
@@ -130,10 +131,10 @@ void generate_grid_points(Point_vector_2& points, int m, float h)
   CGAL::points_on_square_grid_2((double) h, n,
 				std::back_inserter(points),
 				CGAL::Creator_uniform_2<double,Point_2>());
-  
+
 }
 
-////////////////////// 
+//////////////////////
 
 int main(int argc,  char* argv[])
 {
@@ -164,7 +165,7 @@ int main(int argc,  char* argv[])
   int s = sample.size();
   for(int j=0; j<s ; j++){
     T.insert(sample[j]);
-    
+
     values.insert(std::make_pair(sample[j], Coord_type(0)));
     gradients.insert(std::make_pair(sample[j], CGAL::NULL_VECTOR));
     sample_3.push_back( Point_3(sample[j].x(),sample[j].y(),0));
@@ -174,41 +175,41 @@ int main(int argc,  char* argv[])
   T.insert(p);
   values.insert(std::make_pair(p, w));
   gradients.insert(std::make_pair(p, Vector_2(-g,-g) ));
-   
+
   p = Point_2(-h/3,-h/3);
   T.insert(p);
   values.insert(std::make_pair(p,w));
   gradients.insert(std::make_pair(p, Vector_2(g,g) ));
-   
+
   p = Point_2(-h/3,h/3);
   T.insert(p);
   values.insert(std::make_pair(p, w));
   gradients.insert(std::make_pair(p, Vector_2(g,-g) ));
-   
+
   p = Point_2(h/3,-h/3);
   T.insert(p);
   values.insert(std::make_pair(p, w));
   gradients.insert(std::make_pair(p, Vector_2(-g,g) ));
-   
-  sample_3.push_back( Point_3(h/3,h/3,w)); 
+
+  sample_3.push_back( Point_3(h/3,h/3,w));
   sample_3.push_back( Point_3(-h/3,-h/3,w));
   sample_3.push_back( Point_3(-h/3,h/3,w));
   sample_3.push_back( Point_3(h/3,-h/3,w));
- 
+
   //Interpolation grid:
   Point_vector_2 points;
-  generate_grid_points(points, m, 0.999* h); 
+  generate_grid_points(points, m, 0.999* h);
   Point_vector_3 points_3;
-  
+
   int method;
   std::cout << "Enter the choice of the interpolation function: "<<std::endl;
-  std::cout << " 0 -- linear interpolation" <<std::endl;  
-  std::cout << " 1 -- simple quadratic interpolant"  <<std::endl; 
+  std::cout << " 0 -- linear interpolation" <<std::endl;
+  std::cout << " 1 -- simple quadratic interpolant"  <<std::endl;
   std::cout << " 2 -- Sibson's C1 interpolant "<<std::endl;
   std::cout << " 3 -- Sibson's C1 interpolant without square-root"<<std::endl;
   std::cout << " 4 -- Farin's C1 interpolant" << std::endl;
   std::cin >> method;
-  
+
 
   //INTERPOLATION:
   Point_coordinate_vector     coords;
@@ -216,52 +217,52 @@ int main(int argc,  char* argv[])
   Coord_type value;
   int n = points.size();
   ITraits traits;
-  
+
   std::cout << "Interpolation at  "<<n  <<" grid points " << std::endl;
   for(int i=0;i<n;i++){
    CGAL::Triple<
-     std::back_insert_iterator<Point_coordinate_vector>, 
-    K::FT, bool> coordinate_result = 
+     std::back_insert_iterator<Point_coordinate_vector>,
+    K::FT, bool> coordinate_result =
      CGAL::natural_neighbor_coordinates_2(T, points[i],
 					  std::back_inserter(coords));
    K::FT norm = coordinate_result.second;
    //test if the computation was successful
-   assert(coordinate_result.third && norm>0);  
-   
+   assert(coordinate_result.third && norm>0);
+
    switch(method){
-    case 0: 
+    case 0:
       value = CGAL::linear_interpolation(coords.begin(),coords.end(),norm,
-					 CGAL::Data_access<Point_value_map>(values)); 
+					 CGAL::Data_access<Point_value_map>(values));
       break;
-   case 1: 
+   case 1:
       interpolation_result = CGAL::quadratic_interpolation(coords.begin(),coords.end(),
-					  norm, points[i], 
+					  norm, points[i],
 					  CGAL::Data_access< Point_value_map>
 					  (values),
 					  CGAL::Data_access< Point_vector_map>
 					  (gradients),traits); break;
-    case 2:  
+    case 2:
       interpolation_result = CGAL::sibson_c1_interpolation(coords.begin(),coords.end(),
-       					  norm, points[i], 
+       					  norm, points[i],
        					  CGAL::Data_access<Point_value_map>
        					  (values),
        					  CGAL::Data_access<Point_vector_map>
        					  (gradients), traits); break;
-    case 3:  
+    case 3:
       interpolation_result = CGAL::sibson_c1_interpolation_square(coords.begin(),coords.end(),
-						 norm, points[i], 
+						 norm, points[i],
 						 CGAL::Data_access<Point_value_map>
 						 (values),
 						 CGAL::Data_access<Point_vector_map>
 						 (gradients), traits); break;
-    case 4:  
+    case 4:
       interpolation_result = CGAL::farin_c1_interpolation(coords.begin(),coords.end(),
-					 norm, points[i], 
+					 norm, points[i],
 					 CGAL::Data_access<Point_value_map>
 					 (values),
 					 CGAL::Data_access<Point_vector_map>
 					 (gradients), traits); break;
-      
+
     default: std::cout <<"No valid choice of interpolant." <<
 		  std::endl; break;
     }
@@ -276,20 +277,20 @@ int main(int argc,  char* argv[])
   /************** end of Coordinate computation **************/
   //dump_off_file_quadrilateral(points_3, m);
   char ch;
-  
+
   //viewer
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
   gv.set_bg_color(CGAL::Color(0, 200, 200));
   gv.clear();
   gv.set_line_width(2);
-  
+
   visu_graph(gv, points_3,m);
 
   std::cout << "The data points are displayed in blue in the geomview"
 	    << " application." << std::endl;
   gv << CGAL::BLUE;
   visu_points(gv,sample_3);
-  
+
   //show the gradients
   if(method>0){
     std::cout << "The function gradients are displayed by red lines "
@@ -310,8 +311,8 @@ int main(int argc,  char* argv[])
   std::cout << std::endl;
   std::cout << "Enter any character to quit." << std::endl;
   std::cin >> ch;
-  
-  return 0; 
+
+  return 0;
 }
-#endif // if defined(__BORLANDC__) || defined(_MSC_VER)
- 
+
+#endif // CGAL_USE_GEOMVIEW

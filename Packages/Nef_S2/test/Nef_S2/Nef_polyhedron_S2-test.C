@@ -27,7 +27,7 @@ typedef Nef_polyhedron::Object_handle Object_handle;
 int main(int argc, char **argv)
 {
   CGAL::set_pretty_mode ( std::cerr );
-  SETDTHREAD(911);
+  CGAL_NEF_SETDTHREAD(911);
   std::cerr << CGAL::sweepversion << std::endl;
 
   // Sphere_map 109
@@ -57,8 +57,8 @@ int main(int argc, char **argv)
   CGAL_TEST((N1+!N1) == SPHERE);
   CGAL_TEST((N1^N2) == ((N1-N2)+(N2-N1))); // xor reformulation
 
-  TRACEV((N1*N2)); TRACEV(!(N1*N2)); TRACEV((!N1+!N2)); 
-  TRACEV(!(N1*N2) ^ (!N1+!N2));
+  CGAL_NEF_TRACEV((N1*N2)); CGAL_NEF_TRACEV(!(N1*N2)); CGAL_NEF_TRACEV((!N1+!N2)); 
+  CGAL_NEF_TRACEV(!(N1*N2) ^ (!N1+!N2));
   CGAL_TEST( (!(N1*N2)) == (!N1+!N2) ); // deMorgan
 #if 1
   Nef_polyhedron N3 = N1.intersection(N2);

@@ -77,9 +77,9 @@ Bounded_side bounded_side_3(IteratorForward first,
   CGAL_assertion(!plane.is_degenerate());
   Point_2 (*t)(Point_3);
   Vector_3 pv(plane.orthogonal_vector()), pxy(0,0,1), pyz(1,0,0), pzx(0,1,0);
-  TRACEN("pv*pxz: "<<pv*pzx);
-  TRACEN("pv*pyz: "<<pv*pyz);
-  TRACEN("pv*pxy: "<<pv*pxy);
+  CGAL_NEF_TRACEN("pv*pxz: "<<pv*pzx);
+  CGAL_NEF_TRACEN("pv*pyz: "<<pv*pyz);
+  CGAL_NEF_TRACEN("pv*pxy: "<<pv*pxy);
   if( !CGAL_NTS is_zero(pv*pzx) )
     /* the plane is not perpendicular to the ZX plane */
     t = &point_3_get_z_x_point_2< Point_2, Point_3>;
@@ -93,9 +93,9 @@ Bounded_side bounded_side_3(IteratorForward first,
   }
 
   std::vector< Point_2> points;
-  TRACEN("facet:");
+  CGAL_NEF_TRACEN("facet:");
   for( ; first != last; ++first ) {
-    TRACEN(t(*first)<<" "<<*first);
+    CGAL_NEF_TRACEN(t(*first)<<" "<<*first);
     points.push_back( t(*first));
   }
   Bounded_side side = bounded_side_2( points.begin(), points.end(), t(point));

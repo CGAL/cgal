@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------------
 %KILLSTART DISS REP
-%LDEL TRACE.*?\)\;
+%LDEL CGAL_NEF_TRACE.*?\)\;
 \documentclass[a4paper]{article}
 \usepackage{MyLweb}
 \input{defs}

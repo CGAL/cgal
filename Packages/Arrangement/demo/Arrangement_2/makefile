@@ -14,11 +14,36 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 
+ifdef COREROOT
+COREROOT_INC=-I$(COREROOT)/inc
+COREROOT_LIB=-L$(COREROOT)/lib
+CORE_LIB=-lcore++
+else
+COREROOT_INC=
+COREROOT_LIB=
+ifdef CORE_LIB_DIR
+CORE_LIB=-lCore++
+else
+CORE_LIB=
+endif
+endif
 
 CXXFLAGS = \
        -I../../include \
+       -I../../../Planar_map/include \
+       -I../../../Trapezoidal_decomposition/include \
+       -I../../../Arrangement/include \
+       -I../../../Sweep_line_2/include \
+       $(COREROOT_INC) \
        $(CGAL_CXXFLAGS) \
-       $(LONG_NAME_PROBLEM_CXXFLAGS)
+       $(LONG_NAME_PROBLEM_CXXFLAGS)\
+       -DNDEBUG
+       #-O2 \
+       #-fno-strict-aliasing \
+       #-DNDEBUG \
+       
+      
+
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -39,7 +64,7 @@ LDFLAGS = \
 
 all: arrangements_2$(EXE_EXT)
 
-MyWindow$(OBJ_EXT): MyWindow.C MyWindow.moc cgal_types.h demo_tab.h
+MyWindow$(OBJ_EXT): MyWindow.C MyWindow.moc cgal_types.h demo_tab.h forms.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow.C
 
 MyWindow_files$(OBJ_EXT): MyWindow_files.C cgal_types.h demo_tab.h

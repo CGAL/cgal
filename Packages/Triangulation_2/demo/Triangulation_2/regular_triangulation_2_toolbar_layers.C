@@ -1,22 +1,21 @@
-// ============================================================================
+// Copyright (c) 1997-2002  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// file          : triangulation_2_toolbar_layers.C
-// package       : Qt_widget
-// author(s)     : Ursu Radu
-// release       : 
-// release_date  : 
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
-//
-// ============================================================================
+// Author(s)     : Radu Ursu
 
 
 #ifdef CGAL_USE_QT
@@ -31,7 +30,7 @@
 #include <qiconset.h>
 
 
-  Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, 
+  Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
                                  Regular_triangulation *t) :
     QToolBar(mw, "LT"), dt(t), nr_of_buttons(0)
   {
@@ -74,7 +73,7 @@
     }
     connect(button_group, SIGNAL(clicked(int)),
           widget, SLOT(redraw()));
-    
+
     connect(but[0], SIGNAL(stateChanged(int)),
         showT, SLOT(stateChanged(int)));
     connect(but[1], SIGNAL(stateChanged(int)),
@@ -82,7 +81,7 @@
     connect(but[2], SIGNAL(stateChanged(int)),
         showP, SLOT(stateChanged(int)));
   }
-  
+
 
 #include "regular_triangulation_2_toolbar_layers.moc"
 

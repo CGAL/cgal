@@ -18,8 +18,8 @@
 #define CGAL_NEF_DEBUG 509
 #include <CGAL/Nef_3/debug.h>
 
-#undef _TRACEN
-#define _TRACEN(msg) TRACEN( "SNC_point_locator: " << msg);
+#undef _CGAL_NEF_TRACEN
+#define _CGAL_NEF_TRACEN(msg) CGAL_NEF_TRACEN( "SNC_point_locator: " << msg);
 
 // TODO: find out the proper CGAL replacement for this macro and remove it
 #define CGAL_for_each( i, C) for( i = C.begin(); i != C.end(); ++i)
@@ -195,7 +195,7 @@ public:
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
     }
     candidate_provider = new SNC_candidate_provider(objects);
-    //_TRACEN(*candidate_provider);
+    //_CGAL_NEF_TRACEN(*candidate_provider);
     TIMER(ct_t.stop());
   }
 
@@ -225,7 +225,7 @@ public:
   virtual Object_handle shoot(const Ray_3& ray) const {
     TIMER(rs_t.start());
     CGAL_assertion( initialized);
-    _TRACEN( "shooting: "<<ray);
+    _CGAL_NEF_TRACEN( "shooting: "<<ray);
     Object_handle result;
     Vertex_handle v;
     Halfedge_handle e;
@@ -240,80 +240,80 @@ public:
       Object_list_iterator o;
       CGAL_for_each( o, candidates) {
         if( assign( v, *o)) {
-          _TRACEN("trying vertex on "<<point(v));
+          _CGAL_NEF_TRACEN("trying vertex on "<<point(v));
           if( ray.source() != point(v) && ray.has_on(point(v))) {
-            _TRACEN("the ray intersects the vertex");
-            _TRACEN("prev. intersection? "<<hit);
-            if( hit) _TRACEN("prev. intersection on "<<eor);
+            _CGAL_NEF_TRACEN("the ray intersects the vertex");
+            _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
+            if( hit) _CGAL_NEF_TRACEN("prev. intersection on "<<eor);
             if( hit && !Segment_3( ray.source(), eor).has_on(point(v)))
               continue;
             eor = point(v);
             result = Object_handle(v);
             hit = true;
-            _TRACEN("the vertex becomes the new hit object");
+            _CGAL_NEF_TRACEN("the vertex becomes the new hit object");
           }
         }
         else if( assign( e, *o)) {
           Point_3 q;
-          _TRACEN("trying edge on "<<segment(e));
+          _CGAL_NEF_TRACEN("trying edge on "<<segment(e));
           if( is.does_intersect_internally( ray, segment(e), q)) {
-            _TRACEN("ray intersects edge on "<<q);
-            _TRACEN("prev. intersection? "<<hit);
-            if( hit) _TRACEN("prev. intersection on "<<eor);
+            _CGAL_NEF_TRACEN("ray intersects edge on "<<q);
+            _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
+            if( hit) _CGAL_NEF_TRACEN("prev. intersection on "<<eor);
             if( hit && !has_smaller_distance_to_point( ray.source(), q, eor))
               continue;
-            _TRACEN("is the intersection point on the current cell? "<<
+            _CGAL_NEF_TRACEN("is the intersection point on the current cell? "<<
                     candidate_provider->is_point_on_cell( q, objects_iterator));
             if( !candidate_provider->is_point_on_cell( q, objects_iterator))
                 continue;
             eor = q; 
             result = Object_handle(e);
             hit = true;
-            _TRACEN("the edge becomes the new hit object");
+            _CGAL_NEF_TRACEN("the edge becomes the new hit object");
           }
         }
         else if( assign( f, *o)) {
           Point_3 q;
-          _TRACEN("trying facet with on plane "<<plane(f)<<
+          _CGAL_NEF_TRACEN("trying facet with on plane "<<plane(f)<<
                   " with point on "<<plane(f).point());
           if( is.does_intersect_internally( ray, f, q) ) {
-            _TRACEN("ray intersects facet on "<<q);
-            _TRACEN("prev. intersection? "<<hit);
-            if( hit) _TRACEN("prev. intersection on "<<eor);
+            _CGAL_NEF_TRACEN("ray intersects facet on "<<q);
+            _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
+            if( hit) _CGAL_NEF_TRACEN("prev. intersection on "<<eor);
             if( hit && !has_smaller_distance_to_point( ray.source(), q, eor))
 	      continue;
-            _TRACEN("is the intersection point on the current cell? "<<
+            _CGAL_NEF_TRACEN("is the intersection point on the current cell? "<<
                     candidate_provider->is_point_on_cell( q, objects_iterator));
             if( !candidate_provider->is_point_on_cell( q, objects_iterator))
 	      continue;
             eor = q;
             result = Object_handle(f);
             hit = true; 
-            _TRACEN("the facet becomes the new hit object");
+            _CGAL_NEF_TRACEN("the facet becomes the new hit object");
           }
         }
         else if( assign( t, *o)) {
           Point_3 q;
           Triangle_3 tr = t.get_triangle();
-          _TRACEN("trying triangle "<<tr);
+          _CGAL_NEF_TRACEN("trying triangle "<<tr);
           if( is.does_intersect( ray, tr, q)) {
-            _TRACEN("ray intersect triangle on "<<q);
-            _TRACEN("prev. intersection? "<<hit);
-            if( hit) _TRACEN("prev. intersection on "<<eor);
+            _CGAL_NEF_TRACEN("ray intersect triangle on "<<q);
+            _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
+            if( hit) _CGAL_NEF_TRACEN("prev. intersection on "<<eor);
             if( hit && !has_smaller_distance_to_point( ray.source(), q, eor))
               continue;
-            _TRACEN("is the intersection point on the boundary of the facet? "<<
+            _CGAL_NEF_TRACEN("is the intersection point on the boundary of the facet? "<<
                     is.does_contain_on_boundary( t, q));
             if( is.does_contain_on_boundary( t, q))
               continue;
-            _TRACEN("is the intersection point on the current cell? "<<
+            _CGAL_NEF_TRACEN("is the intersection point on the current cell? "<<
                     candidate_provider->is_point_on_cell(q,objects_iterator));
             if( !candidate_provider->is_point_on_cell( q, objects_iterator))
                 continue;
             eor = q;
             result = Object_handle(Halffacet_handle(t));
             hit = true; 
-            _TRACEN("the facet becomes the new hit object");
+            _CGAL_NEF_TRACEN("the facet becomes the new hit object");
           }
         }
         else
@@ -329,7 +329,7 @@ public:
   virtual Object_handle locate( const Point_3& p) const {
     TIMER(pl_t.start());
     CGAL_assertion( initialized);
-    _TRACEN( "locate "<<p);
+    _CGAL_NEF_TRACEN( "locate "<<p);
     Object_handle result;
     Vertex_handle v;
     Halfedge_handle e;
@@ -341,21 +341,21 @@ public:
     while( !found && o != candidates.end()) {
       if( assign( v, *o)) {
         if ( p == point(v)) {
-          _TRACEN("found on vertex "<<point(v));
+          _CGAL_NEF_TRACEN("found on vertex "<<point(v));
           result = Object_handle(v);
           found = true;
         }
       }
       else if( assign( e, *o)) {
         if ( is.does_contain_internally( segment(e), p) ) {
-          _TRACEN("found on edge "<<segment(e));
+          _CGAL_NEF_TRACEN("found on edge "<<segment(e));
           result = Object_handle(e);
           found = true;
         }
       }
       else if( assign( f, *o)) {
         if ( is.does_contain_internally( f, p) ) {
-          _TRACEN("found on facet...");
+          _CGAL_NEF_TRACEN("found on facet...");
           result = Object_handle(f);
           found = true;
         }
@@ -363,9 +363,9 @@ public:
       else if( assign( t, *o)) {
         Triangle_3 tr = t.get_triangle();
         if( tr.has_on(p)) {
-          _TRACEN("found on triangle "<<tr);
+          _CGAL_NEF_TRACEN("found on triangle "<<tr);
 	  if(is.does_contain_on_boundary( t, p)) {
-	    _TRACEN("but located on the facet's boundary");
+	    _CGAL_NEF_TRACEN("but located on the facet's boundary");
 	    continue;
 	  }
           result = Object_handle(Halffacet_handle(t));
@@ -375,8 +375,8 @@ public:
       o++;
     }
     if( !found) {
-      _TRACEN("point not found in 2-skeleton");
-      _TRACEN("shooting ray to determine the volume");
+      _CGAL_NEF_TRACEN("point not found in 2-skeleton");
+      _CGAL_NEF_TRACEN("shooting ray to determine the volume");
       Ray_3 r( p, Vector_3( -1, 0, 0));
       result = Object_handle(determine_volume(r));
     }
@@ -388,7 +388,7 @@ public:
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
-    _TRACEN( "intersecting edge: "<<&*e0<<' '<<segment(e0));
+    _CGAL_NEF_TRACEN( "intersecting edge: "<<&*e0<<' '<<segment(e0));
     Segment_3 s(segment(e0));
     Vertex_handle v;
     Halfedge_handle e;
@@ -405,7 +405,7 @@ public:
         if( is.does_intersect_internally( s, segment(e), q)) {
           q = normalized(q);
           call_back( e0, Object_handle(e), q);
-          _TRACEN("edge intersects edge "<<' '<<&*e<<segment(e)<<" on "<<q);
+          _CGAL_NEF_TRACEN("edge intersects edge "<<' '<<&*e<<segment(e)<<" on "<<q);
         }
       }
       else if( assign( f, *o)) {
@@ -424,7 +424,7 @@ public:
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
-    _TRACEN( "intersecting edge: "<<segment(e0));
+    _CGAL_NEF_TRACEN( "intersecting edge: "<<segment(e0));
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
     Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
@@ -447,7 +447,7 @@ public:
         if( is.does_intersect_internally( s, f, q) ) {
           q = normalized(q);
           call_back( e0, Object_handle(f), q);
-          _TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
+          _CGAL_NEF_TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
         }
       }
       else if( assign( t, *o)) {
@@ -457,12 +457,12 @@ public:
 	if( f_mark[t])
 	  continue;
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
-	_TRACEN("trying with triangle "<<tr);
+	_CGAL_NEF_TRACEN("trying with triangle "<<tr);
         if( is.does_intersect( s, tr, q) &&
             !is.does_contain_on_boundary( t, q)) {
           q = normalized(q);
           call_back( e0, Object_handle(Halffacet_handle(t)), q);
-          _TRACEN("edge intersects facet triangle on plane "<<plane(t)<<" on "<<q);
+          _CGAL_NEF_TRACEN("edge intersects facet triangle on plane "<<plane(t)<<" on "<<q);
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
 	  f_mark[t] = true;
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
@@ -482,7 +482,7 @@ private:
     Halfedge_handle e;
     Halffacet_handle f;
     if( assign( v, o)) {
-      _TRACEN("vertex hit, obtaining volume...");
+      _CGAL_NEF_TRACEN("vertex hit, obtaining volume...");
       f_below = get_visible_facet( v, ray);
       if( f_below != Halffacet_handle())
         return volume(f_below);
@@ -491,7 +491,7 @@ private:
       return volume(SD.sfaces_begin());
     }
     else if( assign( e, o)) {
-      _TRACEN("edge hit, obtaining volume...");
+      _CGAL_NEF_TRACEN("edge hit, obtaining volume...");
       f_below = get_visible_facet( e, ray);
       if( f_below != Halffacet_handle())
         return volume(f_below);
@@ -500,7 +500,7 @@ private:
       return volume(sface(e));
     }
     else if( assign( f, o)) {
-      _TRACEN("facet hit, obtaining volume...");
+      _CGAL_NEF_TRACEN("facet hit, obtaining volume...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());
       return volume(f_below);
@@ -587,7 +587,7 @@ public:
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
-    TRACEN( "intersecting edge: "<<segment(e0));
+    CGAL_NEF_TRACEN( "intersecting edge: "<<segment(e0));
     SNC_intersection is(*sncp());
     Segment_3 s(segment(e0));
     Halfedge_iterator e;
@@ -595,7 +595,7 @@ public:
       Point_3 q;
       if( is.does_intersect_internally( s, segment(e), q)) {
         q = normalized(q);
-        TRACEN("edge intersects edge "<<segment(e)<<" on "<<q);
+        CGAL_NEF_TRACEN("edge intersects edge "<<segment(e)<<" on "<<q);
         call_back( e0, Object_handle(e), q);
       }
     }
@@ -606,7 +606,7 @@ public:
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
-    TRACEN( "intersecting edge: "<<segment(e0));
+    CGAL_NEF_TRACEN( "intersecting edge: "<<segment(e0));
     SNC_intersection is(*sncp());
     Segment_3 s(segment(e0));
     Halffacet_iterator f;
@@ -614,7 +614,7 @@ public:
       Point_3 q;
       if( is.does_intersect_internally( s, f, q) ) {
         q = normalized(q);
-        TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
+        CGAL_NEF_TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
         call_back( e0, Object_handle(f), q);
       }
     }

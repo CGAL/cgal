@@ -34,7 +34,8 @@
 extern "C" {
 #  include <fenv.h>
 }
-#elif defined __linux__ && !defined __PGI && !defined __ia64__
+#elif defined __linux__ && !defined __PGI && !defined __ia64__ \
+  && !defined __x86_64__
 #  include <fpu_control.h>
 #elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
 #  include <ieeefp.h>

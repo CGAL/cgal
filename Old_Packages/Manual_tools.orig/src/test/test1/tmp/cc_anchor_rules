@@ -1,7 +1,0 @@
-[a-zA-Z0-9_]"CGAL_Point_2"    { ECHO; }
-"CGAL_Point_2"/{noCCchar}    { fputs( "<A HREF=\"CGAL_Point_2.html#Cross_link_anchor_0\">CGAL_Point_2</A>", stdout); }
-"CGAL_Point_2"{ws}"&lt;"{ws}{CCidfier}{ws}"&gt;"    {
-        fputs( "<A HREF=\"CGAL_Point_2.html#Cross_link_anchor_0\">", stdout);
-        ECHO;
-        fputs( "</A>", stdout); }
-

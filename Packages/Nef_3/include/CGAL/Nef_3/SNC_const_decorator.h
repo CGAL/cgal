@@ -320,13 +320,13 @@ public:
     CGAL_assertion( ray.source() != point(v));
     CGAL_assertion( ray.has_on(point(v)));
     Sphere_point sp(ray.source() - point(v));
-    TRACEN( "Locating "<<sp <<" in "<<point(v));
+    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<point(v));
     CGAL_assertion(Infi_box::degree(sp.hx()) < 2 && 
 		   Infi_box::degree(sp.hy()) < 2 && 
 		   Infi_box::degree(sp.hz()) < 2 && 
 		   Infi_box::degree(sp.hw()) == 0);
     sp = Infi_box::simplify(sp);
-    TRACEN( "Locating "<<sp <<" in "<<point(v));
+    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<point(v));
     SM_point_locator L(&*v);
     Object_handle o = L.locate(sp);
 
@@ -344,7 +344,7 @@ public:
     SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
       fce = sf->sface_cycles_end();
     if( is_empty_range( fc, fce)) {
-	TRACEN( "no adjacent facet found.");
+	CGAL_NEF_TRACEN( "no adjacent facet found.");
 	f_visible =  Halffacet_const_handle();
     }
     else {
@@ -353,20 +353,20 @@ public:
       SVertex_const_handle sv;
       if (fc.is_shalfedge()) {
 	se = SHalfedge_const_handle(fc);
-	TRACEN( "adjacent facet found (SEdges cycle).");
-	TRACEN("se"<<PH(se));
+	CGAL_NEF_TRACEN( "adjacent facet found (SEdges cycle).");
+	CGAL_NEF_TRACEN("se"<<PH(se));
 	SM_const_decorator SD;
-	TRACEN(plane(facet(se))<<"/"<<plane(facet(SD.next(se)))<<"/"<<plane(facet(SD.next(SD.next(se)))));
+	CGAL_NEF_TRACEN(plane(facet(se))<<"/"<<plane(facet(SD.next(se)))<<"/"<<plane(facet(SD.next(SD.next(se)))));
 	f_visible = facet(twin(se));
-	TRACEN("f_visible"<<plane(f_visible));
+	CGAL_NEF_TRACEN("f_visible"<<plane(f_visible));
       }
       else if (fc.is_shalfloop()) {
 	sl = SHalfloop_const_handle(sl);
 	SM_const_decorator SD;
-	TRACEN( "adjacent facet found (SHalfloop cycle)."<<SD.circle(sl) 
+	CGAL_NEF_TRACEN( "adjacent facet found (SHalfloop cycle)."<<SD.circle(sl) 
 		<< " with facet "<<plane(facet(sl)));
 	f_visible = facet(twin(sl));
-	TRACEN("f_visible"<<plane(f_visible));
+	CGAL_NEF_TRACEN("f_visible"<<plane(f_visible));
       }
       else if(fc.is_svertex()) {
 	sv = SVertex_const_handle(fc);
@@ -375,7 +375,7 @@ public:
 	// in the cycles list?
 	++fc; while( fc != fce)  { CGAL_assertion( fc.is_svertex()); ++fc; }
 #endif
-	TRACEN( "no adjacent facets were found (but incident edge(s)).");
+	CGAL_NEF_TRACEN( "no adjacent facets were found (but incident edge(s)).");
 	f_visible = Halffacet_const_handle();
       }
       else
@@ -413,7 +413,7 @@ public:
     CGAL_assertion( _ess.has_on(vec0));
     */
     SHalfedge_around_svertex_const_circulator send(sh);
-    TRACEN("initial face candidate "<< plane(res)<<" with vector  "<<vec0);
+    CGAL_NEF_TRACEN("initial face candidate "<< plane(res)<<" with vector  "<<vec0);
 
     // We compare the vectors vec0/vec1 of the facets. The one that is nearest 
     // to pointing in the opposite direction of the ray, is chosen. The 
@@ -422,7 +422,7 @@ public:
     sh++;
     CGAL_For_all(sh,send) {
       Vector_3 vec1(cross_product(ev,plane(facet(sh)).orthogonal_vector()));
-      TRACEN("test face candidate "<< plane(facet(sh))<<" with vector  "<<vec1);
+      CGAL_NEF_TRACEN("test face candidate "<< plane(facet(sh))<<" with vector  "<<vec1);
       FT sk0(rv*vec0),  sk1(rv*vec1);
       if(sk0<FT(0) && sk1>FT(0))
         continue;
@@ -453,7 +453,7 @@ public:
     if(rv*plane(res).orthogonal_vector() > FT(0))
       res = twin(res);
 
-    TRACEN("return "<<plane(res));
+    CGAL_NEF_TRACEN("return "<<plane(res));
     return res; // never reached
   }
 
@@ -489,13 +489,13 @@ public:
     CGAL_assertion( ray.source() != point(v));
     CGAL_assertion( ray.has_on(point(v)));
     Sphere_point sp(ray.source() - point(v));
-    TRACEN( "Locating "<<sp <<" in "<<point(v));
+    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<point(v));
     CGAL_assertion(Infi_box::degree(sp.hx()) < 2 && 
 		   Infi_box::degree(sp.hy()) < 2 && 
 		   Infi_box::degree(sp.hz()) < 2 && 
 		   Infi_box::degree(sp.hw()) == 0);
     sp = Infi_box::simplify(sp);
-    TRACEN( "Locating "<<sp <<" in "<<point(v));
+    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<point(v));
     SM_point_locator L(v);
     Object_handle o = L.locate(sp);
 
@@ -506,24 +506,24 @@ public:
     SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
       fce = sf->sface_cycles_end();
     if( is_empty_range( fc, fce)) {
-	TRACEN( "no adjacent facets were found.");
+	CGAL_NEF_TRACEN( "no adjacent facets were found.");
 	f_visible =  Halffacet_const_handle();
     }
     else {
       if (fc.is_shalfedge()) {
       SHalfedge_const_handle se(fc); 
-      TRACEN( "adjacent facet found (SEdges cycle).");
-	TRACEN("se"<<PH(se));
+      CGAL_NEF_TRACEN( "adjacent facet found (SEdges cycle).");
+	CGAL_NEF_TRACEN("se"<<PH(se));
 	f_visible = facet(twin(se));
-	TRACEN("f_visible"<<&f_visible);
+	CGAL_NEF_TRACEN("f_visible"<<&f_visible);
       }
       else if (fc.is_shalfloop()) {
       SHalfloop_const_handle sl(fc);
-      TRACEN( "adjacent facet found (SHalfloop cycle).");
+      CGAL_NEF_TRACEN( "adjacent facet found (SHalfloop cycle).");
 	f_visible = facet(twin(sl));
       }
       else if(fc.is_svertex()) {
-	TRACEN( "no adjacent facets were found (but incident edge(s)).");
+	CGAL_NEF_TRACEN( "no adjacent facets were found (but incident edge(s)).");
 	f_visible = Halffacet_const_handle();
       }
       else
@@ -553,7 +553,7 @@ public:
     Vector_3 ev(segment(e).to_vector()), rv(ray.to_vector());
     SHalfedge_around_svertex_const_circulator sh(SD.first_out_edge(e)), send(sh);
     Vector_3 vec0(cross_product(ev,plane(res).orthogonal_vector()));
-    TRACEN("initial face candidate "<< plane(res));
+    CGAL_NEF_TRACEN("initial face candidate "<< plane(res));
    
     sh++;
     CGAL_For_all(sh,send) {

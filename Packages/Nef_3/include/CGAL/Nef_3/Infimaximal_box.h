@@ -340,7 +340,7 @@ class Infimaximal_box<Tag_true, Kernel> {
   }
 
   static void set_size_of_infimaximal_box(NT size) {
-    RT::set_R(size);
+    RT::infi_maximal_value() = size;
   }
 
   static bool x_on_box(const Point_3& p) {
@@ -597,10 +597,10 @@ class Infimaximal_box<Tag_true, Kernel> {
   static bool is_sedge_on_infibox(SHalfedge_handle sh) {
 
     Point_3 p = sh->source()->center_vertex()->point();
-    TRACEN("Point " << p);
+    CGAL_NEF_TRACEN("Point " << p);
     if(is_standard(p)) return false;
 
-    TRACEN("Circle " << sh->circle() << 
+    CGAL_NEF_TRACEN("Circle " << sh->circle() << 
 	   " has signum " << sign_of(sh->circle()));
     CGAL_assertion(p.hw().degree() == 0);
     RT R(0,CGAL_NTS abs(p.hw()[0]));

@@ -84,9 +84,10 @@ read_triangle_poly_file(CDT& t, std::istream &f,
 }
 
 //the function that write a Shewchuk Triangle .poly file
-template <class CDT>
+template <class CDT, typename InputIterator>
 void
-write_triangle_poly_file(const CDT& t, std::ostream &f)
+write_triangle_poly_file(const CDT& t, std::ostream &f,
+                         InputIterator begin, InputIterator end)
 {
   typedef typename CDT::Vertex_handle Vertex_handle;
   typedef typename CDT::Finite_vertices_iterator
@@ -139,15 +140,24 @@ write_triangle_poly_file(const CDT& t, std::ostream &f)
 
   f << std::endl;
 
-//   // write seeds, assuming that the seeds unmarks faces
-//   unsigned int seeds_counter = 0;
-//   f << mesh.seeds.size() << std::endl;
-//   for(typename Seeds::const_iterator sit = seeds.begin();
-//       sit!=seeds.end(); ++sit)
-//     f << ++seeds_counter << " " << *sit << std::endl;
+  
+  // write seeds, assuming that the seeds unmarks faces
+  f << std::distance(begin, end) << std::endl;
+  unsigned int seeds_counter = 0;
+  for(InputIterator sit = begin;
+      sit!=end; ++sit)
+    f << ++seeds_counter << " " << *sit << std::endl;
 }
 
-
+//the same without holes.
+template <class CDT>
+void
+write_triangle_poly_file(const CDT& t, std::ostream &f)
+{
+  std::list<int> l;
+  
+  write_triangle_poly_file(t, f, l.begin(), l.end());
+}
 
 } // end namespace CGAL
 

@@ -400,7 +400,7 @@ public:
 			   Mark m = Mark())
   /*{\Mop returns a new vertex at point |p| marked by |m|.}*/
   { SVertex_handle vh = new_svertex(); vh->point() = p; vh->mark() = m;
-    TRACEN("new_svertex "<<&*vh);
+    CGAL_NEF_TRACEN("new_svertex "<<&*vh);
     return vh;
   }
 
