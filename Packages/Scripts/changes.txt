@@ -1,3 +1,6 @@
+5 March 2005 Sylvain Pion
+- create_makefile and create_cgal_test : sort files to make cleaner diffs.
+
 28 December 2004 Sylvain Pion
 - 3.1-I-... -> 3.2-I-...
 

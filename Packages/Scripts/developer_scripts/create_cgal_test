@@ -95,10 +95,10 @@ if [ \$# -ne 0 ] ; then
   done
 else
 EOF
-  for file in `ls *.C 2>/dev/null` ; do
+  for file in `ls *.C 2>/dev/null | sort` ; do
     echo "  compile_and_run `basename $file .C`"
   done
-  for file in `ls *.cpp 2>/dev/null` ; do
+  for file in `ls *.cpp 2>/dev/null | sort` ; do
     echo "  compile_and_run `basename $file .cpp`"
   done
   echo "fi"
