@@ -1,3 +1,6 @@
+04 May 2004 Andreas Fabri
+- Removed extra semicolons (leading to error messages on SunProCC)
+
 12 April 2004 Sylvain Pion
 - Add an assertion (denominator != 0) to prevent looping with Gmpq...
   (the real bug is not fixed though)

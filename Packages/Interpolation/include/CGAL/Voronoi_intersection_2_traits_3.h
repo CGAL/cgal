@@ -411,7 +411,7 @@ side_of_plane_centered_sphere(const Point &a, const Vector& n,
   typedef typename Point::R::Rep_tag Tag;
 
   return( side_of_plane_centered_sphere(a,n,p,q,r,t, Tag()) );
-};
+}
 
 template <   class Point, class Vector>
 inline
@@ -424,7 +424,7 @@ side_of_plane_centered_sphere(const Point &a, const Vector& n,
 {
   typedef typename Point::R::Rep_tag Tag;
   return( side_of_plane_centered_sphere(a,n,p,q,r,Tag()) );
-};
+}
 
 template < class Point, class Vector >
 inline
@@ -442,7 +442,7 @@ side_of_plane_centered_sphere(const Point &a, const Vector& n,
   if(r == LARGER)    return ON_NEGATIVE_SIDE;
   else if (r == SMALLER) return ON_POSITIVE_SIDE;
   return ON_ORIENTED_BOUNDARY;
-};
+}
 
 
 
@@ -459,7 +459,7 @@ plane_centered_circumcenter_3(const Point &a, const Vector& n,
 
   
   return( plane_centered_circumcenter_3(a,n,p,q,r, Tag()));
-};
+}
 
 template <  class Point, class Vector>
 inline
@@ -472,7 +472,7 @@ plane_intersected_bisector_3(const Point &a, const Vector& n,
   typedef typename Point::R::Rep_tag Tag;
   
   return( plane_intersected_bisector_3(a,n,p,q, Tag()));
-};
+}
 
 ///-----------------------------------------------------------
 //#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
@@ -494,7 +494,7 @@ side_of_plane_centered_sphere(const Point &a, const Vector& n,
      q.x(), q.y(), q.z(),
      r.x(), r.y(), r.z(), 
      t.x(), t.y(), t.z());
-};
+}
 
 template < class Point, class Vector >
 inline
@@ -512,7 +512,7 @@ side_of_plane_centered_sphere(const Point &a, const Vector& n,
      p.x(), p.y(), p.z(),
      q.x(), q.y(), q.z(),
      r.x(), r.y(), r.z());
-};
+}
 
 
 template < class Point, class Vector>
@@ -533,7 +533,7 @@ plane_centered_circumcenter_3(const Point &a, const Vector& n,
      q.x(), q.y(), q.z(),
      r.x(), r.y(), r.z(),x,y,z);
   return (Point(x,y,z));
-};
+}
 
 template < class Point,  class Vector>
 inline
@@ -553,7 +553,7 @@ plane_intersected_bisector_3(const Point &a, const Vector& n,
      q.x(), q.y(), q.z(), x1,y1,z1,x2,y2,z2);
 
   return Line(Point(x1,y1,z1), Point(x2,y2,z2));
-};
+}
 
 //#endif // CGAL_CARTESIAN_H
 //#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
@@ -580,7 +580,7 @@ side_of_plane_centered_sphere(const Point &a, const Vector& n,
      q.x(), q.y(), q.z(),
      r.x(), r.y(), r.z(), 
      t.x(), t.y(), t.z());
-};
+}
 
 template < class Point, class Vector >
 inline
@@ -598,7 +598,7 @@ side_of_plane_centered_sphere(const Point &a, const Vector& n,
      p.x(), p.y(), p.z(),
      q.x(), q.y(), q.z(),
      r.x(), r.y(), r.z());
-};
+}
 
 
 template < class Point, class Vector>
@@ -619,7 +619,7 @@ plane_centered_circumcenter_3(const Point &a, const Vector& n,
      q.x(), q.y(), q.z(),
      r.x(), r.y(), r.z(),x,y,z);
   return Point(x,y,z);
-};
+}
 
 
 template < class Point,  class Vector>
@@ -641,7 +641,7 @@ plane_intersected_bisector_3(const Point &a, const Vector& n,
      q.x(), q.y(), q.z(),x1,y1,z1,x2,y2,z2);
   
   return Line(Point(x1,y1,z1), Point(x2,y2,z2));
-};
+}
 //#endif // CGAL_HOMOGENEOUS_H
 
 

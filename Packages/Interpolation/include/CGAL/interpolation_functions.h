@@ -63,7 +63,7 @@ linear_interpolation(ForwardIterator first, ForwardIterator beyond,
     result += (first->second/norm) * val.first;
   }
   return result;
-};
+}
 
 
 template < class ForwardIterator, class Functor, class GradFunctor,
@@ -96,7 +96,7 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
 	 (traits.construct_vector_d_object()(first->first, p),0.5)); 
   }
   return std::make_pair(result, true);
-};
+}
 
 
 template < class ForwardIterator, class Functor, class GradFunctor, 
@@ -158,7 +158,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
  
   return std::make_pair((term4* linear_int + term2 * gradient_int)/
 			(term4 + term2), true);
-};
+}
 
 //this method works with rational number types:
 //modification of Sibson's interpolant without sqrt
@@ -232,7 +232,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator
   
   return std::make_pair((term4* linear_int + term2 * gradient_int)/
 			(term4 + term2), true);
-};
+}
 
 
 template < class RandomAccessIterator, class Functor, class

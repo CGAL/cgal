@@ -194,7 +194,7 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
      ++hit;
     }
   return(make_triple(out, area_sum, true));
-};
+}
 
 
 /////////////////////////////////////////////////////////////
@@ -221,7 +221,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
     (dt, p, op, start);
   
   return make_triple(result.first.base(), result.second, result.third); 
-};
+}
 
 //OutputIterator has value type 
 //   std::pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>
@@ -241,7 +241,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
     (dt, p, op, hole_begin,hole_end);
   
   return make_triple(result.first.base(), result.second, result.third);  
-};
+}
 
 /**********************************************************/
 //compute the coordinates for a vertex of the triangulation 
@@ -269,7 +269,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
   
   return natural_neighbor_coordinates_2(t2, vh->point(), out, 
 					dt.incident_faces(vh));
-};
+}
 
 //class providing a function object:
 //OutputIterator has value type 
