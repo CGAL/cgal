@@ -432,16 +432,20 @@ public:
     CGAL_optimisation_precondition(
       (i == BL || i == BT && xmax( *p) < v) &&
       p >= begin(i) && p <= end(i));
+    CGAL_optimisation_postcondition_code( const_iterator pp( p);)
     // s[BL] is sorted acc. to right sides incr.
     if ( i == BL) {
       while ( xmax( *p) < v)
         ++p;
+      CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
+      CGAL_optimisation_postcondition( p == pp || xmax( *(p - 1)) < v);
     } else {
       // s[BT] is sorted acc. to left sides decr.
       while ( xmax( *--p) < v) {}
       ++p;
-    }
     CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
+    CGAL_optimisation_postcondition( p == end(i) || xmax( *p) < v);
+    }
     return p;
   }
   
@@ -459,21 +463,27 @@ public:
   // TIME: O( log(#elements in set i))
   {
     CGAL_optimisation_precondition( i == BL || i == BT);
+    const_iterator p;
     if ( i == BL) {
-      return lower_bound( begin( BL),
-                          end( BL),
-                          v,
-                          CGAL_compose2_2( less< FT >(),
-                                           Xmax(),
-                                           identity< FT >()));
+      p = lower_bound( begin( BL),
+                       s[BL].end(),
+                       v,
+                       CGAL_compose2_2( less< FT >(),
+                                        xmax,
+                                        identity< FT >()));
+      CGAL_optimisation_postcondition(
+        p == begin(i) || xmax( *(p - 1)) < v);
     } else {
-      return lower_bound( begin( i),
-                          end( i),
-                          v,
-                          CGAL_compose2_2( greater_equal< FT >(),
-                                           Xmax(),
-                                           identity< FT >()));
+      p = lower_bound( begin( i),
+                       s[i].end(),
+                       v,
+                       CGAL_compose2_2( greater_equal< FT >(),
+                                        xmax,
+                                        identity< FT >()));
+      CGAL_optimisation_postcondition( p == end(i) || xmax( *p) < v);
     }
+    CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
+    return p;
   }
   
   const_iterator
@@ -490,24 +500,32 @@ public:
       --p;
     ++p;
     CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
+    CGAL_optimisation_postcondition(
+      p == begin(i) || Xmin()( *(p - 1)) > v);
+    CGAL_optimisation_postcondition( xmax( *p) <= v);
     return p;
   }
   
   const_iterator
   first_left_of( set_id i, FT v) const
-  // PRE: i == BR
-  // returns the maximal q from [ begin(i), p ]
+  // PRE: i == BR or i == BT.
+  // returns the maximal q from [ begin(i), end(i) ]
   // such that all rectangles from [ begin(i), q )
   // lie to the right of (not including) the line x = v.
   // TIME: O( log(#elements in set i))
   {
     CGAL_optimisation_precondition( i == BR || i == BT);
-    return lower_bound( begin( i),
-                        end( i),
-                        v,
-                        CGAL_compose2_2( greater< FT >(),
-                                         Xmin(),
-                                         identity< FT >()));
+    const_iterator p =
+      lower_bound( begin( i),
+                   s[i].end(),
+                   v,
+                   CGAL_compose2_2( greater< FT >(),
+                                    Xmin(),
+                                    identity< FT >()));
+    CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
+    CGAL_optimisation_postcondition(
+      p == begin(i) || Xmin()( *(p - 1)) > v);
+    return p;
   }
   
   const_iterator
@@ -519,12 +537,13 @@ public:
   //   lie above (not including) the line y = v.
   // TIME: O( #elements in set i between p and q)
   {
-    CGAL_optimisation_precondition( (i == TL || i == LR) &&
-                       ymin(*p) > v &&
-                       p >= begin(i) && p <= end(i));
+    CGAL_optimisation_precondition( i == TL || i == LR);
+    CGAL_optimisation_precondition(
+      ymin(*p) > v && p >= begin(i) && p <= end(i));
     while ( ymin( *--p) > v) {}
     ++p;
     CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
+    CGAL_optimisation_postcondition( p == end(i) || Ymin()( *p) > v);
     return p;
   }
   
@@ -536,11 +555,12 @@ public:
   //   lie above (not including) the line y = v.
   // TIME: O( #elements in set i between p and q)
   {
-    CGAL_optimisation_precondition( (i == TR || i == LR) &&
-                       p >= begin(i) && p <= end(i));
+    CGAL_optimisation_precondition(
+      (i == TR || i == LR) && p >= begin(i) && p <= end(i));
     while ( ymin( *p) <= v)
       ++p;
     CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
+    CGAL_optimisation_postcondition( p == end(i) || Ymin()( *p) > v);
     return p;
   }
   
@@ -553,12 +573,16 @@ public:
   // TIME: O( log(#elements in set i))
   {
     CGAL_optimisation_precondition( i == TL || i == TR || i == LR);
-    return lower_bound( begin( i),
-                        end( i),
-                        v,
-                        CGAL_compose2_2( less_equal< FT >(),
-                                         Ymin(),
-                                         identity< FT >()));
+    const_iterator p =
+      lower_bound( begin( i),
+                   s[i].end(),
+                   v,
+                   CGAL_compose2_2( less_equal< FT >(),
+                                    Ymin(),
+                                    identity< FT >()));
+    CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
+    CGAL_optimisation_postcondition( p == end(i) || Ymin()( *p) > v);
+    return p;
   }
 
 private:
@@ -712,10 +736,9 @@ CGAL__Rectangle_partition(
 
   while ( f != l) {
     // otherwise d would not be the location domain:
-    CGAL_optimisation_expensive_assertion( (*f).xmax() >= d.xmin() &&
-                              (*f).ymax() >= d.ymin() &&
-                              (*f).xmin() <= d.xmax() &&
-                              (*f).ymin() <= d.ymax());
+    CGAL_optimisation_expensive_assertion(
+      (*f).xmax() >= d.xmin() && (*f).ymax() >= d.ymin() &&
+      (*f).xmin() <= d.xmax() && (*f).ymin() <= d.ymax());
 
     if ( (*f).xmin() > d.xmin())
       if ( (*f).xmax() < d.xmax())
@@ -1379,14 +1402,18 @@ CGAL_four_pierce_rectangles(
     
     // corresponding upper bound for top:
     iterator top_upper_bound_by_lef_in_LR(
-      p.first_above( RP::TL, ymax( *first_unpierced_by_lef_in_LR)));
+      p.first_above( RP::TL,
+                     min( ymax( *first_unpierced_by_lef_in_LR),
+                          d.ymax())));
     
     // first rectangle in s[LR] not pierced by rig:
     iterator first_unpierced_by_rig_in_LR( p.first_above( RP::LR, rig));
     
     // corresponding lower bound for top:
     iterator top_lower_bound_by_rig_in_LR(
-      p.first_above( RP::TR, ymax( *first_unpierced_by_rig_in_LR)));
+      p.first_above( RP::TR,
+                     min( ymax( *first_unpierced_by_rig_in_LR),
+                          d.ymax())));
     
     // top side of the first rectangle in s[LR]
     // ( > d.ymax, iff s[LR] is empty)
@@ -1400,7 +1427,8 @@ CGAL_four_pierce_rectangles(
     // the line y = top_side_of_lr
     // ( possibly > d.ymax())
     FT top_side_above_top_side_of_lr(
-      ymax( *p.first_above( RP::LR, top_side_of_lr)));
+      ymax( *p.first_above( RP::LR,
+                            min( top_side_of_lr, d.ymax()))));
     CGAL_optimisation_assertion( top_side_above_top_side_of_lr >= d.ymin());
     
     // right side of the
@@ -1408,7 +1436,8 @@ CGAL_four_pierce_rectangles(
     // the line y = top_side_of_lr
     // ( possibly > d.xmax())
     FT upper_bound_top_from_slr(
-      xmax( *p.first_above( RP::TL, top_side_above_top_side_of_lr)));
+      xmax( *p.first_above( RP::TL,
+                            min( top_side_above_top_side_of_lr, d.ymax()))));
     CGAL_optimisation_assertion( upper_bound_top_from_slr >= d.xmin());
     
     // left side of the
@@ -1416,7 +1445,8 @@ CGAL_four_pierce_rectangles(
     // the line y = top_side_of_lr
     // ( possibly < d.xmin())
     FT lower_bound_top_from_slr(
-      xmin( *p.first_above( RP::TR, top_side_above_top_side_of_lr)));
+      xmin( *p.first_above( RP::TR,
+                            min( top_side_above_top_side_of_lr, d.ymax()))));
     CGAL_optimisation_assertion( top_side_above_top_side_of_lr >= d.ymin());
     
     
@@ -1453,18 +1483,19 @@ CGAL_four_pierce_rectangles(
       if ( p.begin( RP::BT) == first_pierced_in_BT) {
       
         // bot pierces the first rectangle from s[BT]
-        // (if s[BT] is not empty)
+        // or no rectangle from s[BT] at all
         CGAL_optimisation_assertion(
-          p.begin( RP::BT) == p.end( RP::BT) ||
+          p.is_empty( RP::BT) ||
           !(*(first_pierced_in_BT)).has_on_unbounded_side(
-            build_point( bot, d.ymin())));
+            build_point( bot, d.ymin())) ||
+            Xmax()( *first_pierced_in_BT) < bot);
       
         if ( p.end( RP::BT) == first_unpierced_in_BT) {
       
           // bot pierces the last rectangle from s[BT]
           // (if s[BT] is not empty)
           CGAL_optimisation_assertion(
-            p.begin( RP::BT) == p.end( RP::BT) ||
+            p.is_empty( RP::BT) ||
             !(*(p.end( RP::BT) - 1)).has_on_unbounded_side(
               build_point( bot, d.ymin())));
       
@@ -1495,10 +1526,17 @@ CGAL_four_pierce_rectangles(
       
         // we have to pierce the first rectangle
         // as well as the last unpierced one:
+        /*
         I_BT =
           Intervall( max( xmin( *--(first_pierced_in_BT)),
                           xmin( *(p.begin( RP::BT)))),
                      min( xmax( *--(first_pierced_in_BT)),
+                          xmax( *(p.begin( RP::BT)))));
+        */
+        I_BT =
+          Intervall( max( xmin( *(first_pierced_in_BT - 1)),
+                          xmin( *(p.begin( RP::BT)))),
+                     min( xmax( *(first_pierced_in_BT - 1)),
                           xmax( *(p.begin( RP::BT)))));
       }
       
@@ -1746,8 +1784,9 @@ CGAL_four_pierce_rectangles(
       if ( bot > I_B.second)
         break;
     
-      CGAL_optimisation_assertion( first_pierced_in_BR >= p.begin( RP::BR) &&
-                      first_pierced_in_BT >= p.begin( RP::BT));
+      CGAL_optimisation_assertion(
+        first_pierced_in_BR >= p.begin( RP::BR) &&
+        first_pierced_in_BT >= p.begin( RP::BT));
     
       #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 4
       cerr << "compute rig" << endl;
