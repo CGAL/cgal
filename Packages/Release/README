@@ -64,20 +64,23 @@ Package the code:
 
 For the web pages:
       1.  edit the following web pages (at least)
-             news.html            
-             in_progress.html            
-             download/download.html            
-             download/license.html            
-             home.html            
-             releases.html            
-             platforms.html            
-             Manual/doc_html/frameset/panel*.html (change release number)
-             Manual/doc_html/html_tar.html
-             Manual/doc_ps/index.html
-             Manual/doc_pdf/index.html
-      2.  update the cgal_download.pl script to add the new release
+             Web_pages/news.html            
+             Web_pages/in_progress.html            
+             Web_pages/download/download.html            
+             Web_pages/download/license.html            
+             Web_pages/home.html            
+             Web_pages/releases.html            
+             Web_pages/platforms.html
+           change release number in:
+           (edit and use Manual/script/rename_version)
+             Manual/web_pages/doc_html/frameset/panel*.html 
+             Manual/web_pages/doc_html/html_tar.html
+             Manual/web_pages/doc_ps/index.html
+             Manual/web_pages/doc_pdf/index.html
+      2.  update the cgi-bin/cgal_download.pl script to add the new release,
+          goes then to /www/pub/cgi-bin/www.cgal.org/
       3.  Perhaps update the download/CGALWin directory with new versions
-          of the library for new platforms.
+          of the library for new platforms. [obsolete since CGAL 3.0, Lutz]
 
 Install everything:
       1.  install the manual (and include files) in 
@@ -87,8 +90,12 @@ Install everything:
             (can be done with "make pack" for the documentation)
       3.  zip the individual .ps files for the documentation using
           make dest_zip_ps
-      4.  install the new web pages
-      5.  tag all the packages included in the release with the new
+      4.  install the new web pages, i.e., make a cvs commit in Web_pages/,
+          and a 'cvs up' in /www/pub/www.cgal.org/
+      5.  cp cgi-bin/cgal_download.pl /www/pub/cgi-bin/www.cgal.org/
+
+      6.  [obsolete with CGAL-3.0.1 since we tag before release making, Lutz]
+          tag all the packages included in the release with the new
           release tag CGAL_M_m_release and create a branch tag with
           the name CGAL_M_m_branch.
 	  cvs -z9 co All -rcurrent_submission
@@ -99,5 +106,5 @@ Install everything:
 	          (2) you need write access to all packages.
 
 Then finally ...
-      6.  announce the release (see announcement directory)
+      7.  announce the release (see announcement directory)
 
