@@ -1907,7 +1907,11 @@ public:
   template <class curve_iterator>
   void remove(curve_iterator begin, curve_iterator end)
   {
+    if(begin == end)
+      return;
+    
     std::random_shuffle(begin,end);
+    
     curve_iterator it=begin,next=it;
     while(it!=end) {++next;remove(*it);it=next;}
   }
@@ -3082,7 +3086,9 @@ postcondition:
         ++it;
       }
     }
-    std::random_shuffle(content.begin(),content.end());
+    if(! content.empty()) {
+      std::random_shuffle(content.begin(),content.end());
+    }
     return sz;
 }
     
