@@ -1,3 +1,7 @@
+
+Version 4.17 (30 September 2003) [af]
+- Moved \chapter from intro.tex to main.tex
+
 Version 4.16 (30 September 2003) [af]
 - Changed doc_tex/basic/Spatial_searching_ref/introdcution.tex to intro.tex
 
