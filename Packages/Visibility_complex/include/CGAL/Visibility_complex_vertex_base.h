@@ -21,7 +21,7 @@
 #define CGAL_VISIBILITY_COMPLEX_VERTEX_BASE_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Visibility_complex/Visibility_complex_ccw_cw_traits.h>
+#include <CGAL/Visibility_complex_ccw_cw_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -20,7 +20,7 @@
 #ifndef CGAL_SHORTEST_PATH_2_H
 #define CGAL_SHORTEST_PATH_2_H
 
-#include <CGAL/Visibility_complex/Visibility_complex_2.h>
+#include <CGAL/Visibility_complex_2.h>
 #include <functional>
 #include <set>
 #include <math.h>

@@ -20,7 +20,7 @@
 #ifndef CGAL_SHORTEST_PATH_SEGMENT_TRAITS_H
 #define CGAL_SHORTEST_PATH_SEGMENT_TRAITS_H
 
-#include <CGAL/Visibility_complex/Visibility_complex_segment_traits.h>
+#include <CGAL/Visibility_complex_segment_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -23,10 +23,10 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Visibility_complex/Bitangent_2.h>
-#include <CGAL/Visibility_complex/Arc_2.h>
-#include <CGAL/Visibility_complex/Polygon_2_Polygon_2_intersection.h>
-#include <CGAL/Visibility_complex/Bitangent_2_Bitangent_2_intersection.h>
+#include <CGAL/Bitangent_2.h>
+#include <CGAL/Arc_2.h>
+#include <CGAL/Polygon_2_Polygon_2_intersection.h>
+#include <CGAL/Bitangent_2_Bitangent_2_intersection.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -23,7 +23,7 @@
 #include <cmath>
 #include <list>
 
-#include <CGAL/Visibility_complex/Arc_2.h>
+#include <CGAL/Arc_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -17,28 +17,30 @@
 //
 // Author(s)     : Pierre Angelier, Michel Pocchiola
 
-#ifndef CGAL_CIRCLE_2_CIRCLE_2_INTERSECTION_H
-#define CGAL_CIRCLE_2_CIRCLE_2_INTERSECTION_H
+#ifndef CGAL_VISIBILITY_COMPLEX_ITEMS_H
+#define CGAL_VISIBILITY_COMPLEX_ITEMS_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Circle_2.h>
-#include <CGAL/Visibility_complex/predicates/Circle_2_Circle_2_intersection_ftC2.h>
+#include <CGAL/Visibility_complex_vertex_base.h>
+#include <CGAL/Visibility_complex_edge_base.h>
+#include <CGAL/Visibility_complex_face_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
-// -----------------------------------------------------------------------------
-
-template < class Rep_ >
-bool do_intersect( const Circle_2<Rep_>& c1, const Circle_2<Rep_>& c2 )
-{
-    return circle_2_do_intersectC2(c1.center().x(),c1.center().y(),
-				   c1.squared_radius(),
-				   c2.center().x(),c2.center().y(),
-				   c2.squared_radius());
-}
-
-// -----------------------------------------------------------------------------
+class Visibility_complex_items {
+public:
+    template <class VCA>
+    struct Vertex_wrapper {
+	typedef Visibility_complex_vertex_base<VCA> Vertex;
+    };
+    template <class VCA>
+    struct Edge_wrapper {
+	typedef Visibility_complex_edge_base<VCA>   Edge;
+    };
+    template <class VCA>
+    struct Face_wrapper {
+	typedef Visibility_complex_face_base<VCA>   Face;
+    };
+};
 
 CGAL_END_NAMESPACE
 

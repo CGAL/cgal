@@ -21,7 +21,7 @@
 #define CGAL_VISIBILITY_COMPLEX_CCW_CW_TRAITS_H
 
 #include <functional>
-#include <CGAL/Visibility_complex/Visibility_complex_function_objects.h>
+#include <CGAL/Visibility_complex_function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
 

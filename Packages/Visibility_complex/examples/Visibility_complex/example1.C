@@ -1,7 +1,7 @@
 #include <list>
 #include <CGAL/Simple_cartesian.h>
-#include <CEP/Visibility_complex/Visibility_complex_2.h>
-#include <CEP/Visibility_complex/Visibility_complex_segment_traits.h>
+#include <CGAL/Visibility_complex_2.h>
+#include <CGALVisibility_complex_segment_traits.h>
 
 typedef CGAL::Simple_cartesian<int>                  Rep;
 typedef CGAL::Visibility_complex_segment_traits<Rep> Gt;

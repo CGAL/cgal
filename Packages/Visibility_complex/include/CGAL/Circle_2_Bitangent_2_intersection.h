@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Circle_2.h>
-#include <CGAL/Visibility_complex/Bitangent_2.h>
+#include <CGAL/Bitangent_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -20,8 +20,8 @@
 #ifndef CGAL_VISIBILITY_COMPLEX_2_H
 #define CGAL_VISIBILITY_COMPLEX_2_H
 
-#include <CGAL/Visibility_complex/Visibility_complex_antichain.h>
-#include <CGAL/Visibility_complex/Visibility_complex_iterators.h>
+#include <CGAL/Visibility_complex_antichain.h>
+#include <CGAL/Visibility_complex_iterators.h>
 
 #include <algorithm>
 #include <functional>

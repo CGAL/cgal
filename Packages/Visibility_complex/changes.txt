@@ -1,3 +1,7 @@
+28 April 2004 Radu Ursu
+- moved examples from doc_tex to examples dir
+- moved headers from include/CGAL/Visibility_complex to include/CGAL 
+
 22 April 2004 Radu Ursu
 - moved test_suite directory to test directory
 

@@ -20,7 +20,7 @@
 #ifndef SHORTEST_PATH_POINT_TRAITS_H
 #define SHORTEST_PATH_POINT_TRAITS_H
 
-#include <CGAL/Visibility_complex/Visibility_complex_point_traits.h>
+#include <CGAL/Visibility_complex_point_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 

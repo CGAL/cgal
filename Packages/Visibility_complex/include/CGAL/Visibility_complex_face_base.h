@@ -24,7 +24,7 @@
 //#include <limits.h>
 #include <queue>
 
-#include <CGAL/Visibility_complex/Visibility_complex_ccw_cw_traits.h>
+#include <CGAL/Visibility_complex_ccw_cw_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 

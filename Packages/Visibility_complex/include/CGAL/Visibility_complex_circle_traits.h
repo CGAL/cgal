@@ -21,11 +21,10 @@
 #define CGAL_VISIBILITY_COMPLEX_CIRCLE_TRAITS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Visibility_complex/Circle_by_radius_2.h>
-#include <CGAL/Visibility_complex/Arc_2.h>
-#include <CGAL/Visibility_complex/Circle_2_Circle_2_intersection.h>
-#include <CGAL/Visibility_complex/Circle_2_Bitangent_2_intersection.h>
-#include <CGAL/Visibility_complex/predicates/Visibility_complex_ftC2.h>
+#include <CGAL/Circle_by_radius_2.h>
+#include <CGAL/Arc_2.h>
+#include <CGAL/Circle_2_Circle_2_intersection.h>
+#include <CGAL/Circle_2_Bitangent_2_intersection.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -23,12 +23,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/In_place_list.h>
-#include <CGAL/Visibility_complex/Visibility_complex_items.h>
-#include <CGAL/Visibility_complex/Visibility_complex_flip_traits.h>
-#include <CGAL/Visibility_complex/Visibility_complex_antichain_iterators.h>
-#include <CGAL/Visibility_complex/Visibility_complex_ccw_cw_traits.h>
-#include <CGAL/Visibility_complex/Visibility_complex_function_objects.h>
-#include <CGAL/Visibility_complex/Visibility_complex_sweep_iterator.h>
+#include <CGAL/Visibility_complex_items.h>
+#include <CGAL/Visibility_complex_flip_traits.h>
+#include <CGAL/Visibility_complex_antichain_iterators.h>
+#include <CGAL/Visibility_complex_ccw_cw_traits.h>
+#include <CGAL/Visibility_complex_function_objects.h>
+#include <CGAL/Visibility_complex_sweep_iterator.h>
 
 #include <queue>
 #include <list>

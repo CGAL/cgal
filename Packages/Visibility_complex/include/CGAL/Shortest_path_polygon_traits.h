@@ -20,7 +20,7 @@
 #ifndef SHORTEST_PATH_POLYGON_TRAITS_H
 #define SHORTEST_PATH_POLYGON_TRAITS_H
 
-#include <CGAL/Visibility_complex/Visibility_complex_polygon_traits.h>
+#include <CGAL/Visibility_complex_polygon_traits.h>
 
 
 CGAL_BEGIN_NAMESPACE

@@ -21,7 +21,7 @@
 #define CGAL_BITANGENT_2_BITANGENT_2_INTERSECTION_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Visibility_complex/Bitangent_2.h>
+#include <CGAL/Bitangent_2.h>
 #include <CGAL/Segment_2_Segment_2_intersection.h>
 
 CGAL_BEGIN_NAMESPACE

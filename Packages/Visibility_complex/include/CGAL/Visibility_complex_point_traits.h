@@ -17,20 +17,20 @@
 //
 // Author(s)     : Pierre Angelier, Michel Pocchiola
 
-#ifndef CGAL_VISIBILITY_COMPLEX_SEGMENT_TRAITS_H
-#define CGAL_VISIBILITY_COMPLEX_SEGMENT_TRAITS_H
-
+#ifndef CGAL_VISIBILITY_COMPLEX_POINT_TRAITS_H
+#define CGAL_VISIBILITY_COMPLEX_POINT_TRAITS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Visibility_complex/Bitangent_2.h>
-#include <CGAL/Visibility_complex/Arc_2.h>
+#include <CGAL/Bitangent_2.h>
+#include <CGAL/Arc_2.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
 // -----------------------------------------------------------------------------
 
-template < class R_ >
-class Visibility_complex_segment_traits
+template <class R_>
+class Visibility_complex_point_traits
 {
 public:
     // -------------------------------------------------------------------------
@@ -38,9 +38,9 @@ public:
     typedef typename R::FT                FT;
     typedef typename R::Point_2           Point_2;
     typedef typename R::Segment_2         Segment_2;
-    typedef Segment_2                     Disk;
-    typedef Arc_2<Disk>               Arc_2;
-    typedef Bitangent_2<Disk>         Bitangent_2;
+    typedef Point_2                       Disk;
+    typedef Arc_2<Disk>                   Arc_2;
+    typedef Bitangent_2<Disk>             Bitangent_2;
     // -------------------------------------------------------------------------
     // The chi2 predicate
     struct Orientation_object {
@@ -52,54 +52,34 @@ public:
     // -------------------------------------------------------------------------
     // The two follwing give the chi2 predicate with a point at infinity
     struct Compare_extreme_yx {
-	const Point_2& extreme_point(bool b, const Disk& c) const { 
-	    
-	    Comparison_result comp = compare_y(c.source(), c.target());
-	    comp = (comp != EQUAL) ? comp : compare_x(c.source(), c.target());
-
-	    return ((b == true  && comp == SMALLER) || 
-		    (b == false && comp == LARGER)) ?  c.source() : c.target() ;
-	}
-	const Point_2& extreme_point(bool b, const Bitangent_2& c) const 
+      Point_2 extreme_point(bool /*b*/, const Disk& c) const { return c; }
+	Point_2 extreme_point(bool b, const Bitangent_2& c) const 
 	{ return (b) ? c.source() : c.target(); }
-	template < class C_ , class D_ >
-	Comparison_result operator() (bool sa , const C_& a,
-				      bool sb , const D_& b) const { 
-	    const Point_2& ap = extreme_point(sa,a);
-	    const Point_2& bp = extreme_point(sb,b);
-
-	    Comparison_result cr = compare_y(ap,bp);
-	    cr = (cr != EQUAL) ? cr : compare_x(ap,bp);
-	    return cr;
-	    
+	template < class C , class D >
+	Comparison_result operator() (bool sa , const C& a,
+				      bool sb , const D& b) const { 
+	    Point_2 ap = extreme_point(sa,a);
+	    Point_2 bp = extreme_point(sb,b);
+	    return compare_lexicographically_xyC2(ap.y(),ap.x(),bp.y(),bp.x());
 	}
     };
     // -------------------------------------------------------------------------
     struct Is_upward_directed {
 	bool operator()(const Bitangent_2& b) const {
-	    Comparison_result comp = compare_y(b.source(), b.target());
-	  comp = (comp != EQUAL) ? comp : compare_x(b.source(), b.target());
+	    Comparison_result comp = 
+		compare_lexicographically_xyC2(b.source().y(),b.source().x(),
+					       b.target().y(),b.target().x());
 	    return (comp != LARGER);
 	}
     };
     // -------------------------------------------------------------------------
     // The chi3 predicate
     struct Orientation_infinite {
-	const Point_2& top(const Disk& c) const {
-
-	  Comparison_result comp = compare_y(c.source(), c.target());
-	  comp = (comp != EQUAL) ? comp : compare_x(c.source(), c.target());
-
-	    return (comp == SMALLER) ? c.target() : c.source();
-	}
-	const Point_2& bot(const Disk& o) const 
-	{ return (top(o) == o.source()) ? o.target() : o.source(); }
 	Orientation operator() (const Bitangent_2& a, 
 				const Disk& o) const
-	{ return orientation(a.source(),a.target(),top(o)); } 
-	Orientation operator() (const Disk& o, 
-				const Bitangent_2& b) const
-	{ return orientation(bot(o),top(o),b.target()); }
+	{ return orientation(a.source(),a.target(),o); } 
+      Orientation operator() (const Disk& /*o*/, 
+			      const Bitangent_2& /*b*/) const{ return COLLINEAR; }
 	Orientation operator() (const Bitangent_2& a, 
 				const Bitangent_2& b) const
 	{ return orientation(a.source(),a.target(),b.target()); } 
@@ -112,8 +92,7 @@ public:
 	}
     };
     struct Is_point {
-	bool operator() (const Disk& c) const 
-	{ return c.source() == c.target(); }
+	bool operator() (const Disk& c) const { return true; }
     };
     // -------------------------------------------------------------------------
     struct Do_intersect {
@@ -132,10 +111,8 @@ public:
     };
     // -------------------------------------------------------------------------
 };
-
 // ----------------------------------------------------------------------------- 
 
 CGAL_END_NAMESPACE
 
-#endif // VISIBILITY_COMPLEX_SEGMENT_TRAITS_H
-
+#endif // VISIBILITY_COMPLEX_POINT_TRAITS_H
