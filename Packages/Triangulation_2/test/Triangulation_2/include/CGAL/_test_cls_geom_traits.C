@@ -34,12 +34,17 @@
 //               p[12],p[13],p[14] CW
 //               p[15],p[16],p[17] COLLINEAR
 
-template <class Traits, class Point>
+//typedef typename Traits::Point             Point;
+// Point has to be Traits::Point but CC-4.2 at Zurich does not understand
+// template <class Traits>
+// void
+// CGAL__test_cls_geom_traits(typename Traits::Point p[34], const Traits & )
 
+template <class Traits, class Point>
 void
 CGAL__test_cls_geom_traits(Point p[34], const Traits & )
 {
-  typedef typename Traits::Point             Point;
+  
   typedef typename Traits::Segment           Segment;
   typedef typename Traits::Triangle          Triangle;
 
