@@ -87,3 +87,19 @@ GLOB: included fixes from CGAL-1-1-patch.
 DOCS: adopted to new html-converter.
 SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
 SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
+
+//---------------------------------------------------------------------
+//	 CGAL-1.1
+//---------------------------------------------------------------------
+
+GLOB: Added variable PRINT_STACKTRACE_PROGRAM to include makefiles. It can
+GLOB: be used to get a stacktrace, in case a program crashes during the
+GLOB: testsuite.
+GLOB: yet another printf "-" fix for Linux.
+GLOB: removed some superfluous '\n's.
+GLOB: also fixed CGAL_SHARED_LIB_LDFLAGS for IRIX5 make. :)
+GLOB: write CGAL_LIB_LDFLAGS on one line in order to not confuse IRIX5 make.
+GLOB: changed various printf statements to make them (hopefully)
+GLOB: work better on Linux [printf "---" doesn't work there :(],
+GLOB: removed CUSTOM_CXX(LD)FLAGS from SHARED_LIB_...FLAGS,
+GLOB: added LONG_NAME_PROBLEM_...FLAGS.
