@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : HalfedgeDS_default.h
-// chapter       : $CGAL_Chapter: Halfedge Data Structures $
-// package       : $CGAL_Package: HalfedgeDS 3.3 (27 Sep 2000) $
-// source        : hds.fw
+// file          : include/CGAL/HalfedgeDS_default.h
+// package       : HalfedgeDS 3.3 (27 Sep 2000)
+// chapter       : Halfedge Data Structures
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : MPI Saarbruecken (Stefan Schirra <stschirr@mpi-sb.mpg.de>)
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : MPI Saarbruecken
 //
 // Halfedge Data Structure Default Implementation for CGAL.
 // ============================================================================

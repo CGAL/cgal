@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : HalfedgeDS_halfedge_base.h
-// chapter       : $CGAL_Chapter: Halfedge Data Structures $
-// package       : $CGAL_Package: HalfedgeDS 3.3 (27 Sep 2000) $
-// source        : hds_bases.fw
+// file          : include/CGAL/HalfedgeDS_halfedge_base.h
+// package       : HalfedgeDS 3.3 (27 Sep 2000)
+// chapter       : Halfedge Data Structures
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : MPI Saarbruecken (Stefan Schirra <stschirr@mpi-sb.mpg.de>)
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : MPI Saarbruecken
 //
 // Halfedge Data Structure Base Classes for Halfedges.
 // ============================================================================
@@ -33,7 +34,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
+#if ! defined( CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION) \
+ && ! defined( CGAL_CFG_SUNPRO_PARTIAL_SPEC_BUG)
 
 template < class Refs, class TP, class TV, class TF>
 struct HalfedgeDS_halfedge_base_base {
@@ -338,7 +340,8 @@ public:
         // is true if `h' is a border halfedge.
 };
 
-#else // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION //
+#else //    ! defined( CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION)
+      // && ! defined( CGAL_CFG_SUNPRO_PARTIAL_SPEC_BUG)
 
 // Partial specialization doesn't work. So, we cannot get rid
 // of the previous halfedge, vertex, or face reference.
@@ -422,7 +425,8 @@ public:
         // is true if `h' is a border halfedge.
 };
 
-#endif // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION //
+#endif //    ! defined( CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION)
+       // && ! defined( CGAL_CFG_SUNPRO_PARTIAL_SPEC_BUG)
 
 CGAL_END_NAMESPACE
 

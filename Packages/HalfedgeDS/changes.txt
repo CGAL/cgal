@@ -1,17 +1,23 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+3.22 (18 Dec 2001)
 
-3.22 (?? Sep 2001)
-     - fixed broken figure reference for HTML manaul
+     - Added check for CGAL_CFG_SUNPRO_PARTIAL_SPEC_BUG in the 
+       include/CGAL/HalfedgeDS_*_base.h files.
+     - Cleanup of file headers.
+     - Fixed broken figure reference for HTML manual.
 
 3.21 (6 Aug 2001)
-     - Susan moved the missing *.gif and fig/*.ips from doc_tex/basic/HalfedgeDS
-       to doc_tex/basic/HalfedgeDS_ref directory
+
+     - Susan moved the missing *.gif and fig/*.ips from 
+       doc_tex/basic/HalfedgeDS to doc_tex/basic/HalfedgeDS_ref directory
 
 3.20 (31 Jul 2001)
+
      - Susan moved doc_tex/*_ref directories up one level
 
 3.19 (27 Jul 2001)
+
      - Susan made changes necessary to do the manual split including
        minor formatting changes
 

@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : test_hds_decorator.C
-// chapter       : $CGAL_Chapter: Halfedge Data Structures $
-// package       : $CGAL_Package: HalfedgeDS 3.3 (27 Sep 2000) $
-// source        : hds_decorator.fw
+// file          : test/HalfedgeDS/test_hds_decorator.C
+// package       : HalfedgeDS 3.3 (27 Sep 2000)
+// chapter       : Halfedge Data Structures
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : MPI Saarbruecken (Stefan Schirra <stschirr@mpi-sb.mpg.de>)
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : MPI Saarbruecken
 //
 // Test Halfedge Data Structure Decorator.
 // ============================================================================

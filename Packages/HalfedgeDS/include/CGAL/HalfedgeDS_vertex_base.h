@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : HalfedgeDS_vertex_base.h
-// chapter       : $CGAL_Chapter: Halfedge Data Structures $
-// package       : $CGAL_Package: HalfedgeDS 3.3 (27 Sep 2000) $
-// source        : hds_bases.fw
+// file          : include/CGAL/HalfedgeDS_vertex_base.h
+// package       : HalfedgeDS 3.3 (27 Sep 2000)
+// chapter       : Halfedge Data Structures
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : MPI Saarbruecken (Stefan Schirra <stschirr@mpi-sb.mpg.de>)
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : MPI Saarbruecken
 //
 // Halfedge Data Structure Base Class for Vertices.
 // ============================================================================
@@ -34,7 +35,8 @@
 CGAL_BEGIN_NAMESPACE
 
 
-#ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
+#if ! defined( CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION) \
+ && ! defined( CGAL_CFG_SUNPRO_PARTIAL_SPEC_BUG)
 
 // We use Tag_false to indicate that no point type is provided.
 
@@ -135,7 +137,8 @@ public:
     const Point&          point() const                     { return p; }
 };
 
-#else // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION //
+#else //    ! defined( CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION)
+      // && ! defined( CGAL_CFG_SUNPRO_PARTIAL_SPEC_BUG)
 
 // Partial specialization doesn't work. We can factor out the
 // Point parameter in a base class with full specialization
@@ -195,7 +198,8 @@ public:
     const Point&          point() const     { return Point_base::point; }
 };
 
-#endif // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION //
+#endif //    ! defined( CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION)
+       // && ! defined( CGAL_CFG_SUNPRO_PARTIAL_SPEC_BUG)
 
 CGAL_END_NAMESPACE
 

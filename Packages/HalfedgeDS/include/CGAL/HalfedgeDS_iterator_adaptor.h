@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : HalfedgeDS_iterator_adaptor.h
-// chapter       : $CGAL_Chapter: Halfedge Data Structures $
-// package       : $CGAL_Package: HalfedgeDS 3.3 (27 Sep 2000) $
-// source        : hds_list.fw
+// file          : include/CGAL/HalfedgeDS_iterator_adaptor.h
+// package       : HalfedgeDS 3.3 (27 Sep 2000)
+// chapter       : Halfedge Data Structures
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : MPI Saarbruecken (Stefan Schirra <stschirr@mpi-sb.mpg.de>)
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : MPI Saarbruecken
 //
 // An iterator adaptor for the identity function.
 // ============================================================================
@@ -60,11 +61,11 @@ CGAL_BEGIN_NAMESPACE
 //  initialization happens before the surrounding function is called if
 //  the type is a POD, otherwise the initialization happens when the
 //  control flow passes through the declaration of the static variable the
-//  first time (Section 6.7), which costs performance but makes its safe
+//  first time (Section 6.7), which costs performance but makes it safe
 //  for weird static initialization situations. Usually the std::vector
 //  class uses a plain C-pointer as iterator, which would be a POD and
 //  thus efficient. However, the std::list iterators might not be POD's if
-//  they defines their own copy contructor. This is the case for
+//  they define their own copy contructor. This is the case for
 //  std::list::iterator of the current SGI STL, but not for the
 //  std::list::const_iterator, which is a funny side-effect of having
 //  only a single class for both and a constructor that allows iterator to
