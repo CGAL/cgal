@@ -3,13 +3,14 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <assert.h>
 
 struct Box {
     typedef int            NT;
     typedef std::ptrdiff_t Id_type;
     int x0, x1, y0, y1;
     Box( int u0, int u1, int v0, int v1) : x0(u0), x1(u1), y0(v0), y1(v1) {}
-    static const int dimension() { return 2; }
+    static int dimension() { return 2; }
     int min_coord(int dim) const { return (&x0)[dim]; }
     int max_coord(int dim) const { return (&y0)[dim]; }
     // id-function using address of current box,
@@ -52,6 +53,6 @@ int main() {
     // sort and check result
     std::sort( result.begin(), result.end());
     std::size_t chk[13] = {0,1,2,3,4,4,5,5,6,7,7,8,8};
-    CGAL_assertion(result.size()==13 && std::equal(chk,chk+13,result.begin()));
+    assert( result.size()==13 && std::equal(chk,chk+13,result.begin()));
     return 0;
 }

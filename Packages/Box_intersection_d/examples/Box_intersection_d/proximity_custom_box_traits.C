@@ -23,7 +23,7 @@ struct Traits {
     typedef Point_3*       Box;
     typedef std::ptrdiff_t Id_type;
 
-    static const int dimension() { return 3; }
+    static int   dimension() { return 3; }
     static float coord( Box box, int dim) {
         return (dim == 0) ? box->x() : ((dim == 1) ? box->y() : box->z());
     }
