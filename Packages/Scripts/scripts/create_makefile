@@ -3,14 +3,17 @@
 # This script creates a CGAL makefile with entries for all .C files in the
 # current directory.
 #
-# Usage: create_makefile [-options]
+# Usage: create_makefile [-options] [outputfile]
 #
 # -d   create a default CGAL makefile
 # -t   create a makefile for the test suite
 # -w   create a makefile with flags for LEDA windows
 # -g   create a makefile with flags for GEOWIN
+# -q   create a makefile with support for QT
+
 
 #VERSION=2.0
+
 
 header()
 {
@@ -19,12 +22,31 @@ header()
   echo "#---------------------------------------------------------------------#"
 }
 
+
 create_makefile_entry()
 {
-  echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
-  echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
-  echo
+  local CFILE MOC_FROM MOCFILE
+  CFILE=$1.C
+  MOCFILE=""
+  if [ -n "$QT" ]; then
+    if MOC_FROM=`awk 'BEGIN{ FS=":"; COUNT=0 } \
+            /\/\/ *moc_source_file *:/ {print $2; COUNT++} \
+            END{ exit COUNT==0 }' $CFILE`; then
+      MOCFILE=$1.moc
+      echo "$MOCFILE: $MOC_FROM"
+      echo "	\$(QT_MOC) -o $MOCFILE \$<"
+      echo
+      echo "$1\$(OBJ_EXT): $MOCFILE"
+      echo
+    fi
+  fi
+  if grep -q 'main *(' $CFILE ; then
+    echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
+    echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
+    echo
+  fi;
 }
+
 
 create_makefile()
 {
@@ -68,6 +90,9 @@ create_makefile()
     echo    "          \$(TESTSUITE_LDFLAGS) \\"
   fi
   echo    "          \$(LONG_NAME_PROBLEM_LDFLAGS) \\"
+  if [ -n "$QT" ] ; then
+    echo    "          \$(CGAL_QT_LDFLAGS) \\"
+  fi
   if [ -n "$GEOWIN" ] ; then
     echo    "          \$(CGAL_GEOWIN_LDFLAGS)"
   elif [ -z "$LEDAWINDOWS" ] ; then
@@ -100,28 +125,52 @@ create_makefile()
   echo
 }
 
-case $# in
-  0) echo "Usage: create_makefile [-options]"
+
+usage()
+{
+     echo "Usage: create_makefile [-options] [outputfile]"
      echo
      echo "-d   create a default CGAL makefile"
      echo "-t   create a makefile for the test suite"
      echo "-w   create a makefile with flags for LEDA windows"
      echo "-g   create a makefile with flags for GEOWIN"
-     exit
+     echo "-q   create a makefile with flags for QT"
+}
+
+
+case $# in
+  0) usage
+     exit 1
 esac
+
 
 for i do
   case $i in
+    -d) ;;
     -t) TESTSUITE='y';;
     -w) LEDAWINDOWS='y';;
     -g) GEOWIN='y';;
+    -q) QT='y';;
+    -*) usage
+        exit 1;;
+    *) if [ -z "$OUTPUTFILE" ] ; then
+         OUTPUTFILE=$i
+       else
+         usage
+         exit 1
+       fi;;
   esac
 done
 
-if [ -f makefile ] ; then
-  echo "moving makefile to makefile.bak ..."
-  mv -f makefile makefile.bak
-fi
-create_makefile > makefile
-echo "created makefile ..." 
 
+if [ -z "$OUTPUTFILE" ] ; then
+  OUTPUTFILE=makefile
+fi
+
+
+if [ -f ${OUTPUTFILE} ] ; then
+  echo "moving $OUTPUTFILE to ${OUTPUTFILE}.bak ..."
+  mv -f $OUTPUTFILE ${OUTPUTFILE}.bak
+fi
+create_makefile > $OUTPUTFILE
+echo "created $OUTPUTFILE ..." 
