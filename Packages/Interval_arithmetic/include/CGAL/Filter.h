@@ -88,9 +88,17 @@ inline double CGAL_to_double (const CGAL_Filtering<CT,ET>& fil)
 
 // All exact types should reasonnably have a built-in exact conversion
 // from doubles ?  If not, it will fail, and you have to provide it.
+//
+// It's bad to provide such a default, because it can be a inexact cast:
+// ex: CGAL_Gmpz accepts it, but it's false !!!
 
 template <class ET>
 inline ET CGAL_to_exact_type (const double & d)
 { return ET(d); }
+
+
+#ifdef CGAL_PREDICATES_ON_FTC2_H
+#include <CGAL/Filter/predicates_on_ftC2.h>
+#endif
 
 #endif // CGAL_FILTER_H
