@@ -1,24 +1,12 @@
 * check TODO file in include/CGAL
 - restore the changes in the examples directory (example3.C and example4.C)
-- in the second example in the examples directory, first fall back to
-  CORE and then to double.
-- check what the method finite_vertex() in the Apollonius_graph_2
-  class returns when there are not finite vertices
-- add Object_2 as a type in the traits class and use that in
-  Apollonius_graph_2
 - write a Hidden_point_iterator; or change code so that hidden
   vertices have associated vertex_handles
 - update doc for vertex base and face base when the new design arrives
 - remove from the code the type for Site (in the traits class and the
   main class if it is there)
-- change the draw_* methods to write_* in Apollonius_graph_2.{h,C};
-  also in the doc
 - check the typedefs.h file in the demo directory to make sure that
   definitions make sense
-- add two methods in Apollonius_graph_2: dimension() and number_of_faces();
-  also update the doc on this
-- in the user manual change 10^5 to 10^3 as the critical point where the
-  hierarchy becomes better from the one-layer solution
 - add in user manual geometric interpretation in terms of cones in 3D; see
   corresponding emails
 - add section about dimension of Apollonius_graph_2 in user manual
@@ -30,8 +18,7 @@
   Vb/Fb by the concept names ApolloniusGraphVertexBase_2/...
   Similarly in references to it, where you could also don't put anything,
   i.e. just "CGAL::Apollonius_graph_data_structure_2" (?).
-- "number_of_hidden_weighted_points()" in vertex base should return size_t
+- "number_of_hidden_weighted_points()" in vertex base should return size_t;
+  also add this in the spec.
 - see email to cgal-editor with answers to Sylvain's questions
 - ask Mariette to add access functions to the TDS of Triangulation_2.
-- change the name of the file Kernel_wrapper_2.h to something more
-  relevant to Apollonius graphs.

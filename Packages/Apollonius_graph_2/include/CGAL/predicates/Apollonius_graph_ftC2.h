@@ -35,7 +35,7 @@
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/predicates/Apollonius_graph_predicates_C2.h>
 
-#include <CGAL/Kernel_wrapper_2.h>
+#include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -214,14 +214,14 @@ ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>                Rep;
-  typedef Kernel_wrapper_2<Rep>               Kernel;
-  typedef typename Kernel::Point_2            Point_2;
-  typedef typename Kernel::Weighted_point_2   Weighted_point_2;
+  typedef Simple_cartesian<RT>                    Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>  Kernel;
+  typedef typename Kernel::Point_2                Point_2;
+  typedef typename Kernel::Apollonius_site_2      Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Incircle_test<Kernel> f;
   return f(p1, p2, q, Sqrt_field_tag() );
@@ -239,14 +239,14 @@ ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Incircle_test<Kernel> f;
   return f(p1, p2, q, Ring_tag() );
@@ -270,15 +270,15 @@ ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                    Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>  Kernel;
+  typedef typename Kernel::Point_2                Point_2;
+  typedef typename Kernel::Apollonius_site_2      Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2 p3(Point_2(x3, y3), w3);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2 p3(Point_2(x3, y3), w3);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Incircle_test<Kernel> f;
   return f(p1, p2, p3, q, Sqrt_field_tag() );
@@ -298,15 +298,15 @@ ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2 p3(Point_2(x3, y3), w3);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2 p3(Point_2(x3, y3), w3);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Incircle_test<Kernel> f;
   return f(p1, p2, p3, q, Ring_tag() );
@@ -332,16 +332,16 @@ ad_finite_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2 p3(Point_2(x3, y3), w3);
-  Weighted_point_2 p4(Point_2(x4, y4), w4);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2 p3(Point_2(x3, y3), w3);
+  Apollonius_site_2 p4(Point_2(x4, y4), w4);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Finite_edge_test<Kernel> f;
   return f(p1, p2, p3, p4, q, b, Sqrt_field_tag() );
@@ -362,16 +362,16 @@ ad_finite_edge_test_ring_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2 p3(Point_2(x3, y3), w3);
-  Weighted_point_2 p4(Point_2(x4, y4), w4);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2 p3(Point_2(x3, y3), w3);
+  Apollonius_site_2 p4(Point_2(x4, y4), w4);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Finite_edge_test<Kernel> f;
   return f(p1, p2, p3, p4, q, b, Ring_tag() );
@@ -391,14 +391,14 @@ ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Finite_edge_test_degenerated<Kernel> f;
   return f(p1, p2, q, b, Sqrt_field_tag() );
@@ -415,14 +415,14 @@ ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Finite_edge_test_degenerated<Kernel> f;
   return f(p1, p2, q, b, Ring_tag() );
@@ -442,15 +442,15 @@ ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2 p3(Point_2(x3, y3), w3);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2 p3(Point_2(x3, y3), w3);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Finite_edge_test_degenerated<Kernel> f;
   return f(p1, p2, p3, q, b, Sqrt_field_tag() );
@@ -470,15 +470,15 @@ ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2 p3(Point_2(x3, y3), w3);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2 p3(Point_2(x3, y3), w3);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Finite_edge_test_degenerated<Kernel> f;
   return f(p1, p2, p3, q, b, Ring_tag() );
@@ -499,15 +499,15 @@ ad_infinite_edge_test_sqrtf_C2(const RT &x2, const RT &y2,
 { 
   must_be_filtered(x2);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2 p3(Point_2(x3, y3), w3);
-  Weighted_point_2 p4(Point_2(x4, y4), w4);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2 p3(Point_2(x3, y3), w3);
+  Apollonius_site_2 p4(Point_2(x4, y4), w4);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Infinite_edge_test<Kernel> f;
   return f(p2, p3, p4, q, b, Sqrt_field_tag() );
@@ -526,15 +526,15 @@ ad_infinite_edge_test_ring_C2(const RT &x2, const RT &y2,
 {
   must_be_filtered(x2);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2 p3(Point_2(x3, y3), w3);
-  Weighted_point_2 p4(Point_2(x4, y4), w4);
-  Weighted_point_2  q(Point_2(qx, qy), qw);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2 p3(Point_2(x3, y3), w3);
+  Apollonius_site_2 p4(Point_2(x4, y4), w4);
+  Apollonius_site_2  q(Point_2(qx, qy), qw);
 
   Infinite_edge_test<Kernel> f;
   return f(p2, p3, p4, q, b, Ring_tag() );
@@ -557,15 +557,15 @@ ad_is_degenerate_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2 p3(Point_2(x3, y3), w3);
-  Weighted_point_2 p4(Point_2(x4, y4), w4);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2 p3(Point_2(x3, y3), w3);
+  Apollonius_site_2 p4(Point_2(x4, y4), w4);
 
   Is_degenerate_edge_test<Kernel> f;
   return f(p1, p2, p3, p4, Sqrt_field_tag() );
@@ -584,15 +584,15 @@ ad_is_degenerate_edge_test_ring_C2(const RT &x1, const RT &y1,
 {
   must_be_filtered(x1);
 
-  typedef Simple_cartesian<RT>               Rep;
-  typedef Kernel_wrapper_2<Rep>              Kernel;
-  typedef typename Kernel::Point_2           Point_2;
-  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
+  typedef Simple_cartesian<RT>                     Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>   Kernel;
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Apollonius_site_2       Apollonius_site_2;
 
-  Weighted_point_2 p1(Point_2(x1, y1), w1);
-  Weighted_point_2 p2(Point_2(x2, y2), w2);
-  Weighted_point_2 p3(Point_2(x3, y3), w3);
-  Weighted_point_2 p4(Point_2(x4, y4), w4);
+  Apollonius_site_2 p1(Point_2(x1, y1), w1);
+  Apollonius_site_2 p2(Point_2(x2, y2), w2);
+  Apollonius_site_2 p3(Point_2(x3, y3), w3);
+  Apollonius_site_2 p4(Point_2(x4, y4), w4);
 
   Is_degenerate_edge_test<Kernel> f;
   return f(p1, p2, p3, p4, Ring_tag() );

@@ -44,7 +44,8 @@ class Hyperbola_ray_2 : public Hyperbola_segment_2< Point, Weight >
 {
 public:
   typedef Sign                                   Hyperbola_direction;
-  typedef CGAL::Weighted_point< Point, Weight >  Weighted_point;
+  typedef CGAL::Hyperbola_segment_2<Point,Weight> Base;
+  typedef typename Base::Weighted_point    Weighted_point;
   //  typedef typename R::RT         FT;
   typedef double                                 FT;
   typedef CGAL::Point_2< Cartesian<double> >     Point_2;

@@ -39,6 +39,8 @@
 #include <CGAL/determinant.h>
 #include <CGAL/IO/Window_stream.h>
 
+#include <CGAL/Apollonius_site_2.h>
+#include <CGAL/Kernel_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,7 +49,8 @@ template < class Point, class Weight, class Line >
 class Parabola_2
 {
 public:
-  typedef CGAL::Weighted_point< Point, Weight >   Weighted_point;
+  typedef typename Kernel_traits<Point>::Kernel   Kernel;
+  typedef CGAL::Apollonius_site_2<Kernel>         Weighted_point;
   typedef CGAL::Point_2< Cartesian<double> >      Point_2;
   typedef CGAL::Segment_2< Cartesian<double> >    Segment_2;
   typedef CGAL::Line_2< Cartesian<double> >       Line_2;

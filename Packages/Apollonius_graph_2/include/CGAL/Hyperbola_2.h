@@ -39,13 +39,17 @@
 #include <CGAL/determinant.h>
 #include <CGAL/IO/Window_stream.h>
 
+#include <CGAL/Apollonius_site_2.h>
+#include <CGAL/Kernel_traits.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class Point, class Weight >
 class Hyperbola_2
 {
 public:
-  typedef CGAL::Weighted_point< Point, Weight >   Weighted_point;
+  typedef typename Kernel_traits<Point>::Kernel   Kernel;
+  typedef CGAL::Apollonius_site_2<Kernel>         Weighted_point;
   //  typedef typename R::RT          FT;
   typedef double                                  FT;
   typedef CGAL::Point_2< Cartesian<double>  >     Point_2;

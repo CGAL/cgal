@@ -42,7 +42,8 @@ template < class Point, class Weight >
 class Hyperbola_segment_2 : public Hyperbola_2< Point, Weight >
 {
 public:
-  typedef CGAL::Weighted_point< Point, Weight >   Weighted_point;
+  typedef CGAL::Hyperbola_2<Point,Weight>         Base;
+  typedef typename Base::Weighted_point           Weighted_point;
   //  typedef typename R::RT          FT;
   typedef double                                  FT;
   typedef CGAL::Point_2< Cartesian<double> >      Point_2;

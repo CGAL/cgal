@@ -38,21 +38,28 @@ int main()
 {
   std::ifstream ifs_traits("./data/traits.dat");
   std::ifstream ifs_algo("./data/algo.dat");
+  std::ifstream ifs_hierarchy("./data/hierarchy.dat");
 
   assert( ifs_traits );
   assert( ifs_algo );
+  assert( ifs_hierarchy );
 
   //  bool is_ok =
   //    CGAL::test_traits<Kernel,CGAL::Ring_tag,std::ifstream>(ifs_traits);
 
-  bool is_ok = CGAL::test_traits<Kernel,Method_tag>();
+  bool traits_ok = CGAL::test_traits<Kernel,Method_tag>();
 
-  assert( is_ok );
+  assert( traits_ok );
 
   bool algo_ok =
     CGAL::test_algo<Kernel,Method_tag,std::ifstream>(ifs_algo);
 
   assert( algo_ok );
+
+  bool hierarchy_ok = 
+    CGAL::test_hierarchy_algo<Kernel,Method_tag,std::ifstream>(ifs_hierarchy);
+
+  assert( hierarchy_ok );
 
   return 0;
 }

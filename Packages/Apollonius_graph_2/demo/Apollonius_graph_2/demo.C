@@ -26,15 +26,15 @@ AG_2 ag;
 //************************************
 // conversion functions
 //************************************
-inline Weighted_point_2
+inline Apollonius_site_2
 to_weighted_point(const Circle_2 &c)
 {
   double r = CGAL_NTS sqrt(CGAL_NTS to_double(c.squared_radius()));
-  return  Weighted_point_2(c.center(), Rep::RT(r));
+  return  Apollonius_site_2(c.center(), Rep::RT(r));
 }
 
 inline Circle_2
-to_circle(const Weighted_point_2 &wp)
+to_circle(const Apollonius_site_2 &wp)
 {
   return Circle_2(wp.point(), CGAL_NTS square(wp.weight()) );
 }
@@ -160,10 +160,10 @@ private slots:
     Circle_2 c;
     Point_2 p;
     if ( CGAL::assign(c, obj) ) {
-      Weighted_point_2 wp = to_weighted_point(c);
+      Apollonius_site_2 wp = to_weighted_point(c);
       ag.insert(wp);
     } else if ( CGAL::assign(p, obj) ) {
-      Weighted_point_2 wp(p, Weight(0));
+      Apollonius_site_2 wp(p, Weight(0));
       ag.insert(wp);
     }
     assert( ag.is_valid(false, 1) );
@@ -207,29 +207,14 @@ private slots:
       std::ifstream f(fileName);
       assert( f );
 
-      int n;
-      f >> n;
-      Weighted_point_2 wp;
+      //      int n;
+      //      f >> n;
+      Apollonius_site_2 wp;
 
       int counter = 0;
       std::cout << std::endl;
-#if 1
-      for (int i = 0; i < n; i++) {
-	f >> wp;
-	ag.insert(wp);
-	counter++;
-	if ( counter % 500 == 0 ) {
-	  std::cout << "\r" << counter
-		    << " sites haved been inserted..." << std::flush;
-	}
-      }
-      //      std::cout << "\r" << counter 
-      //		<< " sites haved been inserted... Done!" << std::endl;
-      assert( ag.is_valid(false, 1) );
-      widget->redraw();
-#else
-      for (int i = 0; i < n - 1; i++) {
-	f >> wp;
+
+      while ( f >> wp ) {
 	ag.insert(wp);
 	counter++;
 	if ( counter % 500 == 0 ) {
@@ -238,18 +223,10 @@ private slots:
 	}
       }
       std::cout << "\r" << counter 
-		<< " sites haved been inserted... Done!" << std::endl;
-      //      assert( ag.is_valid(true, 1) );
-
-      f >> wp;
-      std::vector<AG_2::Edge> edge_list = 
-	ag.find_conflict_region(wp);
-
+		<< " sites haved been inserted... Done!"
+		<< std::endl;
+      assert( ag.is_valid(false, 1) );
       widget->redraw();
-
-      *widget << CGAL::ORANGE;
-      ag.draw_edge_list(*widget, edge_list.begin(), edge_list.end());
-#endif
     }
 
   void print_screen()

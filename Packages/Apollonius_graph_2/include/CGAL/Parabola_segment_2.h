@@ -41,7 +41,8 @@ CGAL_BEGIN_NAMESPACE
 template < class Point, class Weight, class Line >
 class Parabola_segment_2 : public Parabola_2< Point, Weight, Line >
 {
-  typedef CGAL::Weighted_point< Point, Weight >   Weighted_point;
+  typedef CGAL::Parabola_2<Point,Weight,Line>     Base;
+  typedef typename Base::Weighted_point           Weighted_point;
   typedef double                                  FT;
   typedef CGAL::Point_2< Cartesian<double> >      Point_2;
   typedef CGAL::Segment_2< Cartesian<double> >    Segment_2;

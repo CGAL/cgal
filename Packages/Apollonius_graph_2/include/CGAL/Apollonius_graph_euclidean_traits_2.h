@@ -57,7 +57,7 @@
 
 #include <CGAL/Apollonius_graph_euclidean_traits_2.C>
 
-#include <CGAL/Kernel_wrapper_2.h>
+#include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -75,25 +75,31 @@ public:
   // BASIC TYPES
   //------------
   
-  typedef Kernel_wrapper_2<R>                           Kernel;
+  typedef Apollonius_graph_kernel_wrapper_2<R>          Kernel;
   typedef R                                             Rep;
   typedef MTag                                          Method_tag;
-  typedef typename Kernel::RT                           Weight;
   typedef typename Kernel::Point_2                      Point_2;
-  typedef typename Kernel::Weighted_point_2             Weighted_point_2;
+  typedef typename Kernel::Apollonius_site_2            Apollonius_site_2;
   //
-  typedef Weighted_point_2                              Site;
   typedef typename Kernel::Line_2                       Line_2;
   typedef typename Kernel::Ray_2                        Ray_2;
   typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename Kernel::Object_2                     Object_2;
+private:
+  typedef typename Kernel::RT                           Weight;
+public:
   typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2>
   /*                                                 */ Parabola_segment_2;
-  typedef CGAL::Hyperbola_2<Point_2,Weight>        Hyperbola_2;
-  typedef CGAL::Hyperbola_ray_2<Point_2,Weight>    Hyperbola_ray_2;
+  typedef CGAL::Hyperbola_2<Point_2,Weight>             Hyperbola_2;
+  typedef CGAL::Hyperbola_ray_2<Point_2,Weight>         Hyperbola_ray_2;
   typedef CGAL::Hyperbola_segment_2<Point_2,Weight>
   /*                                                 */ Hyperbola_segment_2;
 
 public:
+  // ASSIGNMENT
+  //-----------
+  typedef typename Kernel::Assign_2                     Assign_2;
+
   // CONSTRUCTIONS
   //--------------
   // vertex and weighted point
@@ -138,6 +144,12 @@ public:
   //-----------------------------------------------------------------------
   //                  ACCESS TO OBJECTS
   //-----------------------------------------------------------------------
+
+  // ASSIGNMENT
+  Assign_2
+  assign_2_object() const {
+    return Assign_2();
+  }
 
   // CONSTRUCTIONS
   //--------------
@@ -251,9 +263,9 @@ Filtered_kernel<_CK,_EK,_FK,_C2E,_C2F>, MTag>
 private:
   // add the wrappers; these should be removed once weighted points
   // find their way into the kernel
-  typedef Kernel_wrapper_2<_CK>  CK;
-  typedef Kernel_wrapper_2<_EK>  EK;
-  typedef Kernel_wrapper_2<_FK>  FK;
+  typedef Apollonius_graph_kernel_wrapper_2<_CK>  CK;
+  typedef Apollonius_graph_kernel_wrapper_2<_EK>  EK;
+  typedef Apollonius_graph_kernel_wrapper_2<_FK>  FK;
   typedef Extended_cartesian_converter<_C2E>  C2E;
   typedef Extended_cartesian_converter<_C2F>  C2F;
 
@@ -269,9 +281,9 @@ public:
   typedef MTag                                           Method_tag;
   typedef typename Kernel::RT                            Weight;
   typedef typename Kernel::Point_2                       Point_2;
-  typedef typename Kernel::Weighted_point_2              Weighted_point_2;
+  typedef typename Kernel::Apollonius_site_2             Apollonius_site_2;
   //
-  typedef Weighted_point_2                               Site;
+  typedef typename Kernel::Object_2                      Object_2;
   typedef typename Kernel::Line_2                        Line_2;
   typedef typename Kernel::Ray_2                         Ray_2;
   typedef typename Kernel::Segment_2                     Segment_2;
@@ -280,22 +292,6 @@ public:
   typedef CGAL::Hyperbola_2<Point_2,Weight>         Hyperbola_2;
   typedef CGAL::Hyperbola_ray_2<Point_2,Weight>     Hyperbola_ray_2;
   typedef CGAL::Hyperbola_segment_2<Point_2,Weight> Hyperbola_segment_2;
-
-private:
-  // Types for the construction kernel
-  typedef typename CK::RT                      CK_weight;
-  typedef typename CK::Point_2                 CK_bare_point;
-  typedef typename CK::Weighted_point_2        CK_weighted_point;
-
-  // Types for the exact kernel
-  typedef typename EK::RT                      EK_weight;
-  typedef typename EK::Point_2                 EK_bare_point;
-  typedef typename EK::Weighted_point_2        EK_weighted_point;
-
-  // Types for the filtering kernel
-  typedef typename FK::RT                      FK_weight;
-  typedef typename FK::Point_2                 FK_bare_point;
-  typedef typename FK::Weighted_point_2        FK_weighted_point;
 
 public:
   // CONSTRUCTIONS

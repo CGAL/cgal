@@ -177,7 +177,9 @@ operator=(const Apollonius_graph_2<Gt,StoreHidden,Agds>& other);}
 {the \ccc{infinite_vertex}.}
 \ccGlue
 \ccMethod{Vertex_handle finite_vertex() const;}
-{a vertex distinct from  the \ccc{infinite_vertex}.}
+{a vertex distinct from  the \ccc{infinite_vertex}.
+\ccPrecond{The number of (visible) vertices in the Apollonius graph must
+  be at least one.}}
 
 
 

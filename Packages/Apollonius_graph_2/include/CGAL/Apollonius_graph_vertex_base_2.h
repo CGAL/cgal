@@ -47,7 +47,7 @@ public:
   //------
   typedef Gt                             Geom_traits;
   typedef Vb                             Base;
-  typedef typename Gt::Weighted_point_2  Weighted_point_2;
+  typedef typename Gt::Apollonius_site_2 Apollonius_site_2;
   typedef AGDS	                         Apollonius_graph_data_structure;
   typedef typename AGDS::Face_handle     Face_handle;
   typedef typename AGDS::Vertex_handle   Vertex_handle;
@@ -61,7 +61,7 @@ public:
 
 private:
   // local types
-  typedef std::list<Weighted_point_2>         Container;
+  typedef std::list<Apollonius_site_2>         Container;
 
 public:
   // TYPES (continued)
@@ -73,8 +73,8 @@ public:
   // CREATION
   //---------
   Apollonius_graph_vertex_base_2() : Vb() {}
-  Apollonius_graph_vertex_base_2(const Weighted_point_2& p) : Vb(), _p(p) {}
-  Apollonius_graph_vertex_base_2(const Weighted_point_2& p,
+  Apollonius_graph_vertex_base_2(const Apollonius_site_2& p) : Vb(), _p(p) {}
+  Apollonius_graph_vertex_base_2(const Apollonius_site_2& p,
 				 Face_handle f)
     : Vb(f), _p(p) {}
 
@@ -86,7 +86,7 @@ public:
 
   // ACCESS METHODS
   //---------------
-  Weighted_point_2 point() const { return _p; }
+  Apollonius_site_2 point() const { return _p; }
 
   Face_handle face() const { return Vb::face(); }
 
@@ -105,10 +105,10 @@ public:
 public:
   // SETTING AND UNSETTING
   //----------------------
-  void set_point(const Weighted_point_2& p) { _p = p; }
+  void set_point(const Apollonius_site_2& p) { _p = p; }
 
 
-  void add_hidden_weighted_point(const Weighted_point_2& p)
+  void add_hidden_weighted_point(const Apollonius_site_2& p)
   {
     if ( StoreHidden ) {
       weighted_point_list.push_back(p);
@@ -129,7 +129,7 @@ public:
 private:
   // class variables
   Container weighted_point_list;
-  Weighted_point_2 _p;
+  Apollonius_site_2 _p;
 };
 
 CGAL_END_NAMESPACE 

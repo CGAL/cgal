@@ -44,11 +44,11 @@ int main()
   assert( ifs );
 
   Apollonius_graph ag;
-  Apollonius_graph::Weighted_point_2 wp;
+  Apollonius_graph::Apollonius_site_2 site;
 
   // read the weighted points and insert them in the Apollonius graph
-  while ( ifs >> wp ) {
-    ag.insert(wp);
+  while ( ifs >> site ) {
+    ag.insert(site);
   }
 
   // validate the Apollonius graph

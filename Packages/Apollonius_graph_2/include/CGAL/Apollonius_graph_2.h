@@ -66,8 +66,7 @@ public:
   typedef Agds                                   Data_structure;
   typedef Gt                                     Geom_traits;
   typedef typename Gt::Point_2                   Point_2;
-  typedef typename Gt::Weighted_point_2          Weighted_point_2;
-  typedef typename Gt::Weight                    Weight;
+  typedef typename Gt::Apollonius_site_2         Apollonius_site_2;
 
   typedef typename DG::Edge                      Edge;
   typedef typename DG::Vertex_handle             Vertex_handle;
@@ -93,8 +92,8 @@ protected:
   typedef typename Agds::Vertex_base       Vertex_base;
 
   // point lists
-  typedef std::vector<Weighted_point_2>      Weighted_point_list;
-  typedef typename Weighted_point_list::iterator Weighted_point_list_iterator;
+  typedef std::vector<Apollonius_site_2>   Site_list;
+  typedef typename Site_list::iterator     Site_list_iterator;
 
   typedef std::map<Face_handle,bool>           Face_map;
   typedef std::map<Face_handle, Face_handle>   Face_face_map;
@@ -122,15 +121,15 @@ protected:
   // Less_than comparator for weights of weighted points;
   // used to sort sites by decreasing weight when a sequence of sites
   // is inserted
-  class Weighted_point_less_than_comparator
+  class Site_less_than_comparator
   {
   private:
     const Gt& gt;
   public:
-    Weighted_point_less_than_comparator(const Gt& gt) : gt(gt) {}
+    Site_less_than_comparator(const Gt& gt) : gt(gt) {}
 
-    bool operator ()(const Weighted_point_2& p,
-		     const Weighted_point_2& q) {
+    bool operator ()(const Apollonius_site_2& p,
+		     const Apollonius_site_2& q) {
       Comparison_result result = gt.compare_weight_2_object()(p, q);
       return (result == LARGER);
     }
@@ -313,17 +312,17 @@ public:
   template< class Input_iterator >
   void insert(Input_iterator first, Input_iterator beyond) {
     // copy to a local container
-    Weighted_point_list wp_list;
+    Site_list wp_list;
     for (Input_iterator it = first; it != beyond; ++it) {
       wp_list.push_back(*it);
     }
 
     // sort by decreasing weight
-    Weighted_point_less_than_comparator less_than(geom_traits());
+    Site_less_than_comparator less_than(geom_traits());
     std::sort(wp_list.begin(), wp_list.end(), less_than);
 
     // now insert
-    Weighted_point_list_iterator lit;
+    Site_list_iterator lit;
     for (lit = wp_list.begin(); lit != wp_list.end(); ++lit) {
       insert(*lit);
     }
@@ -332,8 +331,8 @@ public:
     wp_list.clear();
   }
 
-  Vertex_handle  insert(const Weighted_point_2& p);
-  Vertex_handle  insert(const Weighted_point_2& p, Vertex_handle vnear);
+  Vertex_handle  insert(const Apollonius_site_2& p);
+  Vertex_handle  insert(const Apollonius_site_2& p, Vertex_handle vnear);
 
 public:
   // REMOVAL
@@ -351,17 +350,19 @@ public:
   // ACCESS TO THE DUAL
   //-------------------
   Point_2  dual(const Face_handle& f) const;
-  Object   dual(const Edge e) const;
+  typename Gt::Object_2 dual(const Edge e) const;
 
-  inline Object dual(const Edge_circulator& ec) const {
+  typename Gt::Object_2 dual(const Edge_circulator& ec) const {
     return dual(*ec);
   }
 
-  inline Object dual(const Finite_edges_iterator& ei) const {
+  typename Gt::Object_2 dual(const Finite_edges_iterator& ei) const {
     return dual(*ei);
   }
 
 public:
+
+
   // I/O
   //----
   template < class Stream >
@@ -371,7 +372,7 @@ public:
 
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
-      Weighted_point_2 wp = vit->point();
+      Apollonius_site_2 wp = vit->point();
       str << wp << std::endl;
     }
     return str;
@@ -386,7 +387,7 @@ public:
 
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
-      Weighted_point_2 wp = vit->point();
+      Apollonius_site_2 wp = vit->point();
       str << wp << std::endl;
       // now write the hidden vertices
       if ( StoreHidden ) {
@@ -412,7 +413,7 @@ public:
 	typename Vertex_base::Hidden_weighted_point_iterator wpit;
 	for (wpit = vit->hidden_weighted_points_begin();
 	     wpit != vit->hidden_weighted_points_end(); ++wpit) {
-	  Weighted_point_2 wp = *wpit;
+	  Apollonius_site_2 wp = *wpit;
 	  typename Gt::Rep::Circle_2 c(wp.point(),
 				       CGAL_NTS square(wp.weight()));
 	  str << c;
@@ -434,7 +435,7 @@ public:
 	typename Vertex_base::Hidden_weighted_point_iterator wpit;
 	for (wpit = vit->hidden_weighted_points_begin();
 	     wpit != vit->hidden_weighted_points_end(); ++wpit) {
-	  Weighted_point_2 wp = *wpit;
+	  Apollonius_site_2 wp = *wpit;
 	  str << wp.point();
 	}
       }
@@ -447,7 +448,7 @@ public:
   {
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
-      Weighted_point_2 wp = vit->point();
+      Apollonius_site_2 wp = vit->point();
       typename Gt::Rep::Circle_2 c(wp.point(),
 				   CGAL_NTS square(wp.weight()));
       str << c;
@@ -460,7 +461,7 @@ public:
   {
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
-      Weighted_point_2 wp = vit->point();
+      Apollonius_site_2 wp = vit->point();
       str << wp.point();
     }
     return str;
@@ -475,8 +476,8 @@ public:
     } else if ( number_of_vertices() == 2 ) {
       Vertex_handle v1(finite_vertices_begin());
       Vertex_handle v2(++finite_vertices_begin());
-      Weighted_point_2 p1 = v1->point();
-      Weighted_point_2 p2 = v2->point();
+      Apollonius_site_2 p1 = v1->point();
+      Apollonius_site_2 p2 = v2->point();
       typename Geom_traits::Segment_2 seg =
 	geom_traits().construct_Apollonius_primal_segment_2_object()(p1,p2);
       typename Geom_traits::Ray_2 ray1 =
@@ -501,19 +502,19 @@ public:
   {
     Finite_edges_iterator eit = finite_edges_begin();
     for (; eit != finite_edges_end(); ++eit) {
-      Object o = dual(eit);
+      typename Gt::Object_2 o = dual(eit);
       typename Geom_traits::Line_2     l;
       typename Geom_traits::Segment_2  s;
       typename Geom_traits::Ray_2      r;
       typename Geom_traits::Hyperbola_2          h;
       typename Geom_traits::Hyperbola_segment_2  hs;
       typename Geom_traits::Hyperbola_ray_2      hr;
-      if (CGAL::assign(hs, o))  str << hs;
-      if (CGAL::assign(s, o))   str << s; 
-      if (CGAL::assign(hr, o))  str << hr;
-      if (CGAL::assign(r, o))   str << r;
-      if (CGAL::assign(h, o))   str << h;
-      if (CGAL::assign(l, o))   str << l;
+      if (assign(hs, o))  str << hs;
+      if (assign(s, o))   str << s; 
+      if (assign(hr, o))  str << hr;
+      if (assign(r, o))   str << r;
+      if (assign(h, o))   str << h;
+      if (assign(l, o))   str << l;
     }
     return str;
   }
@@ -536,7 +537,7 @@ public:
 			       f->vertex(1)->point() );	  
 	}
       } else {
-	Weighted_point_2 wp = circumcircle(f);
+	Apollonius_site_2 wp = circumcircle(f);
 	typename Gt::Rep::Circle_2 c(wp.point(),
 				     CGAL_NTS square(wp.weight()));
 	str << c;
@@ -566,11 +567,11 @@ public:
   //======================================
   // Primal
   //  Weighted_point primal(const Face_handle& f) const;
-  Object primal(const Edge e) const;
-  inline Object primal(const Edge_circulator& ec) const {
+  typename Gt::Object_2 primal(const Edge e) const;
+  typename Gt::Object_2 primal(const Edge_circulator& ec) const {
     return primal(*ec);
   }
-  inline Object primal(const Finite_edges_iterator& ei) const {
+  typename Gt::Object_2 primal(const Finite_edges_iterator& ei) const {
     return primal(*ei);
   }
 
@@ -579,25 +580,25 @@ protected:
   // wrappers for the geometric predicates
 
   // checks is q is contained inside p
-  bool is_hidden(const Weighted_point_2 &p,
-		 const Weighted_point_2 &q) const;
+  bool is_hidden(const Apollonius_site_2 &p,
+		 const Apollonius_site_2 &q) const;
 
   // returns:
   //   ON_POSITIVE_SIDE if q is closer to p1
   //   ON_NEGATIVE_SIDE if q is closer to p2
   //   ON_ORIENTED_BOUNDARY if q is on the bisector of p1 and p2
-  Oriented_side side_of_bisector(const Weighted_point_2 &p1,
-				 const Weighted_point_2 &p2,
+  Oriented_side side_of_bisector(const Apollonius_site_2 &p1,
+				 const Apollonius_site_2 &p2,
 				 const Point_2 &q) const;
 
-  Sign incircle(const Weighted_point_2 &p1, const Weighted_point_2 &p2,
-		const Weighted_point_2 &p3, const Weighted_point_2 &q) const;
+  Sign incircle(const Apollonius_site_2 &p1, const Apollonius_site_2 &p2,
+		const Apollonius_site_2 &p3, const Apollonius_site_2 &q) const;
 
-  Sign incircle(const Weighted_point_2 &p1, const Weighted_point_2 &p2,
-		const Weighted_point_2 &q) const;
+  Sign incircle(const Apollonius_site_2 &p1, const Apollonius_site_2 &p2,
+		const Apollonius_site_2 &q) const;
 
 
-  Sign incircle(const Face_handle& f, const Weighted_point_2& q) const;
+  Sign incircle(const Face_handle& f, const Apollonius_site_2& q) const;
 
 
   Sign incircle(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -608,15 +609,15 @@ protected:
 
 
   
-  bool finite_edge_interior(const Weighted_point_2& p1,
-			    const Weighted_point_2& p2,
-			    const Weighted_point_2& p3,
-			    const Weighted_point_2& p4,
-			    const Weighted_point_2& q,
+  bool finite_edge_interior(const Apollonius_site_2& p1,
+			    const Apollonius_site_2& p2,
+			    const Apollonius_site_2& p3,
+			    const Apollonius_site_2& p4,
+			    const Apollonius_site_2& q,
 			    bool endpoints_in_conflict) const;
 
   bool finite_edge_interior(const Face_handle& f, int i,
-			    const Weighted_point_2& q,
+			    const Apollonius_site_2& q,
 			    bool endpoints_in_conflict) const;
 
   bool finite_edge_interior(const Vertex_handle& v1,
@@ -626,20 +627,20 @@ protected:
 			    const Vertex_handle& v,
 			    bool endpoints_in_conflict) const;
 
-  bool finite_edge_interior_degenerated(const Weighted_point_2& p1,
-					const Weighted_point_2& p2,
-					const Weighted_point_2& p3,
-					const Weighted_point_2& q,
+  bool finite_edge_interior_degenerated(const Apollonius_site_2& p1,
+					const Apollonius_site_2& p2,
+					const Apollonius_site_2& p3,
+					const Apollonius_site_2& q,
 					bool endpoints_in_conflict) const;
 
 
-  bool finite_edge_interior_degenerated(const Weighted_point_2& p1,
-					const Weighted_point_2& p2,
-					const Weighted_point_2& q,
+  bool finite_edge_interior_degenerated(const Apollonius_site_2& p1,
+					const Apollonius_site_2& p2,
+					const Apollonius_site_2& q,
 					bool endpoints_in_conflict) const;
 
   bool finite_edge_interior_degenerated(const Face_handle& f, int i,
-					const Weighted_point_2& p,
+					const Apollonius_site_2& p,
 					bool endpoints_in_conflict) const;
 
   bool finite_edge_interior_degenerated(const Vertex_handle& v1,
@@ -648,15 +649,15 @@ protected:
 					const Vertex_handle& v4,
 					const Vertex_handle& v,
 					bool endpoints_in_conflict) const;
-  bool infinite_edge_interior(const Weighted_point_2& p2,
-			      const Weighted_point_2& p3,
-			      const Weighted_point_2& p4,
-			      const Weighted_point_2& q,
+  bool infinite_edge_interior(const Apollonius_site_2& p2,
+			      const Apollonius_site_2& p3,
+			      const Apollonius_site_2& p4,
+			      const Apollonius_site_2& q,
 			      bool endpoints_in_conflict) const;
 
 
   bool infinite_edge_interior(const Face_handle& f, int i,
-			      const Weighted_point_2& p,
+			      const Apollonius_site_2& p,
 			      bool endpoints_in_conflict) const;
 
   bool infinite_edge_interior(const Vertex_handle& v1,
@@ -667,16 +668,16 @@ protected:
 			      bool endpoints_in_conflict) const;
 
   Conflict_type
-  finite_edge_conflict_type_degenerated(const Weighted_point_2& p1,
-					const Weighted_point_2& p2,
-					const Weighted_point_2& q) const;
+  finite_edge_conflict_type_degenerated(const Apollonius_site_2& p1,
+					const Apollonius_site_2& p2,
+					const Apollonius_site_2& q) const;
 
   bool edge_interior(const Face_handle& f, int i,
-		     const Weighted_point_2& p, bool b) const;
+		     const Apollonius_site_2& p, bool b) const;
 
 
   inline bool edge_interior(const Edge& e,
-			    const Weighted_point_2& p, bool b) const {
+			    const Apollonius_site_2& p, bool b) const {
     return edge_interior(e.first, e.second, p, b);
   }
 
@@ -687,10 +688,10 @@ protected:
 		     const Vertex_handle& v,
 		     bool endpoints_in_conflict) const;
 
-  inline bool is_degenerate_edge(const Weighted_point_2& p1,
-				 const Weighted_point_2& p2,
-				 const Weighted_point_2& p3,
-				 const Weighted_point_2& p4) const {
+  inline bool is_degenerate_edge(const Apollonius_site_2& p1,
+				 const Apollonius_site_2& p2,
+				 const Apollonius_site_2& p3,
+				 const Apollonius_site_2& p4) const {
     return geom_traits().is_degenerate_edge_2_object()
       (p1, p2, p3, p4);
   }
@@ -723,17 +724,17 @@ protected:
 protected:
   // wrappers for constructions
   Point_2 circumcenter(const Face_handle& f) const;
-  Point_2 circumcenter(const Weighted_point_2& p0, 
-		       const Weighted_point_2& p1, 
-		       const Weighted_point_2& p2) const;
+  Point_2 circumcenter(const Apollonius_site_2& p0, 
+		       const Apollonius_site_2& p1, 
+		       const Apollonius_site_2& p2) const;
 
-  Weighted_point_2 circumcircle(const Face_handle& f) const;
-  Weighted_point_2 circumcircle(const Weighted_point_2& p0, 
-				const Weighted_point_2& p1, 
-				const Weighted_point_2& p2) const;
+  Apollonius_site_2 circumcircle(const Face_handle& f) const;
+  Apollonius_site_2 circumcircle(const Apollonius_site_2& p0, 
+				const Apollonius_site_2& p1, 
+				const Apollonius_site_2& p2) const;
 
-  typename Gt::Line_2 circumcircle(const Weighted_point_2& p0,
-				   const Weighted_point_2& p1) const;
+  typename Gt::Line_2 circumcircle(const Apollonius_site_2& p0,
+				   const Apollonius_site_2& p1) const;
 
 protected:
   // wrappers for combinatorial operations on the data structure
@@ -751,12 +752,12 @@ protected:
   Edge flip(Face_handle& f, int i);
   Edge flip(Edge e);
 
-  Vertex_handle insert_in_face(Face_handle& f, const Weighted_point_2& p);
+  Vertex_handle insert_in_face(Face_handle& f, const Apollonius_site_2& p);
 
   bool          is_degree_2(const Vertex_handle& v) const;
 
   Vertex_handle insert_degree_2(Edge e);
-  Vertex_handle insert_degree_2(Edge e, const Weighted_point_2& p);
+  Vertex_handle insert_degree_2(Edge e, const Apollonius_site_2& p);
   void          remove_degree_2(Vertex_handle v);
   void          remove_degree_3(Vertex_handle v);
   void          remove_degree_3(Vertex_handle v, Face* f);
@@ -768,17 +769,17 @@ protected:
 
 protected:
   // insertion of the first three sites
-  Vertex_handle  insert_first(const Weighted_point_2& p);
-  Vertex_handle  insert_second(const Weighted_point_2& p);
-  Vertex_handle  insert_third(const Weighted_point_2& p);
+  Vertex_handle  insert_first(const Apollonius_site_2& p);
+  Vertex_handle  insert_second(const Apollonius_site_2& p);
+  Vertex_handle  insert_third(const Apollonius_site_2& p);
 
   // methods for insertion
   void initialize_conflict_region(const Face_handle& f, List& l);
   bool check_edge_for_hidden_weighted_points(const Face_handle& f, int i,
-					     const Weighted_point_2& p,
+					     const Apollonius_site_2& p,
 					     Vertex_map& vm);
   void expand_conflict_region(const Face_handle& f,
-			      const Weighted_point_2& p,
+			      const Apollonius_site_2& p,
 			      List& l, Face_map& fm, Vertex_map& vm,
 			      std::vector<Vh_triple*>* fe);
 
@@ -794,7 +795,7 @@ protected:
 					     unsigned int n_wanted);
   void remove_hidden_vertices(Vertex_handle&v, Vertex_map& vm,
 			      Face_map& fm);
-  Vertex_handle retriangulate_conflict_region(const Weighted_point_2& p,
+  Vertex_handle retriangulate_conflict_region(const Apollonius_site_2& p,
 					      List& l,
 					      Face_map& fm,
 					      Vertex_map& vm);
@@ -816,6 +817,12 @@ protected:
 protected:
   // methods for I/O
 
+  template<class T>
+  bool assign(T& t2, const typename Gt::Object_2& o2) const
+  {
+    return geom_traits().assign_2_object()(t2, o2);
+  }
+
   template< class Stream >
   Stream& draw_primal_edge(Edge e, Stream &str) const
   {
@@ -827,13 +834,13 @@ protected:
     typename Geom_traits::Hyperbola_segment_2  hs;
     //      typename Geom_traits::Hyperbola_ray_2      hr;
     typename Geom_traits::Parabola_segment_2   ps;
-    if (CGAL::assign(hs, o))  str << hs;
-    if (CGAL::assign(s, o))   str << s; 
-    if (CGAL::assign(ps, o))  str << ps;
-    if (CGAL::assign(r, o))   str << r;
-    //      if (CGAL::assign(hr, o))  str << hr;
-    //      if (CGAL::assign(h, o))   str << h;
-    //      if (CGAL::assign(l, o))   str << l;
+    if (assign(hs, o))  str << hs;
+    if (assign(s, o))   str << s; 
+    if (assign(ps, o))  str << ps;
+    if (assign(r, o))   str << r;
+    //      if (assign(hr, o))  str << hr;
+    //      if (assign(h, o))   str << h;
+    //      if (assign(l, o))   str << l;
     return str;
   }
 
@@ -848,12 +855,12 @@ protected:
     typename Geom_traits::Hyperbola_2          h;
     typename Geom_traits::Hyperbola_segment_2  hs;
     typename Geom_traits::Hyperbola_ray_2      hr;
-    if (CGAL::assign(hs, o))  str << hs;
-    if (CGAL::assign(s, o))   str << s; 
-    if (CGAL::assign(hr, o))  str << hr;
-    if (CGAL::assign(r, o))   str << r;
-    if (CGAL::assign(h, o))   str << h;
-    if (CGAL::assign(l, o))   str << l;
+    if (assign(hs, o))  str << hs;
+    if (assign(s, o))   str << s; 
+    if (assign(hr, o))  str << hr;
+    if (assign(r, o))   str << r;
+    if (assign(h, o))   str << h;
+    if (assign(l, o))   str << l;
 
     return str;
   }

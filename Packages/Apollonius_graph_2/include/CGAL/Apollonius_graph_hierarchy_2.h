@@ -60,15 +60,12 @@ private:
   typedef Apollonius_graph_base                   Ag_base;
 
   typedef typename Ag_base::Vertex                Vertex;
-  typedef typename Ag_base::Weighted_point_list   Weighted_point_list;
 
 public:
-  typedef Agds                           Data_structure;
-  typedef Gt                             Geom_traits;
-  typedef typename Gt::Weighted_point_2  Weighted_point_2;
-  typedef typename Gt::Point_2           Point_2;
-  typedef typename Gt::Site              Site;
-  typedef typename Gt::Weight            Weight;
+  typedef Agds                            Data_structure;
+  typedef Gt                              Geom_traits;
+  typedef typename Gt::Apollonius_site_2  Apollonius_site_2;
+  typedef typename Gt::Point_2            Point_2;
 
   typedef typename Ag_base::Vertex_handle    Vertex_handle;
   typedef typename Ag_base::Face_handle      Face_handle;
@@ -106,8 +103,9 @@ public:
   Apollonius_graph_hierarchy_2(Input_iterator first,
 			       Input_iterator beyond,
 			       const Geom_traits& gt = Geom_traits())
-    : Apollonius_graph_hierarchy_2(gt)
+    : Apollonius_graph_base(gt)
   {
+    init_hierarchy(gt);
     insert(first, beyond);
   }
 
@@ -119,6 +117,10 @@ public:
 
   ~Apollonius_graph_hierarchy_2();
 
+protected:
+  // used to initialize the hierarchy at construction time
+  void init_hierarchy(const Geom_traits& gt);
+
 public:
   // INSERTION
   //----------
@@ -126,18 +128,19 @@ public:
   void insert(Input_iterator first, Input_iterator beyond)
   {
     // copy the sites to a local container
-    typename Apollonius_graph_base::Weighted_point_list wp_list;
+    typename Apollonius_graph_base::Site_list wp_list;
+    //    Site_list wp_list;
     for (Input_iterator it = first; it != beyond; ++it) {
       wp_list.push_back(*it);
     }
 
     // sort by decreasing weight
-    typename Apollonius_graph_base::Weighted_point_less_than_comparator
+    typename Apollonius_graph_base::Site_less_than_comparator
       less_than(geom_traits());
     std::sort(wp_list.begin(), wp_list.end(), less_than);
 
     // now insert
-    typename Apollonius_graph_base::Weighted_point_list_iterator lit;
+    typename Apollonius_graph_base::Site_list_iterator lit;
     for (lit = wp_list.begin(); lit != wp_list.end(); ++lit) {
       insert(*lit);
     }
@@ -146,8 +149,8 @@ public:
     wp_list.clear();
   }
 
-  Vertex_handle insert(const Weighted_point_2& p);
-  inline Vertex_handle insert(const Weighted_point_2& p,
+  Vertex_handle insert(const Apollonius_site_2& p);
+  inline Vertex_handle insert(const Apollonius_site_2& p,
 			      Vertex_handle vnear) {
     return insert(p);
   }

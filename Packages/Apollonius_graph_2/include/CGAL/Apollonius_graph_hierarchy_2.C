@@ -30,14 +30,22 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt, bool StoreHidden, class Agds>
+void
 Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
-Apollonius_graph_hierarchy_2(const Geom_traits& gt)
-  : Apollonius_graph_base(gt), random((long)0)
-{ 
+init_hierarchy(const Geom_traits& gt)
+{
   hierarchy[0] = this; 
   for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
     hierarchy[i] = new Apollonius_graph_base(gt);
   }
+}
+
+template < class Gt, bool StoreHidden, class Agds>
+Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
+Apollonius_graph_hierarchy_2(const Geom_traits& gt)
+  : Apollonius_graph_base(gt), random((long)0)
+{ 
+  init_hierarchy(gt);
 }
 
 
@@ -46,12 +54,9 @@ template <class Gt, bool StoreHidden, class Agds>
 Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
 Apollonius_graph_hierarchy_2
 (const Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>& agh)
-    : Apollonius_graph_base(), random((long)0)
+    : Apollonius_graph_base(agh.geom_traits()), random((long)0)
 { 
-  // create an empty triangulation to be able to delete it !
-  hierarchy[0] = this; 
-  for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i)
-    hierarchy[i] = new Apollonius_graph_base(agh.geom_traits());
+  init_hierarchy(agh.geom_traits());
   copy(agh);
 } 
  
@@ -83,7 +88,7 @@ copy
   // compute a map at lower level
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it) {
-    if (it->up()) V[ it->up()->down() ] = it;
+    if ( it->up() != NULL ) V[ it->up()->down() ] = it;
   }
 
   for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
@@ -94,7 +99,7 @@ copy
       // make reverse link
       it->down()->set_up( it );
       // make map for next level
-      if (it->up()) V[ it->up()->down() ] = it;
+      if ( it->up() != NULL ) V[ it->up()->down() ] = it;
     }
   }
 }
@@ -156,7 +161,7 @@ is_valid(bool verbose, int level) const
 template <class Gt, bool StoreHidden, class Agds>
 typename Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
-insert(const Weighted_point_2 &p)
+insert(const Apollonius_site_2 &p)
 {
   int vertex_level = random_level();
 
@@ -199,12 +204,12 @@ insert(const Weighted_point_2 &p)
   int n_hidden = 0;
 
   // locate the nearest neighbor using hierarchy
-  nearest_neighbor(p, vnear);
+  nearest_neighbor(p.point(), vnear);
 
   CGAL_assertion( vnear[0] != NULL );
 
   // check if it is hidden
-  Weighted_point_2 wp_nearest = vnear[0]->point();
+  Apollonius_site_2 wp_nearest = vnear[0]->point();
   if ( is_hidden(wp_nearest, p) ) {
     vnear[0]->add_hidden_weighted_point(p);
     return Vertex_handle(NULL);
@@ -340,7 +345,7 @@ remove(Vertex_handle v)
   CGAL_triangulation_precondition( !is_infinite(v));
 
   // get the hidden circles
-  Weighted_point_list wp_list;
+  typename Apollonius_graph_base::Site_list wp_list;
   typename Vertex_base::Hidden_weighted_point_iterator wpit;
 
   for (wpit = v->hidden_weighted_points_begin();
