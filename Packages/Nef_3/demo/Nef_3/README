@@ -10,11 +10,18 @@ nef_3:  This program maintains a stack of Nef_3 polyhedra and accepts
         boolean operations, save files, etc.
 
 visualization_SM: This program shows how to display the sphere map of 
-----------------  a vertex in an Nef_polyhedron_3.
+----------------  a vertex in an Nef_polyhedron_3. The program expects
+                  a 3D Nef polyherdon from standard in. For example
+		  call ./visualization_SM < visualization_SM.cin
 
 
 visualization_SNC: This program shows how to display Nef_polyhedron_3. 
+                   The program expects a 3D Nef polyhedron from
+		   standard in. For example call
+		   ./visualization_SNC < visualization_SNC.cin
 -----------------
 
-cube.off: example input file
+cube.off, 
+visualization_SNC.cin,
+visualization_SM.cin:   example input file
 --------
