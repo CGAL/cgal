@@ -718,6 +718,14 @@ Packages/Apollonius_graph_2/demo/Apollonius_graph_2/fileprint.xpm -text
 Packages/Apollonius_graph_2/demo/Apollonius_graph_2/filesave.xpm -text
 Packages/Apollonius_graph_2/demo/Apollonius_graph_2/remove.xpm -text
 Packages/Apollonius_graph_2/demo/Apollonius_graph_2/removecircle.xpm -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_diagram.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_diagram.gif -text svneol=unset#unset
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_graph.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_graph.gif -text svneol=unset#unset
+Packages/Apollonius_graph_2/doc_tex/basic/Apollonius_graph_2/apollonius_diagram.eps -text
+Packages/Apollonius_graph_2/doc_tex/basic/Apollonius_graph_2/apollonius_diagram.gif -text svneol=unset#unset
+Packages/Apollonius_graph_2/doc_tex/basic/Apollonius_graph_2/apollonius_graph.eps -text
+Packages/Apollonius_graph_2/doc_tex/basic/Apollonius_graph_2/apollonius_graph.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr3.gif svneol=native#unset
 Packages/Arrangement/doc_tex/Arrangement_2/circles.gif svneol=native#unset
 Packages/Arrangement/doc_tex/basic/Arrangement_2/arr3.gif svneol=native#unset

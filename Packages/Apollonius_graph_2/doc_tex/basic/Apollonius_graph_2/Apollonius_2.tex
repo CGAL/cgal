@@ -1,0 +1,167 @@
+% // ============================================================================
+%//
+%// Copyright (c) 1999 The CGAL Consortium
+%//
+%// This software and related documentation is part of an INTERNAL release
+%// of the Computational Geometry Algorithms Library (CGAL). It is not
+%// intended for general use.
+%//
+%// ----------------------------------------------------------------------------
+%//
+%// release       :
+%// release_date  :
+%//
+%// file          : /doc_tex/basic/Apollonius_graph_2/Apollonius_2.tex
+%// revision      : $Revision$
+%//
+%// author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+%//
+%// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
+%//
+%//============================================================================
+
+\chapter{2D Apollonius graph}
+\label{chapter-apollonius2}
+
+\vspace*{1cm}
+
+\begin{ccTexOnly}
+\minitoc
+\newpage
+\end{ccTexOnly}
+
+\begin{figure}[htb]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=0.4\textwidth]%
+{Apollonius_graph_2/apollonius_diagram.eps}
+\hspace*{2cm} 
+\includegraphics[width=0.4\textwidth]%
+{Apollonius_graph_2/apollonius_graph.eps} 
+\end{center}
+\end{ccTexOnly}
+\caption{The Apollonius diagram (left) and its dual the Apollonius
+  graph (right).}
+\label{fig:apollonius}
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./apollonius_diagram.gif" align=center
+alt="The Apollonius diagram">
+<img border=0 src="./apollonius_graph.gif" align=center
+alt="The Apollonius graph (dual of the Apollonius diagram)">
+</center>
+\end{ccHtmlOnly}
+\end{figure}
+
+The 2D Apollonius graph class of \cgal\ is designed to compute the
+dual of the {\em Apollonius diagram} or, as it is also known, the
+{\em Additively weighted Voronoi diagram}. The algorithm that has been
+implemented is dynamic, which means that we can perform insertions and
+deletions on line. The corresponding \cgal\ class is called
+\ccc{Apollonius_graph_2<ApolloniusGraphEuclideanTraits_2,StoreHidden,ApolloniusGraphDataStructure_2>}
+and will be discussed in
+more detail below. The interested reader may want to refer to the
+paper by Karavelas and Yvinec \cite{} for the general idea as well as
+the details of the algorithm implemented.
+
+
+Before describing the details of the implementation we make a brief
+introduction to the theory of Apollonius diagrams.
+The Apollonius diagram is defined over a set of weighted points
+$P_i=(c_i,w_i)$, $n=1,\ldots,n$, where $c_i$ is the point and $w_i$
+the weight of $P_i$. It is a subdivision of the plane into connected
+regions, called {\em cells}, associated with the weighted points (see
+Fig. \ref{fig:apollonius}(left)). The cell of a 
+weighted point $P_i$ is the locus of points on the plane that are
+closer to $P_i$ than any other weighted point $P_j$, $j\ne i$.
+It can easily be seen that it is a generalization of the Voronoi
+diagram for points, which can actually be obtained if all the weights
+$w_i$ are equal. If all weights $w_i$ are non-negative, the Apollonius
+graph can be viewed as the Voronoi diagram of the set of circles
+$\{P_1,\ldots, P_n\}$, where $c_i$ is the center of the circle $P_i$
+and $w_i$ its radius. The distance $\delta(x, P_i)$ of a point $x$ in
+the plane from a circle $P_i$ is then defined as:
+\[      \delta(x,P_i)=\|x-c_i\|-w_i,\]
+where $\|\cdot\|$ denotes the Euclidean norm.
+Unlike the case of points, however, it is possible
+that a weighted point $P_i$ might have an empty cell. If this is the
+case we call the weighted point {\em hidden} (these are the black
+circles in Fig. \ref{fig:apollonius}). From now on we will assume for
+simplicity that all weights are positive and we will refer to the
+weighted points as circles.
+
+
+The Apollonius diagram is planar graph, and so is its dual, the
+Apollonius graph. There are many ways to embed it on the plane and one
+such way is shown in Fig. \ref{fig:apollonius}(right).
+The Apollonius graph is uniquely defined once we have
+the Apollonius diagram. If the circles are in {\em general position},
+then the Apollonius graph is a graph with triangular faces away from
+the convex hull of the set of circles (by triangular we mean that
+every face has exactly three edges). Near the convex hull we may
+have some spikes (i.e., vertices of degree 1). To unify our approach
+and handling of the Apollonius graph we add to the set of (finite)
+circles a fictious circle at infinity, which we call the
+{\em point at infinity}. We can then connect all vertices of the outer
+face of the Apollonius graph with the point at infinity which gives us
+a graph with the property that all its faces are now
+triangular. However, the Apollonius graph is not a triangulation for
+two main reasons: we cannot always embed it on the plane with straight
+lines segments that yield a triangulation and moreover we may have two
+faces of the graph that have two edges in common, which is not allowed
+in a triangulation. Both of these particularities appear when we
+consider the Apollonius graph of the set of circles in
+Fig. \ref{fig:apollonius}(right).
+
+
+We would like to finish our brief introduction to the theory of
+Apollonius graphs by discussing the concept of general position. We say
+that a set of circles is in general position if no two triples of
+circles have the same tritangent circle. This statement is rather
+technical and it is best understood in the context of points. The
+equivalent statement of points is that we have no two triples of
+points that define the same circle, or equivalently that no four
+circles are co-circular. The statement about general position made
+above is a direct generalization of the (much simpler to understand)
+statement about points. On the contrary, when we have circles in
+degenerate position, the Apollonius graph has faces with more than
+three edges on their boundary. We can get a triangulated version of
+the graph by simply {\em triangulating} the corrsponding face in an
+arbitrary way. In fact the algorithm that has been implemented in
+\cgal\ has the property that it always returns a valid
+{\em triangulated} version of the Apollonius graph. By valid we mean
+that is contains the actual Apollonius graph (i.e., the actual dual of
+the Apollonius diagram) and whenever there are faces with more than
+three faces then they are triangulated. The way that they are
+triangulated depends on the order of insertion and deletion of the
+circles in the diagram.
+
+
+
+One final point has to be made about hidden circles. First of all we
+would like to be more precise about our definition of hidden circles:
+we say that a circle is hidden if its cell has empty interior. This
+definition allows us to guarantee that all non-hidden circles have
+cells that are two-dimensional regions.
+Geometrically the fact that a circle is hidden means that it is
+contained in the closure of the disk of another circle (see again
+Fig. \ref{fig:apollonius}). Hidden circles pose an additional
+difficulty to our algorithm and software design. Since we allow
+circles to be inserted and deleted at wish, it is possible that a
+circle that was hidden at some point, may become non-hidden at another
+point; for example this can happen if we delete the circle that
+contains it. For this purpose we store hidden circles and have them
+reappear when they become non-hidden. We will discuss this issue in
+detail below. For the time being it suffices to say that the user has
+the ability to control this behavior. More specifically it is possible
+to discard of the circles that become hidden. This choice is totally
+natural when for example we expect to do only insertions, since in
+this case a circle that becomes hidden will never reapper. On the
+other hand if deletions are expected as well, then we lose the ability
+to have the hidden circles reapper.
+
+
+\section{Representation}
+\label{sec:apollonius2-representation}
+
+
