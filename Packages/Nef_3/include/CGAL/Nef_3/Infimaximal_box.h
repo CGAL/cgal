@@ -48,9 +48,12 @@ class Infimaximal_box {
   typedef typename Kernel::RT               RT;
   typedef Kernel                            Standard_kernel;
   typedef typename Kernel::Point_3          Point_3;
+  typedef typename Kernel::Vector_3         Vector_3;
   typedef typename Kernel::Plane_3          Plane_3;
   typedef typename Kernel::Ray_3            Ray_3;
   typedef typename Kernel::Direction_3      Direction_3;
+  typedef Plane_3                           Standard_plane;
+  typedef Vector_3                          Standard_vector;
   typedef Point_3                           Standard_point;
 
  public:
@@ -80,6 +83,14 @@ class Infimaximal_box {
   }
 
   static Standard_point standard_point(Point_3 p, NT d=1) {
+    return p;
+  }
+
+  static Standard_plane standard_plane(Plane_3 p, NT d=1) {
+    return p;
+  }
+
+  static Standard_vector standard_vector(Vector_3 p) {
     return p;
   }
 
