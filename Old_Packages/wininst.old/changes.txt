@@ -1,3 +1,6 @@
+1.4.3 (25/6/2001)  Packages renaming : Triangulation  -> Triangulation_2
+                                       Triangulation3 -> Triangulation_3
+
 1.4.2 (12/1/2000)  added existance check for tmpt0.cpp at the end of
 		   cgal_config.bat. Updated install.txt.
 
