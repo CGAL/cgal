@@ -1,4 +1,4 @@
-#include "Mesh.h"
+#include <CGAL/Mesh_2.h>
 #include <qapplication.h>
 #include <qpainter.h>
 #include <qfiledialog.h>

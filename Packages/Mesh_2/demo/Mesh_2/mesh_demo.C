@@ -19,7 +19,7 @@ int main(int, char*)
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
-#include "Mesh.h"
+#include <CGAL/Mesh_2.h>
 
 
 #include <CGAL/IO/Qt_widget.h>
