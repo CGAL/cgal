@@ -83,6 +83,12 @@ Saarbruecken@)
 #ifndef CGAL_WMULT_H
 #define CGAL_WMULT_H
 
+#include <CGAL/Kernel/Wutils.h>
+
+#endif // CGAL_WMULT_H
+@}
+
+@$@<Moved to Kernel/Wutils.h@>@Z==@{
 CGAL_BEGIN_NAMESPACE
 
 
@@ -203,8 +209,6 @@ inline RT wmult(Simple_cartesian<RT> *, const RT &a,
 #endif // CGAL_SIMPLE_CARTESIAN_H
 
 CGAL_END_NAMESPACE
-
-#endif // CGAL_WMULT_H
 @}
 
 @D@<Testing for null vector@>
