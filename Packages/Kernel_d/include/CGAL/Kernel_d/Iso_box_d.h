@@ -24,7 +24,9 @@
 #ifndef CGAL_ISO_BOX_D_H
 #define CGAL_ISO_BOX_D_H
 
-#include <CGAL/Kernel_d/Pair_d.h> 
+#include <CGAL/basic.h>
+#include <CGAL/Handle_for.h>
+#include <CGAL/representation_tags.h> 
 #include <functional>
 #include <algorithm>
 #include <numeric>
