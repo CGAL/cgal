@@ -78,12 +78,6 @@
 #  define CGAL_END_NAMESPACE
 #endif
 
-#ifdef CGAL_CFG_VC7_PRIVATE_TYPE_BUG
-#  define CGAL_VC7_BUG_PROTECTED protected:
-#else
-#  define CGAL_VC7_BUG_PROTECTED
-#endif
-
 #define CGAL_NULL_TMPL_ARGS <>
 
 #ifdef CGAL_CFG_NO_STDC_NAMESPACE
