@@ -836,7 +836,8 @@ output: trapezoid iterator
     
     CGAL_warning(!tt_left.is_inner_node());
     CGAL_warning(!tt_right.is_inner_node());
-    CGAL_warning(tt_left->is_right_unbounded()==tt_right->is_right_unbounded());
+    CGAL_warning(tt_left->is_right_unbounded() ==
+                 tt_right->is_right_unbounded());
 
 #else
     std::cout << "\nremove_split_trapezoid_by_point(){";
@@ -3083,16 +3084,17 @@ postcondition:
 
     // initialize content to point to curves in X_trapezoid Tree
     if (rep>0)
+    {
+      bool o=set_needs_update(false);
+      typename std::vector<X_curve>::iterator it = content.begin(),
+          it_end = content.end();
+      while(it!=it_end) 
       {
-        bool o=set_needs_update(false);
-        typename std::vector<X_curve>::iterator it=content.begin(),it_end=content.end();
-        while(it!=it_end) 
-          {
-            insert(*it);
-            ++it;
-          }
-        set_needs_update(o);
+        insert(*it);
+        ++it;
       }
+      set_needs_update(o);
+    }
     
 #ifdef CGAL_TD_DEBUG
     
@@ -3130,7 +3132,8 @@ postcondition:
   {
     unsigned long sz=number_of_curves();
     list_container representatives;
-    container(representatives,Active_right_degenerate_curve_trapezoid(*traits));
+    container(representatives,
+              Active_right_degenerate_curve_trapezoid(*traits));
     
 #ifndef CGAL_TD_DEBUG
     
@@ -3140,23 +3143,24 @@ postcondition:
     
     unsigned long rep=representatives.size();
     if (sz!=rep)
-      {
-        std::cerr << "\nnumber_of_curves()=" << sz;
-        std::cerr << "\nrepresentatives.size()=" << rep;
-        CGAL_assertion(number_of_curves()==representatives.size());
-      }
+    {
+      std::cerr << "\nnumber_of_curves()=" << sz;
+      std::cerr << "\nrepresentatives.size()=" << rep;
+      CGAL_assertion(number_of_curves()==representatives.size());
+    }
     
 #endif
     
     if (sz>0)
+    {
+      typename list_container::iterator it = representatives.begin(),
+          it_end = representatives.end();
+      while(it!=it_end)
       {
-        typename list_container::iterator it=representatives.begin(),it_end=representatives.end();
-        while(it!=it_end)
-          {
-            content.push_back(it->top());
-            ++it;
-          }
+        content.push_back(it->top());
+        ++it;
       }
+    }
     std::random_shuffle(content.begin(),content.end());
     return sz;
 }
