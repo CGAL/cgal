@@ -642,8 +642,6 @@ void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_>
 #if defined ISR_DEBUG || defined ISR_TIMER
         ++needed_hp;
 #endif
-
-        ++number_of_intersections;
         hot_pixels_intersected_set.insert(*iter);
       }
 #if defined ISR_DEBUG || defined ISR_TIMER
@@ -651,6 +649,8 @@ void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_>
           ++unneeded_hp;
 #endif
     }
+
+    number_of_intersections = hot_pixels_intersected_set.size();
   }
 
 template<class Rep_>
@@ -711,7 +711,7 @@ void Snap_rounding_2<Rep_>::reroute_isr(std::set<Hot_Pixel<Rep_> *,
         reroute_isr(hot_pixels_intersected_set,seg_output,
             number_of_intersections,false);
       }
-    } else {      
+    } else {
       // insert second hot pixel
       hot_pixel_iter = inp_hot_pixels_intersected_set.begin();
       ++hot_pixel_iter;
@@ -751,7 +751,7 @@ void Snap_rounding_2<Rep_>::iterate()
         erase_hp = true;
         delete(hp);
         erase_hp = false;
-      } else
+      } else {
         seg_output.push_back(Point_2((*hot_pixel_iter)->get_x(),
                              (*hot_pixel_iter)->get_y()));
         if(number_of_intersections > 1) {
@@ -762,6 +762,7 @@ void Snap_rounding_2<Rep_>::iterate()
                         number_of_intersections,true);
           else
             reroute_sr(hot_pixels_intersected_set,seg_output);
+	}
       }
 
       if(stat_current_number_of_vertices > stat_max_number_of_vertices)
