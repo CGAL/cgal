@@ -27,6 +27,21 @@ public:
 };
 
 template <>
+class Equal_xy_plane_xy_2<leda_d3_rat_point> 
+{
+public:
+   typedef bool          result_type;
+   typedef Arity_tag<2>  Arity;
+
+   bool 
+   operator()(const leda_d3_rat_point& p, const leda_d3_rat_point& q) const
+   { 
+     return 
+        compare_lexicographically_xyC2(p.xcoord(), p.ycoord(), q.xcoord(), q.ycoord()) == EQUAL;
+   }
+};
+
+template <>
 class Less_yx_plane_xy_2<leda_d3_rat_point> 
 {
 public:
@@ -115,6 +130,7 @@ public:
     typedef leda_d3_rat_point                   Point_3;
     typedef Point_3                             Point_2;
     typedef Less_xy_plane_xy_2<Point_3>         Less_xy_2;
+    typedef Equal_xy_plane_xy_2<Point_3>        Equal_2;     
     typedef Less_yx_plane_xy_2<Point_3>         Less_yx_2;
     typedef Left_turn_plane_xy_2<Point_3>       Leftturn_2;
     typedef Left_turn_plane_xy_2<Point_3>       Left_turn_2;    
@@ -126,6 +142,10 @@ public:
     Less_xy_2
     less_xy_2_object() const
     {  return Less_xy_2(); }
+    
+    Equal_2
+    equal_2_object() const
+    {  return Equal_2(); }    
 
     Less_yx_2
     less_yx_2_object() const
