@@ -1,4 +1,9 @@
 //-----------------------------------------------------------------------//
+// 1.41
++Adapted some workarounds for MSVC for dealing with outdated use
+ of isspace, isalnum and isdigit in CGAL.
+
+//-----------------------------------------------------------------------//
 // 1.40
 +Adapted CGAL_CFG_NO_LOCALE.C to avoid strange runtime error under MSVC
 +Adapted CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION.C to avoid linking error
