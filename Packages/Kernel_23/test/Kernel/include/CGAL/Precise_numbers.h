@@ -22,7 +22,11 @@
 #ifndef CGAL_PRECISE_NUMBERS_H
 #define CGAL_PRECISE_NUMBERS_H
 
-#ifdef CGAL_USE_LEDA
+#if defined CGAL_USE_GMPXX
+#  include <CGAL/gmpxx.h>
+typedef mpz_class                       Precise_integer;
+typedef mpq_class                       Precise_rational;
+#elif defined CGAL_USE_LEDA
 #  include <CGAL/leda_integer.h>
 #  include <CGAL/leda_rational.h>
 typedef leda_integer                    Precise_integer;

@@ -150,11 +150,11 @@ _test_cls_sphere_3(const R& )
  RT cos5;
  RT den5;
  RT RT0 = RT(0);
- CGAL::rational_rotation_approximation(n11,n13, sin1, cos1, den1, -n2,n12);
- CGAL::rational_rotation_approximation(-n8, n9, sin2, cos2, den2, -n2,n12);
- CGAL::rational_rotation_approximation( n5,-n1, sin3, cos3, den3, -n2,n12);
- CGAL::rational_rotation_approximation(-n5,-n11,sin4, cos4, den4, -n2,n12);
- CGAL::rational_rotation_approximation(-n2, n2, sin5, cos5, den5, -n2,n12);
+ CGAL::rational_rotation_approximation<RT>(n11,n13, sin1, cos1, den1, -n2,n12);
+ CGAL::rational_rotation_approximation<RT>(-n8, n9, sin2, cos2, den2, -n2,n12);
+ CGAL::rational_rotation_approximation<RT>( n5,-n1, sin3, cos3, den3, -n2,n12);
+ CGAL::rational_rotation_approximation<RT>(-n5,-n11,sin4, cos4, den4, -n2,n12);
+ CGAL::rational_rotation_approximation<RT>(-n2, n2, sin5, cos5, den5, -n2,n12);
 
  CGAL::Aff_transformation_3<R> rotate1( sin1, cos1,  RT0,  RT0,
                                        -cos1, sin1,  RT0,  RT0,

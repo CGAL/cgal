@@ -1,3 +1,6 @@
+3.48  (5 Oct 2002)
+- Better support expression templates NTs (GMP++).
+
 3.47  (14 Aug 2002)
 - added missing test for less_x, less_y
 
