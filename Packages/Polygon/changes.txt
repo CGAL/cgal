@@ -1,3 +1,6 @@
+4.7 (20 March 2002)
++ Added test for availability of GMP in SimplicityTest.C
+
 4.6.4 (15 March 2002)
 + No changes, but something went wrong during previous submit.
 
