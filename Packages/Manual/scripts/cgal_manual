@@ -100,12 +100,12 @@
 #
 # When the -testsuite option is used the script will copy all the manuals
 # and logfiles to $TestSuiteResultPath/CGAL-$CgalVersion/ and creates an
-# HTML summary page index.html in that subdirectory. The latest results
-# is also always accessible at $TestSuiteResultPath/last/index.html .
+# HTML summary page index.html in that subdirectory. The latest result
+# is also always accessible at $TestSuiteResultPath/LAST/index.html .
 #    Futhermore, the script will cleanup old results. For the most recent
 # number $TestSuiteFullHistory of test suites the full results including
 # the manuals are kept. Older test suites will have their manuals deleted
-# to save space. Int total only $TestSuiteHistory many test suites are kept.
+# to save space. In total only $TestSuiteHistory many test suites are kept.
 #    The history of test suites is managed in a shift register like fashion
 # using files in $TestSuiteResultPath of defined names History.<i> that 
 # contain the name of the i-th test suite subdirectory. The 1st is the 
@@ -189,7 +189,7 @@ Time="`date '+%T %Z'`"
 # Try to determine the CGAL version (works only for internal/external releases)
 # Otherwise use date.
 if [ -r version.tex ]; then
-    CgalVersion="`cat version.tex | grep cgalversion | sed 's/[}]$//' | sed 's/.*[{]//'`"
+    CgalVersion="`cat version.tex | grep '\\cgalversion[{]' | sed 's/[}]$//' | sed 's/.*[{]//'`"
 else
     CgalVersion=`echo ${Date} | sed 's/ /_/g'`
 fi
@@ -291,7 +291,7 @@ ${BoldColor}Options:${ResetColor}
                         only after reading the config section of this script.
     ${BoldColor}-h${ResetColor}                  help (this text).
     ${BoldColor}-V${ResetColor}                  version.
-    ${BoldColor}-v${ResetColor}                  verbose: repeats logfiles on stserr.
+    ${BoldColor}-v${ResetColor}                  verbose: repeats logfiles on stderr.
     ${BoldColor}-k${ResetColor}                  keep logfiles (default: delete after a clean run).
     ${BoldColor}-n${ResetColor}                  no logfile: delete logfiles always.
     ${BoldColor}-s${ResetColor}                  create a summary logfile .sum .
@@ -461,7 +461,7 @@ EOF
 \begin{document}
 
 EOF
-    echo "\\cgalTitlePage{$1 Package}" | sed 's/_/\\_/g'
+    echo "\\cgaltitlepage{$1 Package}" | sed 's/_/\\_/g'
     cat <<EOF
 
 \cgalchapters{

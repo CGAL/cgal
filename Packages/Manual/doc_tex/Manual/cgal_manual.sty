@@ -115,13 +115,13 @@
 
 % default column layout
 % ---------------------
-\newcommand{\cgalColumnLayout}{%
+\newcommand{\cgalcolumnlayout}{%
     \ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{8.5cm}}%
     \ccPropagateThreeToTwoColumns}
 
 % reinitialize some settings before each chapter
 % ----------------------------------------------
-\newcommand{\cgalReinit}{\cgalColumnLayout}
+\newcommand{\cgalreinit}{\cgalcolumnlayout}
 
 % The tab marker are aligned with the top of the main text. To align
 % them with the page header, the following length definition can be used.
@@ -132,8 +132,8 @@
 % other redefinitions of ccRefPageBegin and End don't cause strange problems
 % (e.g. if ccAdvanced is used to bracket a ref page)
 % -------------------------------------------------------------------------
-%\def\ccRefPageBegin{\ccParDims\cgalColumnLayout}
-%\def\ccRefPageEnd{\ccParDims\cgalColumnLayout}
+%\def\ccRefPageBegin{\ccParDims\cgalcolumnlayout}
+%\def\ccRefPageEnd{\ccParDims\cgalcolumnlayout}
 
 
 % All identifiers reside in CGAL scope by default
@@ -152,7 +152,7 @@
 
 % Provide a default title page macro. Args: <package/module name>
 % ---------------------------------------------------------------
-\newcommand{\cgalTitlePage}[1]{%
+\newcommand{\cgaltitlepage}[1]{%
   \pagestyle{empty}
   \begin{titlepage}\mbox{}\vspace{3cm}
   \lcTex{\centerline{\IpeScale{25}%
@@ -178,9 +178,35 @@
 % Implement the two columns layout for the HTML converted part
 % ------------------------------------------------------------
 
-% Define a macro of suitable name that can be tested with the
-% \isundefined test of the \ifthenelse macro.
-\newcommand{\cgalDeclarePackage}[1]{}
+\lcTex{
+  % Args: <package-name>
+  % Remembers the package name, such that it can be tested later with
+  % \cgalifpackage{<package-name>}{<yes-text>}{<no-text>}
+  \newcommand{\cgaldeclarepackage}[1]{%
+    \expandafter\xdef\csname CgalPackage#1\endcsname{Dummy}}
+
+  % Args: <package-name>, <yes-text>, <no-text>
+  % Tests, if <package-name> was previously declared with 
+  % \cgaldeclarepackage{<package-name>}, and if so expands the <yes-text>,
+  % and otherwise expands the <no-text>
+  \newcommand{\cgalifpackage}[3]{%
+    \expandafter\ifx\csname CgalPackage#1\endcsname\relax #3\else #2\fi}
+}
+
+\lcHtml{
+  % Args: <package-name>
+  % Remembers the package name, such that it can be tested later with
+  % \cgalifpackage{<package-name>}{<yes-text>}{<no-text>}
+  \newcommand{\cgaldeclarepackage}[1]{\gdef{\CgalPackage#G1}{Dummy}}
+
+  % Args: <package-name>, <yes-text>, <no-text>
+  % Tests, if <package-name> was previously declared with 
+  % \cgaldeclarepackage{<package-name>}, and if so expands the <yes-text>,
+  % and otherwise expands the <no-text>
+  \newcommand{\cgalifpackage}[3]{\lciIfDefined{\CgalPackage#G1}{#2}{#3}}
+}
+
+\lcHtml{\lcTwoColumnToc}%
 
 % Group all \entryleft, \entryright, \entryleftright, \package... commands 
 % as argument to this macro.
@@ -190,25 +216,25 @@
   \newcommand{\entryleft}[1]{}%
   \newcommand{\entryright}[1]{}%
   \newcommand{\entryleftright}[2]{}%
-  \newcommand{\packageleft}[1]{\cgalDeclarePackage{##1}}%
-  \newcommand{\packageright}[1]{\cgalDeclarePackage{##1}}%
+  \newcommand{\packageleft}[1]{\cgaldeclarepackage{##1}}%
+  \newcommand{\packageright}[1]{\cgaldeclarepackage{##1}}%
   \newcommand{\packageleftright}[2]{%
-    \cgalDeclarePackage{##1}\cgalDeclarePackage{##2}}%
+    \cgaldeclarepackage{##1}\cgaldeclarepackage{##2}}%
   #1
   \lcTex{%
     \renewcommand{\entryleft}[1]{##1}%
     \renewcommand{\entryright}[1]{}%
     \renewcommand{\entryleftright}[2]{##1}%
-    \renewcommand{\packageleft}[1]{\cgalReinit\include{##1/main}}%
+    \renewcommand{\packageleft}[1]{\cgalreinit\include{##1/main}}%
     \renewcommand{\packageright}[1]{}%
-    \renewcommand{\packageleftright}[2]{\cgalReinit\include{##1/main}}%
+    \renewcommand{\packageleftright}[2]{\cgalreinit\include{##1/main}}%
     #1
     \renewcommand{\entryleft}[1]{}%
     \renewcommand{\entryright}[1]{##1}%
     \renewcommand{\entryleftright}[2]{##2}%
     \renewcommand{\packageleft}[1]{}%
-    \renewcommand{\packageright}[1]{\cgalReinit\include{##1/main}}%
-    \renewcommand{\packageleftright}[2]{\cgalReinit\include{##2/main}}%
+    \renewcommand{\packageright}[1]{\cgalreinit\include{##1/main}}%
+    \renewcommand{\packageleftright}[2]{\cgalreinit\include{##2/main}}%
     #1
   }%
   \lcHtml{\lciIfTwoColumnToc{
@@ -216,27 +242,27 @@
       \newcommand{\entryright}[1]{\lcTocRight ##1}%
       \newcommand{\entryleftright}[2]{%
         \lcTocSync\lcTocLeft ##1\lcTocRight ##2\lcTocSync}%
-      \newcommand{\packageleft}[1]{\lcTocLeft \cgalReinit\include{##1/main}}%
+      \newcommand{\packageleft}[1]{\lcTocLeft \cgalreinit\include{##1/main}}%
       % improve that later
-      \newcommand{\packageright}[1]{\lcTocRight \cgalReinit\include{##1/main}}%
+      \newcommand{\packageright}[1]{\lcTocRight \cgalreinit\include{##1/main}}%
       \newcommand{\packageleftright}[2]{%
-        \lcTocSync\lcTocLeft\cgalReinit\include{##1/main}%
-        \lcTocRight\cgalReinit\include{##2/main}\lcTocSync}%
+        \lcTocSync\lcTocLeft\cgalreinit\include{##1/main}%
+        \lcTocRight\cgalreinit\include{##2/main}\lcTocSync}%
       #1
     }{%
       \newcommand{\entryleft}[1]{##1}%
       \newcommand{\entryright}[1]{}%
       \newcommand{\entryleftright}[2]{##1}%
-      \newcommand{\packageleft}[1]{\cgalReinit\include{##1/main}}%
+      \newcommand{\packageleft}[1]{\cgalreinit\include{##1/main}}%
       \newcommand{\packageright}[1]{}%
-      \newcommand{\packageleftright}[2]{\cgalReinit\include{##1/main}}%
+      \newcommand{\packageleftright}[2]{\cgalreinit\include{##1/main}}%
       #1
       \renewcommand{\entryleft}[1]{}%
       \renewcommand{\entryright}[1]{##1}%
       \renewcommand{\entryleftright}[2]{##2}%
       \renewcommand{\packageleft}[1]{}%
-      \renewcommand{\packageright}[1]{\cgalReinit\include{##1/main}}%
-      \renewcommand{\packageleftright}[2]{\cgalReinit\include{##2/main}}%
+      \renewcommand{\packageright}[1]{\cgalreinit\include{##1/main}}%
+      \renewcommand{\packageleftright}[2]{\cgalreinit\include{##2/main}}%
       #1
     }%
   }%
