@@ -1,0 +1,15 @@
+---------------------------------------------------------------
+- TEST RESULTS FROM PLATFORM sparc_SunOS-5.6_eg++-egcs-2.91.57_LEDA
+---------------------------------------------------------------
+
+DIRECTORY Triangulation:
+
+   compilation of test_triangulation_tds (TESTR=) succeeded
+   execution of test_triangulation_tds succeeded
+   compilation of test_triangulation_geom_traits (TESTR=) succeeded
+   execution of test_triangulation_geom_traits succeeded
+   compilation of test_triangulation_2 (TESTR=) succeeded
+   execution of test_triangulation_2 succeeded
+   compilation of test_delaunay_triangulation_2 (TESTR=) succeeded
+   execution of test_delaunay_triangulation_2 succeeded
+

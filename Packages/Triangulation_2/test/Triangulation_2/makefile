@@ -1,0 +1,62 @@
+# This is the makefile for compiling a CGAL application.  
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = \
+          -I/u/alcor/0/prisme_util/CGAL/Local/C2/include \
+           -I../../include \
+          -I./include \
+          -I/u/alcor/0/prisme_util/CGAL/Local/C2/include \
+           $(CGAL_CXXFLAGS) \
+           -g
+
+#---------------------------------------------------------------------#
+#                    linker flags
+#---------------------------------------------------------------------#
+
+LDFLAGS =  \
+          $(TESTSUITE_LDFLAGS) \
+          $(CGAL_LDFLAGS)
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+all: test_triangulation_geom_traits test_triangulation_tds \
+	test_triangulation_2 test_delaunay_triangulation_2
+
+test_triangulation_geom_traits: test_triangulation_geom_traits.o
+	$(CGAL_CXX) -o test_triangulation_geom_traits test_triangulation_geom_traits.o $(LDFLAGS)
+
+test_triangulation_tds: test_triangulation_tds.o
+	$(CGAL_CXX) -o test_triangulation_tds test_triangulation_tds.o $(LDFLAGS)
+
+test_triangulation_2: test_triangulation_2.o
+	$(CGAL_CXX) -o test_triangulation_2 test_triangulation_2.o $(LDFLAGS)
+
+test_delaunay_triangulation_2: test_delaunay_triangulation_2.o
+	$(CGAL_CXX) -o test_delaunay_triangulation_2 test_delaunay_triangulation_2.o $(LDFLAGS)
+
+clean:
+	- rm -f *.o test_triangulation_geom_traits test_triangulation_2 \
+	            test_triangulation_tds test_delaunay_triangulation_2 core \
+	            T??.triangulation
+
+distclean: clean
+	- rm -f Program* Error* Compiler* error.txt
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C.o:
+	$(CGAL_CXX) -Wall  $(CXXFLAGS) -c $<
