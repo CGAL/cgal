@@ -8,21 +8,13 @@
 #include <algo.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
-
-typedef CGAL_Cartesian<int>  R;
-typedef CGAL_Point_2<R>      Point;
-
-/* Provide your own CGAL_build_point function. */
-inline
-Point& CGAL_build_point( double x, double y, Point& p) {
-    p = Point( int(x), int(y));
-    return p;
-}
-
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/IO/Window_stream.h>  /* only for visualization used */
 
+typedef CGAL_Cartesian<double>                R;
+typedef CGAL_Point_2<R>                       Point;
+typedef CGAL_Creator_uniform_2<double,Point>  Creator;
 
 int main()
 {
@@ -33,7 +25,7 @@ int main()
     /* Create 250 points from a 16 x 16 grid. Note that the double */
     /* arithmetic _is_ sufficient to produce exact integer grid points. */
     /* The distance between neighbors is 34 pixel = 510 / 15. */
-    CGAL_points_on_square_grid_2( 510.0, 250, back_inserter(points),(Point*)0);
+    CGAL_points_on_square_grid_2( 255.0, 250, back_inserter(points),Creator());
 
     /* Lower, left corner. */
     assert( points[0].x() == -255);
@@ -44,7 +36,7 @@ int main()
     assert( points[249].y() == 255);
 
     /* Create 250 points within a disc of radius 150. */
-    CGAL_Random_points_in_disc_2<Point> g( 150.0);
+    CGAL_Random_points_in_disc_2<Point,Creator> g( 150.0);
     CGAL_copy_n( g, 250, back_inserter( points));
 
     /* Check that we have really created 500 points. */

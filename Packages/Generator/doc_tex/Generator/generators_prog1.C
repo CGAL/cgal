@@ -11,10 +11,11 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/random_selection.h>
-#include <CGAL/IO/Window_stream.h>  /* only for visualization used */
+#include <CGAL/IO/Window_stream.h>  /* only used for visualization */
 
-typedef CGAL_Cartesian<double>  R;
-typedef CGAL_Point_2<R>         Point;
+typedef CGAL_Cartesian<double>                R;
+typedef CGAL_Point_2<R>                       Point;
+typedef CGAL_Creator_uniform_2<double,Point>  Creator;
 
 int main()
 {
@@ -23,11 +24,11 @@ int main()
     points.reserve(1000);
 
     /* Create 600 points within a disc of radius 150. */
-    CGAL_Random_points_in_disc_2<Point> g( 150.0);
+    CGAL_Random_points_in_disc_2<Point,Creator> g( 150.0);
     CGAL_copy_n( g, 600, back_inserter( points));
 
     /* Create 200 points from a 15 x 15 grid. */
-    CGAL_points_on_square_grid_2( 500.0, 200, back_inserter(points),(Point*)0);
+    CGAL_points_on_square_grid_2( 250.0, 200, back_inserter(points),Creator());
 
     /* Select 100 points randomly and append them at the end of */
     /* the current vector of points. */
