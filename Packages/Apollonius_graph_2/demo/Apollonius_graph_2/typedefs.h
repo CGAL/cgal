@@ -4,6 +4,17 @@
 #if 1
 
 //-------- choosing number type --- start ---------
+
+
+// Workaround for buggy compilers.
+#ifdef CGAL_CFG_MATCHING_BUG_2
+#define CGAL_IA_CT double
+#define CGAL_IA_PROTECTED true
+#define CGAL_IA_CACHE No_Filter_Cache
+#define CGAL_IA_ET CGAL::MP_Float
+#endif
+
+
 #include <CGAL/MP_Float.h>
 typedef CGAL::MP_Float  exact_type;
 //#include <CGAL/leda_real.h>

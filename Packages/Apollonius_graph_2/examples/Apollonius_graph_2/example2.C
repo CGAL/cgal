@@ -5,23 +5,43 @@
 
 
 #include <CGAL/basic.h>
+
+
+#if defined CGAL_USE_LEDA
+#  include <CGAL/leda_real.h>
+#elif defined CGAL_USE_CORE
+#  include <CGAL_Expr.h>
+#endif
+
+#if defined CGAL_USE_LEDA || defined CGAL_USE_CORE
+
+// Workaround for buggy compilers.
+#ifdef CGAL_CFG_MATCHING_BUG_2
+#  define CGAL_IA_CT double
+#  define CGAL_IA_PROTECTED true
+#  define CGAL_IA_CACHE No_Filter_Cache
+#  ifdef CGAL_USE_LEDA
+#    define CGAL_IA_ET leda_real
+#  elif defined CGAL_USE_CORE
+#    define CGAL_IA_ET CORE::Expr
+#  endif
+#endif
+
 #include <CGAL/Filtered_exact.h>
 
 
-#ifdef CGAL_USE_LEDA
+#endif
 
+
+#if defined CGAL_USE_LEDA
 // If LEDA is present use leda_real as the exact number type for
 // Filtered_exact
-#include <CGAL/leda_real.h>
 typedef CGAL::Filtered_exact<double,leda_real> NT;
 
-#else
-
-#ifdef CGAL_USE_CORE
+#elif defined CGAL_USE_CORE
 // Othwrwise if CORE is present use CORE's Expr as the exact number
 // type for Filtered_exact
 
-#include <CGAL_Expr.h>
 typedef CGAL::Filtered_exact<double,CORE::Expr> NT;
 
 #else
@@ -31,7 +51,6 @@ typedef CGAL::Filtered_exact<double,CORE::Expr> NT;
 // class
 typedef double NT;
 
-#endif
 #endif
 
 

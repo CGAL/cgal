@@ -22,3 +22,5 @@
   also add this in the spec.
 - see email to cgal-editor with answers to Sylvain's questions
 - ask Mariette to add access functions to the TDS of Triangulation_2.
+- change definitions of Hyperbola_* and Parabola_* to be templated by
+  a kernel, not point and weight.

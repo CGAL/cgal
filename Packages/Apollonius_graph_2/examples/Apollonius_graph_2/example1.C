@@ -5,10 +5,19 @@
 
 #include <CGAL/basic.h>
 
-// example that uses the Filtered_exact number type
+// Workaround for buggy compilers.
+#ifdef CGAL_CFG_MATCHING_BUG_2
+#  define CGAL_IA_CT double
+#  define CGAL_IA_PROTECTED true
+#  define CGAL_IA_CACHE No_Filter_Cache
+#  define CGAL_IA_ET CGAL::MP_Float
+#endif
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Filtered_exact.h>
+
+
+// example that uses the Filtered_exact number type
 
 typedef CGAL::Filtered_exact<double,CGAL::MP_Float> NT;
 
