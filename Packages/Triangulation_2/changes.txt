@@ -1,13 +1,14 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.30 (8/1/04)
+- fixed code and test for size_type and difference_type
 
 ver 8.29 (8/1/04)
 - Moved Handle concept documentation to Circulator.
 - Removed obsolete Pointer class.
 - fixed in doc : added include statement for leda_window and Qt stream ouutput                  operators
 - fixed doc for size_type and difference_type
-- fixed code and test for size_type and difference_type
 
 ver 8.28 (29/12/03)
 - fixed a bug in Line_face_circular operators == and !=

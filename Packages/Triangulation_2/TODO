@@ -1,9 +1,8 @@
-- changed return type of number_of_..() to std::size_t
+- bencher Triangulation_2 avec un insert virtuel
+  insert virtuel permettrait de resoudre le pb de design
+  de Mesh_2 et Alpha_shapes_[23]
 - documenter Triangulation_2traits_3
 - doc : relier nerarest-vertex queries a localisation dans Voronoi
-- nettoyer Triangulation_line_face_circulator
-  suite aux modifs de Radu ....(voir diff 129-128)
-- Vertex_with_info done remains the doc
 - doc de la triangulation reguliere a mettre a jour
 - input output of regular triangulation
   (may be outputing for each face the hidden points
@@ -23,7 +22,7 @@
 - suppress function set_number_of_vertices(int )
 - Regular_triangulation_2 : remplacer degenerate_power_test_2(p,q,r)
   par power_test_2(p,q,r)
-- corriger le figure "three_layers" dans la doc 
+
 
 - Check if copy constructor and assignement operator of
   constrained riangulation transfers the contrained marks.

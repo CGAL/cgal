@@ -82,7 +82,7 @@ public:
 
   virtual ~Constrained_triangulation_plus_2() {}
 
-  Constrained_triangulation_plus_2 &operator= (const Self& ctp);
+  Constrained_triangulation_plus_2 & operator=(const Self& ctp);
 
   Constrained_triangulation_plus_2(List_constraints& lc, 
 				   const Geom_traits& gt=Geom_traits())
@@ -229,6 +229,15 @@ swap(Constrained_triangulation_plus_2 &ctp)
   Constraint_hierarchy temp = hierarchy;
   hierarchy = ctp.hierarchy;
   ctp.hierarchy = temp;  
+}
+
+template <class Tr>
+Constrained_triangulation_plus_2<Tr>&
+Constrained_triangulation_plus_2<Tr>::
+operator=(const Constrained_triangulation_plus_2 &ctp)
+{
+  copy(ctp);
+  return *this;
 }
 
 template <class Tr>

@@ -59,7 +59,7 @@ template < class Gt,
 class Triangulation_2
   : public Triangulation_cw_ccw_2
 {
-  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+  friend std::istream& operator>> <>
                 (std::istream& is, Triangulation_2 &tr);
   typedef Triangulation_2<Gt,Tds>             Self;
 
