@@ -10,6 +10,7 @@
 #include <CGAL/Threetuple.h>
 #include <CGAL/Filtred_container.h>
 #include <CGAL/Filtred_circulator.h>
+#include <CGAL/IO/File_header_extended_OFF.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -83,14 +84,19 @@ public:
   typedef typename Tr::List_constraints       List_constraints;
 
 public:
-  void write(std::ostream &f);
+  void write(std::ostream &f) const;
   void read(std::istream &f);
+  void read_poly(std::istream &f);
   void reset() {
     cluster_map.clear();
     c_edge_queue.clear();
     Bad_faces.clear();
+    seeds.clear();
     clear();
   }
+
+  typedef std::list<Point> Seeds;
+  Seeds seeds;
 
 private:
 
@@ -421,7 +427,7 @@ get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
 //the function that writes a file
 template <class Tr>
 void Mesh_2<Tr>::
-write(std::ostream &f)
+write(std::ostream &f) const
 {
   int nedges = 0;
   Finite_edges_iterator eit = finite_edges_begin();
@@ -456,6 +462,58 @@ read(std::istream &f)
     f>>x1>>y1>>x2>>y2;
     insert(Point(x1, y1), Point(x2, y2));
   }
+}
+
+
+//the function that reads a Shewchuk Triangle .poly file
+template <class Tr>
+void Mesh_2<Tr>::
+read_poly(std::istream &f)
+{
+  reset();
+
+  unsigned int number_of_points;
+  f >> number_of_points;
+  skip_until_EOL(f);
+  skip_comment_OFF(f);
+  
+  // read vertices
+  std::vector<Vertex_handle> vertices(number_of_points);
+  for(unsigned int i = 0; i < number_of_points; ++i)
+    {
+      unsigned int j;
+      Point p;
+      f >> j >> p;
+      skip_until_EOL(f); skip_comment_OFF(f);
+      vertices[--j] = insert(p);
+    }
+
+  // read segments
+  unsigned int number_of_segments;
+  f >> number_of_segments;
+  skip_until_EOL(f);
+  for(unsigned int k = 0; k < number_of_segments; ++k)
+    {
+      unsigned int l, v1, v2;
+      f >> l >> v1 >> v2;
+      skip_until_EOL(f); skip_comment_OFF(f);
+      insert(vertices[--v1], vertices[--v2]);
+    }
+
+  // read holes
+  unsigned int number_of_holes;
+  f >> number_of_holes;
+  
+  for(unsigned int m = 0; m < number_of_holes; ++m)
+    {
+      unsigned int n;
+      Point p;
+      f >> n >> p;
+      skip_until_EOL(f); skip_comment_OFF(f);
+      seeds.push_back(p);
+    }
+
+  init(seeds.begin(), seeds.end(), false);
 }
 
 template <class Tr>
@@ -593,7 +651,7 @@ refine_face(const Face_handle f)
 	      // only one cluster: c or c2
 	      if(is_cluster_at_vb)
 		c = c2;
-// What Shewchuck says:
+// What Shewchuk says:
 // - If the cluster is not reduced (all segments don't have the same
 // length as [va,vb]), then split the edge
 // - Else, let rmin be the minimum insertion radius introduced by the

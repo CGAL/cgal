@@ -592,13 +592,26 @@ public slots:
     }
 
   void openTriangulation()
-    {    
+    {
       QString s( QFileDialog::getOpenFileName( QString::null,
-        "Constrained edges (*.edg);;All files (*)", this ) );
+        "Constrained edges (*.edg)
+         Shewchuk Triangle .poly files (*.poly)
+         All files (*)",
+         this ) );
       if ( s.isEmpty() )
         return;
       std::ifstream f(s);
-      mesh.read(f);
+      if(s.left(5) == ".poly")
+	{
+	  mesh.read_poly(f);
+	  seeds.clear();
+	  for(Mesh::Seeds::iterator it = mesh.seeds.begin();
+	      it != mesh.seeds.end();
+	      ++it)
+	    seeds.push_back(*it);
+	}
+      else
+	mesh.read(f);
 
       // compute bounds
       FT xmin, xmax, ymin, ymax;
