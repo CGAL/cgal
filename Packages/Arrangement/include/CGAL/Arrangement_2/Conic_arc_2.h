@@ -120,13 +120,13 @@ private:
   // Compare the x coordinates.
   Comparison_result compare_x (const Self& p) const
   {
-    return (CGAL_NTS compare(x(), p.x()));
+    return (CGAL_NTS compare(this->x(), p.x()));
   }
 
   // Compare the y coordinates.
   Comparison_result compare_y (const Self& p) const
   {
-    return (CGAL_NTS compare(y(), p.y()));
+    return (CGAL_NTS compare(this->y(), p.y()));
   }
 
   // Compare two points lexicographically.
