@@ -433,6 +433,43 @@ double Qt_widget::y_real(int y) const
       return (ymax-y/yscal);
 }
 
+// templated x_real and y_real
+
+template <class FT>
+void Qt_widget::x_real(int x, FT& return_t) const
+{
+  if(xscal<1)
+    return_t = static_cast<FT>(xmin+(int)(x/xscal));
+  else{
+#ifdef CGAL_USE_GMP
+    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
+                            xmin+x/xscal-(x/xscal-(x-1)/xscal)/2, 
+                            xmin+x/xscal+((x+1)/xscal-x/xscal)/2);
+    return_t = static_cast<FT>(CGAL::to_double(r));
+#else
+    return_t = static_cast<FT>(xmin+x/xscal);
+#endif
+  }
+}
+
+template <class FT>
+void Qt_widget::y_real(int y, FT& return_t) const
+{
+    if(yscal<1)
+      return_t = static_cast<FT>(ymax-(int)(y/yscal));
+    else{
+#ifdef CGAL_USE_GMP
+    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
+                            ymax - y/yscal-(y/yscal-(y-1)/yscal)/2, 
+                            ymax - y/yscal+((y+1)/yscal-y/yscal)/2);
+    return_t = static_cast<FT>(CGAL::to_double(r));
+#else
+    return_t = static_cast<FT>(ymax-y/yscal);
+#endif
+  }  
+}
+
+
 double Qt_widget::x_real_dist(double d) const
 {
   return(d/xscal);

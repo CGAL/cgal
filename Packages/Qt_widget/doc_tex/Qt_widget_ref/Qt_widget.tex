@@ -223,8 +223,8 @@ The coordinates of the screen are maped to a certain interval that you
 can choose  with \ccc{set_window} member function. The scale of the
 objects you can visualize is computed and maintained the same for both 
 axes to keep the aspect ratio of the objects. You should use
-\ccc{x_real} or \ccc{y_real} to get the real world coordinates,
-represented as a double, for your screen coordinates. If you are using
+\ccc{x_real} or \ccc{y_real} to get the real world coordinates, for
+your screen coordinates. If you are using
 \ccc{gmp} you can use this functions with \ccc{Gmpq} as second
 parameter. You may need it when you work with rationals. The double
 from the other function could be more complex and can make you loose
@@ -232,11 +232,27 @@ speed in computations. Computing with rational coordinates directly
 could increase the speed, rather than computing with complex double
 coordinates.
 
+\ccMethod{double x_real(int x);}{}
+\ccGlue
+\ccMethod{double y_real(int y);}{}
 \ccFunction{template<class FT> void x_real(int x, FT&) const;}{Returns
 the \ccc{x} real world coordinate of the \ccc{Qt_widget}.}
 \ccFunction{template<class FT> void y_real(int y, FT& )
-const;}{Returns the \ccc{y} real world coordinate of the \ccc{Qt_widget}.}
+const;}{Returns the \ccc{y} real world coordinate of the
+\ccc{Qt_widget}.}
+\ccMethod{void x_real(int, Gmpq&);}{}
+\ccGlue
+\ccMethod{void y_real(int, Gmpq&);}{}
 \end{ccAdvanced}
+
+\ccMethod{int x_pixel(double x);}{This method is the opposite of
+\ccc{x_real} method. Converts the world coordinates in screen
+coordinates. If you want to get an integer between 0 and width, you
+should pass an x between xmin and xmax.}
+\ccMethod{int y_pixel(double y);}{This method is the opposite of
+\ccc{y_real} method. Converts the world coordinates in screen
+coordinates. If you want to get an integer between 0 and height, you
+should pass an y between ymin and ymax.}
 
 \begin{ccAdvanced}
 %PAINTER
