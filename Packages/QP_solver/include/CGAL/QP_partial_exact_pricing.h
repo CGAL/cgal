@@ -89,15 +89,15 @@ pricing( )
 
     // loop over all active non-basic variables
     CGAL_qpe_debug {
-	vout() << "active variables:" << std::endl;
+	this->vout() << "active variables:" << std::endl;
     }
-    for ( it = active_set_begin(); it != active_set_end(); ++it) {
+    for ( it = this->active_set_begin(); it != this->active_set_end(); ++it) {
 
 	// compute mu_j
 	mu = mu_j( *it);
 
 	CGAL_qpe_debug {
-	    vout() << "  mu_" << *it << ": " << mu << std::endl;
+	    this->vout() << "  mu_" << *it << ": " << mu << std::endl;
 	}
 
 	// new minimum?
@@ -105,24 +105,25 @@ pricing( )
     }
 
     // no entering variable found so far?
-    if ( ( min_mu == et0) && ( inactive_set_begin() < inactive_set_end())) {
+    if ( ( min_mu == this->et0) && ( this->inactive_set_begin() <
+                                     this->inactive_set_end())) {
 
 	// loop over all inactive non-basic variables
 	CGAL_qpe_debug {
-	    vout() << "inactive variables:" << std::endl;
+	    this->vout() << "inactive variables:" << std::endl;
 	}
 	Index_const_iterator  active_it;
-	for ( it = inactive_set_begin(); it != inactive_set_end(); ++it) {
+	for ( it = this->inactive_set_begin(); it != this->inactive_set_end(); ++it) {
 
 	    // compute mu_j
 	    mu = mu_j( *it);
 
 	    CGAL_qpe_debug {
-		vout() << "  mu_" << *it << ": " << mu << std::endl;
+		this->vout() << "  mu_" << *it << ": " << mu << std::endl;
 	    }
 
 	    // candidate for entering?
-	    if ( mu < et0) {
+	    if ( mu < this->et0) {
 
 		// make variable active
 		active_it = it;
@@ -133,10 +134,10 @@ pricing( )
 	    }
 	}
     }
-    vout() << std::endl;
+    this->vout() << std::endl;
 
     // return index of entering variable, if any
-    if ( min_mu < et0) {
+    if ( min_mu < this->et0) {
 	int  j = *min_it;
 	entering_basis( min_it);
 	return j;
