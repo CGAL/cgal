@@ -14,7 +14,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            -Iinclude \
@@ -40,7 +39,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                _test_Double$(EXE_EXT) \
+                MP_Float$(EXE_EXT) \
                 _test_sign$(EXE_EXT) \
                 _test_to_interval$(EXE_EXT) \
                 _test_valid_finite_double$(EXE_EXT) \
@@ -50,8 +49,8 @@ all:            \
                 floattst$(EXE_EXT) \
                 quotient_io$(EXE_EXT) 
 
-_test_Double$(EXE_EXT): _test_Double$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_Double _test_Double$(OBJ_EXT) $(LDFLAGS)
+MP_Float$(EXE_EXT): MP_Float$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)MP_Float MP_Float$(OBJ_EXT) $(LDFLAGS)
 
 _test_sign$(EXE_EXT): _test_sign$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_sign _test_sign$(OBJ_EXT) $(LDFLAGS)
@@ -78,7 +77,7 @@ quotient_io$(EXE_EXT): quotient_io$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quotient_io quotient_io$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   _test_Double.clean \
+                   MP_Float.clean \
                    _test_sign.clean \
                    _test_to_interval.clean \
                    _test_valid_finite_double.clean \

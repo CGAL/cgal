@@ -43,7 +43,6 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class NumberType> class Quotient;
-CGAL_TEMPLATE_NULL  class Quotient<int>;
 
 template <class NumberType>
 double
@@ -264,16 +263,8 @@ class Quotient
   
   Quotient() : num( NT(0) ), den( NT(1) ) {}
 
-  // If the following template ctor works, then we can probably get rid of the
-  // entire Quotient<int> specialization, and this will make
-  // Quotient<>(double) to work without the need to specialize
-  // Quotient<double>.
   template <class T>
   Quotient(const T& n) : num(n), den( NT(1) ) {}
-
-  // Quotient(const NT& n) : num(n), den( NT(1) ) {}
-
-  // Quotient(int i) : num(NT(i)), den( NT(1) ) {}
 
   Quotient(const NT& n, const NT& d) : num(n), den(d)
   { CGAL_kernel_precondition( d!= NT(0) ); }
@@ -312,93 +303,6 @@ CGAL_END_NAMESPACE
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/Quotient.C>
 #endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-
-CGAL_BEGIN_NAMESPACE
-
-CGAL_TEMPLATE_NULL
-class Quotient<int>
-{
- public:
-  Quotient() : num( 0 ), den( 1 ) {}
-  Quotient(int i) : num( i ), den( 1 ) {}
-  Quotient(const int& n, const int& d) : num(n), den(d)
-  { CGAL_kernel_precondition( d!= 0 ); }
-  Quotient(const Quotient<int>& r) : num(r.num), den(r.den) {}
-  ~Quotient() {}
-  
-  int
-  numerator() const { return num; }
-  
-  int
-  denominator() const { return den; }
-  
-  Quotient<int>&
-  operator+= (const Quotient<int>& r)
-  {
-    num = num * r.den + r.num * den;
-    den *= r.den;
-    return (*this);
-  }
-  
-  Quotient<int>&
-  operator-= (const Quotient<int>& r)
-  {
-    num = num * r.den - r.num * den;
-    den *= r.den;
-    return (*this);
-  }
-  
-  Quotient<int>&
-  operator*= (const Quotient<int>& r)
-  {
-    num *= r.num;
-    den *= r.den;
-    return (*this);
-  }
-  
-  Quotient<int>&
-  operator/= (const Quotient<int>& r)
-  {
-    CGAL_kernel_precondition( r.num != 0 );
-    num *= r.den;
-    den *= r.num;
-    return (*this);
-  }
-  Quotient<int>&
-  operator+= (const int& r)
-  {
-    num = num + r * den;
-    return (*this);
-  }
-  
-  Quotient<int>&
-  operator-= (const int& r)
-  {
-    num = num - r * den;
-    return (*this);
-  }
-  
-  Quotient<int>&
-  operator*= (const int& r)
-  {
-    num *= r ;
-    return (*this);
-  }
-  
-  Quotient<int>&
-  operator/= (const int& r)
-  {
-    CGAL_kernel_precondition( r != 0 );
-    den *= r ;
-    return (*this);
-  }
-  
- public:
-  int num;
-  int den;
-};
-
-CGAL_END_NAMESPACE
 
 #include <CGAL/iterator_traits_pointer_specs_for_cartesian_quotient.h>
 

@@ -1,10 +1,9 @@
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 #include <cassert>
 #include <fstream>
-// #include <CGAL/basic.h>
-#include <CGAL/Quotient.h>
 #include <vector>
 #include <algorithm>
+#include <CGAL/Quotient.h>
 
 int
 main()

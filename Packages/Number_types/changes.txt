@@ -1,3 +1,8 @@
+4.23     (21 June 01)
+- Remove the specialization Quotient<int>
+- Remove obsolete test program _test_Double.C.
+- Update test-suite makefile.
+
 4.22     (18 June 01)
 - Update the Quotient documentation.
 
