@@ -122,10 +122,12 @@ public:
     {
       if ( !m_isInitialized ) 
       {
-	if ( curve->isSourceLeftToTarget())
+	if ( curve->isSourceLeftToTarget()) {
 	  m_rightmostPointToLeft = curve->getSource();
-	else
+	}
+	else{
 	  m_rightmostPointToLeft = curve->getTarget();
+	}
 	m_isInitialized = true;
 
       } else {
@@ -260,6 +262,9 @@ public:
   int getNumRightCurves() {
     return m_rightCurves->size();
   }
+  int getNumLeftCurves() {
+    return m_leftCurves->size();
+  }
 
   /*! Returns true if at least one intersecting curve is defined to 
       the left of the point. */
@@ -380,13 +385,15 @@ protected:
     if ( curve->isSourceLeftToTarget())
     {
       if ( curve->isTarget(m_point) )
-	if ( m_traits->compare_x(m_point, m_rightmostPointToLeft) == LARGER )
-	  m_rightmostPointToLeft = m_point;
+	if ( m_traits->compare_x(curve->getSource(), 
+				 m_rightmostPointToLeft) == LARGER )
+	  m_rightmostPointToLeft = curve->getSource();
     } else
     {
       if ( curve->isSource(m_point) )
-	if ( m_traits->compare_x(m_point, m_rightmostPointToLeft) == LARGER )
-	  m_rightmostPointToLeft = m_point;
+	if ( m_traits->compare_x(curve->getTarget(), 
+				 m_rightmostPointToLeft) == LARGER )
+	  m_rightmostPointToLeft = curve->getTarget();
     }
   }
 
