@@ -367,9 +367,9 @@ test_new_3(const R& rep)
   typename R::Compute_volume_3 compute_volume
         = rep.compute_volume_3_object();
   FT tmp11b = compute_volume(th2);
-  FT tmp11c = compute_volume(iso1);
+     tmp11b = compute_volume(iso1);
+     tmp11b = compute_volume(p3, p4, p5, p6);
   (void) tmp11b;
-  (void) tmp11c;
 
   typename R::Equal_3 equal
         = rep.equal_3_object();

@@ -236,6 +236,15 @@ squared_radius(const Point_3<K> &p, const Point_3<K> &q)
   return K().compute_squared_radius_3_object()(p, q);
 }
 
+template < class K >
+inline
+typename K::FT
+volume(const Point_3<K> &p0, const Point_3<K> &p1,
+       const Point_3<K> &p2, const Point_3<K> &p3)
+{
+  return K().compute_volume_3_object()(p0, p1, p2, p3);
+}
+
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_KERNEL_GLOBAL_FUNCTIONS_3_H

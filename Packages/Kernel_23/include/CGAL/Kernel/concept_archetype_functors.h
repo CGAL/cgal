@@ -777,6 +777,7 @@ template <typename K>
 class Compute_volume_3
 {
     typedef typename K::FT             FT;
+    typedef typename K::Point_3        Point_3;
     typedef typename K::Tetrahedron_3  Tetrahedron_3;
     typedef typename K::Iso_cuboid_3   Iso_cuboid_3;
 public:
@@ -785,6 +786,11 @@ public:
 
     FT
     operator()( const Tetrahedron_3&) const
+    { FT val = 0; return val; }
+
+    FT
+    operator()( const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
     { FT val = 0; return val; }
 
     FT

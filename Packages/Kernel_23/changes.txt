@@ -1,3 +1,6 @@
+1.101 (13 January 2004)
+- Add volume(4 points).
+
 1.100 (13 January 2004)
 - Remove Simple_handle_for.
 

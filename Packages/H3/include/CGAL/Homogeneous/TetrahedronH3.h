@@ -302,6 +302,11 @@ CGAL_KERNEL_MEDIUM_INLINE
 typename TetrahedronH3<R>::FT
 TetrahedronH3<R>::volume() const
 {
+    return R().compute_volume_3_object()(*this);
+/*
+ * Old code, which might be faster than the Cartesian version,
+ * but sacrificed in the name of factorization, at least until
+ * it prooves useful to optimize again...
   Vector_3 vec1 = vertex(1) - vertex(0);
   Vector_3 vec2 = vertex(2) - vertex(0);
   Vector_3 vec3 = vertex(3) - vertex(0);
@@ -322,6 +327,7 @@ TetrahedronH3<R>::volume() const
   return (  (hx1 * (hy2 * hz3 - hy3 * hz2))
           - (hy1 * (hx2 * hz3 - hx3 * hz2))
           + (hz1 * (hx2 * hy3 - hx3 * hy2)))/ (FT(6) * w123);
+*/
 }
 
 template < class R >

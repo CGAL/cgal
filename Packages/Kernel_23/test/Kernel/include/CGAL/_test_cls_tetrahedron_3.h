@@ -147,12 +147,27 @@ _test_cls_tetrahedron_3(const R& )
  assert ( td1.volume() == td2.volume() );
  assert ( t1.volume() == the.volume() );
 
+ // Same things, but on points directly.
+ assert ( CGAL::volume(t7.vertex(0), t7.vertex(1), t7.vertex(2), t7.vertex(3))
+	  == FT(0) );
+ assert ( CGAL::volume(t8.vertex(0), t8.vertex(1), t8.vertex(2), t8.vertex(3))
+	  == FT(0) );
+ assert ( CGAL::volume(t1.vertex(0), t1.vertex(1), t1.vertex(2), t1.vertex(3))
+      == -CGAL::volume(t2.vertex(0), t2.vertex(1), t2.vertex(2), t2.vertex(3)));
+ assert ( CGAL::volume(t3.vertex(0), t3.vertex(1), t3.vertex(2), t3.vertex(3))
+      == -CGAL::volume(t4.vertex(0), t4.vertex(1), t4.vertex(2), t4.vertex(3)));
+ assert ( CGAL::volume(td1.vertex(0), td1.vertex(1), td1.vertex(2), td1.vertex(3))
+      ==  CGAL::volume(td2.vertex(0), td2.vertex(1), td2.vertex(2), td2.vertex(3)));
+ assert ( CGAL::volume(t1.vertex(0), t1.vertex(1), t1.vertex(2), t1.vertex(3))
+    == CGAL::volume(the.vertex(0), the.vertex(1), the.vertex(2), the.vertex(3)));
+
  CGAL::Point_3<R> p10( n0, n0, n8, n4); // (0, 0, 12)
  CGAL::Point_3<R> p11( n0, n8, n0, n4); // (0, 12, 0)
  CGAL::Point_3<R> p12( n8, n0, n0, n4); // (12, 0, 0)
 
  CGAL::Tetrahedron_3<R> t9(ps0,p10,p11,p12);
  assert ( t9.volume() == FT(-288) );
+ assert ( CGAL::volume(ps0,p10,p11,p12) == FT(-288) );
 
  std::cout << "done" << std::endl;
  return true;

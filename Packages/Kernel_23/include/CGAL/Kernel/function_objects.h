@@ -335,6 +335,7 @@ namespace CommonKernelFunctors {
   class Compute_volume_3
   {
     typedef typename K::FT             FT;
+    typedef typename K::Point_3        Point_3;
     typedef typename K::Tetrahedron_3  Tetrahedron_3;
     typedef typename K::Iso_cuboid_3   Iso_cuboid_3;
   public:
@@ -342,8 +343,20 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 1 >   Arity;
 
     FT
+    operator()(const Point_3& p0, const Point_3& p1,
+	       const Point_3& p2, const Point_3& p3) const
+    {
+      return det3x3_by_formula(p1.x()-p0.x(), p1.y()-p0.y(), p1.z()-p0.z(),
+                               p2.x()-p0.x(), p2.y()-p0.y(), p2.z()-p0.z(),
+                               p3.x()-p0.x(), p3.y()-p0.y(), p3.z()-p0.z())/6;
+    }
+
+    FT
     operator()( const Tetrahedron_3& t ) const
-    { return t.volume(); }
+    {
+      return this->operator()(t.vertex(0), t.vertex(1),
+		              t.vertex(2), t.vertex(3));
+    }
 
     FT
     operator()( const Iso_cuboid_3& c ) const
