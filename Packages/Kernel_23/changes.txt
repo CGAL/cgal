@@ -1,3 +1,6 @@
+1.80 (7 October 2003) [af]
+- Made typedef K_ Kernel public
+
 1.79 (6 October 2003) [af]
 - smaller extensible kernel (thank you sylvain!!)
 
