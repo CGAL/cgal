@@ -57,8 +57,8 @@ CGAL_TEMPLATE_NULL class Polynomial<double> ;
 // SPECIALIZE_CLASS(NT,int double) END
 
 
-Polynomial<int> operator - (const Polynomial<int>& p);
-Polynomial<double> operator - (const Polynomial<double>& p);
+// Polynomial<int> operator - (const Polynomial<int>& p);
+// Polynomial<double> operator - (const Polynomial<double>& p);
 
 /*{\Mtext \headerline{Range template}}*/
 
@@ -392,9 +392,9 @@ template <class pNT> class Polynomial :
   also offer comparison predicates as $<,>,\leq,\geq$. Where $p_1 < p_2$
   holds iff $|sign|(p_1 - p_2) < 0$. This data type is fully compliant
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
-
-  friend Polynomial<NT>
-    operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<NT>&);   
+  
+   friend Polynomial<NT>
+   operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<NT>&);   
                           
   friend Polynomial<NT>
     operator + CGAL_NULL_TMPL_ARGS (const Polynomial<NT>&, 
@@ -721,19 +721,12 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
     return gcd_of_range(ptr()->coeff.begin(),ptr()->coeff.end());
   }
 
-
-
   /*{\Xtext Additionally |\Mname| offers standard arithmetic ring
   opertions like |+,-,*,+=,-=,*=|. By means of the sign operation we can
   also offer comparison predicates as $<,>,\leq,\geq$. Where $p_1 < p_2$
   holds iff $|sign|(p_1 - p_2) < 0$. This data type is fully compliant
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
 
-  friend  Polynomial<double> // af: new
-  operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<double>&);   
-                   
-  friend  Polynomial<int>
-    operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<int>&);   
                           
   friend Polynomial<int>
     operator + CGAL_NULL_TMPL_ARGS (const Polynomial<int>&, 
@@ -1039,18 +1032,14 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { CGAL_assertion( degree()>=0 );
     return gcd_of_range(ptr()->coeff.begin(),ptr()->coeff.end());
   }
-
-
+ 
 
   /*{\Xtext Additionally |\Mname| offers standard arithmetic ring
   opertions like |+,-,*,+=,-=,*=|. By means of the sign operation we can
   also offer comparison predicates as $<,>,\leq,\geq$. Where $p_1 < p_2$
   holds iff $|sign|(p_1 - p_2) < 0$. This data type is fully compliant
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
-
-//  friend  Polynomial<double>
-//    operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<double>&);   
-                          
+                     
   friend Polynomial<double>
     operator + CGAL_NULL_TMPL_ARGS (const Polynomial<double>&, 
                                     const Polynomial<double>&);
@@ -1231,6 +1220,7 @@ template <class NT> CGAL::io_Operator
 
 
 template <class NT> 
+inline
 Polynomial<NT> operator - (const Polynomial<NT>& p)
 {
   CGAL_assertion(p.degree()>=0);
@@ -2008,6 +1998,14 @@ Polynomial<NT> Polynomial<NT>::gcd(
 // SPECIALIZE_IMPLEMENTATION(NT,int double) END
 
 CGAL_END_NAMESPACE
+
+
+
+
+
+
+
+
 
 #endif  // CGAL_POLYNOMIAL_H
 
