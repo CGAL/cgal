@@ -1,3 +1,6 @@
+2.48    (8 Apr 2002)
+- fixed return type of side of oriented sphere concept.
+
 2.47    (20 Mar 2002)
 - added Tag classes used for number type traits
 
