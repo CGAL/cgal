@@ -1875,6 +1875,37 @@ Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_convex
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_convex_hull.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/sidedim2.eps -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/sidedim2.gif -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/.xvpics/rock.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/cgal.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/cgal.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/directions.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/directions.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/filenew.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fileopen.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fileprint.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/filesave.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fill.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/fill.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/light.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/light.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/param.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/param.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/points.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/points.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/quadtriangle.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/quadtriangle.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/smooth.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/smooth.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/lo16-app-tool.png -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/lo32-app-tool.png -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.sln -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.vcproj -text
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.eps -text
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
 Packages/Viewer_3/doc_tex/support/Viewer_3/viewer.eps -text

@@ -1,0 +1,26 @@
+/* XPM */
+static const char *antialiasing_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c #808080",
+"X c #C0C0C0",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"ooooooooooooXooo",
+"oooooooooooX. oo",
+"ooooooooooX. .Xo",
+"oooooooooX. .Xoo",
+"ooooooooX. .Xooo",
+"oooooooX. .Xoooo",
+"ooooooX. .Xooooo",
+"oooooX. .Xoooooo",
+"ooooX. .Xooooooo",
+"oooX. .Xoooooooo",
+"ooX. .Xooooooooo",
+"oX. .Xoooooooooo",
+"oo .Xooooooooooo",
+"oooXoooooooooooo",
+"oooooooooooooooo"
+};

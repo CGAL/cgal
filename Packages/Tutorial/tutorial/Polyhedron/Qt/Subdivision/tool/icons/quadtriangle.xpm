@@ -1,0 +1,26 @@
+/* XPM */
+static const char *quadtriangle_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c red",
+"X c #808080",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"oo  XXX..XXX  oo",
+"oo  XXX..XXX  oo",
+"ooXXoooXXoooXXoo",
+"ooXXoooXXoooXXoo",
+"ooXXoooXXoooXXoo",
+"ooXXoooXXoooXXoo",
+"oo..XXX..XXX..oo",
+"oo..XXX..XXX..oo",
+"ooXXoooXXoooXXoo",
+"ooXXoooXXoooXXoo",
+"ooXXoooXXoooXXoo",
+"ooXXoooXXoooXXoo",
+"oo  XXX..XXX  oo",
+"oo  XXX..XXX  oo",
+"oooooooooooooooo"
+};

@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE KDevPrjSession>
+<KDevPrjSession>
+ <Mainframe MaximizeMode="1" />
+ <DocsAndViews NumberOfDocuments="4" >
+  <Doc0 CursorPosLine="26" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/0/prisme/palliez/src/cgal/compression/tool/tooldoc.cpp" >
+   <View0 Top="24" Width="400" Attach="1" Height="300" Left="3" Focus="0" Type="KWriteView" MinMaxMode="0" />
+  </Doc0>
+  <Doc1 CursorPosLine="135" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/0/prisme/palliez/src/cgal/compression/tool/cgal_types.h" >
+   <View0 Top="46" Width="993" Attach="1" Height="613" Left="25" Focus="0" Type="KWriteView" MinMaxMode="0" />
+  </Doc1>
+  <Doc2 CursorPosLine="64" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/0/prisme/palliez/src/cgal/compression/tool/tooldoc.h" >
+   <View0 Top="68" Width="993" Attach="1" Height="595" Left="47" Focus="0" Type="KWriteView" MinMaxMode="0" />
+  </Doc2>
+  <Doc3 CursorPosLine="22" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/0/prisme/palliez/src/cgal/compression/tool/quad-triangle.h" >
+   <View0 Top="66" Width="999" Attach="1" Height="622" Left="66" Focus="1" Type="KWriteView" MinMaxMode="2" />
+  </Doc3>
+ </DocsAndViews>
+ <LastCompileConfig>(Default)</LastCompileConfig>
+</KDevPrjSession>

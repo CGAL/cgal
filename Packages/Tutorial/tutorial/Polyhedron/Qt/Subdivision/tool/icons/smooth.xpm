@@ -1,0 +1,25 @@
+/* XPM */
+static const char *smooth_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c #808080",
+"X c None",
+/* pixels */
+"XXXXX.......XXXX",
+"XXX...........XX",
+"XXX...XXXXX...XX",
+"XX...XXXXXXX...X",
+"X...XXXXXXXXX...",
+"X...XXXXXXXXX...",
+"X..XXXXXXXXXXX..",
+"X..XXXXXXXXXXX..",
+"X..XXXXXXXXXXX..",
+"X...XXXXXXXXX...",
+"XX..XXXXXXXXX..X",
+"XX...XXXXXXX...X",
+"XXX....XXX....XX",
+"XXXX.........XXX",
+"XXXXXX.....XXXXX",
+"XXXXXXXXXXXXXXXX"
+};

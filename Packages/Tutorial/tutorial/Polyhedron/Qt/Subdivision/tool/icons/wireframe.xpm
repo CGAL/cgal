@@ -1,0 +1,25 @@
+/* XPM */
+static const char *wireframe_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c #808080",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXX  XXXXXX",
+"XXXXXXX.  .XXXXX",
+"XXXXXX..XX.XXXXX",
+"XXXXXX.XXX..XXXX",
+"XXXXX.XXXXX.XXXX",
+"XXXX.XXXXXX.XXXX",
+"XXX.XXXXXXXX.XXX",
+"XX..XXXXXXXX.XXX",
+"X  XXXXXXXXXX.XX",
+"X  ......XXXX  X",
+"XXXXXXXXX....  X",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX"
+};

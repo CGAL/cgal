@@ -1,0 +1,3 @@
+make -f Makefile.dist
+./configure --with-qt-dir=/usr/local/qt2
+make

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.00"
+	Name="subdivision"
+	ProjectGUID="{E3B81A91-6911-4473-B679-3E5F8FDD2625}"
+	Keyword="Win32Proj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="1"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CGAL_USE_QT;NOMINMAX;CGAL_USE_POLYHEDRON_DESIGN_TWO"
+				MinimalRebuild="TRUE"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="5"
+				RuntimeTypeInfo="TRUE"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="4"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="$(CGALROOT)/lib/msvc7/ML/CGAL.lib $(QTDIR)/lib/qt.lib $(QTDIR)/lib/qtmain.lib
+wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
+				OutputFile="$(OutDir)/subdivision.exe"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)/subdivision.pdb"
+				SubSystem="2"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="1"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				OmitFramePointers="TRUE"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\mkspecs\win32-msvc&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CGAL_USE_QT;NOMINMAX;CGAL_USE_POLYHEDRON_DESIGN_TWO"
+				StringPooling="TRUE"
+				RuntimeLibrary="4"
+				EnableFunctionLevelLinking="TRUE"
+				RuntimeTypeInfo="TRUE"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="$(CGALROOT)/lib/msvc7/ML/CGAL.lib $(QTDIR)/lib/qt.lib $(QTDIR)/lib/qtmain.lib
+wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
+				OutputFile="$(OutDir)/subdivision.exe"
+				LinkIncremental="1"
+				GenerateDebugInformation="TRUE"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
+			<File
+				RelativePath="Arcball.cpp">
+			</File>
+			<File
+				RelativePath="Camera.cpp">
+			</File>
+			<File
+				RelativePath="Matrix44.cpp">
+			</File>
+			<File
+				RelativePath="Quaternion.cpp">
+			</File>
+			<File
+				RelativePath="Vector2d.cpp">
+			</File>
+			<File
+				RelativePath="Vector3d.cpp">
+			</File>
+			<File
+				RelativePath="Viewport.cpp">
+			</File>
+			<File
+				RelativePath="glview.cpp">
+			</File>
+			<File
+				RelativePath="main.cpp">
+			</File>
+			<File
+				RelativePath="tool.cpp">
+			</File>
+			<File
+				RelativePath="tooldoc.cpp">
+			</File>
+			<File
+				RelativePath="toolview.cpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc">
+			<File
+				RelativePath="Arcball.h">
+			</File>
+			<File
+				RelativePath="Camera.h">
+			</File>
+			<File
+				RelativePath="Matrix44.h">
+			</File>
+			<File
+				RelativePath="Quaternion.h">
+			</File>
+			<File
+				RelativePath="ScalarMap.h">
+			</File>
+			<File
+				RelativePath="Vector2d.h">
+			</File>
+			<File
+				RelativePath="Vector3d.h">
+			</File>
+			<File
+				RelativePath="Viewport.h">
+			</File>
+			<File
+				RelativePath="builder.h">
+			</File>
+			<File
+				RelativePath="cgal_types.h">
+			</File>
+			<File
+				RelativePath="glview.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o glview.moc glview.h
+"
+						Outputs="glview.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o glview.moc glview.h
+"
+						Outputs="glview.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="quad-triangle.h">
+			</File>
+			<File
+				RelativePath="tool.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o tool.moc tool.h
+"
+						Outputs="tool.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o tool.moc tool.h
+"
+						Outputs="tool.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="tooldoc.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o tooldoc.moc tooldoc.h
+"
+						Outputs="tooldoc.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o tooldoc.moc tooldoc.h
+"
+						Outputs="tooldoc.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="toolview.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o toolview.moc toolview.h
+"
+						Outputs="toolview.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o toolview.moc toolview.h
+"
+						Outputs="toolview.moc"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

@@ -1,0 +1,25 @@
+/* XPM */
+static const char *superimposed_edges_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c #808080",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXX XXXXXX",
+"XXXXXXXX  XXXXXX",
+"XXXXXXX    XXXXX",
+"XXXXXX     XXXXX",
+"XXXXX   ..  XXXX",
+"XXXX   ...  XXXX",
+"XXX   .....  XXX",
+"XX   ......  XXX",
+"X   ........  XX",
+"      ......  XX",
+"XXX        ..  X",
+"XXXXXXX        X",
+"XXXXXXXXXXX    X",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX"
+};

@@ -1,0 +1,25 @@
+/* XPM */
+static const char *fill_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c #808080",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXX  XXXXXX",
+"XXXXXXXX  XXXXXX",
+"XXXXXXX....XXXXX",
+"XXXXXX.....XXXXX",
+"XXXXXX......XXXX",
+"XXXXX.......XXXX",
+"XXXX........XXXX",
+"XXX..........XXX",
+"X  ..........XXX",
+"X  ...........XX",
+"XXX...........XX",
+"XXXXXXXXX....  X",
+"XXXXXXXXXXXXX  X",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX"
+};
