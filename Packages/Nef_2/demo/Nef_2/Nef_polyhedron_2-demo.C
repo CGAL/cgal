@@ -1,15 +1,10 @@
 #include <CGAL/basic.h>
-#include <CGAL/Homogeneous.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Line_2.h>
-
 #ifdef CGAL_USE_LEDA
 #include "xpms/nef.xpm"
 #include <LEDA/pixmaps/button32/eye.xpm>
 #include <LEDA/pixmaps/button32/draw.xpm>
 #include <CGAL/leda_integer.h>
 #include <CGAL/Extended_homogeneous.h>
-#include <CGAL/RPolynomial.h>
 #include <CGAL/Filtered_extended_homogeneous.h>
 #include <CGAL/IO/Filtered_extended_homogeneous_Window_stream.h>
 #include <CGAL/Nef_polyhedron_2.h>
@@ -151,8 +146,7 @@ void create(int i)
                                Nef_polyhedron::INCLUDED),sos.str());
       break;
     default:
-      pW->message("Insert Simple Polygon");
-      cout << "create nothing\n";
+      std::cout << "created nothing\n";
   }
   sos.freeze(0);
   update_history();
@@ -273,9 +267,9 @@ void draw(Object_handle h)
         CGAL::PM_DefColor<TExplorer>(CGAL::RED,CGAL::RED,6,6) );
   leda_drawing_mode prev = pW->set_mode(leda_xor_mode);
   Vertex_const_handle vh; Halfedge_const_handle eh; Face_const_handle fh; 
-  if ( assign(vh,h) ) PMV.draw(vh); 
-  if ( assign(eh,h) ) PMV.draw(eh);   
-  if ( assign(fh,h) ) PMV.draw(fh); 
+  if ( CGAL::assign(vh,h) ) PMV.draw(vh); 
+  if ( CGAL::assign(eh,h) ) PMV.draw(eh);   
+  if ( CGAL::assign(fh,h) ) PMV.draw(fh); 
   pW->set_mode(prev);
 }
 

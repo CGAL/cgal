@@ -5,8 +5,8 @@
 #include <CGAL/Nef_polyhedron_2.h>
 
 typedef CGAL::Gmpz RT;
-typedef CGAL::Filtered_extended_homogeneous<RT> EKernel;
-typedef CGAL::Nef_polyhedron_2<EKernel> Nef_polyhedron;
+typedef CGAL::Filtered_extended_homogeneous<RT> Extended_kernel;
+typedef CGAL::Nef_polyhedron_2<Extended_kernel> Nef_polyhedron;
 typedef Nef_polyhedron::Point Point;
 typedef Nef_polyhedron::Line  Line;
 

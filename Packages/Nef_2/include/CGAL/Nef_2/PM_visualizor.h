@@ -15,7 +15,6 @@
 // package       : Nef_2 
 // chapter       : Nef Polyhedra
 //
-// source        : nef_2d/PM_decorator.lw
 // revision      : $Revision$
 // revision_date : $Date$
 //
@@ -30,8 +29,8 @@
 #define PM_VISUALIZOR_H
 
 #include <CGAL/basic.h>
-#include <CGAL/IO/Window_stream.h> 
-#include <CGAL/Nef_2/PM_decorator.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/IO/Window_stream.h>
 
 #define USING(t) typedef typename PMCDEC::t t
 #define LGREY CGAL::Color(190,190,190)
@@ -105,7 +104,7 @@ the visualization parameters of the objects of |P|:\\
 |int width(Vertex/Halfedge_const_handle h) const|.
 }*/
 
-/*{\Mgeneralization PM_const_decorator}*/
+/*{\Mgeneralization PMCDEC}*/
 /*{\Mtypes 3}*/
 public:
   typedef PM_visualizor<PMCDEC,GEOM,COLORDA> Self;
@@ -125,6 +124,7 @@ public:
   USING(Point);
   USING(Mark);
   typedef typename GEOM::Segment_2 Segment;
+  typedef CGAL::Cartesian<double>::Point_2 Draw_point;
 
   typedef PMCDEC PM_const_decorator;
   /*{\Mtypemember The plane map decorator.}*/
@@ -172,30 +172,27 @@ void draw(Halfedge_const_handle e) const
   _W.set_line_width(ow);
 }
 
-void draw_face_cycle(const leda_list<leda_point>& fc, int c) const
-{ int n = fc.length();
+void draw_face_cycle(const std::list<Draw_point>& fc, int c) const
+{ int n = fc.size();
   double* xc = new double[n];
   double* yc = new double[n];
   int i = 0;
-  leda_point p;
-  forall(p,fc)
-  { xc[i] = p.xcoord();
-    yc[i] = p.ycoord();
-    i++;
-  }
+  std::list<Draw_point>::const_iterator it;
+  for (it = fc.begin(); it != fc.end(); ++i,++it) 
+  { xc[i] = (*it).x(); yc[i] = (*it).y(); }
   _W.clip_mask_polygon(n,xc,yc,c);
   delete[] xc;
   delete[] yc;
 }
 
-void get_point_list(leda_list<leda_point>& L, 
+void get_point_list(std::list<Draw_point>& L, 
                     Halfedge_const_iterator e) const
 {
   Halfedge_around_face_const_circulator fcirc(e), fend(fcirc);
   CGAL_For_all(fcirc,fend) {
     Point p = point(target(fcirc));
-    L.append(leda_point(CGAL::to_double(p.x()),
-                        CGAL::to_double(p.y())));
+    L.push_back(Draw_point(CGAL::to_double(p.x()),
+			   CGAL::to_double(p.y())));
   }   
 }
 
@@ -204,7 +201,7 @@ void draw(Face_const_handle f) const
 { 
   CGAL::Color cc = _CO.color(f,mark(f));
   leda_color c (cc.r(),cc.g(),cc.b());
-  leda_list<leda_point> outer_cycle;
+  std::list<Draw_point> outer_cycle;
   // First the outer face cycle:
   get_point_list(outer_cycle,halfedge(f));
 
@@ -221,12 +218,12 @@ void draw(Face_const_handle f) const
   }
 
   _W.reset_clip_mask();
-  leda_list<leda_point> frame;
-  frame.append(leda_point(x0,y0));
-  frame.append(leda_point(x1,y0));
-  frame.append(leda_point(x1,y1));
-  frame.append(leda_point(x0,y1));
-  frame.reverse_items();
+  std::list<Draw_point> frame;
+  frame.push_back(Draw_point(x0,y0));
+  frame.push_back(Draw_point(x1,y0));
+  frame.push_back(Draw_point(x1,y1));
+  frame.push_back(Draw_point(x0,y1));
+  frame.reverse();
   draw_face_cycle(frame,0); 
   // enforcing transparent mode outside f and inside frame
   draw_face_cycle(outer_cycle,1);
@@ -234,7 +231,7 @@ void draw(Face_const_handle f) const
 
   Hole_const_iterator hole_it;
   for (hole_it = holes_begin(f); hole_it != holes_end(f); ++hole_it) {
-    leda_list<leda_point> hole;
+    std::list<Draw_point> hole;
     get_point_list(hole,hole_it);
     draw_face_cycle(hole,0);
     // enforcing transparent mode for holes
