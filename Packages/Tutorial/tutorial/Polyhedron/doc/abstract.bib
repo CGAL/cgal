@@ -1,4 +1,237 @@
 %======================================================
+% == Data structures ======================================
+%======================================================
+
+@inproceedings{fg-sebbc-03
+, author =      "K. Fischer and B. G{\"a}rtner"
+, title =       "The Smallest Enclosing Ball of Balls: Combinatorial
+                 Structure and Algorithms"
+, booktitle =   "Proc. of ACM Sympos. Comput. Geom."
+, year =        2003
+, pages = {292--301}
+}
+
+@article{bdh-qach-96
+, author =      "C. Bradford Barber and David P. Dobkin and Hannu Huhdanpaa"
+, title =       "The {Quickhull} Algorithm for Convex Hulls"
+, journal =     "ACM Trans. Math. Softw."
+, volume =      22
+, number =      4
+, month =       dec
+, year =        1996
+, pages =       "469--483"
+, succeeds =    "bdh-qach-93"
+, update =      "01.04 icking, 98.03 icking"
+}
+
+@manual{ cgal:g-gmpal-96
+  ,author       = "T. Granlund"
+  ,title        = "{GNU MP}, The {GNU} Multiple Precision Arithmetic Library, 
+                   version 2.0.2"
+  ,month        = jun
+  ,year         = 1996
+}
+
+@article{ cgal:ze-fsbi-02
+  ,author       = "Afra Zomorodian and Herbert Edelsbrunner"
+  ,title        = "Fast Software for Box Intersection"
+  ,journal      = "Int. J. Comput. Geom. Appl."
+  ,year         = 2002
+  ,volume       = 12
+  ,pages        = "143--172"
+}
+
+@inproceedings{ bksv-agppd-00,
+    author       = {H. Br{\"o}nnimann and L. Kettner and 
+                    S. Schirra and R. Veltkamp},
+    title        = {Applications of the Generic Programming Paradigm
+                    in the Design of {CGAL}},
+    booktitle    = {Generic Programming---Proc. of a Dagstuhl Seminar},
+    pages        = {206--217},
+    year         = 2000
+}
+
+@inproceedings{hhkps-aegk-01
+, author =     "S. Hert and M. Hoffmann and L. Kettner and S. Pion and M. Seel"
+, title =	"An Adaptable and Extensible Geometry Kernel"
+, booktitle =	"Proc. Workshop on Algor.\ Engin."
+, nickname =	"WAE '01"
+, year =	2001
+, pages =	"79--90"
+, update =	"02.03 devillers"
+}
+
+@inproceedings{ cgal:b-digph-01
+  ,author       = "Herv{\'e} Br{\"o}nnimann"
+  ,title        = "Designing and implementing a general purpose halfedge 
+                   data structure"
+  ,booktitle    = "Proc. of Intern.\ Worksh.\ on Algor.\
+                   Engin."
+  ,year         = 2001
+  ,pages        = "51--66"
+  ,update       = "04.04 kettner"
+}
+
+@incollection{ Kettner04Handbook,
+    author       = {Lutz Kettner and Stefan N{\"a}her},
+    title        = {Two Computational Geometry Libraries: {LEDA} and {CGAL}},
+    chapter      = 64,
+    editor       = "Jacob E. Goodman and Joseph O'Rourke",
+    booktitle    = "Handbook of Discrete and Computational Geometry",
+    publisher    = "CRC Press LLC",
+    year         = 2004,
+    note         = {to appear}
+}
+
+@book{ Maentylae88,
+    author       = {Martti M{\"a}ntyl{\"a}},
+    title        = {An Introduction to Solid Modeling},
+    publisher    = {Computer Science Press},
+    address      = {Rockville, MD},
+    year         = 1988
+}
+
+@article{ Weiler85,
+    author       = {Kevin Weiler},
+    title        = {Edge-Based Data Structures for Solid Modeling in
+                    Curved-Surface Environments},
+    journal      = {IEEE Comp./ Graphics and Appl.},
+    year         = 1985,
+    volume       = 5,
+    pages        = {21--40},
+    month        = jan
+}
+
+@article{ Muller78,
+    author       = {D. E. Muller and F. P. Preparata},
+    title        = {Finding the Intersection of two Convex Polyhedra},
+    journal      = {Theoretical Computer Science},
+    year         = 1978,
+    volume       = 7,
+    pages        = {217--236}
+}
+
+@book{ cgal:vj-ctcg-03
+  ,author       = "David Vandevoorde and Nicolai M. Josuttis"
+  ,title        = "{C}++ Templates: The Complete Guide"
+  ,publisher    = "Addison-Wesley"
+  ,year         = 2003
+  ,update       = "04.04 kettner"
+}
+
+@book{ cgal:a-gps-98
+  ,author       = {Matthew H. Austern}
+  ,title        = {Generic Programming and the {STL}}
+  ,publisher    = {Addison-Wesley}
+  ,year         = 1998
+  ,update       = "01.06 hoffmann"
+}
+
+@article{ cgal:ms-aogl-94
+  ,author       = {David R.~Musser and Alexander A.~Stepanov}
+  ,title        = {Algorithm-oriented Generic Libraries}
+  ,journal      = {Software -- Practice and Experience}
+  ,year         = 1994
+  ,volume       = 24
+  ,number       = 7
+  ,pages        = {623--642}
+  ,month        = jul
+}
+
+@misc{ cgal:sl-stl-95
+  ,author       = {Alexander Stepanov and Meng Lee}
+  ,title        = {The Standard Template Library}
+  ,howpublished = {\path|http://www.cs.rpi.edu/~musser/doc.ps|}
+  ,month        = oct
+  ,year         = 1995
+  ,annote       = {recommended C++ reading. Short introduction to the
+                   STL. Precise requirements for the iterators and
+                   containers. Explanation of iterator tags (outdated).}
+  ,update       = "97.04 kettner"
+}
+
+@InProceedings{Baumgart:1975:PRCV,
+  author =       "Bruce G. Baumgart",
+  year =         "1975",
+  title =        "A Polyhedron Representation for Computer Vision",
+  booktitle =    "Proc. of the National Computer Conference",
+  pages =        "589--596",
+  keywords =     "winged-edge data structures",
+}
+
+@TechReport{Baumgart:1972:WEPR,
+  type =         "Technical Report",
+  number =       "CS-TR-72-320",
+  title =        "Winged edge polyhedron representation.",
+  month =        oct,
+  notes =        "[Adminitrivia V1/Prg/19951016]",
+  pages =        "54",
+  year =         "1972",
+  bibdate =      "October 16, 1995",
+  author =       "Bruce G. Baumgart",
+  abstract =     "A winged edge polyhedron representation is stated and
+                 a set of primitives that preserve Euler's F-E+V = 2
+                 equation are explained. Present use of this
+                 representation in artificial intelligence for computer
+                 graphics and world modeling is illustrated and its
+                 intended future application to computer vision is
+                 described.",
+  institution =  "Stanford University, Department of Computer Science",
+}
+
+@Article{Weiler:1985:EDS,
+  author =       "Kevin Weiler",
+  title =        "Edge-Based Data Structures for Solid Modeling in
+                 Curved-Surface Environments",
+  journal =      "IEEE Computer Graphics and Applications",
+  volume =       "5",
+  number =       "1",
+  pages =        "21--40",
+  month =        jan,
+  year =         "1985",
+  coden =        "ICGADZ",
+  ISSN =         "0272-1716",
+  bibdate =      "Sat Jan 25 06:42:48 MST 1997",
+  acknowledgement = ack-nhfb,
+  classification = "723; 921",
+  journalabr =   "IEEE Comput Graphics Appl",
+}
+
+@InProceedings{Guibas:1983:PMG,
+  author =       "Leo J. Guibas and Jorge Stolfi",
+  title =        "Primitives for the manipulation of general
+                 subdivisions and the computation of {Voronoi}
+                 diagrams",
+  booktitle =    "Proc. Sympos. on Theory of Computing",
+  year =         "1983",
+  ISBN =         "0-89791-099-0",
+  pages =        "221--234",
+  bibdate =      "Thu Feb 21 06:51:34 MST 2002",
+  acknowledgement = ack-nhfb,
+}
+
+@Article{Campagna:1998:DES,
+  author =       "Swen Campagna and Leif Kobbelt and Hans-Peter Seidel",
+  title =        "Directed Edges --- {A} Scalable Representation for
+                 Triangle Meshes",
+  journal =      "J. of Graphics Tools",
+  volume =       "3",
+  number =       "4",
+  pages =        "1--12", 
+  year =         "1998",
+  ISSN =         "1086-7651",
+}
+
+@misc{Botsch:2002:OPENMESH,
+  author = "M. Botsch and S. Steinberg and S. Bischoff and L. Kobbelt",
+  title = "OpenMesh -- a Generic and Efficient Polygon Mesh Data Structure",
+  text = "M. Botsch, S. Steinberg, S. Bischoff, L. Kobbelt, OpenMesh -- a Generic
+    and Efficient Polygon Mesh Data Structure, OpenSG Symposium 2002.",
+  note = "OpenSG Symposium",
+  year = "2002" }
+
+
+%======================================================
 % == SUBDIVISION ======================================
 %======================================================
 
@@ -8,6 +241,15 @@
     publisher = "Morgan Kaufmann",
     year = "2002",
 }
+
+@article{a-rotm-02,
+  author   = "Marc Alexa",
+  title    = "Refinement Operators for Triangle Meshes",
+  journal  = "Computer Aided Geometric Design",
+  pages    = "169-172",
+  year     = 2002,
+  volume   = "19(3)"}
+
 
 @Article{qts,
   author =       "Jos Stam and Charles Loop",
@@ -71,4 +313,148 @@
     publisher = "ACM SIGGRAPH",
 }
 
+@Article{Peters:1997:SSS,
+  author =       "J. Peters and U. Reif",
+  title =        "The simplest subdivision scheme for smoothing
+                 polyhedra",
+  journal =      {ACM Transaction on Graphics},
+  volume =       "16",
+  number =       "4",
+  month =        "oct",
+  year =         "1997",
+  CODEN =        "ATGRDF",
+  ISSN =         "0730-0301",
+  pages=         "420--431",
+}
 
+@article{Abhijit:2004:APISUB,
+ author = {Abhijit Sovakar and Leif Kobbelt},
+ title = {{API} Design for adaptive subdivision schemes},
+ journal = {Computers \& Graphics},
+ volume = {28},
+ number = {1},
+ year = {2004},
+ month = {Feb},
+ issn = {},
+ pages = {67--72},
+ }
+
+@article{Joe:2003:FASS,
+ author = {Joe Warren and Scott Schaefer},
+ title = {A Factored Approach to Subdivision Surfaces},
+ journal = {submitted to Computer Graphics \& Applications},
+ year = {2003},
+ }
+
+@article{Denis:2001:UFPDQ,
+  author = {Denis Zorin and Peter Schr\"oder},
+  title = "A Unified Framework for Primal/Dual Quadrilateral Subdivision Schemes",
+  journal = "Compu. Aided Geom. Des.",
+ volume = {18},
+ number = {5},
+ pages = {429--454},
+  year = "2001",
+}
+
+%======================================================
+% == CGAL =============================================
+%======================================================
+
+@article{fgkss-dccga-00
+, author =      "A. Fabri and G.-J. Giezeman and L. Kettner and S. Schirra
+                 and S. Sch{\"o}nherr"
+, title =       "{On the Design of {CG\-AL}, a Computational Geometry
+                  Algorithms Library}"
+, journal =     "Softw. -- Pract. Exp."
+, volume =      30
+, number =      11
+, year =        2000
+, pages =       "1167--1202"
+, annote =      "Special Issue on Discrete Algorithm Engineering"}
+
+@article{k-ugpdd-99
+, author =      "L. Kettner"
+, title =       "{Using generic programming for designing a data structure
+                  for polyhedral surfaces}"
+, journal =     "Comput. Geom. Theory Appl."
+, volume =      13
+, year =        1999
+, pages =       "65--90"}
+
+@article{bbp-iayed-01
+, author =  "H. Br{\"o}nnimann and C. Burnikel and S. Pion"
+, title =   "Interval arithmetic yields efficient dynamic filters for computational geometry"
+, journal = "Discrete Applied Mathematics"
+, volume = 109
+, year = 2001
+, pages = "25--47"
+, succeeds = "bbp-iayed-98scg"
+}
+
+@inproceedings{p-iaeia-99
+, author =      "Sylvain Pion"
+, title =       "Interval Arithmetic: An efficient implementation and an application to computational geometry"
+, booktitle =   "Workshop on Applications of Interval Analysis to systems and Control"
+, year =        1999
+, pages =       "99--110"
+, url = "http://www-sop.inria.fr/prisme/biblio/search.html"
+, update =      "01.07 devillers, 00.03 devillers, 99.07 devillers"
+}
+
+%======================================================
+% == STL ==============================================
+%======================================================
+
+@book{ms-stl-96,
+  author    = "D. R. Musser and A. Saini",
+  title     = "{STL} Tutorial and Reference Guide: {C++} Programming 
+                with the {Standard Template Library}", 
+  year      = 1996,
+  publisher = "Addison-Wesley"}
+
+@Book{Austern:1999:GPS,
+  author =       "Matthew H. Austern",
+  title =        "Generic programming and the {STL}: using and extending
+                 the {C++ Standard Template} Library",
+  publisher =    "Addison-Wessley",
+  year =         "1999",
+}
+
+
+@book{Alexandrescu:2001:MCD,
+  author    = "Andrei Alexandrescu",
+  title     = "Modern C++ Design: Generic Programming and Design Patterns Applied", 
+  year      = 2001,
+  publisher = "Addison-Wesley"}
+
+@book{Gamma:1995:DP,
+  author      = {Gamma, Erich and Helm, Richard and Johnson, Ralph},
+  title       = {Design Patterns: Elements of Reusable Object-Oriented Software},
+  year        = {1995},
+  publisher   = {Addison-Wesley}}
+
+
+% GEOMETRY PROCESSING
+
+@Book{ss-dgp-01,
+  editor    = {Wim Sweldens and Peter Schr{\"o}der},
+  title     = {Digital Geometry Processing},
+  series    = {Course Notes},
+  publisher = {ACM SIGGRAPH},
+  year      = {2001}}
+
+@inproceedings{acdi-isr-03,
+  author     = {Pierre Alliez and {\'E}ric Colin de Verdi{\`e}re and
+                Olivier Devillers and Martin Isenburg},
+  title      = {Isotropic Surface Remeshing},
+  booktitle  = {Proc. of Shape Modeling International},
+  pages      = {49--58},
+  year       = {2003}}
+
+@article{acdld-apr-03,
+  author     = {Pierre Alliez and David Cohen-Steiner and Olivier Devillers
+                and Bruno Levy and Mathieu Desbrun},
+  title      = {Anisotropic Polygonal Re\-me\-shing},
+  journal    = {Proc.\ of SIGGRAPH '03},
+  pages      = {485--493},
+}

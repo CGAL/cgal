@@ -11,18 +11,23 @@
 \newcommand\IB{{\itshape bottom}}
 
 % ------------------------------------------------------------------------
-\def\kernel{\lstinline!Kernel!}
-
-\def\cgalpoly{\lstinline!CGAL::Polyhedron_3!}
-\def\poly{\lstinline!Polyhedron_3!}
-\def\polytrait{\lstinline!PolyhedronTraits_3!}
-\def\polyitem{\lstinline!PolyhedronItems_3!}
-\def\polybuilder{\lstinline!Polyhedron_incremental_builder_3!}
-
-\def\cgalhds{\lstinline!CGAL::HalfedgeDS!}
-\def\hds{\lstinline!HalfedgeDS!}
-\def\hdsitem{\lstinline!PolyhedronItems!}
-
-
 \newcommand{\CodeFmt}[1]{{\small\texttt{#1}}}
-\def\cgalpoly{\CodeFmt{Polyhedron\_3}}
+
+\def\kernel{\CodeFmt{Kernel}}
+
+\def\cgalpoly{\CodeFmt{CGAL::Polyhedron\_3}}
+\def\poly{\CodeFmt{Polyhedron\_3}}
+\def\polytrait{\CodeFmt{PolyhedronTraits\_3}}
+\def\polyitem{\CodeFmt{PolyhedronItems\_3}}
+\def\polybuilder{\CodeFmt{Polyhedron\_incremental\_builder\_3}}
+
+\def\cgalhds{\CodeFmt{CGAL::HalfedgeDS}}
+\def\hds{\CodeFmt{HalfedgeDS}}
+\def\hdsitem{\CodeFmt{PolyhedronItems}}
+
+% L.K. -------------------------------------------------------------------
+\newcommand{\CC}{C\raise.08ex\hbox{\texttt{++}}}
+\newcommand{\openmesh}{\textsc{OpenMesh}}
+\newcommand{\opensg}{\textsc{OpenSG}}
+\newcommand{\cgal}{\textsc{Cgal}}
+\newcommand{\stl}{\textsc{Stl}}
