@@ -36,6 +36,17 @@ LDFLAGS = \
 
 all:            \
                 constrained$(EXE_EXT) 
+	make -C basic/tutorial1
+	make -C basic/tutorial2
+	make -C basic/tutorial3
+	make -C basic/tutorial4
+	make -C basic/tutorial5
+	make -C basic/tutorial6
+	make -C basic/tutorial7
+	make -C basic/tutorial8
+	make -C Partition_2
+	make -C Triangulation_2
+	make -C Convex_Hull_2
 
 constrained.moc: constrained.C
 	$(QT_MOC) -o constrained.moc $<
