@@ -202,11 +202,13 @@ inline void Assert_compile_time_tag( const Tag&, const Derived& b) {
 
 template <class C> inline
 void Assert_circulator( const C &c) {
-    Assert_compile_time_tag( Circulator_tag(),query_circulator_or_iterator(c));
+    typedef typename Circulator_traits<C>::category category;
+    Assert_compile_time_tag( Circulator_tag(), category());
 }
 template <class I> inline
 void Assert_iterator( const I &i) {
-    Assert_compile_time_tag( Iterator_tag(), query_circulator_or_iterator(i));
+    typedef typename Circulator_traits<I>::category category;
+    Assert_compile_time_tag( Iterator_tag(), category());
 }
 template <class I> inline
 void Assert_input_category( const I &/*i*/) {
@@ -324,7 +326,8 @@ bool is_empty_range( const IC& ic1, const IC& ic2){
     // is `true' if the range [`ic1, ic2') is empty, `false' otherwise.
     // Precondition: `T' is either a circulator or an iterator type. The
     // range [`ic1, ic2') is valid.
-    return I_is_empty_range( ic1, ic2, query_circulator_or_iterator(ic1));
+    typedef typename Circulator_traits<IC>::category category;
+    return I_is_empty_range( ic1, ic2, category());
 }
 
 struct Circulator_or_iterator_tag {};  // any circulator or iterator.
@@ -342,9 +345,10 @@ check_circulator_or_iterator( Iterator_tag ){
 
 template< class IC> inline
 void Assert_circulator_or_iterator( const IC &ic){
+    typedef typename Circulator_traits<IC>::category category;
     Assert_compile_time_tag(
         Circulator_or_iterator_tag(),
-        check_circulator_or_iterator( query_circulator_or_iterator(ic)));
+        check_circulator_or_iterator( category()));
 }
 
 #define CGAL_For_all( ic1, ic2) \
@@ -445,22 +449,34 @@ circulator_distance( const C& c, const C& d) {
 				std::iterator_traits<C>::iterator_category());
 }
 template <class C> inline
+#ifdef __SUNPRO_CC
+ptrdiff_t
+#else
 typename std::iterator_traits<C>::difference_type
+#endif // __SUNPRO_CC
 I_iterator_distance(const C& c1, const C& c2, Circulator_tag) {
     return circulator_distance( c1, c2);
 }
 
 template <class I> inline
+#ifdef __SUNPRO_CC
+ptrdiff_t
+#else
 typename std::iterator_traits<I>::difference_type
+#endif // __SUNPRO_CC
 I_iterator_distance(const I& i1, const I& i2, Iterator_tag) {
     return std::distance( i1, i2);
 }
 
 template <class IC> inline
+#ifdef __SUNPRO_CC
+ptrdiff_t
+#else
 typename std::iterator_traits<IC>::difference_type
+#endif // __SUNPRO_CC
 iterator_distance(const IC& ic1, const IC& ic2) {
-    return I_iterator_distance( ic1, ic2,
-                                query_circulator_or_iterator(ic1));
+    typedef typename Circulator_traits<IC>::category category;
+    return I_iterator_distance( ic1, ic2, category());
 }
 template <class C> inline
 C I_get_min_circulator( C c, Forward_circulator_tag) {
