@@ -14,7 +14,7 @@ typedef CGAL::Filtered_kernel<SK> FK;
 struct K : public FK {};
 
 typedef K::Point_3                                  Point_3;
-typedef CGAL::Delaunay_triangulation_3<K>           Delaunay_base;
+typedef CGAL::Delaunay_triangulation_3<K>           Delaunay;
 typedef Delaunay::Vertex_handle                     Vertex_handle;
 
 int main()
