@@ -6,7 +6,8 @@
 //---------------------------------------------------------------------
 //	actual revision
 //---------------------------------------------------------------------
-
+MSVC: a workaround in Inverse_index to avoid "duplicate comdat" linker
+	error.
 ALL : New functor adaptors (bind/compose).
 ALL : Removed Compose for Projection objects.
 ALL : Fixed dumb compiler macro.
