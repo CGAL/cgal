@@ -1,3 +1,7 @@
+/*
+ * This test file is not extensive enough.
+ */
+
 #include <CGAL/basic.h>
 
 // Workaround for crappy compilers.
@@ -5,6 +9,8 @@
 #define CGAL_IA_CT double
 #ifdef CGAL_USE_LEDA
 #define CGAL_IA_ET leda_real
+#elif defined CGAL_USE_GMP
+#define CGAL_IA_ET CGAL::Quotient<CGAL::Gmpz>
 #else
 #define CGAL_IA_ET double
 #endif
@@ -15,64 +21,42 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Timer.h>
 
-#include <CGAL/Quotient.h>
-#include <CGAL/Interval_arithmetic.h>
-
-#include <CGAL/predicates/kernel_ftC2.h>
-// #include <CGAL/predicates/kernel_ftC3.h>
-
 #include <CGAL/double.h>
+#include <CGAL/Double_eps.h>
+#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Quotient.h>
+
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_real.h>
+#include <CGAL/leda_integer.h>
+#include <CGAL/leda_rational.h>
+#endif
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 #endif
 
-#ifdef CGAL_USE_LEDA
-// #include <CGAL/leda_bigfloat.h>
-// #include <CGAL/leda_rational.h>
-#include <CGAL/leda_real.h>
-#include <CGAL/leda_integer.h>
-#endif // CGAL_USE_LEDA
-
-// #include <CGAL/Interval_arithmetic.h>
-// #include <CGAL/Fixed_precision_nt.h>
-#include <CGAL/Double_eps.h>
+#include <CGAL/predicates/kernel_ftC2.h>
+// #include <CGAL/predicates/kernel_ftC3.h>
 
 #define CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 #include <CGAL/Arithmetic_filter.h>
 
-// Please pay attention to the workaround at the top of the file.
-
-// Don't be stupid, Gmpz can only store integers !!!
-// typedef CGAL::Filtered_exact<double, CGAL::Gmpz> NT;
-// typedef CGAL::Filtered_exact<leda_real, leda_real> NT;
-// typedef CGAL::Filtered_exact<double, leda_bigfloat> NT;
+// PLEASE PAY ATTENTION TO THE WORKAROUND AT THE TOP OF THE FILE !!!
 #ifdef CGAL_USE_LEDA
 typedef CGAL::Filtered_exact<double, leda_real> NT;
-#elif defined(CGAL_USE_GMP)
+#elif defined CGAL_USE_GMP
 typedef CGAL::Filtered_exact<double, CGAL::Quotient<CGAL::Gmpz> > NT;
 #else
 typedef CGAL::Filtered_exact<double, double> NT; // Need to be exact rationnals
-#endif // CGAL_USE_LEDA
-// typedef CGAL::Filtered_exact<double, leda_real, Filter_Cache> NT;
-// typedef CGAL::Filtered_exact<double, leda_rational> NT;
-// typedef CGAL::Filtered_exact<float, leda_real> NT;
-// typedef CGAL::Filtered_exact<unsigned short int, leda_real> NT;
-// typedef CGAL::Filtered_exact<int, leda_real> NT;
-// typedef Fixed_precision_nt NT;
-// typedef double NT;
-// typedef CGAL::Gmpz NT;
-// typedef leda_real NT;
-// typedef leda_rational NT;
-// typedef Double_eps NT;
-// typedef Interval_nt NT;
-// typedef Interval_nt_advanced NT;
+#endif
+
 
 int test(void);
 void bench(void);
 
 // Now try the higher level predicates (C2/C3/H2/H3).
-// Well, that is make a test-suite.
+// Well, that is: make a real test-suite !
 int main()
 {
   // Interval_nt ia (2);
