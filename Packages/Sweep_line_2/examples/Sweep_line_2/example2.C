@@ -1,21 +1,23 @@
-// examples/Sweep_line/example4.C
+// examples/Sweep_line/example2.C
 // ------------------------------
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h> 
 #include <CGAL/Sweep_line_2.h> 
-#include <CGAL/Arr_polyline_traits.h>
+#include <CGAL/Arr_segment_cached_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 #include <iostream>
 #include <vector>
+#include <list>
 
-typedef CGAL::Quotient<CGAL::MP_Float>       NT;
-typedef CGAL::Cartesian<NT>                  Kernel;
+typedef CGAL::Quotient<CGAL::MP_Float>                NT;
+typedef CGAL::Cartesian<NT>                           Kernel;
+typedef CGAL::Arr_segment_cached_traits_2<Kernel>     Seg_traits;
+typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
 
-typedef CGAL::Arr_polyline_traits<Kernel>    Traits;
-
-typedef Traits::Point_2                      Point_2;
-typedef Traits::Curve_2                      Curve_2;
+typedef Traits::Point_2                               Point_2;
+typedef Traits::Curve_2                               Curve_2;
 
 CGAL_BEGIN_NAMESPACE
 
@@ -23,7 +25,7 @@ std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
 {
   typedef Curve_2::const_iterator Points_iterator;
   
-  os << cv.size() << std::endl;
+  os << cv.points() << std::endl;
   for (Points_iterator points_iter = cv.begin(); 
        points_iter != cv.end(); points_iter++)
     os << " " << *points_iter;
@@ -34,14 +36,18 @@ std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
 std::istream & operator>>(std::istream & in, Curve_2 & cv)
 {
   std::size_t size;
-  std::cout << "enter number of points and then the (x,y) values for each point: ";
+  std::cout << 
+    "enter number of points and then the (x,y) values for each point: ";
   in >> size;
 
-  for (unsigned int i = 0; i < size; i++){
+  std::list<Traits::Point_2>  pts;
+  for (unsigned int i = 0; i < size; i++)
+  {
     Traits::Point_2 p;
     in >> p;
-    cv.push_back(p);  
+    pts.push_back(p);  
   }
+  cv = Curve_2 (pts.begin(), pts.end());
   std::cout << std::endl;
   return in;
 }
@@ -62,13 +68,14 @@ void read_polylines(Container & curves)
   std::cin >> num_polylines;
   std::cout << "number of polylines is : " << num_polylines << std::endl;
 
-  while (num_polylines--) {
+  while (num_polylines--) 
+  {
     Curve_2 polyline;
-    std::cin>>polyline;
+    std::cin >> polyline;
     curves.push_back(polyline);
-    polyline.clear();
   }
 }
+
 int main()
 {
   // Read input

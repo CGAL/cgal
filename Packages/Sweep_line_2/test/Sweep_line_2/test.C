@@ -15,11 +15,10 @@
 
 #include <CGAL/Sweep_line_2.h>
 
-#define CGAL_SEGMENT_TRAITS        1
-#define CGAL_SEGMENT_LEDA_TRAITS   2
-#define CGAL_POLYLINE_TRAITS      11
-#define CGAL_POLYLINE_LEDA_TRAITS 12
-#define CGAL_SEGMENT_CIRCLE_TRAITS 21
+#define CGAL_SEGMENT_TRAITS         1
+#define CGAL_SEGMENT_LEDA_TRAITS    2
+#define CGAL_POLYLINE_TRAITS       11
+#define CGAL_CONIC_TRAITS          21
 
 // Picking a default Traits class (this, with the 
 // PL flag enables the running of the test independently of cgal_make.)
@@ -29,9 +28,8 @@
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA) && \
-      (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
-       CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
-       CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS )
+      (CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
+       CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS )
 
 int main()
 {
@@ -53,14 +51,11 @@ int main()
 #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
 #include <CGAL/Arr_leda_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-#include <CGAL/Arr_polyline_traits.h>
-#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-#include <CGAL/leda_rational.h>
-#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
-#include <CGAL/Arr_leda_polyline_traits.h>
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+#include <CGAL/Arr_segment_cached_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
 #include <CGAL/leda_real.h>
-#include <CGAL/Arr_segment_circle_traits.h>
+#include <CGAL/Arr_conic_traits_2.h>
 #else
 #error No traits defined for test
 #endif
@@ -103,6 +98,7 @@ int main()
 // data files. Quotient can read both integers and fractions.
 // leda rational will only read fractions.
 #include <CGAL/Quotient.h> 
+#include <CGAL/MP_Float.h>
 
 #include <list>
 #include <string>
@@ -111,8 +107,8 @@ int main()
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
   typedef CGAL::Quotient<int>                           NT;
-  typedef CGAL::Cartesian<NT>                           R;
-  typedef CGAL::Arr_segment_traits_2<R>                 Traits;
+  typedef CGAL::Cartesian<NT>                           Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>            Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                                 NT;
@@ -120,20 +116,17 @@ int main()
   typedef CGAL::Arr_leda_segment_traits_2<Kernel>       Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  typedef CGAL::Quotient<int>                           NT;
-  typedef CGAL::Cartesian<NT>                           R;
-  typedef CGAL::Arr_polyline_traits<R>                  Traits;
+  typedef CGAL::Quotient<MP_Floa                        NT;
+  typedef CGAL::Cartesian<NT>                           Kernel;
+  typedef CGAL::Arr_segment_cached_traits_2<Kernel>     Seg_traits;
+  typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
 
-#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-  typedef leda_rational                                 NT;
-  typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
-  typedef CGAL::Arr_leda_polyline_traits<Kernel>        Traits;
-
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
   typedef leda_real                                     NT;
-  typedef CGAL::Arr_segment_circle_traits<NT>           Traits;
-  typedef Traits::Segment                               Segment;
-  typedef Traits::Circle                                Circle;
+  typedef CGAL::Cartesian<NT>                           Kernel;
+  typedef CGAL::Arr_conic_traits_2<Kernel>              Traits;
+  typedef Traits::Segment_2                             Segment;
+  typedef Traits::Circle_2                              Circle;
 #endif
 
 typedef Traits::Point_2                         Point;
@@ -148,7 +141,7 @@ typedef Pmwx::Pmwx_change_notification          Notifier;
 typedef std::list<Point>                        Point_list;
 
 // Defining IO operators for polyline curves.
-#if (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS)
+#if (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS)
 
 
 CGAL_BEGIN_NAMESPACE
@@ -158,7 +151,7 @@ std::ostream&  operator<<(std::ostream& os,
 {
   typedef Curve::const_iterator       Points_iterator;
   
-  os<<cv.size()<<std::endl;
+  os<<cv.points()<<std::endl;
   for (Points_iterator points_iter = cv.begin(); 
        points_iter != cv.end(); points_iter++)
     os<<" "<<*points_iter;
@@ -310,7 +303,7 @@ private:
     
     for (pit = all_points_list.begin(); pit != all_points_list.end(); pit++)
     {
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
       std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
 #else
       std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
@@ -332,11 +325,7 @@ private:
 	 pit != point_list.end();
 	 pit++, lt_it++)
     {
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  //#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  //CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || 
-          //    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
       std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
 #else
       std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
@@ -389,7 +378,7 @@ private:
         else
           {
             file.putback(c);
-#if CGAL_ARR_TEST_TRAITS != CGAL_SEGMENT_CIRCLE_TRAITS
+#if CGAL_ARR_TEST_TRAITS != CGAL_CONIC_TRAITS
             file >> num;
             result = NT(num.numerator(), num.denominator());
 #else
@@ -439,28 +428,16 @@ private:
     int get_next_int(std::ifstream& file)
     {
 
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
       // The to_long precondition is that number is indeed long
       // is supplied here since input numbers are small.
       return get_next_num(file).numerator().to_long();
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
       return (int) CGAL::to_double(get_next_num(file));
 #else
       return get_next_num(file).numerator();
 #endif
     }
-
-  /*  int get_next_int(std::ifstream& file)
-    {
-
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-      // The to_long precondition is that number is indeed long
-      // is supplied here since input numbers are small.
-      return get_next_num(file).numerator().to_long();
-#else
-      return get_next_num(file).numerator();
-#endif
-}*/
 
 #if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
     CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
@@ -487,20 +464,18 @@ private:
     return segment;
   }
 
-#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
-      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
 
 Curve read_polyline_curve(std::ifstream& file, bool reverse_order = false)
   {
-    Curve                 polyline;
     NT                    x,y; 
     int                   num_x_curves ;
     Point_list            point_list;
-    Point_list::iterator  plit;
 
     num_x_curves = get_next_int(file);
     
-    while (num_x_curves--) {
+    while (num_x_curves--) 
+    {
       x = get_next_num(file); y = get_next_num(file);
       Point s(x,y);
       if (reverse_order)
@@ -508,22 +483,16 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order = false)
       else
 	point_list.push_back(s);
     }
-    for (plit = point_list.begin(); //, cit = polyline.begin();
-	 plit != point_list.end();
-	 plit++) 
-      {
-	//std::cout << *plit << std::endl;
-	polyline.push_back(*plit);
-      }
-    
-    // all_points_list.splice(all_points_list.end(), point_list);
+
+    Curve polyline (point_list.begin(), point_list.end());
+
     std::copy(point_list.begin(), point_list.end(),
               std::back_inserter(all_points_list));
     
-    return polyline;
+    return (polyline);
 }
 
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
 
 Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order=false)
 {
@@ -627,11 +596,11 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order=false)
       
       curr_curve = read_segment_curve(file);
       
-#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
-      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
+#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
       
       curr_curve = read_polyline_curve(file);
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+
+#elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
       
       curr_curve = read_seg_circ_curve(file);
 #else

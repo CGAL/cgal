@@ -111,9 +111,6 @@ run_io()
   elif [ $3 -eq $CGAL_POLYLINE_TRAITS ]; then
     iofiles="DATA/IO/polylines/exact_io/"
     SUFFIO="exact_io"
-  elif [ $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
-    iofiles="DATA/IO/polylines/leda_io/" 
-    SUFFIO="leda_io"
   fi
 
   for DATAFILE in ${datafiles}
@@ -170,9 +167,7 @@ else
   CGAL_SEGMENT_TRAITS=1
   CGAL_SEGMENT_LEDA_TRAITS=2
   CGAL_POLYLINE_TRAITS=11
-  CGAL_POLYLINE_LEDA_TRAITS=12
-  CGAL_SEGMENT_CIRCLE_TRAITS=21
-  CGAL_CONIC_TRAITS=31
+  CGAL_CONIC_TRAITS=21
 
   TRAP=1  # Trapezoidal decomposition
   NAIVE=2
@@ -195,13 +190,7 @@ else
     (compile_and_run test $TRAP  $CGAL_POLYLINE_TRAITS "DATA/polylines")
     (compile_and_run test $NAIVE $CGAL_POLYLINE_TRAITS "DATA/polylines")
     (compile_and_run test $WALK  $CGAL_POLYLINE_TRAITS "DATA/polylines")
-
-  # Uncomment when leda polyline traits is fully debugged
-  # run test with leda polyline traits
-  #  (compile_and_run test $TRAP  $CGAL_POLYLINE_LEDA_TRAITS "DATA/polylines")
-  #  (compile_and_run test $NAIVE $CGAL_POLYLINE_LEDA_TRAITS "DATA/polylines")
-  #  (compile_and_run test $WALK  $CGAL_POLYLINE_LEDA_TRAITS "DATA/polylines")
-    
-  # run test with segment circle traits
-    (compile_and_run test $WALK  $CGAL_SEGMENT_CIRCLE_TRAITS "DATA/segment_circles")
+   
+  # run test with conic traits
+    (compile_and_run test $WALK  $CGAL_CONIC_TRAITS "DATA/segment_circles")
 fi
