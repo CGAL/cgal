@@ -53,6 +53,11 @@ public:
 	Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
 	~Layers_toolbar()
 	{
+		delete showT;
+		delete showV;
+		delete showP;
+		delete showNV;
+		delete showMC;
 		delete maintoolbar;
 	};
 	QToolBar*	toolbar(){return maintoolbar;};

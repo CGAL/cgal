@@ -47,6 +47,11 @@ public:
   Layers_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point>	*l_of_p);
 	~Layers_toolbar()
 	{
+		delete showMC;
+		delete showP;
+		delete showPL;
+		delete showLS;
+		delete showR;
 		delete maintoolbar;
 	};
 	QToolBar*	toolbar(){return maintoolbar;};
