@@ -5,10 +5,22 @@
   <class name="cls121" key="aggregate dummy PMWX Conics Cartesian Core Expr"/>
   <class name="cls122" key="aggregate dummy PMWX Conics Simple Cartesian Core Expr"/>
 
-  <class name="cls211" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Cgal Gmpq"/>
-  <class name="cls212" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Cgal Gmpq"/>
-  <class name="cls213" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Cgal Gmpq"/>
-  <class name="cls214" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Cgal Gmpq"/>
+  <class name="cls211" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Gmpz"/>
+  <class name="cls212" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Gmpz"/>
+  <class name="cls213" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Gmpz"/>
+  <class name="cls214" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Gmpz"/>
+  <class name="cls215" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Core Expr"/>
+  <class name="cls216" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Core Expr"/>
+  <class name="cls217" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Leda Real"/>
+  <class name="cls218" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Leda Real"/>
+  <class name="cls219" key="aggregate dummy PMWX Curved Kernel Circles Cartesian MP Float"/>
+  <class name="cls21a" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian MP Float"/>
+  <class name="cls21b" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Quotient MP Float"/>
+  <class name="cls21c" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Quotient MP Float"/>
+  <class name="cls21d" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Cgal Gmpq"/>
+  <class name="cls21e" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Cgal Gmpq"/>
+  <class name="cls21f" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Cgal Gmpq"/>
+  <class name="cls21g" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Cgal Gmpq"/>
 
   <class name="cls221" key="aggregate dummy PMWX Curved Kernel Conics Cartesian Gmpz"/>
   <class name="cls222" key="aggregate dummy PMWX Curved Kernel Conics Simple Cartesian Gmpz"/>
@@ -37,8 +49,8 @@
       <benchPmwxLedaRealSimpleCartesianConic/>
       <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
       <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
-      <benchPmwxGmpzCartesianCkConic/>
-      <benchPmwxGmpzSimpleCartesianCkConic/>
+      <benchPmwxGmpqCartesianCkConic/>
+      <benchPmwxGmpqSimpleCartesianCkConic/>
       <benchPmwxNixLedaCartesianExacusConic/>
       <benchPmwxNixCoreCartesianExacusConic/>
     </bench>
@@ -48,8 +60,8 @@
       <benchPmwxLedaRealSimpleCartesianConic />
       <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
       <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
-      <benchPmwxGmpzCartesianCkConic/>
-      <benchPmwxGmpzSimpleCartesianCkConic/>
+      <benchPmwxGmpqCartesianCkConic/>
+      <benchPmwxGmpqSimpleCartesianCkConic/>
       <benchPmwxNixLedaCartesianExacusConic/>
       <benchPmwxNixCoreCartesianExacusConic/>
     </bench>
@@ -59,8 +71,8 @@
       <benchPmwxLedaRealSimpleCartesianConic/>
       <benchPmwxCgalWindowCoreExprCartesianCoreConic enable="false"/>
       <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic enable="false"/>
-      <benchPmwxGmpzCartesianCkConic/>
-      <benchPmwxGmpzSimpleCartesianCkConic/>
+      <benchPmwxGmpqCartesianCkConic/>
+      <benchPmwxGmpqSimpleCartesianCkConic/>
       <benchPmwxNixLedaCartesianExacusConic/>
       <benchPmwxNixCoreCartesianExacusConic/>
     </bench>

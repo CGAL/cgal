@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<bench name_length="80" header="false" type_mask="0x2" strategy_mask="0x8" time="10">
+<bench name_length="80" header="false" type_mask="0x2" strategy_mask="0x8" samples="1">
   <class name="cls111" key="aggregate dummy PMWX Conics Cartesian Leda Real"/>
   <class name="cls112" key="aggregate dummy PMWX Conics Simple Cartesian Leda Real"/>
   <class name="cls121" key="aggregate dummy PMWX Conics Cartesian Core Expr"/>
   <class name="cls122" key="aggregate dummy PMWX Conics Simple Cartesian Core Expr"/>
 
-  <class name="cls211" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Cgal Gmpq"/>
-  <class name="cls212" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Cgal Gmpq"/>
-  <class name="cls213" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Cgal Gmpq"/>
-  <class name="cls214" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Cgal Gmpq"/>
-
+  <class name="cls211" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Gmpz"/>
+  <class name="cls212" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Gmpz"/>
+  <class name="cls213" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Gmpz"/>
+  <class name="cls214" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Gmpz"/>
   <class name="cls215" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Core Expr"/>
   <class name="cls216" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Core Expr"/>
   <class name="cls217" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Leda Real"/>
@@ -18,6 +17,16 @@
   <class name="cls21a" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian MP Float"/>
   <class name="cls21b" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Quotient MP Float"/>
   <class name="cls21c" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Quotient MP Float"/>
+  <class name="cls21d" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Cgal Gmpq"/>
+  <class name="cls21e" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Cgal Gmpq"/>
+  <class name="cls21f" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Cgal Gmpq"/>
+  <class name="cls21g" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Cgal Gmpq"/>
+
+  <class name="cls221" key="aggregate dummy PMWX Curved Kernel Conics Cartesian Gmpq"/>
+  <class name="cls222" key="aggregate dummy PMWX Curved Kernel Conics Simple Cartesian Gmpq"/>
+
+  <class name="cls311" key="aggregate dummy PMWX Exacus Conics Cartesian NiX Leda Real"/>
+  <class name="cls321" key="aggregate dummy PMWX Exacus Conics Cartesian NiX Core"/>
 
   <class name="cls221" key="aggregate dummy PMWX Curved Kernel Conics Cartesian Gmpq"/>
   <class name="cls222" key="aggregate dummy PMWX Curved Kernel Conics Simple Cartesian Gmpq"/>
@@ -26,8 +35,8 @@
   <class name="cls321" key="aggregate dummy PMWX Exacus Conics Cartesian NiX Core"/>
 
   <!-- <clo name="format" string="-If="/> -->
-  <!-- <clo name="samples" string="-s"/> -->
-  <clo name="time" string="-t"/> 
+  <clo name="samples" string="-s"/>
+  <!-- <clo name="time" string="-t"/> -->
   <clo name="header" string="-bh="/> 
   <clo name="name_length" string="-bnl="/> 
   <clo name="type_mask" string="-btm="/> 
@@ -57,35 +66,63 @@
     vertices="44" halfedges="184" faces="50"></file>
   <file name="tng_circs_seg_8.dat" format="dat" curves="8"
     vertices="31" halfedges="108" faces="25"></file>
+  <file name="int_circs_30.dat" format="dat" curves="30"
+    vertices="424" halfedges="1576" faces="367"></file>
 
   <bench>
     <bench file="box_25_16_org_big.dat" enable="true">
-      <benchPmwxCoreExprCartesianCkCircle header="true"/>
-      <benchPmwxCoreExprSimpleCartesianCkCircle/>
-      <benchPmwxLedaRealCartesianCkCircle/>
-      <benchPmwxLedaRealSimpleCartesianCkCircle/>
+      <benchPmwxGmpzCartesianCkCircle header="true"/>
+      <benchPmwxGmpzSimpleCartesianCkCircle/>
       <benchPmwxMPFloatCartesianCkCircle/>
       <benchPmwxMPFloatSimpleCartesianCkCircle/>
       <benchPmwxQuotientCartesianCkCircle/>
       <benchPmwxQuotientSimpleCartesianCkCircle/>
-      <benchPmwxLazyCgalGmpqCartesianCkCircle/>
-      <benchPmwxLazyCgalGmpqSimpleCartesianCkCircle/>
       <benchPmwxCgalGmpqCartesianCkCircle/>
       <benchPmwxCgalGmpqSimpleCartesianCkCircle/>
+      <benchPmwxCoreExprCartesianCkCircle/>
+      <benchPmwxCoreExprSimpleCartesianCkCircle/>
+      <benchPmwxLedaRealCartesianCkCircle/>
+      <benchPmwxLedaRealSimpleCartesianCkCircle/>
+      <benchPmwxLazyGmpzCartesianCkCircle/>
+      <benchPmwxLazyGmpzSimpleCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqSimpleCartesianCkCircle/>
     </bench>
     <bench file="circles_21.dat" enable="true">
-      <benchPmwxCoreExprCartesianCkCircle header="true"/>
-      <benchPmwxCoreExprSimpleCartesianCkCircle/>
-      <benchPmwxLedaRealCartesianCkCircle/>
-      <benchPmwxLedaRealSimpleCartesianCkCircle/>
+      <benchPmwxGmpzCartesianCkCircle header="true"/>
+      <benchPmwxGmpzSimpleCartesianCkCircle/>
       <benchPmwxMPFloatCartesianCkCircle/>
       <benchPmwxMPFloatSimpleCartesianCkCircle/>
       <benchPmwxQuotientCartesianCkCircle/>
       <benchPmwxQuotientSimpleCartesianCkCircle/>
-      <benchPmwxLazyCgalGmpqCartesianCkCircle/>
-      <benchPmwxLazyCgalGmpqSimpleCartesianCkCircle/>
       <benchPmwxCgalGmpqCartesianCkCircle/>
       <benchPmwxCgalGmpqSimpleCartesianCkCircle/>
+      <benchPmwxCoreExprCartesianCkCircle/>
+      <benchPmwxCoreExprSimpleCartesianCkCircle/>
+      <benchPmwxLedaRealCartesianCkCircle/>
+      <benchPmwxLedaRealSimpleCartesianCkCircle/>
+      <benchPmwxLazyGmpzCartesianCkCircle/>
+      <benchPmwxLazyGmpzSimpleCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqSimpleCartesianCkCircle/>
+    </bench>
+    <bench file="int_circs_30.dat" enable="true">
+      <benchPmwxGmpzCartesianCkCircle header="true"/>
+      <benchPmwxGmpzSimpleCartesianCkCircle/>
+      <benchPmwxMPFloatCartesianCkCircle/>
+      <benchPmwxMPFloatSimpleCartesianCkCircle/>
+      <benchPmwxQuotientCartesianCkCircle/>
+      <benchPmwxQuotientSimpleCartesianCkCircle/>
+      <benchPmwxCgalGmpqCartesianCkCircle/>
+      <benchPmwxCgalGmpqSimpleCartesianCkCircle/>
+      <benchPmwxCoreExprCartesianCkCircle/>
+      <benchPmwxCoreExprSimpleCartesianCkCircle/>
+      <benchPmwxLedaRealCartesianCkCircle/>
+      <benchPmwxLedaRealSimpleCartesianCkCircle/>
+      <benchPmwxLazyGmpzCartesianCkCircle/>
+      <benchPmwxLazyGmpzSimpleCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqSimpleCartesianCkCircle/>
     </bench>
   </bench>
 
