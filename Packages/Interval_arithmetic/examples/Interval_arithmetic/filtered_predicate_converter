@@ -6,17 +6,7 @@
 # This script takes as input a source code file containing template predicates.
 # It outputs the filtered specializations.
 #
-# It is not supposed to be universal: it doesn't understand full C++.
-# But it appears to work for CGAL's predicates, so you might want
-# to use it for your predicates too.
-#
-# See the CGAL documentation: Support Library, Number Types, Filtered_exact.
-
-# TODO list:
-#      - Introduce a EPSILON_COMPUTATION section, so that the user can provide
-#        in place the alternative code to be used to recompute the epsilons,
-#        when the default is not correct or fast enough.
-#      - String templates for the epsilons variants ?
+# See the CGAL documentation: Support Library, Number Types.
 
 use vars qw($opt_p $opt_h $opt_s $opt_d $opt_v); # Suppress stupid warnings
 require 'getopt.pl';
@@ -32,6 +22,7 @@ $static_version=0;		# Default is the filtered_exact version.
     [ "", "NT", "inline", "Sign", "sign", 1, "", "", "x"] );
 # Note: we don't actually care about a few fields ($body...) for these.
 $num_built_in_predicates=$#predicates+1;	# Number of built-in predicates.
+$pred_list_re="sign|compare|lexicographical_sign";
 
 # We _must_ manipulate the fields of @predicate using these constants:
 # (aren't there structs in Perl ?  Are packs the way to go ? )
@@ -92,6 +83,11 @@ __FUNCTION_NAME__(__ARGUMENTS_CALL__)
   }
 }\n\n";
 
+$Accessory_SAF_template=
+"__INLINE_DIRECTIVE__
+__RETURN_TYPE__
+__FUNCTION_NAME__(__ARGUMENTS_CALL____EPSILONS_CALL__)__BODY__\n\n";
+
 $Static_adaptif_template=
 "__INLINE_DIRECTIVE__
 __RETURN_TYPE__
@@ -136,7 +132,6 @@ letstry:
 # Parse the command line options.
 sub parse_command_line {
   Getopt('iod');
-  $pedantic=$opt_p;
   if ($opt_h) {
     print STDERR "Usage: filtered_predicate_converter [options]
     -i file   : specify the main input source file [default is stdin]
@@ -155,19 +150,18 @@ sub parse_command_line {
   $opt_i = "-" unless $opt_i;
   $opt_o = "-" unless $opt_o;
   $static_version = 1 if $opt_s;
+  $pedantic = $opt_p;
 }
 
 # Auxiliary routine to emit a warning and die if pedantic.
 sub warning {
-  my ($msg) = @_;
-  warn "// Warning : $msg";
+  warn "// Warning : @_\n";
   die if $pedantic;
 }
 
 # Emit a message in verbose mode only.
 sub verbose {
-  my ($msg) = @_;
-  warn "// Info : $msg" if $opt_v;
+  warn "// Info : @_\n" if $opt_v;
 }
 
 # Parse the CGAL header
@@ -221,19 +215,20 @@ sub print_filtered_exact {
 }
 
 # Returns the new function
-sub give_new_body {
+sub print_epsilon_body {
   my ($ret_type, $fct_name, $body, $t, $eps, $new_t, $const, @args) = @_;
-  my $new_body="inline\n";	# inline by default since it's not template.
+  my $args_call = arg_string("\n    const $new_t &", ",", "", @args);
+  my $eps_call = arg_string("\n    ${const}double & epsilon_", "", ",", 0..$eps-1);
 
-  $new_body.="$ret_type\n";
-  $new_body.="${fct_name}_SAF(";
-  $new_body.=arg_string("\n    const $new_t &", ",", "", @args);
-  $new_body.=arg_string("\n    ${const}double & epsilon_", "", ",", 0..$eps-1).")";
-  # Replace $template_type by the instantiated one.
-  $_ = $body;
-  s/$t/$new_t/smg; # Could be made more accurate ;-)
-  $new_body.="$_\n\n";
-  return $new_body;
+  $_ = $Accessory_SAF_template;
+  s#__INLINE_DIRECTIVE__#inline#ms;
+  s#__RETURN_TYPE__#$ret_type#ms;
+  s#__FUNCTION_NAME__#$fct_name\_SAF#ms;
+  s#__ARGUMENTS_CALL__#$args_call#ms;
+  s#__EPSILONS_CALL__#$eps_call#ms;
+  s#__BODY__#$body#ms;
+  s#(\W)$t(\W)#$1$new_t$2#msg;	# Replace $templ_type.
+  print FO;
 }
 
 # Print the Static Adaptatif version of a predicate.
@@ -244,19 +239,18 @@ sub print_static_adaptatif {
     warning("Predicate \"$fct_name\" (".scalar(@args)." args) _must_ have at least one epsilon.");
   }
 
-  # Print the SFE version of the predicate.
-  print FO give_new_body($ret_type, $fct_name, $new_body, $t, $eps,
-  			 "${CGAL}Static_filter_error", "", @args);
+  # Print the accessory versions of the predicate.
+  print_epsilon_body($ret_type, $fct_name, $new_body, $t, $eps,
+  		     "${CGAL}Static_filter_error", "", @args);
 
-  # Print the epsilon version of the predicate.
-  print FO give_new_body($ret_type, $fct_name, $new_body, $t, $eps,
-  			 "Restricted_double", "const ", @args);
+  print_epsilon_body($ret_type, $fct_name, $new_body, $t, $eps,
+  		     "Restricted_double", "const ", @args);
 
   # Print the function declaration
   my $bounds_check = arg_string("\n        fabs(", ".value()) > SAF_bound", " ||", @args);
-  my $args_value   = arg_string("\n\t\tRestricted_double(", ".value())", ",", @args);
-  my $args_error   = "\n\t\tStatic_filter_error(SAF_bound,0,1)," x ($#args+1);
-  my $args_exact   = arg_string("\n\t\t", ".exact()", ",", @args);
+  my $args_value = arg_string("\n\t\tRestricted_double(", ".value())", ",", @args);
+  my $args_error = "\n\t\tStatic_filter_error(SAF_bound,0,1)," x ($#args+1);
+  my $args_exact = arg_string("\n\t\t", ".exact()", ",", @args);
   my $args_epsilons = arg_string("\n\t\tSAF_epsilon_", "", ",", 0..$eps-1);
   my $static_epsilons = arg_string("  static double SAF_epsilon_",";\n", "", 0..$eps-1);
   my $args_call = arg_string("\n    const ${CGAL}Static_adaptatif_filter &", "", ",", @args);
@@ -278,7 +272,7 @@ sub print_static_adaptatif {
   print FO;
 }
 
-# Parse from "template" to end of body "}"
+# Parse from "template" to end of body
 sub parse_function_definition {
   local ($_) = @_;
   /^\W*template\s*\<\s*(?:class|typename)\s*(\S*)\s*\>	# template type name
@@ -317,6 +311,7 @@ sub parse_input_code {
     else {
       my ($after, @pred) = parse_function_definition($1.$');
       push @predicates, [ $CGAL, @pred ];
+      $pred_list_re.="|".$pred[$fct_name_pos-1];
       if ($static_version) { treat_predicate($#predicates); }
       $_ = $after;
     }
@@ -331,11 +326,8 @@ sub print_predicates {
     my ($CGAL) = @{$predicates[$i]};
     print "CGAL_BEGIN_NAMESPACE\n\n" if $CGAL eq "" && not $was_in_CGAL;
     print "CGAL_END_NAMESPACE\n\n"   if $CGAL ne "" && $was_in_CGAL;
-    if ($static_version) {
-      print_static_adaptatif(@{$predicates[$i]});
-    } else {
-      print_filtered_exact(@{$predicates[$i]});
-    }
+    if ($static_version) { print_static_adaptatif(@{$predicates[$i]}); }
+    else { print_filtered_exact(@{$predicates[$i]}); }
     $was_in_CGAL = $CGAL eq "";
   }
   print "CGAL_END_NAMESPACE\n\n" if $was_in_CGAL;
@@ -366,46 +358,33 @@ sub extract_balanced {
 sub match_calls_in_body {
   local ($_) = @_;
   my $new_body = "";
-  my $num_eps=0;
-
-  # We prepare the $predicates_re (should be done at an upper level).
-  # Final is sthg like "(?:compare|sign|orientationC2)".
-  my $predicates_re = "(?:";
-  foreach ( @predicates ) {
-    $predicates_re .= "@$_[$fct_name_pos]|";
-  }
-  chop($predicates_re);
-  $predicates_re .= ')';
+  my $num_eps = 0;
 
   # We match the first call to a known predicate function.
-  while (/([^\w\d_])($predicates_re)(\s*\()/sm) {
-    $predicate_name = $2;
+  while (/(\W)($pred_list_re)(\s*\()/sm) {
+    my $predicate_name = $2;
     my ($num_args, $before, $after) = extract_balanced ("(", ")", "(".$');
     $new_body .= "$`$1$2_SAF$before"; # We add "_SAF" to the predicate name
 
-    # Recognize the actual predicate.
+    # Recognize the actual predicate, with same number of arguments.
     my $p;
     foreach ( @predicates ) {
       $p = $_;
       last if (scalar(@$p)-$args_pos == $num_args) && (@$p[$fct_name_pos] eq $predicate_name);
     }
-    # Check the number of arguments corresponds.
-    if (not ((scalar(@$p)-$args_pos == $num_args) && (@$p[$fct_name_pos] eq $predicate_name))) {
-      warning("We beleive we matched a predicate, but it's not in our list !
-             pred = \"$predicate_name\"");
+    if (not $p) {
+      warning("We matched \"$predicate_name\" with an unknown number of arguments");
     };
 
     # We add the epsilon arguments to the call in $new_body.
-    for $i ( $num_eps .. ($num_eps + @$p[$eps_pos] - 1) ) {
-      $new_body .= ", epsilon_$i";
+    for $i ( 0 .. @$p[$eps_pos] - 1 ) {
+      $new_body .= ", epsilon_".($num_eps+$i);
     }
-    
     $num_eps += @$p[$eps_pos];
     $_ = $after;
   }
-  $new_body .= $_;
 
-  return ($num_eps, $new_body);
+  return ($num_eps, $new_body.$_);
 }
 
 # Calls match_calls_in_body over @predicates[$_], and updates $eps & $new_body.
