@@ -38,7 +38,7 @@ public:
     widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar(widget, this);
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     
     QToolBar  *tools_toolbar;
@@ -82,7 +82,7 @@ private slots:
 private:
   CGAL::Qt_widget *widget;	//the instance of Qt_widget
   My_Layer v;		//an instance of a layer
-  CGAL::Standard_toolbar *stoolbar; //the standard toolbar
+  CGAL::Qt_widget_standard_toolbar *stoolbar; //the standard toolbar
   CGAL::Qt_widget_get_point<Rep> get_point;   
 						//the generic tool that creates Cgal points
   QToolButton *get_point_but;	//the toolbar button

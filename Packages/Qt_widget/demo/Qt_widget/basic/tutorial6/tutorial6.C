@@ -51,7 +51,7 @@ public:
     widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar(widget, this);
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     
     widget->attach(&v);
@@ -75,7 +75,7 @@ private:
   CGAL::Qt_widget *widget;
   My_Layer v;
   My_Tool t;
-  CGAL::Standard_toolbar *stoolbar;
+  CGAL::Qt_widget_standard_toolbar *stoolbar;
 };
 
 #include "tutorial6.moc"

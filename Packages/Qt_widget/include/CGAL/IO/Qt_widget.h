@@ -236,7 +236,7 @@ private:
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;
   std::list<togglelayer>	qt_toggle_layers;
-  friend class Standard_toolbar;
+  friend class Qt_widget_standard_toolbar;
 };//end Qt_widget class
 
 // manipulators

@@ -14,11 +14,11 @@ Qt_widget, that you need in the class My_Window.
 The only difference between this example and the previous one is the
 use of standard toolbar. It is declared as private in My_Window class:
 
-	CGAL::Standard_toolbar *stoolbar;
+	CGAL::Qt_widget_standard_toolbar *stoolbar;
 
 To use it, in the constructor of My_Window, it is added:
 
-	stoolbar = new CGAL::Standard_toolbar(widget, this);
+	stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
 	this->addToolBar(stoolbar->toolbar(), Top, FALSE);
 
 In this tutorial you can play a little bit with the standard toolbar

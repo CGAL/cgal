@@ -40,11 +40,11 @@
 
 namespace CGAL {
 
-class Standard_toolbar : public QObject
+class Qt_widget_standard_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Standard_toolbar(Qt_widget *w, QMainWindow *mw);
+  Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw);
   QToolBar*	toolbar(){return maintoolbar;}
 
 

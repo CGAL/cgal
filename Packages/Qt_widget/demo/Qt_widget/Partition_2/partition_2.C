@@ -103,7 +103,7 @@ public:
     //the new scenes toolbar
     vtoolbar = new CGAL::Layers_toolbar(widget, this, &polygon);
     //the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar (widget, this);
+    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
     this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
@@ -222,7 +222,7 @@ private:
   CGAL::Qt_widget	  *widget;	
   CGAL::Tools_toolbar	  *newtoolbar;
   CGAL::Layers_toolbar	  *vtoolbar;
-  CGAL::Standard_toolbar  *stoolbar;
+  CGAL::Qt_widget_standard_toolbar  *stoolbar;
   int			old_state;	
 };
 

@@ -46,7 +46,7 @@ public:
     widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar(widget, this);
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     setUsesBigPixmaps(true);
 
@@ -55,7 +55,7 @@ public:
 private:
   My_Widget *widget;
   My_Layer  v;
-  CGAL::Standard_toolbar *stoolbar;
+  CGAL::Qt_widget_standard_toolbar *stoolbar;
 };
 
 int main( int argc, char **argv )

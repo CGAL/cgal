@@ -32,7 +32,7 @@
 
 
 namespace CGAL {
-  Standard_toolbar::Standard_toolbar(Qt_widget *w, QMainWindow *mw)
+  Qt_widget_standard_toolbar::Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw)
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
@@ -107,7 +107,7 @@ namespace CGAL {
   };
 
   //the definition of the slots
-  void Standard_toolbar::toggle_button()
+  void Qt_widget_standard_toolbar::toggle_button()
   {
     if(is_active) {
       but[activebutton]->toggle();
@@ -115,7 +115,7 @@ namespace CGAL {
     }
   }	
 
-  void Standard_toolbar::toolregion()
+  void Qt_widget_standard_toolbar::toolregion()
   {
     if (but[3]->isOn())
     {
@@ -130,7 +130,7 @@ namespace CGAL {
     }
   }
 
-  void Standard_toolbar::zoominrect()
+  void Qt_widget_standard_toolbar::zoominrect()
   {
     if (but[4]->isOn())
     {
@@ -145,17 +145,17 @@ namespace CGAL {
     }
   }
 
-  void Standard_toolbar::zoomin()
+  void Qt_widget_standard_toolbar::zoomin()
   {
     widget->zoom_in(2);
     widget->redraw();
   }
-  void Standard_toolbar::zoomout()
+  void Qt_widget_standard_toolbar::zoomout()
   {
     widget->zoom_out(2);
     widget->redraw();
   }
-  void Standard_toolbar::notool()
+  void Qt_widget_standard_toolbar::notool()
   {
     if(is_active) {
       but[activebutton]->toggle();
@@ -165,7 +165,7 @@ namespace CGAL {
   }
 
 
-  void Standard_toolbar::handtool()
+  void Qt_widget_standard_toolbar::handtool()
   {
     if (but[5]->isOn())
     {      
