@@ -11,8 +11,8 @@
 // release       :
 // release_date  :
 // 
-// source        : test_triangulation_tds_2.C
-// file          : test_triangulation_tds_2.C
+// source        : 
+// file          : test_triangulation_tds.C
 // revision      : 
 // revision_date : 
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)

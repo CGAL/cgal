@@ -3,15 +3,7 @@
 
 TODO pour la test suite de triangulation:
 
-* enlever les warnings
-* insertion avec un iterateur ne marche pas
-* locate avec p11 dans T2_1 ne retourne pas ce qu'il faut
 * entree/sortie ne marche pas (assert nb_of_vertices == failed)
-* bug dans clear (assertion violation "we should never get here")
-
-* delaunay n'a pas de fonctions pour le dual (alors qu'elles y
-  sont dans l'ancienne version) donc pas testees
-
 * suggestion: relire la doc et la nettoyer (typos, orthographe, etc.)
 
 

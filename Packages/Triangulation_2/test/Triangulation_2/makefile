@@ -52,7 +52,7 @@ clean:
 	            T??.triangulation
 
 distclean: clean
-	- rm -f Program* Error* Compiler* error.txt
+	- rm -f Program* Error* Compiler* error*
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -11,8 +11,8 @@
 // release       :
 // release_date  :
 // 
-// source        : test_triangulation.C
-// file          : test_triangulation.C
+// source        : 
+// file          : test_delaunay_triangulation.C
 // revision      : 
 // revision_date : 
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)

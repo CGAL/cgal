@@ -11,8 +11,8 @@
 // release       :
 // release_date  :
 // 
-// source        : test_triangulation_euclidean_traits_2.C
-// file          : test_triangulation_euclidean_traits_2.C
+// source        :
+// file          : test_triangulation_geom_traits_2.C
 // revision      : 
 // revision_date : 
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
