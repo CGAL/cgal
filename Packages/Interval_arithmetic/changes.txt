@@ -1,3 +1,7 @@
+13 Apr 2004 Menelaos Karavelas
+- Made changes suggested by Sylvain for icc; namely, replaced occurences
+  of HUGE_VAL by std::numeric_limits<double>::infinity()
+
 9 Apr 2004 Sylvain Pion
 - PGCC workarounds.
 
