@@ -15,9 +15,9 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval Arithmetic
-// author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
-//
+// author(s)     : Sylvain Pion
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
 // ============================================================================
 
 #ifndef CGAL_FPU_H
@@ -25,6 +25,10 @@
 
 // This file specifies some platform dependant functions, regarding the FPU
 // directed rounding modes.  There is only support for double precision.
+//
+// It also contains the definition of the Protect_FPU_rounding<> classes,
+// a helper class which is a nice way to protect blocks of code needing a
+// particular rounding mode.
 
 // Some useful constants
 #define CGAL_IA_MIN_DOUBLE (5e-324) // subnormal
@@ -222,6 +226,43 @@ FPU_get_and_set_cw (FPU_CW_t cw)
 }
 
 FPU_CW_t FPU_empiric_test(); // Only used for debug.
+
+// A class whose constructor sets the FPU mode to +inf, saves a backup of it,
+// and whose destructor resets it back to the saved state.
+//
+// Next step: add this in the filtered predicates.  It'll be even funnier with
+// the exceptions => function-try-blocks.  And don't forget the test-suite.
+
+template <bool Protected> class Protect_FPU_rounding;
+ 
+template <>
+struct Protect_FPU_rounding<true>
+{
+  Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_UPWARD)
+    : backup( FPU_get_and_set_cw(r) ) {}
+
+  ~Protect_FPU_rounding()
+  {
+     FPU_set_cw(backup);
+  }
+
+private:
+  FPU_CW_t backup;
+};
+ 
+template <>
+struct Protect_FPU_rounding<false>
+{
+  Protect_FPU_rounding(FPU_CW_t CGAL_expensive_assertion_code(r)
+		        = CGAL_FE_UPWARD)
+  {
+    CGAL_expensive_assertion(FPU_empiric_test() == r);
+  }
+
+  ~Protect_FPU_rounding() {}
+  // just to shut up a warning, but it has a performance issue with GCC 2.95,
+  // so I should disable it for the moment.  Use __attribute__((unused)) ?
+};
 
 CGAL_END_NAMESPACE
 
