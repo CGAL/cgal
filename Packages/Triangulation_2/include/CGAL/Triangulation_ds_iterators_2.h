@@ -52,7 +52,7 @@ public:
     : Base(tds->face_container().begin())
     {}
 
-  Triangulation_ds_face_iterator_2(const Tds* tds, int i)
+  Triangulation_ds_face_iterator_2(const Tds* tds, int)
     : Base(tds->face_container().end())
     {}
 
@@ -74,7 +74,7 @@ public:
   Triangulation_ds_vertex_iterator_2(const Tds* tds)
     : Vertex_iterator_base(tds->vertex_container().begin()) {}
    
-  Triangulation_ds_vertex_iterator_2(const Tds* tds, int i)
+  Triangulation_ds_vertex_iterator_2(const Tds* tds, int )
     : Vertex_iterator_base(tds->vertex_container().end()) {}
    
   operator Vertex_handle() const {return (*this)->handle();}
@@ -106,7 +106,7 @@ mutable Edge edge;
 public:
   Triangulation_ds_edge_iterator_2()  {}
   Triangulation_ds_edge_iterator_2(const Tds * tds);
-  Triangulation_ds_edge_iterator_2(const Tds* tds, int i);
+  Triangulation_ds_edge_iterator_2(const Tds* tds, int );
 
   bool  operator==(const Edge_iterator& fi) const ;
   bool  operator!=(const Edge_iterator& fi) const {return !(*this== fi);}
