@@ -372,10 +372,10 @@ Intersect_2
 intersect_2_object() const 
 { return Intersect_2(); }
 
-typedef CGALi::Call_y_at_x_to_get<FT>              Compute_y_at_x;
-Compute_y_at_x
-compute_y_at_x_object() const 
-{ return Compute_y_at_x(); }
+typedef CGALi::Call_y_at_x_to_get<FT>              Compute_y_at_x_2;
+Compute_y_at_x_2
+compute_y_at_x_2_object() const 
+{ return Compute_y_at_x_2(); }
 
 typedef CGALi::Call_squared_length_to_get<FT>      Compute_squared_length_2;
 Compute_squared_length_2
