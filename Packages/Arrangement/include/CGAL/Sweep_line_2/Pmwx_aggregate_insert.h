@@ -957,8 +957,8 @@ void HandleRightCurves(PM &pm, SweepLinePlanarmap &tag)
     {
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) ) {
-	if ( hhandle->target()->point() != cv.source() &&
-	     hhandle->target()->point() != cv.target() )
+	if ( hhandle->target()->point() != m_traits->curve_source(cv) &&
+	     hhandle->target()->point() != m_traits->curve_target(cv) )
 	  hhandle = hhandle->twin();
 	SL_DEBUG(std::cout << "  from vertex (1)";
 		 std::cout << hhandle->source()->point() << " " 
@@ -978,8 +978,8 @@ void HandleRightCurves(PM &pm, SweepLinePlanarmap &tag)
       // skip to the right halfedge
       SL_DEBUG(std::cout << "Skipping " << jump << " steps\n";)
       Halfedge_handle prev = insertInfo->getHalfedgeHandle();
-      if ( prev->target()->point() != cv.source() &&
-	   prev->target()->point() != cv.target() )
+      if ( prev->target()->point() != m_traits->curve_source(cv) &&
+	   prev->target()->point() != m_traits->curve_target(cv) )
 	prev = prev->twin();
       for ( int i = 0 ; i < jump ; i++ )
 	prev = (prev->next_halfedge())->twin();
@@ -987,8 +987,8 @@ void HandleRightCurves(PM &pm, SweepLinePlanarmap &tag)
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) ) 
       {
-	if ( hhandle->target()->point() != cv.source() &&
-	     hhandle->target()->point() != cv.target() )
+	if ( hhandle->target()->point() != m_traits->curve_source(cv) &&
+	     hhandle->target()->point() != m_traits->curve_target(cv) )
 	  hhandle = hhandle->twin();
 
 	SL_DEBUG(std::cout << "  at vertices";
@@ -1080,8 +1080,8 @@ insertToPmV(const X_monotone_curve_2 &cv, SubCurve *origCurve,
 	                 << bottomII->getHalfedgeHandle()->target()->point()
 	                 << "\n";)
       Halfedge_handle h1 = bottomII->getHalfedgeHandle();
-      if ( h1->target()->point() != cv.source() &&
-	   h1->target()->point() != cv.target() )
+      if ( h1->target()->point() != m_traits->curve_source(cv) &&
+	   h1->target()->point() != m_traits->curve_target(cv) )
 	h1 = h1->twin();
       res = pm.non_intersecting_insert_from_vertex(cv, 
 						   h1,
@@ -1096,8 +1096,8 @@ insertToPmV(const X_monotone_curve_2 &cv, SubCurve *origCurve,
 	                 << topII->getHalfedgeHandle()->target()->point() 
                          << "\n";)
       Halfedge_handle h1 = topII->getHalfedgeHandle();
-      if ( h1->target()->point() != cv.source() &&
-	   h1->target()->point() != cv.target() )
+      if ( h1->target()->point() != m_traits->curve_source(cv) &&
+	   h1->target()->point() != m_traits->curve_target(cv) )
 	h1 = h1->twin();
       res = pm.non_intersecting_insert_from_vertex(cv, 
 						   h1,
@@ -1113,11 +1113,11 @@ insertToPmV(const X_monotone_curve_2 &cv, SubCurve *origCurve,
                          << "\n";)
       Halfedge_handle h1 = bottomII->getHalfedgeHandle();
       Halfedge_handle h2 = topII->getHalfedgeHandle();
-      if ( h1->target()->point() != cv.source() &&
-	   h1->target()->point() != cv.target() )
+      if ( h1->target()->point() != m_traits->curve_source(cv) &&
+	   h1->target()->point() != m_traits->curve_target(cv) )
 	h1 = h1->twin();
-      if ( h2->target()->point() != cv.source() &&
-	   h2->target()->point() != cv.target() )
+      if ( h2->target()->point() != m_traits->curve_source(cv) &&
+	   h2->target()->point() != m_traits->curve_target(cv) )
 	h2 = h2->twin();
       res = pm.non_intersecting_insert_at_vertices(cv,
 					     h1, 
