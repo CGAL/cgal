@@ -1,3 +1,7 @@
+3.21 (21 Jun 2001)
+- Merge point_vector_definitions_3.C into point_vector_declarations_3.h.
+- Remove number_type_tag(const Vector_3<R> &).
+
 3.20 (20 Jun 2001)
 - nothing, just to resubmit in time...
 

@@ -120,12 +120,6 @@ private:
   {}
 };
 
-template < class R >
-No_number_tag number_type_tag(const Vector_3<R>& )
-{
-  return No_number_tag();
-}
-
 template<class R>
 inline
 Vector_3<R>
