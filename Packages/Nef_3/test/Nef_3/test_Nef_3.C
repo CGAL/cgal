@@ -333,7 +333,9 @@ private:
 	    v_min = E.vertex(ec); 
 	}
 	Vector_3 orth = E.plane(fin).orthogonal_vector();
-	Vector_3 vec(1-abs(orth.hx()),1-abs(orth.hy()),1-abs(orth.hz()));
+	Vector_3 vec(1-CGAL_NTS abs(orth.hx()),
+		     1-CGAL_NTS abs(orth.hy()),
+		     1-CGAL_NTS abs(orth.hz()));
 	vec = vec / RT(2);
 	Object_handle o = N.locate(E.point(v_min)+vec);
 	CGAL_nef3_assertion(assign(fout,o));
@@ -888,15 +890,15 @@ private:
 public:
   void run_test(char* suffix) {
     
-    //    loadSave(suffix);
-    //    construction(suffix);  //
-    //    point_location_SNC(suffix);
-    //    intersection(suffix);    //
-    //    point_location_SM(suffix);
-    //    simplification_SNC(suffix);
-    //    simplification_SM(suffix);
-    //    pluecker_coordinates(suffix);
-    //    unary_operations(suffix);
+        loadSave(suffix);
+        construction(suffix);
+        point_location_SNC(suffix);
+        intersection(suffix);
+        point_location_SM(suffix);
+        simplification_SNC(suffix);
+        simplification_SM(suffix);
+        pluecker_coordinates(suffix);
+        unary_operations(suffix);
         mark_evaluation(suffix);
   }
 
