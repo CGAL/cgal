@@ -1,3 +1,4 @@
+Version 2.70 (10 April 2003) [af]
 - cleanup: initialization, naming conventions for classes
 - replaced count_elements__C by std::distance
 - added plenty of const
