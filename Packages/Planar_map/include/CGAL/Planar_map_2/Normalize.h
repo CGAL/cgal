@@ -42,8 +42,9 @@ inline bool normalize_coordinates(Point_2<R_>& pt){
 #ifdef CGAL_LEDA_RATIONAL_H
 // remove inline in future use
   inline bool normalize_coordinates(Point_2<Cartesian<leda_rational> >& pt)  {
-    typedef CGAL::Point_2<Cartesian<leda_rational> > Point;
-    typedef Point::RT RT;
+    typedef Cartesian<leda_rational> K;
+    typedef CGAL::Point_2<K> Point;
+    typedef K::RT RT;
     RT x, y;
     x = pt.x();
     y = pt.y();
