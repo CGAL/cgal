@@ -21,7 +21,7 @@
 #define CGAL_KD_TREE_H
 #include <CGAL/basic.h>
 #include <cassert>
-#include<list>
+#include<vector>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
@@ -57,7 +57,7 @@ private:
   Node_handle tree_root;
 
   Kd_tree_rectangle<SearchTraits>* bbox;
-  std::list<Point_d> pts;
+  std::vector<Point_d> pts;
 
   // Instead of storing the points in arrays in the Kd_tree_node
   // we put all the data in a vector in the Kd_tree.
@@ -80,10 +80,7 @@ private:
   Node_handle 
   create_leaf_node(Point_container& c)
   {
-    Node n;
-    Node_handle nh = nodes.insert(n);
-    nh->n = c.size();
-    nh->the_node_type = Node::LEAF;
+    Node_handle nh = nodes.construct_insert(c.size(), Node::LEAF);
     if (c.size()>0) { 
       nh->data = data_iterator;
       data_iterator = std::copy(c.begin(), c.end(), data_iterator);
@@ -115,11 +112,9 @@ private:
   Node_handle 
   create_internal_node_use_extension(Point_container& c) 
   {
-    Node n;
-    Node_handle nh = nodes.insert(n);
-    
-    nh->the_node_type = Node::EXTENDED_INTERNAL;
 
+    Node_handle nh = nodes.construct_insert(Node::EXTENDED_INTERNAL);
+    
     Point_container
       c_low = Point_container(c.dimension());
     
@@ -159,11 +154,8 @@ private:
   Node_handle 
   create_internal_node(Point_container& c) 
   {
-    Node n;
-    Node_handle nh = nodes.insert(n);
+    Node_handle nh = nodes.construct_insert(Node::INTERNAL);
     
-    nh->the_node_type = Node::INTERNAL;
-
     Point_container
     c_low = Point_container(c.dimension());
     
