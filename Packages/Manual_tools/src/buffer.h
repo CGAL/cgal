@@ -327,9 +327,10 @@ public:
         ADT_Assert( ! string || string[ len] == '\0');
 	return *this;
     }
-    friend ostream& operator<< (ostream& out, const TextToken& t);
-    friend istream& operator>> (istream& in, TextToken& t);
 };
+
+ostream& operator<< (ostream& out, const TextToken& t);
+istream& operator>> (istream& in, TextToken& t);
 
 //class   InList< TextToken>;
 

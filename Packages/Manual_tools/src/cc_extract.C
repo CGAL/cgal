@@ -43,6 +43,7 @@ void yyparse();
 void init_scanner( FILE* in);
 extern char*   global_classname;
 extern char*   global_template_params;
+extern char*   global_ref_name;
 
 
 /* Name the scanned file */
@@ -77,35 +78,19 @@ void handleClass( const char* classname) {
     if ( global_classname)
         free( global_classname);
     global_classname = strdup( classname);
-    cout << indNewline;
-    cout << "class " << classname << " {" << indNewline;
-    cout << "public:" << indNewline;
-    cout << indent;
-}
-
-void handleClassEnd( void) {
-    if ( global_classname)
-        free( global_classname);
-    global_classname = NULL;
-    cout << outdent;
-    cout << indNewline;
-    cout << "};" << indNewline;
-}
-
-void handleClassTemplate( const char* classname) {
-    if ( global_classname)
-        free( global_classname);
-    global_classname = strdup( classname);
-    global_template_params = global_classname;
-    while( *global_template_params && *global_template_params != '<')
-        ++global_template_params;
-    cout << indNewline;
-    cout << "template < class ";
     const char* s = classname;
-    while ( *s != 0 && *s != '<') s++;
-    if ( *s == 0)
-        printErrorMessage( TemplateParamExpectedError);
-    else {
+    while ( *s != 0 && *s != '<') 
+	s++;
+
+    if ( *s == 0) {
+	cout << indNewline;
+	cout << "class " << classname;
+    } else {
+	global_template_params = global_classname;
+	while( *global_template_params && *global_template_params != '<')
+	    ++global_template_params;
+	cout << indNewline;
+	cout << "template < class ";
         int nesting = 0;
 	s++;
 	while ( nesting >= 0 && *s != 0) {
@@ -133,29 +118,40 @@ void handleClassTemplate( const char* classname) {
 	}
 	if ( nesting >= 0)
 	    printErrorMessage( MalformedTemplateParamError);
-    }
-    cout << " >" << indNewline;
-    cout << "class ";
-    s = classname;
-    while ( *s != 0 && *s != '<') {
-        cout << *s;
-	s++;
+	cout << " >" << indNewline;
+	cout << "class ";
+	s = classname;
+	while ( *s != 0 && *s != '<') {
+	    cout << *s;
+	    s++;
+	}
     }
     cout << " {" << indNewline;
     cout << "public:" << indNewline;
     cout << indent;
 }
 
-void handleClassTemplateEnd( void) {
+void handleClassEnd( void) {
     global_template_params = 0;
     if ( global_classname)
         free( global_classname);
-    global_classname = 0;
+    global_classname = NULL;
     cout << outdent;
     cout << indNewline;
     cout << "};" << indNewline;
 }
 
+void handleRefPage( const char* token) {
+    if ( global_ref_name)
+        free( global_ref_name);
+    global_ref_name = strdup( token);
+}
+
+void handleRefPageEnd( void) {
+    if ( global_ref_name)
+        free( global_ref_name);
+    global_ref_name = NULL;
+}
 
 void handleDeclaration( const char* decl) {
     cout << endl << indNewline;
@@ -241,7 +237,7 @@ void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
 /* >main: main function with standard unix parameter input */
 /* ------------------------------------------------------- */
  
-main( int argc, char **argv) {
+int main( int argc, char **argv) {
     int i;
     int nParameters = 0;
     char *parameters[ MaxParameters + 1];

@@ -54,6 +54,7 @@ extern int line_number;
 extern int unchecked_tag;
 extern char*   global_classname;
 extern char*   global_template_params;
+extern char*   global_ref_name;
 
 /* Name the scanned file */
 /* ===================== */
@@ -385,6 +386,7 @@ void printEpilog( ostream& out_pattern, ostream& out_errmessage) {
     out_errmessage << "    fprintf( stderr, \"fatal internal error: unknown "
                       "pattern number %d occured.\", number);" << endl;
     out_errmessage << "    exit( 1);" << endl;
+    out_errmessage << "    return \"\";" << endl;
     out_errmessage << "}" << endl;
     out_errmessage << "/* EOF */" << endl;
 }
@@ -734,40 +736,25 @@ void handleClass( const char* classname) {
         free( global_classname);
     global_classname = strdup( classname);
     errmessage->flush();
-    errmessage->add( "class ");
-    errmessage->add( classname);
-    errmessage->add( " ");
     pattern->flush();
-    pattern->add( "class{ws}+\"");
-    pattern->add( classname);
-    pattern->add( "\"{classend}");
-    printPattern( *p_out_pattern, *p_out_errmessage, errmessage, pattern);
-}
-
-void handleClassEnd( void) {
-    if ( global_classname)
-        free( global_classname);
-    global_classname = NULL;
-    return;
-}
-
-void handleClassTemplate( const char* classname) {
-    if ( global_classname)
-        free( global_classname);
-    global_classname = strdup( classname);
-    global_template_params = global_classname;
-    while( *global_template_params && *global_template_params != '<')
-        ++global_template_params;
-    errmessage->flush();
-    pattern->flush();
-    errmessage->add( "template < ...");
-    pattern->add(    "template{ws}*\"<\"{optionalclass}\"");
 
     const char* s = classname;
-    while ( *s != 0 && *s != '<') s++;
-    if ( *s == 0)
-        printErrorMessage( TemplateParamExpectedError);
-    else {
+    while ( *s != 0 && *s != '<') 
+	s++;
+    if ( *s == 0) {
+	errmessage->add( "class ");
+	errmessage->add( classname);
+	errmessage->add( " ");
+	pattern->add( "class{ws}+\"");
+	pattern->add( classname);
+	pattern->add( "\"{classend}");
+    } else {
+	global_template_params = global_classname;
+	while( *global_template_params && *global_template_params != '<')
+	    ++global_template_params;
+	errmessage->add( "template < ...");
+	pattern->add(    "template{ws}*\"<\"{optionalclass}\"");
+
         int nesting = 0;
 	s++;
 	while ( nesting >= 0 && *s != 0) {
@@ -803,22 +790,22 @@ void handleClassTemplate( const char* classname) {
 	}
 	if ( nesting >= 0)
 	    printErrorMessage( MalformedTemplateParamError);
-    }
 
-    errmessage->add( "> class ");
-    pattern->add(    "\"{ws}*\">\"{ws}*\"class\"{ws}+\"");
+	errmessage->add( "> class ");
+	pattern->add(    "\"{ws}*\">\"{ws}*\"class\"{ws}+\"");
 
-    s = classname;
-    while ( *s != 0 && *s != '<' && *s != ' ') {
-        errmessage->add( *s);
-	pattern->add(    *s);
-	s++;
+	s = classname;
+	while ( *s != 0 && *s != '<' && *s != ' ') {
+	    errmessage->add( *s);
+	    pattern->add(    *s);
+	    s++;
+	}
+	pattern->add(    "\"{classend}");
     }
-    pattern->add(    "\"{classend}");
     printPattern( *p_out_pattern, *p_out_errmessage, errmessage, pattern);
 }
 
-void handleClassTemplateEnd( void) {
+void handleClassEnd( void) {
     global_template_params = 0;
     if ( global_classname)
         free( global_classname);
@@ -826,6 +813,17 @@ void handleClassTemplateEnd( void) {
     return;
 }
 
+void handleRefPage( const char* token) {
+    if ( global_ref_name)
+        free( global_ref_name);
+    global_ref_name = strdup( token);
+}
+
+void handleRefPageEnd( void) {
+    if ( global_ref_name)
+        free( global_ref_name);
+    global_ref_name = NULL;
+}
 
 void handleDeclaration( const char* decl) {
     errmessage->flush();
@@ -999,7 +997,7 @@ void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
 /* >main: main function with standard unix parameter input */
 /* ------------------------------------------------------- */
  
-main( int argc, char **argv) {
+int main( int argc, char **argv) {
     int i;
  
     Switch help_switch = NO_SWITCH;

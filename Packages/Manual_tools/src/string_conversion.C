@@ -163,7 +163,7 @@ string convert_to_C_printable( string s) {
 	    break;
 	case '\\':
 	case '"':
-	    s.insert( i, '\\');
+	    s.insert( i, "\\");
 	    i += 2;
 	    break;
 	case '\n':

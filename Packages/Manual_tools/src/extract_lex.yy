@@ -38,9 +38,10 @@ char* creationvariable = NULL;
 /* remember the necessary stop character for \verb"..." */
 char stop_character;
 
-/* The classname and other state varaibles */
+/* The classname and other state variables */
 char* global_classname       = 0;
 char* global_template_params = 0;
+char* global_ref_name        = 0;
 
 /* Hack, to get rid of the yywrap. */
 #define YY_SKIP_YYWRAP 1
@@ -146,19 +147,26 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 
  /* Trigger on different keywords */
  /* ----------------------------- */
-[\\]begin{w}[\{]ccClass[\}]{w}   {
+[\\]begin{w}[\{]ccClass(Template)?[\}]{w}   {
 		    BEGIN( CCMode);
 		    return BEGINCLASS;
 		}
-[\\]end{w}[\{]ccClass[\}]   {
+[\\]end{w}[\{]ccClass(Template)?[\}]   {
 		    return ENDCLASS;
 		}
-[\\]begin{w}[\{]ccClassTemplate[\}]{w}   {
+[\\]begin{w}[\{]ccRef((Class)|(Concept))[\}]{w}   {
 		    BEGIN( CCMode);
-		    return BEGINCLASSTEMPLATE;
+		    return BEGINREFCLASS;
 		}
-[\\]end{w}[\{]ccClassTemplate[\}]   {
-		    return ENDCLASSTEMPLATE;
+[\\]end{w}[\{]ccRef((Class)|(Concept))[\}]   {
+		    return ENDREFCLASS;
+		}
+[\\]begin{w}[\{]ccRef{idfier}[\}]{w}   {
+		    BEGIN( CCMode);
+		    return BEGINREFPAGE;
+		}
+[\\]end{w}[\{]ccRef{idfier}[\}]   {
+		    return ENDREFPAGE;
 		}
 [\\]ccCreationVariable{w}[\{]{w}.*{w}[\}]   {
 		    char *s = yytext + yyleng - 2;
@@ -302,6 +310,17 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    }
 		    return STRING;
                  }
+[\\]cc(Pure)?RefName{w}      {
+		    if ( global_ref_name) {
+	                yylval.string.text = global_ref_name;
+		        yylval.string.len  = strlen( global_ref_name);
+		    } else {
+		        printErrorMessage( RefNameUsedError);
+	                yylval.string.text = "[Unknown RefName]";
+		        yylval.string.len  = strlen( yylval.string.text);
+		    }
+		    return STRING;
+                 }
 [\\]ccSection{w} {  return CCSECTION; }
 [\\]ccSubsection{w}  {  return CCSUBSECTION; }
 [\\]ldots{w}     {
@@ -387,6 +406,11 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
+[\\]ccIsModel{w} {
+	            yylval.string.text = "IS MODEL FOR THE CONCEPT";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
 [\\]ccInheritsFrom{w} {
 	            yylval.string.text = "INHERITS FROM";
 		    yylval.string.len  = -1;
@@ -397,13 +421,13 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]ccTypes{w} {
-	            yylval.string.text = "TYPES";
+[\\]ccConstants{w} {
+	            yylval.string.text = "CONSTANTS";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]ccConstants{w} {
-	            yylval.string.text = "CONSTANTS";
+[\\]ccTypes{w} {
+	            yylval.string.text = "TYPES";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
@@ -429,6 +453,11 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
                  }
 [\\]ccModifiers{w} {
 	            yylval.string.text = "MODIFIERS";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccHasModels{w} {
+	            yylval.string.text = "HAS MODELS";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
@@ -491,6 +520,11 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = 2;
 		    return STRING;
                  }
+[\\]equiv/{noletter}        {
+	            yylval.string.text = "==";
+		    yylval.string.len  = 2;
+		    return STRING;
+                 }
 [\\]ccSetTwoOfThreeColumns{w} { return GOBBLETWOPARAMS; }
 [\\]ccSetThreeColumns{w}      { return GOBBLETHREEPARAMS; }
 [\\]ccThree/{noletter}        { return GOBBLETHREEPARAMS; }
@@ -533,10 +567,11 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 [\\]begin{w}[\{]ccTexOnly[\}]{w}   { break;}
 [\\]end{w}[\{]ccTexOnly[\}]        { break;}
 
-[\\]begin{w}[\{]verbatim[\}]{w}     |
-[\\]begin{w}[\{]cprog[\}]{w}        |
-[\\]begin{w}[\{]alltt[\}]{w}        |
-[\\]begin{w}[\{]ccHtmlOnly[\}]{w}   {
+[\\]begin{w}[\{]verbatim[\}]{w}      |
+[\\]begin{w}[\{]ccExampleCode[\}]{w} |
+[\\]begin{w}[\{]cprog[\}]{w}         |
+[\\]begin{w}[\{]alltt[\}]{w}         |
+[\\]begin{w}[\{]ccHtmlOnly[\}]{w}    {
 		    BEGIN( VerbatimMode);
 		    break;
 		}
@@ -548,10 +583,11 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    break;
 }
 
-<VerbatimMode>[\\]end{w}[\{]verbatim[\}]{w}     |
-<VerbatimMode>[\\]end{w}[\{]cprog[\}]{w}        |
-<VerbatimMode>[\\]end{w}[\{]alltt[\}]{w}        |
-<VerbatimMode>[\\]end{w}[\{]ccHtmlOnly[\}]      {
+<VerbatimMode>[\\]end{w}[\{]verbatim[\}]{w}      |
+<VerbatimMode>[\\]end{w}[\{]ccExampleCode[\}]{w} |
+<VerbatimMode>[\\]end{w}[\{]cprog[\}]{w}         |
+<VerbatimMode>[\\]end{w}[\{]alltt[\}]{w}         |
+<VerbatimMode>[\\]end{w}[\{]ccHtmlOnly[\}]       {
 	            BEGIN(INITIAL);
 		    break;
 		}

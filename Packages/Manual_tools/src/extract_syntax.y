@@ -71,8 +71,10 @@ int yyerror( char *s);
 /* ---------------------- */
 %token             BEGINCLASS
 %token             ENDCLASS
-%token             BEGINCLASSTEMPLATE
-%token             ENDCLASSTEMPLATE
+%token             BEGINREFCLASS
+%token             ENDREFCLASS
+%token             BEGINREFPAGE
+%token             ENDREFPAGE
 %token <string>    CREATIONVARIABLE
 %token             CONSTRUCTOR
 %token             METHOD
@@ -132,8 +134,8 @@ input:            /* empty */
                 | input stmt
 ;
 
-stmt:             string  { delete $1;}
-                | SPACE   {}
+stmt:             string              { delete $1;}
+                | SPACE               {}
                 | NEWLINE
 		| BEGINCLASS
 		  classname           {   handleClass( $2->string());
@@ -145,16 +147,41 @@ stmt:             string  { delete $1;}
                                           free( creationvariable);
                                           creationvariable = NULL;
 				      }
-		| BEGINCLASSTEMPLATE
-		  classname           {   handleClassTemplate( $2->string());
+		| BEGINREFCLASS
+		  classname           {   handleClass( $2->string());
+		                          handleRefPage( $2->string());
 		                          delete $2;}
 		  decl_sequence
-		  ENDCLASSTEMPLATE
+		  ENDREFCLASS
                                       {
-					  handleClassTemplateEnd();
+                                          handleRefPageEnd();
+					  handleClassEnd();
                                           free( creationvariable);
                                           creationvariable = NULL;
 				      }
+		| BEGINREFCLASS
+		  '[' nested_token_sequence ']'
+		  classname           {   handleClass( $5->string());
+		                          handleRefPage( $5->string());
+		                          delete $3;
+		                          delete $5;}
+		  decl_sequence
+		  ENDREFCLASS
+                                      {
+                                          handleRefPageEnd();
+					  handleClassEnd();
+                                          free( creationvariable);
+                                          creationvariable = NULL;
+				      }
+		| BEGINREFPAGE
+		  classname           {   handleRefPage( $2->string());
+		                          delete $2; }
+		| BEGINREFPAGE
+		  '[' nested_token_sequence ']'
+		  classname           {   handleRefPage( $5->string());
+		                          delete $3;
+		                          delete $5; }
+                | ENDREFPAGE          {   handleRefPageEnd(); }
 		| CREATIONVARIABLE    {}
 		| CCSTYLE  '{'  nested_token_sequence '}'  { set_INITIAL = 1; 
                                                              delete $3;
@@ -289,7 +316,8 @@ tagged_declarator:
 ;
 
 global_tagged_declarator:
-		  FUNCTION      declaration   comment_group {
+		  error               {}
+                | FUNCTION      declaration   comment_group {
 		                  handleFunctionDeclaration( $2->string());
 				  delete $2;
 				  handleComment( * $3);
@@ -709,6 +737,8 @@ const char* errorMessage( ErrorNumber n) {
 	return "The creationvariable was used but not defined";
     case ClassnameUsedError:
 	return "The classname was used but not defined";
+    case RefNameUsedError:
+	return "The ref-name was used but not defined";
     case TemplateParamExpectedError:
         return "A template parameter is missing";
     case MalformedFunctionDeclaration:
@@ -722,7 +752,7 @@ const char* errorMessage( ErrorNumber n) {
 }
 
 void  printErrorMessage( ErrorNumber n){
-    cerr << "error " << n << " in line " << line_number << " in `" 
+    cerr << "error " << int(n) << " in line " << line_number << " in `" 
          << file_name << "': " << errorMessage( n) << "." << endl;
 }
 

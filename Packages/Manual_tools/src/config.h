@@ -25,8 +25,8 @@ void handleMainComment( const Text& T);
 
 void handleClass( const char* classname);
 void handleClassEnd( void);
-void handleClassTemplate( const char* classname);
-void handleClassTemplateEnd( void);
+void handleRefPage( const char* token);
+void handleRefPageEnd( void);
 
 void handleDeclaration( const char* decl);
 void handleNestedType( const char* decl);
@@ -38,10 +38,11 @@ void handleFunctionTemplateDeclaration( const char* templ, const char* decl);
 // Error messages and Numbers
 // ==========================
 enum ErrorNumber {
-    NoError,
+    NoError = 0,
     ParseError,         // must stay at position 1
     VariableUsedError,
     ClassnameUsedError,
+    RefNameUsedError,
     TemplateParamExpectedError,
     MalformedTemplateParamError,
     MalformedFunctionDeclaration,

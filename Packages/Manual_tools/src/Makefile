@@ -59,8 +59,8 @@ PROGRAM_FILES =		cc_extract			\
 			cc_build_checker		\
 			cc_extract_html			\
 	        	cc_extract_images		\
-			cc_index_sort			\
-			cc_unique
+			cc_index_sort
+#			cc_unique
 
 # Files that will be copied into LATEX_CONV_BIN upon installation:
 SCRIPT_FILES  = 	cc_check			\
@@ -74,6 +74,7 @@ SCRIPT_FILES  = 	cc_check			\
 HTML_CONFIG_FILES =	latex_converter_config/html/*.sty	\
 			latex_converter_config/html/cc_*
 GIF_CONFIG_FILES  =	latex_converter_config/gif/*.gif
+REF_CONFIG_FILES  =	latex_converter_config/ref_pages/*.tex
 
 
 # Default targets to make:
@@ -92,6 +93,7 @@ all: $(ALL)
 
 # modules
 # --------------------
+
 database.o : database.C database.h config.h
 
 extract_lex.o : extract_syntax.tab.h database.h config.h
@@ -119,30 +121,10 @@ cc_build_checker : ${OBJ} ${HEADER} cc_build_checker.o
 
 # modules
 # --------------------
-html_lex.o : html_syntax.tab.h database.h html_config.h \
-             lex_include.h lex_include_impl.h macro_dictionary.h html_error.h
+include Makefile_depend
 
-html_syntax.o : html_syntax.tab.h database.h html_config.h\
-	        macro_dictionary.h html_error.h
-
-macro_dictionary.o : macro_dictionary.h html_error.h html_config.h
-
-internal_macros.o : internal_macros.h macro_dictionary.h \
-                    html_error.h html_config.h
-
-html_error.o : html_error.h lex_include.h html_config.h
-
-string_conversion.o : string_conversion.h html_config.h
-
-cpp_formatting.o : cpp_formatting.h html_error.h \
-                   string_conversion.h html_config.h
-
-output.o : output.h html_error.h html_config.h
-
-cc_extract_html.o : cc_extract_html.C database.h html_config.h lex_include.h \
-                    macro_dictionary.h internal_macros.h html_error.h \
-	            string_conversion.h output.h
-	${CXX} ${CPPFLAGS} -I. ${CXXFLAGS} \
+cc_extract_html.o : cc_extract_html.C
+	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} \
 	-DLATEX_CONVERTER_CONFIG=\"${LATEX_CONV_CONFIG}\" \
 	-c cc_extract_html.C
 
@@ -175,13 +157,13 @@ cc_extract_html : $(OBJHTML)
 	mv $*.tab.c $*.C
 
 %.o: %.C
-	${CXX} ${CPPFLAGS} -I. ${CXXFLAGS} -c $*.C
+	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c $*.C
 
 %.o: %.c
-	${CC} ${CPPFLAGS} -I. -c $*.c
+	${CC} -I. ${CPPFLAGS} -c $*.c
 
 %: %.c
-	${CC} ${CPPFLAGS} -I. -o $* $*.c ${LDFLAGS}
+	${CC} -I. ${CPPFLAGS} -o $* $*.c ${LDFLAGS}
 
 # =====================================================================
 # Installation Targets:
@@ -190,14 +172,19 @@ rminstall:
 	-rm -f ${LATEX_CONV_CONFIG}/*
 	-rm -f ${LATEX_CONV_CONFIG}/html/*
 	-rm -f ${LATEX_CONV_CONFIG}/gif/*
+	-rm -f ${LATEX_CONV_CONFIG}/ref_pages/*
 
 pathinstall:
 	-mkdir ${LATEX_CONV_CONFIG}
 	-mkdir ${LATEX_CONV_CONFIG}/html
 	-mkdir ${LATEX_CONV_CONFIG}/gif
+	-mkdir ${LATEX_CONV_CONFIG}/ref_pages
 
 gifinstall:
 	-cp ${GIF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/gif
+
+refinstall:
+	-cp ${REF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/ref_pages
 
 cpinstall:
 	cp ${SCRIPT_FILES}  ${LATEX_CONV_BIN}
@@ -206,7 +193,30 @@ cpinstall:
 mvinstall:
 	mv -f ${PROGRAM_FILES} ${LATEX_CONV_BIN}
 
-install: rminstall pathinstall cpinstall mvinstall gifinstall
+install: rminstall pathinstall cpinstall mvinstall refinstall gifinstall
+
+
+# =====================================================================
+# Target to Create Dependencies Automatically:
+# =====================================================================
+
+DEPENDSRC  = html_lex.C          \
+             html_syntax.C       \
+             database.C          \
+             macro_dictionary.C  \
+             internal_macros.C   \
+             html_error.C        \
+             string_conversion.C \
+             cpp_formatting.C    \
+             output.C            \
+             cc_extract_html.C
+
+
+# Prepared for SunPro CC. Change -xM1 to -M, -MM, or -MD, for Gnu g++.
+
+depend: ${DEPENDSRC}
+	# Works only with SunPro CC
+	CC -I. ${CPPFLAGS} ${CXXFLAGS} -xM1 ${DEPENDSRC} | grep -v "STL/SUN" | grep -v "ADT" | grep -v "opt/SUNWspro" | sort | uniq > Makefile_depend
 
 
 # =====================================================================

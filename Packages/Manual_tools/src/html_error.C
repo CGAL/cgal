@@ -90,10 +90,11 @@ const char* errorMessage( ErrorNumber n) {
 void  printErrorMessage( ErrorNumber n){
     cerr << endl;
     if ( in_file)
-	cerr << "*** Error " << n << " in line " << in_file->line() << " in `" 
-	     << in_file->name() << "': " << errorMessage( n) << '.' << endl;
+	cerr << "*** Error " << int(n) << " in line " << in_file->line() 
+	     << " in `"  << in_file->name() << "': " << errorMessage( n) 
+	     << '.' << endl;
     else
-	cerr << "*** Error " << n << " at top level (no file): " 
+	cerr << "*** Error " << int(n) << " at top level (no file): " 
 	     << errorMessage( n) << '.' << endl;
     if ( in_file != in_string)
 	cerr << "    while expanding macro `" << in_string->name() 

@@ -290,8 +290,8 @@ string expandMacro( const string& macro,
     memset( cache_valid, 0, sizeof( bool) * cache_size);
 
     bool  macro_exp_switch2 =  macro_exp_switch
-			    && macro != "\\newcommand"
-			    && macro != "\\newcommand@mom";
+			    && !(macro == "\\newcommand")
+			    && !(macro == "\\newcommand@mom");
     if ( macro_exp_switch2) {
 	cerr << '`' << macro << "' Expanded using parameters:" << endl;
 	for ( size_t i = 0; i < n_parameters + n_options; ++i)

@@ -14,9 +14,8 @@
 
 // Other modules needed:
 // =====================
-#define ADT_INCLUDE_CC 1
 #include <database.h>
-#include <ADT/include_cc.h>
+#include <ADT/adtbase.cc>
 
 
 // Substitute old style malloc, realloc, strdup ...

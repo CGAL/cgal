@@ -535,6 +535,14 @@ main( int argc, char **argv) {
 	if ( include_stack.push_tex_file( parameters[i]))
 	    yyparse();
 
+	include_stack.push_string( "<end of conversion>", 
+				   "\\lciCheckNestingScopes", 
+				   0);
+	include_stack.push_string( "<end of conversion>", 
+				   "\\lciEndOfConversion", 
+				   0);
+	yyparse();
+
 	assert_file_write( *main_stream, main_filename);
 	if ( main_stream != &cout && main_stream != pre_stream) {
 	    close_html( *main_stream);
@@ -544,13 +552,6 @@ main( int argc, char **argv) {
 	    main_filename = "<cout>";
 	}
     }
-    include_stack.push_string( "<end of conversion>", 
-			       "\\lciCheckNestingScopes", 
-			       0);
-    include_stack.push_string( "<end of conversion>", 
-			       "\\lciEndOfConversion", 
-			       0);
-    yyparse();
     if ( ! quiet_switch)
 	cerr << ']' << endl;
 

@@ -1,0 +1,1659 @@
+<HTML><HEAD><TITLE>lib-strings</TITLE></HEAD>
+<BODY><PRE>
+
+  <B>______________________________________________________________________</B>
+
+  21   Strings library                                     <A NAME="lib.strings">[lib.strings]</A>
+
+  <B>______________________________________________________________________</B>
+
+
+  <I>21.3  Template class</I> <B>basic_string                   <A NAME="lib.basic.string">[lib.basic.string]</A></B>
+
+1 For a char-like type charT, the template class basic_string  describes
+  objects  that  can  store a sequence consisting of a varying number of
+  arbitrary char-like objects (_<A HREF="#lib.strings">lib.strings</A>_).  The first element of the
+  sequence  is  at  position  zero.   Such  a  sequence is also called a
+  "string" if the given char-like type is clear  from  context.  In  the
+  rest of this clause, charT denotes such a given char-like type.  Stor-
+  age for the string is allocated and freed as necessary by  the  member
+  functions of class basic_string.
+
+2 The  template  class  basic_string  conforms  to the requirements of a
+  Sequence,  as  specified  in  (_<A HREF="lib-containers.html#lib.sequence.reqmts">lib.sequence.reqmts</A>_).   Additionally,
+  because  the  iterators  supported  by  basic_string are random access
+  iterators (_<A HREF="lib-iterators.html#lib.random.access.iterators">lib.random.access.iterators</A>_),  basic_string  conforms  to
+  the  the  requirements  of  a  Reversible  Container,  as specified in
+  (_<A HREF="lib-containers.html#lib.container.requirements">lib.container.requirements</A>_).
+
+3 In all cases, size() &lt;= capacity().
+
+4 The functions described in this clause can report two kinds of errors,
+  each associated with a distinct exception:
+
+  --a  <I>length</I>  error  is associated with exceptions of type length_error
+    (_<A HREF="lib-diagnostics.html#lib.length.error">lib.length.error</A>_);
+
+  --an  <I>out-of-range</I>  error  is  associated  with  exceptions  of   type
+    out_of_range (_<A HREF="lib-diagnostics.html#lib.out.of.range">lib.out.of.range</A>_).
+      namespace std {
+        template&lt;class charT, class traits = char_traits&lt;charT&gt;,
+                 class Allocator = allocator&lt;charT&gt; &gt;
+        class basic_string {
+        public:
+        // types:
+          typedef          traits                     traits_type;
+          typedef typename traits::char_type          value_type;
+          typedef          Allocator                  allocator_type;
+          typedef typename Allocator::size_type       size_type;
+          typedef typename Allocator::difference_type difference_type;
+          typedef typename Allocator::reference       reference;
+          typedef typename Allocator::const_reference const_reference;
+          typedef typename Allocator::pointer         pointer;
+          typedef typename Allocator::const_pointer   const_pointer;
+          typedef <B>implementation defined</B>             iterator;       // See _<A HREF="lib-containers.html#lib.container.requirements">lib.container.requirements</A>_
+          typedef <B>implementation defined</B>             const_iterator; // See _<A HREF="lib-containers.html#lib.container.requirements">lib.container.requirements</A>_
+          typedef std::reverse_iterator&lt;iterator&gt; reverse_iterator;
+          typedef std::reverse_iterator&lt;const_iterator&gt; const_reverse_iterator;
+          static const size_type npos = -1;
+        // _<A HREF="#lib.string.cons">lib.string.cons</A>_ construct/copy/destroy:
+          explicit basic_string(const Allocator&amp; a = Allocator());
+          basic_string(const basic_string&amp; str, size_type pos = 0,
+                       size_type n = npos, const Allocator&amp; a = Allocator());
+          basic_string(const charT* s, size_type n, const Allocator&amp; a = Allocator());
+          basic_string(const charT* s, const Allocator&amp; a = Allocator());
+          basic_string(size_type n, charT c, const Allocator&amp; a = Allocator());
+          template&lt;class InputIterator&gt;
+            basic_string(InputIterator begin, InputIterator end,
+                         const Allocator&amp; a = Allocator());
+         ~basic_string();
+          basic_string&amp; operator=(const basic_string&amp; str);
+          basic_string&amp; operator=(const charT* s);
+          basic_string&amp; operator=(charT c);
+
+        // _<A HREF="#lib.string.iterators">lib.string.iterators</A>_ iterators:
+          iterator       begin();
+          const_iterator begin() const;
+          iterator       end();
+          const_iterator end() const;
+
+          reverse_iterator       rbegin();
+          const_reverse_iterator rbegin() const;
+          reverse_iterator       rend();
+          const_reverse_iterator rend() const;
+        // _<A HREF="#lib.string.capacity">lib.string.capacity</A>_ capacity:
+          size_type size() const;
+          size_type length() const;
+          size_type max_size() const;
+          void resize(size_type n, charT c);
+          void resize(size_type n);
+          size_type capacity() const;
+          void reserve(size_type res_arg = 0);
+          void clear();
+          bool empty() const;
+        // _<A HREF="#lib.string.access">lib.string.access</A>_ element access:
+          const_reference operator[](size_type pos) const;
+          reference       operator[](size_type pos);
+          const_reference at(size_type n) const;
+          reference       at(size_type n);
+        // _<A HREF="#lib.string.modifiers">lib.string.modifiers</A>_ modifiers:
+          basic_string&amp; operator+=(const basic_string&amp; str);
+          basic_string&amp; operator+=(const charT* s);
+          basic_string&amp; operator+=(charT c);
+          basic_string&amp; append(const basic_string&amp; str);
+          basic_string&amp; append(const basic_string&amp; str, size_type pos,
+                               size_type n);
+          basic_string&amp; append(const charT* s, size_type n);
+          basic_string&amp; append(const charT* s);
+          basic_string&amp; append(size_type n, charT c);
+          template&lt;class InputIterator&gt;
+            basic_string&amp; append(InputIterator first, InputIterator last);
+          basic_string&amp; assign(const basic_string&amp;);
+          basic_string&amp; assign(const basic_string&amp; str, size_type pos,
+                               size_type n);
+          basic_string&amp; assign(const charT* s, size_type n);
+          basic_string&amp; assign(const charT* s);
+          basic_string&amp; assign(size_type n, charT c);
+          template&lt;class InputIterator&gt;
+            basic_string&amp; assign(InputIterator first, InputIterator last);
+
+          basic_string&amp; insert(size_type pos1, const basic_string&amp; str);
+          basic_string&amp; insert(size_type pos1, const basic_string&amp; str,
+                               size_type pos2, size_type n);
+          basic_string&amp; insert(size_type pos, const charT* s, size_type n);
+          basic_string&amp; insert(size_type pos, const charT* s);
+          basic_string&amp; insert(size_type pos, size_type n, charT c);
+          iterator insert(iterator p, charT c = charT());
+          void     insert(iterator p, size_type n, charT c);
+          template&lt;class InputIterator&gt;
+            void insert(iterator p, InputIterator first, InputIterator last);
+          basic_string&amp; erase(size_type pos = 0, size_type n = npos);
+          iterator erase(iterator position);
+          iterator erase(iterator first, iterator last);
+          basic_string&amp; replace(size_type pos1, size_type n1, const basic_string&amp; str);
+          basic_string&amp; replace(size_type pos1, size_type n1, const basic_string&amp; str,
+                                size_type pos2, size_type n2);
+          basic_string&amp; replace(size_type pos, size_type n1, const charT* s,
+                                size_type n2);
+          basic_string&amp; replace(size_type pos, size_type n1, const charT* s);
+          basic_string&amp; replace(size_type pos, size_type n1, size_type n2, charT c);
+          basic_string&amp; replace(iterator i1, iterator i2, const basic_string&amp; str);
+          basic_string&amp; replace(iterator i1, iterator i2, const charT* s, size_type n);
+          basic_string&amp; replace(iterator i1, iterator i2, const charT* s);
+          basic_string&amp; replace(iterator i1, iterator i2,
+                                size_type n, charT c);
+          template&lt;class InputIterator&gt;
+            basic_string&amp; replace(iterator i1, iterator i2,
+                                  InputIterator j1, InputIterator j2);
+          size_type copy(charT* s, size_type n, size_type pos = 0) const;
+          void swap(basic_string&lt;charT,traits,Allocator&gt;&amp;);
+        // _<A HREF="#lib.string.ops">lib.string.ops</A>_ string operations:
+          const charT* c_str() const;  // explicit
+          const charT* data() const;
+          allocator_type get_allocator() const;
+          size_type find (const basic_string&amp; str, size_type pos = 0) const;
+          size_type find (const charT* s, size_type pos, size_type n) const;
+          size_type find (const charT* s, size_type pos = 0) const;
+          size_type find (charT c, size_type pos = 0) const;
+          size_type rfind(const basic_string&amp; str, size_type pos = npos) const;
+          size_type rfind(const charT* s, size_type pos, size_type n) const;
+          size_type rfind(const charT* s, size_type pos = npos) const;
+          size_type rfind(charT c, size_type pos = npos) const;
+          size_type find_first_of(const basic_string&amp; str, size_type pos = 0) const;
+          size_type find_first_of(const charT* s, size_type pos, size_type n) const;
+          size_type find_first_of(const charT* s, size_type pos = 0) const;
+          size_type find_first_of(charT c, size_type pos = 0) const;
+          size_type find_last_of (const basic_string&amp; str,
+                                  size_type pos = npos) const;
+          size_type find_last_of (const charT* s, size_type pos, size_type n) const;
+          size_type find_last_of (const charT* s, size_type pos = npos) const;
+          size_type find_last_of (charT c, size_type pos = npos) const;
+
+          size_type find_first_not_of(const basic_string&amp; str,
+                                      size_type pos = 0) const;
+          size_type find_first_not_of(const charT* s, size_type pos,
+                                      size_type n) const;
+          size_type find_first_not_of(const charT* s, size_type pos = 0) const;
+          size_type find_first_not_of(charT c, size_type pos = 0) const;
+          size_type find_last_not_of (const basic_string&amp; str,
+                                      size_type pos = npos) const;
+          size_type find_last_not_of (const charT* s, size_type pos,
+                                      size_type n) const;
+          size_type find_last_not_of (const charT* s, size_type pos = npos) const;
+          size_type find_last_not_of (charT c, size_type pos = npos) const;
+          basic_string substr(size_type pos = 0, size_type n = npos) const;
+          int compare(const basic_string&amp; str) const;
+          int compare(size_type pos1, size_type n1,
+                      const basic_string&amp; str) const;
+          int compare(size_type pos1, size_type n1,
+                      const basic_string&amp; str,
+                      size_type pos2, size_type n2) const;
+          int compare(const charT* s) const;
+          int compare(size_type pos1, size_type n1,
+                      const charT* s, size_type n2 = npos) const;
+        };
+      }
+
+  <I>21.3.1</I>  <B>basic_string</B> <I>constructors</I>                    <B><A NAME="lib.string.cons">[lib.string.cons]</A></B>
+
+1 In  all basic_string constructors, a copy of the Allocator argument is
+  used for any memory allocation performed by the constructor or  member
+  functions during the lifetime of the object.
+
+  explicit basic_string(const Allocator&amp; a = Allocator());
+
+  <B>Effects:</B>
+    Constructs  an  object of class basic_string.  The postconditions of
+    this function are indicated in Table 3:
+
+              <I>Table 3--</I><B>basic_string(const Allocator&amp;)</B> <I>effects</I>
+
+  +----------------------------------------------------------------------------+
+  | <B>Element                                 Value</B>                              |
+  +----------------------------------------------------------------------------+
+  |<B>data()</B>       a non-null pointer that is copyable and can have 0 added to it |
+  |<B>size()</B>       0                                                              |
+  |<B>capacity()</B>   an unspecified value                                           |
+  +----------------------------------------------------------------------------+
+
+  basic_string(const basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+               size_type pos = 0, size_type n = npos,
+               const Allocator&amp; a = Allocator());
+
+  <B>Requires:</B>
+    pos &lt;= str.size()
+  <B>Throws:</B>
+    out_of_range if pos &gt; str.size().
+  <B>Effects:</B>
+    Constructs an object of class basic_string and determines the effec-
+    tive length rlen of the initial string value as the smaller of n and
+    str.size() - pos, as indicated in Table 4:
+
+    <I>Table 4--</I><B>basic_string(basic_string,size_type,size_type,const Allocator&amp;)</B> <I>effects</I>
+
+          +------------------------------------------------------+
+          |    <B>Element                      Value</B>                |
+          +------------------------------------------------------+
+          |<B>data()</B>            points at the first element  of  an |
+          |                  allocated  copy of rlen consecutive |
+          |                  elements of the  string  controlled |
+          |                  by str beginning at position pos    |
+          |<B>size()</B>            rlen                                |
+          |<B>capacity()</B>        a value at least as large as <B>size()</B> |
+          |<B>get_allocator()</B>   str.get_allocator()                 |
+          +------------------------------------------------------+
+
+  basic_string(const charT* s, size_type n,
+               const Allocator&amp; a = Allocator());
+
+  <B>Requires:</B>
+    s shall not be a null pointer and n &lt; npos.
+  <B>Throws:</B>
+    out_of_range if n == npos.
+  <B>Effects:</B>
+    Constructs  an  object of class basic_string and determines its ini-
+    tial string value from the array of charT of length  n  whose  first
+    element is designated by s, as indicated in Table 5:
+
+    <I>Table 5--</I><B>basic_string(const charT*,size_type, const Allocator&amp;)</B> <I>effects</I>
+
+             +-------------------------------------------------+
+             | <B>Element                    Value</B>                |
+             +-------------------------------------------------+
+             |<B>data()</B>       points  at  the first element of an |
+             |             allocated copy of the  array  whose |
+             |             first element is pointed at by s    |
+             |<B>size()</B>       n                                   |
+             |<B>capacity()</B>   a value at least as large as <B>size()</B> |
+             +-------------------------------------------------+
+
+  basic_string(const charT* s, const Allocator&amp; a = Allocator());
+
+  <B>Requires:</B>
+    s shall not be a null pointer.
+  <B>Effects:</B>
+    Constructs  an  object of class basic_string and determines its ini-
+    tial  string   value   from   the   array   of   charT   of   length
+    traits::length(s)  whose first element is designated by  s, as indi-
+    cated in Table 6:
+
+        <I>Table 6--</I><B>basic_string(const charT*,const Allocator&amp;)</B> <I>effects</I>
+
+             +-------------------------------------------------+
+             | <B>Element                    Value</B>                |
+             +-------------------------------------------------+
+             |<B>data()</B>       points at the first element  of  an |
+             |             allocated  copy  of the array whose |
+             |             first element is pointed at by s    |
+             |<B>size()       traits::length(</B>s<B>)</B>                   |
+             |<B>capacity()</B>   a value at least as large as <B>size()</B> |
+             +-------------------------------------------------+
+  <B>Notes:</B>
+    Uses traits::length().
+
+  basic_string(size_type n, charT c, const Allocator&amp; a = Allocator());
+
+  <B>Requires:</B>
+    n &lt; npos
+  <B>Throws:</B>
+    length_error if n == npos.
+  <B>Effects:</B>
+    Constructs an object of class basic_string and determines  its  ini-
+    tial string value by repeating the char-like object c for all n ele-
+    ments, as indicated in Table 7:
+
+      <I>Table 7--</I><B>basic_string(size_type,charT,const Allocator&amp;)</B> <I>effects</I>
+
+             +-------------------------------------------------+
+             | <B>Element                    Value</B>                |
+             +-------------------------------------------------+
+             |<B>data()</B>       points at the first element  of  an |
+             |             allocated array of n elements, each |
+             |             storing the initial value c         |
+             |<B>size()</B>       n                                   |
+             |<B>capacity()</B>   a value at least as large as <B>size()</B> |
+             +-------------------------------------------------+
+
+  template&lt;class InputIterator&gt;
+    basic_string(InputIterator begin, InputIterator end,
+                 const Allocator&amp; a = Allocator());
+
+  <B>Effects:</B>
+    Constructs a string from the values in the range  [begin,  end),  as
+    indicated in Table 8:
+
+    <I>Table 8--</I><B>basic_string(InputIterator,InputIterator,const Allocator&amp;)</B> <I>effects</I>
+
+             +-------------------------------------------------+
+             | <B>Element                    Value</B>                |
+             +-------------------------------------------------+
+             |<B>data()</B>       points  at  the first element of an |
+             |             allocated copy of the  elements  in |
+             |             the range [begin,end)               |
+             |<B>size()</B>       distance between begin and end      |
+             |<B>capacity()</B>   a value at least as large as <B>size()</B> |
+             +-------------------------------------------------+
+  <B>Notes:</B>
+    see clause _<A HREF="lib-containers.html#lib.sequence.reqmts">lib.sequence.reqmts</A>_.
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    operator=(const basic_string&lt;charT,traits,Allocator&gt;&amp; str);
+
+  <B>Effects:</B>
+    If *this and str are not the same object, modifies *this as shown in
+    Table 9:
+
+    <I>Table 9--</I><B>operator=(const basic_string&lt;charT,traits,Allocator&gt;&amp;)</B> <I>effects</I>
+
+             +-------------------------------------------------+
+             | <B>Element                    Value</B>                |
+             +-------------------------------------------------+
+             |<B>data()</B>       points at the first element  of  an |
+             |             allocated  copy  of the array whose |
+             |             first  element  is  pointed  at  by |
+             |             str.data()                          |
+             |<B>size()</B>       str<B>.size()</B>                          |
+             |<B>capacity()</B>   a value at least as large as <B>size()</B> |
+             +-------------------------------------------------+
+    If *this and str are the same object, the member has no effect.
+  <B>Returns:</B>
+    *this
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    operator=(const charT* s);
+
+  <B>Returns:</B>
+    *this = basic_string&lt;charT,traits,Allocator&gt;(s).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp; operator=(charT c);
+
+  <B>Returns:</B>
+    *this = basic_string&lt;charT,traits,Allocator&gt;(1,c).
+
+  <I>21.3.2</I>  <B>basic_string</B> <I>iterator support</I>           <B><A NAME="lib.string.iterators">[lib.string.iterators]</A></B>
+
+  iterator       begin();
+  const_iterator begin() const;
+
+  <B>Returns:</B>
+    an iterator referring to the first character in the string.
+
+  iterator       end();
+  const_iterator end() const;
+
+  <B>Returns:</B>
+    an iterator which is the past-the-end value.
+
+  reverse_iterator       rbegin();
+  const_reverse_iterator rbegin() const;
+
+  <B>Returns:</B>
+    an  iterator  which  is  semantically  equivalent  to reverse_itera-
+    tor(end()).
+
+  reverse_iterator       rend();
+  const_reverse_iterator rend() const;
+
+  <B>Returns:</B>
+    an iterator  which  is  semantically  equivalent  to  reverse_itera-
+    tor(begin()).
+
+  <I>21.3.3</I>  <B>basic_string</B> <I>capacity</I>                    <B><A NAME="lib.string.capacity">[lib.string.capacity]</A></B>
+
+  size_type size() const;
+
+  <B>Returns:</B>
+    a  count of the number of char-like objects currently in the string.
+
+  size_type length() const;
+
+  <B>Returns:</B>
+    size().
+
+  size_type max_size() const;
+
+  <B>Returns:</B>
+    The maximum size of the string.
+
+  void resize(size_type n, charT c);
+
+  <B>Requires:</B>
+    n &lt;= max_size()
+  <B>Throws:</B>
+    length_error if n &gt; max_size().
+  <B>Effects:</B>
+    Alters the length of the string designated by *this as follows:
+
+  --If n &lt;= size(), the function replaces the string designated by *this
+    with  a  string of length n whose elements are a copy of the initial
+    elements of the original string designated by *this.
+
+  --If n &gt; size(), the function replaces the string designated by  *this
+    with  a string of length n whose first size() elements are a copy of
+    the original string designated by *this, and  whose  remaining  ele-
+    ments are all initialized to c.
+
+  void resize(size_type n);
+
+  <B>Effects:</B>
+    resize(n,charT()).
+
+  size_type capacity() const;
+
+  <B>Returns:</B>
+    the size of the allocated storage in the string.
+
+  void reserve(size_type res_arg=0);
+
+1 The   member   function  reserve()  is  a  directive  that  informs  a
+  basic_string object of a planned change in size, so that it can manage
+  the storage allocation accordingly.
+  <B>Effects:</B>
+    After  reserve(),  capacity() is greater or equal to the argument of
+    reserve.  Reallocation invalidates all the references, pointers, and
+    iterators referring to the elements in the sequence.
+
+  void clear();
+
+  <B>Effects:</B>
+    Behaves as if the function calls:
+
+  erase(begin(), end());
+
+  bool empty() const;
+
+  <B>Returns:</B>
+    size() == 0.
+
+  <I>21.3.4</I>  <B>basic_string</B> <I>element access</I>                <B><A NAME="lib.string.access">[lib.string.access]</A></B>
+
+  const_reference operator[](size_type pos) const;
+  reference       operator[](size_type pos);
+
+  <B>Effects:</B>
+    The  reference  returned  is  invalid  after  any subsequent call to
+    c_str(), data(), or any non-const member function for the object.
+  <B>Returns:</B>
+    If pos &lt; size(), returns data()[pos].  Otherwise, if pos ==  size(),
+    the const version returns traits::eos().  Otherwise, the behavior is
+    undefined.
+
+  const_reference at(size_type pos) const;
+  reference       at(size_type pos);
+
+  <B>Requires:</B>
+    pos &lt; size()
+  <B>Throws:</B>
+    out_of_range if pos &gt;= size().
+  <B>Returns:</B>
+    operator[](pos).
+
+  <I>21.3.5</I>  <B>basic_string</B> <I>modifiers</I>                  <B><A NAME="lib.string.modifiers">[lib.string.modifiers]</A></B>
+
+  <I>21.3.5.1</I>  <B>basic_string::operator+=                  <A NAME="lib.string::op+=">[lib.string::op+=]</A></B>
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    operator+=(const basic_string&lt;charT,traits,Allocator&gt;&amp; str);
+
+  <B>Returns:</B>
+    append(str).
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp; operator+=(const charT* s);
+
+  <B>Returns:</B>
+    *this += basic_string&lt;charT,traits,Allocator&gt;(s).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp; operator+=(charT c);
+
+  <B>Returns:</B>
+    *this += basic_string&lt;charT,traits,Allocator&gt;(1,c).
+
+  <I>21.3.5.2</I>  <B>basic_string::append                    <A NAME="lib.string::append">[lib.string::append]</A></B>
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    append(const basic_string&lt;charT,traits&gt;&amp; str);
+
+  <B>Returns:</B>
+    append(str, 0, npos).
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    append(const basic_string&lt;charT,traits&gt;&amp; str, size_type pos, size_type n);
+
+  <B>Requires:</B>
+    pos &lt;= str.size()
+  <B>Throws:</B>
+    out_of_range if pos &gt; str.size().
+
+  <B>Effects:</B>
+    Determines the effective length rlen of the string to append as  the
+    smaller  of  n  and  str.size()  -  pos.   The  function then throws
+    length_error if size() &gt;= npos - rlen.
+    Otherwise, the function replaces the string controlled by *this with
+    a  string  of length size() + rlen whose first size() elements are a
+    copy of the original string controlled by *this and whose  remaining
+    elements are a copy of the initial elements of the string controlled
+    by str beginning at position pos.
+  <B>Returns:</B>
+    *this.
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    append(const charT* s, size_type n);
+
+  <B>Returns:</B>
+    append(basic_string&lt;charT,traits,Allocator&gt;(s,n)).
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp; append(const charT* s);
+
+  <B>Returns:</B>
+    append(basic_string&lt;charT,traits,Allocator&gt;(s)).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    append(size_type n, charT c);
+
+  <B>Returns:</B>
+    append(basic_string&lt;charT,traits,Allocator&gt;(n,c)).
+
+  template&lt;class InputIterator&gt;
+    basic_string&amp; append(InputIterator first, InputIterator last);
+
+  <B>Returns:</B>
+    append(basic_string&lt;charT,traits,Allocator&gt;(first,last)).
+
+  <I>21.3.5.3</I>  <B>basic_string::assign                    <A NAME="lib.string::assign">[lib.string::assign]</A></B>
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    assign(const basic_string&lt;charT,traits&gt;&amp; str);
+
+  <B>Returns:</B>
+    assign(str, 0, npos).
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    assign(const basic_string&lt;charT,traits&gt;&amp; str, size_type pos,
+           size_type n);
+
+  <B>Requires:</B>
+    pos &lt;= str.size()
+  <B>Throws:</B>
+    out_of_range if pos &gt; str.size().
+  <B>Effects:</B>
+    Determines the effective length rlen of the string to assign as  the
+    smaller of n and str.size() - pos.
+    The  function  then  replaces  the string controlled by *this with a
+    string of length rlen whose elements are a copy of the  string  con-
+    trolled by str beginning at position pos.
+  <B>Returns:</B>
+    *this.
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    assign(const charT* s, size_type n);
+
+  <B>Returns:</B>
+    assign(basic_string&lt;charT,traits,Allocator&gt;(s,n)).
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp; assign(const charT* s);
+
+  <B>Returns:</B>
+    assign(basic_string&lt;charT, traits, Allocator&gt;(s)).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    assign(size_type n, charT c);
+
+  <B>Returns:</B>
+    assign(basic_string&lt;charT,traits,Allocator&gt;(n,c)).
+
+  template&lt;class InputIterator&gt;
+    basic_string&amp; assign(InputIterator first, InputIterator last);
+
+  <B>Returns:</B>
+    assign(basic_string&lt;charT,traits,Allocator&gt;(first,last)).
+
+  <I>21.3.5.4</I>  <B>basic_string::insert                    <A NAME="lib.string::insert">[lib.string::insert]</A></B>
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    insert(size_type pos1,
+           const basic_string&lt;charT,traits,Allocator&gt;&amp; str);
+
+  <B>Returns:</B>
+    insert(pos1,str,0,npos).
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    insert(size_type pos1,
+           const basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+           size_type pos2, size_type n);
+
+  <B>Requires</B>
+    pos1 &lt;= size() and pos2 &lt;= str.size()
+  <B>Throws:</B>
+    out_of_range if pos1 &gt; size() or pos2 &gt; str.size().
+  <B>Effects:</B>
+    Determines  the effective length rlen of the string to insert as the
+    smaller of n and str.size() - pos2.   Then  throws  length_error  if
+    size() &gt;= npos - rlen.
+    Otherwise, the function replaces the string controlled by *this with
+    a string of length size() + rlen whose first  pos1  elements  are  a
+    copy  of  the  initial elements of the original string controlled by
+    *this, whose next rlen elements are a copy of the  elements  of  the
+    string  controlled  by  str  beginning  at  position pos2, and whose
+    remaining elements are a copy of the remaining elements of the orig-
+    inal string controlled by *this.
+  <B>Returns:</B>
+    *this.
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    insert(size_type pos, const charT* s, size_type n);
+
+  <B>Returns:</B>
+    insert(pos,basic_string&lt;charT,traits,Allocator&gt;(s,n)).
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    insert(size_type pos, const charT* s);
+
+  <B>Returns:</B>
+    insert(pos,basic_string&lt;charT,traits,Allocator&gt;(s)).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    insert(size_type pos, size_type n, charT c);
+
+  <B>Returns:</B>
+    insert(pos,basic_string&lt;charT,traits,Allocator&gt;(n,c)).
+
+  iterator insert(iterator p, charT c);
+
+  <B>Requires:</B>
+    p is a valid iterator on *this.
+  <B>Effects:</B>
+    inserts a copy of c before the character referred to by p.
+  <B>Returns:</B>
+    an iterator which refers to the copy of the inserted character.
+
+  void insert(iterator p, size_type n, charT c);
+
+  <B>Requires:</B>
+    p is a valid iterator on *this.
+  <B>Effects:</B>
+    inserts n copies of c before the character referred to by p.
+
+  template&lt;class InputIterator&gt;
+    void insert(iterator p, InputIterator first, InputIterator last);
+
+  <B>Requires:</B>
+    p is a valid iterator on *this.  [first,last) is a valid range.
+  <B>Effects:</B>
+    inserts  copies  of  the characters in the range [first,last) before
+    the character referred to by p.
+
+  <I>21.3.5.5</I>  <B>basic_string::erase                      <A NAME="lib.string::erase">[lib.string::erase]</A></B>
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    erase(size_type pos = 0, size_type n = npos);
+
+  <B>Requires:</B>
+    pos  &lt;= size()
+  <B>Throws:</B>
+    out_of_range if pos  &gt; size().
+  <B>Effects:</B>
+    Determines the effective length xlen of the string to be removed  as
+    the smaller of n and size() - pos.
+    The  function  then  replaces  the string controlled by *this with a
+    string of length size() - xlen whose first pos elements are  a  copy
+    of  the initial elements of the original string controlled by *this,
+    and whose remaining elements are a copy of the elements of the orig-
+    inal string controlled by *this beginning at position pos + xlen.
+  <B>Returns:</B>
+    *this.
+
+  iterator erase(iterator p);
+
+  <B>Requires:</B>
+    p is a valid iterator on *this.
+  <B>Effects:</B>
+    removes the character referred to by p.
+
+  <B>Returns:</B>
+    an  iterator  which  points  to  the element immediately following p
+    prior to the element being erased.  If no such element exists, end()
+    is returned.
+
+  iterator erase(iterator first, iterator last);
+
+  <B>Requires:</B>
+    first  and  last  are  valid  iterators  on  *this, defining a range
+    [first,last).
+  <B>Effects:</B>
+    removes the characters in the range [first,last).
+  <B>Returns:</B>
+    an iterator which points to the element immediately  following  last
+    prior to the element being erased.  If no such element exists, end()
+    is returned.
+
+  <I>21.3.5.6</I>  <B>basic_string::replace                  <A NAME="lib.string::replace">[lib.string::replace]</A></B>
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    replace(size_type pos1, size_type n1,
+            const basic_string&lt;charT,traits,Allocator&gt;&amp; str);
+
+  <B>Returns:</B>
+    replace(pos1, n1, str, 0, npos).
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    replace(size_type pos1, size_type n1,
+            const basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+            size_type pos2, size_type n2);
+
+  <B>Requires:</B>
+    pos1 &lt;= size() &amp;&amp; pos2 &lt;= str.size().
+  <B>Throws:</B>
+    out_of_range if pos1 &gt; size() or pos2 &gt; str.size().
+  <B>Effects:</B>
+    Determines the effective length xlen of the string to be removed  as
+    the  smaller of n1 and size() - pos1.  It also determines the effec-
+    tive length rlen of the string to be inserted as the smaller  of  n2
+    and str.size() - pos2 .
+    Throws length_error if size() - xlen &gt;= npos - rlen.
+    Otherwise, the function replaces the string controlled by *this with
+    a string of length size() - xlen + rlen whose  first  pos1  elements
+    are a copy of the initial elements of the original string controlled
+    by *this, whose next rlen elements are a copy of  the  initial  ele-
+    ments  of  the  string controlled by str beginning at position pos2,
+    and whose remaining elements are a copy of the elements of the orig-
+    inal string controlled by *this beginning at position pos1 + xlen.
+  <B>Returns:</B>
+    *this.
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    replace(size_type pos, size_type n1, const charT* s, size_type n2);
+
+  <B>Returns:</B>
+    replace(pos,n1,basic_string&lt;charT,traits,Allocator&gt;(s,n2)).
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    replace(size_type pos, size_type n1, const charT* s);
+
+  <B>Returns:</B>
+    replace(pos,n1,basic_string&lt;charT,traits,Allocator&gt;(s)).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  basic_string&lt;charT,traits,Allocator&gt;&amp;
+    replace(size_type pos, size_type n1,
+            size_type n2, charT c);
+
+  <B>Returns:</B>
+    replace(pos,n1,basic_string&lt;charT,traits,Allocator&gt;(n2,c)).
+
+  basic_string&amp; replace(iterator i1, iterator i2, const basic_string&amp; str);
+
+  <B>Requires:</B>
+    The  iterators  i1  and  i2 are valid iterators on *this, defining a
+    range [i1,i2).
+  <B>Effects:</B>
+    Replaces the string controlled by *this  with  a  string  of  length
+    size()  -  (i2  - i1) + str.size() whose first begin() - i1 elements
+    are a copy of the initial elements of the original string controlled
+    by  *this,  whose  next str.size() elements are a copy of the string
+    controlled by str, and whose remaining elements are a  copy  of  the
+    elements  of  the  original  string controlled by *this beginning at
+    position i2.
+  <B>Returns:</B>
+    *this.
+  <B>Notes:</B>
+    After the call, the  length  of  the  string  will  be  changed  by:
+    str.size() - (i2 - i1).
+
+  basic_string&amp;
+    replace(iterator i1, iterator i2, const charT* s, size_type n);
+
+  <B>Returns:</B>
+    replace(i1,i2,basic_string(s,n)).
+  <B>Notes:</B>
+    Length change: n - (i2 - i1).
+
+  basic_string&amp; replace(iterator i1, iterator i2, const charT* s);
+
+  <B>Returns:</B>
+    replace(i1,i2,basic_string(s)).
+  <B>Notes:</B>
+    Length change: traits::length(s) - (i2 - i1).
+    Uses traits::length().
+
+  basic_string&amp; replace(iterator i1, iterator i2, size_type n,
+                        charT c);
+
+  <B>Returns:</B>
+    replace(i1,i2,basic_string(n,c)).
+  <B>Notes:</B>
+    Length change: n - (i2 - i1).
+
+  template&lt;class InputIterator&gt;
+    basic_string&amp; replace(iterator i1, iterator i2,
+                          InputIterator j1, InputIterator j2);
+
+  <B>Returns:</B>
+    replace(i1,i2,basic_string(j1,j2)).
+  <B>Notes:</B>
+    Length change: j2 - j1 - (i2 - i1).
+
+  <I>21.3.5.7</I>  <B>basic_string::copy                        <A NAME="lib.string::copy">[lib.string::copy]</A></B>
+
+  size_type copy(charT* s, size_type n, size_type pos = 0) const;
+
+  <B>Requires:</B>
+    pos &lt;= size()
+  <B>Throws:</B>
+    out_of_range if pos &gt; size().
+  <B>Effects:</B>
+    Determines  the  effective  length rlen of the string to copy as the
+    smaller of n and size() - pos.  s shall designate  an  array  of  at
+    least rlen elements.
+    The  function then replaces the string designated by s with a string
+    of length rlen whose elements are a copy of the string controlled by
+    *this beginning at position pos.
+    The  function does not append a null object to the string designated
+    by s.
+  <B>Returns:</B>
+    rlen.
+
+  <I>21.3.5.8</I>  <B>basic_string::swap                        <A NAME="lib.string::swap">[lib.string::swap]</A></B>
+
+  void swap(basic_string&lt;charT,traits,Allocator&gt;&amp; s);
+
+  <B>Effects:</B>
+    Swaps the contents of the two strings.
+  <B>Postcondition:</B>
+    *this contains the characters that were in s, s contains the charac-
+    ters that were in *this.
+  <B>Complexity:</B>
+    constant time.
+
+  <I>21.3.6</I>  <B>basic_string</B> <I>string operations</I>                <B><A NAME="lib.string.ops">[lib.string.ops]</A></B>
+
+  const charT* c_str() const;
+
+  <B>Returns:</B>
+    A  pointer  to  the initial element of an array of length size() + 1
+    whose first size() elements equal the corresponding elements of  the
+    string  controlled by *this and whose last element is a null charac-
+    ter specified by traits::eos().
+  <B>Requires:</B>
+    The program shall not alter any of the values stored in  the  array.
+    Nor  shall  the  program treat the returned value as a valid pointer
+    value after any subsequent call to a non-const  member  function  of
+    the class basic_string that designates the same object as this.
+  <B>Notes:</B>
+    Uses traits::eos().
+
+  const charT* data() const;
+
+  <B>Returns:</B>
+    If  size()  is  nonzero, the member returns a pointer to the initial
+    element of an array whose first size()  elements  equal  the  corre-
+    sponding  elements  of the string controlled by *this.  If size() is
+    zero, the member returns a non-null pointer that is copyable and can
+    have zero added to it.
+  <B>Requires:</B>
+    The  program shall not alter any of the values stored in the charac-
+    ter array.  Nor shall the program treat  the  returned  value  as  a
+    valid pointer value after any subsequent call to a non- const member
+    function of basic_string that designates the same object as this.
+
+  allocator_type get_allocator() const;
+
+  <B>Returns:</B>
+    a copy of the Allocator object used to construct the string.
+
+  <I>21.3.6.1</I>  <B>basic_string::find                        <A NAME="lib.string::find">[lib.string::find]</A></B>
+
+  size_type find(const basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+                 size_type pos = 0) const;
+
+  <B>Effects:</B>
+    Determines the lowest position xpos, if possible, such that both  of
+    the following conditions obtain:
+
+  --pos <I><B>&lt;</B></I>= xpos and xpos + str.size() &lt;= size();
+
+  --at(xpos+I)  == str.at(I) for all elements I of the string controlled
+    by str.
+  <B>Returns:</B>
+    xpos if the function can determine such a value  for  xpos.   Other-
+    wise, returns npos.
+  <B>Notes:</B>
+    Uses traits::eq().
+
+  size_type find(const charT* s, size_type pos, size_type n) const;
+
+  <B>Returns:</B>
+    find(basic_string&lt;charT,traits,Allocator&gt;(s,n),pos).
+
+  size_type find(const charT* s, size_type pos = 0) const;
+
+  <B>Returns:</B>
+    find(basic_string&lt;charT,traits,Allocator&gt;(s),pos).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  size_type find(charT c, size_type pos = 0) const;
+
+  <B>Returns:</B>
+    find(basic_string&lt;charT,traits,Allocator&gt;(1,c),pos).
+
+  <I>21.3.6.2</I>  <B>basic_string::rfind                      <A NAME="lib.string::rfind">[lib.string::rfind]</A></B>
+
+  size_type rfind(const basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+                  size_type pos = npos) const;
+
+  <B>Effects:</B>
+    Determines the highest position xpos, if possible, such that both of
+    the following conditions obtain:
+
+  --xpos <I><B>&lt;</B></I>= pos and xpos + str.size() &lt;= size();
+
+  --at(xpos+I) == str.at(I) for all elements I of the string  controlled
+
+    by str.
+  <B>Returns:</B>
+    xpos  if  the  function can determine such a value for xpos.  Other-
+    wise, returns npos.
+  <B>Notes:</B>
+    Uses traits::eq().
+
+  size_type rfind(const charT* s, size_type pos, size_type n) const;
+
+  <B>Returns:</B>
+    rfind(basic_string&lt;charT,traits,Allocator&gt;(s,n),pos).
+
+  size_type rfind(const charT* s, size_type pos = npos) const;
+
+  <B>Returns:</B>
+    rfind(basic_string&lt;charT,traits,Allocator&gt;(s),pos).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  size_type rfind(charT c, size_type pos = npos) const;
+
+  <B>Returns:</B>
+    rfind(basic_string&lt;charT,traits,Allocator&gt;(1,c),pos).
+
+  <I>21.3.6.3</I>  <B>basic_string::find_first_of      <A NAME="lib.string::find.first.of">[lib.string::find.first.of]</A></B>
+
+  size_type
+    find_first_of(const basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+                  size_type pos = 0) const;
+
+  <B>Effects:</B>
+    Determines  the lowest position xpos, if possible, such that both of
+    the following conditions obtain:
+
+  --pos <I><B>&lt;</B></I>= xpos and xpos &lt; size();
+
+  --at(xpos) == str.at(I) for some element I of the string controlled by
+    str.
+  <B>Returns:</B>
+    xpos  if  the  function can determine such a value for xpos.  Other-
+    wise, returns npos.
+  <B>Notes:</B>
+    Uses traits::eq().
+
+  size_type
+    find_first_of(const charT* s, size_type pos, size_type n) const;
+
+  <B>Returns:</B>
+    find_first_of(basic_string&lt;charT,traits,Allocator&gt;(s,n),pos).
+
+  size_type find_first_of(const charT* s, size_type pos = 0) const;
+
+  <B>Returns:</B>
+    find_first_of(basic_string&lt;charT,traits,Allocator&gt;(s),pos).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  size_type find_first_of(charT c, size_type pos = 0) const;
+
+  <B>Returns:</B>
+    find_first_of(basic_string&lt;charT,traits,Allocator&gt;(1,c),pos).
+
+  <I>21.3.6.4</I>  <B>basic_string::find_last_of        <A NAME="lib.string::find.last.of">[lib.string::find.last.of]</A></B>
+
+  size_type
+    find_last_of(const basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+                 size_type pos = npos) const;
+
+  <B>Effects:</B>
+    Determines the highest position xpos, if possible, such that both of
+    the following conditions obtain:
+
+  --xpos &lt;= pos and pos &lt; size();
+
+  --at(xpos) == str.at(I) for some element I of the string controlled by
+    str.
+  <B>Returns:</B>
+    xpos if the function can determine such a value  for  xpos.   Other-
+    wise, returns npos.
+  <B>Notes:</B>
+    Uses traits::eq().
+
+  size_type find_last_of(const charT* s, size_type pos, size_type n) const;
+
+  <B>Returns:</B>
+    find_last_of(basic_string&lt;charT,traits,Allocator&gt;(s,n),pos).
+
+  size_type find_last_of(const charT* s, size_type pos = npos) const;
+
+  <B>Returns:</B>
+    find_last_of(basic_string&lt;charT,traits,Allocator&gt;(s),pos).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  size_type find_last_of(charT c, size_type pos = npos) const;
+
+  <B>Returns:</B>
+    find_last_of(basic_string&lt;charT,traits,Allocator&gt;(1,c),pos).
+
+  <I>21.3.6.5</I>                               <B><A NAME="lib.string::find.first.not.of">[lib.string::find.first.not.of]</A></B>
+       <B>basic_string::find_first_not_of</B>
+
+  size_type
+    find_first_not_of(const basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+                      size_type pos = 0) const;
+
+  <B>Effects:</B>
+    Determines  the lowest position xpos, if possible, such that both of
+    the following conditions obtain:
+
+  --pos &lt;= xpos and xpos &lt; size();
+
+  --at(xpos) == str.at(I) for no element I of the string  controlled  by
+    str.
+  <B>Returns:</B>
+    xpos  if  the  function can determine such a value for xpos.  Other-
+    wise, returns npos.
+  <B>Notes:</B>
+    Uses traits::eq().
+
+  size_type
+    find_first_not_of(const charT* s, size_type pos, size_type n) const;
+
+  <B>Returns:</B>
+    find_first_not_of(basic_string&lt;charT,traits,Allocator&gt;(s,n),pos).
+
+  size_type find_first_not_of(const charT* s, size_type pos = 0) const;
+
+  <B>Returns:</B>
+    find_first_not_of(basic_string&lt;charT,traits,Allocator&gt;(s),pos).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  size_type find_first_not_of(charT c, size_type pos = 0) const;
+
+  <B>Returns:</B>
+    find_first_not_of(basic_string&lt;charT,traits,Allocator&gt;(1,c),pos).
+
+  <I>21.3.6.6</I>                                <B><A NAME="lib.string::find.last.not.of">[lib.string::find.last.not.of]</A></B>
+       <B>basic_string::find_last_not_of</B>
+
+  size_type
+    find_last_not_of(const basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+                     size_type pos = npos) const;
+
+  <B>Effects:</B>
+    Determines the highest position xpos, if possible, such that both of
+    the following conditions obtain:
+
+  --xpos &lt;= pos and pos &lt; size();
+
+  --at(xpos)  == str.at(I)) for no element I of the string controlled by
+    str.
+  <B>Returns:</B>
+    xpos if the function can determine such a value  for  xpos.   Other-
+    wise, returns npos.
+  <B>Notes:</B>
+    Uses traits::eq().
+
+  size_type find_last_not_of(const charT* s, size_type pos,
+                             size_type n) const;
+
+  <B>Returns:</B>
+    find_last_not_of(basic_string&lt;charT,traits,Allocator&gt;(s,n),pos).
+
+  size_type find_last_not_of(const charT* s, size_type pos = npos) const;
+
+  <B>Returns:</B>
+    find_last_not_of(basic_string&lt;charT,traits,Allocator&gt;(s),pos).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  size_type find_last_not_of(charT c, size_type pos = npos) const;
+
+  <B>Returns:</B>
+    find_last_not_of(basic_string&lt;charT,traits,Allocator&gt;(1,c),pos).
+
+  <I>21.3.6.7</I>  <B>basic_string::substr                    <A NAME="lib.string::substr">[lib.string::substr]</A></B>
+
+  basic_string&lt;charT,traits,Allocator&gt;
+    substr(size_type pos = 0, size_type n = npos) const;
+
+  <B>Requires:</B>
+    pos &lt;= size()
+  <B>Throws:</B>
+    out_of_range if pos &gt; size().
+  <B>Effects:</B>
+    Determines  the  effective  length rlen of the string to copy as the
+    smaller of n and size() - pos.
+
+  <B>Returns:</B>
+    basic_string&lt;charT,traits,Allocator&gt;(data()+pos,rlen).
+
+  <I>21.3.6.8</I>  <B>basic_string::compare                  <A NAME="lib.string::compare">[lib.string::compare]</A></B>
+
+  int compare(const basic_string&lt;charT,traits,Allocator&gt;&amp; str)
+
+  <B>Effects:</B>
+    Determines the effective length <I>rlen</I> of the strings  to  compare  as
+    the  smallest  of size() and str.size().  The function then compares
+    the  two  strings  by  calling  traits::compare(data(),  str.data(),
+    rlen).
+  <B>Returns:</B>
+    the nonzero result if the result of the comparison is nonzero.  Oth-
+    erwise, returns a value as indicated in Table 10:
+
+                        <I>Table 10--</I><B>compare()</B> <I>results</I>
+
+                   +------------------------------------+
+                   |     <B>Condition         Return Value</B> |
+                   +------------------------------------+
+                   |<B>size() &lt;</B>  str<B>.size()   &lt; 0</B>          |
+                   |<B>size() ==</B> str<B>.size()     0</B>          |
+                   |<B>size() &gt;  str.size()   &gt; 0</B>          |
+                   +------------------------------------+
+
+  int compare(size_type pos1, size_type n1,
+              const basic_string&lt;charT,traits,Allocator&gt;&amp; str) const;
+
+  <B>Returns:</B>
+
+  basic_string&lt;charT,traits,Allocator&gt;(*this,pos1,n1).compare(
+               str) .
+
+  int compare(size_type pos1, size_type n1,
+              const basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+              size_type pos2, size_type n2) const;
+
+  <B>Returns:</B>
+
+  basic_string&lt;charT,traits,Allocator&gt;(*this,pos1,n1).compare(
+               basic_string&lt;charT,traits,Allocator&gt;(str,pos2,n2)) .
+
+  int compare(const charT *s) const;
+
+  <B>Returns:</B>
+    this-&gt;compare(basic_string&lt;charT,traits,Allocator&gt;(s)).
+
+  int compare(size_type pos, size_type n1,
+              charT *s, size_type n2 = npos) const;
+
+  <B>Returns:</B>
+
+  basic_string&lt;charT,traits,Allocator&gt;(*this,pos,n1).compare(
+               basic_string&lt;charT,traits,Allocator&gt;(s,n2))
+
+  <I>21.3.7</I>  <B>basic_string</B> <I>non-member functions</I>      <B><A NAME="lib.string.nonmembers">[lib.string.nonmembers]</A></B>
+
+  <I>21.3.7.1</I>  <B>operator+                                  <A NAME="lib.string::op+">[lib.string::op+]</A></B>
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    basic_string&lt;charT,traits,Allocator&gt;
+      operator+(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    basic_string&lt;charT,traits,Allocator&gt;(lhs).append(rhs)
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    basic_string&lt;charT,traits,Allocator&gt;
+      operator+(const charT* lhs,
+                const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    basic_string&lt;charT,traits,Allocator&gt;(lhs) + rhs.
+  <B>Notes:</B>
+    Uses traits::length().
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    basic_string&lt;charT,traits,Allocator&gt;
+      operator+(charT lhs,
+                const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    basic_string&lt;charT,traits,Allocator&gt;(1,lhs) + rhs.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    basic_string&lt;charT,traits,Allocator&gt;
+      operator+(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                const charT* rhs);
+
+  <B>Returns:</B>
+    lhs + basic_string&lt;charT,traits,Allocator&gt;(rhs).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    basic_string&lt;charT,traits,Allocator&gt;
+      operator+(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                charT rhs);
+
+  <B>Returns:</B>
+    lhs + basic_string&lt;charT,traits,Allocator&gt;(1,rhs).
+
+  <I>21.3.7.2</I>  <B>operator==                          <A NAME="lib.string::operator==">[lib.string::operator==]</A></B>
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator==(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    lhs.compare(rhs) == 0.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator==(const charT* lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    basic_string&lt;charT,traits,Allocator&gt;(lhs) == rhs.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator==(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const charT* rhs);
+
+  <B>Returns:</B>
+    lhs == basic_string&lt;charT,traits,Allocator&gt;(rhs).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  <I>21.3.7.3</I>  <B>operator!=                                <A NAME="lib.string::op!=">[lib.string::op!=]</A></B>
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator!=(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    !(lhs == rhs).
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator!=(const charT* lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    basic_string&lt;charT,traits,Allocator&gt;(lhs) != rhs.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator!=(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const charT* rhs);
+
+  <B>Returns:</B>
+    lhs != basic_string&lt;charT,traits,Allocator&gt;(rhs).
+  <B>Notes:</B>
+    Uses traits::length().
+
+  <I>21.3.7.4</I>  <B>operator&lt;                                  <A NAME="lib.string::op&lt;">[lib.string::op&lt;]</A></B>
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&lt; (const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    lhs.compare(rhs) &lt; 0.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&lt; (const charT* lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    basic_string&lt;charT,traits,Allocator&gt;(lhs) &lt; rhs.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&lt; (const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const charT* rhs);
+
+  <B>Returns:</B>
+    lhs &lt; basic_string&lt;charT,traits,Allocator&gt;(rhs).
+
+  <I>21.3.7.5</I>  <B>operator&gt;                                  <A NAME="lib.string::op&gt;">[lib.string::op&gt;]</A></B>
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&gt; (const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    lhs.compare(rhs) &gt; 0.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&gt; (const charT* lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    basic_string&lt;charT,traits,Allocator&gt;(lhs) &gt; rhs.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&gt; (const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const charT* rhs);
+
+  <B>Returns:</B>
+    lhs &gt; basic_string&lt;charT,traits,Allocator&gt;(rhs).
+
+  <I>21.3.7.6</I>  <B>operator&lt;=                                <A NAME="lib.string::op&lt;=">[lib.string::op&lt;=]</A></B>
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&lt;=(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    lhs.compare(rhs) &lt;= 0.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&lt;=(const charT* lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    basic_string&lt;charT,traits,Allocator&gt;(lhs) &lt;= rhs.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&lt;=(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const charT* rhs);
+
+  <B>Returns:</B>
+    lhs &lt;= basic_string&lt;charT,traits,Allocator&gt;(rhs).
+
+  <I>21.3.7.7</I>  <B>operator&gt;=                                <A NAME="lib.string::op&gt;=">[lib.string::op&gt;=]</A></B>
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&gt;=(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    lhs.compare(rhs) &gt;= 0.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&gt;=(const charT* lhs,
+                    const basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+
+  <B>Returns:</B>
+    basic_string&lt;charT,traits,Allocator&gt;(lhs) &gt;= rhs.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    bool operator&gt;=(const basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                    const charT* rhs);
+
+  <B>Returns:</B>
+    lhs &gt;= basic_string&lt;charT,traits,Allocator&gt;(rhs).
+
+  <I>21.3.7.8</I>  <B>swap                                    <A NAME="lib.string.special">[lib.string.special]</A></B>
+    template&lt;class charT, class traits, class Allocator&gt;
+       void swap(basic_string&lt;charT,traits,Allocator&gt;&amp; lhs,
+                 basic_string&lt;charT,traits,Allocator&gt;&amp; rhs);
+  <B>Effects:</B>
+    lhs.swap(rhs);
+
+  <I>21.3.7.9  Inserters and extractors</I>                     <B><A NAME="lib.string.io">[lib.string.io]</A></B>
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    basic_istream&lt;charT,traits&gt;&amp;
+      operator&gt;&gt;(basic_istream&lt;charT,traits&gt;&amp; is,
+                 basic_string&lt;charT,traits,Allocator&gt;&amp; str);
+
+  <B>Effects:</B>
+    Begins by constructing a sentry object k as if k were constructed by
+    basic_istream&lt;charT,traits&gt;::sentry k(is).  If bool(k) is  true,  it
+    calls  str.erase()  and then extracts characters from is and appends
+    them to str as if by  calling  str.append(1,c).   If  is.width()  is
+    greater  than  zero,  the maximum number n of characters appended is
+    is.width(); otherwise n is str.max_size().  Characters are extracted
+    and appended until any of the following occurs:
+
+  --<I>n</I> characters are stored;
+
+  --end-of-file occurs on the input sequence;
+
+  --isspace(<I>c</I>,getloc())  is  true for the next available input character
+    <I>c</I>.  After the last character (if any) is extracted,  is.width(0)  is
+    called and the sentry object k is destroyed.
+  <B>Returns:</B>
+    is
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    basic_ostream&lt;charT, traits&gt;&amp;
+      operator&lt;&lt;(basic_ostream&lt;charT, traits&gt;&amp; os,
+                 const basic_string&lt;charT,traits,Allocator&gt;&amp; str);
+
+  <B>Effects:</B>
+    Begins by constructing a sentry object k as if k were constructed by
+    basic_ostream&lt;charT,traits&gt;::sentry  k(os).   If  bool(k)  is  true,
+    inserts  characters  as  if by calling os.rdbuf()-&gt;sputn(str.data(),
+    <I>n</I>), padding as described in stage 3 of _<A HREF="lib-locales.html#lib.facet.num.put.virtuals">lib.facet.num.put.virtuals</A>_,
+    where  <I>n</I>  is  the  smaller  of os.width() and str.size(); then calls
+    os.width(0).   If  the  call   to   sputn   fails,   calls   os.set-
+    state(ios_base::failbit).
+  <B>Returns:</B>
+    os
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    basic_istream&lt;charT,traits&gt;&amp;
+      getline(basic_istream&lt;charT,traits&gt;&amp; is,
+              basic_string&lt;charT,traits,Allocator&gt;&amp; str,
+              charT delim);
+
+  <B>Effects:</B>
+    Begins    by   constructing   a   sentry   object   k   as   if   by
+    basic_istream&lt;charT,traits&gt;::sentry k(is).  If bool(k) is  true,  it
+    calls  str.erase()  and then extracts characters from is and appends
+    them to str as if by calling str.append(1,c) until any of  the  fol-
+    lowing occurs:
+
+  --end-of-file occurs on the input sequence (in which case, the getline
+    function calls is.setstate(ios_base::eofbit)).
+
+  --<I>c</I> == delim for the next available input character <I>c</I> (in which  case,
+    <I>c</I> is extracted but not appended) (_<A HREF="lib-iostreams.html#lib.iostate.flags">lib.iostate.flags</A>_)
+
+  --str.max_size()  characters  are  stored (in which case, the function
+    calls is.setstate(ios_base::failbit) (_<A HREF="lib-iostreams.html#lib.iostate.flags">lib.iostate.flags</A>_)
+
+1 The conditions are tested in the order shown.  In any case, after  the
+  last character is extracted, the sentry object k is destroyed.
+
+2 If   the   function   extracts   no   characters,   it  calls  is.set-
+  state(ios_base::failbit)    which    may    throw    ios_base::failure
+  (_<A HREF="lib-iostreams.html#lib.iostate.flags">lib.iostate.flags</A>_).
+  <B>Returns:</B>
+    is.
+
+  template&lt;class charT, class traits, class Allocator&gt;
+    basic_istream&lt;charT,traits&gt;&amp;
+      getline(basic_istream&lt;charT,traits&gt;&amp; is,
+              basic_string&lt;charT,traits,Allocator&gt;&amp; str)
+
+  <B>Returns:</B>
+    getline(is,str,is.widen('\n'))
+
+  <I>21.4  Null-terminated sequence utilities</I>               <B><A NAME="lib.c.strings">[lib.c.strings]</A></B>
+
+1 Tables  11,  12,  13, 14, and 15 describe headers &lt;cctype&gt;, &lt;cwctype&gt;,
+  &lt;cstring&gt;, &lt;cwchar&gt;, and &lt;cstdlib&gt;  (multibyte  conversions),  respec-
+  tively.
+
+                    <I>Table 11--Header</I> <B>&lt;cctype&gt;</B> <I>synopsis</I>
+
+            +-------------------------------------------------+
+            | <B>Type                    Name(s)</B>                 |
+            +-------------------------------------------------+
+            |<B>Functions:</B>                                       |
+            |<B>isalnum   isdigit   isprint   isupper    tolower</B> |
+            |<B>isalpha   isgraph   ispunct   isxdigit   toupper</B> |
+            |<B>iscntrl   islower   isspace</B>                      |
+            +-------------------------------------------------+
+
+                   <I>Table 12--Header</I> <B>&lt;cwctype&gt;</B> <I>synopsis</I>
+
+   +------------------------------------------------------------------+
+   |  <B>Type                            Name(s)</B>                         |
+   +------------------------------------------------------------------+
+   |<B>Macro:     WEOF &lt;cwctype&gt;</B>                                         |
+   +------------------------------------------------------------------+
+   |<B>Types:     wctrans_t   wctype_t   wint_t &lt;cwctype&gt;</B>                |
+   +------------------------------------------------------------------+
+   |<B>Functions:</B>                                                        |
+   |<B>iswalnum   iswctype    iswlower   iswspace    towctrans   wctrans</B> |
+   |<B>iswalpha   iswdigit    iswprint   iswupper    towlower    wctype</B>  |
+   |<B>iswcntrl   iswgraph    iswpunct   iswxdigit   towupper</B>            |
+   +------------------------------------------------------------------+
+
+                   <I>Table 13--Header</I> <B>&lt;cstring&gt;</B> <I>synopsis</I>
+
+            +-------------------------------------------------+
+            | <B>Type                    Name(s)</B>                 |
+            +-------------------------------------------------+
+            |<B>Macro:    NULL &lt;cstring&gt;</B>                         |
+            +-------------------------------------------------+
+            |<B>Type:     size_t &lt;cstring&gt;</B>                       |
+            +-------------------------------------------------+
+            |<B>Functions:</B>                                       |
+            |<B>memchr    strcat    strcspn    strncpy   strtok</B>  |
+            |<B>memcmp    strchr    strerror   strpbrk   strxfrm</B> |
+            |<B>memcpy    strcmp    strlen     strrchr</B>           |
+            |<B>memmove   strcoll   strncat    strspn</B>            |
+            |<B>memset    strcpy    strncmp    strstr</B>            |
+            +-------------------------------------------------+
+
+                    <I>Table 14--Header</I> <B>&lt;cwchar&gt;</B> <I>synopsis</I>
+
+  +------------------------------------------------------------------------------+
+  |  <B>Type                                  Name(s)</B>                               |
+  +------------------------------------------------------------------------------+
+  |<B>Macros:    NULL &lt;cwchar&gt;   WCHAR_MAX         WCHAR_MIN   WEOF &lt;cwchar&gt;</B>        |
+  +------------------------------------------------------------------------------+
+  |<B>Types:     mbstate_t       wint_t &lt;cwchar&gt;   size_t</B>                           |
+  +------------------------------------------------------------------------------+
+  |<B>Functions:</B>                                                                    |
+  |<B>btowc      getwchar        ungetwc           wcscpy      wcsrtombs   wmemchr</B>  |
+  |<B>fgetwc     mbrlen          vfwprintf         wcscspn     wcsspn      wmemcmp</B>  |
+  |<B>fgetws     mbrtowc         vswprintf         wcsftime    wcsstr      wmemcpy</B>  |
+  |<B>fputwc     mbsinit         vwprintf          wcslen      wcstod      wmemmove</B> |
+  |<B>fputws     mbsrtowcs       wcrtomb           wcsncat     wcstok      wmemset</B>  |
+  |<B>fwide      putwc           wcscat            wcsncmp     wcstol      wprintf</B>  |
+  |<B>fwprintf   putwchar        wcschr            wcsncpy     wcstoul     wscanf</B>   |
+  |<B>fwscanf    swprintf        wcscmp            wcspbrk     wcsxfrm</B>              |
+  |<B>getwc      swscanf         wcscoll           wcsrchr     wctob</B>                |
+  +------------------------------------------------------------------------------+
+
+                   <I>Table 15--Header</I> <B>&lt;cstdlib&gt;</B> <I>synopsis</I>
+
+               +------------------------------------------+
+               | <B>Type                 Name(s)</B>             |
+               +------------------------------------------+
+               |<B>Macros:   MB_CUR_MAX</B>                      |
+               +------------------------------------------+
+               |<B>Functions:</B>                                |
+               |<B>atol      mblen        strtod    wctomb</B>   |
+               |<B>atof      mbstowcs     strtol    wcstombs</B> |
+               |<B>atoi      mbtowc       strtoul</B>            |
+               +------------------------------------------+
+
+2 The  contents  of these headers are the same as the Standard C library
+  headers  &lt;type.h&gt;,  &lt;wctype.h&gt;,  &lt;string.h&gt;,  &lt;wchar.h&gt;and  &lt;stdlib.h&gt;
+  respectively, with the following modifications:
+
+3 None of the headers shall define the type wchar_t (_<A HREF="lex.html#lex.key">lex.key</A>_).
+
+4 The function signature strchr(const char*, int) is replaced by the two
+  declarations:
+
+  const char* strchr(const char* s, int c);
+        char* strchr(      char* s, int c);
+
+5 both of which have the same behavior as the original declaration.
+
+6 The function signature strpbrk(const char*, const char*)  is  replaced
+  by the two declarations:
+
+  const char* strpbrk(const char* s1, const char* s2);
+        char* strpbrk(      char* s1, const char* s2);
+
+7 both of which have the same behavior as the original declaration.
+
+8 The  function  signature  strrchr(const char*, int) is replaced by the
+  two declarations:
+
+  const char* strrchr(const char* s, int c);
+        char* strrchr(      char* s, int c);
+
+9 both of which have the same behavior as the original declaration.
+
+10The function signature strstr(const char*, const char*) is replaced by
+  the two declarations:
+
+  const char* strstr(const char* s1, const char* s2);
+        char* strstr(      char* s1, const char* s2);
+
+11both of which have the same behavior as the original declaration.
+
+12The function signature memchr(const void*, int, size_t) is replaced by
+  the two declarations:
+
+  const void* memchr(const void* s, int c, size_t n);
+        void* memchr(      void* s, int c, size_t n);
+
+13both of which have the same behavior as the original declaration.
+
+14The function signature wcschr(const wchar_t*, wchar_t) is replaced  by
+  the two declarations:
+
+  const wchar_t* wcschr(const wchar_t* s, wchar_t c);
+        wchar_t* wcschr(      wchar_t* s, wchar_t c);
+
+15both of which have the same behavior as the original declaration.
+
+16The  function  signature  wcspbrk(const wchar_t*,  const wchar_t*)  is
+  replaced by the two declarations:
+
+  const wchar_t* wcspbrk(const wchar_t* s1, const wchar_t* s2);
+        wchar_t* wcspbrk(      wchar_t* s1, const wchar_t* s2);
+
+17both of which have the same behavior as the original declaration.
+
+18The function signature wcsrchr(const wchar_t*, wchar_t) is replaced by
+  the two declarations:
+
+  const wchar_t* wcsrchr(const wchar_t* s, wchar_t c);
+        wchar_t* wcsrchr(      wchar_t* s, wchar_t c);
+
+19both of which have the same behavior as the original declaration.
+
+20The   function  signature  wcsstr(const wchar_t*,  const wchar_t*)  is
+  replaced by the two declarations:
+
+  const wchar_t* wcsstr(const wchar_t* s1, const wchar_t* s2);
+        wchar_t* wcsstr(      wchar_t* s1, const wchar_t* s2);
+
+21both of which have the same behavior as the original declaration.
+
+22The  function  signature  wmemchr(const wwchar_t*,  int,  size_t)   is
+  replaced by the two declarations:
+
+  const wchar_t* wmemchr(const wchar_t* s, wchar_t c, size_t n);
+        wchar_t* wmemchr(      wchar_t* s, wchar_t c, size_t n);
+
+23both of which have the same behavior as the original declaration.
+
+  <I>SEE ALSO:</I>  ISO C subclauses 7.3, 7.10.7, 7.10.8, and  7.11.  Amendment
+  1 subclauses 4.4, 4.5, and 4.6.
+
+</PRE></BODY>

@@ -35,30 +35,6 @@ string handleHtmlIndexC( const string& category, const string& item);
 string handleHtmlIndex( const string& category, const string& item);
 string handleHtmlCrossLink( string key, bool tmpl_class = false);
 
-
-/* Functions to manage footnotes. */
-/* ============================== */
-extern int  pre_footnote_counter;
-extern int  main_footnote_counter;
-extern int  class_footnote_counter;
-extern int* footnote_counter;
-
-extern PQueue<char*>  pre_footnotes;
-extern PQueue<char*>  main_footnotes;
-extern PQueue<char*>  class_footnotes;
-extern PQueue<char*>* footnotes;
-
-void insertFootnote( char* s);
-// increments counter and returns current value.
-int nextFootnoteCounter();
-// format footnote reference and hyperlink based on actual counter 
-// into a Buffer.
-TextToken* formattedFootnoteNumber();
-// prints footnote reference and hyperlink based on actual counter.
-void printFootnoteCounter( ostream& out);
-// prints footnotes and resets counter.
-void printFootnotes( ostream& out);
-
 // Index sorting.
 // ==============
 // sort_keys are used to sort the index according to different sections.

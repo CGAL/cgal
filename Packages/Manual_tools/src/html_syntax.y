@@ -94,7 +94,8 @@ input:            /* empty */
                 | input stmt
 ;
 
-stmt:             direct_string       {}
+stmt:             error               {}
+                | direct_string       {}
                 | CHAPTER '{' comment_sequence '}'  {
 		                          handleChapter( * $3); 
                                           delete $3;
