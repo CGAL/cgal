@@ -63,7 +63,7 @@ public:
                                high_1, compare_1> I1; 
 
 
-  typedef tree_anchor<Interval, Interval> Tree_anchor_type;
+  typedef Tree_anchor<Interval, Interval> Tree_anchor_type;
   Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I1> Segment_tree_1_type;
@@ -75,16 +75,16 @@ public:
   {}
   
   template <class T>
-  Segment_tree_1(T& first, 
-		 T& last) 
+  Segment_tree_1(const T& first, 
+		 const T& last) 
     : anchor(new Tree_anchor_type), segment_tree_1(new Segment_tree_1_type(*anchor))
  {
    segment_tree_1->make_tree(first,last);
   }
 
   template <class T>
-  bool make_tree(T& first, 
-		 T& last)
+  bool make_tree(const T& first, 
+		 const T& last)
   {
     delete segment_tree_1;
     delete anchor;
@@ -148,7 +148,7 @@ public:
                                low_2,  high_2, 
                                low_2,  high_2, compare_2> I2; 
 
-  typedef tree_anchor<Interval, Interval> Tree_anchor_type;
+  typedef Tree_anchor<Interval, Interval> Tree_anchor_type;
   Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I2> Segment_tree_1_type;
@@ -164,8 +164,8 @@ public:
   {}
 
   template <class T>
-  Segment_tree_2(T& first, 
-		 T& last)
+  Segment_tree_2(const T& first, 
+		 const T& last)
     : anchor( new Tree_anchor_type),
       segment_tree_1(new Segment_tree_1_type(*anchor)),
       segment_tree_2(new Segment_tree_2_type(*segment_tree_1))  
@@ -174,8 +174,8 @@ public:
   }
 
   template <class T>
-  bool make_tree(T& first, 
-		 T& last)
+  bool make_tree(const T& first, 
+		 const T& last)
   {
     delete segment_tree_2;
     delete segment_tree_1;
@@ -250,7 +250,7 @@ public:
                                low_3, high_3, low_3, high_3,  compare_3> I3;
 
 
-  typedef tree_anchor<Interval, Interval> Tree_anchor_type;
+  typedef Tree_anchor<Interval, Interval> Tree_anchor_type;
   Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I3> Segment_tree_1_type;
@@ -270,8 +270,8 @@ public:
   {}
 
   template <class T>
-  Segment_tree_3(T& first, 
-		 T& last)
+  Segment_tree_3(const T& first, 
+		 const T& last)
     : anchor(new Tree_anchor_type),
       segment_tree_1(new Segment_tree_1_type(*anchor)),
       segment_tree_2(new Segment_tree_2_type(*segment_tree_1)),
@@ -281,8 +281,8 @@ public:
   }
 
   template <class T>
-  bool make_tree(T& first, 
-		 T& last)
+  bool make_tree(const T& first, 
+		 const T& last)
   {
     delete segment_tree_3;
     delete segment_tree_2;
@@ -368,7 +368,7 @@ public:
                                low_4, high_4, low_4, high_4, compare_4> I4; 
 
 
-  typedef tree_anchor<Interval, Interval> Tree_anchor_type;
+  typedef Tree_anchor<Interval, Interval> Tree_anchor_type;
   Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I4> Segment_tree_1_type;
@@ -392,8 +392,8 @@ public:
   {}
 
   template <class T>
-  Segment_tree_4(T& first, 
-		 T& last)
+  Segment_tree_4(const T& first, 
+		 const T& last)
     : anchor(new Tree_anchor_type),
       segment_tree_1(new Segment_tree_1_type(*anchor)),
       segment_tree_2(new Segment_tree_2_type(*segment_tree_1)),
@@ -404,8 +404,8 @@ public:
   }
 
   template <class T>
-  bool make_tree(T& first, 
-		 T& last)
+  bool make_tree(const T& first, 
+		 const T& last)
   {
     delete segment_tree_4;
     delete segment_tree_3;

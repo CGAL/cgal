@@ -109,7 +109,7 @@ protected:
   //  typedef Range_tree_d< C_Data,  C_Window,  C_Interface> rT_d;
   Tree_base<C_Data, C_Window> *sublayer_tree;
   C_Interface interface;
-  int is_build;
+  int is_built;
 
  
   // A vertex is of this type:
@@ -391,12 +391,12 @@ public:
 
   // construction of a tree
   Range_tree_d(Range_tree_d const &fact, bool):
-    sublayer_tree(fact.sublayer_tree->clone()), is_build(false), header(0)
+    sublayer_tree(fact.sublayer_tree->clone()), is_built(false), header(0)
   {}
 
   // construction of a tree
   Range_tree_d(Tree_base<C_Data, C_Window> const &fact):
-    sublayer_tree(fact.clone()), is_build(false), header(0) 
+    sublayer_tree(fact.clone()), is_built(false), header(0) 
   {}
 
   // destruction
@@ -419,22 +419,22 @@ public:
     return new Range_tree_d(*this, true); 
   }
   
-  bool make_tree(typename std::list< C_Data>::iterator& beg, 
-		 typename std::list< C_Data>::iterator& end,
+  bool make_tree(const typename std::list< C_Data>::iterator& beg, 
+		 const typename std::list< C_Data>::iterator& end,
 		 typename tbt::lit * =0){ 
     return make_tree_impl(beg,end);
   }
 
 #ifdef stlvector
-  bool make_tree(typename std::vector< C_Data>::iterator& beg, 
-		 typename std::vector< C_Data>::iterator& end,
+  bool make_tree(const typename std::vector< C_Data>::iterator& beg, 
+		 const typename std::vector< C_Data>::iterator& end,
 		 typename tbt::vbit * =0){ 
     return make_tree_impl(beg,end);
   }
 #endif
 #ifdef carray
-  bool make_tree(C_Data *beg, 
-		 C_Data *end){
+  bool make_tree(const C_Data *beg, 
+		 const C_Data *end){
     return make_tree_impl(beg,end);
   }
 #endif
@@ -442,20 +442,20 @@ public:
   // the tree is build according to the input elements in [first,last)
   template<class T>
   inline  
-  bool make_tree_impl(T& first, 
-		      T& last)
+  bool make_tree_impl(T first, 
+		      T last) // af: was &   todo: can we turn it in const& ??  
   {
     link_type leftchild, rightchild, prevchild, leftmostlink;
 
-    if(!is_build)
-      is_build = true;
+    if(!is_built)
+      is_built = true;
     else
       return false;
 
     int n = std::distance(first, last);
 
     if(n==0) {
-      is_build = false;
+      is_built = false;
       return true;
     }
 

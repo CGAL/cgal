@@ -18,7 +18,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include \
+CXXFLAGS = -O3 -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -48,8 +48,13 @@ all:            \
 segment_tree_set_2$(EXE_EXT): segment_tree_set_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)segment_tree_set_2 segment_tree_set_2$(OBJ_EXT) $(LDFLAGS)
 
+generate$(EXE_EXT): generate$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)generate generate$(OBJ_EXT) $(LDFLAGS)
+
+run: segment_tree_set_2$(EXE_EXT)
+	segment_tree_set_2$(EXE_EXT) < thousand.rect > thousand.tmp; diff thousand.out thousand.tmp
 clean: \
-                   segment_tree_set_2.clean 
+                   segment_tree_set_2.clean generate.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

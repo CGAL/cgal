@@ -68,7 +68,7 @@ public:
   typedef tree_point_traits<Key, Interval, Key_1, 
                             key_1, low_1, high_1, compare_1> I1;
 
-  typedef tree_anchor<Key, Interval> Tree_anchor_type;
+  typedef Tree_anchor<Key, Interval> Tree_anchor_type;
   Tree_anchor_type *anchor;
 
   typedef Range_tree_d<Key, Interval, I1> Range_tree_1_type;
@@ -82,16 +82,16 @@ public:
   }
 
   template <class T>
-  Range_tree_1(T& first, 
-	       T& last)  
+  Range_tree_1(const T& first, 
+	       const T& last)  
     : anchor(new Tree_anchor_type), range_tree_1(new Range_tree_1_type(*anchor))
   {
    range_tree_1->make_tree(first,last);
   }
 
   template <class T>
-  bool make_tree(T& first, 
-		 T& last)
+  bool make_tree(const T& first, 
+		 const T& last)
   {
     delete range_tree_1;
     delete anchor;
@@ -149,7 +149,7 @@ public:
                             Key_2, key_2, low_2, high_2, compare_2> I2;
 
 
-  typedef tree_anchor<Key, Interval> Tree_anchor_type;
+  typedef Tree_anchor<Key, Interval> Tree_anchor_type;
   Tree_anchor_type *anchor;
 
   typedef Range_tree_d<Key, Interval, I2> Range_tree_1_type;
@@ -166,8 +166,8 @@ public:
   {}
 
   template <class T>
-  Range_tree_2(T& first, 
-	       T& last)
+  Range_tree_2(const T& first, 
+	       const T& last)
     : anchor(new Tree_anchor_type),
       range_tree_1(new Range_tree_1_type(*anchor)),
       range_tree_2(new Range_tree_2_type(*range_tree_1))
@@ -176,8 +176,8 @@ public:
   }
 
   template <class T>
-  bool make_tree(T& first, 
-		 T& last)
+  bool make_tree(const T& first, 
+		 const T& last)
   {
     delete range_tree_2;
     delete range_tree_1;
@@ -241,7 +241,7 @@ public:
   typedef tree_point_traits<Key, Interval, Key_3, 
                             key_3, low_3, high_3, compare_3> I3;
 
-  typedef tree_anchor<Key, Interval> Tree_anchor_type;
+  typedef Tree_anchor<Key, Interval> Tree_anchor_type;
   Tree_anchor_type *anchor;
 
   typedef Range_tree_d<Key, Interval, I3> Range_tree_1_type;
@@ -261,8 +261,8 @@ public:
   {}
   
   template <class T>
-  Range_tree_3(T& first, 
-	       T& last)
+  Range_tree_3(const T& first, 
+	       const T& last)
     : anchor(new Tree_anchor_type),
       range_tree_1(new Range_tree_1_type(*anchor)),
       range_tree_2(new Range_tree_2_type(*range_tree_1)),
@@ -272,8 +272,8 @@ public:
   }
 
   template <class T>
-  bool make_tree(T& first, 
-		 T& last)
+  bool make_tree(const T& first, 
+		 const T& last)
   {
     delete range_tree_3;
     delete range_tree_2;
@@ -351,7 +351,7 @@ public:
   typedef tree_point_traits<Key, Interval, Key_4, 
                             key_4, low_4, high_4, compare_4> I4;  
 
-  typedef tree_anchor<Key, Interval> Tree_anchor_type;
+  typedef Tree_anchor<Key, Interval> Tree_anchor_type;
   Tree_anchor_type *anchor;
 
   typedef Range_tree_d<Key, Interval, I4> Range_tree_1_type;
@@ -375,8 +375,8 @@ public:
   {}
 
   template <class T>
-  Range_tree_4(T& first, 
-	       T& last)
+  Range_tree_4(const T& first, 
+	       const T& last)
     : anchor(new Tree_anchor_type),
       range_tree_1(new Range_tree_1_type(*anchor)),
       range_tree_2(new Range_tree_2_type(*range_tree_1)),
@@ -387,8 +387,8 @@ public:
   }
 
   template <class T>
-  bool make_tree(T& first, 
-		 T& last)
+  bool make_tree(const T& first, 
+		 const T& last)
   {
     delete range_tree_4;
     delete range_tree_3;

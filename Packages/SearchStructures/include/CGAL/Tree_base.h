@@ -65,30 +65,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class InIt>
-int   count_elements__C( const InIt  first, const InIt  last )
-{
-  InIt z=first;
-  int i=0;
-  
-  while ( z++ != last ) {  
-    i++;
-  }
-
-  return  i;
-}
-
 
 
 //link type definition of an ordinary vertex of the tree
-struct tree_node_base {
+struct Tree_node_base {
   void *parent_link;
   void *left_link;
   void *right_link;
-  tree_node_base()
+  Tree_node_base()
     :parent_link(0), left_link(0), right_link(0)
   {}
-  tree_node_base(void* ll, void* rl)
+  Tree_node_base(void* ll, void* rl)
     :parent_link(0), left_link(ll), right_link(rl)
   {}
 };
@@ -100,12 +87,12 @@ struct tree_node_base {
 // A tree class has to be derived from this class.
 
 template <class C_Data, class C_Window>
-class tree_base
+class Tree_base
 {
 
 protected:
-  tree_base(tree_base const &); // prevent access
-  void operator= (tree_base const &); // prevent access
+  Tree_base(Tree_base const &); // prevent access
+  void operator= (Tree_base const &); // prevent access
 
 public:
   typedef double vit;
@@ -117,26 +104,26 @@ public:
   //typedef std::list<C_Data>::iterator lit;
   //typedef std::back_insert_iterator<lit>  lbit;
   //typedef std::back_insert_iterator<vit>  vbit;
-  typedef tree_base<C_Data, C_Window> tree_base_type;
-  tree_base() {}
-  virtual ~tree_base() {}
+  typedef Tree_base<C_Data, C_Window> Tree_base_type;
+  Tree_base() {}
+  virtual ~Tree_base() {}
 
   // 'clone()' returns an object which can be used as argument to 'delete'
-  virtual tree_base<C_Data, C_Window>  *clone() const = 0;
-  //virtual tree_base_type   *clone() const = 0;
+  virtual Tree_base<C_Data, C_Window>  *clone() const = 0;
+  //virtual Tree_base_type   *clone() const = 0;
 
   // 'make_tree()' returns an object which can be used as argument to 'delete'
-  virtual bool make_tree(typename std::list<C_Data>::iterator& beg, 
-			 typename std::list<C_Data>::iterator& end,
+  virtual bool make_tree(const typename std::list<C_Data>::iterator& beg, 
+			 const typename std::list<C_Data>::iterator& end,
 			 lit *dummy=0) =0;
 #ifdef stlvector
-  virtual bool make_tree(typename std::vector<C_Data>::iterator& beg, 
-			 typename std::vector<C_Data>::iterator& end,
+  virtual bool make_tree(const typename std::vector<C_Data>::iterator& beg, 
+			 const typename std::vector<C_Data>::iterator& end,
 			 vit *dummy=0) =0;
 #endif
 #ifdef carray
-  virtual bool make_tree(C_Data *beg, 
-                         C_Data *end) =0;
+  virtual bool make_tree(const C_Data *beg, 
+                         const C_Data *end) =0;
 #endif
   virtual std::back_insert_iterator< std::list<C_Data> > 
     window_query(C_Window const &win,  std::back_insert_iterator<
@@ -182,18 +169,18 @@ public:
 // most inner class. This class is doing nothin exept stopping the recursion
 
 template <class C_Data, class C_Window>
-class tree_anchor: public tree_base< C_Data,  C_Window>
+class Tree_anchor: public Tree_base< C_Data,  C_Window>
 {
 public:
   // Construct a factory with the given factory as sublayer
-  tree_anchor() {}
-  virtual ~tree_anchor(){}
-  tree_base<C_Data, C_Window> *clone() const { return new tree_anchor(); }
-  typedef tree_base<C_Data, C_Window> tbt;
-//  tree_base_type *clone() const { return new tree_anchor(); }
+  Tree_anchor() {}
+  virtual ~Tree_anchor(){}
+  Tree_base<C_Data, C_Window> *clone() const { return new Tree_anchor(); }
+  typedef Tree_base<C_Data, C_Window> tbt;
+//  Tree_base_type *clone() const { return new Tree_anchor(); }
 
-  bool make_tree(typename std::list< C_Data>::iterator& beg, 
-		 typename std::list< C_Data>::iterator& end, 
+  bool make_tree(const typename std::list< C_Data>::iterator& beg, 
+		 const typename std::list< C_Data>::iterator& end, 
 		 typename tbt::lit * =0) 
   {
     USE_ARGUMENT(beg);
@@ -201,8 +188,8 @@ public:
     return true;
   }
 #ifdef stlvector
-  bool make_tree(typename std::vector< C_Data>::iterator& beg, 
-		 typename std::vector< C_Data>::iterator& end, 
+  bool make_tree(const typename std::vector< C_Data>::iterator& beg, 
+		 const typename std::vector< C_Data>::iterator& end, 
 		 typename tbt::vit * =0) 
   {
     USE_ARGUMENT(beg);
@@ -211,8 +198,8 @@ public:
   }
 #endif
 #ifdef carray
-  bool make_tree( C_Data *beg, 
-                  C_Data *end) 
+  bool make_tree(const  C_Data *beg, 
+                 const  C_Data *end) 
   {
     USE_ARGUMENT(beg);
     USE_ARGUMENT(end);
@@ -300,5 +287,5 @@ protected:
 };
 
 CGAL_END_NAMESPACE
-// -------------------------------------------------------------------
+
 #endif

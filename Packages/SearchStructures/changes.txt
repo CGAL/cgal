@@ -1,3 +1,7 @@
+- cleanup: initialization, naming conventions for classes
+- replaced count_elements__C by std::distance
+- added plenty of const
+
 Version 2.69 (8 April 2003) [af]
 - Fixed a bug reported by Serge Pashkov on 08/01/2003
 - A vector was too long.

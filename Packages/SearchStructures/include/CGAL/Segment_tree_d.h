@@ -50,34 +50,33 @@ template <class C_Data, class C_Window, class C_Interface>
 class Segment_tree_d;
 
 template <class C_Data, class C_Window, class C_Interface>
-struct segment_tree_node: public tree_node_base
+struct Segment_tree_node: public Tree_node_base
 {
   typedef  C_Data Data;
   typedef  C_Window Window;
   typedef typename C_Interface::Key Key;
   typedef  C_Interface Interface;
-  typedef tree_base< C_Data,  C_Window> tree_base_type;
-  typedef Segment_tree_d< C_Data,  C_Window,  C_Interface> sT_d;
+  typedef Tree_base< C_Data,  C_Window> Tree_base_type;
   std::list< C_Data> objects;
   Key left_key;
   Key right_key;
-  tree_base<C_Data, C_Window> *sublayer;
+  Tree_base<C_Data, C_Window> *sublayer;
 public:
   friend class Segment_tree_d< C_Data,  C_Window,  C_Interface>;
   
-  segment_tree_node()
-    : tree_node_base(TREE_BASE_NULL, TREE_BASE_NULL), sublayer(0)
+  Segment_tree_node()
+    : Tree_node_base(TREE_BASE_NULL, TREE_BASE_NULL), sublayer(0)
   {}
 
-  segment_tree_node(segment_tree_node * p_left,
-		    segment_tree_node * p_right,
+  Segment_tree_node(Segment_tree_node * p_left,
+		    Segment_tree_node * p_right,
 		    const Key p_left_key,
 		    const Key p_right_key)
-    : tree_node_base(p_left,p_right), left_key(p_left_key), right_key(p_right_key), sublayer(0)
+    : Tree_node_base(p_left,p_right), left_key(p_left_key), right_key(p_right_key), sublayer(0)
   {}
 
   
-  ~segment_tree_node(){
+  ~Segment_tree_node(){
     objects.clear();
     if (sublayer != 0)//(tree_base_type *)
       delete sublayer;
@@ -86,7 +85,7 @@ public:
 
 
 template <class C_Data, class C_Window, class C_Interface>
-class Segment_tree_d: public tree_base< C_Data,  C_Window>
+class Segment_tree_d: public Tree_base< C_Data,  C_Window>
 {
 private:
   typedef  C_Data Data;
@@ -94,20 +93,19 @@ private:
   typedef  typename C_Interface::Key Key;
   typedef  C_Interface Interface;
 public:
-  typedef tree_base<C_Data, C_Window> tbt;
+  typedef Tree_base<C_Data, C_Window> tbt;
 protected:
-  typedef Segment_tree_d< C_Data,  C_Window,  C_Interface> sT_d;
-  tree_base<C_Data, C_Window> *sublayer_tree; 
+  Tree_base<C_Data, C_Window> *sublayer_tree; 
   
   // type of a vertex
-  // struct segment_tree_node;
+  // struct Segment_tree_node;
   
-  friend class segment_tree_node<C_Data,C_Window,C_Interface>;
-  typedef segment_tree_node<C_Data,C_Window,C_Interface> segment_tree_node_t;
-  typedef segment_tree_node<C_Data,C_Window,C_Interface> *link_type;
+  friend class Segment_tree_node<C_Data,C_Window,C_Interface>;
+  typedef Segment_tree_node<C_Data,C_Window,C_Interface> Segment_tree_node_t;
+  typedef Segment_tree_node<C_Data,C_Window,C_Interface> *link_type;
   
   C_Interface interface;
-  bool is_build;
+  bool is_built;
 
 
   bool is_less_equal(const Key& x, const Key&  y) const
@@ -115,17 +113,14 @@ protected:
     return (!interface.comp(y,x));
   }   
   
-  static link_type& left(link_type x) { 
-        return CGAL__static_cast(link_type&, (*x).left_link);
-    //    return static_cast<link_type&>((*x).left_link);
+  static link_type left(link_type x) { 
+    return static_cast<link_type>(x->left_link);
   }
-  static link_type& right(link_type x) {
-    return CGAL__static_cast(link_type&, (*x).right_link); 
-    //return static_cast<link_type&>((*x).right_link); 
+  static link_type right(link_type x) {
+    return static_cast<link_type>(x->right_link); 
    }
-  static link_type& parent(link_type x) {
-        return CGAL__static_cast(link_type&, (*x).parent_link);
-	//return static_cast<link_type&>( (*x).parent_link);
+  static link_type parent(link_type x) {
+    return static_cast<link_type>( x->parent_link);
   }
 
   link_type header;
@@ -134,9 +129,8 @@ protected:
   link_type leftmost(){return left(header);}
   link_type root() const{
     if(header!=0)
-      return CGAL__static_cast(link_type&,header->parent_link); 
-    // return parent(header);
-    else return 0;
+      return static_cast<link_type>(header->parent_link); 
+    return 0;
   }
   
   // returns true, if the object lies inside of win
@@ -148,8 +142,7 @@ protected:
     {
       return sublayer_tree->is_inside(win,object);
     }
-    else
-      return false;
+    return false;
   }
 
   // this tree is not a recursion anchor
@@ -158,10 +151,10 @@ protected:
 
   void insert_segment(link_type v,  C_Data& element)
   {
-    if ((is_less_equal(interface.get_left(element), (*v).left_key) && 
-	 is_less_equal((*v).right_key, interface.get_right(element)))
+    if ((is_less_equal(interface.get_left(element), v->left_key) && 
+	 is_less_equal(v->right_key, interface.get_right(element)))
 	|| left(v)==TREE_BASE_NULL)
-      (*v).objects.insert((*v).objects.end(), element);
+      v->objects.insert(v->objects.end(), element);
     else
      {
        if (!is_less_equal((*left(v)).right_key, interface.get_left(element)))
@@ -185,7 +178,7 @@ protected:
        typename std::list< C_Data>::iterator sub_first = v->objects.begin();
        typename std::list< C_Data>::iterator sub_last = v->objects.end();
 
-       tree_base<C_Data, C_Window> *g = sublayer_tree->clone();
+       Tree_base<C_Data, C_Window> *g = sublayer_tree->clone();
        g->make_tree(sub_first, sub_last);
        v->sublayer = g;
        if (!v->sublayer->is_anchor())
@@ -206,21 +199,21 @@ protected:
      if (n==2)
      {
        link_type vright;
-       link_type vleft = new segment_tree_node_t
+       link_type vleft = new Segment_tree_node_t
 	 (TREE_BASE_NULL, TREE_BASE_NULL, keys[index], keys[index+1]);
        index++;
        if(index+1>last)
        {
-         vright = new segment_tree_node_t
+         vright = new Segment_tree_node_t
 	   (TREE_BASE_NULL, TREE_BASE_NULL, keys[index], keys[index]);
        }
        else
        {
-	 vright = new segment_tree_node_t
+	 vright = new Segment_tree_node_t
 	   (TREE_BASE_NULL, TREE_BASE_NULL, keys[index], keys[index+1]);
        }
        index++;
-       link_type vparent = new segment_tree_node_t
+       link_type vparent = new Segment_tree_node_t
 	 (vleft, vright, vleft->left_key, vright->right_key);
 
        vleft->parent_link = vparent;
@@ -237,11 +230,11 @@ protected:
        {
 	 link_type vright;
 	 if(index+1 > last){
-	   vright = new segment_tree_node_t
+	   vright = new Segment_tree_node_t
 	     (TREE_BASE_NULL, TREE_BASE_NULL, keys[index], keys[index]);
 	 }
 	 else{
-	   vright = new segment_tree_node_t
+	   vright = new Segment_tree_node_t
 	     (TREE_BASE_NULL, TREE_BASE_NULL, keys[index], keys[index+1]);
 	 }
 	 index++;
@@ -254,7 +247,7 @@ protected:
 	 // recursiv call for the construction. the interval is devided.
 	 build_segment_tree(n - (int)n/2, leftchild, rightchild, 
 			 prevchild, leftmostlink, index, last, keys);
-	 link_type vparent = new segment_tree_node_t
+	 link_type vparent = new Segment_tree_node_t
 	   (prevchild, TREE_BASE_NULL, prevchild->left_key, prevchild->left_key);
 	 prevchild->parent_link   = vparent;
 	 build_segment_tree((int)n/2, leftchild, rightchild, 
@@ -284,17 +277,17 @@ protected:
 		     A result,
 		     link_type v)
    {
-     if(is_less_equal(interface.get_right_win(win), (*v).left_key) 
-	|| is_less_equal((*v).right_key,interface.get_left_win(win)))
+     if(is_less_equal(interface.get_right_win(win), v->left_key) 
+	|| is_less_equal(v->right_key,interface.get_left_win(win)))
        return result;
      if (v->sublayer!=0 && (!v->sublayer->is_anchor())) //(tree_base_type *)
      {
-       tree_base<C_Data, C_Window> *T = v->sublayer;
+       Tree_base<C_Data, C_Window> *T = v->sublayer;
 
        std::list< C_Data> tmp_result;
        std::back_insert_iterator<std::list< C_Data> > tmp_back_inserter = 
 	 std::back_inserter(tmp_result);
-       (*T).enclosing_query(win, tmp_back_inserter);
+       T->enclosing_query(win, tmp_back_inserter);
        typename std::list<  C_Data>::iterator tmp = tmp_result.begin();
        while(tmp!=tmp_result.end())
        {
@@ -303,7 +296,7 @@ protected:
 	 {
 	   if(is_less_equal(interface.get_right_win(win), 
 			    interface.get_right(*tmp)))
-	     if(is_less_equal((*v).left_key, interface.get_left_win(win)))
+	     if(is_less_equal(v->left_key, interface.get_left_win(win)))
 	       *result++=(*tmp);
 	 }
 	 tmp++;
@@ -321,7 +314,7 @@ protected:
 	   {
 	     if(is_less_equal(interface.get_right_win(win), 
 			      interface.get_right(*j)))
-	       if(is_less_equal((*v).left_key, interface.get_left_win(win)))
+	       if(is_less_equal(v->left_key, interface.get_left_win(win)))
 		 *result++=(*j);
 	   }
 	   j++;
@@ -342,32 +335,32 @@ protected:
   inline 
   A window_query( C_Window const &win,
 		  A result,
-		  link_type& v)
+		  const link_type& v) // af: was not const
    {
-     if(is_less_equal(interface.get_right_win(win), (*v).left_key) || 
-	is_less_equal((*v).right_key,interface.get_left_win(win)))
+     if(is_less_equal(interface.get_right_win(win), v->left_key) || 
+	is_less_equal(v->right_key,interface.get_left_win(win)))
        return result;
      if (v->sublayer!=0 && (!v->sublayer->is_anchor())) //(tree_base_type *)
      {
-       tree_base<C_Data, C_Window> *T = v->sublayer;
+       Tree_base<C_Data, C_Window> *T = v->sublayer;
 
        std::list< C_Data> tmp_result;
        std::back_insert_iterator<std::list< C_Data> > tmp_back_inserter = 
 	 std::back_inserter(tmp_result);
-       (*T).window_query(win, tmp_back_inserter);
+       T->window_query(win, tmp_back_inserter);
        typename std::list< C_Data>::iterator tmp = tmp_result.begin();
        while(tmp!=tmp_result.end())
        {
 	 if(interface.comp(interface.get_left(*tmp), 
 			   interface.get_left_win(win)))
 	 {
-	   if(is_less_equal((*v).left_key, interface.get_left_win(win))){
+	   if(is_less_equal(v->left_key, interface.get_left_win(win))){
 	     *result++=(*tmp);
 	   }
 	 }
 	 else
 	 {
-	   if(is_less_equal((*v).left_key,interface.get_left(*tmp))){
+	   if(is_less_equal(v->left_key,interface.get_left(*tmp))){
 	     *result++=(*tmp);
 	   }
 	 }
@@ -383,13 +376,13 @@ protected:
 	 {
 	   if(interface.comp(interface.get_left(*j), interface.get_left_win(win)))
 	   {
-	     if(is_less_equal((*v).left_key, interface.get_left_win(win)))
+	     if(is_less_equal(v->left_key, interface.get_left_win(win)))
 	     {
 	       *result++=(*j);
 	     }
 	   }
 	   else
-	     if(is_less_equal((*v).left_key,interface.get_left(*j)))
+	     if(is_less_equal(v->left_key,interface.get_left(*j)))
 	     {
 	       *result++=(*j);
 	     }
@@ -405,12 +398,12 @@ protected:
      return result;
    }
   
-  bool is_valid(link_type& v) const
+  bool is_valid(const link_type& v) const // af:was not const reference
   {
     if (v->sublayer != 0)//(tree_base_type *)
     {
-      tree_base<C_Data, C_Window> *T=v->sublayer;
-      if(! (*T).is_valid())
+      Tree_base<C_Data, C_Window> *T=v->sublayer;
+      if(! T->is_valid())
 	return false;
     }
     if(left(v)!=TREE_BASE_NULL)
@@ -428,13 +421,13 @@ protected:
       link_type parent_of_v = parent(v);
       while (j!= v->objects.end())
       {
-	if(!is_less_equal(interface.get_left(*j), (*v).left_key))
+	if(!is_less_equal(interface.get_left(*j), v->left_key))
 	  return false;
-	if(!is_less_equal( (*v).right_key, interface.get_right(*j)))
+	if(!is_less_equal( v->right_key, interface.get_right(*j)))
 	  return false;
 	if (parent_of_v != root())
-	  if((is_less_equal(interface.get_left(*j),(*parent_of_v).left_key))&& 
-	     (is_less_equal( (*parent_of_v).right_key, 
+	  if((is_less_equal(interface.get_left(*j), parent_of_v->left_key))&& 
+	     (is_less_equal( parent_of_v->right_key, 
 			     interface.get_right(*j))))
 	    return false;
 	j++;
@@ -449,12 +442,12 @@ public:
 
   // construction of a tree
   Segment_tree_d(Segment_tree_d const &sub_tree, bool):
-    sublayer_tree(sub_tree.sublayer_tree->clone()), is_build(false), header(TREE_BASE_NULL)
+    sublayer_tree(sub_tree.sublayer_tree->clone()), is_built(false), header(TREE_BASE_NULL)
   {}
 
   // construction of a tree, definition of the prototype of sublayer tree
-  Segment_tree_d(tree_base<C_Data, C_Window> const &sub_tree):
-    sublayer_tree(sub_tree.clone()), is_build(false), header(TREE_BASE_NULL)
+  Segment_tree_d(Tree_base<C_Data, C_Window> const &sub_tree):
+    sublayer_tree(sub_tree.clone()), is_built(false), header(TREE_BASE_NULL)
   {}
 
   // destruction 
@@ -470,25 +463,25 @@ public:
   }
    
   // clone creates a prototype
-  tree_base<C_Data, C_Window> *clone() const { 
+  Tree_base<C_Data, C_Window> *clone() const { 
     return new Segment_tree_d(*this, true); }
 
- bool make_tree(typename std::list< C_Data>::iterator& beg, 
-                 typename std::list< C_Data>::iterator& end,
+  bool make_tree(const typename std::list< C_Data>::iterator& beg,
+		const typename std::list< C_Data>::iterator& end,
                  typename tbt::lit * =0){ 
     return make_tree_impl(beg,end);
   }
 
   #ifdef stlvector
-  bool make_tree(typename std::vector< C_Data>::iterator& beg, 
-                 typename std::vector< C_Data>::iterator& end,
+  bool make_tree(const typename std::vector< C_Data>::iterator& beg, 
+                 const typename std::vector< C_Data>::iterator& end,
                  typename tbt::vbit * =0){ 
     return make_tree_impl(beg,end);
   }
   #endif
   #ifdef carray
-  bool make_tree(C_Data *beg, 
-                 C_Data *end){
+  bool make_tree(const C_Data *beg, 
+                 const C_Data *end){
      return make_tree_impl(beg,end);
    }
   #endif
@@ -496,19 +489,16 @@ public:
   // the tree is build according to Data [first,last)
   template<class A>
   inline 
-  bool make_tree_impl(A& first,A& last)
+  bool make_tree_impl(const A& first, const A& last)
   {
-    if(!is_build)
-      is_build = true;
+    if(!is_built)
+      is_built = true;
     else
       return false;
 
     A count = first;
     int n=0;
-    int c1 = count_elements__C(first, last);
-    int c2 = std::distance(first, last);
-    assert(c1 == c2);
-    std::vector<Key> keys(2*c1);
+    std::vector<Key> keys(2* std::distance(first, last));
     while(count!=last)
     {
       if (interface.comp(interface.get_left(*count),
@@ -528,7 +518,7 @@ public:
 
     if(n==0)
     {
-      is_build = false;
+      is_built = false;
       return true;
     }
     std::sort(keys.begin(), keys.end(), interface.comp);
@@ -554,7 +544,7 @@ public:
     build_segment_tree(num-1, leftchild, rightchild, prevchild, 
 		      leftmostlink, start, num-1, keys2);
 
-    header = new segment_tree_node_t();
+    header = new Segment_tree_node_t();
     header->right_link = rightchild;
     header->parent_link = prevchild;
     prevchild->parent_link = prevchild;
