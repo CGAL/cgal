@@ -29,16 +29,16 @@ void test_polygon(const R&, const Point&, const char* FileName)
   std::vector<Point> polygon;
 
   from >> point;
-  copy(istream_iterator<Point, ptrdiff_t>(from),
-       istream_iterator<Point, ptrdiff_t>(),
-       back_inserter(polygon)
+  std::copy(std::istream_iterator<Point, ptrdiff_t>(from),
+       std::istream_iterator<Point, ptrdiff_t>(),
+       std::back_inserter(polygon)
   );
 
     // show the point and the polygon
     cout << "point: " << point << endl;
     cout << "polygon:" << endl;
-    copy(polygon.begin(), polygon.end(),
-	ostream_iterator<Point>(cout, "\n"));
+    std::copy(polygon.begin(), polygon.end(),
+	std::ostream_iterator<Point>(cout, "\n"));
     cout << endl;
 
     iterator left =

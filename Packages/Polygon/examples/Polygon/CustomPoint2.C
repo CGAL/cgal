@@ -59,7 +59,7 @@ MyVector operator-(const MyPoint& p, const MyPoint& q)
 //                          MySegment
 //-----------------------------------------------------------------------//
 
-typedef pair<MyPoint,MyPoint> MySegment;
+typedef std::pair<MyPoint,MyPoint> MySegment;
 
 ostream& operator<<(ostream& to, const MySegment& e)
 {

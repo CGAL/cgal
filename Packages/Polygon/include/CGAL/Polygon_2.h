@@ -158,7 +158,7 @@ class Polygon_2 {
 #else
     template <class InputIterator>
     Polygon_2(InputIterator first, InputIterator last)
-      { copy(first, last, back_inserter(d_container)); }
+      { std::copy(first, last, std::back_inserter(d_container)); }
 #endif
 
     //--------------------------------------------------------
@@ -191,7 +191,7 @@ class Polygon_2 {
         return;
 
       typename _Container::iterator i = d_container.begin();
-      reverse(++i, d_container.end());
+      std::reverse(++i, d_container.end());
     }
 
     //--------------------------------------------------------

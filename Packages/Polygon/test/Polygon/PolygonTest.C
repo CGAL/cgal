@@ -86,9 +86,9 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
 
   {
     VC v = p.vertices_circulator();
-    iterator_category(v);
-    value_type(v);
-    distance_type(v);
+    std::iterator_category(v);
+    std::value_type(v);
+    std::distance_type(v);
 
     VC vstart(v);
     if (v != 0)
@@ -101,9 +101,9 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
       cout << *vi << endl;
 
     EC e = p.edges_circulator();
-    iterator_category(e);
-    value_type(e);
-    distance_type(e);
+    std::iterator_category(e);
+    std::value_type(e);
+    std::distance_type(e);
 
     EC estart(e);
     if (e != 0)
@@ -112,16 +112,16 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
         ++e;
       } while (e != estart);
 
-    for (EI ei = p.edges_begin(); ei != p.edges_end(); ++ei)
+    for (EI ei = p.edges_begin(); p.edges_end() != ei; ++ei)
       cout << *ei << endl;
   }
 
   //-------------------------------------------------------------------//
   {
     VCC v = q.vertices_circulator();
-    iterator_category(v);
-    value_type(v);
-    distance_type(v);
+    std::iterator_category(v);
+    std::value_type(v);
+    std::distance_type(v);
 
     VCC vstart(v);
     if (v != 0)
@@ -134,9 +134,9 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
       cout << *vi << endl;
 
     EC e = q.edges_circulator();
-    iterator_category(e);
-    value_type(e);
-    distance_type(e);
+    std::iterator_category(e);
+    std::value_type(e);
+    std::distance_type(e);
 
     EC estart(e);
     if (e != 0)
@@ -270,7 +270,7 @@ void test_update_operations(const ListPolygon& p,
   VI middle = q.vertices_begin();
   VI last   = q.vertices_end();
   ++middle;
-  rotate(first, middle, last);
+  std::rotate(first, middle, last);
   assert(p==q);
 
   // test update operations
