@@ -3,13 +3,16 @@
 \paragraph{Smallest enclosing spheres} are commonly used as bounding
 volumes, for example, to speed up intersection tests.
 
+All 7 digits after the decimal are identical between the exact and the
+double implementation.
+
 \begin{tabular}{l|ll}
   \textbf{smallest enclosing sphere} & \texttt{double} & exact
     \texttt{qmpq} (non opt.)\\\hline
-  Bunny     & 0.02 &  10 \\
-  Lion vase & 0.11 & 231 \\
-  David     & 0.23 & 126 \\
-  Raptor    & 0.6  & 370
+  Bunny     & 0.02 &  14 \\
+  Lion vase & 0.15 & 396 \\
+  David     & 0.13 & 215 \\
+  Raptor    & 0.35  & 589
 \end{tabular}
 
 
@@ -25,3 +28,23 @@ volumes, for example, to speed up intersection tests.
            Raptor: 2M.}
   \label{fig:models}
 \end{figure}
+
+\paragraph{Convex hulls} are commonly used as bounding
+volumes, for example, to speed up intersection tests.
+
+\begin{tabular}{l|ll}
+  & \textbf{convex hull} & \textbf{minimum width} \\\hline
+  Bunny     &  3.5 & 111 \\
+  Lion vase & 13.1 & 276 \\
+  David     & 20.3 & 112 \\
+  Raptor    & 45.5 & 123
+\end{tabular}
+
+\begin{tabular}{l|l}
+  & \textbf{self intersection} \\\hline
+  Bunny     & 3.2 \\
+  Lion vase & 22.9 \\
+  David     & 41.6 \\
+  Raptor    & 92.3
+\end{tabular}
+
