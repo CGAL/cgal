@@ -34,6 +34,7 @@ template<class base_rep>
 class Snap_rounding_traits_2 :
     public CGAL::Arr_segment_cached_traits_2<base_rep> {
 
+public: // otherwise Segment_data cannot access the types
 typedef typename base_rep::FT                    NT;
 typedef typename base_rep::Point_2               Point_2;
 typedef typename base_rep::Segment_2             Segment_2;
