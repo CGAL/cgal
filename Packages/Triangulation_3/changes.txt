@@ -1,3 +1,11 @@
+Version 1.144 (30 May 03)
+- Functions taking output iterators as argument now return them
+  (find_conflicts, incident_vertices, incident_cells).
+  This also fixes a potential bug with some output iterators.
+- degree() now uses Counting_output_iterator.
+- Fixed a bug in IO/Triangulation_geomview_stream_3.h.
+- Add example_find_conflicts.C and test-suite for find_conflicts/insert_in_hole
+
 Version 1.143 (28 May 03)
 - SunPro fixes.
 
