@@ -52,7 +52,8 @@ void  sweep_to_produce_planar_map_subcurves(Curve_iterator curves_begin,
 }
 
 /*template <class Curve_iterator, class PM, class Notifier>
-  void  sweep_curves_to_pm(Curve_iterator curves_begin, Curve_iterator curves_end, PM &result, Notifier* notifier)
+  void  sweep_curves_to_pm(Curve_iterator curves_begin, 
+  Curve_iterator curves_end, PM &result, Notifier* notifier)
   {
   Sweep_line<Curve_iterator, PM, Notifier>  sweep_line;
   

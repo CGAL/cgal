@@ -52,7 +52,8 @@
 CGAL_BEGIN_NAMESPACE
 
 // Point_rep:
-// Point_rep holds only a Point. This class holds the representation, and the next will hold the Handle to Point.
+// Point_rep holds only a Point. This class holds the representation, 
+// and the next will hold the Handle to Point.
 template <class Traits_>
 class Point_handle;
 
@@ -113,12 +114,15 @@ public:
   };
 
 template <class Curve_iterator_,  class Traits_, class Container_>
-class Sweep_curves_to_subcurves : public Sweep_curves_base<Curve_iterator_, Traits_, Point_handle<Traits_> > 
+class Sweep_curves_to_subcurves : 
+  public Sweep_curves_base<Curve_iterator_, Traits_, Point_handle<Traits_> > 
 {
   /*
   // Arr_X_curve_plus:
-  // holds a curve and its id number. The addition of id number to a curve was made due to overlapping 
-  // (in which some binary predicates return EQUAL, while we are interseted in sharp order relation. 
+  // holds a curve and its id number. 
+  // The addition of id number to a curve was made due to overlapping 
+  // (in which some binary predicates return EQUAL, 
+  // while we are interseted in sharp order relation. 
   class Arr_X_curve_plus: public Traits_::X_curve
   {
   public:
@@ -159,9 +163,12 @@ class Sweep_curves_to_subcurves : public Sweep_curves_base<Curve_iterator_, Trai
   };
   
   // Point_plus_rep:
-  // Point_plus_rep holds a Point plus a vertex handle of the vertex in the subdivision that will hold that point.
-  // The reason we need the vertex handle information is to update the subdivision by the time the sweep line progresses without makeing any 
-  // point location query. This class holds the representation, and the next will hold the Handle to Point_plus.
+  // Point_plus_rep holds a Point plus a vertex handle of the vertex 
+  // in the subdivision that will hold that point.
+  // The reason we need the vertex handle information is to update 
+  // the subdivision by the time the sweep line progresses without makeing any 
+  // point location query. This class holds the representation, 
+  // and the next will hold the Handle to Point_plus.
   class Point_plus_rep : public Rep {
   public:
     typedef Traits_                       Traits;
@@ -788,18 +795,18 @@ public:
 
   typedef Sweep_curves_base<Curve_iterator, Traits, Point_handle_traits>  Base;
   
-  typedef typename Base::X_curve_plus                                     X_curve_plus;
-  typedef typename Base::Curve_node                                       Curve_node;
-  typedef typename Base::Intersection_point_node                          Intersection_point_node;
-  typedef typename Base::Points_iterator                                  Points_iterator;  
-  typedef typename Base::Points_const_iterator                            Points_const_iterator;
-  typedef typename Base::Curve_node_iterator                              Curve_node_iterator;
-  typedef typename Base::Curve_node_const_iterator                        Curve_node_const_iterator;
-  typedef typename Base::X_curve_list                                     X_curve_list;
-  typedef typename Base::X_curve_list_iterator                            X_curve_list_iterator;
-  typedef typename Base::Vertices_points_plus                             Vertices_points_plus;
-  typedef typename Base::Event_queue                                      Event_queue;
-  typedef typename Base::Status_line                                      Status_line;
+  typedef typename Base::X_curve_plus                X_curve_plus;
+  typedef typename Base::Curve_node                  Curve_node;
+  typedef typename Base::Intersection_point_node     Intersection_point_node;
+  typedef typename Base::Points_iterator             Points_iterator;  
+  typedef typename Base::Points_const_iterator       Points_const_iterator;
+  typedef typename Base::Curve_node_iterator         Curve_node_iterator;
+  typedef typename Base::Curve_node_const_iterator   Curve_node_const_iterator;
+  typedef typename Base::X_curve_list                X_curve_list;
+  typedef typename Base::X_curve_list_iterator       X_curve_list_iterator;
+  typedef typename Base::Vertices_points_plus        Vertices_points_plus;
+  typedef typename Base::Event_queue                 Event_queue;
+  typedef typename Base::Status_line                 Status_line;
  
 
   void  sweep_curves_to_subcurves(Curve_iterator curves_begin, 
@@ -816,13 +823,15 @@ public:
     
 #ifdef  CGAL_SWEEP_LINE_DEBUG
     unsigned int n = 0;
-    for (Curve_iterator cv_iter = curves_begin; cv_iter !=  curves_end; cv_iter++, n++);
+    for (Curve_iterator cv_iter = curves_begin; 
+         cv_iter !=  curves_end; cv_iter++, n++);
     cout<<"number of edges on input "<< n <<std::endl;
 #endif
     
     // splitting all curves to x-monotone curves.
     X_curve_list  x_monotone_curves;
-    for(Curve_iterator cv_iter = curves_begin; cv_iter != curves_end; cv_iter++){
+    for(Curve_iterator cv_iter = curves_begin; 
+        cv_iter != curves_end; cv_iter++){
       if (!traits.is_x_monotone(*cv_iter)) {
         X_curve_list x_monotone_subcurves;
         traits.make_x_monotone(*cv_iter, x_monotone_subcurves);
@@ -844,32 +853,46 @@ public:
        
     // now creating the Curve_node handles and the event queue.
     unsigned int id = 0;
-    for(X_curve_list_iterator cv_iter = x_monotone_curves.begin(); cv_iter != x_monotone_curves.end(); cv_iter++, id++){
+    for(X_curve_list_iterator cv_iter = x_monotone_curves.begin(); 
+        cv_iter != x_monotone_curves.end(); cv_iter++, id++){
       
       X_curve cv(*cv_iter);
-      if (is_right(traits.curve_source(*cv_iter), traits.curve_target(*cv_iter)) )
+      if (is_right(traits.curve_source(*cv_iter), 
+                   traits.curve_target(*cv_iter)) )
         cv = traits.curve_flip(*cv_iter);
       
 #ifdef  CGAL_SWEEP_LINE_DEBUG
       cout<<cv<<std::endl;
 #endif
       
-      typename Event_queue::iterator  edge_point = event_queue.find( traits.curve_source(cv) );
-      Curve_node  cv_node = Curve_node(X_curve_plus(cv, id), traits.curve_source(cv)); // defining one cv_node for both source and target event points.  
-      Intersection_point_node  source_point_node = Intersection_point_node(cv_node, traits.curve_source(cv) );
+      typename Event_queue::iterator  edge_point = 
+        event_queue.find( traits.curve_source(cv) );
+      // defining one cv_node for both source and target event points. 
+      Curve_node  cv_node = Curve_node(X_curve_plus(cv, id), 
+                                       traits.curve_source(cv)); 
+      
+      Intersection_point_node  source_point_node = 
+        Intersection_point_node(cv_node, traits.curve_source(cv) );
        
-      if (edge_point == event_queue.end() || edge_point->second.get_point() != source_point_node.get_point())
-        event_queue.insert(typename Event_queue::value_type(traits.curve_source(cv), source_point_node));
+      if (edge_point == event_queue.end() || 
+          edge_point->second.get_point() != source_point_node.get_point())
+        event_queue.insert(typename Event_queue::
+                           value_type(traits.curve_source(cv), 
+                                      source_point_node));
       else
         edge_point->second.merge(source_point_node);
       
       
       edge_point = event_queue.find( traits.curve_target(cv) );
 
-      Intersection_point_node  target_point_node = Intersection_point_node(cv_node, traits.curve_target(cv) );
+      Intersection_point_node  target_point_node = 
+        Intersection_point_node(cv_node, traits.curve_target(cv) );
 
-      if (edge_point == event_queue.end() || edge_point->second.get_point() != target_point_node.get_point())
-        event_queue.insert(typename Event_queue::value_type(traits.curve_target(cv), target_point_node));
+      if (edge_point == event_queue.end() || 
+          edge_point->second.get_point() != target_point_node.get_point())
+        event_queue.insert(typename Event_queue::
+                           value_type(traits.curve_target(cv), 
+                                      target_point_node));
       else
         edge_point->second.merge(target_point_node);
     }
@@ -880,26 +903,35 @@ public:
     bool         event_overlap_terminated = true;
     while ( !(event_queue.empty()) ){
       queue_size++;
-      typename Event_queue::iterator  event = event_queue.begin();  // fetch the next event.
+      // fetch the next event.
+      typename Event_queue::iterator  event = event_queue.begin();
 
       const Point&              event_point = event->first;
       Intersection_point_node&  point_node = event->second;
       //bool                     event_terminated = true;
       
 #ifdef  CGAL_SWEEP_LINE_DEBUG     
-      cout<<"* * * event point is "<<event_point<<" and point node is "<<point_node.get_point().point()<<std::endl;
+      cout<<"* * * event point is "<<event_point<<
+        " and point node is "<<point_node.get_point().point()<<std::endl;
       assert(event_point == point_node.get_point().point());
 #endif
       
-      event_terminated = true; // reinitializing event_terminated to true only after the updating of the subdivision.
+      event_terminated = true; // reinitializing event_terminated 
+      // to true only after the updating of the subdivision.
      
       // now continue with the sweep line.
-      event_terminated = handle_one_event (event_queue, status, event_point, point_node);
+      event_terminated = handle_one_event (event_queue, 
+                                           status, 
+                                           event_point, 
+                                           point_node);
         
       // handling overlapping curves. 
-      // On each overlapping group, we remove iteratively each curve and check for new events after the removing.
-      // when finish, we reinsert to the status all the overlappting removed curves.
-      for (Curve_node_iterator cv_iter = point_node.curves_begin(); cv_iter != point_node.curves_end(); cv_iter++){
+      // On each overlapping group, we remove iteratively each 
+      // curve and check for new events after the removing.
+      // when finish, we reinsert to the status all the overlappting 
+      // removed curves.
+      for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
+           cv_iter != point_node.curves_end(); cv_iter++){
         typename Status_line::iterator curr_cv_node = status.find(*cv_iter);
         if (curr_cv_node != status.end()){
           if (curr_cv_node != status.begin()){
@@ -907,13 +939,20 @@ public:
             
             typename Status_line::iterator lower =  --curr_cv_node;
             curr_cv_node++;
-            for ( ;curr_cv_node != status.begin() && traits.curves_overlap(lower->first.get_curve(), curr_cv_node->first.get_curve()); lower--){
+            for ( ;curr_cv_node != status.begin() && 
+                    traits.curves_overlap(lower->first.get_curve(), 
+                                          curr_cv_node->first.get_curve()); 
+                  lower--){
               
               Point p1, p2;
-              traits.nearest_intersection_to_right (curr_cv_node->first.get_curve(), lower->first.get_curve(), event_point, p1, p2);
+              traits.nearest_intersection_to_right (
+                                   curr_cv_node->first.get_curve(), 
+                                   lower->first.get_curve(), 
+                                   event_point, p1, p2);
               
               if (is_left(event_point, p1) || is_right(event_point, p2)) 
-                // means that the overlapping does not intersects the status line.
+                // means that the overlapping does not intersects the 
+                // status line.
                 break;
               
               overlapping_curves.push_back(curr_cv_node->first);
@@ -922,17 +961,25 @@ public:
               curr_cv_node = lower;
               Curve_node  cv_node = curr_cv_node->first;
               
-              // now taking care of the events created by the overlapping curve.
+              // now taking care of the events created by the overlapping 
+              // curve.
               
               Point xp;
-              if (check_status_neighbors_intersections(event_queue, status, curr_cv_node, event_point, xp))
+              if (check_status_neighbors_intersections(event_queue, 
+                                                       status, 
+                                                       curr_cv_node, 
+                                                       event_point, xp))
                 if (xp == event_point) 
-                  // Edge case of tangency in the event point, if it is this event will be taked cared again.
+                  // Edge case of tangency in the event point, if it is this 
+                  // event will be taked cared again.
                   event_overlap_terminated = false;
               
               if (curr_cv_node != status.begin()){
                 curr_cv_node--;
-                if (check_status_neighbors_intersections(event_queue, status, curr_cv_node, event_point, xp))
+                if (check_status_neighbors_intersections(event_queue, 
+                                                         status, 
+                                                         curr_cv_node, 
+                                                         event_point, xp))
                   if (xp == event_point)  
                     // Edge case of tangency in the event point, if it is - this event will be taked cared again.
                     event_overlap_terminated = false;
@@ -940,7 +987,9 @@ public:
               }
               
               if (curr_cv_node != status.end() && 
-                  CGAL::compare_lexicographically_xy (event_point, traits.curve_target(curr_cv_node->first.get_curve()) ) == CGAL::EQUAL){
+                  CGAL::compare_lexicographically_xy (event_point, 
+                       traits.curve_target(curr_cv_node->first.get_curve()) ) 
+                  == CGAL::EQUAL){
                 
                 typename Status_line::iterator prev_cv_node;
                 bool first = true;
@@ -959,16 +1008,23 @@ public:
                 
                 if (!first){
                   //cout<<"checking neighbors after deletion\n";
-                  if (check_status_neighbors_intersections(event_queue, status, prev_cv_node, event_point, xp))
+                  if (check_status_neighbors_intersections(event_queue, 
+                                                           status, 
+                                                           prev_cv_node, 
+                                                           event_point, xp))
                     if (xp == event_point) 
-                      // Edge case of tangency in the event point, if it is this event will be taked cared again.
+                      // Edge case of tangency in the event point, if it is 
+                      // this event will be taked cared again.
                       event_overlap_terminated = false;
                 }
               } 
             }
             // reinsert to the status line all the overlapping removed curves.
-            for (typename std::list<Curve_node>::iterator  ovlp_iter = overlapping_curves.begin(); ovlp_iter != overlapping_curves.end();  ovlp_iter++)
-              status.insert(typename Status_line::value_type(*ovlp_iter, ovlp_iter->get_curve()));
+            for (typename std::list<Curve_node>::iterator  
+                   ovlp_iter = overlapping_curves.begin(); 
+                 ovlp_iter != overlapping_curves.end();  ovlp_iter++)
+              status.insert(typename Status_line::
+                            value_type(*ovlp_iter, ovlp_iter->get_curve()));
           }
         }
         
@@ -980,12 +1036,18 @@ public:
           curr_cv_node--;
         
           
-          for ( ;upper != status.end() && curr_cv_node != status.end() && traits.curves_overlap(curr_cv_node->first.get_curve(), upper->first.get_curve()); upper++){
+          for ( ;upper != status.end() && curr_cv_node != status.end() && 
+                  traits.curves_overlap(curr_cv_node->first.get_curve(), 
+                                        upper->first.get_curve()); upper++){
 
             Point p1, p2;
-            traits.nearest_intersection_to_right (curr_cv_node->first.get_curve(), upper->first.get_curve(), event_point , p1, p2);
+            traits.nearest_intersection_to_right (
+                                 curr_cv_node->first.get_curve(), 
+                                 upper->first.get_curve(), 
+                                 event_point , p1, p2);
             
-            if (is_left(event_point, p1) || is_right(event_point, p2)) // means that the overlapping does not intersects the status line.
+            // means that the overlapping does not intersects the status line
+            if (is_left(event_point, p1) || is_right(event_point, p2))
               break;
             
             overlapping_curves.push_back(curr_cv_node->first);
@@ -996,23 +1058,32 @@ public:
             
             // now taking care of the events created by the overlapping curve.
             Point xp;
-            if (check_status_neighbors_intersections(event_queue, status, curr_cv_node, event_point, xp))
+            if (check_status_neighbors_intersections(event_queue, status, 
+                                                     curr_cv_node, 
+                                                     event_point, xp))
               if (xp == event_point) 
-                // Edge case of tangency in the event point, if it is this event will be taked cared again.
+                // Edge case of tangency in the event point, if it is this 
+                // event will be taked cared again.
                 event_overlap_terminated = false;
             
             if (curr_cv_node != status.begin()){
               curr_cv_node--;
-              if (check_status_neighbors_intersections(event_queue, status, curr_cv_node, event_point, xp))
+              if (check_status_neighbors_intersections(event_queue, 
+                                                       status, 
+                                                       curr_cv_node, 
+                                                       event_point, xp))
                 if (xp == event_point)  
-                  // Edge case of tangency in the event point, if it is - this event will be taked cared again.
+                  // Edge case of tangency in the event point, if it is - 
+                  // this event will be taked cared again.
                   event_overlap_terminated = false;
              
               curr_cv_node++;
             }
             
             if (curr_cv_node != status.end() && 
-                CGAL::compare_lexicographically_xy (event_point, traits.curve_target(curr_cv_node->first.get_curve()) ) == CGAL::EQUAL){
+                CGAL::compare_lexicographically_xy (event_point, 
+                       traits.curve_target(curr_cv_node->first.get_curve()) ) 
+                == CGAL::EQUAL){
               
               typename Status_line::iterator prev_cv_node;
               bool first = true;
@@ -1030,7 +1101,10 @@ public:
               CGAL_expensive_postcondition_code(is_valid(status));
               if (!first){
                 //cout<<"checking neighbors after deletion\n";
-                if (check_status_neighbors_intersections(event_queue, status, prev_cv_node, event_point, xp))
+                if (check_status_neighbors_intersections(event_queue, 
+                                                         status, 
+                                                         prev_cv_node, 
+                                                         event_point, xp))
                   if (xp == event_point) 
                     // Edge case of tangency in the event point, if it is this event will be taked cared again.
                     event_overlap_terminated = false;
@@ -1038,8 +1112,11 @@ public:
             } 
           }
           // reinsert to the status line all the overlapping removed curves.
-          for (typename std::list<Curve_node>::iterator  ovlp_iter = overlapping_curves.begin(); ovlp_iter != overlapping_curves.end();  ovlp_iter++)
-            status.insert(typename Status_line::value_type(*ovlp_iter, ovlp_iter->get_curve()));
+          for (typename std::list<Curve_node>::iterator  ovlp_iter = 
+                 overlapping_curves.begin(); 
+               ovlp_iter != overlapping_curves.end();  ovlp_iter++)
+            status.insert(typename Status_line::
+                          value_type(*ovlp_iter, ovlp_iter->get_curve()));
         }
       }
       
@@ -1052,16 +1129,21 @@ public:
       print_status(status);   
 #endif
       
-      for (Curve_node_iterator cv_iter = point_node.curves_begin(); cv_iter != point_node.curves_end(); cv_iter++){
-        if (event_point != traits.curve_source(cv_iter->get_curve()) && event_point == cv_iter->get_rightmost_point().point())
+      for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
+           cv_iter != point_node.curves_end(); cv_iter++){
+        if (event_point != traits.curve_source(cv_iter->get_curve()) && 
+            event_point == cv_iter->get_rightmost_point().point())
           cv_iter->erase_rightmost_point();
       }
 
-      // now, updating the planar map (or arrangement) according the curves enemating from the currnet event point.
+      // now, updating the planar map (or arrangement) according the 
+      // curves enemating from the currnet event point.
       update_subcurves(point_node, subcurves, overlapping);
 
-      // updating all the new intersection nodes of the curves participating within the event.
-      for (Curve_node_iterator cv_iter = point_node.curves_begin(); cv_iter != point_node.curves_end(); cv_iter++){
+      // updating all the new intersection nodes of the curves 
+      // participating within the event.
+      for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
+           cv_iter != point_node.curves_end(); cv_iter++){
         if (event_point != cv_iter->get_rightmost_point().point())
           cv_iter->push_event_point(point_node.get_point());
       }
@@ -1077,7 +1159,8 @@ public:
     CGAL_expensive_postcondition_code(is_valid(status)); 
     
     //c_sweep_t = clock() - c_sweep_t;
-    //std::cout<<"The time required by sweep proccess: "<< (double) c_sweep_t / (double) CLOCKS_PER_SEC<<std::endl;
+    //std::cout<<"The time required by sweep proccess: "
+    // << (double) c_sweep_t / (double) CLOCKS_PER_SEC<<std::endl;
   }  
    
 private:
@@ -1389,7 +1472,9 @@ private:
         }*/
   
   template <class Container>
-  void  update_subcurves(Intersection_point_node& point_node, Container &subcurves, bool overlapping) 
+  void  update_subcurves(Intersection_point_node& point_node, 
+                         Container &subcurves, 
+                         bool overlapping) 
   {
     if (overlapping)
       update_subcurves_with_overlappings(point_node, subcurves);
@@ -1450,45 +1535,62 @@ private:
   }
   
   template <class Container>
-  void  update_subcurves_with_overlappings(Intersection_point_node& point_node, Container &subcurves) 
+  void  update_subcurves_with_overlappings(Intersection_point_node& point_node, 
+                                           Container &subcurves) 
   {
 #ifdef  CGAL_SWEEP_LINE_DEBUG
-    cout<<"--------- updating map with point node"<<point_node.get_point().point() <<std::endl;
-    for (Curve_node_iterator cv_iter1= point_node.curves_begin(); cv_iter1 != point_node.curves_end(); cv_iter1++){
+    cout<<"--------- updating map with point node"<<
+      point_node.get_point().point() <<std::endl;
+    for (Curve_node_iterator cv_iter1= point_node.curves_begin(); 
+         cv_iter1 != point_node.curves_end(); cv_iter1++){
       cv_iter1++;
       Curve_node_iterator cv_iter2 = cv_iter1;
       cv_iter1--;
       for ( ; cv_iter2 != point_node.curves_end(); cv_iter2++){   
-        if (traits.curves_overlap(cv_iter1->get_curve(), cv_iter2->get_curve()))
-          cout<<"update_subdivision "<<cv_iter1->get_curve()<<" and "<< cv_iter2->get_curve() <<" are overlapping"<<endl;
+        if (traits.curves_overlap(cv_iter1->get_curve(), 
+                                  cv_iter2->get_curve()))
+          cout<<"update_subdivision "<<cv_iter1->get_curve()<<
+            " and "<< cv_iter2->get_curve() <<" are overlapping"<<endl;
       }
     }
 #endif    
 
     X_curve prev_sub_cv;
-    for (Curve_node_iterator cv_iter = point_node.curves_begin(); cv_iter != point_node.curves_end(); cv_iter++){
+    for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
+         cv_iter != point_node.curves_end(); cv_iter++){
 #ifdef  CGAL_SWEEP_LINE_DEBUG
       cout<<"now handling "<<cv_iter->get_curve()<<endl;
 #endif
       
-      if (is_left(cv_iter->get_rightmost_point().point(), point_node.get_point().point())) { // means we have a new sub curve to insert.
+      if (is_left(cv_iter->get_rightmost_point().point(), 
+                  point_node.get_point().point())) { 
+        // means we have a new sub curve to insert.
         
-        // first splitting the curve in the points cv_iter->get_rightmost_point().point() and point_node.get_point().point().
-        X_curve cv = cv_iter->get_curve(), sub_cv = cv_iter->get_curve(), right_cv = cv;
+        // first splitting the curve in the points 
+        // cv_iter->get_rightmost_point().point() 
+        // and point_node.get_point().point().
+        X_curve cv = cv_iter->get_curve(), sub_cv = cv_iter->get_curve(), 
+          right_cv = cv;
 
         //cout<<"cv is "<<cv<<endl;
-        if (traits.curve_source(cv) != cv_iter->get_rightmost_point().point() &&
-            traits.curve_target(cv) != cv_iter->get_rightmost_point().point() ) {
-          traits.curve_split(cv, sub_cv, right_cv, cv_iter->get_rightmost_point().point());
+        if (traits.curve_source(cv) != cv_iter->get_rightmost_point().point() 
+            &&
+            traits.curve_target(cv) != cv_iter->get_rightmost_point().point()) 
+          {
+            traits.curve_split(cv, sub_cv, right_cv, 
+                               cv_iter->get_rightmost_point().point());
           
-          cv = right_cv;
-        }
+            cv = right_cv;
+          }
         
         //cout<<"after first splitting cv is "<<cv<<endl;
-        //cout<<"source and target of cv are"<<traits.curve_source(cv)<<" "<<traits.curve_target(cv)<<endl;
+        //cout<<"source and target of cv are"<<traits.curve_source(cv)
+        // <<" "<<traits.curve_target(cv)<<endl;
+        
         if (traits.curve_source(cv) != point_node.get_point().point() &&
             traits.curve_target(cv) != point_node.get_point().point())
-          traits.curve_split(cv, sub_cv, right_cv, point_node.get_point().point());
+          traits.curve_split(cv, sub_cv, 
+                             right_cv, point_node.get_point().point());
         else
           sub_cv = right_cv;
 
@@ -1512,45 +1614,61 @@ private:
   }
   
   template <class Container> 
-  void  update_subcurves_without_overlappings(Intersection_point_node& point_node, Container &subcurves)
+  void  update_subcurves_without_overlappings(
+                          Intersection_point_node& point_node, 
+                          Container &subcurves)
   {
 #ifdef  CGAL_SWEEP_LINE_DEBUG
-    cout<<"--------- updating map with point node"<<point_node.get_point().point() <<std::endl;
-    for (Curve_node_iterator cv_iter1= point_node.curves_begin(); cv_iter1 != point_node.curves_end(); cv_iter1++){
+    cout<<"--------- updating map with point node"<<
+      point_node.get_point().point() <<std::endl;
+    for (Curve_node_iterator cv_iter1= point_node.curves_begin(); 
+         cv_iter1 != point_node.curves_end(); cv_iter1++){
       cv_iter1++;
       Curve_node_iterator cv_iter2 = cv_iter1;
       cv_iter1--;
       for ( ; cv_iter2 != point_node.curves_end(); cv_iter2++){   
-        if (traits.curves_overlap(cv_iter1->get_curve(), cv_iter2->get_curve()))
-          cout<<"update_subdivision "<<cv_iter1->get_curve()<<" and "<< cv_iter2->get_curve() <<" are overlapping"<<endl;
+        if (traits.curves_overlap(cv_iter1->get_curve(), 
+                                  cv_iter2->get_curve()))
+          cout<<"update_subdivision "<<cv_iter1->get_curve()<<
+            " and "<< cv_iter2->get_curve() <<" are overlapping"<<endl;
       }
     }
 #endif    
 
     X_curve prev_sub_cv;
-    for (Curve_node_iterator cv_iter = point_node.curves_begin(); cv_iter != point_node.curves_end(); cv_iter++){
+    for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
+         cv_iter != point_node.curves_end(); cv_iter++){
 #ifdef  CGAL_SWEEP_LINE_DEBUG
       cout<<"now handling "<<cv_iter->get_curve()<<endl;
 #endif
 
-      if (is_left(cv_iter->get_rightmost_point().point(), point_node.get_point().point())) { // means we have a new sub curve to insert.
+      if (is_left(cv_iter->get_rightmost_point().point(), 
+                  point_node.get_point().point())) { 
+        // means we have a new sub curve to insert.
         
-        // first splitting the curve in the points cv_iter->get_rightmost_point().point() and point_node.get_point().point().
-        X_curve cv = cv_iter->get_curve(), sub_cv = cv_iter->get_curve(), right_cv = cv;
+        // first splitting the curve in the points 
+        // cv_iter->get_rightmost_point().point() and 
+        // point_node.get_point().point().
+        X_curve cv = cv_iter->get_curve(), sub_cv = cv_iter->get_curve(), 
+          right_cv = cv;
         
         //cout<<"cv is "<<cv<<endl;
-        if (traits.curve_source(cv) != cv_iter->get_rightmost_point().point() &&
-            traits.curve_target(cv) != cv_iter->get_rightmost_point().point() ) {
-          traits.curve_split(cv, sub_cv, right_cv, cv_iter->get_rightmost_point().point());
+        if (traits.curve_source(cv) != cv_iter->get_rightmost_point().point() 
+            &&
+            traits.curve_target(cv) != cv_iter->get_rightmost_point().point() ) 
+          {
+            traits.curve_split(cv, sub_cv, right_cv, 
+                               cv_iter->get_rightmost_point().point());
           
-          cv = right_cv;
-        }
+            cv = right_cv;
+          }
         
         //cout<<"after first splitting cv is "<<cv<<endl;
         //cout<<"source and target of cv are"<<traits.curve_source(cv)<<" "<<traits.curve_target(cv)<<endl;
         if (traits.curve_source(cv) != point_node.get_point().point() &&
             traits.curve_target(cv) != point_node.get_point().point())
-          traits.curve_split(cv, sub_cv, right_cv, point_node.get_point().point());
+          traits.curve_split(cv, sub_cv, right_cv, 
+                             point_node.get_point().point());
         else
           sub_cv = right_cv;
         
