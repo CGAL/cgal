@@ -52,9 +52,14 @@ public:
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
-  RayC3();
-  RayC3(const Point_3 &sp, const Point_3 &secondp);
-  RayC3(const Point_3 &sp, const Direction_3 &d);
+  RayC3()
+    : Ray_handle_3(Ray_ref_3()) {}
+
+  RayC3(const Point_3 &sp, const Point_3 &secondp)
+    : Ray_handle_3(Ray_ref_3(sp, secondp)) {}
+
+  RayC3(const Point_3 &sp, const Direction_3 &d)
+    : Ray_handle_3(Ray_ref_3(sp, sp + d.to_vector())) {}
 
   bool        operator==(const Self &r) const;
   bool        operator!=(const Self &r) const;
@@ -74,29 +79,15 @@ public:
   Line_3      supporting_line() const;
   Self        opposite() const;
 
-  Self        transform(const Aff_transformation_3 &t) const;
+  Self        transform(const Aff_transformation_3 &t) const
+  {
+    return RayC3(t.transform(source()), t.transform(second_point()));
+  }
 
   bool        is_degenerate() const;
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;
 };
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-RayC3<R CGAL_CTAG>::RayC3()
-  : Ray_handle_3(Ray_ref_3() ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-RayC3<R CGAL_CTAG>::RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
-                          const typename RayC3<R CGAL_CTAG>::Point_3 &secondp)
-  : Ray_handle_3(Ray_ref_3(sp, secondp)) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-RayC3<R CGAL_CTAG>::RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
-                          const typename RayC3<R CGAL_CTAG>::Direction_3 &d)
-  : Ray_handle_3(Ray_ref_3(sp, sp + d.to_vector())) {}
 
 template < class R >
 inline
@@ -157,16 +148,6 @@ RayC3<R CGAL_CTAG>
 RayC3<R CGAL_CTAG>::opposite() const
 {
   return RayC3<R CGAL_CTAG>( source(), - direction() );
-}
-
-template < class R >
-inline
-RayC3<R CGAL_CTAG>
-RayC3<R CGAL_CTAG>::
-transform(const typename RayC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
-{
-  return RayC3<R CGAL_CTAG>(t.transform(source()),
-                            t.transform(second_point()));
 }
 
 template < class R >

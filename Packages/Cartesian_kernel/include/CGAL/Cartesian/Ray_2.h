@@ -62,9 +62,14 @@ public:
   typedef typename R::Circle_2_base             Circle_2;
 #endif
 
-  RayC2();
-  RayC2(const Point_2 &sp, const Point_2 &secondp);
-  RayC2(const Point_2 &sp, const Direction_2 &d);
+  RayC2()
+    : Ray_handle_2(Ray_ref_2()) {}
+
+  RayC2(const Point_2 &sp, const Point_2 &secondp)
+    : Ray_handle_2(Ray_ref_2(sp, secondp)) {}
+
+  RayC2(const Point_2 &sp, const Direction_2 &d)
+    : Ray_handle_2(Ray_ref_2(sp, sp + d.to_vector())){}
 
   bool        operator==(const Self &r) const;
   bool        operator!=(const Self &r) const;
@@ -84,7 +89,10 @@ public:
   Line_2      supporting_line() const;
   Self        opposite() const;
 
-  Self        transform(const Aff_transformation_2 &t) const;
+  Self        transform(const Aff_transformation_2 &t) const
+  {
+    return RayC2(t.transform(source()), t.transform(second_point()));
+  }
 
   bool        is_horizontal() const;
   bool        is_vertical() const;
@@ -94,28 +102,12 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-RayC2<R CGAL_CTAG>::RayC2()
-  : Ray_handle_2(Ray_ref_2() ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
-                          const typename RayC2<R CGAL_CTAG>::Point_2 &secondp)
-  : Ray_handle_2(Ray_ref_2(sp, secondp) ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
-                          const typename RayC2<R CGAL_CTAG>::Direction_2 &d)
-  : Ray_handle_2(Ray_ref_2(sp, sp + d.to_vector())){}
-
-template < class R >
 CGAL_KERNEL_INLINE
 bool
 RayC2<R CGAL_CTAG>::operator==(const RayC2<R CGAL_CTAG> &r) const
 {
-  if ( identical(r) ) return true;
+  if (identical(r))
+      return true;
   return source() == r.source() && direction() == r.direction();
 }
 
@@ -168,16 +160,6 @@ RayC2<R CGAL_CTAG>
 RayC2<R CGAL_CTAG>::opposite() const
 {
   return RayC2<R CGAL_CTAG>( source(), - direction() );
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-RayC2<R CGAL_CTAG>
-RayC2<R CGAL_CTAG>::
-transform(const typename RayC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
-{
-  return RayC2<R CGAL_CTAG>(t.transform(source()), 
-			    t.transform(second_point()));
 }
 
 template < class R >

@@ -61,14 +61,31 @@ public:
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
-  PlaneC3();
-  PlaneC3(const Point_3 &p, const Point_3 &q, const Point_3 &r);
-  PlaneC3(const Point_3 &p, const Direction_3 &d);
-  PlaneC3(const Point_3 &p, const Vector_3 &v);
-  PlaneC3(const FT &a, const FT &b, const FT &c, const FT &d);
-  PlaneC3(const Line_3 &l, const Point_3 &p);
-  PlaneC3(const Segment_3 &s, const Point_3 &p);
-  PlaneC3(const Ray_3 &r, const Point_3 &p);
+  PlaneC3()
+    : Plane_handle_3(Plane_ref_3()) {}
+
+  PlaneC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
+    : Plane_handle_3(plane_from_points(p, q, r)) {}
+
+  PlaneC3(const Point_3 &p, const Direction_3 &d)
+    : Plane_handle_3(plane_from_point_direction(p, d)) {}
+
+  PlaneC3(const Point_3 &p, const Vector_3 &v)
+    : Plane_handle_3(plane_from_point_direction(p, v.direction())) {}
+
+  PlaneC3(const FT &a, const FT &b, const FT &c, const FT &d)
+    : Plane_handle_3(Plane_ref_3(a, b, c, d)) {}
+
+  PlaneC3(const Line_3 &l, const Point_3 &p)
+    : Plane_handle_3(plane_from_points(l.point(),
+	                               l.point()+l.direction().to_vector(),
+				       p)) {}
+
+  PlaneC3(const Segment_3 &s, const Point_3 &p)
+    : Plane_handle_3(plane_from_points(s.start(), s.end(), p)) {}
+
+  PlaneC3(const Ray_3 &r, const Point_3 &p)
+    : Plane_handle_3(plane_from_points(r.start(), r.second_point(), p)) {}
 
   bool         operator==(const Self &p) const;
   bool         operator!=(const Self &p) const;
@@ -105,8 +122,15 @@ public:
   Point_2      to_2d(const Point_3 &p) const;
   Point_3      to_3d(const Point_2 &p) const;
 
-  Self         transform(const Aff_transformation_3 &t) const;
-
+  Self         transform(const Aff_transformation_3 &t) const
+  {
+    if (t.is_even())
+      return PlaneC3(t.transform(point()),
+                 t.transpose().inverse().transform(orthogonal_direction()));
+    else
+      return PlaneC3( t.transform(point()),
+               - t.transpose().inverse().transform(orthogonal_direction()));
+  }
 
   Oriented_side oriented_side(const Point_3 &p) const;
   bool         has_on_boundary(const Point_3 &p) const;
@@ -119,70 +143,12 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::PlaneC3()
-  : Plane_handle_3(Plane_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename PlaneC3<R CGAL_CTAG>::FT &a,
-        const typename PlaneC3<R CGAL_CTAG>::FT &b,
-        const typename PlaneC3<R CGAL_CTAG>::FT &c,
-        const typename PlaneC3<R CGAL_CTAG>::FT &d)
-  : Plane_handle_3(Plane_ref_3(a, b, c, d) ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
-        const typename PlaneC3<R CGAL_CTAG>::Point_3 &q,
-        const typename PlaneC3<R CGAL_CTAG>::Point_3 &r)
-  : Plane_handle_3(plane_from_points(p, q, r)) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
-        const typename PlaneC3<R CGAL_CTAG>::Direction_3 &d)
-  : Plane_handle_3(plane_from_point_direction(p, d)) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
-        const typename PlaneC3<R CGAL_CTAG>::Vector_3 &v)
-  : Plane_handle_3(plane_from_point_direction(p, v.direction())) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Line_3 &l,
-        const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
-  : Plane_handle_3(plane_from_points(l.point(),
-	                             l.point()+l.direction().to_vector(),
-				     p)) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Segment_3 &s,
-        const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
-  : Plane_handle_3(plane_from_points(s.start(), s.end(), p)) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Ray_3 &r,
-        const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
-  : Plane_handle_3(plane_from_points(r.start(), r.second_point(), p)) {}
-
-template < class R >
 CGAL_KERNEL_INLINE
 bool
 PlaneC3<R CGAL_CTAG>::operator==(const PlaneC3<R CGAL_CTAG> &p) const
 {
-  if ( identical(p) ) return true;
+  if (identical(p))
+      return true;
   return has_on_boundary(p.point()) &&
          (orthogonal_direction() == p.orthogonal_direction());
 }
@@ -315,19 +281,6 @@ PlaneC3<R CGAL_CTAG>
 PlaneC3<R CGAL_CTAG>::opposite() const
 {
   return PlaneC3<R CGAL_CTAG>(-a(),-b(),-c(),-d());
-}
-
-template < class R >
-PlaneC3<R CGAL_CTAG>
-PlaneC3<R CGAL_CTAG>::
-transform(const typename PlaneC3<R CGAL_CTAG>::Aff_transformation_3& t) const
-{
-  if (t.is_even())
-    return PlaneC3<R CGAL_CTAG>( t.transform(point()),
-               t.transpose().inverse().transform(orthogonal_direction()) );
-  else
-    return PlaneC3<R CGAL_CTAG>( t.transform(point()),
-             - t.transpose().inverse().transform(orthogonal_direction()) );
 }
 
 template < class R >
