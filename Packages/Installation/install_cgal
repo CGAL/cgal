@@ -399,10 +399,10 @@ _check_for_sysutil()
     elif [ -x /usr/bin/$1 ]; then 
 	eval "_$1=/usr/bin/$1" 
     else
-	_check_for_util $*
+	_check_for_util ${*}
 	return $?
     fi
-    _tmp="echo $\_`echo ${3:-$1}`"
+   _tmp="echo $\_`echo ${3:-$1}`"
     _tmp=`eval "${_tmp}"`
     _tmp=`eval "echo ${_tmp}"`
     log_print "$1 is ${_tmp}." 
@@ -549,10 +549,9 @@ _install_version_number()
 # (they should be on a unix system, but ...)
 check_for_utils()
 {
-    _which='which'
+    _which=real_which
     _check_for_sysutil basename y
     _check_for_sysutil dirname y
-    _which=real_which
     _check_for_sysutil uname y
     _check_for_sysutil printf y
     _check_for_sysutil cat y
@@ -563,7 +562,6 @@ check_for_utils()
     _check_for_sysutil ls y
     _check_for_sysutil chmod y
     _check_for_sysutil mkdir y
-    _check_for_sysutil tput y
     _check_for_sysutil fgrep y
     _check_for_sysutil sed y
     _check_for_sysutil awk y
@@ -586,7 +584,7 @@ check_for_utils()
 guess_os()
 {
     _tmp=`${_uname} -p 2>/dev/null`
-    if [ -z "${_tmp}" ]; then
+    if [ -z "${_tmp}" -o "${_tmp}" = 'unknown' ]; then
 	_tmp=`${_uname} -m 2>/dev/null`
     fi
     if [ -n "${_tmp}" ]; then
@@ -594,7 +592,7 @@ guess_os()
     else
 	$1 "WARNING: Could not determine architecture."
     fi
-    SYST="${_tmp}`${_uname} -s`-`${_uname} -r`"
+    SYST="${_tmp}`${_uname} -s | ${_sed} 's/_//g'`-`${_uname} -r | ${_awk} '{print $1}'`"
     $1 "OS is \"${SYST}\"." 
 }
 
@@ -1462,7 +1460,7 @@ _expr_expr()
 {
     # we have to do the indirection in three steps
     # (since there can be only one `...` expression level)
-    eval "_result=`/bin/expr ${1} \"${2}\" ${3}`"
+    eval "_result=`${_expr} ${1} \"${2}\" ${3}`"
     if [ $? != 0 ]; then
 	exit_on_error "Cannot evaluate \"${1}\" in _expr_expr()"
     fi
@@ -1474,7 +1472,7 @@ _bc_expr()
 {
     # we have to do the indirection in three steps
     # (since there can be only one `...` expression level)
-    eval "_result=`echo $1 \"$2\" $3 | /bin/bc`"
+    eval "_result=`echo $1 \"$2\" $3 | ${_bc}`"
     if [ $? != 0 ]; then
 	exit_on_error "Cannot evaluate \"${1}\" in _bc_expr()"
     fi
@@ -1487,9 +1485,10 @@ set_expr()
     # first try shell let, then expr, bc, dc and csh
     if /bin/sh -tc 'e=0; let e+=1' 2>/dev/null; then
 	_EXPR=_let_expr
-    elif [ -x /bin/expr ]; then
+#    elif [ -x /bin/expr ]; then
+    elif _check_for_sysutil expr n; then
 	_EXPR=_expr_expr
-    elif [ -x /bin/bc ]; then
+    elif _check_for_sysutil expr n; then
 	_EXPR=_bc_expr
     else
 	exit_on_error "Cannot find either of \"expr\" or \"bc\"" \
@@ -1711,24 +1710,32 @@ set_menu_lines()
 # set some variables for output
 set_terminal_variables()
 {
-    ${_tput} smcup # turn on cup (see man terminfo)
-    _line_up=`${_tput} cuu1`"\r"
-    _bold_on=`${_tput} bold`
-    _bold_off=`${_tput} sgr0`
-    _clear_screen=`${_tput} clear`
-    _clear_end_of_display=`${_tput} ed`
-    eval "${_EXPR} ${_MENU_WIDTH} \* 10"
-    length "${_LEFTSPACE}"
-    eval "${_EXPR} ${_result} + $?"
-    # for two-star('**') border
-    eval "${_EXPR} ${_result} + 4"
-    if [ `${_tput} cols` -lt ${_result} ]; then
-	print_filled_line
-	print_line \
-	"${_bold_on}WARNING${_bold_off}: Your terminal screen is too narrow."
-	print_line "It should have at least ${_result} columns."
-	print_filled_line
-	wait_for_enter
+    if _check_for_sysutil tput n; then
+	${_tput} smcup # turn on cup (see man terminfo)
+	_line_up=`${_tput} cuu1`"\r"
+	_bold_on=`${_tput} bold`
+	_bold_off=`${_tput} sgr0`
+	_clear_screen=`${_tput} clear`
+	_clear_end_of_display=`${_tput} ed`
+	eval "${_EXPR} ${_MENU_WIDTH} \* 10"
+	length "${_LEFTSPACE}"
+	eval "${_EXPR} ${_result} + $?"
+	# for two-star('**') border
+	eval "${_EXPR} ${_result} + 4"
+	if [ `${_tput} cols` -lt ${_result} ]; then
+	    print_filled_line
+	    print_line \
+	    "${_bold_on}WARNING${_bold_off}: Your terminal screen is too narrow."
+	    print_line "It should have at least ${_result} columns."
+	    print_filled_line
+	    wait_for_enter
+	fi
+    else
+	eval "${_EXPR} ${_MENU_WIDTH} \* 10"
+	length "${_LEFTSPACE}"
+	eval "${_EXPR} ${_result} + $?"
+	# for two-star('**') border
+	eval "${_EXPR} ${_result} + 4"
     fi
 }
 
@@ -4075,9 +4082,9 @@ set_variable_from_command_line()
 _WHAT_TO_DO=''
 _CONFLICT=''
 _ANY_OPT=''
-_check_for_sysutil printf y
-_check_for_sysutil awk y
-_check_for_sysutil rm y
+_awk=awk
+_printf=printf
+_rm=rm
 initial_check
 while [ ${#} -gt 0 ]; do
     case ${*} in
