@@ -2,10 +2,14 @@
 #include <CGAL/Object.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Line_2_Triangle_2_intersection.h>
-#include <iostream.h>
+#include <iostream>
 
 
 #include "numrep2.h"
+
+using std::cout;
+using std::cin;
+using std::ios;
 
 typedef CGAL::Point_2< TestR > point_t;
 typedef CGAL::Line_2< TestR > line_t;

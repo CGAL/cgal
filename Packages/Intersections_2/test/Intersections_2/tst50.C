@@ -1,13 +1,17 @@
 #include <CGAL/Cartesian.h>
 #include "numrep1.h"
 
-#include <iostream.h>
+#include <iostream>
 #include <CGAL/Object.h>
 #include <CGAL/Triangle_2.h>
 #include <vector>
 #include <CGAL/Triangle_2_Triangle_2_intersection.h>
 
 #include "numrep2.h"
+
+using std::cout;
+using std::cin;
+using std::ios;
 
 typedef CGAL::Point_2< TestR > point_t;
 typedef CGAL::Segment_2< TestR > segment_t;

@@ -1,10 +1,14 @@
 #include "numrep1.h"
-#include <iostream.h>
+#include <iostream>
 #include <CGAL/Object.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Line_2_Iso_rectangle_2_intersection.h>
 
 #include "numrep2.h"
+
+using std::cout;
+using std::cin;
+using std::ios;
 
 typedef CGAL::Point_2<TestR> point_t;
 typedef CGAL::Line_2<TestR> line_t;
@@ -65,7 +69,7 @@ void one_pair(line_t const & line, rect_t const & rect)
     }
 }
 
-main()
+int main()
 {
     randomint ri;
     int x1, x2, y1, y2, w1, w2;

@@ -11,6 +11,10 @@
 
 #include "numrep2.h"
 
+using std::cout;
+using std::cin;
+using std::ios;
+
 typedef CGAL::Point_2< TestR > point_t;
 typedef CGAL::Line_2< TestR > line_t;
 typedef CGAL::Segment_2< TestR > segment_t;

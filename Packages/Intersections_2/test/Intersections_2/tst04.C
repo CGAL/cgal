@@ -14,6 +14,10 @@
 typedef CGAL::Point_2< TestR > point_t;
 typedef CGAL::Line_2< TestR > line_t;
 
+using std::cout;
+using std::cin;
+using std::ios;
+
 void print(const point_t &pt)
 {
     double xd = CGAL::to_double(pt.x());

@@ -9,7 +9,11 @@
 #include <CGAL/Segment_2_Triangle_2_intersection.h>
 
 #include "numrep2.h"
-#include <iostream.h>
+#include <iostream>
+
+using std::cout;
+using std::cin;
+using std::ios;
 
 typedef CGAL::Point_2< TestR > point_t;
 typedef CGAL::Segment_2< TestR > segment_t;
@@ -73,7 +77,7 @@ void one_pair(segment_t const & seg, trian_t const & trian)
     }
 }
 
-main()
+int main()
 {
     int x1, x2, x3, y1, y2, y3, w1, w2, w3;
     randomint ri;

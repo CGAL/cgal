@@ -7,7 +7,11 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Ray_2_Iso_rectangle_2_intersection.h>
 #include "numrep2.h"
-#include <iostream.h>
+#include <iostream>
+
+using std::cout;
+using std::cin;
+using std::ios;
 
 typedef CGAL::Point_2< TestR > point_t;
 typedef CGAL::Ray_2< TestR > ray_t;
@@ -68,7 +72,7 @@ void one_pair(ray_t const & ray, rect_t const & rect)
     }
 }
 
-main()
+int main()
 {
     randomint ri;
     int x1, x2, y1, y2, w1, w2;

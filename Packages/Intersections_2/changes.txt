@@ -1,4 +1,10 @@
 -----
+* 2.1.5 *
+Updated all testfiles
+  added int as return type for main whre necessary to avoid warnings
+  added using declarations for cout, cin and ios.
+
+-----
 * 2.1.4 *
 Added some CGAL_ prefixes to inclusion guards
 

@@ -3,12 +3,16 @@
  */
 
 #include "numrep1.h"
-#include <iostream.h>
+#include <iostream>
 #include <CGAL/Object.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Point_2_Triangle_2_intersection.h>
 
 #include "numrep2.h"
+
+using std::cout;
+using std::cin;
+using std::ios;
 
 typedef CGAL::Point_2< TestR > point_t;
 typedef CGAL::Triangle_2< TestR > trian_t;
@@ -59,7 +63,7 @@ void one_pair(point_t const & pt, trian_t const & trian)
     }
 }
 
-main()
+int main()
 {
     randomint ri;
     int x1, x2, x3, y1, y2, y3, w1, w2, w3;

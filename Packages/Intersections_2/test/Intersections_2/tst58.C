@@ -3,12 +3,16 @@
  */
 #include "numrep1.h"
 
-#include <iostream.h>
+#include <iostream>
 #include <CGAL/Object.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Segment_2_Iso_rectangle_2_intersection.h>
 
 #include "numrep2.h"
+
+using std::cout;
+using std::cin;
+using std::ios;
 
 typedef CGAL::Point_2< TestR > point_t;
 typedef CGAL::Segment_2< TestR > segment_t;
@@ -69,7 +73,7 @@ void one_pair(segment_t const & seg, rect_t const & rect)
     }
 }
 
-main()
+int main()
 {
     randomint ri;
     int x1, x2, y1, y2, w1, w2;
