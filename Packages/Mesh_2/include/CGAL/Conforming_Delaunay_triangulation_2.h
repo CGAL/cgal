@@ -896,17 +896,20 @@ refine_edge(Vertex_handle va, Vertex_handle vb,
 
   if( get_cluster(va,vb,c,true) )
     if( get_cluster(vb,va,c2,true) )
-      { 
+      { // both ends are clusters
 	vm = insert_middle(f,i);
 	update_cluster(c,va,vb,vm,false);
 	update_cluster(c2,vb,va,vm,false);
       }
     else {
+      // va only is a cluster
       vm = cut_cluster_edge(va,vb,c);
   }else
     if( get_cluster(vb,va,c,true) ){
+      // vb only is a cluster
       vm = cut_cluster_edge(vb,va,c);
     }else{
+      // no cluster
       vm = insert_middle(f,i);
     }
   update_edges_to_be_conformed(va, vb, vm, is_loc_conf);
