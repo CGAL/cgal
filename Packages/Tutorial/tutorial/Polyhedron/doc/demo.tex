@@ -9,18 +9,19 @@ Right: translation\\
 Both: zoom.\\
 
 \noindent {\bf Main keys}\\
+Press 's' to subdivide the mesh using the quad-triangle scheme.\\
 Press 'r' to choose a rendering mode. Note that superimposing the
 control edges during subdivision is only available for the
-quad-triangle subdivision scheme.\\
-Press 's' to subdivide the mesh using the quad-triangle scheme.\\
-Press 'ctrl+c' to generate a 24-bits raster image output to the clipboard.\\
+quad-triangle subdivision scheme.\\ Press 'ctrl+c' to generate a
+24-bits raster image output to the clipboard.\\
 
 \noindent {\bf Compiling on Windows}\\
 The application has been compiled on MS .NET 2003 using CGAL. Apply
 the following steps to compile the demo:
 \begin{itemize}
 \item Install the last release of CGAL.
-\item Define an environment variable CGALROOT with the path to the CGAL-3.0.1 folder. If you installed CGAL with the standard wizard installation, the CGALROOT variable was defined at that time.
+\item Define an environment variable CGALROOT with the path to the
+CGAL folder. If you installed CGAL with the standard wizard installation, the CGALROOT variable was defined at that time.
 \item Compile the CGAL library in multithread mode. Go in CGALROOT/src directory and open the cgallib project. Open from the main menu, Project Properties. Go to C/C++, Code Generation, Runtime Library and choose Multi-threaded Debug (/MTd). Go to Librarian, General, Output File and modify to ../lib/msvc7/CGAL\_MT\_DEBUG.LIB. If you want to build in release mode, choose at the Project Properties Configuration Release, and do the same steps as before but at the Runtime Library you choose Multi-threaded (/MT) and in the output of Librarian put ../lib/msvc7/CGAL\_MT\_RELEASE.LIB.
 
 To build debug and release mode, you need to choose the mode in the main menu Build at the Configuration manager.

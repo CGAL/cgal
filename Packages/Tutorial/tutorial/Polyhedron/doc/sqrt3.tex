@@ -5,15 +5,6 @@ restrict our example program to a single uniform subdivision step, see
 Fig.~\ref{fig:sqrt3} for an example of a subdivision sequence and
 Fig.~\ref{fig:sqrt3_basic} for a closeup on the refinement.
 
-% sqrt3 subdivision (basic)
-
-\begin{figure}[htb]
-    \centering{\includegraphics[width=10.0cm]{figs/sqrt3_basic}}
-    \caption{The $\sqrt{3}$-Subdivision scheme is decomposed as
-             a set of Euler operators: face splits and edge flips.}
-    \label{fig:sqrt3_basic}
-\end{figure}
-
 The subdivision step takes a triangle mesh as input and splits each
 facet at its centroid into three triangles.  We write a function that
 creates the centroid for one triangle. The topology refinement part
@@ -80,7 +71,7 @@ centroids, then smooth the old vertices, and conclude with flipping
 the old edges.
 
 \begin{figure}[tb]
-    \centering{\includegraphics[width=7.0cm]{figs/sqrt3_basic}}
+    \centering{\includegraphics[width=9.0cm]{figs/sqrt3_basic}}
     \caption{The $\sqrt{3}$-subdivision scheme is decomposed into
              Euler operators: center vertex and edge flips.}
     \label{fig:sqrt3_basic}%\vspace*{-2mm}
@@ -93,22 +84,22 @@ void subdiv( Polyhedron& P) {
   Vertex_iterator last_v = P.vertices_end();
   --last_v;                 // the last of the old vertices
   Edge_iterator last_e = P.edges_end();
-  --last_e;                 //    the last of the old edges
+  --last_e;                 // the last of the old edges
   Facet_iterator last_f = P.facets_end();
-  --last_f;                 //   the last of the old facets
-  Facet_iterator f = P.facets_begin();         // centroids
+  --last_f;                 // the last of the old facets
+  Facet_iterator f = P.facets_begin();  // centroids
   do {
     create_centroid( P, f);
   } while ( f++ != last_f);
-  std::vector<Point> pts;   //          smooth old vertices
-  pts.reserve( nv);         //     space for the new points
-  ++ last_v;                //   move to past-the-end again
+  std::vector<Point> pts;   // smooth old vertices
+  pts.reserve( nv);         // space for the new points
+  ++ last_v;                // move to past-the-end again
   std::transform( P.vertices_begin(), last_v, 
             std::back_inserter( pts), Smooth_old_vertex());
   std::copy( pts.begin(), pts.end(), P.points_begin());
-  ++ last_e;                //   move to past-the-end again
+  ++ last_e;                // move to past-the-end again
   for ( Edge_iterator e = P.edges_begin(); e != last_e; ++e)
-    P.flip_edge(e);         //           flip the old edges
+    P.flip_edge(e);         // flip the old edges
 }
 \end{lstlisting}%\vspace*{-3mm}
 
@@ -132,9 +123,9 @@ and as it turned out, this was not crucial.  What is crucial is the
 size of the structure. For example, the same experiment with an unused
 plane equations in the facets increases the running time by
 25\%. Similarly the choice of the coordinate type matters. We used the
-lion vase, see Fig.~{fig:models} with 400k triangles as benchmark in
-two successive subdivision steps. The other models had boundary edges
-so that we could not use them in our currently limited example
+lion vase, see Fig.~\ref{fig:models} with 400k triangles as benchmark
+in two successive subdivision steps. The other models had boundary
+edges so that we could not use them in our currently limited example
 program. Time in seconds:
 
 \begin{center}
