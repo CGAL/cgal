@@ -108,18 +108,6 @@ protected:
 
 public:
 
-#if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
-
-    inline friend void intrusive_ptr_add_ref(Ref_counted_base const* p) { ++p->mCount; }
-    
-    inline friend void intrusive_ptr_release(Ref_counted_base const* p)
-      {
-        if ( --p->mCount == 0 )
-          delete p;
-      }
-
-#else
-
     void AddRef() const { ++mCount; }
 
     void Release() const
@@ -127,25 +115,18 @@ public:
         if( --mCount == 0 )
           delete this;
       }
-
-#endif
 };
 
 CGAL_END_NAMESPACE
 
-#if defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
-
 namespace boost
 {
 
-inline void intrusive_ptr_add_ref( CGAL_NS Ref_counted_base const* p ) { p->AddRef(); }
-inline void intrusive_ptr_release( CGAL_NS Ref_counted_base const* p ) { p->Release(); }
-
-}
+inline void intrusive_ptr_add_ref( CGAL::Ref_counted_base const* p ) { p->AddRef(); }
+inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Release(); }
 
 } // namespace boost
 
-#endif
 
 #endif // CGAL_STRAIGHT_SKELETON_AUX_H //
 // EOF //
