@@ -40,6 +40,7 @@
 #include <CGAL/Nef_3/SNC_io_parser.h>
 #include <CGAL/Nef_3/SNC_SM_explorer.h>
 #include <CGAL/Nef_polyhedron_S2.h>
+#include <CGAL/Modifier_base.h>
 
 #ifdef CGAL_NEF3_CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
@@ -433,7 +434,32 @@ protected:
 
   };
 
-  int orientation() {
+ public:
+ void delegate( Modifier_base<SNC_structure>& modifier) {
+   // calls the `operator()' of the `modifier'. Precondition: The
+   // `modifier' returns a consistent representation.
+   modifier(snc());
+   CGAL_expensive_postcondition( is_valid());
+ }
+
+ struct SNC_and_PL {
+   SNC_structure* sncp;
+   SNC_point_locator* pl;
+
+   SNC_and_PL(SNC_structure* s, SNC_point_locator* p) : sncp(s), pl(p) {}
+ };
+
+ void delegate( Modifier_base<SNC_and_PL>& modifier) {
+   // calls the `operator()' of the `modifier'. Precondition: The
+   // `modifier' returns a consistent representation.
+   SNC_and_PL sncpl(&snc(),pl());
+   modifier(sncpl);
+   pl() = sncpl.pl;
+   CGAL_expensive_postcondition( is_valid());
+ }
+ 
+ protected:
+   int orientation() {
     // Function does not work correctly with every Nef_polyhedron. 
     // It works correctly if v_max is 2-manifold
     TRACEN("orientation");
