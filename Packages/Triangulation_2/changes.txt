@@ -1,7 +1,7 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 7.00 ()
+Ver 7.00 (1/03/02)
 - adapted 2d triangulations to the DS_Container
 - Iterators for finite elements implemented via a filtered iterator
 
