@@ -1,6 +1,10 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
 
+2.26 (10 Dec 2003) [rursu]
+- Files with common functionality were moved into this package 
+  from Polyhedron_IO
+
 2.25 (22 Octo 2003)
 - changed headers
 
