@@ -343,6 +343,7 @@ class Compare_x_at_y_2
     typedef typename K::Line_2     Line_2;
 public:
     typedef Comparison_result      result_type;
+    typedef Arity_tag< 3 >         Arity;
 
     Comparison_result
     operator()( const Point_2& p, const Line_2& h) const
@@ -408,6 +409,7 @@ class Compare_x_2
     typedef typename K::Line_2     Line_2;
 public:
     typedef Comparison_result      result_type;
+    typedef Arity_tag< 2 >     Arity;
 
     Comparison_result
     operator()( const Point_2& p, const Point_2& q) const
@@ -448,6 +450,7 @@ class Compare_y_at_x_2
     typedef typename K::Segment_2  Segment_2;
 public:
     typedef Comparison_result      result_type;
+    typedef Arity_tag< 3 >         Arity;
 
     Comparison_result
     operator()( const Point_2& p, const Line_2& h) const
@@ -483,6 +486,7 @@ class Compare_y_2
     typedef typename K::Line_2    Line_2;
 public:
     typedef Comparison_result     result_type;
+    typedef Arity_tag< 2 >         Arity;
 
     Comparison_result
     operator()( const Point_2& p, const Point_2& q) const
@@ -626,7 +630,8 @@ class Compute_squared_radius_2
     typedef typename K::Point_2     Point_2;
     typedef typename K::Circle_2    Circle_2;
 public:
-    typedef FT         result_type;
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()( const Circle_2& c) const
@@ -644,7 +649,8 @@ class Compute_squared_radius_3
     typedef typename K::Point_3     Point_3;
     typedef typename K::Sphere_3    Sphere_3;
 public:
-    typedef FT         result_type;
+    typedef FT               result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()( const Sphere_3& s) const
@@ -746,6 +752,7 @@ class Construct_centroid_2
     typedef typename K::Point_2  Point_2;
 public:
     typedef Point_2          result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     Point_2
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
@@ -763,6 +770,7 @@ class Construct_centroid_3
     typedef typename K::Point_3  Point_3;
 public:
     typedef Point_3          result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     Point_3
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -781,7 +789,8 @@ class Construct_circle_2
     typedef typename K::Point_2     Point_2;
     typedef typename K::Circle_2    Circle_2;
 public:
-    typedef Circle_2       result_type;
+    typedef Circle_2         result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     Circle_2
     operator()() const
@@ -813,6 +822,7 @@ class Construct_circumcenter_2
     typedef typename K::Point_2  Point_2;
 public:
     typedef Point_2          result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     Point_2
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
@@ -825,6 +835,7 @@ class Construct_circumcenter_3
     typedef typename K::Point_3  Point_3;
 public:
     typedef Point_3          result_type;
+    typedef Arity_tag< 4 >   Arity;
 
     Point_3
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -860,6 +871,7 @@ class Construct_direction_2
     typedef typename K::RT              RT;
 public:
     typedef Direction_2       result_type;
+    typedef Arity_tag< 1 >    Arity;
 
     Direction_2
     operator()() const
@@ -899,6 +911,7 @@ class Construct_direction_3
     typedef typename K::RT              RT;
 public:
     typedef Direction_3       result_type;
+    typedef Arity_tag< 1 >    Arity;
 
     Direction_3
     operator()() const
@@ -933,7 +946,8 @@ class Construct_iso_cuboid_3
     typedef typename K::Point_3       Point_3;
     typedef typename K::Iso_cuboid_3  Iso_cuboid_3;
 public:
-    typedef Iso_cuboid_3   result_type;
+    typedef Iso_cuboid_3      result_type;
+    typedef Arity_tag< 2 >    Arity;
 
     Iso_cuboid_3
     operator()() const
@@ -951,6 +965,7 @@ class Construct_iso_rectangle_2
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
 public:
     typedef Iso_rectangle_2   result_type;
+    typedef Arity_tag< 2 >    Arity;
 
     Iso_rectangle_2
     operator()() const
@@ -986,7 +1001,8 @@ class Construct_line_2
     typedef typename K::Ray_2        Ray_2;
     typedef typename K::Line_2       Line_2;
 public:
-    typedef Line_2  result_type;
+    typedef Line_2            result_type;
+    typedef Arity_tag< 2 >    Arity;
 
     Line_2
     operator()() const
@@ -1024,7 +1040,8 @@ class Construct_line_3
     typedef typename K::Ray_3        Ray_3;
     typedef typename K::Line_3       Line_3;
 public:
-    typedef Line_3  result_type;
+    typedef Line_3            result_type;
+    typedef Arity_tag< 2 >    Arity;
 
     Line_3
     operator()() const
@@ -1378,7 +1395,8 @@ class Construct_plane_3
     typedef typename K::Segment_3    Segment_3;
     typedef typename K::Plane_3      Plane_3;
 public:
-    typedef Plane_3    result_type;
+    typedef Plane_3          result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Plane_3
     operator()() const
@@ -1417,7 +1435,8 @@ class Construct_point_on_2
     typedef typename K::Line_2     Line_2;
     typedef typename K::Ray_2      Ray_2;
 public:
-    typedef Point_2     result_type;
+    typedef Point_2          result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Point_2
     operator()( const Line_2& l, int i) const
@@ -1441,7 +1460,8 @@ class Construct_point_on_3
     typedef typename K::Ray_3      Ray_3;
     typedef typename K::Plane_3    Plane_3;
 public:
-    typedef Point_3     result_type;
+    typedef Point_3          result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Point_3
     operator()( const Line_3& l, int i) const
@@ -1466,7 +1486,8 @@ class Construct_point_2
     typedef typename K::RT         RT;
     typedef typename K::Point_2    Point_2;
 public:
-    typedef Point_2    result_type;
+    typedef Point_2          result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     Point_2
     operator()() const
@@ -1493,7 +1514,8 @@ class Construct_point_3
     typedef typename K::RT         RT;
     typedef typename K::Point_3    Point_3;
 public:
-    typedef Point_3    result_type;
+    typedef Point_3          result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     Point_3
     operator()() const
@@ -1570,6 +1592,7 @@ class Construct_ray_2
     typedef typename K::Ray_2        Ray_2;
 public:
      typedef Ray_2            result_type;
+     typedef Arity_tag< 2 >   Arity;
 
      Ray_2
      operator()() const
@@ -1592,6 +1615,7 @@ class Construct_ray_3
     typedef typename K::Ray_3        Ray_3;
 public:
      typedef Ray_3            result_type;
+     typedef Arity_tag< 2 >   Arity;
 
      Ray_3
      operator()() const
@@ -1649,6 +1673,7 @@ class Construct_segment_2
     typedef typename K::Point_2    Point_2;
 public:
     typedef Segment_2        result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Segment_2
     operator()() const
@@ -1666,6 +1691,7 @@ class Construct_segment_3
     typedef typename K::Point_3    Point_3;
 public:
     typedef Segment_3        result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Segment_3
     operator()() const
@@ -1684,6 +1710,7 @@ class Construct_sphere_3
     typedef typename K::Sphere_3   Sphere_3;
 public:
     typedef Sphere_3        result_type;
+    typedef Arity_tag< 4 >   Arity;
 
     Sphere_3
     operator()() const
@@ -1774,6 +1801,7 @@ class Construct_tetrahedron_3
     typedef typename K::Point_3         Point_3;
 public:
     typedef Tetrahedron_3    result_type;
+    typedef Arity_tag< 4 >   Arity;
 
     Tetrahedron_3
     operator()() const
@@ -1819,7 +1847,8 @@ class Construct_triangle_2
     typedef typename K::Triangle_2   Triangle_2;
     typedef typename K::Point_2      Point_2;
 public:
-    typedef Triangle_2   result_type;
+    typedef Triangle_2       result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     Triangle_2
     operator()() const
@@ -1836,7 +1865,8 @@ class Construct_triangle_3
     typedef typename K::Triangle_3   Triangle_3;
     typedef typename K::Point_3      Point_3;
 public:
-    typedef Triangle_3   result_type;
+    typedef Triangle_3       result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     Triangle_3
     operator()() const
@@ -1854,7 +1884,8 @@ class Construct_vector_2
     typedef typename K::Vector_2     Vector_2;
     typedef typename K::Point_2      Point_2;
 public:
-    typedef Vector_2   result_type;
+    typedef Vector_2         result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Vector_2
     operator()() const
@@ -1886,7 +1917,8 @@ class Construct_vector_3
     typedef typename K::Vector_3     Vector_3;
     typedef typename K::Point_3      Point_3;
 public:
-    typedef Vector_3   result_type;
+    typedef Vector_3         result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Vector_3
     operator()() const
@@ -1970,6 +2002,7 @@ class Coplanar_orientation_3
     typedef typename K::Point_3   Point_3;
 public:
     typedef Orientation  result_type;
+    typedef Arity_tag< 4 >   Arity;
 
     Orientation
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -2928,7 +2961,8 @@ class Side_of_bounded_circle_2
 {
     typedef typename K::Point_2        Point_2;
 public:
-    typedef Bounded_side   result_type;
+    typedef Bounded_side     result_type;
+    typedef Arity_tag< 4 >   Arity;
 
     Bounded_side
     operator()( const Point_2& p, const Point_2& q, const Point_2& t) const
@@ -2946,6 +2980,7 @@ class Side_of_bounded_sphere_3
     typedef typename K::Point_3        Point_3;
 public:
     typedef Bounded_side   result_type;
+    typedef Arity_tag< 5 >   Arity;
 
     Bounded_side
     operator()( const Point_3& p, const Point_3& q, const Point_3& t) const

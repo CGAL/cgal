@@ -1,3 +1,6 @@
+3.99   (6 November 2002)
+- Add Arity to all kernel functors.
+
 3.98   (? November 2002)
 - Remove unused include/CGAL/Kernel/traits_aids.h
 
