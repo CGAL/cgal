@@ -53,7 +53,9 @@ LATEX_CONV_RESOURCE=${HOME}/.latex_to_html.rc
 
 
 # C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
-# CC=gcc
+if [ "$CC" == "" ]; then
+    CC=gcc
+fi
 
 # The header files within the \ccInclude macro can be linked to the original
 # header files if the -header option is given to the cc_extract_html program.
