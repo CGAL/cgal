@@ -1,0 +1,5 @@
+Changes done to the `Optimisation_doc' package
+
+Version 0.5 on 12-Sep-2000
+- moved documentation from `Optimisation_basic'.
+- documentation split up into user and reference manual parts.
