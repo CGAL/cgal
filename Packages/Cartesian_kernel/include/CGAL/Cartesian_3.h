@@ -70,6 +70,7 @@ struct Cartesian_base_3
     typedef CGAL::Triangle_3<R,Rep_tag>           Triangle_3;
     typedef CGAL::Tetrahedron_3<R,Rep_tag>        Tetrahedron_3;
     typedef CGAL::Iso_cuboid_3<R,Rep_tag>         Iso_cuboid_3;
+    typedef CGAL::Sphere_3<R,Rep_tag>             Sphere_3;
     typedef CGAL::Aff_transformation_3<R,Rep_tag> Aff_transformation_3;
 #else
     typedef PointC2<R>                             Point_2;
@@ -95,6 +96,7 @@ struct Cartesian_base_3
     typedef TriangleC3<R>                         Triangle_3;
     typedef TetrahedronC3<R>                      Tetrahedron_3;
     typedef Iso_cuboidC3<R>                       Iso_cuboid_3;
+    typedef SphereC3<R>                           Sphere_3;
     typedef Aff_transformationC3<R>               Aff_transformation_3;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 };
@@ -106,11 +108,6 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Vector_3.h>
 #include <CGAL/Cartesian/Direction_3.h>
 
-#include <CGAL/Cartesian/Point_2.C>
-#include <CGAL/Cartesian/Point_3.C>
-#include <CGAL/Cartesian/Vector_3.C>
-#include <CGAL/Cartesian/Direction_3.C>
-
 #include <CGAL/Cartesian/Line_3.h>
 #include <CGAL/Cartesian/Plane_3.h>
 #include <CGAL/Cartesian/Ray_3.h>
@@ -118,6 +115,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Triangle_3.h>
 #include <CGAL/Cartesian/Tetrahedron_3.h>
 #include <CGAL/Cartesian/Iso_cuboid_3.h>
+#include <CGAL/Cartesian/Sphere_3.h>
 #include <CGAL/Cartesian/Aff_transformation_3.h>
 
 #include <CGAL/Cartesian/global_operators_3.h>
@@ -130,13 +128,6 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/constructions_on_planes_3.h>
 #include <CGAL/Cartesian/distance_computations_3.h>
 
-#include <CGAL/Cartesian/Line_3.C>
-#include <CGAL/Cartesian/Plane_3.C>
-#include <CGAL/Cartesian/Ray_3.C>
-#include <CGAL/Cartesian/Segment_3.C>
-#include <CGAL/Cartesian/Triangle_3.C>
-#include <CGAL/Cartesian/Tetrahedron_3.C>
-#include <CGAL/Cartesian/Iso_cuboid_3.C>
 #include <CGAL/Cartesian/Aff_transformation_3.C>
  
 // #include <CGAL/Kernel/Construction_objects_3.h>

@@ -82,6 +82,7 @@ struct Cartesian_base :
     typedef typename Kernel_base_3::Triangle_3            Triangle_3;
     typedef typename Kernel_base_3::Tetrahedron_3         Tetrahedron_3;
     typedef typename Kernel_base_3::Iso_cuboid_3          Iso_cuboid_3;
+    typedef typename Kernel_base_3::Sphere_3              Sphere_3;
     typedef typename Kernel_base_3::Aff_transformation_3  Aff_transformation_3;
 
     typedef typename Kernel_base_d::Point_d                     Point_d;

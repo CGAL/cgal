@@ -100,15 +100,6 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/constructions_on_circles_2.h>
 #include <CGAL/Cartesian/distance_computations_2.h>
 
-#include <CGAL/Cartesian/Point_2.C>
-#include <CGAL/Cartesian/Vector_2.C>
-#include <CGAL/Cartesian/Direction_2.C>
-#include <CGAL/Cartesian/Line_2.C>
-#include <CGAL/Cartesian/Ray_2.C>
-#include <CGAL/Cartesian/Segment_2.C>
-#include <CGAL/Cartesian/Triangle_2.C>
-#include <CGAL/Cartesian/Circle_2.C>
-#include <CGAL/Cartesian/Iso_rectangle_2.C>
 #include <CGAL/Cartesian/Aff_transformation_2.C>
 
 // #include <CGAL/Kernel/Construction_objects_2.h>
