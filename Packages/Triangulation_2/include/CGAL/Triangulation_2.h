@@ -50,11 +50,10 @@
 
 
 CGAL_BEGIN_NAMESPACE
-template < class Gt, class Tds > class Triangulation_2;
+template < class Gt, class Tds > Triangulation_2;
 template < class Gt, class Tds > std::istream& operator>>
     (std::istream& is, Triangulation_2<Gt,Tds> &tr);
-template < class Gt, class Tds >  std::ostream& operator< // template<class OutputIterator>
-  // bool are_there_incident_constraints(Vertex_handle v, OutputIterator out)<
+template < class Gt, class Tds >  std::ostream& operator<<
   (std::ostream& os, const Triangulation_2<Gt,Tds> &tr);
   
 
