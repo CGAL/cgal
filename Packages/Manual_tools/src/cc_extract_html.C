@@ -158,6 +158,8 @@ const char* new_remember_font( char c) {
 	return new_remember_font( tt_font);
     case 'I':
 	return new_remember_font( it_font);
+    case 'B':
+	return new_remember_font( bf_font);
     default:
 	font_tag_buffer[0] = '\\';
 	font_tag_buffer[1] = c;
@@ -1089,6 +1091,41 @@ char* convert_ascii_to_html( const char* txt) {
 char* convert_C_to_html( const char* txt) {
     current_font = it_font;
     char* tmp = convert_ascii_to_html( txt);
+    const char* end_font = new_font_tags( it_font);
+    char* formatted = new char[ strlen( tmp) + strlen( end_font) + 8];
+    strcpy( formatted, "<I>");
+    strcat( formatted, tmp);
+    strcat( formatted, end_font);
+    strcat( formatted, "</I>");
+    delete[] tmp;
+    return formatted;
+}
+
+char* convert_ccStyle2_to_html( const char* txt) {
+    if ( txt == NULL) {
+        char *q = new char[1];
+	q[0] = '\0';
+	return q;
+    }
+    char* s = new char[ strlen_ascii_to_html( txt) + 1];
+    char* p = s;
+    while( *txt) {
+	if ( *txt == '\\' && isupper(txt[1]) && txt[2] == '\\') {
+	    const char* q = new_remember_font( txt[1]);
+	    while ( *q)
+	        *p++ = *q++;
+	    txt += 2;
+	} else
+	    *p++ = *txt;
+	++txt;
+    }
+    *p = '\0';
+    return s;
+}
+
+char* convert_ccStyle_to_html( const char* txt) {
+    current_font = it_font;
+    char* tmp = convert_ccStyle2_to_html( txt);
     const char* end_font = new_font_tags( it_font);
     char* formatted = new char[ strlen( tmp) + strlen( end_font) + 8];
     strcpy( formatted, "<I>");
@@ -3052,6 +3089,15 @@ char      cross_link_anchor_buffer[ cross_link_anchor_len];
 int       cross_link_anchor_counter = 0;
 
 const char* handleHtmlCrossLink( const char* key, bool tmpl_class) {
+    // test empty key.
+    const char* p = key;
+    while( p && isspace(*p))
+	p++;
+    if ( !p || *p == '\0') {
+	printErrorMessage( EmptyCrossLinkError);
+	exit( 1);
+    }
+
     char *tmp_name = convert_ascii_to_html( key);
     *anchor_stream << "[a-zA-Z0-9_]\"" << tmp_name
 		   << "\"    { ECHO; }" << endl;
@@ -3089,6 +3135,15 @@ const char* handleHtmlCrossLink( const char* key, bool tmpl_class) {
 }
 
 void handleClasses( const char* classname, const char* template_cls) {
+    // test empty classname.
+    const char* p = classname;
+    while( p && isspace(*p))
+	p++;
+    if ( !p || *p == '\0') {
+	printErrorMessage( EmptyClassNameError);
+	exit( 1);
+    }
+
     // Name manipulation.
     if ( template_cls)
         template_class_name = newstr( template_cls);

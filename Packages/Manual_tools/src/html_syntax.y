@@ -54,6 +54,7 @@ int CCMode = 0;
 extern char* class_name;
 extern char* formatted_class_name;
 char* text_block_to_string( const Text& T);
+char* convert_ccStyle_to_html( const char* txt);
 
 /* for the bibliography */
 /* ==================== */
@@ -273,10 +274,12 @@ stmt:             string              {   handleBuffer( * $1);
 		| CREATIONVARIABLE    {}
 		| CCSTYLE  '{' nested_token_sequence '}'  {
 					  set_INITIAL = 1;
-					  handleString( "<I>");
-					  handleText( * $3);
-					  handleString( "</I>");
+					  char* s = text_block_to_string( *$3);
+                                          char* p = convert_ccStyle_to_html(s);
+					  handleString( p);
  		                          current_font = unknown_font;
+					  delete[] p;
+					  delete[] s;
 					  delete $3;
 		                      }
 		| INCLUDE  '{' comment_sequence '}'  {
@@ -847,23 +850,15 @@ compound_comment:   '{' full_comment_sequence '}' {
 							     $2); 
 		                }
                   | CCSTYLE '{' nested_token_sequence '}'  { 
-				  $$ = $3;
-		                  set_INITIAL = 1;
-                                  if ( $$->isEmpty() || 
-				       $$->head().isSpace)  // should not
-		                      $$->cons(   *new TextToken( "<I>", 1));
-                                  else
-		                      $$->head().prepend( "<I>");
-                                  InListFIter< TextToken> ix( * $$);
-				  ForAll( ix) {
-				      if ( ix.isLast())
-					  if ( ix->isSpace)
-					      $$->append( *new TextToken(
-                                                              "</I>", 1));
-					  else
-					      ix->add( "</I>");
-				  }
-	                          current_font = unknown_font;
+				  set_INITIAL = 1;
+				  char* s = text_block_to_string( *$3);
+                                  char* p = convert_ccStyle_to_html(s);
+		                  $$ = new Text( managed);
+				  $$->cons(   *new TextToken( p));
+ 		                  current_font = unknown_font;
+				  delete[] p;
+				  delete[] s;
+				  delete $3;
                                 }
                   | verbatim_style {
 		                  $$ = new Text( managed);
@@ -1240,6 +1235,10 @@ const char* errorMessage( ErrorNumber n) {
         return "Malformed chapter structure: one chapter per file";
     case UnknownIndexCategoryError:
         return "Unknown index category in optional argument of \\ccHtmlIndex";
+    case EmptyClassNameError:
+	return "The classname was empty";
+    case EmptyCrossLinkError:
+	return "The key for a cross link was empty";
     }
     return "UNKNOWN ERROR MESSAGE NUMBER";
 }
@@ -1254,13 +1253,14 @@ void  printErrorMessage( ErrorNumber n){
 // -----------------
 Text* blockintroProcessing( const char* text, int len, Text* t) { 
     if ( len < 0) {  /* Hack! Here we know that t has to get capitalized.*/
-        len = 4;
+        len = strlen(text);
         InListFIter< TextToken> ix( *t);
         ForAll( ix) {
 	    if ( ! (*ix).isSpace) {
 	        char *s = (*ix).string;
 		while ( *s) {
-                    *s++ = toupper( *s);
+                    *s = toupper( *s);
+		    s++;
 		}
 	    }
         }
@@ -1275,7 +1275,7 @@ Text* blockintroProcessing( const char* text, int len, Text* t) {
 
 Buffer* blockintroProcessing( const char* text, int len, Buffer* t) { 
     if ( len < 0) {  /* Hack! Here we know that t has to get capitalized.*/
-        len = 4;
+        len = strlen(text);
         t->capitalize();
     }
     t->prepend( text, len);

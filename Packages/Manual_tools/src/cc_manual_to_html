@@ -254,12 +254,12 @@ if ( "$in_files" == "") goto usage
 
 # Make a subdirectory for the temp_path:
 # --------------------------------------
-set tmp_name = "extract_html_tmp"
-if ( $?DEBUG) echo "# Make a subdirectory 'extract_html_tmp' for the tmp_path."
+set tmp_name = "extract_html_tmp_$USER"
+if ( $?DEBUG) echo "# Make a subdirectory $tmp_name for the tmp_path."
 
 set new_tmp_path =  ${tmp_path}/${tmp_name}
 if ( -d ${new_tmp_path}) then
-    echo "error: the subdirectory 'extract_html_tmp' for the tmp_path exists already."
+    echo "error: the subdirectory $tmp_name for the tmp_path exists already."
     echo "       type 'rm -r ${new_tmp_path}' to remove it."
     goto usage
 endif

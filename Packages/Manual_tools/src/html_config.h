@@ -195,7 +195,9 @@ enum ErrorNumber {
     IncludeNestingTooDeepError,
     IncludeOpenError,
     ChapterStructureError,
-    UnknownIndexCategoryError
+    UnknownIndexCategoryError,
+    EmptyClassNameError,
+    EmptyCrossLinkError
 };
 
 

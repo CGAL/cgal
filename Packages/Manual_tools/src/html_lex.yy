@@ -1430,6 +1430,12 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		        yylval.string.len  = -1;
 			return STRING;
                 }
+<CCMode,ccStyleMode>[\\]bf/{noletter}      {
+		        skipspaces();
+		        yylval.string.text = "\\B\\";
+		        yylval.string.len  = -1;
+			return STRING;
+                }
 <CCMode,ccStyleMode>[\\]ccFont/{noletter}  {
 		        skipspaces();
 		        yylval.string.text = "\\I\\";
@@ -1559,18 +1565,27 @@ void init_scanner( FILE* in){
 
 void skipspaces( void) {
     int c = yyinput();
-    while( c && c <= ' ')
+    while( c && c <= ' ') {
+	if ( c == '\n')
+	    line_number++;
         c = yyinput();
+    }
     unput( c);
 }
 
 void skipoptionalparam( void) {
     int c = yyinput();
-    while( c && c <= ' ')
+    while( c && c <= ' ') {
+	if ( c == '\n')
+	    line_number++;
         c = yyinput();
+    }
     if ( c == '[')
-        while( c && c != ']')
+        while( c && c != ']') {
+	    if ( c == '\n')
+	        line_number++;
             c = yyinput();
+        }
     else
         unput( c);
 }
