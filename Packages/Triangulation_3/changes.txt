@@ -1,3 +1,6 @@
+Version 1.88 (?? September 01)
+- Use Pointer<> directly, no need for Triangulation_*_handle_3<>.
+
 Version 1.87 (11 September 01)
 - Remove deprecated code.
 - Internal classes now templated either by Tds or Tr so they are more easily

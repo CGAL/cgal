@@ -42,14 +42,13 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 
-#include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Pointer.h>
 
 #include <CGAL/Triangulation_ds_cell_3.h>
 #include <CGAL/Triangulation_ds_vertex_3.h>
 
 #include <CGAL/Triangulation_ds_iterators_3.h>
 #include <CGAL/Triangulation_ds_circulators_3.h>
-#include <CGAL/Triangulation_handles_3.h>
 
 #include <CGAL/DS_Container.h>
 
@@ -59,7 +58,6 @@ template <class Vb, class Cb>
 class Triangulation_data_structure_3
   : public Triangulation_utils_3
 {
-  typedef Triangulation_data_structure_3<Vb, Cb>   Self;
 public:
 
   typedef Triangulation_data_structure_3<Vb,Cb>    Tds;
@@ -69,13 +67,10 @@ public:
   typedef Triangulation_ds_vertex_3<Tds>           Vertex;
   typedef Triangulation_ds_cell_3<Tds>             Cell;
 
-  typedef Triangulation_cell_handle_3<Self>        Cell_handle;
-  typedef Triangulation_vertex_handle_3<Self>      Vertex_handle;
-  // TODO : The following (simpler), should work.  One day...
-  //typedef Pointer<Cell>        Cell_handle;
-  //typedef Pointer<Vertex>      Vertex_handle;
-  //typedef Cell *        Cell_handle;
-  //typedef Vertex *      Vertex_handle;
+  typedef Pointer<Cell>        Cell_handle;
+  typedef Pointer<Vertex>      Vertex_handle;
+  // typedef Cell *        Cell_handle;
+  // typedef Vertex *      Vertex_handle;
 
   typedef std::pair<Cell_handle, int>              Facet;
   typedef triple<Cell_handle, int, int>            Edge;

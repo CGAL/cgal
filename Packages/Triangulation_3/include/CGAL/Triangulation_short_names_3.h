@@ -26,8 +26,6 @@
 #define Triangulation_vertex_base_3                 T_vb
 #define Triangulation_cell_base_3                   T_cb
 
-#define Triangulation_geom_traits_3                 T_gt
-
 #define Triangulation_data_structure_3              TDS
 
 #define Triangulation_ds_vertex_3                   TDS_v
@@ -40,9 +38,6 @@
 #define Triangulation_ds_facet_circulator_3         TDS_fcir
 
 #define Triangulation_3                             TR
-
-#define Triangulation_vertex_handle_3               T_vh
-#define Triangulation_cell_handle_3                 T_ch
 
 #define Triangulation_finite_iterator_3             T_Fit
 #define Triangulation_finite_iterator2_3            T_Fit2
