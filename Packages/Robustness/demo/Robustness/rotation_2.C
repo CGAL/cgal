@@ -22,7 +22,11 @@
  
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpz.h>
+#ifdef CGAL_USE_GMP
+#  include <CGAL/Gmpz.h>
+#else
+#  include <CGAL/MP_Float.h>
+#endif
 #include <cmath>
 #include <vector>
 #include <algorithm>
@@ -43,7 +47,11 @@ typedef CGAL::Cartesian<double>           CartesianDouble;
 typedef CartesianDouble::Point_2          Point;
 typedef CartesianDouble::Direction_2      Direction;
 typedef std::vector<Point>                Vector;
+#ifdef CGAL_USE_GMP
 typedef CGAL::Homogeneous<CGAL::Gmpz>     HomogeneousInteger;
+#else
+typedef CGAL::Homogeneous<CGAL::MP_Float> HomogeneousInteger;
+#endif
 typedef CGAL::Cartesian<exact_NT>         CartesianLedaReal;
 
 
