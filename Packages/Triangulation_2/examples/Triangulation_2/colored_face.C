@@ -6,7 +6,6 @@
 #include <CGAL/Triangulation_2.h>
 
 using namespace CGAL;
-using namespace std;
 
 /* A facet with a color member variable. */
 template < class Gt >
@@ -37,7 +36,7 @@ int main() {
     Triangulation t;
     Point p;
    
-    while (cin >> p){
+    while (std::cin >> p){
         t.insert(p);
     }
     Face_iterator fc = t.faces_begin();
