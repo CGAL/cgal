@@ -19,12 +19,12 @@
 \ccDefinition
   
 The class \ccRefName\ is a model of the concept
-\ccc{Triangulation_hieararchy_vertex_base_2_concept}.
+\ccc{Triangulation_hierarchy_vertex_base_2_concept}.
 This class is templated by a parameter \ccc{Vb}
-which is to be templated by a model of  the concept
-\ccc{Triangulation_vertex_base_2_concept}
+which is to be instancuated by a model of  the concept
+\ccc{Triangulation_vertex_base_2_concept}.
 The class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>} inherits
-from its template parameter \ccc{Vb}.
+from the class \ccc{Vb}.
 This design allows to use either the default
 vertex base class or a user customized
 vertex base with additionnal functionalities.
@@ -41,8 +41,8 @@ vertex base with additionnal functionalities.
 \ccTypedef{Vb::Point Point;}{The point type.}
 
 \ccSeeAlso
-\ccc{Triangulation_vertex_base_2_concept} //
-\ccc{Triangulation_hieararchy_vertex_base_2_concept} //
+\ccc{Triangulation_vertex_base_2_concept} \\
+\ccc{Triangulation_hieararchy_vertex_base_2_concept} \\
 \ccc{CGAL::Triangulation_vertex_base_2<Traits>}
 
 
