@@ -1,3 +1,6 @@
+Version 2.43 (09 February 2004) [rursu]
+- Updated headers in examples
+
 2.42 (21 October 2003)
 - fix headers
 
