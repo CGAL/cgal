@@ -1,3 +1,7 @@
+1 September 2004 Menelaos Karavelas
+- added the following tags in number type traits: Has_exact_sqrt,
+  Has_exact_ring_operations, Has_exact_division
+
 21 August 2004 Sylvain Pion
 - Undo last change.
 

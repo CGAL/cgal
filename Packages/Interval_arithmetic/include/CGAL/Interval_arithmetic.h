@@ -55,6 +55,11 @@ public:
   typedef Tag_true    Has_division;
   typedef Tag_true    Has_sqrt;
 
+  // ??? MK: We may have to look back at these...
+  typedef Tag_false   Has_exact_ring_operations;
+  typedef Tag_false   Has_exact_division;
+  typedef Tag_false   Has_exact_sqrt;
+
   typedef CGALi::Unsafe_comparison unsafe_comparison;
 
   static unsigned number_of_failures;	// Number of filter failures.

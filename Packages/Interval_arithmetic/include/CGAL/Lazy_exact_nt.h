@@ -260,6 +260,13 @@ public :
   typedef typename Number_type_traits<ET>::Has_division Has_division;
   typedef typename Number_type_traits<ET>::Has_sqrt     Has_sqrt;
 
+  typedef typename Number_type_traits<ET>::Has_exact_sqrt Has_exact_sqrt;
+  typedef typename Number_type_traits<ET>::Has_exact_division
+  Has_exact_division;
+  typedef typename Number_type_traits<ET>::Has_exact_ring_operations
+  Has_exact_ring_operations;
+  
+
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_rep<ET> Self_rep;
 

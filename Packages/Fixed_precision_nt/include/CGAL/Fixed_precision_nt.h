@@ -99,6 +99,10 @@ public:
   typedef Tag_true        Has_division;
   typedef Tag_false       Has_sqrt;
 
+  typedef Tag_false       Has_exact_ring_operations;
+  typedef Tag_false       Has_exact_division;
+  typedef Tag_false       Has_exact_sqrt;
+
   // constructors
   Fixed_precision_nt() {_value=0;}
   Fixed_precision_nt(const Fixed_precision_nt&f) {_value=f._value;}
