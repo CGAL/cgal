@@ -426,14 +426,15 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
     else
       nearest = position->vertex(1);
     // compare to vertex 2
-    if ( ! hierarchy[level]->is_infinite(position->vertex(2)))
-      if ( closer( position->vertex(2)->point(), nearest->point()))
+    if ( dimension() >= 2
+      && ( ! hierarchy[level]->is_infinite(position->vertex(2)))
+      && ( closer( position->vertex(2)->point(), nearest->point())))
 	nearest = position->vertex(2);
     // compare to vertex 3
-    if ( dimension() == 3 )
-      if ( ! hierarchy[level]->is_infinite(position->vertex(3)))
-        if ( closer( position->vertex(3)->point(), nearest->point()))
-	  nearest = position->vertex(3);
+    if ( dimension() == 3
+      && ( ! hierarchy[level]->is_infinite(position->vertex(3)))
+      && ( closer( position->vertex(3)->point(), nearest->point())))
+	nearest = position->vertex(3);
     // go at the same vertex on level below
     nearest = (Vertex*)( nearest->down() );
     position = nearest->cell();                // incident cell
