@@ -26,7 +26,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-const Origin      ORIGIN;
-const Null_vector NULL_VECTOR;
+const Origin      ORIGIN = Origin();
+const Null_vector NULL_VECTOR = Null_vector();
 
 CGAL_END_NAMESPACE
