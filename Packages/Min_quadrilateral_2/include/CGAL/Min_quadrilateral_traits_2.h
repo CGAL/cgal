@@ -109,28 +109,17 @@ struct Min_quadrilateral_default_traits_2 {
   typedef Min_strip_2< R >                   Strip_2;
 
   // Predicates
-  typedef std::equal_to< Point_2 >           Equal_2;
-  struct Less_x_2
-  : public CGAL_STD::binary_function< Point_2, Point_2, bool >
-  {
-    bool
-    operator()(const Point_2& p, const Point_2& q) const
-    { return p.x() < q.x(); }
-  };
-  struct Less_y_2
-  : public CGAL_STD::binary_function< Point_2, Point_2, bool >
-  {
-    bool
-    operator()(const Point_2& p, const Point_2& q) const
-    { return p.y() < q.y(); }
-  };
-  struct Greater_x_2
-  : public CGAL_STD::binary_function< Point_2, Point_2, bool >
-  {
-    bool
-    operator()(const Point_2& p, const Point_2& q) const
-    { return p.x() > q.x(); }
-  };
+  typedef typename R::Equal_2                Equal_2;
+  // std::equal_to< Point_2 >                Equal_2;
+  typedef typename R::Less_x_2               Less_x_2;
+  typedef typename R::Less_y_2               Less_y_2;
+      struct Greater_x_2
+      : public CGAL_STD::binary_function< Point_2, Point_2, bool >
+      {
+        bool
+        operator()(const Point_2& p, const Point_2& q) const
+        { return p.x() > q.x(); }
+      };
   struct Greater_y_2
   : public CGAL_STD::binary_function< Point_2, Point_2, bool >
   {
