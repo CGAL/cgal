@@ -962,6 +962,7 @@ class Segment_cached_2 :
   typedef typename Kernel_::Line_2                Line_2;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+public:
   using Base::ps;
   using Base::pt;
 #endif
