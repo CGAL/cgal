@@ -29,7 +29,8 @@ public:
   // -- public typedef --
 
   typedef Tr Triangulation;
-  typedef Conforming_Delaunay_triangulation_2<Tr> Conform; 
+  typedef Conforming_Delaunay_triangulation_2<Tr> Conform;
+  typedef Conform Self;
   /**< The \em Self type, for use by nested types. */
   
 
@@ -227,7 +228,7 @@ public:
 	  Side_of_oriented_circle_2;
 	
 	const Side_of_oriented_circle_2 in_circle =
-	  ct.geom_traits.side_of_oriented_circle_2_object();
+	  ct.geom_traits().side_of_oriented_circle_2_object();
 	
 	const Point& a = fh->vertex(ct.cw(i))->point();
 	const Point& b = fh->vertex(ct.ccw(i))->point();
@@ -252,8 +253,7 @@ public:
   //@{
 private:
   /** Fake insert() function. */
-  void insert() {};
-
+  void fake_insert() {};
   //@}
 
   /** \name ASSIGNMENT

@@ -68,7 +68,7 @@ int main(int argc, char** argv)
   if(input)
     {
       read_poly(conform, input);
-      conform.make_conforming_Gabriel();
+      conform.make_conforming_Delaunay();
     }
   else
     {
