@@ -50,7 +50,7 @@ using namespace leda;
 #endif
 
 typedef leda_rational                                   NT;
-typedef CGAL::Arr_leda_segment_exact_traits<NT>         Traits;
+typedef CGAL::Arr_leda_segment_exact_traits             Traits;
 
 typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               X_curve;
