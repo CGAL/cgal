@@ -1,3 +1,6 @@
+22 September 2004 Sylvain Pion
+- Leftturn_2 -> Left_turn_2.
+
 8 September 2004 Sylvain Pion
 - Document the "All" CVS module.
 - Mention developer_scripts/crypt_passwd.

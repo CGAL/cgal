@@ -83,7 +83,7 @@ due to Andrews) is as follows:
                                    OutputIterator result,
                                    const Traits &      ch_traits);}
            {{\sc traits}: operates on \ccc{Traits::Point_2} using
-            \ccc{Traits::Leftturn_2} and 
+            \ccc{Traits::Left_turn_2} and 
             \ccc{Traits::Less_xy_2}.
            }
 \lcRawHtml{</A>}
@@ -91,9 +91,9 @@ due to Andrews) is as follows:
 
 You notice that there is a template parameter named \ccc{Traits}, 
 and you also see a comment that mentions three identifiers (\ccc{Point_2}, 
-\ccc{Leftturn_2} and \ccc{Less_xy_2}) that have to be defined in the
+\ccc{Left_turn_2} and \ccc{Less_xy_2}) that have to be defined in the
 scope of the traits class in order for the algorithm to work.
-As you can guess, \ccc{Leftturn_2} is responsible for the orientation 
+As you can guess, \ccc{Left_turn_2} is responsible for the orientation 
 test, while \ccc{Less_xy_2} does the sorting. So, obviously, the traits class
 must provide these three identifiers. The requirements it has to satisfy
 beyond that are documented in full with the concept ConvexHullTraits\_2.
@@ -127,7 +127,7 @@ following specifications:
         where $p_x$ and $p_y$ denote $x$ and $y$ coordinate of point $p$,
         respectively.
        }
-\ccNestedType{Leftturn_2}%
+\ccNestedType{Left_turn_2}%
        {Predicate object type that must provide
         \ccc{bool operator()(Point_2 p,Point_2 q,Point_2 r)}, which
         returns \ccc{true} iff \ccc{r} lies to the left of the
@@ -146,14 +146,14 @@ object types must exist.
 \setlength\parskip{0mm}
 \ccMemberFunction{Less_xy_2 less_xy_2_object(); }{}
 \ccGlue
-\ccMemberFunction{Leftturn_2 leftturn_2_object(); }{}
+\ccMemberFunction{Left_turn_2 left_turn_2_object(); }{}
 
 \end{ccRefConcept}
 \ccAutoIndexingOn
 
 This ends the copied manual text. 
 Some comments are in order here. You might have expected \ccc{Less_xy_2}
-and \ccc{Leftturn_2} to be simply member functions of the traits class.
+and \ccc{Left_turn_2} to be simply member functions of the traits class.
 \ccIndexMainItemBegin{function objects}
 Instead, they are function object types, and there are member 
 functions generating instances of these types, \ie, the actual function 
