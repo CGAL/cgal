@@ -83,10 +83,10 @@ _test_line_face_circulator( const Triangulation & )
  m.push_back(m1); m.push_back(m2); m.push_back(m3); m.push_back(m4);
 
  Cls tr;
- typename std::vector<Point>::iterator pit;
- typename std::vector<Point>::iterator qit;
- typename std::vector<Point>::iterator mit;
- typename std::vector<Point>::iterator tit;
+ std::vector<Point>::iterator pit;
+ std::vector<Point>::iterator qit;
+ std::vector<Point>::iterator mit;
+ std::vector<Point>::iterator tit;
  int i; 
  Locate_type(lt);
 
