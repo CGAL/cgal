@@ -21,23 +21,22 @@ int main()
 #include "../../include/CGAL/Snap_rounding_traits_2.h"
 #include "../../include/CGAL/Snap_rounding_2.h"
 
-typedef leda_rational                            Number_type;
-typedef CGAL::Cartesian<Number_type>             Rep;
-typedef CGAL::Snap_rounding_traits_2<Rep>        Sr_traits;
-typedef Rep::Segment_2                           Segment_2;
-typedef Rep::Point_2                             Point_2;
-typedef std::list<Segment_2>                     Segment_list_2;
-typedef std::list<Point_2>                       Polyline_2;
-typedef std::list<Polyline_2>                    Polyline_list_2;
-typedef CGAL::Iso_rectangle_2<Rep>               Iso_rectangle_2;
-typedef CGAL::Window_stream                      Window_stream;
-typedef std::list<Segment_2>                     Segment_2_list;
-typedef Segment_2_list::const_iterator           Segment_2_list_const_iterator;
-typedef Segment_2_list::iterator           Segment_2_list_iterator;
-typedef std::list<Point_2>                       Point_2_list;
-typedef Point_2_list::const_iterator             Point_2_list_const_iterator;
-typedef std::list<std::list<Point_2> >           Polyline_2_list;
-typedef Polyline_2_list::const_iterator          Polyline_2_list_const_iterator;
+typedef leda_rational                        Number_type;
+typedef CGAL::Cartesian<Number_type>         Rep;
+typedef CGAL::Snap_rounding_traits_2<Rep>    Sr_traits;
+typedef Rep::Segment_2                       Segment_2;
+typedef Rep::Point_2                         Point_2;
+typedef std::list<Segment_2>                 Segment_list_2;
+typedef std::list<Point_2>                   Polyline_2;
+typedef std::list<Polyline_2>                Polyline_list_2;
+typedef CGAL::Iso_rectangle_2<Rep>           Iso_rectangle_2;
+typedef std::list<Segment_2>                 Segment_2_list;
+typedef Segment_2_list::const_iterator       Segment_2_list_const_iterator;
+typedef Segment_2_list::iterator             Segment_2_list_iterator;
+typedef std::list<Point_2>                   Point_2_list;
+typedef Point_2_list::const_iterator         Point_2_list_const_iterator;
+typedef std::list<std::list<Point_2> >       Polyline_2_list;
+typedef Polyline_2_list::const_iterator      Polyline_2_list_const_iterator;
 
 void read_data(char *argv[],
                Number_type &prec,
@@ -72,7 +71,6 @@ void read_data(char *argv[],
                                    Point_2(x2,y2)));
   }
 }
-
 
 int main(int argc,char *argv[])
 {
