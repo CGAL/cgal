@@ -77,6 +77,11 @@ std::pair<double,double> to_interval(const MP_Float &);
 bool is_finite(const MP_Float &);
 bool is_valid(const MP_Float &);
 
+template<typename> class Quotient;
+
+double to_double(const Quotient<MP_Float>&);
+std::pair<double,double> to_interval(const Quotient<MP_Float>&);
+
 // long
 
 double to_double(long);
@@ -277,6 +282,17 @@ Gmpz div(const Gmpz &, const Gmpz &);
 Gmpz gcd(const Gmpz &, const Gmpz &);
 Gmpz gcd(const Gmpz &, int);
 std::pair<double, double> to_interval (const Gmpz &);
+
+CGAL_END_NAMESPACE
+
+#include <CGAL/Quotient.h>
+
+#ifdef CGAL_USE_GMP
+#  include <CGAL/Gmpz.h>
+#endif
+
+CGAL_BEGIN_NAMESPACE
+
 double to_double(const Quotient<Gmpz>&);
 
 // Gmpq

@@ -1,5 +1,9 @@
 2 September 2004 Sylvain Pion & Menelaos Karavelas
-- number_type_basic.h : Replace #includes by declarations (for g++ 3.4).
+- number_type_basic.h :
+  - Replace #includes by declarations (for g++ 3.4).
+  - added declarations for specializations for Quotient<MP_Float>
+  - added includes for Gmpz.h and Quotient.h, necessary for g++ 3.4
+- Gmp.C : file removed and corresponding code was moved back to Gmpz.h
 
 1 September 2004 Sylvain Pion
 - Add missing #include <CGAL/Quotient.h> in src/MP_Float.C.
