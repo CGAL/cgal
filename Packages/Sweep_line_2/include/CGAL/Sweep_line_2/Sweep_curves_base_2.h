@@ -941,10 +941,10 @@ public:
   typedef typename std::map<Point, Point_plus, less_xy<Point> >
                                                     Vertices_points_plus;
 
-  typedef typename std::map<Point,Intersection_point_node,less_xy<Point>
+  typedef typename std::map<Point,Intersection_point_node,less_xy<Point> >
                                                              Event_queue;
 
-  typedef typename std::set<Curve_node, less_yx<Curve_node>  Status_line; 
+  typedef typename std::set<Curve_node, less_yx<Curve_node> > Status_line; 
   
   typedef std::list<X_curve>                        X_curve_list;
   typedef typename X_curve_list::iterator           X_curve_list_iterator;
