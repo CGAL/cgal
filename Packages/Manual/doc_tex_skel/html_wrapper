@@ -8,7 +8,5 @@
 
 \ccDefGlobalScope{CGAL::}
 \newcommand{\cgalColumnLayout}{}
-\newcommand{\cgalReferToAssertions}
-{Section~2 of the Reference Manual Part 0, General Introduction}
 
 \input{main}
