@@ -368,11 +368,11 @@ insert(const Point & a)
 
 
 template < class Gt, class Tds >  
-inline 
 Constrained_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle 
 Constrained_Delaunay_triangulation_2<Gt, Tds>::
 special_insert_in_edge(const Point & a, Face_handle f, int i)
   // insert  point p in edge(f,i)
+  // bypass the precondition for point a to be in edge(f,i)
   // update constrained status
   // and restore Delaunay constrained property
   // this function is intended to be use by refine
@@ -381,19 +381,12 @@ special_insert_in_edge(const Point & a, Face_handle f, int i)
   Vertex_handle c1,c2;
   c1 = f->vertex(cw(i));  //endpoint of edge
   c2 = f->vertex(ccw(i)); //endpoint of edge
-
-  // CGAL_triangulation_precondition(
-  //   geom_traits().orientation(c1->point(), a, c2->point()) == COLLINEAR &&
-  //   collinear_between(c1->point(), p, c2->point()));
-
-  // inserting a bypassing the precondition of
-  // va = Triangulation::insert_in_edge(a,f,i);
-  // because midpoint is not exact
-  // TO BE DISCUSSED
+  bool insert_in_constrained_edge = f->is_constrained(i);
+ 
   va = static_cast<Vertex*> (_tds.insert_in_edge(&(*f), i));
   va->set_point(a);
 
-  if (f->is_constrained(i)) update_constraints_incident(va, c1,c2);
+  if (insert_in_constrained_edge) update_constraints_incident(va, c1,c2);
   else clear_constraints_incident(va);
   if (dimension() == 2) update_constraints_opposite(va);
   flip_around(va); 

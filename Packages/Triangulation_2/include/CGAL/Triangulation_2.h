@@ -160,7 +160,8 @@ public:
   bool is_edge(Vertex_handle va, Vertex_handle vb) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr,
 	       int & i) const;
-  bool includes_edge(Vertex_handle va, Vertex_handle & vb,
+  bool includes_edge(Vertex_handle va, Vertex_handle vb,
+		     Vertex_handle& vbb,
 		     Face_handle& fr, int & i) const;
   //bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const;
   //bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
@@ -556,11 +557,12 @@ is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i) const
 template <class Gt, class Tds >
 bool 
 Triangulation_2<Gt, Tds>::
-includes_edge(Vertex_handle va, Vertex_handle & vb,
+includes_edge(Vertex_handle va, Vertex_handle vb,
+	      Vertex_handle & vbb,
 	      Face_handle& fr, int & i) const
   // returns true if the line segment ab contains an edge e of t 
   // incident to a, false otherwise
-  // if true, b becomes the vertex of e distinct from a
+  // if true, vbb becomes the vertex of e distinct from a
   // fr is the face incident to e and e=(fr,i)
   // fr is on the right side of a->b
 {
@@ -575,6 +577,7 @@ includes_edge(Vertex_handle va, Vertex_handle & vb,
       v = ((*ec).first)->vertex(indv);
       if (!is_infinite(v)) {
 	if (v==vb) {
+	  vbb = vb;
 	  fr=(*ec).first;
 	  i= (*ec).second;
 	  return true;
@@ -587,14 +590,14 @@ includes_edge(Vertex_handle va, Vertex_handle & vb,
 	     (collinear_between (va->point(),
 				 v->point(),
 				 vb->point()))) {
-	    vb=v;
+	    vbb = v;
 	    fr=(*ec).first;
 	    i= (*ec).second;
 	    return true;
 	  }
 	}
       }
-    }	while (++ec != done);
+    } while (++ec != done);
   }
   return false;
 }
