@@ -36,11 +36,48 @@ permutations (e.g.~for points on a grid).
 
 % +------------------------------------------------------------------------+
 \newpage
+\section{Support Functions for Generators}
+\ccThree{OutputIterator}{rand}{}
+
+Two support functions are provided. \ccc{CGAL_ncopy()} copies $n$
+items from an input iterator to an output iterator which is useful for
+possibly infinite sequnces of random geometric objects.
+\ccc{CGAL_random_selection} chooses $n$ items at random from a random
+access iterator range which is useful to produce degenerate input data
+sets with multiple entries of identical items.
+
+\subsection{{\it CGAL\_ncopy()}}
+\label{sectionNCopy}
+
+\ccFunction{template <class InputIterator, class OutputIterator>
+  OutputIterator CGAL_ncopy( InputIterator first, size_t n, 
+  OutputIterator first2);}
+{copies the first $n$ elements from \ccc{first} to \ccc{first2}.}
+
+\subsection{{\it CGAL\_random\_selection()}}
+\label{sectionRandomSelection}
+
+\ccFunction{template <class RandomAccessIterator, class OutputIterator>
+    OutputIterator CGAL_random_selection( RandomAccessIterator first,
+        RandomAccessIterator last, 
+        size_t n, OutputIterator first2, CGAL_Random& rnd = CGAL_random);}
+{ choose a random item from the range $[\ccc{first},\ccc{last})$ and
+    write it to \ccc{first2}, each item from the range with equal
+    probability. Repeat this $n$ times, thus writing $n$ items to
+    \ccc{first2}.
+    A single random number is needed from \ccc{rnd} for each item.
+    Returns the value of \ccc{first2} after inserting the $n$ items.
+}
+
+
+
+% +------------------------------------------------------------------------+
+\newpage
 \section{2D Point Generators}
 
 \ccDefinition
 
-Point generators are provided for random points equally distributed
+Point generators are provided for random points uniformly distributed
 over a two-dimensional domain (square or disc) or a one-dimensional
 domain (boundary of a square, circle, or segment). Other point
 generators create two-dimensional grids or equally spaced points on a
@@ -60,8 +97,8 @@ arithmetic, a different building process is necessary. It is
 encapsulated in the global function \ccc{CGAL_build_point()}.
 Implementations exist for \ccc{CGAL_Cartesian<double>} and
 \ccc{CGAL_Cartesian<float>}. They are automatically included if the
-representation type \ccc{CGAL_Cartesian} has been included before. For
-other representations and arithmetic types the function can be
+representation type \ccc{CGAL_Cartesian} has been included beforehand.
+For other representations and arithmetic types the function can be
 overloaded.
 
 \ccThree{void}{random}{}
@@ -75,7 +112,8 @@ The random point generators are implemented as classes that satisfies
 the requirements for input iterators. They represent the possibly
 infinite sequence of randomly generated points. Each call to the
 \ccc{operator*} returns a new point. To create a finite sequence in a
-container, the function \ccc{CGAL_ncopy()} could be used.
+container, the function \ccc{CGAL_ncopy()} could be used, see
+Section~\ref{sectionNCopy}.
 
 \ccHtmlNoClassFile
 \begin{ccClassTemplate}{CGAL_Random_points_in_disc_2<P>}
@@ -135,19 +173,15 @@ container, the function \ccc{CGAL_ncopy()} could be used.
   CGAL_Random& rnd = CGAL_random);}{%
   $g$ is an input iterator creating points of type \ccc{P} uniformly
   distributed on the segment from $p$ to $q$ except $q$,
-  i.e.~$\ccc{*g} == \lambda p + (1-\lambda)\, q$ where $0 \le \lambda < 1$~.
+  i.e.~$\ccc{*g} == (1-\lambda)\, p + \lambda q$ where $0 \le \lambda < 1$~.
   A single random number is needed from \ccc{rnd} for each point.
   \ccPrecond a function \ccc{CGAL_build_point()} for the point type \ccc{P}.
     The expressions \ccc{CGAL_to_double(p.x())} and
   \ccc{CGAL_to_double(p.y())} must be legal and similar for $q$.}
 \end{ccClassTemplate}
 
-\ccFunction{template <class InputIterator, class OutputIterator>
-  OutputIterator CGAL_ncopy( InputIterator first, size_t n, 
-  OutputIterator first2);}
-{copies the first $n$ elements from \ccc{first} to \ccc{first2}.}
-
 \ccHeading{Grid Points}
+\ccThree{OutputIterator}{rand}{}
 
 Grid points are produced by generating functions writing to an output
 iterator.
@@ -190,25 +224,18 @@ slightly off from zero.
   \ccPrecond a function \ccc{CGAL_build_point()} for the value type of
     the \ccc{ForwardIterator}. 
     The expression \ccc{CGAL_to_double((*first).x())} and
-    \ccc{CGAL_to_double((*begin).y())} must be legal. 
+    \ccc{CGAL_to_double((*first).y())} must be legal. 
 }
 
 \ccHeading{Adding Degeneracies}
 
 For a given point set certain kinds of degeneracies can be produced
-adding new points.
+adding new points. The \ccc{CGAL_random_selection()} function is
+useful to generate multiple entries of identical points, see
+Section~\ref{sectionRandomSelection}. The
+\ccc{CGAL_random_collinear_points_2()} function adds collinearities to
+a point set.
 
-\ccFunction{template <class RandomAccessIterator, class OutputIterator>
-    OutputIterator CGAL_random_selection( RandomAccessIterator first,
-        RandomAccessIterator last, 
-        size_t n, OutputIterator first2, CGAL_Random& rnd = CGAL_random);}
-{ choose a random point from the range $[\ccc{first},\ccc{last})$ and
-    write it to \ccc{first2}, each point from the range with equal
-    probability. Repeat this $n$ times, thus writing $n$ points to
-    \ccc{first2}.
-    A single random number is needed from \ccc{rnd} for each point.
-    Returns the value of \ccc{first2} after inserting the $n$ points.
-}
 
 \ccFunction{template <class RandomAccessIterator, class OutputIterator>
     OutputIterator CGAL_random_collinear_points_2( RandomAccessIterator first,
@@ -232,7 +259,7 @@ adding new points.
 We want to generate a test set of 1000 points, where 60\% are chosen
 randomly in a small disc, 20\% are from a larger grid, 10\% duplicates
 are added, and 10\% collinearities added. A random shuffle removes the
-construction order from the test set. See \ccTexHtml{
+construction order from the test set. See \ccTexHtml{%
 Figure~\ref{figurePointGenerator}}{Figure <A HREF="#PointGenerators">
   <IMG SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10"
   HEIGHT="10"></A>} for the example output.
@@ -274,7 +301,7 @@ Figure~\ref{figurePointGenerator}}{Figure <A HREF="#PointGenerators">
 
 The second example demostrates the point generators with integer
 points. Arithmetic with \ccc{double}'s is sufficient to produce
-regular integer grids. See \ccTexHtml{
+regular integer grids. See \ccTexHtml{%
 Figure~\ref{figureIntegerPointGenerator}}{Figure 
   <A HREF="#IntegerPointGenerators">
   <IMG SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10"
@@ -317,14 +344,11 @@ higher level objects.
 
 The generic segment generator \ccClassTemplateName\ uses two point
 generators \ccc{P1} and \ccc{P2} to create a segment of type $S$ from
-two endpoints. This is a design example how further generators could
-look like -- for segments and for other higher level objects.
-
-The generic segment generator \ccClassTemplateName\  satisfies
-the requirements for an input iterator. It represents the possibly
-infinite sequence of generated segments. Each call to the
-\ccc{operator*} returns a new segment. To create a finite sequence in
-a container, the function \ccc{CGAL_ncopy()} could be used.
+two endpoints.  \ccClassTemplateName\ satisfies the requirements for
+an input iterator. It represents the possibly infinite sequence of
+generated segments. Each call to the \ccc{operator*} returns a new
+segment. To create a finite sequence in a container, the function
+\ccc{CGAL_ncopy()} could be used, see Section~\ref{sectionNCopy}.
 
 \ccInclude{CGAL/Segment_generator_2.h}
 
@@ -346,12 +370,12 @@ $g$ satisfies the requirements of an input iterator. Each call to the
 \ccExample
 
 We want to generate a test set of 200 segments, where one endpoint is
-chosen with regular spacing from a horizontal segment of length 200,
-and the other endpoint is chosen ramdomly from a circle of radius
-250. See \ccTexHtml{
-Figure~\ref{figureSegmentGenerator}}{Figure <A HREF="#SegmentGenerator">
-  <IMG SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10"
-  HEIGHT="10"></A>} for the example output.
+chosen randomly from a horizontal segment of length 200, and the other
+endpoint is chosen ramdomly from a circle of radius 250. See
+\ccTexHtml{Figure~\ref{figureSegmentGenerator}}{Figure <A
+  HREF="#SegmentGenerator"> <IMG SRC="cc_ref_up_arrow.gif"
+  ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>} for the example
+output.
 
 \begin{ccTexOnly}
   \begin{figure}
@@ -361,6 +385,13 @@ Figure~\ref{figureSegmentGenerator}}{Figure <A HREF="#SegmentGenerator">
       \epsfig{figure=Segment_generator_prog1.ps,width=\textwidth}
       \caption{Output of example program for the generic segment generator.}
       \label{figureSegmentGenerator}
+    \end{minipage}%
+    \hspace*{0.05\textwidth}%
+    \begin{minipage}{0.45\textwidth}%
+      \epsfig{figure=Segment_generator_prog2.ps,width=\textwidth}
+      \caption{Output of example program for the generic segment
+        generator using precomputed point locations.}
+      \label{figureSegmentGeneratorFan}
     \end{minipage}%
   \end{figure}
 \end{ccTexOnly}
@@ -377,6 +408,29 @@ Figure~\ref{figureSegmentGenerator}}{Figure <A HREF="#SegmentGenerator">
     <A HREF="./Segment_generator_prog1.gif">
         <img src="./Segment_generator_prog1_small.gif" 
              alt="Segment Generator Example Output"></A>
+  </TD></TR></TABLE>
+\end{ccHtmlOnly}
+
+The second example uses precomputed point vectors to generate a
+regular structure of 100 segments, see 
+\ccTexHtml{Figure~\ref{figureSegmentGeneratorFan}}{Figure <A
+  HREF="#SegmentGeneratorFan"> <IMG SRC="cc_ref_up_arrow.gif"
+  ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>} for the example
+output.
+
+\cprogfile{Segment_generator_prog2.C}
+
+\begin{ccHtmlOnly}
+  <A NAME="SegmentGeneratorFan">
+  <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=60%>
+    <A HREF="./Segment_generator_prog2.gif">Figure:</A>
+    Output of example program for the generic segment generator using
+    precomputed point locations.
+  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=5% NOWRAP>
+  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=35% NOWRAP>
+    <A HREF="./Segment_generator_prog2.gif">
+        <img src="./Segment_generator_prog2_small.gif" 
+             alt="Segment Generator Example Output 2"></A>
   </TD></TR></TABLE>
 \end{ccHtmlOnly}
 
