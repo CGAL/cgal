@@ -1,3 +1,6 @@
+17 September 2004 Sylvain Pion
+- Cartesian_converter.h : add #include <CGAL/Origin.h>.
+
 14 September 2004 Sylvain Pion
 - Cartesian_converter : add converions for Origin and Null_vector.
 - More global functions call the functors.
