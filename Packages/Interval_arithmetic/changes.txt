@@ -1,4 +1,3 @@
-
 24 June 2004 Sylvain Pion
 - Use CGAL::Random instead of drand48 in test/Static_filters.C.
 
