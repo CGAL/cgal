@@ -176,7 +176,7 @@ Vertex_visibility_graph_2<Traits>::initialize_vertex_map(
 
    // Sort the event list (iterators to points) from left to right 
    // (using less_xy)
-   iterator_list.sort(Indirect_less_xy_compare_2<Traits>());
+   iterator_list.sort(Indirect_less_xy_2<Traits>());
 
    // Create an ordered list of edge endpoints (iterators), initially empty
    typedef std::set< Point_pair, Segment_less_yx_2 > Ordered_edge_set;
@@ -744,6 +744,8 @@ void Vertex_visibility_graph_2<Traits>::handle(Tree_iterator p,
 #endif
    Vertex_map_iterator p_it = vertex_map.find(*p);
    Vertex_map_iterator q_it = vertex_map.find(*q);
+   CGAL_assertion (p_it != vertex_map.end());
+   CGAL_assertion (q_it != vertex_map.end());
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
    std::cout << "p currently sees : ";
    if ((*p_it).second.second != polygon.end())
