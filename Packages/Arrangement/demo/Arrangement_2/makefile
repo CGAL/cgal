@@ -15,7 +15,8 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
        -Iinclude \
-       $(CGAL_CXXFLAGS) \
+       -I../../include \
+	   $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
