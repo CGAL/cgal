@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France) and
+\// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France) and
 // Notre Dame University (U.S.A.).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -30,8 +30,6 @@
 #include <CGAL/predicates/Svd_are_same_segments_C2.h>
 
 #include <iostream>
-
-#warning "Using the new arrangement type predicate"
 
 CGAL_BEGIN_NAMESPACE
 
