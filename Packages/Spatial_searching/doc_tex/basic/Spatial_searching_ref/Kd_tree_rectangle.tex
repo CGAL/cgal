@@ -59,10 +59,6 @@ Kd_tree_rectangle(int d, PointIter begin, PointIter end);}
 \ccMethod{void set_lower_bound(int i, const NT& x);}
 {Sets lower bound in dimension \ccc{i} to \ccc{x}.}
  
-\ccMethod{ template <class PointPointerIter>
-void update_from_point_pointers(PointPointerIter begin, PointPointerIter end, bool empty);}
-{Updates the rectangle $r$ as the the bounding box of the points accessed by the pointers
- in the range [begin,end). If empty is true the result is an empty bounding box.} 
  
 \ccMethod{NT max_span();}
 {Returns the maximal span of the rectangle.}
