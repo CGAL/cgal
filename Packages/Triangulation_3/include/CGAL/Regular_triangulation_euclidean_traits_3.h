@@ -25,15 +25,12 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H
 #define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H
 
-// This file is based on Regular_triangulation_euclidean_traits_2.h
-
 #include <CGAL/Triangulation_short_names_3.h>
-#include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Weighted_point.h>
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/predicates/Regular_triangulation_ftC3.h>
@@ -49,6 +46,7 @@ template <class Point, class Weight>
 class Power_test_3
 {
 public:
+  typedef Oriented_side  result_type;
   typedef Weighted_point <Point, Weight>        Weighted_point;
 
   Oriented_side operator() ( const Weighted_point & p,
@@ -82,10 +80,10 @@ public:
 
 template < class Repres, class Weight = CGAL_TYPENAME_MSVC_NULL Repres::RT >
 class Regular_triangulation_euclidean_traits_3
-  : public Triangulation_geom_traits_3<Repres>
+  : public Repres
 {
 public:
-  typedef typename Triangulation_geom_traits_3<Repres>::Point_3 Bare_point;
+  typedef typename Repres::Point_3 Bare_point;
   typedef Weighted_point <Bare_point, Weight>   Weighted_point;
   typedef Weighted_point                        Point_3;
 
@@ -95,7 +93,6 @@ public:
   typedef Point_3 Point;
 
   typedef Power_test_3<Bare_point, Weight> Power_test_3;
-
   
   Power_test_3 
   power_test_3_object() const

@@ -1,16 +1,13 @@
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
 - Why are the iterators friend in the ds_cell ?
-- coplanar_orientation()... faire marche arriere et recuperer l'ancienne
-  interface (ie sans Vector) ? cf T2D
 - remove() : ca plante dans le prog de test de la hierarchie... a investiguer.
   refaire marcher le vieux remove pour pouvoir tester (voire garder les deux
   versions si c'est mieux).
 - hierarchie : verifier que l'interface est bonne (ie tous les insert(*) sont
-  interceptes...).  Documenter.
+  interceptes...).  Documenter (+ traits).
 - ameliorer user manual
 - TEST SUITE
-- Traits : mettre a jour la doc.
 - Alignement des cellules en memoire : effets de cache + pointeurs a
   l'interieur des cellules pour le voisinage (Fred a deja fait => ask).
 - La gestion memoire (interne a l'allocateur new/delete) prend pas mal de

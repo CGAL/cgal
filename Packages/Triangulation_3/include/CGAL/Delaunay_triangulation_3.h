@@ -52,17 +52,14 @@ public:
   typedef Delaunay_triangulation_3<Gt, Tds> Self;
 
   typedef typename Gt::Point_3       Point;
-  typedef typename Gt::Vector_3      Vector;
   typedef typename Gt::Segment_3     Segment;
   typedef typename Gt::Triangle_3    Triangle;
   typedef typename Gt::Tetrahedron_3 Tetrahedron;
 
   // Function objects
   typedef typename Gt::Side_of_oriented_sphere_3 Side_of_oriented_sphere;
-  typedef typename Gt::Coplanar_side_of_oriented_circle_3
-                                             Coplanar_side_of_oriented_circle;
-  typedef typename Gt::Construct_cross_product_vector_3
-                                             Construct_cross_product_vector;
+  typedef typename Gt::Coplanar_side_of_bounded_circle_3
+                                             Coplanar_side_of_bounded_circle;
 
   typedef typename Triangulation_3<Gt,Tds>::Cell_handle   Cell_handle;
   typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
@@ -82,8 +79,7 @@ public:
 
 protected:
   Side_of_oriented_sphere          side_of_oriented_sphere;
-  Coplanar_side_of_oriented_circle coplanar_side_of_oriented_circle;
-  Construct_cross_product_vector   cross_product;
+  Coplanar_side_of_bounded_circle  coplanar_side_of_bounded_circle;
 
 public:
 
@@ -120,9 +116,8 @@ public:
   {
     side_of_oriented_sphere =
 	geom_traits().side_of_oriented_sphere_3_object();
-    coplanar_side_of_oriented_circle =
-	geom_traits().coplanar_side_of_oriented_circle_3_object();
-    cross_product = geom_traits().construct_cross_product_vector_3_object();
+    coplanar_side_of_bounded_circle =
+	geom_traits().coplanar_side_of_bounded_circle_3_object();
   }
 
   template < class InputIterator >
@@ -182,11 +177,11 @@ private:
   //  void make_hole_3D(Vertex_handle v,
   //		    std::list<Facet> & hole) const;		 
 
-  Oriented_side  
-  side_of_oriented_circle(const Point & p,
-			  const Point & q,
-			  const Point & r,
-			  const Point & test) const;
+  Bounded_side
+  side_of_bounded_circle(const Point & p,
+			 const Point & q,
+			 const Point & r,
+			 const Point & test) const;
 
   Bounded_side
   side_of_sphere( Vertex_handle v0, 
@@ -1080,16 +1075,14 @@ violates( Vertex_handle u,
 }
 
 template < class Gt, class Tds >
-Oriented_side 
+Bounded_side 
 Delaunay_triangulation_3<Gt,Tds>::
-side_of_oriented_circle(const Point & p,
-			const Point & q,
-			const Point & r,
-			const Point & test) const
+side_of_bounded_circle(const Point & p,
+		       const Point & q,
+		       const Point & r,
+		       const Point & test) const
 {
-  // FIXME : q-p must call a function object from the traits.
-  Vector v = cross_product(q-p, r-p);
-  return coplanar_side_of_oriented_circle(p, q, r, test, v);
+  return coplanar_side_of_bounded_circle(p, q, r, test);
 }
 
 
@@ -1125,10 +1118,10 @@ side_of_sphere(Cell_handle c, const Point & p) const
   if (o != ZERO)
     return Bounded_side(o);
 
-  return Bounded_side( side_of_oriented_circle ( c->vertex(i0)->point(), 
-			                         c->vertex(i1)->point(),
-			                         c->vertex(i2)->point(),
-			                         p ) );
+  return side_of_bounded_circle ( c->vertex(i0)->point(), 
+			          c->vertex(i1)->point(),
+			          c->vertex(i2)->point(),
+			          p );
 }
 
 template < class Gt, class Tds >
@@ -1163,11 +1156,10 @@ side_of_sphere(Vertex_handle v0,
       if (o != ZERO)
 	return Bounded_side(o);
 
-      return Bounded_side( side_of_oriented_circle
-			   ( v[i0]->point(), 
-			     v[i1]->point(),
-			     v[i2]->point(),
-			      p ) );
+      return side_of_bounded_circle ( v[i0]->point(), 
+			              v[i1]->point(),
+			              v[i2]->point(),
+			              p );
     }
   }
   
@@ -1194,7 +1186,7 @@ side_of_sphere_inf(const Point & p0,
   if (o != ZERO)
     return Bounded_side(o);
 
-  return Bounded_side( side_of_oriented_circle (p0, p1, p2, p ) );
+  return side_of_bounded_circle (p0, p1, p2, p );
 }
 
 
@@ -1224,11 +1216,10 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     // the triangulation is supposed to be valid, ie the facet
     // with vertices 0 1 2 in this order is positively oriented
     if ( ! c->has_vertex( infinite_vertex(), i3 ) ) 
-      return Bounded_side( side_of_oriented_circle
-			   (c->vertex(0)->point(),
-			    c->vertex(1)->point(),
-			    c->vertex(2)->point(),
-			    p) );
+      return side_of_bounded_circle (c->vertex(0)->point(),
+			             c->vertex(1)->point(),
+			             c->vertex(2)->point(),
+			             p);
     // else infinite facet
     // v1, v2 finite vertices of the facet such that v1,v2,infinite
     // is positively oriented
@@ -1267,10 +1258,10 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
 				                  c->vertex(i1)->point(),
 				                  c->vertex(i2)->point(),
 				                  p) == COPLANAR );
-    return Bounded_side ( side_of_oriented_circle (c->vertex(i0)->point(),
-			                           c->vertex(i1)->point(),
-			                           c->vertex(i2)->point(),
-			                           p) );
+    return side_of_bounded_circle (c->vertex(i0)->point(),
+			           c->vertex(i1)->point(),
+			           c->vertex(i2)->point(),
+			           p);
   }
 
   //else infinite facet

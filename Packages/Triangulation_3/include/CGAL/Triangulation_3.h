@@ -84,19 +84,21 @@ public:
   typedef Tds Triangulation_data_structure;
   typedef GT  Geom_traits;
 
-  typedef typename GT::Point_3 Point;
-  typedef typename GT::Vector_3 Vector;
-  typedef typename GT::Segment_3 Segment;
-  typedef typename GT::Triangle_3 Triangle;
-  typedef typename GT::Tetrahedron_3 Tetrahedron;
+  typedef typename GT::Point_3                 Point;
+  typedef typename GT::Segment_3               Segment;
+  typedef typename GT::Triangle_3              Triangle;
+  typedef typename GT::Tetrahedron_3           Tetrahedron;
 
-  typedef typename GT::Compare_x_3 Compare_x_3;
-  typedef typename GT::Compare_y_3 Compare_y_3;
-  typedef typename GT::Compare_z_3 Compare_z_3;
-  typedef typename GT::Equal_3 Equal_3;
-  typedef typename GT::Collinear_3 Collinear_3;
-  typedef typename GT::Orientation_3 Orientation_3;
-  typedef typename GT::Coplanar_orientation_3 Coplanar_orientation_3;
+  typedef typename GT::Compare_x_3             Compare_x_3;
+  typedef typename GT::Compare_y_3             Compare_y_3;
+  typedef typename GT::Compare_z_3             Compare_z_3;
+  typedef typename GT::Equal_3                 Equal_3;
+  typedef typename GT::Collinear_3             Collinear_3;
+  typedef typename GT::Orientation_3           Orientation_3;
+  typedef typename GT::Coplanar_orientation_3  Coplanar_orientation_3;
+  typedef typename GT::Construct_segment_3     Construct_segment_3;
+  typedef typename GT::Construct_triangle_3    Construct_triangle_3;
+  typedef typename GT::Construct_tetrahedron_3 Construct_tetrahedron_3;
 
   typedef Triangulation_cell_handle_3<GT,Tds> Cell_handle;
   typedef Triangulation_vertex_handle_3<GT,Tds> Vertex_handle;
@@ -137,6 +139,9 @@ protected:
   Collinear_3 collinear;
   Orientation_3 orientation;
   Coplanar_orientation_3 coplanar_orientation;
+  Construct_segment_3 construct_segment_3;
+  Construct_triangle_3 construct_triangle_3;
+  Construct_tetrahedron_3 construct_tetrahedron_3;
 
   void init_tds()
     {
@@ -167,6 +172,9 @@ protected:
       collinear = geom_traits().collinear_3_object();
       orientation = geom_traits().orientation_3_object();
       coplanar_orientation = geom_traits().coplanar_orientation_3_object();
+      construct_segment_3 = geom_traits().construct_segment_3_object();
+      construct_triangle_3 = geom_traits().construct_triangle_3_object();
+      construct_tetrahedron_3 = geom_traits().construct_tetrahedron_3_object();
     }
 
   // debug
@@ -298,10 +306,10 @@ public:
     {
       CGAL_triangulation_precondition( dimension() == 3 );
       CGAL_triangulation_precondition( ! is_infinite(c) );
-      return Tetrahedron(c->vertex(0)->point(),
-			 c->vertex(1)->point(),
-			 c->vertex(2)->point(),
-			 c->vertex(3)->point());
+      return construct_tetrahedron_3(c->vertex(0)->point(),
+			             c->vertex(1)->point(),
+			             c->vertex(2)->point(),
+			             c->vertex(3)->point());
     }
 
   Triangle triangle(const Cell_handle c, int i) const;
@@ -1156,10 +1164,9 @@ triangle(const Cell_handle c, int i) const
   CGAL_triangulation_precondition( (dimension() == 2 && i == 3)
 	                        || (dimension() == 3 && i >= 0 && i <= 3) );
   CGAL_triangulation_precondition( ! is_infinite(std::make_pair(c, i)) );
-  return Triangle(c->vertex(i<=0 ? 1 : 0)->point(),
-		  c->vertex(i<=1 ? 2 : 1)->point(),
-		  c->vertex(i<=2 ? 3 : 2)->point());
-  // FIXME : should use the Construct_triangle_3 object from the traits !
+  return construct_triangle_3(c->vertex(i<=0 ? 1 : 0)->point(),
+		              c->vertex(i<=1 ? 2 : 1)->point(),
+		              c->vertex(i<=2 ? 3 : 2)->point());
 }
 
 template < class GT, class Tds >
@@ -1172,8 +1179,7 @@ segment(const Cell_handle c, int i, int j) const
   CGAL_triangulation_precondition(
 	  i >= 0 && i <= dimension() && j >= 0 && j <= dimension() );
   CGAL_triangulation_precondition( ! is_infinite(make_triple(c, i, j)) );
-  return Segment( c->vertex(i)->point(), c->vertex(j)->point() );
-  // FIXME : should use the Construct_segment_3 object from the traits !
+  return construct_segment_3( c->vertex(i)->point(), c->vertex(j)->point() );
 }
 
 template < class GT, class Tds >
@@ -2661,9 +2667,6 @@ insert_outside_convex_hull(const Point & p, Cell_handle c)
   // in dimension 1, vertex li separates p from the triangulation
   // dimension 0 not allowed, use outside-affine-hull
 {
-  //    CGAL_triangulation_precondition( !
-  //    c->has_vertex(infinite_vertex()) ); 
-  // not a precondition any more in this version
   CGAL_triangulation_precondition( dimension() > 0 );
   CGAL_triangulation_precondition( c->has_vertex(infinite) );
   // the precondition that p is in c is tested in each of the
@@ -2746,16 +2749,11 @@ insert_outside_convex_hull(const Point & p, Cell_handle c)
     }
   case 3:
     {
-      // 	Cell_handle n = c->neighbor(li);
-      // 	// n is an infinite cell containing p
-
       Vertex_handle v = new Vertex(p);
-      // 	v->set_cell( n );
       v->set_cell( c );
 
       set_number_of_vertices(number_of_vertices()+1);
 
-      // 	link( v, hat(v,n) );
       link( v, hat(v,c) );
       // infinite->set_cell is done by link
 
