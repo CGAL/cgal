@@ -1,5 +1,9 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.13 (20 April 00)
+     fixed a typing bug of the previous modification in 
+     void Assert_forward_category( const IC &ic)
+
 3.12 (14 April 00)
      changes all std::iterator_category(c)
      to          std::iterator_traits<C>::iterator_category()
