@@ -352,7 +352,7 @@ also functions to test if a given point is inside a finite face
 or not.
 
 \ccMethod{Cell_handle
-          locate(const Point & query, Cell_handle start = Cell_handle()) const;}
+          locate(const Point & query, Cell_handle start = NULL) const;}
 {
 %\ccPrecond{\ccVar.\ccc{dimension()} $= 3$ (otherwise there is no
 %cell yet).}\\
@@ -373,7 +373,7 @@ The optional argument \ccc{start} is used as a starting place for the search.
 
 \ccMethod{Cell_handle
           locate(const Point & query, Locate_type & lt,
-                 int & li, int & lj, Cell_handle start = Cell_handle() ) const;}
+                 int & li, int & lj, Cell_handle start = NULL ) const;}
 {If \ccc{query} lies inside the affine hull of the points, the $k$-face
 (finite or infinite) that contains \ccc{query} in its interior is
 returned, by means of the cell returned together with \ccc{lt}, which
@@ -539,7 +539,7 @@ known to be flippable.
 The following operations are guaranteed to lead to a valid triangulation 
 when they are applied on a valid triangulation.
 
-\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle() );}
+\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start = NULL );}
 {Inserts point \ccc{p} in the triangulation and returns the corresponding
  vertex.\\
 If point \ccc{p} coincides with an already existing vertex, this 

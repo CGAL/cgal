@@ -78,7 +78,7 @@ triangulations to ensure the empty sphere property of Delaunay
 triangulations.
 \ccThree{Vertex_handle}{dt.remove()}{}
 
-\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle() );}
+\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start = NULL );}
 {Inserts point \ccc{p} in the triangulation and returns the corresponding
  vertex. Similar to the insertion in a triangulation, but ensures in
 addition the empty sphere property of all the created faces.
