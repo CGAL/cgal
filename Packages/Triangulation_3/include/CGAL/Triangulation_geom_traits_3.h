@@ -45,19 +45,6 @@ CGAL_BEGIN_NAMESPACE
 // The classes prefixed with Local_ ae only needed because the
 // kernel does not provide them yet.
 
-class Local_Coplanar_orientation
-{
-  public:
-    typedef Orientation   result_type;
-
-  template <class T1, class T2>
-    Orientation
-    operator()(const T1& q, const T1& r, const T1& s, const T2& p) const
-    {
-      return coplanar_orientation(q,r,s,p); 
-    }
-};
-
 template < class FT >
 CGAL_KERNEL_LARGE_INLINE
 Oriented_side
@@ -123,40 +110,38 @@ class Triangulation_geom_traits_3
 {
 public:
   typedef Repres Rep;
-  typedef Point_3<Repres>  Point_3;
+
+  typedef typename Rep::Point_3        Point_3;
+  typedef typename Rep::Segment_3      Segment_3;
+  typedef typename Rep::Triangle_3     Triangle_3;
+  typedef typename Rep::Tetrahedron_3  Tetrahedron_3;
+  typedef typename Rep::Vector_3       Vector_3;
 
   // The next typedef is there for backward compatibility
   // Some users take their point type from the traits class.
   // Before this type was Point
-  typedef Point_3 Point; 
+  typedef Point_3                      Point; 
 
-  typedef Segment_3<Repres> Segment_3;
-  typedef Triangle_3<Repres> Triangle_3;
-  typedef Tetrahedron_3<Repres> Tetrahedron_3;
-
-  typedef Vector_3<Repres> Vector_3;
-  //typedef typename R::Cross_product Cross_product;
-  typedef Local_Cross_product<Vector_3> Cross_product;
-
-  typedef typename Rep::Compare_x_3 Compare_x_3;
-  typedef typename Rep::Compare_y_3 Compare_y_3;
-  typedef typename Rep::Compare_z_3 Compare_z_3;
-  typedef typename Rep::Equal_3 Equal_3;
-  typedef typename Rep::Collinear_3 Collinear_3;
-  typedef typename Rep::Orientation_3 Orientation_3;
-  //typedef typename Rep::Coplanar_orientation_3 Coplanar_orientation_3;
-  typedef Local_Coplanar_orientation Coplanar_orientation_3;
-
+  typedef typename Rep::Compare_x_3                Compare_x_3;
+  typedef typename Rep::Compare_y_3                Compare_y_3;
+  typedef typename Rep::Compare_z_3                Compare_z_3;
+  typedef typename Rep::Equal_3                    Equal_3;
+  typedef typename Rep::Collinear_3                Collinear_3;
+  typedef typename Rep::Orientation_3              Orientation_3;
+  typedef typename Rep::Coplanar_orientation_3     Coplanar_orientation_3;
   typedef typename Rep::Side_of_oriented_sphere_3  Side_of_oriented_sphere_3;
 
   // Uncomment the next line as soon as Kernels have this function
-  //typedef typename Rep::Side_of_oriented_circle_3 Coplanar_side_of_oriented_circle_3;
+  // typedef typename Rep::Side_of_oriented_circle_3 Coplanar_side_of_oriented_circle_3;
+  // typedef typename Rep::Cross_product Cross_product;
   typedef Local_Coplanar_side_of_oriented_circle Coplanar_side_of_oriented_circle_3;
+  typedef Local_Cross_product<Vector_3> Cross_product;
 
-  typedef typename Rep::Construct_segment_3 Construct_segment_3;
-  typedef typename Rep::Construct_triangle_3 Construct_triangle_3;
-  typedef typename Rep::Construct_tetrahedron_3 Construct_tetrahedron_3;
+  typedef typename Rep::Construct_segment_3        Construct_segment_3;
+  typedef typename Rep::Construct_triangle_3       Construct_triangle_3;
+  typedef typename Rep::Construct_tetrahedron_3    Construct_tetrahedron_3;
 
+  // And for the hierarchy :
   typedef typename Rep::Less_distance_to_point_3 Less_distance_to_point_3;
 
   Triangulation_geom_traits_3()
