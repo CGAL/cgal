@@ -29,23 +29,38 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt, class Df >
+template < class Gt, class Df = Triangulation_face_base_2<Gt> >
 class Alpha_shape_face_base_2 : public Df
 {
+  typedef Df                                         Base;
+  typedef typename Df::Triangulation_data_structure  TDS;
 public:
-  typedef typename Gt::Coord_type Coord_type;
+  typedef TDS                                Triangulation_data_structure;
+  typedef typename TDS::Vertex_handle        Vertex_handle;
+  typedef typename TDS::Face_handle          Face_handle;
+
+  typedef typename Gt::Coord_type                    Coord_type;
   typedef Triple<Coord_type, Coord_type, Coord_type> Interval_3;
 
-  Alpha_shape_face_base_2() 
-    : Df() 
-    {}
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Base::template Rebind_TDS<TDS2>::Other    Fb2;
+    typedef Alpha_shape_face_base_2<Gt,Fb2>         Other;
+  };
+
+
+private:
+  Interval_3 vec_edge[3];
+  Coord_type A;
+ 
+public:
+  Alpha_shape_face_base_2()  : Base()     {}
   
-  Alpha_shape_face_base_2(void* v0, void* v1, void* v2)
-    : Df(v0, v1, v2)
-    {}
+  Alpha_shape_face_base_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
+    : Df(v0, v1, v2)     {}
   
-  Alpha_shape_face_base_2(void* v0, void* v1, void* v2,
-			  void* n0, void* n1, void* n2)
+  Alpha_shape_face_base_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2,
+			  Face_handle n0, Face_handle n1, Face_handle n2)
     : Df(v0, v1, v2, n0, n1, n2)
     {}
 
@@ -69,9 +84,7 @@ public:
       vec_edge[i]=Inter;
     }
 
-private:
-  Interval_3 vec_edge[3];
-  Coord_type A;
+
 };
 
 CGAL_END_NAMESPACE

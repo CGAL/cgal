@@ -16,13 +16,13 @@ the weighted Alpha Shape.
 #include <CGAL/Weighted_point.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
 
-#include <CGAL/Alpha_shape_vertex_base_2.h>
+// #include <CGAL/Alpha_shape_vertex_base_2.h>
 
-#include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Regular_triangulation_face_base_2.h>
-#include <CGAL/Alpha_shape_face_base_2.h>
+// #include <CGAL/Triangulation_face_base_2.h>
+// #include <CGAL/Regular_triangulation_face_base_2.h>
+// #include <CGAL/Alpha_shape_face_base_2.h>
 
-#include <CGAL/Delaunay_triangulation_2.h>
+// #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
@@ -47,14 +47,12 @@ typedef K::Line_2  Line;
 typedef K::Triangle_2  Triangle;
 
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<K> Gt;
-
-
-typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
-
-typedef CGAL::Regular_triangulation_face_base_2<Gt> Rf;
+typedef CGAL::Regular_triangulation_vertex_base_2<Gt> Rvb;
+typedef CGAL::Alpha_shape_vertex_base_2<Gt,Rvb> Vb;
+typedef CGAL::Regular_triangulation_face_base_2<> Rf;
 typedef CGAL::Alpha_shape_face_base_2<Gt, Rf>  Fb;
 
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
 typedef CGAL::Regular_triangulation_2<Gt,Tds> Triangulation_2;
 
 typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape_2;

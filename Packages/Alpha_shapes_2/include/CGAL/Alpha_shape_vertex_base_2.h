@@ -32,34 +32,41 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-template <class Gt>
-class Alpha_shape_vertex_base_2 : public
-Triangulation_vertex_base_2<Gt> 
+template <class Gt, class Vb = Triangulation_vertex_base_2<Gt> >
+class Alpha_shape_vertex_base_2 : public Vb
 {
+  typedef Vb                                         Base;
+  typedef typename Vb::Triangulation_data_structure  TDS;
+public:
+  typedef TDS                                        Triangulation_data_structure;
+  typedef typename TDS::Vertex_handle                Vertex_handle;
+  typedef typename TDS::Face_handle                  Face_handle;
 
+  typedef typename Gt::Coord_type                Coord_type;
+  typedef std::pair< Coord_type, Coord_type >    Interval2;
+  typedef typename Base::Point                   Point;
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Base::template Rebind_TDS<TDS2>::Other    Vb2;
+    typedef Alpha_shape_vertex_base_2 <Gt,Vb2>         Other;
+  };
 private:
-  typedef typename Gt::Coord_type Coord_type;
-  typedef std::pair< Coord_type, Coord_type > Interval2;
+  Interval2 I;
 
 public:
-  typedef typename Triangulation_vertex_base_2<Gt>::Point Point;
-  
   Alpha_shape_vertex_base_2()
-    : Triangulation_vertex_base_2<Gt>() 
+    : Base() 
     {}
   
   Alpha_shape_vertex_base_2(const Point & p)
-    : Triangulation_vertex_base_2<Gt>(p) 
+    : Base(p) 
     {}
   
-  Alpha_shape_vertex_base_2(const Point & p, void* f)
-    : Triangulation_vertex_base_2<Gt>(p, f) 
+  Alpha_shape_vertex_base_2(const Point & p, Face_handle f)
+    : Base(p, f) 
     {}
 
-
-private:
-
-  Interval2 I;
 
 public:
 

@@ -35,6 +35,10 @@
 #include <iostream>
 
 #include <CGAL/utility.h>
+#include <CGAL/Triangulation_vertex_base_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Alpha_shape_vertex_base_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
 
 #ifdef CGAL_ALPHA_WINDOW_STREAM
 #include <CGAL/IO/Window_stream.h>
@@ -91,7 +95,7 @@ private:
   typedef typename Interval_face_map::value_type   Interval_face;
 
   typedef typename Tds::Face Face_tds;
-  typedef typename Face_tds::Face Face_base;
+  typedef typename Tds::Face_base  Face_base;
   typedef typename Face_base::Interval_3 Interval3;
   // should be replaced by as soon as possible
   // typedef typename Face::Interval_3 Interval3;

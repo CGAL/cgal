@@ -31,19 +31,16 @@
 #include <vector>
 #include <list>
 
-#include <CGAL/triangulation_assertions.h>
 
-#include <CGAL/Alpha_shape_vertex_base_2.h>
-#include <CGAL/Alpha_shape_face_base_2.h>
 #include <CGAL/Random.h>
 #define CGAL_ALPHA_WINDOW_STREAM
 
 #include <CGAL/Alpha_shape_euclidean_traits_2.h>
 
-#include <CGAL/Alpha_shape_vertex_base_2.h>
+// #include <CGAL/Alpha_shape_vertex_base_2.h>
 
-#include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Alpha_shape_face_base_2.h>
+// #include <CGAL/Triangulation_face_base_2.h>
+// #include <CGAL/Alpha_shape_face_base_2.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
@@ -72,10 +69,10 @@ typedef CGAL::Alpha_shape_euclidean_traits_2<K> Gt;
 
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
 
-typedef CGAL::Triangulation_face_base_2<Gt> Df;
-typedef CGAL::Alpha_shape_face_base_2<Gt, Df>  Fb;
+//typedef CGAL::Triangulation_face_base_2<Gt> Df;
+typedef CGAL::Alpha_shape_face_base_2<Gt>  Fb;
 
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
 typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Triangulation_2;
 
 typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape;
