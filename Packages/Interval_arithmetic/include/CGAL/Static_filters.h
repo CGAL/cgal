@@ -42,15 +42,22 @@
 // If it should be provided again, it should probably be separate.
 
 // TODO :
-// - better filtering strategy.
+// - aim at obsoleting Filtered_exact, so that
+//   Exact_predicates_inexact_constructions_kernel becomes Filtered_kernel.
+// - Is Fixed_precision_nt now obsolete ?  If yes, deprecate it automatically.
 // - add more predicates :
 //   - lexicographical comparisons
 //   - left_turn (via generic adapter to orientation)
 //   - power_tests
 //   - others ?
+// - benchmark on more algorithms.
 // - improve fit_in_double() for other NTs (MP_Float, Lazy).
 // - check if it's not possible to underflow/overflow the new filters.
 // - add code to make sure we are using Cartesian coordinates as input.
+//   (if not, then don't do anything)
+// - try to automatize : have a struct a la Static_filter_error, with one part
+//   which is runtime, and the other which can be constant-propagated by the
+//   compiler.  g++ 3.5 should be able to cprop the second part...
 
 
 CGAL_BEGIN_NAMESPACE

@@ -205,7 +205,9 @@ test_side_of_oriented_sphere_3()
 void compute_epsilons()
 {
   std::cerr.precision(20);
+  K2::Orientation_2::compute_epsilon();
   K2::Orientation_3::compute_epsilon();
+  K2::Side_of_oriented_circle_2::compute_epsilon();
   K2::Side_of_oriented_sphere_3::compute_epsilon();
 }
 
