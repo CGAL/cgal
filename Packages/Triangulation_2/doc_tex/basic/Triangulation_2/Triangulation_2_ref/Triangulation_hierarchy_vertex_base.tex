@@ -1,0 +1,98 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_hierarchy_vertex_base.tex
+% +------------------------------------------------------------------------+
+% | 16.08.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationhierarchyvertexbaseRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationhierarchyvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Triangulation_hierarchy_vertex_base_2_concept}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition 
+The vertex of a triangulation  
+included in a  triangulation hierarchy has to provided
+some pointers to the corresponding vertices in the
+triangulations of the next and preceeding levels.
+Therefore, the concept
+\ccRefName
+extend the concept \ccc{Triangulation_vertex_base_2_concept},
+adding two \ccc{void*} pointers to the correponding vertices in the
+next and previous level triangulations.
+
+
+
+\ccGeneralizes
+\ccc{Triangulation_vertex_base_2_concept}
+
+
+\ccTypes
+\ccRefName does not introduce other types than those
+of \ccc{Triangulation_vertex_base_2_concept}.
+
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccConstructor{Triangulation_hierarchy_vertex_base_2_concept();}{default
+constructor.}
+\ccGlue
+\ccConstructor{Triangulation_hierarchy_vertex_base_2_concept(const
+Point & p).}{constructs a vertex embedded in point \ccc{p}.}
+\ccGlue
+\ccConstructor{Triangulation_hierarchy_vertex_base_2_concept(const
+Point & p, void* f).}{constructs a vertex embedded in point \ccc{p}
+and pointing on face \ccc{f}.}
+
+\ccOperations
+\ccMethod{void* up();}{returns a pointer to the corresponding vertex
+(if any) of the next level triangulation;}
+\ccGlue
+\ccMethod{void* down();}{returns a pointer to the corresponding vertex
+ of the previous level triangulation;}
+\ccGlue
+\ccMethod{void set_up(void *u);}{sets the pointer to the corresponding vertex
+of the next level triangulation;} 
+\ccGlue 
+\ccMethod{void set_down(void *d);}{sets the pointer to the corresponding vertex
+of the previous level triangulation;}
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Traits>}
+
+\ccSeeAlso
+\ccc{Triangulation_vertex_base_2_concept} \\
+\ccc{Triangulation_hierarchy_vertex_base_2<Vb>}\\
+\ccc{Triangulation_hierarchy_2<Tr>}. 
+
+\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{examples/Package/Triangulation_hierarchy_vertex_base_prog.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{examples/Package/Triangulation_hierarchy_vertex_base_prog.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
