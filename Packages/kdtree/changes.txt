@@ -1,3 +1,6 @@
+Version 2.3.3 (09 February 2004) [rursu]
+- Updated headers in examples
+
 2.3.2 new headers.
 
 2.2.25 Add #include <iterator> to please GCC 3.1.
