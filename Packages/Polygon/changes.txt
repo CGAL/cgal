@@ -1,6 +1,13 @@
 //-----------------------------------------------------------------------//
+// 2.6
++Added std:: in several places in the testsuite.
++Removed constructor that takes a circulator as parameter. MSVC and egcs
+ had problems with this one in combination with the copy constructor.
+
+//-----------------------------------------------------------------------//
 // 2.5
 +Added constructor that takes a circulator as parameter
+
 //-----------------------------------------------------------------------//
 // 2.4.8
 +Added CGAL qualification to Less_xy_2
