@@ -69,7 +69,7 @@ generate_point() {
         d_item = creator( d_range * ( 2 * _rnd.get_double() - 1.0),
                           d_range * ( 2 * _rnd.get_double() - 1.0),
                           d_range * ( 2 * _rnd.get_double() - 1.0));
-    } while ( d_item.x() * d_item.x() + d_item.y() * d_item.y() >=
+    } while ( to_double(d_item.x() * d_item.x() + d_item.y() * d_item.y()) >=
               d_range * d_range);
 }
 
