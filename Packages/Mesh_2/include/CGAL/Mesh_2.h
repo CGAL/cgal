@@ -11,6 +11,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Filtred_container.h>
 #include <CGAL/Filtred_circulator.h>
+#include <CGAL/Double_map.h>
 
 #include <CGAL/IO/File_header_extended_OFF.h> 
 // to skip comments and EOF in the function read_poly
@@ -68,9 +69,8 @@ public:
   template <class InputIterator>
   Mesh_2(InputIterator first, InputIterator last, 
 	 const Geom_traits& gt = Geom_traits())
-    : Tr(gt), is_really_bad(*this),
-	 bad_faces(is_really_bad), is_really_a_contrained_edge(*this), 
-	 c_edge_queue(is_really_a_contrained_edge)
+    : Tr(gt), is_really_a_contrained_edge(*this), 
+      c_edge_queue(is_really_a_contrained_edge)
     {
       while(first != last){
 	insert((*first).first, (*first).second);
@@ -216,7 +216,8 @@ public:
 
 private:
   // PRIVATE TYPES
-
+  typedef std::list<Edge> List_of_edges;
+  typedef std::list<Face_handle> List_of_face_handles;
   typedef CGAL::Triple<Vertex_handle,
                        Vertex_handle,
                        Vertex_handle> Threevertices;
@@ -298,23 +299,6 @@ private:
       }
   };
 
-  // Is_really_bad: TODO: remove this
-  class Is_really_bad {
-    Self& _m;
-  public:
-    Is_really_bad(Self& m) : _m(m) {};
-    bool operator()(const std::pair<FT, Threevertices>& p) const
-      {
-	const Threevertices& t = p.second;
-	const Vertex_handle&
-	  va = t.first,
-	  vb = t.second,
-	  vc = t.third;
-	Face_handle f;
-	return( _m.is_face(va,vb,vc,f) && _m.is_bad(f));
-      }
-  };
-
   class Is_really_a_contrained_edge {
     const Self& _m;
   public:
@@ -332,8 +316,7 @@ private:
   typedef Filtred_circulator<Vertex_circulator, Is_edge_constrained>
     Constrained_vertex_circulator;
 
-  typedef CGAL::Filtred_container<std::multimap<double, Threevertices>,
-    Is_really_bad> Bad_faces;
+  typedef CGAL::Double_map<Face_handle, double> Bad_faces;
 
   typedef std::list<Constrained_edge> List_of_constraints;
   typedef CGAL::Filtred_container<List_of_constraints, 
@@ -347,9 +330,8 @@ private:
 
   // bad_faces: list of bad finite faces
   // warning: some faces could be recycled during insertion in the
-  //  triangulation, that's why I use a wrapper around the map
-  // is_really_bad: tester to filter bad faces
-  const Is_really_bad is_really_bad;
+  //  triangulation, that's why we need to be able to remoce faces
+  //  from the map.
   Bad_faces bad_faces;
 
   // c_edge_queue: list of encroached constrained edges
@@ -411,7 +393,7 @@ private:
   void update_c_edge_queue(Vertex_handle va,
 			   Vertex_handle vb,
 			   Vertex_handle vm);
-  void update_facette_map(Vertex_handle v);
+  void compute_new_bad_faces(Vertex_handle v);
 
   // update_cluster update the cluster of [va,vb], putting vm instead
   // of vb. If reduction=false, the edge [va,vm] is not set reduced.
@@ -442,16 +424,14 @@ private:
 template <class Tr>
 Mesh_2<Tr>::
 Mesh_2(const Geom_traits& gt)
-  : Tr(gt), is_really_bad(*this), bad_faces(is_really_bad),
-    is_really_a_contrained_edge(*this),
+  : Tr(gt), is_really_a_contrained_edge(*this),
     c_edge_queue(is_really_a_contrained_edge)
 {};
 
 template <class Tr>
 Mesh_2<Tr>::
 Mesh_2(List_constraints& lc, const Geom_traits& gt)
-  : Tr(gt), is_really_bad(*this), bad_faces(is_really_bad),
-    is_really_a_contrained_edge(*this),
+  : Tr(gt), is_really_a_contrained_edge(*this),
     c_edge_queue(is_really_a_contrained_edge)
 {
   typename List_constraints::iterator lcit = lc.begin();
@@ -751,11 +731,7 @@ inline
 void Mesh_2<Tr>::
 push_in_bad_faces(Face_handle fh)
 {
-  const Vertex_handle&
-    va = fh->vertex(0),
-    vb = fh->vertex(1),
-    vc = fh->vertex(2);
-  push_in_bad_faces(va, vb, vc);
+  bad_faces.insert(fh, squared_minimum_sine(fh));
 }
 
 template <class Tr>
@@ -764,8 +740,9 @@ void Mesh_2<Tr>::
 push_in_bad_faces(Vertex_handle va, Vertex_handle vb,
 		  Vertex_handle vc)
 {
-  bad_faces.insert(std::make_pair(squared_minimum_sine(va,vb,vc),
-				  Threevertices(va,vb,vc)));
+  Face_handle fh;
+  is_face(va, vb, vc, fh);
+  push_in_bad_faces(fh);
 }
 
 //it is necessarry for process_facette_map
@@ -818,8 +795,6 @@ refine_face(const Face_handle f)
 {
   Point pc = circumcenter(f);
 
-  typedef std::list<Edge> List_of_edges;
-  typedef std::list<Face_handle> List_of_face_handles;
   List_of_edges zone_of_pc_boundary;
   List_of_face_handles zone_of_pc;
 
@@ -900,21 +875,38 @@ refine_face(const Face_handle f)
 }
 
 // # used by refine_face
-// WARNING, TODO: use star_hole
 template <class Tr>
 inline
 void Mesh_2<Tr>::
 split_face(const Face_handle& f, const Point& circum_center)
 {
   bool marked = f->is_marked();
-  Vertex_handle v = insert(circum_center,f);
+
+  List_of_face_handles zone_of_cc;
+  List_of_edges zone_of_cc_boundary;
+
+  get_conflicts_and_boundary(circum_center, 
+			     std::back_inserter(zone_of_cc),
+			     std::back_inserter(zone_of_cc_boundary),
+			     f);
+  for(List_of_face_handles::iterator fh_it = zone_of_cc.begin();
+      fh_it != zone_of_cc.end();
+      ++fh_it)
+    bad_faces.erase(*fh_it);
+
+  // insert the point in the triangulation with star_hole
+  Vertex_handle v = star_hole(circum_center,
+			      zone_of_cc_boundary.begin(),
+			      zone_of_cc_boundary.end(),
+			      zone_of_cc.begin(),
+			      zone_of_cc.end());
 
   Face_circulator fc = incident_faces(v), fcbegin(fc);
   do {
     fc->set_marked(marked);
   } while (++fc != fcbegin);
 
-  update_facette_map(v);
+  compute_new_bad_faces(v);
 }
 
 template <class Tr>
@@ -1055,6 +1047,14 @@ insert_in_the_edge(Face_handle fh, int edge_index, const Point p)
     mark_at_right = fh->is_marked(),
     mark_at_left = fh->neighbor(edge_index)->is_marked();
 
+  List_of_face_handles zone_of_p;
+
+  get_conflicts(p, std::back_inserter(zone_of_p), fh);
+  for(List_of_face_handles::iterator fh_it = zone_of_p.begin();
+      fh_it != zone_of_p.end();
+      ++fh_it)
+    bad_faces.erase(*fh_it);
+
   Vertex_handle vp = special_insert_in_edge(p, fh, edge_index);
   // TODO, WARNING: special_insert_in_edge is not robust!
   // We should deconstrained the constrained edge, insert the two
@@ -1077,6 +1077,8 @@ insert_in_the_edge(Face_handle fh, int edge_index, const Point p)
       fc->set_marked(mark_at_left);
     ++fc;
   } while ( fc != fcbegin );
+
+  compute_new_bad_faces(vp);
   return vp;
 }
 
@@ -1134,7 +1136,7 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
       vc = insert_in_the_edge(fh, index, i);
     }
   update_c_edge_queue(va, vb, vc);
-  update_facette_map(vc);
+  compute_new_bad_faces(vc);
   update_cluster(c, va, vb, vc);
 }
 
@@ -1156,7 +1158,6 @@ insert_middle(Face_handle f, int i)
   Vertex_handle vm = insert_in_the_edge(f, i, mp);
 
   update_c_edge_queue(va, vb, vm);
-  update_facette_map(vm);
   return vm;
 }
 
@@ -1189,7 +1190,7 @@ update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
 
 template <class Tr>
 void Mesh_2<Tr>::
-update_facette_map(Vertex_handle v)
+compute_new_bad_faces(Vertex_handle v)
 {
   Face_circulator fc = v->incident_faces(), fcbegin(fc);
   do {
@@ -1365,14 +1366,7 @@ inline
 void Mesh_2<Tr>::
 process_one_face()
 {
-  const Threevertices& t = bad_faces.front().second;
-  const Vertex_handle&
-    va = t.first,
-    vb = t.second,
-    vc = t.third;
-
-  Face_handle f;
-  is_face(va,vb,vc,f);
+  Face_handle f = bad_faces.front()->second;
   bad_faces.pop_front();
   refine_face(f);
 }
