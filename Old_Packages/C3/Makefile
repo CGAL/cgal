@@ -23,8 +23,10 @@ Package: clean $(Package).tar.gz
 
 	@echo "----------------------------------"
 
-Test:
+symlinks:
 	cd include/CGAL/Cartesian ; sh ./create_symlinks
+
+Test:
 	cd test/Kernel ; ./cgal_test
 
 Version:

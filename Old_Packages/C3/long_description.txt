@@ -18,9 +18,6 @@ include/CGAL/Cartesian/Ray_3.h
 include/CGAL/Cartesian/Scaling_rep_3.h
 include/CGAL/Cartesian/Segment_3.C
 include/CGAL/Cartesian/Segment_3.h
-include/CGAL/Cartesian/Sphere_3.C
-include/CGAL/Cartesian/Sphere_3.h
-include/CGAL/Cartesian/Sphere_rep_3.h
 include/CGAL/Cartesian/Tetrahedron_3.C
 include/CGAL/Cartesian/Tetrahedron_3.h
 include/CGAL/Cartesian/Translation_rep_3.h
@@ -29,15 +26,11 @@ include/CGAL/Cartesian/Triangle_3.h
 include/CGAL/Cartesian/Vector_3.C
 include/CGAL/Cartesian/Vector_3.h
 include/CGAL/Cartesian/basic_constructions_3.h
-include/CGAL/Cartesian/constructions_on_planes_3.h
-include/CGAL/Cartesian/constructions_on_points_3.h
-include/CGAL/Cartesian/constructions_on_vectors_3.h
 include/CGAL/Cartesian/create_symlinks
-include/CGAL/Cartesian/distance_computations_3.h
 include/CGAL/Cartesian/distance_predicates_3.h
 include/CGAL/Cartesian/global_operators_3.h
-include/CGAL/Cartesian/predicates_on_planes_3.h
 include/CGAL/Cartesian/predicates_on_points_3.h
 include/CGAL/Cartesian/redefine_names_3.h
-include/CGAL/Cartesian/remove_symlinks
 include/CGAL/Cartesian/solve_3.h
+include/CGAL/constructions/kernel_ftC3.h
+include/CGAL/predicates/kernel_ftC3.h
