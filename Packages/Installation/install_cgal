@@ -789,6 +789,7 @@ set_compiler_flags()
     START_LD_OPT=""
     CGAL_CXX="`compiler_bin`"
     LIB_CREATION_COMMANDS=""
+    RANLIB="cat >/dev/null"
 
     case ${CGAL_OS_COMPILER} in
 	*bcc32.exe*|*BCC32*)
@@ -987,6 +988,7 @@ set_compiler_flags()
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG=''
 	    PRINT_STACKTRACE_PROGRAM="gdb"
+	    RANLIB="ranlib"
 	    ;;
 	*mwcc.exe*|*MWCC*)
 	    #### settings Metroworks C++ compiler 
@@ -6153,6 +6155,7 @@ create_include_makefile()
   ${_printf} "%s\n" "START_LD_OPT = ${START_LD_OPT}" >> ${FILE}
   ${_printf} "%s\n" "LIBPATH_OPT = ${LIBPATH_OPT}" >> ${FILE}
   ${_printf} "%s\n" "LIB_OPT = ${LIB_OPT}" >> ${FILE}
+  ${_printf} "%s\n" "RANLIB = ${RANLIB}" >> ${FILE}
 
   # 
   # suffixes and rules
