@@ -1,5 +1,12 @@
 Changes done to the `Optimisation_basic' package
 
+Version 3.8.8 on 16-Jul-2001
+- renamed concept 'Optimisation_d_traits' to 'OptimisationDTraits'
+
+Version 3.8.7 on 09-Jul-2001
+- added TAG macros to assertions.h (in anyweb-file)
+- replaced template parameter 'R' by 'K'
+
 Version 3.8.6 on 04-Jul-2001
 - added TAG macros to assertions.h
 
