@@ -34,21 +34,19 @@ submit:
 	tar -zcvf Geomview.tar.gz\
 	--exclude=CVS --exclude=wrapper.tex --exclude=makefile \
 	--exclude=TODO --exclude=run_testsuite\
-	version description.txt changes.txt \
+	version maintainer description.txt changes.txt \
 	include src\
 	doc_tex doc_ps
 	cp -f Geomview.tar.gz *.txt version $(WWW_dir)
-	cp -rf doc_ps/* $(WWW_dir)/doc_ps/
-	cp -rf doc_html/* $(WWW_dir)/doc_html/
-
+	cp -f doc_ps/Geomview.ps.gz $(WWW_dir)/doc_ps/
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/Geomview/Geomview.tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
+	mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
 	rm -f $(TMP_file)
 
-Doc : Doc_ps Doc_html
+Doc : Doc_ps
 
 Doc_ps : 	
 	rm -f doc_ps/Geomview.ps.gz;
@@ -59,9 +57,3 @@ Doc_ps :
 	gzip Geomview.ps ;\
 	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc ;
 	mv doc_tex/support/Geomview/Geomview.ps.gz doc_ps ;
-
-Doc_html :
-	cd doc_tex/support/Geomview; \
-	cc_manual_to_html -title Geomview -release $(VERSION) \
-	-o ../../../doc_html/support/Geomview main.tex ;
-	echo "done"
