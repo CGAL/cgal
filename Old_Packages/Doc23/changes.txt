@@ -1,3 +1,7 @@
+2.8     (?? ??? 2001)
+
+- Added some missing function object classes
+
 2.7     (26 Sep 2000)
 
 - links for Cartesian and intersection suppressed in many places (certainly 
