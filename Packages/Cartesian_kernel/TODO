@@ -1,6 +1,10 @@
 Stuff to look at, as time permits:
 ----------------------------------
 
+*** Before submitting : check the test-suite on M$, especially for
+  CGAL_TYPENAME_BUG stuff...
+
+- Finish merging .C files in corresponding .h files.
 - include/CGAL/smallest_radiusC2.h should use the kernel code.
   Check if it's ok (correct and as efficient), and tell Frank to do so.
   The name of this file doesn't have anything to do with what is inside anyway.
@@ -66,7 +70,7 @@ Stuff to look at, as time permits:
 - Why can't we simply have : typedef Iso_rectangleC2<double> Bbox_2;  ?
 - Iso_rectangleC2 stores a Twotuple<Point_2>, which means they are
   ref-counted, which is sub-optimal...  See above.
-- Have a separate kernel for the advanced cartesian ? 
+- Have a separate (top-level) kernel for the advanced cartesian ? 
 - Getting rid of the partial kernels Cartesian_2 and Cartesian_3 ?  This is a
   lot (1Kloc) of redundant code, and this is something only aimed at reducing
   compile time, for which I have some serious doubts anyway.  So:
@@ -110,8 +114,8 @@ Stuff to look at, as time permits:
   but mainly they are the simple ones, just needing to compute an opposite or
   something.  I need to think about what to do with these, it's painful to have
   a 3-stage calling sequence for not that much...
-- Merge Intersection package.
-- line_get_pointC2() should take "i" as "const FT&" directly, not "int", it
+- Merge Intersection package ?
+- line_get_pointC2() could take "i" as "const FT&" directly, not "int", it
   will avoid several constructions.  Also, propagating that to the higher
   level will also bring more functionality at the top level...
   Seems like a stupid design choice at the beginning ?
@@ -127,3 +131,9 @@ Stuff to look at, as time permits:
   Why do Point.x(), y(), hx(), hy(), hw() return FT instead of a "const FT &" ?
 - Status of the scripts create_symlinks and remove_symlinks ?
 - Status of the test/ directories in the old C2, C3, Cartesian_basic ?
+
+Notes:
+------
+- To run the test-suite, download the Kernel_test package, and add the correct
+  "-I../../../Cartesian_kernel/include" line in the makefile.
+- To test Sphere_3, you also need to add -DTEST_SPHERE...  It's 100% buggy now.
