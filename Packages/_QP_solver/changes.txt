@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.14 on 13-Aug-2003 [af]
+- Added template argument to To_double
+
 Version 0.9.13 on 11-Aug-2003 [af]
 - Removed To_double from Pricing_strategy.h, as this functor is now part of the kernel
 

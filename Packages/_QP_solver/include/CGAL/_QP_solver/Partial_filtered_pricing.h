@@ -198,12 +198,12 @@ class Partial_filtered_pricing
         lambda.reserve( m);
         std::transform( solve.lambda_numerator_begin(),
                         solve.lambda_numerator_end(),
-                        std::back_inserter( lambda), To_double());
+                        std::back_inserter( lambda), To_double<ET>());
         if ( ! ( CGAL::check_tag( Is_lp()) || is_phase_I)) {
             x_B.reserve( b);
             std::transform( solve.basic_variables_numerator_begin(),
                             solve.basic_variables_numerator_end(),
-                            std::back_inserter( x_B), To_double());
+                            std::back_inserter( x_B), To_double<ET>());
         }
     
         // loop over all active non-basic variables
