@@ -29,6 +29,7 @@ private:
 
 template<class Vb>
 class TDS_2 {
+public:
   typedef TDS_2<Vb>  Self;
   typedef typename Vb::template TDS_rebind<Self>::Rebound Vertex;
 

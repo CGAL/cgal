@@ -26,7 +26,7 @@ struct TDS_Bidon {
 
 
 template <class Gt, class TDS = TDS_Bidon> 
-class  Vertex_base : public Triangulation_vertex_base_2<Gt> 
+class  Vertex_base_2 : public Triangulation_vertex_base_2<Gt> 
 {
 public:
   typedef typename Gt::Point_2               Point;
@@ -36,10 +36,10 @@ public:
   typedef typename TDS::Vertex_handle            Vertex_handle;
 
   template < class My_TDS>
-  struct TDS_rebind { typedef Vertex_base<Gt, My_TDS> Rebound;};
+  struct TDS_rebind { typedef Vertex_base_2<Gt, My_TDS> Rebound;};
     
-  Vertex_base() : Base (){}
-  Vertex_base(const Point & p, void * f = NULL) : Base(p,f) {}
+  Vertex_base_2() : Base (){}
+  Vertex_base_2(const Point & p, void * f = NULL) : Base(p,f) {}
       
   void set_vh(Vertex_handle vh) { _vh = vh;}
   void set_fh(Face_handle fh) {_fh  = fh ;}
@@ -54,7 +54,7 @@ private:
 
 
 template <class Gt, class TDS = TDS_Bidon> 
-class  Face_base : public Triangulation_face_base_2<Gt> 
+class  Face_base_2 : public Triangulation_face_base_2<Gt> 
 {
 public:
   typedef Triangulation_face_base_2<Gt>          Base;
@@ -63,14 +63,14 @@ public:
   typedef typename TDS::Vertex_handle            Vertex_handle;
 
   template < class My_TDS>
-  struct TDS_rebind { typedef Face_base<Gt, My_TDS> Rebound; };
+  struct TDS_rebind { typedef Face_base_2<Gt, My_TDS> Rebound; };
 
     
-  Face_base() : Base (){}
+  Face_base_2() : Base (){}
 
-  Face_base (void* v0, void* v1, void* v2) : Base (v0, v1, v2){}
+  Face_base_2 (void* v0, void* v1, void* v2) : Base (v0, v1, v2){}
 
-  Face_base (void* v0, void* v1, void* v2, 
+  Face_base_2 (void* v0, void* v1, void* v2, 
 	     void* n0, void* n1, void* n2) 
     : Base (v0, v1, v2, n0, n1, n2){}
   
@@ -90,10 +90,11 @@ CGAL_END_NAMESPACE
 //
 // A user defined Vertex 
 template <class Gt, class TDS = CGAL::TDS_Bidon> 
-class  My_vertex : public CGAL::Vertex_base<Gt, TDS>
+class  My_vertex : public CGAL::Vertex_base_2<Gt, TDS>
 {
 public:
-  typedef CGAL::Vertex_base<Gt,TDS>    Base;
+  typedef CGAL::Vertex_base_2<Gt,TDS>              Base;
+  typedef typename Base::Point                   Point;
   typedef typename TDS::Face_handle              Face_handle;
   typedef typename TDS::Vertex_handle            Vertex_handle;
 
@@ -113,8 +114,8 @@ private:
 
 typedef CGAL::Cartesian<double>                         K;
 typedef My_vertex<K>                                    MyVb;
-typedef CGAL::Vertex_base<K>                            Vb;
-typedef CGAL::Face_base<K>                              Fb;
+typedef CGAL::Vertex_base_2<K>                            Vb;
+typedef CGAL::Face_base_2<K>                              Fb;
 //typedef CGAL::Triangulation_data_structure_2<Vb,Fb>     Tds;
 typedef CGAL::Triangulation_data_structure_2<MyVb,Fb>     Tds;
 typedef CGAL::Triangulation_2<K,Tds>                    Triangulation;
