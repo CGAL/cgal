@@ -153,22 +153,14 @@ namespace NTS {
   sign(const ::__gmp_expr<T, U> & e)
   { return (Sign) ::sgn(e); }
 
-  template < typename T, typename U >
-  inline
-  Comparison_result
-  compare(const ::__gmp_expr<T, U> & e1,
-          const ::__gmp_expr<T, U> & e2)
-  {
-    return (Comparison_result) ::cmp(e1, e2);
-  }
-
   template < typename T, typename U1, typename U2 >
   inline
   Comparison_result
   compare(const ::__gmp_expr<T, U1> & e1,
           const ::__gmp_expr<T, U2> & e2)
   {
-    return (Comparison_result) ::cmp(e1, e2);
+    // cmp returns any int value, not just -1/0/1...
+    return (Comparison_result) CGAL_NTS sign(::cmp(e1, e2));
   }
 
   template < typename T, typename U >

@@ -1,3 +1,7 @@
+4.105 (28 July 2003)
+- Fix compare(mp[zq]_class), and remove one useless version.
+- Fix Quotient.
+
 4.104 (24 July 2003)
 - Add mixed operators with int.
 

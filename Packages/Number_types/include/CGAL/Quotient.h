@@ -160,7 +160,6 @@ CGAL_KERNEL_INLINE
 Quotient<NT>&
 Quotient<NT>::operator/= (const Quotient<NT>& r)
 {
-    typedef NT NT;
     CGAL_kernel_precondition( r.num != NT(0) );
     num *= r.den;
     den *= r.num;
