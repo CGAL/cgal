@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.23
+- updated the doc of constrained triangulations
+- fixed demo/Triangulation_2/constrained.C for VC6
+
 Ver 7.22 (12/04/02)
 - doc fixes
 
