@@ -177,11 +177,11 @@ double to_double(const Rational& x) {
 }
 
 namespace CGAL {
-  namespace NTS {
-    double to_double(const Rational& x) {
-      return ::to_double(x);
-    }
+
+  double to_double(const Rational& x) {
+    return ::to_double(x);
   }
+
 }
 
 #endif // RATIONAL_WRAPPER
