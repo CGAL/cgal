@@ -1,3 +1,7 @@
+// Test file #1 for the IA package.
+//  $Revision$
+//  $Date$
+
 #define CGAL_IA_NO_WARNINGS
 #include <CGAL/Interval_arithmetic.h>
 
