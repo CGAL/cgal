@@ -3,6 +3,7 @@
 - Make Static_filter_error::ulp() work with optimization.
 - The ulp computation was too optimistic for Intel's "extended precision
   feature", so adjust the epsilons.
+- Add safe default "true" for template argument of Protect_FPU_rounding.
 
 24 September 2004 Sylvain Pion
 - Interval_nt : Introduce comparison functions/operators in namespace

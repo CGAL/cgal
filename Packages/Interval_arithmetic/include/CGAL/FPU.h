@@ -387,7 +387,7 @@ inline void force_ieee_double_precision()
 // A class whose constructor sets the FPU mode to +inf, saves a backup of it,
 // and whose destructor resets it back to the saved state.
 
-template <bool Protected> struct Protect_FPU_rounding;
+template <bool Protected = true> struct Protect_FPU_rounding;
  
 template <>
 struct Protect_FPU_rounding<true>
