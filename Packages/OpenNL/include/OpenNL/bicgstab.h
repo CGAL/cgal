@@ -70,7 +70,7 @@ namespace OpenNL {
  * @param x initial value.
  * @param eps threshold for the residual.
  * @param max_iter maximum number of iterations.
-  */    
+ */
 
 template < class MATRIX, class VECTOR> class Solver_BICGSTAB {
 public:
@@ -91,12 +91,12 @@ public:
 	// Preconditions:
 	// * A.dimension() == b.dimension()
 	// * A.dimension() == x.dimension()
-    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) 
+	bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x)
 	{
 	   // Debug trace
 	   //std::cerr << std::endl << "Solver_BICGSTAB<>::solve: start" << std::endl;
 
-       if (A.dimension() != b.dimension())
+        if (A.dimension() != b.dimension())
 			return false;
         if (A.dimension() != x.dimension())
 			return false;
@@ -115,7 +115,7 @@ public:
         Vector Ad(n) ;
         Vector t(n) ;
         Vector& s = h ;
-        CoeffType rTh, rTAd, rTr, alpha, beta, omega, st, tt;
+        CoeffType rTh, rTAd, rr, alpha, beta, omega, st, tt;
         unsigned int its=0;										// Loop counter
         CoeffType err=epsilon_*epsilon_*BLAS<Vector>::dot(b,b);	// Error to reach
 
@@ -130,13 +130,13 @@ public:
         assert( BLAS<Vector>::dot(rT,rT)>1e-40 );
 
 		rTh=BLAS<Vector>::dot(rT,h);							// (rT|h)
-        rTr=BLAS<Vector>::dot(r,r);								// Current error (r|r)
+        rr=BLAS<Vector>::dot(r,r);								// Current error (r|r)
 
-        while ( rTr>err && its < max_iter) 
+        while ( rr>err && its < max_iter) 
 		{
 			// Debug trace
 			//if (its % 25 == 0)
-			//	std::cerr << "Solver_BICGSTAB<>::solve: rTr(=" << rTr << ") > err(=" << err << ")" << std::endl;
+			//	std::cerr << "Solver_BICGSTAB<>::solve: rr(=" << rr << ") > err(=" << err << ")" << std::endl;
 
             mult(A,d,Ad);
             rTAd=BLAS<Vector>::dot(rT,Ad);
@@ -170,13 +170,13 @@ public:
             BLAS<Vector>::scal(beta,d);
             BLAS<Vector>::axpy(1,h,d);
             BLAS<Vector>::axpy(-beta*omega,Ad,d);
-            rTr=BLAS<Vector>::dot(r,r);
+            rr=BLAS<Vector>::dot(r,r);
             its++ ;
         }
 
 		bool success = (its < max_iter);
 		if ( ! success )
-			std::cerr << "Solver_BICGSTAB<>::solve: failure: rTr(=" << rTr << ") > err(=" << err << ")" << std::endl;
+			std::cerr << "Solver_BICGSTAB<>::solve: failure: rr(=" << rr << ") > err(=" << err << ")" << std::endl;
 		return success;
     }
 
