@@ -1,7 +1,6 @@
 [See also the file TODO_static_filters] 
 
 - DOCUMENT enough for the new to_interval() requirement.
-- Dispatch all CGAL/Interval_arithmetic/*.h into the respective packages.
 - mv test/include/*.C *.def ; Or use template functions ?
 - Use Self instead of IA as the internal typedef ?
 
@@ -41,6 +40,7 @@ Sous optimal, mais si on peut lui dire de l'utiliser quand il n'optimise pas
 (genre #ifndef __OPTIMIZE__), ca peut faire l'affaire.
 De toute facon, c'est le fsqrt qui prend un max de temps, donc l'enrobage...
 
+- SunPro 5.1 ?
 - Does KCC 4.0 still fails when optimizing ?  Ask Stefan.
 - Try to see if KCC can use the GCC asm() on x86 ?
 - Try to get rid of the libc5 compatible version (make benchmarks first).
@@ -51,11 +51,6 @@ De toute facon, c'est le fsqrt qui prend un max de temps, donc l'enrobage...
   A revoir en tout cas dans l'optique d'un noyau filtre.
 - Have determinant_by_formula() overloading for Lazy_exact_nt<> ?
   And what about for Interval_nt<> too ?
-- There are problems with Handle_for if the allocator is not standard, because
-  I allocate with new.  Handle_for cannot work because the allocation doesn't
-  work for virtual derived types from RefCounted.  I guess that's why it fails
-  for Aff_transformation too...  What's the solution.  Ask Stefan if he has a
-  clue.
 - Turn CGAL_IA_CHECK_RESTRICT into an [expensive] assertion ?
 - Get rid of convert_to() ?  This is a mess for nothing (benchmark first).
   Target convert_from_to (const Target, const Source) is fine ?
