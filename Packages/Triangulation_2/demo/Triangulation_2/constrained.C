@@ -40,7 +40,7 @@ void
 any_button(Window_stream &win)
 {
     double x, y;
-    cerr << "Press any button to continue" << endl;
+    std::cerr << "Press any button to continue" << endl;
     win.read_mouse(x,y);
 }
 
@@ -61,7 +61,7 @@ input_constraints_from_file(list<Constraint> & list_contraintes,
 {
   int n;
   is >> n;
-    cerr << "Reading " << n << " constraints" << std::endl;
+    std::cerr << "Reading " << n << " constraints" << std::endl;
 
   Point p,q;
   for(; n > 0; n--) {
@@ -127,8 +127,7 @@ main( )
   win << ct;
   draw_constraints(win,lc);
   
-  // corrige
-  std::cerr << "Enter points with the left button" << std::endl;
+    std::cerr << "Enter points with the left button" << std::endl;
   std::cerr << "Terminate with right button " << std::endl;
   Point p;
     while(1) {
