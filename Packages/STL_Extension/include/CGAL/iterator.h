@@ -20,6 +20,7 @@
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
 //                 Sylvain Pion <Sylvain.Pion@mpi-sb.mpg.de>
+//                 Menelaos Karavelas <mkaravel@cse.nd.edu>
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH
@@ -548,12 +549,6 @@ public:
       ++c_;
   }
 
-  bool operator==(const Self& it) const {
-    CGAL_precondition(b_ == it.b_ && e_ == it.e_);
-    return c_ == it.c_;
-  }
-  bool operator!=(const Self& it) const { return !(*this == it); }
-
   Self& operator++() {
     do { ++c_; } while (c_ != e_ && p_(c_));
     return *this;
@@ -581,7 +576,35 @@ public:
   reference operator*() const { return *c_;  }
   pointer operator->() const  { return &*c_; }
 
+  const Predicate& predicate() const { return p_; }
+  Iterator base() const { return c_; }
+  bool is_end() const { return (c_ == e_); }
+
+  template<class I_, class P_, class Ref_, class Ptr_,
+           class Val_, class Dist_, class Ctg_ >
+  friend bool operator==(const Filter_iterator<I_,P_,Ref_,Ptr_,
+			 Val_,Dist_,Ctg_>& it1,
+			 const Filter_iterator<I_,P_,Ref_,Ptr_,
+			 Val_,Dist_,Ctg_>& it2);
 };
+
+
+template < class I, class P, class Ref, class Ptr,
+           class Val, class Dist, class Ctg >
+bool operator==(const Filter_iterator<I,P,Ref,Ptr,Val,Dist,Ctg>& it1,
+		const Filter_iterator<I,P,Ref,Ptr,Val,Dist,Ctg>& it2)
+{
+  CGAL_precondition(it1.b_ == it2.b_ && it1.e_ == it2.e_);
+  return it1.c_ == it2.c_;
+}
+
+bool operator!=(const Filter_iterator<I,P,Ref,Ptr,Val,Dist,Ctg>& it1,
+		const Filter_iterator<I,P,Ref,Ptr,Val,Dist,Ctg>& it2)
+{
+  return !(it1 == it2);
+}
+
+
 
 template < class I, class P >
 inline Filter_iterator< I, P >
