@@ -4,6 +4,69 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1175
+//---------------------------------------------------------------------
+
+GLOB: Incorporate Intel support (<- Andreas).
+GLOB: Set CGAL_VERSION to 3.0.
+GLOB: Removed visual support for CLN (menu etc.).
+GLOB: The actual CLN support is still there for bw compatibility.
+GLOB: Update supported compilers (->Borland 5.5.1, mips 64).
+DOCS: Changed CGAL_VERSION to 3.0.
+DOCS: Update supported compiler list.
+
+//---------------------------------------------------------------------
+//	revision 1174
+//---------------------------------------------------------------------
+
+ALL : Remove traces of KCC/EGCS and CGAL_CC.
+DOCS: - Fix typo cgal_install -> install_cgal.
+
+//---------------------------------------------------------------------
+//	revision 1173
+//---------------------------------------------------------------------
+
+GLOB: CGAL_EXTRA_OBJECTS is not needed anymore.
+
+//---------------------------------------------------------------------
+//	revision 1172
+//---------------------------------------------------------------------
+
+ALL : - New options --build <config> and --rebuild <config>.
+ALL : - Update list of supported compilers.
+ALL : - New interactive option "Register new compiler".
+GLOB: Set QLIBS even if QT_SUPPORT is null.
+GLOB: That way, CGAL_QT_LDFLAGS will always be correct.
+
+//---------------------------------------------------------------------
+//	revision 1171
+//---------------------------------------------------------------------
+
+GLOB: In install_cgal:
+GLOB: ) printf -> ${_printf} twice
+GLOB: ) Added a check for printf, to test wether it handles options. In that
+GLOB: case, 'printf --' whould be used instead of printf alone. A workaround
+GLOB: shell function is then assigned to ${_printf}.
+
+//---------------------------------------------------------------------
+//	revision 1170
+//---------------------------------------------------------------------
+
+GLOB: VC7 is supported, VC6 is not anymore.
+
+//---------------------------------------------------------------------
+//	revision 1169
+//---------------------------------------------------------------------
+
+GLOB: Fix typo.
+
+//---------------------------------------------------------------------
+//	revision 1168
+//---------------------------------------------------------------------
+
+GLOB: - Move GMP link options at the end.
+
+//---------------------------------------------------------------------
 //	revision 1167
 //---------------------------------------------------------------------
 
@@ -64,6 +127,13 @@ GLOB: Qt license updates
 //	revision 1158
 //---------------------------------------------------------------------
 
+DOCS: Changed CGAL_VERSION to 3.0.
+DOCS: Update supported compiler list.
+ALL : Remove traces of KCC/EGCS and CGAL_CC.
+DOCS: - Fix typo cgal_install -> install_cgal.
+DOCS: - New options --build <config> and --rebuild <config>.
+DOCS: - Update list of supported compilers.
+DOCS: - New interactive option "Register new compiler".
 DOCS: 2.4 -> 2.5
 DOCS: - update GMP to version 4.1
 DOCS: - add support for GMP++
@@ -604,6 +674,7 @@ DOCS: Updated CGAL version in --upgrade.
 
 GLOB: Initial revision
 GLOB: Updated sample include makefiles + README.
+GLOB: Remove traces of KCC/EGCS and CGAL_CC.
 
 //---------------------------------------------------------------------
 //	revision 191
@@ -637,6 +708,9 @@ TEST: Updated makefile and removed superfluous include in example.C.
 //---------------------------------------------------------------------
 
 GLOB: Updated makefile.
+GLOB: - New options --build <config> and --rebuild <config>.
+GLOB: - Update list of supported compilers.
+GLOB: - New interactive option "Register new compiler".
 GLOB: Initial revision
 DOCS: Two changes due to Dima/Stefan.
 
@@ -1076,6 +1150,7 @@ GLOB: added geomview support,
 GLOB: included fixes from CGAL-1-1-patch.
 DOCS: adopted to new html-converter.
 GLOB: Updated sample include makefiles + README.
+GLOB: Remove traces of KCC/EGCS and CGAL_CC.
 
 //---------------------------------------------------------------------
 //	revision 128
