@@ -330,7 +330,7 @@ nearest_vertex_1D(const Point& p) const
   Finite_vertices_iterator vit=finite_vertices_begin();
   nn = vit->handle();
   for ( ; vit != finite_vertices_end(); ++vit){
-    if (closer(p, vit->point(), nn->point()) ) nn=vit->handle();
+    if (closer(p, vit->point(), nn->point()) == SMALLER) nn=vit->handle();
   } 
   return nn;
 }
