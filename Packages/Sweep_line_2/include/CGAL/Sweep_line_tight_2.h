@@ -179,10 +179,9 @@ public:
    *  \param curves_end the input past-the-end iterator of the range.
    *  \param subcurves an iterator to the first curve in the range
    *                   of curves created by intersecting the input curves.
-   *  \param overlapping indicates whether overlapping curves should be reported 
-   *                   once or multiple times. If false, the overlapping curves are 
-   *                   reported once only.
-   *
+   *  \param overlapping indicates whether overlapping curves should be 
+   *                   reported once or multiple times. If false, the 
+   *                   overlapping curves are reported once only.
    */
   template <class OutpoutIterator>
   void  get_subcurves(CurveInputIterator begin, CurveInputIterator end, 
