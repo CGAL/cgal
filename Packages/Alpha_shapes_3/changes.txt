@@ -1,3 +1,6 @@
+Version 3.29 (3 October 2003)[af]
+- cleanup in demos
+
 Version 3.28 (1 October 2003)[af]
 - Made Alpha_shape_euclidean_traits obsolete
 
