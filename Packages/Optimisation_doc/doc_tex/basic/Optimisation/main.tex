@@ -10,7 +10,8 @@
 % $Date$
 % =============================================================================
 
-\newcommand{\linebreakByHand}{\ccTexHtml{\\}{}}
+\newcommand{\linebreakByHand}{\ccTexHtml{\linebreak[4]}{}}
+\newcommand{  \newlineByHand}{\ccTexHtml{\\}{}}
 \newcommand{\SaveSpaceByHand}{}  %%%% [2]{\ccTexHtml{#1}{#2}}
 
 \chapter{Geometric Optimisation} \label{Optimisation}
@@ -18,8 +19,8 @@
 
 \ccChapterRelease{Release: WIP \ccTexHtml{\quad}{ , } \OptRCSDate}
 
-\ccChapterAuthor{Bernd G{\"a}rtner}\ccTexHtml{\\}{<br>}
-\ccChapterAuthor{Michael Hoffmann}\ccTexHtml{\\}{<br>}
+\ccChapterAuthor{Bernd G{\"a}rtner}\ccTexHtml{\\}{<BR>}
+\ccChapterAuthor{Michael Hoffmann}\ccTexHtml{\\}{<BR>}
 \ccChapterAuthor{Sven Sch{\"o}nherr}
 
 \ccTexHtml{\thispagestyle{empty}}{}
@@ -72,17 +73,8 @@ e.g.\ defining the compiler flag
 \ccc{CGAL_OPTIMISATION_NO_PRECONDITIONS} switches precondition
 checking off, cf.~\cgalReferToAssertions
 
-\newcommand{\cgalSetOptTraitsAdaptLayout}{\ccTexHtml{%
-    \ccSetThreeColumns{CGAL_Oriented_side}{}{returns constants
-      \ccc{CGAL_LEFTTURN}, \ccc{CGAL_COLLINEAR}}
-    \ccPropagateThreeToTwoColumns}{}}
 \newcommand{\cgalSetOptTraitsAdaptReqLayout}{\ccTexHtml{%
-    \ccSetThreeColumns{CGAL_Oriented_side}{da.get_hw( Point p).}{}
-    \ccPropagateThreeToTwoColumns}{}}
-
-\newcommand{\cgalSetOptTraitsReqLayout}{\ccTexHtml{%
-    \ccSetThreeColumns{CGAL_Oriented_side}{}{returns
-      \ccc{CGAL_ON_BOUNDED_SIDE}, \ccc{CGAL_ON_BOUNDARY}}
+    \ccSetThreeColumns{Oriented_side}{da.get_hw( Point p).}{}
     \ccPropagateThreeToTwoColumns}{}}
 
 \input{smallest_enclosing_circles}
@@ -100,5 +92,7 @@ checking off, cf.~\cgalReferToAssertions
 \input{spec_monotone_matrix_search}
  
 \input{spec_sorted_matrix_search}
+
+\cgalColumnLayout
 
 % ===== EOF ===================================================================

@@ -13,16 +13,16 @@
 % =============================================================================
 
 \ccHtmlNoClassToc
-\begin{ccClassTemplate}{CGAL_Min_ellipse_2_traits_2<R>}
+\begin{ccClassTemplate}{Min_ellipse_2_traits_2<R>}
 %\ccSubsection{Traits Class Implementation using the two-dimensional
-%  CGAL Kernel}
+%  \cgal-kernel}
 \ccTexHtml{%
-  \subsection[Traits Class Impl.\ using the 2D CGAL Kernel
+  \subsection[Traits Class Implementation using the 2D \cgal-kernel
                (\protect\ccPrintSingleTokenSemi \ccPureClassTemplateName;)]%
-             {Traits Class Implementation using the two-dimensional CGAL
-               Kernel (\ccClassTemplateName)}}{
-  <H2> Traits Class Implementation using the two-dimensional CGAL Kernel
-          (<I>CGAL_Min_ellipse_2_traits_2</I>)
+             {Traits Class Implementation for 2D Smallest Enclosing Ellipse
+               using the two-dimensional \cgal-kernel (\ccClassTemplateName)}}{
+  <H2> Traits Class Implementation using the two-dimensional CGAL-kernel
+          (<I>Min_ellipse_2_traits_2</I>)
   </H2> <P>}
 \label{sec:min_ellipse_2_traits_impl_2D_kernel}
 
@@ -32,17 +32,17 @@
 \ccDefinition
 
 The class \ccClassTemplateName\ interfaces the 2D optimisation
-algorithm for smallest enclsoing ellipses with the \cgal\ 2D kernel.
+algorithm for smallest enclosing ellipses with the 2D \cgal-kernel.
 
 \ccInclude{CGAL/Min_ellipse_2_traits_2.h}
 
 % -----------------------------------------------------------------------------
 \ccTypes
 
-\ccSetThreeColumns{typedef CGAL_Optimisation_ellipse_2<R>}{Ellipse;}{}
+\ccSetThreeColumns{typedef Optimisation_ellipse_2<R>}{Ellipse;}{}
 
-\ccTypedef{typedef  CGAL_Point_2<R>                 Point;  }{}
-\ccTypedef{typedef  CGAL_Optimisation_ellipse_2<R>  Ellipse;}{}
+\ccTypedef{typedef  Point_2<R>                 Point;  }{}
+\ccTypedef{typedef  Optimisation_ellipse_2<R>  Ellipse;}{}
 
 \cgalColumnLayout
 
@@ -50,20 +50,18 @@ algorithm for smallest enclsoing ellipses with the \cgal\ 2D kernel.
 \ccCreation
 \ccCreationVariable{traits}
 
-\ccConstructor{ CGAL_Min_ellipse_2_traits_2( );}{}
+\ccConstructor{ Min_ellipse_2_traits_2( );}{}
 
-\ccConstructor{ CGAL_Min_ellipse_2_traits_2(
-                    const CGAL_Min_ellipse_2_traits_2<R>&);}{}
+\ccConstructor{ Min_ellipse_2_traits_2( const Min_ellipse_2_traits_2<R>&);}{}
 
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
-\ccc{CGAL_Min_ellipse_2}
+\ccc{Min_ellipse_2}
   \ccTexHtml{(Section~\ref{sec:min_ellipse_2_spec})}{}, 
-\ccc{CGAL_Min_ellipse_2_adapterC2}
+\ccc{Min_ellipse_2_adapterC2}
   \ccTexHtml{(Section~\ref{sec:min_ellipse_2_traits_adapterC2})}{},
-\linebreakByHand
-\ccc{CGAL_Min_ellipse_2_adapterH2}
+\ccc{Min_ellipse_2_adapterH2}
   \ccTexHtml{(Section~\ref{sec:min_ellipse_2_traits_adapterH2})}{},
 \ccTexHtml{}{<A HREF="requirements_Min_ellipse_2.html">}Requirements
   of Traits Classes for 2D Smallest Enclosing
@@ -72,7 +70,7 @@ algorithm for smallest enclsoing ellipses with the \cgal\ 2D kernel.
 % -----------------------------------------------------------------------------
 \ccExample
 
-See example for \ccc{CGAL_Min_ellipse_2}
+See example for \ccc{Min_ellipse_2}
   \ccTexHtml{(Section~\ref{sec:min_ellipse_2_spec})}{}.
 
 % -----------------------------------------------------------------------------

@@ -23,15 +23,15 @@
   <H2>Requirements of Traits Classes for 2D Smallest Enclosing Ellipse</H2><P>
 \end{ccHtmlOnly}
 
-\cgalSetOptTraitsReqLayout
+\cgalSetMinEllipseLayout
 
-The class template \ccc{CGAL_Min_ellipse_2} is parameterized with a
+The class template \ccc{Min_ellipse_2} is parameterized with a
 \ccc{Traits} class which defines the abstract interface between the
 optimisation algorithm and the primitives it uses. The following
 requirements catalog lists the primitives, i.e.\ types, member
 functions etc., that must be defined for a class that can be used to
-parameterize \ccc{CGAL_Min_ellipse_2}.  A traits class implementation
-using the \cgal\ 2D kernel is available and described in
+parameterize \ccc{Min_ellipse_2}.  A traits class implementation
+using the 2D \cgal-kernel is available and described in
 Section~\ref{sec:min_ellipse_2_traits_impl_2D_kernel}. In addition, we
 provide traits class adapters to user supplied point classes, see
 Sections~\ref{sec:min_ellipse_2_traits_adapterC2}
@@ -51,7 +51,7 @@ traits classes, e.g.\ through derivation and specialization.
 \ccDefinition
 
 A class that satisfies the requirements of a traits class for
-\ccc{CGAL_Min_ellipse_2} must provide the following primitives.
+\ccc{Min_ellipse_2} must provide the following primitives.
 
 % -----------------------------------------------------------------------------
 \ccTypes
@@ -100,7 +100,7 @@ constructors can be provided.
 \ccDefinition
  
 An object of the class \ccClassName\ is an ellipse in two-dimensional
-euclidean plane $\E_2$. Its boundary splits the plane into a bounded
+Euclidean plane $\E_2$. Its boundary splits the plane into a bounded
 and an unbounded side. By definition, an empty \ccClassName\ has no
 boundary and no bounded side, i.e.\ its unbounded side equals the
 whole plane $\E_2$.
@@ -123,8 +123,8 @@ whole plane $\E_2$.
 \ccMemberFunction{ void  set( const Point& p,
                               const Point& q);}{
         sets \ccVar\ to the ellipse containing exactly the segment
-	connecting \ccc{p} and \ccc{q}. The algorithm guarantees
-	that \ccc{set} is never called with two equal points.}
+        connecting \ccc{p} and \ccc{q}. The algorithm guarantees
+        that \ccc{set} is never called with two equal points.}
 
 \ccMemberFunction{ void  set( const Point& p,
                               const Point& q,
@@ -157,12 +157,14 @@ whole plane $\E_2$.
         returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
 
 Each of the following predicates is only needed, if the corresponding
-predicate of \ccc{CGAL_Min_ellipse_2} is used.
+predicate of \ccc{Min_ellipse_2} is used.
 
-\ccMemberFunction{ CGAL_Bounded_side
+\ccMemberFunction{ Bounded_side
                    bounded_side( const Point& p) const;}{
-        returns \ccc{CGAL_ON_BOUNDED_SIDE}, \ccc{CGAL_ON_BOUNDARY} or
-        \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
+        returns \ccc{ON_BOUNDED_SIDE}, \ccc{ON_BOUNDARY},
+\newlineByHand
+        or \ccc{ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
+\newlineByHand
         on the boundary, or properly outside of \ccVar, resp.}
 
 \ccMemberFunction{ bool  has_on_bounded_side( const Point& p) const;}{
@@ -183,18 +185,16 @@ predicate of \ccc{CGAL_Min_ellipse_2} is used.
 % -----------------------------------------------------------------------------
 \ccHeading{I/O}
 
-The following I/O operators are only needed,%
-\SaveSpaceByHand{\ccTexHtml{$\!$}{}}
-                                             if the corresponding I/O
-operators of \ccc{CGAL_Min_ellipse_2} are used.
+The following I/O operators are only needed, if the corresponding I/O
+operators of \ccc{Min_ellipse_2} are used.
 
 \ccHtmlNoIndex
 \ccFunction{ ostream& operator << ( ostream& os, const Ellipse& ellipse);}{
         writes \ccVar\ to output stream \ccc{os}.}
 
 \ccHtmlNoIndex
-\ccFunction{ CGAL_Window_stream&
-             operator << ( CGAL_Window_stream& ws, const Ellipse& ellipse);}{
+\ccFunction{ Window_stream&
+             operator << ( Window_stream& ws, const Ellipse& ellipse);}{
         writes \ccVar\ to window stream \ccc{ws}.}
 
 % -----------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 % =============================================================================
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
-% Section: 2D Smallest Enclosing Circle
+% Section: Smallest Enclosing Circles
 % Subsec.: Requirements of Traits Classes for 2D Smallest Enclosing Circle
 % -----------------------------------------------------------------------------
 % file  : doc_tex/basic/Optimisation/requirements_Min_circle_2.tex
@@ -23,15 +23,15 @@
   <H2>Requirements of Traits Classes for 2D Smallest Enclosing Circle</H2><P>
 \end{ccHtmlOnly}
 
-\cgalSetOptTraitsReqLayout
+\cgalSetMinCircleLayout
 
-The class template \ccc{CGAL_Min_circle_2} is parameterized with a
+The class template \ccc{Min_circle_2} is parameterized with a
 \ccc{Traits} class which defines the abstract interface between the
 optimisation algorithm and the primitives it uses. The following
 requirements catalog lists the primitives, i.e.\ types, member
 functions etc., that must be defined for a class that can be used to
-parameterize \ccc{CGAL_Min_circle_2}.  A traits class implementation
-using the \cgal\ 2D kernel is available and described in
+parameterize \ccc{Min_circle_2}.  A traits class implementation
+using the 2D \cgal-kernel is available and described in
 Section~\ref{sec:min_circle_2_traits_impl_2D_kernel}. In addition, we
 provide traits class adapters to user supplied point classes, see
 Sections~\ref{sec:min_circle_2_traits_adapterC2}
@@ -51,7 +51,7 @@ traits classes, e.g.\ through derivation and specialization.
 \ccDefinition
 
 A class that satisfies the requirements of a traits class for
-\ccc{CGAL_Min_circle_2} must provide the following primitives.
+\ccc{Min_circle_2} must provide the following primitives.
 
 % -----------------------------------------------------------------------------
 \ccTypes
@@ -90,13 +90,13 @@ constructors can be provided.
 \ccOperations
 
 The following predicate is only needed, if the member function
-\ccc{is_valid} of \ccc{CGAL_Min_circle_2} is used.
+\ccc{is_valid} of \ccc{Min_circle_2} is used.
 
-\ccMemberFunction{ CGAL_Orientation  orientation( const Point& p,
+\ccMemberFunction{ Orientation  orientation( const Point& p,
                                                   const Point& q,
                                                   const Point& r) const;}{
-        returns constants \ccc{CGAL_LEFTTURN}, \ccc{CGAL_COLLINEAR},
-        or \ccc{CGAL_RIGHTTURN} iff \ccc{r} lies properly to the left,
+        returns constants \ccc{LEFTTURN}, \ccc{COLLINEAR},
+        or \ccc{RIGHTTURN} iff \ccc{r} lies properly to the left of,
         on, or properly to the right of the oriented line through
         \ccc{p} and \ccc{q}, resp.}
 
@@ -127,7 +127,7 @@ equals $\E_2\mbox{\ccTexHtml{$\setminus$}{-}}\{p\}$.
 \ccNestedType{Point}{Point type.}
 
 The following type is only needed, if the member function \ccc{is_valid}
-of \ccc{CGAL_Min_circle_2} is used.
+of \ccc{Min_circle_2} is used.
 
 \ccNestedType{Distance}{
         Distance type. The function \ccc{squared_radius} (see below)
@@ -146,8 +146,8 @@ of \ccc{CGAL_Min_circle_2} is used.
 \ccMemberFunction{ void  set( const Point& p,
                               const Point& q);}{
         sets \ccVar\ to the circle with diameter equal to the segment
-	connecting \ccc{p} and \ccc{q}. The algorithm guarantees that
-	\ccc{set} is never called with two equal points.}
+        connecting \ccc{p} and \ccc{q}. The algorithm guarantees that
+        \ccc{set} is never called with two equal points.}
 
 \ccMemberFunction{ void  set( const Point& p,
                               const Point& q,
@@ -163,12 +163,14 @@ of \ccc{CGAL_Min_circle_2} is used.
         returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
 
 Each of the following predicates is only needed, if the corresponding
-predicate of \ccc{CGAL_Min_circle_2} is used.
+predicate of \ccc{Min_circle_2} is used.
 
-\ccMemberFunction{ CGAL_Bounded_side
+\ccMemberFunction{ Bounded_side
                    bounded_side( const Point& p) const;}{
-        returns \ccc{CGAL_ON_BOUNDED_SIDE}, \ccc{CGAL_ON_BOUNDARY} or
-        \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
+        returns \ccc{ON_BOUNDED_SIDE}, \ccc{ON_BOUNDARY,}
+\newlineByHand
+        or \ccc{ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
+\newlineByHand
         on the boundary, or properly outside of \ccVar, resp.}
 
 \ccMemberFunction{ bool  has_on_bounded_side( const Point& p) const;}{
@@ -190,7 +192,7 @@ predicate of \ccc{CGAL_Min_circle_2} is used.
 \ccHeading{Additional Operations for Checking}
 
 The following operations are only needed, if the member function
-\ccc{is_valid} of \ccc{CGAL_Min_circle_2} is used.
+\ccc{is_valid} of \ccc{Min_circle_2} is used.
 
 \ccMemberFunction{ bool  operator == ( const Circle& circle2) const;}{
         returns \ccc{true}, iff \ccVar\ and \ccc{circle2} are equal.}
@@ -205,15 +207,15 @@ The following operations are only needed, if the member function
 \ccHeading{I/O}
 
 The following I/O operators are only needed, if the corresponding I/O
-operators of \ccc{CGAL_Min_circle_2} are used.
+operators of \ccc{Min_circle_2} are used.
 
 \ccHtmlNoIndex
 \ccFunction{ ostream& operator << ( ostream& os, const Circle& circle);}{
         writes \ccVar\ to output stream \ccc{os}.}
 
 \ccHtmlNoIndex
-\ccFunction{ CGAL_Window_stream&
-             operator << ( CGAL_Window_stream& ws, const Circle& circle);}{
+\ccFunction{ Window_stream&
+             operator << ( Window_stream& ws, const Circle& circle);}{
         writes \ccVar\ to window stream \ccc{ws}.}
 
 % -----------------------------------------------------------------------------
