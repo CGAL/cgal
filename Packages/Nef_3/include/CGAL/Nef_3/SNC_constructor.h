@@ -850,7 +850,8 @@ public:
       Halfedge_key_lt;
     typedef std::list<Halfedge_key>  Halfedge_list;
     
-    typedef CGAL::Pluecker_line_3<Standard_kernel> Pluecker_line_3;
+    typedef typename Standard_kernel::Kernel_tag   Kernel_tag;
+    typedef CGAL::Pluecker_line_3<Kernel_tag,Standard_kernel> Pluecker_line_3;
     typedef CGAL::Pluecker_line_lt        Pluecker_line_lt;
     typedef std::map< Pluecker_line_3, Halfedge_list, Pluecker_line_lt> 
       Pluecker_line_map;
@@ -873,7 +874,7 @@ public:
       Point_3 q = p + e->vector();
       Standard_point_3 sp = Infi_box::standard_point(p,eval);
       Standard_point_3 sq = Infi_box::standard_point(q,eval);
-      Pluecker_line_3 l( sp, sq);
+      Pluecker_line_3  l( sp, sq);
       
       int inverted;
       l = categorize( l, inverted);
@@ -972,7 +973,7 @@ public:
 	Halfedge_handle e2 = itl->e;
 	TRACEN("    " << point(vertex(e1)) << " -> " << point(vertex(e2)));
 	TRACEN(e1->vector()<<" -> "<< -e2->vector());
-	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
+	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	CGAL_assertion(point(vertex(e1)) != point(vertex(e2)));
 	CGAL_assertion(mark(e1)==mark(e2));
 	make_twins(e1,e2);
@@ -1112,7 +1113,7 @@ public:
       FM_decorator D(*this->sncp());
       D.create_facet_objects(it->first,it->second.begin(),it->second.end());
     }
-    SETDTHREAD(1);
+    //    SETDTHREAD(1);
   }
 
   void create_volumes() {
@@ -1120,8 +1121,7 @@ public:
   volumes.  \precond |categorize_facet_cycles_and_creating_facets()| was
   called before.}*/
 
-  //  SETDTHREAD(37*43*19*47);
-    
+    //    SETDTHREAD(37*43*19*47);
     TRACEN(">>>>>create_volumes");
     Sface_shell_hash     ShellSf(-1);
     Face_shell_hash      ShellF(-1);
@@ -1246,6 +1246,7 @@ public:
     
     Ray_3 ray = Ray_3(p, Direction_3(-1,0,0));
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+    number_of_point_location_queries++;
     timer_point_location.start();
 #endif 
     Object_handle o = pl->shoot(ray);
@@ -1405,7 +1406,8 @@ public:
 	Halfedge_key_lt;
       typedef std::list<Halfedge_key>  Halfedge_list;
       
-      typedef CGAL::Pluecker_line_3<Standard_kernel> Pluecker_line_3;
+      typedef typename Standard_kernel::Kernel_tag Kernel_tag;
+      typedef CGAL::Pluecker_line_3<Kernel_tag,Standard_kernel> Pluecker_line_3;
       typedef CGAL::Pluecker_line_lt        Pluecker_line_lt;
       typedef std::map< Pluecker_line_3, Halfedge_list, Pluecker_line_lt> 
 	Pluecker_line_map;

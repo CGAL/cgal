@@ -73,7 +73,8 @@ public:
   typedef typename Kernel::Triangle_3 Triangle_3;
 
   typedef typename Kernel::RT RT;
-  typedef Bounding_box_3<Kernel> Bounding_box_3;
+  typedef typename Kernel::Kernel_tag Kernel_tag;
+  typedef Bounding_box_3<Kernel_tag,Kernel> Bounding_box_3;
   
   virtual Bounding_box_3 operator()(const Object_list& o) const;
   virtual Bounding_box_3 operator()(Object_handle o) const;
@@ -113,7 +114,8 @@ public:
   typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename Kernel::RT RT;
-  typedef Bounding_box_3<Kernel> Bounding_box_3;
+  typedef typename Kernel::Kernel_tag Kernel_tag;
+  typedef Bounding_box_3<Kernel_tag,Kernel> Bounding_box_3;
 
   typedef typename Kernel::Intersect_3 Intersect;
   typedef Objects_bbox<SNC_decorator> Objects_bbox;
@@ -262,7 +264,8 @@ Side_of_plane<SNC_decorator>::operator()
 }
 
 template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel>
+Bounding_box_3<typename SNC_decorator::Kernel::Kernel_tag, 
+	       typename SNC_decorator::Kernel>
 Objects_bbox<SNC_decorator>::operator()
   ( const Object_list& O) const {
   CGAL_assertion( O.size() >= 0);
@@ -278,7 +281,8 @@ Objects_bbox<SNC_decorator>::operator()
 }
 
 template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel> 
+Bounding_box_3<typename SNC_decorator::Kernel::Kernel_tag, 
+	       typename SNC_decorator::Kernel>
 Objects_bbox<SNC_decorator>::operator()
   (Object_handle o) const {
   Vertex_handle v;
@@ -301,7 +305,8 @@ Objects_bbox<SNC_decorator>::operator()
 }
 
 template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel> 
+Bounding_box_3<typename SNC_decorator::Kernel::Kernel_tag, 
+	       typename SNC_decorator::Kernel>
 Objects_bbox<SNC_decorator>::operator()
   (Vertex_handle v) const {
   Point_3 p(D.point(v));
@@ -309,14 +314,16 @@ Objects_bbox<SNC_decorator>::operator()
 }
 
 template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel> 
+Bounding_box_3<typename SNC_decorator::Kernel::Kernel_tag, 
+	       typename SNC_decorator::Kernel>
 Objects_bbox<SNC_decorator>::operator()
   (Halfedge_handle e) const {
   return (operator()(D.vertex(e)) + operator()(D.vertex(D.twin(e))));
 }
 
 template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel> 
+Bounding_box_3<typename SNC_decorator::Kernel::Kernel_tag, 
+	       typename SNC_decorator::Kernel> 
 Objects_bbox<SNC_decorator>::operator()
   (Halffacet_triangle_handle t) const {
   Bounding_box_3 bbox(Point_3(0,0,0),Point_3(0,0,0));
@@ -329,7 +336,8 @@ Objects_bbox<SNC_decorator>::operator()
 }
 
 template <class SNC_decorator>
-Bounding_box_3<typename SNC_decorator::Kernel> 
+Bounding_box_3<typename SNC_decorator::Kernel::Kernel_tag, 
+	       typename SNC_decorator::Kernel> 
 Objects_bbox<SNC_decorator>::operator()
   (Halffacet_handle f) const { // TODO
   CGAL_assertion( f->facet_cycles_begin() != Halffacet_cycle_iterator());

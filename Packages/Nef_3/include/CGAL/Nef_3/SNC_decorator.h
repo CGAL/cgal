@@ -57,6 +57,7 @@ CGAL::Timer timer_overlay;
 #endif
 
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+int number_of_point_location_queries;
 CGAL::Timer timer_point_location;
 #endif 
 
@@ -875,6 +876,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     Self D(result);
 
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+    number_of_point_location_queries++;
     timer_point_location.start();
 #endif
     Object_handle o = pl1->locate(p);
@@ -1054,6 +1056,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       TRACEN("Locating point " << p0);
 
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+      number_of_point_location_queries++;
       timer_point_location.start();
 #endif 
       Object_handle o = pl2->locate(p0);
@@ -1125,6 +1128,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       TRACEN("Locating point " << p1);
 
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+      number_of_point_location_queries++;
       timer_point_location.start();
 #endif 
       Object_handle o = pl1->locate(p1);
@@ -1192,7 +1196,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     // local view on the intersection point on both SNC structures,
     // overlay them and add the resulting sphere map to the result.
 
-    //    SETDTHREAD(19*509*43*131);
+    // SETDTHREAD(19*509*43*131);
 
     //    Progress_indicator_clog ee_intersections
     //      (sncp()->number_of_edges(),
@@ -1329,6 +1333,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #endif
 
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+    std::cout << "Number_of_point_location_queries: "
+	      << number_of_point_location_queries << std::endl;
     std::cout << "Runtime_point_location: "
 	      << timer_point_location.time() << std::endl;;
 #endif 
