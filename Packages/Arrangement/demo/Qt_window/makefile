@@ -14,8 +14,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = -I../../../include/ \
-	-I/a/home/cc/students/cs/leiserow/cone/CGAL/All/Planar_map/include \
-	-I/a/home/cc/students/cs/leiserow/cone/CGAL/All/Arrangement/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
