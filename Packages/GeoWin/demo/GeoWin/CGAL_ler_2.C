@@ -36,7 +36,6 @@
 // file          : demo/GeoWin/CGAL_ler_2.C
 //
 // ======================================================================
-// Largest empty rectangle demo
 
 #include <CGAL/basic.h>
 #if !defined(CGAL_USE_LEDA) || (__LEDA__ < 400)
@@ -87,7 +86,7 @@ int main()
   
   std::list<Point> L;
   GeoWin GW("2d Largest empty rectangle in a set of points");
-  GW.message("You have to input a bounding box in the isorectangle scene");
+  bbox.push_front(Iso_rectangle(Point(0,0),Point(400,400)));
 
   geo_ler update_obj;
   geo_scene my_scene= GW.new_scene(L);  
@@ -95,8 +94,8 @@ int main()
   GW.set_fill_color(rect_scene, leda_invisible);
   
   geo_scene result  = GW.new_scene(update_obj,my_scene,leda_string("LER")); 
-  GW.set_color(result, leda_red);
-  GW.set_fill_color(result, leda_red);
+  GW.set_color(result, leda_black);
+  GW.set_fill_color(result, leda_green);
   GW.set_line_width(result, 2);
    
   GW.add_dependence(rect_scene, result);
