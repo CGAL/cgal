@@ -952,6 +952,16 @@ insert_at_halfedges(
   typename Planar_map_2< Dcel, Traits >::Halfedge_handle   previous2,
   Change_notification                                    * en)
 {
+  CGAL_precondition_msg(traits->point_is_same(previous1->target()->point(), 
+					traits->curve_source(cv)) &&
+			traits->point_is_same(previous2->target()->point(), 
+					traits->curve_target(cv)) ||
+			traits->point_is_same(previous2->target()->point(), 
+					traits->curve_source(cv)) &&
+			traits->point_is_same(previous1->target()->point(), 
+					traits->curve_target(cv)),
+  "Points of target vertices of input halfedges should be curve endpoints.");
+
   Size num_before = number_of_faces();
 
   bool prev1_before_prev2 = prev1_inside_hole(previous1, previous2, cv);
@@ -1020,6 +1030,16 @@ insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
                    typename Planar_map_2< Dcel, Traits >::Vertex_handle   v2, 
                    Change_notification                                  * en)
 {
+  CGAL_precondition_msg(traits->point_is_same(v1->point(), 
+					traits->curve_source(cv)) &&
+			traits->point_is_same(v2->point(), 
+					traits->curve_target(cv)) ||
+			traits->point_is_same(v2->point(), 
+					traits->curve_source(cv)) &&
+			traits->point_is_same(v1->point(), 
+					traits->curve_target(cv)),
+			"Points of input vertices should be curve endpoints.");
+
   Halfedge_around_vertex_circulator previous1 = v1->incident_halfedges(),
     after = previous1,
     infinite_loop = previous1;
