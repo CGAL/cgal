@@ -50,7 +50,7 @@ $y$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
 
 \ccNestedType{snap}{The snap operation as defined
-in CITE. It rounds a point to a center of a pixel (unit square)
+in \cite{isr-2002}. It rounds a point to a center of a pixel (unit square)
 in the grid used by the Snap Rounding algorithm. Must have the syntax
 \ccc{void snap(Point_2 p,NT pixel_size,NT &x,NT &y)} where $p$ is the
 input point, \ccc{pixel_size} is the size of the pixel of the grid,
@@ -58,7 +58,7 @@ and $x$ and $y$ are the $x$ and $y$-coordinates of the rounded point
 respectively.}
 
 \ccNestedType{segment_direction}{Returns the slope of a segment
-as described in CITE.
+as described in \cite{isr-2002}.
 Must have the syntax \ccc{double segment_direction(Segment_2 s)}
 where $s$ is the input segment.}
 
@@ -68,7 +68,7 @@ where $p$ is the point to rotate and angle is the rotation magnitude
 in radians.}
 
 \ccNestedType{get_bounding_of_min_sum}{Get the bounding box
-of the minkowski sum of a segment and a unit pixel as described in CITE.
+of the minkowski sum of a segment and a unit pixel as described in \cite{isr-2002}.
 Must have the syntax \ccc{Iso_rectangle_2 get_bounding_of_min_sum(
 Segment_2 s,NT unit_squere,NT angle)}
 where $s$ is the segment, $unit_square$ is the edge size of the pixel
@@ -115,7 +115,8 @@ and constructor objects.
 \ccSeeAlso
 \ccc{CGAL::Snap_rounding_2<Traits>}
 
-
+\bibliography{Snap_rounding_2}
+\bibliographystyle{abbrv}
 
 \end{ccRefConcept}
 
