@@ -462,7 +462,14 @@ public:
 
   // retrieve four points from the input that define the largest rectangle
   Quadruple<Point, Point, Point, Point>
-  get_left_bottom_right_top();
+  get_left_bottom_right_top()
+  {
+    if(x_sorted.size() == 4) {
+      return(make_quadruple(bl_p, bl_p, tr_p, tr_p));
+    }
+    update();
+    return(make_quadruple(left_p, bottom_p, right_p, top_p));
+  }
 
   // clear data(remove points)
   void 
@@ -1287,6 +1294,7 @@ Largest_empty_iso_rectangle_2<T>::get_largest_empty_iso_rectangle()
 /* Some applications might be more interested in the four points
  * that are from the input and that define the empty rectangle
  */
+/*
 template<class T>
 Quadruple<typename Largest_empty_iso_rectangle_2<T>::Point,
           typename Largest_empty_iso_rectangle_2<T>::Point,
@@ -1300,7 +1308,7 @@ Largest_empty_iso_rectangle_2<T>::get_left_bottom_right_top()
   update();
   return(make_quadruple(left_p, bottom_p, right_p, top_p));
 }
-
+*/
 
 template<class T>
 void
