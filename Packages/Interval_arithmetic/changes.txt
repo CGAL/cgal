@@ -1,3 +1,7 @@
+
+Version 4.163 on 22 April 2003 [af]
+- Introduced numeric_limits for the compilers who support it in FPU.h
+
 Version 4.162 on 6 March 2003
 - Fix stupid bug affecting Lazy_exact_nt's overloaded predicates...
 
