@@ -347,6 +347,12 @@ Transform_3
 transform_3_object() const 
 { return Transform_2(); }
 
+typedef CGALi::Assign                                  Assign_3;
+Assign_3
+assign_3_object() const 
+{ return Assign_3(); }
+
+
 typedef CGALi::Intersect                           Intersect_3;
 Intersect_3
 intersect_3_object() const 

@@ -346,6 +346,11 @@ Construct_opposite_circle_2
 construct_opposite_circle_2_object() const 
 { return Construct_opposite_circle_2(); }
 
+typedef CGALi::Assign                                  Assign_2;
+Assign_2
+assign_2_object() const 
+{ return Assign_2(); }
+
 typedef CGALi::Call_transform                      Transform_2;
 Transform_2
 transform_2_object() const 
@@ -646,6 +651,12 @@ typedef CGALi::Call_transform                          Transform_3;
 Transform_3
 transform_3_object() const 
 { return Transform_2(); }
+
+typedef CGALi::Assign                                  Assign_3;
+Assign_3
+assign_3_object() const 
+{ return Assign_3(); }
+
 
 typedef CGALi::Intersect                               Intersect_3;
 Intersect_3
