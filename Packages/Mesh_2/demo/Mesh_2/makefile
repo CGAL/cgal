@@ -16,7 +16,6 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../../Qt_widget/include \
            -I../../include \
            $(CGAL_CXXFLAGS) \
-           -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
@@ -37,11 +36,10 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                mesh_old_demo$(EXE_EXT) \
-                mesh_demo$(EXE_EXT)
+                mesh_demo$(EXE_EXT) 
 
-mesh_old_demo$(EXE_EXT): mesh_old_demo$(OBJ_EXT) viewer$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_old_demo mesh_old_demo$(OBJ_EXT) viewer$(OBJ_EXT) $(LDFLAGS)
+icons$(EXE_EXT): icons$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)icons icons$(OBJ_EXT) $(LDFLAGS)
 
 mesh_demo.moc:  mesh_demo.C
 	$(QT_MOC) -o mesh_demo.moc $<
@@ -58,17 +56,9 @@ mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT)
 run_mesh_demo: mesh_demo$(EXE_EXT)
 	./mesh_demo$(EXE_EXT)
 
-viewer.moc:  viewer.h
-	$(QT_MOC) -o viewer.moc $<
-
-viewer$(OBJ_EXT): viewer.moc ../../include/CGAL/Mesh_2.h
-
-mesh_old_demo$(OBJ_EXT): ../../include/CGAL/Mesh_2.h
-
 clean: \
-                   mesh_old_demo.clean \
-                   mesh_demo.clean \
-                   viewer.clean 
+                   icons.clean \
+                   mesh_demo.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
