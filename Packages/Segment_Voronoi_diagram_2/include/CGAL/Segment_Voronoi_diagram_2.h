@@ -86,15 +86,14 @@ namespace CGALi {
 } // namespace CGALi
 
 
-template<class Gt, class STag, class PC, class DS, class LTag >
+template<class Gt, class STag, class DS, class LTag >
 class Segment_Voronoi_diagram_hierarchy_2;
 
 
 
 template<class Gt,
-	 class PC = std::list<typename Gt::Point_2>,
 	 class DS = Segment_Voronoi_diagram_data_structure_2 < 
-                Segment_Voronoi_diagram_vertex_base_2<Gt,PC,
+                Segment_Voronoi_diagram_vertex_base_2<Gt,
 			    typename Gt::Intersections_tag>,
                 Triangulation_face_base_2<Gt> >,
 	 class LTag = Tag_false >
@@ -102,8 +101,8 @@ class Segment_Voronoi_diagram_2
   : private Triangulation_2<
           Segment_Voronoi_diagram_traits_wrapper_2<Gt>, DS >
 {
-  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,Tag_true,PC,DS,LTag>;
-  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,Tag_false,PC,DS,LTag>;
+  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,Tag_true,DS,LTag>;
+  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,Tag_false,DS,LTag>;
 protected:
   // LOCAL TYPES
   //------------
@@ -138,6 +137,10 @@ public:
   typedef typename DG::All_edges_iterator        All_edges_iterator;
   typedef typename DG::Finite_edges_iterator     Finite_edges_iterator;
 
+private:
+  typedef std::list<Point_2>                     PC;
+
+public:
   typedef Simple_container_wrapper<PC>           Point_container;
   typedef typename Point_container::iterator     Point_handle;
 

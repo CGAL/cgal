@@ -25,9 +25,12 @@
 
 #include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
+#include <list>
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/Segment_Voronoi_diagram_storage_site_2.h>
 #include <CGAL/Segment_Voronoi_diagram_simple_storage_site_2.h>
+
+#include <CGAL/Simple_container_wrapper.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -67,7 +70,7 @@ namespace CGALi {
 } // namespace CGALi
 
 
-template < class Gt, class PC,
+template < class Gt,
 	   class USE_FULL_STORAGE_SITE_Tag = Tag_true,
 	   class Vb = Triangulation_ds_vertex_base_2<> >
 class Segment_Voronoi_diagram_vertex_base_2
@@ -75,11 +78,14 @@ class Segment_Voronoi_diagram_vertex_base_2
 {
 private:
   typedef typename Vb::Triangulation_data_structure  DS;
+
+  typedef std::list<typename Gt::Point_2>     PC;
+
 public:
   // TYPES
   //------
   typedef Gt                                  Geom_traits;
-  typedef PC                                  Point_container;
+  typedef Simple_container_wrapper<PC>        Point_container;
   typedef typename Point_container::iterator  Point_handle;
   typedef Vb                                  Base;
   typedef typename Gt::Site_2                 Site_2;
@@ -104,8 +110,7 @@ public:
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<DS2>::Other   Vb2;
     typedef Storage_site_tag                               STag;
-    typedef
-    Segment_Voronoi_diagram_vertex_base_2<Gt,PC,STag,Vb2>  Other;
+    typedef Segment_Voronoi_diagram_vertex_base_2<Gt,STag,Vb2>  Other;
   };
 
   

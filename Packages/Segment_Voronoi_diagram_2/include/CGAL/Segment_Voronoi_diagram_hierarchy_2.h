@@ -54,20 +54,19 @@ const unsigned int svd_hierarchy_2__maxlevel = 5;
 //--------------------------------------------------------------------
 
 template < class Gt, class STag = Tag_false,
-	   class PC = std::list<typename Gt::Point_2>,
 	   class DS = Segment_Voronoi_diagram_data_structure_2<
               Segment_Voronoi_diagram_hierarchy_vertex_base_2<
-                 Segment_Voronoi_diagram_vertex_base_2<Gt,PC,
+                 Segment_Voronoi_diagram_vertex_base_2<Gt,
 			     typename Gt::Intersections_tag> >,
               Triangulation_face_base_2<Gt> >,
 	   class LTag = Tag_false>
 class Segment_Voronoi_diagram_hierarchy_2
-  : public Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>
+  : public Segment_Voronoi_diagram_2<Gt,DS,LTag>
 {
 public:
   // PUBLIC TYPES
   //-------------
-  typedef Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>  Base;
+  typedef Segment_Voronoi_diagram_2<Gt,DS,LTag>  Base;
 
   typedef typename Base::Geom_traits        Geom_traits;
 
@@ -89,6 +88,10 @@ public:
   typedef typename Base::All_edges_iterator        All_edges_iterator;
   typedef typename Base::Finite_edges_iterator     Finite_edges_iterator;
 
+private:
+  typedef std::list<Point_2>                       PC;
+
+public:
   typedef typename Base::Point_container           Point_container;
   typedef typename Base::size_type                 size_type;
 
@@ -296,9 +299,9 @@ protected:
 };
 
 
-template<class Gt, class STag, class PC, class DS, class LTag>
+template<class Gt, class STag, class DS, class LTag>
 const int
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS,LTag>::UNDEFINED_LEVEL = -1;
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::UNDEFINED_LEVEL = -1;
 
 
 CGAL_END_NAMESPACE
