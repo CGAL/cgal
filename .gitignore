@@ -58,6 +58,7 @@ Packages/Mesh_2/include/CGAL/semantic.cache
 Packages/Mesh_2/test/Mesh_2/*.core
 Packages/Mesh_2/test/Mesh_2/semantic.cache
 Packages/Mesh_2/test/Mesh_2/test_filtred_container
+Packages/Mesh_3/examples/Mesh_3/depends
 Packages/Min_annulus_d/*.aux
 Packages/Min_annulus_d/*.bbl
 Packages/Min_annulus_d/*.blg
