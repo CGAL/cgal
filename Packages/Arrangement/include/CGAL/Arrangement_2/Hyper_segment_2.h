@@ -56,19 +56,21 @@ public:
 
 private:
 
-  NT            _A;               // The coefficients of the equation of 
-  NT            _B;               // the underlying canonical hyperbola:
-  NT            _C;               //   y = sqrt (A*x^2 + B*x + C)
+  bool          _is_seg;      // Is this hyper-segment actaully a line segment.
+  NT            _A;           // The coefficients of the equation of 
+  NT            _B;           // the underlying canonical hyperbola:
+  NT            _C;           //   y = sqrt (A*x^2 + B*x + C)
 
-  Point_2       _source;          // The hyperbolic segment source.
-  Point_2       _target;          // The hyperbolic segment target.
+  Point_2       _source;      // The hyperbolic segment source.
+  Point_2       _target;      // The hyperbolic segment target.
 
  public:
 
   /*!
    * Default constructor.
    */
-  Hyper_segment_2 ()
+  Hyper_segment_2 () :
+    _is_seg(true)
   {}
 
   /*!
@@ -85,10 +87,10 @@ private:
    *      Furthermore, x_max > x_min.
    */
   Hyper_segment_2 (const NT& a, const NT& b, const NT& c, const NT& d,
-		   const NT& x_min, const NT& x_max)
+		   const NT& x_min, const NT& x_max) :
+    _is_seg(false)
   {
-    static const NT  _zero = 0;
-
+    CGAL_precondition_code (static const NT  _zero = 0;);
     CGAL_precondition(_compare (a, _zero) == LARGER);
     CGAL_precondition(_compare (b, _zero) == SMALLER);
     CGAL_precondition(_compare (x_min, x_max) == SMALLER);
@@ -130,6 +132,53 @@ private:
     */
   }
 
+  /*!
+   * Construct a degenerate hyperbolic segment defined by a line segment.
+   * \param ps The source point of the segment.
+   * \param pt The target point of the segment.
+   * \pre The segment is not vertical -- that is, x(ps) does not equal x(pt).
+   *      Furthermore, both points should lie above the x-axis.
+   */
+  Hyper_segment_2 (const Point_2& ps, const Point_2& pt) :
+    _is_seg(true)
+  {
+    // Make sure that the two points do not define a vertical segment.
+    Comparison_result comp_x = _compare (ps.x(), pt.x());
+
+    CGAL_precondition(comp_x != EQUAL);
+
+    // Make sure that both points are above the x-axis.
+    CGAL_precondition_code (static const NT  _zero = 0;);
+    CGAL_precondition(_compare (ps.y(), _zero) == LARGER);
+    CGAL_precondition(_compare (pt.y(), _zero) == LARGER);
+
+    // Find the line (y = a*x + b)  that connects the two points.
+    const NT  denom = ps.x() - pt.x();
+    const NT  a = (ps.y() - pt.y()) / denom;
+    const NT  b = (ps.x()*pt.y() - pt.x()*ps.y()) / denom;
+
+    // Set the underlying hyperbola to be the pair of lines:
+    //  y^2 = (a*x + b)^2 = (a^2)*x^2 + (2ab)*x + b^2
+    _A = a*a;
+    _B = 2*a*b;
+    _C = b*b;
+
+    // Set the source and target point.
+    if (comp_x == SMALLER)
+    {
+      _source = ps;
+      _target = pt;
+    }
+    else
+    {
+      _source = pt;
+      _target = ps;
+    }
+  }
+
+  /*!
+   * Access the hyperblic coeffcients.
+   */
   const NT& A () const {return (_A);}
   const NT& B () const {return (_B);}
   const NT& C () const {return (_C);}
@@ -150,6 +199,15 @@ private:
   const Point_2& target () const
   {
     return (_target);
+  }
+
+  /*! 
+   * Check whether the hyper-segment is actually a line segment.
+   * \return (true) if the underlying hyperbola is actually a line segment.
+   */
+  bool is_linear () const
+  {
+    return (_is_seg);
   }
 
   /*!
@@ -548,7 +606,7 @@ protected:
    */
   inline Comparison_result _compare (const NT& val1, const NT& val2) const
   {
-    return (CGAL::compare(val1, val2));
+    return (CGAL_NTS compare(val1, val2));
   }
 
   /*!
