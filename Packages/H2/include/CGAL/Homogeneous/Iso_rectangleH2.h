@@ -48,6 +48,9 @@ public:
 
   Iso_rectangleH2(const Point_2& p, const Point_2& q);
 
+  Iso_rectangleH2(const Point_2& left, const Point_2& right,
+                  const Point_2& bottom, const Point_2& top);
+
   Iso_rectangleH2(const RT& min_hx, const RT& min_hy, 
                   const RT& max_hx, const RT& max_hy);
 
@@ -122,13 +125,30 @@ Iso_rectangleH2(const typename Iso_rectangleH2<R>::Point_2& p,
 }
 
 template < class R >
+CGAL_KERNEL_MEDIUM_INLINE
+Iso_rectangleH2<R>::
+Iso_rectangleH2(const typename Iso_rectangleH2<R>::Point_2& left,
+                const typename Iso_rectangleH2<R>::Point_2& right,
+                const typename Iso_rectangleH2<R>::Point_2& bottom,
+                const typename Iso_rectangleH2<R>::Point_2& top)
+  : base(rep(Point_2(left.hx()   * bottom.hw(),
+                     bottom.hy() * left.hw(),
+                     left.hw()   * bottom.hw()),
+             Point_2(right.hx()  * top.hw(),
+                     top.hy()    * right.hw(),
+                     right.hw()  * top.hw())))
+{
+  CGAL_kernel_precondition(!less_x(right, left));
+  CGAL_kernel_precondition(!less_y(top, bottom));
+}
+
+template < class R >
 inline
 Iso_rectangleH2<R>::Iso_rectangleH2(const RT& min_hx, const RT& min_hy, 
                                     const RT& max_hx, const RT& max_hy)
-{
-  initialize_with( rep( Point_2(min_hx, min_hy), 
-                        Point_2(max_hx, max_hy)) );
-}
+  : base( rep( Point_2(min_hx, min_hy), 
+               Point_2(max_hx, max_hy)))
+{}
 
 template < class R >
 inline

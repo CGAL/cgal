@@ -1,5 +1,6 @@
-2.57
-- Added coordinate iterator
+2.57   (22 Jan 2003)
+- Add coordinate iterator
+- Add new constructor Iso_rectangle_2(left, right, bottom, top).
 
 2.74   (20 Jan 2003)
 - Remove #ifdef CGAL_CFG_TYPENAME_BUG stuff, as VC6 is not supported anymore.
