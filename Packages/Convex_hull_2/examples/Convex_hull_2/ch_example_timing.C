@@ -28,7 +28,7 @@ int main( int argc, char* argv[] )
   {
       std::cerr << "Usage: ch_example_timing data_file_name ";
       std::cerr << "[number_of_iterations]" << std::endl;
-      std::exit(1);
+      CGAL_CLIB_STD::exit(1);
   }
   std::vector< Point2 > V;
   std::vector< Point2 > VE;
@@ -40,7 +40,7 @@ int main( int argc, char* argv[] )
   std::copy( V.begin(), V.end(), std::back_inserter(VE) );
   int iterations;
   if (argc == 3)
-    iterations = std::atoi( argv[2] );
+    iterations = CGAL_CLIB_STD::atoi( argv[2] );
   else
     iterations = 1;
   CGAL::ch_timing(V.begin(), V.end(), VE.begin(), iterations, TraitsCls() ); 
