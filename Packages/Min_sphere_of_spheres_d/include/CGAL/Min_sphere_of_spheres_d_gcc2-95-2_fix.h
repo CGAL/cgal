@@ -311,7 +311,8 @@ unsigned long _Base_bitset<_Nw, _WordT>::_M_do_to_ulong() const
     const size_t __part = sizeof(unsigned long) % sizeof(_WordT);
 
     if (__part != 0 && __nwords <= _Nw &&
-        (_M_w[__min_nwords - 1] >> ((sizeof(_WordT) - __part) * CHAR_BIT)) != 0)
+        (_M_w[__min_nwords - 1] >> 
+        ((sizeof(_WordT) - __part) * CHAR_BIT)) != 0)
       __STL_THROW(__overflow);
 
     unsigned long __result = 0;
@@ -454,7 +455,8 @@ struct _Base_bitset<1, _WordT> {
   size_t _M_do_count() const {
     size_t __result = 0;
     const unsigned char* __byte_ptr = (const unsigned char*)&_M_w;
-    const unsigned char* __end_ptr = ((const unsigned char*)&_M_w)+sizeof(_M_w);
+    const unsigned char* __end_ptr = ((const unsigned char*)&_M_w)+
+                                     sizeof(_M_w);
     while ( __byte_ptr < __end_ptr ) {
       __result += _Bit_count<true>::_S_bit_count[*__byte_ptr];
       __byte_ptr++;
@@ -466,7 +468,8 @@ struct _Base_bitset<1, _WordT> {
     if (sizeof(_WordT) <= sizeof(unsigned long))
         return static_cast<unsigned long>(_M_w);
     else {
-      const _WordT __mask = static_cast<_WordT>(static_cast<unsigned long>(-1));
+      const _WordT __mask = static_cast<_WordT>(
+         static_cast<unsigned long>(-1));
       if (_M_w & ~__mask)
         __STL_THROW(overflow_error("bitset"));
       return static_cast<unsigned long>(_M_w);
@@ -683,7 +686,8 @@ public:
   template<class _CharT, class _Traits, class _Alloc>
   explicit bitset(const basic_string<_CharT,_Traits,_Alloc>& __s,
                   size_t __pos = 0,
-                  size_t __n = size_t(basic_string<_CharT,_Traits,_Alloc>::npos))
+                  size_t __n = size_t(basic_string<_CharT,_Traits,_Alloc>::
+                                 npos))
     : _Base()
   {
     if (__pos > __s.size())
