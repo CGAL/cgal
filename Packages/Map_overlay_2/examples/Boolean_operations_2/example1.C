@@ -22,10 +22,10 @@ typedef Traits::Point                       Point;
 typedef Traits::X_curve                     X_curve;
 typedef Traits::Curve                       Curve;
 
-typedef CGAL::Bop_default_dcel<Traits>         Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits>        Planar_map;
-typedef CGAL::Map_overlay<Planar_map>          MapOverlay;
-typedef CGAL::Boolean_operations<MapOverlay>   Bops;
+typedef CGAL::Bop_default_dcel<Traits>           Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>          Planar_map;
+typedef CGAL::Map_overlay<Planar_map>            MapOverlay;
+typedef CGAL::Boolean_operations_2<MapOverlay>   Bops;
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
 
 typedef Bops::Faces_container                  Faces_container;
