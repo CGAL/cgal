@@ -29,8 +29,9 @@ public:
   typedef _Halfedge_handle Halfedge_handle;
 
   /*! Constructor */
-  Pmwx_insert_info() : 
-    m_halfedge(Halfedge_handle(NULL))
+  Pmwx_insert_info() : m_halfedge(Halfedge_handle(NULL)),
+                       vertical_above_event_flag(false),
+                       vertical_below_event_flag(false)
   {
   }
 
@@ -41,6 +42,27 @@ public:
   Halfedge_handle get_halfedge_handle() const {
     return m_halfedge;
   }
+
+  bool get_vertical_above_event_flag() const
+  {
+    return vertical_above_event_flag;
+  }
+
+  bool get_vertical_below_event_flag() const
+  {
+    return vertical_below_event_flag;
+  }
+
+  void set_vertical_below_event_flag(bool flag)
+  {
+    vertical_below_event_flag = flag;
+  }
+
+  void set_vertical_above_event_flag(bool flag)
+  {
+    vertical_above_event_flag = flag;
+  }
+
 
   void Print()
   {
@@ -53,6 +75,10 @@ public:
  
 private:
   Halfedge_handle m_halfedge;
+
+  //Baruch
+  bool vertical_above_event_flag;
+  bool vertical_below_event_flag;
   
 };
 
