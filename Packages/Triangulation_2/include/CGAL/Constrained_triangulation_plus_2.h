@@ -69,7 +69,8 @@ public:
     : Triangulation() { }
 
   // copy constructrue et effectation operateur a revoir
-//   Constrained_triangulation_plus_2(const Constrained_triangulation_plus_2& ct)
+//   Constrained_triangulation_plus_2(
+  //  const Constrained_triangulation_plus_2& ct)
 //     : Constrained_triangulation(ct) {}
 
   Constrained_triangulation_plus_2(List_constraints& lc, 
@@ -477,7 +478,8 @@ intersect(Face_handle f, int i,
 
 template <class Tr, class I_tag >
 std::ostream &
-operator<<(std::ostream& os, const Constrained_triangulation_plus_2<Tr,I_tag> &ct)
+operator<<(std::ostream& os, 
+	   const Constrained_triangulation_plus_2<Tr,I_tag> &ct)
 {
   ct.file_output(os);
   return os ;
