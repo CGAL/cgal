@@ -8,10 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.0-I-1 $
-// release_date  : $CGAL_Date: 1999/02/09 $
+// release       : $CGAL_Revision: CGAL-2.4-I-7 $
+// release_date  : $CGAL_Date: 2001/09/07 $
 //
 // file          : include/CGAL/config.h
+// package       : Configuration (2.11)
+// maintainer    : Geert-Jan Giezeman <geert@cs.uu.nl>
 // source        :
 // revision      : 1.11
 // revision_date : 30 Mar 1998
@@ -25,8 +27,8 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
-#define CGAL_VERSION 1.1-I-01
-#define CGAL_VERSION_NR 1001100001
+#define CGAL_VERSION 2.4-I-7
+#define CGAL_VERSION_NR 1002004007
 
 #define CGAL_CFG_NO_ADVANCED_KERNEL 1
 
@@ -122,7 +124,6 @@
 //             select old or new style headers
 //----------------------------------------------------------------------//
 
-
 #ifndef CGAL_USE_NEWSTYLE_HEADERS
 #  ifndef CGAL_CFG_NO_STANDARD_HEADERS
 #    ifndef CGAL_NO_NEWSTYLE_HEADERS
@@ -130,6 +131,40 @@
 #    endif // ! CGAL_NO_NEWSTYLE_HEADERS
 #  endif // ! CGAL_CFG_NO_STANDARD_HEADERS
 #endif // ! CGAL_USE_NEWSTYLE_HEADERS
+
+//----------------------------------------------------------------------//
+//             fake iterator_traits for sunpro
+//----------------------------------------------------------------------//
+
+#if defined(__sun) && defined(__SUNPRO_CC)
+#include <iterator>
+namespace std {
+  template <class Iterator> struct iterator_traits
+  {
+    typedef typename Iterator::value_type value_type;
+    typedef typename Iterator::difference_type difference_type;
+    typedef typename Iterator::pointer pointer;
+    typedef typename Iterator::reference reference;
+    typedef typename Iterator::iterator_category iterator_category;
+  };
+  template <class T> struct iterator_traits<T*>
+  {
+    typedef T value_type;
+    typedef ptrdiff_t difference_type;
+    typedef T* pointer;
+    typedef T& reference;
+    typedef random_access_iterator_tag iterator_category;
+  };
+  template <class T> struct iterator_traits<const T*>
+  {
+    typedef T value_type;
+    typedef ptrdiff_t difference_type;
+    typedef const T* pointer;
+    typedef const T& reference;
+    typedef random_access_iterator_tag iterator_category;
+  };
+}
+#endif // if defined(__sun) && defined(__SUNPRO_CC)
 
 #endif // CGAL_CONFIG_H
 
