@@ -227,7 +227,7 @@ Geomview_stream::operator<<(int i)
     if (get_binary_mode()) {
         // we write raw binary data to the stream.
         int num = i;
-        _swap_to_big_endian(num);
+        I_swap_to_big_endian(num);
         ::write(out, (char*)&num, sizeof(num));
         trace(i);
     } else {
@@ -246,7 +246,7 @@ Geomview_stream::operator<<(double d)
     float f = d;
     if (get_binary_mode()) {
         float num = d;
-        _swap_to_big_endian(num);
+        I_swap_to_big_endian(num);
         ::write(out, (char*)&num, sizeof(num));
         trace(f);
     } else {

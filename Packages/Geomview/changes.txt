@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.14 (18 June 2001)
+- Change _swap_to_big_endian to I_swap_to_big_endian.
+
 Ver 3.13 (5  June 2001)
 - Use CGAL_CLIB_STD for MipsPro.
 
