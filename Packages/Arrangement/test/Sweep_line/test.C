@@ -618,14 +618,20 @@ int main(int argc, char* argv[])
 {
   
   Pm_polyline_traits_test<PM>   test;
-  bool                          sweep_to_subcurves;
+  bool                          sweep_to_subcurves = false;
 
   if (argc < 2 || argc > 3) {
-    std::cout << "usage: test data_file [reverse]" << std::endl;
+    std::cout << "usage: test data_file [subcurves]" << std::endl;
     exit(1);
   }
 
-  sweep_to_subcurves = (argc == 3 && 0 == strcmp(argv[2], "subcurves"));
+  //sweep_to_subcurves = (argc == 3 && 0 == strcmp(argv[2], "subcurves"));
+  if (argc == 3) {
+    std::string second_par(argv[2]);
+    if (second_par.compare("subcurves") == 0) {
+      sweep_to_subcurves = true;
+    }
+  }
 
   test.start(argv[1], sweep_to_subcurves);
   return 0;
