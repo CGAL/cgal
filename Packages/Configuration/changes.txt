@@ -1,4 +1,13 @@
 //-----------------------------------------------------------------------//
+// 1.53
++ Changed CGAL_CFG_NO_STD_NAMESPACE.C, so that it returns the correct
+  answer for Borland (Borland requires std::, but lacks cwctype).
++ Added macro CGAL_CLIB_STD to config.h.
++ Removed lots of using declarations in MSVC_header_fixes.h
+  Importing in namespace std does not always work correctly and is now
+  superseded by the use of the CGAL_CLIB_STD macro.
+
+//-----------------------------------------------------------------------//
 // 1.52
 + Removed assertions from testfiles. Replaced them by booleans.
 
