@@ -179,11 +179,11 @@ Note the double occurrence of the factor@{wq@} in the latter definition.
 @$@<2D squared distance general utilities@>+=@{
 
 template <class R>
-R_RT_return(R)
+R::RT
 wdot(const Vector_2<R> &u,
     const Vector_2<R> &v)
 {
-    return  (R_RT_return(R))(u.hx()*v.hx() + u.hy()*v.hy());
+    return  (R::RT)(u.hx()*v.hx() + u.hy()*v.hy());
 }
 
 #ifdef CGAL_HOMOGENEOUS_H
@@ -231,11 +231,11 @@ definition of the wcross product for points.
 
 
 template <class R>
-R_RT_return(R)
+R::RT
 wcross(const Vector_2<R> &u,
     const Vector_2<R> &v)
 {
-    return (R_RT_return(R))(u.hx()*v.hy() - u.hy()*v.hx());
+    return (R::RT)(u.hx()*v.hy() - u.hy()*v.hx());
 }
 
 #ifdef CGAL_HOMOGENEOUS_H
@@ -406,13 +406,13 @@ of the difference vector.
 @$@<2D squared distance header declarations 1@>+=@{@-
 
 template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Point_2<R> & pt1,
     const Point_2<R> & pt2)
 {
     Vector_2<R> vec(pt1-pt2);
-    return (R_FT_return(R))(vec*vec);
+    return (R::FT)(vec*vec);
 }
 
 @}
@@ -422,15 +422,10 @@ squared_distance(
 @C@<Declarations@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+@<Point Line distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Point_2<R> &pt,
-    const Line_2<R> &line);
-
-template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Line_2<R> & line,
     const Point_2<R> & pt)
@@ -449,9 +444,9 @@ dividing by the square of the length of the @{normal@} gives the square
 distance between the line and the point.
 
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Point Line distance implementation@>==@{
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance(
     const Point_2<R> &pt,
     const Line_2<R> &line)
@@ -463,7 +458,7 @@ squared_distance(
     Vector_2<R> normal(x, y);
     Vector_2<R> diff = pt - line.point();
     FT signdist = diff * normal;
-    return (R_FT_return(R))((signdist*signdist)/FT(x*x+y*y));
+    return (R::FT)((signdist*signdist)/FT(x*x+y*y));
 }
 @}
 
@@ -473,14 +468,10 @@ squared_distance(
 
 @$@<2D squared distance header declarations 1@>+=@{@-
 
-template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Point_2<R> &pt,
-    const Ray_2<R> &ray);
+@<Point Ray distance implementation@>
 
 template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Ray_2<R> & ray,
     const Point_2<R> & pt)
@@ -499,10 +490,10 @@ point to the supporting line of the ray. Otherwise we compute the squared
 distance from @{pt@} to the start point of the ray, as this is the closest
 point.
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Point Ray distance implementation@>==@{
 
 template <class R>
-extern R_FT_return(R)
+extern R::FT
 squared_distance(
     const Point_2<R> &pt,
     const Ray_2<R> &ray)
@@ -510,7 +501,7 @@ squared_distance(
     Vector_2<R> diff = pt-ray.source();
     const Vector_2<R> &dir = ray.direction().vector();
     if (!is_acute_angle(dir,diff) )
-        return (R_FT_return(R))(diff*diff);
+        return (R::FT)(diff*diff);
     return squared_distance(pt, ray.supporting_line());
 }
 @}
@@ -518,24 +509,13 @@ squared_distance(
 @B@<Point Ray distance discerners@>
 
 @$@<2D squared distance header declarations 1@>+=@{
-
-template <class R>
-extern void
-distance_index(
-    int &ind,
-    const Point_2<R> &pt,
-    const Ray_2<R> &ray);
-
-template <class R>
-R_FT_return(R)
-squared_distance_indexed(const Point_2<R> &pt,
-    const Ray_2<R> &ray, int ind);
+@<Point Ray distance discerners implementation@>
 
 @}
 
 @C@<Implementation@>
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Point Ray distance discerners implementation@>==@{
 template <class R>
 extern void
 distance_index(
@@ -551,7 +531,7 @@ distance_index(
 }
 
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance_indexed(const Point_2<R> &pt,
     const Ray_2<R> &ray, int ind)
 {
@@ -564,16 +544,10 @@ squared_distance_indexed(const Point_2<R> &pt,
 @B@<Point Segment distance@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+@<Point Segment distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Point_2<R> &pt,
-    const Segment_2<R> &seg);
-
-
-template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Segment_2<R> & seg,
     const Point_2<R> & pt)
@@ -597,10 +571,10 @@ segment start to segment end and the vector from segment start to the point.
 If this product is negative, the distance from the point to the start of the
 segment is taken.
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Point Segment distance implementation@>==@{
 
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance(
     const Point_2<R> &pt,
     const Segment_2<R> &seg)
@@ -611,7 +585,7 @@ squared_distance(
     Vector_2<R> segvec = seg.target()-seg.source();
     RT d = wdot(diff,segvec);
     if (d <= (RT)0)
-        return (R_FT_return(R))(diff*diff);
+        return (R::FT)(diff*diff);
     RT e = wdot(segvec,segvec);
     if (wmult((R*)0 ,d, segvec.hw()) > wmult((R*)0, e, diff.hw()))
         return squared_distance(pt, seg.target());
@@ -622,22 +596,13 @@ squared_distance(
 @B@<Point Segment distance discerners@>
 
 @$@<2D squared distance header declarations 1@>+=@{
-template <class R>
-extern void
-distance_index(
-    int &ind,
-    const Point_2<R> &pt,
-    const Segment_2<R> &seg);
+@<Point Segment distance discerners implementation@>
 
-template <class R>
-extern R_FT_return(R)
-squared_distance_indexed(const Point_2<R> &pt,
-    const Segment_2<R> &seg, int ind1);
 @}
 
 @C@<Implementation@>
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Point Segment distance discerners implementation@>==@{
 
 template <class R>
 extern void
@@ -658,7 +623,7 @@ distance_index(
 }
 
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance_indexed(const Point_2<R> &pt,
     const Segment_2<R> &seg, int ind)
 {
@@ -675,12 +640,7 @@ squared_distance_indexed(const Point_2<R> &pt,
 @C@<Declarations@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
-
-template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Segment_2<R> &,
-    const Segment_2<R> &);
+@<Segment Segment distance implementation@>
 
 @}
 
@@ -714,7 +674,7 @@ This is checked separately.
 @$@<2D segment segment squared distance main routine@>+=@{
 
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance(
     const Segment_2<R> &seg1,
     const Segment_2<R> &seg2)
@@ -776,7 +736,7 @@ distance from both endpoints to the other segment and taking the minimum.
 @$@<unused implementation@>@Z==@{
 
 template <class R, class RT>
-R_FT_return(R)
+R::FT
 _squared_distance_of_endpoint_exact(RT start_dm, RT end_dm,
   const Point_2<R> &start, const Point_2<R> &end,
   const Segment<R> &seg)
@@ -792,7 +752,7 @@ _squared_distance_of_endpoint_exact(RT start_dm, RT end_dm,
 }
 
 template <class R, class RT>
-R_FT_return(R)
+R::FT
 _squared_distance_of_endpoint_inexact<R, RT>(
   const Point_2<R> &start, const Point_2<R> &end,
   const Segment<R> &seg)
@@ -801,11 +761,11 @@ _squared_distance_of_endpoint_inexact<R, RT>(
     RT d1, d2;
     d1 = squared_distance(start, seg);
     d2 = squared_distance(end, seg);
-    return (d1 < d2) ? (R_FT_return(R))(d1) : (R_FT_return(R))(d2);
+    return (d1 < d2) ? (R::FT)(d1) : (R::FT)(d2);
 }
 
 template <class R, class RT>
-inline R_FT_return(R)
+inline R::FT
 _squared_distance_of_endpoint<false, R, RT>(RT start_dm, RT end_dm,
   const Point_2<R> &start, const Point_2<R> &end,
   const Segment<R> &seg)
@@ -821,7 +781,7 @@ _squared_distance_of_endpoint<false, R, RT>(RT start_dm, RT end_dm,
 @$@<2D segment segment squared distance main routine@>+=@{
     if (crossing1) {
         if (crossing2)
-            return (R_FT_return(R))((FT)0);
+            return (R::FT)((FT)0);
         RT dm;
         dm = _distance_measure_sub(c2s,c2e, seg2.source(), seg2.target());
         if (dm < RT(0)) {
@@ -874,8 +834,8 @@ segment and take the minimum.
                 squared_distance(seg2.source(), seg1):
                 squared_distance(seg2.target(), seg1);
             return (min1 < min2)
-                ? (R_FT_return(R))(min1)
-                : (R_FT_return(R))(min2);
+                ? (R::FT)(min1)
+                : (R::FT)(min2);
         }
     }
 }
@@ -915,7 +875,7 @@ to make the necessary decisions.
 @$@<2D segment segment squared distance parallel case@>+=@{
 
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance_parallel(
     const Segment_2<R> &seg1,
     const Segment_2<R> &seg2)
@@ -943,7 +903,7 @@ squared_distance_parallel(
 }
 @}
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Segment Segment distance implementation@>==@{
 @<2D segment segment squared distance parallel case@>
 @<2D segment segment squared distance helper routine@>
 @<2D segment segment squared distance main routine@>
@@ -954,16 +914,10 @@ squared_distance_parallel(
 @C@<Declarations@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+@<Segment Ray distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Segment_2<R> &seg,
-    const Ray_2<R> &ray);
-
-
-template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Ray_2<R> & ray,
     const Segment_2<R> & seg)
@@ -993,7 +947,7 @@ lies.
 @$@<2D ray segment squared distance computation@>+=@{
 
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance(
     const Segment_2<R> &seg,
     const Ray_2<R> &ray)
@@ -1055,7 +1009,7 @@ product, first corrected by homogenising factors).
 @$@<2D ray segment squared distance computation@>+=@{
     if (crossing1) {
         if (crossing2)
-            return (R_FT_return(R))(FT(0));
+            return (R::FT)(FT(0));
         return squared_distance(ray.source(), seg);
     } else {
         if (crossing2) {
@@ -1090,8 +1044,8 @@ segment and take the minimum.
                  : squared_distance(seg.target(), ray);
             min2 = squared_distance(ray.source(), seg);
             return (min1 < min2)
-                ? (R_FT_return(R))(min1)
-                : (R_FT_return(R))(min2);
+                ? (R::FT)(min1)
+                : (R::FT)(min2);
         }
     }
 }
@@ -1099,7 +1053,7 @@ segment and take the minimum.
 
 @$@<2D ray segment squared distance parallel case@>==@{
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance_parallel(
     const Segment_2<R> &seg,
     const Ray_2<R> &ray)
@@ -1135,7 +1089,7 @@ const Vector_2<R> &start, const Vector_2<R> &end
 @}
 
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Segment Ray distance implementation@>==@{
 @<2D ray segment squared distance helper routine@>
 @<2D ray segment squared distance parallel case@>
 @<2D ray segment squared distance computation@>
@@ -1146,16 +1100,10 @@ const Vector_2<R> &start, const Vector_2<R> &end
 @C@<Declarations@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+@<Segment Line distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Segment_2<R> &seg,
-    const Line_2<R> &line);
-
-
-template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Line_2<R> & line,
     const Segment_2<R> & seg)
@@ -1179,7 +1127,7 @@ The boolean @{crossing1@} tells whether the segment crosses the line.
 @$@<2D line segment squared distance computation@>+=@{
 
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance(
     const Segment_2<R> &seg,
     const Line_2<R> &line)
@@ -1221,7 +1169,7 @@ factors).
 
 @$@<2D line segment squared distance computation@>+=@{
     if (crossing1) {
-        return (R_FT_return(R))((FT)0);
+        return (R::FT)((FT)0);
     } else {
         RT dm;
         dm = _distance_measure_sub(c1s, c1e, startvec, endvec);
@@ -1247,7 +1195,7 @@ with hw factors. The hw factors of @{dir@} cancel.
 @$@<2D line segment squared distance helper routine@>==@{
 
 template <class RT, class R>
-R_FT_return(R)
+R::FT
 _sqd_to_line(const Vector_2<R> &diff,
                    const RT & wcross, const Vector_2<R> &dir )
 {
@@ -1256,12 +1204,12 @@ _sqd_to_line(const Vector_2<R> &diff,
     RT denominator = wmult((R*)0, RT(wdot(dir,dir)),
                     diff.hw(), diff.hw());
     FT result = R::make_FT(numerator, denominator);
-    return (R_FT_return(R))(result);
+    return (R::FT)(result);
 }
 @}
 
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Segment Line distance implementation@>==@{
 @<2D line segment squared distance helper routine@>
 @<2D line segment squared distance computation@>
 @}
@@ -1269,12 +1217,7 @@ _sqd_to_line(const Vector_2<R> &diff,
 @B@<Ray Ray distance@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
-
-template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Ray_2<R> &ray1,
-    const Ray_2<R> &ray2);
+@<Ray Ray distance@>
 
 @}
 
@@ -1294,7 +1237,7 @@ We look at the direction of the ray and on which side its starting point lies.
 @$@<2D ray ray squared distance computation@>+=@{
 
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance(
     const Ray_2<R> &ray1,
     const Ray_2<R> &ray2)
@@ -1334,7 +1277,7 @@ ray.
 @$@<2D ray ray squared distance computation@>+=@{
     if (crossing1) {
         if (crossing2)
-            return (R_FT_return(R))((FT)0);
+            return (R::FT)((FT)0);
         return squared_distance(ray2.source(), ray1);
     } else {
         if (crossing2) {
@@ -1352,8 +1295,8 @@ ray and take the minimum.
             min1 = squared_distance(ray1.source(), ray2);
             min2 = squared_distance(ray2.source(), ray1);
             return (min1 < min2)
-                ? (R_FT_return(R))(min1)
-                : (R_FT_return(R))(min2);
+                ? (R::FT)(min1)
+                : (R::FT)(min2);
         }
     }
 }
@@ -1371,7 +1314,7 @@ line of the other.
 
 @$@<2D ray ray squared distance parallel case@>==@{
 template <class R>
-R_FT_return(R)
+R::FT
 ray_ray_squared_distance_parallel(
     const Vector_2<R> &ray1dir,
     const Vector_2<R> &ray2dir,
@@ -1389,17 +1332,17 @@ ray_ray_squared_distance_parallel(
                 (sign(ray1dir.hy()) == sign(ray2dir.hy()));
         }
         if (!same_direction)
-            return (R_FT_return(R))(from1to2*from1to2);
+            return (R::FT)(from1to2*from1to2);
     }
     RT wcr, w;
     wcr = wcross(ray1dir, from1to2);
     w = from1to2.hw();
-    return (R_FT_return(R))(FT(wcr*wcr)
+    return (R::FT)(FT(wcr*wcr)
          / FT(wmult((R*)0, RT(wdot(ray1dir, ray1dir)), w, w)));
 }
 @}
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Ray Ray distance@>==@{
 @<2D ray ray squared distance parallel case@>
 @<2D ray ray squared distance computation@>
 @}
@@ -1407,16 +1350,10 @@ ray_ray_squared_distance_parallel(
 @B@<Line Ray distance@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+@<Line Ray distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Line_2<R> &line,
-    const Ray_2<R> &ray);
-
-
-template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Ray_2<R> & ray,
     const Line_2<R> & line)
@@ -1442,10 +1379,10 @@ It would be nice to have a routine to get the normal vector of a line (or of a
 direction).
 
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Line Ray distance implementation@>==@{
 
 template <class R>
-extern R_FT_return(R)
+extern R::FT
 squared_distance(
     const Line_2<R> &line,
     const Ray_2<R> &ray)
@@ -1456,24 +1393,19 @@ squared_distance(
     FT sign_dist = diff*normalvec;
     if (sign_dist < FT(0)) {
         if (is_acute_angle(normalvec, ray.direction().vector()) )
-            return (R_FT_return(R))((FT)0);
+            return (R::FT)((FT)0);
     } else {
         if (is_obtuse_angle(normalvec, ray.direction().vector()) )
-            return (R_FT_return(R))((FT)0);
+            return (R::FT)((FT)0);
     }
-    return (R_FT_return(R))((sign_dist*sign_dist)/(normalvec*normalvec));
+    return (R::FT)((sign_dist*sign_dist)/(normalvec*normalvec));
 }
 @}
 
 @B@<Line Line distance@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
-
-template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Line_2<R> &line1,
-    const Line_2<R> &line2);
+@<Line Line distance@>
 
 @}
 
@@ -1483,7 +1415,7 @@ The distance between two lines is zero unless the two lines are paralel. In
 that case we can take the distance of an arbitrary point on the one line to
 the other line.
 
-@$@<2D squared distance outline definitions 1@>+=@{
+@$@<Line Line distance@>==@{
 
 template <class R>
 bool
@@ -1495,7 +1427,7 @@ _are_parallel(
 }
 
 template <class R>
-R_FT_return(R)
+R::FT
 squared_distance(
     const Line_2<R> &line1,
     const Line_2<R> &line2)
@@ -1504,7 +1436,7 @@ squared_distance(
     if (_are_parallel(line1,line2))
         return squared_distance(line1.point(), line2);
     else
-        return (R_FT_return(R))((FT)0);
+        return (R::FT)((FT)0);
 }
 @}
 
@@ -1520,21 +1452,11 @@ Otherwise, the point is closest to a vertex of the triangle. Then ind2 is
 set to -1 and vertex(ind1) is the closest vertex.
 
 @$@<2D squared distance header declarations 2@>+=@{
-
-template <class R>
-extern void
-distance_index(
-    int &ind1,
-    int &ind2,
-    const Point_2<R> &pt,
-    const Triangle_2<R> &triangle);
+@<Point Triangle distance implementation 1@>
 @}
 
 @$@<2D squared distance header declarations 2@>+=@{
-template <class R>
-extern R_FT_return(R)
-squared_distance_indexed(const Point_2<R> &pt,
-    const Triangle_2<R> &triangle, int ind1, int ind2);
+@<Point Triangle distance implementation 2@>
 @}
 
 @C@<Implementation@>
@@ -1554,7 +1476,7 @@ angle edge.source, edge.target, point and edge.target, edge.source, point are
 sharp.
 Otherwise the point lies closest to a vertex.
 
-@$@<2D squared distance outline definitions 2@>+=@{
+@$@<Point Triangle distance implementation 1@>==@{
 
 template <class R>
 extern void
@@ -1727,16 +1649,16 @@ distance_index(
 }
 @}
 
-@$@<2D squared distance outline definitions 2@>+=@{
+@$@<Point Triangle distance implementation 2@>==@{
 
 template <class R>
-extern R_FT_return(R)
+extern R::FT
 squared_distance_indexed(const Point_2<R> &pt,
     const Triangle_2<R> &triangle, int ind1, int ind2)
 {
     typedef typename R::FT FT;
     if (ind1 == -1)
-        return (R_FT_return(R))(FT(0));
+        return (R::FT)(FT(0));
     if (ind2 == -1)
         return squared_distance(pt, triangle.vertex(ind1));
     return squared_distance(pt,
@@ -1748,16 +1670,10 @@ squared_distance_indexed(const Point_2<R> &pt,
 @B@<Point Triangle distance@>
 
 @$@<2D squared distance header declarations 2@>+=@{@-
+@<Point Triangle distance implementation 3@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Point_2<R> &pt,
-    const Triangle_2<R> &triangle);
-
-
-template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Triangle_2<R> & triangle,
     const Point_2<R> & pt)
@@ -1770,10 +1686,10 @@ squared_distance(
 @C@<Implementation@>
 
 
-@$@<2D squared distance outline definitions 2@>+=@{
+@$@<Point Triangle distance implementation 3@>==@{
 
 template <class R>
-extern R_FT_return(R)
+extern R::FT
 squared_distance(
     const Point_2<R> &pt,
     const Triangle_2<R> &triangle)
@@ -1787,16 +1703,10 @@ squared_distance(
 @B@<Line Triangle distance@>
 
 @$@<2D squared distance header declarations 2@>+=@{@-
+@<Line Triangle distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Line_2<R> &line,
-    const Triangle_2<R> &triangle);
-
-
-template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Triangle_2<R> & triangle,
     const Line_2<R> & line)
@@ -1809,10 +1719,10 @@ squared_distance(
 @C@<Implementation@>
 
 
-@$@<2D squared distance outline definitions 2@>+=@{
+@$@<Line Triangle distance implementation@>==@{
 
 template <class R>
-extern R_FT_return(R)
+extern R::FT
 squared_distance(
     const Line_2<R> &line,
     const Triangle_2<R> &triangle)
@@ -1821,9 +1731,9 @@ squared_distance(
     Oriented_side side0;
     side0 = line.oriented_side(triangle.vertex(0));
     if (line.oriented_side(triangle.vertex(1)) != side0)
-        return (R_FT_return(R))(FT(0));
+        return (R::FT)(FT(0));
     if (line.oriented_side(triangle.vertex(2)) != side0)
-        return (R_FT_return(R))(FT(0));
+        return (R::FT)(FT(0));
     FT mindist, dist;
     int i;
     mindist = squared_distance(triangle.vertex(0),line);
@@ -1832,23 +1742,17 @@ squared_distance(
         if (dist < mindist)
             mindist = dist;
     }
-    return (R_FT_return(R))(mindist);
+    return (R::FT)(mindist);
 }
 @}
 
 @B@<Ray Triangle distance@>
 
 @$@<2D squared distance header declarations 2@>+=@{@-
+@<Ray Triangle distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Ray_2<R> &ray,
-    const Triangle_2<R> &triangle);
-
-
-template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Triangle_2<R> & triangle,
     const Ray_2<R> & ray)
@@ -1861,10 +1765,10 @@ squared_distance(
 @C@<Implementation@>
 
 
-@$@<2D squared distance outline definitions 2@>+=@{
+@$@<Ray Triangle distance implementation@>==@{
 
 template <class R>
-extern R_FT_return(R)
+extern R::FT
 squared_distance(
     const Ray_2<R> &ray,
     const Triangle_2<R> &triangle)
@@ -1888,7 +1792,7 @@ squared_distance(
     // now check if all vertices are on the right side of the separating line.
     // In case of vertex-vertex smallest distance this is the case.
     if (ind_tr2 == -1 && ind_ray != -1)
-        return (R_FT_return(R))(mindist);
+        return (R::FT)(mindist);
     if (ind_tr2 != -1) {
 // Check if all the segment vertices lie at the same side of
 // the triangle segment.
@@ -1908,23 +1812,17 @@ squared_distance(
             }
         }
     }
-    return (R_FT_return(R))(mindist);
+    return (R::FT)(mindist);
 }
 @}
 
 @B@<Segment Triangle distance@>
 
 @$@<2D squared distance header declarations 2@>+=@{@-
+@<Segment Triangle distance implementation@>
 
 template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Segment_2<R> &seg,
-    const Triangle_2<R> &triangle);
-
-
-template <class R>
-inline R_FT_return(R)
+inline R::FT
 squared_distance(
     const Triangle_2<R> & triangle,
     const Segment_2<R> & seg)
@@ -1937,10 +1835,10 @@ squared_distance(
 @C@<Implementation@>
 
 
-@$@<2D squared distance outline definitions 2@>+=@{
+@$@<Segment Triangle distance implementation@>==@{
 
 template <class R>
-extern R_FT_return(R)
+extern R::FT
 squared_distance(
     const Segment_2<R> &seg,
     const Triangle_2<R> &triangle)
@@ -1972,7 +1870,7 @@ squared_distance(
     // now check if all vertices are on the right side of the separating line.
     // In case of vertex-vertex smallest distance this is the case.
     if (ind_tr2 == -1 && ind_seg != -1)
-        return (R_FT_return(R))(mindist);
+        return (R::FT)(mindist);
 
     if (ind_tr2 != -1) {
 // Check if all the segment vertices lie at the same side of
@@ -1995,28 +1893,24 @@ squared_distance(
             }
         }
     }
-    return (R_FT_return(R))(mindist);
+    return (R::FT)(mindist);
 }
 @}
 
 @B@<Triangle Triangle distance@>
 
 @$@<2D squared distance header declarations 2@>+=@{@-
+@<Triangle Triangle distance implementation@>
 
-template <class R>
-extern R_FT_return(R)
-squared_distance(
-    const Triangle_2<R> &triangle1,
-    const Triangle_2<R> &triangle2);
 @}
 
 @C@<Implementation@>
 
 
-@$@<2D squared distance outline definitions 2@>+=@{
+@$@<Triangle Triangle distance implementation@>==@{
 
 template <class R>
-extern R_FT_return(R)
+extern R::FT
 squared_distance(
     const Triangle_2<R> &triangle1,
     const Triangle_2<R> &triangle2)
@@ -2048,7 +1942,7 @@ squared_distance(
     }
     // now check if all vertices are on the right side of the separating line.
     if (ind1_2 == -1 && ind2_2 == -1)
-        return (R_FT_return(R))(mindist);
+        return (R::FT)(mindist);
     // In case of point-segment closest distance, there is still the possibility
     // of overlapping triangles.
     // Check if all the vertices lie at the same side of the segment.
@@ -2073,7 +1967,7 @@ squared_distance(
             }
         }
     }
-    return (R_FT_return(R))(mindist);
+    return (R::FT)(mindist);
 }
 @}
 
@@ -2110,25 +2004,6 @@ Saarbruecken@)
 #include <CGAL/user_classes.h>
 #endif // CGAL_USER_CLASSES_H
 
-CGAL_BEGIN_NAMESPACE
-@<2D squared distance header declarations 1@>
-CGAL_END_NAMESPACE
-
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/squared_distance_2_1.C>
-#endif
-
-
-#endif
-@}
-
-
-@O@<../include/CGAL/squared_distance_2_1.C@>==@{@-
-@<cgal_heading@>@(@-
-include/CGAL/squared_distance_2_1.C@,@-
-sqdistance_2.fw@,@-
-Geert-Jan Giezeman@,@-
-Saarbruecken@)
 
 #ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
@@ -2156,9 +2031,13 @@ Saarbruecken@)
 #endif // CGAL_SQUARED_DISTANCE_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
-@<2D squared distance outline definitions 1@>
+@<2D squared distance header declarations 1@>
 CGAL_END_NAMESPACE
+
+
+#endif
 @}
+
 
 @O@<../include/CGAL/squared_distance_2_2.h@>==@{@-
 @<cgal_heading@>@(@-
@@ -2173,26 +2052,6 @@ Saarbruecken@)
 #ifndef CGAL_USER_CLASSES_H
 #include <CGAL/user_classes.h>
 #endif // CGAL_USER_CLASSES_H
-
-CGAL_BEGIN_NAMESPACE
-
-@<2D squared distance header declarations 2@>
-CGAL_END_NAMESPACE
-
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/squared_distance_2_2.C>
-#endif
-
-
-#endif
-@}
-
-@O@<../include/CGAL/squared_distance_2_2.C@>==@{@-
-@<cgal_heading@>@(@-
-include/CGAL/squared_distance_2_2.C@,@-
-sqdistance_2.fw@,@-
-Geert-Jan Giezeman@,@-
-Saarbruecken@)
 
 #ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
@@ -2224,10 +2083,14 @@ Saarbruecken@)
 #ifndef CGAL_SQUARED_DISTANCE_2_1_H
 #include <CGAL/squared_distance_2_1.h>
 #endif // CGAL_SQUARED_DISTANCE_2_1_H
+
 CGAL_BEGIN_NAMESPACE
 
-@<2D squared distance outline definitions 2@>
+@<2D squared distance header declarations 2@>
 CGAL_END_NAMESPACE
+
+
+#endif
 @}
 
 
