@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_layer_show_mouse_coordinates.h
+// file          : include/CGAL/IO/Qt_widget_show_mouse_coordinates.h
 // package       : Qt_widget
 // author(s)     : Ursu Radu
 // release       : 
