@@ -66,8 +66,8 @@ public:
       FT xs = wp.x() - _pole.x();
       FT ys = wp.y() - _pole.y();
       FT ws = wp.weight() - _pole.weight();
-      FT ps = CGAL_NTS square(xs) + CGAL_NTS square(ys)
-	- CGAL_NTS square(ws);
+      FT ps = CGAL::square(xs) + CGAL::square(ys)
+	- CGAL::square(ws);
 
       return
 	Inverted_weighted_point(Site_2(Point_2(xs, ys), ws), ps);
@@ -109,11 +109,11 @@ public:
       FT dxw = det2x2_by_formula(u1.x(), u1.weight(), u2.x(), u2.weight());
       FT dyw = det2x2_by_formula(u1.y(), u1.weight(), u2.y(), u2.weight());
 
-      _a = CGAL_NTS square(dxp) + CGAL_NTS square(dyp);
+      _a = CGAL::square(dxp) + CGAL::square(dyp);
       _b = dxp * dxw + dyp * dyw;
-      _c = CGAL_NTS square(dxw) + CGAL_NTS square(dyw) - CGAL_NTS square(dxy);
+      _c = CGAL::square(dxw) + CGAL::square(dyw) - CGAL::square(dxy);
       _c2 = dxy;
-      _delta = _a - CGAL_NTS square(dwp);
+      _delta = _a - CGAL::square(dwp);
       _dxp = dxp;
       _dyp = dyp;
       _dwp = dwp;
@@ -132,7 +132,7 @@ public:
   inline FT dyp() const { return _dyp; }
   inline FT dwp() const { return _dwp; }
 
-  inline bool is_first_root() const { return CGAL_NTS is_negative(_c2); }
+  inline bool is_first_root() const { return CGAL::is_negative(_c2); }
 
   Voronoi_radius get_symmetric()
     {
@@ -183,8 +183,8 @@ protected:
       store(dx, dy, dw);
       _c1 = dx * dxw + dy * dyw;
       _c2 = dxy;
-      _d = CGAL_NTS square(dx) + CGAL_NTS square(dy);
-      _delta = _d - CGAL_NTS square(dw);
+      _d = CGAL::square(dx) + CGAL::square(dy);
+      _delta = _d - CGAL::square(dw);
       _dxw = dxw;
       _dyw = dyw;
     }
@@ -286,8 +286,8 @@ protected:
   inline
   void compute_gamma()
     {
-      _gamma = CGAL_NTS square(this->_dxw) + CGAL_NTS square(this->_dyw)
-	- CGAL_NTS square(this->_c2);
+      _gamma = CGAL::square(this->_dxw) + CGAL::square(this->_dyw)
+	- CGAL::square(this->_c2);
     }
 
 public:
@@ -310,7 +310,7 @@ public:
   inline FT gamma() const { return _gamma; }
 
   inline bool is_first_root() const {
-    return CGAL_NTS is_negative(this->_c2);
+    return CGAL::is_negative(this->_c2);
   }
 
   FT compute_P4(const Inverted_weighted_point& u1,
@@ -325,24 +325,24 @@ public:
       FT dy3 = det2x2_by_formula(u3.y(), u3.p(), u2.y(), u2.p());
       FT dw3 = det2x2_by_formula(u3.weight(), u3.p(), u2.weight(), u2.p());
 
-      FT u2Pv2 = CGAL_NTS square(u2.x()) + CGAL_NTS square(u2.y());
-      FT u2Mv2 = CGAL_NTS square(u2.x()) - CGAL_NTS square(u2.y());
+      FT u2Pv2 = CGAL::square(u2.x()) + CGAL::square(u2.y());
+      FT u2Mv2 = CGAL::square(u2.x()) - CGAL::square(u2.y());
       FT u2v2 = FT(2) * u2.x() * u2.y();
 
 
       FT vvMuu = dy1 * dy3 - dx1 * dx3;
       FT vuPuv = dy1 * dx3 + dx1 * dy3;
 
-      FT dx2Pdy2_1 = CGAL_NTS square(dx1) + CGAL_NTS square(dy1);
-      FT dx2Pdy2_3 = CGAL_NTS square(dx3) + CGAL_NTS square(dy3);
+      FT dx2Pdy2_1 = CGAL::square(dx1) + CGAL::square(dy1);
+      FT dx2Pdy2_3 = CGAL::square(dx3) + CGAL::square(dy3);
 
-      FT fr1_sq = CGAL_NTS square(dw1) * dx2Pdy2_3;
-      FT fr3_sq = CGAL_NTS square(dw3) * dx2Pdy2_1;
+      FT fr1_sq = CGAL::square(dw1) * dx2Pdy2_3;
+      FT fr3_sq = CGAL::square(dw3) * dx2Pdy2_1;
 
-      FT f1 = (fr1_sq + fr3_sq) * CGAL_NTS square(u2Pv2);
+      FT f1 = (fr1_sq + fr3_sq) * CGAL::square(u2Pv2);
 
       FT f2 = FT(2) * dw1 * dw3 * u2Pv2 * (u2Mv2 * vvMuu - u2v2 * vuPuv );
-      FT f3 = CGAL_NTS square(u2Mv2 * vuPuv + u2v2 * vvMuu);
+      FT f3 = CGAL::square(u2Mv2 * vuPuv + u2v2 * vvMuu);
 
       FT F = f1 + f2 - f3;
 
@@ -351,7 +351,7 @@ public:
       FT vuMuv = dy1 * dx3 - dx1 * dy3;
 
       FT G = fr1_sq + fr3_sq - FT(2) * dw1 * dw3 * uuPvv
-	- CGAL_NTS square(vuMuv);
+	- CGAL::square(vuMuv);
 
       return (F * G);
     }

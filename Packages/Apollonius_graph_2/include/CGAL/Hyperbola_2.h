@@ -86,7 +86,7 @@ protected:
   inline
   FT norm2(const Point_2& p) const
   {
-    return (CGAL_NTS square(p.x()) + CGAL_NTS square(p.y()));
+    return (CGAL::square(p.x()) + CGAL::square(p.y()));
   }
 
   inline
@@ -94,20 +94,20 @@ protected:
   {
     FT dx = p1.x()-p2.x();
     FT dy = p1.y()-p2.y();
-    return (CGAL_NTS square(dx) + CGAL_NTS square(dy));
+    return (CGAL::square(dx) + CGAL::square(dy));
   }
 
   inline
   FT distance(const Point_2& p1, const Point_2& p2) const
   {
-    return CGAL_NTS sqrt( distance2(p1, p2) );
+    return CGAL::sqrt( distance2(p1, p2) );
   }
 
   void compute_origin()
   {
     FT dx = f2.x() - f1.x();
     FT dy = f2.y() - f1.y();
-    FT a = CGAL_NTS sqrt(CGAL_NTS square(dx) + CGAL_NTS square(dy));
+    FT a = CGAL::sqrt(CGAL::square(dx) + CGAL::square(dy));
     FT t = (FT(1) + r / a) / FT(2);
 
     o = Point_2(dx * t + f1.x(), dy * t + f1.y());
@@ -123,17 +123,17 @@ protected:
 
       std::vector< Point_2 > p;
 
-      if ( CGAL_NTS is_negative(d) ) return p;
+      if ( CGAL::is_negative(d) ) return p;
 
-      if ( CGAL_NTS is_zero(df.x()) ) {
+      if ( CGAL::is_zero(df.x()) ) {
 	FT y = (d1 - d2 + norm2(f2) - norm2(f1)) / (FT(2) * df.y());
 
-	FT D = d1 - CGAL_NTS square(y - f1.y());
+	FT D = d1 - CGAL::square(y - f1.y());
 
-	D = CGAL_NTS abs(D);
+	D = CGAL::abs(D);
 
-	FT x1 = CGAL_NTS sqrt(D) + f1.x();
-	FT x2 = -CGAL_NTS sqrt(D) + f1.x();
+	FT x1 = CGAL::sqrt(D) + f1.x();
+	FT x2 = -CGAL::sqrt(D) + f1.x();
 
 	p.push_back(Point_2(x1, y));
 	p.push_back(Point_2(x2, y));
@@ -145,16 +145,16 @@ protected:
       FT gamma1 = gamma - f1.x();
       FT beta = df.y() / df.x();
 
-      FT a = FT(1) + CGAL_NTS square(beta);
+      FT a = FT(1) + CGAL::square(beta);
       FT b = -FT(2) * (gamma1 * beta + f1.y());
-      FT c = CGAL_NTS square(f1.y()) + CGAL_NTS square(gamma1) - d1;
+      FT c = CGAL::square(f1.y()) + CGAL::square(gamma1) - d1;
 
-      FT D = CGAL_NTS square(b) - FT(4) * a * c;
+      FT D = CGAL::square(b) - FT(4) * a * c;
 
-      D = CGAL_NTS abs(D);
+      D = CGAL::abs(D);
 
-      FT y1 = (-b + CGAL_NTS sqrt(D)) / (FT(2) * a);
-      FT y2 = (-b - CGAL_NTS sqrt(D)) / (FT(2) * a);
+      FT y1 = (-b + CGAL::sqrt(D)) / (FT(2) * a);
+      FT y2 = (-b - CGAL::sqrt(D)) / (FT(2) * a);
 
       FT x1 = gamma - beta * y1;
       FT x2 = gamma - beta * y2;
@@ -167,10 +167,10 @@ protected:
 
   bool right(const Point_2& p) const
   {
-    return CGAL_NTS
-      is_negative( det3x3_by_formula< FT >(f1.x(), f1.y(), 1,
-					   f2.x(), f2.y(), 1,
-					   p.x(),  p.y(), 1) );
+    return
+      CGAL::is_negative( det3x3_by_formula<FT>(f1.x(), f1.y(), 1,
+					       f2.x(), f2.y(), 1,
+					       p.x(),   p.y(), 1) );
   }
 
   inline
@@ -185,7 +185,7 @@ protected:
   inline
   Point_2 f(FT t) const
   {
-    if ( CGAL_NTS is_negative(t) )  return rchain(-t);
+    if ( CGAL::is_negative(t) )  return rchain(-t);
     return lchain(t);
   }
 

@@ -69,7 +69,7 @@ public:
   Comparison_result operator()(const Site_2& p,
 			       const Site_2& q) const
   {
-    return CGAL_NTS compare(p.weight(), q.weight());
+    return CGAL::compare(p.weight(), q.weight());
   }
 };
 
@@ -114,7 +114,7 @@ ad_is_hidden_test_2(const typename K::Site_2& p,
 				       q.hx(), q.hy(), q.hw(),
 				       q.weight());
   if ( s == POSITIVE ) { return false; }
-  return (CGAL_NTS compare(p.weight(), q.weight()) != SMALLER);
+  return (CGAL::compare(p.weight(), q.weight()) != SMALLER);
 }
 
 template < class K, class Method_tag >

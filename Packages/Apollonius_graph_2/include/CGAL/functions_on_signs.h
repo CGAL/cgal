@@ -47,17 +47,17 @@ sign_a_plus_b_x_sqrt_c(const RT &a, const RT &b, const RT &c)
 {
   // computes the sign of quantity: a + b * sqrt(c)
 
-  CGAL_assertion( !(CGAL_NTS is_negative(c)) );
+  CGAL_assertion( !(CGAL::is_negative(c)) );
 
-  Sign sa = CGAL_NTS sign(a);
-  if ( CGAL_NTS sign(c) == ZERO )  return sa;
+  Sign sa = CGAL::sign(a);
+  if ( CGAL::sign(c) == ZERO )  return sa;
 
-  Sign sb = CGAL_NTS sign(b);
+  Sign sb = CGAL::sign(b);
   if ( sa == sb )  return sa;
   if ( sa == ZERO )  return sb;
 
-  return Sign( sa * CGAL_NTS compare( CGAL_NTS square(a),
-				      c * CGAL_NTS square(b) )
+  return Sign( sa * CGAL::compare( CGAL::square(a),
+				   c * CGAL::square(b) )
 	       );
 }
 
@@ -68,19 +68,19 @@ sign_a_x_sqrt_c_plus_b_x_sqrt_d(const RT &a, const RT &b,
 {
   // computes the sign of quantity: a * sqrt(c) + b * sqrt(d)
 
-  CGAL_assertion( !(CGAL_NTS is_negative(c)) );
-  CGAL_assertion( !(CGAL_NTS is_negative(d)) );
+  CGAL_assertion( !(CGAL::is_negative(c)) );
+  CGAL_assertion( !(CGAL::is_negative(d)) );
 
-  Sign sb = CGAL_NTS sign(b);
-  if ( CGAL_NTS sign(d) == ZERO )  return CGAL_NTS sign(a * c);
-  if ( CGAL_NTS sign(c) == ZERO )  return sb;
+  Sign sb = CGAL::sign(b);
+  if ( CGAL::sign(d) == ZERO )  return CGAL::sign(a * c);
+  if ( CGAL::sign(c) == ZERO )  return sb;
 
-  Sign sa = CGAL_NTS sign(a);
+  Sign sa = CGAL::sign(a);
   if ( sa == sb )  return sa;
   if ( sa == ZERO )  return sb;
 
-  return Sign( sa * CGAL_NTS compare( CGAL_NTS square(a) * c,
-				      CGAL_NTS square(b) * d )
+  return Sign( sa * CGAL::compare( CGAL::square(a) * c,
+				   CGAL::square(b) * d )
 	       );
 }
 
@@ -92,19 +92,19 @@ sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f(const RT &a, const RT &b,
 {
   // computes the sign of quantity: a + b * sqrt(e) + c * sqrt(f)
   
-  CGAL_assertion( !(CGAL_NTS is_negative(e)) );
-  CGAL_assertion( !(CGAL_NTS is_negative(f)) );
+  CGAL_assertion( !(CGAL::is_negative(e)) );
+  CGAL_assertion( !(CGAL::is_negative(f)) );
 
   Sign s_a_plus_b_x_sqrt_e = sign_a_plus_b_x_sqrt_c(a, b, e);
-  if ( CGAL_NTS sign(f) == ZERO )  return s_a_plus_b_x_sqrt_e;
+  if ( CGAL::sign(f) == ZERO )  return s_a_plus_b_x_sqrt_e;
 
-  Sign sc = CGAL_NTS sign(c);
+  Sign sc = CGAL::sign(c);
   if ( s_a_plus_b_x_sqrt_e == sc )  return sc;
   if ( s_a_plus_b_x_sqrt_e == ZERO )  return sc;
 
   return s_a_plus_b_x_sqrt_e * 
-    sign_a_plus_b_x_sqrt_c(CGAL_NTS square(a) + CGAL_NTS square(b) * e
-			   - CGAL_NTS square(c) * f,
+    sign_a_plus_b_x_sqrt_c(CGAL::square(a) + CGAL::square(b) * e
+			   - CGAL::square(c) * f,
 			   RT(2) * a * b, e);
 }
 
@@ -120,8 +120,8 @@ sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f_plus_d_sqrt_e_x_f(const RT &a,
   // computes the sign of quantity:
   //           a + b * sqrt(e) + c * sqrt(f) + d * sqrt(e * f)
   
-  CGAL_assertion( !(CGAL_NTS is_negative(e)) );
-  CGAL_assertion( !(CGAL_NTS is_negative(f)) );
+  CGAL_assertion( !(CGAL::is_negative(e)) );
+  CGAL_assertion( !(CGAL::is_negative(f)) );
 
   Sign s_a_plus_b_sqrt_e = sign_a_plus_b_x_sqrt_c(a, b, e);
   Sign s_c_plus_d_sqrt_e = sign_a_plus_b_x_sqrt_c(c, d, e);
@@ -133,9 +133,9 @@ sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f_plus_d_sqrt_e_x_f(const RT &a,
     return s_a_plus_b_sqrt_e;
 
   return s_a_plus_b_sqrt_e *
-    sign_a_plus_b_x_sqrt_c(CGAL_NTS square(a) + CGAL_NTS square(b) * e
-			   - CGAL_NTS square(c) * f
-			   - CGAL_NTS square(d) * e * f,
+    sign_a_plus_b_x_sqrt_c(CGAL::square(a) + CGAL::square(b) * e
+			   - CGAL::square(c) * f
+			   - CGAL::square(d) * e * f,
 			   RT(2) * (a * b - c * d * f),
 			   e);
 }

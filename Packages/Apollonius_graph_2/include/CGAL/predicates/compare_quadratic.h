@@ -44,7 +44,7 @@ template < class FT >
 inline FT
 value_of_D(const FT& a, const FT& b, const FT& c)
 {
-  return CGAL_NTS square(b) - a * c;
+  return CGAL::square(b) - a * c;
 }
 
 template < class FT >
@@ -95,7 +95,7 @@ value_of_R0(const FT&  J, const FT& Jp,
 	    const FT& a1, const FT& c1,
 	    const FT& a2, const FT& c2)
 {
-  return CGAL_NTS square(a1 * c2 - c1 * a2) - FT(4) * J * Jp;
+  return CGAL::square(a1 * c2 - c1 * a2) - FT(4) * J * Jp;
 }
 
 template < class FT >
@@ -103,7 +103,7 @@ template < class FT >
 inline FT
 value_of_R0(const FT& D1, const FT& D2, const FT& K)
 {
-  return CGAL_NTS square(K) - FT(4) * D1 * D2;
+  return CGAL::square(K) - FT(4) * D1 * D2;
 }
 
 template < class FT >
@@ -111,7 +111,7 @@ template < class FT >
 inline FT
 value_of_P4(const FT& D1, const FT& D2, const FT& K)
 {
-  return FT(4) * D1 * D2 - CGAL_NTS square(K);
+  return FT(4) * D1 * D2 - CGAL::square(K);
 }
 
 template < class FT >
@@ -119,7 +119,7 @@ template < class FT >
 inline FT
 value_of_D(const FT& a1, const FT& D1, const FT& a2, const FT& D2)
 {
-  return D1 * CGAL_NTS square(a2) - D2 * CGAL_NTS square(a1);
+  return D1 * CGAL::square(a2) - D2 * CGAL::square(a1);
 }
 
 template < class FT >
@@ -210,10 +210,10 @@ sqrt_compare_l1_l2(const FT& a1, const FT& b1, const FT& c1,
   FT D1 = value_of_D(a1, b1, c1);
   FT D2 = value_of_D(a2, b2, c2);
 
-  FT l1 = ( b1 - CGAL_NTS sqrt(D1) ) / a1;
-  FT l2 = ( b2 - CGAL_NTS sqrt(D2) ) / a2;
+  FT l1 = ( b1 - CGAL::sqrt(D1) ) / a1;
+  FT l2 = ( b2 - CGAL::sqrt(D2) ) / a2;
 
-  return CGAL_NTS compare(l1, l2);
+  return CGAL::compare(l1, l2);
 }
 
 template < class FT >
@@ -225,10 +225,10 @@ sqrt_compare_l1_r2(const FT& a1, const FT& b1, const FT& c1,
   FT D1 = value_of_D(a1, b1, c1);
   FT D2 = value_of_D(a2, b2, c2);
 
-  FT l1 = ( b1 - CGAL_NTS sqrt(D1) ) / a1;
-  FT r2 = ( b2 + CGAL_NTS sqrt(D2) ) / a2;
+  FT l1 = ( b1 - CGAL::sqrt(D1) ) / a1;
+  FT r2 = ( b2 + CGAL::sqrt(D2) ) / a2;
 
-  return CGAL_NTS compare(l1, r2);
+  return CGAL::compare(l1, r2);
 }
 
 
@@ -241,10 +241,10 @@ sqrt_compare_r1_l2(const FT& a1, const FT& b1, const FT& c1,
   FT D1 = value_of_D(a1, b1, c1);
   FT D2 = value_of_D(a2, b2, c2);
 
-  FT r1 = ( b1 + CGAL_NTS sqrt(D1) ) / a1;
-  FT l2 = ( b2 - CGAL_NTS sqrt(D2) ) / a2;
+  FT r1 = ( b1 + CGAL::sqrt(D1) ) / a1;
+  FT l2 = ( b2 - CGAL::sqrt(D2) ) / a2;
 
-  return CGAL_NTS compare(r1, l2);
+  return CGAL::compare(r1, l2);
 }
 
 template < class FT >
@@ -256,10 +256,10 @@ sqrt_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
   FT D1 = value_of_D(a1, b1, c1);
   FT D2 = value_of_D(a2, b2, c2);
 
-  FT r1 = ( b1 + CGAL_NTS sqrt(D1) ) / a1;
-  FT r2 = ( b2 + CGAL_NTS sqrt(D2) ) / a2;
+  FT r1 = ( b1 + CGAL::sqrt(D1) ) / a1;
+  FT r2 = ( b2 + CGAL::sqrt(D2) ) / a2;
 
-  return CGAL_NTS compare(r1, r2);
+  return CGAL::compare(r1, r2);
 }
 
 
@@ -278,43 +278,43 @@ dfmt_compare_l1_l2(const FT& a1, const FT& b1, const FT& c1,
   FT J = value_of_J(a1, b1, a2, b2);
   FT K = value_of_K(a1, b1, c1, a2, b2, c2);
     
-  if ( CGAL_NTS is_positive(J) ) {
-    if ( CGAL_NTS is_positive(K) )  return SMALLER;  // l1 < l2
+  if ( CGAL::is_positive(J) ) {
+    if ( CGAL::is_positive(K) )  return SMALLER;  // l1 < l2
 	
     FT D1 = value_of_D(a1, b1, c1);
     FT D2 = value_of_D(a2, b2, c2);
 
     FT D = value_of_D(a1, D1, a2, D2);
 
-    if ( CGAL_NTS is_positive(D) )  return SMALLER;  // l1 < l2
+    if ( CGAL::is_positive(D) )  return SMALLER;  // l1 < l2
 	
     FT Jp = value_of_Jp(b1, c1, b2, c2);
 
-    if ( CGAL_NTS is_negative(Jp) )  return LARGER;   // l1 > l2
+    if ( CGAL::is_negative(Jp) )  return LARGER;   // l1 > l2
 	
     FT R0 = value_of_R0(D1, D2, K);
 	
-    Sign s_R0 = CGAL_NTS sign(R0);
+    Sign s_R0 = CGAL::sign(R0);
     if ( s_R0 == NEGATIVE )  return SMALLER;  // l1 < l2
     if ( s_R0 == POSITIVE )  return LARGER;   // l1 > l2
     return EQUAL;
   } else { // J<0
-    if ( CGAL_NTS is_positive(K) )  return LARGER;   // l1 > l2
+    if ( CGAL::is_positive(K) )  return LARGER;   // l1 > l2
 	
     FT D1 = value_of_D(a1, b1, c1);
     FT D2 = value_of_D(a2, b2, c2);
 
     FT D = value_of_D(a1, D1, a2, D2);
 
-    if ( CGAL_NTS is_negative(D) )  return LARGER;   // l1 > l2
+    if ( CGAL::is_negative(D) )  return LARGER;   // l1 > l2
 
     FT Jp = value_of_Jp(b1, c1, b2, c2);
 
-    if ( CGAL_NTS is_positive(Jp) )  return SMALLER;  // l1 < l2
+    if ( CGAL::is_positive(Jp) )  return SMALLER;  // l1 < l2
 
     FT R0 = value_of_R0(D1, D2, K);
 
-    Sign s_R0 = CGAL_NTS sign(R0);
+    Sign s_R0 = CGAL::sign(R0);
     if ( s_R0 == NEGATIVE )  return LARGER;   // l1 > l2
     if ( s_R0 == POSITIVE )  return SMALLER;  // l1 < l2
     return EQUAL;
@@ -329,19 +329,19 @@ dfmt_compare_l1_r2(const FT& a1, const FT& b1, const FT& c1,
 {
   FT J = value_of_J(a1, b1, a2, b2);
 
-  if ( CGAL_NTS is_positive(J) ) return SMALLER;   // l1 < r2
+  if ( CGAL::is_positive(J) ) return SMALLER;   // l1 < r2
 
   FT K = value_of_K(a1, b1, c1, a2, b2, c2);
 
-  if ( CGAL_NTS is_negative(K) ) return SMALLER;   // l1 < r2
+  if ( CGAL::is_negative(K) ) return SMALLER;   // l1 < r2
 
   FT Jp = value_of_Jp(b1, c1, b2, c2);
     
-  if ( CGAL_NTS is_positive(Jp) ) return LARGER;  // l1 > r2
+  if ( CGAL::is_positive(Jp) ) return LARGER;  // l1 > r2
     
   FT R0 = value_of_R0(J, Jp, a1, c1, a2, c2);
     
-  Sign s_R0 = CGAL_NTS sign(R0);
+  Sign s_R0 = CGAL::sign(R0);
   if ( s_R0 == NEGATIVE ) return SMALLER;   // l1 < r2
   if ( s_R0 == POSITIVE ) return LARGER;    // l1 > r2
   return EQUAL;
@@ -357,19 +357,19 @@ dfmt_compare_r1_l2(const FT& a1, const FT& b1, const FT& c1,
 {
   FT J = value_of_J(a1, b1, a2, b2);
 
-  if ( CGAL_NTS is_negative(J) ) return LARGER;   // r1 > l2
+  if ( CGAL::is_negative(J) ) return LARGER;   // r1 > l2
 
   FT K = value_of_K(a1, b1, c1, a2, b2, c2);
 
-  if ( CGAL_NTS is_negative(K) ) return LARGER;   // r1 > l2
+  if ( CGAL::is_negative(K) ) return LARGER;   // r1 > l2
 
   FT Jp = value_of_Jp(b1, c1, b2, c2);
     
-  if ( CGAL_NTS is_negative(Jp) ) return SMALLER;  // r1 < l2
+  if ( CGAL::is_negative(Jp) ) return SMALLER;  // r1 < l2
     
   FT R0 = value_of_R0(J, Jp, a1, c1, a2, c2);
     
-  Sign s_R0 = CGAL_NTS sign(R0);
+  Sign s_R0 = CGAL::sign(R0);
   if ( s_R0 == NEGATIVE ) return LARGER;   // r1 > l2
   if ( s_R0 == POSITIVE ) return SMALLER;  // r1 < l2
   return EQUAL;
@@ -388,8 +388,8 @@ dfmt_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
   FT J = value_of_J(a1, b1, a2, b2);
   FT K = value_of_K(a1, b1, c1, a2, b2, c2);
     
-  if ( CGAL_NTS is_positive(J) ){
-    if ( CGAL_NTS is_positive(K) )  return SMALLER;   // r1 < r2   1,2
+  if ( CGAL::is_positive(J) ){
+    if ( CGAL::is_positive(K) )  return SMALLER;   // r1 < r2   1,2
 
 #ifdef COMPARATOR_PROFILER
     comparator_profiler::counter_rr_e++;
@@ -400,7 +400,7 @@ dfmt_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
 
     FT D = value_of_D(a1, D1, a2, D2);
 
-    if ( CGAL_NTS is_negative(D) )  return SMALLER;   // r1 < r2   2,3b
+    if ( CGAL::is_negative(D) )  return SMALLER;   // r1 < r2   2,3b
 
 #ifdef COMPARATOR_PROFILER
     comparator_profiler::counter_rr_r0++;
@@ -408,16 +408,16 @@ dfmt_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
 
     FT Jp = value_of_Jp(b1, c1, b2, c2);
 
-    if ( CGAL_NTS is_negative(Jp) )  return LARGER;    // r1 > r2   3a
+    if ( CGAL::is_negative(Jp) )  return LARGER;    // r1 > r2   3a
 
     FT R0 = value_of_R0(D1, D2, K);
 
-    Sign s_R0 = CGAL_NTS sign(R0);
+    Sign s_R0 = CGAL::sign(R0);
     if ( s_R0 == NEGATIVE )  return SMALLER;   // r1 < r2   2
     if ( s_R0 == POSITIVE )  return LARGER;    // r1 > r2   3a
     return EQUAL;
   } else { // J<0
-    if ( CGAL_NTS is_positive(K) )  return LARGER;   // r1 > r2    4,5
+    if ( CGAL::is_positive(K) )  return LARGER;   // r1 > r2    4,5
 
 #ifdef COMPARATOR_PROFILER
     comparator_profiler::counter_rr_e++;
@@ -428,7 +428,7 @@ dfmt_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
 
     FT D = value_of_D(a1, D1, a2, D2);
 	
-    if ( CGAL_NTS is_positive(D) )  return LARGER;   // r1 > r2    3a,4
+    if ( CGAL::is_positive(D) )  return LARGER;   // r1 > r2    3a,4
 	
 #ifdef COMPARATOR_PROFILER
     comparator_profiler::counter_rr_r0++;
@@ -436,11 +436,11 @@ dfmt_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
 
     FT Jp = value_of_Jp(b1, c1, b2, c2);
 
-    if ( CGAL_NTS is_positive(Jp) )  return SMALLER;   // r1 < r2     3b
+    if ( CGAL::is_positive(Jp) )  return SMALLER;   // r1 < r2     3b
 
     FT R0 = value_of_P4(D1, D2, K);
 
-    Sign s_R0 = CGAL_NTS sign(R0);
+    Sign s_R0 = CGAL::sign(R0);
     if ( s_R0 == NEGATIVE )  return LARGER;   // r1 > r2     4
     if ( s_R0 == POSITIVE )  return SMALLER;  // r1 < r2     3b
     return EQUAL;
@@ -458,10 +458,10 @@ ke_compare_l1_l2(const FT& a1, const FT& b1, const FT& c1,
 		 const FT& a2, const FT& b2, const FT& c2)
 {
   FT J = value_of_J(a1, b1, a2, b2);
-  Sign s_J = CGAL_NTS sign(J);
+  Sign s_J = CGAL::sign(J);
 
   if ( s_J == ZERO ) {
-    Sign s_G = CGAL_NTS sign( value_of_G(a1, c1, a2, c2) );
+    Sign s_G = CGAL::sign( value_of_G(a1, c1, a2, c2) );
     if ( s_G == POSITIVE ) { return SMALLER; }
     if ( s_G == NEGATIVE ) { return LARGER; }
     return EQUAL;
@@ -470,14 +470,14 @@ ke_compare_l1_l2(const FT& a1, const FT& b1, const FT& c1,
   FT a1c2 = a1 * c2;
   FT a2c1 = a2 * c1;
   FT K = value_of_K(a1c2, a2c1, b1 * b2);
-  Sign s_K = CGAL_NTS sign(K);
+  Sign s_K = CGAL::sign(K);
 
   if ( s_J == POSITIVE ) {
     if ( s_K == POSITIVE ) { return SMALLER; }
 
     if ( s_K == ZERO ) {
       FT D1 = value_of_D(a1, b1, c1);
-      if ( CGAL_NTS is_zero(D1) ) { return EQUAL; }
+      if ( CGAL::is_zero(D1) ) { return EQUAL; }
 
       return SMALLER;
     }
@@ -485,15 +485,15 @@ ke_compare_l1_l2(const FT& a1, const FT& b1, const FT& c1,
     FT G = a1c2 - a2c1;
     FT P3inf = value_of_P3inf(a1, b1, J, G);
 
-    if ( !(CGAL_NTS is_positive(P3inf)) ) { return SMALLER; }
+    if ( !(CGAL::is_positive(P3inf)) ) { return SMALLER; }
 
     FT Jp = value_of_Jp(b1, c1, b2, c2);
 
-    if ( CGAL_NTS is_negative(Jp) )  { return LARGER; }
+    if ( CGAL::is_negative(Jp) )  { return LARGER; }
 
     FT P4 = value_of_P4(J, Jp, G);
 
-    Sign s_P4 = CGAL_NTS sign(P4);
+    Sign s_P4 = CGAL::sign(P4);
     if ( s_P4 == POSITIVE )  { return SMALLER; }
     if ( s_P4 == NEGATIVE )  { return LARGER; }
     return EQUAL;
@@ -502,22 +502,22 @@ ke_compare_l1_l2(const FT& a1, const FT& b1, const FT& c1,
 
     if ( s_K == ZERO ) {
       FT D2 = value_of_D(a2, b2, c2);
-      if ( CGAL_NTS is_zero(D2) ) { return EQUAL; }
+      if ( CGAL::is_zero(D2) ) { return EQUAL; }
 
       return LARGER;
     }
     FT G = a1c2 - a2c1;
     FT P3inf = value_of_P3inf(a1, b1, J, G);
 
-    if ( !(CGAL_NTS is_negative(P3inf)) )  { return LARGER; }
+    if ( !(CGAL::is_negative(P3inf)) )  { return LARGER; }
 
     FT Jp = value_of_Jp(b1, c1, b2, c2);
 
-    if ( CGAL_NTS is_positive(Jp) )  { return SMALLER; }
+    if ( CGAL::is_positive(Jp) )  { return SMALLER; }
 
     FT P4 = value_of_P4(J, Jp, G);
 
-    Sign s_P4 = CGAL_NTS sign(P4);
+    Sign s_P4 = CGAL::sign(P4);
     if ( s_P4 == POSITIVE )  { return LARGER; }
     if ( s_P4 == NEGATIVE )  { return SMALLER; }
     return EQUAL;
@@ -531,15 +531,15 @@ ke_compare_l1_r2(const FT& a1, const FT& b1, const FT& c1,
 		 const FT& a2, const FT& b2, const FT& c2)
 {
   FT J = value_of_J(a1, b1, a2, b2);
-  FT s_J = CGAL_NTS sign(J);
+  FT s_J = CGAL::sign(J);
 
 #if 0
   if ( s_J == ZERO ) {
     FT D1 = value_of_D(a1, b1, c1);
-    if ( CGAL_NTS is_positive(D1) ) { return SMALLER; }
+    if ( CGAL::is_positive(D1) ) { return SMALLER; }
 
     FT D2 = value_of_D(a2, b2, c2);
-    if ( CGAL_NTS is_positive(D2) ) { return SMALLER; }
+    if ( CGAL::is_positive(D2) ) { return SMALLER; }
 
     return EQUAL;
   }
@@ -550,16 +550,16 @@ ke_compare_l1_r2(const FT& a1, const FT& b1, const FT& c1,
   FT a1c2 = a1 * c2;
   FT a2c1 = a2 * c1;
   FT K = value_of_K(a1c2, a2c1, b1 * b2);
-  Sign s_K = CGAL_NTS sign(K);
+  Sign s_K = CGAL::sign(K);
 
   if ( s_K == NEGATIVE ) { return SMALLER; }
 #if 0
   if ( s_K == ZERO ) {
     FT D1 = value_of_D(a1, b1, c1);
-    if ( CGAL_NTS is_zero(D1) ) { return EQUAL; }
+    if ( CGAL::is_zero(D1) ) { return EQUAL; }
 
     FT D2 = value_of_D(a2, b2, c2);
-    if ( CGAL_NTS is_zero(D2) ) { return EQUAL; }
+    if ( CGAL::is_zero(D2) ) { return EQUAL; }
 
     return SMALLER;
   }
@@ -567,11 +567,11 @@ ke_compare_l1_r2(const FT& a1, const FT& b1, const FT& c1,
 
   FT Jp = value_of_Jp(b1, c1, b2, c2);
     
-  if ( CGAL_NTS is_positive(Jp) ) { return LARGER; }
+  if ( CGAL::is_positive(Jp) ) { return LARGER; }
 
   FT P4 = value_of_P4(J, Jp, a1c2 - a2c1);
     
-  Sign s_P4 = CGAL_NTS sign(P4);
+  Sign s_P4 = CGAL::sign(P4);
   if ( s_P4 == POSITIVE ) { return SMALLER; }
   if ( s_P4 == NEGATIVE ) { return LARGER; }
   return EQUAL;
@@ -584,15 +584,15 @@ ke_compare_r1_l2(const FT& a1, const FT& b1, const FT& c1,
 		 const FT& a2, const FT& b2, const FT& c2)
 {
   FT J = value_of_J(a1, b1, a2, b2);
-  FT s_J = CGAL_NTS sign(J);
+  FT s_J = CGAL::sign(J);
 
 #if 0
   if ( s_J == ZERO ) {
     FT D1 = value_of_D(a1, b1, c1);
-    if ( CGAL_NTS is_positive(D1) ) { return LARGER; }
+    if ( CGAL::is_positive(D1) ) { return LARGER; }
 
     FT D2 = value_of_D(a2, b2, c2);
-    if ( CGAL_NTS is_positive(D2) ) { return LARGER; }
+    if ( CGAL::is_positive(D2) ) { return LARGER; }
 
     return EQUAL;
   }
@@ -603,17 +603,17 @@ ke_compare_r1_l2(const FT& a1, const FT& b1, const FT& c1,
   FT a1c2 = a1 * c2;
   FT a2c1 = a2 * c1;
   FT K = value_of_K(a1c2, a2c1, b1 * b2);
-  Sign s_K = CGAL_NTS sign(K);
+  Sign s_K = CGAL::sign(K);
 
   if ( s_K == NEGATIVE ) { return LARGER; }
 
 #if 0
   if ( s_K == ZERO ) {
     FT D1 = value_of_D(a1, b1, c1);
-    if ( CGAL_NTS is_zero(D1) ) { return EQUAL; }
+    if ( CGAL::is_zero(D1) ) { return EQUAL; }
 
     FT D2 = value_of_D(a2, b2, c2);
-    if ( CGAL_NTS is_zero(D2) ) { return EQUAL; }
+    if ( CGAL::is_zero(D2) ) { return EQUAL; }
 
     return LARGER;
   }
@@ -621,11 +621,11 @@ ke_compare_r1_l2(const FT& a1, const FT& b1, const FT& c1,
 
   FT Jp = value_of_Jp(b1, c1, b2, c2);
     
-  if ( CGAL_NTS is_negative(Jp) ) { return SMALLER; }
+  if ( CGAL::is_negative(Jp) ) { return SMALLER; }
     
   FT P4 = value_of_P4(J, Jp, a1c2 - a2c1);
 
-  Sign s_P4 = CGAL_NTS sign(P4);
+  Sign s_P4 = CGAL::sign(P4);
   if ( s_P4 == POSITIVE ) { return LARGER; }
   if ( s_P4 == NEGATIVE ) { return SMALLER; }
   return EQUAL;
@@ -642,12 +642,12 @@ ke_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
 #endif
 
   FT J = value_of_J(a1, b1, a2, b2);
-  Sign s_J = CGAL_NTS sign(J);
+  Sign s_J = CGAL::sign(J);
 
   FT a1c2 = a1 * c2;
   FT a2c1 = a2 * c1;
   FT K = value_of_K(a1c2, a2c1, b1 * b2);
-  Sign s_K = CGAL_NTS sign(K);
+  Sign s_K = CGAL::sign(K);
     
   if ( s_J == POSITIVE ) {
     if ( s_K == POSITIVE )  { return SMALLER; }
@@ -660,7 +660,7 @@ ke_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
       FT G = a1c2 - a2c1;
       FT P3inf = value_of_P3inf(a1, b1, J, G);
 
-      if ( !(CGAL_NTS is_negative(P3inf)) ) { return SMALLER; }
+      if ( !(CGAL::is_negative(P3inf)) ) { return SMALLER; }
 
 #ifdef COMPARATOR_PROFILER
       comparator_profiler::counter_rr_p4++;
@@ -668,17 +668,17 @@ ke_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
 
       FT Jp = value_of_Jp(b1, c1, b2, c2);
 
-      if ( CGAL_NTS is_negative(Jp) )  { return LARGER; }
+      if ( CGAL::is_negative(Jp) )  { return LARGER; }
 
       FT P4 = value_of_P4(J, Jp, G);
 
-      Sign s_P4 = CGAL_NTS sign(P4);
+      Sign s_P4 = CGAL::sign(P4);
       if ( s_P4 == POSITIVE )  { return SMALLER; }
       if ( s_P4 == NEGATIVE )  { return LARGER; }
       return EQUAL;
     } else { // K = 0
       FT D2 = value_of_D(a2, b2, c2);
-      if ( CGAL_NTS is_zero(D2) ) { return EQUAL; }
+      if ( CGAL::is_zero(D2) ) { return EQUAL; }
 
       return SMALLER;
     }
@@ -693,7 +693,7 @@ ke_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
       FT G = a1c2 - a2c1;
       FT P3inf = value_of_P3inf(a1, b1, J, G);
 
-      if ( !(CGAL_NTS is_positive(P3inf)) ) { return LARGER; }
+      if ( !(CGAL::is_positive(P3inf)) ) { return LARGER; }
 
 #ifdef COMPARATOR_PROFILER
       comparator_profiler::counter_rr_p4++;
@@ -701,22 +701,22 @@ ke_compare_r1_r2(const FT& a1, const FT& b1, const FT& c1,
 
       FT Jp = value_of_Jp(b1, c1, b2, c2);
 
-      if ( CGAL_NTS is_positive(Jp) )   { return SMALLER; }
+      if ( CGAL::is_positive(Jp) )   { return SMALLER; }
 
       FT P4 = value_of_P4(J, Jp, G);
 
-      Sign s_P4 = CGAL_NTS sign(P4);
+      Sign s_P4 = CGAL::sign(P4);
       if ( s_P4 == POSITIVE )  { return LARGER; }
       if ( s_P4 == NEGATIVE )  { return SMALLER; }
       return EQUAL;
     } else { // K = 0
       FT D1 = value_of_D(a1, b1, c1);
-      if ( CGAL_NTS is_zero(D1) ) { return EQUAL; }
+      if ( CGAL::is_zero(D1) ) { return EQUAL; }
 
       return LARGER;
     }
   } else { // J = 0
-    Sign s_G = CGAL_NTS sign( value_of_G(a1, c1, a2, c2) );
+    Sign s_G = CGAL::sign( value_of_G(a1, c1, a2, c2) );
     if ( s_G == NEGATIVE ) { return SMALLER; }
     if ( s_G == POSITIVE ) { return LARGER; }
     return EQUAL;
@@ -749,8 +749,8 @@ sqrt_compare_r1_r2_filtered(const CT& a1, const CT& b1, const CT& c1,
   IT D1 = value_of_D(a1i, b1i, c1i);
   IT D2 = value_of_D(a2i, b2i, c2i);
 
-  IT r1 = ( b1i + CGAL_NTS sqrt(D1) ) / a1i;
-  IT r2 = ( b2i + CGAL_NTS sqrt(D2) ) / a2i;
+  IT r1 = ( b1i + CGAL::sqrt(D1) ) / a1i;
+  IT r2 = ( b2i + CGAL::sqrt(D2) ) / a2i;
 
   FPU_set_cw(backup);
 

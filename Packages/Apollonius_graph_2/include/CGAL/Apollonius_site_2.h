@@ -105,7 +105,7 @@ operator<<(Qt_widget &qt_w, const Apollonius_site_2<K>& wp)
   typedef typename K::Point_2     Point_2;
 
   Point_2 p(wp.point());
-  Circle_2 c(p, CGAL_NTS square(wp.weight()));
+  Circle_2 c(p, CGAL::square(wp.weight()));
   return qt_w << p << c;
 }
 

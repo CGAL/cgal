@@ -168,7 +168,7 @@ private:
 public:
   Object_2 operator() (const Site_2& p,	const Site_2& q) const
   {
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
       Line_2 l1(p.point(), q.point());
       Line_2 l = l1.perpendicular(midpoint(p.point(), q.point()));
@@ -213,7 +213,7 @@ public:
 	      const Point_2& r,
 	      const Hyperbola_direction& direction) const {
     //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
       Line_2 l1(q, p);
       Line_2 l = l1.perpendicular(midpoint(p.point(), q.point()));
@@ -229,7 +229,7 @@ public:
 	      const Site_2& q,
 	      const Site_2& r) const {
     Point_2 c = Apollonius_vertex_2()(p, q, r);
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
       Line_2 l1(q.point(), p.point());
       Line_2 l = l1.perpendicular(midpoint(p.point(), q.point()));
@@ -269,7 +269,7 @@ public:
 			      const Site_2& q,
 			      const Point_2& r, const Point_2& s) const {
     //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
       Segment_2 seg(r, s);
       return make_object(seg);
@@ -286,7 +286,7 @@ public:
     Point_2 c_pqr = apollonius_vertex_2(p,q,r);
     Point_2 c_qps = apollonius_vertex_2(q,p,s);
     //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
       Segment_2 seg(c_pqr, c_qps);
       return make_object(seg);
@@ -323,10 +323,8 @@ public:
     Line_2 l1 = apollonius_circle_2(r, p);
     Line_2 l2 = apollonius_circle_2(p, s);
 
-    RT d1 = CGAL_NTS sqrt( CGAL_NTS square(l1.a()) +
-			   CGAL_NTS square(l1.b()) );
-    RT d2 = CGAL_NTS sqrt( CGAL_NTS square(l2.a()) +
-			   CGAL_NTS square(l2.b()) );
+    RT d1 = CGAL::sqrt( CGAL::square(l1.a()) + CGAL::square(l1.b()) );
+    RT d2 = CGAL::sqrt( CGAL::square(l2.a()) + CGAL::square(l2.b()) );
     RT a = l1.a() / d1 - l2.a() / d2;
     RT b = l1.b() / d1 - l2.b() / d2;
     Point_2 c(p.x() + b, p.y() - a);
@@ -375,7 +373,7 @@ public:
 	      const Site_2& q,
 	      const Point_2& r, const Point_2& s) const {
     //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
       Segment_2 seg(r, s);
       return make_object(seg);
@@ -393,7 +391,7 @@ public:
     Site_2 c_pqr = apollonius_circle_2(p, q, r);
     Site_2 c_qps = apollonius_circle_2(q, p, s);
     //
-    Comparison_result cr = CGAL_NTS compare(c_pqr.weight(), c_qps.weight());
+    Comparison_result cr = CGAL::compare(c_pqr.weight(), c_qps.weight());
     if ( cr == EQUAL ) {
       Segment_2 seg(p.point(), q.point());
       return make_object(seg);

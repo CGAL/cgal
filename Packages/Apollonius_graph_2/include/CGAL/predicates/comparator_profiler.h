@@ -76,21 +76,21 @@ public:
 			 const FT& a2, const FT& b2, const FT& c2)
   {
     // works correctly only with leda_real
-    FT D1 = CGAL_NTS square(b1) - a1 * c1;
+    FT D1 = CGAL::square(b1) - a1 * c1;
     
-    FT l1 = (b1 - CGAL_NTS sqrt(D1)) / a1;
-    FT r1 = (b1 + CGAL_NTS sqrt(D1)) / a1;
+    FT l1 = (b1 - CGAL::sqrt(D1)) / a1;
+    FT r1 = (b1 + CGAL::sqrt(D1)) / a1;
     if ( a1 < 0 ) { std::swap(r1, l1); }
     
-    FT D2 = CGAL_NTS square(b2) - a2 * c2;
+    FT D2 = CGAL::square(b2) - a2 * c2;
 
     if ( D1 == 0 || D2 == 0 ) {
       case_degenerate_counter++;
       return;
     }
 
-    FT l2 = (b2 - CGAL_NTS sqrt(D2)) / a2;
-    FT r2 = (b2 + CGAL_NTS sqrt(D2)) / a2;
+    FT l2 = (b2 - CGAL::sqrt(D2)) / a2;
+    FT r2 = (b2 + CGAL::sqrt(D2)) / a2;
     if ( a2 < 0 ) { std::swap(r2, l2); }
 
     if ( l1 < l2 ) {

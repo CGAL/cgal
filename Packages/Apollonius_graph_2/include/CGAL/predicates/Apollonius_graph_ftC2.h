@@ -52,13 +52,11 @@ ad_is_hidden_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
 #endif
   must_be_filtered(x1);
 
-  Sign s = CGAL_NTS sign(
-			 CGAL_NTS square(x1 - x2)
-			 + CGAL_NTS square(y1 - y2)
-			 - CGAL_NTS square(w1 - w2)
-			 );
+  Sign s = CGAL::sign( CGAL::square(x1 - x2) + CGAL::square(y1 - y2)
+		       - CGAL::square(w1 - w2)
+		       );
   if ( s == POSITIVE ) { return false; }
-  return (CGAL_NTS compare(w1, w2) != SMALLER);
+  return (CGAL::compare(w1, w2) != SMALLER);
 }
 
 
@@ -71,9 +69,8 @@ ad_is_hidden_test_sqrtf_C2(const RT &x1, const RT &y1, const RT &w1,
 #ifdef AG2_PROFILE_PREDICATES
   ag2_predicate_profiler::is_trivial_counter++;
 #endif
-  RT d = CGAL_NTS sqrt(CGAL_NTS square(x1 - x2)
-		       + CGAL_NTS square(y1 - y2));
-  Sign s = CGAL_NTS sign(d - w1 + w2);
+  RT d = CGAL::sqrt(CGAL::square(x1 - x2) + CGAL::square(y1 - y2));
+  Sign s = CGAL::sign(d - w1 + w2);
 
   return ( s != POSITIVE );
 }
@@ -96,12 +93,12 @@ compare_ad_distances_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
 
   // this function compares the distances of the point(x, y) from the 
   // disks {(x1, y1), w1} and {(x2, y2), w2}
-  RT D1 = CGAL_NTS square(x1 - x) + CGAL_NTS square(y1 - y);
-  RT D2 = CGAL_NTS square(x2 - x) + CGAL_NTS square(y2 - y);
+  RT D1 = CGAL::square(x1 - x) + CGAL::square(y1 - y);
+  RT D2 = CGAL::square(x2 - x) + CGAL::square(y2 - y);
   RT Dw = w2 - w1;
 
-  Sign sign_of_Dw = CGAL_NTS sign(Dw);
-  Comparison_result R = CGAL_NTS compare(D1, D2);
+  Sign sign_of_Dw = CGAL::sign(Dw);
+  Comparison_result R = CGAL::compare(D1, D2);
 
   if ( sign_of_Dw == ZERO ) {
     return R;
@@ -109,13 +106,13 @@ compare_ad_distances_test_ring_C2(const RT &x1, const RT &y1, const RT &w1,
   if ( sign_of_Dw == POSITIVE ) {
     if ( R != SMALLER )  return LARGER;
 
-    Sign s = sign_a_plus_b_x_sqrt_c(D1 - D2 + CGAL_NTS square(Dw),
+    Sign s = sign_a_plus_b_x_sqrt_c(D1 - D2 + CGAL::square(Dw),
 				    RT(2) * Dw, D1);
     return ((s == POSITIVE) ? LARGER : ((s == ZERO) ? EQUAL : SMALLER));
   }
 
   if ( R != LARGER )  return SMALLER;
-  Sign s = sign_a_plus_b_x_sqrt_c(D1 - D2 - CGAL_NTS square(Dw),
+  Sign s = sign_a_plus_b_x_sqrt_c(D1 - D2 - CGAL::square(Dw),
 				  RT(2) * Dw, D2);
 
   return ((s == POSITIVE) ? LARGER : ((s == ZERO) ? EQUAL : SMALLER));
@@ -137,13 +134,13 @@ compare_ad_distances_test_sqrtf_C2(const RT &x1, const RT &y1, const RT &w1,
   // this function compares the distances of the point(x, y) from the 
   // disks {(x1, y1), w1} and {(x2, y2), w2}
 
-  RT D1 = CGAL_NTS square(x1 - x) + CGAL_NTS square(y1 - y);
-  RT D2 = CGAL_NTS square(x2 - x) + CGAL_NTS square(y2 - y);
+  RT D1 = CGAL::square(x1 - x) + CGAL::square(y1 - y);
+  RT D2 = CGAL::square(x2 - x) + CGAL::square(y2 - y);
 
-  RT d1 = CGAL_NTS sqrt(D1) - w1;
-  RT d2 = CGAL_NTS sqrt(D2) - w2;
+  RT d1 = CGAL::sqrt(D1) - w1;
+  RT d2 = CGAL::sqrt(D2) - w2;
 
-  return CGAL_NTS compare(d1, d2);
+  return CGAL::compare(d1, d2);
 }
 
 //--------------------------------------------------------------------
@@ -164,17 +161,17 @@ bounded_side_of_segment(const RT& x1, const RT& y1,
 
   CGAL_precondition( sign_of_determinant2x2(x1-x,y1-y,x2-x,y2-y) == ZERO );
 
-  Comparison_result rx1 = CGAL_NTS compare(x, x1);
-  Comparison_result ry1 = CGAL_NTS compare(y, y1);
+  Comparison_result rx1 = CGAL::compare(x, x1);
+  Comparison_result ry1 = CGAL::compare(y, y1);
 
   if ( rx1 == EQUAL && ry1 == EQUAL ) { return ON_BOUNDARY; }
 
-  Comparison_result rx2 = CGAL_NTS compare(x, x2);
-  Comparison_result ry2 = CGAL_NTS compare(y, y2);
+  Comparison_result rx2 = CGAL::compare(x, x2);
+  Comparison_result ry2 = CGAL::compare(y, y2);
 
   if ( rx2 == EQUAL && ry2 == EQUAL ) { return ON_BOUNDARY; }
 
-  Comparison_result rx12 = CGAL_NTS compare(x1, x2);
+  Comparison_result rx12 = CGAL::compare(x1, x2);
 
   if ( rx12 == SMALLER ) {
     CGAL_assertion( rx1 != EQUAL && rx2 != EQUAL );
@@ -186,7 +183,7 @@ bounded_side_of_segment(const RT& x1, const RT& y1,
       ON_UNBOUNDED_SIDE;
   }
 
-  Comparison_result ry12 = CGAL_NTS compare(y1, y2);
+  Comparison_result ry12 = CGAL::compare(y1, y2);
   CGAL_assertion( ry12 != EQUAL );
   CGAL_assertion( ry1 != EQUAL && ry2 != EQUAL );
 

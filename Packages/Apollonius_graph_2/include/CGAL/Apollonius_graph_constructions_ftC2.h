@@ -37,9 +37,9 @@ void
 invert_C2(const FT &x, const FT &y, const FT &wt,
 	  FT &new_x, FT &new_y, FT &new_wt)
 {
-  FT p = CGAL_NTS square(x) + CGAL_NTS square(y) - CGAL_NTS square(wt);
+  FT p = CGAL::square(x) + CGAL::square(y) - CGAL::square(wt);
 
-  CGAL_assertion( CGAL_NTS is_positive(p) );
+  CGAL_assertion( CGAL::is_positive(p) );
 
   new_x = x / p;
   new_y = -y / p;
@@ -71,9 +71,9 @@ w_plane_tangent_line_2(const FT &x1, const FT &y1, const FT &w1,
   FT Dur = det2x2_by_formula(u2, r2, u3, r3);
   FT Dvr = det2x2_by_formula(v2, r2, v3, r3);
 
-  FT D1 = CGAL_NTS square(Du) + CGAL_NTS square(Dv);
+  FT D1 = CGAL::square(Du) + CGAL::square(Dv);
   FT D1inv = FT(1) / D1;
-  FT sqrtD = CGAL_NTS sqrt(D1 - CGAL_NTS square(Dr));
+  FT sqrtD = CGAL::sqrt(D1 - CGAL::square(Dr));
 
   a = (Du * Dr - Dv * sqrtD) * D1inv;
   b = (Dv * Dr + Du * sqrtD) * D1inv;
@@ -101,10 +101,10 @@ z_plane_circumcircle_2(const FT &x1, const FT &y1, const FT &w1,
   // this the only part that is computed at vain when only the center
   // is needed.
 #if 0
-  FT cwt2 = (CGAL_NTS square(a) + CGAL_NTS square(b)) / 
-    (FT(4) * CGAL_NTS square(c));
+  FT cwt2 = (CGAL::square(a) + CGAL::square(b)) / 
+    (FT(4) * CGAL::square(c));
 #endif
-  //  cwt = CGAL_NTS sqrt(cwt2) - FT(w1);
+  //  cwt = CGAL::sqrt(cwt2) - FT(w1);
   cwt = FT(1) / (FT(2) * c) - FT(w1);
 }
 
@@ -133,15 +133,15 @@ ad_circumcircleC2(const FT &x1, const FT &y1, const FT &w1,
 		  const FT &x3, const FT &y3, const FT &w3,
 		  FT       &cx, FT       &cy, FT      &cwt)
 {
-  if (CGAL_NTS compare(w2, w1) != LARGER &&
-      CGAL_NTS compare(w2, w3) != LARGER) {
+  if (CGAL::compare(w2, w1) != LARGER &&
+      CGAL::compare(w2, w3) != LARGER) {
     z_plane_circumcircle_2(x2, y2, w2,
 			   x3, y3, w3,
 			   x1, y1, w1,
 			   cx, cy, cwt);
     return;
-  } else if (CGAL_NTS compare(w3, w1) != LARGER &&
-	     CGAL_NTS compare(w3, w2) != LARGER) {
+  } else if (CGAL::compare(w3, w1) != LARGER &&
+	     CGAL::compare(w3, w2) != LARGER) {
     z_plane_circumcircle_2(x3, y3, w3,
 			   x1, y1, w1,
 			   x2, y2, w2,
@@ -168,10 +168,10 @@ ad_left_bitangent_lineC2(const FT &x1, const FT &y1, const FT &w1,
   FT dyw = det2x2_by_formula(y1, w1, y2, w2);
   FT dxy = det2x2_by_formula(x1, y1, x2, y2);
 
-  FT D1 = CGAL_NTS square(dx) + CGAL_NTS square(dy);
+  FT D1 = CGAL::square(dx) + CGAL::square(dy);
   FT invD1 = FT(1) / D1;
-  FT D = D1 - CGAL_NTS square(dw);
-  FT sqrtD = CGAL_NTS sqrt(D);
+  FT D = D1 - CGAL::square(dw);
+  FT sqrtD = CGAL::sqrt(D);
 
   a = -(dx * dw - dy * sqrtD) * invD1;
   b = -(dy * dw + dx * sqrtD) * invD1;

@@ -56,8 +56,8 @@ public:
   inline
   Sign operator()(const Voronoi_radius& vr, Sqrt_field_tag )
     {
-      FT r = vr.c1() + vr.c2() * CGAL_NTS sqrt(vr.delta());
-      return CGAL_NTS sign(r);
+      FT r = vr.c1() + vr.c2() * CGAL::sqrt(vr.delta());
+      return CGAL::sign(r);
     }
 
 
@@ -68,10 +68,10 @@ public:
       // instead of 5 in this case.
       //      return sign_a_plus_b_x_sqrt_c(vr.c1(), vr.c2(), vr.delta());
 
-      bool is_first_root = CGAL_NTS is_negative(vr.c2());
+      bool is_first_root = CGAL::is_negative(vr.c2());
 
-      Sign s_beta = CGAL_NTS sign(vr.b());
-      Sign s_gamma = CGAL_NTS sign(vr.c());
+      Sign s_beta = CGAL::sign(vr.b());
+      Sign s_gamma = CGAL::sign(vr.c());
 
       // the existence test
       Sign sign_of_root;
@@ -123,11 +123,11 @@ public:
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::distance_from_bitangent_counter++;
 #endif
-      FT a = bl.a1() + bl.a2() * CGAL_NTS sqrt(bl.delta());
-      FT b = bl.b1() + bl.b2() * CGAL_NTS sqrt(bl.delta());
-      FT c = bl.c1() + bl.c2() * CGAL_NTS sqrt(bl.delta());
+      FT a = bl.a1() + bl.a2() * CGAL::sqrt(bl.delta());
+      FT b = bl.b1() + bl.b2() * CGAL::sqrt(bl.delta());
+      FT c = bl.c1() + bl.c2() * CGAL::sqrt(bl.delta());
       FT r = a * q.x() + b * q.y() + c - q.weight() * bl.d();
-      return CGAL_NTS sign(r);
+      return CGAL::sign(r);
     }
 
   Sign
@@ -159,11 +159,11 @@ public:
   operator()(const Bitangent_line& bl,
 	     const Inverted_weighted_point& v, Sqrt_field_tag)
     {
-      FT a = bl.a1() + bl.a2() * CGAL_NTS sqrt(bl.delta());
-      FT b = bl.b1() + bl.b2() * CGAL_NTS sqrt(bl.delta());
-      FT c = bl.c1() + bl.c2() * CGAL_NTS sqrt(bl.delta());
+      FT a = bl.a1() + bl.a2() * CGAL::sqrt(bl.delta());
+      FT b = bl.b1() + bl.b2() * CGAL::sqrt(bl.delta());
+      FT c = bl.c1() + bl.c2() * CGAL::sqrt(bl.delta());
       FT r = a * v.x() + b * v.y() + c * v.p() - v.weight() * bl.d();
-      return CGAL_NTS sign(r);
+      return CGAL::sign(r);
     }
 
   Sign
@@ -219,8 +219,8 @@ private:
     {
       FT A = l.a1() * p.x() + l.b1() * p.y() + l.c1();
       FT B = l.a2() * p.x() + l.b2() * p.y() + l.c2();
-      FT P = A + B * CGAL_NTS sqrt(l.delta());
-      return CGAL_NTS sign(P);
+      FT P = A + B * CGAL::sqrt(l.delta());
+      return CGAL::sign(P);
     }
 
   Orientation
@@ -239,8 +239,8 @@ private:
     {
       FT A = l.a1() * u.x() / u.p() + l.b1() * u.y() / u.p() + l.c1();
       FT B = l.a2() * u.x() / u.p() + l.b2() * u.y() / u.p() + l.c2();
-      FT P = A + B * CGAL_NTS sqrt(l.delta());
-      return CGAL_NTS sign(P);
+      FT P = A + B * CGAL::sqrt(l.delta());
+      return CGAL::sign(P);
     }
 
 public:
@@ -308,10 +308,10 @@ public:
   operator()(const Voronoi_circle& vc, const Point_2& p1,
 	     const Point_2& p2, Sqrt_field_tag)
     {
-      FT a = vc.a1() + vc.a2() * CGAL_NTS sqrt(vc.delta());
-      FT b = vc.b1() + vc.b2() * CGAL_NTS sqrt(vc.delta());
+      FT a = vc.a1() + vc.a2() * CGAL::sqrt(vc.delta());
+      FT b = vc.b1() + vc.b2() * CGAL::sqrt(vc.delta());
       FT det = a * (p2.y() - p1.y()) - b * (p2.x() - p1.x());
-      return CGAL_NTS sign(det);
+      return CGAL::sign(det);
     }
 
   Orientation
@@ -344,8 +344,8 @@ private:
     {
       std::pair<FT,FT> factors = factors_of_P4(u, v, du, dv, dr,
 					       Du, Dv, Dr);
-      Sign s1 = CGAL_NTS sign(factors.first);
-      Sign s2 = CGAL_NTS sign(factors.second);
+      Sign s1 = CGAL::sign(factors.first);
+      Sign s2 = CGAL::sign(factors.second);
       return (s1 * s2);
     }
 
@@ -354,17 +354,17 @@ private:
 		const FT& du, const FT& dv, const FT& dr,
 		const FT& Du, const FT& Dv, const FT& Dr)
     {
-      FT u2 = CGAL_NTS square(u);
-      FT v2 = CGAL_NTS square(v);
+      FT u2 = CGAL::square(u);
+      FT v2 = CGAL::square(v);
 
-      FT du2 = CGAL_NTS square(du);
-      FT Du2 = CGAL_NTS square(Du);
+      FT du2 = CGAL::square(du);
+      FT Du2 = CGAL::square(Du);
 
-      FT dv2 = CGAL_NTS square(dv);
-      FT Dv2 = CGAL_NTS square(Dv);
+      FT dv2 = CGAL::square(dv);
+      FT Dv2 = CGAL::square(Dv);
 
-      FT dr2 = CGAL_NTS square(dr);
-      FT Dr2 = CGAL_NTS square(Dr);
+      FT dr2 = CGAL::square(dr);
+      FT Dr2 = CGAL::square(Dr);
 
       FT u2_P_v2 = u2 + v2;
       FT u2_M_v2 = u2 - v2;
@@ -383,11 +383,11 @@ private:
       
 
       FT F1 = du2_P_dv2 * Dr2 + Du2_P_Dv2 * dr2
-	- uU_P_vV * drDr - CGAL_NTS square(uV_M_Uv);
+	- uU_P_vV * drDr - CGAL::square(uV_M_Uv);
 
-      FT F2 = CGAL_NTS square(u2_P_v2) * (du2_P_dv2 * Dr2 + Du2_P_Dv2 * dr2);
+      FT F2 = CGAL::square(u2_P_v2) * (du2_P_dv2 * Dr2 + Du2_P_Dv2 * dr2);
       F2 -= u2_P_v2 * (u2_M_v2 * uU_M_vV + uv * uV_P_Uv) * drDr;
-      F2 -= CGAL_NTS square(u2_M_v2 * uV_P_Uv - uv * uU_M_vV);
+      F2 -= CGAL::square(u2_M_v2 * uV_P_Uv - uv * uU_M_vV);
 
       std::pair<FT, FT> factors(F1,F2);
       return factors;
@@ -398,10 +398,10 @@ public:
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
 	     Sqrt_field_tag)
     {
-      FT c1 = (vc1.c1() + vc1.c2() * CGAL_NTS sqrt(vc1.delta())) / vc1.d();
-      FT c2 = (vc2.c1() + vc2.c2() * CGAL_NTS sqrt(vc2.delta())) / vc2.d();
+      FT c1 = (vc1.c1() + vc1.c2() * CGAL::sqrt(vc1.delta())) / vc1.d();
+      FT c2 = (vc2.c1() + vc2.c2() * CGAL::sqrt(vc2.delta())) / vc2.d();
 
-      Comparison_result r = CGAL_NTS compare(c2, c1);
+      Comparison_result r = CGAL::compare(c2, c1);
       return r;
     }
 
@@ -432,8 +432,8 @@ public:
       bool is_first_root1 = vc1.is_first_root();
       bool is_first_root2 = vc2.is_first_root();
 
-      CGAL_precondition( CGAL_NTS is_positive(vc1.alpha()) );
-      CGAL_precondition( CGAL_NTS is_positive(vc2.alpha()) );
+      CGAL_precondition( CGAL::is_positive(vc1.alpha()) );
+      CGAL_precondition( CGAL::is_positive(vc2.alpha()) );
 
       Comparison_result r;
       if ( is_first_root1 && is_first_root2 ) {
@@ -475,8 +475,8 @@ public:
       bool is_first_root1 = vc1.is_first_root();
       bool is_first_root2 = vc2.is_first_root();
 
-      CGAL_precondition( CGAL_NTS is_positive(vc1.alpha()) );
-      CGAL_precondition( CGAL_NTS is_positive(vc2.alpha()) );
+      CGAL_precondition( CGAL::is_positive(vc1.alpha()) );
+      CGAL_precondition( CGAL::is_positive(vc2.alpha()) );
 
       Comparison_result r;
       if ( is_first_root1 && is_first_root2 ) {
@@ -928,10 +928,10 @@ public:
       FT p = bl1.delta();
       FT P = bl2.delta();
 
-      FT E = E1 * CGAL_NTS sqrt(p) + E2 * CGAL_NTS sqrt(P)
-	+ E3 * CGAL_NTS sqrt(p * P) + E4;
+      FT E = E1 * CGAL::sqrt(p) + E2 * CGAL::sqrt(P)
+	+ E3 * CGAL::sqrt(p * P) + E4;
 
-      return CGAL_NTS sign(E);
+      return CGAL::sign(E);
     }
 
   inline
@@ -950,10 +950,10 @@ public:
       FT sigma = a * A + b * B;
       FT delta = det2x2_by_formula(a, b, A, B);
 
-      Sign sign_sigma = CGAL_NTS sign(sigma);
-      Sign sign_delta = CGAL_NTS sign(delta);
-      Sign sign_r = CGAL_NTS sign(r);
-      Sign sign_R = CGAL_NTS sign(R);
+      Sign sign_sigma = CGAL::sign(sigma);
+      Sign sign_delta = CGAL::sign(delta);
+      Sign sign_r = CGAL::sign(r);
+      Sign sign_R = CGAL::sign(R);
 
       Sign sign_E1 = opposite(Sign(sign_R * sign_sigma));
       Sign sign_E2 = Sign(sign_r * sign_sigma);
@@ -962,9 +962,9 @@ public:
 
       Sign sign_E1_plus_E3_P, sign_E4_plus_E2_P;
 
-      //      FT d = CGAL_NTS square(a) + CGAL_NTS square(b);
-      FT G = CGAL_NTS square(R) * d;
-      FT delta2 = CGAL_NTS square(delta);
+      //      FT d = CGAL::square(a) + CGAL::square(b);
+      FT G = CGAL::square(R) * d;
+      FT delta2 = CGAL::square(delta);
 
       if ( sign_E3 == ZERO ) {
 	sign_E1_plus_E3_P = sign_E1;
@@ -973,7 +973,7 @@ public:
 	  sign_E1_plus_E3_P = sign_E3;
 	} else {
 	  FT F1 = delta2 - G;
-	  sign_E1_plus_E3_P = Sign(sign_E3 * CGAL_NTS sign(F1));
+	  sign_E1_plus_E3_P = Sign(sign_E3 * CGAL::sign(F1));
 	}
       }
 
@@ -983,11 +983,11 @@ public:
 	if ( sign_E2 == sign_E4 ) {
 	  sign_E4_plus_E2_P = sign_E2;
 	} else {
-	  FT F2 = CGAL_NTS square(sigma) - G;
+	  FT F2 = CGAL::square(sigma) - G;
 	  if ( sign_r == ZERO ) {
 	    sign_E4_plus_E2_P = ZERO;
 	  } else {
-	    sign_E4_plus_E2_P = Sign(sign_E2 * CGAL_NTS sign(F2));
+	    sign_E4_plus_E2_P = Sign(sign_E2 * CGAL::sign(F2));
 	  }
 	}
       }
@@ -999,13 +999,13 @@ public:
 
       Sign sign_E5 = opposite(Sign(sign_R * sign_sigma * sign_delta));
 
-      //      FT D = CGAL_NTS square(A) + CGAL_NTS square(B);
-      //      FT P = D - CGAL_NTS square(R);
+      //      FT D = CGAL::square(A) + CGAL::square(B);
+      //      FT P = D - CGAL::square(R);
 
-      FT F3 = P * delta2 + CGAL_NTS square(R * sigma) -
-	CGAL_NTS square(r * D);
+      FT F3 = P * delta2 + CGAL::square(R * sigma) -
+	CGAL::square(r * D);
 
-      Sign sign_E6 = CGAL_NTS sign(F3);
+      Sign sign_E6 = CGAL::sign(F3);
 
       if ( sign_E5 == ZERO ) {
 	return Sign(sign_E1_plus_E3_P * sign_E6);
@@ -1014,15 +1014,15 @@ public:
 	return Sign(sign_E1_plus_E3_P * sign_E5);
       }
 
-      //      FT p = d - CGAL_NTS square(r);
+      //      FT p = d - CGAL::square(r);
       FT rR = r * R;
       FT pP = p * P;
       //error();
-      FT F4 = CGAL_NTS square(sigma - rR) - pP;
-      FT F5 = CGAL_NTS square(sigma + rR) - pP;
+      FT F4 = CGAL::square(sigma - rR) - pP;
+      FT F5 = CGAL::square(sigma + rR) - pP;
 
       Sign sign_E7 =
-	opposite(Sign(CGAL_NTS sign(F4) * CGAL_NTS sign(F5)));
+	opposite(Sign(CGAL::sign(F4) * CGAL::sign(F5)));
 
       return Sign(sign_E1_plus_E3_P * sign_E5 * sign_E7);
     }

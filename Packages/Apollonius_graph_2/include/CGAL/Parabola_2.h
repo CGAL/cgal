@@ -76,14 +76,14 @@ protected:
   inline static
   FT distance(const Point_2& p1, const Point_2& p2)
   {
-    return CGAL_NTS sqrt( distance2(p1, p2) );
+    return CGAL::sqrt( distance2(p1, p2) );
   }
 
   inline static
   FT distance(const Point_2& p, const Line_2& l)
   {
     return ( p.x() * l.a() + p.y() * l.b() + l.c() ) /
-      CGAL_NTS sqrt( square(l.a()) + square(l.b()) );
+      CGAL::sqrt( square(l.a()) + square(l.b()) );
   }
 
   // instance stuff
@@ -118,17 +118,17 @@ protected:
     std::vector< Point_2 > p;
 
     if ( l.a() == ZERO ) {
-      FT y = d2 * CGAL_NTS sign(l.b()) - l.c() / l.b();
+      FT y = d2 * CGAL::sign(l.b()) - l.c() / l.b();
 
-      FT C = CGAL_NTS square(y) - FT(2) * c.y() * y + 
+      FT C = CGAL::square(y) - FT(2) * c.y() * y + 
 	square(c.x()) + square(c.y()) - d1;
 
       FT D = square(c.x()) - C;
 
-      D = CGAL_NTS abs(D);
+      D = CGAL::abs(D);
 
-      FT x1 = CGAL_NTS sqrt(D) + c.x();
-      FT x2 = -CGAL_NTS sqrt(D) + c.x();
+      FT x1 = CGAL::sqrt(D) + c.x();
+      FT x2 = -CGAL::sqrt(D) + c.x();
 
       p.push_back(Point_2(x1, y));
       p.push_back(Point_2(x2, y));
@@ -136,22 +136,22 @@ protected:
       return p;
     }
 
-    FT A = d2 * CGAL_NTS sqrt( CGAL_NTS square(l.a()) +
-			       CGAL_NTS square(l.b()) ) - l.c();
-    FT B = CGAL_NTS square(c.x()) + CGAL_NTS square(c.y()) - d1;
+    FT A = d2 * CGAL::sqrt( CGAL::square(l.a()) +
+			       CGAL::square(l.b()) ) - l.c();
+    FT B = CGAL::square(c.x()) + CGAL::square(c.y()) - d1;
 
-    FT alpha = FT(1) + CGAL_NTS square(l.b() / l.a());
-    FT beta = A * l.b() / CGAL_NTS square(l.a()) + c.y()
+    FT alpha = FT(1) + CGAL::square(l.b() / l.a());
+    FT beta = A * l.b() / CGAL::square(l.a()) + c.y()
       - c.x() * l.b() / l.a();
-    FT gamma = CGAL_NTS square(A / l.a()) + B
+    FT gamma = CGAL::square(A / l.a()) + B
       - FT(2) * c.x() * A / l.a();
 
-    FT D = CGAL_NTS square(beta) - alpha * gamma;
+    FT D = CGAL::square(beta) - alpha * gamma;
 
-    D = CGAL_NTS abs(D);
+    D = CGAL::abs(D);
 
-    FT y1 = (beta + CGAL_NTS sqrt(D)) / alpha;
-    FT y2 = (beta - CGAL_NTS sqrt(D)) / alpha;
+    FT y1 = (beta + CGAL::sqrt(D)) / alpha;
+    FT y2 = (beta - CGAL::sqrt(D)) / alpha;
 
     FT x1 = (A - l.b() * y1) / l.a();
     FT x2 = (A - l.b() * y2) / l.a();
@@ -164,10 +164,10 @@ protected:
 
   bool right(const Point_2& p) const
   {
-    return CGAL_NTS
-      is_positive( det3x3_by_formula< FT >(c.x(), c.y(), FT(1),
-					   o.x(), o.y(), FT(1),
-					   p.x(), p.y(), FT(1)) );
+    return
+      CGAL::is_positive( det3x3_by_formula<FT>(c.x(), c.y(), FT(1),
+					       o.x(), o.y(), FT(1),
+					       p.x(), p.y(), FT(1)) );
   }
 
   inline
@@ -182,7 +182,7 @@ protected:
   inline
   Point_2 f(FT t) const
   {
-    if ( CGAL_NTS is_negative(t) )  return rchain(-t);
+    if ( CGAL::is_negative(t) )  return rchain(-t);
     return lchain(t);
   }
 
@@ -209,10 +209,9 @@ public:
   {
     this->c = p.point();
 
-    FT d_a = CGAL_NTS to_double(l1.a());
-    FT d_b = CGAL_NTS to_double(l1.b());
-    FT len = CGAL_NTS sqrt(CGAL_NTS square(d_a) +
-			   CGAL_NTS square(d_b));
+    FT d_a = CGAL::to_double(l1.a());
+    FT d_b = CGAL::to_double(l1.b());
+    FT len = CGAL::sqrt(CGAL::square(d_a) + CGAL::square(d_b));
 
     FT r = p.weight() * len;
 
@@ -236,8 +235,7 @@ public:
   Oriented_side
   side_of_parabola(const Point_2& p) const
   {
-    Point_2 q(CGAL_NTS to_double(p.x()),
-	      CGAL_NTS to_double(p.y()));
+    Point_2 q(CGAL::to_double(p.x()), CGAL::to_double(p.y()));
 
     FT d = distance(q, c) - fabs(distance(q, l));
     if ( d < 0 )  return ON_NEGATIVE_SIDE;

@@ -688,7 +688,7 @@ protected:
       } else {
 	Site_2 wp = circumcircle(f);
 	typename Gt::Rep::Circle_2 c(wp.point(),
-				     CGAL_NTS square(wp.weight()));
+				     CGAL::square(wp.weight()));
 	str << c;
       }
     }

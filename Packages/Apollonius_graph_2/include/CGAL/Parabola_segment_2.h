@@ -75,7 +75,7 @@ public:
     s[0] = t(p1);
     s[1] = t(p2);
 
-    if (CGAL_NTS compare(s[0], s[1]) == LARGER) {
+    if (CGAL::compare(s[0], s[1]) == LARGER) {
 #if defined(__GNUC__) && (__GNUC__ < 3)
       FT tmp = s[0];
       s[0] = s[1];
@@ -87,15 +87,15 @@ public:
 
     p.clear();
 
-    if ( !(CGAL_NTS is_positive(s[0])) &&
-	 !(CGAL_NTS is_negative(s[1])) ) {
+    if ( !(CGAL::is_positive(s[0])) &&
+	 !(CGAL::is_negative(s[1])) ) {
       FT tt;
       int k;
 
       p.push_back( this->o );
       k = 1;
       tt = -this->STEP;
-      while ( CGAL_NTS compare(tt, s[0]) == LARGER ) {
+      while ( CGAL::compare(tt, s[0]) == LARGER ) {
 	p.insert( p.begin(), f(tt) );
 	k--;
 	tt = -FT(k * k) * this->STEP;
@@ -104,14 +104,14 @@ public:
 
       k = 1;
       tt = this->STEP;
-      while ( CGAL_NTS compare(tt, s[1]) == SMALLER ) {
+      while ( CGAL::compare(tt, s[1]) == SMALLER ) {
 	p.push_back( f(tt) );
 	k++;
 	tt = FT(k * k) * this->STEP;
       }
       p.push_back( f(s[1]) );
-    } else if ( !(CGAL_NTS is_negative(s[0])) &&
-		!(CGAL_NTS is_negative(s[1])) ) {
+    } else if ( !(CGAL::is_negative(s[0])) &&
+		!(CGAL::is_negative(s[1])) ) {
       FT tt;
       int k;
 
@@ -119,10 +119,10 @@ public:
       p.push_back( f(s[0]) );
 
       tt = s[0];
-      k = int(CGAL_NTS to_double(CGAL_NTS sqrt(tt / this->STEP)));
+      k = int(CGAL::to_double(CGAL::sqrt(tt / this->STEP)));
 
-      while ( CGAL_NTS compare(tt, s[1]) == SMALLER ) {
-	if ( CGAL_NTS compare(tt, s[0]) != SMALLER )
+      while ( CGAL::compare(tt, s[1]) == SMALLER ) {
+	if ( CGAL::compare(tt, s[0]) != SMALLER )
 	  p.push_back( f(tt) );
 	k++;
 	tt = FT(k * k) * this->STEP;
@@ -135,10 +135,10 @@ public:
       p.push_back( f(s[1]) );
 
       tt = s[1];
-      k = int(CGAL_NTS to_double(-CGAL_NTS sqrt(-tt / this->STEP)));
+      k = int(CGAL::to_double(-CGAL::sqrt(-tt / this->STEP)));
 
-      while ( CGAL_NTS compare(tt, s[0]) == LARGER ) {
-	if ( CGAL_NTS compare(tt, s[1]) != LARGER )
+      while ( CGAL::compare(tt, s[0]) == LARGER ) {
+	if ( CGAL::compare(tt, s[1]) != LARGER )
 	  p.push_back( f(tt) );
 	k--;
 	tt = -FT(k * k) * this->STEP;

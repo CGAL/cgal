@@ -88,7 +88,7 @@ public:
 #if defined CGAL_QT_WIDGET_H
   void draw_qt(Qt_widget& s)
   {
-    if ( CGAL_NTS is_zero(r) ) {
+    if ( CGAL::is_zero(r) ) {
       draw_ray(s);
       return;
     }
@@ -117,7 +117,7 @@ public:
   inline
   void draw(Stream& s) const
   {
-    if ( CGAL_NTS is_zero(this->r) ) {
+    if ( CGAL::is_zero(this->r) ) {
       draw_ray(s);
       return;
     }
