@@ -59,31 +59,10 @@ which constructs a triangle from three points.}
 \ccc{Tetrahedron_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)},
 which constructs a tetrahedron from four points.}
 
-\ccNestedType{Equal_3}{Predicate object. Must provide the operator\\ 
-\ccc{bool operator()(Point p, Point q)}
-which tests whether points \ccc{p} and \ccc{q} are equal.}
-%
-\ccGlue
-%
-\ccNestedType{Compare_x_3}{Predicate object. Must provide the operator\\
+\ccNestedType{Compare_xyz_3}{Predicate object. Must provide the operator\\ 
 \ccc{Comparison_result operator()(Point p, Point q)}
-which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER}
-according to the $x$-ordering of the points \ccc{p} and \ccc{q}.}
-%
-\ccGlue
-%
-\ccNestedType{Compare_y_3}{Predicate object. Must provide the operator\\
-\ccc{Comparison_result operator()(Point p, Point q)}
-which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER}
-according to the $y$-ordering of the points \ccc{p} and \ccc{q}.}
-%
-\ccGlue
-%
-\ccNestedType{Compare_z_3}{Predicate object. Must provide the operator\\
-\ccc{Comparison_result operator()(Point p, Point q)}
-which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER}
-according to the $z$-ordering of the points \ccc{p} and \ccc{q}.}
-%
+which returns \ccc{EQUAL} if the two points are equal.  Otherwise it must
+return a consistent order for any two points chosen in a same line.}
 \ccGlue
 %
 \ccNestedType{Orientation_3}{Predicate object. Must provide the operator\\
@@ -113,7 +92,7 @@ return a consistent orientation for any three points chosen in a same plane.
 
 The following functions give access to the predicate and construction objects:
 
-\ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.compare_x(Point p0, Point p1)x}{}
+\ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.xxxxxxxxx(Point p0, Point p1)x}{}
 
 \ccMethod{Construct_segment_3 construct_segment_3_object();}{}
 \ccGlue
@@ -121,14 +100,8 @@ The following functions give access to the predicate and construction objects:
 \ccGlue
 \ccMethod{Construct_tetrahedron_3 construct_tetrahedron_3_object();}{}
 
-\ccMethod{Equal_3 equal_3_object();}{}
+\ccMethod{Compare_xyz_3 compare_xyz_3_object();}{}
 \ccGlue
-\ccMethod{Compare_x_3 compare_x_3_object();}{}
-\ccGlue
-\ccMethod{Compare_y_3 compare_y_3_object();}{}
-\ccGlue
-\ccMethod{Compare_z_3 compare_z_3_object();}{}
-
 \ccMethod{Orientation_3 orientation_3_object();}{}
 \ccGlue
 \ccMethod{Coplanar_orientation_3 coplanar_orientation_3_object();}{}

@@ -111,27 +111,15 @@ protected:
   Vertex_handle infinite; //infinite vertex
  
   Comparison_result
-  compare_x(const Point &p, const Point &q) const
+  compare_xyz(const Point &p, const Point &q) const
   {
-      return geom_traits().compare_x_3_object()(p, q);
+      return geom_traits().compare_xyz_3_object()(p, q);
   }
-
-  Comparison_result
-  compare_y(const Point &p, const Point &q) const
-  {
-      return geom_traits().compare_y_3_object()(p, q);
-  }
-
-  Comparison_result
-  compare_z(const Point &p, const Point &q) const
-  {
-      return geom_traits().compare_z_3_object()(p, q);
-  }
-
+ 
   bool
   equal(const Point &p, const Point &q) const
   {
-      return geom_traits().equal_3_object()(p, q);
+      return compare_xyz(p, q) == EQUAL;
   }
 
   Orientation
@@ -172,9 +160,6 @@ protected:
       return geom_traits().construct_tetrahedron_3_object()(p, q, r, s);
   }
 
-  // FIXME : This should be replaced by a couple of calls to compare_xyz() (?).
-  // Accessory function, which is the only user of compare_[xyz].
-  // Should this come from the traits directly ?
   enum COLLINEAR_POSITION {BEFORE, SOURCE, MIDDLE, TARGET, AFTER};
 
   COLLINEAR_POSITION
@@ -186,35 +171,19 @@ protected:
   {
       CGAL_triangulation_precondition(!equal(s, t));
       CGAL_triangulation_precondition(collinear(s, p, t));
-      Comparison_result c;
-      if ((c = compare_x(s, t)) != EQUAL) {
-	  Comparison_result ps = compare_x(p, s);
-	  if (ps == c)     return BEFORE;
-	  if (ps == EQUAL) return SOURCE;
-	  Comparison_result tp = compare_x(t, p);
-	  if (tp == c)     return AFTER;
-	  if (tp == EQUAL) return TARGET;
+
+      Comparison_result ps = compare_xyz(p, s);
+      if (ps == EQUAL)
+	  return SOURCE;
+      Comparison_result st = compare_xyz(s, t);
+      if (ps == st)
+	  return BEFORE;
+      Comparison_result pt = compare_xyz(p, t);
+      if (pt == EQUAL)
+	  return TARGET;
+      if (pt == st)
 	  return MIDDLE;
-      }
-      else if ((c = compare_y(s,t)) != EQUAL) {
-	  Comparison_result ps = compare_y(p, s);
-	  if (ps == c)     return BEFORE;
-	  if (ps == EQUAL) return SOURCE;
-	  Comparison_result tp = compare_y(t, p);
-	  if (tp == c)     return AFTER;
-	  if (tp == EQUAL) return TARGET;
-	  return MIDDLE;
-      }
-      else {
-	  c = compare_z(s, t);
-	  Comparison_result ps = compare_z(p, s);
-	  if (ps == c)     return BEFORE;
-	  if (ps == EQUAL) return SOURCE;
-	  Comparison_result tp = compare_z(t, p);
-	  if (tp == c)     return AFTER;
-	  if (tp == EQUAL) return TARGET;
-	  return MIDDLE;
-      }
+      return AFTER;
   }
 
   void init_tds()

@@ -44,6 +44,12 @@ by \ccc{p}, \ccc{q}, and \ccc{r} on which \ccc{s} lies.
 \ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar and
 \ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
 
+\ccNestedType{Compare_distance_3}{Predicate object.
+Must provide the operator\\
+\ccc{Comparison_result operator()(Point p, Point q, Point r)}
+which compares the distance between \ccc{p} and \ccc{q} to the distance
+between \ccc{p} and \ccc{r}.}
+
 \ccTwo{DelaunayTriangulationTraits_3::Direction_3xxx}{}
 
 \ccNestedType{Line_3}{The line type.}
@@ -102,12 +108,14 @@ that construct an object respectively from a point, a segment and a ray.}
 
 The following functions give access to the predicate and construction objects:
 
-\ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.compare_x(Point p0, Point p1)x}{}
+\ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.xxxxxxxxx(Point p0, Point p1)x}{}
 \ccCreationVariable{traits}  %% choose variable name
 
 \ccMethod{Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object();}{}
 \ccGlue
 \ccMethod{Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object();}{}
+\ccGlue
+\ccMethod{Compare_distance_3 compare_distance_3_object();}{}
 
 The following functions must be provided only if the methods of 
 \ccc{Delaunay_triangulation_3} returning elements of the Voronoi diagram 
