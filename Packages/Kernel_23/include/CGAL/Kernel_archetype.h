@@ -139,13 +139,13 @@ public:
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_CARTESIAN_COORDINATE_CONST_ITERATOR_2)
   typedef Cartesian_coordinate_const_iterator_2_archetype 
-      Cartesian_coordinate_const_iterator_2;
+      Cartesian_const_iterator_2;
 #endif
   
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_CARTESIAN_COORDINATE_CONST_ITERATOR_3)
   typedef Cartesian_coordinate_const_iterator_3_archetype 
-      Cartesian_coordinate_const_iterator_3;
+      Cartesian_const_iterator_3;
 #endif
 
   // functors and access functions ...
