@@ -24,6 +24,7 @@
 #define CGAL_STATIC_FILTERS_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Static_filters/Orientation_2.h>
 #include <CGAL/Static_filters/Orientation_3.h>
 #include <CGAL/Static_filters/Side_of_oriented_sphere_3.h>
 
@@ -42,13 +43,19 @@ class Static_filters : public K_base
 {
 public :
 
+  typedef typename K_base::Point_2 Point_2;
   typedef typename K_base::Point_3 Point_3;
 
   Static_filters()
     : max3x(0), max3y(0), max3z(0) {}
 
+  typedef SF_Orientation_2<Point_2>                 Orientation_2;
   typedef SF_Orientation_3<Point_3>                 Orientation_3;
   typedef SF_Side_of_oriented_sphere_3<Point_3>     Side_of_oriented_sphere_3;
+
+  const Orientation_2 &
+  orientation_2_object() const
+  { return _orientation_2; }
 
   const Orientation_3 &
   orientation_3_object() const
@@ -58,7 +65,7 @@ public :
   side_of_oriented_sphere_3_object() const
   { return _side_of_oriented_sphere_3; }
 
-  // This should not be const, but unfortunately Triangulation_?.geom_traits()
+  // These should not be const, but unfortunately Triangulation_?.geom_traits()
   // only give a const& access (should this be changed ?).
   // In the mean time, I put the data members mutable.
   void register_object(const Point_3 &p) const
@@ -80,12 +87,29 @@ public :
       }
   }
 
+  void register_object(const Point_2 &p) const
+  {
+      bool redo = false;
+      double d;
+      d = fabs(CGAL::to_double(p.x()));
+      if (d > max2x)
+	  max2x = d, redo = true;
+      d = fabs(CGAL::to_double(p.y()));
+      if (d > max2y)
+	  max2y = d, redo = true;
+      if (redo) {
+          _orientation_2.update(max2x, max2y);
+      }
+  }
+
 private:
   // Bounds on fabs() of the coordinates of the Point_3s.
+  mutable double max2x, max2y;
   mutable double max3x, max3y, max3z;
 
   // A data member for each predicate.
   // Their state is related to the state of *this.
+  mutable Orientation_2 _orientation_2;
   mutable Orientation_3 _orientation_3;
   mutable Side_of_oriented_sphere_3 _side_of_oriented_sphere_3;
 };
