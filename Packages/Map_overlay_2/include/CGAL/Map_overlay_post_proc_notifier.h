@@ -82,6 +82,20 @@ public:
 
         set_first_halfedge_above(Vertex_handle(e->source()), orig_halfedge1);
         set_first_halfedge_above(Vertex_handle(e->target()), orig_halfedge1);
+
+        if (e->source()->point() ==  orig_halfedge1->source()->point())
+          set_first_vertex_above(Vertex_handle(e->source()), 
+                                 orig_halfedge1->source());
+        else if (e->source()->point() ==  orig_halfedge1->target()->point())
+          set_first_vertex_above(Vertex_handle(e->source()), 
+                                 orig_halfedge1->target());
+        
+        if (e->target()->point() ==  orig_halfedge1->source()->point())
+          set_first_vertex_above(Vertex_handle(e->target()), 
+                                 orig_halfedge1->source());
+        else if (e->target()->point() ==  orig_halfedge1->target()->point())
+          set_first_vertex_above(Vertex_handle(e->target()), 
+                                 orig_halfedge1->target());
       }
       else{ 
         set_second_halfedge_above(Halfedge_handle(e), orig_halfedge1);
@@ -89,6 +103,20 @@ public:
        
         set_second_halfedge_above(Vertex_handle(e->source()), orig_halfedge1);
         set_second_halfedge_above(Vertex_handle(e->target()), orig_halfedge1);
+
+        if (e->source()->point() == orig_halfedge1->source()->point())
+          set_second_vertex_above(Vertex_handle(e->source()), 
+                                  orig_halfedge1->source());
+        else if (e->source()->point() == orig_halfedge1->target()->point())
+          set_second_vertex_above(Vertex_handle(e->source()), 
+                                  orig_halfedge1->target());
+        
+        if (e->target()->point() == orig_halfedge1->source()->point())
+          set_second_vertex_above(Vertex_handle(e->target()), 
+                                  orig_halfedge1->source());
+        else if (e->target()->point() == orig_halfedge1->target()->point())
+          set_second_vertex_above(Vertex_handle(e->target()), 
+                                  orig_halfedge1->target());
       }
     }
     
@@ -109,8 +137,20 @@ public:
           set_first_halfedge_above(Vertex_handle(e->source()), orig_halfedge2);
           set_first_halfedge_above(Vertex_handle(e->target()), orig_halfedge2);
 
-          //e->set_first_halfedge_above(orig_halfedge2.operator->());
-          //e->twin()->set_first_halfedge_above(orig_halfedge2->twin().operator->());
+          if (e->source()->point() ==  orig_halfedge2->source()->point())
+            set_first_vertex_above(Vertex_handle(e->source()), 
+                                   orig_halfedge2->source());
+          else if (e->source()->point() ==  orig_halfedge2->target()->point())
+            set_first_vertex_above(Vertex_handle(e->source()), 
+                                   orig_halfedge2->target());
+          
+          if (e->target()->point() ==  orig_halfedge2->source()->point())
+            set_first_vertex_above(Vertex_handle(e->target()), 
+                                   orig_halfedge2->source());
+          else if (e->target()->point() ==  orig_halfedge2->target()->point())
+            set_first_vertex_above(Vertex_handle(e->target()), 
+                                   orig_halfedge2->target());
+        
         }
         else{
           set_second_halfedge_above(Halfedge_handle(e), orig_halfedge2);
@@ -118,9 +158,21 @@ public:
           
           set_second_halfedge_above(Vertex_handle(e->source()), orig_halfedge2);
           set_second_halfedge_above(Vertex_handle(e->target()), orig_halfedge2);
-
-          //e->set_second_halfedge_above(orig_halfedge2.operator->());
-          //e->twin()->set_second_halfedge_above(orig_halfedge2->twin().operator->());
+          
+          if (e->source()->point() ==  orig_halfedge2->source()->point())
+            set_second_vertex_above(Vertex_handle(e->source()), 
+                                    orig_halfedge2->source());
+          else if (e->source()->point() ==  orig_halfedge2->target()->point())
+            set_second_vertex_above(Vertex_handle(e->source()), 
+                                    orig_halfedge2->target());
+          
+          if (e->target()->point() ==  orig_halfedge2->source()->point())
+            set_second_vertex_above(Vertex_handle(e->target()), 
+                                    orig_halfedge2->source());
+          else if (e->target()->point() ==  orig_halfedge1->target()->point())
+            set_second_vertex_above(Vertex_handle(e->target()), 
+                                    orig_halfedge2->target());
+          
         }
       }
     //else
@@ -187,16 +239,16 @@ public:
     return false;
   }
 
-  void  update_all_faces(Arrangement& pmwx, 
-                         const Arrangement& first_creator,  
-                         const Arrangement& second_creator)
+  void  update_all_faces(Arrangement& pmwx) 
+                         //const Arrangement& first_creator,  
+                         //const Arrangement& second_creator)
   {
     //mapOverlay   tmp_ovl;
     Face_handle  unbounded = pmwx.unbounded_face();
 
     // first taking care of the unbounded face.
-    set_first_face_above(unbounded, first_creator.unbounded_face());
-    set_second_face_above(unbounded, second_creator.unbounded_face());
+    set_first_face_above(unbounded, arr1->unbounded_face());
+    set_second_face_above(unbounded, arr2->unbounded_face());
     unbounded->set_color(Face::BLACK);
 
     for (Holes_iterator hit = unbounded->holes_begin(); 
@@ -272,7 +324,7 @@ public:
             std::cout<<"first face above begin_face is 0 - putting unbounded"<<std::endl;
 #endif
             
-            set_first_face_above(begin_face, first_creator.unbounded_face());
+            set_first_face_above(begin_face, arr1->unbounded_face());
             //begin_face->set_first_face_above(first_creator.unbounded_face().operator->());
           }
    
@@ -281,10 +333,14 @@ public:
             std::cout<<"second face above begin_face is 0 - putting unbounded"<<std::endl;
 #endif
             
-            set_second_face_above(begin_face,second_creator.unbounded_face());
+            set_second_face_above(begin_face, arr2->unbounded_face());
             //begin_face->set_second_face_above(second_creator.unbounded_face().operator->());
           }
-
+          
+          // update the vertices and halfedges along begin_face.
+          update_halfedges_along_face(begin_face);
+          update_vertices_along_face(begin_face);
+          
           // inserting begin_face to queue and starting BFS.
           begin_face->set_color(Face::GRAY);
           faces_queue.push_back(begin_face);
@@ -360,7 +416,9 @@ public:
                     }
                   } while (++next_hole_cc != next_hole_face->outer_ccb());
 
-                  
+                   update_halfedges_along_face(next_hole_face);
+                   update_vertices_along_face(next_hole_face);
+
                   next_hole_face->set_color(Face::GRAY);
                   faces_queue.push_back (next_hole_face);
                 }
@@ -436,6 +494,9 @@ public:
                   }
                 } while (++next_cc != next_face->outer_ccb());
                 
+                update_halfedges_along_face(next_face);
+                update_vertices_along_face(next_face);
+
                 next_face->set_color(Face::GRAY);
                 faces_queue.push_back (next_face);
               }
@@ -838,6 +899,34 @@ public:
   //---------------------------- end handles wrappering.
   
 private:
+  // Update the faces above the halfedges of the new face.
+  void  update_halfedges_along_face(Face_handle f){
+     Ccb_halfedge_circulator  ccb_cir = f->outer_ccb();
+    do{
+      if (f->get_first_face_above())
+        set_first_face_above (ccb_cir, get_first_face_above(f));
+      
+      if (f->get_second_face_above())
+        set_second_face_above (ccb_cir, get_second_face_above(f));
+      
+      ++ccb_cir;
+    } while (ccb_cir != f->outer_ccb());
+  }
+
+  // Update the faces above the vertices of the new face.
+  void  update_vertices_along_face(Face_handle f){
+    Ccb_halfedge_circulator  ccb_cir = f->outer_ccb();
+    do{
+      if (f->get_first_face_above())
+        set_first_face_above (ccb_cir->source(), get_first_face_above(f));
+      
+      if (f->get_second_face_above())
+        set_second_face_above (ccb_cir->source(), get_second_face_above(f));
+      
+      ++ccb_cir;
+    } while (ccb_cir != f->outer_ccb());
+  }
+
   bool                   first_halfedge;
   Halfedge_const_handle  orig_halfedge1, orig_halfedge2;
   Arr_const_pointer      arr1, arr2;
