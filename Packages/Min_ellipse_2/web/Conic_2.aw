@@ -3285,7 +3285,7 @@ Here is the class @prg{CGAL_ConicHPA2<PT,DA>}\ldots
  
 @macro <Conic_2 header>(1) many = @begin
     @<file header>("2D Conic",@1,
-                   "Optimisation/Conic_2",
+                   "Optimisation","Optimisation/Conic_2",
                    "Bernd Gärtner <gaertner@@inf.ethz.ch>",
                    "Sven Schönherr",
                    "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
