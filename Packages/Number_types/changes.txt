@@ -1,3 +1,6 @@
+4.106 (29 July 2003)
+- Overload NTS::compare<Quotient> when partial spec is available.
+
 4.105 (28 July 2003)
 - Fix compare(mp[zq]_class), and remove one useless version.
 - Fix Quotient.

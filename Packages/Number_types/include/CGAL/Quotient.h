@@ -91,8 +91,8 @@ class Quotient
   
   Quotient<NT>&    normalize();
   
-  const NT&   numerator() const;
-  const NT&   denominator() const;
+  const NT&   numerator()   const { return num; }
+  const NT&   denominator() const { return den; }
 
  public:
   NT   num;
@@ -245,8 +245,7 @@ CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
 {
-    // In contrast to LEDA class rational, no assumptions
-    // on the sign of  den  are made
+    // No assumptions on the sign of  den  are made
 
     // code assumes that SMALLER == - 1;
     CGAL_kernel_precondition( SMALLER == static_cast<Comparison_result>(-1) );
@@ -262,20 +261,23 @@ quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
         int msign = CGAL_NTS sign(x.den) * CGAL_NTS sign(y.den);
         NT leftop  = x.num * y.den * NT(msign);
         NT rightop = y.num * x.den * NT(msign);
-        if (leftop < rightop)
-        {
-            return SMALLER;
-        }
-        else
-        {
-            return (rightop < leftop) ? LARGER : EQUAL;
-        }
+        return CGAL_NTS compare(leftop, rightop);
     }
     else
     {
         return (xsign < ysign) ? SMALLER : LARGER;
     }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+namespace NTS {
+template <class NT>
+inline
+Comparison_result
+compare(const Quotient<NT>& x, const Quotient<NT>& y)
+{ return quotient_cmp(x, y); }
+} // namespace NTS
+#endif // CGAL_CFG_MATCHING_BUG_2
 
 template <class NT>
 std::ostream&
@@ -334,18 +336,6 @@ inline
 io_Operator
 io_tag(const Quotient<NT>&)
 { return io_Operator(); }
-
-template <class NT>
-inline
-const NT&
-Quotient<NT>::numerator() const
-{ return num; }
-
-template <class NT>
-inline
-const NT&
-Quotient<NT>::denominator() const
-{ return den; }
 
 template <class NT>
 CGAL_KERNEL_INLINE
