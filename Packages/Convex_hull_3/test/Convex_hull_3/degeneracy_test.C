@@ -22,7 +22,6 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
 #include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/ch_assertions.h>
@@ -30,16 +29,11 @@
 #include <vector>
 #include <fstream>
 
-typedef double                                                      NumberType;
-
-/* representation class */
-typedef CGAL::Cartesian<NumberType>                                 RepCls;
-
-/* define polyhedron type */
-typedef CGAL::Halfedge_data_structure_polyhedron_default_3<RepCls>  HDS;
-typedef CGAL::Polyhedron_default_traits_3<RepCls>                   PolyTraits;
-typedef CGAL::Polyhedron_3< PolyTraits, HDS>                        Polyhedron;
-typedef CGAL::Point_3<RepCls>                                       Point;
+typedef double                                     NumberType;
+typedef CGAL::Cartesian<NumberType>                R;
+typedef CGAL::Polyhedron_default_traits_3<R>       PolyTraits;
+typedef CGAL::Polyhedron_3<PolyTraits>             Polyhedron;
+typedef CGAL::Point_3<RepCls>                      Point;
 
 int
 main()

@@ -1,4 +1,7 @@
-2.11    (?? June 2001)
+2.12    (19 June 2001)
+- incorporated changes to work for new polyhedron design
+
+2.11    (19 June 2001)
 - removed dd_geo directory
 
 2.10    (1 June 2001)
