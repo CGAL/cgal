@@ -23,6 +23,9 @@
 % ###########################################################################
 
 
+% Can be customized to have different body attributes, such as backgrounds
+\gdef{\lcBodyAttributes}{\lcRawHtml{bgcolor="white"}}
+
 % Args: <title-text>
 \newcommand{\lciHtmlFileHeader}[1]{%
     \lciHtmlFileHeaderX{#1}{\lciExtractHtmlRelease}{\lciInputFilename}}
@@ -35,7 +38,7 @@
 <title>}#1\lcRawHtml{</title>
 </head>  
 <link href="}\lciOutputUppath\lcRawHtml{latex_to_html.css" rel="STYLESHEET">
-<body bgcolor="white">
+<body }\lcBodyAttributes\lcRawHtml{>
 <!-- ------------------------------------------------------------------- -->
 
 }}
@@ -101,8 +104,9 @@
     \gdef\lciTocOdd{Even}}{\gdef\lciTocOdd{Odd}}}
 \gdef\lciTocOdd{Odd}
 
-% Enables the two-column TOC
+% Enables and disables the two-column TOC
 \newcommand{\lcTwoColumnToc}{\gdef\lciIfTwoColumnToc{\lcTrue}}
+\newcommand{\lcOneColumnToc}{\gdef\lciIfTwoColumnToc{\lcFalse}}
 \gdef\lciIfTwoColumnToc{\lcFalse}
 
 % Implements the three states for the outer table: Sync, Left, Right
