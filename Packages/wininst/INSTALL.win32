@@ -100,12 +100,18 @@ Do *not* use directory names that have spaces in them for the
 installation path.  A subdirectory called CGAL-2.3 will be created.
 
 
-Further, if you don't have a recent (at least 4.3) version of LEDA
-installed, download the file called ???CGALWinmsvc???  (respectively,
-???CGALWinbcc???, if using Borland) and unpack it into the
-subdirectory CGAL-2.3.  This will install CGALWin library that is
-needed for most of the demos, and is a free replacement of LEDA
-Window library.
+Further, if you don't have (or will not use) a recent (at least 4.3)
+version of LEDA installed, download the file
+
+http://www.cgal.org/download/CGALWin/MS_windows/Visual_C++/CGALWin_msvc_native.zip
+
+(respectively,
+
+http://www.cgal.org/download/CGALWin/MS_windows/Borland/CGALWin_bcc_native.zip
+
+if using Borland) and unpack it into the subdirectory CGAL-2.3.  This
+will install CGALWin library that is needed for most of the demos, and
+is a free replacement of LEDA Window library.
 
 The full path to the directory CGAL-2.3 
 is referred as CGALROOT in the sequel.
@@ -236,7 +242,7 @@ The most important issue is the following.  CGAL uses C++ STL
 (Standard Template Library) quite extensively.  To resolve many C++
 Standard compliance problems of the native MSVC STL, we chose to use a
 drop-in replacement for it, STLPort (see http://www.stlport.org).  We
-have customized STLPort, version 3.2.1, to partially support
+have customized STLPort, version 3.2.1, to support, partially,
 std::iterator_traits template of STL.
 
 For this to work, the compiler should have STLPort subdirectory first
@@ -294,8 +300,7 @@ Debug Multi-threaded		mtd
 Debug Multi-threaded DLL	mdd
 
 Further necessary customization is as follows.
-We hope that the forthcoming automatic installation will simplify
-these elaborated procedures.
+
 
 4.2.1. Customizing compilation.
 
@@ -305,6 +310,34 @@ an (already defined) environment variable (and then the include and
 library paths can be entered as shown), or $(CGAL_ROOT) must be
 replaced by the corresponding full path to the CGAL installation.
 
+There are two ways of customizing this, either per project, or per workspace.
+(It is assumed that your CGAL project is within this workspace.)
+The latter is more user-friendly, because the choice of directories is
+can be done with the usual Windows explorer wizzard.
+
+
+4.2.1.1. Customizing compilation within a workspace.
+
+Select Tools->Options->Directories from the main toolbar.
+In "Show directories for" choose "Include files".
+Add (in the following order)
+
+   $(CGAL_ROOT)\stlport
+   $(CGAL_ROOT)\include\CGAL\config\msvc
+   $(CGAL_ROOT)\include
+   $(CGAL_ROOT)\include
+   $(CGAL_ROOT)\auxiliary\wingmp\gmp-2.0.2
+
+It is very important that $(CGAL_ROOT)\stlport appears first
+in the list in "Additional include directories:"; otherwise a bunch
+of ugly compiler error messages is guaranteed.
+
+If LEDA is used, don't forget to add 
+   $(LEDAROOT)\incl
+
+
+4.2.1.2. Customizing compilation within a project.
+ 
 Select "Project/Settings...", the "C/C++"
 section, "Preprocessor" category. Add (in the following order)
 
@@ -327,20 +360,50 @@ Add CGAL_USE_GMP to "Preprocessor definitions:".
 If LEDA is used, also add CGAL_USE_LEDA and LEDA_PREFIX there.
 
 
+4.2.1.3. Customizing source file suffices.
+
 Should your source file(s) have non-MSVC-standard suffices,
 (like all the CGAL source files, by the way)
 add /TP to options "Project Settings" in the "C/C++" section,
-"Preprocessor" category.
+"Preprocessor" category in the project settings.
 
 
 4.2.2. Customizing linking.
 
-Additional library directories have to be specified.
+Extra library files are to be specified, that are located in
+non-standard directories.  For the latter to be specified, two
+different ways are available, either per project, or per workspace.
+
+
+4.2.2.1. Customizing linking directories within a workspace.
+
+Select Tools->Options->Directories from the main toolbar.
+In "Show directories for" choose "Library files".
+Add  $(CGAL_ROOT)\lib\msvc and
+$(CGAL_ROOT)\lib\win32\msvc\XXX,
+where XXX denotes one of the 6 compiler options (ML, MLd, MT, MTd, MD, MDd)
+used within the workspace, there.
+
+
+4.2.2.2. Customizing linking directories within a project.
+
+Select "Project/Settings...", "Link" section, "Input" category.
+Add  $(CGAL_ROOT)\lib\msvc and
+$(CGAL_ROOT)\lib\win32\msvc\XXX,
+where XXX denotes one of the 6 compiler options (ML, MLd, MT, MTd, MD, MDd)
+used for the project, into "Additional library path" field.
+This should be done on per configuration basis, because
+for Debug and for Release one needs different paths.
+
+4.2.2.3. Specifying extra libararies.
+
 Select "Project/Settings...", "Link" section, "Input" category. Add 
 	 CGAL.lib
 	 gmp.lib
 in "Object/library modules:" list.
-If LEDA is used, also add there
+
+If CGALWin is used, also add CGALWin.lib there.
+Otherwise, if LEDA is used, also add there
    libP.lib 
    libG.lib 
    libL.lib
