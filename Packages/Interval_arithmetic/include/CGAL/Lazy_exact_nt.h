@@ -121,7 +121,7 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_rep<ET>
       : Lazy_exact_rep<ET>(double(i)) {}
 
   void update_approx() { CGAL_assertion(false); }
-  void update_exact()  { et = new ET((int)in.inf()); }
+  void update_exact()  { this->et = new ET((int)this->in.inf()); }
 };
 
 // double constant
@@ -132,7 +132,7 @@ struct Lazy_exact_Cst : public Lazy_exact_rep<ET>
       : Lazy_exact_rep<ET>(d) {}
 
   void update_approx() { CGAL_assertion(false); }
-  void update_exact()  { et = new ET(in.inf()); }
+  void update_exact()  { this->et = new ET(this->in.inf()); }
 };
 
 // Exact constant
@@ -142,7 +142,7 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET>
   Lazy_exact_Ex_Cst (const ET & e)
       : Lazy_exact_rep<ET>(to_interval(e))
   {
-    et = new ET(e);
+    this->et = new ET(e);
   }
 
   void update_approx() { CGAL_assertion(false); }
@@ -157,7 +157,7 @@ struct Lazy_lazy_exact_Cst : public Lazy_exact_rep<ET>
       : Lazy_exact_rep<ET>(x.approx()), l(x) {}
 
   void update_approx() { CGAL_assertion(false); }
-  void update_exact()  { et = new ET(l.exact()); }
+  void update_exact()  { this->et = new ET(l.exact()); }
 
   Lazy_exact_nt<ET1> l;
 };
@@ -199,8 +199,8 @@ struct NAME : public Lazy_exact_unary<ET>                            \
   NAME (const Lazy_exact_nt<ET> &a)                                  \
       : Lazy_exact_unary<ET>(OP(a.approx()), a) {}                   \
                                                                      \
-  void update_approx() { in = OP(op1.approx()); }                    \
-  void update_exact()  { et = new ET(OP(op1.exact())); }             \
+  void update_approx() { this->in = OP(this->op1.approx()); }        \
+  void update_exact()  { this->et = new ET(OP(this->op1.exact())); } \
 };
 
 CGAL_LAZY_UNARY_OP(CGAL::opposite,  Lazy_exact_Opp)
@@ -216,8 +216,14 @@ struct NAME : public Lazy_exact_binary<ET>                            \
   NAME (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)       \
     : Lazy_exact_binary<ET>(a.approx() OP b.approx(), a, b) {}        \
                                                                       \
-  void update_approx() { in = op1.approx() OP op2.approx(); }         \
-  void update_exact()  { et = new ET(op1.exact() OP op2.exact()); }   \
+  void update_approx()                                                \
+  {                                                                   \
+    this->in = this->op1.approx() OP this->op2.approx();              \
+  }                                                                   \
+  void update_exact()                                                 \
+  {                                                                   \
+    this->et = new ET(this->op1.exact() OP this->op2.exact());        \
+  }                                                                   \
 };
 
 CGAL_LAZY_BINARY_OP(+, Lazy_exact_Add)
@@ -232,8 +238,14 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
   Lazy_exact_Min (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
     : Lazy_exact_binary<ET>(min(a.approx(), b.approx()), a, b) {}
 
-  void update_approx() { in = min(op1.approx(), op2.approx()); }
-  void update_exact()  { et = new ET(min(op1.exact(), op2.exact())); }
+  void update_approx()
+  {
+    this->in = min(this->op1.approx(), this->op2.approx());
+  }
+  void update_exact()
+  {
+    this->et = new ET(min(this->op1.exact(), this->op2.exact()));
+  }
 };
 
 // Maximum
@@ -243,8 +255,14 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
   Lazy_exact_Max (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
     : Lazy_exact_binary<ET>(max(a.approx(), b.approx()), a, b) {}
 
-  void update_approx() { in = max(op1.approx(), op2.approx()); }
-  void update_exact()  { et = new ET(max(op1.exact(), op2.exact())); }
+  void update_approx()
+  {
+    this->in = max(this->op1.approx(), this->op2.approx());
+  }
+  void update_exact()
+  {
+    this->et = new ET(max(this->op1.exact(), this->op2.exact()));
+  }
 };
 
 
