@@ -77,17 +77,6 @@ void read_polylines(Container& curves)
   while (num_polylines--) {
     Curve      polyline;
     
-    /*   int        num_points;
-	 
-	 cin >> num_points;
-	 
-	 while (num_points--) {
-	 cin >> x >> y;
-	 Point s(x, y);
-	 
-	 polyline.push_back(s);
-	 }*/
-    
     std::cin>>polyline;
     
     curves.push_back(polyline);
@@ -96,7 +85,7 @@ void read_polylines(Container& curves)
   }
 }
 
-int main(/*int argc, char* argv[]*/)
+int main()
 {
   std::list<Curve>      polylines;
     
