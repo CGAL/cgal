@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : $Id$
+// file          : $Source$
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval Arithmetic
