@@ -1,3 +1,6 @@
+1.29 -rursu
+Moved list_cgal_include script in scripts
+
 1.28 (25 November 2002)
 + Avoid warning message from last change
 
