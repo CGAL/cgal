@@ -1,3 +1,8 @@
+//-----------------------------------------------------------------------//
+// 2.3
++ added CGAL_CFG_NO_ITERATOR_TRAITS.C again. install_cgal depended on this.
+
+//-----------------------------------------------------------------------//
 // 2.2
 + made the long name in CGAL_CFG_NO_LONGNAME_PROBLEM.C longer.
 + removed  several tests that pass on all supported platforms
