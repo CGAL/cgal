@@ -17,7 +17,8 @@
 // revision_date : 
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
 //
-// coordinator   : INRIA Sophia-Antipolis
+// coordinator   : Mariette Yvinec (Mariette.Yvinec@@sophia.inria.fr)
+//
 // ============================================================================
 
 #include <CGAL/basic.h>

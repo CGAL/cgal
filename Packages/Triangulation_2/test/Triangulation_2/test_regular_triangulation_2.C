@@ -27,6 +27,8 @@
 #include <CGAL/Weighted_point.h>
 
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
+#include <CGAL/Triangulation_default_data_structure_2.h>
+#include <CGAL/Triangulation_data_structure_using_list_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/_test_cls_regular_triangulation_2.C>
 
@@ -56,6 +58,16 @@ int main()
   typedef CGAL::Regular_triangulation_2<RGt2,RTds2>                    RCls2;
 
     _test_cls_reg_triangulation_2( RCls2() );
+
+  std::cout << "Testing Regular_triangulation_2" <<std::endl;
+  std::cout << " with Triangulation_data_structure_using_list_2"
+	    <<std::endl;
+  typedef CGAL::Triangulation_data_structure_using_list_2<RVb,RFb>  RTds3;
+  typedef CGAL::Regular_triangulation_2<RGt,RTds3>                  RCls3;
+
+    _test_cls_reg_triangulation_2( RCls3() );
+
+
 return 0;
 }
 

@@ -6,7 +6,7 @@
 
 
 #CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
-CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
+CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.1/make/makefile_i686_Linux-2.2.13_g++-2.95.2_LEDA
 #CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
 include $(CGAL_MAKEFILE)
 
@@ -47,6 +47,9 @@ test_regular_triangulation_2: test_regular_triangulation_2.o
 test_triangulation_tds: test_triangulation_tds.o
 	$(CGAL_CXX) -o test_triangulation_tds test_triangulation_tds.o $(LDFLAGS)
 
+test_triangulation_tdsul: test_triangulation_tdsul.o
+	$(CGAL_CXX) -o test_triangulation_tdsul test_triangulation_tdsul.o $(LDFLAGS)
+
 test_triangulation_2: test_triangulation_2.o
 	$(CGAL_CXX) -o test_triangulation_2 test_triangulation_2.o $(LDFLAGS)
 
@@ -59,7 +62,8 @@ test_constrained_triangulation_2: test_constrained_triangulation_2.o
 clean:
 	- rm -f *.o  *.obj *.exe \
 	test_triangulation_geom_traits test_triangulation_2 \
-	test_triangulation_tds test_delaunay_triangulation_2 core \
+	test_triangulation_tds test_triangulation_tdsul \
+	test_delaunay_triangulation_2 core \
 	test_constrained_triangulation_2 test_regular_triangulation_2 \
 	T??.triangulation  file_tds? 
 

@@ -26,6 +26,7 @@
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/Triangulation_default_data_structure_2.h>
+#include <CGAL/Triangulation_data_structure_using_list_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
 
 #include <CGAL/_test_types.C>
@@ -43,5 +44,12 @@ int main()
   typedef CGAL::Constrained_triangulation_2<Gt,Tds>              CCls;
 
   _test_cls_constrained_triangulation(CCls());
-  return 0;
+
+  std::cout << "Testing constrained_triangulation "<< std::endl;
+  std::cout << " with Triangulation_data_structure_using_list : " << std::endl;
+  typedef CGAL::Triangulation_data_structure_using_list_2<Vb,CFb> Tds1;
+  typedef CGAL::Constrained_triangulation_2<Gt,Tds1>              CCls1;
+
+ _test_cls_constrained_triangulation(CCls1());
+ return 0;
 }

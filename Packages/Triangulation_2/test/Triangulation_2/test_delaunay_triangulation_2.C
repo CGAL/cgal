@@ -28,6 +28,7 @@
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_default_data_structure_2.h>
+#include <CGAL/Triangulation_data_structure_using_list_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/_test_types.C>
@@ -72,6 +73,15 @@ int main()
   typedef CGAL::Delaunay_triangulation_2<Gt,Tds>                 Cls;
 
   _test_cls_delaunay_triangulation_2( Cls() );
+
+  std::cout << "Testing Delaunay Triangulation_2 " <<  std::endl;
+  std::cout << " with Triangulation_data_structure_using_list_2 : " 
+	    << std::endl;
+  typedef CGAL::_Triangulation_test_traits                       Gt;
+  typedef CGAL::Triangulation_data_structure_using_list_2<Vb,Fb> Tds3;
+  typedef CGAL::Delaunay_triangulation_2<Gt,Tds3>                Cls3;
+
+  _test_cls_delaunay_triangulation_2( Cls3() );
 
   return 0;
 }
