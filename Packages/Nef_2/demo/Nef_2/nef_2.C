@@ -153,10 +153,10 @@ public:
     setCentralWidget(cwidget);
 
     if(is_the_first_widget){
-      Line l1(Point(0, 0), Point(0, 2));
+      Line l1(Point_2(0, 0), Point_2(0, 2));
       Nef_polyhedron N1(l1, Nef_polyhedron::INCLUDED);
       Nef_visible = N1;
-      Line l2(Point(0, 0), Point(2, 0));
+      Line l2(Point_2(0, 0), Point_2(2, 0));
       Nef_polyhedron N2(l2, Nef_polyhedron::INCLUDED);
       Nef_visible2 = N2;
       insert_in_list(N1, QString("LeftHalf"));
@@ -357,14 +357,14 @@ public slots:
     Polygon_2_double poly;
     in >> poly;
       Vertex_iterator_double it = poly.vertices_begin();
-      std::list<Point> l_of_p;        
+      std::list<Point_2> l_of_p;        
       while(it != poly.vertices_end()){
         CGAL::Gmpq p_q_x((*it).x());
         CGAL::Gmpq p_q_y((*it).y());
         RT wsx = p_q_x.numerator() * p_q_y.denominator(); 
         RT wsy = p_q_y.numerator() * p_q_x.denominator(); 
         RT wsh  = p_q_x.denominator() * p_q_y.denominator(); 
-        Point p1(wsx, wsy, wsh);
+        Point_2 p1(wsx, wsy, wsh);
         l_of_p.push_back(p1);
         it++;
       }
@@ -402,8 +402,8 @@ private slots:
       RT wsx = p.x().numerator() * p.y().denominator(); 
       RT wsy = p.y().numerator() * p.x().denominator(); 
       RT wsh  = p.x().denominator() * p.y().denominator(); 
-      Point p1(wsx, wsy, wsh);
-      Point pt[1] = {p1};
+      Point_2 p1(wsx, wsy, wsh);
+      Point_2 pt[1] = {p1};
       Nef_polyhedron Nt(pt, pt+1);
       insert_in_list(Nt, "Point");
       Nef_visible = Nt;
@@ -415,7 +415,7 @@ private slots:
       something_changed();
     } else if(CGAL::assign(poly, obj)){
       Vertex_iterator it = poly.vertices_begin();
-      std::list<Point> l_of_p;
+      std::list<Point_2> l_of_p;
       while(it != poly.vertices_end()){
         //double xp = (*it).x();
         //double yp = (*it).y();
@@ -424,7 +424,7 @@ private slots:
         RT wsx = (*it).x().numerator() * (*it).y().denominator(); 
         RT wsy = (*it).y().numerator() * (*it).x().denominator(); 
         RT wsh  = (*it).x().denominator() * (*it).y().denominator(); 
-        Point p1(wsx, wsy, wsh);
+        Point_2 p1(wsx, wsy, wsh);
         l_of_p.push_back(p1);
         it++;
       }
@@ -455,7 +455,7 @@ private slots:
                * line.point(0).x().denominator(); 
       RT wsh  = line.point(0).x().denominator() 
                * line.point(0).y().denominator(); 
-      Point p1(wsx, wsy, wsh);
+      Point_2 p1(wsx, wsy, wsh);
       /*
       wsxq = double_to_quotient<RT>(line.point(1).x());
       wsyq = double_to_quotient<RT>(line.point(1).y());
@@ -467,7 +467,7 @@ private slots:
       wsy = line.point(1).y().numerator() * line.point(1).x().denominator(); 
       wsh  = line.point(1).x().denominator() 
              * line.point(1).y().denominator(); 
-      Point p2(wsx, wsy, wsh);
+      Point_2 p2(wsx, wsy, wsh);
 
       Nef_polyhedron Nt(Line(p1, p2), Nef_polyhedron::INCLUDED);
       Nef_visible = Nt;

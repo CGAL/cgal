@@ -1,5 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+17 May 2004 Menelaos Karavelas
+- replaced Point by Point_2 in the demo in order to resolve clash with
+  the Mac version of Qt
+
 3 April 2004 Sylvain Pion
 - Remove debug options from testsuite makefile to please PGCC.
 
