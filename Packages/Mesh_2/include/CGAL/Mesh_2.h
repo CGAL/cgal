@@ -229,8 +229,40 @@ public:
 private: void propagate_marks(Face_handle, bool);
 public:
   // It is an iterator of points
-  template <class It> void init(It begin, It end);
-  template <class It> void mark_facets(It begin, It end);
+  template <class It> void init(It begin, It end)
+    {
+      cluster_map.clear();
+      c_edge_queue.clear();
+      Bad_faces.clear();
+      
+      mark_facets(begin, end);
+      
+      create_clusters();
+      fill_edge_queue();
+      fill_facette_map();
+    }
+
+  template <class It> void mark_facets(It begin, It end)
+    {
+      if(begin!=end)
+	{
+	  for(All_faces_iterator it=all_faces_begin();
+	      it!=all_faces_end();
+	      ++it)
+	    it->set_marked(false);
+	  
+	  for(It it=begin; it!=end; ++it)
+	    {
+	      std::queue<Face_handle> face_queue;
+	      Face_handle fh=locate(*it);
+	      if(fh!=NULL)
+		propagate_marks(fh, true);
+	    }
+	}
+      else
+	mark_convex_hull();
+      propagate_marks(infinite_face(), false);
+    };
 
   void process_one_edge();
   void process_one_face();
@@ -1059,23 +1091,6 @@ init()
 }
 
 template <class Tr>
-template <class It>
-inline
-void Mesh_2<Tr>::
-init(It begin, It end)
-{
-  cluster_map.clear();
-  c_edge_queue.clear();
-  Bad_faces.clear();
-  
-  mark_facets(begin, end);
-
-  create_clusters();
-  fill_edge_queue();
-  fill_facette_map();
-}
-
-template <class Tr>
 inline
 void Mesh_2<Tr>::
 process_one_edge()
@@ -1151,31 +1166,6 @@ propagate_marks(const Face_handle fh, bool mark)
 	}
     }
 };
-
-template <class Tr>
-template <class It>
-void Mesh_2<Tr>::
-mark_facets(It begin, It end)
-{
-  if(begin!=end)
-    {
-      for(All_faces_iterator it=all_faces_begin();
-	  it!=all_faces_end();
-	  ++it)
-	it->set_marked(false);
-      
-      for(It it=begin; it!=end; ++it)
-	{
-	  std::queue<Face_handle> face_queue;
-	  Face_handle fh=locate(*it);
-	  if(fh!=NULL)
-	    propagate_marks(fh, true);
-	}
-    }
-  else
-    mark_convex_hull();
-  propagate_marks(infinite_face(), false);
-}
 
 template <class Tr>
 void Mesh_2<Tr>::
