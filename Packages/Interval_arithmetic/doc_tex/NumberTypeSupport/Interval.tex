@@ -82,8 +82,8 @@ middle of the interval, as a double approximation of the interval.}
 \ccMethod{bool is_point();} {returns whether both bounds are equal.}
 \ccMethod{bool is_same(Interval_nt J);} {returns whether both intervals have
 the same bounds.}
-\ccMethod{bool overlap(Interval_nt J);} {returns whether both intervals have a
-non empty intersection.}
+\ccMethod{bool do_overlap(Interval_nt J);} {returns whether both intervals
+have a non empty intersection.}
 
 The two following operators can be used for interval analysis, they are not
 directly useful for \ccc{Interval_nt} as a number type.

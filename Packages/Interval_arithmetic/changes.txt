@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.54 on ?? August 2000
+- Renamed Interval_base::overlap() to do_overlap().
+
 Version 4.53 on 20 August 2000
 - Make the adaptative static filters kind of work again.
 - CGAL:: qualified min() and max() in the test-suite for VC++ and MipsPro.

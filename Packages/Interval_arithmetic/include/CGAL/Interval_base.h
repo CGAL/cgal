@@ -27,7 +27,7 @@
 // by the number types Interval_nt<>.
 
 #include <CGAL/basic.h>
-#include <CGAL/Interval_arithmetic/_FPU.h>
+#include <CGAL/Interval_arithmetic/_FPU.h>	// For CGAL_IA_STOP_CPROP.
 #include <utility>				// Relational operators.
 
 CGAL_BEGIN_NAMESPACE
@@ -102,7 +102,7 @@ struct Interval_base
     return _inf == d._inf && _sup == d._sup;
   }
 
-  bool overlap (const IA & d) const
+  bool do_overlap (const IA & d) const
   {
     return !(d._inf > _sup || d._sup < _inf);
   }
