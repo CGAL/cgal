@@ -95,6 +95,19 @@ unsigned Static_Filtered_side_of_bounded_sphereC3_15::number_of_updates = 0;
 
 unsigned Static_Filtered_side_of_bounded_sphereC3_15::number_of_failures = 0;
 
+double Static_Filtered_side_of_bounded_sphereC3_9::_epsilon_0;
+double Static_Filtered_side_of_bounded_sphereC3_9::_bound = -1.0;
+
+unsigned Static_Filtered_side_of_bounded_sphereC3_9::number_of_updates = 0;
+
+unsigned Static_Filtered_side_of_bounded_sphereC3_9::number_of_failures = 0;
+
+double Static_Filtered_side_of_bounded_sphereC3_12::_bound = -1.0;
+
+unsigned Static_Filtered_side_of_bounded_sphereC3_12::number_of_updates = 0;
+
+unsigned Static_Filtered_side_of_bounded_sphereC3_12::number_of_failures = 0;
+
 double Static_Filtered_cmp_dist_to_pointC3_9::_epsilon_0;
 double Static_Filtered_cmp_dist_to_pointC3_9::_bound = -1.0;
 

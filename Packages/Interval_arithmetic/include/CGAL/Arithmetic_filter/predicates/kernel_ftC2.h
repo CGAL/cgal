@@ -2630,8 +2630,8 @@ struct Static_Filtered_orientationC2_6
   {
     typedef Static_filter_error FT;
   
-    return Orientation (Static_Filtered_sign_of_determinant2x2_4::update_epsilon(px-rx, py-ry,
-                                               qx-rx, qy-ry,
+    return Orientation (Static_Filtered_sign_of_determinant2x2_4::update_epsilon(qx-px, qy-py,
+                                               rx-px, ry-py,
   		epsilon_0));
   }
 
@@ -2657,8 +2657,8 @@ struct Static_Filtered_orientationC2_6
   {
     typedef Restricted_double FT;
   
-    return Orientation (Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(px-rx, py-ry,
-                                               qx-rx, qy-ry,
+    return Orientation (Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(qx-px, qy-py,
+                                               rx-px, ry-py,
   		epsilon_0));
   }
 };
@@ -2856,19 +2856,19 @@ struct Static_Filtered_side_of_oriented_circleC2_8
     
     
     
-    FT ptx = px-tx;
-    FT pty = py-ty;
-    FT qtx = qx-tx;
-    FT qty = qy-ty;
-    FT rtx = rx-tx;
-    FT rty = ry-ty;
+    FT qpx = qx-px;
+    FT qpy = qy-py;
+    FT rpx = rx-px;
+    FT rpy = ry-py;
+    FT tpx = tx-px;
+    FT tpy = ty-py;
   
   
   
   
-    return Oriented_side( Static_Filtered_sign_of_determinant2x2_4::update_epsilon(
-                               ptx*qty - pty*qtx, qtx*(qx-px) + qty*(qy-py),
-                               ptx*rty - pty*rtx, rtx*(rx-px) + rty*(ry-py),
+    return Oriented_side(Static_Filtered_sign_of_determinant2x2_4::update_epsilon(
+                               qpx*tpy - qpy*tpx, tpx*(tx-qx) + tpy*(ty-qy),
+                               qpx*rpy - qpy*rpx, rpx*(rx-qx) + rpy*(ry-qy),
   		epsilon_0));
   }
 
@@ -2902,19 +2902,19 @@ struct Static_Filtered_side_of_oriented_circleC2_8
     
     
     
-    FT ptx = px-tx;
-    FT pty = py-ty;
-    FT qtx = qx-tx;
-    FT qty = qy-ty;
-    FT rtx = rx-tx;
-    FT rty = ry-ty;
+    FT qpx = qx-px;
+    FT qpy = qy-py;
+    FT rpx = rx-px;
+    FT rpy = ry-py;
+    FT tpx = tx-px;
+    FT tpy = ty-py;
   
   
   
   
-    return Oriented_side( Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(
-                               ptx*qty - pty*qtx, qtx*(qx-px) + qty*(qy-py),
-                               ptx*rty - pty*rtx, rtx*(rx-px) + rty*(ry-py),
+    return Oriented_side(Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(
+                               qpx*tpy - qpy*tpx, tpx*(tx-qx) + tpy*(ty-qy),
+                               qpx*rpy - qpy*rpx, rpx*(rx-qx) + rpy*(ry-qy),
   		epsilon_0));
   }
 };
@@ -3125,9 +3125,6 @@ struct Static_Filtered_side_of_bounded_circleC2_8
   {
     typedef Static_filter_error FT;
   
-    
-    
-    
     return Bounded_side( Static_Filtered_side_of_oriented_circleC2_8::update_epsilon(px,py,qx,qy,rx,ry,tx,ty,
   		epsilon_0)
                                    * Static_Filtered_orientationC2_6::update_epsilon(px,py,qx,qy,rx,ry,
@@ -3159,9 +3156,6 @@ struct Static_Filtered_side_of_bounded_circleC2_8
   {
     typedef Restricted_double FT;
   
-    
-    
-    
     return Bounded_side( Static_Filtered_side_of_oriented_circleC2_8::epsilon_variant(px,py,qx,qy,rx,ry,tx,ty,
   		epsilon_0)
                                    * Static_Filtered_orientationC2_6::epsilon_variant(px,py,qx,qy,rx,ry,
