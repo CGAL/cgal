@@ -29,21 +29,22 @@
 
 namespace CGAL {
 
-  template <class SearchTraits, class Sphere>
+  template <class SearchTraits>
   class Euclidean_distance_sphere_point {
 
     public:
 
     typedef typename SearchTraits::Point_d Point_d;
+    typedef typename SearchTraits::Sphere_d Sphere_d;
     typedef typename SearchTraits::FT    FT;
-    typedef Sphere Query_item;    
+    typedef Sphere_d Query_item;    
     public:
 
     	// default constructor
     	Euclidean_distance_sphere_point() {}
 
 
-	inline FT transformed_distance(const Sphere& q, const Point_d& p) const {
+	inline FT transformed_distance(const Sphere_d& q, const Point_d& p) const {
                 Point_d c=q.center();
 		FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
@@ -58,7 +59,7 @@ namespace CGAL {
 	}
 
 
-	inline FT min_distance_to_rectangle(const Sphere& q,
+	inline FT min_distance_to_rectangle(const Sphere_d& q,
 					     const Kd_tree_rectangle<SearchTraits>& r) const {
                 Point_d c=q.center();
 		FT distance = FT(0);
@@ -79,7 +80,7 @@ namespace CGAL {
 		return distance;
 	}
 
-	inline FT max_distance_to_rectangle(const Sphere& q,
+	inline FT max_distance_to_rectangle(const Sphere_d& q,
 					      const Kd_tree_rectangle<SearchTraits>& r) const {
                 Point_d c=q.center();
 		FT distance=FT(0);

@@ -29,14 +29,15 @@
 
 namespace CGAL {
 
-  template <class SearchTraits, class QueryItem>
+  template <class SearchTraits>
   class Manhattan_distance_iso_box_point {
 
     public:
 
     typedef typename SearchTraits::Point_d Point_d;
+    typedef typename SearchTraits::Iso_box_d Iso_box_d;
     typedef typename SearchTraits::FT    FT;
-    typedef QueryItem                  Query_item;
+    typedef Iso_box_d                  Query_item;
 
     
     Manhattan_distance_iso_box_point() {}

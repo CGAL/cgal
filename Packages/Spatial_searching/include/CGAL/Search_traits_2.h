@@ -34,8 +34,11 @@ namespace CGAL {
 
   public:
     typedef typename K::Point_2 Point_d;
+    typedef typename K::Iso_rectangle_2 Iso_box_d;
     typedef typename K::Cartesian_const_iterator_2 Cartesian_const_iterator_d;
     typedef typename K::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator_d;
+
+    typedef typename K::Construct_iso_rectangle_2 Construct_iso_box_d;
     typedef typename K::FT FT;
   };
 
