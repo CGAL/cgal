@@ -4,9 +4,9 @@
 
 \ccParDims
 
-%\chapter{Timers}
-%\label{chapterTimer}
-%\ccChapterAuthor{Lutz Kettner, Matthias B\"asken}
+\chapter{Benchmark support tools}
+\label{chapterTimer}
+\ccChapterAuthor{Lutz Kettner, Matthias B\"asken, Sylvain Pion}
 
 \section{Timers}
 
@@ -22,8 +22,15 @@ time elapsed since its creation or last reset. It counts only the time
 where it is in the running state. The time information is given in seconds.
 The timer counts also the number of intervals it was running, i.e. it 
 counts the number of calls of the \ccc{start()} member function since the 
-last reset. If the reset occures while the timer is running it counts as the
+last reset. If the reset occurs while the timer is running it counts as the
 first interval.
+
+\section{Memory size}
+
+\cgal\ provides access to the memory size used by the program.  Both the
+virtual memory size and the resident size are available (the resident size
+does not account for swapped out memory nor for the memory which is not yet
+paged-in).
 
 
 \ccParDims
