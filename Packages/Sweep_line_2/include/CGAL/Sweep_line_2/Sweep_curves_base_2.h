@@ -33,21 +33,9 @@
 #include <map>
 #include <set>
 
-#ifndef CGAL_IN_PLACE_LIST_H
 #include <CGAL/In_place_list.h>
-#endif
-
-//#ifndef CGAL_HANDLE_H
-//#include <CGAL/Handle.h>
-//#endif
-
-#ifndef CGAL_HANDLE_FOR_H
 #include <CGAL/Handle_for.h>
-#endif
-
-#ifndef CGAL_ASSERTIONS_H
 #include <CGAL/assertions.h>
-#endif
 
 #ifdef CGAL_SWEEP_LINE_DEBUG
 #define CGAL_SL_DEBUG(x) x
@@ -97,7 +85,8 @@ protected:
     typedef typename Traits::Point              Point;
     typedef std::vector<Point_plus>             Points_container;
 
-    Curve_node_rep(const X_curve_plus& cv, const Point& p, Traits* traits_) : 
+    Curve_node_rep(const X_curve_plus& cv, const Point& p, 
+		   Traits* traits_) : 
       cv_(cv), traits(traits_) {
       points.push_back( Point_plus(p) );
     }
@@ -119,7 +108,6 @@ protected:
       if (&cv_ == &rep.cv_ && &points == &(rep.points))
         return true;
 
-      //return cv_ == rep.cv_ && points == rep.points;
       return false;
     }
 
@@ -162,39 +150,41 @@ protected:
   class Curve_node : public Handle_for<Curve_node_rep> {
     typedef Handle_for<Curve_node_rep>           Handle_for_Curve_node_rep;
   public:
-    typedef  Point_plus_                                     Point_plus;
-    typedef  X_curve_plus_                                   X_curve_plus;
-    typedef  SweepLineTraits_2                               Traits;
-    typedef  typename Traits::X_curve                        X_curve; 
-    typedef  typename Traits::Point                          Point;
+    typedef  Point_plus_                         Point_plus;
+    typedef  X_curve_plus_                       X_curve_plus;
+    typedef  SweepLineTraits_2                   Traits;
+    typedef  typename Traits::X_curve            X_curve; 
+    typedef  typename Traits::Point              Point;
     
-    typedef typename Curve_node_rep::Points_container    Points_container;
-    typedef typename Points_container::iterator          Points_iterator;
-    typedef typename Points_container::const_iterator    Points_const_iterator;
+    typedef typename Curve_node_rep::Points_container   Points_container;
+    typedef typename Points_container::iterator         Points_iterator;
+    typedef typename Points_container::const_iterator  
+	    					Points_const_iterator;
 
     Curve_node(Traits *traits_) : 
       Handle_for_Curve_node_rep(traits_) {
 #ifdef CGAL_MAKE_PROFILING
-      std::cout<<"allocating handle for DEFAULT Curve_node_rep"<<endl;
+      std::cout<<"alloc handle for DEFAULT Curve_node_rep"<<endl;
 #endif
     }
     
     Curve_node(const X_curve_plus& cv, Traits *traits_) : 
       Handle_for_Curve_node_rep(Curve_node_rep(cv, traits_)) {
 #ifdef CGAL_MAKE_PROFILING
-      std::cout<<"allocating handle for Curve_node_rep(cv)" << cv << endl;
+      std::cout<<"alloc handle for Curve_node_rep(cv)" << cv << endl;
 #endif
     }
     
     Curve_node(const X_curve_plus& cv, const Point& p, Traits *traits_) : 
       Handle_for_Curve_node_rep(Curve_node_rep(cv,p, traits_)) {
 #ifdef CGAL_MAKE_PROFILING
-      std::cout << "allocating handle for Curve_node_rep(cv,p)" << cv << " "
+      std::cout << "alloc handle for Curve_node_rep(cv,p)" << cv << " "
                 << p << endl;
 #endif
     }
 
-    Curve_node(const X_curve_plus& cv, const Point_plus& p, Traits *traits_) : 
+    Curve_node(const X_curve_plus& cv, const Point_plus& p, 
+	       Traits *traits_) : 
       Handle_for_Curve_node_rep(Curve_node_rep(cv,p,traits_)) {
 #ifdef CGAL_MAKE_PROFILING
       std::cout<<"allocating handle for Curve_node_rep(cv,p_plus)" 
@@ -277,18 +267,19 @@ protected:
     compare_at_x and compare_at_x_right of the traits.
   */
   class Intersection_point_node {
-    typedef Curve_node                                   Curve_node_;
+    typedef Curve_node                            Curve_node_;
   public:
-    typedef  SweepLineTraits_2                            Traits;
-    typedef  Point_plus_                                  Point_plus;
-    typedef  X_curve_plus_                                X_curve_plus;
-    typedef  typename Traits::X_curve                     X_curve; 
-    typedef  typename Traits::Point                       Point;
-    typedef  Intersection_point_node                      Self;
-    typedef  std::vector<Curve_node_>                     Curve_node_container;
-    typedef  typename Curve_node_container::iterator      Curve_node_iterator;
+    typedef  SweepLineTraits_2                    Traits;
+    typedef  Point_plus_                          Point_plus;
+    typedef  X_curve_plus_                        X_curve_plus;
+    typedef  typename Traits::X_curve             X_curve; 
+    typedef  typename Traits::Point               Point;
+    typedef  Intersection_point_node              Self;
+    typedef  std::vector<Curve_node_>             Curve_node_container;
+    typedef  typename Curve_node_container::iterator      
+	                                          Curve_node_iterator;
     typedef  typename Curve_node_container::const_iterator  
-                                                    Curve_node_const_iterator;
+                                             Curve_node_const_iterator;
 
     Intersection_point_node(Traits *traits_) : traits(traits_) {}
     
@@ -355,7 +346,6 @@ protected:
   protected:
     const Point& rightmost(const Point &p1, const Point &p2) const
     { 
-      //Comparison_result rx = CGAL::compare_lexicographically_xy(p1, p2);
       Comparison_result rx = traits->compare_x(p1,p2);
       if (rx == SMALLER)
         return p2;
@@ -389,7 +379,8 @@ protected:
       X_curve rcv2 = traits->curve_reflect_in_x_and_y( cv2);
       
       Point rp1, rp2;
-      bool result = traits->nearest_intersection_to_right(rcv1, rcv2, rpt, 
+      bool result = traits->nearest_intersection_to_right(rcv1, rcv2, 
+		      		                          rpt, 
                                                           rp1, rp2);
     
       p1 = traits->point_reflect_in_x_and_y( rp1);
@@ -445,8 +436,6 @@ protected:
       }
       
       return false;  // get here only if p1 == p2.
-      
-      //return CGAL::compare_lexicographically_xy(p1,p2) == CGAL::SMALLER ;
     }
   private:
     Traits *traits;
@@ -457,10 +446,10 @@ protected:
   template <class _Curve_node>
   class less_curve_xy {
   public:
-    typedef SweepLineTraits_2                               Traits;
-    typedef typename Traits::X_curve                        X_curve; 
-    typedef typename Traits::Point                          Point;
-    typedef typename Traits::Curve_point_status             Curve_point_status;
+    typedef SweepLineTraits_2                       Traits;
+    typedef typename Traits::X_curve                X_curve; 
+    typedef typename Traits::Point                  Point;
+    typedef typename Traits::Curve_point_status     Curve_point_status;
     
     less_curve_xy(Traits *traits_) : traits(traits_) {}
     
@@ -478,48 +467,52 @@ protected:
   };
 
 public:
-  typedef CurveInputIterator                            Curve_iterator;
-  typedef SweepLineTraits_2                             Traits;
-  typedef Point_plus_                                   Point_plus;
-  typedef typename  Traits::Point                       Point;
+  typedef CurveInputIterator                    Curve_iterator;
+  typedef SweepLineTraits_2                     Traits;
+  typedef Point_plus_                           Point_plus;
+  typedef typename  Traits::Point               Point;
   
-  typedef X_curve_plus_                                  X_curve_plus;
-  typedef typename Curve_node::Points_iterator           Points_iterator;  
-  typedef typename Curve_node::Points_const_iterator     Points_const_iterator;
+  typedef X_curve_plus_                         X_curve_plus;
+  typedef typename Curve_node::Points_iterator  Points_iterator;  
+  typedef typename Curve_node::Points_const_iterator     
+	                                        Points_const_iterator;
   typedef typename Intersection_point_node::Curve_node_iterator     
-                                                          Curve_node_iterator;
-  typedef typename Intersection_point_node::Curve_node_const_iterator      
-                                                    Curve_node_const_iterator;
+                                                Curve_node_iterator;
+  typedef typename Intersection_point_node::Curve_node_const_iterator  
+                                             Curve_node_const_iterator;
 
 protected:
-  typedef  std::pair<const Point,Point_plus>          pair_Point_Point_plus;
+  typedef  std::pair<const Point,Point_plus>    pair_Point_Point_plus;
   typedef  std::pair<const Point,Intersection_point_node>  
-                                          pair_Point_Intersection_point_node; 
+                                   pair_Point_Intersection_point_node; 
   typedef  std::pair<const Curve_node,X_curve_plus>   
                                           pair_Curve_node_X_curve_plus;
 
-  typedef less_point_xy<Point>                              Less_xy;
-  typedef less_curve_xy<Curve_node>                         Less_yx;
+  typedef less_point_xy<Point>                      Less_xy;
+  typedef less_curve_xy<Curve_node>                 Less_yx;
   
 public:
   typedef typename std::map<Point, Point_plus, less_point_xy<Point> >
-                                                    Vertices_points_plus;
+                                                  Vertices_points_plus;
 
-  typedef typename std::map<Point,Intersection_point_node,less_point_xy<Point> >
-                                                             Event_queue;
+  typedef typename 
+	   std::map<Point,Intersection_point_node,less_point_xy<Point> >
+                                                           Event_queue;
 
-  typedef typename std::set<Curve_node, less_curve_xy<Curve_node> > Status_line; 
+  typedef typename std::set<Curve_node, less_curve_xy<Curve_node> > 
+	                                                   Status_line; 
   
-  typedef std::list<X_curve>                        X_curve_list;
-  typedef typename X_curve_list::iterator           X_curve_list_iterator;
+  typedef std::list<X_curve>                    X_curve_list;
+  typedef typename X_curve_list::iterator       X_curve_list_iterator;
 
-  typedef typename Event_queue::value_type          Event_queue_value_type;
-  typedef typename Status_line::value_type          Status_line_value_type;
+  typedef typename Event_queue::value_type      Event_queue_value_type;
+  typedef typename Status_line::value_type      Status_line_value_type;
 
-  typedef typename Event_queue::iterator            Event_queue_iterator;
-  typedef typename Status_line::iterator            Status_line_iterator;
+  typedef typename Event_queue::iterator        Event_queue_iterator;
+  typedef typename Status_line::iterator        Status_line_iterator;
   
-  typedef typename std::list<Curve_node>::iterator  list_Curve_node_iterator;
+  typedef typename std::list<Curve_node>::iterator  
+	                                       list_Curve_node_iterator;
   
   Sweep_curves_base_2() : 
     traits(new Traits), use_delete_traits(true), intersection_exist_(false) {}
@@ -543,12 +536,6 @@ protected:
                           const Point& event_point, 
                           Intersection_point_node& point_node)
   {
-#ifdef CGAL_MAKE_PROFILING
-    cout<<"In handle_one_event"<<endl;
-#endif
-
-    //int check_status_neighbors_t = 0;  // for time measuting.
-    
     bool event_terminated = true;
     bool point_node_first_on_status = false, point_node_last_on_status = false;
     
@@ -585,9 +572,8 @@ protected:
       for (cv_iter = point_node.curves_begin() ; 
            cv_iter != point_node.curves_end(); ++cv_iter)
         if (*hint == *cv_iter){
-          //    hint_in_point_node = true;
-        break;
-      }
+	  break;
+	}
     
       if (cv_iter != point_node.curves_end())
         ++hint;
@@ -597,18 +583,8 @@ protected:
     
     Local_status_line_iterator local_status_hint = local_status.end();
     for (cv_iter = point_node.curves_begin(); 
-         cv_iter != point_node.curves_end(); ++cv_iter){
-      
-      CGAL_SL_DEBUG (
-        if (hint == status.end())
-          cout<<"hint is status.end()"<<endl;
-        else
-          cout<<"hint curve is"<<hint->get_curve()<<endl;
-      
-        cout<<"curve at event is "<<cv_iter->get_curve()<<std::endl;
-        print_points_on_curves(*cv_iter);
-      )
-
+         cv_iter != point_node.curves_end(); ++cv_iter)
+    {
       
       // trying to use general find in order to force it to use
       // operator == of Curve node. We only care here if *cv_iter is
@@ -619,21 +595,10 @@ protected:
                                                     status.end(), 
                                                     *cv_iter);
       
-      //bool found = false;
-      CGAL_SL_DEBUG (
-      if (curr_cv_node != status.end()){
-        cout<<"found curve "<<curr_cv_node->get_curve()<<std::endl;
-        cout<<"with right most point "<<
-          curr_cv_node->get_rightmost_point().point()<<std::endl;
-      }
-      )
-      
       // the event point is not the right point of the curve - 
       // insert curve to status if it's not already there.  
       if (curr_cv_node != status.end()){
-        //found = true;
         // remove cv_iter from status and reinsert it with the new point.
-        //cout<<"found curve on status, erasing it from status"<<std::endl;
         status.erase(curr_cv_node);
       }
       
@@ -645,32 +610,6 @@ protected:
       
       if (local_status_hint != local_status.end()){
           ++local_status_hint;
-
-      CGAL_SL_DEBUG (
-        // for debug!
-        less_curve_xy<Curve_node>  pred(traits);
-        if (local_status_hint != local_status.end()) {
-          if (!pred( *cv_iter, *local_status_hint))
-            cout<< cv_iter->get_curve()<<" "<< 
-              local_status_hint->get_curve()<< "  "<< 
-              cv_iter->get_rightmost_point().point() <<
-              " are in wrong order on local sweep "<<endl;
-          else
-            cout << "local hint is helping" <<endl;
-        }
-        else {
-          if ( !pred( *(--local_status_hint), *cv_iter) )
-            cout<< cv_iter->get_curve()<<" "<< 
-              local_status_hint->get_curve()<< "  "<< 
-              cv_iter->get_rightmost_point().point() <<
-              " are in wrong order on local sweep "<<endl;
-          else 
-            cout<<
-              "local status hint is local_status.end() and is helping"<<endl;
-          ++local_status_hint;
-          // end debug.
-        }
-	)
       }
       
       if (Compare_lexicographically_xy(
@@ -685,12 +624,6 @@ protected:
       }
     }
     
-    CGAL_SL_DEBUG (
-      cout << "inserting the new event point to curve node,"; 
-      cout << "and then to the status line" << std::endl;
-    )
-
- 
     if (local_status.empty()) {
       if (status.empty())
         return event_terminated;
@@ -708,18 +641,7 @@ protected:
       
       return event_terminated;
     }
-
-    CGAL_SL_DEBUG (
-      cout<<local_status.begin()->get_curve()<<endl;
-      if (hint == status.end())
-        cout<<"hint is status.end()"<<endl;
-      else{ 
-        cout<<"hint->get_curve()=";
-        cout<<hint->get_curve()<<endl;
-      }
-      )
-
-
+    
     Status_line_iterator new_cv_node_begin = status.insert(
                                                hint, 
                                                *(local_status.begin()) );
@@ -732,23 +654,6 @@ protected:
       
        if (hint != status.end()){
          ++hint;
-         
-    CGAL_SL_DEBUG (
-         // for debug!
-         less_curve_xy<Curve_node>  pred(traits);
-         if (hint != status.end()) {
-           if (!pred( *local_status_iter, *hint))
-             cout<< local_status_iter->get_curve() << " " << 
-               hint->get_curve() << " "<<
-               local_status_iter->get_rightmost_point().point() <<
-               " are in wrong order on local sweep "<<endl;
-           else 
-             cout<<"hint is helping" <<endl;
-         }
-         else
-           cout << "hint is status.end() " << endl;
-         // end debug.
-	 )
        }
        hint = status.insert(hint, *local_status_iter);
     }
@@ -761,7 +666,6 @@ protected:
 
       if (check_status_neighbors_intersections(event_queue, status, 
                                                new_cv_node_it, event_point))
-        //if (xp == event_point)
         // Edge case of tangency in the event point, 
         // if it is this event will be taked cared again.
         event_terminated = false;
@@ -777,7 +681,6 @@ protected:
                                                    status, 
                                                    new_cv_node_it, 
                                                    event_point))
-            //if (xp ==  event_point)  
             // Edge case of tangency in the event point, if it is - 
             // this event will be taked cared again.
             event_terminated = false;
@@ -785,10 +688,6 @@ protected:
         }
       }
     }
-    
-#ifdef CGAL_MAKE_PROFILING
-    cout<<"Finish handle_one_event"<<endl;
-#endif
     
     return event_terminated;
   }
@@ -875,16 +774,11 @@ protected:
                 ++curr_cv_node;
                 first = false;
               }
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-              cout << "the event point is the right point of the curve - ";
-              cout << "the curve leaves the status" << std::endl;
-#endif
               status.erase(curr_cv_node);
               
               CGAL_expensive_postcondition_code(is_valid(status));
               
               if (!first){
-                //cout<<"checking neighbors after deletion\n";
                 if (check_status_neighbors_intersections(event_queue, 
                                                          status, 
                                                          prev_cv_node, 
@@ -903,7 +797,6 @@ protected:
         }
       }
       
-      //curr_cv_node = status.find(*cv_iter);
       curr_cv_node = std::find(status.begin(), status.end(), *cv_iter);
       if (curr_cv_node != status.end()){
         std::list<Curve_node>  overlapping_curves;
@@ -967,10 +860,6 @@ protected:
               ++curr_cv_node;
               first = false;
             }
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-            cout << "the event point is the right point of the curve - ";
-            cout << "the curve leaves the status" << std::endl;
-#endif
             status.erase(curr_cv_node);
             
             CGAL_expensive_postcondition_code(is_valid(status));
@@ -1005,13 +894,6 @@ protected:
                                 const X_curve& cv2, 
                                 const Point& point)
   { 
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-    if (traits->curve_get_point_status(cv1, point) == Traits::ON_CURVE)
-      std::cout<<point<<" is on "<<cv1<<std::endl;
-    if (traits->curve_get_point_status(cv2, point) == Traits::ON_CURVE)
-      std::cout<<point<<" is on "<<cv2<<std::endl;
-#endif
-
     return (traits->curve_get_point_status(cv1, point) == Traits::ON_CURVE && 
             traits->curve_get_point_status(cv2, point) == Traits::ON_CURVE && 
             (point_is_on_curve_interior(point, cv1) || 
@@ -1024,18 +906,6 @@ protected:
                                             Status_line_iterator lower_neighbor
                                             ,const Point &event_point)
   { 
-#ifdef CGAL_MAKE_PROFILING
-    cout<<"In check_status_neighbors_intersections" <<endl;
-#endif
-
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-    cout<<"Printing status line "<<std::endl;
-    print_status(status);   
-#endif
-
-    //CGAL::Timer check_status_neighbors_t;
-    //check_status_neighbors_t.start(); 
-
     const Curve_node& cv1 = *lower_neighbor;
     
     Status_line_iterator next_neighbor = ++lower_neighbor;
@@ -1046,58 +916,19 @@ protected:
     
     const Curve_node&  cv2 = *next_neighbor;
     
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-    cout<<"cv1 and cv2 are "<<cv1.get_curve()<<" "<<cv2.get_curve()<<std::endl;
-#endif
-
     // in each node - checking intersections between two 
     // adjacent curves and updating the event queue if needed.  
     const Point &xp1 = event_point;
     Point xp2, xp3;
     
-    //ref_point = event_point; //I added this to avoid calcuating
-    //points that are left to the event point. When dealing with
-    //overlapping this bug may apear.
-
     bool  curves_tangent = curves_tangent_at_point(cv1.get_curve(), 
                                                    cv2.get_curve(), 
                                                    event_point);
-  
     bool curves_intersect = 
       traits->nearest_intersection_to_right(cv1.get_curve(), cv2.get_curve(),
                                             event_point, xp2, xp3);
       
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-    cout<<"reference point on status, xp1, xp2 and xp3 before changing are "<<
-      event_point<<" "<<xp1<<" "<<xp2<<" "<<xp3<<std::endl;
-#endif
-    
-    if (curves_tangent || curves_intersect){  
-      
-      //   // first arrange the intersection points xp1, xp2, xp3 if on of the 
-      //        // conditoins (tangency or intersection) does not hold.
-      //        if (!curves_tangent){
-      //          xp1 = xp2;
-      //          xp2 = xp3;
-      //          }
-      
-      //          if (!curves_intersect)
-      //          xp2 = xp3 = xp1;
-      
-      //        //if (is_left(xp1, event_point)) // cout<<"interection
-      //        point " <<xp1<<" is left to event point
-      //        "<<point<<endl;
-      
-      // we choose the leftmost point because the intersection point may be 
-      // one of the points on lower_neighbor or next_neighbor, specially it 
-      // can be a tangent point, and the function 
-      // nearest_intersection_to_right may return false 
-      // (it's third parameter is the intersection point itself!).
-      
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-      cout<<"reference point on status, xp1, xp2 and xp3 are "<<
-        event_point<<" "<<xp1<<" "<<xp2<<" "<<xp3<<std::endl;
-#endif
+    if (curves_tangent || curves_intersect) {   
       
       // checking if the curves are already participate within the
       // intersection node, if at least one is not - we have a new
@@ -1105,15 +936,7 @@ protected:
       // function will return true.
      
       // handling overlapping.
-      if ( curves_intersect && (xp2 != xp3) 
-           //   && !( (xp3 == traits->curve_source(cv1.get_curve()) ||
-           //   xp3 == traits->curve_target(cv1.get_curve()) ) && (xp3
-           //   == traits->curve_source(cv2.get_curve()) || xp3 ==
-           //   traits->curve_target(cv2.get_curve()) ))
-           ){
-        
-        //status_iter->first.push_event_point(xp3);
-        //next_iter->first.push_event_point(xp3);
+      if ( curves_intersect && (xp2 != xp3)) {
         
         Event_queue_iterator  xp_event = event_queue.find(xp3);
         bool xp3_cv1_in_queue = false,  xp3_cv2_in_queue = false;
@@ -1129,22 +952,11 @@ protected:
           for ( Curve_node_iterator cv_iter = 
                   xp_event->second.curves_begin(); 
                 cv_iter != xp_event->second.curves_end(); cv_iter++){
-            if (cv_iter->get_curve() == cv1.get_curve())
-              // traits->curve_is_same(cv_iter->get_curve(), cv1.get_curve()) 
-              // && cv_iter->get_curve().id() == cv1.get_curve().id()) 
-              {
-                xp3_cv1_in_queue = true;
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-                std::cout<<cv1.get_curve()<<" was found "<<std::endl;
-#endif
-              }
+            if (cv_iter->get_curve() == cv1.get_curve()) {
+	      xp3_cv1_in_queue = true;
+	    }
             if (cv_iter->get_curve() ==  cv2.get_curve()) {
-              //traits->curve_is_same(cv_iter->get_curve(), cv2.get_curve()) 
-              // && cv_iter->get_curve().id() == cv2.get_curve().id()){
               xp3_cv2_in_queue = true;
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-              std::cout<<cv2.get_curve()<<" was found "<<std::endl;
-#endif
             }
           }
           
@@ -1163,53 +975,31 @@ protected:
                                                            Point_plus(xp3), 
                                                            traits));
         }
-        //  return (!xp1_cv1_in_queue || !xp1_cv2_in_queue);
       }
 
       // handling intersection.
       bool xp2_cv1_in_queue = false,  xp2_cv2_in_queue = false;
-      if ( curves_intersect  
-           //    && 
-           //           !( (xp2 == traits->curve_source(cv1.get_curve()) || 
-           //               xp2 == traits->curve_target(cv1.get_curve()) ) && 
-           //              (xp2 == traits->curve_source(cv2.get_curve()) || 
-           //              xp2 == traits->curve_target(cv2.get_curve()) )) 
-           ){
-        
-        //status_iter->first.push_event_point(xp2);
-        //next_iter->first.push_event_point(xp2);
-        
+      if ( curves_intersect )
+      {
         Event_queue_iterator  xp_event = event_queue.find(xp2);
-        //bool xp2_cv1_in_queue = false,  xp2_cv2_in_queue = false;
         if (xp_event == event_queue.end())
           xp_event = event_queue.insert(
-                                     Event_queue_value_type
-                                     (xp2, 
-                                      Intersection_point_node(cv1, 
-                                                              cv2, 
-                                                              xp2, 
-                                                              traits))).first;
-        else{
+	                 Event_queue_value_type(xp2, 
+					 Intersection_point_node(cv1, 
+								cv2, 
+								xp2, 
+								traits))).first;
+        else
+	{
           // have to check whether the event is a new event. (we might
           // calculated this point before).
           for ( Curve_node_iterator cv_iter = xp_event->second.curves_begin(); 
                 cv_iter != xp_event->second.curves_end(); cv_iter++){
-            if (cv_iter->get_curve() == cv1.get_curve()) 
-              // traits->curve_is_same(cv_iter->get_curve(), cv1.get_curve()) 
-              // && cv_iter->get_curve().id() == cv1.get_curve().id()) 
-              {
-                xp2_cv1_in_queue = true;
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-                std::cout<<cv1.get_curve()<<" was found "<<std::endl;
-#endif
-              }
+            if (cv_iter->get_curve() == cv1.get_curve()) {
+	      xp2_cv1_in_queue = true;
+	    }
             if (cv_iter->get_curve() ==  cv2.get_curve()) {
-              //traits->curve_is_same(cv_iter->get_curve(), cv2.get_curve()) 
-              // && cv_iter->get_curve().id() == cv2.get_curve().id()){
               xp2_cv2_in_queue = true;
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-              std::cout<<cv2.get_curve()<<" was found "<<std::endl;
-#endif
             }
           }
           
@@ -1227,25 +1017,13 @@ protected:
                                                            Point_plus(xp2), 
                                                            traits));
         }
-        //  return (!xp1_cv1_in_queue || !xp1_cv2_in_queue);
       }
       
       bool xp1_cv1_in_queue = false,  xp1_cv2_in_queue = false; 
       // if cv1 and cv2 have common edge point - we do not consider it 
       // as an intersection point. 
-      if ( curves_tangent 
-           //   && 
-           //     !( (xp1 == traits->curve_source(cv1.get_curve()) || 
-           //         xp1 == traits->curve_target(cv1.get_curve()) ) && 
-           //         (xp1 == traits->curve_source(cv2.get_curve()) || 
-           //          xp1 == traits->curve_target(cv2.get_curve()) ) )
-           ){
-        
-        //status_iter->first.push_event_point(xp1);
-        //next_iter->first.push_event_point(xp1);
-        
+      if ( curves_tangent ) {
         Event_queue_iterator  xp_event = event_queue.find(xp1);
-        //bool xp1_cv1_in_queue = false,  xp1_cv2_in_queue = false;
         if (xp_event == event_queue.end())
           xp_event=event_queue.insert(Event_queue_value_type(
                                        xp1, 
@@ -1258,22 +1036,11 @@ protected:
           // (we might calculated this point before).
           for ( Curve_node_iterator cv_iter = xp_event->second.curves_begin(); 
                 cv_iter != xp_event->second.curves_end(); ++cv_iter){
-            if (cv_iter->get_curve() == cv1.get_curve()) 
-              // traits->curve_is_same(cv_iter->get_curve(), cv1.get_curve()) 
-              // && cv_iter->get_curve().id() == cv1.get_curve().id()) 
-              {
-                xp1_cv1_in_queue = true;
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-                std::cout<<cv1.get_curve()<<" was found "<<std::endl;
-#endif
-              }
+            if (cv_iter->get_curve() == cv1.get_curve())  {
+	      xp1_cv1_in_queue = true;
+	    }
             if (cv_iter->get_curve() ==  cv2.get_curve()) {
-              //traits->curve_is_same(cv_iter->get_curve(), cv2.get_curve()) 
-              // && cv_iter->get_curve().id() == cv2.get_curve().id()){
               xp1_cv2_in_queue = true;
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-              std::cout<<cv2.get_curve()<<" was found "<<std::endl;
-#endif
             }
           }
           
@@ -1292,19 +1059,6 @@ protected:
                                                            traits));
         }
       }  
-    
-      //  if (curves_intersect && !curves_tangent)
-      //          point = xp2;
-      //          else if (curves_tangent)
-      //          point = xp1;
-      
-      //check_status_neighbors_t.stop(); std::cout<<"The time required
-      //to check status neighbors : "<<
-      //check_status_neighbors_t.time()<<std::endl;
-      
-#ifdef CGAL_MAKE_PROFILING
-      cout<<"Finish check_status_neighbors_intersections" <<endl;
-#endif
     
       if (curves_intersect || curves_tangent)
         intersection_exist_ = true;
@@ -1339,17 +1093,19 @@ protected:
       
       return EQUAL;  // otherwise - EQUAL
   }
-  
+
+#if defined SWEEP_DEBUG_MODE
   //------------------------------------------------------- debuging functions
   //-----------------------------------------
-  bool  is_valid(Status_line& status){
+  bool  is_valid(Status_line& status) {
+
     std::list<Curve_node> curve_nodes;
     std::list<X_curve>    subcurves;
     
     for (typename Status_line::const_iterator iter = status.begin(); 
          iter != status.end(); iter++)
       curve_nodes.push_back(*iter);
-
+    
     get_subcurves(curve_nodes, subcurves);
     
     return (!do_intersect_subcurves(subcurves));
@@ -1369,11 +1125,6 @@ protected:
         if (points_iter == cv_iter->points_begin())  
           continue;
         
-        //   ++points_iter;
-        //            if (points_iter == cv_iter->points_end())
-        //            break;
-        //            points_iter--;
-        
         if (*points_iter==rightmost(
                                  traits->curve_source(cv_iter->get_curve()),
                                  traits->curve_target(cv_iter->get_curve())))
@@ -1385,7 +1136,6 @@ protected:
         
         cv = right_cv;
       }
-      //subcurves.push_back(right_cv);
     }
   }
   
@@ -1418,10 +1168,6 @@ protected:
                   (xp1 == traits->curve_source(*scv_iter2) || 
                    xp1 == traits->curve_target(*scv_iter2) )) ){
 
-#ifdef  CGAL_SWEEP_LINE_DEBUG   
-            cout<<"The curves "<<*scv_iter1<<" "<<*scv_iter2<<
-              " are intersected in the point "<<xp1<<"\n";
-#endif
             return true;
           }
         }
@@ -1429,6 +1175,7 @@ protected:
     }
     return false;
   }
+#endif // SWEEP_DEBUG_MODE
     
   bool is_left(const Point &p1, const Point &p2) const 
   { return (Compare_lexicographically_xy(p1, p2) == SMALLER); }
@@ -1441,49 +1188,27 @@ protected:
 
   const Point& leftmost(const Point &p1, const Point &p2) const
   {
-    //Comparison_result rx = CGAL::compare_lexicographically_xy(p1, p2);
-    Comparison_result rx = traits->compare_x(p1,p2);
-    if (rx == SMALLER)
+    if ( is_left(p1, p2) )
       return p1;
-    else if (rx == LARGER)
-      return p2;
-    else{
-      Comparison_result ry = traits->compare_y(p1,p2);
-      if (ry == SMALLER)
-        return p1;
-      else if (ry == LARGER)
-        return p2;
-     return p1; // otherwise - does not compile at
-  // i686_CYGWINNT-5.0-1.3.1_bcc32.
-    }
+    return p2;
   }
     
   const Point& rightmost(const Point &p1, const Point &p2) const
   { 
-    //Comparison_result rx = CGAL::compare_lexicographically_xy(p1, p2);
-    Comparison_result rx = traits->compare_x(p1,p2);
-    if (rx == SMALLER)
-      return p2;
-    else if (rx == LARGER)
+    if ( is_right(p1, p2) )
       return p1;
-    else{
-      Comparison_result ry = traits->compare_y(p1,p2);
-      if (ry == SMALLER)
-        return p2;
-      else if (ry == LARGER)
-        return p1;
-      return p1; // otherwise - does not compile at
-  // i686_CYGWINNT-5.0-1.3.1_bcc32.
-    }
+    else
+      return p2;
   }
 
+#if defined SWEEP_DEBUG_MODE
   //-------------------------------- debuging functions.
   template <class Status>
   void  print_status(const Status &status);
   template <class _Curve_node>
   void  print_points_on_curves(const _Curve_node& cv);
+#endif
 
-  
   friend class less_point_xy;
   friend class less_curve_xy;
 
@@ -1546,10 +1271,6 @@ Intersection_point_node::merge(const Self& point_node)
                                           p1, p2);
             
             if (p1 == intersect_p.point()){
-#ifdef  CGAL_SWEEP_LINE_DEBUG
-              cout<<cv_iter->get_curve()<<" and "<<
-                point_node_cv_iter->get_curve()<<" overlap"<<endl;
-#endif
               merged_left_curves.push_back(*cv_iter);
               cv_iter++;
               merged_left_curves.push_back(*point_node_cv_iter);
@@ -1607,10 +1328,6 @@ Intersection_point_node::merge(const Self& point_node)
                                    intersect_p.point(), p1, p2);
             
             if (p2 == intersect_p.point()){
-#ifdef  CGAL_SWEEP_LINE_DEBUG
-              cout<<cv_iter->get_curve()<<" and "<<
-                point_node_cv_iter->get_curve()<<" overlap"<<endl;
-#endif
               merged_right_curves.push_back(*cv_iter);
               cv_iter++;
               merged_right_curves.push_back(*point_node_cv_iter);
@@ -1710,6 +1427,10 @@ Intersection_point_node::merge(const Self& point_node)
 }
 
 
+/*!
+  Returns true if the first curve is "less" than the second curve.
+  If both curves are "the same", it returns the one with a smaller id.
+*/
 template <class CurveInputIterator, class SweepLineTraits_2, 
           class Point_plus_, class X_curve_plus_>
 template <class _Curve_node>
@@ -1717,53 +1438,53 @@ bool
 Sweep_curves_base_2<CurveInputIterator, SweepLineTraits_2,
                     Point_plus_, X_curve_plus_>::
 less_curve_xy<_Curve_node>::operator()(const _Curve_node& cv1, 
-                            const _Curve_node& cv2) const
+				       const _Curve_node& cv2) const
 {
-      Comparison_result result;
-      
-      const Point& ref_point = rightmost(cv1.get_rightmost_point().point(),
-                                         cv2.get_rightmost_point().point());
-
-      // first check if one of the curves is vertical and the 
-      // other is not.  (the traits return EQUAL in this case).
-      if (traits->curve_is_vertical(cv2.get_curve()))
-        if (traits->curve_is_vertical(cv1.get_curve())) 
-          // equal - the curves are overlapping.
-          return ( cv1.get_curve().id() < cv2.get_curve().id() );
-      
-      if ( cv1.get_rightmost_point() != cv2.get_rightmost_point() ){     
-        result = curve_node_compare_at_x(cv1, cv2, ref_point);
-      } 
-      else{ // both curves enamting the same point.
-        if ( traits->curve_is_vertical(cv1.get_curve()) )  
-          // if one of the curves enamating from the point is vertical
-          // then it will have larger value on the status.
-          return false;
-        else if ( traits->curve_is_vertical(cv2.get_curve()) )
-          return true;
-          
-        result = traits->curve_compare_at_x_right (cv1.get_curve(), 
-                                                  cv2.get_curve(), 
-                                                  ref_point);
-        if (result == EQUAL)
-          result = traits->curve_compare_at_x (cv1.get_curve(), 
-                                              cv2.get_curve(), 
-                                              ref_point );
-      }
-      
-      if (result == SMALLER){
-        return true;
-      }
-      else if (result == LARGER){
-        return false;
-      }
-      
-      else { // equal - the curves are overlapping.
-        
-        return ( cv1.get_curve().id() < cv2.get_curve().id() );  
-        // comparing the pointers of the parent halfedges.
-      }
-    }
+  Comparison_result result;
+  
+  const Point& ref_point = rightmost(cv1.get_rightmost_point().point(),
+				     cv2.get_rightmost_point().point());
+  
+  // if both curves are vartical, we look at the ids
+  if (traits->curve_is_vertical(cv2.get_curve()) &&
+      (traits->curve_is_vertical(cv1.get_curve())))
+    return ( cv1.get_curve().id() < cv2.get_curve().id() );
+  
+  // if the rightmost points are different, we compare the curves relative
+  // to the righmost of the two
+  if ( cv1.get_rightmost_point() != cv2.get_rightmost_point() ) {
+    
+    result = curve_node_compare_at_x(cv1, cv2, ref_point);
+    
+  } else
+  { 
+    // both curves enamting the same point.
+    if ( traits->curve_is_vertical(cv1.get_curve()) )  
+      // if one of the curves enamating from the point is vertical
+      // then it will have larger value on the status.
+      return false;
+    else if ( traits->curve_is_vertical(cv2.get_curve()) )
+      return true;
+    
+    result = traits->curve_compare_at_x_right (cv1.get_curve(), 
+					       cv2.get_curve(), 
+					       ref_point);
+    if (result == EQUAL)
+      result = traits->curve_compare_at_x (cv1.get_curve(), 
+					   cv2.get_curve(), 
+					   ref_point);
+  }
+  
+  if (result == SMALLER){
+    return true;
+  }
+  else if (result == LARGER){
+    return false;
+  }
+  else { // equal - the curves are overlapping.
+    return ( cv1.get_curve().id() < cv2.get_curve().id() );  
+  }
+}
 
 template <class CurveInputIterator, class SweepLineTraits_2, 
           class Point_plus_, class X_curve_plus_>
@@ -1776,180 +1497,159 @@ curve_node_compare_at_x(const _Curve_node &cv1,
                         const _Curve_node &cv2, 
                         const Point &q) const
 {
-      Comparison_result result;
-      bool update_first_cv = false, update_second_cv = false;
-      X_curve_plus first_cv , second_cv;  // making an optimization.
+  Comparison_result result;
+  bool update_first_cv = false, update_second_cv = false;
+  X_curve_plus first_cv , second_cv;  // making an optimization.
         
-      // taking care the edge case of vertical segments: if one is
-      // vertical, then the order is set according the 'rightmost'
-      // point (so far) of the vertical curve comparing the point that
-      // a vertical line hits the other curve.
-      if ( traits->curve_is_vertical(cv1.get_curve()) ){
-        //cout<<"cv1 is vertical"<<endl;
+  // taking care the edge case of vertical segments: if one is
+  // vertical, then the order is set according the 'rightmost'
+  // point (so far) of the vertical curve comparing the point that
+  // a vertical line hits the other curve.
+  if ( traits->curve_is_vertical(cv1.get_curve()) ) {
         
-        // if the curve is vertical and the point is its target we
-        // refer that curve as a point.
-        if (traits->curve_target(cv1.get_curve()) == 
-            cv1.get_rightmost_point().point()){
-          Curve_point_status p_status = traits->curve_get_point_status(
-                                        cv2.get_curve(), 
-                                        traits->curve_target(cv1.get_curve()));
-          if (p_status == Traits::UNDER_CURVE || p_status == Traits::ON_CURVE) 
-            // if the target is on cv2 its means that it tangent to
-            // cv2 from below.
-            return  SMALLER;
-          else if (p_status == Traits::ABOVE_CURVE)
-            return  LARGER;
-          else 
-            return  EQUAL;
-        }
+    // if the curve is vertical and the point is its target we
+    // refer that curve as a point.
+    if (traits->curve_target(cv1.get_curve()) == 
+	cv1.get_rightmost_point().point()) {
+      Curve_point_status p_status = traits->curve_get_point_status(
+	cv2.get_curve(), 
+	traits->curve_target(cv1.get_curve()));
+      if (p_status == Traits::UNDER_CURVE || p_status == Traits::ON_CURVE) 
+	// if the target is on cv2 its means that it tangent to
+	// cv2 from below.
+	return  SMALLER;
+      else if (p_status == Traits::ABOVE_CURVE)
+	return  LARGER;
+      else 
+	return  EQUAL;
+    }
           
-        X_curve tmp_cv;
-        if (traits->curve_source(cv1.get_curve()) != q) {
-          traits->curve_split(cv1.get_curve(), tmp_cv, first_cv, q);
+    X_curve tmp_cv;
+    if (traits->curve_source(cv1.get_curve()) != q) {
+      traits->curve_split(cv1.get_curve(), tmp_cv, first_cv, q);
 
-          update_first_cv = true;
-        }
-      }
+      update_first_cv = true;
+    }
+  }
       
-      if ( traits->curve_is_vertical(cv2.get_curve()) ){
-        //cout<<"cv2 is vertical"<<endl;
+  if ( traits->curve_is_vertical(cv2.get_curve()) ){
         
-        // if the curve is vertical and the point is its target we
-        // refer that curve as a point.
-        if (traits->curve_target(cv2.get_curve()) == 
-            cv2.get_rightmost_point().point()){
-          Curve_point_status p_status = 
-            traits->curve_get_point_status(cv1.get_curve(), 
-                                        traits->curve_target(cv2.get_curve()));
-          // if the target is on cv1 its means that it tangent to cv1 
-          // from below.
-          if (p_status == Traits::UNDER_CURVE || p_status == Traits::ON_CURVE)
-            return  LARGER;
-          else if (p_status == Traits::ABOVE_CURVE)
-            return  SMALLER;
-          else  
-            return EQUAL;
-        }
+    // if the curve is vertical and the point is its target we
+    // refer that curve as a point.
+    if (traits->curve_target(cv2.get_curve()) == 
+	cv2.get_rightmost_point().point()){
+      Curve_point_status p_status = 
+	traits->curve_get_point_status(cv1.get_curve(), 
+				       traits->curve_target(cv2.get_curve()));
+      // if the target is on cv1 its means that it tangent to cv1 
+      // from below.
+      if (p_status == Traits::UNDER_CURVE || p_status == Traits::ON_CURVE)
+	return  LARGER;
+      else if (p_status == Traits::ABOVE_CURVE)
+	return  SMALLER;
+      else  
+	return EQUAL;
+    }
         
-        X_curve tmp_cv;
-        if (traits->curve_source(cv2.get_curve()) != q) {
-          traits->curve_split(cv2.get_curve(), tmp_cv, second_cv, q);
+    X_curve tmp_cv;
+    if (traits->curve_source(cv2.get_curve()) != q) {
+      traits->curve_split(cv2.get_curve(), tmp_cv, second_cv, q);
 
-          update_second_cv = true;
-        }
-      }    
+      update_second_cv = true;
+    }
+  }    
       
-#ifdef  CGAL_SWEEP_LINE_DEBUG
-      cout<<"first cv and second cv are "<<first_cv<<" "<<
-        second_cv<<std::endl; 
-#endif
+  // making this four cases in order to make an optimization for not 
+  // copying to first_cv and second_cv the original curves is not needed.
+  if (!update_first_cv && !update_second_cv) 
+    result = traits->curve_compare_at_x_right (
+      cv1.get_curve(), 
+      cv2.get_curve(),  
+      // making an optimization attemp:
+      rightmost(cv1.get_rightmost_point().point(), 
+		cv2.get_rightmost_point().point()) );
       
-      // making this four cases in order to make an optimization for not 
-      // copying to first_cv and second_cv the original curves is not needed.
-      if (!update_first_cv && !update_second_cv) 
-        result = traits->curve_compare_at_x_right (
-                               cv1.get_curve(), 
-                               cv2.get_curve(),  
-                               // making an optimization attemp:
-                               rightmost(cv1.get_rightmost_point().point(), 
-                                         cv2.get_rightmost_point().point()) );
+  else if (update_first_cv && !update_second_cv)
+    result = traits->curve_compare_at_x_right (
+      first_cv, 
+      cv2.get_curve(), 
+      rightmost(cv1.get_rightmost_point().point(), 
+		cv2.get_rightmost_point().point()));
+  else if (!update_first_cv && update_second_cv)
+    result = traits->curve_compare_at_x_right (
+      cv1.get_curve(),
+      second_cv, 
+      rightmost(cv1.get_rightmost_point().point(), 
+		cv2.get_rightmost_point().point()));
+  else               // update_first_cv && update_second_cv is true.
+    result = traits->curve_compare_at_x_right (
+      first_cv, 
+      second_cv, 
+      rightmost(cv1.get_rightmost_point().point(), 
+		cv2.get_rightmost_point().point()));
       
-      else if (update_first_cv && !update_second_cv)
-        result = traits->curve_compare_at_x_right (
-                                first_cv, 
-                                cv2.get_curve(), 
-                                rightmost(cv1.get_rightmost_point().point(), 
-                                          cv2.get_rightmost_point().point()));
-      else if (!update_first_cv && update_second_cv)
-        result = traits->curve_compare_at_x_right (
-                               cv1.get_curve(),
-                               second_cv, 
-                               rightmost(cv1.get_rightmost_point().point(), 
-                                         cv2.get_rightmost_point().point()));
-      else               // update_first_cv && update_second_cv is true.
-        result = traits->curve_compare_at_x_right (
-                               first_cv, 
-                               second_cv, 
-                               rightmost(cv1.get_rightmost_point().point(), 
-                                         cv2.get_rightmost_point().point()));
-      
-      if (result == EQUAL){
-        if (!update_first_cv && !update_second_cv)
-          result = traits->curve_compare_at_x (
-                                 cv1.get_curve(), 
-                                 cv2.get_curve(), 
-                                 rightmost(cv1.get_rightmost_point().point(), 
-                                           cv2.get_rightmost_point().point()));
-        else if (update_first_cv && !update_second_cv)
-          result = traits->curve_compare_at_x (
-                                 first_cv, 
-                                 cv2.get_curve(), 
-                                 rightmost(cv1.get_rightmost_point().point(), 
-                                           cv2.get_rightmost_point().point()));
-        else if (!update_first_cv && update_second_cv)
-          result = traits->curve_compare_at_x (
-                            cv1.get_curve(),second_cv, 
-                            rightmost(cv1.get_rightmost_point().point(), 
-                                      cv2.get_rightmost_point().point()));
-        else           // update_first_cv && update_second_cv is true.
-          result = traits->curve_compare_at_x (
-                             first_cv, 
-                             second_cv,
-                             rightmost(cv1.get_rightmost_point().point(), 
-                                       cv2.get_rightmost_point().point()));
-      }
+  if (result == EQUAL){
+    if (!update_first_cv && !update_second_cv)
+      result = traits->curve_compare_at_x (
+	cv1.get_curve(), 
+	cv2.get_curve(), 
+	rightmost(cv1.get_rightmost_point().point(), 
+		  cv2.get_rightmost_point().point()));
+    else if (update_first_cv && !update_second_cv)
+      result = traits->curve_compare_at_x (
+	first_cv, 
+	cv2.get_curve(), 
+	rightmost(cv1.get_rightmost_point().point(), 
+		  cv2.get_rightmost_point().point()));
+    else if (!update_first_cv && update_second_cv)
+      result = traits->curve_compare_at_x (
+	cv1.get_curve(),second_cv, 
+	rightmost(cv1.get_rightmost_point().point(), 
+		  cv2.get_rightmost_point().point()));
+    else           // update_first_cv && update_second_cv is true.
+      result = traits->curve_compare_at_x (
+	first_cv, 
+	second_cv,
+	rightmost(cv1.get_rightmost_point().point(), 
+		  cv2.get_rightmost_point().point()));
+  }
     
-#ifdef  CGAL_SWEEP_LINE_DEBUG
-      cout<<"first cv "<<first_cv<<" is ";
-      if (result == SMALLER)
-        cout<<" below ";
-      else if (result == LARGER)
-        cout<<" above ";
-      else
-        cout<<" equal ";
-      cout<<" second cv "<<second_cv<<std::endl;
       
-      cout<<"rightmost point of both is "<<
-        rightmost(cv1.get_rightmost_point().point(), 
-                  cv2.get_rightmost_point().point())<<std::endl;
-#endif    
-      
-      // if one of the curves is vertical - EQUAL means that the other curve 
-      // is between the source and target point of the vertical curve, and 
-      // for our definition - it means that the verical curve comes first.
-      if ( result == EQUAL && 
-           traits->curve_is_vertical(update_first_cv ? first_cv: 
-                                     cv1.get_curve()) ){
-        // if first_cv is vertical and its source tangent to second_cv - 
-        // it means that first_cv is above second_cv.
-        Curve_point_status p_status = traits->curve_get_point_status(
-                            update_second_cv? second_cv: cv2.get_curve(), 
-                            traits->curve_source(update_first_cv? 
-                                                 first_cv: cv1.get_curve()));
-        if (p_status == Traits::ON_CURVE)
-          result = LARGER;
-        else
-          result = SMALLER;
-      }
-      else if (result == EQUAL && 
-               traits->curve_is_vertical(update_second_cv? second_cv: 
-                                         cv2.get_curve())){
+  // if one of the curves is vertical - EQUAL means that the other curve 
+  // is between the source and target point of the vertical curve, and 
+  // for our definition - it means that the verical curve comes first.
+  if ( result == EQUAL && 
+       traits->curve_is_vertical(update_first_cv ? first_cv: 
+				 cv1.get_curve()) ){
+    // if first_cv is vertical and its source tangent to second_cv - 
+    // it means that first_cv is above second_cv.
+    Curve_point_status p_status = traits->curve_get_point_status(
+      update_second_cv? second_cv: cv2.get_curve(), 
+      traits->curve_source(update_first_cv? 
+			   first_cv: cv1.get_curve()));
+    if (p_status == Traits::ON_CURVE)
+      result = LARGER;
+    else
+      result = SMALLER;
+  }
+  else if (result == EQUAL && 
+	   traits->curve_is_vertical(update_second_cv? second_cv: 
+				     cv2.get_curve())){
 
-        // if second_cv is vertical and its source tangent to first_cv - 
-        // it means that second_cv is above first_cv.
-        Curve_point_status p_status = traits->curve_get_point_status(
-                             update_first_cv? first_cv: cv1.get_curve(), 
-                             traits->curve_source(update_second_cv? 
-                                                  second_cv: cv2.get_curve()));
-        if (p_status == Traits::ON_CURVE)
-          result = SMALLER;
-          
-          else
-          result = LARGER;
-          }
+    // if second_cv is vertical and its source tangent to first_cv - 
+    // it means that second_cv is above first_cv.
+    Curve_point_status p_status = traits->curve_get_point_status(
+      update_first_cv? first_cv: cv1.get_curve(), 
+      traits->curve_source(update_second_cv? 
+			   second_cv: cv2.get_curve()));
+    if (p_status == Traits::ON_CURVE)
+      result = SMALLER;
+	
+    else
+      result = LARGER;
+  }
       
-      return result;
+  return result;
 }
 
 
@@ -1980,6 +1680,7 @@ rightmost(const Point &p1, const Point &p2) const
     }
 
 
+#if defined SWEEP_DEBUG_MODE
 // ---- debug functions -----
 template <class CurveInputIterator, class SweepLineTraits_2, 
           class Point_plus_, class X_curve_plus_>
@@ -2019,6 +1720,7 @@ print_points_on_curves(const _Curve_node& cv)
     
     cout<<std::endl;
   }
+#endif // SWEEP_DEBUG_MODE
 
 CGAL_END_NAMESPACE
 
