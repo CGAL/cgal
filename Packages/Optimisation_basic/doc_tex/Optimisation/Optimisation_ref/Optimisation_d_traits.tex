@@ -56,6 +56,10 @@ optimisation algorithms.
   enclosing sphere or annulus, or the points realizing the distance between
   the two polytopes.}
 
+The following two number types are only needed for
+\ccGlobalScope\ccc{Min_annulus_d<Traits>} and
+\ccGlobalScope\ccc{Polytope_distance_d<Traits>}.
+
 \ccNestedType{ET}{%
   exact number type used to do the exact computations in the
   underlying solver for linear programs. It has to to be a model for
@@ -109,8 +113,11 @@ object.
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
+\ccIndexTraitsClassRequirements[C]{Min_sphere_d}
 \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+\ccIndexTraitsClassRequirements[C]{Min_annulus_d}
 \ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}\\
+\ccIndexTraitsClassRequirements[C]{Polytope_distance_d}
 \ccRefIdfierPage{CGAL::Polytope_distance_d<Traits>}
 
 % -----------------------------------------------------------------------------
