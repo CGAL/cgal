@@ -1,0 +1,2 @@
+Algorithm for computing the (squared) distance between two convex polytopes
+in arbitrary dimension

@@ -1,0 +1,4 @@
+Changes done to the `Polytope_distance_d' package
+
+Version 0.1 on 05-Sep-2000
+- initial version
