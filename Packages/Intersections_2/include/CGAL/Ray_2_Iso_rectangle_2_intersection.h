@@ -259,12 +259,13 @@ bool Ray_2_Iso_rectangle_2_pair<K>::
 intersection(typename K::Segment_2 &seg) const
 {
   typedef typename K::Segment_2 Segment_2; 
+  typename K::Construct_translated_point_2 translated_point;
     if (!_known)
         intersection_type();
     if (_result != SEGMENT)
         return false;
-    typename K::Point_2 p1(_ref_point + _dir*_min);
-    typename K::Point_2 p2(_ref_point + _dir*_max);
+    typename K::Point_2 p1(translated_point(_ref_point, _dir*_min));
+    typename K::Point_2 p2(translated_point(_ref_point, _dir*_max));
     seg = Segment_2(p1, p2);
     return true;
 }
@@ -273,11 +274,12 @@ template <class K> bool Ray_2_Iso_rectangle_2_pair<K>::
 intersection(typename K::Point_2 &pt) const
 {
   typedef typename K::Point_2 Point_2;
+  typename K::Construct_translated_point_2 translated_point;
     if (!_known)
         intersection_type();
     if (_result != POINT)
         return false;
-    pt = Point_2(_ref_point + _dir*_min);
+    pt = Point_2(translated_point(_ref_point, _dir*_min));
     return true;
 }
 

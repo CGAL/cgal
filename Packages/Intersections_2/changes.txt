@@ -1,4 +1,5 @@
-
+2.21 (7 September 2003)
+- Replaced several global function calls with Kernel functors 
 - Replaced start()/end() with source()/target() to reduce requirements on 
   member functions of classes R::Segment_2 and R::Ray_2
 

@@ -225,11 +225,13 @@ bool
 Line_2_Iso_rectangle_2_pair<K>::
 intersection(typename K::Point_2 &result) const
 {
+  typename K::Construct_translated_point_2 translated_point;
+
     if (!_known)
         intersection_type();
     if (_result != POINT)
         return false;
-    result = _ref_point + _dir * _min;
+    result = translated_point(_ref_point,_dir * _min);
     return true;
 }
 
@@ -239,12 +241,13 @@ Line_2_Iso_rectangle_2_pair<K>::
 intersection(typename K::Segment_2 &result) const
 {
   typename K::Construct_segment_2 construct_segment_2;
+  typename K::Construct_translated_point_2 translated_point;
     if (!_known)
         intersection_type();
     if (_result != SEGMENT)
         return false;
-    result = construct_segment_2(_ref_point + _dir*_min, 
-				 _ref_point + _dir*_max);
+    result = construct_segment_2(translated_point(_ref_point, _dir*_min), 
+				 translated_point(_ref_point, _dir*_max));
     return true;
 }
 

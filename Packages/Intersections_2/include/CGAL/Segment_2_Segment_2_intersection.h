@@ -78,11 +78,13 @@ public:
     case Line_2_Line_2_pair<K>::LINE:
         {
         typedef typename K::RT RT;
+
+	typename K::Construct_vector_2 construct_vector;
         typename K::Point_2 const &start1 = _seg1->source();
         typename K::Point_2 const &end1   = _seg1->target();
         typename K::Point_2 const &start2 = _seg2->source();
         typename K::Point_2 const &end2   = _seg2->target();
-        typename K::Vector_2 diff1 = end1-start1;
+        typename K::Vector_2 diff1 = construct_vector(start1, end1);
         typename K::Point_2 const *minpt;
         typename K::Point_2 const *maxpt;
         if (CGAL_NTS abs(diff1.x()) > CGAL_NTS abs(diff1.y())) {
@@ -234,29 +236,32 @@ do_intersect(const typename CGAL_WRAP(K)::Segment_2 &seg1,
     typename K::Point_2 const & A2 = seg1.target();
     typename K::Point_2 const & B1 = seg2.source();
     typename K::Point_2 const & B2 = seg2.target();
-    if (lexicographically_yx_smaller(A1,A2)) {
-        if (lexicographically_yx_smaller(B1,B2)) {
-            if (lexicographically_yx_smaller(A2,B1)
-             || lexicographically_yx_smaller(B2,A1))
+    typename K::Less_xy_2 less_xy;
+    typename K::Compare_xy_2 compare_xy;
+
+    if (less_xy(A1,A2)) {
+        if (less_xy(B1,B2)) {
+            if (less_xy(A2,B1)
+             || less_xy(B2,A1))
                 return false;
         } else {
-            if (lexicographically_yx_smaller(A2,B2)
-             || lexicographically_yx_smaller(B1,A1))
+            if (less_xy(A2,B2)
+             || less_xy(B1,A1))
                 return false;
         }
     } else {
-        if (lexicographically_yx_smaller(B1,B2)) {
-            if (lexicographically_yx_smaller(A1,B1)
-             || lexicographically_yx_smaller(B2,A2))
+        if (less_xy(B1,B2)) {
+            if (less_xy(A1,B1)
+             || less_xy(B2,A2))
                 return false;
         } else {
-            if (lexicographically_yx_smaller(A1,B2)
-             || lexicographically_yx_smaller(B1,A2))
+            if (less_xy(A1,B2)
+             || less_xy(B1,A2))
                 return false;
         }
     }
-    if (lexicographically_xy_smaller(A1,A2)) {
-        if (lexicographically_xy_smaller(B1,B2)) {
+    if (less_xy(A1,A2)) {
+        if (less_xy(B1,B2)) {
             switch(compare_xy(A1,B1)) {
             case SMALLER:
                 switch(compare_xy(A2,B1)) {
@@ -332,7 +337,7 @@ do_intersect(const typename CGAL_WRAP(K)::Segment_2 &seg1,
             }
         }
     } else {
-        if (lexicographically_xy_smaller(B1,B2)) {
+        if (less_xy(B1,B2)) {
             switch(compare_xy(A2,B1)) {
             case SMALLER:
                 switch(compare_xy(A1,B1)) {
@@ -435,6 +440,7 @@ template <class K>
 typename Segment_2_Segment_2_pair<K>::Intersection_results
 Segment_2_Segment_2_pair<K>::intersection_type() const
 {
+  typename K::Construct_vector_2 construct_vector;
     if (_known)
         return _result;
     _known = true;
@@ -460,7 +466,7 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
         typename K::Point_2 const &end1   = _seg1->target();
         typename K::Point_2 const &start2 = _seg2->source();
         typename K::Point_2 const &end2   = _seg2->target();
-        typename K::Vector_2 diff1 = end1-start1;
+        typename K::Vector_2 diff1 = construct_vector(start1, end1);
         typename K::Point_2 const *minpt;
         typename K::Point_2 const *maxpt;
         if (CGAL_NTS abs(diff1.x()) > CGAL_NTS abs(diff1.y())) {
