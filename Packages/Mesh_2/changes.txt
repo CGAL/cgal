@@ -1,3 +1,6 @@
+09  August 2004 Andreas Fabri
+Removed semicolons after closing parenthesis of functions, as they make problems for SunProCC
+
 22 July 2004 Laurent Rineau
 - patch a bug in Delaunay_mesh_2<Tr>: virtual_insert_in_the_edge was
   forcing the insertion of a point on a EDGE.

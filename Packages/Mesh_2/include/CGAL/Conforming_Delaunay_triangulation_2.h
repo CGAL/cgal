@@ -140,7 +140,10 @@ protected:
     
     bool operator()(const Edge_circulator& ec) const
       {
-	return ec->first->is_constrained(ec->second);
+	Edge e = *ec;
+	return e.first->is_constrained(e.second);
+	
+	//return ec->first->is_constrained(ec->second);
       }
   };
 
@@ -179,7 +182,24 @@ protected:
 
   Vertex_handle target(const Edge_circulator& ec) const
   {
-    return ec->first->vertex(ccw(ec->second));
+    //std::cout << "target(" << segment(ec) << ") = "  << ec->first->vertex(ccw(ec->second))->point() << std::endl;
+    //std::cout << "in target" << std::endl;
+    
+    Edge e = *ec;
+    return e.first->vertex(ccw(e.second));
+    
+    //return (*ec).first->vertex(ccw((*ec).second));
+  }
+
+  Vertex_handle target(const Constrained_edge_circulator& ec) const
+  {
+    //std::cout << "target(" << segment(ec) << ") = "  << ec->first->vertex(ccw(ec->second))->point() << std::endl;
+    //std::cout << "in target" << std::endl;
+    
+    Edge e = *ec;
+    return e.first->vertex(ccw(e.second));
+    
+    //return (*ec).first->vertex(ccw((*ec).second));
   }
   //@}
 
@@ -801,6 +821,7 @@ init(const Is_locally_conform& is_loc_conf)
 {
   cluster_map.clear();
   edges_to_be_conformed.clear();
+  //  std::cout << "____________" << std::endl << *this << "____________" << std::endl;
   create_clusters();
   fill_edge_queue(is_loc_conf);
   CGAL_assertion(initialized == GABRIEL || initialized == DELAUNAY);
@@ -901,25 +922,60 @@ template <class Tr, class Extras>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 create_clusters_of_vertex(const Vertex_handle v)
 {
+  //  std::cout << "\ncreate_clusters_of_vertex(" << v->point() << ")" << std::endl;
+
   Is_edge_constrained test;
+
+  //  std::cout << "begin incident edges" << std::endl;
+  /*
+  Edge_circulator ec =  incident_edges(v), done(ec);
+  do {
+    if(! is_infinite(*ec)){
+            std::cout << segment(*ec) << "  " << test(ec)  << std::endl;
+    } else {
+      std::cout << "infinite edge" << std::endl;
+    }
+    Face_handle n = ec->first->neighbor(ec->second);
+    int ni = n->index(ec->first);
+    Edge ee(n,ni);
+    if(! is_infinite(ee)){
+      std::cout << segment(ee) << "  " << n->is_constrained(ni)  << std::endl;
+    } else {
+      std::cout << "infinite edge" << std::endl;
+    }
+    ec++;
+  } while(ec != done);
+  std::cout << "end incident edges" << std::endl;
+  */
   Constrained_edge_circulator begin(incident_edges(v),test);
 
   // This circulator represents all constrained edges around the
   // vertex v. An edge [v,v'] is represented by the vertex v'.
-
+  //std::cout << "A" << std::endl;
   if(begin == 0) return; // if there is only one vertex
 
+  //std::cout << "segment(begin) = "  << segment(begin)   << std::endl;
+
+  //std::cout << "B" << std::endl;
   Constrained_edge_circulator
     current(begin), next(begin), cluster_begin(begin);
   ++next; // next is always just after current.
+  //std::cout << "segment(begin) = "  << segment(begin)   << std::endl;
+  //std::cout << "segment(next) = "  << segment(next)   << std::endl;
+  //std::cout << "segment(current) = "  << segment(current)   << std::endl;
+  //std::cout << "C" << std::endl;
   if(current == next) return;
-
+  //std::cout << "D" << std::endl;
   bool in_a_cluster = false;
   do
     {
+      //  std::cout << "is_small_angle(" << target(current)->point() << std::endl;
+      //std::cout << "               " << v->point() << std::endl;
+      //std::cout << "               " << target(next)->point() << ") == ";
       if(is_small_angle(target(current)->point(), v->point(),
 			target(next)->point()))
 	{
+	  //std::cout << "true" << std::endl;
 	  if(!in_a_cluster)
 	    {
 	      // at this point, current is the beginning of a cluster
@@ -927,7 +983,8 @@ create_clusters_of_vertex(const Vertex_handle v)
 	      cluster_begin = current;
 	    }
 	}
-      else
+      else{
+	//std::cout << "false" << std::endl;
 	if(in_a_cluster)
 	  {
 	    // at this point, current is the end of a cluster and
@@ -935,17 +992,23 @@ create_clusters_of_vertex(const Vertex_handle v)
  	    construct_cluster(v, cluster_begin, current);
 	    in_a_cluster = false;
 	  }
+      }
       ++next;
       ++current;
     } while( current!=begin );
+  //std::cout << "after while loop" << std::endl;
   if(in_a_cluster)
     {
+      //std::cout << "in a cluster" << std::endl;
       Cluster c;
-      if(get_cluster(v, target(begin), c, true)) 
+      if(get_cluster(v, target(begin), c, true)){ 
 	// get the cluster and erase it from the clusters map
+	//std::cout << "construct_cluster(v, cluster_begin, begin, c);" << std::endl;
 	construct_cluster(v, cluster_begin, begin, c);
-      else
+      } else {
 	construct_cluster(v, cluster_begin, current);
+	//std::cout << "construct_cluster(v, cluster_begin, current);" << std::endl;
+      }
     }
 }
 
