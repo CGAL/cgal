@@ -1,3 +1,7 @@
+1.7 (9 July 2001)
+- Remove the 3D test program from the submissions.
+- Fix the example.
+
 1.6 (21 June 2001)
 - More cleanups.
 

@@ -18,7 +18,6 @@
 #include "PS_Stream_3.C"
 
 typedef CGAL::Cartesian<double> D;
-//typedef CGAL::Cartesian<leda_real> R;
 
 typedef CGAL::Bbox_3    PS_BBox3;
 typedef D::Direction_3  Direction;

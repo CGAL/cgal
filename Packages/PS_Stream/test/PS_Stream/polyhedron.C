@@ -14,17 +14,16 @@
 #include "PS_Stream_3.C"
 
 typedef CGAL::Cartesian<double> D;
-//typedef CGAL::Cartesian<leda_real> R;
 
 typedef CGAL::Bbox_3     PS_BBox3;
 typedef D::Point_3       Point3;
 typedef D::Direction_3   Direction;
 
 typedef CGAL::Halfedge_data_structure_polyhedron_default_3<D> HDS;
-typedef  CGAL::Polyhedron_default_traits_3<D> Traits;
-typedef  CGAL::Polyhedron_3<Traits,HDS> Polyhedron;
+typedef CGAL::Polyhedron_default_traits_3<D> Traits;
+typedef CGAL::Polyhedron_3<Traits,HDS> Polyhedron;
 
-int main(void)
+int main()
 {
   PS_BBox3 bb3(-500,-500,-500,500,500,500);
   double x,y,z,lx,ly,lz;
