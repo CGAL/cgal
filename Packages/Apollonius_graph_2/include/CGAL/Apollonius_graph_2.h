@@ -78,7 +78,7 @@ namespace CGALi {
     const Site& operator()( const Node& x) const { return x.site(); }
   };
 
-}; // namespace CGALi
+} // namespace CGALi
 
 
 
