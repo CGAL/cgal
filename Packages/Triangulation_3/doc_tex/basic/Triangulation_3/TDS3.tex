@@ -35,14 +35,14 @@ A geometric triangulation has two aspects: the combinatorial structure which
 gives the incidence and adjacency relations between faces, and the
 geometric information related to the position of vertices.
 
-\cgal\ proposes 3D geometric triangulations in which these
+\cgal\ provides 3D geometric triangulations in which these
 two aspects are clearly separated.
 As described in Chapter~\ref{chapter-Triangulation3}, a geometric
 triangulation of a set of points in $\R^d$ is a partition of the
-whole space $\R^d$ into cells having $d+1$ vertices: some of them
+whole space $\R^d$ into cells having $d+1$ vertices. Some of them
 are infinite, they are obtained by linking an additional vertex at
 infinity to each facet of the convex hull of the points.
-The underlying combinatorial triangulation of such a triangulation
+The underlying combinatorial graph of such a triangulation
 without boundary of $\R^d$ can be seen as a triangulation of the
 topological sphere $S^d$ in $\R^{d+1}$. 
 
@@ -57,7 +57,8 @@ $\R^3$ is advised to read Chapter~\ref{chapter-Triangulation3}.
 In \cgal, a triangulation data structure is a
 container of cells ($3$-faces) and vertices ($0$-faces). Each cell gives
 access to its four incident vertices and to its four adjacent
-cells. Each vertex gives access to one of its incident cells.
+cells. Each vertex gives direct access to one of its incident cells, which is 
+sufficient to retrieve all the incident cells when needed.
 
 The four vertices of a cell are indexed with 0, 1, 2 and 3.  The
 neighbors of a cell are also indexed with 0, 1, 2, 3 
@@ -78,7 +79,7 @@ with the same index (see Figure~\ref{TDS3-fig-repres}).
 alt="Representation">
 \end{ccHtmlOnly}
 
-Edges ($1$-faces) and facets ($2$-faces) are not explicitely
+Edges ($1$-faces) and facets ($2$-faces) are not explicitly
 represented: a facet is given by a cell and an index (the facet
 \ccc{i} of a cell \ccc{c} is the facet of \ccc{c} that is opposite to
 the vertex of index \ccc{i}) and an edge is given by a cell and two
@@ -88,7 +89,7 @@ whose endpoints are the vertices of indices \ccc{i} and \ccc{j} of
 
 \subsection{Degenerate Dimensions}
 \label{TDS3-sec-degen_dim}
-As \cgal\ explicitely deals with all degenerate cases, a
+As \cgal\ explicitly deals with all degenerate cases, a
 3D-triangulation data structure in \cgal\ can handle the cases when
 the dimension of the triangulation is lower than~3.
 
@@ -120,7 +121,7 @@ alt="4D simplex and a 3D geometric embedding">
 \end{ccHtmlOnly}
 \item \emph{dimension 2.} We have 4 vertices forming one 3-dimensional
 simplex, i.e. the boundary of a tetrahedron. The geometric embedding in
-the plane consists in choosing one of these vertices to be infinite,
+the plane results from choosing one of these vertices to be infinite,
 then the geometric triangulation has one finite triangle whose edges are
 incident to the infinite triangles. See Figure~\ref{TDS3-fig-topo-simplex3}.
 \begin{ccTexOnly}
@@ -161,7 +162,7 @@ in the geometric embedding, and there is only one finite vertex
 remaining. The two vertices are adjacent.
 \item \emph{dimension -1.} This dimension is a convention to represent a 
 0-dimensional simplex, that is a sole vertex, which will be
-geometrically embedded as an ``empty'' triangulation, only having one
+geometrically embedded as an ``empty'' triangulation, having only one
 infinite vertex.
 \item \emph{dimension -2.} This is also a convention. The
 triangulation data structure has no vertex. There is no associated
@@ -170,8 +171,8 @@ geometric triangulation.
 
 Note that the notion of infinite vertex has no meaning for the
 triangulation data structure. The infinite vertex of the geometric
-embedding is a vertex without any particularity in the
-combinatorial triangulation.
+embedding is a vertex that cannot be distinguished from the other
+vertices in the combinatorial triangulation.
 
 The implicit representation of facets (resp. edges) still holds
 for degenerate ($< 3$) dimensions : in dimension~2, each cell has only one
@@ -227,11 +228,11 @@ validity of a given triangulation data structure.
 \section{Software Design}
 \label{TDS3-sec-design}
 
-The 3D- triangulation data structure class of \cgal\ is designed to be
-used as a combinatorial layer for another class on an upper geometric
-layer \cite{k-ddsps-98}. This upper class can be the 3D-Triangulation class of
-\cgal. Figure~\ref{TDS3-fig-layers} shows the organization of the
-software design in this case.
+The 3D-triangulation data structure class of CGAL is designed to be
+used as a combinatorial layer upon which a geometric layer can be
+built \cite{k-ddsps-98}. This upper class can be the 3D-triangulation
+class of \cgal. Figure~\ref{TDS3-fig-layers} shows the organization of
+the software design in this case.
 
 \begin{ccTexOnly}
 \begin{figure}[htbp]
@@ -259,20 +260,17 @@ has a pointer to a cell of the triangulation data structure, and a
 cell has four pointers to vertices. These pointers are usual
 \ccc{C++} pointers. The triangulation data structure provides
 operations such as insertion of a new vertex in a given cell, on a
-$1$ or $2$-face. It also allows, if the dimension of the triangulation
+$1$ or $2$-face. It also allows one, if the dimension of the triangulation
 is smaller than $3$, to insert a vertex so that the dimension of the
 triangulation is increased by one. The triangulation data
 structure is responsible for the combinatorial integrity of the
 triangulation. 
 
-It is up to the user to derive its own base classes from the \cgal\
+It is up to the user to derive his own base classes from the \cgal\
 base classes to add any other information he may need for his given
 application, or to write his own base classes from scratch. In this
-case, his base classes must be models for the concepts described in
-Section~\ref{TDS3-sec-concept-Base}. As the triangulation data
-structure class is parameterized by the base vertex and the base cell
-classes. it will consider the user's bases classes instead of the
-predefined base classes.
+case, the base classes must be models for the concepts described in
+Section~\ref{TDS3-sec-concept-Base}.
 
 The upper layer, described in Chapter~\ref{chapter-Triangulation3}, is
 the geometric triangulation class, providing operations such as
@@ -282,8 +280,8 @@ has a pointer to a cell and a cell has four pointers to
 vertices. These pointers are \cgal\ \emph{handles}. The triangulation
 data structure class is one of the template parameters of the
 geometric triangulation class. The user may choose to replace the
-\cgal\ triangulation data structure class by its own triangulation
-data structure, in this case, his class has to be a model of the
+\cgal\ triangulation data structure class by his own triangulation
+data structure. In this case, his class has to be a model of the
 concept described in Section~\ref{TDS3-sec-concept}.
 
 \section{Examples}
@@ -306,7 +304,7 @@ structure by inserting vertices.
 #include <CGAL/Triangulation_data_structure_3.h>
 
 // the definition of the geometric traits class is necessary to
-// instanciate base vertices and cells but will in fact never be used
+// instantiate base vertices and cells but will in fact never be used
 // in the program 
 typedef CGAL::Cartesian<double>  Rep;
 typedef CGAL::Triangulation_geom_traits_3<Rep> Gt;
@@ -379,16 +377,16 @@ int main()
 
 \section{Concepts}
 
-This section describes the concepts for a 3D- triangulation data
+This section describes the concepts for a 3D-triangulation data
 structure, its vertices and cells.
 
-\subsection{Concepts for a 3D- Triangulation Data Structure}
+\subsection{Concepts for a 3D-Triangulation Data Structure}
 \label{TDS3-sec-concept} 
 \begin{ccClassTemplate}{Tds<Vb,Fb>}
 
 The triangulation data structure must be able to represent a
-triangulation of a topological sphere $S^d$ of $\R^{d+1}$, for $d \in
-\{-1,0,1,2,3\}$.
+triangulation of a topological sphere $S^d$ of $\R^{d+1}$, for 
+$d \in \{-1,0,1,2,3\}$.
 The triangulation data structure must be templated by the base
 vertex and the base cell classes. 
 (see~\ref{TDS3-sec-intro})
@@ -412,16 +410,16 @@ and~\ref{TDS3-sec-concept-Tds_Cell}.
 
 \ccTypedef{typedef triple<Cell*, int, int> Edge;}{\ccc{(c,i,j)} is the
 edge of cell \ccc{c} whose vertices indices are \ccc{i} and
-\ccc{j}. (see Section~\ref{TDS3-sec-def})}
+\ccc{j}. (See Section~\ref{TDS3-sec-def}.)}
 \ccGlue
 \ccTypedef{typedef pair<Cell*, int>  Facet;}{\ccc{(c,i)} is the facet
-of \ccc{c} opposite to the vertex of index \ccc{i}. (see
-Section~\ref{TDS3-sec-def})} 
+of \ccc{c} opposite to the vertex of index \ccc{i}. (See
+Section~\ref{TDS3-sec-def}.)} 
 
 
-The following iterators allow to visit all the vertices, edges, facets
+The following iterators allow one to visit all the vertices, edges, facets
 and cells of the triangulation data structure. They are all
-bidirectional, non mutable iterators.
+bidirectional, non-mutable iterators.
 
 \ccNestedType{Cell_iterator}{}
 \ccGlue
@@ -432,7 +430,7 @@ bidirectional, non mutable iterators.
 \ccNestedType{Vertex_iterator}{}
 
 The following circulators allow us to visit all the cells and facets
-incident to a given edge. They are bidirectional and non mutable.
+incident to a given edge. They are bidirectional and non-mutable.
 
 \ccNestedType{Facet_circulator}{}
 \ccGlue
@@ -447,19 +445,19 @@ incident to a given edge. They are bidirectional and non mutable.
 \ccConstructor{Tds<Vb,Fb>(const Tds & tds1);}
 {Copy constructor. All the vertices and cells are duplicated.}
 
-\ccMethod{Tds<Vb,Fb> operator=(const Tds & tds1);}
+\ccMethod{Tds<Vb,Fb> operator = (const Tds & tds1);}
 {Assignment. All the vertices and cells are duplicated.}
 
-The previous first two methods are equivalent.
+The previous two methods are equivalent.
 
 \ccMethod{void swap(Tds & tds1);} 
 {Swaps \ccVar\ and \ccc{tds1}. There is no copy of cells and vertices,
-thus this method runs in constant time. Should be preferred to
+thus this method runs in constant time. This method should be preferred to
 \ccVar=\ccc{tds1} or \ccVar(\ccc{tds1}) when \ccc{tds1} is deleted after
 that.}
 
 \ccMethod{Vertex* copy_tds(const Tds & tds1, Vertex* v = NULL);}
-{\ccc{tds1} is copied into \ccVar. If $v != NULL$, the vertex of \ccVar\ 
+{\ccc{tds1} is copied into \ccVar. If $v\, !\!= NULL$, the vertex of \ccVar\ 
 corresponding to \ccc{v} is returned, otherwise \ccc{NULL} is returned.
 \ccPrecond{The optional argument \ccc{v} is a vertex of \ccc{tds1}.}}
 
@@ -470,7 +468,7 @@ deleted.}
 \ccAccessFunctions
 
 \ccMethod{int dimension() const;}
-{The dimension of the topological sphere triangulated.}
+{The dimension of the triangulated topological sphere.}
 
 \ccMethod{int number_of_vertices() const;}
 {The number of vertices. Note that the triangulation data structure has one
@@ -634,14 +632,14 @@ split into 2 new edges.
 			const Vertex & v, 
 			Vertex* star = NULL, 
 			bool reorient = false);}
-{Transforms a triangulation of the sphere $S^d$ of $\R^{d+1}$ in the
+{Transforms a triangulation of the sphere $S^d$ of $\R^{d+1}$ into the
 triangulation of the sphere $S^{d+1}$ of $\R^{d+2}$ by adding vertex \ccc{v}:  
 \ccc{v} is linked to all the vertices to triangulate one of the two
-halfspheres of dimension $(d+1)$, and vertex \ccc{star}, chosen among
-the already present vertices, is used to triangulate the second
-halfsphere. See Figure~\ref{TDS3-fig-topo-insert_outside_affine_hull}.\\ 
+halfspheres of dimension $(d+1)$. Vertex \ccc{star} is used to
+triangulate the second halfsphere. See
+Figure~\ref{TDS3-fig-topo-insert_outside_affine_hull}.\\  
 The numbering of the cells is such that, if \ccc{f} was a face of
-maximal dimension in the initial triangulation, then \ccc{(f,p)} (in
+maximal dimension in the initial triangulation, then \ccc{(f,v)} (in
 this order) is the corresponding face in the new triangulation. If the
 boolean \ccc{reorient} is set to true, all the faces of maximal
 dimension are given the opposite orientation.\\
@@ -704,7 +702,7 @@ data structure.
 \ccPrecond{\ccc{c != NULL}.}}
 
 \ccMethod{Cell * create_cell();}
-{Creates a cell and adds it into the triangulation data structure. Its 
+{Creates a cell and adds it to the triangulation data structure. Its 
 vertices and neighbors are initialized to \ccc{NULL}.
 The setting functions of the cell can be used later to modify them.}
 
@@ -752,7 +750,7 @@ into the triangulation data structure.}
 \ccPrecond{\ccVar.\ccc{dimension()}~$=3$}}
 \ccGlue
 \ccMethod{Cell_circulator incident_cells(Cell* c, int i, int j) const;}
-{Idem for edge \ccc{(i,j)} of \ccc{c}.}
+{As above for edge \ccc{(i,j)} of \ccc{c}.}
 \ccGlue
 \ccMethod{Cell_circulator incident_cells(const Edge & e, Cell* start) const;}
 {Starts at cell \ccc{start}.
@@ -761,7 +759,7 @@ into the triangulation data structure.}
 \ccGlue
 \ccMethod{Cell_circulator incident_cells(Cell* c, int i, int j, Cell* start)
 const;}
-{Idem for edge \ccc{(i,j)} of \ccc{c}.}
+{As above for edge \ccc{(i,j)} of \ccc{c}.}
 
 The following circulators on facets are defined only in dimension~3,
 though facets are defined also in dimension~2: there are only two
@@ -771,7 +769,7 @@ facets sharing an edge in dimension~2.
 \ccPrecond{\ccVar.\ccc{dimension()}~$=3$}} 
 \ccGlue
 \ccMethod{Facet_circulator incident_facets(Cell* c, int i, int j) const;}
-{Idem for edge \ccc{(i,j)} of \ccc{c}.} 
+{As above for edge \ccc{(i,j)} of \ccc{c}.} 
 \ccGlue
 \ccMethod{Facet_circulator incident_facets(Edge e, Facet start) const;}
 {Starts at facet \ccc{start}.
@@ -782,11 +780,11 @@ facets sharing an edge in dimension~2.
 \ccGlue
 \ccMethod{Facet_circulator incident_facets(Cell* c, int i, int j,
 Facet start) const;} 
-{Idem for edge \ccc{(i,j)} of \ccc{c}.} 
+{As above for edge \ccc{(i,j)} of \ccc{c}.} 
 \ccGlue
 \ccMethod{Facet_circulator incident_facets(Cell* c, int i, int j,
 Cell* start, int f) const;}
-{Idem for edge \ccc{(i,j)} of \ccc{c} and facet \ccc{(start,f)}.} 
+{As above for edge \ccc{(i,j)} of \ccc{c} and facet \ccc{(start,f)}.} 
 
 \ccHeading{Traversal of the incident cells and the
 adjacent vertices of a given vertex}
@@ -796,25 +794,28 @@ adjacent vertices of a given vertex}
 \ccMethod{void incident_cells(Vertex* v, set<Cell*, less<Cell*> > & cells,
 		   Cell* c = NULL ) const;}
 {Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
-\ccVar.\ccc{dimension()} $<3$ then the set is empty.
+\ccVar.\ccc{dimension()} $<3$ then the set is empty. The optional
+argument \ccc{c} will be used for initializing the set.
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)} and
-the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
+the optional argument \ccc{c} is a cell having \ccc{v} as a vertex.}}
 
 \ccMethod{void incident_vertices(Vertex* v, 
 		set<Vertex*, less<Vertex*> > & vertices,
 		Cell* c = NULL ) const;}
 {Computes the set \ccc{vertices} of all vertices incident to \ccc{v}. If
-\ccVar.\ccc{number_of_vertices()} $<2$ then the set is empty.
+\ccVar.\ccc{number_of_vertices()} $<2$ then the set is empty. The optional
+argument \ccc{c} will be used for finding a first vertex of the set.
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)} and
-the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
+the optional argument \ccc{c} is a cell having \ccc{v} as a vertex.}}
 
 \begin{ccAdvanced}
 \ccHeading{Checking}
 
 \ccMethod{bool is_valid(bool verbose = false) const;}
-{Checks the combinatorial validity of the triangulation by checking the
-validity of all its cells and vertices (see~\pageref{TDS3-sec-Valid}). Moreover, Euler relation is tested, in
-any dimension.\\ 
+{Checks the combinatorial validity of the triangulation by checking
+the validity of all its cells and vertices. 
+(See Section~\ref{TDS3-sec-Valid}.) Moreover, the Euler relation is
+tested.\\ 
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication on the kind of invalidity encountered.}
 \end{ccAdvanced}
@@ -829,28 +830,28 @@ a precise indication on the kind of invalidity encountered.}
 	(ostream& os, const Tds & t);}
 {Writes \ccc{t} into the stream \ccc{os}}
 
-The information stored in the \ccc{iostream} are: 
+The information stored in the \ccc{iostream} is: 
 the dimension, the number of vertices, the number of cells,
-the cells given by the indices of their vertices, the neighbors of
-each cell given by their index in the preceding list of cells.
-(When dimension < 3 : the same with faces of maximal dimension).
+the indices of the vertices of each cell, then the indices of the
+neighbors of each cell, where the index corresponds to the preceding
+list of cells. When dimension $<$ 3, the same information is stored
+for faces of maximal dimension instead of cells.
 
 	\end{ccClassTemplate} 
 
-	\subsection{Concept for the Vertex of a 3D- Triangulation Data Structure} 
+	\subsection{Concept for the Vertex of a 3D-Triangulation Data Structure} 
 	\label{TDS3-sec-concept-Tds_Vertex}
 
 	\begin{ccClass}{Tds::Vertex}
 	
 \ccCreationVariable{v}
 
-The vertex class of a 3D- triangulation data structure must define
+The vertex class of a 3D-triangulation data structure must define
 the types and operations listed in this section. Some of these
 requirements are of geometric nature, they are \textit{optional}
 when using the triangulation data structure class alone. They become
 compulsory when the triangulation data structure is used as a layer
-for the geometric triangulation class (see
-Section~\ref{TDS3-sec-design}).
+for the geometric triangulation class. (See Section~\ref{TDS3-sec-design}.)
 
 \ccTypes
 \ccThree{typedef triple <Cell*, int, int>}{Facet }{}
@@ -912,7 +913,7 @@ a precise indication on the kind of invalidity encountered.}
 
 	\end{ccClass} 
 
-	\subsection{Concept for the Cell of a 3D- Triangulation Data Structure} 
+	\subsection{Concept for the Cell of a 3D-Triangulation Data Structure} 
 	\label{TDS3-sec-concept-Tds_Cell}
 
 	\begin{ccClass}{Tds::Cell}
@@ -922,13 +923,13 @@ a precise indication on the kind of invalidity encountered.}
 The cell class \ccClassName\ of a triangulation data structure stores
 four pointers to its four vertices and four pointers to its four
 neighbors The vertices are indexed 0, 1, 2, and 3 in positive order.
-The neighbor indexed $i$ lies opposite to vertex i.
+The neighbor indexed $i$ lies opposite to vertex \ccc{i}.
 
 In degenerate dimensions, cells are used to store faces of maximal
 dimension: in dimension~2, each cell represents only one
 facet of index 3, and 3 edges $(0,1)$, $(1,2)$ and $(2,0)$; in
-dimension~1, each cell represents one edge $(0,1)$ (see also
-Section~\ref{TDS3-sec-degen_dim}). 
+dimension~1, each cell represents one edge $(0,1)$. (See also
+Section~\ref{TDS3-sec-degen_dim}.) 
 
 \ccTypes
 \ccThree{typedef triple <Cell*, int, int>}{Facet }{}
@@ -986,7 +987,7 @@ computes its index \ccc{i} in \ccVar.}
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccGlue
 \ccMethod{int index(const Cell* n) const;}
-{Returns the index of cell \ccc{n} in \ccVar.
+{Returns the index corresponding to neighboring cell \ccc{n}.
 \ccPrecond{\ccc{n} is a neighbor of \ccVar.}}
 \ccGlue
 \ccMethod{bool has_neighbor(const Cell* n) const;}
@@ -1000,23 +1001,23 @@ computes its index \ccc{i} in \ccVar.}
 {Returns the vertex of the neighbor of \ccVar that is opposite to \ccVar.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccMethod{int mirror_index(int i) const;}
-{Returns the index of \ccVar in its \ccc{i^{\rm th}} neighbor.
+{Returns the index of \ccVar\ in its $i^{th}$ neighbor.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 
 \ccHeading{Setting}
 
 \ccMethod{void set_vertex(int i, Vertex* v);}
-{Sets vertex \ccc{i} to be \ccc{v}.
+{Sets vertex \ccc{i} to \ccc{v}.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccGlue
 \ccMethod{void set_vertices(Vertex* v0,
 			Vertex* v1,
 		    	Vertex* v2,
 		    	Vertex* v3);}
-{Sets the vertices pointers.}
+{Sets the vertex pointers.}
 
 \ccMethod{void set_neighbor(int i, Cell* n);}
-{Sets neighbor \ccc{i} to be \ccc{n}.
+{Sets neighbor \ccc{i} to \ccc{n}.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccGlue
 \ccMethod{void set_neighbors(Cell* n0,
@@ -1029,19 +1030,19 @@ computes its index \ccc{i} in \ccVar.}
 \ccMethod{bool is_valid(int dim=3, bool verbose = false) const;}
 {\ccc{dim} is the dimension of the triangulation, with default
 value~3.\\
-In dimension 3 (resp. 2, 1) must check that the cell shares three
-(resp. two, one) vertices with its neighbors, and these neighbors have
-a correct reciprocal neighboring link. Moreover, the consistency of
-the orientations of common faces must be checked.\\
+In dimension 3 (resp. 2, 1) this function must check that the cell
+shares three (resp. two, one) vertices with its neighbors, and these
+neighbors have a correct reciprocal neighboring link. Moreover, the
+consistency of the orientations of common faces must be checked.\\ 
 The validity of all the vertices of the cell must be checked.\\
 The validity of the base cell is also checked.\\ 
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
-a precise indication on the kind of invalidity encountered.}
+a precise indication of the kind of invalidity encountered.}
 
 	\end{ccClass} 
 
 \begin{ccClassTemplate}{Triangulation_data_structure_3<Vb,Cb>}
-\section{A model of Triangulation Data Structure:\\ 
+\section{A model of Triangulation Data Structure\\ 
 \protect \ccc{Triangulation_data_structure_3<Vb,Cb>} }
 \label{TDS3-sec-class}
 
@@ -1051,10 +1052,11 @@ geometric functionalities. It is templated by base classes for
 vertices and cells described in Section~\ref{TDS3-sec-concept-Base}.
 
 \ccInheritsFrom{\ccc{Triangulation_utils_3}}
+
 This class defines basic computations on indices of vertices and
-neighbors of cells (Details are presented in
+neighbors of cells. (Details are presented in
 Section~\ref{Triangulation3-sec-class-Utils} of
-Chapter~\ref{chapter-Triangulation3}).
+Chapter~\ref{chapter-Triangulation3}.)
 
 \ccInclude{CGAL/Triangulation_data_structure_3.h}
 
@@ -1079,14 +1081,14 @@ cell concept described in Section~\ref{TDS3-sec-concept-Tds_Cell}.
 \ccCreationVariable{v}
 
 At the bottom level, a vertex provides access to
-one of its incident cells through a \ccc{void *} pointer. 
+one of its incident cells through a \ccc{void*} pointer. 
 It can also \textit{optionally} store a point. The
 information about the point is in fact not used by the triangulation
-data structure class proposed by \cgal\ and is therefore only
+data structure class provided by \cgal\ and is therefore only
 \textit{optional} when this triangulation data structure class is used
 alone. It becomes compulsory when the 
 triangulation data structure is used as a layer for the geometric
-triangulation class (see Section~\ref{TDS3-sec-design}).
+triangulation class. (See Section~\ref{TDS3-sec-design}.)
 
 \ccTypes
 \ccNestedType{Point}
@@ -1106,11 +1108,11 @@ alone.}}}
 \ccGlue
 \ccConstructor{Vertex_base(const Point & p,
                      		void* c);}
-{Constructs a vertex emdedded in point \ccc{p} and pointing on cell
+{Constructs a vertex emdedded in point \ccc{p} and pointing to cell
 \ccc{c}. {\textit{Optional for the triangulation data structure alone.}}}
 \ccGlue
 \ccConstructor{Vertex_base(void* c);}
-{Constructs a vertex pointing on cell \ccc{c}.}
+{Constructs a vertex pointing to cell \ccc{c}.}
 
 \ccAccessFunctions
 
@@ -1139,17 +1141,19 @@ pointer to an incident cell is not \ccc{NULL}.}
 
 \ccFunction{istream& operator>>
 (istream& is, Vertex_base & v);}
-{Inputs the non combinatorial information given by the vertex: 
+{Inputs the non-combinatorial information given by the vertex: 
 the optional point and other possible information.
 \ccPrecond{The point and the other information have a corresponding
-operator \ccc{>>}.}} 
+operator \ccc{>>}. \textit{This precondition is optional for the
+triangulation data structure alone.}}}  
 
 \ccFunction{ostream& operator<< (ostream& os, 
 			const Vertex_base & v);}
 {Outputs the non combinatorial operation given by the vertex: the
 optional point and other possible information.
 \ccPrecond{The point and the other information have a corresponding
-operator \ccc{<<}.}} 
+operator \ccc{<<}. \textit{This precondition is optional for the
+triangulation data structure alone.}}} 
 
 	\end{ccClass}
 
@@ -1158,7 +1162,7 @@ operator \ccc{<<}.}}
 
 \ccCreationVariable{c}
 
-At the base level, a cell stores \ccc{void *} pointers to its four
+At the base level, a cell stores \ccc{void*} pointers to its four
 vertices and to its four neighbor cells. 
 The vertices and neighbors are indexed 0, 1, 2 and 3. Neighbor $i$
 lies opposite to vertex $i$.
@@ -1168,7 +1172,8 @@ lies opposite to vertex $i$.
 \ccConstructor{Cell_base();}{}
 \ccGlue
 \ccConstructor{Cell_base( void* v0, void* v1, void* v2, void* v3);}
-{Neighbors are initialized to \ccc{NULL}.}
+{Initializes the vertices with \ccc{v0, v1, v2, v3}. Neighbors are
+initialized to \ccc{NULL}.} 
 \ccGlue
 \ccConstructor{Cell_base(void* v0, void* v1, void* v2, void* v3,
 			    void* n0, void* n1, void* n2, void* n3)} 
@@ -1210,7 +1215,7 @@ computes its index \ccc{i} in \ccVar.}
 \ccHeading{Setting}
 
 \ccMethod{void set_vertex(int i, void* v);}
-{Sets vertex \ccc{i} to be \ccc{v}.
+{Sets vertex \ccc{i} to \ccc{v}.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccGlue
 \ccMethod{ void set_vertices();}
@@ -1223,7 +1228,7 @@ computes its index \ccc{i} in \ccVar.}
 {Sets the vertices.}
 
 \ccMethod{void set_neighbor(int i, void* n);}
-{Sets neighbor \ccc{i} to be \ccc{n}.
+{Sets neighbor \ccc{i} to \ccc{n}.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccGlue
 \ccMethod{void set_neighbors();} 
@@ -1239,7 +1244,7 @@ computes its index \ccc{i} in \ccVar.}
 \ccMethod{bool is_valid(bool verbose = false) const;}
 {Performs any desired geometric test on a cell.\\
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
-a precise indication on the kind of invalidity encountered.}
+a precise indication of the kind of invalidity encountered.}
 
 \ccHeading{I/O}
 
@@ -1262,15 +1267,15 @@ a precise indication on the kind of invalidity encountered.}
 	\subsection{The Base Class \protect \ccc{Triangulation_vertex_base_3<Traits>} }
 	\label{TDS3-sec-class-Base_Vertex}
 
-This class is proposed by \cgal\ as a base vertex class. It is
+This class is provided by \cgal\ as a base vertex class. It is
 templated by a geometric traits class \ccc{Traits} that provides the
-geometric types. The user who uses the geometric layer (see
-Section~\ref{TDS3-sec-design} and
+geometric types. The user who uses the geometric layer
+(Section~\ref{TDS3-sec-design} and 
 Chapter~\ref{chapter-Triangulation3}) is strongly advised to use the
 same geometric traits class \ccc{Traits} as the one used for
 \ccc{Triangulation_3<Traits,Tds>}. In this way, the point type
 defined by \ccClassTemplateName\ is the same as the point type defined by the
-geometric traits class. The default geometric traits class proposed by 
+geometric traits class. The default geometric traits class provided by 
 \cgal\ is presented in Section~\ref{Triangulation3-sec-Traits}.
 
 This base class can be used directly or can serve as a base to derive
@@ -1284,9 +1289,9 @@ example) tuned for a specific application.
 	\begin{ccClassTemplate}{Triangulation_cell_base_3<Traits>}
 	\subsection{The Base Class \protect \ccc{Triangulation_cell_base_3<Traits>}}
 
-This class is proposed by \cgal\ as a base cell class, and is similar
-to the case of the base vertex class (see
-Section~\ref{TDS3-sec-class-Base_Vertex}).
+This class is provided by \cgal\ as a base cell class, and is similar
+to the case of the base vertex class. (See
+Section~\ref{TDS3-sec-class-Base_Vertex}.)
 
 \ccInclude{CGAL/Triangulation_cell_base_3.h}
 

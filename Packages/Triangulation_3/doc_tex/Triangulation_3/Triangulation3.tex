@@ -26,15 +26,16 @@
 \subsection{Definition}
 \label{Triangulation3-sec-def}
 A three-dimensional triangulation is a three-dimensional simplicial
-complex, pure connected and without singularities \cite{by-ag-98}. Its
+complex, pure connected and without singularities. (See
+\cite{by-ag-98} or Chapter~\ref{I1_Chapter_Triangulations}.) Its
 cells ($3$-faces) are such that two cells either do not intersect or
 share a common facet ($2$-face), edge ($1$-face) or vertex ($0$-face).
 
 The basic 3D-triangulation class of \cgal\ is primarily designed to
 represent the triangulations of a set of points $A$ in $\R^3$.  It can
-be viewed as a partition of the convex hull of {$A$} with tetrahedra
+be viewed as a partition of the convex hull of {$A$} into tetrahedra
 whose vertices are the points of {$A$}.  Together with the unbounded
-cell having the convex hull boundary as frontier, the triangulation
+cell having the convex hull boundary as its frontier, the triangulation
 forms a partition of $\R^3$.
 
 In order to deal
@@ -80,13 +81,13 @@ Figure~\ref{Triangulation3-fig-orient}.
 
 As in the underlying combinatorial triangulation (see
 Chapter~\ref{chapter-TDS3}), edges ($1$-faces) and facets ($2$-faces)
-are not explicitely 
+are not explicitly 
 represented: a facet is given by a cell and an index (the facet
 \ccc{i} of a cell \ccc{c} is the facet of \ccc{c} that is opposite to
-the vertex of index \ccc{i}) and an edge is given by a cell and two
+the vertex with index \ccc{i}) and an edge is given by a cell and two
 indices (the edge \ccc{(i,j)} of a cell \ccc{c} is the edge whose
-endpoints are the vertices of indices \ccc{i} and \ccc{j} of
-\ccc{c}). See Figure~\ref{TDS3-fig-repres}.
+endpoints are the vertices of \ccc{c} with indices \ccc{i} and
+\ccc{j}). See Figure~\ref{TDS3-fig-repres}.  
 
 \subsection{Degenerate Dimensions}
 \label{Triangulation3-sec-degen_dim}
@@ -156,14 +157,14 @@ The class \ccc{Triangulation_3<Traits,Tds>} is designed to be used as
 a layer upon a 3D-triangulation data structure as presented in 
 Section~\ref{TDS3-sec-design} of Chapter~\ref{chapter-TDS3}.
 It provides high level geometric operations such as location of a point
-in the  triangulation, insertion of a point, and is responsible for
+in the triangulation and insertion of a point, and is responsible for
 the geometric validity. This class is parameterized by two classes:
 \begin{itemize}
 \item {} the \textbf{geometric traits} class, where the user can
-specify the type of points he wants to use as well as the elementary
+specify the type of points to use as well as the elementary
 operations on them (predicates,\ldots). The concept of such a class is
 described in Section~\ref{Triangulation3-sec-concept-Traits} and a
-model is proposed by \cgal\ (see
+model is provided by \cgal\ (see
 Section~\ref{Triangulation3-sec-class-Traits}).
 \item {} the \textbf{triangulation data structure} class of the middle level, 
 described in Chapter~\ref{chapter-TDS3}.
@@ -174,12 +175,12 @@ Delaunay triangulations as well as hierarchical Delaunay triangulations
 \ccc{Delaunay_triangulation_3<Traits,Tds>} inherits from 
 \ccc{Triangulation_3<Traits,Tds>} and 
 \ccc{Delaunay_hierarchic_triangulation_3<Traits,Tds>} inherits from 
-\ccc{Delaunay_triangulation_3<Traits,Tds>}. \textit{(hierarchical
-Delaunay triangulations are not yet implemented).} 
+\ccc{Delaunay_triangulation_3<Traits,Tds>}. \textit{(Hierarchical
+Delaunay triangulations are not yet implemented.)} 
 
 \ccc{Triangulation_3<Traits,Tds>} derives from
-\ccc{Triangulation_utils_3<Traits,Tds>}, which defines tools on
-the indices of vertices in cells (see
+\ccc{Triangulation_utils_3<Traits,Tds>}, which defines a set of tools
+working on the indices of vertices in cells (see
 Section~\ref{Triangulation3-sec-class-Utils}). 
 
 \section{Examples}
@@ -325,9 +326,9 @@ Figure~\ref{Triangulation3-fig-utils}).
 
 \ccDefinition
 
-The \ccClassTemplateName\ expects a model of \ccc{geometric traits
-class} as first template argument and a model of \ccc{triangulation data
-structure} as second argument. The requirements and defaults for these
+The \ccClassTemplateName\ expects a model of a \ccc{geometric traits
+class} as its first template argument and a model of a \ccc{triangulation data
+structure} as its second argument. The requirements and defaults for these
 classes are described in Sections~\ref{Triangulation3-sec-concept-Traits} 
 and~\ref{Triangulation3-sec-class-Traits}.
 
@@ -350,7 +351,7 @@ The class \ccClassTemplateName\ defines the following types:
 \ccTypedef{typedef Traits::Tetrahedron Tetrahedron;}{}
 
 The following types represent $k$-faces for $k\in\{0,1,2,3\}$. Edges
-($1$-faces) and facets ($2$-faces) are not explicitely represented and
+($1$-faces) and facets ($2$-faces) are not explicitly represented and
 thus there are no corresponding classes (see
 Sections~\ref{Triangulation3-sec-degen_dim} and
 ~\ref{Triangulation3-sec-def}). The functionalities of the 
@@ -363,7 +364,7 @@ and~\ref{Triangulation3-sec-class-Cell}.
 \ccNestedType{Cell}{Cell type}
 
 \ccTypedef{typedef pair<Cell_handle, int> Facet;}{Facet type.
-The pair \ccc{(c,i)} denotes the facet number \ccc{i} of cell \ccc{c}.}
+The pair \ccc{(c,i)} denotes facet number \ccc{i} of cell \ccc{c}.}
 \ccGlue
 \ccTypedef{typedef triple<Cell_handle, int, int> Edge;}{Edge type.
 The triple \ccc{Edge(c,i,j)} denotes the edge with vertices numbered
@@ -373,13 +374,13 @@ The vertices and faces of the triangulations are accessed through
 \ccc{handles}, \ccc{iterators} and \ccc{circulators}. 
 A handle is a type which supports the two dereference operators
 \ccc{operator*} and \ccc{operator->}. Iterator and circulators are
-bidirectionnel and non mutable.  Circulators and iterators are
+bidirectional and non-mutable.  Circulators and iterators are
 assignable to the corresponding handle types. Whenever a handle appears 
 in the parameter list of a function, an appropriate iterator or
 circulator can be used as well \textit{(not yet implemented)}.  The
 edges and facets of the 
 triangulation can also be visited through iterators and circulators
-which are bidirectionnel and non mutable.
+which are bidirectional and non-mutable.
 
 \ccNestedType{Vertex_handle}{handle to a vertex}
 \ccGlue
@@ -416,9 +417,7 @@ infinite vertex.}
 
 \ccConstructor{Triangulation_3<Traits,Tds>(const
 Triangulation_3<Traits,Tds> & tr);} 
-{Copy constructor. All the vertices and faces are duplicated.
-\ccVar\ and \ccc{tr}\ refer to different triangulations. After the copy,
-if \ccc{tr} is modified, \ccVar\ is not modified.}
+{Copy constructor. All vertices and faces are duplicated.}
 
 \ccFunction{void ~t();}
 {Destructor. All vertices (including the infinite vertex) and cells are
@@ -428,14 +427,14 @@ deleted.}
 
 \ccMethod{Triangulation_3<Traits,Tds>
 		operator=(const Triangulation_3<Traits,Tds> & tr);}
-{The triangulation \ccc{tr} is duplicated, and modifying one after the 
-copy does not modify the other.}
+{The triangulation \ccc{tr} is duplicated, and modifying one copy after the 
+duplication does not modify the other copy.}
 
 \ccMethod{void copy_triangulation
 		(const Triangulation_3<Traits,Tds> & tr);}
 {The triangulation is duplicated.}
 
-The previous first two methods are equivalent.
+The previous two methods are equivalent.
 
 \ccMethod{void swap(Triangulation_3<Traits,Tds> & tr);}
 {The triangulations \ccc{tr} and \ccVar\ are swapped.
@@ -464,13 +463,13 @@ copy of cells and vertices, thus this method runs in constant time.}
 \ccMethod{Cell_handle infinite_cell() const;}
 {Returns a cell incident to the infinite vertex.}
 
-\ccHeading{Non constant-time access functions}
+\ccHeading{Non-constant-time access functions}
 
-As previously said, the triangulation is a collection of cells which
+As previously said, the triangulation is a collection of cells that
 are either infinite or represent a finite tetrahedra, where an
 infinite cell is a 
-cell incident to the infinite vertex. Similarly we call \ccc{infinite}
-an edge (resp. facet) incident to the infinite vertex.
+cell incident to the infinite vertex. Similarly we call
+an edge (resp. facet) \ccc{infinite} if it is incident to the infinite vertex.
 
 \ccMethod{int number_of_cells() const;}
 {The number of cells. Returns 0 if \ccVar.\ccc{dimension()}$<3$.}
@@ -492,14 +491,16 @@ an edge (resp. facet) incident to the infinite vertex.
 
 \begin{ccAdvanced}
 \ccHeading{Setting}
-\ccMethod{void set_number_of_vertices(int n);}{}
+\ccMethod{void set_number_of_vertices(int n);}
+{Sets the number of vertices to \ccc{n}.}
 
 \ccModifiers
-The geometric triangulation is not supposed to perform any operation
+The geometric triangulation is not supposed to perform any operations
 on its underlying triangulation data structure. We nevertheless
-propose the following function to add a cell created by a constructor
+provide the following function to add a cell created by a constructor
 of the cell class of a triangulation
-\ccc{Triangulation_cell_3<Traits,Tds>}.
+\ccc{Triangulation_cell_3<Traits,Tds>}. Users programming their own
+triangulation algorithms might use it.
 
 \ccMethod{void add_cell( Cell_handle c );}
 {Adds \ccc{c} to the triangulation.
@@ -518,7 +519,7 @@ of the cell class of a triangulation
 \ccGlue
 \ccMethod{Triangle triangle(const Cell_handle c, int i) const;}
 {Same as the previous method for facet \ccc{(c,i)}.
-\ccPrecond{idem and $i \in \{0,1,2,3\}$ in dimension~3, $i = 3$ in
+\ccPrecond{As above and $i \in \{0,1,2,3\}$ in dimension~3, $i = 3$ in
 dimension~2.}}
 \ccGlue
 \ccMethod{Segment segment(const Edge & e) const;}
@@ -527,7 +528,7 @@ dimension~2.}}
 \ccGlue
 \ccMethod{Segment segment(const Cell_handle c, int i, int j) const;}
 {Same as the previous method for edge \ccc{(c,i,j)}.
-\ccPrecond{idem and $i\neq j$. Moreover $i,j \in \{0,1,2,3\}$ in
+\ccPrecond{As above and $i\neq j$. Moreover $i,j \in \{0,1,2,3\}$ in
 dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j \in \{0,1\}$ in 
 dimension~1.}}
 
@@ -554,14 +555,14 @@ dimension~3, $i=3$ in dimension~2.}}
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$.}}
 \ccGlue
 \ccMethod{bool is_infinite(const Cell_handle c, int i, int j) const;}
-{\ccc{true}, iff the edge \ccc{i} \ccc{j} of cell \ccc{c} is incident to
+{\ccc{true}, iff the edge \ccc{(i,j)} of cell \ccc{c} is incident to
 the infinite vertex.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$ and $i\neq j$. Moreover
 $i,j \in \{0,1,2,3\}$ in dimension~3, $i,j \in \{0,1,2\}$ in dimension
 2, $i,j \in \{0,1\}$ in  dimension~1.}} 
 \ccGlue
 \ccMethod{bool is_infinite(const Edge & e) const;}
-{\ccc{true} iff edge \ccc{e} incident to the infinite vertex.
+{\ccc{true} iff edge \ccc{e} is incident to the infinite vertex.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$.}}
 
 \ccHeading{Queries}
@@ -616,7 +617,9 @@ or not.
 %\ccPrecond{\ccVar.\ccc{dimension()} $= 3$ (otherwise there is no
 %cell yet).}\\
 If the point \ccc{query} lies inside the convex hull of the points, the cell 
-that contains the query in its interior or on its boundary is returned.\\
+that contains the query in its interior is returned. If \ccc{query} lies on a
+facet, an edge or on a vertex, one of the cells having \ccc{query} on
+its boundary is returned.\\ 
 If the point \ccc{query} lies outside the convex hull of the points,
 an infinite cell with vertices $\{ p, q, r, \infty\}$ is returned such that
 the tetrahedron $( p, q, r, query )$ is positively oriented
@@ -630,7 +633,7 @@ the facet (resp. edge, vertex) containing the query point.
 \ccMethod{Cell_handle
           locate(const Point & query, Cell_handle start) const;}
 {Same as the previous method, but \ccc{start} is used as a starting
-place for the location.}
+place for the search.}
 
 \ccMethod{Cell_handle
           locate(const Point & query,
@@ -641,9 +644,9 @@ place for the location.}
 returned, by means of the cell returned together with \ccc{lt}, which
 is set to the locate type of the query (\ccc{VERTEX, EDGE, FACET,
 CELL}, or \ccc{OUTSIDE_CONVEX_HULL} if the cell is infinite and \ccc{query}
-strictly lies in it) and two indices \ccc{li}, and \ccc{lj} that
-specify the $k$-face of the cell containing \ccc{query}:\\ 
-if the $k$-face is a cell, \ccc{li} and \ccc{lj} have no
+lies strictly in it) and two indices \ccc{li} and \ccc{lj} that
+specify the $k$-face of the cell containing \ccc{query}.\\ 
+If the $k$-face is a cell, \ccc{li} and \ccc{lj} have no
 meaning; if it is a facet (resp. vertex), \ccc{li} gives the index of
 the facet (resp. vertex) and \ccc{lj} has no meaning; if it is and
 edge, \ccc{li} and \ccc{lj} give the indices of its vertices.\\ 
@@ -666,45 +669,46 @@ triangulation, \ccc{lt} is set to \ccc{OUTSIDE_AFFINE_HULL} and
                  Locate_type & lt,
                  int & li, int & lj ) const;}
 {Same as the previous method, but \ccc{start} is used as a starting
-place for the location.}
+place for the search.}
 
 \ccMethod{Bounded_side
           side_of_cell(const Point & p,
 			Cell_handle c,
                         Locate_type & lt, int & li, int & lj) const;}
-{Returns on which side of the oriented boundary of \ccc{c} lies 
-the point \ccc{p}. More precisely, it returns:\\
-- \ccc{ON_BOUNDED_SIDE} if \ccc{p} is inside the cell (for an infinite
+{Returns a value indicating on which side of the oriented boundary
+of \ccc{c} the point \ccc{p} lies. More precisely, it returns:\\
+- \ccc{ON_BOUNDED_SIDE} if \ccc{p} is inside the cell. For an infinite
 cell this means that \ccc{p} lies strictly in the half space limited by
-its finite facet) \\
-- \ccc{ON_BOUNDARY} if p on the boundary of the cell (for an infinite
-cell this means that \ccc{p} lies on the *finite* facet). Then
+its finite facet and not containing any other point of the triangulation. \\
+- \ccc{ON_BOUNDARY} if p on the boundary of the cell. For an infinite
+cell this means that \ccc{p} lies on the \textit{finite} facet. Then
 \ccc{lt} together with \ccc{li} and \ccc{lj} give the precise location
-on the boundary (see the descriptions of \ccc{locate} methods)\\ 
-- \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the cell (for an
-infinite cell this means that \ccc{p} is not in the preceding two
-cases).
+on the boundary. (See the descriptions of the \ccc{locate} methods.)\\ 
+- \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the cell. For an
+infinite cell this means that \ccc{p} does not satisfy either of the
+two previous conditions.  
 \ccPrecond{\ccVar.\ccc{dimension()} $=3$}}
 
 \ccMethod{Bounded_side
           side_of_facet(const Point & p,
 			const Facet & f,
 			Locate_type & lt, int & li, int & lj) const;}
-{Returns on which side of the oriented boundary of \ccc{f} lies 
-the point \ccc{p}:\\
-- \ccc{ON_BOUNDED_SIDE} if \ccc{p} is inside the facet (for an
+{Returns a value indicating on which side of the oriented boundary
+of \ccc{f} the point \ccc{p} lies:\\
+- \ccc{ON_BOUNDED_SIDE} if \ccc{p} is inside the facet. For an
 infinite facet this means that \ccc{p} lies strictly in the half plane
-limited by its finite edge) \\
-- \ccc{ON_BOUNDARY} if \ccc{p} is on the boundary of the facet
-(for an infinite facet this means that \ccc{p} lies on the finite
-edge). \ccc{lt}, \ccc{li} and \ccc{lj} give the precise location of
+limited by its finite edge and not containing any other point of the
+triangulation . \\
+- \ccc{ON_BOUNDARY} if \ccc{p} is on the boundary of the facet.
+For an infinite facet this means that \ccc{p} lies on the finite
+edge. \ccc{lt}, \ccc{li} and \ccc{lj} give the precise location of
 \ccc{p} on the boundary of the facet. \ccc{li} and \ccc{lj} refer to
-indices in the cell \ccc{c} storing \ccc{f}\\
-- \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the facet (for
-an infinite facet this means that \ccc{p} is not in the preceding two
-cases)
+indices in the degenerate cell \ccc{c} representing \ccc{f}.\\
+- \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the facet. For
+an infinite facet this means that \ccc{p} does not satisfy either of
+the two previous conditions. \\
 \ccPrecond{\ccVar.\ccc{dimension()} $=2$ and \ccc{p} lies in the
-plane containing the triangulation. \ccc{f.first} $=3$ (in dimension~2 
+plane containing the triangulation. \ccc{f.second} $=3$ (in dimension~2 
 there is only one facet per cell).}}
 \ccGlue
 \ccMethod{Bounded_side
@@ -717,18 +721,19 @@ there is only one facet per cell).}}
           side_of_edge(const Point & p, 
 			const Edge & e,
                         Locate_type & lt, int & li) const;}
-{Returns on which side of the oriented boundary of \ccc{e} lies 
-the point \ccc{p}:\\
-- \ccc{ON_BOUNDED_SIDE} if \ccc{p} is inside the edge (for an
+{Returns a value indicating on which side of the oriented boundary
+of \ccc{e} the point \ccc{p} lies:\\
+- \ccc{ON_BOUNDED_SIDE} if \ccc{p} is inside the edge. For an
 infinite edge this means that \ccc{p} lies in the half line defined by
-the vertex)\\ 
+the vertex and not containing any other point of the triangulation.\\ 
 - \ccc{ON_BOUNDARY} if \ccc{p} equals one of the vertices,
 \ccc{li} give the index of the vertex in the cell storing \ccc{e}\\
-- \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the edge (for
-an infinite edge this means that \ccc{p} lies on the other half line)\\ 
+- \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the edge. For
+an infinite edge this means that \ccc{p} lies on the other half line,
+which contains the other points of the triangulation.
 \ccPrecond{\ccVar.\ccc{dimension()} $=1$ and \ccc{p} is collinear
-with the points of the triangulation. \ccc{e.first} $=0$ and
-\ccc{e.second} $=1$ (in dimension~2 there is only one edge per cell).}}
+with the points of the triangulation. \ccc{e.second} $=0$ and
+\ccc{e.third} $=1$ (in dimension~2 there is only one edge per cell).}}
 \ccGlue
 \ccMethod{Bounded_side
           side_of_edge(const Point & p,
@@ -827,7 +832,7 @@ Figure~\ref{Triangulation3-fig-insert_outside_affine_hull}.}
 
 \ccMethod{Vertex_handle insert(const Point & p, Cell_handle start);}
 {Same as the previous method, but \ccc{start} is used as a starting
-place for the location done within the insertion.}
+place for the search done within the insertion.}
 
 \ccMethod{template < class InputIterator >
           int
@@ -874,8 +879,8 @@ inside face \ccc{f}.}}
 \ccGlue
 \ccMethod{Vertex_handle insert_in_facet(const Point & p, 
 					Cell_handle c, int i);}
-{Idem, insertion in facet \ccc{(C,i)}.
-\ccPrecond{idem and $i \in \{0,1,2,3\}$ in dimension~3, $i = 3$ in
+{As above, insertion in facet \ccc{(c,i)}.
+\ccPrecond{As above and $i \in \{0,1,2,3\}$ in dimension~3, $i = 3$ in
 dimension~2.}}
 
 \ccMethod{Vertex_handle insert_in_edge(const Point & p, const Edge & e);}
@@ -887,8 +892,8 @@ dimension~1, the edge is split into 2 edges.
 \ccc{e}.}}
 \ccGlue
 \ccMethod{Vertex_handle insert_in_edge(Point p, Cell_handle c, int i, int j);} 
-{Idem, inserts \ccc{p} in edge $(\ccc{i}, \ccc{j})$ of \ccc{c}.
-\ccPrecond{idem and $i\neq j$. Moreover $i,j \in \{0,1,2,3\}$ in
+{As above, inserts \ccc{p} in edge $(\ccc{i}, \ccc{j})$ of \ccc{c}.
+\ccPrecond{As above and $i\neq j$. Moreover $i,j \in \{0,1,2,3\}$ in
 dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j \in \{0,1\}$ in 
 dimension~1.}} 
 
@@ -899,7 +904,7 @@ dimension~1.}}
 %separator (facet, edge or vertex, depending on the dimension) for
 %\ccc{p} from the triangulation (see the description of method
 %\ccc{locate()} for more details on the way the separator is represented).\\
-The cell \ccc{c} must be an infinite face containing \ccVar.\\
+The cell \ccc{c} must be an infinite cell containing \ccc{p}.\\
 Links \ccc{p} to all  points in the triangulation that are visible from
 \ccc{p}. Updates consequently the infinite faces. See
 Figure~\ref{Triangulation3-fig-insert_outside_convex_hull}.
@@ -952,26 +957,26 @@ alt="insert_outside_affine_hull} (2-dimensional case)">
 
 \ccHeading{Traversal of the Triangulation}
 
-The triangulation provides several iterators and circulators
-that allow to traverse it (completely or partially).
+The triangulation class provides several iterators and circulators
+that allow one to traverse it (completely or partially).
 
 \ccHeading{Face, Edge and Vertex Iterators}
 \ccThree{Facet_circulator}{t.finite_facets_begin()toto}{}
 
-The following iterators respectively allow the user to visit cells,
+The following iterators allow the user to visit cells,
 facets, edges and vertices of the
-triangulation. These iterators are non mutable, bi-directionnal and
+triangulation. These iterators are non-mutable, bidirectional and
 their value types are respectively \ccc{Cell}, \ccc{Facet}, \ccc{Edge}
 and \ccc{Vertex}. They are all invalidated by any change in the
 triangulation. 
 
 \ccMethod{Vertex_iterator finite_vertices_begin() const;}
 {Starts at an arbitrary finite vertex. Then \ccc{++} and \ccc{--} will
-iterate on finite vertices. Returns \ccc{vertices_end()} when
+iterate over finite vertices. Returns \ccc{vertices_end()} when
 \ccVar.\ccc{number_of_vertices()} $<1$.} 
 \ccGlue
 \ccMethod{Vertex_iterator all_vertices_begin() const;}
-{Starts at an arbitrary vertex. Iterates on all vertices (even infinite
+{Starts at an arbitrary vertex. Iterates over all vertices (even infinite
 ones). Returns \ccc{vertices_end()} when
 \ccVar.\ccc{number_of_vertices()} $<1$.}  
 \ccGlue
@@ -980,11 +985,11 @@ ones). Returns \ccc{vertices_end()} when
 
 \ccMethod{Edge_iterator finite_edges_begin() const;}
 {Starts at an arbitrary finite edge. Then \ccc{++} and \ccc{--} will
-iterate on finite edges. Returns \ccc{edges_end()} when
+iterate over finite edges. Returns \ccc{edges_end()} when
 \ccVar.\ccc{dimension()} $<1$.} 
 \ccGlue
 \ccMethod{Edge_iterator all_edges_begin() const;}
-{Starts at an arbitrary edge. Iterates on all edges (even infinite
+{Starts at an arbitrary edge. Iterates over all edges (even infinite
 ones). Returns \ccc{edges_end()} when \ccVar.\ccc{dimension()} $<1$.}
 \ccGlue
 \ccMethod{Edge_iterator edges_end() const;}
@@ -992,11 +997,11 @@ ones). Returns \ccc{edges_end()} when \ccVar.\ccc{dimension()} $<1$.}
 
 \ccMethod{Facet_iterator finite_facets_begin() const;}
 {Starts at an arbitrary finite facet. Then \ccc{++} and \ccc{--} will
-iterate on finite facets. Returns \ccc{facets_end()} when
+iterate over finite facets. Returns \ccc{facets_end()} when
 \ccVar.\ccc{dimension()} $<2$.}
 \ccGlue
 \ccMethod{Facet_iterator all_facets_begin() const;}
-{Starts at an arbitrary facet. Iterates on all facets (even infinite
+{Starts at an arbitrary facet. Iterates over all facets (even infinite
 ones). Returns \ccc{facets_end()} when 
 \ccVar.\ccc{dimension()} $<2$.}
 \ccGlue
@@ -1005,11 +1010,11 @@ ones). Returns \ccc{facets_end()} when
 
 \ccMethod{Cell_iterator finite_cells_begin() const;}
 {Starts at an arbitrary finite cell. Then \ccc{++} and \ccc{--} will
-iterate on finite cells. Returns \ccc{cells_end()} when
+iterate over finite cells. Returns \ccc{cells_end()} when
 \ccVar.\ccc{dimension()} $<3$.}
 \ccGlue
 \ccMethod{Cell_iterator all_cells_begin() const;}
-{Starts at an arbitrary cell. Iterates on all cells (even infinite
+{Starts at an arbitrary cell. Iterates over all cells (even infinite
 ones). Returns \ccc{cells_end()} when 
 \ccVar.\ccc{dimension()} $<3$.}
 \ccGlue
@@ -1020,14 +1025,14 @@ ones). Returns \ccc{cells_end()} when
 
 The following circulators respectively visit all cells or all facets
 incident to a given edge. They are non-mutable and bidirectional. They
-are invalited by any modification of one of the cells traversed. 
+are invalidated by any modification of one of the cells traversed. 
 
 \ccMethod{Cell_circulator incident_cells(Edge e) const;}
 {Starts at an arbitrary cell incident to \ccc{e}.
 \ccPrecond{\ccVar.\ccc{dimension()} $=3$.}}
 \ccGlue
 \ccMethod{Cell_circulator incident_cells(Cell_handle c, int i, int j) const;}
-{Idem for edge \ccc{(i,j)} of \ccc{c}.}
+{As above for edge \ccc{(i,j)} of \ccc{c}.}
 \ccGlue
 \ccMethod{Cell_circulator incident_cells(Edge e, Cell_handle start) const;}
 {Starts at cell \ccc{start}.
@@ -1036,7 +1041,7 @@ are invalited by any modification of one of the cells traversed.
 \ccGlue
 \ccMethod{Cell_circulator incident_cells(Cell_handle c, int i, int j, 
 Cell_handle start) const;}
-{Idem for edge \ccc{(i,j)} of \ccc{c}.}
+{As above for edge \ccc{(i,j)} of \ccc{c}.}
 
 The following circulators on facets are defined only in dimension~3,
 though facets are defined also in dimension~2: there are only two
@@ -1046,7 +1051,7 @@ facets sharing an edge in dimension~2.
 \ccPrecond{\ccVar.\ccc{dimension()}~$=3$}}
 \ccGlue
 \ccMethod{Facet_circulator incident_facets(Cell_handle c, int i, int j) const;}
-{Idem for edge \ccc{(i,j)} of \ccc{c}.} 
+{As above for edge \ccc{(i,j)} of \ccc{c}.} 
 \ccGlue
 \ccMethod{Facet_circulator incident_facets(Edge e, Facet start) const;}
 {Starts at facet \ccc{start}. 
@@ -1058,11 +1063,11 @@ const;}
 \ccGlue
 \ccMethod{Facet_circulator incident_facets(Cell_handle c, int i, int j,
 Facet start) const;} 
-{Idem for edge \ccc{(i,j)} of \ccc{c}.} 
+{As above for edge \ccc{(i,j)} of \ccc{c}.} 
 \ccGlue
 \ccMethod{Facet_circulator incident_facets(Cell_handle c, int i, int j,
 Cell_handle start, int f) const;}
-{Idem for edge \ccc{(i,j)} of \ccc{c} and facet \ccc{(start,f)}.} 
+{As above for edge \ccc{(i,j)} of \ccc{c} and facet \ccc{(start,f)}.} 
 
 \ccHeading{Traversal of the incident cells and the adjacent vertices
 of a given vertex} 
@@ -1071,7 +1076,8 @@ of a given vertex}
 		set<Cell*, less<Cell*> > & cells,
 		   Cell_handle c = NULL ) const;}
 {Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
-\ccVar.\ccc{dimension()} $<3$ then the returned set is empty. \\
+\ccVar.\ccc{dimension()} $<3$ then the returned set is empty. The optional
+argument \ccc{c} will be used for initializing the set.\\
 \textit{This method computes a set of \ccc{Cell*}, whereas it should
 logically compute a set of \ccc{Cell_handle}. This is due to
 compilation problems with sets of \ccc{Cell_handle}. However, the user
@@ -1084,7 +1090,8 @@ and the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 		set<Vertex*, less<Vertex*> > & vertices,
 		Cell_handle c = NULL ) const;}
 {Computes the set \ccc{vertices} of all vertices incident to \ccc{v}. If
-\ccVar.\ccc{number_of_vertices()} $<1$ then the set is empty.
+\ccVar.\ccc{number_of_vertices()} $<1$ then the set is empty. The optional
+argument \ccc{c} will be used for finding a first vertex of the set.\\
 \textit{An analogous remark as for the previous method holds on the
 types within the set.}
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ and
@@ -1092,9 +1099,9 @@ the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 
 \begin{ccAdvanced}
 \ccHeading{Checking}
-The responsability of keeping a valid triangulation belongs to the user
+The responsibility of keeping a valid triangulation belongs to the user
 when using advanced operations allowing a direct manipulation of cells
-and vertices. We provide the user with the following method to help
+and vertices. We provide the user with the following methods to help
 debugging. 
 
 \ccMethod{bool
@@ -1110,10 +1117,10 @@ This method is  mainly a debugging help for the users of advanced features.
           is_valid(Cell_handle c, bool verbose = false) const;}
 {Checks the combinatorial validity of the cell by calling the
 \ccc{is_valid} method of the \ccc{Tds} cell class. Also checks the
-geometric validity of \ccc{c}, if \ccc{c} is finite 
-(see Section~\pageref{Triangulation3-sec-Valid}).\\
+geometric validity of \ccc{c}, if \ccc{c} is finite. (See
+Section~\pageref{Triangulation3-sec-Valid}.)\\ 
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
-a precise indication on the kind of invalidity encountered.}
+a precise indication of the kind of invalidity encountered.}
 
 \end{ccAdvanced}
 
@@ -1121,9 +1128,9 @@ a precise indication on the kind of invalidity encountered.}
 
 \ccFunction{istream& operator>>
 (istream& is, Triangulation_3<Traits, Tds> &t);}
-{Reads the combinatorial underlying triangulation from \ccc{is} by
+{Reads the underlying combinatorial triangulation from \ccc{is} by
 calling the corresponding input operator of the triangulation data
-structure class, and the non combinatorial information by calling the
+structure class, and the non-combinatorial information by calling the
 corresponding input operators of the vertex and the cell
 classes. Assigns the resulting triangulation to \ccc{t}.}
 
@@ -1132,12 +1139,13 @@ classes. Assigns the resulting triangulation to \ccc{t}.}
 {Writes the triangulation \ccc{t} into \ccc{os}.}
 
 The information in the \ccc{iostream} is: the dimension, the number of
-finite vertices, the non combinatorial information on vertices (point,
-etc), the number of cells, the cells by the indices of their vertices
-in the preceding list of vertices, plus the non combinatorial
-information on each cell, the neighbors of each cell by their index in
-the preceding list of cells. (This holds when dimension < 3 with faces
-of maximal dimension.)
+finite vertices, the non-combinatorial information about vertices (point,
+etc), the number of cells, the indices of the vertices of each cell,
+plus the non-combinatorial information about each cell, 
+then the indices of the neighbors of each cell, where the index
+corresponds to the preceding list of cells. When dimension $<$ 3, the
+same information is stored for faces of maximal dimension instead of
+cells. 
 
 \end{ccClassTemplate}
 
@@ -1169,7 +1177,7 @@ defined in the class \ccc{Triangulation_3<Traits,Tds>}:
 
 \begin{ccAdvanced}
 \ccCreation
-The user needs to construct explicitly vertices only when designing his
+The user needs to construct vertices explicitly only when implementing his
 own triangulation algorithms. 
 
 \ccConstructor{{Triangulation_vertex_3<Traits,Tds>}()}
@@ -1211,7 +1219,7 @@ vertex. Remember that in degenerate dimensions, a cell stores a face
 of maximal dimension (Section~\ref{Triangulation3-sec-degen_dim}).}
 
 \ccMethod{Vertex_handle handle() const;}
-{Returns an handle to the vertex.}
+{Returns a handle to the vertex.}
 
 %\begin{ccAdvanced}
 %\ccHeading{Checking}
@@ -1251,11 +1259,11 @@ The class \ccClassTemplateName\ defines the same types as the
 
 \begin{ccAdvanced}
 \ccCreation
-The user needs to construct explicitly cells only when designing his
+The user needs to construct cells explicitly only when implementing his
 own triangulation algorithms. The constructors of a cell do not insert
-it into any triangulation. To add a cell into a given triangulation,
+it into any triangulation. To add a cell to a given triangulation,
 the \ccc{add_cell()} method of the triangulation must be used. Note
-that a given cell can only be inserted into \textit{one} triangulation.
+that a given cell can be inserted into only textit{one} triangulation.
 
 \ccConstructor{Triangulation_cell_3<Traits,Tds>()}
 {Introduces a variable \ccVar\ and initializes all its vertices and
@@ -1320,6 +1328,7 @@ neighbors are initialized so that tests on the handles for equality with
 \end{ccAdvanced} 
 
 \ccAccessFunctions
+\ccThree{Vertex_handle}{c.has_vertex( Vertex_handle) v)}{}
 
 \ccMethod{Vertex_handle vertex(int i) const;}
 {Returns vertex \ccc{i} of \ccVar.
@@ -1341,7 +1350,7 @@ computes the index \ccc{i} of the vertex.}
 \ccPrecond{$i \in \{0,1,2,3\}$.}}
 \ccGlue
 \ccMethod{int index(Cell_handle n) const;}
-{Returns the index of cell \ccc{n} in \ccVar.
+{Returns the index corresponding to neighboring cell \ccc{n}.
 \ccPrecond{\ccc{n} is a neighbor of \ccVar.}}
 \ccGlue
 \ccMethod{bool has_neighbor(Cell_handle n) const;}
@@ -1401,9 +1410,9 @@ addition the empty sphere property of all the created faces.}
 
 \ccMethod{Vertex_handle insert(const Point & p, Cell_handle start);}
 {Same as the previous method, \ccc{start} is used as a starting
-place for the location done within the insertion.}
+place for the search done within the insertion.}
 
-The following method allows to insert several points. It returns the
+The following method allows one to insert several points. It returns the
 number of inserted points. 
 
 \ccMethod{template < class InputIterator >
@@ -1440,38 +1449,40 @@ number of inserted points.
 
 \ccMethod{Bounded_side
           side_of_sphere(Cell_handle c, const Point & p) const;}
-{Returns on which side of the circumscribed sphere of \ccc{c} lies 
-the point \ccc{p}. More precisely, it returns:\\
-- \ccc{ON_BOUNDED_SIDE} if \ccc{p} is inside the sphere (for an infinite
+{Returns a value indicating on which side of the circumscribed sphere
+of \ccc{c} the point \ccc{p} lies. More precisely, it returns:\\
+- \ccc{ON_BOUNDED_SIDE} if \ccc{p} is inside the sphere. For an infinite
 cell this means that \ccc{p} lies strictly either in the half space
-limited by its finite facet, or in the interior of the disk
-circumscribing the *finite* facet) \\ 
-- \ccc{ON_BOUNDARY} if p on the boundary of the sphere (for an infinite
+limited by its finite facet and not containing any other point of the
+triangulation, or in the interior of the disk circumscribing the
+\textit{finite} facet. \\ 
+- \ccc{ON_BOUNDARY} if p on the boundary of the sphere. For an infinite
 cell this means that \ccc{p} lies on the circle circumscribing
-the *finite* facet)\\ 
-- \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the sphere (for an
-infinite cell this means that \ccc{p} is not in the preceding two
-cases).
+the \textit{finite} facet.\\ 
+- \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the sphere. For an
+infinite cell this means that \ccc{p} does not satisfy either of the
+two previous conditions. 
 \ccPrecond{\ccVar.\ccc{dimension()} $=3$.}}
 \ccMethod{Bounded_side
 	  side_of_circle(const Facet & f, const Point & p) const;}
-{Returns on which side of the circumscribed circle of \ccc{f} lies 
-the point \ccc{p}. More precisely, it returns:\\
+{Returns a value indicating on which side of the circumscribed circle
+of \ccc{f} the point \ccc{p} lies. More precisely, it returns:\\
 - in dimension~3:\\
--- for a finite facet, \ccc{ON_BOUNDARY} if \ccc{p} lies
+-- For a finite facet, \ccc{ON_BOUNDARY} if \ccc{p} lies
 on the circle, \ccc{ON_UNBOUNDED_SIDE} when it lies in the exterior of
 the disk, \ccc{ON_BOUNDED_SIDE} when it lies in its interior.\\
--- for an infinite facet, it considers the plane defined by the finite
+-- For an infinite facet, it considers the plane defined by the finite
 facet of the same cell, and does the same as in dimension~2 in this
 plane.\\
 - in dimension~2:\\
--- for a finite facet, \ccc{ON_BOUNDARY} if \ccc{p} lies
+-- For a finite facet, \ccc{ON_BOUNDARY} if \ccc{p} lies
 on the circle, \ccc{ON_UNBOUNDED_SIDE} when it lies in the exterior of
 the disk, \ccc{ON_BOUNDED_SIDE} when it lies in its interior.\\
--- for an infinite facet, \ccc{ON_BOUNDARY} if the
+-- For an infinite facet, \ccc{ON_BOUNDARY} if the
 point lies on the finite edge of \ccc{f} (endpoints included),
-\ccc{ON_BOUNDED_SIDE} for a point in the open half-plane defined
-by \ccc{f}, \ccc{ON_UNBOUNDED_SIDE} elsewhere.
+\ccc{ON_BOUNDED_SIDE} for a point in the open half plane defined
+by \ccc{f} and not containing any other point of the triangulation,
+\ccc{ON_UNBOUNDED_SIDE} elsewhere. 
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$.}}
 
 \ccMethod{Bounded_side
@@ -1484,10 +1495,11 @@ by \ccc{f}, \ccc{ON_UNBOUNDED_SIDE} elsewhere.
           is_valid(bool verbose = false) const;}
 {Checks the combinatorial validity of the triangulation and the
 validity of its geometric embedding (see
-Section~\ref{Triangulation3-sec-Valid}). Also checks that all the spheres
-(resp. circles in dimension~2) circumscribing cells (resp. facets in
-dimension~2) are empty. When \ccc{verbose} is set to true, 
-messages describing the first invalidity encountered are printed.\\
+Section~\ref{Triangulation3-sec-Valid}). Also checks that all the
+circumscribing spheres (resp. circles in dimension~2) of  cells
+(resp. facets in dimension~2) are empty. When \ccc{verbose} is set to
+true,  messages describing the first invalidity encountered are
+printed.\\ 
 This method is  mainly a debugging help for the users of advanced features.
 }
 \end{ccAdvanced}
@@ -1539,7 +1551,7 @@ points (picture in 2D)">
 \end{ccHtmlOnly}
 
 Four weighted points have a unique common orthogonal weighted point called
-\textit{power sphere}. A sphere ${z}^{(w)}$ is said to be
+the \textit{power sphere}. A sphere ${z}^{(w)}$ is said to be
 \textit{regular} if $\forall {p}^{(w)}\in{S}^{(w)},
 \Pi{({p}^{(w)}-{z}^{(w)})}\geq 0$.
 
@@ -1555,15 +1567,14 @@ necessarily appear as vertices of the regular
 triangulation. To know more about regular triangulations, see for
 example \cite{es-itfwr-96}. 
 
-When all weights are 0, power spheres are nothing else than
-circumscribed spheres, and the regular triangulation is exactly the
+When all weights are 0, power spheres are nothing more than
+circumscribing spheres, and the regular triangulation is exactly the
 Delaunay triangulation.
 
-We will call \textit{power circle} the
-weighted point orthogonal to three weighted points in the plane
-defined by these three points. The \textit{power segment} will denote
-the weighted point orthogonal to two weighted points on the line
-defined by these two points.
+We will call the weighted point orthogonal to three weighted points in
+the plane defined by these three points the \textit{power circle}. The
+\textit{power segment} will denote the weighted point orthogonal to
+two weighted points on the line defined by these two points.
 
 To simplify notation, $p$ will often denote in the sequel either the
 point $p\in\R^3$ or the weighted point ${p}^{(w)}=(p,w_p)$.
@@ -1612,9 +1623,9 @@ method returns \ccc{NULL}.}
 
 \ccMethod{Vertex_handle insert(const Weighted_point & p, Cell_handle start);}
 {Same as the previous method, \ccc{start} is used as a starting
-place for the location done within the insertion.}
+place for the search done within the insertion.}
 
-The following method allows to insert several points. It returns the
+The following method allows one to insert several points. It returns the
 number of inserted points. 
 
 \ccMethod{template < class InputIterator >
@@ -1631,9 +1642,9 @@ number of inserted points.
 Let us remark that 
 \[\Pi({p}^{(w)}-{z}^{(w)}) > 0\]
 is equivalent to\\
-\centerline{\ccc{p} lies outside the sphere of center \ccc{z} and radius
+\centerline{\ccc{p} lies outside the sphere with center \ccc{z} and radius
 $\sqrt{w_p^2+w_z^2}$.}\\
-This remark helps to have an intuition about the following predicates.
+This remark helps provide an intuition about the following predicates.
 
 \begin{ccTexOnly}
 \begin{figure}[htbp]
@@ -1656,16 +1667,19 @@ power sphere of \ccc{c}. More precisely, it returns:\\
 - \ccc{ON_BOUNDED_SIDE} if $\Pi({p}^{(w)}-{z(c)}^{(w)})<0$ where
 ${z(c)}^{(w)}$ is the power sphere of \ccc{c}. For an
 infinite cell this means either that \ccc{p} lies strictly in the half
-space limited by its finite facet, or that the angle
-between \ccc{p} and the power circle of the *finite* facet of \ccc{c}
+space limited by its finite facet and not containing any other point
+of the triangulation, or that the angle 
+between \ccc{p} and the power circle of the \textit{finite} facet of \ccc{c}
 is greater than $\pi/2$. \\  
 - \ccc{ON_BOUNDARY} if p is orthogonal to the power sphere of \ccc{c}
 i.e. $\Pi({p}^{(w)}-{z(c)}^{(w)})=0$. For an infinite cell this means
-that \ccc{p} is orthogonal to the power circle of its *finite* facet.\\ 
+that \ccc{p} is orthogonal to the power circle of its \textit{finite} facet.\\ 
 - \ccc{ON_UNBOUNDED_SIDE} if $\Pi({p}^{(w)}-{z(c)}^{(w)})>0$
 i.e. the angle between the weighted point \ccc{p} and the power sphere
-of \ccc{c} is less than $\pi/2$ or if they do not intersect (for an
-infinite cell this means that \ccc{p} is not in the preceding two cases).
+of \ccc{c} is less than $\pi/2$ or if these two spheres do not
+intersect. For an 
+infinite cell this means that \ccc{p} does not satisfy either of the
+two previous conditions. 
 \ccPrecond{\ccVar.\ccc{dimension()} $=3$.}}
 
 \ccMethod{Bounded_side
@@ -1674,24 +1688,25 @@ infinite cell this means that \ccc{p} is not in the preceding two cases).
 {Returns the position of the point \ccc{p} with respect to the
 power circle of \ccc{f}. More precisely, it returns:\\
 --- in dimension~3:\\
--- for a finite facet,\\
+-- For a finite facet,\\
 \ccc{ON_BOUNDARY} if \ccc{p} is orthogonal to the power circle in the
 plane of the facet,\\ 
 \ccc{ON_UNBOUNDED_SIDE} when their angle is less than $\pi/2$,\\
 \ccc{ON_BOUNDED_SIDE} when it is greater than $\pi/2$ (see
 Figure~\ref{Triangulation3-fig-sidedim2}).\\ 
--- for an infinite facet, it considers the plane defined by the finite
-facet of the same cell, and does the same as in dimension~2 in this
-plane.\\
+-- For an infinite facet, it considers the plane defined by the finite
+facet of the cell \ccc{f.first}, and does the same as in
+dimension~2 in this plane.\\
 --- in dimension~2:\\
--- for a finite facet,\\
+-- For a finite facet,\\
 \ccc{ON_BOUNDARY} if \ccc{p} is orthogonal to the circle,\\
-\ccc{ON_UNBOUNDED_SIDE} when their angle is less than $\pi/2$,
+\ccc{ON_UNBOUNDED_SIDE} when the angle between \ccc{p} and the
+power circle of \ccc{f} is less than $\pi/2$,
 \ccc{ON_BOUNDED_SIDE} when it is greater than $\pi/2$.\\ 
--- for an infinite facet,\\
-\ccc{ON_BOUNDED_SIDE} for a point in the open half-plane defined by
-\ccc{f},\\
-\ccc{ON_UNBOUNDED_SIDE} in the other open half-plane.\\
+-- For an infinite facet,\\
+\ccc{ON_BOUNDED_SIDE} for a point in the open half plane defined by
+\ccc{f} and not containing any other point of the triangulation,\\
+\ccc{ON_UNBOUNDED_SIDE} in the other open half plane.\\
 If the point \ccc{p} is collinear with the finite edge \ccc{e} of
 \ccc{f}, it returns:\\
 \ccc{ON_BOUNDED_SIDE} if $\Pi({p}^{(w)}-{z(e)}^{(w)})<0$, where
@@ -1724,7 +1739,7 @@ ${z(c)}^{(w)}$ is the power segment of the edge represented by
 {Checks the combinatorial validity of the triangulation and the
 validity of its geometric embedding (see
 Section~\ref{Triangulation3-sec-Valid}). Also checks that all the
-power spheres (resp. power circles in dimension~2, power segment in
+power spheres (resp. power circles in dimension~2, power segments in
 dimension~1) of cells (resp. facets in dimension~2, edges in
 dimension~1) are regular. When \ccc{verbose}
 is set to true, messages describing the first invalidity encountered
@@ -1777,7 +1792,7 @@ The first template parameter of the triangulation class
 \ccc{Triangulation_3<Traits,Tds>} of \cgal\ is the geometric traits class.
 
 The first subsection of this section describes the requirements
-that the geometric traits class must fulfill. The second subsection
+that a geometric traits class must fulfill. The second subsection
 presents a predefined geometric traits class available in \cgal.
 
 	
@@ -1794,14 +1809,14 @@ The geometric traits class \ccClassName\ of the triangulation
 class \ccc{Triangulation_3<Traits, Tds>} must define the geometric
 objects (points, segments, triangles and tetrahedra) forming the
 triangulation together with a few geometric predicates on these objects:
-equality, coordinates comparison, orientation in the space, orientation
+equality, coordinate comparison, orientation in space, orientation
 in case of coplanar points, and collinearity tests.
 
 \ccTypes
 \ccThree{Traits::Tetrahedron}{tds.set_number_of_vertices()}{}
 
 \ccNestedType{Point}
-{The type must provide a copy constructor and assignement operator.}
+{The type must provide a copy constructor and assignment operator.}
 \ccGlue
 \ccNestedType{Segment}
 {The  type must provide a constructor that takes two points as arguments.}
@@ -1817,8 +1832,7 @@ arguments.}
 \ccCreation
 \ccThree{Comparison_result}{compare_x()toto}{}
 
-Only a default constructor is required. Note that further constructors
-can be provided. 
+Only a default constructor is required.
 
 \ccConstructor{Traits();} 
 {A default constructor.}
@@ -1859,12 +1873,13 @@ the \ccc{x} coordinate of \ccc{q}.}
 				 const Point & r,
 				 const Point & s,
 				 const Point & test) const;}
-{When \ccc{test, q, r, s} are coplanar, tests whether \ccc{test} is on the
-same side of \ccc{(q, r)} as \ccc{s}. Returns \ccc{COLLINEAR} if
+{Tests whether \ccc{test} is on the same side of \ccc{(q, r)} as
+\ccc{s} in the common plane of the four points. Returns \ccc{COLLINEAR} if
 \ccc{test, q, r} are collinear, \ccc{POSITIVE} if \ccc{(q, r, test)}
 and \ccc{(q, r, s)} have the same orientation, \ccc{NEGATIVE} if
 \ccc{(q, r, test)} and \ccc{(q, r, s)} have opposite orientations. 
-\ccPrecond{\ccc{test,q,r,s} are coplanar and \ccc{q,r,s} are not collinear.}}
+\ccPrecond{\ccc{test, q, r, s} are coplanar and \ccc{q, r, s} are not
+collinear.}} 
 
 \ccMethod{bool collinear(const Point & p,
 		 	 const Point & q,
@@ -1886,17 +1901,18 @@ Delaunay triangulation must fulfill the following requirements:
 			  const Point & r,
 			  const Point & s,
 			  const Point & test) const;}
-{Computes the side of point \ccc{test} with respect to the oriented
-sphere circumscribing \ccc{p,q,r,s}.}
+{Determines on which side of the oriented sphere circumscribing 
+\ccc{p, q, r, s} the point \ccc{test} lies.} 
 
 \ccMethod{Oriented_side 
   side_of_oriented_circle(const Point & p,
 			  const Point & q,
 			  const Point & r,
 			  const Point & test) const;}
-{Computes the side of \ccc{test} with respect to the oriented circle
-circumscribing \ccc{p,q,r}.
-\ccPrecond{\ccc{p,q,r,test} are coplanar and \ccc{p,q,r} are not collinear.}} 
+{Determines on which side of the oriented circle circumscribing
+\ccc{p, q, r} the point \ccc{test} lies. 
+\ccPrecond{\ccc{p, q, r, test} are coplanar and \ccc{p, q, r} are not
+collinear.}}  
 
 \subsubsection{To be used by \protect 
 \ccc{Delaunay_hierarchic_triangulation_3<Traits, Tds>}}
@@ -1906,7 +1922,7 @@ circumscribing \ccc{p,q,r}.
 \subsubsection{To be used by \protect 
 \ccc{Regular_triangulation_3<Traits, Tds>}}
 
-To be used as the traits class for the regular triangulation proposed
+To be used as the traits class for the regular triangulation provided
 by \cgal, a class must satisfy additional requirements.
 
 We use here the same notation as in
@@ -1925,7 +1941,7 @@ ${z(p,q,r,s)}^{(w)}$,\\
 center $z(p,q,r,s)$ and radius $\sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }$
 (which is equivalent to $\Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0$)),\\
 \ccc{ON_POSITIVE_SIDE} if \ccc{t} lies inside this oriented sphere.
-\ccPrecond{\ccc{p,q,r,s} are not coplanar.}}
+\ccPrecond{\ccc{p, q, r, s} are not coplanar.}}
 
 Note that with this definition, if all the points have a weight equal
 to 0, then
@@ -1937,7 +1953,7 @@ to 0, then
 			   const Weighted_point &t) const;}
 {Analogous definition as the previous method, for coplanar points,
 with the power circle ${z(p,q,r)}^{(w)}$.
-\ccPrecond{\ccc{p,q,r} are not collinear and \ccc{p,q,r,t} are
+\ccPrecond{\ccc{p, q, r} are not collinear and \ccc{p, q, r, t} are
 coplanar.}}
 
 If all the points have a weight equal to 0, then
@@ -1949,7 +1965,7 @@ If all the points have a weight equal to 0, then
 {Same for collinear points, where ${z(p,q)}^{(w)}$ is the
 power segment of \ccc{p} and \ccc{q}.
 \ccPrecond{\ccc{p} and \ccc{q} have different Bare\_points, and
-\ccc{p,q,t} are collinear.}}
+\ccc{p, q, t} are collinear.}}
 
 If all the points have a weight equal to 0, then
 \ccc{power_test(p,q,t)} gives the same answer as the kernel predicate
@@ -1962,14 +1978,18 @@ segment with endpoints \ccc{p} and \ccc{q}.
 	\subsection{The Class \protect \ccc{Triangulation_geom_traits_3<R>}}
 	\label{Triangulation3-sec-class-Traits}
 
-\cgal\ proposes a predefined geometric traits class using the kernel
-geometric objects and predicates. 
+\cgal\ provides a predefined geometric traits class using the kernel
+geometric objects and predicates.
 This class is templated with a representation class.
 
 The traits class \ccClassTemplateName\ is designed to deal with \cgal\ three
 dimensional points. It supplies the user with all
 the functionalities described in
 Section~\ref{Triangulation3-sec-concept-Traits}.
+So, it can be used as a default traits
+class for \ccc{Triangulation_3<Traits,Tds>},
+\ccc{Delaunay_triangulation_3<Traits,Tds>} and
+\ccc{Delaunay_hierarchic_triangulation_3<Traits,Tds>}.
 
 \ccInclude{CGAL/Triangulation_geom_traits_3.h}
 
@@ -1999,6 +2019,12 @@ point class (see
 Section~\ref{Triangulation3-sec-class-Weightedpoints}). It supplies
 the user with all the functionalities 
 described in Section~\ref{Triangulation3-sec-concept-Traits}.
+ It can be used as a default traits
+class for \ccc{Regular_triangulation_3<Traits,Tds>}.
+
+The second argument \ccc{Weight} of the class
+\ccc{Regular_triangulation_euclidean_traits_3<R,Weight>} is in fact
+optional: if is it not provided, \ccc{R::RT} will be used.
 
 \ccInclude{CGAL/Regular_triangulation_euclidean_traits_3.h}
 
@@ -2011,8 +2037,6 @@ described in Section~\ref{Triangulation3-sec-concept-Traits}.
 type for point $p$ of a weighted point ${p}^{(w)}=(p,w_p)$.}
 \ccGlue
 \ccTypedef{typedef Weighted_point <Bare_point, Weight> Weighted_point;}{}
-
-Unless specified, the type \ccc{Weight} for weights is \ccc{R::RT}. 
 
 As \ccClassTemplateName\ inherits from
 \ccc{Triangulation_geom_traits_3<R>}, the \ccc{Bare_point} type is in
@@ -2053,7 +2077,7 @@ with all the required functionalities.
 
 \ccInclude{CGAL/Weighted_point.h}
 
-\ccInheritsFrom{\ccc{Point}}
+\ccInheritsFrom{\ccc{Point} (the template parameter) }
 
 		\end{ccClassTemplate}
 
