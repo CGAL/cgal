@@ -1,4 +1,3 @@
-
 // Test program for the kernel checker.
 
 // Some short names
@@ -18,6 +17,7 @@
 
 typedef CGAL::Filtered_kernel<CGAL::Cartesian<double> > K1;
 typedef CGAL::Cartesian<CGAL::MP_Float> K2;
+// typedef CGAL::Cartesian<int> K2;
 typedef CGAL::Kernel_checker<K1, K2, CGAL::Cartesian_converter<K1, K2> > K;
 
 struct Rep : public  K {};

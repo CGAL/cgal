@@ -1,3 +1,6 @@
+Version 4.190 on 25 January 2004
+- Kernel_checker : print the typeid() in case of failure.
+
 Version 4.189 on 18 January 2004
 - Remove obsolete workarounds related to CGAL_CFG_MATCHING_BUG_2 (VC++ <= 7.0).
 

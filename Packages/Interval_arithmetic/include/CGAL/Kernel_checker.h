@@ -29,11 +29,12 @@
 // TODO:
 // - At the moment, only predicates are checked.  To handle constructions as
 //   well, the best approach is probably to have objects be pairs, and do
-//   everything in parallel.
+//   everything in parallel (cf Curved_kernel's traits checker for an example).
 //   So the template parameter will be a comparator, not a converter.
 
 #include <CGAL/basic.h>
 #include <utility>
+#include <typeinfo>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -64,6 +65,10 @@ public:
 	    std::cerr << "Kernel_checker error : " << res1 << " != " << res2
 		      << " for the inputs : " << std::endl;
 	    std::cerr << a1 << std::endl;
+            std::cerr << "functor first kernel : "
+		      << typeid(o1).name() << std::endl;
+            std::cerr << "functor second kernel: "
+		      << typeid(o2).name() << std::endl;
 #ifdef __GNUG__
 	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
@@ -83,6 +88,10 @@ public:
 	    std::cerr << "Kernel_checker error : " << res1 << " != " << res2
 		      << " for the inputs : " << std::endl;
 	    std::cerr << a1 << ", " << a2 << std::endl;
+            std::cerr << "functor first kernel : "
+		      << typeid(o1).name() << std::endl;
+            std::cerr << "functor second kernel: "
+		      << typeid(o2).name() << std::endl;
 #ifdef __GNUG__
 	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
@@ -102,6 +111,10 @@ public:
 	    std::cerr << "Kernel_checker error : " << res1 << " != " << res2
 		      << " for the inputs : " << std::endl;
 	    std::cerr << a1 << ", " << a2 << ", " << a3 << std::endl;
+            std::cerr << "functor first kernel : "
+		      << typeid(o1).name() << std::endl;
+            std::cerr << "functor second kernel: "
+		      << typeid(o2).name() << std::endl;
 #ifdef __GNUG__
 	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
@@ -122,6 +135,10 @@ public:
 		      << " for the inputs : " << std::endl;
 	    std::cerr << a1 << ", " << a2 << ", " << a3 << ", " << a4
 		      << std::endl;
+            std::cerr << "functor first kernel : "
+		      << typeid(o1).name() << std::endl;
+            std::cerr << "functor second kernel: "
+		      << typeid(o2).name() << std::endl;
 #ifdef __GNUG__
 	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
@@ -143,6 +160,10 @@ public:
 		      << " for the inputs : " << std::endl;
 	    std::cerr << a1 << ", " << a2 << ", " << a3 << ", " << a4
 		      << ", " << a5 << std::endl;
+            std::cerr << "functor first kernel : "
+		      << typeid(o1).name() << std::endl;
+            std::cerr << "functor second kernel: "
+		      << typeid(o2).name() << std::endl;
 #ifdef __GNUG__
 	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
