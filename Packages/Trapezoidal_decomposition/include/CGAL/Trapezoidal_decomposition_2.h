@@ -153,6 +153,7 @@ public:
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
     using Base_trapezoid_iterator::curr;
+    using Base_trapezoid_iterator::traits;
 #endif
 
   protected:
