@@ -40,9 +40,10 @@ protected:
 
 public:
   Vertex_handle create_vertex(Vertex_handle vh){
-    container.push_back(Vertex(vh));
-    return vh;
-  }
+    Vertex* vv = new Vertex(vh);
+    container.push_back(*vv);
+    return vv;
+    }
 };
 
 
@@ -50,17 +51,17 @@ public:
 //
 // A user defined Vertex 
 template <class TDS = TDS_Bidon> 
-class  My_vertex : public Vertex_base<TDS>
+class  My_vertex_base : public Vertex_base<TDS>
 {
 public:
   typedef Vertex_base<TDS>                     Base;
   typedef typename TDS::Vertex_handle          Vertex_handle;
 
   template < class My_TDS>
-  struct TDS_rebind { typedef My_vertex<My_TDS> Rebound;};
+  struct TDS_rebind { typedef My_vertex_base<My_TDS> Rebound;};
     
-  My_vertex() : Base (){}
-  My_vertex(Vertex_handle vh) : Base(vh) {}
+  My_vertex_base() : Base (){}
+  My_vertex_base(Vertex_handle vh) : Base(vh) {}
       
   void set_wahou(Vertex_handle vh) { wahou = vh;}
   Vertex_handle get_wahou() {return wahou ;}
@@ -72,22 +73,24 @@ private:
 
 typedef Vertex_base<>                        Vb;
 typedef TDS_2<Vb>                            Tds;
-typedef My_vertex<>                          Myvb;
+typedef My_vertex_base<>                     Myvb;
 typedef TDS_2<Myvb>                          Mytds;
 
+typedef Tds::Vertex                          Vertex;
 typedef Tds::Vertex_handle                   Vertex_handle;
+typedef Mytds::Vertex                        My_vertex;          
 typedef Mytds::Vertex_handle                 My_vertex_handle;
 
 int  main()
 {
   Tds tds;
-  Vertex_handle vh = Vertex_handle();
+  Vertex_handle vh = new Vertex;
   for(int i = 0 ; i < 10 ; i++) {
     vh = tds.create_vertex(vh);
   }
 
   Mytds mytds;
-  My_vertex_handle myvh = My_vertex_handle();
+  My_vertex_handle myvh = new My_vertex;
   for(int i = 0 ; i < 10 ; i++) {
     myvh = mytds.create_vertex(myvh);
     myvh->set_wahou(myvh);
