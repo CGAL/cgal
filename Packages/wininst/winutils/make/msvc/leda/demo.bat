@@ -1,4 +1,3 @@
-
 cd demo\Alpha_shapes_2 
 %MMAKE% clean
 %MMAKE% all  
@@ -7,7 +6,15 @@ cd demo\Arrangement_2
 %MMAKE% clean
 %MMAKE% all  
 cd ..\.. 
-cd demo\Benchmark_LK_LEDA 
+cd demo\Convex_hull_2
+%MMAKE% clean
+%MMAKE% all  
+cd ..\.. 
+cd demo\Convex_hull_3
+%MMAKE% clean
+%MMAKE% all  
+cd ..\.. 
+cd demo\Convex_hull_d
 %MMAKE% clean
 %MMAKE% all  
 cd ..\.. 
@@ -15,7 +22,7 @@ cd demo\Fixed_precision_nt
 %MMAKE% clean
 %MMAKE% all  
 cd ..\.. 
-cd demo\Generator_LEDA 
+cd demo\Generator
 %MMAKE% clean
 %MMAKE% all  
 cd ..\.. 
@@ -31,7 +38,7 @@ cd demo\Min_circle_2
 %MMAKE% clean
 %MMAKE% all  
 cd ..\.. 
-cd demo\Min_ellipse_2 
+cd demo\Min_ellipse
 %MMAKE% clean
 %MMAKE% all  
 cd ..\.. 
@@ -67,11 +74,11 @@ cd demo\Stream_support_LEDA
 %MMAKE% clean
 %MMAKE% all  
 cd ..\.. 
-cd demo\Triangulation 
+cd demo\Triangulation_2 
 %MMAKE% clean
 %MMAKE% all  
 cd ..\.. 
-cd demo\Triangulation3 
+cd demo\Triangulation_3 
 %MMAKE% clean
 %MMAKE% all  
 cd ..\.. 
@@ -79,4 +86,5 @@ cd demo\Window_stream
 %MMAKE% clean
 %MMAKE% all  
 cd ..\.. 
+
 
