@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <strstream>
 #include <string>
 #include <vector>
@@ -312,7 +313,7 @@ curve_is_in_x_range_wrapper( std::istrstream& strLine ){
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
 curve_compare_at_x_smth_wrapper( std::istrstream& strLine, 
-                                 string& strCommand  ){
+                                 std::string& strCommand  ){
   int index1, index2, index3, exp_answer, real_answer;
 
   strLine >> index1 >> index2 >> index3;
@@ -463,7 +464,7 @@ curve_is_same_wrapper( std::istrstream& strLine ){
 //------------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_src_trg_wrapper( std::istrstream& strLine, string& strCommand ){
+curve_src_trg_wrapper( std::istrstream& strLine, std::string& strCommand ){
   int index1;
   Point real_answer;
   NT x,y;
@@ -500,7 +501,7 @@ curve_src_trg_wrapper( std::istrstream& strLine, string& strCommand ){
 //------------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-point_to_lr_wrapper( std::istrstream& strLine, string& strCommand ){
+point_to_lr_wrapper( std::istrstream& strLine, std::string& strCommand ){
   int index;
   
   strLine >> index;
@@ -732,7 +733,7 @@ curves_overlap_wrapper( std::istrstream& strLine ){
 //------------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-translate_boolean( string& strValue ){
+translate_boolean( std::string& strValue ){
   if(  strValue == "TRUE" ){
     return true;
   }
@@ -741,7 +742,7 @@ translate_boolean( string& strValue ){
 //------------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 int Base_traits_test< Traits_class, Number_type >::
-translate_enumerator( string& strValue ){
+translate_enumerator( std::string& strValue ){
   if( strValue == "LARGER" ){
     return CGAL::LARGER;
   }
@@ -773,7 +774,7 @@ get_expected_boolean( std::istrstream& strLine ){
   char buff[128];
   strLine.getline( buff, 128, '.' );
   buff[strLine.gcount()] = '\0';
-  string strExpRes = remove_blanks( buff );
+  std::string strExpRes = remove_blanks( buff );
   return translate_boolean( strExpRes );
 }
 //------------------------------------------------------------------------------
@@ -783,13 +784,13 @@ get_expected_enum( std::istrstream& strLine ){
   char buff[128];
   strLine.getline( buff, 128, '.' );
   buff[strLine.gcount()] = '\0';
-  string strExpRes = remove_blanks( buff );
+  std::string strExpRes = remove_blanks( buff );
   return translate_enumerator( strExpRes );
 }
 
 //------------------------------------------------------------------------------
-string remove_blanks( char* str ){
-  string result = "";
+std::string remove_blanks( char* str ){
+  std::string result = "";
   while( *str != '\0' ){
     if( *str != ' ' )
       result += *str;
