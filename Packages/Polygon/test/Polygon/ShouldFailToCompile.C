@@ -1,5 +1,5 @@
 #include <CGAL/Cartesian.h>
-#define CGAL_POLYGON_2_CONST_ITER
+#define CGAL_POLYGON_2_CACHED 1
 #include <CGAL/Polygon_2.h>
 
 using CGAL::Polygon_2;

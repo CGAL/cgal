@@ -26,6 +26,7 @@
 
 #include <iterator>
 #include <CGAL/circulator.h>
+#include <CGAL/Polygon_2_vertex_circulator.h>
 #include <CGAL/polygon_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -45,7 +46,8 @@ class Polygon_2_const_edge_circulator {
     typedef _Traits Traits;
     typedef typename _Traits::Segment_2 Segment_2;
     typedef _Container Container;
-    typedef Bidirectional_const_circulator_from_container<_Container>
+//    typedef Bidirectional_const_circulator_from_container<_Container>
+    typedef Polygon_circulator<_Container>
             Vertex_const_circulator;
 
     typedef Segment_2                            value_type;

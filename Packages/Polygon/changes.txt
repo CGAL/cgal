@@ -1,3 +1,11 @@
+4.1 (4 July 2001)
++ Renamed second form of area_2 to polygon_area_2 (to fix compiler bug)
++ Rewrote some documentation.
++ Introduced a new vertex_circulator class, which should allow
+  set, insert and erase by circulator. Alas, gives Internal Compiler Errors
+  on MSVC.
++ Adapted test programs to work with new functionality.
+
 4.0.1 (3 July 2001)
 + Made the caching design safer.
   Caching should be enabled explicitly by setting CGAL_POLYGON_2_CACHED.

@@ -60,7 +60,7 @@ void test_polygon(const R&, const Point&, const char* FileName)
 #endif
     typename R::FT area = 0, area2;
     CGAL::area_2(polygon.begin(), polygon.end(), area, R());
-    area2 = CGAL::area_2(polygon.begin(), polygon.end(), R());
+    area2 = CGAL::polygon_area_2(polygon.begin(), polygon.end(), R());
     CGAL::Bounded_side bside =
 	 CGAL::bounded_side_2(polygon.begin(), polygon.end(), point);
     CGAL::Oriented_side oside =

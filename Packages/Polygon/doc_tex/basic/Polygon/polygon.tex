@@ -2,85 +2,43 @@
 \cleardoublepage
 \chapter{Polygon}\label{Polygon}
 
-\begin{ccClassTemplate}{Polygon_2<Traits,Container>}
-\ccSection{2D Polygon}
+\section{Introduction}
 
-\ccDefinition
+A polygon is a closed chain of edges. Several algorithms are available for
+polygons. For some of those algorithms, it is necessary that the polygon is
+simple. A polygon is simple if edges don't intersect, except consecutive edges,
+which intersect in their common vertex.
 
-The class \ccClassName\ represents a simple polygon in the two-dimensional
-Euclidean plane $\E_2$. A polygon is called {\em simple} if there is no pair
-of nonconsecutive edges sharing a point (see \cite{ps-cgi-85}).
+The following algorithms are available:
+\begin{itemize}
+\item find the leftmost, rightmost, topmost and bottommost vertex.
+\item compute the (signed) area.
+\item check if a polygon is simple.
+\item check if a polygon is convex.
+\item find the orientation (clockwise or counterclockwise)
+\item check if a point lies inside a polygon.
+\end{itemize}
+All those operations take two forward iterators as parameters in order to
+describe the polygon. These parameters have a point type as value type.
 
-An object \ccStyle{p} of the data type \ccClassName\ is defined by the sequence
-of its vertices. A simple polygon \ccStyle{p} is oriented, i.e., its boundary has
-clockwise or counterclockwise orientation. The side to the left of the boundary
-is called the positive side and the side to the right of the boundary is called
-the negative side.  As any Jordan curve, the boundary of a polygon divides the
-plane into two open regions, a bounded one and an unbounded one.
+The type \ccc{Polygon_2} can be used to represent polygons.
+Polygons are dynamic. Vertices can be modified, inserted and erased.
+They provide the algorithms described above as member functions.
+Moreover, they provide ways of iterating over the vertices and edges.
 
-An object \ccStyle{p} of \ccClassName\ is a dynamic data
-structure, i.e. vertices can be added and removed. These operations may
-destroy the simplicity of the polygon, which is a precondition to most
-predicates of polygons.
+Currently, the \ccc{Polygon_2} class is a nice wrapper around the algorithms,
+but little more. Especially, computed values are not cached.
+That is, when the \ccc{is_simple()} member function is called twice or more,
+the result is computed each time anew. It is possible to set a preprocessor flag
+to alter this behaviour. In the future, caching will become the default.
 
-The data type \ccClassName\ is parameterized with two template parameters: 
-a traits class \ccStyle{Traits} and a container class \ccStyle{Container}. 
-The parameter \ccStyle{Traits} defines the types and predicates
-that are used in the polygon class and the polygon algorithms.
-For example \ccStyle{Traits::Point_2} denotes the type of the vertices
-of the polygon. 
-The parameter \ccStyle{Container} specifies the type of container that is 
-used to store the sequence of vertices of the polygon, e.g.\ a list, a vector, 
-a tree, etc.
-The type \ccStyle{Container} should fulfill the requirements of a sequence 
-container given in \cite{ms-strg-96}. 
-The value type of the container should be the same as the point type of the 
-traits class.
-
-\subsubsection*{Assertions}
-The polygon code uses infix \ccc{POLYGON} in the assertions,
-for example defining the compiler flag
-\ccc{CGAL_POLYGON_NO_PRECONDITIONS} switches precondition
-checking off, cf.~Section~2 of the Reference Manual Part 0, General 
-Introduction.
-
-The following types denote iterators that allow to traverse the vertices and
-edges of a polygon. 
-Since it is questionable whether a polygon should be viewed as a circular or 
-as a linear data structure both circulators and iterators are defined.
-The circulators and iterators with `const' in their name are non-mutable, the 
-others are mutable.
-
-\ccExample
-
+\section{Example}
 
 The following code fragment creates a polygon and does some checks.
 
 \ccIncludeExampleCode{Polygon/Polygon.C}
 
 \end{ccClassTemplate}
-
-\section{Algorithms on sequences of 2D points \label{sec:poly_algo}}
-
-A number of algorithms on sequences of 2D points are supplied as global functions.
-In all algorithms the points in the range \ccStyle{[first,last)} are interpreted
-as the vertices of a polygon. The vertices in this range should have value type
-\ccStyle{Traits::Point_2}. Most functions take a traits class as their last argument.
-
-For the implementation of \ccc{oriented_side_2} 
-a {\em crossing test} algorithm is used with complexity
-$O(n)$, see \cite{h-pps-94}.
-The implementation of \ccc{is_convex_2} checks if the polygon is locally convex
-and if there is only one local minimum and one local maximum with respect to
-the lexicographical ordering determined by
-\ccc{Traits::lexicographically_xy_smaller}.
-The complexity of the algorithm is $O(n)$, where $n$ is the number of points
-in the range \ccStyle{[first,last)}.
-The simplicity test \ccc{is_simple_2} of a polygon is a line-segment 
-intersection test. For the implementation a plane sweep algorithm is used, see also 
-\cite{ps-cgi-85}, p.276.
-The complexity of the algorithm is $O(n \log n)$ (worst case), where $n$ is 
-the number of points in the range \ccStyle{[first,last)}.
 
 
 \begin{figure}

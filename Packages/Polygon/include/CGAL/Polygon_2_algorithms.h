@@ -68,7 +68,6 @@ Bbox_2 bbox_2(InputIterator first, InputIterator last);
 template <class ForwardIterator, class Traits>
 void 
 area_2( ForwardIterator first, ForwardIterator last,
-   //	typename std::iterator_traits<ForwardIterator>::value_type::FT& result,
    	typename Traits::FT &result,
         const Traits& traits)
 {
@@ -94,8 +93,7 @@ area_2( ForwardIterator first, ForwardIterator last,
 
 template <class ForwardIterator, class Traits>
 typename Traits::FT 
-area_2( ForwardIterator first, ForwardIterator last,
-   //	typename std::iterator_traits<ForwardIterator>::value_type::FT& result,
+polygon_area_2( ForwardIterator first, ForwardIterator last,
         const Traits& traits)
 {
    typedef typename Traits::FT FT;

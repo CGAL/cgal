@@ -43,6 +43,7 @@
 #endif // CGAL_REP_CLASS_DEFINED
 
 #include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/Polygon_2_vertex_circulator.h>
 #include <CGAL/Polygon_2_edge_iterator.h>
 #include <CGAL/Polygon_2_edge_circulator.h>
 
@@ -150,10 +151,7 @@ class Polygon_2 {
 #endif // defined(...CACHED)
     typedef Vertex_iterator Vertex_const_iterator;
 
-//    typedef Bidirectional_circulator_from_container<Container_P>
-//            Vertex_circulator;
-
-    typedef Bidirectional_const_circulator_from_container<Container_P>
+    typedef Polygon_circulator<Container_P>
             Vertex_const_circulator;
     typedef Vertex_const_circulator Vertex_circulator;
 
@@ -240,22 +238,24 @@ class Polygon_2 {
     void set(Vertex_iterator pos, const Point_2& x)
      { invalidate_cache(); *get_container_iterator(pos) = x; }
 
-//    void set(Vertex_circulator pos, const Point_2& x)
-//     { invalidate_cache();
-//       typename Container::iterator pos1;
-//       pos1 = pos.current_iterator();
-//       *pos1 = x;
-//     }
+#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+    void set(Polygon_circulator<Container>const &pos, const Point_2& x)
+     { invalidate_cache();
+       *pos.mod_iterator() = x;
+     }
+#endif
 
     Vertex_iterator insert(Vertex_iterator pos, const Point_2& x)
       { invalidate_cache();
         return d_container.insert(get_container_iterator(pos),x);
       }
 
-//    Vertex_iterator insert(Vertex_circulator pos, const Point_2& x)
-//      { invalidate_cache();
-//        return d_container.insert(pos.current_iterator(),x);
-//      }
+#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+    Vertex_iterator insert(Vertex_circulator pos, const Point_2& x)
+      { invalidate_cache();
+        return d_container.insert(pos.mod_iterator(),x);
+      }
+#endif
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
     template <class InputIterator>
@@ -264,11 +264,13 @@ class Polygon_2 {
                 InputIterator last)
       { d_container.insert(get_container_iterator(pos), first, last); }
 
-//    template <class InputIterator>
-//    void insert(Vertex_circulator pos,
-//                InputIterator first,
-//                InputIterator last)
-//      { d_container.insert(pos.current_iterator(), first, last); }
+#  if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+    template <class InputIterator>
+    void insert(Vertex_circulator pos,
+                InputIterator first,
+                InputIterator last)
+      { d_container.insert(pos.mod_iterator(), first, last); }
+#  endif
 #endif
 
     void push_back(const Point_2& x)
@@ -277,8 +279,10 @@ class Polygon_2 {
     void erase(Vertex_iterator pos)
       { invalidate_cache(); d_container.erase(get_container_iterator(pos)); }
 
-//    void erase(Vertex_circulator pos)
-//      { invalidate_cache(); d_container.erase(pos.current_iterator()); }
+#if defined(CGAL_POLYGON_2_CACHED) && !defined(CGAL_POLYGON_2_MOD_ITER)
+    void erase(Vertex_circulator pos)
+      { invalidate_cache(); d_container.erase(pos.mod_iterator()); }
+#endif
 
     void erase(Vertex_iterator first, Vertex_iterator last)
       { invalidate_cache();
@@ -310,11 +314,15 @@ class Polygon_2 {
     Vertex_const_iterator vertices_end() const
       { return const_cast<Polygon_2&>(*this).d_container.end(); }
 
-//    Vertex_circulator vertices_circulator()
-//      { return Vertex_circulator(&d_container, d_container.begin()); }
+//    Vertex_const_circulator vertices_circulator() const
+//      { return Vertex_const_circulator(&d_container, d_container.begin()); }
 
     Vertex_const_circulator vertices_circulator() const
-      { return Vertex_const_circulator(&d_container, d_container.begin()); }
+      { 
+        Polygon_2& self = const_cast<Polygon_2&>(*this);
+        return Vertex_const_circulator(&self.d_container,
+               self.d_container.begin());
+      }
 
     Edge_const_iterator edges_begin() const
       { return Edge_const_iterator(&d_container, d_container.begin()); }
