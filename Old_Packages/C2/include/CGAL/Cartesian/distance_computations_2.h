@@ -22,7 +22,6 @@
 #ifndef CGAL_CARTESIAN_DISTANCE_COMPUTATIONS_2_H
 #define CGAL_CARTESIAN_DISTANCE_COMPUTATIONS_2_H
 
-#include <utility>
 #include <CGAL/Cartesian/redefine_names_2.h>
 
 CGAL_BEGIN_NAMESPACE
