@@ -23,7 +23,7 @@
 #
 # Commercial licenses
 # - Please check the CGAL web site http://www.cgal.org/index2.html for 
-#   availability.
+#   availability
 #
 # The CGAL Consortium consists of Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
@@ -769,6 +769,7 @@ set_compiler_flags()
     CGAL_LIBNAME="libCGAL.a"
     CGAL_WIN_LIBNAME="libCGALWin.a"
     CGAL_QT_LIBNAME="libCGALQt.a"
+    CGAL_CORE_LIBNAME="libCORE.a"
     CGAL_WIN_EXTRA_DIR=x11
     GMP_LIBNAME="libgmp.a"
     GMPXX_LIBNAME="libgmpxx.a"
@@ -802,6 +803,7 @@ set_compiler_flags()
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_WIN_LIBNAME="CGALWin.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
+	    CGAL_CORE_LIBNAME="libCORE.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
@@ -836,6 +838,7 @@ set_compiler_flags()
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_WIN_LIBNAME="CGALWin.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
+	    CGAL_CORE_LIBNAME="CORE.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
@@ -869,6 +872,7 @@ set_compiler_flags()
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_WIN_LIBNAME="CGALWin.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
+	    CGAL_CORE_LIBNAME="CORE.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
@@ -5728,9 +5732,9 @@ write_linker_flags()
 	QLIBS="${QLIBS} `lib_option gmpxx`"
     fi
     LIBS="${LIBS} `lib_option gmp`"
-    GEOWLIBS="${GEOWLIBS} `lib_option gmp`"
-    WLIBS="${WLIBS} `lib_option gmp`"
-    QLIBS="${QLIBS} `lib_option gmp`"
+    GEOWLIBS="${GEOWLIBS} `lib_option Core` `lib_option gmp` "
+    WLIBS="${WLIBS} `lib_option Core` `lib_option gmp`"
+    QLIBS="${QLIBS} `lib_option Core` `lib_option gmp`"
   fi
 
   #
@@ -5947,6 +5951,8 @@ create_include_makefile()
   ${_printf} "%s\n" "CGAL_WIN_EXTRA_DIR = ${CGAL_WIN_EXTRA_DIR}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_QT_LIB = ${CGAL_QT_LIBNAME}" >> ${FILE}
 
+  ${_printf} "%s\n" "CGAL_CORE_LIB = ${CGAL_CORE_LIBNAME}" >> ${FILE}
+
   # 
   # CGAL_LIB_CXXFLAGS
   # 
@@ -6036,6 +6042,10 @@ prepare_lib_makefiles()
 	replace_line ${FILE} CGAL_MAKEFILE \
 	    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
     done
+    if [ -d ${CGAL_SRC_DIR}/Core ]; then
+	replace_line ${CGAL_SRC_DIR}/Core/makefile_Core \
+	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    fi
     if [ -d ${CGAL_SRC_DIR}/CGALWin ]; then
 	replace_line ${CGAL_SRC_DIR}/CGALWin/makefile_Win \
 	    CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
@@ -6170,6 +6180,10 @@ build_cgal()
 	if [ -n "${QT_SUPPORT}" -a -d ${CGAL_SRC_DIR}/CGALQt ]; then
 	    cd ${CGAL_SRC_DIR}/CGALQt
 	    _do_compile Qt
+	fi
+	if [ -d ${CGAL_SRC_DIR}/Core ]; then
+	    cd ${CGAL_SRC_DIR}/Core
+	    _do_compile Core
 	fi
     fi
     write_buffer "\n"
