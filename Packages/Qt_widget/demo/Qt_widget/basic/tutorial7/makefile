@@ -40,9 +40,7 @@ all: tutorial7$(EXE_EXT)
 tutorial7$(EXE_EXT): tutorial7.moc tutorial7$(OBJ_EXT) 
 	$(CGAL_CXX)  $(EXE_OPT)tutorial7 tutorial7$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	rm -f tutorial7.o
-	rm -f tutorial7.moc
+clean: tutorial7.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

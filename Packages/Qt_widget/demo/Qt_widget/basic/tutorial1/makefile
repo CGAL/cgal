@@ -38,8 +38,7 @@ all: tutorial1$(EXE_EXT)
 tutorial1$(EXE_EXT): tutorial1$(OBJ_EXT)
 	$(CGAL_CXX)  $(EXE_OPT)tutorial1 tutorial1$(OBJ_EXT) $(LDFLAGS)
 
-clean: 
-	rm -f tutorial1$(OBJ_EXT) tutorial1$(EXE_EXT)
+clean: tutorial1.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

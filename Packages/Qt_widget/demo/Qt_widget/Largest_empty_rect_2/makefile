@@ -59,7 +59,7 @@ largest_empty_rect_2$(EXE_EXT): largest_empty_rect_2$(OBJ_EXT) \
 	 Qt_widget_toolbar$(OBJ_EXT) Qt_widget_move_list_point$(OBJ_EXT) \
 	$(LDFLAGS)
 
-clean: largest_emty_rect_2.clean \
+clean: largest_empty_rect_2.clean \
        Qt_widget_toolbar.clean \
        Qt_widget_move_list_point.clean 
 #---------------------------------------------------------------------#
