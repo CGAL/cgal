@@ -17,7 +17,6 @@
 
 #include <CGAL/Quotient.h>
 #include <CGAL/Interval_arithmetic.h>
-#include <CGAL/leda_real.h>
 
 #include <CGAL/predicates_on_ftC2.h>
 // #include <CGAL/predicates_on_ftC3.h>
@@ -27,7 +26,10 @@
 #include <CGAL/Gmpz.h>
 // #include <CGAL/leda_bigfloat.h>
 // #include <CGAL/leda_rational.h>
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_real.h>
 #include <CGAL/leda_integer.h>
+#endif // CGAL_USE_LEDA
 
 // #define CGAL_IA_NO_WARNINGS
 // #include <CGAL/Interval_arithmetic.h>
@@ -39,13 +41,17 @@
 
 using namespace CGAL;
 
-// Please pay attention to the workaround for MipsPro at teh top of the file.
+// Please pay attention to the workaround for MipsPro at the top of the file.
 
 // Don't be stupid, Gmpz can only store integers !!!
 // typedef Filtered_exact<double, Gmpz> NT;
 // typedef Filtered_exact<leda_real, leda_real> NT;
 // typedef Filtered_exact<double, leda_bigfloat> NT;
+#ifdef CGAL_USE_LEDA
 typedef Filtered_exact<double, leda_real> NT;
+#else
+typedef Filtered_exact<double, Gmpz> NT; // Should be rationnals
+#endif // CGAL_USE_LEDA
 // typedef Filtered_exact<double, leda_real, Filter_Cache> NT;
 // typedef Filtered_exact<double, leda_rational> NT;
 // typedef Filtered_exact<float, leda_real> NT;
@@ -101,10 +107,12 @@ int test()
 {
   NT px, py, la, lb, lc;
   Filtered_exact< Quotient<Gmpz>, Quotient<Gmpz> > qq (3,5);
+#ifdef CGAL_USE_LEDA
   Filtered_exact< Quotient<int>, leda_rational> ii (3,2);
   Quotient<leda_integer> jj (4,5);
   Interval_nt nt = convert_to<Interval_nt_advanced>(jj);
   cout << nt << endl;
+#endif // CGAL_USE_LEDA
   px=1; py=2; la=3; lb=4; lc=5;
   cout << "Result 1st test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
   cout << " ( == 1 )\n";
