@@ -44,6 +44,7 @@ defining \ccc{CGAL_CH_CHECK_EXPENSIVE}%
 
 \ccHeading{Concepts}
 
+\lcTex{
 %\ccRefConceptPage{ConvexHull3fromD_Rep}\\
 \ccRefConceptPage{ConvexHullPolyhedron_3}\\
 \ccRefConceptPage{ConvexHullPolyhedronFacet_3}\\
@@ -52,9 +53,22 @@ defining \ccc{CGAL_CH_CHECK_EXPENSIVE}%
 \ccRefConceptPage{ConvexHullTraits_2}\\
 \ccRefConceptPage{ConvexHullTraits_3} \\
 \ccRefConceptPage{IsStronglyConvexTraits_3}
+}
+
+\lcHtml{
+%\input{ConvexHull_ref/ConvexHull3fromD_Rep}
+\input{ConvexHull_ref/ConvexHullPolyhedron_3}
+\input{ConvexHull_ref/ConvexHullPolyhedronFacet_3}
+\input{ConvexHull_ref/ConvexHullPolyhedronHalfedge_3}
+\input{ConvexHull_ref/ConvexHullPolyhedronVertex_3}
+\input{ConvexHull_ref/ConvexHullTraits_2}
+\input{ConvexHull_ref/ConvexHullTraits_3} 
+\input{ConvexHull_ref/IsStronglyConvexTraits_3}
+}
 
 \ccHeading{Traits Classes}
 
+\lcTex{
 \ccRefIdfierPage{CGAL::Convex_hull_constructive_traits_2<R>}  \\
 \ccRefIdfierPage{CGAL::Convex_hull_d_traits_3<R>} \\
 \ccRefIdfierPage{CGAL::Convex_hull_leda_traits_2}  \\
@@ -64,10 +78,23 @@ defining \ccc{CGAL_CH_CHECK_EXPENSIVE}%
 \ccRefIdfierPage{CGAL::Convex_hull_rat_leda_traits_2}  \\
 \ccRefIdfierPage{CGAL::Convex_hull_traits_2<R>} \\
 \ccRefIdfierPage{CGAL::Convex_hull_traits_3<R>} \\
+}
 
+\lcHtml{
+\input{ConvexHull_ref/Convex_hull_constructive_traits_2}
+\input{ConvexHull_ref/Convex_hull_d_traits_3}
+\input{ConvexHull_ref/Convex_hull_leda_traits_2}
+\input{ConvexHull_ref/Convex_hull_projective_xy_traits_2}
+\input{ConvexHull_ref/Convex_hull_projective_xz_traits_2}
+\input{ConvexHull_ref/Convex_hull_projective_yz_traits_2}
+\input{ConvexHull_ref/Convex_hull_rat_leda_traits_2} 
+\input{ConvexHull_ref/Convex_hull_traits_2}
+\input{ConvexHull_ref/Convex_hull_traits_3} 
+}
 
 \ccHeading{Convex Hull Functions}
 
+\lcTex{
 \ccRefIdfierPage{CGAL::ch_akl_toussaint} \\
 \ccRefIdfierPage{CGAL::ch_bykat} \\
 \ccRefIdfierPage{CGAL::ch_eddy} \\
@@ -76,27 +103,64 @@ defining \ccc{CGAL_CH_CHECK_EXPENSIVE}%
 \ccRefIdfierPage{CGAL::ch_melkman} \\
 \ccRefIdfierPage{CGAL::convex_hull_2} \\
 \ccRefIdfierPage{CGAL::convex_hull_3} \\
-\ccRefIdfierPage{CGAL::convex_hull_randomized_incremental_3} 
+\ccRefIdfierPage{CGAL::convex_hull_incremental_3} 
+}
 
-\ccHeading{Convex Hull Classes}
+\lcHtml{
+\input{ConvexHull_ref/ch_akl_toussaint}
+\input{ConvexHull_ref/ch_bykat} 
+\input{ConvexHull_ref/ch_eddy} 
+\input{ConvexHull_ref/ch_graham_andrew} 
+\input{ConvexHull_ref/ch_jarvis} 
+\input{ConvexHull_ref/ch_melkman}
+\input{ConvexHull_ref/convex_hull_2}
+\input{ConvexHull_ref/convex_hull_3}
+\input{ConvexHull_ref/convex_hull_incremental_3} 
+}
 
+\ccHeading{Convex Hull Class}
+
+\lcTex{
 \ccRefIdfierPage{CGAL::Convex_hull_d<R>}
+}
+
+\lcHtml{
+\input{ConvexHull_ref/Convex_hull_d}
+}
 
 \ccHeading{Convexity Checking Functions}
 
+\lcTex{
 \ccRefIdfierPage{CGAL::is_ccw_strongly_convex_2} \\
 \ccRefIdfierPage{CGAL::is_cw_strongly_convex_2} \\
 \ccRefIdfierPage{CGAL::is_strongly_convex_3} 
+}
+
+\lcHtml{
+\input{ConvexHull_ref/is_ccw_strongly_convex_2} 
+\input{ConvexHull_ref/is_cw_strongly_convex_2} 
+\input{ConvexHull_ref/is_strongly_convex_3} 
+}
 
 \ccHeading{Hull Subsequence Functions}
 
+\lcTex{
 \ccRefIdfierPage{CGAL::ch_graham_andrew_scan} \\
 \ccRefIdfierPage{CGAL::ch_jarvis_march} \\
 \ccRefIdfierPage{CGAL::lower_hull_points_2} \\
 \ccRefIdfierPage{CGAL::upper_hull_points_2}
+}
+
+\lcHtml{
+\input{ConvexHull_ref/ch_graham_andrew_scan}
+\input{ConvexHull_ref/ch_jarvis_march}
+\input{ConvexHull_ref/lower_hull_points_2}
+\input{ConvexHull_ref/upper_hull_points_2}
+}
 
 \ccHeading{Extreme Point Functions}
 
+\lcTex{
 \ccRefIdfierPage{CGAL::ch_e_point} \\
 \ccRefIdfierPage{CGAL::ch_nswe_point} \\
 \ccRefIdfierPage{CGAL::ch_n_point} \\
@@ -104,5 +168,16 @@ defining \ccc{CGAL_CH_CHECK_EXPENSIVE}%
 \ccRefIdfierPage{CGAL::ch_s_point} \\
 \ccRefIdfierPage{CGAL::ch_w_point} \\
 \ccRefIdfierPage{CGAL::ch_we_point} 
+}
+
+\lcHtml{
+\input{ConvexHull_ref/ch_e_point} 
+\input{ConvexHull_ref/ch_nswe_point}
+\input{ConvexHull_ref/ch_n_point}
+\input{ConvexHull_ref/ch_ns_point}
+\input{ConvexHull_ref/ch_s_point}
+\input{ConvexHull_ref/ch_w_point}
+\input{ConvexHull_ref/ch_we_point} 
+}
 
 \clearpage
