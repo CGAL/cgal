@@ -32,18 +32,21 @@
 
 namespace CGAL {
 
-template <class RefCounted,
-          class Allocator = CGAL_ALLOCATOR(RefCounted) >
-class Handle_for_with_access : public Handle_for<RefCounted,Allocator>
+template <class T,
+          class Allocator_ = CGAL_ALLOCATOR(T) >
+class Handle_for_with_access : public Handle_for<T, Allocator_>
 {
   public:
-  Handle_for_with_access(const RefCounted& rc) : 
-    Handle_for<RefCounted,Allocator>(rc){}
-  Handle_for_with_access() : Handle_for<RefCounted,Allocator>(){}
+  Handle_for_with_access(const T& rc) : 
+    Handle_for<T, Allocator_>(rc){}
+  Handle_for_with_access() : Handle_for<T, Allocator_>(){}
   Handle_for_with_access( const Handle_for_with_access& h) : 
-    Handle_for<RefCounted,Allocator>(h){}
+    Handle_for<T, Allocator_>(h){}
   
-  typename Allocator::pointer pointer() const {return ptr;}
+  const T* pointer() const {return Ptr();}
+
+  T* pointer() {return ptr();}
+  
 };
 
 } // namespace CGAL
