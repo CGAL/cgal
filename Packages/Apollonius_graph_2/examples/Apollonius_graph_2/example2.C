@@ -1,4 +1,4 @@
-// general includes
+// standard includes
 #include <iostream>
 #include <fstream>
 #include <cassert>

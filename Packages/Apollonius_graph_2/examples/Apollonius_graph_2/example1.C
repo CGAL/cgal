@@ -1,4 +1,4 @@
-// general includes
+// standard includes
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -8,8 +8,6 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Filtered_exact.h>
 
-// I SHOULD BE ABLE TO DO THE FOLLOWING INSTEAD OF JUST PUTTING ONLY
-//ONE ARGUMENT
 typedef CGAL::Filtered_exact<double,CGAL::MP_Float> NT;
 
 // choose the kernel

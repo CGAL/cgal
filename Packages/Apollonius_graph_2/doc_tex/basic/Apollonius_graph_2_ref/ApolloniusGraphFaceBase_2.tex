@@ -15,15 +15,15 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
-The \ccc{ApolloniusGraphFaceBase_2} generalizes the
+The \ccc{ApolloniusGraphFaceBase_2} refines the
 \ccc{TriangulationFaceBase_2} concept by adding three \ccc{void*}
-pointers and three integers. These triplets intended to support and
+pointers and three integers. These triplets intended to support an
 in-place edge list. Since edges are not represented explicitly, but
 rather as pairs of a \ccc{void*} pointer and an integer, the only way
 to support this in-place edge list is by adding this functionality in
 the face base of the Apollonius graph data structure.
 
-\ccGeneralizes
+\ccRefines
 \ccc{TriangulationFaceBase_2}
 
 \ccTypes
@@ -48,7 +48,7 @@ void* n0, void* n1, void* n2);}
 
 
 \ccHeading{Operations}
-We only cite the additional operations with resepct to those of the
+We only cite the additional operations with respect to those of the
 \ccc{TriangulationFaceBase_2} concept.
 
 %

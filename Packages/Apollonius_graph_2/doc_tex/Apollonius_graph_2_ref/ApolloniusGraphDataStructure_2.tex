@@ -22,7 +22,7 @@ The concept \ccRefName\ refines the concept
 \ccc{TriangulationDataStructure_2}
 described in \ccRefPage{TriangulationDataStructure_2}. In addition
 it provides two methods for the insertion and removal of a degree 2
-vertex in the data structure. We only describe what are the additional 
+vertex in the data structure. We only describe the additional 
 requirements with respect to the \ccc{TriangulationDataStructure_2}
 concept.
 
@@ -35,12 +35,13 @@ concept.
 \ccMethod{Vertex_handle insert_degree_2(Face_handle f, int i);}{Inserts 
 a degree two vertex and two faces adjacent to it that have two common
 edges. The edge defined by the face handle \ccc{f} and the integer
-\ccc{i} is duplicated. It returns a handle to the vertex created}
+\ccc{i} is duplicated. It returns a handle to the vertex created.}
 
 \ccHeading{Removal}
 \ccMethod{void remove_degree_2(Vertex_handle v);}{Removes a degree 2
-vertex and the two faces adjacent to it. The copies of the edges the
-star of \ccc{v} are collapsed.}
+vertex and the two faces adjacent to it. The two edges of the star of
+\ccc{v} that are not incident to it are collapsed.}
+
 
 \ccHasModels
 \ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}

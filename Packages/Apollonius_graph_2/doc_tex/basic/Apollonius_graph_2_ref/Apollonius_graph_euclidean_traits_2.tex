@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Apollonius_graph_euclidean_traits_2<R,W,Method_tag>}
+\begin{ccRefClass}{Apollonius_graph_euclidean_traits_2<K,Method_tag>}
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -20,9 +20,9 @@
   
 The class \ccRefName\ provides a model for the
 \ccc{ApolloniusGraphTraits_2} concept.
-This class is templated by a representation class \ccc{R},
-a weight type \ccc{W} and a \ccc{Method_tag} which
-corresponds to how predicates are evaluated. There are two predefined
+This class is templated by a kernel class \ccc{K} and a
+\ccc{Method_tag} that corresponds to how predicates are
+evaluated. There are two predefined 
 possible values for \ccc{Method_tag}, namely \ccc{CGAL::Sqrt_tag} and
 \ccc{CGAL::No_sqrt_tag}. The first one must be used when the number
 type used in the representation supports the exact evaluation of signs
@@ -38,18 +38,18 @@ multiplications.
 
 \ccCreationVariable{traits}
 \ccCreation
-\ccThree{Apollonius_graph_euclidean_traits_2<R,W,Method_tag>}
+\ccThree{Apollonius_graph_euclidean_traits_2<K,Method_tag>}
 {traits = other}{}
 \ccThreeToTwo
 %
 \ccConstructor{ \ccRefName(); }{Default constructor.}
 \ccGlue
 \ccConstructor{
-\ccRefName(Apollonius_graph_euclidean_traits_2<R,W,Method_tag> other);}
+\ccRefName(Apollonius_graph_euclidean_traits_2<K,Method_tag> other);}
 {Copy constructor.}
 \ccGlue
-\ccMethod{Apollonius_graph_euclidean_traits_2<R,W,Method_tag>
-operator=(Apollonius_graph_euclidean_traits_2<R,W,Method_tag>
+\ccMethod{Apollonius_graph_euclidean_traits_2<K,Method_tag>
+operator=(Apollonius_graph_euclidean_traits_2<K,Method_tag>
 other);}{Assignment operator.}
 
 

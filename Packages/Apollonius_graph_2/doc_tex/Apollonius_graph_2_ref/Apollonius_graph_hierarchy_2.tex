@@ -26,10 +26,10 @@ is in level $i$, is in level $i+1$ with probability $1/\alpha$
 where $\alpha > 1$ is some constant. The difference between the
 \ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>} class and the
 \ccRefName\ is on how the nearest neighbor location is done. Given a
-point $p$ the location is done at follows: at the top most level we
+point $p$ the location is done as follows: at the top most level we
 find the nearest neighbor of $p$ as in the
 \ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>} class. At every
-subsequent level $i$ we use the nearest neighbor found at level $i+i$
+subsequent level $i$ we use the nearest neighbor found at level $i+1$
 to find the nearest neighbor. This is a variant of the corresponding
 hierarchy for points found in \cite{d-iirdt-98}.
 %
@@ -48,7 +48,7 @@ must be models of the concepts
 
 The \ccRefName\ class derives publicly from the
 \ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>} class. The interface is
-the same with its parent class. In the sequel only the methods
+the same with its base class. In the sequel only the methods
 overridden are documented.
 
 
@@ -62,7 +62,7 @@ overridden are documented.
 
 \ccTypes
 \ccRefName\ does not introduce other types than those introduced by
-its parent class \ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>}.
+its base class \ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>}.
 
 \ccCreation
 \ccCreationVariable{agh}
@@ -196,8 +196,9 @@ other} or to \ccVar\ccc{(other)} if \ccc{other} is deleted afterwards.}
 \ccc{ApolloniusGraphTraits_2}\\
 \ccc{ApolloniusGraphHierarchyVertexBase_2}\\
 \ccc{CGAL::Apollonius_graph_2<Gt,StoreHidden,Agds>}\\
-\ccc{CGAL::Apollonius_graph_euclidean_traits_2<R,W,Method_tag>}\\
+\ccc{CGAL::Apollonius_graph_euclidean_traits_2<K,Method_tag>}\\
 \ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Triangulation_hierarchy_2<Tr>}\\
 \ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>}
 
 

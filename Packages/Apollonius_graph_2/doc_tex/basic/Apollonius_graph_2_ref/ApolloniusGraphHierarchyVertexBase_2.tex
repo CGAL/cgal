@@ -28,7 +28,7 @@ adding two \ccc{void*} pointers to the correponding vertices in the
 next and previous level graphs.
 
 
-\ccGeneralizes
+\ccRefines
 \ccc{ApolloniusGraphVertexBase_2}
 
 
@@ -39,19 +39,21 @@ types in addition to those of \ccc{ApolloniusGraphVertexBase_2}.
 
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
-\ccTwo{ApolloniusGraphHierarchyVertexBase_2 v(Point p, void* f);++}{}
+\ccTwo{ApolloniusGraphHierarchyVertexBase_2 v(Weighted_point_2 p, void* f);++}{}
 %
 \ccConstructor{ApolloniusGraphHierarchyVertexBase_2();}{Default
 constructor.}
 \ccGlue
-\ccConstructor{ApolloniusGraphHierarchyVertexBase_2(Point p).}
-{Constructs a vertex embedding the center of the weighted point
-\ccc{p}.}
+\ccConstructor{ApolloniusGraphHierarchyVertexBase_2(Weighted_point_2 p).}
+{Constructs a vertex associated with the weighted point \ccc{p} and
+  embedded at the center of \ccc{p}.}
 \ccGlue
 \ccConstructor
-{ApolloniusGraphHierarchyVertexBase_2(Point p, void* f).}
-{Constructs a vertex embedding the center of the point \ccc{p}
+{ApolloniusGraphHierarchyVertexBase_2(Weighted_point_2 p, void* f).}
+{Constructs a vertex associated with
+the weighted point \ccc{p}, embedded at the center of \ccc{p},
 and pointing to face \ccc{f}.}
+
 
 \ccOperations
 \ccThree{void*}{v.set_down(void* d)+}{}

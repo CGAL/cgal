@@ -1,2 +1,16 @@
 * check TODO file in include/CGAL
 - restore the changes in the examples directory (example3.C and example4.C)
+- in the second example in the examples directory, first fall back to
+  CORE and then to double.
+- check what the method finite_vertex() in the Apollonius_graph_2
+  class returns when there are not finite vertices
+- add Object_2 as a type in the traits class and use that in
+  Apollonius_graph_2
+- the is_valid method should print to std::cerr. check if this is the
+  case.
+- write a Hidden_point_iterator; or change code so that hidden
+  vertices have associated vertex_handles
+- update doc for vertex base and face base when the new design arrives
+- remove from the code the type for Site (in the traits class and the
+  main class if it is there)
+- change the draw_* methods to write_* in Apollonius_graph_2.{h,C}

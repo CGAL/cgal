@@ -19,7 +19,7 @@
 
 The concept \ccRefName\ describes the requirements for the 
 the vertex base class of the \ccc{ApolloniusGraphDataStructure_2}
-concept. At the bottom layer, a vertex stores a weighted point and
+concept. A vertex stores a weighted point and
 provides access to one of its incident face through a \ccc{void *}
 pointer. In addition to that it maintains a container of weighted
 points. The container stores the hidden weighted points related to the 
@@ -27,7 +27,7 @@ vertex.
 
 \ccTypes
 \ccTwo{ApolloniusGraphVertexBase_2::Hidden_weighted_point_container+}{}
-\ccNestedType{Geom_traits}{A type for the geometric traits that define 
+\ccNestedType{Geom_traits}{A type for the geometric traits that defines
 the weighted point stored. \ccPrecond{The type \ccc{Geom_traits} must
 define the type \ccc{Weighted_point}.}}
 %
@@ -38,7 +38,7 @@ define the type \ccc{Weighted_point}.}}
 %
 \ccGlue
 \ccNestedType{Hidden_weighted_point_container}{A type for the list of
-trivial weighted points stored.
+hidden weighted points stored.
 \ccPrecond The container must be a model of \ccc{Back Insertion
 Container}.}
 %
@@ -95,7 +95,7 @@ hidden_weighted_points_end();}
 
 \ccHeading{Setting and unsetting}
 \ccThree{void}{v.add_hidden_weighted_point(Weighted_point p)+}{}
-\ccMethod{void set_point(Weighed_point p);}
+\ccMethod{void set_point(Weighted_point p);}
 {Sets the weighted point.}
 \ccGlue
 \ccMethod{void set_face(void* f);}{Sets the incident face.}
@@ -122,9 +122,7 @@ points.}
 
 \ccSeeAlso
 
-\ccc{ApolloniusGraphDataStructure_2} \\
-%\ccc{TriangulationDataStructure_2::Vertex} \\
-\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
+\ccc{ApolloniusGraphDataStructure_2}
 
 
 \end{ccRefConcept}

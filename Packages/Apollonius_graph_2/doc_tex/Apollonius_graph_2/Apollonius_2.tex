@@ -53,7 +53,7 @@ dual of the {\em Apollonius diagram} or, as it is also known, the
 {\em Additively weighted Voronoi diagram}. The algorithm that has been
 implemented is dynamic, which means that we can perform insertions and
 deletions on line. The corresponding \cgal\ class is called
-\ccc{Apollonius_graph_2<ApolloniusGraphEuclideanTraits_2,StoreHidden,ApolloniusGraphDataStructure_2>}
+\ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,StoreHidden,ApolloniusGraphDataStructure_2>}
 and will be discussed in
 more detail below. The interested reader may want to refer to the
 paper by Karavelas and Yvinec \cite{ky-dawvd-02} for the general idea
@@ -63,46 +63,50 @@ as well as the details of the algorithm implemented.
 Before describing the details of the implementation we make a brief
 introduction to the theory of Apollonius diagrams.
 The Apollonius diagram is defined over a set of weighted points
-$P_i=(c_i,w_i)$, $n=1,\ldots,n$, where $c_i$ is the point and $w_i$
+$P_i=(c_i,w_i)$, $i=1,\ldots,n$, where $c_i$ is the point and $w_i$
 the weight of $P_i$. It is a subdivision of the plane into connected
 regions, called {\em cells}, associated with the weighted points (see
 Fig. \ref{fig:apollonius}(left)). The cell of a 
 weighted point $P_i$ is the locus of points on the plane that are
 closer to $P_i$ than any other weighted point $P_j$, $j\ne i$.
+The distance $\delta(x, P_i)$ of a point $x$ in the plane to a
+circle $P_i$ is defined as: 
+\[      \delta(x,P_i)=\|x-c_i\|-w_i,\]
+where $\|\cdot\|$ denotes the Euclidean norm.
 It can easily be seen that it is a generalization of the Voronoi
 diagram for points, which can actually be obtained if all the weights
 $w_i$ are equal. If all weights $w_i$ are non-negative, the Apollonius
-graph can be viewed as the Voronoi diagram of the set of circles
+diagram can be viewed as the Voronoi diagram of the set of circles
 $\{P_1,\ldots, P_n\}$, where $c_i$ is the center of the circle $P_i$
-and $w_i$ its radius. The distance $\delta(x, P_i)$ of a point $x$ in
-the plane from a circle $P_i$ is then defined as:
-\[      \delta(x,P_i)=\|x-c_i\|-w_i,\]
-where $\|\cdot\|$ denotes the Euclidean norm.
-Unlike the case of points, however, it is possible
-that a weighted point $P_i$ might have an empty cell. If this is the
+and $w_i$ its radius. Unlike the case of points, however, it is
+possible that a weighted point $P_i$ might have an empty cell. This
+can also happen in the case of the power diagram, whose dual is the
+regular triangulation \ref{}. If this is the
 case we call the weighted point {\em hidden} (these are the black
-circles in Fig. \ref{fig:apollonius}). From now on we will assume for
-simplicity that all weights are positive and we will refer to the
-weighted points as circles.
+circles in Fig. \ref{fig:apollonius}). A weighted point which is not
+hidden will be referred to as {\em visible}.
+From now on we will assume for simplicity that all weights are
+positive and we will refer to the weighted points as circles.
 
 
-The Apollonius diagram is planar graph, and so is its dual, the
+The Apollonius diagram is a planar graph, and so is its dual, the
 Apollonius graph. There are many ways to embed it on the plane and one
 such way is shown in Fig. \ref{fig:apollonius}(right).
 The Apollonius graph is uniquely defined once we have
-the Apollonius diagram. If the circles are in {\em general position},
-then the Apollonius graph is a graph with triangular faces away from
+the Apollonius diagram. If the circles are in {\em general position}
+(see precise definition below), then the Apollonius graph is a graph
+with triangular faces away from 
 the convex hull of the set of circles (by triangular we mean that
 every face has exactly three edges). Near the convex hull we may
 have some spikes (i.e., vertices of degree 1). To unify our approach
 and handling of the Apollonius graph we add to the set of (finite)
-circles a fictious circle at infinity, which we call the
+circles a fictitious circle at infinity, which we call the
 {\em point at infinity}. We can then connect all vertices of the outer
-face of the Apollonius graph with the point at infinity which gives us
+face of the Apollonius graph to the point at infinity which gives us
 a graph with the property that all its faces are now
 triangular. However, the Apollonius graph is not a triangulation for
 two main reasons: we cannot always embed it on the plane with straight
-lines segments that yield a triangulation and moreover we may have two
+line segments that yield a triangulation and moreover we may have two
 faces of the graph that have two edges in common, which is not allowed
 in a triangulation. Both of these particularities appear when we
 consider the Apollonius graph of the set of circles in
@@ -114,18 +118,18 @@ Apollonius graphs by discussing the concept of general position. We say
 that a set of circles is in general position if no two triples of
 circles have the same tritangent circle. This statement is rather
 technical and it is best understood in the context of points. The
-equivalent statement of points is that we have no two triples of
-points that define the same circle, or equivalently that no four
-circles are co-circular. The statement about general position made
+equivalent statement for points is that we have no two triples of
+points that define the same circumcircle, or equivalently that no
+four circles are co-circular. The statement about general position made
 above is a direct generalization of the (much simpler to understand)
 statement about points. On the contrary, when we have circles in
 degenerate position, the Apollonius graph has faces with more than
 three edges on their boundary. We can get a triangulated version of
-the graph by simply {\em triangulating} the corrsponding face in an
+the graph by simply {\em triangulating} the corresponding face in an
 arbitrary way. In fact the algorithm that has been implemented in
 \cgal\ has the property that it always returns a valid
 {\em triangulated} version of the Apollonius graph. By valid we mean
-that is contains the actual Apollonius graph (i.e., the actual dual of
+that it contains the actual Apollonius graph (i.e., the actual dual of
 the Apollonius diagram) and whenever there are faces with more than
 three faces then they are triangulated. The way that they are
 triangulated depends on the order of insertion and deletion of the
@@ -136,24 +140,24 @@ circles in the diagram.
 One final point has to be made about hidden circles. First of all we
 would like to be more precise about our definition of hidden circles:
 we say that a circle is hidden if its cell has empty interior. This
-definition allows us to guarantee that all non-hidden circles have
+definition allows us to guarantee that all visible circles have
 cells that are two-dimensional regions.
 Geometrically the fact that a circle is hidden means that it is
 contained in the closure of the disk of another circle (see again
 Fig. \ref{fig:apollonius}). Hidden circles pose an additional
 difficulty to our algorithm and software design. Since we allow
 circles to be inserted and deleted at wish, it is possible that a
-circle that was hidden at some point, may become non-hidden at another
+circle that was hidden at some point, may become visible at another
 point; for example this can happen if we delete the circle that
-contains it. For this purpose we store hidden circles and have them
-reappear when they become non-hidden. We will discuss this issue in
+hides it. For this purpose we store hidden circles and have them
+reappear when they become visible. We will discuss this issue in
 detail below. For the time being it suffices to say that the user has
 the ability to control this behavior. More specifically it is possible
-to discard of the circles that become hidden. This choice is totally
+to discard the circles that become hidden. This choice is totally
 natural when for example we expect to do only insertions, since in
-this case a circle that becomes hidden will never reapper. On the
+this case a circle that becomes hidden will never reappear. On the
 other hand if deletions are expected as well, then we lose the ability
-to have the hidden circles reapper.
+to have the hidden circles reappear.
 
 
 
@@ -162,8 +166,8 @@ to have the hidden circles reapper.
 
 The 2D Apollonius graph class
 \ccc{Apollonius_graph_2<ApolloniusGraphEuclideanTraits_2,StoreHidden,ApolloniusGraphDataStructure_2>}
-follows the design of the triangulation package of \cgal\ .It is
-parametrized by three classes:
+follows the design of the triangulation package of \cgal. It is
+parametrized by three arguments:
 \begin{itemize}
 \item the {\bf geometric traits} class. The user can specify the
   type of geometric objects to be used such as weighted points, points
@@ -171,9 +175,9 @@ parametrized by three classes:
   of the Apollonius graph, as well as some basic constructions that
   can be used, for example, to visualize the Apollonius graph or the
   Apollonius diagram.
-\item a {\bf boolean variable} that indicates if the hidden weighted
-  points are to be stored or not. Its value should \ccc{true} if the
-  user wants to keep track of the weighted points or false
+\item a {\bf boolean value} that indicates if the hidden weighted
+  points are to be stored or not. Its value should be \ccc{true} if the
+  user wants to keep track of the weighted points or \ccc{false}
   otherwise. It is suggested that the value of this template parameter
   is set to \ccc{false}, if only insertions are to be used. By default
   its value is set to \ccc{true}.
@@ -196,12 +200,12 @@ parametrized by three classes:
 
 The predicates required for the computation of the Apollonius graph
 are rather complicated. It is not the purpose of this document to
-discuss them in detail. Te interested reader may refer to the papers
+discuss them in detail. The interested reader may refer to the papers
 by Karavelas and Emiris for the details
 \cite{ke-ppawv-02,ke-rctac-03}. However, we would like to give a brief
-overview what they 
-compute. There are several predicates needed for this algorithm. We
-will discuss the most important/complicated ones. It turnes out that
+overview of what they 
+compute. There are several predicates needed by this algorithm. We
+will discuss the most important/complicated ones. It turns out that
 it is much easier to describe them in terms of the Apollonius diagram,
 rather than the Apollonius graph. Whenever it is applicable we will also
 describe their meaning in terms of the Apollonius graph.
@@ -229,12 +233,12 @@ Fig. \ref{fig:ag2vertexconcfict}) define a tritangent circle (yellow
 circle in Fig. \ref{fig:ag2vertexconflict}). What we want to determine is
 the sign of the distance of the green circle from the yellow
 circle. The distance between two circles $K_1=(c_1,r_1)$ and
-$K_2=(c_2, r_2$ is defined to be the distance of their centers minus
+$K_2=(c_2, r_2)$ is defined as the distance of their centers minus
 their radii:
 \[   \delta(K_1, K_2) = \|c_1-c_2\|-r_1-r_2. \]
 This predicate determines if a vertex in the Apollonius diagram
 (the center of the yellow circle) is destroyed when a new circle is
-inseerted in the diagram (the green circle). In the Apollonius graph
+inserted in the diagram (the green circle). In the Apollonius graph
 it tells us if a triangular face of the diagram is to be destroyed or
 not.
 
@@ -265,7 +269,7 @@ alt="The Vertex_conflict_2 predicate returns true">
 \end{ccHtmlOnly}
 \end{figure}
 
-What we essentially want to compute when we contruct incrementally a
+What we essentially want to compute when we construct incrementally a
 Voronoi diagram, is whether the object to be inserted destroys an edge
 of the Voronoi diagram or not. In the case of points this is really
 easy and it amounts to the well known {\em incircle} test. In the case
@@ -276,13 +280,13 @@ two can be answered directly by the \ccc{Vertex_conflict_2} predicate
 evaluated for the two endpoints of the Apollonius diagram edge. This
 is due to the fact that the value of the \ccc{Vertex_conflict_2}
 predicate is different for the two endpoints. If the two values are
-the same then we need additional test which determines if the interior
-of the Apollonius diagram edge is destroyed by the new circle. This
+the same then we need an additional test which determines if the interior
+of the Apollonius diagram edge is destroyed by the new circle. This is
 what the \ccc{Finite_edge_interior_conflict_2} and
 \ccc{Infinite_edge_interior_concflict_2} predicates do. In essense, it
 is the same predicate (same idea) applied to two different types of
 edges in the Apollonius diagram: a finite or an infinite edge. An edge
-is infinite is its dual edge in the Apollonius graph connects the
+is infinite if its dual edge in the Apollonius graph connects the
 point at infinity with the vertex corresponding to a (finite) circle; 
 otherwise it is a finite edge.
 
@@ -306,7 +310,7 @@ otherwise it is a finite edge.
 {Apollonius_graph_2/apollonius-both_vertices.eps}\\
 \end{ccTexOnly}
 \caption{The \ccc{Finite_edge_interior_conflict_2} predicate. The red
-  circles define two the tritangent yellow circles, whose centers are
+  circles define two tritangent yellow circles, whose centers are
   the endpoints of the edge in the Apollonius diagram (dark blue curve
   segment). The light blue curve is the bisecting curve of the
   top-most and bottom-most red circles, and it is also the supporting
@@ -348,18 +352,19 @@ the additional edges that we use to triangulate non-triangular faces.
 \section{The Apollonius graph hierarchy}
 \label{sec:ag2hierarchy}
 
-The \ccc{ApolloniusGraphHierachy_2} concept is nothing but the
-equivalent of the \ccc{TriangulationHierarchy_2} applied to the
+The \ccc{ApolloniusGraphHierarchy_2} concept is nothing but the
+equivalent of the concept behind the \ccc{Triangulation_hierarchy_2}
+class, applied to the
 Apollonius graph. It consists of a series of Apollonius graphs
 constructed in a manner analogous to the Delaunay hierarchy by
 Devillers \cite{d-iirdt-98}. The class
 \ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,StoreHidden,ApolloniusGraphDataStructure_2>}
-is a model of the \ccc{ApolloniusGraphHierachy_2} concept and has
+is a model of the \ccc{ApolloniusGraphHierarchy_2} concept and has
 exactly the same interface and functionality as the
 \ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,StoreHidden,ApolloniusGraphDataStructure_2>}
 class. Using the Apollonius graph hierarchy involves an additional
 cost in space and time for maintaining the hierarchy. Our experiments
-have shown that it usually pays-off to use the hierarchy for inputs
+have shown that it usually pays off to use the hierarchy for inputs
 consisting of more than 100,000 circles.
 
 

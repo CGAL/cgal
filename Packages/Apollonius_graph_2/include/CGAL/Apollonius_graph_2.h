@@ -133,7 +133,9 @@ public:
   Apollonius_graph_2&
   operator=(const Apollonius_graph_2& ag)
   {
-    DG::operator=(ag);
+    if ( this != &ag ) {
+      DG::operator=(ag);
+    }
     return (*this);
   }
 

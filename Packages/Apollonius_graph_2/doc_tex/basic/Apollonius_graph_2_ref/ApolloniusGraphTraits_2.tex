@@ -19,7 +19,7 @@
   
 The concept \ccRefName\ provides the traits requirements for the
 \ccc{Apollonius_graph_2} class. In particular,
-it provides a type \ccc{Weighted_point}. It also provides
+it provides a type \ccc{Weighted_point_2}. It also provides
 constructions for weighted points and several function object
 types for the predicates. The way the predicates are evaluated is
 discussed in \cite{ke-ppawv-02,ke-rctac-03}.
@@ -32,35 +32,33 @@ discussed in \cite{ke-ppawv-02,ke-rctac-03}.
 \ccTwo{ApolloniusGraphTraits_2}{}
 %\ccTwo{ApolloniusGraphTraits_2::Hyperbola_segment_2+}{}
 %
-\ccNestedType{Bare_point}{A type for a non-weighted point.}
+\ccNestedType{Bare_point_2}{A type for a non-weighted point.}
 \ccGlue
-\ccNestedType{Weighted_point}{A type for a weighted point.}
-\ccGlue
-\ccNestedType{Site}{Another name for the \ccc{Weighted_point} type.}
+\ccNestedType{Weighted_point_2}{A type for a weighted point.}
 \ccGlue
 \ccNestedType{Line_2}{Only required if the primal or dual diagram are
-to be visualized.}
+inserted in a stream.}
 \ccGlue
 \ccNestedType{Ray_2}{Only required if the primal or dual diagram are
-to be visualized.}
+inserted in a stream.}
 \ccGlue
 \ccNestedType{Segment_2}{Only required if the primal or dual diagram are
-to be visualized.}
+inserted in a stream.}
 \ccGlue
 \ccNestedType{Parabola_segment_2}{A parabolic segment type.
 \ccPrecond must be a model for the \ccc{ParabolaSegment_2} concept.}
 %constructor for
 %\ccc{Parabola_segment_2}. Must provide \ccc{Parabola_segment_2
-%operator()(const Weighted_point& p, const Line_2& l, const Bare_point& 
-%p1, const Bare_point& p2)} which constructs the a parabolic segment
+%operator()(const Weighted_point_2& p, const Line_2& l, const Bare_point_2& 
+%p1, const Bare_point_2& p2)} which constructs the a parabolic segment
 %starting from \ccc{p1}, ending at \ccc{p2} and which is equidistant
 %from the weighted point \ccc{p} and the line \ccc{l}.}
 \ccGlue
 \ccNestedType{Hyperbola_2}{A hyperbola type.
 \ccPrecond must be a model for the \ccc{Hyperbola_2} concept.}
 %A constructor for \ccc{Hyperbola_2}. Must
-%provide \ccc{operator()(const Weighted_point& p1, const
-%Weighted_point& p2)} which constructs a hyperbola equidistant from the 
+%provide \ccc{operator()(const Weighted_point_2& p1, const
+%Weighted_point_2& p2)} which constructs a hyperbola equidistant from the 
 %weighted points \ccc{p1} and \ccc{p2}.}
 \ccGlue
 \ccNestedType{Hyperbola_ray_2}{A hyperbolic ray type.
@@ -70,15 +68,15 @@ to be visualized.}
 \ccPrecond must be a model for the \ccc{HyperbolaSegment_2} concept.}
 %A constructor for
 %\ccc{Hyperbola_ray_2}. Must provide \ccc{operator()(const
-%Weighted_point& p1, const Weighted_point& p2, )} which constructs a hyperbola equidistant from the 
+%Weighted_point_2& p1, const Weighted_point_2& p2, )} which constructs a hyperbola equidistant from the 
 %weighted points \ccc{p1} and \ccc{p2}.}
 \ccGlue
 \ccNestedType{Construct_Apollonius_vertex_2}
 {A constructor for an
 Apollonius vertex (a vertex of the Apollonius diagram, i.e., a point
 equidistant from three weighted points). Must provide
-\ccc{Bare_point operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point p3)}, which constructs a
+\ccc{Bare_point_2 operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 p3)}, which constructs a
 point equidistant from \ccc{p1}, \ccc{p2} and \ccc{p3}.}
 %
 \ccGlue
@@ -87,17 +85,17 @@ point equidistant from \ccc{p1}, \ccc{p2} and \ccc{p3}.}
 an Apollonius weighted point (a weighted point whose center is a
 vertex of the Apollonius diagram and its weight is the common
 distance of its center from the three defining weighted points).
-Must provide \ccc{Weighted_point operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point p3)}, which constructs an
-weighted point whose center $c$ if equidistant from \ccc{p1}, \ccc{p2} and
-\ccc{p3}, and its its weight is equal to the (signed) distance of $c$
+Must provide \ccc{Weighted_point_2 operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 p3)}, which constructs a
+weighted point whose center $c$ is equidistant from \ccc{p1}, \ccc{p2} and
+\ccc{p3}, and its weight is equal to the (signed) distance of $c$
 from \ccc{p1} (or \ccc{p2} or \ccc{p3}).}
 %
 \ccGlue
 \ccNestedType{Construct_Apollonius_bisector_2}
 {A constructor for the bisector of
 two weighted points. Must provide \ccc{CGAL::Object
-operator()(Weighted_point p1, Weighted_point p2)}, which constructs
+operator()(Weighted_point_2 p1, Weighted_point_2 p2)}, which constructs
 the bisector of \ccc{p1} and \ccc{p2}. The type of the object returned
 can either be \ccc{Line_2} or \ccc{Hyperbola_2}.}
 %
@@ -110,8 +108,8 @@ the ray. The orientation of the bisector is such that the center of
 \ccc{p1} is to the right. The apex of the ray is the Apollonius vertex
 of the weighted points \ccc{p1}, \ccc{p2} and \ccc{p3}. The direction
 of the ray is that of its supporting bisector.
-Must provide \ccc{CGAL::Object operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point p3)}
+Must provide \ccc{CGAL::Object operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 p3)}
 The type of the object returned can either be \ccc{Ray_2} or
 \ccc{Hyperbola_ray_2}.}
 %
@@ -122,8 +120,8 @@ points \ccc{p1}, \ccc{p2}, \ccc{p3} and \ccc{p4}. The supporting
 bisector of the segment is the bisector of \ccc{p1} and \ccc{p2}. The
 endpoints of the segment are the Apollonius vertices of the triplets:
 \ccc{p1}, \ccc{p2}, \ccc{p3} and \ccc{p1}, \ccc{p4}, \ccc{p2}.
-Must provide \ccc{CGAL::Object operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point p3, Weighted_point p4)}.
+Must provide \ccc{CGAL::Object operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 p3, Weighted_point_2 p4)}.
 The type of the object returned can either be \ccc{Segment_2} or
 \ccc{Hyperbola_segment_2}.}
 %
@@ -131,8 +129,8 @@ The type of the object returned can either be \ccc{Segment_2} or
 \ccNestedType{Construct_Apollonius_primal_ray_2}
 {A constructor for an infinite edge of the Apollonius graph. This is
 the dual of an edge of the Apollonius diagram lying on an infinite
-bisector. Must provide \ccc{Ray_2 operator()(Weighted_point p1,
-Weighted_point p2, Weight_point p3)}, which constructs the
+bisector. Must provide \ccc{Ray_2 operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weight_point p3)}, which constructs the
 ray that bisects the bitangent lines of \ccc{p2}, \ccc{p1} and
 \ccc{p1}, \ccc{p3}. The apex of the ray is the center of \ccc{p1}. The 
 ray is directed in such a way so that it contains the point of
@@ -145,84 +143,84 @@ intersection of the bitangent lines of \ccc{p2}, \ccc{p1} and
 dual of an edge of the Apollonius diagram lying on a finite
 bisector. The dual edge can either be a bisecting segment, a bisecting 
 ray or the entire bisector.
-Must provide \ccc{CGAL::Object operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point p3, Weighted_point p4)}
+Must provide \ccc{CGAL::Object operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 p3, Weighted_point_2 p4)}
 which constructs the segment lying on the bisector of the Apollonius
 weighted points of the triplets \ccc{p1}, \ccc{p2}, \ccc{p3} and
 \ccc{p1}, \ccc{p4}, \ccc{p2} and whose endpoints are the centers of
 \ccc{p1} and \ccc{p2}. The object returned is of type \ccc{Segment_2}
 or \ccc{Hyperbola_segment_2}.
-Must also provide \ccc{Parabola_segment_2 operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point p3)}, which constructs the parabolic
+Must also provide \ccc{Parabola_segment_2 operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 p3)}, which constructs the parabolic
 segment that is equidistant from the bitangent line of \ccc{p1},
 \ccc{p2}, and from the Apollonius weighted point of the triplet \ccc{p1},
 \ccc{p2}, \ccc{p3}. The endpoints of the parabolic
 segment are the centers of \ccc{p1} and \ccc{p2}.
-Must finally provide \ccc{Segment_2 operator()(Weighted_point p1,
-Weighted_point p2)}, which constructs the (straight) segment defined
+Must finally provide \ccc{Segment_2 operator()(Weighted_point_2 p1,
+Weighted_point_2 p2)}, which constructs the (straight) segment defined
 by the centers of \ccc{p1} and \ccc{p2}.}
 %
 \ccTwo{ApolloniusGraphTraits_2}{}
 %
 \ccGlue
 \ccNestedType{Compare_x_2}{A predicate object type. Must
-provide \ccc{Comparison_result operator()(Weighted_point p,
-Weighted_point q)}, which compares the $x$-coordinates of
+provide \ccc{Comparison_result operator()(Weighted_point_2 p,
+Weighted_point_2 q)}, which compares the $x$-coordinates of
 \ccc{p} and \ccc{q}.}
 %
 \ccGlue
 \ccNestedType{Compare_y_2}{A predicate object type. Must
-provide \ccc{Comparison_result operator()(Weighted_point p,
-Weighted_point q)}, which compares the $y$-coordinates of
+provide \ccc{Comparison_result operator()(Weighted_point_2 p,
+Weighted_point_2 q)}, which compares the $y$-coordinates of
 \ccc{p} and \ccc{q}.}
 %
 \ccGlue
 \ccNestedType{Compare_weight_2}{A predicate object type. Must
-provide \ccc{Comparison_result operator()(Weighted_point p,
-Weighted_point q)}, which compares the weights of \ccc{p} 
+provide \ccc{Comparison_result operator()(Weighted_point_2 p,
+Weighted_point_2 q)}, which compares the weights of \ccc{p} 
 and \ccc{q}.}
 %
 \ccGlue
 \ccNestedType{Orientation_2}{A predicate object type. Must
-provide \ccc{Orientation operator()(Weighted_point p,
-Weighted_point q, Weighted_point r)}, which performs the
+provide \ccc{Orientation operator()(Weighted_point_2 p,
+Weighted_point_2 q, Weighted_point_2 r)}, which performs the
 usual orientation test for the centers of the three weighted points
 \ccc{p}, \ccc{q} and \ccc{r}.}
 %
 \ccGlue
-\ccNestedType{Is_trivial_2}{A predicate object type. Must
-provide \ccc{bool operator()(Weighted_point p,
-Weighted_point q)}, which returns \ccc{true} if the circle
+\ccNestedType{Is_hidden_2}{A predicate object type. Must
+provide \ccc{bool operator()(Weighted_point_2 p,
+Weighted_point_2 q)}, which returns \ccc{true} if the circle
 corresponding to \ccc{q} is contained inside the circle corresponding
 to \ccc{p}, \ccc{false} otherwise.}
 %
 \ccGlue
 \ccNestedType{Oriented_side_of_bisector_2}{A predicate object type.
-Must provide \ccc{Oriented_side operator()(Weighted_point p1,
-Weighted_point p2, Bare_point q)}, which returns
+Must provide \ccc{Oriented_side operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Bare_point_2 q)}, which returns
 the oriented side of the bisector of \ccc{p1} and \ccc{p2} that
 contains \ccc{q}. The orientation of the bisector is such that the
 positive halfspace corresponds to \ccc{p1}.}
 %
 \ccGlue
 \ccNestedType{Vertex_conflict_2}{A predicate object type.
-Must provide \ccc{Sign operator()(Weighted_point p1, Weighted_point
-p2, Weighted_point p3, Weighted_point q)}, which
+Must provide \ccc{Sign operator()(Weighted_point_2 p1, Weighted_point_2
+p2, Weighted_point_2 p3, Weighted_point_2 q)}, which
 returns the sign of the distance of \ccc{q} from the Apollonius
 weighted point of \ccc{p1}, \ccc{p2}, \ccc{p3}.
 \ccPrecond{the Apollonius weighted point of \ccc{p1}, \ccc{p2},
 \ccc{p3} must exist.}\\
-Must also provide \ccc{Sign operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point q)}, which
+Must also provide \ccc{Sign operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 q)}, which
 returns the sign of the distance of \ccc{q} from the bitangent line of 
 \ccc{p1}, \ccc{p2} (a degenerate Apollonius weighted point, with its
 center at infinity).}
 %
 \ccGlue
 \ccNestedType{Finite_edge_interior_conflict_2}{A predicate object
-type. Must provide \ccc{bool operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point p3, Weighted_point p4,
-Weighted_point q, bool b)}. The weighted points \ccc{p1}, \ccc{p2},
+type. Must provide \ccc{bool operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 p3, Weighted_point_2 p4,
+Weighted_point_2 q, bool b)}. The weighted points \ccc{p1}, \ccc{p2},
 \ccc{p3} and \ccc{p4} define an Apollonius edge that lies on the
 bisector of \ccc{p1} and \ccc{p2} and has as endpoints the Apollonius
 vertices defined by the triples \ccc{p1}, \ccc{p2}, \ccc{p3} and
@@ -237,8 +235,8 @@ Apollonius edge.
 \ccPrecond{the Apollonius vertices of \ccc{p1}, \ccc{p2},
 \ccc{p3}, and \ccc{p1}, \ccc{p4}, \ccc{p2} must exist.}
 %
-Must also provide \ccc{bool operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point p3, Weighted_point q, bool b)}. The
+Must also provide \ccc{bool operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 p3, Weighted_point_2 q, bool b)}. The
 weighted points \ccc{p1}, \ccc{p2}, \ccc{p3} and the site at infinity
 $p_\infty$ define an Apollonius edge that lies on the bisector of
 \ccc{p1} and \ccc{p2} and has as endpoints the Apollonius vertices
@@ -255,8 +253,8 @@ Apollonius edge.
 \ccPrecond{the Apollonius vertex of \ccc{p1}, \ccc{p2},
 \ccc{p3} must exist.}
 %
-Must finally provide \ccc{bool operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point q, bool b)}. The
+Must finally provide \ccc{bool operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 q, bool b)}. The
 weighted points \ccc{p1}, \ccc{p2} and the site at infinity
 $p_\infty$ define an Apollonius edge that lies on the bisector of
 \ccc{p1} and \ccc{p2} and has as endpoints the Apollonius vertices
@@ -273,8 +271,8 @@ Apollonius edge.}
 %
 \ccGlue
 \ccNestedType{Infinite_edge_interior_conflict_2}{A predicate
-object type. Must provide \ccc{bool operator()(Weighted_point p1,
-Weighted_point p2, Weighted_point p3, Weighted_point q, bool b)}. The
+object type. Must provide \ccc{bool operator()(Weighted_point_2 p1,
+Weighted_point_2 p2, Weighted_point_2 p3, Weighted_point_2 q, bool b)}. The
 weighted points $p_\infty$, \ccc{p1}, \ccc{p2} and \ccc{p3} define an
 Apollonius edge that lies on the bisector of $p_\infty$ and \ccc{p1}
 and has as endpoints the Apollonius vertices defined by the triples
@@ -290,8 +288,8 @@ Apollonius edge.}
 %
 \ccGlue
 \ccNestedType{Is_degenerate_edge_2}{A predicate object type.
-Must provide \ccc{bool operator()(Weighted_point p1, Weighted_point
-p2, Weighted_point p3, Weighted_point p4)}. It returns \ccc{true} if
+Must provide \ccc{bool operator()(Weighted_point_2 p1, Weighted_point_2
+p2, Weighted_point_2 p3, Weighted_point_2 p4)}. It returns \ccc{true} if
 the Apollonius edge defined by \ccc{p1}, \ccc{p2}, \ccc{p3} and
 \ccc{p4} is degenerate, \ccc{false} otherwise. An Apollonius edge is
 called degenerate if its two endpoints coincide.
@@ -329,7 +327,7 @@ called degenerate if its two endpoints coincide.
 \ccGlue
 \ccMethod{Orientation_2 orientation_2_object();}{}
 \ccGlue
-\ccMethod{Is_trivial_2 is_trivial_2_object();}{}
+\ccMethod{Is_hidden_2 is_hidden_2_object();}{}
 \ccGlue
 \ccMethod{Oriented_side_of_bisector_2
 oriented_side_of_bisector_test_2_object();}{}
