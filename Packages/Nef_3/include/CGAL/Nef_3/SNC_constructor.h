@@ -3,7 +3,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/bounded_side_3.h>
-#include <CGAL/line_3_line_3_intersection.h>
 #include <CGAL/Nef_3/Pluecker_line_3.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
@@ -97,38 +96,60 @@ public:
   typedef SNC_SM_const_decorator<SNC_structure_> SM_const_decorator;
 
   #define USING(t) typedef typename SNC_structure_::t t
-  USING(Vertex_iterator); USING(Vertex_handle);
-  USING(Halfedge_iterator); USING(Halfedge_handle);
-  USING(Halffacet_iterator); USING(Halffacet_handle);
-  USING(Volume_iterator); USING(Volume_handle);
-  USING(SVertex_iterator); USING(SVertex_handle);
-  USING(SHalfedge_iterator); USING(SHalfedge_handle);
-  USING(SFace_iterator); USING(SFace_handle);
-  USING(SHalfloop_iterator); USING(SHalfloop_handle);
+  USING(Vertex_iterator);
+  USING(Halfedge_iterator);
+  USING(Halffacet_iterator);
+  USING(Volume_iterator);
+
+  USING(Vertex_const_handle);
+  USING(Halfedge_const_handle);
+  USING(Halffacet_const_handle);
+  USING(Volume_const_handle);
+
+  USING(SVertex_iterator);
+  USING(SHalfedge_iterator);
+  USING(SFace_iterator);
+  USING(SHalfloop_iterator);
+
+  USING(SVertex_handle);
+  USING(SHalfedge_handle);
+  USING(SFace_handle);
+  USING(SHalfloop_handle);
+
   USING(SVertex_const_handle); 
   USING(SHalfedge_const_handle); 
   USING(SHalfloop_const_handle); 
   USING(SFace_const_handle); 
+
   USING(Object_handle);
   USING(SObject_handle);
-  USING(SFace_cycle_iterator);  USING(SFace_cycle_const_iterator);
-  USING(Halffacet_cycle_iterator);  USING(Halffacet_cycle_const_iterator);
-  USING(Shell_entry_iterator);  USING(Shell_entry_const_iterator);
+
+  USING(SFace_cycle_iterator);
+  USING(SFace_cycle_const_iterator);
+  USING(Halffacet_cycle_iterator);
+  USING(Halffacet_cycle_const_iterator);
+  USING(Shell_entry_iterator);
+  USING(Shell_entry_const_iterator);
+
   USING(Point_3);
+  USING(Vector_3);
   USING(Segment_3);
   USING(Line_3);
   USING(Plane_3);
-  USING(Vector_3);
+
   USING(Sphere_point);
   USING(Sphere_segment);
   USING(Sphere_circle);
   USING(Sphere_direction);
+
   USING(Mark);
   #undef USING
+
   #define DECUSING(t) typedef typename SM_decorator::t t
   DECUSING(SHalfedge_around_svertex_const_circulator);
   DECUSING(SHalfedge_around_svertex_circulator);
   #undef DECUSING
+
   typedef void* GenPtr;
 
   typedef CGAL::Unique_hash_map<SFace_handle,int>  Shell_number_hash;
@@ -165,10 +186,8 @@ public:
 	  Closed[sf] = false;
       }
     }
-    void visit(Halffacet_handle h) {
-      //TRACEN("visit hf"<<h);
-      /*Shell[h]=n;*/ 
-    }
+    void visit(Halffacet_handle h) { /* do nothing */ }
+
     Vertex_handle& minimal_vertex() { 
       return v_min; 
     }
@@ -220,7 +239,7 @@ public:
     Vertex_handle v_min = MinimalVertex[Shell[f]];
     Halffacet_handle f_below = get_facet_below(v_min);
     if( f_below == Halffacet_handle() )
-      // return volumes_begin();
+      // return volumes_begin(); // is volumes_begin() a const iterator?
       return SNC_decorator(*this).volumes_begin();
     Volume_handle c = volume(f_below);
     if(c != Volume_handle())
@@ -291,7 +310,8 @@ public:
   { s = Segment_3(s.source(),p); }
 
   bool contains_internally(const Segment_3& s, const Point_3& p) const
-  { CGAL_assertion(s.has_on(p));
+  { if(!s.has_on(p))
+      return false;
     Comparison_result r1 = compare_xyz(s.source(),p); 
     Comparison_result r2 = compare_xyz(s.target(),p); 
     return (r1 == opposite(r2));
@@ -300,55 +320,75 @@ public:
   bool do_intersect(const Segment_3& s,
 		    Halfedge_handle e,
 		    Point_3& p) const {
-    bool intersect = do_intersect(s,segment(e),p);
+    bool intersect; //= do_intersect(s,segment(e),p);
     return intersect;
+  }
 
-
+#ifdef LINE3_LINE3_INTERSECTION
   bool do_intersect( const Segment_3& s, 
 		     const Segment_3& q, 
 		     Point_3& p) const 
   {
     Object o = intersection(Line_3(s),Line_3(q)); 
-    if ( !assign(p,o) ) return false;
-    bool c1 = s.has_on(p) && contains_internally(s, p);
-    bool c2 = q.has_on(p) && contains_internally(q, p);
-    return (c1 && c2);
+    if ( !assign(p,o) ) 
+      return false;
+    if( !contains_internally(s, p) || !contains_internally(q, p) )
+      return false;
+    return true;
   }
-#if 0
-    Line_d<3> ls(s), lq(q);
-    /*Object o = intersection(Line_3(s),Line_3(segment(e))); 
-      if ( !assign(p,o) ) return false;
-    bool intersect = do_intersect(s, segment(e), p);
-    
-    if(s.is_degenerate() || q.is_degenerate())
+
+#else // LINE3_LINE3_INTERSECTION
+
+  bool do_intersect( const Segment_3& s, 
+		     const Segment_3& r, 
+		     Point_3& p) const 
+  {
+    if(s.is_degenerate() || r.is_degenerate())
       return false;
     /* at least one of the segments is degenerate so 
        there is not internal intersection */
-    if(orientation(s.source(),s.target(),q.source(),q.target()) != COPLANAR)
+    if(orientation(s.source(),s.target(),r.source(),r.target()) != COPLANAR)
       return false;
     /* the segments doesn't define a plane */
-    if(collinear(s.source(),s.target(),q.source()) &&
-       collinear(s.source(),s.target(),q.target()) )
+    if(collinear(s.source(),s.target(),r.source()) &&
+       collinear(s.source(),s.target(),r.target()) )
       return false;
     /* the segments are collinear */
-    Line_3 ls(s), lq(q);
-    if(ls.direction() ==  lq.direction() ||
-       ls.direction() == -lq.direction() )
+    Line_3 ls(s), lr(r);
+    if(ls.direction() ==  lr.direction() ||
+       ls.direction() == -lr.direction() )
       return false;
     /* the segments are parallel */
-    Vector_3 sv(s.direction()), qv(q.direction());
-    Vector_3 pv(cross_product(sv, sq));
-    Vector_3 ps(cross_product(sv, pv)), pq(cross_product(qv, pv));
-    Plane_3 hs(s.source(),Direction_3(ps)), hq(q.source,Direction_3(pq));
-    Oriented_side os1 = hs.oriented_side(q.source());
-    Oriented_side os2 = hq.oriented_side(s.target());
-    return (os1 == opposite(os2));*/
-   
-    bool c1 = contains_internally(s, p);
-    bool c2 = contains_internally(q, p);
-    return(c1 && c2);
+
+    Oriented_side os1, os2;
+    Vector_3 vs(s.direction()), vr(r.direction()), vt(cross_product(vs, vr)), 
+      ws(cross_product(vt, vs)), wr(cross_product(vt, vr));
+    Plane_3 hs(s.source(),ws);
+    /* hs is a plane which contains line(s) and is perpendicular to the
+       plane defined by s and r */
+    os1 = hs.oriented_side(r.source());
+    os2 = hs.oriented_side(r.target());
+    if(os1 != opposite(os2))
+      return false;
+    Plane_3 hr(r.source(),wr);
+    /* hr is a plane which contains line(r) and is perpendicular to the
+       plane defined by s and r */
+    os1 = hr.oriented_side(s.source());
+    os2 = hr.oriented_side(s.target());
+    if(os1 != opposite(os2))
+      return false;
+
+    Object o = intersection(hs, lr);
+    CGAL_assertion(assign(p,o));
+    /* since line(s) and line(r) are not parallel they intersects in only
+       one point */
+    assign(p,o);
+    if( !contains_internally(s, p) || !contains_internally(r, p) )
+      return false;
+    return true;
   }
-#endif
+#endif // LINE3_LINE3_INTERSECTION
+
   bool do_intersect(const Segment_3& s,
 		    Halffacet_handle f,
 		    Point_3& p) const
@@ -480,8 +520,8 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
   D.mark(f1) = mark(volume(f));
   D.mark(l) = mark(f);
   Sphere_point q(0,-1,0);
-  CGAL::Oriented_side or = c.oriented_side(q);
-  switch ( or ) {
+  CGAL::Oriented_side os = c.oriented_side(q);
+  switch ( os ) {
     case ON_POSITIVE_SIDE: 
       D.mark_of_halfsphere(-1) = D.mark_of_halfsphere(+1) = true;
       break;

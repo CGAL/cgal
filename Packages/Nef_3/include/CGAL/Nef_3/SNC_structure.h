@@ -17,6 +17,25 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// Const Circulators: 
+template <typename HE>
+struct move_shalfedge_around_svertex {
+  void forward(HE& e) const { e = (e->sprev_->twin_); }
+  void backward(HE& e) const { e = (e->twin_->snext_); }
+};
+
+template <typename HE>
+struct move_shalfedge_around_sface {
+  void forward(HE& e)  const { e = (e->snext_); }
+  void backward(HE& e) const { e = (e->sprev_); }
+};
+
+template <typename HE>
+struct move_shalfedge_around_facet {
+  void forward(HE& e) const { e = (e->next_); }
+  void backward(HE& e) const { e = (e->prev_); }
+};
+
 /*{\Manpage {SNC_structure}{Items}{Selective Nef Complex}{C}}*/
 
 template <typename Items_>
@@ -286,25 +305,6 @@ public:
     SObject_handle& operator*() const { return Ibase::operator*(); }
     SObject_handle  operator->() const 
     { CGAL_nef_assertion_msg(0,"not impl."); }
-  };
-
-  // Const Circulators: 
-  template <typename HE>
-  struct move_shalfedge_around_svertex {
-    void forward(HE& e) const { e = (e->sprev_->twin_); }
-    void backward(HE& e) const { e = (e->twin_->snext_); }
-  };
-
-  template <typename HE>
-  struct move_shalfedge_around_sface {
-    void forward(HE& e)  const { e = (e->snext_); }
-    void backward(HE& e) const { e = (e->sprev_); }
-  };
-
-  template <typename HE>
-  struct move_shalfedge_around_facet {
-    void forward(HE& e) const { e = (e->next_); }
-    void backward(HE& e) const { e = (e->prev_); }
   };
 
   typedef CircFromIt<
