@@ -392,7 +392,6 @@ public:
    * \param r,s,t,u,v,w The coefficients of the supporting conic curve.
    * \param l The intersecting line.
    * \pre The line must have two intersection points with the conic curve.
-   *      The line cannot be vertical.
    */
   Conic_arc_2 (const CfNT& r, const CfNT& s, const CfNT& t,
 	       const CfNT& u, const CfNT& v, const CfNT& w,
@@ -417,6 +416,7 @@ public:
     const CfNT   b = l.b();
     const CfNT   c = l.c();
     Point_2      pmid;
+    bool         found_two_intersection_points;
 
     if (CGAL_NTS compare(b, 0) != EQUAL)
     {
@@ -430,7 +430,11 @@ public:
 					    s*c*c + b*(b*w - c*v), 
 					    xs);
 
-      CGAL_precondition(n_xs == 2);
+      found_two_intersection_points = (n_xs == 2);
+
+      if (! found_two_intersection_points)
+	// The arc is invalid:
+	return;
       
       _source = Point_2 (xs[0],
 			 -(a*xs[0] + c) / CoNT(b));
@@ -470,8 +474,12 @@ public:
       int        n_ys;
 
       n_ys = _conic_get_y_coordinates (_x, ys);
-      
-      CGAL_precondition(n_ys == 2);
+
+      found_two_intersection_points = (n_ys == 2);
+
+      if (! found_two_intersection_points)
+	// The arc is invalid:
+	return;
 
       _source = Point_2 (_x, ys[0]);
       _target = Point_2 (_x, ys[1]);
@@ -1138,10 +1146,19 @@ public:
     // supporting lines.
     if (_orient == CGAL::COLLINEAR && arc._orient == CGAL::COLLINEAR)
     {
+      // Construct the two supporting lines and compare them.
       typename Alg_kernel::Line_2  l1 (_source, _target);
       typename Alg_kernel::Line_2  l2 (arc._source, arc._target);
+      Alg_kernel                   ker;
+      typename Alg_kernel::Equal_2 equal_f = ker.equal_2_object();
 
-      return (l1 == l2);
+      if (equal_f (l1, l2))
+	return (true);
+      
+      // Try to compare l1 with the opposite of l2.
+      typename Alg_kernel::Line_2  op_l2 (arc._target, arc._source);
+
+      return (equal_f (l1, op_l2));
     }
 
     // Check whether arc equals (*this) up to a constant factor.
@@ -2017,6 +2034,10 @@ public:
 
     CGAL_precondition(deg > 0);
 
+    if (deg == 0)
+      // Invalid arc:
+      return;
+
     // Store the degree information.
     _info = _info | deg;
 
@@ -2033,7 +2054,6 @@ public:
     // the arc is not infinite.
     if (deg == 2 && det != LARGER && _orient != CGAL::COLLINEAR)
     {
-      CGAL_precondition_code(
       const CoNT       _two = 2;
       const Point_2    p_mid ((_source.x() + _target.x()) / _two,
                               (_source.y() + _target.y()) / _two);
@@ -2041,8 +2061,10 @@ public:
 
       bool  finite_at_x = (get_points_at_x(p_mid, ps) > 0);
       bool  finite_at_y = (get_points_at_y(p_mid, ps) > 0);
-      );
-      CGAL_precondition(finite_at_x && finite_at_y);
+ 
+      if (! finite_at_x || ! finite_at_y)
+	// The arc is invalid:
+	return;
     }
 
     // If we reached here, the conic arc is legal: Get a new id for the conic.

@@ -127,6 +127,8 @@ public:
    */
   bool curve_is_vertical(const X_monotone_curve_2& curve) const
   {
+    CGAL_precondition (curve.is_valid());
+
     return (curve.is_vertical_segment());
   }
 
@@ -141,6 +143,7 @@ public:
   bool point_in_x_range(const X_monotone_curve_2& curve,
                         const Point_2& p) const
   {
+    CGAL_precondition (curve.is_valid());
     CGAL_precondition(is_x_monotone(curve));
 
     if (curve.is_vertical_segment())
@@ -174,6 +177,8 @@ public:
                                            const X_monotone_curve_2& curve2, 
                                            const Point_2& p) const
   {
+    CGAL_precondition (curve1.is_valid());
+    CGAL_precondition (curve2.is_valid());
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
     CGAL_precondition(point_in_x_range(curve1, p));
@@ -312,6 +317,8 @@ public:
                              const X_monotone_curve_2& curve2,
                              const Point_2& p) const
   {
+    CGAL_precondition (curve1.is_valid());
+    CGAL_precondition (curve2.is_valid());
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
@@ -387,6 +394,8 @@ public:
                               const X_monotone_curve_2& curve2,
                               const Point_2& p) const
   {
+    CGAL_precondition (curve1.is_valid());
+    CGAL_precondition (curve2.is_valid());
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
@@ -458,6 +467,7 @@ public:
   Comparison_result curve_compare_y_at_x(const Point_2& p,
                                          const X_monotone_curve_2& curve) const
   {
+    CGAL_precondition (curve.is_valid());
     CGAL_precondition(is_x_monotone(curve));
     CGAL_precondition(point_in_x_range(curve,p));
 
@@ -525,6 +535,8 @@ public:
   bool curve_equal (const X_monotone_curve_2& curve1,
                     const X_monotone_curve_2& curve2) const
   {
+    CGAL_precondition (curve1.is_valid());
+    CGAL_precondition (curve2.is_valid());
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
@@ -538,6 +550,8 @@ public:
    */  
   const Point_2& curve_source (const X_monotone_curve_2& curve) const
   {
+    CGAL_precondition (curve.is_valid());
+
     return (curve.source());
   }
 
@@ -548,6 +562,8 @@ public:
    */
   const Point_2& curve_target (const X_monotone_curve_2& curve) const
   {
+    CGAL_precondition (curve.is_valid());
+
     return (curve.target());
   }
 
@@ -558,6 +574,8 @@ public:
    */
   X_monotone_curve_2 curve_opposite (const X_monotone_curve_2& curve) const
   {
+    CGAL_precondition (curve.is_valid());
+
     // Flip the arc.
     return (curve.flip());
   }
@@ -582,6 +600,8 @@ public:
   OutputIterator curve_make_x_monotone (const Curve_2& curve, 
                                         OutputIterator o) const
   {
+    CGAL_precondition (curve.is_valid());
+
     // Find the points of vertical tangency and act accordingly.
     int      n;
     Point_2  ps[2];
@@ -686,6 +706,7 @@ public:
                     X_monotone_curve_2& sub_curve2, 
                     const Point_2& p) const 
   {
+    CGAL_precondition (curve.is_valid());
     CGAL_precondition(is_x_monotone(curve));
 
     // Make sure the point is on the curve and is not an end-point.
@@ -712,6 +733,8 @@ public:
 		    const X_monotone_curve_2& sub_curve2,
 		    Curve_2& curve) const 
   {
+    CGAL_precondition (sub_curve1.is_valid());
+    CGAL_precondition (sub_curve2.is_valid());
     CGAL_precondition(is_x_monotone(sub_curve1));
     CGAL_precondition(is_x_monotone(sub_curve2));
     CGAL_precondition(sub_curve1.has_same_base_conic(sub_curve2));
@@ -773,6 +796,8 @@ public:
 					const X_monotone_curve_2& curve2,
 					const Point_2& p) const
   {
+    CGAL_precondition (curve1.is_valid());
+    CGAL_precondition (curve2.is_valid());
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
@@ -926,6 +951,8 @@ public:
 				       const X_monotone_curve_2& curve2,
 				       const Point_2& p) const
   {
+    CGAL_precondition (curve1.is_valid());
+    CGAL_precondition (curve2.is_valid());
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
@@ -1068,6 +1095,8 @@ public:
   bool curves_overlap (const X_monotone_curve_2& curve1,
                        const X_monotone_curve_2& curve2) const
   {
+    CGAL_precondition (curve1.is_valid());
+    CGAL_precondition (curve2.is_valid());
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
@@ -1098,9 +1127,6 @@ private:
     // Split the curve to source->p and p->target.
     sub_curve1 = X_monotone_curve_2 (curve, curve.source(), p);
     sub_curve2 = X_monotone_curve_2 (curve, p, curve.target());
-
-    //CGAL_assertion(sub_curve1.is_x_monotone());
-    //CGAL_assertion(sub_curve2.is_x_monotone());
 
     return;
   }
