@@ -40,7 +40,7 @@ namespace CGAL {
     typedef typename K::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator_d;
 
     typedef typename K::Construct_center_2 Construct_center_d;
-    typedef typename K::Construct_squared_radius_2 Construct_squared_radius_d;
+    typedef typename K::Compute_squared_radius_2 Compute_squared_radius_d;
 
     typedef typename K::Construct_iso_rectangle_2 Construct_iso_box_d;
     typedef typename K::FT FT;
