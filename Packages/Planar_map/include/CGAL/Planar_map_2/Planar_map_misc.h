@@ -13,12 +13,14 @@
 //
 // file          : include/CGAL/Planar_map_2/Planar_map_misc.h
 // package       : pm (4.08)
+// maintainer    : Eyal Flato           <flato@math.tau.ac.il>
 // source        :
 // revision      :
 // revision_date :
-// author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
-//                 Eyal Flato
-//                 Oren Nechushtan <theoren@math.tau.ac.il>
+// author(s)     : Iddo Hanniel         <hanniel@math.tau.ac.il>
+//                 Eyal Flato           <flato@post.tau.ac.il>
+//                 Oren Nechushtan      <theoren@math.tau.ac.il
+//                 Efi Fogel            <efif@post.tau.ac.il>>
 //
 // coordinator   : Tel-Aviv University (Dan Halperin)
 //
@@ -26,6 +28,8 @@
 
 #ifndef CGAL_PLANAR_MAP_MISC_H
 #define CGAL_PLANAR_MAP_MISC_H
+
+#include <CGAL/config.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,7 +51,6 @@ public:
   typedef PlanarMapTraits_2             Base;
   typedef typename Base::X_curve_2      X_curve_2;
   typedef typename Base::Point_2        Point_2;
-
   
   // Creators:
   // ---------
