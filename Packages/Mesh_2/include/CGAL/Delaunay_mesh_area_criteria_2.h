@@ -61,8 +61,8 @@ public:
 	   const double area_bound)
       : Is_bad_base(aspect_bound, area_bound) {};
 
-    bool operator()(const Face_handle& fh,
-		    Quality& q) const
+    Mesh_2::Face_badness operator()(const Face_handle& fh,
+				    Quality& q) const
     {
       typedef typename Tr::Geom_traits Geom_traits;
 
@@ -109,9 +109,14 @@ public:
       q.first = min_sine;
       q.second = area;
 
-      if( min_sine < this->B ) return true;
-      if( this->squared_size_bound == 0 ) return false;
-      return ( area > this->squared_size_bound );
+      if( this->squared_size_bound != 0 &&
+	  area > this->squared_size_bound ) 
+	return Mesh_2::IMPERATIVELY_BAD;
+      else
+	if( min_sine < this->B )
+	  return Mesh_2::BAD;
+	else
+	  return Mesh_2::NOT_BAD;
     };
   }; // end class Is_bad
 

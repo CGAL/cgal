@@ -82,8 +82,13 @@ public:
 	   const Point_2 _p)
       : Base::Is_bad(aspect_bound, size_bound), local(l), p(_p) {};
 
-    bool operator()(const Face_handle& fh,
-		    Quality& q) const
+    Mesh_2::Face_badness operator()(Quality q) const
+    {
+      return Base::Is_bad::operator()(q);
+    }
+    
+    Mesh_2::Face_badness operator()(const Face_handle& fh,
+				    Quality& q) const
     {
       if(!local)
 	return Baseclass::operator()(fh,q);
@@ -92,10 +97,8 @@ public:
 	  typename Geom_traits::Orientation_2 orient = 
 	    Geom_traits().orientation_2_object();
 	  
-	  bool is_non_locally_bad = Baseclass::operator()(fh,q);
-
-	  if( q.sine() < this->B )
-	    return true;
+	  Mesh_2::Face_badness is_non_locally_bad = 
+	    Baseclass::operator()(fh,q);
 
           const Point_2& a = fh->vertex(0)->point();
           const Point_2& b = fh->vertex(1)->point();
@@ -109,7 +112,10 @@ public:
 	  if((o1==o2) && (o2==o3))
 	    return is_non_locally_bad;
 	  else
-	    return false;
+	    if( q.sine() < this->B )
+	      return Mesh_2::BAD;
+	    else
+	      return Mesh_2::NOT_BAD;
 	};
     }
   };

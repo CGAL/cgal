@@ -1,3 +1,9 @@
+16 November 2004 Laurent Rineau
+- fix documentation
+- enum Face_badness { NOT_BAD, BAD, IMPERATIVELY_BAD }; and modified
+specifications for MeshingCriteria_2, to refines too small faces near
+clusters.
+
 22 October 2004 Laurent Rineau
 - fix two typo bugs in the testsuite
 

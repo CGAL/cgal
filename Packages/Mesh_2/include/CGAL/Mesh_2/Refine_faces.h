@@ -20,6 +20,7 @@
 #ifndef CGAL_MESH_2_REFINE_FACES_H
 #define CGAL_MESH_2_REFINE_FACES_H
 
+#include <CGAL/Mesh_2/Face_badness.h>
 #include <CGAL/Double_map.h>
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -27,7 +28,8 @@ namespace CGAL {
 
 namespace Mesh_2 {
 
-template <typename Tr, typename Criteria>
+// Previous is the whole previous edges_level.
+template <typename Tr, typename Criteria, typename Previous>
 class Refine_faces_base
 {
   /** \name Types from Tr. */
@@ -49,7 +51,7 @@ class Refine_faces_base
 
 protected: // --- PROTECTED TYPES ---
   /** Meshing criteria. */
-  typedef typename Criteria::Is_bad Is_bad;
+  typedef typename Criteria::Is_bad s_bad;
   typedef typename Criteria::Quality Quality;
 
   /** \name typedefs for private members types */
@@ -62,14 +64,18 @@ protected:
   Tr& tr; /**< The triangulation itself. */
   Triangulation_mesher_level_traits_2<Tr> traits;
   Criteria& criteria; /**<The meshing criteria */
+  Previous& previous;
 
   /** List of bad finite faces */
   Bad_faces bad_faces;
+
+  Mesh_2::Face_badness current_badness;
+
 public:
   /** \name CONSTRUCTORS */
 
-  Refine_faces_base(Tr& t, Criteria& criteria_) 
-    : tr(t), criteria(criteria_) 
+  Refine_faces_base(Tr& t, Criteria& criteria_, Previous& prev) 
+    : tr(t), criteria(criteria_), previous(prev)
   {
   }
 
@@ -103,9 +109,13 @@ public:
         fit != tr.finite_faces_end();
         ++fit)
     {
-      Quality q;
-      if( fit->is_marked() && is_bad(fit, q) )
-        push_in_bad_faces(fit, q);
+      if( fit->is_marked() )
+	{
+	  Quality q;
+	  Mesh_2::Face_badness badness = is_bad(fit, q);
+	  if( badness != Mesh_2::NOT_BAD )
+	    push_in_bad_faces(fit, q);
+	}
     }
   }
 
@@ -119,6 +129,7 @@ public:
   Face_handle do_get_next_element()
   {
     Face_handle fh = bad_faces.front()->second;
+    current_badness = is_bad(bad_faces.front()->first);
 
     CGAL_assertion_code(typename Geom_traits::Orientation_2 orientation =
                         tr.geom_traits().orientation_2_object());
@@ -143,6 +154,8 @@ public:
   /** Do nothing */
   void do_before_conflicts(const Face_handle&, const Point&)
   {
+    previous.set_imperative_refinement(current_badness == 
+				       Mesh_2::IMPERATIVELY_BAD);
   }
 
   /** Do nothing */
@@ -214,8 +227,9 @@ public:
 public:
   /** \name ACCESS FUNCTION */
 
-  bool is_bad(const Face_handle fh, Quality& q) const;
-  bool is_bad(const Face_handle fh) const ;
+  Mesh_2::Face_badness is_bad(const Face_handle fh, Quality& q) const;
+  Mesh_2::Face_badness is_bad(const Face_handle fh) const;
+  Mesh_2::Face_badness is_bad(Quality q) const;
 
   /**
    * Adds the sequence [\c begin, \c end[ to the list
@@ -236,9 +250,9 @@ public:
   
 // --- PRIVATE MEMBER FUNCTIONS ---
 
-template <typename Tr, typename Criteria>
+template <typename Tr, typename Criteria, typename Previous>
 inline
-void Refine_faces_base<Tr, Criteria>::
+void Refine_faces_base<Tr, Criteria, Previous>::
 push_in_bad_faces(Face_handle fh, const Quality& q)
 {
 #ifdef DEBUG
@@ -256,9 +270,9 @@ push_in_bad_faces(Face_handle fh, const Quality& q)
   bad_faces.insert(fh, q);
 }
 
-template <typename Tr, typename Criteria>
+template <typename Tr, typename Criteria, typename Previous>
 inline
-void Refine_faces_base<Tr, Criteria>::
+void Refine_faces_base<Tr, Criteria, Previous>::
 remove_bad_face(Face_handle fh)
 {
 #ifdef DEBUG
@@ -270,35 +284,50 @@ remove_bad_face(Face_handle fh)
   bad_faces.erase(fh);
 }
 
-template <typename Tr, typename Criteria>
-void Refine_faces_base<Tr, Criteria>::
+template <typename Tr, typename Criteria, typename Previous>
+void Refine_faces_base<Tr, Criteria, Previous>::
 compute_new_bad_faces(Vertex_handle v)
 {
   typename Tr::Face_circulator fc = v->incident_faces(), fcbegin(fc);
   do {
-    Quality q;
     if(!tr.is_infinite(fc))
-      if( fc->is_marked() && is_bad(fc, q) )
-        push_in_bad_faces(fc, q);
+      if( fc->is_marked() )
+	{
+	  Quality q;
+	  Mesh_2::Face_badness badness = is_bad(fc, q);
+	  if( badness != Mesh_2::NOT_BAD )
+	    push_in_bad_faces(fc, q);
+	}
     fc++;
   } while(fc!=fcbegin);
 }
 
-template <typename Tr, typename Criteria>
+template <typename Tr, typename Criteria, typename Previous>
 inline
-bool Refine_faces_base<Tr, Criteria>::
+Mesh_2::Face_badness
+Refine_faces_base<Tr, Criteria, Previous>::
 is_bad(const Face_handle f, Quality& q) const
 {
   return criteria.is_bad_object()(f, q);
 }
 
-template <typename Tr, typename Criteria>
+template <typename Tr, typename Criteria, typename Previous>
 inline
-bool Refine_faces_base<Tr, Criteria>::
+Mesh_2::Face_badness
+Refine_faces_base<Tr, Criteria, Previous>::
 is_bad(const Face_handle f) const
 {
   Quality q;
-  return criteria.is_bad(f, q);
+  return criteria.is_bad_object()(f, q);
+}
+
+template <typename Tr, typename Criteria, typename Previous>
+inline
+Mesh_2::Face_badness
+Refine_faces_base<Tr, Criteria, Previous>::
+is_bad(Quality q) const
+{
+  return criteria.is_bad_object()(q);
 }
 
   namespace details {
@@ -316,7 +345,7 @@ is_bad(const Face_handle f) const
 template <typename Tr,
           typename Criteria,
           typename Previous,
-          typename Base = Refine_faces_base<Tr, Criteria> >
+          typename Base = Refine_faces_base<Tr, Criteria, Previous> >
 class Refine_faces : 
   public Base, 
   public details::Refine_faces_types<Tr, 
@@ -350,7 +379,7 @@ public:
 
 public:
   Refine_faces(Tr& t, Criteria& criteria, Previous& previous)
-    : Base(t, criteria), Mesher(previous)
+    : Base(t, criteria, previous), Mesher(previous)
   {
   }
 

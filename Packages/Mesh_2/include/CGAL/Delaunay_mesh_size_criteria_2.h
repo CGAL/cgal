@@ -20,6 +20,7 @@
 #ifndef CGAL_DELAUNAY_MESH_SIZE_CRITERIA_2_H
 #define CGAL_DELAUNAY_MESH_SIZE_CRITERIA_2_H
 
+#include <CGAL/Mesh_2/Face_badness.h>
 #include <CGAL/Delaunay_mesh_criteria_2.h>
 #include <utility>
 #include <ostream>
@@ -91,8 +92,18 @@ public:
 	   const double size_bound)
       : Base::Is_bad(aspect_bound), squared_size_bound(size_bound * size_bound) {};
 
-    bool operator()(const typename CDT::Face_handle& fh,
-		    Quality& q) const
+    Mesh_2::Face_badness operator()(const Quality q) const
+    {
+      if( q.size() > 1 )
+	return Mesh_2::IMPERATIVELY_BAD;
+      if( q.sine() < this->B )
+	return Mesh_2::BAD;
+      else
+	return Mesh_2::NOT_BAD;
+    }
+
+    Mesh_2::Face_badness operator()(const typename CDT::Face_handle& fh,
+				    Quality& q) const
     {
       typedef typename CDT::Geom_traits Geom_traits;
       typedef typename Geom_traits::Compute_area_2 Compute_area_2;
@@ -152,7 +163,7 @@ public:
 	  if( q.size() > 1 )
 	    {
 	      q.first = 1; // (do not compute sine)
-	      return true;
+	      return Mesh_2::IMPERATIVELY_BAD;
 	    }
 	}
 
@@ -162,7 +173,10 @@ public:
 
       q.first = (area * area) / (max_length * second_max_length); // (sine)
       
-      return ( q.sine() < this->B );
+      if( q.sine() < this->B )
+	return Mesh_2::BAD;
+      else
+	return Mesh_2::NOT_BAD;
     }
   };
 

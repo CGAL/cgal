@@ -887,7 +887,8 @@ public slots:
             if( (fh!=NULL) && (!cdt.is_infinite(fh)) && fh->is_marked() )
               {
                 Criteria::Quality q;
-                if(criteria.is_bad_object().operator()(fh, q))
+                if(criteria.is_bad_object().operator()(fh, q) != 
+		   CGAL::Mesh_2::NOT_BAD)
                   l.push_back(fh);
               }
             if( mesher!=0 )

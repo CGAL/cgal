@@ -154,9 +154,6 @@ namespace Mesh_2 {
                     const Face_handle& fh,
                     const int i) const
     {
-//         if( ct.extras().is_bad( static_cast<const Tr&>(ct),
-//                                 fh, i ) ) return false;
-
       typedef typename Geom_traits::Angle_2 Angle_2;
       
       const Angle_2 angle = ct.geom_traits().angle_2_object();
@@ -216,9 +213,6 @@ namespace Mesh_2 {
                     const Vertex_handle& vb,
                     const Point& p) const
       {
-//         if( ct.extras().is_bad( static_cast<const Tr&>(ct),
-//                                  fh, i ) ) return false;
-
         typedef typename Geom_traits::Angle_2 Angle_2;
 
         const Angle_2 angle = ct.geom_traits().angle_2_object();
@@ -248,9 +242,6 @@ namespace Mesh_2 {
                     const Face_handle& fh,
                     const int i) const
     {
-//       if( ct.extras().is_bad( static_cast<const Tr&>(ct),
-//                                fh, i ) ) return false;
-
       typedef typename Geom_traits::Side_of_oriented_circle_2
         Side_of_oriented_circle_2;
 
@@ -277,9 +268,6 @@ namespace Mesh_2 {
                     const Vertex_handle& va,
                     const Vertex_handle& vb) const
     {
-//       if( ct.extras().is_bad( static_cast<const Tr&>(ct),
-//                                fh, i ) ) return false;
-
       typedef typename Geom_traits::Side_of_oriented_circle_2
         Side_of_oriented_circle_2;
 
@@ -363,13 +351,15 @@ protected:
 
   Vertex_handle va, vb;
 
+  bool imperatively;
+
 public:
   /** \name CONSTRUCTORS */
 
   Refine_edges_base(Tr& tr_) :
     tr(tr_), traits(), is_really_a_constrained_edge(tr_),
     edges_to_be_conformed(is_really_a_constrained_edge),
-    is_locally_conform(), converter(tr_)
+    is_locally_conform(), imperatively(false), converter(tr_)
   {
   }
 
@@ -378,6 +368,11 @@ public:
   void clear()
   {
     edges_to_be_conformed.clear();
+  }
+
+  void set_imperative_refinement(bool b)
+  {
+    imperatively = b;
   }
 
   /** \name Functions that this level must declare. */

@@ -20,6 +20,8 @@
 #ifndef CGAL_DELAUNAY_MESH_CRITERIA_2_H
 #define CGAL_DELAUNAY_MESH_CRITERIA_2_H
 
+#include <CGAL/Mesh_2/Face_badness.h>
+
 namespace CGAL {
 
 template <class Tr>
@@ -48,8 +50,16 @@ public:
       
     Is_bad(const double bound) : B(bound) {};
       
-    bool operator()(const Face_handle& fh,
-                    Quality& q) const
+    Mesh_2::Face_badness operator()(const Quality q) const
+    {
+      if( q < B )
+	return Mesh_2::BAD;
+      else
+	return Mesh_2::NOT_BAD;
+    }
+
+    Mesh_2::Face_badness operator()(const Face_handle& fh,
+				    Quality& q) const
     {
       typedef typename Tr::Geom_traits Geom_traits;
       typedef typename Geom_traits::Compute_area_2 Compute_area_2;
@@ -90,7 +100,7 @@ public:
 	else
 	  q = area/(a*b);
 
-      return ( q < B );
+      return operator()(q);
     };
   };
 
