@@ -1,3 +1,6 @@
+31/01/2004 Sylvain Pion
+- Shrink the GIF files.
+
 30/01/2004 Sylvain Pion
 - Use CGAL_USE_GEOMVIEW in the demos.
 
