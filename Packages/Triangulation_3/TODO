@@ -9,7 +9,6 @@ TEST SUITE
 
 Doc
 - revoir tous les insert...(...)
-- hierarchie
 - traits class
 - ameliorer user manual
 - verifier requirements sur la cell_base pour output/input stream 
@@ -36,8 +35,6 @@ Delaunay
 - optimiser remove
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
-- hierarchie : verifier que l'interface est bonne (ie tous les insert(*) sont
-  interceptes...).  Documenter (+ traits).
 - insertion dans Delaunay : quand on est a l'interieur de l'enveloppe convexe,
   mais une cellule en conflit est en contact avec le bord, on va tester sa
   voisine infinie si elle est en conflit avec un test d'orientation, mais il
@@ -54,7 +51,7 @@ Gestion memoire
   chainees.
   Le flag temporaire pourrait aller dans un des bits -> sizeof(cell) == 32 :)
   NB: Ca serait bien de factoriser ce probleme avec T2D !!!
--  De plus, un vrai allocateur (a la STL) serait mieux, pour preserver les
+- De plus, un vrai allocateur (a la STL) serait mieux, pour preserver les
   constructions/destructions (encore que je doute de l'utilite, je ne vois pas
   comment ca peut etre vraiment fiable).
 - M doit se faire expliquer par S dans le detail une fois pour toutes ce 
