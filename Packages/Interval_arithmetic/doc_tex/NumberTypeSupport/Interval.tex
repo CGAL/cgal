@@ -220,19 +220,6 @@ before they are executed.
 % Note also that NaNs are not handled, so be careful with that
 % (especially if you `divide by zero').
 
-Platform support:\\
-This part of {\cgal} must be explicitly ported to each non yet supported
-platform.  The list of currently tested platforms is:
-\begin{itemize}
-\item Intel: GCC under Linux and CygWin, and Visual C++ and Borland C++ under
-      Windows.
-\item Sparc: GCC under Solaris.
-\item PowerPC: GCC under Linux.
-\item Mips: GCC and MipsPro 7.3 under IRIX 6.
-\end{itemize}
-It is possible that more platforms actually work, but they have not been
-tested enough.
-
 Notes:\\
 \begin{itemize}
 \item On Intel platforms (with any operating system and compiler), due to a
@@ -251,11 +238,6 @@ Notes:\\
       However, this solution slows down the code and is rarely useful, so you
       can disable it by setting the flag
       \ccc{CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION}.
-      Note that GCC offers a feature (\ccc{__builtin_constant_p}) which allows
-      to stop constant propagation at no cost for the general case.
-      A simple way to stop this optimization in a particular case is to put
-      the constant in a global and non static variable, instead of a local
-      one.
 \item By default, all arithmetic operations over intervals are inline.  This
       can slow down some large predicates, because the code of the
       multiplication is large.  You can turn off inlining of the
@@ -383,6 +365,7 @@ predicates for it.  To do so, just define the macros \ccc{CGAL_IA_CT} and
 #define CGAL_IA_CT double
 #define CGAL_IA_ET leda_real
 #define CGAL_IA_CACHE No_Filter_Cache
+#define CGAL_IA_PROTECTED true
 \end{verbatim}
 
 For each predicate file, the overloaded code is generated automatically by a
@@ -409,7 +392,8 @@ The low level template predicates of {\cgal} are in files named
 to produce the files \ccc{CGAL/Arithmetic_filter/predicates/kernel_ftC2.h}
 (resp. ftC3).
 
-For the moment, only the predicates of the Cartesian kernel are supported,
-as well as the power tests used by the regular triangulations.
+At the moment, only the predicates of the Cartesian and Simple\_cartesian
+kernels are supported, as well as the power tests used by the regular
+triangulations.
 
 \end{ccClassTemplate}
