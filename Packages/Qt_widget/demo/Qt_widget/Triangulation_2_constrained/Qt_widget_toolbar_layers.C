@@ -1,22 +1,45 @@
 // ============================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
+
+// This software and related documentation are part of the Computational
+// Geometry Algorithms Library (CGAL).
+// This software and documentation are provided "as-is" and without warranty
+// of any kind. In no event shall the CGAL Consortium be liable for any
+// damage of any kind. 
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Every use of CGAL requires a license. 
 //
-// ----------------------------------------------------------------------------
+// Academic research and teaching license
+// - For academic research and teaching purposes, permission to use and copy
+//   the software and its documentation is hereby granted free of charge,
+//   provided that it is not a component of a commercial product, and this
+//   notice appears in all copies of the software and related documentation. 
+//
+// Commercial licenses
+// - Please check the CGAL web site http://www.cgal.org/index2.html for 
+//   availability.
+//
+// The CGAL Consortium consists of Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).
+//
+// ----------------------------------------------------------------------
 //
 // file          : src/Qt_widget_toolbar_layers.C
 // package       : Qt_widget
 // author(s)     : Ursu Radu
-// release       : 
-// release_date  : 
+// release       : CGAL-2.4
+// release_date  : 2002, May 16
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
+// coordinator   : Laurent Rineau
 //
-// ============================================================================
+// email         : contact@cgal.org
+// www           : http://www.cgal.org
+//
+// ======================================================================
 
 
 #ifdef CGAL_USE_QT
@@ -31,13 +54,13 @@
 
 
 namespace CGAL {
-  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, CDT1 *t) : 
+  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t) : 
      nr_of_buttons(0)
   {
-    showT   = new Qt_layer_show_triangulation< CDT1 >(*t);
-    showP   = new Qt_layer_show_points< CDT1 >(*t);
+    showT   = new Qt_layer_show_triangulation< CDT >(*t);
+    showP   = new Qt_layer_show_points< CDT >(*t);
     showMC  = new Qt_layer_mouse_coordinates(*mw);
-    showC   = new Qt_layer_show_constraineds<CDT1>(*t);
+    showC   = new Qt_layer_show_constraineds<CDT>(*t);
 
     //set the widget
     widget = w;
@@ -57,7 +80,7 @@ namespace CGAL {
     but[0]->setTextLabel("Show Triangulation");
     but[1] = new QToolButton(maintoolbar, "constraineds");
     but[1]->setPixmap(QPixmap( (const char**)constrained_xpm ));
-    but[1]->setTextLabel("Show Constraints");
+    but[1]->setTextLabel("Show Constraineds");
     but[2] = new QToolButton(maintoolbar, "vertices");
     but[2]->setPixmap(QPixmap( (const char**)points_xpm ));
     but[2]->setTextLabel("Show Vertices");

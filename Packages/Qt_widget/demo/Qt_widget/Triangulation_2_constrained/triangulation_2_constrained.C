@@ -1,22 +1,45 @@
 // ============================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
+
+// This software and related documentation are part of the Computational
+// Geometry Algorithms Library (CGAL).
+// This software and documentation are provided "as-is" and without warranty
+// of any kind. In no event shall the CGAL Consortium be liable for any
+// damage of any kind. 
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Every use of CGAL requires a license. 
 //
-// ----------------------------------------------------------------------------
+// Academic research and teaching license
+// - For academic research and teaching purposes, permission to use and copy
+//   the software and its documentation is hereby granted free of charge,
+//   provided that it is not a component of a commercial product, and this
+//   notice appears in all copies of the software and related documentation. 
+//
+// Commercial licenses
+// - Please check the CGAL web site http://www.cgal.org/index2.html for 
+//   availability.
+//
+// The CGAL Consortium consists of Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).
+//
+// ----------------------------------------------------------------------
 //
 // file          : triangulation_2_constrained.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu 
-// release       : 
-// release_date  : 
+// release       : CGAL-2.4
+// release_date  : 2002, May 16
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
+// coordinator   : Laurent Rineau
 //
-// ============================================================================
+// email         : contact@cgal.org
+// www           : http://www.cgal.org
+//
+// ======================================================================
 
 
 // if QT is not installed, a message will be issued in runtime.
@@ -40,16 +63,7 @@ int main(int, char*)
 #include <set>
 #include <string>
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Constrained_triangulation_plus_2.h> 
-#include <CGAL/Filtered_kernel.h>
-#include <CGAL/Partition_traits_2.h>
-
-
-#include <CGAL/point_generators_2.h>
-
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_toolbar.h"
 #include "Qt_widget_toolbar_layers.h"
@@ -66,34 +80,6 @@ int main(int, char*)
 #include <qtoolbar.h>
 #include <qfiledialog.h>
 #include <qtimer.h>
-
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>             K1;
-typedef CGAL::Filtered_kernel<K1>               Rep;
-//struct Rep : public K2{} ;
-
-typedef Rep::Point_2                            Point;
-typedef Rep::Segment_2                          Segment;
-typedef Rep::Line_2                             Line;
-typedef Rep::Triangle_2                         Triangle;
-typedef Rep::Circle_2                           Circle;
-
-typedef CGAL::Triangulation_vertex_base_2<Rep>  Vb;
-typedef CGAL::Constrained_triangulation_face_base_2<Rep>
-                                                Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb, Fb>
-                                                TDS;
-typedef CGAL::Exact_predicates_tag              Itag;
-
-typedef CGAL::Constrained_Delaunay_triangulation_2<Rep, TDS, Itag>
-                                                CT;
-typedef CGAL::Constrained_triangulation_plus_2<CT>
-                                                CDT;
-typedef CDT::Constraint                         Constraint;
-
-typedef CGAL::Partition_traits_2<Rep>           Traits;
-typedef Traits::Polygon_2                       Polygon_2;
-
 
 const QString my_title_string("Constrained Triangulation Demo with"
 			      " CGAL Qt_widget");
@@ -127,10 +113,10 @@ public:
     file->insertItem("&Save Triangulation", this,
 		      SLOT(save_triangulation()), CTRL+Key_T);
     file->insertSeparator();
-    file->insertItem("&Load Constraints", this, 
-		      SLOT(load_constraints()), CTRL+Key_L);
-    file->insertItem("&Save Constraints", this,
-		      SLOT(save_constraints()), CTRL+Key_T);
+    file->insertItem("&Load Constrainets", this, 
+		      SLOT(load_constraineds()), CTRL+Key_L);
+    file->insertItem("&Save Constrainets", this,
+		      SLOT(save_constraineds()), CTRL+Key_T);
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()));
     file->insertSeparator();
@@ -199,7 +185,7 @@ private slots:
   {
     Point p;
     Segment s;
-    Polygon_2 poly;
+    Cgal_Polygon poly;
     if (CGAL::assign(s,obj))
     {
       ct.insert(s.source(), s.target());
@@ -208,7 +194,7 @@ private slots:
       ct.insert(p);
       something_changed();
     } else if (CGAL::assign(poly, obj)) {
-      typedef Polygon_2::Vertex_const_iterator        VI;
+      typedef Cgal_Polygon::Vertex_const_iterator VI;
       VI i=poly.vertices_begin();
       Point lp(i->x(), i->y()), lp1(lp);
       if(i!=poly.vertices_end()) {
@@ -297,11 +283,11 @@ private slots:
     something_changed();
   }
 
-  void load_constraints()
+  void load_constraineds()
   {
   }
 
-  void save_constraints()
+  void save_constraineds()
   {
   }
 
