@@ -46,7 +46,7 @@ boundary of the convex hull are simpler to deal with.
 \begin{center} \IpeScale{50} \Ipe{infinite_vertex.ipe} \end{center}
 \end{ccTexOnly}
 \caption{The infinite vertex.
-\label{Ref_Fig_infinite_vertex}}
+\label{Triangulation_ref_Fig_infinite_vertex}}
 \begin{ccHtmlOnly}
 <CENTER>
 <img border=0 src=infinite_vertex.gif align=center alt="Vertices at
@@ -55,14 +55,13 @@ infinity">
 \end{ccHtmlOnly}
 \end{figure}
 
-
 The class \ccRefName\
 implements this point of view
 and therefore considers  the triangulation of the set of points 
 as a set of  triangular,  finite and
 infinite faces. 
 Although it is convenient to draw a triangulation as in
-figure~\ref{Ref_Fig_infinite_vertex}, note that
+figure~\ref{Triangulation_ref_Fig_infinite_vertex}, note that
 the \ccc{infinite vertex} has no significant
 coordinates and that no geometric predicate can be applied on it
 or on an infinite face.
@@ -104,7 +103,7 @@ of~\ccc{f}.
     \end{center}
 \end{ccTexOnly} 
     \caption{Vertices and neighbors.
-    \label{Ref_Fig_neighbors}}
+    \label{Triangulation_ref_Fig_neighbors}}
   \begin{ccHtmlOnly}
 <CENTER>
 <img border=0 src=neighbors.gif align=center alt="Neighbors">
@@ -119,15 +118,16 @@ of~\ccc{f}.
 \ccParameters
 The class \ccRefName\ depends on  two template parameters. The first one
 \ccc{Traits} expects a model of the \ccc{Triangulation_traits_2}
-concept described on page~\ccRefPage{ConceptTriangulation_traits_2<Rep>}.
+concept described on page~\ccRefPage{Triangulation_traits_2}.
 The second parameter expects a model of the
-\ccc{Triangulation_data_structure} described on page~\ccRefPage{ConceptTriangulation_data_structure<Vb,Fb>}.
+\ccc{Triangulation_data_structure_2} described
+ on page~\ccRefPage{Triangulation_data_structure_2}.
 
 \ccInheritsFrom{\ccc{Triangulation_cw_ccw_2}}
 This class provides the functions \ccc{cw(i)} et \ccc{ccw(i)}.
 
 \ccTypes
-\ccThree{typedef Traits::Triangle}{}{the triangulation data structure type.}
+\ccThree{typedef Traits::Trianglperle sirius gemma procyon algorab zosma alcyone sargas taniae}{}{the triangulation data structure type.}
 \ccThreeToTwo
 
 \ccTypedef{typedef Traits Geom_traits;}{the traits class.}
@@ -476,7 +476,7 @@ algorithm of where to start.
 \end{center}
 \end{ccTexOnly}
 \caption{Insertion of a point on an edge.
-\label{I1_Fig_inser1t}}
+\label{Triangulation_ref_Fig_inser1t}}
 
 \begin{ccHtmlOnly}
 <CENTER>
@@ -495,7 +495,7 @@ algorithm of where to start.
 \end{center}
 \end{ccTexOnly}
 \caption{Insertion in a face.
-\label{I1_Fig_insert2}}
+\label{Triangulation_ref_Fig_insert2}}
 
 \begin{ccHtmlOnly}
 <CENTER>
@@ -512,7 +512,7 @@ algorithm of where to start.
 \end{center}
 \end{ccTexOnly}
 \caption{Insertion outside the convex hull.
-\label{I1_Fig_insert3}}
+\label{Triangulation_ref_Fig_insert3}}
 
 \begin{ccHtmlOnly}
 <CENTER>
@@ -529,7 +529,7 @@ convex hull">
 \end{center}
 \end{ccTexOnly}
 \caption{Removal
-\label{I1_Fig_remove}}
+\label{Triangulation_ref_Fig_remove}}
 
 \begin{ccHtmlOnly}
 <CENTER>
@@ -669,7 +669,7 @@ traversed finite face then through the first finite traversed face again.
 \ccPrecond If \ccc{f != NULL}, the point \ccc{p} must be
 inside or on the boundary of \ccc{f}.}
 
-Figure~\ref{I1_fig_Line_face_circulator} illustrates which finite faces are enumerated. Lines
+Figure~\ref{Triangulation_ref_Fig_Line_face_circulator} illustrates which finite faces are enumerated. Lines
 $l_1$ and $l_2$ have no face to their left. Lines $l_3$ and $l_4$
 have faces to their left. Note that the finite faces that are only vertex
 incident to lines $l_3$ and  $l_4$ are not enumerated.
@@ -679,7 +679,7 @@ incident to lines $l_3$ and  $l_4$ are not enumerated.
 \begin{center}  \Ipe{walk.ipe} \end{center}
 \end{ccTexOnly} 
 \caption{The line face circulator.
-\label{I1_fig_Line_face_circulator}}
+\label{Triangulation_ref_Fig_Line_face_circulator}}
 
 \begin{ccHtmlOnly}
 <CENTER>
@@ -909,7 +909,6 @@ The following code fragment creates a  triangulation of 2D points
 for the  usual Euclidean metric. The points are read from {\tt cin},
 inserted in the triangulation 
 and finally points on the convex hull are written to {\tt cout}. 
-
 \ccIncludeExampleCode{../../../examples/Triangulation/triangulation_prog1.C}
 
 
