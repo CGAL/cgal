@@ -1,6 +1,7 @@
 8 May 2004 Sylvain Pion
 - Move FPU_empiric_test() and force_ieee_double_precision() from
   src/Interval_arithmetic.C to tst0.C and FPU.h respectively.
+- FPU.h : remove G++ 3.0.0 workaround, but put a #error instead.
 
 7 May 2004 Andreas Fabri
 - Replaced protected: with public: in Static_filters/*.h

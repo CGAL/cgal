@@ -59,6 +59,13 @@ extern "C" {
 #endif
 
 
+// GCC 3.0.0 has some bugs, which can be worked around, but it's
+// not worth maintaining them now anymore.
+#if defined __GNUG__ && !defined __INTEL_COMPILER && \
+    (__GNUG__ == 3 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 0)
+#  error GCC 3.0.0 is buggy, use at your own risk.
+#endif
+ 
 
 // Some useful constants
 
@@ -97,14 +104,8 @@ const double infinity = HUGE_VAL;
 // Inline function to stop compiler optimization.
 inline double IA_force_to_double(double x)
 {
-#if defined __GNUG__ && !defined __INTEL_COMPILER && \
-    ! (__GNUG__ == 3 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 0)
-  // This appears to be faster but is GNU specific,
-  // and GCC 3.0.0 has a bug with it.
-  // Menelaos: this is the place where interval arithmetic fails
-  //           for the Intel compiler in linux; the Intel compiler
-  //           defines by default __GNUG__ and the following code is
-  //           compiled instead of the one after the #else.
+#if defined __GNUG__ && !defined __INTEL_COMPILER
+  // Intel does not emulate GCC perfectly...
   asm("" : "=m"(x) : "m"(x));
   // asm("" : "+m"(x) );
   return x;
@@ -318,10 +319,6 @@ inline
 FPU_CW_t
 FPU_get_cw (void)
 {
-#if defined __GNUG__ && \
-    (__GNUG__ == 3 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 0)
-    volatile
-#endif
     FPU_CW_t cw;
     CGAL_IA_GETFPCW(cw);
     return cw;
