@@ -155,11 +155,11 @@ SegmentC2<R>::vertex(int i) const
 }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 const typename SegmentC2<R>::Point_2 &
 SegmentC2<R>::point(int i) const
 {
-  return (i%2 == 0) ? source() : target();
+  return vertex(i);
 }
 
 template < class R >
@@ -211,7 +211,7 @@ inline
 typename SegmentC2<R>::Segment_2
 SegmentC2<R>::opposite() const
 {
-  return SegmentC2<R>(target(), source());
+  return Segment_2(target(), source());
 }
 
 template < class R >
