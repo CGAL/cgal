@@ -273,7 +273,7 @@ the design of the TDS is split into two layers:
 
 \begin{itemize}
 \item{} In the bottom layer, the (vertex and cell) base classes store
-elementary incidence and adjacency (and eventually geometric or other)
+elementary incidence and adjacency (and possibly geometric or other)
 information.  These classes are parameterized by the TDS which provides the
 handle types.  (They can also be parameterized by a geometric traits class or
 anything else.) A vertex stores a \ccc{Cell_handle}, and a cell stores four
@@ -284,15 +284,15 @@ provides operations such as insertion of a new vertex in a given cell, on a $1$
 or $2$-face. It also allows one, if the dimension of the triangulation is
 smaller than $3$, to insert a vertex so that the dimension of the triangulation
 is increased by one. The TDS is responsible for the combinatorial integrity of
-the eventual geometric triangulation built on top of it (the upper layer, not
-described here).
+the eventual geometric triangulation built on top of it (the upper layer,
+see Chapter~\ref{chapter-Triangulation3}).
 \end{itemize}
 
 The user has several ways to add his own data in the vertex and cell base classes used by the TDS.  He can either:
 \begin{itemize}
 \item{} use the classes \ccc{Triangulation_vertex_base_with_info}
-and \ccc{Triangulation_cell_base_with_info}, which allow to add one field of
-a user defined type, and give access to it.
+and \ccc{Triangulation_cell_base_with_info}, which allow to add one data member
+of a user provided type, and give access to it.
 \item{} derive his own classes from the default base classes
 \ccc{Triangulation_ds_vertex_base}, and \ccc{Triangulation_ds_cell_base} (or
 the geometric versions typically used by the geometric layer,
@@ -316,12 +316,16 @@ This is a cycle which cannot be resolved easily.
 
 The solution that we have chosen is similar to the mecanism used by the
 standard class \ccc{std::allocator}: the vertex and cell base classes are
-initially given a fake TDS parameter, which is then \textit{rebound} to the real
-TDS type by and inside the TDS itself.  Rebinding is performed by a nested
-template class of the vertex or cell base classes, which provides a type
-which is the rebound vertex or cell base class\footnote{It is logically
-equivalent to a mecanism which does not exist yet in the C++ language:
-\textit{template typedef} or \textit{template aliasing}}.
+initially given a fake or dummy TDS template parameter, whose unique purpose
+is to provide the types which can be used by the vertex and cell base classes
+(such as handles).  Then, inside the TDS itself, these base classes are
+\textit{rebound} to the real TDS type, that is we obtain the same vertex
+and cell base classes, but parameterized with the real TDS instead of the dummy
+one.  Rebinding is performed by a nested template class of the vertex and cell
+base classes (see code below), which provides a type which is the rebound
+vertex or cell base class\footnote{It is logically equivalent to a mecanism
+which does not exist yet in the C++ language: \textit{template typedef} or
+\textit{template aliasing}}.
 
 Here is how it works, schematically:
 
@@ -357,7 +361,7 @@ public:
 
 When derivation is used for the vertex or cell base classes, which is the
 case at the geometric level with \ccc{Triangulation_vertex_base_3}, then
-it gets slightly more involved because the base class has to be rebound as
+it gets slightly more involved because its base class has to be rebound as
 well:
 
 \begin{ccExampleCode}
