@@ -37,7 +37,6 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
 
-#include <CGAL/_test_cls_delaunay_hierarchy_3.C>
 #include <CGAL/_test_cls_delaunay_3.C>
 
 bool del=true;
@@ -57,7 +56,6 @@ int main()
   typedef CGAL::Delaunay_triangulation_3<Gt,Tdsul>  Dt;
   typedef CGAL::Triangulation_hierarchy_3<Dt>  Dh;
 
-  _test_cls_delaunay_hierarchy_3( Dh() );
   _test_cls_delaunay_3( Dh() );
 
   return 0;
