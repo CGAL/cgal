@@ -30,10 +30,11 @@
 
 using namespace CGAL;
 
+typedef CGAL::Cartesian<double>                  Rep;
+typedef Rep::Point_2                             Point;
+
 int main()
 {
-    typedef Cartesian<double>                        Rep;
-    typedef Rep::Point_2                             Point;
     typedef Ostream_iterator<Point,std::ostrstream>  IteratorO;
     typedef Istream_iterator<Point,std::istrstream>  IteratorI;
     {

@@ -1,6 +1,9 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
 
+2.19 (12 Feb 2003)
+     - workaround Borland bug in test program.
+
 2.18 (29 Apr 2002)
      - split of user and reference manuals
 
