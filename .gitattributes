@@ -810,12 +810,15 @@ Packages/Arrangement/demo/Arrangement_2/icons/split.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/voronoi.xpm -text
 Packages/Arrangement/demo/Qt_widget/Arrangement_2/polyline.xpm -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_circ.gif -text svneol=unset#unset
+Packages/Arrangement/doc_tex/Arrangement_2/arr_circ.pdf -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_circ.ps -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_conics.fig -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_conics.gif -text svneol=unset#unset
+Packages/Arrangement/doc_tex/Arrangement_2/arr_conics.pdf -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_conics.ps -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.fig -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.gif -text svneol=unset#unset
+Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.pdf -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.ps -text
 Packages/Auxiliary/auxiliary/gmp-4.1.3.tar.gz -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.3/gcc/libgmp.a -text svneol=unset#unset
@@ -886,15 +889,19 @@ Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes
 Packages/ExternalMemoryStructures/doc_tex/ExternalMemoryStructures/rtree-classes4.gif -text svneol=unset#unset
 Packages/Generator/demo/Generator/generator.vcproj -text
 Packages/Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#unset
+Packages/Generator/doc_tex/Generator/Segment_generator_prog1.pdf -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/Segment_generator_prog1.ps -text
 Packages/Generator/doc_tex/Generator/Segment_generator_prog1_small.gif -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/Segment_generator_prog2.gif -text svneol=unset#unset
+Packages/Generator/doc_tex/Generator/Segment_generator_prog2.pdf -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/Segment_generator_prog2.ps -text
 Packages/Generator/doc_tex/Generator/Segment_generator_prog2_small.gif -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/generators_prog1.gif -text svneol=unset#unset
+Packages/Generator/doc_tex/Generator/generators_prog1.pdf -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/generators_prog1.ps -text
 Packages/Generator/doc_tex/Generator/generators_prog1_small.gif -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/generators_prog2.gif -text svneol=unset#unset
+Packages/Generator/doc_tex/Generator/generators_prog2.pdf -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/generators_prog2.ps -text
 Packages/Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.gif -text svneol=unset#unset
