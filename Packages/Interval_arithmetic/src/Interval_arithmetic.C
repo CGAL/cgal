@@ -23,7 +23,8 @@
  
 #include <CGAL/basic.h>
 
-#ifndef _MSC_VER
+// M$ VC++ doesn't like them yet.
+#ifdef CGAL_IA_NEW_FILTERS
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/predicates/kernel_ftC3.h>
 #include <CGAL/predicates/sign_of_determinant.h>
@@ -38,7 +39,7 @@
 CGAL_BEGIN_NAMESPACE
 
 // Static variables:
-#ifndef _MSC_VER
+#ifdef CGAL_IA_NEW_FILTERS
 #include <CGAL/Arithmetic_filter/static_infos/dispatch.h>
 #endif
 
