@@ -196,7 +196,8 @@ private slots:
 	
   void save_polygon()
   {
-    QString fileName = QFileDialog::getSaveFileName( "polygon.cgal", "Cgal files (*.cgal)", this );
+    QString fileName = QFileDialog::getSaveFileName( 
+		"polygon.cgal", "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {                 // got a file name
       std::ofstream out(fileName);
       //out << std::setprecision(15);
@@ -207,7 +208,8 @@ private slots:
 
   void load_polygon()
   {
-    QString s( QFileDialog::getOpenFileName( QString::null, "CGAL files (*.cgal)", this ) );
+    QString s( QFileDialog::getOpenFileName(
+		QString::null, "CGAL files (*.cgal)", this ) );
     if ( s.isEmpty() )
         return;
     std::ifstream in(s);
