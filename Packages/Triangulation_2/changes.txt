@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.28 (29/12/03)
+- fixed a bug in Line_face_circular operators == and !=
+  (bug subsequent to changes made for handles defined as iterators)
+- temporary change of TestK kernel to
+  avoid a bug in Filtered Kernel
+
 ver 8.27 (29/12/03)
 - Update to the new filter_iterator() interface.
 

@@ -1859,7 +1859,7 @@ Regular_triangulation_2<Gt,Tds>::
 all_vertices_end () const
 {
   return filter_iterator(Base::all_vertices_end(), 
-			 Hidden_tester() ): 
+			 Hidden_tester() ); 
 }
 
 template < class Gt, class Tds >
