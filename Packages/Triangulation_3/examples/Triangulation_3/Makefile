@@ -17,7 +17,7 @@ CXXFLAGS = \
            -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+           # $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags

@@ -18,7 +18,7 @@ CXXFLAGS = \
 	-W -Wall \
         -DCGAL_NO_DEPRECATED_CODE \
 	-DCGAL_CHECK_EXPENSIVE \
-	-g
+	# -g
 
 	# -fprofile-arcs -ftest-coverage # pour Gcov
 	# -Wold-style-cast
