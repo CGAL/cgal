@@ -70,13 +70,13 @@ public:
     typedef typename CK::X X;
 
 #define CGAL_Filter_pred(P, Pf) \
-    typedef Filtered_predicate<typename EK::P, typename FK::P, \
-	                       C2E_Converter, C2F_Converter> P; \
+    typedef Filter_predicate<typename EK::P, typename FK::P, \
+	                     C2E_Converter, C2F_Converter> P; \
     P Pf() const { return P(); }
 
 #define CGAL_Filter_pred_type_only(P) \
-    typedef Filtered_predicate<typename EK::P, typename FK::P, \
-	                       C2E_Converter, C2F_Converter> P;
+    typedef Filter_predicate<typename EK::P, typename FK::P, \
+	                     C2E_Converter, C2F_Converter> P;
 
     // The following could be used instead for some Cartesian predicates
     // that are exact : compare* and exact*.
