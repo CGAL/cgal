@@ -125,8 +125,8 @@ private:
     
 
     RT a1, b1, c1, a2, b2, c2;
-    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
-    compute_supporting_line(r.supporting_segment(), a2, b2, c2);
+    compute_supporting_line(q.supporting_site(), a1, b1, c1);
+    compute_supporting_line(r.supporting_site(), a2, b2, c2);
 
     RT c1_ = a1 * pp.x() + b1 * pp.y() + c1;
     RT c2_ = a2 * pp.x() + b2 * pp.y() + c2;
@@ -302,7 +302,7 @@ private:
     v_type = PPS;
 
     RT a, b, c;
-    compute_supporting_line(r.supporting_segment(), a, b, c);
+    compute_supporting_line(r.supporting_site(), a, b, c);
 
     Point_2 pp = p.point(), qq = q.point();
 
@@ -435,9 +435,9 @@ private:
 		       r.is_segment() );
 
     Line_2 l[3];
-    l[0] = compute_supporting_line(p.supporting_segment());
-    l[1] = compute_supporting_line(q.supporting_segment());
-    l[2] = compute_supporting_line(r.supporting_segment());
+    l[0] = compute_supporting_line(p.supporting_site());
+    l[1] = compute_supporting_line(q.supporting_site());
+    l[2] = compute_supporting_line(r.supporting_site());
     
     bool is_oriented[3] = {false, false, false};
 
@@ -876,7 +876,7 @@ private:
     Sqrt_1 Zero(RT(0), RT(0), ux.a().c());
 
     RT a1, b1, c1;
-    compute_supporting_line(p_.supporting_segment(), a1, b1, c1);
+    compute_supporting_line(p_.supporting_site(), a1, b1, c1);
 
     RT ns = CGAL::square(a1) + CGAL::square(b1);
 
@@ -1087,7 +1087,7 @@ private:
     Sqrt_1 Zero(RT(0), RT(0), ux.a().c());
 
     RT a1, b1, c1;
-    compute_supporting_line(p_.supporting_segment(), a1, b1, c1);
+    compute_supporting_line(p_.supporting_site(), a1, b1, c1);
 
     Sqrt_1 a = a1 + Zero;
     Sqrt_1 b = b1 + Zero;
@@ -1177,7 +1177,7 @@ private:
     }
     if ( d2 == NEGATIVE ) { return NEGATIVE; }
 
-    Line_2 l = compute_supporting_line(t.supporting_segment());
+    Line_2 l = compute_supporting_line(t.supporting_site());
     Sign sl = incircle(l, type);
 
     if ( sl == POSITIVE ) { return sl; }
@@ -1398,7 +1398,7 @@ public:
       break;
     case SSS:
       {
-	Line_2 l = compute_supporting_line(p_.supporting_segment());
+	Line_2 l = compute_supporting_line(p_.supporting_site());
 	Homogeneous_point_2 q = compute_projection(l, point());
 
 	FT dx2 = CGAL::square(x() - q.x());

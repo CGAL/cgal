@@ -47,7 +47,7 @@ private:
       compare_x_2(p, q) == EQUAL && compare_y_2(p, q) == EQUAL;
   }
 
-  bool are_same(const Segment_2& s, const Segment_2& t) const
+  bool are_same(const Site_2& s, const Site_2& t) const
   {
     return
       ( are_same(s.source(), t.source()) &&
@@ -64,10 +64,8 @@ private:
   bool predicate(const Site_2& p, const Site_2& q, const Tag_true&) const
   {
     if ( !p.is_input() && !q.is_input() ) {
-      Segment_2 s[2] = { p.supporting_segment(0),
-			 p.supporting_segment(1) };
-      Segment_2 t[2] = { q.supporting_segment(0),
-			 q.supporting_segment(1) };
+      Site_2 s[2] = { p.supporting_site(0), p.supporting_site(1) };
+      Site_2 t[2] = { q.supporting_site(0), q.supporting_site(1) };
 
       if (  ( are_same(s[0], t[0]) && are_same(s[1], t[1]) ) ||
 	    ( are_same(s[0], t[1]) && are_same(s[1], t[0]) )  ) {

@@ -106,7 +106,7 @@ private:
 
     if ( t.is_point() ) { return true; }
 
-    Line_2 lt = compute_supporting_line(t.supporting_segment());
+    Line_2 lt = compute_supporting_line(t.supporting_site());
 
     Oriented_side op, oq;
 
@@ -196,7 +196,7 @@ private:
     CGAL_precondition( t.is_point() );
 
     //    Line_2 lq = compute_supporting_line(q);
-    Line_2 lq = compute_supporting_line(q.supporting_segment());
+    Line_2 lq = compute_supporting_line(q.supporting_site());
 
     Comparison_result res =
       compare_squared_distances_to_line(lq, p.point(), t.point());
@@ -235,7 +235,7 @@ private:
     Point_2 p = sp.point();
     //    Segment_2 q = sq.segment(), t = st.segment();
 
-    Line_2 lq = compute_supporting_line(sq.supporting_segment());
+    Line_2 lq = compute_supporting_line(sq.supporting_site());
 
     if ( oriented_side_of_line(lq, p) == ON_NEGATIVE_SIDE ) {
       lq = opposite_line(lq); 
@@ -290,7 +290,7 @@ private:
       return ( res == LARGER );
     }
 
-    Line_2 lt = compute_supporting_line(st.supporting_segment());
+    Line_2 lt = compute_supporting_line(st.supporting_site());
 
     if ( oriented_side_of_line(lt, p) == ON_NEGATIVE_SIDE ) {
       lt = opposite_line(lt);
@@ -408,7 +408,7 @@ private:
 #endif
 
     if ( p.is_point() && q.is_segment() ) {
-      Line_2 lq = compute_supporting_line(q.supporting_segment());
+      Line_2 lq = compute_supporting_line(q.supporting_site());
     
       Comparison_result res =
 	compare_squared_distances_to_line(lq, p.point(), t.point());
@@ -472,7 +472,7 @@ private:
       return false;
     }
    
-    Line_2 lq = compute_supporting_line(sq.supporting_segment());
+    Line_2 lq = compute_supporting_line(sq.supporting_site());
 
     Voronoi_vertex_2 vpqr(sp, sq, r);
     Voronoi_vertex_2 vqps(sq, sp, s);
@@ -523,8 +523,8 @@ private:
     Voronoi_vertex_2 vpqr(p, q, r);
     Voronoi_vertex_2 vqps(q, p, s);
 
-    Line_2 lp = compute_supporting_line(p.supporting_segment());
-    Line_2 lq = compute_supporting_line(q.supporting_segment());
+    Line_2 lp = compute_supporting_line(p.supporting_site());
+    Line_2 lq = compute_supporting_line(q.supporting_site());
 
     // first orient lp according to its Voronoi vertices
     if ( vpqr.is_degenerate_Voronoi_circle() ) {

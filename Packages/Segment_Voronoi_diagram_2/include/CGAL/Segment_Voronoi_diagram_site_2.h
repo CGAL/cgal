@@ -197,33 +197,6 @@ public:
     }
   }
 
-#if 1
-  // MK::ERROR: at some point I want to remove these
-  Segment_2 supporting_segment() const {
-    CGAL_precondition( is_segment() );
-    return Segment_2(p_[0], p_[1]);
-  }
-
-  Segment_2 supporting_segment(unsigned int i) const {
-    CGAL_precondition( is_point() && !is_input() && i < 2 );
-    if ( i == 0 ) {
-      return Segment_2(p_[2], p_[3]);
-    } else {
-      return Segment_2(p_[4], p_[5]);
-    }
-  }
-
-  Segment_2 crossing_segment(unsigned int i) const {
-    CGAL_precondition( is_segment() && !is_input() );
-    CGAL_precondition( i < 2 && !is_input(i) );
-    if ( i == 0 ) {
-      return Segment_2(p_[2], p_[3]);
-    } else {
-      return Segment_2(p_[4], p_[5]);
-    }
-  }
-#endif
-
 protected:
   void initialize_site(const Point_2& p)
   {

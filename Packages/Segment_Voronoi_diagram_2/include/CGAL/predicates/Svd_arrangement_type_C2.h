@@ -467,7 +467,7 @@ private:
   {
     CGAL_precondition( s.is_segment() && p.is_point() );
 
-    Line_2 l = compute_supporting_line( s.supporting_segment() );
+    Line_2 l = compute_supporting_line( s.supporting_site() );
     // do geometric filtering here...
 
     Point_2 pp = p.point();
@@ -512,7 +512,7 @@ private:
     CGAL_precondition( ip < 2 && iq < 2 );
 #if 0
     if ( same_segments(p.supporting_site(), q.supporting_site()) ) {
-      Line_2 l = compute_supporting_line(p.supporting_segment());
+      Line_2 l = compute_supporting_line(p.supporting_site());
       Line_2 lp;
 
       if ( ip == 0 ) {
@@ -539,14 +539,14 @@ private:
       }
     }
 #endif
-    Point_2 p1 = p.supporting_segment().source();
-    Point_2 p2 = p.supporting_segment().target();
+    Point_2 p1 = p.supporting_site().source();
+    Point_2 p2 = p.supporting_site().target();
     Point_2 p3;
 
     if ( iq == 0 ) {
-      p3 = q.supporting_segment().target();
+      p3 = q.supporting_site().target();
     } else {
-      p3 = q.supporting_segment().source();
+      p3 = q.supporting_site().source();
     }
 
     if ( Orientation_2()(p1, p2, p3) != COLLINEAR ) {

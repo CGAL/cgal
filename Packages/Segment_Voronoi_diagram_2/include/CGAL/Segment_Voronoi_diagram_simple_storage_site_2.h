@@ -111,6 +111,21 @@ public:
     return Self(h_[1]);
   }
 
+  Self supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return Self(h_[0], h_[1]);
+  }
+
+  Self supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && !is_input() && i < 2 );
+    return Self(h_[0], h_[0]);
+  }
+
+  Self crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && !is_input() );
+    CGAL_precondition( i < 2 && !is_input(i) );
+    return Self(h_[0], h_[0]);
+  }
 
 protected:
   // INITIALIZATION

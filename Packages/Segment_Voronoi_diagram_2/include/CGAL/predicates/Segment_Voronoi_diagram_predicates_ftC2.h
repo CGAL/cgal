@@ -35,6 +35,7 @@ CGAL_BEGIN_NAMESPACE
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+#if 0
 template<class K, class ITag> class Svd_predicate_push_back_C2;
 
 
@@ -43,6 +44,7 @@ class Svd_predicate_push_back_C2<K,Tag_true>
 {
 private:
   typedef typename K::Site_2     Site_2;
+  typedef typename K::Point_2    Point_2;
   typedef typename K::Segment_2  Segment_2;
   typedef typename K::FT         FT;
 
@@ -61,6 +63,20 @@ public:
 	step = 2;
       } else {
 	site_types[j+1] = 'i';
+#if 1
+	Point_2 s1_p1 = t.point(2);
+	Point_2 s1_p2 = t.point(3);
+	Point_2 s2_p1 = t.point(4);
+	Point_2 s2_p2 = t.point(5);
+	v[k] = s1_p1.x();
+	v[k+1] = s1_p1.y();
+	v[k+2] = s1_p2.x();
+	v[k+3] = s1_p2.y();
+	v[k+4] = s2_p1.x();
+	v[k+5] = s2_p1.y();
+	v[k+6] = s2_p2.x();
+	v[k+7] = s2_p2.y();
+#else
 	Segment_2 s1 = t.supporting_segment(0);
 	Segment_2 s2 = t.supporting_segment(1);
 	v[k] = s1.source().x();
@@ -71,6 +87,7 @@ public:
 	v[k+5] = s2.source().y();
 	v[k+6] = s2.target().x();
 	v[k+7] = s2.target().y();
+#endif
 	step = 8;
       }
     } else {
@@ -83,12 +100,56 @@ public:
 	v[k+3] = t.target().y();
 	step = 4;
       } else {
+#if 1
+	Point_2 supp_p1 = t.point(0);
+	Point_2 supp_p2 = t.point(1);
+	v[k] = supp_p1.x();
+	v[k+1] = supp_p1.y();
+	v[k+2] = supp_p2.x();
+	v[k+3] = supp_p2.y();
+#else
 	Segment_2 supp = t.supporting_segment();
 	v[k] = supp.source().x();
 	v[k+1] = supp.source().y();
 	v[k+2] = supp.target().x();
 	v[k+3] = supp.target().y();
+#endif
 
+#if 1
+	Point_2 cs_p1, cs_p2, cs2_p1, cs2_p2;
+	char stype;
+	if ( t.is_input(0) ) {
+	  stype = '0';
+	  cs_p1 = t.crossing_site(1).source();
+	  cs_p2 = t.crossing_site(1).target();
+	} else if ( t.is_input(1) ) {
+	  stype = '1';
+	  cs_p1 = t.crossing_site(0).source();
+	  cs_p2 = t.crossing_site(0).target();
+	} else {
+	  stype = 'i';
+	  cs_p1 = t.crossing_site(0).source();
+	  cs_p2 = t.crossing_site(0).target();
+	  cs2_p1 = t.crossing_site(1).source();
+	  cs2_p2 = t.crossing_site(1).target();
+	}
+
+	site_types[j+1] = stype;
+	v[k+4] = cs_p1.x();
+	v[k+5] = cs_p1.y();
+	v[k+6] = cs_p2.x();
+	v[k+7] = cs_p2.y();
+
+	step = 8;
+
+	if ( stype == 'i' ) {
+	  v[k+8] = cs2_p1.x();
+	  v[k+9] = cs2_p1.y();
+	  v[k+10] = cs2_p2.x();
+	  v[k+11] = cs2_p2.y();
+	  step = 12;
+	}
+#else
 	Segment_2 cs, cs2;
 	char stype;
 	if ( t.is_input(0) ) {
@@ -118,6 +179,7 @@ public:
 	  v[k+11] = cs2.target().y();
 	  step = 12;
 	}
+#endif
       }
     }
 
@@ -162,7 +224,7 @@ public:
     k += step;
   }
 };
-
+#endif
 
 
 template<class K>
@@ -182,6 +244,20 @@ void svd_predicate_push_back_C2(const typename K::Site_2& t,
       step = 2;
     } else {
       site_types[j+1] = 'i';
+#if 1
+      typename K::Point_2 s1_p1 = t.point(2);
+      typename K::Point_2 s1_p2 = t.point(3);
+      typename K::Point_2 s2_p1 = t.point(4);
+      typename K::Point_2 s2_p2 = t.point(5);
+      v[k] = s1_p1.x();
+      v[k+1] = s1_p1.y();
+      v[k+2] = s1_p2.x();
+      v[k+3] = s1_p2.y();
+      v[k+4] = s2_p1.x();
+      v[k+5] = s2_p1.y();
+      v[k+6] = s2_p2.x();
+      v[k+7] = s2_p2.y();
+#else
       typename K::Segment_2 s1 = t.supporting_segment(0);
       typename K::Segment_2 s2 = t.supporting_segment(1);
       v[k] = s1.source().x();
@@ -192,6 +268,7 @@ void svd_predicate_push_back_C2(const typename K::Site_2& t,
       v[k+5] = s2.source().y();
       v[k+6] = s2.target().x();
       v[k+7] = s2.target().y();
+#endif
       step = 8;
     }
   } else {
@@ -204,12 +281,57 @@ void svd_predicate_push_back_C2(const typename K::Site_2& t,
       v[k+3] = t.target().y();
       step = 4;
     } else {
+#if 1
+      typename K::Point_2 supp_p1 = t.point(0);
+      typename K::Point_2 supp_p2 = t.point(1);
+      v[k] = supp_p1.x();
+      v[k+1] = supp_p1.y();
+      v[k+2] = supp_p2.x();
+      v[k+3] = supp_p2.y();
+#else
       typename K::Segment_2 supp = t.supporting_segment();
       v[k] = supp.source().x();
       v[k+1] = supp.source().y();
       v[k+2] = supp.target().x();
       v[k+3] = supp.target().y();
+#endif
 
+#if 1
+      typename K::Point_2 cs_p1, cs_p2, cs2_p1, cs2_p2;
+      char stype;
+      if ( t.is_input(0) ) {
+	stype = '0';
+	cs_p1 = t.crossing_site(1).source();
+	cs_p2 = t.crossing_site(1).target();
+      } else if ( t.is_input(1) ) {
+	stype = '1';
+	cs_p1 = t.crossing_site(0).source();
+	cs_p2 = t.crossing_site(0).target();
+      } else {
+	stype = 'i';
+	cs_p1 = t.crossing_site(0).source();
+	cs_p2 = t.crossing_site(0).target();
+	cs2_p1 = t.crossing_site(1).source();
+	cs2_p2 = t.crossing_site(1).target();
+      }
+
+      site_types[j+1] = stype;
+      v[k+4] = cs_p1.x();
+      v[k+5] = cs_p1.y();
+      v[k+6] = cs_p2.x();
+      v[k+7] = cs_p2.y();
+
+      step = 8;
+
+      if ( stype == 'i' ) {
+	v[k+8] = cs2_p1.x();
+	v[k+9] = cs2_p1.y();
+	v[k+10] = cs2_p2.x();
+	v[k+11] = cs2_p2.y();
+	step = 12;
+      }
+
+#else
       typename K::Segment_2 cs, cs2;
       char stype;
       if ( t.is_input(0) ) {
@@ -239,6 +361,7 @@ void svd_predicate_push_back_C2(const typename K::Site_2& t,
 	v[k+11] = cs2.target().y();
 	step = 12;
       }
+#endif
     }
   }
 

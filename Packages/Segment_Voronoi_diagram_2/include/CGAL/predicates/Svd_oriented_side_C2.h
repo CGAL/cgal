@@ -63,7 +63,7 @@ public:
     CGAL_precondition( q.is_point() );
     CGAL_precondition( s.is_segment() && p.is_point() );
 
-    Line_2 l = compute_supporting_line( s.segment() );
+    Line_2 l = compute_supporting_line( s );
     Line_2 lp = compute_perpendicular(l, p.point());
 
     return lp.oriented_side(q.point());
@@ -80,7 +80,7 @@ public:
     CGAL_precondition( s.is_segment() && p.is_point() );
 
     Voronoi_vertex_2 v(s1, s2, s3);
-    Line_2 l = compute_supporting_line( s.segment() );
+    Line_2 l = compute_supporting_line( s );
     Line_2 lp = compute_perpendicular(l, p.point());
 
     return v.oriented_side(lp);

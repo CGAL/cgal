@@ -148,11 +148,31 @@ public:
       + to_ft(x.c()) * sqrt_f + to_ft(x.d()) * sqrt_ef;
   }
 
-public:
+public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
+    //    compute_supporting_line(r.supporting_segment(), a2, b2, c2);
+
   //-------------------------------------------------------------------
   // BASIC CONSTRUCTIONS
   //-------------------------------------------------------------------
 
+#if 1
+  static
+  Line_2 compute_supporting_line(const Site_2& s)
+  {
+    RT a, b, c;
+    compute_supporting_line(s, a, b, c);
+    return Line_2(a, b, c);
+  }
+
+  static
+  void compute_supporting_line(const Site_2& s,
+			       RT& a, RT& b, RT& c)
+  {
+    a = s.source().y() - s.target().y();
+    b = s.target().x() - s.source().x();
+    c = s.source().x() * s.target().y() - s.target().x() * s.source().y();
+  }
+#else
   static
   Line_2 compute_supporting_line(const Segment_2& s)
   {
@@ -169,6 +189,7 @@ public:
     b = s.target().x() - s.source().x();
     c = s.source().x() * s.target().y() - s.target().x() * s.source().y();
   }
+#endif
 
   static
   Homogeneous_point_2

@@ -102,7 +102,7 @@ private:
     bool is_trg = same_points(p, s.target_site());
 
     if ( is_src || is_trg ) {
-      Line_2 ls = compute_supporting_line(s.supporting_segment());
+      Line_2 ls = compute_supporting_line(s.supporting_site());
       Line_2 lp = compute_perpendicular(ls, p.point());
 
       if ( is_trg ) {
@@ -126,7 +126,7 @@ private:
 
     Point_2 ssrc = s.source(), strg = s.target();
 
-    Line_2 ls = compute_supporting_line(s.supporting_segment());
+    Line_2 ls = compute_supporting_line(s.supporting_site());
     Line_2 lsrc = compute_perpendicular(ls, ssrc);
     Line_2 ltrg = compute_perpendicular(ls, strg);
 
@@ -176,13 +176,13 @@ private:
     
     Point_2 ssrc1 = s1.source(), strg1 = s1.target();
 
-    Line_2 ls1 = compute_supporting_line(s1.supporting_segment());
+    Line_2 ls1 = compute_supporting_line(s1.supporting_site());
     Line_2 lsrc1 = compute_perpendicular(ls1, ssrc1);
     Line_2 ltrg1 = compute_perpendicular(ls1, strg1);
 
     Point_2 ssrc2 = s2.source(), strg2 = s2.target();
 
-    Line_2 ls2 = compute_supporting_line(s2.supporting_segment());
+    Line_2 ls2 = compute_supporting_line(s2.supporting_site());
     Line_2 lsrc2 = compute_perpendicular(ls2, ssrc2);
     Line_2 ltrg2 = compute_perpendicular(ls2, strg2);
 

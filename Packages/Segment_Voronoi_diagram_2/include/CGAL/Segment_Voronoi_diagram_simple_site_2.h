@@ -69,6 +69,40 @@ public:
     //    return Self(p0, p1);
   }
 
+ private:
+  static bool no_warning(bool b) {
+    CGAL_assertion( b );
+    return b;
+  }
+
+  static void no_constructor_support() {
+    bool THIS_CLASS_DOES_NOT_SUPPORT_THIS_CONSTRUCTOR = false;
+    no_warning( THIS_CLASS_DOES_NOT_SUPPORT_THIS_CONSTRUCTOR );
+  }
+
+ public:
+  // these "constructors" are defined in order to conform with the
+  // specs; they will produce a run-time error if used
+  static Self construct_site_2(const Point_2& p1, const Point_2& p2,
+			       const Point_2& q1, const Point_2& q2) {
+    no_constructor_support();
+    return Self();
+  }
+
+  static Self construct_site_2(const Point_2& p1, const Point_2& p2,
+			       const Point_2& q1, const Point_2& q2,
+			       bool b) {
+    no_constructor_support();
+    return Self();
+  }
+
+  static Self construct_site_2(const Point_2& p1, const Point_2& p2,
+			       const Point_2& q1, const Point_2& q2,
+			       const Point_2& r1, const Point_2& r2) {
+    no_constructor_support();
+    return Self();
+  }
+
 public:
   Segment_Voronoi_diagram_simple_site_2() : type_(0) {}
 
@@ -121,36 +155,16 @@ public:
   }
 
   Self supporting_site(unsigned int i) const {
-    CGAL_assertion( false );
     CGAL_precondition( is_point() && i < 2 );
+    CGAL_precondition( !is_input() );
     return Self::construct_site_2(p_[0], p_[0]);
   }
 
   Self crossing_site(unsigned int i) const {
-    CGAL_assertion( false );
     CGAL_precondition( is_segment() && i < 2 );
+    CGAL_precondition( !is_input(i) );
     return *this;
   }
-
-#if 1
-  // MK::ERROR: at some point I need to remove these
-  Segment_2 supporting_segment() const {
-    CGAL_precondition( is_segment() );
-    return segment();
-  }
-
-  Segment_2 supporting_segment(unsigned int i) const {
-    CGAL_assertion( false );
-    CGAL_precondition( is_point() && i < 2 );
-    return Segment_2(p_[0], p_[0]);
-  }
-
-  Segment_2 crossing_segment(unsigned int i) const {
-    CGAL_assertion( false );
-    CGAL_precondition( is_segment() && i < 2 );
-    return Segment_2(p_[0], p_[1]);
-  }
-#endif
 
 protected:
   void initialize_site(const Point_2& p)
