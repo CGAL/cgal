@@ -20,15 +20,15 @@
 #include <list>
 #include <map>
 #include <set>
-#include <CGAL/Triangulation_vertex_base_3.h>
 
-template <class Gt>
-class Local_selection_vertex_base_3 : public CGAL::Triangulation_vertex_base_3<Gt>
+
+template <class VertexBase>
+class Local_selection_vertex_base_3 : public VertexBase
 {
 public:
 
-  typedef CGAL::Triangulation_vertex_base_3<Gt> Base;
-  typedef typename Base::Point Point;
+  typedef VertexBase Base;
+  typedef typename VertexBase::Point Point;
   typedef double coord_type;
   
   typedef CGAL::Triple< void*, int, int > void_Edge;
@@ -65,7 +65,7 @@ private:
   int _post_mark;
   Intern_successors_type* _incident_border;
 
-  // Instead of having a set per vertex, there should be a global list.
+  // Instead of having a set per vertex, there is a global list.
   static std::list<void*> interior_edges;
   // and two iterators per vertex in this list
   // Note that ie_last is not past the end
@@ -81,7 +81,7 @@ private:
 public:
 
   Local_selection_vertex_base_3()
-    : CGAL::Triangulation_vertex_base_3<Gt>(), _mark(-1), 
+    : VertexBase(), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
     ir_first(incidence_requests.end()), ir_last(incidence_requests.end())
@@ -93,7 +93,7 @@ public:
     }
   
   Local_selection_vertex_base_3(const Point & p)
-    : CGAL::Triangulation_vertex_base_3<Gt>(p), _mark(-1), 
+    : VertexBase(p), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
     ir_first(incidence_requests.end()), ir_last(incidence_requests.end())
@@ -105,7 +105,7 @@ public:
     }
   
   Local_selection_vertex_base_3(const Point & p, void* f)
-    : CGAL::Triangulation_vertex_base_3<Gt>(p, f), _mark(-1), 
+    : VertexBase(p, f), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
     ir_first(incidence_requests.end()), ir_last(incidence_requests.end())
@@ -117,7 +117,7 @@ public:
     }
 
   Local_selection_vertex_base_3(void* f)
-    : CGAL::Triangulation_vertex_base_3<Gt>(f), _mark(-1), 
+    : VertexBase(f), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
     ir_first(incidence_requests.end()), ir_last(incidence_requests.end())
