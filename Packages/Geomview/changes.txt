@@ -7,6 +7,9 @@ src/Geomview_stream.C
 
 CHANGES
 
+Ver 2.8 (?? ??????? 00)
+- Rewrote is_prefix() and nth() [syl].
+
 Ver 2.7 (13 janvier 00)
 undo the previous, 
 and replace "ends" by "std::ends"
