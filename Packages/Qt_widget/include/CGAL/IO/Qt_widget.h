@@ -86,7 +86,8 @@ public:
   void lock() { ++Locked; };
   void unlock() { if (Locked>0) --Locked; do_paint(); };
   void do_paint() { if (Locked==0) repaint( FALSE ); };
-  
+
+  virtual QSize sizeHint() const;
   
   // properties
   // ~~~~~~~~~~
