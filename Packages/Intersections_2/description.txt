@@ -1,0 +1,1 @@
+Intersection routines for simple 2D objects.
