@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 template <class K>
-bool is_null(const  typename CGAL_WRAP(K)::Vector_2 &v, const K&)
+bool is_null(const  typename K::Vector_2 &v, const K&)
 {
     typedef typename K::RT RT;
     return v.hx()==RT(0) && v.hy()==RT(0);
@@ -40,8 +40,8 @@ bool is_null(const  typename CGAL_WRAP(K)::Vector_2 &v, const K&)
 
 template <class K>
 typename K::RT
-wdot(const typename CGAL_WRAP(K)::Vector_2 &u, 
-     const typename CGAL_WRAP(K)::Vector_2 &v,
+wdot(const typename K::Vector_2 &u, 
+     const typename K::Vector_2 &v,
      const K&)
 {
     return  (u.hx()*v.hx() + u.hy()*v.hy());
@@ -50,9 +50,9 @@ wdot(const typename CGAL_WRAP(K)::Vector_2 &u,
 
 
 template <class K>
-typename K::RT wdot(const typename CGAL_WRAP(K)::Point_2 &p,
-		    const typename CGAL_WRAP(K)::Point_2 &q,
-		    const typename CGAL_WRAP(K)::Point_2 &r,
+typename K::RT wdot(const typename K::Point_2 &p,
+		    const typename K::Point_2 &q,
+		    const typename K::Point_2 &r,
 		    const K&)
 {
     K* pR = 0;
@@ -66,8 +66,8 @@ typename K::RT wdot(const typename CGAL_WRAP(K)::Point_2 &p,
 
 template <class K>
 typename K::RT
-wcross(const typename CGAL_WRAP(K)::Vector_2 &u,
-       const typename CGAL_WRAP(K)::Vector_2 &v,
+wcross(const typename K::Vector_2 &u,
+       const typename K::Vector_2 &v,
        const K&)
 {
     return (typename K::RT)(u.hx()*v.hy() - u.hy()*v.hx());
@@ -78,9 +78,9 @@ wcross(const typename CGAL_WRAP(K)::Vector_2 &u,
 template <class K>
 inline
 typename K::RT 
-wcross_tag(const typename CGAL_WRAP(K)::Point_2 &p,
-	   const typename CGAL_WRAP(K)::Point_2 &q,
-	   const typename CGAL_WRAP(K)::Point_2 &r,
+wcross_tag(const typename K::Point_2 &p,
+	   const typename K::Point_2 &q,
+	   const typename K::Point_2 &r,
 	   const K&,
 	   const Homogeneous_tag&)
 {
@@ -95,9 +95,9 @@ wcross_tag(const typename CGAL_WRAP(K)::Point_2 &p,
 template <class K>
 inline
 typename K::FT 
-wcross_tag(const typename CGAL_WRAP(K)::Point_2 &p,
-	   const typename CGAL_WRAP(K)::Point_2 &q,
-	   const typename CGAL_WRAP(K)::Point_2 &r,
+wcross_tag(const typename K::Point_2 &p,
+	   const typename K::Point_2 &q,
+	   const typename K::Point_2 &r,
 	   const K&,
 	   const Cartesian_tag&)
 {
@@ -106,9 +106,9 @@ wcross_tag(const typename CGAL_WRAP(K)::Point_2 &p,
 
 
 template <class K>
-typename K::RT wcross(const typename CGAL_WRAP(K)::Point_2 &p,
-		      const typename CGAL_WRAP(K)::Point_2 &q,
-		      const typename CGAL_WRAP(K)::Point_2 &r,
+typename K::RT wcross(const typename K::Point_2 &p,
+		      const typename K::Point_2 &q,
+		      const typename K::Point_2 &r,
 		      const K& k)
 {
   typedef typename K::Kernel_tag Tag;
@@ -120,8 +120,8 @@ typename K::RT wcross(const typename CGAL_WRAP(K)::Point_2 &p,
 
 
 template <class K>
-inline bool is_acute_angle(const typename CGAL_WRAP(K)::Vector_2 &u,
-			   const typename CGAL_WRAP(K)::Vector_2 &v,
+inline bool is_acute_angle(const typename K::Vector_2 &u,
+			   const typename K::Vector_2 &v,
 			   const K& k)
 {
     typedef typename K::RT RT;
@@ -129,8 +129,8 @@ inline bool is_acute_angle(const typename CGAL_WRAP(K)::Vector_2 &u,
 }
 
 template <class K>
-inline bool is_straight_angle(const typename CGAL_WRAP(K)::Vector_2 &u,
-			      const typename CGAL_WRAP(K)::Vector_2 &v,
+inline bool is_straight_angle(const typename K::Vector_2 &u,
+			      const typename K::Vector_2 &v,
 			      const K& k)
 {
     typedef typename K::RT RT;
@@ -138,8 +138,8 @@ inline bool is_straight_angle(const typename CGAL_WRAP(K)::Vector_2 &u,
 }
 
 template <class K>
-inline bool is_obtuse_angle(const typename CGAL_WRAP(K)::Vector_2 &u,
-			    const typename CGAL_WRAP(K)::Vector_2 &v,
+inline bool is_obtuse_angle(const typename K::Vector_2 &u,
+			    const typename K::Vector_2 &v,
 			    const K& k)
 {
     typedef typename K::RT RT;
@@ -147,9 +147,9 @@ inline bool is_obtuse_angle(const typename CGAL_WRAP(K)::Vector_2 &u,
 }
 
 template <class K>
-inline bool is_acute_angle(const typename CGAL_WRAP(K)::Point_2 &p,
-			   const typename CGAL_WRAP(K)::Point_2 &q, 
-			   const typename CGAL_WRAP(K)::Point_2 &r,
+inline bool is_acute_angle(const typename K::Point_2 &p,
+			   const typename K::Point_2 &q, 
+			   const typename K::Point_2 &r,
 			   const K& k)
 {
     typedef typename K::RT RT;
@@ -157,9 +157,9 @@ inline bool is_acute_angle(const typename CGAL_WRAP(K)::Point_2 &p,
 }
 
 template <class K>
-inline bool is_straight_angle(const typename CGAL_WRAP(K)::Point_2 &p,
-			      const typename CGAL_WRAP(K)::Point_2 &q, 
-			      const typename CGAL_WRAP(K)::Point_2 &r,
+inline bool is_straight_angle(const typename K::Point_2 &p,
+			      const typename K::Point_2 &q, 
+			      const typename K::Point_2 &r,
 			      const K& k)
 {
     typedef typename K::RT RT;
@@ -167,9 +167,9 @@ inline bool is_straight_angle(const typename CGAL_WRAP(K)::Point_2 &p,
 }
 
 template <class K>
-inline bool is_obtuse_angle(const typename CGAL_WRAP(K)::Point_2 &p,
-			    const typename CGAL_WRAP(K)::Point_2 &q, 
-			    const typename CGAL_WRAP(K)::Point_2 &r,
+inline bool is_obtuse_angle(const typename K::Point_2 &p,
+			    const typename K::Point_2 &q, 
+			    const typename K::Point_2 &r,
 			    const K& k)
 {
     typedef typename K::RT RT;
@@ -178,8 +178,8 @@ inline bool is_obtuse_angle(const typename CGAL_WRAP(K)::Point_2 &p,
 
 
 template <class K>
-Orientation orientation(const typename CGAL_WRAP(K)::Vector_2 &u,
-			const typename CGAL_WRAP(K)::Vector_2 &v,
+Orientation orientation(const typename K::Vector_2 &u,
+			const typename K::Vector_2 &v,
 			const K& k)
 {
     typedef typename K::RT RT;
@@ -190,8 +190,8 @@ Orientation orientation(const typename CGAL_WRAP(K)::Vector_2 &u,
 }
 
 template <class K>
-inline bool counterclockwise(const typename CGAL_WRAP(K)::Vector_2 &u,
-			     const typename CGAL_WRAP(K)::Vector_2 &v,
+inline bool counterclockwise(const typename K::Vector_2 &u,
+			     const typename K::Vector_2 &v,
 			     const K& k)
 {
     typedef typename K::RT RT;
@@ -199,8 +199,8 @@ inline bool counterclockwise(const typename CGAL_WRAP(K)::Vector_2 &u,
 }
 
 template <class K>
-inline bool left_turn(const typename CGAL_WRAP(K)::Vector_2 &u,
-		      const typename CGAL_WRAP(K)::Vector_2 &v,
+inline bool left_turn(const typename K::Vector_2 &u,
+		      const typename K::Vector_2 &v,
 		      const K& k)
 {
     typedef typename K::RT RT;
@@ -208,8 +208,8 @@ inline bool left_turn(const typename CGAL_WRAP(K)::Vector_2 &u,
 }
 
 template <class K>
-inline bool clockwise(const typename CGAL_WRAP(K)::Vector_2 &u,
-		      const typename CGAL_WRAP(K)::Vector_2 &v,
+inline bool clockwise(const typename K::Vector_2 &u,
+		      const typename K::Vector_2 &v,
 		      const K& k)
 {
     typedef typename K::RT RT;
@@ -217,8 +217,8 @@ inline bool clockwise(const typename CGAL_WRAP(K)::Vector_2 &u,
 }
 
 template <class K>
-inline bool right_turn(const typename CGAL_WRAP(K)::Vector_2 &u,
-		       const typename CGAL_WRAP(K)::Vector_2 &v,
+inline bool right_turn(const typename K::Vector_2 &u,
+		       const typename K::Vector_2 &v,
 		       const K& k)
 {
     typedef typename K::RT RT;
@@ -226,8 +226,8 @@ inline bool right_turn(const typename CGAL_WRAP(K)::Vector_2 &u,
 }
 
 template <class K>
-inline bool collinear(const typename CGAL_WRAP(K)::Vector_2 &u,
-		      const typename CGAL_WRAP(K)::Vector_2 &v,
+inline bool collinear(const typename K::Vector_2 &u,
+		      const typename K::Vector_2 &v,
 		      const K& k)
 {
     typedef typename K::RT RT;
