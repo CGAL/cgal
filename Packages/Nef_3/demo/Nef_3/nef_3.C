@@ -66,8 +66,8 @@ typedef CGAL::Gmpz NT;
 #endif
 
 #ifdef CGAL_USE_EXTENDED_KERNEL
-//typedef CGAL::Extended_homogeneous<NT>   Kernel;
-typedef CGAL::Extended_cartesian<NT>   Kernel;
+typedef CGAL::Extended_homogeneous<NT>   Kernel;
+//typedef CGAL::Extended_cartesian<NT>   Kernel;
 const char *kernelversion = "Extended homogeneous 3d kernel.";
 #else // #elif CGAL_USE_SIMPLE_KERNEL
 // typedef CGAL::Lazy_exact_nt<NT>  LNT;
