@@ -57,7 +57,7 @@ public:
     typedef Cartesian_const_iterator self;
     typedef std::random_access_iterator_tag iterator_category;
     typedef CGAL::Quotient<NT>              value_type;
-    typedef ptrdiff_t                       difference_type;
+    typedef std::ptrdiff_t                  difference_type;
     typedef const value_type*               pointer;
     typedef const value_type&               reference;
 
@@ -94,7 +94,7 @@ public:
     typedef Homogeneous_const_iterator self;
     typedef std::random_access_iterator_tag iterator_category;
     typedef NT                              value_type;
-    typedef ptrdiff_t                       difference_type;
+    typedef std::ptrdiff_t                  difference_type;
     typedef const value_type*               pointer;
     typedef const value_type&               reference;
 

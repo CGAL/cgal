@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.71 (23 Jul 2002)
+   added missing std:: for ptrdiff_t
+
 0.9.70 (30 May 2002)
    removed kernel_overview chapter from html version; repeated in 
    reference intro.
