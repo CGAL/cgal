@@ -36,6 +36,7 @@ GLOB: Recognize existing _LEDA config/install files.
 GLOB: The _LEDA suffix is now part of the config/install file as well.
 GLOB: Run the compiler tests when it becomes necessary only.
 ALL : Changed CGAL version to 2.3.
+DOCS: Merged Dimas changed in.
 DOCS: Updated CGAL version to 2.4.
 DOCS: Removed ftp paragraph.
 DOCS: updated to include handling of CGALWin with native tools.
