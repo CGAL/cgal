@@ -1,3 +1,6 @@
+2.34   (21 June 2001)
+- New constructors for DirectionH2.
+
 2.33   (21 June 2001)
 - Rename compare_angles_with_x_axis to compare_angle_with_x_axis to match
   Cartesian.

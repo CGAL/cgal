@@ -1,3 +1,6 @@
+2.32   (21 June 2001)
+- New constructors for DirectionH3.
+
 2.31   (20 June 2001)
 - Remove #include <misc.h>
 

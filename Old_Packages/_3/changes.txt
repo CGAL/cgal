@@ -1,3 +1,6 @@
+3.22 (21 Jun 2001)
+- New constructors for Direction_3.
+
 3.21 (21 Jun 2001)
 - Merge point_vector_definitions_3.C into point_vector_declarations_3.h.
 - Remove number_type_tag(const Vector_3<R> &).
