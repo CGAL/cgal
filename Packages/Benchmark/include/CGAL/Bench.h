@@ -110,16 +110,37 @@ public:
   void loop()
   {
     int i;
+    time_t cycle_secs = UINT_MAX / CLOCKS_PER_SEC;
 
     m_benchable.sync();
     if (m_samples == 0) {
       if (m_iterations != 0) {
-        clock_t time_start = clock();
+        time_t time_start_secs = time(0);
+        clock_t time_start_ticks = clock();
         for (i = 0; i < m_iterations; i++) m_benchable.op();
         m_benchable.sync();
-        clock_t time_end = clock();
-        float time_interval = (float) (time_end - time_start) /
-          (float) CLOCKS_PER_SEC;
+        clock_t time_end_ticks = clock();
+        time_t sec_end_secs = time(0);
+
+        clock_t time_interval_ticks = time_end_ticks - time_start_ticks;
+        time_t time_interval_secs = time_interval_ticks / CLOCKS_PER_SEC;
+        time_t time_interval_approx_secs = sec_end_secs - time_start_secs;
+
+        unsigned int num_cycles = time_interval_approx_secs / cycle_secs;
+
+        time_t time_interval_tmp = num_cycles * cycle_secs + time_interval_secs;
+        if (time_interval_tmp > time_interval_approx_secs) {
+          time_t diff = time_interval_tmp - time_interval_approx_secs;
+          if (diff > cycle_secs / 2)
+            num_cycles--;
+        } else {
+          time_t diff = time_interval_approx_secs - time_interval_tmp;
+          if (diff > cycle_secs / 2)
+            num_cycles++;
+        }
+        
+        float time_interval = num_cycles * cycle_secs +
+          (float) time_interval_ticks / (float) CLOCKS_PER_SEC;
         m_samples = (int) ((float) m_seconds / time_interval);
         if (m_samples == 0) m_samples = 1;
         m_samples *= m_iterations;
@@ -144,11 +165,29 @@ public:
     }
 
     m_benchable.sync();
-    clock_t time_start = clock();
+    time_t time_start_secs = time(0);
+    clock_t time_start_ticks = clock();
     for (i = 0; i < m_samples; i++) m_benchable.op();
     m_benchable.sync();
-    clock_t time_end = clock();
-    m_period = (float) (time_end - time_start) / (float) CLOCKS_PER_SEC;
+    clock_t time_end_ticks = clock();
+    time_t sec_end_secs = time(0);
+
+    clock_t time_interval_ticks = time_end_ticks - time_start_ticks;
+    time_t time_interval_secs = time_interval_ticks / CLOCKS_PER_SEC;
+    time_t time_interval_approx_secs = sec_end_secs - time_start_secs;
+    unsigned int num_cycles = time_interval_approx_secs / cycle_secs;
+    time_t time_interval_tmp = num_cycles * cycle_secs + time_interval_secs;
+    if (time_interval_tmp > time_interval_approx_secs) {
+      time_t diff = time_interval_tmp - time_interval_approx_secs;
+      if (diff > cycle_secs / 2)
+        num_cycles--;
+    } else {
+      time_t diff = time_interval_approx_secs - time_interval_tmp;
+      if (diff > cycle_secs / 2)
+        num_cycles++;
+    }
+    m_period = num_cycles * cycle_secs +
+      (float) time_interval_ticks / (float) CLOCKS_PER_SEC;
 
     // std::cout << m_samples << " iterations, " << m_period <<" seconds"
     //           << std::endl;
