@@ -76,14 +76,14 @@ protected:
   inline static
   FT distance(const Point_2& p1, const Point_2& p2)
   {
-    return sqrt( distance2(p1, p2) );
+    return CGAL_NTS sqrt( distance2(p1, p2) );
   }
 
   inline static
   FT distance(const Point_2& p, const Line_2& l)
   {
     return ( p.x() * l.a() + p.y() * l.b() + l.c() ) /
-      sqrt( square(l.a()) + square(l.b()) );
+      CGAL_NTS sqrt( square(l.a()) + square(l.b()) );
   }
 
   // instance stuff
@@ -136,20 +136,22 @@ protected:
       return p;
     }
 
-    FT A = d2 * sqrt( square(l.a()) + square(l.b()) ) - l.c();
-    FT B = square(c.x()) + square(c.y()) - d1;
+    FT A = d2 * CGAL_NTS sqrt( CGAL_NTS square(l.a()) +
+			       CGAL_NTS square(l.b()) ) - l.c();
+    FT B = CGAL_NTS square(c.x()) + CGAL_NTS square(c.y()) - d1;
 
-    FT alpha = FT(1) + square(l.b() / l.a());
-    FT beta = A * l.b() / square(l.a()) + c.y()
+    FT alpha = FT(1) + CGAL_NTS square(l.b() / l.a());
+    FT beta = A * l.b() / CGAL_NTS square(l.a()) + c.y()
       - c.x() * l.b() / l.a();
-    FT gamma = square(A / l.a()) + B - FT(2) * c.x() * A / l.a();
+    FT gamma = CGAL_NTS square(A / l.a()) + B
+      - FT(2) * c.x() * A / l.a();
 
-    FT D = square(beta) - alpha * gamma;
+    FT D = CGAL_NTS square(beta) - alpha * gamma;
 
     D = CGAL_NTS abs(D);
 
-    FT y1 = (beta + sqrt(D)) / alpha;
-    FT y2 = (beta - sqrt(D)) / alpha;
+    FT y1 = (beta + CGAL_NTS sqrt(D)) / alpha;
+    FT y2 = (beta - CGAL_NTS sqrt(D)) / alpha;
 
     FT x1 = (A - l.b() * y1) / l.a();
     FT x2 = (A - l.b() * y2) / l.a();
