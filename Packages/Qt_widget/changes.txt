@@ -1,3 +1,9 @@
+1.2.16
+-----------------------
+The Triangulation_2_constrained has been added to the testsuite :)
+The input layers pixmaps have become more uniforme
+
+
 1.2.15
 ------------------------
 The layers are used in a more restrictive way
