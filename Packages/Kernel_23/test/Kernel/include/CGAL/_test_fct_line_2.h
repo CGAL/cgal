@@ -118,8 +118,8 @@ _test_fct_line_2(const R& )
  std::cout <<'.';
 
  // bisector construction
- Line_2 bl1 = bisector(p2, p3);
- Line_2 bl2 = bisector(p3, p2);
+ Line_2 bl1 = CGAL::bisector(p2, p3);
+ Line_2 bl2 = CGAL::bisector(p3, p2);
  assert(bl1 == Line_2(p12, p1));
  assert(bl2 == Line_2(p1, p12));
  assert(bl1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
