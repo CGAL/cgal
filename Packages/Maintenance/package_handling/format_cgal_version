@@ -17,10 +17,12 @@ my ($version, $date, $maintainer, $email);
     }
     while (<VERSION>) {
 	next if (/^\s*$/);
-	if ( /^\s*maintainer\s*:\s*([^<]+?)\s*<(.*)>\s*$/ ) {
+	if ( /^\s*[Mm]aintainer\s*:\s*([^<]+?)\s*<(.*)>\s*$/ ) {
 	    $maintainer=$1;
 	    $email = $2;
-        }
+        } elsif ( /^\s*[Mm]aintainer\s*:\s*(.+?)\s*$/ ) {
+	    $maintainer=$1;
+	}
     }
     close VERSION;
 }
@@ -31,6 +33,10 @@ if ($#ARGV != 0) {
 get_version($ARGV[0]);
 print STDOUT $version, " (", $date, ")\n";
 if (defined($maintainer)) {
-    print STDOUT "<br> <a href=\"mailto:$email\">", $maintainer,"</a>\n";
+    if (defined($email)) {
+        print STDOUT "<br> <a href=\"mailto:$email\">", $maintainer,"</a>\n";
+    } else {
+        print STDOUT "<br><em>", $maintainer,"</em>\n";
+    }
 }
  
