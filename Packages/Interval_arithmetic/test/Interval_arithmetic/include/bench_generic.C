@@ -18,27 +18,33 @@ typedef TESTED_TYPE IA;
 
 void bench()
 {
-  int i, loops=10000000;
+  const int loops=10000000;
   CGAL_Timer t;
   double dt;
-  const IA a(0.12), b(IA(21)/10);
+  const IA a(0.12);
+  // const IA b(2.1);
+  const IA b(IA(21)/10);
   IA c(1);
 
 // egcs-1.1 + -O + not advanced n'affiche pas pareil....
-  // c = a + b;
-  // cout << a << b << endl;
-  // cout << c <<  endl;
+// De même que le snapshot du 19 octobre...  inquiétant.
+// Quand j'aurai du temps: faire un bug report.
+   c = a + b;
+   cout << a << b << endl;
+   cout << c <<  endl;
+
+  cout << loops << " loops.\n";
 
 #define BENCH_MACRO(op) { \
   dt = t.time(); t.start(); c = 1; \
-  for (i=0; i<loops; i++) { c = a op b; } \
+  for (int i=0; i<loops; i++) { c = a op b; } \
   t.stop(); \
   cout << c << "\t" #op " " << t.time()-dt << endl; \
 }
 
 #define BENCH_MACRO_eq(op1,op2) { \
   dt = t.time(); t.start(); c = 1; \
-  for (i=0; i<loops; i++) { c op1 b; c op2 b; } \
+  for (int i=0; i<loops; i++) { c op1 b; c op2 b; } \
   t.stop(); \
   cout << c << "\t" #op1 " " #op2 " " << t.time()-dt << endl; \
 }
@@ -52,7 +58,7 @@ void bench()
   BENCH_MACRO_eq (*=, /=);
 
   dt = t.time(); t.start();
-  for (i=0; i<loops; i++) { c = sqrt(b); }
+  for (int i=0; i<loops; i++) { c = sqrt(b); }
   t.stop();
   cout << c << "\tsqrt\t" << t.time()-dt << endl;
 }
