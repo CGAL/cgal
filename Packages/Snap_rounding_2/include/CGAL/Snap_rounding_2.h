@@ -102,13 +102,12 @@ private:
   Point_2 p_right;
   Point_2 p_down;
   Point_2 p_up;
-  Rep_ rep;
+  Rep_ _gt;
   NT pixel_size;
   Segment_2 *right_seg;
   Segment_2 *left_seg;
   Segment_2 *top_seg;
   Segment_2 *bot_seg;
-  Rep_   _gt;
 
 public:
   template<class Out>
@@ -145,8 +144,9 @@ struct hot_pixel_dir_cmp
 template<class base_rep>
 class Snap_rounding_traits : public base_rep {
 
-typedef typename base_rep::FT        NT;
-typedef CGAL::Point_2<base_rep> Point_2;
+typedef typename base_rep::FT     NT;
+typedef CGAL::Point_2<base_rep>   Point_2;
+typedef CGAL::Segment_2<base_rep> Segment_2;
 
 public:
 
@@ -159,6 +159,15 @@ void snap(Point_2 p,NT pixel_size,NT &x,NT &y)
         pixel_size / 2.0;
   }
 
+double direction(Segment_2 s)
+  {
+    double x1 = s.source().x().to_double();
+    double y1 = s.source().y().to_double();
+    double x2 = s.target().x().to_double();
+    double y2 = s.target().y().to_double();
+
+    return(atan((y2 - y1)/(x2 - x1)));
+  }
 };
 
 template<class Rep_>
@@ -387,13 +396,7 @@ Hot_Pixel<Rep_>::Hot_Pixel(Point_2 inp_point,NT inp_pixel_size) :
                            pixel_size(inp_pixel_size)
   {
     NT x,y;
-    rep.snap(inp_point,pixel_size,x,y);
-
-    /*    NT x = NT(floor((inp_point.x() / pixel_size).to_double())) * pixel_size +
-        pixel_size / 2.0;
-
-    NT y = NT(floor((inp_point.y() / pixel_size).to_double())) * pixel_size +
-    pixel_size / 2.0;*/
+    _gt.snap(inp_point,pixel_size,x,y);
 
     p = Point_2(x,y);
     p_left = Point_2(x - pixel_size / 2.0,y);
@@ -685,7 +688,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
         seg_list.begin();iter != seg_list.end();++iter)
       simple_seg_list.push_back(Segment_2(iter->source(),iter->target()));
 
-    mul_kd_tree = new Multiple_kd_tree<Rep,Hot_Pixel<Rep_> *>(hot_pixels_list,
+    mul_kd_tree = new Multiple_kd_tree<Rep,Hot_Pixel<Rep> *>(hot_pixels_list,
                   number_of_kd_trees,simple_seg_list);
   }
 

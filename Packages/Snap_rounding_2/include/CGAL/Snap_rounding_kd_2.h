@@ -111,12 +111,14 @@ private:
   int get_kd_num(Segment seg,int n)
   {
     // $$$$ this function is intended to kernel
-    int i;
-    double x1 = seg.source().x().to_double();
+    double alpha = _gt.direction(seg);
+    /*double x1 = seg.source().x().to_double();
     double y1 = seg.source().y().to_double();
     double x2 = seg.target().x().to_double();
     double y2 = seg.target().y().to_double();
-    double alpha = atan((y2 - y1)/(x2 - x1));
+    double alpha = atan((y2 - y1)/(x2 - x1));*/
+
+    int i;
 
     if(alpha < 0)
       alpha += pi / 2.0;
