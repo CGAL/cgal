@@ -4,6 +4,8 @@
 #include <CGAL/IO/Qt_widget_OpenGL.h>
 #include <CGAL/Nef_3/OGL_helper.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template <typename Nef_polyhedron>
 class Qt_widget_Nef_3 : public Qt_widget_OpenGL {
 
@@ -48,4 +50,5 @@ public:
   }
 };
 
+CGAL_END_NAMESPACE
 #endif // CGAL_QT_WIDGET_NEF_3_H
