@@ -33,10 +33,6 @@
 #include <CGAL/Hyperbola_ray_2.h>
 
 
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#error  constructions have not been defined for the homogeneous kernel
-#endif
-
 #include <CGAL/Apollonius_graph_constructions_ftC2.h>
 
 
@@ -61,11 +57,13 @@ ad_circumcenter_2(const typename Gt::Site_2& p,
 		  const typename Gt::Site_2& q,
 		  const typename Gt::Site_2& r)
 {
+  typedef typename Gt::Point_2  Point_2;
+
   typename Gt::FT     x,y;
   ad_circumcenterC2(p.x(),p.y(),p.weight(),
 	       	    q.x(),q.y(),q.weight(),
 		    r.x(),r.y(),r.weight(),x,y);
-  return typename Gt::Point_2(x,y);
+  return Point_2(x,y);
 }
 
 
@@ -94,11 +92,14 @@ ad_circumcircle_2(const typename Gt::Site_2& p,
                   const typename Gt::Site_2& q,
                   const typename Gt::Site_2& r)
 {
+  typedef typename Gt::Site_2   Site_2;
+  typedef typename Gt::Point_2  Point_2;
+
   typename Gt::FT x, y, wt;
   ad_circumcircleC2(p.x(),p.y(),p.weight(),
 		    q.x(),q.y(),q.weight(),
 		    r.x(),r.y(),r.weight(),x,y,wt);
-  return typename Gt::Site_2(typename Gt::Point_2(x,y), wt);
+  return Site_2(Point_2(x,y), wt);
 }
 
 template < class Gt >
@@ -107,11 +108,13 @@ typename Gt::Line_2
 ad_left_bitangent_line_2(const typename Gt::Site_2& p,
 			 const typename Gt::Site_2& q)
 {
+  typedef typename Gt::Line_2  Line_2;
+
   typename Gt::FT a, b, c;
   ad_left_bitangent_lineC2(p.x(),p.y(),p.weight(),
 			   q.x(),q.y(),q.weight(),
 			   a,b,c);
-  return typename Gt::Line_2(a, b, c);
+  return Line_2(a, b, c);
 }
 
 
