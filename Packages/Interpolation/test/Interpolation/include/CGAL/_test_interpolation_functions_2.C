@@ -30,22 +30,36 @@
 #include <CGAL/point_generators_2.h> 
 #include <CGAL/copy_n.h>
 
-
 #include <CGAL/natural_neighbor_coordinates_2.h>
 
 #include <CGAL/Interpolation_traits_2.h>
 #include <CGAL/interpolation_functions.h>
-
-
+#include <CGAL/Interpolation_gradient_fitting_traits_2.h>
+#include <CGAL/sibson_gradient_fitting.h>
 
 //////////////////////////////// 
 
-
+template < class ForwardIterator > 
+bool test_norm(ForwardIterator first, ForwardIterator beyond,
+	       typename std::iterator_traits<ForwardIterator>::
+	       value_type::second_type norm)
+{
+   typename
+     std::iterator_traits<ForwardIterator>::value_type::second_type 
+     sum(0);
+   for(; first !=beyond; first++)
+     sum+= first->second;
+   
+  return(norm==sum); 
+}
 template < class ForwardIterator > 
 bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
-		     typename std::iterator_traits<ForwardIterator>::value_type::second_type
+		     typename std::iterator_traits<ForwardIterator>::
+		     value_type::second_type
 		     norm ,
-		     const typename std::iterator_traits<ForwardIterator>::value_type::first_type& p)
+		     const typename
+		     std::iterator_traits<ForwardIterator>::
+		     value_type::first_type& p)
 {
   typedef typename
     std::iterator_traits<ForwardIterator>::value_type::first_type Point;
@@ -55,70 +69,44 @@ bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
 
   return(p==b); 
 }
-/////////////////////////////////////////////////////////////
-template < class ForwardIterator > 
-bool test_norm(ForwardIterator first, ForwardIterator beyond,
-	       typename std::iterator_traits<ForwardIterator>::value_type::second_type
-	       norm)
-{
-   typename
-     std::iterator_traits<ForwardIterator>::value_type::second_type sum(0);
-   for(; first !=beyond; first++)
-     sum+= first->second;
-   
-  return(norm==sum); 
-}
-
-//////////////////////////////// 
-template< class Map >  
-struct DataAccess : public std::unary_function< typename Map::key_type,
-		    typename Map::mapped_type> {
-  typedef typename Map::mapped_type Data_type;
-  typedef typename Map::key_type  Point;
-  
-  //CONSTRUCTOR:
-  DataAccess< Map >(const Map& m): map(m){};
-  
-  //Functor
-  Data_type operator()(const Point& p) { 
-    
-    typename Map::const_iterator mit = map.find(p);
-    if(mit!= map.end())
-      return mit->second;
-    return Data_type();
-  };
-  
-  const Map& map;
-};
 
 /////////////////////////////////////////////////////////////////
 template < class ForwardIterator, class Functor, class GradFunctor,
   class Gt>
 bool test_interpolation(ForwardIterator first, ForwardIterator beyond,  
-			const typename  std::iterator_traits<ForwardIterator>::value_type::second_type&
+			const typename
+			std::iterator_traits<ForwardIterator>
+			::value_type::second_type&
 			norm, const typename
-			std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+			std::iterator_traits<ForwardIterator>::value_type
+			::first_type& p,
 			Functor f, GradFunctor grad_f,
 			const Gt& geom_traits, const int& i)
 {
-  typedef typename Functor::result_type Value_type;
-  Value_type res, exact_value = f(p);
+  typedef typename Functor::result_type::first_type Value_type;
+  assert(f(p).second);
+  Value_type exact_value = f(p).first;
   
   if(i==0){
-    res =  CGAL::linear_interpolation(first, beyond, norm,f);
-    assert(res == exact_value);
+    Value_type val =  CGAL::linear_interpolation(first, beyond, norm,f);
+    assert(val == exact_value);
   }
   
-  res =  CGAL::quadratic_interpolation(first, beyond, norm,p,f,grad_f, geom_traits);
-  assert(res == exact_value);
+  typename Functor::result_type
+    res =  CGAL::quadratic_interpolation(first, beyond, norm,p,f,
+					 grad_f, geom_traits);
+  assert(res.second && res.first == exact_value);
   
   if(i<2){
-    res =  CGAL::sibson_c1_interpolation_square(first, beyond, norm,p,f,grad_f, geom_traits);
-    assert(res == exact_value);
+    res =  CGAL::sibson_c1_interpolation_square(first, beyond,
+						norm,p,f,
+						  grad_f, geom_traits);
+    assert(res.second && res.first == exact_value);
   }
   
-  res =  CGAL::farin_c1_interpolation(first, beyond, norm,p,f,grad_f, geom_traits);
-  assert(res == exact_value);
+  res =  CGAL::farin_c1_interpolation(first, beyond, norm,p,f,grad_f, 
+				      geom_traits);
+  assert(res.second && res.first == exact_value);
   
   return true;
 }
@@ -147,8 +135,10 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
   typedef typename Gt::FT                         Coord_type;
   typedef typename Gt::Vector_2                   Vector;
   
-  typedef std::map<Point, Coord_type, typename Gt::Less_xy_2>   Point_value_map ;
-  typedef std::map<Point, Vector, typename Gt::Less_xy_2 >      Point_vector_map;
+  typedef std::map<Point, Coord_type, typename Gt::Less_xy_2>   
+    Point_value_map ;
+  typedef std::map<Point, Vector, typename Gt::Less_xy_2 >      
+    Point_vector_map;
   
  
   std::cout << "NN2: Testing random points." << std::endl; 
@@ -185,22 +175,24 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
     
     gradients[0].insert(std::make_pair(points[j], Vector( beta1, beta2)));
     
-    gradients[1].insert(std::make_pair(points[j], Vector( beta1 +
-							  Coord_type(2)* gamma1 *  points[j].x(), 
-							  beta2+
-							  Coord_type(2) * gamma1* points[j].y())));
-    gradients[2].insert(std::make_pair(points[j], Vector( beta1 +
-							  Coord_type(2)* gamma1 *  points[j].x()+ 
-							  gamma3* points[j].y(), 
-							  beta2 +
-							  Coord_type(2) * gamma2* points[j].y()+ 
-							  gamma3* points[j].x())));
+    gradients[1].insert(std::make_pair
+			(points[j], 
+			 Vector( beta1+Coord_type(2)*gamma1*points[j].x(), 
+				 beta2+Coord_type(2)*gamma1* points[j].y())));
+    gradients[2].insert
+      (std::make_pair(points[j],Vector(beta1+Coord_type(2)*gamma1
+				       *points[j].x()+gamma3* points[j].y(), 
+				       beta2 +
+				       Coord_type(2) * gamma2* points[j].y()+ 
+				       gamma3* points[j].x())));
   }
 
   //DETERMINE FUNCTION VALUE FOR n DATA POINTS AND m RANDOM TEST POINTS: 
   for(int j=0; j<n+m; j++){
     //linear function
-    values[0].insert(std::make_pair(points[j],alpha + beta1*points[j].x() + beta2*points[j].y()));
+    values[0].insert(std::make_pair(points[j],alpha +
+				    beta1*points[j].x() 
+				    + beta2*points[j].y()));
     
     //spherical function:
     values[1].insert(std::make_pair(points[j],alpha +
@@ -215,17 +207,16 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
 				    beta2*points[j].y() +
 				    gamma1*points[j].x()*points[j].x()+ 
 				    gamma2*points[j].y()*points[j].y() 
-				    + gamma3*points[j].x()*points[j].y()));
-    
+				    + gamma3*points[j].x()*points[j].y())); 
   }
   
   //INTERPOLATION OF RANDOM POINTS:
   Coord_type exact_value, res, norm;
   std::vector< std::pair< Point, Coord_type > > coords;
   for(int j=n;j<n+m;j++){
-      
     norm = 
-      CGAL::natural_neighbor_coordinates_2(T, points[j],std::back_inserter(coords)).second;
+      CGAL::natural_neighbor_coordinates_2(T, points[j],
+					   std::back_inserter(coords)).second;
     
     assert(norm>0);  
     assert(test_norm( coords.begin(), coords.end(),norm));
@@ -233,33 +224,69 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
     
     for(int i=0; i<3; i++)
       assert(test_interpolation(coords.begin(), coords.end(),norm,points[j], 
-       				DataAccess< Point_value_map >(values[i]),
-       				DataAccess< Point_vector_map >(gradients[i]), 
+       				CGAL::DataAccess< Point_value_map >(values[i]),
+       				CGAL::DataAccess< Point_vector_map >
+				(gradients[i]), 
        				Traits(),i));
     coords.clear();
   }
   //std::cout << "NN_coords_2: barycentric prop.+ ";
   //std::cout << " interpolation on RANDOM POINTS." << std::endl;
   
+
+  //TESTING THE GRADIENT APPRXIMATION METHOD:
+  typedef CGAL::Interpolation_gradient_fitting_traits_2<Gt> GradTraits;
+  Point_vector_map approx_gradients[2];
+  CGAL::sibson_gradient_fitting_nn_2(T,std::inserter(approx_gradients[0],
+						     approx_gradients[0].begin()),
+				     CGAL::DataAccess<Point_value_map>(values[0]), 
+				     GradTraits());
+  CGAL::sibson_gradient_fitting_nn_2(T,std::inserter(approx_gradients[1],
+						    approx_gradients[1].begin()),
+				    CGAL::DataAccess<Point_value_map>(values[1]), 
+				    GradTraits());  
+  for(int j=0; j<n; j++){
+    std::pair<Vector, bool> res = 
+      CGAL::DataAccess<Point_vector_map>(approx_gradients[0])(points[j]);
+    if(res.second){
+      assert(res.first ==  
+	     CGAL::DataAccess<Point_vector_map>(gradients[0])(points[j]).first);
+      res = 
+	CGAL::DataAccess<Point_vector_map>(approx_gradients[1])(points[j]);
+      //if one exists->the other must also exist 
+      assert(res.second);
+      assert(res.first ==  
+	     CGAL::DataAccess<Point_vector_map>(gradients[1])(points[j]).first);
+    }else
+      assert(!CGAL::DataAccess<Point_vector_map>(approx_gradients[1])
+	     (points[j]).second);
+  }
+  std::cout << " Tested gradient estimation method on random points."
+	    <<std::endl;
+
   //TESTING A POINT == A DATA POINT:
   norm = 
-    CGAL::natural_neighbor_coordinates_2(T, points[n/2],std::back_inserter(coords)).second;
+    CGAL::natural_neighbor_coordinates_2(T,points[n/2],std::back_inserter
+					 (coords)).second;
   assert(norm == Coord_type(1));
-  typename std::vector< std::pair< Point, Coord_type > >::iterator ci= coords.begin();
+  typename std::vector< std::pair< Point, Coord_type > >::iterator 
+    ci= coords.begin();
   assert(ci->first == points[n/2]);
   assert(ci->second == Coord_type(1));
   ci++;
   assert(ci==coords.end());
   for(int i=0; i<3; i++)
     assert(test_interpolation(coords.begin(), coords.end(),norm,points[n/2], 
-			      DataAccess< Point_value_map >(values[i]),
-			      DataAccess< Point_vector_map >(gradients[i]), 
+			      CGAL::DataAccess< Point_value_map >(values[i]),
+			      CGAL::DataAccess< Point_vector_map >
+			      (gradients[i]), 
 			      Traits(),i));
   coords.clear();
   //done.
   //std::cout << "NN_coords_2: barycentric prop.+";
   //std::cout << "interpolation on VERTEX." << std::endl;
 
+  //FURTHER TESTS FOR NATURAL NEIGHBOR COORDINATES 2:
   //TESTING A POINT on an EDGE of the triangulation:
   Face_handle fh = T.finite_faces_begin();
   int i =0;
@@ -273,7 +300,6 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
   assert(test_norm( coords.begin(), coords.end(),norm));
   assert(test_barycenter( coords.begin(), coords.end(),norm,p));
   coords.clear();
-  //std::cout << "NN_coords_2: barycentric prop.+ interpolation on EDGE." << std::endl;
   //END OF TEST WITH EDGE
 
   
@@ -300,7 +326,8 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
   T2.insert(p12);T2.insert(p23);T2.insert(p34);T2.insert(p41);
 
   norm = 
-    CGAL::natural_neighbor_coordinates_2(T2,Point(0,0),std::back_inserter(coords)).second;
+    CGAL::natural_neighbor_coordinates_2(T2,Point(0,0),
+					 std::back_inserter(coords)).second;
   assert(norm == Coord_type(1));
   ci= coords.begin();
   for(; ci!= coords.end(); ci++)
@@ -313,7 +340,8 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
 
   //point on a vertex;
   norm = 
-    CGAL::natural_neighbor_coordinates_2(T2,p34,std::back_inserter(coords)).second;
+    CGAL::natural_neighbor_coordinates_2(T2,p34,
+					 std::back_inserter(coords)).second;
   assert(norm == Coord_type(1));
   ci= coords.begin();
   assert(ci->first == p34);
@@ -325,13 +353,12 @@ _test_interpolation_functions_2_delaunay( const Triangul & )
   //point on an edge:
   p= Point(0,0.5);
   norm = 
-    CGAL::natural_neighbor_coordinates_2(T2,p,std::back_inserter(coords)).second;
+    CGAL::natural_neighbor_coordinates_2(T2,p,
+					 std::back_inserter(coords)).second;
   assert(test_barycenter( coords.begin(), coords.end(),norm, p));
   coords.clear();
 
  
 }
-
-
 //end of file
 
