@@ -2,17 +2,18 @@
 
 \section{Introduction}
 
-For visualizing and debugging your programs the graphical output of geometric objects is
-important. In this chapter we describe functionality useful for graphical IO and output
-in Postscript format.\\
-For window output we use the \leda\ window class if \leda\ is present. If you install
-\cgal\ without \leda\ you can use a ported version of the \leda\ window class.
-This port of the \leda\ window lib can be downloaded as a precompiled library for various 
-platforms from the \cgal\ web page. Note that Algorithmic Solutions Software GmbH 
-has offered us the possibility to provide the ported version of the \leda\ 
-window.\\
-For output in Postscript format using the \cgal\ Postscript file stream you need 
-\leda\ installed.
+For visualizing and debugging your programs the graphical output of geometric 
+objects is important. In this chapter we describe functionality useful for 
+graphical IO and output in Postscript format.\\
+For window output we use the \leda\ window class if \leda\ is present. If you 
+install \cgal\ without \leda\ you can use a ported version of the \leda\ window 
+class.  This port of the \leda\ window lib can be downloaded as a precompiled 
+library for various platforms from the \cgal\ web page. Note that Algorithmic 
+Solutions Software GmbH has offered us the possibility to provide the ported 
+version of the \leda\ window.\\ For output in Postscript format using the 
+\cgal\ Postscript file stream you need \leda\ installed.
+
+\input{Color}
 
 \section{Window output}
 
@@ -39,15 +40,15 @@ For further information on <i>leda_window</i>, we refer to the
 <A HREF="http://www.mpi-sb.mpg.de/LEDA/MANUAL/MANUAL.html">LEDA manual</A>.
 \end{ccHtmlOnly}
 
-Input and output operators for \ccStyle{CGAL::Window_stream} are defined for the geometric 
-classes in the \cgal\ kernel.
+Input and output operators for \ccStyle{CGAL::Window_stream} are defined for 
+the geometric classes in the \cgal\ kernel.
 The coordinates of the geometric objects are in object space. Data are
 entered with the left mouse button.
 
 It is important that the window stream header file gets included
 {\em after} the inclusion of the header files of geometric classes
-that get inserted to or extracted from the window stream. See the following small example
-program.
+that get inserted to or extracted from the window stream. See the following 
+small example program.
 
 \begin{verbatim}
 #include <CGAL/basic.h>

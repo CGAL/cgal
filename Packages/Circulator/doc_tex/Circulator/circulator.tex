@@ -15,11 +15,11 @@
 \gdef\lciIfHtmlRefLinks{\lcFalse}
 \gdef\lciIfHtmlLinks{\lcFalse}
 
-\chapter{Circulators}
-\label{chapterCirculators}
+\section{Circulators}
+%\label{chapterCirculators}
 
-\ccChapterRelease{\circRev. \ \circDate}\\
-\ccChapterAuthor{Lutz Kettner}
+%\ccChapterRelease{\circRev. \ \circDate}\\
+%\ccChapterAuthor{Lutz Kettner}
 
 An introduction to the concept of circulators is given here. A couple
 of adaptors are presented that convert between iterators and
@@ -31,7 +31,7 @@ that work for iterators as well as for circulators please refer to the
 reference pages. Note that circulators are not part of \stl, but of \cgal.
 
 % +-----------------------------------------------------+
-\section{Introduction}
+\subsection{Introduction}
 \label{sectionIntroduction}
 \label{sectionCirculatorWarning}
 
@@ -146,7 +146,7 @@ circulators.
 \begin{ccHtmlClassFile}{Circulator.html}{Requirements for Circulators}
 \ccHtmlNoClassLinks
 \begin{ccClass}{Circulator}
-\section{Forward Circulator}
+\subsection{Forward Circulator}
 
 A class \ccClassName\ that satisfies the requirements of a forward
 circulator with the value type \ccStyle{T}, supports the following
@@ -226,7 +226,7 @@ we recommend the use of 0 instead of {\tt NULL}.
 \ccHtmlNoClassLinks
 \ccHtmlNoClassIndex
 \begin{ccClass}{Circulator}
-\section{Bidirectional Circulator}
+\subsection{Bidirectional Circulator}
 
 A class \ccClassName\ that satisfies the requirements of a bidirectional
 circulator with the value type \ccStyle{T}, supports the following operations
@@ -258,7 +258,7 @@ in addition to the operations supported by a forward circulator.
 \ccHtmlNoClassLinks
 \ccHtmlNoClassIndex
 \begin{ccClass}{Circulator}
-\section{Random Access Circulator}
+\subsection{Random Access Circulator}
 \label{sectionRandomAccessCirculatorRequ}
 
 A class \ccClassName\ that satisfies the requirements of a random
@@ -320,7 +320,7 @@ random access circulators.
 \end{ccHtmlClassFile} 
 
 % +-----------------------------------------------------+
-\section{Adaptors Between Iterators and Circulators}
+\subsection{Adaptors Between Iterators and Circulators}
 \label{sectionCirculatorAdaptor}
 
 Algorithms working on iterator ranges can not be applied to circulator
@@ -364,7 +364,7 @@ Circulator c( v.begin(), v.end());
 \end{ccExampleCode}
 
 % +-----------------------------------------------------+
-\section{Functions on Circulators}
+\subsection{Functions on Circulators}
 \label{sectionCirculatorFunctions}
 
 A few functions deal with circulators and circulator ranges. The type

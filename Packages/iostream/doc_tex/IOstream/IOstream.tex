@@ -1,6 +1,7 @@
 
 \cleardoublepage
-\chapter{Operators for IO Streams} \label{Chapter_operator_for_IO_streams}
+\chapter{IO Streams}
+\label{Chapter_operator_for_IO_streams}
 
 All classes in the \cgal\ kernel provide input and output operators for
 IO streams.  The basic task of such an operator is to produce a
@@ -57,7 +58,7 @@ The following functions allow to test whether a stream is in a certain mode.
 \section{Output Operator}
 %\ccCreationVariable{os}
 
-\ccDefinition
+%\ccDefinition
 \cgal\  defines output operators for classes that are derived
 from the class \ccStyle{ostream}. This allows to write to ostreams
 as \ccStyle{cout} or \ccStyle{cerr}, as well as to strstreams
@@ -65,7 +66,7 @@ and fstreams.
 The output operator is defined for all classes in the \cgal\ kernel and for the class \ccc{Color} as well.
 Let \ccc{os}  be an output stream.
 
-\ccFunction{ostream& operator>>(ostream& os, Class c);}
+\ccFunction{ostream& operator<<(ostream& os, Class c);}
 {Inserts object \ccStyle{c} in the stream \ccc{os}. Returns \ccc{os}.}
 
 
@@ -106,7 +107,7 @@ int main()
 \section{Input Operator}
 
 
-\ccDefinition
+%\ccDefinition
 \cgal\  defines input operators for classes that are derived
 from the class \ccStyle{istream}. This allows to read from istreams
 as \ccStyle{cin}, as well as from strstreams and fstreams.
@@ -148,3 +149,6 @@ main()
 }
 \end{cprog} 
 %\end{ccClass} 
+
+
+
