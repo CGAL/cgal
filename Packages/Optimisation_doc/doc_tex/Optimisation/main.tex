@@ -1,0 +1,52 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Optimisation
+% -----------------------------------------------------------------------------
+% file  : spec/Optimisation/Optimisation.tex
+% author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% =============================================================================
+
+\chapter{Optimisation} \label{Optimisation}
+\RCSdef{\OptRCSRev}{$Revision$}
+\RCSdefDate{\OptRCSDate}{$Date$}
+\ccChapterSubTitle{\OptRCSRev \quad \OptRCSDate} \\[1ex]
+\ccChapterAuthor{Bernd Gärtner} \\
+\ccChapterAuthor{Sven Schönherr}
+\ccTexHtml{\thispagestyle{empty}}{}
+
+\section{Introduction}
+
+This chapter describes a routine for computing and updating the
+smallest enclosing circle of a finite point set. Formally, the
+`smallest enclosing circle' is the boundary of the closed disk of
+minimum area covering the point set. It is known that this disk
+is unique. We usually identify the disk with its bounding circle,
+allowing us to talk about points being on the boundary of the
+circle, etc.
+
+The algorithm works in an incremental manner. It is implemented
+as a semi-dynamic data structure, thus allowing to insert points
+while maintaining the smallest enclosing circle.
+
+The class template is parameterized with a traits class which defines
+the abstract interface between the optimisation algorithm and the
+primitives it uses. We provide a traits class implementation that
+interfaces the optimisation algorithm with the \cgal\ kernel. It is
+presented in Section~\ref{sec:opt_traits_impl}. In addition, we
+provide traits class adapters to user supplied point classes, see
+Section~\ref{sec:opt_traits_adapt}. Section~\ref{sec:opt_traits_req}
+describes the requirements that must be fulfilled by traits classes
+for optimisation algorithms.  This is at the same time a specification
+for using the provided traits class implementation as for users who
+want to supply their own traits class.
+
+\include{Min_circle_2}
+%\include{Min_ellipse_2}
+\include{traits_implementations}
+\include{traits_adapters}
+\include{traits_requirements}
+
+% ===== EOF ===================================================================
