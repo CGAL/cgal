@@ -1,12 +1,12 @@
-tex:
+tex: *.tex
 	latex tutorial
 	bibtex tutorial
 	latex tutorial
 	latex tutorial
-ps:
+ps: tex
 	dvips -Ppdf -G0 -t letter -z -o tutorial.ps tutorial.dvi
 
-pdf:
+pdf: ps
 	ps2pdf -dMaxSubsetPct=100 -dCompatibilityLevel=1.2 -dSubsetFonts=true -dEmbedAllFonts=true -dAntiAliasColorImages=true  -dColorImageResolution=1200 -dEncodeColorImages#true -dAutoFilterColorImages#false -dColorImageFilter#/FlateEncode tutorial.ps tutorial.pdf
 
 all:
@@ -15,10 +15,10 @@ all:
 	make pdf
 
 clean:
-	\rm *.aux *.dvi *.log *.out *.blg *.bbl
+	\rm -f *.aux *.dvi *.log *.out *.blg *.bbl
 
 superclean:
-	\rm *.ps *.pdf *~
+	\rm -f *.ps *.pdf *~
 	make clean
 
 

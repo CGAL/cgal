@@ -1,13 +1,16 @@
 \documentclass[letter,twoside,10pt]{article}
 \usepackage{tutorial}
 \usepackage[OT1]{fontenc}
-\input{tutorial.def}
 
 % ------------------------------------------------------------------------
 \usepackage{graphicx}
 \usepackage{subfigure}
 \usepackage{epsfig}
 \usepackage{psfrag}
+\usepackage{}
+% used to write c++ code/algorithms
+\usepackage{listings}
+\usepackage{fancyvrb}
 
 %\psdraft
 
@@ -31,6 +34,10 @@
   bookmarksopen=false,}
 % end hyperref stuff
 
+\lstset{language=C++, basicstyle=\scriptsize}
+
+\input{tutorial.def}
+
 % =========================================================================
 \begin{document}
 
@@ -51,25 +58,27 @@ Polyhedron}}\\ the example of subdivision surfaces}
 
 % ABSTRACT
 % ------------------------------------------------------------------------
-\abstract{This document is a tutorial on how to get
-started with the halfedge data structure provided by CGAL, the
-Computational Geometry Algorithm Library. Assuming the reader to be
-familiar with the C++ template mechanisms and the key concepts of the
-STL (Standard Template Library), we describe three different
-approaches with increasing level of sophistication for implementing
-mesh subdivision schemes. The simplest approach uses simple Euler
-operators to implement the $\sqrt{3}$ subdivision scheme applicable to
-triangle meshes. A second approach overloads the incremental builder
-already provided by CGAL to implement the quad-triangle subdivision
-scheme applicable to polygon meshes. The third approach is generic and
-offers a convenient way to design its own subdivision scheme through
-the definition of rule templates. Catmull-Clark, Loop and Doo-Sabin
-schemes are illustrated using the latter approach. Two companion
-applications, one developed on Windows with MS .NET, MFC and OpenGL,
-and the other developed for both Linux and Windows with Qt and OpenGL,
-implement the subdivision schemes listed above, as well as several
-functionalities for interaction, visualization and raster/vectorial
-output.}
+\abstract{
+%% This document is a tutorial on how to get
+%% started with the halfedge data structure provided by CGAL, the
+%% Computational Geometry Algorithm Library. Assuming the reader to be
+%% familiar with the C++ template mechanisms and the key concepts of the
+%% STL (Standard Template Library), we describe three different
+%% approaches with increasing level of sophistication for implementing
+%% mesh subdivision schemes. The simplest approach uses simple Euler
+%% operators to implement the $\sqrt{3}$ subdivision scheme applicable to
+%% triangle meshes. A second approach overloads the incremental builder
+%% already provided by CGAL to implement the quad-triangle subdivision
+%% scheme applicable to polygon meshes. The third approach is generic and
+%% offers a convenient way to design its own subdivision scheme through
+%% the definition of rule templates. Catmull-Clark, Loop and Doo-Sabin
+%% schemes are illustrated using the latter approach. Two companion
+%% applications, one developed on Windows with MS .NET, MFC and OpenGL,
+%% and the other developed for both Linux and Windows with Qt and OpenGL,
+%% implement the subdivision schemes listed above, as well as several
+%% functionalities for interaction, visualization and raster/vectorial
+%% output.
+}
 
 \vskip 3mm
 
@@ -89,38 +98,55 @@ output.}
 % INTRODUCTION                 
 % ------------------------------------------------------------------------
 \section{Introduction}
-\input intro
+%\input intro
 
 % PREREQUISITES
 % ------------------------------------------------------------------------
 \section{Prerequisites}
-\input prereq 
+%\input prereq 
 
 % ------------------------------------------------------------------------
 \section{Polyhedron Data Structure: Fundamentals}
 \input polyhedron 
 
 % ------------------------------------------------------------------------
+\section{Polyhedron Data Structure: Rendering and Manipulation}
+
+% rendering controls of the polyhedron (wire-frame, surface, normals>generation)
+\subsection{Rendering}
+%\input ??
+
+% user manipulations of the polyhedron (arc ball?) 
+\subsection{Manipulation} 
+%\input ??
+
+
+% ------------------------------------------------------------------------
 \section{Design and Implemenation of Subdivisions}
 
-% Connec Operators
-\subsection{$\sqrt{3}$-Subdivision using Euler Operators}
-\input sqrt3
+\subsection{Subdivision Surfaces}
+\input subdivision
 
-% Inc Builder
+% connectivity ops: specific polyhedron algorithms (sqrt3 subdivisions) 
+\subsection{$\sqrt{3}$-Subdivision using Euler Operators}
+%\input sqrt3
+
+% ------------------------------------------------------------------------
+% inc builder: specific polyhedron algorithms (qt subdivisions) 
 \subsection{Quad-triangle Subdivision using Incremental Builder}
 \label{sec:subdivision_builder}
-\input qt
+%\input qt
 
-% Templated subdivision rules
+% ------------------------------------------------------------------------
+% templated rules: a generic framework for subdivisions 
 \subsection{Subdivision using a rule template}
 \label{sec:subdivision_rule}
-\input subtempl
+%\input subtempl
 
 % APPLICATION DEMO
 % ------------------------------------------------------------------------
 \section{Application demo}
-\input demo
+%\input demo
 
 
 % ------------------------------------------------------------------------

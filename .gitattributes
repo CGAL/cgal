@@ -2060,6 +2060,7 @@ Packages/Tutorial/tutorial/Polyhedron/doc/figs/stl_concepts.eps -text svneol=uns
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/stock.ppt -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/subdivision.eps -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/teaser.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/Circulators.fig -text
 Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/RefMap.fig -text
 Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/RefSchemes.fig -text
 Packages/Tutorial/tutorial/Polyhedron/doc/save/tutorial02.tgz -text svneol=unset#unset
