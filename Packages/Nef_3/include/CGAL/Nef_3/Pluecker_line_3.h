@@ -23,13 +23,11 @@
 #define CGAL_PLUECKER_LINE_3_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Homogeneous.h>
 #include <algorithm>
 #undef _DEBUG
 #define _DEBUG 61
 #include <CGAL/Nef_3/debug.h>
-
-// #include <CGAL/Nef_3/Infimaximal_box.h>
-// #include<CGAL/Nef_3/Filtered_gcd.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -40,8 +38,10 @@ directed straight line in the three-dimensional plane. Its
 representation is based on Pluecker coordinates. (For a treatment see
 the book on projected oriented geometry of Stolfi.)}*/
 
+template <typename Tag, typename R> class Pluecker_line_3;
+
 template <typename R_>
-class Pluecker_line_3 {
+class Pluecker_line_3<Homogeneous_tag,R_> {
 
 /*{\Mtypes 6}*/
 typedef R_ R;
@@ -53,7 +53,7 @@ typedef typename R::Point_3 Point_3;
 typedef typename R::Line_3  Line_3;
 /*{\Mtypemember the line type of the standard kernel.}*/
 /*{\Mtypemember iterator over Pluecker coefficients.}*/
-typedef Pluecker_line_3<R> Self;
+typedef Pluecker_line_3<Homogeneous_tag,R> Self;
 // typedef Infimaximal_box<typename Is_extended_kernel<R>::value_type, R> Infi_box;
 // typedef typename Infi_box::NT NT;
 typedef const RT* const_iterator;
@@ -131,9 +131,9 @@ within the ordered tuple of coefficients.}*/
 }
 
 void normalize()
-/*{\Mop reduces the Pluecker coefficients to a minimal 
-representation. This is done by dividing all Pluecker 
-coefficients by their common gcd.}*/
+//{\Mop reduces the Pluecker coefficients to a minimal 
+//representation. This is done by dividing all Pluecker 
+//coefficients by their common gcd.}
 { 
   TRACEN("normalize");
   int i=0;
@@ -157,16 +157,16 @@ void negate()
 /*{\Mop negates all Pluecker coefficients.}*/
 { for(int i=0; i<6; ++i) c_[i] = -c_[i]; }
 
-Pluecker_line_3<R> opposite() const
+Self opposite() const
 /*{\Mop returns the line opposite to |\Mvar|. }*/
-{ Pluecker_line_3<R> res;
+{ Self res;
   std::negate<RT> N;
   std::transform(begin(), end(), res.c_, N);
   return res;
 }
 
-static int cmp(const Pluecker_line_3<R>& l1,
-               const Pluecker_line_3<R>& l2)
+static int cmp(const Self& l1,
+               const Self& l2)
 /*{\Mstatic returns the lexicographic order on lines defined
 on their Pluecker coefficient tuples.}*/
 { for (unsigned i=0; i<5; ++i) {
@@ -178,12 +178,147 @@ on their Pluecker coefficient tuples.}*/
 
 }; // Pluecker_line_3
 
-/*{\Mimplementation The Pluecker coefficients of a line are stored
-in a six-tuple of |RT| coefficients.}*/
-                
 
-template <typename R>
-std::ostream& operator<<(std::ostream& os, const Pluecker_line_3<R>& l)
+template <typename R_>
+class Pluecker_line_3<Cartesian_tag,R_> {
+
+/*{\Mtypes 6}*/
+typedef R_ R;
+/*{\Mtypemember the standard kernel type.}*/
+typedef typename R::FT FT;
+/*{\Mtypemember the ring type.}*/
+typedef typename R::Point_3 Point_3;
+/*{\Mtypemember the point type of the standard kernel.}*/
+typedef typename R::Line_3  Line_3;
+/*{\Mtypemember the line type of the standard kernel.}*/
+/*{\Mtypemember iterator over Pluecker coefficients.}*/
+typedef Pluecker_line_3<Cartesian_tag,R> Self;
+// typedef Infimaximal_box<typename Is_extended_kernel<R>::value_type, R> Infi_box;
+// typedef typename Infi_box::NT NT;
+typedef const FT* const_iterator;
+
+FT c_[6];
+
+public:
+/*{\Mcreation 3}*/     
+Pluecker_line_3() {}
+/*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
+initializes it to some line.}*/
+
+Pluecker_line_3(const Line_3& l)
+  /*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
+initializes it to |l|.}*/
+{
+  Point_3 p(l.point(0)), q(l.point(1));
+  c_[0] = p.hx()*q.hy() - p.hy()*q.hx();
+  c_[1] = p.hx()*q.hz() - p.hz()*q.hx();
+  c_[2] = p.hy()*q.hz() - p.hz()*q.hy();
+  c_[3] = p.hx()*q.hw() - p.hw()*q.hx();
+  c_[4] = p.hy()*q.hw() - p.hw()*q.hy();
+  c_[5] = p.hz()*q.hw() - p.hw()*q.hz();
+}
+
+Pluecker_line_3(const Point_3& p, const Point_3& q)
+/*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
+initializes it to the oriented line through |p| and |q|.}*/
+{
+  c_[0] = p.hx()*q.hy() - p.hy()*q.hx();
+  c_[1] = p.hx()*q.hz() - p.hz()*q.hx();
+  c_[2] = p.hy()*q.hz() - p.hz()*q.hy();
+  c_[3] = p.hx()*q.hw() - p.hw()*q.hx();
+  c_[4] = p.hy()*q.hw() - p.hw()*q.hy();
+  c_[5] = p.hz()*q.hw() - p.hw()*q.hz();
+
+}
+
+template <typename Forward_iterator>
+Pluecker_line_3(Forward_iterator s, Forward_iterator e) 
+/*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
+initializes it to line with the parameters |tuple [s,e)|.}*/
+{ int i=0;
+  while (s!=e && i<6) c_[i++] = *s;
+  CGAL_assertion(i==6);
+}
+
+/*{\Moperations 4 2 }*/
+
+const_iterator begin() const { return c_; }
+/*{\Mop returns an iterator pointing to the first
+Pluecker coefficient.}*/                                                   
+const_iterator end() const { return c_+6; }
+/*{\Mop returns an iterator pointing beyond the last
+Pluecker coefficient.}*/                                                   
+
+Pluecker_line_3(const Self& l) 
+{ std::copy(l.begin(),l.end(),c_); }
+
+Self& operator=(const Self& l) 
+{ if (&l!=this) std::copy(l.begin(),l.end(),c_); 
+  return *this; }
+
+const FT& operator[](unsigned i) const
+/*{\Marrop returns constant access to the $i$th Pluecker coefficient.}*/    
+{ CGAL_assertion(i<6); return c_[i]; }
+
+int sign() const
+/*{\Mop returns the sign of the first nonzero Pluecker coefficient
+within the ordered tuple of coefficients.}*/
+{ for (unsigned i=0; i<6; ++i) 
+    if (c_[i]!=FT(0)) return CGAL_NTS sign(c_[i]); 
+ CGAL_assertion_msg(0,"Pluecker line 0 0 0 0 0 0 shouldn't appear!!!"); 
+  return CGAL_NTS sign(c_[5]); 
+}
+
+void normalize()
+//{\Mop reduces the Pluecker coefficients to a minimal 
+//representation. This is done by dividing all Pluecker 
+//coefficients by their common gcd.}
+{
+  TRACEN("normalize");
+  int i=0;
+  while(i<6 && c_[i]==FT(0))
+    i++;
+    
+  if(i>5)
+    return;
+
+  FT D = c_[i];
+  if(D<FT(0)) D=-D;
+  CGAL_assertion(D!=0);
+
+  for(int i=0; i<6; ++i) {
+    c_[i]/=D;
+    //    c_[i].normalize();
+  }
+}
+
+void negate()
+/*{\Mop negates all Pluecker coefficients.}*/
+{ for(int i=0; i<6; ++i) c_[i] = -c_[i]; }
+
+Self opposite() const
+/*{\Mop returns the line opposite to |\Mvar|. }*/
+{ Self res;
+  std::negate<FT> N;
+  std::transform(begin(), end(), res.c_, N);
+  return res;
+}
+
+static int cmp(const Self& l1,
+               const Self& l2)
+/*{\Mstatic returns the lexicographic order on lines defined
+on their Pluecker coefficient tuples.}*/
+{ for (unsigned i=0; i<5; ++i) {
+    typename R::FT diff = l1[i]-l2[i];
+    if ( diff != typename R::FT(0) ) return CGAL_NTS sign(diff);
+  }
+  return CGAL_NTS sign(l1[5]-l2[5]);
+}
+
+}; // Pluecker_line_3
+
+template <typename Tag, typename R>
+std::ostream& operator<<(std::ostream& os, const Pluecker_line_3<Tag,R>& l)
 { 
   switch( os.iword(CGAL::IO::mode) ) {
     case CGAL::IO::ASCII :
@@ -199,9 +334,9 @@ std::ostream& operator<<(std::ostream& os, const Pluecker_line_3<R>& l)
   } return os;
 }
 
-template <typename R>
-Pluecker_line_3<R> categorize(const Pluecker_line_3<R>& l, int& inverted)
-{ Pluecker_line_3<R> res(l);
+template <typename Tag, typename R>
+Pluecker_line_3<Tag,R> categorize(const Pluecker_line_3<Tag,R>& l, int& inverted)
+{ Pluecker_line_3<Tag,R> res(l);
   if ( res.sign()<0 ) { res.negate(); inverted=1; }
   else inverted=-1;
   res.normalize();
@@ -210,10 +345,10 @@ Pluecker_line_3<R> categorize(const Pluecker_line_3<R>& l, int& inverted)
 }
 
 struct Pluecker_line_lt {
-  template <typename R>
-  bool operator()(const CGAL::Pluecker_line_3<R>& l1,
-                  const CGAL::Pluecker_line_3<R>& l2) const
-  { return CGAL::Pluecker_line_3<R>::cmp(l1,l2)<0; }
+  template <typename Tag, typename R>
+  bool operator()(const CGAL::Pluecker_line_3<Tag,R>& l1,
+                  const CGAL::Pluecker_line_3<Tag,R>& l2) const
+  { return CGAL::Pluecker_line_3<Tag,R>::cmp(l1,l2)<0; }
 };
 
 CGAL_END_NAMESPACE

@@ -6,6 +6,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <typename Tag, typename Traits> class Bounding_box_3;
+
 template <typename Traits> 
 class Bounding_box_rep_3 {
 
@@ -26,7 +28,8 @@ class Bounding_box_rep_3 {
 };
 
 template <typename Traits>
-class Bounding_box_3 : public Handle_for< Bounding_box_rep_3<Traits> >
+class Bounding_box_3<Cartesian_tag,Traits> : 
+public Handle_for< Bounding_box_rep_3<Traits> >
 {
   typedef Handle_for< Bounding_box_rep_3<Traits> > BBox_handle_3;
   typedef typename BBox_handle_3::element_type     BBox_ref_3;
@@ -42,65 +45,127 @@ public:
 	  : BBox_handle_3(BBox_ref_3(init_min, init_max)) {}
        
 
-	/*
-  NT  xmin() const;
-  NT  ymin() const;
-  NT  zmin() const;
-  NT  xmax() const;
-  NT  ymax() const;
-  NT  zmax() const;
-	*/
-
-	//	Point_3& get_min() { return Ptr()->min; }
 	const Point_3& get_min() const { return this->Ptr()->min; }
-	//	Point_3& get_max() { return Ptr()->max; }
 	const Point_3& get_max() const { return this->Ptr()->max; }
 
-  Bounding_box_3  operator+(const Bounding_box_3& b) const;
+	Bounding_box_3  operator+(const Bounding_box_3& b) const {
+	  Point_3 res_min(b.get_min()), res_max(b.get_max());
+	  
+	  if(res_min.x() > get_min().x())
+	    res_min = Point_3(res_min.x(),get_min().y(),get_min().z());
+	  if(res_min.y() > get_min().y()) 
+	    res_min = Point_3(get_min().x(),res_min.y(),get_min().z());
+	  if(res_min.z() > get_min().z())
+	    res_min = Point_3(get_min().x(),get_min().y(),res_min.z());
+	  
+	  if(res_max.x() < get_max().x())
+	    res_max = Point_3(res_max.x(),get_max().y(),get_max().z());
+	  if(res_max.y() < get_max().y())
+	    res_max = Point_3(get_max().x(),res_max.y(),get_max().z());
+	  if(res_max.z() < get_max().z())
+	    res_max = Point_3(get_max().x(),get_max().y(),res_max.z());
+	  
+	  return Bounding_box_3(normalized(res_min),normalized(res_max));
+	}
+};
+
+template <typename Traits>
+class Bounding_box_3<Homogeneous_tag,Traits> : 
+public Handle_for< Bounding_box_rep_3<Traits> >
+{
+  typedef Handle_for< Bounding_box_rep_3<Traits> > BBox_handle_3;
+  typedef typename BBox_handle_3::element_type     BBox_ref_3;
+
+  typedef typename Traits::Point_3             Point_3;
+  typedef typename Traits::Vector_3            Vector_3;
+
+public:
+        Bounding_box_3()
+	  : BBox_handle_3(BBox_ref_3()) {}
+
+        Bounding_box_3(Point_3 init_min, Point_3 init_max) 
+	  : BBox_handle_3(BBox_ref_3(init_min, init_max)) {}
+       
+
+	const Point_3& get_min() const { return this->Ptr()->min; }
+	const Point_3& get_max() const { return this->Ptr()->max; }
+
+	Bounding_box_3  operator+(const Bounding_box_3& b) const {
+
+	  Point_3 res_min(b.get_min()), res_max(b.get_max());
+	  
+	  if(res_min.x() > get_min().x()) {
+	    Point_3 src(res_min.hx(),0,0,res_min.hw());
+	    Point_3 tgt(get_min().hx(),0,0,get_min().hw());
+	    Vector_3 delta(tgt - src);
+	    res_min = res_min + delta;
+	  }
+	  if(res_min.y() > get_min().y()) {
+	    Point_3 src(0,res_min.hy(),0,res_min.hw());
+	    Point_3 tgt(0,get_min().hy(),0,get_min().hw());
+	    Vector_3 delta(tgt - src);
+	    res_min = res_min + delta;
+	  }
+	  if(res_min.z() > get_min().z()) {
+	    Point_3 src(0,0,res_min.hz(),res_min.hw());
+	    Point_3 tgt(0,0,get_min().hz(),get_min().hw());
+	    Vector_3 delta(tgt - src);
+	    res_min = res_min + delta;
+	  }
+	  
+	  if(res_max.x() < get_max().x()) {
+	    Point_3 src(res_max.hx(),0,0,res_max.hw());
+	    Point_3 tgt(get_max().hx(),0,0,get_max().hw());
+	    Vector_3 delta(tgt - src);
+	    res_max = res_max + delta;
+	  }
+	  if(res_max.y() < get_max().y()) {
+	    Point_3 src(0,res_max.hy(),0,res_max.hw());
+	    Point_3 tgt(0,get_max().hy(),0,get_max().hw());
+	    Vector_3 delta(tgt - src);
+	    res_max = res_max + delta;
+	  }
+	  if(res_max.z() < get_max().z()) {
+	    Point_3 src(0,0,res_max.hz(),res_max.hw());
+	    Point_3 tgt(0,0,get_max().hz(),get_max().hw());
+	    Vector_3 delta(tgt - src);
+	    res_max = res_max + delta;
+	  }
+	  
+	  return Bounding_box_3(normalized(res_min),normalized(res_max));
+	}
 };
 
 /*
 template <typename NT>
 inline
-NT
-Bounding_box_3<NT>::xmin() const
-{ return Ptr()->e0; }
+Bounding_box_3<Cartesian_tag,NT>
+Bounding_box_3<Cartesian_tag,NT>::
+operator+(const Bounding_box_3<Cartesian_tag,NT>& b) const {
+
+  Point_3 res_min(b.get_min()), res_max(b.get_max());
+
+  if(res_min.x() > get_min().x())
+    res_min = Point_3(res_min.x(),get_min().y(),get_min().z());
+  if(res_min.y() > get_min().y()) 
+    res_min = Point_3(get_min().x(),res_min.y(),get_min().z());
+  if(res_min.z() > get_min().z())
+    res_min = Point_3(get_min().x(),get_min().y(),res_min.z());
+
+  if(res_max.x() < get_max().x())
+    res_max = Point_3(res_max.x(),get_max().y(),get_max().z());
+  if(res_max.y() < get_max().y())
+    res_max = Point_3(get_max().x(),res_max.y(),get_max().z());
+  if(res_max.z() < get_max().z())
+    res_max = Point_3(get_max().x(),get_max().y(),res_max.z());
+
+  return Bounding_box_3(normalized(res_min),normalized(res_max));
+}
 
 template <typename NT>
 inline
-NT
-Bounding_box_3<NT>::ymin() const
-{ return Ptr()->e1; }
-
-template <typename NT>
-inline
-NT
-Bounding_box_3<NT>::zmin() const
-{ return Ptr()->e2; }
-
-template <typename NT>
-inline
-NT
-Bounding_box_3<NT>::xmax() const
-{ return Ptr()->e3; }
-
-template <typename NT>
-inline
-NT
-Bounding_box_3<NT>::ymax() const
-{ return Ptr()->e4; }
-
-template <typename NT>
-inline
-NT
-Bounding_box_3<NT>::zmax() const
-{ return Ptr()->e5; }
-*/
-
-template <typename NT>
-inline
-Bounding_box_3<NT>
-Bounding_box_3<NT>::operator+(const Bounding_box_3<NT>& b) const {
+Bounding_box_3<Homogeneous_tag,NT>
+Bounding_box_3<Tag_true,NT>::operator+(const Bounding_box_3<Tag_true,NT>& b) const {
 
   Point_3 res_min(b.get_min()), res_max(b.get_max());
 
@@ -144,11 +209,12 @@ Bounding_box_3<NT>::operator+(const Bounding_box_3<NT>& b) const {
 
   return Bounding_box_3(normalized(res_min),normalized(res_max));
 }
+*/
 
-template <typename NT>
+template <typename Tag,typename NT>
 inline
 bool
-do_overlap(const Bounding_box_3<NT>& bb1, const Bounding_box_3<NT>& bb2)
+do_overlap(const Bounding_box_3<Tag,NT>& bb1, const Bounding_box_3<Tag,NT>& bb2)
 {
     if (bb1.get_max().x() < bb2.get_min().x() || 
 	bb2.get_max().x() < bb1.get_min().x())
@@ -165,10 +231,10 @@ do_overlap(const Bounding_box_3<NT>& bb1, const Bounding_box_3<NT>& bb2)
 #define CGAL_NO_ISTREAM_EXTRACT_BOUNDING_BOX_3
 
 #ifndef CGAL_NO_OSTREAM_INSERT_BOUNDING_BOX_3
-template <typename NT>
+template <typename Tag,typename NT>
 inline
 std::ostream&
-operator<<(std::ostream &os, const Bounding_box_3<NT>& b)
+operator<<(std::ostream &os, const Bounding_box_3<Tag,NT>& b)
 {
   switch(os.iword(IO::mode))
   {
@@ -188,7 +254,7 @@ operator<<(std::ostream &os, const Bounding_box_3<NT>& b)
         write(os, b.get_max().hw());
         return os;
     default:
-      os << "Bounding_box_3<NT>((" << b.get_min().hx()
+      os << "Bounding_box_3<Tag,NT>((" << b.get_min().hx()
 	 << ", "       << b.get_min().hy()
 	 << ", "       << b.get_min().hz()
 	 << ", "       << b.get_min().hw() << "), (";
@@ -202,10 +268,10 @@ operator<<(std::ostream &os, const Bounding_box_3<NT>& b)
 #endif // CGAL_NO_OSTREAM_INSERT_BOUNDING_BOX_3
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_BOUNDING_BOX_3
-template <typename NT>
+template <typename Tag, typename NT>
 inline
 std::istream&
-operator>>(std::istream &is, Bounding_box_3<NT>& b)
+operator>>(std::istream &is, Bounding_box_3<Tag,NT>& b)
 {
   NT xmin, ymin, zmin, xmax, ymax, zmax;
 
@@ -223,7 +289,7 @@ operator>>(std::istream &is, Bounding_box_3<NT>& b)
         read(is, zmax);
         break;
   }
-  b = Bounding_box_3<NT>(xmin, ymin, zmin, xmax, ymax, zmax);
+  b = Bounding_box_3<Tag,NT>(xmin, ymin, zmin, xmax, ymax, zmax);
   return is;
 }
 
