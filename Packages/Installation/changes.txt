@@ -1,3 +1,7 @@
+28/03/2003 (rursu) 1.185
+----------
+fixed ole_32.lib -> ole32.lib
+
 28/03/2003 (rursu) 1.184
 ----------
 fixed install_cgal syntax error
