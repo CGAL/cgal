@@ -1,4 +1,6 @@
+1.74 (22 September 2003)
 - Fixed typos in examples
+- Fixed Kernel_archetype
 
 1.73 (18 September 2003)
 - Again.
