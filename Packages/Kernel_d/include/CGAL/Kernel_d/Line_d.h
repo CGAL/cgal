@@ -57,6 +57,8 @@ typedef typename p_R::FT FT;
 typedef typename p_R::LA LA;
 /*{\Mtypemember the linear algebra layer.}*/
 
+typedef typename Vector_d<R>::Base_vector Base_vector;
+
 friend class Ray_d<R>; 
 friend class Segment_d<R>; 
 
@@ -69,7 +71,7 @@ Line_d(int d = 0)
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| and 
 initializes it to some line in $d$ - dimensional space }*/
  : Base( Pair(Point_d<R>(d), Point_d<R>(d)+
-         Vector_d<R>(typename Vector_d<R>::Base_vector(),d,0)) ) {}
+         Vector_d<R>(Base_vector(),d,0)) ) {}
 
 Line_d(const Point_d<R>& p, const Point_d<R>& q)
 /*{\Mcreate introduces a line through |p| and |q| and oriented

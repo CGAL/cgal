@@ -26,6 +26,7 @@
 
 #ifndef NOCGALINCL
 #include <CGAL/basic.h>
+#include <CGAL/aff_transformation_tags.h>
 #include <CGAL/Handle_for.h>
 #endif
 #include <CGAL/Kernel_d/PointHd.h>
@@ -65,13 +66,13 @@ template <class RT, class LA > class Aff_transformationHd;
 template <class RT, class LA > class Aff_transformationHd_rep;
 
 template <class RT, class LA>
-class Aff_transformationHd_rep : 
-  private LA::Matrix, public Ref_counted {
-  typedef typename LA::Matrix Matrix;
+class Aff_transformationHd_rep : public Ref_counted {
   friend class Aff_transformationHd<RT,LA>;
+  typedef typename LA::Matrix Matrix;
+  Matrix M_;
 public:
-  Aff_transformationHd_rep(int d) : Matrix(d+1) {}
-  Aff_transformationHd_rep(const Matrix& M_init) : Matrix(M_init) {}
+  Aff_transformationHd_rep(int d) : M_(d+1) {}
+  Aff_transformationHd_rep(const Matrix& M_init) : M_(M_init) {}
   ~Aff_transformationHd_rep() {}
 }; 
 
@@ -114,33 +115,53 @@ typedef Quotient<_RT> FT;
 /*{\Mtypemember the field type.}*/
 typedef _LA LA;
 /*{\Mtypemember the linear algebra layer.}*/
+typedef typename _LA::Matrix Matrix;
+/*{\Mtypemember the matrix type.}*/
+typedef typename _LA::Vector Vector;
 
 /*{\Mcreation 3}*/
 
-Aff_transformationHd(int d = 0, bool identity=false) : Base( Rep(d) )
-/*{\Mcreate introduces a transformation in $d$-dimensional space. 
-If identity is true then the transformation is the identity 
-transformation.}*/
-{ if (identity) for (int i = 0; i <= d; ++i) (*ptr)(i,i) = RT(1); }
+Aff_transformationHd(int d = 0) : Base( Rep(d) ) {}
+/*{\Mcreate introduces a transformation in $d$-dimensional space.}*/
 
-Aff_transformationHd(const typename LA::Matrix& M) : Base( Rep(M) )
+Aff_transformationHd(int d, Identity_transformation) : Base( Rep(d) )
+/*{\Mcreate introduces the identity transformation in $d$-dimensional 
+    space.}*/
+{ for (int i = 0; i <= d; ++i) ptr->M_(i,i) = RT(1); }
+
+Aff_transformationHd(const Matrix& M) : Base( Rep(M) )
 /*{\Mcreate introduces the transformation of $d$ - space specified by
 matrix $M$. \precond |M| is a square matrix of dimension $d + 1$. }*/
 { CGAL_assertion_msg((M.row_dimension()==M.column_dimension()),
-  "Aff_transformationHd::\
-   construction: initialization matrix is not quadratic.");
+    "Aff_transformationHd::\
+     construction: initialization matrix is not quadratic.");
 }
 
+#ifndef CGAL_SIMPLE_INTERFACE
+
 template <typename Forward_iterator>
-Aff_transformationHd(Forward_iterator start, Forward_iterator end) :
+Aff_transformationHd(Scaling, Forward_iterator start, Forward_iterator end) :
   Base( Rep(std::distance(start,end)-1) )
 /*{\Mcreate introduces the transformation of $d$-space specified by a
 diagonal matrix with entries |set [start,end)| on the diagonal 
 (a scaling of the space). \precond |set [start,end)| is a vector of 
 dimension $d+1$.}*/
-{ int i=0; while (start != end) { (*ptr)(i,i) = *start++;++i; } }
+{ int i=0; while (start != end) { ptr->M_(i,i) = *start++;++i; } }
 
-Aff_transformationHd(const VectorHd<RT,LA>& v) :
+#else
+#define FIXATHD(I) \
+Aff_transformationHd(Scaling, I start, I end) : \
+  Base( Rep(end-start-1) ) \
+{ int i=0; while (start != end) { ptr->M_(i,i) = *start++;++i; } }
+
+FIXATHD(int*)
+FIXATHD(const int*)
+FIXATHD(RT*)
+FIXATHD(const RT*)
+#undef FIXATHD
+#endif
+
+Aff_transformationHd(Translation, const VectorHd<RT,LA>& v) :
   Base( Rep(v.dimension()) )
 /*{\Mcreate introduces the translation by vector $v$.}*/ 
 @ The homogenous representation of the rational vector is put into the
@@ -157,15 +178,15 @@ vec.homogeneous(vec.dimension()) & 0 & \cdots & 0 & vec.homogeneous(0) \\
 <<defining Aff_transformationHd>>=
 { register int d = v.dimension();
   for (int i = 0; i < d; ++i) {
-    (*ptr)(i,i) = v.homogeneous(d);
-    (*ptr)(i,d) = v.homogeneous(i);
+    ptr->M_(i,i) = v.homogeneous(d);
+    ptr->M_(i,d) = v.homogeneous(i);
   }
-  (*ptr)(d,d) = v.homogeneous(d);
+  ptr->M_(d,d) = v.homogeneous(d);
 }
 
-Aff_transformationHd(int d, const RT& num, const RT& den) : Base( Rep(d) ) 
-/*{\Mcreate returns a scaling by a scale factor $\mathit{num}/
-\mathit{den}$.}*/
+Aff_transformationHd(int d, Scaling, const RT& num, const RT& den) 
+  : Base( Rep(d) ) 
+/*{\Mcreate returns a scaling by a scale factor |num/den|.}*/
 @ We provide a simple scaling transformation.  We put the numerator of
 the rational scaling factor into the Matrix elements $M_{0,0}$ to
 $M_{d-1,d-1}$ and the denominator into the lower right corner element
@@ -178,12 +199,12 @@ $M_{d,d}$:
        \end{array} \right) 
 \end{displaymath}
 <<defining Aff_transformationHd>>=
-{ typename LA::Matrix& M(*ptr);
-  for (int i = 0; i < d; ++i) M(i,i) = num;  
+{ Matrix& M = ptr->M_;
+  for (int i = 0; i < d; ++i) M(i,i) = num;
   M(d,d) = den;
 }
 
-Aff_transformationHd(int d, 
+Aff_transformationHd(int d, Rotation,  
   const RT& sin_num, const RT& cos_num, const RT& den, 
   int e1 = 0, int e2 = 1); 
 /*{\Mcreate returns a planar rotation with sine and cosine values
@@ -207,7 +228,7 @@ sin\_num &  cos\_num &  \\
 <<implementing Aff_transformationHd>>=
 template <class RT, class LA>
 Aff_transformationHd<RT,LA>::
-Aff_transformationHd(int d, 
+Aff_transformationHd(int d, Rotation,  
   const RT& sin_num, const RT& cos_num, const RT& den, 
   int e1, int e2) : Base( Rep(d) )
 {
@@ -215,7 +236,7 @@ Aff_transformationHd(int d,
     "planar_rotation: rotation parameters disobey precondition.");
   CGAL_assertion_msg((0<=e1 && e1<=e2 && e2<d), 
     "planar_rotation: base vector indices wrong.");
-  typename LA::Matrix& M(*ptr);
+  Matrix& M = ptr->M_;
   for (int i=0; i<d; i++) M(i,i) = 1;
   M(e1,e1) = cos_num; M(e1,e2) = -sin_num;
   M(e2,e1) = sin_num; M(e2,e2) = cos_num;
@@ -223,7 +244,7 @@ Aff_transformationHd(int d,
 }
 
 <<defining Aff_transformationHd>>=
-Aff_transformationHd(int d, const DirectionHd<RT,LA>& dir, 
+Aff_transformationHd(int d, Rotation, const DirectionHd<RT,LA>& dir, 
   const RT& num, const RT& den, int e1 = 0, int e2 = 1); 
 /*{\Mcreate returns a planar rotation within the plane spanned by
 the base vectors $b_{e1}$ and $b_{e2}$ in $d$-space.  The rotation
@@ -249,7 +270,7 @@ always exact, that is, it is known that there is no remainder).
 <<implementing Aff_transformationHd>>=
 template <class RT, class LA>
 Aff_transformationHd<RT,LA>::
-Aff_transformationHd(int d, const DirectionHd<RT,LA>& dir, 
+Aff_transformationHd(int d, Rotation, const DirectionHd<RT,LA>& dir, 
    const RT& num, const RT& den, int e1, int e2) : Base( Rep(d) )
 {
   CGAL_assertion_msg((dir.dimension() == 2),
@@ -346,7 +367,7 @@ Aff_transformationHd(int d, const DirectionHd<RT,LA>& dir,
   }
   if (dx < 0) sin = - sin;
   if (dy < 0) cos = - cos;
-  typename LA::Matrix& M(*ptr);
+  Matrix& M = ptr->M_;
   for (int i=0; i<d; i++) M(i,i) = 1;
   M(e1,e1) = cos; M(e1,e2) = -sin;
   M(e2,e1) = sin; M(e2,e2) = cos;
@@ -357,14 +378,13 @@ Aff_transformationHd(int d, const DirectionHd<RT,LA>& dir,
 /*{\Moperations 5 3}*/
 
 int dimension() const 
-{ return (*ptr).row_dimension()-1; }
+{ return ptr->M_.row_dimension()-1; }
 /*{\Mop the dimension of the underlying space }*/
 
-const typename LA::Matrix& matrix() const 
-{ return static_cast<const typename LA::Matrix&>(*ptr); }
+const Matrix& matrix() const { return ptr->M_; }
 /*{\Mop returns the transformation matrix }*/
 
-typename LA::Vector operator()(const typename LA::Vector& iv) const
+Vector operator()(const Vector& iv) const
 // transforms the ivector by a matrix multiplication
 { return matrix()*iv; }
 
@@ -373,8 +393,8 @@ Aff_transformationHd<RT,LA> inverse() const
 /*{\Mop returns the inverse transformation.
 \precond |\Mvar.matrix()| is invertible.}*/
 { Aff_transformationHd<RT,LA> Inv; RT D; 
-  typename LA::Vector dummy;
-  if (!LA::inverse((*ptr),(*Inv.ptr),D,dummy)) 
+  Vector dummy;
+  if ( !LA::inverse(matrix(),Inv.ptr->M_,D,dummy) ) 
   CGAL_assertion_msg(0,"Aff_transformationHd::inverse: not invertible."); 
   return Inv;
 }
@@ -390,8 +410,8 @@ which transforms first by |t| and then by |s|.}*/
 }
 
 bool operator==(const Aff_transformationHd<RT,LA>& a1) const
-{ if (identical(a1)) return true;
-  return (matrix() == a1.matrix());
+{ if ( identical(a1) ) return true;
+  return ( matrix() == a1.matrix() );
 }
 bool operator!=(const Aff_transformationHd<RT,LA>& a1) const
 { return !operator==(a1); }

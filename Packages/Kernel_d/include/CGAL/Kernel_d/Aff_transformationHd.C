@@ -10,7 +10,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <class RT, class LA>
 Aff_transformationHd<RT,LA>::
-Aff_transformationHd(int d, 
+Aff_transformationHd(int d, Rotation,  
   const RT& sin_num, const RT& cos_num, const RT& den, 
   int e1, int e2) : Base( Rep(d) )
 {
@@ -18,7 +18,7 @@ Aff_transformationHd(int d,
     "planar_rotation: rotation parameters disobey precondition.");
   CGAL_assertion_msg((0<=e1 && e1<=e2 && e2<d), 
     "planar_rotation: base vector indices wrong.");
-  typename LA::Matrix& M(*ptr);
+  Matrix& M = ptr->M_;
   for (int i=0; i<d; i++) M(i,i) = 1;
   M(e1,e1) = cos_num; M(e1,e2) = -sin_num;
   M(e2,e1) = sin_num; M(e2,e2) = cos_num;
@@ -27,7 +27,7 @@ Aff_transformationHd(int d,
 
 template <class RT, class LA>
 Aff_transformationHd<RT,LA>::
-Aff_transformationHd(int d, const DirectionHd<RT,LA>& dir, 
+Aff_transformationHd(int d, Rotation, const DirectionHd<RT,LA>& dir, 
    const RT& num, const RT& den, int e1, int e2) : Base( Rep(d) )
 {
   CGAL_assertion_msg((dir.dimension() == 2),
@@ -124,7 +124,7 @@ Aff_transformationHd(int d, const DirectionHd<RT,LA>& dir,
   }
   if (dx < 0) sin = - sin;
   if (dy < 0) cos = - cos;
-  typename LA::Matrix& M(*ptr);
+  Matrix& M = ptr->M_;
   for (int i=0; i<d; i++) M(i,i) = 1;
   M(e1,e1) = cos; M(e1,e2) = -sin;
   M(e2,e1) = sin; M(e2,e2) = cos;

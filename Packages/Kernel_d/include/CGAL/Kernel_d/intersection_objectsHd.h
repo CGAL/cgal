@@ -29,7 +29,7 @@ case the point of intersection is assigned to |p|.  Then |p = s1 + l1
 * t1-s1| and |p = s2 + l2 * t2-s2|. \precond none of the point pairs
 is degenerate.}*/
 { 
-  int d = s1.dimension(); 
+  int d = s1.dimension(),i; 
   CGAL_assertion_msg(d==s2.dimension(),
     "intersection: dimensions disagree!"); 
   typename LA::Matrix M(d,2),S; 
@@ -45,7 +45,7 @@ is degenerate.}*/
   RT t12w = t1w*t2w; 
 
   /* init $d \times 2$ - matrix |M| and $d$ - vector |b| */
-  for (int i = 0; i < d; i++) { 
+  for (i = 0; i < d; i++) { 
     M(i,0) = g2w * (t1.homogeneous(i) * s1w - s1.homogeneous(i) * t1w); 
     M(i,1) = g1w * (s2.homogeneous(i) * t2w - t2.homogeneous(i) * s2w); 
     b[i]   = t12w * (s2.homogeneous(i) * s1w - s1.homogeneous(i) * s2w); 
@@ -90,9 +90,9 @@ not degenerate.}*/
                       h.dimension()==t.dimension()), 
   "Line_hyperplane_intersection_d: dimensions do not agree.");
 
-  int d = h.dimension();
+  int d = h.dimension(),i;
   RT S(0),T(0);
-  for (int i=0; i<=d; ++i) {
+  for (i=0; i<=d; ++i) {
     S += h[i]*s.homogeneous(i);
     T += h[i]*t.homogeneous(i);
   }
@@ -107,7 +107,7 @@ not degenerate.}*/
   if (CGAL_NTS is_zero(D)) return NO;
 
   typename LA::Vector homog(d + 1);
-  for (int i = 0; i < d; ++i)
+  for (i = 0; i < d; ++i)
     homog[i] = S * t.homogeneous(i) - T * s.homogeneous(i); 
   homog[d] = D;
   p = Point_d(d,homog.begin(),homog.end());

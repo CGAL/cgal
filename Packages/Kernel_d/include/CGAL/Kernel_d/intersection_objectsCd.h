@@ -32,7 +32,7 @@ case the point of intersection is assigned to |p|.  Then |p = s1 + l1
 * t1-s1| and |p = s2 + l2 * t2-s2|. \precond none of the point pairs
 is degenerate.}*/
 { 
-  int d = s1.dimension(); 
+  int d = s1.dimension(),i; 
   CGAL_assertion_msg(d==s2.dimension(),
     "intersection: dimensions disagree!"); 
   typename LA::Matrix M(d,2),S; 
@@ -40,7 +40,7 @@ is degenerate.}*/
   FT D; 
 
   /* init $d \times 2$ - matrix |M| and $d$ - vector |b| */
-  for (int i = 0; i < d; i++) { 
+  for (i = 0; i < d; i++) { 
     M(i,0) = t1.cartesian(i) - s1.cartesian(i); 
     M(i,1) = s2.cartesian(i) - t2.cartesian(i); 
     b[i]   = s2.cartesian(i) - s1.cartesian(i); 
@@ -87,7 +87,7 @@ not degenerate.}*/
                       h.dimension()==t.dimension()), 
   "Line_hyperplane_intersection_d: dimensions do not agree.");
 
-  int d = h.dimension();
+  int d = h.dimension(),i;
   FT S = h.value_at(s), T = h.value_at(t);
 
   bool s_contained = CGAL_NTS is_zero(S),
@@ -101,7 +101,7 @@ not degenerate.}*/
   if ( CGAL_NTS is_zero(D) ) return NO;
 
   typename LA::Vector v(d);
-  for (int i = 0; i < d; ++i)
+  for (i = 0; i < d; ++i)
     v[i] = (S * t.cartesian(i) - T * s.cartesian(i))/D;
   p = Point_d(d,v.begin(),v.end()); lambda = S/D;
 

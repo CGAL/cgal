@@ -31,15 +31,17 @@ typedef double FT_;
 
 #ifdef _MSC_VER
 typedef CGAL::Homogeneous_d<RT_> HKernel;
-typedef CGAL::Point_d<HKernel> HPNT;
-typedef CGAL::Vector_d<HKernel> HVEC;
-typedef CGAL::Cartesian_d<RT_>   CKernel;
-typedef CGAL::Point_d<CKernel> CPNT;
-typedef CGAL::Vector_d<CKernel> CVEC;
+typedef CGAL::Point_d<HKernel>   HPNT;
+typedef CGAL::Vector_d<HKernel>  HVEC;
+typedef CGAL::Cartesian_d<FT_>   CKernel;
+typedef CGAL::Point_d<CKernel>   CPNT;
+typedef CGAL::Vector_d<CKernel>  CVEC;
+
 CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(HPNT)
 CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(HVEC)
 CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CPNT)
 CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CVEC)
+
 #endif
 
 int main()

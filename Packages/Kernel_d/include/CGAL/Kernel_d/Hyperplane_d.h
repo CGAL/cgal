@@ -81,11 +81,14 @@ FIXHYPD(const int*)
 FIXHYPD(RT*)
 FIXHYPD(const RT*)
 #undef FIXHYPD
-FIXHYPDD(Point_d<R>*)
-FIXHYPDD(const Point_d<R>*)
+
+#ifdef _MSC_VER
 FIXHYPDD(typename std::vector< Point_d<R> >::iterator)
 FIXHYPDD(typename std::vector< Point_d<R> >::const_iterator)
+#endif // MSC
 
+FIXHYPDD(Point_d<R>*)
+FIXHYPDD(const Point_d<R>*)
 #undef FIXHYPDD
 #endif
 

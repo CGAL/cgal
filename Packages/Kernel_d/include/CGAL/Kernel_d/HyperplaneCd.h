@@ -138,6 +138,9 @@ HyperplaneCd(const PointCd<FT,LA>* first, const PointCd<FT,LA>* last,
   : Base( Tuple(o.dimension()+1) ) 
 { construct_from_points(first,last,o,side); }
 
+#ifdef _MSC_VER
+// necessary as for MSC we have the vector iterators implemented
+// as class types and not as pointers 
 typedef typename std::vector<PointCd<FT,LA> >::iterator vecpntit;
 typedef typename std::vector<PointCd<FT,LA> >::const_iterator vecpntcit;
 
@@ -153,7 +156,8 @@ HyperplaneCd(vecpntcit first, vecpntcit last,
   : Base( Tuple(o.dimension()+1) ) 
 { construct_from_points(first,last,o,side); }
 
-#endif
+#endif // MSC
+#endif // CGAL_SIMPLE_INTERFACE
 
 HyperplaneCd(const PointCd<FT,LA>& p, const DirectionCd<FT,LA>& dir) 
   : Base( Tuple(p.dimension()+1) ) 

@@ -74,14 +74,14 @@ int main()
    
     Afftrafo at0(2); // whole zero in 2d
     Afftrafo at1(M1); // rot(pi) in 2d
-    Afftrafo at2(iv.begin(),iv.end()); // scale by (2,3) in 2d
-    Afftrafo at3(rv); // translate by (5,0) in 2d
+    Afftrafo at2(CGAL::SCALING,iv.begin(),iv.end()); // scale by (2,3) in 2d
+    Afftrafo at3(CGAL::TRANSLATION,rv); // translate by (5,0) in 2d
     Afftrafo at4(at1); // rot(pi) in 2d
     Afftrafo at5(M2); // rot(-pi/2) + trans(1,1) in 2d
-    Afftrafo at6(2,true); // id trafo in 2d
-    Afftrafo at9(2,3,1);  // scale(3/1) in 2d
-    Afftrafo at10(2,RT(1),RT(0),RT(1)); // rot(pi/2) in 2d
-    Afftrafo at11(2,rd,1,1000); // d2_rot approx
+    Afftrafo at6(2,CGAL::IDENTITY); // id trafo in 2d
+    Afftrafo at9(2,CGAL::SCALING,3,1);  // scale(3/1) in 2d
+    Afftrafo at10(2,CGAL::ROTATION,RT(1),RT(0),RT(1)); // rot(pi/2) in 2d
+    Afftrafo at11(2,CGAL::ROTATION,rd,1,1000); // d2_rot approx
 
     CGAL_TEST(at1==at4);
     CGAL_TEST(at1!=at5);
@@ -150,8 +150,8 @@ int main()
     CGAL_TEST(dir.transform(at1)==-dir);
 
     // 3 dim hyperplane:
-    Afftrafo at20 = Afftrafo(Vector(5,0,0,1));
-    Afftrafo at21 = Afftrafo(3,RT(1),RT(0),RT(1),0,2);
+    Afftrafo at20 = Afftrafo(CGAL::TRANSLATION,Vector(5,0,0,1));
+    Afftrafo at21 = Afftrafo(3,CGAL::ROTATION,RT(1),RT(0),RT(1),0,2);
     // pi/2-rotation in x-z-plane in 3-space
 
     Afftrafo at22 = at21*at20; // composition of both

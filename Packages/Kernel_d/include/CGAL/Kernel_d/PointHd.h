@@ -238,7 +238,7 @@ PointHd<RT,LA> transform(const Aff_transformationHd<RT,LA>& t) const;
 /*{\Mtext \headerline{Arithmetic Operators, Tests and IO}}*/
 
 inline VectorHd<RT,LA> operator-(const Origin& o) const; 
-/*{\Mbinop  returns the vector $\vec{Op}$.}*/
+/*{\Mbinop  returns the vector $\vec{0p}$.}*/
 
 VectorHd<RT,LA> operator-(const PointHd<RT,LA>& q) const 
 /*{\Mbinop  returns $p - q$. \precond |p.dimension() == q.dimension()|.}*/

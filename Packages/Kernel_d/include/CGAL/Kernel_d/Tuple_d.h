@@ -266,19 +266,19 @@ Comparison_result operator()(
 
 template <typename NT, typename LA>
 void Tuple_d<NT,LA>::print(std::ostream& os, char* l) const
-{ 
+{ int i;
   switch( os.iword(CGAL::IO::mode) ) {
     case CGAL::IO::ASCII :
       os << size() << " ";
-      for (int i = 0; i < size(); ++i) 
+      for (i = 0; i < size(); ++i) 
         os << v[i] << " "; break;
     case CGAL::IO::BINARY :
       CGAL::write(os, size()); 
-      for (int i = 0; i < size(); ++i) 
+      for (i = 0; i < size(); ++i) 
         CGAL::write(os, v[i]); break;
     default :
       os << l << "(" << size() << ", ";
-      for (int i = 0; i < size(); ++i) {
+      for (i = 0; i < size(); ++i) {
         os << v[i]; if (i!=size()-1) os<<", "; else os<<")";
       }
   }
