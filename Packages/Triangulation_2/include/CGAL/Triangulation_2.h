@@ -1655,17 +1655,29 @@ march_locate_2D_LFC(Face_handle start,
   Orientation o0 = orientation(q, r, t);
   Orientation o1 = orientation(r, p, t);
   if( (o2 == LEFT_TURN)&& (o1 == LEFT_TURN)) {
-    lfc = Line_face_circulator(start, 0, Line_face_circulator::vertex_edge, this, p, t); 
+    lfc = Line_face_circulator(start, 0,
+			       Line_face_circulator::vertex_edge, 
+			       this, p, t); 
   } else if ( (o0 == LEFT_TURN)&& (o2 == LEFT_TURN)) {
-    lfc = Line_face_circulator(start, 1, Line_face_circulator::vertex_edge, this, q, t); 
+    lfc = Line_face_circulator(start, 1,
+			       Line_face_circulator::vertex_edge, 
+			       this, q, t); 
   } else if ( (o1 == LEFT_TURN)&& (o0 == LEFT_TURN)) {
-    lfc = Line_face_circulator(start, 2, Line_face_circulator::vertex_edge, this, r, t); 
+    lfc = Line_face_circulator(start, 2,
+			       Line_face_circulator::vertex_edge, 
+			       this, r, t); 
   } if( (o2 == RIGHT_TURN)&& (o1 == RIGHT_TURN)) {
-    lfc = Line_face_circulator(start, 0, Line_face_circulator::edge_vertex, this, p, t); 
+    lfc = Line_face_circulator(start, 0,
+			       Line_face_circulator::edge_vertex, 
+			       this, p, t); 
   } else if ( (o0 == RIGHT_TURN)&& (o2 == RIGHT_TURN)) {
-    lfc = Line_face_circulator(start, 1, Line_face_circulator::edge_vertex, this, q, t); 
+    lfc = Line_face_circulator(start, 1,
+			       Line_face_circulator::edge_vertex, 
+			       this, q, t); 
   } else if ( (o1 == RIGHT_TURN)&& (o0 == RIGHT_TURN)) {
-    lfc = Line_face_circulator(start, 2, Line_face_circulator::edge_vertex, this, r, t); 
+    lfc = Line_face_circulator(start, 2,
+			       Line_face_circulator::edge_vertex, 
+			       this, r, t); 
   }else {
     lfc = Line_face_circulator(start->vertex(0), this, t);
   }
