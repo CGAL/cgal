@@ -7,6 +7,7 @@
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/sweep_to_construct_planar_map_2.h>
+#include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/Pm_Window_stream.h>
 
 #include <iostream.h>
@@ -85,11 +86,17 @@ int  main()
   CGAL::sweep_to_construct_planar_map_2(segments.begin(),segments.end(), 
                                         traits, pm2);
   
-  cout<<"calling map overlay\n";
-  PmWalkPL  pl_walk_ovl;
+  cout<<"Calling map overlay"<<endl;
+  cout<<endl;
+  
+  PmWalkPL  ovl_walk, map1_walk1, map2_walk2;
+  MapOverlay map1(pm1, &map1_walk1), map2(pm2, &map2_walk2);
+  MapOverlay map_overlay(map1, map2, &ovl_walk);
 
-  MapOverlay map_overlay(pm1, pm2, &pl_walk_ovl);
+  cout<<"Writing the resulting subdivision induced the the overlay of the two input subdivision"<<endl;
+  cout<<endl;
 
+  std::cout<<map_overlay.subdivision();
   
   double        max_x = -9999, min_x = 9999, min_y = 9999;
   calc_Window_size(map_overlay.subdivision(), max_x, min_x, min_y);
@@ -101,7 +108,7 @@ int  main()
   
   W<<CGAL::BLUE;
   W<<map_overlay.subdivision();
-
+  
   return 0;
 }
 
