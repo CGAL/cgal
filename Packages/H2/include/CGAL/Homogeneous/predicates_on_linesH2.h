@@ -199,7 +199,7 @@ compare_slopes(const LineH2<R>& l1, const LineH2<R>& l2)
          SMALLER : Comparison_result(CGAL_NTS sign(l2.a() * l2.b()));
    if (l2.is_horizontal()) 
      return l1.is_vertical() ? 
-         LARGER : Comparison_result(-CGAL_NTS sign(l1.a() * l1.b()));
+         LARGER : Comparison_result(- CGAL_NTS sign(l1.a() * l1.b()));
    if (l1.is_vertical()) return l2.is_vertical() ? EQUAL : LARGER;
    if (l2.is_vertical()) return SMALLER;
    int l1_sign = CGAL_NTS sign(-l1.a() * l1.b());
