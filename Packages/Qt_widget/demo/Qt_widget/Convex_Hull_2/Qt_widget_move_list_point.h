@@ -49,15 +49,15 @@ template <class R>
 class Qt_widget_move_list_point : public Qt_widget_movepoint_helper
 {
 public:
-  typedef typename R::Point_2		Point;
+  typedef typename R::Point_2	Point;
   typedef typename R::FT        FT;
-  bool					                on_first,   //if the user choosed something from the popup
-					                      wasrepainted;//true when the widget was repainted
-  Point					                old_point,  //the last point stored in the list
-					                      current_v;  //the current point
-  QPopupMenu				            *popup1;
-  QCursor				                cursor;
-  std::list<Point>*			        l_of_p;
+  bool					        on_first,   //if the user choosed something from the popup
+					            wasrepainted;//true when the widget was repainted
+  Point					        old_point,  //the last point stored in the list
+					            current_v;  //the current point
+  QPopupMenu				    *popup1;
+  QCursor				        cursor;
+  std::list<Point>*			    l_of_p;
   bool                          first_time;
 
   //constructor
