@@ -8,12 +8,11 @@
 
 #include <list>
 
-typedef CGAL::Cartesian<double> R;
-typedef CGAL::Polygon_traits_2<R> Traits;
-typedef CGAL::Point_2<R> Point;
-typedef CGAL::Polygon_2<Traits, std::list<Point> > Polygon;
-typedef CGAL::Polygon_2<Traits, std::list<Point> >::Vertex_iterator VertexIterator;
-typedef CGAL::Polygon_2<Traits, std::list<Point> >::Edge_const_iterator EdgeIterator;
+typedef CGAL::Cartesian<double> K;
+typedef CGAL::Point_2<K> Point;
+typedef CGAL::Polygon_2<K, std::list<Point> > Polygon;
+typedef CGAL::Polygon_2<K, std::list<Point> >::Vertex_iterator VertexIterator;
+typedef CGAL::Polygon_2<K, std::list<Point> >::Edge_const_iterator EdgeIterator;
 
 //-----------------------------------------------------------------------//
 //                          main

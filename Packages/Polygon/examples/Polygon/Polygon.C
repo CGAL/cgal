@@ -2,16 +2,14 @@
 // This is the polygon example from the reference manual.
 //-----------------------------------------------------------------------//
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <list>
 
-typedef CGAL::Cartesian<double> R;
-typedef CGAL::Polygon_traits_2<R> Traits;
-typedef Traits::Point_2 Point;
+typedef CGAL::Cartesian<double> K;
+typedef K::Point_2 Point;
 typedef std::list<Point> Container;
-typedef CGAL::Polygon_2<Traits,Container> Polygon;
+typedef CGAL::Polygon_2<K,Container> Polygon;
 
 #include <iostream>
 

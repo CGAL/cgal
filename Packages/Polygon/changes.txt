@@ -1,3 +1,10 @@
+3.1 (21 June 2001)
++ Converted the algorithms to use kernel traits.
++ Made polygon_traits be the kernel.
++ Fixed a bug in the is_simple implementation.
++ Removed two example files (which dealt with polygon traits) and
+  adapted the two remaining.
+
 3.0 (20 June 2001)
 + Completely rewrote the is_simple code.
 + Adapted the demo to work with the new cgal-window package.
