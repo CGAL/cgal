@@ -176,13 +176,16 @@ public:
   void show_all() const;	
   
    //  //template member functions, declared and defined at the end 
-  //  template <class OutputItFaces, class OutputItBoundaryEdges, class OutputItHiddenVertices> 
+  //  template <class OutputItFaces, class OutputItBoundaryEdges, 
+  //                                       class OutputItHiddenVertices> 
   //   Triple<OutputItFaces,OutputItBoundaryEdges, OutputItHiddenVertices>
-  //   get_conflicts_and_boundary_and_hidden_vertices (const Weighted_point  &p, 
+  //   get_conflicts_and_boundary_and_hidden_vertices (const
+  //   Weighted_point  &p, 
   // 						  OutputItFaces fit, 
   // 						  OutputItBoundaryEdges eit,
-  // 						  OutputItHiddenVertices vit,		
-  // 						  Face_handle start = Face_handle(NULL)) const;
+  // 						  OutputItHiddenVertices vit,  
+  // 						  Face_handle start = 
+  //                                                 Face_handle(NULL)) const;
   // template <class OutputItFaces, class OutputItBoundaryEdges> 
   // std::pair<OutputItFaces,OutputItBoundaryEdges>
   // get_conflicts_and_boundary(const Point  &p, 
@@ -204,12 +207,14 @@ public:
   //   get_boundary_of_conflicts_and_hidden_vertices(const Weighted_point  &p, 
   // 						OutputItBoundaryEdges eit, 
   // 						OutputItHiddenVertices vit,
-  // 						Face_handle start= Face_handle(NULL)) const;
+  // 						Face_handle start=
+  //                                                Face_handle(NULL)) const;
   //   template <class OutputItHiddenVertices> 
   //   OutputItHiddenVertices
   //   get_hidden_vertices(const Weighted_point  &p, 
   // 						OutputItHiddenVertices vit,
-  // 						Face_handle start= Face_handle(NULL)) const;
+  // 						Face_handle start= 
+  //                                                  Face_handle(NULL)) const;
   
   // DUAL
   Bare_point dual (Face_handle f) const;
@@ -312,7 +317,8 @@ public:
       }
       return ps;
     }
-   template <class OutputItFaces, class OutputItBoundaryEdges, class OutputItHiddenVertices> 
+   template <class OutputItFaces, class OutputItBoundaryEdges, 
+     class OutputItHiddenVertices> 
   Triple<OutputItFaces,OutputItBoundaryEdges, OutputItHiddenVertices>
   get_conflicts_and_boundary_and_hidden_vertices(const Weighted_point  &p, 
 						 OutputItFaces fit, 
@@ -452,14 +458,15 @@ public:
 		 OutputItFaces fit, 
 		 Face_handle start= Face_handle(NULL)) const
     {
-     Triple<OutputItFaces,Emptyset_iterator,Emptyset_iterator>
+      Triple<OutputItFaces,Emptyset_iterator,Emptyset_iterator>
 	pp = 
-       get_conflicts_and_boundary_and_hidden_vertices(p, fit, Emptyset_iterator(),
-						      Emptyset_iterator(), 
-						      start);
+	get_conflicts_and_boundary_and_hidden_vertices(p, fit, 
+						       Emptyset_iterator(),
+						       Emptyset_iterator(), 
+						       start);
       return pp.first;
     }
-
+  
   template <class OutputItBoundaryEdges> 
   OutputItBoundaryEdges
   get_boundary_of_conflicts(const Weighted_point  &p, 
@@ -468,7 +475,9 @@ public:
     {    
       Triple<Emptyset_iterator, OutputItBoundaryEdges,Emptyset_iterator>
 	pp = 
-	get_conflicts_and_boundary_and_hidden_vertices(p, Emptyset_iterator(),eit,
+	get_conflicts_and_boundary_and_hidden_vertices(p,
+						       Emptyset_iterator(),
+						       eit,
 						       Emptyset_iterator(), 
 						       start);
       return pp.second;
