@@ -29,6 +29,42 @@ Meeting the first requirement, the interface needed is straightforward.  However
 
 CGAL_BEGIN_NAMESPACE
 
+template <typename Triangle_3>
+void sort_triangle_by_lexicographically_smaller_vertex
+(const Triangle_3& t, int& a, int& b, int& c) {
+  typedef typename Triangle_3::R Kernel;
+  a = 0;
+  for( int i = 1; i < 3; ++i) {
+    if( compare_xyz<Kernel>( t[a], t[i]) == SMALLER)
+      a = i;
+  }
+  b = (a + 1) % 3;
+  c = (b + 1) % 3;
+  if( compare_xyz<Kernel>( t[b], t[c]) == LARGER)
+    std::swap( b, c);
+  return;
+}
+
+template <typename Triangle_3>
+struct Compare_triangle_3 {
+  typedef typename Triangle_3::R Kernel;
+  bool operator()( const Triangle_3& t1, const Triangle_3& t2) {
+    int v1[3], v2[3];
+    sort_triangle_by_lexicographically_smaller_vertex
+      ( t1, v1[0], v1[1], v1[2]);
+    sort_triangle_by_lexicographically_smaller_vertex
+      ( t2, v2[0], v2[1], v2[2]);
+    for( int i = 0; i < 3; ++i) {
+      Comparison_result c = compare_xyz<Kernel>( t1[v1[i]], t2[v2[i]]);
+      if( c == SMALLER)
+	return true;
+      else if( c == LARGER)
+	return false;
+    }
+    return false; // the two triangles are equivalent
+  }
+};
+
 template <class Traits>
 class K3_tree
 {
@@ -195,6 +231,7 @@ typedef typename Traits::Infimaximal_box Infimaximal_box;
 typedef typename Traits::Vertex_handle Vertex_handle;
 typedef typename Traits::Halfedge_handle Halfedge_handle;
 typedef typename Traits::Halffacet_handle Halffacet_handle;
+typedef typename Traits::Halffacet_triangle_handle Halffacet_triangle_handle;
 typedef typename Traits::Explorer Explorer;
 
 typedef typename Traits::Object_handle Object_handle;
@@ -206,10 +243,10 @@ typedef typename Object_list::size_type size_type;
 typedef typename Traits::Point_3 Point_3;
 typedef typename Traits::Segment_3 Segment_3;
 typedef typename Traits::Ray_3 Ray_3;
-
 typedef typename Traits::Vector_3 Vector_3;
 typedef typename Traits::Direction_3 Direction_3;
 typedef typename Traits::Plane_3 Plane_3;
+typedef typename Traits::Triangle_3 Triangle_3;
 
 typedef typename Traits::Bounding_box_3 Bounding_box_3;
 typedef typename Traits::Side_of_plane Side_of_plane;
@@ -392,7 +429,7 @@ private:
 };
 
 @ 
-During the simplification process of an SNC structure, some vertices could be deleted, as well as some halfedges, halffacets and volumes could be merged, and, since the spatial subdivision structure is constructed before this simplification process in order to be available for the volumes construction process, which requires to perform ray shooting for finding the nesting structure of shells, some of the objects stored in the node of the spatial subdivision tree could become invalid.  For correcting this situation, a update method is provided.  This method takes a map of vertices, edges and facets, that specifies wheter a face is still in the SNC structure or was removed, and so must be removed from the list of objects stored on the tree nodes.
+During the simplification process of an SNC structure, some vertices could be deleted, as well as some halfedges, halffacets and volumes could be merged, and, since the spatial subdivision structure is constructed before this simplification process in order to be available for the volumes construction process, which requires to perform ray shooting for finding the nesting structure of shells, some of the objects stored in the node of the spatial subdivision tree could become invalid.  For correcting this situation, a update method is provided.  This method takes a map of vertices, edges and facets, that specifies whether a face is still in the SNC structure or was removed, and so must be removed from the list of objects stored on the tree nodes.
 
 <<definition of k3 tree update method>>=
 bool update( Unique_hash_map<Vertex_handle, bool>& V, 
@@ -400,6 +437,7 @@ bool update( Unique_hash_map<Vertex_handle, bool>& V,
              Unique_hash_map<Halffacet_handle, bool>& F) {
   return update( root, V, E, F);
 }
+
 bool update( Node* node,
              Unique_hash_map<Vertex_handle, bool>& V, 
              Unique_hash_map<Halfedge_handle, bool>& E, 
@@ -648,13 +686,14 @@ friend std::ostream& operator<<
 #endif
 std::string dump_object_list( const Object_list& O, int level = 0) {
   std::stringstream os; 
-  typename Object_list::size_type v_count = 0, e_count = 0, f_count = 0;
+  typename Object_list::size_type v_count = 0, e_count = 0, f_count = 0, t_count = 0;
   typename Object_list::const_iterator o;
   for( o = O.begin(); o != O.end(); ++o) {
     Explorer D;
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
+    Halffacet_triangle_handle t;
     if( assign( v, *o)) {
       if( level) os << D.point(v) << std::endl;
       v_count++;
@@ -667,9 +706,13 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
       if( level) os << "facet" << std::endl;
       f_count++;
     }
+    else if( assign( t, *o)) {
+      if( level) os << "triangle" << std::endl;
+      t_count++;
+    }
     else CGAL_assertion_msg( 0, "wrong handle");
   }
-  os << v_count << "v " << e_count << "e " << f_count << "f";
+  os << v_count << "v " << e_count << "e " << f_count << "f " << t_count << "t ";
   return os.str();
 }
 
@@ -702,14 +745,15 @@ Objects_around_segment objects( *this, s);
 Unique_hash_map< Vertex_handle, bool> v_mark(false);
 Unique_hash_map< Halfedge_handle, bool> e_mark(false);
 Unique_hash_map< Halffacet_handle, bool> f_mark(false);
+std::map< Triangle_3, bool, Compare_triangle_3<Triangle_3> > t_mark;
 for( typename Objects_around_segment::Iterator oar = objects.begin(); 
      oar != objects.end(); ++oar) {
-  
   for( typename Object_list::const_iterator o = (*oar).begin();
        o != (*oar).end(); ++o) { // TODO: implement operator->(...)
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
+    Halffacet_triangle_handle t;
     if( assign( v, *o)) {
       if( !v_mark[v]) {
         O.push_back(*o);
@@ -726,6 +770,13 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
       if( !f_mark[f]) {
         O.push_back(*o);
         f_mark[f] = true;
+      }
+    }
+    else if( assign( t, *o)) {
+      Triangle_3 tr = t.get_triangle();
+      if( !t_mark[tr]) {
+	O.push_back(*o);
+	t_mark[tr] = true;
       }
     }
     else
@@ -796,10 +847,12 @@ else {
 CGAL_BEGIN_NAMESPACE
 
 template <class SNCstructure>
-struct Side_of_plane {
+class Side_of_plane {
+public:
   typedef typename SNCstructure::Vertex_handle Vertex_handle;
   typedef typename SNCstructure::Halfedge_handle Halfedge_handle;
   typedef typename SNCstructure::Halffacet_handle Halffacet_handle;
+  typedef typename SNCstructure::Halffacet_triangle_handle Halffacet_triangle_handle;
   typedef typename SNCstructure::Object_handle Object_handle;
 
   typedef typename SNCstructure::Halffacet_cycle_iterator
@@ -812,21 +865,25 @@ struct Side_of_plane {
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::Plane_3 Plane_3;
+  typedef typename Kernel::Triangle_3 Triangle_3;
   
-  Oriented_side operator()( Plane_3 pl, Object_handle o) const;
-  Oriented_side operator()( Plane_3 pl, Vertex_handle v) const;
-  Oriented_side operator()( Plane_3 pl, Halfedge_handle e) const;
-  Oriented_side operator()( Plane_3 pl, Halffacet_handle f) const;
+  virtual Oriented_side operator()( const Plane_3& pl, Object_handle o) const;
+  virtual Oriented_side operator()( const Plane_3& pl, Vertex_handle v) const;
+  virtual Oriented_side operator()( const Plane_3& pl, Halfedge_handle e) const;
+  virtual Oriented_side operator()( const Plane_3& pl, Halffacet_handle f) const;
+  virtual Oriented_side operator()( const Plane_3& pl, Halffacet_triangle_handle f) const;
 
   typedef typename SNCstructure::SNC_decorator SNC_decorator;
   SNC_decorator D;
 };
 
 template <class SNCstructure>
-struct Objects_bbox {
+class Objects_bbox {
+public:
   typedef typename SNCstructure::Vertex_handle Vertex_handle;
   typedef typename SNCstructure::Halfedge_handle Halfedge_handle;
   typedef typename SNCstructure::Halffacet_handle Halffacet_handle;
+  typedef typename SNCstructure::Halffacet_triangle_handle Halffacet_triangle_handle;
   typedef typename SNCstructure::Object_handle Object_handle;
   typedef typename SNCstructure::Object_list Object_list;
 
@@ -840,16 +897,18 @@ struct Objects_bbox {
   typedef typename Kernel::Plane_3 Plane_3;
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Triangle_3 Triangle_3;
 
   typedef typename Kernel::RT RT;
   typedef typename Kernel::FT FT;
   typedef Bounding_box_3<FT> Bounding_box_3;
   
-  Bounding_box_3 operator()(const Object_list& o) const;
-  Bounding_box_3 operator()(Object_handle o) const;
-  Bounding_box_3 operator()(Vertex_handle v) const;
-  Bounding_box_3 operator()(Halfedge_handle e) const;
-  Bounding_box_3 operator()(Halffacet_handle f) const;
+  virtual Bounding_box_3 operator()(const Object_list& o) const;
+  virtual Bounding_box_3 operator()(Object_handle o) const;
+  virtual Bounding_box_3 operator()(Vertex_handle v) const;
+  virtual Bounding_box_3 operator()(Halfedge_handle e) const;
+  virtual Bounding_box_3 operator()(Halffacet_handle f) const;
+  virtual Bounding_box_3 operator()(Halffacet_triangle_handle f) const;
 
   typedef typename SNCstructure::SNC_decorator SNC_decorator;
   SNC_decorator D;
@@ -865,6 +924,7 @@ public:
   typedef typename SNCstructure::Vertex_handle Vertex_handle;
   typedef typename SNCstructure::Halfedge_handle Halfedge_handle;
   typedef typename SNCstructure::Halffacet_handle Halffacet_handle;
+  typedef typename SNCstructure::Halffacet_triangle_handle Halffacet_triangle_handle;
   typedef typename SNCstructure::SNC_decorator Explorer;
 
   typedef typename SNCstructure::Object_handle Object_handle;
@@ -876,6 +936,7 @@ public:
   typedef typename Kernel::Vector_3 Vector_3;
   typedef typename Kernel::Direction_3 Direction_3;
   typedef typename Kernel::Plane_3 Plane_3;
+  typedef typename Kernel::Triangle_3 Triangle_3;
 
   typedef typename Kernel::RT RT;
   typedef typename Kernel::FT FT;
@@ -901,16 +962,19 @@ public:
 template <class SNCstructure>
 Oriented_side 
 Side_of_plane<SNCstructure>::operator()
-  ( Plane_3 pl, Object_handle o) const {
+  ( const Plane_3& pl, Object_handle o) const {
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;
+  Halffacet_triangle_handle t;
   if( assign( v, o))
     return (*this)( pl, v);
   else if( assign( e, o))
     return (*this)( pl, e);
   else if( assign( f, o))
     return (*this)( pl, f);
+  else if( assign( t, o))
+    return (*this)( pl, t);
   else
     CGAL_assertion_msg( 0, "wrong handle");
   return Oriented_side(); // never reached
@@ -919,7 +983,7 @@ Side_of_plane<SNCstructure>::operator()
 template <class SNCstructure>
 Oriented_side 
 Side_of_plane<SNCstructure>::operator()
-( Plane_3 pl, Vertex_handle v) const {
+( const Plane_3& pl, Vertex_handle v) const {
   return pl.oriented_side(D.point(v));
 }
 
@@ -933,7 +997,7 @@ Side_of_plane<SNCstructure>::operator()
 template <class SNCstructure>
 Oriented_side 
 Side_of_plane<SNCstructure>::operator()
-( Plane_3 pl, Halfedge_handle e) const{
+( const Plane_3& pl, Halfedge_handle e) const {
   Segment_3 s(D.segment(e));
   Oriented_side src_side = pl.oriented_side(s.source());
   Oriented_side tgt_side = pl.oriented_side(s.target());
@@ -944,6 +1008,31 @@ Side_of_plane<SNCstructure>::operator()
   if( tgt_side == ON_ORIENTED_BOUNDARY)
     return src_side;
   return ON_ORIENTED_BOUNDARY;
+}
+
+template <typename SNCstructure>
+Oriented_side
+Side_of_plane<SNCstructure>::operator()
+( const Plane_3& pl, Halffacet_triangle_handle t) const {
+  bool on_positive_side = false, on_negative_side = false;
+  Triangle_3 tr(t.get_triangle());
+  for( int i = 0; i < 3; ++i) {
+    Oriented_side side = pl.oriented_side(tr[i]);
+    if( side == ON_POSITIVE_SIDE)
+      on_positive_side = true;
+    else if( side == ON_NEGATIVE_SIDE)
+      on_negative_side = true;
+  }
+  if( on_positive_side && on_negative_side)
+    return ON_ORIENTED_BOUNDARY;
+  if( !on_positive_side && !on_negative_side)
+    return ON_ORIENTED_BOUNDARY;
+  if( on_positive_side) {
+    CGAL_assertion( !on_negative_side);
+    return ON_POSITIVE_SIDE;
+  }
+  CGAL_assertion( on_negative_side);
+  return ON_NEGATIVE_SIDE;
 }
 
 /* 
@@ -960,7 +1049,7 @@ Side_of_plane<SNCstructure>::operator()
 template <class SNCstructure>
 Oriented_side 
 Side_of_plane<SNCstructure>::operator()
-  ( Plane_3 pl, Halffacet_handle f) const {
+  ( const Plane_3& pl, Halffacet_handle f) const {
     CGAL_nef3_assertion( std::distance( f->facet_cycles_begin(), f->facet_cycles_end()) > 0);
   Halffacet_cycle_iterator fc(f->facet_cycles_begin());
   SHalfedge_handle e;
@@ -1010,12 +1099,15 @@ Objects_bbox<SNCstructure>::operator()
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;
+  Halffacet_triangle_handle t;
   if( assign( v, o))
-    return (*this)(v);
+    return operator()(v);
   else if( assign( e, o))
-    return (*this)(e);
+    return operator()(e);
   else if( assign( f, o))
-    return (*this)(f);
+    return operator()(f);
+  else if( assign( t, o))
+    return operator()(t);
   else
     CGAL_assertion_msg( 0, "wrong handle");
   return Bounding_box_3(); // never reached
@@ -1033,13 +1125,26 @@ template <class SNCstructure>
 Bounding_box_3<typename SNCstructure::Kernel::FT> 
 Objects_bbox<SNCstructure>::operator()
   (Halfedge_handle e) const {
-  return ((*this)(D.vertex(e)) + (*this)(D.vertex(D.twin(e))));
+  return (operator()(D.vertex(e)) + operator()(D.vertex(D.twin(e))));
 }
 
 template <class SNCstructure>
 Bounding_box_3<typename SNCstructure::Kernel::FT> 
 Objects_bbox<SNCstructure>::operator()
-  (Halffacet_handle f) const {
+  (Halffacet_triangle_handle t) const {
+  Bounding_box_3 bbox(0,0,0,0,0,0);
+  Triangle_3 tr(t.get_triangle());
+  for( int i = 0; i < 3; ++i) {
+    Point_3 p(tr[i]);
+    bbox = bbox + Bounding_box_3( p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
+  }
+  return bbox;
+}
+
+template <class SNCstructure>
+Bounding_box_3<typename SNCstructure::Kernel::FT> 
+Objects_bbox<SNCstructure>::operator()
+  (Halffacet_handle f) const { // TODO
   CGAL_assertion( f->facet_cycles_begin() != Halffacet_cycle_iterator());
   Halffacet_cycle_iterator fc(f->facet_cycles_begin());
   SHalfedge_handle e;
@@ -1047,10 +1152,10 @@ Objects_bbox<SNCstructure>::operator()
   assign( e, fc);
   SHalfedge_around_facet_circulator sc(e), send(sc);
   CGAL_assertion( !is_empty_range( sc, send));
-  Bounding_box_3 b((*this)(D.vertex(sc)));
+  Bounding_box_3 b(operator()(D.vertex(sc)));
   sc++;
   while( sc != send) {
-    b = b + (*this)(D.vertex(sc));
+    b = b + operator()(D.vertex(sc));
     sc++;
   }
   return b;
