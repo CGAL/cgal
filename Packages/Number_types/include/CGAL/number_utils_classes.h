@@ -17,9 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
-//           
-//                 slight modification of Michael's 1.1 version
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 // to be included by number_utils.h
@@ -27,9 +25,7 @@
 #ifndef CGAL_NUMBER_UTILS_CLASSES_H
 #define CGAL_NUMBER_UTILS_CLASSES_H 1
 
-#ifndef CGAL_CONFIG_H
 #include <CGAL/config.h>
-#endif // CGAL_CONFIG_H
 
 #include <algorithm>
 #include <CGAL/functional_base.h>
