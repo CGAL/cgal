@@ -1049,8 +1049,8 @@
 
 \def\noFont{}
 \newif\ifdimmodifier
-\newcommand{\seealso}[1]{\emph{see also} #1}
-%\newcommand{\seealso}[1]{$\rightarrow$ #1}
+\newcommand{\ccIndexSeeAlso}[1]{\emph{see also} #1}
+%\newcommand{\ccIndexSeeAlso}[1]{$\rightarrow$ #1}
 \newcommand{\none}[1]{}
 
 % variables to hold the various pieces of text 
@@ -1433,19 +1433,19 @@
 \newcommand\makeIndexSeeAlsoText[4]{%
    \ifx#2\empty%                                 no modifier
       \ifnum\emptyIndexingFont=\ccTrue%          no font
-        \gdef#4{ZZZ#3@\seealso{#3}}%
+        \gdef#4{ZZZ#3@\ccIndexSeeAlso{#3}}%
       \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
-        \gdef#4{ZZZ#3@\seealso{\protect\ccc{#3}}}%
+        \gdef#4{ZZZ#3@\ccIndexSeeAlso{\protect\ccc{#3}}}%
       \else%                                     other font
-        \gdef#4{ZZZ#1 #3@\seealso{{#1 #3}}}%
+        \gdef#4{ZZZ#1 #3@\ccIndexSeeAlso{{#1 #3}}}%
       \fi \fi%
    \else%                                         modifier
       \ifnum\emptyIndexingFont=\ccTrue%           no font
-        \gdef#4{ZZZ#3, #2@\seealso{#3, #2}}%
+        \gdef#4{ZZZ#3, #2@\ccIndexSeeAlso{#3, #2}}%
       \else\ifnum\indexingFontIsCC=\ccTrue%       ccFont
-        \gdef#4{ZZZ#3, #2@\seealso{{\protect\ccc{#3, #2}}}}%
+        \gdef#4{ZZZ#3, #2@\ccIndexSeeAlso{{\protect\ccc{#3, #2}}}}%
       \else%                                      other font
-        \gdef#4{ZZZ#3, #2@\seealso{{#1 #3, #2}}}%
+        \gdef#4{ZZZ#3, #2@\ccIndexSeeAlso{{#1 #3, #2}}}%
       \fi \fi%
    \fi%
 }
