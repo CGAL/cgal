@@ -1,5 +1,10 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.70 (30 May 2002)
+   removed kernel_overview chapter from html version; repeated in 
+   reference intro.
+
+-------------------------Release 2.4----------------------------------
 0.9.69 (7 May 2002)
    different templating for Polyhedron to please MSVC 6
 
