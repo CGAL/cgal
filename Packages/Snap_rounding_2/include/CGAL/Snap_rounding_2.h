@@ -22,27 +22,45 @@
 #define CGAL_SR_2_H
 
 #include <CGAL/leda_rational.h> 
+
+#include <iostream>
+
+#ifndef CGAL_ENUM_H
 #include <CGAL/enum.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Random.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/intersection_2.h>
+
+#endif
+
+/*#ifndef SWEEP_TO_PRODUCE_PLANAR_MAP_SUBCURVES_H
 #include <CGAL/sweep_to_produce_planar_map_subcurves.h>
+#endif*/
+
+//#include <CGAL/Sweep_line_tight_2.h>
+#include <CGAL/Sweep_line_2.h>
+
+//#ifndef CGAL_ARR_SEGMENT_TRAITS_2_H
 #include <CGAL/Arr_segment_traits_2.h>
+//#endif
+
+#ifndef CGAL_ARR_POLYLINE_TRAITS_H
 #include <CGAL/Arr_polyline_traits.h>
 #include <CGAL/Timer.h>
+#endif
 
 #ifdef ISR_DEBUG
 #include <CGAL/IO/leda_window.h>
 #endif
 
-#include <iostream.h>
-#include <list.h>
-#include <set.h>
+#include <list>
+#include <set>
 
 #include <CGAL/leda_real.h>
-#include <CGAL/Snap_rounding_kd_2.h>
+
+#include "../../include/CGAL/Snap_rounding_kd_2.h"
 
 CGAL_BEGIN_NAMESPACE
 
@@ -53,10 +71,10 @@ typedef CGAL::Window_stream Window_stream;
 template<class Rep_>
 class Segment_data {
 
-typedef Rep_ Rep;
-typedef typename Rep::FT NT;
-typedef CGAL::Segment_2<Rep> Segment_2;
-typedef CGAL::Point_2<Rep> Point_2;
+typedef Rep_                                Rep;
+typedef typename Rep::FT                    NT;
+typedef CGAL::Segment_2<Rep>                Segment_2;
+typedef CGAL::Point_2<Rep>                  Point_2;
 
 private:
   NT x1;
@@ -128,15 +146,20 @@ struct hot_pixel_dir_cmp
 template<class Rep_>
 class Snap_rounding_2 {
 
-typedef CGAL::Arr_segment_traits_2<Rep_ > Traits;
+typedef CGAL::Arr_segment_exact_traits<Rep_ > Traits;
 typedef Rep_ Rep;
 typedef typename Rep::FT NT;
-typedef CGAL::Segment_2<Rep> Segment_2;
-typedef CGAL::Point_2<Rep> Point_2;
-typedef Traits::X_curve X_curve;
-typedef Traits::Curve Curve;
+typedef typename Traits::X_curve X_curve;
+typedef typename Traits::Curve Curve;
+//typedef CGAL::Sweep_line_subcurve<Traits> SubCurve;
+//typedef CGAL::Sweep_line_event<Traits, SubCurve> Event;
+typedef std::list<X_curve>              CurveContainer;
+typedef typename CurveContainer::iterator            CurveContainerIter;
 
 public:
+  typedef CGAL::Segment_2<Rep> Segment_2;
+  typedef CGAL::Point_2<Rep> Point_2;
+  typedef std::list<Point_2> PointList;
   typedef typename std::list<std::list<CGAL::Point_2<Rep> > >
              Polylines_container;
   typedef typename Polylines_container::const_iterator Polyline_const_iterator;
@@ -144,8 +167,8 @@ public:
   typedef typename std::list<CGAL::Point_2<Rep> > Points_container;
   typedef typename Points_container::const_iterator Point_const_iterator;
   typedef typename std::list<Segment_2> Segments_container;
-  typedef Segments_container::const_iterator Segment_const_iterator;
-  typedef Segments_container::iterator Segment_iterator;
+  typedef typename Segments_container::const_iterator Segment_const_iterator;
+  typedef typename Segments_container::iterator Segment_iterator;
 
   enum Direction {UP_RIGHT,UP_LEFT,DOWN_RIGHT,DOWN_LEFT,UP,DOWN,LEFT,
                   RIGHT,POINT_SEG};
@@ -533,7 +556,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     Point_2 p;
     std::list<std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *> > hot_pixels_list;
 
-    list<X_curve>  segments;
+    list<X_curve> segments;
     for(iter1 = seg_list.begin();iter1 != seg_list.end();++iter1)
       segments.push_back(X_curve(Point_2(iter1->get_x1(),iter1->get_y1()),
                                  Point_2(iter1->get_x2(),iter1->get_y2())));
@@ -541,13 +564,33 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     //    PM pm(new CGAL::Pm_naive_point_location<PM>);
     // sweep_to_construct_planar_map(segments.begin(), segments.end(), pm);
     std::list<X_curve>  subcurves;
-    Traits traits;
-    sweep_to_produce_planar_map_subcurves(segments.begin(), 
+
+    /*    sweep_to_produce_planar_map_subcurves(segments.begin(), 
 					  segments.end(),  
 					  traits, 
-					  subcurves);
+					  subcurves);*/
 
-    for(list<X_curve>::iterator v_iter = subcurves.begin();
+    /*// get subcurves with overlapping
+//    CGAL::Sweep_line_tight_2<CurveContainerIter, Traits, Event, SubCurve> sl;
+    CGAL::Sweep_line_2<CurveContainerIter, Traits> sl;
+    sl.get_subcurves(segments.begin(), segments.end(),
+    std::back_inserter(subcurves));*/
+
+    // get intersection points (with endpoints)
+    PointList mypointlist;
+    //    CGAL::Sweep_line_tight_2<CurveContainerIter, Traits, Event, SubCurve> sl;
+    CGAL::Sweep_line_2<CurveContainerIter, Traits> sl;
+    sl.get_intersection_points(segments.begin(), segments.end(),
+                             std::back_inserter(mypointlist));
+
+    for(typename std::list<Point_2>::const_iterator v_iter = mypointlist.begin();
+	v_iter != mypointlist.end();++v_iter) {
+      hp = new Hot_Pixel<Rep_>(v_iter->x(),v_iter->y(),prec);
+      hot_pixels_list.push_back(std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *>(
+            std::pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
+    }
+
+    /*    for(list<X_curve>::iterator v_iter = subcurves.begin();
         v_iter != subcurves.end();
         ++v_iter) {
       hp = new Hot_Pixel<Rep_>(v_iter->source().x(),v_iter->source().y(),prec);
@@ -558,7 +601,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
       if(hp_set.insert(hp).second)
         hot_pixels_list.push_back(pair<pair<NT,NT>,Hot_Pixel<Rep_> *>(
             pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
-    }
+	    }*/
 
     // create kd multiple tree
     // create simple_list from seg_list
@@ -730,10 +773,13 @@ void Snap_rounding_2<Rep_>::iterate()
   }
 
 template<class Rep_>
-Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
+/*Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
   begin,Segment_const_iterator end,
   NT inp_prec,bool inp_do_isr = true,int inp_number_of_kd_trees =
-  default_number_of_kd_trees)
+  default_number_of_kd_trees)*/
+Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
+  begin,Segment_const_iterator end,
+  NT inp_prec,bool inp_do_isr,int inp_number_of_kd_trees)
   {
     timer.start();
 
@@ -878,7 +924,7 @@ void Snap_rounding_2<Rep_>::window_output(Window_stream &w,bool wait_for_click)
 #endif
 
 template<class Rep>
-Snap_rounding_2<Rep>::Direction Snap_rounding_2<Rep>::seg_dir;
+typename Snap_rounding_2<Rep>::Direction Snap_rounding_2<Rep>::seg_dir;
 
 template<class Rep>
 bool Snap_rounding_2<Rep>::erase_hp = false;
