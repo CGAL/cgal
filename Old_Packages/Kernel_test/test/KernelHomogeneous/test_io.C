@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -11,27 +11,27 @@
 // release       :
 // release_date  :
 // 
-// file          : _test_misc.C
+// file          : test_io.C
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Stefan Schirra
+// author(s)     : Sylvain Pion
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
-#ifndef CGAL__TEST_MISC_C
-#define CGAL__TEST_MISC_C
+#include <CGAL/basic.h>
+#include <cassert>
 
-#include <CGAL/_test_cls_object.C>
+#include <CGAL/Homogeneous.h>
+#include <CGAL/Quotient.h>
+#include "../Kernel/include/CGAL/_test_io.h"
 
-template <class R>
-bool
-_test_misc(const R& r)
+int
+main()
 {
-  return
-    _test_cls_object(r);
+  typedef   CGAL::Homogeneous<double>     Cls;
+  std::cout << "Testing IO with Homogeneous<double> :" << std::endl;
+  _test_io( Cls() );
+  return 0;
 }
-
-#endif // CGAL__TEST_MISC_C

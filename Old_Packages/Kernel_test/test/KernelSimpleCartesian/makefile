@@ -23,7 +23,7 @@ CXXFLAGS = \
            -I../../../Cartesian_kernel/include \
            -I../../../Kernel_basic/include \
            -I../../../Number_types/include \
-            $(TESTSUITE_CXXFLAGS) \
+           $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -47,6 +47,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                test_io$(EXE_EXT) \
                 test_kernelS2$(EXE_EXT) \
                 test_kernelS3$(EXE_EXT) \
                 test_kernelSd$(EXE_EXT) \
@@ -55,6 +56,9 @@ all:            \
                 test_new_partsS_$(EXE_EXT) \
                 test_planeS3_to_2d$(EXE_EXT) \
                 test_predicate_classes_2S$(EXE_EXT) 
+
+test_io$(EXE_EXT): test_io$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_io test_io$(OBJ_EXT) $(LDFLAGS)
 
 test_kernelS2$(EXE_EXT): test_kernelS2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelS2 test_kernelS2$(OBJ_EXT) $(LDFLAGS)
@@ -81,6 +85,7 @@ test_predicate_classes_2S$(EXE_EXT): test_predicate_classes_2S$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_predicate_classes_2S test_predicate_classes_2S$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   test_io.clean \
                    test_kernelS2.clean \
                    test_kernelS3.clean \
                    test_kernelSd.clean \

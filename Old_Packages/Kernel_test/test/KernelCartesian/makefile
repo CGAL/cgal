@@ -47,6 +47,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                test_io$(EXE_EXT) \
                 test_kernelC2$(EXE_EXT) \
                 test_kernelC3$(EXE_EXT) \
                 test_kernelCd$(EXE_EXT) \
@@ -55,6 +56,9 @@ all:            \
                 test_new_partsC_$(EXE_EXT) \
                 test_planeC3_to_2d$(EXE_EXT) \
                 test_predicate_classes_2C$(EXE_EXT) 
+
+test_io$(EXE_EXT): test_io$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_io test_io$(OBJ_EXT) $(LDFLAGS)
 
 test_kernelC2$(EXE_EXT): test_kernelC2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelC2 test_kernelC2$(OBJ_EXT) $(LDFLAGS)
@@ -81,6 +85,7 @@ test_predicate_classes_2C$(EXE_EXT): test_predicate_classes_2C$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_predicate_classes_2C test_predicate_classes_2C$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   test_io.clean \
                    test_kernelC2.clean \
                    test_kernelC3.clean \
                    test_kernelCd.clean \

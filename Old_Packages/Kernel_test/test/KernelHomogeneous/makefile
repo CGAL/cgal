@@ -47,6 +47,7 @@ LDFLAGS = \
 
 all:            \
                 test_basic_constructionsH3$(EXE_EXT) \
+                test_io$(EXE_EXT) \
                 test_kernelH2$(EXE_EXT) \
                 test_kernelH3$(EXE_EXT) \
                 test_kernelHd$(EXE_EXT) \
@@ -58,6 +59,9 @@ all:            \
 
 test_basic_constructionsH3$(EXE_EXT): test_basic_constructionsH3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_basic_constructionsH3 test_basic_constructionsH3$(OBJ_EXT) $(LDFLAGS)
+
+test_io$(EXE_EXT): test_io$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_io test_io$(OBJ_EXT) $(LDFLAGS)
 
 test_kernelH2$(EXE_EXT): test_kernelH2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelH2 test_kernelH2$(OBJ_EXT) $(LDFLAGS)
@@ -85,6 +89,7 @@ test_predicate_classes_2H$(EXE_EXT): test_predicate_classes_2H$(OBJ_EXT)
 
 clean: \
                    test_basic_constructionsH3.clean \
+                   test_io.clean \
                    test_kernelH2.clean \
                    test_kernelH3.clean \
                    test_kernelHd.clean \
