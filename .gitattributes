@@ -1316,6 +1316,7 @@ Packages/Nef_3/doc_tex/Nef_3/fig/nef_pyramids.eps -text
 Packages/Nef_3/doc_tex/Nef_3/fig/shalfloopB.eps svneol=native#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/shells.eps -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/snc.eps -text
+Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.png -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.ps -text
 Packages/Nef_3/test/Nef_3/data/centered_cube.off -text
 Packages/Nef_3/test/Nef_3/data/cube+v.off -text
