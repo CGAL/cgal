@@ -2062,6 +2062,14 @@ namespace HomogeneousKernelFunctors {
 		      p.hy()*v.hw() + v.hy()*p.hw(),
 		      p.hw()*v.hw() );
     }
+
+    Point_2
+    operator()( const Origin&, const Vector_2& v) const
+    {  
+      return Point_2( v.hx(),
+		      v.hy(),
+		      v.hw() );
+    }
   };
 
   template <typename K>
@@ -2080,6 +2088,15 @@ namespace HomogeneousKernelFunctors {
 		     p.hy()*v.hw() + v.hy()*p.hw(),
 		     p.hz()*v.hw() + v.hz()*p.hw(),
 		     p.hw()*v.hw() );
+    }
+
+    Point_3
+    operator()( const Origin&, const Vector_3& v) const
+    {  
+      return Point_3( v.hx(),
+		      v.hy(),
+		      v.hz(),
+		      v.hw() );
     }
   };
 
@@ -2107,6 +2124,21 @@ namespace HomogeneousKernelFunctors {
       return Vector_2( q.hx()*p.hw() - p.hx()*q.hw(),
 		       q.hy()*p.hw() - p.hy()*q.hw(),
 		       p.hw()*q.hw() );
+    }
+
+    Vector_2
+    operator()( const Origin& , const Point_2& q) const
+    { 
+      return Vector_2( q.hx() ,
+		       q.hy() ,
+		       q.hw() );
+    }
+    Vector_2
+    operator()( const Point_2& p, const Origin& q) const
+    { 
+      return Vector_2( - p.hx(),
+		       - p.hy(),
+		       p.hw() );
     }
 
     Vector_2
@@ -2161,6 +2193,23 @@ namespace HomogeneousKernelFunctors {
 		      q.hy()*p.hw() - p.hy()*q.hw(),
 		      q.hz()*p.hw() - p.hz()*q.hw(),
 		      q.hw()*p.hw() );
+    }
+
+    Vector_3
+    operator()( const Origin& , const Point_3& q) const
+    { 
+      return Vector_3( q.hx() ,
+		       q.hy() ,
+		       q.hz() ,
+		       q.hw() );
+    }
+    Vector_3
+    operator()( const Point_3& p, const Origin& q) const
+    { 
+      return Vector_3( - p.hx(),
+		       - p.hy(),
+		       - p.hz(),
+		       p.hw() );
     }
 
     Vector_3
