@@ -1,3 +1,8 @@
+2.18    (12 July 2001)
+- fixed type name in compute_plane_equations
+- fixed bug in convex_hull_3 that didn't handle properly the case when
+  all points lie on the negative side of the initial plane.
+
 2.17    (11 July 2001)
 - really fixed	demo makefile for Windoze
 
