@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-MY_DIR = /home/hachenb/CGAL
+MY_DIR = /KM/usr/hachenb/CGAL2
 HOME = /KM/guests/granados
 POLY = $(MY_DIR)/Polynomial/include
 LOCAL = $(MY_DIR)/local/include
@@ -26,7 +26,8 @@ BBOX = $(MY_DIR)/Box_intersection_d/include
 
 CUSTOM_CXXFLAGS = -I$(POLY) -I$(NEF3) -I$(NEF2) -I$(NEFS2) -I$(BBOX) -I$(K3TREE) 
 
-CGAL_CXX = g++
+CGAL_CXX = /KM/projects/ecg/software/linux/bin/g++-3.3.3
+# CGAL_CXX = g++
 # CGAL_CXX = g++ -O2 -NDEBUG
 # CGAL_CXX = g++ -pg -p
 
