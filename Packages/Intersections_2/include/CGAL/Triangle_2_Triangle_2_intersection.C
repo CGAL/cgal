@@ -195,7 +195,7 @@ void _cut_off(Pointlist_2_<R> &list,
 {
     int i;
     int add = 0;
-    Pointlist_2_rec_<R> *cur, *last, *newrec;
+    Pointlist_2_rec_<R> *cur, *last=0, *newrec;
     for (i=0, cur = list.first; i<list.size; i++, cur = cur->next) {
         cur->side = cutter.oriented_side(cur->point);
         last = cur;
