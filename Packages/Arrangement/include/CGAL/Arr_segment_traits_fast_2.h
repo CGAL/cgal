@@ -45,7 +45,7 @@ public:
   typedef int                                   Info_edge;
   typedef int                                   Info_vertex;
   
-  typedef Pm_segment_traits_2<Kernel>           Base;
+  typedef Pm_segment_traits_fast_2<Kernel>      Base;
   
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_curve_2              X_curve_2;
@@ -63,7 +63,7 @@ protected:
   typedef typename Kernel::Compare_xy_2         Compare_xy_2;
 
 public:
-  Arr_segment_exact_traits_fast() : Base() { }
+  Arr_segment_traits_fast_2() : Base() { }
 
   /*! is_x_monotone()
    * \return true if the given curve is an x-monotone curve. False, otherwise.
