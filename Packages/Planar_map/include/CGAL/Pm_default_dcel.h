@@ -18,7 +18,7 @@
 // Author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
 //                 Oren Nechushtan <theoren@math.tau.ac.il>
 #ifndef CGAL_PM_DEFAULT_DCEL_H
-#define CGAL_PM_DEFAULT_DCEL_H 1
+#define CGAL_PM_DEFAULT_DCEL_H
 
 #include <CGAL/basic.h>
 #include <list>
@@ -29,109 +29,121 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*! Base vertex class */
 template <class Pt>
 class Pm_vertex_base {
 protected:
-  void* hdg;
-  Pt    pt;
+  /*! An incident halfedge pointing at the vertex */
+  void * hdg;
+  Pt pt;
+
 public:
   typedef Pt           Point;
   
   Pm_vertex_base() {}
-  Pm_vertex_base( const Pt& p) : pt(p) {}
+  Pm_vertex_base(const Pt & p) : pt(p) {}
   
   virtual ~Pm_vertex_base() {}
 
-  void*       halfedge()               {return hdg;}
-  const void* halfedge() const         {return hdg;}
-  void        set_halfedge( void* h)   { hdg = h;}
-  // an incident halfedge pointing at `v'.
+  void * halfedge() { return hdg; }
+  const void * halfedge() const { return hdg; }
+  void set_halfedge(void * h) { hdg = h; }
   
-  Point&       point()       { return pt;}
-  const Point& point() const { return pt;}
+  Point & point() { return pt; }
+  const Point & point() const { return pt; }
   
-  void set_point(const Point& p) {pt=p;}
+  void set_point(const Point & p) { pt = p; }
 
   // assign function for non-connectivity data
-  virtual void assign(const Pm_vertex_base<Pt> &v)
+  virtual void assign(const Pm_vertex_base<Pt> & v)
   {
     pt = v.pt;
   }
 };
 
-
-
+/*! Base halfedge class */
 template <class X_curve>
 class Pm_halfedge_base {
 public:
   typedef X_curve Curve;
 
+  /*! Parameterless Constructor */
   Pm_halfedge_base() {}
 
-  Pm_halfedge_base(const X_curve& c) : cv(c) {}
+  /*! Constructor */
+  Pm_halfedge_base(const X_curve & c) : cv(c) {}
 
+  /*! Destructor */
   virtual ~Pm_halfedge_base() {}
 
-  void*       opposite()       { return opp;}
-  const void* opposite() const { return opp;}
+  /*! \brief obtains the opposite halfedge */
+  void * opposite() { return opp; }
+  const void * opposite() const { return opp; }
 
-  void*       next()           { return nxt;}
-  const void* next() const     { return nxt;}
-  // the next halfedge along the face.
+  /*! \brief obtains the next halfedge along the face */
+  void * next() { return nxt; }
+  const void * next() const { return nxt; }
   
-  void  set_opposite( void* h)  { opp = h;}
+  /*! \brief sets the opposite halfedge */
+  void set_opposite(void * h) { opp = h; }
 
-  void  set_next( void* h)      { nxt = h;}
+  /*! \brief sets the next halfedge along the face */
+  void set_next(void * h) { nxt = h; }
   
-  void*       vertex()       { return v;}
-  const void* vertex() const { return v;}
+  /*! \brief obtains the incident target vertex */
+  void * vertex() { return v; }
+  const void * vertex() const { return v; }
   
-  void*       face()       { return f;}
-  const void* face() const { return f;}
-  // the face to the left.
+  /*! \brief obtains the face to the left */
+  void * face() { return f; }
+  const void * face() const { return f; }
 
-  void  set_vertex( void* _v)     { v = _v;}
+  /*! \brief sets the incident target vertex */
+  void set_vertex(void * _v) { v = _v; }
 
-  void  set_face( void* _f)      { f = _f;}
+  /*! \brief sets the face to the left */
+  void set_face(void * _f) { f = _f; }
 
+  /*! \brief obtains the geometric x-monotone curve */
+  Curve & curve() { return cv; }
+  const Curve & curve() const { return cv; }
 
-  Curve&       curve()       { return cv;}
-  const Curve& curve() const { return cv;}
+  /*! \brief sets the geometric x-monotone curve */
+  void set_curve(const X_curve& c) { cv = c; }
 
-  void set_curve(const X_curve& c) {cv=c;}
-
-  // assign function for non-connectivity data
+  /*! assign function for non-connectivity data */
   virtual void assign(const Pm_halfedge_base<X_curve> &e)
   {
     cv = e.cv;
   }
 
 protected:
-  void* opp;
-  void* nxt;
+  void * opp;
+  void * nxt;
   
-  void* v; //target
-  void* f; //face
+  void * v;     // target
+  void * f;     // face
   
   X_curve cv;
-
 };
 
-
+/*! Base face class */
 class Pm_face_base {
 public:
   typedef std::list<void*> Holes_container; 
   typedef Holes_container::iterator Holes_iterator; 
   typedef Holes_container::const_iterator Holes_const_iterator;
 
-
+  /*! Parameterless Constructor */
   Pm_face_base() : holes() {};
+
+  /*! Destructor */
   virtual ~Pm_face_base() {}
 
-  void* halfedge() { return hdg;}
-  const void* halfedge() const { return hdg;}
+  void * halfedge() { return hdg;}
+  const void * halfedge() const { return hdg;}
 
-  void set_halfedge(void* h) {hdg=h;}
+  void set_halfedge(void * h) {hdg = h;}
 
   Holes_iterator  holes_begin() {return holes.begin();}
   Holes_iterator  holes_end() {return holes.end();}
@@ -139,22 +151,16 @@ public:
   Holes_const_iterator  holes_begin() const {return holes.begin();}
   Holes_const_iterator  holes_end() const {return holes.end();}
 
+  void add_hole(void * halfedge_ptr) { holes.push_back(halfedge_ptr); }
 
-  void add_hole(void* halfedge_ptr)
-  {
-    holes.push_back(halfedge_ptr);
-  }
-
-  void erase_hole(Holes_iterator hit) {
-    holes.erase(hit);
-  }
+  void erase_hole(Holes_iterator hit) { holes.erase(hit); }
     
   void erase_holes(Holes_iterator first, Holes_iterator last) {
     holes.erase(first,last);
   }
 
   // assign function for non-connectivity data
-  virtual void assign(const Pm_face_base &f)
+  virtual void assign(const Pm_face_base & f)
   { 
     // The reason we do not assign anything here is because
     // we can't copy pointers of a face from another Pm_dcel.
@@ -163,127 +169,155 @@ public:
     (void) f; // We avoid the `unused parameter' warning.
   }
   
-
 private:
-  void* hdg;
-  Holes_container holes ;
-
+  void * hdg;
+  Holes_container holes;
 };
 
-
-
-
-
+// Forward declarations:
 template <class V, class H, class F> class _Pm_Vertex;
 template <class V, class H, class F> class _Pm_Halfedge;
 template <class V, class H, class F> class _Pm_Face;
 
+/*! The vertex class */
 template <class V, class H, class F>
-class _Pm_Vertex
-    : public  V,
-      public  In_place_list_base< _Pm_Vertex<V,H,F> >
+class _Pm_Vertex : public V,
+                   public In_place_list_base< _Pm_Vertex<V,H,F> >
 {
 public:
-  typedef V                              Base;
-  typedef _Pm_Vertex<V,H,F>    Vertex;
-  typedef _Pm_Halfedge<V,H,F>  Halfedge;
-  typedef _Pm_Face<V,H,F>     Face;
+  typedef V                     Base;
+  typedef _Pm_Vertex<V,H,F>     Vertex;
+  typedef _Pm_Halfedge<V,H,F>   Halfedge;
+  typedef _Pm_Face<V,H,F>       Face;
 
   _Pm_Vertex() {}
-  //    _Pm_Vertex( const Point& p) : V(p) {}
+  // _Pm_Vertex(const Point & p) : V(p) {}
 
-  Halfedge*       halfedge()       {return (Halfedge*)(V::halfedge());}
-  const Halfedge* halfedge() const {return (const Halfedge*)(V::halfedge());}
-  void            set_halfedge( Halfedge* h) { V::set_halfedge(h);}
+  /*! \brief obtains an incident halfedge */
+  Halfedge * halfedge() { return (Halfedge*)(V::halfedge()); }
 
-  /* irrelevant
-#if _MSC_VER>=1100
-public:
-#else
+  /*! \brief obtains an incident halfedge */
+  const Halfedge * halfedge() const
+  {
+    return (const Halfedge*)(V::halfedge());
+  }
+
+  /*! \brief sets an incident halfedge */
+  void set_halfedge(Halfedge * h) { V::set_halfedge(h); }
+
+#if 0
+  // Apparently the implementation of the In_place_list requires a copy
+  // constructor of the value type!
 protected:
-#endif
-  //forbid copy constructor and assignment (only derived classes can use them)
-  _Pm_Vertex( const _Pm_Vertex&);
-  _Pm_Vertex& operator=(const _Pm_Vertex&);
-  */
+  // forbid copy constructor and assignment (only derived classes can use them)
 
+  /*! Copy Constructor */
+  _Pm_Vertex(const _Pm_Vertex & v) {}
+
+  /*! Assignment operator */
+  _Pm_Vertex & operator=(const _Pm_Vertex &) { return *this; }
+#endif
 };
 
+/*! The halfdege class */
 template <class V, class H, class F>
-class _Pm_Halfedge
-  : public  H,
-    public  In_place_list_base< _Pm_Halfedge<V,H,F> >
+class _Pm_Halfedge : public  H,
+                     public  In_place_list_base< _Pm_Halfedge<V,H,F> >
 {
 public:
-  typedef H                              Base;
-  typedef _Pm_Vertex<V,H,F>    Vertex;
-  typedef _Pm_Halfedge<V,H,F>  Halfedge;
-  typedef _Pm_Face<V,H,F>     Face;
+  typedef H                     Base;
+  typedef _Pm_Vertex<V,H,F>     Vertex;
+  typedef _Pm_Halfedge<V,H,F>   Halfedge;
+  typedef _Pm_Face<V,H,F>       Face;
 
   _Pm_Halfedge() : H() {}  
   //_Pm_Halfedge( const Curve& c) : H(c) {}
 
-  Halfedge*       opposite()       {return (Halfedge*)(H::opposite());}
+  /*! \brief obtains the opposite halfedge */
+  Halfedge * opposite() { return (Halfedge*)(H::opposite()); }
   
-  Halfedge*       next()           {return (Halfedge*)(H::next());}
   //in the future will probably be implemented in a max base
   //    const Halfedge* prev()     const {return (const Halfedge*)(H::prev());}
 
-  Vertex*         vertex()         {return (Vertex*)(H::vertex());}
+  /*! \brief obtains the base halfedge */
+  Vertex * vertex() { return (Vertex*)(H::vertex()); }
 
-  Face*          face()          {return (Face*)(H::face());}
+  /*! \brief obtains the base halfedge */
+  const Vertex * vertex() const {return (const Vertex*)(H::vertex()); }
+
+  /*! \brief obtains the incident base face */
+  Face * face() { return (Face*)(H::face()); }
   
-  const Halfedge* opposite() const {return (const Halfedge*)(H::opposite());}
+  /*! \brief obtains the incident base face */
+  const Face * face() const {return (const Face*)(H::face()); }
+  
+  /*! \brief obtains the next halfedge along the face */
+  const Halfedge * next() const { return (const Halfedge*)(H::next()); }
 
-  const Halfedge* next()     const {return (const Halfedge*)(H::next());}
+  /*! \brief obtains the next halfedge along the face. */
+  Halfedge * next() { return (Halfedge*)(H::next()); }
+  
   //in the future will probably be implemented in a max base
-  //    const Halfedge* prev()     const {return (const Halfedge*)(H::prev());}
+  // const Halfedge* prev() const {return (const Halfedge*)(H::prev()); }
 
-  const Vertex*   vertex()   const {return (const Vertex*)(H::vertex());}
+  /*! \brief obtains the opposite halfedge */
+  const Halfedge * opposite() const
+  {
+    return (const Halfedge*)(H::opposite());
+  }
 
-  const Face*    face()    const {return (const Face*)(H::face());}
-  
-  void  set_next( Halfedge* h)     { H::set_next(h);}
+  /*! \brief sets the base vertex */
+  void set_vertex(Vertex * ve) { H::set_vertex(ve); }
 
-  void  set_vertex( Vertex* ve)    { H::set_vertex(ve);}
+  /*! \brief sets the next halfedge along the face */
+  void set_next(Halfedge * h) { H::set_next(h); }
 
-  void  set_face( Face* face)   { H::set_face(face);}
+  /*! \brief sets the incident base face */
+  void set_face(Face * face) { H::set_face(face); }
   
 //private:
-  void  set_opposite( void* h)     { H::set_opposite(h);}
+  /*! \brief sets the opposite halfedge */
+  void set_opposite(void * h) { H::set_opposite(h); }
 
-  /*
-#if _MSC_VER>=1100
-public:
-#else
+#if 0
+  // Apparently the implementation of the In_place_list requires a copy
+  // constructor of the value type!
 protected:
-#endif
   //forbid copy constructor and assignment (only derived classes can use them)
-  
-  _Pm_Halfedge( const _Pm_Halfedge&);
-  _Pm_Halfedge& operator=(const _Pm_Halfedge&);
-  */  
 
+  /*! Copy Constructor */
+  _Pm_Halfedge(const _Pm_Halfedge &) {}
+
+  /*! Assignment Operator */
+  _Pm_Halfedge & operator=(const _Pm_Halfedge &) { return *this; }
+#endif
 };
 
-
+/*! The face class */
 template <class V, class H, class F>
-class _Pm_Face
-    : public  F,
-      public  In_place_list_base< _Pm_Face<V,H,F> >
+class _Pm_Face : public F,
+                 public In_place_list_base< _Pm_Face<V,H,F> >
 {
 public:
-  typedef F                              Base;
-  typedef _Pm_Vertex<V,H,F>    Vertex;
-  typedef _Pm_Halfedge<V,H,F>  Halfedge;
-  typedef _Pm_Face<V,H,F>     Face;
+  typedef F                     Base;
+  typedef _Pm_Vertex<V,H,F>     Vertex;
+  typedef _Pm_Halfedge<V,H,F>   Halfedge;
+  typedef _Pm_Face<V,H,F>       Face;
 
+  /*! Parameterless Constructor */
   _Pm_Face() {}  
   
-  Halfedge*       halfedge()       {return (Halfedge*)(F::halfedge());}
-  const Halfedge* halfedge() const {return (const Halfedge*)(F::halfedge());}
-  void            set_halfedge( Halfedge* h) { F::set_halfedge(h);}
+  /*! \brief obtains an incident halfedge */
+  Halfedge * halfedge() { return (Halfedge*)(F::halfedge()); }
 
+  /*! \brief obtains an incident halfedge */
+  const Halfedge * halfedge() const
+  {
+    return (const Halfedge*)(F::halfedge());
+  }
+
+  /*! \brief sets an incident halfedge */
+  void set_halfedge(Halfedge * h) { F::set_halfedge(h); }
 
   typedef I_HalfedgeDS_iterator< typename F::Holes_iterator, 
     Halfedge*, 
@@ -291,122 +325,138 @@ public:
     typename F::Holes_iterator::iterator_category>       Holes_iterator;
 
   typedef I_HalfedgeDS_const_iterator<
-  typename F::Holes_const_iterator, 
-  typename F::Holes_iterator,
-  const Halfedge*,
-  typename F::Holes_const_iterator::difference_type,
-  typename F::Holes_const_iterator::iterator_category>   Holes_const_iterator;
+    typename F::Holes_const_iterator, 
+    typename F::Holes_iterator,
+    const Halfedge*,
+    typename F::Holes_const_iterator::difference_type,
+    typename F::Holes_const_iterator::iterator_category> Holes_const_iterator;
 
-  void add_hole(Halfedge* h) { F::add_hole(h); }
-  void erase_hole(Holes_iterator hit) {F::erase_hole(hit.current_iterator());}
+  /*! \brief adds a hole */
+  void add_hole(Halfedge * h) { F::add_hole(h); }
+
+  /*! \brief erases a hole */
+  void erase_hole(Holes_iterator hit)
+  {
+    F::erase_hole(hit.current_iterator());
+  }
+
+  /*! \brief erases a range of holes */
   void erase_holes(Holes_iterator first, Holes_iterator last) 
-  {F::erase_holes(first.current_iterator(), last.current_iterator());}
+  {
+    F::erase_holes(first.current_iterator(), last.current_iterator());
+  }
 
+  Holes_iterator holes_begin() {return F::holes_begin(); }
+  Holes_iterator holes_end() {return F::holes_end(); }
 
-  Holes_iterator holes_begin() {return F::holes_begin();}
-  Holes_iterator holes_end() {return F::holes_end();}
-
-  Holes_const_iterator holes_begin() const {return F::holes_begin();}
-  Holes_const_iterator holes_end() const {return F::holes_end();}
+  Holes_const_iterator holes_begin() const {return F::holes_begin(); }
+  Holes_const_iterator holes_end() const {return F::holes_end(); }
   
-  /*
-#if _MSC_VER>=1100
-public:
-#else
+#if 0
+  // Apparently the implementation of the In_place_list requires a copy
+  // constructor of the value type!
 protected:
-#endif
   //forbid copy constructor and assignment (only derived classes can use them)
-  _Pm_Face( const _Pm_Face&);
-  _Pm_Face& operator=(const _Pm_Face&);
-  */
 
+  /*! Copy Constructor */
+  _Pm_Face(const _Pm_Face &) {}
+
+  /*! Assignment Operator */
+  _Pm_Face & operator=(const _Pm_Face &) { return * this; }
+#endif
 };
 
-
-// A Dcel Class Using Lists
-// ----------------------------------
-//
-
-template < class V, class H, class F>
+/*! A Dcel Class Using Lists */
+template <class V, class H, class F>
 class Pm_dcel {
 public:
-  typedef Pm_dcel<V,H,F>   Self;
-  typedef _Pm_Vertex<V,H,F>         Vertex;
-  typedef _Pm_Halfedge<V,H,F>       Halfedge;
-  typedef _Pm_Face<V,H,F>          Face;
+  typedef Pm_dcel<V,H,F>        Self;
+  typedef _Pm_Vertex<V,H,F>     Vertex;
+  typedef _Pm_Halfedge<V,H,F>   Halfedge;
+  typedef _Pm_Face<V,H,F>       Face;
   
 protected:
   // Three managed in-place lists for the elements. 
   typedef In_place_list<Vertex,false>   Vertex_list;
   typedef In_place_list<Halfedge,false> Halfedge_list;
   typedef In_place_list<Face,false>     Face_list;
+
 public:
-  typedef typename Halfedge_list::size_type   Size;
-  typedef typename Halfedge_list::size_type   size_type;
-  typedef typename Halfedge_list::difference_type difference_type;
-  typedef typename Halfedge_list::difference_type Difference;
-  typedef std::bidirectional_iterator_tag          iterator_category;
+  typedef typename Halfedge_list::size_type             Size;
+  typedef typename Halfedge_list::size_type             size_type;
+  typedef typename Halfedge_list::difference_type       difference_type;
+  typedef typename Halfedge_list::difference_type       Difference;
+  typedef std::bidirectional_iterator_tag               iterator_category;
 
 protected:
-    Vertex_list    vertices;
-    Halfedge_list  halfedges;
-    Face_list     faces;
+  Vertex_list vertices;
+  Halfedge_list halfedges;
+  Face_list faces;
 
 public:
-
-  typedef typename Vertex_list::iterator      Vertex_iterator;
-  typedef typename Halfedge_list::iterator    Halfedge_iterator;
-  typedef typename Face_list::iterator       Face_iterator;
-  typedef CGAL::N_step_adaptor< Halfedge_iterator, 2> Edge_iterator;
+  typedef typename Vertex_list::iterator                Vertex_iterator;
+  typedef typename Halfedge_list::iterator              Halfedge_iterator;
+  typedef typename Face_list::iterator                  Face_iterator;
+  typedef CGAL::N_step_adaptor<Halfedge_iterator, 2>    Edge_iterator;
   
-  typedef typename Vertex_list::const_iterator    Vertex_const_iterator;
-  typedef typename Halfedge_list::const_iterator  Halfedge_const_iterator;
-  typedef typename Face_list::const_iterator     Face_const_iterator;
-  typedef CGAL::N_step_adaptor<Halfedge_const_iterator,2> Edge_const_iterator;
-  // CREATION
+  typedef typename Vertex_list::const_iterator          Vertex_const_iterator;
+  typedef typename Halfedge_list::const_iterator
+    Halfedge_const_iterator;
+  typedef typename Face_list::const_iterator            Face_const_iterator;
+  typedef CGAL::N_step_adaptor<Halfedge_const_iterator,2>
+    Edge_const_iterator;
 
+  /*! Parameterless Constructor */
   Pm_dcel() {}
 
-#if _MSC_VER>=1100
-public:
-#else
 private:
-#endif
   // Forbid copy constructor and assignment (will be implemented later).
-  Pm_dcel( const Self&) {}
-  Self& operator=( const Self&)            { return *this;}
 
-  // DESTRUCTION
+  /*! Copy Constructor */
+  Pm_dcel(const Self & dcel)
+  {
+    // vertices = dcel.vertices;
+    // halfedges = dcel.halfedges;
+    // faces = dcel.faces;
+  }
 
+  /*! Assignment operator */
+  Self & operator=(const Self & dcel)
+  {
+    // vertices = dcel.vertices;
+    // halfedges = dcel.halfedges;
+    // faces = dcel.faces;
+    return *this;
+  }
+  
 public:
+  /*! Destructor */
   ~Pm_dcel() { delete_all(); }
 
 public:
-  // Access Member Functions
-  
-  Size size_of_vertices() const  { return vertices.size();}
-  Size size_of_halfedges() const { return halfedges.size();}
-  Size size_of_faces() const    { return faces.size();}
+  Size size_of_vertices() const  { return vertices.size(); }
+  Size size_of_halfedges() const { return halfedges.size(); }
+  Size size_of_faces() const     { return faces.size(); }
 
-  Vertex_iterator   vertices_begin()   { return vertices.begin();}
-  Vertex_iterator   vertices_end()     { return vertices.end();}
-  Halfedge_iterator halfedges_begin()  { return halfedges.begin();}
-  Halfedge_iterator halfedges_end()    { return halfedges.end();}
-  Face_iterator    faces_begin()     { return faces.begin();}
-  Face_iterator    faces_end()       { return faces.end();}
-  Edge_iterator     edges_begin() { return halfedges.begin();}  
-  Edge_iterator     edges_end() { return halfedges.end();}  
+  Vertex_iterator   vertices_begin()  { return vertices.begin(); }
+  Vertex_iterator   vertices_end()    { return vertices.end(); }
+  Halfedge_iterator halfedges_begin() { return halfedges.begin();}
+  Halfedge_iterator halfedges_end()   { return halfedges.end(); }
+  Face_iterator     faces_begin()     { return faces.begin(); }
+  Face_iterator     faces_end()       { return faces.end(); }
+  Edge_iterator     edges_begin()     { return halfedges.begin(); }  
+  Edge_iterator     edges_end()       { return halfedges.end(); }  
 
   // The constant iterators and circulators.
 
-  Vertex_const_iterator   vertices_begin()  const{ return vertices.begin();}
-  Vertex_const_iterator   vertices_end()    const{ return vertices.end();}
-  Halfedge_const_iterator halfedges_begin() const{ return halfedges.begin();}
-  Halfedge_const_iterator halfedges_end()   const{ return halfedges.end();}
-  Face_const_iterator    faces_begin()    const{ return faces.begin();}
-  Face_const_iterator    faces_end()      const{ return faces.end();}
-  Edge_const_iterator    edges_begin() const{ return halfedges.begin();}  
-  Edge_const_iterator    edges_end() const{ return halfedges.end();}  
+  Vertex_const_iterator   vertices_begin() const { return vertices.begin(); }
+  Vertex_const_iterator   vertices_end() const { return vertices.end(); }
+  Halfedge_const_iterator halfedges_begin() const { return halfedges.begin(); }
+  Halfedge_const_iterator halfedges_end() const { return halfedges.end(); }
+  Face_const_iterator     faces_begin() const { return faces.begin(); }
+  Face_const_iterator     faces_end() const { return faces.end(); }
+  Edge_const_iterator     edges_begin() const { return halfedges.begin(); }  
+  Edge_const_iterator     edges_end() const { return halfedges.end(); }  
   
   // Insertion
   //
@@ -541,7 +591,7 @@ public:
     // faces.destroy();
   }
   
-  // returns the unbounded face in the assigned map
+  /*! returns the unbounded face in the assigned map */
   void * assign(const Self & d, void * u_face)
   {
     //typedef std::map<Vertex_list::iterator, Vertex_list::iterator> VertexMap;
@@ -581,7 +631,6 @@ public:
       nf->assign(*fit);
       fm.insert(ConnectMap::value_type((void*)&(*fit), (void*)nf));
     }
-
 
     // update pointers
     for (vit = d.vertices_begin(); vit != d.vertices_end(); vit++)
@@ -639,22 +688,17 @@ public:
   }
 };
 
-///////////////////////////////////////////////////////////////
-//               DEFAULT DCEL
-///////////////////////////////////////////////////////////////
-
+/*!
+ * DEFAULT DCEL
+ */
 template <class Traits>
-class Pm_default_dcel
-  : public Pm_dcel<
-Pm_vertex_base<typename Traits::Point>,
-Pm_halfedge_base<typename Traits::X_curve>,
-Pm_face_base
-> 
+class Pm_default_dcel :
+  public Pm_dcel<Pm_vertex_base<typename Traits::Point>,
+                 Pm_halfedge_base<typename Traits::X_curve>,
+                 Pm_face_base> 
 {
-public:  // CREATION
-  
+public:
   Pm_default_dcel() {}
-  
 };
 
 CGAL_END_NAMESPACE

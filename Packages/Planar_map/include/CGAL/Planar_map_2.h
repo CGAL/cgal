@@ -151,13 +151,16 @@ public:
     UNBOUNDED_FACE
   } Locate_type;
 
-  //! A parameter-less constructor.
+  /*! Parameterless Constructor */
   Planar_map_2();
 
-  //! A copy constructor.
+  /*! Copy Constructor. */
   Planar_map_2(const Self & pm);
 
-  //! A destructor
+  /*! Assignment Operator */
+  Self & operator=(const Self & pm);
+  
+  /*! Destructor */
   virtual ~Planar_map_2();
     
   //! A constructor given a point-location parameter.
@@ -482,6 +485,7 @@ protected:
   /////////////////////////////////////////////////////////
   // Assignment functions 
   // Those are temporary functions and it should not be used
+
 public:
   void assign(const Self &pm)
   {
@@ -490,8 +494,6 @@ public:
     // bb->assign(pm->bb);
     // pl->assign(pm->pl);
   }
-
-  Self& operator=(const Self& pm);
 
   // used in implementation of operator=(
   void clear();
@@ -960,7 +962,7 @@ Planar_map_2(
   }  
 }
 
-/*! A copy constructor.
+/*! Copy Constructor.
  * \todo get rid of the cast. Instead implement a copy constructor and a clone
  * operation for the various point location strategies.
  */

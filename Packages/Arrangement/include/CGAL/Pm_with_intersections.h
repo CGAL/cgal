@@ -108,16 +108,13 @@ public:
     pmwx_traits = (Pmwx_traits_wrap*)traits;
   }
 
-  // Copy Constructor
-  // ----------------
+  /*! Copy Constructor */
   Planar_map_with_intersections_2(const Self & rhs);
 
-  // Planar_map converter
+  /*! Planar_map converter */
   Planar_map_with_intersections_2(const Planar_map & pm);
 
-  // Destructor
-  //-----------
-
+  /*! Destructor */
   ~Planar_map_with_intersections_2();
         
   // Operations
@@ -1259,6 +1256,7 @@ protected:
   
   }
 
+  // Data fields:
   Pmwx_traits_wrap * pmwx_traits;
   bool pmwx_use_delete_traits;
   bool pmwx_use_delete_pl;
@@ -1287,7 +1285,7 @@ private:
   { return traits->point_equal(p1, p2); }
 };
 
-//!
+/*! Copy Constructor */
 template<class Pm>
 Planar_map_with_intersections_2<Pm>::
 Planar_map_with_intersections_2(const Self & rhs) :
@@ -1298,10 +1296,10 @@ Planar_map_with_intersections_2(const Self & rhs) :
   pmwx_traits = (Pmwx_traits_wrap*)traits;
 }
 
-//!
+/*! Copy Constructor */
 template<class Pm>
 Planar_map_with_intersections_2<Pm>::
-Planar_map_with_intersections_2(const Planar_map& pm) : 
+Planar_map_with_intersections_2(const Planar_map & pm) : 
   Planar_map(pm),
   pmwx_use_delete_traits(false),
   pmwx_use_delete_pl(false)
@@ -1310,16 +1308,12 @@ Planar_map_with_intersections_2(const Planar_map& pm) :
   //use_delete_pmwx_traits = true;
 }
 
-//!
+/*! Destructor */
 template<class Pm>
 Planar_map_with_intersections_2<Pm>::~Planar_map_with_intersections_2()
 {
-  if (pmwx_use_delete_traits){
-    delete traits;
-  }
-  if (pmwx_use_delete_pl){
-    delete pl;
-  }
+  if (pmwx_use_delete_traits) delete traits;
+  if (pmwx_use_delete_pl) delete pl;
 }
 
 CGAL_END_NAMESPACE

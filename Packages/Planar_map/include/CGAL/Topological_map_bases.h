@@ -19,71 +19,65 @@
 #ifndef  CGAL_TOPOLOGICAL_MAP_BASES_H
 #define  CGAL_TOPOLOGICAL_MAP_BASES_H
 
-#ifndef CGAL_PM_BASIC_H
 #include <CGAL/basic.h>
-#endif
-
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
 
-
-//template <class Pt>
+/*! Base vertex class */
 class Tpm_vertex_base {
- protected:
-    void* hdg;
+protected:
+  /*! An incident halfedge of the vertex */
+  void * hdg;
+
 public:
-    Tpm_vertex_base() {}
+  Tpm_vertex_base() {}
 
-    void*       halfedge()               {return hdg;}
-    const void* halfedge() const         {return hdg;}
-    void        set_halfedge( void* h)   { hdg = h;}
-    // an incident halfedge of 'v'
-
+  void * halfedge() { return hdg; }
+  const void * halfedge() const { return hdg; }
+  void set_halfedge(void * h) { hdg = h; }
 };
 
+/*! Base halfedge class */
 class Tpm_halfedge_base {
 public:
-
   Tpm_halfedge_base() {}
 
-  void*       opposite()       { return opp;}
-  const void* opposite() const { return opp;}
+  void * opposite() { return opp; }
+  const void * opposite() const { return opp; }
 
-  void*       next()           { return nxt;}
-  const void* next() const     { return nxt;}
-  // the next halfedge along the face.
+  /*! \brief obtains the next halfedge along the face. */
+  void * next() { return nxt;}
+  const void * next() const { return nxt; }
   
-  void  set_opposite( void* h)  { opp = h;}
+  void set_opposite(void * h) { opp = h; }
 
-  void  set_next( void* h)      { nxt = h;}
+  void set_next(void * h) { nxt = h; }
   
   //will probably be in a max base in the future
   //    void*       prev()       { return prv;}
   //  const void* prev() const { return prv;}
 
-  void*       vartex()       { return v;}
-  const void* vertex() const { return v;}
+  void * vartex() { return v; }
+  const void * vertex() const { return v; }
   
-  void*       face()       { return f;}
-  const void* face() const { return f;}
-  // the face to the left.
+  /*! \brief obtains the face to the left. */
+  void * face() { return f; }
+  const void * face() const { return f; }
 
-  void  set_vertex( void* _v)     { v = _v;}
+  void set_vertex(void * _v) { v = _v; }
 
-  void  set_face( void* _f)      { f = _f;}
+  void set_face(void * _f) { f = _f; }
 
 protected:
-
-  void* opp;
-  void* nxt;
+  void * opp;
+  void * nxt;
   
-  void* v; 
-  void* f; //face
-  
+  void * v; 
+  void * f;     //face
 };
 
-
+/*! Base face class */
 class Tpm_face_base {
 public:
   typedef std::list<void*> Holes_container; 
@@ -91,48 +85,32 @@ public:
   typedef Holes_container::iterator Holes_iterator; 
   typedef Holes_container::const_iterator Holes_const_iterator;
 
-
   Tpm_face_base() : holes() {};
 
-  void* halfedge() { return hdg;}
-  const void* halfedge() const { return hdg;}
+  void * halfedge() { return hdg; }
+  const void * halfedge() const { return hdg; }
 
-  void set_halfedge(void* h) {hdg=h;}
+  void set_halfedge(void * h) { hdg = h; }
 
   //mine
 
-  Holes_iterator  holes_begin() {return holes.begin();}
-  Holes_iterator  holes_end() {return holes.end();}
+  Holes_iterator holes_begin() { return holes.begin(); }
+  Holes_iterator holes_end() { return holes.end(); }
 
+  Holes_const_iterator holes_begin() const { return holes.begin(); }
+  Holes_const_iterator holes_end() const { return holes.end(); }
   
-  Holes_const_iterator  holes_begin() const {return holes.begin();}
-  Holes_const_iterator  holes_end() const {return holes.end();}
-  
+  void add_hole(void * halfedge_ptr) { holes.push_back(halfedge_ptr); }
 
-  void add_hole(void* halfedge_ptr)
-  {
-
-    holes.push_back(halfedge_ptr);
-
-  }
-
-
-  void erase_hole(Holes_iterator hit) {
-    holes.erase(hit);
-  }
+  void erase_hole(Holes_iterator hit) { holes.erase(hit); }
   void erase_holes(Holes_iterator first, Holes_iterator last) {
-    holes.erase(first,last);
+    holes.erase(first, last);
   }
-
-  
 
 private:
-  void* hdg;
-  Holes_container holes ;
-
-
+  void * hdg;
+  Holes_container holes;
 };
-
 
 CGAL_END_NAMESPACE
 
