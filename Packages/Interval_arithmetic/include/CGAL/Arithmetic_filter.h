@@ -38,6 +38,7 @@
 #endif
 
 // Check that the filtering stuff will work...
+// It will go away when the overlap_action() will be definable dynamically.
 #ifdef CGAL_IA_NO_EXCEPTION
 #  warning CGAL_IA_NO_EXCEPTION is defined !
 #endif
@@ -54,19 +55,49 @@ CGAL_BEGIN_NAMESPACE
 // - convert_to <ET> (CT)
 //     which converts EXACTLY the CT value to ET.
 
-template <class CT, class ET>
+// Third template parameter is either
+// No_Filter_Cache (the default) or Interval_nt_advanced.
+struct No_Filter_Cache {};
+typedef Interval_nt_advanced Filter_Cache;
+
+template <class CT>
+inline
+void
+compute_cache (const CT &value, No_Filter_Cache &cache)
+{ }
+
+template <class CT>
+inline
+void
+compute_cache (const CT &value, Interval_nt_advanced &inter)
+{ inter = convert_to<Interval_nt_advanced>(value); }
+
+template <class CT>
+inline
+Interval_nt_advanced
+give_interval (const CT &value, const No_Filter_Cache &cache)
+{ return convert_to<Interval_nt_advanced>(value); }
+
+template <class CT>
+inline
+Interval_nt_advanced
+give_interval (const CT &value, const Interval_nt_advanced &inter)
+{ return inter; }
+
+template <class CT, class ET, class Cache_t = No_Filter_Cache >
 struct Filtered_exact
 {
-  typedef Filtered_exact<CT,ET> Fil;
+  typedef Filtered_exact<CT,ET,Cache_t> Fil;
   typedef Interval_nt_advanced IA;
 
+  Cache_t cache;
   CT value;
-#ifdef CGAL_FILTER_USE_CACHE
-  IA cache;
-  void recompute_cache() { cache = convert_to<IA>(value); }
-#else
-  void recompute_cache() {}
-#endif
+// #ifdef CGAL_FILTER_USE_CACHE
+  void recompute_cache() { compute_cache (value, cache); }
+  // { cache = convert_to<IA>(value); }
+// #else
+  // void recompute_cache() {}
+// #endif
 
   Filtered_exact () {}
   template <class NT>
@@ -76,13 +107,16 @@ struct Filtered_exact
   template <class NT>
   Filtered_exact (const NT & num, const NT & den)
       : value(num, den)   { recompute_cache(); }
-  Filtered_exact (const Filtered_exact<CT,ET> & fil)
+  Filtered_exact (const Filtered_exact<CT,ET,Cache_t> & fil)
       : value(fil.value)  { recompute_cache(); }
   // Filtered_exact (const double & d)	: value(d)  {}
   // Filtered_exact (const CT & ct)	: value(ct) {}
 
   // The two conversion functions are provided by the global scope.
   // Note that we could "cache" interval_value() [will be done].
+  IA interval() const { return give_interval(value, cache); }
+#if 0
+
 #ifdef CGAL_FILTER_USE_CACHE
   IA interval() const { return cache; }
 #else
@@ -91,6 +125,8 @@ struct Filtered_exact
 #else
   IA interval() const { return convert_from_to(IA(), value); }
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#endif
+
 #endif
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -137,92 +173,92 @@ struct Filtered_exact
 // io_tag, number_type_tag, operator>>, operator<<.
 
 #ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
-Filtered_exact<CT,ET>
-sqrt (const Filtered_exact<CT,ET>& fil)
+Filtered_exact<CT,ET,Cache_t>
+sqrt (const Filtered_exact<CT,ET,Cache_t>& fil)
 { return sqrt(fil.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
-Filtered_exact<CT,ET>
-square (const Filtered_exact<CT,ET>& fil)
+Filtered_exact<CT,ET,Cache_t>
+square (const Filtered_exact<CT,ET,Cache_t>& fil)
 { return square(fil.value); }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
 bool
-is_valid (const Filtered_exact<CT,ET>& fil)
+is_valid (const Filtered_exact<CT,ET,Cache_t>& fil)
 { return is_valid(fil.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
 bool
-is_finite (const Filtered_exact<CT,ET>& fil)
+is_finite (const Filtered_exact<CT,ET,Cache_t>& fil)
 { return is_finite(fil.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
 double
-to_double (const Filtered_exact<CT,ET>& fil)
+to_double (const Filtered_exact<CT,ET,Cache_t>& fil)
 { return CGAL::to_double(fil.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
 Sign
-sign (const Filtered_exact<CT,ET>& fil)
+sign (const Filtered_exact<CT,ET,Cache_t>& fil)
 { return CGAL::sign(fil.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
 Comparison_result
-compare (	const Filtered_exact<CT,ET>& fil,
-		const Filtered_exact<CT,ET>& fil2)
+compare (const Filtered_exact<CT,ET,Cache_t>& fil,
+	 const Filtered_exact<CT,ET,Cache_t>& fil2)
 { return CGAL::compare(fil.value, fil2.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
-Filtered_exact<CT,ET>
-abs (const Filtered_exact<CT,ET>& fil)
+Filtered_exact<CT,ET,Cache_t>
+abs (const Filtered_exact<CT,ET,Cache_t>& fil)
 { return abs(fil.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
-Filtered_exact<CT,ET>
-min (	const Filtered_exact<CT,ET>& fil,
-		const Filtered_exact<CT,ET>& fil2)
+Filtered_exact<CT,ET,Cache_t>
+min (const Filtered_exact<CT,ET,Cache_t>& fil,
+     const Filtered_exact<CT,ET,Cache_t>& fil2)
 { return min(fil.value, fil2.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
-Filtered_exact<CT,ET>
-max (	const Filtered_exact<CT,ET>& fil,
-		const Filtered_exact<CT,ET>& fil2)
+Filtered_exact<CT,ET,Cache_t>
+max (const Filtered_exact<CT,ET,Cache_t>& fil,
+     const Filtered_exact<CT,ET,Cache_t>& fil2)
 { return max(fil.value, fil2.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
 io_Operator
-io_tag (const Filtered_exact<CT,ET> &fil)
+io_tag (const Filtered_exact<CT,ET,Cache_t> &fil)
 { return io_tag(fil.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
 Number_tag
-number_type_tag (const Filtered_exact<CT,ET> &fil)
+number_type_tag (const Filtered_exact<CT,ET,Cache_t> &fil)
 { return number_type_tag(fil.value); }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
 std::ostream &
-operator<< (std::ostream& os, const Filtered_exact<CT,ET>& d)
+operator<< (std::ostream& os, const Filtered_exact<CT,ET,Cache_t>& d)
 { return os << d.value; }
 
-template <class CT, class ET>
+template <class CT, class ET, class Cache_t>
 inline
 std::istream &
-operator>> (std::istream &is, Filtered_exact<CT,ET>& d)
+operator>> (std::istream &is, Filtered_exact<CT,ET,Cache_t>& d)
 { return is >> d.value; }
 
 CGAL_END_NAMESPACE
