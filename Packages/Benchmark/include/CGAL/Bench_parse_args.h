@@ -7,12 +7,6 @@
 #include "getopt.h"
 #include "CGAL/Dir_search.h"
 
-#if (defined _MSC_VER)
-#define OPTS_CONST const
-#else
-#define OPTS_CONST
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 /*!
@@ -355,12 +349,12 @@ private:
   }
 
 private:
-  static OPTS_CONST char * s_formatOpts[];
-  static OPTS_CONST char * s_IOOpts[];
-  static OPTS_CONST char * s_benchOpts[];
-  static OPTS_CONST char * s_typeOpts[];
-  static OPTS_CONST char * s_strategyOpts[];
-  static OPTS_CONST char * s_boolOpts[];
+  static char * s_formatOpts[];
+  static char * s_IOOpts[];
+  static char * s_benchOpts[];
+  static char * s_typeOpts[];
+  static char * s_strategyOpts[];
+  static char * s_boolOpts[];
     
 private:
   static char s_optionStr[];
