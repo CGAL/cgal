@@ -41,6 +41,7 @@ Sous optimal, mais si on peut lui dire de l'utiliser quand il n'optimise pas
 De toute facon, c'est le fsqrt qui prend un max de temps, donc l'enrobage...
 
 - SunPro 5.1 ?  Mike says it supports interval arithmetic...
+  http://docs.sun.com/htmlcoll/coll.693.1/iso-8859-1/CPPARITHPROG/iapg_bookTOC.html
 - Does KCC 4.0 still fails when optimizing ?  Ask Stefan.
 - Try to see if KCC can use the GCC asm() on x86 ?
 - Try to get rid of the libc5 compatible version (make benchmarks first).
