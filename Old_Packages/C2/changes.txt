@@ -1,3 +1,7 @@
+Version 3.3.3 (September 9 1999)
+- renamed the scripts to spare the work for Geert-Jan
+- to satisfy nice arithmetic: I skip 3.3.2 (because 3.3.3 on 9/9/99 is too nice)
+
 Version 3.3.1 (September 3 1999)
 - Added headers to .C files
 

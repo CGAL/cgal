@@ -23,7 +23,7 @@ Package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 
 symlinks:
-	cd include/CGAL/Cartesian ; sh ./create_symlinks
+	cd include/CGAL/Cartesian ; sh ./create_symlinks_2
 
 Test:
 	cd test/Kernel; ./cgal_test
@@ -49,7 +49,7 @@ Submit: Package
 
 clean:
 	rm -f $(Package).tar.gz
-	cd include/CGAL/Cartesian ; sh ./remove_symlinks
+	cd include/CGAL/Cartesian ; sh ./remove_symlinks_2
 	cd test/Kernel ; make distclean
 
 $(Package).tar.gz:

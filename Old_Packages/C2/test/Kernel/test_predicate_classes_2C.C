@@ -25,7 +25,7 @@
 #include <cassert>
 #include <CGAL/leda_real.h>
 
-#include <CGAL/Cartesian_2.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/_test_fctobj_point_line_2.C>
@@ -33,7 +33,7 @@
 int
 main()
 {
-  typedef   CGAL::Cartesian_2<leda_real>     C_Cls;
+  typedef   CGAL::Cartesian<leda_real>     C_Cls;
   typedef   CGAL::Point_2<C_Cls>  C_Point;
   typedef   CGAL::Line_2<C_Cls>   C_Line;
   cout << "Testing 2d with Cartesian<leda_real> > :" << endl;
