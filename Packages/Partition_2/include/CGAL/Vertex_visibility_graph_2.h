@@ -31,7 +31,7 @@
 
 #include <CGAL/Segment_2.h>
 #include <CGAL/Rotation_tree_2.h>
-#include <CGAL/Indirect_less_xy_compare_2.h>
+#include <CGAL/Indirect_less_xy_2.h>
 #include <CGAL/Iterator_list.h>
 #include <CGAL/Turn_reverser.h>
 #include <CGAL/Point_pair_less_xy_2.h>
@@ -179,6 +179,8 @@ public:
          {
             // NOTE: no need to check here if z is p_infinity since you are
             // moving DOWN the tree instead of up and p_infinity is at the root
+            Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn_2);
+
             while ((tree.rightmost_child(z) != tree.end()) &&
                    !rightturn(*p,*tree.rightmost_child(z),*z))
             {
@@ -242,21 +244,10 @@ public:
 
    void insert_edge(const Point_pair& edge)
    {
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-       std::pair<iterator, bool> result = 
-#endif
-       if (less_xy_2(edge.first,edge.second))
-          edges.insert(edge);
-       else
-          edges.insert(Point_pair(edge.second, edge.first));
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-       std::cout << "insert of edge from " << edge.first << " to " 
-                 << edge.second 
-       if (result.second)
-          std::cout << " was successful " << std::endl;
-       else
-          std::cout << " was NOT successful " << std::endl;
-#endif
+      if (less_xy_2(edge.first,edge.second))
+         edges.insert(edge);
+      else
+         edges.insert(Point_pair(edge.second, edge.first));
    }
 
    bool is_an_edge(const Point_pair& edge)
