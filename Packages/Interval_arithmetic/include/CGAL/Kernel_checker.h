@@ -66,8 +66,6 @@ public:
 	    std::cerr << a1 << ", " << a2 << std::endl;
 #ifdef __GNUG__
 	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
-#else
-	    std::cerr << __FUNCTION__ << std::endl;
 #endif
 	    CGAL_kernel_assertion(false);
 	}
@@ -87,8 +85,6 @@ public:
 	    std::cerr << a1 << ", " << a2 << ", " << a3 << std::endl;
 #ifdef __GNUG__
 	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
-#else
-	    std::cerr << __FUNCTION__ << std::endl;
 #endif
 	    CGAL_kernel_assertion(false);
 	}
@@ -109,8 +105,6 @@ public:
 		      << std::endl;
 #ifdef __GNUG__
 	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
-#else
-	    std::cerr << __FUNCTION__ << std::endl;
 #endif
 	    CGAL_kernel_assertion(false);
 	}
@@ -132,8 +126,6 @@ public:
 		      << ", " << a5 << std::endl;
 #ifdef __GNUG__
 	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
-#else
-	    std::cerr << __FUNCTION__ << std::endl;
 #endif
 	    CGAL_kernel_assertion(false);
 	}

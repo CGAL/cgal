@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.105 on 9 July 2001
+- __FUNCTION__ was not portable at all.
+
 Version 4.104 on 4 July 2001
 - Kernel_checker : prints __FUNCTION__ or __PRETTY_FUNCTION__ to get more
   information about which predicate it is.
