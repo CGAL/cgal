@@ -18,11 +18,11 @@
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
 // ======================================================================
-#ifndef CONIC_ARC_WINDOW_STREAM_H
-#define CONIC_ARC_WINDOW_STREAM_H
+#ifndef CONIC_ARC_2_WINDOW_STREAM_H
+#define CONIC_ARC_2_WINDOW_STREAM_H
 
 #include <CGAL/IO/Window_stream.h>
-#include "Conic_arc_2.h"
+#include <CGAL/Arrangement_2/Conic_arc_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -59,13 +59,14 @@ Window_stream& operator<<(Window_stream& ws,
       double   end_y = is_source_left ? ty : sy;
       double   curr_x, curr_y;
       int      x;
-      Conic_arc_2<NT>::Point ps[2];
-      int      nps;
+
+      typename Conic_arc_2<NT>::Point_2 ps[2];
+      int                      nps;
 
       for (x = x_min + 1; x < x_max; x++)
       {
 	curr_x = ws.pix_to_real(x);
-	nps = cv.get_points_at_x (Conic_arc_2<NT>::Point(NT(curr_x), 0), 
+	nps = cv.get_points_at_x (Conic_arc_2<NT>::Point_2(NT(curr_x), 0), 
 				  ps);
 	if (nps == 1)
 	{
