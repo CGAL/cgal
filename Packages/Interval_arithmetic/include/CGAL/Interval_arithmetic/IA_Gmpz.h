@@ -32,7 +32,7 @@ inline CGAL_Interval_nt_advanced CGAL_to_Interval_nt_advanced
 	(const CGAL_Gmpz &z)
 {
     return CGAL_Interval_nt_advanced (CGAL_to_double(z)) +
-	   CGAL_Interval_nt_advanced::min_double;
+	   CGAL_Interval_smallest;
 }
 
 #endif	 // CGAL_IA_GMPZ_H
