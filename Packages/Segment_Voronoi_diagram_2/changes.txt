@@ -1,3 +1,6 @@
+11 August 2004:  Menelaos Karavelas
+- made code more conforming to the spec
+
 10 August 2004:  Menelaos Karavelas
 - added examples in user manual
 - fixed minor problems in user manual

@@ -120,7 +120,7 @@ public:
 
   // ACCESS METHODS
   //---------------
-  const Handle& point_handle(unsigned int i) const {
+  const Handle& handle(unsigned int i) const {
     CGAL_precondition( i < 6 );
     return h_[i];
   }
@@ -143,12 +143,12 @@ public:
     }
   }
 
-  Self supporting_segment_site() const {
+  Self supporting_site() const {
     CGAL_precondition( is_segment() );
     return Self(h_[0], h_[1]);
   }
 
-  Self supporting_segment_site(unsigned int i) const {
+  Self supporting_site(unsigned int i) const {
     CGAL_precondition( is_point() && !is_input() && i < 2 );
     if ( i == 0 ) {
       return Self(h_[2], h_[3]);
@@ -157,7 +157,7 @@ public:
     }
   }
 
-  Self crossing_segment_site(unsigned int i) const {
+  Self crossing_site(unsigned int i) const {
     CGAL_precondition( is_segment() && !is_input() );
     CGAL_precondition( i < 2 && !is_input(i) );
     if ( i == 0 ) {
