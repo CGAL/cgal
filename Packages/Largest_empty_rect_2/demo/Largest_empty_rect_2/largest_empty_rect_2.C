@@ -67,7 +67,7 @@ const QString my_title_string("Largest_empty_rectangle_2 Demo with"
 
 //global flags and variables
 int                 current_state;
-std::list<Point>	  list_of_points;
+std::list<Point_2>	  list_of_points;
 Iso_rectangle_2     iso_rect;
 
 
@@ -93,7 +93,7 @@ public:
       //VERTICES
       *widget << CGAL::PointSize(6);
       *widget << CGAL::GREEN;
-      std::list<Point>::iterator itp = list_of_points.begin();
+      std::list<Point_2>::iterator itp = list_of_points.begin();
       while(itp!=list_of_points.end()){
         empty_rectangle.insert(*itp);
         *widget << (*itp++);
@@ -172,7 +172,7 @@ public:
     widget->attach(&testlayer);
 
     //initialize the iso_rectangle
-    iso_rect = Iso_rectangle_2(Point(-0.8, -0.8), Point(0.8, 0.8));
+    iso_rect = Iso_rectangle_2(Point_2(-0.8, -0.8), Point_2(0.8, 0.8));
   };
 
 private:
@@ -193,7 +193,7 @@ public slots:
 private slots:
   void get_new_object(CGAL::Object obj)
   {
-    Point p;
+    Point_2 p;
     if(CGAL::assign(p,obj)) {
       list_of_points.push_back(p);
       something_changed();
@@ -246,7 +246,7 @@ private slots:
 		// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
-    CGAL::Random_points_in_disc_2<Point> g(0.5);
+    CGAL::Random_points_in_disc_2<Point_2> g(0.5);
     for(int count=0; count<100; count++) {
       list_of_points.push_back(*g++);
     }
@@ -275,8 +275,10 @@ main(int argc, char **argv)
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
+#if !defined (__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   widget.setIcon(cgal_icon);
+#endif
   widget.show();
   current_state = -1;
   return app.exec();
