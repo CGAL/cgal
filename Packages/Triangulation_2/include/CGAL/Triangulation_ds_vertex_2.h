@@ -77,7 +77,7 @@ private:
 };
 
 template <class Tds>
-Triangulation_ds_vertex_2 <Tds>::size_type
+typename Triangulation_ds_vertex_2 <Tds>::size_type
 Triangulation_ds_vertex_2 <Tds>::
 degree() //const
 {
