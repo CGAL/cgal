@@ -1,3 +1,6 @@
+7 September 2004 Sylvain Pion
+- Make some types public in Filtered_kernel (FK, EK, C2E, C2F).
+
 6 September 2004 Menelaos Karavelas & Sylvain Pion
 - added missing "#include<CGAL/basic.h>" in some testsuite files
 

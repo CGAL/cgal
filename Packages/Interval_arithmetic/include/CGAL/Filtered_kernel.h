@@ -57,13 +57,14 @@ class Filtered_kernel_base
   : public CK::template Base<Kernel>::Type
 {
     typedef typename CK::template Base<Kernel>::Type   Kernel_base;
+public:
+
     // Hardcoded for now.
     typedef Simple_cartesian<Quotient<MP_Float> >    EK;
     typedef Simple_cartesian<Interval_nt_advanced>   FK;
     typedef Cartesian_converter<Kernel_base, EK>     C2E;
     typedef Cartesian_converter<Kernel_base, FK,
                                 To_interval<typename Kernel_base::RT> > C2F;
-public:
 
     template < typename Kernel2 >
     struct Base { typedef Filtered_kernel_base<CK, Kernel2>  Type; };
