@@ -37,7 +37,7 @@ struct Visibility_complex_circle_traits
     // The chi2 predicate
     struct Orientation_object {
 	Orientation operator()(const Bitangent_2& a,const Bitangent_2& b) const{ 
-	    typedef Bitangent_2::Disk_handle Disk_handle;
+	    typedef typename Bitangent_2::Disk_handle Disk_handle;
 	    Disk_handle sa(a.source_object()),ta(a.target_object()),
 			   sb(b.source_object()),tb(b.target_object());
 	    FT ssa = (a.is_left_xx()) ? 1 : -1;
@@ -163,7 +163,7 @@ public:
 	    return orientation(a.source() , a.target() ,
 			       a.source() + (b.target() - b.source()));
 	    */
-	    typedef Bitangent_2::Disk_handle Disk_handle;
+	    typedef typename Bitangent_2::Disk_handle Disk_handle;
 	    Disk_handle sa(a.source_object()),ta(a.target_object()),
 			   sb(b.source_object()),tb(b.target_object());
 	    FT ssa = (a.is_left_xx()) ? 1 : -1;
