@@ -1,5 +1,8 @@
 Changes done to the `Random_numbers' package
 
+Version 2.1.2 on 22-Sep-1999
+- deterministic initialisation fixed (on IRIX 64).
+
 Version 2.1.1 on 20-Jul-1999
 - using `RAND_MAX' now (fixes a problem with linux).
 
