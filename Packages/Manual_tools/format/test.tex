@@ -125,7 +125,7 @@ can be accessed using the macro \verb"\"\verb"classname". The unformatted
 name as it was originally written can be accessed using the
 \verb"\"\verb"pureclassname" macro.
 
-\creationvariable{p_}
+\creationvariable{p}
 \creation
 
 The constructors create a variable \var\ of the class. The
@@ -160,16 +160,16 @@ example. All together we achieve this natural looking descriptions.
      \CC\ code: {\tt Demo\_Class(RT hx, RT hy, RT hw);}}
 
 The font and style in which the declarations are formatted can be
-changed by overwriting the \verb"\CCfont" and \verb"\CCendfont"
+changed by overwriting the \verb"\CCfont" and \verb"\CCendFont"
 macros. Their default settings are
-\verb"\gdef\CCfont{\it}\gdef\CCendfont{\/}". They are used within a
+\verb"\gdef\CCfont{\it}\gdef\CCendFont{\/}". They are used within a
 group, so font changing commands are local. The rest of this document is
-formatted using the definitions \verb"\gdef\CCfont{\tt}\gdef\CCendfont{}".
+formatted using the definitions \verb"\gdef\CCfont{\tt}\gdef\CCendFont{}".
 
-\gdef\CCfont{\tt}\gdef\CCendfont{}
+\gdef\CCfont{\tt}\gdef\CCendFont{}
   \constructor{Demo_Class( int a, X<Y> &x);}{arbitrary constructor.}
 
-\gdef\CCfont{\it}\gdef\CCendfont{\/}
+\gdef\CCfont{\it}\gdef\CCendFont{\/}
 
 Also changable are the special characters the formatting has to
 deal with. They are named \verb"\CCunderscore", \verb"\CCopenangle",
@@ -250,6 +250,17 @@ with the next two declarations.
 
   \method{Demo_Class
         operator+(Demo_Class q);}{Declaration via method.}
+
+One can locally activate that the operator declaration is shown as it
+is written without operator formatting, {\tt const ...\&}, classname, or
+trailing const declarations for methods removal. This can be done with
+\verb+\C+\verb+CtagFullDeclarations+ within a scope of braces {\tt
+  \{...\}}.
+
+{\CCtagFullDeclarations
+  \method{Demo_Class
+        operator+(const Demo_Class& q) const;}{Declaration via method.}
+}
 
 There is some laziness allowed in placing spaces around the operator
 characters. See the following examples:
@@ -344,7 +355,7 @@ A small set of handy abbreviations are added. Here they are all together:
 \begin{tabbing}
   dum \= dummyyyyyyyy \= \kill
   \> \verb+\CC+         \> \CC         \\
-  \> \verb+\gg+         \> \gg         \\
+  \> \verb+\gcc+        \> \gcc        \\
   \> \verb+\nat+        \> \nat        \\
   \> \verb+\real+       \> \real       \\
 %  \> \verb+\boxit{A}+   \> \boxit{A}   \\
@@ -461,10 +472,10 @@ A set of handy abbreviations has been extended. They need the package
 
 \begin{tabbing}
   dum \= dummyyyyyyyy \= \kill
-  \> \verb+\+verb+N+        \> \N        \\
-  \> \verb+\+verb+Z+        \> \Z        \\
-  \> \verb+\+verb+R+        \> \R        \\
-  \> \verb+\+verb+E+        \> \E
+  \> \verb+\+\verb+N+        \> \N        \\
+  \> \verb+\+\verb+Z+        \> \Z        \\
+  \> \verb+\+\verb+R+        \> \R        \\
+  \> \verb+\+\verb+E+        \> \E
 \end{tabbing}
 
 A \verb+\de+\verb+claration+ accepts one parameter. The style will
@@ -563,8 +574,9 @@ fully HTML anchor with the given URL around the \TeX\ source after the
         \verb+\Anchor{ URL }{ TeX code ... }+
 \end{itemize}
 
-% ----------------------------------------------------------------------
-\begin{class}{Demo_Class}
+%----------------------------------------------------------------------
+\CCtagDefaults
+\begin{CCclass}{Demo_Class}
 \section{The List of All Operators}
 
   \function{Ptr_Class
@@ -726,7 +738,109 @@ fully HTML anchor with the given URL around the \TeX\ source after the
   \function{Demo_Class
         operator^=(Demo_Class p, Demo_Class q);}{}
 
-\end{class}
+\end{CCclass}
+
+% ----------------------------------------------------------------------
+\section{Test Indentation and Alternate Formatting}
+
+This example tests the indentation and right margin setting
+possibilities. Two long declarations with alternative formatting rules
+for the function arguments are used. First the  declaration without
+any indentation or margins.
+
+\function{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the default formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+
+Now with 10mm indentation and 10mm right margin. Note that the
+description is also further indented since all dimensions are
+calculated from left.
+
+\CCtagDefaults
+\def\ind{\hspace*{7mm}}
+\CCWindent=10mm
+\CCWrightMargin=10mm
+
+\function{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the default formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+
+\function{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the alternative formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+
+Show the indentation also for template functions.
+
+\CCfunction{template<class A> int bar(A a);}{A bit more text to
+  demonstrate the right margin.}
+
+\renewcommand{\CCalternateThreeColumn}{\CCtrue}
+\CCWindent=0mm
+\CCWrightMargin=0mm
+
+% ----------------------------------------------------------------------
+\section{Test the Setting of the Column Widths by Example Texts}
+
+
+\CCsetThreeColumns{int}{foo( int i, int j);}{}
+\function{int foo( int i, int j);}{returns gnats$(i,j)$.}
+
+\CCsetThreeColumns{int}{}{returns gnats$(i,j)$.}
+\function{int foo( int i, int j);}{returns gnats$(i,j)$.}
+
+\CCsetThreeColumns{}{foo( int i, int j);}{returns gnats$(i,j)$.}
+\function{int foo( int i, int j);}{returns gnats$(i,j)$.}
+
+Test it with the special characters (changed catcodes) for function
+and contructor declarations.  
+
+
+\CCsetThreeColumns{%#_^}{%#_^f*&*&oo( int i);}{}
+\CCsetTwoColumns{%#_^ foo( int i, int j);}{}
+\begin{CCclass}{Gnu}
+  \CCcreationVariable{g}
+  \CCconstructor{Gnu( double d);}{test.}
+  \CCfunction{int foo( Gnats<T> gn);}{blablabla.}
+\end{CCclass}
+
+
+% ----------------------------------------------------------------------
+\section{Check Long Constructor Calls}
+
+\begin{classtemplate}{CBP_Bidirectional_circulator< C, C*
+   (C::*next)(), C* (C::*previous)()>} 
+\creationvariable{circ}
+\CCsetTwoColumns{}{a const circulator \var\ with singular value.}
+
+NOTHING is interesting here.
+
+
+\constructor{CBP_Bidirectional_circulator();}{%
+ a const circulator \var\ with singular value.}
+
+\constructor{CBP_Bidirectional_circulator( const C* ptr);}{a
+  const circulator \var\ initialized to point to the element \CCstyle{*ptr}.} 
+\end{classtemplate}
+
+% ----------------------------------------------------------------------
+\section{Glueing Declarations Together}
+
+\function{int foo( double x);}{}
+\CCglueDeclarations
+\function{int bar( double x);}{}
+
+\function{int foo( double x);}{Bla.}
+\CCglueDeclarations
+\function{int bar( double x);}{Blubb blubb.}
+
+\function{int foo_baaaaaaaarrrr( double x);}{%
+     Bla bal blabal blabal blabal blab.}
+\CCglueDeclarations
+\function{int barfoooooooooooooooooo( double x);}{%
+    Blubb blubblubb blubblubb blubblubb blubb.}
+
+
+
 
 \end{document}
 
