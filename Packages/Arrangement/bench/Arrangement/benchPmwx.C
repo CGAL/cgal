@@ -12,13 +12,14 @@
 #include <CGAL/Arr_leda_segment_exact_traits.h>
 #else
 #include <CGAL/Cartesian.h>
+#include <CGAL/Arr_segment_exact_traits.h>
 #endif
 #endif
 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Pm_with_intersections.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/sweep_to_construct_planar_map_2.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/Pm_Window_stream.h>
@@ -29,6 +30,7 @@
 #include <list>
 
 #include "CGAL/Bench.h"
+#include "CGAL/Bench.C"
 #include "CGAL/Parse_args.h"
 #include "CGAL/Parse_args.C"
 
@@ -38,13 +40,13 @@ typedef leda_rational                                   NT;
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
 #else
 #if defined(USE_MY_KERNEL)
-typedef CGAL::Pm_segment_traits_leda_kernel_2<NT>       Kernel;
+typedef CGAL::Arr_leda_segment_exact_traits<NT>         Traits;
 #else
 typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
 #endif
 #endif
 
-typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
 typedef CGAL::Pm_default_dcel<Traits>                   Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                 Pm;
 typedef CGAL::Planar_map_with_intersections_2<Pm>       Pmwx;
@@ -126,7 +128,7 @@ public:
       compareExtreme(CGAL::to_double(x1), CGAL::to_double(y1));
     }
     inp.close();
-    if (m_verbose) std::cout << m_curveList.size() << std::endl;
+    if (m_verbose) std::cout << m_curveList.size() << " curves" << std::endl;
 
     return 0;
   }
@@ -154,7 +156,7 @@ protected:
 
 /*!
  */
-class Construct_Pm : public Basic_Pm {
+class Construct_Pmwx : public Basic_Pm {
 public:
   virtual void op()
   {
@@ -170,7 +172,24 @@ public:
   }
 };
 
-typedef CGAL::Bench<Construct_Pm> ConstructPmBench;
+typedef CGAL::Bench<Construct_Pmwx> ConstructPmwxBench;
+
+/*!
+ */
+class Sweep_Pm : public Basic_Pm {
+public:
+  virtual void op()
+  {
+    Pm pm;
+    Traits traits;
+    CGAL::sweep_to_construct_planar_map_2(m_curveList.begin(),
+                                          m_curveList.end(),
+                                          traits, pm);
+    // if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
+  }
+};
+
+typedef CGAL::Bench<Sweep_Pm> SweepPmBench;
 
 #if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
 CGAL::Window_stream & operator<<(CGAL::Window_stream & os, const Point & p)
@@ -190,11 +209,11 @@ public:
    */
   virtual void op()
   {
-    Pmwx pm;
-    CurveList::const_iterator i;
-    for (i = m_curveList.begin(); i != m_curveList.end(); i++)
-        pm.insert(*i);
-    // pm.insert(m_curveList.begin(), m_curveList.end());
+    Pm pm;
+    Traits traits;
+    CGAL::sweep_to_construct_planar_map_2(m_curveList.begin(),
+                                          m_curveList.end(),
+                                          traits, pm);
     m_window->set_flush(0);
     (*m_window) << pm;
     m_window->set_flush(1);
@@ -265,27 +284,39 @@ int main(int argc, char * argv[])
   if (rc < 0) return rc;
   
   bool verbose = parseArgs.getVerbose();
-  Parse_args::BenchId benchId = parseArgs.getBenchId();
+  unsigned int benchMask = parseArgs.getBenchMask();
   Parse_args::FormatId inputFormat = parseArgs.getInputFormat();
   int samples = parseArgs.getSamples();
+  int iterations = parseArgs.getIterations();
   int seconds = parseArgs.getSeconds();
+  bool printHeader = parseArgs.getPrintHeader();
   const char * filename = parseArgs.getFilename();
   const std::string * fullname = parseArgs.getFullname();
       
   // Construct
   const char * bname = parseArgs.getBenchName(Parse_args::BENCH_CONSTRUCT);
-  ConstructPmBench benchConstruct((std::string(bname) +
-                                  " PM (" + std::string(filename) + ")"),
-                                  seconds, true);
-  Construct_Pm & construct_pm = benchConstruct.getBenchUser();
-  construct_pm.setFormat(inputFormat);
-  construct_pm.setFilename(fullname->c_str());
-  construct_pm.setVerbose(verbose);
+  ConstructPmwxBench benchConstruct((std::string(bname) +
+                                     " Pmwx (" + std::string(filename) + ")"),
+                                    seconds, false);
+  Construct_Pmwx & construct_pmwx = benchConstruct.getBenchUser();
+  construct_pmwx.setFormat(inputFormat);
+  construct_pmwx.setFilename(fullname->c_str());
+  construct_pmwx.setVerbose(verbose);
 
+  // Sweep
+  bname = parseArgs.getBenchName(Parse_args::BENCH_SWEEP);
+  SweepPmBench benchSweep((std::string(bname) +
+                           " Pm (" + std::string(filename) + ")"),
+                          seconds, false);
+  Sweep_Pm & sweep_pm = benchSweep.getBenchUser();
+  sweep_pm.setFormat(inputFormat);
+  sweep_pm.setFilename(fullname->c_str());
+  sweep_pm.setVerbose(verbose);
+  
   // Construct and Display
   bname = parseArgs.getBenchName(Parse_args::BENCH_DISPLAY);
   DisplayPmBench benchDisplay((std::string(bname) +
-                               " PM (" + std::string(filename) + ")"),
+                               " Pm (" + std::string(filename) + ")"),
                               seconds, false);
   Display_Pm & display_pm = benchDisplay.getBenchUser();
   display_pm.setFormat(inputFormat);
@@ -294,21 +325,26 @@ int main(int argc, char * argv[])
 
   if (samples > 0) {
     benchConstruct.setSamples(samples);
+    benchSweep.setSamples(samples);
     benchDisplay.setSamples(samples);
+  } else {
+    if (iterations > 0) {
+      benchConstruct.setIterations(iterations);
+      benchSweep.setIterations(iterations);
+      benchDisplay.setIterations(iterations);
+    }
   }
 
-  if (benchId == Parse_args::BENCH_ALL) {
-    benchConstruct();
-    benchDisplay();
-  } else switch(benchId) {
-    case Parse_args::BENCH_CONSTRUCT: benchConstruct(); break;
-    case Parse_args::BENCH_DISPLAY: benchDisplay(); break;
-  }
+  if (printHeader) CGAL::Bench_base::printHeader();
+  if (benchMask & (0x1 << Parse_args::BENCH_CONSTRUCT)) benchConstruct();
+  if (benchMask & (0x1 << Parse_args::BENCH_SWEEP)) benchSweep();
+  if (benchMask & (0x1 << Parse_args::BENCH_DISPLAY)) benchDisplay();
   
   // Ensure the compiler doesn't optimize the code away...
   if (verbose) {
-    std::cout << "(" << benchConstruct.getIterations() << ") " << std::endl;
-    std::cout << "(" << benchDisplay.getIterations() << ") " << std::endl;
+    std::cout << "(" << benchConstruct.getSamples() << ")" << std::endl;
+    std::cout << "(" << benchSweep.getSamples() << ") " << std::endl;
+    std::cout << "(" << benchDisplay.getSamples() << ") " << std::endl;
   }
   
   return 0;

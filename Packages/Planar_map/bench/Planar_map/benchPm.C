@@ -28,6 +28,7 @@
 #include <list>
 
 #include "CGAL/Bench.h"
+#include "CGAL/Bench.C"
 #include "CGAL/Parse_args.h"
 #include "CGAL/Parse_args.C"
 
@@ -257,10 +258,12 @@ int main(int argc, char * argv[])
   if (rc < 0) return rc;
   
   bool verbose = parseArgs.getVerbose();
-  Parse_args::BenchId benchId = parseArgs.getBenchId();
+  unsigned int benchMask = parseArgs.getBenchMask();
   Parse_args::FormatId inputFormat = parseArgs.getInputFormat();
   int samples = parseArgs.getSamples();
+  int iterations = parseArgs.getIterations();
   int seconds = parseArgs.getSeconds();
+  bool printHeader = parseArgs.getPrintHeader();
   const char * filename = parseArgs.getFilename();
   const std::string * fullname = parseArgs.getFullname();
       
@@ -268,7 +271,7 @@ int main(int argc, char * argv[])
   const char * bname = parseArgs.getBenchName(Parse_args::BENCH_CONSTRUCT);
   ConstructPmBench benchConstruct((std::string(bname) +
                                   " PM (" + std::string(filename) + ")"),
-                                  seconds, true);
+                                  seconds, false);
   Construct_Pm & construct_pm = benchConstruct.getBenchUser();
   construct_pm.setFormat(inputFormat);
   construct_pm.setFilename(fullname->c_str());
@@ -287,20 +290,21 @@ int main(int argc, char * argv[])
   if (samples > 0) {
     benchConstruct.setSamples(samples);
     benchDisplay.setSamples(samples);
+  } else {
+    if (iterations > 0) {
+      benchConstruct.setIterations(iterations);
+      benchDisplay.setIterations(iterations);
+    }
   }
 
-  if (benchId == Parse_args::BENCH_ALL) {
-    benchConstruct();
-    benchDisplay();
-  } else switch(benchId) {
-    case Parse_args::BENCH_CONSTRUCT: benchConstruct(); break;
-    case Parse_args::BENCH_DISPLAY: benchDisplay(); break;
-  }
+  if (printHeader) CGAL::Bench_base::printHeader();
+  if (benchMask & (0x1 << Parse_args::BENCH_CONSTRUCT)) benchConstruct();
+  if (benchMask & (0x1 << Parse_args::BENCH_DISPLAY)) benchDisplay();
   
   // Ensure the compiler doesn't optimize the code away...
   if (verbose) {
-    std::cout << "(" << benchConstruct.getIterations() << ") " << std::endl;
-    std::cout << "(" << benchDisplay.getIterations() << ") " << std::endl;
+    std::cout << "(" << benchConstruct.getSamples() << ") " << std::endl;
+    std::cout << "(" << benchDisplay.getSamples() << ") " << std::endl;
   }
   
   return 0;
