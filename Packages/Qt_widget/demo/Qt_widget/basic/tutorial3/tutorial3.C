@@ -3,7 +3,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-
+#include <CGAL/IO/Qt_widget_Delaunay_triangulation_2.h>
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <qapplication.h>
