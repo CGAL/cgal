@@ -3,6 +3,9 @@
 //  Sylvain Pion, 2000.
 
 #include <CGAL/basic.h>
+#include <iostream>
+
+#if !defined(__BORLANDC__) && !defined(_MSC_VER)
 
 #include <CGAL/Cartesian.h>
 
@@ -71,3 +74,11 @@ int main()
 
   return 0;
 }
+
+#else
+int main()
+{
+  std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
+  return 0;
+}
+#endif

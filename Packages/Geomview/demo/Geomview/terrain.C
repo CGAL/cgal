@@ -1,6 +1,9 @@
-#include <CGAL/basic.h>
 
+#include <CGAL/basic.h>
 #include <iostream>
+
+#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+
 #include <fstream>
 #include <unistd.h> // sleep
 
@@ -122,3 +125,11 @@ int main()
 
   return 0;
 }
+
+#else
+int main()
+{
+  std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
+  return 0;
+}
+#endif

@@ -5,6 +5,8 @@
 #include <CGAL/basic.h>
 #include <iostream>
 
+#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/IO/Geomview_stream.h>
@@ -26,3 +28,11 @@ int main()
 
   return 0;
 }
+
+#else
+int main()
+{
+  std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
+  return 0;
+}
+#endif

@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.10 (23 May 2001)
+- Don't compile the demos at all on Windows.
+
 Ver 3.9 (17 April 2001)
 - Add documentation for the previous change.
 - Draw intersection of the BBox for Ray_2 and Line_2.
