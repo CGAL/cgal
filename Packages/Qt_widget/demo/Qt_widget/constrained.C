@@ -25,6 +25,7 @@ int main(int, char*)
 #include <CGAL/Constrained_triangulation_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_Constrained_triangulation_2.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 #include <qapplication.h>
 #include <qmainwindow.h>
