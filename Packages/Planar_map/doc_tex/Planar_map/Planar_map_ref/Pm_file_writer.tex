@@ -78,15 +78,11 @@ comments are defined only if the comments flag is set to true:
 \ccMethod{void write_comment (const char *str, int i);}
 {writes a line by comments with the information noted in {\em str} and {\em i} to the output stream.}
 
-\ccMethod{void write_value (unsigned int val, char deliminator = \'\\n\');}
-{writes an integer value followed by a deliminator to the output stream.}
-=======
 \ccMethod{void write_value (unsigned int val, 
-                            char deliminator = newline);}
-{writing an integer value followed by a deliminator to the output stream.
- the delimiter has a default value set to the newline character 
+                            char delimiter = newline);}
+{writing an integer value followed by a delimiter to the output stream.
+ The delimiter has a default value set to the newline character 
  '$\backslash$n'.}
->>>>>>> 1.2
 
 \ccMethod{ostream& out();}
 {returns the output stream the \ccc{Planar map} is written to.} 
