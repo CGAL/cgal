@@ -26,6 +26,7 @@ class tetrahedron_generator {
  private:
   std::ostream& out;
   RT s;
+  CGAL::Random r;
   Point_source P;
   std::list<Point_3> points;
 
@@ -275,8 +276,8 @@ class tetrahedron_generator {
   
  public:
   tetrahedron_generator(std::ostream& o, RT sin=10) : out(o), s(sin), P(CGAL::to_double(s)/2) {}
-    tetrahedron_generator(std::ostream& o, RT s, unsigned int seed) 
-      : out(o), s(sin), P(CGAL::to_double(s)/2, seed) {}
+    tetrahedron_generator(std::ostream& o, RT sin, unsigned int seed) 
+      : out(o), s(sin), r(seed), P(CGAL::to_double(s)/2, r) {}
 
     void create_tetrahedra(int nx, int ny, int nz) {
       for(int dx=0; dx < nx; ++dx)

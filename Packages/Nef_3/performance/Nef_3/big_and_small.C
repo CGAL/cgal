@@ -121,8 +121,13 @@ int main(int argc, char* argv[]) {
   int l = argc>4 ? std::atoi(argv[4]) : 2;
 
   std::ostringstream out1;
-  tgen t1(out1,s);
-  t1.create_tetrahedra(n,n,1);
+  if(argc>5) {
+    tgen t1(out1,s,std::atoi(argv[5]));
+    t1.create_tetrahedra(n,n,1);
+  } else {
+    tgen t1(out1,s);
+    t1.create_tetrahedra(n,n,1);
+  }
   std::istringstream in1(out1.str());
   Nef_polyhedron N1;
   in1 >> N1;
@@ -134,12 +139,12 @@ int main(int argc, char* argv[]) {
   Nef_polyhedron N3=N2;
   transform_big(N2,n,s);
   N1=N2.join(N1);
-  std::cout << N1;
+  
+  cgal_nef3_timer_on = true;
   
   CGAL::Random r;
   int x=r.get_int(0,n-l-1);
   int y=r.get_int(0,n-1-1);
   transform_small(N3,s,l,x,y);
   N1 = N1.difference(N3);
-  std::cerr << N1;
 };
