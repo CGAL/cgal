@@ -53,8 +53,8 @@ class Multiple_kd_tree {
 
 typedef Rep_                                Rep;
 typedef typename Rep::FT                    NT;
-typedef CGAL::Segment_2<Rep>                Segment;// !!!! look at LER
-typedef CGAL::Point_2<Rep>                  Point_2;
+typedef typename Rep::Segment_2             Segment;
+typedef typename Rep::Point_2               Point_2;
 typedef CGAL::Iso_rectangle_2<Rep>          Iso_rectangle_2;
 typedef CGAL::Kdtree_interface_2d<my_point<NT,SAVED_OBJECT> >  kd_interface;
 typedef CGAL::Kdtree_d<kd_interface>  kd_tree;

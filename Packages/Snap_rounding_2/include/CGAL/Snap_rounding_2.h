@@ -45,7 +45,7 @@
 
 //#endif
 
-//#include <CGAL/Sweep_line_tight_2.h> ********
+//#include <CGAL/Sweep_line_tight_2.h>
 #include <CGAL/Sweep_line_2.h>
 
 #include <CGAL/Arr_segment_traits_2.h>
@@ -397,8 +397,7 @@ void init_angle_appr()
 template<class Rep_>
 class Snap_rounding_2 {
 
-typedef CGAL::Arr_segment_traits_2<Rep_ >            Traits;// !!!! remove
-
+typedef CGAL::Arr_segment_traits_2<Rep_ >            Traits;
 typedef Rep_                                         Rep;
 typedef typename Rep::FT                             NT;
 // @@@@ special typedefs for pm
@@ -420,17 +419,14 @@ public:
   friend class Hot_Pixel<Rep>;
   friend class hot_pixel_dir_cmp<Rep>;
 
-  typedef CGAL::Segment_2<Rep> Segment_2;
-
-  //  typedef typename Rep::Segment_2 Segment_2;!!!! change everywhere
-
-  typedef CGAL::Point_2<Rep> Point_2;
+  typedef typename Rep::Segment_2 Segment_2;
+  typedef typename Rep::Point_2   Point_2;
   typedef std::list<Point_2> PointList;
-  typedef typename std::list<std::list<CGAL::Point_2<Rep> > >
+  typedef typename std::list<std::list<Point_2> >
              Polylines_container;
   typedef typename Polylines_container::const_iterator Polyline_const_iterator;
   typedef typename Polylines_container::iterator Polyline_iterator;
-  typedef typename std::list<CGAL::Point_2<Rep> > Points_container;
+  typedef typename std::list<typename Rep::Point_2> Points_container;
   typedef typename Points_container::const_iterator Point_const_iterator;
   typedef typename std::list<Segment_2> Segments_container;
   typedef typename Segments_container::const_iterator Segment_const_iterator;
