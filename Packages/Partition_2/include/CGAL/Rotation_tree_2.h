@@ -29,19 +29,19 @@
 #ifndef  CGAL_ROTATION_TREE_H
 #define  CGAL_ROTATION_TREE_H
 
-#include <list>
+#include <vector>
 #include <CGAL/ch_utils.h>
 #include <CGAL/Rotation_tree_node_2.h>
 
 namespace CGAL {
 
 template <class Traits_>
-class Rotation_tree_2 : public std::list< Rotation_tree_node_2<Traits_> >
+class Rotation_tree_2 : public std::vector< Rotation_tree_node_2<Traits_> >
 {
 public:
    typedef Traits_                               Traits;
    typedef Rotation_tree_node_2<Traits>          Node;
-   typedef typename std::list<Node>::iterator    Self_iterator;
+   typedef typename std::vector<Node>::iterator    Self_iterator;
    typedef typename Traits::Point_2              Point_2;
 
 
@@ -57,32 +57,32 @@ public:
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
    
-      sort(Greater_xy_2(Traits().less_xy_2_object()));
-      unique();
+      std::sort(begin(), end(), Greater_xy_2(Traits().less_xy_2_object()));
+      std::unique(begin(), end());
    
       // b is the point with the largest x coordinate
       Node largest_x = front();
    
       // push the point p_minus_infinity
-      push_front(Point_2( CGAL::to_double(largest_x.x())+1,
+      push_back(Point_2( CGAL::to_double(largest_x.x())+1,
                          -CGAL::to_double(largest_x.y())));
-   
+
       // push the point p_infinity
-      push_front(Point_2(CGAL::to_double(largest_x.x())+1,
+      push_back(Point_2(CGAL::to_double(largest_x.x())+1,
                          CGAL::to_double(largest_x.y())));
    
-      _p_inf = begin();  // record the iterators to these extreme points
-      _p_minus_inf = begin(); _p_minus_inf++;
+      _p_inf = end();  // record the iterators to these extreme points
+      _p_inf--;
+      _p_minus_inf = _p_inf;
+      _p_minus_inf--;
    
-      Self_iterator root = begin();     // p_infinity
-      Self_iterator child = root;
-      child++;                          // now points to p_minus_inf
-      set_rightmost_child(child, root); // make p_minus_inf a child of p_inf
-      root++;                           // now points to p_minus_inf
-      child++;                          // now points to p_0
-      while (child != end())  // make all points children of p_minus_inf
+      Self_iterator child = _p_minus_inf;
+      // make p_minus_inf a child of p_inf
+      set_rightmost_child(_p_minus_inf, _p_inf); 
+      child = begin();               // now points to p_0
+      while (child != _p_minus_inf)  // make all points children of p_minus_inf
       {
-         set_rightmost_child(child,root);
+         set_rightmost_child(child, _p_minus_inf);
          child++;
       }
    }
@@ -92,10 +92,7 @@ public:
    // in the ordering, after the auxilliary points p_minus_inf and p_inf
    Self_iterator rightmost_point_ref() 
    {
-      Self_iterator it = begin(); // p_minus_inf
-      it++; // p_inf
-      it++; // p_0
-      return it;
+      return begin();
    }
 
    Self_iterator right_sibling(Self_iterator p) 
