@@ -1,22 +1,23 @@
 
 #include <CGAL/IO/Postscript_stream.h>
 
+CGAL_BEGIN_NAMESPACE
 
-const float CGAL_PS_Stream::CM=28.4;
-const float CGAL_PS_Stream::INCH=72.0;
-const float CGAL_PS_Stream::POINT=1.0;
+const float PS_Stream::CM=28.4;
+const float PS_Stream::INCH=72.0;
+const float PS_Stream::POINT=1.0;
 
-const DashStyle CGAL_PS_Stream::SOLID="[] 0 ";
-const DashStyle CGAL_PS_Stream::DASH2="[5 5] 0 ";
-const DashStyle CGAL_PS_Stream::DASH3="[10 10] 0 ";
-const DashStyle CGAL_PS_Stream::DASH6="[10 6 4 6] 0 ";
-const DashStyle CGAL_PS_Stream::DASH4="[10 5] 0 ";
-const DashStyle CGAL_PS_Stream::DASH5="[5 10] 0 ";
-const DashStyle CGAL_PS_Stream::DASH1="[2 2] 0 ";
-extern const CGAL_PS_Stream::Context CGAL_CTXT_DEFAULT=CGAL_PS_Stream::Context();
+const DashStyle PS_Stream::SOLID="[] 0 ";
+const DashStyle PS_Stream::DASH2="[5 5] 0 ";
+const DashStyle PS_Stream::DASH3="[10 10] 0 ";
+const DashStyle PS_Stream::DASH6="[10 6 4 6] 0 ";
+const DashStyle PS_Stream::DASH4="[10 5] 0 ";
+const DashStyle PS_Stream::DASH5="[5 10] 0 ";
+const DashStyle PS_Stream::DASH1="[2 2] 0 ";
+extern const PS_Stream::Context CTXT_DEFAULT=PS_Stream::Context();
 
 /*
-  CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb)
+  PS_Stream::PS_Stream(const PS_BBox &bb)
   : _bbox(bb), _os(cerr), _mode(GS_VIEW)
   {
   FILE *fp = popen("gs -","w");
@@ -27,7 +28,7 @@ extern const CGAL_PS_Stream::Context CGAL_CTXT_DEFAULT=CGAL_PS_Stream::Context()
   os().attach(fileno(fp));
   insert_catalogue();
   }
-  CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb,float L, float H)
+  PS_Stream::PS_Stream(const PS_BBox &bb,float L, float H)
   : _bbox(bb), _os(cerr), _mode(GS_VIEW), _width(L), _height(H)
   {
   insert_catalogue();
@@ -38,7 +39,7 @@ extern const CGAL_PS_Stream::Context CGAL_CTXT_DEFAULT=CGAL_PS_Stream::Context()
 */  
 
 
-CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb, ostream &os,
+PS_Stream::PS_Stream(const PS_BBox &bb, ostream &os,
                                OutputMode mode)
   :_bbox(bb), _mode(mode),
   _width((int)21*CM), _height((int)29.7*CM), _os(cerr)
@@ -49,7 +50,7 @@ CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb, ostream &os,
   insert_catalogue();
 }
 
-CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb, const char *fname,
+PS_Stream::PS_Stream(const PS_BBox &bb, const char *fname,
                                OutputMode mode)
   : _bbox(bb),_mode(mode),_width((int)21*CM), _height((int)29.7*CM),_os(cerr) 
 {
@@ -60,7 +61,7 @@ CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb, const char *fname,
   insert_catalogue();
 }
 
-CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb,float H, ostream &os,
+PS_Stream::PS_Stream(const PS_BBox &bb,float H, ostream &os,
                                OutputMode mode)
   : _bbox(bb), _mode(mode), _height(H), _os(cerr)
 {
@@ -71,7 +72,7 @@ CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb,float H, ostream &os,
   insert_catalogue();
 }
 
-CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb,float H, const char *fname,
+PS_Stream::PS_Stream(const PS_BBox &bb,float H, const char *fname,
                                OutputMode m)
   : _bbox(bb), _mode(m), _height(H), _os(cerr)
 {
@@ -83,7 +84,7 @@ CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb,float H, const char *fname,
   insert_catalogue();
 }
 
-CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb,float L, float H,
+PS_Stream::PS_Stream(const PS_BBox &bb,float L, float H,
                                ostream &os, OutputMode mode)
   : _bbox(bb), _mode(mode), _width(L), _height(H), _os(cerr)
 {
@@ -93,7 +94,7 @@ CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb,float L, float H,
   insert_catalogue();
 }
 
-CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb,float L, float H,
+PS_Stream::PS_Stream(const PS_BBox &bb,float L, float H,
                                const char *fname, OutputMode mode)
   : _bbox(bb), _mode(mode),_width(L),_height(H), _os(cerr)
 {
@@ -104,7 +105,7 @@ CGAL_PS_Stream::CGAL_PS_Stream(const PS_BBox &bb,float L, float H,
   insert_catalogue();
 }
 
-CGAL_PS_Stream::~CGAL_PS_Stream()
+PS_Stream::~PS_Stream()
 {
   List_Label tmp=list();
   if (!list().empty())
@@ -140,63 +141,63 @@ CGAL_PS_Stream::~CGAL_PS_Stream()
 
 
 
-#ifndef CGAL_PS_MANIP_DEF
-#define CGAL_PS_MANIP_DEF
+#ifndef PS_MANIP_DEF
+#define PS_MANIP_DEF
 
-CGAL_PS_Modifier_creator<CGAL_Color &>
-  set_border_color(&CGAL_PS_Stream::_SetBorderColor);
+PS_Modifier_creator<Color &>
+  set_border_color(&PS_Stream::_SetBorderColor);
 
-CGAL_PS_Modifier_creator<CGAL_Color &>
-  set_fill_color(&CGAL_PS_Stream::_SetFillColor);
+PS_Modifier_creator<Color &>
+  set_fill_color(&PS_Stream::_SetFillColor);
 
-CGAL_PS_Modifier_creator<unsigned int>
-  set_point_size(&CGAL_PS_Stream::_SetPointSize);
+PS_Modifier_creator<unsigned int>
+  set_point_size(&PS_Stream::_SetPointSize);
 
-CGAL_PS_Modifier_creator<CGAL_PS_Stream::DotStyle>
-  set_point_style(&CGAL_PS_Stream::_SetPointStyle);
+PS_Modifier_creator<PS_Stream::DotStyle>
+  set_point_style(&PS_Stream::_SetPointStyle);
 
-CGAL_PS_Modifier_creator<DashStyle>
-  set_line_style(&CGAL_PS_Stream::_SetLineStyle);
+PS_Modifier_creator<DashStyle>
+  set_line_style(&PS_Stream::_SetLineStyle);
 
-CGAL_PS_Modifier_creator<unsigned int>
-  set_line_width(&CGAL_PS_Stream::_SetLineWidth);
+PS_Modifier_creator<unsigned int>
+  set_line_width(&PS_Stream::_SetLineWidth);
 
-CGAL_PS_Modifier_creator<bool>
-  set_fill(&CGAL_PS_Stream::_SetFill);
+PS_Modifier_creator<bool>
+  set_fill(&PS_Stream::_SetFill);
 
-CGAL_PS_Modifier_creator<const CGAL_PS_Stream::Context &>
-  set_current_context(&CGAL_PS_Stream::_SetCurrentContext);
+PS_Modifier_creator<const PS_Stream::Context &>
+  set_current_context(&PS_Stream::_SetCurrentContext);
 
-CGAL_PS_Modifier_creator<bool>
-  show_direction(&CGAL_PS_Stream::_ShowDirection);
+PS_Modifier_creator<bool>
+  show_direction(&PS_Stream::_ShowDirection);
 
-CGAL_PS_Modifier_creator<CGAL_Point_2< CGAL_Cartesian <double> > >
-  move_to(&CGAL_PS_Stream::_MoveTo);
+PS_Modifier_creator<Point_2< Cartesian <double> > >
+  move_to(&PS_Stream::_MoveTo);
 
-CGAL_PS_Modifier_creator<CGAL_PS_Stream::Axis &>
-  show_axis(&CGAL_PS_Stream::_ShowAxis);
+PS_Modifier_creator<PS_Stream::Axis &>
+  show_axis(&PS_Stream::_ShowAxis);
 
-CGAL_PS_Modifier_creator<CGAL_PS_Stream::Grid &>
-  show_grid(&CGAL_PS_Stream::_ShowGrid);
+PS_Modifier_creator<PS_Stream::Grid &>
+  show_grid(&PS_Stream::_ShowGrid);
 
-CGAL_PS_Modifier_creator<const char *>
-  put_ps_label(&CGAL_PS_Stream::_PutPsLabel);
+PS_Modifier_creator<const char *>
+  put_ps_label(&PS_Stream::_PutPsLabel);
 
-CGAL_PS_Modifier_creator<const char *>
-  put_latex_label(&CGAL_PS_Stream::_PutLatexLabel);
+PS_Modifier_creator<const char *>
+  put_latex_label(&PS_Stream::_PutLatexLabel);
 
-CGAL_PS_Modifier_creator<unsigned int>
-  put_border(&CGAL_PS_Stream::_PutBorder);
+PS_Modifier_creator<unsigned int>
+  put_border(&PS_Stream::_PutBorder);
 
-CGAL_PS_Modifier_creator<const char *>
-  set_font(&CGAL_PS_Stream::_SetFont);
+PS_Modifier_creator<const char *>
+  set_font(&PS_Stream::_SetFont);
 
-CGAL_PS_Modifier_creator<unsigned int>
-  set_font_size(&CGAL_PS_Stream::_SetFontSize);
-#endif  //CGAL_PS_MANIP_DEF
+PS_Modifier_creator<unsigned int>
+  set_font_size(&PS_Stream::_SetFontSize);
+#endif  //PS_MANIP_DEF
 
 
-CGAL_PS_Stream& CGAL_PS_Stream::_SetBorderColor(CGAL_Color &color)
+PS_Stream& PS_Stream::_SetBorderColor(Color &color)
 {
   if (ctxt.get_border_color()!=color)
     {
@@ -207,19 +208,19 @@ CGAL_PS_Stream& CGAL_PS_Stream::_SetBorderColor(CGAL_Color &color)
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_SetFillColor(CGAL_Color &color)
+PS_Stream& PS_Stream::_SetFillColor(Color &color)
 {
   ctxt.set_fill_color(color);
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_SetPointSize(unsigned int Size)
+PS_Stream& PS_Stream::_SetPointSize(unsigned int Size)
 {
   ctxt.set_dot_size(Size);
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_SetLineWidth(unsigned int Width)
+PS_Stream& PS_Stream::_SetLineWidth(unsigned int Width)
 {
   if (ctxt.get_thickness()!=Width)
     {
@@ -229,13 +230,13 @@ CGAL_PS_Stream& CGAL_PS_Stream::_SetLineWidth(unsigned int Width)
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_SetPointStyle(DotStyle Style)
+PS_Stream& PS_Stream::_SetPointStyle(DotStyle Style)
 {
   ctxt.set_dot_style(Style);
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_SetLineStyle(DashStyle style)
+PS_Stream& PS_Stream::_SetLineStyle(DashStyle style)
 {
   if (strcmp(ctxt.get_line_style(),style))
     {
@@ -245,19 +246,19 @@ CGAL_PS_Stream& CGAL_PS_Stream::_SetLineStyle(DashStyle style)
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_SetFill(bool test)
+PS_Stream& PS_Stream::_SetFill(bool test)
 {
   ctxt.set_fill(test);
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_SetDefaultContext(void)
+PS_Stream& PS_Stream::_SetDefaultContext(void)
 {
   setdefault();
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_SetCurrentContext(const CGAL_PS_Stream::Context &c)
+PS_Stream& PS_Stream::_SetCurrentContext(const PS_Stream::Context &c)
 {
   if (ctxt.get_border_color()!=c.get_border_color())
     os()<< c.get_border_color().r() << " "
@@ -277,18 +278,18 @@ CGAL_PS_Stream& CGAL_PS_Stream::_SetCurrentContext(const CGAL_PS_Stream::Context
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_ShowDirection(bool choice)
+PS_Stream& PS_Stream::_ShowDirection(bool choice)
 {
   if (choice){};
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_MoveTo(CGAL_Point_2< CGAL_Cartesian <double> > p)
+PS_Stream& PS_Stream::_MoveTo(Point_2< Cartesian <double> > p)
 {
   ctxt.set_current_pos(p);
   return *this;
 }
-CGAL_PS_Stream& CGAL_PS_Stream::_ShowAxis(Axis &g)
+PS_Stream& PS_Stream::_ShowAxis(Axis &g)
 {
   static bool test=false;
   double x0=x2ps(0);
@@ -329,7 +330,7 @@ CGAL_PS_Stream& CGAL_PS_Stream::_ShowAxis(Axis &g)
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_ShowGrid(Grid &g)
+PS_Stream& PS_Stream::_ShowGrid(Grid &g)
 {
   double i;
   os() << "gsave 0 setgray 0 setlinewidth" << endl;
@@ -358,7 +359,7 @@ CGAL_PS_Stream& CGAL_PS_Stream::_ShowGrid(Grid &g)
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_PutPsLabel(const char *ch)
+PS_Stream& PS_Stream::_PutPsLabel(const char *ch)
 {
   os() << x2ps(context().get_pos().x()) << " "
        << y2ps(context().get_pos().y()) << " mt" <<endl;
@@ -367,7 +368,7 @@ CGAL_PS_Stream& CGAL_PS_Stream::_PutPsLabel(const char *ch)
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_PutLatexLabel(const char *ch)
+PS_Stream& PS_Stream::_PutLatexLabel(const char *ch)
 {
   //os() << "%% CGAL - LATEX : " << x2ps(context().get_pos().x()) << " "
   //   << y2ps(context().get_pos().y()) << " " << ch << endl;
@@ -375,7 +376,7 @@ CGAL_PS_Stream& CGAL_PS_Stream::_PutLatexLabel(const char *ch)
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_PutBorder(unsigned int i)
+PS_Stream& PS_Stream::_PutBorder(unsigned int i)
 {
   os() << "gsave" << endl;
   os() << "0 setgray [] 0 setdash" << endl;
@@ -385,7 +386,7 @@ CGAL_PS_Stream& CGAL_PS_Stream::_PutBorder(unsigned int i)
   return *this;
 }
 
-CGAL_PS_Stream& CGAL_PS_Stream::_SetFont(const char *ch)
+PS_Stream& PS_Stream::_SetFont(const char *ch)
 {
   if (strcmp(ch,context().get_font())!=0)
     {
@@ -395,7 +396,7 @@ CGAL_PS_Stream& CGAL_PS_Stream::_SetFont(const char *ch)
     }
   return *this;
 }
-CGAL_PS_Stream& CGAL_PS_Stream::_SetFontSize(unsigned int i)
+PS_Stream& PS_Stream::_SetFontSize(unsigned int i)
 {
   if (context().get_font_size()!=i)
     {
@@ -409,41 +410,41 @@ CGAL_PS_Stream& CGAL_PS_Stream::_SetFontSize(unsigned int i)
 
 
 
-void CGAL_PS_Stream::setdefault()
+void PS_Stream::setdefault()
 {
-  if (ctxt.get_border_color()!=CGAL_CTXT_DEFAULT.get_border_color())
+  if (ctxt.get_border_color()!=CTXT_DEFAULT.get_border_color())
     os()<<"0 0 0 setrgbcolor"<<endl;
-  if (ctxt.get_line_style()!=CGAL_CTXT_DEFAULT.get_line_style())
-    os() << CGAL_PS_Stream::SOLID << " setdash"<<endl;
-  if (ctxt.get_thickness()!=CGAL_CTXT_DEFAULT.get_thickness())
+  if (ctxt.get_line_style()!=CTXT_DEFAULT.get_line_style())
+    os() << PS_Stream::SOLID << " setdash"<<endl;
+  if (ctxt.get_thickness()!=CTXT_DEFAULT.get_thickness())
     os() << 0 << " setlinewidth"<<endl;
-  if (ctxt.get_font_size()!=CGAL_CTXT_DEFAULT.get_font_size() ||
-      strcmp(ctxt.get_font(),CGAL_CTXT_DEFAULT.get_font())!=0)
+  if (ctxt.get_font_size()!=CTXT_DEFAULT.get_font_size() ||
+      strcmp(ctxt.get_font(),CTXT_DEFAULT.get_font())!=0)
     {
       os() << "/Helvetica findfont" <<endl;
       os() << "12 scalefont setfont" << endl;
     }
-  ctxt=CGAL_CTXT_DEFAULT;
+  ctxt=CTXT_DEFAULT;
 }
 
-bool CGAL_PS_Stream::is_eps()
+bool PS_Stream::is_eps()
 {
   return (bool)(mode()==QUIET_EPS || mode()==READABLE_EPS);
 }
 
-bool CGAL_PS_Stream::is_readable()
+bool PS_Stream::is_readable()
 {
   return (bool)(mode()==READABLE || mode()==READABLE_EPS);
 }
 
-void CGAL_PS_Stream::insert_catalogue()
+void PS_Stream::insert_catalogue()
 {
   if (is_eps())
     {
       os() << "%!PS-Adobe-3.0 EPSF 3.0" << endl;
       os() << "%%BoundingBox: " << "0 0 "
            << width() << " " << height()<< endl;
-      os() << "%%Creator: CGAL_PS_Stream" << endl;
+      os() << "%%Creator: PS_Stream" << endl;
       os() << "%%Title: (CGAL Output)" << endl;
       os() << "%%CreationDate:" << endl;
     }
@@ -458,8 +459,8 @@ void CGAL_PS_Stream::insert_catalogue()
   os() << "{\\catcode37=9\\def\\IPEdummy{({{)}} pop" <<endl;
   os() << "%% Ipe postscript prologue" << endl<<endl;
 
-  os() << "/CGAL_PS_Dict 14 dict def" << endl;
-  os() << "CGAL_PS_Dict begin" << endl;
+  os() << "/PS_Dict 14 dict def" << endl;
+  os() << "PS_Dict begin" << endl;
   os() << "/lt {lineto} bind def" << endl;
   os() << "/mt {moveto} bind def" << endl;
   os() << "/st {stroke} bind def" << endl;
@@ -487,7 +488,7 @@ void CGAL_PS_Stream::insert_catalogue()
   os() << "/tr {mt lt lt lt} bind def" << endl;
   os() << "/re {mt lt lt lt lt} bind def" << endl;
   os() << "0 0 0 setrgbcolor"<<endl;
-  os() << CGAL_PS_Stream::SOLID << " setdash"<<endl;
+  os() << PS_Stream::SOLID << " setdash"<<endl;
   os() << 0 << " setlinewidth"<<endl;
   os() << "/Helvetica findfont" <<endl;
   os() << "12 scalefont setfont" << endl;
@@ -500,7 +501,7 @@ void CGAL_PS_Stream::insert_catalogue()
 #ifndef _PS_LABEL_
 #define _PS_LABEL_
 
-CGAL_PS_Stream &operator<<(CGAL_PS_Stream &ps, const CGAL_PS_Stream::Border &b)
+PS_Stream &operator<<(PS_Stream &ps, const PS_Stream::Border &b)
 {
   ps.os() << "gsave" << endl;
   ps.os() << "0 setgray [] 0 setdash" << endl;
@@ -510,7 +511,7 @@ CGAL_PS_Stream &operator<<(CGAL_PS_Stream &ps, const CGAL_PS_Stream::Border &b)
   return ps;
 }
 
-CGAL_PS_Stream &operator<<(CGAL_PS_Stream &ps, const CGAL_PS_Stream::Label &txt)
+PS_Stream &operator<<(PS_Stream &ps, const PS_Stream::Label &txt)
 {
   ps.os() << ps.x2ps(ps.context().get_pos().x()) << " "
        << ps.y2ps(ps.context().get_pos().y()) << " mt" <<endl;
@@ -519,7 +520,7 @@ CGAL_PS_Stream &operator<<(CGAL_PS_Stream &ps, const CGAL_PS_Stream::Label &txt)
   return ps;
 }
 
-CGAL_PS_Stream &operator<<(CGAL_PS_Stream &ps, CGAL_PS_Stream::Latex_Label &txt)
+PS_Stream &operator<<(PS_Stream &ps, PS_Stream::Latex_Label &txt)
 {
   txt.setposition(ps.x2ps(ps.context().get_pos().x()),
                   ps.y2ps(ps.context().get_pos().y()));
@@ -528,7 +529,7 @@ CGAL_PS_Stream &operator<<(CGAL_PS_Stream &ps, CGAL_PS_Stream::Latex_Label &txt)
   return ps;
 }
 
-CGAL_PS_Stream &operator<<(CGAL_PS_Stream &ps, const CGAL_PS_Stream::Grid &g)
+PS_Stream &operator<<(PS_Stream &ps, const PS_Stream::Grid &g)
 {
   double i;
   ps.os() << "gsave 0 setgray 0 setlinewidth" << endl;
@@ -557,7 +558,7 @@ CGAL_PS_Stream &operator<<(CGAL_PS_Stream &ps, const CGAL_PS_Stream::Grid &g)
   return ps;
 }
 
-CGAL_PS_Stream &operator<<(CGAL_PS_Stream &ps, const CGAL_PS_Stream::Axis &g)
+PS_Stream &operator<<(PS_Stream &ps, const PS_Stream::Axis &g)
 {
   static bool test=false;
   double x0=ps.x2ps(0);
@@ -600,3 +601,4 @@ CGAL_PS_Stream &operator<<(CGAL_PS_Stream &ps, const CGAL_PS_Stream::Axis &g)
 
 #endif
 
+CGAL_END_NAMESPACE
