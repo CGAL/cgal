@@ -10,7 +10,7 @@ one_run()
     then
 	if [ -r ${goodresult} ]
 	then
-	    if diff output ${goodresult} > diffoutput
+	    if diff -b output ${goodresult} > diffoutput
 	    then
 		succes=ja
 	    else
