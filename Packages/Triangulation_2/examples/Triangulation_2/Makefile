@@ -14,6 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+	   -I../../../Kernel_23/include \
 	   -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \

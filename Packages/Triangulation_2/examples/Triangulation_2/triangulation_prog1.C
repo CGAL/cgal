@@ -2,13 +2,15 @@
 #include <CGAL/basic.h>
 #include <fstream>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+//#include <CGAL/Cartesian.h>
 #include <CGAL/Triangulation_2.h>
 
-typedef CGAL::Cartesian<double> Gt;
-typedef CGAL::Triangulation_2<Gt> Triangulation;
+//typedef CGAL::Cartesian<double> Gt;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Triangulation_2<K>         Triangulation;
 typedef Triangulation::Vertex_circulator Vertex_circulator;
-typedef Gt::Point_2   Point;
+typedef Triangulation::Point             Point;
 
 int main() {
   std::ifstream in("data/triangulation_prog1.cin");

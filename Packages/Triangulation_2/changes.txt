@@ -1,6 +1,13 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.103 (25/07/03)
+- modify example triangulation_prog1 to use a default Kernel
+- added added Triangulation_face_base_with_info_2 et
+  Triangulation_vertex_base_with_info_2
+- modified example colored_face.C
+- added example adding_handles.C
+
 Ver 7.102 (23/07/03)
 - no changed - resubmission to see if the makefile pb persists
 
