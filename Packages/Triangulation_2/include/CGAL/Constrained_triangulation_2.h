@@ -208,14 +208,17 @@ protected:
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  Exact_predicates_tag);
-
+public:
+// made public for Laurent  to find out deleted faces
+// when inserting a constraint with most probably 
+// no intersection
   bool find_intersected_faces(Vertex_handle va, 
 			      Vertex_handle vb,
 			      List_faces & intersected_faces,
 			      List_edges & list_ab, 
 			      List_edges & list_ba,
 			      Vertex_handle& vi);
-
+protected:
   virtual void triangulate_hole(List_faces& intersected_faces,
 				List_edges& conflict_boundary_ab,
 				List_edges& conflict_boundary_ba);
@@ -483,7 +486,7 @@ find_intersected_faces(Vertex_handle vaa,
 		       List_faces & intersected_faces,
 		       List_edges & list_ab, 
 		       List_edges & list_ba,
-		       Vertex_handle & vi)
+		       Vertex_handle & vi) 
   // vi is set to the first vertex of the triangulation on [vaa,vbb].
   // Return true if an intersection with a constrained edge is
   // encountered, false otherwise
