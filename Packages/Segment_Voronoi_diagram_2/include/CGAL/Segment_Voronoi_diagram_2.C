@@ -441,17 +441,15 @@ insert_third(const Point& p)
   Site_2 t(p);
 
   // p0 and p1 are actually points
-  Site_2 t0 = finite_vertices_begin()->site();
-  Site_2 t1 = (++finite_vertices_begin())->site();
+  Vertex_handle v0 = finite_vertices_begin();
+  Vertex_handle v1 = ++finite_vertices_begin();
+  Site_2 t0 = v0->site();
+  Site_2 t1 = v1->site();
 
   // MK::ERROR: change the equality test between points by the functor
   // in geometric traits
-  if ( are_same_points(t, t0) ) {
-    return Vertex_handle(finite_vertices_begin());
-  }
-  if ( are_same_points(t, t1) ) {
-    return Vertex_handle(++finite_vertices_begin());
-  }
+  if ( are_same_points(t, t0) ) { return v0; }
+  if ( are_same_points(t, t1) ) { return v1; }
 
   Storage_site_2 ss = create_storage_site(p);
   Vertex_handle v = create_vertex_dim_up(ss);
@@ -473,12 +471,68 @@ insert_third(const Point& p)
       }
     }
   } else {
-    // MK::ERROR:
-    // *************************URGENT***************************
-    //  Here I have to test for collinearlity... and maybe more
-    // In particular the code works correctly if the triangle created by
-    // the three points is CCW and only then
-    CGAL_assertion( false );
+    typename Geom_traits::Compare_x_2 compare_x =
+      geom_traits().compare_x_2_object();
+
+    Comparison_result xcmp12 = compare_x(s1, s2);
+    if ( xcmp12 == SMALLER ) {        // x1 < x2
+      Comparison_result xcmp23 = compare_x(s2, s3);
+      if ( xcmp23 == SMALLER ) {            // x2 < x3
+	flip(f, f->index(v1));
+      } else {
+	Comparison_result xcmp31 = compare_x(s3, s1);
+	if ( xcmp31 == SMALLER ) {          // x3 < x1
+	  flip(f, f->index(v0));
+	} else {                            // x1 < x3 < x2
+	  flip(f, f->index(v)); 
+	}
+      }
+    } else if ( xcmp12 == LARGER ) {  // x1 > x2
+      Comparison_result xcmp32 = compare_x(s3, s2);
+      if ( xcmp32 == SMALLER ) {            // x3 < x2
+	flip(f, f->index(v1));
+      } else {
+	Comparison_result xcmp13 = compare_x(s1, s3);
+	if ( xcmp13 == SMALLER ) {          // x1 < x3
+	  flip(f, f->index(v0));
+	} else {                            // x2 < x3 < x1
+	  flip(f, f->index(v));
+	}
+      }
+    } else {                          // x1 == x2
+      typename Geom_traits::Compare_y_2 compare_y =
+	geom_traits().compare_y_2_object();
+
+      Comparison_result ycmp12 = compare_y(s1, s2);
+      if ( ycmp12 == SMALLER ) {      // y1 < y2
+	Comparison_result ycmp23 = compare_y(s2, s3);
+	if ( ycmp23 == SMALLER ) {          // y2 < y3
+	  flip(f, f->index(v1));
+	} else {
+	  Comparison_result ycmp31 = compare_y(s3, s1);
+	  if ( ycmp31 == SMALLER ) {        // y3 < y1
+	    flip(f, f->index(v0));
+	  } else {                          // y1 < y3 < y2
+	    flip(f, f->index(v));
+	  }
+	}
+      } else if ( ycmp12 == LARGER ) { // y1 > y2
+	Comparison_result ycmp32 = compare_y(s3, s2);
+	if ( ycmp32 == SMALLER ) {           // y3 < y2
+	  flip(f, f->index(v1));
+	} else {
+	  Comparison_result ycmp13 = compare_y(s1, s3);
+	  if ( ycmp13 == SMALLER ) {         // y1 < y3
+	    flip(f, f->index(v0));
+	  } else {                           // y2 < y3 < y1
+	    flip(f, f->index(v));
+	  }
+	}
+      } else {
+	// this line should never have been reached
+	CGAL_assertion( false );
+      }
+    }
   }
 
   return v;
