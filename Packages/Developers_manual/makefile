@@ -2,12 +2,13 @@ WRAPPER=wrapper
 PDF_WRAPPER=pdf_wrapper
 HTML_TARGET_DIR=html
 TOOLS_DOC_SOURCE=/KM/usr3/cgal/Manual_tools/doc/
-INSTALL_DIR=/www/pub/www.cgal.org/Members/DManual
+SUBDIR_NAME=DManual
+INSTALL_DIR=/www/pub/www.cgal.org/Members/$(SUBDIR_NAME)
 
 EXT_WRAPPER=wrapper_ext
 EXT_PDF_WRAPPER=pdf_wrapper_ext
 EXT_HTML_TARGET_DIR=html_ext
-EXT_INSTALL_DIR=/www/pub/www.cgal.org/DManual
+EXT_INSTALL_DIR=/www/pub/www.cgal.org/$(SUBDIR_NAME)
 
 internal: ps_doc pdf_doc html_doc
 
@@ -68,18 +69,17 @@ ext_pdf_doc:
 	mv pdf_developers_manual_ext.pdf developers_manual_ext.pdf
 
 ext_html_doc:
-	cc_manual_to_html -o $(EXT_HTML_TARGET_DIR) -title "CGAL Developers' Manual (2.2.1)" -author "<A HREF=""http://www.cgal.org/CGAL"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -aux $(EXT_WRAPPER).aux -bbl $(EXT_WRAPPER).bbl $(EXT_WRAPPER).tex
-	cp -r $(HTML_TARGET_DIR)/images $(EXT_HTML_TARGET_DIR)
+	cc_manual_to_html -o $(EXT_HTML_TARGET_DIR) -title "CGAL Developers' Manual (2.2.2)" -author "<A HREF=""http://www.cgal.org/CGAL"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -aux $(EXT_WRAPPER).aux -bbl $(EXT_WRAPPER).bbl $(EXT_WRAPPER).tex
 	cp manual_index.html $(EXT_HTML_TARGET_DIR)
 	cp title.html $(EXT_HTML_TARGET_DIR)
 
 html_doc:
-	cc_manual_to_html -o $(HTML_TARGET_DIR) -title "CGAL Developers' Manual (2.2.1)" -author "<A HREF=""http://www.cgal.org/CGAL"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -aux $(WRAPPER).aux -bbl $(WRAPPER).bbl $(WRAPPER).tex
+	cc_manual_to_html -o $(HTML_TARGET_DIR) -title "CGAL Developers' Manual (2.2.2)" -author "<A HREF=""http://www.cgal.org/CGAL"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -aux $(WRAPPER).aux -bbl $(WRAPPER).bbl $(WRAPPER).tex
 	cp manual_index.html $(HTML_TARGET_DIR)
 	cp title.html $(HTML_TARGET_DIR)
 
 html_title:
-	cc_manual_to_html -o title_html -title "CGAL Developers' Manual (2.2.1)" -author "<A HREF=""http://www.cgal.org"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -show_main title_wrap.tex
+	cc_manual_to_html -o title_html -title "CGAL Developers' Manual (2.2.2)" -author "<A HREF=""http://www.cgal.org"" target=""_top"">The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -show_main title_wrap.tex
 
 install_internal: install_html install_ps install_pdf install_tools_doc
 	chmod -R a+r $(INSTALL_DIR)
@@ -111,7 +111,8 @@ install_external: install_ext_html install_ext_ps install_ext_pdf
 install_ext_html:
 	mkdir -p $(EXT_INSTALL_DIR)/html
 	cp -R $(EXT_HTML_TARGET_DIR)/* $(EXT_INSTALL_DIR)/html
-	cd $(EXT_INSTALL_DIR)/..; gtar zcvf $(EXT_INSTALL_DIR)/developers_manual.html.tar.gz $(EXT_INSTALL_DIR)/html/*
+	rm -rf $(EXT_INSTALL_DIR)/html/images/CVS
+	cd $(EXT_INSTALL_DIR)/..; gtar zcvf $(EXT_INSTALL_DIR)/developers_manual.html.tar.gz $(SUBDIR_NAME)/html/*
 
 install_ext_ps:
 	mkdir -p $(EXT_INSTALL_DIR)
@@ -120,7 +121,7 @@ install_ext_ps:
 
 install_ext_pdf:
 	mkdir -p $(EXT_INSTALL_DIR)
-	cp developers_manual_ext.pdf $(EXT_INSTALL_DIR)
+	cp developers_manual_ext.pdf $(EXT_INSTALL_DIR)/developers_manual.pdf
 
 
 clean:

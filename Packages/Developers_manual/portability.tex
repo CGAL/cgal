@@ -590,6 +590,33 @@ iterators, just as \texttt{std::vector} usually does.  You can avoid
 problems that arise by explicitly setting the second template parameter
 to something that has proper iterator (\eg, \texttt{std::list}).
 
+\item[\textbf{{\tt std::list} iterator inside item class}]
+
+The following program, which attempts to use an iterator over a list of
+items inside the item class, does not compile on the Borland compiler:
+
+\begin{verbatim}
+#include <vector>
+
+struct E {
+ typedef std::list<E>::iterator T2; // compiles not
+ typedef std::list<E> T3; // compiles
+ typedef std::vector<E>::iterator T1; // compiles
+};
+
+int main() {
+ E e;
+ return 0;
+}
+\end{verbatim}
+
+This problem was reported to the Borland mailing list and the answer received
+indicates that they do not consider this a bug.  Their suggested solution
+is to store a list of \texttt{E*} instead of \texttt{E}. Alternatively, one
+can use \texttt{std::vector} instead of \texttt{std::list} (since their
+implementation of the STL uses pointers for vector iterators) or use 
+\texttt{CGAL::In\_place\_list}.
+
 \end{description}
 \ccIndexMainItemEnd{configuration}
 
