@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-44 $
 // release_date  : $CGAL_Date: 2001/03/09 $
 //
-// file          : include/CGAL/sweep_to_construct_planar_map.h
+// file          : include/CGAL/sweep_to_construct_planar_map_2.h
 // package       : arr (1.87)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 

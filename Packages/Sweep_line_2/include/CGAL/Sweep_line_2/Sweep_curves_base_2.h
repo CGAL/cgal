@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-44 $
 // release_date  : $CGAL_Date: 2001/03/09 $
 //
-// file          : include/CGAL/Sweep_curves_base.h
+// file          : include/CGAL/Sweep_line_2/Sweep_curves_base_2.h
 // package       : arr (1.87)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 
@@ -180,7 +180,8 @@ protected:
     Curve_node(const X_curve_plus& cv, const Point& p, Traits *traits_) : 
       Handle_for_Curve_node_rep(Curve_node_rep(cv,p, traits_)) {
 #ifdef CGAL_MAKE_PROFILING
-      std::cout<<"allocating handle for Curve_node_rep(cv,p)" << cv <<" "<< p << endl;
+      std::cout<<"allocating handle for Curve_node_rep(cv,p)" << cv <<" "<< p 
+	       << endl;
 #endif
     }
 
@@ -1499,8 +1500,8 @@ protected:
 
   bool  check_status_neighbors_intersections(Event_queue& event_queue, 
                                              Status_line& status,  
-                                             Status_line_iterator lower_neighbor, 
-                                             const Point &event_point)
+                                             Status_line_iterator lower_neighbor
+					     ,const Point &event_point)
   { 
 #ifdef CGAL_MAKE_PROFILING
     cout<<"In check_status_neighbors_intersections" <<endl;
@@ -1541,9 +1542,11 @@ protected:
                                                    cv2.get_curve(), 
                                                    event_point);
   
-    bool curves_intersect = traits->nearest_intersection_to_right(cv1.get_curve(), 
-                                                                 cv2.get_curve(), 
-                                                                 event_point, xp2, xp3);
+    bool curves_intersect = 
+      traits->nearest_intersection_to_right(cv1.get_curve()
+					    ,cv2.get_curve()
+					    ,event_point, 
+					    xp2, xp3);
       
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
     cout<<"reference point on status, xp1, xp2 and xp3 before changing are "<<
@@ -1596,12 +1599,13 @@ protected:
         Event_queue_iterator  xp_event = event_queue.find(xp3);
         bool xp3_cv1_in_queue = false,  xp3_cv2_in_queue = false;
         if (xp_event == event_queue.end())
-          xp_event = event_queue.insert(Event_queue_value_type
-					(xp3, 
-					 Intersection_point_node(cv1,
-								 cv2,
-								 xp3, 
-                                                                 traits))).first;
+          xp_event = 
+	    event_queue.insert(Event_queue_value_type(xp3, 
+						      Intersection_point_node(cv1,
+									      cv2,
+									      xp3, 
+									      traits)
+						      )).first;
         else{
           // have to check whether the event is a new event. 
           // (we might calculated this point before).

@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-83 $
 // release_date  : $CGAL_Date: 2001/07/17 $
 //
-// file          : include/CGAL/sweep_to_produce_planar_map_subcurves.h
+// file          : include/CGAL/sweep_to_produce_points_2.h
 // package       : Arrangement (2.10)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 
