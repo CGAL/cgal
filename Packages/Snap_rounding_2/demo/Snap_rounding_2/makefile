@@ -35,17 +35,17 @@ LDFLAGS = \
 
 all: snap_rounding_2$(EXE_EXT)
 
-snap_rounding_2_toolbar$(OBJ_EXT): snap_rounding_2_toolbar.cpp snap_rounding_2_toolbar.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) snap_rounding_2_toolbar.cpp
+snap_rounding_2_toolbar$(OBJ_EXT): snap_rounding_2_toolbar.C snap_rounding_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) snap_rounding_2_toolbar.C
 
 snap_rounding_2_toolbar.moc: snap_rounding_2_toolbar.h
 	$(QT_MOC) -o snap_rounding_2_toolbar.moc snap_rounding_2_toolbar.h
 
-snap_rounding_2$(OBJ_EXT): snap_rounding_2.cpp snap_rounding_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) snap_rounding_2.cpp
+snap_rounding_2$(OBJ_EXT): snap_rounding_2.C snap_rounding_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) snap_rounding_2.C
 
-snap_rounding_2.moc: snap_rounding_2.cpp
-	${QT_MOC} -o snap_rounding_2.moc snap_rounding_2.cpp
+snap_rounding_2.moc: snap_rounding_2.C
+	${QT_MOC} -o snap_rounding_2.moc snap_rounding_2.C
 
 snap_rounding_2$(EXE_EXT): snap_rounding_2_toolbar$(OBJ_EXT) snap_rounding_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)snap_rounding_2 \
@@ -54,5 +54,5 @@ snap_rounding_2$(EXE_EXT): snap_rounding_2_toolbar$(OBJ_EXT) snap_rounding_2$(OB
 	$(LDFLAGS)
 
 clean: 
-	rm -rf *$(OBJ_EXT) *.moc
+	rm -rf *$(OBJ_EXT) *.moc snap_rounding_2$(EXE_EXT)
 
