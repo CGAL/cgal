@@ -70,7 +70,7 @@ public:
 
   typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef CGAL_Triangulation_ds_vertex_3<Vb,Cb> Vertex;
-  typedef typename CGAL_Triangulation_data_structure_3<Vb,Cb>::Facet Facet;
+  //  typedef typename CGAL_Triangulation_data_structure_3<Vb,Cb>::Facet Facet;
   typedef CGAL_Triangulation_ds_cell_3<Vb,Cb> Cell;
 
   // CONSTRUCTORS
