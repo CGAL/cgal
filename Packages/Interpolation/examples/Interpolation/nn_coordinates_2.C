@@ -23,7 +23,7 @@ int main()
    
   //coordinate computation
   K::Point_2 p(1.2, 0.7);
-  Coordinate_vector coords;
+  Point_coordinate_vector coords;
   CGAL::Triple<
     std::back_insert_iterator<Point_coordinate_vector>, 
     K::FT, bool> result = 
