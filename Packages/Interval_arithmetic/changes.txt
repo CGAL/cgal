@@ -1,3 +1,7 @@
+1 September 2004 Sylvain Pion
+- test/Static_filters.C : dump the random generator seed to be able to
+  reproduce bugs.
+
 1 September 2004 Menelaos Karavelas
 - added the following tags in number type traits: Has_exact_sqrt,
   Has_exact_ring_operations, Has_exact_division

@@ -20,9 +20,11 @@ typedef CGAL::Kernel_checker<K2, K4,
 typedef K3::Point_2    Point_2;
 typedef K3::Point_3    Point_3;
 
+CGAL::Random *r;
+
 double rand_base()
 {
-  return CGAL::default_random.get_double(0, 1);
+  return r->get_double(0, 1);
 }
 
 // Random double almost in [0;1].
@@ -220,9 +222,14 @@ void compute_epsilons()
 
 int main(int argc, char **argv)
 {
+  int seed = CGAL::default_random.get_int(0, 1<<30);
+  std::cout << "Initializing random generator with seed = " << seed << std::endl;
+  CGAL::Random rnd(seed);
+  r = &rnd;
+
   compute_epsilons();
 
-  int loops = (argc < 2) ? 1000 : atoi(argv[1]);
+  int loops = (argc < 2) ? 2000 : atoi(argv[1]);
 
   std::cout << "#loops = " << loops << " (can be changed on the command line)" << std::endl;
 
