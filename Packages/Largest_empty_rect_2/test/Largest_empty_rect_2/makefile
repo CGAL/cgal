@@ -45,6 +45,7 @@ all:	\
 	test$(EXE_EXT)
 
 
+
 clean:
 	rm -f *.$(OBJ_EXT)
 	rm -f test
