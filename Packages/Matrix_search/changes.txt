@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------
 
 DEMO: New User-Interface with different Generators.
+DEMO: Prefixed leda_drawing_mode.
 DEMO: fixed for LEDA-3.8 (the point_set<I> data structure vanished)
 DEMO: Now nearest neighbor queries are done brute-force.
 ALL : added std:: in a number of places where it was missing
@@ -18,6 +19,7 @@ ALL : added some return 0;
 ALL : MSVBC workaround for TYPENAME_BUGs.
 DOCS: fixed "cal" problem with html converter
 DOCS: fixed preconditions in replace_column (reported by Mariette).
+SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).
 SRC : New linear 2- and 3-center algorithm.
 TEST: Use Intervall_arithmetic number type.
 TEST: Added LONG_NAME_PROBLEM flags to makefile
