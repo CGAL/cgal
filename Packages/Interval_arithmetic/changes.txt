@@ -1,4 +1,9 @@
 8 May 2004 Sylvain Pion
+- Interval_nt : Partially undo the change done on 11 May 2003 : replace the
+  internal std::pair<double, double> by 2 doubles.
+  It brings back some performance.
+
+8 May 2004 Sylvain Pion
 - SSE2 handling (bugzilla #184).
   Support for GCC (>= 3.3) options : -mfpmath=sse
   which is faster than the traditional FPU, especially since we

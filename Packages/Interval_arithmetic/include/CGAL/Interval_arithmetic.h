@@ -62,13 +62,13 @@ public:
   Interval_nt() {}
 
   Interval_nt(int i)
-    : inf_sup(i, i) {}
+    : _inf(i), _sup(i) {}
 
   Interval_nt(double d)
-    : inf_sup(d, d) {}
+    : _inf(d), _sup(d) {}
 
   Interval_nt(double i, double s)
-    : inf_sup(i, s)
+    : _inf(i), _sup(s)
   {
       // VC++ should use instead : (i<=s) || !is_valid(i) || !is_valid(s)
       // Or should I use is_valid() ? or is_valid_or_nan() ?
@@ -80,10 +80,10 @@ public:
   // appears to fix a code generation problem with GCC 3.0.4...
   // (see test/IA/gcc_3.0.bug.C).
   Interval_nt(const Interval_nt & i)
-    : inf_sup(i.pair()) {}
+    : _inf(i._inf), _sup(i._sup) {}
 
   Interval_nt(const Pair & p)
-    : inf_sup(p) {}
+    : _inf(p.first), _sup(p.second) {}
 
   IA operator-() const { return IA (-sup(), -inf()); }
 
@@ -127,12 +127,12 @@ public:
     return !(d.inf() > sup() || d.sup() < inf());
   }
 
-  double inf() const { return inf_sup.first; }
-  double sup() const { return inf_sup.second; }
+  const double & inf() const { return _inf; }
+  const double & sup() const { return _sup; }
 
-  const std::pair<double,double>& pair() const
+  std::pair<double, double> pair() const
   {
-    return inf_sup;
+    return std::pair<double, double>(_inf, _sup);
   }
 
   static IA largest()
@@ -146,7 +146,8 @@ public:
   }
 
 private:
-  Pair inf_sup;
+  // Pair inf_sup;
+  double _inf, _sup;
 };
 
 template <bool Protected>
@@ -319,7 +320,7 @@ to_double (const Interval_nt<Protected> & d)
 
 template <bool Protected>
 inline
-const std::pair<double,double> &
+std::pair<double, double>
 to_interval (const Interval_nt<Protected> & d)
 {
   return d.pair();
@@ -700,7 +701,7 @@ compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 }
 
 inline
-std::pair<double,double>
+std::pair<double, double>
 to_interval (const long & l)
 {
 #ifndef __BORLANDC__ // The stupid Borland compiler generates warnings...
