@@ -286,6 +286,7 @@ namespace HomogeneousKernelFunctors {
   class Collinear_has_on_2
   {
     typedef typename K::Point_2               Point_2;
+    typedef typename K::Direction_2           Direction_2;
     typedef typename K::Ray_2                 Ray_2;
     typedef typename K::Segment_2             Segment_2;
     typedef typename K::Construct_point_on_2  Construct_point_on_2;
