@@ -294,6 +294,8 @@ Triangulation_hierarchy_2<Tr>::
 insert(const Point &p)
 {
   int vertex_level = random_level();
+  //   debug purpose
+  std::cout << "niveau " << vertex_level << std::endl << std::flush;
   Locate_type lt;
   int i;
   // locate using hierarchy

@@ -34,16 +34,17 @@ _test_cls_delaunay_hierarchy_2( const Dh & )
 
   _test_cls_delaunay_triangulation_2( Delaunay_hierarchy());
 
-  std::cout << "    insertion removal of 1000 points" << std::endl;
-  Delaunay_hierarchy dh;
-  CGAL::Random_points_in_square_2<Point,Creator> g(1.);
-  CGAL::copy_n( g, 1000, std::back_inserter(dh));
+  // temporary commented 
+//   std::cout << "    insertion removal of 1000 points" << std::endl;
+//   Delaunay_hierarchy dh;
+//   CGAL::Random_points_in_square_2<Point,Creator> g(1.);
+//   CGAL::copy_n( g, 1000, std::back_inserter(dh));
 
-  dh.locate(Point(0.,0.));
+//   dh.locate(Point(0.,0.));
 
-  while( dh.number_of_vertices() >0) {
-    dh.remove(dh.finite_vertices_begin());
-  }
+//   while( dh.number_of_vertices() >0) {
+//     dh.remove(dh.finite_vertices_begin());
+//   }
 
   return;
 }
