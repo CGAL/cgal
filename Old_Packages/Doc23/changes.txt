@@ -1,3 +1,6 @@
+2.41    (21 Dec 2001)
+- compare_y_at_x for segments.
+
 2.40    (12 Dec 2001)
 - Improve Filtered_kernel doc.
 

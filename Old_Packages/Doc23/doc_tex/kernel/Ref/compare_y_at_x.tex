@@ -56,6 +56,24 @@
  \ccStyle{h2} are not vertical.
 }
 
+\ccFunction{Comparison_result compare_y_at_x(const Point_2<R> &p,
+                                             const Segment_2<R> &s);}
+{compares the $y$-coordinates of $p$ and the vertical projection
+ of \ccStyle{p} on \ccStyle{s}.
+ \ccPrecond \ccStyle{s} is not vertical, and \ccStyle{p} is within the
+ x range of \ccStyle{s}.
+ }
+
+\ccFunction{Comparison_result compare_y_at_x(const Point_2<R> &p,
+                                           const Segment_2<R> &s1,
+                                           const Segment_2<R> &s2);}
+{compares the $y$-coordinates of the vertical projection 
+ of \ccStyle{p} on \ccStyle{s1} and on \ccStyle{s2}.
+\ccPrecond \ccStyle{s1} and \ccStyle{s2} are not vertical, and
+ \ccStyle{p} is within the x range of \ccStyle{s1} and \ccStyle{s2}.
+}
+
+
 \begin{ccHtmlOnly}
 <img border=0 src=./compare2.gif align=center alt="Comparison of y at x">
 \end{ccHtmlOnly} 

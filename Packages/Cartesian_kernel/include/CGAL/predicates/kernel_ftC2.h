@@ -161,6 +161,60 @@ compare_y_at_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
 }
 
 template < class FT >
+/*CGAL_NO_FILTER*/
+CGAL_KERNEL_LARGE_INLINE
+Comparison_result
+compare_y_at_xC2(const FT &px, const FT &py,
+                 const FT &ssx, const FT &ssy,
+                 const FT &stx, const FT &sty)
+{
+    // compares the y-coordinates of p and the vertical projection of p on s.
+    // Precondition : p is in the x-range of s, and s is not vertical.
+    CGAL_kernel_precondition(ssx != stx);
+    if (ssx < stx) {
+	CGAL_kernel_precondition(ssx <= px && px <= stx);
+	return (Comparison_result) orientationC2(px, py, ssx, ssy, stx, sty);
+    }
+    else {
+	CGAL_kernel_precondition(stx <= px && px <= ssx);
+	return (Comparison_result) orientationC2(px, py, stx, sty, ssx, ssy);
+    }
+}
+
+template < class FT >
+CGAL_KERNEL_LARGE_INLINE
+Comparison_result
+compare_y_at_x_segment_C2(const FT &px,
+                 const FT &s1sx, const FT &s1sy,
+                 const FT &s1tx, const FT &s1ty,
+                 const FT &s2sx, const FT &s2sy,
+                 const FT &s2tx, const FT &s2ty)
+{
+    // compares the y-coordinates of the vertical projections of p on s1 and s2
+    // Precondition : p is in the x-range of s1 and s2, which are not vertical.
+    CGAL_kernel_precondition(s1sx != s1tx);
+    CGAL_kernel_precondition(s2sx != s2tx);
+    if (s1sx < s1tx)
+        CGAL_kernel_precondition(s1sx <= px && px <= s1tx);
+    else
+        CGAL_kernel_precondition(s1tx <= px && px <= s1sx);
+    if (s2sx < s2tx)
+        CGAL_kernel_precondition(s2sx <= px && px <= s2tx);
+    else
+        CGAL_kernel_precondition(s2tx <= px && px <= s2sx);
+
+    FT s1stx = s1sx-s1tx;
+    FT s2stx = s2sx-s2tx;
+
+    return Comparison_result(
+	CGAL_NTS compare(s1sx, s1tx) *
+	CGAL_NTS compare(s2sx, s2tx) *
+	CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+		         (s2sy-s1sy)*s2stx*s1stx
+		         -(s2sx-px)*(s2sy-s2ty)*s1stx ));
+}
+
+template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 equal_directionC2(const FT &dx1, const FT &dy1,

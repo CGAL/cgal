@@ -1,3 +1,6 @@
+2.53   (21 December 2001)
+- compare_y_at_x for segments.
+
 2.52   (13 December 2001)
 - one more similar fix for RayH2.
 

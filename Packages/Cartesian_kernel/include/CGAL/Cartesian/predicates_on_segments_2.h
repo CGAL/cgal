@@ -39,6 +39,28 @@ compare_slopes(const SegmentC2<R CGAL_CTAG> &s1,
                            s2.target().x(), s2.target().y());
 }
 
+template < class R >
+Comparison_result
+compare_y_at_x(const PointC2<R CGAL_CTAG> &p,
+               const SegmentC2<R CGAL_CTAG> &s)
+{
+    return compare_y_at_xC2(p.x(), p.y(),
+	                    s.source().x(), s.source().y(),
+	                    s.target().x(), s.target().y());
+}
+
+template < class R >
+Comparison_result
+compare_y_at_x(const PointC2<R CGAL_CTAG> &p,
+               const SegmentC2<R CGAL_CTAG> &s1,
+               const SegmentC2<R CGAL_CTAG> &s2)
+{
+    return compare_y_at_x_segment_C2(p.x(),
+	                    s1.source().x(), s1.source().y(),
+	                    s1.target().x(), s1.target().y(),
+	                    s2.source().x(), s2.source().y(),
+	                    s2.target().x(), s2.target().y());
+}
 
 CGAL_END_NAMESPACE
 

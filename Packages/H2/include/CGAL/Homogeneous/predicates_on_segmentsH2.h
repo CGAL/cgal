@@ -92,6 +92,70 @@ compare_slopes(const SegmentH2<R>& s1, const SegmentH2<R>& s2)
                             CGAL_NTS abs(s1_ydiff * s2_xdiff)) );
 }
 
+template < class R >
+Comparison_result
+compare_y_at_x(const PointH2<R> &p,
+               const SegmentH2<R> &s)
+{
+    // compares the y-coordinates of p and the vertical projection of p on s.
+    // Precondition : p is in the x-range of s, and s is not vertical.
+    CGAL_kernel_precondition(! s.is_vertical() );
+    if (compare_x(s.source(), s.target()) == SMALLER) {
+        CGAL_kernel_precondition(compare_x(s.source(), p) != LARGER
+		              && compare_x(p, s.target()) != LARGER);
+        return (Comparison_result) orientation(p, s.source(), s.target());
+    }
+    else {
+        CGAL_kernel_precondition(compare_x(s.target(), p) != LARGER
+		              && compare_x(p, s.source()) != LARGER);
+        return (Comparison_result) orientation(p, s.target(), s.source());
+    }
+}
+
+template < class R >
+Comparison_result
+compare_y_at_x(const PointH2<R> &p,
+               const SegmentH2<R> &s1,
+               const SegmentH2<R> &s2)
+{
+    // compares the y-coordinates of the vertical projections of p on s1 and s2
+    // Precondition : p is in the x-range of s1 and s2, which are not vertical.
+    CGAL_kernel_precondition(! s1.is_vertical() );
+    CGAL_kernel_precondition(! s2.is_vertical() );
+    if (compare_x(s1.source(), s1.target()) == SMALLER)
+        CGAL_kernel_precondition(compare_x(s1.source(), p) != LARGER
+		              && compare_x(p, s1.target()) != LARGER);
+    else
+        CGAL_kernel_precondition(compare_x(s1.target(), p) != LARGER
+		              && compare_x(p, s1.source()) != LARGER);
+
+    if (compare_x(s2.source(), s2.target()) == SMALLER)
+        CGAL_kernel_precondition(compare_x(s2.source(), p) != LARGER
+		              && compare_x(p, s2.target()) != LARGER);
+    else
+        CGAL_kernel_precondition(compare_x(s2.target(), p) != LARGER
+		              && compare_x(p, s2.source()) != LARGER);
+
+    typedef typename R::FT FT;
+    FT px = p.x();
+    FT s1sx = s1.source().x();
+    FT s1sy = s1.source().y();
+    FT s1tx = s1.target().x();
+    FT s1ty = s1.target().y();
+    FT s2sx = s2.source().x();
+    FT s2sy = s2.source().y();
+    FT s2tx = s2.target().x();
+    FT s2ty = s2.target().y();
+    FT s1stx = s1sx-s1tx;
+    FT s2stx = s2sx-s2tx;
+
+    return Comparison_result(
+       CGAL_NTS compare(s1sx, s1tx) *
+       CGAL_NTS compare(s2sx, s2tx) *
+       CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+                        (s2sy-s1sy)*s2stx*s1stx
+                        -(s2sx-px)*(s2sy-s2ty)*s1stx ));
+}
 
 CGAL_END_NAMESPACE 
 
