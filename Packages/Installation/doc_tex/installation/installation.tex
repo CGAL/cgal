@@ -973,13 +973,21 @@ find a makefile that is ready for use.
 \index{Cygwin!installation on}\index{installation!on Cygwin}
 
 Cygwin is a free Unix-like environment for MS-Windows, distributed by
-Cygnus Solutions. For our tests we have used version $\beta$-20.1.
+Cygnus Solutions. For our tests we have used version 1.3.2 and
+$B$-20.1.
 
 It consists of a port of a large number of GNU tools, such as bash,
 make, gcc, gas, file utilities, etc, as well as tools ensuring an
 ability to emulate Unix-like access to resources, for instance mount.
 For a comprehensive introduction and details, see
 \path~http://sources.redhat.com/cygwin/~ .
+
+Make sure that the link \texttt{/bin/sh.exe} exists. If not, create
+it:
+\begin{verbatim}
+cd /bin
+ln -s bash.exe sh.exe
+\end{verbatim}
 
 \subsection{Pathnames}
 \index{Cygwin!pathnames}
