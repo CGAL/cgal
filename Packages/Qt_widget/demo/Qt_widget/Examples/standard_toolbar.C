@@ -1,5 +1,4 @@
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 
