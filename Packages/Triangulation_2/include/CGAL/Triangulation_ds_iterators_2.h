@@ -406,7 +406,7 @@ Triangulation_ds_iterator_base_2<Tds> ::
 operator--()
 {
   CGAL_triangulation_precondition( pos != NULL ); //past the end
-  if(pos != _tds->infinite_face())   pos = NULL; //first, return past the end
+  if(pos == _tds->infinite_face())   pos = NULL; //first, return past the end
   else decrement(); 
   return *this;
 }
@@ -703,7 +703,7 @@ void
 Triangulation_ds_edge_iterator_2<Tds> ::
 decrement()
 {
-  if (_tds->dimension() == 1) {Iterator_base::increment();}
+  if (_tds->dimension() == 1) {Iterator_base::decrement();}
   else {
     if (index == 0) {
       Iterator_base::decrement();
@@ -744,11 +744,11 @@ operator--()
 {
   CGAL_triangulation_assertion(*this != Edge_iterator(_tds,1));
   if( *this == Edge_iterator(_tds)){
-     return *this=Vertex_iterator(_tds,1) ;
+     return *this=Edge_iterator(_tds,1) ;
    }
   do   
    decrement();
-  while ( *this != Vertex_iterator(_tds,1) && !associated_vertex()); 
+  while ( *this != Edge_iterator(_tds,1) && !associated_edge()); 
   return *this;
 }
 

@@ -303,7 +303,7 @@ Triangulation_finite_faces_iterator_2<Gt,Tds>&
 Triangulation_finite_faces_iterator_2<Gt,Tds>::
 operator++()
 {
-  do All::operator++();
+  do { All::operator++();}
   while ( *this != All(_tr,1)  && _tr->is_infinite(*this));
   return *this;   
 }
@@ -314,7 +314,7 @@ Triangulation_finite_faces_iterator_2<Gt,Tds>&
 Triangulation_finite_faces_iterator_2<Gt,Tds>::
 operator--()
 {
-  do All::operator--();
+  do {All::operator--();}
   while ( *this !=  All(_tr,1) &&  _tr->is_infinite(*this));
   return *this;   
 }
@@ -538,8 +538,9 @@ Triangulation_finite_edges_iterator_2<Gt,Tds>&
 Triangulation_finite_edges_iterator_2<Gt,Tds>::
 operator--()
 {
-  do All::operator--();
-  while ( *this != All(_tr,1) &&  _tr->is_infinite(*this));
+  do {
+    All::operator--();
+  } while ( *this != All(_tr,1) &&  _tr->is_infinite(*this));
   return *this;  
 }
 
