@@ -37,8 +37,8 @@ PointH2<R>
 gp_linear_intersection(const LineH2<R>& l1, const LineH2<R>& l2)
 {
   return PointH2<R>( l1.b()*l2.c() - l2.b()*l1.c(),
-                         l2.a()*l1.c() - l1.a()*l2.c(),
-                         l1.a()*l2.b() - l2.a()*l1.b() );
+                     l2.a()*l1.c() - l1.a()*l2.c(),
+                     l1.a()*l2.b() - l2.a()*l1.b() );
 }
 
 template <class R>
