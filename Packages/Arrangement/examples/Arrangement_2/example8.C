@@ -67,6 +67,8 @@ int main(int argc, char* argv[])
   }
   else {
     cout << "The halfedge shot is :\n";
+    cout << "(Using homogeneous coordinates <hx, hy, hw>, ";
+    cout << "where <x, y>=<hx/hw, hy/hw>)" << endl;
     cout << e->source()->point() << " -> " << e->target()->point() << endl;
   }
 
