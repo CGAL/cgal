@@ -1,3 +1,6 @@
+2.13 (11 September 2003) [af]
+- Some testsuite files included the wrong header file
+
 2.12 (8 September 2003) [af]
 - Switched to unconditional  #include <CGAL/intersection_3_1.C>
   as Sun and Sgi CC complain about undefined functions
