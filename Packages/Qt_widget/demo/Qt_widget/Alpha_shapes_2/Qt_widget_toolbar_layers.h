@@ -36,9 +36,10 @@
 #include <CGAL/IO/Qt_widget.h>
 
 //Qt_widget_layer
-#include <CGAL/IO/Qt_layer_show_triangulation.h>
-#include <CGAL/IO/Qt_layer_show_voronoy.h>
-#include <CGAL/IO/Qt_layer_show_points.h>
+#include "Qt_layer_show_triangulation.h"
+#include "Qt_layer_show_voronoy.h"
+#include "Qt_layer_show_points.h"
+
 #include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
 //Qt
