@@ -258,6 +258,25 @@ InputPath=.\Qt_widget_toolbar_layers.h
 !ENDIF 
 
 # End Source File
+# Begin Source File
+
+SOURCE=.\triangulation_2.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\triangulation_2.h
+
+"triangulation_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe triangulation_2.C -o triangulation_2.moc
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 
