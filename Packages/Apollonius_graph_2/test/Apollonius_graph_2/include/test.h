@@ -830,7 +830,7 @@ bool test_algo(InputStream& is)
   // Basically what I do here is create typedefs for the default
   // template paramaters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
-  typedef Apollonius_graph_face_base_2<Traits>          Fb;
+  typedef Triangulation_face_base_2<Traits>             Fb;
   typedef Apollonius_graph_data_structure_2<Vb,Fb>      Agds;
   typedef Apollonius_graph_2<Traits,Agds>               Apollonius_graph;
 #else
@@ -856,7 +856,7 @@ bool test_hierarchy_algo(InputStream& is)
   // template paramaters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
-  typedef Apollonius_graph_face_base_2<Traits>          Fb;
+  typedef Triangulation_face_base_2<Traits>             Fb;
   typedef Apollonius_graph_data_structure_2<HVb,Fb>     Agds;
   typedef Apollonius_graph_hierarchy_2<Traits,Agds>
     Apollonius_graph_hierarchy;
@@ -885,7 +885,7 @@ bool test_filtered_traits_algo(InputStream& is)
   // Basically what I do here is create typedefs for the default
   // template paramaters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
-  typedef Apollonius_graph_face_base_2<Traits>          Fb;
+  typedef Triangulation_face_base_2<Traits>             Fb;
   typedef Apollonius_graph_data_structure_2<Vb,Fb>      Agds;
   typedef Apollonius_graph_2<Traits,Agds>               Apollonius_graph;
 #else
@@ -913,7 +913,7 @@ bool test_filtered_traits_hierarchy_algo(InputStream& is)
   // template paramaters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
-  typedef Apollonius_graph_face_base_2<Traits>          Fb;
+  typedef Triangulation_face_base_2<Traits>             Fb;
   typedef Apollonius_graph_data_structure_2<HVb,Fb>     Agds;
   typedef Apollonius_graph_hierarchy_2<Traits,Agds>
     Apollonius_graph_hierarchy;
