@@ -459,7 +459,11 @@ typedef Triangulation_3<GT, My_TDS>                                     Tr;
 ...
 \end{ccExampleCode}
 
-While now, what must be written is:
+While now, there are two possibilities.  The simplest one is to use the
+class \ccc{Triangulation_vertex_base_with_info_3}, and this approach is
+illustrated in a following subsection~\ref{Triangulation3-sec-examples-color}.
+But when the user needs to access some type which depends on the triangulation
+data structure (typically handles), then he must write:
 \begin{ccExampleCode}
 ...
 template < class GT, class Vb = Triangulation_vertex_base<GT> >
@@ -510,6 +514,7 @@ The following two examples show how the user can plug his own vertex base in a
 triangulation.  Changing the cell base is similar.
 
 \subsubsection{Adding a color}
+\label{Triangulation3-sec-examples-color}
 When the user doesn't need to add a type in a vertex which depends on the
 \ccc{TriangulationDataStructure_3} (e.g. a \ccc{Vertex_handle} or
 \ccc{Cell_handle}), then he can use the
