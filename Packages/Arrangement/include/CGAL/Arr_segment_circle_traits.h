@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.3-I-79 $
-// release_date  : $CGAL_Date: 2001/07/03 $
+// release       : $CGAL_Revision: CGAL-2.4-I-5 $
+// release_date  : $CGAL_Date: 2001/08/31 $
 //
 // file          : include/CGAL/Arr_segment_circle_traits.h
-// package       : Arrangement 
+// package       : Arrangement (2.19)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Ron Wein <wein@post.tau.ac.il>
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
@@ -700,31 +700,63 @@ class Arr_segment_circle_traits
     if (cvx.source() != p)
       cvx = curve.flip();
 
+    CGAL_assertion(cv1.source() == p);
+    CGAL_assertion(cv2.source() == p);
+    CGAL_assertion(cvx.source() == p);
+
+    // Make sure no two curves overlap.
+    // Assumes that all three source points are the same (equal to p).
+    if ((cv1.conic() == cv2.conic() &&
+	 cv1.conic().orientation() == cv2.conic().orientation() &&
+	 (cv1.contains_point(cv2.target()) ||
+	  cv2.contains_point(cv1.target()))))
+      return false;
+
+    if((cv1.conic() == cvx.conic() &&
+	cv1.conic().orientation() == cvx.conic().orientation() &&
+	(cv1.contains_point(cvx.target()) ||
+	 cvx.contains_point(cv1.target()))))
+      return false;
+
+    if((cvx.conic() == cv2.conic() &&
+	cvx.conic().orientation() == cv2.conic().orientation() &&
+	(cvx.contains_point(cv2.target()) ||
+	 cv2.contains_point(cvx.target()))))
+      return false;
+
     // Decide whether each arc is defined to the left or to the right of p.
     bool cv1_is_left = (compare_x(cv1.target(), p) == SMALLER);
     bool cv2_is_left = (compare_x(cv2.target(), p) == SMALLER);
     bool cvx_is_left = (compare_x(cvx.target(), p) == SMALLER);
 
-    if (cv1.is_vertical_segment())
+    // Special treatment for vertical segments:
+    // For every curve we define an indicator, which is 0 if it is not a
+    // vertical segment, and -1 / 1 if it is a vertical segment going up / down
+    // resp.
+    int cv1_vertical = (cv1.is_vertical_segment()) ?
+      (compare_y(cv1.target(), p) == LARGER ? 1 : -1) : 0;
+    int cv2_vertical = (cv2.is_vertical_segment()) ?
+      (compare_y(cv2.target(), p) == LARGER ? 1 : -1) : 0;
+    int cvx_vertical = (cvx.is_vertical_segment()) ?
+      (compare_y(cvx.target(), p) == LARGER ? 1 : -1) : 0;
+
+    if (cv1_vertical != 0)
     {
       // cv1 is a vertical segment:
-      bool cv1_is_up = (compare_y(cv1.target(), p) == LARGER);
-
-      if (cv2.is_vertical_segment())
+      if (cv2_vertical != 0)
       {
 	// Both cv1 and cv2 are vertical segments:
-	bool cv2_is_up = (compare_y(cv2.target(), p) == LARGER);
-
-	if (cv1_is_up && !cv2_is_up)
+	if ((cv1_vertical == 1) && (cv2_vertical == -1))
 	  return (!cvx_is_left);
-	else if (!cv1_is_up && cv2_is_up)
+	else if ((cv1_vertical == -1) && (cv2_vertical == 1))
 	  return (cvx_is_left);
 	else
 	  return (false);
       }
       
-      if (cv1_is_up)
+      if (cv1_vertical == 1)
       {
+	// cv1 is a vertical segment going up:
 	if (cv2_is_left)
 	{
 	  return ((!cvx_is_left) ||
@@ -739,6 +771,7 @@ class Arr_segment_circle_traits
       }
       else
       {
+	// cv1 is a vertical segment going down:
 	if (cv2_is_left)
 	{
 	  return (cvx_is_left &&
@@ -747,19 +780,19 @@ class Arr_segment_circle_traits
 	else
 	{
 	  return ((cvx_is_left) ||
+		  (cvx_vertical == 1) ||
 		  (!cvx_is_left &&
 		   curve_compare_at_x_right (cv2, cvx, p) == SMALLER));
 	}
       }
     }
 
-    if (cv2.is_vertical_segment())
+    if (cv2_vertical != 0)
     {
       // Only cv2 is a vertical segment:
-      bool cv2_is_up = (compare_y(cv2.target(), p) == LARGER);
-
-      if (cv2_is_up)
+      if (cv2_vertical == 1)
       {
+	// cv2 is a vertical segment going up:
 	if (cv1_is_left)
 	{
 	  return (cvx_is_left &&
@@ -768,48 +801,51 @@ class Arr_segment_circle_traits
 	else
 	{
 	  return ((cvx_is_left) ||
+		  (cvx_vertical == -1) ||
 		  (!cvx_is_left &&
 		   curve_compare_at_x_right (cv1, cvx, p) == LARGER));
 	}
       }
       else
       {
+	// cv2 is a vertical segment going down:
 	if (cv1_is_left)
 	{
 	  return ((!cvx_is_left) ||
+		  (cvx_vertical == 1) ||
 		  (cvx_is_left &&
 		   curve_compare_at_x_left (cv1, cvx, p) == SMALLER));
 	}
 	else
 	{
-	  return (cvx_is_left &&
+	  return ((!cvx_is_left) &&
 		  curve_compare_at_x_right (cv1, cvx, p) == LARGER);
 	}
       }
     }
 
-    if (cvx.is_vertical_segment())
+    if (cvx_vertical != 0)
     {
       // Only cvx is a vertical segment:
-      bool cvx_is_up = (compare_y(cvx.target(), p) == LARGER);
-
-      if (cvx_is_up)
+      if (cvx_vertical == 1)
       {
+	// cvx is a vertical segment going up:
 	if (cv1_is_left && !cv2_is_left)
 	  return (true);
 	else if (cv1_is_left && cv2_is_left)
 	  return (curve_compare_at_x_left(cv1, cv2, p) == LARGER);
-	else if (!cv1_is_left && !cv2_is_left) 
+	else if (!cv1_is_left && !cv2_is_left)
 	  return (curve_compare_at_x_right(cv1, cv2, p) == SMALLER);
       }
       else
       {
+	// cvx is a vertical segment going down:
 	if (!cv1_is_left && cv2_is_left)
 	  return (true);
 	else if (cv1_is_left && cv2_is_left)
-	  return (curve_compare_at_x_left(cv1, cv2, p) == SMALLER);
+	  return (curve_compare_at_x_left(cv1, cv2, p) == LARGER);
 	else if (!cv1_is_left && !cv2_is_left)
-	  return (curve_compare_at_x_right(cv1, cv2, p) == LARGER);
+	  return (curve_compare_at_x_right(cv1, cv2, p) == SMALLER);
       }
 
       return (false);
@@ -1109,8 +1145,10 @@ class Arr_segment_circle_traits
     {
       // Check if at least one end-point of the overlapping curve is to the
       // right of p.
-      return (compare_x (ovlp_arcs[0].source(), p) == LARGER ||
-	      compare_x (ovlp_arcs[0].target(), p) == LARGER);
+      return (compare_lexicographically_xy (ovlp_arcs[0].source(), 
+					    p) == LARGER ||
+	      compare_lexicographically_xy (ovlp_arcs[0].target(), 
+					    p) == LARGER);
     }
 
     // In case there are no overlaps and the base conics are the same,
@@ -1120,14 +1158,14 @@ class Arr_segment_circle_traits
     {
       if ((curve1.source() == curve2.source() ||
 	   curve1.source() == curve2.target()) &&
-	  compare_x (curve1.source(), p) == LARGER)
+	  compare_lexicographically_xy (curve1.source(), p) == LARGER)
       {
 	return (true);
       }
 
       if ((curve1.target() == curve2.source() ||
 	   curve1.target() == curve2.target()) &&
-	  compare_x (curve1.target(), p) == LARGER)
+	  compare_lexicographically_xy (curve1.target(), p) == LARGER)
       {
 	return (true);
       }
@@ -1144,7 +1182,7 @@ class Arr_segment_circle_traits
 
     for (int i = 0; i < n; i++)
     {
-      if (compare_x (ps[i], p) == LARGER)
+      if (compare_lexicographically_xy (ps[i], p) == LARGER)
 	return (true);
     }
 
@@ -1176,24 +1214,24 @@ class Arr_segment_circle_traits
       Point  ovlp_source = ovlp_arcs[0].source();
       Point  ovlp_target = ovlp_arcs[0].target();
 
-      if (compare_x (ovlp_source, p) == LARGER &&
-	  compare_x (ovlp_target, p) == LARGER)
+      if (compare_lexicographically_xy (ovlp_source, p) == LARGER &&
+	  compare_lexicographically_xy (ovlp_target, p) == LARGER)
       {
 	// The entire overlapping arc is to the right of p:
 	p1 = ovlp_source;
 	p2 = ovlp_target;
 	return (true);
       }
-      else if (compare_x (ovlp_source, p) != LARGER &&
-	       compare_x (ovlp_target, p) == LARGER)
+      else if (compare_lexicographically_xy (ovlp_source, p) != LARGER &&
+	       compare_lexicographically_xy (ovlp_target, p) == LARGER)
       {
 	// The source is to the left of p, and the traget is to its right.
 	p1 = p;
 	p2 = ovlp_target;
 	return (true);
       }
-      else if (compare_x (ovlp_source, p) == LARGER &&
-	       compare_x (ovlp_target, p) != LARGER)
+      else if (compare_lexicographically_xy (ovlp_source, p) == LARGER &&
+	       compare_lexicographically_xy (ovlp_target, p) != LARGER)
       {
 	// The source is to the right of p, and the traget is to its left.
 	p1 = ovlp_source;
@@ -1216,17 +1254,18 @@ class Arr_segment_circle_traits
 
       if ((curve1.source() == curve2.source() ||
 	   curve1.source() == curve2.target()) &&
-	  compare_x (curve1.source(), p) == LARGER)
+	  compare_lexicographically_xy (curve1.source(), p) == LARGER)
       {
 	nearest_end_P = &(curve1.source());
       }
 
       if ((curve1.target() == curve2.source() ||
 	   curve1.target() == curve2.target()) &&
-	  compare_x (curve1.target(), p) == LARGER)
+	  compare_lexicographically_xy (curve1.target(), p) == LARGER)
       {
 	if (nearest_end_P == NULL ||
-	    compare_x (*nearest_end_P, curve1.target()) == LARGER)
+	    compare_lexicographically_xy (*nearest_end_P,
+					  curve1.target()) == LARGER)
 	{
 	  nearest_end_P = &(curve1.target());
 	}
@@ -1254,7 +1293,7 @@ class Arr_segment_circle_traits
 
     for (int i = 0; i < n; i++)
     {
-      if (compare_x (ps[i], p) == LARGER)
+      if (compare_lexicographically_xy (ps[i], p) == LARGER)
       {
 	if (nearest_inter_P == NULL)
 	{
@@ -1264,7 +1303,8 @@ class Arr_segment_circle_traits
 	else
 	{
 	  // Compare with the nearest point so far.
-	  if (compare_x (ps[i], *nearest_inter_P) == SMALLER)
+	  if (compare_lexicographically_xy (ps[i], 
+					    *nearest_inter_P) == SMALLER)
 	    nearest_inter_P = &(ps[i]);
 	}
       }
@@ -1320,9 +1360,3 @@ class Arr_segment_circle_traits
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
-
