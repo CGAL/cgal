@@ -118,8 +118,6 @@ Stuff to look at, as time permits:
   Or did I miss something ?
   Do we want to allow that for other implementations ?
   Maybe there are other similar places.
-- Replace "xxx == FT(0)" by "is_zero(xxx)", and similar for FT(1), is_one().
-  It can be faster for some NTs.
 - Homogeneous' Point_2 has member functions :
     // and for efficiency in the predicates:
     const RT&     hx_ref() const;
