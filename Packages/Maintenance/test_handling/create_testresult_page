@@ -49,8 +49,8 @@ sub write_select()
 EOF
   print OUTPUTV '<form><table><tr><td><h2>Test-suite results for CGAL version</h2></td><td><select name="sel" onchange="top.results.location.href=this.form.sel.options[this.form.sel.selectedIndex].value">';
 
-  my @version_nr_vector, @version_name_vector;
-  my $i, $j;
+  my (@version_nr_vector, @version_name_vector);
+  my ($i, $j);
   $i = 0;
   foreach $_ (glob("results-*.*-I-*\.html")) {
     my $temp, $filename;
