@@ -1,0 +1,1198 @@
+
+@
+\section{Spatial Subdivision for the SNC structure}
+
+From the requirements specification defined for the point location and intersection testing processes on the Nef polyhedra, we now that the spatial subdivision structure should provide the following services:
+
+\begin{itemize}
+\item Give the set of objects $O$ around a point $p$.
+\item Give the set of objects $O$, in bundles, in the neighborhood of a ray $r$.
+\end{itemize}
+
+Meeting the first requirement, the interface needed is straightforward.  However, for accomplishing the second requirement a more complex interface is required in order to provide a internal-attributes free service, so the user does not need to have knowledge about the operation of the ray shooting process.  A simple way to achieve these goal is to define a iterator over the sets of objects that belong to the cell that the ray is currently intersecting.  The class interface is defined then in the following way:
+
+<<K3_tree.h>>=
+#ifndef K3_TREE_H
+#define K3_TREE_H
+
+#include <CGAL/basic.h>
+#include <CGAL/Unique_hash_map.h>
+#include <deque>
+#include <sstream>
+#include <string>
+
+#undef _DEBUG
+#define _DEBUG 503
+#include <CGAL/Nef_2/debug.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class Traits>
+class K3_tree
+{
+  class Objects_along_ray;
+  class Objects_around_segment;
+  friend class Objects_along_ray;
+  friend class Objects_around_segment;
+public:
+  <<declaration of local types>>
+private:
+  Traits traits;
+  Node* root;
+  int max_depth;
+  Bounding_box_3 bounding_box;
+public:
+  K3_tree( const Object_list& objects) {
+    <<compute the maximum depth of the subdivision>>
+    <<compute the bounding box of the input objects>>
+    root = build_kdtree( 0, objects, 0);
+  }
+  const Object_list& objects_around_point( const Point_3& p) const {
+    return locate( p, root);
+  }
+  Objects_along_ray objects_along_ray( const Ray_3& r) const {
+    return Objects_along_ray( *this, r);
+  }
+  Object_list objects_around_segment( const Segment_3& s) const {
+    Object_list O;
+    <<get all objects on the cells intersected by s>>
+    return O;
+  }
+/*
+  class Objects_along_ray 
+  {
+    class Iterator;
+    friend class Iterator;
+  private:
+    Node *root_node;
+    Ray_3 ray;
+  public:
+    Objects_along_ray( const K3_tree& k, const Ray_3& r) : 
+      root_node(k.root), ray(r) {
+      CGAL_assertion( ray.direction() == Direction_3( -1, 0, 0));
+      TRACEN("Objects_along_ray: input ray: "<<ray);
+    }
+    Iterator begin() const {
+      return Iterator( root_node, ray);
+    }
+    Iterator end() const {
+      return Iterator();
+    }
+    class Iterator
+    {
+      typedef Iterator Self;
+      typedef std::pair< const Node*, Ray_3> Candidate;
+    private:
+      std::deque<Candidate> S;
+      const Node* node;
+      Traits traits;
+      CGAL_assertion_code( Ray_3 old_ray);
+      CGAL_assertion_code( bool first_ray);
+    public:
+      Iterator() : node(0) {}
+      Iterator( const Node* root, const Ray_3& ray) {
+        CGAL_assertion_code( first_ray = true);
+        S.push_front( Candidate( root, ray));
+        ++(*this); // place the interator in the first intersected cell
+      }
+      Iterator( const Self& i) : S(i.S), node(i.node) {}
+      const Object_list& operator*() const { 
+        CGAL_assertion( node != 0);
+        return node->objects();
+      }
+      Self& operator++() {
+        <<find next intersected cell>>
+        return *this;
+      }
+      bool operator==(const Self& i) const { 
+        return (node == i.node); 
+      }
+      bool operator!=(const Self& i) const { 
+        return !(*this == i); 
+      }
+      const Node* get_node() const { 
+        CGAL_assertion( node != 0);
+        return node;
+      }
+    private:
+      <<definition of ray shooting iteration methods>>
+    };
+  };
+*/
+  class Objects_around_segment 
+  {
+    class Iterator;
+    friend class Iterator;
+  protected:
+    Node *root_node;
+    Segment_3 segment;
+    bool initialized;
+  public:
+    Objects_around_segment() : initialized(false) {}
+    Objects_around_segment( const K3_tree& k, const Segment_3& s) : 
+      root_node(k.root), segment(s), initialized(true) {
+      TRACEN("Objects_around_segment: input segment: "<<segment);
+    }
+    void initialize( const K3_tree& k, const Segment_3& s) {
+      root_node = k.root;
+      segment = s;
+      initialized = true;
+      TRACEN("Objects_around_segment: input segment: "<<s<<" (initialize)");
+    }
+  public:
+    Iterator begin() const {
+      CGAL_assertion( initialized == true);
+      return Iterator( root_node, segment);
+    }
+    Iterator end() const {
+      return Iterator();
+    }
+    class Iterator
+    {
+      typedef Iterator Self;
+      typedef std::pair< const Node*, Segment_3> Candidate;
+    protected:
+      std::deque<Candidate> S;
+      const Node* node;
+      Traits traits;
+      CGAL_assertion_code( Segment_3 prev_segment);
+      CGAL_assertion_code( bool first_segment);
+    public:
+      Iterator() : node(0) {}
+      Iterator( const Node* root, const Segment_3& s) {
+        CGAL_assertion_code( first_segment = true);
+        S.push_front( Candidate( root, s));
+        ++(*this); // place the interator in the first intersected cell
+      }
+      Iterator( const Self& i) : S(i.S), node(i.node) {}
+      const Object_list& operator*() const { 
+        CGAL_assertion( node != 0);
+        return node->objects();
+      }
+      Self& operator++() {
+        <<find next intersected cell (segment version)>>
+        return *this;
+      }
+      bool operator==(const Self& i) const { 
+        return (node == i.node); 
+      }
+      bool operator!=(const Self& i) const { 
+        return !(*this == i); 
+      }
+      const Node* get_node() const { 
+        CGAL_assertion( node != 0);
+        return node;
+      }
+    private:
+      <<definition of segment intersection iteration methods>>
+    };
+  };
+  class Objects_along_ray : public Objects_around_segment
+  {
+    typedef Objects_around_segment Base;
+  public:
+    Objects_along_ray( const K3_tree& k, const Ray_3& r) {
+      TRACEN("Objects_along_ray: input ray: "<<r);
+      CGAL_assertion( r.direction() == Direction_3( -1, 0, 0));
+      Point_3 p = r.source();
+      Point_3 q = Kernel::epoint( -1*p.hw()[0], 0, 0, p.hy()[0], 0, p.hz()[0], p.hw()[0]);
+      //Point_3 q = Infi_box::target_for_ray_shoot_on_minus_x_direction(r.source());
+      Base::initialize( k, Segment_3( p, q));
+    }
+  };
+  <<definition of k3 tree display method>>
+  <<definition of k3 tree update method>>
+  <<definition of the k3 tree destructor>>
+private:
+  <<definition of the k3 tree construction methods>>
+  <<definition of the point location methods>>
+};
+
+CGAL_END_NAMESPACE
+
+#endif // K3_TREE_H
+
+@ 
+Since all objects on the model are incident to vertices, are they who determine the complexity of the model.  The maximum depth of the spatial subdivision tree is then set as a function of the number of vertices in the model.
+
+<<compute the maximum depth of the subdivision>>=
+size_type n_vertices = 0;
+for( Object_const_iterator o = objects.begin(); o != objects.end(); ++o) {
+  Vertex_handle v;
+  if( assign( v, *o))
+    n_vertices++;
+}
+frexp( n_vertices, &max_depth);
+
+@ 
+The bounding box of the input set of objects is used in two moments.  First, during the construction of the spatial subdivision, where the bounding box is recursivelly divided in halves defining each one a node on the tree, and second, during the ray shooting where the bounding box is used to clip the infinite rays.
+
+<<compute the bounding box of the input objects>>=
+/* Only neccessary when there is no infimaximal box
+Objects_bbox objects_bbox = traits.objects_bbox_object();
+bounding_box = objects_bbox(objects);
+TRACEN("bounding box:"<<
+        " xmin: "<<bounding_box.xmin()<<" xmax: "<<bounding_box.xmax()<<
+        " ymin: "<<bounding_box.ymin()<<" ymax: "<<bounding_box.ymax()<<
+        " zmin: "<<bounding_box.zmin()<<" zmax: "<<bounding_box.zmax());
+*/
+@ 
+Since all the geometric predicates have to be supplied by the traits class, the spatial subdivision has to know only about a general data types for the objects it holds.  Additionally, the data types for the query objects, and geometric constructions must be available.
+
+<<declaration of local types>>=
+typedef typename Traits::Vertex_handle Vertex_handle;
+typedef typename Traits::Halfedge_handle Halfedge_handle;
+typedef typename Traits::Halffacet_handle Halffacet_handle;
+typedef typename Traits::Explorer Explorer;
+
+typedef typename Traits::Object_handle Object_handle;
+typedef typename Traits::Object_list Object_list;
+typedef typename Object_list::const_iterator Object_const_iterator;
+typedef typename Object_list::iterator Object_iterator;
+typedef typename Object_list::size_type size_type;
+
+typedef typename Traits::Point_3 Point_3;
+typedef typename Traits::Segment_3 Segment_3;
+typedef typename Traits::Ray_3 Ray_3;
+
+typedef typename Traits::Direction_3 Direction_3;
+typedef typename Traits::Plane_3 Plane_3;
+
+typedef typename Traits::Bounding_box_3 Bounding_box_3;
+typedef typename Traits::Side_of_plane Side_of_plane;
+typedef typename Traits::Objects_bbox Objects_bbox;
+
+typedef typename Traits::Kernel Kernel;
+typedef typename Kernel::FT FT;
+typedef typename Kernel::RT RT;
+
+<<definition of the node structure>>
+
+@ 
+\subsection{Construction}
+
+During the construction of a Kd-tree, the space is consecutively divided into two halfspaces, switching each time between $X$, $Y$ and $Z$ parallel planes, and distributig the set of objects into the halfspaces they intersect, until no further division is possible.
+
+<<definition of the k3 tree construction methods>>=
+template <typename Depth>
+Node* build_kdtree( Node* parent, const Object_list& O, Depth depth) {
+  CGAL_precondition( depth >= 0);
+  CGAL_precondition( O.size() > 0);
+  TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
+  TRACEN( "build_kdtree: "<<dump_object_list(O));
+  if( !can_set_be_divided( O, depth)) {
+    TRACEN("build_kdtree: set cannot be divided");
+    return new Node( parent, 0, 0, Plane_3(), O);
+  }
+  Plane_3 partition_plane = construct_splitting_plane( O, depth);
+  TRACEN("build_kdtree: plane: "<<partition_plane<<partition_plane.point());
+  Object_list O1, O2;
+  bool splitted = classify_objects( O, partition_plane,
+                                    std::back_inserter(O1), 
+                                    std::back_inserter(O2));
+  if( !splitted) {
+    TRACEN("build_kdtree: splitting plane not found");
+    return new Node( parent, 0, 0, Plane_3(), O);
+  }
+  CGAL_assertion( O1.size() + O2.size() >= O.size());
+  Node *node = new Node( parent, 0, 0, partition_plane, Object_list());
+  node->left_node = build_kdtree( node, O1, depth + 1);
+  node->right_node = build_kdtree( node, O2, depth + 1);
+  return node;
+}
+
+@ 
+When there is only one object in a cell, the node corresponds to a leaf since no more divisions could be performed.  And also, taken from the PM Octree definition, the division of a cell should end when there is only one vertex contained in the cell, in order to avoid infinite cell divisions trying to separated the incident objects to the vertex.  The subdivision also should finish when the maximum depth of the tree is reached.
+
+<<definition of the k3 tree construction methods>>=
+template <typename Depth>
+bool can_set_be_divided( const Object_list& O, Depth depth) {
+  if( O.size() < 2)
+    return false;
+  if( depth >= max_depth)
+    return false;
+  size_t number_of_vertices = 0;
+  typename Object_list::const_iterator o;
+  for( o = O.begin(); o != O.end(); o++) {
+    Vertex_handle v;
+    if( assign( v, *o)) {
+      number_of_vertices++;
+      if( number_of_vertices > 1)
+        break;
+    }
+  }
+  return (number_of_vertices > 1);
+}
+
+@
+If the partition plane is known, it is easy to classify the objects into two categories, one for the objects lying in the positive side of the plane, and the other for the objects on the negative side, by calling the side-of-plane predicate provided in by the traits class.  All such objects that intersect the partition plane are included in both sets.  In order to make the kdtree structure consistent with the spatial distribution, the orientation of the all partition planes used during the build process must be uniform.
+
+Having the partition plane, it is neccesary first to decide if the plane actually divides the set of objects in two distinct parts, and if it is not the case, the spliting process stops, and the set of objects is stored in a leaf node of the tree.
+
+<<definition of the k3 tree construction methods>>=
+template <typename OutputIterator>
+bool classify_objects( const Object_list& O, Plane_3 partition_plane,
+                        OutputIterator o1, OutputIterator o2) {
+  size_t on_oriented_boundary = 0, on_positive_side = 0, on_negative_side = 0;
+  typename Object_list::const_iterator o;
+  for( o = O.begin(); o != O.end(); ++o) {
+    Oriented_side side = traits.side_of_plane_object()( partition_plane, *o);
+    if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
+      *o1 = *o;
+      o1++;
+    }
+    if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
+      *o2 = *o;
+      o2++;
+    }
+    if( side == ON_ORIENTED_BOUNDARY)
+      on_oriented_boundary++;
+    if( side == ON_NEGATIVE_SIDE)
+      on_negative_side++;
+    if( side == ON_POSITIVE_SIDE)
+      on_positive_side++;
+  }
+  //return (on_oriented_boundary != O.size());
+  return (on_negative_side != 0 && on_positive_side != 0 && on_oriented_boundary != O.size());
+}
+
+@
+Now, it remains to define the process that computes the partition plane.  There are many strategies proposed for obtaining such plane.  But, since the construction time of the kdtree must stay as low as is possible, the most inexpensive strategy has to be choosen.  So, the middle point of the bounding box enclosing the set of objects is taken for placing the plane.
+
+<<definition of the k3 tree construction methods>>=
+template < typename Vertex, typename Explorer, typename Coordinate>
+class Vertex_smaller_than
+{
+public:
+  Vertex_smaller_than(Coordinate c) : coord(c) {
+    CGAL_assertion( c >= 0 && c <=2);
+  }
+  bool operator()( const Vertex& v1, const Vertex& v2) { 
+    return( D.point(v1)[coord] < D.point(v2)[coord]); 
+  }
+private:
+  Coordinate coord;
+  Explorer D;
+};
+
+template <typename Depth>
+Plane_3 construct_splitting_plane( const Object_list& O, Depth depth) {
+  typedef typename std::vector<Vertex_handle> Vertex_list;
+  CGAL_precondition( depth >= 0);
+  Vertex_list vertices;
+  for( typename Object_list::const_iterator o = O.begin(); o != O.end(); ++o) {
+    Vertex_handle v;
+    if( assign( v, *o))
+      vertices.push_back(v);
+  }
+  CGAL_assertion( vertices.size() > 1);
+  std::sort( vertices.begin(), vertices.end(), 
+             Vertex_smaller_than<Vertex_handle, Explorer, int>(depth%3));
+  typename Vertex_list::size_type i, n = vertices.size();
+  typename Vertex_list::const_iterator median;
+  for( i = 0, median = vertices.begin(); i < ((n+1)/2)-1; ++i, ++median)
+    CGAL_assertion( median != vertices.end());
+  Explorer D;
+  Point_3 p(D.point(*median));
+  switch( depth % 3) {
+  case 0: return Plane_3( p, Direction_3( 1, 0, 0)); break;
+  case 1: return Plane_3( p, Direction_3( 0, 1, 0)); break;
+  case 2: return Plane_3( p, Direction_3( 0, 0, 1)); break;
+  }
+  CGAL_assertion_msg( 0, "never reached");
+  return Plane_3();
+}
+
+@ 
+Finally, the tree structure holding the k3 tree has to be defined.  It corresponds to a binary tree, where each child node represents a half of the space bounded by the parent.  Also, when the node is a leaf, the objects bounded by it are stored in an object list attached to the node.
+
+<<definition of the node structure>>=
+class Node {
+  friend class K3_tree<Traits>;
+public:
+  Node( Node* p, Node* l, Node* r, Plane_3 pl, const Object_list& O) : 
+    parent_node(p), left_node(l), right_node(r), splitting_plane(pl), 
+    object_list(O) {}
+  bool is_leaf() const {
+    CGAL_assertion( (left_node != 0 && right_node != 0) ||
+                    (left_node == 0 && right_node == 0));
+    return (left_node == 0 && right_node == 0);
+  }
+  const Node* parent() const { return parent_node; }
+  const Node* left() const { return left_node; }
+  const Node* right() const { return right_node; }
+  const Plane_3& plane() const { return splitting_plane; }
+  const Object_list& objects() const { return object_list; }
+  <<definition of the node display method>>
+  <<definition of the node destructor>>
+private:
+  Node* parent_node;
+  Node* left_node;
+  Node* right_node;
+  Plane_3 splitting_plane;
+  Object_list object_list;
+};
+
+@ 
+During the simplification process of an SNC structure, some vertices could be deleted, as well as some halfedges, halffacets and volumes could be merged, and, since the spatial subdivision structure is constructed before this simplification process in order to be available for the volumes construction process, which requires to perform ray shooting for finding the nesting structure of shells, some of the objects stored in the node of the spatial subdivision tree could become invalid.  For correcting this situation, a update method is provided.  This method takes a map of vertices, edges and facets, that specifies wheter a face is still in the SNC structure or was removed, and so must be removed from the list of objects stored on the tree nodes.
+
+<<definition of k3 tree update method>>=
+bool update( Unique_hash_map<Vertex_handle, bool>& V, 
+             Unique_hash_map<Halfedge_handle, bool>& E, 
+             Unique_hash_map<Halffacet_handle, bool>& F) {
+  return update( root, V, E, F);
+}
+bool update( Node* node,
+             Unique_hash_map<Vertex_handle, bool>& V, 
+             Unique_hash_map<Halfedge_handle, bool>& E, 
+             Unique_hash_map<Halffacet_handle, bool>& F) {
+  CGAL_assertion( node != 0);
+  if( node->is_leaf()) {
+    bool updated = false;
+    Object_list* O = &node->object_list;
+    typename Object_list::iterator onext, o = O->begin();
+    while( o != O->end()) {
+      onext = o;
+      onext++;
+      Vertex_handle v;
+      Halfedge_handle e;
+      Halffacet_handle f;
+      if( assign( v, *o)) {
+        if( !V[v]) {
+          O->erase(o);
+          updated = true;
+        }
+      }
+      else if( assign( e, *o)) {
+        if( !E[e]) {
+          O->erase(o);
+          updated = true;
+        }         
+      }
+      else if( assign( f, *o)) {
+        if( !F[f]) {
+          O->erase(o);
+          updated = true;
+        }
+      }
+      else CGAL_assertion_msg( 0, "wrong handle");
+      o = onext;
+    }
+    return updated;
+  }
+  // TODO: protect the code below from optimizations!
+  bool left_updated = update( node->left_node, V, E, F);
+  TRACEN("k3_tree::update(): left node updated? "<<left_updated);
+  bool right_updated = update( node->right_node, V, E, F);
+  TRACEN("k3_tree::update(): right node updated? "<<right_updated);
+  return (left_updated || right_updated);
+}
+
+@ 
+Everything that as a beginning also has an end, and now we define the destructor the k3 tree structure.
+
+<<definition of the k3 tree destructor>>=
+~K3_tree() {
+  TRACEN("~K3_tree: deleting root...");
+  delete root;
+}
+
+<<definition of the node destructor>>=
+~Node() {
+  TRACEN("~Node: deleting node...");
+  if( !is_leaf()) {
+    delete left_node;
+    delete right_node;
+  }
+}
+
+@ 
+\subsection{Point location}
+
+In a kd tree, the point location process consists in a traversal of the tree structure, recursing on each node with the left or right child node depending on the side of the plane where the point is located, and reporting the objects contained on the leaf when one it is reached.  When the point lies on a partition plane, only one of the child nodes has to be visited or reported since all the objects intersecting the partition plane are stored in both incident nodes.  The choose of which node to visit in such cases is arbritary.
+
+<<definition of the point location methods>>=
+const Object_list& locate( const Point_3& p, const Node* node) const {
+  CGAL_precondition( node != 0);
+  if( node->is_leaf())
+    return node->objects();
+  else {
+    Oriented_side side = node->plane().oriented_side(p);
+    if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      return locate( p, node->left());
+    else { // side == ON_POSITIVE_SIDE 
+      CGAL_nef3_assertion( side == ON_POSITIVE_SIDE);
+      return locate( p, node->right());
+    }
+  }
+}
+
+@ 
+\subsection{Ray tracing}
+
+As it was stated before, the interface for ray tracing on the k3 tree structure will consist in an interator that goes over the sets of objects in the cells intersected by the ray, in order of proximity to the origin of the ray.
+
+<<find next intersected cell>>=
+if( S.empty())
+  node = 0; // end of the iterator
+else {
+  while( !S.empty()) {
+    const Node* n = S.front().first;
+    Ray_3 r = S.front().second;
+    CGAL_assertion( !r.is_degenerate());
+    S.pop_front();
+    if( n->is_leaf()) {
+#ifdef _DEBUG
+      if( first_ray) {
+        first_ray = false;
+        TRACEN("operator++: prev_ray=(none), ray="<<r);
+      }
+      else {
+        CGAL_warning( old_ray.has_on(r.source()));
+        TRACEN("operator++: prev_ray="<<old_ray<<", ray="<<r);
+      }
+      old_ray = r;
+#endif
+      node = n;
+      break;
+    }
+    else {
+      TRACEN("find next intersected cell: node plane: "<<n->plane() <<
+             ", point: "<<n->plane().point());
+      TRACEN("find next intersected cell: segment: "<<r);
+      Oriented_side src_side, tgt_side;
+      get_side_of( r, n->plane(), src_side, tgt_side);
+      if( src_side == ON_ORIENTED_BOUNDARY && tgt_side == ON_ORIENTED_BOUNDARY)
+        src_side = tgt_side = ON_NEGATIVE_SIDE;
+      else if( src_side == ON_ORIENTED_BOUNDARY)
+        src_side = tgt_side;
+      else if( tgt_side == ON_ORIENTED_BOUNDARY)
+        tgt_side = src_side;
+      if( src_side == tgt_side)
+        S.push_front( Candidate( get_child_by_side( n, src_side), r));
+      else {
+        Ray_3 r1, r2;
+        divide_ray_by_plane( r, n->plane(), r1, r2);
+        S.push_front( Candidate( get_child_by_side( n, tgt_side), r2));
+        S.push_front( Candidate( get_child_by_side( n, src_side), r1));
+      }
+    }
+  }
+}
+
+@ 
+For determining which cells are interesected by the ray, a recursive approach is followed.  On each node of the three beggining on the root, the division plane associated to the node is used for clipping the ray.  If the ray does not intersect the division plane, only the nodes in the side of the plane where the ray lays must be checked.  When the ray intersects the plane, the nodes on the side where the ray's source lays must be checked at first, and after, the nodes in the other side of the plane.  There are two special cases that must be handled explicitly.  The first one, when the ray lays completely on the division plane is treated as if one side of the plane is closed and the other one is open, so the ray only intersects the cells in one side of the plane, for instance, the negative.  Since all objects intersecting the plane are stored in the nodes on both sides, no possible candidate objects for intersection are discarded.  The second special case occurs when only the ray's source belongs to the division plane.  In this case, only the cells on the side that the ray crosses should be taken, for instance, the cells in the side of the plane where any point belonging to the ray belongs to.
+
+<<definition of ray shooting iteration methods>>=
+void get_side_of( const Ray_3& ray, const Plane_3& plane, 
+                  Oriented_side& src_side, Oriented_side& tgt_side) {
+  Object o = traits.intersect_object()( plane, ray);
+  Point_3 p;
+  Ray_3 r;
+  if( assign( r, o)) {
+    src_side = tgt_side = ON_ORIENTED_BOUNDARY;
+  }
+  else if( assign( p, o)) {
+    p = normalized(p);
+    if( p == ray.source()) {
+      src_side = ON_ORIENTED_BOUNDARY;
+      tgt_side = plane.oriented_side( ray.point(1));
+      CGAL_assertion( tgt_side != ON_ORIENTED_BOUNDARY);
+    }
+    else {
+      src_side = plane.oriented_side( ray.source());
+      CGAL_assertion( src_side != ON_ORIENTED_BOUNDARY);
+      tgt_side = (src_side == ON_NEGATIVE_SIDE ? 
+                  ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE);
+      CGAL_assertion( tgt_side != src_side);
+    }
+  }
+  else {
+    src_side = tgt_side = plane.oriented_side( ray.source());
+  }
+}
+
+inline 
+const Node* get_child_by_side( const Node* node, Oriented_side side) {
+  CGAL_assertion( node != 0);
+  CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
+  if( side == ON_NEGATIVE_SIDE) {
+    return node->left();
+  }
+  CGAL_assertion( side == ON_POSITIVE_SIDE);
+  return node->right();
+}
+
+void divide_ray_by_plane( const Ray_3& r, const Plane_3& pl, 
+                          Ray_3& r1, Ray_3& r2) {
+  Object o = traits.intersect_object()( pl, r);
+  Point_3 ip;
+  CGAL_assertion( assign( ip, o));
+  assign( ip, o);
+  ip = normalized(ip);
+  r1 = Ray_3( r.source(), r.direction());
+  r2 = Ray_3( ip, r.direction());
+}
+
+<<definition of segment intersection iteration methods>>=
+inline 
+const Node* get_child_by_side( const Node* node, Oriented_side side) {
+  CGAL_assertion( node != NULL);
+  CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
+  if( side == ON_NEGATIVE_SIDE) {
+    return node->left();
+  }
+  CGAL_assertion( side == ON_POSITIVE_SIDE);
+  return node->right();
+}
+
+void divide_segment_by_plane( Segment_3 s, Plane_3 pl, 
+                              Segment_3& s1, Segment_3& s2) {
+  Object o = traits.intersect_object()( pl, s);
+  Point_3 ip;
+  CGAL_assertion( assign( ip, o));
+  assign( ip, o);
+  ip = normalized(ip);
+  s1 = Segment_3( s.source(), ip);
+  s2 = Segment_3( ip, s.target());
+  CGAL_assertion( s1.target() == s2.source());
+  CGAL_assertion( s1.direction() == s.direction());
+  CGAL_assertion( s2.direction() == s.direction());
+}
+
+<<definition of k3 tree display method>>=
+template <typename T>
+friend std::ostream& operator<<
+(std::ostream& os, const K3_tree<T>& k3_tree) {
+  os << (const Node*)k3_tree.root; // no default conversion to const Node*?
+  return os;
+}
+
+std::string dump_object_list( const Object_list& O, int level = 0) {
+  std::stringstream os; 
+  typename Object_list::size_type v_count = 0, e_count = 0, f_count = 0;
+  typename Object_list::const_iterator o;
+  for( o = O.begin(); o != O.end(); ++o) {
+    Explorer D;
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    if( assign( v, *o)) {
+      if( level) os << D.point(v) << std::endl;
+      v_count++;
+    }
+    else if( assign( e, *o)) {
+      if( level) os << D.segment(e) << std::endl;
+      e_count++;
+    }
+    else if( assign( f, *o)) {
+      if( level) os << "facet" << std::endl;
+      f_count++;
+    }
+    else CGAL_assertion_msg( 0, "wrong handle");
+  }
+  os << v_count << "v " << e_count << "e " << f_count << "f";
+  return os.str();
+}
+
+<<definition of the node display method>>=
+friend std::ostream& operator<<
+  (std::ostream& os, const Node* node) {
+  CGAL_assertion( node != 0);
+  if( node->is_leaf())
+    os <<  node->objects().size();
+  else { 
+    os << " ( ";
+    if( !node->left()) os << '-';
+    else os << node->left();
+    os << " , ";
+    if( !node->right()) os << '-';
+    else os << node->right();
+    os << " ) ";
+  }
+  return os;
+}
+
+@ 
+\subsubsection{Segment intersecting}
+
+During the boolean operations computation it is necessary to find out all the intersections between the edges on one structure and all edges and facets in the other one.  Naively, all the edges and facets in the latter should be tested, but, using a spatial subdivision structure, it is possible to cut down the number of necessary intersection tests by taking as intersection candidates only the objects in the spatial cell where the supporting line segment of every single edge is located.
+Since the objects intersecting the division planes of the spatial subdivision are stored in both subspaces, it is necessary to guarantee that every object in the output candidates list is reported only once.
+
+<<get all objects on the cells intersected by s>>=
+Objects_around_segment objects( *this, s);
+Unique_hash_map< Vertex_handle, bool> v_mark(false);
+Unique_hash_map< Halfedge_handle, bool> e_mark(false);
+Unique_hash_map< Halffacet_handle, bool> f_mark(false);
+for( typename Objects_around_segment::Iterator oar = objects.begin(); 
+     oar != objects.end(); ++oar) {
+  
+  for( typename Object_list::const_iterator o = (*oar).begin();
+       o != (*oar).end(); ++o) { // TODO: implement operator->(...)
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    if( assign( v, *o)) {
+      if( !v_mark[v]) {
+        O.push_back(*o);
+        v_mark[v] = true;
+      }
+    }
+    else if( assign( e, *o)) {
+      if( !e_mark [e]) {
+        O.push_back(*o);
+        e_mark[e] = true;
+      }
+    }
+    else if( assign( f, *o)) {
+      if( !f_mark[f]) {
+        O.push_back(*o);
+        f_mark[f] = true;
+      }
+    }
+    else
+      CGAL_assertion_msg( 0, "wrong handle");
+  }
+}
+
+<<find next intersected cell (segment version)>>=
+if( S.empty())
+  node = 0; // end of the iterator
+else {
+  while( !S.empty()) {
+    const Node* n = S.front().first;
+    Segment_3 s = S.front().second;
+    S.pop_front();
+    if( n->is_leaf()) {
+#ifdef _DEBUG
+      if( first_segment) {
+        first_segment = false;
+        TRACEN("operator++: prev_segment=(none), segment="<<s);
+      }
+      else {
+        CGAL_assertion( prev_segment.target() == s.source());
+        CGAL_assertion( prev_segment.direction() == s.direction());
+        TRACEN("operator++: prev_segment="<<prev_segment<<", segment="<<s);
+      }
+      prev_segment = s;
+#endif
+      node = n;
+      break;
+    }
+    else {
+      TRACEN("find next intersected cell: segment: "<<s);
+      TRACEN("find next intersected cell: node plane: "<<n->plane() <<
+             ", point: "<<n->plane().point());
+      Oriented_side src_side = n->plane().oriented_side(s.source());
+      Oriented_side tgt_side = n->plane().oriented_side(s.target());
+      if( src_side == ON_ORIENTED_BOUNDARY && tgt_side == ON_ORIENTED_BOUNDARY)
+        src_side = tgt_side = ON_NEGATIVE_SIDE;
+      else if( src_side == ON_ORIENTED_BOUNDARY)
+        src_side = tgt_side;
+      else if( tgt_side == ON_ORIENTED_BOUNDARY)
+        tgt_side = src_side;
+      if( src_side == tgt_side)
+        S.push_front( Candidate( get_child_by_side( n, src_side), s));
+      else {
+        Segment_3 s1, s2;
+        divide_segment_by_plane( s, n->plane(), s1, s2);
+        S.push_front( Candidate( get_child_by_side( n, tgt_side), s2)); // cell on target pushed first
+        S.push_front( Candidate( get_child_by_side( n, src_side), s1));
+      }
+    }
+  }
+}
+
+@ 
+\subsection{K3 Tree Traits class for the SNC structure}
+
+<<SNC_k3_tree_traits.h>>=
+#ifndef SNC_K3_TREE_TRAITS_H
+#define SNC_K3_TREE_TRAITS_H
+
+#include <CGAL/Bounding_box_3.h>
+#include <list>
+
+#define CGAL_for_each( i, C) for( i = C.begin(); i != C.end(); ++i)
+
+CGAL_BEGIN_NAMESPACE
+
+template <class SNCstructure>
+struct Side_of_plane {
+  typedef typename SNCstructure::Vertex_handle Vertex_handle;
+  typedef typename SNCstructure::Halfedge_handle Halfedge_handle;
+  typedef typename SNCstructure::Halffacet_handle Halffacet_handle;
+  typedef typename SNCstructure::Object_handle Object_handle;
+
+  typedef typename SNCstructure::Halffacet_cycle_iterator
+    Halffacet_cycle_iterator;
+  typedef typename SNCstructure::SHalfedge_around_facet_circulator 
+    SHalfedge_around_facet_circulator;
+  typedef typename SNCstructure::SHalfedge_handle SHalfedge_handle;
+  
+  typedef typename SNCstructure::Kernel Kernel;
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Segment_3 Segment_3;
+  typedef typename Kernel::Plane_3 Plane_3;
+  
+  Oriented_side operator()( Plane_3 pl, Object_handle o) const;
+  Oriented_side operator()( Plane_3 pl, Vertex_handle v) const;
+  Oriented_side operator()( Plane_3 pl, Halfedge_handle e) const;
+  Oriented_side operator()( Plane_3 pl, Halffacet_handle f) const;
+
+  typedef typename SNCstructure::SNC_decorator SNC_decorator;
+  SNC_decorator D;
+};
+
+template <class SNCstructure>
+struct Objects_bbox {
+  typedef typename SNCstructure::Vertex_handle Vertex_handle;
+  typedef typename SNCstructure::Halfedge_handle Halfedge_handle;
+  typedef typename SNCstructure::Halffacet_handle Halffacet_handle;
+  typedef typename SNCstructure::Object_handle Object_handle;
+  typedef typename SNCstructure::Object_list Object_list;
+
+  typedef typename SNCstructure::Halffacet_cycle_iterator
+    Halffacet_cycle_iterator;
+  typedef typename SNCstructure::SHalfedge_around_facet_circulator 
+    SHalfedge_around_facet_circulator;
+  typedef typename SNCstructure::SHalfedge_handle SHalfedge_handle;
+
+  typedef typename SNCstructure::Kernel Kernel;
+  typedef typename Kernel::Plane_3 Plane_3;
+  typedef typename Kernel::Segment_3 Segment_3;
+  typedef typename Kernel::Point_3 Point_3;
+
+  typedef typename Kernel::RT RT;
+  typedef typename Kernel::FT FT;
+  typedef Bounding_box_3<FT> Bounding_box_3;
+  
+  Bounding_box_3 operator()(const Object_list& o) const;
+  Bounding_box_3 operator()(Object_handle o) const;
+  Bounding_box_3 operator()(Vertex_handle v) const;
+  Bounding_box_3 operator()(Halfedge_handle e) const;
+  Bounding_box_3 operator()(Halffacet_handle f) const;
+
+  typedef typename SNCstructure::SNC_decorator SNC_decorator;
+  SNC_decorator D;
+};
+
+template <class SNCstructure>
+class SNC_k3_tree_traits {
+  typedef typename SNCstructure::Kernel Kernel;
+
+public:
+  typedef SNCstructure SNC_structure;
+  typedef typename SNCstructure::Vertex_handle Vertex_handle;
+  typedef typename SNCstructure::Halfedge_handle Halfedge_handle;
+  typedef typename SNCstructure::Halffacet_handle Halffacet_handle;
+  typedef typename SNCstructure::SNC_decorator Explorer;
+
+  typedef typename SNCstructure::Object_handle Object_handle;
+  typedef typename SNCstructure::Object_list Object_list;
+
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Segment_3 Segment_3;
+  typedef typename Kernel::Ray_3 Ray_3;
+  typedef typename Kernel::Plane_3 Plane_3;
+  typedef typename Kernel::Direction_3 Direction_3;
+
+  typedef typename Kernel::RT RT;
+  typedef typename Kernel::FT FT;
+  typedef Bounding_box_3<FT> Bounding_box_3;
+
+  typedef typename Kernel::Intersect_3 Intersect;
+  typedef Objects_bbox<SNCstructure> Objects_bbox;
+  typedef Side_of_plane<SNCstructure> Side_of_plane;
+
+  Intersect intersect_object() const {
+    return Intersect();
+  }
+
+  Side_of_plane side_of_plane_object() const {
+    return Side_of_plane();
+  }
+
+  Objects_bbox objects_bbox_object() const {
+    return Objects_bbox();
+  }
+};
+
+template <class SNCstructure>
+Oriented_side 
+Side_of_plane<SNCstructure>::operator()
+  ( Plane_3 pl, Object_handle o) const {
+  Vertex_handle v;
+  Halfedge_handle e;
+  Halffacet_handle f;
+  if( assign( v, o))
+    return (*this)( pl, v);
+  else if( assign( e, o))
+    return (*this)( pl, e);
+  else if( assign( f, o))
+    return (*this)( pl, f);
+  else
+    CGAL_assertion_msg( 0, "wrong handle");
+  return Oriented_side(); // never reached
+}
+
+template <class SNCstructure>
+Oriented_side 
+Side_of_plane<SNCstructure>::operator()
+( Plane_3 pl, Vertex_handle v) const {
+  return pl.oriented_side(D.point(v));
+}
+
+/* 
+   An edge is considered intersecting a plane if its endpoints lie on the
+   plane or if they lie on diferent sides.  Partial tangency is not considered
+   as intersection, due the fact that a lower dimensional face (the vertex)
+   should be already reported as an object intersecting the plane.
+ */
+
+template <class SNCstructure>
+Oriented_side 
+Side_of_plane<SNCstructure>::operator()
+( Plane_3 pl, Halfedge_handle e) const{
+  Segment_3 s(D.segment(e));
+  Oriented_side src_side = pl.oriented_side(s.source());
+  Oriented_side tgt_side = pl.oriented_side(s.target());
+  if( src_side == tgt_side)
+    return src_side;
+  if( src_side == ON_ORIENTED_BOUNDARY)
+    return tgt_side;
+  if( tgt_side == ON_ORIENTED_BOUNDARY)
+    return src_side;
+  return ON_ORIENTED_BOUNDARY;
+}
+
+/* 
+   As for the edges, if a facet is tanget to the plane it is not considered as
+   a interesection since lower dimensional faces, like the edges and vertices
+   where the tangency occurrs, should be reported as the objects intersecting 
+   the plane.
+   So, an intersection is reported if all vertices of the facet lie on plane,
+   for which it is only necessary to check three vertices, or if the facet 
+   has vertices on both sides of the plane, so the intersection is known
+   as far as two vertices located on different sides of the plane.
+*/
+
+template <class SNCstructure>
+Oriented_side 
+Side_of_plane<SNCstructure>::operator()
+  ( Plane_3 pl, Halffacet_handle f) const {
+    CGAL_nef3_assertion( std::distance( f->facet_cycles_begin(), f->facet_cycles_end()) > 0);
+  Halffacet_cycle_iterator fc(f->facet_cycles_begin());
+  SHalfedge_handle e;
+  CGAL_assertion( assign( e, fc));
+  assign( e, fc);
+  SHalfedge_around_facet_circulator sc(e), send(sc);
+  //CGAL_assertion( iterator_distance( sc, send) >= 3); // TODO: facet with 2 vertices was found, is it possible?
+  Oriented_side facet_side;
+  do {
+    facet_side = pl.oriented_side(D.point(D.vertex(sc)));
+    ++sc;
+  }
+  while( facet_side == ON_ORIENTED_BOUNDARY && sc != send);
+  if( facet_side == ON_ORIENTED_BOUNDARY)
+    return ON_ORIENTED_BOUNDARY;
+  CGAL_assertion( facet_side != ON_ORIENTED_BOUNDARY);
+  while( sc != send) {
+    Oriented_side point_side = pl.oriented_side(D.point(D.vertex(sc)));
+    ++sc;
+    if( point_side == ON_ORIENTED_BOUNDARY)
+      continue;
+    if( point_side != facet_side)
+      return ON_ORIENTED_BOUNDARY;
+  }
+  return facet_side;
+}
+
+template <class SNCstructure>
+Bounding_box_3<typename SNCstructure::Kernel::FT>
+Objects_bbox<SNCstructure>::operator()
+  ( const Object_list& O) const {
+  CGAL_assertion( O.size() > 0);
+  Vertex_handle v;
+  typename Object_list::const_iterator o = O.begin();
+  while( !assign( v, *o) || !Kernel::is_standard(D.point(v))) {
+    o++;
+    CGAL_assertion( o != O.end());
+  }
+  Bounding_box_3 b((*this)(v));
+  o++;
+  while( o != O.end()) {
+    if( assign( v, *o) && Kernel::is_standard(D.point(v)))
+      b = b + (*this)(v);
+    o++;
+  }
+  return b;
+}
+
+template <class SNCstructure>
+Bounding_box_3<typename SNCstructure::Kernel::FT> 
+Objects_bbox<SNCstructure>::operator()
+  (Object_handle o) const {
+  Vertex_handle v;
+  Halfedge_handle e;
+  Halffacet_handle f;
+  if( assign( v, o))
+    return (*this)(v);
+  else if( assign( e, o))
+    return (*this)(e);
+  else if( assign( f, o))
+    return (*this)(f);
+  else
+    CGAL_assertion_msg( 0, "wrong handle");
+  return Bounding_box_3(); // never reached
+}
+
+template <class SNCstructure>
+Bounding_box_3<typename SNCstructure::Kernel::FT> 
+Objects_bbox<SNCstructure>::operator()
+  (Vertex_handle v) const {
+  Point_3 p(D.point(v));
+  return Bounding_box_3( p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
+}
+
+template <class SNCstructure>
+Bounding_box_3<typename SNCstructure::Kernel::FT> 
+Objects_bbox<SNCstructure>::operator()
+  (Halfedge_handle e) const {
+  return ((*this)(D.vertex(e)) + (*this)(D.vertex(D.twin(e))));
+}
+
+template <class SNCstructure>
+Bounding_box_3<typename SNCstructure::Kernel::FT> 
+Objects_bbox<SNCstructure>::operator()
+  (Halffacet_handle f) const {
+  CGAL_assertion( f->facet_cycles_begin() != Halffacet_cycle_iterator());
+  Halffacet_cycle_iterator fc(f->facet_cycles_begin());
+  SHalfedge_handle e;
+  CGAL_assertion( assign( e, fc));
+  assign( e, fc);
+  SHalfedge_around_facet_circulator sc(e), send(sc);
+  CGAL_assertion( !is_empty_range( sc, send));
+  Bounding_box_3 b((*this)(D.vertex(sc)));
+  sc++;
+  while( sc != send) {
+    b = b + (*this)(D.vertex(sc));
+    sc++;
+  }
+  return b;
+}
+
+CGAL_END_NAMESPACE
+
+#endif // SNC_K3_TREE_TRAITS_H
+
+@ 
+\subsection{Test program}
+
+<<k3_tree_demo.C>>=
+//#define CGAL_NEF3_VISUALIZOR
+#include <CGAL/basic.h>
+#include <CGAL/Gmpz.h>
+#include <CGAL/Simple_homogeneous.h>
+#include <CGAL/Extended_homogeneous_3.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Nef_polyhedron_3.h>
+#include <CGAL/Nef_3/SNC_point_locator.h>
+#include <CGAL/Timer.h>
+#include <fstream>
+#include <string.h>
+
+#undef _DEBUG
+#define _DEBUG 157
+#include <CGAL/Nef_2/debug.h>
+
+typedef CGAL::Gmpz                          NT;
+typedef CGAL::Extended_homogeneous_3<NT>    Kernel;
+typedef Kernel::Point_3                     Point_3;
+typedef Kernel::Segment_3                   Segment_3;
+typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
+
+typedef CGAL::SNC_items<Kernel, bool>       SNC_items;
+typedef CGAL::SNC_structure<SNC_items>      SNC_structure;
+typedef CGAL::Nef_polyhedron_3<SNC_items>   Nef_polyhedron;
+typedef CGAL::SNC_point_locator<SNC_structure> Point_locator;
+
+typedef SNC_structure::Vertex_handle        Vertex_handle;
+typedef SNC_structure::Halfedge_handle      Halfedge_handle;
+typedef SNC_structure::Halffacet_handle     Halffacet_handle;
+typedef SNC_structure::Volume_handle        Volume_handle;
+typedef SNC_structure::Object_handle        Object_handle;
+
+void error( int n) {
+  std::cerr << "syntax: program file1.off file2.off result.nef "
+    "{naive,subdivision} {union,int,diff,symdiff} debugthread" << std::endl;
+  exit(n);
+}
+
+// syntax: demo file1.off file2.off result.nef strategy operation debug
+int main( int argc, char** argv) {
+  if( argc != 7)
+    error(1);
+
+  std::ifstream file1(argv[1]), file2(argv[2]);
+  if( !file1 || !file2)
+    error(2);
+  std::ofstream result(argv[3]);
+  if( !result)
+    error(2);
+
+  char *strategy = argv[4];
+  if( strcmp( strategy, "naive") && strcmp( strategy, "subdivision"))
+    error(3);
+  char *boolop = argv[5];
+  if( strcmp( boolop, "union") && strcmp( boolop, "int") &&
+      strcmp( boolop, "diff") && strcmp( boolop, "symmdiff"))
+    error(3);
+  int dthread = atoi(argv[6]);
+  if( dthread < 0)
+    error(4);
+  CGAL::set_pretty_mode(std::cerr);
+  SETDTHREAD(dthread);
+
+  Point_locator *pl;
+  if( strcmp( strategy, "subdivision") == 0)
+    pl = new CGAL::SNC_point_locator_by_spatial_subdivision<SNC_structure>;
+  else if( strcmp( strategy, "naive") == 0)
+    pl = new CGAL::SNC_point_locator_naive<SNC_structure>;
+  else CGAL_assertion_msg( 0, "wrong strategy");
+
+  CGAL::Timer constr_time, boolop_time;
+
+  TRACEN("constructing models...");
+  Polyhedron Pp, Qp;
+  file1 >> Pp;
+  file2 >> Qp;
+  CGAL_assertion( Pp.size_of_vertices() > 0 && Qp.size_of_vertices());
+  constr_time.start();
+  Nef_polyhedron P(Pp, pl->clone()), Q(Qp, pl->clone());
+  constr_time.stop();
+
+  TRACEN("operating models...");
+  Nef_polyhedron PQ(Nef_polyhedron::EMPTY); 
+  // wasted time creating the infimaximal box
+  boolop_time.start();
+  if( strcmp( boolop, "union") == 0)
+    PQ = P+Q;
+  else if( strcmp( boolop, "int") == 0)
+    PQ = P*Q;
+  else if( strcmp( boolop, "diff") == 0)
+    PQ = P-Q;
+  else if( strcmp( boolop, "symmdiff") == 0)
+    PQ = P^Q;
+  else CGAL_assertion_msg( 0, "wrong boolean operation");
+  boolop_time.stop();
+
+  TRACEN("writing output...");
+  result << PQ;
+
+  TRACEN("nef3 construction: " << constr_time.time());
+  TRACEN("boolean operation: " << boolop_time.time());
+  return 0;
+}
+
