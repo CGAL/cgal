@@ -62,7 +62,6 @@ namespace CGAL {
   
   // copy constructor
   Iso_rectangle_d(const Iso_rectangle_d& b) : dim(b.dim) {
-      std::cout << "dim=" << dim << std::endl;
       lower = new NT[dim];
       upper = new NT[dim];
       for (int i = 0; i < dim; ++i) {
@@ -71,10 +70,7 @@ namespace CGAL {
       }
   }
 
-  Point_d min() {
-    return Point_d(dim,lower,lower+dim);
-  }
-
+  
   bool has_on_bounded_side(const Point_d& p) const
   {
     NT h;

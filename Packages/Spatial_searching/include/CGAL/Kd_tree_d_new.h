@@ -24,6 +24,7 @@
 #ifndef CGAL_KD_TREE_D_NEW_H
 #define CGAL_KD_TREE_D_NEW_H
 #include <CGAL/Kd_tree.h>
+#include <CGAL/Fuzzy_iso_rectangle_d.h>
 #include <CGAL/Fuzzy_iso_box_d.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Iso_cuboid_3.h>
@@ -200,7 +201,7 @@ template <class Point,
   typedef typename Kernel_traits<Point>::Kernel K;
   typedef typename K::FT NT;
 
-  typedef Fuzzy_iso_box_d<Point,Iso_rectangle_d<K> > Iso_box;
+  typedef Fuzzy_iso_rectangle_d<Point,Iso_rectangle_d<K> > Iso_box;
   // work around, because old kd-tree constructor requires unneeded specification of dim
   class Iso_box_d {
 

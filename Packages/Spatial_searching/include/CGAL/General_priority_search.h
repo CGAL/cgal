@@ -372,7 +372,6 @@ class Distance_smaller
     //destructor
     ~Iterator_implementation() {
 
-        // std::cout << "called destructor" << std::endl;
 	while (PriorityQueue->size()>0) {
                 Cell_with_distance* The_top=PriorityQueue->top();
                 PriorityQueue->pop();

@@ -23,14 +23,14 @@
 
 
 
-#ifndef CGAL_FUZZY_ISO_BOX_D_H
-#define CGAL_FUZZY_ISO_BOX_D_H
+#ifndef CGAL_FUZZY_ISO_RECTANGLE_D_H
+#define CGAL_FUZZY_ISO_RECTANGLE_D_H
 #include <CGAL/Kd_tree_rectangle.h>
 
 namespace CGAL {
 
   template <class Point, class Iso_box_d>
-  class Fuzzy_iso_box_d{
+  class Fuzzy_iso_rectangle_d{
 
     public:
 
@@ -45,19 +45,19 @@ namespace CGAL {
     public:
 
     	// default constructor
-    	Fuzzy_iso_box_d() {}
+    	Fuzzy_iso_rectangle_d() {}
 		
 
 	
 
         // constructor
-	Fuzzy_iso_box_d(const Point& p, const Point& q, NT epsilon=NT(0)) :
+	Fuzzy_iso_rectangle_d(const Point& p, const Point& q, NT epsilon=NT(0)) :
         eps(epsilon), dim(p.dimension())
         {box= new Iso_box_d(p,q);}
         	
         bool contains(const Point& p) const {	 
 		for (unsigned int i = 0; i < dim; ++i) {
-			if ( (p[i] < box->min()[i]) || (p[i] >= box->max()[i]) ) return false;
+			if ( (p[i] < box->min_coord(i)) || (p[i] >= box->max_coord(i)) ) return false;
 		}
 		return true; 
         }
@@ -65,8 +65,8 @@ namespace CGAL {
         
 	bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle) const {   
  		for (unsigned int i = 0; i < dim; ++i) {
-        		if ( (box->max()[i]-eps < rectangle->min_coord(i)) 
-			|| (box->min()[i]+eps >= rectangle->max_coord(i)) ) return false;
+        		if ( (box->max_coord(i)-eps < rectangle->min_coord(i)) 
+			|| (box->min_coord(i)+eps >= rectangle->max_coord(i)) ) return false;
     		}
     		return true;                                     
 	}
@@ -74,19 +74,19 @@ namespace CGAL {
 
 	bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle) const { 
     		for (unsigned int i = 0; i < dim; ++i) {
-        		if (  (box->max()[i]+eps < rectangle->max_coord(i) ) 
-			|| (box->min()[i]-eps >= rectangle->min_coord(i)) ) return false;
+        		if (  (box->max_coord(i)+eps < rectangle->max_coord(i) ) 
+			|| (box->min_coord(i)-eps >= rectangle->min_coord(i)) ) return false;
     		}
     		return true;
   	} 
 
 	
 
-	~Fuzzy_iso_box_d() {delete box;}
+	~Fuzzy_iso_rectangle_d() {delete box;}
 
 	
 
-  }; // class Fuzzy_iso_box_d
+  }; // class Fuzzy_iso_rectangle_d
 
 } // namespace CGAL
-#endif // FUZZY_ISO_BOX_D_H
+#endif // FUZZY_ISO_RECTANGLE_D_H

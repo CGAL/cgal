@@ -307,7 +307,6 @@ class iterator;
 
     // prefix operator
     Iterator_implementation& operator++() {
-        // std::cout << "called ++" << std::endl;
         Delete_the_current_item_top();
         Compute_the_next_nearest_neighbour();
         return *this;
