@@ -54,7 +54,6 @@ namespace CGAL {
     QToolBar(mw, name),
     widget(w)
   {
-    w->setMouseTracking(true);
     setLabel("Qt_widget standard toolbar");
     fill_toolbar(mw);
   };
@@ -67,7 +66,6 @@ namespace CGAL {
     QToolBar("Qt_widget standard toolbar", mw, parent, newLine, name),
     widget(w)
   {
-    w->setMouseTracking(true);
     fill_toolbar(mw);
   };
   
@@ -98,6 +96,7 @@ namespace CGAL {
 					       "showcoordlayer");
 	widget->attach_standard(showcoordlayer);
 	showcoordlayer->does_eat_events = false;
+	widget->setMouseTracking(true);
       }
 
     QIconSet arrow_pixmap(QPixmap( (const char**)arrow_small_xpm ),

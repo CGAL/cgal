@@ -84,7 +84,6 @@ protected:
       if(!active)
       {
         active=true;
-        widget->setMouseTracking(TRUE);
         last_of_poly = Point_2(x, y);
         poly.push_back(Point_2(x, y));	
       } else{
