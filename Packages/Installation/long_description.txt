@@ -4,6 +4,19 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1127
+//---------------------------------------------------------------------
+
+GLOB: Fixed CGAL_LIB_CREATE for mipspro.
+GLOB: Added CGAL_WINLIB_CXXFLAGS, set -fpermissive for gcc-solaris.
+GLOB: Added WINDOW_INCLUDE, set to /usr/openwin/include for solaris.
+GLOB: Show gcc-3 as supported, 2.9X only for X=5, egcs not at all.
+GLOB: Add -O to CGAL_LIB_CXXFLAGS and CGAL_SHARED_LIB_CXXFLAGS.
+DOCS: Added remark for cygwin 1.3.2.
+DOCS: Updated some remark concerning cygwin and/or Borland.
+SRC : Added CGAL_WINLIB_CXXFLAGS.
+
+//---------------------------------------------------------------------
 //	revision 1126
 //---------------------------------------------------------------------
 

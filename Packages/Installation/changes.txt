@@ -7,6 +7,11 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Fixed CGAL_LIB_CREATE for mipspro.
+GLOB: Added CGAL_WINLIB_CXXFLAGS, set -fpermissive for gcc-solaris.
+GLOB: Added WINDOW_INCLUDE, set to /usr/openwin/include for solaris.
+GLOB: Show gcc-3 as supported, 2.9X only for X=5, egcs not at all.
+GLOB: Add -O to CGAL_LIB_CXXFLAGS and CGAL_SHARED_LIB_CXXFLAGS.
 GLOB: Added support for libCGALWin.
 GLOB: Added messages for stupid users.
 GLOB: modified guess_os to truncate everything in "()" in the
@@ -26,6 +31,8 @@ GLOB: Recognize existing _LEDA config/install files.
 GLOB: The _LEDA suffix is now part of the config/install file as well.
 GLOB: Run the compiler tests when it becomes necessary only.
 ALL : Changed CGAL version to 2.3.
+DOCS: Added remark for cygwin 1.3.2.
+DOCS: Updated some remark concerning cygwin and/or Borland.
 DOCS: - Remove some obsolete or buggy references.
 DOCS: Removed egcs-1.* support.
 DOCS: Updated http links.
