@@ -756,7 +756,6 @@ void Snap_rounding_2<Rep_>::iterate()
       iterator hot_pixel_iter;
     int number_of_intersections;
     Hot_Pixel<Rep_> *hp;
-
     segments_output_list.clear();
     for(typename std::list<Segment_data<Rep_> >::iterator iter =
         seg_list.begin();iter != seg_list.end();++iter) {
@@ -764,7 +763,6 @@ void Snap_rounding_2<Rep_>::iterate()
       iter->determine_direction();
       find_intersected_hot_pixels(*iter,hot_pixels_intersected_set,
         number_of_intersections);
-
       // hot_pixels_intersected_set must have at least two hot pixels when the
       // segment is not in entirely inside a hot pixel enter first hot pixel
       hot_pixel_iter = hot_pixels_intersected_set.begin();

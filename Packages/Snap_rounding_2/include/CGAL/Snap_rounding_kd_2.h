@@ -52,8 +52,9 @@ class Multiple_kd_tree {
 
 typedef Rep_                                Rep;
 typedef typename Rep::FT                    NT;
-typedef CGAL::Segment_2<Rep>                Segment;
+typedef CGAL::Segment_2<Rep>                Segment;// !!!! look at LER
 typedef CGAL::Point_2<Rep>                  Point;
+typedef CGAL::Iso_rectangle_2<Rep>          Iso_rectangle_2;
 typedef CGAL::Kdtree_interface_2d<my_point<NT,SAVED_OBJECT> >  kd_interface;
 typedef CGAL::Kdtree_d<kd_interface>  kd_tree;
 typedef typename kd_tree::Box Box;
@@ -292,6 +293,43 @@ public:
     p = Point(x,y);
   }
 
+  Point small_x_point(Point p1,Point p2)
+  {
+     Comparison_result c = _gt.compare_x_2_object()(p1,p2);
+     if(c == SMALLER)
+       return(p1);
+     else
+       return(p2);
+  }
+
+  Point small_y_point(Point p1,Point p2)
+  {
+     Comparison_result c = _gt.compare_y_2_object()(p1,p2);
+     if(c == SMALLER)
+       return(p1);
+     else
+       return(p2);
+  }
+
+  Point big_x_point(Point p1,Point p2)
+  {
+     Comparison_result c = _gt.compare_x_2_object()(p1,p2);
+     if(c == SMALLER)
+       return(p2);
+     else
+       return(p1);
+  }
+
+  Point big_y_point(Point p1,Point p2)
+  {
+     Comparison_result c = _gt.compare_y_2_object()(p1,p2);
+     if(c == SMALLER)
+       return(p2);
+     else
+       return(p1);
+  }
+
+
   void get_intersecting_points(list<SAVED_OBJECT> &result_list,
                                Segment inp_s,
                                NT unit_squere)
@@ -338,7 +376,7 @@ public:
     }
 
     // query
-    Point p1,p2,ms1,ms2,ms3,ms4,ms5,ms6;// minkowski sum points
+    Point ms1,ms2,ms3,ms4,ms5,ms6;// minkowski sum points
     list<my_point<NT,SAVED_OBJECT> > res;
 
     Comparison_result cx = _gt.compare_x_2_object()(s.source(),s.target());
@@ -370,10 +408,37 @@ public:
     rotate(ms6,right_iter->second);
 
     // query
-    p1 = Point(min(ms1.x(),ms2.x(),ms3.x(),ms4.x(),ms5.x(),ms6.x()),
-               min(ms1.y(),ms2.y(),ms3.y(),ms4.y(),ms5.y(),ms6.y()));
-    p2 = Point(max(ms1.x(),ms2.x(),ms3.x(),ms4.x(),ms5.x(),ms6.x()),
-               max(ms1.y(),ms2.y(),ms3.y(),ms4.y(),ms5.y(),ms6.y()));
+    Point point_left,point_right,point_bot,point_top;
+
+    point_left = small_x_point(ms1,ms2);
+    point_left = small_x_point(point_left,ms3);
+    point_left = small_x_point(point_left,ms4);
+    point_left = small_x_point(point_left,ms5);
+    point_left = small_x_point(point_left,ms6);
+
+    point_right = big_x_point(ms1,ms2);
+    point_right = big_x_point(point_right,ms3);
+    point_right = big_x_point(point_right,ms4);
+    point_right = big_x_point(point_right,ms5);
+    point_right = big_x_point(point_right,ms6);
+
+    point_bot = small_y_point(ms1,ms2);
+    point_bot = small_y_point(point_bot,ms3);
+    point_bot = small_y_point(point_bot,ms4);
+    point_bot = small_y_point(point_bot,ms5);
+    point_bot = small_y_point(point_bot,ms6);
+
+    point_top = big_y_point(ms1,ms2);
+    point_top = big_y_point(point_top,ms3);
+    point_top = big_y_point(point_top,ms4);
+    point_top = big_y_point(point_top,ms5);
+    point_top = big_y_point(point_top,ms6);
+
+    Iso_rectangle_2 rec(point_left,point_right,point_bot,point_top);
+
+    Point p1 = rec.vertex(0);
+    Point p2 = rec.vertex(2);// end of new code
+
     my_point<NT,SAVED_OBJECT> point1(p1); 
     my_point<NT,SAVED_OBJECT> point2(p2);
 
