@@ -1,5 +1,10 @@
 Changes done to the `Random_numbers' package
 
+Version 2.1 on 05-Jul-1999
+- replaced `erand48()' by `rand()'.
+- removed state functions.
+- (port to M$-VC++)
+
 Version 2.0.1 on 04-Mar-1999
 - scope `std::' removed from `timeval', `gettimeofday', and `erand48'.
 - `include <sys/time.h>' in `src/Random.C' re-added.
