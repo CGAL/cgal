@@ -1,6 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.28 (09 Apr 2002)
+
+     - Added missing typedefs for Vertex_allocator etc. in HalfedgeDS_list.
+
 3.27 (03 Apr 2002)
 
      - Resubmitted because of failure in Utrecht.

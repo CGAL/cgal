@@ -209,18 +209,21 @@ public:
     typedef typename Types::Halfedge                   Halfedge;
     typedef typename Types::Face                       Face;
 
+    typedef typename Types::Vertex_allocator           Vertex_allocator;
     typedef typename Types::Vertex_list                Vertex_list;
     typedef typename Types::Vertex_handle              Vertex_handle;
     typedef typename Types::Vertex_const_handle        Vertex_const_handle;
     typedef typename Types::Vertex_iterator            Vertex_iterator;
     typedef typename Types::Vertex_const_iterator      Vertex_const_iterator;
 
+    typedef typename Types::Halfedge_allocator         Halfedge_allocator;
     typedef typename Types::Halfedge_list              Halfedge_list;
     typedef typename Types::Halfedge_handle            Halfedge_handle;
     typedef typename Types::Halfedge_const_handle      Halfedge_const_handle;
     typedef typename Types::Halfedge_iterator          Halfedge_iterator;
     typedef typename Types::Halfedge_const_iterator    Halfedge_const_iterator;
 
+    typedef typename Types::Face_allocator             Face_allocator;
     typedef typename Types::Face_list                  Face_list;
     typedef typename Types::Face_handle                Face_handle;
     typedef typename Types::Face_const_handle          Face_const_handle;
