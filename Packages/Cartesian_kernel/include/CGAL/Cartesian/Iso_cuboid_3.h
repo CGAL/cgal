@@ -223,7 +223,7 @@ Iso_cuboidC3<R CGAL_CTAG>::max_coord(int i) const
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-Iso_cuboidC3<R CGAL_CTAG>::Point_3
+typename Iso_cuboidC3<R CGAL_CTAG>::Point_3
 Iso_cuboidC3<R CGAL_CTAG>::vertex(int i) const
 { // FIXME : construction
   switch (i%8)
@@ -242,7 +242,7 @@ Iso_cuboidC3<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::Point_3
+typename Iso_cuboidC3<R CGAL_CTAG>::Point_3
 Iso_cuboidC3<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);
@@ -250,7 +250,7 @@ Iso_cuboidC3<R CGAL_CTAG>::operator[](int i) const
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::FT
+typename Iso_cuboidC3<R CGAL_CTAG>::FT
 Iso_cuboidC3<R CGAL_CTAG>::volume() const
 {
   return (xmax()-xmin()) * (ymax()-ymin()) * (zmax()-zmin());
@@ -260,7 +260,7 @@ template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
 Iso_cuboidC3<R CGAL_CTAG>::
-bounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+bounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
   if (strict_dominance(p, min()) && strict_dominance(max(), p) )
     return ON_BOUNDED_SIDE;
@@ -273,7 +273,7 @@ template < class R >
 inline
 bool
 Iso_cuboidC3<R CGAL_CTAG>::
-has_on_boundary(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+has_on_boundary(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
   return bounded_side(p) == ON_BOUNDARY;
 }
@@ -282,7 +282,7 @@ template < class R >
 inline
 bool
 Iso_cuboidC3<R CGAL_CTAG>::
-has_on(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+has_on(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
   return bounded_side(p) == ON_BOUNDARY;
 }
@@ -291,7 +291,7 @@ template < class R >
 inline
 bool
 Iso_cuboidC3<R CGAL_CTAG>::
-has_on_bounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+has_on_bounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
   return bounded_side(p) == ON_BOUNDED_SIDE;
 }
@@ -300,7 +300,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 Iso_cuboidC3<R CGAL_CTAG>::
-has_on_unbounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+has_on_unbounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
   return bounded_side(p) == ON_UNBOUNDED_SIDE;
 }
