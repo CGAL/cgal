@@ -1,0 +1,218 @@
+// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Julia Floetotto
+#ifndef CGAL_REGULAR_NEIGHBOR_COORDINATES_2_H
+#define CGAL_REGULAR_NEIGHBOR_COORDINATES_2_H
+
+#include <utility>
+#include <CGAL/Polygon_2.h>
+
+//-------------------------------------------------------------------
+CGAL_BEGIN_NAMESPACE
+//-------------------------------------------------------------------
+template <class Rt, class OutputIterator>
+std::pair< OutputIterator, typename Rt::Geom_traits::Rep::FT > 
+regular_neighbor_coordinates_2(const Rt& T, 
+			       const typename Rt::Geom_traits::
+			       Weighted_point& p, 
+			       OutputIterator out){
+  
+  return regular_neighbor_coordinates_2(T, p, out, T.geom_traits(),
+					typename Rt::Face_handle(NULL));
+};
+  
+template <class Rt, class OutputIterator, class Traits>
+std::pair< OutputIterator, typename Rt::Geom_traits::Rep::FT > 
+regular_neighbor_coordinates_2(const Rt& T, 
+			       const typename Rt::Geom_traits::
+			       Weighted_point& p, 
+			       OutputIterator out, const Traits&
+			       traits)
+{
+  
+  return regular_neighbor_coordinates_2(T, p, out,traits, 
+					typename Rt::Face_handle(NULL));
+};
+
+template <class Rt, class OutputIterator, class Traits>
+std::pair< OutputIterator, typename Traits::Rep::FT > 
+regular_neighbor_coordinates_2(const Rt& T,
+			     const typename Traits::Weighted_point& p, 
+			     OutputIterator out, const Traits& traits, 
+		 	     typename Rt::Face_handle start){
+  
+  typedef typename Traits::Rep::FT            Coord_type;
+  typedef typename Traits::Weighted_point  Weighted_point;
+  
+  typedef typename Rt::Vertex_handle     Vertex_handle;
+  typedef typename Rt::Face_handle       Face_handle;
+  typedef typename Rt::Edge              Edge;
+  typedef typename Rt::Locate_type       Locate_type;
+  
+  Locate_type lt;
+  int li;
+  Face_handle fh = T.locate(p, lt, li, start);
+
+  //the point must lie inside the convex hull:
+  CGAL_precondition(lt != Rt::OUTSIDE_AFFINE_HULL && lt !=
+		    Rt::OUTSIDE_CONVEX_HULL
+		    &&  (!(lt == Rt::EDGE && 
+			   (T.is_infinite(fh) 
+			    || T.is_infinite(fh->neighbor(li))))));
+  
+  if(lt == Rt::VERTEX){
+    //the point must be in conflict:
+    CGAL_precondition(power_test(fh->vertex(li)->point(), p) !=
+		      ON_NEGATIVE_SIDE); 
+    if(power_test(fh->vertex(li)->point(), p) ==ON_ORIENTED_BOUNDARY){
+      *out++= std::make_pair(fh->vertex(li)->point(),Coord_type(1));
+      return( std::make_pair(out, Coord_type(1)));
+    }
+  }
+  
+  std::list<Edge> hole;
+  std::list< Vertex_handle > hidden_vertices;
+  
+  T.get_boundary_of_conflicts_and_hidden_vertices(p,
+						  std::back_inserter(hole),
+						  std::back_inserter
+						  (hidden_vertices),
+						  fh); 
+  return 
+    regular_neighbor_coordinates_2
+    (T, p, out, hole.begin(),hole.end(),hidden_vertices.begin(), 
+     hidden_vertices.end(), traits);
+};
+
+
+
+template <class Rt, class OutputIterator, class Traits, class
+EdgeIterator, class VertexIterator  >
+std::pair< OutputIterator, typename Traits::Rep::FT > 
+regular_neighbor_coordinates_2(const Rt& T, 
+			       const typename Traits::Weighted_point& p, 
+			       OutputIterator out, EdgeIterator
+			       hole_begin, EdgeIterator hole_end, 
+			       VertexIterator hidden_vertices_begin, 
+			       VertexIterator hidden_vertices_end, 
+			       const Traits& traits){
+  
+  //precondition: p must lie inside the non-empty hole 
+  //               (=^ inside convex hull of neighbors)
+  CGAL_precondition(T.dimension()==2);
+
+  typedef typename Traits::Rep::FT         Coord_type;
+  typedef typename Traits::Bare_point      Bare_point;
+  typedef typename Traits::Weighted_point  Weighted_point;
+  
+  typedef typename Rt::Vertex_handle     Vertex_handle;
+  typedef typename Rt::Face_circulator   Face_circulator;
+  
+
+  //no hole because only (exactly!) one vertex is hidden:
+  if(hole_begin==hole_end){
+    *out++= std::make_pair((*hidden_vertices_begin)->point(),Coord_type(1));
+    hidden_vertices_begin++;
+    CGAL_assertion(hidden_vertices_begin ==hidden_vertices_end); 
+    return(std::make_pair(out, Coord_type(1)));
+  }
+
+  std::vector<Bare_point>  vor(3);  
+  Coord_type area_sum(0);
+
+  //determine the last vertex of the hole:
+  EdgeIterator hit = hole_end;
+  --hit;
+  //to start: prev is the "last" vertex of the hole
+  // later: prev is the last vertex processed (previously) 
+  Vertex_handle prev = hit->first->vertex(T.cw(hit->second));
+  hit = hole_begin;
+  while(hit != hole_end)
+    { 
+      Coord_type area(0);
+      Vertex_handle current = hit->first->vertex(T.cw(hit->second));
+      
+      vor[0] = traits.construct_weighted_circumcenter_2_object()
+ 	(current->point(),
+	 hit->first->vertex(T.ccw(hit->second))->point(), p);
+      
+      Face_circulator fc = T.incident_faces(current, hit->first);
+      ++fc;
+      vor[1] = T.dual(fc);
+  
+      while(!fc->has_vertex(prev))
+	{
+	  ++fc;
+	  vor[2] = T.dual(fc);
+	  
+	  area += polygon_area_2(vor.begin(), vor.end(), Traits());
+	  vor[1] = vor[2];
+	}
+
+      vor[2] = 
+	traits.construct_weighted_circumcenter_2_object()
+	(prev->point(),current->point(),p);
+     
+      area += polygon_area_2(vor.begin(), vor.end(), Traits());
+      *out++= std::make_pair(current->point(),area);
+      
+      area_sum += area;
+      
+      //update prev and hit:
+      prev= current;
+      ++hit;
+    }
+  
+  //get coordinate for hidden vertices
+  //                   <=> the area of their Voronoi cell.
+  //decomposition of the cell into triangles 
+  //        vor1: dual of first triangle
+  //        vor2, vor 3: duals of two consecutive triangles
+  Face_circulator fc, fc_begin;
+  for(; hidden_vertices_begin != hidden_vertices_end;
+      hidden_vertices_begin++){  
+    Coord_type area(0);
+    fc_begin = T.incident_faces(*hidden_vertices_begin);
+    vor[0] = T.dual(fc_begin);
+    fc = fc_begin;
+    ++fc;
+    vor[1] = T.dual(fc);
+    ++fc;
+    while(fc != fc_begin){
+      vor[2] = T.dual(fc);
+      area += polygon_area_2(vor.begin(), vor.end(), Traits());
+      
+      vor[1] = vor[2]; 
+      ++fc;
+    } 
+    
+    *out++= std::make_pair((*hidden_vertices_begin)->point(),area);
+    area_sum += area;
+  }
+
+  return( std::make_pair(out, area_sum));
+  
+};
+
+//-------------------------------------------------------------------
+CGAL_END_NAMESPACE
+//-------------------------------------------------------------------
+
+#endif // CGAL_REGULAR_NEIGHBORS_2_H
+
+
