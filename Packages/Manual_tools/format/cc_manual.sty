@@ -760,20 +760,41 @@
 \newcommand{\ccChapterAuthor}[1]{%
     \ifnum\ccTagChapterAuthor=\ccTrue\ccChapterSubTitle{%
         \ccChapterAuthorX #1\and\and}\fi}
-% give arg twice and terminate with two \ccEnd
-\def\ccRemoveTrailingSpaces #1#2#3\ccEnd{%
-    \def\xxbody{\ccRemoveTrailingSpaces{#3}#3\ccEnd}%
-    \def\xxparams{#2}\def\xxxparams{\ccEnd}\ifx\xxparams\xxxparams
+% usage: terminate arg with ' @ '
+\def\ccRemoveTrailingSpaces #1 {%
+    \def\xxparams{#1}\def\xxxparams{@}\ifx\xxparams\xxxparams
       \let\xxnext=\relax
     \else
-      \let\xxnext=\xxbody
-      \def\xxparams{#1}\def\xxxparams{#2#3}%
-      \ifx\xxparams\xxxparams \else\ \fi #2%
+      \let\xxnext=\ccRemoveTrailingSpacesX
+      #1%
     \fi
     \xxnext
 }
+% usage: terminate arg with ' @ '
+% it's the second word, so repeat ' ' before it.
+\def\ccRemoveTrailingSpacesX #1 {%
+    \def\xxparams{#1}\def\xxxparams{@}\ifx\xxparams\xxxparams
+      \let\xxnext=\relax
+    \else
+      \let\xxnext=\ccRemoveTrailingSpacesX
+      \isEmpty{#1}\ifnum\ccBool=\ccFalse \ #1\fi
+    \fi
+    \xxnext
+}
+% obolete! usage: give arg twice and terminate with two \ccEnd
+% \def\ccRemoveTrailingSpaces #1#2#3\ccEnd{%
+%     \def\xxbody{\ccRemoveTrailingSpaces{#3}#3\ccEnd}%
+%     \def\xxparams{#2}\def\xxxparams{\ccEnd}\ifx\xxparams\xxxparams
+%       \let\xxnext=\relax
+%     \else
+%       \let\xxnext=\xxbody
+%       \def\xxparams{#1}\def\xxxparams{ #2#3}%
+%       \ifx\xxparams\xxxparams\ \else\fi #2%
+%     \fi
+%     \xxnext
+% }
 \def\ccChapterAuthorX #1\and#2\and{%
-    \ccRemoveTrailingSpaces{#1}#1\ccEnd\ccEnd
+    \ccRemoveTrailingSpaces #1 @ %keep this space
     \def\xAuthBody{\ccChapterAuthorXX #2\and}%
     \isEmpty{#2}\ifnum\ccBool=\ccTrue
         \let\xAuthNext=\relax
@@ -785,10 +806,10 @@
 \def\ccChapterAuthorXX #1\and#2\and{%
     \def\xAuthBody{\ccChapterAuthorXXX #2\and}%
     \isEmpty{#2}\ifnum\ccBool=\ccTrue
-        \ and \ccRemoveTrailingSpaces{#1}#1\ccEnd\ccEnd
+        \ and \ccRemoveTrailingSpaces #1 @ %keep this space
         \let\xAuthNext=\relax
     \else
-        , \ccRemoveTrailingSpaces{#1}#1\ccEnd\ccEnd
+        , \ccRemoveTrailingSpaces #1 @ %keep this space
         \let\xAuthNext=\xAuthBody
     \fi
     \xAuthNext
@@ -796,10 +817,10 @@
 \def\ccChapterAuthorXXX #1\and#2\and{%
     \def\xAuthBody{\ccChapterAuthorXXX #2\and}%
     \isEmpty{#2}\ifnum\ccBool=\ccTrue
-        , and \ccRemoveTrailingSpaces{#1}#1\ccEnd\ccEnd
+        , and \ccRemoveTrailingSpaces #1 @ %keep this space
         \let\xAuthNext=\relax
     \else
-        , \ccRemoveTrailingSpaces{#1}#1\ccEnd\ccEnd
+        , \ccRemoveTrailingSpaces #1 @ %keep this space
         \let\xAuthNext=\xAuthBody
     \fi
     \xAuthNext
