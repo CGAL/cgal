@@ -145,15 +145,17 @@ struct Interval_nt : public Interval_base
   }
 };
 
-#ifdef LONG_LONG // missing CGAL_ ?
+typedef Interval_nt<false> Interval_nt_advanced;  // for back-compatibility
+
+#ifdef CGAL_USE_LONG_LONG
 inline
 Interval_base
 to_interval (const long long & z)
 {
   Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-  Interval_nt_advanced approx (double(z));
+  Interval_nt_advanced approx ((double) z);
   FPU_set_cw(CGAL_FE_UPWARD);
-  return approx + Interval_base::Smallest;
+  return approx + Interval_nt_advanced(Interval_base::Smallest);
 }
 #endif
 
@@ -472,8 +474,6 @@ compare (const Interval_nt<false> & d, const Interval_nt<false> & e)
 #endif // CGAL_CFG_MATCHING_BUG_2
 
 } // namespace NTS
-
-typedef Interval_nt<false> Interval_nt_advanced;  // for back-compatibility
 
 CGAL_END_NAMESPACE
 
