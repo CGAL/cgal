@@ -32,7 +32,7 @@
 
 #include <CGAL/LEDA_basic.h>
 #include <LEDA/pp_dictionary.h>
-#include <strstream>
+#include <sstream>
 #include <string>
 #include <list>
 #include <vector>
@@ -362,12 +362,10 @@ public:
   { return (it == nil ? Location() : S->inf(it)); }
 
   std::string str(const Sweepline& S) const
-  { std::ostrstream os; os << "Sweepline:\n";
+  { std::ostringstream os; os << "Sweepline:\n";
     SL_item it;
     forall_items(it,S) {  os << "  " << S.key(it) << std::endl; }
-    std::string res(os.str());
-    os.freeze(0);
-    return res;
+    return os.str();
   }
 
 
@@ -454,7 +452,7 @@ PointLocator<PLocTraits>::init(const Graph& G)
 }
 
 template <class PLocTraits>
-PointLocator<PLocTraits>::QueryResult
+typename PointLocator<PLocTraits>::QueryResult
 PointLocator<PLocTraits>::
 locate_down(const typename PLocTraits::Point& p) const
 {
@@ -476,7 +474,7 @@ locate_down(const typename PLocTraits::Point& p) const
 }
 
 template <class PLocTraits>
-PointLocator<PLocTraits>::QueryResult
+typename PointLocator<PLocTraits>::QueryResult
 PointLocator<PLocTraits>::locate_up(const typename PLocTraits::Point& p) const
 {
   Sweepline_iterator line_at_x = 

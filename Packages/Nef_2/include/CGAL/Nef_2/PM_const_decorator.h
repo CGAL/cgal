@@ -32,7 +32,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <string>
 #include <list>
-#include <strstream>
+#include <sstream>
 #include <CGAL/Nef_2/Object_index.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #undef _DEBUG
@@ -41,7 +41,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#if ! defined(_MSC_VER) || _MSC_VER >= 1300
+#if ! defined(_MSC_VER) || _MSC_VER >= 1300 || defined(__INTEL_COMPILER)
 
 template <typename Iter, typename Move>
 inline CGAL::Circulator_tag  
@@ -402,20 +402,19 @@ void check_integrity_and_topological_planarity(bool faces=true) const;
 
 template <class VH>
 std::string PV(VH v)
-{ std::ostrstream os; CGAL::set_pretty_mode(os);
+{ std::ostringstream os; CGAL::set_pretty_mode(os);
   if (v != VH()) os << v->point();
   else           os << "nil";
-  os << '\0'; 
-  std::string res(os.str()); os.freeze(0); return res;
+  return os.str();
 }
 
 template <class HH>
 std::string PE(HH e)
-{ std::ostrstream os;
+{ std::ostringstream os;
   if (e==HH()) return "nil";
   os << "[" << PV(e->opposite()->vertex()) << ","
-            << PV(e->vertex()) << " " << e->info() << "]" << '\0';
-  std::string res(os.str()); os.freeze(0); return res;
+            << PV(e->vertex()) << " " << e->info() << "]";
+  return os.str();
 }
 
 template <typename HDS>
@@ -551,11 +550,10 @@ number_of_connected_components() const
 struct KERNELPNT {
   template <typename PNT>
   std::string operator() (const PNT& p) const
-  { std::ostrstream os;
+  { std::ostringstream os;
     os << "(" << CGAL::to_double(p.x()) << ","
               << CGAL::to_double(p.y()) << ")";
-    std::string res(os.str());
-    os.freeze(0); return res;
+    return os.str();
   }
 };
 

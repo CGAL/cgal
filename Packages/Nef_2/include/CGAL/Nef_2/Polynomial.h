@@ -236,7 +236,7 @@ template <class pNT> class Polynomial_rep {
   typedef typename Vector::const_iterator const_iterator;
   Vector coeff;
 
-  Polynomial_rep() : coeff(1) {coeff[0]=0; }
+  Polynomial_rep() : coeff() {}
   Polynomial_rep(const NT& n) : coeff(1) { coeff[0]=n; }
   Polynomial_rep(const NT& n, const NT& m) : coeff(2)
     { coeff[0]=n; coeff[1]=m; }
@@ -267,7 +267,6 @@ template <class pNT> class Polynomial_rep {
   friend std::istream& operator >> CGAL_NULL_TMPL_ARGS  
          (std::istream&, Polynomial<NT>&);
 
-
 };
 
 // SPECIALIZE_CLASS(NT,int double) START
@@ -282,18 +281,20 @@ CGAL_NULL_TMPL_ARGS#
 template <class pNT> class Polynomial : 
   public Handle_for< Polynomial_rep<pNT> >
 {
-/*{\Mdefinition An instance |\Mvar| of the data type |\Mname| represents
-a polynomial $p = a_0 + a_1 x + \ldots a_d x^d $ from the ring |NT[x]|. 
-The data type offers standard ring operations and a sign operation which 
-determines the sign for the limit process $x \rightarrow \infty$. 
+/*  {\Mdefinition An instance |\Mvar| of the data type |\Mname| represents
+  a polynomial $p = a_0 + a_1 x + \ldots a_d x^d $ from the ring |NT[x]|. 
+  The data type offers standard ring operations and a sign operation which 
+  determines the sign for the limit process $x \rightarrow \infty$. 
 
-|NT[x]| becomes a unique factorization domain, if the number type
-|NT| is either a field type (1) or a unique factorization domain
-(2). In both cases there's a polynomial division operation defined.}*/
+  |NT[x]| becomes a unique factorization domain, if the number type
+  |NT| is either a field type (1) or a unique factorization domain
+  (2). In both cases there's a polynomial division operation defined.}
+*/
 
   /*{\Mtypes 5}*/
   public:
   typedef pNT NT;
+  typedef typename Number_type_traits<NT>::Has_gcd Has_gcd;
  
   typedef Handle_for< Polynomial_rep<NT> > Base;
   typedef Polynomial_rep<NT> Rep;
@@ -442,8 +443,8 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { CGAL_assertion( degree()>=0 );
     const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     NT res = *its++;
-    for(; its!=ite; ++its) res = 
-      (*its==0 ? res : get_gcd(res, *its, Number_type_traits<NT>::Has_gcd()));
+    for(; its!=ite; ++its)
+        res = (*its==0 ? res : get_gcd(res, *its, Has_gcd()));
     if (res==0) res = 1;
     return res;
   }
@@ -649,18 +650,20 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
   public Handle_for< Polynomial_rep<int> >
 {
 /*{\Xdefinition An instance |\Mvar| of the data type |\Mname| represents
-a polynomial $p = a_0 + a_1 x + \ldots a_d x^d $ from the ring |int[x]|. 
-The data type offers standard ring operations and a sign operation which 
-determines the sign for the limit process $x \rightarrow \infty$. 
+ a polynomial $p = a_0 + a_1 x + \ldots a_d x^d $ from the ring |int[x]|. 
+ The data type offers standard ring operations and a sign operation which 
+ determines the sign for the limit process $x \rightarrow \infty$. 
 
-|int[x]| becomes a unique factorization domain, if the number type
-|int| is either a field type (1) or a unique factorization domain
-(2). In both cases there's a polynomial division operation defined.}*/
+ |int[x]| becomes a unique factorization domain, if the number type
+ |int| is either a field type (1) or a unique factorization domain
+ (2). In both cases there's a polynomial division operation defined.}*/
 
   /*{\Xtypes 5}*/
   public:
   typedef int NT;
   /*{\Xtypemember the component type representing the coefficients.}*/
+
+  typedef Number_type_traits<NT>::Has_gcd Has_gcd;
 
   typedef Handle_for< Polynomial_rep<int> > Base;
   typedef Polynomial_rep<int> Rep;
@@ -802,7 +805,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     int res = *its++;
     for(; its!=ite; ++its) res = 
-      (*its==0 ? res : get_gcd(res, *its, Number_type_traits<NT>::Has_gcd()));
+      (*its==0 ? res : get_gcd(res, *its, Has_gcd()));
     if (res==0) res = 1;
     return res;
   }
@@ -997,6 +1000,8 @@ determines the sign for the limit process $x \rightarrow \infty$.
   typedef double NT;
   /*{\Xtypemember the component type representing the coefficients.}*/
 
+  typedef Number_type_traits<NT>::Has_gcd Has_gcd;
+
   typedef Handle_for< Polynomial_rep<double> > Base;
   typedef Polynomial_rep<double> Rep;
   typedef  Rep::Vector    Vector;
@@ -1136,8 +1141,8 @@ determines the sign for the limit process $x \rightarrow \infty$.
   { CGAL_assertion( degree()>=0 );
     const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     double res = *its++;
-    for(; its!=ite; ++its) res = 
-      (*its==0 ? res : get_gcd(res, *its, Number_type_traits<NT>::Has_gcd()));
+    for(; its!=ite; ++its)
+      res = (*its==0 ? res : get_gcd(res, *its, Has_gcd()));
     if (res==0) res = 1;
     return res;
   }
@@ -1403,14 +1408,14 @@ Polynomial<NT> operator * (const Polynomial<NT>& p1,
 
 template <class NT> inline
 Polynomial<NT> operator / (const Polynomial<NT>& p1, 
-                            const Polynomial<NT>& p2)
-{ return divop(p1,p2,Number_type_traits<NT>::Has_gcd()); }
+                           const Polynomial<NT>& p2)
+{ return divop(p1,p2, typename Number_type_traits<NT>::Has_gcd()); }
 
 
 template <class NT> inline
 Polynomial<NT> operator % (const Polynomial<NT>& p1,
 			   const Polynomial<NT>& p2)
-{ return modop(p1,p2,Number_type_traits<NT>::Has_gcd()); }
+{ return modop(p1,p2, typename Number_type_traits<NT>::Has_gcd()); }
 
 
 template <class NT> 
@@ -1897,13 +1902,10 @@ void print_monomial(std::ostream& os, const NT& n, int i)
   if (i>1)  os << n << "R^" << i;
 }
 
-#define POLYNOMIAL_EXPLICIT_OUTPUT
-
 // I/O 
 template <class NT>
 std::ostream& operator << (std::ostream& os, const Polynomial<NT>& p)
 {
-  os << "P";
   int i;
   switch( os.iword(CGAL::IO::mode) )
   {
@@ -1911,61 +1913,113 @@ std::ostream& operator << (std::ostream& os, const Polynomial<NT>& p)
       os << p.degree() << ' ';
       for(i=0; i<=p.degree(); ++i) 
         os << p[i] << ' ';
-      return os;
+      break;
     case CGAL::IO::BINARY :
       CGAL::write(os, p.degree());
-      for(i=0; i<=p.degree(); ++i) 
+      for( i=0; i <= p.degree(); ++i) 
         CGAL::write(os, p[i]);
-      return os;
-    default: 
-#ifndef POLYNOMIAL_EXPLICIT_OUTPUT
+      break;
+  default: // i.e. PRETTY
       os << "Polynomial(" << p.degree() << ", ";
-      for(i=0; i<=p.degree(); ++i) {
-        os << p[i];
-        if (i < p.degree()) os << ", ";
+      for( i=0; i <= p.degree(); ++i) {
+          os << p[i];
+          if (i < p.degree())
+              os << ", ";
       }
       os << ")";
-#else
-      print_monomial(os,p[p.degree()],p.degree());
-      for(i=p.degree()-1; i>=0; --i) {
-        if (p[i]!=NT(0)) { os << " + "; print_monomial(os,p[i],i); }
-      }    
-#endif
-      return os;
+      // Alternative pretty format
+      //print_monomial(os,p[p.degree()],p.degree());
+      //for(i=p.degree()-1; i>=0; --i) {
+      //  if (p[i]!=NT(0)) { os << " + "; print_monomial(os,p[i],i); }
+      //}
+      break;
   }
+  return os;
 }
 
 template <class NT>
-std::istream& operator >> (std::istream& is, Polynomial<NT>& p)
-{ 
-  int i,d;
-  NT c;
-  switch( is.iword(CGAL::IO::mode) )
-  { 
+std::istream& operator >> (std::istream& is, Polynomial<NT>& p) { 
+    int  i,d;
+    char ch;
+    NT   c;
+    bool pretty = false;
+    switch( is.iword(CGAL::IO::mode) ) { 
     case CGAL::IO::ASCII : 
-      is >> d;
-      if (d < 0) p = Polynomial<NT>();
-      else {
-        typename Polynomial<NT>::Vector coeffs(d+1);
-        for(i=0; i<=d; ++i) is >> coeffs[i];
-        p = Polynomial<NT>(coeffs.begin(),coeffs.end() ); // af removed SNIINST
-      }
-      break;
+    case CGAL::IO::PRETTY : 
+        is >> ch;
+        if ( ch == 'P') {
+            pretty = true;
+            // Parse rest of "olynomial("
+            const char buffer[11] = "olynomial(";
+            const char* p = buffer;
+            is >> ch;
+            while ( is && *p != '\0' && *p == ch) {
+                is >> ch;
+                ++p;
+            }
+            if ( *p != '\0')
+                is.clear( std::ios::badbit);
+            if ( ! is)
+                return is;
+        } else {
+            is.putback(ch);
+        }
+        is >> d;
+        if ( pretty) {
+            is >> ch;
+            if ( ch != ',') {
+                is.clear( std::ios::badbit);
+                return is;
+            }
+        }
+        if (d < 0) {
+            if ( pretty) {
+                is >> ch;
+                if ( ch != ')') {
+                    is.clear( std::ios::badbit);
+                    return is;
+                }
+            }
+            if ( is)
+                p = Polynomial<NT>();
+        } else {
+            typename Polynomial<NT>::Vector coeffs(d+1);
+            for( i = 0; i <= d; ++i) {
+                is >> coeffs[i];
+                if ( pretty && i < d) {
+                    is >> ch;
+                    if ( ch != ',') {
+                        is.clear( std::ios::badbit);
+                        return is;
+                    }
+                }
+            }
+            if ( pretty) {
+                is >> ch;
+                if ( ch != ')') {
+                    is.clear( std::ios::badbit);
+                    return is;
+                }
+            }
+            if ( is)
+                p = Polynomial<NT>( coeffs.begin(), coeffs.end());
+        }
+        break;
     case CGAL::IO::BINARY :
-      CGAL::read(is, d);
-      if (d < 0) p = Polynomial<NT>();
-      else {
-        typename Polynomial<NT>::Vector coeffs(d+1);
-        for(i=0; i<=d; ++i) 
-        { CGAL::read(is,c); coeffs[i]=c; }
-        p = Polynomial<NT>(coeffs.begin(),coeffs.end() ); // af removed SNIINST
-      }
-      break;
-    default:
-      CGAL_assertion_msg(0,"\nStream must be in ascii or binary mode\n");
-      break;
-  }
-  return is;
+        CGAL::read(is, d);
+        if (d < 0)
+            p = Polynomial<NT>();
+        else {
+            typename Polynomial<NT>::Vector coeffs(d+1);
+            for(i=0; i<=d; ++i) {
+                CGAL::read(is,c);
+                coeffs[i]=c;
+            }
+            p = Polynomial<NT>( coeffs.begin(), coeffs.end());
+        }
+        break;
+    }
+    return is;
 }
 
 // SPECIALIZE_FUNCTION ORIGINAL

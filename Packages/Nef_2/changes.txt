@@ -1,7 +1,17 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
-1.25 (?? ??? ????)
+1.25 (21 Jan 2003)
+
+     - Polynomial: 
+           Added operator%. 
+           Added PRETTY mode for IO.
+           Selected alternative PRETTY output format.
+           Wrote input parser to accept the pretty format.
+           BINARY mode not working! See prepared tests in Polynomial-test.C.
+     - Removed warnings caused by some unused static string constants.
+     - Added some missing typenames.
+     - Changed uses of <strstream> to <sstream>.
      - added missing dereferences in modification operators
 
 1.24 (12 Aug 2002)

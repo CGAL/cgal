@@ -25,7 +25,7 @@
 
 #ifndef CGAL_REDEFINE_MSC_H
 #define CGAL_REDEFINE_MSC_H
-#ifdef _MSC_VER
+#if defined( _MSC_VER ) && ! defined(__INTEL_COMPILER)
 
 #define RPolynomial_MSC RPMS
 #define HalfEdgeDS_default_MSC HDSdMS

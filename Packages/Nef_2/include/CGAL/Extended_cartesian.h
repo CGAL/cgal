@@ -31,7 +31,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h> 
 #include <CGAL/Line_2_Line_2_intersection.h>
-#if (defined( _MSC_VER) && (_MSC_VER <= 1200))
+#if defined( _MSC_VER) && (_MSC_VER <= 1200) && ! defined(__INTEL_COMPILER)
 #include <CGAL/Nef_2/Polynomial_MSC.h>
 #define Polynomial Polynomial_MSC
 #else

@@ -44,7 +44,7 @@
 #include <LEDA/sortseq.h>
 #include <LEDA/p_queue.h>
 #include <utility>
-#include <strstream>
+#include <sstream>
 
 namespace CGAL {
 #ifdef _DEBUG
@@ -144,7 +144,7 @@ public:
 
   leda_string dump_structures() const
   { 
-    std::ostrstream out;
+    std::ostringstream out;
     out << "SQ= ";
     CGAL_LEDA_SCOPE::pq_item pqit;
     forall_items(pqit,SQ) {
@@ -160,8 +160,8 @@ public:
     out << "YS=\n";
     for( sit = YS.max_item(); sit; sit=YS.pred(sit) )
       out << "  "<<YS.key(sit)->first()<<" "<<YS.inf(sit)<<std::endl;
-    out << '\0';
-    leda_string res(out.str()); out.freeze(0); return res;
+    leda_string res(out.str().c_str()); 
+    return res;
   }
 
 
@@ -435,7 +435,7 @@ public:
 #include <list>
 #include <map>
 #include <string>
-#include <strstream>
+#include <sstream>
 
 namespace CGAL {
 
@@ -538,7 +538,7 @@ public:
 
   std::string dump_structures() const
   { 
-    std::ostrstream out; 
+    std::ostringstream out; 
     out << "EventQueue:\n";
     typename EventQueue::const_iterator sit1;
     for(sit1 = XS.begin(); sit1 != XS.end(); ++sit1) 
@@ -554,7 +554,7 @@ public:
     typename SweepStatus::const_iterator sit3;
     for( sit3 = YS.begin(); sit3 != YS.end(); ++sit3 )
       out << sit3->first << " " << &*(sit3->second) << std::endl;
-    std::string res(out.str()); out.freeze(0); return res;
+    return out.str();
   }
 
   Point_2 source(ISegment is) const
@@ -799,10 +799,10 @@ public:
 namespace CGAL {
 #ifdef CGAL_USE_LEDA
 #define Segment_overlay_traits leda_seg_overlay_traits
-static const char* sweepversion = "LEDA segment overlay sweep";
+static const char* const sweepversion = "LEDA segment overlay sweep";
 #else
 #define Segment_overlay_traits stl_seg_overlay_traits
-static const char* sweepversion = "STL segment overlay sweep";
+static const char* const sweepversion = "STL segment overlay sweep";
 #endif
 } // namespace CGAL
 

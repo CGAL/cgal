@@ -2,8 +2,9 @@
 #define CGAL_TEST_MACROS_H
 
 #include <CGAL/basic.h>
+#include <CGAL/IO/io.h>
 #include <iostream>
-#include <strstream>
+#include <sstream>
 #include <vector>
 
 #define CGAL_TEST_START int cgal_test_res=0
@@ -12,14 +13,28 @@
 std::cerr<<"ERROR: ("<<__LINE__ <<") test "<<#b<<" failed."<<std::endl; } \
 else
 
-#define CGAL_IO_TEST(datao,datai) { \
-std::ostrstream OS; OS<<datao<<'\n'<<'\0'; \
-std::istrstream IS(OS.str()); OS.freeze(0); IS>>datai; \
-if (datao != datai) { ++cgal_test_res; \
-std::cerr<<"ERROR in IO of "<<#datao<<" "<<#datai<<" : "\
-         <<OS.str()<<" failed."<<std::endl;\
-OS.freeze(0); }}
+#define CGAL_IO_TEST(datao,datai,iomode) {                                \
+    std::stringstream S;                                                  \
+    CGAL::set_mode(S,iomode);                                             \
+    S << datao;                                                           \
+    if ( iomode != CGAL::IO::BINARY)                                      \
+        S << '\n';                                                        \
+    S << datao;                                                           \
+    S >> datai;                                                           \
+    if (datao != datai) {                                                 \
+       ++cgal_test_res;                                                   \
+       std::cerr << "ERROR in 1.IO " << #iomode << " of " << #datao << " "\
+                 << #datai << " : " << S.str() << " failed." <<std::endl; \
+    }                                                                     \
+    S >> datai;                                                           \
+    if (datao != datai) {                                                 \
+       ++cgal_test_res;                                                   \
+       std::cerr << "ERROR in 2.IO " << #iomode << " of " << #datao << " "\
+                 << #datai << " : " << S.str() << " failed." <<std::endl; \
+    }                                                                     \
+}
    
+
 #define CGAL_TEST_END return cgal_test_res
 
 #undef TRACE

@@ -763,9 +763,9 @@ public:
 
 
 #ifdef USING_PPL
-static const char* pointlocationversion = "point location via pers dicts";
+static const char* const pointlocationversion ="point location via pers dicts";
 #else
-static const char* pointlocationversion = "point location via seg walks";
+static const char* const pointlocationversion ="point location via seg walks";
 #endif
 
 template <typename PMD, typename GEO>

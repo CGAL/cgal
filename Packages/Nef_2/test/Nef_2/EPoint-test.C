@@ -133,8 +133,8 @@ int main()
   ep_res = D.intersection(left, upper);
   CGAL_TEST(ep_res == D.NW());
 
-  CGAL_IO_TEST(eps3,eps1);
-  CGAL_IO_TEST(epn2,epn1);
+  CGAL_IO_TEST(eps3,eps1,CGAL::IO::ASCII);
+  CGAL_IO_TEST(epn2,epn1,CGAL::IO::ASCII);
 
 
 }
@@ -348,8 +348,8 @@ int main()
   ep_res = D.intersection(left, upper);
   CGAL_TEST(ep_res == D.NW());
 
-  CGAL_IO_TEST(eps3,eps1);
-  CGAL_IO_TEST(epn2,epn1);
+  CGAL_IO_TEST(eps3,eps1,CGAL::IO::ASCII);
+  CGAL_IO_TEST(epn2,epn1,CGAL::IO::ASCII);
 
 
   D.print_statistics();

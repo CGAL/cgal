@@ -120,7 +120,7 @@ void PM_checker<PMCDEC,GEOM>::
 check_order_preserving_embedding(Vertex_const_handle v) const
 {
   if ( is_isolated(v) ) return;
-  std::ostrstream error_status;
+  std::ostringstream error_status;
   CGAL::set_pretty_mode ( error_status );
   Halfedge_const_handle ef = first_out_edge(v) ,e=ef,en,enn;
   error_status << "check_order_preserving_embedding\n";
@@ -139,11 +139,10 @@ check_order_preserving_embedding(Vertex_const_handle v) const
 				       direction(ef));
     if ( !(ccw1 && ccw2) ) {
       error_status << "ccw order violate!" << std::endl << '\0';
-      CGAL_assertion_msg(0,error_status.str());
+      CGAL_assertion_msg(0,error_status.str().c_str());
     }
     e = en;
   }
-  error_status.freeze(0);  
 }
 
 template <typename PMCDEC, typename GEOM>
@@ -158,20 +157,19 @@ check_forward_prefix_condition(Vertex_const_handle v) const
   bool el_forward = is_forward(el);
   bool ef_forward = is_forward(ef);
   bool ef_el_eq = (ef==el);
-  std::ostrstream error_status;
+  std::ostringstream error_status;
   error_status << "check_forward_prefix_condition: ";
   error_status << PV(v) << "\n";
   error_status << PE(ef) << "\n" << PE(el) << "\n";
   error_status << " ef == el = " << ef_el_eq;
   error_status << " ef_forward = " << ef_forward;
   error_status << " el_forward = " << el_forward;
-  error_status << " is_left_turn = " << is_left_turn << '\0';
+  error_status << " is_left_turn = " << is_left_turn;
   CGAL_assertion_msg( (ef == el ||
                        ef_forward && !el_forward ||
                        ef_forward &&  el_forward && is_left_turn ||
                        !ef_forward && !el_forward && is_left_turn) ,
-                       error_status.str());
-  error_status.freeze(0);  
+                       error_status.str().c_str());
 }
 
 /* We check the geometric integrity of the structure. We check
@@ -249,7 +247,7 @@ check_is_triangulation() const
 
   CGAL::Unique_hash_map< Halfedge_const_iterator, bool> on_boundary(false);
   Halfedge_around_face_const_circulator hit(eb), hend(hit);
-  std::ostrstream error_status;
+  std::ostringstream error_status;
   CGAL::set_pretty_mode ( error_status );
   error_status << "check_is_triangulation\n";
   error_status << "on boundary:\n";
@@ -266,12 +264,11 @@ check_is_triangulation() const
       error_status << PE(hit);
       ++edges_in_face_cycle;
     }
-    CGAL_assertion_msg(edges_in_face_cycle==3,error_status.str());
+    CGAL_assertion_msg(edges_in_face_cycle==3,error_status.str().c_str());
     CGAL_assertion_msg(
       K.left_turn(point(source(hit)),point(target(hit)),
-                 point(target(next(hit)))), error_status.str());
+                 point(target(next(hit)))), error_status.str().c_str());
   }
-  error_status.freeze(0);
 }
 
 

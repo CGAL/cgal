@@ -144,7 +144,8 @@ int main()
   h3 = N3.locate(Point(1,1,3));
   CGAL_TEST( CGAL::assign(f1,h3) && !E.mark(f1) );
 
-  CGAL_IO_TEST(N1,N2);
+  CGAL_IO_TEST(N1,N2,CGAL::IO::ASCII);
+  //CGAL_IO_TEST(N1,N2,CGAL::IO::PRETTY);
 
 
 
@@ -267,7 +268,8 @@ int main()
   h3 = N3.locate(Point(1,1,3));
   CGAL_TEST( CGAL::assign(f1,h3) && !E.mark(f1) );
 
-  CGAL_IO_TEST(N1,N2);
+  CGAL_IO_TEST(N1,N2,CGAL::IO::ASCII);
+  //CGAL_IO_TEST(N1,N2,CGAL::IO::PRETTY);
 
 
 

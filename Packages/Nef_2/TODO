@@ -1,5 +1,7 @@
 Possible Improvements for future releases are
 
+- BINARY mode not working! See prepared tests in Polynomial-test.C.
+
 1) introduce CGAL number type traits and remove
 	ring_or_field from RPolynomial popping up in
 	Extended_homogeneous and Extended_cartesian

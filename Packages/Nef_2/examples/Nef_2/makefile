@@ -14,9 +14,9 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
@@ -24,37 +24,38 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
-          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:    \
-	simple_intersection$(EXE_EXT) \
-	construction$(EXE_EXT)
+all:            \
+                construction \
+                simple_intersection 
 
 construction$(EXE_EXT): construction$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)construction \
-	construction$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)construction construction$(OBJ_EXT) $(LDFLAGS)
 
 simple_intersection$(EXE_EXT): simple_intersection$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)simple_intersection \
-	simple_intersection$(OBJ_EXT) $(LDFLAGS)
-
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)simple_intersection simple_intersection$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   simple_intersection.clean \
-                   construction.clean 
+                   construction.clean \
+                   simple_intersection.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 

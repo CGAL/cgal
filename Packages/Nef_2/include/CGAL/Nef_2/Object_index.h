@@ -32,7 +32,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <string>
-#include <strstream>
+#include <sstream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -54,11 +54,11 @@ public:
   std::string operator()(const I& it, bool verbose=true) const
   { if (verbose && _index[it]==-1) return "nil";
     if (verbose && _index[it]==-2) return "end";
-    std::ostrstream os; 
+    std::ostringstream os; 
     if (verbose) os << _prefix;
-    os << _index[it] << '\0';    
-    std::string res(os.str()); os.freeze(0); return res; }
- 
+    os << _index[it];    
+    return os.str(); 
+  }
 };
 
 CGAL_END_NAMESPACE

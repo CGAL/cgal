@@ -115,7 +115,9 @@ int main()
 
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == MSCCAST(1));
-      CGAL_IO_TEST(p4,p1);
+      //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
+      CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
+      CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
       CGAL::to_double(p6);
       CGAL::is_finite(p6);
       CGAL::is_valid(p6);
@@ -201,7 +203,9 @@ int main()
 
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == MSCCAST(1));
-      CGAL_IO_TEST(p4,p1);
+      //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
+      CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
+      CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
       CGAL::to_double(p6);
       CGAL::is_finite(p6);
       CGAL::is_valid(p6);
@@ -287,7 +291,9 @@ int main()
 
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == MSCCAST(1));
-      CGAL_IO_TEST(p4,p1);
+      //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
+      CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
+      CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
       CGAL::to_double(p6);
       CGAL::is_finite(p6);
       CGAL::is_valid(p6);
@@ -373,7 +379,9 @@ int main()
 
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == MSCCAST(1));
-      CGAL_IO_TEST(p4,p1);
+      //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
+      CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
+      CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
       CGAL::to_double(p6);
       CGAL::is_finite(p6);
       CGAL::is_valid(p6);
@@ -459,7 +467,9 @@ int main()
 
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == MSCCAST(1));
-      CGAL_IO_TEST(p4,p1);
+      //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
+      CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
+      CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
       CGAL::to_double(p6);
       CGAL::is_finite(p6);
       CGAL::is_valid(p6);
