@@ -99,7 +99,9 @@ public:
 
     std::list<Point_2>	out;
     std::list<Segment>	Sl;
-    CGAL::convex_hull_points_2(list_of_points.begin(), list_of_points.end(), std::back_inserter(out));
+    CGAL::convex_hull_points_2(list_of_points.begin(),
+			       list_of_points.end(),
+			       std::back_inserter(out));
 
     if( out.size() > 1 ) {
       Point_2 pakt,prev,pstart;
@@ -156,7 +158,8 @@ public:
     // drawing menu
     QPopupMenu * draw = new QPopupMenu( this );
     menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("&Generate points", this, SLOT(gen_points()), CTRL+Key_G );
+    draw->insertItem("&Generate points", this, SLOT(gen_points()),
+		     CTRL+Key_G );
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -216,7 +219,8 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new CGAL::Qt_help_window(home, ".", 0, "help viewer");
+    CGAL::Qt_help_window *help = new CGAL::Qt_help_window(home, ".",
+							  0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
