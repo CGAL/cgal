@@ -15,13 +15,20 @@
     
 %\ccDefinition 
 
-The class \ccStyle{Snap_rounding_triats_2<Kernel>} is a model of the
+The class \ccStyle{Snap_rounding_traits_2<Kernel>} is a model of the
 \ccc{SnapRoundingTraits_2} concept, and is the only traits class supplied
 with the package.
 This class should be instantiated with an exact geometric kernel that conforms
 to the \cgal\ kernel-concept, such as the
-\ccStyle{Cartesian<gmpq>} kernel, although other inexact kernels could be
-used at the user's own risk.
+\ccStyle{Cartesian<gmpq>} kernel.
+% although other inexact kernels could be used at the user's own risk.
+
+This geometric kernel must provide an (arbitrary-precision) rational number type
+(\ccc{FT}), \ccc{Point_2}, \ccc{Segment_2} and \ccc{Iso_rectangle_2}.
+It should be possible to cast numbers of the number type \ccc{FT} to 
+double-precision representation. That is, the function 
+\ccc{CGAL::to_double(FT)} must be supported.
+
 % The traits class inherits from the
 % \ccStyle{Arr_segment_cached_traits_2<Kernel>}
 % class, so that the \ccStyle{X_monotone_curve_2} type is defined for it.
