@@ -9,6 +9,11 @@
 
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: Added quotes to support spaces in PATHs on cygwin.
+GLOB: Some changes for Metrowerks support (introduce CYGWIN_COMPILER flag).
+GLOB: Changed to gmp-4 instead of gmp-2.
+GLOB: Changed to gmp-4.
+GLOB: Added support for Metrowerks.
 GLOB: Set "treat as C++ code"-flag for PC compilers.
 GLOB: Removed compiler version functions.
 GLOB: Added ADDITIONAL_CXXFLAGS to compile compiler_test.

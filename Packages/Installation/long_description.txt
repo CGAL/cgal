@@ -4,6 +4,22 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1140
+//---------------------------------------------------------------------
+
+GLOB: Added quotes to support spaces in PATHs on cygwin.
+GLOB: Some changes for Metrowerks support (introduce CYGWIN_COMPILER flag).
+GLOB: Changed to gmp-4 instead of gmp-2.
+GLOB: Changed to gmp-4.
+GLOB: Added support for Metrowerks.
+
+//---------------------------------------------------------------------
+//	revision 1139
+//---------------------------------------------------------------------
+
+GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
+
+//---------------------------------------------------------------------
 //	revision 1138
 //---------------------------------------------------------------------
 
