@@ -93,12 +93,12 @@ void time_insertion_and_check(pp_int V, int n, int d,
     chull_has_center_on_wrong_side_of_hull_facet;
 
   std::cout << " timing of " << s << std::endl;
-  std::vector< CGAL::Point_d<R> > P(n);
-  for(int i=0; i<n; ++i) 
+  std::vector< CGAL::Point_d<R> > P(n); int i;
+  for(i=0; i<n; ++i) 
     P[i] = CGAL::Point_d<R>(d,V[i],V[i]+d,1);
   
   timer.reset(); timer.start(); // float ti = used_time();
-  for(int i=0; i<n; ++i) {
+  for(i=0; i<n; ++i) {
     C.insert(P[i]);
     if (i%10==0) std::cout << i << " points inserted" << std::endl;
   }
