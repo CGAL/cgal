@@ -123,10 +123,11 @@ polyhedra that cannot be retriangulated cannot happen, so \cgal\
 proposes a vertex removal.
 
 \ccMethod{void remove(Vertex_handle v);}
-{Removes the vertex \ccc{v} from the triangulation.\footnote{In {\sc Cgal} 3.0
-we have implemented a new algorithm for retriagulating the hole after the removal.
+{Removes the vertex \ccc{v} from the triangulation.\\
+Note that in {\sc Cgal} 3.0 we have implemented a new algorithm for
+retriangulating the hole after the removal.
 In case that you experience problems when removing a vertex, the old
-code can be enabled with a \ccc{#define CGAL_DELAUNAY_3_OLD_REMOVE 1}.}
+code can be enabled with a \ccc{\#define CGAL_DELAUNAY_3_OLD_REMOVE 1}.
 \ccPrecond{\ccc{v} is a vertex of the triangulation and it is not the
 infinite vertex.}}
 
