@@ -9,9 +9,10 @@ struct Plane_equation {
     template <class Facet>
     typename Facet::Plane_3 operator()( Facet& f) {
         typename Facet::Halfedge_handle h = f.halfedge();
-        return typename Facet::Plane_3( h->vertex()->point(),
-                                        h->next()->vertex()->point(),
-                                        h->next()->next()->vertex()->point());
+        typedef typename Facet::Plane_3  Plane;
+        return Plane( h->vertex()->point(),
+                      h->next()->vertex()->point(),
+                      h->next()->next()->vertex()->point());
     }
 };
 

@@ -38,15 +38,9 @@
 #define CGAL_USE_POLYHEDRON_DESIGN_TWO 1
 #endif
 
-#ifndef CGAL_MODIFIER_BASE_H
 #include <CGAL/Modifier_base.h>
-#endif // CGAL_MODIFIER_BASE_H
-#ifndef CGAL_INVERSE_INDEX_H
 #include <CGAL/Inverse_index.h>
-#endif // CGAL_INVERSE_INDEX_H
-#ifndef CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-#endif // CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H
 
 CGAL_BEGIN_NAMESPACE
 

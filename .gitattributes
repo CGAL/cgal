@@ -268,7 +268,6 @@ Packages/Polygon/doc_tex/basic/Polygon/pgn_algos.gif -text svneol=unset#unset
 Packages/Polygon/doc_tex/basic/Polygon/pgn_algos.ipe -text
 Packages/Polyhedron/doc_tex/Polyhedron/add_facet1.gif svneol=native#unset
 Packages/Polyhedron/doc_tex/Polyhedron/add_facet2.gif svneol=native#unset
-Packages/Polyhedron/doc_tex/Polyhedron/cube_subdiv.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/Polyhedron/euler_center.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/Polyhedron/euler_facet.gif svneol=native#unset
 Packages/Polyhedron/doc_tex/Polyhedron/euler_loop.gif svneol=native#unset
@@ -280,6 +279,8 @@ Packages/Polyhedron/doc_tex/Polyhedron/fig/euler_loop.ips -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/halfedge.ips -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/poly_optional.ips -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/shark.ps -text
+Packages/Polyhedron/doc_tex/Polyhedron/fig/subdiv.ppm -text
+Packages/Polyhedron/doc_tex/Polyhedron/fig/subdiv.ps -text
 Packages/Polyhedron/doc_tex/Polyhedron/halfedge.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/Polyhedron/halfedge_small.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/Polyhedron/idraw/add_facet.ips -text
@@ -293,9 +294,10 @@ Packages/Polyhedron/doc_tex/Polyhedron/idraw/shark.ps -text
 Packages/Polyhedron/doc_tex/Polyhedron/poly_optional.gif svneol=native#unset
 Packages/Polyhedron/doc_tex/Polyhedron/poly_optional_small.gif svneol=native#unset
 Packages/Polyhedron/doc_tex/Polyhedron/shark.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/Polyhedron/subdiv.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/Polyhedron/subdiv_small.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron/add_facet1.gif svneol=native#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron/add_facet2.gif svneol=native#unset
-Packages/Polyhedron/doc_tex/basic/Polyhedron/cube_subdiv.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron/euler_center.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron/euler_facet.gif svneol=native#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron/euler_loop.gif svneol=native#unset
@@ -307,6 +309,8 @@ Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/euler_loop.ips -text
 Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/halfedge.ips -text
 Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/poly_optional.ips -text
 Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/shark.ps -text
+Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/subdiv.ppm -text
+Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/subdiv.ps -text
 Packages/Polyhedron/doc_tex/basic/Polyhedron/halfedge.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron/halfedge_small.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/add_facet.ips -text
@@ -320,6 +324,8 @@ Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/shark.ps -text
 Packages/Polyhedron/doc_tex/basic/Polyhedron/poly_optional.gif svneol=native#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron/poly_optional_small.gif svneol=native#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron/shark.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/subdiv.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/subdiv_small.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/add_facet1.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/add_facet2.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/euler_facet.gif -text svneol=unset#unset

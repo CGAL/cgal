@@ -40,30 +40,18 @@
 #else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 #define CGAL_USE_POLYHEDRON_DESIGN_TWO 1
 
-#ifndef CGAL_RANDOM_ACCESS_ADAPTOR_H
 #include <CGAL/Random_access_adaptor.h>
-#endif
-
-#ifndef CGAL_PROTECT_VECTOR
-#include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
-
-#ifndef CGAL_HALFEDGEDS_DECORATOR_H
 #include <CGAL/HalfedgeDS_decorator.h>
-#endif
-
-#ifndef CGAL_IO_VERBOSE_OSTREAM_H
 #include <CGAL/IO/Verbose_ostream.h>
-#endif // CGAL_IO_VERBOSE_OSTREAM_H
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class p_HDS>
+template < class HalfedgeDS_>
 class Polyhedron_incremental_builder_3 {
 public:
-    typedef p_HDS                           HDS;
-    typedef p_HDS                           HalfedgeDS;
+    typedef HalfedgeDS_                     HDS; // internal
+    typedef HalfedgeDS_                     HalfedgeDS;
     typedef typename HDS::Vertex            Vertex;
     typedef typename HDS::Halfedge          Halfedge;
     typedef typename HDS::Face              Face;
@@ -76,12 +64,10 @@ public:
     typedef typename HDS::size_type         size_type;
 
 protected:
-    typedef typename HDS::Supports_vertex_halfedge
-                                                 Supports_vertex_halfedge;
-    typedef typename HDS::Supports_removal       Supports_removal;
-    typedef typename HDS::Vertex_iterator        Vertex_iterator;
-    typedef Random_access_adaptor<Vertex_iterator>
-                                                 Random_access_index;
+    typedef typename HDS::Supports_vertex_halfedge  Supports_vertex_halfedge;
+    typedef typename HDS::Supports_removal          Supports_removal;
+    typedef typename HDS::Vertex_iterator           Vertex_iterator;
+    typedef Random_access_adaptor<Vertex_iterator>  Random_access_index;
 
     bool                      m_error;
     bool                      m_verbose;

@@ -20,6 +20,26 @@
 
 
 % +------------------------------------------------------------------------+
+\section{Release Note}
+
+Beginning with \cgal\ R2.3, this package has a new design.  The old
+design is still available for backwards compatibility and to support
+older compiler, such as MSVC++6.0. However their use is deprecated and
+the manual page are not converted into this new manual
+format. Instead, see their old documentation in the manual of 
+deprecated packages.
+
+For the polyhedral surface, old and new design cannot be used
+simultaneously (they have identical include file names and class
+names). The include files select automatically the old design for
+MSVC++6.0 and the new design otherwise. This automatism can be
+overwritten by defining appropriate macros before the include
+files. The old design is selected with the 
+\texttt{CGAL\_USE\_POLYHEDRON\_DESIGN\_ONE} macro. The new design 
+is selected with the 
+\texttt{CGAL\_USE\_POLYHEDRON\_DESIGN\_TWO} macro.
+
+% +------------------------------------------------------------------------+
 \section{Introduction}
 \label{sectionPolyIntro}
 
@@ -277,7 +297,7 @@ the \cgal\ modifiers for streams, \ccc{set_ascii_mode} and
 can be used to allow for (a few) structuring comments in the
 output. Otherwise, the output would be free of comments.  The default
 for writing is ASCII without comments. Both, ASCII and binary format,
-can be read independant of the stream setting. Since this file format
+can be read independent of the stream setting. Since this file format
 is the default format, iostream operators are provided for it.
 
 \ccThree{Inventor_ostream&M}{}{.}
@@ -486,30 +506,41 @@ extension {\tt .off}, which is also understood by
 GeomView~\cite{p-gmgv15-94}.
 
 The refinement is a single step of the $\sqrt{3}$-scheme for creating
-a subdivision surface~\ref{k-s-00}. Such a single step subdivides
-each facet into triangles around a new center vertex, smooths the
-position of the old vertices, and flips the old edges. The program is
-organized along this outline. In each of these parts, the program
-efficiently uses the knowledge that the newly created vertices, edges,
-and facets have been added to the end of the sequences. The program
-needs additional processing memory only for the smoothing step of the
-old vertices.
+a subdivision surface~\ref{k-s-00}. Each step subdivides a facet
+into triangles around a new center vertex, smoothes the position of the
+old vertices, and flips the old edges. The program is organized along
+this outline. In each of these parts, the program efficiently uses the
+knowledge that the newly created vertices, edges, and facets have been
+added to the end of the sequences. The program needs additional
+processing memory only for the smoothing step of the old vertices.
 
-The following figure shows an example of five consecutive subdivision
-steps starting with a cube as the initial polyhedral surface.
+The following figure shows three example objects, each 
+subdivided four times. The initial object for the left sequence is
+the closed surface of three unit cubes glued together to a corner.
+The example program shown here can handle only closed surfaces, 
+but the extended example
+\texttt{examples/Polyhedron/polyhedron\_prog\_subdiv\_with\_boundary.C}
+handles surfaces with boundary. So, the middle sequence starts with
+the same surface where one of the facets has been removed. The boundary
+subdivides to a nice circle. The third sequence creates a sharp
+edge using a trick in the object presentation. The sharp edge is 
+actually a hole whose vertex coordinates let the hole collapse to an edge.
+The example directory \texttt{examples/Polyhedron/} contains the 
+OFF files used here.
 
 \begin{ccTexOnly}
     \begin{center}
       \parbox{\textwidth}{%
-          \includegraphics[width=\textwidth]{fig/cube_subdiv.ps}%
+          \includegraphics[width=\textwidth]{fig/subdiv.ps}%
       }
     \end{center}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
     <CENTER>
-        <img src="./cube_subdiv.gif" 
-          alt="five consecutive subdivision steps starting with a cube"><P>
+        <A HREF="./subdiv.gif">
+            <img src="./subdiv_small.gif" alt="subdivision examples">
+        </A><P>
     </CENTER>
 \end{ccHtmlOnly}
 

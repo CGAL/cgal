@@ -26,17 +26,17 @@
 
 
 #include <CGAL/Cartesian.h>
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-#undef CGAL_USE_POLYHEDRON_DESIGN_ONE
-#endif
-#define CGAL_USE_POLYHEDRON_DESIGN_TWO 1
+#include <CGAL/Polyhedron_3.h>
+
+// This is the test file for the new design. Skip new design test for 
+// disabled compilers.
+#ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
 
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/HalfedgeDS_list.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_traits_3.h>
 #include <CGAL/Polyhedron_traits_with_normals_3.h>
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
@@ -820,10 +820,16 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_triangle( h));
     }
 }
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 
 
 int main() {
+// This is the test file for the new design. Skip new design test for 
+// disabled compilers.
+#ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
     test_Polyhedron();
+#endif
     return 0;
 }
 // EOF //

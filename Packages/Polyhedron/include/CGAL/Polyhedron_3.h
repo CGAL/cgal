@@ -42,44 +42,21 @@
 #else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 #define CGAL_USE_POLYHEDRON_DESIGN_TWO 1
 
-#ifndef CGAL_POLYHEDRON_ITERATOR_3_H
 #include <CGAL/Polyhedron_iterator_3.h>
-#endif
-#ifndef CGAL_ITERATOR_PROJECT_H
 #include <CGAL/Iterator_project.h>
-#endif
-#ifndef CGAL_FUNCTION_OBJECTS_H
 #include <CGAL/function_objects.h>
-#endif
-#ifndef CGAL_N_STEP_ADAPTOR_DERIVED_H
 #include <CGAL/N_step_adaptor_derived.h>
-#endif
-#ifndef CGAL_POLYHEDRON_ITEMS_3_H
 #include <CGAL/Polyhedron_items_3.h>
-#endif
-#ifndef CGAL_HALFEDGEDS_DEFAULT_H
 #include <CGAL/HalfedgeDS_default.h>
-#endif
-#ifndef CGAL_HALFEDGEDS_CONST_DECORATOR_H
 #include <CGAL/HalfedgeDS_const_decorator.h>
-#endif
-#ifndef CGAL_HALFEDGEDS_DECORATOR_H
 #include <CGAL/HalfedgeDS_decorator.h>
-#endif
+#include <CGAL/Modifier_base.h>
+#include <CGAL/IO/Verbose_ostream.h>
 
 #ifdef CGAL_REP_CLASS_DEFINED
-#ifndef CGAL_POLYHEDRON_TRAITS_3_H
 #include <CGAL/Polyhedron_traits_3.h>
-#endif
 #endif // CGAL_REP_CLASS_DEFINED
 
-#ifndef CGAL_MODIFIER_BASE_H
-#include <CGAL/Modifier_base.h>
-#endif
-
-#ifndef CGAL_IO_VERBOSE_OSTREAM_H
-#include <CGAL/IO/Verbose_ostream.h>
-#endif // CGAL_IO_VERBOSE_OSTREAM_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -340,7 +317,7 @@ public:
     typedef typename Base::Supports_face_plane    Supports_face_plane;
 
     // No longer required.
-    //typedef typename Base::Supports_face_normal   Supports_face_normal;
+    typedef Tag_false                             Supports_face_normal;
 
     // Circulator category.
     typedef typename Halfedge::Supports_halfedge_prev  Supports_prev;
@@ -447,9 +424,10 @@ public:
 template < class PolyhedronTraits_3,
            class PolyhedronItems_3 = Polyhedron_items_3,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I>
+           template < class T, class I, class A>
 #endif
-           class T_HDS = HalfedgeDS_default>
+           class T_HDS = HalfedgeDS_default, 
+           class Alloc = CGAL_ALLOCATOR(int)>
 class Polyhedron_3 {
     //
     // DEFINITION
@@ -470,24 +448,28 @@ class Polyhedron_3 {
     // geometric properties, e.g. test for self intersections which
     // is  too expensive to be guaranteed as a class invariant.
 public:
-    typedef Polyhedron_3<PolyhedronTraits_3,PolyhedronItems_3,T_HDS>  Self;
+    typedef Polyhedron_3< PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>
+                                                  Self;
     typedef PolyhedronTraits_3                    Traits;
     typedef PolyhedronItems_3                     Items;
     typedef I_Polyhedron_derived_items_3<Items>   Derived_items;
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    typedef T_HDS< Traits, Derived_items>         HDS;
+    typedef T_HDS< Traits, Derived_items, Alloc>  HDS;
 #else
 #ifdef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
-    typedef typename T_HDS::HDS< Traits, Derived_items>  HDS;
+    typedef typename T_HDS::HDS< Traits, Derived_items, Alloc>  HDS;
 #else // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
     // here is the standard conforming way
-    typedef T_HDS::template HDS< Traits, Derived_items>  HDS;
+    typedef T_HDS::template HDS< Traits, Derived_items, Alloc>  HDS;
 #endif // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
 #endif
     typedef HDS                                   HalfedgeDS;
 
     // portability with older CGAL release
     typedef HDS                                   Halfedge_data_structure;
+
+    typedef Alloc                                 Allocator;
+    typedef Alloc                                 allocator_type; // STL name
 
     // Container stuff.
     typedef typename HDS::size_type               size_type;
@@ -565,14 +547,14 @@ public:
     typedef typename FBase::Supports_face_plane     Supports_face_plane;
 
     // No longer required.
-    //typedef typename FBase::Supports_face_normal    Supports_face_normal;
+    typedef Tag_false                               Supports_face_normal;
 
     // Renamed versions for facet
     typedef Supports_halfedge_face  Supports_halfedge_facet;
     typedef Supports_face_halfedge  Supports_facet_halfedge;
     typedef Supports_face_plane     Supports_facet_plane;
     // No longer required.
-    //typedef Supports_face_normal    Supports_facet_normal;
+    typedef Supports_face_normal    Supports_facet_normal;
 
 public:
     // Circulator category.
@@ -623,7 +605,8 @@ public:
     }
 
 protected:
-#ifndef __GNUC__
+#if defined( CGAL_CFG_NO_TMPL_IN_TMPL_PARAM) || \
+    ! defined( CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM)
     Halfedge_handle make_tetrahedron( Vertex_handle v1,
                                       Vertex_handle v2,
                                       Vertex_handle v3,
@@ -632,8 +615,9 @@ protected:
     Halfedge_handle make_triangle( Vertex_handle v1,
                                    Vertex_handle v2,
                                    Vertex_handle v3);
-#else // __GNUC__ //
-    // workaround for g++ 2.95.2
+#else // defined( CGAL_CFG_NO_TMPL_IN_TMPL_PARAM) ||
+      // ! defined( CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM)
+      // workaround for g++ 2.95.2
 
     Halfedge_handle
     make_triangle( Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) {
@@ -710,7 +694,8 @@ protected:
         decorator.set_face_halfedge( d);
         return h;
     }
-#endif // __GNUC__ //
+#endif // defined( CGAL_CFG_NO_TMPL_IN_TMPL_PARAM) ||
+       // ! defined( CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM)
 
 public:
     Halfedge_handle make_tetrahedron();
@@ -736,6 +721,8 @@ public:
         // this structure.
 
 // Access Member Functions
+
+    allocator_type get_allocator() const { return hds.get_allocator(); }
 
     size_type size_of_vertices() const { return hds.size_of_vertices();}
         // number of vertices.
@@ -832,7 +819,8 @@ public:
 
 // Geometric Predicates
 
-#ifndef __GNUC__
+#if defined( CGAL_CFG_NO_TMPL_IN_TMPL_PARAM) || \
+    ! defined( CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM)
     bool is_triangle( Halfedge_const_handle h) const;
         // returns whether the connected component containing h is a
         // single triangle.
@@ -840,8 +828,9 @@ public:
     bool is_tetrahedron( Halfedge_const_handle h) const;
         // returns whether the connected component containing h is a
         // single tetrahedron.
-#else // __GNUC__ //
-    // workaround for g++ 2.95.2
+#else // defined( CGAL_CFG_NO_TMPL_IN_TMPL_PARAM) ||
+      // ! defined( CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM)
+      // workaround for g++ 2.95.2
 
     bool
     is_triangle( Halfedge_const_handle h1) const {
@@ -997,7 +986,8 @@ public:
 
         return true;
     }
-#endif // __GNUC__ //
+#endif // defined( CGAL_CFG_NO_TMPL_IN_TMPL_PARAM) ||
+       // ! defined( CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM)
 
 // Euler Operators (Combinatorial Modifications)
 //
@@ -1340,18 +1330,21 @@ public:
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #define CGAL__POLYH_TMPL_DECL template < class TR, class Itms, \
-                                   template < class T, class I> class HD >
+                              template < class T, class I, class A> class HD, \
+                              class Alloc>
 #else
-#define CGAL__POLYH_TMPL_DECL template < class TR, class Itms, class HD >
+#define CGAL__POLYH_TMPL_DECL template < class TR, class Itms, class HD, \
+                              class Alloc >
 #endif
 
-#ifndef __GNUC__
+#if defined( CGAL_CFG_NO_TMPL_IN_TMPL_PARAM) || \
+    ! defined( CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM)
     // workaround for g++ 2.95.2. g+ does not like these external def's
     // for functions with a parameter dependent on the HDS.
 
 CGAL__POLYH_TMPL_DECL   CGAL_LARGE_INLINE
-typename Polyhedron_3<TR,Itms,HD>::Halfedge_handle
-Polyhedron_3<TR,Itms,HD>::
+typename Polyhedron_3<TR,Itms,HD,Alloc>::Halfedge_handle
+Polyhedron_3<TR,Itms,HD,Alloc>::
 make_triangle( Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) {
     HalfedgeDS_decorator<HDS> decorator(hds);
     Halfedge_handle h  = hds.edges_push_back( Halfedge(), Halfedge());
@@ -1389,8 +1382,8 @@ make_triangle( Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) {
 }
 
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
-typename Polyhedron_3<TR,Itms,HD>::Halfedge_handle
-Polyhedron_3<TR,Itms,HD>::
+typename Polyhedron_3<TR,Itms,HD,Alloc>::Halfedge_handle
+Polyhedron_3<TR,Itms,HD,Alloc>::
 make_tetrahedron( Vertex_handle v1,
                   Vertex_handle v2,
                   Vertex_handle v3,
@@ -1430,7 +1423,7 @@ make_tetrahedron( Vertex_handle v1,
 
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
 bool
-Polyhedron_3<TR,Itms,HD>::
+Polyhedron_3<TR,Itms,HD,Alloc>::
 is_triangle( Halfedge_const_handle h1) const {
     Halfedge_const_handle h2 = h1->next();
     Halfedge_const_handle h3 = h1->next()->next();
@@ -1482,7 +1475,7 @@ is_triangle( Halfedge_const_handle h1) const {
 
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
 bool
-Polyhedron_3<TR,Itms,HD>::
+Polyhedron_3<TR,Itms,HD,Alloc>::
 is_tetrahedron( Halfedge_const_handle h1) const {
     Halfedge_const_handle h2 = h1->next();
     Halfedge_const_handle h3 = h1->next()->next();
@@ -1587,11 +1580,12 @@ is_tetrahedron( Halfedge_const_handle h1) const {
     return true;
 }
 
-#endif // __GNUC__ //
+#endif // defined( CGAL_CFG_NO_TMPL_IN_TMPL_PARAM) ||
+       // ! defined( CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM)
 
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
-typename Polyhedron_3<TR,Itms,HD>::Halfedge_handle
-Polyhedron_3<TR,Itms,HD>::
+typename Polyhedron_3<TR,Itms,HD,Alloc>::Halfedge_handle
+Polyhedron_3<TR,Itms,HD,Alloc>::
 make_triangle() {
     reserve( 3 + size_of_vertices(),
              6 + size_of_halfedges(),
@@ -1603,8 +1597,8 @@ make_triangle() {
 }
 
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
-typename Polyhedron_3<TR,Itms,HD>::Halfedge_handle
-Polyhedron_3<TR,Itms,HD>::
+typename Polyhedron_3<TR,Itms,HD,Alloc>::Halfedge_handle
+Polyhedron_3<TR,Itms,HD,Alloc>::
 make_triangle(const Point_3& p1, const Point_3& p2, const Point_3& p3) {
     reserve( 3 + size_of_vertices(),
              6 + size_of_halfedges(),
@@ -1616,8 +1610,8 @@ make_triangle(const Point_3& p1, const Point_3& p2, const Point_3& p3) {
 }
 
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
-typename Polyhedron_3<TR,Itms,HD>::Halfedge_handle
-Polyhedron_3<TR,Itms,HD>::
+typename Polyhedron_3<TR,Itms,HD,Alloc>::Halfedge_handle
+Polyhedron_3<TR,Itms,HD,Alloc>::
 make_tetrahedron() {
     reserve( 4 + size_of_vertices(),
             12 + size_of_halfedges(),
@@ -1630,8 +1624,8 @@ make_tetrahedron() {
 }
 
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
-typename Polyhedron_3<TR,Itms,HD>::Halfedge_handle
-Polyhedron_3<TR,Itms,HD>::
+typename Polyhedron_3<TR,Itms,HD,Alloc>::Halfedge_handle
+Polyhedron_3<TR,Itms,HD,Alloc>::
 make_tetrahedron(const Point_3& p1,
                  const Point_3& p2,
                  const Point_3& p3,
@@ -1650,7 +1644,7 @@ make_tetrahedron(const Point_3& p1,
 
 CGAL__POLYH_TMPL_DECL  CGAL_LARGE_INLINE
 void                               // Supports_facet_plane
-Polyhedron_3<TR,Itms,HD>::inside_out_geometry( Tag_true) {
+Polyhedron_3<TR,Itms,HD,Alloc>::inside_out_geometry( Tag_true) {
     typename Traits::Construct_opposite_plane_3 opposite
         = traits().construct_opposite_plane_3_object();
     std::transform( planes_begin(), planes_end(), planes_begin(), opposite);
@@ -1658,7 +1652,7 @@ Polyhedron_3<TR,Itms,HD>::inside_out_geometry( Tag_true) {
 
 CGAL__POLYH_TMPL_DECL
 bool
-Polyhedron_3<TR,Itms,HD>:: is_valid( bool verb, int level) const {
+Polyhedron_3<TR,Itms,HD,Alloc>:: is_valid( bool verb, int level) const {
     Verbose_ostream verr(verb);
     verr << "begin CGAL::Polyhedron_3<...>::is_valid( verb=true, "
                       "level = " << level << "):" << std::endl;

@@ -20,6 +20,26 @@
 
 
 % +------------------------------------------------------------------------+
+\section{Release Note}
+
+Beginning with \cgal\ R2.3, this package has been replaced with a new
+design.  The old files are still available for backwards compatibility
+and to support older compiler, such as MSVC++6.0. However their use is
+deprecated and the manual page are not converted into the new
+reference manual format. Instead they are collected in this manual
+here. See the regular user and reference manual for the new design.
+
+For the polyhedral surface, old and new design cannot be used
+simultaneously (they have identical include file names and class
+names). The include files select automatically the old design for
+MSVC++6.0 and the new design otherwise. This automatism can be
+overwritten by defining appropriate macros before the include
+files. The old design is selected with the 
+\texttt{CGAL\_USE\_POLYHEDRON\_DESIGN\_ONE} macro. The new design 
+is selected with the 
+\texttt{CGAL\_USE\_POLYHEDRON\_DESIGN\_TWO} macro.
+
+% +------------------------------------------------------------------------+
 \section{Introduction}
 
 This chapter presents polyhedral surfaces in three dimensions. They
@@ -110,9 +130,14 @@ using polyhedral surfaces.
 \label{sectionPolyhedron}
 \ccCreationVariable{P}
 
+\ccHeading{Release Note}
+
+Beginning with \cgal\ R2.3, this package has been replaced with a new
+design. The old design is still available and documented here, see the
+remark at the beginning of this chapter. See the regular user and
+reference manual for the new design.
+
 \ccDefinition  
-
-
 
 A polyhedral surface \ccClassTemplateName\ in three dimensions
 consists of vertices $V$, edges $E$, facets $F$ and an incidence
@@ -570,7 +595,7 @@ unchanged.
     {removes all vertices, halfedges, and facets.}
 
 \ccMethod{void erase_all();}
-    {equivalent to \ccc{clear()}. Depricated.}
+    {equivalent to \ccc{clear()}. Deprecated.}
 
 
 % +-----------------------------------+

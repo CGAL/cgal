@@ -24,10 +24,10 @@ void create_center_vertex( Polyhedron& P, Facet_iterator f) {
     Vector vec( 0.0, 0.0, 0.0);
     std::size_t order = 0;
     HF_circulator h = f->facet_begin();
-    CGAL_For_all( h, f->facet_begin()) {
+    do {
         vec = vec + ( h->vertex()->point() - CGAL::ORIGIN);
         ++ order;
-    }
+    } while ( ++h != f->facet_begin());
     CGAL_assertion( order >= 3); // guaranteed by definition of polyhedron
     Point center =  CGAL::ORIGIN + (vec / order);
     Halfedge_handle new_center = P.create_center_vertex( f->halfedge());
@@ -37,13 +37,13 @@ void create_center_vertex( Polyhedron& P, Facet_iterator f) {
 struct Smooth_old_vertex {
     Point operator()( const Vertex& v) const {
         CGAL_precondition((CGAL::circulator_size( v.vertex_begin()) & 1) == 0);
-        std::size_t old_degree = CGAL::circulator_size( v.vertex_begin()) / 2;
-        double alpha = ( 4.0 - 2.0 * cos( 2.0 * M_PI / old_degree)) / 9.0;
+        std::size_t degree = CGAL::circulator_size( v.vertex_begin()) / 2;
+        double alpha = ( 4.0 - 2.0 * cos( 2.0 * M_PI / degree)) / 9.0;
         Vector vec = (v.point() - CGAL::ORIGIN) * ( 1.0 - alpha);
         HV_circulator h = v.vertex_begin();
         do {
             vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN) 
-                       * alpha / old_degree;
+                       * alpha / degree;
             ++ h;
             CGAL_assertion( h != v.vertex_begin()); // even degree guaranteed
             ++ h;
@@ -86,7 +86,7 @@ void subdiv( Polyhedron& P) {
     ++ last_e; // make it the past-the-end position again
     while ( e != last_e) {
         Halfedge_handle h = e;
-        ++e; // careful, flip_edge destroys current edge
+        ++e; // careful, incr. before flip since flip destroys current edge
         flip_edge( P, h);
     };
     CGAL_postcondition( P.is_valid());
