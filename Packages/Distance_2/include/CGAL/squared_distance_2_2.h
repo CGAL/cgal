@@ -45,21 +45,23 @@ namespace CGALi {
   distance_index(int &ind1,
 		 int &ind2,
 		 const typename CGAL_WRAP(K)::Point_2 &pt,
-		 const typename CGAL_WRAP(K)::Triangle_2 &triangle)
+		 const typename CGAL_WRAP(K)::Triangle_2 &triangle,
+		 const K& k )
   {
+    typename K::Leftturn_2 leftturn = k.leftturn_2_object();
     typedef typename K::Point_2 Point_2;
     const Point_2 &vt0 = triangle.vertex(0);
     const Point_2 &vt1 = triangle.vertex(1);
     const Point_2 &vt2 = triangle.vertex(2);
-    if (left_turn(vt0, vt1, vt2)) {
-      if (right_turn(vt0, vt1, pt)) {
-	if (!is_acute_angle(vt0, vt1, pt)) {
-	  if (right_turn(vt1, vt2, pt)) {
-	    if (!is_acute_angle(vt1, vt2, pt)) {
+    if (leftturn(vt0, vt1, vt2)) {
+      if (leftturn(pt, vt1, vt0)) {
+	if (!is_acute_angle(vt0, vt1, pt, k)) {
+	  if (leftturn(pt, vt2, vt1)) {
+	    if (!is_acute_angle(vt1, vt2, pt, k)) {
 	      ind1 = 2; ind2 = -1;
 	      return;
 	    }
-	    if (!is_acute_angle(vt2, vt1, pt)) {
+	    if (!is_acute_angle(vt2, vt1, pt, k)) {
 	      ind1 = 1; ind2 = -1;
 	      return;
 	    }
@@ -69,13 +71,13 @@ namespace CGALi {
 	  ind1 = 1; ind2 = -1;
 	  return;
 	}
-	if (!is_acute_angle(vt1, vt0, pt)) {
-	  if (right_turn(vt2, vt0, pt)) {
-	    if (!is_acute_angle(vt0, vt2, pt)) {
+	if (!is_acute_angle(vt1, vt0, pt, k)) {
+	  if (leftturn(pt, vt0, vt2)) {
+	    if (!is_acute_angle(vt0, vt2, pt, k)) {
 	      ind1 = 2; ind2 = -1;
 	      return;
 	    }
-	    if (!is_acute_angle(vt2, vt0, pt)) {
+	    if (!is_acute_angle(vt2, vt0, pt, k)) {
 	      ind1 = 0; ind2 = -1;
 	      return;
 	    }
@@ -88,14 +90,14 @@ namespace CGALi {
 	ind1 = 0; ind2 = 1;
 	return;
       } else {
-	if (right_turn(vt1, vt2, pt)) {
-	  if (!is_acute_angle(vt1, vt2, pt)) {
-	    if (right_turn(vt2, vt0, pt)) {
-	      if (!is_acute_angle(vt0, vt2, pt)) {
+	if (leftturn(pt, vt2, vt1)) {
+	  if (!is_acute_angle(vt1, vt2, pt, k)) {
+	    if (leftturn(pt, vt0, vt2)) {
+	      if (!is_acute_angle(vt0, vt2, pt, k)) {
 		ind1 = 2; ind2 = -1;
 		return;
 	      }
-	      if (!is_acute_angle(vt2, vt0, pt)) {
+	      if (!is_acute_angle(vt2, vt0, pt, k)) {
 		ind1 = 0; ind2 = -1;
 		return;
 	      }
@@ -105,19 +107,19 @@ namespace CGALi {
 	    ind1 = 0; ind2 = -1;
 	    return;
 	  }
-	  if (!is_acute_angle(vt2, vt1, pt)) {
+	  if (!is_acute_angle(vt2, vt1, pt, k)) {
 	    ind1 = 1; ind2 = -1;
 	    return;
 	  }
 	  ind1 = 1; ind2 = 2;
 	  return;
 	} else {
-	  if (right_turn(vt2, vt0, pt)) {
-	    if (!is_acute_angle(vt2, vt0, pt)) {
+	  if (leftturn(pt, vt0, vt2)) {
+	    if (!is_acute_angle(vt2, vt0, pt, k)) {
 	      ind1 = 0; ind2 = -1;
 	      return;
 	    }
-	    if (!is_acute_angle(vt0, vt2, pt)) {
+	    if (!is_acute_angle(vt0, vt2, pt, k)) {
 	      ind1 = 2; ind2 = -1;
 	      return;
 	    }
@@ -130,14 +132,14 @@ namespace CGALi {
 	}
       }
     } else {
-      if (right_turn(vt0, vt2, pt)) {
-	if (!is_acute_angle(vt0, vt2, pt)) {
-	  if (right_turn(vt2, vt1, pt)) {
-	    if (!is_acute_angle(vt2, vt1, pt)) {
+      if (leftturn(pt, vt2, vt0)) {
+	if (!is_acute_angle(vt0, vt2, pt, k)) {
+	  if (leftturn(pt, vt1, vt2)) {
+	    if (!is_acute_angle(vt2, vt1, pt, k)) {
 	      ind1 = 1; ind2 = -1;
 	      return;
 	    }
-	    if (!is_acute_angle(vt1, vt2, pt)) {
+	    if (!is_acute_angle(vt1, vt2, pt, k)) {
 	      ind1 = 2; ind2 = -1;
 	      return;
 	    }
@@ -147,13 +149,13 @@ namespace CGALi {
 	  ind1 = 2; ind2 = -1;
 	  return;
 	}
-	if (!is_acute_angle(vt2, vt0, pt)) {
-	  if (right_turn(vt1, vt0, pt)) {
-	    if (!is_acute_angle(vt0, vt1, pt)) {
+	if (!is_acute_angle(vt2, vt0, pt, k)) {
+	  if (leftturn(pt, vt0, vt1)) {
+	    if (!is_acute_angle(vt0, vt1, pt, k)) {
 	      ind1 = 1; ind2 = -1;
 	      return;
 	    }
-	    if (!is_acute_angle(vt1, vt0, pt)) {
+	    if (!is_acute_angle(vt1, vt0, pt, k)) {
 	      ind1 = 0; ind2 = -1;
 	      return;
 	    }
@@ -166,14 +168,14 @@ namespace CGALi {
 	ind1 = 0; ind2 = 2;
 	return;
       } else {
-	if (right_turn(vt2, vt1, pt)) {
-	  if (!is_acute_angle(vt2, vt1, pt)) {
-	    if (right_turn(vt1, vt0, pt)) {
-	      if (!is_acute_angle(vt0, vt1, pt)) {
+	if (leftturn(pt, vt1, vt2)) {
+	  if (!is_acute_angle(vt2, vt1, pt, k)) {
+	    if (leftturn(pt, vt0, vt1)) {
+	      if (!is_acute_angle(vt0, vt1, pt, k)) {
 		ind1 = 1; ind2 = -1;
 		return;
 	      }
-	      if (!is_acute_angle(vt1, vt0, pt)) {
+	      if (!is_acute_angle(vt1, vt0, pt, k)) {
 		ind1 = 0; ind2 = -1;
 		return;
 	      }
@@ -183,19 +185,19 @@ namespace CGALi {
 	    ind1 = 0; ind2 = -1;
 	    return;
 	  }
-	  if (!is_acute_angle(vt1, vt2, pt)) {
+	  if (!is_acute_angle(vt1, vt2, pt, k)) {
 	    ind1 = 2; ind2 = -1;
 	    return;
 	  }
 	  ind1 = 2; ind2 = 1;
 	  return;
 	} else {
-	  if (right_turn(vt1, vt0, pt)) {
-	    if (!is_acute_angle(vt1, vt0, pt)) {
+	  if (leftturn(pt, vt0, vt1)) {
+	    if (!is_acute_angle(vt1, vt0, pt, k)) {
 	      ind1 = 0; ind2 = -1;
 	      return;
 	    }
-	    if (!is_acute_angle(vt0, vt1, pt)) {
+	    if (!is_acute_angle(vt0, vt1, pt, k)) {
 	      ind1 = 1; ind2 = -1;
 	      return;
 	    }
@@ -240,7 +242,7 @@ namespace CGALi {
 		   const K& k)
   {
     int ind1,ind2;
-    distance_index<K>(ind1, ind2, pt, triangle);
+    distance_index<K>(ind1, ind2, pt, triangle, k);
     return squared_distance_indexed(pt, triangle, ind1, ind2, k);
   }
 
