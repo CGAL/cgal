@@ -1,4 +1,9 @@
 -----
+* 2.4.4 *
++ added -b switch to diff program
++ removed include file guards
+
+-----
 * 2.4.3 *
 + cgal_test writes diff of output and expected output to ProgramOutput,
   instead of complete output.
