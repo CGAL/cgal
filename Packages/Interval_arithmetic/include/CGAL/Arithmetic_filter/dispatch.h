@@ -17,6 +17,7 @@
 // package       : Interval_arithmetic
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 // ======================================================================
 
 #ifndef CGAL_ARITHMETIC_FILTER_DISPATCH_H
