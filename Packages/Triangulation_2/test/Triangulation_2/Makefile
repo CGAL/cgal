@@ -23,8 +23,14 @@ CXXFLAGS = \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
 	-g \
-	-DCGAL_CHECK_EXACTNESS  \
-	-DCGAL_CHECK_EXPENSIVE
+	-pedantic \
+	-DCGAL_NO_ASSERTIONS \
+	-DCGAL_NO_PRECONDITIONS \
+	-DCGAL_NO_POSTCONDITIONS 
+
+#	-DCGAL_CHECK_EXACTNESS  \
+#	-DCGAL_CHECK_EXPENSIVE \
+
 
 
 #---------------------------------------------------------------------#

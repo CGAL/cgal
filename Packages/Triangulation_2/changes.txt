@@ -1,9 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.21 (29/10/03)
+- fix in  line_face_circulator susequent to change in 8.18
+
 ver 8.20 (29/10/03)
 - fixed files for _MSC_VER but not INTEL
-
 
 ver 8.19 (22/10/03)
 - doc fixes in Delaunay_triangulation_2.tex
