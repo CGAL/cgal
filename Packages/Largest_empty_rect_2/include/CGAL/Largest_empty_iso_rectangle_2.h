@@ -75,8 +75,14 @@ public:
   class Point_data;
   class Less_yx;
   class Less_xy;
+
   template < class Node>
-  struct Proj_point;
+  struct Proj_point {
+    typedef Node                  argument_type;
+    typedef Point_2                 result_type;
+    Point_2&       operator()( Node& x)       const { return x->p.original; }
+    const Point_2& operator()( const Node& x) const { return x->p.original; }
+  };
 
   typedef std::set<Point_data *,Less_xy> Point_data_set_of_x;
   typedef std::set<Point_data *,Less_yx> Point_data_set_of_y;
@@ -702,15 +708,6 @@ private:
   insert(const Point& p);
 
   // Auxiliary iterators for convenience
-
-  template < class Node>
-  struct Proj_point {
-    typedef Node                  argument_type;
-    typedef Point_2                 result_type;
-    Point_2&       operator()( Node& x)       const { return x->p.original; }
-    const Point_2& operator()( const Node& x) const { return x->p.original; }
-  };
-
 };
 
 
