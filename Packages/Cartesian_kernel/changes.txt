@@ -1,3 +1,6 @@
+Version 6.36 (23 November 2001)
+- Submission bug.
+
 Version 6.35 (21 November 2001)
 - Fix Conic_2.
 
