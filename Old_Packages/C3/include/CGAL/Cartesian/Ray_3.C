@@ -79,11 +79,10 @@ inline bool RayC3<R CGAL_CTAG>::operator!=(const RayC3<R CGAL_CTAG> &r) const
   return !(*this == r);
 }
 
-
 template < class R >
 inline
 typename RayC3<R CGAL_CTAG>::Point_3
-RayC3<R CGAL_CTAG>::start() const
+RayC3<R CGAL_CTAG>::source() const
 {
   return ptr->e0;
 }
@@ -91,9 +90,9 @@ RayC3<R CGAL_CTAG>::start() const
 template < class R >
 inline
 typename RayC3<R CGAL_CTAG>::Point_3
-RayC3<R CGAL_CTAG>::source() const
+RayC3<R CGAL_CTAG>::start() const
 {
-  return ptr->e0;
+  return source();
 }
 
 template < class R >
@@ -110,12 +109,8 @@ typename RayC3<R CGAL_CTAG>::Point_3
 RayC3<R CGAL_CTAG>::point(int i) const
 {
   CGAL_kernel_precondition( i >= 0 );
-  if (i == 0)
-    return ptr->e0;
-
-  if (i == 1)
-    return ptr->e1;
-
+  if (i == 0) return source();
+  if (i == 1) return second_point();
   return source() + FT(i) * (second_point() - source());
 }
 

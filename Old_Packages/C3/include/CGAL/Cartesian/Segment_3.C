@@ -59,13 +59,12 @@ template < class R >
 inline SegmentC3<R CGAL_CTAG>::~SegmentC3()
 {}
 
-
 template < class R >
 inline
 bool
 SegmentC3<R CGAL_CTAG>::operator==(const SegmentC3<R CGAL_CTAG> &s) const
 {
-  return (source() == s.source())  && (target() == s.target());
+  return source() == s.source()  && target() == s.target();
 }
 
 template < class R >
@@ -74,21 +73,6 @@ bool
 SegmentC3<R CGAL_CTAG>::operator!=(const SegmentC3<R CGAL_CTAG> &s) const
 {
   return !(*this == s);
-}
-
-
-template < class R >
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::start() const
-{
-  return ptr->e0;
-}
-
-template < class R >
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::end() const
-{
-  return ptr->e1;
 }
 
 template < class R >
@@ -106,12 +90,26 @@ SegmentC3<R CGAL_CTAG>::target() const
 }
 
 template < class R >
+typename SegmentC3<R CGAL_CTAG>::Point_3
+SegmentC3<R CGAL_CTAG>::start() const
+{
+  return source();
+}
+
+template < class R >
+typename SegmentC3<R CGAL_CTAG>::Point_3
+SegmentC3<R CGAL_CTAG>::end() const
+{
+  return target();
+}
+
+template < class R >
 inline
 typename SegmentC3<R CGAL_CTAG>::Point_3
 SegmentC3<R CGAL_CTAG>::min() const
 {
-  return (lexicographically_xyz_smaller(source(),target())) ? source()
-                                                            : target();
+  return lexicographically_xyz_smaller(source(),target()) ? source()
+                                                          : target();
 }
 
 template < class R >
@@ -119,8 +117,8 @@ inline
 typename SegmentC3<R CGAL_CTAG>::Point_3
 SegmentC3<R CGAL_CTAG>::max() const
 {
-  return (lexicographically_xyz_smaller(source(),target())) ? target()
-                                                            : source();
+  return lexicographically_xyz_smaller(source(),target()) ? target()
+                                                          : source();
 }
 
 template < class R >

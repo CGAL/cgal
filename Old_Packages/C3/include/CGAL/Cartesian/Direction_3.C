@@ -112,11 +112,9 @@ typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::delta(int i) const
 {
   CGAL_kernel_precondition( i >= 0 && i <= 2 );
-  // return (i==0) ? dx() :
-//          (i==1) ? dy() : dz() ;
   if (i==0) return dx();
-  else if (i==1) return dy();
-  return dz() ;
+  if (i==1) return dy();
+  return dz();
 }
 
 template < class R >
@@ -148,7 +146,7 @@ inline
 typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::hdx() const
 {
-  return ptr->e0;
+  return dx();
 }
 
 template < class R >
@@ -156,7 +154,7 @@ inline
 typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::hdy() const
 {
-  return ptr->e1;
+  return dy();
 }
 
 template < class R >
@@ -164,7 +162,7 @@ inline
 typename DirectionC3<R CGAL_CTAG>::FT
 DirectionC3<R CGAL_CTAG>::hdz() const
 {
-  return ptr->e2;
+  return dz();
 }
 
 template < class R >

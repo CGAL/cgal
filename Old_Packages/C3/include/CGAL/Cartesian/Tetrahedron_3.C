@@ -259,7 +259,7 @@ operator<<(std::ostream &os, const TetrahedronC3<R CGAL_CTAG> &t)
     case IO::BINARY :
         return os << t[0]  << t[1]  << t[2] << t[3];
     default:
-        os << "TetrahedronC3(" << t[0] <<  ", " << t[1] <<   ", " << t[2] ;
+        os << "TetrahedronC3(" << t[0] <<  ", " << t[1] <<   ", " << t[2];
         os <<  ", " << t[3] << ")";
         return os;
     }

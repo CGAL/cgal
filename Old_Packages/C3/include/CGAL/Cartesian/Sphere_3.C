@@ -102,7 +102,6 @@ SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
 {
   CGAL_kernel_precondition( orient != COLLINEAR);
 
-  /****** ADD CIRCUMCENTER OF 3 POINTS IN 3D ******/
   Point_3 center = circumcenter(p,q,r);
   FT      squared_radius = squared_distance(p,center);
 
@@ -330,7 +329,7 @@ operator<<(std::ostream &os, const SphereC3<R CGAL_CTAG> &c)
         write(os, (int)c.orientation());
         break;
     default:
-        os << "SphereC3(" << c.center() <<  ", " << c.squared_radius() ;
+        os << "SphereC3(" << c.center() <<  ", " << c.squared_radius();
         switch (c.orientation()) {
         case CLOCKWISE:
             os << ", clockwise)";

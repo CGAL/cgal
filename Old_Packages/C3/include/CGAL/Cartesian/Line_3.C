@@ -112,7 +112,6 @@ LineC3<R CGAL_CTAG>::operator!=(const LineC3<R CGAL_CTAG> &l) const
   return !(*this == l);
 }
 
-
 template < class R >
 inline
 typename LineC3<R CGAL_CTAG>::Point_3

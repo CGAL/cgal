@@ -158,7 +158,7 @@ inline
 typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::hx()  const
 {
-  return ptr->e0;
+  return x();
 }
 
 template < class R >
@@ -166,7 +166,7 @@ inline
 typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::hy()  const
 {
-  return ptr->e1;
+  return y();
 }
 
 template < class R >
@@ -174,7 +174,7 @@ inline
 typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::hz()  const
 {
-  return ptr->e2;
+  return z();
 }
 
 template < class R >
@@ -189,8 +189,7 @@ template < class R >
 typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::homogeneous(int i) const
 {
-  CGAL_kernel_precondition((i>=0) && (i<=3));
-  //return (i<3) ? cartesian(i) : FT(1);
+  CGAL_kernel_precondition(i>=0 && i<=3);
   if (i<3) return cartesian(i);
   return FT(1);
 }

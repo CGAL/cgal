@@ -277,11 +277,9 @@ typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
 to_plane_basis(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  const Vector_3 &e1 = base1();
-  const Vector_3 &e2 = base2();
   FT alpha, beta, gamma;
 
-  solve(e1, e2, orthogonal_vector(), p - point(), alpha, beta, gamma);
+  solve(base1(), base2(), orthogonal_vector(), p - point(), alpha, beta, gamma);
 
   return Point_3(alpha, beta, gamma);
 }
@@ -291,11 +289,9 @@ typename PlaneC3<R CGAL_CTAG>::Point_2
 PlaneC3<R CGAL_CTAG>::
 to_2d(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  const Vector_3 &e1 = base1();
-  const Vector_3 &e2 = base2();
   FT alpha, beta, gamma;
 
-  solve(e1, e2, orthogonal_vector(), p - point(), alpha, beta, gamma);
+  solve(base1(), base2(), orthogonal_vector(), p - point(), alpha, beta, gamma);
 
   return Point_2(alpha, beta);
 }
@@ -306,9 +302,7 @@ typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
 to_3d(const typename PlaneC3<R CGAL_CTAG>::Point_2 &p) const
 {
-  Vector_3 e1 = base1(),
-               e2 = base2();
-  return point() + p.x() * e1 + p.y() * e2;
+  return point() + p.x() * base1() + p.y() * base2();
 }
 
 template < class R >
@@ -402,7 +396,7 @@ bool
 PlaneC3<R CGAL_CTAG>::
 is_degenerate() const
 {
-  return (a() == FT(0)) && (b() == FT(0)) && (c() == FT(0));
+  return a() == FT(0) && b() == FT(0) && c() == FT(0);
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANEC3

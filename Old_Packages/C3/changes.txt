@@ -1,3 +1,7 @@
+Version 5.0 (?? ???? 2000)
+- Added a new construction circumcenterC3(3 points). [syl]
+- Minor cleanups. [syl]
+
 Version 4.9 (29 June 2000)
 - Header fixes [syl].  Got rid of Herve's check_header script.
 - Fixed a few buggy protect macro names [syl].
