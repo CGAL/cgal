@@ -54,7 +54,7 @@ public:
     c.erase(it);
   }
 
-  void swap(const Self& other)
+  void swap(Self& other)
   {
     c.swap(other.c);
   }
