@@ -1,3 +1,8 @@
+3.92   (? ?????? 2002)
+- Test if CGAL_ALLOCATOR is already defined before defining it.
+- Introduce CGAL_MEMORY, similar to LEDA_MEMORY.
+- Fixes for New_delete_allocator.
+
 3.91   (16 July 2002)
 - Add #include <CGAL/basic.h> on top of Object.h and Handle_for_virtual.h.
 
