@@ -77,12 +77,9 @@ area_2( ForwardIterator first, ForwardIterator last,
    if (second == last) return;
    typename Traits::Compute_area_2 compute_area_2 =
             traits.compute_area_2_object();
-   typename Traits::Construct_triangle_2 construct_triangle_2 =
-            traits.construct_triangle_2_object();
    ForwardIterator third = second;
    while (++third != last) {
-	result = result + compute_area_2(
-                    construct_triangle_2(*first, *second, *third));
+	result = result + compute_area_2(*first, *second, *third);
 	second = third;
    }
 }
@@ -101,12 +98,9 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
    if (second == last) return result;
    typename Traits::Compute_area_2 compute_area_2 =
             traits.compute_area_2_object();
-   typename Traits::Construct_triangle_2 construct_triangle_2 =
-            traits.construct_triangle_2_object();
    ForwardIterator third = second;
    while (++third != last) {
-	result = result + compute_area_2(
-                    construct_triangle_2(*first, *second, *third));
+	result = result + compute_area_2(*first, *second, *third);
 	second = third;
    }
    return result;
