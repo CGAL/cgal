@@ -184,7 +184,24 @@ private slots:
 	    }
 	    ++vc;
 	  } while ( vc_start != vc );
+
 	}
+
+	SVD_2::Vertex_circulator vc = svd.incident_vertices(v);
+	SVD_2::Vertex_circulator vc_start = vc;
+	*widget << CGAL::GREEN;
+	do {
+	  SVD_2::Vertex_handle vv(vc);
+	  if ( !svd.is_infinite(vc) ) {
+	    SVD_2::Site_2 site = vv->site();
+	    if ( site.is_segment() ) {
+	      *widget << site.segment();
+	    } else {
+	      *widget << site.point();
+	    }
+	  }
+	  ++vc;
+	} while ( vc_start != vc );
 #else
 	*widget << CGAL::BLACK;
 	if ( v->is_point() ) {

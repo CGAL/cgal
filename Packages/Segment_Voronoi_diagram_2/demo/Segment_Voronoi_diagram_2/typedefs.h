@@ -6,6 +6,8 @@
 //#include <CGAL/Filtered_exact.h>
 //typedef CGAL::Filtered_exact<double,CGAL::Gmpq> NT;
 
+#define USE_FILTERED_TRAITS 0
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 
@@ -13,8 +15,10 @@
 #include <CGAL/Segment_Voronoi_diagram_hierarchy_2.h>
 #include <CGAL/Segment_Voronoi_diagram_filtered_traits_2.h>
 
+#if USE_FILTERED_TRAITS
 struct Rep : public CGAL::Simple_cartesian<double> {};
-//struct Rep : public CGAL::Simple_cartesian<CGAL::Gmpq> {};
+#else
+struct Rep : public CGAL::Simple_cartesian<CGAL::Gmpq> {};
 //struct Rep : public CGAL::Simple_cartesian<NT> {};
 
 namespace CGAL {
@@ -23,13 +27,15 @@ namespace CGAL {
     return CGAL::Gmpq( sqrt(x.to_double()) );
   }
 }
+#endif
 
+#if USE_FILTERED_TRAITS
 struct Gt
   : public CGAL::Segment_Voronoi_diagram_filtered_traits_2<Rep> {};
-
-//struct Gt
-//  : public CGAL::Segment_Voronoi_diagram_traits_2<Rep,CGAL::Ring_tag> {};
-
+#else
+struct Gt
+  : public CGAL::Segment_Voronoi_diagram_traits_2<Rep,CGAL::Ring_tag> {};
+#endif
 
 typedef Gt::Point_2            Point;
 typedef Gt::Segment_2          Segment;

@@ -378,9 +378,19 @@ public:
 public:
   // NEAREST NEIGHBOR LOCATION
   //--------------------------
-  Vertex_handle  nearest_neighbor(const Point& p) const;
+  Vertex_handle  nearest_neighbor(const Point& p) const {
+    return nearest_neighbor(Site_2(p), Vertex_handle(NULL));
+  }
+
   Vertex_handle  nearest_neighbor(const Point& p,
+				  Vertex_handle vnear) const {
+    return nearest_neighbor(Site_2(p), vnear);
+  }
+
+protected:
+  Vertex_handle  nearest_neighbor(const Site_2& p,
 				  Vertex_handle vnear) const;
+
 
 public:
   // ACCESS TO THE DUAL

@@ -229,7 +229,7 @@ protected:
     defined_ = true;
     point_ = true;
     input_ = true;
-    is_exact_[0] = is_exact_[1] = false;
+    is_exact_[0] = is_exact_[1] = true;
     p_ = p;
   }
 

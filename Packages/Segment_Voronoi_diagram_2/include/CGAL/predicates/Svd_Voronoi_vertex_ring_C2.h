@@ -125,6 +125,11 @@ private:
     if ( sgn_c1_ == NEGATIVE ) {
       a1 = -a1;  b1 = -b1;  c1_ = -c1_;
     } else if ( sgn_c1_ == ZERO ) {
+      if ( !pq ) {
+	std::cout << "p: " << p << std::endl;
+	std::cout << "q: " << q << std::endl;
+	std::cout << "r: " << r << std::endl;
+      }
       CGAL_assertion( pq );
       if ( p == q.target() ) {
 	a1 = -a1;  b1 = -b1;  c1_ = -c1_;

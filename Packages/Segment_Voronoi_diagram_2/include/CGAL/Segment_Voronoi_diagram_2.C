@@ -481,7 +481,7 @@ do_intersect(const Site& t, Vertex_handle v) const
 
   if ( t.is_segment() ) {
     if ( !is_infinite(v) && v->is_segment() ) {
-      if ( do_intersect(t.segment(), v->segment()) ) {
+      if ( do_intersect(t, v->site()) ) {
 	print_error_message();
 	return true;
       }
@@ -497,6 +497,8 @@ Segment_Voronoi_diagram_2<Gt,Svdds>::
 insert(const Site& t, Vertex_handle vnear)
 {
   if ( t.is_segment() && is_degenerate_segment(t) ) {
+    // MK: this may be buggy; does it work when the segment is not an
+    // input one?
     // insert the point
     return insert(t.source(), vnear);
   }
@@ -526,14 +528,14 @@ insert(const Site& t, Vertex_handle vnear)
   // first find the nearest neighbor
   Vertex_handle vnearest;
   if ( t.is_point() ) {
-    vnearest = nearest_neighbor( t.point(), vnear );
+    vnearest = nearest_neighbor( t, vnear );
   } else {
     // if we insert a segment, insert the endpoints first
-    vnearest = insert( t.source(), vnear );
-    insert( t.target(), NULL );
+    vnearest = insert( t.source_site(), vnear );
+    insert( t.target_site(), Vertex_handle(NULL) );
   }
 
-  CGAL_assertion( vnearest != NULL );
+  CGAL_assertion( vnearest != Vertex_handle(NULL) );
 
   // check if it is already inserted
   if ( t.is_point() && vnearest->is_point() &&
@@ -541,6 +543,8 @@ insert(const Site& t, Vertex_handle vnear)
     return vnearest;
   }
 
+  // MK: add here code that checks if the inserted segment has already
+  // been inserted
 
   // find the first conflict
 
@@ -683,6 +687,19 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
 
   CGAL_assertion( f1 != f2 );
 
+  {
+    std::cout << "---" << std::endl;
+    std::cout << "f1: " << std::endl;
+    for (int i = 0; i < 3; i++) {
+      std::cout << f1->vertex(i)->site() << std::endl;
+    }
+    std::cout << "f2: " << std::endl;
+    for (int i = 0; i < 3; i++) {
+      std::cout << f2->vertex(i)->site() << std::endl;
+    }
+    std::cout << "---" << std::endl;      
+  }
+
   Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
     qq = this->_tds.split_vertex(v, f1, f2);
 
@@ -716,6 +733,10 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
 
   vsx->set_site(sx);
 
+  std::cout << "sv1: " << v1->site() << std::endl;
+  std::cout << "sv2: " << v2->site() << std::endl;
+  std::cout << "sx: " << vsx->site() << std::endl;
+
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
     s3 = Site_2(t.supporting_segment(), sitev.supporting_segment(), true);
@@ -734,8 +755,16 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
   }
 
 
-  insert(s3, vsx);
-  insert(s4, vsx);
+  std::cout << "===" << std::endl;
+  Finite_vertices_iterator fvit = finite_vertices_begin();
+  for (; fvit != finite_vertices_end(); fvit++ ) {
+    Vertex_handle v(fvit);
+    std::cout << v->site() << std::endl;
+  }
+  std::cout << "===" << std::endl;
+
+  //  insert(s3, vsx);
+  //  insert(s4, vsx);
 
   return vsx;
   //  return v1;
@@ -1116,18 +1145,11 @@ retriangulate_conflict_region(const Site& t, List& l,
 template< class Gt, class Svdds >
 typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,Svdds>::
-nearest_neighbor(const Point& p) const
-{
-  return nearest_neighbor(p, NULL);
-}
-
-
-template< class Gt, class Svdds >
-typename Segment_Voronoi_diagram_2<Gt,Svdds>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,Svdds>::
-nearest_neighbor(const Point& p,
+nearest_neighbor(const Site_2& p,
 		 Vertex_handle start_vertex) const
 {
+  CGAL_precondition( p.is_point() );
+
   if ( number_of_vertices() == 0 ) {
     return Vertex_handle(NULL);
   }
@@ -1141,6 +1163,8 @@ nearest_neighbor(const Point& p,
   Vertex_handle vclosest;
   Vertex_handle v = start_vertex;
 
+  std::cout << "start vertex: " << v->site() << std::endl;
+
   if ( number_of_vertices() < 3 ) {
     vclosest = v;
     Finite_vertices_iterator vit = finite_vertices_begin();
@@ -1149,8 +1173,9 @@ nearest_neighbor(const Point& p,
       if ( v1 != vclosest /*&& !is_infinite(v1)*/ ) {
 	Site t0 = vclosest->site();
 	Site t1 = v1->site();
-	if ( side_of_bisector(t0, t1, Site_2(p)) == ON_NEGATIVE_SIDE ) {
+	if ( side_of_bisector(t0, t1, p) == ON_NEGATIVE_SIDE ) {
 	  vclosest = v1;
+	  std::cout << "new vertex: " << vclosest->site() << std::endl;
 	}
       }
     }
@@ -1166,8 +1191,9 @@ nearest_neighbor(const Point& p,
       if ( !is_infinite(vc) ) {
 	Vertex_handle v1(vc);
 	Site t1 = v1->site();
-	if ( side_of_bisector(t0, t1, Site_2(p)) == ON_NEGATIVE_SIDE ) {
+	if ( side_of_bisector(t0, t1, p) == ON_NEGATIVE_SIDE ) {
 	  v = v1;
+	  std::cout << "new vertex: " << v->site() << std::endl;
 	  break;
 	}
       }
