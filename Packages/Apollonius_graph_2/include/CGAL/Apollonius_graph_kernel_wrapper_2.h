@@ -27,6 +27,7 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_KERNEL_WRAPPER_2_H
 #define CGAL_APOLLONIUS_GRAPH_KERNEL_WRAPPER_2_H
 
+#include <CGAL/Apollonius_graph_short_names_2.h>
 
 #include <CGAL/Apollonius_site_2.h>
 #include <CGAL/Cartesian_converter.h>
