@@ -967,7 +967,7 @@ set_compiler_flags()
 	*MINGW*g++*)
 	    #### settings for gcc on mingw
 	    ADDITIONAL_CXXFLAGS="-Wall"
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR=
 	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
 	    PRINT_STACKTRACE_PROGRAM="gdb"
