@@ -50,11 +50,11 @@ public:
     typedef Line_3<R>   Line;
     typedef Ray_3<R>    Ray;
     typedef Direction_3<R> Direction;
-    typedef Distance_xy_3<Traits> Dist;
+    typedef Distance_xy_3<Traits> Distance;
     
   Triangulation_euclidean_traits_xy_3(){}
   Triangulation_euclidean_traits_xy_3(
-				const Triangulation_euclidean_traits_xy_3& et){}
+		   const Triangulation_euclidean_traits_xy_3& et){}
   Triangulation_euclidean_traits_xy_3 &operator=(
 	    const Triangulation_euclidean_traits_xy_3&  et){return *this;}
 
