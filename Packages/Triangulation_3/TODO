@@ -49,6 +49,7 @@ Delaunay
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
 - nearest neighbor
+- natural neighbors de Raphaelle a integrer
 
 Regular :
 - faire marcher la hierarchie avec.  Le probleme est qu'on delete des
