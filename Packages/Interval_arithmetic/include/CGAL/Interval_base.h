@@ -27,7 +27,6 @@
 // by the number types Interval_nt<>.
 
 #include <CGAL/basic.h>
-#include <CGAL/Interval_arithmetic/_FPU.h>	// For CGAL_IA_STOP_CPROP.
 #include <utility>				// Relational operators.
 
 CGAL_BEGIN_NAMESPACE
@@ -41,20 +40,14 @@ struct Interval_base
 
   Interval_base () {}
 
-  // To stop constant propagation, I need these CGAL_IA_STOP_CPROP().
-  // Ideally, these barriers should be placed just before the critical
-  // operations.
   Interval_base (const double d)
-  {
-    _inf = _sup = CGAL_IA_STOP_CPROP(d);
-  }
+    : _inf(d), _sup(d) {}
 
   Interval_base (const double i, const double s)
+    : _inf(i), _sup(s)
   {
     CGAL_assertion_msg(i<=s,
 	      " Variable used before being initialized (or CGAL bug)");
-    _inf = CGAL_IA_STOP_CPROP(i);
-    _sup = CGAL_IA_STOP_CPROP(s);
   }
 
   static void overlap_action() // throw (unsafe_comparison)
