@@ -3,6 +3,13 @@
 //=====================================================================
 
 //---------------------------------------------------------------------
+//      revision 
+//---------------------------------------------------------------------
+- Compact_container::iterator can now be initialized with and compared to NULL 
+  This is an undocumented feature needed for speeding up the triangulation code
+- Compact_container got template member functions for in place insertion
+
+//---------------------------------------------------------------------
 //      revision 295
 //---------------------------------------------------------------------
 - new headers
