@@ -864,12 +864,6 @@ public:
   Comparison_result compare_y(const Point &p1, const Point &p2) const
     { return compare_value(p1.y(), p2.y()); }
  public:
-  Point point_to_left(const Point& p) const {
-    return p+Vector(-num,0,denum);
-  }
-  Point point_to_right(const Point& p) const {
-    return p+Vector(num,0,denum);
-  }
   bool curve_is_same(const X_curve &cv1, const X_curve &cv2) const
     {
       return cv1==cv2;
