@@ -280,8 +280,8 @@ remove(Vertex_handle v)
       if ( v != (*vit).handle() ) 
 	{ points.push_front( vit->point() ); }
     }
-    std::list<Point>::iterator pit;
-    std::list<Point>::iterator pdone = points.end();
+    typename std::list<Point>::iterator pit;
+    typename std::list<Point>::iterator pdone = points.end();
     
     clear();
     for ( pit = points.begin(); pit != pdone; ++pit) {
@@ -316,8 +316,8 @@ remove_3D(Vertex_handle v)
     for ( vit = finite_vertices_begin(); vit != vdone ; ++vit) {
 	if ( v != (*vit).handle() ) { points.push_front( vit->point() ); }
     }
-    std::list<Point>::iterator pit;
-    std::list<Point>::iterator pdone = points.end();
+    typename std::list<Point>::iterator pit;
+    typename std::list<Point>::iterator pdone = points.end();
     
     clear();
     for ( pit = points.begin(); pit != pdone; ++pit) {
@@ -346,7 +346,7 @@ make_hole_3D( Vertex_handle v,
 {
   CGAL_triangulation_precondition( ! test_dim_down(v) );
 
-  typedef typename std::set<Cell*, std::less<Cell*> > Hole_cells;
+  typedef std::set<Cell*, std::less<Cell*> > Hole_cells;
   Hole_cells cells;
   incident_cells( v, cells );
   int i, indv;
