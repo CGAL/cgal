@@ -1,4 +1,4 @@
-Version 4.2 (?? August 00)
+Version 4.2 (24 August 00)
 - Removed long_description.txt. [syl]
 
 Version 4.1 (11 August 00)
