@@ -7,27 +7,37 @@
 //	actual revision
 //---------------------------------------------------------------------
 
-SRC : Excluded vector from MSC VC6.
-SRC : Added != and comparison ops for test class X in test_vector.C.
-SRC : Changed vector to improve cross platform compilation.
-SRC : Added vector class in include/CGAL/vector.h.
-TEST: Added vector test program in test/STL_Extension/test_vector.C
+GLOB: SRC : Excluded vector from MSC VC6.
+GLOB: SRC : Added != and comparison ops for test class X in test_vector.C.
+GLOB: SRC : Changed vector to improve cross platform compilation.
+GLOB: Calls to std::uninitialized_.... use pointers as iterators to the
+GLOB: uninitialized memory. The std::uninitialized_fill has no return value.
+GLOB: The test_vector.C file used the same variable in several for loops.
+ALL : SRC : Added vector class in include/CGAL/vector.h.
+ALL : TEST: Added vector test program in test/STL_Extension/test_vector.C
+GLOB: remove Susan as maintainer
+ALL : moved reference page directory up one level to effect split of support
+ALL :  manual
+DOCS: added a new main.tex for the user manual chapter and relabeled ref manual
+DOCS: chapter accordingly
 ALL : Use Arity_traits also in functional_msvc.
 ALL : Small change in In_place_list to please VC7.
 ALL : Changed triple, quadruple -> Triple, Quadruple.
 ALL : Rejoined Inverse_index fix by Dima.
 ALL : Fixed sunpro 5.3 problems.
-DOCS: Fixed another triple -> Triple.
-DOCS: Added Filter_iterator suggested by Sylvain.
-ALL : Added Emptyset_iterator and Oneset_iterator.
-ALL : Added triple and quadruple.
+SRC : Added Emptyset_iterator and Oneset_iterator.
 SRC : Combined iterators and iterator adaptors into iterator.h.
 SRC : Fixed a few more sunpro problems.
 SRC : Added copy constructors/assignment for iterators on gcc-2.
 SRC : Fixed typename bug for msvc.
+ALL : Add Set_arity functor adaptor.
 SRC : Moved to Kernel_basic.
+SRC : Use Arity_traits (needed for VC7).
+TEST: - Added test_vector in cgal_test.
+TEST: - Fixed bug in vector.h in insert with commented new_finish assignment.
 TEST: Fixed "this" problem on msvc7.
 TEST: Fixed Triple/Quadruple test.
+TEST: Added triple and quadruple.
 TEST: Fixed double -> int conversion warning.
 
 //---------------------------------------------------------------------
@@ -54,12 +64,12 @@ SRC : an msvc-specific patch to avoid "duplicate comdat" linker error on find()
 //	 CGAL 2.2
 //---------------------------------------------------------------------
 
-DOCS: Changed to new manual structure.
-DOCS: Changed compose function/class.
 TEST: Fixed warnings with NDEBUG.
 ALL : Fixed leading underscore names.
 SRC : Replace reverse_bidirectional_iterator by reverse_iterator.
 SRC : Fixed composition class/functions.
+TEST: - Added test_vector in cgal_test.
+TEST: - Fixed bug in vector.h in insert with commented new_finish assignment.
 TEST: Added compose_shared.
 TEST: Fixed Arity_traits problem.
 TEST: Initial revision
@@ -70,13 +80,12 @@ TEST: Fixed std::distance(...) calls.
 //---------------------------------------------------------------------
 
 DOCS: now joind into stl_extension.tex.
-ALL : Added file algorithm.h.
-ALL : New functions min_max_element and min/max_element_if.
-DOCS: Joined with compose.tex.
 TEST: Removed conditional include checks.
 SRC : Removed superfluous template parameter D in operator+(D,*).
 SRC : Introduced CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT for MSVC.
 SRC : Don't use iterator_category(...), if iterator traits are there.
+ALL : Added file algorithm.h.
+ALL : New functions min_max_element and min/max_element_if.
 SRC : Added N_step_adaptor_derived.
 SRC : Fixed _Circulator_size_traits to I_Circulator_size_traits.
 SRC : Removed obsolete workaround flags.
@@ -84,5 +93,7 @@ ALL : Removed line directives.
 SRC : Added typedefs for types from base class that are not visible
 SRC : since the base class depends on the template parameter.
 SRC : (in composition classes and Random_access_value_adaptor)
+TEST: - Added test_vector in cgal_test.
+TEST: - Fixed bug in vector.h in insert with commented new_finish assignment.
 TEST: Added compose_shared.
 TEST: Fixed Arity_traits problem.
