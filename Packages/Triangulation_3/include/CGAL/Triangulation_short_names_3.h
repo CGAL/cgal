@@ -66,4 +66,7 @@
 #define Regular_triangulation_euclidean_traits_3    R_gt
 #define Regular_triangulation_3                     RT
 
+#define Triangulation_hierarchy_3                   TH_3
+#define Triangulation_hierarchy_vertex_base_3       TH_vb3
+
 #endif // CGAL_TRIANGULATION_SHORT_NAMES_3_H
