@@ -1,3 +1,7 @@
+2.22   (6 Mar 2001)
+- Remove useless friends in PVDH2.h and delete point_vector_declarationsH2.h.
+- Make operator*(VectorH2, VectorH2) a member function.
+
 2.21   (28 Feb 2001)
 - More VC++ fixes.
 

@@ -34,8 +34,6 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/misc.h>
 
-#include <CGAL/point_vector_declarationsH2.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
@@ -81,15 +79,6 @@ public:
 
     PointH2<R> transform( const Aff_transformationH2<R> & t) const;
     DirectionH2<R> direction() const;
-
- friend CGAL_FRIEND_INLINE
-        PointH2<R>
-        CGAL_SCOPE origin_plus_vector CGAL_NULL_TMPL_ARGS ( 
-                                                      const VectorH2<R> & v);
- friend CGAL_FRIEND_INLINE
-        PointH2<R>
-        CGAL_SCOPE origin_minus_vector CGAL_NULL_TMPL_ARGS (
-                                                      const VectorH2<R> & v);
 };
 
 template < class R_ >
@@ -131,6 +120,7 @@ public:
     VectorH2<R> transform(const Aff_transformationH2<R>& t ) const;
     VectorH2<R> perpendicular(const Orientation& o ) const;
 
+    FT      operator*( const VectorH2<R>& v) const;
     VectorH2<R> operator-() const;
     VectorH2<R> opposite() const;
 
@@ -138,49 +128,6 @@ public:
             VectorH2(const DirectionH2<R> & dir);
 protected:
             VectorH2(const PointH2<R> & p);
-// friends:
-
-friend CGAL_FRIEND_INLINE
-       VectorH2<R>
-       CGAL_SCOPE point_minus_origin CGAL_NULL_TMPL_ARGS (const PointH2<R>& p);
-friend CGAL_FRIEND_INLINE
-       VectorH2<R>
-       CGAL_SCOPE origin_minus_point CGAL_NULL_TMPL_ARGS (const PointH2<R>& p);
-/*
-friend CGAL_FRIEND_INLINE
-       PointH2<R>
-       origin_minus_vector CGAL_NULL_TMPL_ARGS ( const VectorH2<R>& v);
-
-friend CGAL_FRIEND_INLINE
-       PointH2<R>
-       operator+ CGAL_NULL_TMPL_ARGS ( const Origin &,
-                                       const VectorH2<R>& v );
-friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH2<R>
-       operator- CGAL_NULL_TMPL_ARGS ( const VectorH2<R>& v1,
-                                       const VectorH2<R>& v2 );
-*/
-
-friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH2<R>
-       operator+ CGAL_NULL_TMPL_ARGS ( const VectorH2<R>&,
-                                       const VectorH2<R>& );
-friend CGAL_KERNEL_FRIEND_INLINE
-       FT
-       operator* CGAL_NULL_TMPL_ARGS ( const VectorH2<R>&,
-                                       const VectorH2<R>& );
-friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH2<R>
-       operator* CGAL_NULL_TMPL_ARGS ( const VectorH2<R>&,
-                                       const RT& );
-friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH2<R>
-       operator* CGAL_NULL_TMPL_ARGS ( const RT&,
-                                       const VectorH2<R>& );
-friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH2<R>
-       operator/ CGAL_NULL_TMPL_ARGS ( const VectorH2<R>&,
-                                       const RT& );
 };
 
 template < class R_ >
@@ -539,12 +486,11 @@ operator-(const VectorH2<R>& u, const VectorH2<R>& v)
 template <class R>
 CGAL_KERNEL_INLINE
 typename VectorH2<R>::FT
-operator*(const VectorH2<R>& u, const VectorH2<R>& v)
+VectorH2<R>::operator*(const VectorH2<R>& v) const
 {
-    typedef typename R::RT RT;
-    typedef typename R::FT FT;
-  return (   FT( RT(u.hx()*v.hx() + u.hy()*v.hy()) )  /
-             FT( RT(u.hw()*v.hw() ) )    );
+  typedef typename R::RT RT;
+  typedef typename R::FT FT;
+  return FT( RT(hx()*v.hx() + hy()*v.hy()) ) / FT( RT(hw()*v.hw() ) );
 }
 
 template <class R>
