@@ -26,7 +26,7 @@ fct()
 
   for(i = 0; i < n+d; i++) {
     std::list<Interval> L;
-    isl.findIntervals(i, std::back_inserter(L));
+    isl.find_intervals(i, std::back_inserter(L));
     for(std::list<Interval>::iterator it = L.begin(); it != L.end(); it++){
       std::cout << *it;
     }  
