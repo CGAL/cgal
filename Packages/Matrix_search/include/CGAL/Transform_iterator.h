@@ -17,8 +17,8 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
-#if ! (CGAL_TRANSFORM_ITERATOR_H)
-#define CGAL_TRANSFORM_ITERATOR_H 1
+#ifndef CGAL_TRANSFORM_ITERATOR_H
+#define CGAL_TRANSFORM_ITERATOR_H
 
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/circulator_bases.h>
@@ -33,11 +33,17 @@ CGAL_BEGIN_NAMESPACE
 
 template < class OutputIterator, class Operation >
 struct Transform_iterator {
-  // Workaround. Added this non standard iterator category for VC8. Strange that no other iterator complains about this "feature" missing  
+  // Workaround. Added this non standard iterator category for VC8.
+  // Strange that no other iterator complains about this "feature" missing  
   typedef std::_Unchecked_iterator_tag _Checked_iterator_category;
   typedef std::output_iterator_tag             iterator_category;
   typedef Transform_iterator< OutputIterator, Operation >   self;
   typedef typename Operation::argument_type        argument_type;
+
+  typedef typename std::iterator_traits<OutputIterator>::difference_type difference_type;
+  typedef typename std::iterator_traits<OutputIterator>::value_type      value_type;
+  typedef typename std::iterator_traits<OutputIterator>::pointer         pointer;
+  typedef typename std::iterator_traits<OutputIterator>::reference       reference;
 
   Transform_iterator( const OutputIterator& o,
                       const Operation& op)
@@ -76,8 +82,4 @@ query_circulator_or_iterator(
 
 CGAL_END_NAMESPACE
 
-#endif // ! (CGAL_TRANSFORM_ITERATOR_H)
-// ----------------------------------------------------------------------------
-// ** EOF
-// ----------------------------------------------------------------------------
-
+#endif // CGAL_TRANSFORM_ITERATOR_H
