@@ -2,6 +2,10 @@
 //	Revision History for package Installation
 //=====================================================================
 
+13 August 2004 Radu Ursu
+- added mpfr to linker flags.
+
+
 9 August 2004 Menelaos Karavelas
 - Removed the -Xlinker option for ICC under Linux. RHEL complains when
   trying to build the shared library

@@ -791,6 +791,7 @@ set_compiler_flags()
     CGAL_WIN_EXTRA_DIR=x11
     GMP_LIBNAME="libgmp.a"
     GMPXX_LIBNAME="libgmpxx.a"
+    MPFR_LIBNAME="libmpfr.a"
     MATH_LIB="m"
     SEPARATE_LIBPATH=""
     START_LD_OPT=""
@@ -825,6 +826,7 @@ set_compiler_flags()
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
+            MPFR_LIBNAME="mpfr.lib" 
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
             LIB_CREATION_COMMANDS="tlib @borland_lib_creation"
@@ -859,6 +861,7 @@ set_compiler_flags()
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
+            MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=
 	    START_LD_OPT="-link "
 	    ;;
@@ -892,6 +895,7 @@ set_compiler_flags()
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
+            MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=
 	    START_LD_OPT="-link "
 	    ;;
@@ -1028,6 +1032,7 @@ set_compiler_flags()
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
+            MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
 	    LIB_CREATION_COMMANDS="mwld.exe"
@@ -6077,6 +6082,10 @@ write_linker_flags()
 	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMP_LIB_DIR)"
     fi
+    LIBS="${LIBS} `lib_option mpfr`"
+    GEOWLIBS="${GEOWLIBS} `lib_option mpfr`"
+    WLIBS="${WLIBS} `lib_option mpfr`"
+    QLIBS="${QLIBS} `lib_option mpfr`"
     # gmpxx must be before gmp since it depends on it.
     if [ -n "${GMPXX_SUPPORT}" ]; then
         LIBS="${LIBS} `lib_option gmpxx`"
