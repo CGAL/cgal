@@ -1,3 +1,6 @@
+Version 2.66 (16 April 2002)
+- remove maintainer.
+
 Version 2.65 (16 April 2002)
 - maintainer required by submission process...
 
