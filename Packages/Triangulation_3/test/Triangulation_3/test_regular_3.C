@@ -373,7 +373,6 @@ int main()
   Point q1(2.,0.,0.);
   Point q2(0.,2.,0.);
   Point q3(0.,0.,2.);
-  Point q4(2.,2.,2.);
 
   Weighted_point wq0(q0,0.);
   Weighted_point wq1(q1,0.);
