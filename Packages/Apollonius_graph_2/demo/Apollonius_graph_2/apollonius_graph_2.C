@@ -299,8 +299,10 @@ main(int argc, char* argv[])
   QApplication app( argc, argv );
   My_Window W(size,size);
   app.setMainWidget( &W );
+#if !defined (__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   W.setIcon(cgal_icon);
+#endif
   W.show();
   W.set_window(0,size,0,size);
   W.setCaption("Apollonius diagram 2");
