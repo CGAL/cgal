@@ -22,8 +22,10 @@ typedef leda_rational FT_;
 typedef CGAL::Gmpz RT_;
 typedef CGAL::Quotient<RT_> FT_;
 #else
-typedef double RT_;
-typedef double FT_;
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+typedef CGAL::MP_Float RT_;
+typedef CGAL::Quotient<RT_> FT_;
 #endif
 #endif
 
