@@ -133,9 +133,11 @@ intersection(const typename CGAL_WRAP(K)::Line_2 &line1,
 }
 
 
+
 template <class R, class POINT, class RT>
-bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &)
+bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &, const Cartesian_tag &)
 {
+  typename R::Construct_point_2 construct_point;
     typedef typename R::FT FT;
     CGAL_kernel_precondition(::CGAL::is_finite(x)
                              && ::CGAL::is_finite(y)
@@ -145,8 +147,38 @@ bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &)
     FT yw = FT(y)/FT(w);
     if (!::CGAL::is_finite(xw) || !::CGAL::is_finite(yw))
         return false;
-    pt = POINT(x, y, w);
+    pt = construct_point(xw, yw);
     return true;
+}
+
+
+
+template <class R, class POINT, class RT>
+bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &, const Homogeneous_tag&)
+{
+    typename R::Construct_point_2 construct_point;
+    typedef typename R::FT FT;
+    CGAL_kernel_precondition(::CGAL::is_finite(x)
+                             && ::CGAL::is_finite(y)
+                             && w != RT(0));
+
+    FT xw = FT(x)/FT(w);
+    FT yw = FT(y)/FT(w);
+    if (!::CGAL::is_finite(xw) || !::CGAL::is_finite(yw))
+        return false;
+    pt = construct_point(x, y, w);
+    return true;
+}
+
+
+template <class R, class POINT, class RT>
+inline
+bool 
+construct_if_finite(POINT &pt, RT x, RT y, RT w, const R &r)
+{
+  typedef typename R::Kernel_tag Tag;
+  Tag tag;
+  return construct_if_finite(pt, x, y, w, r, tag);
 }
 
 

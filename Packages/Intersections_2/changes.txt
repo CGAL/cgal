@@ -1,3 +1,6 @@
+2.22 (10 September 2003)
+- Specialised construct_if_finite for Cartesian and homogeneous kernels [af]
+
 2.21 (7 September 2003)
 - Replaced several global function calls with Kernel functors 
 - Replaced start()/end() with source()/target() to reduce requirements on 
