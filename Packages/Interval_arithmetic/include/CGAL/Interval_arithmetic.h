@@ -708,6 +708,19 @@ CGAL_BEGIN_NAMESPACE
 template <class FT>
 inline
 Interval_nt
+convert_from_to (const Interval_nt&, const FT & z)
+{
+    FPU_CW_t backup = FPU_get_cw();
+    FPU_set_cw(FPU_cw_up);
+    Interval_nt tmp(convert_from_to(Interval_nt_advanced(), z));
+    FPU_set_cw(backup);
+    return tmp;
+}
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template <class FT>
+inline
+Interval_nt
 convert_to (const FT & z)
 {
     FPU_CW_t backup = FPU_get_cw();
@@ -716,6 +729,7 @@ convert_to (const FT & z)
     FPU_set_cw(backup);
     return tmp;
 }
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 
 CGAL_END_NAMESPACE
 

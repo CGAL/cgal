@@ -86,9 +86,18 @@ struct Filtered_exact
 #ifdef CGAL_FILTER_USE_CACHE
   IA interval() const { return cache; }
 #else
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   IA interval() const { return convert_to<IA>(value); }
+#else
+  IA interval() const { return convert_from_to(IA(), value); }
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 #endif
+
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   ET exact()    const { return convert_to<ET>(value); }
+#else
+  ET exact()    const { return convert_from_to(ET(), value); }
+#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 
   // This one should not be needed, at least for now.
   // CT stored_value()   const { return value; }
