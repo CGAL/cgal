@@ -526,10 +526,10 @@ Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
 
   double xr1, yr1, xr2, yr2;
   double scs_x, scs_y, sct_x, sct_y;
-  scs_x = to_double(s.source().x());
-  scs_y = to_double(s.source().y());
-  sct_x = to_double(s.target().x());
-  sct_y = to_double(s.target().y());
+  scs_x = CGAL::to_double(s.source().x());
+  scs_y = CGAL::to_double(s.source().y());
+  sct_x = CGAL::to_double(s.target().x());
+  sct_y = CGAL::to_double(s.target().y());
 
   xr1 = w.x_real(0); xr2 = w.x_real(w.geometry().width());
   //next condition true if is outside on the X axes
