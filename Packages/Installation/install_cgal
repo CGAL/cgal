@@ -4353,7 +4353,7 @@ compiler_choose_menu()
 		while [ $i -lt ${_COMPILER_NUMBER} ]; do
 		    _tmp=`eval "echo '$'_COMPILER_$i"`
 		    _tmp=`eval "echo ${_tmp}"`
-		    if [ "${COMPILER_NAME}" == `compiler_bin ${_tmp}` ]; then
+		    if [ "${COMPILER_NAME}" = `compiler_bin ${_tmp}` ]; then
 			return
 		    fi
 	    	    eval "${_EXPR} ${i} + 1"
