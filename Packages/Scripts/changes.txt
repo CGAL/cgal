@@ -1,3 +1,6 @@
+2 November 2004 Menelaos Karavelas
+- added script for creating MacOSX applications (needed for Qt demos) 
+
 26 September 2004 Sylvain Pion
 - create_cgal_test : remove error message about "no *.cpp file".
 
