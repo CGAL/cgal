@@ -326,7 +326,8 @@ private:
   // Get the type of the pointee.
   static Type type(const_pointer ptr)
   {
-    return (Type) menion(Traits::pointer(*ptr)).t;
+    menion me(Traits::pointer(*ptr));
+    return (Type) me.t;
   }
 
   // Sets the pointer part and the type of the pointee.
