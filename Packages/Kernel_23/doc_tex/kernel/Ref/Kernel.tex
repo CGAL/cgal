@@ -46,6 +46,8 @@ for equality testing.
 \ccNestedType{Aff_transformation_2}{}
 \ccGlue
 \ccNestedType{Circle_2}{}
+\ccGlue
+\ccNestedType{Object_2}{}
 
 \ccHeading{Constructors}
 
@@ -64,6 +66,8 @@ for equality testing.
 \ccNestedType{Construct_circle_2}{}
 \ccGlue
 \ccNestedType{Construct_triangle_2}{}
+\ccGlue
+\ccNestedType{Construct_iso_rectangle_2}{}
 \ccGlue
 \ccNestedType{Construct_aff_transformation_2}{}
 \ccGlue
@@ -120,6 +124,8 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccNestedType{Compute_y_at_x_2}{}
 \ccGlue
 \ccNestedType{Compute_squared_length_2}{}
+\ccGlue
+\ccNestedType{Compute_area_2}{}
 
 \ccHeading{Generalized Predicates}
 
@@ -137,9 +143,11 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccGlue
 \ccNestedType{Less_xy_2}{}
 \ccGlue
-\ccNestedType{Compare_x_2}{}
+\ccNestedType{Less_yx_2}{}
 \ccGlue
-\ccNestedType{Compare_x_at_y_2}{}
+\ccNestedType{Compare_x_2}{}
+%\ccGlue
+%\ccNestedType{Compare_x_at_y_2}{}
 \ccGlue
 \ccNestedType{Compare_y_2}{}
 \ccGlue
@@ -148,6 +156,8 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccNestedType{Compare_y_at_x_2}{}
 \ccGlue
 \ccNestedType{Less_distance_to_point_2}{}
+\ccGlue
+\ccNestedType{Compare_distance_to_point_2}{}
 \ccGlue
 \ccNestedType{Less_signed_distance_to_line_2}{}
 \ccGlue
@@ -168,6 +178,8 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccNestedType{Is_horizontal_2}{}
 \ccGlue
 \ccNestedType{Is_vertical_2}{}
+\ccGlue
+\ccNestedType{Is_degenerate_2}{}
 \ccGlue
 \ccNestedType{Has_on_2}{}
 \ccGlue
@@ -222,6 +234,8 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccNestedType{Tetrahedron_3}{}
 \ccGlue
 \ccNestedType{Aff_transformation_3}{}
+\ccGlue
+\ccNestedType{Object_3}{}
 
 \ccHeading{Constructors}
 
@@ -265,6 +279,8 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccGlue
 \ccNestedType{Construct_direction_of_ray_3}{}
 \ccGlue
+\ccNestedType{Construct_supporting_line_3}{}
+\ccGlue
 \ccNestedType{Construct_supporting_plane_3}{}
 \ccGlue
 \ccNestedType{Construct_perpendicular_plane_3}{}
@@ -272,6 +288,8 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccNestedType{Construct_perpendicular_line_3}{}
 \ccGlue
 \ccNestedType{Construct_midpoint_3}{}
+\ccGlue
+\ccNestedType{Construct_circumcenter_3}{}
 \ccGlue
 \ccNestedType{Construct_opposite_segment_3}{}
 \ccGlue
@@ -291,7 +309,11 @@ If the result type is not determined, there is no \ccc{Construct_} prefix:
 
 If the result type is a number type, the prefix is \ccc{Compute_}:
 
+\ccNestedType{Compute_squared_area_3}{}
+\ccGlue
 \ccNestedType{Compute_squared_length_3}{}
+\ccGlue
+\ccNestedType{Compute_volume_3}{}
 
 \ccHeading{Generalized Predicates}
 
@@ -329,11 +351,15 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccGlue
 \ccNestedType{Less_distance_to_point_3}{}
 \ccGlue
+\ccNestedType{Compare_distance_to_point_3}{}
+\ccGlue
 \ccNestedType{Collinear_3}{}
 \ccGlue
 \ccNestedType{Coplanar_3}{}
 \ccGlue
 \ccNestedType{Orientation_3}{}
+\ccGlue
+\ccNestedType{Coplanar_orientation_3}{}
 \ccGlue
 \ccNestedType{Side_of_oriented_sphere_3}{}
 \ccGlue
@@ -370,11 +396,15 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 
 \ccNestedType{Point_d}{}
 
+\ccHeading{Constructors}
+
+\ccNestedType{Construct_Point_d}{}
+
 \ccOperations
 
-The following member functions return function objects of the types listed above.
-The name of the access function is the name of the type returned with an
-\ccc{_object} suffix.
+The following member functions return function objects of the types listed 
+above.  The name of the access function is the name of the type returned with 
+an \ccc{_object} suffix.
 
 \ccTexHtml{\ccSetThreeColumns{Kernel::Are_strictly_ordered_along_line}{}{\hspace*{4.5cm}}}{}
 
@@ -451,6 +481,8 @@ The name of the access function is the name of the type returned with an
 \ccGlue
 \ccMemberFunction{Kernel::Compute_squared_length_2 compute_squared_length_2_object() const ;}{}
 \ccGlue
+\ccMemberFunction{Kernel::Compute_area_2 compute_area_2_object() const ;}{}
+\ccGlue
 \ccMemberFunction{Kernel::Equal_2 equal_2_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Equal_x_2 equal_x_2_object() const ;}{}
@@ -475,7 +507,9 @@ The name of the access function is the name of the type returned with an
 \ccGlue
 \ccMemberFunction{Kernel::Compare_y_at_x_2 compare_y_at_x_2_object() const ;}{}
 \ccGlue
-\ccMemberFunction{Kernel::Compare_x_at_y_2 compare_x_at_y_2_object() const ;}{}
+%\ccMemberFunction{Kernel::Compare_x_at_y_2 compare_x_at_y_2_object() const ;}{}
+%\ccGlue
+\ccMemberFunction{Kernel::Compare_distance_to_point_2 compare_distance_to_point_2_object(const Kernel::Point_2& p) const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Less_distance_to_point_2 less_distance_to_point_2_object(const Kernel::Point_2& p) const ;}{}
 \ccGlue
@@ -537,8 +571,6 @@ The name of the access function is the name of the type returned with an
 \ccGlue
 \ccMemberFunction{Kernel::Construct_direction_3 construct_direction_3_object() const ;}{}
 \ccGlue
-\ccMemberFunction{Kernel::Construct_iso_cuboid_3 construct_iso_cuboid_3_object() const ;}{}
-\ccGlue
 \ccMemberFunction{Kernel::Construct_segment_3 construct_segment_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Construct_sphere_3 construct_sphere_3_object() const ;}{}
@@ -553,13 +585,31 @@ The name of the access function is the name of the type returned with an
 \ccGlue
 \ccMemberFunction{Kernel::Construct_tetrahedron_3 construct_tetrahedron_object() const ;}{}
 \ccGlue
-\ccMemberFunction{Kernel::Construct_iso_cuboid_3 construct_iso_cuboid_object() const ;}{}
+\ccMemberFunction{Kernel::Construct_iso_cuboid_3 construct_iso_cuboid_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Construct_aff_transformation_3 construct_aff_transformation_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Construct_point_on_3 construct_point_on_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Construct_second_point_on_3 construct_second_point_on_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Construct_source_point_3 construct_source_point_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Construct_target_point_3 construct_target_point_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Construct_min_point_3 construct_min_point_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Construct_max_point_3 construct_max_point_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Construct_direction_of_line_3 construct_direction_of_line_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Construct_direction_of_ray_3 construct_direction_of_ray_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Construct_supporting_line_3 construct_supporting_line_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Construct_perpendicular_plane_3 construct_perpendicular_plane_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Construct_perpendicular_line_3 construct_perpendicular_line_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Construct_midpoint_3 construct_midpoint_3_object() const ;}{}
 \ccGlue
@@ -571,6 +621,8 @@ The name of the access function is the name of the type returned with an
 \ccGlue
 \ccMemberFunction{Kernel::Construct_opposite_line_3 construct_opposite_line_3_object() const ;}{}
 \ccGlue
+\ccMemberFunction{Kernel::Construct_opposite_plane_3 construct_opposite_plane_3_object() const ;}{}
+\ccGlue
 \ccMemberFunction{Kernel::Construct_supporting_plane_3 construct_supporting_plane_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Transform_3 transform_3_object() const ;}{}
@@ -580,6 +632,10 @@ The name of the access function is the name of the type returned with an
 \ccMemberFunction{Kernel::Intersect_3 intersect_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Compute_squared_length_3 compute_squared_length_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Compute_squared_area_3 compute_squared_area_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Compute_volume_3 compute_volume_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Equal_3 equal_3_object() const ;}{}
 \ccGlue
@@ -615,9 +671,13 @@ The name of the access function is the name of the type returned with an
 \ccGlue
 \ccMemberFunction{Kernel::Less_distance_to_point_3 less_distance_to_point_3_object(const Kernel::Point_3& p) const ;}{}
 \ccGlue
+\ccMemberFunction{Kernel::Compare_distance_to_point_3 compare_distance_to_point_3_object(const Kernel::Point_3& p) const ;}{}
+\ccGlue
 \ccMemberFunction{Kernel::Collinear_3 collinear_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Coplanar_3 coplanar_3_object() const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Coplanar_orientation_3 coplanar_orientation_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Orientation_3 orientation_3_object() const ;}{}
 \ccGlue

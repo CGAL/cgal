@@ -1,6 +1,7 @@
 2.8     (?? ??? 2001)
 
 - Added some missing function object classes
+- Added doc for area and volume functions and function objects
 
 2.7     (26 Sep 2000)
 
