@@ -360,6 +360,8 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
      facet cycle is |FacetCycle[e]| and for a facet cycle |c| we know
      |MinimalEdge[c]|. */
 
+
+
   int i=0; 
   CGAL_nef3_forall_iterators(eit,SHalfedges) { e = *eit;
     if ( FacetCycle[e] >= 0 ) continue; // already assigned
@@ -410,7 +412,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
      part we have all shalfedges and isolated shalfloops linked to
      facet objects, and all facet objects know their bounding facet
      cycles. */
-
+ 
   CGAL_nef3_forall_iterators(eit,SHalfedges) { e=*eit;
     if ( facet(e) != Halffacet_handle() ) continue;
     TRACEN("  linking hole "<<debug(e));
@@ -425,7 +427,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     link_as_interior_loop(l,facet(e_below));
     link_as_interior_loop(twin(l),twin(facet(e_below)));
   }
-
+  TRACEN("exit FM");
 }
 
 

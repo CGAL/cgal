@@ -485,7 +485,7 @@ print_sedge(SHalfedge_handle e) const
       << index(D.previous(e)) << ", " << index(D.next(e)) << ", "
       << index(D.source(e)) << ", " << index(D.face(e)) << ", "
       << index(previous(e)) << ", " << index(next(e)) << ", "
-      << index(facet(e)) << " }\n";
+      << D.circle(e) << " }\n";
 }
 
 template <typename EW>

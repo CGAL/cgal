@@ -128,6 +128,7 @@ static  T EK; // static extended kernel
   typedef typename T::Kernel                    Kernel;
   typedef typename T::Point_3                   Point_3;
   typedef typename T::Plane_3                   Plane_3;
+  typedef typename T::Vector_3                  Vector_3;
   typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
 
 
@@ -256,6 +257,51 @@ protected:
     C.create_box_corner(-INT_MAX,-INT_MAX,-INT_MAX, space );
   }
 
+  void add_box_corners(const Plane_3& h, Boundary& b) {
+
+    TRACEN("add box corner");
+
+    Point_3 loc(-h.d(),0,0,h.a());
+    Vector_3 orth = h.orthogonal_vector();
+    
+    typename Kernel::RT::NT orth_coords[4];
+    orth_coords[0] = orth.hx()[0];
+    orth_coords[1] = orth.hy()[0];
+    orth_coords[2] = orth.hz()[0];
+    orth_coords[3] = orth.hw()[0];
+
+    int min = 0;
+    if(orth_coords[1] < orth_coords[0])
+      min = 1;
+    if(orth_coords[2] < orth_coords[min])
+      min = 2;   
+
+    int max = 0;
+    if(orth_coords[1] > orth_coords[0])
+      max = 1;
+    if(orth_coords[2] > orth_coords[max])
+      max = 2;   
+
+    typename Kernel::RT::NT cross[4][4];
+    cross[0][max] = -orth_coords[(max+1)%3]-orth_coords[(max+2)%3];
+    cross[1][max] =  orth_coords[(max+1)%3]-orth_coords[(max+2)%3];
+    cross[2][max] =  orth_coords[(max+1)%3]+orth_coords[(max+2)%3];  
+    cross[3][max] = -orth_coords[(max+1)%3]+orth_coords[(max+2)%3];
+
+    
+    for(int i=0;i<4;++i)
+      cross[i][3] = orth_coords[max];
+
+    cross[0][(max+1)%3] = cross[3][(max+1)%3] =  orth_coords[max];
+    cross[1][(max+1)%3] = cross[2][(max+1)%3] = -orth_coords[max];
+
+    cross[0][(max+2)%3] = cross[1][(max+2)%3] =  orth_coords[max];
+    cross[2][(max+2)%3] = cross[3][(max+2)%3] = -orth_coords[max];
+
+    SNC_constructor C(snc());
+    C.create_facet(min, max, cross, h);
+  }
+
   void check_h_for_intersection_of_12_cube_edges_and_add_vertices
   (const Plane_3& p);
   void create_intersection_vertex_of_h_and_e();
@@ -299,7 +345,7 @@ public:
   
   typedef Polyhedron_3< Kernel> Polyhedron;
   Nef_polyhedron_3( Polyhedron& P) {
-    initialize_simple_cube_vertices(EMPTY);
+    initialize_extended_cube_vertices(EMPTY);
     polyhedron_3_to_nef_3< Polyhedron, SNC_structure, SNC_constructor>
       ( P, snc() );
     build_external_structure();
@@ -831,10 +877,9 @@ template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3(const Plane_3& h, Boundary b) : Base(Nef_rep()) {
   TRACEN("construction from plane "<<h);
-  CGAL_nef3_assertion_msg( 0, "not implemented");
-  //initialize_simple_cube_vertices(space);
-  //add_box_corners(h, b);
-  //build_external_structure();
+  initialize_extended_cube_vertices(EMPTY);
+  add_box_corners(h, b);
+  build_external_structure();
 }
 
 template <typename T>

@@ -77,12 +77,14 @@ Bounded_side bounded_side_3(IteratorForward first,
     CGAL_assertion(p != last);
     Point_3 p2(*(p++));
     plane = Plane_3(p0, p1, p2);
+
     /* since we just need to project the points to a non-perpendicular plane
        we don't need to care about the plane orientation */
   }
-	
+
+
+
   CGAL_assertion(!plane.is_degenerate());
-  TRACEN(plane);
   Point_2 (*t)(Point_3);
   Vector_3 pv(plane.orthogonal_vector()), pxy(0,0,1), pyz(1,0,0), pzx(0,1,0);
   TRACEN("pv*pxz: "<<pv*pzx);

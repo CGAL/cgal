@@ -227,6 +227,10 @@ public:
   { return v->point(); }
   const Point_3& point(Vertex_const_handle v) const
   { return v->point(); }
+  Point_3 standard_point(Vertex_handle v) const {
+    Point_3 ep = v->point();
+    return Point_3(ep.hx().eval_at(1000), ep.hy().eval_at(1000), ep.hz().eval_at(1000), ep.hw().eval_at(1000));
+  }
 
   Sphere_point tmp_point(Halfedge_handle e) const
   { return e->tmp_point(); }
@@ -391,9 +395,7 @@ public:
   // returns true if |v| is part of the infinimaximal box. ###################
   // Needs to be fixed for true infbox! LK! ##################################
   bool is_infbox_vertex( Vertex_handle v) const {
-      return CGAL_NTS abs( v->point().hx()) == RT(INT_MAX)
-          || CGAL_NTS abs( v->point().hy()) == RT(INT_MAX)
-          || CGAL_NTS abs( v->point().hz()) == RT(INT_MAX);
+      return !Kernel::is_standard(v->point());
   }
 
   /* returns true if |f| is part of the infinimaximal box.*/
@@ -508,6 +510,7 @@ public:
       piercing point of the |ray| on the local (virtual) view  of |f|.
       \precondition |ray| target belongs to |f| and the intersection between
       |ray| and is not coplanar with |f|. }*/ {
+
     Halffacet_handle f_visible = f;
     CGAL_nef3_assertion( !plane(f_visible).has_on(ray.source()));
     if( plane(f_visible).has_on_negative_side(ray.source()))
@@ -643,7 +646,7 @@ public:
     O1.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
-    // SETDTHREAD(131*19*43);
+    //    SETDTHREAD(37*19*43);
 
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
 
@@ -812,9 +815,10 @@ public:
   
     // synthesis of spatial structure
 
-    SNC_constructor C(result);
     SNC_io_parser<SNC_structure> Op(std::cout, result);
     Op.print();
+
+    SNC_constructor C(result);
     C.pair_up_halfedges();
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();

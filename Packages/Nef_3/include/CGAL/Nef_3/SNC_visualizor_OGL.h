@@ -838,10 +838,22 @@ public:
 			       double_point(s.target())); }
 
   void draw(Vertex_handle v) const
-  { ppoly_->push_back(double_point(point(v)), mark(v)); }
+  { 
+    Point_3 p = point(v);
+    Point_3 sp(p.hx().eval_at(1000),p.hy().eval_at(1000),p.hz().eval_at(1000),p.hw().eval_at(1000));
+        SETDTHREAD(53);TRACEN("vertex " << sp);
+    ppoly_->push_back(double_point(sp), mark(v)); 
+  }
 
   void draw(Halfedge_handle e) const
-  { ppoly_->push_back(double_segment(segment(e)), mark(e)); }
+  { 
+    Point_3 s = point(source(e));
+    Point_3 t = point(target(e));
+    Segment_3 seg(Point_3(s.hx().eval_at(1000),s.hy().eval_at(1000),s.hz().eval_at(1000),s.hw().eval_at(1000)),
+		  Point_3(t.hx().eval_at(1000),t.hy().eval_at(1000),t.hz().eval_at(1000),t.hw().eval_at(1000)));
+    TRACEN("edge " << seg);
+    ppoly_->push_back(double_segment(seg), mark(e)); 
+  }
 
   void draw(Halffacet_handle f) const
   { OGL::DFacet g;
@@ -852,8 +864,12 @@ public:
 	g.new_facet_cycle();
 	SHalfedge_handle h = fc;
 	SHalfedge_around_facet_circulator hc(h), he(hc);
-	CGAL_For_all(hc,he) // all vertex coordinates in facet cycle
-	  g.push_back_vertex(double_point(point(source(hc))));
+	CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
+	  Point_3 p = point(source(hc));
+	  Point_3 sp(p.hx().eval_at(1000),p.hy().eval_at(1000),p.hz().eval_at(1000),p.hw().eval_at(1));
+	      TRACEN(" ");TRACEN("facet" << sp);
+	  g.push_back_vertex(double_point(sp));
+	}
       }
     Vector_3 v = orthogonal_vector(f);
     g.set_normal(CGAL::to_double(v.x()), 
@@ -865,6 +881,7 @@ public:
 
   void draw() const
   { 
+    SETDTHREAD(53);
     Vertex_iterator v;
     CGAL_nef3_forall_vertices(v,*sncp()) draw(v);
     ppoly_->bbox() = sncp()->bounded_bbox();

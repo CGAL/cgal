@@ -286,10 +286,14 @@ int eval( int argc, char* argv[]) {
                 NT y( std::atoi( argv[i+2]));
                 NT z( std::atoi( argv[i+3]));
                 NT w( std::atoi( argv[i+4]));
-                Kernel::Vector_3 vec( x, y, z, w);
-                Kernel::Aff_transformation_3 aff( CGAL::TRANSLATION, vec);
-                nef.back().transform( aff);
-                i += 4;
+		if(w == 0)
+		  error = 4;
+		else {
+		  Kernel::Vector_3 vec( x, y, z, w);
+		  Kernel::Aff_transformation_3 aff( CGAL::TRANSLATION, vec);
+		  nef.back().transform( aff);
+		  i += 4;
+		}
             } else {
                 error = 4;
             }
@@ -486,7 +490,19 @@ int eval( int argc, char* argv[]) {
             nef.pop_back();
             Nef_polyhedron nf = nf1.regularization();
             nef.push_back( nf);
-        } else {
+        } else if ( strcmp( argv[i], "plane") == 0) {
+	  if ( assert_argc( argv[i], 4, argc - i - 1)) {
+	    NT a( std::atoi( argv[i+1]));
+	    NT b( std::atoi( argv[i+2]));
+	    NT c( std::atoi( argv[i+3]));
+	    NT d( std::atoi( argv[i+4]));
+	    Kernel::Plane_3 pl( a, b, c, d);
+	    Nef_polyhedron nf(pl);
+	    nef.push_back( nf);
+	    i += 4; 
+	  } else 
+	    error = 4;
+	} else {
             cerr << "Error: unkown command '" << argv[i]
                  << "'. Try 'help' for help." << endl;
             error = 3;
