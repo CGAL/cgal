@@ -28,13 +28,17 @@ typedef K::Point_2 Point;
 
 Mesh mesh;
 
+void usage(char** argv)
+{
+  std::cerr << "Usage: " << std::endl
+	    << argv[0] << " input.poly [output.poly]" << std::endl;
+}
+
 int main(int argc, char** argv)
 {
   if(argc<2 || argc> 3)
     {
-      std::cerr << "Usage: " << std::endl
-		<< argv[0] << " input.poly [output.poly]" <<
-	std::endl;
+      usage(argv);
       return 1;
     };
   std::ifstream input(argv[1]);
@@ -43,6 +47,7 @@ int main(int argc, char** argv)
   else
     {
       std::cerr << "Bad file: " << argv[1] << std::endl;
+      usage(argv);
       return 1;
     }
   
