@@ -1,3 +1,6 @@
+- remove the old code about the definitions of the predicates in the
+  filtered traits class
+- remove the site set_* methods from the spec; remove the macro USE_SET_METHODS
 - use the input sites container as the container where point handles are gotten
   from
 - remove the STORE_INPUT_SITES macro

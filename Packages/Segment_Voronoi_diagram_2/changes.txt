@@ -1,3 +1,9 @@
+20 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- rewrote code for filtered traits to improve efficiency;
+  the traits functor do not go through the number type level now
+- removed dependencies on the set_* methods of the site classes;
+  this should make the site classes interface much simpler
+
 18 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - added code for input and output sites iterator
 
