@@ -983,13 +983,13 @@ Alpha_shape_3<Dt>::initialize_interval_facet_map()
 // 		  Interval3 interval3 = find_interval(const_facet(s, i));
 				
 // 		  alpha_mid_e = (interval3.first != UNDEFINED) ?
-// 		    CGAL::min(alpha_mid_e, interval3.first): 
-// 		    CGAL::min(alpha_mid_e, interval3.second); 
+// 		    min(alpha_mid_e, interval3.first): 
+// 		    min(alpha_mid_e, interval3.second); 
 			
 // 		  if (alpha_max_e != Infinity)
 // 		    {
 // 		      alpha_max_e = (interval3.third != Infinity) ?
-// 			CGAL::max(alpha_max_e, interval3.third):
+// 			max(alpha_max_e, interval3.third):
 // 			Infinity;
 // 		    }
 // 		}
@@ -1066,10 +1066,10 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 // 		      alpha_s = find_interval(s);
 // 		      // if we define singular as not incident to a 
 // 		      // 3-dimensional cell
-// 		      alpha_mid_v = CGAL::min(alpha_mid_v, alpha_s);
+// 		      alpha_mid_v = min(alpha_mid_v, alpha_s);
 		    
 // 		      if (alpha_max_v != Infinity)
-// 			alpha_max_v = CGAL::max(alpha_max_v, alpha_s);
+// 			alpha_max_v = max(alpha_max_v, alpha_s);
 		    
 // 		    }
 // 		}
@@ -1096,10 +1096,10 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 			alpha_s = find_interval(s);
 			// if we define singular as not incident to a
                         // 3-dimensional cell
-			alpha_mid_v = CGAL::min(alpha_mid_v, alpha_s);
+			alpha_mid_v = min(alpha_mid_v, alpha_s);
 		    
 			if (alpha_max_v != Infinity)
-			  alpha_max_v = CGAL::max(alpha_max_v, alpha_s);
+			  alpha_max_v = max(alpha_max_v, alpha_s);
 			
 		      }
 		  }
@@ -1844,7 +1844,7 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 // 	    {
 // 	    Cell_handle s = (*cell_circ);
 // 	    if (! is_infinite(s))
-// 	    alpha_min_v = CGAL::min(find_interval(s),
+// 	    alpha_min_v = min(find_interval(s),
 // 	    alpha_min_v);
 // 	    }
 // 	    while (++cell_circ != done);
@@ -1858,10 +1858,10 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 	    {
 	      Cell_handle s = cell_it;
 	      if (s->has_vertex(vertex_it) && ! is_infinite(s))
-	        alpha_min_v = CGAL::min(find_interval(s), alpha_min_v);
+	        alpha_min_v = min(find_interval(s), alpha_min_v);
 	    }
 	    
-	  alpha_solid = CGAL::max(alpha_min_v, alpha_solid);
+	  alpha_solid = max(alpha_min_v, alpha_solid);
 	}
     }
   return alpha_solid;
