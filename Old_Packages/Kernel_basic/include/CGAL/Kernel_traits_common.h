@@ -21,7 +21,7 @@
 
 // This file is intentionally not protected for re-inclusion.
 // It's aimed at being included from within a kernel traits class, this
-// way we share more code.  Ideally, it should go in Kernel_basic.
+// way we share more code.
 
 #define CGAL_Kernel_obj(X, Xf) X Xf() const { return X(); }
 
@@ -260,7 +260,7 @@ CGAL_Kernel_obj(Construct_line_3, construct_line_3_object)
 CGAL_Kernel_obj(Construct_ray_3, construct_ray_3_object)
 CGAL_Kernel_obj(Construct_sphere_3, construct_sphere_3_object)
 CGAL_Kernel_obj(Construct_triangle_3, construct_triangle_3_object)
-CGAL_Kernel_obj(Construct_tetrahedron_3, construct_tetrahedron_object)
+CGAL_Kernel_obj(Construct_tetrahedron_3, construct_tetrahedron_3_object)
 CGAL_Kernel_obj(Construct_iso_cuboid_3, construct_iso_cuboid_3_object)
 CGAL_Kernel_obj(Construct_aff_transformation_3,
 	        construct_aff_transformation_3_object)

@@ -225,7 +225,7 @@ public:
     CGAL_Filter_cons(Construct_ray_3, construct_ray_3_object)
     CGAL_Filter_cons(Construct_sphere_3, construct_sphere_3_object)
     CGAL_Filter_cons(Construct_triangle_3, construct_triangle_3_object)
-    CGAL_Filter_cons(Construct_tetrahedron_3, construct_tetrahedron_object)
+    CGAL_Filter_cons(Construct_tetrahedron_3, construct_tetrahedron_3_object)
     CGAL_Filter_cons(Construct_iso_cuboid_3, construct_iso_cuboid_3_object)
     CGAL_Filter_cons(Construct_aff_transformation_3,
 	construct_aff_transformation_3_object)

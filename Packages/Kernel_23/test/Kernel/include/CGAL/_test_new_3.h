@@ -146,7 +146,7 @@ test_new_3(const R& rep)
   Triangle_3 t2 = construct_triangle(p2,p3,p4);
 
   typename R::Construct_tetrahedron_3 construct_tetrahedron
-        = rep.construct_tetrahedron_object();
+        = rep.construct_tetrahedron_3_object();
   Tetrahedron_3 th1 = construct_tetrahedron();
   Tetrahedron_3 th2 = construct_tetrahedron(p2,p3,p4,p5);
 

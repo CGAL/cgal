@@ -598,7 +598,7 @@ construct_triangle_3_object() const
 { return Construct_triangle_3(); }
 
 Construct_tetrahedron_3
-construct_tetrahedron_object() const 
+construct_tetrahedron_3_object() const 
 { return Construct_tetrahedron_3(); }
 
 Construct_aff_transformation_3

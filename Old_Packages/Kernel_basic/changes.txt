@@ -1,3 +1,6 @@
+3.36   (27 Apr 2001)
+- Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
+
 3.35   (26 Apr 2001)
 - Change coplanar_side_of_oriented_circle
   to     coplanar_side_of_bounded_circle.
