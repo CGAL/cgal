@@ -44,7 +44,7 @@ struct D {
 };
 
 template < template < class T > class HDS>
-void fct(HDS<int> h1 ) { // here it does not compile } 
+void fct(HDS<int> h1 ) {} // here it does not compile 
 
 
 int main() {
