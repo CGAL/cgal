@@ -26,42 +26,35 @@
 
 #ifndef CGAL_HALFEDGEDS_VECTOR_H
 #define CGAL_HALFEDGEDS_VECTOR_H 1
-#ifndef CGAL_PROTECT_ALGORITHM
-#include <algorithm>
-#define CGAL_PROTECT_ALGORITHM
-#endif
-#ifndef CGAL_PROTECT_VECTOR
-#include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_PROTECT_MAP
-#include <map>
-#define CGAL_PROTECT_MAP
-#endif
 
-#ifndef CGAL_HALFEDGEDS_ITERATOR_ADAPTOR_H
+#include <CGAL/basic.h>
+#include <CGAL/memory.h>
 #include <CGAL/HalfedgeDS_iterator_adaptor.h>
-#endif
-#ifndef CGAL_HALFEDGEDS_ITEMS_DECORATOR_H
 #include <CGAL/HalfedgeDS_items_decorator.h>
-#endif
+#include <algorithm>
+#include <vector>
+#include <map>
 
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-template < class Traits_, class HalfedgeDSItems>
+template < class Traits_, class HalfedgeDSItems, 
+           class Alloc = CGAL_ALLOCATOR(int)>
 class HalfedgeDS_vector {
 public:
-    typedef HalfedgeDS_vector<Traits_,HalfedgeDSItems> Self;
+    typedef HalfedgeDS_vector<Traits_,HalfedgeDSItems,Alloc> Self;
 #else
 struct HalfedgeDS_vector {
-template < class Traits_, class HalfedgeDSItems>
+template < class Traits_, class HalfedgeDSItems, 
+           class Alloc = CGAL_ALLOCATOR(int)>
 class HDS {
 public:
-    typedef HDS<Traits_,HalfedgeDSItems> Self;
+    typedef HDS<Traits_,HalfedgeDSItems,Alloc> Self;
 #endif
     typedef Traits_                                       Traits;
     typedef HalfedgeDSItems                               Items;
+    typedef Alloc                                         Allocator;
+    typedef Alloc                                         allocator_type;
 
 #ifdef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
     typedef typename Items::Vertex_wrapper<Self,Traits>   Vertex_wrapper;
@@ -75,7 +68,26 @@ public:
 #endif // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
 
     typedef typename Vertex_wrapper::Vertex            Vertex;
-    typedef std::vector<Vertex>                        Vertex_vector;
+    typedef typename Halfedge_wrapper::Halfedge        Halfedge;
+    typedef typename Face_wrapper::Face                Face;
+
+#ifdef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
+    typedef typename Allocator::rebind< Vertex>        Vertex_alloc_rebind;
+    typedef typename Vertex_alloc_rebind::other        Vertex_allocator;
+    typedef typename Allocator::rebind< Halfedge>      Halfedge_alloc_rebind;
+    typedef typename Halfedge_alloc_rebind::other      Halfedge_allocator;
+    typedef typename Allocator::rebind< Face>          Face_alloc_rebind;
+    typedef typename Face_alloc_rebind::other          Face_allocator;
+#else // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
+    typedef Allocator::template rebind< Vertex>        Vertex_alloc_rebind;
+    typedef typename Vertex_alloc_rebind::other        Vertex_allocator;
+    typedef Allocator::template rebind< Halfedge>      Halfedge_alloc_rebind;
+    typedef typename Halfedge_alloc_rebind::other      Halfedge_allocator;
+    typedef Allocator::template rebind< Face>          Face_alloc_rebind;
+    typedef typename Face_alloc_rebind::other          Face_allocator;
+#endif // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
+
+    typedef std::vector<Vertex, Vertex_allocator>      Vertex_vector;
     typedef typename Vertex_vector::iterator           Vertex_I;
     typedef typename Vertex_vector::const_iterator     Vertex_CI;
     typedef HalfedgeDS_iterator_adaptor<Vertex_I>      Vertex_iterator;
@@ -83,8 +95,7 @@ public:
     typedef Vertex_iterator                            Vertex_handle;
     typedef Vertex_const_iterator                      Vertex_const_handle;
 
-    typedef typename Halfedge_wrapper::Halfedge        Halfedge;
-    typedef std::vector<Halfedge>                      Halfedge_vector;
+    typedef std::vector<Halfedge, Halfedge_allocator>  Halfedge_vector;
     typedef typename Halfedge_vector::iterator         Halfedge_I;
     typedef typename Halfedge_vector::const_iterator   Halfedge_CI;
     typedef HalfedgeDS_iterator_adaptor<Halfedge_I>    Halfedge_iterator;
@@ -92,8 +103,7 @@ public:
     typedef Halfedge_iterator                          Halfedge_handle;
     typedef Halfedge_const_iterator                    Halfedge_const_handle;
 
-    typedef typename Face_wrapper::Face                Face;
-    typedef std::vector<Face>                          Face_vector;
+    typedef std::vector<Face, Face_allocator>          Face_vector;
     typedef typename Face_vector::iterator             Face_I;
     typedef typename Face_vector::const_iterator       Face_CI;
     typedef HalfedgeDS_iterator_adaptor<Face_I>        Face_iterator;
@@ -236,6 +246,8 @@ public:
     }
 
 // Access Member Functions
+
+    allocator_type  get_allocator() const { return allocator_type(); }
 
     size_type size_of_vertices() const  { return vertices.size();}
     size_type size_of_halfedges() const { return halfedges.size();}
@@ -410,9 +422,9 @@ public:
 #define CGAL__H_UPDATE(h) (h_new + ( Halfedge_CI (h.iterator()) - h_old))
 #define CGAL__F_UPDATE(f) (f_new + ( Face_CI     (f.iterator()) - f_old))
 
-template < class Traits_, class HalfedgeDSItems>
+template < class Traits_, class HalfedgeDSItems, class Alloc>
 void
-CGAL__HalfedgeDS_vector<Traits_,HalfedgeDSItems>::
+CGAL__HalfedgeDS_vector<Traits_, HalfedgeDSItems, Alloc>::
 pointer_update(  Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old) {
     // Update own pointers assuming that they lived previously
     // in a halfedge data structure with vector starting addresses
@@ -445,9 +457,9 @@ pointer_update(  Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old) {
 #undef CGAL__H_UPDATE
 #undef CGAL__F_UPDATE
 
-template < class Traits_, class HalfedgeDSItems>
+template < class Traits_, class HalfedgeDSItems, class Alloc>
 void
-CGAL__HalfedgeDS_vector<Traits_,HalfedgeDSItems>::
+CGAL__HalfedgeDS_vector<Traits_, HalfedgeDSItems, Alloc>::
 normalize_border() {
     nb_border_halfedges = 0;
     nb_border_edges = 0;
@@ -462,7 +474,15 @@ normalize_border() {
         return;
 
     // An array of pointers to update the changed halfedge pointers.
-    typedef std::vector<Halfedge_I> HVector;
+#ifdef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
+    typedef typename Allocator::rebind< Halfedge_I>    HI_alloc_rebind;
+    typedef typename HI_alloc_rebind::other            HI_allocator;
+#else // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
+    typedef Allocator::template rebind< Halfedge_I>    HI_alloc_rebind;
+    typedef typename HI_alloc_rebind::other            HI_allocator;
+#endif // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
+
+    typedef std::vector<Halfedge_I, HI_allocator> HVector;
     typedef typename HVector::iterator Hiterator;
     HVector hvector;
     // Initialize it.

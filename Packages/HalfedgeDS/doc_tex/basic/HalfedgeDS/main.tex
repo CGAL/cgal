@@ -20,6 +20,16 @@
 
 
 % +------------------------------------------------------------------------+
+\section{Release Note}
+
+Beginning with \cgal\ R2.3, this package has a new design.  The old
+design is still available for backwards compatibility and to support
+older compiler, such as MSVC++6.0. However its use is deprecated and
+the manual pages are not converted into this new manual
+format. Instead, see its old documentation in the manual of 
+deprecated packages.
+
+% +------------------------------------------------------------------------+
 \section{Introduction}
 
 A halfedge data structure (abbreviated as \ccc{HalfedgeDS}, or
@@ -288,7 +298,7 @@ the assumption that pointers, especially those from {\tt malloc} or
 {\tt new}, point to even addresses). The idea goes as follows: The
 halfedge data structure allocates halfedges pairwise.  Concerning the
 vector-based data structure this implies that the absolute value of
-the differengce between a halfedge and its opposite halfedge is always
+the difference between a halfedge and its opposite halfedge is always
 one with respect to C pointer arithmetic. We can replace the opposite
 pointer by a single bit encoding the sign of this difference.  We will
 store this bit as the least significant bit in the next halfedge

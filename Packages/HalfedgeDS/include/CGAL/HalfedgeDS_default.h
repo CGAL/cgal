@@ -26,53 +26,56 @@
 
 #ifndef CGAL_HALFEDGEDS_DEFAULT_H
 #define CGAL_HALFEDGEDS_DEFAULT_H 1
-#ifndef CGAL_HALFEDGEDS_ITEMS_2_H
+
 #include <CGAL/HalfedgeDS_items_2.h>
-#endif
-#ifndef CGAL_HALFEDGEDS_IN_PLACE_LIST_H
 #include <CGAL/HalfedgeDS_list.h>
-#endif
+#include <CGAL/memory.h>
 
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    template <class p_Traits, class p_Items = HalfedgeDS_items_2>
-    class HalfedgeDS_default : public HalfedgeDS_list< p_Traits, p_Items> {
-    public:
-        typedef p_Traits Traits;
-        typedef HalfedgeDS_list<p_Traits, p_Items> DS;
-        typedef typename DS::size_type size_type;
-        HalfedgeDS_default() {}
-        HalfedgeDS_default( size_type v, size_type h, size_type f)
-            : HalfedgeDS_list< p_Traits, p_Items>(v,h,f) {}
-    };
-    #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default
-#else
-    struct HalfedgeDS_default {
-      template <class p_Traits, class p_Items = HalfedgeDS_items_2>
-      class HDS : public HalfedgeDS_list::HDS<p_Traits, p_Items> {
-      public:
-          typedef p_Traits Traits;
-          typedef HalfedgeDS_list::HDS<p_Traits, p_Items> DS;
-          typedef typename DS::size_type size_type;
-          //HDS() {}
-          //HDS( size_type v, size_type h, size_type f)
-          // : HalfedgeDS_list::HDS<p_Traits, p_Items>(v,h,f) {}
-          HDS();
-          HDS( size_type v, size_type h, size_type f);
-      };
-    };
-    template <class p_Traits, class p_Items>
-    HalfedgeDS_default::HDS<p_Traits, p_Items>:: HDS() {}
 
-    template <class p_Traits, class p_Items>
-    HalfedgeDS_default::HDS<p_Traits, p_Items>::
-    HDS( size_type v, size_type h, size_type f)
-        : HalfedgeDS_list::HDS<p_Traits, p_Items>(v,h,f) {}
+template <class Traits_, class HalfedgeDSItems = HalfedgeDS_items_2, 
+          class Alloc = CGAL_ALLOCATOR(int)>
+class HalfedgeDS_default 
+    : public HalfedgeDS_list< Traits_, HalfedgeDSItems, Alloc> {
+public:
+    typedef Traits_                                          Traits;
+    typedef HalfedgeDS_list<Traits_, HalfedgeDSItems, Alloc> DS;
+    typedef typename DS::size_type                           size_type;
+    HalfedgeDS_default() {}
+    HalfedgeDS_default( size_type v, size_type h, size_type f)
+        : HalfedgeDS_list< Traits_, HalfedgeDSItems, Alloc>(v,h,f) {}
+};
+#define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default
 
-    #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default::HDS
+#else //  CGAL_CFG_NO_TMPL_IN_TMPL_PARAM //
+
+struct HalfedgeDS_default {
+  template <class Traits_, class HalfedgeDSItems = HalfedgeDS_items_2, 
+            class Alloc = CGAL_ALLOCATOR(int)>
+  class HDS : public HalfedgeDS_list::HDS<Traits_, HalfedgeDSItems, Alloc> {
+  public:
+      typedef Traits_                                               Traits;
+      typedef HalfedgeDS_list::HDS<Traits_, HalfedgeDSItems, Alloc> DS;
+      typedef typename DS::size_type                                size_type;
+      HDS();
+      HDS( size_type v, size_type h, size_type f);
+  };
+};
+
+template <class Traits_, class HalfedgeDSItems, class Alloc>
+HalfedgeDS_default::HDS<Traits_, HalfedgeDSItems, Alloc>:: HDS() {}
+
+template <class Traits_, class HalfedgeDSItems, class Alloc>
+HalfedgeDS_default::HDS<Traits_, HalfedgeDSItems, Alloc>::
+HDS( size_type v, size_type h, size_type f)
+    : HalfedgeDS_list::HDS<Traits_, HalfedgeDSItems, Alloc>(v,h,f) {}
+
+#define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default::HDS
+
 #endif // CGAL_CFG_NO_TMPL_IN_TMPL_PARAM //
 
-    CGAL_END_NAMESPACE
+CGAL_END_NAMESPACE
 #endif // CGAL_HALFEDGEDS_DEFAULT_H //
 // EOF //

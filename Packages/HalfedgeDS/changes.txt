@@ -1,6 +1,12 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.13 (02 Jul 2001)
+
+     - Added release note about old/new design to documentation.
+     - Documentation ispelled.
+     - Added allocators to HalfedgeDS.
+
 3.12 (29 Jun 2001)
 
      - Changed \ccIdfierPage back to \ccRefIdfierPage.

@@ -20,6 +20,16 @@
 \ccTagFullDeclarations
 
 % +-----------------------------------+
+\ccHeading{Release Note}
+
+Beginning with \cgal\ R2.3, this package has a new design.  The old
+design is still available for backwards compatibility and to support
+older compiler, such as MSVC++6.0. However its use is deprecated and
+the manual pages are not converted into this new manual
+format. Instead, see its old documentation in the manual of 
+deprecated packages.
+
+% +-----------------------------------+
 \ccDefinition
   
 The concept of a halfedge data structure (abbreviated as \ccRefName, or
@@ -223,7 +233,7 @@ refers to the instantiated \ccc{HalfedgeDS} --
 
 Implementing these functions relies on the fundamental assumption that
 an iterator (or handle) of the internally used container class can be
-contructed from a pointer of a contained item only. This is true and
+constructed from a pointer of a contained item only. This is true and
 controlled by us for \ccc{CGAL::In_place_list}. It is true for the
 \ccc{std::vector} of major \stl\ distributions, but not necessarily 
 guaranteed. We might switch to an internal implementation if need
