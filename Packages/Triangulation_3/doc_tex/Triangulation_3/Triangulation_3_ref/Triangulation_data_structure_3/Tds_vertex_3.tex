@@ -40,27 +40,30 @@ types defined by the triangulation data structure class \ccc{TriangulationDataSt
 
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
-\ccThree{Vertex*}{v(Point p, Cell* c);}{}
 
-\ccConstructor{Vertex();}
-{Introduces a vertex \ccVar. 
-The pointer to the incident cell is initialized with \ccc{NULL}.}
+In order to obtain new vertices or destruct unused vertices, the user must
+call the \ccc{create_vertex()} and \ccc{delete_vertex()} methods of the
+triangulation data structure.
 
-\ccConstructor{Vertex(const Point & p);}
-{Introduces a vertex \ccVar. Initializes its point with \ccc{p}.
-The pointer to the incident cell is initialized with
-\ccc{NULL}. {\textit{Optional for the triangulation data structure alone.}}}
+%\ccConstructor{Vertex();}
+%{Introduces a vertex \ccVar. 
+%The pointer to the incident cell is initialized with \ccc{NULL}.}
 
-\ccConstructor{Vertex(const Point & p, Cell* c);}
-{Introduces a vertex \ccVar, and initializes the point with \ccc{p}
-and sets the pointer to the incident cell to \ccc{c}. {\textit{Optional for the
-triangulation data structure alone.}}}
+%\ccConstructor{Vertex(const Point & p);}
+%{Introduces a vertex \ccVar. Initializes its point with \ccc{p}.
+%The pointer to the incident cell is initialized with
+%\ccc{NULL}. {\textit{Optional for the triangulation data structure alone.}}}
 
-\ccConstructor{Vertex(Cell* c);}
-{Introduces a vertex \ccVar, and sets the pointer to the incident cell
-to \ccc{c}.}
+%\ccConstructor{Vertex(const Point & p, Cell* c);}
+%{Introduces a vertex \ccVar, and initializes the point with \ccc{p}
+%and sets the pointer to the incident cell to \ccc{c}. {\textit{Optional for the
+%triangulation data structure alone.}}}
 
-\ccConstructor{Vertex();}{default constructor.}
+%\ccConstructor{Vertex(Cell* c);}
+%{Introduces a vertex \ccVar, and sets the pointer to the incident cell
+%to \ccc{c}.}
+
+%\ccConstructor{Vertex();}{default constructor.}
 
 \ccOperations
 \ccThree{Vertex*}{v.set_point()}{}
