@@ -51,6 +51,14 @@ Kernel:
 Basic Library:
 --------------
 
+    * Apollonius graph (new package): Algorithms for computing the Apollonius
+      graph in two dimensions.  The Apollonius graph is the dual of the
+      Apollonius diagram, also known as the additively weighted Voronoi
+      diagram.  The latter can be thought of as the Voronoi diagram of a set
+      of circles under the Euclidean metric, and it is a generalization of the
+      standard Voronoi diagram for points.  The algorithms provided are
+      dynamic.
+
     * Min_sphere_of_spheres_d (new package): Algorithms to compute the smallest
       enclosing sphere of a given set of spheres in R^d.  The package provides
       an algorithm with maximal expected running time $O(2^{O(d)} n)$ and a
