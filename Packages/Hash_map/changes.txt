@@ -1,5 +1,7 @@
 Hash_map Package: Release changes
 ----------------------------------------------------------------------
+22 September 2004 Andreas Fabri
+- Don't put a past-the-end iterator into a map. as the hash function dereferences and takes the adress
 
 16 September 2004 Andreas Fabri
 - Added missing boost related forward declarations
