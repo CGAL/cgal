@@ -2,10 +2,10 @@
 /*  ------------------------------- */
 /*  CGAL example program for point generators. */
 
+#include <CGAL/basic.h>
 #include <assert.h>
 #include <vector.h>
 #include <algo.h>
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
@@ -54,11 +54,9 @@ int main()
     for( vector<Point>::iterator i = points.begin(); i != points.end(); i++)
 	W << *i;
 
-    /*  Wait for program termination. */
-    char c;
-    cout << " Type any character to continue: " << endl;
-    cin >> c;
-    cout << " done" << endl;
+    /*  Wait for mouse click in window. */
+    Point p;
+    W >> p;
 
     return 0;
 }
