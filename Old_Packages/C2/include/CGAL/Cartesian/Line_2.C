@@ -320,7 +320,8 @@ operator<<(std::ostream &os, const LineC2<R CGAL_CTAG> &l)
         write(os, l.c());
         return os;
     default:
-        return os << "LineC2(" << l.a() << ", " << l.b() << ", " << l.c() <<')';
+        return os << "LineC2(" << l.a() 
+		  << ", " << l.b() << ", " << l.c() <<')';
     }
 }
 #endif // CGAL_NO_OSTREAM_INSERT_LINEC2

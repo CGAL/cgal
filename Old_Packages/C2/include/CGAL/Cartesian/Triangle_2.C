@@ -231,7 +231,8 @@ template < class R >
 inline
 TriangleC2<R CGAL_CTAG>
 TriangleC2<R CGAL_CTAG>::
-transform(const typename TriangleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+transform(const 
+	  typename TriangleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   return TriangleC2<R CGAL_CTAG>(t.transform(vertex(0)),
                         t.transform(vertex(1)),
@@ -258,7 +259,8 @@ operator<<(std::ostream &os, const TriangleC2<R CGAL_CTAG> &t)
     case IO::BINARY :
         return os << t[0] << t[1]  << t[2];
     default:
-        return os<< "TriangleC2(" << t[0] << ", " << t[1] << ", " << t[2] <<")";
+        return os<< "TriangleC2(" << t[0] << ", " 
+		 << t[1] << ", " << t[2] <<")";
     }
 }
 #endif // CGAL_NO_OSTREAM_INSERT_TRIANGLEC2
