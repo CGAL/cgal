@@ -15,7 +15,8 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : H2
-// author(s)     : Sylvain Pion
+// author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+//                 Menelaos Karavelas <mkaravel@cse.nd.edu>
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================

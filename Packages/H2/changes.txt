@@ -1,3 +1,8 @@
+2.84 (7 May 2003) [mk]
+- added type names for the template parameters of the homogeneous
+  converter; homogeneous converter now derives from Enum_converter in
+  order to convert CGAL's enum types also
+
 2.83 (7 May 2003)
 - Changed names in kernel rebind/base mechanism
 
