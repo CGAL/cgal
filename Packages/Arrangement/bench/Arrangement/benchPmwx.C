@@ -72,11 +72,30 @@
 #include <SoX/GAPS/CGAL_Pmwx_2_for_GAPS_traits.h>
 
 // Curved-kernel Conics:
+#elif BENCH_TRAITS == CK_CIRCLE_TRAITS
+// This does not belong here
+#ifdef CGAL_USE_GMP
+#include <ECG/Root_of/CGAL_Gmpq.h>
+#endif
+#ifdef CGAL_USE_GMPXX
+#include <ECG/Root_of/gmpxx.h>
+#endif
+#ifdef CGAL_USE_LEDA
+#include <ECG/Root_of/leda_real.h>
+#endif
+#include <ECG/Root_of/Root_of_2.h>
+
+#include <ECG/Circular_kernel.h>
+#include <ECG/Circular_arc_traits.h>
+#include <ECG/Circular_arc_traits_tracer.h> 
+#include <ECG/IO/Qt_widget_circular_arc_2.h>
+#include <ECG/IO/Qt_widget_circular_arc_endpoint_2.h>
+
 #elif BENCH_TRAITS == CK_CONIC_TRAITS
+// #include <CGAL/Random.h>
 #include <ECG/Synaps_kernel.h>
 #include <ECG/Conic_kernel.h>
 #include <ECG/Conic_arc_traits.h>
-#include <CGAL/Random.h>
 #include <ECG/Conic_arc_traits_tracer.h> 
 #include <ECG/IO/Qt_widget_conic_arc_2.h>
 #include <ECG/IO/Qt_widget_conic_arc_endpoint_2.h>
@@ -118,7 +137,8 @@
 #if BENCH_TRAITS == SEGMENT_TRAITS
 #include "Segment_reader.h"
 
-#elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS
+#elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS || \
+      BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS
 #include "Conic_reader.h"
 
 // Polyline reader:
@@ -129,9 +149,11 @@
 #elif BENCH_TRAITS == EXACUS_CONIC_TRAITS
 #include "Exacus_conic_reader.h"
 
+#if 0
 // Curved-kernel conic reader:
 #elif BENCH_TRAITS == CK_CONIC_TRAITS
 #include "Ck_conic_reader.h"
+#endif
 
 #else
 #error No traits (TRAITS) specified
@@ -201,14 +223,20 @@ typedef CGAL::Arr_conic_traits_2<CfNT,Kernel>           Traits;
 typedef CnX::Conic_sweep_traits_2<Arithmetic_traits>    CST;
 typedef CnX::Conic_segment_2< CST>                      Input_segment;
 typedef SoX::CGAL_Pmwx_2_for_GAPS_traits< Input_segment, CST> Traits;
-#define TRAITS_TYPE "Exacus Traits"
+#define TRAITS_TYPE "Exacus Conics"
+
+// Curved-kernel Circle:
+#elif BENCH_TRAITS == CK_CIRCLE_TRAITS
+typedef ECG::Curved_kernel<Kernel>                      Curved_k;
+typedef ECG::Circular_arc_traits<Curved_k>              Traits;
+#define TRAITS_TYPE "Curved Kernel Circles"
 
 // Curved-kernel Conics:
 #elif BENCH_TRAITS == CK_CONIC_TRAITS
 typedef ECG::Algebraic::Synaps_kernel<RT,FT>            Algebraic_k;	
 typedef ECG::Curved_kernel<Kernel,Algebraic_k>          Curved_k;
 typedef ECG::Conic_arc_traits<Curved_k>                 Traits;
-#define TRAITS_TYPE "Curved Kernel Traits"
+#define TRAITS_TYPE "Curved Kernel Conics"
 
 #else
 #error No traits (TRAITS) specified!
@@ -242,7 +270,8 @@ QApplication * App;
 
 // PostScript support:
 #if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != EXACUS_CONIC_TRAITS && BENCH_TRAITS != CK_CONIC_TRAITS
+    BENCH_TRAITS != EXACUS_CONIC_TRAITS && BENCH_TRAITS != CK_CIRCLE_TRAITS && \
+    BENCH_TRAITS != CK_CONIC_TRAITS
 #define POSTSCRIPT_SUPPORTED 1
 #endif
 
@@ -284,16 +313,20 @@ public:
 #elif BENCH_TRAITS == POLYLINE_TRAITS || BENCH_TRAITS == POLYLINE_CACHED_TRAITS
     Polyline_reader<Traits> reader;
 
-#elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS
+#elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS || \
+      BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS
     Conic_reader<Traits> reader;
 
 #elif BENCH_TRAITS == EXACUS_CONIC_TRAITS
     Exacus_conix_reader<Traits> reader;
 
+#if 0
 #elif BENCH_TRAITS == CK_CONIC_TRAITS
     Ck_conic_reader<Traits> reader;
-
+#endif
+    
 #else
+#error "Run out of options!"
 #endif
 
     int rc = reader.read_data(m_filename, std::back_inserter(m_curve_list),
@@ -304,8 +337,7 @@ public:
     return 0;
   }
     
-  /*
-   */
+  /* */
   void clean() { m_curve_list.clear(); }
   void sync(){}
 
@@ -336,8 +368,7 @@ public:
     Pmwx pm(&strategy);
     
     Curve_list::const_iterator i;
-    for (i = m_curve_list.begin(); i != m_curve_list.end(); i++)
-        pm.insert(*i);
+    for (i = m_curve_list.begin(); i != m_curve_list.end(); i++) pm.insert(*i);
     if (m_verbose) {
       if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
       std::cout << "# of vertices: " << pm.number_of_vertices() << std::endl;
@@ -445,8 +476,7 @@ public:
 #endif
   }
   
-  /*!
-   */
+  /*! */
   int init()
   {
     int rc = Basic_Pm::init();
@@ -491,8 +521,7 @@ public:
     return 0;
   }
 
-  /*!
-   */
+  /*! */
   void clean()
   {
     Basic_Pm::clean();
@@ -500,8 +529,7 @@ public:
   }
   
 private:
-  /*!
-   */
+  /*! */
   static void
     redraw(leda_window * wp, double x0, double y0, double x1, double y1) 
   { wp->flush_buffer(x0,y0,x1,y1); }
@@ -521,8 +549,7 @@ typedef CGAL::Bench<Walk_dis_pmwx>            Walk_dis_pmwx_bench;
 typedef Display_pmwx<Dummy_point_location>    Dummy_dis_pmwx;
 typedef CGAL::Bench<Dummy_dis_pmwx>           Dummy_dis_pmwx_bench;
 
-/*
- */
+/*! */
 template <class Bench_inst, class Benchable>
 void run_bench(Bench_inst & benchInst, Benchable & benchable,
                const char * fullname, Format_id format,

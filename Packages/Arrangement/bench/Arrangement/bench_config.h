@@ -15,6 +15,7 @@
 #define EXACUS_CONIC_TRAITS             6
 #define CK_CONIC_TRAITS                 7
 #define CORE_CONIC_TRAITS               8
+#define CK_CIRCLE_TRAITS                9
 
 #define DOUBLE_NT                       0
 #define GMPZ_NT                         1

@@ -17,6 +17,7 @@ CONIC_TRAITS =                  5
 EXACUS_CONIC_TRAITS =           6
 CK_CONIC_TRAITS =               7
 CORE_CONIC_TRAITS =             8
+CK_CIRCLE_TRAITS =              9
 
 DOUBLE_NT =                     0
 GMPZ_NT =                       1
@@ -33,25 +34,25 @@ NIX_LEDA_FIELD_WITH_SQRT_NT =   11
 NIX_CORE_FIELD_WITH_SQRT_NT =   12
 
 # Force values:
-ifeq ($(BENCH_KERNEL), LEDA_KERNEL)
+ifeq ($(BENCH_KERNEL), $(LEDA_KERNEL))
 BENCH_NT ?= $(LEDA_RAT_NT)
 endif
 
-ifeq ($(BENCH_KERNEL), MY_KERNEL)
+ifeq ($(BENCH_KERNEL), $(MY_KERNEL))
 BENCH_NT ?= $(LEDA_RAT_NT)
 TRAITS ?= $(LEDA_SEGMENT_TRAITS)
 endif
 
-ifeq ($(BENCH_TRAITS), LEDA_SEGMENT_TRAITS)
+ifeq ($(BENCH_TRAITS), $(LEDA_SEGMENT_TRAITS))
 BENCH_NT ?= $(LEDA_RAT_NT)
 KERNEL ?= $(LEDA_KERNEL)
 endif
 
-ifeq ($(BENCH_TRAITS), CONIC_TRAITS)
+ifeq ($(BENCH_TRAITS), $(CONIC_TRAITS))
 BENCH_NT ?= $(LEDA_REAL_NT)
 endif
 
-ifeq ($(BENCH_TRAITS), CORE_CONIC_TRAITS)
+ifeq ($(BENCH_TRAITS), $(CORE_CONIC_TRAITS))
 BENCH_NT ?= $(CORE_EXPR_NT)
 endif
 
@@ -110,18 +111,21 @@ INSTALLDIR0 = $(BINDIR)
 CPPSOURCES = $(BASENAME).C
 TARGET0 = $(BASENAME)
 LCPPDEFS+= -DCGAL_NO_PM_DEFAULT_POINT_LOCATION
+# LCPPDEFS+= -DVERBOSE
 
 LOBJDIR =
 
+ifeq ($(BENCH_TRAITS), $(CORE_CONIC_TRAITS))
+GCPPOPTS = -O
+else
 GCPPOPTS = -O3
+endif
+# GCPPOPTS = -g
 
 ifeq ($(USE_CGAL_WINDOW), 1)
 LCPPDEFS+= -DUSE_CGAL_WINDOW
 TARGET0 := $(TARGET0)CgalWindow
 LOBJDIR :=$(LOBJDIR)_cgal_window
-else
-LLDLIBS+= -lCGALQt -lqt
-LLDOPTS+= -L$(QTDIR)/lib
 endif
 
 # Number Type:
@@ -250,9 +254,14 @@ ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 TARGET0 := $(TARGET0)ExacusConic
 LOBJDIR :=$(LOBJDIR)_exacus_conic
 else 
+ifeq ($(BENCH_TRAITS), $(CK_CIRCLE_TRAITS))
+TARGET0 := $(TARGET0)CkCircle
+LOBJDIR :=$(LOBJDIR)_ck_circle
+else 
 ifeq ($(BENCH_TRAITS), $(CK_CONIC_TRAITS))
 TARGET0 := $(TARGET0)CkConic
 LOBJDIR :=$(LOBJDIR)_ck_conic
+endif
 endif
 endif
 endif
@@ -280,9 +289,13 @@ LCPPINCS+= -I$(BASEDIR)/../../../Planar_map/include
 LCPPINCS+= -I$(BASEDIR)/../../../Arrangement/include
 LCPPINCS+= -I$(BASEDIR)/../../../Trapezoidal_decomposition/include
 LCPPINCS+= -I$(BASEDIR)/../../../Sweep_line_2/include
+
+LCPPINCS+= -I$(COREROOT)/inc
+
 ifeq ($(BENCH_KERNEL), $(LEDA_KERNEL))
 LCPPINCS+= -I$(BASEDIR)/../../../Leda_rat_kernel/include
 endif
+
 ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 LCPPINCS+= -I$(EXACUS_ROOT)/NumeriX/include
 LCPPINCS+= -I$(EXACUS_ROOT)/Support/include
@@ -292,10 +305,20 @@ LCPPINCS+= -I/usr/local/boost
 LCPPDEFS+= -DHAVE_CONFIG_H -DQT_NO_COMPAT -DQT_CLEAN_NAMESPACE
 LCPPOPTS+= -ftemplate-depth-50 -Wno-deprecated
 endif
+
+ifeq ($(BENCH_TRAITS), $(CK_CIRCLE_TRAITS))
+LCPPINCS+= -I$(CURVED_KERNEL_ROOT)/include
+endif
 ifeq ($(BENCH_TRAITS), $(CK_CONIC_TRAITS))
 LCPPINCS+= -I$(CURVED_KERNEL_ROOT)/include
 endif
 LCPPINCS+= $(CGALINCS)
+
+LLDOPTS = -L$(CORE_LIB_DIR)
+LLDLIBS = -lcore
+LLDLIBS+= $(CGALLIB) $(LEDALIBS) $(CGALQTLIB) $(QTLIB) $(GMPLIBS)
+LLDLIBS+= -lX11 -lm
+LLDOPTS+= $(CGALLIBDIRS)
 
 include $(ROOT)/include/make/cgalrul.mak
 
@@ -522,14 +545,57 @@ pol_cached_inst: leda_rat_cartesian_cached_pol_inst \
 #	leda_kernel_cached_pol_inst \
 
 # Conics:
-conic:
-	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(CONIC_TRAITS)"
+cartesian_leda_conic:
+	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)"
 
-leda_conic_inst:
+simple_cartesian_leda_conic:
+	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)"
+
+cartesian_core_conic:
+	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CORE_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "USE_CGAL_WINDOW=1"
+
+simple_cartesian_core_conic:
+	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CORE_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "USE_CGAL_WINDOW=1"
+
+leda_exacus_conic:
+	$(MAKEF) "BENCH_NT=$(NIX_LEDA_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)"
+
+core_exacus_conic:
+	$(MAKEF) "BENCH_NT=$(NIX_CORE_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)"
+
+lazy_mpq_cartesian_ck_circle:
+	$(MAKEF) "BENCH_NT=$(LAZY_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)"
+
+lazy_mpq_simple_cartesian_ck_circle:
+	$(MAKEF) "BENCH_NT=$(LAZY_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)"
+
+mpz_cartesian_ck_conic:
+	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)"
+
+mpz_simple_cartesian_ck_conic:
+	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)"
+
+conics: cartesian_leda_conic \
+        simple_cartesian_leda_conic \
+	cartesian_core_conic \
+	simple_cartesian_core_conic \
+	lazy_mpq_cartesian_ck_circle \
+	lazy_mpq_simple_cartesian_ck_circle \
+	mpz_cartesian_ck_conic \
+	mpz_simple_cartesian_ck_conic
+
+# With install:
+cartesian_leda_conic_inst:
 	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
 
-core_conic_inst:
+simple_cartesian_leda_conic_inst:
+	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
+
+cartesian_core_conic_inst:
 	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CORE_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "USE_CGAL_WINDOW=1" install
+
+simple_cartesian_core_conic_inst:
+	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CORE_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "USE_CGAL_WINDOW=1" install
 
 leda_exacus_conic_inst:
 	$(MAKEF) "BENCH_NT=$(NIX_LEDA_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
@@ -537,11 +603,26 @@ leda_exacus_conic_inst:
 core_exacus_conic_inst:
 	$(MAKEF) "BENCH_NT=$(NIX_CORE_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
 
-mpz_simple_cartesian_ck_conic_inst:
-	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
+lazy_mpq_cartesian_ck_circle_inst:
+	$(MAKEF) "BENCH_NT=$(LAZY_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
+
+lazy_mpq_simple_cartesian_ck_circle_inst:
+	$(MAKEF) "BENCH_NT=$(LAZY_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
 
 mpz_cartesian_ck_conic_inst:
 	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
+
+mpz_simple_cartesian_ck_conic_inst:
+	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
+
+conics_inst: cartesian_leda_conic_inst \
+        simple_cartesian_leda_conic_inst \
+	cartesian_core_conic_inst \
+	simple_cartesian_core_conic_inst \
+	lazy_mpq_cartesian_ck_circle_inst \
+	lazy_mpq_simple_cartesian_ck_circle_inst \
+	mpz_cartesian_ck_conic_inst \
+	mpz_simple_cartesian_ck_conic_inst
 
 # Miscellaneous
 insert_old:
@@ -552,3 +633,4 @@ insert_old_inst:
 
 # Dependencies:
 $(BASENAME).o: $(BASENAME).moc
+

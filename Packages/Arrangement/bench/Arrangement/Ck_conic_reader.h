@@ -18,7 +18,7 @@ public:
   typedef typename Traits::Kernel                       Curved_k;
   typedef typename Traits::Curve_2                      Curve_2;
   typedef typename Traits::Point_2                      Point_2;
-
+  
   template<class OutputIterator>
   int read_data(const char* filename, OutputIterator curves_out,
                 CGAL::Bench_parse_args::FormatId format,
@@ -42,7 +42,7 @@ public:
       if (i == 0) bbox = curve_bbox;
       else bbox = bbox + curve_bbox;
 #else
-      bbox = CGAL::Bbox_2(-10, -10, 10, 10);
+      bbox = CGAL::Bbox_2(-7, -7, 28, 29);
 #endif
     }
     inp.close();
@@ -55,7 +55,7 @@ public:
     FT gc[6] = {w,v,u,t,s,r};
     cv =
       ECG::Conic_arc_2<Curved_k>
-      (ECG::Conic_2<Curved_k>(gc[5],gc[4],gc[3],gc[2],gc[1],gc[0]));      
+      (ECG::Conic_2<Curved_k>(gc[5],gc[4],gc[3],gc[2],gc[1],gc[0]));
   }
 };
 
