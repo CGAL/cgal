@@ -1,3 +1,8 @@
+1.16 (7 August 2000)
++ repaired redirection error in create_cgal_test script.
++ Augmented time bound for test scripts in run_testsuite
+
+----------------------
 # 1.15 (30 May 2000)
 + added script rename_clib_calls to developer_scripts
 
