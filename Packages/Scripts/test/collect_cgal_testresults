@@ -4,7 +4,10 @@
 # collect all files to generate the html page
 # containing the testsuite results
 # 
-# to be run in the CGAL/test directory
+# to be run in the CGAL/test directory or a local test directory.
+# $CGAL_MAKEFILE is used to find out $CGAL_DIR.
+# CGAL_TESTER, CGAL_TESTER_NAME, CGAL_TESTER_ADDRESS are also used as
+# environment variables.
 
 print_platforms()
 {
@@ -25,7 +28,6 @@ print_testresult()
     if eval grep ERROR ErrorOutput_$1 > /dev/null ; then
       RESULT="n"
     else
-#      if eval grep '[Ww]arning' CompilerOutput_$1 > /dev/null
       if eval grep -i warning CompilerOutput_$1 > /dev/null
       then
         RESULT="w"
@@ -43,20 +45,28 @@ do_platform()
   PLATFORM=$1
   CURRENT_DIR=`pwd`
   TESTER=${CGAL_TESTER:-${USER:-`whoami`}}
+  TESTER_NAME="${CGAL_TESTER_NAME:-${TESTER}}"
+  TESTER_ADDRESS="${CGAL_TESTER_ADDRESS:-${TESTER}}"
   TEST_REPORT="TestReport_${TESTER}_${PLATFORM}"
   RESULT_FILE=$CURRENT_DIR/results_${TESTER}_${PLATFORM}.txt
+  CGAL_DIR=..
+  if [ "${CGAL_MAKEFILE}" ]; then
+    CGAL_DIR=`dirname $CGAL_MAKEFILE`/..
+  fi
   rm -f $RESULT_FILE
   touch $RESULT_FILE
-  sed -n '/CGAL_VERSION/s/#define //p' <../include/CGAL/version.h >> $RESULT_FILE
+  sed -n '/CGAL_VERSION /s/#define //p' < $CGAL_DIR/include/CGAL/version.h >> $RESULT_FILE
   echo "TESTER ${TESTER}" >> $RESULT_FILE
+  echo "TESTER_NAME ${TESTER_NAME}" >> $RESULT_FILE
+  echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> $RESULT_FILE
   echo "PLATFORM ${PLATFORM}" >> $RESULT_FILE
 
-  LEDA_INCL_DIR=`cat "../config/install/${PLATFORM}" |sed -n '/LEDA_INCL_DIR/s/^.*= .\([^ ]*\). .*$/\1/p'`
+  LEDA_INCL_DIR=`cat "${CGAL_DIR}/config/install/${PLATFORM}" |sed -n '/LEDA_INCL_DIR/s/^.*= .\([^ ]*\). .*$/\1/p'`
   if [ -r ${LEDA_INCL_DIR}/LEDA/basic.h ]; then
     sed -n '/__LEDA__/s/^#define __LEDA__/LEDA version/p' < ${LEDA_INCL_DIR}/LEDA/basic.h >>$RESULT_FILE
   fi
 
-  cat "../config/install/${PLATFORM}" >> $RESULT_FILE
+  cat "${CGAL_DIR}/config/install/${PLATFORM}" >> $RESULT_FILE
   echo "------------" >> $RESULT_FILE
 
   for DIR in $TEST_DIRECTORIES ; do

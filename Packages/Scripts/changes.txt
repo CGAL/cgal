@@ -1,6 +1,16 @@
+29 July 2004 Sylvain Pion
+- changes to collect_cgal_testresults :
+  - extract CGAL_VERSION only, not CGAL_VERSION_H and CGAL_VERSION_NR.
+  - compute CGAL_DIR from CGAL_MAKEFILE instead of being hardcoded to "..",
+    which allows to use a local test directory which is not under $CGAL.
+  - write TESTER_NAME and TESTER_ADDRESS in the results*.txt file.
+
 22 July 2004 Radu Ursu
-- made the possibility for create_modules to generate docs for individual packages.
-- create_new_release was updated in that sense but for the moment it calls create_modules with -c n, which means no doc will be generated for the moment. (Sylvain must prepare the doc tools first)
+- made the possibility for create_modules to generate docs for individual
+  packages.
+- create_new_release was updated in that sense but for the moment it calls
+  create_modules with -c n, which means no doc will be generated for the
+  moment. (Sylvain must prepare the doc tools first)
 
 22 July 2004 Radu Ursu
 - applied previous patch made by Sylvain also to create_internal_module script 
