@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_Window_toolbar.C
-// package       : QT_window
+// file          : demo/Qt_widget/Max_k-gon/Qt_widget_toolbar.C
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -30,9 +30,10 @@
 
 
 namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> &l1) : 
-  my_toolbar_list(l1)
+  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> *l1)
   {
+
+    move_deletebut = new CGAL::Qt_widget_move_list_point<Rp>(l1);
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
     //set the widget
@@ -65,10 +66,19 @@ namespace CGAL {
 			     maintoolbar, 
 			     "Point Tool");
 
-  
-  but[1]->setToggleButton(TRUE);
+  but[2] = new QToolButton(QPixmap( (const char**)movepoint_xpm ),
+			     "Move/Delete Point Tool", 
+			     0, 
+			     this, 
+			     SLOT(move_deletetool()), 
+			     maintoolbar, 
+			     "Move/Delete Point Tool");
 
-  nr_of_buttons = 2;
+
+  but[1]->setToggleButton(TRUE);
+  but[2]->setToggleButton(TRUE);
+
+  nr_of_buttons = 3;
 
   connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
 };
@@ -89,6 +99,21 @@ namespace CGAL {
     {
       widget->attach(pointbut);
       activebutton = 1;
+      is_active = true;
+    }
+    else
+    {
+      is_active = false;
+      widget->detach_current_tool();
+    }
+  }
+  
+  void Tools_toolbar::move_deletetool()
+  {
+    if (but[2]->isOn())
+    {
+      widget->attach(*move_deletebut);
+      activebutton = 2;
       is_active = true;
     }
     else
