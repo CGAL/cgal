@@ -1,5 +1,7 @@
-1.42 04/09/2003 [rursu]
------------------------
-	- added project to build the demo (apollonius_graph_2.vcproj)
-	- renamed demo.C in apollonius_graph_2.C
-	- Demo use now CGAL common demoicon as the main window icon :)
+1.43 (14 October 2003) [af]
+- Moved \chapter from Apollonius_2.tex to main.tex
+
+1.42 (4 Septemer 2003) [rursu]
+- added project to build the demo (apollonius_graph_2.vcproj)
+- renamed demo.C in apollonius_graph_2.C
+- Demo use now CGAL common demoicon as the main window icon :)
