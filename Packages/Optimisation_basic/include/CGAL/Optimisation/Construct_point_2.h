@@ -68,7 +68,7 @@ class Construct_point_2 {
     // operations
     template < class InputIterator >
     Point
-    operator() ( int d, InputIterator first, InputIterator last) const
+    operator() ( int, InputIterator first, InputIterator last) const
     {
 	std::vector<CGAL_TYPENAME_MSVC_NULL R::RT>  coords;
 	std::copy( first, last, std::back_inserter( coords));
