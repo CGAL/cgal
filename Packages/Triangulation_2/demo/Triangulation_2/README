@@ -1,0 +1,14 @@
+DEMOS   :
+---------
+try "make demo" 
+
+
+demo:
+Illustrates features of the  basic triangulation and of Delaunay Triangulation
+(i. e. the classes CGAL_Triangulation_2<Gt,Tds> and
+CGAL_Delaunay_triangulation_2<Gt,Tds>)
+It makes use of graphical IO and needs LEDA to be installed.
+
+
+More demos about Constrained and Regular triangulation 
+will be provided soon.
