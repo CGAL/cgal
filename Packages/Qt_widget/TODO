@@ -33,5 +33,5 @@ TODO FOR DOC
 2) Document well set_window() add ranges ...
 3) Document the compilation phase (with moc). create_makefile?
 4) add the signal detached_tool()
-5) add custom_redraw() signal
-6) remove the derivation of redraw();
+5) add custom_redraw() signal					[done]
+6) remove the derivation of redraw();				[done]
