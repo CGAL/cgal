@@ -34,10 +34,10 @@
 //               p[12],p[13],p[14] CW
 //               p[15],p[16],p[17] COLLINEAR
 
-template <class Traits, class Point >
+template <class Traits>
 
 void
-CGAL__test_cls_geom_traits( Point p[34], const Traits & )
+CGAL__test_cls_geom_traits( typename Traits::Point p[34], const Traits & )
 {
   typedef typename Traits::Point             Point;
   typedef typename Traits::Segment           Segment;
