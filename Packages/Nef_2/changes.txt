@@ -1,6 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.14 (29 Apr 2002)
+     - added missing cstddef include
+
 1.13 (26 Apr 2002)
      - removed SNIINST hack from calls in specialized operator -
 
