@@ -1195,7 +1195,7 @@ nearest_neighbor(const Point& p,
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
       Vertex_handle v1(vit);
-      if ( v1 != vclosest && !is_infinite(v1) ) {
+      if ( v1 != vclosest /*&& !is_infinite(v1)*/ ) {
 	Weighted_point p1 = vclosest->point();
 	Weighted_point p2 = v1->point();
 	if ( side_of_bisector(p1, p2, p) == ON_NEGATIVE_SIDE ) {
@@ -1246,8 +1246,8 @@ inline
 Oriented_side
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 side_of_bisector(const Weighted_point &p1,
-		      const Weighted_point &p2,
-		      const Point &p) const
+		 const Weighted_point &p2,
+		 const Point &p) const
 {
   return geom_traits().oriented_side_of_bisector_2_object()(p1, p2, p);
 }
@@ -1258,7 +1258,7 @@ inline
 Sign
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 incircle(const Weighted_point &p1, const Weighted_point &p2,
-	      const Weighted_point &p3,	const Weighted_point &q) const
+	 const Weighted_point &p3,	const Weighted_point &q) const
 {
   return geom_traits().vertex_conflict_2_object()(p1, p2, p3, q);
 }
@@ -1268,7 +1268,7 @@ inline
 Sign
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 incircle(const Weighted_point &p1, const Weighted_point &p2,
-	      const Weighted_point &q) const
+	 const Weighted_point &q) const
 {
   return
     geom_traits().vertex_conflict_2_object()(p1, p2, q);
@@ -1283,8 +1283,8 @@ incircle(const Face_handle& f, const Weighted_point& q) const
 {
   if ( !is_infinite(f) ) {
     return incircle(f->vertex(0)->point(),
-			 f->vertex(1)->point(),
-			 f->vertex(2)->point(), q);
+		    f->vertex(1)->point(),
+		    f->vertex(2)->point(), q);
   }
 
   int inf_i(-1); // to avoid compiler warning
@@ -1295,8 +1295,7 @@ incircle(const Face_handle& f, const Weighted_point& q) const
     }
   }
   return incircle( f->vertex( ccw(inf_i) )->point(),
-			f->vertex(  cw(inf_i) )->point(),
-			q );
+		   f->vertex(  cw(inf_i) )->point(), q );
 }
 
 
@@ -1305,7 +1304,7 @@ inline
 Sign
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 incircle(const Vertex_handle& v0, const Vertex_handle& v1,
-	      const Vertex_handle& v) const
+	 const Vertex_handle& v) const
 {
   CGAL_precondition( !is_infinite(v0) && !is_infinite(v1)
 		     && !is_infinite(v) );
@@ -1318,14 +1317,14 @@ inline
 Sign
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 incircle(const Vertex_handle& v0, const Vertex_handle& v1,
-	      const Vertex_handle& v2, const Vertex_handle& v) const
+	 const Vertex_handle& v2, const Vertex_handle& v) const
 {
   CGAL_precondition( !is_infinite(v) );
 
   if ( !is_infinite(v0) && !is_infinite(v1) &&
        !is_infinite(v2) ) {
     return incircle(v0->point(), v1->point(),
-			 v2->point(), v->point());
+		    v2->point(), v->point());
   }
 
   if ( is_infinite(v0) ) {
