@@ -867,7 +867,17 @@ public:
   typedef typename Base::Vertices_points_plus        Vertices_points_plus;
   typedef typename Base::Event_queue                 Event_queue;
   typedef typename Base::Status_line                 Status_line;
- 
+  
+  typedef typename Vertices_points_plus::value_type  Vertices_points_plus_value_type; 
+  typedef typename Event_queue::value_type           Event_queue_value_type;
+  typedef typename Status_line::value_type           Status_line_value_type;
+  
+  typedef typename Vertices_points_plus::iterator   Vertices_points_plus_iterator;  
+  typedef typename Event_queue::iterator            Event_queue_iterator;  
+  typedef typename Status_line::iterator            Status_line_iterator; 
+  typedef typename std::list<Curve_node>::iterator  list_Curve_node_iterator;
+
+  
   void  sweep_curves_to_planar_map(Curve_iterator curves_begin, 
                                    Curve_iterator curves_end, PM &result)
   {
@@ -902,14 +912,13 @@ public:
 
       if (input_vertices.find(traits.curve_source(*cv_iter)) == 
           input_vertices.end())  
-        input_vertices.insert( typename Vertices_points_plus::
-                               value_type(traits.curve_source(*cv_iter), 
-                                          Point_plus(traits.curve_source(*cv_iter))) );
+        input_vertices.insert(Vertices_points_plus_value_type(traits.curve_source(*cv_iter), 
+							      Point_plus(traits.curve_source(*cv_iter))) );
       if (input_vertices.find(traits.curve_target(*cv_iter)) == 
           input_vertices.end())  
-        input_vertices.insert( typename Vertices_points_plus::
-                               value_type(traits.curve_target(*cv_iter), 
-                                          Point_plus(traits.curve_target(*cv_iter))) );
+        input_vertices.insert(Vertices_points_plus_value_type
+			      (traits.curve_target(*cv_iter), 
+			       Point_plus(traits.curve_target(*cv_iter))) );
     }
     
     // splitting all curves to x-monotone curves.
@@ -945,12 +954,12 @@ public:
          cv_iter != x_monotone_curves.end(); cv_iter++){
       if (input_vertices.find(traits.curve_source(*cv_iter)) == 
           input_vertices.end())  
-        input_vertices.insert( typename Vertices_points_plus::value_type
+        input_vertices.insert( Vertices_points_plus_value_type
                                (traits.curve_source(*cv_iter), 
                                 Point_plus(traits.curve_source(*cv_iter))) );
       if (input_vertices.find(traits.curve_target(*cv_iter)) == 
           input_vertices.end())  
-        input_vertices.insert( typename Vertices_points_plus::value_type
+        input_vertices.insert( Vertices_points_plus_value_type
                                (traits.curve_target(*cv_iter), 
                                 Point_plus(traits.curve_target(*cv_iter))) );
     }
@@ -969,24 +978,25 @@ public:
 #ifdef  CGAL_SWEEP_LINE_DEBUG
       cout<<cv<<std::endl;
 #endif
-
-      typename Vertices_points_plus::iterator curr_point_plus = 
+   
+      Vertices_points_plus_iterator curr_point_plus = 
         input_vertices.find( traits.curve_source(cv) );
       //assert(traits.curve_source(cv) ==  curr_point_plus->second.point());
       
-      typename Event_queue::iterator  edge_point = 
+      Event_queue_iterator  edge_point = 
         event_queue.find( traits.curve_source(cv) );
       // defining one cv_node for both source and target event points.  
-      Curve_node  cv_node = Curve_node(X_curve_plus(cv, id), 
+      X_curve_plus  cv_plus = X_curve_plus(cv, id);  // to satisfy BCC.
+      Curve_node  cv_node = Curve_node(cv_plus, 
                                        curr_point_plus->second); 
       Intersection_point_node  source_point_node = 
         Intersection_point_node(cv_node, curr_point_plus->second );
        
       if (edge_point == event_queue.end() || 
           edge_point->second.get_point() != source_point_node.get_point())
-        event_queue.insert(typename Event_queue::
-                           value_type(traits.curve_source(cv), 
-                                      source_point_node));
+        event_queue.insert(Event_queue_value_type
+			   (traits.curve_source(cv), 
+			    source_point_node));
       else
         edge_point->second.merge(source_point_node);
       
@@ -1000,9 +1010,8 @@ public:
 
       if (edge_point == event_queue.end() || 
           edge_point->second.get_point() != target_point_node.get_point())
-        event_queue.insert(typename Event_queue::
-                           value_type(traits.curve_target(cv), 
-                                      target_point_node));
+        event_queue.insert(Event_queue_value_type(traits.curve_target(cv), 
+						  target_point_node));
       else
         edge_point->second.merge(target_point_node);
     }
@@ -1014,8 +1023,8 @@ public:
     while ( !(event_queue.empty()) ){
       queue_size++;
       // fetch the next event.
-      typename Event_queue::iterator  event = event_queue.begin();  
-
+      Event_queue_iterator  event = event_queue.begin();  
+      
       const Point&              event_point = event->first;
       Intersection_point_node&  point_node = event->second;
       //bool                     event_terminated = true;
@@ -1037,12 +1046,12 @@ public:
       // when finish, we reinsert to the status all the overlappting removed curves.
       for (Curve_node_iterator cv_iter = point_node.curves_begin(); 
            cv_iter != point_node.curves_end(); cv_iter++){
-        typename Status_line::iterator curr_cv_node = status.find(*cv_iter);
+        Status_line_iterator curr_cv_node = status.find(*cv_iter);
         if (curr_cv_node != status.end()){
           if (curr_cv_node != status.begin()){
             std::list<Curve_node>  overlapping_curves;
             
-            typename Status_line::iterator lower =  --curr_cv_node;
+            Status_line_iterator lower =  --curr_cv_node;
             curr_cv_node++;
             for ( ;curr_cv_node != status.begin() && 
                     traits.curves_overlap(lower->first.get_curve(), 
@@ -1095,7 +1104,7 @@ public:
                                                       traits.curve_target(curr_cv_node->first.get_curve()) ) ==
                   CGAL::EQUAL){
                 
-                typename Status_line::iterator prev_cv_node;
+                Status_line_iterator prev_cv_node;
                 bool first = true;
                 // hold the (lower) neighbor element of the current.
                 if (curr_cv_node != status.begin()){
@@ -1123,11 +1132,11 @@ public:
               } 
             }
             // reinsert to the status line all the overlapping removed curves.
-            for (typename std::list<Curve_node>::iterator  ovlp_iter = 
+            for (list_Curve_node_iterator  ovlp_iter = 
                    overlapping_curves.begin(); 
                  ovlp_iter != overlapping_curves.end();  ovlp_iter++)
-              status.insert(typename Status_line::
-                            value_type(*ovlp_iter, ovlp_iter->get_curve()));
+
+              status.insert(Status_line_value_type(*ovlp_iter, ovlp_iter->get_curve()));
           }
         }
         
@@ -1135,7 +1144,7 @@ public:
         if (curr_cv_node != status.end()){
           std::list<Curve_node>  overlapping_curves;
           
-          typename Status_line::iterator upper =  ++curr_cv_node;
+          Status_line_iterator upper =  ++curr_cv_node;
           curr_cv_node--;
         
           
@@ -1186,7 +1195,7 @@ public:
                 CGAL::compare_lexicographically_xy (event_point, 
                                                     traits.curve_target(curr_cv_node->first.get_curve()) ) == CGAL::EQUAL){
               
-              typename Status_line::iterator prev_cv_node;
+              Status_line_iterator prev_cv_node;
               bool first = true;
               // hold the (lower) neighbor element of the current.
               if (curr_cv_node != status.begin()){
@@ -1214,11 +1223,10 @@ public:
             } 
           }
           // reinsert to the status line all the overlapping removed curves.
-          for (typename std::list<Curve_node>::iterator  ovlp_iter = 
+          for (list_Curve_node_iterator  ovlp_iter = 
                  overlapping_curves.begin(); 
                ovlp_iter != overlapping_curves.end();  ovlp_iter++)
-            status.insert(typename Status_line::
-                          value_type(*ovlp_iter, ovlp_iter->get_curve()));
+            status.insert(Status_line_value_type(*ovlp_iter, ovlp_iter->get_curve()));
         }
       }
       

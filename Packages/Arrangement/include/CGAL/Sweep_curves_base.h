@@ -238,7 +238,7 @@ protected:
     //typedef  X_curve_plus                               X_curve_plus;
     //typedef  Curve_node                                     Self;
 
-    typedef Self::Curve_node_rep                     Curve_node_rep_point_plus;
+    typedef /*Self::*/ Curve_node_rep                     Curve_node_rep_point_plus;
     typedef Curve_node_rep_point_plus::Points_container  Points_container;
     typedef typename Points_container::iterator          Points_iterator;
     typedef typename Points_container::const_iterator    Points_const_iterator;
@@ -867,6 +867,13 @@ public:
   typedef std::list<X_curve>                          X_curve_list;
   typedef typename X_curve_list::iterator             X_curve_list_iterator;
 
+  typedef typename Event_queue::value_type           Event_queue_value_type;
+  typedef typename Status_line::value_type           Status_line_value_type;
+
+  typedef typename Event_queue::iterator            Event_queue_iterator;  
+  typedef typename Status_line::iterator            Status_line_iterator; 
+  //typedef typename std::list<Curve_node>::iterator  list_Curve_node_iterator;
+
   /*typedef Curve_node::Points_iterator                                    Points_iterator;  
     typedef Curve_node::Points_const_iterator                              Points_const_iterator;
     typedef Intersection_point_node::Curve_node_iterator                   Curve_node_iterator;
@@ -1174,7 +1181,7 @@ protected:
       print_points_on_curves(*cv_iter);
 #endif
       
-      typename Status_line::iterator curr_cv_node = status.find(*cv_iter);
+      Status_line_iterator curr_cv_node = status.find(*cv_iter);
       
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
       if (curr_cv_node != status.end()){
@@ -1206,9 +1213,8 @@ protected:
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
       cout<<"inserting the new event point to curve node, and then to the status line"<<std::endl;
 #endif
-      typename Status_line::iterator new_cv_node = 
-        status.insert(typename Status_line::
-                      value_type(*cv_iter, cv_iter->get_curve()));
+      Status_line_iterator new_cv_node = 
+        status.insert(Status_line_value_type(*cv_iter, cv_iter->get_curve()));
       CGAL_expensive_postcondition_code(is_valid(status));
       
       Point xp;
@@ -1242,7 +1248,7 @@ protected:
         //final_cv.push_event_point(event_point);
         //disjoint_interior_curves.push_back(final_cv);
         
-        typename Status_line::iterator prev_cv_node;
+        Status_line_iterator prev_cv_node;
         bool first = true;
         // hold the (lower) neighbor element of the current.
         if (new_cv_node != status.begin()){
@@ -1331,8 +1337,7 @@ protected:
   //template <class Point_plus>
   bool  check_status_neighbors_intersections(Event_queue& event_queue, 
                                              Status_line& status,  
-                                             typename Status_line::iterator 
-                                             lower_neighbor, 
+                                             Status_line_iterator lower_neighbor, 
                                              const Point &event_point, 
                                              Point& point)
   {
@@ -1349,7 +1354,7 @@ protected:
     Traits traits;
     const Curve_node& cv1 = lower_neighbor->first;
     
-    typename Status_line::iterator next_neighbor = ++lower_neighbor;
+    Status_line_iterator next_neighbor = ++lower_neighbor;
     if (next_neighbor == status.end())
       return false;
     
@@ -1428,14 +1433,14 @@ protected:
         //status_iter->first.push_event_point(xp3);
         //next_iter->first.push_event_point(xp3);
         
-        typename Event_queue::iterator  xp_event = event_queue.find(xp3);
+        Event_queue_iterator  xp_event = event_queue.find(xp3);
         bool xp3_cv1_in_queue = false,  xp3_cv2_in_queue = false;
         if (xp_event == event_queue.end())
-          xp_event = event_queue.insert(typename Event_queue::
-                                        value_type(xp3, 
-                                            Intersection_point_node(cv1,
-                                                                    cv2,
-                                                                    xp3)));
+          xp_event = event_queue.insert(Event_queue_value_type
+					(xp3, 
+					 Intersection_point_node(cv1,
+								 cv2,
+								 xp3)));
         else{
           // have to check whether the event is a new event. 
           // (we might calculated this point before).
@@ -1486,14 +1491,14 @@ protected:
         //status_iter->first.push_event_point(xp2);
         //next_iter->first.push_event_point(xp2);
         
-        typename Event_queue::iterator  xp_event = event_queue.find(xp2);
+        Event_queue_iterator  xp_event = event_queue.find(xp2);
         bool xp2_cv1_in_queue = false,  xp2_cv2_in_queue = false;
         if (xp_event == event_queue.end())
-          xp_event = event_queue.insert(typename Event_queue::
-                                        value_type(xp2, 
-                                         Intersection_point_node(cv1, 
-                                                                 cv2, 
-                                                                 xp2)));
+          xp_event = event_queue.insert(Event_queue_value_type
+					(xp2, 
+					 Intersection_point_node(cv1, 
+								 cv2, 
+								 xp2)));
         else{
           // have to check whether the event is a new event. (we might calculated this point before).
           for ( Curve_node_iterator cv_iter = xp_event->second.curves_begin(); 
@@ -1542,11 +1547,10 @@ protected:
         //status_iter->first.push_event_point(xp1);
         //next_iter->first.push_event_point(xp1);
         
-        typename Event_queue::iterator  xp_event = event_queue.find(xp1);
+        Event_queue_iterator  xp_event = event_queue.find(xp1);
         //bool xp1_cv1_in_queue = false,  xp1_cv2_in_queue = false;
         if (xp_event == event_queue.end())
-          xp_event = event_queue.insert(typename Event_queue::
-                                     value_type(xp1, 
+          xp_event = event_queue.insert(Event_queue_value_type(xp1, 
                                      Intersection_point_node(cv1, cv2, xp1)));
         else{
           // have to check whether the event is a new event. 
