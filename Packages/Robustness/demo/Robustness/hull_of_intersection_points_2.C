@@ -35,12 +35,12 @@ typedef CGAL::Quotient<CGAL::MP_Float> exact_NT;
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/copy_n.h>
+#include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Ostream_iterator.h>
 
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/squared_distance_2.h>
-#include <CGAL/IO/polygonal_2.h>
 #include <CGAL/Cartesian_converter.h>
 
 #if defined(CGAL_USE_CGAL_WINDOW)
@@ -59,6 +59,7 @@ main( int argc, char** argv)
   typedef CGAL::Cartesian<double>       C_double;
   typedef C_double::Point_2             double_Point;
   typedef C_double::Segment_2           double_Segment;
+  typedef CGAL::Polygon_2< C_double>    Polygon;
   typedef CGAL::Cartesian<exact_NT>     C_real;
   typedef C_real::Point_2               real_Point;
   typedef C_real::Segment_2             real_Segment;
@@ -136,8 +137,7 @@ main( int argc, char** argv)
           double_intersection_points.end(),
           std::back_inserter( double_convex_hull));
   W.set_fg_color( leda_grey2);
-  CGAL::send_to_stream_as_polygon( W, double_convex_hull.begin(),
-                                      double_convex_hull.end());
+  W << Polygon( double_convex_hull.begin(), double_convex_hull.end());
   W.set_fg_color( leda_green);
   std::copy( double_segments.begin(),
              double_segments.end(),
