@@ -46,7 +46,7 @@ void print_test()
   for (int i=-2; i<3; i++)
     std::cout << MPF(i) << "   ";
   std::cout << std::endl;
-  for (int j=-2; i<3; i++)
+  for (int j=-2; j<3; j++)
     std::cout << MPF(j+65536) << "      ";
   std::cout << std::endl;
 }
