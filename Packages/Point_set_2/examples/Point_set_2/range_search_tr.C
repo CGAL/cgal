@@ -1,35 +1,29 @@
 #include <CGAL/basic.h>
-
 #include <list>
 #include <vector>
 #include <CGAL/Cartesian.h>
-
-#include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
-
 #include <CGAL/Point_set_2.h>
 
 using namespace CGAL;
 using namespace std;
 
-typedef Cartesian<double>     REP;
-typedef CGAL::Triangulation_euclidean_traits_2<REP> Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef Cartesian<double>     K;
+typedef CGAL::Triangulation_vertex_base_2<K> Vb;
+typedef CGAL::Triangulation_face_base_2<K>   Fb;
+typedef CGAL::Triangulation_default_data_structure_2<K,Vb,Fb> Tds;
 
 
-typedef CGAL::Point_set_2<Gt,Tds>::Edge    Edge;
-typedef CGAL::Point_set_2<Gt,Tds>::Edge_iterator  Edge_iterator;
-typedef CGAL::Point_set_2<Gt,Tds>::Vertex_handle  Vertex_handle;
-typedef CGAL::Point_set_2<Gt,Tds>::Vertex  Vertex;
+typedef CGAL::Point_set_2<K,Tds>::Edge    Edge;
+typedef CGAL::Point_set_2<K,Tds>::Edge_iterator  Edge_iterator;
+typedef CGAL::Point_set_2<K,Tds>::Vertex_handle  Vertex_handle;
+typedef CGAL::Point_set_2<K,Tds>::Vertex  Vertex;
 
 
-Point_set_2<Gt,Tds> PSet;
+Point_set_2<K,Tds> PSet;
 
-Point_2<REP> ar1[6];
-Point_2<REP> ar2[3];
-Point_2<REP> ar3[3];
+Point_2<K> ar1[6];
+Point_2<K> ar2[3];
+Point_2<K> ar3[3];
 
 int check1(std::list<Vertex_handle> L)
 {
@@ -78,22 +72,22 @@ int check3(std::list<Vertex_handle> L)
 
 int main()
 {
-  Point_2<REP> pnew(12,6.2);
+  Point_2<K> pnew(12,6.2);
   
   int w1,w2,w3;
 
-  std::list<Point_2<REP> > Lr;
+  std::list<Point_2<K> > Lr;
   
-  Point_2<REP> p1(12,14);
-  Point_2<REP> p2(-12,14);  
-  Point_2<REP> p3(2,11);
-  Point_2<REP> p4(5,6);
-  Point_2<REP> p5(6.7,3.8);
-  Point_2<REP> p6(11,20);
-  Point_2<REP> p7(-5,6);  
-  Point_2<REP> p8(12,0);
-  Point_2<REP> p9(4,31);
-  Point_2<REP> p10(-10,-10); 
+  Point_2<K> p1(12,14);
+  Point_2<K> p2(-12,14);  
+  Point_2<K> p3(2,11);
+  Point_2<K> p4(5,6);
+  Point_2<K> p5(6.7,3.8);
+  Point_2<K> p6(11,20);
+  Point_2<K> p7(-5,6);  
+  Point_2<K> p8(12,0);
+  Point_2<K> p9(4,31);
+  Point_2<K> p10(-10,-10); 
   
   // init 
   ar1[0]=p1; ar1[1]=p6; ar1[2]=p3; ar1[3]=p4; ar1[4]=p5; ar1[5]=pnew; 
@@ -111,7 +105,7 @@ int main()
   PSet.insert(pnew);
 
   cout << "circular range search !\n";  
-  Circle_2<REP> rc(p5,p6);
+  Circle_2<K> rc(p5,p6);
 
   std::list<Vertex_handle> LV;
   PSet.range_search(rc,back_inserter(LV));
@@ -133,11 +127,11 @@ int main()
   LV.clear();
  
   cout << "isorectangular range search !\n";
-  Point_2<REP> pt1=p10; // lower left
-  Point_2<REP> pt3=p3; // upper right 
+  Point_2<K> pt1=p10; // lower left
+  Point_2<K> pt3=p3; // upper right 
   
-  Point_2<REP> pt2 = Point_2<REP>(pt3.x(),pt1.y());
-  Point_2<REP> pt4 = Point_2<REP>(pt1.x(),pt3.y());
+  Point_2<K> pt2 = Point_2<K>(pt3.x(),pt1.y());
+  Point_2<K> pt4 = Point_2<K>(pt1.x(),pt3.y());
   
   PSet.range_search(pt1,pt2,pt3,pt4,back_inserter(LV));
   for (it=LV.begin();it != LV.end(); it++)

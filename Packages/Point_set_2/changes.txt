@@ -1,3 +1,6 @@
+2.1    manual changed
+       kernel traits support improved
+
 2.0.2  point_set_traits_2 removed (we need now only one geometric
        traits class)
 
