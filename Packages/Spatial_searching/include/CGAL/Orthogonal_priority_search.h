@@ -411,8 +411,8 @@ class iterator;
                 }
                 // n is a leaf
                 number_of_leaf_nodes_visited++;
-                if (N->size() > 0)
-                for (Item_iterator it=N->begin(); it != N->end(); it++) {
+                if (N->size() > 0) {
+                  for (Item_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
                         NT distance_to_query_point=
                         Orthogonal_Distance_instance->
@@ -420,23 +420,26 @@ class iterator;
                         Item_with_distance *NN_Candidate=
                         new Item_with_distance(*it,distance_to_query_point);
                         Item_PriorityQueue->push(NN_Candidate);
-                }
-                // old top of PriorityQueue has been processed,
-                // hence update rd
-                if (!PriorityQueue->empty()) {
+                  };
+                  // old top of PriorityQueue has been processed,
+                  // hence update rd
+                
+                  if (!(PriorityQueue->empty()))  {
                         rd = PriorityQueue->top()->second;
                         if (search_nearest_neighbour)
 				next_neighbour_found =
-                (multiplication_factor*rd > Item_PriorityQueue->top()->second);
+                  (multiplication_factor*rd > Item_PriorityQueue->top()->second);
                         else
 				next_neighbour_found =
-                (multiplication_factor*rd < Item_PriorityQueue->top()->second);
-                }
-                else // priority queue empty => last neighbour found
-                {
+                  (multiplication_factor*rd < Item_PriorityQueue->top()->second);
+                  }
+                  else // priority queue empty => last neighbour found
+                  {
                         next_neighbour_found=true;
-                };
-                number_of_neighbours_computed++;
+                  };
+
+                  number_of_neighbours_computed++;
+           }
         }   // next_neighbour_found or priority queue is empty
         // in the latter case also the item priority quee is empty
     }
