@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+11 october 2004 Mariette
+- fixed include og figure in html version of the doc
+
 23 September 2004 Sylvain Pion
 - Don't shorten the name of Gmpz (g++ 3.4 issue).
 - Doc : Replace \begin{enumerate} by something that works.
