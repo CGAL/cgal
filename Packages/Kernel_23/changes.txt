@@ -1,3 +1,6 @@
+1.47 (24 July 2003)
+- Document the new "mixed operators with int" requirements of number types.
+
 1.46 (23 July 2003)
 - Comment out test/Filtered_homogeneous.C until I get a chance to make it work.
 

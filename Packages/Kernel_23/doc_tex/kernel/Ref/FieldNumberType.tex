@@ -9,6 +9,23 @@ type supports the operations $+$, $-$, $*$ and $/$.  This implies that
 \ccRefines
 RingNumberType
 
+\ccCreationVariable{n1}
+
+\ccOperations
+\ccFunction{FieldNumberType operator/(const FieldNumberType &n1, 
+                                      const FieldNumberType &n2);} {}
+\ccGlue
+\ccFunction{FieldNumberType operator/(int n1, 
+                                      const FieldNumberType &n2);} {}
+\ccGlue
+\ccFunction{FieldNumberType operator/(const FieldNumberType &n1, 
+                                      int n2);} {}
+\ccGlue
+\ccMethod{FieldNumberType operator/=(const FieldNumberType &n2) const;}{}
+\ccGlue
+\ccMethod{FieldNumberType operator/=(int n2) const;}{}
+
+
 \ccHasModels
 \ccc{float} \\
 \ccc{double} \\
@@ -23,16 +40,6 @@ RingNumberType
 \ccc{leda_rational} \\
 \ccc{leda_bigfloat} \\
 \ccc{leda_real} \\
-
-\ccCreationVariable{ntvar}
-
-\ccOperations
-\ccFunction{FieldNumberType operator/(const FieldNumberType &ntval1, 
-                                      const FieldNumberType &ntval2);}
-       {}
-
-\ccMethod{FieldNumberType operator/=(const FieldNumberType &n) const;}{}
-
 
 \ccSeeAlso
 \ccRefConceptPage{EuclideanRingNumberType} \\
