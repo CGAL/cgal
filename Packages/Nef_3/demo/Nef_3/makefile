@@ -52,18 +52,18 @@ LDFLAGS = \
 all:            \
                 nef_3$(EXE_EXT) 
 
-moc_Nef3Widget.C:  Nef3Widget.h
-	$(QT_MOC) -o moc_Nef3Widget.C Nef3Widget.h
+moc_Qt_widget_Nef_3.C:  Qt_widget_Nef_3.h
+	$(QT_MOC) -o moc_Qt_widget_Nef_3.C Qt_widget_Nef_3.h
 
-moc_Nef3Widget$(OBJ_EXT): moc_Nef3Widget.C
+moc_Qt_widget_Nef_3$(OBJ_EXT): moc_Qt_widget_Nef_3.C
 
-Nef3Widget$(OBJ_EXT): Nef3Widget.C
+Qt_widget_Nef_3$(OBJ_EXT): Qt_widget_Nef_3.C
 
 nef_3.clean:
-	rm -f nef_3.o QT_demo moc_Nef3Widget.C moc_Nef3Widget.o Nef3Widget.o
+	rm -f nef_3.o moc_Qt_widget_Nef_3.C moc_Qt_widget_Nef_3.o Qt_widget_Nef_3.o
 
-nef_3$(EXE_EXT): nef_3$(OBJ_EXT) Nef3Widget$(OBJ_EXT) moc_Nef3Widget$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nef_3 nef_3$(OBJ_EXT) Nef3Widget$(OBJ_EXT) moc_Nef3Widget$(OBJ_EXT) $(LDFLAGS)
+nef_3$(EXE_EXT): nef_3$(OBJ_EXT) Qt_widget_Nef_3$(OBJ_EXT) moc_Qt_widget_Nef_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nef_3 nef_3$(OBJ_EXT) Qt_widget_Nef_3$(OBJ_EXT) moc_Qt_widget_Nef_3$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    nef_3.clean  
