@@ -50,145 +50,155 @@
 namespace CGAL {
   Qt_widget_standard_toolbar::
   Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw,
-#if QT_VERSION < 300
-			     // for Qt 2.3 and before
-			     QMainWindow::ToolBarDock dock,
-#else
-			     // from Qt 3.0
-			     Dock dock,
-#endif
+			     const char* name) :
+    QToolBar(mw, name),
+    widget(w)
+  {
+    setLabel("Qt_widget standard toolbar");
+    fill_toolbar(mw);
+  };
+  
+  Qt_widget_standard_toolbar::
+  Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw,
+			     QWidget* parent,
 			     bool newLine,
 			     const char* name) :
-    QToolBar("Qt_widget standard toolbar", mw)
+    QToolBar("Qt_widget standard toolbar", mw, parent, newLine, name),
+    widget(w)
   {
-    setName(name);
-
-    Qt_widget_focus* focusbut = 
+    fill_toolbar(mw);
+  };
+  
+  void Qt_widget_standard_toolbar::fill_toolbar(QMainWindow *mw)
+  {
+    Qt_widget_focus* focuslayer = 
       new Qt_widget_focus();
-    Qt_widget_zoomrect* zoomrectbut = 
+    Qt_widget_zoomrect* zoomrectlayer = 
       new Qt_widget_zoomrect();
-    Qt_widget_handtool* handtoolbut = 
+    Qt_widget_handtool* handtoollayer = 
       new Qt_widget_handtool();
-    Qt_widget_show_mouse_coordinates* show_coord = 
-      new Qt_widget_show_mouse_coordinates(*mw);
+    Qt_widget_show_mouse_coordinates* showcoordlayer = 0; // created below
     // FIXME: thse objects should be destroyed in a destructor
 
-    w->attach_standard(focusbut);
-    w->attach_standard(zoomrectbut);
-    w->attach_standard(handtoolbut);
-    w->attach_standard(show_coord);
-    show_coord->does_eat_events = false;
-    focusbut->deactivate();
-    zoomrectbut->deactivate();
-    handtoolbut->deactivate();
-    //set the widget
-    widget = w;
-    mw->statusBar();
+    widget->attach_standard(focuslayer);
+    widget->attach_standard(zoomrectlayer);
+    widget->attach_standard(handtoollayer);
+    focuslayer->deactivate();
+    zoomrectlayer->deactivate();
+    handtoollayer->deactivate();
 
-#if QT_VERSION < 300
-    // for Qt 2.3 and before
-    mw->addToolBar(this, dock, newLine);
-#else
-    // from Qt 3.0
-    mw->addDockWindow (this, dock, newLine);
-#endif
+    if (mw)
+      {
+	mw->statusBar();
+	showcoordlayer = new Qt_widget_show_mouse_coordinates(*mw);
+	// FIXME: this object should be destroyed in a destructor
+	widget->attach_standard(showcoordlayer);
+	showcoordlayer->does_eat_events = false;
+      }
 
-    QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
-                  QPixmap( (const char**)arrow_xpm ));
-    QIconSet set1(QPixmap( (const char**)back_small_xpm ),
-                  QPixmap( (const char**)back_xpm ));
-    QIconSet set2(QPixmap( (const char**)forward_small_xpm ),
-                  QPixmap( (const char**)forward_xpm ));
+    QIconSet arrow_pixmap(QPixmap( (const char**)arrow_small_xpm ),
+			  QPixmap( (const char**)arrow_xpm ));
+    QIconSet back_pixmap(QPixmap( (const char**)back_small_xpm ),
+			 QPixmap( (const char**)back_xpm ));
+    QIconSet forward_pixmap(QPixmap( (const char**)forward_small_xpm ),
+			    QPixmap( (const char**)forward_xpm ));
 
-    QToolButton     *but[10];
-    but[0] = new QToolButton(this, "nolayer");
-    but[0]->setIconSet(set0);
-    but[0]->setTextLabel("Deactivate Standard Layer");
+    QToolButton* nolayerBt = new QToolButton(this, "nolayer");
+    nolayerBt->setIconSet(arrow_pixmap);
+    nolayerBt->setTextLabel("Deactivate Standard Layer");
   
     addSeparator();
 
-    but[1] = new QToolButton(this, "History Back");
-    but[1]->setIconSet(set1);
-    but[1]->setTextLabel("History Back");
+    QToolButton* backBt = new QToolButton(this, "History Back");
+    backBt->setIconSet(back_pixmap);
+    backBt->setTextLabel("History Back");
 
-    but[2] = new QToolButton(this, "History Forward");
-    but[2]->setIconSet(set2);
-    but[2]->setTextLabel("History Forward");
+    QToolButton* forwardBt = new QToolButton(this, "History Forward");
+    forwardBt->setIconSet(forward_pixmap);
+    forwardBt->setTextLabel("History Forward");
   
     addSeparator();
 
-    but[3] = new QToolButton(QPixmap( (const char**)zoomin_xpm ),
-			     "Zoom in", 
-			     0, 
-			     this, 
-			     SLOT(zoomin()), 
-			     this, 
-			     "Zoom in");
-    but[3]->setTextLabel("Scaling factor X2");
-    but[4] = new QToolButton(QPixmap( (const char**)zoomout_xpm ),
-			     "Zoom out", 
-			     0, 
-			     this, 
-			     SLOT(zoomout()), 
-			     this, 
-			     "Zoom out");
-    but[4]->setTextLabel("Scaling factor 1/2");
+    QToolButton* zoominBt =
+      new QToolButton(QPixmap( (const char**)zoomin_xpm ),
+			       "Zoom in", 
+			       0, 
+			       this, 
+			       SLOT(zoomin()), 
+			       this, 
+			       "Zoom in");
+    zoominBt->setTextLabel("Scaling factor X2");
+
+    QToolButton* zoomoutBt = 
+      new QToolButton(QPixmap( (const char**)zoomout_xpm ),
+				"Zoom out", 
+				0, 
+				this, 
+				SLOT(zoomout()), 
+				this, 
+				"Zoom out");
+    zoomoutBt->setTextLabel("Scaling factor 1/2");
   
-    but[5] = new QToolButton(this, "focus on region");
-    but[5]->setPixmap(QPixmap( (const char**)zoomin_rect_xpm ));
-    but[5]->setTextLabel("Focus on region");
+    QToolButton* zoomrectBt = new QToolButton(this, "focus on region");
+    zoomrectBt->setPixmap(QPixmap( (const char**)zoomin_rect_xpm ));
+    zoomrectBt->setTextLabel("Focus on region");
 
     addSeparator();
 
-    but[6] = new QToolButton(this, "focus");
-    but[6]->setPixmap(QPixmap( (const char**)focus_xpm ));
-    but[6]->setTextLabel("Focus on point");
-    but[7] = new QToolButton(this, "handtool");
-    but[7]->setPixmap(QPixmap( (const char**)hand_xpm ));
-    but[7]->setTextLabel("Pan tool");
+    QToolButton* focusBt = new QToolButton(this, "focus");
+    focusBt->setPixmap(QPixmap( (const char**)focus_xpm ));
+    focusBt->setTextLabel("Focus on point");
+
+    QToolButton* handtoolBt = new QToolButton(this, "handtool");
+    handtoolBt->setPixmap(QPixmap( (const char**)hand_xpm ));
+    handtoolBt->setTextLabel("Pan tool");
 
     addSeparator();
 
-    but[8] = new QToolButton(this, "mouse");
-    but[8]->setPixmap(QPixmap( (const char**)mouse_coord_xpm) );
-    but[8]->setTextLabel("Mouse Coordinates");
+    QToolButton* showcoordBt = new QToolButton(this, "mouse");
+    showcoordBt->setPixmap(QPixmap( (const char**)mouse_coord_xpm) );
+    showcoordBt->setTextLabel("Mouse Coordinates");
 
     QButtonGroup* button_group = new QButtonGroup(0, "My_group");
     // FIXME: this QButtonGroup has no parent and should be destroyed 
-    int nr_of_buttons = 9;
-    for(int i = 5; i<nr_of_buttons-1; i++){
-      but[i]->setToggleButton(true);
-      button_group->insert(but[i]);
-    }
-    but[0]->setToggleButton(true);
-    but[8]->setToggleButton(true);
-    but[8]->toggle();
-
-    button_group->insert(but[0]);
+    QToolButton* button_group_list[] = { nolayerBt,
+					zoomrectBt,
+					focusBt,
+					handtoolBt };
+    for(int i=0; i<4; ++i)
+      {
+	button_group_list[i]->setToggleButton(true);
+	button_group->insert(button_group_list[i]);
+      }
     button_group->setExclusive(true);
-  
-    connect(but[5], SIGNAL(stateChanged(int)),
-        zoomrectbut, SLOT(stateChanged(int)));
-    connect(but[6], SIGNAL(stateChanged(int)),
-        focusbut, SLOT(stateChanged(int)));	
-    connect(but[7], SIGNAL(stateChanged(int)),
-        handtoolbut, SLOT(stateChanged(int)));
-    connect(but[8], SIGNAL(stateChanged(int)),
-        show_coord, SLOT(stateChanged(int)));
 
+    showcoordBt->setToggleButton(true);
+    showcoordBt->toggle();
+
+    connect(zoomrectBt, SIGNAL(stateChanged(int)),
+	    zoomrectlayer, SLOT(stateChanged(int)));
+    connect(focusBt, SIGNAL(stateChanged(int)),
+	    focuslayer, SLOT(stateChanged(int)));	
+    connect(handtoolBt, SIGNAL(stateChanged(int)),
+	    handtoollayer, SLOT(stateChanged(int)));
+    connect(showcoordBt, SIGNAL(stateChanged(int)),
+	    showcoordlayer, SLOT(stateChanged(int)));
+
+
+    // history setting
     Qt_widget_history* history = 
       new Qt_widget_history(widget, "standard history");
-
-    connect(but[1], SIGNAL(clicked()),
+    connect(backBt, SIGNAL(clicked()),
 	    history, SLOT(backward()));
-    connect(but[2], SIGNAL(clicked()),
+    connect(forwardBt, SIGNAL(clicked()),
 	    history, SLOT(forward()));
 
     connect(history, SIGNAL(backwardAvaillable(bool)),
-            but[1], SLOT(setEnabled(bool)));
+            backBt, SLOT(setEnabled(bool)));
     connect(history, SIGNAL(forwardAvaillable(bool)),
-            but[2], SLOT(setEnabled(bool)));
-    widget->clear_history();
+            forwardBt, SLOT(setEnabled(bool)));
+    history->clear();
+
   };
   void Qt_widget_standard_toolbar::zoomin()
   {
