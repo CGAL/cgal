@@ -21,7 +21,9 @@
 #ifndef CGAL_SO_NODE_TERRAIN_H
 #define CGAL_SO_NODE_TERRAIN_H
 
+#include <CGAL/Cartesian.h>
 #include <CGAL/Triangulation_2.h>
+
 
 #if HAVE_CONFIG_H
 #include <config.h>
@@ -31,8 +33,8 @@
 #endif // HAVE_WINDOWS_H
 
 #include <qgl.h>
-
-#include <CGAL/Cartesian.h>
+#include <map>
+#include <qprogressdialog.h>
 
 #include <Inventor/SbBox.h>
 #include <Inventor/caches/SoNormalCache.h>

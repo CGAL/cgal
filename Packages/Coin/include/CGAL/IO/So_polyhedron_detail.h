@@ -82,7 +82,7 @@ public:
     return &vertex[i];
   }
 
-  const Facet_handle find_face(){    
+  Facet_handle find_face(){    
     Facet_iterator fit = p.facets_begin();    
     while(fit != p.facets_end())
     {      
@@ -100,7 +100,7 @@ public:
         }
 
         if(index == 2 && !found){          
-          return (&(*fit));
+          return (fit);
         }
         haf++;
         index++;
@@ -108,8 +108,7 @@ public:
 
       fit++;
     }
-    
-    return Facet_handle();
+    exit(1);
   }
 
   //defined from SoSubDetail.h because of template declaration of this class
