@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Changed concept names.
+ALL : Added help button to pcenter demo.
+ALL : Restricted options in pcenter demo to reasonable values.
 ALL : Fixed warning on gcc3.
 
 //---------------------------------------------------------------------
@@ -87,6 +90,9 @@ TEST: Added LONG_NAME_PROBLEM flags to makefile
 //	 CGAL 1.2
 //---------------------------------------------------------------------
 
+DEMO: Changed concept names.
+DEMO: Added help button to pcenter demo.
+DEMO: Restricted options in pcenter demo to reasonable values.
 DEMO: New User-Interface with different Generators.
 ALL : some minor changes to prevent warnings for gcc -Wall.
 DEMO: Initial revision
