@@ -62,6 +62,7 @@ public:
   typedef std::list<Edge>                    List_edges;
   typedef std::list<Face_handle>             List_faces;
   typedef std::list<Vertex_handle>           List_vertices;
+  typedef std::list<Constraint>              List_constraints;
 
   //nouveau 
   class Less_edge;
@@ -78,7 +79,7 @@ public:
   {
     //Sweep sweep(this,lc);
     //sweep is momentaneously broken
-    typename std::list<Constraint>::iterator lcit=lc.begin();
+    typename List_constraints::iterator lcit=lc.begin();
     for( ;lcit != lc.end(); lcit++) {
       insert( (*lcit).first, (*lcit).second);
     }
@@ -149,7 +150,7 @@ protected:
 				   Vertex_handle c2);
   void clear_constraints_incident(Vertex_handle va);
   void update_constraints_opposite(Vertex_handle va);
-  void update_constraints(const std::list<Edge> &hole);
+  void update_constraints(const List_edges &hole);
 
   void mark_constraint(Face_handle fr, int i);
   Vertex_handle  insert_part(Vertex_handle va, 
@@ -406,9 +407,9 @@ update_constraints_opposite(Vertex_handle va)
 template < class Gt, class Tds >
 void
 Constrained_triangulation_2<Gt,Tds>:: 
-update_constraints( const std::list<Edge> &hole)
+update_constraints( const List_edges &hole)
 {
-  typename std::list<Edge>::const_iterator it = hole.begin();
+  typename List_edges::const_iterator it = hole.begin();
   Face_handle f;
   int i;
   for ( ; it != hole.end(); it ++) {
@@ -546,9 +547,9 @@ remove_2D(Vertex_handle v)
 {
   if (test_dim_down(v)) {_tds.remove_dim_down(&(*v));}
   else {
-    std::list<Edge> hole;
+    List_edges hole;
     make_hole(v, hole);
-    std::list<Edge> shell=hole; //because hole will be emptied by fill_hole
+    List_edges shell=hole; //save hole because it will be emptied by fill_hole
     fill_hole(v, hole);
     update_constraints(shell);
     delete &(*v);

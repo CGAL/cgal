@@ -42,25 +42,22 @@ public:
   typedef Constrained_triangulation_2<Gt, Tds>             Ct;
   typedef Constrained_Delaunay_triangulation_2<Gt, Tds>    CDt;
   typedef typename Ct::Geom_traits   Geom_traits;
+
   typedef typename Ct::Constraint    Constraint;
-//   typedef typename Ct::Vertex        Vertex;
-//   typedef typename Ct::Vertex_handle Vertex_handle;
-//   typedef typename Ct::Face_handle   Face_handle;
-//   typedef typename Ct::Edge          Edge;
-//   typedef typename Ct::Finite_faces_iterator Finite_faces_iterator;
-//   typedef typename Ct::Face_circulator       Face_circulator;
-//   typedef typename Ct::Less_edge less_edge;
-//   typedef typename Ct::Edge_set Edge_set;
+  typedef typename Ct::Vertex_handle Vertex_handle;
+  typedef typename Ct::Face_handle   Face_handle;
+  typedef typename Ct::Edge          Edge;
+  typedef typename Ct::Finite_faces_iterator Finite_faces_iterator;
+  typedef typename Ct::Face_circulator       Face_circulator;
+ 
+  typedef typename Ct::List_edges List_edges;  
+  typedef typename Ct::List_faces List_faces;
+  typedef typename Ct::List_vertices  List_vertices;
+  typedef typename Ct::List_constraints List_constraints;
+  //typedef std::list<Constraint> List_constraints;
+  typedef typename Ct::Less_edge less_edge;
+  typedef typename Ct::Edge_set Edge_set;
 
-    //don't know why these typedef makes the compilation crash
-  // typedef typename Constrained_triangulation::List_edges List_edges;  
-  // typedef typename Constrained_triangulation::List_faces List_faces;
-  // typedef typename Constrained_triangulation::List_vertices  List_vertices;
-
-  typedef std::list<Constraint>       List_constraints;
-  typedef std::list<Edge>             List_edges;
-  typedef std::list<Vertex_handle>    List_vertices;  
-  typedef std::list<Face_handle>      List_faces;
   typedef typename Geom_traits::Point_2  Point;
 
 
@@ -70,11 +67,11 @@ public:
   Constrained_Delaunay_triangulation_2(const CDt& cdt)
     : Ct(cdt) {}
 
-  Constrained_Delaunay_triangulation_2(std::list<Constraint>& lc, 
+  Constrained_Delaunay_triangulation_2(List_constraints& lc, 
 				       const Geom_traits& gt=Geom_traits())
     : Ct(gt) 
     {   
-      List_constraints::iterator itc = lc.begin();
+      typename List_constraints::iterator itc = lc.begin();
       for( ; itc != lc.end(); ++itc) {
 	insert((*itc).first, (*itc).second);
       }
