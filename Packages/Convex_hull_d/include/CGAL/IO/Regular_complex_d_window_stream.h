@@ -83,10 +83,11 @@ template <class R>
 void d2_map(const Regular_complex_d<R>& RC, 
             CGAL_LEDA_SCOPE::GRAPH<leda_point,int>& G)
 { 
-  typedef Regular_complex_d<R>::Simplex_const_iterator Simplex_iterator;
-  typedef Regular_complex_d<R>::Vertex_const_iterator Vertex_iterator;
-  typedef Regular_complex_d<R>::Vertex_const_handle Vertex_handle;
-  typedef Regular_complex_d<R>::Simplex_const_handle Simplex_handle;
+  typedef typename Regular_complex_d<R>::Simplex_const_iterator
+      Simplex_iterator;
+  typedef typename Regular_complex_d<R>::Vertex_const_iterator Vertex_iterator;
+  typedef typename Regular_complex_d<R>::Vertex_const_handle Vertex_handle;
+  typedef typename Regular_complex_d<R>::Simplex_const_handle Simplex_handle;
   Vertex_iterator v;
   Simplex_iterator s;
 
@@ -187,9 +188,11 @@ template <class R>
 void d3_graph(const Regular_complex_d<R>& RC, 
        CGAL_LEDA_SCOPE::GRAPH< typename Regular_complex_d<R>::Point_d ,int>& G)
 { 
-  typedef Regular_complex_d<R>::Simplex_const_iterator Simplex_iterator;
-  typedef Regular_complex_d<R>::Vertex_const_iterator Vertex_iterator;
-  typedef Regular_complex_d<R>::Vertex_const_handle Vertex_handle;
+  typedef typename Regular_complex_d<R>::Simplex_const_iterator
+                                         Simplex_iterator;
+  typedef typename Regular_complex_d<R>::Vertex_const_iterator
+                                         Vertex_iterator;
+  typedef typename Regular_complex_d<R>::Vertex_const_handle Vertex_handle;
 
   Simplex_iterator s;
   Vertex_iterator v;
