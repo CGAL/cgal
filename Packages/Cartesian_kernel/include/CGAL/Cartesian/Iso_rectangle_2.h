@@ -35,8 +35,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Iso_rectangle_handle_2    Iso_rectangle_handle_2;
-  typedef typename Iso_rectangle_handle_2::element_type Iso_rectangle_ref_2;
+  typedef typename R::Iso_rectangle_handle_2    Iso_rectangle_handle_2_;
+  typedef typename Iso_rectangle_handle_2_::element_type Iso_rectangle_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef Iso_rectangleC2<R,Cartesian_tag>      Self;
@@ -63,7 +63,7 @@ public:
 #endif
 
   Iso_rectangleC2()
-    : Iso_rectangle_handle_2(Iso_rectangle_ref_2()) {}
+    : Iso_rectangle_handle_2_(Iso_rectangle_ref_2()) {}
 
   Iso_rectangleC2(const Point_2 &p, const Point_2 &q)
   { // FIXME : construction

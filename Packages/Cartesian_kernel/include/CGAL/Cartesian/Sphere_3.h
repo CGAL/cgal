@@ -36,8 +36,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Sphere_handle_3           Sphere_handle_3;
-  typedef typename Sphere_handle_3::element_type Sphere_ref_3;
+  typedef typename R::Sphere_handle_3           Sphere_handle_3_;
+  typedef typename Sphere_handle_3_::element_type Sphere_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef SphereC3<R CGAL_CTAG>                 Self;
@@ -52,7 +52,7 @@ public:
 #endif
 
   SphereC3()
-    : Sphere_handle_3() {}
+    : Sphere_handle_3_() {}
 
   SphereC3(const Point_3 &center, const FT &squared_radius,
            const Orientation &o = COUNTERCLOCKWISE)

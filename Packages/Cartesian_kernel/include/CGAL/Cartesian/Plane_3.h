@@ -36,8 +36,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Plane_handle_3            Plane_handle_3;
-  typedef typename Plane_handle_3::element_type Plane_ref_3;
+  typedef typename R::Plane_handle_3            Plane_handle_3_;
+  typedef typename Plane_handle_3_::element_type Plane_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef PlaneC3<R,Cartesian_tag>              Self;
@@ -62,30 +62,30 @@ public:
 #endif
 
   PlaneC3()
-    : Plane_handle_3(Plane_ref_3()) {}
+    : Plane_handle_3_(Plane_ref_3()) {}
 
   PlaneC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
-    : Plane_handle_3(plane_from_points(p, q, r)) {}
+    : Plane_handle_3_(plane_from_points(p, q, r)) {}
 
   PlaneC3(const Point_3 &p, const Direction_3 &d)
-    : Plane_handle_3(plane_from_point_direction(p, d)) {}
+    : Plane_handle_3_(plane_from_point_direction(p, d)) {}
 
   PlaneC3(const Point_3 &p, const Vector_3 &v)
-    : Plane_handle_3(plane_from_point_direction(p, v.direction())) {}
+    : Plane_handle_3_(plane_from_point_direction(p, v.direction())) {}
 
   PlaneC3(const FT &a, const FT &b, const FT &c, const FT &d)
-    : Plane_handle_3(Plane_ref_3(a, b, c, d)) {}
+    : Plane_handle_3_(Plane_ref_3(a, b, c, d)) {}
 
   PlaneC3(const Line_3 &l, const Point_3 &p)
-    : Plane_handle_3(plane_from_points(l.point(),
+    : Plane_handle_3_(plane_from_points(l.point(),
 	                               l.point()+l.direction().to_vector(),
 				       p)) {}
 
   PlaneC3(const Segment_3 &s, const Point_3 &p)
-    : Plane_handle_3(plane_from_points(s.start(), s.end(), p)) {}
+    : Plane_handle_3_(plane_from_points(s.start(), s.end(), p)) {}
 
   PlaneC3(const Ray_3 &r, const Point_3 &p)
-    : Plane_handle_3(plane_from_points(r.start(), r.second_point(), p)) {}
+    : Plane_handle_3_(plane_from_points(r.start(), r.second_point(), p)) {}
 
   bool         operator==(const Self &p) const;
   bool         operator!=(const Self &p) const;

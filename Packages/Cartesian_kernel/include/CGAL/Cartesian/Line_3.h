@@ -37,8 +37,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Line_handle_3             Line_handle_3;
-  typedef typename Line_handle_3::element_type  Line_ref_3;
+  typedef typename R::Line_handle_3             Line_handle_3_;
+  typedef typename Line_handle_3_::element_type  Line_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef LineC3<R CGAL_CTAG>                   Self;
@@ -61,21 +61,21 @@ public:
 #endif
 
   LineC3()
-    : Line_handle_3(Line_ref_3()) {}
+    : Line_handle_3_(Line_ref_3()) {}
 
   LineC3(const Point_3 &p, const Point_3 &q) // FIXME : construction
-    : Line_handle_3(Line_ref_3(p, (q-p).direction())) {}
+    : Line_handle_3_(Line_ref_3(p, (q-p).direction())) {}
 
   LineC3(const Segment_3 &s) // FIXME : construction
-    : Line_handle_3(Line_ref_3(s.start(),
+    : Line_handle_3_(Line_ref_3(s.start(),
 		               (s.end() - s.start()).direction())) {}
 
   LineC3(const Ray_3 &r) // FIXME : construction
-    : Line_handle_3(Line_ref_3(r.start(),
+    : Line_handle_3_(Line_ref_3(r.start(),
 	                       (r.point(1) - r.start()).direction())) {}
 
   LineC3(const Point_3 &p, const Direction_3 &d)
-    : Line_handle_3(Line_ref_3(p, d)) {}
+    : Line_handle_3_(Line_ref_3(p, d)) {}
 
   bool        operator==(const Self &l) const;
   bool        operator!=(const Self &l) const;

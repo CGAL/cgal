@@ -36,8 +36,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Triangle_handle_2         Triangle_handle_2;
-  typedef typename Triangle_handle_2::element_type Triangle_ref_2;
+  typedef typename R::Triangle_handle_2         Triangle_handle_2_;
+  typedef typename Triangle_handle_2_::element_type Triangle_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef TriangleC2<R,Cartesian_tag>           Self;
@@ -64,10 +64,10 @@ public:
 #endif
 
   TriangleC2()
-    : Triangle_handle_2(Triangle_ref_2()) {}
+    : Triangle_handle_2_(Triangle_ref_2()) {}
 
   TriangleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
-    : Triangle_handle_2(Triangle_ref_2(p, q, r)) {}
+    : Triangle_handle_2_(Triangle_ref_2(p, q, r)) {}
 
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;

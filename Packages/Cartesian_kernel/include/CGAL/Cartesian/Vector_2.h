@@ -35,8 +35,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Vector_handle_2		Vector_handle_2;
-  typedef typename Vector_handle_2::element_type	Vector_ref_2;
+  typedef typename R::Vector_handle_2		Vector_handle_2_;
+  typedef typename Vector_handle_2_::element_type	Vector_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef VectorC2<R,Cartesian_tag>             Self;
@@ -63,19 +63,19 @@ public:
 #endif
 
   VectorC2()
-    : Vector_handle_2(Vector_ref_2()) {}
+    : Vector_handle_2_(Vector_ref_2()) {}
 
   VectorC2(const Null_vector &)
-    : Vector_handle_2(Vector_ref_2(FT(0), FT(0))) {}
+    : Vector_handle_2_(Vector_ref_2(FT(0), FT(0))) {}
 
   VectorC2(const Point_2 &p)
-    : Vector_handle_2(p) {}
+    : Vector_handle_2_(p) {}
 
   VectorC2(const Direction_2 &d)
-    : Vector_handle_2(d) {}
+    : Vector_handle_2_(d) {}
 
   VectorC2(const FT &x, const FT &y)
-    : Vector_handle_2(Vector_ref_2(x, y)) {}
+    : Vector_handle_2_(Vector_ref_2(x, y)) {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
   {

@@ -37,8 +37,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Circle_handle_2           Circle_handle_2;
-  typedef typename Circle_handle_2::element_type Circle_ref_2;
+  typedef typename R::Circle_handle_2           Circle_handle_2_;
+  typedef typename Circle_handle_2_::element_type Circle_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef CircleC2<R,Cartesian_tag>             Self;
@@ -65,7 +65,7 @@ public:
 #endif
 
   CircleC2()
-    : Circle_handle_2() {}
+    : Circle_handle_2_() {}
 
   CircleC2(const Point_2 &center, const FT &squared_radius = FT(0),
            const Orientation &orient = COUNTERCLOCKWISE) // Is this new?

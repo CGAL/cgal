@@ -37,8 +37,8 @@ public:
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
 
-  typedef typename R::Point_handle_3       Point_handle_3;
-  typedef typename Point_handle_3::element_type Point_ref_3;
+  typedef typename R::Point_handle_3       Point_handle_3_;
+  typedef typename Point_handle_3_::element_type Point_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef PointC3<R CGAL_CTAG>             Self;
@@ -51,16 +51,16 @@ public:
 #endif
 
   PointC3()
-    : Point_handle_3(Point_ref_3()) {}
+    : Point_handle_3_(Point_ref_3()) {}
 
   PointC3(const Origin &)
-    : Point_handle_3(Point_ref_3(FT(0), FT(0), FT(0))) {}
+    : Point_handle_3_(Point_ref_3(FT(0), FT(0), FT(0))) {}
 
   PointC3(const Vector_3 &v)
-    : Point_handle_3(v) {}
+    : Point_handle_3_(v) {}
 
   PointC3(const FT &x, const FT &y, const FT &z)
-    : Point_handle_3(Point_ref_3(x, y, z)) {}
+    : Point_handle_3_(Point_ref_3(x, y, z)) {}
 
   PointC3(const FT &x, const FT &y, const FT &z, const FT &w)
   {

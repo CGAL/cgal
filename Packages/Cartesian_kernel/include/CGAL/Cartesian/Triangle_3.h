@@ -35,8 +35,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Triangle_handle_3         Triangle_handle_3;
-  typedef typename Triangle_handle_3::element_type Triangle_ref_3;
+  typedef typename R::Triangle_handle_3         Triangle_handle_3_;
+  typedef typename Triangle_handle_3_::element_type Triangle_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef TriangleC3<R CGAL_CTAG>               Self;
@@ -53,10 +53,10 @@ public:
 #endif
 
   TriangleC3()
-    : Triangle_handle_3(Triangle_ref_3()) {}
+    : Triangle_handle_3_(Triangle_ref_3()) {}
 
   TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
-    : Triangle_handle_3(Triangle_ref_3(p, q, r)) {}
+    : Triangle_handle_3_(Triangle_ref_3(p, q, r)) {}
 
   bool       operator==(const Self &t) const;
   bool       operator!=(const Self &t) const;

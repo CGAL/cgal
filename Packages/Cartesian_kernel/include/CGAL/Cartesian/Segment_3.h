@@ -35,8 +35,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Segment_handle_3          Segment_handle_3;
-  typedef typename Segment_handle_3::element_type Segment_ref_3;
+  typedef typename R::Segment_handle_3          Segment_handle_3_;
+  typedef typename Segment_handle_3_::element_type Segment_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef SegmentC3<R CGAL_CTAG>                Self;
@@ -53,10 +53,10 @@ public:
 #endif
 
   SegmentC3()
-    : Segment_handle_3(Segment_ref_3()) {}
+    : Segment_handle_3_(Segment_ref_3()) {}
 
   SegmentC3(const Point_3 &sp, const Point_3 &ep)
-    : Segment_handle_3(Segment_ref_3(sp, ep)) {}
+    : Segment_handle_3_(Segment_ref_3(sp, ep)) {}
 
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;

@@ -35,8 +35,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Vector_handle_3	   	Vector_handle_3;
-  typedef typename Vector_handle_3::element_type   	Vector_ref_3;
+  typedef typename R::Vector_handle_3	   	Vector_handle_3_;
+  typedef typename Vector_handle_3_::element_type   	Vector_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef VectorC3<R CGAL_CTAG>                 Self;
@@ -51,19 +51,19 @@ public:
 #endif
 
   VectorC3()
-    : Vector_handle_3(Vector_ref_3()) {}
+    : Vector_handle_3_(Vector_ref_3()) {}
 
   VectorC3(const Null_vector &)
-    : Vector_handle_3(Vector_ref_3(FT(0), FT(0), FT(0))) {}
+    : Vector_handle_3_(Vector_ref_3(FT(0), FT(0), FT(0))) {}
 
   VectorC3(const Point_3 &p)
-    : Vector_handle_3(p) {}
+    : Vector_handle_3_(p) {}
 
   VectorC3(const Direction_3 &d)
-    : Vector_handle_3(d) {}
+    : Vector_handle_3_(d) {}
 
   VectorC3(const FT &x, const FT &y, const FT &z)
-    : Vector_handle_3(Vector_ref_3(x, y, z)) {}
+    : Vector_handle_3_(Vector_ref_3(x, y, z)) {}
 
   VectorC3(const FT &x, const FT &y, const FT &z, const FT &w)
   {

@@ -35,8 +35,8 @@ public:
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
 
-  typedef typename R::Iso_cuboid_handle_3  Iso_cuboid_handle_3;
-  typedef typename Iso_cuboid_handle_3::element_type Iso_cuboid_ref_3;
+  typedef typename R::Iso_cuboid_handle_3  Iso_cuboid_handle_3_;
+  typedef typename Iso_cuboid_handle_3_::element_type Iso_cuboid_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef Iso_cuboidC3<R CGAL_CTAG>        Self;
@@ -49,7 +49,7 @@ public:
 #endif
 
   Iso_cuboidC3()
-    : Iso_cuboid_handle_3(Iso_cuboid_ref_3()) {}
+    : Iso_cuboid_handle_3_(Iso_cuboid_ref_3()) {}
 
   Iso_cuboidC3(const Point_3 &p, const Point_3 &q)
   { // FIXME : construction

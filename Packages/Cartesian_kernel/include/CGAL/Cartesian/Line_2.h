@@ -36,8 +36,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Line_handle_2             Line_handle_2;
-  typedef typename Line_handle_2::element_type  Line_ref_2;
+  typedef typename R::Line_handle_2             Line_handle_2_;
+  typedef typename Line_handle_2_::element_type  Line_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef LineC2<R,Cartesian_tag>               Self;
@@ -64,22 +64,22 @@ public:
 #endif
 
   LineC2()
-    : Line_handle_2(Line_ref_2()) {}
+    : Line_handle_2_(Line_ref_2()) {}
 
   LineC2(const Point_2 &p, const Point_2 &q)
-    : Line_handle_2(line_from_points(p, q)) {}
+    : Line_handle_2_(line_from_points(p, q)) {}
 
   LineC2(const FT &a, const FT &b, const FT &c)
-    : Line_handle_2(Line_ref_2(a, b, c)) {}
+    : Line_handle_2_(Line_ref_2(a, b, c)) {}
 
   LineC2(const Segment_2 &s)
-    : Line_handle_2(line_from_points(s.source(), s.target())) {}
+    : Line_handle_2_(line_from_points(s.source(), s.target())) {}
 
   LineC2(const Ray_2 &r)
-    : Line_handle_2(line_from_points(r.point(0), r.point(1))) {}
+    : Line_handle_2_(line_from_points(r.point(0), r.point(1))) {}
 
   LineC2(const Point_2 &p, const Direction_2 &d)
-    : Line_handle_2(line_from_point_direction(p, d)) {}
+    : Line_handle_2_(line_from_point_direction(p, d)) {}
 
   bool            operator==(const Self &l) const;
   bool            operator!=(const Self &l) const;

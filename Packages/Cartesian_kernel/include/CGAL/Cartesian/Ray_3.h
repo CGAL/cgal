@@ -35,8 +35,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Ray_handle_3              Ray_handle_3;
-  typedef typename Ray_handle_3::element_type   Ray_ref_3;
+  typedef typename R::Ray_handle_3              Ray_handle_3_;
+  typedef typename Ray_handle_3_::element_type   Ray_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef RayC3<R CGAL_CTAG>                    Self;
@@ -53,13 +53,13 @@ public:
 #endif
 
   RayC3()
-    : Ray_handle_3(Ray_ref_3()) {}
+    : Ray_handle_3_(Ray_ref_3()) {}
 
   RayC3(const Point_3 &sp, const Point_3 &secondp)
-    : Ray_handle_3(Ray_ref_3(sp, secondp)) {}
+    : Ray_handle_3_(Ray_ref_3(sp, secondp)) {}
 
   RayC3(const Point_3 &sp, const Direction_3 &d)
-    : Ray_handle_3(Ray_ref_3(sp, sp + d.to_vector())) {}
+    : Ray_handle_3_(Ray_ref_3(sp, sp + d.to_vector())) {}
 
   bool        operator==(const Self &r) const;
   bool        operator!=(const Self &r) const;

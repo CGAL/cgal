@@ -39,8 +39,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Tetrahedron_handle_3      Tetrahedron_handle_3;
-  typedef typename Tetrahedron_handle_3::element_type Tetrahedron_ref_3;
+  typedef typename R::Tetrahedron_handle_3      Tetrahedron_handle_3_;
+  typedef typename Tetrahedron_handle_3_::element_type Tetrahedron_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef TetrahedronC3<R CGAL_CTAG>            Self;
@@ -55,11 +55,11 @@ public:
 #endif
 
   TetrahedronC3()
-    : Tetrahedron_handle_3(Tetrahedron_ref_3()) {}
+    : Tetrahedron_handle_3_(Tetrahedron_ref_3()) {}
 
   TetrahedronC3(const Point_3 &p, const Point_3 &q, const Point_3 &r,
                 const Point_3 &s)
-    : Tetrahedron_handle_3(Tetrahedron_ref_3(p, q, r, s)) {}
+    : Tetrahedron_handle_3_(Tetrahedron_ref_3(p, q, r, s)) {}
 
   Point_3    vertex(int i) const;
   Point_3    operator[](int i) const;

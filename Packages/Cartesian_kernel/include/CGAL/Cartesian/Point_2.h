@@ -37,8 +37,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Point_handle_2		Point_handle_2;
-  typedef typename Point_handle_2::element_type	Point_ref_2;
+  typedef typename R::Point_handle_2		Point_handle_2_;
+  typedef typename Point_handle_2_::element_type	Point_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef PointC2<R,Cartesian_tag>              Self;
@@ -65,13 +65,13 @@ public:
 #endif
 
   PointC2()
-    : Point_handle_2(Point_ref_2()) {}
+    : Point_handle_2_(Point_ref_2()) {}
 
   PointC2(const Origin &)
-    : Point_handle_2(Point_ref_2(FT(0), FT(0))) {}
+    : Point_handle_2_(Point_ref_2(FT(0), FT(0))) {}
 
   PointC2(const FT &x, const FT &y)
-    : Point_handle_2(Point_ref_2(x, y)) {}
+    : Point_handle_2_(Point_ref_2(x, y)) {}
 
   PointC2(const FT &hx, const FT &hy, const FT &hw)
   {
@@ -82,7 +82,7 @@ public:
   }
 
   PointC2(const Vector_2 &v)
-    : Point_handle_2(v) {}
+    : Point_handle_2_(v) {}
 
   FT x() const
   {

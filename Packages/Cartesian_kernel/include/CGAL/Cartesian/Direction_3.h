@@ -35,8 +35,8 @@ public:
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
 
-  typedef typename R::Direction_handle_3   Direction_handle_3;
-  typedef typename Direction_handle_3::element_type Direction_ref_3;
+  typedef typename R::Direction_handle_3   Direction_handle_3_;
+  typedef typename Direction_handle_3_::element_type Direction_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef DirectionC3<R CGAL_CTAG>         Self;
@@ -49,13 +49,13 @@ public:
 #endif
 
   DirectionC3()
-    : Direction_handle_3(Direction_ref_3()) {}
+    : Direction_handle_3_(Direction_ref_3()) {}
 
   DirectionC3(const Vector_3 &v)
-    : Direction_handle_3(v) {}
+    : Direction_handle_3_(v) {}
 
   DirectionC3(const FT &x, const FT &y, const FT &z)
-    : Direction_handle_3(Direction_ref_3(x, y, z)) {}
+    : Direction_handle_3_(Direction_ref_3(x, y, z)) {}
 
   bool           operator==(const Self &d) const;
   bool           operator!=(const Self &d) const;

@@ -36,8 +36,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Segment_handle_2          Segment_handle_2;
-  typedef typename Segment_handle_2::element_type Segment_ref_2;
+  typedef typename R::Segment_handle_2          Segment_handle_2_;
+  typedef typename Segment_handle_2_::element_type Segment_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef SegmentC2<R,Cartesian_tag>            Self;
@@ -64,10 +64,10 @@ public:
 #endif
 
   SegmentC2()
-    : Segment_handle_2(Segment_ref_2()) {}
+    : Segment_handle_2_(Segment_ref_2()) {}
 
   SegmentC2(const Point_2 &sp, const Point_2 &ep)
-    : Segment_handle_2(Segment_ref_2(sp, ep)) {}
+    : Segment_handle_2_(Segment_ref_2(sp, ep)) {}
 
   bool        is_horizontal() const;
   bool        is_vertical() const;

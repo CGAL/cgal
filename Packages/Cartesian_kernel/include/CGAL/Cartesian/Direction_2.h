@@ -35,8 +35,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Direction_handle_2        Direction_handle_2;
-  typedef typename Direction_handle_2::element_type Direction_ref_2;
+  typedef typename R::Direction_handle_2        Direction_handle_2_;
+  typedef typename Direction_handle_2_::element_type Direction_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef DirectionC2<R,Cartesian_tag>          Self;
@@ -63,13 +63,13 @@ public:
 #endif
 
   DirectionC2()
-    : Direction_handle_2(Direction_ref_2()) {}
+    : Direction_handle_2_(Direction_ref_2()) {}
 
   DirectionC2(const Vector_2 &v)
-    : Direction_handle_2(v) {}
+    : Direction_handle_2_(v) {}
 
   DirectionC2(const FT &x, const FT &y)
-    : Direction_handle_2(Direction_ref_2(x, y)) {}
+    : Direction_handle_2_(Direction_ref_2(x, y)) {}
 
   bool operator==(const Self &d) const;
   bool operator!=(const Self &d) const;
