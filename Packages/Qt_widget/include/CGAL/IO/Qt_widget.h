@@ -511,12 +511,42 @@ Qt_widget& operator<<(Qt_widget& w, const Point_2<R>& p)
 template <class R>
 Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
 {
-  const int
-    x1=w.x_pixel(to_double(s.source().x())),
-    y1=w.y_pixel(to_double(s.source().y())),
-    x2=w.x_pixel(to_double(s.target().x())),
-    y2=w.y_pixel(to_double(s.target().y()));
-  w.get_painter().drawLine(x1,y1,x2,y2);
+
+  R::FT xr1, yr1, xr2, yr2;
+  xr1 = w.x_real(0); xr2 = w.x_real(w.geometry().width());
+  
+  if((s.source().x() < xr1 && s.target().x() < xr1) ||
+     (s.source().x() > xr2 && s.target().x() > xr2))//if is outside on the X axes
+    return w;
+  else{
+    yr2 = w.y_real(0); yr1 = w.y_real(w.geometry().height());
+    if((s.source().y() < yr1 && s.target().y() < yr1) ||
+       (s.source().y() > yr2 && s.target().y() > yr2))//if is outside on the Y axes
+      return w;
+  }
+  //if is here, the segment intersect the screen boundaries or is inside
+  int x1, y1, x2, y2;
+  Segment_2<R>  sr;
+  if(s.source().x() >= xr1 && s.target().x() <= xr2 && 
+     s.source().y() >= yr1 && s.target().y() <= yr2)//true if the segment is inside
+    sr = s;
+  else{
+    Iso_rectangle_2<R> r = Iso_rectangle_2<R>(Point_2<R>(xr1, yr1), Point_2<R>(xr2, yr2));
+    CGAL::Object obj = CGAL::intersection(r, s);  
+    Point_2<R>    p;
+    if (CGAL::assign(p, obj)){
+      w << p;
+      return w;
+    }
+    else
+      CGAL::assign(sr, obj);
+  }
+  x1 = w.x_pixel(to_double(sr.source().x()));
+  x2 = w.x_pixel(to_double(sr.target().x()));
+  y1 = w.y_pixel(to_double(sr.source().y()));
+  y2 = w.y_pixel(to_double(sr.target().y()));
+  w.get_painter().drawLine(x1, y1, x2, y2);
+
   w.do_paint();
   return w;
 }
