@@ -902,10 +902,10 @@ public:
     Locate_type lt;
     int li, lj;
     Cell_handle c;
-    if ( dimension() > 2 ) {//TBD dim 2 !!!
+    if ( dimension() > 1 ) {
       // there is at least one finite "cell" (or facet)
-      Cell_handle start = infinite_cell()
-	->neighbor( infinite_cell()->index( infinite_vertex()) );
+      Cell_handle start = infinite_vertex()->cell()
+	->neighbor( infinite_vertex()->cell()->index( infinite_vertex()) );
       c = locate_quick( p, start, lt, li, lj);
     }
     else {
@@ -1256,7 +1256,7 @@ public:
     // separating p from the rest of the triangulation
   {
     CGAL_triangulation_precondition( (start != NULL) 
-				     && ( ! is_infinite(start) ) );
+				     && ( ! start->has_vertex(infinite) ) );
     static CGAL_Random rand( (long) 0 );
     int i, inf;
     Point p0,p1,p2,p3;
@@ -1381,9 +1381,90 @@ public:
 	// to avoid warning
 	return start;
       }
-    default:
+    case 2:
       {
-	//	TBD
+	//first tests whether p is coplanar with the current triangulation
+	Facet_iterator finite_fit = finite_facets_begin();
+	if ( geom_traits().orientation
+	     ( p, 
+	       (*finite_fit).first->vertex(0)->point(),
+	       (*finite_fit).first->vertex(1)->point(),
+	       (*finite_fit).first->vertex(2)->point() ) 
+	     != CGAL_DEGENERATE ) {
+	  lt = OUTSIDE_AFFINE_HULL;
+	  // li = 3; // only one facet : any cell is degenerate in dimension 2
+	  return (*finite_fit).first;
+	}
+	// if p is coplanar, location in the triangulation
+	// only the facet numbered 3 exists in each cell
+	Cell_handle c = start;
+	CGAL_Orientation o[3];
+	while (1) {
+	  
+	  if ( c->has_vertex(infinite,inf) ) {
+	    // c must contain p in its interior
+	    Cell_handle n = c->neighbor(inf);
+	    lt = OUTSIDE_CONVEX_HULL;
+	    li = n->index( c->vertex( cw(inf) ) );
+	    lj = n->index( c->vertex( ccw(inf) ) );
+	    return n;
+	  }
+
+	  // else c is finite
+	  // we test its edges in a random order until we find a
+	  // neighbor to go further
+	  i = rand.get_int(0,3);
+	  p0 = c->vertex( i )->point();
+	  p1 = c->vertex( ccw(i) )->point();
+	  p2 = c->vertex( cw(i) )->point();
+	  o[0] = geom_traits().orientation_in_plane(p,p0,p1,p2);
+	  if ( o[0] == CGAL_NEGATIVE ) {
+	    c = c->neighbor( cw(i) );
+	    continue;
+	  }
+	  o[1] = geom_traits().orientation_in_plane(p,p1,p2,p0);
+	  if ( o[1] == CGAL_NEGATIVE ) {
+	    c = c->neighbor( i );
+	    continue;
+	  }
+	  o[2] = geom_traits().orientation_in_plane(p,p2,p0,p1);
+	  if ( o[2] == CGAL_NEGATIVE ) {
+	    c = c->neighbor( ccw(i) );
+	    continue;
+	  }
+
+	  // now p is in c or on its boundary
+	  int sum = ( o[0] == CGAL_COLLINEAR )
+	    + ( o[1] == CGAL_COLLINEAR )
+	    + ( o[2] == CGAL_COLLINEAR );
+	  switch (sum) {
+	  case 0:
+	    {
+	      lt = FACET;
+	      li = 3; // useless ?
+	      break;
+	    }
+	  case 1:
+	    {
+	      lt = EDGE;
+	      li = ( o[0] == CGAL_COLLINEAR ) ? i :
+		( o[1] == CGAL_COLLINEAR ) ? ccw(i) :
+		cw(i);
+	      lj = ccw(li);
+	      break;
+	    }
+	  case 2:
+	    {
+	      lt = VERTEX;
+	      li = ( o[0] != CGAL_COLLINEAR ) ? cw(i) :
+		( o[1] != CGAL_COLLINEAR ) ? i :
+		ccw(i);
+	      break;
+	    }
+	  }
+	  return c;
+	}
+	// to avoid warning
 	return start;
       }
     }
