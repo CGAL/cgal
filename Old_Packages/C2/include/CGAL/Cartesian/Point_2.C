@@ -87,13 +87,12 @@ inline
 PointC2<R CGAL_CTAG>::~PointC2()
 {}
 
-
 template < class R >
 inline
 bool
 PointC2<R CGAL_CTAG>::operator==(const PointC2<R CGAL_CTAG>& p) const
 {
-  return x() == p.x() && y() == p.y();
+  return equal_xy(*this, p);
 }
 
 template < class R >
@@ -103,7 +102,6 @@ PointC2<R CGAL_CTAG>::operator!=(const PointC2<R CGAL_CTAG>& p) const
 {
   return !(*this == p);
 }
-
 
 template < class R >
 inline

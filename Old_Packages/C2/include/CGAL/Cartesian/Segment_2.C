@@ -61,14 +61,12 @@ inline
 SegmentC2<R CGAL_CTAG>::~SegmentC2()
 {}
 
-
-
 template < class R >
 inline
 bool
 SegmentC2<R CGAL_CTAG>::operator==(const SegmentC2<R CGAL_CTAG> &s) const
 {
-  return source() == s.source()  && target() == s.target();
+  return source() == s.source() && target() == s.target();
 }
 
 template < class R >
@@ -205,7 +203,7 @@ inline
 bool
 SegmentC2<R CGAL_CTAG>::is_degenerate() const
 {
-  return (source() == target());
+  return source() == target();
 }
 
 template < class R >
@@ -213,7 +211,7 @@ CGAL_KERNEL_INLINE
 bool
 SegmentC2<R CGAL_CTAG>::is_horizontal() const
 {
-  return source().y() == target().y();
+  return y_equal(source(), target());
 }
 
 template < class R >
@@ -221,7 +219,7 @@ CGAL_KERNEL_INLINE
 bool
 SegmentC2<R CGAL_CTAG>::is_vertical() const
 {
-  return source().x() == target().x();
+  return x_equal(source(), target());
 }
 
 template < class R >

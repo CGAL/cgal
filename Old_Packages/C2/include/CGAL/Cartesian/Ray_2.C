@@ -53,7 +53,6 @@ RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
   new ( static_cast< void*>(ptr)) Twotuple<Point_2>(sp, secondp);
 }
 
-
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
@@ -76,6 +75,7 @@ RayC2<R CGAL_CTAG>::operator==(const RayC2<R CGAL_CTAG> &r) const
 }
 
 template < class R >
+inline
 bool
 RayC2<R CGAL_CTAG>::operator!=(const RayC2<R CGAL_CTAG> &r) const
 {
@@ -155,14 +155,14 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool RayC2<R CGAL_CTAG>::is_horizontal() const
 {
-  return source().y() == second_point().y();
+  return y_equal(source(), second_point());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool RayC2<R CGAL_CTAG>::is_vertical() const
 {
-  return source().x() == second_point().x();
+  return x_equal(source(), second_point());
 }
 
 template < class R >
