@@ -62,8 +62,10 @@
 #define CGAL_USING_NAMESPACE_STD
 #define CGAL_STD
 #else
-#define CGAL_USING_NAMESPACE_STD using namespace std;
-#define CGAL_STD std
+#define CGAL_USING_NAMESPACE_STD
+#define CGAL_STD
+//#define CGAL_USING_NAMESPACE_STD using namespace std;
+//#define CGAL_STD std
 #endif
 
 #ifdef CGAL_USE_NAMESPACE
