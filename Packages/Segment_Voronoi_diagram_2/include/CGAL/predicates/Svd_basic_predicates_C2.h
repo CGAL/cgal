@@ -114,10 +114,11 @@ public:
   static
   FT to_ft(const Sqrt_3& x)
   {
-    FT sqrt_e = CGAL::sqrt(x.e());
-    FT sqrt_f = CGAL::sqrt(x.f());
+    FT sqrt_e = CGAL::sqrt( to_ft(x.e()) );
+    FT sqrt_f = CGAL::sqrt( to_ft(x.f()) );
     FT sqrt_ef = sqrt_e * sqrt_f;
-    return x.a() + x.b() * sqrt_e +  x.c() * sqrt_f + x.d() * sqrt_ef;
+    return to_ft(x.a()) + to_ft(x.b()) * sqrt_e
+      + to_ft(x.c()) * sqrt_f + to_ft(x.d()) * sqrt_ef;
   }
 
 public:
