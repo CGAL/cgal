@@ -809,7 +809,7 @@ public:
         CGAL_assertion( is_unbounded_simplex(f) );
         Hyperplane_d h = f->hyperplane_of_base_facet();
         std::list<Point_d>& L = PointsOf[f];
-        pit = OtherPoints.begin(), pred;
+        pit = OtherPoints.begin();
         while ( pit != OtherPoints.end() ) {
           if ( side_of(h,*pit) == ON_POSITIVE_SIDE ) {
             L.push_back(*pit); pred=pit; ++pit; OtherPoints.erase(pred);

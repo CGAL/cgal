@@ -1,3 +1,6 @@
+25 September 2004 Sylvain Pion
+- Remove useless code causing g++ 3.4 to warn.
+
 19 August 2004 Andreas Fabri
 - Fixed bug in counting the unbounded simplices (thanks to Camille Wormser)
 
