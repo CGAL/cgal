@@ -1,3 +1,9 @@
+2.76 6/8/2003
+- In Sun_fixes.h the added value_type() etc. functions are put 
+  into namespace CGAL to be found by Koenig-lookup.
+- We also have to add one more overload for these functions 
+  (for pointers) to please SunPro 5.5.
+
 2.75 5/8/2003
 - Introduce CGAL_CFG_MATCHING_BUG_4 (SunPro 5.3 and 5.4).
 - Minor cleanup.
