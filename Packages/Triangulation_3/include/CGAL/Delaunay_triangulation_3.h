@@ -180,15 +180,14 @@ private:
   int max2(int i0, int i1, int i2, int i3, int i4, int m) const;
   int maxless(int i0, int i1, int i2, int i3, int i4, int m) const;
 
-  void delete_cells(std::list<Cell_handle> & cells);
+  void delete_cells(std::vector<Cell_handle> & hole);
 
   void make_hole_3D_ear( Vertex_handle v, 
-	                 std::list<Facet> & boundhole,
-			 // std::set<Vertex_handle> & boundvert,
-	                 std::list<Cell_handle> & hole);
-  void undo_make_hole_3D_ear(std::list<Facet> & boundhole,
-		             std::list<Cell_handle> & hole);
-  bool fill_hole_3D_ear(std::list<Facet> & boundhole);
+	                 std::vector<Facet> & boundhole,
+	                 std::vector<Cell_handle> & hole);
+  void undo_make_hole_3D_ear(std::vector<Facet> & boundhole,
+		             std::vector<Cell_handle> & hole);
+  bool fill_hole_3D_ear(std::vector<Facet> & boundhole);
 
 private:
 
@@ -316,18 +315,20 @@ remove(Vertex_handle v)
 
   CGAL_triangulation_assertion( dimension() == 3 );
 
-  std::list<Facet> boundary; // facets on the boundary of the hole
+  std::vector<Facet> boundhole; // facets on the boundary of the hole
+  boundhole.reserve(64);        // 27 on average.
+  std::vector<Cell_handle> hole;
+  hole.reserve(64);
 
-  std::list<Cell_handle> hole;
-  make_hole_3D_ear(v, boundary,hole);
+  make_hole_3D_ear(v, boundhole, hole);
 
-  bool filled = fill_hole_3D_ear(boundary);
+  bool filled = fill_hole_3D_ear(boundhole);
   if(filled){
     delete( &(*v) );
     delete_cells(hole);
     set_number_of_vertices(number_of_vertices()-1);
   } else {
-    undo_make_hole_3D_ear(boundary, hole);
+    undo_make_hole_3D_ear(boundhole, hole);
   }
 
   return filled;
@@ -336,9 +337,9 @@ remove(Vertex_handle v)
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-delete_cells(std::list<Cell_handle> & hole)
+delete_cells(std::vector<Cell_handle> & hole)
 {
-  for(typename std::list<Cell_handle>::iterator cit = hole.begin();
+  for(typename std::vector<Cell_handle>::iterator cit = hole.begin();
       cit != hole.end(); ++cit)
     _tds.delete_cell( &*(*cit) );
 }
@@ -804,8 +805,8 @@ template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
 make_hole_3D_ear( Vertex_handle v, 
-	      std::list<Facet> & boundhole,
-	      std::list<Cell_handle> & hole)
+	      std::vector<Facet> & boundhole,
+	      std::vector<Cell_handle> & hole)
 {
   CGAL_triangulation_expensive_precondition( ! test_dim_down(v) );
 
@@ -834,11 +835,11 @@ make_hole_3D_ear( Vertex_handle v,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-undo_make_hole_3D_ear(std::list<Facet> & boundhole,
-		      std::list<Cell_handle> & hole)
+undo_make_hole_3D_ear(std::vector<Facet> & boundhole,
+		      std::vector<Cell_handle> & hole)
 {
-  typename std::list<Cell_handle>::iterator cit = hole.begin();
-  for(typename std::list<Facet>::iterator fit = boundhole.begin();	
+  typename std::vector<Cell_handle>::iterator cit = hole.begin();
+  for(typename std::vector<Facet>::iterator fit = boundhole.begin();	
       fit != boundhole.end(); ++fit) {
     Cell_handle ch = (*fit).first;
     ch->set_neighbor((*fit).second, *cit);
@@ -851,7 +852,7 @@ undo_make_hole_3D_ear(std::list<Facet> & boundhole,
 template < class Gt, class Tds >
 bool
 Delaunay_triangulation_3<Gt,Tds>::
-fill_hole_3D_ear( std::list<Facet> & boundhole)
+fill_hole_3D_ear( std::vector<Facet> & boundhole)
 {
   typedef Delaunay_remove_tds_3_2<Delaunay_triangulation_3> Surface;
   typedef typename Surface::Face_3_2 Face_3_2;
@@ -860,7 +861,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 
   // The list of cells that gets created, so that we know what
   // we have to delete, in case that we cannot fill the hole
-  std::list<Cell_handle> cells;
+  std::vector<Cell_handle> cells;
+  cells.reserve(32); // 20 on average.
 
   Surface surface(boundhole);
 

@@ -203,10 +203,7 @@ private:
   }
 
   I inf;
- 
-  Delaunay_remove_tds_face_3_2* _p;
-  Delaunay_remove_tds_face_3_2* _n;
-
+  Delaunay_remove_tds_face_3_2 *_p, *_n;
   bool _edge[3];
 };
 
@@ -248,13 +245,11 @@ public:
   typedef typename TDSUL2::Face_iterator Face_iterator;
   typedef quadruple<void*, void*, Face_3_2*, int> Halfedge;
 
-  Delaunay_remove_tds_3_2( std::list<Facet> & boundhole ) {
+  Delaunay_remove_tds_3_2( std::vector<Facet> & boundhole ) {
 
-    typedef typename std::list<Facet>::iterator Facet_iterator;
+    typedef typename std::vector<Facet>::iterator Facet_iterator;
 
-    int size = boundhole.size();
- 
-    std::vector<Halfedge> halfedges(3*size);
+    std::vector<Halfedge> halfedges(3*boundhole.size());
     int i = 0;
     std::map<Vertex_handle, Vertex_3_2*>  vertex_map;
     typename std::map<Vertex_handle, Vertex_3_2*>::iterator map_it;
@@ -272,10 +267,10 @@ public:
       // Furthermore the triangles are seen "from the other side"
       int i0 = 0, i1 = 2, i2 = 3;
       switch (k) {
-      case 0: i0 = 1;   break;
+      case 0:  i0 = 1; break;
       case 1:  i1 = 3; i2 = 2; break;
-      case 2:   i1 = 1; break;
-      default:  i2 = 1;
+      case 2:  i1 = 1; break;
+      default: i2 = 1;
       }
 
       // We create as many 2d vertices as there are 3d vertices.
@@ -332,8 +327,7 @@ public:
     // in the sorted list. 
 
     for(typename std::vector<Halfedge>::iterator it = halfedges.begin();
-	it != halfedges.end();
-	++it) {
+	it != halfedges.end(); ++it) {
       Halfedge e1 = *it;
       ++it;
       Halfedge e2 = *it;
@@ -362,8 +356,7 @@ public:
     ((Face_3_2*)dummy.n())->set_p(f);
   }
 
-  void
-  remove_degree_3(Vertex_3_2* v, Face_3_2* f) 
+  void remove_degree_3(Vertex_3_2* v, Face_3_2* f) 
   {
     int i = f->index(v);
     // As f->neighbor(cw(i)) and f->neighbor(ccw(i)) will be removed,
