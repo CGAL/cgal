@@ -189,6 +189,15 @@ Interval_nt<Protected>::operator/ (const Interval_nt<Protected> & d) const
 	   // but is this worth ?
 }
 
+#if 0 // Do this for the next release, same for is_one()
+bool is_zero(const NT &n)
+{
+  if (0 >  n.sup_ || 0  < n.inf_) return false;
+  if (0 == n.sup_ && 0 == n.inf_) return true;
+  n.overlap_action();
+}
+#endif
+
 template <bool Protected>
 inline
 Interval_nt<Protected>
