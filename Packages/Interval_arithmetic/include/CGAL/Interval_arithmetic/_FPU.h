@@ -125,7 +125,7 @@ enum {
 #endif
 #endif // __sparc__
 
-#ifdef __mips__
+#if defined(__mips__) || defined(__sgi)
 #ifdef CGAL_IA_USE_ASSEMBLY
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
@@ -137,7 +137,7 @@ enum {
     FPU_cw_up   = 0x2,
     FPU_cw_down = 0x3
 };
-#endif // __mips__
+#endif // __mips__ || __sgi
 
 #ifdef __alpha__ // This one is not really supported [yet].
 #ifdef CGAL_IA_USE_ASSEMBLY
