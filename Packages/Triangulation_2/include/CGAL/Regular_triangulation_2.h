@@ -47,13 +47,12 @@ template <class Iterator>
   };
 
 
-template < class Triangulation_>
+template < class Triangulation>
 class Regular_triangulation_hidden_vertices_iterator_2
- : public Filter_iterator< typename Triangulation_::Finite_vertices_iterator, 
-                           typename Unhidden_filter<typename Triangulation_::Finite_vertices_iterator>  >
+ : public Filter_iterator< typename Triangulation::Finite_vertices_iterator, 
+                           typename Unhidden_filter<typename Triangulation::Finite_vertices_iterator>  >
 {
 public:
-  typedef Triangulation_ Triangulation;
   typedef typename Triangulation::Finite_vertices_iterator Finite_vertices_iterator;
   typedef Unhidden_filter<Finite_vertices_iterator> Unhidden_filter;
   typedef Filter_iterator<Finite_vertices_iterator,Unhidden_filter>  Base;
