@@ -164,12 +164,10 @@ public:
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
+    //the standard toolbar
+    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the new tools toolbar
     newtoolbar = new Tools_toolbar(widget, this, &list_of_points);	
-    //the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
-    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
-    this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   
     *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
   

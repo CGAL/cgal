@@ -32,9 +32,9 @@
 #include <qstatusbar.h>
 #include <qbuttongroup.h>
 
-class Layers_toolbar : public QObject
+class Layers_toolbar : public QToolBar
 {
-	Q_OBJECT
+  Q_OBJECT
 public:
   Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Regular_triangulation *t);
   ~Layers_toolbar()
@@ -43,10 +43,7 @@ public:
     delete showV;
     delete showP;
   };
-  QToolBar*	toolbar(){return maintoolbar;};
-	
 private:
-  QToolBar        *maintoolbar;
   QToolButton     *but[10];
   CGAL::Qt_widget *widget;
   QMainWindow     *window;

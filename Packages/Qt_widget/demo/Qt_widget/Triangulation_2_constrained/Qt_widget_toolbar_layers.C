@@ -31,8 +31,8 @@
 // file          : Qt_widget_toolbar_layers.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu
-// release       : CGAL-2.4
-// release_date  : 2002, May 16
+// release       : 
+// release_date  : 
 //
 // coordinator   : Laurent Rineau
 //
@@ -54,7 +54,7 @@
 #include <qiconset.h>
 
   Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, 
-                                 CDT *t) : nr_of_buttons(0)
+                                 CDT *t) : QToolBar(mw, "LT"), nr_of_buttons(0)
   {
     showT   = new Qt_layer_show_triangulation< CDT >(*t);
     showP   = new Qt_layer_show_points< CDT >(*t);
@@ -68,9 +68,6 @@
     widget->attach(showC);
     widget->attach(showP);
     
-
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
-
     QIconSet set0(QPixmap( (const char**)triangulation_small_xpm ),
                   QPixmap( (const char**)triangulation_xpm ));
     QIconSet set1(QPixmap( (const char**)constrained_small_xpm ),
@@ -78,13 +75,13 @@
     QIconSet set2(QPixmap( (const char**)points_small_xpm ),
                   QPixmap( (const char**)points_xpm ));
 		
-    but[0] = new QToolButton(maintoolbar, "triangulation");
+    but[0] = new QToolButton(this, "triangulation");
     but[0]->setIconSet(set0);
     but[0]->setTextLabel("Show Triangulation");
-    but[1] = new QToolButton(maintoolbar, "constraineds");
+    but[1] = new QToolButton(this, "constraineds");
     but[1]->setIconSet(set1);
     but[1]->setTextLabel("Show Constraineds");
-    but[2] = new QToolButton(maintoolbar, "vertices");
+    but[2] = new QToolButton(this, "vertices");
     but[2]->setIconSet(set2);
     but[2]->setTextLabel("Show Vertices");
 		

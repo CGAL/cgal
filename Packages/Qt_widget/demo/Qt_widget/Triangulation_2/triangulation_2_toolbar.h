@@ -34,14 +34,12 @@
 #include <qbuttongroup.h>
 
 
-class Tools_toolbar : public QObject
+class Tools_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
   Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Delaunay *t);
-  QToolBar*	toolbar(){return maintoolbar;}
 private:
-  QToolBar           *maintoolbar;
   QToolButton        *but[10];
   CGAL::Qt_widget    *widget;
   QButtonGroup       *button_group;

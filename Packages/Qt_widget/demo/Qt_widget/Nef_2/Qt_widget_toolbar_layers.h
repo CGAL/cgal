@@ -28,11 +28,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_toolbar_layers.h
+// file          : Qt_widget_toolbar_layers.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
-// release       : CGAL-2.4
-// release_date  : 2002, May 16
+// release       : 
+// release_date  : 
 //
 // coordinator   : Laurent Rineau
 //
@@ -54,9 +54,9 @@
 #include <qstatusbar.h>
 #include <qbuttongroup.h>
 
-class Layers_toolbar : public QObject
+class Layers_toolbar : public QToolBar
 {
-	Q_OBJECT
+  Q_OBJECT
 public:
   Layers_toolbar( CGAL::Qt_widget *w, 
                   QMainWindow *mw,
@@ -67,10 +67,7 @@ public:
     delete showNR;
     delete showNG;
   };
-  QToolBar*	toolbar(){return maintoolbar;};
-  
 private:
-  QToolBar        *maintoolbar;
   QToolButton     *but[10];
   CGAL::Qt_widget *widget;
   QMainWindow     *window;

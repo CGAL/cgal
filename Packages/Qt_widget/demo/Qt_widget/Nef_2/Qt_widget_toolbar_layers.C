@@ -28,11 +28,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : src/Qt_widget_toolbar_layers.C
+// file          : Qt_widget_toolbar_layers.C
 // package       : Qt_widget
-// author(s)     : Ursu Radu
-// release       : CGAL-2.4
-// release_date  : 2002, July 8
+// author(s)     : Radu Ursu
+// release       : 
+// release_date  : 
 //
 // coordinator   : Laurent Rineau
 //
@@ -48,8 +48,9 @@
 
 
 Layers_toolbar::Layers_toolbar( CGAL::Qt_widget *w, QMainWindow *mw,
-                                  Nef_polyhedron *n1, Nef_polyhedron *n2) : 
-    widget(w), window(mw), nr_of_buttons(0)
+                                  Nef_polyhedron *n1, Nef_polyhedron
+				*n2) : QToolBar(mw, "LT"), widget(w),
+  window(mw), nr_of_buttons(0)
   {
     showNG  = new Qt_layer_nef_gray<Nef_polyhedron>(*n1);
     showNR  = new Qt_layer_nef_red<Nef_polyhedron>(*n2);
@@ -60,9 +61,6 @@ Layers_toolbar::Layers_toolbar( CGAL::Qt_widget *w, QMainWindow *mw,
     widget->attach(showNG);    
     widget->attach(showNR);
     
-    
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
-
   }//end constructor
 
 #include "Qt_widget_toolbar_layers.moc"

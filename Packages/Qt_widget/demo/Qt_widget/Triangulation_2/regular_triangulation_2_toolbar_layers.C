@@ -32,7 +32,8 @@
 
 
   Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, 
-                                 Regular_triangulation *t) : dt(t), nr_of_buttons(0)
+                                 Regular_triangulation *t) :
+    QToolBar(mw, "LT"), dt(t), nr_of_buttons(0)
   {
     showT   = new Qt_layer_show_triangulation< Regular_triangulation >(*t);
     showV   = new Qt_layer_show_voronoi< Regular_triangulation >(*t);
@@ -46,8 +47,6 @@
     widget->attach(showV);
     widget->attach(showP);
 
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
-		
     QIconSet set0(QPixmap( (const char**)triangulation_small_xpm ),
                   QPixmap( (const char**)triangulation_xpm ));
     QIconSet set1(QPixmap( (const char**)voronoi_small_xpm ),
@@ -55,13 +54,13 @@
     QIconSet set3(QPixmap( (const char**)points_small_xpm ),
                   QPixmap( (const char**)points_xpm ));
 
-    but[0] = new QToolButton(maintoolbar, "triangulation");
+    but[0] = new QToolButton(this, "triangulation");
     but[0]->setIconSet(set0);
     but[0]->setTextLabel("Triangulation");
-    but[1] = new QToolButton(maintoolbar, "voronoi");
+    but[1] = new QToolButton(this, "voronoi");
     but[1]->setIconSet(set1);
     but[1]->setTextLabel("Voronoi Diagram");
-    but[2] = new QToolButton(maintoolbar, "vertices");
+    but[2] = new QToolButton(this, "vertices");
     but[2]->setIconSet(set3);
     but[2]->setTextLabel("Vertices");
 

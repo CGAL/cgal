@@ -102,8 +102,8 @@ static char * image_xpm[] = {
 "                                "};
 
 Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
-                                Delaunay *t, Alpha_shape *a, QImage *i) : 
-  nr_of_buttons(0)
+                                Delaunay *t, Alpha_shape *a, QImage
+			       *i) : QToolBar(mw, "LT") ,nr_of_buttons(0)
 {
   
   showT = new Qt_layer_show_triangulation< Delaunay >(*t);
@@ -124,8 +124,6 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
 
   showV->deactivate();
 
-  maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
-
   QIconSet set0(QPixmap( (const char**)image_small_xpm ),
                 QPixmap( (const char**)image_xpm ));		
   QIconSet set1(QPixmap( (const char**)triangulation_small_xpm ),
@@ -137,19 +135,19 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
   QIconSet set4(QPixmap( (const char**)points_small_xpm ),
                 QPixmap( (const char**)points_xpm ));
 
-  but[0] = new QToolButton(maintoolbar, "image layer");
+  but[0] = new QToolButton(this, "image layer");
   but[0]->setIconSet(set0);
   but[0]->setTextLabel("Show Image");
-  but[1] = new QToolButton(maintoolbar, "triangulation layer");
+  but[1] = new QToolButton(this, "triangulation layer");
   but[1]->setIconSet(set1);
   but[1]->setTextLabel("Show Triangulation");
-  but[2] = new QToolButton(maintoolbar, "alpha_shape layer");
+  but[2] = new QToolButton(this, "alpha_shape layer");
   but[2]->setIconSet(set2);
   but[2]->setTextLabel("Show Alpha Shape");
-  but[3] = new QToolButton(maintoolbar, "voronoi layer");
+  but[3] = new QToolButton(this, "voronoi layer");
   but[3]->setIconSet(set3);
   but[3]->setTextLabel("Show Voronoi");
-  but[4] = new QToolButton(maintoolbar, "vertices layer");
+  but[4] = new QToolButton(this, "vertices layer");
   but[4]->setIconSet(set4);
   but[4]->setTextLabel("Show Vertices");
 

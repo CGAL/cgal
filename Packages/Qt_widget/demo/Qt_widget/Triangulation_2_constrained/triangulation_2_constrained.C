@@ -31,8 +31,8 @@
 // file          : triangulation_2_constrained.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu 
-// release       : CGAL-2.4
-// release_date  : 2002, May 16
+// release       : 
+// release_date  : 
 //
 // coordinator   : Laurent Rineau
 //
@@ -142,15 +142,12 @@ public:
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
+    //the standard toolbar
+    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the new tools toolbar
     newtoolbar = new Tools_toolbar(widget, this, &ct);	
     //the new scenes toolbar
     vtoolbar = new Layers_toolbar(widget, this, &ct);
-    //the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
-    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
-    this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
-    this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
   
     *widget << CGAL::BackgroundColor (CGAL::BLACK);
 

@@ -31,8 +31,8 @@
 // file          : Qt_widget_toolbar.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu
-// release       : CGAL-2.4
-// release_date  : 2002, May 16
+// release       : 
+// release_date  : 
 //
 // coordinator   : Laurent Rineau
 //
@@ -54,7 +54,8 @@
 
 #include <qiconset.h>
 
-  Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, CDT *t)
+  Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
+			       CDT *t) : QToolBar(mw, "NT")
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
@@ -67,15 +68,6 @@
     segmentbut.deactivate();
     polygonbut.deactivate();
 
-#if QT_VERSION < 300
-		// for Qt 2.3 and before
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
-#else
-    // from Qt 3.0
-    maintoolbar = new QToolBar(mw, "Tools");
-    mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
-#endif
-
     QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
                   QPixmap( (const char**)arrow_xpm ));
     QIconSet set1(QPixmap( (const char**)point_small_xpm ),
@@ -84,16 +76,16 @@
                   QPixmap( (const char**)line_xpm ));
     QIconSet set3(QPixmap( (const char**)polygon_small_xpm ),
                   QPixmap( (const char**)polygon_xpm ));
-    but[0] = new QToolButton(maintoolbar, "deactivate layer");
+    but[0] = new QToolButton(this, "deactivate layer");
     but[0]->setIconSet(set0);
     but[0]->setTextLabel("Deactivate Layer");
-    but[1] = new QToolButton(maintoolbar, "pointinput layer");
+    but[1] = new QToolButton(this, "pointinput layer");
     but[1]->setIconSet(set1);
     but[1]->setTextLabel("Input Point");
-    but[2] = new QToolButton(maintoolbar, "lineinput layer");
+    but[2] = new QToolButton(this, "lineinput layer");
     but[2]->setIconSet(set2);
     but[2]->setTextLabel("Input Segment");
-    but[3] = new QToolButton(maintoolbar, "polygoninput layer");
+    but[3] = new QToolButton(this, "polygoninput layer");
     but[3]->setIconSet(set3);
     but[3]->setTextLabel("Input Polygon");
   		

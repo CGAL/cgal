@@ -37,21 +37,17 @@
 
 typedef double CoordT;
 typedef CGAL::Cartesian<CoordT> RP;
-class Tools_toolbar : public QObject
+class Tools_toolbar : public QToolBar
 {
-	Q_OBJECT
+  Q_OBJECT
 public:
   Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, 
                 Delaunay *t, Alpha_shape *a);
-
-  QToolBar*	toolbar(){return maintoolbar;}
-
 signals:
   void new_object(CGAL::Object);
   void was_repainted();
 
 private:
-  QToolBar        *maintoolbar;
   QToolButton     *but[10];
   CGAL::Qt_widget *widget;
   QButtonGroup    *button_group;

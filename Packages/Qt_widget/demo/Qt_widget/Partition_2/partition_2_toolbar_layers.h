@@ -37,16 +37,13 @@ template <class T> class Qt_layer_show_ymonotone;
 template <class T> class Qt_layer_show_optimal_convex;
 template <class T> class Qt_layer_show_polygon_points;
 
-class Layers_toolbar : public QObject
+class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
   Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Cgal_Polygon *p);
   ~Layers_toolbar();
-  QToolBar* toolbar(){return maintoolbar;};
-
 private:
-  QToolBar            *maintoolbar;
   QToolButton         *but[10];
   CGAL::Qt_widget     *widget;
   QMainWindow         *window;

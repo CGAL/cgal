@@ -104,14 +104,13 @@ public:
     resize(w, h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
+
     //the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
+    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the input layers toolbar
     newtoolbar = new Tools_toolbar(widget, this, &rt);
     //the other layers toolbar
     ltoolbar = new Layers_toolbar(widget, this, &rt);
-    this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
-    this->addToolBar(ltoolbar->toolbar(), Top, FALSE);
 
 
     //connect the widget to the main function that receives the objects

@@ -207,7 +207,7 @@ public:
     help->insertItem("About &Qt", this, SLOT(sl_aboutQt()) );
 
     //the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
+    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
     //the new tools toolbar
     newtoolbar = new Tools_toolbar(widget, this);	
     //the layers toolbar
@@ -270,11 +270,6 @@ public:
     but_boundary->setOn(true);
     but_regularization->setOn(true);
 
-    this->addToolBar(stoolbar->toolbar(), Top, false);
-    this->addToolBar(newtoolbar->toolbar(), Top, false);
-    //this->addToolBar(ltoolbar->toolbar(), Top, false);
-    this->addToolBar(optoolbar, Top, false);
-  
     connect(list1, SIGNAL(delete_key(QListBoxItem*)), 
             this, SLOT(sl_list1_delete_key_pressed(QListBoxItem*)));
     connect(list2, SIGNAL(delete_key(QListBoxItem*)), 

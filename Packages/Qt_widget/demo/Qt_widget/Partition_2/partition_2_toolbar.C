@@ -29,7 +29,8 @@
 
 #include <qiconset.h>
 
-Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw)
+Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw) :
+  QToolBar(mw, "NT")
 {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
@@ -37,26 +38,16 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw)
     widget = w;
     widget->attach(&getsimplebut);
 
-#if QT_VERSION < 300
-// for Qt 2.3 and before
-  maintoolbar = new QToolBar("tools", mw, 
-			    QMainWindow::Top, TRUE, "Tools");
-#else
-// from Qt 3.0
-  maintoolbar = new QToolBar(mw, "Tools");
-  mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
-#endif		  
-
     QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
                   QPixmap( (const char**)arrow_xpm ));
     QIconSet set1(QPixmap( (const char**)polygon_small_xpm ),
                   QPixmap( (const char**)polygon_xpm ));
 		
-  but[0] = new QToolButton(maintoolbar, "deactivate layer");
+  but[0] = new QToolButton(this, "deactivate layer");
   but[0]->setIconSet(set0);
   but[0]->setTextLabel("Deactivate Layer");
   
-  but[1] = new QToolButton(maintoolbar, "spolygon");
+  but[1] = new QToolButton(this, "spolygon");
   but[1]->setIconSet(set1);
   but[1]->setTextLabel("Input Simple Polygon");
   

@@ -34,7 +34,8 @@
 #include <qiconset.h>
 
 
-Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Cgal_Polygon *p) : 
+Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
+			       Cgal_Polygon *p) : QToolBar(mw, "LT"),
      nr_of_buttons(0)
   {
     showP = new Qt_layer_show_polygon<Cgal_Polygon>(*p);
@@ -57,8 +58,6 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Cgal_Polygon
     showYM->deactivate();
     showOC->deactivate();
 
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
-		
     QIconSet set0(QPixmap( (const char**)show_polygon_small_xpm ),
                   QPixmap( (const char**)show_polygon_xpm ));
     QIconSet set1(QPixmap( (const char**)greene_approx_small_xpm ),
@@ -70,19 +69,19 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Cgal_Polygon
     QIconSet set4(QPixmap( (const char**)points_small_xpm ),
                   QPixmap( (const char**)points_xpm ));
 
-    but[0] = new QToolButton(maintoolbar, "show_polygon");
+    but[0] = new QToolButton(this, "show_polygon");
     but[0]->setIconSet(set0);
     but[0]->setTextLabel("Show Simple Polygon");
-    but[1] = new QToolButton(maintoolbar, "greene_approx");
+    but[1] = new QToolButton(this, "greene_approx");
     but[1]->setIconSet(set1);
     but[1]->setTextLabel("Show Greene Approximation");
-    but[2] = new QToolButton(maintoolbar, "ymonotone");
+    but[2] = new QToolButton(this, "ymonotone");
     but[2]->setIconSet(set2);
     but[2]->setTextLabel("Show Y Monotone Partition");
-    but[3] = new QToolButton(maintoolbar, "optimal_convex");
+    but[3] = new QToolButton(this, "optimal_convex");
     but[3]->setIconSet(set3);
     but[3]->setTextLabel("Show Optimal Convex Partition");
-    but[4] = new QToolButton(maintoolbar, "show_points");
+    but[4] = new QToolButton(this, "show_points");
     but[4]->setIconSet(set4);
     but[4]->setTextLabel("Show Polygon Vertices");
     

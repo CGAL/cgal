@@ -173,15 +173,12 @@ public:
   help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
   help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
+  //the standard toolbar
+  stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
   //the new input layers toolbar
   newtoolbar = new Tools_toolbar(widget, this, &tr1, &A);	
   //the new drawing layers toolbar
   vtoolbar = new Layers_toolbar(widget, this, &tr1, &A, &image);
-  //the standard toolbar
-  stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
-  this->addToolBar(stoolbar->toolbar(), Top, FALSE);
-  this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
-  this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
 
   *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
 

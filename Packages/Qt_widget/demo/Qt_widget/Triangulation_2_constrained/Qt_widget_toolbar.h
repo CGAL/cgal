@@ -30,9 +30,9 @@
 //
 // file          : Qt_widget_toolbar.h
 // package       : Qt_widget
-// author(s)     : Ursu Radu
-// release       : CGAL-2.4
-// release_date  : 2002, May 16
+// author(s)     : Radu Ursu
+// release       : 
+// release_date  : 
 //
 // coordinator   : Laurent Rineau
 //
@@ -59,29 +59,15 @@
 #include <qmainwindow.h>
 #include <qbuttongroup.h>
 
-class Tools_toolbar : public QObject
+class Tools_toolbar : public QToolBar
 {
-	Q_OBJECT
+  Q_OBJECT
 public:
   Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, CDT *t);
-
-  QToolBar*	toolbar(){return maintoolbar;}
-
-signals:
-  void new_object(CGAL::Object);
-  void was_repainted();
-
-private slots:
-  void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
-
 private:
-  QToolBar           *maintoolbar;
   QToolButton        *but[10];
   CGAL::Qt_widget    *widget;
   QButtonGroup       *button_group;
-  int                activebutton;
-  bool               is_active;
-  void               setActiveButton(int i);
   void               addToolButton(QToolButton *b);
   int                nr_of_buttons;
 	

@@ -8,9 +8,9 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_widget_toolbar_layers.C
+// file          : Qt_widget_toolbar_layers.C
 // package       : Qt_widget
-// author(s)     : Ursu Radu
+// author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
 //
@@ -55,8 +55,9 @@ static char * lines_small_xpm[] = {
 
 
 
-Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Point>	*l_of_p) : 
-    widget(w), window(mw), nr_of_buttons(0)
+Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
+			       std::list<Point>	*l_of_p) :
+  QToolBar(mw, "LT"), widget(w), window(mw), nr_of_buttons(0)
   {
       
     showPL  = new Qt_layer_show_parallelogram<Rp>(l_of_p);
@@ -71,8 +72,6 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Po
     widget->attach(showP);
     widget->attach(showLS);
 
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
-
     QIconSet set0(QPixmap( (const char**)points_small_xpm ),
                   QPixmap( (const char**)points_xpm ));
     QIconSet set1(QPixmap( (const char**)min_parallelogram_small_xpm ),
@@ -82,16 +81,16 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Po
     QIconSet set3(QPixmap( (const char**)min_rectangle_small_xpm ),
                   QPixmap( (const char**)min_rectangle_xpm ));
 
-    but[0] = new QToolButton(maintoolbar, "points");
+    but[0] = new QToolButton(this, "points");
     but[0]->setIconSet(set0);
     but[0]->setTextLabel("Show Points");
-    but[1] = new QToolButton(maintoolbar, "Minimum_parallelogram");
+    but[1] = new QToolButton(this, "Minimum_parallelogram");
     but[1]->setIconSet(set1);
     but[1]->setTextLabel("Show Minimum Parallelogram");
-    but[2] = new QToolButton(maintoolbar, "Show_lines");
+    but[2] = new QToolButton(this, "Show_lines");
     but[2]->setIconSet(set2);
     but[2]->setTextLabel("Show Lines");
-    but[3] = new QToolButton(maintoolbar, "Minimum_rectangle");
+    but[3] = new QToolButton(this, "Minimum_rectangle");
     but[3]->setIconSet(set3);
     but[3]->setTextLabel("Show Minimum Rectangle");
 

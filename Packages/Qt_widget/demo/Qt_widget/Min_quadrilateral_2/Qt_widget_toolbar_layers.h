@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_toolbar_layers.h
+// file          : Qt_widget_toolbar_layers.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -39,9 +39,9 @@ typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
 typedef Rp::Point_2   Point;
 
-class Layers_toolbar : public QObject
+class Layers_toolbar : public QToolBar
 {
-	Q_OBJECT
+  Q_OBJECT
 public:
   Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Point> *l_of_p);
   ~Layers_toolbar()
@@ -51,10 +51,8 @@ public:
     delete showLS;
     delete showR;
   };
-  QToolBar*	toolbar(){return maintoolbar;};
   
 private:
-  QToolBar        *maintoolbar;
   QToolButton     *but[10];
   CGAL::Qt_widget *widget;
   QMainWindow     *window;

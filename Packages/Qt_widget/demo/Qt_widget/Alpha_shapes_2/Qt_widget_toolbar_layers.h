@@ -37,17 +37,14 @@
 #include <qstatusbar.h>
 #include <qbuttongroup.h>
 
-class Layers_toolbar : public QObject
+class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
   Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, 
                  Delaunay *t, Alpha_shape *a, QImage *i);
 
-  QToolBar*	toolbar(){return maintoolbar;};
-
 private:
-  QToolBar        *maintoolbar;	
   QToolButton     *but[10];
   QButtonGroup    *button_group;
   CGAL::Qt_widget *widget;

@@ -31,7 +31,9 @@
 
 #include <qiconset.h>
 
-  Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Regular_triangulation *t)
+  Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
+			       Regular_triangulation *t) :
+    QToolBar(mw, "NT")
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
@@ -45,15 +47,6 @@
     edit_vertex_layer.set_triangulation(t);
     edit_vertex_layer.deactivate();
 
-#if QT_VERSION < 300
-		// for Qt 2.3 and before
-    maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
-#else
-    // from Qt 3.0
-    maintoolbar = new QToolBar(mw, "Tools");
-    mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
-#endif
-		
     QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
                   QPixmap( (const char**)arrow_xpm ));
     QIconSet set1(QPixmap( (const char**)point_small_xpm ),
@@ -63,15 +56,15 @@
     QIconSet set3(QPixmap( (const char**)movepoint_small_xpm ),
                   QPixmap( (const char**)movepoint_xpm ));
 
-    but[0] = new QToolButton(maintoolbar, "deactivate layer");
+    but[0] = new QToolButton(this, "deactivate layer");
     but[0]->setIconSet(set0);
-    but[1] = new QToolButton(maintoolbar, "pointinput layer");
+    but[1] = new QToolButton(this, "pointinput layer");
     but[1]->setIconSet(set1);
     but[1]->setTextLabel("Input Point");    
-    but[2] = new QToolButton(maintoolbar, "circleinput layer");
+    but[2] = new QToolButton(this, "circleinput layer");
     but[2]->setIconSet(set2);
     but[2]->setTextLabel("Input WeightedPoint");    
-    but[3] = new QToolButton(maintoolbar, "movedelete layer");
+    but[3] = new QToolButton(this, "movedelete layer");
     but[3]->setIconSet(set3);
     but[3]->setTextLabel("Edit Vertex");
   	

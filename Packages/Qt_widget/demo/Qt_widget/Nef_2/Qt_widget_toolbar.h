@@ -28,11 +28,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : demo/Qt_widget/Nef_2/Qt_widget_toolbar.h
+// file          : Qt_widget_toolbar.h
 // package       : Qt_widget
-// author(s)     : Ursu Radu
-// release       : CGAL-2.4
-// release_date  : 2002, May 16
+// author(s)     : Radu Ursu
+// release       : 
+// release_date  : 
 //
 // coordinator   : Laurent Rineau
 //
@@ -60,19 +60,13 @@
 #include <qmainwindow.h>
 
 
-class Tools_toolbar : public QObject
+class Tools_toolbar : public QToolBar
 {
-	Q_OBJECT
+  Q_OBJECT
 public:
   Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw);
   ~Tools_toolbar(){};
-  QToolBar*	toolbar(){return maintoolbar;}
-
-signals:
-  void new_object(CGAL::Object);
-
 private:
-  QToolBar        *maintoolbar;
   QToolButton     *but[10];
   QButtonGroup    *button_group;
   CGAL::Qt_widget *widget;

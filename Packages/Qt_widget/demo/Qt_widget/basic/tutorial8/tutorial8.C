@@ -47,7 +47,6 @@ public:
     QToolBar  *layers_toolbar;
     layers_toolbar = new QToolBar("Tools", this, 
 				QMainWindow::Top, TRUE, "Tools");
-    addToolBar(layers_toolbar, Top, FALSE);
     get_point_button = new QToolButton(layers_toolbar, "Get Point");
     get_point_button->setPixmap(QPixmap( (const char**)point_xpm ));
     get_point_button->setToggleButton(true);
