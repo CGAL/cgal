@@ -63,6 +63,7 @@
 
 #include <CGAL/Pm_insert_utils.h>
 #include <list>
+#include <map>
 
 CGAL_BEGIN_NAMESPACE
 
