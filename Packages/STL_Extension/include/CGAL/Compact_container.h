@@ -855,7 +855,7 @@ namespace CGALi {
  template < class DSC, class Ptr1, class Ref1>
   inline
   bool operator==(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
-                  const CGAL_NULL_TYPE CGAL_assertion_code(n))
+                  CGAL_NULL_TYPE CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
     return &*rhs == NULL;
@@ -873,7 +873,7 @@ namespace CGALi {
  template < class DSC, class Ptr1, class Ref1>
   inline
   bool operator!=(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
-		  const CGAL_NULL_TYPE CGAL_assertion_code(n))
+		  CGAL_NULL_TYPE CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;
