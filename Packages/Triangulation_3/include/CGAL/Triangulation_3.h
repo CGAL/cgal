@@ -1300,6 +1300,13 @@ public:
     return Facet_iterator(ncthis);
   }
 
+  Cell_circulator incident_cells(Edge e) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    return Cell_circulator(ncthis,e);
+  }
+
   // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
 
   CGAL_Bounded_side
