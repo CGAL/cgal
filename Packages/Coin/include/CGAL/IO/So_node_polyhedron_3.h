@@ -70,21 +70,22 @@ public:
   typedef typename Polyhedron::Facet_iterator          Facet_iterator;
   typedef typename Polyhedron::Vertex_iterator         Vertex_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator
-                                              Halfedge_around_facet_circulator;
+                                Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Halfedge_around_vertex_circulator
-                                              Halfedge_around_vertex_circulator;
+                                Halfedge_around_vertex_circulator;
   typedef typename Traits::Point_3                     Point;
   //typedef typename Polyhedron::Size                    Size;
 
   static void initClass(){
     do {
-      const char * classname = SO__QUOTE(Node_polyhedron_3);
-      //PRIVATE_COMMON_INIT_CODE(_class_, classname, &_class_::createInstance, _parentclass_);
+      const char * classname = SO__QUOTE(Node_polyhedron_3);      
       do {
         // Make sure we only initialize once.
-        assert(Node_polyhedron_3::classTypeId == SoType::badType() && "don't init() twice!");
+        assert(Node_polyhedron_3::classTypeId == SoType::badType() && 
+                "don't init() twice!");
         // Make sure superclass gets initialized before subclass.
-        assert(SoShape::getClassTypeId() != SoType::badType() && "you forgot init() on parentclass!");
+        assert(SoShape::getClassTypeId() != SoType::badType() && 
+                "you forgot init() on parentclass!");
 
         // Set up entry in the type system.
         Node_polyhedron_3::classTypeId =
@@ -103,7 +104,8 @@ public:
     do {
       Node_polyhedron_3::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
-      assert(Node_polyhedron_3::classTypeId != SoType::badType() && "you forgot init()!");
+      assert(Node_polyhedron_3::classTypeId != SoType::badType() &&
+                "you forgot init()!");
       // Initialize a fielddata container for the class only once. 
       if (!Node_polyhedron_3::fieldData) {
         Node_polyhedron_3::fieldData =
@@ -120,7 +122,8 @@ public:
     do {
       Node_polyhedron_3::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
-      assert(Node_polyhedron_3::classTypeId != SoType::badType() && "you forgot init()!");
+      assert(Node_polyhedron_3::classTypeId != SoType::badType() && 
+                "you forgot init()!");
       // Initialize a fielddata container for the class only once. 
       if (!Node_polyhedron_3::fieldData) {
         Node_polyhedron_3::fieldData =
@@ -394,7 +397,8 @@ protected:
                         const SoPrimitiveVertex * v3,
                         SoPickedPoint *pp){
     
-    SoPolyhedronDetail<Polyhedron_3> *copy = new SoPolyhedronDetail<Polyhedron_3>(action, v1, v2, v3, pp, p);
+    SoPolyhedronDetail<Polyhedron_3> 
+      *copy = new SoPolyhedronDetail<Polyhedron_3>(action, v1, v2, v3, pp, p);
     return copy;
   }
 
