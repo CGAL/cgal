@@ -223,8 +223,8 @@ public:
    * \param en the notification class. It's default value is NULL, which
    * implies no notification on insertion.
    * \return a handle to a new halfedge directed in the same way as the curve
-   * cv. That is, The curve source and target points coinside with the points
-   * of the source and target vertices of the returned halfedge respectively.)
+   * cv. That is, the curve source and target points coinside with the points
+   * of the source and target vertices of the returned halfedge respectively.
    */
   Halfedge_handle insert_in_face_interior(const X_curve_2 & cv, 
                                           Face_handle f, 
@@ -399,7 +399,8 @@ public:
     // is not changed.
   }
 
-  //! determines whether a given point lies within the interior of a given face
+  //! determines whether a given point lies within the interior of a given
+  //! face.
 
   /*! is_point_in_face() is a predicate that determines whether a given point 
    * lies within the interior of a given face.
@@ -418,32 +419,36 @@ public:
     if (!f->is_unbounded()) {
       // f is bounded:
       Halfedge_const_handle h = f->halfedge_on_outer_ccb();
-      return point_is_in(p, h, h->curve());
-    return false;
+      if (!point_is_in(p, h, h->curve())) return false;
     }
-    // f is the unbounded face:
-    if (f->holes_begin() == f->holes_end()) return true;
-    // f has at least one hole:
-    Halfedge_const_handle h = *(f->holes_begin());
-    return point_is_in(p, h, h->curve());
+    // Examine f holes:
+    for (Holes_const_iterator it = f->holes_begin(); it != f->holes_end();
+         ++it)
+    {
+      Halfedge_const_handle h = *it;
+      if (point_is_in(p, h, h->curve())) return false;
+    }
+    return true;
   }
 
 protected:
 
-  //! determines whether a given point lies within the interior of a face
-  //! incident to a given halfedge.
+  //! determines whether a given point lies within the region bounded by
+  //! a circular boundary given by a halfedge on the boundary.
 
   /*! point_is_in() is a predicate that determines whether a given point lies
-   * within the interior of a face incident to a given halfedge. The halfedge
-   * curve is provided explicitly, in case the halfedge hasn't been fully
-   * constructed yet.
-   * A point lies within a face interior, iff the number of intersections 
-   * between the face boundary and a ray emanating from the point is even.
+   * within the geometrical region bounded by a circular boundary given by a
+   * halfedge on the boundary. The halfedge curve is provided explicitly, in
+   * case the halfedge hasn't been fully constructed yet.
+   * A point lies within region, iff the number of intersections between the
+   * region boundary and a ray emanating from the point is even.
    * This function counts the number of intersections with a vertical ray, by
    * counting the number of boundary halfedges that are above the input point,
    * and the input point is in their x-range. The functions carefuly handles
    * degenerate cases. For example, the vertical ray coinsides with a boundary
    * halfedge.
+   * Note that this function iterates the given circular boundary only, and
+   * ignores other objcts, such as holes that might be inside the boundary.
    * \param p the given point.
    * \param ne a handle to a halfedge incident to the face in question.
    * \param ncv the curve of the given halfedge (for cases where the
