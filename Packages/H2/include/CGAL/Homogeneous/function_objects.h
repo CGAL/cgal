@@ -301,7 +301,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Construct_point_on_2  Construct_point_on_2;
     typedef typename K::Compare_xy_2          Compare_xy_2;
     typedef typename K::Collinear_are_ordered_along_line_2
-                                             Collinear_are_ordered_along_line_2;
+                                           Collinear_are_ordered_along_line_2;
     Collinear_are_ordered_along_line_2 co;
     Construct_point_on_2 cp;
     Compare_xy_2 cxy;
