@@ -80,28 +80,28 @@ int  QPE_full_exact_pricing<Rep_>::
 pricing( )
 {
     // get properties of quadratic program
-    int  w = solver().number_of_working_variables();
+    int  w = this->solver().number_of_working_variables();
 
     // loop over all non-basic variables
     int  j,  min_j  = -1;
-    ET   mu, min_mu = et0;
+    ET   mu, min_mu = this->et0;
     for ( j = 0; j < w; ++j) {
 
 	// variable non-basic?
-	if ( ! solver().is_basic( j)) {
+	if ( ! this->solver().is_basic( j)) {
 
 	    // compute mu_j
-	    mu = mu_j( j);
+	    mu = this->mu_j( j);
 
 	    CGAL_qpe_debug {
-		vout() << "mu_" << j << ": " << mu << std::endl;
+		this->vout() << "mu_" << j << ": " << mu << std::endl;
 	    }
 
 	    // new minimum?
 	    if ( mu < min_mu) { min_j = j; min_mu = mu; }
 	}
     }
-    vout() << std::endl;
+    this->vout() << std::endl;
 
     // return index of entering variable
     return min_j;
