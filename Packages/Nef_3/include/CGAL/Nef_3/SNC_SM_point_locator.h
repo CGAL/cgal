@@ -300,7 +300,6 @@ public:
       TRACEN(circle(l_res));
     } else { // has vertices !
       CGAL_nef3_assertion( number_of_svertices()!=0 );
-      CGAL_nef3_warning( number_of_svertices()>1);
       SVertex_iterator vi = svertices_begin();
       if( p == point(vi).antipode()) {
 	++vi;
