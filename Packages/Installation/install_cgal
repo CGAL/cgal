@@ -21,10 +21,10 @@
 # - Development licenses grant access to the source code of the library 
 #   to develop programs. These programs may be sold to other parties as 
 #   executable code. To obtain a development license, please contact
-#   the CGAL Consortium (at cgal@cs.uu.nl).
+#   the CGAL Consortium (at contact@cgal.org).
 # - Commercialization licenses grant access to the source code and the
 #   right to sell development licenses. To obtain a commercialization 
-#   license, please contact the CGAL Consortium (at cgal@cs.uu.nl).
+#   license, please contact the CGAL Consortium (at contact@cgal.org).
 #
 # This software and documentation is provided "as-is" and without
 # warranty of any kind. In no event shall the CGAL Consortium be
@@ -46,7 +46,7 @@
 # CGAL specific:
 
 # ---------------------------------------------
-CGAL_VERSION='2.2'
+CGAL_VERSION='2.3'
 # ---------------------------------------------
 CGAL_INSTALL_CGAL="`basename ${0}`"
 # ---------------------------------------------
