@@ -238,6 +238,7 @@ doc_ps_a4:
 	cd basic; cp basic_lib.ps $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps/. ;
 	cd support; cp support_lib.ps $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps/. ;
 	cd use_of_stl; cp use_of_stl.ps $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps/. ;
+	rm -r $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4
 	mv $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4
 	rmdir $(DOC_PS_DESTINATION)/doc_ps/a4
 	chmod -R a+r $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4;
@@ -252,6 +253,7 @@ doc_ps_letter:
 	cd basic; cp basic_lib_letter.ps $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps/basic_lib.ps ;
 	cd support; cp support_lib_letter.ps $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps/support_lib.ps ;
 	cd use_of_stl; cp use_of_stl_letter.ps $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps/use_of_stl.ps ;
+	rm -r $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter
 	mv $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter
 	rmdir $(DOC_PS_DESTINATION)/doc_ps/letter
 	chmod -R a+r $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter;
