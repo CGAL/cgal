@@ -57,8 +57,6 @@ int main(int argc, char *argv[])
 #include <CGAL/Min_ellipse_2.h>
 #include <CGAL/Min_ellipse_2_traits_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include <CGAL/predicates_on_points_2.h>
-#include <CGAL/predicate_objects_on_points_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -92,8 +90,7 @@ typedef Triangulation_2::Face_handle                              Face_handle;
 typedef Triangulation_2::Edge_iterator                            Edge_iterator;
 typedef Triangulation_2::Face_iterator                            Face_iterator;
 
-typedef CGAL::p_Less_xy<Point>                                    Point_compare;
-
+typedef K::Less_xy_2                                              Point_compare;
 
 
 class geo_hull : public geowin_update<std::list<Point>, std::list<Segment> >
