@@ -138,6 +138,8 @@ class Segment_Voronoi_diagram_2
 protected:
   // LOCAL TYPES
   //------------
+  typedef Segment_Voronoi_diagram_2<Gt,DS,LTag>         Self;
+
   typedef Segment_Voronoi_diagram_traits_wrapper_2<Gt>  Modified_traits;
   typedef Triangulation_2<Modified_traits,DS>           DG;
   typedef DG                                            Delaunay_graph;
@@ -183,7 +185,7 @@ protected:
   // these containers should have point handles and should replace the
   // point container...
   typedef Triple<Point_2,Point_2,bool>   Site_rep_2;
-  typedef std::vector<Site_rep_2>        Input_sites_container;
+  typedef std::list<Site_rep_2>          Input_sites_container;
   typedef typename Input_sites_container::const_iterator
   All_inputs_iterator;
 
@@ -199,6 +201,17 @@ public:
 
 protected:
   typedef CGALi::Svd_project_site_2<Vertex>      Proj_site;
+
+  struct Point_handle_less_than {
+    // less than
+    bool operator()(const Point_handle& x,
+		    const Point_handle& y) const {
+      return &(*x) < &(*y);
+    }
+  };
+  
+  typedef std::map<Point_handle,Point_handle,Point_handle_less_than>
+  Handle_map;
 
 public:
 #if STORE_INPUT_SITES
@@ -247,31 +260,20 @@ public:
 
   template< class Input_iterator >
   Segment_Voronoi_diagram_2(Input_iterator first, Input_iterator beyond,
-			    const Gt& gt=Gt())
-    : DG(gt)
+			    const Gt& gt=Gt()) : DG(gt)
   {
     insert(first, beyond);
   }
 
-  Segment_Voronoi_diagram_2(const Segment_Voronoi_diagram_2 &svd)
-    : DG(svd)
-  {
-    CGAL_postcondition( is_valid() );
-  }
-
-  Segment_Voronoi_diagram_2&
-  operator=(const Segment_Voronoi_diagram_2& svd)
-  {
-    DG::operator=(svd);
-    return (*this);
-  }
+  Segment_Voronoi_diagram_2(const Self& other);
+  Self& operator=(const Self& other);
 
 public:
   // ACCESS METHODS
   // --------------
   const Geom_traits&  geom_traits() const { return DG::geom_traits(); }
 
-  const Data_structure&   ds() const { return this->_tds; }
+  const Data_structure&   data_structure() const { return this->_tds; }
   const Point_container&  point_container() const { return pc_; }
 
   inline size_type number_of_input_sites() const {
@@ -300,6 +302,10 @@ public:
 
   inline Vertex_handle finite_vertex() const {
     return DG::finite_vertex();
+  }
+
+  inline int dimension() const {
+    return DG::dimension();
   }
 
   using Delaunay_graph::cw;
@@ -614,7 +620,7 @@ public:
   // I/O METHODS
   //------------
   template< class Stream >
-  Stream& draw_dual(Stream &str) const
+  Stream& draw_dual(Stream& str) const
   {
     Finite_edges_iterator eit = finite_edges_begin();
     for (; eit != finite_edges_end(); ++eit) {
@@ -624,7 +630,7 @@ public:
   }
 
   template < class Stream > 
-  Stream& draw_skeleton(Stream &str) const
+  Stream& draw_skeleton(Stream& str) const
   {
     Finite_edges_iterator eit = finite_edges_begin();
     for (; eit != finite_edges_end(); ++eit) {
@@ -647,8 +653,10 @@ public:
   // MK: this has to be rewritten. all the checking must be done in
   // the geometric traits class.
   template< class Stream >
-  Stream& draw_dual_edge(Edge e, Stream &str) const
+  Stream& draw_dual_edge(Edge e, Stream& str) const
   {
+    CGAL_precondition( !is_infinite(e) );
+
     typename Geom_traits::Line_2              l;
     typename Geom_traits::Segment_2           s;
     typename Geom_traits::Ray_2               r;
@@ -659,9 +667,21 @@ public:
     if (CGAL::assign(l, o))   str << l;
     if (CGAL::assign(s, o))   str << s; 
     if (CGAL::assign(r, o))   str << r;
-    if (CGAL::assign(ps, o))  str << ps;
+    if (CGAL::assign(ps, o))  ps.draw(str);
 
     return str;
+  }
+
+  template< class Stream >
+  inline
+  Stream& draw_dual_edge(Edge_circulator ec, Stream& str) const {
+    return draw_dual_edge(*ec, str);
+  }
+
+  template< class Stream >
+  inline
+  Stream& draw_dual_edge(Finite_edges_iterator eit, Stream& str) const {
+    return draw_dual_edge(*eit, str);
   }
 
 public:
@@ -678,7 +698,7 @@ public:
     isc_.clear();
   }
 
-  void swap(const Segment_Voronoi_diagram_2& svd) {
+  void swap(Segment_Voronoi_diagram_2& svd) {
     DG::swap(svd);
     pc_.swap(svd.pc_);
     isc_.swap(svd.isc_);
@@ -687,6 +707,21 @@ public:
   //////////////////////////////////////////////////////////////////////
   // THE METHODS BELOW ARE LOCAL
   //////////////////////////////////////////////////////////////////////
+
+protected:
+  // THE COPY METHOD
+  //------------------------------------------------------------------
+  // used in the copy constructor and assignment operator
+
+  Storage_site_2
+  copy_storage_site(const Storage_site_2& ss_other,
+		    Handle_map& hm, const Tag_false&);
+
+  Storage_site_2
+  copy_storage_site(const Storage_site_2& ss_other,
+		    Handle_map& hm, const Tag_true&);
+
+  void copy(Segment_Voronoi_diagram_2& other);
 
 protected:
   // HELPER METHODS FOR COMBINATORIAL OPERATIONS ON THE DATA STRUCTURE
@@ -906,8 +941,6 @@ protected:
   }
 
 protected:
-  // MK: THE FOLLOWING ARE NOT IN THE SPEC
-  //======================================
   // METHODS FOR ACCESSING THE PRIMAL GRAPH
   //---------------------------------------
   // used primarily for visualization

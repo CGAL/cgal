@@ -27,6 +27,38 @@ CGAL_BEGIN_NAMESPACE
 
 //====================================================================
 //====================================================================
+//                   CONSTRUCTORS
+//====================================================================
+//====================================================================
+
+// copy constructor
+template<class Gt, class DS, class LTag>
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+Segment_Voronoi_diagram_2(const Segment_Voronoi_diagram_2& other)
+  : DG(other.geom_traits())
+{
+  Segment_Voronoi_diagram_2&
+    non_const_other = const_cast<Segment_Voronoi_diagram_2&>(other);
+  copy(non_const_other);
+  CGAL_postcondition( is_valid() );
+}
+
+// assignment operator
+template<class Gt, class DS, class LTag>
+typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Self&
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+operator=(const Self& other)
+{
+  if ( this != &other ) {
+    Segment_Voronoi_diagram_2&
+      non_const_other = const_cast<Segment_Voronoi_diagram_2&>(other);
+    copy(non_const_other);
+  }
+  return (*this);
+}
+
+//====================================================================
+//====================================================================
 //                   METHODS FOR INSERTION
 //====================================================================
 //====================================================================
@@ -190,7 +222,7 @@ insert_third(Vertex_handle v0, Vertex_handle v1)
   CGAL_precondition( number_of_vertices() == 2 );
 
   //  this can only be the case if the first site is a segment
-  CGAL_precondition( ds().dimension() == 1 );
+  CGAL_precondition( dimension() == 1 );
 
   Storage_site_2 ss = create_storage_site(v0, v1);
   Vertex_handle v = create_vertex_dim_up(ss);
@@ -598,6 +630,12 @@ insert_segment(const Site_2& t, Vertex_handle vnear)
       v1 = insert_point( t.target(), v0 );
     }
 
+    if ( number_of_vertices() == 2 ) {
+      Vertex_handle v0( finite_vertices_begin() );
+      Vertex_handle v1( ++finite_vertices_begin() );
+      return insert_third(v0, v1);
+    }
+
     Storage_site_2 ss = create_storage_site(v0, v1);
     // we do not add vs in the vertex list; it is inserted inside
     // the method insert_segment2
@@ -614,7 +652,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 			Vertex_handle vnearest)
 {
   CGAL_precondition( t.is_segment() );
-  CGAL_precondition( number_of_vertices() >= 2 );
+  CGAL_precondition( number_of_vertices() > 2 );
 
   CGAL_assertion( vnearest != Vertex_handle() );
 
@@ -1537,7 +1575,7 @@ is_valid(bool verbose, int level) const
   if (number_of_vertices() <= 1) { return true; }
 
   // level 0 test: check the TDS
-  bool result = ds().is_valid(verbose, level);
+  bool result = data_structure().is_valid(verbose, level);
 
   if ( result && verbose ) {
     std::cerr << "SVDDS is ok... " << std::flush;
@@ -1605,6 +1643,128 @@ print_error_message() const
 }
 
 //--------------------------------------------------------------------
+//--------------------------------------------------------------------
+// the copy method
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
+
+template<class Gt, class DS, class LTag>
+typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Storage_site_2
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
+		  const Tag_false&)
+{
+  if ( ss_other.is_segment() ) {
+    Point_handle p0 = hm[ ss_other.point_handle(0) ];
+    Point_handle p1 = hm[ ss_other.point_handle(1) ];
+
+    return Storage_site_2(p0, p1);
+  } else {
+    Point_handle p0 = hm[ ss_other.point_handle(0) ];
+
+    return Storage_site_2(p0);
+  }
+}
+
+template<class Gt, class DS, class LTag>
+typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Storage_site_2
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
+		  const Tag_true&)
+{
+  if ( ss_other.is_segment() ) {
+    if ( ss_other.is_exact() ) {
+      Point_handle p0 = hm[ ss_other.point_handle(0) ];
+      Point_handle p1 = hm[ ss_other.point_handle(1) ];
+
+      return Storage_site_2(p0, p1);
+    } else if ( ss_other.is_exact(0) ) {
+      Point_handle p0 = hm[ ss_other.point_handle(0) ];
+      Point_handle p1 = hm[ ss_other.point_handle(1) ];
+      Point_handle p4 = hm[ ss_other.point_handle(4) ];
+      Point_handle p5 = hm[ ss_other.point_handle(5) ];
+
+      return Storage_site_2(p0, p1, p4, p5, true);
+    } else if ( ss_other.is_exact(1) ) {
+      Point_handle p0 = hm[ ss_other.point_handle(0) ];
+      Point_handle p1 = hm[ ss_other.point_handle(1) ];
+      Point_handle p2 = hm[ ss_other.point_handle(2) ];
+      Point_handle p3 = hm[ ss_other.point_handle(3) ];
+
+      return Storage_site_2(p0, p1, p2, p3, false);
+    } else {
+      Point_handle p0 = hm[ ss_other.point_handle(0) ];
+      Point_handle p1 = hm[ ss_other.point_handle(1) ];
+      Point_handle p2 = hm[ ss_other.point_handle(2) ];
+      Point_handle p3 = hm[ ss_other.point_handle(3) ];
+      Point_handle p4 = hm[ ss_other.point_handle(4) ];
+      Point_handle p5 = hm[ ss_other.point_handle(5) ];
+
+      return Storage_site_2(p0, p1, p2, p3, p4, p5);
+    }
+  } else {
+    if ( ss_other.is_exact() ) {
+      Point_handle p0 = hm[ ss_other.point_handle(0) ];
+      return Storage_site_2(p0);
+    } else {
+      Point_handle p2 = hm[ ss_other.point_handle(2) ];
+      Point_handle p3 = hm[ ss_other.point_handle(3) ];
+      Point_handle p4 = hm[ ss_other.point_handle(4) ];
+      Point_handle p5 = hm[ ss_other.point_handle(5) ];
+      return Storage_site_2(p2, p3, p4, p5);
+    }
+  }
+}
+
+template<class Gt, class DS, class LTag>
+void
+Segment_Voronoi_diagram_2<Gt,DS,LTag>::
+copy(Segment_Voronoi_diagram_2& other)
+{
+  // first copy the point container and input point container
+  pc_ = other.pc_;
+  isc_ = other.isc_;
+
+  // then copy the diagram
+  DG::operator=(other);
+
+  // now we have to update the sotrage sites in each vertex of the
+  // diagram and also update the 
+
+  // first create a map between the old point handles and the new ones
+  Handle_map hm;
+
+  Point_handle it_other = other.pc_.begin();
+  Point_handle it_this = pc_.begin();
+  for (; it_other != other.pc_.end(); ++it_other, ++it_this) {
+    hm[it_other] = it_this;
+  }
+
+  // then update the storage sites for each vertex
+  Intersections_tag itag;
+
+  Finite_vertices_iterator vit_other = other.finite_vertices_begin();
+  Finite_vertices_iterator vit_this = finite_vertices_begin();
+  for (; vit_other != other.finite_vertices_end(); vit_other++,
+	 vit_this++) {
+    Storage_site_2 ss_other = vit_other->storage_site();
+
+#ifndef NDEBUG
+    Storage_site_2 ss_this = vit_this->storage_site();
+    if ( ss_other.is_segment() ) {
+      CGAL_assertion( ss_this.is_segment() );
+      CGAL_assertion( same_segments(ss_this.site(), ss_other.site()) );
+    } else {
+      CGAL_assertion( ss_this.is_point() );
+      CGAL_assertion( same_points(ss_this.site(), ss_other.site()) );
+    }
+#endif
+
+    Storage_site_2 new_ss_this = copy_storage_site(ss_other, hm, itag);
+    vit_this->set_site( new_ss_this );
+  }
+
+}
 
 CGAL_END_NAMESPACE
 
