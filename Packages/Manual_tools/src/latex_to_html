@@ -260,6 +260,24 @@ warning() {
 }
 
 #---------------------------------------------------------------------#
+# find_in_search_path <name> <search-path>
+#     - searches for <name> in all directories listed in the
+#       colon seperated <search-path> starting at ${CurrentDir}
+#     - Echos the first path that contains <name>, otherwise echos ".".
+#---------------------------------------------------------------------#
+
+find_in_search_path() {
+    search_paths="`echo $2 | sed 's/:/ /g'`"
+    for p in ${search_paths} ; do
+        if [[ "$p" != "" && -r ${CurrentDir}/$p/$1 ]]; then
+            echo -n $p
+            return
+        fi
+    done
+    echo -n "."
+}
+
+#---------------------------------------------------------------------#
 # print_time <start-time> <end-time>
 #     - prints the time difference in the format hh:mm:ss
 #     - <start-time> and <end-time> are in seconds
@@ -512,7 +530,11 @@ convert() {
         # copy user images first
         ImageFiles=`\cat *.html | cc_extract_images | \sort | \uniq`
         for f in $ImageFiles ; do
-            if [ -r ${CurrentDir}/${dir}/${f} ]; then
+            ImageSearchPath="."
+            if [ ! -r ${CurrentDir}/${dir}/${f} ]; then
+                ImageSearchPath="`find_in_search_path ${dir}/${f} ${LATEX_CONV_INPUTS}`"
+            fi
+            if [ -r ${CurrentDir}/${ImageSearchPath}/${dir}/${f} ]; then
                 ImageBase=${f##*/}
                 # relative path, can be empty. If not empty, trailing '/'.
                 ImagePath=${f%$ImageBase}
@@ -522,9 +544,9 @@ convert() {
                       error noexit "failed to create directory for image '$f'."
                     fi
                 fi
-                \cp ${CurrentDir}/${dir}/${f} ${f}
+                \cp ${CurrentDir}/${ImageSearchPath}/${dir}/${f} ${f}
             else
-                error noexit "image file '${CurrentDir}/${dir}/${f}' not found."
+               error noexit "image file '${CurrentDir}/${dir}/${f}' not found."
             fi
         done
         # copy latex_to_html internal images with 'cc_' prefix now
