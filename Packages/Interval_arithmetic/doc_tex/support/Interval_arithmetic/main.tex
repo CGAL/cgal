@@ -229,8 +229,9 @@ this, he must take care to reset it to 'round to the nearest' before them.
 Platform support:\\
 This part of {\cgal} must be explicitly ported to each non yet supported
 platform.  For Intel, Sparc and Mips, only the GNU compilers use assembly
-code.  The MipsPro compiler uses the slow C code instead, and does not
-support the construction \ccc{convert_to<>()} right now.
+code.  The MipsPro compiler uses slower C code instead, and does not
+support the construction \ccc{convert_to<>()}, but a workaround
+\ccc{convert_from_to(target, source)}.
 
 \end{ccClass}
 
@@ -307,10 +308,14 @@ As a general rule, we advise the use of
 
 \ccImplementation
 
-The template definition of the low level predicates of \cgal are overloaded for
-the type \ccc{Filtered_exact<CT,ET>}.  It is a partial specialisation,
+The template definition of the low level predicates of {\cgal} are overloaded
+for the type \ccc{Filtered_exact<CT,ET>}.  It is a partial specialisation,
 which implies that this is not supported by the compilers that do not support
-this C++ feature (MipsPro 7.2).
+this C++ feature (MipsPro 7.2).  A workaround is in place that allows to use
+one such filtered number type at once, by explicitely specializing the
+predicates for it.  To do so, just define the macros \ccc{CGAL_IA_CT} and
+\ccc{CGAL_IA_ET} to the corresponding number types before any inclusion of
+{\cgal} files.
 
 For each predicate file, the overloaded code is generated automatically by a
 \ccc{PERL} script
@@ -320,18 +325,19 @@ This script parses the template declaration of the functions and generates the
 overloaded code the following way:
 \begin{itemize}
 \item convert the entries to intervals using
-    \ccc{convert_to<Interval_nt_advanced>(CT)},
+    \ccc{convert_to<Interval_nt_advanced>(CT)} (via the .interval() member
+    function),
 \item call the original template function with the type
     \ccc{Interval_nt_advanced},
 \item if no exception is thrown, return the value,
 \item if an exception is thrown (the filter failed), convert the original
-    entries using \ccc{convert_to<ET>(CT)},
+    entries using \ccc{convert_to<ET>(CT)} (via the .exact() member function),
 \item and call the original template function with the type \ccc{ET}.
 \end{itemize}
 
 \ccExample
 
-The low level template predicates of \cgal are in files named
+The low level template predicates of {\cgal} are in files named
 \ccc{CGAL/predicates_on_ftC2.h} (resp. ftC3), the script is used
 to produce the files \ccc{CGAL/Arithmetic_filter/predicates_on_ftC2.h}
 (resp. ftC3).
