@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+Version 1.0.15 on 15-Sep-2003
+- Fixed typos in the doc
+
 Version 1.0.14 on 15-Sep-2003
 - Changed filename reference_part.tex to intro.tex
 
