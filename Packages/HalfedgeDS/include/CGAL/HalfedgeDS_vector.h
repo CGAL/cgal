@@ -515,12 +515,10 @@ public:
         // `normalize_border()' has been called and no halfedge insertion
         // or removal and no change in border status of the halfedges have
         // occured since then.
-        CGAL_postcondition( border_halfedges != Halfedge_iterator());
         return border_halfedges;
     }
 
     Halfedge_const_iterator border_halfedges_begin() const {
-        CGAL_postcondition( border_halfedges != Halfedge_iterator());
         return border_halfedges;
     }
 
