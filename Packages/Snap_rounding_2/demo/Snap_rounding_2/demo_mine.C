@@ -89,6 +89,8 @@ void show_results(Snap_rounding_2 &s,
     Point_const_iterator i2 = prev;
     bool seg_painted = false;
 
+    std::cout << "!!!!!!!!!!!!!!!!!!!!!!\n";
+
     if(show_hp)
       w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
 					          i2->y() - prec / 2.0),
@@ -259,7 +261,7 @@ int main(int argc,char *argv[])
 
   if(argc == 1 || argc == 3) {
     // initialize window
-    W.init(MIN_X - 3,MAX_X + 3,MIN_Y - 2);
+    W.init(MIN_X - 3,MAX_X + 60,MIN_Y - 45);
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
     W.buttons_per_line(4);
@@ -281,7 +283,9 @@ int main(int argc,char *argv[])
     W.button("Enlarge Pixel",16);
     W.button("Shrink Pixel",17);
     W.button("Reset Pixel",18);
-    W.button("Exit",19);
+    W.button("Enlarge Delta",19);
+    W.button("Shrink Delta",20);
+    W.button("Exit",21);
     W.display();
     W.disable_button(4);
     W.disable_button(5);
@@ -471,16 +475,12 @@ int main(int argc,char *argv[])
     } else if(mouse_input == 16) {
       prec = prec * 2;
       s.change_pixel_size(prec);
-      delta = delta * 2;
-      s.change_delta(delta);
       if(prec == 2)
         W.disable_button(16);
       W.enable_button(17);
     } else if(mouse_input == 17) {
       prec = prec / 2;
       s.change_pixel_size(prec);
-      delta = delta / 2;
-      s.change_delta(delta);
       if(prec < 1.0 / 5)
         W.disable_button(17);
       W.enable_button(16);
@@ -490,7 +490,17 @@ int main(int argc,char *argv[])
       s.change_pixel_size(prec);
       W.enable_button(16);
       W.enable_button(17);
-    } else if(mouse_input == 19) {
+     } else if(mouse_input == 19) {
+      delta = delta + 1;
+      s.change_delta(delta);
+      if(delta > 2)
+        W.enable_button(20);
+    } else if(mouse_input == 20) {
+      delta = delta - 1;
+      s.change_delta(delta);
+      if(delta <= 2)
+        W.disable_button(20);
+   } else if(mouse_input == 21) {
       // finish
       break;
     }

@@ -21,7 +21,7 @@
 #ifndef CGAL_SR_2_H
 #define CGAL_SR_2_H
 
-#define DEBUG
+//#define DEBUG
 
 #include <CGAL/leda_rational.h> 
 
@@ -338,8 +338,10 @@ private:
         std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
   bool negative_slope(const Segment_2& s);
   bool positive_slope(const Segment_2& s);
-  void heat_pixel_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
-  void heat_pixel_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
+  void heat_pixel_up_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
+  void heat_pixel_down_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
+  void heat_pixel_up_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
+  void heat_pixel_down_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list);
   //@@@@ end functions for isrs
 
   void find_intersected_hot_pixels(Segment_data<Rep> &seg,
@@ -1091,7 +1093,7 @@ bool Snap_rounding_2<Rep_>::triangle_empty_down_left(const Segment_2& s,const Po
 
 // @@@@ a function for ISRS
 template<class Rep_>
-void Snap_rounding_2<Rep_>::heat_pixel_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
 {
   Object result;
   Point_2 inter_p;  
@@ -1133,7 +1135,49 @@ void Snap_rounding_2<Rep_>::heat_pixel_right(const Point_2& p,const Segment_2& s
 
 // @@@@ a function for ISRS
 template<class Rep_>
-void Snap_rounding_2<Rep_>::heat_pixel_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+void Snap_rounding_2<Rep_>::heat_pixel_down_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+{
+  Object result;
+  Point_2 inter_p;  
+
+  // find the intersction to the right on s
+  Segment_2 t(p,Point_2(s.max().x(),p.y()));
+  result = intersection(t,s);
+  if(assign(inter_p,result)) {
+    #ifdef DEBUG
+      std::cout << "1) inter_p = " << inter_p << std::endl;
+    #endif
+    // reach a point which is in the left pixel columns to the intersection
+    Segment_2 r(Point_2(inter_p.x() - pixel_size,inter_p.y()),
+                Point_2(inter_p.x() - pixel_size,s.target().y() < s.source().y() ?
+                                                 s.target().y() : s.source().y()));
+    result = intersection(r,s);
+    #ifdef DEBUG
+      std::cout << "r = " << r << std::endl;
+      std::cout << "s = " << s << std::endl;
+    #endif
+
+    if(assign(inter_p,result)) {
+      #ifdef DEBUG
+        std::cout << "2) inter_p = " << inter_p << std::endl;
+      #endif
+      // heat the resective pixel and insert it to hot_pixels_list
+      Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
+      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+ 				hp->get_center(),hp));
+    } else {
+      std::cout << "error 31\n";
+      exit(-1);
+    }
+  } else {
+    std::cout << "error 4\n";
+    exit(-1);
+  }
+}
+
+// @@@@ a function for ISRS
+template<class Rep_>
+void Snap_rounding_2<Rep_>::heat_pixel_up_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
 {
   Object result;
   Point_2 inter_p;  
@@ -1149,6 +1193,48 @@ void Snap_rounding_2<Rep_>::heat_pixel_left(const Point_2& p,const Segment_2& s,
     // reach a point which is in the right pixel columns to the intersection
     Segment_2 r(Point_2(inter_p.x() + pixel_size,inter_p.y()),
                 Point_2(inter_p.x() + pixel_size,s.target().y() > s.source().y() ?
+                                                 s.target().y() : s.source().y()));
+    result = intersection(r,s);
+    #ifdef DEBUG
+      std::cout << "r = " << r << std::endl;
+      std::cout << "s = " << s << std::endl;
+    #endif
+    if(assign(inter_p,result)) {
+      #ifdef DEBUG
+        std::cout << "2) inter_p = " << inter_p << std::endl;
+      #endif
+      // heat the resective pixel and insert it to hot_pixels_list
+      Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
+      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+ 				hp->get_center(),hp));
+    } else {
+      std::cout << "error 32\n";
+      exit(-1);
+    }
+  } else {
+    std::cout << "error 4\n";
+    exit(-1);
+  }
+}
+
+// @@@@ a function for ISRS
+template<class Rep_>
+void Snap_rounding_2<Rep_>::heat_pixel_down_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+{
+  Object result;
+  Point_2 inter_p;  
+
+  // find the intersction to the right on s
+  Segment_2 t(p,Point_2(s.min().x(),p.y()));
+  result = intersection(t,s);
+  if(assign(inter_p,result)) {
+    #ifdef DEBUG
+      std::cout << "1) inter_p = " << inter_p << std::endl;
+      std::cout << "t = " << t << std::endl;
+    #endif
+    // reach a point which is in the right pixel columns to the intersection
+    Segment_2 r(Point_2(inter_p.x() + pixel_size,inter_p.y()),
+                Point_2(inter_p.x() + pixel_size,s.target().y() < s.source().y() ?
                                                  s.target().y() : s.source().y()));
     result = intersection(r,s);
     #ifdef DEBUG
@@ -1241,7 +1327,7 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
           query_point = next_center_to_right(query_point,first_s);
         else if(sq_dis < dis2 &&
                 triangle_empty_up_right(first_s,query_point,hot_pixels_list) && negative_slope(first_s)) {
-          heat_pixel_right(query_point,first_s,hot_pixels_list);// insert to the end of the list
+          heat_pixel_up_right(query_point,first_s,hot_pixels_list);// insert to the end of the list
           done = true;
 	} else
           done = true;
@@ -1263,7 +1349,7 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
           query_point = next_center_to_left(query_point,first_s);
         } else if(sq_dis < dis2 &&
                 triangle_empty_up_left(first_s,query_point,hot_pixels_list) && positive_slope(first_s)) {
-          heat_pixel_left(query_point,first_s,hot_pixels_list);// insert to the end of the list
+          heat_pixel_up_left(query_point,first_s,hot_pixels_list);// insert to the end of the list
           done = true;
 	} else
           done = true;
@@ -1294,8 +1380,8 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
         if(sq_dis < dis1)
           query_point = next_center_to_right(query_point,first_s);
         else if(sq_dis < dis2 &&
-                triangle_empty_down_right(first_s,query_point,hot_pixels_list) && negative_slope(first_s)) {
-          heat_pixel_right(query_point,first_s,hot_pixels_list);// insert to the end of the list
+                triangle_empty_down_right(first_s,query_point,hot_pixels_list) && positive_slope(first_s)) {
+          heat_pixel_down_right(query_point,first_s,hot_pixels_list);// insert to the end of the list
           done = true;
 	} else
           done = true;
@@ -1321,8 +1407,8 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
         if(sq_dis < dis1) {
           query_point = next_center_to_left(query_point,first_s);
         } else if(sq_dis < dis2 &&
-                triangle_empty_down_left(first_s,query_point,hot_pixels_list) && positive_slope(first_s)) {
-          heat_pixel_left(query_point,first_s,hot_pixels_list);// insert to the end of the list
+                triangle_empty_down_left(first_s,query_point,hot_pixels_list) && negative_slope(first_s)) {
+          heat_pixel_down_left(query_point,first_s,hot_pixels_list);// insert to the end of the list
           done = true;
 	} else
           done = true;
