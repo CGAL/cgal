@@ -11,48 +11,15 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Filtred_container.h>
 #include <CGAL/Filtred_circulator.h>
-#include <CGAL/IO/File_header_extended_OFF.h>
+
+#include <CGAL/IO/File_header_extended_OFF.h> 
+// to skip comments and EOF in the function read_poly
 
 #ifdef CGAL_MESH_2_USE_TIMERS
 #include <CGAL/Timer.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
-
-// auxiliary classes
-// # TODO: use this Filtred_iterator usable by Filtred_container, so
-// that it erase bad elements. It will need a pointer to the container.
-// template <class In, class Pred>
-// class Filtred_iterator_from_container : public In
-// {
-//   Pred test;
-//   In _end;
-// public:
-//   typedef Pred Predicate;
-//   typedef In InputIterator;
-//   typedef Filtred_iterator_from_container<In,Pred> Self;
-
-//   Filtred_iterator_from_container(In current, In end, Pred p=Pred())
-//     : test(p), _end(end) 
-//     {
-//       while(!(*this==_end) & !test(*this))
-// 	this->In::operator++();
-//     };
-
-//   Self& operator++() {
-//     do {
-//       this->In::operator++();
-//     } while(!(*this==_end) & !test(*(*this)));
-//     return *this;
-//   }
-
-//   Self  operator++(int) {
-//     Self tmp = *this;
-//     ++*this;
-//     return tmp;
-//   }
-// };
-
 
 // Tr is a Delaunay constrained triangulation (with intersections or not)
 template <class Tr>
@@ -89,23 +56,168 @@ public:
   typedef typename Tr::List_constraints       List_constraints;
 
 public:
+  // CONSTRUCTORS
+
+  // default constructor
+  Mesh_2(const Geom_traits& gt = Geom_traits());
+
+  // for compatibility only
+  Mesh_2(List_constraints& lc, const Geom_traits& gt = Geom_traits());
+
+  // TODO: this comment
+  template <class InputIterator>
+  Mesh_2(InputIterator first, InputIterator last, 
+	 const Geom_traits& gt = Geom_traits())
+    : Tr(gt), is_really_bad(*this),
+	 bad_faces(is_really_bad), is_really_a_contrained_edge(*this), 
+	 c_edge_queue(is_really_a_contrained_edge)
+    {
+      while(first != last){
+	insert((*first).first, (*first).second);
+	++first;
+      }
+      CGAL_triangulation_postcondition(is_valid());
+    }
+
+  // ASSIGNEMENT
+  // TODO!
+
+  // ACCESS FUNCTIONS
   unsigned int number_of_contrained_edges() const;
+
+  bool is_bad(const Face_handle fh) const;
+
+  double squared_minimum_sine(const Face_handle fh) const;
+  double squared_minimum_sine(const Vertex_handle& va,
+			      const Vertex_handle& vb,
+			      const Vertex_handle& vc) const;
+  // IO
+
+  // write and read the constrained edges in the format:
+  //   number_of_edges
+  //   segment1
+  //   segment2
+  //   ...
   void write(std::ostream &f) const;
-  void write_poly(std::ostream &f) const;
   void read(std::istream &f);
+
+  // write and read a mesh in the Triangle .poly format 
+  // (see http://www-2.cs.cmu.edu/~quake/triangle.poly.html)
+  void write_poly(std::ostream &f) const;
   void read_poly(std::istream &f);
-  void reset() {
-    cluster_map.clear();
-    c_edge_queue.clear();
-    Bad_faces.clear();
-    seeds.clear();
-    clear();
+
+  // HELPING FUNCTION
+  void clear();
+
+  // MESHING FUNCTIONS
+
+  // Perform meshing. All faces but those connected to the infinite
+  // faces are marked.
+  void refine();
+
+  // Perform meshing. Seed_it is an iterator of points, representing
+  // seeds. Connected components of seeds are marked with the value of 
+  // "mark". Other components are marked with !mark. The connected
+  // component of infinite faces is always marked with false.
+  template <class Seed_it>
+  void refine(Seed_it begin, Seed_it end, bool mark = false)
+    {
+      init(begin, end, mark);
+
+#ifdef CGAL_MESH_2_USE_TIMERS
+      timer.reset();
+      timer.start();
+#endif
+      while(! (c_edge_queue.empty() && bad_faces.empty()) )
+	{
+	  conform();
+	  if ( !bad_faces.empty() )
+	    process_one_face();
+	}
+#ifdef CGAL_MESH_2_USE_TIMERS
+      timer.stop();
+      std::cout << "Refine mesh time: " << timer.time() << std::endl;
+#endif
+    }
+
+  // REMESHING FUNCTIONS
+
+  // Set the geom_traits and recalculate the list of bad faces
+  void set_geom_traits(const Geom_traits& gt);
+
+  // Set the geom_traits and add the sequence [begin, end[ to the list
+  // of bad faces.
+  // Fh_it is a iterator of Face_Handle.
+  // Use this overriden function if the list of bad faces can be
+  // computed easily without testing all faces.
+  template <class Fh_it>
+  void set_geom_traits(const Geom_traits& gt,
+		       Fh_it begin, Fh_it end)
+  {
+    _gt = gt;
+    for(Fh_it pfit=begin; pfit!=end; ++pfit)
+      push_in_bad_faces(*pfit);
   }
 
-  typedef std::list<Point> Seeds;
-  Seeds seeds;
+  // STEP BY STEP MESHING
+
+  // init(...): Initialize the data structures 
+  // (The call of one of the following init function is REQUIRED
+  // before any step by step operation).
+  // See the explanations of functions refine(...) for the
+  // signification of arguments
+  void init();
+
+  template <class Seed_it> 
+  void init(Seed_it begin, Seed_it end, bool mark = false)
+    {
+      cluster_map.clear();
+      c_edge_queue.clear();
+      bad_faces.clear();
+      
+      mark_facets(begin, end, mark);
+      
+      create_clusters();
+      fill_edge_queue();
+      fill_facette_map();
+    }
+
+  // mark_facets(...): procedure called to mark facets, same arguments 
+  // as init(...) above
+  template <class Seed_it>
+  void mark_facets(Seed_it begin, Seed_it end, bool mark = false)
+    {
+      if (dimension()<2) return;
+      if(begin!=end)
+	{
+	  for(All_faces_iterator it=all_faces_begin();
+	      it!=all_faces_end();
+	      ++it)
+	    it->set_marked(!mark);
+	  
+	  for(Seed_it it=begin; it!=end; ++it)
+	    {
+	      std::queue<Face_handle> face_queue;
+	      Face_handle fh=locate(*it);
+	      if(fh!=NULL)
+		propagate_marks(fh, mark);
+	    }
+	}
+      else
+	mark_convex_hull();
+      propagate_marks(infinite_face(), false);
+    };
+
+  // Conform edges and doesn't refine faces
+  void conform();
+
+  // Execute on step of the algorithm.
+  bool refine_step();
 
 private:
+  // PRIVATE TYPES
+
+  typedef CGAL::Threetuple<Vertex_handle> Threevertices;
 
   // traits type
   typedef typename Geom_traits::Vector_2 Vector_2;
@@ -125,8 +237,11 @@ private:
       Compute_squared_minimum_sine_2;
   typedef typename Geom_traits::Is_bad Is_bad;
 
+  // Cluster register several informations about clusters.
+  // A cluster is a is a set of vertices v_i incident to one vertice
+  // v_0, so that angles between segments [v_0, v_i] is less than 60°.
   struct Cluster {
-    bool reduced ;
+    bool reduced ; // Is the cluster reduced
 
     // smallest_angle gives the two vertices defining the
     // smallest angle in the cluster
@@ -135,20 +250,24 @@ private:
     FT rmin; // WARNING: rmin has no meaning if reduced=false!!!
     Squared_length minimum_squared_length;
 
-    // the following map tells what segments are in the cluster and
-    // they already have been splitted once
+    // The following map tells what vertices are in the cluster and if 
+    // the corresponding segment has been splitted once.
     typedef std::map<Vertex_handle, bool> Vertices_map;
     Vertices_map vertices;
 
-    inline bool is_reduced() const {
+    bool is_reduced() const {
       return reduced;
     }
 
-    inline bool is_reduced(const Vertex_handle v) {
+    bool is_reduced(const Vertex_handle v) {
       return vertices[v];
     }
   };
 
+  // Is_edge_constrained: function object class.
+  // Take a Mesh_2 object m and a Vertex_handle v in constructor.
+  // Is_edge_constrained(Vertex_handle v2) tells if [v,v2] is a
+  // constrained edge in m.
   class Is_edge_constrained {
     Self* _m;
     Vertex_handle _v;
@@ -178,18 +297,11 @@ private:
       }
   };
 
-  typedef Filtred_circulator<Vertex_circulator,
-    Is_edge_constrained> Constrained_vertex_circulator;
-
-  // Bad_faces: list of bad finite faces
-  // warning: some faces could be recycled during insertion in the
-  //  triangulation, that's why I use a wrapper around the map
-  typedef CGAL::Threetuple<Vertex_handle> Threevertices;
+  // Is_really_bad: TODO: remove this
   class Is_really_bad {
     Self& _m;
   public:
     Is_really_bad(Self& m) : _m(m) {};
-    inline
     bool operator()(const std::pair<FT, Threevertices>& p) const
       {
 	const Threevertices& t = p.second;
@@ -202,19 +314,10 @@ private:
       }
   };
 
-  const Is_really_bad is_really_bad;
-  typedef std::multimap<double, Threevertices> 
-                                              Bad_faces_container_primal_type;
-  CGAL::Filtred_container<Bad_faces_container_primal_type, 
-    Is_really_bad> Bad_faces;
-
-  // c_edge_queue: list of encroached constrained edges
-  //  warning: some edges could be destroyed, use the same wrapper
   class Is_really_a_contrained_edge {
     const Self& _m;
   public:
     explicit Is_really_a_contrained_edge(const Self& m) : _m(m) {};
-    inline
     bool operator()(const Constrained_edge& ce) const
       {
 	Face_handle fh;
@@ -224,14 +327,39 @@ private:
       }
   };
 
-  const Is_really_a_contrained_edge is_really_a_contrained_edge;
+  // typedefs for private members types
+  typedef Filtred_circulator<Vertex_circulator, Is_edge_constrained>
+    Constrained_vertex_circulator;
+
+  typedef CGAL::Filtred_container<std::multimap<double, Threevertices>,
+    Is_really_bad> Bad_faces;
+
   typedef std::list<Constrained_edge> List_of_constraints;
-  CGAL::Filtred_container<List_of_constraints,
-    Is_really_a_contrained_edge>       c_edge_queue;
+  typedef CGAL::Filtred_container<List_of_constraints, 
+                                  Is_really_a_contrained_edge>
+    Constrained_edges_queue;
 
   typedef std::multimap<Vertex_handle, Cluster> Cluster_map;
-  Cluster_map cluster_map;
+
+private:
+  // PRIVATE MEMBER DATAS
+
+  // bad_faces: list of bad finite faces
+  // warning: some faces could be recycled during insertion in the
+  //  triangulation, that's why I use a wrapper around the map
+  // is_really_bad: tester to filter bad faces
+  const Is_really_bad is_really_bad;
+  Bad_faces bad_faces;
+
+  // c_edge_queue: list of encroached constrained edges
+  //  warning: some edges could be destroyed, use the same wrapper
+  // is_really_a_contrained_edge: tester to filter c_edge_queue
+  const Is_really_a_contrained_edge is_really_a_contrained_edge;
+  Constrained_edges_queue c_edge_queue;
+
+  // Cluster_map: multimap Vertex_handle -> Cluster
   // each vertex can have several clusters
+  Cluster_map cluster_map;
 
 #ifdef CGAL_MESH_2_USE_TIMERS
   // Timer to bench
@@ -239,148 +367,25 @@ private:
 #endif
 
 public:
-  void refine();
-  void conform();
-  void init(bool mark=false);
+  // PUBLIC DATA MEMBERS
+  typedef std::list<Point> Seeds;
+  Seeds seeds; // TODO, WARNING: have to think about this variable and 
+  // about the default marker.
+
+private: 
+  // PRIVATE MEMBER FUNCTIONS
+  void propagate_marks(Face_handle, bool);
   void mark_convex_hull();
-
-private: void propagate_marks(Face_handle, bool);
-public:
-  // In the two following functions, Seed_it is an iterator of
-  // points, representing seeds
-
-  template <class Seed_it>
-  void refine(Seed_it begin, Seed_it end, bool mark=false)
-    {
-      init(begin, end, mark);
-
-#ifdef CGAL_MESH_2_USE_TIMERS
-      timer.reset();
-      timer.start();
-#endif
-      while(! (c_edge_queue.empty() && Bad_faces.empty()) )
-	{
-	  conform();
-	  if ( !Bad_faces.empty() )
-	    process_one_face();
-	}
-#ifdef CGAL_MESH_2_USE_TIMERS
-      timer.stop();
-      std::cout << "Refine mesh time: " << timer.time() << std::endl;
-#endif
-    }
-
-  template <class Seed_it> 
-  void init(Seed_it begin, Seed_it end, bool mark=false)
-    {
-      cluster_map.clear();
-      c_edge_queue.clear();
-      Bad_faces.clear();
-      
-      mark_facets(begin, end, mark);
-      
-      create_clusters();
-      fill_edge_queue();
-      fill_facette_map();
-    }
-
-  template <class Seed_it>
-  void mark_facets(Seed_it begin, Seed_it end, bool mark=false)
-    {
-      if (dimension()<2) return;
-      if(begin!=end)
-	{
-	  for(All_faces_iterator it=all_faces_begin();
-	      it!=all_faces_end();
-	      ++it)
-	    it->set_marked(!mark);
-	  
-	  for(Seed_it it=begin; it!=end; ++it)
-	    {
-	      std::queue<Face_handle> face_queue;
-	      Face_handle fh=locate(*it);
-	      if(fh!=NULL)
-		propagate_marks(fh, mark);
-	    }
-	}
-      else
-	mark_convex_hull();
-      propagate_marks(infinite_face(), false);
-    };
-
   void process_one_edge();
   void process_one_face();
-  bool refine_step();
 
-  // Set the geom_traits and recalculate the list of bad faces
-  void set_geom_traits(const Geom_traits& gt);
-
-  // Set the geom_traits and add the sequence [begin, end[ to the list
-  // of bad faces.
-  // Fh_it is a iterator of Face_Handle
-  template <class Fh_it>
-  void set_geom_traits(const Geom_traits& gt,
-		       Fh_it begin, Fh_it end)
-  {
-    _gt = gt;
-    for(Fh_it pfit=begin; pfit!=end; ++pfit)
-      {
-	const Vertex_handle&
-	  va = (*pfit)->vertex(0),
-	  vb = (*pfit)->vertex(1),
-	  vc = (*pfit)->vertex(2);
-	Bad_faces.insert(std::make_pair(aspect_ratio(*pfit),
-				    Threevertices(va,vb,vc)));
-      }
-  }
-
-  //CHECK
+  // checks
   bool is_encroached(const Vertex_handle va, 
 		     const Vertex_handle vb,
 		     Point p) const;
   bool is_encroached(const Vertex_handle va, 
 		     const Vertex_handle vb) const;
 
-  inline 
-  bool is_bad(const Face_handle f) const;
-  
-  inline
-  double aspect_ratio(const Face_handle f) const;
-
-
-  // constructors
-  Mesh_2(const Geom_traits& gt = Geom_traits()) : Tr(gt),
-    is_really_bad(*this), Bad_faces(is_really_bad),
-    is_really_a_contrained_edge(*this),
-    c_edge_queue(is_really_a_contrained_edge) {};
-
-  Mesh_2(List_constraints& lc, const Geom_traits& gt = Geom_traits())
-    : Tr(gt), is_really_bad(*this), Bad_faces(is_really_bad),
-    is_really_a_contrained_edge(*this),
-      c_edge_queue(is_really_a_contrained_edge)
-    {
-      typename List_constraints::iterator lcit = lc.begin();
-      for( ; lcit != lc.end(); ++lcit)
-	{
-	  insert( (*lcit).first, (*lcit).second);
-	}
-      CGAL_triangulation_postcondition(is_valid());
-    }
-  
-  template <class InputIterator>
-  Mesh_2(InputIterator first, InputIterator last, const Geom_traits&
-       gt = Geom_traits()) : Tr(gt), is_really_bad(*this),
-	 Bad_faces(is_really_bad), is_really_a_contrained_edge(*this), 
-	 c_edge_queue(is_really_a_contrained_edge)
-    {
-      while(first != last){
-	insert((*first).first, (*first).second);
-	++first;
-      }
-      CGAL_triangulation_postcondition(is_valid());
-    }
-
-private:
   void refine_face(Face_handle f);
   void refine_edge(Vertex_handle va, Vertex_handle vb);
   void split_face(const Face_handle& f, const Point& circum_center);
@@ -390,7 +395,6 @@ private:
 			 Constrained_vertex_circulator begin,
 			 const Constrained_vertex_circulator& end,
 			 Cluster c = Cluster());
-  inline 
   Vertex_handle insert_in_the_edge(Face_handle fh, int edge_index,
 				   const Point p);
   Vertex_handle insert_middle(Face_handle f, int i);
@@ -398,6 +402,10 @@ private:
 			c);
   Vertex_handle insert_in_c_edge(Vertex_handle va, Vertex_handle vb, Point p);
   void fill_edge_queue();
+  void push_in_bad_faces(Face_handle fh);
+  void push_in_bad_faces(Vertex_handle va,
+			 Vertex_handle vb,
+			 Vertex_handle vc);
   void fill_facette_map();
   void update_c_edge_queue(Vertex_handle va,
 			   Vertex_handle vb,
@@ -428,6 +436,33 @@ private:
 
 }; // end of Mesh_2
 
+// CONSTRUCTORS
+
+template <class Tr>
+Mesh_2<Tr>::
+Mesh_2(const Geom_traits& gt)
+  : Tr(gt), is_really_bad(*this), bad_faces(is_really_bad),
+    is_really_a_contrained_edge(*this),
+    c_edge_queue(is_really_a_contrained_edge)
+{};
+
+template <class Tr>
+Mesh_2<Tr>::
+Mesh_2(List_constraints& lc, const Geom_traits& gt)
+  : Tr(gt), is_really_bad(*this), bad_faces(is_really_bad),
+    is_really_a_contrained_edge(*this),
+    c_edge_queue(is_really_a_contrained_edge)
+{
+  typename List_constraints::iterator lcit = lc.begin();
+  for( ; lcit != lc.end(); ++lcit)
+    {
+      insert( (*lcit).first, (*lcit).second);
+    }
+  CGAL_triangulation_postcondition(is_valid());
+}
+
+// ACCESS FUNCTIONS
+
 template <class Tr>
 unsigned int Mesh_2<Tr>::
 number_of_contrained_edges() const
@@ -441,27 +476,7 @@ number_of_contrained_edges() const
   return nedges;
 }
 
-// # used by refine_face and cut_cluster_edge
-template <class Tr>
-bool Mesh_2<Tr>::
-get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
-{
-  typedef Cluster_map::iterator Iterator;
-  typedef std::pair<Iterator, Iterator> Range;
-  Range range = cluster_map.equal_range(va);
-  for(Iterator it = range.first; it != range.second; it++)
-    {
-      Cluster &cl = it->second;
-      if(cl.vertices.find(vb)!=cl.vertices.end()) {
-	c = it->second;
-	if(erase)
-	  cluster_map.erase(it);
-	return true;
-      }
-    }
-  return false;
-}
-
+// IO
 //the function that writes a file
 template <class Tr>
 void Mesh_2<Tr>::
@@ -476,6 +491,21 @@ write(std::ostream &f) const
 	f << (*eit).first->vertex(cw((*eit).second))->point() << " "
 	  << (*eit).first->vertex(ccw((*eit).second))->point() <<std::endl;
       }
+}
+
+//the function that reads a file
+template <class Tr>
+void Mesh_2<Tr>::
+read(std::istream &f)
+{
+  int nedges = 0;
+  clear();
+  f>>nedges;
+  for(int n = 0; n<nedges; n++) {
+    Point p1, p2;
+    f >> p1 >> p2;
+    insert(p1, p2);
+  }
 }
 
 //the function that write a Shewchuk Triangle .poly file
@@ -528,28 +558,12 @@ write_poly(std::ostream &f) const
     f << ++seeds_counter << " " << *sit << std::endl;
 }
 
-//the function that reads a file
-template <class Tr>
-void Mesh_2<Tr>::
-read(std::istream &f)
-{
-  int nedges = 0;
-  clear();
-  f>>nedges;
-  for(int n = 0; n<nedges; n++) {
-    FT x1, y1, x2, y2;
-    f>>x1>>y1>>x2>>y2;
-    insert(Point(x1, y1), Point(x2, y2));
-  }
-}
-
-
 //the function that reads a Shewchuk Triangle .poly file
 template <class Tr>
 void Mesh_2<Tr>::
 read_poly(std::istream &f)
 {
-  reset();
+  clear();
 
   unsigned int number_of_points;
   skip_comment_OFF(f);
@@ -595,6 +609,101 @@ read_poly(std::istream &f)
   init(seeds.begin(), seeds.end(), false);
 }
 
+// HELPING FUNCTIONS
+
+template <class Tr>
+void Mesh_2<Tr>::
+clear() 
+{
+  cluster_map.clear();
+  c_edge_queue.clear();
+  bad_faces.clear();
+  seeds.clear();
+  Triangulation::clear();
+}
+
+// MESHING FUNCTIONS
+
+
+//the mesh refine function 
+template <class Tr>
+inline
+void Mesh_2<Tr>::
+refine()
+{
+  std::list<Point> l;
+  refine(l.begin(), l.end());
+}
+
+// REMESHING FUNCTIONS
+template <class Tr>
+void Mesh_2<Tr>::
+set_geom_traits(const Geom_traits& gt)
+{
+  _gt = gt;
+  bad_faces.clear();
+  fill_facette_map();
+}
+
+// STEP BY STEP MESHING
+template <class Tr>
+inline
+void Mesh_2<Tr>::
+init()
+{
+  std::list<Point> l;
+  init(l.end(), l.end());
+}
+
+template <class Tr>
+inline
+void Mesh_2<Tr>::
+conform()
+{
+  while( !c_edge_queue.empty() )
+    {
+      process_one_edge();	
+    };
+}
+
+template <class Tr>
+inline
+bool Mesh_2<Tr>::
+refine_step()
+{
+  if( !c_edge_queue.empty() )
+    process_one_edge();
+  else
+    if ( !bad_faces.empty() )
+      process_one_face();
+    else
+      return false;
+  return true;
+}
+
+// PRIVATE MEMBER FUNCTIONS
+
+// # used by refine_face and cut_cluster_edge
+template <class Tr>
+bool Mesh_2<Tr>::
+get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
+{
+  typedef Cluster_map::iterator Iterator;
+  typedef std::pair<Iterator, Iterator> Range;
+  Range range = cluster_map.equal_range(va);
+  for(Iterator it = range.first; it != range.second; it++)
+    {
+      Cluster &cl = it->second;
+      if(cl.vertices.find(vb)!=cl.vertices.end()) {
+	c = it->second;
+	if(erase)
+	  cluster_map.erase(it);
+	return true;
+      }
+    }
+  return false;
+}
+
 template <class Tr>
 void Mesh_2<Tr>::
 fill_edge_queue()
@@ -616,17 +725,48 @@ fill_edge_queue()
 template <class Tr>
 inline
 double Mesh_2<Tr>::
-aspect_ratio(const Face_handle fh) const
+squared_minimum_sine(const Face_handle fh) const
 {
-  Compute_squared_minimum_sine_2 squared_sine = 
-    geom_traits().compute_squared_minimum_sine_2_object();
   const Vertex_handle&
     va = fh->vertex(0),
     vb = fh->vertex(1),
     vc = fh->vertex(2);
+  return squared_minimum_sine(va, vb, vc);
+}
+
+template <class Tr>
+inline
+double Mesh_2<Tr>::
+squared_minimum_sine(const Vertex_handle& va, const Vertex_handle& vb,
+		     const Vertex_handle& vc) const
+{
+  Compute_squared_minimum_sine_2 squared_sine = 
+    geom_traits().compute_squared_minimum_sine_2_object();
   return squared_sine(va->point(), vb->point(), vc->point());
 }
-  
+
+template <class Tr>
+inline
+void Mesh_2<Tr>::
+push_in_bad_faces(Face_handle fh)
+{
+  const Vertex_handle&
+    va = fh->vertex(0),
+    vb = fh->vertex(1),
+    vc = fh->vertex(2);
+  push_in_bad_faces(va, vb, vc);
+}
+
+template <class Tr>
+inline
+void Mesh_2<Tr>::
+push_in_bad_faces(Vertex_handle va, Vertex_handle vb,
+		  Vertex_handle vc)
+{
+  bad_faces.insert(std::make_pair(squared_minimum_sine(va,vb,vc),
+				  Threevertices(va,vb,vc)));
+}
+
 //it is necessarry for process_facette_map
 template <class Tr>
 void Mesh_2<Tr>::
@@ -635,17 +775,8 @@ fill_facette_map()
   for(Finite_faces_iterator fit = finite_faces_begin();
       fit != finite_faces_end();
       ++fit)
-    {
-      if( is_bad(fit))
-	{
-	  const Vertex_handle&
-	    va = fit->vertex(0),
-	    vb = fit->vertex(1),
-	    vc = fit->vertex(2);
-	  Bad_faces.insert(std::make_pair(aspect_ratio(fit),
-				     Threevertices(va,vb,vc)));
-	}
-    }
+    if( is_bad(fit))
+      push_in_bad_faces(fit);
 }
 
 //this function split all the segments that are encroached
@@ -697,7 +828,7 @@ refine_face(const Face_handle f)
 			    std::back_inserter(zone_of_pc_boundary), 
 			    f);
   // For the moment, we don't use the zone_of_pc.
-  // It will be used when we will destroyed old bad faces in Bad_faces
+  // It will be used when we will destroyed old bad faces in bad_faces
 
   bool split_the_face = true;
   bool keep_the_face_bad = false;
@@ -764,10 +895,7 @@ refine_face(const Face_handle f)
     }
   else
     if(keep_the_face_bad)
-      {
-	Bad_faces.insert(std::make_pair(aspect_ratio(f),
-				   Threevertices(va,vb,vc)));
-      }
+      push_in_bad_faces(va, vb, vc);
 }
 
 // # used by refine_face
@@ -1064,17 +1192,9 @@ update_facette_map(Vertex_handle v)
 {
   Face_circulator fc = v->incident_faces(), fcbegin(fc);
   do {
-    if(!is_infinite(fc)) {
-      if(is_bad(fc)) {
-	const Vertex_handle&
-	  va = fc->vertex(0),
-	  vb = fc->vertex(1),
-	  vc = fc->vertex(2);
-	
-	Bad_faces.insert(std::make_pair(aspect_ratio(fc),
-				   Threevertices(va,vb,vc)));
-      }
-    }
+    if(!is_infinite(fc))
+      if(is_bad(fc))
+	push_in_bad_faces(fc);
     fc++;
   } while(fc!=fcbegin);
 }
@@ -1210,7 +1330,7 @@ squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
 
 // ->traits?
 //the shortest edge that are in a triangle
-// # used by: refine_face, aspect_ratio
+// # used by: refine_face, squared_minimum_sine
 template <class Tr>
 typename Mesh_2<Tr>::FT Mesh_2<Tr>::
 shortest_edge_squared_length(Face_handle f)
@@ -1226,36 +1346,6 @@ shortest_edge_squared_length(Face_handle f)
   b = squared_distance(pc, pa);
   c = squared_distance(pa, pb);
   return (min(a, min(b, c)));
-}
-
-//the mesh refine function 
-template <class Tr>
-inline
-void Mesh_2<Tr>::
-refine()
-{
-  std::list<Point> l;
-  refine(l.begin(), l.end());
-}
-
-template <class Tr>
-inline
-void Mesh_2<Tr>::
-conform()
-{
-  while( !c_edge_queue.empty() )
-    {
-      process_one_edge();	
-    };
-}
-
-template <class Tr>
-inline
-void Mesh_2<Tr>::
-init(bool mark)
-{
-  std::list<Point> l;
-  init(l.end(), l.end());
 }
 
 template <class Tr>
@@ -1274,7 +1364,7 @@ inline
 void Mesh_2<Tr>::
 process_one_face()
 {
-  const Threevertices& t = Bad_faces.front().second;
+  const Threevertices& t = bad_faces.front().second;
   const Vertex_handle&
     va = t.e0,
     vb = t.e1,
@@ -1282,23 +1372,8 @@ process_one_face()
 
   Face_handle f;
   is_face(va,vb,vc,f);
-  Bad_faces.pop_front();
+  bad_faces.pop_front();
   refine_face(f);
-}
-
-template <class Tr>
-inline
-bool Mesh_2<Tr>::
-refine_step()
-{
-  if( !c_edge_queue.empty() )
-    process_one_edge();
-  else
-    if ( !Bad_faces.empty() )
-      process_one_face();
-    else
-      return false;
-  return true;
 }
 
 template <class Tr>
@@ -1334,15 +1409,6 @@ propagate_marks(const Face_handle fh, bool mark)
 	}
     }
 };
-
-template <class Tr>
-void Mesh_2<Tr>::
-set_geom_traits(const Geom_traits& gt)
-{
-  _gt = gt;
-  Bad_faces.clear();
-  fill_facette_map();
-}
 
 CGAL_END_NAMESPACE
 

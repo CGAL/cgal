@@ -92,7 +92,7 @@ public:
 	      
 	      widget->unlock();
 	      QString s;
-	      s.setNum(to_double(tr.aspect_ratio(fh)), 'g', 5);
+	      s.setNum(to_double(tr.squared_minimum_sine(fh)), 'g', 5);
 	      label.setText(s);
 	      do_erase=true;
 	    }

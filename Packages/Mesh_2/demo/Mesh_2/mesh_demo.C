@@ -22,10 +22,7 @@ int main(int, char*)
 #define CGAL_MESH_2_USE_TIMERS
 #include <CGAL/Mesh_2.h>
 #include <CGAL/Mesh_local_size_traits_2.h>
-#include <CGAL/Mesh_size_traits_2.h>
 #include <CGAL/Mesh_face_base_2.h>
-
-#include <CGAL/point_generators_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
@@ -586,7 +583,7 @@ public slots:
 
   void clearMesh()
     {
-      mesh.reset();
+      mesh.clear();
       seeds.clear();
       is_mesh_initialized=false;
       widget->redraw();
