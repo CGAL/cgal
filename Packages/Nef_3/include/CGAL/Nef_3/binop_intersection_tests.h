@@ -76,7 +76,7 @@ struct binop_intersection_test_segment_tree {
           SHalfedge_around_facet_const_circulator
             start( edge_it ), end( edge_it );
           CGAL_For_all( start, end ) {
-            const Point_3& p = start->prev()->source()->point();
+            const Point_3& p = start->prev()->source()->source()->point();
             extend( p );
           }
         } else
@@ -218,7 +218,7 @@ struct binop_intersection_test_segment_tree {
 
     TRACEN("start edge0 face1");
     Bop_edge0_face1_callback<Callback> callback_edge0_face1( is, cb0 );
-    CGAL_forall_halfedges( e0, sncp ) a.push_back( Nef_box( e0 ) );
+    CGAL_forall_edges( e0, sncp ) a.push_back( Nef_box( e0 ) );
     CGAL_forall_facets( f1, snc1i)    b.push_back( Nef_box( f1 ) );
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_face1);
