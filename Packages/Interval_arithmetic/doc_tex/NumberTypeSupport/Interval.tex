@@ -186,6 +186,8 @@ We provide the following functions to change the rounding mode:
        {To set the rounding mode to \ccc{R}.}
 \ccFunction{FPU_CW_t FPU_get_cw (void);}
        {To get the current rounding mode.}
+\ccFunction{FPU_CW_t FPU_get_and_set_cw (FPU_CW_t R);}
+       {To set the rounding mode to \ccc{R} and get the old one. }
 
 \ccExample
 
