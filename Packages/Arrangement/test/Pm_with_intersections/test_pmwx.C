@@ -26,13 +26,33 @@
 #define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
 #endif
    
+// Utility defines:
+#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CACHED_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CACHED_LEDA_TRAITS
+#define CGAL_TRAITS_SEGMENT
+#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_LEDA_TRAITS
+#define CGAL_TRAITS_POLYLINE
+#endif
+
+#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CACHED_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_TRAITS
+#define CGAL_TRAITS_CGAL
+#elif     CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CACHED_LEDA_TRAITS
+    CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_LEDA_TRAITS
+#define CGAL_TRAITS_LEDA
+#endif
+
 // Making sure test doesn't fail if LEDA is not installed
-#if ! defined(CGAL_USE_LEDA) && ( \
-  (CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS) || \
-  (CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CACHED_LEDA_TRAITS) || \
-  (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_LEDA_TRAITS) || \
-  (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_LEDA_TRAITS) \
-)
+#if !defined(CGAL_USE_LEDA) && defined(CGAL_TRAITS_LEDA)
 
 int main()
 {
@@ -262,7 +282,7 @@ private:
       
     for (pit = all_point_list.begin(); pit != all_point_list.end(); pit++)
     {
-#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if defined(CGAL_TRAITS_LEDA)
       std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
 #else
       std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
@@ -283,7 +303,7 @@ private:
          pit != point_list.end();
          pit++, lt_it++)
     {
-#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if defined(CGAL_TRAITS_LEDA)
       std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
 #else
       std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
@@ -361,10 +381,7 @@ private:
     return result;
   }
 
-#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CACHED_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CACHED_LEDA_TRAITS
+#if defined(CGAL_TRAITS_SEGMENT)
 
   Curve_2 read_segment_curve(std::ifstream & file, bool reverse_order)
   {
@@ -388,10 +405,7 @@ private:
     return segment;
   }
 
-#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
-      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_TRAITS || \
-      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
-      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_LEDA_TRAITS
+#elif defined(CGAL_TRAITS_POLYLINE)
 
   Curve_2 read_polyline_curve(std::ifstream & file, bool reverse_order)
   {
@@ -434,17 +448,10 @@ private:
     // read curves (test specific)
     while (m_num_polylines--) {
 
-#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CACHED_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CACHED_LEDA_TRAITS
-
+#if defined(CGAL_TRAITS_SEGMENT)
       curr_curve = read_segment_curve(file, reverse_order);
 
-#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
-      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_TRAITS || \
-      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
-      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_LEDA_TRAITS
+#elif defined(CGAL_TRAITS_POLYLINE)
 
       curr_curve = read_polyline_curve(file, reverse_order);
 #endif
