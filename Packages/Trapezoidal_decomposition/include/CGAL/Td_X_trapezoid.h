@@ -71,10 +71,8 @@ public:
   
 #ifdef CGAL_PM_FRIEND_CLASS
   
-  friend 
-  class typename Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
-  friend 
-  class typename Trapezoidal_decomposition_2<Traits>::In_face_iterator;
+  friend class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
+  friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
   
 #endif
   
