@@ -1,6 +1,6 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
-2.72 (22 Sep 2003)
+2.73 (22 Sep 2003)
 - Moved \chapter to main.tex
 
 2.72 (22 Sep 2003)
