@@ -1,7 +1,7 @@
 Rineau: fix init stuff [done]
 ---
 Rineau:
-Patch create_makefile [done]
+Patch create_makefile [in progess]
 Patch CGALROOT/makefile
 ---
 Rineau: study the effect of QPen::setCapStyle and QPen::setJoinStyle
