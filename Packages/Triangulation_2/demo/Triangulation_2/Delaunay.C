@@ -34,7 +34,7 @@ typedef Delaunay::Vertex_handle             Vertex_handle;
 typedef Delaunay::Edge                      Edge;
 
 #include "parse.h"
-#include "window_stuff.h"
+#include "common_stuff.h"
 
 
 

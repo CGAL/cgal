@@ -56,7 +56,7 @@ typedef Gt::Segment_2        Segment;
 typedef Gt::Line_2           Line;
 typedef CGAL::Window_stream  Window_stream;
 
-#include "window_stuff.h"
+#include "common_stuff.h"
 
 template <class TRIANGULATION>
 void window_input(TRIANGULATION &T,
