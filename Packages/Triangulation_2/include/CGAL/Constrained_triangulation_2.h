@@ -113,11 +113,12 @@ public:
   virtual ~Constrained_triangulation_2() {}
 
   // INSERTION
-  virtual Vertex_handle insert(const Point& p, 
+  Vertex_handle insert(const Point& p, 
 			       Face_handle start = Face_handle() );
-  virtual Vertex_handle insert(const Point& p,
-			       Locate_type lt,
-			       Face_handle loc, int li );
+  Vertex_handle insert(const Point& p,
+		       Locate_type lt,
+		       Face_handle loc, 
+		       int li );
   Vertex_handle push_back(const Point& a);
 //   template < class InputIterator >
 //   int insert(InputIterator first, InputIterator last);
@@ -159,6 +160,12 @@ public:
   void file_output(std::ostream& os) const;
 
 protected:
+  virtual Vertex_handle virtual_insert(const Point& a, 
+				       Face_handle start = Face_handle() );
+  virtual Vertex_handle virtual_insert(const Point& a,
+				       Locate_type lt,
+				       Face_handle loc, 
+				       int li );
   Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void update_constraints_incident(Vertex_handle va, 
 				   Vertex_handle c1,
@@ -283,6 +290,29 @@ public:
 }
  
 };
+
+template < class Gt, class Tds, class Itag >
+inline
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
+Constrained_triangulation_2<Gt,Tds,Itag>::
+virtual_insert(const Point& a, Face_handle start)
+// virtual version of insert
+{
+  return insert(a,start);
+}
+
+template < class Gt, class Tds, class Itag >
+inline
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
+Constrained_triangulation_2<Gt,Tds,Itag>::
+virtual_insert(const Point& a,
+	       Locate_type lt,
+	       Face_handle loc, 
+	       int li )
+// virtual version of insert
+{
+  return insert(a,lt,loc,li);
+}
     
 template < class Gt, class Tds, class Itag >
 inline
@@ -356,8 +386,8 @@ insert_constraint(Point a, Point b)
 // the algorithm first inserts a and b, 
 // and then forces the constraint [va,vb]
 {
-  Vertex_handle va= insert(a);
-  Vertex_handle vb= insert(b);
+  Vertex_handle va= virtual_insert(a);
+  Vertex_handle vb= virtual_insert(b);
   if ( va != vb)   insert_constraint(va,vb);
 }
 
@@ -380,7 +410,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
   if(includes_edge(vaa,vbb,vi,fr,i)) {
     mark_constraint(fr,i);
     if (vi != vbb)  {
-      insert(vi,vbb);
+      insert_constraint(vi,vbb);
     }
     return;
   }
@@ -394,10 +424,10 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
 					       vi);
   if ( intersection) {
     if (vi != vaa && vi != vbb) {
-      insert(vaa,vi); 
-      insert(vi,vbb); 
+      insert_constraint(vaa,vi); 
+      insert_constraint(vi,vbb); 
      }
-    else insert(vaa,vbb);
+    else insert_constraint(vaa,vbb);
     return;
   }
 
@@ -406,7 +436,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
 		   conflict_boundary_ba);
 
   if (vi != vbb) {
-    insert(vi,vbb); 
+    insert_constraint(vi,vbb); 
   }
   return;
 
@@ -559,7 +589,7 @@ intersect(Face_handle f, int i,
   Itag itag = Itag();
   bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
   CGAL_triangulation_assertion(ok);
-  Vertex_handle vi = insert(pi, EDGE, f, i);
+  Vertex_handle vi = virtual_insert(pi, EDGE, f, i);
   return vi; 
 }
 
@@ -596,17 +626,17 @@ intersect(Face_handle f, int i,
   }
   else{ //intersection computed
     remove_constraint(f, i);
-    vi = insert(pi, f);
+    vi = virtual_insert(pi, f);
   }
 
   // vi == vc or vi == vd may happen even if intersection==true
   // due to approximate construction of the intersection
   if (vi != vcc && vi != vdd) { 
-    insert(vcc,vi); 
-    insert(vi, vdd);
+    insert_constraint(vcc,vi); 
+    insert_constraint(vi, vdd);
   } 
   else {
-    insert(vcc,vdd);
+    insert_constraint(vcc,vdd);
   }
   return vi; 
 }

@@ -126,14 +126,13 @@ public:
    
 
   // INSERTION-REMOVAL
-  virtual Vertex_handle insert(const Point & a, 
-			       Face_handle start = Face_handle());
-  virtual Vertex_handle insert(const Point& p,
-			       Locate_type lt,
-			       Face_handle loc, int li );
+  Vertex_handle insert(const Point & a, Face_handle start = Face_handle());
+  Vertex_handle insert(const Point& p,
+		       Locate_type lt,
+		       Face_handle loc, int li );
+  Vertex_handle push_back(const Point& a);
 //   template < class InputIterator >
 //   int insert(InputIterator first, InputIterator last);
-  //  Vertex_handle push_back(const Point& a);
 
   void remove(Vertex_handle v);
   void remove_incident_constraints(Vertex_handle v);
@@ -147,6 +146,12 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
  
 protected:
+  virtual Vertex_handle virtual_insert(const Point & a, 
+				       Face_handle start = Face_handle());
+  virtual Vertex_handle virtual_insert(const Point& a,
+				       Locate_type lt,
+				       Face_handle loc, 
+				       int li );
   Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void remove_2D(Vertex_handle v );
   virtual void triangulate_hole(List_faces& intersected_faces,
@@ -456,6 +461,29 @@ template < class Gt, class Tds, class Itag >
 inline 
 typename Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
+virtual_insert(const Point & a, Face_handle start)
+  // virtual version of the insertion
+{
+  return insert(a,start);
+}
+
+template < class Gt, class Tds, class Itag >  
+inline 
+typename Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
+Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
+virtual_insert(const Point& a,
+	       Locate_type lt,
+	       Face_handle loc, 
+	       int li )
+// virtual version of insert
+{
+  return insert(a,lt,loc,li);
+}
+
+template < class Gt, class Tds, class Itag >  
+inline 
+typename Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
+Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 insert(const Point & a, Face_handle start)
  // inserts a in the triangulation
 // constrained edges are updated
@@ -477,6 +505,15 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle va= Ctr::insert(a,lt,loc,li);
   flip_around(va); 
   return va;
+}
+
+template < class Gt, class Tds, class Itag >
+inline
+typename Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Vertex_handle
+Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
+push_back(const Point &p)
+{
+  return insert(p);
 }
 
 template < class Gt, class Tds, class Itag >

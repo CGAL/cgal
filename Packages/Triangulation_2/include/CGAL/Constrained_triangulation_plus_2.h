@@ -91,7 +91,7 @@ public:
   {
     typename List_constraints::iterator lcit=lc.begin();
     for( ;lcit != lc.end(); lcit++) {
-      insert( (*lcit).first, (*lcit).second);
+      insert_constraint( (*lcit).first, (*lcit).second);
     }
      CGAL_triangulation_postcondition( is_valid() );
   }
@@ -103,7 +103,7 @@ public:
      : Triangulation(gt)
   {
     while( first != last){
-      insert((*first).first, (*first).second);
+      insert_constraint((*first).first, (*first).second);
       ++first;
     }
       CGAL_triangulation_postcondition( is_valid() );
@@ -115,11 +115,11 @@ public:
   void swap(Constrained_triangulation_plus_2 &ctp);
 
   // INSERTION
-  virtual Vertex_handle insert(const Point& a, 
-			       Face_handle start = Face_handle() );
-  virtual Vertex_handle insert(const Point& p,
-			       Locate_type lt,
-			       Face_handle loc, int li );
+  Vertex_handle insert(const Point& a, 
+		       Face_handle start = Face_handle() );
+  Vertex_handle insert(const Point& p,
+		       Locate_type lt,
+		       Face_handle loc, int li );
   void insert_constraint(Point a, Point b);
   void insert_constraint(Vertex_handle va, Vertex_handle vb);
 //   template < class InputIterator >
@@ -391,8 +391,10 @@ intersect(Face_handle f, int i,
   Vertex_handle  vcc, vdd;
   vcc = f->vertex(cw(i));
   vdd = f->vertex(ccw(i));
-  CGAL_triangulation_assertion(hierarchy.enclosing_constraint(vcc,vdd,vc,vd));
-  CGAL_triangulation_assertion(hierarchy.enclosing_constraint(vaa,vbb,va,vb));
+  bool b1=hierarchy.enclosing_constraint(vcc,vdd,vc,vd);
+  bool b2=hierarchy.enclosing_constraint(vaa,vbb,va,vb);
+  CGAL_triangulation_assertion(b1);
+  CGAL_triangulation_assertion(b2);
 
   Point pa = va->point();
   Point pb = vb->point();
@@ -403,7 +405,7 @@ intersect(Face_handle f, int i,
   bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
   CGAL_triangulation_assertion(ok);
 
-  Vertex_handle vi = insert(pi, EDGE, f, i);
+  Vertex_handle vi = virtual_insert(pi, EDGE, f, i);
   return vi; 
 }
 
@@ -440,7 +442,7 @@ intersect(Face_handle f, int i,
   }
   else{ //computed
     remove_constraint(f, i);
-    vi = insert(pi, f);
+    vi = virtual_insert(pi, f);
   }
 
   // vi == vc or vi == vd may happen even if intersection==true

@@ -320,13 +320,13 @@ insert(const Point &p, Face_handle)
   Face_handle positions[Triangulation_hierarchy_2__maxlevel];
   locate_in_all(p,lt,i,positions);
   //insert at level 0
-  Vertex_handle vertex=hierarchy[0]->insert(p,lt,positions[0],i);
+  Vertex_handle vertex=hierarchy[0]->Tr_Base::insert(p,lt,positions[0],i);
   Vertex_handle previous=vertex;
   Vertex_handle first = vertex;
       
   int level  = 1;
   while (level <= vertex_level ){
-    vertex=hierarchy[level]->insert(p,positions[level]);
+    vertex=hierarchy[level]->Tr_Base::insert(p,positions[level]);
     vertex->set_down((void *) &*previous);// link with level above
     previous->set_up((void *) &*vertex);
     previous=vertex;
@@ -345,7 +345,7 @@ insert(const Point& p,
 {
   int vertex_level = random_level();
   //insert at level 0
-  Vertex_handle vertex=hierarchy[0]->insert(p,lt,loc,li);
+  Vertex_handle vertex=hierarchy[0]->Tr_Base::insert(p,lt,loc,li);
   Vertex_handle previous=vertex;
   Vertex_handle first = vertex;
 
@@ -358,7 +358,7 @@ insert(const Point& p,
     //insert in higher levels
     int level  = 1;
     while (level <= vertex_level ){
-      vertex=hierarchy[level]->insert(p,positions[level]);
+      vertex=hierarchy[level]->Tr_Base::insert(p,positions[level]);
       vertex->set_down((void *) &*previous);// link with level above
       previous->set_up((void *) &*vertex);
       previous=vertex;
