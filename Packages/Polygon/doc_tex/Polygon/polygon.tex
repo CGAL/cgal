@@ -2,7 +2,7 @@
 \cleardoublepage
 \chapter{Polygon}\label{Polygon}
 
-\begin{ccClassTemplate}{CGAL_Polygon_2<Traits,Container>}
+\begin{ccClassTemplate}{Polygon_2<Traits,Container>}
 \ccSection{2D Polygon}
 
 \ccDefinition
@@ -29,7 +29,7 @@ The parameter \ccStyle{Traits} defines the types and predicates
 that are used in the polygon class and the polygon algorithms.
 For example \ccStyle{Traits::Point_2} denotes the type of the vertices
 of the polygon. A default polygon traits class
-\ccStyle{CGAL_Polygon_traits_2<R>} is provided (see section \ref{sec:poly_default}),
+\ccStyle{Polygon_traits_2<R>} is provided (see section \ref{sec:poly_default}),
 where \ccStyle{R} is a representation class.
 The parameter \ccStyle{Container} specifies the type of container that is 
 used to store the sequence of vertices of the polygon, e.g.\ a list, a vector, 
@@ -40,9 +40,9 @@ The value type of the container should be the same as the point type of the
 traits class.
 
 {\em Note}: Currently, a polygon declaration looks like
-\ccStyle{CGAL_Polygon_2<Traits, list<Traits::Point_2> >}.
+\ccStyle{Polygon_2<Traits, list<Traits::Point_2> >}.
 When nested templates become available this might be simplified to
-\ccStyle{CGAL_Polygon_2<Traits, list>}.
+\ccStyle{Polygon_2<Traits, list>}.
 
 \subsubsection*{Assertions}
 The polygon code uses infix \ccc{POLYGON} in the assertions,
@@ -56,7 +56,7 @@ The most important changes with respect to the previous release are:
 \begin{itemize}
 \item There is now a proper traits parameter. It is no longer possible to use
 the representation class \ccc{R} parameter for the template parameter \ccc{Traits}.
-Instead the default traits class \ccc{CGAL_Polygon_traits_2<R>} should be used,
+Instead the default traits class \ccc{Polygon_traits_2<R>} should be used,
 or when appropriate a user defined one.
 
 \item The method \ccc{append} is now called \ccc{push_back}. This was done to
@@ -74,7 +74,7 @@ for random access containers.
 \end{itemize}
 
 \ccHeading{Types}
-\ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{10cm}}
+\ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
 \ccNestedType{Traits}{The traits type.}
 \ccNestedType{Container}{The container type.}
 \ccTypedef{typedef Traits::FT FT;}{}
@@ -116,25 +116,25 @@ Their value type is \ccStyle{Segment_2}.
 \ccCreation
 \ccCreationVariable{p}
 
-  \ccHidden\ccConstructor{ CGAL_Polygon_2( );}
+  \ccHidden\ccConstructor{ Polygon_2( );}
     { Introduces an empty polygon \ccVar.}
 
-  \ccHidden\ccConstructor{ CGAL_Polygon_2( const CGAL_Polygon_2<Traits,Container>& q);}
+  \ccHidden\ccConstructor{ Polygon_2( const Polygon_2<Traits,Container>& q);}
     { Introduces a polygon \ccVar\ with vertices from \ccStyle{q}.}
 
   \ccConstructor{template <class InputIterator>
-      CGAL_Polygon_2( InputIterator first, InputIterator last ); }
+      Polygon_2( InputIterator first, InputIterator last ); }
     { Introduces a polygon \ccVar\ with vertices from the sequence defined by
       the range \ccStyle{[first,last)}.
       \ccPrecond The value type of points in the range \ccStyle{[first,last)} is
                  \ccStyle{Point_2}.
     }
 
-  \ccHidden\destructor{ ~CGAL_Polygon_2();}
+  \ccHidden\destructor{ ~Polygon_2();}
   { destructor }
 
-  \ccHidden\ccMethod{ CGAL_Polygon_2<Traits,Container>& operator=(const
-     CGAL_Polygon_2<Traits,Container>& polygon);}
+  \ccHidden\ccMethod{ Polygon_2<Traits,Container>& operator=(const
+     Polygon_2<Traits,Container>& polygon);}
   {assignment operator}
 
 \ccHeading{Operations}
@@ -210,28 +210,28 @@ circulators and iterators that allow to traverse the vertices and edges.
   \ccMethod{bool is_convex() const;}
     { Returns whether \ccStyle{p} is convex. }
 
-  \ccMethod{CGAL_Orientation orientation() const;}
+  \ccMethod{Orientation orientation() const;}
     { Returns the orientation of \ccVar. If the number of vertices 
-      $\ccStyle{p.size()} < 3$ then \ccStyle{CGAL_COLLINEAR} is returned.
+      $\ccStyle{p.size()} < 3$ then \ccStyle{COLLINEAR} is returned.
       \ccPrecond \ccStyle{p.is_simple()}.
     }
 
-  \ccMethod{CGAL_Oriented_side oriented_side(const Point_2& q) const;}
-    { Returns \ccStyle{CGAL_POSITIVE_SIDE}, \ccStyle{CGAL_NEGATIVE_SIDE},
-       or \ccStyle{CGAL_ON_ORIENTED_BOUNDARY}, 
+  \ccMethod{Oriented_side oriented_side(const Point_2& q) const;}
+    { Returns \ccStyle{POSITIVE_SIDE}, \ccStyle{NEGATIVE_SIDE},
+       or \ccStyle{ON_ORIENTED_BOUNDARY}, 
        depending on where point \ccStyle{q} is.
       \ccPrecond \ccStyle{p.is_simple()}.
     }
 
-  \ccMethod{CGAL_Bounded_side bounded_side(const Point_2& q) const;}
-    { Returns the symbolic constant \ccStyle{CGAL_ON_BOUNDED_SIDE}, 
-      \ccStyle{CGAL_ON_BOUNDARY}
-      or \ccStyle{CGAL_ON_UNBOUNDED_SIDE}, depending on where point
+  \ccMethod{Bounded_side bounded_side(const Point_2& q) const;}
+    { Returns the symbolic constant \ccStyle{ON_BOUNDED_SIDE}, 
+      \ccStyle{ON_BOUNDARY}
+      or \ccStyle{ON_UNBOUNDED_SIDE}, depending on where point
       \ccStyle{q} is.
       \ccPrecond \ccStyle{p.is_simple()}.
     }
 
-  \ccMethod{CGAL_Bbox_2 bbox() const;}
+  \ccMethod{Bbox_2 bbox() const;}
     { Returns the smallest bounding box containing \ccVar.}
     
   \ccMethod{Traits::FT area() const;}
@@ -295,7 +295,7 @@ These methods are only available for random access containers.
 
 \ccHeading{Miscellaneous}
 
-\ccSetThreeColumns{CGAL_Oriented_side}{10cm}{}
+\ccSetThreeColumns{Oriented_side}{10cm}{}
 
   \ccMethod{int size() const;}
     { Returns the number of vertices of the polygon \ccVar.}
@@ -307,15 +307,15 @@ These methods are only available for random access containers.
     { Returns a const reference to the sequence of vertices of the polygon 
       \ccVar. }
 
-  \ccHidden\ccMethod{bool identical(const CGAL_Polygon_2<Traits,Container> &) const;}
+  \ccHidden\ccMethod{bool identical(const Polygon_2<Traits,Container> &) const;}
   {}
 
 \ccHeading{Globally defined operators}
 
 \ccStyle{template <class Traits, class Container1, class Container2>}
   \ccFunction{
-     bool operator==(const CGAL_Polygon_2<Traits,Container1>& p1, 
-                     const CGAL_Polygon_2<Traits,Container2>& p2);}
+     bool operator==(const Polygon_2<Traits,Container1>& p1, 
+                     const Polygon_2<Traits,Container2>& p2);}
      { Test for equality: two polygons are equal iff there exists a cyclic
        permutation of the vertices of \ccStyle{p2} such that they are equal to the
        vertices of \ccStyle{p1}. Note that the template argument
@@ -323,14 +323,14 @@ These methods are only available for random access containers.
 
 \ccStyle{template <class Traits, class Container1, class Container2>}
   \ccFunction{
-     bool operator!=(const CGAL_Polygon_2<Traits,Container1>& p1, 
-                     const CGAL_Polygon_2<Traits,Container2>& p2);}
+     bool operator!=(const Polygon_2<Traits,Container1>& p1, 
+                     const Polygon_2<Traits,Container2>& p2);}
      { Test for inequality. }
 
 \ccStyle{template <class Transformation, class Traits, class Container>}
   \ccFunction{
-     CGAL_Polygon_2<Traits,Container>
-     transform(const Transformation& t, const CGAL_Polygon_2<Traits,Container>& p);}
+     Polygon_2<Traits,Container>
+     transform(const Transformation& t, const Polygon_2<Traits,Container>& p);}
   { Returns the image of the polygon \ccc{p} under the transformation \ccc{t}. }
 
 \ccHeading{I/O}
@@ -339,20 +339,20 @@ The I/O operators are defined for \ccStyle{iostream}, and for
 the window stream provided by \cgal. The format for the iostream
 is an internal format.
 
-  \ccFunction{ostream& operator<<(ostream& os, const CGAL_Polygon_2<Traits, Container>& p);}
+  \ccFunction{ostream& operator<<(ostream& os, const Polygon_2<Traits, Container>& p);}
      { Inserts the polygon \ccVar\ into the stream \ccStyle{os}.
        \ccPrecond The insert operator is defined for class \ccStyle{Point_2}.}
 
   \ccFunction{istream& operator>>(istream& is,
-                  const CGAL_Polygon_2<Traits, Container>& p);}
+                  const Polygon_2<Traits, Container>& p);}
      { Reads a polygon from stream \ccStyle{is} and assigns it
        to \ccVar.}
 
 \ccInclude{CGAL/IO/Window_stream.h}
 
 \ccFunction{
-CGAL_Window_stream& operator<<(CGAL_Window_stream& W,
-                               const CGAL_Polygon_2<Traits, Container>& p);
+Window_stream& operator<<(Window_stream& W,
+                               const Polygon_2<Traits, Container>& p);
 }
 {
 Inserts the triangulation \ccStyle{p} into the window stream \ccStyle{W}.
@@ -369,11 +369,11 @@ The following code fragment creates a polygon and checks if it is convex.
 #include <CGAL/Polygon_2.h>
 #include <list.h>
 
-typedef CGAL_Cartesian<double> R;
-typedef CGAL_Polygon_traits_2<R> Traits;
+typedef Cartesian<double> R;
+typedef Polygon_traits_2<R> Traits;
 typedef Traits::Point_2 Point;
 typedef list<Point> Container;
-typedef CGAL_Polygon_2<Traits,Container> Polygon;
+typedef Polygon_2<Traits,Container> Polygon;
 
 #include <iostream.h>
 
@@ -425,7 +425,7 @@ polygon traits class from section \ref{sec:poly_default}.
 
 \ccFunction{
 template <class ForwardIterator, class Traits>
-ForwardIterator CGAL_left_vertex_2(ForwardIterator first,
+ForwardIterator left_vertex_2(ForwardIterator first,
                                    ForwardIterator last,
                                    const Traits& traits);
 }
@@ -437,7 +437,7 @@ with the smallest \ccStyle{y}-coordinate.
 
 \ccFunction{
 template <class ForwardIterator, class Traits>
-ForwardIterator CGAL_right_vertex_2(ForwardIterator first,
+ForwardIterator right_vertex_2(ForwardIterator first,
                                    ForwardIterator last,
                                    const Traits& traits);
 }
@@ -449,7 +449,7 @@ with the largest \ccStyle{y}-coordinate. \\
 
 \ccFunction{
 template <class ForwardIterator, class Traits>
-ForwardIterator CGAL_top_vertex_2(ForwardIterator first,
+ForwardIterator top_vertex_2(ForwardIterator first,
                                    ForwardIterator last,
                                    const Traits& traits);
 }
@@ -461,7 +461,7 @@ with the largest \ccStyle{x}-coordinate. \\
 
 \ccFunction{
 template <class ForwardIterator, class Traits>
-ForwardIterator CGAL_bottom_vertex_2(ForwardIterator first,
+ForwardIterator bottom_vertex_2(ForwardIterator first,
                                    ForwardIterator last,
                                    const Traits& traits);
 }
@@ -473,7 +473,7 @@ with the smallest \ccStyle{x}-coordinate.\\
 
 \ccFunction{
 template <class InputIterator>
-CGAL_Bbox_2 CGAL_bbox_2(InputIterator first, InputIterator last);
+Bbox_2 bbox_2(InputIterator first, InputIterator last);
 }
 {
 Returns the smallest bounding box of the points in the range
@@ -483,7 +483,7 @@ Returns the smallest bounding box of the points in the range
 
 \ccFunction{
 template <class ForwardIterator, class Numbertype, class Traits>
-void CGAL_area_2(ForwardIterator first,
+void area_2(ForwardIterator first,
                  ForwardIterator last,
                  Numbertype& result,
                  const Traits& traits);
@@ -496,7 +496,7 @@ Computes the signed area of the polygon formed by the points in the range
 
 \ccFunction{
 template <class ForwardIterator, class Traits>
-bool CGAL_is_convex_2(ForwardIterator first,
+bool is_convex_2(ForwardIterator first,
                       ForwardIterator last,
                       const Traits& traits);
 }
@@ -515,7 +515,7 @@ in the range \ccStyle{[first,last)}.\\
 
 \ccFunction{
 template <class ForwardIterator, class Traits>
-bool CGAL_is_simple_2(ForwardIterator first,
+bool is_simple_2(ForwardIterator first,
                       ForwardIterator last,
                       const Traits& traits);
 }
@@ -538,7 +538,7 @@ number of points in the range \ccStyle{[first,last)}.\\
 
 \ccFunction{
 template <class ForwardIterator, class Point, class Traits>
-CGAL_Oriented_side CGAL_oriented_side_2(ForwardIterator first,
+Oriented_side oriented_side_2(ForwardIterator first,
                                         ForwardIterator last,
                                         const Traits::Point_2& point,
                                         const Traits& traits);
@@ -546,8 +546,8 @@ CGAL_Oriented_side CGAL_oriented_side_2(ForwardIterator first,
 {
 This determines the location of the point \ccStyle{q} with respect to the polygon
 formed by the points in the range \ccStyle{[first,last)}.
-Returns \ccStyle{CGAL_NEGATIVE_SIDE},
-\ccStyle{CGAL_POSITIVE_SIDE}, or \ccStyle{CGAL_ON_ORIENTED_BOUNDARY},
+Returns \ccStyle{NEGATIVE_SIDE},
+\ccStyle{POSITIVE_SIDE}, or \ccStyle{ON_ORIENTED_BOUNDARY},
 depending on where point \ccStyle{q} is.
 For the implementation a {\em crossing test} algorithm is used with complexity
 $O(n)$, see \cite{h-pps-94}.
@@ -563,7 +563,7 @@ form the vertices of a simple polygon.\\
 
 \ccFunction{
 template <class ForwardIterator, class Point, class Traits>
-CGAL_Bounded_side CGAL_bounded_side_2(ForwardIterator first,
+Bounded_side bounded_side_2(ForwardIterator first,
                                       ForwardIterator last,
                                       const Traits::Point_2& point,
                                       const Traits& traits);
@@ -571,8 +571,8 @@ CGAL_Bounded_side CGAL_bounded_side_2(ForwardIterator first,
 {
 Determines the location of the point \ccStyle{q} with respect to the polygon
 formed by the points in the range \ccStyle{[first,last)}.
-Returns \ccStyle{CGAL_ON_BOUNDED_SIDE}, \ccStyle{CGAL_ON_BOUNDARY}
-or \ccStyle{CGAL_ON_UNBOUNDED_SIDE}, depending on where point \ccStyle{q} is.
+Returns \ccStyle{ON_BOUNDED_SIDE}, \ccStyle{ON_BOUNDARY}
+or \ccStyle{ON_UNBOUNDED_SIDE}, depending on where point \ccStyle{q} is.
 \ccPrecond The points in the range \ccStyle{[first,last)}
 form the vertices of a simple polygon.\\
 {\sc traits}: uses \ccc{Traits::compare_x},
@@ -583,14 +583,14 @@ form the vertices of a simple polygon.\\
 
 \ccFunction{
 template <class ForwardIterator, class Traits>
-CGAL_Orientation CGAL_orientation_2(ForwardIterator first,
+Orientation orientation_2(ForwardIterator first,
                                     ForwardIterator last,
                                     const Traits& traits);
 }
 {
 Returns the orientation of the polygon formed by the points in the range
 \ccStyle{[first,last)}. 
-If the number of points is smaller than three, \ccStyle{CGAL_COLLINEAR} is
+If the number of points is smaller than three, \ccStyle{COLLINEAR} is
 returned.
 \ccPrecond The points in the range \ccStyle{[first,last)}
 form the vertices of a simple polygon.\\
@@ -713,41 +713,41 @@ Returns \ccc{true} iff the segments \ccStyle{[p1,q1]} and \ccStyle{[p2,q2]} inte
 }
 
 \ccMemberFunction{ 
-    CGAL_Orientation orientation(const Point_2& p,
+    Orientation orientation(const Point_2& p,
                                  const Point_2& q,
                                  const Point_2& r) const;
 }
 {
-Returns \ccStyle{CGAL_LEFTTURN}, if $r$ lies to the left of the oriented
-line $l$ defined by $p$ and $q$, returns \ccStyle{CGAL_RIGHTTURN} if $r$
-lies to the right of $l$, and returns \ccStyle{CGAL_COLLINEAR} if $r$ lies
+Returns \ccStyle{LEFTTURN}, if $r$ lies to the left of the oriented
+line $l$ defined by $p$ and $q$, returns \ccStyle{RIGHTTURN} if $r$
+lies to the right of $l$, and returns \ccStyle{COLLINEAR} if $r$ lies
 on $l$.
 }
 
 \ccMemberFunction{ 
-    CGAL_Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const;
+    Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const;
 }
 {
 Returns
 $ \left\{
   \begin{array}{lll}
-     \ccStyle{CGAL_SMALLER} & \mbox{if} & p_x < q_x \\
-     \ccStyle{CGAL_EQUAL}   & \mbox{if} & p_x = q_x \\
-     \ccStyle{CGAL_LARGER}  & \mbox{if} & p_x > q_x
+     \ccStyle{SMALLER} & \mbox{if} & p_x < q_x \\
+     \ccStyle{EQUAL}   & \mbox{if} & p_x = q_x \\
+     \ccStyle{LARGER}  & \mbox{if} & p_x > q_x
   \end{array}
   \right.$
 }
 
 \ccMemberFunction{ 
-    CGAL_Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const;
+    Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const;
 }
 {
 Returns
 $ \left\{
   \begin{array}{lll}
-     \ccStyle{CGAL_SMALLER} & \mbox{if} & p_y < q_y \\
-     \ccStyle{CGAL_EQUAL}   & \mbox{if} & p_y = q_y \\
-     \ccStyle{CGAL_LARGER}  & \mbox{if} & p_y > q_y
+     \ccStyle{SMALLER} & \mbox{if} & p_y < q_y \\
+     \ccStyle{EQUAL}   & \mbox{if} & p_y = q_y \\
+     \ccStyle{LARGER}  & \mbox{if} & p_y > q_y
   \end{array}
   \right.$
 }
@@ -763,12 +763,12 @@ same direction.
 
 \end{ccClass}
 
-\begin{ccClassTemplate}{CGAL_Polygon_traits_2<R>}
+\begin{ccClassTemplate}{Polygon_traits_2<R>}
 \ccSection{Polygon default Traits class} \label{sec:poly_default}
 
-The polygon class \ccStyle{CGAL_Polygon_2} and the polygon algorithms are
+The polygon class \ccStyle{Polygon_2} and the polygon algorithms are
 parameterized with a traits class \ccStyle{Traits}. The default polygon
-traits class \ccStyle{CGAL_Polygon_traits_2<R>} is parameterized with a
+traits class \ccStyle{Polygon_traits_2<R>} is parameterized with a
 representation class \ccc{R}.
 
 \ccInclude{CGAL/Polygon_traits_2.h}
@@ -776,16 +776,16 @@ representation class \ccc{R}.
 \ccTypes
 
 \ccTypedef{typedef R::FT FT;}{}
-\ccTypedef{typedef CGAL_Point_2<_R>              Point_2;}{}
-\ccTypedef{typedef CGAL_Segment_2<_R>            Segment_2;}{}
-\ccTypedef{typedef CGAL_Vector_2<_R>             Vector_2;}{}
+\ccTypedef{typedef Point_2<_R>              Point_2;}{}
+\ccTypedef{typedef Segment_2<_R>            Segment_2;}{}
+\ccTypedef{typedef Vector_2<_R>             Vector_2;}{}
 
-\ccTypedef{typedef CGAL_p_Less_xy<Point_2>       Less_xy;}{}
-\ccTypedef{typedef CGAL_p_Less_yx<Point_2>       Less_yx;}{}
+\ccTypedef{typedef p_Less_xy<Point_2>       Less_xy;}{}
+\ccTypedef{typedef p_Less_yx<Point_2>       Less_yx;}{}
 
 \ccCreation
 \ccCreationVariable{traits}
-\ccConstructor{ CGAL_Polygon_traits_2<R>( );}{}
+\ccConstructor{ Polygon_traits_2<R>( );}{}
 
 \ccOperations
 
@@ -793,7 +793,7 @@ representation class \ccc{R}.
     bool lexicographically_xy_smaller(const Point_2& p, const Point_2& q) const;
 }
 {
-  Returns \ccc{CGAL_lexicographically_xy_smaller(p,q)}.
+  Returns \ccc{lexicographically_xy_smaller(p,q)}.
 }
 
 \ccMemberFunction{
@@ -801,7 +801,7 @@ representation class \ccc{R}.
                                                const Point_2& q) const;
 }
 {
-  Returns \ccc{CGAL_lexicographically_yx_smaller_or_equal(p,q)}.
+  Returns \ccc{lexicographically_yx_smaller_or_equal(p,q)}.
 }
 
 \ccMemberFunction{
@@ -822,14 +822,14 @@ representation class \ccc{R}.
     int sign(const FT& x) const;
 }
 {
-  Returns \ccc{CGAL_sign(x)}.
+  Returns \ccc{sign(x)}.
 }
 
 \ccMemberFunction{
     bool is_negative(const FT& x) const;
 }
 {
-  Returns \ccc{CGAL_is_negative(x)}.
+  Returns \ccc{is_negative(x)}.
 }
 
 \ccMemberFunction{
@@ -839,30 +839,30 @@ representation class \ccc{R}.
                       const Point_2& q2) const;
 }
 {
-  Returns \ccc{CGAL_do_intersect(Segment_2(p1,q1), Segment_2(p2,q2)}.
+  Returns \ccc{do_intersect(Segment_2(p1,q1), Segment_2(p2,q2)}.
 }
 
 \ccMemberFunction{
-    CGAL_Orientation orientation(const Point_2& p,
+    Orientation orientation(const Point_2& p,
                                  const Point_2& q,
                                  const Point_2& r) const;
 }
 {
-  Returns \ccc{CGAL_orientation(p, q, r)}.
+  Returns \ccc{orientation(p, q, r)}.
 }
 
 \ccMemberFunction{
-    CGAL_Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const;
+    Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const;
 }
 {
-  Returns \ccc{CGAL_compare_x(p, q)}.
+  Returns \ccc{compare_x(p, q)}.
 }
 
 \ccMemberFunction{
-    CGAL_Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const;
+    Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const;
 }
 {
-  Returns \ccc{CGAL_compare_y(p, q)}.
+  Returns \ccc{compare_y(p, q)}.
 }
 
 \ccMemberFunction{
@@ -870,7 +870,7 @@ representation class \ccc{R}.
                               const Vector_2& v2 ) const;
 }
 {
-  Returns \ccc{CGAL_Direction_2<R>(v1) == CGAL_Direction_2<R>(v2)}.
+  Returns \ccc{Direction_2<R>(v1) == Direction_2<R>(v2)}.
 }
 
 \end{ccClassTemplate}
