@@ -29,7 +29,7 @@
 computing the 2D Voronoi diagram of segments and points. The two
 template parameters must be models of the
 \ccc{SegmentVoronoiDiagramTraits_2} and
-\ccc{ApolloniusGraphDataStructure_2} concepts. The first concept
+\ccc{SegmentVoronoiDiagramDataStructure_2} concepts. The first concept
 is related to the geometric objects and predicates associated with
 segment Voronoi diagrams, whereas the second concept refers to the data
 structure used to represent the dual of the segment Voronoi
@@ -39,13 +39,14 @@ diagram. The classes \ccc{Segment_Voronoi_diagram_traits_2<K,MTag>},
 \ccc{Segment_Voronoi_diagram_filtered_traits_without_intersections_2<K,MTag>}
 are models of the \ccc{SegmentVoronoiDiagramTraits_2} concept, whereas
 the class
-\ccc{Apollonius_graph_data_structure_2<Vb,Fb>} is a model of the
-\ccc{ApolloniusGraphDataStructure_2} concept.
+\ccc{Triangulation_data_structure_2<Vb,Fb>} is a model of the
+\ccc{SegmentVoronoiDiagramDataStructure_2} concept.
 
 
 \ccHeading{Concepts}
 \ccRefConceptPage{SegmentVoronoiDiagramSite_2}\\
 \ccRefConceptPage{SegmentVoronoiDiagramStorageSite_2}\\
+\ccRefConceptPage{SegmentVoronoiDiagramDataStructure_2}\\
 \ccRefConceptPage{SegmentVoronoiDiagramVertexBase_2}\\
 \ccRefConceptPage{SegmentVoronoiDiagramTraits_2}\\
 \ccRefConceptPage{SegmentVoronoiDiagramHierarchyVertexBase_2}%

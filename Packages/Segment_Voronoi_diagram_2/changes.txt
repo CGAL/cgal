@@ -1,3 +1,6 @@
+7 September 2004:  Menelaos Karavelas
+- Documentation & code: replaced Agds_2 by Tds_2
+
 3 September 2004:  Menelaos Karavelas
 - test_svd_2_et.C: in definition of sqrt for Gmpq, I qualified the calls to
   to_double and sqrt by CGAL::

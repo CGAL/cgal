@@ -28,7 +28,7 @@
 
 #include <CGAL/Random.h>
 #include <CGAL/Segment_Voronoi_diagram_2.h>
-#include <CGAL/Apollonius_graph_data_structure_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Segment_Voronoi_diagram_vertex_base_2.h>
 #include <CGAL/Segment_Voronoi_diagram_hierarchy_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
@@ -54,7 +54,7 @@ const unsigned int svd_hierarchy_2__maxlevel = 5;
 //--------------------------------------------------------------------
 
 template < class Gt, class STag = Tag_false,
-	   class DS = Apollonius_graph_data_structure_2<
+	   class DS = Triangulation_data_structure_2<
               Segment_Voronoi_diagram_hierarchy_vertex_base_2<
                  Segment_Voronoi_diagram_vertex_base_2<Gt,
 			     typename Gt::Intersections_tag> >,

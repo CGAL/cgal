@@ -59,12 +59,12 @@ have essentially the same semantics as in the
 first template parameter must be a model of the
 \ccc{SegmentVoronoiDiagramTraits_2} concept. The third template
 parameter must be a model of the
-\ccc{ApolloniusGraphDataStructure_2} concept. However, the
+\ccc{SegmentVoronoiDiagramDataStructure_2} concept. However, the
 vertex base class that is to be used in the segment Voronoi diagram
 data structure must be a model of the
 \ccc{SegmentVoronoiDiagramHierarchyVertexBase_2}
 concept. The third template parameter defaults to
-\ccc{Apollonius_graph_data_structure_2<
+\ccc{Triangulation_data_structure_2<
 Segment_Voronoi_diagram_hierarchy_vertex_base_2< 
 Segment_Voronoi_diagram_vertex_base_2<Gt> >,
 Triangulation_face_base_2<Gt> >}. The second template
@@ -152,11 +152,11 @@ range [\ccc{first}, \ccc{beyond}). \ccc{Input_iterator} must be a
 %% not.}
 
 \ccSeeAlso
-\ccc{ApolloniusGraphDataStructure_2}\\
+\ccc{SegmentVoronoiDiagramDataStructure_2}\\
 \ccc{SegmentVoronoiDiagramTraits_2}\\
 \ccc{SegmentVoronoiDiagramHierarchyVertexBase_2}\\
 \ccc{CGAL::Segment_Voronoi_diagram_2<Gt,DS>}\\
-\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\

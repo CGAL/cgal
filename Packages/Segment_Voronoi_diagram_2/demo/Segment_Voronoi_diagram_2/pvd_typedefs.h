@@ -49,7 +49,7 @@ typedef CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,ITag>          Vb;
 typedef CGAL::Segment_Voronoi_diagram_vertex_base_with_info_2<Vb,int> Vbi;
 typedef CGAL::Segment_Voronoi_diagram_hierarchy_vertex_base_2<Vbi>    Vbh;
 typedef CGAL::Triangulation_face_base_2<Gt>                           Fb;
-typedef CGAL::Apollonius_graph_data_structure_2<Vbh,Fb>               DS;
+typedef CGAL::Triangulation_data_structure_2<Vbh,Fb>                  DS;
 
 
 

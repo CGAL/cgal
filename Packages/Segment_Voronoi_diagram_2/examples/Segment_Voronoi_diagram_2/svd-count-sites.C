@@ -61,8 +61,8 @@ int main() {
   for (oit = svd.output_sites_begin(); oit != svd.output_sites_end(); ++oit)
     {
       if ( oit->is_segment() ) { n_oseg++; } else {
-	n_opt++;
-	if ( !oit->is_input() ) { n_ptx++; }
+        n_opt++;
+        if ( !oit->is_input() ) { n_ptx++; }
       }
     }
 

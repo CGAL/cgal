@@ -73,7 +73,7 @@ intersecting segments on the plane. Although we compute the dual, we
 will often refer to the diagram itself, since it is easier to
 explain an d understand. The algorithm that has been
 implemented is incremental. The corresponding \cgal\ class is called
-\ccc{Segment_Voronoi_diagram_2<SegmentVoronoiDiagramTraits_2,ApolloniusGraphDataStructure_2>}
+\ccc{Segment_Voronoi_diagram_2<SegmentVoronoiDiagramTraits_2,SegmentVoronoiDiagramStructure_2>}
 and will be discussed in more detail in the sequel. The interested
 reader may want to refer to the paper by Karavelas
 \cite{cgal:k-reisv-04} for the general idea as well as the details of
@@ -199,7 +199,7 @@ exceptions to this rule are as follows:
 \label{sec:segvor2-design}
 
 The 2D segment Voronoi diagram class
-\ccc{Segment_Voronoi_diagram_2<SegmentVoronoiDiagramTraits_2,ApolloniusGraphDataStructure_2>}
+\ccc{Segment_Voronoi_diagram_2<SegmentVoronoiDiagramTraits_2,SegmentVoronoiDiagramDataStructure_2>}
 follows the design of the triangulation package of \cgal. It is
 parametrized by two arguments:
 \begin{itemize}
@@ -210,12 +210,15 @@ parametrized by two arguments:
   that can be used, for example, to visualize the diagram.
   The geometric traits for the segment Voronoi diagram will be
   discussed in more detail in the next section.
-\item the underlying {\bf data structure}. This is
-  actually identical to the Apollonius graph data structure (discussed
-  in Chapter \ref{sec:apollonius2-design}). The corresponding concept
-  is that of \ccc{ApolloniusGraphDataStructure_2}. The class
-  \ccc{Apollonius_graph_data_structure_2<Vb,Fb>} is a model of
-  the concept \ccc{ApolloniusGraphDataStructure_2}. A default value
+\item the {\bf segment Voronoi diagram data structure}. This is
+  essentially the same as the Apollonius graph data structure (discussed
+  in Chapter \ref{sec:apollonius2-design}), augmented with some
+  additional operations that are specific to segment Voronoi
+  diagrams. The corresponding concept is that of
+  \ccc{SegmentVoronoiDiagramDataStructure_2}, which in fact is a refinement
+  of the \ccc{ApolloniusGraphDataStructure_2} concept. The class
+  \ccc{Triangulation_data_structure_2<Vb,Fb>} is a model of
+  the concept \ccc{SegmentVoronoiDiagramDataStructure_2}. A default value
   for the corresponding template parameter is provided, so the user
   does not need to specify it.
 \end{itemize}
@@ -557,7 +560,7 @@ class is used, the possible values are \ccc{CGAL::Sqrt_field_tag} and
 
 The
 \ccc{Segment_Voronoi_diagram_hierarchy_2<SegmentVoronoiDiagramTraits_2,
-  SSTag, ApolloniusGraphDataStructure_2>} class is the analogue
+  SSTag, SegmentVoronoiDiagramDataStructure_2>} class is the analogue
 of the \ccc{Triangulation_hierarchy_2} or the
 \ccc{Apollonius_graph_hierarchy_2} classes, applied to the segment
 Voronoi diagram. It consists of a hierarchy of
@@ -588,9 +591,9 @@ Voronoi diagrams at all levels of the hierarchy.
 
 The class
 \ccc{Segment_Voronoi_diagram_hierarchy_2<SegmentVoronoiDiagramTraits_2,
-  SSTag, ApolloniusGraphDataStructure_2>}
+  SSTag, SegmentVoronoiDiagramDataStructure_2>}
 has exactly the same interface and functionality as the
-\ccc{Segment_Voronoi_diagram_2<SegmentVoronoiDiagramTraits_2,ApolloniusGraphDataStructure_2>}
+\ccc{Segment_Voronoi_diagram_2<SegmentVoronoiDiagramTraits_2,SegmentVoronoiDiagramDataStructure_2>}
 class. Using the segment Voronoi diagram hierarchy involves an
 additional cost in space and time for maintaining the hierarchy. Our
 experiments have shown that it usually pays off to use the hierarchy

@@ -34,9 +34,9 @@ dual. Currently it supports only insertions of sites.
 It is templated by two template arguments \ccc{Gt}, which
 must be a model of \ccc{SegmentVoronoiDiagramTraits_2}
 and \ccc{DS},
-which must be a model of \ccc{ApolloniusGraphDataStructure_2}.
+which must be a model of \ccc{SegmentVoronoiDiagramDataStructure_2}.
 The second template argument defaults to 
-\ccc{CGAL::Apollonius_graph_data_structure_2< 
+\ccc{CGAL::Triangulation_data_structure_2< 
 CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt>,
 CGAL::Triangulation_face_base_2<Gt> >}.
 
@@ -633,7 +633,7 @@ be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
 
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramTraits_2}\\
-\ccc{ApolloniusGraphDataStructure_2}\\
+\ccc{SegmentVoronoiDiagramDataStructure_2}\\
 \ccc{SegmentVoronoiDiagramVertexBase_2}\\
 \ccc{TriangulationFaceBase_2}\\
 \ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>}\\
@@ -641,7 +641,7 @@ be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
 \ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}\\
-\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,SSTag>}\\
 \ccc{CGAL::Triangulation_face_base_2<Gt>}
 
