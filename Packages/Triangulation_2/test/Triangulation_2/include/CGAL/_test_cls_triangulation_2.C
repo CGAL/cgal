@@ -42,7 +42,7 @@ class V2p_adaptor : public VIt {
 public:
   typedef typename VIt::Vertex::Point Point;
   V2p_adaptor(const VIt &vit) : VIt(vit) {}
-  V2p_adaptor(VIt &vit) : VIt(vit) {}
+  //V2p_adaptor(VIt &vit) : VIt(vit) {}
   const Point& operator*() const { return (VIt::operator*()).point(); }
 };
 
