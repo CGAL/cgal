@@ -221,7 +221,7 @@ private:
   {
     CGAL_precondition( st.is_segment() );
     Point_2 p = sp.point();
-    Segment_2 q = sq.segment(), t = st.segment();
+    //    Segment_2 q = sq.segment(), t = st.segment();
 
     Line_2 lq = compute_supporting_line(sq.supporting_segment());
 

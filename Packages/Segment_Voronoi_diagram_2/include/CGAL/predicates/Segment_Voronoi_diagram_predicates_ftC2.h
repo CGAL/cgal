@@ -155,8 +155,6 @@ get_site(const typename K::FT v[], unsigned int& k,
 	Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
 	Point_2 p3(v[k+4], v[k+5]), p4(v[k+6], v[k+7]);
 	Point_2 p5(v[k+8], v[k+9]), p6(v[k+10], v[k+11]);
-	Segment_2 supp(p1, p2);
-	Segment_2 s1(p3, p4), s2(p5, p6);
 	t.set_segment(p1, p2, p3, p4, p5, p6);
 	step = 12;
       }

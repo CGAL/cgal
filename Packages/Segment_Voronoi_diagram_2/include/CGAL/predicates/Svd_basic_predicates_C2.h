@@ -167,8 +167,6 @@ public:
   Homogeneous_point_2
   compute_projection(const Line_2& l, const Point_2& p)
   {
-    Homogeneous_point_2 hp;
-
     RT ab = l.a() * l.b();
 
     RT hx = CGAL::square(l.b()) * p.x()
