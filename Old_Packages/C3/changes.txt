@@ -1,3 +1,6 @@
+Version 3.6.4 (October 21 1999)
+- Update for CGAL/Arithmetic_filter/predicates/kernel_ftC3.h [Sylvain]
+
 Version 3.6.3 (October 12 1999)
 - Reverted the typename R::FT in *.C to typename Classname<R>::FT [Geert-Jan]
   Should now work on M$VC++ as well because of that change
