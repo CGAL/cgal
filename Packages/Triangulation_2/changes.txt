@@ -2,7 +2,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 7.49 (??/10/02)
+
+Ver 7.49 (25/10/02)
+- clean up update_hidden_points_1_3 in Regular_triangulation_2
+- changed a typedef in Triangulation_hierarchy_2
+- suppressed tempalate parameter in Trivial_iterator.h (SP)
 - Comparable_iterator renamed Trivial_comparable_iterator.
 
 Ver 7.48 (07/10/02)
