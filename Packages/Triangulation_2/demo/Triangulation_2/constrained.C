@@ -1,4 +1,5 @@
 #include <CGAL/basic.h>
+#include <cassert>
 #include <fstream>
 #include <list>
 #include <stack>

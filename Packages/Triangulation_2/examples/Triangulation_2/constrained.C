@@ -3,6 +3,7 @@
 #include <CGAL/Cartesian.h>
 #include <fstream>
 #include <list>
+#include <cassert>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 typedef double Coord_type;
