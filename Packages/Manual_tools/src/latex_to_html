@@ -843,6 +843,12 @@ cd $TmpDir
 TmpDir=$PWD
 cd ${CurrentDir}
 
+# convert two path variables for use with Cygwin
+if eval cygpath -i > /dev/null 2>&1 ; then 
+    TmpDir=`cygpath -m $TmpDir`
+    LATEX_CONV_CONFIG=`cygpath -m $LATEX_CONV_CONFIG`
+fi
+
 for f in $InFiles; do
     convert $f
 done
