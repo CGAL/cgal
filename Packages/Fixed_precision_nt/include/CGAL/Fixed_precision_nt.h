@@ -1,3 +1,26 @@
+// ======================================================================
+//
+// Copyright (c) 1998 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : include/CGAL/Fixed_precision_nt.h
+// package       : 
+// revision      : 
+// revision_date : 
+// author(s)     : Olivier Devillers <Olivivier.Devillers@sophia.inria.fr>
+//
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+//
+// ======================================================================
+
 
 #ifndef CGAL_FIXED_PRECISION_NT_H
 #define CGAL_FIXED_PRECISION_NT_H
