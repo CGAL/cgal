@@ -426,11 +426,10 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
   // check that the point is not already inserted
   Point_data *po = new Point_data(_p);
   Point_data_set_of_x::iterator iter = x_sorted.find(po);
+  delete(po);
 
-  if(iter != x_sorted.end()) {
-    delete(po);
-    return(true);
-  }
+  if(iter != x_sorted.end())
+    return(false);
 
   cache_valid = false;
   Point_data_set_of_y *right_tent =
@@ -567,11 +566,10 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
   // check that the point is not already inserted
   Point_data *po = new Point_data(_p);
   Point_data_set_of_x::iterator iter = x_sorted.find(po);
+  delete(po);
 
-  if(iter != x_sorted.end()) {
-    delete(po);
-    return(true);
-  }
+  if(iter != x_sorted.end())
+    return(false);
 
   cache_valid = false;
   Point_data_set_of_y *right_tent =
