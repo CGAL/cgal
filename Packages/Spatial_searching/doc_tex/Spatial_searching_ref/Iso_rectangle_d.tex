@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Iso_rectangle_d.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSIsorectangledRev}{$Revision$}
+\RCSdefDate{\RCSIsorectangledDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Iso_rectangle_d<R>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements \ccc{d}-dimensional iso-rectangles.
+
+\ccInclude{CGAL/Iso_rectangle_d.h}
+
+\ccIsModel
+
+Implements the concept query item.
+
+
+\ccTypes
+
+\ccTypedef{Item::R::FT NT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{r}  %% choose variable name
+
+\ccConstructor{Iso_rectangle_d();}{default constructor.}
+
+\ccConstructor{Iso_rectangle_d(Point_d<R> p, Point_d<R> q);}
+{constructs an iso-oriented rectangle \ccc{d} with diagonal opposite vertices \ccc{p} and \ccc{q}}. 
+
+\ccOperations
+
+\ccMethod{NT min_coord(int i);}
+{Returns the lower bound of the rectangle in dimension \ccc{i}.}
+
+\ccMethod{NT max_coord(int i);}
+{Returns the upper bound of the rectangle in dimension \ccc{i}.}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

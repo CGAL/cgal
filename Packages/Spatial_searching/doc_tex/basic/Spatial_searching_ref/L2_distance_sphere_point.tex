@@ -1,36 +1,32 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: L1_distance_rectangle_point.tex
+% | Reference manual page: L2_distance_sphere_point.tex
 % +------------------------------------------------------------------------+
 % | 1.07.2001   Johan W.H. Tangelder
 % | Package: ASPAS
-% |
-\RCSdef{\RCSLdistancerectanglepointRev}{$Revision$}
-\RCSdefDate{\RCSLdistancerectanglepointDate}{$Date$}
+% | 
+\RCSdef{\RCSLdistancespherepointRev}{$Revision$}
+\RCSdefDate{\RCSLdistancespherepointDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{L1_distance_rectangle_point<QueryItem,Item>}  %% add template arg's if necessary
-
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[class]{} %% add further index entries
+\begin{ccRefClass}{L2_distance_sphere_point<QueryItem,Item>}  %% add template arg's if necessary
 
 \ccDefinition
 
 The class \ccRefName\ provides an implementation of \\
 the GeneralDistance concept
-for the L1 distance between a $d$-dimensional iso-rectangle and a $d$-dimensional point 
-and the L1 distance between a $d$-dimensional iso-rectangle
+for the L2 distance between a $d$-dimensional sphere and a point and the L2 distance between a $d$-dimensional sphere
 and a $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
 
-\ccInclude{CGAL/L1_distance_rectangle_point.h}
+\ccInclude{CGAL/L2_distance_sphere_point.h}
 
 \ccParameters
 
 Expects for the parameter \ccc{QueryItem}
-\ccc{item} an implementation of iso-rectangles
-for example \ccc{CGAL::Iso_rectangle_d<R>}.
+\ccc{item} an implementation of $d$-dimensional spheres
+for example \ccc{CGAL::sphere_d<R>}.
 Expects for the parameter \ccc{Item} an implementation
 of a $d$-dimensional point, for example \ccc{CGAL::Point_d<R>}.
 
@@ -43,35 +39,39 @@ GeneralDistance
 \ccTypedef{Item::R::FT NT;}{Number type.}
 
 \ccCreation
-\ccCreationVariable{d}  %% choose variable name
+\ccCreationVariable{s}  %% choose variable name
 
-\ccConstructor{L1_distance_rectangle_point();}{Default constructor implementing $l_1$ metric for
-two-dimensional iso-rectangles.}
+\ccConstructor{L2_distance_sphere_point();}{Default constructor implementing $l_2$ metric for
+two-dimensional spheres.}
 
-\ccConstructor{L1_distance_rectangle_point(int d);}
-{Constructor implementing $l_1$ metric for
-$d$-dimensional iso-rectangles.}
+\ccConstructor{L2_distance_sphere_point(int d);}
+{Constructor implementing $l_2$ metric for
+$d$-dimensional spheres.}
 
 \ccHeading{Member Functions}
 
-\ccMethod{NT transformed_distance(NT d);} {Returns $d$.}
+\ccMethod{NT transformed_distance(NT d);} {Returns $d^2$.}
 
-\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $d$.}
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $\sqrt d$.}
 
 \ccMethod{NT distance(QueryItem& q, Item&p);}{Returns the distance between \ccc{q} and \ccc{p}.}
 
 \ccMethod{NT min_distance_to_queryitem(QueryItem& q, Kd_tree_rectangle<NT>& r;);}
-{Returns the minimal distance between a point from \ccc{q} and a point from
+{Returns the minimal distance between a point from the sphere \ccc{q} and a point from
 \ccc{r}}
 
 \ccMethod{NT max_distance_to_queryitem(QueryItem& q, Kd_tree_rectangle<NT>& r;);}
-{Returns the maximal distance between the iso-rectangle \ccc{q} and
+{Returns the maximal distance between the sphere \ccc{q} and
 a point from \ccc{r} furthest to \ccc{q}.}
 
 
 \ccSeeAlso
 
 GeneralDistance.
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
 
 \end{ccRefClass}
 

@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Item.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSItemRev}{$Revision$}
+\RCSdefDate{\RCSItemDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Item<R>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+An object of the class \ccClassTemplateName\ is a point in $d$-dimensional
+Euclidean space $E_d$, where $d$ is arbitrary. 
+
+\ccTypes
+
+\ccTypedef{Item::R::FT NT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{p}  %% choose variable name
+
+\ccConstructor{Item();}{default constructor.}
+
+
+
+
+\ccOperations
+
+
+
+\ccMemberFunction{ NT operator [] (int i) const;}
+        {returns the i'th Cartesian coordinate of \ccVar, starting
+        with 0. \ccPrecond $0\leq i < \ccc{d}$.}
+
+\ccMemberFunction{ int dimension () const;}
+        {returns the dimension \ccc{d} of \ccVar.}
+
+
+\ccHasModels
+
+\ccc{Point_2, Point_3, Point_d}
+
+\ccSeeAlso
+
+GeneralDistance, OrthogonalDistance.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
