@@ -62,7 +62,8 @@ class Triangulation_hierarchy_vertex_base_2
 };
 
 // parameterization of the  hierarchy
-const float Triangulation_hierarchy_2__ratio    = 30.0;
+//const float Triangulation_hierarchy_2__ratio    = 30.0;
+const int Triangulation_hierarchy_2__ratio    = 30;
 const int   Triangulation_hierarchy_2__minsize  = 20;
 const int   Triangulation_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !

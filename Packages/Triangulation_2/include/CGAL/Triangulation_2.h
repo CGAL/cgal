@@ -62,12 +62,12 @@ class Triangulation_2
                 (std::istream& is, Triangulation_2<Gt,Tds> &tr);
   friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
                 (std::ostream& os, const Triangulation_2<Gt,Tds> &tr);
-  friend Triangulation_all_faces_iterator_2<Gt,Tds>;
-  friend Triangulation_all_edges_iterator_2<Gt,Tds>;
-  friend Triangulation_all_vertices_iterator_2<Gt,Tds>;
-  friend Triangulation_finite_faces_iterator_2<Gt,Tds>;
-  friend Triangulation_finite_edges_iterator_2<Gt,Tds>;
-  friend Triangulation_finite_vertices_iterator_2<Gt,Tds>;
+  friend class Triangulation_all_faces_iterator_2<Gt,Tds>;
+  friend class Triangulation_all_edges_iterator_2<Gt,Tds>;
+  friend class Triangulation_all_vertices_iterator_2<Gt,Tds>;
+  friend class Triangulation_finite_faces_iterator_2<Gt,Tds>;
+  friend class Triangulation_finite_edges_iterator_2<Gt,Tds>;
+  friend class Triangulation_finite_vertices_iterator_2<Gt,Tds>;
 
 public:
   typedef Tds Triangulation_data_structure;
@@ -587,7 +587,7 @@ includes_edge(Vertex_handle va, Vertex_handle vb,
   // fr is on the right side of a->b
 {
   Vertex_handle v;
-  Orientation or;
+  Orientation orient;
   int indv;
   Edge_circulator ec = va->incident_edges(), done(ec);
   if (ec != 0) {
@@ -603,10 +603,10 @@ includes_edge(Vertex_handle va, Vertex_handle vb,
 	  return true;
 	}
 	else {
-	  or = orientation(va->point(),
+	  orient = orientation(va->point(),
 			   vb->point(),
 			   v->point()); 
-	  if((or==COLLINEAR) && 
+	  if((orient==COLLINEAR) && 
 	     (collinear_between (va->point(),
 				 v->point(),
 				 vb->point()))) {
@@ -885,11 +885,11 @@ insert_outside_affine_hull(const Point& p)
 {
   CGAL_triangulation_precondition(dimension() == 1);
   Face_handle f = (*finite_edges_begin()).first;
-  Orientation or = orientation( f->vertex(0)->point(),
-				f->vertex(1)->point(),
-				p);
-  CGAL_triangulation_precondition(or != COLLINEAR);
-  bool conform = ( or == COUNTERCLOCKWISE);
+  Orientation orient = orientation( f->vertex(0)->point(),
+				    f->vertex(1)->point(),
+				    p);
+  CGAL_triangulation_precondition(orient != COLLINEAR);
+  bool conform = ( orient == COUNTERCLOCKWISE);
 
   Vertex_handle v = static_cast<Vertex*>
     (_tds.insert_dim_up( &(*infinite_vertex()), conform));

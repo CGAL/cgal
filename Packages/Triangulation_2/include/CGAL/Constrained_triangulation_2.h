@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds>
 class Constrained_triangulation_2  : public Triangulation_2<Gt,Tds>
 {
-  friend Constrained_triangulation_sweep_2<Gt,Tds>;
+  friend  class Constrained_triangulation_sweep_2<Gt,Tds>;
   //friend Constrained_triangulation_sweep_2<Gt,Tds>::Neighbor_list;
 public:
   typedef Triangulation_2<Gt,Tds> Triangulation;
