@@ -92,7 +92,8 @@ namespace CGAL {
 	      RasterOp old = widget->rasterOp();	//save the initial raster mode
 	      widget->setRasterOp(XorROP);
 	      widget->lock();
-	      *widget << CGAL::GREEN << CGAL::PointSize (7) << CGAL::PointStyle (CGAL::DISC);
+        *widget << CGAL::GREEN << CGAL::PointSize (7) 
+                << CGAL::PointStyle (CGAL::DISC);
 	      if(!wasrepainted)
 	        *widget << old_point;
 	      *widget << v->point();
