@@ -201,6 +201,29 @@ the search.  \ccPrecond{\ccc{c} is a cell of \ccVar.}
 A point \ccc{p} is said to be in conflict with a cell \ccc{c} in dimension 3
 (resp. a facet \ccc{f} in dimension 2) iff \ccVar.\ccc{side_of_sphere(c, p)}
 (resp. \ccVar.\ccc{side_of_circle(f, p)}) returns \ccc{ON_BOUNDED_SIDE}.
+The set of cells (resp. facets in dimension 2) which are in conflict with
+\ccc{p} is connected, and it forms a hole.
+
+\ccMethod{template <class OutputIteratorBoundaryFacets,
+                    class OutputIteratorCells>
+  std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
+  find_conflicts(Point p, Cell_handle c,
+	         OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit);}
+{Computes the conflict hole induced by \ccc{p}.  The starting cell
+(resp.  facet) \ccc{c} must be in conflict.  Then this function returns
+respectively in the output iterators:\\
+-- \ccc{cit}: the cells (resp. facets) in conflict.\\
+-- \ccc{bfit}: the facets (resp. edges) on the boundary, that is, the facets
+(resp. edges) \ccc{(t, i)} where the cell (resp. facet) \ccc{t} is in
+conflict, but \ccc{t->neighbor(i)} is not.\\
+This function can be used in conjunction with \ccc{insert_in_hole()} in order
+to decide the insertion of a point after seeing which elements of the
+triangulation are affected.
+Returns the pair composed of the resulting output iterators.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, and \ccc{c} is in conflict
+with \ccc{p}.}
+}
 
 \ccMethod{template <class OutputIteratorBoundaryFacets,
                     class OutputIteratorCells,
@@ -212,23 +235,21 @@ A point \ccc{p} is said to be in conflict with a cell \ccc{c} in dimension 3
 	         OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
 		 OutputIteratorInternalFacets ifit);}
-{A point \ccc{p} defines a set of connected cells (resp. facets in dimension
-2) that are in conflict with it, which forms a hole.  The starting cell
-(resp.  facet) \ccc{c} must be in conflict.  Then this function returns
-respectively in the output iterators:\\
+{Same as the other \ccc{find_conflicts()} function, except that it also 
+computes the internal facets, i.e. the facets common to two cells which
+are in conflict with \ccc{p}.
+Then this function returns respectively in the output iterators:\\
 -- \ccc{cit}: the cells (resp. facets) in conflict.\\
 -- \ccc{bfit}: the facets (resp. edges) on the boundary, that is, the facets
 (resp. edges) \ccc{(t, i)} where the cell (resp. facet) \ccc{t} is in
 conflict, but \ccc{t->neighbor(i)} is not.\\
 -- \ccc{ifit}: the facets (resp. edges) inside the hole, that is, delimiting
 two cells (resp facets) in conflict.\\
-This function can be used in conjunction with \ccc{insert_in_hole()} in order
-to decide the insertion of a point after seeing which elements of the
-triangulation are affected.
 Returns the \ccc{Triple} composed of the resulting output iterators.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, and \ccc{c} is in conflict
 with \ccc{p}.}
 }
+
 
 \ccHeading{Voronoi diagram}
 \ccIndexMainItem{Voronoi diagram}

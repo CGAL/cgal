@@ -428,6 +428,8 @@ _test_cls_delaunay_3(const Triangulation &)
   }
 
   // Testing find_conflicts() + insert_in_hole()
+  // FIXME : Note that we do not test the version of find_conflicts()
+  //         which returns the internal facets too...
   std::cout << "    Constructor13 (find_conflicts/insert_in_hole)" << std::endl;
   Cls T3_13;
   for (i=0; i<22; ++i) {
@@ -448,7 +450,7 @@ _test_cls_delaunay_3(const Triangulation &)
       std::vector<Cell_handle> V;
       Facet facet;
       T3_13.find_conflicts(q[i], c, CGAL::Oneset_iterator<Facet>(facet),
-                           std::back_inserter(V), CGAL::Emptyset_iterator());
+                           std::back_inserter(V));
       T3_13.insert_in_hole(q[i], V.begin(), V.end(), facet.first, facet.second);
     }
   }

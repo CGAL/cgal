@@ -32,6 +32,7 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_remove_tds_3.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -243,6 +244,19 @@ public:
 	*cit++ = *ccit;
       }
       return make_triple(bfit, cit, ifit);
+  }
+
+  template <class OutputIteratorBoundaryFacets, class OutputIteratorCells>
+  std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
+  find_conflicts(const Point &p, Cell_handle c,
+	         OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit) const
+  {
+      Triple<OutputIteratorBoundaryFacets,
+             OutputIteratorCells,
+	     Emptyset_iterator> t = find_conflicts(p, c, bfit, cit,
+		                                   Emptyset_iterator());
+     return std::make_pair(t.first, t.second);
   }
 
   void
