@@ -47,7 +47,7 @@ private:
     std::ostream*  m_os;
 public:
     Inventor_ostream_base()           : m_os(0)  {}
-    Inventor_ostream_base(ostream& o) : m_os(&o) {}
+    Inventor_ostream_base(std::ostream& o) : m_os(&o) {}
     ~Inventor_ostream_base()  { close(); }
     void open(std::ostream& o)        { m_os = &o; }
     void close() {
