@@ -118,7 +118,7 @@ with \ccc{Face_handle()}.}
 \ccMethod{bool has_vertex(Vertex_handle v, int& i) const;}
 {as above, and sets \ccc{i} to the index of \ccc{v} in \ccVar\ .}
 \ccGlue
-\ccMethod{int vertex_index(Vertex_handle v) const;}
+\ccMethod{int index(Vertex_handle v) const;}
 {returns the index of \ccc{v} in \ccVar\ .}
 \ccGlue
 \ccMethod{Face_handle neighbor(int i) const;}
@@ -131,7 +131,7 @@ with \ccc{Face_handle()}.}
 \ccMethod{bool has_neigbor(Face_handle n, int& i) const;}
 {as above, and sets i to the index of \ccc{n} in \ccVar\ .}
 \ccGlue
-\ccMethod{int face_index(const Face_handle n) const;}
+\ccMethod{int index(const Face_handle n) const;}
 {returns the index of neighbor \ccc{n} in \ccVar\ .}
 
 \ccHeading{Setting}

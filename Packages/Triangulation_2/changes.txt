@@ -1,4 +1,7 @@
-23 december 2004 Mariette
+03 January 2005 Mariette
+- fix documentation of index fonctions in concept TriangulationDSFaceBase_2.
+ 
+23 December 2004 Mariette
 - fixed assert in Constrained_triangulation_plus_2.h
 
 20 December 2004 Sylvain Pion
