@@ -1,3 +1,4 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -5,57 +6,68 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
-
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-
-CXXFLAGS = -I../../include\
-	$(CGAL_CXXFLAGS)\
-#	-g 
-
+CXXFLAGS = \
+           -I../../../STL_Extension_output_iterator/include \
+           -I../../include \
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LIBPATH = \
+          $(CGAL_LIBPATH)
+
 LDFLAGS = \
-	$(TESTSUITE_LDFLAGS) \
-	$(CGAL_LDFLAGS)
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: example_simple example_color example_hierarchy example_tds
-	./example_simple
-	./example_color
-	./example_hierarchy
-	./example_tds
+all:            \
+                example_color$(EXE_EXT) \
+                example_find_conflicts$(EXE_EXT) \
+                example_hierarchy$(EXE_EXT) \
+                example_simple$(EXE_EXT) \
+                example_tds$(EXE_EXT) 
 
-example_simple: example_simple.o
-	$(CGAL_CXX) -o example_simple example_simple.o $(LDFLAGS)
+example_color$(EXE_EXT): example_color$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_color example_color$(OBJ_EXT) $(LDFLAGS)
 
-example_hierarchy: example_hierarchy.o
-	$(CGAL_CXX) -o example_hierarchy example_hierarchy.o $(LDFLAGS)
+example_find_conflicts$(EXE_EXT): example_find_conflicts$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_find_conflicts example_find_conflicts$(OBJ_EXT) $(LDFLAGS)
 
-example_color: example_color.o
-	$(CGAL_CXX) -o example_color example_color.o $(LDFLAGS)
+example_hierarchy$(EXE_EXT): example_hierarchy$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_hierarchy example_hierarchy$(OBJ_EXT) $(LDFLAGS)
 
-example_tds: example_tds.o
-	$(CGAL_CXX) -o example_tds example_tds.o $(LDFLAGS)
+example_simple$(EXE_EXT): example_simple$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_simple example_simple$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	rm -rf *~ *.o core example_simple example_color example_hierarchy example_tds output output_tds
+example_tds$(EXE_EXT): example_tds$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_tds example_tds$(OBJ_EXT) $(LDFLAGS)
 
-realclean: clean
+clean: \
+                   example_color.clean \
+                   example_find_conflicts.clean \
+                   example_hierarchy.clean \
+                   example_simple.clean \
+                   example_tds.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
