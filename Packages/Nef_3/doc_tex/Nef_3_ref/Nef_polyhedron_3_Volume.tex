@@ -27,7 +27,7 @@ iterator range (\ccc{shells_begin()}/\ccc{shells_end()}). A
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
 \ccTypes
-\ccThree{Halfedge_const_handle}{h.halfedge() const;;}{}
+\ccThree{Shell_entry_const_iterator}{shells_begin() const;}{}
 \ccThreeToTwo
 
 \ccNestedType{Mark}{type of mark.}
@@ -51,7 +51,7 @@ iterator range (\ccc{shells_begin()}/\ccc{shells_end()}). A
 \ccMethod{Shell_entry_const_iterator  shells_begin() const;}
 {const iterator over the entries to all shells adjacent to \ccVar\ .}
 
-\ccMethod{Shell_entry_const_iterator  shells_cycle_end() const;}
+\ccMethod{Shell_entry_const_iterator  shells_end() const;}
 {past-the-end iterator.}
 
 \ccSeeAlso

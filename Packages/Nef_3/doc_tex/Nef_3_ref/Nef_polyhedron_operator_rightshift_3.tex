@@ -23,7 +23,8 @@ complete incidence structure, the geometric data, and the marks of each item.
 It is recommended to use the \cgal kernels \ccc{Homogeneous}, 
 \ccc{Simple_homogeneous}, 
 or \ccc{Extended_homogeneous} parametrized with any exact number type that models 
-mathbb{Z}. The input and output iterators of Nef polyhedra parametrized with
+\mathbb{Z} (e.g.\ccc{Gmpz} or \ccc{leda_integer}). The input and 
+output iterators of Nef polyhedra parametrized with
 either of these kernels are compatible as long as the Nef polyhedron is bounded.
 An unbounded Nef polyhedron can only be read by a Nef polyhedron parametrized with
 an extended kernel. It is also recommended to use the \cgal stream modifier 

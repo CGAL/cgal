@@ -39,8 +39,8 @@ is represented by two halfedges or two halffacets, respectively.
 
 \begin{tabbing}
 \ccc{template <} \=\ccc{class Nef_polyhedronTraits_3,}\\
-                 \>\ccc{class Nef_polyhedronItems_3 = CGAL::SNC_items_3,}\\
-                 \>\ccc{class Nef_polyhedronMarks_3 = bool >}\\
+                 \>\ccc{class Nef_polyhedronItems_3 = CGAL::SNC_items,}\\
+                 \>\ccc{class Nef_polyhedronMarks = bool >}\\
     \ccc{class Nef_polyhedron_3;}
 \end{tabbing}
 
@@ -52,10 +52,10 @@ modeling \Z, or \ccc{Cartesian}, \ccc{Simple_cartesian},
 \ccc{Quotient<Gmpz>} or any other number type modeling \Q.
 
 The second parameter expects a model of the concept
-\ccc{Nef_polyhedronItems_3}.  The default is the \ccc{CGAL::SNC_items}
+\ccc{Nef_polyhedronItems_3}. The default is the \ccc{CGAL::SNC_items}
 class.
 
-The third parameter expects a model of the concept \ccc{Nef_polyhedronMarks_3}.
+The third parameter expects a model of the concept \ccc{Nef_polyhedronMarks}.
 The default is the basic type \ccc{bool}.
 
 \ccTypes
@@ -236,7 +236,7 @@ The following macros are provided: \ccc{CGAL_forall_vertices(v,N)},
 
 \ccHeading{Point Set Predicates}
 
-\ccThree{bool}{N.operator==();}{}
+\ccThree{Nef_polyhedron_3<Traits>}{N.intersection(N1);}{}
 
 \ccMethod{bool is_empty() const;}{returns true, if \ccVar\ is the 
                                   empty point set.}
@@ -263,8 +263,6 @@ The following macros are provided: \ccc{CGAL_forall_vertices(v,N)},
 {returns true, if \ccVar\ is a superset of N1. }
 
 \ccHeading{Unary Set Operations}
-
-\ccThree{Nef_polyhedron_3<Traits>}{N.intersection(N1);}{}
 
 \ccMethod{Nef_polyhedron_3<Traits> complement() const;}
 {returns the complement of \ccVar\ .}
