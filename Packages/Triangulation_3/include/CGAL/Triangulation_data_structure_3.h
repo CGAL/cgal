@@ -102,12 +102,6 @@ public:
     : _dimension(-2), _number_of_vertices(0)
   {}
 
-//   Triangulation_data_structure_3(const Vertex & v)
-//     : _dimension(-2), _number_of_vertices(0)
-//   {
-//     insert_increase_dimension(v);
-//   }
-
   Triangulation_data_structure_3(const Tds & tds)
     : _number_of_vertices(0)
     // _number_of_vertices is set to 0 so that clear() in copy_tds() works
@@ -189,6 +183,7 @@ public:
       return c; 
     }
 
+private:
   // not documented
   // only used by copy_tds in the TDS class
   Cell* create_cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
@@ -210,7 +205,7 @@ public:
       link_cells(c->_previous_cell, c->_next_cell);
   }
 
-  // TODO : ajouter (et donc l'eliminer) add_cell() dedans...
+  // TODO : put add_cell() in it ?
   Cell* get_new_cell()
   {
       if (_list_of_free_cells._next_cell == &_list_of_free_cells)
@@ -221,14 +216,6 @@ public:
       remove_cell_from_list(r);
       return r;
   }
-
-  void add_cell( Cell* c )
-    {
-      CGAL_triangulation_precondition( c != NULL );
-
-      link_cells(c, _list_of_cells._next_cell);
-      link_cells(&_list_of_cells, c);
-    }
 
   void move_cell_to_temporary_free_list(Cell *c)
   {
@@ -251,6 +238,15 @@ public:
       link_cells(&_list_of_temporary_free_cells,
 	         &_list_of_temporary_free_cells);
   }
+
+public:
+  void add_cell( Cell* c )
+    {
+      CGAL_triangulation_precondition( c != NULL );
+
+      link_cells(c, _list_of_cells._next_cell);
+      link_cells(&_list_of_cells, c);
+    }
 
   // ACCESS FUNCTIONS
 

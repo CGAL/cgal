@@ -147,20 +147,10 @@ protected:
   void init_tds()
     {
       infinite = (Vertex*) _tds.insert_increase_dimension(NULL);
-      // this causes a problem of accessing non initialized data 
-      // (seen by purify) in _tds.insert_increase_dimension
-      // when doing Vertex* w = new Vertex(v)
-      // to be solved...
-      // but the following solution does not work for regular triangulation :
 
-// 	_tds.insert_increase_dimension(Vertex(Point(0,0,0)));
-     // coordinates are given to this vertex but they will and must
-     // NEVER be accessed !! done to avoid a problem of accessing
-     // non initialized data
-
-      handle2pointer( infinite ); 
+      // Forces the compiler to instantiate handle2pointer.
+      handle2pointer( Vertex_handle() ); 
       handle2pointer( Cell_handle() );
-      // ( forces the compiler to instanciate handle2pointer )
     }
   
   void init_function_objects() 
@@ -803,17 +793,6 @@ private:
 			 std::set<Cell*> & cells,
 			 Cell_handle c,
 			 int dummy_for_windows = 0) const;
-protected:
-  // Only used by Delaunay remove(), and should probably not exist.
-  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
-			  Vertex_handle v2, Vertex_handle v3,
-			  Cell_handle c0, Cell_handle c1,
-			  Cell_handle c2, Cell_handle c3)
-    {
-      Cell_handle cnew = new Cell (v0,v1,v2,v3,c0,c1,c2,c3);
-      _tds.add_cell( &(*cnew) );
-      return cnew;
-    }
 
 public:
 

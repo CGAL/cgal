@@ -968,8 +968,11 @@ fill_hole_3D_ear( std::vector<Facet> & boundhole)
 	// none of the vertices violates the Delaunay property
 	// We are ready to plug a new cell
 
-	Cell_handle ch = create_cell(v0, v1, v2, v3,
-				     NULL, NULL, NULL, NULL);
+        Cell_handle ch = (Cell *) _tds.create_cell(
+		                       (typename Tds::Vertex *) &(*v0),
+	                               (typename Tds::Vertex *) &(*v1),
+			               (typename Tds::Vertex *) &(*v2),
+			               (typename Tds::Vertex *) &(*v3));
 	cells.push_back(ch);
 
 	// The new cell touches the faces that form the ear
