@@ -1,3 +1,7 @@
+28 February 2005 Laurent Rineau
+- Added macro CGAL_MESH_2_DEBUG_DRAW and Debug_layer.h in mesh_demo, to debug
+calls to widget->redraw(). Not activated by default.
+
 8 February 2005 Laurent Rineau
 - CHANGES to Mesher_level:
     - enum Mesher_level_conflict_status instead of std::map<bool, bool>.

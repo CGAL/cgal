@@ -68,6 +68,10 @@ int main(int, char*)
 #include "Show_clusters.h"
 #include <CGAL/IO/Qt_widget_show_mouse_coordinates.h>
 
+#ifdef CGAL_MESH_2_DEBUG_DRAW
+#include "Debug_layer.h"
+#endif
+
 #include "Qt_widget_style_editor.h"
 
 #include <qapplication.h>
@@ -606,6 +610,9 @@ public:
                                                 "Show clusters");
 
       // layers order, first attached are "under" last attached
+#ifdef CGAL_MESH_2_DEBUG_DRAW
+      widget->attach(new CGAL::Debug_layer());
+#endif
       widget->attach(show_marked);
       widget->attach(show_bad_faces);
       widget->attach(show_triangulation);
