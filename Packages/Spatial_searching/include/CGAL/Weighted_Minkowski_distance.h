@@ -56,11 +56,12 @@ namespace CGAL {
 
     // default constructor
     // default case dim=2, L2.
+    
     Weighted_Minkowski_distance() : p(2.0), The_dimension(2) 
     { 
          The_weights = new Weight_vector(2);
-         The_Weights[0]=1.0;
-         The_Weights[1]=1.0;
+         The_weights[0]=1.0;
+         The_weights[1]=1.0;
     }
 
 	Weighted_Minkowski_distance (float power, int dim,
@@ -70,7 +71,8 @@ namespace CGAL {
 		assert(The_dimension==Weights.size());
 		for (unsigned int i = 0; i < Weights.size(); ++i)
                 assert(Weights[i]>=0.0);
-		The_weights = new Weight_vector(Weights);
+		The_weights = new Weight_vector(Weights.size());
+		for (unsigned int i = 0; i < Weights.size(); ++i) (*The_weights)[i]=Weights[i];
 	}
 
 	~Weighted_Minkowski_distance() {

@@ -1,9 +1,8 @@
-// example using nearest_neighbour_iterator for L2
+// example using nearest_neighbour_iterator for L2 using standard search with Orthogonal Distance
 // benchmark example using 10000 data points and 10000 query points
 // bucketsize=1
 // both generated with Random_points_in_cube_3<Point_3>
 // comparing ASPAS to brute force method 
-
 
 // #include <CGAL/basic.h>
 
@@ -13,13 +12,15 @@
 #include <string>
 
 #include <iostream>
-#include <fstream>
+#include <fstream> 
+
 
 // #include <CGAL/Cartesian.h>
 // #include <CGAL/Point_3.h>
 #include <CGAL/Binary_search_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Nearest_neighbour_L2_standard_search.h>
+#include <CGAL/Nearest_neighbour_L2_standard_search_Minkowski_norm.h>
+#include <CGAL/Weighted_Minkowski_distance.h>
 #include <CGAL/Search_nearest_neighbour.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Timer.h>
@@ -126,7 +127,8 @@ typedef double NT;
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
 typedef CGAL::Creator_uniform_3<double,Point> Creator;
-typedef CGAL::Nearest_neighbour_L2_standard_search <Traits,CGAL::Search_nearest_neighbour> 
+typedef CGAL::Weighted_Minkowski_distance<Traits> Distance_traits;
+typedef CGAL::Nearest_neighbour_L2_standard_search_Minkowski_norm <Traits,CGAL::Search_nearest_neighbour,Distance_traits> 
 Nearest_neighbours_type;
 
 // typedef std::vector<Point> Vector;  causes IRIS compiler problem
@@ -141,11 +143,15 @@ NT The_squared_distance(const Point& P, const Point& Q) {
 
   int test_benchmark_nearest_neighbour_L2() {
 
+  int dim=3;
   CGAL::Timer t;
   // clock_t ticks_start, ticks_stop;
   // int dim=3; 
   int bucket_size=1;
   NT eps=0.0;
+
+  std::vector<double> my_weights(dim);
+  my_weights[0]=1.0; my_weights[1]=1.0; my_weights[2]=1.0;
 
   const int data_point_number=  10000;
   const int query_point_number= 10000;
@@ -193,17 +199,18 @@ NT The_squared_distance(const Point& P, const Point& Q) {
 
   // end of building binary search tree
   
-  std::vector<CGAL::Nearest_neighbour_L2_standard_search <Traits,
-	  CGAL::Search_nearest_neighbour>::Item_with_distance> nearest_neighbours;
+  std::vector<CGAL::Nearest_neighbour_L2_standard_search_Minkowski_norm <Traits,
+	  CGAL::Search_nearest_neighbour, Distance_traits>::Item_with_distance> nearest_neighbours;
   nearest_neighbours.reserve(query_point_number);
 
   t.reset(); t.start();
   
-  
+  Distance_traits tr_dist(2.0,dim,my_weights);
+ 
   for (int i=0; i < query_point_number; i++) { /*
     NNN_Iterator NNN_Iterator1(d,query_points[i],0.0);
     nearest_neighbours[i]=*NNN_Iterator1; */
-    Nearest_neighbours_type NN(d, query_points[i], 1, 0.0);
+    Nearest_neighbours_type NN(d, query_points[i], tr_dist, 1, 0.0);
     NN.the_k_nearest_neighbours(std::back_inserter(nearest_neighbours));
   };
   
@@ -249,17 +256,16 @@ NT The_squared_distance(const Point& P, const Point& Q) {
   << query_point_number << " queries in time " <<  t.time() <<
   " seconds using brute force" << std::endl;
 
-  // compare the results
+  // compare the results 
   std::cout << "comparing results" << std::endl;
-  for (int i=0; i < query_point_number; i++) {
+  for (int i=0; i < query_point_number; i++) {  
 	if (!((*(nearest_neighbours[i].first))==the_data_points[
 		nearest_neighbours_brute_force_index[i]])) {
-		// assert
-		if (!(
-		The_squared_distance(query_points[i],
+		assert(
+		(The_squared_distance(query_points[i],
 				     (*nearest_neighbours[i].first))==
 		The_squared_distance(query_points[i],
-		the_data_points[nearest_neighbours_brute_force_index[i]]))) std::cout << "i=" << i << std::endl;
+		the_data_points[nearest_neighbours_brute_force_index[i]]))); 
 	};
   };
   std::cout << "all results are fine" << std::endl;  
