@@ -1,3 +1,7 @@
+2.56 (mh)
+- removed obsolete workaround files
+- set NOMINMAX in config.h if _MSC_VER is defined
+
 2.55 (rursu)
 - removed couple lines from config.h used for cl1200
 

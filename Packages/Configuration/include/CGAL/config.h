@@ -139,12 +139,12 @@
 #endif // ! CGAL_USE_NEWSTYLE_HEADERS
 
 //--------------------------------------------------------------------//
-//           if defined CGAL_CFG_NOMINMAX_BUG define NOMINMAX flag
+// This addresses a bug in VC++ 7.0 that (re)defines min(a, b)
+// and max(a, b) in windows.h and windef.h 
 //-------------------------------------------------------------------//
 
-#ifdef CGAL_CFG_NOMINMAX_BUG
+#ifdef _MSC_VER
 #define NOMINMAX 1
 #endif
 
 #endif // CGAL_CONFIG_H
-
