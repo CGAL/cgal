@@ -17,12 +17,12 @@ include $(CGAL_MAKEFILE)
 # CGAL_CXX=purify g++
 # CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
               # -L$(GMP_LIB_DIR) -lgmp -lm \
-	      # ../../src/Interval_arithmetic.o
 
 CXXFLAGS = -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -DLOOPS=100000 -W
+	-DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
+	-O2 -DLOOPS=100000 -W
 	# -fpermissive
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
 	# -O2 -W -Winline -Wunused -malign-double

@@ -1,4 +1,4 @@
-// ==========================================================================
+// ======================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
 //
@@ -6,13 +6,13 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// --------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
 // file          : include/CGAL/Arithmetic_filter/predicates_on_ftC3.h
+// package       : Interval_arithmetic
 // source        : include/CGAL/predicates_on_ftC3.h
 // revision      : $Revision$
 // revision_date :
@@ -20,7 +20,7 @@
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
-// ==========================================================================
+// ======================================================================
 
 
 #ifndef CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H

@@ -1,5 +1,14 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.18 on 30 June 1999
+- Cleaned up _FPU.h, no more CGAL_*ASSEMBLY* macros, using GNU libc macros
+  on Linux/PPC (x86 keeps the old asm() for compatibility with libc5).
+- _FPU.h ported to M$ VC++, though it needs testing.
+- Removed obsolete lower_bound() and upper_bound().
+- CGAL_IA_FORCE_TO_DOUBLE() revised on __i386__, it should be slightly faster.
+- Removed the template ctor for Filtered_exact<>.
+- Added "std::" where missing.
+
 Version 4.17 on 24 June 1999
 - Removed the ".pure" and src/*.o files.
 - Removed include/CGAL/Arithmetic_filter/predicates_on_rtH2.h.

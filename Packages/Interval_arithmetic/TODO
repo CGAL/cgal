@@ -1,5 +1,4 @@
-- CLN: finish the wrapper(s) [and add the converters]. (+doc)
-- Real/Expr: idem (?).  See also http://www.cs.nyu.edu/exact/core/.
+- Real/Expr: ?  See also http://www.cs.nyu.edu/exact/core/.
 - Implanter les optimisations suivantes compatibles IEEE 754 dans egcs:
   - (-a)*(-b) => a*b  (idem pour /)
   - (-a)>0    => a<0
@@ -15,8 +14,6 @@
 
 Concerning the code itself:
 
-- Vérifier si la version PPC contribuée par Pierre peut marcher sur
-  Linux/glibc/*.
 - Est-ce que les spécialisations doivent être sous CVS ?
 - Essayer de bencher avec -fbranch-probabilities ?  Ça pourrait être pas mal.
 - Expertiser le bench de Stefan.
@@ -64,16 +61,7 @@ Concerning the code itself:
 ? SUN: Add "-Wa,-xarch=v8plus" to fix the following "error":
   /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
   required between ldfsr and next FBfcc; nops inserted
-  In which case is it produced ?  I can't see it anymore.
-- Sparc 64 support: dans glibc-2.1.1, il y a le patch suivant, qu'il
-  conviendrait d'adapter (?):
-    +#if __WORDSIZE == 64
-    +/* Type of the control word.  */
-    +typedef unsigned long fpu_control_t;
-    +
-    +#define _FPU_GETCW(cw) __asm__ ("stx %%fsr,%0" : "=m" (*&cw))
-    +#define _FPU_SETCW(cw) __asm__ ("ldx %0,%%fsr" : : "m" (*&cw))
-    +#else
+- Sparc 64 support (Solaris 2.7 only for the moment): cf glibc-2.1.1
 - In the future: see the C++ Standard numeric_limits<>, section 18.2.
 
 Concerning the script:
@@ -86,9 +74,15 @@ Concerning the script:
 - Produire un fichier avec juste les déclarations, et un autre avec les
   définitions, ça aidera à faire une library séparée de trucs précompilés.
 - Add a comment for the parser script, e.g. /*No_Filter*/, because some
-  predicates don't need to be filtered (compare_x, lexico,..)..
-  Or try to guess when parsing ?  Anyway for the filtered constructions, the
-  scheme will have to be rethought.
+  predicates don't need to be filtered:
+   - compare_lexicographically_xyC2
+   - collinear_are_ordered_along_lineC2
+   - collinear_are_strictly_ordered_along_lineC2
+   - compare_lexicographically_xyzC3
+   - collinear_are_ordered_along_lineC3
+   - collinear_are_strictly_ordered_along_lineC3
+  There's no way to guess when parsing.
+  Anyway for the filtered constructions, the scheme will have to be rethought.
 ? Clean it up, and comment it...
 
 Concerning the doc:
