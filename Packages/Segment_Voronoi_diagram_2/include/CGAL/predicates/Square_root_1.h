@@ -32,7 +32,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_USE_ADL_FOR_NT
 template<class NT>
 class Square_root_1;
 
@@ -42,7 +41,6 @@ Sign sign(const Square_root_1<NT>&);
 template<class NT>
 Comparison_result compare(const Square_root_1<NT>&,
 			  const Square_root_1<NT>&);
-#endif
 
 template<class NT>
 class Square_root_1
@@ -234,7 +232,6 @@ operator-(const Square_root_1<NT>& x, const Square_root_1<NT>& y)
 
 
 //=============================================================
-#ifdef CGAL_USE_ADL_FOR_NT
 
 template<class NT>
 struct Number_type_traits< Square_root_1<NT> >
@@ -349,83 +346,6 @@ to_double(const Square_root_1<NT>& x)
 {
   return Number_type_traits< Square_root_1<NT> >::to_double(x);
 }
-
-#else // CGAL_USE_ADL_FOR_NT
-
-template<class NT>
-inline
-std::pair<double,double>
-to_interval(const Square_root_1<NT>& x)
-{
-  return x.to_interval();
-}
-
-
-template<class NT>
-inline
-bool
-is_positive(const Square_root_1<NT>& x)
-{
-  return sign(x) == POSITIVE;
-}
-
-template<class NT>
-inline
-bool
-is_negative(const Square_root_1<NT>& x)
-{
-  return sign(x) == NEGATIVE;
-}
-
-template<class NT>
-inline
-bool
-is_zero(const Square_root_1<NT>& x)
-{
-  return sign(x) == ZERO;
-}
-
-
-template<class NT>
-inline
-Sign
-sign(const Square_root_1<NT>& x)
-{
-  return x.sign();
-}
-
-template<class NT>
-inline
-Square_root_1<NT>
-square(const Square_root_1<NT>& x)
-{
-  return x.square();
-}
-
-template<class NT>
-inline
-Comparison_result
-compare(const Square_root_1<NT>& x, const Square_root_1<NT>& y)
-{
-#if CHECK_CGAL_PRECONDITIONS
-  CGAL_precondition( CGAL::compare(x.c(), y.c()) == EQUAL );
-#endif
-
-  Sign s = CGAL::sign(x - y);
-
-  if ( s == ZERO ) { return EQUAL; }
-  return (s == POSITIVE) ? LARGER : SMALLER;
-}
-
-template<class NT>
-inline
-double
-to_double(const Square_root_1<NT>& x)
-{
-  return x.to_double();
-}
-
-#endif // CGAL_USE_ADL_FOR_NT
 
 // operator <<
 template<class Stream, class NT>
