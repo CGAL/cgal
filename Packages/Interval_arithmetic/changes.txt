@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.96 on 6 June 2001
+- First version of Kernel_checker, which works only for predicates.
+
 Version 4.95 on 5 June 2001
 - Add a workaround on OSF/Alpha for GCC's too agressive fixincludes in FPU.h.
 - Fix MP_Float::operator-() which died in an endless loop...
