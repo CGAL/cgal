@@ -93,6 +93,30 @@ VectorC3(const typename VectorC3<R CGAL_CTAG>::Direction_3 &d)
 {}
 
 template < class R >
+inline
+typename VectorC3<R CGAL_CTAG>::FT
+VectorC3<R CGAL_CTAG>::x()  const
+{
+  return ptr->e0;
+}
+
+template < class R >
+inline
+typename VectorC3<R CGAL_CTAG>::FT
+VectorC3<R CGAL_CTAG>::y()  const
+{
+  return ptr->e1;
+}
+
+template < class R >
+inline
+typename VectorC3<R CGAL_CTAG>::FT
+VectorC3<R CGAL_CTAG>::z()  const
+{
+  return ptr->e2;
+}
+
+template < class R >
 bool VectorC3<R CGAL_CTAG>::operator==(const VectorC3<R CGAL_CTAG> &v) const
 {
   return x() == v.x() && y() == v.y() && z() == v.z();
@@ -119,30 +143,6 @@ bool
 VectorC3<R CGAL_CTAG>::operator!=(const Null_vector &v) const
 {
   return !(*this == v);
-}
-
-template < class R >
-inline
-typename VectorC3<R CGAL_CTAG>::FT
-VectorC3<R CGAL_CTAG>::x()  const
-{
-  return ptr->e0;
-}
-
-template < class R >
-inline
-typename VectorC3<R CGAL_CTAG>::FT
-VectorC3<R CGAL_CTAG>::y()  const
-{
-  return ptr->e1;
-}
-
-template < class R >
-inline
-typename VectorC3<R CGAL_CTAG>::FT
-VectorC3<R CGAL_CTAG>::z()  const
-{
-  return ptr->e2;
 }
 
 template < class R >
