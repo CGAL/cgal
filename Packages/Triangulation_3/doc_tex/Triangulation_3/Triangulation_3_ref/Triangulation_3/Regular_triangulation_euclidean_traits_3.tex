@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_triangulation_euclidean_traits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSRegulartriangulationeuclideantraitsRev}{$Revision$}
+\RCSdefDate{\RCSRegulartriangulationeuclideantraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Regular_triangulation_euclidean_traits_3<R,Weight>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is designed as a default traits class for the
+class \ccc{Regular_triangulation_3<Triangulation_traits_3,Tds_3>}. It provides
+\ccc{Weighted_point}, a class for weighted points, which derives from 
+the \cgal\ three dimensional point class (see
+Section~\ref{Triangulation3-sec-class-Weightedpoints}).
+
+The second argument \ccc{Weight} of the class
+\ccc{Regular_triangulation_euclidean_traits_3<R,Weight>} is in fact
+optional: if is it not provided, \ccc{R::RT} will be used.
+
+\ccInclude{CGAL/Regular_triangulation_euclidean_traits_3.h}
+
+\ccIsModel
+\ccc{Triangulation_traits_3}
+
+\ccInheritsFrom{\ccc{Triangulation_geom_traits_3<R>}}
+
+\ccTypes
+\ccThree{typedef Triangulation_geom_traits_3::Point}{Weighted_point;}{}
+
+\ccTypedef{typedef Triangulation_geom_traits_3::Point Bare_point;}
+{The type for point $p$ of a weighted point ${p}^{(w)}=(p,w_p)$.}
+\ccGlue
+\ccTypedef{typedef Weighted_point <Bare_point, Weight> Weighted_point;}{}
+
+As \ccClassTemplateName\ inherits from
+\ccc{Triangulation_geom_traits_3<R>}, the \ccc{Bare_point} type is in
+fact \ccc{Point_3<R>}.
+
+\ccSeeAlso
+
+\ccc{Triangulation_geom_traits_3}.
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{examples/Triangulation3/Regular_triangulation_euclidean_traits_3_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
