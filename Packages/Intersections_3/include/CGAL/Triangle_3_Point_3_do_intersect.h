@@ -32,8 +32,8 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 template <class K>
-bool do_intersect(const CGAL_WRAP(K)::Triangle_3 &t, 
-		  const CGAL_WRAP(K)::Point_3    &p,
+bool do_intersect(const typename CGAL_WRAP(K)::Triangle_3 &t, 
+		  const typename CGAL_WRAP(K)::Point_3    &p,
 		  const K & k )
 {
 
@@ -88,8 +88,8 @@ bool do_intersect(const CGAL_WRAP(K)::Triangle_3 &t,
 
 
 template <class K>
-bool do_intersect(const CGAL_WRAP(K)::Point_3    &p,
-		  const CGAL_WRAP(K)::Triangle_3 &t, 
+bool do_intersect(const typename CGAL_WRAP(K)::Point_3    &p,
+		  const typename CGAL_WRAP(K)::Triangle_3 &t, 
 		  const K & k )
 {
   return do_intersect(t, p, k);
