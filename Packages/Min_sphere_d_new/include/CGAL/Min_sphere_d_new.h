@@ -226,7 +226,7 @@ class Min_sphere_d {
     bounded_side( const Point& p) const
         { CGAL_optimisation_precondition(
               is_empty() || tco.access_dimension_d_object()( p) == d);
-          return CGAL::Bounded_side( CGAL::NTS::sign(
+          return CGAL::Bounded_side( CGAL_NTS sign(
               sqr_rad_numer - sqr_dist( p))); }
     
     bool
@@ -546,7 +546,7 @@ is_valid( bool verbose, int level) const
     typename Solver::Basic_variable_numerator_iterator
         num_it = solver.basic_variables_numerator_begin();
     for ( ; num_it != solver.basic_variables_numerator_end(); ++num_it) {
-        if ( ! (    CGAL::NTS::is_positive( *num_it)
+        if ( ! (    CGAL_NTS is_positive( *num_it)
                  && *num_it <= solver.variables_common_denominator()))
             return CGAL::_optimisation_is_valid_fail( verr,
               "center does not lie strictly in convex hull of support points");
