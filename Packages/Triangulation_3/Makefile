@@ -24,7 +24,6 @@ package: doc clean $(Package).tar.gz
 
 version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
-	echo "Maintainer : Monique.Teillaud@sophia.inria.fr" >> version
 
 rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
@@ -60,7 +59,7 @@ $(Package).tar.gz:
 	--exclude=.pure --exclude=*.pv \
 	--exclude=.nfs*\
 	--exclude=HTML_TEST \
-	version description.txt changes.txt \
+	version maintainer description.txt changes.txt \
 	demo include doc_tex doc_ps src test examples
 
 doc: 
