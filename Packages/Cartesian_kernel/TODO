@@ -71,11 +71,6 @@ Backward
       as we don't know its exact type !
     - Apply them to Aff_transformations, then Lazy_exact_nt<>, then... :)
 
-- Advanced Kernel :
-  - Rename CGAL_CFG_NO_ADVANCED_KERNEL to CGAL_USE_ADVANCED_KERNEL, definable
-    on the command line, and not in config.h... ?
-  - Have a separate (top-level) kernel for the advanced cartesian ? 
-
 - ::bbox() robustness issues : it's not robust, since basically, we use
   to_double().
   The homogeneous kernel uses an epsilon to get this right, in the case
