@@ -69,7 +69,7 @@ public:
   typedef Point_3  Point;
   typedef typename R::Segment_3 Segment_3;
 
-  typedef Compute_squared_radius_circumsphere_3<Coord_type, Point_3> 
+  typedef CGAL::Compute_squared_radius_circumsphere_3<Coord_type, Point_3> 
   Compute_squared_radius_circumsphere_3;
   typedef typename R::Side_of_bounded_sphere_3 Side_of_bounded_sphere_3;
 

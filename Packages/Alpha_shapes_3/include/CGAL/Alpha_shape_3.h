@@ -1622,7 +1622,7 @@ Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
 //---------------------------------------------------------------------
 
 template < class Dt >
-Alpha_shape_3<Dt>::Classification_type  
+typename Alpha_shape_3<Dt>::Classification_type  
 Alpha_shape_3<Dt>::classify(const Cell_handle& s, 
 			    const int& i,
 			    const Coord_type& alpha) const
@@ -1659,7 +1659,7 @@ Alpha_shape_3<Dt>::classify(const Cell_handle& s,
 //---------------------------------------------------------------------
 
 template < class Dt >
-Alpha_shape_3<Dt>::Classification_type  
+typename Alpha_shape_3<Dt>::Classification_type  
 Alpha_shape_3<Dt>::classify(const Cell_handle& s, 
 			    const int& i,
 			    const int& j,
@@ -1698,7 +1698,7 @@ Alpha_shape_3<Dt>::classify(const Cell_handle& s,
 //---------------------------------------------------------------------
 
 template < class Dt >
-Alpha_shape_3<Dt>::Classification_type  
+typename Alpha_shape_3<Dt>::Classification_type  
 Alpha_shape_3<Dt>::classify(const Vertex_handle& v,
 			    const Coord_type& alpha) const
   // Classifies the vertex `v' of the underlying Delaunay
@@ -1775,7 +1775,7 @@ void Alpha_shape_3<Dt>::traverse(const Cell_handle& pCell,
 //----------------------------------------------------------------------
 
 template <class Dt>
-Alpha_shape_3<Dt>::Alpha_iterator 
+typename Alpha_shape_3<Dt>::Alpha_iterator 
 Alpha_shape_3<Dt>::find_optimal_alpha(const int& nb_components)
   // find the minimum alpha that satisfies the properties
   // (1) nb_components solid components
@@ -1834,7 +1834,7 @@ Alpha_shape_3<Dt>::find_optimal_alpha(const int& nb_components)
 //----------------------------------------------------------------------
 
 template <class Dt>
-Alpha_shape_3<Dt>::Coord_type 
+typename Alpha_shape_3<Dt>::Coord_type 
 Alpha_shape_3<Dt>::find_alpha_solid() const
   // compute the minumum alpha such that all data points 
   // are either on the boundary or in the interior

@@ -93,9 +93,9 @@ public:
   typedef Weighted_point Point_3;
   typedef Weighted_point Point;
 
-  typedef Compute_squared_radius_orthogonalsphere_3<Coord_type, Point> 
+  typedef CGAL::Compute_squared_radius_orthogonalsphere_3<Coord_type, Point> 
     Compute_squared_radius_orthogonalsphere_3;
-  typedef Side_of_bounded_orthogonalsphere_3<Point> 
+  typedef CGAL::Side_of_bounded_orthogonalsphere_3<Point> 
     Side_of_bounded_orthogonalsphere_3;
 
   //---------------------------------------------------------------------
