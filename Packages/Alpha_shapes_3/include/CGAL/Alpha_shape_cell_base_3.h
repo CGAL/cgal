@@ -8,22 +8,21 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.0-I-20 $
-// release_date  : $CGAL_Date: 1999/06/02 $
+// release       : 
+// release_date  : 
 //
 // file          : include/CGAL/Alpha_shape_cell_base_3.h
 // package       : Alpha_shapes_3(1.0)
-// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+// author(s)     : Tran Kai Frank DA
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ======================================================================
 
-#ifndef ALPHA_SHAPE_CELL_BASE_3_H
-#define ALPHA_SHAPE_CELL_BASE_3_H
+#ifndef CGAL_ALPHA_SHAPE_CELL_BASE_3_H
+#define CGAL_ALPHA_SHAPE_CELL_BASE_3_H
 
 #include <vector>
 #include <CGAL/utility.h>
@@ -35,7 +34,7 @@ class Alpha_shape_cell_base_3 : public Df
 {
 public:
 
-  typedef typename Gt::FT Coord_type;        // A corriger avec Monique
+  typedef typename Gt::FT                            Coord_type;
   typedef Triple<Coord_type, Coord_type, Coord_type> Interval3;
 
   //-------------------------------------------------------------------
@@ -97,4 +96,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif //ALPHA_SHAPE_CELL_BASE_3_H
+#endif // CGAL_ALPHA_SHAPE_CELL_BASE_3_H
