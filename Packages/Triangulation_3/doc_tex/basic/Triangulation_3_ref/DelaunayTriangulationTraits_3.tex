@@ -38,12 +38,6 @@ Delaunay triangulation must fulfill the following requirements:
 
 \ccTwo{DelaunayTriangulationTraits}{}
 
-\ccNestedType{Compare_distance_3}
-{A predicate object that must provide the function operator\\
-\ccc{Comparison_result operator()(Point p, Point q, Point r)},\\
-which compares the distance between \ccc{p} and \ccc{q} to the distance
-between \ccc{p} and \ccc{r}.}
-\ccGlue
 \ccNestedType{Coplanar_side_of_bounded_circle_3}
 {A predicate object that must provide the function operator\\
 \ccc{Bounded_side operator()(Point p, Point q, Point r, Point s)},\\
@@ -57,6 +51,15 @@ by \ccc{p}, \ccc{q}, and \ccc{r} on which \ccc{s} lies.
 \ccc{Oriented_side operator()(Point p, Point q, Point r, Point s, Point t)},\\
 which determines on which side of the oriented sphere circumscribing 
 \ccc{p, q, r, s} the point \ccc{t} lies.}
+
+In order to use the \ccc{Triangulation_hierarchy_3} on top of
+\ccc{Delaunay_triangulation_3}, an additional predicate is required:
+
+\ccNestedType{Compare_distance_3}
+{A predicate object that must provide the function operator\\
+\ccc{Comparison_result operator()(Point p, Point q, Point r)},\\
+which compares the distance between \ccc{p} and \ccc{q} to the distance
+between \ccc{p} and \ccc{r}.}
 
 In addition, in order to display a Voronoi diagram, the traits class
 must provide the following:
@@ -103,11 +106,13 @@ The following functions give access to the predicate and construction objects:
 \ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.xxxxxxxxx(Point p0, Point p1)x}{}
 \ccCreationVariable{traits}
 
-\ccMethod{Compare_distance_3 compare_distance_3_object();}{}
-\ccGlue
 \ccMethod{Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object();}{}
 \ccGlue
 \ccMethod{Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object();}{}
+
+When using the triangulation hierarchy, the traits must provide:
+
+\ccMethod{Compare_distance_3 compare_distance_3_object();}{}
 
 The following functions must be provided only if the methods of 
 \ccc{Delaunay_triangulation_3} returning elements of the Voronoi diagram 
@@ -125,10 +130,13 @@ are instantiated:
 
 \ccHasModels
 
+\ccc{CGAL::Exact_predicates_inexact_constructions_kernel} (recommended)\\
+\ccc{CGAL::Exact_predicates_exact_constructions_kernel} (recommended for
+Voronoi)\\
+\ccc{CGAL::Filtered_kernel}\\
 \ccc{CGAL::Cartesian}\\
-\ccc{CGAL::Homogeneous}\\
 \ccc{CGAL::Simple_cartesian}\\
-\ccc{CGAL::Simple_homogeneous}\\
-\ccc{CGAL::Filtered_kernel}
+\ccc{CGAL::Homogeneous}\\
+\ccc{CGAL::Simple_homogeneous}
 
 \end{ccRefConcept}

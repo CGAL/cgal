@@ -442,11 +442,16 @@ typedef Triangulation_3<GT, My_TDS>                                     Tr;
 ...
 \end{ccExampleCode}
 
-While now, there are two possibilities.  The simplest one is to use the
+While now, there are three possibilities.  The simplest one is to use the
 class \ccc{Triangulation_vertex_base_with_info_3}, and this approach is
 illustrated in a following subsection~\ref{Triangulation3-sec-examples-color}.
-But when the user needs to access some type that depends on the triangulation
-data structure (typically handles), then he must write:
+The most complicated one, and probably useless for almost all cases, is to
+write a vertex base class from scratch, following the documented requirements.
+This is mostly useless because most of the time it is enough to derive from
+the models that \cgal\ provides, and add the desired features.
+In this case, when the user needs to access some type that depends on the
+triangulation data structure (typically handles), then he should write
+something like:
 \begin{ccExampleCode}
 ...
 template < class GT, class Vb = Triangulation_vertex_base<GT> >
@@ -473,7 +478,7 @@ public:
 
 The changes that need to be made are the following:
 \begin{itemize}
-\item{} \ccc{My_vertex} must be parameterized by the vertex base class it
+\item{} \ccc{My_vertex} is now parameterized by the vertex base class it
         derives from.
 \item{} a nested template class \ccc{Rebind_TDS} must be defined.
 \item{} \texttt{void*} must be changed to \ccc{Cell_handle}, and you need to
@@ -524,3 +529,12 @@ as the following example shows.
 triangulation}
 
 \ccIncludeExampleCode{Triangulation_3/example_find_conflicts.C}
+
+\subsection{Regular triangulation}
+This example shows the building of a regular triangulation.  In this
+triangulation, points have an associated weight, and some points can
+be hidden and do not result in vertices in the triangulation.
+Another difference is that a specific traits class has to be used
+(at least at the moment).
+
+\ccIncludeExampleCode{Triangulation_3/example_regular.C}

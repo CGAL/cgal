@@ -1,9 +1,9 @@
 %!PS-Adobe-2.0 EPSF-2.0
-%%Title: design.eps
-%%Creator: fig2dev Version 3.2 Patchlevel 3d
-%%CreationDate: Wed Sep  3 14:25:36 2003
-%%For: spion@mpino1212 (Sylvain Pion,328,128,)
-%%BoundingBox: 0 0 684 514
+%%Title: design.fig
+%%Creator: fig2dev Version 3.2 Patchlevel 4
+%%CreationDate: Mon Oct 20 19:41:57 2003
+%%For: spion@termite (Sylvain Pion,Ch.,L016,657762)
+%%BoundingBox: 0 0 684 531
 %%Magnification: 1.0000
 %%EndComments
 /$F2psDict 200 dict def
@@ -45,7 +45,7 @@ $F2psDict /mtrx matrix put
 
 end
 save
-newpath 0 514 moveto 0 0 lineto 684 0 lineto 684 514 lineto closepath clip newpath
+newpath 0 531 moveto 0 0 lineto 684 0 lineto 684 531 lineto closepath clip newpath
 171.5 398.2 translate
 1 -1 scale
 
@@ -90,6 +90,8 @@ $F2psBegin
 %
 % Fig objects follow
 %
+% 
+% here starts figure with depth 50
 /Times-Roman ff 180.00 scf sf
 4365 4140 m
 gs 1 -1 sc (Optional) col0 sh gr
@@ -257,25 +259,25 @@ n 5400 1350 m 7200 1350 l 7200 1800 l 5400 1800 l
  cp gs col0 s gr 
 % Polyline
 gs  clippath
-3195 -1365 m 3105 -1365 l 3105 -1153 l 3150 -1333 l 3195 -1153 l cp
+3195 -2085 m 3105 -2085 l 3105 -1873 l 3150 -2053 l 3195 -1873 l cp
 eoclip
 n 3150 1350 m
- 3150 -1350 l gs col0 s gr gr
+ 3150 -2070 l gs col0 s gr gr
 
 % arrowhead
 7.500 slw
-n 3195 -1153 m 3150 -1333 l 3105 -1153 l 3195 -1153 l  cp gs 0.00 setgray ef gr  col0 s
+n 3195 -1873 m 3150 -2053 l 3105 -1873 l 3195 -1873 l  cp gs 0.00 setgray ef gr  col0 s
 % Polyline
 15.000 slw
 gs  clippath
-6345 -1365 m 6255 -1365 l 6255 -1153 l 6300 -1333 l 6345 -1153 l cp
+6345 -2085 m 6255 -2085 l 6255 -1873 l 6300 -2053 l 6345 -1873 l cp
 eoclip
 n 6300 1350 m
- 6300 -1350 l gs col0 s gr gr
+ 6300 -2070 l gs col0 s gr gr
 
 % arrowhead
 7.500 slw
-n 6345 -1153 m 6300 -1333 l 6255 -1153 l 6345 -1153 l  cp gs 0.00 setgray ef gr  col0 s
+n 6345 -1873 m 6300 -2053 l 6255 -1873 l 6345 -1873 l  cp gs 0.00 setgray ef gr  col0 s
 % Polyline
 30.000 slw
 gs  clippath
@@ -300,12 +302,6 @@ n 450 5625 m
 n 1754 5745 m 2234 5625 l 1754 5505 l 1754 5745 l  cp gs 0.00 setgray ef gr  col0 s
 % Polyline
 15.000 slw
-n 2250 -1800 m 4050 -1800 l 4050 -1350 l 2250 -1350 l
- cp gs col0 s gr 
-% Polyline
-n 5400 -1800 m 7200 -1800 l 7200 -1350 l 5400 -1350 l
- cp gs col0 s gr 
-% Polyline
 n -900 -1800 m 1125 -1800 l 1125 -1350 l -900 -1350 l
  cp gs col0 s gr 
 % Polyline
@@ -461,12 +457,6 @@ gs 1 -1 sc (Template) col0 sh gr
 /Times-Roman ff 240.00 scf sf
 585 4950 m
 gs 1 -1 sc (Parameters) col0 sh gr
-/Times-Roman ff 300.00 scf sf
-2745 -1485 m
-gs 1 -1 sc (Vertex) col0 sh gr
-/Times-Roman ff 300.00 scf sf
-6030 -1485 m
-gs 1 -1 sc (Cell) col0 sh gr
 /Times-Roman ff 270.00 scf sf
 -585 -585 m
 gs 1 -1 sc (Functionality) col0 sh gr
@@ -479,5 +469,7 @@ gs 1 -1 sc (locate\(\), insert\(\)...) col0 sh gr
 /Times-Roman ff 240.00 scf sf
 4500 -1440 m
 gs 1 -1 sc (Types) col0 sh gr
+% here ends figure;
 $F2psEnd
 rs
+showpage

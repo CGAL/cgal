@@ -1,5 +1,6 @@
-Version 1.173 (??)
+Version 1.173 (20 October 03)
 - Doc fixes
+- New program example_regular.C
 
 Version 1.172 (17 October 03)
 - Doc fixes.
