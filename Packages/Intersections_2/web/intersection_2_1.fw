@@ -1060,7 +1060,7 @@ as a line sweep algorithm. The endpoints of the segments are sorted
 In the sweep, the first two point that are inserted second should be from
 different segments (otherwise, the segments don't intersect because they
 can be separated by a vertical line).
-We check for the seond and third inserted point on which side of the line
+We check for the second and third inserted point on which side of the line
 through the other segment they lie. (The other segment can be the same  for
 both points -the contained case- or different -the crossing case).
 
@@ -1183,7 +1183,7 @@ bool seg_seg_do_intersect_contained(
 The y-test tests if the segments have an interval in common in the y-direction.
 This is not necessary for the correctness of the computation, but it leads to
 a similar computation time for symmetric cases. Together with the tests on
-x coordinates this is effictively a bounding box test.
+x coordinates this is effectively a bounding box test.
 
 Comparing coordinates is usually cheaper than orientation tests, so I expect
 that this test will help efficiency on average.
@@ -1273,9 +1273,8 @@ CGAL_END_NAMESPACE
 {
     if (_known)
         return _result;
-    // The non const this pointer is used to cast away const.
     _known = true;
-    if (!do_overlap(_seg1->bbox(), _seg2->bbox())) {
+    if (!do_intersect(*_seg1, *_seg2)) {
         _result = NO;
         return _result;
     }
@@ -1288,8 +1287,7 @@ CGAL_END_NAMESPACE
         break;
     case Line_2_Line_2_pair<R>::POINT:
         linepair.intersection(_intersection_point);
-        _result = (_seg1->collinear_has_on(_intersection_point)
-            && _seg2->collinear_has_on(_intersection_point)) ? POINT : NO;
+        _result = POINT;
         break;
     case Line_2_Line_2_pair<R>::LINE:
         @<Segment_2_Segment_2_pair collinear case@>
