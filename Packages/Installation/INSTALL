@@ -17,7 +17,7 @@ To install CGAL, you should:
 
   - install the CGAL libraries: 
     the impatient can just try to run "./install_cgal -i", but we recommend
-    that you first have a look at the Installation notes. 
+    to first have a look at the Installation notes. 
     These are available in several formats. A PostScript file named
     installation.ps.gz can be found in the directory doc_ps.
     The HTML version is in doc_html/installation/main.html and 
