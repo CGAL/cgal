@@ -46,24 +46,18 @@ bool del=true;
 
 int main()
 {
-
   std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: " << std::endl;
 
   typedef CGAL::Regular_triangulation_euclidean_traits_3<Test_rep_cartesian> traits;
-  // It should als work withthe following class, but it doesn't
-  // typedef _Triangulation_test_traits_3                         traits;
 
-
-  typedef CGAL::Triangulation_vertex_base_pointer_3<traits>                 Vb;
+  typedef CGAL::Triangulation_vertex_base_pointer_3<traits>         Vb;
   typedef CGAL::Triangulation_cell_base_3<traits>                   Fb;
   typedef CGAL::Triangulation_data_structure_3<Vb,Fb>               Tds;
-  typedef CGAL::Regular_triangulation_3<traits,Tds>                Cls;
-
-
+  typedef CGAL::Regular_triangulation_3<traits,Tds>                 Cls;
 
   //  _test_cls_regular_3( Cls() );
-  typedef  traits::Bare_point Point;
-  typedef  traits::Weighted_point Weighted_point;
+  typedef traits::Bare_point Point;
+  typedef traits::Weighted_point Weighted_point;
 
   typedef std::list<Weighted_point>                        list_point;
 

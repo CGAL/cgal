@@ -1,3 +1,6 @@
+Version 1.52 (?? May 01)
+- Regular works again.
+
 Version 1.51 (18 May 01)
 - remove
 - bug fix in is_edge of tds
