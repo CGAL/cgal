@@ -28,6 +28,7 @@
 #undef _DEBUG
 #define _DEBUG  23
 #include <CGAL/Nef_3/debug.h>
+#include <CGAL/Nef_3/SNC_decorator_traits.h>
 #include <CGAL/Unique_hash_map.h>
 #include <string>
 #include <sstream>
@@ -45,6 +46,7 @@ class SNC_SM_decorator : public SNC_SM_base_decorator<Refs_>
 public:
 typedef SNC_SM_base_decorator<Refs_> Base;
 typedef SNC_SM_decorator<Refs_> Self;
+typedef SNC_decorator_traits<Refs_>  Decorator_traits;
 
 /*{\Mdefinition ...}*/
 

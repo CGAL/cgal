@@ -120,6 +120,13 @@ public:
 
   SNC_const_decorator() : sncp_(0) {}
   SNC_const_decorator(const SNC_structure& W) : sncp_(&W) {}
+
+ protected:  
+  void set_snc(const SNC_structure& W) {
+    sncp_ = &W;
+  }
+
+ public:
   const SNC_structure* sncp() const { return sncp_; }
   
   Vertex_const_handle vertex( Halfedge_const_handle e) const

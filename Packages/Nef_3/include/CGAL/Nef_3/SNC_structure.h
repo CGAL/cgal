@@ -92,10 +92,10 @@ the local graph or added for the comfort of the user.}*/
 public:
   /*{\Mtypes 7}*/
 
-  typedef SNC_SM_decorator<Self> SM_decorator;
-  typedef SNC_decorator<Self>    SNC_decorator;
-  typedef SNC_const_decorator<Self> SNC_const_decorator;
-  typedef SNC_SM_point_locator<Self> SM_point_locator;
+  typedef SNC_SM_decorator<Self>             SM_decorator;
+  typedef SNC_decorator<Self>                SNC_decorator;
+  typedef SNC_const_decorator<Self>          SNC_const_decorator;
+  typedef SNC_SM_point_locator<SM_decorator> SM_point_locator;
 
   typedef typename Items::Kernel        Kernel;
   typedef typename Kernel::FT           FT;

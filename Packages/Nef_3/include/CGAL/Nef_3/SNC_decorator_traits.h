@@ -25,6 +25,8 @@ class SNC_decorator_traits {
 
   typedef typename Refs::SHalfedge_around_svertex_circulator 
     SHalfedge_around_svertex_circulator;
+  typedef typename Refs::SHalfedge_around_sface_circulator 
+    SHalfedge_around_sface_circulator;
   typedef typename Refs::SFace_cycle_iterator SFace_cycle_iterator;
   typedef typename Refs::SHalfedge_around_facet_circulator 
     SHalfedge_around_facet_circulator;
@@ -56,6 +58,8 @@ class SNC_decorator_const_traits {
 
   typedef typename Refs::SHalfedge_around_svertex_const_circulator 
     SHalfedge_around_svertex_circulator;
+  typedef typename Refs::SHalfedge_around_sface_const_circulator 
+    SHalfedge_around_sface_circulator;
   typedef typename Refs::SFace_cycle_const_iterator SFace_cycle_iterator;
   typedef typename Refs::SHalfedge_around_facet_const_circulator 
     SHalfedge_around_facet_circulator;

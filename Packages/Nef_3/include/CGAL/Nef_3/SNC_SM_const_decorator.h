@@ -28,6 +28,7 @@
 #include <CGAL/Nef_2/Object_index.h>
 #include <CGAL/Nef_3/nef3_assertions.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
+#include <CGAL/Nef_3/SNC_decorator_traits.h>
 #include <string>
 #include <list>
 #include <sstream>
@@ -41,9 +42,11 @@ CGAL_BEGIN_NAMESPACE
   {Topological sphere map decorator}{D}}*/
 
 template <typename Refs_>
-class SNC_SM_const_decorator 
-{ typedef SNC_SM_const_decorator<Refs_> Self;
+class SNC_SM_const_decorator { 
+
+  typedef SNC_SM_const_decorator<Refs_> Self;
 public:
+  typedef SNC_decorator_const_traits<Refs_>  Decorator_traits;
 
 /*{\Mdefinition ...}*/
 

@@ -72,7 +72,7 @@ struct Facet_plane_3 {
 };
 
 
-template <class Polyhedron_, class SNC_structure, class SM_point_locator>
+template <class Polyhedron_, class SNC_structure>
 void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 {
   typedef Polyhedron_                                Polyhedron;

@@ -166,22 +166,23 @@ class SNC_constructor : public SNC_decorator<SNC_structure_>
 { 
 public:
   typedef SNC_structure_ SNC_structure;
-  typedef typename SNC_structure::Infi_box              Infi_box;
-  typedef typename SNC_structure_::Sphere_kernel        Sphere_kernel;
-  typedef typename Infi_box::Standard_kernel            Standard_kernel;
-  typedef typename Standard_kernel::Point_3             Standard_point_3;
-  typedef typename SNC_structure_::Kernel               Kernel;
-  typedef typename Kernel::RT                           RT;
-  typedef typename Infi_box::NT                         NT;
-  typedef CGAL::SNC_constructor<SNC_structure>          Self;
-  typedef CGAL::SNC_decorator<SNC_structure>            Base;
-  typedef CGAL::SNC_decorator<SNC_structure>            SNC_decorator;
-  typedef CGAL::SNC_point_locator<SNC_structure>        SNC_point_locator;
-  typedef CGAL::SNC_FM_decorator<SNC_structure>         FM_decorator;
-  typedef CGAL::SNC_SM_decorator<SNC_structure>         SM_decorator;
-  typedef CGAL::SNC_SM_overlayer<SNC_structure>         SM_overlayer;
-  typedef CGAL::SNC_SM_point_locator<SNC_structure>     SM_point_locator;
-  typedef CGAL::SNC_SM_const_decorator<SNC_structure>   SM_const_decorator;
+  typedef typename SNC_structure::Infi_box                Infi_box;
+  typedef typename SNC_structure_::Sphere_kernel          Sphere_kernel;
+  typedef typename Infi_box::Standard_kernel              Standard_kernel;
+  typedef typename Standard_kernel::Point_3               Standard_point_3;
+  typedef typename SNC_structure_::Kernel                 Kernel;
+  typedef typename Kernel::RT                             RT;
+  typedef typename Infi_box::NT                           NT;
+  typedef CGAL::SNC_constructor<SNC_structure>            Self;
+  typedef CGAL::SNC_decorator<SNC_structure>              Base;
+  typedef CGAL::SNC_decorator<SNC_structure>              SNC_decorator;
+  typedef CGAL::SNC_point_locator<SNC_structure>          SNC_point_locator;
+  typedef CGAL::SNC_FM_decorator<SNC_structure>           FM_decorator;
+  typedef CGAL::SNC_SM_decorator<SNC_structure>           SM_decorator;
+  typedef CGAL::SNC_SM_const_decorator<SNC_structure>     SM_const_decorator;
+  typedef CGAL::SNC_SM_overlayer<SNC_structure>           SM_overlayer;
+  typedef CGAL::SNC_SM_point_locator<SM_const_decorator>  SM_point_locator;
+  typedef CGAL::SNC_SM_const_decorator<SNC_structure>     SM_const_decorator;
 
   #define USING(t) typedef typename SNC_structure::t t
   USING(Vertex);
@@ -397,7 +398,7 @@ public:
 			    bool boundary, bool fmark0) const;
 
   void build_external_structure() {
-    //    SETDTHREAD(43);
+    //      SETDTHREAD(43);
     //    /*debug*/ sncp()->print_statistics();
     pair_up_halfedges();
     link_shalfedges_to_facet_cycles();
@@ -803,9 +804,6 @@ create_SM_on_infibox(Point_3 center, Sphere_point* SP, int size,
   SD.link_as_face_cycle(she[0],sf[0]);
   SD.link_as_face_cycle(SD.twin(she[0]),sf[1]);
   SD.link_as_face_cycle(SD.twin(she[1]),sf[2]);
-
-  //  SM_point_locator L(v);
-  //  L.init_marks_of_halfspheres();
 }
 
 // ----------------------------------------------------------------------------
@@ -863,8 +861,6 @@ create_box_corner(int x, int y, int z, bool space, bool boundary) const {
   // SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
   // SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
   /* TODO: to check if the commented code above could be wrong */
-  //  SM_point_locator L(v);
-  //  L.init_marks_of_halfspheres();
   return v;
 }
 
@@ -927,8 +923,6 @@ create_extended_box_corner(int x,int y,int z,bool space,bool boundary) const {
   // SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
   // SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
   /* TODO: to check if the commented code above could be wrong */
-  //  SM_point_locator L(v);
-  //  L.init_marks_of_halfspheres();
   return v;
 }
 
@@ -980,8 +974,6 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
   */
   /* TODO: to find why the code chuck above is wrong */
 #endif // CGAL_NEF3_BUGGY_CODE
-  //  SM_point_locator L(v);
-  //  L.init_marks_of_halfspheres();
   return v;
 }
 
@@ -1055,8 +1047,6 @@ create_from_edge(Halfedge_handle e,
   }
 
   TRACEN(" ");
-  //  SM_point_locator L(v);
-  //  L.init_marks_of_halfspheres();
 
   /*
   CGAL_nef3_forall_shalfedges(eee,D)
@@ -1209,7 +1199,9 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
 
     SHalfedge_around_svertex_const_circulator ec(E.out_edges(e)), ee(ec);
     CGAL_For_all(ec,ee) {
-      Sphere_segment seg(E.point(E.source(ec)), E.point(E.source(ec)).antipode(), E.circle(ec));
+      Sphere_segment seg(E.point(E.source(ec)), 
+			 E.point(E.source(ec)).antipode(), 
+			 E.circle(ec));
       Sphere_point sp(intersection(c, seg.sphere_circle()));
       TRACEN(seg <<" has_on " << sp);
       if(!seg.has_on(sp))
@@ -1245,11 +1237,380 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
     }   
   }
 
-  //  SM_point_locator L(D.center_vertex());
-  //  L.init_marks_of_halfspheres();
+  return D.center_vertex();
+}
+
+/*
+template <typename SNC_>
+template <typename Selection>
+typename SNC_::Vertex_handle
+SNC_constructor<SNC_>::
+create_edge_edge_overlay( typename SNC_::Halfedge_handle e0, 
+			  typename SNC_::Halfedge_handle e1,
+			  const Point_3& p,
+			  const Selection& BOP) {
+
+  SM_const_decorator E0(source(e0));
+  SM_const_decorator E1(source(e1));
+
+  CGAL_nef3_assertion(E0.number_of_edges()==2 &&
+		      E1.number_of_edges()==2);
+
+  SM_decorator D(sncp()->new_vertex(p, BOP(mark(e0), mark(e1))));
+
+  Sphere_point src[2];
+  src[0] = calc_point(e0);
+  src[1] = calc_point(e1);
+  src[0] = normalized(src[0]);
+  src[1] = normalized(src[1]);
+
+  SHalfedge_around_svertex_const_circulator ec0(E1.out_edges(e0)), ee0(ec0);
+  SHalfedge_around_svertex_const_circulator ec1(E2.out_edges(e1)), ee1(ec1); 
+  
+  ++ee0;
+  Sphere_segment test_length(CGAL::ORIGIN + ec0.sphere_circle().orthogonal_vector(),
+			     CGAL::ORIGIN + ee0.sphere_circle().orthogonal_vector());
+  if(test_length.is_short())
+    ++ec0;
+  
+  ++ee1;
+  test_length(CGAL::ORIGIN + ec1.sphere_circle().orthogonal_vector(),
+	      CGAL::ORIGIN + ee1.sphere_circle().orthogonal_vector());
+  if(test_length.is_short())
+    ++ec1;
+
+  SHalfedge_handle orig_edge[2][2];
+  orig_edge[0][0] = ++ec0;
+  orig_edge[0][1] = ++ec0;
+  orig_edge[1][0] = ++ec1;
+  orig_edge[1][1] = ++ec1;
+
+  Mark face_mark[2][2];
+  for(int i=0; i<2; i++) { 
+    face_mark[0][i] = E0.mark(E0.face(orig_edge[0][i]));
+    face_mark[1][i] = E1.mark(E1.face(orig_edge[1][i]));
+  }
+
+  Sphere_segment segs[2][2];
+  for(int i=0; i<2; i++) {
+    segs[0][i] = Sphere_segment(src[0], src[0].antipode(), E0.circle(++ec0));
+    segs[1][i] = Sphere_segment(src[1], src[1].antipode(), E1.circle(++ec1));
+  }
+
+  int noi=0;
+  int add=1;
+  Sphere_point sp[2][2];
+  for(int x=0; x<2; x++) {
+    for(int y=0; y<2; y++) {
+      sp[x][y] = segs[0][x].intersection(segs[1][y]);
+      if(segs[0][x].has_on(sp[x][y]) && segs[1][y].has_on(sp[x][y]))
+	noi+=add;
+      else
+	sp[x][y] = Sphere_point();
+      ++y;
+      add*=2;
+    }
+    ++x;
+  }
+
+  SVertex_handle sv[2][2];
+  sv[0][0] = D.new_vertex(src[0]);
+  sv[0][1] = D.new_vertex(src[0].antipode());
+  sv[1][0] = D.new_vertex(src[1]);
+  sv[1][1] = D.new_vertex(src[1].antipode());
+  D.mark(sv[0][0]) = D.mark(sv[0][1]) = BOP(E0.mark(e0), face_mark[1][0]);
+  D.mark(sv[1][0]) = D.mark(sv[1][1]) = BOP(E1.mark(e1), face_mark[0][0]);
+  
+  SVertex_handle iv[4];
+  for(int i=0; i<4; i++) {
+    if(sp[i] != Sphere_point()) {
+      iv[i] = D.new_vertex(src[0]);
+      D.mark(iv[i]) = BOP(face_mark[0][i/2], face_mark[1][i%2]);
+    }
+  }
+
+  switch(noi) {
+  case 0:    
+    SHalfedge_handle se[2][2];
+    se[0][0] = D.new_edge_pair(sv[0][0], sv[0][1]);
+    se[0][1] = D.new_edge_pair(sv[0][0], sv[0][1]);
+    se[1][0] = D.new_edge_pair(sv[1][0], sv[1][1]);
+    se[1][1] = D.new_edge_pair(sv[1][0], sv[1][1]);
+    D.mark(se[0][0]) = BOP(E0.mark(++ec0), face_mark[1][0]);
+    D.mark(se[0][1]) = BOP(E0.mark(++ec0), face_mark[1][0]);
+    D.mark(se[1][0]) = BOP(E1.mark(++ec1), face_mark[0][0]);
+    D.mark(se[1][1]) = BOP(E1.mark(++ec1), face_mark[0][0]);
+    D.circle(se[0][0]) = E0.circle(++ec0);
+    D.circle(D.twin(se[0][0])) = D.circle(se[0][0]).opposite();
+    D.circle(se[0][1]) = E0.circle(++ec0);
+    D.circle(D.twin(se[0][1])) = D.circle(se[0][1]).opposite();
+    D.circle(se[1][0]) = E1.circle(++ec1);
+    D.circle(D.twin(se[1][0])) = D.circle(se[1][0]).opposite();
+    D.circle(se[1][1]) = E1.circle(++ec1);
+    D.circle(D.twin(se[1][1])) = D.circle(se[1][1]).opposite();
+
+    SFace_handle sf[3];
+    for(int i=0; i<3; ++i)
+      sf[i] = D.new_sface();
+    D.mark(sf[0]) = BOP(face_mark[0][0], face_mark[1][0]);
+    D.link_as_face_cycle(++ec0, sf[0]);
+    D.link_as_face_cycle(++ec1, sf[0]);
+    D.mark(sf[1]) = BOP(face_mark[0][1], face_mark[1][0]);
+    D.link_as_face_cylce(++ec0, sf[1]);
+    D.mark(sf[2]) = BOP(face_mark[0][0], face_mark[1][1]);
+    D.link_as_face_cylce(++ec1, sf[2]);  
+    break;
+  case 6:
+  case 9:
+    SHalfedge_handle se[4];
+    for(int i=0; i<4; i++) {
+      if(iv[i] != SVertex_handle()) {
+	
+	SHalfedge_handle tmp_se = orig[1][i%2];
+	int side=E0.circle(orig_edge[0][0]).oriented_side(sv[1][0]);	
+	if(side > 0)
+	  tmp_se = E1.twin(tmp_se);
+	Sphere_point tmp_sp = E1.point(E1.source(tmp_se));
+
+	se[0][0] = D.new_edge_pair(sv[0][0], iv[i]);
+	se[0][1] = D.new_edge_pair(iv[i], sv[0][1]);
+	se[1][0] = D.new_edge_pair(tmp_sp, D.twin(se[0][0]), -1);
+	se[1][1] = D.new_edge_pair(D.twin(se[0][1]), tmp_sp , -1);
+	
+	D.circle(se[0][0])=D.circle(se[0][1])=E0.circle(orig_edge[0][i/2]);
+	D.circle(D.twin(se[0][0]))
+	  = D.circle(D.twin(se[0][1]))
+	  = E0.circle(E0.twin(orig_edge[0][i/2]));
+	D.circle(se[1][0])=D.circle(se[1][1])=E1.circle(tmp_se);
+	D.circle(D.twin(se[1][0]))
+	  = D.circle(D.twin(se[1][1]))
+	  = E1.circle(tmp_se);
+	
+	D.mark(se[0][0])=BOP(E0.mark(orig[0][i/2]),
+			     E1.mark(E1.face(E1.twin(tmp_se))));
+	D.mark(se[0][1])=BOP(E0.mark(orig[0][i/2]),
+			     E1.mark(E1.face(tmp_se)));
+	D.mark(se[1][0])=BOP(E0.mark(E0.face(orig[0][i/2])),	
+			     E1.mark(tmp_se));
+	D.mark(se[1][1])=BOP(E0.mark(E0.face(E0.twin(orig[0][i/2]))),
+			     E1.mark(tmp_se));
+      }
+    }
+    
+    for(int i=0; i<4; i++) {
+      if(i==0 && (iv[0] != SVertex_handle() || iv[1] != SVertex_handle()))
+	continue;
+      if(i==1 && (iv[0] != SVertex_handle() || iv[2] != SVertex_handle()))
+	continue;
+      if(i==2 && (iv[2] != SVertex_handle() || iv[3] != SVertex_handle()))
+	continue;
+      if(i==3 && (iv[1] != SVertex_handle() || iv[3] != SVertex_handle()))
+	continue;
+
+      SHalfedge_handle se = D.new_edge_pair(sv[i/2][0], sv[i/2][1]);
+      D.circle(se) = E0.circle(orig_edge[i/2][i%2]);
+      D.circle(D.twin(se)) = D.twin(D.circle(se));
+      D.mark(se) = BOP(mark(orig_edge[i/2][i%2]), face_mark[1-i/2][0]);
+    }  
+    
+    
+
+    break;
+  default: CGAL_nef3_assertion_msg(0, "wrong value");
+  }
+  
+  return D.center_vertex();
+}
+*/
+/*
+template <typename SNC_>
+template <typename Selection>
+typename SNC_::Vertex_handle
+SNC_constructor<SNC_>::
+create_edge_edge_overlay( typename SNC_::Halfedge_handle e1, 
+			  typename SNC_::Halfedge_handle e2,
+			  const Point_3& p,
+			  const Selection& BOP) {
+
+  TRACEN("edge edge overlay " << p);
+
+  Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
+
+  SM_const_decorator E1(source(e1));
+  SM_const_decorator E2(source(e2));
+
+  CGAL_nef3_assertion(!E1.is_isolated(e1) && !E2.is_isolated(e2));
+  CGAL_nef3_assertion(E1.number_of_vertices()>=2 &&
+		      E2.number_of_vertices()>=2);
+
+  SM_decorator D(sncp()->new_vertex(p, BOP(mark(e1), mark(e2))));
+
+  Sphere_point p1 = calc_point(e1);
+  Sphere_point p2 = calc_point(e2);
+  p1 = normalized(p1);
+  p2 = normalized(p2);
+
+  SVertex_handle v11 = D.new_vertex(p1);
+  SVertex_handle v12 = D.new_vertex(p1.antipode());
+  TRACEN("new svertex 1 " << p1);
+  TRACEN("new svertex 2 " << p1.antipode());
+  //  D.mark(v1) = BOP(E.mark(e), mark(volume(faces_p)));
+  //  D.mark(v2) = BOP(E.mark(e), mark(volume(twin(faces_p))));
+
+  SVertex_handle sv;
+  SHalfedge_handle se;
+  SFace_handle sf;
+  
+  SHalfedge_around_svertex_const_circulator ec1(E1.out_edges(e1)), ee1(ec1);
+  SHalfedge_around_svertex_const_circulator ec2(E2.out_edges(e2)); 
+
+  CGAL_For_all(ec1,ee1) {
+    Sphere_segment seg(E1.point(E1.source(ec1)), 
+		       E1.point(E1.source(ec1)).antipode(), 
+		       E1.circle(ec1));
+    se = D.new_edge_pair(v11, v12);
+    D.mark(se) = E1.mark(ec1);
+    mark_of_right_sface[se] = E1.mark(E1.face(ec1));
+    D.circle(se1) = E1.circle(ec1);
+    D.circle(D.twin(se1)) = D.circle(D.circle(se1).opposite());
+  }
+  
+  int i=0;
+  int curr_side;
+  bool set_end = true;
+  bool cut[2];
+  cut[0] = false;
+  cut[1] = false;
+  SHalfedge_around_svertex_const_circulator shalf[2], ehalf[2];
+  int init_side=orientation(Point_3(0,0,0), E1.point(E1.source(ec1)), 
+			    E1.point(E1.target(ec1)), E2.point(E2.source(ec2))); 
+  CGAL_For_all(ec1,ee1) {
+    curr_side=orientation(Point_3(0,0,0), E1.point(E1.source(ec1)), 
+			  E1.point(E1.target(ec1)),E2.point(E2.source(ec2))); 
+    if(curr_side == 0) {
+      ehalf[i] = ec1;
+      set_end = false;
+      cut[i] = true;
+    }
+
+    if(curr_side != 0 && curr_side != init_side) {
+      init_side = curr_side;
+      if(set_end)
+	ehalf[i] = ec1;
+      else
+	set_end = true;
+      shalf[++i%2] = ec1;
+      if(i==2)
+	break;
+    }
+    else {
+      SHalfedge_around_svertex_const_circulator tmp_circ(ec1);
+      ++tmp_circ;
+      int tmp_side=orientation(Point_3(0,0,0), 
+			       E1.point(E1.source(ec1)), E1.point(E1.target(ec1)),
+			       CGAL::ORIGIN+tmp_circ->sphere_circle().orthogonal_vector());
+      if(tmp_side <= 0) {
+	if(tmp_side==0)
+	  cut[i]= true;
+	if(set_end)
+	  ehalf[i] = ec1;
+	shalf[i++] = tmp_circ;
+	break;
+      }
+    }
+  }
+
+  curr_side=orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
+			E2.point(E2.target(ec2)),E1.point(E1.source(ec1))); 
+  if(curr>0) {
+    do {
+      SHalfedge_around_svertex_const_circulator tmp_circ(ec2);
+      --ec2;
+      int tmp_side=orientation(Point_3(0,0,0), 
+			       E2.point(E2.source(ec2)), E2.point(E2.target(ec2)),
+			       CGAL::ORIGIN+tmp_circ->sphere_circle().orthogonal_vector());
+      curr_side = orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
+			      E2.point(E2.target(ec2)),E1.point(E1.source(ec1)));
+      if(tmp_side <= 0)       
+	break;
+    }
+    while(curr_side>0);
+  }
+  else {
+    do {
+      ++ec2;
+      curr_side = orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
+			      E2.point(E2.target(ec2)),E1.point(E1.source(ec1))); 
+    }
+    while(curr_side<=0);
+    --ec2;
+  }
+
+
+
+      curr_side = orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
+			      E2.point(E2.target(ec2)),E1.point(E1.source(ec1)));
+    }
+  }
+
+  SHalfedge_around_svertex_const_circulator ec3(ec2);
+  ++ec2;
+  if(init_side==0 || curr_side==0)
+    --ec3;
+  
+  if(orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
+		 E2.point(E2.target(ec2)),E1.point(E1.source(ec1)))
+     <0)
+    
+
+  CGAL_For_all(ec2,ee2) {
+    int curr_side=orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
+			      E2.point(E2.target(ec2)),E1.point(E1.source(ec1))); 
+
+    
+  }
+
+  CGAL_For_all(ec2,ee2) {
+    if(first) {
+      CGAL_For_all(ec1,ee1) {
+	Sphere_point sp(intersection(c, seg.sphere_circle()));
+	TRACEN(seg <<" has_on " << sp);
+	if(!seg.has_on(sp))
+	  sp = sp.antipode();
+	sv = D.new_vertex(sp);
+	TRACEN("new svertex 3 " << normalized(sp));
+	D.mark(sv) = BOP(E.mark(ec), mark(f));
+	se1 = D.new_edge_pair(v1, sv);
+	se2 = D.new_edge_pair(sv, v2);
+	D.mark(se1) = BOP(E.mark(ec), mark(volume(faces_p)));
+	D.mark(se2) = BOP(E.mark(ec), mark(volume(twin(faces_p))));
+	D.circle(se1) = D.circle(se2) = E.circle(ec);
+	D.circle(D.twin(se1)) = D.circle(D.twin(se2)) = D.circle(se1).opposite();
+      }
+    }
+    else {
+      CGAL_For_all(ec1,ee1) {
+	SHalfedge_around_svertex_circulator en(ec2);
+	++en;
+	se1 = D.new_edge_pair(twin(ec2), twin(en), -1, 1);
+	TRACEN("new edge pair " << ssource(twin(ec2))->tmp_point() << " -> " << ssource(twin(en))->tmp_point());
+	D.circle(se1) = Sphere_circle(plane(faces_p));
+	D.circle(D.twin(se1)) = D.circle(se1).opposite();
+	D.mark(se1) = BOP(mark_of_right_sface[ec2], mark(faces_p));
+	
+	sf = D.new_face();
+	D.mark(sf) = BOP(mark_of_right_sface[ec2], mark(volume(faces_p)));
+	D.link_as_face_cycle(se1,sf);
+	sf = D.new_face();
+	D.mark(sf) = BOP(mark_of_right_sface[ec2], mark(volume(twin(faces_p))));
+	D.link_as_face_cycle(D.twin(se1),sf);
+      }   
+    }
+  }
 
   return D.center_vertex();
 }
+*/
 
 template <typename SNC_>
 typename SNC_::Halffacet_handle 

@@ -280,7 +280,7 @@ public:
   typedef SNC_SM_decorator<Refs_> Base;
   typedef SNC_SM_decorator<Refs_> Decorator;
   typedef SNC_SM_overlayer<Refs_> Self;
-  typedef CGAL::SNC_SM_point_locator<SNC_structure> SM_point_locator;
+  typedef CGAL::SNC_SM_point_locator<Decorator> SM_point_locator;
 
 #define USING(t) typedef typename Refs_::t t
   USING(Vertex_handle);
@@ -1090,8 +1090,8 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   SM_point_locator L0(PI[0].center_vertex());
   SM_point_locator L1(PI[1].center_vertex());
   
-  L0.init_marks_of_halfspheres(mohs, 0, cs);
-  L1.init_marks_of_halfspheres(mohs, 2, cs);
+  L0.marks_of_halfspheres(mohs, 0, cs);
+  L1.marks_of_halfspheres(mohs, 2, cs);
 
   if(compute_halfsphere[cs][0])
     complete_face_support(svertices_begin(), v, O, mohs, 0);
@@ -1562,8 +1562,8 @@ merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2,
     set_face(e1,f);
     if ( e2 == first_out_edge(source(e2)) )
       set_first_out_edge(source(e2),e1t);
-    mark(e1,0) = mark(e1,0) || mark(e2,0);
-    mark(e1,1) = mark(e1,1) || mark(e2,1);
+    //    mark(e1,0) = mark(e1,0) || mark(e2,0);
+    //    mark(e1,1) = mark(e1,1) || mark(e2,1);
     D.discard_info(e2);
     delete_edge_pair_only(e2);
   }

@@ -26,6 +26,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
 //#include <CGAL/Nef_3/SNC_walker.h>
@@ -37,7 +38,6 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
-#include <CGAL/Nef_3/SNC_explorer.h>
 #include <CGAL/Nef_3/SNC_SM_explorer.h>
 
 #ifdef CGAL_NEF3_CGAL_NEF3_SM_VISUALIZOR
@@ -71,7 +71,7 @@ template <typename T>
 std::istream& operator>>(std::istream&, Nef_polyhedron_3<T>&); 
 
 template <typename T>
-class Nef_polyhedron_3_rep
+class Nef_polyhedron_3_rep 
 { 
   typedef Nef_polyhedron_3_rep<T>                     Self;
   friend class Nef_polyhedron_3<T>;
@@ -124,20 +124,23 @@ halfspaces. |\Mtype| is closed under all binary set opertions |intersection|,
 |boundary|, |closure|, and |interior|.}*/
 
 template <typename T>
-class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<T> >
+class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<T> >, 
+			 public SNC_const_decorator<SNC_structure<T> >
 { 
-public:
+ public:
   typedef T Extended_kernel; 
   static  T EK; // static extended kernel
 
   /*{\Mtypes 7}*/  
-  typedef Nef_polyhedron_3<T>                   Self;
-  typedef Handle_for< Nef_polyhedron_3_rep<T> > Base;
-  typedef typename T::Kernel                    Kernel;
-  typedef typename T::Point_3                   Point_3;
-  typedef typename T::Plane_3                   Plane_3;
-  typedef typename T::Vector_3                  Vector_3;
-  typedef typename Kernel::Aff_transformation_3      Aff_transformation_3;
+  typedef Nef_polyhedron_3<T>                         Self;
+  typedef Handle_for< Nef_polyhedron_3_rep<T> >       Base;
+  //  typedef SNC_const_decorator<SNC_structure<T> >      Explorer;
+  typedef typename T::Kernel                          Kernel;
+  typedef typename T::Point_3                         Point_3;
+  typedef typename T::Plane_3                         Plane_3;
+  typedef typename T::Vector_3                        Vector_3;
+  typedef typename Kernel::Segment_3                  Segment_3;
+  typedef typename Kernel::Aff_transformation_3       Aff_transformation_3;
 
   typedef bool Mark;
   /*{\Xtypemember marking set membership or exclusion.}*/
@@ -285,10 +288,15 @@ protected:
   halfspace on the positive side of |p| including |p| if |b==INCLUDED|,
   excluding |p| if |b==EXCLUDED|.}*/
 
-  Nef_polyhedron_3(const Nef_polyhedron_3<T>& N1) : Base(N1) {} 
+  Nef_polyhedron_3(const Nef_polyhedron_3<T>& N1) : Base(N1) {
+    set_snc(snc());
+  } 
 
-  Nef_polyhedron_3& operator=(const Nef_polyhedron_3<T>& N1)
-  { Base::operator=(N1); return (*this); }
+  Nef_polyhedron_3& operator=(const Nef_polyhedron_3<T>& N1) { 
+    Base::operator=(N1);
+    set_snc(snc());
+    return (*this); 
+  }
 
   ~Nef_polyhedron_3() { 
     TRACEN("~Nef_polyhedron_3: destructor called for snc "<<&snc()<<
@@ -303,9 +311,11 @@ protected:
     *this = Nef_polyhedron_3(rsnc, _pl, false);
     initialize_infibox_vertices(EMPTY);
     polyhedron_3_to_nef_3
-      < Polyhedron, SNC_structure, SM_point_locator>( P, snc());
+      < Polyhedron, SNC_structure>( P, snc());
     build_external_structure();
     simplify();
+    set_snc(snc());
+    CGAL_nef3_assertion(orientation() == 1);
   }
   
   Nef_polyhedron_3( const char* filename, 
@@ -426,6 +436,52 @@ protected:
 
   };
   
+  int orientation() {
+    // Function does not work correctly with every Nef_polyhedron. 
+    // It works correctly if v_max is 2-manifold
+
+    typedef typename SM_decorator::SHalfedge_around_sface_circulator
+      SHalfedge_around_sface_circulator;
+
+    if ( number_of_vertices() == 0)
+      return 0;
+    
+    // Find top-most vertex v_max (top-most also works fine for terrains)
+    SNC_decorator D(snc());
+    Vertex_handle v_max = D.vertices_begin();
+    Vertex_handle vh;
+    CGAL_nef3_forall_vertices(vh, D) {
+      if ( D.point(vh).z() > D.point(v_max).z())
+	v_max = vh;
+    }
+    SM_decorator SD(v_max);
+
+    // Add up z-coord. of all normalized normal vectors of the incident facets
+    
+    double z=0.0;
+    bool first = true;
+    SFace_handle sf;
+    CGAL_nef3_forall_sfaces(sf, SD) {
+      if(D.volume(sf) != D.volumes_begin()) continue;
+      if(!first) return 0; // orientation can't be decided via v_max
+      SHalfedge_around_sface_circulator estart(sf->sface_cycles_begin()), 
+	                                eend(estart);
+      CGAL_For_all(estart,eend) {
+	Sphere_circle c(SD.circle(estart));
+	double delta_z = CGAL::to_double(c.orthogonal_vector().hz());
+	Point_3 target = ORIGIN + c.orthogonal_vector();
+	Segment_3 s(Point_3(0,0,0), target);
+	delta_z /= sqrt(to_double(s.squared_length()));
+	z += delta_z;	
+      }
+      first = false;
+    }
+    
+    return sign(z);
+    
+
+  }
+
   typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
   void convert_to_Polyhedron(Polyhedron& P) {
        
@@ -879,23 +935,13 @@ protected:
   /*{\Mtypes 3}*/
     
     typedef typename Nef_rep::SNC_const_decorator      SNC_const_decorator;
-    typedef CGAL::SNC_explorer<SNC_const_decorator>    SNC_explorer;
     typedef typename Nef_rep::SM_const_decorator       SM_const_decorator;
     typedef CGAL::SNC_SM_explorer<SM_const_decorator>  SM_explorer;
-
-    SNC_explorer SNCexplorer() const { 
-      SNC_const_decorator SCD(snc());
-      return SNC_explorer(SCD); 
-    }
 
     SM_explorer SMexplorer(Vertex_const_handle v) const { 
       SM_const_decorator SMCD(v);
       return SM_explorer(SMCD); 
     }
-
-  //typedef CGAL::SNC_explorer<SNC_decorator,T> SNC_explorer; //not implemented
-  /*{\Mtypemember a decorator to examine the underlying plane map. 
-  See the manual page of |EW_explorer|.}*/
 
   typedef typename SNC_structure::Object_list Object_list;
   typedef typename SNC_structure::Object_handle Object_handle;
@@ -1037,8 +1083,10 @@ Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl,
   // TODO: granados: define behavior when clone=false
   //  TRACEN("construction from an existing SNC structure (clone="<<clone<<")"); 
   copy_on_write();
-  if(clone_snc)
+  if(clone_snc) {
     snc() = W;
+    set_snc(snc());
+  }
   if(clone_pl) {
     pl() = _pl->clone();
     pl()->initialize(&snc());

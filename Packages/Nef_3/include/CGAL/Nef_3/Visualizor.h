@@ -827,9 +827,9 @@ public:
   USING(SHalfedge_around_facet_const_circulator);
   #undef USING
 
-  SNC_explorer E;
+  Nef_polyhedron N;
 
-  Visualizor(const SNC_explorer& Exp) : E(Exp) { 
+  Visualizor(const Nef_polyhedron& Nef) : N(Nef) { 
     ppoly_ = & CGAL::OGL::add_polyhedron(); 
   }
   
@@ -844,18 +844,18 @@ public:
 
   void draw(Vertex_const_handle v) const
   { 
-    Point_3 bp = E.box_point(v);
+    Point_3 bp = N.box_point(v);
     TRACEN("vertex " << bp);
-    ppoly_->push_back(double_point(bp), E.mark(v)); 
+    ppoly_->push_back(double_point(bp), N.mark(v)); 
   }
 
   void draw(Halfedge_const_handle e) const
   { 
-    Vertex_const_handle s = E.source(e);
-    Vertex_const_handle t = E.source(E.twin(e));
-    Segment_3 seg(E.box_point(s),E.box_point(t));
+    Vertex_const_handle s = N.source(e);
+    Vertex_const_handle t = N.source(N.twin(e));
+    Segment_3 seg(N.box_point(s),N.box_point(t));
     TRACEN("edge " << seg);
-    ppoly_->push_back(double_segment(seg), E.mark(e)); 
+    ppoly_->push_back(double_segment(seg), N.mark(e)); 
   }
 
   void draw(Halffacet_const_handle f) const
@@ -867,28 +867,28 @@ public:
 	SHalfedge_const_handle h = fc;
 	SHalfedge_around_facet_const_circulator hc(h), he(hc);
 	CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
-	  Point_3 sp = E.box_point(E.source(hc));
+	  Point_3 sp = N.box_point(N.source(hc));
 	      TRACEN(" ");TRACEN("facet" << sp);
 	  g.push_back_vertex(double_point(sp));
 	}
       }
-    Vector_3 v = E.orthogonal_vector(f);
+    Vector_3 v = N.orthogonal_vector(f);
     g.set_normal(CGAL::to_double(v.x()), 
 		 CGAL::to_double(v.y()), 
 		 CGAL::to_double(v.z()), 
-		 E.mark(f));
+		 N.mark(f));
     ppoly_->push_back(g);
   }
 
   void draw() const
   { 
     Vertex_const_iterator v;
-    CGAL_nef3_forall_vertices(v,*E.sncp()) draw(v);
-    ppoly_->bbox() = E.sncp()->bounded_bbox();
+    CGAL_nef3_forall_vertices(v,*N.sncp()) draw(v);
+    ppoly_->bbox() = N.sncp()->bounded_bbox();
     Halfedge_const_iterator e;
-    CGAL_nef3_forall_edges(e,*E.sncp()) draw(e);
+    CGAL_nef3_forall_edges(e,*N.sncp()) draw(e);
     Halffacet_const_iterator f;
-    CGAL_nef3_forall_facets(f,*E.sncp()) draw(f);
+    CGAL_nef3_forall_facets(f,*N.sncp()) draw(f);
   }
 
 }; // Visualizor

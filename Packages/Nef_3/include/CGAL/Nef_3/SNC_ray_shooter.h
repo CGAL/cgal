@@ -63,7 +63,7 @@ public:
   typedef typename SNC_structure_::Kernel          Kernel;
   typedef SNC_decorator<SNC_structure>             SNC_decorator;
   typedef SNC_SM_decorator<SNC_structure>          SM_decorator;
-  typedef SNC_SM_point_locator<SNC_structure>      SM_point_locator;
+  typedef SNC_SM_point_locator<SM_decorator>       SM_point_locator;
   typedef SNC_SM_const_decorator<SNC_structure>    SM_const_decorator;
   typedef SNC_intersection<SNC_structure>          SNC_intersection;
 

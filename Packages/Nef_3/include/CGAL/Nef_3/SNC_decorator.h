@@ -54,15 +54,15 @@ CGAL_BEGIN_NAMESPACE
 template <typename SNC_structure_>
 class SNC_decorator : public SNC_const_decorator<SNC_structure_> { 
   typedef SNC_structure_ SNC_structure;
-  typedef SNC_decorator<SNC_structure>           Self;
-  typedef SNC_const_decorator<SNC_structure>     Base;
-  typedef SNC_constructor<SNC_structure>         SNC_constructor;
-  typedef SNC_SM_decorator<SNC_structure>        SM_decorator;
-  typedef SNC_SM_const_decorator<SNC_structure>  SM_const_decorator;
-  typedef SNC_SM_overlayer<SNC_structure>        SM_overlayer;
-  typedef SNC_SM_point_locator<SNC_structure>    SM_point_locator;
-  typedef SNC_intersection<SNC_structure>        SNC_intersection;
-  typedef SNC_point_locator<SNC_structure>       SNC_point_locator;
+  typedef SNC_decorator<SNC_structure>                 Self;
+  typedef SNC_const_decorator<SNC_structure>           Base;
+  typedef SNC_constructor<SNC_structure>               SNC_constructor;
+  typedef SNC_SM_decorator<SNC_structure>              SM_decorator;
+  typedef SNC_SM_const_decorator<SNC_structure>        SM_const_decorator;
+  typedef SNC_SM_overlayer<SNC_structure>              SM_overlayer;
+  typedef SNC_SM_point_locator<SM_const_decorator>     SM_point_locator;
+  typedef SNC_intersection<SNC_structure>              SNC_intersection;
+  typedef SNC_point_locator<SNC_structure>             SNC_point_locator;
   SNC_structure* sncp_;
   SNC_point_locator* pl0;
 
@@ -996,7 +996,7 @@ public:
     Vertex_iterator v0, v1;
     SNC_decorator D(result);
 
-    //    SETDTHREAD(19*131*43);
+    //    SETDTHREAD(131*43*31);
     
     TRACEN("=> binary operation");
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
