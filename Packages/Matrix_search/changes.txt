@@ -7,8 +7,14 @@
 //	actual revision
 //---------------------------------------------------------------------
 
-ALL : some minor changes to prevent warnings for gcc -Wall.
-ALL : Initial revision
 ALL : use namespace std and CGAL
 ALL : use standard header files
+DOCS: Initial revision
+
+//---------------------------------------------------------------------
+//	 CGAL-1.2
+//---------------------------------------------------------------------
+
+ALL : some minor changes to prevent warnings for gcc -Wall.
+DEMO: Initial revision
 SRC : fix signed <-> unsigned comparison warning on gcc.
