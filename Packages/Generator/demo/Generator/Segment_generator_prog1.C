@@ -1,4 +1,4 @@
-// Segment_generator_prog1.C
+// demo/Generator/Segment_generator_prog1.C
 // -------------------------------
 // CGAL example program for the generic segment generator.
 

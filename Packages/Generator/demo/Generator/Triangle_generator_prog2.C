@@ -1,4 +1,4 @@
-//  Triangle_generator_prog2.C
+//  demo/Generator/Triangle_generator_prog2.C
 //  -------------------------------
 //  CGAL example program generating a regular triangle pattern.
 

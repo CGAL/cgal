@@ -1,4 +1,4 @@
-// Segment_generator_prog2.C
+// demo/Generator/Segment_generator_prog2.C
 // -------------------------------
 // CGAL example program generating a regular segment pattern.
 

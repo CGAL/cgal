@@ -1,4 +1,4 @@
-// generators_prog1.C
+// demo/Generator/generators_prog1.C
 // ------------------------------------------
 // CGAL example program for point generators.
 

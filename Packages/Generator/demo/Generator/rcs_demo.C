@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision $
 // release_date  : $CGAL_Date $
 //
-// file          : demo/Generator_LEDA/random_polys_demo.C
+// file          : demo/Generator/rcs_demo.C
 // package       : $CGAL_Package: Generator 2.12 (28 Jul 1999) $
 // source        : src/rcs/rcs.aw
 // revision      : $Revision$

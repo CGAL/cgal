@@ -1,4 +1,4 @@
-// Triangle_generator_prog1.C
+// demo/Generator/Triangle_generator_prog1.C
 // -------------------------------------------------
 // CGAL example program generating random triangles.
 
