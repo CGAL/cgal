@@ -11,8 +11,8 @@
 // release       :
 // release_date  :
 //
-// file          : Triangulation/include/CGAL/Regular_triangulation_face_base_2.
-// source        : $Source$
+// file       : Triangulation/include/CGAL/Regular_triangulation_face_base_2.h
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Frederic Fichel, Mariette Yvinec

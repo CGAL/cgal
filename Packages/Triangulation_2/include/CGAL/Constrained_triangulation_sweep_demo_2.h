@@ -11,8 +11,8 @@
 // release       :
 // release_date  :
 //
-// file          : Triangulation/include/CGAL/Constrained_triangulation_sweep_demo_2
-// source        : $Source$
+// file    : Triangulation/include/CGAL/Constrained_triangulation_sweep_demo_2.h
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Mariette Yvinec
