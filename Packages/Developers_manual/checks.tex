@@ -250,15 +250,19 @@ Requirements:
 \begin{itemize}
    \item Write pre- and postcondition checkers for your functions wherever
          possible.
+   \item Use the \cgal\ preprocessor macros (Sections~\ref{sec:checks_using} 
+         and~\ref{sec:checks_controlling})
+         exclusively throughout your code (instead of,
+         for example, the \ccc{assert} macro) for all checks 
+         to assure that all \cgal\ invariant tests can be handled in a uniform 
+         way.
 \end{itemize}
 
-\noindent
-Recommendations:
-\begin{itemize}
-   \item Make all checks arguments of the appropriate preprocessor
-         macros (Sections~\ref{sec:checks_using} 
-         and~\ref{sec:checks_controlling}).
-\end{itemize}
+%\noindent
+%Recommendations:
+%\begin{itemize}
+%   \item 
+%\end{itemize}
 
 }
 
