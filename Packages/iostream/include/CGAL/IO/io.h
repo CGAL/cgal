@@ -40,27 +40,27 @@ public:
 };
 
 IO::Mode
-get_mode(ios& i);
+get_mode(std::ios& i);
 
 IO::Mode
-set_ascii_mode(ios& i);
+set_ascii_mode(std::ios& i);
 
 IO::Mode
-set_binary_mode(ios& i);
+set_binary_mode(std::ios& i);
 
 IO::Mode
-set_pretty_mode(ios& i);
+set_pretty_mode(std::ios& i);
 
 IO::Mode
-set_mode(ios& i, IO::Mode m);
+set_mode(std::ios& i, IO::Mode m);
 bool
-is_pretty(ios& i);
-
-bool
-is_ascii(ios& i);
+is_pretty(std::ios& i);
 
 bool
-is_binary(ios& i);
+is_ascii(std::ios& i);
+
+bool
+is_binary(std::ios& i);
 
 inline io_Read_write io_tag(char){ return io_Read_write(); }
 
