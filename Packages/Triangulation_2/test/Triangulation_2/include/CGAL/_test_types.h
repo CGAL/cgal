@@ -1,6 +1,8 @@
 #ifndef CGAL_TEST_TYPES_H
 #define CGAL_TEST_TYPES_H
 
+#include <CGAL/_test_short_names_2.h>
+
 #include <iostream>
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
@@ -16,15 +18,12 @@
 #include <CGAL/Homogeneous.h>
 #endif // CGAL_HOMOGENEOUS_H
 
-#include <CGAL/_test_short_names_2.h>
+
 
 typedef CGAL::Cartesian<CGAL::Quotient<CGAL::Gmpz> > Test_rep_cartesian;
 //typedef CGAL::Cartesian<CGAL::Gmpz>  Test_rep_cartesian;
 typedef CGAL::Homogeneous<CGAL::Gmpz> Test_rep_homogeneous;
 
-//the following define shorter names to make the (g++/egcs) linker work 
-//#define CGAL::_Triangulation_test_traits CGAL::Ttt
 
-//class CGAL::_Triangulation_test_traits;
 
 #endif

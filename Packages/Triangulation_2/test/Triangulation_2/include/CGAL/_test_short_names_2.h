@@ -3,6 +3,11 @@
 
 
 // Define shorter names to please linker (g++/egcs)
+
+   #define Cartesian Cart
+   #define Homogeneous Hom
+   #define Quotient Qt
+
    #define Triangulation_test_point Ttp
    #define Triangulation_test_segment Tts
    #define Triangulation_test_line Ttl
