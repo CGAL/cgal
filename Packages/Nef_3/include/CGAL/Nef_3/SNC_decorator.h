@@ -335,13 +335,13 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   static Plane_3& plane(Halffacet_handle f)
   { return f->plane(); }
 
-  Mark& mark(Vertex_handle v) const
+  static Mark& mark(Vertex_handle v)
   { return v->mark(); }
-  Mark& mark(Halfedge_handle e) const
+  static Mark& mark(Halfedge_handle e)
   { return e->mark(); }
-  Mark& mark(Halffacet_handle f) const
+  static Mark& mark(Halffacet_handle f)
   { return f->mark(); }
-  Mark& mark(Volume_handle c) const
+  static Mark& mark(Volume_handle c)
   { return c->mark(); }
 
   GenPtr& info(Vertex_handle v) const
