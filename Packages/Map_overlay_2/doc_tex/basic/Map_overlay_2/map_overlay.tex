@@ -112,7 +112,7 @@ representing the overlay and its two creators.
  \ccStyle{Planar_Map_With_Intersections_2}.
 % or an a \ccc{Arrangement}.
 Notice that the choice of a subdivision type determines the choice 
-of a DCEL and a traits class (see Chapter~\ccRefPage{I1_ChapterPlanarMap}).
+of a DCEL and a traits class (see~\ccRefPage{I1_ChapterPlanarMap}).
 (ii) {\it Notifier} is the class used to update the overlay components. 
 {\it Notifier} should be a model of the 
 \ccc{PlanarMapWithIntersectionsChangeNotification_2} concept.
@@ -316,7 +316,7 @@ See Figure~\ref{fig:overlay_example} for an illustration.
 Updating the DCEL additional attributes is performed by the {\em Notifier} class.
 We extend and override the notification functions of the basic {\em Notifier}, 
 defined in the \ccc{Planar_Map_2<Dcel,Traits>} package 
-(see Chapter~\ccRefPage{I1_ChapterPlanarMap}), 
+(see~\ccRefPage{I1_ChapterPlanarMap}), 
 in order to update the corresponding features constructed by the overlay. 
 
 The \ccc{Map_overlay_default_notifier<Subdivision>} class 
@@ -326,7 +326,7 @@ The notifier class overrides only the functions \ccStyle{add_edge}
 and \ccStyle{split_edge} of the basic notifier defined for \ccStyle{Planar_Map}.
 In our implementation these functions update 
 the pointers of the halfedges and the vertices in the DCEL 
-presenting the overlay, see Chapter~\ccRefPage{I1_ChapterPlanarMap} for details.
+presenting the overlay, see~\ccRefPage{I1_ChapterPlanarMap} for details.
 In order to update the pointers of a face, we define a new function in our 
 notifier, which we call \ccStyle{update_all_faces}. 
 This function traverses all components in the overlay in a DFS manner and 
