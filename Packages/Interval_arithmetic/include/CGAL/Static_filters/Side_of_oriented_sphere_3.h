@@ -65,21 +65,21 @@ public:
           fit_in_double(s.x()) && fit_in_double(s.y()) && fit_in_double(s.z()) &&
           fit_in_double(t.x()) && fit_in_double(t.y()) && fit_in_double(t.z()))
       {
-          double px = CGAL_NTS to_double(p.x());
-          double py = CGAL_NTS to_double(p.y());
-          double pz = CGAL_NTS to_double(p.z());
-          double qx = CGAL_NTS to_double(q.x());
-          double qy = CGAL_NTS to_double(q.y());
-          double qz = CGAL_NTS to_double(q.z());
-          double rx = CGAL_NTS to_double(r.x());
-          double ry = CGAL_NTS to_double(r.y());
-          double rz = CGAL_NTS to_double(r.z());
-          double sx = CGAL_NTS to_double(s.x());
-          double sy = CGAL_NTS to_double(s.y());
-          double sz = CGAL_NTS to_double(s.z());
-          double tx = CGAL_NTS to_double(t.x());
-          double ty = CGAL_NTS to_double(t.y());
-          double tz = CGAL_NTS to_double(t.z());
+          const double & px = CGAL_NTS to_double(p.x());
+          const double & py = CGAL_NTS to_double(p.y());
+          const double & pz = CGAL_NTS to_double(p.z());
+          const double & qx = CGAL_NTS to_double(q.x());
+          const double & qy = CGAL_NTS to_double(q.y());
+          const double & qz = CGAL_NTS to_double(q.z());
+          const double & rx = CGAL_NTS to_double(r.x());
+          const double & ry = CGAL_NTS to_double(r.y());
+          const double & rz = CGAL_NTS to_double(r.z());
+          const double & sx = CGAL_NTS to_double(s.x());
+          const double & sy = CGAL_NTS to_double(s.y());
+          const double & sz = CGAL_NTS to_double(s.z());
+          const double & tx = CGAL_NTS to_double(t.x());
+          const double & ty = CGAL_NTS to_double(t.y());
+          const double & tz = CGAL_NTS to_double(t.z());
 
           CGAL_PROFILER("In_sphere_3 calls");
 
