@@ -893,8 +893,8 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map()
 
   Finite_vertices_iterator vertex_it;
 
-  for( vertex_it = vertices_begin(); 
-       vertex_it != vertices_end(); 
+  for( vertex_it = finite_vertices_begin(); 
+       vertex_it != finite_vertices_end(); 
        ++vertex_it) 
     {
       Vertex_handle v = vertex_it;
@@ -1366,8 +1366,8 @@ Alpha_shape_2<Dt>::find_alpha_solid() const
 
   Finite_vertices_iterator vertex_it;
   // only finite vertices
-  for( vertex_it = vertices_begin(); 
-       vertex_it != vertices_end();
+  for( vertex_it = finite_vertices_begin(); 
+       vertex_it != finite_vertices_end();
        ++vertex_it) 
     {
       Coord_type alpha_min_v = (--_interval_face_map.end())->first;
