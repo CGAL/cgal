@@ -223,7 +223,7 @@ public:
   /** \note This is only the sign of the mantissa, it can be taken to be
       the sign of the BigFloat only if !(isZeroIn()). */
   int sign() const {
-    assert(!(isZeroIn()));
+    assert((err() == 0 && m() == 0) || !(isZeroIn()));
     return rep->signM();
   }
   /// check whether contains zero
