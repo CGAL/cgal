@@ -21,9 +21,6 @@
 \newcommand{\Gcc}[1]{\gnu~\texttt{g++}~{\rm #1}}
 \newcommand{\gccurl}{\path'http://gcc.gnu.org/'}
 
-%% macro for egcs
-\newcommand{\egcs}[1]{\texttt{Egcs}~{\rm #1}}
-
 %% macro for SUNPRO CC
 \newcommand{\sunprocc}[1]{\textsc{Sunpro}~\texttt{CC}~{\rm #1}}
 
@@ -128,7 +125,7 @@ systems:
     & IRIX 6.5\\\hline
     \kcc{4} \footnotemark[8]                 
     & Solaris 2.6+\\\hline
-    \Gcc{2.95} (and later) \footnotemark[9]            
+    \Gcc{2.95} \footnotemark[9]            
     & IRIX 6.5 / Solaris 2.6+ / Linux 2.x / 
       \mswin\ 95/98/2000/NT4\footnotemark[12]\\\hline
     \msvc{6.0} \footnotemark[10]           
@@ -147,8 +144,7 @@ systems:
 \msvc{5.0} and prior is not supported and there are no plans to
 support it in future releases.  The \sunprocc{4.2} compiler is not
 supported anymore, please stay with \cgal-1.2 if you have to use it.
-\Gcc{2.8.1} is not supported anymore, please stay with \cgal-2.0 if
-you have to use it.  Support for \sunprocc{} will be reconsidered as
+Support for \sunprocc{} will be reconsidered as
 soon as an acceptable degree of standard-conformance is reached.
 Support for \icl{4.0} will be considered.
 
@@ -813,7 +809,7 @@ right place:\TTsubindex{install\_cgal}{upgrade option}
 ./install_cgal --upgrade <OLD_CGAL_DIR>
 \end{verbatim}
 where \texttt{<OLD\_CGAL\_DIR>} is the root directory of your existing
-\cgal\ installation\\ (e.g. \texttt{/pub/local/CGAL-2.1}).  You can
+\cgal\ installation\\ (e.g. \texttt{/pub/local/CGAL-2.2}).  You can
 then build all libraries for the actual operating system that existed
 in your previous \cgal\ installation with
 \TTsubindex{install\_cgal}{rebuild-all option}
@@ -883,9 +879,6 @@ The \cgal\ distribution contains the following makefiles:
   
 \item \texttt{\cgaldir/src/makefile\_sharedlib} for compiling the
   \cgal\ shared object library \texttt{libCGAL.so},
-  
-\item \texttt{\cgaldir/src/makefile\_geomview} for compiling a library
-  for geomview support,
   
 \item \texttt{\cgaldir/examples/makefile} as sample makefile
   \textit{and}
@@ -1573,8 +1566,8 @@ LDFLAGS = $(LONG_NAME_PROBLEM_LDFLAGS) $(CGAL_LDFLAGS)
 
 If you are using an old version of \leda, the combination of \leda\ 
 and \stl\ may give some problems. In order to avoid them, it is highly
-recommended to use the latest \leda\ release\footnote{At the moment
-  this is \leda\ 4.1.}, since this is what we test \cgal\ with.
+recommended to use the latest \leda\ release, since this is what we test
+\cgal\ with.
 
 \paragraph{\msvc-specific problems.}
 Using \msvc\ with \leda\ requires\footnote{Also applies to \bcc .} the
@@ -1597,7 +1590,7 @@ options controlling the use of debugging and multithreading.
 
 If a binary release of \leda{4.1} is used, make sure that it is one of
 them that uses new-style headers. Namely, among the self-extracting
-executables on \path'http://www.mpi-sb.mpg.de/LEDA/download/windows/'
+executables,
 choose one of these that have the name ending with \texttt{-std.exe}.
 
 
