@@ -1,3 +1,6 @@
+4.56     (24 April 02)
+- dont_submit makefile and cgal_test.
+
 4.55     (23 April 02)
 - Don't compile Filtered_Exact tests in utilities.C on VC++ (lack of partial
   specialization).
