@@ -1532,7 +1532,7 @@ print_headline()
     write_buffer "$1\n"
     write_buffer "$_MENU_LINE_EMPTY\r${_LEFTSPACE}**"
     string_n_print " " $_result
-    string_n_print "-" $l
+    string_n_print "=" $l
     write_buffer "\n"
     print_empty_line
 }
