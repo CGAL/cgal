@@ -1,3 +1,6 @@
+Version 3.21
+- Replaced CGAL_TYPENAME_MSVC_NULL with typename
+
 version 3.20 (3/06/03)
 - New design fixes.
 
