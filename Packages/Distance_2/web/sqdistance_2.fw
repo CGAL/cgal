@@ -83,7 +83,7 @@ Saarbruecken@)
 #ifndef CGAL_WMULT_H
 #define CGAL_WMULT_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 #ifdef CGAL_HOMOGENEOUS_H
 template <class RT>
@@ -143,7 +143,7 @@ inline RT wmult(Cartesian<RT> *, const RT &a,
 }
 #endif // CGAL_CARTESIAN_H
 
-} // close namespace CGAL
+CGAL_NAMESPACE_END
 
 #endif // CGAL_WMULT_H
 @}
@@ -2087,10 +2087,10 @@ Saarbruecken@)
 #ifndef CGAL_SQUARED_DISTANCE_UTILS_H
 #define CGAL_SQUARED_DISTANCE_UTILS_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 @<2D squared distance general utilities@>
-} // close namespace CGAL
+CGAL_NAMESPACE_END
 
 #endif // CGAL_SQUARED_DISTANCE_UTILS_H
 @}
@@ -2109,9 +2109,9 @@ Saarbruecken@)
 #include <CGAL/user_classes.h>
 #endif // CGAL_USER_CLASSES_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 @<2D squared distance header declarations 1@>
-} // close namespace CGAL
+CGAL_NAMESPACE_END
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/squared_distance_2_1.C>
@@ -2154,9 +2154,9 @@ Saarbruecken@)
 #include <CGAL/squared_distance_utils.h>
 #endif // CGAL_SQUARED_DISTANCE_UTILS_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 @<2D squared distance outline definitions 1@>
-} // close namespace CGAL
+CGAL_NAMESPACE_END
 @}
 
 @O@<../include/CGAL/squared_distance_2_2.h@>==@{@-
@@ -2173,10 +2173,10 @@ Saarbruecken@)
 #include <CGAL/user_classes.h>
 #endif // CGAL_USER_CLASSES_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 @<2D squared distance header declarations 2@>
-} // close namespace CGAL
+CGAL_NAMESPACE_END
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/squared_distance_2_2.C>
@@ -2223,10 +2223,10 @@ Saarbruecken@)
 #ifndef CGAL_SQUARED_DISTANCE_2_1_H
 #include <CGAL/squared_distance_2_1.h>
 #endif // CGAL_SQUARED_DISTANCE_2_1_H
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 @<2D squared distance outline definitions 2@>
-} // close namespace CGAL
+CGAL_NAMESPACE_END
 @}
 
 
