@@ -249,6 +249,7 @@ private:
     Verbose_ostream          vout2;     // used for more diagnostic output
     Verbose_ostream          vout3;     // used for full diagnostic output
     Verbose_ostream          vout4;     // used for output of basis inverse
+    Verbose_ostream	     vout5; 	// used for output of validity tests
     
     // pricing strategy
     Pricing_strategy*        strategyP;
@@ -674,6 +675,8 @@ private:
     void  replace_variable_original_slack( );
     void  replace_variable_slack_original( );
     void  replace_variable_slack_slack( );
+    void  remove_artificial_variable_and_constraint( );
+    void  expel_artificial_variables_from_basis( );
 
     void  enter_variable( );
     void  leave_variable( );
