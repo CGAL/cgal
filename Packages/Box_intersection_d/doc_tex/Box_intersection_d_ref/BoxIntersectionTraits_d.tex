@@ -3,7 +3,7 @@
 % +------------------------------------------------------------------------+
 
 \begin{ccRefConcept}{BoxIntersectionTraits_d}
-\ccThree{const int}{BoxIntersectiommmmnTraits_d::dimension();}{}
+\ccThree{inti}{BoxIntersectionmmmmnTraits_d::dimension();}{}
 \ccTwo{BoxIntersectionTraits_d::Box_handle;}{}
 \ccCreationVariable{traits}
 
@@ -21,20 +21,19 @@ the boxes manipulated in these algorithms.
 
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<Box>}
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<BoxHandle>}
 
 \ccTypes
 
 
-\ccNestedType{Box}{box type. Since we support in our algorithms
+\ccNestedType{Box_handle}{box handle. Since we support in our algorithms
   passing the boxes by value as well as passing them as pointers, we
-  have as box type either \ccc{const B&}, \ccc{B*}, or \ccc{const B*}
-  respectively, if \ccc{B} is the actually class type storing the box.
-  The box objects are passed in parameter lists of functions and
-  predicates using exactly this type.} 
+  use as box handle either \ccc{const B&}, \ccc{B*}, or \ccc{const B*}
+  respectively, where \ccc{B} is the actual box type.
+  The boxes are passed as function arguments using exactly this type.} 
 
 \ccNestedType{NT}{number type to represent the box
-  boundaries. Supported are the builtin types \ccc{int}, \ccc{unsigned
+  boundaries. Allowed are the builtin types \ccc{int}, \ccc{unsigned
   int}, \ccc{float}, and \ccc{double}.} 
 
 \ccNestedType{ID}{type for the \ccc{id}-number,
@@ -42,27 +41,28 @@ the boxes manipulated in these algorithms.
 
 \ccAccessFunctions
 
-\ccFunction{const int BoxIntersectionTraits_d::dimension();}{%
-  returns the number of dimensions.}
+\ccFunction{int BoxIntersectionTraits_d::dimension();}{%
+  returns the dimension of the box.}
 
-\ccFunction{ID BoxIntersectionTraits_d::id(Box box);}{%
+\ccFunction{ID BoxIntersectionTraits_d::id(Box_handle box);}{%
   returns the unique \ccc{id}-number for the \ccc{box}.}
 
 \ccThree{const int}{BoxIntersec}{}
 
-\ccFunction{NT  BoxIntersectionTraits_d::min_coord( Box box, int dim);}{%
-  returns the lower boundary value of the \ccc{box} in dimension
-  \ccc{dim}, $0 \leq $\ccc{dim}$ < $\ccc{dimension()}.}
+\ccFunction{NT  BoxIntersectionTraits_d::min_coord( Box_handle box, int d);}{%
+  returns the lower boundary of the \ccc{box} in dimension
+  \ccc{d}, $0 \leq $\ccc{d}$ < $\ccc{dimension()}.}
 
-\ccFunction{NT  BoxIntersectionTraits_d::max_coord( Box box, int dim);}{%
-  returns the upper boundary value of the \ccc{box} in dimension
-  \ccc{dim}, $0 \leq $\ccc{dim}$ < $\ccc{dimension()}.}
+\ccFunction{NT  BoxIntersectionTraits_d::max_coord( Box_handle box, int d);}{%
+  returns the upper boundary of the \ccc{box} in dimension
+  \ccc{d}, $0 \leq $\ccc{d}$ < $\ccc{dimension()}.}
 
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::box_intersection_d}\\
 \ccRefIdfierPage{CGAL::box_self_intersection_d}\\
-\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}\\
+\ccRefIdfierPage{CGAL::box_self_intersection_all_pairs_d}
 
 \end{ccRefConcept}
 

@@ -1,38 +1,35 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: box_intersection_all_pairs_d.tex
+% | Reference manual page: box_self_intersection_all_pairs_d.tex
 % +------------------------------------------------------------------------+
 % | 19.05.2004   Lutz Kettner, Andreas Meyer
 % | Package: Package
 % | 
-\RCSdef{\RCSboxintersectiondRev}{$Revision$}
-\RCSdefDate{\RCSboxintersectiondDate}{$Date$}
+\RCSdef{\RCSboxselfintersectionAPdRev}{$Revision$}
+\RCSdefDate{\RCSboxselfintersectionAPdDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{box_intersection_all_pairs_d}
-%\ccHtmlCrossLink{CGAL::box_intersection_all_pairs_custom_predicates_d}
-%\ccRefLabel{CGAL::box_intersection_all_pairs_custom_predicates_d}
+\begin{ccRefFunction}{box_self_intersection_all_pairs_d}
 \ccIndexSubitem{intersection}{iso-oriented boxes}
 \ccIndexSubitemDef{intersection}{all pairs}
 
 \ccDefinition
   
 The function \ccRefName\ computes the pairwise intersecting boxes
-between two sequences of iso-oriented boxes in arbitrary dimension.
+in a sequence of iso-oriented boxes in arbitrary dimension.
 It does so by comparing all possible pairs of boxes and is thus
-inferior to the fast \ccc{CGAL::box_intersection_d} algorithm on
-page~\ccRefPage{CGAL::box_intersection_d}.
+inferior to the fast \ccc{CGAL::box_self_intersection_d} algorithm on
+\ccRefPage{CGAL::box_self_intersection_d}.
 
-The sequences of boxes are given with two forward iterator ranges. The
+The sequence of boxes is given with a forward iterator range. The
 sequences are not modified. For each intersecting pair of boxes a
 \ccc{callback} function object is called with the two intersecting
-boxes as argument; the first argument is a box from the first
-sequence, the second argument a box from the second sequence.
+boxes as argument.
 
 The algorithm is interface compatible with the
-\ccc{CGAL::box_intersection_d} function. Similarly, we call the
+\ccc{CGAL::box_self_intersection_d} function. Similarly, we call the
 \ccc{value_type} of the iterators the \emph{box handle}, which is
 either our box type or a pointer type to our box type.
 
@@ -50,82 +47,43 @@ selected with the \ccc{topology} parameter and its two values,
 \ccc{CGAL::Box_intersection_d::HALF_OPEN} and
 \ccc{CGAL::Box_intersection_d::CLOSED}.
 
-In addition, a box has an unique \ccc{id}-number. Boxes with equal
-\ccc{id}-number are not reported since they obviously intersect trivially.
-
 The algorithm uses a traits class of the \ccc{BoxIntersectionTraits_d}
 concept to access the boxes. A default traits class is provided that
 assumes that the box type is a model of the \ccc{BoxIntersectionBox_d}
 concept and that the box handle, i.e., the iterators value type, is
 identical to the box type or a pointer to the box type.
 
-An important special application of this algorithm is the test for
-self-intersections where the second box sequence is an identical copy
-of the first sequence including the preserved \ccc{id}-number. We
-offer a specialized implementation
-\ccc{CGAL::box_self_intersection_all_pairs} for this application.
-
 \ccInclude{CGAL/box_intersection_d.h}
 
 \ccThree{void}{box_inter}{}
-%\def\ccLongParamLayout{\ccTrue}
-\ccFunction{template< class ForwardIterator1, 
-            class ForwardIterator2, 
-            class Callback >
-void box_intersection_all_pairs_d(
-    ForwardIterator1 begin1, ForwardIterator1 end1,
-    ForwardIterator2 begin2, ForwardIterator2 end2,
+\def\ccLongParamLayout{\ccTrue}
+\ccFunction{template< class ForwardIterator, class Callback >
+void box_self_intersection_all_pairs_d(
+    ForwardIterator begin, ForwardIterator end,
     Callback callback,
     Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
 }{%
     Invocation of box intersection with default box traits
     \ccc{CGAL::Box_intersection_d::Box_traits_d<Box_handle>}, where
     \ccc{Box_handle} corresponds to the iterator value type  of
-    \ccc{ForwardIterator1}.}
+    \ccc{ForwardIterator}.}
  
-\ccFunction{template< class ForwardIterator1,
-            class ForwardIterator2,
+\ccFunction{template< class ForwardIterator,
             class Callback, class BoxTraits >
-void box_intersection_all_pairs_d(
-    ForwardIterator1 begin1, ForwardIterator1 end1,
-    ForwardIterator2 begin2, ForwardIterator2 end2,
+void box_self_intersection_all_pairs_d(
+    ForwardIterator begin, ForwardIterator end,
     Callback callback,
     BoxTraits box_traits,
     Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
 }{Invocation with custom box traits.}
-
-%\begin{ccAdvanced}
-%\def\ccLongParamLayout{\ccTrue}
-%\ccFunction{template< class RandomAccessIterator1,
-%                  class RandomAccessIterator2,
-%                  class Callback, class BoxPredicateTraits >
-%void box_intersection_all_pairs_custom_predicates_d(
-%    RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
-%    RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
-%    Callback callback,
-%    BoxPredicateTraits traits);
-%}{%
-%    This version of the algorithm is interface compatible with the
-%    \ccc{CGAL::box_intersection_custom_predicates_d} function on 
-%    \ccRefPage{CGAL::box_intersection_d}. Therefore,
-%    this version of the box-intersection algorithms uses a very
-%    fine-grained predicate traits class that allows the hand-crafted
-%    implementation of the individual interval comparison tests. This is
-%    only for experts and might only be useful in the context of special
-%    number types or exploitation of special assembler instructions!
-%    The details of half-open or closed boxes and the \ccc{id}-value of a
-%    box are encoded in this predicate traits.
-%}
-%\def\ccLongParamLayout{\ccFalse}
-%\end{ccAdvanced}
+\def\ccLongParamLayout{\ccFalse}
 
 \ccRequirements
 
 \begin{itemize}
   \item
-    \ccc{ForwardIterator1}, and \ldots \ccc{2}, must be
-    forward iterators and both value types must be
-    the same. We call this value type \ccc{Box_handle} in the following.
+    \ccc{ForwardIterator} must be a forward iterator. We call its
+    value type \ccc{Box_handle} in the following. 
   \item
     \ccc{Callback} must be of the \ccc{BinaryFunction} concept. 
     The \ccc{Box_handle} must be convertible to both argument types. The
@@ -140,34 +98,23 @@ void box_intersection_all_pairs_d(
     implementation.
   \item
     \ccc{BoxTraits} must be of the \ccc{BoxIntersectionTraits_d} concept.
-%  \item
-%    \ccc{BoxPredicateTraits} must be of the
-%    \ccc{BoxIntersectionPredicateTraits_d} concept.
 \end{itemize}
 
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::box_intersection_d}\\
 \ccRefIdfierPage{CGAL::box_self_intersection_d}\\
-\ccRefIdfierPage{CGAL::box_self_intersection_all_pairs_d}
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}
 
 \ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<BoxHandle>}\\
 \ccRefConceptPage{BoxIntersectionBox_d}\\
 \ccRefConceptPage{BoxIntersectionTraits_d}
 
-%\begin{ccAdvanced}
-%
-%\ccRefIdfierPage{CGAL::Box_intersection_d::Predicate_traits_d<BoxTraits,bool closed>}\\
-%\ccRefConceptPage{BoxIntersectionPredicateTraits_d}
-%
-%\end{ccAdvanced}
-
-
 \ccImplementation
 
 The algorithm is trivially testing all pairs and runs therefore in time
-$O(nm)$ where $n$ is the size of the first sequence and $m$ is the
-size of the second sequence.
+$O(n^2)$ where $n$ is the size of the inut sequence. This algorithm
+does not use the {id}-number of the boxes.
 
 \end{ccRefFunction}
 

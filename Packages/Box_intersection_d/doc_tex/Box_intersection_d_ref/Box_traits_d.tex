@@ -2,19 +2,19 @@
 % | Reference manual page: Box_traits_d.tex
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}[Box_intersection_d::]{Box_traits_d<Box>}
+\begin{ccRefClass}[Box_intersection_d::]{Box_traits_d<BoxHandle>}
 
 \ccDefinition
 
 This is the default traits class for the intersection algorithms for
 iso-oriented boxes. There are actually three versions depending on the
-type of \ccc{Box}; there is one if \ccc{Box} is a class type and there are
-two if \ccc{Box} is a pointer type, one for a mutable and one for a const
+type of \ccc{BoxHandle}; there is one if \ccc{BoxHandle} is a class type and there are
+two if \ccc{BoxHandle} is a pointer type, one for a mutable and one for a const
 pointer, respectively.
 
 \begin{itemize}
   \item
-    \ccc{Box}: either a class type \ccc{B}, a pointer \ccc{B*}, or a
+    \ccc{BoxHandle}: either a class type \ccc{B}, a pointer \ccc{B*}, or a
     const-pointer \ccc{const B*}, where \ccc{B} is a model of the
     \ccc{BoxIntersectionBox_d} concept.
 \end{itemize}
@@ -39,6 +39,6 @@ and also automatically with\\
 \ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}
 
 \ccRefConceptPage{BoxIntersectionBox_d}\\
-\ccRefIdfierPage{CGAL::Box_intersection_d::Box_d<NT,int N,IdPolicy>}
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_d<NT,int D,IdPolicy>}
 
 \end{ccRefClass}

@@ -5,7 +5,7 @@
 
 \begin{ccRefConcept}{BoxIntersectionBox_d}
 \ccCreationVariable{box}
-\ccThree{const int}{BoxIntersectionBox_d::dimension();}{}\ccThreeToTwo
+\ccThree{const int}{BoxIntersectionBox_d::dim();}{}\ccThreeToTwo
 \ccDefinition
 
 The \ccRefName\ concept is used in the context of the intersection
@@ -20,13 +20,13 @@ the dimension, the \ccc{id}-number, and the boundaries of the box.
 
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::Box_intersection_d::Box_d<NT,int N,IdPolicy>}\\
-\ccRefIdfierPage{CGAL::Box_intersection_d::Box_with_handle_d<NT, int N, Handle, IdPolicy>}
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_d<NT,int D,IdPolicy>}\\
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_with_handle_d<NT, int D, Handle, IdPolicy>}
 
 \ccTypes
 
 \ccNestedType{NT}{number type to represent the box
-  boundaries. Supported are the builtin types \ccc{int}, \ccc{unsigned
+  boundaries. Allowed are the builtin types \ccc{int}, \ccc{unsigned
   int}, \ccc{float}, and \ccc{double}.} 
 
 \ccNestedType{ID}{type for the box \ccc{id}-number,
@@ -34,27 +34,26 @@ the dimension, the \ccc{id}-number, and the boundaries of the box.
 
 \ccAccessFunctions
 
-\ccFunction{const int BoxIntersectionBox_d::dimension();}{%
-  returns the number of dimensions.}
+\ccFunction{int BoxIntersectionBox_d::dimension();}{%
+  returns the dimension of the box.}
 
 \ccMethod{ID id() const;}{%
   returns the unique \ccc{id}-number for the \ccc{box}.}
 
-\ccMethod{NT min_coord( int dim) const;}{%
-  returns the lower boundary value of the \ccc{box} in dimension
-  \ccc{dim}, $0 \leq $\ccc{dim}$ < $\ccc{dimension()}.}
+\ccMethod{NT min_coord( int d) const;}{returns the lower boundary in dimension
+  \ccc{d}, $0 \leq $\ccc{d}$ < $\ccc{dimension()}.}
 
-\ccMethod{NT max_coord( int dim) const;}{%
-  returns the upper boundary value of the \ccc{box} in dimension
-  \ccc{dim}, $0 \leq $\ccc{dim}$ < $\ccc{dimension()}.}
+\ccMethod{NT max_coord( int d) const;}{returns the upper boundary in dimension
+  \ccc{d}, $0 \leq $\ccc{d}$ < $\ccc{dimension()}.}
 
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::box_intersection_d}\\
 \ccRefIdfierPage{CGAL::box_self_intersection_d}\\
-\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}\\
+\ccRefIdfierPage{CGAL::box_self_intersection_all_pairs_d}
 
-\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<Box>}\\
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<BoxHandle>}\\
 \ccRefConceptPage{BoxIntersectionTraits_d}
 
 

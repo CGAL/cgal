@@ -125,7 +125,7 @@ depending on the size of a box it can be faster to copy the boxes, or
 to work with pointers to boxes and copy only pointers. We offer
 automatic support for both options. To simplify the description, let us
 call the \ccc{value_type} of the iterator ranges \emph{box handle}.
-The \emph{box handle\/} can either be our box type itself, or a
+The \emph{box handle\/} can either be our box type itself or a
 pointer (or const pointer) to the box type; these choices represent
 both options from above.
 
@@ -428,13 +428,13 @@ important.
 \begin{figure}[htbp]
 \begin{ccTexOnly}
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{Box_intersection_d/fig/benchmark}
+  \includegraphics[width=0.7\textwidth]{Box_intersection_d/fig/benchmark}
 \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
 <center>
 \end{ccHtmlOnly}
-  \caption{Runtime comparison scanning vs.\ streaming.
+  \caption{Runtime comparison between the scanning and the streaming algorithm.
   \label{fig_benchmark}}
 
 \begin{ccHtmlOnly}

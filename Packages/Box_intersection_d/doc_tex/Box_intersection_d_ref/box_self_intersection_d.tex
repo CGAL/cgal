@@ -27,21 +27,22 @@ box from the sequence, the second argument is a copy of a box from the
 sequence.  The performance of the algorithm can be tuned with a
 \ccc{cutoff} parameter, see the implementation section of the
 \ccc{CGAL::box_intersection_d} function on
-page~\ccRefPage{CGAL::box_intersection_d}. 
+\ccRefPage{CGAL::box_intersection_d}.  
 
 The algorithm creates a second copy of the boxes and reorders the
 boxes in the course of the algorithm. Now, depending on the size of a
 box it can be faster to copy the boxes, or to work with pointers to
 boxes and copy only pointers. We offer automatic support for both
-options. We call the \ccc{value_type} of the iterator ranges the
-\emph{box type}, which is either the type of our boxes, or a pointer
-type to our type of boxes.
+options. To simplify the description, let us call the \ccc{value_type}
+of the iterators \emph{box handle}.  The \emph{box handle\/} can
+either be our box type itself or a pointer (or const pointer) to the
+box type.
 
 A $d$-dimensional iso-oriented box is defined as the Cartesian product
 of $d$ intervals. We call the box \emph{half-open} if the $d$
-intervals $\{ [lo_i,hi_i) | 0 \leq i < d\}$ are half-open intervals,
+intervals $\{ [lo_i,hi_i) \,|\, 0 \leq i < d\}$ are half-open intervals,
 and we call the box \emph{closed} if the $d$ intervals $\{ [lo_i,hi_i]
-| 0 \leq i < d\}$ are closed intervals. Note that closed boxes support
+\,|\, 0 \leq i < d\}$ are closed intervals. Note that closed boxes support
 zero-width boxes and they can intersect at their boundaries, while
 non-empty half-open boxes always have a positive volume and they only
 intersect iff their interiors overlap.  The distinction between closed
@@ -51,43 +52,42 @@ selected with the \ccc{topology} parameter and its two values,
 \ccc{CGAL::Box_intersection_d::HALF_OPEN} and
 \ccc{CGAL::Box_intersection_d::CLOSED}.
 
-In addition, a box has an \ccc{id}-number that is distinct for
-all boxes. It is needed in order to have a pair of intersecting boxes
-to be reported only once in the algorithm. This is necessary if boxes
-of identical geometry appear several times in the input sequences.
-For this self-intersection function a second copy of the box sequence
-is created. The copying has to preserve the \ccc{id}-number of boxes.
-Note that this implies that the address of the box might not be
-sufficient for the \ccc{id}-number if boxes are copied by value. Boxes of
-equal \ccc{id}-number are not reported as intersecting pairs since they are
+In addition, a box has an unique \ccc{id}-number. It is used to order
+boxes consistently in each dimension even if boxes have identical
+coordinates. In consequence, the algorithm guarantees that a pair of
+intersecting boxes is reported only once.  This self-intersection
+function creates internallz a second copy of the box sequence. The
+copying has to preserve the \ccc{id}-number of boxes.  Note that this
+implies that the address of the box is not sufficient for the
+\ccc{id}-number if boxes are copied by value. Boxes of equal
+\ccc{id}-number are not reported as intersecting pairs since they are
 always intersecting trivially.
-
 
 The algorithm uses a traits class of the \ccc{BoxIntersectionTraits_d}
 concept to access the boxes. A default traits class is provided that
-works under the assumption that the box type is a model of the
-\ccc{BoxIntersectionBox_d} concept, or a pointer to a model of that
-concept (see above for the value versus pointer nature of the box type).
+assumes that the box type is a model of the \ccc{BoxIntersectionBox_d}
+concept and that the box handle, i.e., the iterators value type, is
+identical to the box type or a pointer to the box type.
 
 \ccInclude{CGAL/box_intersection_d.h}
 
 \ccThree{void}{box_intersection_custom_}{}
 %\def\ccLongParamLayout{\ccTrue}
 \ccFunction{template< class RandomAccessIterator, class Callback >
-void box_intersection_d(
+void box_self_intersection_d(
     RandomAccessIterator begin, RandomAccessIterator end,
     Callback callback,
     std::ptrdiff_t cutoff = 10,
     Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
 }{%
     Invocation of box intersection with default box traits
-    \ccc{CGAL::Box_intersection_d::Box_traits_d<Box_type>}, where
-    \ccc{Box_type} corresponds to the iterator value type  of
+    \ccc{CGAL::Box_intersection_d::Box_traits_d<Box_handle>}, where
+    \ccc{Box_handle} corresponds to the iterator value type  of
     \ccc{RandomAccessIterator}.}
  
 \ccFunction{template< class RandomAccessIterator,
             class Callback, class BoxTraits >
-void box_intersection_d(
+void box_self_intersection_d(
     RandomAccessIterator begin, RandomAccessIterator end,
     Callback callback,
     BoxTraits box_traits,
@@ -101,16 +101,16 @@ void box_intersection_d(
 \begin{itemize}
   \item
     \ccc{RandomAccessIterator} must be a mutable random-access
-    iterator. We call its value type \ccc{Box_type} in the following.
+    iterator. We call its value type \ccc{Box_handle} in the following.
   \item
     \ccc{Callback} must be of the \ccc{BinaryFunction} concept. 
-    The \ccc{Box_type} must be convertible to both argument types. The
+    The \ccc{Box_handle} must be convertible to both argument types. The
     return type is not used and can be \ccc{void}.
   \item
-    The \ccc{Box_type} must be a model of the \ccc{Assignable} concept.
+    The \ccc{Box_handle} must be a model of the \ccc{Assignable} concept.
   \item
-    In addition, if the default box traits is used the \ccc{Box_type} must be 
-    a class type \ccc{T}, or a pointer to a class type \ccc{T}, where
+    In addition, if the default box traits is used the \ccc{Box_handle} must
+    be a class type \ccc{T} or a pointer to a class type \ccc{T}, where
     \ccc{T} must be a model of the \ccc{BoxIntersectionBox_d} concept.
     In both cases, the default box traits specializes to a suitable
     implementation.
@@ -121,25 +121,24 @@ void box_intersection_d(
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::box_intersection_d}\\
-\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}\\
-\ccRefIdfierPage{CGAL::box_intersection_custom_predicates_d}
+\ccRefIdfierPage{CGAL::box_self_intersection_all_pairs_d}
 
-\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<Box>}\\
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<BoxHandle>}\\
 \ccRefConceptPage{BoxIntersectionBox_d}\\
 \ccRefConceptPage{BoxIntersectionTraits_d}
 
 \ccImplementation
 
 See the implementation section of the \ccc{CGAL::box_intersection_d}
-function on page~\ccRefPage{CGAL::box_intersection_d}.
+function on \ccRefPage{CGAL::box_intersection_d}.
 
 \ccExample
 
 The box implementation provided with
 \ccc{CGAL::Box_intersection_d::Box_d<double,2>} has a special
 constructor for the \cgal\ bounding box type \ccc{CGAL::Bbox_2} (and
-the same holds also for dimension 3). We use this in the example to
-create $3 \times 3$ \ccc{boxes} in a grid layout.
+similar for dimension 3). We use this in the example to create $3
+\times 3$ \ccc{boxes} in a grid layout.
 
 The default policy of the box type implements the \ccc{id}-number with
 an explicit counter in the boxes, which is the default choice since it
