@@ -23,7 +23,7 @@
 #ifndef CGAL_FPU_H
 #define CGAL_FPU_H
 
-// This file specifies some platform dependant functions, regarding the FPU
+// This file specifies some platform dependant functions, regarding the FPU       
 // directed rounding modes.  There is only support for double precision.
 //
 // It also contains the definition of the Protect_FPU_rounding<> classes,
