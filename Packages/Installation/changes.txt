@@ -22,7 +22,7 @@ GLOB: Run the compiler tests when it becomes necessary only.
 ALL : Changed CGAL version to 2.3.
 
 //---------------------------------------------------------------------
-//	 
+//	 CGAL 2.2
 //---------------------------------------------------------------------
 
 GLOB: Show KCC support (fixed).
@@ -54,7 +54,7 @@ DOCS: Replaced path by nonlinkedpath.
 DOCS: moved here from former package Installation_doc.
 
 //---------------------------------------------------------------------
-//	 
+//	 CGAL 2.1
 //---------------------------------------------------------------------
 
 GLOB: Updated makefile.
@@ -169,7 +169,7 @@ SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 SRC : Installation
 
 //---------------------------------------------------------------------
-//	 
+//	 CGAL 2.0
 //---------------------------------------------------------------------
 
 GLOB: fixed EXTRA_OBJECTS bug (workaround_4_irix was addded ALWAYS).
@@ -216,7 +216,7 @@ SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
 SRC : added Fixed_precision_nt.o.
 
 //---------------------------------------------------------------------
-//	 
+//	 CGAL 1.2
 //---------------------------------------------------------------------
 
 GLOB: added -Wall flag for gcc2.8/egcs.
@@ -231,7 +231,7 @@ SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
 SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 
 //---------------------------------------------------------------------
-//	 
+//	 CGAL 1.1
 //---------------------------------------------------------------------
 
 GLOB: Added variable PRINT_STACKTRACE_PROGRAM to include makefiles. It can
