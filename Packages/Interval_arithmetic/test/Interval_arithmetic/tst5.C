@@ -8,6 +8,7 @@
 #ifdef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 #define CGAL_IA_CT double
 #define CGAL_IA_ET leda_real
+#define CGAL_IA_CACHE No_Filter_Cache
 #endif
 
 #include <CGAL/misc.h>
