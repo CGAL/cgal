@@ -1,3 +1,7 @@
+5.48 (Susan)
+===
+- moved doc_tex/*_ref directory up one level
+
 5.47 (Susan)
 ===
 - made changes necessary to do the manual split
