@@ -26,7 +26,7 @@
 #define ALPHA_SHAPE_CELL_BASE_3_H
 
 #include <vector>
-#include <CGAL/triple.h>
+#include <CGAL/utility.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,7 +36,7 @@ class Alpha_shape_cell_base_3 : public Df
 public:
 
   typedef typename Gt::FT Coord_type;        // A corriger avec Monique
-  typedef triple<Coord_type, Coord_type , Coord_type> Interval3;
+  typedef Triple<Coord_type, Coord_type, Coord_type> Interval3;
 
   //-------------------------------------------------------------------
 private:
@@ -64,32 +64,32 @@ public:
 
   //-------------------------------------------------------------------
 
-  Coord_type get_alpha()
+  const Coord_type & get_alpha() const
     {
       return A;
     }
   
-  void set_alpha(Coord_type AA)
+  void set_alpha(const Coord_type & AA)
     {
       A = AA;
     }
 
-  Interval3 get_facet_ranges(const int& i)
+  const Interval3 & get_facet_ranges(int i) const
     {
       return vec_facet[i];
     }
 
-  void set_facet_ranges(const int& i, const Interval3& Inter)
+  void set_facet_ranges(int i, const Interval3& Inter)
     {
       vec_facet[i]=Inter;
     }
   
-  Interval3 get_edge_ranges(const int& i, const int& j)
+  const Interval3 & get_edge_ranges(int i, int j) const
     {
       return vec_edge[i][j];
     }
 
-  void set_edge_ranges(const int& i, const int& j, const Interval3& Inter)
+  void set_edge_ranges(int i, int j, const Interval3& Inter)
     {
       vec_edge[i][j]=Inter;
     }

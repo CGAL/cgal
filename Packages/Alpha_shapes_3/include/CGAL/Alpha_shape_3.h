@@ -35,7 +35,7 @@
 #include <utility>
 #include <iostream>
 
-#include <CGAL/triple.h>
+#include <CGAL/utility.h>
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 
 //-------------------------------------------------------------------
@@ -99,7 +99,7 @@ private:
   typedef std::multimap< Coord_type, Cell_handle > Interval_cell_map;
   typedef typename Interval_cell_map::value_type   Interval_cell;
 
-  typedef triple<Coord_type, Coord_type , Coord_type> Interval3;
+  typedef Triple<Coord_type, Coord_type, Coord_type> Interval3;
 
   typedef std::multimap< Interval3, Facet >        Interval_facet_map;
   typedef typename Interval_facet_map::value_type  Interval_facet;
