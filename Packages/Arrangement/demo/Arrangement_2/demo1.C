@@ -334,14 +334,14 @@ MyWindow::MyWindow(int w, int h)
   
   connect( setGridSnapMode, SIGNAL( toggled( bool ) ) , 
        this, SLOT( updateGridSnapMode( bool ) ) );
+    
+  // connect the change of current tab
+  connect( myBar, SIGNAL( currentChanged(QWidget * )  ),
+           this, SLOT( update() ) );
   
   //state flag 
   old_state = 0;
   add_segment_tab();
-  
-  // connect the change of current tab
-  connect( myBar, SIGNAL( currentChanged(QWidget * )  ),
-           this, SLOT( update() ) );
   
 }
 
@@ -775,7 +775,7 @@ void MyWindow::update()
   setMode( w_demo_p->mode );
   updateSnapMode( false );
   setTraits( w_demo_p->traits_type );
-  setConicType( w_demo_p->conic_type );
+  setConicType( w_demo_p->conic_type ); 
 }
 
 /*! zoom in - enlarge the picture */
@@ -836,13 +836,8 @@ void MyWindow::fileOpenSegment()
   bool flag = (w_demo_p->traits_type == SEGMENT_TRAITS);
   if( w_demo_p->empty ) // pm is empty
   {
-    if (flag)
-	  fileOpen();
-	else
-	{
-	  updateTraitsType( setSegmentTraits );
-      fileOpen(true);
-	}
+    updateTraitsType( setSegmentTraits );
+    fileOpen(true);
   }
   else
   {
@@ -874,16 +869,10 @@ void MyWindow::fileOpenSegmentPm()
 {
   Qt_widget_base_tab *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  bool flag = (w_demo_p->traits_type == SEGMENT_TRAITS);
   if( w_demo_p->empty ) // pm is empty
-  {
-    if (flag)
-	  fileOpenPm();
-	else
-	{
-	  updateTraitsType( setSegmentTraits );
-      fileOpenPm();
-	}
+  {    
+    updateTraitsType( setSegmentTraits );
+    fileOpenPm();
   }
   else
   {
@@ -914,14 +903,9 @@ void MyWindow::fileOpenPolyline()
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   bool flag = (w_demo_p->traits_type == POLYLINE_TRAITS);
   if( w_demo_p->empty ) // pm is empty
-  {
-    if (flag)
-	  fileOpen();
-	else
-	{
-	  updateTraitsType( setSegmentTraits );
-      fileOpen(true);
-	}
+  {    
+    updateTraitsType( setPolylineTraits );
+    fileOpen(true);	
   }
   else
   {
@@ -953,16 +937,10 @@ void MyWindow::fileOpenPolylinePm()
 {
   Qt_widget_base_tab *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  bool flag = (w_demo_p->traits_type == POLYLINE_TRAITS);
   if( w_demo_p->empty ) // pm is empty
   {
-    if (flag)
-	  fileOpenPm();
-	else
-	{
-	  updateTraitsType( setPolylineTraits );
-      fileOpenPm();
-	}
+    updateTraitsType( setPolylineTraits );
+    fileOpenPm();
   }
   else
   {
@@ -994,13 +972,8 @@ void MyWindow::fileOpenConic()
   bool flag = (w_demo_p->traits_type == CONIC_TRAITS);
   if( w_demo_p->empty ) // pm is empty
   {
-    if (flag)
-	  fileOpen();
-	else
-	{
-	  updateTraitsType( setSegmentTraits );
-      fileOpen(true);
-	}
+    updateTraitsType( setConicTraits );
+    fileOpen(true);
   }
   else
   {
@@ -1068,19 +1041,27 @@ void MyWindow::fileOpenPm()
   switch ( w_demo_p1->traits_type ) {
    case SEGMENT_TRAITS:
     {
-     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
+      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
        (myBar->currentPage());
-     w_demo_p->m_curves_arr.read(inputFile);
+      w_demo_p->m_curves_arr.read(inputFile);
+	  if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
+    	w_demo_p->empty = false;
+      else 
+        w_demo_p->empty = true;
      break;
     }
    case POLYLINE_TRAITS: // dosen't work !!
     {
-     Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
+      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
        (myBar->currentPage());
-     w_demo_p->m_curves_arr.read(inputFile);     
-	 break;
+       w_demo_p->m_curves_arr.read(inputFile);   
+	   if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
+	     w_demo_p->empty = false;
+       else 
+         w_demo_p->empty = true;
+	   break;
     }
    case CONIC_TRAITS: // dosen't work !!
     {
@@ -1154,8 +1135,11 @@ void MyWindow::load( const QString& filename , bool clear_flag )
         w_demo->bbox = curve_bbox;
       else
         w_demo->bbox = w_demo->bbox + curve_bbox;
-    }
-    
+	}
+	if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
+	  w_demo_p->empty = false;
+    else 
+      w_demo_p->empty = true;    
   }
   
   else if (w_demo->traits_type == POLYLINE_TRAITS)
@@ -1198,6 +1182,10 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       
       w_demo_p->m_curves_arr.insert(Pm_pol_2( *base_polyline , cd));
     }
+    if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
+      w_demo_p->empty = false;
+    else 
+      w_demo_p->empty = true;
   }
   
   else if (w_demo->traits_type == SEGMENT_TRAITS)
@@ -1236,6 +1224,10 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       w_demo_p->m_curves_arr.insert(Pm_seg_2( *base_seg , cd));
 
     }
+	if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
+	  w_demo_p->empty = false;
+    else 
+      w_demo_p->empty = true;
       
   }
   w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() , 
