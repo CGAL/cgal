@@ -61,8 +61,8 @@ public:
   bool          nondegenerate_has_on(const PointH3<R> &p) const;
   bool          is_degenerate() const;
 
-  PointH3<R> vertex(int i) const;
-  PointH3<R> operator[](int i) const;
+  const PointH3<R> & vertex(int i) const;
+  const PointH3<R> & operator[](int i) const;
 
   FT       squared_area() const;
 
@@ -91,7 +91,7 @@ TriangleH3<R>::operator!=(const TriangleH3<R> &t) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH3<R>
+const PointH3<R> &
 TriangleH3<R>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
@@ -103,7 +103,7 @@ TriangleH3<R>::vertex(int i) const
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 TriangleH3<R>::operator[](int i) const
 { return vertex(i); }
 

@@ -60,8 +60,8 @@ public:
                 const Point_3 &s)
     : Tetrahedron_handle_3_(Tetrahedron_ref_3(p, q, r, s)) {}
 
-  Point_3    vertex(int i) const;
-  Point_3    operator[](int i) const;
+  const Point_3 &    vertex(int i) const;
+  const Point_3 &    operator[](int i) const;
 
   bool       operator==(const Self &t) const;
   bool       operator!=(const Self &t) const;
@@ -131,7 +131,7 @@ operator!=(const TetrahedronC3<R CGAL_CTAG> &t) const
 }
 
 template < class R >
-typename TetrahedronC3<R CGAL_CTAG>::Point_3
+const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &
 TetrahedronC3<R CGAL_CTAG>::
 vertex(int i) const
 {
@@ -148,7 +148,7 @@ vertex(int i) const
 
 template < class R >
 inline
-typename TetrahedronC3<R CGAL_CTAG>::Point_3
+const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &
 TetrahedronC3<R CGAL_CTAG>::
 operator[](int i) const
 {

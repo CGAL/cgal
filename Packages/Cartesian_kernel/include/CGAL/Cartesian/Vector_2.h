@@ -93,20 +93,20 @@ public:
   bool operator==(const Null_vector &) const;
   bool operator!=(const Null_vector &p) const;
 
-  FT x() const
+  const FT & x() const
   {
       return Ptr()->e0;
   }
-  FT y() const
+  const FT & y() const
   {
       return Ptr()->e1;
   }
 
-  FT hx() const
+  const FT & hx() const
   {
       return x();
   }
-  FT hy() const
+  const FT & hy() const
   {
       return y();
   }
@@ -115,8 +115,8 @@ public:
       return FT(1);
   }
 
-  FT cartesian(int i) const;
-  FT operator[](int i) const;
+  const FT & cartesian(int i) const;
+  const FT & operator[](int i) const;
   FT homogeneous(int i) const;
 
   int dimension() const
@@ -179,7 +179,7 @@ VectorC2<R CGAL_CTAG>::operator!=(const Null_vector &v) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename VectorC2<R CGAL_CTAG>::FT 
+const typename VectorC2<R CGAL_CTAG>::FT &
 VectorC2<R CGAL_CTAG>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i == 0) || (i == 1) );
@@ -188,7 +188,7 @@ VectorC2<R CGAL_CTAG>::cartesian(int i) const
 
 template < class R >
 inline
-typename VectorC2<R CGAL_CTAG>::FT
+const typename VectorC2<R CGAL_CTAG>::FT &
 VectorC2<R CGAL_CTAG>::operator[](int i) const
 {
   return cartesian(i);

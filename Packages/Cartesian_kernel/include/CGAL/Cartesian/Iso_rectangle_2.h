@@ -97,11 +97,11 @@ public:
   bool            operator==(const Self &s) const;
   bool            operator!=(const Self &s) const;
 
-  Point_2 min() const
+  const Point_2 & min() const
   {
       return Ptr()->e0;
   }
-  Point_2 max() const
+  const Point_2 & max() const
   {
       return Ptr()->e1;
   }
@@ -124,12 +124,12 @@ public:
 
   Bbox_2          bbox() const;
 
-  FT              xmin() const;
-  FT              ymin() const;
-  FT              xmax() const;
-  FT              ymax() const;
-  FT              min_coord(int i) const;
-  FT              max_coord(int i) const;
+  const FT &      xmin() const;
+  const FT &      ymin() const;
+  const FT &      xmax() const;
+  const FT &      ymax() const;
+  const FT &      min_coord(int i) const;
+  const FT &      max_coord(int i) const;
 
   FT              area() const;
 };
@@ -160,7 +160,7 @@ operator!=(const Iso_rectangleC2<R CGAL_CTAG> &r) const
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT
+const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
 Iso_rectangleC2<R CGAL_CTAG>::xmin() const
 {
   return min().x();
@@ -168,7 +168,7 @@ Iso_rectangleC2<R CGAL_CTAG>::xmin() const
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT
+const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
 Iso_rectangleC2<R CGAL_CTAG>::ymin() const
 {
   return min().y();
@@ -176,7 +176,7 @@ Iso_rectangleC2<R CGAL_CTAG>::ymin() const
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT
+const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
 Iso_rectangleC2<R CGAL_CTAG>::xmax() const
 {
   return max().x();
@@ -184,7 +184,7 @@ Iso_rectangleC2<R CGAL_CTAG>::xmax() const
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT
+const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
 Iso_rectangleC2<R CGAL_CTAG>::ymax() const
 {
   return max().y();
@@ -192,7 +192,7 @@ Iso_rectangleC2<R CGAL_CTAG>::ymax() const
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT
+const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
 Iso_rectangleC2<R CGAL_CTAG>::min_coord(int i) const
 {
   CGAL_kernel_precondition( i == 0 || i == 1 );
@@ -204,7 +204,7 @@ Iso_rectangleC2<R CGAL_CTAG>::min_coord(int i) const
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT
+const typename Iso_rectangleC2<R CGAL_CTAG>::FT &
 Iso_rectangleC2<R CGAL_CTAG>::max_coord(int i) const
 {
   CGAL_kernel_precondition( i == 0 || i == 1 );

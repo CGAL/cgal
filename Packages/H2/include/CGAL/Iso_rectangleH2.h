@@ -55,8 +55,8 @@ public:
   bool      operator==(const Iso_rectangleH2<R>& s) const;
   bool      operator!=(const Iso_rectangleH2<R>& s) const;
 
-  PointH2<R>  min() const;
-  PointH2<R>  max() const;
+  const PointH2<R> & min() const;
+  const PointH2<R> & max() const;
   PointH2<R>  vertex(int i) const;
   PointH2<R>  operator[](int i) const;
 
@@ -150,13 +150,13 @@ Iso_rectangleH2<R>::operator!=(const Iso_rectangleH2<R>& r) const
 
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 Iso_rectangleH2<R>::min() const
 { return  Ptr()->e0; }
 
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 Iso_rectangleH2<R>::max() const
 { return  Ptr()->e1; }
 
@@ -229,12 +229,11 @@ Iso_rectangleH2<R>::vertex(int i) const
                            min().hw()*max().hw() );
     case 2:
         return max();
-    case 3:
+    default: // case 3:
         return PointH2<R>( min().hx()*max().hw(),
                            max().hy()*min().hw(),
                            min().hw()*max().hw() );
   }
-  return PointH2<R>();
 }
 
 template < class R >

@@ -93,8 +93,8 @@ public:
                 const PointH3<R> &s)
     : Tetrahedron_handle_3_(Tetrahedron_ref_3(p,q,r,s)) {}
 
-  PointH3<R> vertex(int i) const;
-  PointH3<R> operator[](int i) const;
+  const PointH3<R> & vertex(int i) const;
+  const PointH3<R> & operator[](int i) const;
   bool           operator==(const TetrahedronH3<R> &t) const;
   bool           operator!=(const TetrahedronH3<R> &t) const;
   Bbox_3         bbox() const;
@@ -119,8 +119,10 @@ CGAL_KERNEL_INLINE
 bool
 TetrahedronH3<R>::operator==(const TetrahedronH3<R> &t) const
 {
-  if ( Ptr() == t.Ptr() ) return true;
-  if ( orientation() != t.orientation() ) return false;
+  if ( identical(t) )
+      return true;
+  if ( orientation() != t.orientation() )
+      return false;
 
   std::vector< PointH3<R> > V1;
   std::vector< PointH3<R> > V2;
@@ -147,7 +149,7 @@ TetrahedronH3<R>::operator!=(const TetrahedronH3<R> &t) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH3<R>
+const PointH3<R> &
 TetrahedronH3<R>::vertex(int i) const
 {
   switch (i%4)
@@ -155,16 +157,16 @@ TetrahedronH3<R>::vertex(int i) const
      case 0:  return Ptr()->container.e0;
      case 1:  return Ptr()->container.e1;
      case 2:  return Ptr()->container.e2;
-     case 3:  return Ptr()->container.e3;
+     default: /*case 3:*/  return Ptr()->container.e3;
   }
-  return PointH3<R>();
 }
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 TetrahedronH3<R>::operator[](int i) const
 { return vertex(i); }
+
 template < class R >
 inline
 bool

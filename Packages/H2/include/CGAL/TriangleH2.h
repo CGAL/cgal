@@ -118,8 +118,8 @@ public:
     // bool               oriented_equal( const TriangleH2<R>& ) const;
     // bool               unoriented_equal( const TriangleH2<R>& ) const;
 
-    PointH2<R>     vertex(int i) const;
-    PointH2<R>     operator[](int i) const;
+    const PointH2<R> & vertex(int i) const;
+    const PointH2<R> & operator[](int i) const;
 
     FT                 area() const;
 };
@@ -130,7 +130,7 @@ public:
 
 template <class R>
 CGAL_KERNEL_INLINE
-PointH2<R>
+const PointH2<R> &
 TriangleH2<R>::vertex(int i) const
 {
   if (i>2) i = i%3;
@@ -140,7 +140,7 @@ TriangleH2<R>::vertex(int i) const
 
 template <class R>
 inline
-PointH2<R>
+const PointH2<R> &
 TriangleH2<R>::operator[](int i) const
 { return vertex(i); }
 

@@ -1,3 +1,6 @@
+2.36   (2 October 2001)
+- Access functions of objects (like .x() ) now return const references.
+
 2.35   (15 August 2001)
 - SunPro patches.
 

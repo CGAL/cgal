@@ -37,10 +37,10 @@ public:
   RepH3(const NT& a0, const NT& a1, const NT& a2, const NT& a3)
     : e0(a0), e1(a1), e2(a2), e3(a3) {}
 
-  NT    hx() const { return e0; }
-  NT    hy() const { return e1; }
-  NT    hz() const { return e2; }
-  NT    hw() const { return e3; } // homogenizing component
+  const NT & hx() const { return e0; }
+  const NT & hy() const { return e1; }
+  const NT & hz() const { return e2; }
+  const NT & hw() const { return e3; } // homogenizing component
 };
 
 template <class NT>
@@ -53,10 +53,10 @@ public:
   Simple_RepH3(const NT& a0, const NT& a1, const NT& a2, const NT& a3)
     : e0(a0), e1(a1), e2(a2), e3(a3) {}
 
-  NT    hx() const { return e0; }
-  NT    hy() const { return e1; }
-  NT    hz() const { return e2; }
-  NT    hw() const { return e3; } // homogenizing component
+  const NT & hx() const { return e0; }
+  const NT & hy() const { return e1; }
+  const NT & hz() const { return e2; }
+  const NT & hw() const { return e3; } // homogenizing component
 };
 
 CGAL_END_NAMESPACE

@@ -72,8 +72,8 @@ public:
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;
 
-  Point_2        vertex(int i) const;
-  Point_2        operator[](int i) const;
+  const Point_2 & vertex(int i) const;
+  const Point_2 & operator[](int i) const;
 
   Self           opposite() const;
   Self           transform(const Aff_transformation_2 &t) const
@@ -132,7 +132,7 @@ TriangleC2<R CGAL_CTAG>::operator!=(const TriangleC2<R CGAL_CTAG> &t) const
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-typename TriangleC2<R CGAL_CTAG>::Point_2
+const typename TriangleC2<R CGAL_CTAG>::Point_2 &
 TriangleC2<R CGAL_CTAG>::vertex(int i) const
 {
   if (i>2) i = i%3;
@@ -144,7 +144,7 @@ TriangleC2<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-typename TriangleC2<R CGAL_CTAG>::Point_2
+const typename TriangleC2<R CGAL_CTAG>::Point_2 &
 TriangleC2<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);

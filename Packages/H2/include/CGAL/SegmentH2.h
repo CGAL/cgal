@@ -38,8 +38,7 @@ public:
     Segment_repH2(const PointH2<R>& sp, const PointH2<R>& ep)
 	: start(sp), end(ep) {}
 
-    PointH2<R>  start;
-    PointH2<R>  end;
+    PointH2<R>  start, end;
 };
 
 template < class R >
@@ -50,8 +49,7 @@ public:
     Simple_Segment_repH2(const PointH2<R>& sp, const PointH2<R>& ep)
 	: start(sp), end(ep) {}
 
-    PointH2<R>  start;
-    PointH2<R>  end;
+    PointH2<R>  start, end;
 };
 
 template < class R_ >
@@ -82,16 +80,16 @@ public:
     bool    operator==(const SegmentH2<R>& s) const;
     bool    operator!=(const SegmentH2<R>& s) const;
 
-    PointH2<R>  source() const;
-    PointH2<R>  target() const;
-    PointH2<R>  start() const;
-    PointH2<R>  end()   const;
-    PointH2<R>  vertex(int i) const;
-    PointH2<R>  point(int i) const;
-    PointH2<R>  operator[](int i) const;
-    PointH2<R>  min()   const;
-    PointH2<R>  max()   const;
-    PointH2<R>  other_vertex(const PointH2<R>& p) const;
+    const PointH2<R> & source() const;
+    const PointH2<R> & target() const;
+    const PointH2<R> & start() const;
+    const PointH2<R> & end()   const;
+    const PointH2<R> & vertex(int i) const;
+    const PointH2<R> & point(int i) const;
+    const PointH2<R> & operator[](int i) const;
+    const PointH2<R> & min()   const;
+    const PointH2<R> & max()   const;
+    const PointH2<R> & other_vertex(const PointH2<R>& p) const;
 
     bool    is_horizontal() const;
     bool    is_vertical() const;
@@ -115,31 +113,31 @@ public:
 
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 SegmentH2<R>::source() const
 { return Ptr()->start; }
 
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 SegmentH2<R>::start() const
 { return Ptr()->start; }
 
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 SegmentH2<R>::target() const
 { return Ptr()->end; }
 
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 SegmentH2<R>::end() const
 { return Ptr()->end; }
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH2<R>
+const PointH2<R> &
 SegmentH2<R>::min() const
 {
   return
@@ -148,7 +146,7 @@ SegmentH2<R>::min() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH2<R>
+const PointH2<R> &
 SegmentH2<R>::max() const
 {
   return
@@ -157,7 +155,7 @@ SegmentH2<R>::max() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH2<R>
+const PointH2<R> &
 SegmentH2<R>::other_vertex(const PointH2<R>& p) const
 {
   CGAL_kernel_precondition( (p == end()) || (p == start()) );
@@ -166,26 +164,21 @@ SegmentH2<R>::other_vertex(const PointH2<R>& p) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH2<R>
+const PointH2<R> &
 SegmentH2<R>::vertex(int i) const
 {
-  switch (i%2)
-  {
-    case 0:  return Ptr()->start;
-    case 1:  return Ptr()->end;
-  };
-  return PointH2<R>(); // otherwise the SGI compiler complains
+    return (i%2 == 0) ? start() : end();
 }
 
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 SegmentH2<R>::point(int i) const
 { return vertex(i); }
 
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 SegmentH2<R>::operator[](int i) const
 { return vertex(i); }
 
@@ -193,7 +186,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 typename SegmentH2<R>::FT
 SegmentH2<R>::squared_length() const
-{ return  (Ptr()->end - Ptr()->start) * (Ptr()->end - Ptr()->start); }
+{ return  (end() - start()) * (end() - start()); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -201,7 +194,7 @@ DirectionH2<R>
 SegmentH2<R>::direction() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return DirectionH2<R>( Ptr()->end - Ptr()->start );
+  return DirectionH2<R>( end() - start() );
 }
 
 template < class R >
@@ -210,14 +203,14 @@ LineH2<R>
 SegmentH2<R>::supporting_line() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return LineH2<R>(Ptr()->start, Ptr()->end);
+  return LineH2<R>(start(), end());
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 SegmentH2<R>
 SegmentH2<R>::opposite() const
-{ return SegmentH2<R>(Ptr()->end, Ptr()->start); }
+{ return SegmentH2<R>(end(), start()); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -225,8 +218,7 @@ SegmentH2<R>
 SegmentH2<R>::
 transform(const Aff_transformationH2<R>& t) const
 {
-  return SegmentH2<R>(t.transform(Ptr()->start),
-                               t.transform(Ptr()->end)   );
+  return SegmentH2<R>(t.transform(start()), t.transform(end()) );
 }
 
 template < class R >

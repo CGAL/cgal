@@ -88,11 +88,11 @@ public:
   bool operator==(const Self& s) const;
   bool operator!=(const Self& s) const;
 
-  Point_3 min() const
+  const Point_3 & min() const
   {
       return Ptr()->e0;
   }
-  Point_3 max() const
+  const Point_3 & max() const
   {
       return Ptr()->e1;
   }
@@ -111,14 +111,14 @@ public:
   bool         has_on_unbounded_side(const Point_3& p) const;
   bool         is_degenerate() const;
   Bbox_3       bbox() const;
-  FT           xmin() const;
-  FT           ymin() const;
-  FT           zmin() const;
-  FT           xmax() const;
-  FT           ymax() const;
-  FT           zmax() const;
-  FT           min_coord(int i) const;
-  FT           max_coord(int i) const;
+  const FT &   xmin() const;
+  const FT &   ymin() const;
+  const FT &   zmin() const;
+  const FT &   xmax() const;
+  const FT &   ymax() const;
+  const FT &   zmax() const;
+  const FT &   min_coord(int i) const;
+  const FT &   max_coord(int i) const;
 
   FT           volume() const;
 };
@@ -147,7 +147,7 @@ Iso_cuboidC3<R CGAL_CTAG>::operator!=(const Iso_cuboidC3<R CGAL_CTAG>& r) const
 
 template < class R >
 inline
-typename Iso_cuboidC3<R CGAL_CTAG>::FT
+const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
 Iso_cuboidC3<R CGAL_CTAG>::xmin() const
 {
   return min().x();
@@ -155,7 +155,7 @@ Iso_cuboidC3<R CGAL_CTAG>::xmin() const
 
 template < class R >
 inline
-typename Iso_cuboidC3<R CGAL_CTAG>::FT
+const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
 Iso_cuboidC3<R CGAL_CTAG>::ymin() const
 {
   return min().y();
@@ -163,7 +163,7 @@ Iso_cuboidC3<R CGAL_CTAG>::ymin() const
 
 template < class R >
 inline
-typename Iso_cuboidC3<R CGAL_CTAG>::FT
+const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
 Iso_cuboidC3<R CGAL_CTAG>::zmin() const
 {
   return min().z();
@@ -171,7 +171,7 @@ Iso_cuboidC3<R CGAL_CTAG>::zmin() const
 
 template < class R >
 inline
-typename Iso_cuboidC3<R CGAL_CTAG>::FT
+const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
 Iso_cuboidC3<R CGAL_CTAG>::xmax() const
 {
   return max().x();
@@ -179,7 +179,7 @@ Iso_cuboidC3<R CGAL_CTAG>::xmax() const
 
 template < class R >
 inline
-typename Iso_cuboidC3<R CGAL_CTAG>::FT
+const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
 Iso_cuboidC3<R CGAL_CTAG>::ymax() const
 {
   return max().y();
@@ -187,7 +187,7 @@ Iso_cuboidC3<R CGAL_CTAG>::ymax() const
 
 template < class R >
 inline
-typename Iso_cuboidC3<R CGAL_CTAG>::FT
+const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
 Iso_cuboidC3<R CGAL_CTAG>::zmax() const
 {
   return max().z();
@@ -195,7 +195,7 @@ Iso_cuboidC3<R CGAL_CTAG>::zmax() const
 
 template < class R >
 inline
-typename Iso_cuboidC3<R CGAL_CTAG>::FT
+const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
 Iso_cuboidC3<R CGAL_CTAG>::min_coord(int i) const
 {
   CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
@@ -209,7 +209,7 @@ Iso_cuboidC3<R CGAL_CTAG>::min_coord(int i) const
 
 template < class R >
 inline
-typename Iso_cuboidC3<R CGAL_CTAG>::FT
+const typename Iso_cuboidC3<R CGAL_CTAG>::FT &
 Iso_cuboidC3<R CGAL_CTAG>::max_coord(int i) const
 {
   CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
@@ -225,7 +225,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Iso_cuboidC3<R CGAL_CTAG>::Point_3
 Iso_cuboidC3<R CGAL_CTAG>::vertex(int i) const
-{ // FIXME : construction
+{
   switch (i%8)
   {
     case 0: return min();
@@ -235,9 +235,9 @@ Iso_cuboidC3<R CGAL_CTAG>::vertex(int i) const
     case 4: return Point_3(min().hx(), max().hy(), max().hz());
     case 5: return Point_3(min().hx(), min().hy(), max().hz());
     case 6: return Point_3(max().hx(), min().hy(), max().hz());
-    case 7: return max();
+    default: // case 7:
+        return max();
   }
-  return Point_3(); // FIXME : why ?
 }
 
 template < class R >

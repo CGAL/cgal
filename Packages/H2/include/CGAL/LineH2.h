@@ -51,12 +51,9 @@ public:
     bool           operator==(const LineH2<R>& l) const ;
     bool           operator!=(const LineH2<R>& l) const ;
 
-    RT             a() const;
-    RT             b() const;
-    RT             c() const;
-    const RT&      a_ref() const { return Ptr()->e0; }
-    const RT&      b_ref() const { return Ptr()->e1; }
-    const RT&      c_ref() const { return Ptr()->e2; }
+    const RT &     a() const { return Ptr()->e0; }
+    const RT &     b() const { return Ptr()->e1; }
+    const RT &     c() const { return Ptr()->e2; }
 
     FT             x_at_y(FT y) const;
     FT             y_at_x(FT x) const;
@@ -145,25 +142,6 @@ LineH2<R>::LineH2(const PointH2<R>& p,
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() ) );
 }
-
-template < class R >
-inline
-typename LineH2<R>::RT
-LineH2<R>::a() const
-{ return Ptr()->e0; }
-
-template < class R >
-inline
-typename LineH2<R>::RT
-LineH2<R>::b() const
-{ return Ptr()->e1; }
-
-template < class R >
-inline
-typename LineH2<R>::RT
-LineH2<R>::c() const
-{ return Ptr()->e2; }
-
 
 template < class R >
 CGAL_KERNEL_INLINE

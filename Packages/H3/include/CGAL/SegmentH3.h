@@ -37,12 +37,11 @@ public:
    Segment_repH3(const PointH3<R>& sp, const PointH3<R>& ep)
      : startpoint(sp), endpoint(ep) {}
 
-   PointH3<R>  start() const { return startpoint; }
-   PointH3<R>  end()   const { return endpoint; }
+   const PointH3<R> & start() const { return startpoint; }
+   const PointH3<R> & end()   const { return endpoint; }
 
 private:
-   PointH3<R>  startpoint;
-   PointH3<R>  endpoint;
+   PointH3<R>  startpoint, endpoint;
 };
 
 template < class R >
@@ -53,12 +52,11 @@ public:
    Simple_Segment_repH3(const PointH3<R>& sp, const PointH3<R>& ep)
      : startpoint(sp), endpoint(ep) {}
 
-   PointH3<R>  start() const { return startpoint; }
-   PointH3<R>  end()   const { return endpoint; }
+   const PointH3<R> & start() const { return startpoint; }
+   const PointH3<R> & end()   const { return endpoint; }
 
 private:
-   PointH3<R>  startpoint;
-   PointH3<R>  endpoint;
+   PointH3<R>  startpoint, endpoint;
 };
 
 template < class R_ >
@@ -79,16 +77,16 @@ public:
   SegmentH3( const PointH3<R>& sp, const PointH3<R>& ep)
     : Segment_handle_3_(Segment_ref_3(sp, ep)) {}
 
-  PointH3<R>    source() const;
-  PointH3<R>    target() const;
+  const PointH3<R> &  source() const;
+  const PointH3<R> &  target() const;
 
-  PointH3<R>    start() const;
-  PointH3<R>    end() const;
-  PointH3<R>    min() const;
-  PointH3<R>    max() const;
-  PointH3<R>    vertex(int i) const;
-  PointH3<R>    point(int i) const;
-  PointH3<R>    operator[](int i) const;
+  const PointH3<R> &  start() const;
+  const PointH3<R> &  end() const;
+  const PointH3<R> &  min() const;
+  const PointH3<R> &  max() const;
+  const PointH3<R> &  vertex(int i) const;
+  const PointH3<R> &  point(int i) const;
+  const PointH3<R> &  operator[](int i) const;
 
   FT                squared_length() const;
   DirectionH3<R>
@@ -108,31 +106,31 @@ public:
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 SegmentH3<R>::source() const
 { return Ptr()->start(); }
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 SegmentH3<R>::target() const
 { return Ptr()->end(); }
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 SegmentH3<R>::start() const
 { return Ptr()->start(); }
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 SegmentH3<R>::end() const
 { return Ptr()->end(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH3<R>
+const PointH3<R> &
 SegmentH3<R>::min() const
 {
   return
@@ -141,29 +139,28 @@ SegmentH3<R>::min() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH3<R>
+const PointH3<R> &
 SegmentH3<R>::max() const
 {
-  return
-  lexicographically_xyz_smaller_or_equal(source(),target()) ?
+  return lexicographically_xyz_smaller_or_equal(source(),target()) ?
                                                          target() : source();
 }
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 SegmentH3<R>::vertex(int i) const
 { return ( i%2 == 0 ) ? start() : end() ; }
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 SegmentH3<R>::point(int i) const
 { return ( i%2 == 0 ) ? start() : end() ; }
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 SegmentH3<R>::operator[](int i) const
 { return ( i%2 == 0 ) ? start() : end() ; }
 

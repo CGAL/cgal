@@ -456,9 +456,9 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
              general_form() const
              {
                const RT mRT2 = - RT(2);
-               const RT& a = l.a_ref();
-               const RT& b = l.b_ref();
-               const RT& c = l.c_ref();
+               const RT& a = l.a();
+               const RT& b = l.b();
+               const RT& c = l.c();
                RT de = a*a + b*b;
                RT aa = b*b - a*a;
                RT bb = a*a - b*b;

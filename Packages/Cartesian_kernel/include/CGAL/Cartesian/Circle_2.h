@@ -111,17 +111,17 @@ public:
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;
 
-  Point_2        center() const
+  const Point_2 & center() const
   {
    return Ptr()->center;
   }
 
-  FT             squared_radius() const
+  const FT & squared_radius() const
   {
    return Ptr()->squared_radius;
   }
 
-  Orientation    orientation() const
+  Orientation orientation() const
   {
    return Ptr()->orient;
   }

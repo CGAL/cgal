@@ -73,8 +73,8 @@ public:
   bool       has_on(const Point_3 &p) const;
   bool       is_degenerate() const;
 
-  Point_3    vertex(int i) const;
-  Point_3    operator[](int i) const;
+  const Point_3 & vertex(int i) const;
+  const Point_3 & operator[](int i) const;
 
   Bbox_3     bbox() const;
   
@@ -109,7 +109,7 @@ TriangleC3<R CGAL_CTAG>::operator!=(const TriangleC3<R CGAL_CTAG> &t) const
 }
 
 template < class R >
-typename TriangleC3<R CGAL_CTAG>::Point_3
+const typename TriangleC3<R CGAL_CTAG>::Point_3 &
 TriangleC3<R CGAL_CTAG>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
@@ -121,7 +121,7 @@ TriangleC3<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-typename TriangleC3<R CGAL_CTAG>::Point_3
+const typename TriangleC3<R CGAL_CTAG>::Point_3 &
 TriangleC3<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);

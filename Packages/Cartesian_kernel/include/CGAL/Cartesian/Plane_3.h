@@ -90,19 +90,19 @@ public:
   bool         operator==(const Self &p) const;
   bool         operator!=(const Self &p) const;
 
-  FT a() const
+  const FT & a() const
   {
       return Ptr()->e0;
   }
-  FT b() const
+  const FT & b() const
   {
       return Ptr()->e1;
   }
-  FT c() const
+  const FT & c() const
   {
       return Ptr()->e2;
   }
-  FT d() const
+  const FT & d() const
   {
       return Ptr()->e3;
   }

@@ -80,11 +80,11 @@ class RayH3
     RayH3( const PointH3<R>& sp, const DirectionH3<R>& d)
       : Ray_handle_3_(Ray_ref_3(sp, d)) {}
 
-    PointH3<R> start() const;
-    PointH3<R> source() const;
+    const PointH3<R> & start() const;
+    const PointH3<R> & source() const;
     PointH3<R> second_point() const;
     PointH3<R> point(int i) const;
-    DirectionH3<R> direction() const;
+    const DirectionH3<R> & direction() const;
     LineH3<R>  supporting_line() const;
     RayH3<R>   opposite() const;
     RayH3<R>   transform( const Aff_transformationH3<R> & t) const;
@@ -98,23 +98,23 @@ class RayH3
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 RayH3<R>::source() const
 { return Ptr()->startpoint; }
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 RayH3<R>::start() const
 { return Ptr()->startpoint; }
 
 template < class R >
 inline
-DirectionH3<R>
+const DirectionH3<R> &
 RayH3<R>::direction() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return DirectionH3<R>( Ptr()->direction );
+  return Ptr()->direction;
 }
 
 

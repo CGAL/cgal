@@ -110,29 +110,21 @@ class SphereH3
       operator!=(const SphereH3<R>& s) const
       { return !(*this == s); }
 
-      PointH3<R>
-      center() const;
+      const PointH3<R> & center() const;
 
-      FT
-      squared_radius() const;
+      const FT & squared_radius() const;
 
-      Orientation
-      orientation() const;
+      Orientation orientation() const;
 
-      SphereH3<R>
-      orthogonal_transform(const Aff_transformationH3<R>& t) const;
+      SphereH3<R> orthogonal_transform(const Aff_transformationH3<R>& t) const;
 
-      bool
-      is_degenerate() const;
+      bool is_degenerate() const;
 
-      SphereH3<R>
-      opposite() const;
+      SphereH3<R> opposite() const;
 
-      Bbox_3
-      bbox() const;
+      Bbox_3 bbox() const;
 
-      Oriented_side
-      oriented_side(const PointH3<R>& p) const;
+      Oriented_side oriented_side(const PointH3<R>& p) const;
 
       bool
       has_on_boundary(const PointH3<R>& p) const
@@ -156,7 +148,6 @@ class SphereH3
       bool
       has_on_unbounded_side(const PointH3<R>& p) const
       { return bounded_side(p)==ON_UNBOUNDED_SIDE; }
-
 };
 
 
@@ -231,13 +222,13 @@ SphereH3<R>::operator==(const SphereH3<R>& s) const
 
 template <class R>
 inline
-PointH3<R>
+const PointH3<R> &
 SphereH3<R>::center() const
 { return Ptr()->center; }
 
 template <class R>
 inline
-typename SphereH3<R>::FT
+const typename SphereH3<R>::FT &
 SphereH3<R>::squared_radius() const
 { return Ptr()->squared_radius; }
 

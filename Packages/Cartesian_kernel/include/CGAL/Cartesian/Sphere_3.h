@@ -109,11 +109,11 @@ public:
   bool operator==(const Self &) const;
   bool operator!=(const Self &) const;
 
-  Point_3 center() const
+  const Point_3 & center() const
   {
       return Ptr()->center;
   }
-  FT squared_radius() const
+  const FT & squared_radius() const
   {
       // Returns the square of the radius (instead of the radius itself,
       // which would require square roots)

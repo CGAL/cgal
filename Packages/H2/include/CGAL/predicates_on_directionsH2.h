@@ -51,13 +51,13 @@ compare_angle_with_x_axis(const DirectionH2<R>& d1,
 //  PointH2<R>   p1 = ORIGIN + d1.vector(); // Commented out
 //  PointH2<R>   p2 = ORIGIN + d2.vector(); // Commented out
 
-  CGAL_kernel_precondition( RT0 < p1.hw_ref() );
-  CGAL_kernel_precondition( RT0 < p2.hw_ref() );
+  CGAL_kernel_precondition( RT0 < p1.hw() );
+  CGAL_kernel_precondition( RT0 < p2.hw() );
 
-  int       x_sign1 = static_cast<int>(CGAL_NTS sign( p1.hx_ref() ));
-  int       x_sign2 = static_cast<int>(CGAL_NTS sign( p2.hx_ref() ));
-  int       y_sign1 = static_cast<int>(CGAL_NTS sign( p1.hy_ref() ));
-  int       y_sign2 = static_cast<int>(CGAL_NTS sign( p2.hy_ref() ));
+  int       x_sign1 = static_cast<int>(CGAL_NTS sign( p1.hx() ));
+  int       x_sign2 = static_cast<int>(CGAL_NTS sign( p2.hx() ));
+  int       y_sign1 = static_cast<int>(CGAL_NTS sign( p1.hy() ));
+  int       y_sign2 = static_cast<int>(CGAL_NTS sign( p2.hy() ));
 
   if ( y_sign1 * y_sign2 < 0)
   {

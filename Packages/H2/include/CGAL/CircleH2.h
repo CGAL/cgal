@@ -123,13 +123,13 @@ public:
     CircleH2<R>
     orthogonal_transform(const Aff_transformationH2<R>&) const;
 
-    PointH2<R>
+    const PointH2<R> &
     center() const;
 
     Orientation
     orientation() const;
 
-    FT
+    const FT &
     squared_radius() const;
 
     CircleH2<R>
@@ -160,13 +160,13 @@ public:
 
 template <class R>
 inline
-PointH2<R>
+const PointH2<R> &
 CircleH2<R>::center() const
 { return Ptr()->center; }
 
 template <class R>
 inline
-typename CircleH2<R>::FT
+const typename CircleH2<R>::FT &
 CircleH2<R>::squared_radius() const
 { return Ptr()->squared_radius; }
 

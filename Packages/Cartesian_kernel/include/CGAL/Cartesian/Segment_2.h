@@ -77,23 +77,23 @@ public:
   bool        operator==(const Self &s) const;
   bool        operator!=(const Self &s) const;
 
-  Point_2     source() const
+  const Point_2 &   source() const
   {
       return Ptr()->e0;
   }
-  Point_2     target() const
+  const Point_2 &   target() const
   {
       return Ptr()->e1;
   }
   
-  Point_2     start() const;
-  Point_2     end() const;
+  const Point_2 &    start() const;
+  const Point_2 &    end() const;
 
-  Point_2     min() const;
-  Point_2     max() const;
-  Point_2     vertex(int i) const;
-  Point_2     point(int i) const;
-  Point_2     operator[](int i) const;
+  const Point_2 &   min() const;
+  const Point_2 &   max() const;
+  const Point_2 &   vertex(int i) const;
+  const Point_2 &   point(int i) const;
+  const Point_2 &   operator[](int i) const;
 
   FT          squared_length() const;
 
@@ -133,7 +133,7 @@ SegmentC2<R CGAL_CTAG>::operator!=(const SegmentC2<R CGAL_CTAG> &s) const
 
 template < class R >
 inline
-typename SegmentC2<R CGAL_CTAG>::Point_2
+const typename SegmentC2<R CGAL_CTAG>::Point_2 &
 SegmentC2<R CGAL_CTAG>::start() const
 {
   return source();
@@ -141,7 +141,7 @@ SegmentC2<R CGAL_CTAG>::start() const
 
 template < class R >
 inline
-typename SegmentC2<R CGAL_CTAG>::Point_2
+const typename SegmentC2<R CGAL_CTAG>::Point_2 &
 SegmentC2<R CGAL_CTAG>::end() const
 {
   return target();
@@ -149,7 +149,7 @@ SegmentC2<R CGAL_CTAG>::end() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename SegmentC2<R CGAL_CTAG>::Point_2
+const typename SegmentC2<R CGAL_CTAG>::Point_2 &
 SegmentC2<R CGAL_CTAG>::min() const
 {
   return lexicographically_xy_smaller(source(),target()) ? source() : target();
@@ -157,7 +157,7 @@ SegmentC2<R CGAL_CTAG>::min() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename SegmentC2<R CGAL_CTAG>::Point_2
+const typename SegmentC2<R CGAL_CTAG>::Point_2 &
 SegmentC2<R CGAL_CTAG>::max() const
 {
   return lexicographically_xy_smaller(source(),target()) ? target() : source();
@@ -165,7 +165,7 @@ SegmentC2<R CGAL_CTAG>::max() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename SegmentC2<R CGAL_CTAG>::Point_2
+const typename SegmentC2<R CGAL_CTAG>::Point_2 &
 SegmentC2<R CGAL_CTAG>::vertex(int i) const
 {
   return (i%2 == 0) ? source() : target();
@@ -173,7 +173,7 @@ SegmentC2<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename SegmentC2<R CGAL_CTAG>::Point_2
+const typename SegmentC2<R CGAL_CTAG>::Point_2 &
 SegmentC2<R CGAL_CTAG>::point(int i) const
 {
   return (i%2 == 0) ? source() : target();
@@ -181,7 +181,7 @@ SegmentC2<R CGAL_CTAG>::point(int i) const
 
 template < class R >
 inline
-typename SegmentC2<R CGAL_CTAG>::Point_2
+const typename SegmentC2<R CGAL_CTAG>::Point_2 &
 SegmentC2<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);

@@ -85,20 +85,20 @@ public:
   PointC2(const Vector_2 &v)
     : Point_handle_2_(v) {}
 
-  FT x() const
+  const FT& x() const
   {
       return Ptr()->e0;
   }
-  FT y() const
+  const FT& y() const
   {
       return Ptr()->e1;
   }
 
-  FT hx() const
+  const FT& hx() const
   {
       return x();
   }
-  FT hy() const
+  const FT& hy() const
   {
       return y();
   }
@@ -107,9 +107,9 @@ public:
       return FT(1);
   }
 
-  FT cartesian(int i) const;
+  const FT& cartesian(int i) const;
   FT homogeneous(int i) const;
-  FT operator[](int i) const
+  const FT& operator[](int i) const
   {
       return cartesian(i);
   }
@@ -144,7 +144,7 @@ public:
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename PointC2<R CGAL_CTAG>::FT
+const typename PointC2<R CGAL_CTAG>::FT &
 PointC2<R CGAL_CTAG>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i == 0) || (i == 1) );

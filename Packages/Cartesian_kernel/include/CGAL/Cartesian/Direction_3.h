@@ -83,29 +83,29 @@ public:
 
   Self           operator-() const;
 
-  FT delta(int i) const;
-  FT dx() const
+  const FT & delta(int i) const;
+  const FT & dx() const
   {
       return Ptr()->e0;
   }
-  FT dy() const
+  const FT & dy() const
   {
       return Ptr()->e1;
   }
-  FT dz() const
+  const FT & dz() const
   {
       return Ptr()->e2;
   }
 
-  FT hdx() const
+  const FT & hdx() const
   {
       return dx();
   }
-  FT hdy() const
+  const FT & hdy() const
   {
       return dy();
   }
-  FT hdz() const
+  const FT & hdz() const
   {
       return dz();
   }
@@ -154,7 +154,7 @@ DirectionC3<R CGAL_CTAG>::operator-() const
 }
 
 template < class R >
-typename DirectionC3<R CGAL_CTAG>::FT 
+const typename DirectionC3<R CGAL_CTAG>::FT &
 DirectionC3<R CGAL_CTAG>::delta(int i) const
 {
   CGAL_kernel_precondition( i >= 0 && i <= 2 );

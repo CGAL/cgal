@@ -51,12 +51,12 @@ equal_xy(const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
 
   RT pV = phx*qhw;
   RT qV = qhx*phw;
@@ -75,12 +75,12 @@ compare_xy(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
 
   RT pV = phx*qhw;
   RT qV = qhx*phw;
@@ -119,12 +119,12 @@ lexicographically_xy_smaller_or_equal(const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
 
   RT pV = phx * qhw;
   RT qV = qhx * phw;
@@ -150,12 +150,12 @@ lexicographically_xy_smaller(const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
 
   RT pV = phx * qhw;
   RT qV = qhx * phw;
@@ -188,12 +188,12 @@ lexicographically_xy_larger(const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
 
   RT pV = phx * qhw;
   RT qV = qhx * phw;
@@ -217,12 +217,12 @@ compare_yx(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
 
   RT pV = phy*qhw;
   RT qV = qhy*phw;
@@ -258,12 +258,12 @@ lexicographically_yx_smaller_or_equal(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
 
   RT pV = phy * qhw;
   RT qV = qhy * phw;
@@ -287,12 +287,12 @@ lexicographically_yx_smaller(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
 
   RT pV = phy * qhw;
   RT qV = qhy * phw;
@@ -325,12 +325,12 @@ lexicographically_yx_larger(const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
 
   RT pV = phy * qhw;
   RT qV = qhy * phw;
@@ -356,10 +356,10 @@ compare_x(const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhw = q.hw();
   const RT  RT0 = RT(0);
   RT com = phx * qhw - qhx * phw;
   if ( com < RT0 )
@@ -381,10 +381,10 @@ compare_y(const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
   const RT  RT0 = RT(0);
   RT com = phy * qhw - qhy * phw;
   if ( com < RT0 )
@@ -407,15 +407,15 @@ orientation( const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& rhx = r.hx_ref();
-  const RT& rhy = r.hy_ref();
-  const RT& rhw = r.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
+  const RT& rhx = r.hx();
+  const RT& rhy = r.hy();
+  const RT& rhw = r.hw();
   const RT  RT0 = RT(0);
 
   // | A B |
@@ -429,9 +429,9 @@ orientation( const PointH2<R>& p,
   RT  det =  A*D - B*C;
 
 /*
-  RT det_old =   p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
-               + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
-               + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
+  RT det_old =   p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
+               + p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
+               + p.hw() * (q.hx()*r.hy() - q.hy()*r.hx() );
 
   if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
   {
@@ -466,15 +466,15 @@ left_turn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& rhx = r.hx_ref();
-  const RT& rhy = r.hy_ref();
-  const RT& rhw = r.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
+  const RT& rhx = r.hx();
+  const RT& rhy = r.hy();
+  const RT& rhw = r.hw();
   const RT  RT0 = RT(0);
 
   // | A B |
@@ -488,9 +488,9 @@ left_turn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
   RT  det =  A*D - B*C;
 
 /*
-  RT det_old =   p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
-               + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
-               + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
+  RT det_old =   p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
+               + p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
+               + p.hw() * (q.hx()*r.hy() - q.hy()*r.hx() );
 
   if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
   {
@@ -519,15 +519,15 @@ right_turn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& rhx = r.hx_ref();
-  const RT& rhy = r.hy_ref();
-  const RT& rhw = r.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
+  const RT& rhx = r.hx();
+  const RT& rhy = r.hy();
+  const RT& rhw = r.hw();
   const RT  RT0 = RT(0);
 
   // | A B |
@@ -541,9 +541,9 @@ right_turn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
   RT  det =  A*D - B*C;
 
 /*
-  RT det_old =   p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
-               + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
-               + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
+  RT det_old =   p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
+               + p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
+               + p.hw() * (q.hx()*r.hy() - q.hy()*r.hx() );
 
   if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
   {
@@ -574,15 +574,15 @@ collinear( const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& rhx = r.hx_ref();
-  const RT& rhy = r.hy_ref();
-  const RT& rhw = r.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
+  const RT& rhx = r.hx();
+  const RT& rhy = r.hy();
+  const RT& rhw = r.hw();
   const RT  RT0 = RT(0);
 
   // | A B |
@@ -596,9 +596,9 @@ collinear( const PointH2<R>& p,
   RT  det =  A*D - B*C;
 
 /*
-  RT det_old =   p.hx_ref() * (q.hy_ref()*r.hw_ref() - q.hw_ref()*r.hy_ref() )
-               + p.hy_ref() * (q.hw_ref()*r.hx_ref() - q.hx_ref()*r.hw_ref() )
-               + p.hw_ref() * (q.hx_ref()*r.hy_ref() - q.hy_ref()*r.hx_ref() );
+  RT det_old =   p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
+               + p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
+               + p.hw() * (q.hx()*r.hy() - q.hy()*r.hx() );
 
   if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
   {
@@ -618,15 +618,15 @@ side_of_bounded_circle( const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& thx = t.hx_ref();
-  const RT& thy = t.hy_ref();
-  const RT& thw = t.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
+  const RT& thx = t.hx();
+  const RT& thy = t.hy();
+  const RT& thw = t.hw();
 
   return Bounded_side( CGAL_NTS compare((thx*phw-phx*thw)*(qhx*thw-thx*qhw),
 	                                (thy*phw-phy*thw)*(thy*qhw-qhy*thw)) );
@@ -642,18 +642,18 @@ side_of_bounded_circle( const PointH2<R>& q,
 {
   typedef typename R::RT RT;
 
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& rhx = r.hx_ref();
-  const RT& rhy = r.hy_ref();
-  const RT& rhw = r.hw_ref();
-  const RT& shx = s.hx_ref();
-  const RT& shy = s.hy_ref();
-  const RT& shw = s.hw_ref();
-  const RT& thx = t.hx_ref();
-  const RT& thy = t.hy_ref();
-  const RT& thw = t.hw_ref();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
+  const RT& rhx = r.hx();
+  const RT& rhy = r.hy();
+  const RT& rhw = r.hw();
+  const RT& shx = s.hx();
+  const RT& shy = s.hy();
+  const RT& shw = s.hw();
+  const RT& thx = t.hx();
+  const RT& thy = t.hy();
+  const RT& thw = t.hw();
   const RT  RT0 = RT(0);
 
   CGAL_kernel_precondition( ! collinear(q,r,s) );
@@ -714,18 +714,18 @@ side_of_oriented_circle( const PointH2<R>& q,
 {
   typedef typename R::RT RT;
 
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& rhx = r.hx_ref();
-  const RT& rhy = r.hy_ref();
-  const RT& rhw = r.hw_ref();
-  const RT& shx = s.hx_ref();
-  const RT& shy = s.hy_ref();
-  const RT& shw = s.hw_ref();
-  const RT& thx = t.hx_ref();
-  const RT& thy = t.hy_ref();
-  const RT& thw = t.hw_ref();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
+  const RT& rhx = r.hx();
+  const RT& rhy = r.hy();
+  const RT& rhw = r.hw();
+  const RT& shx = s.hx();
+  const RT& shy = s.hy();
+  const RT& shw = s.hw();
+  const RT& thx = t.hx();
+  const RT& thy = t.hy();
+  const RT& thw = t.hw();
   const RT  RT0 = RT(0);
 
   CGAL_kernel_precondition( ! collinear(q,r,s) );
@@ -780,15 +780,15 @@ collinear_are_ordered_along_line( const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& rhx = r.hx_ref();
-  const RT& rhy = r.hy_ref();
-  const RT& rhw = r.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
+  const RT& rhx = r.hx();
+  const RT& rhy = r.hy();
+  const RT& rhw = r.hw();
 
   if ( !(phx * rhw == rhx * phw ) )          // non-vertical ?
   {
@@ -835,15 +835,15 @@ collinear_are_strictly_ordered_along_line( const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& rhx = r.hx_ref();
-  const RT& rhy = r.hy_ref();
-  const RT& rhw = r.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
+  const RT& rhx = r.hx();
+  const RT& rhy = r.hy();
+  const RT& rhw = r.hw();
 
   if ( !(phx * rhw == rhx * phw ) )
   {
@@ -884,14 +884,14 @@ inline
 bool
 x_equal( const PointH2<R>& p,
               const PointH2<R>& q )
-{ return ( p.hx_ref()*q.hw_ref() == q.hx_ref()*p.hw_ref() ); }
+{ return ( p.hx()*q.hw() == q.hx()*p.hw() ); }
 
 template <class R>
 inline
 bool
 y_equal( const PointH2<R>& p,
               const PointH2<R>& q )
-{ return ( p.hy_ref()*q.hw_ref() == q.hy_ref()*p.hw_ref() ); }
+{ return ( p.hy()*q.hw() == q.hy()*p.hw() ); }
 
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
@@ -901,12 +901,12 @@ _where_wrt_L_wedge( const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhw = q.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhw = q.hw();
 
   Sign xs = CGAL_NTS sign( qhx*phw - phx*qhw );  // sign( qx - px )
   Sign ys = CGAL_NTS sign( qhy*phw - phy*qhw );  // sign( qy - py )
@@ -932,14 +932,14 @@ compare_deltax_deltay(const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& rhy = r.hy_ref();
-  const RT& rhw = r.hw_ref();
-  const RT& shy = s.hy_ref();
-  const RT& shw = s.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhw = q.hw();
+  const RT& rhy = r.hy();
+  const RT& rhw = r.hw();
+  const RT& shy = s.hy();
+  const RT& shw = s.hw();
   const RT  tbc1 = CGAL_NTS abs(phx*qhw - qhx*phw) * rhw*shw;
   const RT  tbc2 = CGAL_NTS abs(rhy*shw - shy*rhw) * phw*qhw;
 

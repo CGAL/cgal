@@ -83,11 +83,11 @@ public:
   Plane_3     perpendicular_plane(const Point_3 &p) const;
   Self        opposite() const;
 
-  Point_3     point() const
+  const Point_3 &     point() const
   {
       return Ptr()->basepoint;
   }
-  Direction_3 direction() const
+  const Direction_3 & direction() const
   {
       return Ptr()->direction;
   }

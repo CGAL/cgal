@@ -1,3 +1,6 @@
+Version 6.29 (2 October 2001)
+- Access functions of objects (like .x() ) now return const references.
+
 Version 6.28 (13 September 2001)
 - More missing typenames.
 

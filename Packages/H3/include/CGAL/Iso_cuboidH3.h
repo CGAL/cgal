@@ -58,8 +58,8 @@ public:
   bool      operator==(const Iso_cuboidH3<R>& s) const;
   bool      operator!=(const Iso_cuboidH3<R>& s) const;
 
-  PointH3<R>  min() const;
-  PointH3<R>  max() const;
+  const PointH3<R> & min() const;
+  const PointH3<R> & max() const;
   PointH3<R>  vertex(int i) const;
   PointH3<R>  operator[](int i) const;
 
@@ -175,13 +175,13 @@ operator!=(const Iso_cuboidH3<R>& r) const
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 Iso_cuboidH3<R>::min() const
 { return  Ptr()->e0; }
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 Iso_cuboidH3<R>::max() const
 { return  Ptr()->e1; }
 
@@ -273,9 +273,8 @@ Iso_cuboidH3<R>::vertex(int i) const
 		                   max().hz(), min().hw() );
     case 6: return PointH3<R>( max().hx(), min().hy(),
 		                   max().hz(), min().hw() );
-    case 7: return max();
+    default: /*case 7:*/ return max();
   }
-  return PointH3<R>();
 }
 
 template < class R >

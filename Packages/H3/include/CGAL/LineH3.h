@@ -92,11 +92,11 @@ public:
 
   PlaneH3<R>  perpendicular_plane(const PointH3<R>& p) const;
   LineH3<R>   opposite() const;
-  PointH3<R>  point() const;
+  const PointH3<R> & point() const;
   PointH3<R>  point(int i) const;
   PointH3<R>  projection(const PointH3<R>& p) const;
 
-  DirectionH3<R>
+  const DirectionH3<R> &
                   direction() const;
 
   bool            has_on( const PointH3<R>& p ) const;
@@ -126,7 +126,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-PointH3<R>
+const PointH3<R> &
 LineH3<R>::point() const
 { return Ptr()->basepoint; }
 
@@ -138,7 +138,7 @@ LineH3<R>::point(int i) const
 
 template < class R >
 inline
-DirectionH3<R>
+const DirectionH3<R> &
 LineH3<R>::direction() const
 { return Ptr()->direction; }
 
@@ -153,7 +153,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 LineH3<R>
 LineH3<R>::opposite() const
-{ return LineH3<R>( Ptr()->basepoint, -(Ptr()->direction ) ); }
+{ return LineH3<R>( point(), -direction() ); }
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
@@ -233,8 +233,7 @@ CGAL_KERNEL_INLINE
 bool
 LineH3<R>::operator==(const LineH3<R>& l) const
 {
-  return  (  (l.direction() ==   Ptr()->direction )
-           &&(l.has_on( Ptr()->basepoint ) ) );
+  return l.direction() == direction() && l.has_on( point() );
 }
 
 #ifdef CGAL_CFG_TYPENAME_BUG

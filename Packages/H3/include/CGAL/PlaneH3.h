@@ -64,13 +64,13 @@ class PlaneH3
     PlaneH3(const PointH3<R>&, const VectorH3<R>& );
     PlaneH3(const PointH3<R>&, const DirectionH3<R>&, const DirectionH3<R>& );
 
-    RT             a() const;
-    RT             b() const;
-    RT             c() const;
-    RT             d() const;
+    const RT & a() const;
+    const RT & b() const;
+    const RT & c() const;
+    const RT & d() const;
 
-    bool           operator==( const PlaneH3<R>& ) const;
-    bool           operator!=( const PlaneH3<R>& ) const;
+    bool       operator==( const PlaneH3<R>& ) const;
+    bool       operator!=( const PlaneH3<R>& ) const;
 
     LineH3<R>  perpendicular_line(const PointH3<R>& ) const;
     PlaneH3<R> opposite() const;  // plane with opposite orientation
@@ -261,25 +261,25 @@ PlaneH3<R>::PlaneH3(const PointH3<R>& p,
 
 template < class R >
 inline
-typename PlaneH3<R>::RT
+const typename PlaneH3<R>::RT &
 PlaneH3<R>::a() const
 { return Ptr()->e0; }
 
 template < class R >
 inline
-typename PlaneH3<R>::RT
+const typename PlaneH3<R>::RT &
 PlaneH3<R>::b() const
 { return Ptr()->e1; }
 
 template < class R >
 inline
-typename PlaneH3<R>::RT
+const typename PlaneH3<R>::RT &
 PlaneH3<R>::c() const
 { return Ptr()->e2; }
 
 template < class R >
 inline
-typename PlaneH3<R>::RT
+const typename PlaneH3<R>::RT &
 PlaneH3<R>::d() const
 { return Ptr()->e3; }
 

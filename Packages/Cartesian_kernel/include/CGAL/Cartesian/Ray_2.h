@@ -74,13 +74,13 @@ public:
   bool        operator==(const Self &r) const;
   bool        operator!=(const Self &r) const;
 
-  Point_2     start() const;
-  Point_2     source() const
+  const Point_2 &     start() const;
+  const Point_2 &     source() const
   {
       return Ptr()->e0;
   }
   Point_2     point(int i) const;
-  Point_2     second_point() const
+  const Point_2 &     second_point() const
   {
       return Ptr()->e1;
   }
@@ -125,7 +125,7 @@ RayC2<R CGAL_CTAG>::operator!=(const RayC2<R CGAL_CTAG> &r) const
 
 template < class R >
 inline
-typename RayC2<R CGAL_CTAG>::Point_2
+const typename RayC2<R CGAL_CTAG>::Point_2 &
 RayC2<R CGAL_CTAG>::start() const
 {
   return source();

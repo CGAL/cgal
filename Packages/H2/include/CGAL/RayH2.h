@@ -35,8 +35,7 @@ public:
     Ray_repH2(const PointH2<R>& fp, const PointH2<R>& sp)
 	: start(fp), second(sp) {}
 
-    PointH2<R>  start;
-    PointH2<R>  second;
+    PointH2<R>  start, second;
 };
 
 template < class R >
@@ -47,8 +46,7 @@ public:
     Simple_Ray_repH2(const PointH2<R>& fp, const PointH2<R>& sp)
 	: start(fp), second(sp) {}
 
-    PointH2<R>  start;
-    PointH2<R>  second;
+    PointH2<R>  start, second;
 };
 
 template < class R_ >
@@ -73,9 +71,9 @@ public:
     bool    operator==(const RayH2<R>& r) const;
     bool    operator!=(const RayH2<R>& r) const;
 
-    PointH2<R>     start() const;
-    PointH2<R>     source() const;
-    PointH2<R>     second_point() const;
+    const PointH2<R> & start() const;
+    const PointH2<R> & source() const;
+    const PointH2<R> & second_point() const;
     PointH2<R>     point(int i) const;
     DirectionH2<R> direction() const;
     LineH2<R>      supporting_line() const;
@@ -93,13 +91,13 @@ public:
 
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 RayH2<R>::source() const
 { return Ptr()->start; }
 
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 RayH2<R>::start() const
 { return Ptr()->start; }
 
@@ -109,11 +107,11 @@ DirectionH2<R>
 RayH2<R>::direction() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return DirectionH2<R>( Ptr()->second - Ptr()->start );
+  return DirectionH2<R>( second_point() - start() );
 }
 template < class R >
 inline
-PointH2<R>
+const PointH2<R> &
 RayH2<R>::second_point() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
@@ -144,7 +142,7 @@ template < class R >
 inline
 RayH2<R>
 RayH2<R>::opposite() const
-{ return RayH2<R>( Ptr()->start, - direction() ); }
+{ return RayH2<R>( start(), - direction() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -152,8 +150,7 @@ RayH2<R>
 RayH2<R>::
 transform(const Aff_transformationH2<R> & t) const
 {
-  return RayH2<R>(t.transform(Ptr()->start),
-                           t.transform(Ptr()->second) );
+  return RayH2<R>(t.transform(start()), t.transform(second_point()) );
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAYH2
@@ -206,21 +203,21 @@ CGAL_KERNEL_INLINE
 bool
 RayH2<R>::has_on(const PointH2<R> p) const
 {
-  return ( (  p == start() )
-        ||(DirectionH2<R>(p - Ptr()->start) == direction() ) );
+  return p == start() || DirectionH2<R>(p - start()) == direction();
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool
 RayH2<R>::is_degenerate() const
-{ return ( (Ptr()->start == Ptr()->second) ); }
+{ return start() == Ptr()->second; }
 
 template < class R >
 inline
 bool
 RayH2<R>::collinear_has_on(const PointH2<R> p) const
 { return has_on(p); }
+
 template < class R >
 CGAL_KERNEL_INLINE
 bool

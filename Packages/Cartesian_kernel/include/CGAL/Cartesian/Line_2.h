@@ -84,15 +84,15 @@ public:
   bool            operator==(const Self &l) const;
   bool            operator!=(const Self &l) const;
 
-  FT a() const
+  const FT & a() const
   {
       return Ptr()->e0;
   }
-  FT b() const
+  const FT & b() const
   {
       return Ptr()->e1;
   }
-  FT c() const
+  const FT & c() const
   {
       return Ptr()->e2;
   }

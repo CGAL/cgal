@@ -64,23 +64,23 @@ public:
   bool        operator==(const Self &s) const;
   bool        operator!=(const Self &s) const;
 
-  Point_3     source() const
+  const Point_3 &   source() const
   {
       return Ptr()->e0;
   }
-  Point_3     target() const
+  const Point_3 &   target() const
   {
       return Ptr()->e1;
   }
 
-  Point_3     start() const;
-  Point_3     end() const;
+  const Point_3 &   start() const;
+  const Point_3 &   end() const;
 
-  Point_3     min() const;
-  Point_3     max() const;
-  Point_3     vertex(int i) const;
-  Point_3     point(int i) const;
-  Point_3     operator[](int i) const;
+  const Point_3 &   min() const;
+  const Point_3 &   max() const;
+  const Point_3 &   vertex(int i) const;
+  const Point_3 &   point(int i) const;
+  const Point_3 &   operator[](int i) const;
 
   FT          squared_length() const;
 
@@ -119,14 +119,14 @@ SegmentC3<R CGAL_CTAG>::operator!=(const SegmentC3<R CGAL_CTAG> &s) const
 }
 
 template < class R >
-typename SegmentC3<R CGAL_CTAG>::Point_3
+const typename SegmentC3<R CGAL_CTAG>::Point_3 &
 SegmentC3<R CGAL_CTAG>::start() const
 {
   return source();
 }
 
 template < class R >
-typename SegmentC3<R CGAL_CTAG>::Point_3
+const typename SegmentC3<R CGAL_CTAG>::Point_3 &
 SegmentC3<R CGAL_CTAG>::end() const
 {
   return target();
@@ -134,7 +134,7 @@ SegmentC3<R CGAL_CTAG>::end() const
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Point_3
+const typename SegmentC3<R CGAL_CTAG>::Point_3 &
 SegmentC3<R CGAL_CTAG>::min() const
 {
   return lexicographically_xyz_smaller(source(),target()) ? source()
@@ -143,7 +143,7 @@ SegmentC3<R CGAL_CTAG>::min() const
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Point_3
+const typename SegmentC3<R CGAL_CTAG>::Point_3 &
 SegmentC3<R CGAL_CTAG>::max() const
 {
   return lexicographically_xyz_smaller(source(),target()) ? target()
@@ -152,7 +152,7 @@ SegmentC3<R CGAL_CTAG>::max() const
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Point_3
+const typename SegmentC3<R CGAL_CTAG>::Point_3 &
 SegmentC3<R CGAL_CTAG>::vertex(int i) const
 {
   return (i%2 == 0) ? source() : target();
@@ -160,7 +160,7 @@ SegmentC3<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Point_3
+const typename SegmentC3<R CGAL_CTAG>::Point_3 &
 SegmentC3<R CGAL_CTAG>::point(int i) const
 {
   return (i%2 == 0) ? source() : target();
@@ -168,7 +168,7 @@ SegmentC3<R CGAL_CTAG>::point(int i) const
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Point_3
+const typename SegmentC3<R CGAL_CTAG>::Point_3 &
 SegmentC3<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);

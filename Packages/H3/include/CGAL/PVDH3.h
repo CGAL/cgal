@@ -63,12 +63,12 @@ class PointH3
   FT    x()  const;
   FT    y()  const;
   FT    z()  const;
-  RT    hx() const;
-  RT    hy() const;
-  RT    hz() const;
-  RT    hw() const;
+  const RT & hx() const;
+  const RT & hy() const;
+  const RT & hz() const;
+  const RT & hw() const;
+  const RT & homogeneous(int i) const;
   FT    cartesian(int i) const;
-  RT    homogeneous(int i) const;
   FT    operator[](int i) const;
 
   int   dimension() const;
@@ -82,11 +82,6 @@ class PointH3
 
   bool  operator==( const PointH3<R>& p) const;
   bool  operator!=( const PointH3<R>& p) const;
-
-  const RT&     hx_ref() const;
-  const RT&     hy_ref() const;
-  const RT&     hz_ref() const;
-  const RT&     hw_ref() const;
 };
 
 
@@ -127,12 +122,12 @@ class VectorH3
   FT    x()  const;
   FT    y()  const;
   FT    z()  const;
-  RT    hx() const;
-  RT    hy() const;
-  RT    hz() const;
-  RT    hw() const;
+  const RT & hx() const;
+  const RT & hy() const;
+  const RT & hz() const;
+  const RT & hw() const;
+  const RT & homogeneous(int i) const;
   FT    cartesian(int i) const;
-  RT    homogeneous(int i) const;
   FT    operator[](int i) const;
 
   int   dimension() const;
@@ -196,17 +191,17 @@ class DirectionH3
 
   VectorH3<R>    to_vector() const;
 
-  RT    dx() const;
-  RT    dy() const;
-  RT    dz() const;
-  RT    x()  const;
-  RT    y()  const;
-  RT    z()  const;
-  RT    hx() const;
-  RT    hy() const;
-  RT    hz() const;
+  const RT & dx() const;
+  const RT & dy() const;
+  const RT & dz() const;
+  const RT & x()  const;
+  const RT & y()  const;
+  const RT & z()  const;
+  const RT & hx() const;
+  const RT & hy() const;
+  const RT & hz() const;
 
-  RT    delta(int i) const;
+  const RT & delta(int i) const;
 };
 
 #ifdef CGAL_CFG_TYPENAME_BUG
@@ -224,8 +219,7 @@ PointH3<R>::PointH3(const Origin&)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointH3<R>::PointH3(const RT& x, const RT& y, const RT& z,
-                        const RT& w)
+PointH3<R>::PointH3(const RT& x, const RT& y, const RT& z, const RT& w)
 {
   if ( w < RT(0) )
   { initialize_with( Point_ref_3(-x,-y,-z,-w)); }
@@ -253,51 +247,27 @@ PointH3<R>::z()  const
 
 template < class R >
 inline
-typename PointH3<R>::RT
+const typename PointH3<R>::RT &
 PointH3<R>::hx() const
 { return  Ptr()->hx() ; }
 
 template < class R >
 inline
-typename PointH3<R>::RT
+const typename PointH3<R>::RT &
 PointH3<R>::hy() const
 { return  Ptr()->hy() ; }
 
 template < class R >
 inline
-typename PointH3<R>::RT
+const typename PointH3<R>::RT &
 PointH3<R>::hz() const
 { return  Ptr()->hz() ; }
 
 template < class R >
 inline
-typename PointH3<R>::RT
+const typename PointH3<R>::RT &
 PointH3<R>::hw() const
 { return  Ptr()->hw(); }
-
-template < class R >
-inline
-const typename PointH3<R>::RT&
-PointH3<R>::hx_ref() const
-{ return  Ptr()->e0 ; }
-
-template < class R >
-inline
-const typename PointH3<R>::RT&
-PointH3<R>::hy_ref() const
-{ return  Ptr()->e1 ; }
-
-template < class R >
-inline
-const typename PointH3<R>::RT&
-PointH3<R>::hz_ref() const
-{ return  Ptr()->e2 ; }
-
-template < class R >
-inline
-const typename PointH3<R>::RT&
-PointH3<R>::hw_ref() const
-{ return  Ptr()->e3; }
 
 template < class R >
 inline
@@ -321,7 +291,7 @@ PointH3<R>::cartesian(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename PointH3<R>::RT
+const typename PointH3<R>::RT &
 PointH3<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition(i == 0 || i == 1 || i == 2 || i == 3);
@@ -439,25 +409,25 @@ VectorH3<R>::z()  const
 
 template < class R >
 inline
-typename VectorH3<R>::RT
+const typename VectorH3<R>::RT &
 VectorH3<R>::hx() const
 { return  Ptr()->hx() ; }
 
 template < class R >
 inline
-typename VectorH3<R>::RT
+const typename VectorH3<R>::RT &
 VectorH3<R>::hy() const
 { return  Ptr()->hy() ; }
 
 template < class R >
 inline
-typename VectorH3<R>::RT
+const typename VectorH3<R>::RT &
 VectorH3<R>::hz() const
 { return  Ptr()->hz() ; }
 
 template < class R >
 inline
-typename VectorH3<R>::RT
+const typename VectorH3<R>::RT &
 VectorH3<R>::hw() const
 { return  Ptr()->hw() ; }
 
@@ -483,7 +453,7 @@ VectorH3<R>::cartesian(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename VectorH3<R>::RT
+const typename VectorH3<R>::RT &
 VectorH3<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition(i == 0 || i == 1 || i == 2 || i == 3);
@@ -543,7 +513,7 @@ DirectionH3<R>::DirectionH3(const RT& x, const RT& y, const RT& z,
 
 template <class R >
 CGAL_KERNEL_INLINE
-typename DirectionH3<R>::RT
+const typename DirectionH3<R>::RT &
 DirectionH3<R>::delta(int i) const
 {
   switch (i)
@@ -557,55 +527,55 @@ DirectionH3<R>::delta(int i) const
 
 template <class R >
 inline
-typename DirectionH3<R>::RT
+const typename DirectionH3<R>::RT &
 DirectionH3<R>::dx() const
 { return Ptr()->e0; }
 
 template <class R >
 inline
-typename DirectionH3<R>::RT
+const typename DirectionH3<R>::RT &
 DirectionH3<R>::x() const
 { return Ptr()->e0; }
 
 template <class R >
 inline
-typename DirectionH3<R>::RT
+const typename DirectionH3<R>::RT &
 DirectionH3<R>::hx() const
 { return Ptr()->e0; }
 
 template <class R >
 inline
-typename DirectionH3<R>::RT
+const typename DirectionH3<R>::RT &
 DirectionH3<R>::dy() const
 { return Ptr()->e1; }
 
 template <class R >
 inline
-typename DirectionH3<R>::RT
+const typename DirectionH3<R>::RT &
 DirectionH3<R>::y() const
 { return Ptr()->e1; }
 
 template <class R >
 inline
-typename DirectionH3<R>::RT
+const typename DirectionH3<R>::RT &
 DirectionH3<R>::hy() const
 { return Ptr()->e1; }
 
 template <class R >
 inline
-typename DirectionH3<R>::RT
+const typename DirectionH3<R>::RT &
 DirectionH3<R>::dz() const
 { return Ptr()->e2; }
 
 template <class R >
 inline
-typename DirectionH3<R>::RT
+const typename DirectionH3<R>::RT &
 DirectionH3<R>::z() const
 { return Ptr()->e2; }
 
 template <class R >
 inline
-typename DirectionH3<R>::RT
+const typename DirectionH3<R>::RT &
 DirectionH3<R>::hz() const
 { return Ptr()->e2; }
 

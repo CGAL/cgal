@@ -265,8 +265,8 @@ CGAL_KERNEL_INLINE
 bool
 equal_xy(const PointH3<R> &p, const PointH3<R> &q)
 {
-  return   (p.hx_ref() * q.hw_ref() == q.hx_ref() * p.hw_ref() )
-        && (p.hy_ref() * q.hw_ref() == q.hy_ref() * p.hw_ref() );
+  return   (p.hx() * q.hw() == q.hx() * p.hw() )
+        && (p.hy() * q.hw() == q.hy() * p.hw() );
 }
 
 template < class R >  // ???  ->   ==
@@ -274,29 +274,29 @@ CGAL_KERNEL_INLINE
 bool
 equal_xyz(const PointH3<R> &p, const PointH3<R> &q)
 {
-  return   (p.hx_ref() * q.hw_ref() == q.hx_ref() * p.hw_ref() )
-        && (p.hy_ref() * q.hw_ref() == q.hy_ref() * p.hw_ref() )
-        && (p.hz_ref() * q.hw_ref() == q.hz_ref() * p.hw_ref() );
+  return   (p.hx() * q.hw() == q.hx() * p.hw() )
+        && (p.hy() * q.hw() == q.hy() * p.hw() )
+        && (p.hz() * q.hw() == q.hz() * p.hw() );
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool
 less_x(const PointH3<R> &p, const PointH3<R> &q)
-{ return   (p.hx_ref() * q.hw_ref() < q.hx_ref() * p.hw_ref() ); }
+{ return   (p.hx() * q.hw() < q.hx() * p.hw() ); }
 
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool
 less_y(const PointH3<R> &p, const PointH3<R> &q)
-{ return   (p.hy_ref() * q.hw_ref() < q.hy_ref() * p.hw_ref() ); }
+{ return   (p.hy() * q.hw() < q.hy() * p.hw() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool
 less_z(const PointH3<R> &p, const PointH3<R> &q)
-{ return   (p.hz_ref() * q.hw_ref() < q.hz_ref() * p.hw_ref() ); }
+{ return   (p.hz() * q.hw() < q.hz() * p.hw() ); }
 
 
 CGAL_END_NAMESPACE
@@ -502,18 +502,18 @@ side_of_bounded_sphere(const PointH3<R> &p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx_ref();
-  const RT& phy = p.hy_ref();
-  const RT& phz = p.hz_ref();
-  const RT& phw = p.hw_ref();
-  const RT& qhx = q.hx_ref();
-  const RT& qhy = q.hy_ref();
-  const RT& qhz = q.hz_ref();
-  const RT& qhw = q.hw_ref();
-  const RT& thx = t.hx_ref();
-  const RT& thy = t.hy_ref();
-  const RT& thz = t.hz_ref();
-  const RT& thw = t.hw_ref();
+  const RT& phx = p.hx();
+  const RT& phy = p.hy();
+  const RT& phz = p.hz();
+  const RT& phw = p.hw();
+  const RT& qhx = q.hx();
+  const RT& qhy = q.hy();
+  const RT& qhz = q.hz();
+  const RT& qhw = q.hw();
+  const RT& thx = t.hx();
+  const RT& thy = t.hy();
+  const RT& thz = t.hz();
+  const RT& thw = t.hw();
 
   return Bounded_side( CGAL_NTS sign((thx*phw-phx*thw)*(qhx*thw-thx*qhw)
 	                           + (thy*phw-phy*thw)*(qhy*thw-thy*qhw)
