@@ -37,9 +37,10 @@ class Qt_widget_get_point : public Qt_widget_tool
 public:
   typedef Point_2<R> Point;
   typedef typename R::FT FT;
-
-  Qt_widget_get_point() {};
-
+  
+  Qt_widget_get_point(const QCursor c=QCursor(Qt::crossCursor)) :
+    oldcursor(), cursor(c) {};
+  
 private:
   void mousePressEvent(QMouseEvent *e)
   {
@@ -51,6 +52,20 @@ private:
 	emit new_object(make_object(Point(x,y)));
       }
   };
+  void attaching()
+  {
+    oldcursor = widget->cursor();
+    widget->setCursor(cursor);
+  };
+  
+  void detaching()
+  {
+    widget->setCursor(oldcursor);
+  };
+
+  //member datas
+  QCursor oldcursor;
+  QCursor cursor;
 };
 
 } // namespace CGAL
