@@ -26,7 +26,6 @@
 #define CGAL_TAGS_H
 
 #include <CGAL/aff_transformation_tags.h>
-#include <CGAL/number_type_tags.h>
 #include <CGAL/IO/io_tags.h>
 
 CGAL_BEGIN_NAMESPACE
