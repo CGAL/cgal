@@ -114,7 +114,8 @@ namespace CGAL {
 	      x=static_cast<FT>(widget->x_real(e->x())),
 	      y=static_cast<FT>(widget->y_real(e->y()));
 			
-      *widget << CGAL::GREEN << CGAL::PointSize (5) << CGAL::PointStyle (CGAL::DISC);
+      *widget << CGAL::GREEN << CGAL::PointSize (5)
+              << CGAL::PointStyle (CGAL::DISC);
       if(!wasrepainted)
         *widget << old_point;
       *widget << Point(x, y);
