@@ -1,3 +1,7 @@
+28 February 2005 Laurent Rineau
+- Remove one call to redraw() in Qt_widget_layer_get_polygon.h,
+because slots connected to new_cgal_object() should cann it themself.
+
 18 December 2004 Sylvain Pion
 - Use $(CGAL_INCL_DIR) instead of ../../include.
 

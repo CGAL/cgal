@@ -116,7 +116,6 @@ protected:
         active = false;
         first_time = true;
         poly.erase(poly.vertices_begin(), poly.vertices_end());
-        widget->redraw();
       }
     };
   };//end mousePressEvent
