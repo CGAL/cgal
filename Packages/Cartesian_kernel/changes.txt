@@ -1,4 +1,4 @@
-Version 6.95 (7 September 2003) 
+Version 6.96 (7 September 2003) 
 - Replaced global function calls by Kernel functors
 
 Version 6.95 (8 August 2003) 
