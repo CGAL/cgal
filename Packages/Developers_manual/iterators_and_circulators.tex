@@ -109,45 +109,6 @@ struct iterator_traits<T*> {
 };
 \end{verbatim}
 
-Iterators traits are not fully supported by compilers, such as MS Visual \CC,
-that do not allow partial specialization 
-\ccIndexSubitem{partial specialization}{for iterator traits}
-This means that, when using these compilers,
-the class \ccc{iterator_traits<It>} has to be be explicitely
-instantiated whenever \ccc{<It>} is a C pointer.
-
-\cgal\ provides these instantiations for pointers to 
-the most commonly used primitive data types, number types and
-\cgal\ kernel types (\ccc{CGAL::Point_2}, \ccc{CGAL::Segment_2}, \etc).
-For other types, the user must provide the relevant iterator traits. 
-This can be done by using the macro
-\texttt{CGAL\_\-DEFINE\_\-ITERATOR\_\-TRAITS\_\-POINTER\_\-SPEC(T)}.
-\index{CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC macro@\texttt{CGAL\_DEFINE\_ITERATOR\_TRAITS\_POINTER\_SPEC} macro}
-Take care that this macro is used only once for a particular type \ccc{T}; 
-otherwise you will get complaints about multiple definitions of a class.
-
-If the parameter to this macro is a templated class with more than
-one template parameter such as this:
-\begin{center}
-\verb|CGAL::PointH2< CGAL::Quotient<int>, int >|
-\end{center}
-the compiler may not be able to parse this properly as a single argument for 
-the macro. It will instead read the comma as a separator for the arguments of 
-the macro and thus assume you have provided more arguments than are necessary
-for this one-argument macro.  However, this is easily gotten around by 
-first using a typedef as follows:
-\begin{verbatim}
-typedef CGAL::PointH2< CGAL::Quotient<int>, int > Blah;
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Blah)
-\end{verbatim}
-
-The only currently supported compiler (as of release 3.0) that does not
-support partial specialization is MS Visual \CC 7.0. Thus this macro is defined
-to have an effect only when using this compiler.  For all other compilers,
-it simply does nothing and thus can be safely left in the code, unprotected
-by checks for this compiler.
-%The example program \texttt{examples/Getting\_started/advanced\_hull.C}
-%contains an example of the use of this macro.\\
 \ccIndexMainItemEnd{iterator traits}
 
 
