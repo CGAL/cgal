@@ -1,20 +1,36 @@
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_GMPZ -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_MPZ_CLASS -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_GMPZ -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_MPZ_CLASS -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_GMPZ -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_MPZ_CLASS -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_GMPZ -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_MPZ_CLASS -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LEDA_RATIONAL -DCGAL_NEF3_USE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_GMPQ -DCGAL_NEF3_USE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LEDA_RATIONAL -DCGAL_NEF3_USE_SIMPLE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_GMPQ -DCGAL_NEF3_USE_SIMPLE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_LEDA_RATIONAL -DCGAL_NEF3_USE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_GMPQ -DCGAL_NEF3_USE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_LEDA_RATIONAL -DCGAL_NEF3_USE_SIMPLE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_GMPQ -DCGAL_NEF3_USE_SIMPLE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus 
+#!/bin/bash
+
+export OPTIMIZATION_FLAGS="-O2 -DNDEBUG"
+
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_GMPZ -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_MPZ_CLASS -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-Iinclude -DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-Iinclude -DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_GMPZ -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-Iinclude -DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_MPZ_CLASS -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+
+
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_GMPZ -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_MPZ_CLASS -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-Iinclude -DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-Iinclude -DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_GMPZ -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-Iinclude -DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_MPZ_CLASS -DCGAL_NEF3_USE_SIMPLE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+
+
+
+
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LEDA_RATIONAL -DCGAL_NEF3_USE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_GMPQ -DCGAL_NEF3_USE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-Iinclude -DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_LEDA_RATIONAL -DCGAL_NEF3_USE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-Iinclude -DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_GMPQ -DCGAL_NEF3_USE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+
+
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LEDA_RATIONAL -DCGAL_NEF3_USE_SIMPLE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_GMPQ -DCGAL_NEF3_USE_SIMPLE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-Iinclude -DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_LEDA_RATIONAL -DCGAL_NEF3_USE_SIMPLE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
+labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-Iinclude -DCGAL_NEF3_USE_LAZY_EXACT_NT -DCGAL_NEF3_USE_GMPQ -DCGAL_NEF3_USE_SIMPLE_CARTESIAN' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
