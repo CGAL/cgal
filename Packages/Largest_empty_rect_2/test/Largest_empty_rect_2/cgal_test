@@ -22,7 +22,7 @@ CMP='diff -b'
 compile()
 {
   echo "Compiling $1 ... "
-  EXTRA_FLAGS="-DCGAL_SNAP_ROUNDING_TEST=$2"
+  EXTRA_FLAGS=""
   export EXTRA_FLAGS
 
   if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
