@@ -823,7 +823,7 @@ public:
         --*this;
         return tmp;
     }
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
     Self& operator+=( difference_type n);
 #else
     Self& operator+=( difference_type n) {
@@ -873,7 +873,7 @@ operator+( typename Circulator_from_container<Ctnr>::difference_type n,
     return tmp += n;
 }
 
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
 template <class Ctnr>
 Circulator_from_container<Ctnr>&
 Circulator_from_container<Ctnr>::
@@ -890,7 +890,7 @@ operator+=( typename Ctnr::difference_type n) {
     i = ctnr->begin() + j;
     return *this;
 }
-#endif // _MSC_VER //
+#endif // CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS //
 
 
 template < class  Ctnr>
@@ -980,7 +980,7 @@ public:
         --*this;
         return tmp;
     }
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
     Self& operator+=( difference_type n);
 #else
     Self& operator+=( difference_type n) {
@@ -1031,7 +1031,7 @@ operator+( typename Const_circulator_from_container<Ctnr>::
     return tmp += n;
 }
 
-#ifndef _MSC_VER
+#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
 template <class Ctnr>
 Const_circulator_from_container<Ctnr>&
 Const_circulator_from_container<Ctnr>::
@@ -1048,7 +1048,7 @@ operator+=( typename Ctnr::difference_type n) {
     i = ctnr->begin() + j;
     return *this;
 }
-#endif // _MSC_VER
+#endif // CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
 
 // Note: TT, SS, and DD are here for backwards compatibility, they are
 // not used.
