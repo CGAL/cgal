@@ -1084,7 +1084,7 @@ protected:
   */
   template <class OutpoutIterator>
   void add_curve_to_output(const X_monotone_curve_2 &cv, Subcurve *curve, 
-			OutpoutIterator out)
+                           OutpoutIterator out)
   {
     static Subcurve *prevCurve = 0;
     static X_monotone_curve_2 prevXCv;
@@ -1457,26 +1457,19 @@ init(CurveInputIterator begin, CurveInputIterator end)
   CurveInputIterator iter;
   for ( iter = begin ; iter != end ; ++iter)
   {
-    if ( m_traits->is_x_monotone(*iter) ) 
-      init_curve(*iter);
-    else
-    {
-      std::list<X_monotone_curve_2> xcurves;
-      m_traits->curve_make_x_monotone(*iter,
-                                      std::back_inserter(xcurves));
-      SL_DEBUG(
-      std::cout << "curve " << *iter << " was split into " 
-                << xcurves.size() << " curves." << std::endl;
-      )
+    std::list<X_monotone_curve_2> xcurves;
+    m_traits->curve_make_x_monotone(*iter, std::back_inserter(xcurves));
+    SL_DEBUG(
+             std::cout << "curve " << *iter << " was split into " 
+             << xcurves.size() << " curves." << std::endl;
+             )
 
-      for (typename std::list<X_monotone_curve_2>::iterator i =
-             xcurves.begin();
-	   i != xcurves.end() ; ++i )
-      {
-	m_xcurves.push_back(*i);
-	init_curve(m_xcurves[count]);
-	count++;
-      }
+    for (typename std::list<X_monotone_curve_2>::iterator i = xcurves.begin();
+         i != xcurves.end() ; ++i )
+    {
+      m_xcurves.push_back(*i);
+      init_curve(m_xcurves[count]);
+      count++;
     }
   }
 }
