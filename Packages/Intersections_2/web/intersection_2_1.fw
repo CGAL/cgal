@@ -151,9 +151,9 @@ Bbox_2_Line_2_pair<R>::intersection(
     if (_result != SEGMENT)
         return false;
     Point_2< Cartesian<double> > p1(_line.point()
-                + _min*_line.direction().vector());
+                + _min*_line.direction().to_vector());
     Point_2< Cartesian<double> > p2(_line.point()
-                + _max*_line.direction().vector());
+                + _max*_line.direction().to_vector());
     seg = Segment_2< Cartesian<double> >(p1, p2);
     return true;
 }
@@ -167,7 +167,7 @@ Bbox_2_Line_2_pair<R>::intersection(
         intersection_type();
     if (_result != POINT)
         return false;
-    pt = (_line.point() + _min*_line.direction().vector());
+    pt = (_line.point() + _min*_line.direction().to_vector());
     return true;
 }
 
@@ -187,7 +187,7 @@ Once inline (which the g++ compiler wants because of a bug) and once outline.
     ncthis->_known = true;
     const Point_2< Cartesian<double> > &ref_point = _line.point();
     const Vector_2< Cartesian<double> > &dir =
-                               _line.direction().vector();
+                               _line.direction().to_vector();
     bool to_infinity = true;
 // first on x value
     if (dir.x() == 0.0) {
@@ -422,7 +422,7 @@ Ray_2_Bbox_2_pair(Ray_2<R> const *ray, Bbox_2 const *box)
     _box = box;
 // convert the ray to a ray parametrised by doubles.
     Point_2<R> const &start(ray->start());
-    Vector_2<R> const &dir(ray->direction().vector());
+    Vector_2<R> const &dir(ray->direction().to_vector());
     _ref_point = Point_2< Rcart >
                 ( to_double(start.x()), to_double(start.y()));
     double dx = to_double(dir.x());
@@ -564,7 +564,7 @@ Ray_2_Bbox_2_pair(
     _known = false;
     _box = box;
     _ref_point = ray->start();
-    _dir = ray->direction().vector();
+    _dir = ray->direction().to_vector();
     _min = 0;
 }
 
@@ -1735,7 +1735,7 @@ if (start1.@1() < end1.@1()) {
     minpt = &end1;
     maxpt = &start1;
 }
-if (_ray->direction().vector().@1() > FT(0)) {
+if (_ray->direction().to_vector().@1() > FT(0)) {
     if (maxpt->@1() < start2.@1()) {
         ncthis->_result = NO;
         return _result;
@@ -1995,8 +1995,8 @@ the fastest.
 @$@<Ray_2_Ray_2_pair collinear case@>==@{@-
 {
 typedef typename R::RT RT;
-const Vector_2<R> &dir1 = _ray1->direction().vector();
-const Vector_2<R> &dir2 = _ray2->direction().vector();
+const Vector_2<R> &dir1 = _ray1->direction().to_vector();
+const Vector_2<R> &dir2 = _ray2->direction().to_vector();
 if (abs(dir1.x()) > abs(dir1.y())) {
     @<Ray_2_Ray_2_pair collinear case 2@>@(x@)
 } else {

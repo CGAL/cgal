@@ -1552,7 +1552,7 @@ Line_2_Iso_rectangle_2_pair(Line_2<R> const *line,
 {
     _known = false;
     _ref_point = line->point();
-    _dir = line->direction().vector();
+    _dir = line->direction().to_vector();
     _isomin = iso->min();
     _isomax = iso->max();
 }
@@ -1824,7 +1824,7 @@ Ray_2_Iso_rectangle_2_pair(
     _isomin = iso->min();
     _isomax = iso->max();
     _ref_point = ray->start();
-    _dir = ray->direction().vector();
+    _dir = ray->direction().to_vector();
     _min = (typename R::FT)(0);
 }
 
@@ -2086,7 +2086,7 @@ Segment_2_Iso_rectangle_2_pair(
     _isomin = iso->min();
     _isomax = iso->max();
     _ref_point = seg->source();
-    _dir = seg->direction().vector();
+    _dir = seg->direction().to_vector();
     _min = (typename R::FT)(0);
     int main_dir = (abs(_dir.x()) > abs(_dir.y()) ) ? 0 : 1;
     _max = (seg->target().cartesian(main_dir)-_ref_point.cartesian(main_dir)) /

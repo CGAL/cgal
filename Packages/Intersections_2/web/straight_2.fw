@@ -89,9 +89,9 @@ Straight_2_<R>::
 Straight_2_(Line_2<R> const &line)
 {
     support_ = line;
-    Vector_2<R> const &dir = support_.direction().vector();
+    Vector_2<R> const &dir = support_.direction().to_vector();
     main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
-    dir_sign_ = sign(support_.direction().vector().cartesian(main_dir_));
+    dir_sign_ = sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = BOTH_UNBOUNDED;
 }
 
@@ -112,10 +112,10 @@ Straight_2_<R>::
 Straight_2_(Ray_2<R> const &ray)
 {
     support_ = ray.supporting_line();
-    Vector_2<R> const &dir = ray.direction().vector();
+    Vector_2<R> const &dir = ray.direction().to_vector();
 //    main_dir_ = (abs(dir.hx()) > abs(dir.hy()) ) ? 0 : 1;
     main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
-    dir_sign_ = sign(support_.direction().vector().cartesian(main_dir_));
+    dir_sign_ = sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = MAX_UNBOUNDED;
     min_ = ray.start();
 }
@@ -125,9 +125,9 @@ Straight_2_<R>::
 Straight_2_(Segment_2<R> const &seg)
 {
     support_ = seg.supporting_line();
-    Vector_2<R> const &dir = support_.direction().vector();
+    Vector_2<R> const &dir = support_.direction().to_vector();
     main_dir_ = (abs(dir.x()) > abs(dir.y()) ) ? 0 : 1;
-    dir_sign_ = sign(support_.direction().vector().cartesian(main_dir_));
+    dir_sign_ = sign(support_.direction().to_vector().cartesian(main_dir_));
     bound_state_ = NO_UNBOUNDED;
     min_ = seg.start();
     max_ = seg.end();
@@ -200,7 +200,7 @@ int
 sign_of_cross(Direction_2<R> const &dir1,
             Direction_2<R> const &dir2)
 {
-    return sign(cross(dir1.vector(), dir2.vector()));
+    return sign(cross(dir1.to_vector(), dir2.to_vector()));
 }
 #endif
 
@@ -216,7 +216,7 @@ sign_of_cross(Direction_2<R> const &dir1,
             Direction_2<R> const &dir2)
 {
     int result;
-    switch(orientation(dir1.vector(), dir2.vector()))  {
+    switch(orientation(dir1.to_vector(), dir2.to_vector()))  {
     case COUNTERCLOCKWISE:
         result = 1;
         break;
