@@ -1,0 +1,521 @@
+#!/bin/sh
+# ----------------------------------------------------
+# ----------------------------------------------------
+# autotest_cgal: a script to automagically install and
+#   test internal CGAL releases
+# $Revision$ $Date$
+# ----------------------------------------------------
+# You will need 
+#  * GNU wget 
+#    (see ftp://sunsite.auc.dk/pub/infosystems/wget/)
+#
+# Furthermore you have to edit this file in order to
+# cutomize it for your environment.
+# In particular you have to change the BUILHOSTS
+# variable to contain the names of your hosts and
+# set the COMPILERS_<hostname> variables to the 
+# os-compilers descriptions on which you want to run
+# the testsuite.
+# ----------------------------------------------------
+# ----------------------------------------------------
+
+# ----------------------------------------------------
+# the CGAL release id has to be given on command line:
+
+if [ ${#} -lt 2 ]; then
+    printf "usage: `basename ${0}` [CGAL-release-id] [mail-to]\n"
+    printf "(e.g. `basename ${0}` CGAL-2.4-I-1 cgal-submit@cs.uu.nl)\n"
+    exit 1
+fi
+CGAL_RELEASE_ID="${1}"
+
+# ----------------------------------------------------
+# the mail adress where to send notification as soon
+# as everyting is done has to be given on command line:
+
+MAIL_ADRESS="${2}"
+
+# ----------------------------------------------------
+# set to non-empty, if you want console output,
+# otherwise output is only to the logfile
+
+CONSOLE_OUTPUT=""
+
+# ----------------------------------------------------
+# set to empty, if you want to get the .zip file
+# otherwise the tar.gz version is used
+
+USE_TARGZ="y"
+if [ -n "${USE_TARGZ}" ]; then
+    CGAL_TARFILE="${CGAL_RELEASE_ID}.tar"
+    CGAL_ZIPFILE="${CGAL_TARFILE}.gz"
+else
+    CGAL_ZIPFILE="${CGAL_RELEASE_ID}.zip"
+fi
+
+# ----------------------------------------------------
+# ID and password for getting to the member pages
+# (since it is to be written here, it might be a good idea
+# to keep this file in 700 mode [-rwx------])
+
+# insert password after the colon
+CGAL_PASSWD="member1:"
+CGAL_URL="http://${CGAL_PASSWD}@www.cs.uu.nl/CGAL/Members/Develop/updates/${CGAL_ZIPFILE}"
+
+# ----------------------------------------------------
+# hosts and compilers for building/testing
+# (change to your hostname(s) and the according
+#  CGAL os-compiler descriptions)
+
+BUILDHOSTS="shadow lala lulu"
+COMPILERS_shadow="sparc_SunOS-5.6_g++-2.95_LEDA sparc_SunOS-5.6_CC-5.30"
+COMPILERS_lala="mips_IRIX64-6.5_CC-n32-7.30_LEDA"
+COMPILERS_lulu="mips_IRIX-6.5_g++-fsquangle-2.95_LEDA"
+
+
+# ----------------------------------------------------
+# some paths
+
+# just used to restore the working dir on exit
+ACTUAL_DIR=`pwd`
+
+# the root of you CGAL dirtree
+# (it is assumed that you keep all CGAL test-installations
+#  below this directory)
+#CGAL_ROOT=/pub/blabla/CGAL
+CGAL_ROOT=${HOME}/tmp/CGAL
+
+# dir for the actual release
+CGAL_DIR=${CGAL_ROOT}/${CGAL_RELEASE_ID}
+
+# dir of the previous release
+# HAS TO exist !
+# (used to copy config/install files and evt. gmp stuff)
+OLD_CGAL_DIR=${CGAL_ROOT}/CGAL-I
+
+# you will guess it :)
+CGAL_INCL_DIR=${CGAL_DIR}/include
+OLD_CGAL_INCL_DIR=${OLD_CGAL_DIR}/include
+CGAL_LIB_DIR=${CGAL_DIR}/lib
+OLD_CGAL_LIB_DIR=${OLD_CGAL_DIR}/lib
+CGAL_MAKE_DIR=${CGAL_DIR}/make
+
+# script to start the testsuite run
+# (assumed to use the environment variable CGAL_MAKEFILE
+#  to determine the test platform)
+
+CGAL_RUN_TEST="run_testsuite"
+
+# files containing the test results
+TEST_RESULT_FILES=results_'*'
+
+# script to collect the test results
+# (assumed to create files matching ${TEST_RESULT_FILES})
+
+CGAL_COLLECT_TEST=collect_cgal_testresults
+
+# What is the name of your gmp library?
+# (on windows probably gmp.lib)
+#GMPLIB=gmp.lib
+# otherwise libgmp.a
+GMPLIB=libgmp.a
+
+# dir to put the test results into (for downloading)
+# and the corresponding URL
+
+HTML_DIR=${HOME}/public_html/CGAL/members
+HTML_DIR_URL="http://www.inf.ethz.ch/~${LOGNAME}/CGAL/members"
+
+# file to put a link to the test result file into
+# (assumed to contain exactly one ${HTML_INSERT_BOOKMARK})
+
+HTML_FILE=${HTML_DIR}/index.html
+
+# bookmark for where to insert the links in ${HTML_FILE}
+HTML_INSERT_BOOKMARK='<!-- CGAL testsuite results insert bookmark -->'
+
+# logfile
+ACTUAL_LOGFILE="${CGAL_ROOT}/`basename ${0}`.log"
+
+# ----------------------------------------------------
+# Command to run a command in your favorite shell:
+# 
+
+# for bash I want to source my ~/.bashrc file:
+MYSHELL="BASH_ENV=${HOME}/.bashrc bash -c"
+
+# for (t)csh you should take that:
+#MYSHELL="tcsh -c"
+
+# ----------------------------------------------------
+# program for executing programs remotely 
+# (uncomment one)
+
+# secure shell
+RSH="ssh -1"
+#RSH="ssh"
+
+# remote shell (if you don't have ssh)
+#RSH=rsh
+
+# do not log to another machine (e.g. on windows machines)
+#RSH=stay_local
+
+# ----------------------------------------------------
+# program to send mail
+
+SENDMAIL=mail
+
+# ----------------------------------------------------
+# programm for getting files via http/ftp
+# GNU wget (see http://sunsite.auc.dk/ftp/pub/infosystems/wget/)
+
+WGET="/pub/blabla/sun4OS5/bin/wget -Y off -nd -P ${CGAL_ROOT}"
+
+# ----------------------------------------------------
+# GNU zip
+TAR=/usr/local/gnu/bin/gtar
+GZIP=/usr/local/gnu/bin/gzip
+GUNZIP=/usr/local/gnu/bin/gunzip
+
+# ----------------------------------------------------
+# You probably don't need to change anything beyond
+# ----------------------------------------------------
+
+#
+# write to logfile
+#
+
+# $1 = logfile
+log()
+{
+    LOGFILE=${1}
+    shift
+    if [ -n "${CONSOLE_OUTPUT}" ]; then
+	printf "${*} ..."
+    fi
+    printf "-------------------------------------------------------\n" \
+	>> ${LOGFILE}
+    printf "  ${*} ...\n" \
+	>> ${LOGFILE}
+    printf "-------------------------------------------------------\n" \
+	>> ${LOGFILE}
+}
+
+# $1 = logfile
+log_done()
+{
+    if [ -n "${CONSOLE_OUTPUT}" ]; then
+	printf \
+	" done\n-------------------------------------------------------\n"
+    fi
+    printf "-------------------------------------------------------\n" \
+	>> ${1}
+    printf "  **DONE**\n" \
+	>> ${1}
+    printf "-------------------------------------------------------\n" \
+	>> ${1}
+}
+
+#
+# produce a string containing the actual date/time
+#  (used to identify files)
+#
+
+datestr()
+{
+    date +%d%m%Y%H%M
+}
+
+#
+# function to put result files on the web
+#
+
+# $1 = source filename (full path)
+# $2 = target filename (basename only)
+# $3 = description
+put_on_web()
+{
+    cp ${1} ${HTML_DIR}/${2}
+    chmod a+r ${HTML_DIR}/${2}
+    cp ${HTML_FILE} tmp_html.tmp
+    sed '/'"${HTML_INSERT_BOOKMARK}"'/ i\
+	<LI> '"${3}"' from <A HREF='"\"${HTML_DIR_URL}/${2}\">`date +\"%a %d %b %Y %R\"`"'</A>' \
+	tmp_html.tmp > ${HTML_FILE}
+    rm -f tmp_html.tmp
+}
+
+#
+# function for error handling (exit & send mail)
+#
+
+error()
+{
+    if [ -n "${CONSOLE_OUTPUT}" ]; then
+	printf "\nERROR: ${*}, exiting.\n"
+    fi
+    printf "\nERROR: ${*}, exiting.\n" >> ${ACTUAL_LOGFILE}
+    ${GZIP} -9f ${ACTUAL_LOGFILE}
+    FILENAME="${CGAL_RELEASE_ID}-log`datestr`.gz"
+    put_on_web ${ACTUAL_LOGFILE}.gz \
+	${FILENAME} \
+	'log of <FONT COLOR=\"#bf0008\">failed</FONT> run'
+    for i in ${MAIL_ADRESS} ${LOGNAME}; do
+	printf "Subject: Completed automagic CGAL test-run\nERROR\n${HTML_DIR_URL}/${FILENAME}\n" | \
+	    ${SENDMAIL} ${i}
+    done
+    exit 1
+}
+
+
+# ----------------------------------------------------
+# some sanity checks
+#
+
+# remove old logfile
+rm -f ${ACTUAL_LOGFILE}
+
+# check, if OLD_CGAL_DIR exists and is a symbolic link
+if [ ! -r ${OLD_CGAL_DIR} -o ! -d ${OLD_CGAL_DIR} ]; then
+    error "directory ${OLD_CGAL_DIR} does not exist"
+fi
+if [ ! -h ${OLD_CGAL_DIR} ]; then
+    error "${OLD_CGAL_DIR} has to be a symbolic link"
+fi
+
+if [ `fgrep -c "${HTML_INSERT_BOOKMARK}" ${HTML_FILE}` != 1 ]; then
+    error \
+	"file ${HTML_FILE}\n  does not contain exactly one insert bookmark"
+fi
+
+#
+# function to print the value of variable $1
+#
+
+value_of()
+{
+    _value=`eval "printf '$'${1}"`
+    eval "printf \"${_value}\""
+}
+
+#
+# function for executing a command remotely
+#
+
+# if ${RSH} is set to this function, no remote connection
+# will be established, the hostname parameter ${1} is just
+# ignored.
+stay_local()
+{
+    printf "** No, we stay on this machine. **\n"
+    eval "${2}"
+}
+
+# $1 = HOST
+# $2 = COMMAND
+remote_command()
+{
+    printf "** Logging into host ${1} **\n"
+    ${RSH} ${1} "${MYSHELL} \"${2}\""
+}
+
+#
+# function for building the CGAL libs
+#
+
+# $1 = HOST
+build_cgal_libs()
+{
+    remote_command ${1} \
+    "cd ${CGAL_DIR};
+    ${CGAL_DIR}/install_cgal --CGAL_DIR ${CGAL_DIR} --rebuild-all;
+    rm ${OLD_CGAL_DIR};
+    ln -s ${CGAL_DIR} ${OLD_CGAL_DIR}" \
+      > ${ACTUAL_LOGFILE}.${1} 2>&1 
+}
+
+#
+# function to run the testsuite
+#
+
+# $1 = HOST
+# $2 = COMPILERS
+run_testsuite() 
+{
+    #
+    # test
+    #
+    for i in ${2}; do
+	log ${ACTUAL_LOGFILE}.${1} "Testing on ${1}"
+	remote_command ${1} \
+	    "cd ${CGAL_DIR}; cp -R test test-${1}; cd test-${1};
+		export CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${i};
+		nice -19 ${CGAL_DIR}/test-${1}/${CGAL_RUN_TEST}" \
+	    >> ${ACTUAL_LOGFILE}.${1} 2>&1 
+	log_done ${ACTUAL_LOGFILE}.${1}
+    done
+
+    #
+    # collect results and put them on the web
+    #
+    log ${ACTUAL_LOGFILE}.${1} "putting results on the web"
+    cd ${CGAL_DIR}/test-${1}
+    CGAL_TESTER=${LOGNAME} ${CGAL_DIR}/test-${1}/${CGAL_COLLECT_TEST} \
+	>> ${ACTUAL_LOGFILE}.${1} 2>&1
+    ${TAR} cf test_results-${1}.tar ${TEST_RESULT_FILES}
+    ${GZIP} -9f test_results-${1}.tar
+    FILENAME=${CGAL_RELEASE_ID}-test`datestr`-${1}.tar.gz
+    LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${1}.gz"
+    ${GZIP} -9f ${ACTUAL_LOGFILE}.${1}
+    mv ${ACTUAL_LOGFILE}.${1}.gz ${HTML_DIR}/${LOGFILENAME}
+    chmod a+r ${HTML_DIR}/${LOGFILENAME}
+    put_on_web \
+	test_results-${1}.tar.gz \
+	${FILENAME} \
+	"for <B><FONT COLOR="#069114">${CGAL_RELEASE_ID}</FONT></B> on <B>${1}</B> (log <A HREF=\"${HTML_DIR_URL}/${LOGFILENAME}\"> here</A>)"
+
+    #
+    # inform the CGAL world :-)
+    #
+    for i in ${MAIL_ADRESS} ${LOGNAME}; do
+	printf "Subject: autohandle\nresult collection::\n${HTML_DIR_URL}/${FILENAME}\n" | ${SENDMAIL} ${i}
+    done
+}
+
+
+# ----------------------------------------------------
+# get CGAL
+#
+
+get_cgal() 
+{
+    log ${ACTUAL_LOGFILE} "getting CGAL"
+    rm -f ${CGAL_ZIPFILE}
+    ${WGET} ${CGAL_URL} >> ${ACTUAL_LOGFILE} 2>&1
+    if [ ${?} != 0 ]; then
+	error "Could not get CGAL"
+    fi
+    log_done ${ACTUAL_LOGFILE}
+}
+
+
+# ----------------------------------------------------
+# unzip/untar CGAL
+#
+
+unzip_cgal()
+{
+    cd ${CGAL_ROOT}
+    log ${ACTUAL_LOGFILE} "unzipping CGAL"
+    if [ -n "${USE_TARGZ}" ]; then
+	log ${ACTUAL_LOGFILE} "untarring CGAL"
+	${GUNZIP} -c ${CGAL_ZIPFILE} | ${TAR} xvf - >> ${ACTUAL_LOGFILE} 2>&1
+	if [ ${?} != 0 ]; then
+	    error "Could not untar CGAL"
+	fi
+	log_done ${ACTUAL_LOGFILE}
+	# make sure permissions are ok
+	#chmod -R a+r ${CGAL_DIR}
+	#chmod a+x ${CGAL_DIR}/install_cgal
+	#chmod a+x `find ${CGAL_DIR} -type d`
+    else
+	unzip ${CGAL_ZIPFILE} >> ${ACTUAL_LOGFILE} 2>&1
+	if [ ${?} != 0 ]; then
+	    error "Could not unzip CGAL"
+	fi
+    fi
+    log_done ${ACTUAL_LOGFILE}
+}
+
+
+# ----------------------------------------------------
+# copy stuff from old CGAL installation
+#
+
+copy_old_stuff()
+{
+    # copy config install files
+    log ${ACTUAL_LOGFILE} "copy config install files"
+    cp -r ${OLD_CGAL_DIR}/config/install ${CGAL_DIR}/config
+    log_done ${ACTUAL_LOGFILE}
+
+    # copy gmp header and libs
+    log ${ACTUAL_LOGFILE} "copy gmp header"
+    if [ -f ${OLD_CGAL_INCL_DIR}/gmp.h ]; then
+	cp ${OLD_CGAL_INCL_DIR}/gmp.h ${CGAL_INCL_DIR}
+    fi
+    log_done ${ACTUAL_LOGFILE}
+    log ${ACTUAL_LOGFILE} "copy gmp libs"
+    printf "\n" >> ${ACTUAL_LOGFILE}
+    for i in `find ${OLD_CGAL_LIB_DIR} -name "${GMPLIB}" -print`; do
+	printf "."
+	printf "copying ${i}\n" >> ${ACTUAL_LOGFILE}
+	newdir=`dirname ${i} | \
+	    sed "s${OLD_CGAL_LIB_DIR}${CGAL_LIB_DIR}g`
+	mkdir -p ${newdir}
+	if [ ${?} != 0 ]; then
+	    error "Could not mkdir ${newdir}"
+	fi
+	cp ${i} ${newdir}
+    done
+    log_done ${ACTUAL_LOGFILE}
+}
+
+
+# ----------------------------------------------------
+# build cgal
+#
+
+build_cgal()
+{
+    log ${ACTUAL_LOGFILE} "building cgal libs"
+    for i in ${BUILDHOSTS}; do
+	build_cgal_libs ${i}
+    done
+    log_done ${ACTUAL_LOGFILE}
+    ${GZIP} -9f ${ACTUAL_LOGFILE}
+    put_on_web \
+	${ACTUAL_LOGFILE}.gz \
+	${CGAL_RELEASE_ID}-log`datestr`.gz \
+	"<B>Log</B> for <B><FONT COLOR="#069114">${CGAL_RELEASE_ID}</FONT></B>"
+}
+
+
+# ----------------------------------------------------
+# run the testsuites
+#
+
+run_test()
+{
+    log ${ACTUAL_LOGFILE} "running the testsuites"
+    if [ -n "${CONSOLE_OUTPUT}" ]; then
+	printf "\n-------------------------------------------------------\n" 
+    fi
+    for i in ${BUILDHOSTS}; do
+	run_testsuite ${i} "`value_of COMPILERS_${i}`" &
+    done
+}
+
+# ----------------------------------------------------
+# START OF MAIN BODY
+# ----------------------------------------------------
+
+# notify
+
+for i in ${MAIL_ADRESS} ${LOGNAME}; do
+    printf "Subject: Started automagic CGAL test-run\nsubject says it all\n" | \
+	${SENDMAIL} ${i}
+done
+
+# do the job
+
+get_cgal
+unzip_cgal
+copy_old_stuff
+build_cgal
+run_test
+
+# restore settings:
+cd ${ACTUAL_DIR}
+
+# EOF
