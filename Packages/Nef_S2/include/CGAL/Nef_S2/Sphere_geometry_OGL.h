@@ -591,7 +591,7 @@ void construct_cube() const
 void construct()
 { initialized_=true;
   sphere_list_ = glGenLists(5);
-  CGAL_nef_assertion_msg(sphere_list_!=0,"no display list.");
+  CGAL_assertion_msg(sphere_list_!=0,"no display list.");
   // skeleton:
   glNewList(sphere_list_, GL_COMPILE);
   for (Object_const_iterator it = objects_.begin();

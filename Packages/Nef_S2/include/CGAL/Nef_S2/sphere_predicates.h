@@ -2,7 +2,11 @@
 #define CGAL_SPHERE_PREDICATES_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Nef_S2/SM_iteration.h>
+
+#undef CGAL_forall_iterators
+#define CGAL_forall_iterators(x,L)\
+for(x = (L).begin(); x != (L).end(); ++x) 
+
 
 CGAL_BEGIN_NAMESPACE
 

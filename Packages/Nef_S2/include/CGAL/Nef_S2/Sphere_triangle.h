@@ -55,9 +55,9 @@ Sphere_triangle(
 /*{\Mcreate creates a triangle spanned by the three points
 |p0|, |p1|, |p2|, where the triangle is left of the three circles
 |c0|, |c1|, |c2|. \precond $c_i$ contains $p_i$ and $p_{i+1}$ mod 3.}*/
-{ CGAL_nef_assertion( c0.has_on(p0) && c0.has_on(p1) );
-  CGAL_nef_assertion( c1.has_on(p1) && c1.has_on(p2) );
-  CGAL_nef_assertion( c2.has_on(p2) && c0.has_on(p0) );
+{ CGAL_assertion( c0.has_on(p0) && c0.has_on(p1) );
+  CGAL_assertion( c1.has_on(p1) && c1.has_on(p2) );
+  CGAL_assertion( c2.has_on(p2) && c0.has_on(p0) );
 }
 
 Sphere_triangle(const Sphere_triangle<R>& t) : Base(t) {} 

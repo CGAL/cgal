@@ -19,7 +19,7 @@ public:
 Sphere_segment_rep(const Point& p1, const Point& p2,
 		   bool shorter_arc=true) :
   ps_(p1), pt_(p2), c_(Plane_3(p1,p2,Point_3(0,0,0))) 
-{ CGAL_nef_assertion(p1 != p2.opposite()); 
+{ CGAL_assertion(p1 != p2.opposite()); 
   if ( p1 == p2 ) { 
     Plane_3 h(Point_3(0,0,0),(p1-CGAL::ORIGIN));
     c_ = Sphere_circle<R_>(Plane_3(Point_3(0,0,0),h.base1()));
@@ -29,11 +29,11 @@ Sphere_segment_rep(const Point& p1, const Point& p2,
 
 Sphere_segment_rep(const Point& p1, const Point& p2, const Circle& c) :
   ps_(p1), pt_(p2), c_(c) 
-{ CGAL_nef_assertion(c.has_on(p1)&&c.has_on(p2)); }
+{ CGAL_assertion(c.has_on(p1)&&c.has_on(p2)); }
 
 Sphere_segment_rep(const Circle& c1, 
                    const Circle& c2) : c_(c1) 
-{ CGAL_nef_assertion(!equal_as_sets(c1,c2)); 
+{ CGAL_assertion(!equal_as_sets(c1,c2)); 
   ps_ = intersection(c1,c2);
   pt_ = ps_.opposite();
   if ( orientation(Point_3(0,0,0),ps_,pt_,
@@ -149,7 +149,7 @@ void split_halfcircle(Sphere_segment<R>& s1,
                       Sphere_segment<R>& s2) const
 /*{\Mop splits a halfcircle into two equally sized segments.
 \precond |\Mvar| is a halfcircle.}*/
-{ CGAL_nef_assertion( is_halfcircle() );
+{ CGAL_assertion( is_halfcircle() );
   Plane_3 h(Point_3(0,0,0),(target()-CGAL::ORIGIN));
   Sphere_point<R> p = 
     CGAL::intersection(sphere_circle(),Sphere_circle<R>(h));
@@ -221,7 +221,7 @@ std::istream& operator>>(std::istream& is,
 template <typename R>
 std::pair< Sphere_segment<R>,Sphere_segment<R> >
 Sphere_circle<R>::split_at(const Sphere_point<R>& p) const
-{ CGAL_nef_assertion(has_on(p));
+{ CGAL_assertion(has_on(p));
   Sphere_point<R> q(p.opposite());
   return Sphere_segment_pair(
     Sphere_segment<R>(p,q,*this),
@@ -301,7 +301,7 @@ template <typename R>
 Sphere_point<R> Sphere_segment<R>::
 intersection(const Sphere_segment<R>& s) const
 {
-  CGAL_nef_assertion(!equal_as_sets(sphere_circle(),s.sphere_circle()));
+  CGAL_assertion(!equal_as_sets(sphere_circle(),s.sphere_circle()));
   Sphere_point<R> res = 
     CGAL::intersection(sphere_circle(),s.sphere_circle());
   if ( has_on(res) && s.has_on(res) ) return res;

@@ -55,7 +55,7 @@ create any great circle that contains $p$ and $q$.}*/
 Sphere_circle(const CGAL::Plane_3<R>& h) 
 /*{\Mcreate creates the circle corresponding to the plane |h|.
 \precond |h| contains the origin.}*/
- : Base(h) { CGAL_nef_assertion(h.d() == 0); } 
+ : Base(h) { CGAL_assertion(h.d() == 0); } 
 
 Sphere_circle(const RT& x, const RT& y, const RT& z) : Base(x,y,z,0) {} 
 /*{\Mcreate creates the circle orthogonal to the vector $(x,y,z)$.}*/
@@ -63,7 +63,7 @@ Sphere_circle(const RT& x, const RT& y, const RT& z) : Base(x,y,z,0) {}
 Sphere_circle(Sphere_circle<R> c, const Sphere_point<R>& p) 
 /*{\Mcreate creates a great circle orthogonal to $c$ that contains $p$. 
 \precond $p$ is not part of $c$.}*/
-{ CGAL_nef_assertion(!c.has_on(p));
+{ CGAL_assertion(!c.has_on(p));
   if ( c.has_on_negative_side(p) ) c=c.opposite();
   if ( p == c.orthogonal_pole() ) 
     *this = Sphere_circle<R>(Base(Point_3(0,0,0),p,CGAL::ORIGIN+c.base1()));
@@ -116,11 +116,11 @@ Sphere_point<R> intersection(const Sphere_circle<R>& c1,
 /*{\Mfunc returns one of the two intersection points of 
 |c1| and |c2|. \precond |c1 != c2| as sets.}*/
 { 
-  CGAL_nef_assertion(!equal_as_sets(c1,c2));
+  CGAL_assertion(!equal_as_sets(c1,c2));
   typename R::Line_3 lres;
   TRACEN("circle_intersection "<<c1<<" "<<c2);
   CGAL::Object o = CGAL::intersection(c1.plane(),c2.plane());
-  if ( !assign(lres,o) ) CGAL_nef_assertion_msg(0,"damn id planes.");
+  if ( !assign(lres,o) ) CGAL_assertion_msg(0,"damn id planes.");
   return CGAL::ORIGIN + lres.direction().vector();
 }
 

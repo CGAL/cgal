@@ -40,7 +40,7 @@ Sphere_direction(const Sphere_point<R>& p, const Sphere_point<R>&q)
 the great circle through $p$ and $q$ (oriented such that the segment
 $pq$ is the shorter one of the two possible ones. \precond $p$ and $q$
 are not opposite on $S_2$.}*/ 
-{ CGAL_nef_assertion(p!=q.opposite()); 
+{ CGAL_assertion(p!=q.opposite()); 
   Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + orthogonal_vector();
   if ( CGAL::orientation(p1,p,q,p4) != CGAL::POSITIVE )
     *this = Sphere_direction(opposite());
@@ -49,7 +49,7 @@ are not opposite on $S_2$.}*/
 Sphere_direction(const CGAL::Plane_3<R>& h) 
 /*{\Xcreate creates the direction corresponding to the plane |h|.
 \precond |h| contains the origin.}*/
- : Base(h) { CGAL_nef_assertion(h.d() == 0); } 
+ : Base(h) { CGAL_assertion(h.d() == 0); } 
 
 /*{\Moperations 4 2}*/
 
@@ -78,7 +78,7 @@ bool strictly_ordered_ccw_at(const Sphere_point<R>& p,
   const Sphere_direction<R>& d1,
   const Sphere_direction<R>& d2,
   const Sphere_direction<R>& d3)
-{ CGAL_nef_assertion(d1.has_on(p) && d2.has_on(p) && d3.has_on(p));
+{ CGAL_assertion(d1.has_on(p) && d2.has_on(p) && d3.has_on(p));
   typename R::Point_3 p0(0,0,0); 
   typename R::Point_3 p1(CGAL::ORIGIN + d1.orthogonal_vector()); 
   typename R::Point_3 p2(CGAL::ORIGIN + d2.orthogonal_vector()); 
