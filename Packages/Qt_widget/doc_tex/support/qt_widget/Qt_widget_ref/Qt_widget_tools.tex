@@ -7,74 +7,16 @@
 % | \RCSdef{\qtwidgetRev}{$Revision$}
 % | \RCSdefDate{\qtwidgetDate}{$Date$}
 % +------------------------------------------------------------------------+
-
 % +-----------------------------------------------------+
-\section{Qt\_widget\_tools}
-\label{Qt_widget_tools}
-
-
-\ccDefinition
-
-A tool for Qt\_widget is a class that receives events from Qt\_widget and can 
-provide some functionalities like input objects for Qt\_widget and modify 
-already created objects. Also some basic operations can be provided like tools
-for zoomIn, zoomOut, translate.
-
-There is a base class for tools called Qt\_widget\_tool, all the tools should 
-be derived from this base class.
-\begin{ccExampleCode}
-namespace CGAL {
-class Qt_widget_zoomrect : public Qt_widget_tool
-{
-public:
-	....
-protected:
-	....
-private:
-	....
-}//endclass
-}//endnamespace
-\end{ccExampleCode}
-In order to attach a tool to Qt\_widget all you have to do is to declare and 
-define the tool and then use the attach method from Qt\_widget class. The 
-Qt\_widget and the tool mechanism is designed to use only one tool at one moment of time. You can't use two tools at the same time. When a tool is attached, both the tool and the Qt\_widget will receive the events from the Window System.
-\begin{ccExampleCode}
-CGAL::Qt_widget_zoomrect	zoomrectbut;
-CGAL::Qt_widget			*widget;
-
-widget->attach(zoomrectbut);
-\end{ccExampleCode}
-The events are declared in the base class as virtual functions. Your tool class
-has to overload this functions in order to receive the events from the main 
-widget. Only the tool that is attached at the moment will receive the events
-from the widget.
-\begin{ccExampleCode}
-namespace CGAL {
-class Qt_widget_zoomrect : public Qt_widget_tool
-{
-.....
-private:
-  void mousePressEvent(QMouseEvent *e)
-  {
-    if(e->button() == CGAL_QT_WINDOW_ZOOMRECT_BUTTON)
-    {
-      if (!on_first)
-      {
-        first_x = e->x();
-        first_y = e->y();
-        on_first = TRUE;
-      }
-    }
-  };
-......
-}//endclass
-}//endnamespace
-\end{ccExampleCode}
-
 \begin{ccRefClass}{Qt_widget_tool}
 
-\ccInclude{CGAL/Qt_widget_tool.h}
+\ccInclude{CGAL/IO/Qt_widget_tool.h}
 \ccGlue
+
+\ccDefinition
+A tool for Qt\_widget is a class that receives events from Qt\_widget and can 
+provide some functionalities like input objects for Qt\_widget and modify 
+already created objects.
 
 \ccCreation
 \ccCreationVariable{tool}
@@ -224,121 +166,6 @@ public:
 } // namespace CGAL
 
 #endif // CGAL_QT_WINDOW_ZOOM_H
-\end{ccExampleCode}
-
-\ccHeading{Creating \cgal\ objects}
-In order to create \cgal\ objects, your tool has to call the public member 
-function new\_object(CGAL::Object) from Qt\_widget. Qt\_widget will emit the 
-signal new\_cgal\_object(CGAL::Object). To be more clear, all the objects 
-created with tools, will be catched by Qt\_widget and send to user through the
- signal new\_cgal\_object(CGAL::Object). This way, the user should write only 
-a connect like this:
-
-connect(Qt\_Widget,SIGNAL(new\_cgal\_object(CGAL::Object)),this,SLOT(get\_new\_object(CGAL::Object)));
-
-Also in the user class the code should look like this. This should be a 
-template for you anytime you want to use Qt\_widget, you should follow the same
-model:
-\begin{ccExampleCode}
-class MyWindow : public QMainWindow
-{
-  Q_OBJECT
-public:
-  MyWindow(int w, int h): win(this) {
-    setCentralWidget(&win);
-    resize(w, h);
-    connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), 
-      this, SLOT(get_new_object(CGAL::Object)));
-   ...
-  }
-  ...
-private:
-  CGAL::Qt_widget	  win;		
-
-private slots:
-  void get_new_object(CGAL::Object obj)
-  {
-    Point p;
-    Segment s;
-    Line l;
-    Polygon_2 poly;
-    if (CGAL::assign(p, obj)) {
-       ...
-    } else if(CGAL::assign(s,obj)) {
-       ...      
-    } else if(CGAL::assign(l, obj)) {
-       ...
-    } else if(CGAL::assign(poly, obj)) {
-       ...
-    }
-    ...
-  }
-};
-
-int
-main(int argc, char **argv)
-{
-  QApplication app( argc, argv );
-    app.setStyle( new QPlatinumStyle );
-    QPalette p( QColor( 250, 215, 100 ) );
-    app.setPalette( p, TRUE );
-  MyWindow win(800,800); // physical window size
-  app.setMainWidget(&win);
-  win.setMouseTracking(TRUE);
-  win.show();
-  // because Qt send resizeEvent only on show.
-  win.set_window(-1, 1, -1, 1);
-  return app.exec();
-}
-
-\end{ccExampleCode}
-
-The following is an example of a tool that create \cgal\ points when the user 
-click the left mouse button over the widget. Combined with the previous 
-example, you can get \cgal\ objects. For example in the previous example all 
-you have to do is to declare the tool and to attach it, let's say in the 
-constructor, or in other member function..
- 
-\begin{ccExampleCode}
-namespace CGAL {
-
-template <class R>
-class Qt_widget_get_point : public Qt_widget_tool
-{
-  //  Q_OBJECT
-public:
-  typedef typename R::Point_2	Point;
-  typedef typename R::FT	FT;
-  
-  Qt_widget_get_point(const QCursor c=QCursor(Qt::crossCursor)) :
-    cursor(c) {};
-  
-private:
-  void mousePressEvent(QMouseEvent *e)
-  {
-    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)
-    {
-      FT
-        x=static_cast<FT>(widget->x_real(e->x())),
-        y=static_cast<FT>(widget->y_real(e->y()));
-      widget->new_object(make_object(Point(x, y)));
-    }
-  };
-  void attaching()
-  {
-    oldcursor = widget->cursor();
-    widget->setCursor(cursor);
-  };
-  
-  void detaching()
-  {
-    widget->setCursor(oldcursor);
-  };
-
-  QCursor cursor;
-};
-
-} // namespace CGAL
 \end{ccExampleCode}
 % +-----------------------------------------------------+
 % EOF

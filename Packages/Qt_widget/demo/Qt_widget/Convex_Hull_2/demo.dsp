@@ -99,6 +99,10 @@ SOURCE=..\..\..\src\Qt_Widget.C
 # End Source File
 # Begin Source File
 
+SOURCE=.\Qt_Widget_MovePoint.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\Qt_Widget_standard_toolbar.C
 # End Source File
 # Begin Source File
@@ -139,6 +143,10 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Get_point.h
 # Begin Source File
 
 SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Handtool.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_Widget_MovePoint.h
 # End Source File
 # Begin Source File
 

@@ -134,7 +134,7 @@ namespace CGAL {
       dt->remove(current_v);
       current_v = dt->insert(Point(x, y));
       widget->redraw();	//redraw the scenes
-      emit(redraw());
+      //emit(redraw());
       old_point = Point(x, y);
     }
   };

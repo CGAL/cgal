@@ -22,14 +22,12 @@
 #define CGAL_QT_VIEW_SHOW_TRIANGULATION_H
 
 #include <CGAL/IO/Qt_widget_view.h>
-#include <qobject.h>
 
 namespace CGAL {
 
 template <class T>
 class Qt_view_show_triangulation : public Qt_widget_view
 {
-    //Q_OBJECT
 public:
 	
   Qt_view_show_triangulation(T &t) : tr(t){};
