@@ -4,6 +4,8 @@
 	- Added clear_history() public slot in standard toolbar. The history object is neither public nor accessible so I can't make history->clear() now that the clear_history from Qt_widget is deprecated.
 	- The move_center() and set_center() methods in Qt_widget are no longer public slots, but simple methods as it was documented. We let like this or we change the doc too. :) Maybe they should be public slots.
 	- Modified the doc in Qt_widget according to the latest changes concerning the history. Laurent, please take a look and report bugs if any.
+        - fixed bug in Triangulation_2 demo (uses Qt_widget_toolbar_layers.h that doesn't exist)
+        - added Qt_widget_move_weightedpoint layer in Qt_widget_movepoint.h
 
 
 1.3.24 - 14/03/2003 (rursu)

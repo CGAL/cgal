@@ -54,21 +54,21 @@ class Qt_widget_movepoint : public Qt_widget_movepoint_helper
 {
 public:
 
-  typedef typename T::Point			      Point;
-  typedef typename T::Segment			    Segment;
-  typedef typename T::Face_handle		  Face_handle;
-  typedef typename T::Vertex_handle		Vertex_handle;
-  typedef typename T::Geom_traits::FT	FT;
+  typedef typename T::Point                         Point;
+  typedef typename T::Segment                       Segment;
+  typedef typename T::Face_handle                   Face_handle;
+  typedef typename T::Vertex_handle                 Vertex_handle;
+  typedef typename T::Geom_traits::FT               FT;
 protected:
-  FT						first_x, first_y;
-  FT						x2, y2;
-  bool					wasrepainted;
-  bool					on_first;
-
-  Vertex_handle			current_v;	//the vertex that will be process
-  Point					    old_point;
-  T						      *dt;
-  QPopupMenu				*popup;
+  FT                                                first_x, first_y;
+  FT                                                x2, y2;
+  bool                                              wasrepainted;
+  bool                                              on_first;
+  Vertex_handle                                     current_v;
+         //the vertex that will be process
+  Point                                             old_point;
+  T                                                 *dt;
+  QPopupMenu                                        *popup;
 public:
   Qt_widget_movepoint() : wasrepainted(true), on_first(FALSE)
   {};
@@ -159,26 +159,31 @@ class Qt_widget_move_weightedpoint : public Qt_widget_movepoint_helper
 public:
 
   typedef typename T::Point			      Point;
-  typedef typename T::Segment			    Segment;
-  typedef typename T::Face_handle		  Face_handle;
-  typedef typename T::Vertex_handle		Vertex_handle;
-  typedef typename T::Geom_traits     GT;
+  typedef typename T::Segment                         Segment;
+  typedef typename T::Face_handle                     Face_handle;
+  typedef typename T::Vertex_handle                   Vertex_handle;
+  typedef typename T::Geom_traits                     GT;
   typedef typename CGAL::Kernel_traits<Point>::Kernel::FT FT;
 protected:
-  FT						    first_x, first_y;
-  FT						    x2, y2;
-  bool					    wasrepainted;
-  bool					    on_first; //true if right mouse button was pressed
-  bool              move_button_pressed; //true if the popup's move button 
-                                         //was pressed
-  bool              change_weight_pressed; //true if the popup's 
-                                           //change_weight button was pressed
-
-  Vertex_handle			current_v;	//the vertex that will be processed
-  Point					    old_point;  //contains the old vertex that should be removed
-  T						      *t;         //pointer to regular triangulation being used
-  QPopupMenu				*popup;     //the popup being displayed when right mouse 
-                                //button is pressed
+  FT                                                  first_x, first_y;
+  FT                                                  x2, y2;
+  bool                                                wasrepainted;
+  bool                                                on_first; 
+           //true if right mouse button was pressed
+  bool
+  move_button_pressed; 
+           //true if the popup's move button was pressed
+  bool
+  change_weight_pressed; 
+          //true if the popup's change_weight button was pressed
+  Vertex_handle                                       current_v;
+          //the vertex that will be processed
+  Point                                               old_point;
+          //contains the old vertex that should be removed
+  T                                                   *t;
+          //pointer to regular triangulation being used
+  QPopupMenu                                          *popup;
+          //the popup being displayed when right mouse button is pressed
 public:
   Qt_widget_move_weightedpoint() : wasrepainted(true), on_first(false)
             , move_button_pressed(false), change_weight_pressed(false) {};
@@ -191,7 +196,7 @@ public:
 			      const Point& p)
   {
     Vertex_handle v ;
-    typename Gt::Compare_distance_2 cmp =
+    typename GT::Compare_distance_2 cmp =
       T.geom_traits().compare_distance_2_object();
 
     if( T.is_infinite(f)){
@@ -227,29 +232,28 @@ private:
     }
     if(e->button() == Qt::RightButton)
     {
-	    if (t->dimension()<2) return;
-	    FT x, y;
-      widget->x_real(e->x(), x);
-      widget->y_real(e->y(), y);
-
-	    Point p(x, y);
-      Face_handle f = t->locate(p);
-	    Vertex_handle v = closest_vertex(*t, f, p);
-	    RasterOp old = widget->rasterOp();	//save the initial raster mode
-	    widget->setRasterOp(XorROP);
-	    widget->lock();
+       if (t->dimension()<2) return;
+       FT x, y;
+       widget->x_real(e->x(), x);
+       widget->y_real(e->y(), y);
+       Point p(x, y);
+       Face_handle f = t->locate(p);
+       Vertex_handle v = closest_vertex(*t, f, p);
+       RasterOp old = widget->rasterOp();	//save the initial raster mode
+       widget->setRasterOp(XorROP);
+       widget->lock();
         *widget << CGAL::GREEN << CGAL::PointSize (7) 
               << CGAL::PointStyle (CGAL::DISC);
         if(!wasrepainted)
           *widget << old_point;
         *widget << v->point();
-      widget->unlock();
-      widget->setRasterOp(old);
-      popup->popup(widget->mapToGlobal(e->pos()));
-      old_point = v->point();
-      current_v = v;
-      wasrepainted = FALSE;
-      on_first = FALSE;
+       widget->unlock();
+       widget->setRasterOp(old);
+       popup->popup(widget->mapToGlobal(e->pos()));
+       old_point = v->point();
+       current_v = v;
+       wasrepainted = FALSE;
+       on_first = FALSE;
     }	
   }
   
@@ -270,7 +274,7 @@ private:
         *widget << Point(x, y);
         double wght = current_v->point().weight();
         t->remove(current_v);
-        current_v = t->insert(Gt::Weighted_point(Point(x, y), wght));
+        current_v = t->insert(GT::Weighted_point(Point(x, y), wght));
         widget->redraw();	//redraw the scenes
         old_point = Point(x, y);
       } else if(change_weight_pressed){
@@ -279,7 +283,7 @@ private:
         widget->y_real(e->y(), y);
         double wght = current_v->point().weight();
         t->remove(current_v);
-        current_v = t->insert(Gt::Weighted_point(Point(x, y), wght));
+        current_v = t->insert(GT::Weighted_point(Point(x, y), wght));
         widget->redraw();	//redraw the scenes
         old_point = Point(x, y);
       }
@@ -314,7 +318,8 @@ private:
   move_vertexi(){
     on_first = true;
     move_button_pressed = true;
-    widget->cursor().setPos(widget->mapToGlobal(QPoint(old_point.x(), old_point.y())));
+    widget->cursor().setPos(widget->mapToGlobal(
+                            QPoint(old_point.x(), old_point.y())));
   }
   
   void 
