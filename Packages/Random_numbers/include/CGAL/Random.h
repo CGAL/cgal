@@ -19,23 +19,15 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sven Schönherr <sven@inf.ethz.ch>
+// Author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Sylvain Pion
 
 #ifndef CGAL_RANDOM_H
 #define CGAL_RANDOM_H
 
-// includes
-// --------
-#  include <CGAL/basic.h>
+#include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
-// Class declaration
-// =================
-class Random;
-
-// Class interface
-// ===============
 class Random {
   public:
     // creation
@@ -46,11 +38,30 @@ class Random {
     bool    get_bool  ( );
     int     get_int   ( int lower, int upper);
     double  get_double( double lower = 0.0, double upper = 1.0);
-    
+
+    // Computes a random int value smaller than 2^b.
+    // It's supposed to be fast, useful for randomized algorithms.
+    // The distribution is not perfectly flat, but this is a sacrifice against
+    // efficiency.
+    template <int b>
+    int get_bits()
+    {
+	CGAL_assertion(0<b && b<16);
+        if (val == 0) {
+            random_value = (421U * random_value + 2073U) % 32749U;
+            val = random_value;
+        }
+        int ret = val & ((1<<b)-1);
+        val >>= 1; // Shifting by b would be slightly better, but is slower.
+        return ret;
+    }
+
     int     operator () ( int upper);
   private:
     // data members
     const double  rand_max_plus_1;
+    unsigned int random_value; // Current 15 bits random value.
+    unsigned int val; // random_value shifted by used bits.
 };
 
 // Global variables

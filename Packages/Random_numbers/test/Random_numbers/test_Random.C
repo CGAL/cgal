@@ -25,12 +25,12 @@
 // implementation: test program for Random Numbers Generator
 // ============================================================================
 
-// includes
 #include <CGAL/Random.h>
 #include <cassert>
+#include <iterator>
 
 int
-main( int, char**)
+main()
 {
     // test get_bool
     {
@@ -53,7 +53,40 @@ main( int, char**)
         double  d = CGAL::default_random.get_double( l, u);
         assert( ( l <= d) && ( d < u));
     }
-    
+
+    // test get_bits
+    {
+        int p1[2] = {0,};
+        int p2[4] = {0,};
+        int p3[8] = {0,};
+        int p4[16] = {0,};
+        for (int loops=0; loops < (1<<16); ++loops) {
+          unsigned int l1 = CGAL::default_random.get_bits<1>();
+          unsigned int l2 = CGAL::default_random.get_bits<2>();
+          unsigned int l3 = CGAL::default_random.get_bits<3>();
+          unsigned int l4 = CGAL::default_random.get_bits<4>();
+	  assert(l1 < 2);
+	  assert(l2 < 4);
+	  assert(l3 < 8);
+	  assert(l4 < 16);
+	  // std::cout << l1 << " " << l2 << " "
+	  //           << l3 << " " << l4 << std::endl;
+	  ++(p1[l1]);
+	  ++(p2[l2]);
+	  ++(p3[l3]);
+	  ++(p4[l4]);
+	}
+	std::cout << "Pseudo random distribution of get_bits<>():" << std::endl;
+	std::copy(p1, p1+2, std::ostream_iterator<int>(std::cout, " "));
+	std::cout << std::endl;
+	std::copy(p2, p2+4, std::ostream_iterator<int>(std::cout, " "));
+	std::cout << std::endl;
+	std::copy(p3, p3+8, std::ostream_iterator<int>(std::cout, " "));
+	std::cout << std::endl;
+	std::copy(p4, p4+16, std::ostream_iterator<int>(std::cout, " "));
+	std::cout << std::endl;
+    }
+
     // test operator()
     {
         int  i = CGAL::default_random( 5555);

@@ -63,6 +63,11 @@ deterministically or using the state functions as described below.
 \ccMemberFunction{ bool get_bool( );}{
         returns a random \ccc{bool}.}
 
+\ccMemberFunction{ template <int b> int get_bits();}{
+        returns a random \ccc{int} value from the interval
+        $[\mbox{\ccc{0},\ccc{2^b}})$.  This is supposed to
+	be efficient.}
+
 \ccMemberFunction{ int get_int( int lower, int upper);}{
         returns a random \ccc{int} from the interval
         $[\mbox{\ccc{lower},\ccc{upper}})$.}

@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 // constructors
 Random::
 Random( )
-    : rand_max_plus_1( RAND_MAX+1.0)
+    : rand_max_plus_1( RAND_MAX+1.0), val(0)
 {
     // get system's time
     std::time_t s;
@@ -46,14 +46,16 @@ Random( )
 
     // initialize random numbers generator
     CGAL_CLIB_STD::srand( seed);
+    random_value = get_int(0, 1<<15);
 }
 
 Random::
 Random( unsigned int  seed)
-    : rand_max_plus_1( RAND_MAX+1.0)
+    : rand_max_plus_1( RAND_MAX+1.0), val(0)
 {
     // initialize random numbers generator
     CGAL_CLIB_STD::srand( seed);
+    random_value = get_int(0, 1<<15);
 }
 
 // Global variables
