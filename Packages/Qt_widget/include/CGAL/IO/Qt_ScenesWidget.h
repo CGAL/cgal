@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------------
 //
 // file          : include/CGAL/IO/Qt_ScenesWidget.h
-// package       : QT_window
+// package       : Qt_widget
 // author(s)     : Laurent Rineau
 // release       : 
 // release_date  : 

@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_Get_line.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_widget_get_line.h
+// package       : Qt_widget
 // author(s)     : Ursu Radu
 // release       : 
 // release_date  : 
@@ -114,4 +114,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+#endif // CGAL_QT_WIDGET_GET_LINE_H

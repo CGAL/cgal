@@ -8,9 +8,9 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_tool.h
-// package       : QT_window
-// author(s)     : Laurent Rineau
+// file          : include/CGAL/IO/Qt_widget_tool.h
+// package       : Qt_widget
+// author(s)     : Laurent Rineau & Radu Ursu
 // release       : 
 // release_date  : 
 //
@@ -55,7 +55,8 @@ public:
 
 
 signals:
-  void redraw();    //this signal is emited when the tool needs to repaint the widget
+  void redraw();	//this signal is emited when the tool 
+			//needs to repaint the widget
 
 public slots:
   virtual void widget_repainted() {};	//called every time widget been repainted

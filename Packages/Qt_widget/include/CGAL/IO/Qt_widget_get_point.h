@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_Get_point.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_widget_get_point.h
+// package       : Qt_widget
 // author(s)     : Laurent Rineau
 // release       : 
 // release_date  : 
@@ -67,4 +67,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_POINT_H
+#endif // CGAL_QT_WIDGET_GET_POINT_H

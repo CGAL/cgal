@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------------
 //
 // file          : include/CGAL/IO/Qt_view_show_mouse_coordinates.h
-// package       : QT_window
+// package       : Qt_widget
 // author(s)     : Ursu Radu
 // release       : 
 // release_date  : 

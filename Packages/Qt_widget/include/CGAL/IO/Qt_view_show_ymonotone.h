@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Scene_Show_green_approximation.h
+// file          : include/CGAL/IO/Qt_view_show_ymonotone.h
 // package       : QT_window
 // author(s)     : Radu Ursu
 // release       : 
@@ -63,4 +63,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+#endif // CGAL_QT_VIEW_SHOW_YMONOTONE_H

@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Scene_Show_points.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_view_show_points.h
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -42,7 +42,8 @@ public:
     Vertex v;
     Vertex_iterator it = tr.vertices_begin(), 
 		beyond = tr.vertices_end();
-    widget << CGAL::GREEN << CGAL::PointSize (3) << CGAL::PointStyle (CGAL::DISC);
+    widget << CGAL::GREEN << CGAL::PointSize (3) 
+		<< CGAL::PointStyle (CGAL::DISC);
     while(it != beyond)
     {
       v = *it;
@@ -57,4 +58,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+#endif // CGAL_QT_VIEW_SHOW_POINTS_H

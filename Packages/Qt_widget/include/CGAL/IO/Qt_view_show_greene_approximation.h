@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------------
 //
 // file          : include/CGAL/IO/Qt_view_show_greene_approximation.h
-// package       : QT_window
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -45,13 +45,15 @@ public:
     greene_approx_polys.clear();
     Traits  partition_traits;
     
-    CGAL::greene_approx_convex_partition_2(polygon.vertices_begin(), 
-                                          polygon.vertices_end(),
-                                          std::back_inserter(greene_approx_polys),
-                                          partition_traits);
+    CGAL::greene_approx_convex_partition_2(
+		polygon.vertices_begin(), 
+		polygon.vertices_end(),
+		std::back_inserter(greene_approx_polys),
+		partition_traits);
     
     std::list<T>::const_iterator p_it;
-    for(p_it = greene_approx_polys.begin(); p_it != greene_approx_polys.end(); p_it++)
+    for(p_it = greene_approx_polys.begin(); 
+		p_it != greene_approx_polys.end(); p_it++)
     {
       widget << CGAL::GREEN; 
       widget << *p_it;

@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Scene_Show_polygon.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_view_show_polygon_points.h
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -44,7 +44,8 @@ public:
         vert_it++)
     {
       
-      widget << CGAL::GREEN << CGAL::PointSize (5) << CGAL::PointStyle (CGAL::DISC);
+      widget << CGAL::GREEN << CGAL::PointSize (5) 
+			<< CGAL::PointStyle (CGAL::DISC);
       widget << Point_2((*vert_it).x(), (*vert_it).y());
     }
   };
@@ -55,4 +56,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_SCENE_SHOW_POLYGON_H
+#endif // CGAL_QT_VIEW_SHOW_POLYGON_POINTS_H

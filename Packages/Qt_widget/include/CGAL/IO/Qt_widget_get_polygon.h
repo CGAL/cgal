@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Widget_Get_polygon.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_widget_get_polygon.h
+// package       : Qt_widget
 // author(s)     : Laurent Rineau
 // release       : 
 // release_date  : 
@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WINDOW_GET_POLYGON_H
-#define CGAL_QT_WINDOW_GET_POLYGON_H
+#ifndef CGAL_QT_WIDGET_GET_POLYGON_H
+#define CGAL_QT_WIDGET_GET_POLYGON_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_tool.h>
@@ -125,4 +125,4 @@ protected:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_POLYGON_H
+#endif // CGAL_QT_WIDGET_GET_POLYGON_H

@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_widget.h
+// package       : Qt_widget
 // author(s)     : Laurent Rineau
 // release       : 
 // release_date  : 
@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WINDOW_H
-#define CGAL_QT_WINDOW_H
+#ifndef CGAL_QT_WIDGET_H
+#define CGAL_QT_WIDGET_H
 
 #include <qwidget.h>
 #include <qpainter.h>
@@ -32,9 +32,6 @@
 #include <vector>
 #include <list>
 #include <map>
-
-
-#define CGAL_MOC_FROM(sourcefile) 
 
 namespace CGAL {
 
@@ -703,4 +700,4 @@ operator<<(Qt_widget& w, Regular_triangulation_2<Gt,Tds> &t)
 
 } // namespace CGAL
 
-#endif // QT_WINDOW_H
+#endif // QT_WIDGET_H

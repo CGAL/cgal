@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_Zoom.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_widget_zoom.h
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -18,10 +18,8 @@
 //
 // ============================================================================
 
-// TODO: put almost everything in a .C file
-
-#ifndef CGAL_QT_WINDOW_ZOOM_H
-#define CGAL_QT_WINDOW_ZOOM_H
+#ifndef CGAL_QT_WIDGET_ZOOM_H
+#define CGAL_QT_WIDGET_ZOOM_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_tool.h>
@@ -120,4 +118,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_ZOOM_H
+#endif // CGAL_QT_WIDGET_ZOOM_H

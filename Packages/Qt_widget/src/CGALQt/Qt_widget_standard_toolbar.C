@@ -8,9 +8,9 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_Window_toolbar.C
-// package       : QT_window
-// author(s)     : Ursu Radu
+// file          : src/Qt_widget_standard_toolbar.C
+// package       : Qt_widget
+// author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
 //

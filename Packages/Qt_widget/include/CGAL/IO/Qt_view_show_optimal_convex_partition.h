@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Scene_Show_green_approximation.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_view_show_optimal_convex_partition.h
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -65,4 +65,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+#endif // CGAL_QT_VIEW_SHOW_OPTIMAL_CONVEX_H

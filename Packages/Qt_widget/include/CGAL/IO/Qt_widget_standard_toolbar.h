@@ -8,9 +8,9 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_toolbar.h
-// package       : QT_window
-// author(s)     : Ursu Radu
+// file          : include/CGAL/IO/Qt_widget_standard_toolbar.h
+// package       : Qt_widget
+// author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
 //
@@ -82,4 +82,4 @@ private:
 
 };//end namespace
 
-#endif
+#endif //CGAL_QT_WIDGET_STANDARD_TOOLBAR_H

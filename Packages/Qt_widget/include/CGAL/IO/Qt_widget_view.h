@@ -8,9 +8,9 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Scene.h
-// package       : QT_window
-// author(s)     : Laurent Rineau
+// file          : include/CGAL/IO/Qt_widget_view.h
+// package       : Qt_widget
+// author(s)     : Laurent Rineau & Radu Ursu
 // release       : 
 // release_date  : 
 //

@@ -8,9 +8,9 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_Window_tool.C
-// package       : QT_window
-// author(s)     : Laurent Rineau
+// file          : src/Qt_widget_tool.C
+// package       : Qt_widget
+// author(s)     : Laurent Rineau & Radu Ursu
 // release       : 
 // release_date  : 
 //

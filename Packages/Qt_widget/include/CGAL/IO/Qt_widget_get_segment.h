@@ -8,9 +8,9 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_Get_segment.h
-// package       : QT_window
-// author(s)     : Ursu Radu
+// file          : include/CGAL/IO/Qt_widget_get_segment.h
+// package       : Qt_widget
+// author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
 //
@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WINDOW_GET_SEGMENT_H
-#define CGAL_QT_WINDOW_GET_SEGMENT_H
+#ifndef CGAL_QT_WIDGET_GET_SEGMENT_H
+#define CGAL_QT_WIDGET_GET_SEGMENT_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_tool.h>
@@ -113,4 +113,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+#endif // CGAL_QT_WIDGET_GET_SEGMENT_H

@@ -8,9 +8,9 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_Window.C
-// package       : QT_window
-// author(s)     : Laurent Rineau
+// file          : src/Qt_widget.C
+// package       : Qt_widget
+// author(s)     : Laurent Rineau & Radu Ursu
 // release       : 
 // release_date  : 
 //
@@ -389,7 +389,6 @@ void Qt_widget::redraw()
     temp.view = s;
     temp.active = true;
     qt_toggle_views.push_back(temp);
-    connect(s,SIGNAL(dying(Qt_widget_view*)),this,SLOT(remove_scene(Qt_widget_view*)));
   }
 
   void Qt_widget::activate(Qt_widget_view* s)
@@ -446,7 +445,8 @@ void Qt_widget::redraw()
 	it++;
       }
     }
-    //qt_toggle_views.erase(std::find(qt_toggle_views.begin(), qt_toggle_views.end(), temp));
+    //qt_toggle_views.erase(std::find(qt_toggle_views.begin(),
+//	 qt_toggle_views.end(), temp));
   }
 
 } // namespace CGAL

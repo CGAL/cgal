@@ -8,8 +8,8 @@
 //	
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_Zoom.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_widget_handtool.h
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WINDOW_HANDTOOL_H
-#define CGAL_QT_WINDOW_HANDTOOL_H
+#ifndef CGAL_QT_WIDGET_HANDTOOL_H
+#define CGAL_QT_WIDGET_HANDTOOL_H
 
 
 #include <cstdio>
@@ -149,4 +149,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+#endif // CGAL_QT_WIDGET_HANDTOOL_H

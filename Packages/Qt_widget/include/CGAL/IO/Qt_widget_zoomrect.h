@@ -8,8 +8,8 @@
 //	
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_Zoom.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_widget_zoomrect.h
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WINDOW_ZOOMRECT_H
-#define CGAL_QT_WINDOW_ZOOMRECT_H
+#ifndef CGAL_QT_WIDGET_ZOOMRECT_H
+#define CGAL_QT_WIDGET_ZOOMRECT_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_tool.h>
@@ -131,4 +131,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WINDOW_GET_SEGMENT_H
+#endif // CGAL_QT_WIDGET_ZOOMRECT_H

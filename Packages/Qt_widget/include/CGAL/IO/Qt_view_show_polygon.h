@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Scene_Show_polygon.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_view_show_polygon.h
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -51,4 +51,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_SCENE_SHOW_POLYGON_H
+#endif // CGAL_QT_VIEW_SHOW_POLYGON_H
