@@ -49,7 +49,6 @@ De toute facon, c'est le fsqrt qui prend un max de temps, donc l'enrobage...
     void convert_from_to(Target &, const Source &) ?
   Suggest that to Stefan for misc.h ?
 - Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
-  Note : this is already in the kernel, this file should disappear !
 - Bench -fbranch-probabilities ?  Use __builtin_expect() for GCC 3 ?
 - Mark the cache as "mutable" (see Stroustrup, page 232) ?
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
