@@ -22,12 +22,8 @@
 // test stream support for CGAL
 // ============================================================================
 
-
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <cstddef>
-
-#include <CGAL/Point_2.h>
 #include <strstream>
 #include <CGAL/IO/Ostream_iterator.h>
 #include <CGAL/IO/Istream_iterator.h>
@@ -37,7 +33,7 @@ using namespace CGAL;
 int main()
 {
     typedef Cartesian<double>                        Rep;
-    typedef Point_2<Rep>                             Point;
+    typedef Rep::Point_2                             Point;
     typedef Ostream_iterator<Point,std::ostrstream>  IteratorO;
     typedef Istream_iterator<Point,std::istrstream>  IteratorI;
     {

@@ -2,28 +2,23 @@
 // ----------------------------------------------------------
 // CGAL example program for the CGAL stream iterator adaptor.
 
-#ifndef CGAL_USE_LEDA
-#include <iostream>
-int main()
-{
-  std::cout << "This program requires LEDA window." << std::endl;
-  return 0;
-}
-#else
-
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/IO/Istream_iterator.h>
 #include <CGAL/IO/Ostream_iterator.h>
-#include <CGAL/IO/leda_window.h>
+#include <CGAL/IO/Window_stream.h>
 #include <algorithm>
 
 typedef CGAL::Cartesian<double>                       TutorialR;
-typedef CGAL::Point_2<TutorialR>                      Point;
+typedef TutorialR::Point_2                            Point;
 typedef CGAL::Creator_uniform_2<double,Point>         Creator;
 typedef CGAL::Random_points_in_disc_2<Point,Creator>  Random_points_in_disc;
+
+#ifdef CGAL_USE_CGAL_WINDOW
+#define leda_window CGAL::window
+#define leda_green  CGAL::green
+#endif
 
 void init_window( leda_window& W)
 {
@@ -33,9 +28,8 @@ void init_window( leda_window& W)
     W.init(-1.0, 1.0, -1.0);
 }
 
-int main()
-{
-    Point  points[100];
+int main() {
+    Point points[100];
 
     // Create 100 random points uniform distributed in a disc of radius 1.
     // Use deterministic initialization for the random number generator.
@@ -55,5 +49,3 @@ int main()
 
     return 0;
 }
-
-#endif
