@@ -1,3 +1,6 @@
+5 September 2004 Menelaos Karavelas & Sylvain Pion
+- excluded unsigned numbers from being models of RingNumberType
+
 4 September 2004 Menelaos Karavelas
 - re-wrote author names in copyright notices using 7-bit characters
 

@@ -5,7 +5,8 @@
 The concept \ccRefName\ defines the syntactic requirements a number type must
 meet in order to be used in \cgal\ as a ring type.  This implies that
 \ccc{CGAL::Number_type_traits<RingNumberType>::Has_division} is not required
-to be \ccc{CGAL::Tag_true}.
+to be \ccc{CGAL::Tag_true}. Unsigned numbers are excluded due to
+semantical limitations in the ordering.
 
 \ccRefines
 
