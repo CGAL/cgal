@@ -162,6 +162,7 @@ public:
   class  SweepLineGetSubCurves {};
   class  SweepLineGetPoints {};
   class  SweepLineGetInterCurveList {};
+  class  SweepLinePlanarmap {};
 
   Sweep_line_tight_2() : m_traits(new Traits()), m_traitsOwner(true),
     m_includeEndPoints(true) {}
@@ -1492,7 +1493,7 @@ Intersect(Subcurve *c1, Subcurve *c2)
       return isOverlap;
     } else 
     {
-      SL_DEBUG(std::cout << "event already exists, updating.. (" << p << ")\n";)
+      SL_DEBUG(std::cout << "event already exists,updating.. (" << xp << ")\n";)
       e = eqi->second;
       if ( !scv1->isEndPoint(xp)) {
 	e->addCurveToLeft(c1, m_sweepLinePos);
