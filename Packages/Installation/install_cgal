@@ -5043,7 +5043,7 @@ write_compiler_flags()
       "(e.g. /usr/local/lib/qt/bin/moc)" \
       >> ${FILE}
     ${_printf} "%s\\\\\n" "QT_MOC = " >> ${FILE}
-    ${_printf} "\t%s\n\n" "`_posix_path ${QT_MOC}`" >> ${FILE}
+    ${_printf} "\t%s\n\n" "`posix_path ${QT_MOC}`" >> ${FILE}
   fi
 
   #
