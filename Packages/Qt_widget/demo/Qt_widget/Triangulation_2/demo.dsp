@@ -119,7 +119,7 @@ SOURCE=..\..\..\src\CGALQt\Qt_widget_view.C
 # End Source File
 # Begin Source File
 
-SOURCE=.\triangulationdemo.C
+SOURCE=.\triangulation_2.C
 # End Source File
 # End Group
 # Begin Group "Header Files"

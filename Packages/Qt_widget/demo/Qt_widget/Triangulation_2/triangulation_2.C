@@ -81,10 +81,8 @@ public:
     
   connect(&win, SIGNAL(mouseReleased(QMouseEvent*)), this,
           SLOT(insert_after_show_conflicts(QMouseEvent*)));
-
-  connect(&win, SIGNAL(resized()), this, SLOT(redrawWin()));
 	
-	//create a timer for checking if somthing changed
+  //create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()),
            this, SLOT(timerDone()) );
@@ -188,11 +186,6 @@ public slots:
     win.unlock();
     something_changed();
   }
-
-  void redrawWin()
-  {
-    //emit(was_repainted());	
-  }
 	
 
 private slots:
@@ -254,13 +247,13 @@ private slots:
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("View");
     ed->show();
+    ed->set_window(-1.1, 1.1, -1.1, 1.1);
     something_changed();
   }
 
   void timerDone()
   {
     if(old_state!=current_state){
-      redrawWin();
       win.redraw();
       old_state = current_state;
     }
