@@ -65,35 +65,7 @@ namespace Mesh_2 {
       edge = e;
     }
 
-    Zone get_conflicts_zone(Tr& t, const Point& p)
-    {
-      Zone zone;
 
-      typedef std::back_insert_iterator<typename Zone::Faces> OutputItFaces;
-      typedef std::back_insert_iterator<typename Zone::Edges> OutputItEdges;
-
-      OutputItFaces faces_out(zone.faces);
-      OutputItEdges edges_out(zone.boundary_edges);
-
-      const Face_handle& f = edge.first;
-      const int& i = edge.second;
-      *faces_out++ = f;
-      const Face_handle n = f->neighbor(i);
-      *faces_out++ = n;
-      const int ni = f->mirror_index(i);
-      std::pair<OutputItFaces,OutputItEdges>
-	pit = std::make_pair(faces_out,edges_out);
-      pit = t.propagate_conflicts(p,f,t.ccw(i),pit);
-      pit = t.propagate_conflicts(p,f,t. cw(i),pit);
-      pit = t.propagate_conflicts(p,n,t.ccw(ni),pit);
-      pit = t.propagate_conflicts(p,n,t. cw(ni),pit);
-      return zone; 
-    }
-
-    static Vertex_handle insert(Tr&t, const Point& p, Zone& zone)
-    {
-      return Std_traits::insert(t, p, zone);
-    }
     
   }; // end Refine_edges_triangulation_mesher_level_traits_2
 
@@ -112,11 +84,11 @@ namespace Mesh_2 {
       /** Object predicate that tests if a given \c Constrained_Edge is
           really an edge of the triangulation and is constrained.
       */
-      class Is_really_a_constrained_edge {
+      class Is_a_constrained_edge {
         const Tr& tr;
       public:
         /** \param tr_ points to the triangulation. */
-        explicit Is_really_a_constrained_edge(const Tr& tr_) : tr(tr_) {}
+        explicit Is_a_constrained_edge(const Tr& tr_) : tr(tr_) {}
 
         bool operator()(const Constrained_edge& ce) const
         {
@@ -128,7 +100,7 @@ namespace Mesh_2 {
       };
 
       typedef ::CGAL::Mesh_2::Filtered_queue_container<Constrained_edge,
-                                               Is_really_a_constrained_edge>
+                                               Is_a_constrained_edge>
                            Default_container;
     };
 
@@ -312,7 +284,9 @@ template <
   class Container = 
     typename details::Refine_edges_base_types<Tr>::Default_container
 >
-class Refine_edges_base
+class Refine_edges_base :
+    public No_private_test_point_conflict,
+    public No_after_no_insertion
 {
 public:
   typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
@@ -336,13 +310,12 @@ protected:
   /* --- protected datas --- */
 
   Tr& tr; /**< The triangulation itself. */
-  Triangulation_traits traits;
 
   /** Predicates to filter edges. */
   typedef typename details::Refine_edges_base_types<Tr>
-     ::Is_really_a_constrained_edge Is_really_a_constrained_edge;
+     ::Is_a_constrained_edge Is_a_constrained_edge;
 
-  const Is_really_a_constrained_edge is_really_a_constrained_edge;
+  const Is_a_constrained_edge is_a_constrained_edge;
 
   Container edges_to_be_conformed; /**< Edge queue */
 
@@ -350,6 +323,7 @@ protected:
   Is_locally_conform is_locally_conform;
 
   Vertex_handle va, vb;
+  Edge edge;
 
   bool imperatively;
 
@@ -357,8 +331,8 @@ public:
   /** \name CONSTRUCTORS */
 
   Refine_edges_base(Tr& tr_) :
-    tr(tr_), traits(), is_really_a_constrained_edge(tr_),
-    edges_to_be_conformed(is_really_a_constrained_edge),
+    tr(tr_), is_a_constrained_edge(tr_),
+    edges_to_be_conformed(is_a_constrained_edge),
     is_locally_conform(), imperatively(false), converter(tr_)
   {
   }
@@ -377,24 +351,50 @@ public:
 
   /** \name Functions that this level must declare. */
 
-  Tr& get_triangulation_ref()
+  Tr& triangulation_ref_impl()
   {
     return tr;
   }
 
-  const Tr& get_triangulation_ref() const
+  const Tr& triangulation_ref_impl() const
   {
     return tr;
   }
 
-  Triangulation_traits& get_triangulation_traits()
+  /** Reimplemented from Triangulation_mesher_level_traits_2<Tr>. */
+  Zone conflicts_zone_impl(const Point& p)
   {
-    return traits;
+    Zone zone;
+
+    typedef std::back_insert_iterator<typename Zone::Faces> OutputItFaces;
+    typedef std::back_insert_iterator<typename Zone::Edges> OutputItEdges;
+
+    OutputItFaces faces_out(zone.faces);
+    OutputItEdges edges_out(zone.boundary_edges);
+
+    const Face_handle& f = edge.first;
+    const int i = edge.second;
+    *faces_out++ = f;
+    const Face_handle n = f->neighbor(i);
+    *faces_out++ = n;
+    const int ni = f->mirror_index(i);
+    std::pair<OutputItFaces,OutputItEdges>
+    pit = std::make_pair(faces_out,edges_out);
+    pit = triangulation_ref_impl().propagate_conflicts(p,f,Tr::ccw(i),pit);
+    pit = triangulation_ref_impl().propagate_conflicts(p,f,Tr:: cw(i),pit);
+    pit = triangulation_ref_impl().propagate_conflicts(p,n,Tr::ccw(ni),pit);
+    pit = triangulation_ref_impl().propagate_conflicts(p,n,Tr:: cw(ni),pit);
+    return zone; 
   }
 
-  const Triangulation_traits& get_triangulation_traits() const
+  Vertex_handle insert_impl(const Point& p, Zone& zone)
   {
-    return traits;
+    return triangulation_ref_impl().star_hole(p,
+					      zone.boundary_edges.begin(),
+					      zone.boundary_edges.end(),
+					      zone.faces.begin(),
+					      zone.faces.end()
+					      );
   }
 
   /** Scans all constrained edges and put them in the queue if they are
@@ -468,27 +468,21 @@ public:
     return midpoint(va->point(), vb->point());
   }
 
-  /** Passes the edge to the triangulation traits. */
+  /** Store the edge. */
   void before_conflicts_impl(const Edge& e, const Point&)
   {
-    traits.set_edge(e);
-  }
-
-  /** Do nothing. */
-  void after_no_insertion_impl(const Edge&, const Point&,
-                             const Zone& )
-  {
+    edge = e;
   }
 
   /**
    * Test if the edges of the boundary are locally conforming.
    * Push which that are not in the list of edges to be conformed.
    */
-  std::pair<bool, bool>
-  test_pprivate_test_point_conflict_imploint_conflict_from_superior_impl(const Point& p,
-                                       Zone& z)
+  Mesher_level_conflict_status
+  test_point_conflict_from_superior_impl(const Point& p,
+					 Zone& z)
   {
-    bool no_edge_is_encroached = true;
+    Mesher_level_conflict_status status = NO_CONFLICT;
     
     for(typename Zone::Edges_iterator eit = z.boundary_edges.begin();
         eit != z.boundary_edges.end(); ++eit)
@@ -499,23 +493,16 @@ public:
         if(fh->is_constrained(i) && !is_locally_conform(tr, fh, i, p))
           {
             add_constrained_edge_to_be_conformed(*eit);
-            no_edge_is_encroached = false;
+	    status = CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
           }
       }
 
-    return std::make_pair(no_edge_is_encroached, false);
-  }
-
-  /** Do nothing. */
-  std::pair<bool, bool> 
-  private_test_point_conflict_impl(Point, Zone)
-  {
-    return std::make_pair(true, true);
+    return status;
   }
 
   /** Unmark as constrained. */
-  void before_insertion(const Edge& e, const Point&,
-                           const Zone&)
+  void before_insertion_impl(const Edge& e, const Point&,
+			     const Zone&)
   {
     const Face_handle& f = e.first;
     const int& i = e.second;
@@ -611,7 +598,7 @@ private: /** \name DEBUGGING TYPES AND DATAS */
 
 private:
 
-  typedef boost::filter_iterator<Is_really_a_constrained_edge,
+  typedef boost::filter_iterator<Is_a_constrained_edge,
                                  typename Container::const_iterator>
     Aux_edges_filter_iterator;
 
@@ -623,7 +610,7 @@ public:  /** \name DEBUGGING FUNCTIONS */
   Edges_const_iterator begin() const
   {
     return Edges_const_iterator(
-       Aux_edges_filter_iterator(is_really_a_constrained_edge,
+       Aux_edges_filter_iterator(is_a_constrained_edge,
                                  this->edges_to_be_conformed.begin(),
                                  this->edges_to_be_conformed.end()),
        converter);
@@ -632,7 +619,7 @@ public:  /** \name DEBUGGING FUNCTIONS */
   Edges_const_iterator end() const
   {
     return Edges_const_iterator(
-       Aux_edges_filter_iterator(is_really_a_constrained_edge,
+       Aux_edges_filter_iterator(is_a_constrained_edge,
                                  this->edges_to_be_conformed.end(),
                                  this->edges_to_be_conformed.end()),
        converter);

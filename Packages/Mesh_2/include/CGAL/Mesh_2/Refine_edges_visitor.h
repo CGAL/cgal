@@ -76,13 +76,13 @@ public:
 
   void before_insertion(const Edge&, const Point& p, Zone& z)
   {
-    mesher_base.before_insertion(Face_handle(), p, z);
+    mesher_base.before_insertion_impl(Face_handle(), p, z);
   }
 
   /** Restore markers in the star of \c v. */
   void after_insertion(const Vertex_handle& v)
   {
-    Tr& tr = mesher_base.get_triangulation_ref();
+    Tr& tr = mesher_base.triangulation_ref_impl();
 
     int dummy;
     // if we put edge_index instead of dummy, Intel C++ does not find

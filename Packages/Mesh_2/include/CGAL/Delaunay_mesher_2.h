@@ -302,9 +302,9 @@ public:
   const Point next_refinement_point() 
   {
     if( !edges_level.is_algorithm_done() )
-      return edges_level.get_refinement_point(next_encroached_edge());
+      return edges_level.refinement_point(next_encroached_edge());
     else
-      return faces_level.get_refinement_point(next_bad_face());
+      return faces_level.refinement_point(next_bad_face());
   }
 
   typedef typename Edges_level::Edges_const_iterator

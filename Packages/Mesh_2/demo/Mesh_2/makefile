@@ -15,6 +15,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
+	   -I../../../Triangulation_2/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
@@ -49,7 +50,7 @@ Qt_widget_style_editor.moc:  Qt_widget_style_editor.h
 Qt_widget_style_editor-aux.moc:  Qt_widget_style_editor-aux.h
 	$(QT_MOC) -o Qt_widget_style_editor-aux.moc  Qt_widget_style_editor-aux.h
 
-Qt_widget_style_editor(OBJ_EXT): Qt_widget_style_editor-aux.moc
+Qt_widget_style_editor(OBJ_EXT): Qt_widget_style_editor-aux.moc Qt_widget_style_editor.moc
 
 Show_points.moc: Show_points.h
 	$(QT_MOC) -o Show_points.moc Show_points.h

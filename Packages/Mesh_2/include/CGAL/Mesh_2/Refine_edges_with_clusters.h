@@ -153,8 +153,7 @@ public:
   test_point_conflict_from_superior_impl(const Point& p,
 					 Zone& z)
   {
-    bool split_the_face = true;
-    bool remove_the_bad_face = true;
+    Mesher_level_conflict_status status = NO_CONFLICT;
 
     Tr& tr = triangulation_ref_impl();
 
@@ -169,7 +168,7 @@ public:
 	    const Vertex_handle& v1 = fh->vertex( tr.cw (i));
 	    const Vertex_handle& v2 = fh->vertex( tr.ccw(i));
 
-            split_the_face = false;
+	    status = CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
 
             bool v1_has_a_cluster = clusters.get_cluster(v1,v2,ca,ca_it);
             bool v2_has_a_cluster = clusters.get_cluster(v2,v1,cb,cb_it);
@@ -179,7 +178,7 @@ public:
             {
               // two clusters or no cluster
               add_constrained_edge_to_be_conformed(v1, v2);
-              remove_the_bad_face = false;
+	      //	      status = CONF//CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
             }
           else
             {
@@ -198,14 +197,14 @@ public:
                   ca.rmin >= shortest_edge_squared_length(fh) )
                 {
                   add_constrained_edge_to_be_conformed(v1,v2);
-                  remove_the_bad_face = false;
+		  status = CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
                 }
             }
           }
       }; // after here edges encroached by p are in the list of edges to
          // be conformed.
 
-    return std::make_pair(split_the_face, remove_the_bad_face);
+    return status;
   }
 
 private:

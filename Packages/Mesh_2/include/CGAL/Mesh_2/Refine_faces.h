@@ -37,6 +37,8 @@ class Refine_faces_base :
 {
   /** \name Types from Tr. */
 
+  typedef Tr Triangulation;
+
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Geom_traits::FT FT;
   typedef FT      Squared_length;
@@ -307,7 +309,7 @@ is_bad(Quality q) const
         Self,
         typename Tr::Face_handle,
         Previous,
-	Triangulation_mesher_level_traits_2<Tr>,
+	Triangulation_mesher_level_traits_2<Tr>
 	>
       Faces_mesher_level;
     }; // end Refine_faces_types
@@ -340,6 +342,8 @@ public:
   typedef Refine_faces<Tr, Criteria, Previous, Base> Self;
   typedef typename details::Refine_faces_types<Tr, Self, Previous>
     ::Faces_mesher_level Mesher;
+
+  typedef Tr Triangulation;
 
   typedef typename Base::Bad_faces Bad_faces;
 

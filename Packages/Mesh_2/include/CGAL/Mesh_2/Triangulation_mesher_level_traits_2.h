@@ -53,7 +53,7 @@ struct Triangulation_mesher_level_traits_2 :
     Edges boundary_edges;
   };
 
-  static Zone conflicts_zone_impl(const Point& p)
+  Zone conflicts_zone_impl(const Point& p)
   {
     Zone zone;
 
@@ -70,7 +70,7 @@ struct Triangulation_mesher_level_traits_2 :
     return zone;
   }
 
-  static Vertex_handle insert_impl(const Point& p, Zone& zone)
+  Vertex_handle insert_impl(const Point& p, Zone& zone)
   {
 #ifdef DEBUG
     std::cerr << "insert(" << p << "): " 
