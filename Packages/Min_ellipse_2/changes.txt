@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.2.6 on 18-Aug-1999
+- some missing `std::' added.
+
 Version 3.2.5 on 14-Jul-1999
 - prefix `CGAL_' added to `CONIC_MISC_H'.
 
