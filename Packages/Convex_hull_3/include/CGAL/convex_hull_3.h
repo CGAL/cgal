@@ -562,8 +562,8 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 		   Object& ch_object)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
-   return CGAL_ch_quickhull_obj_3(first, beyond, ch_object,
-                                  reinterpret_cast<Point_3*>(0));
+   CGAL_ch_quickhull_obj_3(first, beyond, ch_object,
+                           reinterpret_cast<Point_3*>(0));
 
 }
 
@@ -571,7 +571,7 @@ template <class InputIterator, class R>
 void CGAL_ch_quickhull_obj_3(InputIterator first, InputIterator beyond, 
 		             Object& ch_object, Point_3<R>*)
 {
-   return convex_hull_3(first, beyond, ch_object, Convex_hull_traits_3<R>());
+   convex_hull_3(first, beyond, ch_object, Convex_hull_traits_3<R>());
 }
 
 template <class InputIterator, class Polyhedron_3, class Traits>
@@ -614,7 +614,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3& polyhedron)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
-   return CGAL_ch_quickhull_poly_3(first, beyond, polyhedron,
+   CGAL_ch_quickhull_poly_3(first, beyond, polyhedron,
                                    reinterpret_cast<Point_3*>(0));
 
 }
@@ -623,7 +623,7 @@ template <class InputIterator, class Polyhedron_3, class R>
 void CGAL_ch_quickhull_poly_3(InputIterator first, InputIterator beyond, 
 		              Polyhedron_3& polyhedron, Point_3<R>*)
 {
-   return convex_hull_3(first, beyond, polyhedron, Convex_hull_traits_3<R>());
+   convex_hull_3(first, beyond, polyhedron, Convex_hull_traits_3<R>());
 }
 
 
