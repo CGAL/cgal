@@ -1,3 +1,10 @@
+
+
+version 11.24 (08/05/03) MY
+- put the code of template member function get_alpha_shape_vertices 
+  in the class Alpha_shape_2
+- fixed the typedef for Interval_3  in Alpha_shape_2.h
+
 version 11.23 (07/05/03) my
 - fixed template parameters in instanciations of Regular_face_base_2
 
