@@ -1024,7 +1024,7 @@
 % |
 % | \begin{ccTexOnly}..., \begin{ccHtmlOnly}..., \ccTexHtml{}{}, \ccAnchor{}{}
 % |
-% | \ccHtmlIndex, \ccHtmlIndexC, \ccHtmlCrossLink, 
+% | \ccHtmlIndex, \ccHtmlIndexC, \ccHtmlCrossLink, \ccHtmlNoClassToc,
 % | \ccHtmlNoClassLinks, \ccHtmlNoClassFile, \ccHtmlNoClassIndex
 % | \ccHtmlBeginClassFile, \ccHtmlEndClassFile
 % +--------------------------------------------------------------------------
@@ -1085,6 +1085,7 @@
     \ccHtmlCrossLinkX
 }
 \def\ccHtmlCrossLinkX #1{\endgroup}
+\newcommand{\ccHtmlNoClassToc}{}
 \newcommand{\ccHtmlNoClassFile}{}
 \newcommand{\ccHtmlNoClassLinks}{}
 \newcommand{\ccHtmlNoClassIndex}{}
