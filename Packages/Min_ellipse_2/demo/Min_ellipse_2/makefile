@@ -1,3 +1,4 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -16,6 +17,7 @@ CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
@@ -28,25 +30,20 @@ LIBPATH = \
 
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_WINDOW_LDFLAGS)
-
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 all:            \
-                demo_Min_circle_2$(EXE_EXT) \
                 demo_Min_ellipse_2$(EXE_EXT) 
-
-demo_Min_circle_2$(EXE_EXT): demo_Min_circle_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_Min_circle_2 demo_Min_circle_2$(OBJ_EXT) $(LDFLAGS)
 
 demo_Min_ellipse_2$(EXE_EXT): demo_Min_ellipse_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_Min_ellipse_2 demo_Min_ellipse_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                demo_Min_circle_2.clean \
                 demo_Min_ellipse_2.clean
 
 #---------------------------------------------------------------------#
