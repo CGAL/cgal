@@ -118,7 +118,8 @@ template < class R >
 inline
 DirectionC3<R CGAL_CTAG>
 DirectionC3<R CGAL_CTAG>::
-transform(const typename DirectionC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+transform
+  (const typename DirectionC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   return t.transform(*this);
 }
