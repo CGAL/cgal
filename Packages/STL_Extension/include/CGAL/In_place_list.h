@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <CGAL/circulator_impl.h>
 #include <CGAL/circulator.h>
+#include <CGAL/memory.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,7 +48,9 @@ namespace CGALi {
   template <class T> class In_place_list_iterator;
   template <class T> class In_place_list_const_iterator;
 }
-template <class T, bool managed> class In_place_list;
+
+template <class T, bool managed, class Alloc = CGAL_ALLOCATOR(T)>
+class In_place_list;
 
 template < class T >
 class In_place_sl_list_base {
@@ -65,6 +68,8 @@ public:
   friend  class In_place_list<T,false>;
   friend  class In_place_list<T,true>;
 };
+
+
 namespace CGALi {
   template <class T>
   class In_place_list_iterator {
@@ -113,32 +118,6 @@ namespace CGALi {
     }
   };
 }
-
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-template < class T>
-inline  std::bidirectional_iterator_tag
-iterator_category( const  CGALi::In_place_list_iterator<T>&) {
-  return std::bidirectional_iterator_tag();
-}
-template < class T>
-inline  T*
-value_type( const  CGALi::In_place_list_iterator<T>&) {
-  return (T*)(0);
-}
-template < class T>
-inline  std::ptrdiff_t*
-distance_type( const  CGALi::In_place_list_iterator<T>&) {
-  return (std::ptrdiff_t*)(0);
-}
-template < class T>
-inline  Iterator_tag
-query_circulator_or_iterator(
-  const CGALi::In_place_list_iterator<T>&) {
-  return Iterator_tag();
-}
-#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
 namespace CGALi {
   template <class T>
@@ -191,45 +170,10 @@ namespace CGALi {
   };
 }
 
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-template < class T>
-inline  std::bidirectional_iterator_tag
-iterator_category( const  CGALi::In_place_list_const_iterator<T>&) {
-  return std::bidirectional_iterator_tag();
-}
-template < class T>
-inline  T*
-value_type( const  CGALi::In_place_list_const_iterator<T>&) {
-  return (T*)(0);
-}
-template < class T>
-inline  std::ptrdiff_t*
-distance_type( const  CGALi::In_place_list_const_iterator<T>&) {
-  return (std::ptrdiff_t*)(0);
-}
-template < class T>
-inline  Iterator_tag
-query_circulator_or_iterator(
-  const  CGALi::In_place_list_const_iterator<T>&) {
-  return Iterator_tag();
-}
-#endif // CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 
-
-
-template <class T, bool managed>
+template <class T, bool managed, class Alloc>
 class In_place_list {
-protected:
-  T*           node;
-  std::size_t  length;
 
-  T*   get_node()           { return new T;}
-  T*   get_node(const T& t) { return new T(t);}
-  void put_node(T* p)       { delete p;}
-
-  //
   // Bidirectional List Managing Objects in Place
   // --------------------------------------------
   //
@@ -258,21 +202,25 @@ protected:
   //
   // PARAMETERS
   //
-  // The full classname is `In_place_list<T,bool managed = false, T*
-  // T::*next = &T::next_link, T* T::*prev = &T::prev_link>'. As long as no
-  // default template arguments are supported, only
-  // In_place_list<T,bool> is provided.
+  // The full classname is `In_place_list<T,bool managed = false, Alloc
+  // = CGAL_ALLOCATOR(T)>'.
   //
   // TYPES
 
 public:
-  typedef T               value_type;
-  typedef T*              pointer;
-  typedef const T*        const_pointer;
-  typedef T&              reference;
-  typedef const T&        const_reference;
-  typedef std::size_t     size_type;
-  typedef std::ptrdiff_t  difference_type;
+  typedef Alloc           Allocator;
+  typedef Alloc           allocator_type; // STL compliant
+
+  // Note: the standard requires the following types to be equivalent
+  // to T, T*, const T*, T&, const T&, size_t, and ptrdiff_t, respectively.
+  // So we don't pass these types to the iterators explicitly.
+  typedef typename Allocator::value_type          value_type;
+  typedef typename Allocator::pointer             pointer;
+  typedef typename Allocator::const_pointer       const_pointer;
+  typedef typename Allocator::reference           reference;
+  typedef typename Allocator::const_reference     const_reference;
+  typedef typename Allocator::size_type           size_type;
+  typedef typename Allocator::difference_type     difference_type;
 
   typedef CGALi::In_place_list_iterator<T>        iterator;
   typedef CGALi::In_place_list_const_iterator<T>  const_iterator;
@@ -280,8 +228,34 @@ public:
   typedef std::reverse_iterator< iterator >       reverse_iterator;
   typedef std::reverse_iterator< const_iterator > const_reverse_iterator;
 
-  typedef In_place_list<T,managed>  Self;
+  typedef In_place_list<T,managed,Alloc>          Self;
 
+protected:
+  static Allocator allocator;
+
+  pointer      node;
+  size_type    length;
+
+  // These are the only places where the allocator gets called.
+  pointer get_node() {
+    // was: return new T;
+    pointer p = allocator.allocate(1);
+    allocator.construct(p, value_type());
+    return p;
+  }
+  pointer get_node( const T& t) {
+    // was: return new T(t);
+    pointer p = allocator.allocate(1);
+    allocator.construct(p, t);
+    return p;
+  }
+  void put_node( pointer p) {
+    // was: delete p;
+    allocator.destroy( p);
+    allocator.deallocate( p, 1);
+  }
+
+public:
   // CREATION
   //
   // New creation variable is: `l'
@@ -298,6 +272,8 @@ public:
   }
 
   // ACCESS MEMBER FUNCTIONS
+
+  allocator_type get_allocator() const { return allocator; }
 
   iterator       begin() { return (*node).next_link; }
   const_iterator begin() const { return (*node).next_link; }
@@ -608,8 +584,8 @@ public:
   // where `n = size()'. It is stable.
   {
     if (size() < 2) return;
-    In_place_list<T,managed> carry;
-    In_place_list<T,managed> counter[64];
+    In_place_list<T,managed,Alloc> carry;
+    In_place_list<T,managed,Alloc> counter[64];
     int fill = 0;
     while (!empty()) {
       carry.splice(carry.begin(), *this, begin());
@@ -629,25 +605,26 @@ public:
 
 };
 
-template <class T, bool managed>
-void In_place_list<T,managed>::
-insert(CGALi::In_place_list_iterator<T> position, std::size_t n) {
+// init static member allocator object
+template <class T, bool managed, class Alloc>
+Alloc In_place_list<T,managed,Alloc>::allocator = Alloc();
+
+template <class T, bool managed, class Alloc>
+void In_place_list<T,managed,Alloc>::
+insert(CGALi::In_place_list_iterator<T> position, size_type n) {
   while (n--)
     insert(position, *get_node());
 }
 
-template <class T, bool managed>
-void In_place_list<T,managed>::
-insert(CGALi::In_place_list_iterator<T> position,
-       std::size_t n,
-       const T& x)
-{
+template <class T, bool managed, class Alloc>
+void In_place_list<T,managed,Alloc>::
+insert(CGALi::In_place_list_iterator<T> position, size_type n, const T& x) {
   while (n--)
     insert(position, *get_node(x));
 }
 
-template <class T, bool managed>
-void In_place_list<T,managed>::
+template <class T, bool managed, class Alloc>
+void In_place_list<T,managed,Alloc>::
 erase(CGALi::In_place_list_iterator<T> first,
       CGALi::In_place_list_iterator<T> last)
 {
@@ -655,10 +632,10 @@ erase(CGALi::In_place_list_iterator<T> first,
     erase(first++);
 }
 
-template <class T, bool managed>
-In_place_list<T,managed>&
-In_place_list<T,managed>::
-operator=(const In_place_list<T,managed>& x) {
+template <class T, bool managed, class Alloc>
+In_place_list<T,managed,Alloc>&
+In_place_list<T,managed,Alloc>::
+operator=(const In_place_list<T,managed,Alloc>& x) {
   if (this != &x) {
     iterator first1 = begin();
     iterator last1  = end();
@@ -682,8 +659,8 @@ operator=(const In_place_list<T,managed>& x) {
   return *this;
 }
 
-template <class T, bool managed>
-void In_place_list<T,managed>::
+template <class T, bool managed, class Alloc>
+void In_place_list<T,managed,Alloc>::
 destroy() {
   iterator first = begin();
   iterator last  = end();
@@ -696,8 +673,8 @@ destroy() {
   (*node).prev_link = node;
 }
 
-template <class T, bool managed>
-void In_place_list<T,managed>::remove(const T& value) {
+template <class T, bool managed, class Alloc>
+void In_place_list<T,managed,Alloc>::remove(const T& value) {
   iterator first = begin();
   iterator last = end();
   while (first != last) {
@@ -709,8 +686,8 @@ void In_place_list<T,managed>::remove(const T& value) {
   }
 }
 
-template <class T, bool managed>
-void In_place_list<T,managed>::reverse() {
+template <class T, bool managed, class Alloc>
+void In_place_list<T,managed,Alloc>::reverse() {
   if (size() < 2) return;
   for (iterator first = ++begin(); first != end();) {
     iterator old = first++;
@@ -718,8 +695,8 @@ void In_place_list<T,managed>::reverse() {
   }
 }
 
-template <class T, bool managed>
-void In_place_list<T,managed>::unique() {
+template <class T, bool managed, class Alloc>
+void In_place_list<T,managed,Alloc>::unique() {
   iterator first = begin();
   iterator last = end();
   if (first == last) return;
@@ -733,8 +710,8 @@ void In_place_list<T,managed>::unique() {
   }
 }
 
-template <class T, bool managed>
-void In_place_list<T,managed>::merge(In_place_list<T,managed>& x) {
+template <class T, bool managed, class Alloc>
+void In_place_list<T,managed,Alloc>::merge(In_place_list<T,managed,Alloc>& x) {
   iterator first1 = begin();
   iterator last1 = end();
   iterator first2 = x.begin();
@@ -752,11 +729,11 @@ void In_place_list<T,managed>::merge(In_place_list<T,managed>& x) {
   x.length= 0;
 }
 
-template <class T, bool managed>
-void In_place_list<T,managed>::sort() {
+template <class T, bool managed, class Alloc>
+void In_place_list<T,managed,Alloc>::sort() {
   if (size() < 2) return;
-  In_place_list<T,managed> carry;
-  In_place_list<T,managed> counter[64];
+  In_place_list<T,managed,Alloc> carry;
+  In_place_list<T,managed,Alloc> counter[64];
   int fill = 0;
   while (!empty()) {
     carry.splice(carry.begin(), *this, begin());

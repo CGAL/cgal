@@ -63,15 +63,13 @@
   %% +-----------------------------------+
   \ccParameters
   
-  The full class name is \ccStyle{In_place_list<T,bool managed =
-    false, T* T::*next = &T::next_link, T* T::*prev = &T::prev_link>}.
-  As long as no default template arguments are supported, only
-  \ccClassTemplateName\ is provided.
+  The full class name is \ccStyle{In_place_list<T, bool managed =
+    false, class Alloc = CGAL_ALLOCATOR(T)>}.
   
   The parameter \ccStyle{T} is supposed to have a default constructor,
   a copy constructor and an assignment operator. The copy constructor
-  and the assignment may not copy the pointers in \ccc{T} for the list
-  management, but they are allowed to. The equality test and the
+  and the assignment may copy the pointers in \ccc{T} for the list
+  management, but they do not have to. The equality test and the
   relational order require the operators \ccStyle{==} and \ccStyle{<}
   for $T$ respectively. These operators must not compare the pointers
   in \ccc{T}.
@@ -99,6 +97,8 @@
   \ccGlue
   \ccNestedType{const_reverse_iterator}{}
   
+  \ccNestedType{allocator_type}{}
+
   %% +-----------------------------------+
   \ccCreation
   \ccCreationVariable{l}
@@ -176,6 +176,7 @@
   \ccHidden\ccMethod{const T& back() const;}{}
   \ccHidden\ccMethod{const T& front() const;}{}
 
+  \ccMethod{allocator_type get_allocator() const;}{returns the alloctor.}
 
   %% +-----------------------------------+
   \ccHeading{Insertion}
