@@ -227,8 +227,7 @@ template <class InputIterator, class OutputIterator,
 OutputIterator
 __visibility_complex_2(InputIterator first, InputIterator last, 
 		       OutputIterator result, 
-		       Polygon_2<typename Polygon_traits_2<_R> >,
-		       std::list<typename _R::Point_2 > >, 
+		       Polygon_2<_R, std::list<typename _R::Point_2 > >, 
 		       Items)
 {
     typedef Visibility_complex_polygon_traits<_R> Traits;

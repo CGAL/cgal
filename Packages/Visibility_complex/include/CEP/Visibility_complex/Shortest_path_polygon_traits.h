@@ -24,7 +24,7 @@ public:
     // -------------------------------------------------------------------------
 private:
     // -------------------------------------------------------------------------
-    typedef Simple_cartesian<Exact_NT>::Point_2   Exact_point_2;
+    typedef typename Simple_cartesian<Exact_NT>::Point_2   Exact_point_2;
     typedef typename Arc_2::Vertex_const_iterator Arc_const_iterator;
     // -------------------------------------------------------------------------
 public:
