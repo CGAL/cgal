@@ -1,5 +1,9 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.11 on 17-Jul-2001
+- replaced template parameter 'R' by 'K'
+- renamed concept names
+
 Version 3.10.7 on 21-Mar-2001
 - removed 'maintainer' line from file header in example and demo program
 
