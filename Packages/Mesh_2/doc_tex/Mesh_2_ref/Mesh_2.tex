@@ -1,0 +1,36 @@
+\begin{ccRefClass}{Mesh_2<Tr>}
+
+The class \ccRefName\ is the main class of this package. It derives
+from its template parameter \ccc{Tr}, that has to be a \cgal\
+constrained Delaunay triangulation (CDT). This CDT is also the type of
+the input of the meshing process. The geometric traits class of
+\ccc{Tr} has to be a model of the concept \ccc{MeshTraits_2}. \textbf{DE QUOI
+HERITE CE MODEL?}
+
+\ccInclude{CGAL/Mesh_2.h}
+
+\ccInheritsFrom
+
+\ccc{Tr}
+
+\ccRequirements
+
+\ccc{Tr} must be a \cgal\ constrained Delaunay triangulation.
+
+\ccTypes 
+\ccTypedef{typedef Tr Triangulation;}{the triangulation base class.}
+
+\ccCreation
+\ccCreationVariable{mesh}
+
+\ccConstructor{Mesh_2();}{default constructor.}
+\ccConstructor{Mesh_2(const Geom_traits& gt = Geom_traits());}
+{Introduces an empty mesh \ccVar.}
+\ccConstructor{Mesh_2(Tr& t, const Geom_traits& gt = Geom_traits());}
+{Construct a mesh from a triangulation \ccc{t} of type \ccc{Tr}.}
+\ccConstructor{template <class Seed_it> 
+  Mesh_2(Triangulation& t, Seed_it begin, Seed_it end, 
+         const Geom_traits& gt = Geom_traits(), bool mark = false);}
+{}
+
+\end{ccRefClass}

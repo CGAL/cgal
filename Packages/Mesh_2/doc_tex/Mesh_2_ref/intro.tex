@@ -1,0 +1,24 @@
+\chapter{2D Meshes}
+
+This package implements 2D unstructured triangular meshes. Given a
+domain, with constraints, it constructs a triangulation conforming the
+domain and satisfying shape and size constraints. Hence, this package 
+use \cgal\ 2D triangulations\footnote{See \ccTexHtml{the \cgal\ Manual.}
+{<a href="http://www.cgal.org/Manual/doc_html/basic_lib/Triangulation_2/Chapter_triangulation_user.html">the CGAL Manual</a>.}}.
+
+Domains that can be meshed are \emph{planar straight line graphes}
+(PSLG), which are sets of of vertices and segments such that all
+endpoints of every segments are in the set and that segments intersect
+only at end-points. Such a domain can represented by a \cgal\ 
+constrained triangulation, whose constraints segment are the segment of the
+domain.
+
+The mesh class depends on one template parameter. It stands for a
+\cgal\ constrained Delaunay triangulation which represents the PSLG
+and becomes the base class. Its geometric traits class should not only
+provide geometric objects and predicates for the triangulation, as
+usual, but also define the geometric constraints that the triangles
+have to satisfy.
+
+The algorithm used to compute the mesh is the \emph{Delaunay
+refinement}~\cite{s-mgdsa-00}.

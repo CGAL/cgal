@@ -1,0 +1,39 @@
+\begin{ccRefConcept}{MeshTraits_2}
+
+\ccDefinition
+
+In addition of the requirements of the concept \textbf{QUEL\_MODEL\_ ?},
+the concept \ccRefName\ has to provide a numeric field type \ccc{FT},
+a type \ccc{Vector_2} and several constructors on \ccc{Vector_2} and
+\ccc{Point_2}, a predicate on angles \ccc{Angle_2}, and two special
+predicates \ccc{Compute_squared_minimum_sine}, and \ccc{Is_bad}.
+
+\ccRefines
+
+\ccc{ConstrainedDelaunayTriangulationTraits_2}
+
+\ccTypes
+
+\ccNestedType{FT}{The field type.}
+\ccNestedType{Vector_2}{The vector type.}
+\ccNestedType{Construct_vector_2}{Constructor object. Must provide the 
+  operator \ccc{Vector_2 operator()(Point a, Point b)} that computes
+  the vector $b-a$.}
+\ccNestedType{Constructor_scaled_vector_2}{Constructor object. Must
+  provide the operator \ccc{Vector_2 operator()(Vector_2 v, FT scale)}
+  that computes the vector $scale \cdot \mathbf{v}$}
+\ccNestedType{Constructor_midpoint_2}{Constructor object. Must provide 
+  the operator \ccc{Point operator()(Point a, Point b)} that computes
+  the middle point of the segment $ab$.}
+
+\ccCreation
+\ccc{ccCreationVariable}{traits}
+
+\ccConstructor{MeshTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{MeshTraits_2(const MeshTraits_2& traits2);}
+{Copy constructor.}
+
+
+
+\end{ccRefConcept}
