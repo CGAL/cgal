@@ -31,6 +31,10 @@
 #ifndef CGAL_VECTOR_H
 #define CGAL_VECTOR_H 1
 
+#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+#error CGAL::vector not available on MSC VC6
+#else
+
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 #include <iterator>
@@ -620,6 +624,7 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
 
 CGAL_END_NAMESPACE
 
+#endif // defined( _MSC_VER) && (_MSC_VER <= 1200)
 
 #endif // CGAL_VECTOR_H //
 // EOF //

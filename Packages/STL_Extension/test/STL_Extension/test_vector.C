@@ -28,6 +28,13 @@
 // with templates.
 // ============================================================================
 
+#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+// CGAL::vector not available on MSC VC6
+int main() {
+    return 0;
+}
+#else
+
 #include <CGAL/vector.h>
 #include <cassert>
 #include <iostream>
@@ -43,9 +50,12 @@ private:
     int x_;
 };
 
-bool operator==( const X& x1, const X& x2) {
-    return x1.x() == x2.x();
-}
+bool operator==( const X& x1, const X& x2) { return x1.x() == x2.x(); }
+bool operator!=( const X& x1, const X& x2) { return x1.x() != x2.x(); }
+bool operator< ( const X& x1, const X& x2) { return x1.x() <  x2.x(); }
+bool operator<=( const X& x1, const X& x2) { return x1.x() <=  x2.x(); }
+bool operator> ( const X& x1, const X& x2) { return x1.x() >  x2.x(); }
+bool operator>=( const X& x1, const X& x2) { return x1.x() >= x2.x(); }
 
 std::ostream& operator<< ( std::ostream& s, const X& x) {
     s << x.x();
@@ -194,3 +204,5 @@ int main() {
   
     return 0;
 }
+
+#endif // defined( _MSC_VER) && (_MSC_VER <= 1200) //

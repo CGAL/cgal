@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+SRC : Excluded vector from MSC VC6.
+SRC : Added != and comparison ops for test class X in test_vector.C.
 SRC : Changed vector to improve cross platform compilation.
 SRC : Added vector class in include/CGAL/vector.h.
 TEST: Added vector test program in test/STL_Extension/test_vector.C
