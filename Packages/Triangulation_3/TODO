@@ -29,4 +29,4 @@
 - Facet_circulator : Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
   deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
   d'etre plus rapide, non ? 
-
+- chercher bug dans ds_edge_iterator, dim 2
