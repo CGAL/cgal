@@ -21,7 +21,7 @@
 // coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
 //
 // ============================================================================
-
+ 
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 
@@ -33,8 +33,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// template <class Ctr>
-// class Constrained_Delaunay_triangulation_base_2;
 
 template <class Gt, class Tds>
 class Constrained_Delaunay_triangulation_2
@@ -106,6 +104,7 @@ public:
   void propagating_flip(Face_handle& f,int i);
   void propagating_flip(List_edges & edges);
 
+  // CONFLICTS
   bool test_conflict(Face_handle fh, const Point& p) const;
   void find_conflicts(Point p, std::list<Edge>& le, 
 		      Face_handle hint= Face_handle()) const;
@@ -115,7 +114,7 @@ public:
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
-  //Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
+
   void insert(const Point & a, const Point & b);
   void insert(Vertex_handle va, Vertex_handle vb);
   void insert(Vertex_handle va, 
@@ -125,18 +124,18 @@ public:
   void          push_back(const Constraint& c);
 
   void remove(Vertex_handle v);
-  // to be called from Constrained_triangulation_plus
-  void triangulate_hole(List_faces& intersected_faces,
-			List_edges& conflict_boundary_ab,
-			List_edges& conflict_boundary_ba,
-			List_edges& new_edges,
-			Vertex_handle vb);
+ 
   // CHECK
   bool is_valid(bool verbose = false, int level = 0) const;
 
 protected:
   void remove_2D(Vertex_handle v );
-
+ // to be called from Constrained_triangulation_plus
+  void triangulate_hole(List_faces& intersected_faces,
+			List_edges& conflict_boundary_ab,
+			List_edges& conflict_boundary_ba,
+			List_edges& new_edges,
+			Vertex_handle vb);
 public:
   // MESHING 
   double twice_area_of_triangle(const Point &p, 
@@ -296,7 +295,7 @@ propagating_flip(List_edges & edges)
   while (!(edge_set.empty())) {
     f=(*(edge_set.begin())).first;
     indf=(*(edge_set.begin())).second;
-
+ 
     // erase from edge_set the 4 edges of the wing of the edge to be
     // flipped (edge_set.begin) , i.e. the edges of the faces f and
     // f->neighbor(indf) that are distinct from the edge to be flipped
@@ -393,7 +392,9 @@ inline
 Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle 
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 insert(const Point & a)
-  // inserts a in the triangulation
+ // inserts a in the triangulation
+// constrained edges are updated
+// Delaunay property is restored
 {
   Vertex_handle va= Ct::insert(a);
   flip_around(va); 
@@ -414,22 +415,6 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 }
 
 
-// template < class Gt, class Tds >  
-// Constrained_Delaunay_triangulation_2<Ctr>::Vertex_handle 
-// Constrained_Delaunay_triangulation_2<Ctr>::
-// special_insert_in_edge(const Point & a, Face_handle f, int i)
-//   // insert  point p in edge(f,i)
-//   // bypass the precondition for point a to be in edge(f,i)
-//   // update constrained status
-//   // and restore Delaunay constrained property
-//   // this function is intended to be use by refine
-// {
-//   Vertex_handle va = Ct::special_insert_in_edge(a,f,i);
-//   flip_around(va); 
-//   return va;
-// }
-
-
 template < class Gt, class Tds >  
 inline void 
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
@@ -444,32 +429,6 @@ insert(const Point & a, const Point & b)
 }
 
 
-// template < class Ctr >  
-// inline void 
-// Constrained_Delaunay_triangulation_base_2<Ctr>::
-// insert(Vertex_handle va, Vertex_handle & vb)
-// // inserts line segment ab as an edge in the triangulation 
-// {
-//   List_edges new_edges;
-//   Face_handle fr;
-//   int i;
-//   Ct::insert(va,vb,fr,i,new_edges);
-//   propagating_flip(new_edges);
-// }
-
-// template < class Gt, class Tds >  
-// inline void 
-// Constrained_Delaunay_triangulation_2<Ctr>::
-// insert(Vertex_handle va, Vertex_handle vb,
-//        Face_handle & fr, int & i)
-//  // inserts line segment ab as an edge in the triangulation 
-//  // returns the triangle fr right to edge ab
-//  // edge ab=(fr,i)
-// {
-//   List_edges new_edges;
-//   Ct::insert(va,vb,fr,i,new_edges);
-//   propagating_flip(new_edges);
-// }
 
 template < class Gt, class Tds >
 inline void
@@ -483,34 +442,6 @@ insert(Vertex_handle  va, Vertex_handle vb, List_vertices& new_vertices)
 }
 
 
-
-// template < class Gt, class Tds >
-// Constrained_triangulation_2<Gt,Tds>::Vertex_handle
-// Constrained_triangulation_2<Gt,Tds>::
-// insert(Vertex_handle  vaa, 
-//        Vertex_handle  vb,
-//        Face_handle fr,
-//        int i)
-// {
-//   if(includes_edge(vaa,vb,vbb,fr,i)) {
-//     mark_constraint(fr,i);
-//     return vbb;
-//   }
-      
-//   List_faces intersected_faces;
-//   List_edges conflict_boundary_ab, conflict_boundary_ba;
-//   List_edges new_edges;
-//   vbb = find_intersected_faces(vaa, vb, 
-// 			       intersected_faces,
-// 			       conflict_boundary_ab,
-// 			       conflict_boundary_ba);
-//   triangulate_hole(intersected_faces,
-// 		   conflict_boundary_ab,
-// 		   conflict_boundary_ba,
-// 		   new_edges,
-// 		   vbb);
-//   return vbb;
-// }       
 
 template < class Gt, class Tds >
 void
@@ -581,6 +512,9 @@ is_valid(bool verbose, int level) const
     }
     return result;
 }
+
+
+// MESHING FUNCTIONS
 
 template < class Gt, class Tds >  
 double
