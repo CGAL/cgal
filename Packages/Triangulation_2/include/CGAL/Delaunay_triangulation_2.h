@@ -112,8 +112,8 @@ public:
   void  remove(Vertex_handle v );
   
 private:
-  using Triangulation_2::cw;
-  using Triangulation_2::ccw;
+  using Triangulation::cw;
+  using Triangulation::ccw;
 
 private:
   void restore_Delaunay(Vertex_handle v);
