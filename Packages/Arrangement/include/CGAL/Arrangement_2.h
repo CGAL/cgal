@@ -74,7 +74,7 @@ public:
   typedef Planar_map_2<Dcel,Traits> Planar_map;
   typedef Pm_walk_along_line_point_location<Planar_map> WalkPL;
   typedef Planar_map_with_intersections_2<Planar_map> Pmwx;
-  typedef typename Pmwx::Pmwx_change_notification  Pmwx_change_notification;
+  typedef typename Pmwx::Change_notification  Change_notification;
 
   typedef Arrangement_2<_Dcel,_Traits,Base_node> Self;
 
@@ -93,6 +93,9 @@ public:
   
   typedef typename Dcel::iterator_category      iterator_category;
 
+  // For backward compatibility
+  typedef Change_notification Pmwx_change_notification; 
+  // (backward compatibility end)
 
   //for Action
   //typedef typename Traits::SPLIT_FUNC SPLIT_FUNC;
@@ -1743,7 +1746,7 @@ bool is_valid(bool verbose = false) const
 //               INSERTION FUNCTIONS
 Curve_iterator insert_from_vertex(const typename Traits::Curve& cv, 
 				  Vertex_handle src,
-				   Pmwx_change_notification *en = NULL)
+				  Change_notification *en = NULL)
 {
   CGAL_precondition( traits->point_is_same( src->point(), 
 					    traits->curve_source( cv)));
@@ -1828,7 +1831,7 @@ Curve_iterator insert_from_vertex(const typename Traits::Curve& cv,
 
 
 Curve_iterator insert(const typename Traits::Curve& cv,
-		      Pmwx_change_notification *en = NULL) 
+		      Change_notification *en = NULL) 
 {
   
   CGAL_precondition( ! traits->point_is_same( traits->curve_source( cv),
@@ -1925,7 +1928,7 @@ template <class F_iterator>
 Curve_iterator insert(const typename Traits::Curve& cv,
                       F_iterator F_begin,
                       F_iterator F_end,
-		      Pmwx_change_notification *en = NULL) 
+		      Change_notification *en = NULL) 
 {
   if (F_begin==F_end)
     return insert(cv); //if list is empty return the regular insert function
@@ -2377,14 +2380,14 @@ void set_update(bool u) {
 
 // object given as a parameter to insert function of pmwx
 // such that insert will not know about curve hirarchy
-class Arr_hierarchy_ops : public Pmwx_change_notification
+class Arr_hierarchy_ops : public Change_notification
 {
 public:
   typedef Self Arr;
   Arr_hierarchy_ops(Arr *arr_,
 		  In_place_list<Subcurve_node,true>& edge_list_,
 		  Subcurve_node* ftr_,
-		  Pmwx_change_notification *user_notifier_ = NULL ) : 
+		  Change_notification *user_notifier_ = NULL ) : 
     arr(arr_), edge_list(edge_list_), ftr(ftr_), user_notifier(user_notifier_)
   {}
 	
@@ -2435,7 +2438,7 @@ public:
   Arr *arr;
   In_place_list<Subcurve_node,true> &edge_list;
   Subcurve_node* ftr;
-  Pmwx_change_notification *user_notifier;
+  Change_notification *user_notifier;
 };
 
 friend class Arr_hierarchy_ops;
