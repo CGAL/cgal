@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.4-I-8 $
 // release_date  : $CGAL_Date: 2001/09/11 $
 //
-// file          : config/testfiles/CGAL_CFG_NET2003_MATCHING_BUG_3.C
+// file          : config/testfiles/CGAL_CFG_NET2003_MATCHING_BUG.C
 // package       : Configuration (2.12)
 // maintainer    : Geert-Jan Giezeman <geert@cs.uu.nl>
 // source        :
@@ -23,7 +23,7 @@
 //
 // ======================================================================
 
-// CGAL_CFG_NET2003_MATCHING_BUG_3.C
+// CGAL_CFG_NET2003_MATCHING_BUG.C
 // ---------------------------------------------------------------------
 // This program is used by cgal_configure.
 // The following documentation will be pasted in the generated configfile.
