@@ -64,13 +64,14 @@ template < class P, class Creator >
 void
 Random_points_in_sphere_3<P,Creator>::
 generate_point() {
-    do {
-        Creator creator;
-        d_item = creator( d_range * ( 2 * _rnd.get_double() - 1.0),
-                          d_range * ( 2 * _rnd.get_double() - 1.0),
-                          d_range * ( 2 * _rnd.get_double() - 1.0));
-    } while ( to_double(d_item.x() * d_item.x() + d_item.y() * d_item.y()) >=
-              d_range * d_range);
+   do {
+       Creator creator;
+       d_item = creator( d_range * ( 2 * _rnd.get_double() - 1.0),
+                         d_range * ( 2 * _rnd.get_double() - 1.0),
+                         d_range * ( 2 * _rnd.get_double() - 1.0));
+   } 
+   while (CGAL::to_double(d_item.x() * d_item.x() + d_item.y() * d_item.y()) >=
+          d_range * d_range);
 }
 
 
