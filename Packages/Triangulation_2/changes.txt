@@ -1,7 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 6.03 ()
+Ver 6.03 (24/1/02)
+- removed references to type RT in Weighted_point.h
+  replaced in Regular_triangulation_euclidean_traits_2.h
+  references to Point::RT by Point::R::RT
 - get rid of references to type Point in 
   Triangulation_data_structure_2 and Triangulation_ds_vertex_2
 - fixed missing typedefs in Triangulation_ds_iterator_2
