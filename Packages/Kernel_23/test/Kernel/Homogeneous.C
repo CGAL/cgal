@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 // 
-// file          : test_all.C
+// file          : test/Kernel/Homogeneous.C
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra, Sylvain Pion
@@ -21,31 +21,29 @@
 // ============================================================================
  
 
-#include <CGAL/basic.h>
-#include <cassert>
-
-#include "../Kernel/include/CGAL/Precise_numbers.h"
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Quotient.h>
+#include <cassert>
 #include <CGAL/intersection_3.h>
 
-#include "../Kernel/include/CGAL/_test_io.h"
-#include "../Kernel/include/CGAL/_test_2.C"
-#include "../Kernel/include/CGAL/_test_3.C"
+#include "CGAL/Precise_numbers.h"
+#include "CGAL/_test_io.h"
+#include "CGAL/_test_2.C"
+#include "CGAL/_test_3.C"
 
-#include "../Kernel/include/CGAL/_test_new_2.h"
-#include "../Kernel/include/CGAL/_test_new_3.h"
+#include "CGAL/_test_new_2.h"
+#include "CGAL/_test_new_3.h"
 
-#include "../Kernel/include/CGAL/_test_fct_points_implicit_sphere.h"
-#include "../Kernel/include/CGAL/_test_orientation_and_bounded_side.h"
-#include "../Kernel/include/CGAL/_test_fct_constructions_2.h"
-#include "../Kernel/include/CGAL/_test_fct_constructions_3.h"
-#include "../Kernel/include/CGAL/_test_fct_point_3.h"
-#include "../Kernel/include/CGAL/_test_fct_coplanar_3.h"
-#include "../Kernel/include/CGAL/_test_cls_iso_cuboid_3.h"
-#include "../Kernel/include/CGAL/_test_angle.h"
+#include "CGAL/_test_fct_points_implicit_sphere.h"
+#include "CGAL/_test_orientation_and_bounded_side.h"
+#include "CGAL/_test_fct_constructions_2.h"
+#include "CGAL/_test_fct_constructions_3.h"
+#include "CGAL/_test_fct_point_3.h"
+#include "CGAL/_test_fct_coplanar_3.h"
+#include "CGAL/_test_cls_iso_cuboid_3.h"
+#include "CGAL/_test_angle.h"
 
-#include "../Kernel/include/CGAL/_test_mf_plane_3_to_2d.h"
+#include "CGAL/_test_mf_plane_3_to_2d.h"
 
 // This one should be merged with the global test-suite.
 void

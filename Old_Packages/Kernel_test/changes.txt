@@ -1,3 +1,6 @@
+3.53  (5 Nov 2002)
+- Put all programs in test/Kernel.
+
 3.52  (5 Nov 2002)
 - Merge test programs to speed up and uniformize the test-suite.
 

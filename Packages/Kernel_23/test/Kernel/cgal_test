@@ -1,4 +1,5 @@
 #! /bin/sh
+
 # This is a script for the CGAL test suite. Such a script must obey
 # the following rules:
 #
@@ -19,36 +20,38 @@ ERRORFILE=error.txt
 compile_and_run()
 {
   echo "Compiling $1 ... "
+  SUCCES="y"
   if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
            TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
            TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then
-    echo "   compilation of $1 succeeded" >> $ERRORFILE
+    echo "   succesful compilation of $1" >> $ERRORFILE
   else
-    echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
+    echo "   ERROR:    compilation of $1" >> $ERRORFILE
+    SUCCES=""
   fi
 
-  if [ -f $1 ] ; then
+  if [ -n "${SUCCES}" ] ; then
      OUTPUTFILE=ProgramOutput.$1.$PLATFORM
     rm -f $OUTPUTFILE
     COMMAND="./$1"
     if [ -f $1.cmd ] ; then
-      COMMAND="$COMMAND '`cat $1.cmd`'"
+      COMMAND="$COMMAND `cat $1.cmd`"
     fi
     if [ -f $1.cin ] ; then
-      COMMAND="echo '`cat $1.cin`' | $COMMAND"
+      COMMAND="cat $1.cin | $COMMAND"
     fi
     echo "Executing $1 ... "
     echo
-    if eval 2>&1 $COMMAND > $OUTPUTFILE ; then
-      echo "   execution of $1 succeeded" >> $ERRORFILE
+    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+      echo "   succesful execution   of $1" >> $ERRORFILE
     else
-      echo "   ERROR: execution of $1 failed" >> $ERRORFILE
+      echo "   ERROR:    execution   of $1" >> $ERRORFILE
     fi
   else
-    echo "   ERROR: could not execute $1" >> $ERRORFILE
+    echo   "   ERROR:    not executed   $1" >> $ERRORFILE
   fi
 
-  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
+  eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
 }
 
 #---------------------------------------------------------------------#
@@ -62,5 +65,15 @@ touch $ERRORFILE
 #                    compile and run the tests
 #---------------------------------------------------------------------#
 
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    compile_and_run $file
+  done
+else
+  compile_and_run Cartesian
+  compile_and_run Homogeneous
+  compile_and_run Simple_cartesian
+  compile_and_run Simple_homogeneous
+  compile_and_run test_kernel__
+fi
 
-compile_and_run test_kernel__
