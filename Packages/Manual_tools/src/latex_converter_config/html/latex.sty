@@ -1169,14 +1169,20 @@
 % ###########################################################################
 
 \newenvironment{figure}{\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}{}
-\newenvironment{figure*}{\begin{figure}}{\end{figure}}
-\newenvironment{figure@o}{\begin{figure}}{\end{figure}}
-\newenvironment{figure*@o}{\begin{figure}}{\end{figure}}
+\newenvironment{figure*}{\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}{}
+\newenvironment{figure@o}{\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}{}
+\newenvironment{figure*@o}{\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}{}
+%\newenvironment{figure*}{\begin{figure}}{\end{figure}}
+%\newenvironment{figure@o}{\begin{figure}}{\end{figure}}
+%\newenvironment{figure*@o}{\begin{figure}}{\end{figure}}
 
 \newenvironment{table}{\newcommand{\lciLabelTitle}{{\bf Table:~~}}}{}
-\newenvironment{table*}{\begin{table}}{\end{table}}
-\newenvironment{table@o}{\begin{table}}{\end{table}}
-\newenvironment{table*@o}{\begin{table}}{\end{table}}
+\newenvironment{table*}{\newcommand{\lciLabelTitle}{{\bf Table:~~}}}{}
+\newenvironment{table@o}{\newcommand{\lciLabelTitle}{{\bf Table:~~}}}{}
+\newenvironment{table*@o}{\newcommand{\lciLabelTitle}{{\bf Table:~~}}}{}
+%\newenvironment{table*}{\begin{table}}{\end{table}}
+%\newenvironment{table@o}{\begin{table}}{\end{table}}
+%\newenvironment{table*@o}{\begin{table}}{\end{table}}
 
 \newcommand{\caption}[1]{\lciLabelTitle #1}
 \newcommand{\caption@om}{\lciLabelTitle #1}

@@ -11,7 +11,7 @@
 % |_________________________________________________________________________|
 % |#########################################################################|
 
-\documentclass[12pt]{article}
+\documentclass[11pt]{article}
 \usepackage{latexsym}
 \usepackage{amssymb}
 \usepackage{path}
@@ -48,7 +48,7 @@
 }
 
 \newcommand{\Mindex}[1]{\index{#1@\protect\Backslash{\tt #1}}}
-\newcommand{\ccIndex}[1]{\index{#1@\protect\Backslash{\tt #1}}}
+\newcommand{\ccIndexEntry}[1]{\index{#1@\protect\Backslash{\tt #1}}}
 \newcommand{\lcIndex}[1]{\index{#1@\protect\Backslash{\tt #1}}}
 \newcommand{\TTindex}[1]{\index{#1@{\tt #1}}}
 \newcommand{\Dindex}[1]{#1\index{#1}}
@@ -57,7 +57,7 @@
 
 % ----------------------------------------------------------------------
 \title{\LaTeX\ to HTML Converter\\
-       {\tt latex\_to\_html} and {\tt latex\_converter.sty}}
+       {\tt cc\_manual\_to\_html} and {\tt latex\_converter.sty}}
 \author{Lutz Kettner}
 
 \date{\lcRevision. \lcDate}
@@ -80,7 +80,7 @@
 \section{Introduction}
 
 This manual describes the \LaTeX\ to HTML converter {\tt
-  latex\_to\_html}. The converter is accompanied by a \LaTeX\ style
+  cc\_manual\_to\_html}. The converter is accompanied by a \LaTeX\ style
 file, {\tt latex\_converter.sty}, that defines a couple of macros for
 HTML output which are then usually ignored in the \LaTeX\ formatting,
 for example, hyper-links.
@@ -207,12 +207,12 @@ involved.  For this purpose and for global declarations the
 the declaration following these macros.
 
 \index{table of contents}
-\ccIndex{ccHtmlNoClassToc}
-\ccIndex{ccHtmlNoClassFile}
-\ccIndex{ccHtmlNoClassLinks}
-\ccIndex{ccHtmlNoClassIndex}
-\ccIndex{ccHtmlNoLinks}
-\ccIndex{ccHtmlNoIndex}
+\ccIndexEntry{ccHtmlNoClassToc}
+\ccIndexEntry{ccHtmlNoClassFile}
+\ccIndexEntry{ccHtmlNoClassLinks}
+\ccIndexEntry{ccHtmlNoClassIndex}
+\ccIndexEntry{ccHtmlNoLinks}
+\ccIndexEntry{ccHtmlNoIndex}
 %
 \begin{tabbing}
   M \= CCimplementationNNNMM \= ImplementationMMMMM \= \kill
@@ -253,7 +253,7 @@ will automatically be stopped to create own files.  \index{htmlclassfile
   \> \verb+\end{ccHtmlClassFile}+
 \end{tabbing}
 
-\ccIndex{ccHtmlCrossLink}\index{crosslinking} The macro
+\ccIndexEntry{ccHtmlCrossLink}\index{crosslinking} The macro
 \verb+\ccHtmlCrossLink{+{\em C-idfier\/}\verb+}+ activates the
 automatic cross linking for the given C identifier {\em C-idfier}. The
 generated links will point to the place where this macro is placed.
@@ -279,7 +279,7 @@ be made for a class name. Possible categories are: {\tt
 the place where its generating macro is placed.  The difference between
 both macros is that \verb+\ccHtmlIndexC+ parses C code in its
 argument {\em C-idfier}.
-\ccIndex{ccHtmlIndex}\ccIndex{ccHtmlIndexC}\index{index}
+\ccIndexEntry{ccHtmlIndex}\ccIndexEntry{ccHtmlIndexC}\index{index}
 
 \begin{tabbing}
   M \= CCimplementationNNNMM \= ImplementationMMMMM \= \kill

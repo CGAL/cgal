@@ -38,6 +38,23 @@
 % |
 % ###########################################################################
 
+\newcommand{\ccwIndent}{}
+\newcommand{\ccwRightMargin}{}
+\newcommand{\ccwFirst}{}
+\newcommand{\ccwFirstLong}{}
+\newcommand{\ccwSecond}{}
+\newcommand{\ccwSecondLong}{}
+\newcommand{\ccwComment}{}
+\newcommand{\ccwBetween}{}
+\newcommand{\ccwParam}{}
+\newcommand{\ccwParamIndent}{}
+
+\newcommand{\ccwFunctionFirst}{}
+\newcommand{\ccwFunctionSecond}{}
+\newcommand{\ccwConstructorFirst}{}
+\newcommand{\ccwConstructorSecond}{}
+
+
 \newcommand{\ccOriginalParDims}{}
 \newcommand{\ccParDims}{}
 
@@ -223,6 +240,7 @@
 \newcommand{\stl}{{\sc STL}}
 \newcommand{\leda}{{\sc Leda}}
 \newcommand{\cgal}{{\sc Cgal}}
+\newcommand{\galia}{{\sc Galia}}
 \newcommand{\protocgal}{{\sc C++gal}}
 \newcommand{\plageo}{{\sc Plageo}}
 
@@ -280,7 +298,7 @@
         \newcommand{\lciLocalHtmlName}{\lcAsciiToHtml{##X1}}}%
       \lciDefLocalHtmlName\lciHeaderPath\lciLocalHtmlName%
       \lcAsciiToHtml{#C1}\lcRawHtml{">}\lcAsciiToHtml{#C1}\lcRawHtml{</A>}}%
-    {\lcAsciiToHtml{#C1}}%
+    {\ccHtmlNoLinks\lcAsciiToHtml{#C1}}%
     \lcRawHtml{&gt;</I>}%
 }
 

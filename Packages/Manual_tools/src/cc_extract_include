@@ -6,6 +6,7 @@
 #  A script to extract \ccInclude statements from a spec file.
 #
 #  Author    : (c) 1997 Lutz Kettner   kettner@acm.org
+#              as of version 3.3 (Sept. 1999) maintained by Susan Hert
 #  Revision  : $Revision$
 #  Date      : $Date$
 # 

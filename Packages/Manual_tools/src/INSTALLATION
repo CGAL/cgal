@@ -131,11 +131,11 @@ Installation of the Supporting Tools:
      of the C++ compiler.
 
 
-(7)  Test Suit:
+(7)  Test Suite:
 
-     A small test suit is provided. It assumes the new LaTeX style files
+     A small test suite is provided. It assumes the new LaTeX style files
      to be installed, see ../INSTALLATION for details. Move in the `test/'
-     directory and type `./test_suit'. This test should finish silently, 
+     directory and type `./test_suite'. This test should finish silently, 
      otherwise something is wrong (commands not properly installed, 
      configuration files not accessable, ..., or I forgot to update the
      reference files ;-).

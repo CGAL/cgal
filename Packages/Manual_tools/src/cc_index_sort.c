@@ -8,6 +8,7 @@
               of the characters (alternativly german character ordering).
   System    : Standard Ansi C
   Author    : (c) 1992 Lutz Kettner
+              as of version 3.3 (Sept. 1999) maintained by Susan Hert
   History   : This program is derived from binsort 1.05. It implements
               a quicksort algorithm with a pivot chosen as the median
               of three randomly chosen elements. Dynamic line management,

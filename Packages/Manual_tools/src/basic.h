@@ -6,7 +6,7 @@
   Function  : Assertions, indented output, etc.
   System    : C++ (g++)
   Author    : (c) 1995 Lutz Kettner
-              (c) 1999 Susan Hert 
+              as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Revision$
   Date      : $Date$
  

@@ -4,6 +4,12 @@
 %  $Id$
 % ========================================================================
 
+%
+% Make sure the cc_manual style file is included since some of the commands
+% used in this file are defined there
+%
+\usepackage{cc_manual}
+
 % ========================================================================
 % Definitions of fonts for the different categories of non-C++ items 
 % ========================================================================
@@ -1166,7 +1172,7 @@
 %   if there is a leading command and this command is \ccFont,
 %   \indexingFontIsCC is set to true
 %
-%   \text contains the entire text
+%   \indexText contains the entire text
 %
 \def\findText#1#2{%
   \ifx#2\leda   % have to do this nasty special case testing because I can't
@@ -1207,9 +1213,9 @@
       \ifx#1\ccFont%
         \xdef\indexingFontIsCC{\ccTrue}%
       \fi%
-      \gdef\text{#2}%
+      \gdef\indexText{#2}%
    \else%
-      \gdef\text{#1#2}%
+      \gdef\indexText{#1#2}%
    \fi%
 }
 
@@ -1227,14 +1233,14 @@
 %   where text_with_font is of the form: [\font] text
 %
 % results in the definition of two macros:
-%     \indexingFont (possibly empty) and \text (without font)
+%     \indexingFont (possibly empty) and \indexText (without font)
 % and two Boolean variables are set
 %     \emptyIndexingFont and \indexingFontIsCC
 \def\separateFontFromText#1#2{%
     \gdef\indexingFont{}%
     \xdef\emptyIndexingFont{\ccFalse}%
     \xdef\indexingFontIsCC{\ccFalse}%
-    \gdef\text{}%
+    \gdef\indexText{}%
     {\findText{#1}{#2}}% braces are necessary to limit the scope of the font
                        % if there is one
 }
@@ -1307,7 +1313,7 @@
 %
 \def\parseText#1#2{%
    \separateFontFromText{#1}{#2}%
-   \separateModifier{#1}{\text}%
+   \separateModifier{#1}{\indexText}%
 }
 
 
@@ -1790,7 +1796,7 @@
    \ifnum\ccIndex=\ccTrue%
       \findLastWord #1 \ccEnd1\lastWord%
       \ifnum\ccCurrentIndexCat=\ccIndexTypedefCat%
-         \ccIndexGlobalTypedef{\lastWord}%
+         \ccIndexTypedef{\lastWord}%
       \else
          \ccIndexGlobalVariable{\lastWord}%
       \fi

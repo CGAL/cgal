@@ -6,6 +6,7 @@
   Function  : main program, command line parameter parsing
   System    : bison, flex, C++ (g++)
   Author    : (c) 1995 Lutz Kettner
+              as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Revision$
   Date      : $Date$
  

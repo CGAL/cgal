@@ -6,6 +6,7 @@
   Function  : Configuration constants and variables
   System    : C++ (g++)
   Author    : (c) 1995 Lutz Kettner
+              as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Revision$
   Date      : $Date$
  

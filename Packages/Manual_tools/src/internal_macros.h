@@ -6,6 +6,7 @@
   Function  : Internal macro definitions.
   System    : bison, flex, C++ (g++)
   Author    : (c) 1998 Lutz Kettner
+              as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Revision$
   Date      : $Date$
  

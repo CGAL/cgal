@@ -6,6 +6,7 @@
   Function  : Internal macro definitions.
   System    : bison, flex, C++ (g++)
   Author    : (c) 1998 Lutz Kettner
+              as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Revision$
   Date      : $Date$
  
@@ -291,7 +292,8 @@ void handleClassEnvironment() {
     if ( macroIsTrue( "\\lciIfHtmlClassNotInline") &&
 	 macroIsTrue( "\\lciIfHtmlClassFile")) {
 	// Start a new class file.
-	string filename = remove_font_commands( class_name)
+	string filename = replace_template_braces_and_colons(
+                            remove_font_commands( class_name))
 	                + macroX( "\\lciHtmlSuffix");
 	string contents( " Class declaration of ");
 	contents += string("<A HREF=\"") + filename + "\">"

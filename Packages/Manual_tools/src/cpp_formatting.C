@@ -6,6 +6,7 @@
   Function  : C++ Formatting functions.
   System    : bison, flex, C++ (g++)
   Author    : (c) 1998 Lutz Kettner
+              as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Revision$
   Date      : $Date$
  
@@ -1075,6 +1076,7 @@ void format_variable( const char* signature,
 				variable_name,
 				rest);
     char* formatted_var = convert_fontified_ascii_to_html( variable_name);
+    char* formatted_class = convert_fontified_ascii_to_html( template_class_name);
 
     double exp_size_ret = 0.0;
     double exp_size     = 0.0;
@@ -1122,7 +1124,7 @@ void format_variable( const char* signature,
 		      << current_filename 
 		      << (is_typedef ? "#Typedef_" :  "#Var_" );
 	filter_for_index_anchor( *index_stream, variable_name);
-	*index_stream << "\"><I>" << template_class_name << "::"
+	*index_stream << "\"><I>" << formatted_class << "::"
 		      << variable_name << "</I></A></UL>" << endl;
     }
     if ( macroIsTrue( "\\lciIfHtmlLinks") || 
@@ -1381,6 +1383,7 @@ void format_struct( const char* signature) {
 void format_nested_type( const char* nested_type_name) {
     current_font = it_font;
     char* formatted_type = convert_fontified_ascii_to_html( nested_type_name);
+    char* formatted_class = convert_fontified_ascii_to_html( template_class_name);
     two_cols_html_begin( *current_ostream);
 
     if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
@@ -1395,7 +1398,7 @@ void format_nested_type( const char* nested_type_name) {
                       << nested_type_name
 		      << "\"><I>";
 	if ( ! template_class_name.empty())
-	    *index_stream << template_class_name << "::";
+	    *index_stream << formatted_class << "::";
 	*index_stream << nested_type_name << "</I></A></UL>" << endl;
 	*current_ostream << "<A NAME=\"Nested_type_" << nested_type_name 
 			<< "\"></A>" << endl;

@@ -6,6 +6,7 @@
   Function  : String conversion functions.
   System    : bison, flex, C++ (g++)
   Author    : (c) 1998 Lutz Kettner
+              as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Revision$
   Date      : $Date$
  
@@ -74,6 +75,24 @@ void remove_separator( string& s) {
     }
 }
 
+// Replaces the <> around any template parameters with () since < and > cannot
+// be used in file names under M$Windows.  Also removes any colons (:) 
+// is also disallowed.
+string replace_template_braces_and_colons( string name) {
+    for ( size_t i = 0; i < name.size(); ++i) {
+	if ( name[i]=='<' ) {
+	    name.replace(i,1,"-");
+        }
+	else if ( name[i]=='>' ) {
+	    name.replace(i,1,"-");
+	}
+	else if ( name[i]==':' ) {
+	    name.replace(i,1,"-");
+//            i--;
+	}
+    }
+    return name;
+}
 
 // Removes the quoted font changing commands used in CCMode: |I|, |B| ...
 string remove_font_commands( string name) {

@@ -415,7 +415,7 @@
 \newcommand{\ccUnderscore}{\raisebox{-.05ex}{\_}\kern.05em\discretionary{}{}{}}
 % \newcommand{\ccUnderscore}{\kern.05em\raisebox{.5ex}{\_}\kern-.1em}
 \newcommand{\ccHat       }{{\large $\;\,\hat{}\,\,$}}
-\newcommand{\ccTilde     }{{\lower.3ex \hbox{\large$\,\tilde{}\,$}}}
+\newcommand{\ccTilde     }{{\leavevmode\lower.3ex \hbox{\large$\,\tilde{}\,$}}}
 \newcommand{\ccHash      }{{\rm \#}}
 \newcommand{\ccDollar    }{\$}
 
@@ -615,7 +615,7 @@
 \newwrite\@unused
 \def\typeout#1{{\let\protect\string\immediate\write\@unused{#1}}}
 \typeout{cc_manual.sty: \ccRevision. \ccDate.}
-\typeout{cc_manual.sty: *** Including revisions for automatic indexing ***}
+%\typeout{cc_manual.sty: *** Including revisions for automatic indexing ***}
 \catcode`\@=12\relax
 
 
@@ -1311,7 +1311,7 @@
 % All simple macros work also at the global level. The following
 % `global' versions are only shortcuts to omit the comment parameter,
 % so that global declarations are always commented inbetween and not in
-% the last column. Note hat declarations always can extend in the last
+% the last column. Note that declarations always can extend in the last
 % column, so the previous column has not to be reshaped.
 
 \newcommand{\ccGlobalFunction}{\gdef\ccGlobalDecl{\ccTrue}\ccFunction}
@@ -2783,6 +2783,17 @@
     |endgroup
 \fi
 
+%
+% make sure the cc_manual_index style file is used since the automatic
+% index commands used in this file are defined there
+%
+\usepackage{cc_manual_index}
+
+%
+% make sure the alltt style file is used since the ccIncludeVerbatim
+% command and ccExampleCode environment depend on it
+%
+\usepackage{alltt}
 % ___________________________________________________________________________
 % ###########################################################################
 % | EOF

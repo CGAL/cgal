@@ -7,6 +7,7 @@
               Taylored for HTML manual generation.
   System    : flex, bison, C++ (g++)
   Author    : (c) 1996 Lutz Kettner
+              as of version 3.3 (Sept. 1999) maintained by Susan Hert
   Revision  : $Revision$
   Date      : $Date$
  
