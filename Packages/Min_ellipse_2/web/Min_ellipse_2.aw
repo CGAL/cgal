@@ -1101,7 +1101,7 @@ pseudo-code above.
         if ( n_sp == 5) return;
 
         // test first n points
-        std::list<Point>::iterator  point_iter = points.begin();
+        typename std::list<Point>::iterator  point_iter = points.begin();
         for ( ; last != point_iter; ) {
             const Point& p = *point_iter;
 
@@ -2676,14 +2676,14 @@ once to ensure code coverage.
 
         verr << endl << "support points access...";
         {
-            Point  support_point;
-            Min_ellipse::Support_point_iterator
-                iter( me.support_points_begin());
+            typedef  typename Min_ellipse::Support_point_iterator
+                                              Support_point_iterator;
+            Point                   support_point;
+            Support_point_iterator  iter( me.support_points_begin());
             for ( i = 0; i < me.number_of_support_points(); ++i, ++iter) {
                 support_point = me.support_point( i);
                 assert( support_point == *iter); }
-            Min_ellipse::Support_point_iterator
-                end_iter( me.support_points_end());
+            Support_point_iterator  end_iter( me.support_points_end());
             assert( iter == end_iter);
         }
 
