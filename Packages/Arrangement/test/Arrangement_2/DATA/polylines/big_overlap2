@@ -1,0 +1,38 @@
+# Arr_polyline_traits Test Data File
+# Big Overlap
+#
+# The values used to be different and larger. They were changed to avoid
+# an overflow due to the use of int in Quotient<int> for 
+# Arr_polyline_traits. 
+# See /home/shaihi/geomtery/work/bugs/trapezoidal_decomposition/bug2/README
+# for more details.
+#
+# No. of polylines:
+2
+# Polylines:
+# ----------
+# No. of points:
+5
+# Points:
+0 0  2 0  4 2  5 0  7 0
+# No. of points:
+7
+# Points:
+1 0  2 1  3 1  4 2  5 0  6 0  6 -1
+#
+# No. of test points:
+1
+# Test points
+# -------------
+# (coordinates followed by expected type:
+# 1 VERTEX, 2 EDGE, 3 FACE, 6 UNBOUNDED_FACE)
+1 1  6
+#
+# No. of expected vertices :
+8
+# No. of expected halfedges:
+8
+# No. of expected faces    :
+2
+# No. of expected overlaps :
+3
