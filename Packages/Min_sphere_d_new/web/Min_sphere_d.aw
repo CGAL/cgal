@@ -185,6 +185,8 @@ in the \cgal\ Reference Manual.
 \subsectionRef{Concept}{Optimisation\_d\_traits}
 \input{../../Optimisation_basic/doc_tex/basic/Optimisation/Optimisation_ref/Optimisation_d_traits.tex}
 
+@p maximum_input_line_length = 80
+
 
 @! ============================================================================
 @! Implementation
@@ -1165,8 +1167,8 @@ command line.
     int verbose = -1;
     if ( argc > 1) verbose = atoi( argv[ 1]);
     CGAL::Verbose_ostream  verr ( verbose >= 0);
-    CGAL::Verbose_ostream  verr0( verbose == 0);
-    CGAL::Verbose_ostream  verrX( verbose >  0);
+    CGAL::Verbose_ostream  verr0( verbose == 0); verr0 << "";
+    CGAL::Verbose_ostream  verrX( verbose >  0); verrX << "";
 @end
 
 @! ----------------------------------------------------------------------------
