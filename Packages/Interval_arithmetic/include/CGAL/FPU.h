@@ -50,7 +50,7 @@ extern "C" {
 #  include <float.h>
 #elif defined __sgi
 #  include <sys/fpu.h>
-#elif defined _MSC_VER
+#elif defined _MSC_VER || defined __i386__
    // Nothing to include.
 #else
    // By default we use the ISO C99 version.
