@@ -28,15 +28,22 @@
 #ifndef CGAL_HALFEDGEDS_VECTOR_H
 #define CGAL_HALFEDGEDS_VECTOR_H 1
 
+// Define this if HalfedgeDS_vector is based on CGAL internal vector.
+#define CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR 1
+
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
-#include <CGAL/vector.h>
-#include <CGAL/HalfedgeDS_iterator_adaptor.h>
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <algorithm>
 #include <vector>
 #include <map>
 #include <cstddef>
+
+#ifdef CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR
+#include <CGAL/vector.h>
+#else
+#include <CGAL/HalfedgeDS_iterator_adaptor.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,7 +54,7 @@ class HalfedgeDS_vector_types {
 public:
     typedef HalfedgeDS_vector_types<Traits_,HalfedgeDSItems,Alloc> Self;
 #else
-struct HalfedgeDS_vector {
+struct HalfedgeDS_vector_types {
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 class HDS {
 public:
@@ -77,30 +84,48 @@ public:
     typedef typename Allocator::template rebind< Face> Face_alloc_rebind;
     typedef typename Face_alloc_rebind::other          Face_allocator;
 
-    //typedef std::vector<Vertex, Vertex_allocator>      Vertex_vector;
-    typedef ::CGALi::vector<Vertex, Vertex_allocator>  Vertex_vector;
+#ifdef CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR
+    typedef CGALi::vector<Vertex, Vertex_allocator>    Vertex_vector;
+    typedef typename Vertex_vector::iterator           Vertex_I;
+    typedef typename Vertex_vector::const_iterator     Vertex_CI;
+    typedef typename Vertex_vector::iterator           Vertex_iterator;
+    typedef typename Vertex_vector::const_iterator     Vertex_const_iterator;
+
+    typedef CGALi::vector<Halfedge, Halfedge_allocator>  Halfedge_vector;
+    typedef typename Halfedge_vector::iterator         Halfedge_I;
+    typedef typename Halfedge_vector::const_iterator   Halfedge_CI;
+    typedef typename Halfedge_vector::iterator         Halfedge_iterator;
+    typedef typename Halfedge_vector::const_iterator   Halfedge_const_iterator;
+
+    typedef CGALi::vector<Face, Face_allocator>        Face_vector;
+    typedef typename Face_vector::iterator             Face_I;
+    typedef typename Face_vector::const_iterator       Face_CI;
+    typedef typename Face_vector::iterator             Face_iterator;
+    typedef typename Face_vector::const_iterator       Face_const_iterator;
+#else // CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR //
+    typedef std::vector<Vertex, Vertex_allocator>      Vertex_vector;
     typedef typename Vertex_vector::iterator           Vertex_I;
     typedef typename Vertex_vector::const_iterator     Vertex_CI;
     typedef HalfedgeDS_iterator_adaptor<Vertex_I>      Vertex_iterator;
     typedef HalfedgeDS_iterator_adaptor<Vertex_CI>     Vertex_const_iterator;
-    typedef Vertex_iterator                            Vertex_handle;
-    typedef Vertex_const_iterator                      Vertex_const_handle;
 
-    //typedef std::vector<Halfedge, Halfedge_allocator>  Halfedge_vector;
-    typedef ::CGALi::vector<Halfedge, Halfedge_allocator>  Halfedge_vector;
+    typedef std::vector<Halfedge, Halfedge_allocator>  Halfedge_vector;
     typedef typename Halfedge_vector::iterator         Halfedge_I;
     typedef typename Halfedge_vector::const_iterator   Halfedge_CI;
     typedef HalfedgeDS_iterator_adaptor<Halfedge_I>    Halfedge_iterator;
     typedef HalfedgeDS_iterator_adaptor<Halfedge_CI>   Halfedge_const_iterator;
-    typedef Halfedge_iterator                          Halfedge_handle;
-    typedef Halfedge_const_iterator                    Halfedge_const_handle;
 
-    //typedef std::vector<Face, Face_allocator>          Face_vector;
-    typedef ::CGALi::vector<Face, Face_allocator>      Face_vector;
+    typedef std::vector<Face, Face_allocator>          Face_vector;
     typedef typename Face_vector::iterator             Face_I;
     typedef typename Face_vector::const_iterator       Face_CI;
     typedef HalfedgeDS_iterator_adaptor<Face_I>        Face_iterator;
     typedef HalfedgeDS_iterator_adaptor<Face_CI>       Face_const_iterator;
+#endif // CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR //
+
+    typedef Vertex_iterator                            Vertex_handle;
+    typedef Vertex_const_iterator                      Vertex_const_handle;
+    typedef Halfedge_iterator                          Halfedge_handle;
+    typedef Halfedge_const_iterator                    Halfedge_const_handle;
     typedef Face_iterator                              Face_handle;
     typedef Face_const_iterator                        Face_const_handle;
 
@@ -109,22 +134,22 @@ public:
     typedef std::random_access_iterator_tag            iterator_category;
 
     static inline Vertex_handle vertex_handle( Vertex* v) {
-        return Vertex_I(v);
+        return Vertex_handle( Vertex_I(v));
     }
     static inline Vertex_const_handle vertex_handle( const Vertex* v) {
-        return Vertex_CI(v);
+        return Vertex_const_handle( Vertex_CI(v));
     }
     static inline Halfedge_handle halfedge_handle( Halfedge* h) {
-        return Halfedge_I(h);
+        return Halfedge_handle( Halfedge_I(h));
     }
     static inline Halfedge_const_handle halfedge_handle( const Halfedge* h) {
-        return Halfedge_CI(h);
+        return Halfedge_const_handle( Halfedge_CI(h));
     }
     static inline Face_handle face_handle( Face* f) {
-        return Face_I(f);
+        return Face_handle( Face_I(f));
     }
     static inline Face_const_handle face_handle( const Face* f) {
-        return Face_CI(f);
+        return Face_const_handle( Face_CI(f));
     }
 };
 
@@ -199,6 +224,34 @@ protected:
     size_type          nb_border_halfedges;
     size_type          nb_border_edges;
     Halfedge_iterator  border_halfedges;
+
+#ifdef CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR
+    Vertex_I    get_iter( const Vertex_I&  i)   const { return i; }
+    Vertex_CI   get_iter( const Vertex_CI& i)   const { return i; }
+    Halfedge_I  get_iter( const Halfedge_I&  i) const { return i; }
+    Halfedge_CI get_iter( const Halfedge_CI& i) const { return i; }
+    Face_I      get_iter( const Face_I&  i)     const { return i; }
+    Face_CI     get_iter( const Face_CI& i)     const { return i; }
+#else // CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR //
+    Vertex_I    get_iter( const Vertex_iterator&  i) const {
+        return i.iterator();
+    }
+    Vertex_CI   get_iter( const Vertex_const_iterator& i)   const {
+        return i.iterator();
+    }
+    Halfedge_I  get_iter( const Halfedge_iterator&  i) const {
+        return i.iterator();
+    }
+    Halfedge_CI get_iter( const Halfedge_const_iterator& i) const {
+        return i.iterator();
+    }
+    Face_I      get_iter( const Face_iterator&  i)     const {
+        return i.iterator();
+    }
+    Face_CI     get_iter( const Face_const_iterator& i)     const {
+        return i.iterator();
+    }
+#endif // CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR //
 
 // CREATION
 
@@ -461,11 +514,11 @@ public:
 #endif
 
 #define CGAL__V_UPDATE(v) (((v) == Vertex_handle()) ? (v) : \
-                           (v_new + ( Vertex_CI   ((v).iterator()) - v_old)))
+                           (v_new + ( Vertex_CI   (get_iter(v)) - v_old)))
 #define CGAL__H_UPDATE(h) (((h) == Halfedge_handle()) ? (h) : \
-                           (h_new + ( Halfedge_CI ((h).iterator()) - h_old)))
+                           (h_new + ( Halfedge_CI (get_iter(h)) - h_old)))
 #define CGAL__F_UPDATE(f) (((f) == Face_handle()) ? (f) : \
-                           (f_new + ( Face_CI     ((f).iterator()) - f_old)))
+                           (f_new + ( Face_CI     (get_iter(f)) - f_old)))
 
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 void
@@ -545,7 +598,7 @@ normalize_border() {
                           // Pivot is in *ll, ll <= rr.
         while ( rr > ll && (rr->is_border() || rr->opposite()->is_border())) {
             if ( ! rr->opposite()->is_border()) {
-                CGAL_assertion( rr + 1 == rr->opposite().iterator());
+                CGAL_assertion( rr + 1 == get_iter(rr->opposite()));
                 std::swap( *rr, *(rr+1));
                 update_opposite( rr);
                 std::swap( *rrhv, *(rrhv+1));
@@ -555,8 +608,8 @@ normalize_border() {
         }
                           // Elements in [rr+1..end) >= pivot (border)
                           // *rr <= pivot, ll <= rr.
-        CGAL_assertion( rr + 1 == rr->opposite().iterator());
-        CGAL_assertion( ll + 1 == ll->opposite().iterator());
+        CGAL_assertion( rr + 1 == get_iter( rr->opposite()));
+        CGAL_assertion( ll + 1 == get_iter( ll->opposite()));
         std::swap( *(ll+1), *(rr+1));
         std::swap( *ll, *rr);
         update_opposite( ll);
@@ -574,8 +627,8 @@ normalize_border() {
                           // ll <= rr (since *rr is pivot.)
         CGAL_assertion( ll <= rr);
         CGAL_assertion( llhv <= rrhv);
-        CGAL_assertion( rr + 1 == rr->opposite().iterator());
-        CGAL_assertion( ll + 1 == ll->opposite().iterator());
+        CGAL_assertion( rr + 1 == get_iter( rr->opposite()));
+        CGAL_assertion( ll + 1 == get_iter( ll->opposite()));
         std::swap( *(ll+1), *(rr+1));
         std::swap( *ll, *rr);
         update_opposite( ll);
@@ -583,7 +636,7 @@ normalize_border() {
         std::swap( *(llhv+1), *(rrhv+1));
         std::swap( *llhv, *rrhv);
         if ( ! rr->opposite()->is_border()) {
-            CGAL_assertion( rr + 1 == rr->opposite().iterator());
+            CGAL_assertion( rr + 1 == get_iter( rr->opposite()));
             std::swap( *rr, *(rr+1));
             update_opposite( rr);
             std::swap( *rrhv, *(rrhv+1));
@@ -601,7 +654,7 @@ normalize_border() {
     if ( ll == rr) {
         // Check for the possibly missed swap.
         if ( rr->is_border() && ! rr->opposite()->is_border()) {
-            CGAL_assertion( rr + 1 == rr->opposite().iterator());
+            CGAL_assertion( rr + 1 == get_iter (rr->opposite()));
             std::swap( *rr, *(rr+1));
             update_opposite( rr);
             std::swap( *rrhv, *(rrhv+1));
