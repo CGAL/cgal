@@ -14,14 +14,12 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Segment_2.h>
 
-#ifdef USE_RATIONAL
 #include <CGAL/Pm_segment_traits_2.h>
+#ifdef USE_RATIONAL
 #include <CGAL/leda_rational.h>
 #else
 #if defined (USE_LEDA_RAT_KERNEL)
-#include <CGAL/Pm_leda_segment_traits_2.h>
-#else
-#include <CGAL/Pm_segment_traits_2.h>
+#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #endif
 #endif
 
@@ -46,44 +44,38 @@
 #if defined(USE_RATIONAL) && defined(USE_LEDA_RAT_KERNEL)
 #error only one kernel should be defined
 #endif
-typedef leda_rational                          number_type;
+typedef leda_rational                           number_type;
 #else
-typedef double                                 number_type; 
+typedef double                                  number_type; 
 #endif
 
-#ifndef USE_LEDA_RAT_KERNEL
-typedef CGAL::Cartesian<number_type>           Rep;
-#endif
-
-#ifdef USE_RATIONAL
-typedef CGAL::Pm_segment_traits_2<Rep>     Traits;
+#ifdef USE_LEDA_RAT_KERNEL
+typedef CGAL::leda_rat_kernel_traits            Rep;
 #else
-#if defined(USE_LEDA_RAT_KERNEL)
-typedef CGAL::Pm_leda_segment_traits_2     Traits;
-#else
-typedef CGAL::Pm_segment_traits_2<Rep>   Traits;
-#endif
+typedef CGAL::Cartesian<number_type>            Rep;
 #endif
 
-typedef CGAL::Pm_default_dcel<Traits>          Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits>        Planar_map;
-typedef Planar_map::Traits_wrap                Traits_wrap;
+typedef CGAL::Pm_segment_traits_2<Rep>          Traits;
 
-typedef Planar_map::Vertex                     Vertex;
-typedef Planar_map::Halfedge                   Halfedge;
-typedef Planar_map::Face                       Face;
+typedef CGAL::Pm_default_dcel<Traits>           Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
+typedef Planar_map::Traits_wrap                 Traits_wrap;
 
-typedef Planar_map::Vertex_handle              Vertex_handle;
-typedef Planar_map::Halfedge_handle            Halfedge_handle;
-typedef Planar_map::Face_handle                Face_handle;
+typedef Planar_map::Vertex                      Vertex;
+typedef Planar_map::Halfedge                    Halfedge;
+typedef Planar_map::Face                        Face;
 
-typedef Planar_map::Vertex_iterator            Vertex_iterator;
-typedef Planar_map::Halfedge_iterator          Halfedge_iterator;
+typedef Planar_map::Vertex_handle               Vertex_handle;
+typedef Planar_map::Halfedge_handle             Halfedge_handle;
+typedef Planar_map::Face_handle                 Face_handle;
 
-typedef Planar_map::Ccb_halfedge_circulator    Ccb_halfedge_circulator;
+typedef Planar_map::Vertex_iterator             Vertex_iterator;
+typedef Planar_map::Halfedge_iterator           Halfedge_iterator;
 
-typedef Traits::Point                          Pm_point;
-typedef Traits::X_curve                        Pm_curve; 
+typedef Planar_map::Ccb_halfedge_circulator     Ccb_halfedge_circulator;
+
+typedef Traits::Point                           Pm_point;
+typedef Traits::X_curve                         Pm_curve; 
 
 
 extern  int draw_pm (Planar_map & pm , CGAL::Window_stream & W);
