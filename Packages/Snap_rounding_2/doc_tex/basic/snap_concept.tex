@@ -33,13 +33,12 @@ the built-in number type \ccc{double}. The assumption is that although the Snap 
 algorithm requires exact computation, the \ccc{double} number type should be sufficient
 for representing the output such that no overflows occur.
 
-Since the \ccc{Snap_rounding_2<T>} function uses \ccc{Sweep_line_2} and \ccc{Kdtree_2}
-their requirements hold here too.
-
 \ccTypes
 \ccNestedType{Point_2}{The point type.}
 \ccGlue
 \ccNestedType{Segment_2}{The segment type.}
+\ccGlue
+\ccNestedType{X_curve}{X-monotone curve used for a sweep line on the input segments.}
 \ccGlue
 \ccNestedType{Iso_rectangle_2}{The iso rectangle  type.}
 
@@ -122,8 +121,7 @@ and constructor objects.
 
 
 \ccHasModels
-\ccc{CGAL::Cartesian<R>} \\
-\ccc{CGAL::Homogeneous<R>}
+\ccc{CGAL::Snap_rounding_traits<R>}
 
 \ccSeeAlso
 \ccc{CGAL::Snap_rounding_2<Traits>}

@@ -19,29 +19,33 @@ int main()
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
-//#include <CGAL/IO/cgal_window_redefine.h>
-#include "../../include/CGAL/Snap_rounding_2_traits.h"
+#include "../../include/CGAL/Snap_rounding_traits_2.h"
 #include "../../include/CGAL/Snap_rounding_2.h"
 
-typedef leda_rational                                  Number_Type;
-typedef CGAL::Cartesian<Number_Type>                   Rep;
-typedef Rep::Point_2                                   Local_point_2;
-typedef Rep::Segment_2                                 Local_segment_2;
-typedef CGAL::Snap_rounding_traits<Rep>                Sr_traits;
-typedef CGAL::Snap_rounding_2<Sr_traits>               Snap_rounding_2;
-typedef Snap_rounding_2::Segment_2                     Segment_2;
-typedef Snap_rounding_2::Point_2                       Point_2;
-typedef Snap_rounding_2::Segment_iterator              Segment_iterator;
-typedef Snap_rounding_2::Polyline_const_iterator       Polyline_const_iterator;
-typedef Snap_rounding_2::Point_const_iterator          Point_const_iterator;
-typedef CGAL::Iso_rectangle_2<Rep>                     Iso_rectangle_2;
-typedef CGAL::Window_stream                            Window_stream;
+typedef leda_rational                            Number_type;
+typedef CGAL::Cartesian<Number_type>             Rep;
+typedef CGAL::Snap_rounding_traits_2<Rep>        Sr_traits;
+typedef Rep::Segment_2                           Segment_2;
+typedef Rep::Point_2                             Point_2;
+typedef std::list<Segment_2>                     Segment_list_2;
+typedef std::list<Point_2>                       Polyline_2;
+typedef std::list<Polyline_2>                    Polyline_list_2;
+typedef CGAL::Iso_rectangle_2<Rep>               Iso_rectangle_2;
+typedef CGAL::Window_stream                      Window_stream;
+typedef std::list<Segment_2>                     Segment_2_list;
+typedef Segment_list::const_iterator             Segment_2_list_const_iterator;
+typedef std::list<Point_2>                       Point_2_list;
+typedef Point_list::const_iterator               Point_2_list_const_iterator;
+typedef std::list<std::list<Point_2> >           Polyline_2_list;
+typedef Polyline_2_list::const_iterator          Polyline_2_list_const_iterator;
 
 #define MIN_X 0
 #define MIN_Y 0
 #define MAX_X 10
 #define MAX_Y 10
 #define PRECISION 0.5
+
+#define NUMBER_OF_KD_TREES 5
 
 Number_Type min(const Number_Type &p,const Number_Type &q,Number_Type &r)
 {
@@ -74,18 +78,18 @@ void get_extreme_points(std::list<Segment_2> &seg_list,
   }
 }
 
-void show_results(Snap_rounding_2 &s,
+void show_results(Polyline_2_list& polyline_list,
                  Number_Type prec,
                  CGAL::Window_stream &w,
                  bool show_hp,
                  bool show_output)
 {
   // draw isr polylines
-  for(Polyline_const_iterator i = s.polylines_begin();
-      i != s.polylines_end();
+  for(Polyline_2_list_const_iterator i = polyline_list_begin();
+      i != polyline_list.end();
       ++i) {
-    Point_const_iterator prev = i->begin();
-    Point_const_iterator i2 = prev;
+    Point_2_list_const_iterator prev = i->begin();
+    Point_2_list_const_iterator i2 = prev;
     bool seg_painted = false;
 
     if(show_hp)
@@ -116,11 +120,10 @@ void display_bounding_box(CGAL::Window_stream &W,
                           const Iso_rectangle_2 &b,
                           bool display_bbox)
 {
-  //  if(display_bbox)
-    W << CGAL::BLACK << b;
+  W << CGAL::BLACK << b;
 }
 
-void window_output(Snap_rounding_2 &s,Window_stream &w,
+/*void window_output(Snap_rounding_2 &s,Window_stream &w,
                    Number_Type prec,
                    bool wait_for_click)
 {
@@ -168,6 +171,7 @@ void window_output(Snap_rounding_2 &s,Window_stream &w,
       return;
   }
 }
+*/
 
 void read_data(int argc,
                char *argv[],
@@ -204,19 +208,16 @@ void read_data(int argc,
   }
 }
 
-void clear(Snap_rounding_2 &s,
-           CGAL::Window_stream &W,
+void clear(CGAL::Window_stream &W,
            const Iso_rectangle_2 &b,
            bool display_bbox)
 {
-  s.clear();
-
   W.clear();
 
   display_bounding_box(W,b,display_bbox);
 }
 
-void redraw(Snap_rounding_2 &s,
+void redraw(Segment_2_list& s,
             CGAL::Window_stream &W,
             const Iso_rectangle_2 &b,
             bool show_input,
@@ -228,8 +229,8 @@ void redraw(Snap_rounding_2 &s,
 
   if(show_input) {
     W << CGAL::BLACK;
-    for(Segment_iterator i1 = s.segments_begin();
-        i1 != s.segments_end();
+    for(Segment_2_list_const_iterator i1 = s.begin();
+        i1 != s.end();
         ++i1)
       W << *i1;
   }
@@ -319,7 +320,7 @@ int main(int argc,char *argv[])
   W.text_box(-1.5,-1,9.5,"add");
   W.text_box(-1.5,-1,9,"isr");
 
-  Snap_rounding_2 s(prec,true,false,5);
+  //Snap_rounding_2 s(prec,true,false,5); !!!!
 
   Iso_rectangle_2 b(Point_2(x1, y1), Point_2(x2, y2));
 
@@ -329,8 +330,8 @@ int main(int argc,char *argv[])
   int mouse_input;
 
   if(argc == 2) {
-    s.insert(seg_list.begin(),seg_list.end());
-    show_results(s,prec,W,show_hp,show_output);
+    
+    show_results(seg_list,prec,W,show_hp,show_output);
     sr_shown = true;
   } else
     sr_shown = false;
@@ -344,13 +345,13 @@ int main(int argc,char *argv[])
       if(remove_segments) {
 	Number_Type min_dist = -1,dist;
         Segment_iterator closest_iter =
-                s.segments_end();
-        for(Segment_iterator i1 = s.segments_begin();
-            i1 != s.segments_end();
+                seg_list.end();
+        for(Segment_iterator i1 = seg_list.begin();
+            i1 != seg_list.end();
             ++i1) {
-          Local_segment_2 l_s(Local_point_2(i1->source().x(),i1->source().y()),
-              Local_point_2(i1->target().x(),i1->target().y()));
-          dist = CGAL::squared_distance(Local_point_2(x3,y3),l_s);
+          Segment_2 l_s(Point_2(i1->source().x(),i1->source().y()),
+              Point_2(i1->target().x(),i1->target().y()));
+          dist = CGAL::squared_distance(Point_2(x3,y3),l_s);
 
           if(min_dist == -1 || dist < min_dist) {
             min_dist = dist;
@@ -359,9 +360,9 @@ int main(int argc,char *argv[])
 	}
         
         if(closest_iter != s.segments_end())
-          s.remove(*closest_iter);
+          seg_list.remove(closest_iter);
 
-	redraw(s,W,b,show_input,argc == 1);
+	redraw(seg_list,W,b,show_input,argc == 1);
       } else {
         // add a segment
         mouse_input = W.read_mouse_seg(x3,y3,x4,y4);
@@ -369,11 +370,11 @@ int main(int argc,char *argv[])
            y4 >= y1 && y4 <= y2) {
           if(sr_shown) {
             sr_shown = false;
-            redraw(s,W,b,show_input,argc == 1);
+            redraw(seg_list,W,b,show_input,argc == 1);
           }
           W << CGAL::BLACK;
           Segment_2 tmp1(Point_2(x3,y3),Point_2(x4,y4));
-          s.insert(tmp1);
+          seg_list.push_back(tmp1);
           W << tmp1;
         }
       }
@@ -388,7 +389,7 @@ int main(int argc,char *argv[])
       show_results(s,prec,W,show_hp,show_output);
       sr_shown = true;
     } else if(mouse_input == 2) {
-      clear(s,W,b,argc == 1);
+      clear(W,b,argc == 1);
       sr_shown = false;
     } else if(mouse_input == 3) {
       // change to automatic mode
@@ -398,7 +399,7 @@ int main(int argc,char *argv[])
       W.disable_button(3);
       W.disable_button(1);
       sr_shown = true;
-      redraw(s,W,b,show_input,argc == 1);
+      redraw(seg_list,W,b,show_input,argc == 1);
       show_results(s,prec,W,show_hp,show_output);
       sr_shown = true;
     } else if(mouse_input == 4) {
@@ -408,7 +409,7 @@ int main(int argc,char *argv[])
       W.enable_button(3);
       W.disable_button(4);
       sr_shown = false;
-      redraw(s,W,b,show_input,argc == 1);
+      redraw(seg_list,W,b,show_input,argc == 1);
     } else if(mouse_input == 5) {
       W.enable_button(6);
       W.disable_button(5);
@@ -474,7 +475,7 @@ int main(int argc,char *argv[])
     }
 
     if(mouse_input > 4 && mouse_input < 18) {
-      redraw(s,W,b,show_input,argc == 1);
+      redraw(seg_list,W,b,show_input,argc == 1);
       if(automatic_show)
         show_results(s,prec,W,show_hp,show_output);
     }

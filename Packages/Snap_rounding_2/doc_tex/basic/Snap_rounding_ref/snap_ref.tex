@@ -67,15 +67,16 @@ basic requirement of Snap Rounding.
   bool int_output = true,
   unsigned int number_of_kd_trees = 1);}
 
-The first two parameters denote the first and after-the-last iterators of a list of Segment\_2 which are the input of Snap Rounding.
-The third parameter denotes the pixel size. The forth parameter determines whether to apply Iterated Snap Rounding
-or Snap Rounding. The fifth parameter determines the output representation. If the
+The first two parameters denote the first and after-the-last iterators of the input segments.
+The third parameter is a referrence to a container of the output polylines.
+The forth parameter denotes the pixel size. The fifth parameter determines whether to apply Iterated Snap Rounding
+or Snap Rounding. The sixth parameter determines the output representation. If the
 parameter value is {\ccc true}, then the output is represented in an integer
 grid just as defined by the Snap Rounding algorithm. Note that the number type of
-the representation remains {\ccc NT}. Otherwise, the plane is tiled
+the representation remains {\ccc Traits::FT}. Otherwise, the plane is tiled
 with unit pixels with size {\ccc pixel\_size} and each vertice of the output is
 represented by the coordinates of the cenetr of the hot pixel that contains it.
-The sixth parameter is desribed below.
+The seventh parameter is desribed below.
 
 
 \ccPrecond{\ccc{pixel_size} must have a positive value.}

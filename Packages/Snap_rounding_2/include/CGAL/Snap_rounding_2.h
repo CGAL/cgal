@@ -135,16 +135,15 @@ struct hot_pixel_dir_cmp
   bool operator ()(const Hot_Pixel<Rep_> *h1,const Hot_Pixel<Rep_> *h2);
 };
 
-template<class Rep_,class outputContainer>
+template<class Rep_,class OutputContainer>
 class Snap_rounding_2 {
 
 typedef Rep_                                         Rep;
 typedef typename Rep::FT                             NT;
 typedef typename Rep::X_curve                        X_curve;
-typedef typename Rep::Curve                          Curve;
 typedef std::list<X_curve>                           CurveContainer;
 typedef typename CurveContainer::iterator            CurveContainerIter;
-typedef typename outputContainer::value_type         Polyline_type;
+typedef typename OutputContainer::value_type         Polyline_type;
 
 public:
   friend class Segment_data<Rep>;
@@ -162,7 +161,7 @@ public:
        Multiple_kd_tree<Rep,Hot_Pixel<Rep> *> **mul_kd_tree);
 
   void iterate(
-        outputContainer& output_container,
+        OutputContainer& output_container,
         NT pixel_size,
         bool int_output,
         bool do_isr,
@@ -483,8 +482,8 @@ bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,
     cx == LARGER || seg_dir == SEG_RIGHT && cx == SMALLER);
 }
 
-template<class Rep_,class outputContainer>
-void Snap_rounding_2<Rep_,outputContainer>::
+template<class Rep_,class OutputContainer>
+void Snap_rounding_2<Rep_,OutputContainer>::
      find_hot_pixels_and_create_kd_trees(
        NT pixel_size,
        unsigned int number_of_kd_trees,
@@ -533,8 +532,8 @@ void Snap_rounding_2<Rep_,outputContainer>::
                   number_of_kd_trees,simple_seg_list);
   }
 
-template<class Rep_,class outputContainer>
-void Snap_rounding_2<Rep_,outputContainer>::
+template<class Rep_,class OutputContainer>
+void Snap_rounding_2<Rep_,OutputContainer>::
      find_intersected_hot_pixels(Segment_data<Rep_>
                     &seg,
                     std::set<Hot_Pixel<Rep_> *,
@@ -565,8 +564,8 @@ void Snap_rounding_2<Rep_,outputContainer>::
   }
 
 
-template<class Rep_,class outputContainer>
-void Snap_rounding_2<Rep_,outputContainer>::
+template<class Rep_,class OutputContainer>
+void Snap_rounding_2<Rep_,OutputContainer>::
      reroute_sr(std::set<Hot_Pixel<Rep_> *,
                 hot_pixel_dir_cmp<Rep_> > &inp_hot_pixels_intersected_set,
                 Polyline_type& seg_output,
@@ -584,8 +583,8 @@ void Snap_rounding_2<Rep_,outputContainer>::
 
   }
 
-template<class Rep_,class outputContainer>
-void Snap_rounding_2<Rep_,outputContainer>::reroute_isr(
+template<class Rep_,class OutputContainer>
+void Snap_rounding_2<Rep_,OutputContainer>::reroute_isr(
    std::set<Hot_Pixel<Rep_> *,
    hot_pixel_dir_cmp<Rep_> > &inp_hot_pixels_intersected_set,
    Polyline_type& seg_output,
@@ -627,9 +626,9 @@ void Snap_rounding_2<Rep_,outputContainer>::reroute_isr(
     }
   }
 
-template<class Rep_,class outputContainer>
-void Snap_rounding_2<Rep_,outputContainer>::iterate(
-        outputContainer& output_container,
+template<class Rep_,class OutputContainer>
+void Snap_rounding_2<Rep_,OutputContainer>::iterate(
+        OutputContainer& output_container,
         NT pixel_size,
         bool int_output,
         bool do_isr,
@@ -677,11 +676,11 @@ void Snap_rounding_2<Rep_,outputContainer>::iterate(
     }
   }
 
-template<class Rep_,class InputIterator,class outputContainer>
+template<class Rep_,class InputIterator,class OutputContainer>
 void snap_rounding_2(
   InputIterator begin,
   InputIterator end,
-  outputContainer& output_container,
+  OutputContainer& output_container,
   //std::list<std::list<typename Rep_::Point_2> >& output_container,
   typename Rep_::FT pixel_size,
   bool do_isr = true,
@@ -698,7 +697,7 @@ void snap_rounding_2(
       ++begin;
     }
 
-    Snap_rounding_2<Rep_,outputContainer> s;
+    Snap_rounding_2<Rep_,OutputContainer> s;
 
     s.find_hot_pixels_and_create_kd_trees(pixel_size,number_of_kd_trees,
          seg_list,&mul_kd_tree);
