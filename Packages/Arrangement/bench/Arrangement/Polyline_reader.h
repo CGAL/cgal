@@ -58,7 +58,7 @@ public:
         points.push_back (Point_2(NT(ix),NT(iy)));
       }
 
-      Curve_2   polyline(points);
+      Curve_2 polyline(points.begin(), points.end());
       curves.push_back(polyline);
 
 #if defined(USE_LEDA_KERNEL) || defined(USE_MY_KERNEL)
