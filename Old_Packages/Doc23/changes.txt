@@ -1,3 +1,6 @@
+2.9     (?? Feb 2001)
+- Add doc for Construct_cross_product_vector_3.
+
 2.8     (14 Feb 2001)
 
 - Added some missing function object classes
