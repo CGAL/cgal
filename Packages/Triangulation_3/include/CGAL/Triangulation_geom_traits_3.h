@@ -48,7 +48,8 @@ CGAL_BEGIN_NAMESPACE
 template < class FT >
 CGAL_KERNEL_LARGE_INLINE
 Oriented_side
-local_coplanar_side_of_oriented_circleC3(const FT &px, const FT &py, const FT &pz,
+local_coplanar_side_of_oriented_circleC3(
+	                           const FT &px, const FT &py, const FT &pz,
                                    const FT &qx, const FT &qy, const FT &qz,
                                    const FT &rx, const FT &ry, const FT &rz,
                                    const FT &tx, const FT &ty, const FT &tz,
@@ -82,7 +83,8 @@ class Local_Coplanar_side_of_oriented_circle
 
     template <class T1, class T2>
     Oriented_side
-    operator()(const T1& p, const T1& q, const T1& r, const T1& t, const T2& v) const
+    operator()(const T1& p, const T1& q, const T1& r, const T1& t,
+	       const T2& v) const
     { 
       //return coplanar_side_of_oriented_circle(p,q,r,t, v); 
       return local_coplanar_side_of_oriented_circleC3(p.x(), p.y(), p.z(),
@@ -122,8 +124,10 @@ public:
                                             Construct_cross_product_vector_3;
 
   // Uncomment the next line as soon as Kernels have this function
-  // typedef typename Rep::Side_of_oriented_circle_3 Coplanar_side_of_oriented_circle_3;
-  typedef Local_Coplanar_side_of_oriented_circle Coplanar_side_of_oriented_circle_3;
+  // typedef typename Rep::Side_of_oriented_circle_3
+  //                  Coplanar_side_of_oriented_circle_3;
+  typedef Local_Coplanar_side_of_oriented_circle
+                                          Coplanar_side_of_oriented_circle_3;
 
   typedef typename Rep::Construct_segment_3        Construct_segment_3;
   typedef typename Rep::Construct_triangle_3       Construct_triangle_3;
@@ -181,12 +185,12 @@ public:
   coplanar_orientation_3_object() const {
     return Coplanar_orientation_3();
   }
-  
+
   Coplanar_side_of_oriented_circle_3
   coplanar_side_of_oriented_circle_3_object() const {
     return Coplanar_side_of_oriented_circle_3();
   }
-  
+
   Side_of_oriented_sphere_3
   side_of_oriented_sphere_3_object() const {
     return Side_of_oriented_sphere_3();
