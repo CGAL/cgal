@@ -1,10 +1,13 @@
 test points
+   0 5
+   0 10
    1 1
    2 2
    2 4
    3.5 8
    4 1
    4 9
+   5 0
    5 1
    5 7
    5 9
@@ -22,7 +25,7 @@ test first set   (2,1),(8,7)
 test operator = (2,1),(8,7)
 test cctor      (2,1),(8,7)
 test list insertion:
-  number of successfully inserted points is 19
+  number of successfully inserted points is 21
   LER is  (2,1),(8,7)
 test default ctor    (0,0),(0.5,1)
 test after removal   (2,1),(8,7)
