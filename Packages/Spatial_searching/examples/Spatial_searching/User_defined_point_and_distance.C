@@ -1,4 +1,10 @@
+// Copyright (c) 2002 Utrecht University
+//
+// This file is part of an example program for CGAL. This example
+// program may be used, distributed and modified without limitation.
+//
 //file: examples/Spatial_searching/User_defined_point_and_distance.C
+
 #include <CGAL/basic.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/point_generators_3.h>

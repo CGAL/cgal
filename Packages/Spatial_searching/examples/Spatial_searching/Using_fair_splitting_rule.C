@@ -1,3 +1,8 @@
+// Copyright (c) 2002 Utrecht University
+//
+// This file is part of an example program for CGAL. This example
+// program may be used, distributed and modified without limitation.
+//
 //file: examples/Spatial_searching/Using_fair_splitting_rule.C
 
 #include <CGAL/Cartesian.h>

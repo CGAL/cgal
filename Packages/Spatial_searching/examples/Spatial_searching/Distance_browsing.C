@@ -1,4 +1,10 @@
+// Copyright (c) 2002 Utrecht University
+//
+// This file is part of an example program for CGAL. This example
+// program may be used, distributed and modified without limitation.
+//
 //file: examples/Spatial_searching/Distance_browsing.C
+
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>

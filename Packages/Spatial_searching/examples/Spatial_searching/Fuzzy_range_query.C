@@ -1,4 +1,10 @@
+// Copyright (c) 2002 Utrecht University
+//
+// This file is part of an example program for CGAL. This example
+// program may be used, distributed and modified without limitation.
+//
 // file: examples/Spatial_searching/Fuzzy_range_query.C
+
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/point_generators_d.h>
