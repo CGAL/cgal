@@ -15,9 +15,10 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
-	   -g -O -Wall # -mcpu=ultrasparc -fprofile-arcs -ftest-coverage
+	   -O3 -Wall -mcpu=ultrasparc # -fprofile-arcs -ftest-coverage
            #-O2 -xtarget=ultra2
 	   #-Winline
+	   #-mcpu=pentiumpro
 
 #---------------------------------------------------------------------#
 #                    linker flags
