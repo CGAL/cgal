@@ -84,7 +84,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         dup(pipe_out[0]);   // we connect it to the pipe
         close (1);          // this is the file descriptor of cout
         dup(pipe_in[1]);    // we connect it to the pipe
-        if (machine && (strlen(machine)>0)) {
+        if (machine && (::strlen(machine)>0)) {
             std::ostrstream os;
             os << " rgeomview " << machine << ":0.0" << std::ends;
             execlp("rsh", "rsh", machine, "-l", login, os.str(), NULL);
@@ -121,7 +121,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 	// placed in the file .geomview (cf the doc).  It helps for
 	// synchronizing.  Probably not the best method.
         char inbuf[10];
-        ::read(in, inbuf, 7);
+        ::read(in, inbuf, ::strlen("started"));
 
         std::cout << "done." << std::endl;
 
@@ -263,7 +263,7 @@ Geomview_stream::look_recenter() const
 Geomview_stream&
 Geomview_stream::operator<<(const char *cptr)
 {
-    int length = strlen(cptr);
+    int length = ::strlen(cptr);
     if (length != ::write(out, cptr, length)) {
         std::cerr << "write problem in the pipe while sending data to geomview"
              << std::endl;
@@ -286,7 +286,7 @@ Geomview_stream::operator<<(int i)
         std::ostrstream str;
         str << i << ' ' << std::ends;
         char *bptr = str.str();
-        ::write(out, bptr, int(strlen(bptr)));
+        ::write(out, bptr, int(::strlen(bptr)));
     }
     trace(i);
 
@@ -306,7 +306,7 @@ Geomview_stream::operator<<(double d)
         str << f << " " << std::ends;
         char *bptr = str.str();
 
-        ::write(out, bptr, int(strlen(bptr)));
+        ::write(out, bptr, int(::strlen(bptr)));
     }
     trace(f);
     return *this;
