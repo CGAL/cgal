@@ -2,7 +2,7 @@
 @! The CGAL Project
 @! Implementation: file header and other anyweb macros
 @! ----------------------------------------------------------------------------
-@! file  : web/file_header.awlib
+@! file  : web/file_header.awi
 @! author: Sven Schönherr (sven@inf.fu-berlin.de)
 @! ----------------------------------------------------------------------------
 @! $Revision$
