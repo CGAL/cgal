@@ -489,7 +489,7 @@ initial_check()
 
 # fetch CGAL version id from ${CGAL_INCL_DIR}/CGAL/config.h
 # and compiler-testsuite version id 
-# from ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_TYPENAME.C
+# from ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_ITERATOR_TRAITS.C
 get_cgal_version()
 {
     # this file is assumed to contain one line matching "CGAL_VERSION "
@@ -501,7 +501,7 @@ get_cgal_version()
     
     # this file is assumed to contain one line matching "revision "
     # where the fourth field describes the compiler-testsuite version
-    FILE="${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_BUILTIN_BOOL.C"
+    FILE="${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_ITERATOR_TRAITS.C"
     _check_read ${FILE}
     CGAL_INSTALL_CONF_VERSION=`${_fgrep} 'revision ' ${FILE} | \
 	${_awk} '{printf "%s",$4}'`
@@ -789,7 +789,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    MATH_LIB=
-	    START_LD_OPTIONS="-link"
+	    START_LD_OPTIONS="-link "
 	    ;;
 	*IRIX*5.*CC*)
 	    #### settings for sgi mipspro compiler on irix5
@@ -1432,7 +1432,7 @@ leda_ldflags()
 	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
 	    pathname1=`_where_is 'LEDA_LIB_DIR'`
 	    pathname2=`filename_for_compiler ${pathname1}`
-	    ${_printf} "%s" "${START_LD_OPTIONS} '${LIBPATH_OPT}${pathname2}' "
+	    ${_printf} "%s" "${START_LD_OPTIONS}'${LIBPATH_OPT}${pathname2}' "
 	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
 	fi
 	${_printf} "%s" "${LEDA_LIB_OPT}P${LIB_SFX} ${LEDA_LIB_OPT}G${LIB_SFX} ${LEDA_LIB_OPT}L${LIB_SFX} "
@@ -3847,8 +3847,7 @@ write_compiler_flags()
   # CGAL_CXXFLAGS
   #
   ${_printf} "%s\\\\\n" "CGAL_CXXFLAGS = " >> ${FILE}
-  makefile_print_line "\$(CUSTOM_CXXFLAGS)" >> ${FILE}
-  makefile_print_line "${ADDITIONAL_CXXFLAGS}" >> ${FILE}
+  makefile_print_line "\$(CUSTOM_CXXFLAGS) ${ADDITIONAL_CXXFLAGS}" >> ${FILE}
   if [ -n "${GMP_SUPPORT}" ]; then
     makefile_print_line "-DCGAL_USE_GMP" >> ${FILE}
     if [ "${GMP_INSTALLATION}" = 'x' -o \
@@ -4040,7 +4039,7 @@ write_linker_flags()
   # CGAL_LDFLAGS
   #
   ${_printf} "\n%s\\\\\n" "CGAL_LDFLAGS = " >> ${FILE}
-  makefile_print_line "${START_LD_OPTIONS} \$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+  makefile_print_line "${START_LD_OPTIONS}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
   makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   ${_printf} "\t%s\n\n" "${LIBS}" >> ${FILE}
 
@@ -4064,10 +4063,9 @@ write_linker_flags()
   # CGAL_WINDOW_LDFLAGS
   #
   if [ -n "${LEDA_SUPPORT}" ]; then
-    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
-    RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
     ${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
-    makefile_print_line "${CUSTOM_LDFLAGS}" >> ${FILE}
+    makefile_print_line "${START_LD_OPTIONS}\$(CGAL_WINDOW_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+    makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
     ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
   fi
 }
