@@ -28,7 +28,7 @@
 #include <CGAL/Interval_arithmetic.h>
 
 #include <utility>
-
+#include <string>
 #include <gmp.h>
 
 
@@ -105,6 +105,17 @@ public:
     mpq_canonicalize(mpQ);
   }
   
+  Gmpq_rep(int num, int den)
+  { 
+    mpq_init(mpQ); 
+    if(den < 0) {
+      num = -num;
+      den = -den;
+    }
+    mpq_set_si(mpQ, num, den);
+    mpq_canonicalize(mpQ);
+  }
+
   Gmpq_rep(const Gmpz& n, const Gmpz& d)
   { 
     mpq_init(mpQ); 
@@ -120,17 +131,17 @@ public:
     mpq_set_d(mpQ, d); 
   }
 
-  Gmpq_rep(const char * const str)
+  Gmpq_rep(const std::string& str)
   { 
     mpq_init(mpQ);
-    mpq_set_str(mpQ, str, 10);
+    mpq_set_str(mpQ, str.c_str(), 10);
     mpq_canonicalize(mpQ); 
   }
 
-  Gmpq_rep(const char * const str, int base)
+  Gmpq_rep(const std::string& str, int base)
   { 
     mpq_init(mpQ);
-    mpq_set_str(mpQ, str, base);
+    mpq_set_str(mpQ, str.c_str(), base);
     mpq_canonicalize(mpQ);
   }
 
@@ -167,6 +178,9 @@ public:
   Gmpq(const Gmpz& n)
     : Base(Gmpq_rep(n)) {}
 
+  Gmpq(int n, int d)
+    : Base(Gmpq_rep(n, d)) {}
+  
   Gmpq(signed long n, unsigned long d)
     : Base(Gmpq_rep(n, d)) {}
 
@@ -178,11 +192,11 @@ public:
 
   Gmpq(double d)
     : Base(Gmpq_rep(d)) {}
-
-  Gmpq(const char* const str)
+  
+  Gmpq(const std::string& str)
     : Base(Gmpq_rep(str)) {}
-
-  Gmpq(const char* const str, int base)
+  
+   Gmpq(const std::string& str, int base)
     : Base(Gmpq_rep(str, base)) {}
 
 

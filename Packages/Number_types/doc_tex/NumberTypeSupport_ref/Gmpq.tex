@@ -32,6 +32,10 @@ FieldNumberType
             {creates a multiple-precision rational number initialized with
              \ccStyle{n}.}
 
+\ccConstructor{Gmpq(int n, int d)}
+            {creates a multiple-precision rational number initialized with
+             \ccStyle{n/d}.}
+
 \ccConstructor{Gmpq(signed long n, unsigned long d)}
             {creates a multiple-precision rational number initialized with
              \ccStyle{n/d}.}
@@ -48,11 +52,11 @@ FieldNumberType
             {creates a multiple-precision rational number initialized with
              \ccStyle{d}.}
 
-\ccConstructor{Gmpq(const char* const str)}
+\ccConstructor{Gmpq(const std::string& str)}
             {creates a multiple-precision rational number initialized with
              \ccStyle{str}.}
 
-\ccConstructor{Gmpq(const char* const str, int base)}
+\ccConstructor{Gmpq(const std::string& str, int base)}
             {creates a multiple-precision rational number initialized with
              \ccStyle{str}.}
 

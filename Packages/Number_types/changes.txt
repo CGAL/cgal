@@ -1,3 +1,6 @@
+4.118 (23 September 2003) [af]
+Added constructor Gmqp(int,int) and from std::string instead of char*
+
 4.117 (18 September 2003)
 - New headers
 
