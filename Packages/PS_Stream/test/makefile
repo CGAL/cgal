@@ -33,10 +33,11 @@ LDFLAGS = \
 postscript:  postscript.o  
 	$(CGAL_CXX) -o postscript postscript.o  $(CGAL_WINDOW_LDFLAGS)
 
-
+postscript3:  postscript3.o  
+	$(CGAL_CXX) -o postscript3 postscript3.o  $(CGAL_WINDOW_LDFLAGS)
 clean:
 	/bin/rm -f *.o \
-                   postscript \
+                   postscript postscript3\
                    core
 
 #---------------------------------------------------------------------#
