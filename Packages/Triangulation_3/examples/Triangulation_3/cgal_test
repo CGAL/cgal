@@ -69,5 +69,6 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run example1
+  compile_and_run example_tds
 fi
 

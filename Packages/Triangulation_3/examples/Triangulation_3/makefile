@@ -39,17 +39,19 @@ LDFLAGS = \
 
 # QUANTIFY = quantify
 
-all: example1
+all: example1 example_tds
 
 example1: example1.o
 	$(CGAL_CXX) -o example1 example1.o $(LDFLAGS)
 
+example_tds: example_tds.o
+	$(CGAL_CXX) -o example_tds example_tds.o $(LDFLAGS)
 
 clean:
 	rm -rf *~ *.o core 
 
 realclean: clean
-	rm -rf example1 Program* Compiler* Error* error.txt output
+	rm -rf example1 example_tds Program* Compiler* Error* error.txt output output_tds
 
 #---------------------------------------------------------------------#
 #                    suffix rules

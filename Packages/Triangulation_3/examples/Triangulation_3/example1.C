@@ -28,21 +28,14 @@
 #include <list>
 #include <vector>
 
-#include <CGAL/triangulation_assertions.h>
-
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
 
-#include <CGAL/Triangulation_iterators_3.h>
-#include <CGAL/Triangulation_circulators_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Triangulation_3.h>
 //#include <CGAL/Delaunay_triangulation_3.h>
-
-#include <CGAL/IO/Geomview_stream.h>
 
 typedef CGAL::Cartesian<double>  Rep;
 
@@ -72,7 +65,7 @@ int main(int argc, char* argv[])
 
   int n = T.insert(L.begin(), L.end());
 
-  // isertion from a vector :
+  // insertion from a vector :
   std::vector<Point> V(3);
   V[0] = Point(0,0,1);
   V[1] = Point(1,1,1);
@@ -104,7 +97,7 @@ int main(int argc, char* argv[])
   // nli is the index of v in nc
 
   std::ofstream oFileT("output",ios::out);
-  // writing file data/output; 
+  // writing file output; 
   oFileT << T; 
 
   return 0;
