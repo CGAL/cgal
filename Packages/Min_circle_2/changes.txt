@@ -1,4 +1,7 @@
 Changes done to the `Min_circle_2' package
+Version 3.22  on 10-Sep-2003
+- Qt_help_window class is in the CGAL namespace [rursu]
+
 Version 3.21  on 08-Sep-2003
 - demo use now the new help class Qt_help_window instead of HelpWindow [rursu]
 - demo use the new demo icon demoicon [rursu]
