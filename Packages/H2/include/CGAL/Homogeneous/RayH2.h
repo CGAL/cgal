@@ -49,10 +49,18 @@ public:
 
     RayH2()
       : base(rep()) {}
+
     RayH2( const Point_2& sp, const Point_2& secondp)
       : base(rep(sp, secondp)) {}
+
     RayH2( const Point_2& sp, const Direction_2& d)
       : base(rep(sp, sp + d.to_vector())) {}
+
+    RayH2( const Point_2& sp, const Vector_2& v)
+      : base(rep(sp, sp + v)) {}
+
+    RayH2( const Point_2& sp, const Line_2& l)
+      : base(rep(sp, sp + l.to_vector())) {}
 
     bool    operator==(const RayH2<R>& r) const;
     bool    operator!=(const RayH2<R>& r) const;
@@ -62,6 +70,7 @@ public:
     const Point_2 & second_point() const;
     Point_2     point(int i) const;
     Direction_2    direction() const;
+    Vector_2       to_vector() const;
     Line_2         supporting_line() const;
     RayH2<R>       opposite() const;
 
@@ -89,12 +98,22 @@ RayH2<R>::start() const
 
 template < class R >
 CGAL_KERNEL_INLINE
+typename RayH2<R>::Vector_2
+RayH2<R>::to_vector() const
+{
+  CGAL_kernel_precondition( !is_degenerate() );
+  return second_point() - start();
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
 typename RayH2<R>::Direction_2
 RayH2<R>::direction() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return Direction_2( second_point() - start() );
 }
+
 template < class R >
 inline
 const typename RayH2<R>::Point_2 &

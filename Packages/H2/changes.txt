@@ -1,3 +1,15 @@
+2.86 (11 May 2003)
+- In order to get rid of Direction_2 at some point, I have added :
+    - Line_2(Point_2, Vector_2)        ConstructLine_2
+    - Ray_2(Point_2, Vector_2)         ConstructRay_2
+    - Ray_2(Point_2, Line_2)           ConstructRay_2
+    - Vector_2(Line_2)                 ConstructVector_2
+    - Vector_2(Ray_2)                  ConstructVector_2
+    - Vector_2(Segment_2)              ConstructVector_2
+    - Vector_2 Line_2.to_vector()
+    - Vector_2 Ray_2.to_vector()
+    - Vector_2 Segment_2.to_vector()
+
 2.85 (9 May 2003) [mh]
 - Introduce homogeneous kernel functors in their own namespace
 - Remove some global function calls from the functors

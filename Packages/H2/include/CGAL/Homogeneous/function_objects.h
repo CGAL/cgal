@@ -1537,6 +1537,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::RT                        RT;
     typedef typename K::FT                        FT;
     typedef typename K::Point_2                   Point_2;
+    typedef typename K::Vector_2                  Vector_2;
     typedef typename K::Direction_2               Direction_2;
     typedef typename K::Segment_2                 Segment_2;
     typedef typename K::Ray_2                     Ray_2;
@@ -1572,6 +1573,15 @@ namespace HomogeneousKernelFunctors {
 		    p.hy()*q.hw() - p.hw()*q.hy(),
 		    p.hw()*q.hx() - p.hx()*q.hw(),
 		    p.hx()*q.hy() - p.hy()*q.hx() );
+    }
+
+    Line_2
+    operator()(const Point_2& p, const Vector_2& v) const
+    { 
+      Point_2 q = p + v;
+      return Line_2( p.hy()*q.hw() - p.hw()*q.hy(),
+		     p.hw()*q.hx() - p.hx()*q.hw(),
+		     p.hx()*q.hy() - p.hy()*q.hx() );
     }
 
     Line_2
@@ -1782,6 +1792,9 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::RT           RT;
     typedef typename K::FT           FT;
+    typedef typename K::Segment_2    Segment_2;
+    typedef typename K::Ray_2        Ray_2;
+    typedef typename K::Line_2       Line_2;
     typedef typename K::Vector_2     Vector_2;
     typedef typename K::Point_2      Point_2;
   public:
@@ -1799,6 +1812,18 @@ namespace HomogeneousKernelFunctors {
 		       p.hy()*q.hw() - q.hy()*p.hw(),
 		       p.hw()*q.hw() );
     }
+
+    Vector_2
+    operator()( const Segment_2& s) const
+    { return Vector_2(s); }
+
+    Vector_2
+    operator()( const Ray_2& r) const
+    { return Vector_2(r); }
+
+    Vector_2
+    operator()( const Line_2& l) const
+    { return Vector_2(l); }
 
     Vector_2
     operator()( Null_vector) const
@@ -1820,6 +1845,9 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::RT           RT;
     typedef typename K::FT           FT;
+    typedef typename K::Segment_3    Segment_3;
+    typedef typename K::Ray_3        Ray_3;
+    typedef typename K::Line_3       Line_3;
     typedef typename K::Vector_3     Vector_3;
     typedef typename K::Point_3      Point_3;
   public:
@@ -1838,6 +1866,18 @@ namespace HomogeneousKernelFunctors {
 		      p.hz()*q.hw() - q.hz()*p.hw(),
 		      p.hw()*q.hw() );
     }
+
+    Vector_3
+    operator()( const Segment_3& s) const
+    { return Vector_3(s); }
+
+    Vector_3
+    operator()( const Ray_3& r) const
+    { return Vector_3(r); }
+
+    Vector_3
+    operator()( const Line_3& l) const
+    { return Vector_3(l); }
 
     Vector_3
     operator()( const Null_vector&) const

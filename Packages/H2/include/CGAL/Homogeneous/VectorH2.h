@@ -37,6 +37,9 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::RT                   RT;
   typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Segment_2            Segment_2;
+  typedef typename R_::Ray_2                Ray_2;
+  typedef typename R_::Line_2               Line_2;
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
@@ -52,6 +55,15 @@ public:
 
    VectorH2(const Point_2& a, const Point_2& b)
       : base (b-a) {}
+
+   VectorH2(const Segment_2& s)
+      : base (s.to_vector()) {}
+
+   VectorH2(const Ray_2& r)
+      : base (r.to_vector()) {}
+
+   VectorH2(const Line_2& l)
+      : base (l.to_vector()) {}
 
    VectorH2(const Null_vector &)
       : base ( rep(RT(0), RT(0), RT(1) )) {}

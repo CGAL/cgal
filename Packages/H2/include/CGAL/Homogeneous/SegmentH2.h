@@ -37,6 +37,7 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Direction_2          Direction_2;
+  typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Twotuple<Point_2>                        rep;
@@ -81,6 +82,7 @@ public:
     FT      squared_length() const;
 
     Direction_2    direction() const;
+    Vector_2       to_vector() const;
     Line_2         supporting_line() const;
     SegmentH2<R>   opposite() const;
     Bbox_2         bbox() const;
@@ -164,6 +166,15 @@ CGAL_KERNEL_INLINE
 typename SegmentH2<R>::FT
 SegmentH2<R>::squared_length() const
 { return  (end() - start()) * (end() - start()); }
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename SegmentH2<R>::Vector_2
+SegmentH2<R>::to_vector() const
+{
+  CGAL_kernel_precondition( !is_degenerate() );
+  return end() - start();
+}
 
 template < class R >
 CGAL_KERNEL_INLINE

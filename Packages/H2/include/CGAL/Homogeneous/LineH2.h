@@ -54,6 +54,7 @@ public:
     LineH2(const Segment_2& s);
     LineH2(const Ray_2& r);
     LineH2(const Point_2& p, const Direction_2& d);
+    LineH2(const Point_2& p, const Vector_2& v);
 
     bool           operator==(const LineH2<R>& l) const ;
     bool           operator!=(const LineH2<R>& l) const ;
@@ -71,6 +72,7 @@ public:
     Point_2    point(int i) const;
     Point_2    projection(const Point_2& p) const;
     Direction_2 direction() const;
+    Vector_2   to_vector() const;
     Oriented_side  oriented_side( const Point_2& p ) const;
     bool           has_on( const Point_2& p ) const;
     bool           has_on_boundary( const Point_2& p ) const;
@@ -128,6 +130,18 @@ LineH2<R>::LineH2(const typename LineH2<R>::Ray_2& r)
 {
   Point_2 p = r.start();
   Point_2 q = r.second_point();
+  initialize_with( rep (
+            p.hy()*q.hw() - p.hw()*q.hy(),
+            p.hw()*q.hx() - p.hx()*q.hw(),
+            p.hx()*q.hy() - p.hy()*q.hx() ) );
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
+		  const typename LineH2<R>::Vector_2& v)
+{
+  Point_2 q = p + v;
   initialize_with( rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
@@ -199,7 +213,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 typename LineH2<R>::Point_2
 LineH2<R>::point(int i) const
-{ return point() + RT(i) * (direction().to_vector()); }
+{ return point() + RT(i) * to_vector(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -211,6 +225,15 @@ LineH2<R>::projection(const typename LineH2<R>::Point_2& p) const
   return Point_2( b()*l.c() - l.b()*c(),
                   l.a()*c() - a()*l.c(),
                   a()*l.b() - l.a()*b() );
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename LineH2<R>::Vector_2
+LineH2<R>::to_vector() const
+{
+  CGAL_kernel_precondition( !is_degenerate() );
+  return Vector_2( b(), -a() );
 }
 
 template < class R >
@@ -228,7 +251,7 @@ LineH2<R>
 LineH2<R>::transform(const typename LineH2<R>::Aff_transformation_2& t) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  Point_2 p = point() + direction().to_vector();
+  Point_2 p = point() + to_vector();
   return LineH2<R>( t.transform(point() ), t.transform(p) );
 }
 
