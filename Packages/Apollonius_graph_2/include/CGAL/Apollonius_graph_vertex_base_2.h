@@ -34,6 +34,27 @@
 CGAL_BEGIN_NAMESPACE
 
 
+template <class AGVB2_Iterator>
+struct Apollonius_graph_vertex_base_nested_iterator_traits
+{
+  typedef AGVB2_Iterator                   Base_iterator;
+  typedef typename
+  Base_iterator::value_type::Hidden_sites_iterator Nested_iterator;
+
+  Nested_iterator begin(Base_iterator it) const
+  {
+    return it->hidden_sites_begin();
+  }
+
+  Nested_iterator end(Base_iterator it) const
+  {
+    return it->hidden_sites_end();
+  }
+  
+};
+
+
+
 template <class Gt,
 	  bool StoreHidden = true,
 	  class Vb = Triangulation_ds_vertex_base_2<> >
@@ -47,10 +68,12 @@ public:
   //------
   typedef Gt                             Geom_traits;
   typedef Vb                             Base;
-  typedef typename Gt::Apollonius_site_2 Apollonius_site_2;
+  typedef typename Gt::Site_2            Site_2;
   typedef AGDS	                         Apollonius_graph_data_structure;
   typedef typename AGDS::Face_handle     Face_handle;
   typedef typename AGDS::Vertex_handle   Vertex_handle;
+
+  enum {Store_hidden = StoreHidden};
 
   template < typename AGDS2 >
   struct Rebind_TDS {
@@ -61,63 +84,63 @@ public:
 
 private:
   // local types
-  typedef std::list<Apollonius_site_2>         Container;
+  typedef std::list<Site_2>         Container;
 
 public:
   // TYPES (continued)
   //------------------
-  typedef Container                        Hidden_weighted_point_container;
-  typedef typename Container::iterator     Hidden_weighted_point_iterator;
+  typedef Container                        Hidden_sites_container;
+  typedef typename Container::iterator     Hidden_sites_iterator;
 
 public:
   // CREATION
   //---------
   Apollonius_graph_vertex_base_2() : Vb() {}
-  Apollonius_graph_vertex_base_2(const Apollonius_site_2& p) : Vb(), _p(p) {}
-  Apollonius_graph_vertex_base_2(const Apollonius_site_2& p,
+  Apollonius_graph_vertex_base_2(const Site_2& p) : Vb(), _p(p) {}
+  Apollonius_graph_vertex_base_2(const Site_2& p,
 				 Face_handle f)
     : Vb(f), _p(p) {}
 
   ~Apollonius_graph_vertex_base_2()
   {
-    clear_hidden_weighted_point_container();
+    clear_hidden_sites_container();
   }
 
 
   // ACCESS METHODS
   //---------------
-  Apollonius_site_2 point() const { return _p; }
+  Site_2 point() const { return _p; }
 
   Face_handle face() const { return Vb::face(); }
 
-  unsigned int number_of_hidden_weighted_points() const {
-    return weighted_point_list.size();
+  unsigned int number_of_hidden_sites() const {
+    return hidden_site_list.size();
   }
 
-  Hidden_weighted_point_iterator hidden_weighted_points_begin() { 
-    return weighted_point_list.begin();
+  Hidden_sites_iterator hidden_sites_begin() { 
+    return hidden_site_list.begin();
   }
 
-  Hidden_weighted_point_iterator hidden_weighted_points_end() {
-    return weighted_point_list.end();
+  Hidden_sites_iterator hidden_sites_end() {
+    return hidden_site_list.end();
   }
 
 public:
   // SETTING AND UNSETTING
   //----------------------
-  void set_point(const Apollonius_site_2& p) { _p = p; }
+  void set_point(const Site_2& p) { _p = p; }
 
 
-  void add_hidden_weighted_point(const Apollonius_site_2& p)
+  void add_hidden_site(const Site_2& p)
   {
     if ( StoreHidden ) {
-      weighted_point_list.push_back(p);
+      hidden_site_list.push_back(p);
     }
   }
 
-  void clear_hidden_weighted_point_container()
+  void clear_hidden_sites_container()
   {
-    weighted_point_list.clear();
+    hidden_site_list.clear();
   }
 
 public:
@@ -128,8 +151,8 @@ public:
 
 private:
   // class variables
-  Container weighted_point_list;
-  Apollonius_site_2 _p;
+  Container hidden_site_list;
+  Site_2 _p;
 };
 
 CGAL_END_NAMESPACE 

@@ -47,24 +47,24 @@ const int ag_hierarchy_2__minsize  = 20;
 const int ag_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
 
-template < class Gt, bool StoreHidden = true,
-  class Agds = Apollonius_graph_data_structure_2<
-    Apollonius_graph_hierarchy_vertex_base_2<
-       Apollonius_graph_vertex_base_2<Gt,StoreHidden> >,
-    Apollonius_graph_face_base_2<Gt> > >
+template < class Gt,
+	   class Agds = Apollonius_graph_data_structure_2<
+             Apollonius_graph_hierarchy_vertex_base_2<
+               Apollonius_graph_vertex_base_2<Gt,true> >,
+               Apollonius_graph_face_base_2<Gt> > >
 class Apollonius_graph_hierarchy_2
-  : public Apollonius_graph_2< Gt, StoreHidden, Agds >
+  : public Apollonius_graph_2< Gt, Agds >
 {
 private:
-  typedef Apollonius_graph_2<Gt,StoreHidden,Agds> Apollonius_graph_base;
-  typedef Apollonius_graph_base                   Ag_base;
+  typedef Apollonius_graph_2<Gt,Agds>    Apollonius_graph_base;
+  typedef Apollonius_graph_base          Ag_base;
 
-  typedef typename Ag_base::Vertex                Vertex;
+  typedef typename Ag_base::Vertex       Vertex;
 
 public:
   typedef Agds                            Data_structure;
   typedef Gt                              Geom_traits;
-  typedef typename Gt::Apollonius_site_2  Apollonius_site_2;
+  typedef typename Gt::Site_2             Site_2;
   typedef typename Gt::Point_2            Point_2;
 
   typedef typename Ag_base::Vertex_handle    Vertex_handle;
@@ -149,8 +149,8 @@ public:
     wp_list.clear();
   }
 
-  Vertex_handle insert(const Apollonius_site_2& p);
-  inline Vertex_handle insert(const Apollonius_site_2& p,
+  Vertex_handle insert(const Site_2& p);
+  inline Vertex_handle insert(const Site_2& p,
 			      Vertex_handle vnear) {
     return insert(p);
   }

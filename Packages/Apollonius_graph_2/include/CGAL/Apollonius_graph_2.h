@@ -41,12 +41,25 @@
 #include <CGAL/Apollonius_graph_euclidean_traits_wrapper_2.h>
 
 
+#include <CGAL/Iterator_project.h>
+#include <CGAL/Nested_iterator.h>
+#include <CGAL/Combined_iterator.h>
+
+
 CGAL_BEGIN_NAMESPACE
 
+template < class Node, class Type >
+struct Project_site {
+  typedef Node                   argument_type;
+  typedef Type                   Site;
+  typedef Site                   result_type;
+  Site&       operator()( Node& x)       const { return x.site(); }
+  const Site& operator()( const Node& x) const { return x.site(); }
+};
 
-template < class Gt, bool StoreHidden = true,
-  class Agds = Apollonius_graph_data_structure_2 < 
-               Apollonius_graph_vertex_base_2<Gt,StoreHidden>,
+template < class Gt,
+	   class Agds = Apollonius_graph_data_structure_2 < 
+               Apollonius_graph_vertex_base_2<Gt,true>,
                Apollonius_graph_face_base_2<Gt> > >
 class Apollonius_graph_2
   : private Triangulation_2< Apollonius_graph_gt_wrapper<Gt>, Agds >
@@ -66,7 +79,7 @@ public:
   typedef Agds                                   Data_structure;
   typedef Gt                                     Geom_traits;
   typedef typename Gt::Point_2                   Point_2;
-  typedef typename Gt::Apollonius_site_2         Apollonius_site_2;
+  typedef typename Gt::Site_2                    Site_2;
 
   typedef typename DG::Edge                      Edge;
   typedef typename DG::Vertex_handle             Vertex_handle;
@@ -83,16 +96,44 @@ public:
   typedef typename DG::All_edges_iterator        All_edges_iterator;
   typedef typename DG::Finite_edges_iterator     Finite_edges_iterator;
 
-  typedef double   Vertex_iterator;
-  typedef double   Face_iterator;
-  typedef double   Edge_iterator;
+
+  // Auxiliary iterators for convenience
+  // do not use default template argument to please VC++
+  typedef Project_site<Vertex,Site_2>                        Proj_site;
+  typedef Iterator_project<Finite_vertices_iterator, 
+                           Proj_site,
+	                   const Site_2&, 
+                           const Site_2*,
+                           CGAL_CLIB_STD::ptrdiff_t,
+                           std::bidirectional_iterator_tag> 
+  /*                                         */ Visible_sites_iterator;
+
+  typedef
+  Apollonius_graph_vertex_base_nested_iterator_traits<
+    Finite_vertices_iterator>  Hidden_sites_nested_iterator_traits;
+  
+
+  typedef Nested_iterator<Finite_vertices_iterator,
+			  Hidden_sites_nested_iterator_traits>
+  /*                                          */ Hidden_sites_iterator;
+
+  typedef Combined_iterator<Visible_sites_iterator,
+			    Hidden_sites_iterator>      Sites_iterator;
+
+  typedef Site_2               value_type; // to have a back_inserter
+  typedef const value_type&    const_reference; 
+  typedef value_type&          reference;
+private:
+  typedef struct   Vertex_iterator {};
+  typedef struct   Face_iterator {};
+  typedef struct   Edge_iterator {};
 
 protected:
   // some more local types
   typedef typename Agds::Vertex            Vertex;
 
   // point lists
-  typedef std::vector<Apollonius_site_2>   Site_list;
+  typedef std::vector<Site_2>   Site_list;
   typedef typename Site_list::iterator     Site_list_iterator;
 
   typedef std::map<Face_handle,bool>           Face_map;
@@ -128,8 +169,8 @@ protected:
   public:
     Site_less_than_comparator(const Gt& gt) : gt(gt) {}
 
-    bool operator ()(const Apollonius_site_2& p,
-		     const Apollonius_site_2& q) {
+    bool operator ()(const Site_2& p,
+		     const Site_2& q) {
       Comparison_result result = gt.compare_weight_2_object()(p, q);
       return (result == LARGER);
     }
@@ -184,12 +225,12 @@ public:
   }
 
   inline int number_of_hidden_vertices() const {
-    if ( !StoreHidden ) { return 0; }
+    //    if ( !Vertex::StoreHidden ) { return 0; }
 
     int n_hidden(0);
     for (Finite_vertices_iterator vit = finite_vertices_begin();
 	 vit != finite_vertices_end(); ++vit) {
-      n_hidden += vit->number_of_hidden_weighted_points();
+      n_hidden += vit->number_of_hidden_sites();
     }
 
     return n_hidden;
@@ -331,8 +372,8 @@ public:
     wp_list.clear();
   }
 
-  Vertex_handle  insert(const Apollonius_site_2& p);
-  Vertex_handle  insert(const Apollonius_site_2& p, Vertex_handle vnear);
+  Vertex_handle  insert(const Site_2& p);
+  Vertex_handle  insert(const Site_2& p, Vertex_handle vnear);
 
 public:
   // REMOVAL
@@ -372,7 +413,7 @@ public:
 
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
-      Apollonius_site_2 wp = vit->point();
+      Site_2 wp = vit->point();
       str << wp << std::endl;
     }
     return str;
@@ -387,13 +428,13 @@ public:
 
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
-      Apollonius_site_2 wp = vit->point();
+      Site_2 wp = vit->point();
       str << wp << std::endl;
       // now write the hidden vertices
-      if ( StoreHidden ) {
-	typename Vertex::Hidden_weighted_point_iterator wpit;
-	for (wpit = vit->hidden_weighted_points_begin();
-	     wpit != vit->hidden_weighted_points_end(); ++wpit) {
+      if ( true /*Vertex::StoreHidden*/ ) {
+	typename Vertex::Hidden_sites_iterator wpit;
+	for (wpit = vit->hidden_sites_begin();
+	     wpit != vit->hidden_sites_end(); ++wpit) {
 	  str << (*wpit) << std::endl;
 	}
       }
@@ -404,16 +445,16 @@ public:
   template < class Stream >
   Stream& draw_hidden_weighted_points(Stream &str) const
   {
-    if ( !StoreHidden ) { return str; }
+    if ( /*!Vertex::StoreHidden*/ false ) { return str; }
 
     Finite_vertices_iterator vit = finite_vertices_begin();
 
     for (; vit != finite_vertices_end(); ++vit) {
-      if ( vit->number_of_hidden_weighted_points() > 0 ) {
-	typename Vertex::Hidden_weighted_point_iterator wpit;
-	for (wpit = vit->hidden_weighted_points_begin();
-	     wpit != vit->hidden_weighted_points_end(); ++wpit) {
-	  Apollonius_site_2 wp = *wpit;
+      if ( vit->number_of_hidden_sites() > 0 ) {
+	typename Vertex::Hidden_sites_iterator wpit;
+	for (wpit = vit->hidden_sites_begin();
+	     wpit != vit->hidden_sites_end(); ++wpit) {
+	  Site_2 wp = *wpit;
 	  typename Gt::Rep::Circle_2 c(wp.point(),
 				       CGAL_NTS square(wp.weight()));
 	  str << c;
@@ -426,16 +467,16 @@ public:
   template < class Stream >
   Stream& draw_hidden_weighted_point_centers(Stream &str) const
   {
-    if ( !StoreHidden ) { return str; }
+    if ( /*!Vertex::StoreHidden*/ false ) { return str; }
 
     Finite_vertices_iterator vit = finite_vertices_begin();
 
     for (; vit != finite_vertices_end(); ++vit) {
-      if ( vit->number_of_hidden_weighted_points() > 0 ) {
-	typename Vertex::Hidden_weighted_point_iterator wpit;
-	for (wpit = vit->hidden_weighted_points_begin();
-	     wpit != vit->hidden_weighted_points_end(); ++wpit) {
-	  Apollonius_site_2 wp = *wpit;
+      if ( vit->number_of_hidden_sites() > 0 ) {
+	typename Vertex::Hidden_sites_iterator wpit;
+	for (wpit = vit->hidden_sites_begin();
+	     wpit != vit->hidden_sites_end(); ++wpit) {
+	  Site_2 wp = *wpit;
 	  str << wp.point();
 	}
       }
@@ -448,7 +489,7 @@ public:
   {
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
-      Apollonius_site_2 wp = vit->point();
+      Site_2 wp = vit->point();
       typename Gt::Rep::Circle_2 c(wp.point(),
 				   CGAL_NTS square(wp.weight()));
       str << c;
@@ -461,7 +502,7 @@ public:
   {
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
-      Apollonius_site_2 wp = vit->point();
+      Site_2 wp = vit->point();
       str << wp.point();
     }
     return str;
@@ -476,8 +517,8 @@ public:
     } else if ( number_of_vertices() == 2 ) {
       Vertex_handle v1(finite_vertices_begin());
       Vertex_handle v2(++finite_vertices_begin());
-      Apollonius_site_2 p1 = v1->point();
-      Apollonius_site_2 p2 = v2->point();
+      Site_2 p1 = v1->point();
+      Site_2 p2 = v2->point();
       typename Geom_traits::Segment_2 seg =
 	geom_traits().construct_Apollonius_primal_segment_2_object()(p1,p2);
       typename Geom_traits::Ray_2 ray1 =
@@ -537,7 +578,7 @@ public:
 			       f->vertex(1)->point() );	  
 	}
       } else {
-	Apollonius_site_2 wp = circumcircle(f);
+	Site_2 wp = circumcircle(f);
 	typename Gt::Rep::Circle_2 c(wp.point(),
 				     CGAL_NTS square(wp.weight()));
 	str << c;
@@ -580,25 +621,25 @@ protected:
   // wrappers for the geometric predicates
 
   // checks is q is contained inside p
-  bool is_hidden(const Apollonius_site_2 &p,
-		 const Apollonius_site_2 &q) const;
+  bool is_hidden(const Site_2 &p,
+		 const Site_2 &q) const;
 
   // returns:
   //   ON_POSITIVE_SIDE if q is closer to p1
   //   ON_NEGATIVE_SIDE if q is closer to p2
   //   ON_ORIENTED_BOUNDARY if q is on the bisector of p1 and p2
-  Oriented_side side_of_bisector(const Apollonius_site_2 &p1,
-				 const Apollonius_site_2 &p2,
+  Oriented_side side_of_bisector(const Site_2 &p1,
+				 const Site_2 &p2,
 				 const Point_2 &q) const;
 
-  Sign incircle(const Apollonius_site_2 &p1, const Apollonius_site_2 &p2,
-		const Apollonius_site_2 &p3, const Apollonius_site_2 &q) const;
+  Sign incircle(const Site_2 &p1, const Site_2 &p2,
+		const Site_2 &p3, const Site_2 &q) const;
 
-  Sign incircle(const Apollonius_site_2 &p1, const Apollonius_site_2 &p2,
-		const Apollonius_site_2 &q) const;
+  Sign incircle(const Site_2 &p1, const Site_2 &p2,
+		const Site_2 &q) const;
 
 
-  Sign incircle(const Face_handle& f, const Apollonius_site_2& q) const;
+  Sign incircle(const Face_handle& f, const Site_2& q) const;
 
 
   Sign incircle(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -609,15 +650,15 @@ protected:
 
 
   
-  bool finite_edge_interior(const Apollonius_site_2& p1,
-			    const Apollonius_site_2& p2,
-			    const Apollonius_site_2& p3,
-			    const Apollonius_site_2& p4,
-			    const Apollonius_site_2& q,
+  bool finite_edge_interior(const Site_2& p1,
+			    const Site_2& p2,
+			    const Site_2& p3,
+			    const Site_2& p4,
+			    const Site_2& q,
 			    bool endpoints_in_conflict) const;
 
   bool finite_edge_interior(const Face_handle& f, int i,
-			    const Apollonius_site_2& q,
+			    const Site_2& q,
 			    bool endpoints_in_conflict) const;
 
   bool finite_edge_interior(const Vertex_handle& v1,
@@ -627,20 +668,20 @@ protected:
 			    const Vertex_handle& v,
 			    bool endpoints_in_conflict) const;
 
-  bool finite_edge_interior_degenerated(const Apollonius_site_2& p1,
-					const Apollonius_site_2& p2,
-					const Apollonius_site_2& p3,
-					const Apollonius_site_2& q,
+  bool finite_edge_interior_degenerated(const Site_2& p1,
+					const Site_2& p2,
+					const Site_2& p3,
+					const Site_2& q,
 					bool endpoints_in_conflict) const;
 
 
-  bool finite_edge_interior_degenerated(const Apollonius_site_2& p1,
-					const Apollonius_site_2& p2,
-					const Apollonius_site_2& q,
+  bool finite_edge_interior_degenerated(const Site_2& p1,
+					const Site_2& p2,
+					const Site_2& q,
 					bool endpoints_in_conflict) const;
 
   bool finite_edge_interior_degenerated(const Face_handle& f, int i,
-					const Apollonius_site_2& p,
+					const Site_2& p,
 					bool endpoints_in_conflict) const;
 
   bool finite_edge_interior_degenerated(const Vertex_handle& v1,
@@ -649,15 +690,15 @@ protected:
 					const Vertex_handle& v4,
 					const Vertex_handle& v,
 					bool endpoints_in_conflict) const;
-  bool infinite_edge_interior(const Apollonius_site_2& p2,
-			      const Apollonius_site_2& p3,
-			      const Apollonius_site_2& p4,
-			      const Apollonius_site_2& q,
+  bool infinite_edge_interior(const Site_2& p2,
+			      const Site_2& p3,
+			      const Site_2& p4,
+			      const Site_2& q,
 			      bool endpoints_in_conflict) const;
 
 
   bool infinite_edge_interior(const Face_handle& f, int i,
-			      const Apollonius_site_2& p,
+			      const Site_2& p,
 			      bool endpoints_in_conflict) const;
 
   bool infinite_edge_interior(const Vertex_handle& v1,
@@ -668,16 +709,16 @@ protected:
 			      bool endpoints_in_conflict) const;
 
   Conflict_type
-  finite_edge_conflict_type_degenerated(const Apollonius_site_2& p1,
-					const Apollonius_site_2& p2,
-					const Apollonius_site_2& q) const;
+  finite_edge_conflict_type_degenerated(const Site_2& p1,
+					const Site_2& p2,
+					const Site_2& q) const;
 
   bool edge_interior(const Face_handle& f, int i,
-		     const Apollonius_site_2& p, bool b) const;
+		     const Site_2& p, bool b) const;
 
 
   inline bool edge_interior(const Edge& e,
-			    const Apollonius_site_2& p, bool b) const {
+			    const Site_2& p, bool b) const {
     return edge_interior(e.first, e.second, p, b);
   }
 
@@ -688,10 +729,10 @@ protected:
 		     const Vertex_handle& v,
 		     bool endpoints_in_conflict) const;
 
-  inline bool is_degenerate_edge(const Apollonius_site_2& p1,
-				 const Apollonius_site_2& p2,
-				 const Apollonius_site_2& p3,
-				 const Apollonius_site_2& p4) const {
+  inline bool is_degenerate_edge(const Site_2& p1,
+				 const Site_2& p2,
+				 const Site_2& p3,
+				 const Site_2& p4) const {
     return geom_traits().is_degenerate_edge_2_object()
       (p1, p2, p3, p4);
   }
@@ -724,17 +765,17 @@ protected:
 protected:
   // wrappers for constructions
   Point_2 circumcenter(const Face_handle& f) const;
-  Point_2 circumcenter(const Apollonius_site_2& p0, 
-		       const Apollonius_site_2& p1, 
-		       const Apollonius_site_2& p2) const;
+  Point_2 circumcenter(const Site_2& p0, 
+		       const Site_2& p1, 
+		       const Site_2& p2) const;
 
-  Apollonius_site_2 circumcircle(const Face_handle& f) const;
-  Apollonius_site_2 circumcircle(const Apollonius_site_2& p0, 
-				const Apollonius_site_2& p1, 
-				const Apollonius_site_2& p2) const;
+  Site_2 circumcircle(const Face_handle& f) const;
+  Site_2 circumcircle(const Site_2& p0, 
+		      const Site_2& p1, 
+		      const Site_2& p2) const;
 
-  typename Gt::Line_2 circumcircle(const Apollonius_site_2& p0,
-				   const Apollonius_site_2& p1) const;
+  typename Gt::Line_2 circumcircle(const Site_2& p0,
+				   const Site_2& p1) const;
 
 protected:
   // wrappers for combinatorial operations on the data structure
@@ -752,12 +793,12 @@ protected:
   Edge flip(Face_handle& f, int i);
   Edge flip(Edge e);
 
-  Vertex_handle insert_in_face(Face_handle& f, const Apollonius_site_2& p);
+  Vertex_handle insert_in_face(Face_handle& f, const Site_2& p);
 
   bool          is_degree_2(const Vertex_handle& v) const;
 
   Vertex_handle insert_degree_2(Edge e);
-  Vertex_handle insert_degree_2(Edge e, const Apollonius_site_2& p);
+  Vertex_handle insert_degree_2(Edge e, const Site_2& p);
   void          remove_degree_2(Vertex_handle v);
   void          remove_degree_3(Vertex_handle v);
   void          remove_degree_3(Vertex_handle v, Face* f);
@@ -769,17 +810,16 @@ protected:
 
 protected:
   // insertion of the first three sites
-  Vertex_handle  insert_first(const Apollonius_site_2& p);
-  Vertex_handle  insert_second(const Apollonius_site_2& p);
-  Vertex_handle  insert_third(const Apollonius_site_2& p);
+  Vertex_handle  insert_first(const Site_2& p);
+  Vertex_handle  insert_second(const Site_2& p);
+  Vertex_handle  insert_third(const Site_2& p);
 
   // methods for insertion
   void initialize_conflict_region(const Face_handle& f, List& l);
-  bool check_edge_for_hidden_weighted_points(const Face_handle& f, int i,
-					     const Apollonius_site_2& p,
-					     Vertex_map& vm);
+  bool check_edge_for_hidden_sites(const Face_handle& f, int i,
+				   const Site_2& p, Vertex_map& vm);
   void expand_conflict_region(const Face_handle& f,
-			      const Apollonius_site_2& p,
+			      const Site_2& p,
 			      List& l, Face_map& fm, Vertex_map& vm,
 			      std::vector<Vh_triple*>* fe);
 
@@ -787,15 +827,14 @@ protected:
   Vertex_list   add_bogus_vertices(List& l);
   void          remove_bogus_vertices(Vertex_list& vl);
 
-  void move_hidden_weighted_points(Vertex_handle& vold,
-				   Vertex_handle& vnew);
+  void move_hidden_sites(Vertex_handle& vold, Vertex_handle& vnew);
 
   // MK: this is not currently used
   inline  std::vector<Face*> get_faces_for_recycling(Face_map& fm,
 					     unsigned int n_wanted);
   void remove_hidden_vertices(Vertex_handle&v, Vertex_map& vm,
 			      Face_map& fm);
-  Vertex_handle retriangulate_conflict_region(const Apollonius_site_2& p,
+  Vertex_handle retriangulate_conflict_region(const Site_2& p,
 					      List& l,
 					      Face_map& fm,
 					      Vertex_map& vm);

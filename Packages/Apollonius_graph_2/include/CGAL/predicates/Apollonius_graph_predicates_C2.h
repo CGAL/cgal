@@ -110,14 +110,14 @@ class Sign_of_distance_from_bitangent_line
 {
 public:
   typedef CGAL::Bitangent_line<K>           Bitangent_line;
-  typedef typename K::Apollonius_site_2     Apollonius_site_2;
+  typedef typename K::Site_2                Site_2;
   typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
   typedef typename K::FT                    FT;
 
 public:
 
   Sign
-  operator()(const Bitangent_line& bl, const Apollonius_site_2& q,
+  operator()(const Bitangent_line& bl, const Site_2& q,
 	     Sqrt_field_tag)
     {
 #ifdef AG2_PROFILE_PREDICATES
@@ -131,7 +131,7 @@ public:
     }
 
   Sign
-  operator()(const Bitangent_line& bl, const Apollonius_site_2& q, Ring_tag)
+  operator()(const Bitangent_line& bl, const Site_2& q, Ring_tag)
     {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::distance_from_bitangent_counter++;
@@ -198,7 +198,7 @@ class Incircle_test
 {
 public:
   typedef typename K::Point_2               Point_2;
-  typedef typename K::Apollonius_site_2     Apollonius_site_2;
+  typedef typename K::Site_2                Site_2;
   typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
   typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
   typedef CGAL::Bitangent_line<K>           Bitangent_line;
@@ -246,10 +246,10 @@ private:
 public:
 
   template<class Method_tag>
-  inline Sign operator()(const Apollonius_site_2& p1,
-			 const Apollonius_site_2& p2,
-			 const Apollonius_site_2& p3,
-			 const Apollonius_site_2& q,
+  inline Sign operator()(const Site_2& p1,
+			 const Site_2& p2,
+			 const Site_2& p3,
+			 const Site_2& q,
 			 Method_tag tag) const {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::incircle_counter++;
@@ -272,9 +272,9 @@ public:
   }
 
   template<class Method_tag>
-  inline Sign operator()(const Apollonius_site_2& p1,
-			 const Apollonius_site_2& p2,
-			 const Apollonius_site_2& q,
+  inline Sign operator()(const Site_2& p1,
+			 const Site_2& p2,
+			 const Site_2& q,
 			 Method_tag tag) const {
     //
     Bitangent_line bl_21(p2, p1);
@@ -507,7 +507,7 @@ class Order_on_finite_bisector
 {
 public:
   typedef CGAL::Voronoi_circle<K>           Voronoi_circle;
-  typedef typename K::Apollonius_site_2     Apollonius_site_2;
+  typedef typename K::Site_2                Site_2;
   typedef typename K::FT                    FT;
   typedef CGAL::Orientation_wrt_symmetry_axis<K>
                                     Orientation_wrt_symmetry_axis;
@@ -517,7 +517,7 @@ public:
   template<class Method_tag>
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     const Apollonius_site_2& p1, const Apollonius_site_2& p2,
+	     const Site_2& p1, const Site_2& p2,
 	     Method_tag tag)
     {
 #ifdef AG2_PROFILE_PREDICATES
@@ -566,7 +566,7 @@ template < class K >
 class Finite_edge_test
 {
 public:
-  typedef typename K::Apollonius_site_2     Apollonius_site_2;
+  typedef typename K::Site_2                Site_2;
   typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
   typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
   typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
@@ -584,11 +584,11 @@ public:
 public:
   template<class Method_tag>
   bool
-  operator()(const Apollonius_site_2& p1,
-	     const Apollonius_site_2& p2,
-	     const Apollonius_site_2& p3,
-	     const Apollonius_site_2& p4,
-	     const Apollonius_site_2& q, bool b, Method_tag tag) {
+  operator()(const Site_2& p1,
+	     const Site_2& p2,
+	     const Site_2& p3,
+	     const Site_2& p4,
+	     const Site_2& q, bool b, Method_tag tag) {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::shadow_region_type_counter++;
 #endif
@@ -689,9 +689,7 @@ template < class K >
 class Finite_edge_test_degenerated
 {
 public:
-  //  typedef Point_2<R>                              Point;
-
-  typedef typename K::Apollonius_site_2     Apollonius_site_2;
+  typedef typename K::Site_2                Site_2;
   typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
   typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
   typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
@@ -709,10 +707,10 @@ public:
 
   template<class Method_tag>
   bool
-  operator()(const Apollonius_site_2& p1,
-	     const Apollonius_site_2& p2,
-	     const Apollonius_site_2& p3,
-	     const Apollonius_site_2& q, bool b, Method_tag tag) {
+  operator()(const Site_2& p1,
+	     const Site_2& p2,
+	     const Site_2& p3,
+	     const Site_2& q, bool b, Method_tag tag) {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::shadow_region_type_counter++;
 #endif
@@ -789,9 +787,9 @@ public:
 
   template<class Method_tag>
   bool
-  operator()(const Apollonius_site_2& p1,
-	     const Apollonius_site_2& p2,
-	     const Apollonius_site_2& q, bool b, Method_tag tag) {
+  operator()(const Site_2& p1,
+	     const Site_2& p2,
+	     const Site_2& q, bool b, Method_tag tag) {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::shadow_region_type_counter++;
 #endif
@@ -835,7 +833,6 @@ template< class K >
 class Bounded_side_of_CCW_circular_arc
 {
 public:
-  //  typedef typename K::Apollonius_site_2     Apollonius_site_2;
   typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
   typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
   typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
@@ -1036,10 +1033,7 @@ template < class K >
 class Infinite_edge_test
 {
 public:
-  //  typedef Point_2<R>                              Point;
-  //  typedef W                                       Weight;
-
-  typedef typename K::Apollonius_site_2     Apollonius_site_2;
+  typedef typename K::Site_2                Site_2;
   typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
   typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
   typedef CGAL::Voronoi_radius<K>           Voronoi_radius;
@@ -1060,10 +1054,10 @@ public:
 public:
   template<class Method_tag>
   bool
-  operator()(const Apollonius_site_2& p2,
-	     const Apollonius_site_2& p3,
-	     const Apollonius_site_2& p4,
-	     const Apollonius_site_2& q, bool b, Method_tag tag) {
+  operator()(const Site_2& p2,
+	     const Site_2& p3,
+	     const Site_2& p4,
+	     const Site_2& q, bool b, Method_tag tag) {
     Bitangent_line bl_32(p3, p2);
     Bitangent_line bl_24(p2, p4);
     Bitangent_line bl_2q(p2, q);
@@ -1107,11 +1101,7 @@ template < class K >
 class Is_degenerate_edge_test
 {
 public:
-  //  typedef Point_2<R>                              Point;
-  //  typedef W                                       Weight;
-
-
-  typedef typename K::Apollonius_site_2     Apollonius_site_2;
+  typedef typename K::Site_2                Site_2;
   typedef CGAL::Weighted_point_inverter<K>  Weighted_point_inverter;
   typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
   typedef CGAL::Bitangent_line<K>           Bitangent_line;
@@ -1125,10 +1115,10 @@ public:
 public:
 
   template<class Method_tag>
-  inline bool operator()(const Apollonius_site_2& p1,
-			 const Apollonius_site_2& p2,
-			 const Apollonius_site_2& p3,
-			 const Apollonius_site_2& p4,
+  inline bool operator()(const Site_2& p1,
+			 const Site_2& p2,
+			 const Site_2& p3,
+			 const Site_2& p4,
 			 Method_tag tag) const {
     Weighted_point_inverter inverter(p1);
     Inverted_weighted_point u2 = inverter(p2);

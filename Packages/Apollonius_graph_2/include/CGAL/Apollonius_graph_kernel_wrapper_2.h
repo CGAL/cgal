@@ -37,12 +37,12 @@ template<class Kernel_base_2>
 class Apollonius_graph_kernel_wrapper_2 : public Kernel_base_2
 {
 public:
-  typedef CGAL::Apollonius_site_2<Kernel_base_2>  Apollonius_site_2;
+  typedef CGAL::Apollonius_site_2<Kernel_base_2>  Site_2;
 
   struct Compare_x_2 : public Kernel_base_2
   {
-    Comparison_result operator()(const Apollonius_site_2& s1,
-				 const Apollonius_site_2& s2) const
+    Comparison_result operator()(const Site_2& s1,
+				 const Site_2& s2) const
     {
       return this->compare_x_2_object()(s1.point(), s2.point());
     }
@@ -50,8 +50,8 @@ public:
 
   struct Compare_y_2 : public Kernel_base_2
   {
-    Comparison_result operator()(const Apollonius_site_2& s1,
-				 const Apollonius_site_2& s2) const
+    Comparison_result operator()(const Site_2& s1,
+				 const Site_2& s2) const
     {
       return this->compare_y_2_object()(s1.point(), s2.point());
     }
@@ -59,9 +59,9 @@ public:
 
   struct Orientation_2 : public Kernel_base_2
   {
-    Orientation operator()(const Apollonius_site_2& s1,
-			   const Apollonius_site_2& s2,
-			   const Apollonius_site_2& s3) const
+    Orientation operator()(const Site_2& s1,
+			   const Site_2& s2,
+			   const Site_2& s3) const
     {
       return this->orientation_2_object()(s1.point(),
 					  s2.point(),
@@ -91,13 +91,13 @@ public:
     return b;
   }
 
-  typename K2::Apollonius_site_2
-  operator()(const typename K1::Apollonius_site_2& wp) const
+  typename K2::Site_2
+  operator()(const typename K1::Site_2& wp) const
   {
     Converter c;
 
     typename K2::Point_2 p(c(wp.x()), c(wp.y()));
-    return typename K2::Apollonius_site_2( p, c(wp.weight()) );
+    return typename K2::Site_2( p, c(wp.weight()) );
   }
 };
 

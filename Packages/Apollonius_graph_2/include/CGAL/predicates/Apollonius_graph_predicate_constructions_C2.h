@@ -32,16 +32,16 @@ CGAL_BEGIN_NAMESPACE
 
 template< class K >
 class Inverted_weighted_point
-  : public K::Apollonius_site_2
+  : public K::Site_2
 {
 public:
-  typedef typename K::Apollonius_site_2  Apollonius_site_2;
+  typedef typename K::Site_2             Site_2;
   typedef typename K::FT                 FT;
 private:
   FT   _p;
 public:
-  Inverted_weighted_point(const Apollonius_site_2& wp, const FT& p)
-    : Apollonius_site_2(wp), _p(p) {}
+  Inverted_weighted_point(const Site_2& wp, const FT& p)
+    : Site_2(wp), _p(p) {}
 
   inline FT p() const { return _p; }
 };
@@ -52,16 +52,16 @@ class Weighted_point_inverter
 {
 public:
   typedef typename K::Point_2               Point_2;
-  typedef typename K::Apollonius_site_2     Apollonius_site_2;
+  typedef typename K::Site_2                Site_2;
   typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
   typedef typename K::FT                    FT;
 private:
-  Apollonius_site_2 _pole;
+  Site_2 _pole;
 public:
-  Weighted_point_inverter(const Apollonius_site_2& pole)
+  Weighted_point_inverter(const Site_2& pole)
     : _pole(pole) {}
 
-  Inverted_weighted_point operator()(const Apollonius_site_2& wp)
+  Inverted_weighted_point operator()(const Site_2& wp)
     {
       FT xs = wp.x() - _pole.x();
       FT ys = wp.y() - _pole.y();
@@ -70,10 +70,10 @@ public:
 	- CGAL_NTS square(ws);
 
       return
-	Inverted_weighted_point(Apollonius_site_2(Point_2(xs, ys), ws), ps);
+	Inverted_weighted_point(Site_2(Point_2(xs, ys), ws), ps);
     }
 
-  Apollonius_site_2 pole() const { return _pole; }
+  Site_2 pole() const { return _pole; }
 };
 
 
@@ -150,7 +150,7 @@ class Bitangent_line
   // u2, oriented from u1 to u2
 public:
   typedef typename K::Point_2               Point_2;
-  typedef typename K::Apollonius_site_2     Apollonius_site_2;
+  typedef typename K::Site_2                Site_2;
   typedef CGAL::Inverted_weighted_point<K>  Inverted_weighted_point;
   typedef typename K::FT                    FT;
 protected:
@@ -190,7 +190,7 @@ protected:
     }
 
 public:
-  Bitangent_line(const Apollonius_site_2& p1, const Apollonius_site_2& p2)
+  Bitangent_line(const Site_2& p1, const Site_2& p2)
     {
       FT dx = p1.x() - p2.x();
       FT dy = p1.y() - p2.y();

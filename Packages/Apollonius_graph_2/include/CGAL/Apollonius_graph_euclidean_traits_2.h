@@ -79,7 +79,7 @@ public:
   typedef R                                             Rep;
   typedef MTag                                          Method_tag;
   typedef typename Kernel::Point_2                      Point_2;
-  typedef typename Kernel::Apollonius_site_2            Apollonius_site_2;
+  typedef typename Kernel::Site_2            Site_2;
   //
   typedef typename Kernel::Line_2                       Line_2;
   typedef typename Kernel::Ray_2                        Ray_2;
@@ -281,7 +281,7 @@ public:
   typedef MTag                                           Method_tag;
   typedef typename Kernel::RT                            Weight;
   typedef typename Kernel::Point_2                       Point_2;
-  typedef typename Kernel::Apollonius_site_2             Apollonius_site_2;
+  typedef typename Kernel::Site_2                        Site_2;
   //
   typedef typename Kernel::Object_2                      Object_2;
   typedef typename Kernel::Line_2                        Line_2;

@@ -38,7 +38,7 @@ class Apollonius_graph_hierarchy_vertex_base_2
   typedef typename Base::Apollonius_graph_data_structure   Agds;
 
 public:
-  typedef typename Base::Apollonius_site_2  Apollonius_site_2;
+  typedef typename Base::Site_2             Site_2;
   typedef Agds                              Apollonius_graph_data_structure;
   typedef typename Agds::Vertex_handle      Vertex_handle;
   typedef typename Agds::Face_handle        Face_handle;
@@ -52,11 +52,11 @@ public:
   Apollonius_graph_hierarchy_vertex_base_2()
     : Base(), _up(NULL), _down(NULL)
     {}
-  Apollonius_graph_hierarchy_vertex_base_2(const Apollonius_site_2& p,
+  Apollonius_graph_hierarchy_vertex_base_2(const Site_2& p,
 					   Face_handle f)
     : Base(p,f), _up(NULL), _down(NULL)
     {}
-  Apollonius_graph_hierarchy_vertex_base_2(const Apollonius_site_2& p)
+  Apollonius_graph_hierarchy_vertex_base_2(const Site_2& p)
     : Base(p), _up(NULL), _down(NULL)
     {}
 
