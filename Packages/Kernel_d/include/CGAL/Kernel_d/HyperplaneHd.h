@@ -209,12 +209,12 @@ side.  \precond |dir| is not the trivial direction.}*/
 }
 
 HyperplaneHd(const RT& a, const RT& b, const RT& c) : 
-  Base( Tuple(a,b,c) ) {} 
+  Base( Tuple(a,b,c,MatchHelper()) ) {} 
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in 
 $2$-dimensional space with equation $ax+by+c=0$. }*/
 
 HyperplaneHd(int a, int b, int c) : 
-  Base( Tuple(RT(a),RT(b),RT(c)) ) {} 
+  Base( Tuple(RT(a),RT(b),RT(c),MatchHelper()) ) {} 
 
 HyperplaneHd(const RT& a, const RT& b, const RT& c, const RT& d) :
   Base( Tuple(a,b,c,d) ) {} 

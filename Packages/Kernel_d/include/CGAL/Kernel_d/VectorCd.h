@@ -109,7 +109,7 @@ VectorCd(const FT& x, const FT& y, const FT& z, const FT& w)
   vector_rep()/=w; }
 
 VectorCd(int x, int y, int z, int w) :
-  Base( Tuple((FT)x,(FT)y,(FT)z) )
+  Base( Tuple((FT)x,(FT)y,(FT)z, MatchHelper()) )
 { CGAL_assertion_msg((w!=0), "VectorCd::construction: w == 0.");
   vector_rep()/=w; }
 

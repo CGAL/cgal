@@ -133,10 +133,10 @@ HyperplaneCd(const PointCd<FT,LA>& p, const DirectionCd<FT,LA>& dir)
 }
 
 HyperplaneCd(const FT& a, const FT& b, const FT& c) : 
-  Base( Tuple(a,b,c) ) {} 
+  Base( Tuple(a,b,c,MatchHelper()) ) {} 
 
 HyperplaneCd(int a, int b, int c) : 
-  Base( Tuple(FT(a),FT(b),FT(c)) ) {} 
+  Base( Tuple(FT(a),FT(b),FT(c),MatchHelper()) ) {} 
 
 HyperplaneCd(const FT& a, const FT& b, const FT& c, const FT& d) :
   Base( Tuple(a,b,c,d) ) {} 

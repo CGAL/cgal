@@ -1,3 +1,6 @@
+17 September 2004 Andreas Fabri
+- Added a parameter to one of two Tuple_d constructors with three parameters to help Intel compiler
+
 24 July 2004 Sylvain Pion
 - Move demo to Convex_hull_d.
 

@@ -144,7 +144,7 @@ PointHd(int x, int y, int w = 1) : Base( Tuple((RT)x,(RT)y,(RT)w) )
 PointHd(const RT& x, const RT& y, const RT& w = 1)
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in 
 $2$-dimensional space.}*/ 
-  : Base( Tuple(x,y,w) )
+  : Base( Tuple(x,y,w,MatchHelper()) )
 { CGAL_assertion_msg((w!=0),"PointHd::construction: w == 0.");
   if (w < 0) invert_rep();
 }

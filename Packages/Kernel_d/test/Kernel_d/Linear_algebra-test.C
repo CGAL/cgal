@@ -49,7 +49,6 @@ int main(int argc, char* argv[])
       else           vec_dim = VEC_DIM;
 
       /* some construction and access ops */
-
       Vector v0(vec_dim), v1(vec_dim), v2(vec_dim);
       int F[] = { 1,2,3,4,5 };
       Vector v11(F,F+2), v12(F,F+3), v13(F,F+4), v14(F,F+5),
@@ -80,7 +79,6 @@ int main(int argc, char* argv[])
       CGAL_TEST(v21 == NT(13)*v22);
       v21 /= 13;
       CGAL_TEST(v21 == v22);
-
       if (IOTEST) CGAL_IO_TEST(v1,v2,CGAL::IO::ASCII);
     }
 
@@ -396,13 +394,11 @@ int main(int argc, char* argv[])
           CGAL_TEST(LA::transpose(E)*e==null && b*e!=NT(0));
           CGAL_TEST(!LA::is_solvable(E,b));
         }
-
         Matrix SV;
         if (LA::homogeneous_linear_solver(E,x)) {
           CGAL_TEST(E*x==Vector(mat_dim));
           CGAL_TEST(LA::homogeneous_linear_solver(E,SV)==LA::rank(SV));
         }
-
         // inverse
         if (LA::inverse(E,D,denom,c)) {
           CGAL_TEST(E*D==denom*Matrix(mat_dim,Matrix::Identity()));

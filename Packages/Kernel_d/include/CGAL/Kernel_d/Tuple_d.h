@@ -45,6 +45,9 @@ template <typename FT, typename LA> class DirectionCd;
 template <typename FT, typename LA> class HyperplaneCd;
 template <typename NT, typename LA> class Aff_transformationCd;
 
+
+class MatchHelper {};
+
 template <typename NT, typename LA>
 class Tuple_d  {
   typedef Tuple_d<NT,LA> Self;
@@ -132,7 +135,7 @@ public:
   Tuple_d(int d) : v(d) {}
   Tuple_d(const NT& a, const NT& b) : v(2)
   { v[0]=a; v[1]=b; }
-  Tuple_d(const NT& a, const NT& b, const NT& c) : v(3)
+  Tuple_d(const NT& a, const NT& b, const NT& c, const MatchHelper&) : v(3)
   { v[0]=a; v[1]=b; v[2]=c; }
   Tuple_d(const NT& a, const NT& b, const NT& c, const NT& d) : v(4)
   { v[0]=a; v[1]=b; v[2]=c; v[3]=d; }

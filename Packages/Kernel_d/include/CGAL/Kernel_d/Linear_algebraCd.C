@@ -264,7 +264,6 @@ linear_solver(const Matrix &M, const Vector &b,
   Matrix L,U;
   int rank;
   std::vector<int> dummy, var;
-
     TRACEN("linear_solver");TRACEV(M); TRACEV(b);
   Gaussian_elimination(M, L, U, dummy, var, D, rank, c);
   // Compute a solution by solving triangular system
@@ -272,7 +271,6 @@ linear_solver(const Matrix &M, const Vector &b,
   // Temporary store the solution in c
   if ( !Triangular_system_solver(U, L, L*b, rank, c, D) )
     return false;
-
   // Don't forget to permute the rows of M back
   x = Vector(M.column_dimension());
   for (int i=0; i<U.column_dimension(); ++i)
@@ -296,7 +294,6 @@ linear_solver(const Matrix &M, const Vector &b,
   Matrix L,U;
   int rank;
   std::vector<int> dummy, var;
-
     TRACEN("linear_solver");TRACEV(M); TRACEV(b);
   Gaussian_elimination(M, L, U, dummy, var, D, rank, c);
   // Compute a solution by solving triangular system
@@ -304,7 +301,6 @@ linear_solver(const Matrix &M, const Vector &b,
   // Temporary store the solution in c
   if ( !Triangular_system_solver(U, L, L*b, rank, c, D) )
     return false;
-
   // Don't forget to permute the rows of M back:
   x = Vector(M.column_dimension());
   for (int i=0; i<U.column_dimension(); ++i)
@@ -313,10 +309,8 @@ linear_solver(const Matrix &M, const Vector &b,
 #ifdef CGAL_LA_SELFTEST
   CGAL_assertion( (M*x) == b );
 #endif
-
   int defect = M.column_dimension() - rank;
   spanning_vectors = Matrix(M.column_dimension(),defect); 
- 
   if (defect > 0) { 
     for(int l=0; l < defect; ++l) { 
       spanning_vectors(var[rank + l],l)=FT(1); 

@@ -123,7 +123,7 @@ DirectionHd(const RT& x, const RT& y) : Base( Tuple(x,y,1) ) {}
 $2$-dimensional space. }*/
 
 DirectionHd(int a, int b) : 
-  Base( Tuple(RT(a),RT(b),RT(1)) ) {}
+  Base( Tuple(RT(a),RT(b),RT(1),MatchHelper()) ) {}
 
 DirectionHd(const RT& x, const RT& y, const RT& z) : 
   Base( Tuple(x,y,z,1) ) {}

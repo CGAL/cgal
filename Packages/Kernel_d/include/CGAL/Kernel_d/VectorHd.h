@@ -157,7 +157,7 @@ $2$-dimensional space. }*/
 }
 
 VectorHd(int a, int b, int c = 1) : 
-  Base( Tuple((RT)a,(RT)b,(RT)c) ) 
+  Base( Tuple((RT)a,(RT)b,(RT)c, MatchHelper()) ) 
 { CGAL_assertion_msg((c != 0), "VectorHd::construction: w == 0.");
   if (c < 0) invert_rep();
 }

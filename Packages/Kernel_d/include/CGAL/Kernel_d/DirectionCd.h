@@ -74,11 +74,11 @@ DirectionCd(int d, Base_direction, int i) : Base( Tuple(d) )
   entry(i) = 1;
 }
 
-DirectionCd(const FT& x, const FT& y) : Base( Tuple(x,y) ) {}
+DirectionCd(const FT& x, const FT y) : Base( Tuple(x,y) ) {}
 DirectionCd(int a, int b) : Base( Tuple(FT(a),FT(b)) ) {}
 DirectionCd(const FT& x, const FT& y, const FT& z) : 
   Base( Tuple(x,y,z) ) {}
-DirectionCd(int a, int b, int c) : Base( Tuple(FT(a),FT(b),FT(c)) ) {}
+DirectionCd(int a, int b, int c) : Base( Tuple(FT(a),FT(b),FT(c), MatchHelper()) ) {}
 
 DirectionCd(const DirectionCd<FT,LA>& p) : Base(p)  {}
 ~DirectionCd() {}     
