@@ -39,7 +39,7 @@ tutorial3$(EXE_EXT): tutorial3$(OBJ_EXT)
 	$(CGAL_CXX)  $(EXE_OPT)tutorial3 tutorial3$(OBJ_EXT) $(LDFLAGS)
 
 clean: 
-	rm -f tutorial3.o
+	rm -f tutorial3$(OBJ_EXT) tutorial3$(EXE_EXT)
 
 #---------------------------------------------------------------------#
 #                    suffix rules
