@@ -70,23 +70,23 @@ public:
 
     double get_vertex_radius() const
     {
-	return radius_;
+	return radius;
     }
     double set_vertex_radius(double r)
     {
-	double old = radius_;
-	radius_ = r;
+	double old = radius;
+	radius = r;
 	return old;
     }
 
     int get_line_width() const
     {
-	return line_width_;
+	return line_width;
     }
     int set_line_width(int w)
     {
-        int old = line_width_;
-        line_width_ = w;
+        int old = line_width;
+        line_width = w;
         return old;
     }
 
@@ -94,6 +94,8 @@ public:
     Geomview_stream &operator<<(std::string s);
     Geomview_stream &operator<<(int i);
     Geomview_stream &operator<<(double d);
+
+    Geomview_stream &operator>>(char *expr);
 
     bool set_trace(bool b)
     {
@@ -127,10 +129,8 @@ public:
     bool in_binary_mode() const    { return binary_flag; }
     bool in_ascii_mode() const     { return ! binary_flag; }
 
-    Geomview_stream &operator<<( Geomview_stream& (*fct)(Geomview_stream&));
-
-    Geomview_stream &operator>>(char *expr);
-
+    // Various counters for having different IDs corresponding to the
+    // kernel objects sent to Geomview.
     int bbox_count;
     int triangle_count;
     int sphere_count;
@@ -146,27 +146,11 @@ private:
     Color vertex_color, edge_color, face_color;
     bool trace_flag;  // bool that makes operator<<() write a trace on cerr.
     bool binary_flag; // bool that makes operator<< write binary format
-    double radius_;   // radius of vertices
-    int line_width_;  // width of edges
+    int line_width;   // width of edges
+    double radius;    // radius of vertices
     int in, out;      // file descriptors for input and output pipes
     int pid;          // the geomview process identification
 };
-
-inline
-Geomview_stream&
-binary(Geomview_stream &gv)
-{
-    gv.set_binary_mode();
-    return gv;
-}
-
-inline
-Geomview_stream&
-ascii(Geomview_stream &gv)
-{
-    gv.set_ascii_mode();
-    return gv;
-}
 
 #if defined CGAL_POINT_2_H && \
    !defined CGAL_GV_OUT_POINT_2_H
@@ -175,8 +159,8 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_2<R> &p)
 {
-    gv << ascii
-       << "(geometry P" << gv.point_count++
+    gv.set_ascii_mode();
+    gv << "(geometry P" << gv.point_count++
        << " {appearance {linewidth 5 material {edgecolor "
        << gv.vcr() << gv.vcg() << gv.vcb()
        << "}}{SKEL 1 1 " ;
@@ -198,8 +182,8 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_3<R> &p)
 {
-    gv << ascii
-       << "(geometry P" << gv.point_count++
+    gv.set_ascii_mode();
+    gv << "(geometry P" << gv.point_count++
        << " {appearance {linewidth 5 material {edgecolor "
        << gv.vcr() << gv.vcg() << gv.vcb()
        << "}}{SKEL 1 1 "
@@ -221,8 +205,8 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Segment_2<R> &segment)
 {
-    gv << ascii
-       << "(geometry Seg" << gv.segment_count++
+    gv.set_ascii_mode();
+    gv << "(geometry Seg" << gv.segment_count++
        << " {appearance {linewidth "
        << gv.get_line_width() << "}{VECT "
        << 1 <<  2 << 1    // 1 polyline, two vertices, 1 color
@@ -254,8 +238,8 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Segment_3<R> &segment)
 {
-    gv << ascii
-       << "(geometry Seg" << gv.segment_count++
+    gv.set_ascii_mode();
+    gv << "(geometry Seg" << gv.segment_count++
        << " {appearance {linewidth "
        << gv.get_line_width()
        << " }{VECT "
@@ -288,13 +272,13 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
 {
-    gv << ascii
-       << "(geometry Tr" << gv.triangle_count++
+    gv.set_ascii_mode();
+    gv << "(geometry Tr" << gv.triangle_count++
        << " {appearance {+edge material {edgecolor "
-       << gv.ecr()  << gv.ecg()  << gv.ecb() <<  " } shading constant}{ "
-       << binary
+       << gv.ecr()  << gv.ecg()  << gv.ecb() <<  " } shading constant}{ ";
+    gv.set_binary_mode();
     // it's a planar polygon
-       << "OFF BINARY\n"
+    gv << "OFF BINARY\n"
 
     // it has 3 vertices, 1 face and 3 edges
        << 3 << 1 << 3;
@@ -307,8 +291,8 @@ operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
 
     // the face
     gv << 3 << 0 << 1 << 2 << 4 << gv.fcr() << gv.fcg() << gv.fcb() << 1.0
-       << "}})"
-       << ascii;
+       << "}})";
+    gv.set_ascii_mode();
 
     return gv;
 }
@@ -321,13 +305,13 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Triangle_3<R> &t)
 {
-    gv << ascii
-       << "(geometry Tr" << gv.triangle_count++
+    gv.set_ascii_mode();
+    gv << "(geometry Tr" << gv.triangle_count++
        << " {appearance {+edge material {edgecolor "
-       << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
-       << binary
+       << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ ";
+    gv.set_binary_mode();
     // it's a planar polygon
-       << "OFF BINARY\n"
+    gv << "OFF BINARY\n"
 
     // it has 3 vertices, 1 face and 3 edges
        << 3 << 1 << 3;
@@ -340,8 +324,8 @@ operator<<(Geomview_stream &gv, const Triangle_3<R> &t)
 
     // the face
     gv << 3 << 0 << 1 << 2 << 4 << gv.fcr() << gv.fcg() << gv.fcb() << 1.0
-       << "}})"
-       << ascii;
+       << "}})";
+    gv.set_ascii_mode();
 
     return gv;
 }
@@ -354,11 +338,11 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Tetrahedron_3<R> &t)
 {
-    gv << ascii
-       << "(geometry Tetra" << gv.tetrahedron_count++
-       << " {appearance {}{ "
-       << binary
-       << "OFF BINARY\n"
+    gv.set_ascii_mode();
+    gv << "(geometry Tetra" << gv.tetrahedron_count++
+       << " {appearance {}{ ";
+    gv.set_binary_mode();
+    gv << "OFF BINARY\n"
 
     // it has 4 vertices, 4 face and 6 edges
        << 4 << 4 << 6 ;
@@ -378,7 +362,8 @@ operator<<(Geomview_stream &gv, const Tetrahedron_3<R> &t)
        << 3 << 3 << 0 << 1 << 4 << r << g << b << 1.0
        << 3 << 3 << 1 << 2 << 4 << r << g << b << 1.0
        << 3 << 3 << 0 << 2 << 4 << r << g << b << 1.0
-       << "}})" << ascii;
+       << "}})";
+    gv.set_ascii_mode();
     return gv;
 }
 #endif
@@ -390,8 +375,8 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
 {
-    gv << ascii
-       << "(geometry Sph" << gv.sphere_count++
+    gv.set_ascii_mode();
+    gv << "(geometry Sph" << gv.sphere_count++
        << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
        << "SPHERE\n"
@@ -438,8 +423,8 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
     const char *gclpick =
 	"(pick world pickplane * nil nil nil nil nil nil nil)";
 
-    gv << ascii
-       << "(pickable pickplane yes) (ui-target pickplane yes)"
+    gv.set_ascii_mode();
+    gv << "(pickable pickplane yes) (ui-target pickplane yes)"
        << "(interest " << gclpick <<")";
 
     char sexpr[1024];
