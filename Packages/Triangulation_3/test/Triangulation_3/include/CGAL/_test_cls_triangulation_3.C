@@ -16,7 +16,7 @@
 // revision      : 
 // revision_date : 
 
-// author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
+// author(s)     : Francois Rebufat
 
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
@@ -137,8 +137,8 @@ _test_cls_triangulation_3(const Triangulation &)
   /************** and I/O ****************************/
 
   std::cout << "    Constructor " << std::endl;
-  // Begining with an empty triangulation and adding point until reaching
-  // 3-dimentional triangulation.
+  // Beginning with an empty triangulation and adding points until reaching
+  // 3-dimensional triangulation.
   Cls T0; 
   assert(T0.dimension() == -1);
   assert(T0.number_of_vertices() == 0);
@@ -450,10 +450,19 @@ _test_cls_triangulation_3(const Triangulation &)
   Cls T3_2_1;
   T3_2_1.insert(lp2.begin(),lp2.end());
   assert(T3_2_1.is_valid());
-  
+
   assert(T3_2_1.dimension()==3);
   //  assert(T3_2.number_of_vertices()==1000);
   std::cout << "   end of insertion " << std::endl;
+
+  // The same using the template constructor.
+  std::cout << "  template ctor"<< std::endl;
+  Cls T3_2_2(lp2.begin(), lp2.end());
+  assert(T3_2_2.is_valid());
+
+  assert(T3_2_2.dimension()==3);
+  std::cout << "   end of insertion " << std::endl;
+
   //########################################################################
 
 

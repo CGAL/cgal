@@ -462,10 +462,19 @@ _test_cls_delaunay_3(const Triangulation &)
   Cls T3_2_1;
   T3_2_1.insert(lp2.begin(),lp2.end());
   assert(T3_2_1.is_valid());
-  
+
   assert(T3_2_1.dimension()==3);
   //  assert(T3_2.number_of_vertices()==1000);
   std::cout << "   end of insertion " << std::endl;
+
+  // Same as above but using the template ctor.
+  std::cout << "  template constructor"<< std::endl;
+  Cls T3_2_2(lp2.begin(), lp2.end());
+  assert(T3_2_2.is_valid());
+
+  assert(T3_2_2.dimension()==3);
+  std::cout << "   end of insertion " << std::endl;
+
   //########################################################################
 
 
