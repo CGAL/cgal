@@ -1,0 +1,9 @@
+- The insertion works if the new disk leaves less than 2 non-trivial
+  disks, but then deletion does not work. This should be due to the
+  fact that now I have an 1D triangulation instead of 2D.
+- The insertion does not work if the new site contains all previous ones.
+- When insertion and deletion are done several maps are used to keep track
+  of the information. These maps should be replaced by something that is more
+  efficient (constant time for all operations instead of logarithmic).
+- Check what happens if in the hierarchy I add lots of trivial sites, all 
+  inside the same one.
