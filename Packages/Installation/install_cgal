@@ -5382,27 +5382,7 @@ write_linker_flags()
     # no LEDA --> use libCGALWin
     WLIBS="${WLIBS} `lib_option CGALWin` ${XLIBS}"
   fi
-  if [ -n "${GMP_SUPPORT}" ]; then
-    if [ "${GMP_INSTALLATION}" = 'x' -o \
-	 "${GMP_INSTALLATION}" = 'z' -o \
-	 "${GMP_INSTALLATION}" = 'e' ]; then
-	if [ -n "${CYGWIN_COMPILER}" ]; then
-	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(GMP_LIB_DIR)'"
-	else
-	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(GMP_LIB_DIR)"
-	fi
-	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMP_LIB_DIR)"
-    fi
-    # gmpxx must be before gmp since it depends on it.
-    if [ -n "${GMPXX_SUPPORT}" ]; then
-        LIBS="${LIBS} `lib_option gmpxx`"
-        GEOWLIBS="${GEOWLIBS} `lib_option gmpxx`"
-        WLIBS="${WLIBS} `lib_option gmpxx`"
-    fi
-    LIBS="${LIBS} `lib_option gmp`"
-    GEOWLIBS="${GEOWLIBS} `lib_option gmp`"
-    WLIBS="${WLIBS} `lib_option gmp`"
-  fi
+
   if [ -n "${CLN_SUPPORT}" ]; then
     if [ "${CLN_INSTALLATION}" = 'x' -o \
 	 "${CLN_INSTALLATION}" = 'z' -o \
@@ -5434,6 +5414,30 @@ write_linker_flags()
     else
 	QLIBS="${LIBS} `lib_option qt` `lib_option CGALQt`"
     fi
+  fi
+
+  if [ -n "${GMP_SUPPORT}" ]; then
+    if [ "${GMP_INSTALLATION}" = 'x' -o \
+	 "${GMP_INSTALLATION}" = 'z' -o \
+	 "${GMP_INSTALLATION}" = 'e' ]; then
+	if [ -n "${CYGWIN_COMPILER}" ]; then
+	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(GMP_LIB_DIR)'"
+	else
+	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(GMP_LIB_DIR)"
+	fi
+	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMP_LIB_DIR)"
+    fi
+    # gmpxx must be before gmp since it depends on it.
+    if [ -n "${GMPXX_SUPPORT}" ]; then
+        LIBS="${LIBS} `lib_option gmpxx`"
+        GEOWLIBS="${GEOWLIBS} `lib_option gmpxx`"
+        WLIBS="${WLIBS} `lib_option gmpxx`"
+	QLIBS="$(QLIBS) `lib_option gmpxx`"
+    fi
+    LIBS="${LIBS} `lib_option gmp`"
+    GEOWLIBS="${GEOWLIBS} `lib_option gmp`"
+    WLIBS="${WLIBS} `lib_option gmp`"
+    QLIBS="${QLIBS} `lib_option gmp`"
   fi
 
   #
