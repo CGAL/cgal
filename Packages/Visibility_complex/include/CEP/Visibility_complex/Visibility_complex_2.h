@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <list>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -226,7 +227,8 @@ template <class InputIterator, class OutputIterator,
 OutputIterator
 __visibility_complex_2(InputIterator first, InputIterator last, 
 		       OutputIterator result, 
-		       Polygon_2<Polygon_traits_2<_R>,std::list<Point_2<_R> > >, 
+		       Polygon_2<typename Polygon_traits_2<_R> >,
+		       std::list<typename _R::Point_2 > >, 
 		       Items)
 {
     typedef Visibility_complex_polygon_traits<_R> Traits;
