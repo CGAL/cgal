@@ -45,6 +45,9 @@ clean:
 	make -C src clean
 	make -C demo/Qt_window -f Makefile.local clean
 
+update:
+	@cvs -q update
+
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
