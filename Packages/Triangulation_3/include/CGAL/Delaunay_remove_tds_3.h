@@ -27,7 +27,6 @@
 #include <CGAL/basic.h>
 
 #include <map>
-#include <CGAL/utility.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 
@@ -245,18 +244,22 @@ public:
 
 private:
 
-  // VC7 is lost by too many templates, so we cut the templates by deriving
+  // Some compilers get lost by too many templates,
+  // so we don't use Quadruple, we define a nested class.
 
   // typedef Quadruple<Vertex_handle_3_2, Vertex_handle_3_2,
   //                   Face_handle_3_2, int> Halfedge;
 
-  struct Halfedge : public Quadruple<Vertex_handle_3_2, Vertex_handle_3_2,
-                                     Face_handle_3_2, int>
+  struct Halfedge
   {
+    Vertex_handle_3_2  first;
+    Vertex_handle_3_2  second;
+    Face_handle_3_2    third;
+    int                fourth;
+
     Halfedge(Vertex_handle_3_2 a, Vertex_handle_3_2 b,
 	     Face_handle_3_2 c, int d)
-      : Quadruple<Vertex_handle_3_2, Vertex_handle_3_2, Face_handle_3_2, int>
-        (a, b, c, d) {}
+      : first(a), second(b), third(c), fourth(d) {}
   };
 
 public:

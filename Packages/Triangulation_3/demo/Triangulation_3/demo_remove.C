@@ -44,7 +44,10 @@ int main()
 #include <vector>
 #include <cassert>
 
-typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
+// We use derivation instead of a typedef, in order to shorten
+// mangled names for some compilers.
+struct K : public CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
+// typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
 
 typedef CGAL::Triangulation_vertex_base_3<K>            Vb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb>  Vbh;
