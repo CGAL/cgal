@@ -58,12 +58,11 @@ compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = compare_xC2(
+    Comparison_result result = compare_xC2(
 		px.interval(),
 		l1a.interval(),
 		l1b.interval(),
@@ -72,11 +71,12 @@ compare_xC2(
 		l2b.interval(),
 		l2c.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = compare_xC2(
+    return compare_xC2(
 		px.exact(),
 		l1a.exact(),
 		l1b.exact(),
@@ -85,7 +85,7 @@ compare_xC2(
 		l2b.exact(),
 		l2c.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -110,12 +110,11 @@ compare_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = compare_xC2(
+    Comparison_result result = compare_xC2(
 		l1a.interval(),
 		l1b.interval(),
 		l1c.interval(),
@@ -129,11 +128,12 @@ compare_xC2(
 		h2b.interval(),
 		h2c.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = compare_xC2(
+    return compare_xC2(
 		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
@@ -147,7 +147,7 @@ compare_xC2(
 		h2b.exact(),
 		h2c.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -163,30 +163,30 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = compare_y_at_xC2(
+    Comparison_result result = compare_y_at_xC2(
 		px.interval(),
 		py.interval(),
 		la.interval(),
 		lb.interval(),
 		lc.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = compare_y_at_xC2(
+    return compare_y_at_xC2(
 		px.exact(),
 		py.exact(),
 		la.exact(),
 		lb.exact(),
 		lc.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -205,12 +205,11 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = compare_y_at_xC2(
+    Comparison_result result = compare_y_at_xC2(
 		px.interval(),
 		l1a.interval(),
 		l1b.interval(),
@@ -219,11 +218,12 @@ compare_y_at_xC2(
 		l2b.interval(),
 		l2c.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = compare_y_at_xC2(
+    return compare_y_at_xC2(
 		px.exact(),
 		l1a.exact(),
 		l1b.exact(),
@@ -232,7 +232,7 @@ compare_y_at_xC2(
 		l2b.exact(),
 		l2c.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -253,12 +253,11 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hb,  
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hc)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = compare_y_at_xC2(
+    Comparison_result result = compare_y_at_xC2(
 		l1a.interval(),
 		l1b.interval(),
 		l1c.interval(),
@@ -269,11 +268,12 @@ compare_y_at_xC2(
 		hb.interval(),
 		hc.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = compare_y_at_xC2(
+    return compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
@@ -284,7 +284,7 @@ compare_y_at_xC2(
 		hb.exact(),
 		hc.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -309,12 +309,11 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = compare_y_at_xC2(
+    Comparison_result result = compare_y_at_xC2(
 		l1a.interval(),
 		l1b.interval(),
 		l1c.interval(),
@@ -328,11 +327,12 @@ compare_y_at_xC2(
 		h2b.interval(),
 		h2c.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = compare_y_at_xC2(
+    return compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
@@ -346,7 +346,7 @@ compare_y_at_xC2(
 		h2b.exact(),
 		h2c.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -361,28 +361,28 @@ compare_deltax_deltayC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = compare_deltax_deltayC2(
+    Comparison_result result = compare_deltax_deltayC2(
 		px.interval(),
 		qx.interval(),
 		ry.interval(),
 		sy.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = compare_deltax_deltayC2(
+    return compare_deltax_deltayC2(
 		px.exact(),
 		qx.exact(),
 		ry.exact(),
 		sy.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -397,28 +397,28 @@ compare_lexicographically_xyC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = compare_lexicographically_xyC2(
+    Comparison_result result = compare_lexicographically_xyC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
 		qy.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = compare_lexicographically_xyC2(
+    return compare_lexicographically_xyC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
 		qy.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -436,12 +436,11 @@ orientationC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  Orientation result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = orientationC2(
+    Orientation result = orientationC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -449,11 +448,12 @@ orientationC2(
 		rx.interval(),
 		ry.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = orientationC2(
+    return orientationC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -461,7 +461,7 @@ orientationC2(
 		rx.exact(),
 		ry.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -479,12 +479,11 @@ collinear_are_ordered_along_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  bool result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = collinear_are_ordered_along_lineC2(
+    bool result = collinear_are_ordered_along_lineC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -492,11 +491,12 @@ collinear_are_ordered_along_lineC2(
 		rx.interval(),
 		ry.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = collinear_are_ordered_along_lineC2(
+    return collinear_are_ordered_along_lineC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -504,7 +504,7 @@ collinear_are_ordered_along_lineC2(
 		rx.exact(),
 		ry.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -522,12 +522,11 @@ collinear_are_strictly_ordered_along_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  bool result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = collinear_are_strictly_ordered_along_lineC2(
+    bool result = collinear_are_strictly_ordered_along_lineC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -535,11 +534,12 @@ collinear_are_strictly_ordered_along_lineC2(
 		rx.interval(),
 		ry.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = collinear_are_strictly_ordered_along_lineC2(
+    return collinear_are_strictly_ordered_along_lineC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -547,7 +547,7 @@ collinear_are_strictly_ordered_along_lineC2(
 		rx.exact(),
 		ry.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -568,12 +568,11 @@ side_of_oriented_circleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
 {
-  Oriented_side result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = side_of_oriented_circleC2(
+    Oriented_side result = side_of_oriented_circleC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -583,11 +582,12 @@ side_of_oriented_circleC2(
 		tx.interval(),
 		ty.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = side_of_oriented_circleC2(
+    return side_of_oriented_circleC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -597,7 +597,7 @@ side_of_oriented_circleC2(
 		tx.exact(),
 		ty.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -618,12 +618,11 @@ side_of_bounded_circleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
 {
-  Bounded_side result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = side_of_bounded_circleC2(
+    Bounded_side result = side_of_bounded_circleC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -633,11 +632,12 @@ side_of_bounded_circleC2(
 		tx.interval(),
 		ty.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = side_of_bounded_circleC2(
+    return side_of_bounded_circleC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -647,7 +647,7 @@ side_of_bounded_circleC2(
 		tx.exact(),
 		ty.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -665,12 +665,11 @@ cmp_dist_to_pointC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = cmp_dist_to_pointC2(
+    Comparison_result result = cmp_dist_to_pointC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -678,11 +677,12 @@ cmp_dist_to_pointC2(
 		rx.interval(),
 		ry.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = cmp_dist_to_pointC2(
+    return cmp_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -690,7 +690,7 @@ cmp_dist_to_pointC2(
 		rx.exact(),
 		ry.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -708,12 +708,11 @@ has_larger_dist_to_pointC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  bool result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = has_larger_dist_to_pointC2(
+    bool result = has_larger_dist_to_pointC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -721,11 +720,12 @@ has_larger_dist_to_pointC2(
 		rx.interval(),
 		ry.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = has_larger_dist_to_pointC2(
+    return has_larger_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -733,7 +733,7 @@ has_larger_dist_to_pointC2(
 		rx.exact(),
 		ry.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -751,12 +751,11 @@ has_smaller_dist_to_pointC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  bool result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = has_smaller_dist_to_pointC2(
+    bool result = has_smaller_dist_to_pointC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -764,11 +763,12 @@ has_smaller_dist_to_pointC2(
 		rx.interval(),
 		ry.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = has_smaller_dist_to_pointC2(
+    return has_smaller_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -776,7 +776,7 @@ has_smaller_dist_to_pointC2(
 		rx.exact(),
 		ry.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -795,12 +795,11 @@ cmp_signed_dist_to_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = cmp_signed_dist_to_lineC2(
+    Comparison_result result = cmp_signed_dist_to_lineC2(
 		la.interval(),
 		lb.interval(),
 		lc.interval(),
@@ -809,11 +808,12 @@ cmp_signed_dist_to_lineC2(
 		qx.interval(),
 		qy.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = cmp_signed_dist_to_lineC2(
+    return cmp_signed_dist_to_lineC2(
 		la.exact(),
 		lb.exact(),
 		lc.exact(),
@@ -822,7 +822,7 @@ cmp_signed_dist_to_lineC2(
 		qx.exact(),
 		qy.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -841,12 +841,11 @@ has_larger_signed_dist_to_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  bool result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = has_larger_signed_dist_to_lineC2(
+    bool result = has_larger_signed_dist_to_lineC2(
 		la.interval(),
 		lb.interval(),
 		lc.interval(),
@@ -855,11 +854,12 @@ has_larger_signed_dist_to_lineC2(
 		qx.interval(),
 		qy.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = has_larger_signed_dist_to_lineC2(
+    return has_larger_signed_dist_to_lineC2(
 		la.exact(),
 		lb.exact(),
 		lc.exact(),
@@ -868,7 +868,7 @@ has_larger_signed_dist_to_lineC2(
 		qx.exact(),
 		qy.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -887,12 +887,11 @@ has_smaller_signed_dist_to_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  bool result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = has_smaller_signed_dist_to_lineC2(
+    bool result = has_smaller_signed_dist_to_lineC2(
 		la.interval(),
 		lb.interval(),
 		lc.interval(),
@@ -901,11 +900,12 @@ has_smaller_signed_dist_to_lineC2(
 		qx.interval(),
 		qy.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = has_smaller_signed_dist_to_lineC2(
+    return has_smaller_signed_dist_to_lineC2(
 		la.exact(),
 		lb.exact(),
 		lc.exact(),
@@ -914,7 +914,7 @@ has_smaller_signed_dist_to_lineC2(
 		qx.exact(),
 		qy.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
@@ -934,12 +934,11 @@ cmp_signed_dist_to_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = cmp_signed_dist_to_lineC2(
+    Comparison_result result = cmp_signed_dist_to_lineC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -949,11 +948,12 @@ cmp_signed_dist_to_lineC2(
 		sx.interval(),
 		sy.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = cmp_signed_dist_to_lineC2(
+    return cmp_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -963,7 +963,7 @@ cmp_signed_dist_to_lineC2(
 		sx.exact(),
 		sy.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -984,12 +984,11 @@ has_larger_signed_dist_to_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  bool result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = has_larger_signed_dist_to_lineC2(
+    bool result = has_larger_signed_dist_to_lineC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -999,11 +998,12 @@ has_larger_signed_dist_to_lineC2(
 		sx.interval(),
 		sy.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = has_larger_signed_dist_to_lineC2(
+    return has_larger_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -1013,7 +1013,7 @@ has_larger_signed_dist_to_lineC2(
 		sx.exact(),
 		sy.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -1034,12 +1034,11 @@ has_smaller_signed_dist_to_lineC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  bool result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = has_smaller_signed_dist_to_lineC2(
+    bool result = has_smaller_signed_dist_to_lineC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -1049,11 +1048,12 @@ has_smaller_signed_dist_to_lineC2(
 		sx.interval(),
 		sy.interval());
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = has_smaller_signed_dist_to_lineC2(
+    return has_smaller_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -1063,7 +1063,7 @@ has_smaller_signed_dist_to_lineC2(
 		sx.exact(),
 		sy.exact());
   }
-  return result;
+  CGAL_assertion(false);
 }
 
 
