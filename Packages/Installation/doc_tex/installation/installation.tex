@@ -140,12 +140,12 @@ systems:
     & \mswin\ 95/98/NT4\\\hline
   \end{tabular}
 \end{center}
-\footnotetext[7]{\mipsprourl}\stepcounter{footnote}
-\footnotetext[8]{\kccurl}\stepcounter{footnote}
-\footnotetext[9]{\gccurl}\stepcounter{footnote}
-\footnotetext[10]{\msvcurl}\stepcounter{footnote}
-\footnotetext[11]{\bccurl}\stepcounter{footnote}
-\footnotetext[12]{with Cygwin}\stepcounter{footnote}
+\footnotetext[7]{\mipsprourl}\addtocounter{footnote}{1}
+\footnotetext[8]{\kccurl}\addtocounter{footnote}{1}
+\footnotetext[9]{\gccurl}\addtocounter{footnote}{1}
+\footnotetext[10]{\msvcurl}\addtocounter{footnote}{1}
+\footnotetext[11]{\bccurl}\addtocounter{footnote}{1}
+\footnotetext[12]{with Cygwin}\addtocounter{footnote}{1}
 
 \msvc{5.0} and prior is not supported and there are no plans to
 support it in future releases.  The \sunprocc{4.2} compiler is not
@@ -217,7 +217,7 @@ filenames (like WinZip or InfoZip).
 In both cases the directory \cgaldir\ will be created. This directory
 contains the following subdirectories:\index{directories!structure}
 
-\footnotetext[8]{\stlportpage}
+\footnotetext[14]{\stlportpage}\addtocounter{footnote}{1}
 \begin{center}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
@@ -237,7 +237,7 @@ contains the following subdirectories:\index{directories!structure}
     \texttt{scripts}   & some useful scripts (e.g. for creating makefiles)\\\hline
     \texttt{src}       & source files\\\hline
     \texttt{stlport}   & 
-         a customized version of \texttt{Stlport-3.2.1}\footnotemark[8] 
+         a customized version of \texttt{Stlport-3.2.1}\footnotemark[14] 
          that is used with \msvc{6.0}\\\hline
   \end{tabular}
 \end{center}
@@ -1405,10 +1405,10 @@ around compiler bugs and limitations.  For example, the flag
 know the keyword \texttt{mutable}. 
 
 For each compiler a file \texttt{<CGAL/compiler\_config.h>}
-\index{files!\texttt{compiler\_config.h}} is defined, with the
-correct settings of all flags. This file is generated automatically by
-the \texttt{install\_cgal} script. For this the test programs in the
-directory \nonlinkedpath'\cgaldir/config/testfiles'
+\index{files!\texttt{compiler\_config.h}} is defined, with the correct
+settings of all flags. This file is generated automatically by the
+\texttt{install\_cgal} script. For this the test programs in the
+directory \nonlinkedpath'CGAL-2.2/config/testfiles'
 \index{directories!config/testfiles@\texttt{config/testfiles}} are
 used.  The file \texttt{<CGAL/compiler\_config.h>} and the test
 programs contain a description of the problem, so in case of trouble
