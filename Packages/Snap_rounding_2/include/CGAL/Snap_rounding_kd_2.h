@@ -85,7 +85,7 @@ private:
 
       Point_2 p(iter->first);
 
-      Snap_rounding_rotation<Rep> r;
+      static Snap_rounding_rotation<Rep> r;
       r(p,angle);
 
       my_point<NT,SAVED_OBJECT> rotated_point(p,iter->first,iter->second);

@@ -167,7 +167,7 @@ class Bounding_box_of_minkowski_sum_2 {
       ms6 = Point_2(x2 - 0.6 * unit_squere,y2 - 0.6 * unit_squere);
     }
 
-    Snap_rounding_rotation<base_rep> r;
+    static Snap_rounding_rotation<base_rep> r;
     r(ms1,angle);
     r(ms2,angle);
     r(ms3,angle);
