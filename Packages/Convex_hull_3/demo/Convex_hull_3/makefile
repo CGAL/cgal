@@ -37,11 +37,9 @@ incremental_hull_3_demo: incremental_hull_3_demo.o
 quickhull_3_demo: quickhull_3_demo.o
 	$(CGAL_CXX) -o quickhull_3_demo quickhull_3_demo.o $(LDFLAGS)
 
-clean:
-	/bin/rm -f *.o \
-                   incremental_hull_3_demo \
-                   quickhull_3_demo \
-                   core
+clean: \
+       incremental_hull_3_demo.clean \
+       quickhull_3_demo.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
