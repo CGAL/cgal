@@ -3,6 +3,8 @@ Packages/Distance_3/include
 Packages/Mesh_2/demo/Mesh_2/*.moc
 Packages/Mesh_2/demo/Mesh_2/mesh_demo
 Packages/Mesh_2/doc_tex/basic/*.aux
+Packages/Mesh_2/doc_tex/basic/*.bbl
+Packages/Mesh_2/doc_tex/basic/*.blg
 Packages/Mesh_2/doc_tex/basic/*.dvi
 Packages/Mesh_2/doc_tex/basic/*.idx
 Packages/Mesh_2/doc_tex/basic/*.ilg

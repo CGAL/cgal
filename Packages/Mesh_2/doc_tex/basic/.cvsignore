@@ -1,2 +1,3 @@
 *.aux *.idx *.dvi *.ps* *.ind* *.log *.ilg
 html
+*.blg *.bbl
