@@ -947,7 +947,7 @@ diameter of the circle.
     if ( ( ! has_on_boundary( p)                                ) ||
          ( ! has_on_boundary( q)                                ) ||
          ( tco.orientation( p, q,
-			    circle().center()) != CGAL_COLLINEAR) )
+                            circle().center()) != CGAL_COLLINEAR) )
         return( CGAL__optimisation_is_valid_fail( verr,
                     "circle does not have its \
                      two support points as diameter."));
@@ -1587,7 +1587,7 @@ it is declared \ccc{friend}.
     CGAL_Orientation
     orientation( Point const& p, Point const& q, Point const& r) const
     {
-        typedef  _DA::FT  FT;
+        typedef  typename _DA::FT  FT;
 
         FT  px;
         FT  py;
@@ -1616,7 +1616,7 @@ it is declared \ccc{friend}.
         typedef  _PT  PT;
         typedef  _DA  DA;
 
-        typedef  _DA::FT  FT;
+        typedef  typename _DA::FT  FT;
 
       private:
         // data members
@@ -1910,7 +1910,7 @@ it is declared \ccc{friend}.
     CGAL_Orientation
     orientation( Point const& p, Point const& q, Point const& r) const
     {
-        typedef  _DA::RT  RT;
+        typedef  typename _DA::RT  RT;
 
         RT  phx;
         RT  phy;
@@ -1943,8 +1943,8 @@ it is declared \ccc{friend}.
         typedef  _PT  PT;
         typedef  _DA  DA;
 
-        typedef  _DA::RT            RT;
-        typedef  CGAL_Quotient<RT>  FT;
+        typedef  typename _DA::RT            RT;
+        typedef           CGAL_Quotient<RT>  FT;
 
       private:
         // data members
@@ -2228,18 +2228,18 @@ homogeneous representation with number type \ccc{CGAL_Gmpz}.
 
     #ifdef CGAL_USE_LEDA
     #  include <CGAL/leda_integer.h>
-       typedef  leda_integer			 Rt;
-       typedef  CGAL_Quotient< leda_integer >	 Ft;
+       typedef  leda_integer                     Rt;
+       typedef  CGAL_Quotient< leda_integer >    Ft;
     #else
     #  include <CGAL/Gmpz.h>
-       typedef  CGAL_Gmpz			 Rt;
-       typedef  CGAL_Quotient< CGAL_Gmpz >	 Ft;
+       typedef  CGAL_Gmpz                        Rt;
+       typedef  CGAL_Quotient< CGAL_Gmpz >       Ft;
     #endif
 
-    typedef  CGAL_Cartesian< Ft >		 RepC;
-    typedef  CGAL_Homogeneous< Rt >		 RepH;
-    typedef  CGAL_Optimisation_traits_2< RepC >	 TraitsC;
-    typedef  CGAL_Optimisation_traits_2< RepH >	 TraitsH;
+    typedef  CGAL_Cartesian< Ft >                RepC;
+    typedef  CGAL_Homogeneous< Rt >              RepH;
+    typedef  CGAL_Optimisation_traits_2< RepC >  TraitsC;
+    typedef  CGAL_Optimisation_traits_2< RepH >  TraitsH;
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
@@ -2683,8 +2683,8 @@ end of each file.
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
     #  include <CGAL/optimisation_assertions.h>
     #endif
-    #ifndef CGAL_OPTIMISATION_MISC_H
-    #  include <CGAL/optimisation_misc.h>
+    #ifndef CGAL_OPTIMISATION_BASIC_H
+    #  include <CGAL/optimisation_basic.h>
     #endif
     #ifndef CGAL_PROTECT_LIST_H
     #  include <list.h>
@@ -2933,7 +2933,7 @@ end of each file.
                    "Optimisation/Min_circle_2",
                    "Sven Schönherr <sven@@inf.fu-berlin.de>",
                    "Bernd Gärtner",
-		   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
+                   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
                    "$Revision$","$Date$")
 @end
 
@@ -2942,7 +2942,7 @@ end of each file.
                    "Optimisation/Min_circle_2",
                    "Sven Schönherr <sven@@inf.fu-berlin.de>",
                    "Bernd Gärtner",
-		   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
+                   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
                    "$Revision$","$Date$")
 @end
 

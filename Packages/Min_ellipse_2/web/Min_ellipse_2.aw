@@ -200,15 +200,15 @@ The class interface looks as follows.
     template < class _Traits >
     class CGAL_Min_ellipse_2 {
       public:
-	@<Min_ellipse_2 public interface>
+        @<Min_ellipse_2 public interface>
 
       private:
-	// private data members
-	@<Min_ellipse_2 private data members>
+        // private data members
+        @<Min_ellipse_2 private data members>
 
-	// copying and assignment not allowed!
-	CGAL_Min_ellipse_2( CGAL_Min_ellipse_2<_Traits> const&);
-	CGAL_Min_ellipse_2<_Traits>&
+        // copying and assignment not allowed!
+        CGAL_Min_ellipse_2( CGAL_Min_ellipse_2<_Traits> const&);
+        CGAL_Min_ellipse_2<_Traits>&
             operator = ( CGAL_Min_ellipse_2<_Traits> const&);
 
     @<dividing line>
@@ -217,43 +217,43 @@ The class interface looks as follows.
     // ====================
 
       public:
-	// Access functions and predicates
-	// -------------------------------
-	@<Min_ellipse_2 access functions `number_of_...'>
+        // Access functions and predicates
+        // -------------------------------
+        @<Min_ellipse_2 access functions `number_of_...'>
 
-	@<Min_ellipse_2 predicates `is_...'>
+        @<Min_ellipse_2 predicates `is_...'>
 
-	@<Min_ellipse_2 access functions>
+        @<Min_ellipse_2 access functions>
 
-	@<Min_ellipse_2 predicates>
+        @<Min_ellipse_2 predicates>
 
       private:
-	// Privat member functions
-	// -----------------------
-	@<Min_ellipse_2 private member function `compute_ellipse'>
+        // Privat member functions
+        // -----------------------
+        @<Min_ellipse_2 private member function `compute_ellipse'>
 
-	@<Min_ellipse_2 private member function `me'>
+        @<Min_ellipse_2 private member function `me'>
 
       public:
-	// Constructors
-	// ------------
-	@<Min_ellipse_2 constructors>
+        // Constructors
+        // ------------
+        @<Min_ellipse_2 constructors>
 
-	// Destructor
-	// ----------
-	@<Min_ellipse_2 destructor>
+        // Destructor
+        // ----------
+        @<Min_ellipse_2 destructor>
 
-	// Modifiers
-	// ---------
-	@<Min_ellipse_2 modifiers>
+        // Modifiers
+        // ---------
+        @<Min_ellipse_2 modifiers>
 
-	// Validity check
-	// --------------
-	@<Min_ellipse_2 validity check>
+        // Validity check
+        // --------------
+        @<Min_ellipse_2 validity check>
 
-	// Miscellaneous
-	// -------------
-	@<Min_ellipse_2 miscellaneous>
+        // Miscellaneous
+        // -------------
+        @<Min_ellipse_2 miscellaneous>
     };
 @end   
 
@@ -279,30 +279,30 @@ section, so we do not comment on it here.
 
     // creation
     CGAL_Min_ellipse_2( const Point*  first,
-			const Point*  last,
-			bool          randomize = false,
-			CGAL_Random&  random    = CGAL_random,
-			Traits const& traits    = Traits());
+                        const Point*  last,
+                        bool          randomize = false,
+                        CGAL_Random&  random    = CGAL_random,
+                        Traits const& traits    = Traits());
     CGAL_Min_ellipse_2( list<Point>::const_iterator first,
-			list<Point>::const_iterator last,
-			bool          randomize = false,
-			CGAL_Random&  random    = CGAL_random,
-			Traits const& traits    = Traits());
+                        list<Point>::const_iterator last,
+                        bool          randomize = false,
+                        CGAL_Random&  random    = CGAL_random,
+                        Traits const& traits    = Traits());
     CGAL_Min_ellipse_2( istream_iterator<Point,ptrdiff_t> first,
-			istream_iterator<Point,ptrdiff_t> last,
-			bool          randomize = false,
-			CGAL_Random&  random    = CGAL_random,
-			Traits const& traits    = Traits())
+                        istream_iterator<Point,ptrdiff_t> last,
+                        bool          randomize = false,
+                        CGAL_Random&  random    = CGAL_random,
+                        Traits const& traits    = Traits())
     CGAL_Min_ellipse_2( Traits const& traits = Traits());
     CGAL_Min_ellipse_2( Point  const& p,
-			Traits const& traits = Traits());
+                        Traits const& traits = Traits());
     CGAL_Min_ellipse_2( Point  const& p,
-			Point  const& q,
-			Traits const& traits = Traits());
+                        Point  const& q,
+                        Traits const& traits = Traits());
     CGAL_Min_ellipse_2( Point  const& p1,
-			Point  const& p2,
-			Point  const& p3,
-			Traits const& traits = Traits());
+                        Point  const& p2,
+                        Point  const& p3,
+                        Traits const& traits = Traits());
     ~CGAL_Min_ellipse_2( );
 
     // access functions
@@ -352,7 +352,7 @@ section, so we do not comment on it here.
 First, the traits class object is stored.
 
 @macro <Min_ellipse_2 private data members> += @begin
-    Traits       tco;				// traits class object
+    Traits       tco;                           // traits class object
 @end
 
 The points of $P$ are internally stored as a linked list that allows to
@@ -360,7 +360,7 @@ bring points to the front of the list in constant time. We use the
 sequence container \ccc{list} from STL~\cite{sl-stl-95}.
 
 @macro <Min_ellipse_2 private data members> += @begin
-    list<Point>  points;			// doubly linked list of points
+    list<Point>  points;                        // doubly linked list of points
 @end
 
 The support set $S$ of at most five support points is stored in an
@@ -374,8 +374,8 @@ because the SGI compiler (mipspro CC 7.1) does not accept a static
 array here.
 
 @macro <Min_ellipse_2 private data members> += @begin
-    int          n_support_points;		// number of support points
-    Point*       support_points;		// array of support points
+    int          n_support_points;              // number of support points
+    Point*       support_points;                // array of support points
 @end
 
 Finally, the actual ellipse is stored in a variable \ccc{ellipse}
@@ -407,91 +407,91 @@ compute $me(P)=me(P,\emptyset)$.
 @macro <Min_ellipse_2 constructors> += @begin
     // STL-like constructor for C array and vector<Point>
     CGAL_Min_ellipse_2( const Point*  first,
-			const Point*  last,
-			bool          randomize = false,
-			CGAL_Random&  random    = CGAL_random,
-			Traits const& traits    = Traits())
-	: tco( traits)
+                        const Point*  last,
+                        bool          randomize = false,
+                        CGAL_Random&  random    = CGAL_random,
+                        Traits const& traits    = Traits())
+        : tco( traits)
     {
-	// allocate support points' array
-	support_points = new Point[ 5];
+        // allocate support points' array
+        support_points = new Point[ 5];
 
-	// range not empty?
-	if ( ( last-first) > 0) {
+        // range not empty?
+        if ( ( last-first) > 0) {
 
-	    // store points
-	    if ( randomize) {
+            // store points
+            if ( randomize) {
 
-	        // shuffle points at random
-	        vector<Point> v( first, last);
-		random_shuffle( v.begin(), v.end(), random);
-		copy( v.begin(), v.end(), back_inserter( points)); }
-	    else
-		copy( first, last, back_inserter( points)); }
+                // shuffle points at random
+                vector<Point> v( first, last);
+                random_shuffle( v.begin(), v.end(), random);
+                copy( v.begin(), v.end(), back_inserter( points)); }
+            else
+                copy( first, last, back_inserter( points)); }
 
-	// compute me
-	me( points.end(), 0);
+        // compute me
+        me( points.end(), 0);
     }
 
     // STL-like constructor for list<Point>
     CGAL_Min_ellipse_2( list<Point>::const_iterator first,
-			list<Point>::const_iterator last,
-			bool          randomize = false,
-			CGAL_Random&  random    = CGAL_random,
-			Traits const& traits    = Traits())
-	: tco( traits)
+                        list<Point>::const_iterator last,
+                        bool          randomize = false,
+                        CGAL_Random&  random    = CGAL_random,
+                        Traits const& traits    = Traits())
+        : tco( traits)
     {
-	// allocate support points' array
-	support_points = new Point[ 5];
+        // allocate support points' array
+        support_points = new Point[ 5];
 
-	// compute number of points
-	list<Point>::size_type n = 0;
-	CGAL__distance( first, last, n);
-	if ( n > 0) {
+        // compute number of points
+        list<Point>::size_type n = 0;
+        CGAL__distance( first, last, n);
+        if ( n > 0) {
 
-	    // store points
-	    if ( randomize) {
+            // store points
+            if ( randomize) {
 
-	        // shuffle points at random
-		vector<Point> v;
-		v.reserve( n);
-		copy( first, last, back_inserter( v));
-		random_shuffle( v.begin(), v.end(), random);
-		copy( v.begin(), v.end(), back_inserter( points)); }
-	    else
-		copy( first, last, back_inserter( points)); }
+                // shuffle points at random
+                vector<Point> v;
+                v.reserve( n);
+                copy( first, last, back_inserter( v));
+                random_shuffle( v.begin(), v.end(), random);
+                copy( v.begin(), v.end(), back_inserter( points)); }
+            else
+                copy( first, last, back_inserter( points)); }
 
-	// compute me
-	me( points.end(), 0);
+        // compute me
+        me( points.end(), 0);
     }
 
     // STL-like constructor for input stream iterator istream_iterator<Point>
     CGAL_Min_ellipse_2( istream_iterator<Point,ptrdiff_t>  first,
-			istream_iterator<Point,ptrdiff_t>  last,
-			bool          randomize = false,
-			CGAL_Random&  random    = CGAL_random,
-			Traits const& traits    = Traits())
-	: tco( traits)
+                        istream_iterator<Point,ptrdiff_t>  last,
+                        bool          randomize = false,
+                        CGAL_Random&  random    = CGAL_random,
+                        Traits const& traits    = Traits())
+        : tco( traits)
     {
-	// allocate support points' array
-	support_points = new Point[ 5];
+        // allocate support points' array
+        support_points = new Point[ 5];
 
-	// range not empty?
-	if ( first != last) {
+        // range not empty?
+        if ( first != last) {
 
-	    // store points
-	    if ( randomize) {
+            // store points
+            if ( randomize) {
 
-	        // shuffle points at random
-		vector<Point> v;
-		copy( first, last, back_inserter( v));
-		random_shuffle( v.begin(), v.end(), random);
-		copy( v.begin(), v.end(), back_inserter( points)); }
-	    else
-		copy( first, last, back_inserter( points)); }
+                // shuffle points at random
+                vector<Point> v;
+                copy( first, last, back_inserter( v));
+                random_shuffle( v.begin(), v.end(), random);
+                copy( v.begin(), v.end(), back_inserter( points)); }
+            else
+                copy( first, last, back_inserter( points)); }
 
-	// compute me
-	me( points.end(), 0);
+        // compute me
+        me( points.end(), 0);
     }
 
 @end
@@ -511,114 +511,114 @@ For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
     // default constructor
     inline
     CGAL_Min_ellipse_2( Traits const& traits = Traits())
-	: tco( traits), n_support_points( 0)
+        : tco( traits), n_support_points( 0)
     {
-	// allocate support points' array
-	support_points = new Point[ 5];
+        // allocate support points' array
+        support_points = new Point[ 5];
 
-	// initialize ellipse
-	tco.ellipse.set();
+        // initialize ellipse
+        tco.ellipse.set();
 
-	CGAL_optimisation_postcondition( is_empty());
+        CGAL_optimisation_postcondition( is_empty());
     }
 
     // constructor for one point
     inline
     CGAL_Min_ellipse_2( Point const& p, Traits const& traits = Traits())
-	: tco( traits), points( 1, p), n_support_points( 1)
+        : tco( traits), points( 1, p), n_support_points( 1)
     {
-	// allocate support points' array
-	support_points = new Point[ 5];
+        // allocate support points' array
+        support_points = new Point[ 5];
 
-	// initialize ellipse
-	support_points[ 0] = p;
-	tco.ellipse.set( p);
+        // initialize ellipse
+        support_points[ 0] = p;
+        tco.ellipse.set( p);
 
-	CGAL_optimisation_postcondition( is_degenerate());
+        CGAL_optimisation_postcondition( is_degenerate());
     }
 
     // constructor for two points
     inline
     CGAL_Min_ellipse_2( Point const& p,
-			Point const& q,
-			Traits const& traits = Traits())
-	: tco( traits)
+                        Point const& q,
+                        Traits const& traits = Traits())
+        : tco( traits)
     {
-	// allocate support points' array
-	support_points = new Point[ 5];
+        // allocate support points' array
+        support_points = new Point[ 5];
 
-	// store points
-	points.push_back( p);
-	points.push_back( q);
+        // store points
+        points.push_back( p);
+        points.push_back( q);
 
-	// compute me
-	me( points.end(), 0);
+        // compute me
+        me( points.end(), 0);
     }
 
     // constructor for three points
     inline
     CGAL_Min_ellipse_2( Point const& p1,
-			Point const& p2,
-			Point const& p3,
-			Traits const& traits = Traits())
-	: tco( traits)
+                        Point const& p2,
+                        Point const& p3,
+                        Traits const& traits = Traits())
+        : tco( traits)
     {
-	// allocate support points' array
-	support_points = new Point[ 5];
+        // allocate support points' array
+        support_points = new Point[ 5];
 
-	// store points
-	points.push_back( p1);
-	points.push_back( p2);
-	points.push_back( p3);
+        // store points
+        points.push_back( p1);
+        points.push_back( p2);
+        points.push_back( p3);
 
-	// compute me
-	me( points.end(), 0);
+        // compute me
+        me( points.end(), 0);
     }
 
     // constructor for four points
     inline
     CGAL_Min_ellipse_2( Point const& p1,
-			Point const& p2,
-			Point const& p3,
-			Point const& p4,
-			Traits const& traits = Traits())
-	: tco( traits)
+                        Point const& p2,
+                        Point const& p3,
+                        Point const& p4,
+                        Traits const& traits = Traits())
+        : tco( traits)
     {
-	// allocate support points' array
-	support_points = new Point[ 5];
+        // allocate support points' array
+        support_points = new Point[ 5];
 
-	// store points
-	points.push_back( p1);
-	points.push_back( p2);
-	points.push_back( p3);
-	points.push_back( p4);
+        // store points
+        points.push_back( p1);
+        points.push_back( p2);
+        points.push_back( p3);
+        points.push_back( p4);
 
-	// compute me
-	me( points.end(), 0);
+        // compute me
+        me( points.end(), 0);
     }
 
     // constructor for five points
     inline
     CGAL_Min_ellipse_2( Point const& p1,
-			Point const& p2,
-			Point const& p3,
-			Point const& p4,
-			Point const& p5,
-			Traits const& traits = Traits())
-	: tco( traits)
+                        Point const& p2,
+                        Point const& p3,
+                        Point const& p4,
+                        Point const& p5,
+                        Traits const& traits = Traits())
+        : tco( traits)
     {
-	// allocate support points' array
-	support_points = new Point[ 5];
+        // allocate support points' array
+        support_points = new Point[ 5];
 
-	// store points
-	points.push_back( p1);
-	points.push_back( p2);
-	points.push_back( p3);
-	points.push_back( p4);
-	points.push_back( p5);
+        // store points
+        points.push_back( p1);
+        points.push_back( p2);
+        points.push_back( p3);
+        points.push_back( p4);
+        points.push_back( p5);
 
-	// compute me
-	me( points.end(), 0);
+        // compute me
+        me( points.end(), 0);
     }
 @end
 
@@ -628,8 +628,8 @@ The destructor only frees the memory of the support points' array.
     inline
     ~CGAL_Min_ellipse_2( )
     {
-	// free support points' array
-	delete[] support_points;
+        // free support points' array
+        delete[] support_points;
     }
 @end
 
@@ -649,14 +649,14 @@ First, we define the \ccc{number_of_...} methods.
     int
     number_of_points( ) const
     {
-	return( points.size());
+        return( points.size());
     }
 
     inline
     int
     number_of_support_points( ) const
     {
-	return( n_support_points);
+        return( n_support_points);
     }
 @end
 
@@ -668,28 +668,28 @@ Then, we have the access functions for points and support points.
     Point_iterator
     points_begin( ) const
     {
-	return( points.begin());
+        return( points.begin());
     }
 
     inline
     Point_iterator
     points_end( ) const
     {
-	return( points.end());
+        return( points.end());
     }
 
     inline
     Support_point_iterator
     support_points_begin( ) const
     {
-	return( support_points);
+        return( support_points);
     }
 
     inline
     Support_point_iterator
     support_points_end( ) const
     {
-	return( support_points+n_support_points);
+        return( support_points+n_support_points);
     }
 
     // random access for support points    
@@ -697,9 +697,9 @@ Then, we have the access functions for points and support points.
     Point const&
     support_point( int i) const
     {
-	CGAL_optimisation_precondition( (i >= 0) &&
-					(i <  number_of_support_points()));
-	return( support_points[ i]);
+        CGAL_optimisation_precondition( (i >= 0) &&
+                                        (i <  number_of_support_points()));
+        return( support_points[ i]);
     }
 @end
 
@@ -711,7 +711,7 @@ Finally, the access function \ccc{ellipse}.
     Ellipse const&
     ellipse( ) const
     {
-	return( tco.ellipse);
+        return( tco.ellipse);
     }
 @end
 
@@ -728,14 +728,14 @@ define them \ccc{inline} and put them in a separate macro.
     bool
     is_empty( ) const
     {
-	return( number_of_support_points() == 0);
+        return( number_of_support_points() == 0);
     }
 
     inline
     bool
     is_degenerate( ) const
     {
-	return( number_of_support_points() <  2);
+        return( number_of_support_points() <  2);
     }
 @end
 
@@ -748,28 +748,28 @@ corresponding predicates of class \ccc{Ellipse}.
     CGAL_Bounded_side
     bounded_side( Point const& p) const
     {
-	return( tco.ellipse.bounded_side( p));
+        return( tco.ellipse.bounded_side( p));
     }
 
     inline
     bool
     has_on_bounded_side( Point const& p) const
     {
-	return( tco.ellipse.has_on_bounded_side( p));
+        return( tco.ellipse.has_on_bounded_side( p));
     }
 
     inline
     bool
     has_on_boundary( Point const& p) const
     {
-	return( tco.ellipse.has_on_boundary( p));
+        return( tco.ellipse.has_on_boundary( p));
     }
 
     inline
     bool
     has_on_unbounded_side( Point const& p) const
     {
-	return( tco.ellipse.has_on_unbounded_side( p));
+        return( tco.ellipse.has_on_unbounded_side( p));
     }
 @end
 
@@ -793,21 +793,21 @@ Section~\ref{sec:algo}.
     void
     insert( Point const& p)
     {
-	// p not in current ellipse?
-	if ( has_on_unbounded_side( p)) {
+        // p not in current ellipse?
+        if ( has_on_unbounded_side( p)) {
 
-	    // p new support point
-	    support_points[ 0] = p;
+            // p new support point
+            support_points[ 0] = p;
 
-	    // recompute me
-	    me( points.end(), 1);
+            // recompute me
+            me( points.end(), 1);
 
-	    // store p as the first point in list
-	    points.push_front( p); }
-	else
+            // store p as the first point in list
+            points.push_front( p); }
+        else
 
-	    // append p to the end of the list
-	    points.push_back( p);
+            // append p to the end of the list
+            points.push_back( p);
     }
 @end
 
@@ -828,26 +828,26 @@ the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$ a call \ccc{insert(p)}.
     void
     insert( const Point* first, const Point* last)
     {
-	for ( ; first != last; ++first)
-	    insert( *first);
+        for ( ; first != last; ++first)
+            insert( *first);
     }
 
     inline
     void
     insert( list<Point>::const_iterator first,
-	    list<Point>::const_iterator last )
+            list<Point>::const_iterator last )
     {
-	for ( ; first != last; ++first)
-	    insert( *first);
+        for ( ; first != last; ++first)
+            insert( *first);
     }
 
     inline
     void
     insert( istream_iterator<Point,ptrdiff_t>  first,
-	    istream_iterator<Point,ptrdiff_t>  last )
+            istream_iterator<Point,ptrdiff_t>  last )
     {
-	for ( ; first != last; ++first)
-	    insert( *first);
+        for ( ; first != last; ++first)
+            insert( *first);
     }
 @end
 
@@ -858,9 +858,9 @@ empty ellipse.
 @macro <Min_ellipse_2 modifiers> += @begin
     void  clear( )
     {
-	points.erase( points.begin(), points.end());
-	n_support_points = 0;
-	tco.ellipse.set();
+        points.erase( points.begin(), points.end());
+        n_support_points = 0;
+        tco.ellipse.set();
     }
 @end
 
@@ -885,24 +885,24 @@ interfaces of other classes.
     bool
     is_valid( bool verbose = false, int level = 0) const
     {
-	CGAL_Verbose_ostream verr( verbose);
-	verr << endl;
-	verr << "CGAL_Min_ellipse_2<Traits>::" << endl;
-	verr << "is_valid( true, " << level << "):" << endl;
-	verr << "  |P| = " << number_of_points()
-	     << ", |S| = " << number_of_support_points() << endl;
+        CGAL_Verbose_ostream verr( verbose);
+        verr << endl;
+        verr << "CGAL_Min_ellipse_2<Traits>::" << endl;
+        verr << "is_valid( true, " << level << "):" << endl;
+        verr << "  |P| = " << number_of_points()
+             << ", |S| = " << number_of_support_points() << endl;
 
-	// containment check (a)
-	@<Min_ellipse_2 containment check>
+        // containment check (a)
+        @<Min_ellipse_2 containment check>
 
-	// support set checks (b)+(c) (not yet implemented)
-	@!<Min_ellipse_2 support set checks>
+        // support set checks (b)+(c) (not yet implemented)
+        @!<Min_ellipse_2 support set checks>
 
-	// alternative support set check
-	@<Min_ellipse_2 support set check>
+        // alternative support set check
+        @<Min_ellipse_2 support set check>
 
-	verr << "  object is valid!" << endl;
-	return( true);
+        verr << "  object is valid!" << endl;
+        return( true);
     }
 @end
 
@@ -913,11 +913,11 @@ points in \ccc{points}.
     verr << "  a) containment check..." << flush;
     Point_iterator point_iter;
     for ( point_iter  = points_begin();
-	  point_iter != points_end();
-	  ++point_iter)
-	if ( has_on_unbounded_side( *point_iter)) 
-	    return( CGAL__optimisation_is_valid_fail( verr,
-			"ellipse does not contain all points"));
+          point_iter != points_end();
+          ++point_iter)
+        if ( has_on_unbounded_side( *point_iter)) 
+            return( CGAL__optimisation_is_valid_fail( verr,
+                        "ellipse does not contain all points"));
     verr << "passed." << endl;
 @end
 
@@ -928,11 +928,11 @@ support points in \ccc{support_points}.
     verr << "  +) support set check..." << flush;
     Support_point_iterator support_point_iter;
     for ( support_point_iter  = support_points_begin();
-	  support_point_iter != support_points_end();
-	  ++support_point_iter)
-	if ( ! has_on_boundary( *support_point_iter)) 
-	    return( CGAL__optimisation_is_valid_fail( verr,
-		        "ellipse does not have all \
+          support_point_iter != support_points_end();
+          ++support_point_iter)
+        if ( ! has_on_boundary( *support_point_iter)) 
+            return( CGAL__optimisation_is_valid_fail( verr,
+                        "ellipse does not have all \
                          support points on the boundary"));
     verr << "passed." << endl;
 @end
@@ -948,7 +948,7 @@ traits class object.
     Traits const&
     traits( ) const
     {
-	return( tco);
+        return( tco);
     }
 @end
 
@@ -968,71 +968,71 @@ traits class object.
     ostream&
     operator << ( ostream& os, CGAL_Min_ellipse_2<_Traits> const& min_ellipse)
     {
-	typedef typename  CGAL_Min_ellipse_2<_Traits>::Point  Point;
+        typedef typename  CGAL_Min_ellipse_2<_Traits>::Point  Point;
 
-	switch ( CGAL_get_mode( os)) {
+        switch ( CGAL_get_mode( os)) {
 
-	  case CGAL_IO::PRETTY:
-	    os << endl;
-	    os << "CGAL_Min_ellipse_2( |P| = "<< min_ellipse.number_of_points()
-	       << ", |S| = " << min_ellipse.number_of_support_points() << endl;
-	    os << "  P = {" << endl;
-	    os << "    ";
-	    copy( min_ellipse.points_begin(), min_ellipse.points_end(),
-		  ostream_iterator<Point>( os, ",\n    "));
-	    os << "}" << endl;
-	    os << "  S = {" << endl;
-	    os << "    ";
-	    copy( min_ellipse.support_points_begin(),
-		  min_ellipse.support_points_end(),
-		  ostream_iterator<Point>( os, ",\n    "));
-	    os << "}" << endl;
-	    os << "  ellipse = " << min_ellipse.ellipse() << endl;
-	    os << ")" << endl;
-	    break;
+          case CGAL_IO::PRETTY:
+            os << endl;
+            os << "CGAL_Min_ellipse_2( |P| = "<< min_ellipse.number_of_points()
+               << ", |S| = " << min_ellipse.number_of_support_points() << endl;
+            os << "  P = {" << endl;
+            os << "    ";
+            copy( min_ellipse.points_begin(), min_ellipse.points_end(),
+                  ostream_iterator<Point>( os, ",\n    "));
+            os << "}" << endl;
+            os << "  S = {" << endl;
+            os << "    ";
+            copy( min_ellipse.support_points_begin(),
+                  min_ellipse.support_points_end(),
+                  ostream_iterator<Point>( os, ",\n    "));
+            os << "}" << endl;
+            os << "  ellipse = " << min_ellipse.ellipse() << endl;
+            os << ")" << endl;
+            break;
 
-	  case CGAL_IO::ASCII:
-	    copy( min_ellipse.points_begin(), min_ellipse.points_end(),
-		  ostream_iterator<Point>( os, "\n"));
-	    break;
+          case CGAL_IO::ASCII:
+            copy( min_ellipse.points_begin(), min_ellipse.points_end(),
+                  ostream_iterator<Point>( os, "\n"));
+            break;
 
-	  case CGAL_IO::BINARY:
-	    copy( min_ellipse.points_begin(), min_ellipse.points_end(),
-		  ostream_iterator<Point>( os));
-	    break;
+          case CGAL_IO::BINARY:
+            copy( min_ellipse.points_begin(), min_ellipse.points_end(),
+                  ostream_iterator<Point>( os));
+            break;
 
-	  default:
-	    CGAL_optimisation_assertion_msg( false,
-					     "CGAL_get_mode( os) invalid!");
-	    break; }
+          default:
+            CGAL_optimisation_assertion_msg( false,
+                                             "CGAL_get_mode( os) invalid!");
+            break; }
 
-	return( os);
+        return( os);
     }
 
     template < class Traits >
     istream&
     operator >> ( istream& is, CGAL_Min_ellipse_2<Traits>& min_ellipse)
     {
-	switch ( CGAL_get_mode( is)) {
+        switch ( CGAL_get_mode( is)) {
 
-	  case CGAL_IO::PRETTY:
-	    cerr << endl;
-	    cerr << "Stream must be in ascii or binary mode" << endl;
-	    break;
+          case CGAL_IO::PRETTY:
+            cerr << endl;
+            cerr << "Stream must be in ascii or binary mode" << endl;
+            break;
 
-	  case CGAL_IO::ASCII:
-	  case CGAL_IO::BINARY:
-	    typedef typename  CGAL_Min_ellipse_2<Traits>::Point  Point;
-	    typedef           istream_iterator<Point,ptrdiff_t>  Is_it;
-	    min_ellipse.clear();
-	    min_ellipse.insert( Is_it( is), Is_it());
-	    break;
+          case CGAL_IO::ASCII:
+          case CGAL_IO::BINARY:
+            typedef typename  CGAL_Min_ellipse_2<Traits>::Point  Point;
+            typedef           istream_iterator<Point,ptrdiff_t>  Is_it;
+            min_ellipse.clear();
+            min_ellipse.insert( Is_it( is), Is_it());
+            break;
 
-	  default:
-	    CGAL_optimisation_assertion_msg( false, "CGAL_IO::mode invalid!");
-	    break; }
+          default:
+            CGAL_optimisation_assertion_msg( false, "CGAL_IO::mode invalid!");
+            break; }
 
-	return( is);
+        return( is);
     }
 @end
 
@@ -1050,37 +1050,37 @@ noting that $|B| \leq 5$.
     void
     compute_ellipse( )
     {
-	switch ( n_support_points) {
-	  case 5:
-	    tco.ellipse.set( support_points[ 0],
-			     support_points[ 1],
-			     support_points[ 2],
-			     support_points[ 3],
-			     support_points[ 4]);
+        switch ( n_support_points) {
+          case 5:
+            tco.ellipse.set( support_points[ 0],
+                             support_points[ 1],
+                             support_points[ 2],
+                             support_points[ 3],
+                             support_points[ 4]);
             break;
-	  case 4:
-	    tco.ellipse.set( support_points[ 0],
-			     support_points[ 1],
-			     support_points[ 2],
-			     support_points[ 3]);
+          case 4:
+            tco.ellipse.set( support_points[ 0],
+                             support_points[ 1],
+                             support_points[ 2],
+                             support_points[ 3]);
             break;
-	  case 3:
-	    tco.ellipse.set( support_points[ 0],
-			     support_points[ 1],
-			     support_points[ 2]);
+          case 3:
+            tco.ellipse.set( support_points[ 0],
+                             support_points[ 1],
+                             support_points[ 2]);
             break;
-	  case 2:
-	    tco.ellipse.set( support_points[ 0], support_points[ 1]);
-	    break;
-	  case 1:
-	    tco.ellipse.set( support_points[ 0]);
-	    break;
-	  case 0:
-	    tco.ellipse.set( );
-	    break;
-	  default:
-	    CGAL_optimisation_assertion( ( n_support_points >= 0) &&
-					 ( n_support_points <= 5) ); }
+          case 2:
+            tco.ellipse.set( support_points[ 0], support_points[ 1]);
+            break;
+          case 1:
+            tco.ellipse.set( support_points[ 0]);
+            break;
+          case 0:
+            tco.ellipse.set( );
+            break;
+          default:
+            CGAL_optimisation_assertion( ( n_support_points >= 0) &&
+                                         ( n_support_points <= 5) ); }
     }
 @end
 
@@ -1097,31 +1097,31 @@ pseudocode above.
     void
     me( Point_iterator const& last, int n_sp)
     {
-	// compute ellipse through support points
-	n_support_points = n_sp;
-	compute_ellipse();
-	if ( n_sp == 5) return;
+        // compute ellipse through support points
+        n_support_points = n_sp;
+        compute_ellipse();
+        if ( n_sp == 5) return;
 
-	// test first n points
-	list<Point>::iterator  point_iter( points.begin());
-	for ( ; last != point_iter; ) {
-	    Point const& p( *point_iter);
+        // test first n points
+        list<Point>::iterator  point_iter( points.begin());
+        for ( ; last != point_iter; ) {
+            Point const& p( *point_iter);
 
-	    // p not in current ellipse?
-	    if ( has_on_unbounded_side( p)) {
+            // p not in current ellipse?
+            if ( has_on_unbounded_side( p)) {
 
-		// recursive call with p as additional support point
-		support_points[ n_sp] = p;
-		me( point_iter, n_sp+1);
+                // recursive call with p as additional support point
+                support_points[ n_sp] = p;
+                me( point_iter, n_sp+1);
 
-		// move current point to front
-		if ( point_iter != points.begin()) {		// p not first?
-		    points.push_front( p);
-		    points.erase( point_iter++); }
-		else
-		    ++point_iter; }
-	    else
-		++point_iter; }
+                // move current point to front
+                if ( point_iter != points.begin()) {            // p not first?
+                    points.push_front( p);
+                    points.erase( point_iter++); }
+                else
+                    ++point_iter; }
+            else
+                ++point_iter; }
     }
 @end
 
@@ -1152,19 +1152,18 @@ The class interface looks as follows.
 @macro <Optimisation_ellipse_2 interface> = @begin
     template < class _R >
     class CGAL_Optimisation_ellipse_2 {
-        friend
-	ostream& operator<< ( ostream&,CGAL_Optimisation_ellipse_2<_R> const&);
-        friend
-	istream& operator<< ( istream&,CGAL_Optimisation_ellipse_2<_R> &);
-        friend
-	CGAL_Window_stream& operator<< ( CGAL_Window_stream&,
-				       CGAL_Optimisation_ellipse_2<_R> const&);
+        friend  ostream&  operator << CGAL_NULL_TMPL_ARGS (
+            ostream&, CGAL_Optimisation_ellipse_2<_R> const&);
+        friend  istream&  operator << CGAL_NULL_TMPL_ARGS (
+            istream&, CGAL_Optimisation_ellipse_2<_R> &);
+        friend  CGAL_Window_stream& operator << CGAL_NULL_TMPL_ARGS (
+            CGAL_Window_stream&, CGAL_Optimisation_ellipse_2<_R> const&);
       public:
-	@<Optimisation_ellipse_2 public interface>
+        @<Optimisation_ellipse_2 public interface>
 
       private:
-	// private data members
-	@<Optimisation_ellipse_2 private data members>
+        // private data members
+        @<Optimisation_ellipse_2 private data members>
 
     @<dividing line>
 
@@ -1172,21 +1171,21 @@ The class interface looks as follows.
     // ====================
 
       public:
-	// Set functions
-	// -------------
-	@<Optimisation_ellipse_2 set functions>
+        // Set functions
+        // -------------
+        @<Optimisation_ellipse_2 set functions>
 
-	// Access functions
-	// ----------------
-	@<Optimisation_ellipse_2 access functions>
+        // Access functions
+        // ----------------
+        @<Optimisation_ellipse_2 access functions>
 
-	// Equality tests
-	// --------------
-	@<Optimisation_ellipse_2 equality tests>
+        // Equality tests
+        // --------------
+        @<Optimisation_ellipse_2 equality tests>
 
-	// Predicates
-	// ----------
-	@<Optimisation_ellipse_2 predicates>
+        // Predicates
+        // ----------
+        @<Optimisation_ellipse_2 predicates>
     };
 @end   
 
@@ -1199,8 +1198,10 @@ section, so we do not comment on it here.
 @macro <Optimisation_ellipse_2 public interface> = @begin
     // types
     typedef           _R               R;
+    typedef           typename _R::RT  RT;
+    typedef           typename _R::FT  FT;
     typedef           CGAL_Point_2<R>  Point;
-    typedef	      CGAL_Conic_2<R>  Conic;
+    typedef           CGAL_Conic_2<R>  Conic;
 
     /**************************************************************************
     WORKAROUND: The GNU compiler (g++ 2.7.2[.*]) does not accept types
@@ -1214,9 +1215,9 @@ section, so we do not comment on it here.
     void  set( Point const& p, Point const& q);
     void  set( Point const& p1, Point const& p2, Point const& p3);
     void  set( Point const& p1, Point const& p2,
-	       Point const& p3, Point const& p4);
+               Point const& p3, Point const& p4);
     void  set( Point const& p1, Point const& p2,
-	       Point const& p3, Point const& p4, Point const& p5);
+               Point const& p3, Point const& p4, Point const& p5);
 
     // access functions    
     int  number_of_boundary_points()
@@ -1243,7 +1244,7 @@ The representation of the ellipse depends on the number of given
 boundary points, stored in \ccc{n_boundary_points}.
 
 @macro <Optimisation_ellipse_2 private data members> += @begin
-    int    n_boundary_points;			// number of boundary points
+    int    n_boundary_points;                   // number of boundary points
 @end
 
 In the degenerate cases with zero to two boundary points, the given
@@ -1251,7 +1252,7 @@ points are stored directly in \ccc{boundary_point1} and
 \ccc{boundary_point2}, resp.
 
 @macro <Optimisation_ellipse_2 private data members> += @begin
-    Point  boundary_point1, boundary_point2;	// two boundary points
+    Point  boundary_point1, boundary_point2;    // two boundary points
 @end
 
 Given three or five points, the ellipse is represented as a conic,
@@ -1262,7 +1263,7 @@ coordinates~\cite{gs-seefe-97a}. Therefore the ellipse is represented
 implicitly as a linear combination of two conics.
 
 @macro <Optimisation_ellipse_2 private data members> += @begin
-    Conic  conic1, conic2;			// two conics
+    Conic  conic1, conic2;                      // two conics
 @end
 
 Finally, in the case of four boundary points, we need the gradient
@@ -1270,7 +1271,7 @@ vector of the linear combination for the volume derivative in the
 in-ellipse test.
 
 @macro <Optimisation_ellipse_2 private data members> += @begin
-    _R::RT  dr, ds, dt, du, dv, dw;		// the gradient vector
+    RT     dr, ds, dt, du, dv, dw;              // the gradient vector
 @end
 
 @! ----------------------------------------------------------------------------
@@ -1290,56 +1291,56 @@ its boundary points.
     void
     set( )
     {
-	n_boundary_points = 0;
+        n_boundary_points = 0;
     }
     
     inline
     void
     set( Point const& p)
     {
-	n_boundary_points = 1;
-	boundary_point1   = p;
+        n_boundary_points = 1;
+        boundary_point1   = p;
     }
     
     inline
     void
     set( Point const& p, Point const& q)
     {
-	n_boundary_points = 2;
-	boundary_point1   = p;
-	boundary_point2   = q;
+        n_boundary_points = 2;
+        boundary_point1   = p;
+        boundary_point2   = q;
     }
     
     inline
     void
     set( Point const& p1, Point const& p2, Point const& p3)
     {
-	n_boundary_points = 3;
-	conic1.set_ellipse( p1, p2, p3);
+        n_boundary_points = 3;
+        conic1.set_ellipse( p1, p2, p3);
     }
     
     inline
     void
     set( Point const& p1, Point const& p2, Point const& p3, Point const& p4)
     {
-	n_boundary_points = 4;
-	Conic::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
-	dr = R::RT( 0);
-	ds = conic1.r() * conic2.s() - conic2.r() * conic1.s(),
-	dt = conic1.r() * conic2.t() - conic2.r() * conic1.t(),
-	du = conic1.r() * conic2.u() - conic2.r() * conic1.u(),
-	dv = conic1.r() * conic2.v() - conic2.r() * conic1.v(),
-	dw = conic1.r() * conic2.w() - conic2.r() * conic1.w();
+        n_boundary_points = 4;
+        Conic::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
+        dr = RT( 0);
+        ds = conic1.r() * conic2.s() - conic2.r() * conic1.s(),
+        dt = conic1.r() * conic2.t() - conic2.r() * conic1.t(),
+        du = conic1.r() * conic2.u() - conic2.r() * conic1.u(),
+        dv = conic1.r() * conic2.v() - conic2.r() * conic1.v(),
+        dw = conic1.r() * conic2.w() - conic2.r() * conic1.w();
     }
     
     inline
     void
     set( Point const&, Point const&,
-	 Point const&, Point const&, Point const& p5)
+         Point const&, Point const&, Point const& p5)
     {
-	n_boundary_points = 5;
-	conic1.set( conic1, conic2, p5);
-	conic1.analyse();
+        n_boundary_points = 5;
+        conic1.set( conic1, conic2, p5);
+        conic1.analyse();
     }
 @end
 
@@ -1351,7 +1352,7 @@ its boundary points.
     int
     number_of_boundary_points( ) const
     {
-	return( n_boundary_points);
+        return( n_boundary_points);
     }
 @end
 
@@ -1362,39 +1363,39 @@ its boundary points.
     bool
     operator == ( CGAL_Optimisation_ellipse_2<R> const& e) const
     {
-	if ( n_boundary_points != e.n_boundary_points)
-	    return( false);
+        if ( n_boundary_points != e.n_boundary_points)
+            return( false);
 
-	switch ( n_boundary_points) {
-	  case 0:
-	    return( true);
-	  case 1:
-	    return( boundary_point1 == e.boundary_point1);
-	  case 2:
-	    return(    (    ( boundary_point1 == e.boundary_point1)
-		         && ( boundary_point2 == e.boundary_point2))
-		    || (    ( boundary_point1 == e.boundary_point2)
-		         && ( boundary_point2 == e.boundary_point1)));
-	  case 3:
-	  case 5:
-	    return( conic1 == e.conic1);
-	  case 4:
-	    return(    (    ( conic1 == e.conic1)
-	                 && ( conic2 == e.conic2))
-	            || (    ( conic1 == e.conic2)
-	                 && ( conic2 == e.conic1)));
-	  default:
-	    CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
-					 && ( n_boundary_points <= 5)); }
-	// keeps g++ happy
-	return( false);
+        switch ( n_boundary_points) {
+          case 0:
+            return( true);
+          case 1:
+            return( boundary_point1 == e.boundary_point1);
+          case 2:
+            return(    (    ( boundary_point1 == e.boundary_point1)
+                         && ( boundary_point2 == e.boundary_point2))
+                    || (    ( boundary_point1 == e.boundary_point2)
+                         && ( boundary_point2 == e.boundary_point1)));
+          case 3:
+          case 5:
+            return( conic1 == e.conic1);
+          case 4:
+            return(    (    ( conic1 == e.conic1)
+                         && ( conic2 == e.conic2))
+                    || (    ( conic1 == e.conic2)
+                         && ( conic2 == e.conic1)));
+          default:
+            CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
+                                         && ( n_boundary_points <= 5)); }
+        // keeps g++ happy
+        return( false);
     }
     
     inline
     bool
     operator != ( CGAL_Optimisation_ellipse_2<R> const& e) const
     {
-	return( ! operator == ( e));
+        return( ! operator == ( e));
     }
 @end
     
@@ -1412,73 +1413,73 @@ one.
     CGAL_Bounded_side
     bounded_side( Point const& p) const
     {
-	switch ( n_boundary_points) {
-	  case 0:
-	    return( CGAL_ON_UNBOUNDED_SIDE);
-	  case 1:
-	    return( ( p == boundary_point1) ?
-			   CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-	  case 2:
-	    return(    ( p == boundary_point1)
-		    || ( p == boundary_point2)
-		    || ( CGAL_are_ordered_along_line(
-		             boundary_point1, p, boundary_point2)) ?
-			 CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-	  case 3:
-	  case 5:
-	    return( conic1.convex_side( p));
-	  case 4: {
-	    Conic c;
-	    c.set( conic1, conic2, p);
-	    c.analyse();
-	    if ( ! c.is_ellipse()) {
-	        c.set_ellipse( conic1, conic2);
-		c.analyse();
-		return( c.convex_side( p)); }
-	    else {
-		int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
-		return( CGAL_static_cast( CGAL_Bounded_side,
-					  CGAL_sign( tau_star))); } }
-	  default:
-	    CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
-					 ( n_boundary_points <= 5) ); }
-	// keeps g++ happy
-	return( CGAL_Bounded_side( 0));
+        switch ( n_boundary_points) {
+          case 0:
+            return( CGAL_ON_UNBOUNDED_SIDE);
+          case 1:
+            return( ( p == boundary_point1) ?
+                           CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+          case 2:
+            return(    ( p == boundary_point1)
+                    || ( p == boundary_point2)
+                    || ( CGAL_are_ordered_along_line(
+                             boundary_point1, p, boundary_point2)) ?
+                         CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+          case 3:
+          case 5:
+            return( conic1.convex_side( p));
+          case 4: {
+            Conic c;
+            c.set( conic1, conic2, p);
+            c.analyse();
+            if ( ! c.is_ellipse()) {
+                c.set_ellipse( conic1, conic2);
+                c.analyse();
+                return( c.convex_side( p)); }
+            else {
+                int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
+                return( CGAL_static_cast( CGAL_Bounded_side,
+                                          CGAL_sign( tau_star))); } }
+          default:
+            CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+                                         ( n_boundary_points <= 5) ); }
+        // keeps g++ happy
+        return( CGAL_Bounded_side( 0));
     }
 
     inline
     bool
     has_on_bounded_side( Point const& p) const
     {
-	return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
+        return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
     }
 
     inline
     bool
     has_on_boundary( Point const& p) const
     {
-	return( bounded_side( p) == CGAL_ON_BOUNDARY);
+        return( bounded_side( p) == CGAL_ON_BOUNDARY);
     }
 
     inline
     bool
     has_on_unbounded_side( Point const& p) const
     {
-	return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
+        return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
     }
 
     inline
     bool
     is_empty( ) const
     {
-	return( n_boundary_points == 0);
+        return( n_boundary_points == 0);
     }
 
     inline
     bool
     is_degenerate( ) const
     {
-	return( n_boundary_points < 3);
+        return( n_boundary_points < 3);
     }
 @end
 
@@ -1500,96 +1501,96 @@ one.
     ostream&
     operator << ( ostream& os, CGAL_Optimisation_ellipse_2<_R> const& e)
     {
-	const char* const  empty       = "";
-	const char* const  pretty_head = "CGAL_Optimisation_ellipse_2( ";
-	const char* const  pretty_sep  = ", ";
-	const char* const  pretty_tail = ")";
-	const char* const  ascii_sep   = " ";
+        const char* const  empty       = "";
+        const char* const  pretty_head = "CGAL_Optimisation_ellipse_2( ";
+        const char* const  pretty_sep  = ", ";
+        const char* const  pretty_tail = ")";
+        const char* const  ascii_sep   = " ";
 
-	const char*  head = empty;
-	const char*  sep  = empty;
-	const char*  tail = empty;
+        const char*  head = empty;
+        const char*  sep  = empty;
+        const char*  tail = empty;
 
-	switch ( CGAL_get_mode( os)) {
-	  case CGAL_IO::PRETTY:
-	    head = pretty_head;
-	    sep  = pretty_sep;
-	    tail = pretty_tail;
-	    break;
-	  case CGAL_IO::ASCII:
-	    sep  = ascii_sep;
-	    break;
-	  case CGAL_IO::BINARY:
-	    break;
-	  default:
-	    CGAL_optimisation_assertion_msg( false,
-					     "CGAL_get_mode( os) invalid!");
-	    break; }
+        switch ( CGAL_get_mode( os)) {
+          case CGAL_IO::PRETTY:
+            head = pretty_head;
+            sep  = pretty_sep;
+            tail = pretty_tail;
+            break;
+          case CGAL_IO::ASCII:
+            sep  = ascii_sep;
+            break;
+          case CGAL_IO::BINARY:
+            break;
+          default:
+            CGAL_optimisation_assertion_msg( false,
+                                             "CGAL_get_mode( os) invalid!");
+            break; }
 
-	os << head << e.n_boundary_points;
-	switch ( e.n_boundary_points) {
-	  case 0:
-	    break;
-	  case 1:
-	    os << sep << e.boundary_point1;
-	    break;
-	  case 2:
-	    os << sep << e.boundary_point1
-	       << sep << e.boundary_point2;
-	    break;
-	  case 3:
-	  case 5:
-	    os << sep << e.conic1;
-	    break;
-	  case 4:
-	    os << sep << e.conic1
-	       << sep << e.conic2;
-	    break; }
-	os << tail;
+        os << head << e.n_boundary_points;
+        switch ( e.n_boundary_points) {
+          case 0:
+            break;
+          case 1:
+            os << sep << e.boundary_point1;
+            break;
+          case 2:
+            os << sep << e.boundary_point1
+               << sep << e.boundary_point2;
+            break;
+          case 3:
+          case 5:
+            os << sep << e.conic1;
+            break;
+          case 4:
+            os << sep << e.conic1
+               << sep << e.conic2;
+            break; }
+        os << tail;
 
-	return( os);
+        return( os);
     }
 
     template < class _R >
     istream&
     operator >> ( istream& is, CGAL_Optimisation_ellipse_2<_R>& e)
     {
-	switch ( CGAL_get_mode( is)) {
+        switch ( CGAL_get_mode( is)) {
 
-	  case CGAL_IO::PRETTY:
-	    cerr << endl;
-	    cerr << "Stream must be in ascii or binary mode" << endl;
-	    break;
+          case CGAL_IO::PRETTY:
+            cerr << endl;
+            cerr << "Stream must be in ascii or binary mode" << endl;
+            break;
 
-	  case CGAL_IO::ASCII:
-	  case CGAL_IO::BINARY:
-	    CGAL_read( is, e.n_boundary_points);
-	    switch ( e.n_boundary_points) {
-	      case 0:
-		break;
-	      case 1:
-		is >> e.boundary_point1;
-		break;
-	      case 2:
-		is >> e.boundary_point1
-		   >> e.boundary_point2;
-	        break;
-	      case 3:
-	      case 5:
-		is >> e.conic1;
-	        break;
-	      case 4:
-		is >> e.conic1
-		   >> e.conic2;
-	        break; }
-	    break;
+          case CGAL_IO::ASCII:
+          case CGAL_IO::BINARY:
+            CGAL_read( is, e.n_boundary_points);
+            switch ( e.n_boundary_points) {
+              case 0:
+                break;
+              case 1:
+                is >> e.boundary_point1;
+                break;
+              case 2:
+                is >> e.boundary_point1
+                   >> e.boundary_point2;
+                break;
+              case 3:
+              case 5:
+                is >> e.conic1;
+                break;
+              case 4:
+                is >> e.conic1
+                   >> e.conic2;
+                break; }
+            break;
 
-	  default:
-	    CGAL_optimisation_assertion_msg( false,
-					     "CGAL_get_mode( is) invalid!");
-	    break; }
+          default:
+            CGAL_optimisation_assertion_msg( false,
+                                             "CGAL_get_mode( is) invalid!");
+            break; }
 
-	return( is);
+        return( is);
     }
 @end
 
@@ -1665,7 +1666,7 @@ it is declared \ccc{friend}.
     CGAL_Orientation
     orientation( Point const& p, Point const& q, Point const& r) const
     {
-        typedef  _DA::FT  FT;
+        typedef  typename _DA::FT  FT;
 
         FT  px;
         FT  py;
@@ -1694,15 +1695,15 @@ it is declared \ccc{friend}.
         typedef  _PT  PT;
         typedef  _DA  DA;
 
-        typedef  CGAL_ConicCPA2< PT, DA>  CT;
-	typedef	 _DA::FT		  FT;
+        typedef           CGAL_ConicCPA2< PT, DA>  CT;
+        typedef  typename _DA::FT                  FT;
 
       private:
         // data members
-	int  n_boundary_points;			// number of boundary points
-	PT   boundary_point1, boundary_point2;	// two boundary points
-	CT   conic1, conic2;			// two conics
-	FT   dr, ds, dt, du, dv, dw;		// the gradient vector
+        int  n_boundary_points;                 // number of boundary points
+        PT   boundary_point1, boundary_point2;  // two boundary points
+        CT   conic1, conic2;                    // two conics
+        FT   dr, ds, dt, du, dv, dw;            // the gradient vector
 
       public:
         // types
@@ -1710,114 +1711,114 @@ it is declared \ccc{friend}.
 
         // creation
         CGAL__Min_ellipse_2_adapterC2__Ellipse( DA const& da)
-	    : conic1( da), conic2( da)
-	{ }
+            : conic1( da), conic2( da)
+        { }
 
-	void
-	set( )
-	{
-	    n_boundary_points = 0;
-	}
+        void
+        set( )
+        {
+            n_boundary_points = 0;
+        }
     
-	void
-	set( Point const& p)
-	{
-	    n_boundary_points = 1;
-	    boundary_point1   = p;
-	}
+        void
+        set( Point const& p)
+        {
+            n_boundary_points = 1;
+            boundary_point1   = p;
+        }
     
-	void
-	set( Point const& p, Point const& q)
-	{
-	    n_boundary_points = 2;
-	    boundary_point1   = p;
-	    boundary_point2   = q;
-	}
+        void
+        set( Point const& p, Point const& q)
+        {
+            n_boundary_points = 2;
+            boundary_point1   = p;
+            boundary_point2   = q;
+        }
     
-	void
-	set( Point const& p1, Point const& p2, Point const& p3)
-	{
-	    n_boundary_points = 3;
-	    conic1.set_ellipse( p1, p2, p3);
-	}
+        void
+        set( Point const& p1, Point const& p2, Point const& p3)
+        {
+            n_boundary_points = 3;
+            conic1.set_ellipse( p1, p2, p3);
+        }
     
-	void
-	set( Point const& p1, Point const& p2,
-	     Point const& p3, Point const& p4)
-	{
-	    n_boundary_points = 4;
-	    CT::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
-	    dr = FT( 0);
-	    ds = conic1.r() * conic2.s() - conic2.r() * conic1.s(),
-	    dt = conic1.r() * conic2.t() - conic2.r() * conic1.t(),
-	    du = conic1.r() * conic2.u() - conic2.r() * conic1.u(),
-	    dv = conic1.r() * conic2.v() - conic2.r() * conic1.v(),
-	    dw = conic1.r() * conic2.w() - conic2.r() * conic1.w();
-	}
+        void
+        set( Point const& p1, Point const& p2,
+             Point const& p3, Point const& p4)
+        {
+            n_boundary_points = 4;
+            CT::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
+            dr = FT( 0);
+            ds = conic1.r() * conic2.s() - conic2.r() * conic1.s(),
+            dt = conic1.r() * conic2.t() - conic2.r() * conic1.t(),
+            du = conic1.r() * conic2.u() - conic2.r() * conic1.u(),
+            dv = conic1.r() * conic2.v() - conic2.r() * conic1.v(),
+            dw = conic1.r() * conic2.w() - conic2.r() * conic1.w();
+        }
     
-	void
-	set( Point const&, Point const&,
-	     Point const&, Point const&, Point const& p5)
-	{
-	    n_boundary_points = 5;
-	    conic1.set( conic1, conic2, p5);
-	    conic1.analyse();
-	}
+        void
+        set( Point const&, Point const&,
+             Point const&, Point const&, Point const& p5)
+        {
+            n_boundary_points = 5;
+            conic1.set( conic1, conic2, p5);
+            conic1.analyse();
+        }
 
         // predicates
         CGAL_Bounded_side
         bounded_side( Point const& p) const
         {
-	    switch ( n_boundary_points) {
-	      case 0:
-		return( CGAL_ON_UNBOUNDED_SIDE);
-	      case 1:
-		return( ( p == boundary_point1) ?
-			       CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-	      case 2:
-		return(    ( p == boundary_point1)
-			|| ( p == boundary_point2)
-			|| ( CGAL_are_ordered_along_lineC2( boundary_point1, p,
-			                       boundary_point2, conic1.da())) ?
-				    CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-	      case 3:
-	      case 5:
-		return( conic1.convex_side( p));
-	      case 4: {
-		CT c( conic1.da());
-		c.set( conic1, conic2, p);
-		c.analyse();
-		if ( ! c.is_ellipse()) {
-		    c.set_ellipse( conic1, conic2);
-		    c.analyse();
-		    return( c.convex_side( p)); }
-		else {
-		    int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
-		    return( CGAL_static_cast( CGAL_Bounded_side,
-					      CGAL_sign( tau_star))); } }
-	      default:
-		CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
-					     ( n_boundary_points <= 5) ); }
-	    // keeps g++ happy
-	    return( CGAL_Bounded_side( 0));
+            switch ( n_boundary_points) {
+              case 0:
+                return( CGAL_ON_UNBOUNDED_SIDE);
+              case 1:
+                return( ( p == boundary_point1) ?
+                               CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+              case 2:
+                return(    ( p == boundary_point1)
+                        || ( p == boundary_point2)
+                        || ( CGAL_are_ordered_along_lineC2( boundary_point1, p,
+                                               boundary_point2, conic1.da())) ?
+                                    CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+              case 3:
+              case 5:
+                return( conic1.convex_side( p));
+              case 4: {
+                CT c( conic1.da());
+                c.set( conic1, conic2, p);
+                c.analyse();
+                if ( ! c.is_ellipse()) {
+                    c.set_ellipse( conic1, conic2);
+                    c.analyse();
+                    return( c.convex_side( p)); }
+                else {
+                    int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
+                    return( CGAL_static_cast( CGAL_Bounded_side,
+                                              CGAL_sign( tau_star))); } }
+              default:
+                CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+                                             ( n_boundary_points <= 5) ); }
+            // keeps g++ happy
+            return( CGAL_Bounded_side( 0));
         }
 
         bool
         has_on_bounded_side( Point const& p) const
         {
-	    return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
+            return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
         }
 
         bool
         has_on_boundary( Point const& p) const
         {
-	    return( bounded_side( p) == CGAL_ON_BOUNDARY);
+            return( bounded_side( p) == CGAL_ON_BOUNDARY);
         }
 
         bool
         has_on_unbounded_side( Point const& p) const
         {
-	    return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
+            return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
         }
 
         bool
@@ -1837,32 +1838,32 @@ it is declared \ccc{friend}.
         operator == (
             CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA> const& e) const
         {
-	    if ( n_boundary_points != e.n_boundary_points)
-		return( false);
+            if ( n_boundary_points != e.n_boundary_points)
+                return( false);
 
-	    switch ( n_boundary_points) {
-	      case 0:
-		return( true);
-	      case 1:
-		return( boundary_point1 == e.boundary_point1);
-	      case 2:
-		return(    (    ( boundary_point1 == e.boundary_point1)
-			     && ( boundary_point2 == e.boundary_point2))
-			|| (    ( boundary_point1 == e.boundary_point2)
-			     && ( boundary_point2 == e.boundary_point1)));
-	      case 3:
-	      case 5:
-		return( conic1 == e.conic1);
-	      case 4:
-		return(    (    ( conic1 == e.conic1)
-			     && ( conic2 == e.conic2))
-			|| (    ( conic1 == e.conic2)
-			     && ( conic2 == e.conic1)));
-	      default:
-	        CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
-					     && ( n_boundary_points <= 5)); }
-	    // keeps g++ happy
-	    return( false);
+            switch ( n_boundary_points) {
+              case 0:
+                return( true);
+              case 1:
+                return( boundary_point1 == e.boundary_point1);
+              case 2:
+                return(    (    ( boundary_point1 == e.boundary_point1)
+                             && ( boundary_point2 == e.boundary_point2))
+                        || (    ( boundary_point1 == e.boundary_point2)
+                             && ( boundary_point2 == e.boundary_point1)));
+              case 3:
+              case 5:
+                return( conic1 == e.conic1);
+              case 4:
+                return(    (    ( conic1 == e.conic1)
+                             && ( conic2 == e.conic2))
+                        || (    ( conic1 == e.conic2)
+                             && ( conic2 == e.conic1)));
+              default:
+                CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
+                                             && ( n_boundary_points <= 5)); }
+            // keeps g++ happy
+            return( false);
         }
 
         // I/O
@@ -1871,55 +1872,55 @@ it is declared \ccc{friend}.
         operator << ( ostream& os,
                       CGAL__Min_ellipse_2_adapterC2__Ellipse<_PT,_DA> const& e)
         {
-	    const char* const  empty       = "";
-	    const char* const  pretty_head =
-				     "CGAL_Min_ellipse_2_adapterC2::Ellipse( ";
-	    const char* const  pretty_sep  = ", ";
-	    const char* const  pretty_tail = ")";
-	    const char* const  ascii_sep   = " ";
+            const char* const  empty       = "";
+            const char* const  pretty_head =
+                                     "CGAL_Min_ellipse_2_adapterC2::Ellipse( ";
+            const char* const  pretty_sep  = ", ";
+            const char* const  pretty_tail = ")";
+            const char* const  ascii_sep   = " ";
 
-	    const char*  head = empty;
-	    const char*  sep  = empty;
-	    const char*  tail = empty;
+            const char*  head = empty;
+            const char*  sep  = empty;
+            const char*  tail = empty;
 
-	    switch ( CGAL_get_mode( os)) {
-	      case CGAL_IO::PRETTY:
-		head = pretty_head;
-		sep  = pretty_sep;
-		tail = pretty_tail;
-		break;
-	      case CGAL_IO::ASCII:
-		sep  = ascii_sep;
-		break;
-	      case CGAL_IO::BINARY:
-		break;
-	      default:
-		CGAL_optimisation_assertion_msg( false,
-						"CGAL_get_mode( os) invalid!");
-		break; }
+            switch ( CGAL_get_mode( os)) {
+              case CGAL_IO::PRETTY:
+                head = pretty_head;
+                sep  = pretty_sep;
+                tail = pretty_tail;
+                break;
+              case CGAL_IO::ASCII:
+                sep  = ascii_sep;
+                break;
+              case CGAL_IO::BINARY:
+                break;
+              default:
+                CGAL_optimisation_assertion_msg( false,
+                                                "CGAL_get_mode( os) invalid!");
+                break; }
 
-	    os << head << e.n_boundary_points;
-	    switch ( e.n_boundary_points) {
-	      case 0:
-		break;
-	      case 1:
-		os << sep << e.boundary_point1;
-		break;
-	      case 2:
-		os << sep << e.boundary_point1
-		   << sep << e.boundary_point2;
-		break;
-	      case 3:
-	      case 5:
-		os << sep << e.conic1;
-		break;
-	      case 4:
-		os << sep << e.conic1
-		   << sep << e.conic2;
-		break; }
-	    os << tail;
+            os << head << e.n_boundary_points;
+            switch ( e.n_boundary_points) {
+              case 0:
+                break;
+              case 1:
+                os << sep << e.boundary_point1;
+                break;
+              case 2:
+                os << sep << e.boundary_point1
+                   << sep << e.boundary_point2;
+                break;
+              case 3:
+              case 5:
+                os << sep << e.conic1;
+                break;
+              case 4:
+                os << sep << e.conic1
+                   << sep << e.conic2;
+                break; }
+            os << tail;
 
-	    return( os);
+            return( os);
         }
 
         friend
@@ -1936,25 +1937,25 @@ it is declared \ccc{friend}.
 
               case CGAL_IO::ASCII:
               case CGAL_IO::BINARY:
-		CGAL_read( is, e.n_boundary_points);
-		switch ( e.n_boundary_points) {
-		  case 0:
-		    break;
-		  case 1:
-		    is >> e.boundary_point1;
-		    break;
-		  case 2:
-		    is >> e.boundary_point1
-		       >> e.boundary_point2;
-		    break;
-		  case 3:
-		  case 5:
-		    is >> e.conic1;
-		    break;
-		  case 4:
-		    is >> e.conic1
-		       >> e.conic2;
-		    break; }
+                CGAL_read( is, e.n_boundary_points);
+                switch ( e.n_boundary_points) {
+                  case 0:
+                    break;
+                  case 1:
+                    is >> e.boundary_point1;
+                    break;
+                  case 2:
+                    is >> e.boundary_point1
+                       >> e.boundary_point2;
+                    break;
+                  case 3:
+                  case 5:
+                    is >> e.conic1;
+                    break;
+                  case 4:
+                    is >> e.conic1
+                       >> e.conic2;
+                    break; }
                 break;
 
               default:
@@ -2006,7 +2007,7 @@ it is declared \ccc{friend}.
         typedef  _DA  DA;
 
         // nested types
-        typedef  PT						Point;
+        typedef  PT                                             Point;
         typedef  CGAL__Min_ellipse_2_adapterH2__Ellipse<PT,DA>  Ellipse;
 
       private:
@@ -2039,7 +2040,7 @@ it is declared \ccc{friend}.
     CGAL_Orientation
     orientation( Point const& p, Point const& q, Point const& r) const
     {
-        typedef  _DA::RT  RT;
+        typedef  typename _DA::RT  RT;
 
         RT  phx;
         RT  phy;
@@ -2072,15 +2073,15 @@ it is declared \ccc{friend}.
         typedef  _PT  PT;
         typedef  _DA  DA;
 
-	typedef  CGAL_ConicHPA2< PT, DA>  CT;
-        typedef  _DA::RT		  RT;
+        typedef           CGAL_ConicHPA2< PT, DA>  CT;
+        typedef  typename _DA::RT                  RT;
 
       private:
         // data members
-	int  n_boundary_points;			// number of boundary points
-	PT   boundary_point1, boundary_point2;	// two boundary points
-	CT   conic1, conic2;			// two conics
-	RT   dr, ds, dt, du, dv, dw;		// the gradient vector
+        int  n_boundary_points;                 // number of boundary points
+        PT   boundary_point1, boundary_point2;  // two boundary points
+        CT   conic1, conic2;                    // two conics
+        RT   dr, ds, dt, du, dv, dw;            // the gradient vector
 
       public:
         // types
@@ -2088,114 +2089,114 @@ it is declared \ccc{friend}.
 
         // creation
         CGAL__Min_ellipse_2_adapterH2__Ellipse( DA const& da)
-	    : conic1( da), conic2( da)
-	{ }
+            : conic1( da), conic2( da)
+        { }
 
-	void
-	set( )
-	{
-	    n_boundary_points = 0;
-	}
+        void
+        set( )
+        {
+            n_boundary_points = 0;
+        }
     
-	void
-	set( Point const& p)
-	{
-	    n_boundary_points = 1;
-	    boundary_point1   = p;
-	}
+        void
+        set( Point const& p)
+        {
+            n_boundary_points = 1;
+            boundary_point1   = p;
+        }
     
-	void
-	set( Point const& p, Point const& q)
-	{
-	    n_boundary_points = 2;
-	    boundary_point1   = p;
-	    boundary_point2   = q;
-	}
+        void
+        set( Point const& p, Point const& q)
+        {
+            n_boundary_points = 2;
+            boundary_point1   = p;
+            boundary_point2   = q;
+        }
     
-	void
-	set( Point const& p1, Point const& p2, Point const& p3)
-	{
-	    n_boundary_points = 3;
-	    conic1.set_ellipse( p1, p2, p3);
-	}
+        void
+        set( Point const& p1, Point const& p2, Point const& p3)
+        {
+            n_boundary_points = 3;
+            conic1.set_ellipse( p1, p2, p3);
+        }
     
-	void
-	set( Point const& p1, Point const& p2,
-	     Point const& p3, Point const& p4)
-	{
-	    n_boundary_points = 4;
-	    CT::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
-	    dr = RT( 0);
-	    ds = conic1.r() * conic2.s() - conic2.r() * conic1.s(),
-	    dt = conic1.r() * conic2.t() - conic2.r() * conic1.t(),
-	    du = conic1.r() * conic2.u() - conic2.r() * conic1.u(),
-	    dv = conic1.r() * conic2.v() - conic2.r() * conic1.v(),
-	    dw = conic1.r() * conic2.w() - conic2.r() * conic1.w();
-	}
+        void
+        set( Point const& p1, Point const& p2,
+             Point const& p3, Point const& p4)
+        {
+            n_boundary_points = 4;
+            CT::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
+            dr = RT( 0);
+            ds = conic1.r() * conic2.s() - conic2.r() * conic1.s(),
+            dt = conic1.r() * conic2.t() - conic2.r() * conic1.t(),
+            du = conic1.r() * conic2.u() - conic2.r() * conic1.u(),
+            dv = conic1.r() * conic2.v() - conic2.r() * conic1.v(),
+            dw = conic1.r() * conic2.w() - conic2.r() * conic1.w();
+        }
     
-	void
-	set( Point const&, Point const&,
-	     Point const&, Point const&, Point const& p5)
-	{
-	    n_boundary_points = 5;
-	    conic1.set( conic1, conic2, p5);
-	    conic1.analyse();
-	}
+        void
+        set( Point const&, Point const&,
+             Point const&, Point const&, Point const& p5)
+        {
+            n_boundary_points = 5;
+            conic1.set( conic1, conic2, p5);
+            conic1.analyse();
+        }
 
         // predicates
         CGAL_Bounded_side
         bounded_side( Point const& p) const
         {
-	    switch ( n_boundary_points) {
-	      case 0:
-		return( CGAL_ON_UNBOUNDED_SIDE);
-	      case 1:
-		return( ( p == boundary_point1) ?
-			       CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-	      case 2:
-		return(    ( p == boundary_point1)
-			|| ( p == boundary_point2)
-			|| ( CGAL_are_ordered_along_lineH2( boundary_point1, p,
-			                       boundary_point2, conic1.da())) ?
-				    CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
-	      case 3:
-	      case 5:
-		return( conic1.convex_side( p));
-	      case 4: {
-		CT c( conic1.da());
-		c.set( conic1, conic2, p);
-		c.analyse();
-		if ( ! c.is_ellipse()) {
-		    c.set_ellipse( conic1, conic2);
-		    c.analyse();
-		    return( c.convex_side( p)); }
-		else {
-		    int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
-		    return( CGAL_static_cast( CGAL_Bounded_side,
-					      CGAL_sign( tau_star))); } }
-	      default:
-		CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
-					     ( n_boundary_points <= 5) ); }
-	    // keeps g++ happy
-	    return( CGAL_Bounded_side( 0));
+            switch ( n_boundary_points) {
+              case 0:
+                return( CGAL_ON_UNBOUNDED_SIDE);
+              case 1:
+                return( ( p == boundary_point1) ?
+                               CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+              case 2:
+                return(    ( p == boundary_point1)
+                        || ( p == boundary_point2)
+                        || ( CGAL_are_ordered_along_lineH2( boundary_point1, p,
+                                               boundary_point2, conic1.da())) ?
+                                    CGAL_ON_BOUNDARY : CGAL_ON_UNBOUNDED_SIDE);
+              case 3:
+              case 5:
+                return( conic1.convex_side( p));
+              case 4: {
+                CT c( conic1.da());
+                c.set( conic1, conic2, p);
+                c.analyse();
+                if ( ! c.is_ellipse()) {
+                    c.set_ellipse( conic1, conic2);
+                    c.analyse();
+                    return( c.convex_side( p)); }
+                else {
+                    int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
+                    return( CGAL_static_cast( CGAL_Bounded_side,
+                                              CGAL_sign( tau_star))); } }
+              default:
+                CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+                                             ( n_boundary_points <= 5) ); }
+            // keeps g++ happy
+            return( CGAL_Bounded_side( 0));
         }
 
         bool
         has_on_bounded_side( Point const& p) const
         {
-	    return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
+            return( bounded_side( p) == CGAL_ON_BOUNDED_SIDE);
         }
 
         bool
         has_on_boundary( Point const& p) const
         {
-	    return( bounded_side( p) == CGAL_ON_BOUNDARY);
+            return( bounded_side( p) == CGAL_ON_BOUNDARY);
         }
 
         bool
         has_on_unbounded_side( Point const& p) const
         {
-	    return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
+            return( bounded_side( p) == CGAL_ON_UNBOUNDED_SIDE);
         }
 
         bool
@@ -2215,32 +2216,32 @@ it is declared \ccc{friend}.
         operator == (
             CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA> const& e) const
         {
-	    if ( n_boundary_points != e.n_boundary_points)
-		return( false);
+            if ( n_boundary_points != e.n_boundary_points)
+                return( false);
 
-	    switch ( n_boundary_points) {
-	      case 0:
-		return( true);
-	      case 1:
-		return( boundary_point1 == e.boundary_point1);
-	      case 2:
-		return(    (    ( boundary_point1 == e.boundary_point1)
-			     && ( boundary_point2 == e.boundary_point2))
-			|| (    ( boundary_point1 == e.boundary_point2)
-			     && ( boundary_point2 == e.boundary_point1)));
-	      case 3:
-	      case 5:
-		return( conic1 == e.conic1);
-	      case 4:
-		return(    (    ( conic1 == e.conic1)
-			     && ( conic2 == e.conic2))
-			|| (    ( conic1 == e.conic2)
-			     && ( conic2 == e.conic1)));
-	      default:
-	        CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
-					     && ( n_boundary_points <= 5)); }
-	    // keeps g++ happy
-	    return( false);
+            switch ( n_boundary_points) {
+              case 0:
+                return( true);
+              case 1:
+                return( boundary_point1 == e.boundary_point1);
+              case 2:
+                return(    (    ( boundary_point1 == e.boundary_point1)
+                             && ( boundary_point2 == e.boundary_point2))
+                        || (    ( boundary_point1 == e.boundary_point2)
+                             && ( boundary_point2 == e.boundary_point1)));
+              case 3:
+              case 5:
+                return( conic1 == e.conic1);
+              case 4:
+                return(    (    ( conic1 == e.conic1)
+                             && ( conic2 == e.conic2))
+                        || (    ( conic1 == e.conic2)
+                             && ( conic2 == e.conic1)));
+              default:
+                CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
+                                             && ( n_boundary_points <= 5)); }
+            // keeps g++ happy
+            return( false);
         }
 
         // I/O
@@ -2249,55 +2250,55 @@ it is declared \ccc{friend}.
         operator << ( ostream& os,
                       CGAL__Min_ellipse_2_adapterH2__Ellipse<_PT,_DA> const& e)
         {
-	    const char* const  empty       = "";
-	    const char* const  pretty_head =
-				     "CGAL_Min_ellipse_2_adapterH2::Ellipse( ";
-	    const char* const  pretty_sep  = ", ";
-	    const char* const  pretty_tail = ")";
-	    const char* const  ascii_sep   = " ";
+            const char* const  empty       = "";
+            const char* const  pretty_head =
+                                     "CGAL_Min_ellipse_2_adapterH2::Ellipse( ";
+            const char* const  pretty_sep  = ", ";
+            const char* const  pretty_tail = ")";
+            const char* const  ascii_sep   = " ";
 
-	    const char*  head = empty;
-	    const char*  sep  = empty;
-	    const char*  tail = empty;
+            const char*  head = empty;
+            const char*  sep  = empty;
+            const char*  tail = empty;
 
-	    switch ( CGAL_get_mode( os)) {
-	      case CGAL_IO::PRETTY:
-		head = pretty_head;
-		sep  = pretty_sep;
-		tail = pretty_tail;
-		break;
-	      case CGAL_IO::ASCII:
-		sep  = ascii_sep;
-		break;
-	      case CGAL_IO::BINARY:
-		break;
-	      default:
-		CGAL_optimisation_assertion_msg( false,
-						"CGAL_get_mode( os) invalid!");
-		break; }
+            switch ( CGAL_get_mode( os)) {
+              case CGAL_IO::PRETTY:
+                head = pretty_head;
+                sep  = pretty_sep;
+                tail = pretty_tail;
+                break;
+              case CGAL_IO::ASCII:
+                sep  = ascii_sep;
+                break;
+              case CGAL_IO::BINARY:
+                break;
+              default:
+                CGAL_optimisation_assertion_msg( false,
+                                                "CGAL_get_mode( os) invalid!");
+                break; }
 
-	    os << head << e.n_boundary_points;
-	    switch ( e.n_boundary_points) {
-	      case 0:
-		break;
-	      case 1:
-		os << sep << e.boundary_point1;
-		break;
-	      case 2:
-		os << sep << e.boundary_point1
-		   << sep << e.boundary_point2;
-		break;
-	      case 3:
-	      case 5:
-		os << sep << e.conic1;
-		break;
-	      case 4:
-		os << sep << e.conic1
-		   << sep << e.conic2;
-		break; }
-	    os << tail;
+            os << head << e.n_boundary_points;
+            switch ( e.n_boundary_points) {
+              case 0:
+                break;
+              case 1:
+                os << sep << e.boundary_point1;
+                break;
+              case 2:
+                os << sep << e.boundary_point1
+                   << sep << e.boundary_point2;
+                break;
+              case 3:
+              case 5:
+                os << sep << e.conic1;
+                break;
+              case 4:
+                os << sep << e.conic1
+                   << sep << e.conic2;
+                break; }
+            os << tail;
 
-	    return( os);
+            return( os);
         }
 
         friend
@@ -2314,25 +2315,25 @@ it is declared \ccc{friend}.
 
               case CGAL_IO::ASCII:
               case CGAL_IO::BINARY:
-		CGAL_read( is, e.n_boundary_points);
-		switch ( e.n_boundary_points) {
-		  case 0:
-		    break;
-		  case 1:
-		    is >> e.boundary_point1;
-		    break;
-		  case 2:
-		    is >> e.boundary_point1
-		       >> e.boundary_point2;
-		    break;
-		  case 3:
-		  case 5:
-		    is >> e.conic1;
-		    break;
-		  case 4:
-		    is >> e.conic1
-		       >> e.conic2;
-		    break; }
+                CGAL_read( is, e.n_boundary_points);
+                switch ( e.n_boundary_points) {
+                  case 0:
+                    break;
+                  case 1:
+                    is >> e.boundary_point1;
+                    break;
+                  case 2:
+                    is >> e.boundary_point1
+                       >> e.boundary_point2;
+                    break;
+                  case 3:
+                  case 5:
+                    is >> e.conic1;
+                    break;
+                  case 4:
+                    is >> e.conic1
+                       >> e.conic2;
+                    break; }
                 break;
 
               default:
@@ -2372,18 +2373,18 @@ number type \ccc{CGAL_Gmpz} or \ccc{integer}.
 
     #ifdef CGAL_USE_LEDA
     #  include <CGAL/leda_integer.h>
-       typedef  leda_integer			 Rt;
-       typedef  CGAL_Quotient< leda_integer >	 Ft;
+       typedef  leda_integer                     Rt;
+       typedef  CGAL_Quotient< leda_integer >    Ft;
     #else
     #  include <CGAL/Gmpz.h>
-       typedef  CGAL_Gmpz			 Rt;
-       typedef  CGAL_Quotient< CGAL_Gmpz >	 Ft;
+       typedef  CGAL_Gmpz                        Rt;
+       typedef  CGAL_Quotient< CGAL_Gmpz >       Ft;
     #endif
 
-    typedef  CGAL_Cartesian< Ft >		 RepC;
-    typedef  CGAL_Homogeneous< Rt >		 RepH;
-    typedef  CGAL_Optimisation_traits_2< RepC >	 TraitsC;
-    typedef  CGAL_Optimisation_traits_2< RepH >	 TraitsH;
+    typedef  CGAL_Cartesian< Ft >                RepC;
+    typedef  CGAL_Homogeneous< Rt >              RepH;
+    typedef  CGAL_Optimisation_traits_2< RepC >  TraitsC;
+    typedef  CGAL_Optimisation_traits_2< RepH >  TraitsH;
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
@@ -2392,8 +2393,8 @@ The command line option \ccc{-verbose} enables verbose output.
     bool  verbose = false;
     if ( ( argc > 1) && ( strcmp( argv[ 1], "-verbose") == 0)) {
         verbose = true;
-	--argc;
-	++argv; }
+        --argc;
+        ++argv; }
 @end
 
 @! ----------------------------------------------------------------------------
@@ -2415,222 +2416,222 @@ once to ensure code coverage.
     void
     cover_Min_ellipse_2( bool verbose, Traits const&, RT const&)
     {
-	typedef  CGAL_Min_ellipse_2< Traits >	Min_ellipse;
-	typedef  Min_ellipse::Point		Point;
-	typedef  Min_ellipse::Ellipse		Ellipse;
+        typedef  CGAL_Min_ellipse_2< Traits >   Min_ellipse;
+        typedef  Min_ellipse::Point             Point;
+        typedef  Min_ellipse::Ellipse           Ellipse;
 
-	CGAL_Verbose_ostream verr( verbose);
+        CGAL_Verbose_ostream verr( verbose);
 
-	// generate `n' points at random
-	const int    n = 20;
-	CGAL_Random  random_x, random_y;
-	Point	     random_points[ n];
-	int	     i;
-	verr << n << " random points from [0,128)^2:" << endl;
-	for ( i = 0; i < n; ++i)
-	    random_points[ i] = Point( RT( random_x( 128)),
-				       RT( random_y( 128)));
-	if ( verbose)
-	    for ( i = 0; i < n; ++i)
-		cerr << i << ": " << random_points[ i] << endl;
+        // generate `n' points at random
+        const int    n = 20;
+        CGAL_Random  random_x, random_y;
+        Point        random_points[ n];
+        int          i;
+        verr << n << " random points from [0,128)^2:" << endl;
+        for ( i = 0; i < n; ++i)
+            random_points[ i] = Point( RT( random_x( 128)),
+                                       RT( random_y( 128)));
+        if ( verbose)
+            for ( i = 0; i < n; ++i)
+                cerr << i << ": " << random_points[ i] << endl;
 
-	// cover code
-	verr << endl << "default constructor...";
-	{
-	    Min_ellipse  me;
-	    bool  is_valid = me.is_valid( verbose);
-	    bool  is_empty = me.is_empty();
-	    assert( is_valid); 
-	    assert( is_empty);
-	}
+        // cover code
+        verr << endl << "default constructor...";
+        {
+            Min_ellipse  me;
+            bool  is_valid = me.is_valid( verbose);
+            bool  is_empty = me.is_empty();
+            assert( is_valid); 
+            assert( is_empty);
+        }
 
-	verr << endl << "one point constructor...";
-	{
-	    Min_ellipse  me( random_points[ 0]);
-	    bool  is_valid      = me.is_valid( verbose);
-	    bool  is_degenerate = me.is_degenerate();
-	    assert( is_valid);
-	    assert( is_degenerate);
-	}
+        verr << endl << "one point constructor...";
+        {
+            Min_ellipse  me( random_points[ 0]);
+            bool  is_valid      = me.is_valid( verbose);
+            bool  is_degenerate = me.is_degenerate();
+            assert( is_valid);
+            assert( is_degenerate);
+        }
 
-	verr << endl << "two points constructor...";
-	{
-	    Min_ellipse  me( random_points[ 1],
-			     random_points[ 2]);
-	    bool  is_valid = me.is_valid( verbose);
-	    assert( is_valid);
-	    assert( me.number_of_points() == 2);
-	}
+        verr << endl << "two points constructor...";
+        {
+            Min_ellipse  me( random_points[ 1],
+                             random_points[ 2]);
+            bool  is_valid = me.is_valid( verbose);
+            assert( is_valid);
+            assert( me.number_of_points() == 2);
+        }
 
-	verr << endl << "three points constructor...";
-	{    
-	    Min_ellipse  me( random_points[ 3],
-			     random_points[ 4],
-			     random_points[ 5]);
-	    bool  is_valid = me.is_valid( verbose);
-	    assert( is_valid);
-	    assert( me.number_of_points() == 3);
-	}
+        verr << endl << "three points constructor...";
+        {    
+            Min_ellipse  me( random_points[ 3],
+                             random_points[ 4],
+                             random_points[ 5]);
+            bool  is_valid = me.is_valid( verbose);
+            assert( is_valid);
+            assert( me.number_of_points() == 3);
+        }
 
-	verr << endl << "four points constructor...";
-	{    
-	    Min_ellipse  me( random_points[ 6],
-			     random_points[ 7],
-			     random_points[ 8],
-			     random_points[ 9]);
-	    bool  is_valid = me.is_valid( verbose);
-	    assert( is_valid);
-	    assert( me.number_of_points() == 4);
-	}
+        verr << endl << "four points constructor...";
+        {    
+            Min_ellipse  me( random_points[ 6],
+                             random_points[ 7],
+                             random_points[ 8],
+                             random_points[ 9]);
+            bool  is_valid = me.is_valid( verbose);
+            assert( is_valid);
+            assert( me.number_of_points() == 4);
+        }
 
-	verr << endl << "five points constructor...";
-	{    
-	    Min_ellipse  me( random_points[ 10],
-			     random_points[ 11],
-			     random_points[ 12],
-			     random_points[ 13],
-			     random_points[ 14]);
-	    bool  is_valid = me.is_valid( verbose);
-	    assert( is_valid);
-	    assert( me.number_of_points() == 5);
-	}
+        verr << endl << "five points constructor...";
+        {    
+            Min_ellipse  me( random_points[ 10],
+                             random_points[ 11],
+                             random_points[ 12],
+                             random_points[ 13],
+                             random_points[ 14]);
+            bool  is_valid = me.is_valid( verbose);
+            assert( is_valid);
+            assert( me.number_of_points() == 5);
+        }
 
-	verr << endl << "Point* constructor...";
-	Min_ellipse  me( random_points, random_points+9);
-	{
-	    Min_ellipse  me2( random_points, random_points+9, true);
-	    bool  is_valid  = me .is_valid( verbose);
-	    bool  is_valid2 = me2.is_valid( verbose);
-	    assert( is_valid);
-	    assert( is_valid2);
-	    assert( me .number_of_points() == 9);
-	    assert( me2.number_of_points() == 9);
-	    assert( me.ellipse() == me2.ellipse());
-	}
+        verr << endl << "Point* constructor...";
+        Min_ellipse  me( random_points, random_points+9);
+        {
+            Min_ellipse  me2( random_points, random_points+9, true);
+            bool  is_valid  = me .is_valid( verbose);
+            bool  is_valid2 = me2.is_valid( verbose);
+            assert( is_valid);
+            assert( is_valid2);
+            assert( me .number_of_points() == 9);
+            assert( me2.number_of_points() == 9);
+            assert( me.ellipse() == me2.ellipse());
+        }
 
-	verr << endl << "list<Point>::const_iterator constructor...";
-	{
-	    Min_ellipse  me1( me.points_begin(), me.points_end());
-	    Min_ellipse  me2( me.points_begin(), me.points_end(), true);
-	    bool  is_valid1 = me1.is_valid( verbose);
-	    bool  is_valid2 = me2.is_valid( verbose);
-	    assert( is_valid1);
-	    assert( is_valid2);
-	    assert( me1.number_of_points() == 9);
-	    assert( me2.number_of_points() == 9);
-	    assert( me.ellipse() == me1.ellipse());
-	    assert( me.ellipse() == me2.ellipse());
-	}
+        verr << endl << "list<Point>::const_iterator constructor...";
+        {
+            Min_ellipse  me1( me.points_begin(), me.points_end());
+            Min_ellipse  me2( me.points_begin(), me.points_end(), true);
+            bool  is_valid1 = me1.is_valid( verbose);
+            bool  is_valid2 = me2.is_valid( verbose);
+            assert( is_valid1);
+            assert( is_valid2);
+            assert( me1.number_of_points() == 9);
+            assert( me2.number_of_points() == 9);
+            assert( me.ellipse() == me1.ellipse());
+            assert( me.ellipse() == me2.ellipse());
+        }
 
-	verr << endl << "#points already called above.";
+        verr << endl << "#points already called above.";
 
-	verr << endl << "points access already called above.";
+        verr << endl << "points access already called above.";
 
-	verr << endl << "support points access...";
-	{
-	    Point  support_point;
-	    Min_ellipse::Support_point_iterator
-		iter( me.support_points_begin());
+        verr << endl << "support points access...";
+        {
+            Point  support_point;
+            Min_ellipse::Support_point_iterator
+                iter( me.support_points_begin());
             for ( i = 0; i < me.number_of_support_points(); ++i, ++iter) {
-		support_point = me.support_point( i);
-		assert( support_point == *iter); }
-	    Min_ellipse::Support_point_iterator
-		end_iter( me.support_points_end());
-	    assert( iter == end_iter);
-	}
+                support_point = me.support_point( i);
+                assert( support_point == *iter); }
+            Min_ellipse::Support_point_iterator
+                end_iter( me.support_points_end());
+            assert( iter == end_iter);
+        }
 
-	verr << endl << "ellipse access already called above...";
+        verr << endl << "ellipse access already called above...";
 
-	verr << endl << "in-ellipse predicates...";
-	{
-	    Point              p;
-	    CGAL_Bounded_side  bounded_side;
-	    bool               has_on_bounded_side;
-	    bool	       has_on_boundary;
-	    bool	       has_on_unbounded_side;
-	    for ( i = 0; i < 9; ++i) {
-		p = random_points[ i];
-		bounded_side          = me.bounded_side( p);
-		has_on_bounded_side   = me.has_on_bounded_side( p);
-		has_on_boundary       = me.has_on_boundary( p);
-		has_on_unbounded_side = me.has_on_unbounded_side( p);
-	    assert( bounded_side != CGAL_ON_UNBOUNDED_SIDE);
-	    assert( has_on_bounded_side || has_on_boundary);
-	    assert( ! has_on_unbounded_side); }
-	}
+        verr << endl << "in-ellipse predicates...";
+        {
+            Point              p;
+            CGAL_Bounded_side  bounded_side;
+            bool               has_on_bounded_side;
+            bool               has_on_boundary;
+            bool               has_on_unbounded_side;
+            for ( i = 0; i < 9; ++i) {
+                p = random_points[ i];
+                bounded_side          = me.bounded_side( p);
+                has_on_bounded_side   = me.has_on_bounded_side( p);
+                has_on_boundary       = me.has_on_boundary( p);
+                has_on_unbounded_side = me.has_on_unbounded_side( p);
+            assert( bounded_side != CGAL_ON_UNBOUNDED_SIDE);
+            assert( has_on_bounded_side || has_on_boundary);
+            assert( ! has_on_unbounded_side); }
+        }
 
-	verr << endl << "is_... predicates already called above.";
+        verr << endl << "is_... predicates already called above.";
 
-	verr << endl << "single point insert...";
-	me.insert( random_points[ 9]);
-	{
-	    bool  is_valid = me.is_valid( verbose);
-	    assert( is_valid);
-	    assert( me.number_of_points() == 10);
-	}
+        verr << endl << "single point insert...";
+        me.insert( random_points[ 9]);
+        {
+            bool  is_valid = me.is_valid( verbose);
+            assert( is_valid);
+            assert( me.number_of_points() == 10);
+        }
 
-	verr << endl << "Point* insert...";
-	me.insert( random_points+10, random_points+n);
-	{
-	    bool  is_valid = me.is_valid( verbose);
-	    assert( is_valid);
-	    assert( me.number_of_points() == n);
-	}
+        verr << endl << "Point* insert...";
+        me.insert( random_points+10, random_points+n);
+        {
+            bool  is_valid = me.is_valid( verbose);
+            assert( is_valid);
+            assert( me.number_of_points() == n);
+        }
 
-	verr << endl << "list<Point>::const_iterator insert...";
-	{
-	    Min_ellipse  me2;
-	    me2.insert( me.points_begin(), me.points_end());
-	    bool  is_valid = me2.is_valid( verbose);
-	    assert( is_valid);
-	    assert( me2.number_of_points() == n);
-	    
-	    verr << endl << "clear...";
-	    me2.clear();	
-	          is_valid = me2.is_valid( verbose);
-	    bool  is_empty = me2.is_empty();
-	    assert( is_valid); 
-	    assert( is_empty);
-    	}
+        verr << endl << "list<Point>::const_iterator insert...";
+        {
+            Min_ellipse  me2;
+            me2.insert( me.points_begin(), me.points_end());
+            bool  is_valid = me2.is_valid( verbose);
+            assert( is_valid);
+            assert( me2.number_of_points() == n);
+            
+            verr << endl << "clear...";
+            me2.clear();        
+                  is_valid = me2.is_valid( verbose);
+            bool  is_empty = me2.is_empty();
+            assert( is_valid); 
+            assert( is_empty);
+        }
 
-	verr << endl << "validity check already called several times.";
+        verr << endl << "validity check already called several times.";
 
-	verr << endl << "traits class access...";
-	{
-	    Traits  traits( me.traits());
-	}
+        verr << endl << "traits class access...";
+        {
+            Traits  traits( me.traits());
+        }
 
-	verr << endl << "I/O...";
-	{
-	    verr << endl << "  writing `test_Min_ellipse_2.ascii'...";
-	    ofstream os( "test_Min_ellipse_2.ascii");
-	    CGAL_set_ascii_mode( os);
-	    os << me;
-	}
-	{
-	    verr << endl << "  writing `test_Min_ellipse_2.pretty'...";
-	    ofstream os( "test_Min_ellipse_2.pretty");
-	    CGAL_set_pretty_mode( os);
-	    os << me;
-	}
-	{
-	    verr << endl << "  writing `test_Min_ellipse_2.binary'...";
-	    ofstream os( "test_Min_ellipse_2.binary");
-	    CGAL_set_binary_mode( os);
-	    os << me;
-	}
-	{
-	    verr << endl << "  reading `test_Min_ellipse_2.ascii'...";
-	    Min_ellipse me_in;
-	    ifstream is( "test_Min_ellipse_2.ascii");
-	    CGAL_set_ascii_mode( is);
-	    is >> me_in;
-	    bool    is_valid = me_in.is_valid( verbose);
-	    assert( is_valid);
-	    assert( me_in.number_of_points() == n);
-	    assert( me_in.ellipse() == me.ellipse());
-	}
-	verr << endl;
+        verr << endl << "I/O...";
+        {
+            verr << endl << "  writing `test_Min_ellipse_2.ascii'...";
+            ofstream os( "test_Min_ellipse_2.ascii");
+            CGAL_set_ascii_mode( os);
+            os << me;
+        }
+        {
+            verr << endl << "  writing `test_Min_ellipse_2.pretty'...";
+            ofstream os( "test_Min_ellipse_2.pretty");
+            CGAL_set_pretty_mode( os);
+            os << me;
+        }
+        {
+            verr << endl << "  writing `test_Min_ellipse_2.binary'...";
+            ofstream os( "test_Min_ellipse_2.binary");
+            CGAL_set_binary_mode( os);
+            os << me;
+        }
+        {
+            verr << endl << "  reading `test_Min_ellipse_2.ascii'...";
+            Min_ellipse me_in;
+            ifstream is( "test_Min_ellipse_2.ascii");
+            CGAL_set_ascii_mode( is);
+            is >> me_in;
+            bool    is_valid = me_in.is_valid( verbose);
+            assert( is_valid);
+            assert( me_in.number_of_points() == n);
+            assert( me_in.ellipse() == me.ellipse());
+        }
+        verr << endl;
     }
 @end
 
@@ -2789,33 +2790,33 @@ end of each file.
 @macro <Min_ellipse_2 test (external test sets)> = @begin
     while ( argc > 1) {
 
-	typedef  CGAL_Min_ellipse_2< TraitsH >	Min_ellipse;
-	typedef  Min_ellipse::Point		Point;
-	typedef  Min_ellipse::Ellipse		Ellipse;
+        typedef  CGAL_Min_ellipse_2< TraitsH >  Min_ellipse;
+        typedef  Min_ellipse::Point             Point;
+        typedef  Min_ellipse::Ellipse           Ellipse;
 
-	CGAL_Verbose_ostream verr( verbose);
+        CGAL_Verbose_ostream verr( verbose);
 
-	// read points from file
-	verr << endl << "input file: `" << argv[ 1] << "'" << flush;
+        // read points from file
+        verr << endl << "input file: `" << argv[ 1] << "'" << flush;
 
-	list<Point>  points;
-	int          n, x, y;
-	ifstream     in( argv[ 1]);
-	in >> n;
-	assert( in);
-	for ( int i = 0; i < n; ++i) {
-	    in >> x >> y;
-	    assert( in);
-	    points.push_back( Point( x, y)); }
+        list<Point>  points;
+        int          n, x, y;
+        ifstream     in( argv[ 1]);
+        in >> n;
+        assert( in);
+        for ( int i = 0; i < n; ++i) {
+            in >> x >> y;
+            assert( in);
+            points.push_back( Point( x, y)); }
 
-	// compute and check min_ellipse
-	Min_ellipse  me2( points.begin(), points.end());
-	bool  is_valid = me2.is_valid( verbose);
-	assert( is_valid);
+        // compute and check min_ellipse
+        Min_ellipse  me2( points.begin(), points.end());
+        bool  is_valid = me2.is_valid( verbose);
+        assert( is_valid);
 
-	// next file
-	--argc;
-	++argv; }
+        // next file
+        --argc;
+        ++argv; }
 @end
 
 @! ==========================================================================
@@ -2850,8 +2851,8 @@ end of each file.
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
     #  include <CGAL/optimisation_assertions.h>
     #endif
-    #ifndef CGAL_OPTIMISATION_MISC_H
-    #  include <CGAL/optimisation_misc.h>
+    #ifndef CGAL_OPTIMISATION_BASIC_H
+    #  include <CGAL/optimisation_basic.h>
     #endif
     #ifndef CGAL_PROTECT_LIST_H
     #  include <list.h>
@@ -2999,9 +3000,9 @@ end of each file.
     template < class PT, class DA >
     bool
     CGAL_are_ordered_along_lineC2( PT const& p, PT const& q, PT const& r,
-				   DA const& da)
+                                   DA const& da)
     {
-        typedef  DA::FT  FT;
+        typedef  typename DA::FT  FT;
 
         FT  px;
         FT  py;
@@ -3014,17 +3015,17 @@ end of each file.
         da.get( q, qx, qy);
         da.get( r, rx, ry);
 
-	// p,q,r collinear?
-	if ( ! CGAL_is_zero( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx)))
-	    return( false);
+        // p,q,r collinear?
+        if ( ! CGAL_is_zero( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx)))
+            return( false);
 
-	// p,q,r vertical?
-	if ( px != rx)
-	    return(    ( ( px < qx) && ( qx < rx))
-		    || ( ( rx < qx) && ( qx < px)));
-	else
-	    return(    ( ( py < qy) && ( qy < ry))
-		    || ( ( ry < qy) && ( qy < py)));
+        // p,q,r vertical?
+        if ( px != rx)
+            return(    ( ( px < qx) && ( qx < rx))
+                    || ( ( rx < qx) && ( qx < px)));
+        else
+            return(    ( ( py < qy) && ( qy < ry))
+                    || ( ( ry < qy) && ( qy < py)));
     }
 
     @<Min_ellipse_2_adapterC2 interface and implementation>
@@ -3066,9 +3067,9 @@ end of each file.
     template < class PT, class DA >
     bool
     CGAL_are_ordered_along_lineH2( PT const& p, PT const& q, PT const& r,
-				   DA const& da)
+                                   DA const& da)
     {
-        typedef  DA::RT  RT;
+        typedef  typename DA::RT  RT;
 
         RT  phx;
         RT  phy;
@@ -3084,18 +3085,18 @@ end of each file.
         da.get( q, qhx, qhy, qhw);
         da.get( r, rhx, rhy, rhw);
 
-	// p,q,r collinear?
+        // p,q,r collinear?
         if ( ! CGAL_is_zero(   ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
-			     - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw)))
-	    return( false);
+                             - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw)))
+            return( false);
 
-	// p,q,r vertical?
-	if ( phx*rhw != rhx*phw)
-	    return(    ( ( phx*qhw < qhx*phw) && ( qhx*rhw < rhx*qhw))
-		    || ( ( rhx*qhw < qhx*rhw) && ( qhx*phw < phx*qhw)));
-	else
-	    return(    ( ( phy*qhw < qhy*phw) && ( qhy*rhw < rhy*qhw))
-		    || ( ( rhy*qhw < qhy*rhw) && ( qhy*phw < phy*qhw)));
+        // p,q,r vertical?
+        if ( phx*rhw != rhx*phw)
+            return(    ( ( phx*qhw < qhx*phw) && ( qhx*rhw < rhx*qhw))
+                    || ( ( rhx*qhw < qhx*rhw) && ( qhx*phw < phx*qhw)));
+        else
+            return(    ( ( phy*qhw < qhy*phw) && ( qhy*rhw < rhy*qhw))
+                    || ( ( rhy*qhw < qhy*rhw) && ( qhy*phw < phy*qhw)));
     }
 
     @<Min_ellipse_2_adapterH2 interface and implementation>
@@ -3133,21 +3134,21 @@ end of each file.
     main( int argc, char* argv[])
     {
         // command line options
-	// --------------------
-	// option `-verbose'
-	@<Min_ellipse_2 test (verbose option)>
+        // --------------------
+        // option `-verbose'
+        @<Min_ellipse_2 test (verbose option)>
 
-	// code coverage
-	// -------------
-	@<Min_ellipse_2 test (code coverage)>
+        // code coverage
+        // -------------
+        @<Min_ellipse_2 test (code coverage)>
 
         // adapters test
         // -------------
         @<Min_ellipse_2 test (adapters test)>
 
-	// external test sets
-	// -------------------
-	@<Min_ellipse_2 test (external test sets)>
+        // external test sets
+        // -------------------
+        @<Min_ellipse_2 test (external test sets)>
     }
 
     @<end of file line>
@@ -3163,20 +3164,20 @@ end of each file.
  
 @macro <Min_ellipse_2 header>(1) many = @begin
     @<file header>("2D Smallest Enclosing Ellipse",@1,
-		   "Optimisation/Min_ellipse_2",
+                   "Optimisation/Min_ellipse_2",
                    "Sven Schönherr <sven@@inf.fu-berlin.de>",
                    "Bernd Gärtner",
-		   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
-		   "$Revision$","$Date$")
+                   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
+                   "$Revision$","$Date$")
 @end
 
 @macro <Optimisation_ellipse_2 header>(1) many = @begin
     @<file header>("2D Optimisation Ellipse",@1,
-		   "Optimisation/Min_ellipse_2",
+                   "Optimisation/Min_ellipse_2",
                    "Sven Schönherr <sven@@inf.fu-berlin.de>",
                    "Bernd Gärtner",
-		   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
-		   "$Revision$","$Date$")
+                   "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
+                   "$Revision$","$Date$")
 @end
 @! ============================================================================
 @! Bibliography
