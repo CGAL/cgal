@@ -61,7 +61,9 @@ int main()
   Planar_map_2<pmdcel,pmtraits>::Halfedge_handle e;  
   Planar_map_2<pmdcel,pmtraits>::Locate_type lt;
 
-  std::cout << std::endl << "upward vertical ray shooting from " << p << std::endl; 
+  std::cout << std::endl << "upward vertical ray shooting from " << p;
+  std::cout << std::endl; 
+
   e=pm.vertical_ray_shoot(p, lt, true);
   std::cout << "returned the curve :" << e->curve() << " oriented toward " 
             << e->target()->point() << std::endl;
