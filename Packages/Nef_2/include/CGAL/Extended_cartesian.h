@@ -28,15 +28,11 @@
 #ifndef CGAL_EXTENDED_CARTESIAN_H
 #define CGAL_EXTENDED_CARTESIAN_H
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_2.h> 
 #include <CGAL/Line_2_Line_2_intersection.h>
-#if defined( _MSC_VER) && (_MSC_VER <= 1200) && ! defined(__INTEL_COMPILER)
-#include <CGAL/Nef_2/Polynomial_MSC.h>
-#define Polynomial Polynomial_MSC
-#else
 #include <CGAL/Nef_2/Polynomial.h>
-#endif
+
 #undef _DEBUG
 #define _DEBUG 51
 #include <CGAL/Nef_2/debug.h>
@@ -50,8 +46,9 @@ template <class T> class Extended_cartesian;
 
 template <class pFT>
 class Extended_cartesian : public 
-  CGAL::Cartesian< CGAL::Polynomial<pFT> > { public:
-typedef CGAL::Cartesian< CGAL::Polynomial<pFT> > Base;
+  CGAL::Simple_cartesian< CGAL::Polynomial<pFT> > { 
+public:
+typedef CGAL::Simple_cartesian< CGAL::Polynomial<pFT> > Base;
 typedef Extended_cartesian<pFT> Self;
 
 /*{\Xdefinition |\Mname| is a kernel model realizing the concept
@@ -60,7 +57,7 @@ typedef Extended_cartesian<pFT> Self;
 /*{\Xtypes 6.5}*/
 /*{\Xtext \headerline{Affine kernel and types}}*/
 
-typedef CGAL::Cartesian<pFT> Standard_kernel;
+typedef CGAL::Simple_cartesian<pFT> Standard_kernel;
 /*{\Xtypemember the standard affine kernel.}*/
 
 typedef typename Standard_kernel::RT Standard_RT;
@@ -368,8 +365,11 @@ and |s2|.}*/
   typename Base::Construct_line_2 _line =
     construct_line_2_object();
   Point_2 p; 
+  Line_2 l1 = _line(s1);
+  Line_2 l2 = _line(s2);
+
   CGAL::Object result =
-    _intersect(_line(s1),_line(s2));
+    _intersect(l1, l2);
   if ( !CGAL::assign(p, result) )
   CGAL_assertion_msg(false,"intersection: no intersection.");
   return p;
