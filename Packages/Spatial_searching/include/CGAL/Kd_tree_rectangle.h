@@ -109,21 +109,20 @@ namespace CGAL {
     }
     
     Kd_tree_rectangle(int d) : 
-    dim(d), lower_(new FT[d]), upper_(new FT[d])
+      dim(d), lower_(new FT[d]), upper_(new FT[d]), max_span_coord_(0)
     {
       std::fill(lower_, lower_ + dim, 0);
       std::fill(upper_, upper_ + dim, 0);
-      set_max_span();
+     
     }
 
     Kd_tree_rectangle() : dim(0), lower_(0), upper_(0) {}
 
     
     explicit Kd_tree_rectangle(const Kd_tree_rectangle<SearchTraits>& r) : dim(r.dim),
-      lower_(new FT[dim]), upper_(new FT[dim]) {
+      lower_(new FT[dim]), upper_(new FT[dim]), max_span_coord_(r.max_span_coord_) {
         std::copy(r.lower_, r.lower_+dim, lower_);
 	std::copy(r.upper_, r.upper_+dim, upper_);
-	set_max_span();
     }
 
     template <class PointIter>
