@@ -287,6 +287,7 @@ public:
             delete_all();
             vertices            = hds.vertices;
             // goal is halfedges = hds.halfedges, but we have pairs here
+	    halfedges = Halfedge_list();
 	    Halfedge_const_iterator i = hds.halfedges.begin();
 	    for ( ; i != hds.halfedges.end(); ++ ++ i) {
 		new_edge( & * i);
@@ -575,6 +576,7 @@ pointer_update( const Halfedge_data_structure_using_list<V,H,F>& hds) {
     Halfedge_data_structure_decorator<Self> D;
     for ( Halfedge_iterator h = halfedges.begin(); h != halfedges.end(); ++h) {
         h->set_next( h_map[ h->next()]);
+	// Superfluous and false: opposite pointer get set upon creation
         //h->H::set_opposite( h_map[ h->opposite()]);
         if ( check_tag( Supports_halfedge_prev()))
             D.set_prev( &*h, h_map[ D.get_prev(&*h)]);
