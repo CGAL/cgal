@@ -440,7 +440,8 @@ OutputIterator partition_y_monotone_2(InputIterator first,
 
    Circulator first_c(polygon.begin(), polygon.end());
    Circulator_list<Circulator>  circ_list(first_c);
-   circ_list.sort(Indirect_not_less_yx_2<Traits>(traits));
+   std::sort(circ_list.begin(), circ_list.end(), 
+             Indirect_not_less_yx_2<Traits>(traits));
 
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
    std::cout << "Initial vertex list: "<< circ_list << std::endl;

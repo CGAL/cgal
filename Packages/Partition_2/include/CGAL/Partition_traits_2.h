@@ -53,8 +53,8 @@ class Partition_traits_2  : public Partition_traits_2_base<R_>
     typedef typename R::Orientation_2                   Orientation_2;
     typedef typename R::Compare_y_2                     Compare_y_2;
     typedef typename R::Compare_x_2                     Compare_x_2;
-    typedef Is_convex_2<Self>                           Is_convex_2;
-    typedef Is_y_monotone_2<Self>                       Is_y_monotone_2;
+    typedef CGAL::Is_convex_2<Self>                     Is_convex_2;
+    typedef CGAL::Is_y_monotone_2<Self>                 Is_y_monotone_2;
 
     // needed by Indirect_edge_compare, used in y_monotone and greene_approx
     typedef typename R::Line_2                          Line_2;
@@ -63,7 +63,7 @@ class Partition_traits_2  : public Partition_traits_2_base<R_>
     typedef typename R::Is_horizontal_2                 Is_horizontal_2;
 
     // needed by visibility graph and thus by optimal convex
-    typedef Ray_2<R_>                                   Ray_2; 
+    typedef R::Ray_2                                    Ray_2; 
     typedef typename R::Collinear_are_ordered_along_line_2
                                             Collinear_are_ordered_along_line_2;
     typedef typename R::Are_strictly_ordered_along_line_2

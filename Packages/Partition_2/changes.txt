@@ -1,3 +1,7 @@
+1.23 (2 Dec 2001)
+  - added some CGAL prefixes to make SunPro happy
+  - also changed to use of std::sort instead of sort in std::list
+
 1.22 (26 Oct 2001)
   - fixed bug in Indirect_edge_compare for comparing edge with itself
 

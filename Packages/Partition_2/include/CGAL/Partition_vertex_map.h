@@ -52,7 +52,7 @@ public:
    typedef typename Traits::Leftturn_2              Leftturn_2;
    typedef typename Traits::Less_xy_2               Less_xy_2;
    typedef typename Traits::Point_2                 Point_2;
-   typedef Edge_info<Iterator>                      Edge_info;
+   typedef CGAL::Edge_info<Iterator>                Edge_info;
 
    CW_indirect_edge_info_compare (Iterator v_it) : vertex_it(v_it),
       left_turn(Traits().leftturn_2_object()),
@@ -186,7 +186,8 @@ public:
        // order), and this is what you need when you construct the union 
        // polygon.
        if (size() > 2)
-        sort(CW_indirect_edge_info_compare<Vertex_iterator,Traits>(vertex_it));
+        std::sort(begin(), end(), 
+              CW_indirect_edge_info_compare<Vertex_iterator,Traits>(vertex_it));
 
 #ifdef CGAL_PARTITION_CHECK_DEBUG
        std::cout << "after sort: edges for " << *vertex_it  << std::endl;
@@ -392,9 +393,9 @@ public:
           // order), and this is what you need to begin the construction 
           // of the union polygon.
           if ((*m_it).second.size() > 2)
-           (*m_it).second.sort(
+           std::sort((*m_it).second.begin(), (*m_it).second.end(), 
              CW_indirect_edge_info_compare<Vertex_iterator,Traits>(
-                                                                (*m_it).first));
+                                                               (*m_it).first));
           // find the previous vertex in this vertex's list
           next_v_it=(*m_it).second.next_ccw_edge_info(prev_v_it).endpoint();
           if (next_v_it != first_v_it)
