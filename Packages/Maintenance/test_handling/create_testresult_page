@@ -98,34 +98,22 @@ sub collect_results()
     }
 }
 
-
-sub print_platforms_extended()
-{
-    my ($filename, @result,@filenames);
-    @filenames = glob("results_*.info");
-    foreach $_ (@filenames) {
-	($filename) =  m/results_(.*?)\.info\s*/;
-	push(@result, $filename) if $filename;
-    }
-}
-
-sub print_resultpage()
+sub print_result_table()
 {
     my $platform_count = scalar(@platforms_to_do);
     my $pc_plus_2 = $platform_count + 2;
 
     print OUTPUT <<"EOF";
-<H2><A NAME="testresults">Test Results</A></H2>
-<TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5>
+<TABLE CLASS="result" BORDER=1 CELLSPACING=2 CELLPADDING=5>
 <TR>
 <TD ALIGN=CENTER COLSPAN=$pc_plus_2>
 <FONT SIZE="+2">Test Suite Results $release_name</FONT></TD>
 </TR>
 
 <TR ALIGN=CENTER>
-<TD ROWSPAN=2><B>Package</B></TD>
-<TD ROWSPAN=2><B>Version</B></TD>
-<TD COLSPAN=$platform_count><B>Test Platform</B></TD>
+<TH ROWSPAN=2>Package</TH>
+<TH ROWSPAN=2>Version</TH>
+<TH COLSPAN=$platform_count>Test Platform</TH>
 </TR>
 <TR ALIGN=CENTER>
 EOF
@@ -180,6 +168,50 @@ EOF
     print OUTPUT "</TABLE>\n";
 }
 
+sub print_resultpage()
+{
+    my $platform_count = scalar(@platforms_to_do);
+    my $pc_plus_2 = $platform_count + 2;
+
+    print OUTPUT <<"EOF";
+<H2><A NAME="testresults">Test Results</A></H2>
+<TABLE BORDER=0 CELLSPACING=5 CELLPADDING=0>
+<TR ALIGN=CENTER>
+<TD>
+EOF
+
+    print_result_table();
+
+
+    print OUTPUT <<"EOF";
+</TD>
+<TD>
+<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0>
+EOF
+    if ($platform_count > 0) {
+    my $repeat_count = scalar(@test_directories)/$platform_count;
+	while ($repeat_count >= 1) {
+	    $repeat_count--;
+	    print OUTPUT <<"EOF";
+<TR>
+<TD>
+EOF
+            print_platforms();
+            print OUTPUT <<"EOF";
+</TD>
+</TR>
+EOF
+	}
+    }
+
+    print OUTPUT <<"EOF";
+</TABLE>
+</TD>
+</TR>
+</TABLE>
+EOF
+}
+
 sub choose_platforms()
 {
     my (%platform_index, $pf);
@@ -226,53 +258,14 @@ sub print_platform_descriptions()
     print OUTPUT <<'EOF';
 <TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >
 <TR ALIGN=CENTER>
-<TD COLSPAN=2><B>OS and compiler</B></TD>
-<TD><B>tester</B></TD>
-<TD><B>LEDA</B></TD>
-<TD><B>GMP</B></TD>
-<TD><B>CLN</B></TD>
-</TR>
-EOF
-    foreach $pf (@platforms_to_do) {
-	print OUTPUT "<TR>\n<TD>$pf_no</TD>\n";
-	$pf_no++;
-	my $pf_short = $pf;
-	$pf_short =~ s/^[^_]*_//;
-	$pf_short =~ s/_LEDA$//;
-	print OUTPUT "<TD NOWRAP><B>$pf_short</B></TD>\n";
-        if (open (PLATFORM_INFO, "results_${pf}.info")) {
-	    $_ = <PLATFORM_INFO>;
-	    $_ = <PLATFORM_INFO>;
-	    chomp;
-	    $_ = email_address_in_html_format($_);
-	    print OUTPUT "<TD NOWRAP><B>$_</B></TD>\n";
-	    my $index = 3;
-	    while ($index) {
-	        $index--;
-		$_ = <PLATFORM_INFO>;
-		chomp;
-		print OUTPUT "<TD ALIGN=CENTER NOWRAP><B>$_</B></TD>\n";
-	    }
-	} else {
-	    print OUTPUT "<TD NOWRAP><B>?</B></TD>\n";
-	    print OUTPUT "<TD NOWRAP><B>?</B></TD>\n";
-	    print OUTPUT "<TD NOWRAP><B>?</B></TD>\n";
-	    print OUTPUT "<TD NOWRAP><B>?</B></TD>\n";
-	}
-    }
-    print OUTPUT "</TABLE>\n";
-}
-
-sub print_platforms()
-{
-    my ($pf_no,$pf) = (1,"");
-    print OUTPUT <<'EOF';
-<TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >
-<TR ALIGN=CENTER>
-<TD COLSPAN=2><B>Test Platform</B></TD>
-<TD class=ok>y</TD>
-<TD class=warning>w</TD>
-<TD class=error>n</TD>
+<TH COLSPAN=2>OS and compiler</TH>
+<TH>tester</TH>
+<TH>LEDA</TH>
+<TH>GMP</TH>
+<TH>CLN</TH>
+<TH class=ok>y</TH>
+<TH class=warning>w</TH>
+<TH class=error>n</TH>
 </TR>
 EOF
     my ($platform_num)=(0);
@@ -282,7 +275,26 @@ EOF
 	my $pf_short = $pf;
 	$pf_short =~ s/^[^_]*_//;
 	$pf_short =~ s/_LEDA$//;
-	print OUTPUT "<TD NOWRAP><B>$pf_short</B></TD>\n";
+	print OUTPUT "<TD NOWRAP>$pf_short</TD>\n";
+        if (open (PLATFORM_INFO, "results_${pf}.info")) {
+	    $_ = <PLATFORM_INFO>;
+	    $_ = <PLATFORM_INFO>;
+	    chomp;
+	    $_ = email_address_in_html_format($_);
+	    print OUTPUT "<TD NOWRAP>$_</TD>\n";
+	    my $index = 3;
+	    while ($index) {
+	        $index--;
+		$_ = <PLATFORM_INFO>;
+		chomp;
+		print OUTPUT "<TD ALIGN=CENTER NOWRAP>$_</TD>\n";
+	    }
+	} else {
+	    print OUTPUT "<TD NOWRAP>?</TD>\n";
+	    print OUTPUT "<TD NOWRAP>?</TD>\n";
+	    print OUTPUT "<TD NOWRAP>?</TD>\n";
+	    print OUTPUT "<TD NOWRAP>?</TD>\n";
+	}
 	my $count;
 	$count = $testresults[$platform_num]->{"y"};
 	print OUTPUT "<TD>$count</TD>\n"; 
@@ -290,8 +302,25 @@ EOF
 	print OUTPUT "<TD>$count</TD>\n"; 
 	$count = $testresults[$platform_num]->{"n"};
 	print OUTPUT "<TD>$count</TD>\n"; 
-	print OUTPUT "</TR>\n";
 	++$platform_num;
+    }
+    print OUTPUT "</TABLE>\n";
+}
+
+sub print_platforms()
+{
+    my ($pf_no,$pf) = (1,"");
+    print OUTPUT <<'EOF';
+<TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >
+EOF
+    foreach $pf (@platforms_to_do) {
+	print OUTPUT "<TR>\n<TD>$pf_no</TD>\n";
+	$pf_no++;
+	my $pf_short = $pf;
+	$pf_short =~ s/^[^_]*_//;
+	$pf_short =~ s/_LEDA$//;
+	print OUTPUT "<TD NOWRAP>$pf_short</TD>\n";
+	print OUTPUT "</TR>\n";
     }
     print OUTPUT "</TABLE>\n";
 }
@@ -432,11 +461,9 @@ sub main()
     chdir $release_name or die;
     collect_results();
     print_header();
-    print_platforms();
+    print_platform_descriptions();
     print OUTPUT "<P>\n";
     print_resultpage();
-    print OUTPUT "<P>\n";
-    print_platforms();
     print OUTPUT "<P>\n";
     print_platform_descriptions();
     print OUTPUT "<P>\n";
@@ -457,30 +484,30 @@ sub email_address_in_html_format($)
 	    return "?";
 	} elsif ($responsible eq 'baesken') {
 	    return 
-		'<A HREF="mailto:baesken\@infsn2.informatik.uni-halle.de">'.
+		'<A HREF="mailto:baesken@infsn2.informatik.uni-halle.de">'.
 		"Matthias Baesken</A>";
-	} elsif ($responsible eq 'Sylvain') {
-	    return '<A HREF="mailto:Sylvain.Pion\@sophia.inria.fr">'.
+	} elsif ($responsible eq 'spion') {
+	    return '<A HREF="mailto:Sylvain.Pion@sophia.inria.fr">'.
 		"Sylvain Pion</A>";
-	} elsif ($responsible eq 'Francois') {
+	} elsif ($responsible eq 'frebufat') {
 	    return 
-		'<A HREF="mailto:Francois.Rebufat\@sophia.inria.fr">'.
+		'<A HREF="mailto:Francois.Rebufat@sophia.inria.fr">'.
 		"Fran&ccedil;ois Rebufat</A>";
 	} elsif ($responsible eq 'geert') {
 	    return 
-		'<A HREF="mailto:geert\@cs.uu.nl">'.
+		'<A HREF="mailto:geert@cs.uu.nl">'.
 		"Geert-Jan Giezeman</A>";
 	} elsif ($responsible eq 'dima') {
 	    return 
-		'<A HREF="mailto:dima\@cs.uu.nl">'.
+		'<A HREF="mailto:dima@cs.uu.nl">'.
 		"Dima Pasechnik</A>";
 	} elsif ($responsible eq 'hoffmann') {
 	    return 
-		'<A HREF="mailto:hoffmann\@inf.ethz.ch">'.
+		'<A HREF="mailto:hoffmann@inf.ethz.ch">'.
 		"Michael Hoffmann</A>";
 	} elsif ($responsible eq 'stschirr') {
 	    return 
-		'<A HREF="mailto:stschirr\@mpi-sb.mpg.de">'.
+		'<A HREF="mailto:stschirr@mpi-sb.mpg.de">'.
 		"Stefan Schirra</A>";
 	} else {
 	    print STDERR "Unknown responsible person $responsible.\n";
