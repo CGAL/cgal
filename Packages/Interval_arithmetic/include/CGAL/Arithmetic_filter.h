@@ -237,35 +237,6 @@ operator>> (std::istream &is, Filtered_exact<CT,ET,Cache_t>& d)
 CGAL_END_NAMESPACE
 
 //  Now conditionnaly include the overloaded predicates.
-
-#if defined( CGAL_PREDICATES_ON_FTC2_H ) && \
-   !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H )
-#include <CGAL/Arithmetic_filter/predicates_on_ftC2.h>
-#endif
-
-#if defined( CGAL_PREDICATES_ON_FTC3_H ) && \
-   !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H )
-#include <CGAL/Arithmetic_filter/predicates_on_ftC3.h>
-#endif
-
-#if defined( CGAL_PREDICATES_ON_RTH2_H ) && \
-   !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_RTH2_H )
-#include <CGAL/Arithmetic_filter/predicates_on_rtH2.h>
-#endif
-
-#if defined( CGAL_PREDICATES_ON_RTH3_H ) && \
-   !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_RTH3_H )
-#include <CGAL/Arithmetic_filter/predicates_on_rtH3.h>
-#endif
-
-#if defined( CGAL_REGULAR_TRIANGULATION_FTC2_H ) && \
-   !defined( CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_FTC2_H )
-#include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_ftC2.h>
-#endif
-
-#if defined( CGAL_REGULAR_TRIANGULATION_RTH2_H ) && \
-   !defined( CGAL_ARITHMETIC_FILTER_REGULAR_TRIANGULATION_RTH2_H )
-#include <CGAL/Arithmetic_filter/predicates/Regular_triangulation_rtH2.h>
-#endif
+#include <CGAL/Arithmetic_filter/dispatch.h>
 
 #endif // CGAL_ARITHMETIC_FILTER_H
