@@ -51,7 +51,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class T>
-class Td_dag_base : public Leda_like_handle
+class Td_dag_base : public Handle
 {
 public: //iddo (for CC-7.2) maybe protected?
   typedef T* pointer;
@@ -61,9 +61,9 @@ protected:
   void init() {PTR=0;}
 public:
   Td_dag_base() {init();}
-  Td_dag_base(const Td_dag_base<T>& x) : Leda_like_handle(x) {}
+  Td_dag_base(const Td_dag_base<T>& x) : Handle(x) {}
   Td_dag_base& operator=(const Td_dag_base<T>& x) 
-  {Leda_like_handle::operator=(x);return *this;}
+  {Handle::operator=(x);return *this;}
   bool operator!() const {return PTR==0;}
 };
 
@@ -78,7 +78,7 @@ public:
   typedef Td_dag<T> Self;
   typedef std::list<pointer> list_pointer;
 protected:	
-  class node : public Leda_like_rep
+  class node : public Rep
   {
 #ifndef __BORLANDC__
     friend class Td_dag<T>;
@@ -162,7 +162,7 @@ public:
      Shallow copy	*/
   Self& operator=(const Self& b)
   {
-    Leda_like_handle::operator=(b);
+    Handle::operator=(b);
     return *this;
   }
   /*
