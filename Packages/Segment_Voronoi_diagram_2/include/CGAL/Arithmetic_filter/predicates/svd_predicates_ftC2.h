@@ -52,15 +52,16 @@ static unsigned int num_failures_do_intersect = 0;
 template < class CT, class ET, bool Protected, class Cache, class Method_tag >
 inline
 Comparison_result
-svd_compare_distance_ftC2(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qx,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qy,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& sx,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& sy,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& tx,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& ty,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& px,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& py,
-			  Method_tag method_tag)
+svd_compare_distance_ftC2
+(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qx,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qy,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& sx,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& sy,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& tx,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& ty,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& px,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& py,
+ Method_tag method_tag)
 {
   //  do_not_compile();
 
@@ -109,17 +110,18 @@ svd_compare_distance_ftC2(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& q
 template < class CT, class ET, bool Protected, class Cache, class Method_tag >
 inline
 Comparison_result
-svd_compare_distance_ftC2(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qx,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qy,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s1x,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s1y,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t1x,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t1y,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s2x,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s2y,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t2x,
-			  const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t2y,
-			  Method_tag method_tag)
+svd_compare_distance_ftC2
+(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qx,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& qy,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s1x,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s1y,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t1x,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t1y,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s2x,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& s2y,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t2x,
+ const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& t2y,
+ Method_tag method_tag)
 {
   //  do_not_compile();
 
