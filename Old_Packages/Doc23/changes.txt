@@ -1,3 +1,6 @@
+2.38    (5 Dec 2001)
+- added compare_slopes and Kernel::CompareSlope_2
+
 2.37    (29 Oct 2001)
 - fixed return type for xmin, xmax, ect. functions in Iso_rectangle_2
 
