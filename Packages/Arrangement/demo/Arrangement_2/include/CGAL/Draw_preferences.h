@@ -22,7 +22,7 @@ private:
 public:
   My_Arr_drawer( Window_stream& W ): Pm_drawer<Arr_2,Window_stream>( W ){}
   
-  void draw_face(Face_handle f) {
+  void draw_face(typename Base::Face_handle f) {
     if (f->does_outer_ccb_exist()) {
       Ccb_halfedge_circulator cc=f->outer_ccb();
       do {
@@ -39,14 +39,14 @@ public:
     }      
   }
 
-  void draw_vertices(Vertex_const_iterator Vertices_begin, 
-		     Vertex_const_iterator Vertices_end) {
+  void draw_vertices(typename Base::Vertex_const_iterator Vertices_begin, 
+		     typename Base::Vertex_const_iterator Vertices_end) {
     W << GREEN;
     Base::draw_vertices(Vertices_begin, Vertices_end);
   }
   
-  void draw_halfedges(Halfedge_const_iterator Halfedges_begin, 
-		      Halfedge_const_iterator Halfedges_end) {
+  void draw_halfedges(typename Base::Halfedge_const_iterator Halfedges_begin, 
+		      typename Base::Halfedge_const_iterator Halfedges_end) {
     W << BLUE;
     Base base(window());
     base.draw_halfedges(Halfedges_begin, Halfedges_end);
