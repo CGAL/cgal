@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.75 on 10 March 2001
+- Various test-suite fixes.
+
 Version 4.74 on 9 March 2001
 - Remove MP_Integer.
 - VC++ fixes.
