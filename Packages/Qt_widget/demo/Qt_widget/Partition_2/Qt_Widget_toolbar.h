@@ -30,9 +30,6 @@
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_Widget.h>
-#include <CGAL/IO/Qt_Widget_Zoom.h>
-#include <CGAL/IO/Qt_Widget_Zoomrect.h>
-#include <CGAL/IO/Qt_Widget_Handtool.h>
 #include <CGAL/IO/Qt_Widget_Get_simple_polygon.h>
 
 
@@ -65,12 +62,7 @@ signals:
   void was_repainted();
 
 private slots:
-  void toolregion();
-  void zoomin();
-  void zoomout();
-  void zoominrect();
   void notool();
-  void handtool();
   void get_s_polygon();
 	
 	
@@ -84,9 +76,6 @@ private:
   void					addToolButton(QToolButton *b);
   int					nr_of_buttons;
 	
-  CGAL::Qt_widget_zoom			zoombut;
-  CGAL::Qt_widget_zoomrect		zoomrectbut;
-  CGAL::Qt_widget_handtool<Rp>		handtoolbut;
   CGAL::Qt_widget_get_simple_polygon<Polygon> getsimplebut;
 };//end class
 

@@ -46,6 +46,7 @@ typedef CGAL::Random_points_in_square_2<Point_2>    Point_generator;
 
 
 #include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_Widget_Standard_toolbar.h>
 #include "Qt_Widget_toolbar.h"
 #include "Qt_Widget_toolbar_views.h"
 
@@ -98,10 +99,13 @@ public:
   help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
   //the new tools toolbar
-  //setUsesBigPixmaps(TRUE);
+  setUsesBigPixmaps(TRUE);
   newtoolbar = new CGAL::Tools_toolbar(&win, this);	
   //the new scenes toolbar
   vtoolbar = new CGAL::Views_toolbar(&win, this, &polygon);
+  //the standard toolbar
+  stoolbar = new CGAL::Standard_toolbar (&win, this);
+  this->addToolBar(stoolbar->toolbar(), Top, FALSE);
   this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
 
@@ -229,9 +233,10 @@ private slots:
 	
 
 private:
-  CGAL::Qt_widget win;	
-  CGAL::Tools_toolbar *newtoolbar;
-  CGAL::Views_toolbar *vtoolbar;
+  CGAL::Qt_widget	  win;	
+  CGAL::Tools_toolbar	  *newtoolbar;
+  CGAL::Views_toolbar	  *vtoolbar;
+  CGAL::Standard_toolbar  *stoolbar;
   int			old_state;	
 };
 

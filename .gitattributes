@@ -1411,6 +1411,7 @@ Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
 Packages/Qt_widget/demo/Qt_widget/Partition_2/demo.dsp -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/greene_approx.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/hand.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/handtool.xpm -text

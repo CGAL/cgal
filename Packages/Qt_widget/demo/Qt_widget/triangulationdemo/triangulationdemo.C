@@ -31,6 +31,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_Widget.h>
 #include "Qt_widget_toolbar.h"
 #include "Qt_widget_toolbar_views.h"
+#include <CGAL/IO/Qt_Widget_standard_toolbar.h>
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -120,10 +121,14 @@ public:
   newtoolbar = new CGAL::Tools_toolbar(&win, this, &tr1);	
   //the new scenes toolbar
   vtoolbar = new CGAL::Views_toolbar(&win, this, &tr1);
+  //the standard toolbar
+  stoolbar = new CGAL::Standard_toolbar (&win, this);
+  this->addToolBar(stoolbar->toolbar(), Top, FALSE);
   this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
-
   
+
+
 
   win << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
 
@@ -185,6 +190,7 @@ public slots:
     tr1.clear();
     win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
     win.unlock();
+    something_changed();
   }
 
   void redrawWin()
@@ -304,18 +310,17 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     in >> tr1;
-    win.redraw();
-    redrawWin();
+    something_changed();
   }
 
 	
 
 private:
   
-  CGAL::Qt_widget	    win;	
-  //CGAL::Qt_widget win;	
-  CGAL::Tools_toolbar *newtoolbar;
-  CGAL::Views_toolbar *vtoolbar;
+  CGAL::Qt_widget	  win;		
+  CGAL::Tools_toolbar	  *newtoolbar;
+  CGAL::Views_toolbar	  *vtoolbar;
+  CGAL::Standard_toolbar  *stoolbar;
   bool		    got_point;	
 	  //if a CGAL::Point is received should be true
   int		    old_state;

@@ -103,6 +103,10 @@ SOURCE=..\..\..\src\Qt_Widget_MovePoint.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\Qt_Widget_standard_toolbar.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\Qt_Widget_tool.C
 # End Source File
 # Begin Source File
@@ -121,10 +125,6 @@ SOURCE=.\triangulationdemo.C
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\..\include\CGAL\IO\icons.h
-# End Source File
 # Begin Source File
 
 SOURCE=..\..\..\include\CGAL\IO\Qt_Scene.h
@@ -201,10 +201,6 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Handtool.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Mouse_coordinates.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_MovePoint.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
@@ -224,19 +220,22 @@ InputPath=..\..\..\include\CGAL\IO\Qt_Widget_MovePoint.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Nearest_vertex.h
-# End Source File
-# Begin Source File
+SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_standard_toolbar.h
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Show_points.h
-# End Source File
-# Begin Source File
+!IF  "$(CFG)" == "demo - Win32 Release"
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Show_triangulation.h
-# End Source File
-# Begin Source File
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Show_voronoi.h
+# Begin Custom Build
+InputPath=..\..\..\include\CGAL\IO\Qt_Widget_standard_toolbar.h
+
+"../../../src/Qt_Widget_standard_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "../../../src/Qt_Widget_standard_toolbar.moc" "../../../Include/CGAL/IO/Qt_Widget_standard_toolbar.h"
+
+# End Custom Build
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 

@@ -46,7 +46,6 @@ namespace CGAL {
     for(CI it=scenes_to_display.begin(); it!=scenes_to_display.end();it++)
       if(it->second)
 				(it->first)->draw_scene(this);
-    emit(redrawed());
   }
 
   // add a scene in the list of displayable scenes

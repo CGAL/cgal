@@ -124,7 +124,6 @@ private:
     widget->setRasterOp(XorROP);
     widget->lock();
     *widget << CGAL::GREEN;
-    //widget->painter().drawRect(first_x, first_y, x2 - first_x, y2 - first_y);
     widget->unlock();
     widget->setRasterOp(old);
   };

@@ -25,13 +25,7 @@
 
 // icons
 
-#include <CGAL/IO/pixmaps/handtool.xpm>
-#include <CGAL/IO/pixmaps/zoom_in_rect.xpm>
-#include <CGAL/IO/pixmaps/movepoint.xpm>
-#include <CGAL/IO/pixmaps/no_tool.xpm>
-#include <CGAL/IO/pixmaps/zoom_out.xpm>
-#include <CGAL/IO/pixmaps/zoom_in.xpm>
-#include <CGAL/IO/pixmaps/zoom_reg.xpm>
+#include <CGAL/IO/pixmaps/arrow.xpm>
 #include <CGAL/IO/pixmaps/polygon.xpm>
 
 
@@ -52,37 +46,8 @@ namespace CGAL {
   maintoolbar = new QToolBar(mw, "Tools");
   mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif		  
-    but[0] = new QToolButton(QPixmap( (const char**)zoomin_reg_xpm ),
-			     "Zoom in a certain region", 
-			     0, 
-			     this, 
-			     SLOT(toolregion()), 
-			     maintoolbar, 
-			     "Zoom in a certain region");
-    but[1] = new QToolButton(QPixmap( (const char**)zoomin_xpm ),
-			     "Zoom in", 
-			     0, 
-			     this, 
-			     SLOT(zoomin()), 
-			     maintoolbar, 
-			     "Zoom in");
-    but[2] = new QToolButton(QPixmap( (const char**)zoomout_xpm ),
-			     "Zoom out", 
-			     0, 
-			     this, 
-			     SLOT(zoomout()), 
-			     maintoolbar, 
-			     "Zoom out");
 		
-    but[3] = new QToolButton(QPixmap( (const char**)zoomin_rect_xpm ),
-			     "View rectangle", 
-			     0, 
-			     this, 
-			     SLOT(zoominrect()), 
-			     maintoolbar, 
-			     "View rectangle");
-		
-    but[4] = new QToolButton(QPixmap( (const char**)notool_xpm ),
+    but[0] = new QToolButton(QPixmap( (const char**)arrow_xpm ),
 			     "Detach current tool", 
 			     0, 
 			     this, 
@@ -90,15 +55,7 @@ namespace CGAL {
 			     maintoolbar, 
 			     "Detach current tool");
 		
-    but[5] = new QToolButton(QPixmap( (const char**)handtool_xpm ),
-						"Hand tool", 
-						0, 
-						this, 
-						SLOT(handtool()), 
-						maintoolbar, 
-						"Hand tool");
-
-    but[7] = new QToolButton(QPixmap( (const char**)polygon_xpm ),
+    but[1] = new QToolButton(QPixmap( (const char**)polygon_xpm ),
 						"Get Simple Polygon", 
 						0, 
 						this, 
@@ -106,95 +63,33 @@ namespace CGAL {
 						maintoolbar, 
 						"Get Simple Polygon");
 
-		
-    but[0]->setToggleButton(TRUE);
-    but[3]->setToggleButton(TRUE);
-    but[5]->setToggleButton(TRUE);
-    but[7]->setToggleButton(TRUE);
-
-    nr_of_buttons = 8;
+    but[1]->setToggleButton(TRUE);
+    
+    nr_of_buttons = 2;
   };
 
 	
   //the definition of the slots
 	
-  
-  void Tools_toolbar::toolregion()
+
+  void Tools_toolbar::notool()
   {
-    if (but[0]->isOn())
-    {
-      if(is_active)
-	but[activebutton]->toggle();
-      *widget >> zoombut;
-      activebutton = 0;
-      is_active = TRUE;
-    }
-    else
-    {
+    if(is_active) {
+      but[activebutton]->toggle();
       widget->detach_current_tool();
       is_active = FALSE;
     }
   }
-
-  void Tools_toolbar::zoominrect()
-  {
-    if (but[3]->isOn())
-    {
-	if(is_active)
-	  but[activebutton]->toggle();
-	*widget >> zoomrectbut;
-	activebutton = 3;
-	is_active = TRUE;
-    }
-    else
-    {
-	widget->detach_current_tool();
-	is_active = FALSE;
-    }
-  }
-
-  void Tools_toolbar::zoomin()
-  {
-    widget->zoom_in(2);
-    widget->redraw();
-  }
-  void Tools_toolbar::zoomout()
-  {
-    widget->zoom_out(2);
-    widget->redraw();
-  }
-  void Tools_toolbar::notool()
-  {
-    if(is_active)
-      but[activebutton]->toggle();
-    widget->detach_current_tool();
-    is_active = FALSE;
-  }
   
-
-  void Tools_toolbar::handtool()
-  {
-    if (but[5]->isOn())
-    {
-      if(is_active)
-	but[activebutton]->toggle();
-      *widget >> handtoolbut;
-      activebutton = 5;
-      is_active = TRUE;
-    } else {
-	widget->detach_current_tool();
-	is_active = FALSE;
-    }
-  }
 
   void Tools_toolbar::get_s_polygon()
   {
-    if (but[7]->isOn())
+    if (but[1]->isOn())
     {
       if(is_active)
 	but[activebutton]->toggle();
       *widget >> getsimplebut;
-      activebutton = 7;
+      activebutton = 1;
       is_active = TRUE;
     } else {
       widget->detach_current_tool();
