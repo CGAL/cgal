@@ -32,24 +32,24 @@ struct Triangulation_utils_3
 {
   static const char tab_next_around_edge[4][4];
 
-  int ccw(const int i) const
+  static int ccw(int i)
     {
-      CGAL_triangulation_precondition( 3 > (unsigned) i );
+      CGAL_triangulation_precondition( i >= 0 && i < 3 );
       return (i==2) ? 0 : i+1;
     }
   
-  int cw(const int i) const
+  static int cw(int i)
     {
-      CGAL_triangulation_precondition( 3 > (unsigned) i );
+      CGAL_triangulation_precondition( i >= 0 && i < 3 );
       return (i==0) ? 2 : i-1;
     }
 
-  int next_around_edge(const int i, const int j) const
+  static int next_around_edge(const int i, const int j)
   {
     // index of the next cell when turning around the
     // oriented edge vertex(i) vertex(j) in 3d
-    CGAL_triangulation_precondition( ( 4 > (unsigned) i) &&
-		                     ( 4 > (unsigned) j) &&
+    CGAL_triangulation_precondition( ( i >= 0 && i < 4 ) &&
+		                     ( j >= 0 && j < 4 ) &&
 		                     ( i != j ) );
     return tab_next_around_edge[i][j];
   }
