@@ -95,6 +95,8 @@ class Triangulation_3
   friend class Triangulation_facet_circulator_3<GT,Tds>;
 
 public:
+  typedef Tds Triangulation_data_structure;
+  typedef GT  Geom_traits;
 
   typedef typename GT::Point_3 Point;
   typedef typename GT::Segment_3 Segment;
