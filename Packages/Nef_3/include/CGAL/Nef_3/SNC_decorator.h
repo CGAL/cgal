@@ -429,7 +429,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     void visit(SHalfedge_handle se) {}
     void visit(SHalfloop_handle sl) {}
     void set_volume(Volume_handle ci) { c = ci; }
-    bool is_linked(SFace_handle(h)) {return linked[h];}
+    bool is_linked(SFace_handle h) {return linked[h];}
   };
 
   void link_as_outer_shell( SFace_handle f, Volume_handle c ) const {
