@@ -1,3 +1,7 @@
+Version 1.55 (12 June 03)
+- Removed derivation from Triangulation_cw_ccw_2 again
+  and access cw by scoping it with Triangulation_utils_3::
+
 Version 1.154 (11 June 03)
 - Made derivation from Triangulation_cw_ccw_2 public
 
