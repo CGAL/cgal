@@ -153,6 +153,10 @@ public:
 };
 #endif
 
+
+// Unary operations: probably some factorization of code is welcome...
+// constant, abs, sqrt, square.
+
 // Dynamic double Constant.
 template <typename ET>
 class Lazy_exact_nt_dyn_cst : public Lazy_exact_nt_dyn_rep<ET>
@@ -160,9 +164,64 @@ class Lazy_exact_nt_dyn_cst : public Lazy_exact_nt_dyn_rep<ET>
   friend Lazy_exact_nt<ET>;
   const double d;
   // ET *et; // ?
-  Lazy_exact_nt_dyn_cst (const double a) : d(a) {};
+  Lazy_exact_nt_dyn_cst (const double a) : d(a) {}
   Interval_nt interval() const { return d; };
 };
+
+// Dynamic abs.
+template <typename ET>
+class Lazy_exact_nt_dyn_abs : public Lazy_exact_nt_dyn_rep<ET>
+{
+  friend Lazy_exact_nt<ET>;
+  mutable Interval_nt in;
+  const Lazy_exact_nt_dyn_rep<ET> *op;
+  // ET *et; // ?
+  Lazy_exact_nt_dyn_abs (const Lazy_exact_nt_dyn_rep<ET> *a) : op(a) {}
+  Interval_nt interval() const
+  {
+    if (!is_valid(in))
+      in = abs(op->interval());
+    return in;
+  }
+};
+
+// Dynamic sqrt.
+template <typename ET>
+class Lazy_exact_nt_dyn_sqrt : public Lazy_exact_nt_dyn_rep<ET>
+{
+  friend Lazy_exact_nt<ET>;
+  mutable Interval_nt in;
+  const Lazy_exact_nt_dyn_rep<ET> *op;
+  // ET *et; // ?
+  Lazy_exact_nt_dyn_sqrt (const Lazy_exact_nt_dyn_rep<ET> *a) : op(a) {}
+  Interval_nt interval() const
+  {
+    if (!is_valid(in))
+      in = sqrt(op->interval());
+    return in;
+  }
+};
+
+// Dynamic square.
+template <typename ET>
+class Lazy_exact_nt_dyn_square : public Lazy_exact_nt_dyn_rep<ET>
+{
+  friend Lazy_exact_nt<ET>;
+  mutable Interval_nt in;
+  const Lazy_exact_nt_dyn_rep<ET> *op;
+  // ET *et; // ?
+  Lazy_exact_nt_dyn_square (const Lazy_exact_nt_dyn_rep<ET> *a) : op(a) {}
+  Interval_nt interval() const
+  {
+    if (!is_valid(in))
+      in = square(op->interval());
+    return in;
+  }
+};
+
+
+// Binary operations: (probably some factorization of code is welcome...)
+// +, -, *, /, min, max.
 
 // Dynamic Addition.
 template <typename ET>
@@ -185,6 +244,102 @@ class Lazy_exact_nt_dyn_add : public Lazy_exact_nt_dyn_rep<ET>
   }
 };
 
+// Dynamic Subtraction.
+template <typename ET>
+class Lazy_exact_nt_dyn_sub : public Lazy_exact_nt_dyn_rep<ET>
+{
+  friend Lazy_exact_nt<ET>;
+  mutable Interval_nt in;
+  mutable ET *ex;
+  const Lazy_exact_nt_dyn_rep<ET> *op1, *op2;
+  Lazy_exact_nt_dyn_sub (const Lazy_exact_nt_dyn_rep<ET> *a,
+	                 const Lazy_exact_nt_dyn_rep<ET> *b)
+    : in(1,0), ex(NULL), op1(a), op2(b) {}
+  Interval_nt interval() const
+  {
+    if (!is_valid(in))
+      in = op1->interval() - op2->interval();
+    return in;
+  }
+};
+
+// Dynamic Multiplication.
+template <typename ET>
+class Lazy_exact_nt_dyn_mul : public Lazy_exact_nt_dyn_rep<ET>
+{
+  friend Lazy_exact_nt<ET>;
+  mutable Interval_nt in;
+  mutable ET *ex;
+  const Lazy_exact_nt_dyn_rep<ET> *op1, *op2;
+  Lazy_exact_nt_dyn_mul (const Lazy_exact_nt_dyn_rep<ET> *a,
+	                 const Lazy_exact_nt_dyn_rep<ET> *b)
+    : in(1,0), ex(NULL), op1(a), op2(b) {}
+  Interval_nt interval() const
+  {
+    if (!is_valid(in))
+      in = op1->interval() * op2->interval();
+    return in;
+  }
+};
+
+// Dynamic Division.
+template <typename ET>
+class Lazy_exact_nt_dyn_div : public Lazy_exact_nt_dyn_rep<ET>
+{
+  friend Lazy_exact_nt<ET>;
+  mutable Interval_nt in;
+  mutable ET *ex;
+  const Lazy_exact_nt_dyn_rep<ET> *op1, *op2;
+  Lazy_exact_nt_dyn_div (const Lazy_exact_nt_dyn_rep<ET> *a,
+	                 const Lazy_exact_nt_dyn_rep<ET> *b)
+    : in(1,0), ex(NULL), op1(a), op2(b) {}
+  Interval_nt interval() const
+  {
+    if (!is_valid(in))
+      in = op1->interval() / op2->interval();
+    return in;
+  }
+};
+
+// Dynamic min().
+template <typename ET>
+class Lazy_exact_nt_dyn_min : public Lazy_exact_nt_dyn_rep<ET>
+{
+  friend Lazy_exact_nt<ET>;
+  mutable Interval_nt in;
+  mutable ET *ex;
+  const Lazy_exact_nt_dyn_rep<ET> *op1, *op2;
+  Lazy_exact_nt_dyn_min (const Lazy_exact_nt_dyn_rep<ET> *a,
+	                 const Lazy_exact_nt_dyn_rep<ET> *b)
+    : in(1,0), ex(NULL), op1(a), op2(b) {}
+  Interval_nt interval() const
+  {
+    if (!is_valid(in))
+      in = min(op1->interval(), op2->interval());
+    return in;
+  }
+};
+
+// Dynamic max().
+template <typename ET>
+class Lazy_exact_nt_dyn_max : public Lazy_exact_nt_dyn_rep<ET>
+{
+  friend Lazy_exact_nt<ET>;
+  mutable Interval_nt in;
+  mutable ET *ex;
+  const Lazy_exact_nt_dyn_rep<ET> *op1, *op2;
+  Lazy_exact_nt_dyn_max (const Lazy_exact_nt_dyn_rep<ET> *a,
+	                 const Lazy_exact_nt_dyn_rep<ET> *b)
+    : in(1,0), ex(NULL), op1(a), op2(b) {}
+  Interval_nt interval() const
+  {
+    if (!is_valid(in))
+      in = max(op1->interval(), op2->interval());
+    return in;
+  }
+};
+
+// A few operations are probably still lacking.
 // static Lazy_exact_nt_dyn_cst<int> lazy_null(0.0);
 
 // Celui-là devrait contenir un ref_count et tout le bazard sur la pile ?
@@ -245,6 +400,21 @@ public:
     return new Lazy_exact_nt_dyn_add<ET>(rep, a.rep);
   }
 
+  Self operator- (const Self a) const
+  {
+    return new Lazy_exact_nt_dyn_sub<ET>(rep, a.rep);
+  }
+
+  Self operator* (const Self a) const
+  {
+    return new Lazy_exact_nt_dyn_mul<ET>(rep, a.rep);
+  }
+
+  Self operator/ (const Self a) const
+  {
+    return new Lazy_exact_nt_dyn_div<ET>(rep, a.rep);
+  }
+
   // Dtor:
   ~Lazy_exact_nt () { dec_count(); }
 
@@ -261,6 +431,47 @@ public:
 #endif
   }
 };
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET>
+sqrt(const Lazy_exact_nt<ET> a)
+{
+    return new Lazy_exact_nt_dyn_sqrt<ET>(a.rep);
+}
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET>
+square(const Lazy_exact_nt<ET> a)
+{
+    return new Lazy_exact_nt_dyn_square<ET>(a.rep);
+}
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET>
+abs(const Lazy_exact_nt<ET> a)
+{
+    return new Lazy_exact_nt_dyn_abs<ET>(a.rep);
+}
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET>
+min(const Lazy_exact_nt<ET> a, const Lazy_exact_nt<ET> b)
+{
+    return new Lazy_exact_nt_dyn_min<ET>(a.rep, b.rep);
+}
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET>
+max(const Lazy_exact_nt<ET> a, const Lazy_exact_nt<ET> b)
+{
+    return new Lazy_exact_nt_dyn_max<ET>(a.rep, b.rep);
+}
+
 
 CGAL_END_NAMESPACE
 
