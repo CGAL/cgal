@@ -1,5 +1,9 @@
 Changes done to the `Min_annulus_d' package
 
+Version 0.4 on 05-Sep-2000
+- data accessors moved to separate header files in package Optimisation_basic
+- changed leading `_' to trailing `_' in template parameters
+
 Version 0.3 on 28-Aug-2000
 - ``workarounds'' for M$-VC++
 
