@@ -37,6 +37,17 @@ template <class R> class Aff_transformation_repC3;
 template <class R> class Translation_repC3;
 template <class R> class Scaling_repC3;
 
+template <class R>
+Aff_transformationC3<R CGAL_CTAG>
+_general_transformation_composition (const Aff_transformation_rep_baseC3<R> &l,
+                                     const Aff_transformation_rep_baseC3<R> &r );
+
+template <class R>
+Aff_transformationC3<R CGAL_CTAG>
+operator*(const Aff_transformationC3<R CGAL_CTAG> &a,
+          const Aff_transformationC3<R CGAL_CTAG> &b );
+
+
 CGAL_END_NAMESPACE
 
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
@@ -56,17 +67,6 @@ CGAL_BEGIN_NAMESPACE
 template <class R>
 std::ostream &operator<<(std::ostream &os,
                          const Aff_transformationC3<R CGAL_CTAG> &t);
-
-template <class R>
-Aff_transformationC3<R CGAL_CTAG>
-_general_transformation_composition (const Aff_transformation_rep_baseC3<R> &l,
-                                     const Aff_transformation_rep_baseC3<R> &r );
-
-template <class R>
-Aff_transformationC3<R CGAL_CTAG>
-operator*(const Aff_transformationC3<R CGAL_CTAG> &a,
-          const Aff_transformationC3<R CGAL_CTAG> &b );
-
 
 template < class _R >
 class Aff_transformationC3
