@@ -28,13 +28,14 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_LDFLAGS) \
+
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-SOURCES = ../../../src/CGALQt/Qt_widget.o \
+#SOURCES = ../../../src/CGALQt/Qt_widget.o \
 	../../../src/CGALQt/Qt_widget_tool.o \
 	../../../src/CGALQt/Qt_widget_view.o \
 	../../../src/CGALQt/Qt_widget_standard_toolbar.o
@@ -55,7 +56,7 @@ convex_hull_2$(OBJ_EXT): convex_hull_2.C convex_hull_2.moc
 
 convex_hull_2$(EXE_EXT): convex_hull_2$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)convex_hull_2 convex_hull_2$(OBJ_EXT) \
-	$(SOURCES) Qt_widget_toolbar$(OBJ_EXT) $(LDFLAGS)
+	 Qt_widget_toolbar$(OBJ_EXT) $(LDFLAGS)
 
 clean: convex_hull_2.clean
 
