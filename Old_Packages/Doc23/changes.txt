@@ -1,4 +1,7 @@
 
+2.54    (8 Aug 2002)
+- replaced LEFTTURN, RIGHTTURN, etc. by LEFT_TURN, RIGHT_TURN, etc.
+
 2.53    (1 Aug 2002)
 - added CGAL:: to intersection example
 - removed inclusion of ComputeYatX reference page since it is not (currently) 
