@@ -30,6 +30,11 @@ int main(int, char*)
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/Regular_triangulation_2.h>
+#include <CGAL/Regular_triangulation_face_base_2.h>
+#include <CGAL/Alpha_shape_vertex_base_2.h> 
+#include <CGAL/Alpha_shape_face_base_2.h> 
+#include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
 
 //Qt_widget
 #include "Qt_widget_toolbar_layers.h"
@@ -61,17 +66,24 @@ int main(int, char*)
 
 
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rep;
-typedef CGAL::Point_2<Rep>  Point;
-typedef CGAL::Segment_2<Rep>  Segment;
-typedef CGAL::Line_2<Rep>  Line;
-typedef CGAL::Triangle_2<Rep>  Triangle;
+typedef double                      Coord_type;
+typedef CGAL::Cartesian<Coord_type> Rep;
+typedef CGAL::Point_2<Rep>          Point;
+typedef CGAL::Segment_2<Rep>        Segment;
+typedef CGAL::Line_2<Rep>           Line;
+typedef CGAL::Triangle_2<Rep>       Triangle;
 
-typedef CGAL::Triangulation_2<Rep> Triangulation;
-typedef std::list<Point>     CGALPointlist;
+typedef CGAL::Triangulation_2<Rep>  Triangulation;
+typedef std::list<Point>            CGALPointlist;
 
-
+typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<Rep> Gt_w;
+typedef CGAL::Alpha_shape_vertex_base_2<Gt_w>              Av_w;
+typedef CGAL::Regular_triangulation_face_base_2<Gt_w>      Rf_w;
+typedef CGAL::Alpha_shape_face_base_2<Gt_w,Rf_w>           Af_w;
+typedef CGAL::Triangulation_default_data_structure_2<Gt_w,Av_w,Af_w> 
+                                                           Tds_w;
+typedef CGAL::Regular_triangulation_2<Gt_w,Tds_w>          Rt_w;
+typedef CGAL::Alpha_shape_2<Rt_w>                          Alpha_shape_w;
 
 typedef CGAL::Alpha_shape_2<Delaunay>  Alpha_shape;
 typedef Alpha_shape::Face  Face;
