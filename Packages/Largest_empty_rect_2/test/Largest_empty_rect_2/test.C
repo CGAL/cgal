@@ -63,6 +63,7 @@ int main(int argc,char *argv[])
 
   Iso_rectangle_2 b(Point(x1, y1), Point(x2, y2));
   Largest_empty_rect empty_rectangle1(b);
+  assert(b == empty_rectangle1.get_largest_empty_iso_rectangle());
 
   // get points from an input file 
   int number_of_points;
@@ -73,6 +74,15 @@ int main(int argc,char *argv[])
     Point tmp2(x,y);
     empty_rectangle1.insert(tmp2);
     points_list.push_back(tmp2);
+  }
+
+  // print points inserted so far
+  std::cout << "test points\n";
+  for(Largest_empty_rect::const_iterator it = empty_rectangle1.begin();
+      it != empty_rectangle1.end();
+      ++it){
+    const Point& p = *it;
+    std::cout << "   " << p << endl;
   }
 
   // output
@@ -110,12 +120,14 @@ int main(int argc,char *argv[])
 
   // test list insertion
   Largest_empty_rect empty_rectangle4(Point(x1, y1), Point(x2, y2));
-  empty_rectangle4.insert(points_list.begin(), points_list.end());
+  int n = empty_rectangle4.insert(points_list.begin(), points_list.end());
 
   // output
+  std::cout << "test list insertion:\n";
+  std::cout << "  number of successfully inserted points is " << n << endl;
   ler = empty_rectangle4.get_largest_empty_iso_rectangle();
 
-  std::cout << "test list insertion (" << ler.min().x()
+  std::cout << "  LER is  (" << ler.min().x()
 	    << "," << ler.min().y() 
             << "),(" << ler.max().x() 
             << "," << ler.max().y() << ")\n";
@@ -149,7 +161,9 @@ int main(int argc,char *argv[])
 
   // test clear
   empty_rectangle1.clear();
-  empty_rectangle1.insert(p);
+  assert(empty_rectangle1.begin() == empty_rectangle1.end());
+  bool bo = empty_rectangle1.insert(p);
+  std::cout << "test successful insertion " << bo << endl;
 
   // output
   ler = empty_rectangle1.get_largest_empty_iso_rectangle();
@@ -158,6 +172,9 @@ int main(int argc,char *argv[])
 	    << "," << ler.min().y() 
             << "),(" << ler.max().x() 
             << "," << ler.max().y() << ")\n";
+
+  bo = empty_rectangle1.insert(p);
+  std::cout << "test unsuccessful insertion " << bo << endl;
 
   // test bbox
   Iso_rectangle_2 bb = empty_rectangle1.get_bounding_box();
