@@ -49,7 +49,7 @@ int CCMode = 0;
 #include <database.h>
 #include <html_config.h>
 
-/* Declarations from the cgal_extract_html.cc file */
+/* Declarations from the cc_extract_html.cc file */
 /* =============================================== */
 extern char* class_name;
 extern char* formatted_class_name;
@@ -191,6 +191,7 @@ extern bool mbox_within_math;
 %token             BEGINSUPERSCRIPT
 %token             FRACTION
 %token             SQRT
+%token <string>    SQRT_OPT
 
 /* handle LALR(1) restriction */
 /* -------------------------- */
@@ -287,9 +288,9 @@ stmt:             string              {   handleBuffer( * $1);
 		                      }
 		| INCLUDE  '{' comment_sequence '}'  {
 					  handleString( "<I>#include &lt;");
-					  if (cgal_lib_dir) {
+					  if (header_dir) {
 					      handleString( "<A HREF=\"");
-					      handleString( cgal_lib_dir);
+					      handleString( header_dir);
 					      handleText( * $3);
 					      handleString( "\">");
 					      handleText( * $3);
@@ -909,11 +910,11 @@ compound_comment:   '{' full_comment_sequence '}' {
 		                }
                   | INCLUDE '{' comment_sequence '}'  {
                                   $$ = $3;
-				  if (cgal_lib_dir) {
+				  if (header_dir) {
 				      char* s = text_block_to_string(* $3);
 				      $$->cons(  *new TextToken("\">"));
 				      $$->cons(  *new TextToken(s));
-				      $$->cons(  *new TextToken(cgal_lib_dir));
+				      $$->cons(  *new TextToken(header_dir));
 				      $$->cons(  *new TextToken("<A HREF=\""));
 				      $$->append( *new TextToken( "</A>"));
 				      delete[] s;
@@ -1229,6 +1230,14 @@ math_token:
         {
 	    $$ = $3;
 	    $$->prepend( "sqrt(", 5);
+	    $$->add( ")", 1);
+	}
+    | SQRT_OPT   '{'  math_sequence  '}'
+        {
+	    $$ = $3;
+	    $$->prepend( "</SUB>(", 7);
+	    $$->prepend( $1.text);
+	    $$->prepend( "root<SUB>", 9);
 	    $$->add( ")", 1);
 	}
     | CCSTYLE  '{' nested_token_sequence '}'  {

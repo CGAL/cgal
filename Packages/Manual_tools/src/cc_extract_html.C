@@ -76,7 +76,7 @@ Switch  macro_switch      = NO_SWITCH;
 Switch  noheader_switch   = NO_SWITCH;
 Switch  onlyheader_switch = NO_SWITCH;
 
-char*   cgal_lib_dir      = NULL;
+char*   header_dir      = NULL;
 char*   pre_main_filename = NULL;
 ostream* pre_stream       = NULL;
 
@@ -3549,11 +3549,27 @@ main( int argc, char **argv) {
 	        nParameters = ErrParameters;
 	    }
         endDetect();
+        detectSwitch( dummy_switch, "header");
+            i++;
+            if ( i < argc) {
+	        header_dir = argv[i];
+		if ( header_dir[ strlen( header_dir) - 1] != '/') {
+		    cerr << "error: option -header: a path must terminate "
+		            "with a /" << endl;
+		    nParameters = ErrParameters;
+		}
+	    } else {
+	        cerr << "error: option -header needs an additional parameter"
+		     << endl;
+	        nParameters = ErrParameters;
+	    }
+        endDetect();
+	// The following block remains for compatibility.
         detectSwitch( dummy_switch, "cgal_dir");
             i++;
             if ( i < argc) {
-	        cgal_lib_dir = argv[i];
-		if ( cgal_lib_dir[ strlen( cgal_lib_dir) - 1] != '/') {
+	        header_dir = argv[i];
+		if ( header_dir[ strlen( header_dir) - 1] != '/') {
 		    cerr << "error: option -cgal_dir: a path must terminate "
 		            "with a /" << endl;
 		    nParameters = ErrParameters;
@@ -3599,7 +3615,8 @@ main( int argc, char **argv) {
         nParameters = ErrParameters;
         break;
     }
- 
+    (void)(dummy_switch);  // simulate a use of 'dummy_switch'.
+
     if ((nParameters < MaxParameters - MaxOptionalParameters) ||
         (nParameters > MaxParameters) || (help_switch != NO_SWITCH)) {
         if (help_switch == NO_SWITCH)
@@ -3619,14 +3636,14 @@ main( int argc, char **argv) {
                                            "config files." << endl;
         cerr << "       -tmp      <dir/>    set the path where to put the "
                                            "output files." << endl;
-        cerr << "       -cgal_dir <dir/>    set the path to the CGAL "
+        cerr << "       -header   <dir/>    set the path to the C "
                                            "header files." << endl;
         cerr << "       -main     <file>    main filename for the part before"
                                            " any chapter" << endl;
         cerr << "       -warn               warn about unknown macros" << endl;
         cerr << "       -macro              trace macro definitions" << endl;
-        cerr << "       -noheader           no header for contents.html and "
-                "index" << endl;
+        cerr << "       -noheader           no HTML header for contents.html "
+                "and index" << endl;
         cerr << "       -onlyheader         convert config files instead of "
                 "TeX-files" << endl;
         cerr << "       -trace              set `yydebug' for bison to true"

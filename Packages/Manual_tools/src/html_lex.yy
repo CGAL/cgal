@@ -327,13 +327,13 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    skipspaces();
 		    return CHAPTER;
 }
-[\\]section[*]?{w}[\{]  {
+[\\]section[*]?{w}("["[^\]]*"]")?[\{]  {
 		    return SECTION;
 }
-[\\]subsection[*]?{w}[\{]  {
+[\\]subsection[*]?{w}("["[^\]]*"]")?[\{]  {
 		    return SUBSECTION;
 }
-[\\]subsubsection[*]?{w}[\{]  {
+[\\]subsubsection[*]?{w}("["[^\]]*"]")?[\{]  {
 		    return SUBSUBSECTION;
 }
 [\\]label{w}[\{][^\}]+[\}]  {
@@ -535,6 +535,11 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 [\\]"cprogfile{"[^\}]*"}"    {
 	            yylval.string.text = yytext + 11;
 		    yylval.string.len  = yyleng - 12;
+	  	    return CPROGFILE;
+                 }
+[\\]"ccIncludeVerbatim{"[^\}]*"}"    {
+	            yylval.string.text = yytext + 19;
+		    yylval.string.len  = yyleng - 20;
 	  	    return CPROGFILE;
                  }
 
@@ -949,7 +954,6 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    return STRING;
                  }
 [\\]begin[\{]ccAdvanced[\}]   {
-		    skipspaces();
 	            yylval.string.text = "<BR><IMG BORDER=0 SRC=\""
                         "cc_advanced_begin.gif\" ALT=\"begin of advanced "
                         "section\"><BR>";
@@ -957,7 +961,6 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    return STRING;
                  }
 [\\]end[\{]ccAdvanced[\}]   {
-		    skipspaces();
 	            yylval.string.text = "<BR><IMG BORDER=0 SRC=\""
                         "cc_advanced_end.gif\" ALT=\"end of advanced "
 			"section\"><BR>";
@@ -1240,6 +1243,12 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 <MMODE>[\\]frac/{noletter}   {
 		    return FRACTION;
                  }
+<MMODE>[\\]sqrt[\[][^\]]*[\]]   {
+                    yytext[yyleng-1] = '\0';
+	            yylval.string.text = yytext+6;
+		    yylval.string.len  = yyleng-7;
+		    return SQRT_OPT;
+                 }
 <MMODE>[\\]sqrt/{noletter}   {
 		    return SQRT;
                  }
@@ -1388,6 +1397,7 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 [\\]((maketitle)|(tableofcontents))/{noletter}            {}
 [\\]((begin)|(end))[\{]document[\}]                       {}
 <INITIAL,MMODE,NestingMode>[\\]((tiny)|(scriptsize)|(footnotesize)|(small)|(normalsize)|(large)|(Large))/{noletter}                      {}
+[\\]noindent/{noletter}                                   {}
 
 
 [\\]newsavebox{w}[\{]          |
@@ -1662,7 +1672,10 @@ void skipspaces( void) {
 	    line_number++;
         c = yyinput();
     }
-    unput( c);
+    if (c)
+        unput( c);
+    else
+        unput( '\n');  /* enforce a linefeed at EOF */
 }
 
 void skipoptionalparam( void) {
