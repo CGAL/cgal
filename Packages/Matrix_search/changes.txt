@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : K::FT -> K::R::FT. (<- Sylvain)
 ALL : Fixed sunpro problems.
 ALL : Some fixes for sunpro 5.3.
 SRC : Fixed rectangle construction bug.
