@@ -117,7 +117,8 @@ operator<<(std::ostream &os, const Bbox_3& b)
   switch(os.iword(IO::mode))
   {
     case IO::ASCII :
-        return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin();
+        return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin() 
+		  << ' ' << b.xmax() << ' ' << b.ymax() << ' ' << b.zmax();
     case IO::BINARY :
         write(os, b.xmin());
         write(os, b.ymin());
@@ -148,7 +149,7 @@ operator>>(std::istream &is, Bbox_3& b)
   switch(is.iword(IO::mode))
   {
     case IO::ASCII :
-        is >> xmin >> ymin >> xmax >> ymax;
+      is >> xmin >> ymin >> zmin >> xmax >> ymax >> zmax;
         break;
     case IO::BINARY :
         read(is, xmin);
