@@ -3,9 +3,13 @@
 // This software and related documentation is part of the
 // Computational Geometry Algorithms Library (CGAL).
 //
-// release       : 
 // file          : include/CGAL/config/msvc7/CGAL/compiler_config.h
 // package       : wininst
+// author(s)     : install_cgal script
+// release       : 
+// release_date  :
+//
+// coordinator   : Radu Ursu <rursu@sophia.inria.fr>
 //
 // Compiler specific configuration file for CGAL 2.4-I-83
 // System: i686_CYGWINNT-5.0-1.3.2_CL.EXE-1300
