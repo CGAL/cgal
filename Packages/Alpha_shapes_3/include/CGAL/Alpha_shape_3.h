@@ -1800,28 +1800,11 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
   // takes O(#alpha_shape) time
 {
   Coord_type alpha_solid = 0;
-
-  Vertex_iterator vertex_it, done = vertices_end();
-  
-  // at the moment all finite + infinite vertices
-  for( vertex_it = vertices_begin(); vertex_it != done; ++vertex_it)
-    {
-      if (!is_infinite(vertex_it))
-	{
-	  // consider only finite vertices
-	  Coord_type alpha_min_v = (--_interval_cell_map.end())->first;
-
-	  std::list<Cell_handle> cells;
-	  incident_cells(vertex_it, std::back_inserter(cells));
-	  for(typename std::list<Cell_handle>::iterator cell_it = cells.begin(); cell_it != cells.end(); ++cell_it)
-	    {
-	      if (! is_infinite(*cell_it))
-	        alpha_min_v = min(find_interval(*cell_it), alpha_min_v);
-	    }
-	    
-	  alpha_solid = max(alpha_min_v, alpha_solid);
-	}
-    }
+  Finite_vertices_iterator vit, done;
+  for( vit = finite_vertices_begin(); 
+       vit != finite_vertices_end(); ++vit) {
+    alpha_solid = max(alpha_solid, find_interval(vit).first);
+  }
   return alpha_solid;
 }
 
