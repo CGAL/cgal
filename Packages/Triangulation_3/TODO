@@ -38,11 +38,6 @@ Delaunay
 - optimiser remove
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
-- insertion dans Delaunay : quand on est a l'interieur de l'enveloppe convexe,
-  mais une cellule en conflit est en contact avec le bord, on va tester sa
-  voisine infinie si elle est en conflit avec un test d'orientation, mais il
-  n'est pas necessaire.  Essayer de le zapper (voir avec un bench/profile si
-  la complexite en vaut le coup).
 - dual -> voronoi
 
 Gestion memoire
