@@ -1,6 +1,11 @@
 //=====================================================================
 //	Revision History for package STL_Extension
 //=====================================================================
+//---------------------------------------------------------------------
+//	revision 281
+//---------------------------------------------------------------------
+SRC : Modified Compact_container::type to avoid a MipsPro 7.4 ICE [af]
+
 
 - Compact_container : fixes for Intel C++, and remove iterator::operator<.
 
