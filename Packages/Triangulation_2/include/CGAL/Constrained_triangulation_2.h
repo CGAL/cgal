@@ -113,12 +113,8 @@ public:
   void insert(Point a, Point b);
   void insert(Vertex_handle va, 
 	      Vertex_handle  vb);
-  void insert(Vertex_handle va, 
-	      Vertex_handle  vb,
-	      List_vertices& new_vertices);
   void insert(Vertex_handle  va, 
 	      Vertex_handle  vb,
-	      List_vertices& new_vertices,
 	      List_edges& new_edges);
 
   Vertex_handle push_back(const Point& a);
@@ -251,14 +247,13 @@ insert(Point a, Point b)
 // the triangles crossed by ab and creates new ones
 // if a vertex vc of t lies on segment ab, 
 // constraint ab is replaced by the
-// two constraints ac and cb, and vc is included in the list new_vertices
+// two constraints ac and cb, 
 // apart from the insertion of a and b, the algorithm runs in time 
 // proportionnal to the number of removed triangles
 {
   Vertex_handle va= insert(a);
   Vertex_handle vb= insert(b);
-  List_vertices new_vertices;
-  insert(va, vb, new_vertices);
+  insert(va,vb);
 }
 
 template < class Gt, class Tds >
@@ -266,18 +261,8 @@ inline void
 Constrained_triangulation_2<Gt,Tds>::
 insert(Vertex_handle  va, Vertex_handle vb)
 {
-  List_vertices& new_vertices;
-  insert(va, vb, new_vertices);
-}
-
-
-template < class Gt, class Tds >
-inline void
-Constrained_triangulation_2<Gt,Tds>::
-insert(Vertex_handle  va, Vertex_handle vb, List_vertices& new_vertices)
-{
   List_edges new_edges;
-  insert(va, vb, new_vertices, new_edges);
+  insert(va, vb, new_edges);
 }
 
 template < class Gt, class Tds >
@@ -285,15 +270,14 @@ inline void
 Constrained_triangulation_2<Gt,Tds>::
 insert(Vertex_handle  va, 
        Vertex_handle vb, 
-       List_vertices& new_vertices,
        List_edges&   new_edges)
   // the new_edges created by the insertion of (va,vb)
   // are listed in new_edges
+  // to help in Constrained_Delaunay_triangulation_2
 {
   Vertex_handle vaa = va;
   while (vaa != vb) {
     Vertex_handle vbb = insert_part(va,vb,vaa,new_edges);
-    new_vertices.push_back(vbb);
     vaa=vbb;
   }    
   return;

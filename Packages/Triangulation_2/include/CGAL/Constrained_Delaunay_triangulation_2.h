@@ -115,9 +115,6 @@ public:
 
   void insert(const Point & a, const Point & b);
   void insert(Vertex_handle va, Vertex_handle vb);
-  void insert(Vertex_handle va, 
-	      Vertex_handle vb,
-	      List_vertices & new_vertices);
   Vertex_handle push_back(const Point& a);
   void          push_back(const Constraint& c);
 
@@ -422,8 +419,7 @@ insert(const Point & a, const Point & b)
 {
   Vertex_handle va= insert(a);
   Vertex_handle vb= insert(b);
-  List_vertices new_vertices;
-  insert(va, vb, new_vertices);
+  insert(va,vb);
 }
 
 template < class Gt, class Tds >
@@ -431,19 +427,9 @@ inline void
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 insert(Vertex_handle  va, Vertex_handle vb)
 {
-  List_vertices new_vertices;
-  insert(va, vb, new_vertices);
-}
-
-template < class Gt, class Tds >
-inline void
-Constrained_Delaunay_triangulation_2<Gt,Tds>::
-insert(Vertex_handle  va, Vertex_handle vb, List_vertices& new_vertices)
-{
   List_edges new_edges;
-  Ctr::insert(va,vb,new_vertices,new_edges);
+  Ctr::insert(va,vb,new_edges);
   propagating_flip(new_edges);
-  flip_around(new_vertices);
 }
 
 
