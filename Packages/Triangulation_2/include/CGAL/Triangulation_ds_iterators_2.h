@@ -144,7 +144,7 @@ Triangulation_ds_edge_iterator_2(const Tds * tds)
 
 template<class Tds>
 Triangulation_ds_edge_iterator_2<Tds> ::
-Triangulation_ds_edge_iterator_2(const Tds * tds, int i)
+Triangulation_ds_edge_iterator_2(const Tds * tds, int )
   : _tds(tds) 
 {
   pos = tds->face_container().end();
