@@ -68,7 +68,7 @@ two predefined traits classes to compute a maximum area (see section
   \ccHeading{Note}
   
   On compilers not supporting member function templates, the parameter
-  \ccc{RandomAccessIC} is fixed to \ccc{vector<Point_2>::iterator}
+  \ccc{RandomAccessIC} is fixed to \ccc{std::vector<Point_2>::iterator}
   where \ccc{Point_2} is the value type of \ccc{RandomAccessIC}.
   
   \ccImplementation The implementation uses monotone matrix
@@ -136,8 +136,9 @@ two predefined traits classes to compute a maximum area (see section
   \ccHeading{Note}
   
   On compilers not supporting member function templates, the parameter
-  \ccc{RandomAccessIC} is fixed to \ccc{vector<Point_2>::iterator}
-  where \ccc{Point_2} is the value type of \ccc{RandomAccessIC}.
+  \ccc{RandomAccessIC} is fixed to
+  \ccc{std::vector<Point_2>::iterator} where \ccc{Point_2} is the
+  value type of \ccc{RandomAccessIC}.
   
   \ccImplementation The implementation uses monotone matrix
   search\cite{akmsw-gamsa-87} and has a worst case running time of $O(k
@@ -272,9 +273,9 @@ two predefined traits classes to compute a maximum area (see section
       checking. Therefore it needs not to be specified, in case that
       precondition checking is disabled.
     \item On compilers not supporting member function templates,
-      \ccc{RandomAccessIC} is fixed to \ccc{vector<Point_2>::iterator}
-      and \ccc{OutputIterator} is fixed to
-      \ccc{vector<int>::reverse_iterator}.
+      \ccc{RandomAccessIC} is fixed to
+      \ccc{std::vector<Point_2>::iterator} and \ccc{OutputIterator} is
+      fixed to \ccc{std::vector<int>::reverse_iterator}.
       
     \end{itemize}
     
