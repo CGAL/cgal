@@ -76,7 +76,7 @@ private:
   int number_of_trees;
   kd_triple_list kd_trees_list;
   std::list<std::pair<Point_2,SAVED_OBJECT > > input_points_list;
-  std::map<const int,typename Rep::FT> angle_to_sines_appr;
+  std::map<int,typename Rep::FT> angle_to_sines_appr; // was const int
 
   void rotate(Point_2& p,NT angle)
   {
