@@ -1,12 +1,13 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Box_d.tex
+% | Reference manual page: Box_with_handle_d.tex
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}[Box_intersection_d::]{Box_d<NT,int N,IdPolicy>}
+\begin{ccRefClass}[Box_intersection_d::]{Box_with_handle_d<NT, int N, Handle, IdPolicy>}
 \ccDefinition
 
-\ccRefName\ is a generic iso-oriented bounding box. It provides an
+\ccRefName\ is a generic iso-oriented bounding box that stores a
+handle to some other geometry. It provides an
 interval with lower and upper endpoints represented with the number
 type \ccc{NT} for each dimension of the total of \ccc{N} dimensions.
 This class is provided to work smoothly with the algorithms for
@@ -21,6 +22,8 @@ parameters have to comply with the following requirements:
     of the \ccc{Assignable} and the \ccc{LessThanComparable} concept.
   \item
     \ccc{int N}: the dimension of the box.
+  \item
+    \ccc{Handle} concept, e.g., a pointer, an iterator, or a circulators.
   \item
     \ccc{IdPolicy}: specifies how the \ccc{id}-number will be
     provided. Can be one of the following types, where
@@ -48,10 +51,22 @@ parameters have to comply with the following requirements:
         boxes, and the \ccc{CGAL::box_self_intersection} algorithm
         creates copies of the boxes that would not have identical
         \ccc{id}-numbers.  
+      \item
+        \ccc{ID_FROM_HANDLE}: casts the address of the value of the
+        handle into a \ccc{std::ptrdiff_t} to create the
+        \ccc{id}-number. Works fine in many conceivable settings, e.g.,
+        it works fine with boxes copied by value or by pointer, and
+        the self intersection test. It would not work fine if there
+        is no one-to-one mapping between boxes and the geometry that
+        is referred to with the handles, i.e., this \ccc{id}-number
+        scheme might fail if there are several boxes referring to the
+        same geometry. Note that this option was not
+        available for the \ccc{CGAL::Box_intersection_d::Box_d} type
+        that does not store a handle.
     \end{itemize}
 \end{itemize}
 
-\ccInclude{CGAL/Box_intersection_d/Box_d.h}\\
+\ccInclude{CGAL/Box_intersection_d/Box_with_handle_d.h}\\
 and also automatically with\\
 \ccInclude{CGAL/box_intersection_d.h}
 
@@ -77,20 +92,23 @@ and also automatically with\\
 \ccCreationVariable{box}
 \ccThree{std::size_t}{MMMMMMbox.min_coord( int dim)}{}\ccThreeToTwo
 
-\ccConstructor{Box_d();}{Default constructor. No particular initialization.}
+\ccConstructor{Box_with_handle_d();}{Default constructor. No particular initialization.}
 
-\ccConstructor{Box_d(bool complete);}{initializes to the complete or 
-  the empty space. If empty, all interval starting(end) points will be
-  set to positive(negative) infinity.} 
+\ccConstructor{Box_with_handle_d(bool complete, Handle h);}{initializes to the
+  complete or the empty space. If empty, all interval starting(end)
+  points will be set to positive(negative) infinity, sets handle to $h$.} 
 
-\ccConstructor{Box_d(NT lo[N], NT hi[N]);}{initializes the box
-  intervals to [\ccc{lo[i]}, \ccc{hi[i]} for $0 \leq i < $\ccc{dimension()}.}
+\ccConstructor{Box_with_handle_d(NT lo[N], NT hi[N], Handle h);}{initializes 
+  the box intervals to [\ccc{lo[i]}, \ccc{hi[i]} for $0 \leq i <
+  $\ccc{dimension()}, sets the handle to $h$.}
 
-\ccConstructor{Box_d( const Bbox_2& bbox);}{constructs from bbox,
-  exists iff $N=2$ and \ccc{NT}$ \equiv $\ccc{double}.}
+\ccConstructor{Box_with_handle_d( const Bbox_2& bbox, Handle h);}{constructs
+ from bbox and sets the handle to $h$, exists iff $N=2$ and \ccc{NT}$
+ \equiv $\ccc{double}.} 
 \ccGlue
-\ccConstructor{Box_d( const Bbox_3& bbox);}{constructs from bbox,
-  exists iff $N=3$ and \ccc{NT}$ \equiv $\ccc{double}.} 
+\ccConstructor{Box_with_handle_d( const Bbox_3& bbox, Handle h);}{constructs
+ from bbox and sets the handle to $h$, exists iff $N=3$ and \ccc{NT}$
+ \equiv $\ccc{double}.}  
 
 
 \ccModifiers
@@ -103,7 +121,9 @@ and also automatically with\\
 
 \ccAccessFunctions
 
-\ccFunction{const int Box_d::dimension();}{%
+\ccMethod{Handle handle() const;}{returns the handle stored in \ccc{box}.}
+
+\ccFunction{const int Box_with_handle_d::dimension();}{%
   returns the number of dimensions.}
 
 \ccMethod{std::size_t id();} {returns a unique box id, see the
@@ -130,8 +150,6 @@ and also automatically with\\
 \ccRefIdfierPage{CGAL::box_intersection_d}\\
 \ccRefIdfierPage{CGAL::box_self_intersection_d}\\
 \ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}
-
-\ccRefIdfierPage{CGAL::Box_intersection_d::Box_with_handle_d<NT, int N, Handle, IdPolicy>}
 
 \ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<Box>}\\
 \ccRefConceptPage{BoxIntersectionTraits_d}

@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: BoxTraits_d.tex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{BoxIntersectionTraits_d}
+\ccThree{const int}{BoxIntersectiommmmnTraits_d::dimension();}{}
+\ccTwo{BoxIntersectionTraits_d::Id_type;}{}
+\ccCreationVariable{traits}
+
+\ccDefinition
+
+The \ccRefName\ concept is used for the intersection algorithms for
+sequences of iso-oriented boxes.  This concept defines the access
+functions to the dimension, the \ccc{id}-number, and the boundaries of
+the boxes manipulated in these algorithms.
+
+
+\ccRefines
+
+\ccc{Assignable}.
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<Box>}
+
+\ccTypes
+
+
+\ccNestedType{Box}{box type. Since we support in our algorithms
+  passing the boxes by value as well as passing them as pointers, we
+  have as box type either \ccc{const B&}, \ccc{B*}, or \ccc{const B*}
+  respectively, if \ccc{B} is the actually class type storing the box.
+  The box objects are passed in parameter lists of functions and
+  predicates using exactly this type.} 
+
+\ccNestedType{NT}{number type to represent the box
+  boundaries. Supported are the builtin types \ccc{int}, \ccc{unsigned
+  int}, \ccc{float}, and \ccc{double}.} 
+
+\ccNestedType{Id_type}{type for the \ccc{id}-number,
+  model of the \ccc{LessThanComparable} concept.}
+
+\ccAccessFunctions
+
+\ccFunction{const int BoxIntersectionTraits_d::dimension();}{%
+  returns the number of dimensions.}
+
+\ccFunction{Id_type BoxIntersectionTraits_d::id(Box box);}{%
+  returns the unique \ccc{id}-number for the \ccc{box}.}
+
+\ccThree{const int}{BoxIntersec}{}
+
+\ccFunction{NT  BoxIntersectionTraits_d::min_coord( Box box, int dim);}{%
+  returns the lower boundary value of the \ccc{box} in dimension
+  \ccc{dim}, $0 \leq $\ccc{dim}$ < $\ccc{dimension()}.}
+
+\ccFunction{NT  BoxIntersectionTraits_d::max_coord( Box box, int dim);}{%
+  returns the upper boundary value of the \ccc{box} in dimension
+  \ccc{dim}, $0 \leq $\ccc{dim}$ < $\ccc{dimension()}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::box_intersection_d}\\
+\ccRefIdfierPage{CGAL::box_self_intersection_d}\\
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

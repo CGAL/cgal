@@ -6,64 +6,54 @@
 % | 10.1.2004  Andreas Meyer
 % +------------------------------------------------------------------------+
 
-\clearpage
-\chapter{Bounding Box Intersection}
-
+\chapter{Intersecting Sequences of Iso-oriented Boxes}
 
 % +------------------------------------------------------------------------+
 \section*{Summary}
 
+We provide an efficient algorithm~\cite{cgal:ze-fsbi-02} for finding all
+intersecting pairs for large numbers of iso-oriented boxes, i.e.,
+typically these will be bounding boxes of more complicated geometries.
+For comparison and as a base case for other methods, we also offer the
+simple all-pairs test as a generic function.
 
 \subsection*{Concepts}
 
-\ccRefConceptPage{Box_d}\\
-\ccRefConceptPage{BoxTraits_d}\\
-\ccRefConceptPage{BoxPredicateTraits_d}
+\ccRefConceptPage{BoxIntersectionBox_d}\\
+\ccRefConceptPage{BoxIntersectionTraits_d}
 
 \subsection*{Classes}
 
-\ccRefIdfierPage{CGAL::Box_d<NT,unsigned int N>}\\
-\ccRefIdfierPage{CGAL::Box_traits_d<Box>}\\
-\ccRefIdfierPage{CGAL::Box_predicate_traits_d<BoxTraits_d, bool closed>}\\
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_d<NT,int N,IdPolicy>}\\
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_with_handle_d<NT, int N, Handle, IdPolicy>}\\
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<Box>}
 
 \subsection*{Functions}
 
-\def\ccLongParamLayout{\ccTrue}
+\ccRefIdfierPage{CGAL::box_intersection_d} \\
+\ccRefIdfierPage{CGAL::box_self_intersection_d}
 
-\ccFunction{
-template< class RandomAccessIter, class Callback >
-void box_intersection_d(
-  RandomAccessIter p_begin, RandomAccessIter p_end,
-  RandomAccessIter i_begin, RandomAccessIter i_end,
-  Callback& callback,
-  unsigned int cutoff = 10,
-  Setting  setting  = BIPARTITE,
-  Topology topology = CLOSED );}
-  {Invokation of box intersection with default box traits. The \ccc{value_type} of \ccc{RandomAccessIter} can be a class type, or a pointer to a class type. For both cases, box traits exists and will be chosen automatically.}
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}
 
-\ccFunction{
-template< class RandomAccessIter, class Callback >
-void box_intersection_d(
-  RandomAccessIter p_begin, RandomAccessIter p_end,
-  RandomAccessIter i_begin, RandomAccessIter i_end,
-  Callback& callback,
-  BoxTraits traits,
-  unsigned int cutoff = 10,
-  Setting  setting  = BIPARTITE,
-  Topology topology = CLOSED );}
-  {Invocation with custom box traits. \ccc{traits} acts as a box adapter. The predicate traits are instantiated using the provided \ccc{BoxTraits} type. }
 
-\ccFunction{
-template< class RandomAccessIter, class Callback >
-void box_intersection_d_custom(
-  RandomAccessIter p_begin, RandomAccessIter p_end,
-  RandomAccessIter i_begin, RandomAccessIter i_end,
-  Callback& callback,
-  BoxPredicateTraits traits,
-  unsigned int cutoff = 10,
-  Setting  setting  = BIPARTITE,
-  Topology topology = CLOSED );}
-  {Invocation with custom box predicate traits. Predicate traits subsume box traits.  }
+\clearpage
+\begin{ccAdvanced}
 
+\subsection*{Concept}
+
+\ccRefConceptPage{BoxIntersectionPredicateTraits_d}
+
+\subsection*{Class}
+
+\ccRefIdfierPage{CGAL::Box_intersection_d::Predicate_traits_d<BoxTraits,bool closed>}
+
+\subsection*{Functions}
+
+\ccRefIdfierPage{CGAL::box_intersection_custom_predicates_d}\\
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_custom_predicates_d}
+
+\end{ccAdvanced}
+
+\lcHtml{\subsection*{Links to the Reference Sections}}
 
 %% EOF %%
