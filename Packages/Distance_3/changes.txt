@@ -1,4 +1,10 @@
 -----
+* 2.4 *
++Replaced R_FT_return and R_RT_return macros
++Avoided forward declarations of functions returning R::FT, as this caused
+ a bug under MSVC. This causes the disappearance of several .C files.
+
+-----
 * 2.3 *
 Added some CGAL_ prefixes to inclusion guards
 
