@@ -15,10 +15,13 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
+#include <CGAL/Polygon_2.h>
+#include <list>
 
 enum MyColor { Red, Green, Blue };
 
-using namespace CGAL;
+using CGAL::Point_2;
+using CGAL::Polygon_2;
 
 template <class R>
 class MyPoint: public Point_2<R>
@@ -33,13 +36,11 @@ class MyPoint: public Point_2<R>
 // N.B. The class MyPoint derives from CGAL::Point_2. This is not always a
 // good idea, since the class CGAL::Point_2 doesn't have a virtual destructor.
 
-typedef Cartesian<double> R;
+typedef CGAL::Cartesian<double> R;
 typedef MyPoint<R> Point;
 
-#include <CGAL/Polygon_2.h>
-#include <list>
 
-typedef Polygon_traits_2_aux<R, R::FT, Point> Traits;
+typedef CGAL::Polygon_traits_2_aux<R, R::FT, Point> Traits;
 // The class MyPoint derives from CGAL::Point, so the polygon traits class
 // CGAL::Polygon_traits_2_aux can be reused.
 
