@@ -197,7 +197,7 @@ public:
     : Base(Rep(a0,a1,a2)) { reduce(); }
 
   #define RPOL(I)\
-  RPolynomial_MSC(I first, I last) : Base(Rep(first,last SNIINST)) { reduce(); }
+  RPolynomial_MSC(I first, I last):Base(Rep(first,last SNIINST)){ reduce(); }
   RPOL(const NT*)
   #undef RPOL
 

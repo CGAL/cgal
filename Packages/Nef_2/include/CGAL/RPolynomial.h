@@ -1159,11 +1159,12 @@ determines the sign for the limit process $x \rightarrow \infty$.
   |p2|. if |p1 = p2 * p3| then |p2| is returned. The result
   is undefined if |p3| does not exist in |double[x]|. 
   The correct division algorithm is chosen according to a traits class
-  |ring_or_field<double>| provided by the user.  If |ring_or_field<double>::kind
-  == ring_with_gcd| then the division is done by \emph{pseudo division}
-  based on a |gcd| operation of |double|.  If |ring_or_field<double>::kind ==
-  field_with_div| then the division is done by \emph{euclidean division}
-  based on the division operation of the field |double|.
+  |ring_or_field<double>| provided by the user.  
+  If |ring_or_field<double>::kind == ring_with_gcd| then the division is 
+  done by \emph{pseudo division} based on a |gcd| operation of |double|.  
+  If |ring_or_field<double>::kind == field_with_div| then the division 
+  is done by \emph{euclidean division} based on the division operation 
+  of the field |double|.
 
   \textbf{Note} that |double=int| quickly leads to overflow
   errors when using this operation.}*/

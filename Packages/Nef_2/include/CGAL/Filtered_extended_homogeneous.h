@@ -32,6 +32,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle.h>
 #include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Homogeneous.h>
 #undef _DEBUG
 #define _DEBUG 59
 #include <CGAL/Nef_2/debug.h>

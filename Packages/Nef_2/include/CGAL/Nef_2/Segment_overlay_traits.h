@@ -734,7 +734,7 @@ public:
 
         // delete and reinsert the continuing bundle
         YS.erase(sit_first,sit_succ);
-        std::list<ISegment>::const_iterator lit;
+        typename std::list<ISegment>::const_iterator lit;
         for ( lit = L_tmp.begin(); lit != L_tmp.end(); ++lit ) {
           YS.insert(sit_pred,ss_pair(*lit,Halfedge_handle()));
         }

@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : HalfedgeDS_default.h
+// file          : HalfedgeDS_default_MSC.h
 // chapter       : $CGAL_Chapter: Halfedge Data Structures $
 // package       : $CGAL_Package: HalfedgeDS_2 3.1 (26 Mar 1999) $
 // source        : hds.fw
