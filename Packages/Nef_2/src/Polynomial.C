@@ -27,28 +27,6 @@
 namespace CGAL{
 
 
- Polynomial<int> operator - (const Polynomial<int>& p)  
- {  
-   CGAL_assertion(p.degree()>=0);  
-   Polynomial<int> res(std::make_pair(p.coeffs().begin(),p.coeffs().end()));  
-   Polynomial<int>::iterator it, ite=res.coeffs().end();  
-   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;  
-   return res;  
- }  
-   
- Polynomial<double> operator - (const Polynomial<double>& p)  
- {  
-   CGAL_assertion(p.degree()>=0);  
-   Polynomial<double> res(std::make_pair(p.coeffs().begin(),p.coeffs().end()));  
-   Polynomial<double>::iterator it, ite=res.coeffs().end();  
-   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;  
-   return res;  
- }  
-
-
-// SPECIALIZE_IMPLEMENTATION(NT,int double) START
-// SPECIALIZING to :
-
 void Polynomial<int>::euclidean_div(
   const Polynomial<int>& f, const Polynomial<int>& g,
   Polynomial<int>& q, Polynomial<int>& r)
@@ -131,7 +109,7 @@ Polynomial<int> Polynomial<int>::gcd(
 }
 
 
-// SPECIALIZING to :
+
 
 void Polynomial<double>::euclidean_div(
   const Polynomial<double>& f, const Polynomial<double>& g,
