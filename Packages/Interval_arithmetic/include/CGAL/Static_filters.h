@@ -73,15 +73,27 @@ struct Static_filters : public K_base
 {
   typedef Static_filters<K_base>                    Self;
 
+  typedef CommonKernelFunctors::Left_turn_2<Self>   Left_turn_2;
+  typedef CartesianKernelFunctors::Less_xy_2<Self>  Less_xy_2;
+  typedef CartesianKernelFunctors::Less_yx_2<Self>  Less_yx_2;
+
   typedef SF_Orientation_2<K_base>                  Orientation_2;
   typedef SF_Orientation_3<K_base>                  Orientation_3;
   typedef SF_Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef SF_Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
 
-  typedef CommonKernelFunctors::Left_turn_2<Self>   Left_turn_2;
-  typedef CartesianKernelFunctors::Less_yx_2<Self>  Less_yx_2;
-  typedef CartesianKernelFunctors::Less_xy_2<Self>  Less_xy_2;
 
+  Left_turn_2
+  left_turn_2_object() const
+  { return Left_turn_2(); }
+
+  Less_xy_2
+  less_xy_2_object() const
+  { return Less_xy_2(); }
+
+  Less_yx_2
+  less_yx_2_object() const
+  { return Less_yx_2(); }
 
   Orientation_2
   orientation_2_object() const
@@ -98,18 +110,6 @@ struct Static_filters : public K_base
   Side_of_oriented_sphere_3
   side_of_oriented_sphere_3_object() const
   { return Side_of_oriented_sphere_3(); }
-
-  Left_turn_2
-  left_turn_2_object() const
-  { return Left_turn_2(); }
-
-  Less_xy_2
-  less_xy_2_object() const
-  { return Less_xy_2(); }
-
-  Less_yx_2
-  less_yx_2_object() const
-  { return Less_yx_2(); }
 
   // The two following are for degenerate cases, so I'll update them later.
   //
