@@ -36,9 +36,6 @@ LDFLAGS = \
 
 all: tutorial4$(EXE_EXT)
 
-tutorial4$(OBJ_EXT): tutorial4.C
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) tutorial4.C
-
 tutorial4$(EXE_EXT): tutorial4$(OBJ_EXT)
 	$(CGAL_CXX)  $(EXE_OPT)tutorial4 tutorial4$(OBJ_EXT) $(LDFLAGS)
 
