@@ -3,11 +3,10 @@
 #modified April 9th
 #-----------------------------------------------------------
 
-
-WWW=/u/www/0/www/htdocs/files/equipes/prisme
 WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/iostream
 TMP_file=/tmp/submit-mail
+MAINTAINER=Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 package:
 	@echo "----------------------------------"
@@ -17,7 +16,7 @@ package:
 	@echo "---- changes.txt              ----"
 	@echo "---- cvs update; cvs commit ------"
 	@echo "---- more version ----------------"
-	@echo "---- VERSION=   ; export VERSION -"
+	@echo "---- VERSION=2.8; export VERSION -"
 	@echo "---- make Doc --------------------"
 	@echo "---- make Version-----------------"
 	@echo "---- make tag --------------------"
@@ -26,6 +25,7 @@ package:
 
 Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
+	echo  "maintainer : $(MAINTAINER)" >> version
 
 tag:
 	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"`

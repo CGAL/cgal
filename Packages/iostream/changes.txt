@@ -14,6 +14,9 @@ src/io.C
 
 CHANGES:
 
+fixed banner and long lines (31 January 2000)
+
+
 Version 2.7 (31 January 2000)
 cleaned up  CGAL_static_cast(A,B) to static_cast<A>(B)
 in io.C

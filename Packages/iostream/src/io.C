@@ -8,11 +8,12 @@
 //
 // ----------------------------------------------------------------------------
 //
-
-// release       : $CGAL_Revision: CGAL-0.9-I-04 $
-// release_date  : $CGAL_Date: 1997/12/15 $
+//
+// release       : 
+// release_date  : 
 //
 // file          : src/io.C
+// package       : iostream
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
