@@ -861,17 +861,20 @@ private:
           //cout<<sub_cv<<endl;
         }
         
-        pm_change_notf->set_curve_attributes(sub_cv,  
-                                             cv_iter->get_curve().get_parent(),
-                                             cv_iter->get_curve().first_map());
+        if (pm_change_notf)
+          pm_change_notf->set_curve_attributes(sub_cv,  
+                                               cv_iter->get_curve().get_parent(),
+                                               cv_iter->get_curve().first_map());
         
         if (overlap){
           // special case of overlapping:
           // We do not insert the overlapped curve. 
           // However, we have to call add_edge of the notifier in order to update attributes 
           // of the current halfedge.
-          h = find_halfedge(sub_cv, pm);
-          pm_change_notf->add_edge(sub_cv, h, true, true);
+          if (pm_change_notf){
+            h = find_halfedge(sub_cv, pm);
+            pm_change_notf->add_edge(sub_cv, h, true, true);
+          }
         }
         else {
           prev_sub_cv = sub_cv;
@@ -969,9 +972,13 @@ private:
     cout<<"cv="<<cv<<endl;
     cout<<"h->curve()="<<h->curve()<<endl;
     
-    if (h->curve() == cv || h->curve() == traits.curve_flip(cv))
-      return h;
+    //if (h->curve() == cv || h->curve() == traits.curve_flip(cv))
+    //  return h;
 
+    if (traits.curve_is_same(h->curve(),cv) || 
+        traits.curve_is_same(h->curve(),traits.curve_flip(cv)) )
+      return h;
+     
     Vertex_handle v;
     if (h->source()->point() == traits.curve_source(cv))
       v = h->source();
@@ -982,8 +989,13 @@ private:
 
     do {
       cout<<"circ->curve()="<<circ->curve()<<endl;
-      if (circ->curve() == cv || circ->curve() == traits.curve_flip(cv))
+      if (traits.curve_is_same(circ->curve(),cv) || 
+          traits.curve_is_same(circ->curve(),traits.curve_flip(cv)))
         return Halfedge_handle(circ);
+      
+      //if (circ->curve() == cv || circ->curve() == traits.curve_flip(cv))
+      //  return Halfedge_handle(circ);
+      
     } while (++circ != v->incident_halfedges());
 
     CGAL_assertion(0);
