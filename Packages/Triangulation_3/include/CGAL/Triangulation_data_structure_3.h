@@ -32,6 +32,7 @@
 #include <CGAL/triple.h>
 #include <list.h>
 #include <map.h>
+#include <set.h>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_3.h>
