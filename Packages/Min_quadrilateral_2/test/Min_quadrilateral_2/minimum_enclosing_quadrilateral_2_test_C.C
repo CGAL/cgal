@@ -36,7 +36,6 @@
 #include <iostream>
 
 
-using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
@@ -50,9 +49,8 @@ using std::endl;
 typedef CGAL::Cartesian< double >                       Kernel;
 typedef Kernel::Point_2                             Point_2;
 typedef Kernel::Line_2                              Line_2;
-typedef Polygon_traits_2<Kernel>                    P_traits;
 typedef vector<Point_2>                             Cont;
-typedef CGAL::Polygon_2<P_traits,Cont>              Polygon_2;
+typedef CGAL::Polygon_2<Kernel,Cont>                Polygon_2;
 typedef Creator_uniform_2<double,Point_2>           Creator;
 typedef Random_points_in_square_2<Point_2,Creator>  Point_generator;
 

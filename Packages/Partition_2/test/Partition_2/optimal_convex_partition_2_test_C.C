@@ -28,7 +28,6 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Polygon_traits_2.h>
 #include <CGAL/partition_2.h>
 #include <list>
 #include <cassert>
