@@ -171,48 +171,12 @@ following.
 If this occurs to you, please seriously consider upgrading your
 compiler. This issue is fixed starting from \Gcc{3.3.1}.
 Alternatively, you can add \texttt{-fabi-version=0} to your custom
-compiler flags\footnote{Thanks to Christopher Intemann for pointing
-  this out.}. In interactive mode, this is done via the Compiler Menu,
+compiler flags.
+In interactive mode, this is done via the Compiler Menu,
 as described in Section~\ref{sec:compiler-menu}. Afterwards rebuild
 the libraries. But note that changing the \textsc{Abi} might have side
 effects. Hence, a compiler upgrade is the recommended fix here.
 
-\subsection{The ``Long-Name-Problem'' on IRIX6}\label{sec:longnameirix}
-\index{problems with long names}\index{long name problem}
-
-The system assembler and linker on IRIX6 cannot handle symbols with
-more than 4096 characters. But this number can be exceeded when one
-starts nesting templates into each other. So if you encounter strange
-assembler or linker errors like
-\begin{alltt}
-as: Error: /var/tmp/ccPBl5vJ.s, line 41289: Truncating token: 
-<some ridiculously long token snipped>
-\end{alltt}
-there is a good chance that you suffer from this ``long-name''
-problem.
-
-In contrast to Solaris, using the \gnu\ binutils does not work, since
-\texttt{gas} has not been ported to IRIX6 yet. The solution proposed
-in the GCC
-faq\footnote{\path'http://gcc.gnu.org/cgi-bin/fom.cgi?file=41'} is to
-compile with the (experimental) option \texttt{-fsquangle}, that
-enables compression of symbol names. This option was experimental and
-has disappeared in GCC 3.0, where the ABI has been improved.  So this
-is only interesting for GCC 2.95.3.
-
-Citing from the above FAQ:
-
-\begin{alltt}
-Note that this option is still under development, and subject to
-change. Since it modifies the name mangling mechanism, you'll need to
-build libstdc++ and any other C++ libraries with this option enabled.
-Furthermore, if this option changes its behavior in the future, you'll
-have to rebuild them all again. :-(
-
-This option can be enabled by default by initializing
-`flag_do_squangling' with `1' in `gcc/cp/decl2.c' (it is not
-initialized by default), then rebuilding GCC and any C++ libraries.
-\end{alltt}
 
 \subsection{The ``Long-Name-Problem'' on Solaris}\label{sec:longnamesolaris}
 \index{problems with long names}\index{long name problem}
@@ -325,11 +289,6 @@ Here goes an incomplete list of problems encountered, and
 meant to be hints only, and do not pretend to be complete, as well.
 \begin{enumerate}
 %
-\item Compiler does not support the Koenig
-lookup. That is, it does not search in the namespace of the arguments for
-the function. See
-\texttt{config/testfiles/CGAL\_CFG\_NO\_KOENIG\_LOOKUP.C}. \label{msvc::koenig}
-%
 \item Internal compiler errors can sometimes be avoided by increasing
   the amount of memory available to the compiler. Use \texttt{-Zm<number>}
 option. In \cgal\ makefiles it is set to \texttt{-Zm900}, meaning
@@ -350,13 +309,6 @@ option. In \cgal\ makefiles it is set to \texttt{-Zm900}, meaning
   \texttt{\#define~\_VIRTUAL~virtual} there and replace it by
   \texttt{\#define~\_VIRTUAL~}. \label{msvc::VIRTUAL}
 %
-\item Various matching failures for overloaded functions and ctors.
-Use dummy parameters.
-%
-\item Avoid multiple forward declarations.
-%
-\item If necessary, simplify template parameters by using extra 
-\texttt{typedef}s.
 \end{enumerate}
 
 \section{Scripts}

@@ -1,3 +1,6 @@
+4 April 2005 Sylvain Pion
+- doc : remove g++ 2.95, and some obsolete VC++ problems, and other cleanups.
+
 7 February 2005 Sylvain Pion
 - Redirect stderr of "uname -p" to /dev/null as it's not supported on some
   Linux systems.
