@@ -15,7 +15,7 @@ package:
 	@echo "------------ Faire :-- -----------"
 	@echo "----------------------------------"
 	@echo "---- cvs update; -----------------"
-	@echo "---- make Test                ----"
+	@echo "---- make Test ; ------------ ----"
 	@echo "---- make VERSION=4.57 Doc -------"
 	@echo "---- editer changes.txt       ----"
 	@echo "---- make VERSION=4.57 Version ---"
@@ -33,9 +33,19 @@ Tag:
 	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"` \
 	demo doc_tex examples include test
 
+
+Test: 
+	cd test; ./run_testsuite;
+	cd test/Triangulation; make -f Makefile realclean
+	cd test/Triangulation2_Delaunay; make -f Makefile realclean
+	cd test/Triangulation2_constraint; make -f Makefile realclean
+
+
 clean:
 	rm -f $(PACKAGE).tar.gz
 	cd test/Triangulation ; make -f Makefile realclean
+	cd test/Triangulation2_Delaunay; make -f Makefile realclean
+	cd test/Triangulation2_constraint; make -f Makefile realclean
 	cd examples/Triangulation ; make realclean
 	cd demo/Triangulation ; make clean
 
