@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: changed EXTRA_OBJECTS for Intervall_arithmetic workaround on irix6.
 GLOB: define CGAL_CC in include makefiles.
 GLOB: write CGAL_EXTRA_OBJECTS without path-prefix.
 GLOB: generate cctype replacement header, if CCTYPE_MACRO_BUG is encountered.
@@ -31,6 +32,7 @@ ALL : Update for CGAL-2.0.
 GLOB: Show whether compiler is supported.
 GLOB: Create redirection header files in correct dir.
 GLOB: New Upgrade option.
+DOCS: updated documentation acc.to Stefan's suggestions.
 DOCS: added documentation of scripts (use_cgal_namespace,
 DOCS: create_cgal_makefile and replace_headers).
 DOCS: some minor corrections/clarifications.
@@ -39,6 +41,7 @@ DOCS: removed support for "external" STL
 DOCS: removed obsolete paragraph about LEDA/STL problems
 DOCS: updated upgrade section.
 DOCS: updated list of supported compilers.
+SRC : fixed IA workaround_irix naming.
 SRC : added rule for compiling the intervall-arithmetic workaround_4_irix.
 SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
 SRC : added Fixed_precision_nt.o.

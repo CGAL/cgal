@@ -4,6 +4,14 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.44
+//---------------------------------------------------------------------
+
+GLOB: changed EXTRA_OBJECTS for Intervall_arithmetic workaround on irix6.
+DOCS: updated documentation acc.to Stefan's suggestions.
+SRC : fixed IA workaround_irix naming.
+
+//---------------------------------------------------------------------
 //	revision 1.43
 //---------------------------------------------------------------------
 
