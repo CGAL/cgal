@@ -1,3 +1,7 @@
+1.2 (18 June 2001)
+- Remove include/CGAL/IO/Triangulation_PS_Stream.h since it's already in the
+  Triangulation package.
+
 1.1 (18 June 2001)
 - Lots of std:: related fixes.
 - First submission.
