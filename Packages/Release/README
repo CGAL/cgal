@@ -18,6 +18,7 @@ Let <release_dir> be the directory in which you plan to build the release.
                Remove developer_scripts dir
                Remove doc_tex dir
                Remove src/CGALwin dir
+               Remove winutils dir
                Remove examples/*/cgal_test, demos/*/cgal_test, 
                       examples/*/version demos/*/version
                Find all .C and .h files and collect them in a file
@@ -87,7 +88,8 @@ Install everything:
           make dest_zip_ps
       4.  install the new web pages
       5.  tag all the packages included in the release with the new
-          release tag CGAL_M_m_release.
+          release tag CGAL_M_m_release and create a branch tag with
+          the name CGAL_M_m_branch.
 
 Then finally ...
       6.  announce the release (see announcement directory)
