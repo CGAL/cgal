@@ -1,5 +1,8 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 0.6 on 26-Sep-2000
+- unified traits class models for dD optimisation algorithms
+
 Version 0.5 on 15-Sep-2000
 - added indexing command.
 
