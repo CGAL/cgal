@@ -186,7 +186,7 @@ void SM_io_parser<Decorator_>::print_edge(Halfedge_handle e) const
 
 template <typename Decorator_>
 bool SM_io_parser<Decorator_>::read_edge(Halfedge_handle e)
-{ // syntax: index { twin, prev, next, source, face, mark }
+{ // syntax: index { twin, prev, next, source, face, mark, circle }
   int n, eo, epr, ene, v, f; bool m; Sphere_circle k;
   if ( !(in >> n) ||
        !check_sep("{") ||
@@ -216,7 +216,7 @@ bool SM_io_parser<Decorator_>::read_edge(Halfedge_handle e)
 
 template <typename Decorator_>
 void SM_io_parser<Decorator_>::print_loop(Halfloop_handle l) const
-{ // syntax: index { twin, face, mark }
+{ // syntax: index { twin, face, mark, circle }
   out << index(l) << " { "
       << index(twin(l)) << ", " 
       << index(face(l)) << ", "
@@ -225,7 +225,7 @@ void SM_io_parser<Decorator_>::print_loop(Halfloop_handle l) const
 
 template <typename Decorator_>
 bool SM_io_parser<Decorator_>::read_loop(Halfloop_handle l)
-{ // syntax: index { twin, face, mark }
+{ // syntax: index { twin, face, mark, circle }
   int n, lo, f; bool m; Sphere_circle k;
   if ( !(in >> n) ||
        !check_sep("{") ||
@@ -249,15 +249,14 @@ void SM_io_parser<Decorator_>::print_face(Face_handle f) const
 { // syntax: index { fclist, ivlist, loop, mark }
   out << index(f) << " { "; 
   Face_cycle_iterator it;
-  Halfedge_handle e; Vertex_handle v; Halfloop_handle l;
   CGAL_forall_face_cycles_of(it,f)
-    if ( assign(e,it) ) out << index(e) << ' ';
+    if ( it.is_halfedge() ) out << index(Halfedge_handle(it)) << ' ';
   out << ", ";
   CGAL_forall_face_cycles_of(it,f)
-    if ( assign(v,it) ) out << index(v) << ' ';
+    if ( it.is_vertex() ) out << index(Vertex_handle(it)) << ' ';
   out << ", ";
   CGAL_forall_face_cycles_of(it,f)
-    if ( assign(l,it) ) out << index(l);
+    if ( it.is_halfloop() ) out << index(Halfloop_handle(it));
   out << ", " << mark(f) << " }\n";
 }
 
@@ -319,11 +318,12 @@ void SM_io_parser<Decorator_>::print() const
   Vertex_iterator vit;
   CGAL_forall_vertices(vit,*this) print_vertex(vit);
   if (verbose) 
-    out << "/* index { twin, prev, next, source, face, mark } */" << endl;
+    out << "/* index { twin, prev, next, source, face, mark, circle } */" 
+	<< endl;
   Halfedge_iterator eit;
   CGAL_forall_halfedges(eit,*this) print_edge(eit);
   if (verbose) 
-    out << "/* index { twin, face, mark } */" << endl;
+    out << "/* index { twin, face, mark, circle } */" << endl;
   if ( has_loop() ) 
   { print_loop(halfloop()); print_loop(twin(halfloop())); }
   if (verbose) 

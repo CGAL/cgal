@@ -7,7 +7,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R_> class Sphere_triangle_rep : public Ref_counted
+template <class R_> class Sphere_triangle_rep 
 { typedef Sphere_point<R_>  Point;
   typedef Sphere_circle<R_> Circle;
   typedef Sphere_triangle_rep<R_> Rep;
@@ -21,6 +21,7 @@ template <class R_> class Sphere_triangle_rep : public Ref_counted
         const Circle& c1, const Circle& c2, const Circle& c3) :
     points_(p1,p2,p3), circles_(c1,c2,c3) {}
 public:
+  Sphere_triangle_rep() : points_(), circles_() {}
   Sphere_triangle_rep(const Rep& r) : 
     points_(r.points_), circles_(r.circles_) {}
 
@@ -66,11 +67,11 @@ Sphere_triangle(const Sphere_triangle<R>& t) : Base(t) {}
 
 const Sphere_point<R>& point(unsigned i) const 
 /*{\Mop returns the ith point of |\Mvar|.}*/
-{ return ptr->points_[i%3]; }
+{ return ptr()->points_[i%3]; }
 
 const Sphere_circle<R>& circle(unsigned i) const 
 /*{\Mop returns the ith circle of |\Mvar|.}*/
-{ return ptr->circles_[i%3]; }
+{ return ptr()->circles_[i%3]; }
 
 Sphere_triangle<R> opposite() const 
 /*{\Mop returns the opposite of |\Mvar|.}*/

@@ -55,7 +55,7 @@ std::istream& operator>>(std::istream&, Nef_polyhedron_S2<K>&);
 
 
 template <typename K>
-class Nef_polyhedron_S2_rep : public Ref_counted
+class Nef_polyhedron_S2_rep 
 { typedef Nef_polyhedron_S2_rep<K> Self;
   friend class Nef_polyhedron_S2<K>;
 
@@ -71,8 +71,8 @@ class Nef_polyhedron_S2_rep : public Ref_counted
   Sphere_map sm_; 
   
 public:
-  Nef_polyhedron_S2_rep() : Ref_counted(), sm_() {}
-  Nef_polyhedron_S2_rep(const Self& R) : Ref_counted(), sm_() {}
+  Nef_polyhedron_S2_rep() : sm_() {}
+  Nef_polyhedron_S2_rep(const Self& R) : sm_() {}
   ~Nef_polyhedron_S2_rep() { sm_.clear(); }
 };
 
@@ -124,9 +124,9 @@ public:
   enum Content { EMPTY=0, COMPLETE=1 };
   /*{\Menum construction selection}*/
 
-  const Sphere_map& sphere_map() const { return ptr->sm_; }
+  const Sphere_map& sphere_map() const { return ptr()->sm_; }
 protected:
-  Sphere_map& sphere_map() { return ptr->sm_; } 
+  Sphere_map& sphere_map() { return ptr()->sm_; } 
 
   struct AND { bool operator()(bool b1, bool b2)  const { return b1&&b2; }  };
   struct OR { bool operator()(bool b1, bool b2)   const { return b1||b2; }  };
@@ -264,7 +264,7 @@ protected:
   Nef_polyhedron_S2(const Sphere_map& H, bool clone=true) : Base(Nef_rep()) 
   /*{\Xcreate makes |\Mvar| a new object.  If |clone==true| then the
   underlying structure of |H| is copied into |\Mvar|.}*/
-  { if (clone) ptr->sm_ = H; }
+  { if (clone) ptr()->sm_ = H; }
 
   void clone_rep() { *this = Nef_polyhedron_S2<K>(sphere_map()); }
 
@@ -301,7 +301,7 @@ protected:
 
   void extract_complement()
   { TRACEN("extract complement");
-    if ( ptr->is_shared() ) clone_rep();
+    if ( is_shared() ) clone_rep();
     Overlayer D(sphere_map());
     Vertex_iterator v;
     Halfedge_iterator e;
@@ -318,7 +318,7 @@ protected:
 
   void extract_interior()
   { TRACEN("extract interior");
-    if ( ptr->is_shared() ) clone_rep();
+    if ( is_shared() ) clone_rep();
     Overlayer D(sphere_map());
     Vertex_iterator v;
     Halfedge_iterator e;
@@ -331,7 +331,7 @@ protected:
 
   void extract_boundary()
   { TRACEN("extract boundary");
-    if ( ptr->is_shared() ) clone_rep();
+    if ( is_shared() ) clone_rep();
     Overlayer D(sphere_map());
     Vertex_iterator v;
     Halfedge_iterator e;

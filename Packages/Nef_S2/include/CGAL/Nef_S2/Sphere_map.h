@@ -27,8 +27,8 @@
 #define CGAL_SPHERE_MAP_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_S2/nef_assertions.h>
 #include <CGAL/Nef_S2/SM_items.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
@@ -98,27 +98,13 @@ public:
   typedef Halfloop* Halfloop_iterator;
   typedef const Halfloop* Halfloop_const_iterator;
 
-  class Object_handle 
+  typedef CGAL::Object_handle Object_handle;
   /*{\Mtypemember a generic handle to an object of |\Mvar|. 
   The kind of the object can be determined and the object assigned 
   by the function:\\ 
   |bool assign(xxx_handle& h, Object_handle o)|\\ 
   where the function returns |true| iff the assignment of |o| to 
   |h| was valid.}*/
-    : public CGAL::Object 
-  {
-    typedef CGAL::Object Base;
-  public:
-    Object_handle() : Base() {}
-    Object_handle(const CGAL::Object& o) : Base(o) {}
-    Object_handle(const Object_handle& h) : Base(h) {}
-    Object_handle& operator=(const Object_handle& h) 
-    { Base::operator=(h); return *this; }
-    bool operator==(CGAL_NULL_TYPE n) const
-    { assert(n == 0); return Base::is_empty(); }
-    bool operator!=(CGAL_NULL_TYPE n) const
-    { assert(n == 0); return !Base::is_empty(); }
-  }; // Object_handle
 
   typedef std::list<Object_handle>    Object_list;
   typedef typename Object_list::iterator       Object_iterator;

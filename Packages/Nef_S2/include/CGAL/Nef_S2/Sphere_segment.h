@@ -6,7 +6,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R_> class Sphere_segment_rep : public Ref_counted
+template <class R_> class Sphere_segment_rep 
 { 
   typedef typename R_::Point_3 Point_3;
   typedef typename R_::Plane_3 Plane_3;
@@ -15,6 +15,7 @@ template <class R_> class Sphere_segment_rep : public Ref_counted
   typedef Sphere_segment_rep<R_> Rep;
   friend class Sphere_segment<R_>;
 public:
+Sphere_segment_rep() { ps_ = pt_ = Point(); c_ = Circle(); }
 
 Sphere_segment_rep(const Point& p1, const Point& p2,
 		   bool shorter_arc=true) :
@@ -115,11 +116,11 @@ Sphere_segment(const Self& s) : Base(s) {}
 
 /*{\Moperations 4 2}*/
 
-const Sphere_point<R>& source() const { return ptr->ps_; }
+const Sphere_point<R>& source() const { return ptr()->ps_; }
 /*{\Mop the source point of |\Mvar|.}*/
-const Sphere_point<R>& target() const { return ptr->pt_; }
+const Sphere_point<R>& target() const { return ptr()->pt_; }
 /*{\Mop the target point of |\Mvar|.}*/
-const Sphere_circle<R>& sphere_circle() const { return ptr->c_; }
+const Sphere_circle<R>& sphere_circle() const { return ptr()->c_; }
 /*{\Mop the great circle supporting |\Mvar|.}*/
 
 Sphere_segment<R> opposite() const 
@@ -154,20 +155,20 @@ void split_halfcircle(Sphere_segment<R>& s1,
   Sphere_point<R> p = 
     CGAL::intersection(sphere_circle(),Sphere_circle<R>(h));
   if ( !has_on(p) ) p = p.opposite();
-  s1 = Sphere_segment<R>(ptr->ps_,p,ptr->c_);
-  s2 = Sphere_segment<R>(p,ptr->pt_,ptr->c_);
+  s1 = Sphere_segment<R>(ptr()->ps_,p,ptr()->c_);
+  s2 = Sphere_segment<R>(p,ptr()->pt_,ptr()->c_);
 }
 
 bool is_short() const 
 /*{\Mop a segment is short iff it is shorter than a halfcircle.}*/
 { return CGAL::orientation(Point_3(0,0,0), source(), target(),
-                           CGAL::ORIGIN + ptr->c_.orthogonal_vector()) 
+                           CGAL::ORIGIN + ptr()->c_.orthogonal_vector()) 
          == CGAL::POSITIVE; }
 
 bool is_long() const 
 /*{\Mop a segment is long iff it is longer than a halfcircle.}*/
 { return CGAL::orientation(Point_3(0,0,0), source(), target(),
-                           CGAL::ORIGIN + ptr->c_.orthogonal_vector()) 
+                           CGAL::ORIGIN + ptr()->c_.orthogonal_vector()) 
          == CGAL::NEGATIVE; }
 
 bool is_degenerate() const { return source() == target(); }

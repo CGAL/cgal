@@ -5,6 +5,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/Object_index.h>
+#include <CGAL/Nef_2/iterator_tools.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
 #include <string>
 #include <list>
@@ -14,64 +15,6 @@
 #include <CGAL/Nef_S2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
-
-template <typename Iter, typename Move> 
-class CircFromIt : public Iter {
-    // Ptr  node;    // The internal node ptr inherited from It.
-    typedef CircFromIt<Iter,Move> ThisClass;
-public:
-
-    CircFromIt() : Iter(0) {}
-    CircFromIt(Iter i) : Iter(i) {}
-
-// OPERATIONS Forward Category
-// ---------------------------
-
-    bool operator==( CGAL_NULL_TYPE p ) const {
-      CGAL_nef_assertion( p == NULL );
-      return Iter::operator==( Iter(NULL) );
-    }
-    bool operator!=( CGAL_NULL_TYPE p ) const {
-      return !(*this == p);
-    }
-    bool operator==( const ThisClass& i ) const {
-      return Iter::operator==(i);
-    }
-    bool operator!=( const ThisClass& i) const {
-        return !(*this == i);
-    }
-
-    ThisClass& operator++() {
-      Move move;
-      move.forward(*this);
-      return *this;
-    }
-    ThisClass  operator++(int) {
-      CircFromIt tmp = *this;
-      ++*this;
-      return tmp;
-    }
-
-// OPERATIONS Bidirectional Category
-// ---------------------------------
-
-    ThisClass& operator--() {
-      Move move;
-      move.backward(*this);
-      return *this;
-    }
-    ThisClass  operator--(int) {
-      CircFromIt tmp = *this;
-      --*this;
-      return tmp;
-    }
-
-};
-
-template <typename Iter, typename Move>
-inline CGAL::Circulator_tag  
-query_circulator_or_iterator(const CircFromIt<Iter,Move>& )
-{ return CGAL::Circulator_tag(); }
 
 template <typename HE>
 class move_edge_around_vertex {
@@ -86,32 +29,14 @@ struct move_edge_around_face {
   void backward(HE& e) const { e = (e->prev_); }
 };
 
-template <typename Iter, typename Pnt>
-class PntItFromVertIt : public Iter {
-public:
-  typedef PntItFromVertIt<Iter,Pnt> Self;
-  typedef Iter Base;
-  typedef Pnt  value_type;
-  typedef const Pnt* pointer;
-  typedef const Pnt& reference;
- 
-  PntItFromVertIt() : Base() {}
-  PntItFromVertIt(Iter it) : Base(it) {}
-  PntItFromVertIt(const Self& it) : Base(it) {}
- 
-  reference operator*() const
-  { return Base::operator*().point(); }
-  pointer operator->() const
-  { return &(operator*()); }
-  Self& operator++() { return (Self&)Base::operator++(); }
-  Self operator++(int) { Self tmp=*this; ++*this; return tmp; }
- 
-};
-          
+
+template <typename Sphere_map_, typename Kernel_>
+class SM_decorator;
 
 /*{\Moptions print_title=yes }*/ 
-/*{\Moptions outfile=SM_decorator.man }*/
-/*{\Manpage {SM_decorator}{HDS,Kernel}{Topological sphere map decorator}{D}}*/
+/*{\Moptions outfile=SM_const_decorator.man }*/
+/*{\Manpage {SM_const_decorator}{Sphere_map,Kernel}
+  {Topological sphere map decorator}{D}}*/
 
 template <typename Sphere_map_, typename Kernel_>
 class SM_const_decorator 
@@ -411,10 +336,6 @@ is a sphere map and |F| is a face.}*/
 
 }; // SM_const_decorator
 
-
-template <class H>
-std::string PH(H h)
-{ if (h == H()) return "nil"; return h->debug(); }
 
 
 template <typename SM_, typename K_>

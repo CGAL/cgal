@@ -50,20 +50,17 @@ CGAL_BEGIN_NAMESPACE
 template <typename Decorator_, typename IT, typename INFO>
 struct SM_subdivision {
   typedef Decorator_ Triangulator;
-  typedef typename Decorator_::Explorer Explorer;
   typedef typename Decorator_::Vertex_handle Vertex_handle;
   typedef typename Decorator_::Halfedge_handle   Halfedge_handle;
   typedef typename Decorator_::Sphere_point   Point;
   typedef typename Decorator_::Sphere_segment Segment;
   Triangulator T;
-  Explorer E;
   CGAL::Unique_hash_map<IT,INFO>& M;
   /* M stores the object that supports the segment that
      is input object of the sweep */
 
-  SM_subdivision(Triangulator Ti, Explorer Ei,
-                 CGAL::Unique_hash_map<IT,INFO>& Mi) : 
-    T(Ti), E(Ei), M(Mi) {}
+  SM_subdivision(Triangulator Ti, 
+                 CGAL::Unique_hash_map<IT,INFO>& Mi) : T(Ti), M(Mi) {}
 
 Vertex_handle new_vertex(const Point& p) const
 { Vertex_handle v = T.new_vertex(p); T.assoc_info(v);
@@ -356,7 +353,7 @@ void SM_triangulator<Decorator_>::triangulate()
   }
   Halfedge_const_iterator e;
   CGAL_forall_edges(e,E_) {
-    if ( source(e) == target(e) ) {
+    if ( E_.source(e) == E_.target(e) ) {
       Seg_pair p = two_segments(E_,e);
       L.push_back(p.first); L.push_back(p.second);
       From[--L.end()] = From[--(--L.end())] = make_object(e);
@@ -390,7 +387,7 @@ void SM_triangulator<Decorator_>::triangulate()
 
   Vertex_handle v_sep;
   Halfedge_handle e_sep;
-  SM_output O(*this,E_,From); 
+  SM_output O(*this,From); 
 
   typedef typename PHS_traits::INPUT Input_range;
   Positive_halfsphere_sweep SP(
@@ -610,10 +607,10 @@ complete_support(Vertex_iterator v_start, Vertex_iterator v_end, int pos) const
     Halfloop_const_handle ls;
     if ( o == NULL ) { mark(v) = m_buffer; }
     else if ( assign(vs,o) ) { mark(v) = E_.mark(vs); }
-    else if ( assign(es,support(v)) ) {
-      if ( point(source(es)) == point(v) ) 
+    else if ( assign(es,o) ) {
+      if ( E_.point(E_.source(es)) == point(v) ) 
       { mark(v) = E_.mark(E_.source(es)); }
-      else if ( point(target(es)) == point(v) ) 
+      else if ( E_.point(E_.target(es)) == point(v) ) 
       { mark(v) = E_.mark(E_.target(es)); }
       else { mark(v) = E_.mark(es); }
     }
