@@ -248,7 +248,7 @@ template <class K>
 inline bool do_intersect(const Triangle_2<K> &tr,
 			 const Ray_2<K> &ray)
 {
-  return CGALi::do_intersect(ray, triangle, K());
+  return CGALi::do_intersect(ray, tr, K());
 }
 
 template <class K>

@@ -1,3 +1,6 @@
+2.33 (02 Jan 2004) [rursu]
+- fixed Ray_2_Triangle_2_intersection.h for gcc 3.4
+
 2.32 (18 Jan 2004)
 - Removed CGAL_CFG_RETURN_TYPE_BUG_2 workarounds.
 
