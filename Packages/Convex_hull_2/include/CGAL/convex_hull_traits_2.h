@@ -41,7 +41,7 @@ public:
   typedef typename K::Less_xy_2                       Less_xy_2;
   typedef typename K::Less_yx_2                       Less_yx_2;
   typedef typename K::Left_of_line_2                  Left_of_line_2;
-  typedef typename K::Less_singed_distance_to_line_2  
+  typedef typename K::Less_signed_distance_to_line_2  
                                          Less_signed_distance_to_line_2;
   typedef typename K::Less_rotate_ccw_2               Less_rotate_ccw_2;
   typedef typename K::Leftturn_2                      Leftturn_2;
