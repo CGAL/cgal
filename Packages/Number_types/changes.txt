@@ -1,3 +1,7 @@
+4.12     (?? Feb 01)
+- Add NT_converter.h which contains NT_converter<A,B> and
+  Interval_converter<A>.
+
 4.11     (21 Feb 01)
 - Removed <utility> in Quotient.h.
 - Fix test program typo for CLN.
