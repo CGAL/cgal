@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 3.9 on 20 April 1999
+- Big clean up of the caching stuff.  Seems to be done the Right Way [tm] now.
+
 Version 3.8 on 20 April 1999
 - Fixed small bugs.
 - Updated documentation.

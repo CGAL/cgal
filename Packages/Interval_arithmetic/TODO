@@ -11,16 +11,10 @@
 
 Concerning the code itself:
 
-- test-suite: rajouter un test simple qui vérifie que les exceptions marchent.
 - FPU_get_and_set_cw (), c'est plus joli, et ça peut être plus efficace.
 - Les opérateurs (double, Interval_nt (pas advanced)) ne sont pas protégés par
   le rounding mode +inf...
-- Filter_Cache:
-  C'est pas un cache, mais un stockage forcé, et il faut l'updater
-  si la value est modifiée...  Vérifier si c'est bien fait partout.
-  Faire des benchs.
-- template < template<CT,ET> class Filter<CT,ET> >, ça n'aurait pas marché ?
-  voir le Stroustrup, et si MipsPro/M$VC le gobent.
+- Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
 - sign_det_2x2() optimisé pour l'IA (+ bench de triangulation).
   (et régler le sort de include/CGAL/Interval_arithmetic/determinant.h.)
 	include/CGAL/Interval_arithmetic/determinant.h has no header.
@@ -29,6 +23,7 @@ Concerning the code itself:
 - Workarounds (pour MipsPro [et M$VC]):
   - specializations partielles: vérifier que c'est bien le bon CGAL_CFG_..
                                 que j'utilise.
+				NB: si on linke 2 .o comme ça => multiple def...
   - The convert_to workaround could be enabled even for all compilers ?
     It would simplify the code, but:  slow down ?  still work for Quotient ?
 - Mariette dit que g++ 2.8.1 supporte pas
@@ -59,9 +54,6 @@ Concerning the code itself:
 
 Concerning the script:
 
-- Add the option to produce a complete specialization (for Mips, Visual...):
-  remove the template, and instantiate for the given type, e.g.
-  Filter<double,leda_real>.
 - Add determinant_signs.h to the list of filtered files ?  And send the 3
   lines to Stefan to add to the end of the original determinant.h.
 - Produire un fichier avec juste les déclarations, et un autre avec les
@@ -81,9 +73,11 @@ Concerning the doc:
   (#define CGAL_IA_ET, CGAL_IA_CT... cf tst5.C).
 - add a pointer to my MISC'99 paper.
 - Document "IA::number_of_failures".
+- Documenter le mécanisme de cache.
 
 Concerning the test-suite:
 
+- test-suite: rajouter un test simple qui vérifie que les exceptions marchent.
 - Faire une test-suite un peu plus extensive des filtres.  En particulier les
   types templatés, etc...
 - test new converter functions ?  [use flag -DCGAL_IA_DEBUG]

@@ -46,6 +46,7 @@ using namespace CGAL;
 // typedef Filtered_exact<leda_real, leda_real> NT;
 // typedef Filtered_exact<double, leda_bigfloat> NT;
 typedef Filtered_exact<double, leda_real> NT;
+// typedef Filtered_exact<double, leda_real, Filter_Cache> NT;
 // typedef Filtered_exact<double, leda_rational> NT;
 // typedef Filtered_exact<float, leda_real> NT;
 // typedef Filtered_exact<unsigned short int, leda_real> NT;
