@@ -131,6 +131,7 @@ public:
    
   void  copy_triangulation(const CGAL_Triangulation_2 &tr)
   {
+    clear();
     _infinite_vertex = (Vertex *) _tds.copy_tds(tr._tds, &(*tr._infinite_vertex));
      _gt = tr._gt;
   }
