@@ -42,7 +42,7 @@ clean:
 
 $(PACKAGE).tar.gz:
 	tar -zcvf $(PACKAGE).tar.gz \
-	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile* \
+	--exclude=CVS --exclude=wrapper.* --exclude=Makefile* \
 	--exclude=Makefilevc \
 	--exclude=TODO --exclude=run_testsuite --exclude=error.txt \
 	version description.txt changes.txt \
