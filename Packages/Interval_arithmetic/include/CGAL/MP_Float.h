@@ -31,8 +31,8 @@
 #include <functional>
 #include <cmath>
 
-// MP_Float : very simple multiprecision _scaled_ integer.
-// It is not optimized for large operands.
+// MP_Float : multiprecision scaled integer.
+// Not optimized for large operands at the moment.
 
 // Some invariants on the internal representation :
 // - zero is represented by an empty vector, and whatever exp.
@@ -48,8 +48,6 @@
 
 // TODO :
 // - Should the MP_Float unconditionaly replace MP_Integer ?
-// - Have a typedef Exact_Float defined to Lazy<MP_Float/leda_integer/Gmpz>
-// - Idem for rational.
 // - the non-inline stuff must go in src/MP_Float.C
 //   (when the code will be stabilized/ported).
 // - implement missing CGAL requirements.
@@ -171,13 +169,10 @@ public:
     return *this = *this * a;
   }
 
-#if 0
-  // Remove division code completely ?
   MP_Float& operator/=(const MP_Float &a)
   {
     return *this = *this / a;
   }
-#endif
 
   bool operator<(const MP_Float &) const;
 
@@ -278,7 +273,7 @@ sign (const MP_Float &a)
   return a.sign();
 }
 
-inline // ?
+static
 Comparison_result
 compare (const MP_Float & a, const MP_Float & b)
 {
@@ -300,6 +295,7 @@ compare (const MP_Float & a, const MP_Float & b)
 
 } // namespace NTS
 
+inline
 bool
 MP_Float::operator<(const MP_Float & b) const
 {
@@ -308,6 +304,7 @@ MP_Float::operator<(const MP_Float & b) const
 
 // Common code for operator+ and operator-.
 template <class BinOp>
+inline
 void
 Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b)
 {
@@ -328,6 +325,7 @@ Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b)
   r.canonicalize();
 }
 
+static
 MP_Float
 MP_Float::operator+(const MP_Float &b) const
 {
@@ -341,6 +339,7 @@ MP_Float::operator+(const MP_Float &b) const
   return r;
 }
 
+static
 MP_Float
 MP_Float::operator-(const MP_Float &b) const
 {
@@ -354,6 +353,7 @@ MP_Float::operator-(const MP_Float &b) const
   return r;
 }
 
+static
 MP_Float
 MP_Float::operator*(const MP_Float &b) const
 {
@@ -380,26 +380,23 @@ MP_Float::operator*(const MP_Float &b) const
   return r;
 }
 
-#if 0 // Should I define the following at all ?
+static
 MP_Float
-MP_Float::operator/(const MP_Float &) const
+MP_Float::operator/(const MP_Float &d) const
 {
-  CGAL_assertion_msg(false, "Sorry, MP_Float division not implemented");
-  abort();
-  return MP_Float();
+  return MP_Float(CGAL::to_double(*this)/CGAL::to_double(d));
 }
 
+static
 MP_Float
-sqrt(const MP_Float &)
+sqrt(const MP_Float &d)
 {
-  CGAL_assertion_msg(false, "Sorry, MP_Float square root not implemented");
-  abort();
-  return MP_Float();
+  return MP_Float(CGAL_NTS sqrt(CGAL::to_double(d)));
 }
-#endif
 
 // to_double() returns, not the closest double, but a one bit error is allowed.
-// to_double(MPI(double d)) == d.  (expansive assertion in the ctor(double) ?)
+// We guarantee : to_double(MPI(double d)) == d.
+static
 double
 to_double(const MP_Float &b)
 {
@@ -420,7 +417,8 @@ to_double(const MP_Float &b)
   return d;
 }
 
-// This function deserves proper testing...
+// FIXME : This function deserves proper testing...
+static
 Interval_base
 to_interval(const MP_Float &b)
 {
@@ -467,12 +465,16 @@ to_interval(const MP_Float &b)
   return d;
 }
 
-bool is_finite(const MP_Float &)
+inline
+bool
+is_finite(const MP_Float &)
 {
   return true;
 }
 
-bool is_valid(const MP_Float &)
+inline
+bool
+is_valid(const MP_Float &)
 {
   return true;
 }
@@ -491,6 +493,7 @@ number_type_tag(const MP_Float &)
   return Number_tag();
 }
 
+static
 std::ostream &
 operator<< (std::ostream & os, const MP_Float &b)
 {
@@ -519,10 +522,11 @@ operator<< (std::ostream & os, const MP_Float &b)
   return os;
 }
 
+static
 std::istream &
 operator>> (std::istream & is, MP_Float &b)
 {
-  int i;
+  double i;
   is >> i;
   b = MP_Float(i);
   return is;
