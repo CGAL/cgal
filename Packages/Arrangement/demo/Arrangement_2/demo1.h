@@ -156,6 +156,8 @@ private slots:
        void updateConicType( QAction *action );
     /*! update the window buttons according to change in conic type */
     void setConicType( ConicType t );
+	/*! open the color dialog */
+	void openColorDialog();
 
 private:
     /*! myBar - hold the tab widgets */
@@ -193,7 +195,9 @@ private:
     /*! merge mode action */
     QAction *mergeMode;    
     /*! split mode action */
-    QAction *splitMode;    
+    QAction *splitMode;
+    /*! fill face mode action */
+    QAction *fillfaceMode;
     /*! zoomin button */
     QAction *zoominBt;
     /*! zoomout button */
@@ -234,5 +238,7 @@ private:
     QAction *setHyperbola;
     /*! conic type tool bar */
     QToolBar *conicTypeTool;
+	/*! color dialog action (for filling faces) */
+	QAction *color_dialog_bt;
 };
 

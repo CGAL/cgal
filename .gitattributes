@@ -767,6 +767,7 @@ Packages/Arrangement/demo/Arrangement_2/icons/conic_types.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/delete.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_arrow_down.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_arrow_up.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_colors.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_conic_3points.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_conic_5points.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_conic_circle.xpm -text
@@ -774,6 +775,7 @@ Packages/Arrangement/demo/Arrangement_2/icons/demo_conic_ellipse.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_conic_segment.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#unset
 Packages/Arrangement/demo/Arrangement_2/icons/demo_delete.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_fill.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#unset
 Packages/Arrangement/demo/Arrangement_2/icons/demo_insert.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/demo_merge.bmp -text svneol=unset#unset

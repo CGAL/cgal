@@ -26,6 +26,7 @@ void MyWindow::setMode( Mode m )
    case DRAG: dragMode->setOn( TRUE ); break;
    case MERGE: mergeMode->setOn( TRUE ); break;
    case SPLIT: splitMode->setOn( TRUE ); break;
+   case FILLFACE: fillfaceMode->setOn( TRUE ); break;
   }
 }
 

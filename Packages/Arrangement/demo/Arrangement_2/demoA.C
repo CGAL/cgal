@@ -38,6 +38,10 @@
 #include "icons/demo_rayshoot_up.xpm"
 #include "icons/demo_arrow_down.xpm"
 #include "icons/demo_arrow_up.xpm"
+#include "icons/demo_fill.xpm"
+#include "icons/demo_colors.xpm"
+
+
 
 
 
@@ -131,12 +135,22 @@ MyWindow::MyWindow(int w, int h)
                          "&Split", 0 , modeGroup, "Split" );
   splitMode->setToggleAction( TRUE );
 
+   fillfaceMode = new QAction("Fill", QPixmap( (const char**)demo_fill_xpm ),
+                         "&Fill", 0 , modeGroup, "Fill" );
+  fillfaceMode->setToggleAction( TRUE );
+
+  
+
   // zoom in
   zoominBt = new QAction("Zoom in", QPixmap( (const char**)zoomin_xpm ),
                          "&Zoom in", 0 , this, "Zoom in" );
   // zoom out
   zoomoutBt = new QAction("Zoom out", QPixmap( (const char**)zoomout_xpm ),
                           "&Zoom out", 0 , this, "Zoom out" );
+
+   // color dialog
+  color_dialog_bt = new QAction("Choose color", QPixmap( (const char**)demo_colors_xpm ),
+                         "&choose color", 0 , this, "choose color" );
   
   // Conic Type Group
   QActionGroup *conicTypeGroup = new QActionGroup( this ); // Connected later
@@ -215,6 +229,7 @@ MyWindow::MyWindow(int w, int h)
   dragMode->addTo( mode );
   mergeMode->addTo( mode );
   splitMode->addTo( mode );
+  fillfaceMode->addTo( mode );
   menuBar()->insertSeparator();
   
   // snap mode menu
@@ -264,6 +279,7 @@ MyWindow::MyWindow(int w, int h)
   rayShootingMode->addTo( modeTools );
   mergeMode->addTo( modeTools );
   splitMode->addTo( modeTools );
+  fillfaceMode->addTo( modeTools );
   modeTools->addSeparator();
   
   QToolBar *snapModeTools = new QToolBar( this, "snapMode operations" );
@@ -287,6 +303,14 @@ MyWindow::MyWindow(int w, int h)
   zoomoutBt->addTo( zoomTool );
   zoominBt->addTo( zoomTool );
   zoomTool->addSeparator();
+  
+  QToolBar *colorTool = new QToolBar( this, "color" );
+  colorTool->addSeparator();
+  colorTool->setLabel("Choose color");
+  color_dialog_bt->addTo(colorTool);
+  colorTool->addSeparator();
+
+
 
   conicTypeTool = new QToolBar( this, "conic type" );
   conicTypeTool->setLabel( "Conic Type" );
@@ -303,6 +327,9 @@ MyWindow::MyWindow(int w, int h)
   
   connect( zoominBt, SIGNAL( activated () ) , 
        this, SLOT( zoomin() ) );
+
+  connect (color_dialog_bt , SIGNAL( activated()) , 
+	  this , SLOT(openColorDialog() ) );
   
   // connect mode group
   connect( modeGroup, SIGNAL( selected(QAction*) ), 
@@ -404,9 +431,7 @@ void MyWindow::init(Qt_widget_base_tab *widget)
   widget->attach(testlayer);
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
   rayShootingMode->setIconSet(QPixmap((const char**)demo_rayshoot_up_xpm ));
-  QColor c = Qt::white;
-  c.setRgb(236,236,236);
-  widget->setBackgroundColor(c);
+  widget->setBackgroundColor(def_bg_color);
   tab_number++;
   number_of_tabs++;
   // add the new widget to myBar
@@ -530,9 +555,7 @@ void MyWindow::updateTraitsType( QAction *action )
   
   //initialize the new tab widget
   *widget << CGAL::LineWidth(2); // << CGAL::BackgroundColor (CGAL::WHITE);
-  QColor c = Qt::white;
-  c.setRgb(236,236,236);
-  widget->setBackgroundColor(c);
+  widget->setBackgroundColor(def_bg_color);
   widget->set_window(-10, 10, -10, 10);
   widget->setMouseTracking(TRUE);
   connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
@@ -616,6 +639,17 @@ void MyWindow::setConicType( ConicType t )
     break;
   }
 }
+
+/*! open color dialog for faces color */
+void MyWindow::openColorDialog()
+{
+	Qt_widget_base_tab    *w_demo_p = 
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+    QColor c = QColorDialog::getColor();
+	if( c.isValid())
+	  w_demo_p->fill_face_color = c;
+}
+
 
 /*! update snap mode - change the snap mode and the relevant buttons 
  *  state after the snap mode button was clicked
@@ -733,6 +767,11 @@ void MyWindow::updateMode( QAction *action )
     w_demo_p->mode = SPLIT;
     w_demo_p->setCursor(Qt::SplitHCursor  );
     something_changed();
+  }
+  else if ( action == fillfaceMode ) 
+  {
+    w_demo_p->mode = FILLFACE;
+    w_demo_p->setCursor(Qt::CrossCursor  );	
   }
 }
 
