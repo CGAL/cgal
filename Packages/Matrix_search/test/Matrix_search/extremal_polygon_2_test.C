@@ -195,7 +195,7 @@ int main() {
     random_convex_set_2( number_of_points[n],
                          back_inserter( p),
                          Point_generator( 1));
-    assert( p.is_convex());
+    CGAL_assertion( p.is_convex());
 
     for ( j = 0; j < 4; ++j) {
       // maximum area:

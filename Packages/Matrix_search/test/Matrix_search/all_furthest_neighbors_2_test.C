@@ -124,9 +124,9 @@ main()
       back_inserter( neighbors2));
     
     // and compare both results:
-    assert( equal( neighbors.begin(),
-                   neighbors.end(),
-                   neighbors2.begin()));
+    CGAL_assertion( equal( neighbors.begin(),
+                           neighbors.end(),
+                           neighbors2.begin()));
   } // for ( int i( 0); i < 5; ++i)
 
 #if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \

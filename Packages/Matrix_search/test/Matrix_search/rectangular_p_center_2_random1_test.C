@@ -106,6 +106,12 @@ typedef PCont::iterator                    iterator;
 typedef Creator_uniform_2< FT, Point >     Creator;
 typedef Random_points_in_square_2< Point, Creator >
                                            Point_generator;
+#ifdef _MSC_VER
+// that compiler cannot even distinguish between global
+// and class scope, so ...
+#define Base B_B_Base
+#endif // _MSC_VER
+
 #ifdef CGAL_CFG_NO_NAMESPACE
 template < class P,
            class Creator =
@@ -176,6 +182,10 @@ private:
   P p0, p1, p2, p3;
 };
 
+#ifdef _MSC_VER
+#undef Base
+#endif // _MSC_VER
+
 int
 main(int argc, char* argv[])
 {
@@ -242,7 +252,7 @@ main(int argc, char* argv[])
           break;
         if (++j == centers.end()) {
           cerr << "Error: Point " << *i << " is not covered." << endl;
-          assert(j != centers.end());
+          CGAL_assertion(j != centers.end());
         }
       } while (j != centers.end());
     }
