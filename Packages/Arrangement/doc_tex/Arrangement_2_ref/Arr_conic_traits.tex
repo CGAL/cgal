@@ -1,0 +1,181 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_conic_traits.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%  Arr_conic_traits_2<Kernel>
+% +========================================================================+
+\begin{ccRefClass}{Arr_conic_traits_2<Kernel>}
+
+\ccDefinition
+    The class \ccc{Arr_conic_traits_2<Kernel>} is a model of the 
+    \ccc{ArrangementTraits_2} concept and serves as a traits class for finite
+    segments of algebraic curves of degree 2 at most (conic curves).
+    The template parameter \ccc{Kernel} must be a model of the a CGAL Kernel 
+    concept that is templated by an exact number type that support the 
+    arithmetic operations plus the square root operation, to ensure the
+    robustness of the predicates and constructions carried out by the traits
+    class. For example, \ccStyle{Cartesian<leda_real>} would be a good choice
+    for the kernel.
+
+    A general conic curve $C$ is the locus of all points $(x,y)$ satisfying the
+    equation $rx^2 + sy^2 + txy + ux + vy + w = 0$, where:
+    \begin{itemize}
+    \item If $4rs - t^2 > 0$, $C$ is an ellipse. A special case occurs when
+          $r = s \neq 0$ and $t = 0$, where $C$ becomes a circle.
+    \item If $4rs - t^2 < 0$, $C$ is a hyperbola.
+    \item If $4rs - t^2 = 0$, $C$ is a parabola. A special case occurs when
+          $r = s = t = 0$, where $C$ becomes a line. 
+    \end{itemize}
+
+    A bounded conic arc is defined as one of the following:
+    \begin{itemize}
+    \item A full ellipse (or a circle) $C$.
+    \item The supporting conic curve $C$ and two endpoints $s$ and $t$ (the 
+    source and target, respectively).
+    \end{itemize}
+
+    It is possible to construct conic arcs in several ways, specifying a full
+    ellipse or a conic curve and two endpoints. It is also possible to specify
+    implicit endpoint that are formed by an intersection of $C$ with two other
+    conic curves $C_1$ and $C_2$ --- in this case the user is just required to
+    supply some approximation to the endpoints.
+
+    A very useful subset of the set of conic arcs are line segments and 
+    circular arcs, since arrangements of circular arcs and line segments have 
+    some interesting applications (e.g. offsetting polygons, motion planning 
+    for a disc robot, etc.). Circular arcs and line segment are simpler 
+    objects and can be dealt with more efficiently than arbitrary arcs. 
+    For these reasons, it is possible to construct conic arcs from segments 
+    and from circles. Using these constructors is highly recommended: It is 
+    more straightforward and also speeds up the arrangement construction.
+
+\ccInclude{CGAL/Arr_conic_traits_2.h}
+
+\ccIsModel
+    \ccc{ArrangementTraits_2} \lcTex{(\ccRefPage{ArrangementTraits_2}).}
+
+% The Conic_arc_2 class:
+%
+\subsection*{Class \ccc{Arr_conic_traits_2<Kernel>::Curve_2}}
+
+The \ccc{Curve_2} class nested within the conic arcs' traits can represent
+arbitrary conic arcs and support their construction in various ways. The copy 
+and default constructor as well as the assignment and equality operators are 
+provided for conic arcs. In addition, an \ccc{operator<<} for the curves is 
+defined for standard output streams and \ccc{Window_stream}.
+
+\begin{ccClass}{Arr_conic_traits_2<Kernel>::Curve_2}
+    \ccCreation
+    \ccCreationVariable{cv}
+
+\ccConstructor{Curve_2 (const Kernel::FT& r, 
+                        const Kernel::FT& s, 
+			const Kernel::FT& t, 
+                        const Kernel::FT& u, 
+                        const Kernel::FT& v, 
+                        const Kernel::FT& w,
+                        const Kernel::Point_2& ps,
+                        const Kernel::Point_2& pt);}
+  {constructs a conic arc supported by the curve $rx^2 + sy^2 + txy + ux + 
+   vy + w = 0$ with \ccc{ps} as its source and \ccc{pt} as its target.
+   \ccPrecond{\ccc{ps} and \ccc{pt} both satisfy the equation of the supporting
+              curve and define a bounded segment from it (e.g. in case of a
+              hyperbolic arc, both point should be located on the same branch
+              of the hyperbola.}}
+
+\ccConstructor{Curve_2(const Kernel::FT& r, 
+                       const Kernel::FT& s, 
+		       const Kernel::FT& t, 
+                       const Kernel::FT& u, 
+                       const Kernel::FT& v, 
+                       const Kernel::FT& w);}
+  {constructs a conic arc that corresponds to the full curve $rx^2 + sy^2 + 
+   txy + ux + vy + w = 0$.
+   \ccPrecond{The given curve is an ellipse, that is $4rs - t^2 > 0$.}}
+
+\ccConstructor{Curve_2(const Kernel::Segment_2& seg);}
+  {constructs an arc from the line segment \ccc{seg}.}
+
+\ccConstructor{Curve_2(const Kernel::Circle_2& circ,
+                       const Kernel::Point_2& ps,
+                       const Kernel::Point_2& pt);}
+  {constructs a circular arc supported by the circle \ccc{circ} and with 
+   \ccc{ps} and \ccc{pt} as its endpoints. If \ccc{circ} has a positive
+   orientation, then the arc is formed by going in a counterclockwise 
+   direction from \ccc{ps} to \ccc{pt}, and going in a clockwise direction if
+   the circle has a negative orientation.
+   \ccPrecond{\ccc{ps} and \ccc{pt} both lie on the circle \ccc{circ}}.}
+
+\ccConstructor{Curve_2(const Kernel::Circle_2& circ);}
+  {constructs a circular arc that corresponds to the full circle \ccc{circ}.}
+
+\ccConstructor{Curve_2 (const Kernel::FT& r, 
+                        const Kernel::FT& s, 
+			const Kernel::FT& t, 
+                        const Kernel::FT& u, 
+                        const Kernel::FT& v, 
+                        const Kernel::FT& w,
+                        const Kernel::Point_2& ps,
+                        const Kernel::FT& r1, 
+                        const Kernel::FT& s1, 
+			const Kernel::FT& t1, 
+                        const Kernel::FT& u1, 
+                        const Kernel::FT& v1, 
+                        const Kernel::FT& w1,
+                        const Kernel::Point_2& pt,
+                        const Kernel::FT& r2, 
+                        const Kernel::FT& s2, 
+			const Kernel::FT& t2, 
+                        const Kernel::FT& u2, 
+                        const Kernel::FT& v2, 
+                        const Kernel::FT& w2);}
+  {constructs a conic are supported by the curve $rx^2 + sy^2 + txy + ux + 
+   vy + w = 0$ with \ccc{ps} as its source and \ccc{pt} as its target.
+   In this case \ccc{ps} and  \ccc{pt} are just approximations of the 
+   endpoints, and their exact values are given implicitly, as the 
+   intersections of the supporting curve with $r_{1}x^2 + s_{1}y^2 + t_{1}xy +
+    u_{1}x + v_{1}y + w_{1} = 0$ and $r_{2}x^2 + s_{2}y^2 + t_{2}xy +
+    u_{2}x + v_{2}y + w_{2} = 0$, respectively.
+   \ccPrecond{The two curves specifying the endpoints really intersect with
+              the supporting conic curve.}}
+
+\ccOperations
+
+\ccMethod{bool is_full_conic() const;}
+  {returns whether the arc represents a full conic curve (a full ellipse).}
+
+\ccMethod{const Kernel::Point_2& source() const;}
+  {returns the source point of the arc.}
+
+\ccMethod{const Kernel::Point_2& target() const;}
+  {returns the target point of the arc.}
+
+\ccMethod{bool is_x_monotone() const;}{returns \ccc{true} if the arc is
+   $x$-monotone, \ccc{false} otherwise.}
+
+\ccMethod{bool is_segment() const;}
+  {returns whether the arc is a line segment.}
+
+\ccMethod{bool is_circular() const;}
+  {returns whether the arc is supported by a circle.} 
+
+\ccInclude{CGAL/IO/Conic_arc_2_Window_stream.h}
+
+\end{ccClass}
+
+\end{ccRefClass} % Arr_conic_traits
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
