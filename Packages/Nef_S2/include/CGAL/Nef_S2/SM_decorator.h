@@ -319,7 +319,7 @@ bool is_boundary_object(H h) const
 
 template <typename H>
 void store_boundary_object(H h, Face_handle f) const
-{ f->boundary_.push_back(make_object(h));
+{ f->boundary_.push_back(Object_handle(h));
   psm_->store_boundary_item(h, --(psm_->face_cycles_end(f)));
 }
 

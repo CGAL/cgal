@@ -348,11 +348,11 @@ public:
 
     Seg_info() : _o(), _from(-1) {}
     Seg_info(Vertex_handle v, int i) 
-    { _o=make_object(v); _from=i; }
+    { _o=Object_handle(v); _from=i; }
     Seg_info(Halfedge_handle e, int i) 
-    { _o=make_object(e); _from=i; }
+    { _o=Object_handle(e); _from=i; }
     Seg_info(Halfloop_handle l, int i) 
-    { _o=make_object(l); _from=i; }
+    { _o=Object_handle(l); _from=i; }
     Seg_info(const Seg_info& si) 
     { _o=si._o; _from=si._from; }
     Seg_info& operator=(const Seg_info& si) 

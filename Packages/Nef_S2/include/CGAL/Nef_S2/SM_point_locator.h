@@ -29,7 +29,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Object.h>
 #include <CGAL/Nef_2/geninfo.h>
 
 #undef _DEBUG
@@ -153,10 +152,6 @@ public:
   }
 
 
-  template <class Handle>
-  Object_handle make_object(Handle h) const
-  { return CGAL::make_object(h); }
-
   /*{\Mcreation 3}*/
 
   SM_point_locator() : Base() {}
@@ -192,20 +187,20 @@ public:
   { TRACEN("locate naivly "<<p);
     Vertex_const_iterator v;
     CGAL_forall_vertices(v,*this) {
-      if ( p == point(v) ) return make_object(v);
+      if ( p == point(v) ) return Object_handle(v);
     }
 
     Halfedge_const_iterator e;
     CGAL_forall_edges(e,*this) {
-      if ( segment(e).has_on(p) ) return make_object(e);
+      if ( segment(e).has_on(p) ) return Object_handle(e);
     }
     if ( has_loop() && circle(halfloop()).has_on(p) )
-      return make_object(Halfloop_const_handle(halfloop()));
+      return Object_handle(Halfloop_const_handle(halfloop()));
 
     // now in face:
 
     if ( number_of_vertices() == 0 && ! has_loop() ) 
-      return make_object(faces_begin());
+      return Object_handle(faces_begin());
 
     Vertex_const_handle v_res;
     Halfedge_const_handle e_res;
@@ -223,7 +218,7 @@ public:
       CGAL_nef_assertion( number_of_vertices()!=0 );
       Vertex_const_handle vt = vertices_begin();
       Sphere_point pvt = point(vt);
-      if ( p != pvt.opposite() ) s = Sphere_segment(p,pvt);
+      if ( p != pvt.antipode() ) s = Sphere_segment(p,pvt);
       else s = Sphere_segment(p,pvt,Sphere_circle(p,pvt));
       v_res = vt;
       solution = is_vertex_;
@@ -273,11 +268,11 @@ public:
 
     switch ( solution ) {
       case is_edge_: 
-        return make_object((Face_const_handle)(face(e_res)));
+        return Object_handle((Face_const_handle)(face(e_res)));
       case is_loop_:
-        return make_object((Face_const_handle)(face(l_res)));
+        return Object_handle((Face_const_handle)(face(l_res)));
       case is_vertex_:
-        return make_object((Face_const_handle)(face(v_res)));
+        return Object_handle((Face_const_handle)(face(v_res)));
       default: CGAL_nef_assertion_msg(0,"missing solution.");
     }
     return Object_handle(); // never reached!
@@ -322,7 +317,7 @@ public:
 	    !s_init && c.has_on(pv)) ) continue;
       TRACEN("candidate "<<pv);
       if ( M(v) ) {
-        h = make_object(v);     // store vertex
+        h = Object_handle(v);     // store vertex
         s = Sphere_segment(p,pv,c); // shorten
         continue;
       }
@@ -331,13 +326,13 @@ public:
       Halfedge_const_handle e = out_wedge(v,d,collinear);
       if ( collinear ) { 
         if ( M(e) ) {
-          h = make_object(e);
+          h = Object_handle(e);
           s = Sphere_segment(p,pv,c);
         }
         continue;
       }
       if ( M(face(e)) ) {
-        h = make_object(face(e));
+        h = Object_handle(face(e));
         s = Sphere_segment(p,pv,c);
       }
     } // all vertices
@@ -355,13 +350,13 @@ public:
         if ( s_cand.is_short() && circle(e).has_on_negative_side(p) ||
 	     s_cand.is_long() && circle(e).has_on_positive_side(p) ||
 	     s_cand.is_halfcircle() && 
-	       strictly_ordered_ccw_at(p.opposite(),
+	       strictly_ordered_ccw_at(p.antipode(),
 				       direction(e),d,direction(twin(e))) )
 	  e_res = twin(e);
         if ( M(e_res) ) {
-          h = make_object(e_res); s = s_cand;
+          h = Object_handle(e_res); s = s_cand;
         } else if ( M(face(twin(e_res))) ) {
-          h = make_object(face(twin(e_res))); s = s_cand;
+          h = Object_handle(face(twin(e_res))); s = s_cand;
         }
       }
     }
@@ -424,8 +419,6 @@ void SM_point_locator<D>::init_marks_of_halfspheres()
     return;
   }
 
-  //Sphere_circle c(-1,0,0);
-  //Sphere_direction up(c),down(c.opposite());
   Sphere_circle c(0,0,1);
   Sphere_direction right(c),left(c.opposite());
   bool collinear(false);

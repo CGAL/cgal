@@ -20,7 +20,7 @@ Sphere_segment_rep() { ps_ = pt_ = Point(); c_ = Circle(); }
 Sphere_segment_rep(const Point& p1, const Point& p2,
 		   bool shorter_arc=true) :
   ps_(p1), pt_(p2), c_(Plane_3(p1,p2,Point_3(0,0,0))) 
-{ CGAL_assertion(p1 != p2.opposite()); 
+{ CGAL_assertion(p1 != p2.antipode()); 
   if ( p1 == p2 ) { 
     Plane_3 h(Point_3(0,0,0),(p1-CGAL::ORIGIN));
     c_ = Sphere_circle<R_>(Plane_3(Point_3(0,0,0),h.base1()));
@@ -36,7 +36,7 @@ Sphere_segment_rep(const Circle& c1,
                    const Circle& c2) : c_(c1) 
 { CGAL_assertion(!equal_as_sets(c1,c2)); 
   ps_ = intersection(c1,c2);
-  pt_ = ps_.opposite();
+  pt_ = ps_.antipode();
   if ( orientation(Point_3(0,0,0),ps_,pt_,
                    CGAL::ORIGIN + c_.orthogonal_vector()) !=
        CGAL::POSITIVE ) std::swap(ps_,pt_);
@@ -96,14 +96,14 @@ Sphere_segment(const Sphere_point<R>& p1, const Sphere_point<R>& p2,
                bool shorter_arc=true) :  Base(Rep(p1,p2,shorter_arc)) {}
 /*{\Mcreate creates a spherical segment spanning the shorter arc
 from |p1| to |p2| if |shorter_arc == true|. Otherwise the longer
-arc is created. \precond |p1 != p2| and |p1 != p2.opposite()|.}*/
+arc is created. \precond |p1 != p2| and |p1 != p2.antipode()|.}*/
 
 
 Sphere_segment(const Sphere_point<R>& p1, const Sphere_point<R>& p2,
                const Sphere_circle<R>& c) : Base(Rep(p1,p2,c)) {}
 /*{\Mcreate creates a spherical segment spanning the arc
 from |p1| to |p2| as part of the oriented circle |c| 
-(|p1 == p2| or |p1 == p2.opposite()| are possible.)
+(|p1 == p2| or |p1 == p2.antipode()| are possible.)
 \precond |p1| and |p2| are contained in |c|.}*/
 
 Sphere_segment(const Sphere_circle<R>& c1, 
@@ -154,7 +154,7 @@ void split_halfcircle(Sphere_segment<R>& s1,
   Plane_3 h(Point_3(0,0,0),(target()-CGAL::ORIGIN));
   Sphere_point<R> p = 
     CGAL::intersection(sphere_circle(),Sphere_circle<R>(h));
-  if ( !has_on(p) ) p = p.opposite();
+  if ( !has_on(p) ) p = p.antipode();
   s1 = Sphere_segment<R>(ptr()->ps_,p,ptr()->c_);
   s2 = Sphere_segment<R>(p,ptr()->pt_,ptr()->c_);
 }
@@ -174,7 +174,7 @@ bool is_long() const
 bool is_degenerate() const { return source() == target(); }
 /*{\Mop return true iff |\Mvar| is degenerate.}*/
 
-bool is_halfcircle() const { return source().opposite() == target(); }
+bool is_halfcircle() const { return source().antipode() == target(); }
 /*{\Mop return true iff |\Mvar| is a halfcircle.}*/
 
 bool has_on(const Sphere_point<R>& p) const;
@@ -223,7 +223,7 @@ template <typename R>
 std::pair< Sphere_segment<R>,Sphere_segment<R> >
 Sphere_circle<R>::split_at(const Sphere_point<R>& p) const
 { CGAL_assertion(has_on(p));
-  Sphere_point<R> q(p.opposite());
+  Sphere_point<R> q(p.antipode());
   return Sphere_segment_pair(
     Sphere_segment<R>(p,q,*this),
     Sphere_segment<R>(p,q,this->opposite()));
@@ -306,7 +306,7 @@ intersection(const Sphere_segment<R>& s) const
   Sphere_point<R> res = 
     CGAL::intersection(sphere_circle(),s.sphere_circle());
   if ( has_on(res) && s.has_on(res) ) return res;
-  return res.opposite();
+  return res.antipode();
 }
 
 template <typename R> 
@@ -319,7 +319,7 @@ bool do_intersect_internally(const Sphere_segment<R>& s1,
   p = CGAL::intersection(s1.sphere_circle(),s2.sphere_circle());
   if ( s1.has_in_relative_interior(p) && 
        s2.has_in_relative_interior(p) ) return true;
-  p = p.opposite();
+  p = p.antipode();
   if ( s1.has_in_relative_interior(p) && 
        s2.has_in_relative_interior(p) ) return true;
   return false;
@@ -335,7 +335,7 @@ bool do_intersect_internally(const Sphere_circle<R>& c1,
     return false;
   p = CGAL::intersection(c1,s2.sphere_circle());
   if ( s2.has_in_relative_interior(p) ) return true;
-  p = p.opposite();
+  p = p.antipode();
   if ( s2.has_in_relative_interior(p) ) return true;
   return false;
 }

@@ -38,80 +38,60 @@ class Handle_wrapper : public Ref_counted_virtual
 {
   public:
     Handle_wrapper(const T& object) : _object(object) {}
-
     Handle_wrapper() {}
-
     operator T() const { return _object; }
-
     ~Handle_wrapper() {}
-
   private:
-    T         _object;
+  T _object;
 };
 
 
 class Object_handle
   : public Handle_for_virtual<Ref_counted_virtual>
 {
-    struct empty{};
-    typedef Handle_for_virtual<Ref_counted_virtual> base;
+  struct empty{};
+  typedef Handle_for_virtual<Ref_counted_virtual> base;
+public:
+  Object_handle()
+  { initialize_with(Handle_wrapper<empty>()); }
 
-  public:
+  template <class T>
+  Object_handle(const T&t)
+  { initialize_with(Handle_wrapper<T>(t)); }
 
-    Object_handle()
-    {
-	initialize_with(Handle_wrapper<empty>());
-    }
-
-    template <class T>
-    Object_handle(const T&t)
-    {
-	initialize_with(Handle_wrapper<T>(t));
-    }
-
-    template <class T>
-    bool assign(T &t) const
-    {
+  template <class T>
+  bool assign(T &t) const
+  {
 #ifdef _MSC_VER
-      try {
+    try {
 #endif
-        const Handle_wrapper<T> *wp = 
-	  dynamic_cast<const Handle_wrapper<T> *>(Ptr());
-        if ( wp == static_cast<Handle_wrapper<T> *>(0) )
-            return false;
-        t = *(wp);
+      const Handle_wrapper<T> *wp = 
+	dynamic_cast<const Handle_wrapper<T> *>(Ptr());
+      if ( wp == static_cast<Handle_wrapper<T> *>(0) )
+	return false;
+      t = *(wp);
 #ifdef _MSC_VER
-      }
-      catch (...) {
-          std::cerr << "ERROR : YOUR COMPILER MUST SUPPORT RTTI" << std::endl;
-          abort();
-      }
+    }
+    catch (...) {
+      std::cerr << "ERROR : YOUR COMPILER MUST SUPPORT RTTI" << std::endl;
+      abort();
+    }
 #endif
-      return true;
-    }
+    return true;
+  }
 
-    bool
-    is_empty() const
-    {
-	empty E;
-	return assign(E);
-    }
-
-    bool operator==(CGAL_NULL_TYPE n) const
-    { assert(n == 0); return is_empty(); }
-
-    bool operator!=(CGAL_NULL_TYPE n) const
-    { assert(n == 0); return !is_empty(); }
+  bool is_empty() const
+  { empty E; return assign(E); }
+  bool operator==(CGAL_NULL_TYPE n) const
+  { CGAL_assertion(n == 0); return is_empty(); }
+  bool operator!=(CGAL_NULL_TYPE n) const
+  { CGAL_assertion(n == 0); return !is_empty(); }
 
 };
 
 template <class T>
-inline
-bool
-assign(T& t, const Object_handle& o)
-{
-    return o.assign(t);
-}
+inline bool assign(T& t, const Object_handle& o)
+{ return o.assign(t); }
 
 CGAL_END_NAMESPACE
 

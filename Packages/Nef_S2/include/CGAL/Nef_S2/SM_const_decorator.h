@@ -395,8 +395,7 @@ check_integrity_and_topological_planarity(bool faces) const
         CGAL_nef_assertion( face(Halfedge_const_handle(fci)) == f ); ++fc_num;
       } else if ( fci.is_vertex() ) {
         CGAL_nef_assertion( face(Vertex_const_handle(fci)) == f ); ++iv_num;
-      }
-      else CGAL_nef_assertion(0);
+      } else CGAL_nef_assertion_msg(0,"damn generic handle.");
     }
   }
 

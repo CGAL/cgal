@@ -447,12 +447,15 @@ pointer_update(const Sphere_map<K>& D)
   for (f = faces_begin(); f != faces_end(); ++f) {
     Face_cycle_iterator fci; 
     for(fci = f->boundary_.begin(); fci != f->boundary_.end(); ++fci) {
-      if ( assign(v,Object_handle(fci)) ) 
-      { *fci = make_object(VM[v]); store_boundary_item(v,fci); }
-      else if ( assign(e,Object_handle(fci)) ) 
-      { *fci = make_object(EM[e]); store_boundary_item(e,fci); }
-      else if ( assign(l,Object_handle(fci)) ) 
-      { *fci = make_object(LM[l]); store_boundary_item(l,fci); }
+      if ( fci.is_vertex() ) 
+      { v = Vertex_handle(fci);
+	*fci = Object_handle(VM[v]); store_boundary_item(v,fci); }
+      else if ( fci.is_halfedge() ) 
+      { e = Halfedge_handle(fci);
+	*fci = Object_handle(EM[e]); store_boundary_item(e,fci); }
+      else if ( fci.is_halfloop() ) 
+      { l = Halfloop_handle(fci);
+	*fci = Object_handle(LM[l]); store_boundary_item(l,fci); }
       else CGAL_nef_assertion_msg(0,"damn wrong boundary item in face.");
     }
   }

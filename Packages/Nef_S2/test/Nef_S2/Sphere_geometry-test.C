@@ -28,8 +28,8 @@ int main()
   CGAL_TEST(p.x() == NT(0));
   CGAL_TEST(p.y() == NT(0));
   CGAL_TEST(p.z() == NT(1));
-  CGAL_TEST(p.opposite().opposite()==p);
-  CGAL_TEST(p.opposite()!=p);
+  CGAL_TEST(p.antipode().antipode()==p);
+  CGAL_TEST(p.antipode()!=p);
   
   CGAL_TEST(c1.opposite().opposite()==c1);
   CGAL_TEST(c1.has_on(p)&&c1.has_on(q));
@@ -45,9 +45,9 @@ int main()
   CGAL_TEST(s1.opposite().opposite()==s1);
   CGAL_TEST(s1.complement().complement()==s1);
   CGAL_TEST(SSegment(p,p,c1).is_degenerate());
-  CGAL_TEST(SSegment(p,p.opposite(),c1).is_halfcircle());
+  CGAL_TEST(SSegment(p,p.antipode(),c1).is_halfcircle());
   CGAL_TEST(s1.has_on(p));
-  CGAL_TEST(SSegment(p,p.opposite(),c1).has_in_relative_interior(q));
+  CGAL_TEST(SSegment(p,p.antipode(),c1).has_in_relative_interior(q));
 
   std::list<SSegment> L,Lp;
   std::list<SSegment>::iterator it;

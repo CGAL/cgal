@@ -39,12 +39,12 @@ Sphere_circle() : Base() {}
 Sphere_circle(const Sphere_point<R>& p, const Sphere_point<R>&q) 
   : Base(Point_3(0,0,0),p,q) 
 /*{\Mcreate creates a great circle through $p$ and $q$.  If $p$ and
-$q$ are not opposite on $S_2$, then this circle is unique and oriented
+$q$ are not antipodal on $S_2$, then this circle is unique and oriented
 such that a walk along |\Mvar| meets $p$ just before the shorter segment
-between $p$ and $q$. If $p$ and $q$ are opposite of each other then we
+between $p$ and $q$. If $p$ and $q$ are antipodal of each other then we
 create any great circle that contains $p$ and $q$.}*/ 
 { Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + orthogonal_vector();
-  if ( p != q.opposite() ) {
+  if ( p != q.antipode() ) {
     if ( CGAL::orientation(p1,p,q,p4) != CGAL::POSITIVE )
       *this = Self(opposite());
   } else {
@@ -91,7 +91,7 @@ hemisphere left of |\Mvar|.}*/
 
 Sphere_segment_pair split_at(const Sphere_point<R>& p) const;
 /*{\Mop returns the pair of circle segments that is the result
-of splitting |\Mvar| at |p| and |p.opposite()|.}*/
+of splitting |\Mvar| at |p| and |p.antipode()|.}*/
 
 Sphere_segment_pair split_at_xy_plane() const;
 /*{\Mop returns the pair of circle segments that is the result

@@ -150,7 +150,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
        question is which part is in the halfspace $h^+$.*/
     TRACEN("    opposite");
     Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
-    if ( !has_on(i1) ) i1 = i1.opposite();
+    if ( !has_on(i1) ) i1 = i1.antipode();
     if ( or1 == CGAL::ON_POSITIVE_SIDE ) 
       s1 = Sphere_segment<R>(source(),i1,sphere_circle());
     else if ( or2 == CGAL::ON_POSITIVE_SIDE )
@@ -167,7 +167,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
        |s.sphere_circle()| with respect to the plane through the
        endpoints of $s$ and the tip of the normal of $h$. */
     TRACEN("    both in plane");
-    if ( source() != target().opposite() ) {
+    if ( source() != target().antipode() ) {
       s1 = *this; return 1;
     } 
     // now this is a halfcircle
@@ -194,7 +194,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
        degenerate). */
     if ( is_long() ) { 
       Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
-      Sphere_point<R> i2 = i1.opposite();
+      Sphere_point<R> i2 = i1.antipode();
       Sphere_segment<R> so(i1,i2,sphere_circle());
       if ( so.has_on(source()) && so.has_on(target()) )
 	std::swap(i1,i2);
@@ -213,7 +213,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
        and one on $h^0$. */
     if ( is_long() ) { 
       Sphere_point<R> i1 = CGAL::intersection(ptr()->c_,c);
-      Sphere_point<R> i2 = i1.opposite();
+      Sphere_point<R> i2 = i1.antipode();
       Sphere_segment<R> so(i1,i2,sphere_circle());
       TRACEN("    both <= plane, long"<<so);
       if ( so.has_on(source()) && so.has_on(target()) )

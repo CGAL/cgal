@@ -93,8 +93,8 @@ bool operator!=(const Sphere_point<R>& q) const
 /*{\Mbinop Inequality.}*/
 { return !operator==(q); }
 
-Sphere_point<R> opposite() const 
-/*{\Mop returns the opposite of |\Mvar|.}*/
+Sphere_point<R> antipode() const 
+/*{\Mop returns the antipode of |\Mvar|.}*/
 { return ORIGIN + -(Base(*this)-ORIGIN); }
 
 }; // Sphere_point<R>
