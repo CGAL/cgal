@@ -52,7 +52,7 @@ Package the code:
            in order to touch all files (Here the date/time  Jan 22, 15:30 was 
            used as an example)
       2.  Make CGAL-M.m.tar.gz with tar and gzip and CGAL-M.m.zip with zip.
-           gtar zcf CGAL-M.m.tar.gz CGAL-M.m
+           gtar zcf CGAL-M.m.gtar.gz CGAL-M.m
            tar cf CGAL-M.m.tar CGAL-M.m
            gzip CGAL-M.m.tar
            zip -r CGAL-M.m.zip CGAL-M.m
@@ -61,7 +61,8 @@ For the web pages:
       1.  edit the following web pages (at least)
              news.html            
              in_progress.html            
-             download.html            
+             download/download.html            
+             download/license.html            
              home.html            
              releases.html            
              platforms.html            
