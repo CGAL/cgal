@@ -40,11 +40,11 @@ CGAL_BEGIN_NAMESPACE
 
 template <class Curve_iterator, class SweepLineTraits_2, class OutpoutIterator>
 void  sweep_to_produce_points_2(Curve_iterator curves_begin, 
-                                           Curve_iterator curves_end,  
-                                           SweepLineTraits_2& traits, 
-                                           OutpoutIterator points,
-                                           bool edge_points = true,
-                                           bool overlapping = false)
+                                Curve_iterator curves_end,  
+                                SweepLineTraits_2& traits, 
+                                OutpoutIterator points,
+                                bool edge_points = true,
+                                bool overlapping = false)
 {
   Sweep_curves_to_subcurves_2<Curve_iterator, SweepLineTraits_2>  
                                                       sweep_line(&traits);
