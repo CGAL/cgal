@@ -41,6 +41,11 @@ opposite(Sign o)
 { return static_cast<Sign>( - static_cast<int>(o)); }
 
 inline
+Comparison_result
+opposite(Comparison_result o)
+{ return static_cast<Comparison_result>( - static_cast<int>(o)); }
+
+inline
 Oriented_side
 opposite(Oriented_side os)
 { return static_cast<Oriented_side>( - static_cast<int>(os)); }
