@@ -38,18 +38,34 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class Tr>
+struct Conforming_Delaunay_triangulation_2_default_extras
+{
+  typedef typename Tr::Vertex_handle Vertex_handle;
+  typedef typename Tr::Face_handle Face_handle;
+
+  bool is_bad(const Tr&, const Face_handle&, const int) const { return false;}
+
+  void signal_inserted_vertex(const Tr&,
+			      const Face_handle&,
+			      const int,
+			      const Vertex_handle&) const  {};
+};
+
 /**
    - Tr is a Delaunay constrained triangulation (with intersections or
    not).
 */
-template <class Tr>
+template <class Tr,
+	  class Extras = 
+	    Conforming_Delaunay_triangulation_2_default_extras<Tr> >
 class Conforming_Delaunay_triangulation_2: public Tr
 {
 public:
   // -- public typedef --
 
   typedef Tr Triangulation;
-  typedef Conforming_Delaunay_triangulation_2<Tr> Conform;
+  typedef Conforming_Delaunay_triangulation_2<Tr, Extras> Conform;
   typedef Conform Self;
   /**< The \em Self type, for use by nested types. */
   
@@ -232,6 +248,11 @@ public:
 		    const Face_handle& fh,
 		    const int i) const
       {
+	if( ct.extras.is_bad( static_cast<const Tr&>(ct),
+			      fh, i ) ) return false;
+
+	typedef typename Geom_traits::Angle_2 Angle_2;
+	
 	const Angle_2 angle = ct.geom_traits().angle_2_object();
 	
 	const Point& a = fh->vertex(ct.cw(i))->point();
@@ -247,6 +268,11 @@ public:
 		    const int i,
 		    const Point& p) const	
       {
+	if( ct.extras.is_bad( static_cast<const Tr&>(ct),
+			      fh, i ) ) return false;
+
+	typedef typename Geom_traits::Angle_2 Angle_2;
+	
 	const Angle_2 angle = ct.geom_traits().angle_2_object();
 	
 	const Point& a = fh->vertex(ct.cw(i))->point();
@@ -263,6 +289,9 @@ public:
 		    const Face_handle& fh,
 		    const int i) const
       {
+	if( ct.extras.is_bad( static_cast<const Tr&>(ct),
+			      fh, i ) ) return false;
+
 	typedef typename Geom_traits::Side_of_oriented_circle_2
 	  Side_of_oriented_circle_2;
 	
@@ -291,7 +320,8 @@ public:
 
   /** default constructor */
   explicit
-  Conforming_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits());
+  Conforming_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits(),
+				      Extras& extras_ = Extras());
   //@}
 
   /** \name SURCHARGED INSERTION-DELETION FONCTIONS
@@ -457,6 +487,7 @@ private:
   //  warning: some edges could be destroyed, use the same wrapper
   // is_really_a_constrained_edge: tester to filter edges_to_be_conformed
   const Is_really_a_constrained_edge is_really_a_constrained_edge;
+  Extras extras;
   Constrained_edges_queue edges_to_be_conformed;
 
   // Cluster_map: multimap Vertex_handle -> Cluster
@@ -633,11 +664,13 @@ protected:
 
 // --- CONSTRUCTORS ---
 
-template <class Tr>
-Conforming_Delaunay_triangulation_2<Tr>::
-Conforming_Delaunay_triangulation_2(const Geom_traits& gt)
+template <class Tr, class Extras>
+Conforming_Delaunay_triangulation_2<Tr, Extras>::
+Conforming_Delaunay_triangulation_2(const Geom_traits& gt,
+				    Extras& extras_)
   : Tr(gt), is_really_a_constrained_edge(*this), 
     /** \todo{ *this is used in the constructor!!} */
+    extras(extras_),
     edges_to_be_conformed(is_really_a_constrained_edge),
     cluster_map(),
     initialized(NONE)
@@ -645,8 +678,8 @@ Conforming_Delaunay_triangulation_2(const Geom_traits& gt)
 
 // --- ACCESS FUNCTIONS ---
 
-template <class Tr>
-int Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+int Conforming_Delaunay_triangulation_2<Tr, Extras>::
 number_of_constrained_edges() const
 {
   int nedges = 0;
@@ -658,9 +691,9 @@ number_of_constrained_edges() const
   return nedges;
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 template <class Is_locally_conform>
-bool Conforming_Delaunay_triangulation_2<Tr>::
+bool Conforming_Delaunay_triangulation_2<Tr, Extras>::
 is_conforming(const Is_locally_conform& is_locally_conform)
 {
   for(Finite_edges_iterator ei = finite_edges_begin();
@@ -674,8 +707,8 @@ is_conforming(const Is_locally_conform& is_locally_conform)
 
 // --- HELPING FUNCTIONS ---
 
-template <class Tr>
-void Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 clear() 
 {
   cluster_map.clear();
@@ -685,9 +718,9 @@ clear()
 
 // --- MARKING FUNCTIONS ---
 
-template <class Tr>
+template <class Tr, class Extras>
 template <typename Seeds_it>
-void Conforming_Delaunay_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 mark_facets(Seeds_it begin,
 	    Seeds_it end,
 	    bool mark /* = false */)
@@ -714,9 +747,9 @@ mark_facets(Seeds_it begin,
 
 // --- CONFORMING FUNCTIONS ---
 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-void Conforming_Delaunay_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 make_conforming_Delaunay()
 {
   if(initialized!=DELAUNAY) init_Delaunay();
@@ -726,9 +759,9 @@ make_conforming_Delaunay()
     };
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-void Conforming_Delaunay_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 make_conforming_Gabriel()
 {
   if(initialized!=GABRIEL) init_Gabriel();
@@ -739,10 +772,10 @@ make_conforming_Gabriel()
 }
 
 // --- STEP BY STEP FUNCTIONS ---
-template <class Tr>
+template <class Tr, class Extras>
 template <class Is_locally_conform>
 inline
-void Conforming_Delaunay_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 init(const Is_locally_conform& is_loc_conf)
 {
   cluster_map.clear();
@@ -752,10 +785,10 @@ init(const Is_locally_conform& is_loc_conf)
   CGAL_assertion(initialized == GABRIEL || initialized == DELAUNAY);
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 template <class Is_locally_conform>
 inline
-bool Conforming_Delaunay_triangulation_2<Tr>::
+bool Conforming_Delaunay_triangulation_2<Tr, Extras>::
 step_by_step(const Is_locally_conform& is_loc_conf)
 {
   if( !edges_to_be_conformed.empty() )
@@ -769,10 +802,8 @@ step_by_step(const Is_locally_conform& is_loc_conf)
 
 // --- PRIVATE MEMBER FUNCTIONS ---
 
-#ifndef CGAL_IT_IS_A_CONSTRAINED_TRIANGULATION_PLUS
-
-template <class Tr>
-void Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 mark_convex_hull()
 {
   for(All_faces_iterator fit=all_faces_begin();
@@ -782,8 +813,8 @@ mark_convex_hull()
   propagate_marks(infinite_face(), false);
 }
 
-template <class Tr>
-void Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 propagate_marks(const Face_handle fh, bool mark)
 {
   // std::queue only works with std::list on VC++6, and not with
@@ -808,8 +839,10 @@ propagate_marks(const Face_handle fh, bool mark)
     }
 };
 
-template <class Tr>
-void Conforming_Delaunay_triangulation_2<Tr>::
+#ifndef CGAL_IT_IS_A_CONSTRAINED_TRIANGULATION_PLUS
+
+template <class Tr, class Extras>
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 create_clusters()
 {
   for(Finite_vertices_iterator vit = finite_vertices_begin();
@@ -820,8 +853,8 @@ create_clusters()
 
 #else
 
-template <class Tr>
-void Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 create_clusters()
 {
   Unique_hash_map<Vertex_handle,bool> created(false);
@@ -843,8 +876,8 @@ create_clusters()
 
 #endif
 
-template <class Tr>
-void Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 create_clusters_of_vertex(const Vertex_handle v)
 {
   Is_edge_constrained test;
@@ -895,8 +928,8 @@ create_clusters_of_vertex(const Vertex_handle v)
     }
 }
 
-template <class Tr>
-void Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 construct_cluster(Vertex_handle v,
 		  Constrained_edge_circulator begin,
 		  const Constrained_edge_circulator& end,
@@ -963,9 +996,9 @@ construct_cluster(Vertex_handle v,
 
 #ifndef CGAL_IT_IS_A_CONSTRAINED_TRIANGULATION_PLUS
 
-template <class Tr>
+template <class Tr, class Extras>
 template <class Is_locally_conform>
-void Conforming_Delaunay_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 fill_edge_queue(const Is_locally_conform& is_locally_conform)
 {
   for(Finite_edges_iterator ei = finite_edges_begin();
@@ -984,9 +1017,9 @@ fill_edge_queue(const Is_locally_conform& is_locally_conform)
 
 #else
 
-template <class Tr>
+template <class Tr, class Extras>
 template <class Is_locally_conform>
-void Conforming_Delaunay_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 fill_edge_queue(const Is_locally_conform& is_locally_conform)
 { 
   for(typename Tr::Subconstraint_iterator it = subconstraints_begin();
@@ -1015,9 +1048,9 @@ fill_edge_queue(const Is_locally_conform& is_locally_conform)
 //update the encroached segments list
 // TODO: perhaps we should remove destroyed edges too
 // TODO: rewrite this function one day
-template <class Tr>
+template <class Tr, class Extras>
 template <class Is_locally_conform>
-void Conforming_Delaunay_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 update_edges_to_be_conformed(Vertex_handle va,
 			     Vertex_handle vb,
 			     Vertex_handle vm,
@@ -1050,10 +1083,10 @@ update_edges_to_be_conformed(Vertex_handle va,
   }
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 template <class Is_locally_conform>
 inline
-void Conforming_Delaunay_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 process_one_edge(const Is_locally_conform& is_loc_conf)
 {
   Constrained_edge ce = edges_to_be_conformed.front();
@@ -1063,9 +1096,9 @@ process_one_edge(const Is_locally_conform& is_loc_conf)
 }
 
 //this function split all the segments that are encroached
-template <class Tr>
+template <class Tr, class Extras>
 template <class Is_locally_conform>
-void Conforming_Delaunay_triangulation_2<Tr>::
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 refine_edge(Vertex_handle va, Vertex_handle vb,
 	    const Is_locally_conform& is_loc_conf)
 {
@@ -1098,9 +1131,9 @@ refine_edge(Vertex_handle va, Vertex_handle vb,
   update_edges_to_be_conformed(va, vb, vm, is_loc_conf);
 }
 
-// template <class Tr>
+// template <class Tr, class Extras>
 // inline
-// bool Conforming_Delaunay_triangulation_2<Tr>::
+// bool Conforming_Delaunay_triangulation_2<Tr, Extras>::
 // is_encroached(const Vertex_handle va, const Vertex_handle vb) const
 // {
 //   Face_handle fh;
@@ -1119,8 +1152,8 @@ refine_edge(Vertex_handle va, Vertex_handle vb,
 
 // -> traits?
 // TODO, FIXME: not robust!
-template <class Tr>
-bool Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+bool Conforming_Delaunay_triangulation_2<Tr, Extras>::
 is_small_angle(const Point& pleft,
 	       const Point& pmiddle,
 	       const Point& pright) const
@@ -1146,9 +1179,9 @@ is_small_angle(const Point& pleft,
     }
 }
 
-template <class Tr>
-typename Conforming_Delaunay_triangulation_2<Tr>::Vertex_handle
-Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+typename Conforming_Delaunay_triangulation_2<Tr, Extras>::Vertex_handle
+Conforming_Delaunay_triangulation_2<Tr, Extras>::
 cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
 {
   Construct_vector_2 vector =
@@ -1204,9 +1237,9 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
   return vc;
 }
 
-template <class Tr>
-typename Conforming_Delaunay_triangulation_2<Tr>::Vertex_handle
-Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+typename Conforming_Delaunay_triangulation_2<Tr, Extras>::Vertex_handle
+Conforming_Delaunay_triangulation_2<Tr, Extras>::
 insert_middle(Face_handle f, int i)
 {
   Construct_midpoint_2
@@ -1223,10 +1256,10 @@ insert_middle(Face_handle f, int i)
   return vm;
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 inline 
-typename Conforming_Delaunay_triangulation_2<Tr>::Vertex_handle
-Conforming_Delaunay_triangulation_2<Tr>::
+typename Conforming_Delaunay_triangulation_2<Tr, Extras>::Vertex_handle
+Conforming_Delaunay_triangulation_2<Tr, Extras>::
 virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // insert the point p in the edge (fh, edge_index). It updates seeds 
   // too.
@@ -1251,15 +1284,18 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // We should deconstrained the constrained edge, insert the two
   // subconstraints and re-constrain them
 
+  extras.signal_inserted_vertex(static_cast<const Tr&>(*this),
+				fh, edge_index, vp);
+
   return vp;
 }
 
 // # used by: is_small_angle, create_clusters_of_vertex
 // # compute 4 times the square of the cosine of the angle (ab,ac)
 // # WARNING, TODO: this is not exact with doubles and can lead to crashes!!
-template <class Tr>
-typename Conforming_Delaunay_triangulation_2<Tr>::FT
-Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+typename Conforming_Delaunay_triangulation_2<Tr, Extras>::FT
+Conforming_Delaunay_triangulation_2<Tr, Extras>::
 squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
 				const Point& pc) const
 {
@@ -1279,8 +1315,8 @@ squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
 
 // --- PROTECTED MEMBER FUNCTIONS ---
 
-template <class Tr>
-void Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
 	       Vertex_handle vm, bool reduction)
 {
@@ -1315,8 +1351,8 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
 }
 
 // # used by refine_face and cut_cluster_edge
-template <class Tr>
-bool Conforming_Delaunay_triangulation_2<Tr>::
+template <class Tr, class Extras>
+bool Conforming_Delaunay_triangulation_2<Tr, Extras>::
 get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
 {
   typedef typename Cluster_map::iterator Iterator;
@@ -1341,7 +1377,8 @@ template <class Tr>
 void
 make_conforming_Gabriel_2(Tr& t)
 {
-  typedef Conforming_Delaunay_triangulation_2<Tr> Conform;
+  typedef Conforming_Delaunay_triangulation_2<Tr,
+    Conforming_Delaunay_triangulation_2_default_extras<Tr> > Conform;
 
   Conform conform;
   conform.swap(t);
@@ -1353,7 +1390,8 @@ template <class Tr>
 void
 make_conforming_Delaunay_2(Tr& t)
 {
-  typedef Conforming_Delaunay_triangulation_2<Tr> Conform;
+  typedef Conforming_Delaunay_triangulation_2<Tr,
+    Conforming_Delaunay_triangulation_2_default_extras<Tr> > Conform;
 
   Conform conform;
   conform.swap(t);

@@ -1,6 +1,11 @@
 28 June 2004 Laurent Rineau
 - Move mark_facets functions from Delaunay_mesh_2 to
   Conforming_Delaunay_triangulation_2.
+- Added a sort of hooks, through a template parameter "Extras", in
+  Conforming_Delaunay_triangulation_2<Tr, Extras>. There is a default
+  template argument that does nothing.
+  These hooks help doing actions when points are inserted. Used in the
+  package Mesh_3.
 
 17 May 2004 Menelaos Karavelas
 - replaced Point by Point_2 in the demo in order to resolve clash with
