@@ -1,4 +1,4 @@
-\begin{ccRefConcept}{RootOf_2}
+\begin{ccRefConcept}{AlgebraicKernel_2_2::RootOf_2}
 
 \ccDefinition
 
@@ -13,9 +13,9 @@ degree up to~2 over a \ccc{RingNumberType} denoted as \ccc{RT}.
 \footnote{How to get RT...?}
 \footnote{\ccc{make_root_of} to be removed from concept? solve instead} 
 
-\ccFunction{RootOf_2 make_root_of_2(RT a,b,c, int i);}{Returns the \ccc{i}th root of equation $aX^2+bX+c=0$.}
+\ccFunction{RootOf_2 make_root_of_2(RT a, RT b, RT c, int i);}{Returns the \ccc{i}th root of equation $aX^2+bX+c=0$.}\footnote{numbering of roots from 0 or 1? to be checked}
 \ccGlue
-\ccFunction{RootOf_2 make_root_of_2(FT a,b,c, int i);}{Returns the \ccc{i}th root of equation $aX^2+bX+c=0$.}
+\ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, int i);}{Returns the \ccc{i}th root of equation $aX^2+bX+c=0$.}
 
 \ccOperations
 
@@ -23,6 +23,8 @@ The comparison operators \ccc{==, !=, <, >, <=, >=} need to be
 provided to compare elements of types \ccc{RootOf_2, RT} and \ccc{FT}. 
 
 In addition, the following operations must be provided:
+
+\def\ccTagRmEigenClassName{\ccFalse}
 
 \ccFunction{RootOf_2 operator+(const RT &a, const RootOf_2 &r);}{}
 \ccGlue
@@ -32,11 +34,15 @@ In addition, the following operations must be provided:
 \ccGlue
 \ccFunction{RootOf_2 operator+(const RootOf_2 &r, const FT &a);}{}
 
+and similarly for operators -, * and /.
+
 \ccFunction{RootOf_2 square(const RootOf_2 & r);}{}
+
+\def\ccTagRmEigenClassName{\ccTrue}
 
 \ccHasModels
 
-\footnote{to be done}
+\ccc{double}, \ccc{Root_of_2<RT>}, etc \footnote{to be precised}
 
 \ccSeeAlso
 

@@ -4,7 +4,7 @@
 
 \ccInclude{CGAL/Curved_kernel.h}
 
-\ccIsModel{CircularKernel, ConicKernel}
+\ccIsModel{CircularKernel, ConicKernel}\footnote{macro ``ccIsmodel'' is apparently assuming that there is only one concept...}
 
 
 \ccParameters
@@ -30,12 +30,12 @@ manipulation of algebraic curves.
 
 The curved kernel takes its basic number type from either the basic geometric kernel or the algebraic kernel. 
 \ccTypedef{typedef AlgebraicKernel::RT RT;}{Ring number type RT.}
-or\\
+or\footnote{specify which one}\\
 \ccTypedef{typedef BasicGeometricKernel::RT RT;}{Ring number type RT.}
-Therefore, these two number types must coincide. In the same way,
-\ccTypedef{typedef AlgebraicKernel::RT FT;}{Ring number type FT.}
+Therefore, these two number types must coincide. In the same way,\\
+\ccTypedef{typedef AlgebraicKernel::FT FT;}{Field number type FT.}
 and\\
-\ccTypedef{typedef BasicGeometricKernel::FT FT;}{Ring number type FT.}
+\ccTypedef{typedef BasicGeometricKernel::FT FT;}{Field number type FT.}
 must coincide. 
 
 
@@ -65,15 +65,18 @@ concept \ccc{AlgebraicKernel_4_2}. The following types will then be usable.
 \ccGlue
 \ccTypedef{typedef Conic_arc_endpoint_2<Curved_kernel> Conic_arc_endpoint_2;}{}
 
-\ccNestedType{Compare_x_2;}{Model of \ccc{CurvedKernel::CompareX_2}.}
+\ccc{Curved_kernel} provides predicates and constructions on the types 
+it defines. 
+
+\ccNestedType{Compare_x_2;}{Model of \ccc{CircularKernel::CompareX_2} and of\ccc{ConicKernel::CompareX_2} .}
 \ccGlue
-\ccNestedType{Compare_y_2;}{Model of \ccc{CurvedKernel::CompareY_2}.}
+\ccNestedType{Compare_y_2;}{Model of \ccc{CircularKernel::CompareY_2} and of \ccc{ConicKernel::CompareY_2}.}
 \ccGlue
-\ccNestedType{Compare_xy_2;}{Model of \ccc{CurvedKernel::CompareXY_2}.}
+\ccNestedType{Compare_xy_2;}{Model of \ccc{CircularKernel::CompareXY_2} and of \ccc{ConicKernel::CompareXY_2}.}
 
 \ccNestedType{Construct_circle_2;}{Model of ...}
 
-!!!!!!!!!!!!!!!!!! a faire !!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!
 
 \ccCreation
 \ccCreationVariable{CK}
@@ -87,6 +90,10 @@ concept \ccc{AlgebraicKernel_4_2}. The following types will then be usable.
 \ccMethod{Compare_y_2 compare_y_2_object() const;}{}
 \ccGlue
 \ccMethod{Compare_xy_2 compare_xy_2_object() const;}{}
+
+\ccHeading{title?}
+
+\ccMethod{Get_equation get_equation_object() const;}{}
 
 \ccHeading{Constructions}
 

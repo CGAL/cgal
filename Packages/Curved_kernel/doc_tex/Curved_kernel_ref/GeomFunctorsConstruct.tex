@@ -53,15 +53,33 @@ output iterator.}
 
 A model \ccVar\ of this type must provide:
 
+\ccMethod{template < class OutputIterator >
+    std::pair< OutputIterator >
+    operator()(const CircularKernel::Circle_2 &c1, 
+	const CircularKernel::Circle_2 &c2, 
+	OutputIterator points);}
+{Copies in the output iterators the intersections between the two circles. 
+More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<CircularKernel::Circular_arc_endpoint_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{c1} and \ccc{c2}. 
+\ccPrecond{\ccc{c1} and \ccc{c2} are not equal.}}
+
+\ccMethod{template < class OutputIterator >
+    std::pair< OutputIterator >
+    operator()(const CircularKernel::Circle_2 &c1, 
+	const CircularKernel::Circle_2 &c2, 
+	OutputIterator points, int foo);}
+{Same as the previous one, except that \ccc{points} gives intersections 
+with the parity of their multiplicity only.}
+
 \ccMethod{template < class OutputIteratorPoints, class OutputIteratorArcs >
     std::pair< OutputIteratorPoints, OutputIteratorArcs >
     operator()(const CircularKernel::Circular_arc_2 &ca1, 
 	const CircularKernel::Circular_arc_2 &ca2, 
 	OutputIteratorPoints points, OutputIteratorArcs arcs);}
 {Copies in the output iterators the intersections between the two arcs. 
-More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<CurvedKernel::Circular_arc_endpoint_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{ca1} and \ccc{ca2}, and \ccc{arcs} iterates on elements of type \ccc{CurvedKernel::Circular_arc_2} that are arcs on which \ccc{ca1} and \ccc{ca2} overlap.}
+More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<CircularKernel::Circular_arc_endpoint_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{ca1} and \ccc{ca2}, and \ccc{arcs} iterates on elements of type \ccc{CircularKernel::Circular_arc_2} that are arcs on which \ccc{ca1} and \ccc{ca2} overlap.}
 
 \footnote{sorted or not ?}
+\footnote{not that the multiplicity is not defined for the case of a point that is the common endpoints of the two arcs. Does it make sense to decide a convention: multiplicity=0...? to be discussed}
 
 \ccMethod{template < class OutputIteratorPoints, class OutputIteratorArcs >
     std::pair< OutputIteratorPoints, OutputIteratorArcs >
@@ -70,6 +88,8 @@ More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<CurvedK
 	OutputIteratorPoints points, OutputIteratorArcs arcs, int foo);}
 {Same as the previous one, except that \ccc{points} gives intersections 
 with the parity of their multiplicity only.}
+
+\footnote{same problem as previous footnote}
 
 \ccHasModels
 
@@ -88,13 +108,30 @@ with the parity of their multiplicity only.}
 
 A model \ccVar\ of this type must provide:
 
+\ccMethod{template < class OutputIterator >
+    std::pair< OutputIterator >
+    operator()(const ConicKernel::Conic_2 &c1, 
+	const ConicKernel::Conic_2 &c2, 
+	OutputIterator points);}
+{Copies in the output iterators the intersections between the two circles. 
+More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<ConicKernel::Conic_arc_endpoint_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{c1} and \ccc{c2}. 
+\ccPrecond{\ccc{c1} and \ccc{c2} are not equal.}}
+
+\ccMethod{template < class OutputIterator >
+    std::pair< OutputIterator >
+    operator()(const ConicKernel::Conic_2 &c1, 
+	const ConicKernel::Conic_2 &c2, 
+	OutputIterator points, int foo);}
+{Same as the previous one, except that \ccc{points} gives intersections 
+with the parity of their multiplicity only.}
+
 \ccMethod{template < class OutputIteratorPoints, class OutputIteratorArcs >
     std::pair< OutputIteratorPoints, OutputIteratorArcs >
     operator()(const ConicKernel::Conic_arc_2 &ca1, 
 	const ConicKernel::Conic_arc_2 &ca2, 
 	OutputIteratorPoints points, OutputIteratorArcs arcs);}
 {Copies in the output iterators the intersections between the two arcs. 
-More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<CurvedKernel::Conic_arc_endpoint_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{ca1} and \ccc{ca2}, and \ccc{arcs} iterates on elements of type \ccc{CurvedKernel::Conic_arc_2} that are arcs on which \ccc{ca1} and \ccc{ca2} overlap.}
+More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<ConicKernel::Conic_arc_endpoint_2, int>}, where the integer is the multiplicity of the corresponding intersection point between \ccc{ca1} and \ccc{ca2}, and \ccc{arcs} iterates on elements of type \ccc{ConicKernel::Conic_arc_2} that are arcs on which \ccc{ca1} and \ccc{ca2} overlap.}
 
 \footnote{sorted or not ?}
 

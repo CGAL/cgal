@@ -1,4 +1,4 @@
-\begin{ccRefFunction}{compare_x}
+>\begin{ccRefFunction}{compare_x}
 
 \ccDefinition
 
@@ -16,7 +16,8 @@
 
 \ccSeeAlso
 
-\ccRefConceptPage{CompareX_2}
+\ccRefConceptPage{CircularKernel::CompareX_2}\\
+\ccRefConceptPage{ConicKernel::CompareX_2}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{compare_y}
@@ -37,7 +38,8 @@
 
 \ccSeeAlso
 
-\ccRefConceptPage{CompareY_2}
+\ccRefConceptPage{CircularKernel::CompareY_2}\\
+\ccRefConceptPage{ConicKernel::CompareY_2}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{compare_xy}
@@ -58,7 +60,8 @@
 
 \ccSeeAlso
 
-\ccRefConceptPage{CompareXY_2}
+\ccRefConceptPage{CircularKernel::CompareXY_2}\\
+\ccRefConceptPage{ConicKernel::CompareXY_2}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{make_x_monotone}
@@ -89,17 +92,34 @@
 
 \ccFunction{template < class CircularKernel, class OutputIterator >
     OutputIterator construct_intersections
+	(const Circle_2<CircularKernel> &ca1,
+	const Circle_2<CircularKernel> &ca2, 
+	OutputIterator res);}
+        {Calls the operator() of \ccc{CircularKernel::ConstructIntersections_2}.}
+
+\ccFunction{template < class CircularKernel, class OutputIterator >
+    OutputIterator construct_intersections
+	(const Circle_2<CircularKernel> &ca1,
+	const Circle_2<CircularKernel> &ca2, 
+	OutputIterator res, int foo);}
+        {Calls the operator(int foo) of \ccc{CircularKernel::ConstructIntersections_2}.}
+\footnote{difference between multiplicity and parity...?}
+
+\ccFunction{template < class CircularKernel, class OutputIterator >
+    OutputIterator construct_intersections
 	(const Circular_arc_2<CircularKernel> &ca1,
 	const Circular_arc_2<CircularKernel> &ca2, 
 	OutputIterator res);}
         {Calls the operator() of \ccc{CircularKernel::ConstructIntersections_2}.}
 
-\ccFunction{template < class ConicKernel, class OutputIterator >
+\ccFunction{template < class CircularKernel, class OutputIterator >
     OutputIterator construct_intersections
-	(const Circular_arc_2<ConicKernel> &ca1,
-	const Circular_arc_2<ConicKernel> &ca2, 
-	OutputIterator res);}
-        {Calls the operator() of \ccc{ConicKernel::ConstructIntersections_2}.}
+	(const Circular_arc_2<CircularKernel> &ca1,
+	const Circular_arc_2<CircularKernel> &ca2, 
+	OutputIterator res, int foo);}
+        {Calls the operator(int foo) of \ccc{CircularKernel::ConstructIntersections_2}.}
+
+Idem for conics...
 
 \ccSeeAlso
 
@@ -129,5 +149,43 @@
 
 \ccRefConceptPage{AlgebraicKernel_2_2::Solve}\\
 \ccRefConceptPage{AlgebraicKernel_4_2::Solve}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{get_equation}
+
+\ccFunction{template < class CircularKernel >
+	CircularKernel::AlgebraicKernel_2_2::PolynomialCircle_2_2
+	get_equation(const CircularKernel::Circle_2 & c);}
+	{Calls the operator() of \ccc{CircularKernel::GetEquation}.}
+
+\ccFunction{template < class ConicKernel >
+	ConicKernel::AlgebraicKernel_4_2::Polynomial_2_2
+	get_equation(const ConicKernel::Conic_2 & c);}
+	{Calls the operator() of \ccc{ConicKernel::GetEquation}.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{CircularKernel::GetEquation}\\
+\ccRefConceptPage{ConicKernel::GetEquation}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{make_root_of_2}
+
+\ccFunction{template < class RT >
+	Root_of_2<RT>
+	make_root_of_2(RT a, RT b, RT c, int i);}
+	{Returns the \ccc{i}th root of equation $aX^2+bX+c=0$. \ccc{RT} is supposed to be a \ccc{RingNumberType}, and \ccc{Root_of_2<RT>} is the type given by \ccc{Root_of_traits_2<RT>}.}
+
+\ccFunction{template < class RT >
+	Root_of_2<RT>
+	make_root_of_2(FT a, FT b, FT c, int i);}
+	{.}
+
+\footnote{groumpf. \ccc{Root_of_taits} is templated by RT but we also need (do we?) make-root-of with FT. Relation between RT and FT...?}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Root_of_2<RT>}\\
+\ccRefIdfierPage{Root_of_traits_2<RT>}
 
 \end{ccRefFunction}

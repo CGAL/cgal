@@ -1,0 +1,34 @@
+\begin{ccRefConcept}{CircularKernel::GetEquation}
+
+\ccDefinition
+
+\ccCreationVariable{geteq}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{CircularKernel::AlgebraicKernel_2_2::PolynomialCircle_2_2
+    operator()(const CircularKernel::Circle_2 & c);}
+{Returns the equation of the circle.}
+
+\ccHasModels
+
+\ccc{Curved_kernel::Get_equation;}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{ConicKernel::GetEquation}
+
+\ccDefinition
+
+\ccCreationVariable{geteq}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{ConicKernel::AlgebraicKernel_2_2::Polynomial_2_2
+    operator()(const ConicKernel::Conic_2 & c);}
+{Returns the equation of the conic.}
+
+\ccHasModels
+
+\ccc{Curved_kernel::Get_equation;}
+
+\end{ccRefConcept}

@@ -1,6 +1,6 @@
 \chapter{Curved Kernel}
 
-\textbf{DRAFT - Monique - supervised by Sylvain...}
+\textbf{DRAFT - Monique - with Sylvain's help...}
 
 The main class is: 
 
@@ -38,31 +38,52 @@ dimension for geometric objects.}
 \ccRefConceptPage{ConstructConicArc_2}\\
 \ccRefConceptPage{ConstructConicArcEndpoint_2}
 
+\ccRefConceptPage{CircularKernel::IsXMonotone_2}\\
+\ccRefConceptPage{ConicKernel::IsXMonotone_2}
+
 \ccRefConceptPage{CircularKernel::MakeXMonotone_2}\\
 \ccRefConceptPage{ConicKernel::MakeXMonotone_2}\\
 \ccRefConceptPage{CircularKernel::ConstructIntersections_2}\\
 \ccRefConceptPage{ConicKernel::ConstructIntersections_2}
 
+\ccRefConceptPage{CircularKernel::GetEquation}\\
+\ccRefConceptPage{ConicKernel::GetEquation}
+
 \ccRefConceptPage{AlgebraicKernel_2_2::ConstructPolynomialCircle_2_2}\\
 \ccRefConceptPage{AlgebraicKernel_4_2::ConstructPolynomial_2_2}
 
 \ccRefConceptPage{AlgebraicKernel_2_2::Solve}\\
-\ccRefConceptPage{AlgebraicKernel_4_2::Solve}\\
+\ccRefConceptPage{AlgebraicKernel_4_2::Solve}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Classes}
+
+\ccRefIdfierPage{CGAL::Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}
 
 	\subsubsection*{Curves and Surfaces}
 \ccRefIdfierPage{CGAL::Circle_2<CircularKernel>}\\
 \ccRefIdfierPage{CGAL::Conic_2<ConicKernel>}\\
-\ccRefIdfierPage{CGAL::Sphere_3<CurvedKernel>}
+\ccRefIdfierPage{CGAL::Ellipsis_2<ConicKernel>}\footnote{for ETH?}\\
+\ccRefIdfierPage{CGAL::Sphere_3<SphericalKernel>}\\
+\ccRefIdfierPage{CGAL::Quadric_3<Quadr...Kernel>}
 
 	\subsubsection*{Arcs}
 \ccRefIdfierPage{CGAL::Circular_arc_2<CircularKernel>}\\
-\ccRefIdfierPage{CGAL::Conic_arc_2<ConicKernel>}
+\ccRefIdfierPage{CGAL::Conic_arc_2<ConicKernel>}\\
+\ccRefIdfierPage{CGAL::Sphere_patch_3<SphericalKernel>}\\
+\ccRefIdfierPage{CGAL::Quadric_patch_3<SphericalKernel>}
 
 	\subsubsection*{Points}
 \ccRefIdfierPage{CGAL::Circular_arc_endpoint_2<CircularKernel>}\\
 \ccRefIdfierPage{CGAL::Conic_arc_endpoint_2<ConicKernel>}
+
+	\subsubsection*{Polynomials and algebraic numbers} 
+\footnote{how does the linking work when concepts and classes have the same name...? example \ccc{Polynomial_2_2}}
+
+\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_of_4<RT>}
+
+\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_of_traits_4<RT>}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Functions}
@@ -81,6 +102,11 @@ dimension for geometric objects.}
 \ccRefIdfierPage{CGAL::construct_intersections}
 
 \ccRefIdfierPage{CGAL::solve}
+
+	\subsubsection*{others?} 
+
+\ccRefIdfierPage{CGAL::get_equation}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Traits class}
 
