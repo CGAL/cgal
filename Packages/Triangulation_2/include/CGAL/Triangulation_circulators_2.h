@@ -167,7 +167,7 @@ public:
   operator!=(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
-    return ! (*this == NULL);
+    return  (! _bfc.is_empty());
   }
 
   
