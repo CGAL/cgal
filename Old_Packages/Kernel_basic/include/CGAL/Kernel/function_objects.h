@@ -261,6 +261,17 @@ class Intersect
     { return intersection( t1, t2); }
 };
 
+class Do_intersect
+{
+  public:
+    typedef bool   result_type;
+
+    template <class T1, class T2>
+    bool
+    operator()(const T1& t1, const T2& t2) const
+    { return do_intersect( t1, t2); }
+};
+
 class Assign
 {
   public:
