@@ -50,9 +50,9 @@
 #ifdef CGAL_USE_LEDA
 typedef CGAL::Filtered_exact<double, leda_real> NT;
 #elif defined(CGAL_USE_GMP)
-typedef CGAL::Filtered_exact<double, CGAL::Gmpz> NT; // Should be exact rationnals
+typedef CGAL::Filtered_exact<double, CGAL::Quotient<CGAL::Gmpz> > NT;
 #else
-typedef CGAL::Filtered_exact<double, double> NT; // Should be exact rationnals
+typedef CGAL::Filtered_exact<double, double> NT; // Need to be exact rationnals
 #endif // CGAL_USE_LEDA
 // typedef CGAL::Filtered_exact<double, leda_real, Filter_Cache> NT;
 // typedef CGAL::Filtered_exact<double, leda_rational> NT;
