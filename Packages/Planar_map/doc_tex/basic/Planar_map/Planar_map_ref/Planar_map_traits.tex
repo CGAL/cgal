@@ -15,14 +15,19 @@
 \label{PM_sec:req:interface} 
  
 %\label{I1_S}} 
+   
+   A model for the \ccRefName\ concept must provide the
+   following types and operations. It defines the geometric types and
+   primitive operations used in the planar map data structure
+   \ccc{Planar_map_2<Dcel,Traits>}.
 
-The planar map class is parameterized with the
-interface class \ccStyle{PlanarMapTraits_2} which defines the abstract interface
-between planar maps and the primitives they use. 
-The following
-requirement catalog lists the primitives, i.e., types, member functions
-etc., that must be defined for a Traits class that can be used to
-parameterize planar maps. %Ready-made implementation is available
+%The planar map class is parameterized with the
+%interface class \ccStyle{PlanarMapTraits_2} which defines the abstract interface
+%between planar maps and the primitives they use. 
+%The following
+%requirement catalog lists the primitives, i.e., types, member functions
+%etc., that must be defined for a Traits class that can be used to
+%parameterize planar maps. %Ready-made implementation is available
 %and described in Section~\ref{PM_sec:def:interface}. They can be used as a
 %starting point for customizing own interface classes, for example
 %through derivation and specialization.
@@ -165,13 +170,14 @@ parameterize planar maps. %Ready-made implementation is available
   \ccc{Pm_segment_epsilon_traits<R>}\\
   \ccc{Pm_leda_segment_exact_traits}
 
-  The \ccc{ArrangementTraits_2} concept is a refinement of the \ccc{PlanarMapTraits_2}
-  concept, in other words, a model of the former is a model of the latter.
-  The meaning of that is that all supplied (or user written ) arrangement traits classes
-  can be used ass the \ccc{Traits} template parameter for 
-  \ccc{Planar_map_2<Dcel,Traits>}.
-  See the list of the arrangement traits classes as part of the 
-  \ccc{Arrangement_2 Reference Pages}.
+  The \ccc{PlanarMapWithIntersectionsTraits_2} and
+  \ccc{ArrangementTraits_2} concepts are refinements of the
+  \ccc{PlanarMapTraits_2} concept, in other words, a model of the
+  formers is a model of the latter.  The meaning of that is that all
+  supplied (or user written ) arrangement traits classes can be used
+  ass the \ccc{Traits} template parameter for
+  \ccc{Planar_map_2<Dcel,Traits>}.  See the list of the arrangement
+  traits classes as part of the \ccc{Arrangement_2 Reference Pages}.
   
 \end{ccRefConcept} % Pm_traits
 
