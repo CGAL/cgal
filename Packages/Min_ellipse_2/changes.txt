@@ -1,5 +1,9 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.30 on 16-Oct-2003
+- Constructor with two points makes a copy of the points
+  as const Point& leads to matching problem for Intel/net.2003
+
 Version 3.29 on 23-Sep-2003
 - New file headers.
 
