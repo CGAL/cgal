@@ -252,6 +252,13 @@ Notes:\\
       A simple way to stop this optimization in a particular case is to put
       the constant in a global and non static variable, instead of a local
       one.
+\item By default, all arithmetic operations over intervals are inline.  This
+      can slow down some large predicates, because the code of the
+      multiplication is large.  Your can turn on inlining of the
+      multiplication and division with the flag \ccc{CGAL_IA_NO_INLINE}.
+      On the other hand, this slows down the small predicates, which is why
+      it is not enabled for all cases.
+      You might want to tune this for your particular application.
 \end{itemize}
 
 \end{ccClass}
