@@ -1,7 +1,6 @@
-
 [See also the file TODO_static_filters]
 
-- Implement and DOCUMENT enough for the new to_interval() requirement.
+- DOCUMENT enough for the new to_interval() requirement.
 - Dispatch all CGAL/Interval_arithmetic/*.h into the respective packages.
 - mv test/include/*.C *.def ; Or use template functions ?
 - Use Self instead of IA as the internal typedef ?
@@ -20,7 +19,6 @@ Concerning the main code:
   should be fine for that.
 - Remove the "return false" after overlap_action(), if possible, and see
   produced code.  Or re-arrange the code in order to remove it ?
-- Implement to_interval() for CLN types, and Lazy_exact_nt<>.
 - Specializations for is_zero() and co, and make use of them in the kernel.
   [Filtered_exact<> doesn't define them either, it's a bug...]
 - Implement CGAL_ms_sqrt() with asms so that no special install procedure is
