@@ -115,7 +115,7 @@ private:
 	v_min = h;
 	first=false; 
       } else if ( CGAL::lexicographically_xyz_smaller(
-		N.point(h),N.point(v_min)) ) 
+		h->point(),v_min->point()) ) 
 	v_min = h; 
     }
 
@@ -419,7 +419,7 @@ private:
     Vertex_const_iterator vin;
     Vertex_const_handle vout;
     CGAL_forall_vertices(vin,N) {
-      Object_handle o = N.locate(N.point(vin));
+      Object_handle o = N.locate(vin->point());
       CGAL_assertion(assign(vout,o));
       CGAL_assertion(vin == vout);
     }
@@ -427,11 +427,11 @@ private:
     Halfedge_const_iterator ein;
     Halfedge_const_handle eout;
     CGAL_forall_halfedges(ein,N) {
-      Vector_3 d(N.point(N.source(N.twin(ein))) - N.point(N.source(ein)));
-      Point_3 s(N.point(N.source(ein)));
+      Vector_3 d(ein->twin()->source()->point() - ein->source()->point());
+      Point_3 s(ein->source()->point());
       Object_handle o = N.locate(s+(d/RT(2)));
       CGAL_assertion(assign(eout,o));
-      CGAL_assertion(ein == eout || ein == N.twin(eout));
+      CGAL_assertion(ein == eout || ein == eout->twin());
     }
     
     Halffacet_const_iterator fin;
@@ -442,21 +442,21 @@ private:
       CGAL_assertion(fc.is_shalfedge());
       e = SHalfedge_const_handle(fc);
       SHalfedge_around_facet_const_circulator ec(e),ee(e);
-      Vertex_const_handle v_min = N.vertex(ec++);
+      Vertex_const_handle v_min = (ec++)->source()->center_vertex();
       CGAL_For_all(ec,ee) {
-	if (CGAL::lexicographically_xyz_smaller(N.point(N.vertex(ec)),
-						N.point(v_min))) 
-	  v_min = N.vertex(ec); 
+	if (CGAL::lexicographically_xyz_smaller(ec->source()->center_vertex()->point(),
+						v_min->point())) 
+	  v_min = ec->source()->center_vertex(); 
       }
-      Vector_3 orth = N.plane(fin).orthogonal_vector();
+      Vector_3 orth = fin->plane().orthogonal_vector();
       Vector_3 vec(1-CGAL_NTS abs(orth.hx()),
 		   1-CGAL_NTS abs(orth.hy()),
 		   1-CGAL_NTS abs(orth.hz()));
       vec = vec / RT(2);
-      Object_handle o = N.locate(N.point(v_min)+vec);
+      Object_handle o = N.locate(v_min->point()+vec);
       CGAL_assertion(assign(fout,o));
-      CGAL_assertion(N.plane(fin) == N.plane(fout) || 
-			  N.plane(fin) == N.plane(N.twin(fout)));
+      CGAL_assertion(fin->plane() == fout->plane() || 
+			  fin->plane() == fout->twin()->plane());
     }
     
     Volume_const_iterator Cin;
@@ -469,7 +469,7 @@ private:
       Shell_entry_const_iterator it;
       CGAL_forall_shells_of(it,Cin)
 	N.visit_shell_objects(SFace_const_handle(it),SE);
-      Point_3 p(N.point(SE.minimal_vertex()));
+      Point_3 p(SE.minimal_vertex()->point());
       Object_handle o;
       if(Cin == N.volumes_begin()) {
 	o = N.locate(p-vec);
@@ -639,7 +639,7 @@ private:
       Vertex_const_iterator vi = N.vertices_begin();
  
       do {vi++;} while(++i < 8); //  -1 1 0
-      CGAL_assertion(N.point(vi) == Point_3(-1,1,0));
+      CGAL_assertion(vi->point() == Point_3(-1,1,0));
       SM_explorer SME(N.SMexplorer(vi));
       SM_point_locator PL(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -647,7 +647,7 @@ private:
       CGAL_assertion(upper == 0);
       
       do {vi++;} while(++i < 9); //  0 1 -1
-      CGAL_assertion(N.point(vi) == Point_3(0,1,-1));
+      CGAL_assertion(vi->point() == Point_3(0,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -655,7 +655,7 @@ private:
       CGAL_assertion(upper == 1);
       
       do {vi++;} while(++i < 10); //  1 1 0
-      CGAL_assertion(N.point(vi) == Point_3(1,1,0));
+      CGAL_assertion(vi->point() == Point_3(1,1,0));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -663,7 +663,7 @@ private:
       CGAL_assertion(upper == 1);
       
       do {vi++;} while(++i < 11); //  0 1 1
-      CGAL_assertion(N.point(vi) == Point_3(0,1,1));
+      CGAL_assertion(vi->point() == Point_3(0,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -671,7 +671,7 @@ private:
       CGAL_assertion(upper == 0);
       
       do {vi++;} while(++i < 12); //  0 0 -1
-      CGAL_assertion(N.point(vi) == Point_3(0,0,-1));
+      CGAL_assertion(vi->point() == Point_3(0,0,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -679,7 +679,7 @@ private:
       CGAL_assertion(upper == 1);
       
       do {vi++;} while(++i < 13); //  0 0 1
-      CGAL_assertion(N.point(vi) == Point_3(0,0,1));
+      CGAL_assertion(vi->point() == Point_3(0,0,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -687,7 +687,7 @@ private:
       CGAL_assertion(upper == 0);
       
       do {vi++;} while(++i < 14); //  -1 0 0
-      CGAL_assertion(N.point(vi) == Point_3(-1,0,0));
+      CGAL_assertion(vi->point() == Point_3(-1,0,0));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -695,7 +695,7 @@ private:
       CGAL_assertion(upper == 0);
       
       do {vi++;} while(++i < 15); //  1 0 0
-      CGAL_assertion(N.point(vi) == Point_3(1,0,0));
+      CGAL_assertion(vi->point() == Point_3(1,0,0));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -703,7 +703,7 @@ private:
       CGAL_assertion(upper == 1);
       
       do {vi++;} while(++i < 17); //  -1 1 1
-      CGAL_assertion(N.point(vi) == Point_3(-1,1,1));
+      CGAL_assertion(vi->point() == Point_3(-1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -711,7 +711,7 @@ private:
       CGAL_assertion(upper == 0);
       
       do {vi++;} while(++i < 18); //  1 1 1
-      CGAL_assertion(N.point(vi) == Point_3(1,1,1));
+      CGAL_assertion(vi->point() == Point_3(1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -719,7 +719,7 @@ private:
       CGAL_assertion(upper == 0);
       
       do {vi++;} while(++i < 21); //  -1 1 -1
-      CGAL_assertion(N.point(vi) == Point_3(-1,1,-1));
+      CGAL_assertion(vi->point() == Point_3(-1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -727,7 +727,7 @@ private:
       CGAL_assertion(upper == 0);
       
       do {vi++;} while(++i < 22); //  1 1 -1
-      CGAL_assertion(N.point(vi) == Point_3(1,1,-1));
+      CGAL_assertion(vi->point() == Point_3(1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -735,7 +735,7 @@ private:
       CGAL_assertion(upper == 1);
 
       do {vi++;} while(++i < 29); //  -0.5 -0.5 -1
-      CGAL_assertion(N.point(vi) == Point_3(-1,-1,-2,2));
+      CGAL_assertion(vi->point() == Point_3(-1,-1,-2,2));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -747,7 +747,7 @@ private:
       vi = N.vertices_begin();
       i=0;
 
-      CGAL_assertion(N.point(vi) == Point_3(-57993689, 27367811, 6449, 37023709));
+      CGAL_assertion(vi->point() == Point_3(-57993689, 27367811, 6449, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -755,7 +755,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(-45133849, -45554371, 6449, 37023709));
+      CGAL_assertion(vi->point() == Point_3(-45133849, -45554371, 6449, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -763,7 +763,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(-6436271, 36459971, -52359431, 37023709));
+      CGAL_assertion(vi->point() == Point_3(-6436271, 36459971, -52359431, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -771,7 +771,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(-6423569, 36462211, 52359431, 37023709));
+      CGAL_assertion(vi->point() == Point_3(-6423569, 36462211, 52359431, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -779,7 +779,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(6423569, -36462211, -52359431, 37023709));
+      CGAL_assertion(vi->point() == Point_3(6423569, -36462211, -52359431, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -787,7 +787,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(6436271, -36459971, 52359431, 37023709));
+      CGAL_assertion(vi->point() == Point_3(6436271, -36459971, 52359431, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -795,7 +795,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(45133849, 45554371, -6449, 37023709));
+      CGAL_assertion(vi->point() == Point_3(45133849, 45554371, -6449, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -803,7 +803,7 @@ private:
       CGAL_assertion(upper == 1);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(57993689, -27367811, -6449, 37023709));
+      CGAL_assertion(vi->point() == Point_3(57993689, -27367811, -6449, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -815,7 +815,7 @@ private:
       vi = N.vertices_begin();
       i=0;
 
-      CGAL_assertion(N.point(vi) == Point_3(1,-1,1));
+      CGAL_assertion(vi->point() == Point_3(1,-1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -823,7 +823,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(1,1,-1));
+      CGAL_assertion(vi->point() == Point_3(1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -831,7 +831,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(1,1,1));
+      CGAL_assertion(vi->point() == Point_3(1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -843,7 +843,7 @@ private:
       vi = N.vertices_begin();
       i=0;
 
-      CGAL_assertion(N.point(vi) == Point_3(-1,1,-1));
+      CGAL_assertion(vi->point() == Point_3(-1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -851,7 +851,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(-1,1,1));
+      CGAL_assertion(vi->point() == Point_3(-1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -859,7 +859,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(0,1,0));
+      CGAL_assertion(vi->point() == Point_3(0,1,0));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -867,7 +867,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(1,1,-1));
+      CGAL_assertion(vi->point() == Point_3(1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -875,7 +875,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(1,1,1));
+      CGAL_assertion(vi->point() == Point_3(1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -887,7 +887,7 @@ private:
       vi = N.vertices_begin();
       i=0;
 
-      CGAL_assertion(N.point(vi) == Point_3(-1,1,-1));
+      CGAL_assertion(vi->point() == Point_3(-1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -895,7 +895,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(-1,1,1));
+      CGAL_assertion(vi->point() == Point_3(-1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -903,7 +903,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(0,-2379,-8118, 5741));
+      CGAL_assertion(vi->point() == Point_3(0,-2379,-8118, 5741));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -911,7 +911,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(0,1,0));
+      CGAL_assertion(vi->point() == Point_3(0,1,0));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -919,7 +919,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(1,1,-1));
+      CGAL_assertion(vi->point() == Point_3(1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -927,7 +927,7 @@ private:
       CGAL_assertion(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(N.point(vi) == Point_3(1,1,1));
+      CGAL_assertion(vi->point() == Point_3(1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
@@ -940,7 +940,7 @@ private:
       i=0;
 
       do {vi++;} while(++i < 7); 
-      CGAL_assertion(N.point(vi) == Point_3(0,0,-1,2));
+      CGAL_assertion(vi->point() == Point_3(0,0,-1,2));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
