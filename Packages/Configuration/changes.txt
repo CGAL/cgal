@@ -1,6 +1,11 @@
 //-----------------------------------------------------------------------//
 // Changes in 1.26
 
+Added a std:: prefix in CGAL_CFG_NO_ITERATOR_TRAITS
+
+//-----------------------------------------------------------------------//
+// Changes in 1.26
+
 Removed some unneccessary testfiles and the corresponding postprocessing in
 config.h.
 
