@@ -9,6 +9,7 @@
 
 ALL : New functor adaptors (bind/compose).
 ALL : Removed Compose for Projection objects.
+ALL : Made In_place_list::allocator non-static for MSVC.
 ALL : Added swap adaptor for functors.
 ALL : Added Allocators to In_place_list acc. to Lutz.
 ALL : Added compose_shared.
