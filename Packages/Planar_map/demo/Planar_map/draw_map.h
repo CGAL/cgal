@@ -15,13 +15,13 @@
 #include <CGAL/Segment_2.h>
 
 #ifdef USE_RATIONAL
-#include <CGAL/Pm_segment_exact_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/leda_rational.h>
 #else
 #if defined (USE_LEDA_RAT_KERNEL)
-#include <CGAL/Pm_leda_segment_exact_traits.h>
+#include <CGAL/Pm_leda_segment_traits_2.h>
 #else
-#include <CGAL/Pm_segment_exact_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #endif
 #endif
 
@@ -56,12 +56,12 @@ typedef CGAL::Cartesian<number_type>           Rep;
 #endif
 
 #ifdef USE_RATIONAL
-typedef CGAL::Pm_segment_exact_traits<Rep>     Traits;
+typedef CGAL::Pm_segment_traits_2<Rep>     Traits;
 #else
 #if defined(USE_LEDA_RAT_KERNEL)
-typedef CGAL::Pm_leda_segment_exact_traits     Traits;
+typedef CGAL::Pm_leda_segment_traits_2     Traits;
 #else
-typedef CGAL::Pm_segment_exact_traits<Rep>   Traits;
+typedef CGAL::Pm_segment_traits_2<Rep>   Traits;
 #endif
 #endif
 

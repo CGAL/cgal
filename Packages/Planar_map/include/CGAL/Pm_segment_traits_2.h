@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-26 $
 // release_date  : $CGAL_Date: 2001/01/05 $
 //
-// file          : include/CGAL/Pm_segment_traits.h
+// file          : include/CGAL/Pm_segment_traits_2.h
 // package       : pm (5.43)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 

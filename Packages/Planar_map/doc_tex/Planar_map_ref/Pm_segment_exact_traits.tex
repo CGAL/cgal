@@ -11,18 +11,18 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Pm_segment_exact_traits<R>}
+\begin{ccRefClass}{Pm_segment_traits_2<R>}
 %%    \ccSubsection{Exact (Rationals) Traits}
     
 \ccDefinition 
-    The class \ccStyle{Pm_segment_exact_traits<R>}
+    The class \ccStyle{Pm_segment_traits_2<R>}
     is used as the recommended class. To avoid robustness problems, 
     the representation type \ccStyle{R} must be an exact type such as
     \ccStyle{Cartesian<leda_rational>},
     \ccStyle{Homogeneous<leda_integer>} or any other exact type,
     although other representation types could be used at the user's own risk.
 
-\ccInclude{ CGAL/Pm_segment_exact_traits.h}
+\ccInclude{CGAL/Pm_segment_traits_2.h}
  
 \ccIsModel
     \ccc{PlanarMapTraits_2}
@@ -36,10 +36,10 @@
 %    \ccCreation
 %    \ccCreationVariable{T_exact}
      
-%    \ccConstructor{Pm_segment_exact_traits();} 
+%    \ccConstructor{Pm_segment_traits_2();} 
 %    {}
  
-\end{ccRefClass} % Pm_segment_exact_traits
+\end{ccRefClass} % Pm_segment_traits_2
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.4-I-40 $
 // release_date  : $CGAL_Date: 2001/12/28 $
 //
-// file          : include/CGAL/Pm_segment_traits.h
+// file          : include/CGAL/Pm_segment_exact_traits.h
 // package       : Planar_map (5.80)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>

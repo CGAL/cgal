@@ -7,17 +7,12 @@
 // invoke add_hole, and the last call will invoke split_face.
 
 #include <CGAL/Cartesian.h>
-//#include <CGAL/config.h>
 
-//#include <CGAL/leda_real.h>
-//#include <CGAL/leda_rational.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 
-
 #include <CGAL/Pm_default_dcel.h>
-#include <CGAL/Pm_segment_exact_traits.h>
-//#include <CGAL/Pm_leda_segment_exact_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Planar_map_2/Pm_change_notification.h>
@@ -282,10 +277,8 @@ public:
 CGAL_END_NAMESPACE         
 
 typedef CGAL::Quotient<CGAL::MP_Float>      NT;
-//typedef leda_rational                NT;
 typedef CGAL::Cartesian<NT>          R;
-typedef CGAL::Pm_segment_exact_traits<R>    Traits;
-//typedef CGAL::Pm_leda_segment_exact_traits  Traits;
+typedef CGAL::Pm_segment_traits_2<R>    Traits;
 typedef CGAL::Pm_measures_dcel<Traits, NT>  Dcel;
 typedef CGAL::Planar_map_2< Dcel, Traits >  Planar_map;
 typedef Traits::Point                       Point;

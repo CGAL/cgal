@@ -64,10 +64,10 @@ int main(int argc, char* argv[])
 // Choose traits
 
 #if CGAL_PM_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
-#include <CGAL/Pm_segment_exact_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #elif CGAL_PM_TEST_TRAITS==CGAL_SEGMENT_LEDA_TRAITS
 #include <CGAL/leda_rational.h>
-#include <CGAL/Pm_leda_segment_exact_traits.h>
+#include <CGAL/Pm_leda_segment_traits_2.h>
 #else
   #error No traits defined for test
 #endif
@@ -104,11 +104,11 @@ int main(int argc, char* argv[])
 #if CGAL_PM_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
   typedef CGAL::Quotient<int>                  NT;
   typedef CGAL::Cartesian<NT>                  R;
-  typedef CGAL::Pm_segment_exact_traits<R>    Traits;
+  typedef CGAL::Pm_segment_traits_2<R>    Traits;
 
 #elif CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                        NT;
-  typedef CGAL::Pm_leda_segment_exact_traits  Traits;
+  typedef CGAL::Pm_leda_segment_traits_2  Traits;
 
 #endif
 

@@ -50,7 +50,7 @@ interface class \ccStyle{PlanarMapTraits_2} which defines the abstract interface
 between planar maps and the primitives they use. 
 
 We supply a default traits class for exact arithmetic ---
-\ccStyle{Pm_segment_exact_traits<R>} % and a class for finite
+\ccStyle{Pm_segment_traits_2<R>} % and a class for finite
 %precision arithmetic --- \ccStyle{Pm_segment_epsilon_traits<R>},
 where \ccStyle{R} is the kernel representation type
 (\ccc{Homogeneous} or \ccc{Cartesian}).  There is also a class
@@ -188,7 +188,7 @@ format cannot be scanned by the reading functions of
 The example below presents a representation of a planar map containing
 one triangle with the coordinates {\em (0,0)}, {\em (1,1)} and {\em
 (2,0)}.  The \ccc{Planar_map_2} instance that was used to produce this
-example was templated with the \ccStyle{Pm_segment_exact_traits}
+example was templated with the \ccStyle{Pm_segment_traits_2}
 class, which in turn was templated with the representation class
 \ccStyle{Cartesian<leda_rational>}.  The first line specifies that the
 planar map has three vertices, six halfedges, and 2 faces (the
@@ -397,7 +397,7 @@ significantly reduces running time.
    vertices of the map and are known in advanced.
  
    \item If the user has \leda\/ installed it is recommended to use
-   the specialized traits classes \ccc{Pm_leda_segment_exact_traits}
+   the specialized traits classes \ccc{Pm_leda_segment_traits_2}
    or \ccc{Arr_leda_polyline_traits}. These traits classes are much
    faster since they are specialized for \leda\/'s \ccc{rational
    geometric kernel}. Note that these traits classes are models of
@@ -429,9 +429,8 @@ significantly reduces running time.
 \ccRefIdfierPage{CGAL::Pm_unbounding_box<Planar_map>}\\
 \ccRefIdfierPage{CGAL::Pm_dynamic_open_bounding_box<Planar_map>}\\
 \ccRefIdfierPage{CGAL::Pm_dcel<V,H,F>}\\
-\ccRefIdfierPage{CGAL::Pm_segment_exact_traits<R>}\\
-\ccRefIdfierPage{CGAL::Pm_segment_epsilon_traits<R>}\\
-\ccRefIdfierPage{CGAL::Pm_leda_segment_exact_traits}\\
+\ccRefIdfierPage{CGAL::Pm_segment_traits_2<R>}\\
+\ccRefIdfierPage{CGAL::Pm_leda_segment_traits_2}\\
 \ccRefIdfierPage{CGAL::Pm_straight_exact_traits<R>}\\
 \ccRefIdfierPage{CGAL::File_header}\\
 \ccRefIdfierPage{CGAL::Pm_file_scanner<Planar_map>}\\

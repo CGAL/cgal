@@ -68,25 +68,25 @@ Bounding_box_base* init_default_bounding_box(T_*) const
 #ifdef CGAL_PM_SEGMENT_EXACT_TRAITS_H
 template <class R_> 
 Bounding_box_base* init_default_bounding_box(
-  Pm_segment_exact_traits<R_>* t_) const
+  Pm_segment_traits_2<R_>* t_) const
 {
   return new Pm_unbounding_box<Self>;
 }
 template <class R_> 
 Bounding_box_base* init_default_bounding_box(
-  const Pm_segment_exact_traits<R_>* t_) const
+  const Pm_segment_traits_2<R_>* t_) const
 {
   return new Pm_unbounding_box<Self>;
 }
 template <class R_> 
 Bounding_box_base* init_default_bounding_box(
-  Pm_segment_exact_traits<R_>* t_) 
+  Pm_segment_traits_2<R_>* t_) 
 {
   return new Pm_unbounding_box<Self>;
 }
 template <class R_> 
 Bounding_box_base* init_default_bounding_box(
-  const Pm_segment_exact_traits<R_>* t_) 
+  const Pm_segment_traits_2<R_>* t_) 
 {
   return new Pm_unbounding_box<Self>;
 }
@@ -120,25 +120,25 @@ Bounding_box_base* init_default_bounding_box(
 #ifdef CGAL_PM_LEDA_SEGMENT_EXACT_TRAITS_H
 template <class R_> 
 Bounding_box_base* init_default_bounding_box(
-  const Pm_leda_segment_exact_traits<R_>* t_) const
+  const Pm_leda_segment_traits_2<R_>* t_) const
 {
   return new Pm_unbounding_box<Self>;
 }
 template <class R_> 
 Bounding_box_base* init_default_bounding_box(
-  Pm_leda_segment_exact_traits<R_>* t_) const
+  Pm_leda_segment_traits_2<R_>* t_) const
 {
   return new Pm_unbounding_box<Self>;
 }
 template <class R_> 
 Bounding_box_base* init_default_bounding_box(
-  const Pm_leda_segment_exact_traits<R_>* t_) 
+  const Pm_leda_segment_traits_2<R_>* t_) 
 {
   return new Pm_unbounding_box<Self>;
 }
 template <class R_> 
 Bounding_box_base* init_default_bounding_box(
-  Pm_leda_segment_exact_traits<R_>* t_) 
+  Pm_leda_segment_traits_2<R_>* t_) 
 {
   return new Pm_unbounding_box<Self>;
 }

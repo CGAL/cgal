@@ -12,7 +12,7 @@
   #error We dont support epsilon traits anymore (shaihi 2000-03-19) 
   //#include <CGAL/Pm_segment_epsilon_traits.h>
 #else
-#include <CGAL/Pm_segment_exact_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #endif
 
 #if STRATEGY == 2

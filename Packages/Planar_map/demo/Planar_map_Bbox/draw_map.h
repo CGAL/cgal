@@ -23,7 +23,7 @@
 #include <CGAL/IO/Pm_straight_exact_traits_stream.h>
 
 #ifdef CGAL_PM_DEBUG
-#include <CGAL/Pm_segment_exact_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Pm_traits_checker.h>
 #endif
 
