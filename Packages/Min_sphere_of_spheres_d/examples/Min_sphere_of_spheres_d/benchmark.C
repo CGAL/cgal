@@ -1,52 +1,8 @@
-// ======================================================================
+// Copyright (c) 1997  ETH Zurich (Switzerland).
+// All rights reserved.
 //
-// Copyright (c) 1997 The CGAL Consortium
-//
-// This software and related documentation are part of the Computational
-// Geometry Algorithms Library (CGAL).
-// This software and documentation are provided "as-is" and without warranty
-// of any kind. In no event shall the CGAL Consortium be liable for any
-// damage of any kind.
-//
-// Every use of CGAL requires a license.
-//
-// Academic research and teaching license
-// - For academic research and teaching purposes, permission to use and copy
-//   the software and its documentation is hereby granted free of charge,
-//   provided that it is not a component of a commercial product, and this
-//   notice appears in all copies of the software and related documentation.
-//
-// Commercial licenses
-// - Please check the CGAL web site http://www.cgal.org/index2.html for
-//   availability.
-//
-// The CGAL Consortium consists of Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).
-//
-// ----------------------------------------------------------------------
-//
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
-//
-// chapter       : $CGAL_Chapter: Optimisation $
-// file          : examples/Min_sphere_of_spheres_d/benchmark.C
-// package       : Min_sphere_of_spheres_d (1.10)
-// revision      : $Revision$
-// revision_date : $Date$
-//
-// author(s)     : Kaspar Fischer
-// maintainer    : Kaspar Fischer <fischerk@inf.ethz.ch>
-// coordinator   : ETH Zurich (Kaspar Fischer)
-//
-// implementation: dD Smallest Enclosing Sphere of Spheres
-// email         : contact@cgal.org
-// www           : http://www.cgal.org
-//
-// ======================================================================
-
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
 
 #include <iostream>
 #include <ctime>

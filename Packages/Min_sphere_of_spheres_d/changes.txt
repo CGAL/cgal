@@ -1,3 +1,6 @@
+10 February 2004 Radu Ursu
+- Updated headers in examples
+
 Version 1.1.18 (27-Sep-2003)
 - new headers
 

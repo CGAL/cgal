@@ -1,3 +1,9 @@
+// Copyright (c) 1997  ETH Zurich (Switzerland).
+// All rights reserved.
+//
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
+
 // Computes the minsphere of some random spheres.
 // This example illustrates how to use CGAL::Point_3 and CGAL::
 // Weighted_point with the Min_sphere_of_spheres_d package.
