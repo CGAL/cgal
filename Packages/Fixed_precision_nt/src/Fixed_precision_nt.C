@@ -256,6 +256,34 @@ inline void Fixed_split
 
 
 CGAL_Fixed_public
+int Fixed_cmp_dist(float x0, float y0, 
+		   float x1, float y1, 
+		   float x2, float y2)
+{
+  double X1 = x1-x0;
+  double Y1 = y1-y0;
+  double X2 = x2-x0;
+  double Y2 = y2-y0;
+  X1 = (X2*X2+Y2*Y2)-(X1*X1+Y1*Y1);         // exact
+  return (X1>0) ? 1 : (X1==0) ? 0 : -1;
+}
+
+CGAL_Fixed_public
+int Fixed_cmp_dist(float x0, float y0, float z0, 
+		   float x1, float y1, float z1,
+		   float x2, float y2, float z2)
+{
+  double X1 = x1-x0;
+  double Y1 = y1-y0;
+  double Z1 = z1-z0;
+  double X2 = x2-x0;
+  double Y2 = y2-y0;
+  double Z2 = z2-z0;
+  X1 = (X2*X2+Y2*Y2+Z2*Z2)-(X1*X1+Y1*Y1+Z1*Z1);         // exact
+  return (X1>0) ? 1 : (X1==0) ? 0 : -1;
+}
+
+CGAL_Fixed_public
 int Fixed_orientation(float x0, float y0, 
 		      float x1, float y1, 
 		      float x2, float y2)
@@ -810,6 +838,35 @@ bool Fixed_precision_nt::init(float b)
 // ======================================================================
 //--------- geometric predicates
 // ======================================================================
+
+//template <>
+Comparison_result
+cmp_dist_to_pointC2(
+  const Fixed_precision_nt x0, const Fixed_precision_nt y0,
+  const Fixed_precision_nt x1, const Fixed_precision_nt y1,
+  const Fixed_precision_nt x2, const Fixed_precision_nt y2)
+{
+  return (Comparison_result) sign(Fixed_cmp_dist(
+			     x0.to_float(),  y0.to_float(), 
+			     x1.to_float(),  y1.to_float(), 
+			     x2.to_float(),  y2.to_float()));
+}
+
+//template <>
+Comparison_result
+cmp_dist_to_pointC3(
+  const Fixed_precision_nt x0, const Fixed_precision_nt y0,
+  const Fixed_precision_nt z0,
+  const Fixed_precision_nt x1, const Fixed_precision_nt y1,
+  const Fixed_precision_nt z1,
+  const Fixed_precision_nt x2, const Fixed_precision_nt y2,
+  const Fixed_precision_nt z2)
+{
+  return (Comparison_result) sign(Fixed_cmp_dist(
+			     x0.to_float(),  y0.to_float(), z0.to_float(),
+			     x1.to_float(),  y1.to_float(), z1.to_float(),
+			     x2.to_float(),  y2.to_float(), z2.to_float()));
+}
 
 //template <>
 Orientation orientationC2

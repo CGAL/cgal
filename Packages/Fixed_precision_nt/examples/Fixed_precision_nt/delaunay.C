@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
       Creator_uniform_2<double,Point_> > Input ( 1.0 );
 
     int N; if (argc==2) sscanf(argv[1], "%d", &N); 
-    else {N=100; cerr<<"usage : "<<argv[0]<<" nb-of-points"<<std::endl<<std::endl;}
+    else {N=100; std::cerr<<"usage : "<<argv[0]<<" nb-of-points"<<std::endl<<std::endl;}
     std::cout << "Delaunay of "<<N<<" random points"<<std::endl;
     t.start();
     while(N--) D.insert( *++Input);

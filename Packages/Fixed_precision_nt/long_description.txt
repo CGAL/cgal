@@ -10,6 +10,9 @@ predicates.
 
 Versions
 
+2.7 (19 Oct 1999)
+  M$ VC++ (cerr)    and adding cmp_dist_to_pointC[23]
+
 2.6 (18 Oct 1999)
   M$ VC++
 

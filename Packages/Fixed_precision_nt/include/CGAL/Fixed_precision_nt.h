@@ -85,6 +85,23 @@ inline double to_double(const Fixed_precision_nt f) {return f.to_double();}
 
 
 //template <>
+Comparison_result
+cmp_dist_to_pointC2(
+  const Fixed_precision_nt x0, const Fixed_precision_nt y0,
+  const Fixed_precision_nt x1, const Fixed_precision_nt y1,
+  const Fixed_precision_nt x2, const Fixed_precision_nt y2);
+
+//template <>
+Comparison_result
+cmp_dist_to_pointC3(
+  const Fixed_precision_nt x0, const Fixed_precision_nt y0,
+  const Fixed_precision_nt z0,
+  const Fixed_precision_nt x1, const Fixed_precision_nt y1,
+  const Fixed_precision_nt z1,
+  const Fixed_precision_nt x2, const Fixed_precision_nt y2,
+  const Fixed_precision_nt z2);
+
+//template <>
 Orientation orientationC2(
   const Fixed_precision_nt x0, const Fixed_precision_nt y0,
   const Fixed_precision_nt x1, const Fixed_precision_nt y1,
