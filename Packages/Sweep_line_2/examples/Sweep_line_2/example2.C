@@ -7,6 +7,7 @@
 #include <CGAL/Sweep_line_2.h> 
 #include <CGAL/Arr_segment_cached_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/IO/Arr_polyline_traits_iostream.h>
 #include <iostream>
 #include <vector>
 #include <list>
@@ -19,47 +20,31 @@ typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
 typedef Traits::Point_2                               Point_2;
 typedef Traits::Curve_2                               Curve_2;
 
-CGAL_BEGIN_NAMESPACE
+typedef std::list<Curve_2>                            Curves_list;
+typedef Curves_list::iterator                         Curves_iter;
+typedef CGAL::Sweep_line_2<Curves_iter, Traits>       Sweep_line;
 
-std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
-{
-  typedef Curve_2::const_iterator Points_iterator;
-  
-  os << cv.points() << std::endl;
-  for (Points_iterator points_iter = cv.begin(); 
-       points_iter != cv.end(); points_iter++)
-    os << " " << *points_iter;
-
-  return os;
-}
-
-std::istream & operator>>(std::istream & in, Curve_2 & cv)
+// Read one polyline:
+Curve_2 read_polyline ()
 {
   std::size_t size;
   std::cout << 
     "enter number of points and then the (x,y) values for each point: ";
-  in >> size;
+  std::cin >> size;
 
-  std::list<Traits::Point_2>  pts;
+  std::list<Point_2>  pts;
   for (unsigned int i = 0; i < size; i++)
   {
     Traits::Point_2 p;
-    in >> p;
+    std::cin >> p;
     pts.push_back(p);  
   }
-  cv = Curve_2 (pts.begin(), pts.end());
   std::cout << std::endl;
-  return in;
+
+  return (Curve_2 (pts.begin(), pts.end()));
 }
 
-CGAL_END_NAMESPACE
-
-// Read polylines from the input
-
-typedef std::list<Curve_2> CurveList;
-typedef CurveList::iterator CurveListIter;
-typedef CGAL::Sweep_line_2<CurveListIter, Traits> Sweep_line;
-
+// Read a list of polylines from the input:
 template <class Container>
 void read_polylines(Container & curves)
 {
@@ -69,30 +54,31 @@ void read_polylines(Container & curves)
   std::cout << "number of polylines is : " << num_polylines << std::endl;
 
   while (num_polylines--) 
-  {
-    Curve_2 polyline;
-    std::cin >> polyline;
-    curves.push_back(polyline);
-  }
+    curves.push_back(read_polyline());
+
+  return;
 }
 
 int main()
 {
-  // Read input
-  std::list<Curve_2> polylines;
+  // Read the input polylines.
+  Curves_list polylines;
+
   read_polylines(polylines);
   
-  // Use a sweep to create the sub curves  
-  Traits traits;
-  std::list<Curve_2> subcurves;
-  Sweep_line sl(&traits);
-  sl.get_subcurves(polylines.begin(),polylines.end(), 
-		   std::back_inserter(subcurves));
+  // Use a sweep to create the sub-curves.  
+  Traits      traits;
+  Curves_list subcurves;
+  Sweep_line  sl(&traits);
 
-  // Write output
-  for (std::list<Curve_2>::iterator scv_iter = subcurves.begin(); 
-       scv_iter != subcurves.end(); scv_iter++)    
-    std::cout << *scv_iter << std::endl;
+  sl.get_subcurves (polylines.begin(), polylines.end(), 
+		    std::back_inserter(subcurves));
 
-  return 0;
+  // Write the output sub-curves.
+  Curves_iter scv_iter;
+
+  for (scv_iter = subcurves.begin(); scv_iter != subcurves.end(); scv_iter++)  
+    std::cout << (*scv_iter) << std::endl;
+
+  return (0);
 }
