@@ -1,6 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.33 (26 Apr 2002)
+
+     - Fixed broken HalfedgeDS_vector.
+
 3.32 (26 Apr 2002)
 
      - Moved externally defined member functions into class body in

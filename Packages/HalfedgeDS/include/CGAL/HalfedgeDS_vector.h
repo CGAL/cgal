@@ -261,7 +261,7 @@ private:
 #define CGAL__F_UPDATE(f) (((f) == Face_handle()) ? (f) : \
                            (f_new + ( Face_CI     (get_f_iter(f)) - f_old)))
 
-    void pointer_update( Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old);
+    void pointer_update( Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old) {
         // Update own pointers assuming that they lived previously
         // in a halfedge data structure with vector starting addresses
         // as given as parameters v_old, h_old, f_old.
