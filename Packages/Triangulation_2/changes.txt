@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.11 (21/03/02)
+- move the intersection_tag parameter from Constrained triangulation plus
+ to Constrained and Delaunay constrained triangulation
+
 Ver 7.10(20/03/02)
 - change names of Context's member functions
 - fixed copy of the constraint_hierarchy

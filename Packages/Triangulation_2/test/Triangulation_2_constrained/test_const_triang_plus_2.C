@@ -19,7 +19,7 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-
+#include <CGAL/basic.h>
 #include <CGAL/_test_types.h>
 
 #include <CGAL/intersections.h>

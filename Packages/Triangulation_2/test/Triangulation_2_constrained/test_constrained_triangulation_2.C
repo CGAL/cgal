@@ -20,23 +20,45 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-
+#include <CGAL/basic.h>
 #include <CGAL/_test_types.h>
+
+#include <CGAL/intersections.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/_test_cls_constrained_triangulation_2.C>
 
+typedef CGAL::Quotient<Ftype>                       Exact_type;
+typedef CGAL::Simple_cartesian<Exact_type>          Exact_kernel;
+struct EK : public Exact_kernel {};
+
 int main()
 {
   std::cout << "Testing constrained_triangulation "<< std::endl;
-  std::cout << " with Triangulation_euclidean_traits_2 : " << std::endl;
-  std::cout << " and double coordinates " << std::endl;
-  
-  typedef double coord_type;
-  typedef CGAL::Cartesian<coord_type>  Rep;
-  typedef CGAL::Triangulation_euclidean_traits_2<Rep>            Gt;
-  typedef CGAL::Constrained_triangulation_2<Gt>              CCls;
-  _test_cls_constrained_triangulation(CCls());
+  std::cout << " with No_intersection_tag : " << std::endl;
+  typedef CGAL::Triangulation_euclidean_traits_2<TestK>            Gt;
+  typedef CGAL::Triangulation_vertex_base_2<TestK>                 Vb;
+  typedef CGAL::Constrained_triangulation_face_base_2<TestK>       Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
+  typedef CGAL::No_intersection_tag                                Itag;
+  typedef CGAL::Constrained_triangulation_2<TestK,TDS,Itag>        Ct;
+  _test_cls_constrained_triangulation(Ct());
 
+  std::cout << "Testing constrained_triangulation "<< std::endl;
+  std::cout << " with Exact_predicates_tag : " << std::endl;
+  typedef CGAL::Constrained_triangulation_2<TestK>        Ctwi;
+  _test_cls_constrained_triangulation(Ctwi());
+  
+  std::cout << "Testing constrained_triangulation "<< std::endl;
+  std::cout << " with Exact_intersections_tag : " << std::endl;
+  
+
+  typedef CGAL::Triangulation_vertex_base_2<EK>                 Vbb;
+  typedef CGAL::Constrained_triangulation_face_base_2<EK>       Fbb;
+  typedef CGAL::Triangulation_data_structure_2<Vbb,Fbb>         TDSS;
+  typedef CGAL::Exact_intersections_tag                         EItag;
+  typedef CGAL::Constrained_triangulation_2<EK,TDSS,EItag>      Ctwei;
+  _test_cls_constrained_triangulation(Ctwei());
+  
   return 0;
 }

@@ -25,11 +25,10 @@
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 
-#include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Constraint_hierarchy_2.h>
-#include <CGAL/squared_distance_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -164,6 +163,7 @@ public:
 						    Vertex_handle vb);
   int number_of_constraints() { return hierarchy.number_of_constraints();}
   int number_of_subconstraints(){return hierarchy.number_of_subconstraints();}
+
 
 protected:
   void insert_subconstraint(Vertex_handle va,Vertex_handle vb);
@@ -362,7 +362,7 @@ Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i, 
 	  Vertex_handle vaa,
 	  Vertex_handle vbb,
-	  Tag_exact_predicates)
+	  Exact_predicates_tag)
 {
   Vertex_handle  vcc, vdd;
   vcc = f->vertex(cw(i));

@@ -32,7 +32,11 @@
 #include <CGAL/Triangulation_2.h> 
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/iterator.h>
+
+#ifdef CGAL_REP_CLASS_DEFINED
+#include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
+#endif
 	
 CGAL_BEGIN_NAMESPACE
 
@@ -548,8 +552,8 @@ intersect(Face_handle f, int i,
   std::cerr << "using a Constrained_triangulation_plus_2 class" << std::endl;
   std::cerr << "would avoid cascading intersection computation" << std::endl;
   std::cerr << " and be much more efficient" << std::endl;
-  vcc = f->vertex(cw(i));
-  vdd = f->vertex(ccw(i));
+  Vertex_handle vcc = f->vertex(cw(i));
+  Vertex_handle vdd = f->vertex(ccw(i));
   						  
   Point pi; //creator for point is required here
   Object result;
