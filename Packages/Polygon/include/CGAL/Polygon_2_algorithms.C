@@ -256,12 +256,16 @@ class Simplicity_test_2 {
 
         int replace(int e1, int e2)
         {
-          // Ideally we would like to directly replace edge e1 with edge e2 by
-          // putting *(index[e1]) = e2. However, this is not supported by STL
-          // sets.
-          erase(e1);
-          insert(e2);
-          return e2;
+#ifdef CGAL_POLYGON_DEBUG
+{
+    cout << endl << "    replacing edge " << e1 << " by edge "<< e2
+      << " in sweep status" << endl;
+}
+#endif // CGAL_POLYGON_DEBUG
+	    typename std::set<int,EdgeComp>::iterator cur = index[e1];
+	    status.erase(cur++);
+	    index[e2] = status.insert(cur, e2);
+            return e2;
         }
 
         int left(int e) const
@@ -321,14 +325,6 @@ bool Simplicity_test_2<ForwardIterator, Traits>::EdgeCompare(
     else
       Result = !edge_compare_non_consecutive(e2,e1);
   }
-
-#ifdef CGAL_POLYGON_DEBUG
-{
-  char c = Result ? '<' : '>';
-  cout << "      edge " << e1 << " " << c << " edge " << e2 << endl;
-}
-#endif // CGAL_POLYGON_DEBUG
-
   return Result;
 }
 
@@ -515,10 +511,10 @@ Simplicity_test_2<ForwardIterator, Traits>::Test(ForwardIterator first,
           left = status.left(prev);
           right = status.right(i);
        }
+       status.erase(prev);
+       status.erase(i);
        if (left >=0 && right >=0 && EdgesDoIntersect(left, right))
           return false;
-      status.erase(prev);
-      status.erase(i);
       CGAL_polygon_assertion(status.is_valid());
 
 #ifdef CGAL_POLYGON_DEBUG
