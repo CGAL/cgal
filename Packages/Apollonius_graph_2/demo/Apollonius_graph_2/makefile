@@ -19,11 +19,8 @@ include $(CGAL_MAKEFILE)
 #
 # CGAL 2.5 has the needed functionality and so the following directory is not
 # needed with 2.5
-CGAL_PATCHES_DIR = ./ #./include
-AG_INC_DIR = ../../include
-MY_CXXFLAGS = -I$(CGAL_PATCHES_DIR) -I$(AG_INC_DIR)
 
-CXXFLAGS = $(MY_CXXFLAGS) \
+CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -37,8 +34,7 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_QT_LDFLAGS) 
 
 #---------------------------------------------------------------------#
 #                    target entries
