@@ -2628,7 +2628,6 @@ test_leda()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
 	${_printf} "%s\n" '
-	    #include <cassert>
 	    #include <LEDA/integer.h>
 	    #if defined(_MSC_VER) || defined(__BORLANDC__)
 	    #ifndef LEDA_STD_HEADERS
@@ -4738,8 +4737,8 @@ upgrade()
     print_filled_line
     flush_buffer
     log_print "copy gmp libs ... "
-    for i in `${_find} ${UPGRADE_FROM} -follow -name "libgmp.a" -print` \
-	`${_find} ${UPGRADE_FROM} -follow -name "gmp.lib" -print`
+    for i in `${_find} ${UPGRADE_FROM}/lib -follow -name "libgmp.a" -print` \
+	`${_find} ${UPGRADE_FROM}/lib -follow -name "gmp.lib" -print`
     do
 	go_up_lines 1
 	print_line "`${_printf} ${i} | ${_awk} 'BEGIN {FS=\"/\"} {i=NF-1;print $i}'`"
