@@ -826,18 +826,18 @@ and their value types are respectively
 \ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
 They are all invalidated by any change in the triangulation.
 
-\ccThree{Vertex_iterator}{t.finite_vertices_begin()x}{}
-\ccMethod{Vertex_iterator finite_vertices_begin() const;}{Starts at an arbitrary finite vertex}
+\ccThree{Finite_vertices_iterator}{t.finite_vertices_begin()x}{}
+\ccMethod{Finite_vertices_iterator finite_vertices_begin() const;}{Starts at an arbitrary finite vertex}
 \ccGlue
-\ccMethod{Vertex_iterator finite_vertices_end() const;}{Past-the-end iterator}
+\ccMethod{Finite_vertices_iterator finite_vertices_end() const;}{Past-the-end iterator}
 
-\ccMethod{Edge_iterator finite_edges_begin() const;}{Starts at an arbitrary finite edge}
+\ccMethod{Finite_edges_iterator finite_edges_begin() const;}{Starts at an arbitrary finite edge}
 \ccGlue
-\ccMethod{Edge_iterator finite_edges_end() const;}{Past-the-end iterator}
+\ccMethod{Finite_edges_iterator finite_edges_end() const;}{Past-the-end iterator}
 
-\ccMethod{Face_iterator finite_faces_begin() const;}{Starts at an arbitrary finite face}
+\ccMethod{Finite_faces_iterator finite_faces_begin() const;}{Starts at an arbitrary finite face}
 \ccGlue
-\ccMethod{Face_iterator finite_faces_end() const;}{Past-the-end iterator}
+\ccMethod{Finite_faces_iterator finite_faces_end() const;}{Past-the-end iterator}
 
 
 The following iterators allow respectively to visit all
@@ -847,18 +847,18 @@ and their value types are respectively
 \ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
 They are all invalidated by any change in the triangulation.
 
-\ccThree{Vertex_iterator}{t.all_vertices_begin()x}{}
-\ccMethod{Vertex_iterator all_vertices_begin() const;}{Starts at an arbitrary  vertex}
-\ccGlue
-\ccMethod{Vertex_iterator all_vertices_end() const;}{Past-the-end iterator}
 
-\ccMethod{Edge_iterator all_edges_begin() const;}{Starts at an arbitrary edge}
+\ccMethod{All_vertices_iterator all_vertices_begin() const;}{Starts at an arbitrary  vertex}
 \ccGlue
-\ccMethod{Edge_iterator all_edges_end() const;}{Past-the-end iterator}
+\ccMethod{All_vertices_iterator all_vertices_end() const;}{Past-the-end iterator}
 
-\ccMethod{Face_iterator all_faces_begin() const;}{Starts at an arbitrary face}
+\ccMethod{All_edges_iterator all_edges_begin() const;}{Starts at an arbitrary edge}
 \ccGlue
-\ccMethod{Face_iterator all_faces_end() const;}{Past-the-end iterator}
+\ccMethod{All_edges_iterator all_edges_end() const;}{Past-the-end iterator}
+
+\ccMethod{All_faces_iterator all_faces_begin() const;}{Starts at an arbitrary face}
+\ccGlue
+\ccMethod{All_faces_iterator all_faces_end() const;}{Past-the-end iterator}
 
 \ccThree{Line_face_circulator}{T.line_walk(Point p, }{}
 \ccHeading{Line Face Circulator}
@@ -1754,16 +1754,16 @@ diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.}
 \end{figure}
 
 
-\ccMethod{Vertex* insert_first(Vertex* v);} {creates the first 
+\ccMethod{Vertex* insert_first();} {creates the first 
 vertex and returns a pointer to it.}
 \ccGlue
-\ccMethod{Vertex* insert_second(Vertex* v);} {creates the second finite
+\ccMethod{Vertex* insert_second();} {creates the second finite
 vertex and returns a pointer to it.}
-\ccMethod{Vertex* insert_in_edge(Vertex* v, Face* f, int i);} {adds a
+\ccMethod{Vertex* insert_in_edge(Face* f, int i);} {adds a
 vertex \ccc{v} splitting 
 edge \ccc{i} of face \ccc{f}. Return a  pointer to \ccc{v}.}
 \ccGlue
-\ccMethod{Vertex* insert_in_face(Vertex* v,Face* f);} {adds a vertex
+\ccMethod{Vertex* insert_in_face(Face* f);} {adds a vertex
 \ccc{v} splitting  face
 \ccc{f} in three. Face \ccc{f} is modified,
 two new faces are created. Return a  pointer to \ccc{v} }
@@ -2128,7 +2128,17 @@ in correct reverse order.}
 
 \end{ccClass}
 
-\subsection{The Default Triangulation Data Structure}
+\subsection{Models of Triangulation Data Structure}
+\cgal offers currently two models of triangulation data structures.
+The first one \ccc{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb
+>}
+is highly economic with respect to memory space but its use is
+restricted
+to planar embedded triangulation. The second one
+\ccc{Triangulation_data_structure_using_list_2<Vb,Fb>} can be used for 
+the representation of any  orientable triangulations.
+
+\subsubsection{The Default Triangulation Data Structure}
 \begin{ccClassTemplate}{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb>}
 \cgal\ proposes the class \ccc{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb >}
 as a default for the triangulation data structure class of a triangulation.
@@ -2176,10 +2186,15 @@ This is achieved if the same model is used for both traits classes
 which is recommended but not compulsory.
 
 
-
-
 \ccInclude{CGAL/Triangulation_default_data_structure_2.h}
 \end{ccClassTemplate}
+
+\subsubsection{A triangulation data structure using list}
+The class \ccc{Triangulation_data_structure_using_list_2<Vb,Fb>}
+can be used as a triangulation data structure for any
+orientable triangulation. It uses aa \stl list to store the
+full dimensional faces of the triangulation.
+\ccInclude{CGAL/Triangulation_data_structure_using_list_2.h}
 
 
 \section{The Base Classes \protect \ccc{Vertex_base} and  \protect \ccc{Face_base} }
