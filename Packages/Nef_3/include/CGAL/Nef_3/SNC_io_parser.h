@@ -474,6 +474,41 @@ class sort_shell_entries : public T {
   }
 };
 
+template<typename T>
+struct find_minimal_sface_of_shell : public SNC_decorator<T> {
+  
+  typedef T                        SNC_structure;
+  typedef SNC_decorator<T>          Base;
+  typedef typename T::Vertex_handle  Vertex_handle;
+  typedef typename T::Halfedge_handle  Halfedge_handle;
+  typedef typename T::Halffacet_handle  Halffacet_handle;
+  typedef typename T::SFace_handle  SFace_handle;
+  typedef CGAL::Unique_hash_map<SFace_handle,bool> SFace_visited_hash;
+
+  SFace_visited_hash& Done;
+  SFace_handle sf_min;
+  sort_sfaces<T> SORT;
+  
+  find_minimal_sface_of_shell(T& D, SFace_visited_hash& Vi) 
+    : Base(D), Done(Vi), SORT(D) {}
+  
+  void visit(SFace_handle h) { 
+    Done[h]=true;
+    if(sf_min == SFace_handle())
+      sf_min = h;
+    else {
+      if(SORT(h,sf_min))
+	sf_min = h;
+    }
+  }
+  
+  void visit(Vertex_handle h) {}
+  void visit(Halfedge_handle h) {}
+  void visit(Halffacet_handle h) {}
+  
+  SFace_handle& minimal_sface() { return sf_min; }
+};
+
 template <typename SNC_structure_>
 class SNC_io_parser : public SNC_decorator<SNC_structure_>
 { typedef SNC_structure_ SNC_structure;
@@ -756,22 +791,25 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
   for(fl = FL.begin(); fl != FL.end(); fl++)
     FI[*fl] = i++;
 
-  bool first = true;
-  Volume_iterator nirv;
   Volume_iterator ci; 
+  CGAL::Unique_hash_map<SFace_handle,bool> Done(false);
+  find_minimal_sface_of_shell<SNC_structure> findMinSF(*sncp(),Done);
   CGAL_nef3_forall_volumes(ci, *sncp()) {
-    if(sorted) 
+    if(sorted) {
+      Shell_entry_iterator it;
+      CGAL_nef3_forall_shells_of(it,ci) {
+	findMinSF.minimal_sface() = SFace_handle(it);
+	visit_shell_objects(SFace_handle(it),findMinSF);
+	*it = findMinSF.minimal_sface();
+      }
       ci->shell_entry_objects_.sort(sort_shell_entries<Base>((Base)*this));
-    if(!first)
-      CL.push_back(ci);
-    else {
-      nirv = ci;
-      first = false;
-    }
+    } 
+    CL.push_back(ci);
   }
+ 
   if(sorted) CL.sort(sort_volumes<SNC_structure>(*sncp()));
-  if(!reduce)
-    CL.push_front(nirv);
+  if(reduce)
+    CL.pop_front();
   i = 0;
   typename std::list<Volume_iterator>::iterator cl;
   for(cl = CL.begin(); cl != CL.end(); cl++)
