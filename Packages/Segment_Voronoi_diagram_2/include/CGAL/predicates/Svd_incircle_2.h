@@ -1,7 +1,7 @@
 #ifndef CGAL_SVD_INCIRCLE_2_H
 #define CGAL_SVD_INCIRCLE_2_H
 
-#include <CGAL/predicates/Segment_Voronoi_diagram_vertex_C2.h>
+#include <CGAL/predicates/Segment_Voronoi_diagram_vertex_2.h>
 
 
 CGAL_BEGIN_NAMESPACE
