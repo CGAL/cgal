@@ -54,7 +54,8 @@ public:
   //CREATORS
   Triangulation_dsul_vertex_2() : Vertex_base() {}
   Triangulation_dsul_vertex_2(const Point & p) :  Vertex_base(p)  {}
-  Triangulation_dsul_vertex_2(const Point & p, Face * f) : Vertex_base(p, f )  {}
+  Triangulation_dsul_vertex_2(const Point & p, Face * f) 
+    : Vertex_base(p, f )  {}
 
   //SETTING
   void set_face(Face* f)  { Vertex_base::set_face(f);  }
