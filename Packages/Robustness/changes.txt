@@ -1,3 +1,8 @@
+1.11    (27 September 2001)
+- Changed CartesianLedaReal to ExactCartesian.
+
+====================  CGAL 2.3 =========================
+
 1.10    (1 August 2001)
 - Use MP_Float when GMP is not there.
 - Use Filtered_kernel instead of Filtered_exact for VC++.

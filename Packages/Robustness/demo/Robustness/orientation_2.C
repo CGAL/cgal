@@ -50,7 +50,7 @@ typedef CGAL::Cartesian<double>                CartesianDouble;
 typedef CartesianDouble::Point_2               Point;
 typedef CGAL::Creator_uniform_2<double,Point>  Pt_creator;
 typedef std::vector<Point>                     Vector;
-typedef CGAL::Cartesian<exact_NT>              CartesianLedaReal;
+typedef CGAL::Cartesian<exact_NT>              ExactCartesian;
 
 int
 main(int argc, char** argv)
@@ -93,15 +93,15 @@ main(int argc, char** argv)
                CGAL::Ostream_iterator< Point, CGAL_Stream>( W2));
 
     CGAL::Orientation* C = new CGAL::Orientation[N*N*N];
-    std::vector< CartesianLedaReal::Point_2>  S;
-    CGAL::Cartesian_converter<CartesianDouble, CartesianLedaReal> converter;
+    std::vector< ExactCartesian::Point_2>  S;
+    CGAL::Cartesian_converter<CartesianDouble, ExactCartesian> converter;
     leda_string s1;
     leda_string s2;
 
 
     std::transform( points1.begin(), points1.end(),
                     std::back_inserter( S), converter);
-    fill_control_field( S.begin(), S.end(), C, CartesianLedaReal());
+    fill_control_field( S.begin(), S.end(), C, ExactCartesian());
     orientation_statistics(points1.begin(), points1.end(),
                            C, s1, s2, CartesianDouble());
     W.draw_ctext( 250, 50, s1);
@@ -110,7 +110,7 @@ main(int argc, char** argv)
 
     std::transform( points2.begin(), points2.end(),
                     S.begin(), converter);
-    fill_control_field( S.begin(), S.end(), C, CartesianLedaReal());
+    fill_control_field( S.begin(), S.end(), C, ExactCartesian());
     orientation_statistics(points2.begin(), points2.end(),
                            C, s1, s2, CartesianDouble());
     W.draw_ctext( 700, 50, s1);
