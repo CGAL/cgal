@@ -30,7 +30,6 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <iostream>
 #include <vector>
-#include <utility>
 #include <functional>
 
 // TODO :
@@ -113,10 +112,28 @@ public:
   }
 
   bool operator<(const MP_Integer &) const;
+
+  
+  bool operator>(const MP_Integer &f) const
+  {
+      return f<*this;
+  }
+
+  bool operator>=(const MP_Integer &f) const
+  {
+      return !(*this<f);
+  }
+
+  bool operator<=(const MP_Integer &f) const
+  {
+      return !(*this>f);
+  }
+
   bool operator==(const MP_Integer &b) const
   {
     return v == b.v;
   }
+
   bool operator!=(const MP_Integer &b) const
   {
     return v != b.v;
