@@ -1287,7 +1287,7 @@ namespace std
 
 inline int std::stringbuf::sync()
 {
-  if((mode & ios::out) == 0)
+  if(static_cast<int>(mode & ios::out) == 0)
     return EOF;
 
   streamsize n = pptr() - pbase();
