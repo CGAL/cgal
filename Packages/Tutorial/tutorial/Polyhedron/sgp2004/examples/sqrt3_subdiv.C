@@ -1,17 +1,50 @@
-// file: examples/Polyhedron/polyhedron_prog_subdiv.C
+// file: examples/sqrt3_subdiv.C
 // Revised and simplified to work with CGAL 3.1 and triangulated meshes only.
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Real_timer.h>
 #include <iostream>
 #include <algorithm>
 #include <vector>
 
-typedef CGAL::Cartesian<double>                              Kernel;
+using std::cerr;
+using std::endl;
+using std::cout;
+using std::cin;
+using std::exit;
+
+// no plane equations in facets
+class Polyhedron_min_items_3 {
+public:
+    template < class Refs, class Traits>
+    struct Vertex_wrapper {
+        typedef typename Traits::Point_3 Point;
+        typedef CGAL::HalfedgeDS_vertex_base< Refs, CGAL::Tag_true, Point> 
+                                                                   Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Halfedge_wrapper {
+        // with prev pointer, 1.05 s, without 0.94
+        typedef CGAL::HalfedgeDS_halfedge_base< Refs, CGAL::Tag_false>
+                                                                   Halfedge;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        // with plane and prev pointer. 1.20 s
+        typedef typename Traits::Plane_3 Plane;
+        typedef CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true>  Face;
+    };
+};
+
+
+typedef CGAL::Simple_cartesian<float>                       Kernel;
 typedef Kernel::Vector_3                                     Vector;
 typedef Kernel::Point_3                                      Point;
-typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
+typedef CGAL::Polyhedron_3<Kernel, Polyhedron_min_items_3,
+                           CGAL::HalfedgeDS_vector>   Polyhedron;
 
 typedef Polyhedron::Vertex                                   Vertex;
 typedef Polyhedron::Vertex_iterator                          Vertex_iterator;
@@ -79,20 +112,35 @@ void subdiv( Polyhedron& P) {
 }
 
 int main() {
+    CGAL::Real_timer runtime;
+    cerr << "Loading OFF file ... " << endl;
+    runtime.start();
     Polyhedron P;
-    std::cin >> P;
+    cin >> P;
+    cerr << "Loading OFF file   : " << runtime.time() << " seconds." << endl;
+
     P.normalize_border();
     if ( P.size_of_border_edges() != 0) {
-        std::cerr << "The input object has border edges. Cannot subdivide." 
-                  << std::endl;
-        std::exit(1);
+        cerr << "The input object has border edges. Cannot subdivide." 
+                  << endl;
+        exit(1);
     }
     if ( ! P.is_pure_triangle()) {
-        std::cerr << "The input object is not triangulated. Cannot subdivide." 
-                  << std::endl;
-        std::exit(1);
+        cerr << "The input object is not triangulated. Cannot subdivide." 
+                  << endl;
+        exit(1);
     }
+    P.reserve( P.size_of_vertices() + P.size_of_facets(),
+               P.size_of_halfedges() + 6 * P.size_of_facets(),
+               3 * P.size_of_facets());
+    runtime.reset();
+    cerr << "Sqrt-3 Subdiv ... " << endl;
     subdiv( P);
-    std::cout << P;
+    cerr << "Sqrt-3 Subdiv      : " << runtime.time() << " seconds." << endl;
+
+    runtime.reset();
+    cerr << "Saving OFF file ... " << endl;
+    cout << P;
+    cerr << "Saving OFF file    : " << runtime.time() << " seconds." << endl;
     return 0;
 }
