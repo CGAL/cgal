@@ -78,7 +78,7 @@ compare(const leda_real& r1, const leda_real& r2)
 #endif // CGAL_CFG_NO_NAMESPACE
 
 inline
-std::pair<double>
+std::pair<double,double>
 to_interval (const leda_real & z)
 {
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);

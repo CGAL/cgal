@@ -1,3 +1,6 @@
+4.96  (15 May 2003)
+- Fix to_interval(leda_real).
+
 4.95  (15 May 2003)
 - Test and enable to_interval for GMP++ and CORE.
 
