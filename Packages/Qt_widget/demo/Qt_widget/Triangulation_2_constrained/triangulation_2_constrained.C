@@ -155,7 +155,7 @@ public:
     *widget << CGAL::BackgroundColor (CGAL::BLACK);
 
     resize(w,h);
-    widget->show();
+    widget->set_window(-1, 1, -1, 1);
 
     widget->setMouseTracking(TRUE);
 	
@@ -172,13 +172,6 @@ public:
     ymin = -1; ymax = 1;
   }
 
-  void set_window(double xmin, double xmax,
-			  double ymin, double ymax)
-  {
-    widget->set_window(xmin, xmax, ymin, ymax);
-    widget->clear_history();
-  }
-
 
 private slots:
   void new_instance()
@@ -187,8 +180,8 @@ private slots:
     widget->clear();
     widget->clear_history();
     ct.clear();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
-	// set the Visible Area to the Interval
+    // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
     widget->unlock();
     something_changed();
   }
@@ -215,8 +208,8 @@ private slots:
         i++;
         for(;i!=poly.vertices_end();i++){
           Point p(i->x(), i->y());
-	  Vertex_handle vs = ct.insert(p);
-	  Vertex_handle vt = ct.insert(lp);
+          Vertex_handle vs = ct.insert(p);
+          Vertex_handle vt = ct.insert(lp);
           ct.insert_constraint(vs, vt);
           lp = p;
         }
@@ -251,24 +244,25 @@ private slots:
 
   void new_window(){
     Window *ed = new Window(500, 500);
-    ed->setCaption("Layer");
-    ed->show();
+    ed->setCaption("Layer");    
     if(ct.number_of_vertices() > 1){
     Vertex_iterator it = ct.vertices_begin();
     xmin = xmax = (*it).point().x();
     ymin = ymax = (*it).point().y();
     while(it != ct.vertices_end()) {
       if(xmin > (*it).point().x())
-	xmin = (*it).point().x();
+        xmin = (*it).point().x();
       if(xmax < (*it).point().x())
-	xmax = (*it).point().x();
+        xmax = (*it).point().x();
       if(ymin > (*it).point().y())
-	ymin = (*it).point().y();
+        ymin = (*it).point().y();
       if(ymax < (*it).point().y())
-	ymax = (*it).point().y();
+        ymax = (*it).point().y();
       it++;
     }
-    ed->set_window(xmin, xmax, ymin, ymax);
+    ed->widget->clear_history();
+    ed->widget->set_window(xmin, xmax, ymin, ymax);
+    ed->show();
     }
     something_changed();
   }
@@ -292,13 +286,13 @@ private slots:
     ymin = ymax = (*it).point().y();
     while(it != ct.vertices_end()) {
       if(xmin > (*it).point().x())
-	xmin = (*it).point().x();
+        xmin = (*it).point().x();
       if(xmax < (*it).point().x())
-	xmax = (*it).point().x();
+        xmax = (*it).point().x();
       if(ymin > (*it).point().y())
-	ymin = (*it).point().y();
+        ymin = (*it).point().y();
       if(ymax < (*it).point().y())
-	ymax = (*it).point().y();
+        ymax = (*it).point().y();
       it++;
     }
     widget->clear_history();
@@ -334,13 +328,13 @@ private slots:
     ymin = ymax = (*it).point().y();
     while(it != ct.vertices_end()) {
       if(xmin > (*it).point().x())
-	xmin = (*it).point().x();
+        xmin = (*it).point().x();
       if(xmax < (*it).point().x())
-	xmax = (*it).point().x();
+        xmax = (*it).point().x();
       if(ymin > (*it).point().y())
-	ymin = (*it).point().y();
+        ymin = (*it).point().y();
       if(ymax < (*it).point().y())
-	ymax = (*it).point().y();
+        ymax = (*it).point().y();
       it++;
     }
     widget->clear_history();
@@ -369,26 +363,26 @@ private slots:
       for(int n = 0; n<nedges; n++) {
         Point p1, p2;
         in >> p1 >> p2;
-	if(n==0){
-	  xmin = xmax = p1.x();
-	  ymin = ymax = p1.y();
-	}
-	if(xmin > p1.x())
-	  xmin = p1.x();
-	if(xmax < p1.x())
-	  xmax = p1.x();
-	if(ymin > p1.y())
-	  ymin = p1.y();
-	if(ymax < p1.y())
-	  ymax = p1.y();
-	if(xmin > p2.x())
-	  xmin = p2.x();
-	if(xmax < p2.x())
-	  xmax = p2.x();
-	if(ymin > p2.y())
-	  ymin = p2.y();
-	if(ymax < p2.y())
-	  ymax = p2.y();
+	      if(n==0){
+	        xmin = xmax = p1.x();
+	        ymin = ymax = p1.y();
+	      }
+	      if(xmin > p1.x())
+	        xmin = p1.x();
+	      if(xmax < p1.x())
+	        xmax = p1.x();
+	      if(ymin > p1.y())
+	        ymin = p1.y();
+	      if(ymax < p1.y())
+	        ymax = p1.y();
+	      if(xmin > p2.x())
+	        xmin = p2.x();
+	      if(xmax < p2.x())
+	        xmax = p2.x();
+	      if(ymin > p2.y())
+	        ymin = p2.y();
+	      if(ymax < p2.y())
+	        ymax = p2.y();
         Vertex_handle vs = ct.insert(p1);
         Vertex_handle vt = ct.insert(p2);
         ct.insert_constraint(vs, vt);
@@ -424,16 +418,15 @@ private slots:
           ct.insert_constraint(p_vh, vh);
           p_vh = vh;
         } else {
-	  Vertex_handle vhp = ct.insert(p);
-	  p_vh = ct.insert(q, vhp->face());
+          Vertex_handle vhp = ct.insert(p);
+          p_vh = ct.insert(q, vhp->face());
         }
         p_q = q;
         first = false;
       }
     }
-	
-    set_window(xmin, xmax, ymin, ymax);
     widget->clear_history();
+    widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
 
@@ -465,7 +458,6 @@ main(int argc, char **argv)
   W.show();
   // because Qt send resizeEvent only on show.
   W.init_coordinates();  
-  W.set_window(-1, 1, -1, 1);
   current_state = -1;
   return app.exec();
 }
