@@ -192,7 +192,7 @@ to_double(const MP_Float &b)
 
   int exp = b.max_exp();
   int steps = std::min(MP_Float::limbs_per_double, b.v.size());
-  double d_exp_1 = std::ldexp(1.0,     - MP_Float::log_limb);
+  double d_exp_1 = std::ldexp(1.0, (int) - MP_Float::log_limb);
   double d_exp   = std::ldexp(1.0, exp * MP_Float::log_limb);
   double d = 0;
 
@@ -213,7 +213,7 @@ to_interval(const MP_Float &b)
 
   int exp = b.max_exp();
   int steps = std::min(MP_Float::limbs_per_double, b.v.size());
-  double d_exp_1 = std::ldexp(1.0,     - MP_Float::log_limb);
+  double d_exp_1 = std::ldexp(1.0, (int) - MP_Float::log_limb);
   double d_exp   = std::ldexp(1.0, exp * MP_Float::log_limb);
 
   // We take care of overflow.  The following should be enough.
