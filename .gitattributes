@@ -1433,6 +1433,7 @@ Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/circle.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/focus1.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/focus2.xpm -text
+Packages/Qt_widget/include/CGAL/IO/pixmaps/focus2_mask.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/focus3.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/greene_approx.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/hand.xpm -text
