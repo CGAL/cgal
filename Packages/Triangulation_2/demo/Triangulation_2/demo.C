@@ -9,11 +9,6 @@
 #define Cartesian Ca
 
 #include <CGAL/Cartesian.h>
-//#include <CGAL/Homogeneous.h>
-//#include <CGAL/Integer.h>
-//#include <CGAL/Rational.h>
-//#include <CGAL/Fixed.h>
-//#include <CGAL/Real.h>
 #include <CGAL/squared_distance_2.h>   // to avoid a g++ problem
 #include <CGAL/Point_2.h>
 #include <CGAL/predicates_on_points_2.h>
@@ -29,14 +24,9 @@
 
 #include "parse.h"
 
-//typedef leda_rational coord_type;
-//typedef leda_integer  coord_type;
-typedef double coord_type;
-//typedef leda_real coord_type;
-//typedef CGAL::Fixed coord_type;
 
+typedef double coord_type;
 typedef CGAL::Cartesian<coord_type>  Rep;
-//typedef CGAL::Homogeneous<coord_type>  Rep;
 
 typedef CGAL::Point_2<Rep>  Point_;
 typedef CGAL::Segment_2<Rep>  Segment_;
@@ -110,8 +100,8 @@ Vertex_handle_ closest_vertex(const TRIANGULATION &T,
 
 template <class TRIANGULATION>
 void window_input(TRIANGULATION &T,
-             Window_stream &W,
-             const Options& opt)
+		  Window_stream &W,
+		  const Options& opt)
 {
     cerr << "Enter points with the left button" << endl;
     cerr << "Remove points with the middle button" << endl;
@@ -135,7 +125,8 @@ void window_input(TRIANGULATION &T,
         bool mouse_moved = p != q;
         bool face_change = true,
              vertex_change = false;
-        if( (highlight != (CGAL_NULL_TYPE) NULL) && (button_pressed || mouse_moved) ){
+        if( (highlight != (CGAL_NULL_TYPE) NULL) && 
+	                  (button_pressed || mouse_moved) ){
             face_change = mouse_moved &&
                           ( T.oriented_side(highlight, p)
                                 == CGAL::ON_NEGATIVE_SIDE );
@@ -182,7 +173,9 @@ void window_input(TRIANGULATION &T,
         if( button_pressed || face_change){
             bool outside = highlight == (CGAL_NULL_TYPE) NULL;
             highlight = T.locate(p, highlight);
-            if((highlight != (CGAL_NULL_TYPE) NULL) && (! T.is_infinite(highlight))){
+            if((highlight != (CGAL_NULL_TYPE) NULL) && 
+	                     (! T.is_infinite(highlight)) &&
+	                        T.dimension()==2){
                 vertex_change = outside && true;
                 drawing_mode dm = W.set_mode(leda_src_mode);
                 W << CGAL::RED << T.triangle(highlight) << CGAL::BLUE;
