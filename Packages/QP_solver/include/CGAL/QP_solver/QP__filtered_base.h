@@ -116,9 +116,9 @@ class QPE__filtered_base : virtual public QPE_pricing_strategy<Rep_> {
     typedef  typename Rep::Row_type_iterator
                                         R_iterator;
 
-    typedef  typename QP_solver::Basic_variable_index_iterator
+    typedef  typename Base::QP_solver::Basic_variable_index_iterator
                                         Basic_variable_index_iterator;
-    typedef  typename QP_solver::Basic_constraint_index_iterator
+    typedef  typename Base::QP_solver::Basic_constraint_index_iterator
                                         Basic_constraint_index_iterator;
 
     typedef  std::vector<NT>            Values_NT;
@@ -191,11 +191,11 @@ template < class Rep_, class NT_, class ET2NT_ >  inline        // QP case
 void  QPE__filtered_base<Rep_,NT_,ET2NT_>::
 init_NT( Tag_false)
 {
-    if ( solver().number_of_basic_original_variables()
+    if ( this->solver().number_of_basic_original_variables()
 	 > static_cast< int>( x_B_O_NT.size())) x_B_O_NT.push_back( nt0);
 
-    std::transform( solver().basic_original_variables_numerator_begin(),
-		    solver().basic_original_variables_numerator_end(),
+    std::transform( this->solver().basic_original_variables_numerator_begin(),
+		    this->solver().basic_original_variables_numerator_end(),
 		    x_B_O_NT.begin(), et2nt_obj);
 }
 
@@ -211,7 +211,7 @@ template < class Rep_, class NT_, class ET2NT_ >  inline
 NT_  QPE__filtered_base<Rep_,NT_,ET2NT_>::
 mu_j_NT( int j) const
 {
-    return solver().mu_j( j, lambda_NT.begin(), x_B_O_NT.begin(), d_NT);
+    return this->solver().mu_j( j, lambda_NT.begin(), x_B_O_NT.begin(), d_NT);
 }
 
 template < class Rep_, class NT_, class ET2NT_ >  inline        // LP case
