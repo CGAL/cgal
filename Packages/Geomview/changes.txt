@@ -1,12 +1,13 @@
 CHANGES to the Geomview package.
 
-Ver 3.3 (?? ???????? 2000)
+Ver 3.3 (29 November 2000)
 - to_double -> CGAL::to_double.
 - char * -> string.
-- Got rid of useless and deprecated strstreams.
+- Got rid of some useless and deprecated strstreams.
 - Fixed a bug in frame().
-- Removed obsolete code concerning the ooold triangulation package.
+- Removed obsolete code concerning the very old (born dead) 3D triangulation.
 - Do not submit test/Geomview/Makefile.
+- New directory demo/Geomview.
 
 Ver 3.2 (24 November 2000)
 - Forgot to submit the test/ directory.
