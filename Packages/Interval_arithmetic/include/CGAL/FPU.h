@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2003  Utrecht University (The Netherlands),
+// Copyright (c) 1998-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -27,9 +27,8 @@
 // This file specifies some platform dependant functions, regarding the FPU
 // directed rounding modes.  There is only support for double precision.
 //
-// It also contains the definition of the Protect_FPU_rounding<> classes,
-// a helper class which is a nice way to protect blocks of code needing a
-// particular rounding mode.
+// It also contains the definition of the Protect_FPU_rounding<> class,
+// which helps to protect blocks of code needing a particular rounding mode.
 
 #if defined __alpha__  && defined __linux__ 
 extern "C" {
@@ -60,12 +59,12 @@ extern "C" {
 
 
 // GCC 3.0.0 has some bugs, which can be worked around, but it's
-// not worth maintaining them now anymore.
+// not worth maintaining them anymore.
 #if defined __GNUG__ && !defined __INTEL_COMPILER && \
     (__GNUG__ == 3 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 0)
 #  error GCC 3.0.0 is buggy, use at your own risk.
 #endif
- 
+
 
 // Some useful constants
 
@@ -83,6 +82,23 @@ extern "C" {
 #  define CGAL_IA_MIN_DOUBLE std::numeric_limits<double>::denorm_min()
 #  define CGAL_IA_MAX_DOUBLE std::numeric_limits<double>::max()
 #endif
+
+
+// Pure and safe SSE2 mode (g++ -mfp-math=sse && (-msse2 || -march=pentium4))
+// can be detected by :
+// TODO : see what Intel and VC++ have to say about this.
+#if defined __FLT_EVAL_METHOD__ && defined __SSE2_MATH__ && \
+      (__FLT_EVAL_METHOD__ == 0 || __FLT_EVAL_METHOD__ == 1)
+#  define CGAL_SAFE_SSE2
+#  include <xmmintrin.h>
+#endif
+
+// We do not handle -mfp-math=387,sse yet.
+#if defined __SSE2_MATH__ && \
+    ! (__FLT_EVAL_METHOD__ == 0 || __FLT_EVAL_METHOD__ == 1)
+#  warning Unsafe SSE2 mode : not supported yet.
+#endif
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -122,7 +138,8 @@ inline double IA_force_to_double(double x)
 // Another possible workaround would be to use intervals of "long doubles"
 // directly, but I think it would be much slower.
 #if !defined (CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) && \
-    (defined __i386__ || defined _MSC_VER || defined __BORLANDC__)
+    ((defined __i386__ && !defined CGAL_SAFE_SSE2) \
+     || defined _MSC_VER || defined __BORLANDC__)
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
@@ -161,6 +178,9 @@ inline double IA_bug_sqrt(double d)
   return d;
 }
 #  define CGAL_BUG_SQRT(d) CGAL::IA_bug_sqrt(d)
+#elif defined __SSE2_MATH__
+// For SSE2, we need to call __builtin_sqrt() instead of libc's sqrt().
+#  define CGAL_BUG_SQRT(d) __builtin_sqrt(d)
 #elif defined __CYGWIN__
 inline double IA_bug_sqrt(double d)
 {
@@ -187,6 +207,18 @@ inline double IA_bug_sqrt(double d)
 
 
 #if defined __i386__ && !defined __PGI
+
+#  if defined CGAL_SAFE_SSE2 
+
+#define CGAL_IA_SETFPCW(CW) _MM_SET_ROUNDING_MODE(CW)
+#define CGAL_IA_GETFPCW(CW) CW = _MM_GET_ROUNDING_MODE()
+typedef unsigned int FPU_CW_t;
+#define CGAL_FE_TONEAREST    _MM_ROUND_NEAREST
+#define CGAL_FE_TOWARDZERO   _MM_ROUND_TOWARD_ZERO
+#define CGAL_FE_UPWARD       _MM_ROUND_UP
+#define CGAL_FE_DOWNWARD     _MM_ROUND_DOWN
+
+#  else
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
 // Note that the ISO C99 version is not enough because of the extended
@@ -199,6 +231,8 @@ typedef unsigned short FPU_CW_t;
 #define CGAL_FE_TOWARDZERO   (0xc00 | 0x127f)
 #define CGAL_FE_UPWARD       (0x800 | 0x127f)
 #define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
+
+#  endif
 
 #elif defined __powerpc__  
 #define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)

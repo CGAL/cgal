@@ -1,4 +1,11 @@
 8 May 2004 Sylvain Pion
+- SSE2 handling (bugzilla #184).
+  Support for GCC (>= 3.3) options : -mfp-math=sse
+  which is faster than the traditional FPU, especially since we
+  do not have to workaround some "features" of the x87.
+  -mfp-math=387,sse is not yet supported.
+
+8 May 2004 Sylvain Pion
 - Move FPU_empiric_test() and force_ieee_double_precision() from
   src/Interval_arithmetic.C to tst0.C and FPU.h respectively.
 - FPU.h : remove G++ 3.0.0 workaround, but put a #error instead.
