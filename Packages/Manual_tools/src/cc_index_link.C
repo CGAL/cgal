@@ -144,7 +144,7 @@ main( int argc, char **argv) {
                                in_file2 >> number;
                                if (out_link) {
                                  out_file << "<A "<< search(list,number)<<">" 
-                                          << "<img SRC=\"" << "gif/index_arrow.gif\" ALT=\"reference\" WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM BORDER=0></A> ";
+                                          << "<img SRC=\"" << "./index_arrow.gif\" ALT=\"reference\" WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM BORDER=0></A> ";
                                }  
                              }
                           }  

@@ -408,7 +408,7 @@ void handleIndex() {
 
   
    if (modifier=="") {
-         handleIndex2(ord_index_name+"@ ??? "+index_name,sub_item ,sub_sub_item,
+         handleIndex2(ord_index_name+"@ ??? "+ index_name,sub_item ,sub_sub_item,
                       0);
    }
    else { 
@@ -468,7 +468,7 @@ void handleIndex2(string main_item, string sub_item, string sub_sub_item, int mo
                           << HREF_counter-2 << "\"" << endl;
              break; 
       } 
-   } else *current_ostream<<"NIE1"<<main_item<<endl;
+   } 
   
      
    *index_stream << "}{"<< HREF_counter << "}" << endl;
@@ -956,7 +956,8 @@ string
 html_index( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);  // param[0] is index category, param[1] is text
     crop_string( param[0]);
-    handleIndex2(param[1]+"@ ??? "+convert_C_to_html(param[1]),"","",0);
+//    handleIndex2(param[1]+"@ ??? "+convert_C_to_html(param[1]),"","",0);
+ handleIndex2(param[1]+"@ ??? "+param[1],"","",0);
     return "";
 }
 

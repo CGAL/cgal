@@ -140,15 +140,15 @@
 \gdef{\lciItem}{}
 
 \newcommand{\ccFonts}[2]{%
-   \lciIfEqualExpanded{a}{#1}{{\ccIndexAbbreviationFont #2}}{%
+   \lciIfEqualExpanded{a}{#1}{{\ccIndexAbbreviationFont \lcRawHtml{#2}}}{%
    \lciIfEqualExpanded{C}{#1}{{\ccc{#2}}}{%
-   \lciIfEqualExpanded{c}{#1}{{\ccIndexConceptFont #2}}{%
-   \lciIfEqualExpanded{d}{#1}{{\ccIndexDSFont #2}}{%
-   \lciIfEqualExpanded{f}{#1}{{\ccIndexFunctionalityFont #2}}{%
-   \lciIfEqualExpanded{h}{#1}{{\ccIndexHintFont #2}}{%
-   \lciIfEqualExpanded{l}{#1}{{\ccIndexLibraryFont #2}}{%
-   \lciIfEqualExpanded{p}{#1}{{\ccIndexPackageFont #2}}{%
-   \lciIfEqualExpanded{t}{#1}{{\ccIndexTermFont #2}}{
+   \lciIfEqualExpanded{c}{#1}{{\ccIndexConceptFont \lcRawHtml{#2}}}{%
+   \lciIfEqualExpanded{d}{#1}{{\ccIndexDSFont \lcRawHtml{#2}}}{%
+   \lciIfEqualExpanded{f}{#1}{{\ccIndexFunctionalityFont \lcRawHtml{#2}}}{%
+   \lciIfEqualExpanded{h}{#1}{{\ccIndexHintFont \lcRawHtml{#2}}}{%
+   \lciIfEqualExpanded{l}{#1}{{\ccIndexLibraryFont \lcRawHtml{#2}}}{%
+   \lciIfEqualExpanded{p}{#1}{{\ccIndexPackageFont \lcRawHtml{#2}}}{%
+   \lciIfEqualExpanded{t}{#1}{{\ccIndexTermFont \lcRawHtml{#2}}}{
    {#2}}}}}}}}}}%
 }
 
@@ -277,14 +277,20 @@
    \ccIndexSubitem[#1]{#2}{#3}
 }
 
+\gdef\lciIfSeeAlso{\lcFalse}
+
 %
 % Usage:  \ccIndexSubitemSeeAlso[category]{item}{subitem}
 %
 \newcommand{\ccIndexSubitemSeeAlso}[2]{%
+   \gdef\lciIfSeeAlso{\lcTrue}
    \ccIndexSubitem{#1}{{\em see also} #2}
+   \gdef\lciIfSeeAlso{\lcFalse}
 }
 \newcommand{\ccIndexSubitemSeeAlso@omm}{%
+   \gdef\lciIfSeeAlso{\lcTrue}
    \ccIndexSubitem[#1]{#2}{{\em see also} #3}
+   \gdef\lciIfSeeAlso{\lcFalse}
 }
 
 % ------------------------------------------------------------------------
@@ -358,10 +364,14 @@
 % Usage:  \ccIndexSubsubitemSeeAlso[category]{item}{subitem}{subsubitem}
 %
 \newcommand{\ccIndexSubsubitemSeeAlso}[3]{%
+   \gdef\lciIfSeeAlso{\lcTrue}
    \ccIndexSubsubitem{#1}{#2}{{\em see also} #3}%
+   \gdef\lciIfSeeAlso{\lcFalse}
 }
 \newcommand{\ccIndexSubsubitemSeeAlso@ommm}{%
+   \gdef\lciIfSeeAlso{\lcTrue}
    \ccIndexSubsubitem[#1]{#2}{#3}{{\em see also} #4}%
+   \gdef\lciIfSeeAlso{\lcFalse}
 }
 
 % ========================================================================
@@ -524,8 +534,9 @@
 %
 \newcommand{\ccIndexAbbreviation}[2]{%
    \lciIf{\ccIndex}{% 
-%     \ccIndexMainItem[a]{#1, {\em see} #2}%
+     \gdef\lciIfSeeAlso{\lcTrue}
      \ccIndexSubitem{#1}{{\em see} #2}%
+     \gdef\lciIfSeeAlso{\lcFalse}
      \lciIf{\ccIndexCrossRef}{%
        \ccIndexMainItem{#2}% 
      }{} 
@@ -920,11 +931,13 @@
 
 \newcommand\ccIndexTraitsClassForClasses[1]{
     \gdef\lciWhichItem{MainItem}
+    \gdef\lciIfSeeAlso{\lcTrue}
     \lciOpenFileforIndex {#1} \lciCloseFileforIndex
     \gdef\lciWhichItem{SubItem}
     \lciOpenFileforIndex {\ccIndexClassName} \lciCloseFileforIndex
     \lciIndexTraitsClass
     \gdef\lciWhichItem{}
+    \gdef\lciIfSeeAlso{\lcFalse}
 }
 
 

@@ -294,10 +294,11 @@
 
 % if the manual has more than one part, the table of contents will look
 % a bit different
-\newcommand{\ccMultiplePartsToc}{\gdef{\lciIfMultipleParts}{\lcTrue}
-\renewcommand{\lciTocHeader}{cc_toc_w_parts_header}
-\renewcommand{\lciTocFooter}{cc_toc_w_parts_footer}
-}
+
+%\newcommand{\ccMultiplePartsToc}{}
+%\renewcommand{\lciTocHeader}{cc_toc_w_parts_header}
+%\renewcommand{\lciTocFooter}{cc_toc_w_parts_footer}
+%}
 
 % make chapters start number at 1 again for each new part of the manual
 \newcommand{\ccNumberChaptersByPart}{\gdef{\lciIfNumberChaptersByPart}{\lcTrue}}
@@ -507,8 +508,7 @@
     \newcommand{\ccRefFilename}{#XC1#C2}%
     \gdef{\lciIfHtmlClassToc}{\lcFalse}%
     \begin{ccHtmlClassFile}{#XC3_#XC1#C2.html}{\ccRefName}%
-    \lciIfHtmlClassLinks{\ccHtmlCrossLink{#XC1#C2}}{}%
-%    \ccHtmlIndexC[\ccRefCategory]{#C2}% 
+    \lciIfHtmlClassLinks{\ccHtmlCrossLink{#XC1#C2}}{}% 
     \ccIndexRefName{#1}{\ccc{#2}}{#3}%
     \gdef{\lciIfHtmlClassLinks}{\lcFalse}%
     \gdef{\lciIfHtmlClassIndex}{\lcFalse}%
@@ -662,6 +662,7 @@
     \lciIfHtmlClassNotInline{\lciIfHtmlClassFile{%
         \lciPushFootnotes
     }{}}{}%
+    \lciIf{\lciIfHtmlClassIndex}{}{\ccIndexMainItem{\ccClassName}}%
     \begin{lciClass}%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%

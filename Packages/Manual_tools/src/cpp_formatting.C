@@ -919,7 +919,12 @@ void format_function( bool method, const char* signature,
           macroIsTrue( "\\ccIsFunctionTemplate"))) {
        	char* formatted_function = convert_fontified_ascii_to_html( 
 	    function_name);
-        string class_name = macroX("\\ccPureClassName");
+        string class_name;
+        if (macroIsTrue( "\\ccIsRefFunction")) 
+            class_name =  macroX("\\ccRefFilename");
+        else
+            class_name = macroX("\\ccPureClassName");
+
         // Make a hyperlink. Types could be substituted
 	// according the rules.
 
@@ -1048,12 +1053,10 @@ void format_function( bool method, const char* signature,
               && !(macroIsTrue( "\\ccIsRefFunction") &&
               macroIsTrue( "\\ccIsFunctionTemplate"))) {
             p = parameter_list;
-
             if (!method) {
                char* q = full_parameter_list;
                char* s = q;
-               bool found = false;
-               while ((m--) && !(found)) { 
+               bool found = false; 
                   while (*s != '<' && *s) {
                     *s++;  
                   }
@@ -1070,14 +1073,12 @@ void format_function( bool method, const char* signature,
                      found = true;
                      make_index(op_symbols_for_index,token1,"",signature,'f');
                   }
-                  q+=strlen(q)+1;    //skip to next parameter                 
-                  s=q;  
-               } 
                if (!found) {
-                 q = p; 
+                 q = full_parameter_list; 
                  if (strcmp(op_symbols,"<<")==0 || strcmp(op_symbols,">>")==0) {
-                    q+=strlen(q)+1; 
-                    char* token = strtok(q, " \t&");
+                    q = strtok(q,",");
+                    q = strtok(NULL," &\t");   
+                    char* token =q;
                     if (token==NULL) { // no second parameter so first 
                                     // parameter is used. This shouldn't happen.
                        q = p;
