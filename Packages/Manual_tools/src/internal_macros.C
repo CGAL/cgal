@@ -98,7 +98,7 @@ void handleChapter(  const Buffer_list& T) {
     //                         + macroX( "\\lciChapterPrefix")
     //                         + macroX( "\\lciInputFilenameBase")
     //                         + macroX( "\\lciHtmlSuffix");
-    string new_main_filename = macroX( "\\lciChapterPrefix")
+    string new_main_filename =  macroX( "\\lciChapterPrefix")
                              + macroX( "\\lciInputFilenameBase")
 	                     + macroX( "\\lciHtmlSuffix");
     if ( new_main_filename == main_filename) {
@@ -956,8 +956,6 @@ string
 html_index( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);  // param[0] is index category, param[1] is text
     crop_string( param[0]);
-//    handleIndex2(param[1]+"@ ??? "+convert_C_to_html(param[1]),"","",0);
- handleIndex2(param[1]+"@ ??? "+param[1],"","",0);
     return "";
 }
 
@@ -965,8 +963,7 @@ string
 html_index_C( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);  // uses cc_string as index item, param[0] is
                          // index category
-    crop_string( param[0]);
-    handleIndex2(cc_string+"@ ??? "+convert_C_to_html(cc_string),"","",0); 
+    crop_string( param[0]); 
     return "";
 }
 

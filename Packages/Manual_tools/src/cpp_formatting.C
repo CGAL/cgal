@@ -919,11 +919,11 @@ void format_function( bool method, const char* signature,
           macroIsTrue( "\\ccIsFunctionTemplate"))) {
        	char* formatted_function = convert_fontified_ascii_to_html( 
 	    function_name);
-        string class_name;
-        if (macroIsTrue( "\\ccIsRefFunction")) 
-            class_name =  macroX("\\ccRefFilename");
-        else
+        string class_name; 
+        if (macroIsTrue( "\\lciIfHtmlRefIndex"))
             class_name = macroX("\\ccPureClassName");
+        else
+           class_name =  macroX("\\ccRefFilename");
 
         // Make a hyperlink. Types could be substituted
 	// according the rules.
