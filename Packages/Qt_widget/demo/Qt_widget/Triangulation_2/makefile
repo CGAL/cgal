@@ -34,7 +34,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: triangulationdemo
+all: triangulation_2
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
@@ -56,18 +56,18 @@ Qt_widget_move_point.moc: Qt_widget_move_point.h
 	$(QT_MOC) -o Qt_widget_move_point.moc Qt_widget_move_point.h
 
 
-triangulationdemo.moc: triangulationdemo.C Qt_widget_move_point$(OBJ_EXT) \
+triangulation_2.moc: triangulation_2.C Qt_widget_move_point$(OBJ_EXT) \
 			Qt_widget_toolbar$(OBJ_EXT) \
 			Qt_widget_toolbar_views$(OBJ_EXT)
-	${QT_MOC} -o triangulationdemo.moc triangulationdemo.C
+	${QT_MOC} -o triangulation_2.moc triangulation_2.C
 
-triangulationdemo$(OBJ_EXT): triangulationdemo.C triangulationdemo.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulationdemo.C
+triangulation_2$(OBJ_EXT): triangulation_2.C triangulation_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) triangulation_2.C
 
-triangulationdemo$(EXE_EXT): triangulationdemo$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)triangulationdemo triangulationdemo$(OBJ_EXT)  Qt_widget_move_point$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_views$(OBJ_EXT) $(LDFLAGS)
+triangulation_2$(EXE_EXT): triangulation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)triangulation_2 triangulation_2$(OBJ_EXT)  Qt_widget_move_point$(OBJ_EXT) Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_views$(OBJ_EXT) $(LDFLAGS)
 
-clean: triangulation.clean
+clean: triangulation_2.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
