@@ -782,6 +782,8 @@ is_edge(Vertex* u, Vertex* v,
 	Cell* & c, int & i, int & j) const
   // returns false when dimension <1
     {
+      if (u==v) return false;
+
       Edge_iterator it = edges_begin();
       while ( it != edges_end() ) {
 	if ( ( ((*it).first)->has_vertex(u,i) )
@@ -821,6 +823,7 @@ is_facet(Vertex* u, Vertex* v, Vertex* w,
 	 Cell* & c, int & i, int & j, int & k) const
   // returns false when dimension <2
     {
+      if ( (u==v) || (u==w) || (v==w) ) return false;
       Facet_iterator it = facets_begin();
       while ( it != facets_end() ) {
 	if ( ( ((*it).first)->has_vertex(u,i) )
@@ -875,6 +878,8 @@ is_cell(Vertex* u, Vertex* v, Vertex* w, Vertex* t,
 	Cell* & c, int & i, int & j, int & k, int & l) const
   // returns false when dimension <3
 {
+  if ( (u==v) || (u==w) || (u==t) || (v==w) || (v==t) || (w==t) )
+    return false;
   Cell_iterator it = cells_begin();
   while ( it != cells_end() ) {
     if ( ( it->has_vertex(u,i) )
@@ -895,6 +900,8 @@ Triangulation_data_structure_3<Vb,Cb>::
 is_cell(Vertex* u, Vertex* v, Vertex* w, Vertex* t) const
   // returns false when dimension <3
 {
+  if ( (u==v) || (u==w) || (u==t) || (v==w) || (v==t) || (w==t) )
+    return false;
   Cell_iterator it = cells_begin();
   while ( it != cells_end() ) {
     if ( ( it->has_vertex(u) ) &&
