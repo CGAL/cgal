@@ -105,7 +105,7 @@ public:
      : Triangulation_2<Gt,Tds>(gt)
   {
     for ( ; it != last; it++) {
-      	insert((*it).first, (*it).second);
+      	insert_constraint((*it).first, (*it).second);
       }
       CGAL_triangulation_postcondition( is_valid() );
   }
@@ -170,18 +170,18 @@ protected:
 
   void mark_constraint(Face_handle fr, int i);
 
-  Vertex_handle intersect(Face_handle f, int i, 
+  virtual Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb);
-  virtual Vertex_handle intersect(Face_handle f, int i, 
+  Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  No_intersection_tag);
-  virtual Vertex_handle intersect(Face_handle f, int i, 
+  Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			   Exact_intersections_tag);
-  virtual Vertex_handle intersect(Face_handle f, int i, 
+  Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  Exact_predicates_tag);
@@ -354,7 +354,7 @@ insert_constraint(Point a, Point b)
 {
   Vertex_handle va= insert(a);
   Vertex_handle vb= insert(b);
-  if ( va != vb)   insert(va,vb);
+  if ( va != vb)   insert_constraint(va,vb);
 }
 
 
@@ -552,7 +552,7 @@ intersect(Face_handle f, int i,
   Point pc = f->vertex(cw(i))->point();
   Point pd = f->vertex(ccw(i))->point();
   Point pi;
-  Itag itag;
+  Itag itag = Itag();
   bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
   CGAL_triangulation_assertion(ok);
   Vertex_handle vi = insert(pi, EDGE, f, i);
@@ -577,7 +577,7 @@ intersect(Face_handle f, int i,
   Point pd = vdd->point();
 
   Point pi; //creator for point is required here
-  Itag itag;
+  Itag itag = Itag();
   bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
 
   Vertex_handle vi;
@@ -1067,11 +1067,11 @@ compute_intersection(Gt gt,
 	     const typename Gt::Point_2& pd,
 	     typename Gt::Point_2& pi)
 {
-  typename Gt::Intersect_2 compute_intersection=gt.intersect_2_object();
+  typename Gt::Intersect_2 compute_intersec=gt.intersect_2_object();
    typename Gt::Construct_segment_2  
     construct_segment=gt.construct_segment_2_object();
-  Object result = compute_intersection(construct_segment(pa,pb),
-				       construct_segment(pc,pd));
+  Object result = compute_intersec(construct_segment(pa,pb),
+				   construct_segment(pc,pd));
   return assign(pi, result);
 }
 

@@ -131,12 +131,18 @@ public:
   void insert(Point a, Point b) { insert_constraint(a, b);}
   void insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
 
-
   virtual Vertex_handle intersect(Face_handle f, int i, 
+			  Vertex_handle vaa,
+			  Vertex_handle vbb);
+  Vertex_handle intersect(Face_handle f, int i, 
+			  Vertex_handle vaa,
+			  Vertex_handle vbb,
+			  No_intersection_tag);
+  Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  Exact_intersections_tag);
-  virtual Vertex_handle intersect(Face_handle f, int i, 
+  Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  Exact_predicates_tag);
@@ -343,6 +349,32 @@ typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle
 Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i, 
 	  Vertex_handle vaa,
+	  Vertex_handle vbb) 
+{
+  return intersect(f, i, vaa, vbb, Intersection_tag());
+}
+
+template <class Tr>
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
+Constrained_triangulation_plus_2<Tr>::
+
+intersect(Face_handle , int , 
+	  Vertex_handle ,
+	  Vertex_handle ,
+	  No_intersection_tag)
+{
+  std::cerr << " sorry, this triangulation does not deal with" 
+	    <<    std::endl
+	    << " intersecting constraints" << std::endl;
+  CGAL_triangulation_assertion(false);
+  return Vertex_handle();
+}
+
+template <class Tr>
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
+Constrained_triangulation_plus_2<Tr>::
+intersect(Face_handle f, int i, 
+	  Vertex_handle vaa,
 	  Vertex_handle vbb,
 	  Exact_intersections_tag)
 // compute the intersection of the constraint edge (f,i) 
@@ -363,7 +395,7 @@ intersect(Face_handle f, int i,
   Point pc = vc->point();
   Point pd = vd->point();
   Point pi;
-  Intersection_tag itag;
+  Intersection_tag itag = Intersection_tag();
   bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
   CGAL_triangulation_assertion(ok);
 
@@ -389,7 +421,7 @@ intersect(Face_handle f, int i,
   Point pd = vdd->point();
 
   Point pi; //creator for point is required here
-  Intersection_tag itag;
+  Intersection_tag itag = Intersection_tag();
   bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
 
   Vertex_handle vi;

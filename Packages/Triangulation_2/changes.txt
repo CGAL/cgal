@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.18 ()
+- fixed intersect functions in Constrained triangulations 
+  and Constrained_triangulation_plus 
+  (virtual - non vritual, partial overriding)
+
 Ver 7.17 (05/04/02)
 - try to fixed "unused parameter warnings"
 

@@ -83,7 +83,7 @@ private:
   
 public:
   Constraint_hierarchy_2() { }
-  Constraint_hierarchy_2(const Constraint_hierarchy_2<T,Data>& ch); 
+  Constraint_hierarchy_2(const Constraint_hierarchy_2& ch); 
   ~Constraint_hierarchy_2(){ clear();}
   void clear();
   Constraint_hierarchy_2& operator=(const Constraint_hierarchy_2& ch);
@@ -151,7 +151,7 @@ public:
 
 template <class T, class Data> 
 Constraint_hierarchy_2<T,Data>::
-Constraint_hierarchy_2<T,Data>(const Constraint_hierarchy_2<T,Data>& ch)
+Constraint_hierarchy_2<T,Data>(const Constraint_hierarchy_2& ch)
 {
   copy(ch);
 }
