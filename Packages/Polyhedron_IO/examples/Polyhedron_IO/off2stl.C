@@ -125,13 +125,13 @@ int main( int argc, char **argv) {
     *p_out << "solid " << oname << endl;
 
     // find "bottom/left/front" corner to translate into positive octant
-    Vertex_iterator i = P.vertices_begin();
-    Point p = i->point();
+    Vertex_iterator i2 = P.vertices_begin();
+    Point p = i2->point();
     double minx = p.x();
     double miny = p.y();
     double minz = p.z();
-    for ( ; i != P.vertices_end(); ++i) {
-        p = i->point();
+    for ( ; i2 != P.vertices_end(); ++i) {
+        p = i2->point();
         if ( p.x() < minx)
             minx = p.x();
         if ( p.y() < miny)
