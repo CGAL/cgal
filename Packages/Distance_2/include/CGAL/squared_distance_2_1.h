@@ -649,9 +649,7 @@ namespace CGALi {
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Point_2<K> & pt1,
-    const Point_2<K> & pt2)
+squared_distance(const Point_2<K> & pt1, const Point_2<K> & pt2)
 {
   return CGALi::squared_distance(pt1, pt2, K());
 }
@@ -694,9 +692,7 @@ public:
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Point_2<K> &pt,
-    const Line_2<K> &line)
+squared_distance(const Point_2<K> &pt, const Line_2<K> &line)
 {
   return CGALi::squared_distance(pt, line, K());
 }
@@ -704,9 +700,7 @@ squared_distance(
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Line_2<K> & line,
-    const Point_2<K> & pt)
+squared_distance(const Line_2<K> & line, const Point_2<K> & pt)
 {
     return squared_distance(pt, line);
 }
@@ -736,19 +730,14 @@ class Squared_distance_to_ray {
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Point_2<K> &pt,
-    const Ray_2<K> &ray)
+squared_distance(const Point_2<K> &pt, const Ray_2<K> &ray)
 {
   return CGALi::squared_distance(pt, ray, K());
 }
 
-
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Ray_2<K> & ray,
-    const Point_2<K> & pt)
+squared_distance(const Ray_2<K> & ray, const Point_2<K> & pt)
 {
     return squared_distance(pt, ray);
 }
@@ -789,9 +778,7 @@ class Squared_distance_to_segment {
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Point_2<K> &pt,
-    const Segment_2<K> &seg)
+squared_distance(const Point_2<K> &pt, const Segment_2<K> &seg)
 {
   return CGALi::squared_distance(pt, seg, K());
 }
@@ -799,9 +786,7 @@ squared_distance(
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Segment_2<K> & seg,
-    const Point_2<K> & pt)
+squared_distance(const Segment_2<K> & seg, const Point_2<K> & pt)
 {
   return CGALi::squared_distance(pt, seg, K());
 }
@@ -809,81 +794,63 @@ squared_distance(
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Segment_2<K> &seg1,
-    const Segment_2<K> &seg2)
+squared_distance(const Segment_2<K> &seg1, const Segment_2<K> &seg2)
 {
   return CGALi::squared_distance(seg1, seg2, K());
 }
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Segment_2<K> &seg,
-    const Ray_2<K> &ray)
+squared_distance(const Segment_2<K> &seg, const Ray_2<K> &ray)
 {
   return CGALi::squared_distance(seg, ray, K());
 }
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Ray_2<K> & ray,
-    const Segment_2<K> & seg)
+squared_distance(const Ray_2<K> & ray, const Segment_2<K> & seg)
 {
   return CGALi::squared_distance(seg, ray, K());
 }
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Segment_2<K> &seg,
-    const Line_2<K> &line)
+squared_distance(const Segment_2<K> &seg, const Line_2<K> &line)
 {
   return CGALi::squared_distance(seg, line, K());
 }
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Line_2<K> & line,
-    const Segment_2<K> & seg)
+squared_distance(const Line_2<K> & line, const Segment_2<K> & seg)
 {
   return CGALi::squared_distance(seg, line, K());
 }
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Ray_2<K> &ray1,
-    const Ray_2<K> &ray2)
+squared_distance(const Ray_2<K> &ray1, const Ray_2<K> &ray2)
 {
   return CGALi::squared_distance(ray1, ray2, K());
 }
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Line_2<K> &line,
-    const Ray_2<K> &ray)
+squared_distance(const Line_2<K> &line, const Ray_2<K> &ray)
 {
   return CGALi::squared_distance(line, ray, K());
 }
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Ray_2<K> & ray,
-    const Line_2<K> & line)
+squared_distance(const Ray_2<K> & ray, const Line_2<K> & line)
 {
   return CGALi::squared_distance(line, ray, K());
 }
 
 template <class K>
 inline typename K::FT
-squared_distance(
-    const Line_2<K> &line1,
-    const Line_2<K> &line2)
+squared_distance(const Line_2<K> &line1, const Line_2<K> &line2)
 {
   return CGALi::squared_distance(line1, line2, K());
 }
