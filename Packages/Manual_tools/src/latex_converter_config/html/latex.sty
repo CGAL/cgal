@@ -184,8 +184,8 @@
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter
     % prepare Index Header and Footer (only if index is actually used)
-    \lciOpenFile{cc_index_header}\lciIndexFileHeader\lciCloseFile
-    \lciOpenFile{cc_index_footer}\lciIndexFileFooter\lciCloseFile
+    \lciOpenFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
+    \lciOpenFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
 }
 
 % Args: tmp-path, main-rootname: reads *.auxtmp file created by latex_to_html
