@@ -57,21 +57,12 @@ public:
   typedef typename Ctriangulation::Vertex Vertex;
   typedef typename Ctriangulation::Face Face;
   typedef typename Ctriangulation::Constraint Constraint;
+  typedef std::pair<Face_handle, int> Neighbor;
 
   class Neighbor_list;
   class Chain;
   class Event_less;
   class Status_comp;
-    
-  typedef std::list<Point> Out_edges;
-  typedef std::map<Point,Out_edges *,Event_less> Event_queue;
-  typedef std::map<Constraint,void *, Status_comp> Sweep_status;
-  // should be  
-  //typedef std::map<Constraint, Chain *, Status_comp> Sweep_status;
-  typedef std::pair<Face_handle, int> Neighbor;
-  // added to please MIPS Pro
-  typedef typename Event_queue::iterator  Event_queue_iterator;
-  typedef typename Sweep_status::iterator Sweep_status_iterator;
     
   class Event_less : public CGAL_STD::binary_function<Point, Point, bool>
   {
@@ -165,7 +156,7 @@ public:
       bool is_removable(Face_handle fh)
       {
 	return ( (*fh).vertex(1) == (*fh).vertex(2) &&
-		 !(*fh).neighbor(1).is_null() && !(*fh).neighbor(2).is_null() );
+		 !(*fh).neighbor(1).is_null() && !(*fh).neighbor(2).is_null());
       }
 
       void remove_flat(Face_handle fh) 
@@ -276,7 +267,18 @@ public:
       Neighbor_list* down_list(){return &down;}
       void set_right_most(Vertex_handle v) { rm=v;}
     };
-    
+  
+  typedef std::list<Point> Out_edges;
+  typedef std::map<Point,Out_edges *,Event_less> Event_queue;
+  typedef std::map<Constraint,void *, Status_comp> Sweep_status;
+  // should be  
+  //typedef std::map<Constraint, Chain *, Status_comp> Sweep_status;
+  
+  // added to please MIPS Pro
+  typedef typename Event_queue::iterator  Event_queue_iterator;
+  typedef typename Sweep_status::iterator Sweep_status_iterator;
+  
+  
  protected:
     Ctriangulation* _tr;
     std::list<Constraint>* _lc;
