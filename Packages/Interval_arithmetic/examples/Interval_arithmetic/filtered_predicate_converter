@@ -101,8 +101,8 @@ while (<>)
         push(@args, $1);
         $last_arg=$1;
       }
-      s/,[\s]*/,\n\t/g; # Split to make the lines < 80 characters.
-      s/[RF]T/Filtered_exact<CGAL_IA_CT,CGAL_IA_ET>/g;
+      s/const/\n    const/g;  # Split lines.
+      s/[RF]T/Filtered_exact <CGAL_IA_CT, CGAL_IA_ET>/g;
     }
     if (/\(/) {
       /([a-zA-Z_]\w*)\s*\(/;
