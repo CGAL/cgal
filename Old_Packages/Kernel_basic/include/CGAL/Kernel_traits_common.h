@@ -205,6 +205,7 @@ typedef CGALi::Call_has_on_boundary                Has_on_boundary_2;
 typedef CGALi::Call_has_on_positive_side           Has_on_positive_side_2;
 typedef CGALi::Call_has_on_negative_side           Has_on_negative_side_2;
 typedef CGALi::Call_oriented_side                  Oriented_side_2;
+typedef CGALi::Call_bounded_side                   Bounded_side_2;
 typedef CGALi::Are_ordered_along_line              Are_ordered_along_line_2 ;
 typedef CGALi::Are_strictly_ordered_along_line     
                                          Are_strictly_ordered_along_line_2;
@@ -229,6 +230,7 @@ CGAL_Kernel_obj(Has_on_boundary_2, has_on_boundary_2_object)
 CGAL_Kernel_obj(Has_on_positive_side_2, has_on_positive_side_2_object)
 CGAL_Kernel_obj(Has_on_negative_side_2, has_on_negative_side_2_object)
 CGAL_Kernel_obj(Oriented_side_2, oriented_side_2_object)
+CGAL_Kernel_obj(Bounded_side_2, bounded_side_2_object)
 CGAL_Kernel_obj(Are_ordered_along_line_2, are_ordered_along_line_2_object)
 CGAL_Kernel_obj(Are_strictly_ordered_along_line_2,
 	        are_strictly_ordered_along_line_2_object)
@@ -402,6 +404,7 @@ typedef CGALi::Call_has_on_boundary                    Has_on_boundary_3;
 typedef CGALi::Call_has_on_positive_side               Has_on_positive_side_3;
 typedef CGALi::Call_has_on_negative_side               Has_on_negative_side_3;
 typedef CGALi::Call_oriented_side                      Oriented_side_3;
+typedef CGALi::Call_bounded_side                       Bounded_side_3;
 typedef CGALi::Are_ordered_along_line                 Are_ordered_along_line_3;
 typedef CGALi::Are_strictly_ordered_along_line         
                                             Are_strictly_ordered_along_line_3;
@@ -427,6 +430,7 @@ CGAL_Kernel_obj(Has_on_boundary_3, has_on_boundary_3_object)
 CGAL_Kernel_obj(Has_on_positive_side_3, has_on_positive_side_3_object)
 CGAL_Kernel_obj(Has_on_negative_side_3, has_on_negative_side_3_object)
 CGAL_Kernel_obj(Oriented_side_3, oriented_side_3_object)
+CGAL_Kernel_obj(Bounded_side_3, bounded_side_3_object)
 CGAL_Kernel_obj(Are_ordered_along_line_3, are_ordered_along_line_3_object)
 CGAL_Kernel_obj(Are_strictly_ordered_along_line_3,
 	        are_strictly_ordered_along_line_3_object)

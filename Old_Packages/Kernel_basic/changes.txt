@@ -1,3 +1,6 @@
+3.42   (18 June 2001)
+- added Bounded_side_2 and Bounded_side_3 to traits
+
 3.41   (18 June 2001)
 - #include all _2 and _3 classes in user_classes.h.
 

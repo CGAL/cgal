@@ -596,12 +596,23 @@ class Call_has_on_negative_side
 class Call_oriented_side
 {
   public:
-    typedef bool           result_type;
+    typedef Oriented_side   result_type;
 
     template <class Cls, class Arg>
     Oriented_side
     operator()( const Cls& c, const Arg& a) const
     { return c.oriented_side(a); }
+};
+
+class Call_bounded_side
+{
+  public:
+    typedef Bounded_side    result_type;
+
+    template <class Cls, class Arg>
+    Bounded_side
+    operator()( const Cls& c, const Arg& a) const
+    { return c.bounded_side(a); }
 };
 
 class Less_x

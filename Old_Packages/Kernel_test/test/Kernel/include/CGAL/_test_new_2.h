@@ -472,7 +472,13 @@ test_new_2(const R& rep)
   typename R::Oriented_side_2 oriented_side
         = rep.oriented_side_2_object();
   Oriented_side tmp53a = oriented_side(l2,p2);
-  Oriented_side tmp53b = oriented_side(c2,p2);
+                tmp53a = oriented_side(c2,p2);
+
+  typename R::Bounded_side_2 bounded_side
+        = rep.bounded_side_2_object();
+  Bounded_side tmp53b = bounded_side(c2,p2);
+               tmp53b = bounded_side(t2,p2);
+               tmp53b = bounded_side(rec2,p2);
 
 
   typename R::Are_ordered_along_line_2 are_ordered_along_line

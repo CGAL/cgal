@@ -1,3 +1,6 @@
+3.25   (18 June 2001)
+- Add Bounded_side_2 and Bounded_side_3
+
 3.24   (13 June 2001)
 - Add std::endl to test_cls_quotient so that it's more readable.
 

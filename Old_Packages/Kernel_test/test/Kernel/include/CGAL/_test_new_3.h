@@ -468,6 +468,11 @@ test_new_3(const R& rep)
         = rep.oriented_side_3_object();
   Oriented_side tmp39 = oriented_side(h2,p2);
 
+  typename R::Bounded_side_3 bounded_side
+        = rep.bounded_side_3_object();
+  Bounded_side tmp39a = bounded_side(sp1,p2);
+               tmp39a = bounded_side(th2,p2);
+               tmp39a = bounded_side(iso1,p2);
 
   typename R::Are_ordered_along_line_3 are_ordered_along_line
         = rep.are_ordered_along_line_3_object();
@@ -512,7 +517,8 @@ test_new_3(const R& rep)
   use(tmp29); use(tmp27); use(tmp25); use(tmp24); use(tmp23); use(tmp22);
   use(tmp15); use(tmp14); use(tmp13); use(tmp12b); use(tmp12a);
   use(tmp16); use(tmp17); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
-  use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab);
+  use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab); 
+  use(tmp39a); 
 
   return true;
 }
