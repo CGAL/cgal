@@ -34,14 +34,17 @@ all: example1 example_tds
 	./example1
 	./example_tds
 
-example1: ../../src/Triangulation_3.o example1.o
-	$(CGAL_CXX) -o example1 Triangulation_3.o example1.o $(LDFLAGS)
+example_simple: ../../src/Triangulation_3.o example_simple.o
+	$(CGAL_CXX) -o example_simple Triangulation_3.o example_simple.o $(LDFLAGS)
+
+example_hierarchy: ../../src/Triangulation_3.o example_hierarchy.o
+	$(CGAL_CXX) -o example_hierarchy Triangulation_3.o example_hierarchy.o $(LDFLAGS)
 
 example_tds: ../../src/Triangulation_3.o example_tds.o
 	$(CGAL_CXX) -o example_tds Triangulation_3.o example_tds.o $(LDFLAGS)
 
 clean:
-	rm -rf *~ *.o core example1 example_tds output output_tds
+	rm -rf *~ *.o core example_simple example_tds example_hierarchy output output_tds
 
 realclean: clean
 
