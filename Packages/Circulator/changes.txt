@@ -1,7 +1,13 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
-3.4 (02 Sep 1999)
+3.6 (24 septembre 99)
+    add the doc file Circulator_stl.tex in submission
 
+3.5 (06 septembre 99)
+    fixed #endif _MSC_VER
+     to #endif // _MSC_VER
+
+3.4 (02 Sep 1999)
      Unnecessary typenames removed from iterator_test.any. Mariette
      Yvinec (INRIA) takes over the maintenance of this package with
      this release.
