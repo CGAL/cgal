@@ -32,7 +32,6 @@
 #include <CGAL/leda_integer.h>
 #endif // CGAL_USE_LEDA
 
-// #define CGAL_IA_NO_WARNINGS
 // #include <CGAL/Interval_arithmetic.h>
 // #include <CGAL/Fixed_precision_nt.h>
 #include <CGAL/Double_eps.h>
@@ -87,7 +86,7 @@ void bench()
 {
   const int loops = 1000000;
   int i;
-  Timer t;
+  CGAL::Timer t;
   double dt;
   Comparison_result result;
   NT px, py, la, lb, lc;
