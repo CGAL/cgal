@@ -84,22 +84,109 @@
 
 \begin{ccAdvanced}
 
-  \ccMethod{Halfedge_handle non_intersecting_insert(const X_curve_2&
-  cv);}
-  {invokes the planar map implementation of \ccc{insert}
-  function. Since this function does not check for intersections it is
-  more efficient than \ccc{insert}.
-  \ccPrecond{\ccc{cv} has no proper
-  intersection with any curve of the map. } }
+\ccHeading{Non Intersecting Insertion Functions}
 
-  \ccMethod{Halfedge_handle non_intersecting_insert_from_vertex(const X_curve_2& cv, Vertex_handle src, bool
-  source);}
-  {invokes the planar map implementation of
-  \ccc{insert_from_vertex} function. Since this function does not
-  check for intersections it is more efficient than \ccc{insert_from_vertex}.
-       \ccPrecond{\ccc{cv} has no intersection in the interior with any curve of the map. }
-       \ccPrecond{\ccc{src} holds a point thatmn                      is the same as \ccc{cv}'s source.}
-       }
+The following functions do not check for intersections. They simply
+call the \ccc{Planar_map_2} corresponding insert functions. Therefore,
+they are more efficient than their counterpart insert-functions.
+{\em see also} \ref{PM_sec:pm} for details including the full list of
+preconditions.
+
+  \ccMethod{Halfedge_handle
+            non_intersecting_insert(const X_curve_2 & cv,
+                                    Change_notification * en = NULL);}
+  {inserts the curve \ccc{cv} into the
+  map. \ccc{non_intersecting_insert()} returns a handle to a new
+  halfedge directed in the same way as the curve \ccc{cv}.
+  \ccPrecond{\ccc{cv} has no proper intersection with any curve of the
+  map. }
+  }
+
+  \ccMethod{template <class X_curve_2_iterator>
+            Halfedge_iterator
+	    non_intersecting_insert(const X_curve_2_iterator & begin,
+                                    const X_curve_2_iterator & end,
+                                    Change_notification * en = NULL);}
+  {iterates through a given range of curves, inserting the curves into
+  the map. \ccc{begin} and \ccc{end} are input iterators that point to
+  the first curve and past-the-end curve of the range
+  respectively. \ccc{non_intersecting_insert()} returns a handle to a
+  new halfedge directed in the same way as the last curve in the range.
+  \ccPrecond{the curves of the map do not intersect the curves in the
+  given range in the interiors of the curves respectively. }
+  }
+
+  \ccMethod{Halfedge_handle
+            non_intersecting_insert_in_face_interior(const X_curve_2 & cv, 
+                                                     Face_handle f,
+                                             Change_notification * en = NULL);}
+  {inserts the curve \ccc{cv} as a new inner component of the face
+  \ccc{f}. \ccc{non_intersecting_insert_in_face_interior()} returns a
+  handle to a new halfedge directed in the same way as \ccc{cv}.
+  \ccPrecond{\ccc{cv} has no proper intersection with any curve of the
+  map. }
+  }
+
+  \ccMethod{Halfedge_handle
+            non_intersecting_insert_from_vertex(const X_curve_2 & cv, 
+                                                Halfedge_handle h,
+                                             Change_notification * en = NULL);}
+  {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv}
+  is the point of the target vertex, \ccc{v}, of the given halfedge
+  \ccc{h}. \ccc{non_intersecting_insert_from_vertex} returns a handle
+  to a new halfedge that has  \ccc{v} as its source vertex. The
+  returened twin halfedge is inserted immediately after \ccc{h} in the
+  circular list of halfedges that share the same target vertex
+  \ccc{v}.
+  \ccPrecond{\ccc{cv} has no proper intersection with any curve of the
+  map. }
+  }
+
+  \ccMethod{Halfedge_handle
+            non_intersecting_insert_at_vertices(const X_curve_2 & cv, 
+                                                Halfedge_handle h1, 
+                                                Halfedge_handle h2,
+                                             Change_notification * en = NULL);}
+  {inserts the curve \ccc{cv} into the map. The two endpoints of
+  \ccc{cv} are held by the two target vertices \ccc{v1} and \ccc{v2}
+  of \ccc{h1} and \ccc{h2}
+  respectively. \ccc{non_intersecting_insert_at_vertices()} returns a
+  handle to a new halfedge, that has \ccc{v1} and \ccc{v2} as its
+  source and target vertices respectively. The returened halfedge is
+  inserted immediately after \ccc{h1} in the  circular list of
+  halfedges that share the same target vertex \ccc{v1}. Its twin
+  halfedge is inserted immediately after \ccc{h2} in the circular list
+  of halfedges that share the same target vertex \ccc{v2}.
+  \ccPrecond{\ccc{cv} has no proper intersection with any curve of the
+  map. }
+  }
+
+  \ccMethod{Halfedge_handle
+            non_intersecting_insert_from_vertex(const X_curve_2 & cv, 
+                                                Vertex_handle v1,
+                                             Change_notification * en = NULL);}
+  {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv}
+  is the point of the given vertex \ccc{v}, that is already in the
+  map. \ccc{non_intersecting_insert_from_vertex} returns a handle to a
+  new halfedge that has \ccc{v} as its source vertex.
+  \ccPrecond{\ccc{cv} has no proper intersection with any curve of the
+  map. }
+  }
+  
+  \ccMethod{Halfedge_handle
+            non_intersecting_insert_at_vertices(const X_curve_2 & cv, 
+                                                Vertex_handle v1, 
+                                                Vertex_handle v2,
+                                             Change_notification * en = NULL);}
+  {inserts the curve \ccc{cv} into the map. The two endpoints of
+  \ccc{cv} are held by the two given vertices \ccc{v1} and \ccc{v2}
+  respectively, that are already in the
+  map. \ccc{non_intersecting_insert_at_vertices()} returns a handle to
+  a new halfedge, that has \ccc{v1} and \ccc{v2} as its source and
+  target vertices respectively.
+  \ccPrecond{\ccc{cv} has no proper intersection with any curve of the
+  map. }
+  }
 
 \end{ccAdvanced}
 
