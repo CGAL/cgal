@@ -77,7 +77,9 @@ public:
 
     if (CGAL_NTS compare(s[0], s[1]) == LARGER) {
 #if defined(__GNUC__) && (__GNUC__ < 3)
-      swap< FT >(s[0], s[1]);
+      FT tmp = s[0];
+      s[0] = s[1];
+      s[1] = tmp;
 #else
       std::swap< FT >(s[0], s[1]);
 #endif
