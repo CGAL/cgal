@@ -104,6 +104,15 @@ Again they come in a \ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
 \ccMethod{Weighted_point_2<R>  transform(const Aff_transformation_2<R> &t) const;}
        {returns the point obtained by applying $t$ on \ccVar.}
 
+Here are the access functions for the components of the weighted point.
+
+\ccMethod{Weight weight() const;}
+       {returns the weight associated with the point.}
+\ccGlue
+\ccMethod{Point_2<R> point() const;}
+       {returns the unweighted point.}
+
+
 
 \ccHeading{Operators}
 

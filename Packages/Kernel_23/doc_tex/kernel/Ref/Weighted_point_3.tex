@@ -83,10 +83,6 @@ type is a quotient.
 \ccGlue
 \ccMethod{R::FT z() const;}
        {returns the \ccHtmlNoLinks{Cartesian} $z$ coordinate, that is $hz/hw$.}
-\ccGlue
-\ccMethod{Weight weight() const;}
-       {returns the weight associated with the point}
-
 The following operations are for convenience and for making this
 point class compatible with code for higher dimensional points.
 Again they come in a \ccHtmlNoLinks{Cartesian} and homogeneous flavor.
@@ -111,6 +107,14 @@ Again they come in a \ccHtmlNoLinks{Cartesian} and homogeneous flavor.
 
 \ccMethod{Weighted_point_3<R>  transform(const Aff_transformation_3<R> &t) const;}
        {returns the point obtained by applying $t$ on \ccVar.}
+
+Here are the access functions for the components of the weighted point.
+
+\ccMethod{Weight weight() const;}
+       {returns the weight associated with the point.}
+\ccGlue
+\ccMethod{Point_3<R> point() const;}
+       {returns the unweighted point.}
 
 \ccHeading{Operators}
 
