@@ -20,6 +20,8 @@ General
 TEST SUITE
 
 Doc
+- finir le changement Vertex * -> handles dans la TDS.
+- documenter find_conflicts/star_hole.
 - (optional) sphere et grille en couleur version eps
 - (revoir les anciennes corrections de JF Dufourd)
 
@@ -28,6 +30,7 @@ Exemples - demo
 - Monique elle veut des exemples pour les output iterators.
 
 TDS
+- virer le truc infame dans DS_Container (le magic machin).
 - comprendre bug dans ancienne version de is_edge de tds, dim 2 
 	(pb edge_iterator...? etonnant)
 
