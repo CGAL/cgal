@@ -63,7 +63,8 @@ public:
     pointer,pointer,pointer,pointer> Boundary_type;
   typedef Trapezoidal_decomposition_2<Traits>           TD;
   typedef typename TD::Unbounded                        Unbounded;
-  typedef typename TD::Around_point_circulator          Around_point_circulator;
+  typedef typename TD::Around_point_circulator
+    Around_point_circulator;
   typedef typename TD::In_face_iterator                 In_face_iterator;
   friend class Trapezoidal_decomposition_2<Traits>;
   
