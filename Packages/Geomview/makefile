@@ -1,6 +1,5 @@
 #Makefile for Geomwiew files
 
-WWW=/u/www/0/www/htdocs/files/equipes/prisme
 WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Geomview
 TMP_file=/tmp/submit-mail
@@ -14,15 +13,19 @@ package:
 	@echo "---- editer changes.txt  ---------"
 	@echo "---- cvs update; cvs commit ------"
 	@echo "---- more version ----------------"
-	@echo "---- VERSION=   ; export VERSION -"
+	@echo "---- VERSION=2.8; export VERSION -"
 	@echo "---- make Doc --------------------"
 	@echo "---- make Version ----------------"
+	@echo "---- make commit -----------------"
 	@echo "---- make tag --------------------"
 	@echo "---- make submit -----------------"
 	@echo "----------------------------------"
 
 Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
+
+commit:
+	cvs commit
 
 tag:
 	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"`

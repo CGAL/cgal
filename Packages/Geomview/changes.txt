@@ -7,7 +7,7 @@ src/Geomview_stream.C
 
 CHANGES
 
-Ver 2.8 (?? ??????? 00)
+Ver 2.8 (27 June 00)
 - Rewrote is_prefix() and nth() [syl].
 
 Ver 2.7 (13 janvier 00)
