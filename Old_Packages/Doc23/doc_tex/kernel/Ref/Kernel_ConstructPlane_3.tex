@@ -7,7 +7,7 @@ A model for this must provide:
              {introduces an uninitialized variable .}
 
 \ccHidden \ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Plane_3 &h);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::RT &a, 
                        const Kernel::RT &b,
@@ -18,8 +18,8 @@ A model for this must provide:
 Notice that  is degenerate if \ccTexHtml{$a = b = c$}{a = b = c}.}
 
 \ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Point_3 &p,
-	               const Kernel::Point_3 &q,
-	               const Kernel::Point_3 &r);}
+                       const Kernel::Point_3 &q,
+                       const Kernel::Point_3 &r);}
 {creates a plane  passing through the points \ccStyle{p},
  \ccStyle{q} and \ccStyle{r}. The plane is oriented such that \ccStyle{p}, 
  \ccStyle{q} and \ccStyle{r} are oriented in a positive sense 
@@ -28,7 +28,7 @@ Notice that  is degenerate if the points are collinear.}
 
 
 \ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Point_3 &p,
-	                  const Kernel::Direction_3&d);}
+                          const Kernel::Direction_3&d);}
 {introduces a plane  that passes through point \ccStyle{p} and
  that has as an orthogonal direction equal to \ccStyle{d}.}
 
@@ -46,6 +46,9 @@ Notice that  is degenerate if the points are collinear.}
                           const Kernel::Point_3 &p);}
 {introduces a plane  that is defined through the  three points 
  \ccStyle{s.source()}, \ccStyle{s.target()} and \ccStyle{p}.}
+
+\ccRefines
+AdaptableFunctor (with two arguments)
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Plane_3<R>} \\

@@ -7,7 +7,7 @@ A model for this must provide:
              {introduces an uninitialized variable .}
 
 \ccHidden \ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Line_3 &h);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Point_3 &p, const Kernel::Point_3 &q);}
             {introduces a line  passing through the points $p$ and $q$. 
@@ -20,11 +20,14 @@ A model for this must provide:
 
 \ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Segment_3 &s);}
             {returns the line supporting the segment $s$,
-	    oriented from source to target.}
+            oriented from source to target.}
 
 \ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Ray_3 &r);}
             {returns the line supporting the ray $r$, with the
-	    same orientation.}
+            same orientation.}
+
+\ccRefines
+AdaptableFunctor (with two arguments)
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Line_3<R>}  \\
