@@ -790,19 +790,12 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   int i = 0;
 
   // write the vertices
+  // the vertices must be indexed by their order of creation so
+  // that when reread from file, the orders of vertices are the
+  // same - important for remove 
 
   for (Vertex_iterator it=tr.all_vertices_begin(); it!=tr.vertices_end(); ++it)
-    {
-//    if ( (&(*it)) != &(*(tr.infinite_vertex())) ) {
-      // the vertices must be indexed by their order of creation so
-      // that when reread from file, the orders of vertices are the
-      // same - important for remove - so the following is not good:
-//       V[&(*it)] = i++;
-//       os << *it; // uses the << operator of Vertex
-//       if (is_ascii(os))
-// 	os << std::endl;
-      TV[i++] = &(*it);
-    }
+    TV[i++] = &(*it);
 
   CGAL_triangulation_assertion( i == n+1 ); 
 
@@ -810,10 +803,11 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
 	    Vertex_handle_compare_order_of_creation<Vertex_handle>()); 
 
   CGAL_triangulation_assertion( tr.is_infinite(TV[0]) );
+
   std::map< void*, int > V;
 
   V[&(*tr.infinite_vertex())] = 0;
-  for (i=1; i <= n; i++) {// not i=0: infinite vertex
+  for (i=1; i <= n; i++) {
     os << *TV[i];
     V[&(*TV[i])] = i;
     if (is_ascii(os))
