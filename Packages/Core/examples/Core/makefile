@@ -8,10 +8,6 @@
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 
-#CGAL_MAKEFILE = /cygdrive/d/cgal/CGAL-2.5-I-93/make/makefile_i686_CYGWINNT-5.0-1.3.12_g++-2.95
-#CGAL_MAKEFILE = /cygdrive/d/cgal/CGAL-2.5-I-93/make/makefile_i686_CYGWINNT-5.0-1.3.12_CL.EXE-1300
-CGAL_MAKEFILE = /cygdrive/d/cgal/CGAL-2.5-I-93/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
-
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
