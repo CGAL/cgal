@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Geert-Jan Giezeman
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_DOUBLE_H
