@@ -70,6 +70,7 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
+  compile_and_run Gmpq
   compile_and_run MP_Float
   compile_and_run _test_to_interval
   compile_and_run _test_valid_finite_double
@@ -78,6 +79,7 @@ else
   compile_and_run doubletst
   compile_and_run floattst
   compile_and_run quotient_io
+  compile_and_run simplest_rational
   compile_and_run utilities
 fi
 
