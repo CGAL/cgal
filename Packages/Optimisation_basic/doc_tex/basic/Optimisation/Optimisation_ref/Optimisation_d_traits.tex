@@ -1,30 +1,30 @@
 % =============================================================================
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
-% Concept: Min_annulus_d_traits
+% Concept: Optimisation_d_traits
 % -----------------------------------------------------------------------------
-% file  : doc_tex/basic/Optimisation/Optimisation_ref/Min_annulus_d_traits.tex
+% file  : doc_tex/basic/Optimisation/Optimisation_ref/Optimisation_d_traits.tex
 % author: Sven Schönherr <sven@inf.ethz.ch>
 % -----------------------------------------------------------------------------
 % $CGAL_Chapter: Geometric Optimisation $
-% $CGAL_Package: Min_annulus_d WIP $
+% $CGAL_Package: Optimisation_basic WIP $
 % $Revision$
 % $Date$
 % =============================================================================
 
-\begin{ccRefConcept}{Min_annulus_d_traits}
+\begin{ccRefConcept}{Optimisation_d_traits}
 
 % -----------------------------------------------------------------------------
 \ccDefinition
 
-This concept defines the requirements for traits classes of
-\ccGlobalScope\ccc{Min_annulus_d<Traits>}.
+This concept defines the requirements for traits classes of $d$-dimensional
+optimisation algorithms.
 
 % -----------------------------------------------------------------------------
 \ccTypes
 
 \ccSaveThreeColumns
-\ccSetTwoColumns{Min_annulus_d_traits:: Rep_tag}{}
+\ccSetTwoColumns{Optimisation_d_traits:: Rep_tag}{}
 
 \ccNestedType{Point_d}{point type used to represent the input points.}
 
@@ -39,10 +39,11 @@ This concept defines the requirements for traits classes of
   It has to be a model for \ccc{RingNumberType}.}
 
 \ccNestedType{FT}{%
-  number type used to return the squared radii of the smallest
-  enclosing annulus. \ccc{FT} has to be either \ccc{RT} or
-  \ccGlobalScope\ccc{Quotient<RT>} if the input points have Cartesian
-  or homogeneous representation, respectively (cf.~\ccc{Rep_tag}).}
+  number type used to return either the squared radius of the smallest
+  enclosing sphere or annulus, or the squared distance of the polytopes.
+  \ccc{FT} has to be either \ccc{RT} or \ccGlobalScope\ccc{Quotient<RT>} if
+  the input points have Cartesian or homogeneous representation,
+  respectively (cf.~\ccc{Rep_tag}).}
 
 \ccNestedType{Access_dimension_d}{%
   data accessor object used to access the dimension of the input points.}
@@ -51,8 +52,9 @@ This concept defines the requirements for traits classes of
   data accessor object used to access the coordinates of the input points.}
 
 \ccNestedType{Construct_point_d}{%
-  constructor object used to construct the center of the smallest
-  enclosing annulus from its coordinates.}
+  constructor object used to construct either the center of the smallest
+  enclosing sphere or annulus, or the points realizing the distance between
+  the two polytopes.}
 
 \ccNestedType{ET}{%
   exact number type used to do the exact computations in the
@@ -74,14 +76,14 @@ This concept defines the requirements for traits classes of
 
 Only default and copy constructor are required.
 
-\ccConstructor{ Min_annulus_d_traits( );}{}
+\ccConstructor{ Optimisation_d_traits( );}{}
 
-\ccConstructor{ Min_annulus_d_traits( const Min_annulus_d_traits&);}{}
+\ccConstructor{ Optimisation_d_traits( const Optimisation_d_traits&);}{}
 
 % -----------------------------------------------------------------------------
 \ccOperations
 
-\ccSetThreeColumns{Access_coordinates_begin_d}{}{\hspace*{10cm}}
+\ccSetThreeColumns{Access_coordinates_begin_d}{}{\hspace*{8.5cm}}
 
 The following functions just return the corresponding function class
 object.
@@ -100,14 +102,16 @@ object.
 % -----------------------------------------------------------------------------
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_2<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_3<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_d<R,ET,NT>}
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_2<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_3<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_d<R,ET,NT>}
 
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}
+\ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+\ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}\\
+\ccRefIdfierPage{CGAL::Polytope_distance_d<Traits>}
 
 % -----------------------------------------------------------------------------
 
