@@ -22,38 +22,33 @@
 #define CGAL_QT_LAYER_SHOW_POINTS_H
 
 #include <CGAL/IO/Qt_widget_layer.h>
-#include <qobject.h>
-
 
 namespace CGAL {
 
 template <class T>
 class Qt_layer_show_points : public Qt_widget_layer {
 public:
-  typedef typename T::Point		Point;
-  typedef typename T::Segment		Segment;
-  typedef typename T::Vertex		Vertex;
+  typedef typename T::Point           Point;
+  typedef typename T::Segment         Segment;
+  typedef typename T::Vertex          Vertex;
   typedef typename T::Vertex_iterator	Vertex_iterator;
 
   Qt_layer_show_points(T &t) : tr(t){};
 
-  void draw(Qt_widget &widget)
-  {
-    Vertex v;
+  void draw()
+  {  
     Vertex_iterator it = tr.vertices_begin(), 
 		beyond = tr.vertices_end();
-    widget << CGAL::GREEN << CGAL::PointSize (3) 
-		<< CGAL::PointStyle (CGAL::DISC);
-    while(it != beyond)
-    {
-      v = *it;
-      widget << v.point();
+    *widget << CGAL::GREEN << CGAL::PointSize (3) 
+		<< CGAL::PointStyle (CGAL::DISC);    
+    while(it != beyond) {      
+      *widget << (*it).point();
       ++it;
     }
   };
 private:
   T	&tr;
-
+  
 };//end class 
 
 } // namespace CGAL

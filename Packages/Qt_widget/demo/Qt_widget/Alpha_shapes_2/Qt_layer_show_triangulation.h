@@ -22,6 +22,7 @@
 #define CGAL_QT_LAYER_SHOW_TRIANGULATION_H
 
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/Qt_widget_Triangulation_2.h>
 
 namespace CGAL {
 
@@ -33,10 +34,10 @@ public:
   Qt_layer_show_triangulation(T &t) : tr(t){};
 
 
-  void draw(Qt_widget &widget)
+  void draw()
   {
-    widget << CGAL::BLUE; 
-    widget << tr;
+    *widget << CGAL::BLUE; 
+    *widget << tr;
   };
 	
 private:
