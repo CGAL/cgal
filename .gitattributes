@@ -196,7 +196,6 @@ Packages/Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#unset
 Packages/Modifier/doc_tex/support/Modifier/idraw/modifier.ips -text
 Packages/Modifier/doc_tex/support/Modifier/modifier.gif -text svneol=unset#unset
 Packages/Modifier/doc_tex/support/Modifier/modifier_small.gif -text svneol=unset#unset
-Packages/PS_Stream/latex/test.dvi svneol=native#unset
 Packages/PS_Stream/test/postscript svneol=native#unset
 Packages/Partition_2/doc_ps/Partition_2.ps.gz svneol=native#unset
 Packages/Planar_map/doc_tex/Planar_map/example_p.gif -text svneol=unset#unset
