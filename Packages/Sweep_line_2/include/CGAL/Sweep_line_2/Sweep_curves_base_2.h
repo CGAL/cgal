@@ -938,14 +938,13 @@ protected:
   typedef less_yx<Curve_node>                         Less_yx;
   
 public:
-  typedef typename std::map<Point, Point_plus, less_xy<Point>, 
-                          CGAL_ALLOCATOR(pair_Point_Point_plus) >  
+  typedef typename std::map<Point, Point_plus, less_xy<Point> >
                                                     Vertices_points_plus;
-  typedef typename std::map<Point,Intersection_point_node,less_xy<Point>, 
-                          CGAL_ALLOCATOR(pair_Point_Intersection_point_node) >
+
+  typedef typename std::map<Point,Intersection_point_node,less_xy<Point>
                                                              Event_queue;
-  typedef typename std::set<Curve_node, less_yx<Curve_node>, 
-                            CGAL_ALLOCATOR(Curve_node) >      Status_line; 
+
+  typedef typename std::set<Curve_node, less_yx<Curve_node>  Status_line; 
   
   typedef std::list<X_curve>                        X_curve_list;
   typedef typename X_curve_list::iterator           X_curve_list_iterator;
@@ -989,8 +988,8 @@ protected:
     
     // a container to hold the point_node curve nodes ordered as they
     // should on status.
-    typedef typename std::set<Curve_node, less_yx<Curve_node>, 
-      CGAL_ALLOCATOR(Curve_node) > Local_status_line; 
+    typedef typename std::set<Curve_node, less_yx<Curve_node> > 
+                                                  Local_status_line; 
     typedef typename Local_status_line::iterator   Local_status_line_iterator; 
     Less_yx            pred(traits);
     Local_status_line local_status(pred);   // reserve the size of the
