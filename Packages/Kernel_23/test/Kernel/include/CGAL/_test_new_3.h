@@ -32,6 +32,47 @@ template < typename T >
 void use(const T&) {}
 #endif
 
+// Accessory function testing functions that require sqrt().
+// Doesn't instantiate anything if RT doesn't support sqrt().
+template <class R>
+bool
+_test_new_3_sqrt(const R&, CGAL::Tag_false)
+{
+    bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
+    std::cout << std::endl
+              << "WARNING : FT doesn't support sqrt(),"
+                 " hence some functions are not tested."
+	      << std::endl;
+    return true;
+}
+
+template <class R>
+bool
+_test_new_3_sqrt(const R& rep, CGAL::Tag_true)
+{
+  typedef typename R::FT          FT;
+  typedef typename R::Point_3     Point_3;
+  typedef typename R::Triangle_3  Triangle_3;
+
+  Point_3 p3 (1,1,1);
+  Point_3 p4 (1,1,2,2);
+  Point_3 p5 (1,2,3,4);
+
+  typename R::Construct_triangle_3 construct_triangle
+        = rep.construct_triangle_3_object();
+  Triangle_3 t2 = construct_triangle(p3,p4,p5);
+
+  typename R::Compute_area_3 compute_area
+        = rep.compute_area_3_object();
+  FT tmp11a = compute_area(t2);
+     tmp11a = compute_area(p3, p4, p5);
+
+  use(tmp11a);
+
+  return true;
+}
+
+
 template <class R>
 bool
 test_new_3(const R& rep)
@@ -369,11 +410,6 @@ test_new_3(const R& rep)
      tmp11a = compute_squared_area(p3, p4, p5);
   (void) tmp11a;
 
-  typename R::Compute_area_3 compute_area
-        = rep.compute_area_3_object();
-  tmp11a = compute_area(t2);
-  tmp11a = compute_area(p3, p4, p5);
-
   typename R::Compute_volume_3 compute_volume
         = rep.compute_volume_3_object();
   FT tmp11b = compute_volume(th2);
@@ -661,6 +697,9 @@ test_new_3(const R& rep)
   use(bb1); use(bb2); use(bb3); use(bb4); use(bb5); use(bb6); 
   use(r4); use(r5); use(l7); use(l8); use(v7); use(v8); use(v9); use(h8);
   use(cccit);
+
+  // More tests, that require sqrt().
+  _test_new_3_sqrt(rep, typename CGAL::Number_type_traits<FT>::Has_sqrt());
 
   return true;
 }
