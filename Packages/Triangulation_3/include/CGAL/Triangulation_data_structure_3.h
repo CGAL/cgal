@@ -36,6 +36,7 @@
 #include <utility>
 #include <list>
 #include <map>
+// #include <hash_set>
 #include <set>
 #include <vector>
 
@@ -385,15 +386,18 @@ public:
     // -- changes the dimension
     // -- if (reorient) the orientation of the cells is modified
 
+  // typedef std::hash_set<const char *> Conflict_set;
+  typedef std::set<void *> Conflict_set;
+
   // for Delaunay :
-  void star_region( std::set<void*> & region, Vertex* v, Cell* c, int li);
+  void star_region(const Conflict_set & region, Vertex* v, Cell* c, int li);
     // region is a set of connected cells
     // c belongs to region and has facet i on the boundary of region 
     // replaces the cells in region  
     // by linking v to the boundary of region 
     
 private:
-  Cell* create_star( std::set<void*> & region, Vertex* v, Cell* c, int li);
+  Cell* create_star(const Conflict_set & region, Vertex* v, Cell* c, int li);
     // creates the cells needed by star_region
 
 public:
@@ -2087,29 +2091,28 @@ insert_increase_dimension(const Vertex & w, // new vertex
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-star_region( std::set<void*> & region, Vertex* v, Cell* c, int li )
+star_region(const Conflict_set & region, Vertex* v, Cell* c, int li )
   // region is a set of connected cells
   // c belongs to region and has facet i on the boundary of region 
   // replaces the cells in region  
   // by linking v to the boundary of region
 {
   CGAL_triangulation_precondition( dimension() >= 2 );
-  CGAL_triangulation_precondition( region.find( (void *) c )  
+  CGAL_triangulation_precondition( region.find( (Conflict_set::key_type) c )  
 				   != region.end() );
   // does not check whether region is connected 
   Cell* nouv = create_star( region, v, c, li );
   v->set_cell( nouv );
   // v->set_cell( create_star( region, v, c, li ) );
-  std::set<void*>::const_iterator it;
-  for( it = region.begin(); it != region.end(); ++it) {
-    delete( (Cell *) *it);
-  }
+  Conflict_set::const_iterator it;
+  for( it = region.begin(); it != region.end(); ++it)
+    delete (Cell *) *it;
 }
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*
 Triangulation_data_structure_3<Vb,Cb>::
-create_star( std::set<void*> & region, Vertex* v, Cell* c, int li )
+create_star(const Conflict_set & region, Vertex* v, Cell* c, int li )
   // creates the cells needed by star_region
 {
   Cell* cnew;
@@ -2145,7 +2148,7 @@ create_star( std::set<void*> & region, Vertex* v, Cell* c, int li )
       while (true) {
 	j1 = n->index( cur->vertex(j1) );
 	j2 = n->index( cur->vertex(j2) );
-	if ( region.find( (void*) n ) == region.end() ) { 
+	if ( region.find( (Conflict_set::key_type) n ) == region.end() ) { 
 	  //not in conflict
 	  break;
 	}
@@ -2180,7 +2183,7 @@ create_star( std::set<void*> & region, Vertex* v, Cell* c, int li )
   do {
     cur = bound;
     // turn around v2 until we reach the boundary of region
-    while ( region.find( (void*) cur->neighbor(cw(i1)) ) !=
+    while ( region.find( (Conflict_set::key_type) cur->neighbor(cw(i1)) ) !=
 	    region.end() ) {
       // neighbor in conflict
       cur = cur->neighbor(cw(i1));

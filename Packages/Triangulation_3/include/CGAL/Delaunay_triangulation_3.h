@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 
+// #include <hash_set>
 #include <set>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_3.h>
@@ -150,8 +151,11 @@ public:
   void print(Vertex_handle v) const;
 
 private:
+  // typedef std::hash_set<const char *> Conflict_set;
+  typedef std::set<void *> Conflict_set;
+
   void
-  find_conflicts_3(std::set<void*> & conflicts, const Point & p,
+  find_conflicts_3(Conflict_set & conflicts, const Point & p,
 		   Cell_handle c, Cell_handle & ac, int & i);
     // 3d case
     // p is in conflict with c
@@ -159,7 +163,7 @@ private:
     // gives a cell ac having a facet on the boundary of conflicts
     // and the index i of its facet on the boundary
   void
-  find_conflicts_2(std::set<void*> & conflicts, const Point & p,
+  find_conflicts_2(Conflict_set & conflicts, const Point & p,
 		   Cell_handle c, Cell_handle & ac, int & i);
     // 2d case
     // p is in conflict with c
@@ -259,7 +263,7 @@ insert(const Point & p, Cell_handle start)
 //       case EDGE:
 	  Vertex_handle v = new Vertex(p);
 	  set_number_of_vertices(number_of_vertices()+1);
-	  std::set<void*> conflicts;
+	  Conflict_set conflicts;
 	  Cell_handle aconflict;
 	  int ineighbor;
 	  find_conflicts_3(conflicts,p,c,aconflict,ineighbor);
@@ -281,7 +285,7 @@ insert(const Point & p, Cell_handle start)
 	{
 	  Vertex_handle v = new Vertex(p);
 	  set_number_of_vertices(number_of_vertices()+1);
-	  std::set<void*> conflicts;
+	  Conflict_set conflicts;
 	  Cell_handle aconflict;
 	  int ineighbor;
 	  find_conflicts_2(conflicts,p,c,aconflict,ineighbor);
@@ -985,7 +989,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-find_conflicts_3(std::set<void*> & conflicts, const Point & p,
+find_conflicts_3(Conflict_set & conflicts, const Point & p,
 		 Cell_handle c, Cell_handle & ac, int & i)
   // 3d case
   // p is in conflict with c
@@ -993,11 +997,11 @@ find_conflicts_3(std::set<void*> & conflicts, const Point & p,
   // gives a cell ac having a facet on the boundary of conflicts
   // and the index i of its facet on the boundary
 {
-  (void) conflicts.insert( (void *) &(*c) );
+  (void) conflicts.insert( (Conflict_set::key_type) &(*c) );
 
   for ( int j=0; j<4; j++ ) {
     Cell_handle test = c->neighbor(j);
-    if ( conflicts.find( (void *) &(*test) ) != conflicts.end() )
+    if (conflicts.find( (Conflict_set::key_type) &(*test) ) != conflicts.end())
       continue;   // test was already tested and found to be in conflict.
     if ( side_of_sphere( test, p ) == ON_BOUNDED_SIDE )
       find_conflicts_3(conflicts, p, test, ac, i);
@@ -1083,7 +1087,7 @@ violates( Vertex_handle u,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-find_conflicts_2(std::set<void*> & conflicts, const Point & p,
+find_conflicts_2(Conflict_set & conflicts, const Point & p,
 		 Cell_handle c, Cell_handle & ac, int & i)
   // 2d case
   // p is in conflict with c
@@ -1091,11 +1095,11 @@ find_conflicts_2(std::set<void*> & conflicts, const Point & p,
   // gives a cell ac having a facet on the boundary of conflicts
   // and the index i of its facet on the boundary
 {
-  (void) conflicts.insert( (void *) &(*c) );
+  (void) conflicts.insert( (Conflict_set::key_type) &(*c) );
 
   for ( int j=0; j<3; j++ ) {
     Cell_handle test = c->neighbor(j);
-    if ( conflicts.find( (void *) &(*test) ) != conflicts.end() )
+    if (conflicts.find( (Conflict_set::key_type) &(*test) ) != conflicts.end())
       continue;   // test was already found
     if ( side_of_circle( test, 3, p ) == ON_BOUNDED_SIDE )
       find_conflicts_2(conflicts, p, test, ac, i);
