@@ -1,7 +1,8 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 7.09 (  )
+Ver 7.09 (19/03/02 )
+- added delete and copy of constraint_hierarchy
 - added #include <cassert> in demo and example of constrained triangulation
 - fixed assertions in Constraint_hierarchy_2.h
 - added type reference in Trianguation_2 for Microsoft
