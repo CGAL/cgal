@@ -1,3 +1,6 @@
+3.52 (22 Sep 2003)
+- new headers
+
 3.51 (18 Sep 2003) [rursu]
 - Changed example in the doc. Using ch_example_from_cin_to_cout.C from now on.
 
