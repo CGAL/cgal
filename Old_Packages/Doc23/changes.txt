@@ -1,3 +1,6 @@
+2.42    (9 Jan 2002)
+- update compare_y_at_x.
+
 2.41    (21 Dec 2001)
 - compare_y_at_x for segments.
 
