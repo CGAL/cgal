@@ -21,7 +21,6 @@
 #include <CGAL/IO/pixmaps/voronoi.xpm>
 #include <CGAL/IO/pixmaps/notool.xpm>
 #include <CGAL/IO/pixmaps/movepoint.xpm>
-//#include "removecircle.xpm"
 
 
 class Layers_toolbar : public QToolBar
@@ -110,18 +109,27 @@ public:
 			     this, 
 			     "Remove site");
 #endif
+
+    // The following button is connected to a layer that is
+    // responsible for deleting, moving the center or changing the
+    // weight of a site. At this time though hidden sites do not have
+    // their own vertices and the code does not work as it is, since
+    // it assumes that both visible and hidden sites have vertices
+    // associated with them...
+#if 0
     but[6] = new QToolButton(QPixmap( (const char**)movepoint_xpm ),
-			     "Edit site", 
-			     0, 
-			     this, 
-			     SLOT(edit_mode()),
-			     this, 
-			     "Edit site");
+    			     "Edit site", 
+    			     0, 
+    			     this, 
+    			     SLOT(edit_mode()),
+    			     this, 
+    			     "Edit site");
+#endif
 
     showDG->deactivate();
     edit_V->deactivate();
 
-    nr_of_buttons = 7;
+    nr_of_buttons = 6;
     for(int i = 0; i < nr_of_buttons; i++){
       but[i]->setToggleButton(TRUE);
     }
@@ -132,6 +140,7 @@ public:
     //    but[3]->toggle();
     but[4]->toggle();
     //    but[5]->toggle();
+    //    but[6]->toggle();
   }
 
   ~Layers_toolbar() {
