@@ -35,8 +35,8 @@ template <class R>
 class Qt_widget_get_segment : public Qt_widget_layer
 {
 public:
-  typedef Point_2<R>		Point;
-  typedef Segment_2<R>		Segment;
+  typedef R::Point_2		Point;
+  typedef R::Segment_2		Segment;
   typedef typename R::FT	FT;
 
   Qt_widget_get_segment() : firstpoint(false), 

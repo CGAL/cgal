@@ -36,8 +36,8 @@ template <class R>
 class Qt_widget_get_line : public Qt_widget_layer
 {
 public:
-  typedef Point_2<R>	Point;
-  typedef Line_2<R>	Line;
+  typedef R::Point_2  Point;
+  typedef R::Line_2	  Line;
   typedef typename	R::FT FT;
 
   Qt_widget_get_line() : firstpoint(false), 

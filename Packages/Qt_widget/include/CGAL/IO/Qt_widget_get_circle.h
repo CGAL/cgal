@@ -36,8 +36,8 @@ template <class R>
 class Qt_widget_get_circle : public Qt_widget_tool
 {
 public:
-  typedef Point_2<R>		Point;
-  typedef Circle_2<R>		Circle;
+  typedef R::Point_2		Point;
+  typedef R::Circle_2		Circle;
   typedef typename R::FT	FT;
 
   Qt_widget_get_circle() : firstpoint(false), 
