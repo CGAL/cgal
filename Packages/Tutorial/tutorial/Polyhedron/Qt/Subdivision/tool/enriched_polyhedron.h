@@ -14,55 +14,6 @@
 #include <fstream>
 #include <qgl.h>
 
-// compute facet normal
-struct Facet_normal	// (functor)
-{
-	template <class	Facet>
-	void operator()(Facet& f)
-	{
-		typename Facet::Normal_3 sum = CGAL::NULL_VECTOR;
-		typename Facet::Halfedge_around_facet_circulator h = f.facet_begin();
-		do
-		{
-			typename Facet::Normal_3 normal	=	CGAL::cross_product(
-				h->next()->vertex()->point() - h->vertex()->point(),
-				h->next()->next()->vertex()->point() - h->next()->vertex()->point());
-			double sqnorm	=	normal * normal;
-			if(sqnorm	!= 0)
-				normal = normal	/	(float)std::sqrt(sqnorm);
-			sum	=	sum	+	normal;
-		}
-		while(++h	!= f.facet_begin());
-		float	sqnorm = sum * sum;
-		if(sqnorm	!= 0.0)
-			f.normal() = sum / std::sqrt(sqnorm);
-		else
-			f.normal() = CGAL::NULL_VECTOR;
-	}
-};
-
-
-// compute vertex	normal
-struct Vertex_normal //	(functor)
-{
-		template <class	Vertex>
-		void operator()(Vertex&	v)
-		{
-				typename Vertex::Normal_3	normal = CGAL::NULL_VECTOR;
-        typename Vertex::Halfedge_around_vertex_const_circulator	pHalfedge = v.vertex_begin();
-        typename Vertex::Halfedge_around_vertex_const_circulator	begin = pHalfedge;
-				CGAL_For_all(pHalfedge,begin)
-					if(!pHalfedge->is_border())
-						normal = normal	+	pHalfedge->facet()->normal();
-				float	sqnorm = normal * normal;
-				if(sqnorm != 0.0f)
-					v.normal() = normal	/	(float)std::sqrt(sqnorm);
-				else
-					v.normal() = CGAL::NULL_VECTOR;
-		}
-};
-
-
 // a refined facet with a normal and a tag
 template <class	Refs,	class	T, class P,	class	Norm>
 class	Enriched_facet : public	CGAL::HalfedgeDS_face_base<Refs, T>
@@ -213,11 +164,11 @@ public :
 	typedef	typename kernel::FT	FT;
 	typedef	typename kernel::Point_3 Point;
 	typedef	typename kernel::Vector_3	Vector;
+  typedef typename kernel::Iso_cuboid_3 Iso_cuboid;
 
 private	:
 	// bounding box
-	FT m_min[3];
-	FT m_max[3];
+	Iso_cuboid m_bbox;
 
 	// type
 	bool m_pure_quad;
@@ -254,50 +205,54 @@ public :
 		compute_normals_per_facet();
 		compute_normals_per_vertex();
 	}
+  // bounding box
+  Iso_cuboid& bbox() { return m_bbox; }
+  const Iso_cuboid bbox() const { return m_bbox; }
 
-	// compute bounding	box
-	void compute_bounding_box(FT &xmin,
-														FT &xmax,
-														FT &ymin,
-														FT &ymax,
-														FT &zmin,
-														FT &zmax)
-	{
-		CGAL_assertion(size_of_vertices()	>	0);
-		Vertex_iterator	pVertex	=	vertices_begin();
-		xmin = xmax = pVertex->point().x();
-		ymin = ymax = pVertex->point().y();
-		zmin = zmax = pVertex->point().z();
-		for(;pVertex !=	vertices_end();pVertex++)
-		{
-			const Point& p = pVertex->point();
-			xmin	=	std::min(xmin,p.x());
-			ymin	=	std::min(ymin,p.y());
-			zmin	=	std::min(zmin,p.z());
-			xmax	=	std::max(xmax,p.x());
-			ymax	=	std::max(ymax,p.y());
-			zmax	=	std::max(zmax,p.z());
-		}
-		m_min[0] = xmin; m_max[0] = xmax;
-		m_min[1] = ymin; m_max[1] = ymax;
-		m_min[2] = zmin; m_max[2] = zmax;
-	}
+  // compute bounding box
+  void compute_bounding_box()
+  {
+    if(size_of_vertices() == 0)
+    {
+      ASSERT(false);
+      return;
+    }
 
-	// bounding box
-	FT xmin() { return m_min[0]; }
-	FT xmax() { return m_max[0]; }
-	FT ymin() { return m_min[1]; }
-	FT ymax() { return m_max[1]; }
-	FT zmin() { return m_min[2]; }
-	FT zmax() { return m_max[2]; }
+    FT xmin,xmax,ymin,ymax,zmin,zmax;
+    Vertex_iterator pVertex = vertices_begin();
+    xmin = xmax = pVertex->point().x();
+    ymin = ymax = pVertex->point().y();
+    zmin = zmax = pVertex->point().z();
+    for(;
+        pVertex !=  vertices_end();
+        pVertex++)
+    {
+      const Point& p = pVertex->point();
 
+      xmin =  std::min(xmin,p.x());
+      ymin =  std::min(ymin,p.y());
+      zmin =  std::min(zmin,p.z());
+
+      xmax =  std::max(xmax,p.x());
+      ymax =  std::max(ymax,p.y());
+      zmax =  std::max(zmax,p.z());
+    }
+    m_bbox = Iso_cuboid(xmin,ymin,zmin,
+                        xmax,ymax,zmax);
+  }
+
+  // bounding box
+  FT xmin() { return m_bbox.xmin(); }
+  FT xmax() { return m_bbox.xmax(); }
+  FT ymin() { return m_bbox.ymin(); }
+  FT ymax() { return m_bbox.ymax(); }
+  FT zmin() { return m_bbox.zmin(); }
+  FT zmax() { return m_bbox.zmax(); }
 	// copy bounding box
 	void copy_bounding_box(Enriched_polyhedron<kernel,items> *pMesh)
 	{
-		m_min[0] = pMesh->xmin(); m_max[0] = pMesh->xmax();
-		m_min[1] = pMesh->ymin(); m_max[1] = pMesh->ymax();
-		m_min[2] = pMesh->zmin(); m_max[2] = pMesh->zmax();
-	}
+    m_bbox = pMesh->bbox();
+  }
 
 	// degree	of a face
 	static unsigned int degree(Facet_handle pFace)
@@ -347,10 +302,10 @@ public :
 	// tag all facets
 	void tag_facets(const	int	tag)
 	{
-		for(Facet_iterator pFace	=	facets_begin();
-				pFace	!= facets_end();
-				pFace++)
-			pFace->tag(tag);
+		for(Facet_iterator pFacet	=	facets_begin();
+				pFacet	!= facets_end();
+				pFacet++)
+			pFacet->tag(tag);
 	}
 
 	// set index for all vertices
@@ -388,14 +343,13 @@ public :
 		Halfedge_around_facet_circulator pHalfEdge = pFace->facet_begin();
 		Halfedge_around_facet_circulator end = pHalfEdge;
 		Vector vec(0.0,0.0,0.0);
-    typedef typename kernel::FT FT;
-		int	degree = 0;
+    int	degree = 0;
 		CGAL_For_all(pHalfEdge,end)
 		{
 			vec	=	vec	+	(pHalfEdge->vertex()->point()-CGAL::ORIGIN);
 			degree++;
     }
-    center = CGAL::ORIGIN + (vec/(FT)degree);
+    center = CGAL::ORIGIN + (vec/(kernel::FT)degree);
   }
 
 	// compute average edge length around a vertex
@@ -417,8 +371,7 @@ public :
 	}
 
 	// draw	using	OpenGL commands	(display lists)
-	void gl_draw(bool	smooth_shading,
-							 bool	use_normals)
+	void gl_draw(bool smooth_shading, bool use_normals)
 	{
 		// draw	polygons
 		Facet_iterator pFacet	=	facets_begin();
@@ -579,34 +532,38 @@ public :
 	void gl_draw_bounding_box()
 	{
 		::glBegin(GL_LINES);
-			// along x axis
-			::glVertex3f(m_min[0],m_min[1],m_min[2]);
-			::glVertex3f(m_max[0],m_min[1],m_min[2]);
-			::glVertex3f(m_min[0],m_min[1],m_max[2]);
-			::glVertex3f(m_max[0],m_min[1],m_max[2]);
-			::glVertex3f(m_min[0],m_max[1],m_min[2]);
-			::glVertex3f(m_max[0],m_max[1],m_min[2]);
-			::glVertex3f(m_min[0],m_max[1],m_max[2]);
-			::glVertex3f(m_max[0],m_max[1],m_max[2]);
-			// along y axis
-			::glVertex3f(m_min[0],m_min[1],m_min[2]);
-			::glVertex3f(m_min[0],m_max[1],m_min[2]);
-			::glVertex3f(m_min[0],m_min[1],m_max[2]);
-			::glVertex3f(m_min[0],m_max[1],m_max[2]);
-			::glVertex3f(m_max[0],m_min[1],m_min[2]);
-			::glVertex3f(m_max[0],m_max[1],m_min[2]);
-			::glVertex3f(m_max[0],m_min[1],m_max[2]);
-			::glVertex3f(m_max[0],m_max[1],m_max[2]);
-			// along z axis
-			::glVertex3f(m_min[0],m_min[1],m_min[2]);
-			::glVertex3f(m_min[0],m_min[1],m_max[2]);
-			::glVertex3f(m_min[0],m_max[1],m_min[2]);
-			::glVertex3f(m_min[0],m_max[1],m_max[2]);
-			::glVertex3f(m_max[0],m_min[1],m_min[2]);
-			::glVertex3f(m_max[0],m_min[1],m_max[2]);
-			::glVertex3f(m_max[0],m_max[1],m_min[2]);
-			::glVertex3f(m_max[0],m_max[1],m_max[2]);
-		::glEnd();
+
+      // along x axis
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
+
+      // along y axis
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
+
+      // along z axis
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
+      ::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
+
+    ::glEnd();
 	}
 
 	// count #boundaries
@@ -614,47 +571,25 @@ public :
 	{
 		unsigned int nb = 0;
 		tag_halfedges(0);
-		Halfedge_handle	seed_halfedge	=	NULL;
-		while((seed_halfedge = get_border_halfedge_tag(0)) !=	NULL)
-		{
-			nb++;
-			seed_halfedge->tag(1);
-			Vertex_handle	seed_vertex	=	seed_halfedge->prev()->vertex();
-			Halfedge_handle	current_halfedge = seed_halfedge;
-			Halfedge_handle	next_halfedge;
-			do
-			{
-				next_halfedge	=	current_halfedge->next();
-				next_halfedge->tag(1);
-				current_halfedge = next_halfedge;
-			}
-			while(next_halfedge->prev()->vertex()	!= seed_vertex);
-		}
-		return nb;
+    for(Halfedge_iterator he = halfedges_begin();
+        he != halfedges_end();
+        he++)
+    {
+      if(he->is_border() && he->tag() == 0)
+      {
+        nb++;
+        Halfedge_handle curr = he;
+        do
+        {
+          curr  = curr->next();
+          curr->tag(1);
+        }
+        while(curr != he);
+      }
+    }
+    return nb;
 	}
 
-	// get any border	halfedge with	tag
-	Halfedge_handle	get_border_halfedge_tag(int	tag)
-	{
-		for(Halfedge_iterator pHalfedge	=	halfedges_begin();
-				pHalfedge	!= halfedges_end();
-				pHalfedge++)
-			if(pHalfedge->is_border()	&&
-				 pHalfedge->tag()	== tag)
-				return pHalfedge;
-		return NULL;
-	}
-
-	// get any facet with	tag
-	Facet_handle get_facet_tag(const int tag)
-	{
-		for(Facet_iterator pFace	=	facets_begin();
-				pFace	!= facets_end();
-				pFace++)
-			if(pFace->tag()	== tag)
-				return pFace;
-		return NULL;
-	}
 
 	// tag component 
 	void tag_component(Facet_handle	pSeedFacet,
@@ -686,15 +621,19 @@ public :
 	// count #components
 	unsigned int nb_components()
 	{
-		unsigned int nb = 0;
-		tag_facets(0);
-		Facet_handle seed_facet	=	NULL;
-		while((seed_facet	=	get_facet_tag(0))	!= NULL)
-		{
-			nb++;
-			tag_component(seed_facet,0,1);
-		}
-		return nb;
+    unsigned int nb = 0;
+    tag_facets(0);
+    for(Facet_iterator pFacet = facets_begin();
+        pFacet != facets_end();
+        pFacet++)
+    {
+      if(pFacet->tag() == 0)
+      {
+        nb++;
+        tag_component(pFacet,0,1);
+      }
+    }
+    return nb;
 	}
 
 	// compute the genus
@@ -721,5 +660,55 @@ public :
 	}
 };
 
+// compute facet normal 
+struct Facet_normal // (functor)
+{
+  template <class Facet>
+  void operator()(Facet& f)
+  {
+    typename Facet::Normal_3 sum = CGAL::NULL_VECTOR;
+    typename Facet::Halfedge_around_facet_circulator h = f.facet_begin();
+    do
+    {
+      typename Facet::Normal_3 normal = CGAL::cross_product(
+        h->next()->vertex()->point() - h->vertex()->point(),
+        h->next()->next()->vertex()->point() - h->next()->vertex()->point());
+      double sqnorm = normal * normal;
+      if(sqnorm != 0)
+        normal = normal / (float)std::sqrt(sqnorm);
+      sum = sum + normal;
+    }
+    while(++h != f.facet_begin());
+    float sqnorm = sum * sum;
+    if(sqnorm != 0.0)
+      f.normal() = sum / std::sqrt(sqnorm);
+    else
+    {
+      f.normal() = CGAL::NULL_VECTOR;
+      //TRACE("degenerate face\n");
+    }
+  }
+};
+
+
+// compute vertex normal 
+struct Vertex_normal // (functor)
+{
+    template <class Vertex>
+    void operator()(Vertex& v)
+    {
+        typename Vertex::Normal_3 normal = CGAL::NULL_VECTOR;
+        Vertex::Halfedge_around_vertex_const_circulator pHalfedge = v.vertex_begin();
+        Vertex::Halfedge_around_vertex_const_circulator begin = pHalfedge;
+        CGAL_For_all(pHalfedge,begin) 
+          if(!pHalfedge->is_border())
+            normal = normal + pHalfedge->facet()->normal();
+        float sqnorm = normal * normal;
+        if(sqnorm != 0.0f)
+          v.normal() = normal / (float)std::sqrt(sqnorm);
+        else
+          v.normal() = CGAL::NULL_VECTOR;
+    }
+};
 
 #endif //	_POLYGON_MESH_
