@@ -22,8 +22,6 @@
 #define CGAL_QT_LAYER_SHOW_POINTS_H
 
 #include <CGAL/IO/Qt_widget_layer.h>
-#include <qobject.h>
-
 
 namespace CGAL {
 
