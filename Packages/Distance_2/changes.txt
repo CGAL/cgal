@@ -1,4 +1,8 @@
 -----
+* 2.3.1 *
++Added typename in places (bug introduced by replacement of R_FT_return macros)
+
+-----
 * 2.3 *
 +Replaced R_FT_return and R_FT_return macros by R::RT and R::FT.
 +Reordered the code so that no forward declarations are necessary any more,
