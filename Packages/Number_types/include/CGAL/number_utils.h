@@ -209,12 +209,6 @@ is_finite( const NT& n)
 
 template <class NT>
 inline
-bool
-is_integral( const NT& n)
-{ return CGAL::is_integral(n); }
-
-template <class NT>
-inline
 NT
 gcd( const NT& n1, const NT& n2)
 { 

@@ -1,3 +1,6 @@
+4.60     (6 August 02)
+- Get rid of is_integral(double) : it's unused (and clashes with boost).
+
 4.59     (23 July 02)
 - Add mpz_class, mpq_class, mpf_class, CORE::Expr.
 - Merged _test_sign.h and utilities.C in utilities.h.

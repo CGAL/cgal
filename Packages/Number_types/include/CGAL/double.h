@@ -51,11 +51,6 @@ double
 sqrt(double d)
 { return std::sqrt(d); }
 
-inline
-bool
-is_integral (const double d)
-{ return CGAL_CLIB_STD::ceil(d) == d; }
-
 #ifdef __sgi
 
 inline
