@@ -33,7 +33,7 @@ class Handle_for
     // Wrapper that adds the reference counter.
     struct RefCounted
     {
-        RefCounted(const T& t) : t_(t) {}
+        RefCounted(const T& t) : t_(t), count(1) {}
         RefCounted(const RefCounted& r) : t_(r.t_), count(1) {}
 
         T* base_ptr() { return &t_; }
@@ -68,10 +68,17 @@ class Handle_for
         ptr_->add_reference();
     }
 
+    // We should also think about providing many template constructors in
+    // order to forward the functionality of T to Handle_for<T> without
+    // the need to an intermediate copy.
+
     Handle_for(const T& t)
       : ptr_(allocator.allocate(1))
     {
-        allocator.construct(ptr_, RefCounted(t));
+        // We use "placement new" instead of allocator.construct()
+        // in order to avoid a temporary copy.
+        new (ptr_) RefCounted(t);
+        // allocator.construct(ptr_, RefCounted(t));
     }
 
     Handle_for(const Handle_for& h)

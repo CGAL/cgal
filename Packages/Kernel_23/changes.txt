@@ -1,3 +1,6 @@
+1.58 (13 August 2003)
+- Handle_for.h : optimize one copy away.
+
 1.57 (12 August 2003)
 - Simplify default and copy ctors in the "user" classes (Point_2<> and co).
 
