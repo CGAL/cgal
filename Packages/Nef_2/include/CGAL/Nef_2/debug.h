@@ -83,8 +83,8 @@ static int debugthread=3141592;
 #else
 #define ASSERT(cond,fstr)   \
   if (!(cond)) {       \
-    std::cerr<<"   ASSERT:   "<< #fstr << endl; \
-    std::cerr<<"   COND:     "<< #cond << endl; \
+    std::cerr<<"   ASSERT:   "<< #fstr << std::endl; \
+    std::cerr<<"   COND:     "<< #cond << std::endl; \
     std::cerr<<"   POSITION: "<<__FILE__<<" at line "<<__LINE__<<std::endl; \
     abort();           \
   }
