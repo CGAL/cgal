@@ -119,6 +119,17 @@ public:
   // bool only for backward compatibility, we document void.
   bool remove(Vertex_handle v);
 
+  template < typename InputIterator >
+  int remove(InputIterator first, InputIterator beyond)
+  {
+    int n = number_of_vertices();
+    while (first != beyond) {
+      remove(*first);
+      ++first;
+    }
+    return n - number_of_vertices();
+  }
+
   //LOCATE
   Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj) const;
   Cell_handle locate(const Point& p) const;

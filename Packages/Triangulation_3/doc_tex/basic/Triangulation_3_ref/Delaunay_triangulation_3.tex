@@ -131,6 +131,15 @@ code can be enabled with a \ccc{\#define CGAL_DELAUNAY_3_OLD_REMOVE 1}.
 \ccPrecond{\ccc{v} is a vertex of the triangulation and it is not the
 infinite vertex.}}
 
+\ccMethod{template < typename InputIterator >
+          int remove(InputIterator first, InputIterator beyond);}
+{Removes the vertices specified by the iterator range [\ccStyle{first, beyond})
+of value type \ccc{Vertex_handle}.
+\ccc{remove()} is called over each element of the range.
+The number of vertices removed is returned.
+\ccPrecond{All vertices of the range are vertices of the triangulation
+and they are not the infinite vertex.}}
+
 \ccHeading{Queries}
 
 \ccMethod{Bounded_side

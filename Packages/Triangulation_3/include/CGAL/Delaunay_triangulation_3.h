@@ -32,6 +32,7 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_remove_tds_3.h>
 #include <CGAL/Unique_hash_map.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class Tr > class Natural_neighbors_3;
@@ -250,16 +251,27 @@ public:
       return make_triple(bfit, cit, ifit);
   }
 
-
   void
   make_canonical(Vertex_triple& t) const;
   
   Vertex_triple
-  make_vertex_triple(const Facet& f)const;
+  make_vertex_triple(const Facet& f) const;
 
   // We return bool only for backward compatibility (it's always true).
   // The documentation mentions void.
   bool remove(Vertex_handle v);
+
+  template < typename InputIterator >
+  int remove(InputIterator first, InputIterator beyond)
+  {
+    int n = number_of_vertices();
+    while (first != beyond) {
+      remove(*first);
+      ++first;
+    }
+    return n - number_of_vertices();
+  }
+
 private:
   typedef Facet Edge_2D;
   void remove_2D(Vertex_handle v);

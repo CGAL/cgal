@@ -1,3 +1,6 @@
+Version 1.170 (22 September 03)
+- Added remove(first, beyond) to Delaunay.
+
 Version 1.169 (18 September 03)
 - New headers.
 

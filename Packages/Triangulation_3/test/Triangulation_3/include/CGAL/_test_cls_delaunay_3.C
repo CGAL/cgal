@@ -394,16 +394,14 @@ _test_cls_delaunay_3(const Triangulation &)
       std::endl; 
     Cls Tdel( T3_0 );
     
-    std::vector<Vertex_handle> vertices(Tdel.number_of_vertices());
-    int i = 0;
-    for(Finite_vertices_iterator vi=Tdel.finite_vertices_begin();
-	vi!=Tdel.finite_vertices_end();vi++) {
-      vertices[i++] = vi;
-    }
-    int n = Tdel.number_of_vertices();
-    for(int j = 0; j < n; j++)
-      Tdel.remove(Vertex_handle(vertices[j]));
+    std::vector<Vertex_handle> vertices;
+    for (Finite_vertices_iterator vi = Tdel.finite_vertices_begin();
+	 vi != Tdel.finite_vertices_end(); ++vi)
+      vertices.push_back(vi);
 
+    int n = Tdel.number_of_vertices();
+    int m = Tdel.remove(vertices.begin(), vertices.end());
+    assert(m == n - Tdel.number_of_vertices());
     assert(Tdel.is_valid(false));
     std::cout << "    successfull" << std::endl; 
   }
