@@ -156,7 +156,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
 {
-  typename DirectionC3<R CGAL_CTAG>::Vector_3 v = d.to_vector();
+  typename R::Vector_3 v = d.to_vector();
   switch(os.iword(IO::mode)) {
     case IO::ASCII :
       return os << v.x() << ' ' << v.y()  << ' ' << v.z();
