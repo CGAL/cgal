@@ -34,7 +34,6 @@ template <class NT>
 class Circ_Curve {
 
 public:
-  typedef Lazy_intersection_tag                 Intersection_category;
   typedef Cartesian<NT>             Kernel;
   typedef typename Kernel::Point_2  Point_2;
   typedef typename Kernel::Circle_2 Circle_2;
@@ -114,7 +113,7 @@ private:
 template <class _NT>
 class Arr_circles_real_traits {
 public:
-  
+  typedef Lazy_intersection_tag      Intersection_category;
   typedef _NT                        NT;
 
   //the difference between Curve and X_curve is semantical only,
