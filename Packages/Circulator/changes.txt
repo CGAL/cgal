@@ -1,5 +1,11 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.17 (26 july 01)
+- remove from the doc duplicated included example files
+- fixed the \ccIncludeExampleCode commands accordinggly
+- move the file doc_tex/support/Circulator/Circulator_stl.tex 
+             to doc_tex/use_of_stl
+
 3.16 (25 February 01)
 - Remove warnings.
 
