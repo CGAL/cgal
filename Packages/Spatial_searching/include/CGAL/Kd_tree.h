@@ -208,7 +208,7 @@ public:
     return built_;
   }
 
-  bool invalidate_built()
+  void invalidate_built()
   {
     if(is_built()){
       c.clear();
@@ -314,7 +314,6 @@ public:
     s << "Number of nodes: " 
       << tree_root->num_nodes() << std::endl;
     s << " Tree depth: " << tree_root->depth() << std::endl;
-    //    tree_root->bucket_size();
     return s;
   }
 
