@@ -1,3 +1,6 @@
+1.32 
+- Remove redundant $CGAL_LD_FLAGS in "create_makefile -q".
+
 1.31 -rursu
 Added create_internal_release script in developer_scripts
 This script is used to create an internal release from All checked out package on the CVS.

@@ -118,9 +118,8 @@ create_makefile()
   fi
   echo    "          \$(LONG_NAME_PROBLEM_LDFLAGS) \\"
   if [ -n "$QT" ] ; then
-    echo    "          \$(CGAL_QT_LDFLAGS) \\"
-  fi
-  if [ -n "$GEOWIN" ] ; then
+    echo    "          \$(CGAL_QT_LDFLAGS)"
+  elif [ -n "$GEOWIN" ] ; then
     echo    "          \$(CGAL_GEOWIN_LDFLAGS)"
   elif [ -z "$LEDAWINDOWS" ] ; then
     echo    "          \$(CGAL_LDFLAGS)"
