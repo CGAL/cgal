@@ -430,10 +430,10 @@ transform(const Transformation& t, const Polygon_2<_Traits,_Container>& p);
 //-----------------------------------------------------------------------//
 
 template <class _Traits, class _Container>
-istream &operator>>(istream &is, Polygon_2<_Traits,_Container>& p);
+std::istream &operator>>(std::istream &is, Polygon_2<_Traits,_Container>& p);
 
 template <class _Traits, class _Container>
-ostream &operator<<(ostream &os, const Polygon_2<_Traits,_Container>& p);
+std::ostream &operator<<(std::ostream &os, const Polygon_2<_Traits,_Container>& p);
 
 //-----------------------------------------------------------------------//
 //                         implementation
