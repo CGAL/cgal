@@ -1,8 +1,7 @@
 // ============================================================================
 //
 // Copyright (c) 1997-2002 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
+/// This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
@@ -38,6 +37,7 @@
 #include <CGAL/rational_rotation.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_3/Visualizor.h>
 #include <CGAL/Nef_polyhedron_3.h>
 
@@ -54,25 +54,23 @@ using std::endl;
 using std::strcmp;
 using std::exit;
 
-// #define CGAL_USE_EXTENDED_KERNEL
+#define CGAL_USE_EXTENDED_KERNEL
 
 // typedef CGAL::Gmpz                         NT;
 typedef leda_integer                       NT;
 
 #ifdef CGAL_USE_EXTENDED_KERNEL
 typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
-const char *kernelversion = "Extended homogeneous 3d kernel (tm).";
+const char *kernelversion = "Extended homogeneous 3d kernel.";
 #else // #elif CGAL_USE_SIMPLE_KERNEL
-typedef CGAL::Simple_homogeneous<NT>       Kernel;
-//typedef CGAL::Lazy_exact_nt<NT>  LNT;
-//typedef CGAL::Simple_homogeneous<LNT>  Kernel;
-
-const char *kernelversion = "Simple homogeneous kernel (tm).";
+// typedef CGAL::Lazy_exact_nt<NT>  LNT;
+// typedef CGAL::Simple_homogeneous<LNT>  Kernel;
+typedef CGAL::Simple_homogeneous<NT> Kernel;
+const char *kernelversion = "Simple homogeneous kernel.";
 #endif
 
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
-typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
-// typedef CGAL::NPX<SNC_items>  Nef_polyhedron;
+typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
 // typedef Nef_polyhedron::Explorer           Explorer;
 typedef std::vector< Nef_polyhedron>       Nef_vector;
 typedef Nef_vector::iterator               Iterator;
@@ -107,7 +105,7 @@ void help_message( std::ostream& out) {
 "    loadoff <filename>     loads file in OFF format and pushes it on stack.\n"
 "    saveoff <filename>     saves top in OFF format if top is simple.\n"
 "    dump                   dump Ascii description of top to stderr.\n"
-"    sorted                 dump standard Ascii description of top to stderr. \n"
+      // "    sorted                 dump standard Ascii description of top to stderr. \n"
 "    vis                    visualize it in OpenGL if available\n"
 "The following commands take their arguments from the stack, where the\n"
 "top of the stack is the first argument. They remove those arguments from\n"
@@ -253,9 +251,23 @@ int eval( int argc, char* argv[]) {
 	    }
         } else if ( strcmp( argv[i], "loadnef3") == 0) {
             if ( assert_argc( argv[i], 1, argc - i - 1)) {
-	      Nef_polyhedron nf(argv[i+1]);
-	      nef.push_back( nf);
-	      ++i;
+	      std::ifstream in(argv[i+1]);
+	      if ( ! in) {
+		cerr << "Error: loadoff cannot open file '" << argv[i+1]
+		     << "'." << endl;
+		error = 5;
+	      } else {	     
+		Nef_polyhedron nf;
+		in >> nf;
+		if ( ! in) {
+		  cerr << "Error: loadnef3 cannot read nef3 file '" 
+		       << argv[i+1] << "' correctly." << endl;
+		  error = 5;
+		} else {
+		  nef.push_back( nf);
+		  ++i;
+		}
+	      }
             } else {
 	      error = 4;
             }
@@ -320,7 +332,9 @@ int eval( int argc, char* argv[]) {
                 error = 2;
                 continue;
             }
-            nef.back().dump(false, std::cout);
+	    //	    nef.back().dump(false, std::cout);
+	    std::cout << nef.back();
+	    /*
         } else if ( strcmp( argv[i], "sorted") == 0) {
             if ( nef.size() == 0) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
@@ -328,6 +342,7 @@ int eval( int argc, char* argv[]) {
                 continue;
             }
             nef.back().dump(true, std::cout);
+	    */
         } else if ( strcmp( argv[i], "vis") == 0) {
             if ( nef.size() == 0) {
                 cerr << "Error: '" << argv[i] << "' on empty stack." << endl;

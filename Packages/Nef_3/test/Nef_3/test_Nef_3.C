@@ -33,6 +33,7 @@
 #include <CGAL/Extended_homogeneous_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
@@ -148,7 +149,7 @@ private:
     strcpy(fullname, datadir);
     strcat(fullname, name);
     std::ofstream out("data/temp.nef3");
-    N.dump(true, out);
+    out << N;
     bool b = are_files_equal("data/temp.nef3",fullname);
     delete [] fullname;
     return b;
@@ -167,7 +168,10 @@ private:
     char* fullname = new char[strlen(datadir)+strlen(name)+1];
     strcpy(fullname, datadir);
     strcat(fullname, name);
-    Nef_polyhedron tmp(fullname);
+    ifstream in(fullname);
+    Nef_polyhedron tmp;
+    CGAL_assertion_msg(in,"could not open file");
+    in >> tmp;
     delete[] fullname;
     return tmp;
   }
@@ -230,7 +234,7 @@ private:
     CGAL_assertion(does_nef3_equals_file(N,"topology.nef3.SH"));
 
     if(Infi_box::extended_kernel()) {
-      N = Nef_polyhedron("data/topology.nef3.EH");
+      N = load_nef3("topology.nef3.EH");
       CGAL_assertion(N.is_valid(0,0));
       CGAL_assertion(does_nef3_equals_file(N,"topology.nef3.EH"));
     }

@@ -17,14 +17,16 @@ MY_DIR = /home/hachenb/CGAL
 HOME = /KM/guests/granados
 LOCAL = $(MY_DIR)/local/include
 NEF3 = $(MY_DIR)/Nef_3/include 
+NEF2 = $(MY_DIR)/Nef_2/include 
 NEFS2 = $(MY_DIR)/Nef_S2/include
 WALKER = $(HOME)/projects/SNC_walker
 K3TREE = $(MY_DIR)/Nef_3/k3tree/include
-BBOX = $(MY_DIR)/Nef_3/bbox/include
+BBOX = $(MY_DIR)/Box_intersection_d/include
 
-CUSTOM_CXXFLAGS = -I$(LOCAL) -I$(NEF3) -I$(NEFS2) -I$(BBOX) -I$(K3TREE)
+CUSTOM_CXXFLAGS = -I$(NEF2) -I$(NEF3) -I$(NEFS2) -I$(BBOX) -I$(K3TREE)
 
-CGAL_CXX = g++
+#CGAL_CXX = g++
+CGAL_CXX = g++ -O2 -DNDEBUG
 
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
