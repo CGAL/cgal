@@ -1,4 +1,4 @@
-#!/sw/bin/perl5
+#!/sw/bin/perl
 
 @source_files = glob("*.C");
 @object_files = map {substr($_, 0,-2) . '$(OBJ_EXT)'} @source_files;
@@ -58,8 +58,6 @@ workaround_4_irix.o:
 workaround_4_irix6.o:
 	$(CGAL_CC) $(CXXFLAGS) -c Interval_arithmetic/workaround_4_irix6.s
 
-workaround_4_ms$(OBJ_EXT):
-	cp Interval_arithmetic/workaround_4_ms.obj workaround_4_ms$(OBJ_EXT)
 
 clean:
 	rm -f $(CGAL_LIB) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
@@ -96,8 +94,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS) \
-           -g
+CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    object files
@@ -128,8 +125,6 @@ workaround_4_irix.o:
 workaround_4_irix6.o:
 	$(CGAL_CC) $(CXXFLAGS) -c Interval_arithmetic/workaround_4_irix6.s
 
-workaround_4_ms$(OBJ_EXT):
-	cp Interval_arithmetic/workaround_4_ms.obj workaround_4_ms$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
 #                    suffix rules
