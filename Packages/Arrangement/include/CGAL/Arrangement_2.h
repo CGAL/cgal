@@ -8,12 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.2-I-26 $
-// release_date  : $CGAL_Date: 2000/07/11 $
+// release       : $CGAL_Revision: CGAL-2.3-I-44 $
+// release_date  : $CGAL_Date: 2001/03/09 $
 //
 // file          : include/CGAL/Arrangement_2.h
-// package       : arr (1.41)
-// maintainer    : Sigal Raab <raab@math.tau.ac.il>
+// package       : Arrangement (1.77)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il> Eti Ezra <estere@post.tau.ac.il> SHai Hirsh <shaihi@post.tau.ac.il> 
 // author(s)     : Iddo Hanniel
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
@@ -52,6 +52,10 @@
 #else
 #include <CGAL/Arr_pmwx.h>
 #endif
+
+#ifndef CGAL_IO_ARR_FILE_SCANNER_H
+#include <CGAL/IO/Arr_file_scanner.h>
+#endif // CGAL_IO_ARR_FILE_SCANNER_H
 
 
 #include <vector>
@@ -920,9 +924,32 @@ Arrangement_2(Traits_wrap *tr_ptr, Pm_point_location_base<Self> *pl_ptr)
   if (use_delete_traits)
     delete traits;
 }
- 
+
+/////////////////////////////////////////////////////////////////////////////
+//                  Reading Arrangement functions. 
+////////////////////////////////////////////////////////////////////////////
+bool read (std::istream &in)
+{
+  clear();
+
+  Arr_file_scanner<Self>  scanner(in);
+  
+  return scan_arr(scanner);
+}    
+
+template <class Scanner>
+bool read (std::istream &in, Scanner& scanner)
+{
+  clear(); 
+  
+  return scan_arr(scanner);
+}  
+
+
 Traits &get_traits(){return *traits;}
 const Traits &get_traits() const {return *traits;}
+
+const Pmwx &get_planar_map() const {return pm;}
 
 public:
 
@@ -1778,6 +1805,26 @@ void remove_curve(Curve_iterator cit)
 }
 
 ///////////////////////////////////////////////////////////////
+//            CLEAR
+///////////////////////////////////////////////////////////////
+void clear()
+{
+  pm.clear();
+
+  for (Curve_iterator cv_iter = curve_node_begin(); cv_iter != curve_node_end(); cv_iter++){
+    
+    // destroying all subcurves levels.
+    for (unsigned int i = 0; i < cv_iter->number_of_sc_levels(); i++)
+      cv_iter->levels[i].destroy();
+    
+    // destroying edge node level.
+    cv_iter->edge_level.destroy();
+  }
+  
+  curve_list.destroy();
+}
+
+///////////////////////////////////////////////////////////////
 //            UPDATE
 ///////////////////////////////////////////////////////////////
 void set_update(bool u) {
@@ -2254,6 +2301,289 @@ Subcurve_iterator replace(Subcurve_iterator sc,
 }
 
 ///////////////////////////////////////////////////////////////////////////
+//                 Scanning Arrangement.
+///////////////////////////////////////////////////////////////////////// 
+private:
+template <class Scanner>
+bool  scan_arr (Scanner& scanner) 
+{ 
+  typedef typename Dcel::Vertex	                          D_vertex;
+  typedef typename Dcel::Halfedge                         D_halfedge;
+  typedef typename Dcel::Face	                          D_face;
+
+  typedef typename  Dcel::Vertex_iterator          D_vetrex_iterator;
+  typedef typename  Dcel::Vertex_const_iterator    D_vetrex_const_iterator;
+  typedef typename  Dcel::Halfedge_iterator        D_halfedge_iterator;
+  typedef typename  Dcel::Halfedge_const_iterator  D_halfedge_const_iterator;
+  typedef typename  Dcel::Face_iterator            D_face_iterator;
+  typedef typename  Dcel::Face_const_iterator      D_face_const_iterator;
+
+  typedef std::pair<std::size_t, std::size_t>      Index_pair;
+  
+  std::vector<Halfedge_handle> halfedges_vec;  // keeping a vector of halfedges (to access them easily by their indices).
+  
+  if ( ! scanner.in()) {
+    return false;
+  }
+
+  if (!pm.read(scanner.in(), scanner)){
+    std::cerr << "can't read planar map"<<std::endl;
+    scanner.in().clear( std::ios::badbit);
+    clear();
+    return false;
+  }
+
+  for (Halfedge_iterator h_iter = halfedges_begin(); h_iter != halfedges_end(); h_iter++)
+    halfedges_vec.push_back(h_iter);
+
+  std::list<std::list<Index_pair> > en_ovlp_child_indices_all_lists;
+
+  std::size_t   number_of_curves;
+  scanner.scan_index(number_of_curves);
+  if ( ! scanner.in()){
+    std::cerr << "can't read number of curves"<<std::endl;
+    scanner.in().clear( std::ios::badbit);
+    clear();
+    return false;
+  }
+
+  unsigned int i;
+  for (i = 0; i < number_of_curves; i++){
+    Curve_node* cn = new Curve_node;
+    scanner.scan_Curve_node(cn);
+
+    if ( ! scanner.in()){
+      std::cerr << "can't read curve node"<<std::endl;
+      scanner.in().clear( std::ios::badbit);
+      clear();
+      return false;
+    }
+
+    // reading subcurve node levels.
+    std::size_t   number_of_levels;
+    scanner.scan_index(number_of_levels);
+    if ( ! scanner.in()){
+      std::cerr << "can't read number of levels"<<std::endl;
+      scanner.in().clear( std::ios::badbit);
+      clear();
+      return false;
+    }
+
+    std::vector<std::vector<std::size_t> > begin_child_indices_table, end_child_indices_table;
+    //std::vector<std::vector<Subcurve_node*> > scn_table;
+    
+    unsigned int j;
+    for (j = 0; j < number_of_levels; j++){
+      // reading level j.
+      
+      std::size_t   number_of_subcurves;
+      scanner.scan_index(number_of_subcurves);
+      if ( ! scanner.in()){
+        std::cerr << "can't read number of subcurves"<<std::endl;
+        scanner.in().clear( std::ios::badbit);
+        clear();
+        return false;
+      }
+
+      In_place_list<Subcurve_node, true>  scn_list;
+
+      std::vector<std::size_t> begin_child_indices_vec, end_child_indices_vec;
+      //std::vector<Subcurve_node* > scn_vec;
+
+      for (unsigned int k = 0; k < number_of_subcurves; k++){
+        std::size_t   begin_child_index, end_child_index;
+        
+        scanner.scan_index(begin_child_index);
+        if ( ! scanner.in()){
+          std::cerr << "can't read begin child index"<<std::endl;
+          scanner.in().clear( std::ios::badbit);
+          clear();
+          return false;
+        }
+        scanner.scan_index(end_child_index);
+        if ( ! scanner.in()){
+          std::cerr << "can't read past end child index"<<std::endl;
+          scanner.in().clear( std::ios::badbit);
+          clear();
+          return false;
+        }
+        
+        begin_child_indices_vec.push_back(begin_child_index);
+        end_child_indices_vec.push_back(end_child_index);
+
+        Subcurve_node* scn = new Subcurve_node;
+        
+        scanner.scan_Subcurve_node(scn);
+        if ( ! scanner.in()){
+          std::cerr << "can't read subcurve node"<<std::endl;
+          scanner.in().clear( std::ios::badbit);
+          clear();
+          return false;
+        }
+
+        scn->ftr = cn;
+
+        scn_list.push_back(*scn);
+
+        //scn_vec.push_back(scn);  // update the tmp vector for finding scn pointers according indices.
+      } 
+      
+      begin_child_indices_table.push_back(begin_child_indices_vec);
+      end_child_indices_table.push_back(end_child_indices_vec);
+
+      (cn->levels).push_back(scn_list);
+    }
+    
+    // now scanning edge nodes.
+    std::size_t     number_of_edge_nodes;
+    scanner.scan_index(number_of_edge_nodes);
+    if ( ! scanner.in()){
+      std::cerr << "can't read numberof edge nodes"<<std::endl;
+      scanner.in().clear( std::ios::badbit);
+      clear();
+      return false;
+    }
+
+    std::list<Index_pair>  en_ovlp_child_indices_list;
+
+    for (j = 0; j < number_of_edge_nodes; j++){
+      //std::vector<Index_pair>  en_ovlp_child_indices_vec;
+      Edge_node* en = new Edge_node;
+      std::size_t   halfedge_index;
+      std::size_t   cn_ovlp_index, en_ovlp_index;
+
+      // scanning the past to end child of edge node (this pointer indicates the overlapping edge nodes).
+      scanner.scan_index(cn_ovlp_index);
+      if ( ! scanner.in()){
+        std::cerr << "can't read begin overlapping index"<<std::endl;
+        scanner.in().clear( std::ios::badbit);
+        clear();
+        return false;
+      }
+     
+      scanner.scan_index(en_ovlp_index);
+      if ( ! scanner.in()){
+        std::cerr << "can't read past end overlapping index"<<std::endl;
+        scanner.in().clear( std::ios::badbit);
+        clear();
+        return false;
+      }
+      
+      en_ovlp_child_indices_list.push_back(Index_pair(cn_ovlp_index, en_ovlp_index));
+ 
+      scanner.scan_index(halfedge_index);
+      if ( ! scanner.in()){
+        std::cerr << "can't read halfedge index"<<std::endl;
+        scanner.in().clear( std::ios::badbit);
+        clear();
+        return false;
+      }
+      
+      scanner.scan_Edge_node(en);
+      if ( ! scanner.in()){
+        std::cerr << "can't read edge node"<<std::endl;
+        scanner.in().clear( std::ios::badbit);
+        clear();
+        return false;
+      }
+
+      // update the halfedge feild.
+      en->hdg = halfedges_vec[halfedge_index];
+      //en->set_curve(halfedges_vec[halfedge_index]->curve());  // may change it later. (not generic).
+      en->ftr = cn;
+
+      // update the pointer in halfedge and its twin to edge_nodes.
+      halfedges_vec[halfedge_index]->set_edge_node(en);
+      halfedges_vec[halfedge_index]->twin()->set_edge_node(en);
+
+      // updating cn list.
+      cn->edge_level.push_back(*en);  
+    }
+    
+    en_ovlp_child_indices_all_lists.push_back(en_ovlp_child_indices_list);
+
+    // updating cn begin and end children pointers.
+    if (number_of_levels){
+      cn->begin_child = &(*(cn->levels[0].begin()));
+      cn->past_end_child = &(*(cn->levels[0].end()));
+    }
+    else{
+      cn->begin_child = cn->edge_level.begin().operator->();
+      cn->past_end_child = cn->edge_level.end().operator->();
+    }
+    
+    // now updating begin and past end children pointers of each subcurve node and also its pointer to its father.
+    for (j = 0; j < number_of_levels; j++){
+      unsigned int k = 0, l = 0, m = 0;
+      Subcurve_iterator  scn_child_iter;
+      Edge_iterator en_child_iter = cn->edges_begin();
+ 
+      if (j+1 < number_of_levels)  // else - we use the en_child_iter.
+        scn_child_iter = cn->level_begin(j+1);
+
+      for (Subcurve_iterator scn_iter = cn->level_begin(j); scn_iter != cn->level_end(j); scn_iter++, k++){
+        if (j+1 < number_of_levels){ // not including the last one.
+          std::size_t begin_child_index = begin_child_indices_table[j][k];
+          
+          for (; l < begin_child_index &&  scn_child_iter != cn->level_end(j+1); scn_child_iter++, l++);
+          scn_iter->begin_child = &(*scn_child_iter);
+
+          std::size_t past_end_child_index = end_child_indices_table[j][k];
+          // running the pointer and also updating father field.
+          for (; l < past_end_child_index && scn_child_iter != cn->level_end(j+1); scn_child_iter++, l++){
+            scn_child_iter->ftr = scn_iter.operator->();
+          }
+            
+          scn_iter->past_end_child = &(*scn_child_iter);
+
+        }
+        else { //the last one should point to the edge nodes.
+          std::size_t begin_child_index = begin_child_indices_table[j][k];
+          
+          for(; m < begin_child_index && en_child_iter != cn->edges_end();  en_child_iter++, m++) ;
+          scn_iter->begin_child = &(*en_child_iter);
+
+          std::size_t past_end_child_index = end_child_indices_table[j][k];
+          // running the pointer and also updating father field.
+          for(; m < past_end_child_index && en_child_iter != cn->edges_end();  en_child_iter++, m++){
+            en_child_iter->ftr = scn_iter.operator->();
+          }
+          scn_iter->past_end_child = &(*en_child_iter);
+        }
+      }
+    }    
+    curve_list.push_back(*cn);
+  }
+
+  // now updating edge node childs, which indicates overlapping edge nodes.
+  Curve_iterator cn_iter = curve_node_begin();
+  std::list <std::list<Index_pair> >::iterator all_lists_iter = en_ovlp_child_indices_all_lists.begin();
+
+  for (;all_lists_iter != en_ovlp_child_indices_all_lists.end() && cn_iter != curve_node_end(); all_lists_iter++, cn_iter++){
+    
+    Edge_iterator en_iter = cn_iter->edges_begin();
+    for (std::list<Index_pair>::iterator  list_iter = (*all_lists_iter).begin(); list_iter !=  (*all_lists_iter).end() && 
+           en_iter != cn_iter->edges_end(); list_iter++, en_iter++){
+      std::size_t cn_ovlp_index = list_iter->first;
+      std::size_t en_ovlp_index = list_iter->second;
+      
+      unsigned int j;
+      Curve_iterator tmp_cn_iter;
+      for (tmp_cn_iter = curve_node_begin(), j = 0; tmp_cn_iter != curve_node_end() && j < cn_ovlp_index; tmp_cn_iter++, j++);
+      // now tmp_cn_iter is the cn_ovlp_index'th curve node.
+      Edge_iterator tmp_en_iter;
+      for (tmp_en_iter = tmp_cn_iter->edges_begin(), j = 0; tmp_en_iter != tmp_cn_iter->edges_end() && j < en_ovlp_index; 
+           tmp_en_iter++, j++);
+      // now tmp_en_iter is the en_ovlp_index'th edge node.
+
+      en_iter->past_end_child = tmp_en_iter.operator->();
+    }
+  }
+ 
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////
 private:
 bool use_delete_pl;
 bool use_delete_traits;
@@ -2273,6 +2603,8 @@ In_place_list<Subcurve_node,true> curve_list;
 //for UPDATE mode
 bool do_update;
 Curve_iterator last_updated;
+
+
 
 /*
   //debug
@@ -2310,3 +2642,7 @@ Curve_iterator last_updated;
 CGAL_END_NAMESPACE
 
 #endif
+
+
+
+
