@@ -259,6 +259,47 @@ Filtered_exact<CT,ET,Dynamic,Protected,Cache>
 max (const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&,
      const Filtered_exact<CT, ET, Dynamic, Protected, Cache>&);
 
+
+// Polynomial
+
+template <typename> class Polynomial;
+
+template <typename ET>
+double to_double(const Polynomial<ET> &);
+
+template <typename ET>
+std::pair<double,double> to_interval(const Polynomial<ET> &);
+
+template <typename ET>
+Sign sign(const Polynomial<ET> &);
+
+template <typename ET>
+Comparison_result
+compare(const Polynomial<ET> &, const Polynomial<ET> &);
+
+template <typename ET>
+Polynomial<ET> abs(const Polynomial<ET> &);
+
+template <typename ET>
+Polynomial<ET> square(const Polynomial<ET> &);
+
+template <typename ET>
+Polynomial<ET> sqrt(const Polynomial<ET> &);
+
+template <typename ET>
+Polynomial<ET> min(const Polynomial<ET> &, const Polynomial<ET> &);
+
+template <typename ET>
+Polynomial<ET> max(const Polynomial<ET> &, const Polynomial<ET> &);
+
+template <typename ET>
+bool is_finite(const Polynomial<ET> &);
+
+template <typename ET>
+bool is_valid(const Polynomial<ET> &);
+
+
+
 #ifdef CGAL_USE_GMP
 // Gmpz
 

@@ -162,7 +162,21 @@ protected:
   typedef typename Kernel::Compare_slope_2      Compare_slope_2;
   typedef typename Kernel::Has_on_2             Has_on_2;
     
-public:
+  public:
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Kernel::compare_xy_2_object;
+  using Kernel::compare_x_2_object;
+  using Kernel::compare_y_2_object;
+  using Kernel::compare_y_at_x_2_object;
+  using Kernel::is_vertical_2_object;
+  using Kernel::has_on_2_object;
+  using Kernel::compare_slope_2_object;
+  using Kernel::equal_2_object;
+  using Kernel::intersect_2_object;
+  using Kernel::construct_line_2_object;
+#endif
+
 
   /*!
    * Default constructor.
@@ -946,6 +960,11 @@ class Segment_cached_2 :
   typedef typename Kernel_::Segment_2             Segment_2;
   typedef typename Kernel_::Point_2               Point_2;
   typedef typename Kernel_::Line_2                Line_2;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Base::ps;
+  using Base::pt;
+#endif
 
   public:
 

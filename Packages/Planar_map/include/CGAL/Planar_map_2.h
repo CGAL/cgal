@@ -120,6 +120,18 @@ public:
   typedef Point_2                               Point;
   typedef X_monotone_curve_2                    X_curve;
 
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using TPM::halfedges_begin;
+  using TPM::halfedges_end;
+  using TPM::vertices_begin;
+  using TPM::vertices_end;
+  using TPM::number_of_faces;
+  using TPM::unbounded_face;
+  using TPM::u_face;
+  using TPM::d;
+#endif
+
   // Implementation Types
   // --------------------
 protected:

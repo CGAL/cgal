@@ -64,8 +64,26 @@ protected:
   typedef typename Kernel::Equal_2              Equal_2;
   typedef typename Kernel::Orientation_2        Orientation_2;
   typedef typename Kernel::Construct_object_2   Construct_object_2;
-
+ 
 public:
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Kernel::construct_opposite_segment_2_object;
+  using Kernel::equal_2_object;
+  using Kernel::construct_vertex_2_object;
+  using Kernel::intersect_2_object;
+  using Kernel::assign_2_object;
+  using Kernel::compare_xy_2_object;
+  using Kernel::compare_x_2_object;
+  using Kernel::compare_y_2_object;
+  using Kernel::construct_object_2_object;
+  using Kernel::orientation_2_object;
+  using Kernel::is_vertical_2_object;
+  using Kernel::has_on_2_object;
+  using Kernel::construct_line_2_object;
+  using Kernel::construct_segment_2_object;
+#endif
+
 
   /*!
    * Default constructor.

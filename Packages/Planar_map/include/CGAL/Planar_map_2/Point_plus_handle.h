@@ -66,6 +66,11 @@ class Point_plus_handle :
 {
   typedef Handle_for<Point_plus_rep<traits, vertexHandle> > 
                                                 Handle_for_Point_plus_rep;
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Handle_for_Point_plus_rep::ptr;
+#endif
+
 public:
   typedef traits                                Traits;
   typedef typename Traits::Point                Point;

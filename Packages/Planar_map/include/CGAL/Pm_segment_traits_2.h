@@ -67,8 +67,24 @@ protected:
   typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
   typedef typename Kernel::Less_x_2             Less_x_2;
   typedef typename Kernel::Equal_2              Equal_2;
+
     
 public:
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Kernel::compare_x_2_object;
+  using Kernel::is_vertical_2_object;
+  using Kernel::construct_vertex_2_object;
+  using Kernel::compare_y_at_x_2_object;
+  using Kernel::compare_xy_2_object;
+  using Kernel::has_on_2_object;
+  using Kernel::compare_slope_2_object;
+  using Kernel::construct_point_2_object;
+  using Kernel::construct_vector_2_object;
+  using Kernel::equal_2_object;
+  using Kernel::construct_opposite_segment_2_object;
+#endif
+    
   // Creation
   Pm_segment_traits_2() {}
 

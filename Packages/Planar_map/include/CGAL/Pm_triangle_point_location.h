@@ -66,7 +66,7 @@ public:
   // Pm Types
   //----------------------------------------------------------
 
-  typedef typename Planar_map::Traits               Traits;
+  typedef typename Planar_map_::Traits               Traits;
   //typedef typename Traits::FT                       FT;
   //typedef Cartesian<FT>                             Kernel;
   typedef typename Traits::Kernel                     Kernel;

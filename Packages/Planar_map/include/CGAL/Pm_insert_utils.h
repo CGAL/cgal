@@ -35,6 +35,9 @@ class Pm_curve_node : public Handle_for< typename SweepLineTraits_2::X_curve >
 
   typedef Point_plus_               Point_plus;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Handle_for_curve::ptr;
+#endif
 public:
 
   Pm_curve_node(const X_curve& cv, const Point_plus& p, Traits* traits_) : 

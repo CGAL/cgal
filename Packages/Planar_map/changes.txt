@@ -1,3 +1,6 @@
+21 September 2004
+- Changes for g++-3.4
+
 17 September 2004 Andreas Fabri
 - Added missing initialization in Pm_trapezoid_dag_point_location, and renamed local variable which had the same name as a data member
 
