@@ -1,10 +1,13 @@
 #ifndef CGAL_BOX_INTERSECTION_D_BOX_TRAITS_H
 #define CGAL_BOX_INTERSECTION_D_BOX_TRAITS_H
 
+#include <CGAL/basic.h>
+
 #include <algorithm>
 #include <functional>
 #include <limits>
 
+CGAL_BEGIN_NAMESPACE
 
 // trivial default implementations
 class UniqueNumbers {
@@ -147,5 +150,7 @@ struct Default_Box_Traits : public BoxAdapter {
 template< class BoxAdapter >
 unsigned int
 Default_Box_Traits<BoxAdapter>::cutoff = 3000;
+
+CGAL_END_NAMESPACE
 
 #endif

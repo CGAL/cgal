@@ -1,6 +1,7 @@
 #ifndef CGAL_BOX_INTERSECTION_D_SEGMENT_TREE_H
 #define CGAL_BOX_INTERSECTION_D_SEGMENT_TREE_H
 
+#include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/one_way_scan.h>
 #include <CGAL/Box_intersection_d/modified_two_way_scan.h>
 
@@ -10,16 +11,12 @@
 #include <cmath>
 #include <functional>
 #include <cassert>
-
-#ifdef USE_MY_NUMERIC_LIMITS
-  #include <CGAL/Box_intersection_d/limits>
-#else
-  #include <limits>
-#endif
+#include <limits>
 
 
+CGAL_BEGIN_NAMESPACE
 
-#define DEBUG 0
+#define BOX_INTERSECTION_DEBUG 0
 
 template< class RandomAccessIter, class Traits >
 RandomAccessIter
@@ -73,9 +70,7 @@ split_points( RandomAccessIter begin, RandomAccessIter end, Traits traits,
 }
 
 
-//#define DEBUG 0
-
-#if DEBUG
+#if BOX_INTERSECTION_DEBUG
  static int level = -1;
  #define DUMP(msg) { \
    for( unsigned int i = level; i; --i ) \
@@ -136,7 +131,7 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     typedef typename Traits::Lo_Less Lo_Less;
     typedef typename Traits::Hi_Greater Hi_Greater;
 
-#if DEBUG
+#if BOX_INTERSECTION_DEBUG
     Counter<int> bla( level );
     //DUMP("----------------===========[ new node ]============-------------")
     DUMP("range: [" << lo << "," << hi << ") dim " << dim << std::endl )
@@ -245,5 +240,7 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     segment_tree( i_begin, i_end, p_begin, p_end,
                   inf, sup, callback, traits, dim, false );
 }
+
+CGAL_END_NAMESPACE
 
 #endif

@@ -1,5 +1,9 @@
+//#include "Box_intersection_d.h"
 #include <CGAL/Box_intersection_d/box_traits.h>
+
+#include <CGAL/Box_intersection_d/all_pairs.h>
 #include <CGAL/Box_intersection_d/one_way_scan.h>
+
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
 #include <CGAL/Box_intersection_d/segment_tree.h>
@@ -7,6 +11,7 @@
 #include "Timer.h"
 
 #include <iostream>
+#include <sstream>
 #include <cstdlib>
 #include <iterator>
 #include <vector>
@@ -16,26 +21,28 @@
 
 using namespace std;
 
-typedef double NumberType;
-typedef Default_Bbox_d< NumberType, 3 > Box;
-typedef Default_Bbox_d_Adapter< Box > BoxAdapter;
-typedef Default_Box_Traits< BoxAdapter > Traits;
-typedef vector< Box > BoxContainer;
-typedef pair< Box, Box > BoxPair;
+typedef CGAL::Default_Bbox_d< int, 3 >         Box;
+typedef CGAL::Default_Bbox_d_Adapter< Box >    BoxAdapter;
+typedef CGAL::Default_Box_Traits< BoxAdapter > Traits;
+typedef vector< Box >     BoxContainer;
+typedef pair< Box, Box >  BoxPair;
 typedef vector< BoxPair > ResultContainer;
 
 
-static void fill_boxes( unsigned int n, BoxContainer& boxes ) {
-    unsigned int maxEdgeLength = (int) pow(n, (double)2/3);
+static void readBoxesFromFile( FILE *infile, BoxContainer& boxes )
+{
+  int numBoxes, numDim;
+  int boxNum, dim;
 
-    for( unsigned int i = 0; i < n; ++i ) {
-        NumberType lo[3], hi[3];
-        for( unsigned int d = 0; d < 3; ++d ) {
-            lo[d] = (NumberType)(drand48() * (n - maxEdgeLength));
-            hi[d] = lo[d] + 1 + (NumberType)(drand48() * maxEdgeLength);
-        }
-        boxes.push_back( Box( &lo[0], &hi[0]) );
-    }
+  fscanf(infile, "%d %d\n", &numBoxes, &numDim);
+  vector< int > lo( numDim ), hi( numDim );
+  /* Read boxes */
+  for(boxNum = 0; boxNum < numBoxes; boxNum++) {
+      for(dim = 0; dim < numDim; dim++)
+          fscanf( infile, "[%d, %d) ", &lo[dim], &hi[dim] );
+      boxes.push_back( Box( &lo[0], &hi[0] ) );
+      fscanf(infile, "\n");
+  }
 }
 
 static void assertIntersection( const Box& a, const Box& b ) {
@@ -48,7 +55,6 @@ static void assertIntersection( const Box& a, const Box& b ) {
     }
 }
 
-
 template< class Storage >
 struct StorageCallback {
     unsigned int counter;
@@ -60,9 +66,6 @@ struct StorageCallback {
         storage.push_back( make_pair( a, b ) );
     }
 };
-
-
-
 
 bool
 operator==( const Box& a, const Box& b ) {
@@ -82,12 +85,10 @@ operator==( const BoxPair& a, const BoxPair& b ) {
 template< class Storage >
 unsigned int countMissingItems( Storage& a, Storage& b ) {
     unsigned int missing = 0;
-    for( typename Storage::iterator it = a.begin(); it != a.end(); ++it ) {
-        if( find( b.begin(), b.end(), *it ) == b.end() ) {
-            ++missing;
-            //cout << it->first << it->second << endl;
-        }
-    }
+    for( typename Storage::iterator it = a.begin(); it != a.end(); ++it )
+        for( typename Storage::iterator it2 = b.begin(); it2 != b.end(); ++it2 )
+            if( *it == *it2 )
+                ++missing;
     return missing;
 }
 
@@ -106,43 +107,44 @@ unsigned int countDuplicates( Storage& storage ) {
 }
 
 static void
-test_n( unsigned int n )
+test( const char* filename1, const char* filename2 )
 {
     BoxContainer boxes1, boxes2;
-    ResultContainer result_scanner, result_tree;
-    cout << "generating random box sets with size " << n << " ... " << flush;
-    fill_boxes( n, boxes1 );
-    fill_boxes( n, boxes2 );
+    ResultContainer result_all_pairs, result_tree;
+    FILE *infile1, *infile2;
+    infile1 = fopen( filename1, "r");
+    infile2 = fopen( filename2, "r");
+
+    readBoxesFromFile( infile1, boxes1 );
+    readBoxesFromFile( infile2, boxes2 );
+
     cout << endl;
     StorageCallback< ResultContainer >
-        callback1( result_scanner ),
+        callback1( result_all_pairs ),
         callback2( result_tree );
 
-    cout << "one way scan ... " << flush;
+    cout << "all pairs ...... " << flush;
     Timer timer;
     timer.start();
-    one_way_scan( boxes1.begin(), boxes1.end(),
-                  boxes2.begin(), boxes2.end(), callback1, Traits(), 2 );
-    one_way_scan( boxes2.begin(), boxes2.end(),
-                  boxes1.begin(), boxes1.end(), callback1, Traits(), 2 );
+    CGAL::all_pairs( boxes1.begin(), boxes1.end(),
+                     boxes2.begin(), boxes2.end(), callback1, Traits(), 2 );
     timer.stop();
     cout << "got " << callback1.counter << " intersections in "
-         << timer.t << " seconds."
-         << endl;
+         << timer.t << " seconds." << endl;
 
     cout << "segment tree ... " << flush;
     timer.reset();
     timer.start();
+    unsigned int n = boxes1.size();
     Traits::cutoff = n < 2000 ? 6 : n / 100;
-    //Traits::cutoff = 5;
-    segment_tree( boxes1.begin(), boxes1.end(),
-                  boxes2.begin(), boxes2.end(), callback2, Traits(), 2 );
+    CGAL::segment_tree( boxes1.begin(), boxes1.end(),
+                        boxes2.begin(), boxes2.end(), callback2, Traits(), 2 );
     timer.stop();
     cout << "got " << callback2.counter << " intersections in "
          << timer.t << " seconds." <<endl;
 
     if( callback1.counter != callback2.counter ) {
-        unsigned int missing    = countMissingItems( result_scanner,
+        unsigned int missing    = countMissingItems( result_all_pairs,
                                                      result_tree );
         unsigned int duplicates = countDuplicates( result_tree );
         cout << "!! failed !! " << missing  << " missing and "
@@ -151,11 +153,17 @@ test_n( unsigned int n )
     }
     else
         cout << "--- passed --- " << endl;
+    fclose( infile1 );
+    fclose( infile2 );
 }
 
 
 int main( int argc, char ** argv ) {
-    for( unsigned int n = 8; n < 500000; n = (int)(n * 1.3))
-        test_n( n );
+    for( unsigned int n = 1; n <= 6; ++n ) {
+        stringstream file1, file2;
+        file1 << "data/test" << n << "_set1.box" << ends;
+        file2 << "data/test" << n << "_set2.box" << ends;
+        test( file1.str().c_str(), file2.str().c_str() );
+    }
 }
 

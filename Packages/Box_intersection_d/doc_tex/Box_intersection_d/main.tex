@@ -1,0 +1,87 @@
+%\begin{twocolumn}
+\chapter*{Bounding Box Intersection}
+
+\section*{Introduction} 
+This chapter describes the functions provided in \cgal{} 
+to check large numbers of bounding boxes for intersection.
+
+Computing information about complex geometric primitives is often expensive. While researchers in computational geometry have discovered many asymptotically efficient algorithms for such problems, the algorithms are often of theoretical interest only, as they are hard to implement or slow if implemented. One general approach is to reduce the problem size enough so that a brute force method is feasible and fast. By putting axis-aligned bounding boxes around complicated primitives, we can compute, in a short amount of time, an approximate answer in the form of a small set of pairs with potential interaction.  We then refine our answer by looking inside the boxes, computing the exact answer for the original data.
+
+Many geometric problems can be restated in terms of box intersections since if the bounding boxes of two primitives intersect, we know that the primitives may intersect or have close proximity. Some practical problems we may solve with this approach include detecting surface self-intersection, intersection of two different objects and performing proximity queries. 
+
+\section*{Bounding Box Intersection}
+\subsection*{Overview}
+
+
+\begin{itemize}
+\item put geometric primitives in enclosing bounding boxes
+\item (todo: check) box is half open, which means the upper bound has to be increased by a small amount
+\item boxes to be checked must be accessible by random access iterators
+\item while checking, each intersecting bbox pair is reported to a callback
+\item intersection algo expects input iterators, an output iterator and a traits class
+\item logarithmic runtime
+\item some fine-tuning required (cutoff) for last percent of performance
+\item two approaches: segment tree, two way scan
+\item segment tree has some overhead. if callback runtime is low, better use two way scan for lower numbers of boxes. normally, in \cgal
+there is slow processing (exact arithmetic) which means normally segment tree is faster even for lower numbers of boxes.
+\end{itemize}
+
+\subsection*{Box Adapter}
+\begin{itemize}
+\item box access only through a BoxAdapter. Box itself can have any interface
+\item a model of BoxAdapter has to provide
+\begin{ccExampleCode}
+typedef ... Box
+typedef ... NumberType
+static NumberType get_lo( const Box& b, unsigned int dim )
+static NumberType get_hi( const Box& b, unsigned int dim )
+static unsigned int get_num( const Box& b )
+\end{ccExampleCode}
+\item type of Box can be pointer or plain structure
+\item NumberType specifies the underlying number type. $std::numeric_limits< NumberType >$ must be defined (for basic types like int, double there exist defaults)
+\item lo, hi = box size, num = unique box id
+\item default adapter provided, with 
+\end{itemize}
+
+\subsection*{Box Traits}
+\begin{itemize}
+\item defines predicates on boxes
+\item box access relies on BoxAdapter
+\item default traits class provided (part of it):
+\begin{ccExampleCode}
+template< class BoxAdapter >
+struct Default_Box_Traits : public BoxAdapter {
+    class Compare : public std::binary_function< Box, Box, bool > {
+        unsigned int dim;
+    public:
+        Compare( unsigned int dim ) : dim( dim ) {}
+        bool operator()( const Box& a, const Box& b ) const
+        { 
+             return Traits::is_lo_less_lo( a, b, dim );  
+        }
+    };
+
+    static bool does_intersect ( const Box& a, const Box& b, unsigned int dim )
+    { 
+         return get_hi(a,dim) > get_lo(b,dim) && get_hi(b,dim) > get_lo(a,dim); 
+    }
+};
+\end{ccExampleCode}
+\end{itemize}
+ 
+\section*{Examples}
+\subsection*{Minimal Example}
+minimal example using random boxes. boxes are default boxes without any geometric primitives inside. each intersection is reported as a pair of numbers. 
+\ccIncludeExampleCode{../../examples/Box_intersection_d/minimal.cc}
+
+\subsection*{Custom Box}
+box containing some primitive.
+\ccIncludeExampleCode{../../examples/Box_intersection_d/custombox.cc}
+
+\subsection*{Custom BoxAdapter }
+\ccIncludeExampleCode{../../examples/Box_intersection_d/customadapter.cc}
+
+%\end{twocolumn}
+
+
+%% EOF %%

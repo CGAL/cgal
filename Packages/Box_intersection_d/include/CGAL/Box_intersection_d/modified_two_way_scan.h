@@ -1,7 +1,10 @@
 #ifndef CGAL_BOX_INTERSECTION_D_MODIFIED_TWO_WAY_SCAN_H
 #define CGAL_BOX_INTERSECTION_D_MODIFIED_TWO_WAY_SCAN_H
 
+#include <CGAL/basic.h>
 #include <algorithm>
+
+CGAL_BEGIN_NAMESPACE
 
 template< class RandomAccessIter,
           class Callback,
@@ -59,5 +62,6 @@ void modified_two_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
 
 }
 
+CGAL_END_NAMESPACE
 
 #endif
