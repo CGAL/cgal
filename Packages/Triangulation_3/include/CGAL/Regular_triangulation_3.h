@@ -63,14 +63,16 @@ public:
   
   typedef typename Gt::Weighted_point              Weighted_point;
   typedef typename Gt::Bare_point                  Bare_point;
-  typedef typename Gt::Segment_3     Segment;
-  typedef typename Gt::Triangle_3    Triangle;
-  typedef typename Gt::Tetrahedron_3 Tetrahedron;
-  typedef typename Gt::Object_3      Object;
+  typedef typename Gt::Segment_3                   Segment;
+  typedef typename Gt::Triangle_3                  Triangle;
+  typedef typename Gt::Tetrahedron_3               Tetrahedron;
+  typedef typename Gt::Object_3                    Object;
 
   using Tr_Base::cw;
   using Tr_Base::ccw;
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::geom_traits;
+#endif
   using Tr_Base::number_of_vertices;
   using Tr_Base::dimension;
   using Tr_Base::finite_facets_begin;
@@ -179,7 +181,7 @@ public:
       }
       return os;
     }
-  
+
   bool is_valid(bool verbose = false, int level = 0) const;
 
 private:

@@ -90,6 +90,7 @@ public:
 
   typedef Triple<Vertex_handle,Vertex_handle,Vertex_handle> Vertex_triple;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::cw;
   using Tr_Base::ccw;
   using Tr_Base::geom_traits;
@@ -107,6 +108,7 @@ public:
   using Tr_Base::infinite_vertex;
   using Tr_Base::next_around_edge;
   using Tr_Base::vertex_triple_index;
+#endif
 
 protected:
 

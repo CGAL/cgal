@@ -1,3 +1,6 @@
+22 May 2004 Sylvain Pion
+- Use CGAL_CFG_USING_BASE_MEMBER_BUG_2 workaround for SunPRO.
+
 20 May 2004 Sylvain Pion
 - Perturbed predicate : minor changes.
 
