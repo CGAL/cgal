@@ -81,6 +81,7 @@ int main()
   all_correct &= TestSimplicity("data/simple9.dat");
   all_correct &= TestSimplicity("data/simple10.dat");
   all_correct &= TestSimplicity("data/simple11.dat");
+  all_correct &= TestSimplicity("data/simple12.dat");
 
   return all_correct ? 0 : 1;
 }
