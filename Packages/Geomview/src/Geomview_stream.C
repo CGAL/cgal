@@ -80,10 +80,11 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         close(pipe_out[1]); // does not write to the out pipe,
         close(pipe_in[0]);  // does not read from the in pipe.
 
-        close (0);          // this is the file descriptor of cin
-        dup(pipe_out[0]);   // we connect it to the pipe
-        close (1);          // this is the file descriptor of cout
-        dup(pipe_in[1]);    // we connect it to the pipe
+	if (dup2(pipe_out[0], 0) != 0)
+	    std::cerr << "Connect pipe to stdin failed." << std::endl;
+	if (dup2(pipe_in[1], 1) != 1)
+	    std::cerr << "Connect pipe to stdout failed." << std::endl;
+
         if (machine && (::strlen(machine)>0)) {
             std::ostrstream os;
             os << " rgeomview " << machine << ":0.0" << std::ends;
