@@ -801,7 +801,8 @@ star_hole(Vertex* newv, List_edges& hole)
   // hole is supposed to be ccw oriented
 {
   CGAL_triangulation_precondition(dimension() == 2);
-  List_edges::const_iterator hit = hole.begin();
+  typedef typename  List_edges::const_iterator Hole_it;
+  Hole_it hit = hole.begin();
 
   Face* first_f = create_face(hit->first, hit->second, newv);
   ++hit;
