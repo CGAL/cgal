@@ -29,7 +29,6 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/distance_predicates_2.h>
-#include <CGAL/predicate_objects_on_points_2.h>
 
 CGAL_BEGIN_NAMESPACE
 template <class K_>

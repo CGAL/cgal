@@ -1,3 +1,6 @@
+3.29 (28 Jan 2002)
+- fixed remaining problems with ch_function_objects.h
+
 3.28 (24 Jan 2002)
 - moved functor specific to convex hull from kernel to here
 - function objects in leda traits classes now come from CGALi

@@ -22,7 +22,9 @@
 #ifndef CH_FUNCTION_OBJECTS_2_H
 #define CH_FUNCTION_OBJECTS_2_H
 
-CGAL_NAMESPACE_BEGIN
+#include <CGAL/functional_base.h>
+
+CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
@@ -69,7 +71,7 @@ private:
 
 } // namespace CGALi
 
-CGAL_NAMESPACE_END
+CGAL_END_NAMESPACE
 
 #endif // CH_FUNCTION_OBJECTS_2_H	
 
