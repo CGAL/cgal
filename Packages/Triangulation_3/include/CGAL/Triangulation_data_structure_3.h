@@ -650,15 +650,6 @@ public:
       std::copy(tmp_vertices.begin(), tmp_vertices.end(), vertices);
   }
 
-  // The following two are obsolete.
-  void
-  incident_cells(Vertex_handle v, std::set<Cell_handle> & cells,
-	         Cell_handle c = Cell_handle(NULL) ) const;
-
-  void
-  incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
-		    Cell_handle c = Cell_handle(NULL) ) const;
-
   int degree(Vertex_handle v) const;
 
   // CHECKING
@@ -2177,47 +2168,6 @@ remove_degree_4(Vertex_handle v)
     delete_vertex(v);
 
     return newc;
-}
-
-template <class Vb, class Cb >
-void
-Triangulation_data_structure_3<Vb,Cb>::
-incident_cells(Vertex_handle v, std::set<Cell_handle> & cells,
-	       Cell_handle c) const
-{
-  bool THIS_FUNCTION_IS_DEPRECATED;
-  CGAL_triangulation_precondition( v != NULL );
-  CGAL_triangulation_expensive_precondition( is_vertex(v) );
-
-  if ( dimension() < 3 )
-      return;
-
-  if ( c == NULL )
-    c = v->cell();
-  else
-    CGAL_triangulation_precondition( c->has_vertex(v) );
-
-  if ( cells.find( c ) != cells.end() )
-    return; // c was already found
-
-  cells.insert( c );
-
-  for ( int j=0; j<4; j++ )
-    if ( j != c->index(v) )
-      incident_cells( v, cells, c->neighbor(j) );
-}
-
-template <class Vb, class Cb >
-void
-Triangulation_data_structure_3<Vb,Cb>::
-incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
-	          Cell_handle c) const
-{
-  bool THIS_FUNCTION_IS_DEPRECATED;
-  CGAL_triangulation_precondition( v != NULL );
-  CGAL_triangulation_expensive_precondition( is_vertex(v) );
-      
-  incident_vertices(v, std::inserter(vertices, vertices.begin()));
 }
 
 template <class Vb, class Cb >

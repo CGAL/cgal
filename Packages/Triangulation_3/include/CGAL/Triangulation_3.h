@@ -920,29 +920,11 @@ public:
   }
 
   // around a vertex
-  void
-  incident_cells(Vertex_handle v,
-                 std::set<Cell_handle> & cells,
-                 Cell_handle c = NULL ) const
-  {
-      bool THIS_FUNCTION_IS_DEPRECATED;
-      _tds.incident_cells(v, cells, c);
-  }
-
   template <class OutputIterator>
   void
   incident_cells(Vertex_handle v, OutputIterator cells) const
   {
       _tds.incident_cells(v, cells);
-  }
-
-  void
-  incident_vertices(Vertex_handle v,
-                    std::set<Vertex_handle> & vertices,
-		    Cell_handle c = NULL ) const
-  {
-      bool THIS_FUNCTION_IS_DEPRECATED;
-      _tds.incident_vertices(v, vertices, c);
   }
 
   template <class OutputIterator>
