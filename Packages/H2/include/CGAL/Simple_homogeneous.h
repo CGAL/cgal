@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999,2001 The CGAL Consortium
+// Copyright (c) 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -11,65 +11,72 @@
 // release       : 
 // release_date  : 
 // 
-// file          : Simple_homogeneous.h
-// package       : Kernel_basic
+// file          : include/CGAL/Simple_homogeneous.h
+// package       : H2
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra, Sylvain Pion
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
-
+ 
 #ifndef CGAL_SIMPLE_HOMOGENEOUS_H
 #define CGAL_SIMPLE_HOMOGENEOUS_H
 
-#define CGAL_REP_CLASS_DEFINED
+#include <CGAL/Homogeneous/Homogeneous_base.h>
+#include <CGAL/Simple_Handle_for.h>
+#include <CGAL/Kernel/Type_equality_wrapper.h>
+#include <CGAL/Kernel/function_objects.h>
 
-#include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/user_classes.h>
-#include <CGAL/basic_classes.h>
 
-#include <CGAL/Homogeneous/Aff_transformationH2.h>
-#include <CGAL/Homogeneous/CircleH2.h>
-#include <CGAL/Homogeneous/DirectionH2.h>
-#include <CGAL/Homogeneous/Iso_rectangleH2.h>
-#include <CGAL/Homogeneous/LineH2.h>
-#include <CGAL/Homogeneous/PointH2.h>
-#include <CGAL/Homogeneous/RayH2.h>
-#include <CGAL/Homogeneous/SegmentH2.h>
-#include <CGAL/Homogeneous/TriangleH2.h>
-#include <CGAL/Homogeneous/VectorH2.h>
-#include <CGAL/Homogeneous/Data_accessorH2.h>
+CGAL_BEGIN_NAMESPACE
 
-#include <CGAL/Homogeneous/Aff_transformationH3.h>
-#include <CGAL/Homogeneous/DirectionH3.h>
-#include <CGAL/Homogeneous/Iso_cuboidH3.h>
-#include <CGAL/Homogeneous/LineH3.h>
-#include <CGAL/Homogeneous/PlaneH3.h>
-#include <CGAL/Homogeneous/PointH3.h>
-#include <CGAL/Homogeneous/RayH3.h>
-#include <CGAL/Homogeneous/SegmentH3.h>
-#include <CGAL/Homogeneous/SphereH3.h>
-#include <CGAL/Homogeneous/TetrahedronH3.h>
-#include <CGAL/Homogeneous/TriangleH3.h>
-#include <CGAL/Homogeneous/VectorH3.h>
+template < typename RT_, typename FT_ = Quotient<RT_> >
+class Simple_homogeneous
+  : public Type_equality_wrapper<
+              Homogeneous_base< Simple_homogeneous<RT_, FT_> > >
+{
+    typedef Simple_homogeneous<RT_, FT_>                  Kernel;
 
-#include <CGAL/Homogeneous/basic_constructionsH2.h>
-#include <CGAL/Homogeneous/distance_predicatesH2.h>
-#include <CGAL/Homogeneous/predicates_on_directionsH2.h>
-#include <CGAL/Homogeneous/predicates_on_linesH2.h>
-#include <CGAL/Homogeneous/predicates_on_segmentsH2.h>
-#include <CGAL/Homogeneous/predicates_on_pointsH2.h>
-#include <CGAL/Homogeneous/predicates_on_rtH2.h>
+public:
 
-#include <CGAL/Homogeneous/basic_constructionsH3.h>
-#include <CGAL/Homogeneous/distance_predicatesH3.h>
-#include <CGAL/Homogeneous/orientation_predicatesH3.h>
-#include <CGAL/Homogeneous/predicates_on_pointsH3.h>
-#include <CGAL/Homogeneous/predicates_on_pointsH2.h>
+    typedef RT_                                           RT;
+    typedef FT_                                           FT;
 
-#include <CGAL/Homogeneous/simple_homogeneous_rep.h>
+    // The mecanism that allows to specify reference-counting or not.
+    template < typename T >
+    struct Handle {
+        typedef Simple_Handle_for<T>    type;
+    };
+
+    // Undocumented stuff.
+    typedef Data_accessorH2<Kernel>                       Data_accessor_2;
+    typedef CGAL::Conic_2<Kernel>                         Conic_2;
+
+    // TODO: cleanup (use Rational_traits<> instead)
+    static FT make_FT(const RT & num, const RT& denom)
+    { return FT(num, denom); }
+
+    static FT make_FT(const RT & num)
+    { return FT(num); }
+
+    static RT FT_numerator(const FT &r)
+    { return r.numerator(); }
+
+    static RT FT_denominator(const FT &r)
+    { return r.denominator(); }
+
+    // Functors types and access functions.
+#define CGAL_Kernel_pred(Y,Z) typedef CGALi::Y<Kernel> Y; \
+                              Y Z() const { return Y(); }
+#define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
+
+#include <CGAL/Kernel/interface_macros.h>
+
+};
+
+CGAL_END_NAMESPACE
 
 CGAL_ITERATOR_TRAITS_POINTER_SPEC_TEMPLATE(CGAL::Simple_homogeneous)
 
