@@ -12,7 +12,6 @@
 #include <CGAL/Alpha_shape_2.h>
 #include <CGAL/Alpha_shape_vertex_base_2.h> 
 #include <CGAL/Alpha_shape_face_base_2.h> 
-#include <CGAL/Alpha_shape_euclidean_traits_2.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
 #include <CGAL/Weighted_point.h>
 #include <CGAL/point_generators_2.h>
@@ -43,7 +42,7 @@ typedef CGAL::Alpha_shape_2<Rt_w>                          Alpha_shape_w;
 typedef CGAL::Weighted_point<Point, double>                Wpoint;
 
 //Delaunay triangulation
-typedef CGAL::Alpha_shape_euclidean_traits_2<Rep>          Gt;
+typedef Rep                                                Gt;
 typedef CGAL::Alpha_shape_vertex_base_2<Gt>                Vb;
 typedef CGAL::Triangulation_face_base_2<Gt>                Df;
 typedef CGAL::Alpha_shape_face_base_2<Gt, Df>              Fb;

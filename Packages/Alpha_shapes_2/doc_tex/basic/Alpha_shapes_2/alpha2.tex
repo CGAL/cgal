@@ -151,7 +151,7 @@ the class \ccc{CGAL::Regular_triangulation_2}.
 The triangulation needs a geometric traits class as argument.
 The requirements of this class are described in the 
 concept \ccc{CGAL::AlphaShapeTraits_2} for which
-the classes \ccc{CGAL::Alpha_shape_euclidean_traits_2}
+the \cgal\ kernels
 and \ccc{CGAL::Weighted_alpha_shape_euclidean_traits_2} are models.
 
 There are no requirements on the triangulation data structure.
@@ -173,8 +173,7 @@ The basic alpha shape needs a Delaunay triangulation as
 underlying triangulation \ccc{Dt}.  The Delaunay triangulation class is
 parameterized with a geometric and a triangulation data structure traits.
 
-For the geometric traits class we can use the \ccc{CGAL::Alpha_shape_traits_2}
-class, which in turn is parameterized with a kernel.
+For the geometric traits class we can use a \cgal\ kernel.
 
 For the triangulation data structure traits, we have to
 choose the vertex and face classes needed for alpha shapes,
@@ -189,15 +188,14 @@ alpha shape type.
 
 \begin{cprog}
 typedef CGAL::Cartesian<double> K;
-typedef CGAL::Alpha_shape_euclidean_traits_2<K> Gt;
 
-typedef CGAL::Alpha_shape_vertex_base_2<Gt> Av;
+typedef CGAL::Alpha_shape_vertex_base_2<K> Av;
 
-typedef CGAL::Triangulation_face_base_2<Gt> Tf;
-typedef CGAL::Alpha_shape_face_base_2<Gt,Tf> Af;
+typedef CGAL::Triangulation_face_base_2<K> Tf;
+typedef CGAL::Alpha_shape_face_base_2<K,Tf> Af;
 
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Av,Af> Tds;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Dt;
+typedef CGAL::Triangulation_default_data_structure_2<K,Av,Af> Tds;
+typedef CGAL::Delaunay_triangulation_2<K,Tds> Dt;
 typedef CGAL::Alpha_shape_2<Dt> Alpha_shape_2;
 \end{cprog}
 
@@ -206,22 +204,21 @@ typedef CGAL::Alpha_shape_2<Dt> Alpha_shape_2;
          \label{I1_SectClassicAS2DHier}}
 
 When the input data set is huge, say more than 10.000 points, it pays
-off to use a triangulation hierarchy. It has the same API as the
+off to use a triangulation hierarchy. It has the same \sc{Api} as the
 Delaunay triangulation and differs only in the types of the vertices
-and faces.Therefore, the only part that changes are the typedefs in the beginning.
+and faces. Therefore, the only part that changes are the typedefs in the beginning.
 
 \begin{cprog}
 typedef CGAL::Cartesian<double> K;
-typedef CGAL::Alpha_shape_euclidean_traits_2<K> Gt;
 
-typedef CGAL::Alpha_shape_vertex_base_2<Gt> Avb;
+typedef CGAL::Alpha_shape_vertex_base_2<K> Avb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Avb> Av 
 
-typedef CGAL::Triangulation_face_base_2<Gt> Tf;
-typedef CGAL::Alpha_shape_face_base_2<Gt,Tf> Af;
+typedef CGAL::Triangulation_face_base_2<K> Tf;
+typedef CGAL::Alpha_shape_face_base_2<K,Tf> Af;
 
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Av,Af> Tds;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Dt;
+typedef CGAL::Triangulation_default_data_structure_2<K,Av,Af> Tds;
+typedef CGAL::Delaunay_triangulation_2<K,Tds> Dt;
 typedef CGAL::Triangulation_hierarchy_2<Dt> Ht;
 typedef CGAL::Alpha_shape_2<Ht> Alpha_shape_2;
 \end{cprog}

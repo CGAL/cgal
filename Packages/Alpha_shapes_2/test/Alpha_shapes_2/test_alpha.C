@@ -9,7 +9,6 @@
 #include <vector>
 #include <list>
 
-#include <CGAL/Alpha_shape_euclidean_traits_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
@@ -24,7 +23,6 @@ typedef K::Ray_2  Ray;
 typedef K::Line_2  Line;
 typedef K::Triangle_2  Triangle;
 
-//typedef CGAL::Alpha_shape_euclidean_traits_2<K> Gt;
 typedef K Gt;
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
 typedef CGAL::Alpha_shape_face_base_2<Gt>  Fb;
