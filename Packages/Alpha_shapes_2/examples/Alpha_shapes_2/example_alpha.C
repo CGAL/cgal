@@ -49,7 +49,6 @@ typedef Alpha_shape_2::Vertex_iterator  Vertex_iterator;
 typedef Alpha_shape_2::Edge_iterator  Edge_iterator;
 typedef Alpha_shape_2::Edge_circulator  Edge_circulator;
 
-typedef Alpha_shape_2::Coord_type Coord_type;
 typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
 typedef Alpha_shape_2::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
 
@@ -58,7 +57,7 @@ typedef Alpha_shape_2::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
 template <class InputIterator, class OutputIterator>
 void
 alpha_edges(InputIterator begin, InputIterator end,
-	    const Coord_type &Alpha,
+	    const coord_type &Alpha,
 	    bool mode,
 	    OutputIterator out)
 { 
@@ -106,7 +105,7 @@ int main()
   }
   std::vector<Segment> segments;
   alpha_edges(points.begin(), points.end(),
-	      Coord_type(10000),Alpha_shape_2::GENERAL, 
+	      coord_type(10000),Alpha_shape_2::GENERAL, 
 	      std::back_inserter(segments));
 
   std::cout << segments.size() << " alpha shape edges" << std::endl;

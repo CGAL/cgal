@@ -58,7 +58,6 @@ typedef Alpha_shape_2::Vertex_iterator  Vertex_iterator;
 typedef Alpha_shape_2::Edge_iterator  Edge_iterator;
 typedef Alpha_shape_2::Edge_circulator  Edge_circulator;
 
-typedef Alpha_shape_2::Coord_type Coord_type;
 typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
 typedef Alpha_shape_2::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
 //---------------------------------------------------------------------
@@ -66,7 +65,7 @@ typedef Alpha_shape_2::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
 template <class InputIterator, class OutputIterator>
 void
 alpha_edges(InputIterator begin, InputIterator end,
-	    const Coord_type &Alpha,
+	    const coord_type &Alpha,
 	    bool mode,
 	    OutputIterator out)
   // Generate Alpha Shape
@@ -109,7 +108,7 @@ file_input(std::list<Point>& L)
   for( ; n>0 ; n--)
     {
       is >> p;
-      L.push_back(Point (p,Coord_type(10)));
+      L.push_back(Point (p,coord_type(10)));
     }
   std::cout << "Points inserted" << std::endl;
   return true;
@@ -123,7 +122,7 @@ int main()
   file_input(points);
   std::vector<Gt::Segment> segments;
   alpha_edges(points.begin(), points.end(),
-	      Coord_type(10000),Alpha_shape_2::GENERAL,
+	      coord_type(10000),Alpha_shape_2::GENERAL,
 	      std::back_inserter(segments));
   std::cout << segments.size() << " alpha shape edges." << std::endl;
   return 0;

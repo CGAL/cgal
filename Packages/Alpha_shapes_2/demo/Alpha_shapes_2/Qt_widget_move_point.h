@@ -52,11 +52,11 @@ class Qt_widget_movepoint : public Qt_widget_movepoint_helper
 public:
 
   typedef typename T::Point                       Point;
-  typedef typename T::Segment			    Segment;
+  typedef typename T::Segment			  Segment;
   typedef typename T::Face_handle                 Face_handle;
   typedef typename T::Vertex_handle               Vertex_handle;
   typedef typename T::Vertex_iterator             Vertex_iterator;
-  typedef typename T::Geom_traits::Coord_type     FT;
+  typedef typename T::Geom_traits::FT             FT;
   typedef std::list<Point>                        CGALPointlist;
 protected:
   FT            first_x, first_y;

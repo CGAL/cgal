@@ -1,5 +1,6 @@
 Version 11.47 (4 October 2003) [af]
-fixed bug in the caching (forgot to clear list)
+- fixed bug in the caching (forgot to clear list)
+- Made points set in demo less equally distributed
 
 Version 11.46 (1 October 2003) [af]
 - Made Alpha_shape_euclidean_traits obsolete
