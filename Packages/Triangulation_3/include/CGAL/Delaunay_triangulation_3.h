@@ -450,9 +450,9 @@ Delaunay_triangulation_3<Gt,Tds>::
 undo_make_hole_3D(std::list<Facet> & outside,
                   std::list<Facet> & inside)
 {
-  std::list<Facet>::iterator cit = inside.begin();
-  for(std::list<Facet>::iterator fit = outside.begin(); fit != outside.end();
-      ++fit) {
+  typename std::list<Facet>::iterator cit = inside.begin();
+  for(typename std::list<Facet>::iterator fit = outside.begin();
+      fit != outside.end(); ++fit) {
     Cell_handle ch = (*fit).first;
     ch->set_neighbor((*fit).second, (*cit).first);
     CGAL_triangulation_assertion( (*cit).first->neighbor((*cit).second) == ch);
@@ -469,8 +469,8 @@ void
 Delaunay_triangulation_3<Gt,Tds>::
 delete_cells(std::list<Cell_handle> & hole, int /*dummy_for_windows*/)
 {
-  for(std::list<Cell_handle>::iterator cit = hole.begin(); cit != hole.end();
-	  ++cit)
+  for(typename std::list<Cell_handle>::iterator cit = hole.begin();
+      cit != hole.end(); ++cit)
     _tds.delete_cell( &*(*cit) );
 }
 
@@ -479,7 +479,8 @@ void
 Delaunay_triangulation_3<Gt,Tds>::
 delete_cells(std::list<Facet> & hole)
 {
-  for(std::list<Facet>::iterator cit = hole.begin(); cit != hole.end(); ++cit)
+  for(typename std::list<Facet>::iterator cit = hole.begin();
+      cit != hole.end(); ++cit)
     _tds.delete_cell( &*((*cit).first) );
 }
 
@@ -1553,8 +1554,8 @@ Delaunay_triangulation_3<Gt,Tds>::
 undo_make_hole_3D_ear(std::list<Facet> & boundhole,
 		      std::list<Cell_handle> & hole)
 {
-  std::list<Cell_handle>::iterator cit = hole.begin();
-  for(std::list<Facet>::iterator fit = boundhole.begin();	
+  typename std::list<Cell_handle>::iterator cit = hole.begin();
+  for(typename std::list<Facet>::iterator fit = boundhole.begin();	
       fit != boundhole.end();
       ++fit) {
     Cell_handle ch = (*fit).first;
@@ -1572,9 +1573,9 @@ Delaunay_triangulation_3<Gt,Tds>::
 fill_hole_3D_ear( std::list<Facet> & boundhole)
 {
   typedef Delaunay_remove_tds_3_2<Delaunay_triangulation_3> Surface;
-  typedef Surface::Face_3_2 Face_3_2;
-  typedef Surface::Vertex_3_2 Vertex_3_2;
-  typedef Surface::Vertex_circulator Vertex_circulator_3_2;
+  typedef typename Surface::Face_3_2 Face_3_2;
+  typedef typename Surface::Vertex_3_2 Vertex_3_2;
+  typedef typename Surface::Vertex_circulator Vertex_circulator_3_2;
 
   std::list<Cell_handle> cells;
 
@@ -1637,7 +1638,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	std::set<Vertex_3_2*> cospheric_vertices;
 	bool on_unbounded_side = false;
 	// we now look at all vertices that are on the boundary of the hole
-	for(Surface::Vertex_iterator vit = surface.vertices_begin();
+	for(typename Surface::Vertex_iterator vit = surface.vertices_begin();
 	    vit != surface.vertices_end();
 	    ++vit) {
 	  Vertex *v = (*vit).info();
@@ -1667,7 +1668,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	// we looked at all vertices
 	// if there are cospheric points we have to test more
 	if(! cospheric_vertices.empty() ) {
-	  std::set<Vertex_3_2*>::iterator not_found = cospheric_vertices.end();
+	  typename std::set<Vertex_3_2*>::iterator not_found =
+	      cospheric_vertices.end();
 	  if(inf_0 || inf_3) {
 	    // the cospheric points are on the boundary of the convex hull 
 	    //if(! on_unbounded_side) {
@@ -1701,7 +1703,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	      }
 	    } while( ++vc != done );
 	    
-	    for(std::set<Vertex_3_2*>::iterator it = cospheric_vertices.begin();
+	    for(typename std::set<Vertex_3_2*>::iterator it
+		    = cospheric_vertices.begin();
 		it != cospheric_vertices.end();
 		++it) {
 	      const Point & pit = (*it)->info()->point();

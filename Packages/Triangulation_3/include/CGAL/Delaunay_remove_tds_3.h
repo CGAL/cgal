@@ -242,20 +242,21 @@ private:
 public:
   typedef typename TDSUL2::Vertex Vertex_3_2;
   typedef typename TDSUL2::Face Face_3_2;
+  typedef typename TDSUL2::Face_iterator Face_iterator;
   typedef quadruple<void*, void*, Face_3_2*, int> Halfedge;
 
 
 
   Delaunay_remove_tds_3_2( std::list<Facet> & boundhole ) {
 
-    typedef std::list<Facet>::iterator Facet_iterator;
+    typedef typename std::list<Facet>::iterator Facet_iterator;
 
     int size = boundhole.size();
  
     std::vector<Halfedge> halfedges(3*size);
     int i = 0;
     std::map<Vertex*, Vertex_3_2*>  vertex_map;
-    std::map<Vertex*, Vertex_3_2*>::iterator map_it;
+    typename std::map<Vertex*, Vertex_3_2*>::iterator map_it;
 
     for(Facet_iterator fit = boundhole.begin() ; 
 	fit != boundhole.end(); 
@@ -333,7 +334,7 @@ public:
     // The halfedges that are oppsoite to each other are neighbor
     // in the sorted list. 
 
-    for(std::vector<Halfedge>::iterator it = halfedges.begin();
+    for(typename std::vector<Halfedge>::iterator it = halfedges.begin();
 	it != halfedges.end();
 	++it) {
       Halfedge e1 = *it;

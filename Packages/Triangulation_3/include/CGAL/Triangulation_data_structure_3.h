@@ -2489,7 +2489,7 @@ clear()
   CGAL_triangulation_assertion(_list_of_cells._previous_cell==&_list_of_cells);
 
   // deletion of the vertices
-  for (std::vector<Vertex*>::iterator it = Vertices.begin();
+  for (typename std::vector<Vertex*>::iterator it = Vertices.begin();
        it != Vertices.end(); ++it)
     delete *it;
 
