@@ -1,3 +1,10 @@
+4.31	 (15 August 01)
+- Merge Quotient.C into Quotient.h.  SunPro knows about automatic template
+  inclusion, but requires these template functions to be not inline, which
+  makes sense.  Given that about all functions in Quotient.C are inline...
+
+============================== CGAL 2.3 ==========================
+
 4.30	 (25 July 01)
 - Fix MP_Float.tex.
 
