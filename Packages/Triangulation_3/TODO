@@ -11,11 +11,6 @@
 - ameliorer user manual
 - TEST SUITE
 - Traits : mettre a jour la doc.
-- locate() : verifier que l'interface est la meme que dans T2D concernant la
-  cellule de depart.  Plutot que prendre une cellule sur le bord, on peut
-  peut-etre prendre la premiere cellule de la liste, qui a de bonnes chances
-  d'y avoir ete mise recemment, et donc d'etre plus pret... ?
-- Faire des benchs/profiles de points non-randoms...
 - Alignement des cellules en memoire : effets de cache + pointeurs a
   l'interieur des cellules pour le voisinage (Fred a deja fait => ask).
 - La gestion memoire (interne a l'allocateur new/delete) prend pas mal de

@@ -360,7 +360,7 @@ insert(const Weighted_point & p, Cell_handle start )
     {
       Locate_type lt;
       int li, lj;
-      Cell_handle c = locate( p, start, lt, li, lj);
+      Cell_handle c = locate( p, lt, li, lj, start);
       
       if ( lt == VERTEX ) { return c->vertex(li); }
       // TBD : look at the weight...
@@ -392,7 +392,7 @@ insert(const Weighted_point & p, Cell_handle start )
     {
       Locate_type lt;
       int li, lj;
-      Cell_handle c = locate( p, start, lt, li, lj);
+      Cell_handle c = locate( p, lt, li, lj, start);
       switch (lt) {
       case OUTSIDE_CONVEX_HULL:
       case CELL:
@@ -429,7 +429,7 @@ insert(const Weighted_point & p, Cell_handle start )
     {
       Locate_type lt;
       int li, lj;
-      Cell_handle c = locate( p, start, lt, li, lj);
+      Cell_handle c = locate( p, lt, li, lj, start);
       switch (lt) {
       case OUTSIDE_CONVEX_HULL:
       case EDGE:

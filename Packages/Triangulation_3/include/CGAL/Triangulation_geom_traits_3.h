@@ -136,16 +136,6 @@ public:
   // And for the hierarchy :
   typedef typename Rep::Less_distance_to_point_3 Less_distance_to_point_3;
 
-  Triangulation_geom_traits_3()
-    {}
-
-  Triangulation_geom_traits_3(const Triangulation_geom_traits_3 & )
-     {}
-
-  Triangulation_geom_traits_3 & 
-  operator=(const Triangulation_geom_traits_3 & )
-    {return *this;}
-
   Compare_x_3
   compare_x_3_object() const { 
     return Compare_x_3();

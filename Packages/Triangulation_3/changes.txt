@@ -1,5 +1,10 @@
+Version 1.49 (13 Apr 01)
+- locate() interface changes to match the 2D case wrt the default start.
+- minor hierarchy speed up.
+
 Version 1.48 (13 Apr 01)
 - for() scope VC++ bug workaround.
+- facet circulator around an edge fix.
 
 Version 1.47 (9 Apr 01)
 - member template definition in class body for VC++.

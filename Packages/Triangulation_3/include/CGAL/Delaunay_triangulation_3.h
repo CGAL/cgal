@@ -295,7 +295,7 @@ insert(const Point & p, Cell_handle start)
     {
       Locate_type lt;
       int li, lj;
-      Cell_handle c = locate( p, start, lt, li, lj);
+      Cell_handle c = locate( p, lt, li, lj, start);
       if ( lt == VERTEX )
 	  return c->vertex(li);
 //    case OUTSIDE_CONVEX_HULL:
@@ -312,7 +312,7 @@ insert(const Point & p, Cell_handle start)
     {
       Locate_type lt;
       int li, lj;
-      Cell_handle c = locate( p, start, lt, li, lj);
+      Cell_handle c = locate( p, lt, li, lj, start);
       switch (lt) {
       case OUTSIDE_CONVEX_HULL:
       case CELL:
@@ -1108,7 +1108,7 @@ side_of_sphere(Cell_handle c, const Point & p) const
 			  c->vertex(3)->point(),p) );
   // else infinite cell :
   int i0,i1,i2;
-  if ( (i3%2) == 1 ) {
+  if ( (i3&1) == 1 ) {
     i0 = (i3+1)&3;
     i1 = (i3+2)&3;
     i2 = (i3+3)&3;

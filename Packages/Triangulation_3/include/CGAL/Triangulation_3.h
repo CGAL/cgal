@@ -311,7 +311,6 @@ public:
 
   Segment segment(const Cell_handle c, int i, int j) const;
 
-
   Segment segment(const Edge & e) const
     { return segment(e.first,e.second,e.third); }
 
@@ -385,37 +384,27 @@ public:
   bool are_equal(const Facet & f, const Facet & g) const;
   bool are_equal(const Facet & f, Cell_handle n, int j) const;
 
-  Cell_handle locate(const Point & p) const;
+  Cell_handle
+  locate(const Point & p,
+	 Locate_type & lt, int & li, int & lj,
+	 Cell_handle start = Cell_handle()) const;
 
   Cell_handle
-  locate(const Point & p, Cell_handle start) const
-    {
+  locate(const Point & p, Cell_handle start = Cell_handle()) const
+  {
       Locate_type lt;
       int li, lj;
-      return locate( p, start, lt, li, lj);
-    }
+      return locate( p, lt, li, lj, start);
+  }
 
-  inline Cell_handle
-  locate(const Point & p,
-	 Locate_type & lt, int & li, int & lj) const;
-
+  // This one is for backward compatibility with CGAL 2.2.
   Cell_handle
-  locate(const Point & p,
-	 Cell_handle start,
-	 Locate_type & lt, int & li, int & lj) const;
-  // returns the (finite or infinite) cell p lies in
-  // starts at cell "start"
-  // start must be non NULL and finite
-  // if lt == OUTSIDE_CONVEX_HULL, li is the
-  // index of a facet separating p from the rest of the triangulation
-  // in dimension 2 :
-  // returns a facet (Cell_handle,li) if lt == FACET
-  // returns an edge (Cell_handle,li,lj) if lt == EDGE
-  // returns a vertex (Cell_handle,li) if lt == VERTEX
-  // if lt == OUTSIDE_CONVEX_HULL, li, lj give the edge of c
-  // separating p from the rest of the triangulation
-  // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
-
+  locate(const Point & p, Cell_handle start,
+	 Locate_type & lt, int & li, int & lj) const
+  {
+      bool WARNING_YOU_ARE_USING_THE_DEPRECATED_VERSION_OF_LOCATE;
+      return locate(p, lt, li, lj, start);
+  }
 
   // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
   
@@ -617,8 +606,6 @@ private:
   // traverses the boundary of the hat and finds adjacencies
   // traversal is done counterclockwise as seen from v
 
- protected:
-
 public:
 
   Vertex_handle
@@ -756,25 +743,25 @@ public:
   void
   incident_cells(Vertex_handle v,
                  std::set<Cell_handle> & cells,
-		 Cell_handle c = (Cell*) NULL ) const;
+		 Cell_handle c = Cell_handle() ) const;
 
   void
   incident_vertices(Vertex_handle v,
                     std::set<Vertex_handle> & vertices,
-		    Cell_handle c = (Cell*) NULL ) const;
+		    Cell_handle c = Cell_handle() ) const;
 
   // old methods, kept for compatibility with previous versions
   void
   incident_cells(Vertex_handle v, 
 		 std::set<Cell*> & cells,
-		 Cell_handle c = (Cell*) NULL,
+		 Cell_handle c = Cell_handle(),
 		 int dummy_for_windows = 0) const;
 
 
   void
   incident_vertices(Vertex_handle v, 
 		    std::set<Vertex*> & vertices,
-		    Cell_handle c = (Cell*) NULL,
+		    Cell_handle c = Cell_handle(),
 		    int dummy_for_windows = 0) const;
 
 private:
@@ -1384,54 +1371,11 @@ are_equal(const Facet & f, Cell_handle n, int j) const
 template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Cell_handle
 Triangulation_3<GT,Tds>::
-locate(const Point & p) const
-{
-  Locate_type lt;
-  int li, lj;
-  Cell_handle start;
-  if ( dimension() >= 1 ) {
-    // there is at least one finite "cell" (or facet or edge)
-    start = infinite_vertex()->cell()->neighbor
-      ( infinite_vertex()->cell()->index( infinite_vertex()) );
-  }
-  else {
-    start = NULL;
-  }
-  return locate( p, start, lt, li, lj);
-}
-
-template < class GT, class Tds >
-inline
-Triangulation_3<GT,Tds>::Cell_handle
-Triangulation_3<GT,Tds>::
-locate(const Point & p,
-       Locate_type & lt,
-       int & li,
-       int & lj) const
-{
-  Cell_handle start;
-  if ( dimension() >= 1 ) {
-    // there is at least one finite "cell" (or facet or edge)
-    start = infinite_vertex()->cell()->neighbor
-      ( infinite_vertex()->cell()->index( infinite_vertex()) );
-  }
-  else {
-    start = NULL;
-  }
-  return locate( p, start, lt, li, lj);
-}
-
-template < class GT, class Tds >
-Triangulation_3<GT,Tds>::Cell_handle
-Triangulation_3<GT,Tds>::
-locate(const Point & p,
-       const Cell_handle start,
-       Locate_type & lt,
-       int & li,
-       int & lj) const
+locate(const Point & p, Locate_type & lt, int & li, int & lj,
+       Cell_handle start ) const
   // returns the (finite or infinite) cell p lies in
   // starts at cell "start"
-  // start must be non NULL 
+  // start must be finite
   // if lt == OUTSIDE_CONVEX_HULL, li is the
   // index of a facet separating p from the rest of the triangulation
   // in dimension 2 :
@@ -1443,17 +1387,19 @@ locate(const Point & p,
   // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
 {
   int i, inf;
+
+  if ( dimension() >= 1 && start == Cell_handle() )
+    // there is at least one finite "cell" (or facet or edge)
+    start = infinite_vertex()->cell()->neighbor
+            ( infinite_vertex()->cell()->index( infinite_vertex()) );
+
   switch (dimension()) {
   case 3:
     {
-//       CGAL_triangulation_precondition
-// 	( (&(*start) != NULL) 
-// 	  && ( ! start->has_vertex(infinite) ) );
-//       Cell_handle c = start;
-      CGAL_triangulation_precondition( (&(*start) != NULL) );
-      Cell_handle c, previous = NULL;
+      CGAL_triangulation_precondition( start != Cell_handle() );
+      Cell_handle c, previous;
       int ind_inf;
-      if ( start->has_vertex(infinite,ind_inf) ) 
+      if ( start->has_vertex(infinite, ind_inf) )
 	c = start->neighbor(ind_inf);
       else
 	c = start;
@@ -1581,14 +1527,10 @@ locate(const Point & p,
     }
   case 2:
     {
-//       CGAL_triangulation_precondition
-// 	( (&(*start) != NULL) 
-// 	  && ( ! start->has_vertex(infinite) ) );
-//       Cell_handle c = start;
-      CGAL_triangulation_precondition( (&(*start) != NULL) );
+      CGAL_triangulation_precondition( start != Cell_handle() );
       Cell_handle c;
       int ind_inf;
-      if ( start->has_vertex(infinite,ind_inf) ) 
+      if ( start->has_vertex(infinite, ind_inf) )
 	c = start->neighbor(ind_inf);
       else
 	c = start;
@@ -1675,14 +1617,10 @@ locate(const Point & p,
     }
   case 1:
     {
-//       CGAL_triangulation_precondition
-// 	( (&(*start) != NULL) 
-// 	  && ( ! start->has_vertex(infinite) ) );
-//       Cell_handle c = start;
-      CGAL_triangulation_precondition( (&(*start) != NULL) );
+      CGAL_triangulation_precondition( start != Cell_handle() );
       Cell_handle c;
       int ind_inf;
-      if ( start->has_vertex(infinite,ind_inf) ) 
+      if ( start->has_vertex(infinite, ind_inf) )
 	c = start->neighbor(ind_inf);
       else
 	c = start;
@@ -1829,7 +1767,6 @@ locate(const Point & p,
 	li = 0;
       }
       return vit->cell();
-
     }
   case -1:
     {
@@ -2608,17 +2545,13 @@ insert(const Point & p )
 {
   Locate_type lt;
   int li, lj;
-  Cell_handle c;
-  Cell_handle start;
+  Cell_handle c, start;
   if ( dimension() >= 1 ) {
     // there is at least one finite "cell" (or facet or edge)
     start = infinite_vertex()->cell()
       ->neighbor( infinite_vertex()->cell()->index( infinite_vertex()) );
   }
-  else {
-    start = NULL;
-  }
-  c = locate( p, start, lt, li, lj);
+  c = locate( p, lt, li, lj, start);
   switch (lt) {
   case VERTEX:
     return c->vertex(li);
@@ -2644,7 +2577,7 @@ insert(const Point & p, Cell_handle start)
 {
   Locate_type lt;
   int li, lj;
-  Cell_handle c = locate( p, start, lt, li, lj);
+  Cell_handle c = locate( p, lt, li, lj, start);
   switch (lt) {
   case VERTEX:
     return c->vertex(li);

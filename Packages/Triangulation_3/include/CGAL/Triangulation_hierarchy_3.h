@@ -120,36 +120,31 @@ public:
   void remove(Vertex_handle  v);
 
   //LOCATE
-  Cell_handle  locate(const Point& p, Locate_type& lt,int& li, int &lj) const;
-  Cell_handle  locate(const Point& p) const;
+  Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj) const;
+  Cell_handle locate(const Point& p) const;
 
 private:
-  void  locate(const Point& p,
-	       Locate_type& lt,
-	       int& li,
-	       int& lj,
-	       Cell_handle pos[Triangulation_hierarchy_3__maxlevel]) const;
+  void locate(const Point& p, Locate_type& lt, int& li, int& lj,
+	      Cell_handle pos[Triangulation_hierarchy_3__maxlevel]) const;
   int random_level();
 
-
- // added to make the test program of usual triangulations work
-  // undocuumented
+  // added to make the test program of usual triangulations work
+  // undocumented
 public:
   
-  Vertex_handle insert(const Point  &p, Cell_handle start){
-    return Tr_Base::insert(p,start);
+  Vertex_handle insert(const Point &p, Cell_handle start)
+  {
+    return Tr_Base::insert(p, start);
   }
-  Vertex_handle insert(const Point& p,
-		       Locate_type lt,
-		       Cell_handle loc, int li ){
+
+  Vertex_handle insert(const Point& p, Locate_type lt, Cell_handle loc, int li)
+  {
     return Tr_Base::insert(p);
   }
 
-  Cell_handle  locate(const Point& p, 
-		      Locate_type& lt,
-		      int& li,
-		      int& lj,
-		      Cell_handle start) const{
+  Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj,
+		     Cell_handle start) const
+  {
     return Tr_Base::locate(p, lt, li, lj, start);
   }
 };
@@ -401,10 +396,7 @@ locate(const Point& p) const
 template <class Tr>
 void
 Triangulation_hierarchy_3<Tr>::
-locate(const Point& p,
-       Locate_type& lt,
-       int& li,
-       int& lj,
+locate(const Point& p, Locate_type& lt, int& li, int& lj,
        Cell_handle pos[Triangulation_hierarchy_3__maxlevel]) const
 {
   Cell_handle position;
@@ -420,10 +412,7 @@ locate(const Point& p,
   }
   for (int i=level+1; i<Triangulation_hierarchy_3__maxlevel;++i) pos[i]=0;
   while(level > 0) {
-    if (position != NULL)
-      pos[level]=position=hierarchy[level]->locate(p,position);
-    else
-      pos[level]=position=hierarchy[level]->locate(p);
+    pos[level]=position=hierarchy[level]->locate(p,position);
     // locate at that level from "position"
     // result is stored in "position" for the next level
     // find the nearest between vertices 0 and 1
@@ -437,19 +426,19 @@ locate(const Point& p,
     else
       nearest = position->vertex(1);
     // compare to vertex 2
-    if ( !  hierarchy[level]->is_infinite(position->vertex(2)))
-      if ( closer( position->vertex(2)->point(),
-		   nearest->point()))
+    if ( ! hierarchy[level]->is_infinite(position->vertex(2)))
+      if ( closer( position->vertex(2)->point(), nearest->point()))
 	nearest = position->vertex(2);
+    // compare to vertex 3
+    if ( ! hierarchy[level]->is_infinite(position->vertex(3)))
+      if ( closer( position->vertex(3)->point(), nearest->point()))
+	nearest = position->vertex(3);
     // go at the same vertex on level below
     nearest = (Vertex*)( nearest->down() );
     position = nearest->cell();                // incident cell
     --level;
   }
-  if (position != NULL)
-    pos[0]=hierarchy[level]->locate(p,position,lt,li,lj);  // at level 0
-  else
-    pos[0]=hierarchy[level]->locate(p,lt,li,lj);  // at level 0
+  pos[0]=hierarchy[level]->locate(p,lt,li,lj,position);  // at level 0
 }
 
 
