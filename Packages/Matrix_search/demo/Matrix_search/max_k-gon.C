@@ -70,15 +70,13 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-typedef double                      Coord_type;
-typedef CGAL::Cartesian<Coord_type> Rep;
+typedef double                       Coord_type;
+typedef CGAL::Cartesian<Coord_type>  Rep;
 
-typedef CGAL::Polygon_traits_2<Rep> Traits;
-typedef Traits::Point_2             Point;
-typedef Traits::Segment_2           Segment;
-typedef std::vector<Point>          Container;
-typedef CGAL::Polygon_2<Traits,Container>
-                                    Polygonvec;
+typedef Rep::Point_2                 Point;
+typedef Rep::Segment_2               Segment;
+typedef std::vector<Point>           Container;
+typedef CGAL::Polygon_2<Rep,Container> Polygonvec;
 
 const QString my_title_string("Maximum Inscribed K-gon Demo with"
 			      " CGAL Qt_widget");

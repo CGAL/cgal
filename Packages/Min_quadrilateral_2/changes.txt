@@ -1,6 +1,8 @@
 //=====================================================================
 //	Revision History for package Min_quadrilateral_2
 //=====================================================================
+Version 1.30 on 17-Sep-2003 [af]
+- Removed Polygon_traits_2
 
 Version 1.29 on 10-Sep-2003 [rursu]
 - Qt_help_window is in the CGAL namespace now.

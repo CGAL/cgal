@@ -32,16 +32,14 @@
 typedef CGAL::Cartesian< double >                           CR;
 typedef CGAL::Point_2< CR >                                 CPoint_2;
 typedef std::list<CPoint_2>                                 CContainer;
-typedef CGAL::Polygon_traits_2<CR>                          CTraits;
-typedef CGAL::Polygon_2<CTraits, CContainer>                CPolygon_2;
+typedef CGAL::Polygon_2<CR, CContainer>                     CPolygon_2;
 typedef CGAL::Creator_uniform_2<double, CPoint_2>           CCreator;
 typedef CGAL::Random_points_in_square_2<CPoint_2, CCreator> CPoint_generator;
 
 typedef CGAL::Homogeneous< double >                          HR;
 typedef CGAL::Point_2< HR >                                  HPoint_2;
 typedef std::list<HPoint_2>                                  HContainer;
-typedef CGAL::Polygon_traits_2<HR>                           HTraits;
-typedef CGAL::Polygon_2<HTraits, HContainer>                 HPolygon_2;
+typedef CGAL::Polygon_2<HR, HContainer>                      HPolygon_2;
 typedef CGAL::Creator_uniform_2<double, HPoint_2>            HCreator;
 typedef CGAL::Random_points_in_square_2<HPoint_2, HCreator>  HPoint_generator;
 

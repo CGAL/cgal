@@ -1,6 +1,8 @@
 //=====================================================================
 //	Revision History for package Matrix_search
 //=====================================================================
+1.65 17/09/2003 af:
+- Removed Polygon_traits_2
 
 1.64 10/09/2003 rursu:
 - Qt_help_window class is in the CGAL namespace

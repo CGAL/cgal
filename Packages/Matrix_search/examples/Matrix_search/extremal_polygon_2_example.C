@@ -40,9 +40,8 @@ using CGAL::maximum_area_inscribed_k_gon_2;
 typedef double                                FT;
 typedef CGAL::Cartesian< FT >                 K;
 typedef K::Point_2                            Point;
-typedef CGAL::Polygon_traits_2< K >           P_traits;
 typedef vector< Point >                       Cont;
-typedef CGAL::Polygon_2< P_traits, Cont >     Polygon;
+typedef CGAL::Polygon_2< K, Cont >            Polygon;
 typedef CGAL::Creator_uniform_2< FT, Point >  Creator;
 typedef CGAL::Random_points_in_square_2< Point, Creator >
   Point_generator;

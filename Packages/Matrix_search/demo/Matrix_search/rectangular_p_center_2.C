@@ -76,16 +76,14 @@ int main(int, char*)
 #include <algorithm>
 #include <functional>
 
-typedef double                      Coord_type;
-typedef CGAL::Cartesian<Coord_type> Rep;
+typedef double                         Coord_type;
+typedef CGAL::Cartesian<Coord_type>    Rep;
 
-typedef Rep::Iso_rectangle_2        Square_2;
-typedef CGAL::Polygon_traits_2<Rep> Traits;
-typedef Traits::Point_2             Point;
-typedef Traits::Segment_2           Segment;
-typedef std::vector<Point>          Container;
-typedef CGAL::Polygon_2<Traits,Container>
-                                    Polygonvec;
+typedef Rep::Iso_rectangle_2           Square_2;
+typedef Rep::Point_2                   Point;
+typedef Rep::Segment_2                 Segment;
+typedef std::vector<Point>             Container;
+typedef CGAL::Polygon_2<Rep,Container> Polygonvec;
 
 const QString my_title_string("Rectangular p-center Demo with"
 			      " CGAL Qt_widget");

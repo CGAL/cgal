@@ -20,9 +20,8 @@ public:
   typedef typename R::Line_2	Line;
 
 
-  typedef CGAL::Polygon_traits_2< R>			    Traits;
   typedef std::vector< Point >				    Container;
-  typedef CGAL::Polygon_2< Traits, Container >		    Polygon;
+  typedef CGAL::Polygon_2< R, Container >		    Polygon;
   typedef CGAL::Creator_uniform_2< double, Point >	    Creator;
 
   Qt_layer_show_parallelogram(std::list<Point> *pl){list_of_points = pl;};
@@ -66,9 +65,8 @@ public:
   typedef typename R::Line_2	Line;
 
 
-  typedef CGAL::Polygon_traits_2< R>			    Traits;
   typedef std::vector< Point >				    Container;
-  typedef CGAL::Polygon_2< Traits, Container >		    Polygon;
+  typedef CGAL::Polygon_2< R, Container >		    Polygon;
   typedef CGAL::Creator_uniform_2< double, Point >	    Creator;
 
   Qt_layer_show_strip(std::list<Point> *pl){list_of_points = pl;};
@@ -110,9 +108,8 @@ public:
   typedef typename R::Line_2	Line;
 
 
-  typedef CGAL::Polygon_traits_2< R>			    Traits;
   typedef std::vector< Point >				    Container;
-  typedef CGAL::Polygon_2< Traits, Container >		    Polygon;
+  typedef CGAL::Polygon_2< R, Container >		    Polygon;
   typedef CGAL::Creator_uniform_2< double, Point >	    Creator;
 
   Qt_layer_show_rectangle(std::list<Point> *pl){list_of_points = pl;};

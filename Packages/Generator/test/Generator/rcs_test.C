@@ -35,7 +35,6 @@
 using std::vector;
 using std::back_inserter;
 using CGAL::Cartesian;
-using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::set_pretty_mode;
@@ -47,9 +46,8 @@ main( )
 {
   typedef Cartesian< double >                            R;
   typedef CGAL::Point_2< R >                             Point_2;
-  typedef Polygon_traits_2< R >                          P_traits;
   typedef vector< Point_2 >                              Cont;
-  typedef CGAL::Polygon_2< P_traits, Cont >              Polygon_2;
+  typedef CGAL::Polygon_2< R, Cont >                     Polygon_2;
   typedef Creator_uniform_2< double, Point_2 >           Creator;
   typedef Random_points_in_square_2< Point_2, Creator >  Point_generator;
   

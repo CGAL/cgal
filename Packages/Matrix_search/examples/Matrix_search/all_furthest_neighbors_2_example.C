@@ -41,9 +41,8 @@ using CGAL::all_furthest_neighbors_2;
 typedef double                                   FT;
 typedef CGAL::Cartesian< FT >                    R;
 typedef CGAL::Point_2< R >                       Point;
-typedef CGAL::Polygon_traits_2< R >              P_traits;
 typedef vector< Point >                          Point_cont;
-typedef CGAL::Polygon_2< P_traits, Point_cont >  Polygon;
+typedef CGAL::Polygon_2< R, Point_cont >         Polygon;
 typedef CGAL::Creator_uniform_2< FT, Point >     Creator;
 typedef CGAL::Random_points_in_square_2< Point, Creator >
   Point_generator;

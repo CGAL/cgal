@@ -25,12 +25,11 @@ typedef double RT;
 #include <fstream>
 #include <list>
 
-typedef CGAL::Cartesian<RT>                             K;
-typedef CGAL::Polygon_traits_2<K>                         Traits;
-typedef Traits::Point_2                                   Point_2;
+typedef CGAL::Cartesian<RT>                               K;
+typedef K::Point_2                                        Point_2;
 typedef std::list<Point_2>                                Container;
-typedef CGAL::Polygon_2<Traits, Container>                Polygon_2;
-typedef CGAL::Creator_uniform_2<int, Point_2>              Creator;
+typedef CGAL::Polygon_2<K, Container>                     Polygon_2;
+typedef CGAL::Creator_uniform_2<int, Point_2>             Creator;
 typedef CGAL::Random_points_in_square_2<Point_2, Creator> Point_generator;
 
 const double RADIUS = 100;
