@@ -1100,7 +1100,7 @@ private:
                  std::cout << hhandle->source()->point() << " " 
                  << hhandle->target()->point() << "\n";);
         
-                 std::cout << "  from vertex (1)";
+                
        res = pm.non_intersecting_insert_from_vertex(cv, hhandle, m_change_not);
 			
 
