@@ -38,30 +38,27 @@ a file scanner could be performed more efficiently on the internal
 halfedge data structure than by using the high-level Euler operators
 of the polyhedron.
 
-\begin{ccTexOnly}
 \begin{figure}
+\begin{ccTexOnly}
     \begin{center}
       \parbox{\textwidth}{%
           \includegraphics[width=\textwidth]{idraw/modifier.ips}%
       }
     \end{center}
+\end{ccTexOnly}
+
     \caption{Class diagram for the modifier. It illustrates the
              safe access to an internal representation through an
              high-level interface.}
     \label{figureModifierDesign}
-\end{figure}
-\end{ccTexOnly}
 
 \begin{ccHtmlOnly}
     <CENTER>
-    <A NAME="figureModifierDesign">
     <A HREF="./modifier.gif">
         <img src="./modifier_small.gif" alt="Modifier Class Diagram"></A><BR>
-    <A HREF="./modifier.gif">Figure:</A>
-             Class diagram for the modifier. It illustrates the safe access
-             to an internal representation through an high-level interface.
     </CENTER>
 \end{ccHtmlOnly}
+\end{figure}
 
 The solution provided here is inspired by the strategy
 pattern~\cite{ghjv-dpero-95}, though it serves a different intent, see
