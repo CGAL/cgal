@@ -13,6 +13,8 @@
 
 \usepackage{ae}
 
+\usepackage{color}
+
 \usepackage[active]{srcltx}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,10 +90,14 @@
 % -------------------------------------------------------------
 \ccDefGlobalScope{CGAL::}
 
-\newcommand{\todo}[2][TODO]{\marginpar{\textbf{#1}}\textbf{#1: #2}}
+%\reversemarginpar
+\newcommand{\todo}[2][TODO]{\textbf{#1: #2}\marginpar{\textbf{#1}}}
+\newcommand{\new}[1]{\textcolor{red}{#1}\marginpar{\textbf{NEW}}}
 
 \begin{document}
 
+
+\lcHtml{\def\Input#1{\input{#1}} \def\todo#1{} \def\todo[#1]#2{}}
 \Input{main}
 
 %% \begin{ccTexOnly}

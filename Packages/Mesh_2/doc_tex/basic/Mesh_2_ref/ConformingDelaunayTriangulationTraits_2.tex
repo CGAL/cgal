@@ -2,12 +2,13 @@
 
 \ccDefinition
 
-In addition of the requirements of the concept
-\ccc{DelaunayTriangulationTraits_2}, a model of the concept \ccRefName\ has
-to provide a numeric field type \ccc{FT}, a type \ccc{Vector_2} and several
-constructors on \ccc{Vector_2} and \ccc{Point_2}. These constructors are
-used by the conforming algorithm to compute Steiner points on constrained
-edges.
+\new{The concept \ccRefName\ refines the concept
+\ccc{ConstrainedDelaunayTriangulationTraits_2}, providing a numeric
+field type \ccc{FT}, a type \ccc{Vector_2} and several constructors on
+\ccc{Vector_2} and \ccc{Point_2}. The field type has to be a model of
+the concept \ccc{SqrtFieldNumberType}. This field type and the
+constructors are used by the conforming algorithm to compute Steiner
+points on constrained edges.}
 
 \ccRefines
 

@@ -1,19 +1,19 @@
 \begin{ccRefConcept}{DelaunayMeshTraits_2}
 
-\ccRefines
-
-\ccc{ConformingGabrielTriangulationTraits_2}
-
 \ccDefinition
 
-In addition of the requirements of the concept
-\ccc{ConformingGabrielTriangulationTraits_2}, a model of the concept
-\ccRefName{} has to provide a type \ccc{Quality} that represents a
-measure of the quality of a triangle, and a predicate \ccc{Is_bad}.
-\ccc{Is_bad} defines mesh criteria on triangles and computes the
-quality of the triangle passed as argument. The type \ccc{Quality}
-must be \emph{comparable} as the meshing algorithm will order bad
-triangles by quality, to split those with smallest quality first.
+\new{The concept \ccRefName\ refines the concept
+\ccc{ConformingGabrielTriangulationTraits_2}. It has to provides a
+type \ccc{Quality} that represents a measure of the quality of a
+triangle, and a predicate \ccc{Is_bad}.  \ccc{Is_bad} defines mesh
+criteria on triangles and computes the quality of the triangle passed
+as argument. The type \ccc{Quality} must be \emph{comparable} as the
+meshing algorithm will order bad triangles by quality, to split those
+with smallest quality first.}
+
+\ccRefines
+
+\new{\ccc{ConformingGabrielTriangulationTraits_2}}
 
 \ccTypes
 
