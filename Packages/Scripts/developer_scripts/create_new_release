@@ -1,0 +1,76 @@
+#!/bin/sh
+#
+# Creating a new CGAL internal release.
+#
+# Radu Ursu, Sylvain Pion, 2004.
+
+# TODO :
+# - Merge [some parts] into ./create_internal_release ?
+# - What is still missing is to do a checkout of the whole thing
+#   so that the Name: CVS keyword is updated in each file.
+#   But I'm more and more wondering if we really want that...
+
+PATH=$PATH:/usr/local/bin
+
+HTML_DIR="/net/servers/www-sop/geometrica/CGAL/Members/Releases"
+URL="https://www-sop.inria.fr/geometrica/CGAL/Members/Releases"
+LOGFILEBASE="create_release.log"
+BASENAME="CGAL-3.1-I-"
+MAILTO="cgal-develop-l@postino.mpi-sb.mpg.de"
+
+TAR=/usr/bin/gnu/tar
+GZIP=/usr/bin/gnu/gzip
+DIFF=/usr/bin/diff
+
+CVS_TAG=""
+#CVS_TAG="-A"
+
+#TMPDIR="/tmp"
+TMPDIR="${HOME}/CGAL/internal_release_making"
+
+cd ${TMPDIR} || return
+if [ -r "version_number" ]; then
+    for i in `cat version_number`
+    do
+        i=$(( $i + 1 ))
+    done
+    rm -rf version_number
+    printf "%d\n" "${i}" >> version_number
+    release_name="${BASENAME}${i}"
+    LOGFILE="`pwd`/${LOGFILEBASE}.${release_name}"
+    echo "${release_name}" >> ${LOGFILE} 2>&1
+    rel=`printf "%3s" "${i}" | sed "y/ /0/"`
+    release_number="1003001${rel}"
+    echo "${release_number}" >> ${LOGFILE} 2>&1
+    cd All
+    cvs -q update -P ${CVS_TAG} >> ${LOGFILE} 2>&1
+    NEW_TAG=`echo $release_name | sed -e "s/[-.]/_/g"`
+    echo "Tagging All with $NEW_TAG" >> ${LOGFILE} 2>&1
+    # Now we tag.  One directory at a time otherwise the repository
+    # gets locked for an hour...
+    # cvs -q tag $NEW_TAG >> ${LOGFILE} 2>&1
+    for dir in *
+    do
+      [ "$dir" != "CVS" ] && cvs -q tag $NEW_TAG $dir >> ${LOGFILE} 2>&1
+    done
+    cd ..
+    ./create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
+    cd ${TMPDIR}
+    # Make the diff with the previous release
+    ${DIFF} -urN previous_release "${release_name}" > ${release_name}.diff
+    ${GZIP} "${release_name}.diff" >> ${LOGFILE} 2>&1
+    rm -rf previous_release >> ${LOGFILE} 2>&1
+    # Make the release tarball
+    ${TAR} -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
+    ${GZIP} "${release_name}.tar" >> ${LOGFILE} 2>&1
+    mv "${release_name}" previous_release >> ${LOGFILE} 2>&1
+    mv "${release_name}.diff.gz" "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
+    echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
+    mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
+
+You can fetch it at :
+${URL}/${release_name}.tar.gz
+
+EOF
+fi
+
