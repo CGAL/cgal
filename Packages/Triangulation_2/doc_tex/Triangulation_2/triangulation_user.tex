@@ -27,15 +27,16 @@ fast point location queries.
 \label{Section_2D_Triangulations_Definitions}
 A two-dimensional triangulation is a set $T$  of simplices of dimension 0,
 1 or 2, called respectively vertices, edges and facets,
-such that :
+such that~: \\
 - any face of a simplex in $T$ is a simplex in $T$ \\
 - any simplex in $T$ is a face of a facet in $T$ \\
-- Two simplices in $T$ are either disjoints,
+- two simplices in $T$ are either disjoints,
 or incident (meaning that one is a subface of the other)
 or they share a common lower dimensional face. \\
-- Two facets of $T$ are said to be  {\em adjacent} if they
- either disjoint or share a common edge.
-  The set of facets in $T$ is connected for the adjacency relation. \\
+- the set of facets in  $T$ is connected for the adjacency relation,
+ where two facets 
+are said to be  {\em adjacent} if they
+share a common edge.
 
 Each facet of a triangulation can be given an orientation
 which in turn induces an orientation
@@ -177,7 +178,7 @@ The concept of
 {triangulation data structure} and some models for this concept are
 described in chapter~\ref{Chapter_2D_Triangulation_data_structure}.
 \cgal\ provides a default for the triangulation data structure
-template argeument.
+template argument.
  
 The class \ccc{Triangulation_2<Traits,Tds>}
 is designed to represent triangulations
