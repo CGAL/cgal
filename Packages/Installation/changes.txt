@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------
 
 GLOB: Updated makefile.
+GLOB: Check for LEDA_STD_HEADERS on windows compilers.
 GLOB: Now also binary distribution of libgmp for cygwin/g++.
 GLOB: Cleanup in gmp_menu and cln_menu.
 GLOB: Another try to fix libpath for test_gmp on Borland.
@@ -86,6 +87,7 @@ DOCS: Updated.
 DOCS: Some additions/corrections due to Dima.
 DOCS: Added description of CLN support.
 DOCS: Some minor corrections.
+DOCS: Some minor changes due to Dima.
 DOCS: Two changes due to Dima/Stefan.
 DOCS: Some updates due to Dima.
 DOCS: Replaced LEDA-4.1-beta by LEDA-4.0. :-)
