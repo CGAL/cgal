@@ -10,7 +10,7 @@ Design patterns \cite{Gamma:1995:DP} describe successful and
 programming paradigm \cite{Alexandrescu:2001:MCD} features the notion
 of C++ class templates and function templates, which is at the corner
 stone of all features provided by CGAL. Details of the design of the
-CGAL polyhedron data structure are given in next section.\\
+CGAL polyhedron data structure are given in next section.
 
 An example illustrating design patterns and the generic programming is
 the Standard Template Library (STL)~\cite{ms-stl-96}. Generality and
@@ -25,11 +25,23 @@ past-the-end position in the sequence. Since CGAL is strongly inspired
 from the generality of STL, it is important to become familiar with
 its concepts before starting using it.
 
-
-TODO:The difference between: class and object; concept and model;
-trait and policy.
-
-TODO:Explain the relation of: container and algorithm; specialization;
-
 \noindent \textbf{Halfedge data structure.}
 \input hds
+
+\noindent \textbf{Geometry data structure and algorithms}
+A subdivision surface is the limit surface resulted from the
+application of a subdivision algorithm to a control polyhedron.
+Subdivision algorithms recursively \emph{refine} (subdivide) the
+control polyhedron and \emph{modify} (smooth) the geometry according
+to the stencils of the source mesh.  
+%Subdivisions consist of two
+%meta-steps that most geometry processing algorithms have: the
+%\emph{connectivity operation} and the
+%\emph{geometry operation}. In this paper, we use subdivision
+%as the template of the geometry processing algorithms because it
+%connectivity operations are more complex than most other
+%algorithms. Some other simple algorithms, e.g.\ displacement map, the
+%connectivity operation is a null operation. In other words, the source
+%and the target mesh have the same connectivity.  
+Further details on
+subdivisions can be found at \cite{Sub:course:2000}.

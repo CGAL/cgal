@@ -1,16 +1,17 @@
 %!PS-Adobe-2.0
-%%Creator: dvips(k) 5.94a Copyright 2003 Radical Eye Software
+%%Creator: dvips(k) 5.86 Copyright 1999 Radical Eye Software
 %%Title: paper.dvi
-%%Pages: 7
+%%Pages: 6
 %%PageOrder: Ascend
 %%BoundingBox: 0 0 612 792
 %%DocumentFonts: Times-Roman Times-Bold Times-Italic CMSY9 CMSY6 Symbol
+%%+ Courier CMSY7 CMMI10
 %%EndComments
 %DVIPSWebPage: (www.radicaleye.com)
 %DVIPSCommandLine: dvips -Ppdf -G0 -t letter -z -o paper.ps paper.dvi
-%DVIPSParameters: dpi=8000
-%DVIPSSource:  TeX output 2004.04.07:2259
-%%BeginProcSet: tex.pro 0 0
+%DVIPSParameters: dpi=8000, compressed
+%DVIPSSource:  TeX output 2004.04.08:1820
+%%BeginProcSet: tex.pro
 %!
 /TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
 N}B/A{dup}B/TR{translate}N/isls false N/vsize 11 72 mul N/hsize 8.5 72
@@ -56,7 +57,7 @@ p -2 w}B/o{p -1 w}B/q{p 1 w}B/r{p 2 w}B/s{p 3 w}B/t{p 4 w}B/x{0 S
 rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
 
 %%EndProcSet
-%%BeginProcSet: alt-rule.pro 0 0
+%%BeginProcSet: alt-rule.pro
 %!
 % Patch by TVZ
 % Makes dvips files draw rules with stroke rather than fill.
@@ -76,7 +77,65 @@ TeXDict begin
 end
 
 %%EndProcSet
-%%BeginProcSet: psfrag.pro 0 0
+%%BeginProcSet: texc.pro
+%!
+/TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
+N}B/A{dup}B/TR{translate}N/isls false N/vsize 11 72 mul N/hsize 8.5 72
+mul N/landplus90{false}def/@rigin{isls{[0 landplus90{1 -1}{-1 1}ifelse 0
+0 0]concat}if 72 Resolution div 72 VResolution div neg scale isls{
+landplus90{VResolution 72 div vsize mul 0 exch}{Resolution -72 div hsize
+mul 0}ifelse TR}if Resolution VResolution vsize -72 div 1 add mul TR[
+matrix currentmatrix{A A round sub abs 0.00001 lt{round}if}forall round
+exch round exch]setmatrix}N/@landscape{/isls true N}B/@manualfeed{
+statusdict/manualfeed true put}B/@copies{/#copies X}B/FMat[1 0 0 -1 0 0]
+N/FBB[0 0 0 0]N/nn 0 N/IEn 0 N/ctr 0 N/df-tail{/nn 8 dict N nn begin
+/FontType 3 N/FontMatrix fntrx N/FontBBox FBB N string/base X array
+/BitMaps X/BuildChar{CharBuilder}N/Encoding IEn N end A{/foo setfont}2
+array copy cvx N load 0 nn put/ctr 0 N[}B/sf 0 N/df{/sf 1 N/fntrx FMat N
+df-tail}B/dfs{div/sf X/fntrx[sf 0 0 sf neg 0 0]N df-tail}B/E{pop nn A
+definefont setfont}B/Cw{Cd A length 5 sub get}B/Ch{Cd A length 4 sub get
+}B/Cx{128 Cd A length 3 sub get sub}B/Cy{Cd A length 2 sub get 127 sub}
+B/Cdx{Cd A length 1 sub get}B/Ci{Cd A type/stringtype ne{ctr get/ctr ctr
+1 add N}if}B/id 0 N/rw 0 N/rc 0 N/gp 0 N/cp 0 N/G 0 N/CharBuilder{save 3
+1 roll S A/base get 2 index get S/BitMaps get S get/Cd X pop/ctr 0 N Cdx
+0 Cx Cy Ch sub Cx Cw add Cy setcachedevice Cw Ch true[1 0 0 -1 -.1 Cx
+sub Cy .1 sub]/id Ci N/rw Cw 7 add 8 idiv string N/rc 0 N/gp 0 N/cp 0 N{
+rc 0 ne{rc 1 sub/rc X rw}{G}ifelse}imagemask restore}B/G{{id gp get/gp
+gp 1 add N A 18 mod S 18 idiv pl S get exec}loop}B/adv{cp add/cp X}B
+/chg{rw cp id gp 4 index getinterval putinterval A gp add/gp X adv}B/nd{
+/cp 0 N rw exit}B/lsh{rw cp 2 copy get A 0 eq{pop 1}{A 255 eq{pop 254}{
+A A add 255 and S 1 and or}ifelse}ifelse put 1 adv}B/rsh{rw cp 2 copy
+get A 0 eq{pop 128}{A 255 eq{pop 127}{A 2 idiv S 128 and or}ifelse}
+ifelse put 1 adv}B/clr{rw cp 2 index string putinterval adv}B/set{rw cp
+fillstr 0 4 index getinterval putinterval adv}B/fillstr 18 string 0 1 17
+{2 copy 255 put pop}for N/pl[{adv 1 chg}{adv 1 chg nd}{1 add chg}{1 add
+chg nd}{adv lsh}{adv lsh nd}{adv rsh}{adv rsh nd}{1 add adv}{/rc X nd}{
+1 add set}{1 add clr}{adv 2 chg}{adv 2 chg nd}{pop nd}]A{bind pop}
+forall N/D{/cc X A type/stringtype ne{]}if nn/base get cc ctr put nn
+/BitMaps get S ctr S sf 1 ne{A A length 1 sub A 2 index S get sf div put
+}if put/ctr ctr 1 add N}B/I{cc 1 add D}B/bop{userdict/bop-hook known{
+bop-hook}if/SI save N @rigin 0 0 moveto/V matrix currentmatrix A 1 get A
+mul exch 0 get A mul add .99 lt{/QV}{/RV}ifelse load def pop pop}N/eop{
+SI restore userdict/eop-hook known{eop-hook}if showpage}N/@start{
+userdict/start-hook known{start-hook}if pop/VResolution X/Resolution X
+1000 div/DVImag X/IEn 256 array N 2 string 0 1 255{IEn S A 360 add 36 4
+index cvrs cvn put}for pop 65781.76 div/vsize X 65781.76 div/hsize X}N
+/p{show}N/RMat[1 0 0 -1 0 0]N/BDot 260 string N/Rx 0 N/Ry 0 N/V{}B/RV/v{
+/Ry X/Rx X V}B statusdict begin/product where{pop false[(Display)(NeXT)
+(LaserWriter 16/600)]{A length product length le{A length product exch 0
+exch getinterval eq{pop true exit}if}{pop}ifelse}forall}{false}ifelse
+end{{gsave TR -.1 .1 TR 1 1 scale Rx Ry false RMat{BDot}imagemask
+grestore}}{{gsave TR -.1 .1 TR Rx Ry scale 1 1 false RMat{BDot}
+imagemask grestore}}ifelse B/QV{gsave newpath transform round exch round
+exch itransform moveto Rx 0 rlineto 0 Ry neg rlineto Rx neg 0 rlineto
+fill grestore}B/a{moveto}B/delta 0 N/tail{A/delta X 0 rmoveto}B/M{S p
+delta add tail}B/b{S p tail}B/c{-4 M}B/d{-3 M}B/e{-2 M}B/f{-1 M}B/g{0 M}
+B/h{1 M}B/i{2 M}B/j{3 M}B/k{4 M}B/w{0 rmoveto}B/l{p -4 w}B/m{p -3 w}B/n{
+p -2 w}B/o{p -1 w}B/q{p 1 w}B/r{p 2 w}B/s{p 3 w}B/t{p 4 w}B/x{0 S
+rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
+
+%%EndProcSet
+%%BeginProcSet: psfrag.pro
 %%
 %% This is file `psfrag.pro',
 %% generated with the docstrip utility.
@@ -234,15 +293,17 @@ end PSfragDict RO pop
 end
 
 %%EndProcSet
-%%BeginProcSet: 8r.enc 0 0
+%%BeginProcSet: 8r.enc
 % @@psencodingfile@{
 %   author = "S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry",
 %   version = "0.6",
-%   date = "1 July 1998",
+%   date = "22 June 1996",
 %   filename = "8r.enc",
-%   email = "tex-fonts@@tug.org",
-%   docstring = "Encoding for TrueType or Type 1 fonts
-%                to be used with TeX."
+%   email = "kb@@mail.tug.org",
+%   address = "135 Center Hill Rd. // Plymouth, MA 02360",
+%   codetable = "ISO/ASCII",
+%   checksum = "119     662    4424",
+%   docstring = "Encoding for TrueType or Type 1 fonts to be used with TeX."
 % @}
 % 
 % Idea is to have all the characters normally included in Type 1 fonts
@@ -270,8 +331,7 @@ end
 % upward-compatible revisions, if someday more characters are generally
 % available.
 % 
-% (5) hyphen appears twice for compatibility with both 
-% ASCII and Windows.
+% (5) hyphen appears twice for compatibility with both ASCII and Windows.
 % 
 /TeXBase1Encoding [
 % 0x00 (encoded characters from Adobe Standard not in Windows 3.1)
@@ -289,7 +349,7 @@ end
  /.notdef /.notdef /.notdef /.notdef
  /.notdef /.notdef /.notdef /.notdef
  % very contentious; it's so painful not having quoteleft and quoteright
- % at 96 and 145 that we move the things normally found there to here.
+ % at 96 and 145 that we move the things normally found there down to here.
  /grave /quotesingle 
 % 0x20 (ASCII begins)
  /space /exclam /quotedbl /numbersign
@@ -355,7 +415,7 @@ end
 ] def
 
 %%EndProcSet
-%%BeginProcSet: texps.pro 0 0
+%%BeginProcSet: texps.pro
 %!
 TeXDict begin/rf{findfont dup length 1 add dict begin{1 index/FID ne 2
 index/UniqueID ne and{def}{pop pop}ifelse}forall[1 index 0 6 -1 roll
@@ -371,7 +431,7 @@ if}forall Encoding{]exch pop}{cleartomark}ifelse}if/Encoding exch def}
 def end
 
 %%EndProcSet
-%%BeginProcSet: special.pro 0 0
+%%BeginProcSet: special.pro
 %!
 TeXDict begin/SDict 200 dict N SDict begin/@SpecialDefaults{/hs 612 N
 /vs 792 N/ho 0 N/vo 0 N/hsc 1 N/vsc 1 N/ang 0 N/CLIP 0 N/rwiSeen false N
@@ -429,7 +489,7 @@ moveto}N/fil{fill SaveX SaveY moveto}N/ellipse{/endangle X/startangle X
 1 startangle endangle arc savematrix setmatrix}N end
 
 %%EndProcSet
-%%BeginProcSet: color.pro 0 0
+%%BeginProcSet: color.pro
 %!
 TeXDict begin/setcmykcolor where{pop}{/setcmykcolor{dup 10 eq{pop
 setrgbcolor}{1 sub 4 1 roll 3{3 index add neg dup 0 lt{pop 0}if 3 1 roll
@@ -478,7 +538,7 @@ setcmykcolor}DC/Gray{0 0 0 0.50 setcmykcolor}DC/Black{0 0 0 1
 setcmykcolor}DC/White{0 0 0 0 setcmykcolor}DC end
 
 %%EndProcSet
-%%BeginProcSet: hps.pro 0 0
+%%BeginProcSet: hps.pro
 %!
 /HPSdict 20 dict dup begin/braindeaddistill 50 def/rfch{dup length 1 sub
 1 exch getinterval}bind def/splituri{dup(#)search{exch pop}{()exch}
@@ -551,10 +611,147 @@ pop vsize 72 sub exch DvipsToPDF sub /pdf@voff exch def } def systemdict
 if
  
 @fedspecial end
+%%BeginFont: CMMI10
+%!PS-AdobeFont-1.1: CMMI10 1.100
+%%CreationDate: 1996 Jul 23 07:53:57
+
+% Copyright (C) 1997 American Mathematical Society.  All Rights Reserved.
+
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.100) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMMI10) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Medium) readonly def
+/ItalicAngle -14.04 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMMI10 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 59 /comma put
+readonly def
+/FontBBox{-32 -250 1048 750}readonly def
+/UniqueXX 5087385 def
+currentdict end
+currentfile eexec
+80347982ab3942d930e069a70d0d48311d725e830d1c76fba12e12486e989c98
+74c2b527f0925722787027f44470d484262c360cdfdddf3657533a57bb16f730
+48bfbbfcb73a650484015441fdc837add94ac8fbd2022e3ec8f115d4b4bb7b7f
+15388f22cc6198efe768bd9fceb3446ee4a8dc27d6cd152485384ef5f59381ff
+da43f2d20c8fb08aa27ab2015b774db10dacfdcd33e60f178c461553146ab427
+bdd7da12534ba078ad3d780414930da4f8d58abefd45db119b10eb409dd89792
+3c6e705479464a4b310b58348c4b42393988fef4925cf984423aaf65fea9f0e6
+4629953bcf50b919d968d99bd185f83112b2759cc411764e9bde677f57c5ee5a
+c555448d5f81a16259ded1e11bf4119d53e8ab07a802df900d3a2d5ccc1c6876
+d29c5e9effb7af3ef83400b0910c07873a8c56fa7b1eb1ba426043b00cc95dbe
+dc6e136cbbbcb3f67509964f9f281ebf81fe5b018122eaf66c4a838487e82e18
+6e006093042848a903efb3469ab6b4049767aadb95c30408dfd58d8a10f4cb22
+168decd9f3ee100f07b49aa44c92139b669cc312ba20192454eb2375be6284b0
+26659d964b96ae82d4942e758027fcf23c25ed01115af27ce7f20efe2a822bb6
+84004f20243a49c9e93301fc21b80815c033c3e2ba58ef53da2157d524b395f2
+b37abca13bc6a2f42e824ab7e47106176b0d6db267fbb795ac7425582df2e3dc
+55863468a9200742bd7b552c48f8cf58bc21343bd3b95abfa140f33f37c6f3f7
+8b0d8a5154eb7c1f62ec598267f13e841a3e64172663935ac8b665d86540d316
+ddece329c008049c5e74b27d59022c5515059bc3b89370b1bc6a169c888bb325
+e0b74282d6f053a50da4024ed1e433271a32ab8c17d41c632b41cf9f3ecd5fe1
+24daf7aea7ce8a63047b245822930d517df7baaafa69d2d17f7d93cebd45416d
+f3459365434123a76ccf883a4973bab19807e1f0c4bab03a45f7ed69ff2660ff
+3963e4def11001eec4238c368a39d874fd30b3c14f4186ec7700fbce22abe468
+eb32baf7b0164f8f21a9b5e706b91411faaa44467cb2180ab03de375c1ab93e9
+76e11ab92fdd4a7280a6d1a8dc65c4c89d04c8ed6988045a2a3de9a4c7b1efd3
+75b79ee3d49569213fcb818f6f1cf250f5e595c4b2c31610a8eea1046e889df5
+10af9721cc0f20069e163dff476ab5e006dceb928e94b980cd5bc1487d3542bc
+f1f9c5e8ffdb710cff68d6dd22f4e88abc163798481d8cdfa9704c5eeed516b1
+f2e14950425d5328bbbbcafd9defc7207840165765d4cba79e900f78ba1fe4a4
+db3e76ad95373a4234e745d3191dbfdac1d4ea83353ba0f99670196dbaa1c3d5
+a77462bead93f499ab7f3d2e4677984ea0668039e9952db4c3e3b76d96650ba3
+33348f5018c393e4adc21225758e823e0bf68779f4a1cb17cd9615b573b52e3f
+daa6a54ea18258f948acde4886e378c5f0155b9ac17d5c9c8f0683aa0f7efa
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+
+%%EndFont 
+%%BeginFont: CMSY7
+%!PS-AdobeFont-1.1: CMSY7 1.0
+%%CreationDate: 1991 Aug 15 07:21:52
+
+% Copyright (C) 1997 American Mathematical Society.  All Rights Reserved.
+
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.0) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMSY7) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Medium) readonly def
+/ItalicAngle -14.035 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMSY7 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 3 /asteriskmath put
+readonly def
+/FontBBox{-15 -951 1252 782}readonly def
+/UniqueXX 5000817 def
+currentdict end
+currentfile eexec
+9b9c1569015f2c1d2bf560f4c0d52257bac8ced9b09a275ab231194ecf829352
+05826f4e975dcecec72b2cf3a18899ccde1fd935d09d813b096cc6b83cdf4f23
+b9a60db41f9976ac333263c908dcefcdbd4c8402ed00a36e7487634d089fd45a
+f4a38a56a4412c3b0baffaeb717bf0de9ffb7a8460bf475a6718b0c73c571145
+d026957276530530a2fbefc6c8f73e9b697ddc0351763500e23c4d170ea8a2d2
+75ad0b6b23097f02fa803c1f46f9ac10fe0e527c431b11b1b9a50e874896cca6
+17fe3e255960846bc319ca68b9b930a45d5d0fc36b352c3443ab6f7793b38d2c
+7fb9c409ab7980ead55e9f8f6b83c70088d1fa6d7f2214da8928e40b96334ad2
+72d1b5db9d1355a579b26a8dac21f021e393d7d837a95deb8de92ed818a8b80b
+98ee9cdd8a3c57ad7d6eb7a82f43eaa6ec520eefa7302e750edc4b495f70bba2
+24a2182eec37f1a1c5dc8e20973007150237daa6bf03d498826777eeebe09014
+ebfe05a8731e1a421cfc513d47d673e3d94d805f5d0668ffa265e0962cb5a75a
+4a93d9b872c2d3ac4391eedd46c6cae184e1af981f95ce21204dc4babbba38ac
+cc0a16964fcb3e98501c0392030d486c9aa8b35acadbea5e2bf9b4e732a90a25
+6a3227e489f245b82b26f4e485b7567ffff5ee02e89d640e56b11d661791f511
+df9cef5821b08b65b671db106348a8bdbbcd377bf82aef6020dfc0cac6fe1932
+7140f3fc917d249129ad07ffdd9b6998cf46901131c08bc0e77fa38ee04143bc
+f4804222bee432c8d0d89ded7fc94b221bc7158766b997de21e51fa6e41af7fc
+3c8329a272bbd2dedcf1bd2eb9d8664abc336bb5697c0c5cb95c7d93323c32bf
+766f35e038d2d3b4e5c4e39d9923a1e36271d2197ca4a121765a994ecf4dffc5
+9e92e783fbabe550dbbe3a6c21fca2652b83d3e550bdfa9b0044f0bb4af8f6d6
+b145c7f1ad0e88f63a2385401cccb0e80f36a7454e6685a0199deb1d52a661ac
+0244fd9d4de92e28930395a3b8c436bfc939fede4b97e8a1164a68d975534921
+c4d36f2591
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+
+%%EndFont 
 %%BeginFont: CMSY6
 %!PS-AdobeFont-1.1: CMSY6 1.0
 %%CreationDate: 1991 Aug 15 07:21:34
-% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+
+% Copyright (C) 1997 American Mathematical Society.  All Rights Reserved.
+
 11 dict begin
 /FontInfo 7 dict dup begin
 /version (1.0) readonly def
@@ -576,39 +773,39 @@ dup 3 /asteriskmath put
 dup 112 /radical put
 readonly def
 /FontBBox{-4 -948 1329 786}readonly def
-/UniqueID 5000816 def
+/UniqueXX 5000816 def
 currentdict end
 currentfile eexec
-D9D66F633B846A97B686A97E45A3D0AA052F09F9C8ADE9D907C058B87E9B6964
-7D53359E51216774A4EAA1E2B58EC3176BD1184A633B951372B4198D4E8C5EF4
-A213ACB58AA0A658908035BF2ED8531779838A960DFE2B27EA49C37156989C85
-E21B3ABF72E39A89232CD9F4237FC80C9E64E8425AA3BEF7DED60B122A52922A
-221A37D9A807DD01161779DDE7D5FC1B2109839E5B52DFB7605D7BA557CC35D6
-49F6EB651B83771034BA0C39DB8D426A24543EF4529E2D939125B5157482688E
-9045C2242F4AFA4C489D975C029177CD6497EACD181FF151A45F521A4C4043C2
-1F3E76EF5B3291A941583E27DFC68B9211105827590393ABFB8AA4D1623D1761
-6AC0DF1D3154B0277BE821712BE7B33385E7A4105E8F3370F981B8FE9E3CF3E0
-007B8C9F2D934F24D591C330487DDF179CECEC5258C47E4B32538F948AB00673
-F9D549C971B0822056B339600FC1E3A5E51844CC8A75B857F15E7276260ED115
-C5FD550F53CE5583743B50B0F9B7C4F836DEF1B263DB260571DCE3DFEC496E93
-CB244233D14265C75105A52752F6FD65BEB401C8874BC659BC1D3ACB2B494652
-F074549FA28873558649A150EC72E3ADBC7803BC5D9544F32F69E37E51E68023
-1EFE3D08447DCF002B47E5E74B40AE0A68591CE2FDAC076767F59A91616E6C8B
-0902351041A9E39EB7D5B3C6BA9955A5F8EE7D61EC0C68E5D07BE984CE262DE5
-298990ECFC5AE969DEEEF69A96E9AEC39DE53580FDC2B6369E7792A2E9F95063
-171960EEAFBDF7813CA061F160F2002CD33994953ABB7F0E6413C125DB49D747
-EA9315E79269CCA9C3065CD21FBDD6E4FA1A92A39447BB7988C5E6AC715E6E17
-686483A23891AA43B18D621721106248257EE902751023BBEFCFA95F2AD87EEE
-ADCFCFE321F98E88C11557EE0582656B8FE9888F1E738132EF9B5B6BD3004F3E
-39CC36BC3F9D9A315397A9B3399F6F8B6D44989AE9523AC8DD04767767081DCD
-3D629D2D6E3E7191608F5CBED743643B8A6DC1CED6C2B909F0D0B2A209D9B82B
-27ADD9CD85B11B9B76CCD74F1B607F55EEA409F12F4CF7B5A9A5192026C4C14C
-0C58695E192E15C97E94093809BB0920C86DE5C6E18C8E226796AEB793808004
-D51C7F0330EC745BB58EDBF248A7F429B5547017E5A5B5ECB404CB4C81A93F09
-11EDFAA0F1DB9958CB9A466FE2D447F3DF7632301E0729E5007D346340E6F172
-DF932DA19B8C5BC5DCAE36995D31671E8CEC137E93927B87628B39290D611B41
-F4016EA42B406642957DE9C98C07C674774274D40DFBD30F1730810BAB062F0E
-795AB4B165F7
+9b9c1569015f2c1d2bf560f4c0d52257bac8ced9b09a275ab231194ecf829352
+05826f4e975dcecec72b2cf3a18899ccde1fd935d09d813b096cc6b83cdf4f23
+b9a60db41f9976ac333263c908dcefcdbd4c8402ed00a36e7487634d089fd45a
+f4a38a56a4412c3b0baffaeb717bf0de9ffb7a8460bf475a6718b0c73c571145
+d026957276530530a2fbefc6c8f059084178f5ab59e11b6a18979f258b8c6ed3
+ccafbc21aca420c9c83eea371adc20e038b4d7b8ac303004b0aa205f04135140
+76407216032fdd22e6219da8f16b28ca12524deb7bca073cc5eba65c102a5e85
+fd48e6d062cd4283ee570a7774597e5bf0e3400b6be72db0115f3cb12db70ce0
+83722870cddfadee715f10f1fcaf20e06f3c54afe5ca238539bfe2b596116e83
+f5371ff18fa5003d8543226cfd4025f9940365b392a858d27f078d3abcffe4a1
+54e78c7692d1a32bf935967c64f01b24788ff8325d61145e2d4a489fd986fb77
+38e6b254522c77ca2797a504a9ce4676a77ebacb026eca94dde5922c936f8e90
+c43e2851905abd26842613d8fb644512275d43f312eea72f7ea3ba90c8fda6ce
+7a9dacf52f55f0dd557f8d866ed6f3d3d5e6fe7e9ee79404fbe1a285bc519ecd
+7ca162f0729044aff526bfe554ed59dd9beab0f842d55be08caada6136ac8e30
+21c0b1f2869eae249565a126093d019e874f1d3e3de66d54ad31a98634d992d1
+2087aa9caadb695d492b62edb22e89fddf96357f7dfe18336e102a892d42c1a8
+924b450df9e62931117872ba4c4f60217f8dba3846b1df7f87862b42db5627bd
+43eb0e86fd0a633d67f9c8d2e64df360c689be9b696536fd7d1886be07beb475
+10befde02910376810d3894b6c3e16d0694dff896b2cd98f5e44f7f059776d8e
+9bb6e3c852781ef8e6e0e0a9c8c78b899754aab4f9a8f9da4fd51bc78e39e7c9
+a538ff680ef2c545bf9fcb4b038ed25337f8c02f345b1b7100eb6a13c86766a0
+a1ac5be7ea63e63b36d9b144a0f13328ce585ece7a8f4a4f920cf6cf29ab98a9
+21ff90b88381f6ad5d1496d428912acf57c3a02cb17ac70bd9f7788f04e11b11
+4ffc3d62edc10be374b267a9d5722e790306ab79251c65efd637d8195cf7ae15
+f7f061d6712427ba1c5d05f3449820a4a56ad3b3857ec2d9ca14de6f97df9a2e
+9dd69dd6e3cd4cac770d3844292a49b22595a9b398e4fe57056a3bc7bee80733
+237102d0ae9f6db089177c157915597779e04d85849305ea4f315cdad061bdce
+78c32d8fac773d3eb2a8e3c9435a089cbda6ad74241778c635752c84e6c6f773
+b92c6d4677e7fe5670a1ccb117b7a9a6ac0de0b90baf3220eb5a
 0000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000
@@ -618,11 +815,14 @@ F4016EA42B406642957DE9C98C07C674774274D40DFBD30F1730810BAB062F0E
 0000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000
 cleartomark
+
 %%EndFont 
 %%BeginFont: CMSY9
 %!PS-AdobeFont-1.1: CMSY9 1.0
 %%CreationDate: 1991 Aug 15 07:22:27
-% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+
+% Copyright (C) 1997 American Mathematical Society.  All Rights Reserved.
+
 11 dict begin
 /FontInfo 7 dict dup begin
 /version (1.0) readonly def
@@ -643,32 +843,33 @@ dup 15 /bullet put
 dup 112 /radical put
 readonly def
 /FontBBox{-30 -958 1146 777}readonly def
-/UniqueID 5000819 def
+/UniqueXX 5000819 def
 currentdict end
 currentfile eexec
-D9D66F633B846A97B686A97E45A3D0AA052F09F9C8ADE9D907C058B87E9B6964
-7D53359E51216774A4EAA1E2B58EC3176BD1184A633B951372B4198D4E8C5EF4
-A213ACB58AA0A658908035BF2ED8531779838A960DFE2B27EA49C37156989C85
-E21B3ABF72E39A89232CD9F4237FC80C9E64E8425AA3BEF7DED60B122A52922A
-221A37D9A807DD01161779DDE7D31FF2B87F97C73D63EECDDA4C49501773468A
-27D1663E0B62F461F6E40A5D6676D0037D33F24E2FAC2B0009AD3C8350CDF8CC
-65BCA87979C36D14CB552E9A985E48BE4E88ECA16DF418749AF04FDD2B0E1380
-D281BB2476BB45FF30946B247DFD7F57305FA87E50CA338121C71CDFDF927A9C
-77FF14CB4A1D6D80356FB1171ED38C37702350497B44E42CE31DB2F493807DAA
-15B887C671199A54C4C1294BC520F5538C15556BC43C9F62342B121C6DCD6C5F
-491DA47FF360201EE21C08A781ED0589A6DF91B99FE118B9B29E4F068672E52F
-1A06C514D91C4C937D4E642503392B1CD1BF5AF0BCA28EBD840AD76CC39AD7AA
-CF2C05723E3599B95B4C5FE6FB43D842FC020017ED2002A4FD11BF6D07256A6B
-63C5FB8EF8521A2875951F0B66F2D6ADE4D8A8C8864A153C4DAA3855C1A468BB
-C435982A01E33D313E1A1AC640EF47B5898AE6479A6AF90FA35131B8CCE6F91D
-E67327CDDFBB5AF8AA459CFB8C882B1A78F36F15AAA6E6B4AFE7638EAB68C817
-FEE59EEA86D5B23033C8BD64E3E2BCE820BA786C49B69EFEDFAE427D0B7BE7F0
-4BEDD322FFB8DDE38C202A442DB607022913F7A28626C9E6D3B4F93F406043A5
-7B934D6762CFD87D4AD334960D76D5E9BFB1BEC610434F523D9F752593672526
-6A7EDFFDA7B8515DBDD9CCC6659AF54C408F0E9AEAA91A86A0E8290D5510BC2C
-ABE774F5403028B983E02F33DBAC7B15B02FD1A3D1E1512FF8BB4AEF71495610
-696D4E3419BA6CF0B2B9B04A616B6526A8B52FF7FF738647EC81DA0B9F621E69
-8D3CE9E3CF1E53F1D0E377606B9F6FCD01F36857C1
+9b9c1569015f2c1d2bf560f4c0d52257bac8ced9b09a275ab231194ecf829352
+05826f4e975dcecec72b2cf3a18899ccde1fd935d09d813b096cc6b83cdf4f23
+b9a60db41f9976ac333263c908dcefcdbd4c8402ed00a36e7487634d089fd45a
+f4a38a56a4412c3b0baffaeb717bf0de9ffb7a8460bf475a6718b0c73c571145
+d026957276530530a2fbefc6c8f67052788e6703bb5ee49533870bca1f113ad8
+3750d597b842d8d96c423ba1273ddc63eb43f34fa90ea73a234af35fd9b24eb7
+4f19626e9124df7acb92629cc87b2cf81c4a89b27447806db34393ddf0402958
+e2daee0b4bf315f9aa0a2650d2e11ee289ffaec940d0af160fe7f29411c1c458
+69d1ac3bcfe2ae4da72422549095f1fc9fec606289316f106e719a4ae2fd45ee
+868fddf07a80e9a626bb43cdfdaa9dcd208b88fd99af20b27f9d6b5cda6a3fa8
+8d5acfce8b5eebb38854378cecc3bfdac526514f1be9fb28ae628918ba942a3e
+05b78c3aff808cf416a5ed01be280231b75a7aee0c66b0549713bef6b3cbc188
+e625ba8091f481ffd2b7a47220a8ad34d58daa96e5249e4f00aebd0b0314ee62
+9f9874a77ed82f333a1b30c652afa16c95ed22c3f7c0f71fb78fe2b76171f3c3
+81dac925ea19de337e9302db90fc5a9a449d37d9494e35ebed5da8cae9183252
+be186e53cbcb6df1ee48ea13017bcfa6a9cca2e4654997c5336cabe27419fcb9
+3e82e5391dafd8dc219157ee06428ec6a06efb69567209a34030afd3ad7fa849
+8180d2b4a7f33eafc696a41b418182cad4e03e89256c8bbb9c3eb317179709ee
+5f480ca9d32a4751989b7596ff87f94b3f1fe3f1334a6e3c1da61a45e5605e02
+b4dc8fed885dde9e1933919febb9c9b0169faf78b72b41d9fd2fc1ce6ee59e63
+6bed890d88032191d5d03c17a81b0d3c9212f9d5cd1af9fc7873b2cafcd9ce78
+8030e99580fc96a983bced606971c0c434bf97d6e47650de14ae49e5523f3603
+d3a32f628ca5371ef2786efd869f9628dbc635a190dd374d5592a2e0a2d0fd86
+34d5f4cd508196a708
 0000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000
@@ -678,54 +879,58 @@ ABE774F5403028B983E02F33DBAC7B15B02FD1A3D1E1512FF8BB4AEF71495610
 0000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000
 cleartomark
+
 %%EndFont 
 TeXDict begin 40258431 52099146 1000 8000 8000 (paper.dvi)
-@start /Fa 167[575 1[575 575 487 443 532 1[443 575 575
-709 487 575 1[265 575 2[487 575 532 532 575 65[{
-TeXBase1Encoding ReEncodeFont}19 797.011 /Times-Roman
-rf /Fb 136[480 332 369 221 258 295 1[369 332 369 1[185
-2[185 369 1[221 295 369 295 369 332 97[{TeXBase1Encoding ReEncodeFont}
-18 664.176 /Times-Bold rf /Fe 143[664 108[424 2[640{}3
-664.176 /CMSY6 rf /Ff 143[853 96[512 15[{}2 996.264 /CMSY9
-rf /Fg 134[393 4[246 344 344 2[443 443 639 246 2[246
-443 443 1[393 443 1[443 443 16[541 1[591 738 492 4[639
-3[591 1[541 17[246 221 46[{TeXBase1Encoding ReEncodeFont}24
-885.568 /Times-Italic rf /Fh 134[295 1[443 295 332 185
-258 258 1[332 332 332 480 185 295 1[185 332 332 185 295
-332 295 1[332 13[332 2[406 8[480 1[406 16[332 1[332 1[332
-185 6[221 40[{TeXBase1Encoding ReEncodeFont}30 664.176
-/Times-Italic rf /Fi 130[319 1[319 295 332 332 480 332
-332 185 258 221 1[332 332 332 517 185 332 1[185 332 332
-221 295 332 295 332 295 1[332 8[480 1[406 369 443 480
-369 480 480 1[406 2[221 480 480 369 406 480 443 1[480
-2[375 375 375 185 185 332 4[332 332 332 332 332 185 166
-1[166 375 1[221 221 1[517 4[221 33[{TeXBase1Encoding ReEncodeFont}63
-664.176 /Times-Roman rf /Fj 133[388 442 442 665 442 498
+@start /Fa 41[575 13[487 109[487 575 575 752 575 575
+487 443 532 1[443 575 575 709 487 575 1[265 575 575 1[487
+575 532 532 575 65[{TeXBase1Encoding ReEncodeFont}25
+797.011 /Times-Roman rf /Fb 196[277 59[{}1 996.264 /CMMI10
+rf /Fc 252[454 3[{}1 774.872 /CMSY7 rf /Fd 212[598 43[{
+TeXBase1Encoding ReEncodeFont}1 996.264 /Courier rf /Fe
+136[480 332 369 221 258 295 1[369 332 369 1[185 2[185
+369 1[221 295 369 295 369 332 97[{TeXBase1Encoding ReEncodeFont}18
+664.176 /Times-Bold rf /Fh 143[664 108[424 2[640{}3 664.176
+/CMSY6 rf /Fi 143[853 96[512 15[{}2 996.264 /CMSY9 rf
+/Fj 134[393 4[246 344 344 1[443 443 443 639 246 2[246
+443 443 1[393 443 1[443 443 16[541 2[738 492 4[639 3[591
+1[541 12[443 3[443 246 47[{TeXBase1Encoding ReEncodeFont}25
+885.568 /Times-Italic rf /Fk 134[295 3[332 185 258 258
+1[332 332 332 480 3[185 332 332 1[295 1[295 1[332 13[332
+2[406 8[480 1[406 16[332 1[332 1[332 7[221 40[{
+TeXBase1Encoding ReEncodeFont}23 664.176 /Times-Italic
+rf /Fl 130[319 1[319 295 332 332 1[332 332 185 258 221
+332 332 332 332 517 185 332 1[185 332 332 221 295 332
+295 332 295 1[332 1[221 1[221 4[480 1[406 369 443 480
+369 480 480 590 406 2[221 480 480 369 1[480 443 1[480
+2[375 375 375 185 185 6[332 332 332 332 185 166 1[166
+375 1[221 221 1[517 4[221 33[{TeXBase1Encoding ReEncodeFont}63
+664.176 /Times-Roman rf /Fm 133[388 442 442 665 442 498
 277 388 388 498 498 498 498 719 277 442 277 277 498 498
 277 442 498 442 498 498 9[830 2[554 498 609 1[609 719
 1[830 554 2[332 719 719 609 609 719 665 1[609 6[332 498
 4[498 498 498 498 498 1[249 332 249 672 1[332 332 332
 35[498 498 2[{TeXBase1Encoding ReEncodeFont}58 996.264
-/Times-Italic rf /Fk 134[498 2[498 554 332 388 442 1[554
+/Times-Italic rf /Fn 134[498 2[498 554 332 388 442 1[554
 498 554 830 277 554 1[277 554 498 332 442 554 442 554
-498 6[665 2[996 3[554 719 775 609 775 1[940 665 2[388
-775 775 1[665 719 719 665 719 1[498 6[498 498 498 498
-498 498 498 498 2[249 332 42[554 2[{TeXBase1Encoding ReEncodeFont}50
-996.264 /Times-Bold rf /Fl 22[442 81[996 498 27[442 498
-498 719 498 498 277 388 332 498 498 498 498 775 277 498
-277 277 498 498 332 442 498 442 498 442 3[332 1[332 3[940
-719 719 609 554 665 719 554 719 719 886 609 719 388 332
-719 719 554 609 719 665 665 719 1[442 1[562 1[277 277
-498 498 498 498 498 498 498 498 498 498 277 249 332 249
-562 1[332 332 332 35[554 554 2[{TeXBase1Encoding ReEncodeFont}78
-996.264 /Times-Roman rf /Fm 134[956 4[637 744 849 2[956
+498 6[665 2[996 3[554 719 1[609 2[940 665 2[388 775 775
+2[719 719 665 719 1[498 9[498 498 498 498 498 2[249 46[{
+TeXBase1Encoding ReEncodeFont}42 996.264 /Times-Bold
+rf /Fo 22[442 31[609 49[996 498 27[442 498 498 719 498
+498 277 388 332 498 498 498 498 775 277 498 277 277 498
+498 332 442 498 442 498 442 3[332 1[332 609 2[940 719
+719 609 554 665 719 554 719 719 886 609 719 388 332 719
+719 554 609 719 665 665 719 1[442 3[277 277 498 498 498
+498 498 498 498 498 498 498 277 249 332 249 562 1[332
+332 332 35[554 554 2[{TeXBase1Encoding ReEncodeFont}79
+996.264 /Times-Roman rf /Fp 134[956 4[637 744 849 2[956
 1064 1593 532 2[532 1064 956 1[849 1064 1[1064 956 16[1169
 2[1806 1276 4[1488 3[1381 1[1381 65[{TeXBase1Encoding ReEncodeFont}21
-1912.83 /Times-Bold rf /Fn 105[443 28[443 3[443 246 344
+1912.83 /Times-Bold rf /Fq 105[443 28[443 3[443 246 344
 295 1[443 443 443 689 3[246 443 443 1[393 443 393 1[393
 6[541 6[492 591 1[492 2[787 5[639 1[541 639 591 1[639
-9[443 443 443 443 443 443 443 443 1[221 1[221 2[295 295
-40[{TeXBase1Encoding ReEncodeFont}39 885.568 /Times-Roman
+10[443 443 443 443 443 443 443 1[221 1[221 2[295 295
+40[{TeXBase1Encoding ReEncodeFont}38 885.568 /Times-Roman
 rf end
 %%EndProlog
 %%BeginSetup
@@ -734,10 +939,10 @@ TeXDict begin
 %%BeginPaperSize: Letter
 letter
 %%EndPaperSize
- end
+
 HPSdict begin
 /TargetAnchors
 0 dict dup begin
-end targetdump-hook def end
+end targetdump-hook def
 TeXDict begin
 %%EndSetup

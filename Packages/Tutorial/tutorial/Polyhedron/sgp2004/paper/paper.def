@@ -23,5 +23,10 @@
 \def\hds{\lstinline!HalfedgeDS!}
 \def\hdsitem{\lstinline!PolyhedronItems!}
 
+
+% ANDY -------------------------------------------------------------------
+\def\tr{topology refinement}
+\def\gm{geometry modification}
+
 % L.K. -------------------------------------------------------------------
 \newcommand{\CC}{C\raise.08ex\hbox{\texttt{++}}}
