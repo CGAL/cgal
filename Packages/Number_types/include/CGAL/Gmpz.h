@@ -87,6 +87,10 @@ class Gmpz
 {
   typedef Handle_for<Gmpz_rep> Base;
 public:
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+
   Gmpz()
     : Base(Gmpz_rep()) {}
 
@@ -430,11 +434,6 @@ inline
 double
 to_double(const Gmpz &z)
 { return z.to_double(); }
-
-inline
-Number_tag
-number_type_tag(const Gmpz& )
-{ return Number_tag(); }
 
 inline
 Sign

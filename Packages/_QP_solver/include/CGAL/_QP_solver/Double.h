@@ -31,6 +31,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template<> struct Number_type_traits<GMP::Double> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_true   Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
 inline
 double
 to_double( GMP::Double d) { return d.to_double(); }

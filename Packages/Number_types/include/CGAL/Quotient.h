@@ -38,8 +38,6 @@
 #  include <cctype>
 #endif
 
-#include <CGAL/IO/io_tags.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template <class NumberType>
@@ -47,6 +45,9 @@ class Quotient
 {
  public:
   typedef NumberType NT;
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_true   Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
   
   Quotient() : num( NT(0) ), den( NT(1) ) {}
 
@@ -600,12 +601,6 @@ CGAL_KERNEL_INLINE
 NumberType
 numerator(const Quotient<NumberType>& q)
 { return q.num ; }
-
-template <class NumberType>
-inline
-Quotient_tag
-number_type_tag(const Quotient<NumberType>& q)
-{ return Quotient_tag(); }
 
 template <class NumberType>
 NumberType

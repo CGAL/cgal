@@ -42,6 +42,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <> struct Number_type_traits<leda_bigfloat> {
+  typedef Tag_false Has_gcd_tag;
+  typedef Tag_true  Has_division_tag;
+  typedef Tag_false Has_sqrt_tag;
+};
 
 #ifndef CGAL_CFG_NO_NAMESPACE
 inline
@@ -49,11 +54,6 @@ double
 to_double(const leda_bigfloat & b)
 { return CGAL_LEDA_SCOPE::to_double(b); }
 #endif // CGAL_CFG_NO_NAMESPACE
-
-inline
-Number_tag
-number_type_tag(const leda_bigfloat& )
-{ return Number_tag(); }
 
 inline
 bool

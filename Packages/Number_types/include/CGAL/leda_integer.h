@@ -29,17 +29,18 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <> struct Number_type_traits<leda_integer> {
+  typedef Tag_false Has_gcd_tag;
+  typedef Tag_false Has_division_tag;
+  typedef Tag_false Has_sqrt_tag;
+};
+
 #ifndef CGAL_CFG_NO_NAMESPACE
 inline
 double
 to_double(const leda_integer & i)
 { return i.to_double(); }
 #endif
-
-inline
-Number_tag
-number_type_tag(const leda_integer& )
-{ return Number_tag(); }
 
 inline
 bool

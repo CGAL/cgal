@@ -72,6 +72,9 @@ compare (const MP_Float & a, const MP_Float & b)
 class MP_Float
 {
 public:
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_true   Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
 
   typedef short limb;
   typedef int   limb2;
@@ -282,13 +285,6 @@ io_Operator
 io_tag(const MP_Float &)
 {
   return io_Operator();
-}
-
-inline
-Number_tag
-number_type_tag(const MP_Float &)
-{
-  return Number_tag();
 }
 
 std::ostream &

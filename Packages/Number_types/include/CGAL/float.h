@@ -37,15 +37,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <> struct Number_type_traits<float> {
+  typedef Tag_false Has_gcd_tag;
+  typedef Tag_true  Has_division_tag;
+  typedef Tag_true  Has_sqrt_tag;
+};
+
 inline
 double
 to_double(float f)
 { return static_cast<double>(f); }
-
-inline
-Number_tag
-number_type_tag(float)
-{ return Number_tag(); }
 
 #ifdef __sgi
 

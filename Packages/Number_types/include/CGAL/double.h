@@ -24,7 +24,6 @@
 #define CGAL_DOUBLE_H
 
 #include <CGAL/basic.h>
-#include <CGAL/tags.h>
 #include <cmath>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || \
     defined(CGAL_MASK_FINITE_VALID)
@@ -35,6 +34,12 @@
 #endif
 
 CGAL_BEGIN_NAMESPACE
+
+template<> struct Number_type_traits<double> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_true   Has_division_tag;
+  typedef Tag_true   Has_sqrt_tag;
+};
 
 inline
 double
@@ -50,11 +55,6 @@ inline
 bool
 is_integral (const double d)
 { return CGAL_CLIB_STD::ceil(d) == d; }
-
-inline
-Number_tag
-number_type_tag(double)
-{ return Number_tag(); }
 
 #ifdef __sgi
 

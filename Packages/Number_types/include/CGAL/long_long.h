@@ -31,15 +31,22 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <> struct Number_type_traits<long long int> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
+template <> struct Number_type_traits<unsigned long long int> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
 inline
 double
 to_double(long long int i)
 { return (double)i; }
-
-inline
-Number_tag
-number_type_tag(long long int)
-{ return Number_tag(); }
 
 inline
 bool

@@ -66,6 +66,7 @@ max(const NT& x, const NT& y)
 
 CGAL_END_NAMESPACE
 
+#include <CGAL/Number_type_traits.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/double.h>

@@ -48,6 +48,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <> struct Number_type_traits<leda_real> {
+  typedef Tag_false Has_gcd_tag;
+  typedef Tag_true  Has_division_tag;
+  typedef Tag_true  Has_sqrt_tag;
+};
 
 #ifndef CGAL_NO_NAMESPACE
 inline
@@ -60,11 +65,6 @@ inline
 leda_real
 sqrt(const leda_real & r)
 { return CGAL_LEDA_SCOPE::sqrt(r); }
-
-inline
-Number_tag
-number_type_tag(const leda_real& )
-{ return Number_tag(); }
 
 inline
 bool

@@ -25,21 +25,28 @@
 #ifndef CGAL_INT_H
 #define CGAL_INT_H
 
-#include <CGAL/number_type_tags.h>
+#include <CGAL/tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
 // int
 
+template <> struct Number_type_traits<int> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
+template <> struct Number_type_traits<unsigned int> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
 inline
 double
 to_double(int i)
 { return static_cast<double>(i); }
-
-inline
-Number_tag
-number_type_tag(int)
-{ return Number_tag(); }
 
 inline
 bool
@@ -58,15 +65,22 @@ io_tag(int)
 
 // long
 
+template <> struct Number_type_traits<long int> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
+template <> struct Number_type_traits<unsigned long int> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
 inline
 double
 to_double(long int i)
 { return static_cast<double>(i); }
-
-inline
-Number_tag
-number_type_tag(long int)
-{ return Number_tag(); }
 
 inline
 bool
@@ -85,15 +99,22 @@ io_tag(long int)
 
 // short
 
+template <> struct Number_type_traits<short int> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
+template <> struct Number_type_traits<unsigned short int> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
 inline
 double
 to_double(short int i)
 { return static_cast<double>(i); }
-
-inline
-Number_tag
-number_type_tag(short int)
-{ return Number_tag(); }
 
 inline
 bool
@@ -114,15 +135,22 @@ io_tag(short int)
 
 #ifdef LONG_LONG
 
+template <> struct Number_type_traits<long long> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
+template <> struct Number_type_traits<unsigned long long> {
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_false  Has_division_tag;
+  typedef Tag_false  Has_sqrt_tag;
+};
+
 inline
 double
 to_double(long long i)
 { return static_cast<double>(i); }
-
-inline
-Number_tag
-number_type_tag(long long)
-{ return Number_tag(); }
 
 inline
 bool
