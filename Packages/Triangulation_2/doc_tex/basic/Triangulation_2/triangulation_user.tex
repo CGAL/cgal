@@ -674,7 +674,7 @@ of this diagram
 \ccIncludeExampleCode{Triangulation_2/voronoi.C}
 
 
-\section{Regular triangulations}
+\section{Regular Triangulations}
 \label{Section_2D_Triangulations_Regular}
 
 \subsection{Description}
@@ -948,9 +948,9 @@ to compute the intersection of two segments.
 \subsubsection{The Base Face of a Constrained Triangulation}
  The information about constrained edges is stored in the 
 faces of the triangulation. The base face of a Constrained Triangulation
-has to be a model for the concept \ccc{ConstrainedFaceBase_2}
+has to be a model for the concept \ccc{ConstrainedTriangulationFaceBase_2}
 which refines the concept \ccc{TriangulationFaceBase_2}.
-The concept \ccc{ConstrainedFaceBase_2}
+The concept \ccc{ConstrainedTriangulationFaceBase_2}
 requires  member functions
  the get and set the constrained status of the edges.
 
@@ -1072,7 +1072,7 @@ of the edges of the triangulation has to be stored
 in the face class
  and the base face class
 of a constrained Delaunay triangulation has to be a model
-of \ccc{ConstrainedFaceBase_2}.
+of \ccc{ConstrainedTriangulationFaceBase_2}.
 
 
 
@@ -1268,7 +1268,7 @@ the triangulation data structure, for instance a handle to a vertex,
 and he was lead to use himself 
 \ccc{void*}  pointers).
 The new solution to resolve the template dependancy
-is based on a rebind mecanism similar to the mecanism used in the 
+is based on a rebind mechanism similar to the mecanism used in the 
 standard allocator class std::allocator. The rebind mecanism
 is described in Section~\ref{2D_TDS_default} 
 of Chapter~\ref{Chapter_2D_Triangulation_Data_Structure}.
