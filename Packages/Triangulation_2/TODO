@@ -1,3 +1,5 @@
+- changed return type of number_of_..() to std::size_t
+- documenter Triangulation_2traits_3
 - doc : relier nerarest-vertex queries a localisation dans Voronoi
 - nettoyer Triangulation_line_face_circulator
   suite aux modifs de Radu ....(voir diff 129-128)
