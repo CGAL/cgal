@@ -2,6 +2,10 @@
 //	Revision History for package Installation
 //=====================================================================
 
+30 Apr 2004 Sylvain Pion
+- Add "-mp" to default CXX_FLAGS for ICC, otherwise it takes too much
+  freedom for floating point operations.
+
 29 Apr 2004 Sylvain Pion
 - Upgrade to GMP 4.1.3.
 

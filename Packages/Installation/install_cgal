@@ -964,7 +964,9 @@ set_compiler_flags()
 	    ;;
 	*Linux*icc*)
 	    #### settings for icc on linux
-	    #ADDITIONAL_CXXFLAGS="-Wall"
+            # -mp seems to be required (when -g is not set at least) for correct
+            # floating point operations (necessary for interval arithmetic).
+	    ADDITIONAL_CXXFLAGS="-mp"
 	    ICCCOMPILERBIN=`compiler_bin`
 	    ICCREALDIRNAME=`echo ${ICCCOMPILERBIN} | ${_sed} 's#bin/icc##g'`
 	    ADDITIONAL_LDFLAGS="-Wl,-R${ICCREALDIRNAME}lib"
