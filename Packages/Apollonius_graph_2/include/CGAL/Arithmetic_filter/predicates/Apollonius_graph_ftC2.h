@@ -36,6 +36,68 @@ CGAL_BEGIN_NAMESPACE
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 /* inline */
+Orientation
+ag2_orientation_test_C2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &x1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &y1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &w1,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &x2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &y2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &w2,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &x3,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &y3,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+    CGAL_IA_PROTECTED, CGAL_IA_CACHE> &w3)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("IA ag2_orientation_test_C2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    return ag2_orientation_test_C2(
+		x1.interval(),
+		y1.interval(),
+		w1.interval(),
+		x2.interval(),
+		y2.interval(),
+		w2.interval(),
+		x3.interval(),
+		y3.interval(),
+		w3.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("IA ag2_orientation_test_C2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    return ag2_orientation_test_C2(
+		x1.exact(),
+		y1.exact(),
+		w1.exact(),
+		x2.exact(),
+		y2.exact(),
+		w2.exact(),
+		x3.exact(),
+		y3.exact(),
+		w3.exact());
+  }
+}
+
+template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
+           class CGAL_IA_CACHE >
+/* inline */
 bool
 ad_is_hidden_test_ring_C2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,

@@ -31,7 +31,7 @@
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_data_structure_2.h>
 #include <CGAL/Apollonius_graph_vertex_base_2.h>
-#include <CGAL/Apollonius_graph_face_base_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Apollonius_graph_hierarchy_vertex_base_2.h>
 
 #include <CGAL/Apollonius_graph_traits_wrapper_2.h>
@@ -49,21 +49,22 @@ template < class Gt,
 	   class Agds = Apollonius_graph_data_structure_2<
              Apollonius_graph_hierarchy_vertex_base_2<
                Apollonius_graph_vertex_base_2<Gt,true> >,
-               Apollonius_graph_face_base_2<Gt> > >
+               Triangulation_face_base_2<Gt> >,
+	   class LTag = Tag_false >
 class Apollonius_graph_hierarchy_2
-  : public Apollonius_graph_2< Gt, Agds >
+  : public Apollonius_graph_2< Gt, Agds, LTag >
 {
 private:
-  typedef Apollonius_graph_2<Gt,Agds>    Apollonius_graph_base;
-  typedef Apollonius_graph_base          Ag_base;
+  typedef Apollonius_graph_2<Gt,Agds,LTag>  Apollonius_graph_base;
+  typedef Apollonius_graph_base             Ag_base;
 
-  typedef typename Ag_base::Vertex       Vertex;
+  typedef typename Ag_base::Vertex          Vertex;
 
 public:
-  typedef Agds                            Data_structure;
-  typedef Gt                              Geom_traits;
-  typedef typename Gt::Site_2             Site_2;
-  typedef typename Gt::Point_2            Point_2;
+  typedef Agds                              Data_structure;
+  typedef Gt                                Geom_traits;
+  typedef typename Gt::Site_2               Site_2;
+  typedef typename Gt::Point_2              Point_2;
 
   typedef typename Ag_base::Vertex_handle    Vertex_handle;
   typedef typename Ag_base::Face_handle      Face_handle;

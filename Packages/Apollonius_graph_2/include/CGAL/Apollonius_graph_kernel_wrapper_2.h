@@ -35,46 +35,6 @@ class Apollonius_graph_kernel_wrapper_2 : public Kernel_base_2
 public:
   typedef CGAL::Apollonius_site_2<Kernel_base_2>  Site_2;
   typedef Kernel_base_2                           Base;
-
-  struct Compare_x_2 : public Kernel_base_2
-  {
-    typedef Comparison_result   result_type;    
-    typedef Arity_tag<2>        Arity;
-
-    Comparison_result operator()(const Site_2& s1,
-				 const Site_2& s2) const
-    {
-      return this->compare_x_2_object()(s1.point(), s2.point());
-    }
-  };
-
-  struct Compare_y_2 : public Kernel_base_2
-  {
-    typedef Comparison_result   result_type;
-    typedef Arity_tag<2>        Arity;
-
-    Comparison_result operator()(const Site_2& s1,
-				 const Site_2& s2) const
-    {
-      return this->compare_y_2_object()(s1.point(), s2.point());
-    }
-  };
-
-  struct Orientation_2 : public Kernel_base_2
-  {
-    typedef Orientation     result_type;
-    typedef Arity_tag<3>    Arity;
-
-    Orientation operator()(const Site_2& s1,
-			   const Site_2& s2,
-			   const Site_2& s3) const
-    {
-      return this->orientation_2_object()(s1.point(),
-					  s2.point(),
-					  s3.point());
-    }
-  };
-
 };
 
 

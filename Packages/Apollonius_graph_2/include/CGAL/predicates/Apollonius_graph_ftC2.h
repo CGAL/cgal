@@ -34,6 +34,28 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template< class RT >
+inline
+Orientation
+ag2_orientation_test_C2(const RT &x1, const RT &y1, const RT &w1,
+			const RT &x2, const RT &y2, const RT &w2,
+			const RT &x3, const RT &y3, const RT &w3)
+{
+  must_be_filtered(x1);
+
+  typedef Simple_cartesian<RT>                    Rep;
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>  Kernel;
+  typedef typename Kernel::Point_2                Point_2;
+  typedef typename Kernel::Site_2                 Site_2;
+
+  Site_2 p1(Point_2(x1, y1), w1);
+  Site_2 p2(Point_2(x2, y2), w2);
+  Site_2 p3(Point_2(x3, y3), w3);
+
+  Ag2_orientation_2<Kernel> f;
+  return f(p1, p2, p3);
+}
+
 //--------------------------------------------------------------------
 
 template< class RT >
@@ -215,8 +237,8 @@ ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
   Site_2 p2(Point_2(x2, y2), w2);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Incircle_test<Kernel> f;
-  return f(p1, p2, q, Sqrt_field_tag() );
+  Incircle_test<Kernel,Sqrt_field_tag> f;
+  return f(p1, p2, q);
 }
 
 
@@ -240,8 +262,8 @@ ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
   Site_2 p2(Point_2(x2, y2), w2);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Incircle_test<Kernel> f;
-  return f(p1, p2, q, Ring_tag() );
+  Incircle_test<Kernel,Ring_tag> f;
+  return f(p1, p2, q);
 }
 
 
@@ -272,8 +294,8 @@ ad_incircle_test_sqrtf_C2(const RT &x1, const RT &y1,
   Site_2 p3(Point_2(x3, y3), w3);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Incircle_test<Kernel> f;
-  return f(p1, p2, p3, q, Sqrt_field_tag() );
+  Incircle_test<Kernel,Sqrt_field_tag> f;
+  return f(p1, p2, p3, q);
 }
 
 
@@ -300,8 +322,8 @@ ad_incircle_test_ring_C2(const RT &x1, const RT &y1,
   Site_2 p3(Point_2(x3, y3), w3);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Incircle_test<Kernel> f;
-  return f(p1, p2, p3, q, Ring_tag() );
+  Incircle_test<Kernel,Ring_tag> f;
+  return f(p1, p2, p3, q);
 }
 
 
@@ -335,8 +357,8 @@ ad_finite_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
   Site_2 p4(Point_2(x4, y4), w4);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Finite_edge_test<Kernel> f;
-  return f(p1, p2, p3, p4, q, b, Sqrt_field_tag() );
+  Ag2_finite_edge_test_C2<Kernel,Sqrt_field_tag> f;
+  return f(p1, p2, p3, p4, q, b);
 }
 
 template < class RT >
@@ -365,8 +387,8 @@ ad_finite_edge_test_ring_C2(const RT &x1, const RT &y1,
   Site_2 p4(Point_2(x4, y4), w4);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Finite_edge_test<Kernel> f;
-  return f(p1, p2, p3, p4, q, b, Ring_tag() );
+  Ag2_finite_edge_test_C2<Kernel,Ring_tag> f;
+  return f(p1, p2, p3, p4, q, b);
 }
 
 
@@ -392,8 +414,8 @@ ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
   Site_2 p2(Point_2(x2, y2), w2);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Finite_edge_test_degenerated<Kernel> f;
-  return f(p1, p2, q, b, Sqrt_field_tag() );
+  Ag2_finite_edge_test_C2<Kernel,Sqrt_field_tag> f;
+  return f(p1, p2, q, b);
 }
 
 template < class RT >
@@ -416,8 +438,8 @@ ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
   Site_2 p2(Point_2(x2, y2), w2);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Finite_edge_test_degenerated<Kernel> f;
-  return f(p1, p2, q, b, Ring_tag() );
+  Ag2_finite_edge_test_C2<Kernel,Ring_tag> f;
+  return f(p1, p2, q, b);
 }
 
 
@@ -444,8 +466,8 @@ ad_finite_edge_test_degenerated_sqrtf_C2(const RT &x1, const RT &y1,
   Site_2 p3(Point_2(x3, y3), w3);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Finite_edge_test_degenerated<Kernel> f;
-  return f(p1, p2, p3, q, b, Sqrt_field_tag() );
+  Ag2_finite_edge_test_C2<Kernel,Sqrt_field_tag> f;
+  return f(p1, p2, p3, q, b);
 }
 
 
@@ -472,8 +494,8 @@ ad_finite_edge_test_degenerated_ring_C2(const RT &x1, const RT &y1,
   Site_2 p3(Point_2(x3, y3), w3);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Finite_edge_test_degenerated<Kernel> f;
-  return f(p1, p2, p3, q, b, Ring_tag() );
+  Ag2_finite_edge_test_C2<Kernel,Ring_tag> f;
+  return f(p1, p2, p3, q, b);
 }
 
 //--------------------------------------------------------------------
@@ -501,8 +523,8 @@ ad_infinite_edge_test_sqrtf_C2(const RT &x2, const RT &y2,
   Site_2 p4(Point_2(x4, y4), w4);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Infinite_edge_test<Kernel> f;
-  return f(p2, p3, p4, q, b, Sqrt_field_tag() );
+  Infinite_edge_test<Kernel,Sqrt_field_tag> f;
+  return f(p2, p3, p4, q, b);
 }
 
 template < class RT >
@@ -528,8 +550,8 @@ ad_infinite_edge_test_ring_C2(const RT &x2, const RT &y2,
   Site_2 p4(Point_2(x4, y4), w4);
   Site_2  q(Point_2(qx, qy), qw);
 
-  Infinite_edge_test<Kernel> f;
-  return f(p2, p3, p4, q, b, Ring_tag() );
+  Infinite_edge_test<Kernel,Ring_tag> f;
+  return f(p2, p3, p4, q, b);
 }
 
 
@@ -559,8 +581,8 @@ ad_is_degenerate_edge_test_sqrtf_C2(const RT &x1, const RT &y1,
   Site_2 p3(Point_2(x3, y3), w3);
   Site_2 p4(Point_2(x4, y4), w4);
 
-  Is_degenerate_edge_test<Kernel> f;
-  return f(p1, p2, p3, p4, Sqrt_field_tag() );
+  Is_degenerate_edge_test<Kernel,Sqrt_field_tag> f;
+  return f(p1, p2, p3, p4);
 }
 
 template < class RT >
@@ -586,8 +608,8 @@ ad_is_degenerate_edge_test_ring_C2(const RT &x1, const RT &y1,
   Site_2 p3(Point_2(x3, y3), w3);
   Site_2 p4(Point_2(x4, y4), w4);
 
-  Is_degenerate_edge_test<Kernel> f;
-  return f(p1, p2, p3, p4, Ring_tag() );
+  Is_degenerate_edge_test<Kernel,Ring_tag> f;
+  return f(p1, p2, p3, p4);
 }
 
 

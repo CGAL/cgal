@@ -29,10 +29,11 @@
 
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Apollonius_graph_data_structure_2.h>
-#include <CGAL/Apollonius_graph_face_base_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Apollonius_graph_vertex_base_2.h>
 
 #include <CGAL/in_place_edge_list.h>
+#include <CGAL/edge_list.h>
 #include <CGAL/Apollonius_graph_traits_wrapper_2.h>
 
 #include <CGAL/Apollonius_graph_constructions_C2.h>
@@ -44,19 +45,48 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Node >
-struct Project_site_2 {
-  typedef Node                   argument_type;
-  typedef typename Node::Site_2  Site;
-  typedef Site                   result_type;
-  Site&       operator()( Node& x) const { return x.site(); }
-  const Site& operator()( const Node& x) const { return x.site(); }
-};
+
+namespace CGALi {
+
+  template<typename Edge, typename LTag> struct AG2_which_list;
+
+  // use the in-place edge list
+  template<typename E>
+  struct AG2_which_list<E,Tag_true>
+  {
+    typedef E                           Edge;
+    typedef In_place_edge_list<Edge>    List;
+  };
+
+  // do not use the in-place edge list
+  template<typename E>
+  struct AG2_which_list<E,Tag_false>
+  {
+    typedef E                                 Edge;
+    // change the following to Tag_false in order to use
+    // CGAL's Unique_hash_map
+    typedef Tag_true                          Use_stl_map_tag;
+    typedef Edge_list<Edge,Use_stl_map_tag>   List;
+  };
+
+  template < class Node >
+  struct Project_site_2 {
+    typedef Node                   argument_type;
+    typedef typename Node::Site_2  Site;
+    typedef Site                   result_type;
+    Site&       operator()( Node& x) const { return x.site(); }
+    const Site& operator()( const Node& x) const { return x.site(); }
+  };
+
+}; // namespace CGALi
+
+
 
 template < class Gt,
 	   class Agds = Apollonius_graph_data_structure_2 < 
                Apollonius_graph_vertex_base_2<Gt,true>,
-               Apollonius_graph_face_base_2<Gt> > >
+               Triangulation_face_base_2<Gt> >,
+	   class LTag = Tag_false>
 class Apollonius_graph_2
   : private Triangulation_2<Apollonius_graph_traits_wrapper_2<Gt>,Agds>
 {
@@ -144,7 +174,7 @@ public:
 
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++
-  typedef Project_site_2<Vertex>                               Proj_site;
+  typedef CGALi::Project_site_2<Vertex>                   Proj_site;
   typedef Iterator_project<Finite_vertices_iterator, 
                            Proj_site>
   /*                                           */ Visible_sites_iterator;
@@ -181,14 +211,14 @@ protected:
   typedef std::map<Face_handle,bool>           Face_map;
   typedef std::map<Face_handle, Face_handle>   Face_face_map;
   typedef std::map<Vertex_handle,bool>         Vertex_map;
-  typedef std::vector<Edge>                    Edge_list;
+  typedef std::set<Edge>                       Edge_list;
 
   typedef std::list<Vertex_handle>         Vertex_list;
   typedef typename Vertex_list::iterator   Vertex_list_iterator;
   typedef Vertex_handle                    Vh_triple[3];
 
-  // the in place edge list
-  typedef In_place_edge_list<Edge>          List;
+  // the edge list
+  typedef typename CGALi::AG2_which_list<Edge,LTag>::List  List;
 
   typedef enum { NO_CONFLICT = -1, INTERIOR, LEFT_VERTEX,
 		 RIGHT_VERTEX, BOTH_VERTICES, ENTIRE_EDGE }
@@ -266,7 +296,11 @@ public:
     return DG::number_of_vertices();
   }
 
-  size_type number_of_hidden_vertices() const {
+  size_type number_of_visible_sites() const {
+    return number_of_vertices();
+  }
+
+  size_type number_of_hidden_sites() const {
     //    if ( !Vertex::StoreHidden ) { return 0; }
 
     int n_hidden(0);

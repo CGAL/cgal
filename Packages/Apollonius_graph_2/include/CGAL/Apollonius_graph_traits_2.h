@@ -50,21 +50,47 @@ CGAL_BEGIN_NAMESPACE
 //***********************************************************************
 
 //-----------------------------------------------------------------------
-//                        Compare weight
+//                        Orientation
 //-----------------------------------------------------------------------
 
-template < class K >
-class Compare_weight_2
+template<class K>
+inline
+Orientation
+ag2_orientation_test_2(const typename K::Site_2& p,
+		       const typename K::Site_2& q,
+		       const typename K::Site_2& r,
+		       Cartesian_tag)
+{
+  return ag2_orientation_test_C2(p.x(), p.y(), p.weight(),
+				 q.x(), q.y(), q.weight(),
+				 r.x(), r.y(), r.weight());
+}
+
+template<class K>
+inline
+Orientation
+ag2_orientation_test_2(const typename K::Site_2& p,
+		       const typename K::Site_2& q,
+		       const typename K::Site_2& r,
+		       Homogeneous_tag)
+{
+  CGAL_assertion( false );
+  return COLLINEAR;
+}
+
+template< class K >
+class AG2_Orientation_test_2
 {
 public:
   typedef typename K::Site_2   Site_2;
-  typedef Comparison_result    result_type;
-  typedef Arity_tag<2>         Arity;
+  typedef Orientation          result_type;
+  typedef Arity_tag<3>         Arity;
 
-  Comparison_result operator()(const Site_2& p,
-			       const Site_2& q) const
+  inline Orientation operator()(const Site_2 &p, const Site_2 &q,
+				const Site_2 &r) const
   {
-    return CGAL::compare(p.weight(), q.weight());
+    typedef typename K::Rep_tag Tag;
+    return ag2_orientation_test_2<K>(p, q, r, Tag());
   }
 };
 
@@ -973,15 +999,15 @@ public:
 
   // PREDICATES
   //-----------
-  typedef typename Kernel::Compare_x_2                  Compare_x_2;
-  typedef typename Kernel::Compare_y_2                  Compare_y_2;
-  typedef CGAL::Compare_weight_2<Kernel>                Compare_weight_2;
-  typedef typename Kernel::Orientation_2                Orientation_2;
+  typedef CGAL::Ag2_compare_x_2<Kernel>                 Compare_x_2;
+  typedef CGAL::Ag2_compare_y_2<Kernel>                 Compare_y_2;
+  typedef CGAL::Ag2_compare_weight_2<Kernel>            Compare_weight_2;
+  typedef CGAL::AG2_Orientation_test_2<Kernel>          Orientation_2;
   typedef CGAL::Is_hidden_2<Kernel,MTag>                Is_hidden_2;
   typedef CGAL::Oriented_side_of_bisector_2<Kernel,MTag> 
   /*                                          */ Oriented_side_of_bisector_2;
-  typedef CGAL::Vertex_conflict_2<Kernel,MTag >            Vertex_conflict_2;
-  typedef CGAL::Finite_edge_interior_conflict_2<Kernel,MTag >
+  typedef CGAL::Vertex_conflict_2<Kernel,MTag>          Vertex_conflict_2;
+  typedef CGAL::Finite_edge_interior_conflict_2<Kernel,MTag>
   /*                                      */ Finite_edge_interior_conflict_2;
   typedef CGAL::Infinite_edge_interior_conflict_2<Kernel,MTag>
   /*                                    */ Infinite_edge_interior_conflict_2;
