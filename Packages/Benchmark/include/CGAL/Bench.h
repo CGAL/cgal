@@ -82,7 +82,9 @@ public:
       m_factor(1.0f), m_seconds(seconds),
       m_samples(0), m_period(0.0f), m_iterations(0)
   {}
-    
+
+  virtual ~Bench() {}
+  
   int get_iterations() const { return m_iterations; }
   int get_seconds() const { return m_seconds; }
   int get_samples() const { return m_samples; }
