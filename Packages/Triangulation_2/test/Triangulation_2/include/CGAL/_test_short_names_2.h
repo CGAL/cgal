@@ -5,7 +5,7 @@
 // Define shorter names to please linker (g++/egcs)
 
    #define Gmpz Gz
-   #define Cartesian Ct
+   #define Cartesian Ca
    #define Homogeneous Hg
    #define Quotient Qt
    #define Filtered_exact Fe
