@@ -77,8 +77,11 @@ class test {
   typedef typename Nef_polyhedron::SM_explorer           SM_explorer;
   typedef CGAL::SNC_intersection<SNC_structure>          SNC_intersection;
 
+private:
+  bool cubes_tested;
+
 public:
-  test() {};
+  test() {cubes_tested=false;};
 
 private:
 
@@ -182,118 +185,136 @@ private:
     delete[] fullname;
     return tmp;
   }
+  
+  void test_cubes() {
+    if(!cubes_tested) {
+      Nef_polyhedron N = load_off("data/cube.off");
+      CGAL_assertion(N.is_valid(0,0));
+      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+      
+      N = load_off("data/cube+v.off");
+      CGAL_assertion(N.is_valid(0,0));
+      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+      
+      N = load_off("data/cube+vee.off");
+      CGAL_assertion(N.is_valid(0,0));
+      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+      
+      N = load_off("data/cube+veeee.off");
+      CGAL_assertion(N.is_valid(0,0));
+      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH")); 
+
+      N = load_off("data/cube+vONe.off");
+      CGAL_assertion(N.is_valid(0,0));
+      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+      cubes_tested = true;
+    }
+  }
 
   void loadSave(char* suffix) {
-    Nef_polyhedron N;
+
+    test_cubes();
+
+    Polyhedron P;
+    Nef_polyhedron N = load_off("data/cube.off");
+    N.convert_to_Polyhedron(P);
+    std::ofstream out("data/temp.off");
+    out << P;
+    CGAL_nef3_assertion(are_files_equal("data/temp.off","data/cube1.off"));
 
     N = load_nef3("topology.nef3.SH");
     CGAL_nef3_assertion(N.is_valid(0,0));
     CGAL_nef3_assertion(does_nef3_equals_file(N,"topology.nef3.SH"));
 
-    N = Nef_polyhedron("data/topologyE.nef3");
-    N.dump(true);
-    /*
     if(suffix[1] == 'E') {
-      N = load_nef3("topologyE.nef3",suffix);
+      N = Nef_polyhedron("data/topology.nef3.EH");
       CGAL_nef3_assertion(N.is_valid(0,0));
-      CGAL_nef3_assertion(does_nef3_equals_file(N,"topologyE.nef3",suffix));
+      CGAL_nef3_assertion(does_nef3_equals_file(N,"topology.nef3.EH"));
     }
-    
-    N = load_off("data/cube.off");
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N,"cube.nef3",suffix));
-
-    Polyhedron P;
-    N.convert_to_Polyhedron(P);
-    std::ofstream out("data/temp.off");
-    out << P;
-    CGAL_nef3_assertion(are_files_equal("data/temp.off","data/cube1.off"))
-    */;
   }
 
   void construction(char* suffix) {
 
     if(suffix[1] == 'E') {
-      
       Nef_polyhedron N = Nef_polyhedron(Nef_polyhedron::EMPTY);
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"empty.nef3",suffix)); 
-
+      CGAL_assertion(does_nef3_equals_file(N,"empty.nef3.SH")); 
+      
       N = Nef_polyhedron(Nef_polyhedron::COMPLETE);
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"complete.nef3",suffix)); 
+      CGAL_assertion(does_nef3_equals_file(N,"complete.nef3.SH")); 
       
       N = Nef_polyhedron(Plane_3(3,4,5,0)); 
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p3-4-5-0.nef3",suffix)); 
-     
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p3-4-5-0.nef3.EH")); 
+      
       N = Nef_polyhedron(Plane_3(3,4,5,31));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p3-4-5-31.nef3",suffix)); 
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p3-4-5-31.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(0,2,2,0));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p0-2-2-0.nef3",suffix)); 
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p0-2-2-0.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(0,2,2,29)); 
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p0-2-2-29.nef3",suffix)); 
-     
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p0-2-2-29.nef3.EH")); 
+      
       N = Nef_polyhedron(Plane_3(1,2,3,0));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-3-0.nef3",suffix)); 
-
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-3-0.nef3.EH")); 
+      
       N = Nef_polyhedron(Plane_3(1,2,3,23));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-3-23.nef3",suffix)); 
-     
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-3-23.nef3.EH")); 
+      
       N = Nef_polyhedron(Plane_3(1,2,4,0));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-4-0.nef3",suffix)); 
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-4-0.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(1,2,4,23));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-4-23.nef3",suffix)); 
-      
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-4-23.nef3.EH")); 
+         
       N = Nef_polyhedron(Plane_3(4,2,1,17));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p4-2-1-17.nef3",suffix)); 
-
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p4-2-1-17.nef3.EH"));
+     
       N = Nef_polyhedron(Plane_3(2,4,1,17));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-4-1-17.nef3",suffix)); 
-
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-4-1-17.nef3.EH")); 
+      
       N = Nef_polyhedron(Plane_3(-4,-2,-1,17));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p-4--2--1-17.nef3",suffix)); 
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p-4--2--1-17.nef3.EH")); 
 
       N = Nef_polyhedron(Plane_3(2,0,2,0));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-0-2-0.nef3",suffix)); 
-
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-0-2-0.nef3.EH")); 
+     
       N = Nef_polyhedron(Plane_3(2,2,0,0));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-2-0-0.nef3",suffix)); 
-
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-2-0-0.nef3.EH")); 
+      
       N = Nef_polyhedron(Plane_3(-2,0,-2,0));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p-2-0--2-0.nef3",suffix)); 
-
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p-2-0--2-0.nef3.EH")); 
+      
       N = Nef_polyhedron(Plane_3(3,2,1,0));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p3-2-1-0.nef3",suffix)); 
-
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p3-2-1-0.nef3.EH")); 
+     
       N = Nef_polyhedron(Plane_3(2,3,1,0));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-3-1-0.nef3",suffix)); 
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-3-1-0.nef3.EH")); 
 
       N = Nef_polyhedron(Plane_3(1,-1,5,0));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1--1-5-0.nef3",suffix)); 
-
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p1--1-5-0.nef3.EH")); 
+      
       N = Nef_polyhedron(Plane_3(0,0,1,10));
       CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p0-0-1-10.nef3",suffix)); 
+      CGAL_assertion(does_nef3_equals_file(N,"cube+p0-0-1-10.nef3.EH")); 
     }      
   }
 
@@ -647,100 +668,31 @@ private:
 
   void simplification_SNC(char* suffix) {
 
-    Nef_polyhedron C = load_off("data/cube.off");
-
-    Nef_polyhedron N = load_off("data/cube+v.off");
-    CGAL_assertion(N.is_valid(0,0));
-    // CGAL_assertion(does_nef3_equals_file(N,"cube.nef3",suffix));
-
-    N = load_off("data/cube+vee.off");
-    CGAL_assertion(N.is_valid(0,0));
-    // CGAL_assertion(does_nef3_equals_file(N,"cube1.nef3",suffix));
-
-    N = load_off("data/cube+veeee.off");
-    CGAL_assertion(N.is_valid(0,0));
-    //    CGAL_assertion(does_nef3_equals_file(N,"cube2.nef3",suffix)); 
-
-    N = load_off("data/cube+vONe.off");
-    CGAL_assertion(N.is_valid(0,0));
-    // CGAL_assertion(does_nef3_equals_file(N,"cube3.nef3",suffix));
-
-    //    Nef_polyhedron N = C;
-    //    Nef_polyhedron N1 = N;
-    //    Nef_polyhedron N2 = N;
-    //    N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,0,0,1)));
-    //    N = N.symmetric_difference(N1);
-    //    CGAL_assertion(N.is_valid(0,0));
-    //    N2.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(0,2,2,1)));
-    //    N = N.join(N2);
-    N = load_nef3("simplifySface.nef3",suffix);
+    test_cubes();
+    
+    Nef_polyhedron N = load_nef3("simplifySface.nef3.SH");
     CGAL_assertion(N.is_valid(0,0));
     N = N.regularization();
     CGAL_assertion(N.is_valid(0,0));
-    //    CGAL_assertion(does_nef3_equals_file(N,"simplifySfaceRef.nef3",suffix));    
+    CGAL_assertion(does_nef3_equals_file(N,"simplifySfaceRef.nef3.SH"));    
+    
+    N = load_nef3("donotsimplify.nef3.SH");
+    CGAL_assertion(N.is_valid(0,0));
+    Nef_polyhedron N1 = load_nef3("openSquare.nef3.SH");
+    CGAL_assertion(N.is_valid(0,0));
+    N = N.join(N1);
+    CGAL_assertion(N.is_valid(0,0));
+    CGAL_assertion(does_nef3_equals_file(N,"donotsimplifyRef.nef3.SH"));
 
-    if(suffix[1] == 'E') {   
-      N = C;
-      CGAL_assertion(N.is_valid(0,0));
-      Nef_polyhedron N1 = N;
-      Nef_polyhedron N2 = N;
-      N2.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,0,0,1)));
-      CGAL_assertion(N2.is_valid(0,0));
-      N1 = N1.intersection(N2);
-      CGAL_assertion(N1.is_valid(0,0));
-      N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-1,0,0,1)));
-      CGAL_assertion(N1.is_valid(0,0));
-      N2 = load_nef3("viereck.nef3", suffix);
-      CGAL_assertion(N2.is_valid(0,0));
-      N2.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,3,0,1)));
-      CGAL_assertion(N2.is_valid(0,0));
-      N2 = N1.difference(N2);
-      CGAL_assertion(N2.is_valid(0,0));
-      N = N.difference(N1);
-      CGAL_assertion(N.is_valid(0,0));
-      N = N.join(N2);
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"donotsimplify.nef3",suffix));
-    } 
+    N = load_nef3("unionfind.nef3.SH");
+    CGAL_assertion(N.is_valid(0,0));
+    N = N.regularization();
+    CGAL_assertion(N.is_valid(0,0));
+    CGAL_assertion(does_nef3_equals_file(N,"unionfindRef.nef3.SH"));
 
-    if(suffix[1] == 'E') {   
-      N = load_nef3("unionfind.nef3", suffix);
-      CGAL_assertion(N.is_valid(0,0));
-      Nef_polyhedron N1 =  N;
-      N.transform(Aff_transformation_3(1, 0, 0, 
-				       0, 0,-1,
-				       0, 1, 0,
-				       1));
-      CGAL_assertion(N1.is_valid(0,0));
-      N1.transform(Aff_transformation_3(1, 0, 0, 
-					0, 0,-1,
-					0, 1, 0,
-					1));
-      CGAL_assertion(N1.is_valid(0,0));
-
-      Nef_polyhedron N2 = N.symmetric_difference(N1);
-      CGAL_assertion(N2.is_valid(0,0));
-      N2 = N2.regularization();
-      CGAL_assertion(N2.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(N2,"unionfindref.nef3",suffix));
-
-      N2 = N.join(N1);
-      CGAL_assertion(N2.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N2,"unionfindref.nef3",suffix));
-    }  
-
-    if(suffix[1] == 'E') {
-      N = load_nef3("topologyE.nef3",suffix);
-      Nef_polyhedron N1 = load_nef3("single_vertex.nef3",suffix);
-      N = N.join(N1);
-      N = N.closure();
-    }
-
-    if(suffix[1] == 'E') {
-      N = load_nef3("nestedFCafterSimpl.nef3",suffix);
-      N = N.closure();
-    }
-
+    N = load_nef3("nestedFCafterSimpl.nef3.SH");
+    N = N.closure();
+    CGAL_assertion(does_nef3_equals_file(N,"nestedFCafterSimplRef.nef3.SH"));
   }
 
   void simplification_SM(char* suffix) {
@@ -794,7 +746,7 @@ private:
 
   void synthesis(char* suffix) {
 
-    if(false && suffix[1] == 'E') {
+    if(suffix[1] == 'E') {
       Nef_polyhedron N = Nef_polyhedron(Nef_polyhedron::COMPLETE);  
       CGAL_assertion(N.is_valid(0,0));               
       Nef_polyhedron N1 = Nef_polyhedron(Plane_3(1,0,0,-1));
@@ -815,26 +767,36 @@ private:
       N1 = Nef_polyhedron(Plane_3(0,0,-1,-1));
       N = N.intersection(N1);      
       CGAL_assertion(N.is_valid(0,0));
-      //      CGAL_assertion(does_nef3_equals_file(N,"cube_created_from_halfspaces.nef3", suffix));
+      CGAL_assertion(does_nef3_equals_file(N,"cube_created_from_halfspaces.nef3.SH"));
     }
     
     Nef_polyhedron N,N2,P,R,S,T;
     N = load_off("data/centered_cube.off");
+    CGAL_assertion(N.is_valid(0,0));
     N2 = N;
     N2.transform(Aff_transformation_3( CGAL::SCALING, 4, 1));
+    CGAL_assertion(N2.is_valid(0,0));
     P = N;
     P.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2,-2,0,1)));
+    CGAL_assertion(P.is_valid(0,0));
     R = N;
     R.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2, 2,0,1)));
+    CGAL_assertion(R.is_valid(0,0));
     S = N;
     S.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3( 2,-2,0,1)));
+    CGAL_assertion(S.is_valid(0,0));
     T = N;
     T.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3( 2, 2,0,1)));
+    CGAL_assertion(T.is_valid(0,0));
     N2 = N2.difference(P);
+    CGAL_assertion(N2.is_valid(0,0));
     N2 = N2.difference(T);
+    CGAL_assertion(N2.is_valid(0,0));
     N2 = N2.difference(R);
+    CGAL_assertion(N2.is_valid(0,0));
     N2 = N2.difference(S);
-    N2.dump();
+    CGAL_assertion(N2.is_valid(0,0));
+    CGAL_assertion(does_nef3_equals_file(N2,"synthesis.nef3.SH"));
   }
 
   void unary_operations(char* suffix) {
@@ -936,14 +898,14 @@ private:
 public:
   void run_test(char* suffix) {
 
-    //        loadSave(suffix);
+            loadSave(suffix);
     //        construction(suffix); 
     //        point_location_SNC(suffix);
     //        intersection(suffix);   
     //        point_location_SM(suffix);
-    //	      simplification_SNC(suffix);
+    //        simplification_SNC(suffix);
     //        simplification_SM(suffix);
-    	      synthesis(suffix);
+    //	      synthesis(suffix);
     //        unary_operations(suffix);
     //        mark_evaluation(suffix);
   }
@@ -969,7 +931,7 @@ int main() {
   test<SH_Kernel> test_SH;
   test<EH_Kernel> test_EH;
 
-  //  test_SH.run_test(".SH");
+  test_SH.run_test(".SH");
   test_EH.run_test(".EH");
 
   t.stop();
