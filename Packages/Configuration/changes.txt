@@ -1,4 +1,8 @@
 //-----------------------------------------------------------------------//
+// 1.42
++Added CGAL_CFG_TYPENAME_BUG.C
+
+//-----------------------------------------------------------------------//
 // 1.41
 +Adapted some workarounds for MSVC for dealing with outdated use
  of isspace, isalnum and isdigit in CGAL.
