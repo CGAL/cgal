@@ -135,7 +135,7 @@ private:
       if(!wasrepainted)
         *widget << old_point;
       *widget << Point(x, y);
-      std::vector<Point>::iterator it = v_of_p->begin();
+      typename std::vector<Point>::iterator it = v_of_p->begin();
       bool found = false;
       while(it != v_of_p->end() && !found){
 	if((*it)==old_point){
@@ -169,7 +169,7 @@ private:
   };
 
   void delete_pointi(){
-    std::vector<Point>::iterator it = v_of_p->begin();
+    typename std::vector<Point>::iterator it = v_of_p->begin();
     bool found = false;
     while(it != v_of_p->end() && !found){
       if((*it)==current_v){
