@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_basic' package
 
+Version 3.8.1 on 26-Sep-2000
+- bug in 2D and 3D point constructor fixed
+
 Version 3.8 on 26-Sep-2000
 - unified traits class models for dD optimisation algorithms
 
