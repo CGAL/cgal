@@ -1,4 +1,4 @@
-Version 1.95 (? October 01)
+Version 1.95 (5 October 01)
 - TDS::Face_circulator in 2D.
 - Delaunay remove now uses a proper algorithm in 2D.
 
