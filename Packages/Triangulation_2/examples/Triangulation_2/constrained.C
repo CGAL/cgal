@@ -14,7 +14,7 @@ typedef CDT::Constraint     Constraint;
 int
 main( )
 {
-  std::ifstream is("constrained.cin");
+  std::ifstream is("data/constrained.cin");
   std::list<Constraint> lc;
   int n;
   Point p,q;
