@@ -3484,7 +3484,12 @@ gmp_menu()
 {
     while [ 0 ]; do
 	menu_header 'GMP'
-	print_line "${_bold_on}<C>${_bold_off}  Install GMP in CGAL tree" 
+	case ${CGAL_OS_COMPILER} in 
+	    *CYGWIN*) print_line ""
+	    ;;
+	    *) print_line "${_bold_on}<C>${_bold_off}  Install GMP in CGAL tree"
+	    ;;
+	esac
 	print_line "${_bold_on}<G>${_bold_off}  Toggle GMP support" 
 	if [ -n "${GMP_SUPPORT}" ]; then
 	    print_line "${_bold_on}<I>${_bold_off}  GMP  include directory" 
@@ -3515,7 +3520,10 @@ gmp_menu()
 
 	case $KEY in
 	    c|C)
-		install_gmp
+		case ${CGAL_OS_COMPILER} in 
+		    *CYGWIN*) ${_printf} "\n";;
+		    *) install_gmp;;
+		esac
 		;;
 	    g|G)
 		if [ -z "${GMP_SUPPORT}" ]; then 
