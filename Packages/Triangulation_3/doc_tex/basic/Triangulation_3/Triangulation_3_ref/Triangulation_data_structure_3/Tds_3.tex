@@ -397,9 +397,7 @@ data structure by the class
 \ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>}, the triangulation
 must offer the following method:
 
-\ccMethod{void star_region( set<void*, less<void*> > & region, 
-			Vertex* v,
-		     	Cell* c, int li );}
+\ccMethod{void star_region( set<void*> & region, Vertex* v, Cell* c, int li );}
 {Replaces all the cells in \ccc{region} by the cells formed by \ccc{v}
 and the facets on the boundary of \ccc{region}.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$. \ccc{region} is a non-empty 
@@ -508,7 +506,7 @@ adjacent vertices of a given vertex}
 
 \ccThree{void_circulator}{tds.facets_begin()toto}{}
 
-\ccMethod{void incident_cells(Vertex* v, set<Cell*, less<Cell*> > & cells,
+\ccMethod{void incident_cells(Vertex* v, set<Cell*> & cells,
 		   Cell* c = NULL ) const;}
 {Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
 \ccVar.\ccc{dimension()} $<3$ then the set is empty. The optional
@@ -517,8 +515,7 @@ argument \ccc{c} will be used for initializing the set.
 the optional argument \ccc{c} is a cell having \ccc{v} as a vertex.}}
 
 \ccMethod{void incident_vertices(Vertex* v, 
-		set<Vertex*, less<Vertex*> > & vertices,
-		Cell* c = NULL ) const;}
+		set<Vertex*> & vertices, Cell* c = NULL ) const;}
 {Computes the set \ccc{vertices} of all vertices incident to \ccc{v}. If
 \ccVar.\ccc{number_of_vertices()} $<2$ then the set is empty. The optional
 argument \ccc{c} will be used for finding a first vertex of the set.

@@ -804,8 +804,7 @@ Cell_handle start, int f) const;}
 of a given vertex} 
 
 \ccMethod{void incident_cells(Vertex_handle v, 
-		set<Cell_handle, less<Cell_handle> > & cells,
-		   Cell_handle c = NULL ) const;}
+		set<Cell_handle> & cells, Cell_handle c = NULL ) const;}
 {Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
 \ccVar.\ccc{dimension()} $<3$ then the returned set is empty. The optional
 argument \ccc{c} will be used for initializing the set.
@@ -813,8 +812,7 @@ argument \ccc{c} will be used for initializing the set.
 and the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 
 %\ccMethod{void incident_cells(Vertex_handle v, 
-%		set<Cell*, less<Cell*> > & cells,
-%		   Cell_handle c = NULL ) const;}
+%		set<Cell*> & cells, Cell_handle c = NULL ) const;}
 %{Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
 %\ccVar.\ccc{dimension()} $<3$ then the returned set is empty. The optional
 %argument \ccc{c} will be used for initializing the set.\\
@@ -827,8 +825,7 @@ and the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 %and the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 
 \ccMethod{void incident_vertices(Vertex_handle v, 
-		set<Vertex_handle, less<Vertex_handle> > & vertices,
-		Cell_handle c = NULL ) const;}
+		set<Vertex_handle> & vertices, Cell_handle c = NULL ) const;}
 {Computes the set \ccc{vertices} of all vertices adjacent to \ccc{v}. If
 \ccVar.\ccc{number_of_vertices()} $<1$ then the set is empty. The optional
 argument \ccc{c} will be used for finding a first vertex of the set.
@@ -836,7 +833,7 @@ argument \ccc{c} will be used for finding a first vertex of the set.
 the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 
 %\ccMethod{void incident_vertices(Vertex_handle v, 
-%		set<Vertex*, less<Vertex*> > & vertices,
+%		set<Vertex*> & vertices,
 %		Cell_handle c = NULL ) const;}
 %{Computes the set \ccc{vertices} of all vertices adjacent to \ccc{v}. If
 %\ccVar.\ccc{number_of_vertices()} $<1$ then the set is empty. The optional
