@@ -1,6 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.17 (16 Jul 2001)
+
+     - Added #include <cstddef> whereever std::size_t is used.
+
 3.16 (11 Jul 2001)
 
      - Fixed references to Polyhedron_3<Traits> in doc.

@@ -27,9 +27,8 @@
 #ifndef CGAL_HALFEDGEDS_ITEMS_DECORATOR_H
 #define CGAL_HALFEDGEDS_ITEMS_DECORATOR_H 1
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
+#include <cstddef>
 
 CGAL_BEGIN_NAMESPACE
 

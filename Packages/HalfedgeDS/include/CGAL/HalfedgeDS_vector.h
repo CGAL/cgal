@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <vector>
 #include <map>
+#include <cstddef>
 
 CGAL_BEGIN_NAMESPACE
 

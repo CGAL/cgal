@@ -31,6 +31,7 @@
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <CGAL/memory.h>
 #include <CGAL/Unique_hash_map.h>
+#include <cstddef>
 
 CGAL_BEGIN_NAMESPACE
 
