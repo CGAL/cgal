@@ -29,15 +29,6 @@ for DIR in $DOCDIRS; do
    cd $DIR
    echo "now in directory $DIR..."
    CURR_DIR=`pwd`
-#  cannot use hyperref package with deprecated basic manual because of the
-#  presence of many \protect\ccc{X} commands in section titles
-   case $CURR_DIR in
-      *deprecated_basic)     if [ ! -f basic_lib.ps ]; then
-                                driver_tex $DIR
-                             fi
-                             exec `$DISTILL basic_lib.ps`
-                             exit;;
-   esac
 
    sed -e '
 s/\\setboolean{usehyperref}{false}/\\setboolean{usehyperref}{true}/

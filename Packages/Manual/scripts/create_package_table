@@ -174,7 +174,6 @@ for DIR in $DOCDIRS; do
            *general)          PART_NAME="General Introduction";;
            *kernel)           PART_NAME="2D and 3D Kernel";;
            *kernel_d)         PART_NAME="dD Kernel";;
-           *deprecated_basic) PART_NAME="Basic Library (Deprecated Packages)";;
            *basic)            PART_NAME="Basic Library";;
            *support)          PART_NAME="Support Library";;
            *use_of_stl)       PART_NAME="Use of STL";;

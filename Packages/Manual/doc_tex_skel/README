@@ -7,8 +7,6 @@ This directory contains
                         manuals
    cgal-manual.bib   -- BibTex entries for the manual that are not part of
                         (the local copy of) geom.bib
-   deprecated_basic/ -- subdirectory for the deprecated Basic Library packages'
-                        reference manual
    docdirs           -- list of subdirectories containing parts of the manual
    Fig/              -- contains the gif files for the CGAL logo
    general/          -- subdirectory for the General Introduction to CGAL

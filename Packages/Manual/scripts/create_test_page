@@ -133,8 +133,6 @@ for DIR in $PART_DIRS; do
                            PART_NAME="2D and 3D Kernel";;
         *kernel_d)         NAME=kernel_d;
                            PART_NAME="dD Kernel";;
-        *deprecated_basic) NAME=deprecated_basic_lib;
-                           PART_NAME="Basic Library (Deprecated Packages)";;
         *basic)            NAME=basic_lib;
                            PART_NAME="Basic Library";;
         *support)          NAME=support_lib;
@@ -232,7 +230,6 @@ EOF
            *general)           PART_NAME="General Introduction";;
            *kernel)            PART_NAME="2D and 3D Kernel";;
            *kernel_d)          PART_NAME="dD Kernel";;
-           *deprecated_basic)  PART_NAME="Basic Library (Deprecated)";;
            *basic)             PART_NAME="Basic Library";;
            *support)           PART_NAME="Support Library";;
            *use_of_stl)        PART_NAME="Use of STL";;

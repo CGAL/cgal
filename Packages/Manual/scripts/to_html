@@ -28,8 +28,6 @@ for DIR in $DOCDIRS; do
                         INCL="-header ../../include";;
         *basic)         TITLE="CGAL Basic Library Manual";
                         INCL="-header ../../../include";;
-        *deprecated_basic) TITLE="CGAL Basic Library Deprecated Packages Manual";
-                        INCL="-header ../../../include";;
         *support)       TITLE="CGAL Support Library Manual";
                         INCL="-header ../../../include";;
         *use_of_stl)    TITLE="The Use of STL and STL Extensions in CGAL";

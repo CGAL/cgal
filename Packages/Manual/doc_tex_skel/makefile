@@ -181,21 +181,6 @@ kernel_d_update:
 	chmod a+r $(DOC_PDF_DESTINATION)/doc_pdf/kernel_d.pdf
 	chmod -R a+rX $(DOC_HTML_DESTINATION)/doc_html/kernel_d
 
-deprecated_basic_update:
-	driver deprecated_basic;
-	to_pdf deprecated_basic;
-	cd deprecated_basic; \
-           gzip -f basic_lib.ps; \
-           cp basic.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/deprecated_basic_lib.ps.gz. ;\
-           gzip -f basic_lib_letter.ps; \
-           cp basic_lib_letter.ps.gz $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/deprecated_basic_lib_letter.ps.gz; \
-           cp basic.pdf $(DOC_PDF_DESTINATION)/doc_pdf/deprecated_basic_lib.pdf
-	cd deprecated_basic/html; \
-           cp -R * $(DOC_HTML_DESTINATION)/doc_html/deprecated_basic_lib/.
-	chmod -R a+r $(DOC_PS_DESTINATION)/doc_ps/
-	chmod a+r $(DOC_PDF_DESTINATION)/doc_pdf/deprecated_basic_lib.pdf
-	chmod -R a+rX $(DOC_HTML_DESTINATION)/doc_html/deprecated_basic_lib
-
 basic_update:
 	driver basic;
 	to_pdf basic; 
@@ -251,7 +236,6 @@ doc_ps_a4:
 	cd kernel; cp kernel.ps $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps/. ;
 	cd kernel_d; cp kernel_d.ps $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps/. ;
 	cd basic; cp basic_lib.ps $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps/. ;
-	cd deprecated_basic; cp basic_lib.ps $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps/deprecated_basic_lib.ps ;
 	cd support; cp support_lib.ps $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps/. ;
 	cd use_of_stl; cp use_of_stl.ps $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps/. ;
 	mv $(DOC_PS_DESTINATION)/doc_ps/a4/doc_ps $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4
@@ -266,7 +250,6 @@ doc_ps_letter:
 	cd kernel; cp kernel_letter.ps $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps/kernel.ps ;
 	cd kernel_d; cp kernel_d_letter.ps $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps/kernel_d.ps ;
 	cd basic; cp basic_lib_letter.ps $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps/basic_lib.ps ;
-	cd deprecated_basic; cp basic_lib_letter.ps $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps/deprecated_basic_lib.ps ;
 	cd support; cp support_lib_letter.ps $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps/support_lib.ps ;
 	cd use_of_stl; cp use_of_stl_letter.ps $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps/use_of_stl.ps ;
 	mv $(DOC_PS_DESTINATION)/doc_ps/letter/doc_ps $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter
@@ -281,7 +264,6 @@ doc_pdf:
 	cd kernel; cp kernel.pdf $(DOC_PDF_DESTINATION)/doc_pdf/. ;
 	cd kernel_d; cp kernel_d.pdf $(DOC_PDF_DESTINATION)/doc_pdf/. ;
 	cd basic; cp basic_lib.pdf $(DOC_PDF_DESTINATION)/doc_pdf/. ;
-	cd deprecated_basic; cp basic_lib.pdf $(DOC_PDF_DESTINATION)/doc_pdf/deprecated_basic_lib.pdf ;
 	cd support; cp support_lib.pdf $(DOC_PDF_DESTINATION)/doc_pdf/. ;
 	cd use_of_stl; cp use_of_stl.pdf $(DOC_PDF_DESTINATION)/doc_pdf/. ;
 	chmod -R a+r $(DOC_PDF_DESTINATION)/doc_pdf;
@@ -293,7 +275,6 @@ zip_ps:
 	gzip -f kernel/kernel*.ps
 	gzip -f kernel_d/kernel_d*.ps
 	gzip -f basic/basic_lib*.ps
-	gzip -f deprecated_basic/basic_lib*.ps
 	gzip -f support/support_lib*.ps
 	gzip -f installation/installation*.ps
 	gzip -f use_of_stl/use_of_stl*.ps
@@ -303,7 +284,6 @@ unzip_ps:
 	gunzip kernel/kernel*.ps.gz
 	gunzip kernel_d/kernel_d*.ps.gz
 	gunzip basic/basic_lib*.ps.gz
-	gunzip deprecated_basic/basic_lib*.ps.gz
 	gunzip support/support_lib*.ps.gz
 	gunzip installation/installation*.ps.gz
 	gunzip use_of_stl/use_of_stl*.ps.gz
@@ -316,8 +296,6 @@ dest_unzip_ps:
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel_d.ps.gz
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/basic_lib.ps.gz
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/basic_lib.ps.gz
-	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/deprecated_basic_lib.ps.gz
-	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/deprecated_basic_lib.ps.gz
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/support_lib.ps.gz
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/support_lib.ps.gz
 	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/installation*.ps.gz
@@ -334,8 +312,6 @@ dest_zip_ps:
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel_d.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/basic_lib.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/basic_lib.ps
-	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/deprecated_basic_lib.ps
-	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/deprecated_basic_lib.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/support_lib.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/support_lib.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/installation*.ps
@@ -354,8 +330,6 @@ install_ps:
 	cd kernel_d; cp kernel_d_letter.ps $(DESTINATION)/doc_ps/doc_ps_letter/kernel_d.ps ;
 	cd basic; cp basic_lib.ps $(DESTINATION)/doc_ps/doc_ps_a4/. ;
 	cd basic; cp basic_lib_letter.ps $(DESTINATION)/doc_ps/doc_ps_letter/basic_lib.ps ;
-	cd deprecated_basic; cp basic_lib.ps $(DESTINATION)/doc_ps/doc_ps_a4/deprecated_basic_lib.ps. ;
-	cd deprecated_basic; cp basic_lib_letter.ps $(DESTINATION)/doc_ps/doc_ps_letter/deprecated_basic_lib.ps ;
 	cd support; cp support_lib.ps $(DESTINATION)/doc_ps/doc_ps_a4/ ;
 	cd support; cp support_lib_letter.ps $(DESTINATION)/doc_ps/doc_ps_letter/support_lib.ps ;
 	cd use_of_stl; cp use_of_stl.ps $(DESTINATION)/doc_ps/doc_ps_a4/. ;
@@ -368,7 +342,6 @@ title_html:
 	cd kernel; cp title.html html/. ;
 	cd kernel_d; cp title.html html/. ;
 	cd basic; cp Title/title.html html/. ;
-	cd deprecated_basic; cp Title/title.html html/. ;
 	cd support; cp Title/title.html html/. ;
 	cd installation; cp title.html html/. ;
 	cd use_of_stl; cp title.html html/. ;
@@ -380,13 +353,11 @@ doc_html:
 	mkdir -p $(DOC_HTML_DESTINATION)/doc_html/kernel; 
 	mkdir -p $(DOC_HTML_DESTINATION)/doc_html/kernel_d; 
 	mkdir -p $(DOC_HTML_DESTINATION)/doc_html/basic_lib; 
-	mkdir -p $(DOC_HTML_DESTINATION)/doc_html/deprecated_basic_lib; 
 	mkdir -p $(DOC_HTML_DESTINATION)/doc_html/support_lib; 
 	mkdir -p $(DOC_HTML_DESTINATION)/doc_html/use_of_stl; 
 	cd kernel/html; cp -R * $(DOC_HTML_DESTINATION)/doc_html/kernel/.
 	cd kernel_d/html; cp -R * $(DOC_HTML_DESTINATION)/doc_html/kernel_d/.
 	cd basic/html; cp -R * $(DOC_HTML_DESTINATION)/doc_html/basic_lib/.
-	cd deprecated_basic/html; cp -R * $(DOC_HTML_DESTINATION)/doc_html/deprecated_basic_lib/.
 	cd support/html; cp -R * $(DOC_HTML_DESTINATION)/doc_html/support_lib/.
 	cd installation/html; cp -R * $(DOC_HTML_DESTINATION)/doc_html/installation/.
 	cd use_of_stl/html; cp -R * $(DOC_HTML_DESTINATION)/doc_html/use_of_stl/.
@@ -400,7 +371,6 @@ install_html:
 	cd kernel/html; cp -R * $(DESTINATION)/doc_html/kernel/. ;
 	cd kernel_d/html; cp -R * $(DESTINATION)/doc_html/kernel_d/. ;
 	cd basic/html; cp -R * $(DESTINATION)/doc_html/basic_lib/. ;
-	cd deprecated_basic/html; cp -R * $(DESTINATION)/doc_html/deprecated_basic_lib/. ;
 	cd support/html; cp -R * $(DESTINATION)/doc_html/support_lib/. ;
 	cd use_of_stl/html; cp -R * $(DESTINATION)/doc_html/use_of_stl/. ;
 	chmod -R a+r $(DESTINATION)/doc_html ;
@@ -426,14 +396,12 @@ install_test_html:
 	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/kernel; 
 	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/kernel_d; 
 	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/basic_lib; 
-	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/deprecated_basic_lib; 
 	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/support_lib; 
 	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/use_of_stl; 
 	cd installation/html; cp -R * $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/installation/. ;
 	cd kernel/html; cp -R * $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/kernel/. ;
 	cd kernel_d/html; cp -R * $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/kernel_d/. ;
 	cd basic/html; cp -R * $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/basic_lib/. ;
-	cd deprecated_basic/html; cp -R * $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/deprecated_basic_lib/. ;
 	cd support/html; cp -R * $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/support_lib/. ;
 	cd use_of_stl/html; cp -R * $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/use_of_stl/. ;
 	cd $(TEST_DESTINATION)/$(TEST_SUBDIR)/html; gif_grep ;
@@ -447,14 +415,12 @@ install_test_ps:
 	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/kernel; 
 	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/kernel_d; 
 	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/basic_lib; 
-	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/deprecated_basic_lib; 
 	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/support_lib; 
 	mkdir -p $(TEST_DESTINATION)/$(TEST_SUBDIR)/html/use_of_stl; 
 	cd installation; gzip -f installation*.ps; cp installation*.ps.gz $(TEST_DESTINATION)/$(TEST_SUBDIR)/installation/.;
 	cd kernel; gzip -f kernel*.ps; cp kernel*.ps.gz $(TEST_DESTINATION)/$(TEST_SUBDIR)/kernel/. ;
 	cd kernel_d; gzip -f kernel_d*.ps; cp kernel_d*.ps.gz $(TEST_DESTINATION)/$(TEST_SUBDIR)/kernel_d/. ;
 	cd basic; gzip -f basic_lib*.ps; cp basic_lib*.ps.gz $(TEST_DESTINATION)/$(TEST_SUBDIR)/basic/.;
-	cd deprecated_basic; gzip -f basic_lib*.ps; cp basic_lib*.ps.gz $(TEST_DESTINATION)/$(TEST_SUBDIR)/deprecated_basic/.;
 	cd support; gzip -f support_lib*.ps; cp support_lib*.ps.gz $(TEST_DESTINATION)/$(TEST_SUBDIR)/support/. ;
 	cd use_of_stl; gzip -f use_of_stl*.ps; cp use_of_stl*.ps.gz $(TEST_DESTINATION)/$(TEST_SUBDIR)/use_of_stl/. ;
 	chmod a+r $(TEST_DESTINATION)/$(TEST_SUBDIR)/*/*.ps.gz
@@ -477,7 +443,6 @@ clean:
 	cd kernel; rm -rf *.bck *.aux *.unfixed *.blg *.dvi *.idx *.ilg *.log *.toc *.bbl *.ind ionly
 	cd kernel_d; rm -rf *.bck *.aux *.unfixed *.blg *.dvi *.idx *.ilg *.log *.toc *.bbl *.ind ionly
 	cd basic; rm -rf *.bck *.aux *.unfixed *.blg *.dvi *.idx *.ilg *.log *.toc *.bbl  *.ind ionly docdirs_failed* docdirs_passed*
-	cd deprecated_basic; rm -rf *.bck *.aux *.unfixed *.blg *.dvi *.idx *.ilg *.log *.toc *.bbl  *.ind ionly docdirs_failed* docdirs_passed*
 	cd support; rm -rf *.bck *.aux *.unfixed *.blg *.dvi *.idx *.ilg *.log *.toc *.bbl *.ind ionly docdirs_failed* docdirs_passed*
 	cd use_of_stl; rm -rf *.bck *.aux *.unfixed *.blg *.dvi *.idx *.ilg *.log *.toc *.bbl *.ind ionly
 	rm -f installation/installation*.ps.gz
@@ -485,6 +450,5 @@ clean:
 	rm -f kernel/kernel*.ps.gz
 	rm -f kernel_d/kernel_d*.ps.gz
 	rm -f basic/basic_lib*.ps.gz
-	rm -f deprecated_basic/basic_lib*.ps.gz
 	rm -f support/support_lib*.ps.gz
 	rm -f use_of_stl/use_of_stl*.ps.gz
