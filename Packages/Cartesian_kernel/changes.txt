@@ -1,6 +1,6 @@
 Version 6.2 (18 January 2001)
 - Borland fix for SegmentC2.
-- Removed #include<CGAL/predicate_classes_3.h> in Tetrhedron_3.h that broke
+- Removed #include<CGAL/predicate_classes_3.h> in Tetrahedron_3.h that broke
   the inclusion order rules...
 
 Version 6.1 (16 January 2001)
