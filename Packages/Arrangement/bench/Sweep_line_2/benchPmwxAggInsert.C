@@ -51,17 +51,22 @@ typedef leda_rational                                   NT;
 #if defined(USE_CONIC_TRAITS)
 typedef CGAL::Cartesian<NT>               Kernel;
 typedef CGAL::Arr_conic_traits_2<Kernel>  Traits;
-#define PM_TYPE "Conics"
+
+#if defined(USE_INSERT_FAST)
+#define PM_TYPE "Tight Sweep (conics)"
+#else
+#define PM_TYPE "Sweep       (conics)"
+#endif
 
 #else
 
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
 #if defined(USE_INSERT_FAST)
 typedef CGAL::Arr_segment_traits_tight_2<Kernel>        Traits;
-#define PM_TYPE "Tali's  Sweep"
+#define PM_TYPE "Tight Sweep (seg)"
 #else
 typedef CGAL::Arr_segment_traits_2<Kernel>          Traits;
-#define PM_TYPE "Eti's Sweep"
+#define PM_TYPE "Sweep       (segs)"
 #endif
 
 #endif
@@ -202,8 +207,8 @@ int main(int argc, char * argv[])
   
   
   // Naive point location:
-  std::string name =
-    std::string("PMWX ") + PM_TYPE + " (" + std::string(filename) + ")";
+  std::string name = std::string(filename) + " - " + std::string("Agg. insert, ") + 
+    PM_TYPE;
   Agg_pmwx_bench benchInst(name, seconds, false);
   Aggregate_pmwx & benchUser = benchInst.getBenchUser();
   runBench<Agg_pmwx_bench,Aggregate_pmwx>(benchInst, benchUser,
