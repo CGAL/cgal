@@ -55,25 +55,24 @@ Triangulation_euclidean_traits_2<R>
 {
 public: 
   typedef typename R::FT Coord_type;
+  typedef typename Triangulation_euclidean_traits_2<R>::Point Point;
 
   //---------------------------------------------------------------------
 
-  Coord_type squared_radius_smallest_circumcircle(const Point &p,
-						  const Point &q,
-						  const Point &r)
-    const 
+  Coord_type squared_radius(const Point &p,
+			    const Point &q,
+			    const Point &r) const 
     {
       // the computation of the squared radius takes 17 multiplications
       // and 12 additions
 
-      return CGAL::squared_radius_smallest_circumcircle(p, q, r);
+      return CGAL::squared_radius_circumcircle(p, q, r);
     }
   
   //------------------------------------------------------------------
 
-  Coord_type squared_radius_smallest_circumcircle(const Point &p,
-						  const Point &q)
-    const 
+  Coord_type squared_radius(const Point &p,
+			    const Point &q) const 
     {
       // the computation of the squared radius takes 17 multiplications
       // and 12 additions
@@ -84,9 +83,9 @@ public:
 
   //------------------------------------------------------------------
 
-  Bounded_side side_of_bounded_circle(const Point &p,
-				      const Point &q,
-				      const Point &test) const 
+  Bounded_side side_of_circle(const Point &p,
+			      const Point &q,
+			      const Point &test) const 
     {
       return CGAL::side_of_bounded_circle(p, q, test);
     }

@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 
 template< class FT >
 CGAL_MEDIUM_INLINE
-Oriented_side
+Bounded_side
 in_smallest_orthogonalcircleC2(const FT &px, const FT &py, const FT  &pw,
 			       const FT &qx, const FT &qy, const FT  &qw,  
 			       const FT &tx, const FT &ty, const FT  &tw)
@@ -45,8 +45,8 @@ in_smallest_orthogonalcircleC2(const FT &px, const FT &py, const FT  &pw,
   FT dty = ty-qy;
   FT dpz = square(dpx)+square(dpy);
  
-  return Oriented_side (sign((square(dtx)+square(dty)-tw+qw)*dpz
-			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty)));
+  return Bounded_side (sign(-(square(dtx)+square(dty)-tw+qw)*dpz
+			    +(dpz-pw+qw)*(dpx*dtx+dpy*dty)));
 }
 
 //-------------------------------------------------------------------

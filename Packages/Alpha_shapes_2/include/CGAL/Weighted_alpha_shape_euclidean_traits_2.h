@@ -61,29 +61,29 @@ public:
 
   //---------------------------------------------------------------------
 
-  Coord_type squared_radius_smallest_orthogonalcircle(const Point &p,
-						      const Point &q,
-						      const Point &r) const 
+  Coord_type squared_radius(const Point &p,
+			    const Point &q,
+			    const Point &r) const 
     {
   
       return
-	CGAL::squared_radius_smallest_orthogonalcircle(p, q, r);
+	CGAL::squared_radius_orthogonalcircle(p, q, r);
     }
 
 
 
 
-  Coord_type squared_radius_smallest_orthogonalcircle(const Point &p,
-						      const Point &q) const 
+  Coord_type squared_radius(const Point &p,
+			    const Point &q) const 
     {
 
       return
 	CGAL::squared_radius_smallest_orthogonalcircle(p, q);
     }
 
-  Oriented_side in_smallest_orthogonalcircle(const Point &p,
-					     const Point &q,
-					     const Point &t) const 
+  Bounded_side side_of_circle(const Point &p,
+			      const Point &q,
+			      const Point &t) const 
     {
   
       return

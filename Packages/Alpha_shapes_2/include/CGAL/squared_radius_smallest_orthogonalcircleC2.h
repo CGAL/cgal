@@ -42,7 +42,7 @@ CGAL_BEGIN_NAMESPACE
 template< class FT >
 inline
 FT 
-squared_radius_smallest_orthogonalcircle(
+squared_radius_orthogonalcircle(
   const Weighted_point<Point_2< Cartesian<FT> >, FT> &p,
   const Weighted_point<Point_2< Cartesian<FT> >, FT> &q,
   const Weighted_point<Point_2< Cartesian<FT> >, FT> &r) 
@@ -58,9 +58,9 @@ squared_radius_smallest_orthogonalcircle(
   FT ry(r.point().y());
   FT rw(r.weight()); 
 
-  return squared_radius_smallest_orthogonalcircleC2(px, py, pw,
-						    qx, qy, qw,
-						    rx, ry, rw);
+  return squared_radius_orthogonalcircleC2(px, py, pw,
+					   qx, qy, qw,
+					   rx, ry, rw);
 }
 
 template< class FT >

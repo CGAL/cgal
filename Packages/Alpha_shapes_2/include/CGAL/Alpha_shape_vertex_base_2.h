@@ -40,20 +40,10 @@ Triangulation_vertex_base_2<Gt>
 private:
   typedef typename Gt::Coord_type Coord_type;
   typedef std::pair< Coord_type, Coord_type > Interval2;
-  Interval2 I;
 
 public:
   typedef typename Triangulation_vertex_base_2<Gt>::Point Point;
-  inline Interval2 get_Range() 
-    {
-      return I;
-    }
-
-  inline void Range(Interval2 Inter)
-    {  
-      I = Inter;
-    }
-
+  
   Alpha_shape_vertex_base_2()
     : Triangulation_vertex_base_2<Gt>() 
     {}
@@ -65,6 +55,23 @@ public:
   Alpha_shape_vertex_base_2(const Point & p, void* f)
     : Triangulation_vertex_base_2<Gt>(p, f) 
     {}
+
+
+private:
+
+  Interval2 I;
+
+public:
+
+  inline Interval2 get_range() 
+    {
+      return I;
+    }
+
+  inline void set_range(Interval2 Inter)
+    {  
+      I = Inter;
+    }
 
 };
 

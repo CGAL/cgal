@@ -25,63 +25,64 @@
 #ifndef CGAL_ALPHA_SHAPE_FACE_BASE_2_H
 #define CGAL_ALPHA_SHAPE_FACE_BASE_2_H
 
-#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/triple.h>
 
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-template < class Gt >
-class Alpha_shape_face_base_2 : public Triangulation_face_base_2<Gt> 
+template < class Gt, class Df >
+class Alpha_shape_face_base_2 : public Df
 {
-private:
-  typedef typename Gt::Coord_type Coord_type;
-  typedef triple<Coord_type, Coord_type , Coord_type> Interval3;
-  Interval3 vec_edge[3];
-  Coord_type A;
 
 public:
-  inline Coord_type get_Alpha() 
-    {
-      return A;
-    }
-  
-  inline void Alpha(Coord_type AA)
-    {
-    
-      A = AA;
-    }
+  typedef typename Gt::Coord_type Coord_type;
+  typedef triple<Coord_type, Coord_type , Coord_type> Interval_3;
 
-
-  inline Interval3 get_Range(int i)
-    {
-      return vec_edge[i];
-    }
-
-  inline void Range(int i, Interval3 Inter)
-    {
-      vec_edge[i]=Inter;
-    }
-  
-  
+public:  
   Alpha_shape_face_base_2() 
-    : Triangulation_face_base_2<Gt>() 
+    : Df() 
     {}
   
   
   Alpha_shape_face_base_2(void* v0, void* v1, void* v2)
-    : Triangulation_face_base_2<Gt>( v0, v1, v2) 
+    : Df( v0, v1, v2) 
     {}
  
   
   
   Alpha_shape_face_base_2(void* v0, void* v1, void* v2,
 			  void* n0, void* n1, void* n2)
-    :  Triangulation_face_base_2<Gt>(v0,  v1,  v2,
-				     n0,  n1,  n2) 
+    :  Df(v0,  v1,  v2,
+	  n0,  n1,  n2) 
     {}
   
+private:
+
+  Interval_3 vec_edge[3];
+  Coord_type A;
+
+public:
+  inline Coord_type get_alpha() 
+    {
+      return A;
+    }
+  
+  inline void set_alpha(Coord_type AA)
+    {    
+      A = AA;
+    }
+
+  inline Interval_3 get_ranges(int i)
+    {
+      return vec_edge[i];
+    }
+
+  inline void set_ranges(int i, Interval_3 Inter)
+    {
+      vec_edge[i]=Inter;
+    }
+
 };
 
 //-------------------------------------------------------------------

@@ -29,9 +29,9 @@
 
 template < class FT, class RT>
 FT
-inline squared_radius_smallest_circumcircle(const PointH2<FT,RT> &p,
-					    const PointH2<FT,RT> &q,
-					    const PointH2<FT,RT> &r) const
+inline squared_radius_circumcircle(const PointH2<FT,RT> &p,
+				   const PointH2<FT,RT> &q,
+				   const PointH2<FT,RT> &r) const
 {
   // compute the smallest radius directly
   if (orientation(p, q, r) == COLLINEAR)

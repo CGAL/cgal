@@ -47,8 +47,6 @@
 #include <utility>
 #include <iostream>
 
-#include <CGAL/Delaunay_triangulation_2.h>
-
 #ifdef CGAL_ALPHA_WINDOW_STREAM
 #include <CGAL/IO/Window_stream.h>
 #endif
@@ -59,10 +57,10 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-template < class Gt, class Tds >
-class Alpha_shape_2 : public Delaunay_triangulation_2<Gt, Tds> 
+template < class Dt >
+class Alpha_shape_2 : public Dt 
 {
-  // DEFINITION The class Alpha_shape_2<Gt,Tds> represents the family
+  // DEFINITION The class Alpha_shape_2<Dt> represents the family
   // of alpha-shapes of points in a plane for all positive alpha. It
   // maintains the underlying Delaunay triangulation which represents
   // connectivity and order among its faces. Each k-dimensional face of the
@@ -76,8 +74,31 @@ class Alpha_shape_2 : public Delaunay_triangulation_2<Gt, Tds>
   //------------------------- TYPES ------------------------------------
 
 public:
+  typedef typename Dt::Geom_traits Gt;
+  typedef typename Dt::Triangulation_data_structure Tds;
 
   typedef typename Gt::Coord_type Coord_type;
+  typedef typename Gt::Point Point;
+
+  typedef typename Gt::Distance Distance;
+  typedef typename Gt::Ray Ray;
+  typedef typename Gt::Line Line;
+  typedef typename Gt::Direction Direction;
+
+
+  typedef typename Dt::Face_handle Face_handle;
+  typedef typename Dt::Vertex_handle Vertex_handle;
+  typedef typename Dt::Edge Edge;
+
+  typedef typename Dt::Face_circulator Face_circulator;
+  typedef typename Dt::Edge_circulator Edge_circulator;
+  typedef typename Dt::Vertex_circulator Vertex_circulator;
+
+  typedef typename Dt::Face_iterator Face_iterator;
+  typedef typename Dt::Edge_iterator Edge_iterator;
+  typedef typename Dt::Vertex_iterator Vertex_iterator;
+
+  typedef typename Dt::Locate_type Locate_type;
 
 private:
 
@@ -100,16 +121,15 @@ private:
 
   // it is faster to compute the radius directly
   // #ifndef STL_HASH_TABLES
-  // typedef std::map< Key, Coord_type, std::less<Key> > Face_interval_map;
+  // typedef std::map< Key, Coord_type, std::less<Key> > 
+  //                                           Face_interval_map;
   // #else
   // typedef std::hash_map< Key , Coord_type > Face_interval_map;
   // #endif
 
   // triple causes under certian conditions a CC sun complier problem
-  typedef triple< Coord_type, Coord_type, Coord_type > Interval3;
-public:
-  typedef std::pair< Face_handle, int > Edge;
-private: 
+  typedef typename Tds::Face::Face::Interval_3 Interval3;
+
   typedef std::pair< Interval3, Edge > Interval_edge;
   typedef std::vector< Interval_edge > Interval_edge_map;
 
@@ -119,13 +139,6 @@ private:
 
   typedef Face_handle const const_void;
   typedef std::pair<const_void, int> const_Edge;
-
-  //   typedef std::pair< const_void, int > const_Vertex;
-  // #ifndef STL_HASH_TABLES
-  //   typedef std::map< Key, Interval2, std::less<Key> > Vertex_interval_map;
-  // #else
-  //   typedef std::hash_map< Key, Interval2 > Vertex_interval_map;
-  // #endif
 
   typedef std::vector< Coord_type > Alpha_spectrum;
   
@@ -176,9 +189,7 @@ private:
   Interval_face_map _interval_face_map;
   Interval_edge_map _interval_edge_map;
   Interval_vertex_map _interval_vertex_map;
-  // Face_interval_map _face_interval_map;
-  // Edge_interval_map _edge_interval_map;
-  // Vertex_interval_map _vertex_interval_map;
+
   Alpha_spectrum _alpha_spectrum;
  
   Coord_type _alpha;
@@ -208,20 +219,20 @@ public:
 		 const Coord_type& alpha = 0,
 		 Mode = GENERAL) 
 {
+  if (Dt::insert(first, last) >= 4)
+    {
+      // Compute the associated _interval_face_map
+      initialize_interval_face_map();
 
-  Delaunay_triangulation_2<Gt,Tds>::insert(first, last);
-
-  // Compute the associated _interval_face_map
-  initialize_interval_face_map();
-
-  // Compute the associated _interval_edge_map
-  initialize_interval_edge_map();
+      // Compute the associated _interval_edge_map
+      initialize_interval_edge_map();
    
-  // Compute the associated _interval_vertex_map
-  initialize_interval_vertex_map();
+      // Compute the associated _interval_vertex_map
+      initialize_interval_vertex_map();
 
-  // merge the two maps
-  initialize_alpha_spectrum();
+      // merge the two maps
+      initialize_alpha_spectrum();
+    }
 }
 #else
 #if defined(LIST) || defined(__SGI_STL_LIST)
@@ -231,20 +242,20 @@ Alpha_shape_2(typename std::list<Point>::const_iterator first,
 	      Mode m = GENERAL)
   : _alpha(alpha), _mode(m), INFINITY(-1), UNDEFINED(-2) 
 {
+  if (Dt::insert(first, last) >= 4)
+    {
+      // Compute the associated _interval_face_map
+      initialize_interval_face_map();
 
-  Delaunay_triangulation_2<Gt,Tds>::insert(first, last);
-
-  // Compute the associated _interval_face_map
-  initialize_interval_face_map();
-
-  // Compute the associated _interval_edge_map
-  initialize_interval_edge_map();
+      // Compute the associated _interval_edge_map
+      initialize_interval_edge_map();
    
-  // Compute the associated _interval_vertex_map
-  initialize_interval_vertex_map();
+      // Compute the associated _interval_vertex_map
+      initialize_interval_vertex_map();
 
-  // merge the two maps
-  initialize_alpha_spectrum();
+      // merge the two maps
+      initialize_alpha_spectrum();
+    }
 }
 
 #endif //LIST
@@ -256,20 +267,20 @@ Alpha_shape_2(typename std::vector<Point>::const_iterator first,
 	      Mode m = GENERAL)
   : _alpha(alpha), _mode(m), INFINITY(-1), UNDEFINED(-2) 
 {
+  if (Dt::insert(first, last) >= 4)
+    {
+      // Compute the associated _interval_face_map
+      initialize_interval_face_map();
 
-  Delaunay_triangulation_2<Gt,Tds>::insert(first, last);
-
-  // Compute the associated _interval_face_map
-  initialize_interval_face_map();
-
-  // Compute the associated _interval_edge_map
-  initialize_interval_edge_map();
+      // Compute the associated _interval_edge_map
+      initialize_interval_edge_map();
    
-  // Compute the associated _interval_vertex_map
-  initialize_interval_vertex_map();
+      // Compute the associated _interval_vertex_map
+      initialize_interval_vertex_map();
 
-  // merge the two maps
-  initialize_alpha_spectrum();
+      // merge the two maps
+      initialize_alpha_spectrum();
+    }
 }
 #endif // VECTOR
 
@@ -294,30 +305,31 @@ Window_stream& op_window(Window_stream& W) const;
 
 #ifdef CGAL_TEMPLATE_MEMBER_FUNCTIONS
 template < class InputIterator >  
-int make_Alpha_shape( InputIterator first,  
+int make_alpha_shape( InputIterator first,  
 		      InputIterator last) 
 {
 
   clear();
 
-  int n =  Delaunay_triangulation_2<Gt,Tds>::insert(first, last);
-    
+  int n =  Dt::insert(first, last);
+ 
 #ifdef DEBUG
-  std::cerr << "Delaunay computed" << std::endl;
+  std::cout << "Triangulation computed" << std::endl;
 #endif
+  if (n >= 4)
+    {   
+      // Compute the associated _interval_face_map
+      initialize_interval_face_map();
 
-  // Compute the associated _interval_face_map
-  initialize_interval_face_map();
+      // Compute the associated _interval_edge_map
+      initialize_interval_edge_map();
 
-  // Compute the associated _interval_edge_map
-  initialize_interval_edge_map();
-
-  // Compute the associated _interval_vertex_map
-  initialize_interval_vertex_map();
+      // Compute the associated _interval_vertex_map
+      initialize_interval_vertex_map();
   
-  // merge the two maps
-  initialize_alpha_spectrum();
-
+      // merge the two maps
+      initialize_alpha_spectrum();
+    }
   return n;
 }
 // Introduces an alpha-shape `A' for a positive alpha-value
@@ -325,59 +337,61 @@ int make_Alpha_shape( InputIterator first,
 // from first to last
 #else
 #if defined(LIST) || defined(__SGI_STL_LIST)
-int make_Alpha_shape(typename std::list<Point>::const_iterator first,
+int make_alpha_shape(typename std::list<Point>::const_iterator first,
 		     typename std::list<Point>::const_iterator last) 
 {
 
   clear();
 
-  int n = Delaunay_triangulation_2<Gt,Tds>::insert(first, last);
+  int n = Dt::insert(first, last);
     
 #ifdef DEBUG
-  std::cerr << "Delaunay computed" << std::endl;
+  std::cout << "Triangulation computed" << std::endl;
 #endif
-
-  // Compute the associated _interval_face_map
-  initialize_interval_face_map();
+ if (n >= 4)
+   { 
+     // Compute the associated _interval_face_map
+     initialize_interval_face_map();
  
-  // Compute the associated _interval_edge_map
-  initialize_interval_edge_map();
+     // Compute the associated _interval_edge_map
+     initialize_interval_edge_map();
 
-  // Compute the associated _interval_vertex_map
-  initialize_interval_vertex_map();
+     // Compute the associated _interval_vertex_map
+     initialize_interval_vertex_map();
   
-  // merge the two maps
-  initialize_alpha_spectrum();
-
+     // merge the two maps
+     initialize_alpha_spectrum();
+   }
   return n;
 }
 #endif //LIST
 
 #if defined(VECTOR) || defined(__SGI_STL_VECTOR)
 
-int  make_Alpha_shape(typename std::vector<Point>::const_iterator first,
+int  make_alpha_shape(typename std::vector<Point>::const_iterator first,
 		      typename std::vector<Point>::const_iterator last) 
 {
     
   clear();
-  int n = Delaunay_triangulation_2<Gt,Tds>::insert(first, last);
-    
+  int n = Dt::insert(first, last);
+  
 #ifdef DEBUG
-  std::cerr << "Delaunay computed" << std::endl;
+  std::cout << "Triangulation computed" << std::endl;
 #endif
+  if (n >= 4)
+    {
+      // Compute the associated _interval_face_map
+      initialize_interval_face_map();
 
-  // Compute the associated _interval_face_map
-  initialize_interval_face_map();
-
-  // Compute the associated _interval_edge_map
-  initialize_interval_edge_map();
+      // Compute the associated _interval_edge_map
+      initialize_interval_edge_map();
  
-  // Compute the associated _interval_vertex_map
-  initialize_interval_vertex_map();
+      // Compute the associated _interval_vertex_map
+      initialize_interval_vertex_map();
 
-  // merge the two maps 
-  initialize_alpha_spectrum(); 
-
+      // merge the two maps 
+      initialize_alpha_spectrum(); 
+    }
   return n;
 }
 #endif // VECTOR
@@ -388,27 +402,6 @@ int  make_Alpha_shape(typename std::vector<Point>::const_iterator first,
 private :
 
 //--------------------- INITIALIZATION OF PRIVATE MEMBERS -----------
-
-//   struct less_partial 
-//   {
-//     bool operator()(const Interval_edge& a,
-// 		    const Interval_edge& b) 
-//       {
-// 	return (a.first < b.first);
-//       }
-
-//     bool operator()(const Interval_vertex& a,
-// 		    const Interval_vertex& b) 
-//       {
-// 	return (a.first < b.first);
-//       }
-
-//     bool operator()(const Interval_face& a,
-// 		    const Interval_face& b) 
-//       {
-// 	return (a.first < b.first);
-//       }
-//   };
 
 void initialize_interval_face_map(void);
 
@@ -425,7 +418,7 @@ public:
 void clear() 
 {
   // clears the structure
-  Delaunay_triangulation_2<Gt,Tds>::clear();
+  Dt::clear();
 
   _interval_face_map.erase(_interval_face_map.begin(),
 			   _interval_face_map.end());
@@ -476,13 +469,13 @@ private:
   
 Coord_type find_interval(Face_handle f) const 
 {
-  return f->get_Alpha();
+  return f->get_alpha();
   // return the value Alpha f the face f
 }
  
 Interval3 find_interval(const_Edge e)  const 
 { // corriger le parametrage
-  return (e.first)->get_Range(e.second);
+  return (e.first)->get_ranges(e.second);
   // return the Interval3 for the edge n
 }
 
@@ -537,7 +530,7 @@ Vertex_handle insert(const Point& p)
 // Otherwise, the vertex is inserted in the underlying Delaunay
 // triangulation and the associated intervals are updated.
 
-void remove(Vertex *v) 
+void remove(Vertex_handle v) 
 {}
 // Removes the vertex from the underlying Delaunay triangulation.
 // The created hole is retriangulated and the associated intervals
@@ -567,15 +560,15 @@ Mode get_mode(void) const
 
 public:
 
-std::back_insert_iterator<std::list<Vertex_handle > >
-get_Alpha_shape_vertices(std::back_insert_iterator<std::list< 
-			 Vertex_handle > > result) const;
+std::back_insert_iterator< std::list< Vertex_handle > >
+get_alpha_shape_vertices(std::back_insert_iterator< 
+			 std::list< Vertex_handle > > result) const;
 
 //---------------------------------------------------------------------
 
-std::back_insert_iterator<std::list<std::pair< Face_handle, int > > >
-get_Alpha_shape_edges(std::back_insert_iterator<std::list<std::pair<
-		      Face_handle, int > > > result) const;
+std::back_insert_iterator< std::list<Edge > >
+get_alpha_shape_edges(std::back_insert_iterator< 
+		      std::list< Edge > > result) const;
 
 //---------------------------------------------------------------------
 
@@ -760,9 +753,9 @@ private:
 bool is_attached(const Face_handle& f, int i) const 
 {
   Bounded_side b = 
-    Gt().side_of_bounded_circle((*(((*f).vertex(cw(i))))).point(),
-				(*(((*f).vertex(ccw(i))))).point(),
-				(*(((*f).vertex(i)))).point());
+    Gt().side_of_circle((*(((*f).vertex(cw(i))))).point(),
+			(*(((*f).vertex(ccw(i))))).point(),
+			(*(((*f).vertex(i)))).point());
  
   return (b == ON_BOUNDED_SIDE) ? true : false;
 }
@@ -772,9 +765,9 @@ bool is_attached(const Face_handle& f, int i) const
 Coord_type squared_radius(const Face_handle& f) const 
 {
   return 
-    Gt().squared_radius_smallest_circumcircle(f->vertex(0)->point(),
-					      f->vertex(1)->point(),
-					      f->vertex(2)->point());
+    Gt().squared_radius(f->vertex(0)->point(),
+			f->vertex(1)->point(),
+			f->vertex(2)->point());
 }
 
 Coord_type squared_radius(const Face_handle& f, const int& i) const 
@@ -783,8 +776,8 @@ Coord_type squared_radius(const Face_handle& f, const int& i) const
   // return (traits().squared_radius_smallest_circumcircle(...)
   // TBC
   return 
-    Gt().squared_radius_smallest_circumcircle(f->vertex(ccw(i))->point(),
-					      f->vertex(cw(i))->point());
+    Gt().squared_radius(f->vertex(ccw(i))->point(),
+			f->vertex(cw(i))->point());
 }
 
 //---------------------------------------------------------------------
@@ -802,9 +795,9 @@ Alpha_shape_2& operator=(const Alpha_shape_2& A)
 
 //---------------------------MEMBER FUNCTIONS-----------------------------
 
-template < class Gt, class Tds >
-std::list<Alpha_shape_2<Gt,Tds>::Point> 
-Alpha_shape_2<Gt,Tds>::Output () 
+template < class Dt >
+std::list<Alpha_shape_2<Dt>::Point> 
+Alpha_shape_2<Dt>::Output () 
 {
 
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
@@ -931,9 +924,9 @@ Alpha_shape_2<Gt,Tds>::Output ()
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
+template < class Dt >
 void 
-Alpha_shape_2<Gt,Tds>::initialize_interval_face_map(void) 
+Alpha_shape_2<Dt>::initialize_interval_face_map(void) 
 {
 
   _interval_face_map.reserve(number_of_faces());
@@ -955,7 +948,7 @@ Alpha_shape_2<Gt,Tds>::initialize_interval_face_map(void)
       _interval_face_map.push_back(Interval_face(alpha_f, face_it));
 
       // cross references
-      face_it->Alpha(alpha_f);
+      face_it->set_alpha(alpha_f);
     }
 
   std::sort(_interval_face_map.begin(),
@@ -965,9 +958,9 @@ Alpha_shape_2<Gt,Tds>::initialize_interval_face_map(void)
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
+template < class Dt >
 void 
-Alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void) 
+Alpha_shape_2<Dt>::initialize_interval_edge_map(void) 
 {
 
   _interval_edge_map.reserve(3*number_of_faces()-6);
@@ -1062,7 +1055,7 @@ Alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void)
       
       // cross-links
       
-      pFace->Range(i,interval);
+      pFace->set_ranges(i,interval);
 
     }
 
@@ -1082,9 +1075,9 @@ Alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void)
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
+template < class Dt >
 void 
-Alpha_shape_2<Gt,Tds>::initialize_interval_vertex_map(void) 
+Alpha_shape_2<Dt>::initialize_interval_vertex_map(void) 
 {
 
   _interval_vertex_map.reserve(number_of_vertices());
@@ -1189,7 +1182,7 @@ Alpha_shape_2<Gt,Tds>::initialize_interval_vertex_map(void)
       _interval_vertex_map.push_back(Interval_vertex(interval, vertex_it));
 
       // cross references
-      vertex_it->Range(interval);
+      vertex_it->set_range(interval);
     }
 
   std::sort(_interval_vertex_map.begin(), 
@@ -1199,9 +1192,9 @@ Alpha_shape_2<Gt,Tds>::initialize_interval_vertex_map(void)
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
+template < class Dt >
 void 
-Alpha_shape_2<Gt,Tds>::initialize_alpha_spectrum(void) 
+Alpha_shape_2<Dt>::initialize_alpha_spectrum(void) 
 {
 
   // skip the attached edges 
@@ -1266,16 +1259,16 @@ Alpha_shape_2<Gt,Tds>::initialize_alpha_spectrum(void)
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
-std::back_insert_iterator<std::list<Alpha_shape_2<Gt,Tds>::Vertex_handle > >
-Alpha_shape_2<Gt,Tds>::get_Alpha_shape_vertices
-(std::back_insert_iterator<std::list<Vertex_handle > > result) const 
+template < class Dt >
+std::back_insert_iterator< std::list< Alpha_shape_2<Dt>::Vertex_handle > >
+Alpha_shape_2<Dt>::get_alpha_shape_vertices
+(std::back_insert_iterator< std::list< Vertex_handle > > result) const 
 {
-  //typedef typename Alpha_shape_2<Gt,Tds>::Interval_vertex_map 
+  //typedef typename Alpha_shape_2<Dt>::Interval_vertex_map 
   //                                              Interval_vertex_map;
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
-  //const typename Alpha_shape_2<Gt,Tds>::Interval2* pInterval2;
+  //const typename Alpha_shape_2<Dt>::Interval2* pInterval2;
   const Interval2* pInterval2;
   Vertex_handle v;
      
@@ -1301,7 +1294,7 @@ Alpha_shape_2<Gt,Tds>::get_Alpha_shape_vertices
 	}
     }
  
-  if (get_mode() == Alpha_shape_2<Gt,Tds>::GENERAL) 
+  if (get_mode() == Alpha_shape_2<Dt>::GENERAL) 
     {
       // write the singular vertices
       for (; 
@@ -1319,19 +1312,18 @@ Alpha_shape_2<Gt,Tds>::get_Alpha_shape_vertices
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
-std::back_insert_iterator<std::list
-                     <std::pair<Alpha_shape_2<Gt,Tds>::Face_handle, int > > >
-Alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges(std::back_insert_iterator
-                    <std::list<std::pair<Face_handle, int > > > result) const 
+template < class Dt >
+std::back_insert_iterator< std::list< Alpha_shape_2<Dt>::Edge > >
+Alpha_shape_2<Dt>::get_alpha_shape_edges
+(std::back_insert_iterator< std::list< Edge > > result) const 
 {
   // Writes the edges of the alpha shape `A' for the current $\alpha$-value
   // to the container where 'out' refers to. Returns an output iterator 
   // which is the end of the constructed range.
-  //typedef  typename Alpha_shape_2<Gt,Tds>::Interval_edge_map Interval_edge_map;
+  //typedef  typename Alpha_shape_2<Dt>::Interval_edge_map Interval_edge_map;
   typename Interval_edge_map::const_iterator edge_alpha_it;
 
-  //const typename Alpha_shape_2<Gt,Tds>::Interval3* pInterval;
+  //const typename Alpha_shape_2<Dt>::Interval3* pInterval;
   const Interval3* pInterval;
   
   if (get_mode() == REGULARIZED) 
@@ -1426,9 +1418,9 @@ Alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges(std::back_insert_iterator
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
-Alpha_shape_2<Gt,Tds>::Classification_type  
-Alpha_shape_2<Gt,Tds>::classify
+template < class Dt >
+Alpha_shape_2<Dt>::Classification_type  
+Alpha_shape_2<Dt>::classify
 ( Face_handle f, int i, const Coord_type& alpha ) const 
 {
   // Classifies the edge `e' of the underlying Delaunay
@@ -1465,14 +1457,14 @@ Alpha_shape_2<Gt,Tds>::classify
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
-Alpha_shape_2<Gt,Tds>::Classification_type  
-Alpha_shape_2<Gt,Tds>::classify( Vertex_handle v,
+template < class Dt >
+Alpha_shape_2<Dt>::Classification_type  
+Alpha_shape_2<Dt>::classify( Vertex_handle v,
 				 const Coord_type& alpha ) const 
 {
   // Classifies the vertex `v' of the underlying Delaunay
   // triangulation with respect to `A'.
-  Interval2 interval = v->get_Range();
+  Interval2 interval = v->get_range();
  
   if (alpha <= interval.first) 
     {
@@ -1493,9 +1485,9 @@ Alpha_shape_2<Gt,Tds>::classify( Vertex_handle v,
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
+template < class Dt >
 int
-Alpha_shape_2<Gt,Tds>::number_solid_components(const Coord_type& alpha) const
+Alpha_shape_2<Dt>::number_solid_components(const Coord_type& alpha) const
 {
   // Determine the number of connected solid components 
   // takes time O(#alpha_shape) amortized if STL_STD::HASH_TABLES
@@ -1528,9 +1520,9 @@ Alpha_shape_2<Gt,Tds>::number_solid_components(const Coord_type& alpha) const
 }
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
+template < class Dt >
 void
-Alpha_shape_2<Gt,Tds>::traverse( Face_handle pFace,
+Alpha_shape_2<Dt>::traverse( Face_handle pFace,
 				 Marked_face_set& marked_face_set, 
 				 const Coord_type alpha) const 
 {
@@ -1547,9 +1539,9 @@ Alpha_shape_2<Gt,Tds>::traverse( Face_handle pFace,
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
-Alpha_shape_2<Gt,Tds>::Alpha_iterator
-Alpha_shape_2<Gt,Tds>::find_optimal_alpha(int nb_components) 
+template < class Dt >
+Alpha_shape_2<Dt>::Alpha_iterator
+Alpha_shape_2<Dt>::find_optimal_alpha(int nb_components) 
 {
   // find the minimum alpha that satisfies the properties
   // (1) nb_components solid components
@@ -1586,7 +1578,7 @@ Alpha_shape_2<Gt,Tds>::find_optimal_alpha(int nb_components)
       middle = first + half;
 
 #ifdef DEBUG
-      std::cerr << "first : " << *first << " last : " << *(first+len)
+      std::cout << "first : " << *first << " last : " << *(first+len)
 		<< " mid : " << *middle 
 		<< " nb comps : " << number_solid_components(*middle) 
 		<< std::endl;
@@ -1610,9 +1602,9 @@ Alpha_shape_2<Gt,Tds>::find_optimal_alpha(int nb_components)
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
-Alpha_shape_2<Gt,Tds>::Coord_type 
-Alpha_shape_2<Gt,Tds>::find_alpha_solid() const 
+template < class Dt >
+Alpha_shape_2<Dt>::Coord_type 
+Alpha_shape_2<Dt>::find_alpha_solid() const 
 {
   // compute the minumum alpha such that all data points 
   // are either on the boundary or in the interior
@@ -1647,16 +1639,16 @@ Alpha_shape_2<Gt,Tds>::find_alpha_solid() const
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
+template < class Dt >
 std::ostream& 
-Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
+Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 {
   
-  typedef typename Alpha_shape_2<Gt, Tds>::Interval_vertex_map 
+  typedef typename Alpha_shape_2<Dt>::Interval_vertex_map 
     Interval_vertex_map ;
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
-  const typename Alpha_shape_2<Gt, Tds>::Interval2* pInterval2;
+  const typename Alpha_shape_2<Dt>::Interval2* pInterval2;
 
     
 #ifndef STL_HASH_TABLES
@@ -1669,16 +1661,16 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 #endif
   int number_of_vertices = 0;
       
-  typedef typename Alpha_shape_2<Gt, Tds>::Interval_edge_map 
+  typedef typename Alpha_shape_2<Dt>::Interval_edge_map 
     Interval_edge_map;
   typename Interval_edge_map::const_iterator edge_alpha_it;
 
-  const typename Alpha_shape_2<Gt,Tds>::Interval3* pInterval;
+  const typename Alpha_shape_2<Dt>::Interval3* pInterval;
 
-  if (get_mode() == Alpha_shape_2<Gt,Tds>::REGULARIZED) 
+  if (get_mode() == Alpha_shape_2<Dt>::REGULARIZED) 
     {
 
-      typename Alpha_shape_2<Gt,Tds>::Vertex_handle v;
+      typename Alpha_shape_2<Dt>::Vertex_handle v;
       for (vertex_alpha_it = _interval_vertex_map.begin(); 
 	   vertex_alpha_it != _interval_vertex_map.end() &&
 	     (*vertex_alpha_it).first.first < get_alpha();
@@ -1688,11 +1680,11 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 	  pInterval2 = &(*vertex_alpha_it).first;
 
 #ifdef DEBUG
-	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha =
+	  typename Alpha_shape_2<Dt>::Coord_type alpha =
 	    get_alpha();
-	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha_mid = 
+	  typename Alpha_shape_2<Dt>::Coord_type alpha_mid = 
 	    pInterval2->first;
-	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha_max = 
+	  typename Alpha_shape_2<Dt>::Coord_type alpha_max = 
 	    pInterval2->second;
 #endif // DEBUG
 
@@ -1706,7 +1698,7 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 
 	      v = (*vertex_alpha_it).second;
  CGAL_triangulation_assertion((classify(v) == 
-			       Alpha_shape_2<Gt,Tds>::REGULAR));
+			       Alpha_shape_2<Dt>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // we would write too many vertices
@@ -1717,7 +1709,7 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 	}
       // the vertices are oriented counterclockwise
 
-      typename Alpha_shape_2<Gt,Tds>::Face_handle f;
+      typename Alpha_shape_2<Dt>::Face_handle f;
       int i;
 
       for (edge_alpha_it = _interval_edge_map.begin(); 
@@ -1746,21 +1738,21 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 	      i = (*edge_alpha_it).second.second;
 
 	      // assure that all vertices are in ccw order
-	      if (classify(f) == Alpha_shape_2<Gt,Tds>::EXTERIOR) 
+	      if (classify(f) == Alpha_shape_2<Dt>::EXTERIOR) 
 		{
             
 		  // take the reverse face
-		  typename Alpha_shape_2<Gt,Tds>::Face_handle 
+		  typename Alpha_shape_2<Dt>::Face_handle 
 		    pNeighbor = f->neighbor(i);
 		  i = pNeighbor->index(&(*f));
 		  f = pNeighbor;
 		}
 	  
  CGAL_triangulation_assertion((classify(f) == 
-			       Alpha_shape_2<Gt,Tds>::INTERIOR));
+			       Alpha_shape_2<Dt>::INTERIOR));
 
  CGAL_triangulation_assertion((classify(f, i) == 
-			       Alpha_shape_2<Gt,Tds>::REGULAR));
+			       Alpha_shape_2<Dt>::REGULAR));
 
 	      os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 		 << V[Key(&(f->vertex(f->cw(i))))] << endl;
@@ -1770,7 +1762,7 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
   else 
     { // get_mode() == GENERAL -----------------------------------------
 
-      typename Alpha_shape_2<Gt,Tds>::Vertex_handle v;
+      typename Alpha_shape_2<Dt>::Vertex_handle v;
      
       // write the regular vertices
 
@@ -1792,7 +1784,7 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 
 	      v = (*vertex_alpha_it).second;
  CGAL_triangulation_assertion((classify(v) == 
-			       Alpha_shape_2<Gt,Tds>::REGULAR));
+			       Alpha_shape_2<Dt>::REGULAR));
 	      V[Key(&v)] = number_of_vertices++;
 	      os << v->point() << endl;
 	    }
@@ -1806,7 +1798,7 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 
 	  v = (*vertex_alpha_it).second;
  CGAL_triangulation_assertion((classify(v) ==
-			       Alpha_shape_2<Gt,Tds>::SINGULAR));
+			       Alpha_shape_2<Dt>::SINGULAR));
 
 	  V[Key(&v)] = number_of_vertices++;
 	  os << v->point() << endl;
@@ -1814,7 +1806,7 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
  
       // the vertices are oriented counterclockwise
 
-      typename Alpha_shape_2<Gt,Tds>::Face_handle f;
+      typename Alpha_shape_2<Dt>::Face_handle f;
       int i;
 
       for (edge_alpha_it = _interval_edge_map.begin(); 
@@ -1826,13 +1818,13 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 	  pInterval = &(*edge_alpha_it).first;
 
 #ifdef DEBUG
-	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha =
+	  typename Alpha_shape_2<Dt>::Coord_type alpha =
 	    get_alpha();
-	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha_min = 
+	  typename Alpha_shape_2<Dt>::Coord_type alpha_min = 
 	    pInterval->first;
-	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha_mid = 
+	  typename Alpha_shape_2<Dt>::Coord_type alpha_mid = 
 	    pInterval->second;
-	  typename Alpha_shape_2<Gt,Tds>::Coord_type alpha_max = 
+	  typename Alpha_shape_2<Dt>::Coord_type alpha_max = 
 	    pInterval->third;
 #endif // DEBUG
 	  
@@ -1853,13 +1845,13 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 		{
 
  CGAL_triangulation_assertion((classify(f, i) == 
-			       Alpha_shape_2<Gt,Tds>::REGULAR));
+			       Alpha_shape_2<Dt>::REGULAR));
 		  // assure that all vertices are in ccw order
-		  if (classify(f) == Alpha_shape_2<Gt,Tds>::EXTERIOR) 
+		  if (classify(f) == Alpha_shape_2<Dt>::EXTERIOR) 
 		    {
  
 		      // take the reverse face
-		      typename Alpha_shape_2<Gt,Tds>::Face_handle 
+		      typename Alpha_shape_2<Dt>::Face_handle 
 			pNeighbor = f->neighbor(i);
 		      
 		      i = pNeighbor->index(&(*f));
@@ -1867,7 +1859,7 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 		    }
 	  
  CGAL_triangulation_assertion((classify(f) == 
-			       Alpha_shape_2<Gt,Tds>::INTERIOR));
+			       Alpha_shape_2<Dt>::INTERIOR));
 
 		  os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 		     << V[Key(&(f->vertex(f->cw(i))))] << endl;
@@ -1883,7 +1875,7 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 		  if (pInterval->first != UNDEFINED) 
 		    {
  CGAL_triangulation_assertion((classify(f, i) == 
-			       Alpha_shape_2<Gt,Tds>::SINGULAR));
+			       Alpha_shape_2<Dt>::SINGULAR));
 		      os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 			 << V[Key(&(f->vertex(f->cw(i))))] << endl;
 	
@@ -1898,22 +1890,22 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 
 //-------------------------------------------------------------------------
 
-template < class Gt, class Tds >
-Alpha_shape_2<Gt,Tds>::Vect_seg& 
-Alpha_shape_2<Gt,Tds>::op_vect_seg(Alpha_shape_2<Gt,Tds>::Vect_seg& V) const
+template < class Dt >
+Alpha_shape_2<Dt>::Vect_seg& 
+Alpha_shape_2<Dt>::op_vect_seg(Alpha_shape_2<Dt>::Vect_seg& V) const
 {
 
-  typedef typename Alpha_shape_2<Gt,Tds>::Interval_vertex_map 
+  typedef typename Alpha_shape_2<Dt>::Interval_vertex_map 
     Interval_vertex_map;
   //  typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
-  typedef  typename Alpha_shape_2<Gt,Tds>::Interval_edge_map 
+  typedef  typename Alpha_shape_2<Dt>::Interval_edge_map 
     Interval_edge_map;
   typename Interval_edge_map::const_iterator edge_alpha_it;
 
-  const typename Alpha_shape_2<Gt,Tds>::Interval3* pInterval;
+  const typename Alpha_shape_2<Dt>::Interval3* pInterval;
 
-  if (get_mode() == Alpha_shape_2<Gt,Tds>::REGULARIZED) 
+  if (get_mode() == Alpha_shape_2<Dt>::REGULARIZED) 
     {
       // it is much faster looking at the sorted intervals 
       // than looking at all sorted faces
@@ -1942,7 +1934,7 @@ Alpha_shape_2<Gt,Tds>::op_vect_seg(Alpha_shape_2<Gt,Tds>::Vect_seg& V) const
 	    
  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 					(*edge_alpha_it).second.second) ==
-			       Alpha_shape_2<Gt,Tds>::REGULAR));
+			       Alpha_shape_2<Dt>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // thus we would write to many vertices
@@ -1981,7 +1973,7 @@ Alpha_shape_2<Gt,Tds>::op_vect_seg(Alpha_shape_2<Gt,Tds>::Vect_seg& V) const
 		
  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 					(*edge_alpha_it).second.second) ==
-			       Alpha_shape_2<Gt,Tds>::REGULAR));
+			       Alpha_shape_2<Dt>::REGULAR));
 		  V.push_back(segment((*edge_alpha_it).second.first,
 				      (*edge_alpha_it).second.second));
 		}
@@ -2000,10 +1992,10 @@ Alpha_shape_2<Gt,Tds>::op_vect_seg(Alpha_shape_2<Gt,Tds>::Vect_seg& V) const
  CGAL_triangulation_assertion(
 			      ((classify((*edge_alpha_it).second.first,
 					 (*edge_alpha_it).second.second) ==
-				Alpha_shape_2<Gt,Tds>::REGULAR) || 
+				Alpha_shape_2<Dt>::REGULAR) || 
 			       (classify((*edge_alpha_it).second.first,
 					 (*edge_alpha_it).second.second) ==
-				Alpha_shape_2<Gt,Tds>::SINGULAR)));
+				Alpha_shape_2<Dt>::SINGULAR)));
 
 		  V.push_back(segment((*edge_alpha_it).second.first,
 				      (*edge_alpha_it).second.second));
@@ -2017,18 +2009,18 @@ Alpha_shape_2<Gt,Tds>::op_vect_seg(Alpha_shape_2<Gt,Tds>::Vect_seg& V) const
 
 //-------------------------------------------------------------------
 
-template < class Gt, class Tds >
+template < class Dt >
 std::ostream& operator<<
-(std::ostream& os, const Alpha_shape_2<Gt,Tds>& A)
+(std::ostream& os, const Alpha_shape_2<Dt>& A)
 {
   return A.op_ostream(os);
 }
 
 //-------------------------------------------------------------------
 
-template < class Gt, class Tds >
-Alpha_shape_2<Gt,Tds>::Vect_seg& operator<<
-(Alpha_shape_2<Gt,Tds>::Vect_seg& V, const Alpha_shape_2<Gt,Tds>& A)
+template < class Dt >
+Alpha_shape_2<Dt>::Vect_seg& operator<<
+(Alpha_shape_2<Dt>::Vect_seg& V, const Alpha_shape_2<Dt>& A)
 {
   return A.op_vect_seg(V);
 }

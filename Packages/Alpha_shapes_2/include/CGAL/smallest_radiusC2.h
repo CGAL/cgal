@@ -37,9 +37,9 @@ CGAL_BEGIN_NAMESPACE
 template < class R >
 inline
 typename R::FT
-squared_radius_smallest_circumcircle(const PointC2<R> &p,
-				     const PointC2<R> &q,
-				     const PointC2<R> &r)
+squared_radius_circumcircle(const PointC2<R> &p,
+			    const PointC2<R> &q,
+			    const PointC2<R> &r)
 {
   
   // the computation of the squared radius takes 17 multiplications
