@@ -16,12 +16,12 @@
 
 %\pagestyle{empty}
 \textwidth 15.4cm 
-\textheight 24 cm
+\textheight 24cm
 \topmargin -14mm       
 \evensidemargin 3mm 
 \oddsidemargin 3mm
 
-\input{cc_manual.sty}
+\usepackage{cc_manual}
 
 \parindent0em
 \setlength{\parskip}{1ex minus 0.9ex}
@@ -70,29 +70,29 @@ The formatting macros handle for example the special characters \_,
 {\tt <}, {\tt >}, and {\tt \&} as they appear in \CC\ names and the
 characters \#, \%, \ccHat, and \ccTilde\ as they appear with
 operators. See the following example that is printed using the
-{\verb+\cc+}{\tt Style} macro:
+\verb+\cc+{\tt Style} macro:
 
 \ccStyle{
-    #define %^~ Return_Type<Template_Param, X<Y> > fct_foo( const X<Y> &a);}
+    #define %^~$@&$ Ret_Type<Template_Param, X<Y> > fct_foo( const X<Y> &a);}
 
 % ----------------------------------------------------------------------
-\begin{ccClass}{Demo_Class}
+\begin{ccClass}{Demo_Class1}
 \ccSection{A Simple Class}
 
 \ccCreationVariable{p}
 
-\ccStyle{#include< demo_class.h>}
-\ccTwo{Demo_Class p;X}{}
+\ccStyle{#include< Demo_Class1.h>}
+\ccTwo{Demo_Class1 p;X}{}
 
-  \ccConstructor{Demo_Class();}{introduces
+  \ccConstructor{Demo_Class1();}{introduces
      a variable \ccVar\ initialized to the default. \CC\ code:
-     {\tt Demo\_Class();}. Test ccStyle: \ccStyle{Underscore\_within
+     {\tt Demo\_Class1();}. Test ccStyle: \ccStyle{Underscore\_within
      ccStyle}.}
 
-  \ccConstructor{Demo_Class( const Demo_Class &);}{copy
-    constructor. \CC\ code: {\tt Demo\_Class(const Demo\_Class \&);}}
+  \ccConstructor{Demo_Class1( const Demo_Class1 &);}{copy
+    constructor. \CC\ code: {\tt Demo\_Class1(const Demo\_Class1 \&);}}
 
-\ccThree{Demo_Class}{p.x();}{}
+\ccThree{Demo_Class1}{p.x();}{}
 
   \ccMethod{FT   x()  const;}{Cartesian x-coordinate. \CC\ code: {\tt
       FT x() const;}}
@@ -100,12 +100,12 @@ operators. See the following example that is printed using the
   \ccMethod{const FT&   y();}{Cartesian y-coordinate. \CC\ code: {\tt
       const FT\& y();}}
 
-  \ccMethod{Demo_Class   
+  \ccMethod{Demo_Class1   
              transform( const CGAL_HAff_transformation<FT,RT> &t) const;
              }{ Longish declarations forces the comment to start in
              the next line.}
 
-  \ccMethod{Demo_Class   
+  \ccMethod{Demo_Class1   
              longish_function_name( 
                         const CGAL_Aff_transformation<FT,RT> &t,
                         const Dummy_Type &q,
@@ -126,40 +126,39 @@ future). An example:
 
 \ccThree{Demo_Class&&}{p.x();}{}
 
-    \ccFunction{Demo_Class& foo( int& a, int* b);}{}
+    \ccFunction{Demo_Class& foo1( int& a, int* b);}{}
     \ccGlue
-    \ccFunction{Demo_Class* foo( int& a, int* b);}{}
+    \ccFunction{Demo_Class* foo2( int& a, int* b);}{}
     \ccGlue
-    \ccFunction{Demo_Class &foo( int &a, int *b);}{}
+    \ccFunction{Demo_Class &foo3( int &a, int *b);}{}
     \ccGlue
-    \ccFunction{Demo_Class *foo( int &a, int *b);}{}
+    \ccFunction{Demo_Class *foo4( int &a, int *b);}{}
 
 % ----------------------------------------------------------------------
+\begin{ccClass}{Demo_Class2}
 \section{Operator Test}
+\ccCreationVariable{p}
 
 Type casting through a conversion operator is the default behavior 
 for the formatting routine if the return type before the {\tt 
 operator} keyword is empty.
 
 \ccThree{Demo_Class&&}{A< FT>(p);}{}
-
-  \ccFunction{ operator int () const;}{Conversion operator.}
+  \ccMethod{ operator int () const;}{Conversion operator.}
     \ccGlue
-  \ccFunction{operator A< FT>() const;}{Conversion operator.}
+  \ccMethod{operator A<FT>() const;}{Conversion operator.}
 
 Sometimes, there is a choice between
 implementing an operator as a method or as a function. Both
 declarations will produce the same formatting, as demonstrated
 with the next two declarations.
 
-\begin{ccClass}{Demo_Class}
-\ccCreationVariable{p}
 
-  \ccFunction{Demo_Class
-        operator+(Demo_Class p, Demo_Class q);}{Declaration via function.}
+  \ccFunction{Demo_Class2
+        operator+(Demo_Class2 p, Demo_Class2 q);}{Declaration via function.}
     \ccGlue
-  \ccMethod{Demo_Class
-        operator+(Demo_Class q);}{Declaration via method.}
+  \ccMethod{Demo_Class2
+        operator+(Demo_Class2 q);}{Declaration via method.}
 
 One can locally activate that the operator declaration is shown as it
 is written without operator formatting, {\tt const ...\&}, classname, or
@@ -167,39 +166,40 @@ trailing const declarations for methods removal. This can be done with
 \verb+\+\verb+ccTagFullDeclarations+ within a scope of braces {\tt
   \{...\}}.
 
-{\ccTagFullDeclarations
-  \ccMethod{Demo_Class
-        operator+(const Demo_Class& q) const;}{Declaration via method.}
-}
+\ccTagFullDeclarations
+  \ccMethod{Demo_Class2
+        operator+(const Demo_Class2& q) const;}{Declaration via method.}
+\ccTagDefaults
 
 There is some laziness allowed in placing spaces around the operator
 characters. See the following examples:
 
 \ccMethod{A
-    operator+(Demo_Class q);}{\CC\ code: {\tt A operator+(Demo\_Class q);}}
+    operator+(Demo_Class2 q);}{\CC\ code: {\tt A operator+(Demo\_Class2 q);}}
     \ccGlue
 \ccMethod{A
-    operator +(Demo_Class q);}{\CC\ code: {\tt A operator +(Demo\_Class q);}}
+    operator +(Demo_Class2 q);}{\CC\ code: {\tt A operator +(Demo\_Class2 q);}}
     \ccGlue
 \ccMethod{A
-    operator+ (Demo_Class q);}{\CC\ code: {\tt A operator+ (Demo\_Class q);}}
+    operator+ (Demo_Class2 q);}{\CC\ code: {\tt A operator+ (Demo\_Class2 q);}}
     \ccGlue
 \ccMethod{A
-    operator + (Demo_Class q);}{\CC\ code: {\tt A operator + (Demo\_Class q);}}
+    operator + (Demo_Class2 q);}{\CC\ code: 
+                                {\tt A operator + (Demo\_Class2 q);}}
 
 The keyword {\tt operator} is reserved, but it can appear as a
 substring in another name. See the following examples that this
 style can handle such cases:
 
-\ccMethod{A foo_operator(Demo_Class q);}{}
+\ccMethod{A foo_operator(Demo_Class2 q);}{}
     \ccGlue
-\ccMethod{A noperator(Demo_Class q);}{}
+\ccMethod{A noperator(Demo_Class2 q);}{}
     \ccGlue
-\ccMethod{A operatoro(Demo_Class q);}{}
+\ccMethod{A operatoro(Demo_Class2 q);}{}
     \ccGlue
-\ccMethod{A operator_(Demo_Class q);}{}
+\ccMethod{A operator_(Demo_Class2 q);}{}
     \ccGlue
-\ccMethod{A operator0(Demo_Class q);}{}
+\ccMethod{A operator0(Demo_Class2 q);}{}
 
 A problem has occured in detecting the operator keyword if it was
 directly preceded by an {\tt \&} or {\tt *} character. It is fixed as
@@ -211,62 +211,62 @@ the following example demonstrates:
 
 %----------------------------------------------------------------------
 \ccTagDefaults
-\begin{ccClass}{Demo_Class}
+\begin{ccClass}{ClassA}
 \section{The List of All Operators}
 
   \ccFunction{Ptr_Class
-        operator->(Demo_Class p);}{}
+        operator->(ClassA p);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator[](Demo_Class p, int i);}{}
+  \ccFunction{ClassA
+        operator[](ClassA p, int i);}{}
 
-  \ccFunction{Demo_Class
-        operator()(Demo_Class p);}{}
+  \ccFunction{ClassA
+        operator()(ClassA p);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator()(Demo_Class p, int i);}{}
+  \ccFunction{ClassA
+        operator()(ClassA p, int i);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator()(Demo_Class p, int i, int j);}{}
+  \ccFunction{ClassA
+        operator()(ClassA p, int i, int j);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator()(Demo_Class p, int i, int j, int k);}{}
+  \ccFunction{ClassA
+        operator()(ClassA p, int i, int j, int k);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator()(Demo_Class p,
-                   const A& a, B& b, C c, const D& d, Demo_Class
+  \ccFunction{ClassA
+        operator()(ClassA p,
+                   const A& a, B& b, C c, const D& d, ClassA
                    e);}{all number and types of parameters are possible.}
 
-  \ccFunction{Demo_Class
-        operator++(Demo_Class p);}{}
+  \ccFunction{ClassA
+        operator++(ClassA p);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator++(Demo_Class p, int);}{The postfix incr.\ operator
+  \ccFunction{ClassA
+        operator++(ClassA p, int);}{The postfix incr.\ operator
         has a hidden {\tt int} parameter that the formatting does not show.}
 
-  \ccFunction{Demo_Class
-        operator--(Demo_Class p);}{}
+  \ccFunction{ClassA
+        operator--(ClassA p);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator--(Demo_Class p, int);}{}
+  \ccFunction{ClassA
+        operator--(ClassA p, int);}{}
 
-  \ccFunction{Demo_Class
-        operator~(Demo_Class p);}{}
+  \ccFunction{ClassA
+        operator~(ClassA p);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator!(Demo_Class p);}{}
+  \ccFunction{ClassA
+        operator!(ClassA p);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator-(Demo_Class p);}{}
+  \ccFunction{ClassA
+        operator-(ClassA p);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator+(Demo_Class p);}{}
+  \ccFunction{ClassA
+        operator+(ClassA p);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator&(Demo_Class p);}{}
+  \ccFunction{ClassA
+        operator&(ClassA p);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator*(Demo_Class p);}{}
+  \ccFunction{ClassA
+        operator*(ClassA p);}{}
 
   \ccMethod{ void*
         operator new( size_t);}{Hidden parameters are not shown. \CC\ code: 
@@ -284,94 +284,94 @@ the following example demonstrates:
             delete[]( void*, size\_t);\}}}
 
   \ccFunction{Member_Ptr
-        operator->*(Demo_Class p);}{}
+        operator->*(ClassA p);}{}
 
-  \ccFunction{Demo_Class
-        operator*(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator*(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator/(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator/(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator%(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator%(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator+(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator+(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator-(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator-(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator<<(Demo_Class p, int i);}{}
+  \ccFunction{ClassA
+        operator<<(ClassA p, int i);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator>>(Demo_Class p, int i);}{}
+  \ccFunction{ClassA
+        operator>>(ClassA p, int i);}{}
 
-  \ccFunction{Demo_Class
-        operator<(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator<(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator<=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator<=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator>(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator>(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator>=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator>=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator==(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator==(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator!=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator!=(ClassA p, ClassA q);}{}
 
-  \ccFunction{Demo_Class
-        operator&(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator&(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator^(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator^(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator|(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator|(ClassA p, ClassA q);}{}
 
-  \ccFunction{Demo_Class
-        operator&&(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator&&(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator||(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator||(ClassA p, ClassA q);}{}
 
-  \ccFunction{Demo_Class
-        operator=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator*=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator*=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator/=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator/=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator%=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator%=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator+=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator+=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator-=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator-=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator<<=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator<<=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator>>=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator>>=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator&=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator&=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator|=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator|=(ClassA p, ClassA q);}{}
   \ccGlue
-  \ccFunction{Demo_Class
-        operator^=(Demo_Class p, Demo_Class q);}{}
+  \ccFunction{ClassA
+        operator^=(ClassA p, ClassA q);}{}
 
 \end{ccClass}
 
@@ -394,26 +394,26 @@ operator cannot be used within the function or method name.
 
 
 % ----------------------------------------------------------------------
-\begin{ccClassTemplate}{Demo_Class<FT<RT> >}
+\begin{ccClassTemplate}{ClassB<FT<RT> >}
 \ccSection{Demo Class Template}
 
 \ccCreation
 \ccCreationVariable{p}
 
-\ccTwo{Demo_Class<FT<RT> > p( A a, B *b);X}{}
-  \ccConstructor{ Demo_Class();}{ default.}
+\ccTwo{ClassB<FT<RT> > p( A a, B *b);X}{}
+  \ccConstructor{ ClassB();}{ default.}
   \ccGlue
-  \ccConstructor{ Demo_Class( Demo_Class<FT<RT> > q);}{ copy.}
+  \ccConstructor{ ClassB( ClassB<FT<RT> > q);}{ copy.}
   \ccGlue
-  \ccConstructor{ Demo_Class( A a, B *b);}{ arbitrary.}
+  \ccConstructor{ ClassB( A a, B *b);}{ arbitrary.}
 
 \ccOperations
-\ccThree{Demo_Class<FT<RT> >}{foo( q);}{}
+\ccThree{ClassB<FT<RT> >}{foo( q);}{}
 
-  \ccMethod{ Demo_Class foo( Demo_Class q);}{
+  \ccMethod{ ClassB foo( ClassB q);}{
       wrong, without template parameters.}
 
-  \ccFunction{ Demo_Class<FT<RT> > foo( Demo_Class<FT<RT> > q);}{
+  \ccFunction{ ClassB<FT<RT> > foo( ClassB<FT<RT> > q);}{
       right, with template parameters.}
 \end{ccClassTemplate}
 
@@ -424,7 +424,7 @@ The math set symbols need the package
 {\tt amssymb} and \LaTeXe.
 
 \begin{tabbing}
-  dum \= dummyyyyyyyy \= \kill
+  \ccTexHtml{dum \= dummyyyyyyyy \= \kill}{}
   \> \verb+\CC+         \> \CC         \\
   \> \verb+\gcc+        \> \gcc        \\
   \> \verb+\nat+        \> \nat        \\
@@ -449,15 +449,15 @@ matching braces has to be in the declaration.
 
 \ccEnum{enum Short { A, B, C};}{ Comment.}
 
-\ccEnum{enum Funny_type_name { A_couple_of_entries,
-    one_with_initialisation = 5, another = -3};}{ Comment.}
+\ccEnum{enum Funny_type_name1 { A_couple_of_entries1,
+    one_with_initialisation1 = 5, another1 = -3};}{ Comment.}
 
 We can even switch the alternative layout on:
 
 \def\ccLongParamLayout{\ccTrue}
 
-\ccEnum{enum Funny_type_name { A_couple_of_entries,
-    one_with_initialisation = 5, another = -3};}{ Comment.}
+\ccEnum{enum Funny_type_name2 { A_couple_of_entries2,
+    one_with_initialisation2 = 5, another2 = -3};}{ Comment.}
 
 \def\ccLongParamLayout{\ccFalse}
 
@@ -467,11 +467,11 @@ We can even switch the alternative layout on:
 
 \ccSetTwoOfThreeColumns{3.5cm}{3.5cm}
 
-\ccVariable{long int foo;}{Local variables are possible.}
+\ccVariable{long int foo4;}{Local variables are possible.}
 
-\ccVariable{long int foo = 15;}{Initialisation.}
+\ccVariable{long int foo5 = 15;}{Initialisation.}
 
-\ccVariable{const long int foo = 15;}{Make a constant.}
+\ccVariable{const long int foo6 = 15;}{Make a constant.}
 
 \ccTypedef{typedef int integer;}{Simple typedef.}
 
@@ -486,19 +486,20 @@ We can even switch the alternative layout on:
 \ccGlobalFunction{Intersection_type CGAL_intersection_type(
       Polygon_2< R>, Polygon_2< R>);}
 
-\ccGlobalEnum{enum global_enum { A_couple_of_entries,
-    one_with_initialisation = 5, another = -3};}
+\ccGlobalEnum{enum global_enum { A_couple_of_entries3,
+    one_with_initialisation3 = 5, another3 = -3};}
 
 \ccGlobalVariable{int CGAL_global_var;}
 
 
 % ----------------------------------------------------------------------
+\begin{ccClassTemplate}{CGAL_Point_2< R>}
 \section{Default Parameters in Function Argument Lists}
 
 The following example demonstrates the new ability to write default
 parameters with initializers in parantheses notion of \CC.
 
-\begin{ccClassTemplate}{CGAL_Point_2< R>}
+\ccCreationVariable{p}
 \ccConstructor{CGAL_Point_2(const R::RT &x, const R::RT &y, const R::RT &w = R::RT(1.0));}{blabla}
 \end{ccClassTemplate}
 
@@ -522,8 +523,7 @@ calculated from left.
 
 \ccTagDefaults
 \def\ind{\hspace*{7mm}}
-\ccwIndent=10mm
-\ccwRightMargin=10mm
+\ccTexHtml{\ccwIndent=10mm \ccwRightMargin=10mm}{}
 
 \ccFunction{int a_really_long_function_name( double paramter1, double
   paramter2);}{the default formatting. A bit more text is necessary to
@@ -556,8 +556,7 @@ Show the indentation also for template functions.
   demonstrate the right margin.}
 
 \renewcommand{\ccAlternateThreeColumn}{\ccTrue}
-\ccwIndent=0mm
-\ccwRightMargin=0mm
+\ccTexHtml{\ccwIndent=0mm \ccwRightMargin=0mm}{}
 
 % ----------------------------------------------------------------------
 \section{Test the Setting of the Column Widths by Example Texts}
@@ -576,11 +575,11 @@ Test it with the special characters (changed catcodes) for function
 and contructor declarations.  
 
 
-\ccSetThreeColumns{%#_^}{%#_^f*&*&oo( int i);}{}
-\ccSetTwoColumns{%#_^ foo( int i, int j);}{}
-\begin{ccClass}{Gnu}
+\ccSetThreeColumns{_#_^}{_#_^f*&*&oo( int i);}{}
+\ccSetTwoColumns{_#_^ foo( int i, int j);}{}
+\begin{ccClass}{Gnu1}
   \ccCreationVariable{g}
-  \ccConstructor{Gnu( double d);}{test.}
+  \ccConstructor{Gnu1( double d);}{test.}
   \ccFunction{int foo( Gnats<T> gn);}{blablabla.}
 \end{ccClass}
 
@@ -588,9 +587,9 @@ Specify a column layout for a function and propagate it to a contructor.
 
 \ccSetThreeColumns{intM}{foo( Gnats<T> gn);M}{}
 \ccPropagateThreeToTwoColumns
-\begin{ccClass}{Gnu}
+\begin{ccClass}{Gnu2}
   \ccCreationVariable{g}
-  \ccConstructor{Gnu( double d);}{test.}
+  \ccConstructor{Gnu2( double d);}{test.}
   \ccFunction{int foo( Gnats<T> gn);}{blablabla.}
 \end{ccClass}
 
@@ -620,7 +619,6 @@ NOTHING is interesting here.
 \ccGlue
 \ccFunction{int bar( double x);}{}
 
-\newpage
 \ccFunction{int foo( double x);}{Bla.}
 \ccGlue
 \ccFunction{int bar( double x);}{Blubb blubb.}
@@ -688,11 +686,11 @@ A bit text thereafter.
 A new paragraph to check that \verb+\parskip+ gets restored properly.
 
 % ----------------------------------------------------------------------
+\begin{ccClass}{Base::Derived}
 \section{Nested Classes}
 
 First try, use the scope operator in the class name.
 
-\begin{ccClass}{Base::Derived}
 \ccCreationVariable{a}
 
 \ccConstructor{Base::Derived( double x);}{a constructor.}
@@ -714,7 +712,7 @@ that does not exist in \cgal).
 \vspace{-\parskip}
 
 \begin{tabbing}
-  CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill
+\ccTexHtml{CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill}{}
   \verb+\def\ccTargetPrefix{}+ \\
   \verb+\renewcommand{\ccTagReplacePrefix}{\ccTrue}+
 \end{tabbing}
@@ -729,7 +727,7 @@ that does not exist in \cgal).
 \vspace{-\parskip}
 
 \begin{tabbing}
-  CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill
+\ccTexHtml{CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill}{}
   \verb+\def\ccTargetPrefix{GTE}+ \\
   \verb+\renewcommand{\ccTagReplaceInclude}{\ccTrue}+
 \end{tabbing}
@@ -744,7 +742,7 @@ that does not exist in \cgal).
 \vspace{-\parskip}
 
 \begin{tabbing}
-  CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill
+\ccTexHtml{CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill}{}
   \verb+\renewcommand{\ccTagReplacePrefix}{\ccFalse}+ \\
   \verb+\renewcommand{\ccTagReplaceInclude}{\ccFalse}+
 \end{tabbing}
@@ -757,6 +755,9 @@ that does not exist in \cgal).
 The method how it should work:
 
 \begin{ccClass}{CGAL_SegmentTree_2d<T1>::SegTree}
+
+The classname is \ccClassTemplateName.
+
 \ccCreationVariable{t}
 \ccConstructor{CGAL_SegmentTree_2d<T1>::SegTree
 (S2dList::const_iterator first);}{constructor.}
@@ -774,9 +775,9 @@ t(S2dList::const_iterator first);}{fake constructor.}
 
 Another check with the trouble making operator in a member function.
 
-\begin{ccClass}{Demo_Class}
+\begin{ccClass}{ClassC}
 \ccCreationVariable{pp}
-  \ccMethod{Demo_Class operator+(Demo_Class qq);}{%
+  \ccMethod{ClassC operator+(ClassC qq);}{%
       Declaration of an operator as a member function.}
 \end{ccClass}
 
@@ -785,57 +786,91 @@ Another check with the trouble making operator in a member function.
 % ----------------------------------------------------------------------
 \section{Font Changes within a Declaration}
 
+In an simple \verb+\ccc{}+ macro: \ccc{var_\tt k_th\ccFont _foo8;} and
+boldface: \ccc{var_\bf k_th\ccFont _foo8;}
+
 A global variable declaration.
 
-\ccSetThreeColumns{\tt k-th\ccFont -dim\ }{\tt k-th\ccFont -foo;}{}
-\ccVariable{\tt k-th\ccFont -dim \tt k-th\ccFont -foo;}{%
-    a {\tt k-th}-dimensional variable.}
+\ccSetThreeColumns{\tt k_th\ccFont _dim\ }{\tt k_th\ccFont _foo8;}{}
+\ccVariable{\tt k_th\ccFont _dim \tt k_th\ccFont _foo8;}{%
+    a {\tt k\_th}-dimensional variable.}
 
 A constructor and a member function within a class where the classname
 also uses font changing macros.
 
-\begin{ccClass}{\tt k-th\ccFont -dim-Class}
-  \ccCreationVariable{v}
-  \ccSetThreeColumns{\tt k-th\ccFont -dim-retvalue\ }{v.k-th\ccFont
-    -dim-foo( \tt k-th\ccFont -dim-param)\ ;}{}
-  \ccSetTwoColumns{\tt k-th\ccFont -dim-Class v( \tt k-th\ccFont
-    -dim-param) \ ;}{}
 \def\ccTagRmEigenClassName{\ccFalse}
-  \ccConstructor{\tt k-th\ccFont -dim-Class();}{The default constructor.}
-  \ccConstructor{\tt k-th\ccFont -dim-Class( \tt k-th\ccFont
-    -dim-param);}{The custom constructor.}  
-  \ccMemberFunction{\tt k-th\ccFont -dim-retvalue \tt k-th\ccFont
-    -dim-foo( \tt k-th\ccFont -dim-param);}{a function.}
-\def\ccTagRmEigenClassName{\ccTrue}
+
+\begin{ccClass}{\tt k_th\ccFont _dim_Class}
+  \ccCreationVariable{v}
+  \ccSetThreeColumns{\tt k_th\ccFont _dim_retvalue\ }{v.k_th\ccFont
+    _dim_foo( \tt k_th\ccFont _dim_param)\ ;}{}
+  \ccSetTwoColumns{\tt k_th\ccFont _dim_Class v( \tt k_th\ccFont
+    _dim_param) \ ;}{}
+  \ccConstructor{\tt k_th\ccFont _dim_Class();}{The default constructor.}
+  \ccConstructor{\tt k_th\ccFont _dim_Class( \tt k_th\ccFont
+    _dim_param);}{The custom constructor.}  
+  \ccMemberFunction{\tt k_th\ccFont _dim_retvalue \tt k_th\ccFont
+    _dim_foo( \tt k_th\ccFont _dim_param);}{a function.}
 \end{ccClass}
 
+\def\ccLongParamLayout{\ccTrue}
+
+\begin{ccClassTemplate}{CGAL_Segment_tree_\tt k\ccFont <_T1, _C1, _T2,
+    _C2,\dots, _T\tt k\ccFont , _C\tt k\ccFont , _V>}
+
+\ccCreationVariable{s}
+\ccThree{void}{Dummy}{}
+
+\ccConstructor{CGAL_Segment_tree_\tt k\ccFont <_T1, _C1, _T2,
+    _C2,\dots, _T\tt k\ccFont , _C\tt k\ccFont ,
+    _V>();}{Creation of a {\tt k}-dimensional Segment
+  Tree, where the i-th coordinate has type \ccStyle{_Ti} and a
+  comparator of type \ccStyle{_Ci}. Parameter type
+\ccStyle{Value} is set to \ccStyle{_V}.}
+
+
+\ccMethod{void Segment_tree_\tt k\ccFont
+.window_query(GIS_interval_data_\tt k \ccFont 
+    win, back_insert_iterator<GIS_interval_data_list_\tt k\ccFont>  out);}{%
+All elements that
+  intersect the associated $d$-dimensional half open interval of 
+\ccStyle{win} are placed in the list of  \ccStyle{out}.}
+
+\end{ccClassTemplate}
+\def\ccLongParamLayout{\ccFalse}
+\def\ccTagRmEigenClassName{\ccTrue}
+
+
 % ----------------------------------------------------------------------
-\begin{ccClass}{Demo_Class}
+\begin{ccClass}{ClassD}
 \section{Customization Tags for the Style}
 
+\ccThree{ClassD}{pp.operator+( const ClassD& qq) const;}{}
 First, a  declaration  with all default substitution rule active.
 
 \ccCreationVariable{pp}
 
-\ccMemberFunction{Demo_Class operator+(const Demo_Class& qq) const;}{%
+\ccMemberFunction{ClassD operator+(const ClassD& qq) const;}{%
       member function.}
 
 Second, all rules switched off.
 \ccTagFullDeclarations
 
-\ccMemberFunction{Demo_Class operator+(const Demo_Class& qq) const;}{%
+\ccMemberFunction{ClassD operator+(const ClassD& qq) const;}{%
       member function.}
 
 Third, back to the default.
 \ccTagDefaults
 
-\ccMemberFunction{Demo_Class operator+(const Demo_Class& qq) const;}{%
+\ccMemberFunction{ClassD operator+(const ClassD& qq) const;}{%
       member function.}
 
 \end{ccClass}
 
 % ----------------------------------------------------------------------
+\begin{ccClass}{Dummy}
 \section{Test the removal or inlining of template declarations}
+\ccCreationVariable{q}
 
 Inlining of template declarations. The default is to format the
 template declaration in an extra line. Here the default with a struct
@@ -844,13 +879,10 @@ and a global function.
 \ccSetThreeColumns{template <class T> T*}{X}{}
 \ccSetTwoColumns{template <class T> struct circulator_base \{\};}{}
 \ccStruct{template <class T> 
-          struct circulator_base {};}{forward.}
+          struct circulator_base1 {};}{forward.}
 
-\begin{ccClass}{Dummy}
-\ccCreationVariable{q}
 \ccConstructor{template <class T> 
           Dummy();}{constructor.}
-\end{ccClass}
 
 \ccGlobalFunction{template <class T> 
   T* value_type( const circulator_base<T>&);}
@@ -859,13 +891,10 @@ Here with the inlining on.
 
 \def\ccTagTemplateInline{\ccTrue}
 \ccStruct{template <class T> 
-          struct circulator_base {};}{forward.}
+          struct circulator_base2 {};}{forward.}
 
-\begin{ccClass}{Dummy}
-\ccCreationVariable{q}
 \ccConstructor{template <class T> 
           Dummy();}{constructor.}
-\end{ccClass}
 
 \ccGlobalFunction{template <class T> 
   T* value_type( const circulator_base<T>&);}
@@ -875,22 +904,20 @@ Here with the removal on.
 
 \def\ccTagRmTemplate{\ccTrue}
 \ccStruct{template <class T> 
-          struct circulator_base {};}{forward.}
+          struct circulator_base3 {};}{forward.}
 
-\begin{ccClass}{Dummy}
-\ccCreationVariable{q}
 \ccConstructor{template <class T> 
           Dummy();}{constructor.}
-\end{ccClass}
 
 \ccGlobalFunction{template <class T> 
   T* value_type( const circulator_base<T>&);}
 \def\ccTagRmTemplate{\ccFalse}
+\end{ccClass}
 
 % ----------------------------------------------------------------------
+\begin{ccClassTemplate}{Demo<T>}
 \section{A Function Pointer as an Operator Argument}
 
-\begin{ccClassTemplate}{Demo<T>}
 \ccCreationVariable{out}
 \ccThree{Ascii_ostream&}{out << ostream& (*f)(ostream&);}{}
 \ccThreeToTwo
@@ -904,14 +931,14 @@ Here with the removal on.
 \section{Long Class Template Names in Nested Types}
 
 
-\begin{ccClassTemplate}{CGAL_tree_point_interface<P, W, Key,  
+\begin{ccClassTemplate}{CGAL_tree_point_interface1<P, W, Key,  
     Left, Right, Comp>}
 \ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
 \end{ccClassTemplate}
 
 If the class does not fit any longer in one line, it wraps around.
 
-\begin{ccClassTemplate}{CGAL_tree_point_interface<Point, Window, Key,  
+\begin{ccClassTemplate}{CGAL_tree_point_interface2<Point, Window, Key,  
          Point_func, Window_left_func, 
          Window_right_func, Compare>}
 \ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
@@ -919,7 +946,7 @@ If the class does not fit any longer in one line, it wraps around.
 
 The formatting for long parameter lists put the new type name in an extra line.
 
-\begin{ccClassTemplate}{CGAL_tree_point_interface<Point, Window, Key,  
+\begin{ccClassTemplate}{CGAL_tree_point_interface3<Point, Window, Key,  
          Point_func, Window_left_func, 
          Window_right_func, Compare>}
 \def\ccLongParamLayout{\ccTrue}
@@ -944,6 +971,20 @@ Since here the specification is written in terms of the above
 
 \ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
 \end{ccClass}
+
+% ----------------------------------------------------------------------
+\section{HTML Conversion}
+
+Small spaces in math mode: $a\:b\;c\!d$.
+
+The \verb+\ccc+ macro within a math environment: $1 + 3 - \ccc{symbol} = 8$.
+
+A simple class I with a short single character name. No cross linking rules
+
+\begin{ccClassTemplate}{I<X>}
+\ccCreationVariable{i}
+\ccConstructor{I(I<X> j);}{}
+\end{ccClassTemplate}
 
 % ----------------------------------------------------------------------
 \end{document}
