@@ -60,7 +60,7 @@ print_table()
 
       echo "<TD>"
       for FILE in `list_compressed_files` ; do
-        echo "<A HREF=\"$DIRNAME/$PACKAGE_DIR/$FILE\">$FILE</A>"
+        echo "<A HREF=\"$DIRNAME/$PACKAGE_DIR/$FILE\">`basename $FILE .zip`</A>"
       done
       echo "</TD>"
 
