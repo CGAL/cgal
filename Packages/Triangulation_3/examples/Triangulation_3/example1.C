@@ -39,7 +39,7 @@
 typedef CGAL::Cartesian<double>  Repr;
 
 typedef CGAL::Triangulation_geom_traits_3<Repr> Gt;
-typedef CGAL::Triangulation_vertex_base_3<Gt> Vb;
+typedef CGAL::Triangulation_vertex_base_pointer_3<Gt> Vb;
 typedef CGAL::Triangulation_cell_base_3<Gt>  Cb;
 
 typedef CGAL::Triangulation_data_structure_3<Vb,Cb> TDS;
@@ -98,6 +98,14 @@ int main(int argc, char* argv[])
   std::ofstream oFileT("output",std::ios::out);
   // writing file output; 
   oFileT << T; 
+
+  Triangulation T1;
+  std::ifstream iFileT("output",std::ios::in);
+  // reading file output; 
+  iFileT >> T1; 
+  assert( T1.is_valid() );
+  assert( T1.number_of_vertices() == T.number_of_vertices() );
+  assert( T1.number_of_cells() == T.number_of_cells() );
 
   return 0;
 }

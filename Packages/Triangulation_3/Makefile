@@ -53,6 +53,7 @@ $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
+	--exclude=.pure --exclude=*.pv \
 	--exclude=.nfs*\
 	version description.txt changes.txt \
 	demo include doc_tex doc_ps test examples
