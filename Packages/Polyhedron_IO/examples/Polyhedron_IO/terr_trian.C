@@ -66,12 +66,8 @@ struct Gt : public Gtraits {
     typedef IPoint Point;
 };
 
-typedef  CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef  CGAL::Triangulation_face_base_2<Gt>  Fb;
-
-typedef  CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef  CGAL::Triangulation_2<Gt,Tds>                 Triangulation;
-typedef  CGAL::Delaunay_triangulation_2<Gt,Tds>        Delaunay_triangulation;
+typedef  CGAL::Triangulation_2<Gt>                 Triangulation;
+typedef  CGAL::Delaunay_triangulation_2<Gt>        Delaunay_triangulation;
 
 bool  verbose      = false;
 bool  binary       = false;
