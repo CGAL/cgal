@@ -1,3 +1,5 @@
+2.1.9 (21/03/02)   added Timer and Real_timer in src/makefile_lib.mak
+
 2.1.8 (20/12/01    Created directory include/CGAL/config/msvc7
 		   Moved Stl_port/vc7/iterator to include/CGAL/config/msvc/iterator_specializations.h
 		   Moved Stl_port/vc7/stl_iterator_base.h to include/CGAL/config/msvc/    (af)
