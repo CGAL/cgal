@@ -11,6 +11,8 @@ Version 6.0 (?? ????? 00)
 - Sphere_3 is back to life.
 - Ctors don't use "new (static_cast<void *> (ptr)) ...", but proper
   construction via the Handle_for.  Got rid of the various new_rep().
+- There's now a Line_repC3<R>, instead of the dirty Twotuple<Point>.
+  We now do the same reasonnable thing as in the homogeneous kernel.
 - Various cleanups.
 
 --- CGAL 2.2 is out ---

@@ -14,9 +14,6 @@ Stuff to look at, as time permits:
   - Replace ptr by ptr() ?
   - Provide dummy_Handle_for<>.
 
-- LineC3 stores a Twotuple<Point_3>, but the second point is in fact a vector,
-  the direction of the line.  It's dirty, and should be changed to match
-  LineH3 which is cleaner.
 - Finish merging .C files in corresponding .h files.
 - Write a Checker for full kernels, like Pm_traits_checker.h ?
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".

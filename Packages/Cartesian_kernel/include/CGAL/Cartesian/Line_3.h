@@ -23,14 +23,14 @@
 #define CGAL_CARTESIAN_LINE_3_H
 
 #include <CGAL/Cartesian/redefine_names_3.h>
-#include <CGAL/Twotuple.h>
+#include <CGAL/Cartesian/Line_rep_3.h>
 #include <CGAL/Cartesian/point_constructions_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class LineC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
-  : public Handle_for<Twotuple<typename R_::Point_3> >
+  : public Handle_for< Line_repC3<R_> >
 {
 public:
   typedef R_                               R;
@@ -72,14 +72,16 @@ public:
 
   Point_3     point() const
   {
-      return ptr->e0;
+      return ptr->basepoint;
+  }
+  Direction_3 direction() const
+  {
+      return ptr->direction;
   }
 
   Point_3     point(int i) const;
 
   Point_3     projection(const Point_3 &p) const;
-
-  Direction_3 direction() const;
 
   bool        has_on(const Point_3 &p) const;
   bool        is_degenerate() const;
@@ -90,35 +92,35 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3()
-  : Handle_for<Twotuple<typename R::Point_3 > >( Twotuple<typename R::Point_3>() ) {}
+  : Handle_for< Line_repC3<R> >( Line_repC3<R>() ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3(const LineC3<R CGAL_CTAG> &l)
-  : Handle_for<Twotuple<typename R::Point_3> >(l) {}
+  : Handle_for< Line_repC3<R> >(l) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
                             const typename LineC3<R CGAL_CTAG>::Point_3 &q)
-  : Handle_for<Twotuple<typename R::Point_3 > >( Twotuple<typename R::Point_3>(p, ORIGIN+(q-p)) ) {}
+  : Handle_for< Line_repC3<R> >( Line_repC3<R>(p, (q-p).direction()) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3(const typename LineC3<R CGAL_CTAG>::Segment_3 &s)
-  : Handle_for<Twotuple<typename R::Point_3 > >( Twotuple<typename R::Point_3>(s.start(), ORIGIN+(s.end() - s.start()))) {}
+  : Handle_for< Line_repC3<R> >( Line_repC3<R>(s.start(), (s.end() - s.start()).direction())) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3(const typename LineC3<R CGAL_CTAG>::Ray_3 &r)
-  : Handle_for<Twotuple<typename R::Point_3 > >( Twotuple<typename R::Point_3>(r.start(), ORIGIN+( r.point(1) - r.start()))) {}
+  : Handle_for< Line_repC3<R> >( Line_repC3<R>(r.start(), (r.point(1) - r.start()).direction())) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::
 LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
        const typename LineC3<R CGAL_CTAG>::Direction_3 &d)
-  : Handle_for<Twotuple<typename R::Point_3 > >( Twotuple<typename R::Point_3>(p, ORIGIN+d.to_vector())) {}
+  : Handle_for< Line_repC3<R> >( Line_repC3<R>(p, d)) {}
 
 template < class R >
 inline
@@ -135,14 +137,6 @@ bool
 LineC3<R CGAL_CTAG>::operator!=(const LineC3<R CGAL_CTAG> &l) const
 {
   return !(*this == l);
-}
-
-template < class R >
-inline
-typename LineC3<R CGAL_CTAG>::Direction_3
-LineC3<R CGAL_CTAG>::direction() const
-{
-  return ((ptr->e1) - ORIGIN).direction();
 }
 
 template < class R >
