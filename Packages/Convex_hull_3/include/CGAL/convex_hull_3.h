@@ -225,7 +225,7 @@ void compute_plane_equation(Facet_handle f)
 {
    typedef typename Facet_handle::value_type         Facet;
    typedef typename Facet::Halfedge_handle           Halfedge_handle;
-   typedef typename Facet::Plane                     Plane;
+   typedef typename Facet::Plane_3                   Plane_3;
 
    Halfedge_handle h = (*f).halfedge();
    (*f).plane() = Plane(h->opposite()->vertex()->point(),
