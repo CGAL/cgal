@@ -203,6 +203,48 @@ public:
       return insert(p);
   }
 
+  template <class Conflict_test, class Out_it_boundary_facets,
+            class Out_it_cells, class Out_it_internal_facets>
+  void
+  find_conflicts(const Point &p, Cell_handle c,
+	         Out_it_boundary_facets bfit, Out_it_cells cit,
+		 Out_it_internal_facets ifit) const
+  {
+      CGAL_triangulation_precondition(dimension() >= 2);
+
+      std::vector<Cell_handle> cells;
+      cells.reserve(32);
+      std::vector<Facet> facets;
+      facets.reserve(64);
+
+      if (dimension() == 2) {
+          Conflict_tester_2 tester(p, this);
+	  find_conflicts_2(c, tester, std::back_inserter(facets),
+		                      std::back_inserter(cells),
+				      ifit);
+      }
+      else {
+          Conflict_tester_3 tester(p, this);
+	  find_conflicts_3(c, tester, std::back_inserter(facets),
+		                      std::back_inserter(cells),
+				      ifit);
+      }
+
+      // Reset the conflict flag on the boundary.
+      for(typename std::vector<Facet>::iterator fit=facets.begin();
+        fit != facets.end(); ++fit) {
+        fit->first->neighbor(fit->second)->set_in_conflict_flag(0);
+	*bfit++ = *fit;
+      }
+
+      // Reset the conflict flag in the conflict cells.
+      for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
+        ccit != cells.end(); ++ccit) {
+        ccit->set_in_conflict_flag(0);
+	*cit++ = *ccit;
+      }
+  }
+
   bool remove(Vertex_handle v );
 
   Bounded_side
@@ -331,7 +373,7 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
 	  return c->vertex(li);
 
       Conflict_tester_3 tester(p, this);
-      v = insert_conflict(v, c, tester); 
+      v = insert_conflict(c, tester, v);
       v->set_point(p);
       return v;
     }// dim 3
@@ -347,7 +389,7 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
       case EDGE:
 	{
           Conflict_tester_2 tester(p, this);
-	  v = insert_conflict(v, c, tester); 
+	  v = insert_conflict(c, tester, v);
 	  v->set_point(p);
 	  return v;
 	}

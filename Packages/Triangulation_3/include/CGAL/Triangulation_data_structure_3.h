@@ -276,7 +276,50 @@ private:
 		   Cell_handle c1, Vertex_handle v1, int i1, int j1, int next1,
 		   Cell_handle c2, Vertex_handle v2, int i2, int j2, int next2,
 		   Vertex_handle v3);
+
+  Cell_handle create_star_3(Vertex_handle v, Cell_handle c, int li,
+	               int prev_ind2 = -1);
+
+  Cell_handle create_star_2(Vertex_handle v, Cell_handle c, int li);
+
 public:
+
+  // Internal function : assumes the conflict cells are marked.
+  template <class CellIt>
+  Vertex_handle _star_hole(Vertex_handle newv,
+	                   CellIt cell_begin, CellIt cell_end,
+	                   Cell_handle begin = NULL, int i = 0)
+  {
+      CGAL_triangulation_precondition(begin != NULL);
+      // if begin == NULL, we could compute one by walking in CellIt.
+      // At the moment, the functionality is not available, you have
+      // to specify a starting facet.
+
+      if ( newv == NULL )
+          newv = create_vertex();
+
+      Cell_handle cnew;
+      if (dimension() == 3)
+	  cnew = create_star_3(newv, begin, i);
+      else
+	  cnew = create_star_2(newv, begin, i);
+
+      newv->set_cell(cnew);
+      delete_cells(cell_begin, cell_end);
+      return newv;
+  }
+
+  // Mark the cells in conflict, then calls the internal function.
+  template <class CellIt>
+  Vertex_handle star_hole(Vertex_handle newv,
+	                  CellIt cell_begin, CellIt cell_end,
+	                  Cell_handle begin = NULL, int i = 0)
+  {
+      for (CellIt cit = cell_begin; cit != cell_end; ++cit)
+	  (*cit)->set_in_conflict_flag(1);
+
+      return _star_hole(newv, cell_begin, cell_end, begin, i);
+  }
 
   //INSERTION
 
@@ -295,193 +338,6 @@ public:
   Vertex_handle insert_increase_dimension(Vertex_handle v, // new vertex
 				     Vertex_handle star = NULL,
 				     bool reorient = false);
-
-  // I think the find_conflicts_[23] should be in the TDS, as they do not
-  // depend on geometry, although they may, depending on the actual
-  // Conflict_test.  But e.g. for incident_cells(), the tester is not
-  // geometric, so it makes sense to have it in the TDS.
-
-  template <class FacetIt, class CellIt>
-  void star_hole_3(Vertex_handle newv, FacetIt facet_begin, FacetIt facet_end,
-	           CellIt cell_begin, CellIt cell_end)
-  {
-      star_hole_3(newv, facet_begin, facet_end);
-      delete_cells(cell_begin, cell_end);
-  }
-
-  template <class FacetIt, class CellIt>
-  void star_hole_2(Vertex_handle newv, FacetIt facet_begin, FacetIt facet_end,
-	           CellIt cell_begin, CellIt cell_end)
-  {
-      star_hole_2(newv, facet_begin, facet_end);
-      delete_cells(cell_begin, cell_end);
-  }
-
-  // Facets->first is in conflict, and we walk inside the hole.
-  //
-  // Note #1 : If we can merge the FacetIt loops, then maybe we can get rid
-  // of the corresponding container by just walking over the boundary ?
-  // Thinking a bit more about that : I think it's either we have a container
-  // of facets, or we have a recursive function over the boundary... (?)
-  template <class FacetIt>
-  void star_hole_3(Vertex_handle newv, FacetIt facet_begin, FacetIt facet_end)
-  {
-      CGAL_triangulation_precondition(dimension()==3);
-
-      // Would be nice if there were already room reserved in the facet
-      // vector.
-      std::vector<Cell_handle > V;
-      V.reserve(std::distance(facet_begin, facet_end));
-
-      // For each facet on the boundary :
-      // - create a new cell, link its vertices and one cell pointer.
-      for (FacetIt fit = facet_begin; fit != facet_end; ++fit) {
-	  Cell_handle old = fit->first;
-	  Cell_handle bound = old->neighbor(fit->second);
-	  // Note that the initial orientation of the new cells is positive,
-	  // as we copy it from an existing one.
-	  Cell_handle newc = create_cell(old->vertex(0),
-		                   old->vertex(1),
-		                   old->vertex(2),
-		                   old->vertex(3));
-	  newc->set_vertex(fit->second, newv);
-	  set_adjacency(newc, bound, fit->second, bound->index(old));
-	  newc->vertex(0)->set_cell(newc);
-	  newc->vertex(1)->set_cell(newc);
-	  newc->vertex(2)->set_cell(newc);
-	  newc->vertex(3)->set_cell(newc);
-	  V.push_back(newc);
-      }
-
-      // For each facet on the boundary, for each of the 3 edges :
-      // - we must find the neighbor facet
-      // - link the 2 corresponding new cells.
-      int zz = -1;
-      for (FacetIt fit2 = facet_begin; fit2 != facet_end; ++fit2) {
-	  ++zz;
-	  Cell_handle old = fit2->first;
-	  Cell_handle newc = V[zz];
-
-	  for (int i=0; i<=3; ++i) {
-	      // We must avoid i == fit->second, but the following
-	      // test will avoid it too.
-	      if (newc->neighbor(i) != NULL)
-		  continue;
-
-	      // Now we turn around the edge inside the hole.
-	      // To recognize when we hit the boundary, we look at the
-	      // neighbor, and see if it doesn't point back to us, in which
-	      // case it's the boundary cell we are looking for.
-	      Cell_handle t = old;
-	      Vertex_handle k = t->vertex(fit2->second);
-	      int j = i;
-	      Cell_handle newt = t->neighbor(j);
-	      int z;
-	      while (newt->has_neighbor(t, z)) {
-		  j = newt->index(k);
-		  k = newt->vertex(z);
-		  t = newt;
-		  newt = t->neighbor(j);
-	      };
-
-	      // Compute the address of the corresponding new cell.
-	      Cell_handle back;
-	      for (int l=0;; ++l) {
-	          back = newt->neighbor(l);
-		  if (l==3)
-		      break;
-	          // The vertices are those of t except vertex(j) = newv.
-		  if (back->vertex(j)   == newv &&
-		      back->vertex(j^1) == t->vertex(j^1) &&
-		      back->vertex(j^2) == t->vertex(j^2) &&
-		      back->vertex(j^3) == t->vertex(j^3))
-		      break;
-	      }
-
-	      set_adjacency(newc, back, i, back->index(k));
-	  }
-      }
-  }
-
-  // Note : the code is almost entirely duplicated, just to have dimension() a
-  // constant for performance.  That's not perfect...
-  template <class FacetIt>
-  void star_hole_2(Vertex_handle newv, FacetIt facet_begin, FacetIt facet_end)
-  {
-      CGAL_triangulation_precondition(dimension()==2);
-
-      // Would be nice if there were already room reserved in the facet
-      // vector.
-      std::vector<Cell_handle > V;
-      V.reserve(std::distance(facet_begin, facet_end));
-
-      // For each facet on the boundary :
-      // - create a new cell, link its vertices and one cell pointer.
-      for (FacetIt fit = facet_begin; fit != facet_end; ++fit) {
-	  Cell_handle old = fit->first;
-	  Cell_handle bound = old->neighbor(fit->second);
-	  // Note that the initial orientation of the new cells is positive,
-	  // as we copy it from an existing one.
-	  Cell_handle newc = create_cell(old->vertex(0),
-		                   old->vertex(1),
-		                   old->vertex(2),
-		                   NULL);
-	  newc->set_vertex(fit->second, newv);
-	  set_adjacency(newc, bound, fit->second, bound->index(old));
-	  newc->vertex(0)->set_cell(newc);
-	  newc->vertex(1)->set_cell(newc);
-	  newc->vertex(2)->set_cell(newc);
-	  V.push_back(newc);
-      }
-
-      // For each facet on the boundary, for each of the 3 edges :
-      // - we must find the neighbor facet
-      // - link the 2 corresponding new cells.
-      int zz = -1;
-      for (FacetIt fit2 = facet_begin; fit2 != facet_end; ++fit2) {
-	  ++zz;
-	  Cell_handle old = fit2->first;
-	  Cell_handle newc = V[zz];
-
-	  for (int i=0; i<=2; ++i) {
-	      // We must avoid i == fit->second, but the following
-	      // test will avoid it too.
-	      if (newc->neighbor(i) != NULL)
-		  continue;
-
-	      // Now we turn around the edge inside the hole.
-	      // To recognize when we hit the boundary, we look at the
-	      // neighbor, and see if it doesn't point back to us, in which
-	      // case it's the boundary cell we are looking for.
-	      Cell_handle t = old;
-	      Vertex_handle k = t->vertex(fit2->second);
-	      int j = i;
-	      Cell_handle newt = t->neighbor(j);
-	      int z;
-	      while (newt->has_neighbor(t, z)) {
-		  j = newt->index(k);
-		  k = newt->vertex(z);
-		  t = newt;
-		  newt = t->neighbor(j);
-	      };
-
-	      // Compute the address of the corresponding new cell.
-	      Cell_handle back;
-	      for (int l=0;; ++l) {
-	          back = newt->neighbor(l);
-		  if (l==2)
-		      break;
-	          // The vertices are those of t except vertex(j) = newv.
-		  if (back->vertex(j)      == newv &&
-		      back->vertex(cw(j))  == t->vertex(cw(j)) &&
-		      back->vertex(ccw(j)) == t->vertex(ccw(j)))
-		      break;
-	      }
-
-	      set_adjacency(newc, back, i, back->index(k));
-	  }
-      }
-  }
 
   // ITERATOR METHODS
 
@@ -695,6 +551,114 @@ private:
   bool count_cells(int & i, bool verbose = false, int level = 0) const;
   // counts AND checks the validity
 };
+
+template <class Vb, class Cb >
+Triangulation_data_structure_3<Vb,Cb>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb>::
+create_star_3(Vertex_handle v, Cell_handle c, int li,
+	      int prev_ind2)
+{
+    CGAL_triangulation_precondition( dimension() == 3);
+    CGAL_triangulation_precondition( c->get_in_conflict_flag() == 1);
+    CGAL_triangulation_precondition( c->neighbor(li)->get_in_conflict_flag()
+	                             != 1);
+
+    Cell_handle cnew = create_cell(c->vertex(0),
+				   c->vertex(1),
+				   c->vertex(2),
+				   c->vertex(3));
+    cnew->set_vertex(li, v);
+    Cell_handle c_li = c->neighbor(li);
+    set_adjacency(cnew, c_li, li, c_li->index(c));
+
+    // Look for the other neighbors of cnew.
+    for (int ii=0; ii<4; ++ii) {
+      if (ii == prev_ind2 || cnew->neighbor(ii) != NULL)
+	  continue;
+      cnew->vertex(ii)->set_cell(cnew);
+
+      // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
+      const Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
+      const Vertex_handle vj2 = c->vertex(next_around_edge(li, ii));
+      Cell_handle cur = c;
+      int zz = ii;
+      Cell_handle n = cur->neighbor(zz);
+      // turn around the oriented edge vj1 vj2
+      while ( n->get_in_conflict_flag() == 1) {
+	CGAL_triangulation_assertion( n != c );
+	cur = n;
+	zz = next_around_edge(n->index(vj1), n->index(vj2));
+	n = cur->neighbor(zz);
+      }
+      // Now n is outside region, cur is inside.
+
+      n->set_in_conflict_flag(0); // Reset the flag for boundary cells.
+
+      int jj1 = n->index(vj1);
+      int jj2 = n->index(vj2);
+      Vertex_handle vvv = n->vertex(next_around_edge(jj1, jj2));
+      Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
+      int zzz = nnn->index(vvv);
+      if (nnn == cur) {
+	// Neighbor relation is reciprocal, ie
+	// the cell we are looking for is not yet created.
+	nnn = create_star_3(v, nnn, zz, zzz);
+      }
+
+      set_adjacency(nnn, cnew, zzz, ii);
+    }
+
+    return cnew;
+}
+
+template <class Vb, class Cb >
+Triangulation_data_structure_3<Vb,Cb>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb>::
+create_star_2(Vertex_handle v, Cell_handle c, int li )
+{
+  CGAL_triangulation_assertion( dimension() == 2 );
+  Cell_handle cnew;
+
+  // i1 i2 such that v,i1,i2 positive
+  int i1=ccw(li);
+  // traversal of the boundary of region in ccw order to create all
+  // the new facets
+  Cell_handle bound = c;
+  Vertex_handle v1 = c->vertex(i1);
+  int ind = c->neighbor(li)->index(c); // to be able to find the
+                                       // first cell that will be created 
+  Cell_handle cur;
+  Cell_handle pnew = NULL;
+  do {
+    cur = bound;
+    // turn around v2 until we reach the boundary of region
+    while ( cur->neighbor(cw(i1))->get_in_conflict_flag() == 1 ) {
+      // neighbor in conflict
+      cur = cur->neighbor(cw(i1));
+      i1 = cur->index( v1 );
+    }
+    cur->neighbor(cw(i1))->set_in_conflict_flag(0);
+    // here cur has an edge on the boundary of region
+    cnew = create_cell( v, v1, cur->vertex( ccw(i1) ), NULL,
+			cur->neighbor(cw(i1)), NULL, pnew, NULL);
+    cur->neighbor(cw(i1))->set_neighbor
+      ( cur->neighbor(cw(i1))->index(cur), cnew );
+    // pnew is null at the first iteration
+    v1->set_cell(cnew);
+    //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
+    if (pnew != NULL) { pnew->set_neighbor( 1, cnew );}
+
+    bound = cur;
+    i1 = ccw(i1);
+    v1 = bound->vertex(i1);
+    pnew = cnew;
+    //} while ( ( bound != c ) || ( li != cw(i1) ) );
+  } while ( v1 != c->vertex(ccw(li)) );
+  // missing neighbors between the first and the last created cells
+  cur = c->neighbor(li)->neighbor(ind); // first created cell
+  set_adjacency(cnew, cur, 1, 2);
+  return cnew;
+}
 
 template < class Vb, class Cb>
 std::istream&
@@ -1576,21 +1540,16 @@ insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)
       CGAL_triangulation_precondition( i>=0 && i<=3 && j>=0 && j<=3 );
 
       std::vector<Cell_handle > cells;
-      std::vector<Facet> facets;
       cells.reserve(32);
-      facets.reserve(64);
-      const Vertex_handle vi=c->vertex(i);
-      const Vertex_handle vj=c->vertex(j);
       Cell_circulator ccir = incident_cells(c, i, j);
       do {
 	  Cell_handle cc = ccir->handle();
 	  cells.push_back(cc);
-	  facets.push_back(Facet(cc, cc->index(vi)));
-	  facets.push_back(Facet(cc, cc->index(vj)));
+	  cc->set_in_conflict_flag(1);
 	  ++ccir;
       } while (ccir->handle() != c);
 
-      star_hole_3(v, facets.begin(), facets.end(), cells.begin(), cells.end());
+      _star_hole(v, cells.begin(), cells.end(), c, i);
       break;
     }
   case 2:

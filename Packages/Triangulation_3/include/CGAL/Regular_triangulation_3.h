@@ -371,7 +371,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  return NULL;
       // Should I mark c's vertices too ?
       Conflict_tester_3 tester(p, this);
-      v = insert_conflict(v, c, tester);
+      v = insert_conflict(c, tester, v);
       v->set_point(p);
       for( typename std::vector<Vertex_handle>::iterator
 		it = tester.conflict_vector().begin();
@@ -403,7 +403,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  if (! in_conflict_2(p, c, 3))
 	      return NULL;
 	  Conflict_tester_2 tester(p, this);
-	  v = insert_conflict(v, c, tester);
+	  v = insert_conflict(c, tester, v);
 	  v->set_point(p);
           for( typename std::vector<Vertex_handle>::iterator
 		it = tester.conflict_vector().begin();

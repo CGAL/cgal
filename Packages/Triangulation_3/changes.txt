@@ -1,3 +1,10 @@
+Version 1.90 (?? September 01)
+- New function find_conflicts(Point, Cell_handle, bfit, cit, ifit) in
+  Delaunay.
+- New star_hole(Vertex_handle, cell_begin, cell_end, Cell_handle, int) in TDS.
+- New Get_one_output_iterator.
+- create_star_[23] are back ans faster.
+
 Version 1.89 (18 September 01)
 - Finite_vertex_iterator -> Finite_vertices_iterator, idem for cell, facet and
   edge.

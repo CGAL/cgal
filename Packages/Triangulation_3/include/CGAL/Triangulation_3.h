@@ -41,6 +41,8 @@
 #include <CGAL/Triangulation_vertex_base_3.h>
 
 #include <CGAL/Triangulation_iterators_3.h>
+#include <CGAL/Dummy_output_iterator.h>
+#include <CGAL/Get_one_output_iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -508,10 +510,12 @@ private:
   // 0 -> unknown
   // 1 -> in conflict
   // 2 -> not in conflict (== on boundary)
-  template <class Conflict_test, class Out_it_facets, class Out_it_cells>
+  template <class Conflict_test, class Out_it_boundary_facets,
+            class Out_it_cells, class Out_it_internal_facets>
   void
   find_conflicts_2(Cell_handle c, const Conflict_test &tester,
-	           Out_it_facets fit, Out_it_cells cit) const
+	           Out_it_boundary_facets fit, Out_it_cells cit,
+		   Out_it_internal_facets ifit) const
   {
     CGAL_triangulation_precondition( dimension()==2 );
     CGAL_triangulation_precondition( tester(c) );
@@ -521,11 +525,16 @@ private:
 
     for (int i=0; i<3; ++i) {
       Cell_handle test = c->neighbor(i);
-      if (test->get_in_conflict_flag() == 1)
+      if (test->get_in_conflict_flag() == 1) {
+	  if (c < test)
+	      *ifit++ = Facet(c, i); // Internal facet.
           continue; // test was already in conflict.
+      }
       if (test->get_in_conflict_flag() == 0) {
 	  if (tester(test)) {
-              find_conflicts_2(test, tester, fit, cit);
+	      if (c < test)
+		  *ifit++ = Facet(c, i); // Internal facet.
+              find_conflicts_2(test, tester, fit, cit, ifit);
 	      continue;
 	  }
 	  test->set_in_conflict_flag(2); // test is on the boundary.
@@ -534,11 +543,13 @@ private:
     }
   }
 
-  // Note: the code duplication should be avoided one day.
-  template <class Conflict_test, class Out_it_facets, class Out_it_cells>
+  // Note: the code duplication between _2 and _3 should be avoided one day.
+  template <class Conflict_test, class Out_it_boundary_facets,
+            class Out_it_cells, class Out_it_internal_facets>
   void
   find_conflicts_3(Cell_handle c, const Conflict_test &tester,
-	           Out_it_facets fit, Out_it_cells cit) const
+	           Out_it_boundary_facets fit, Out_it_cells cit,
+		   Out_it_internal_facets ifit) const
   {
     CGAL_triangulation_precondition( dimension()==3 );
     CGAL_triangulation_precondition( tester(c) );
@@ -548,11 +559,16 @@ private:
 
     for (int i=0; i<4; ++i) {
       Cell_handle test = c->neighbor(i);
-      if (test->get_in_conflict_flag() == 1)
-          continue; // test was already in conflict.
+      if (test->get_in_conflict_flag() == 1) { // test was already in conflict.
+	  if (c < test)
+	      *ifit++ = Facet(c, i); // Internal facet.
+          continue;
+      }
       if (test->get_in_conflict_flag() == 0) {
 	  if (tester(test)) {
-              find_conflicts_3(test, tester, fit, cit);
+	      if (c < test)
+		  *ifit++ = Facet(c, i); // Internal facet.
+              find_conflicts_3(test, tester, fit, cit, ifit);
 	      continue;
 	  }
 	  test->set_in_conflict_flag(2); // test is on the boundary.
@@ -563,10 +579,11 @@ private:
 
 protected:
   // This one takes a function object to recursively determine the cells in
-  // conflict, then calls _tds.star_hole().
+  // conflict, then calls _tds._star_hole().
   template < class Conflict_test >
   Vertex_handle
-  insert_conflict(Vertex_handle w, Cell_handle c, const Conflict_test &tester)
+  insert_conflict(Cell_handle c, const Conflict_test &tester,
+	          Vertex_handle w = NULL)
   {
     CGAL_triangulation_precondition( dimension() >= 2 );
     CGAL_triangulation_precondition( c != NULL );
@@ -574,38 +591,25 @@ protected:
 
     set_number_of_vertices(number_of_vertices()+1);
 
-    if ( w == NULL )  // Let _tds.star_hole_[23]() do that ?
-      w = _tds.create_vertex();
-
     std::vector<Cell_handle> cells;
     cells.reserve(32);
-    std::vector<Facet> facets;
-    facets.reserve(64);
+
+    Facet facet;
 
     // Find the cells in conflict
     if (dimension() == 3)
-	find_conflicts_3(c, tester, std::back_inserter(facets),
-		                    std::back_inserter(cells));
+	find_conflicts_3(c, tester, Get_one_output_iterator<Facet>(facet),
+		                    std::back_inserter(cells),
+				    Dummy_output_iterator());
     else
-	find_conflicts_2(c, tester, std::back_inserter(facets),
-		                    std::back_inserter(cells));
-
-    // Reset the conflict flag on the boundary.
-    for(typename std::vector<Facet>::iterator fit=facets.begin();
-        fit != facets.end(); ++fit)
-        fit->first->neighbor(fit->second)->set_in_conflict_flag(0);
+	find_conflicts_2(c, tester, Get_one_output_iterator<Facet>(facet),
+		                    std::back_inserter(cells),
+				    Dummy_output_iterator());
 
     // Create the new cells and delete the old.
-    if (dimension() == 3)
-	_tds.star_hole_3(w, facets.begin(), facets.end(),
-		         cells.begin(), cells.end());
-    else
-	_tds.star_hole_2(w, facets.begin(), facets.end(),
-		         cells.begin(), cells.end());
-
-    return w;
+    return _tds._star_hole(w, cells.begin(), cells.end(),
+	                   facet.first, facet.second);
   }
-
 
   // Here are the conflit tester function objects passed to
   // insert_conflict() by insert_outside_convex_hull().
@@ -2304,14 +2308,14 @@ insert_outside_convex_hull(const Point & p, Cell_handle c, Vertex_handle v)
   case 2:
     {
       Conflict_tester_outside_convex_hull_2 tester(p, this);
-      Vertex_handle v = insert_conflict(NULL, c, tester);
+      Vertex_handle v = insert_conflict(c, tester);
       v->set_point(p);
       return v;
     }
   default: // case 3:
     {
       Conflict_tester_outside_convex_hull_3 tester(p, this);
-      Vertex_handle v = insert_conflict(NULL, c, tester);
+      Vertex_handle v = insert_conflict(c, tester);
       v->set_point(p);
       return v;
     }
