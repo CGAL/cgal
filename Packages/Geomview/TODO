@@ -5,8 +5,6 @@
 - Why not use the OOGL library coming with Geomview to parse stuff ?
 - The remote geomview (with rsh) facility probably doesn't work.
   But is it useful ?
-- Add operator<< (Sphere), as it's known to geomview, cf :
-  http://www.geomview.org/docs/html/geomview_44.html#SEC47
 
 - Make a testsuite (words from Herve):
 <<<<<<<<<<<<<<<<
@@ -22,8 +20,7 @@ After talking to Francois, I got the following idea:
 * that script will simply process gcl (geomview command language) so that it
   reports on its output exactly the objects that are given from the input
 * the testsuite will simply consist of outputting the different objects into
-* the
-  geomview stream, and getting them back, and comparing.
+* the geomview stream, and getting them back, and comparing.
 
 This should allow the testsuite to be fully automatic and yet test all the
 documented features of the package. How to do it remains to be cleared.
