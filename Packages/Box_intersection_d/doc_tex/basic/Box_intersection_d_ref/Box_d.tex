@@ -7,29 +7,30 @@
 \begin{ccRefClass}{Box_d<NT,unsigned int N>}
 
 \ccDefinition
-bla
-\ccInclude{CGAL/Box_intersection_d/box_traits.h}
+Default generic bounding box implementation. Subtypes of this class can be
+used as a template parameter to \ccc{BoxTraits_d}.
 
+\ccInclude{CGAL/Box_intersection_d/box_traits.h}
 \ccTypes
 \ccNestedType{NT}  {Number type of the box vector components.}
 
 \ccCreation
-\ccCreationVariable{box} 
+\ccCreationVariable{box}
 
 \ccConstructor{Box_d();}{Default constructor. Vector components remain uninitialized.}
-\ccConstructor{Box_d(bool complete);}{Initializes to the complete of the empty space. If empty, all interval starting(end) points will be set to positive(negative) infinity.}
+\ccConstructor{Box_d(bool complete);}{Initializes to the complete or the empty space. If empty, all interval starting(end) points will be set to positive(negative) infinity.}
 \ccConstructor{Box_d(NT lo[N], NT hi[N]);}{Explicitly initializes box intervals.}
 
 \ccOperations
-For all methods that require a dimension parameter, \ccc{dim < get_dim()} must hold obviously. Otherwise, results are undefined.
+For all methods that require a dimension parameter, obviously \ccc{dim < get_dim()} must hold. Otherwise, results are undefined.
 
-\ccMethod{void init (bool complete = false);}{see constructors}
-\ccMethod{void extend(NT point[N]);}{\ccPostcond box contains point}
+\ccMethod{void init (bool complete = false);}{see constructors.}
+\ccMethod{void extend(NT point[N]);}{\ccPostcond box contains point.}
 
-\ccMethod{NT get_lo(unsigned int dim) const;}{returns interval starting point in dimension dim} 
-\ccMethod{NT get_hi(unsigned int dim) const;}{returns interval end point in dimension dim} 
+\ccMethod{NT get_lo(unsigned int dim) const;}{returns interval starting point in dimension dim.}
+\ccMethod{NT get_hi(unsigned int dim) const;}{returns interval end point in dimension dim.}
 \ccMethod{static T get_id(Box b);} {returns a unique box id. T must be less-than comparable.}
-\ccMethod{static NT get_dim();}{returns N} 
+\ccMethod{static NT get_dim();}{returns N.}
 
 \end{ccRefClass}
 

@@ -12,9 +12,9 @@ The box predicate traits class specifies predicates between boxes. It propagates
 \ccNestedType{NT}  {Number type of the box vector components.}
 
 \ccNestedType{Compare}{Function object that compares two boxes with respect to the predicate \ccc{is_lo_less_lo.}}
-\ccNestedType{Lo_less}{Function object that compares the starting point of a box in a certain dimension against a fixed value. Lo\_less val dim box = get\_lo box dim < val}
-\ccNestedType{Hi_greater}{Function object }
-\ccNestedType{Spanning}{Function object }
+\ccNestedType{Lo_less}{Function object that compares the starting point of a box in a certain dimension against a fixed value. Lo\_less val dim box = get\_lo box dim $<$ val}
+\ccNestedType{Hi_greater}{Function object.}
+\ccNestedType{Spanning}{Function object.}
 
 
 \ccOperations
@@ -30,11 +30,11 @@ For all methods that require a dimension parameter, \ccc{dim < get_dim()} must h
   {static bool does_intersect (Box a, Box b, unsigned int dim);}
   {intervals of box a and box b intersect in dimension dim.}
 \ccMethod
-  {static bool contains_lo_point(Box a, Box b, unsigned int dim);}  
+  {static bool contains_lo_point(Box a, Box b, unsigned int dim);}
   {interval of box a contains interval starting point of b in dimension dim, s.t. the intervals in dimension dim could possibly overlap.}
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Box_predicate_traits_d<BoxTraits_d>}
+\ccRefIdfierPage{CGAL::Box_predicate_traits_d<BoxTraits_d, bool closed>}
 
 \end{ccRefConcept}
 
