@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: added strstream to the redirection headers
+GLOB: do not add the cctype symbols to namespace std (they are macros)
 GLOB: added using directives to replacement headers to put symbols into
 GLOB: namespace std that should be there.
 GLOB: changed order in compiler tests: first check standard headers
