@@ -20,18 +20,18 @@
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
-#include <cassert>
-#include "_test_cls_tds_vertex.C"
-#include "_test_cls_tds_cell.C"
 
+#include <cassert>
 #include <iostream>
 #include <fstream>
+
+#include "_test_cls_tds_vertex.C"
+#include "_test_cls_tds_cell.C"
 
 template <class Tds>
 void
 _test_cls_tds_3( const Tds &)
 {
-
   typedef typename Tds::Vertex            Vertex;
   typedef typename Tds::Cell              Cell;
   typedef typename Tds::Edge              Edge;
@@ -42,15 +42,12 @@ _test_cls_tds_3( const Tds &)
   typedef typename Tds::Edge_iterator     Edge_iterator;
   typedef typename Tds::Cell_iterator     Cell_iterator;
 
-
   // test Vertex and cell :
   std::cout << "    Test Vertex " << std::endl;
   _test_vertex_tds_3(Vertex());
 
   std::cout << "    Test Cell " << std::endl;
-  
   _test_cell_tds_3(Cell());
-
 
   std::cout << "   Testing TDS " << std::endl;
   
@@ -64,8 +61,8 @@ _test_cls_tds_3( const Tds &)
   // (they are implicitely tested in triangulation)
   Tds tdsfromfile;
   std::cout << "    I/O" << std::endl;
-std::ofstream oFileT("Test_tds_IO_3",std::ios::out);
-std::ifstream iFileT("Test_tds_IO_3",std::ios::in);
+  std::ofstream oFileT("Test_tds_IO_3", std::ios::out);
+  std::ifstream iFileT("Test_tds_IO_3", std::ios::in);
   oFileT << tds1;
   iFileT >> tdsfromfile;
   assert(tdsfromfile.is_valid());

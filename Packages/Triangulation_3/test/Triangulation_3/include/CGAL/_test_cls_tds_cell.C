@@ -19,28 +19,24 @@
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
+
 #include <cassert>
 
 template <class Cell>
 void
 _test_cell_tds_3( const Cell &)
 {
-  
-  
   typedef typename Cell::Vertex            Vertex;
-  //  typedef typename Cell::Cell              Cell;
-
   typedef typename Cell::Tds               Tds;
 
   std::cout << "   Cells Tds Constructors " << std::endl;
   int ind;
-  Cell c;
   Tds tds;
-  Vertex* v0= new Vertex; 
-  Vertex* v1= new Vertex; 
-  Vertex* v2= new Vertex; 
+  Vertex* v0= new Vertex;
+  Vertex* v1= new Vertex;
+  Vertex* v2= new Vertex;
   Vertex* v3= new Vertex;
-  Cell* c1 = tds.create_cell(v0, v1 , v2, v3);
+  Cell* c1 = tds.create_cell(v0, v1, v2, v3);
   assert(c1->has_vertex(v0));
   assert(c1->has_vertex(v1));
   assert(c1->has_vertex(v2));
@@ -49,8 +45,7 @@ _test_cell_tds_3( const Cell &)
   Cell* n1=tds.create_cell();
   Cell* n2=tds.create_cell();
   Cell* n3=tds.create_cell();
-  Cell* c2 = tds.create_cell(v0, v1 , v2, v3, n0, n1, n2, n3);
-
+  Cell* c2 = tds.create_cell(v0, v1, v2, v3, n0, n1, n2, n3);
 
   std::cout << "   Access cell's functions " << std::endl;
      assert(c2->has_vertex(v0));
@@ -134,6 +129,4 @@ _test_cell_tds_3( const Cell &)
 
    std::cout << "   Tds Destructors " << std::endl;
    delete v0; delete v1; delete v2; delete v3; 
-   delete n0; delete n1; delete n2; delete n3; 
 }
-
