@@ -26,7 +26,7 @@ doxygen:
 
 # clean all object files
 clean: 
-	${MAKE} -C demo/Mesh_2 clean
+	${MAKE} -C demo/Mesh_2 -f makefile clean
 	${MAKE} -C test/Mesh_2 clean
 	${MAKE} -C examples/Mesh_2 clean
 

@@ -1,3 +1,7 @@
+18 October 2004 Laurent Rineau
+- Conforming_Delaunay_triangulation_maker_2 renamed to 
+  Triangulation_conformer_2.
+
 17 October 2004 Laurent Rineau
 - Attempt to fix remaining bug: the list of faces modified by the insertion
 of a point on a segment is not the conflicts zone of the
