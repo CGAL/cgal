@@ -1,3 +1,6 @@
+13 October 2004 Andreas Fabri
+- Added data member initialization in copy constructor of class Pm_trapezoid_ric_point_location
+
 1 October 2004 Andreas Fabri
 - In demo: Retrieve type RasterOp with a 'typedef' and not with a 'using'
 
