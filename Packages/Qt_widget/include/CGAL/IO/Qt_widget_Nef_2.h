@@ -23,31 +23,52 @@
 #define CGAL_QT_WIDGET_NEF_2_H
 
 #include <CGAL/Nef_polyhedron_2.h>
+#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Qt_widget.h>
 
+USING(Vertex_const_handle);
 
 typedef CGAL::Cartesian<double>::Point_2 Draw_point;
 typedef CGAL::Cartesian<double>::Segment_2 Segment;
-CGAL::Qt_widget	_W;
+
+//void draw(Vertex_const_handle v, CGAL::Qt_widget& ws) const;
+//void draw(Halfedge_const_handle e) const;
+//void draw(Face_const_handle f) const;
+
 namespace CGAL{
 
 template<typename T>
 CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
 {
+    typedef Nef_polyhedron_2<T> Polyhedron;
+    typedef typename T::RT RT;
+    typedef typename T::Standard_RT Standard_RT;
+    typedef typename Polyhedron::Topological_explorer 
+                                    TExplorer;
 
+
+    TExplorer D = N1.explorer();
+    const T& E = Polyhedron::EK;
+
+    Standard_RT frame_radius = 100;
+    E.determine_frame_radius(D.points_begin(), D.points_end(),
+			     frame_radius);
+    RT::set_R(frame_radius);
+    
+    return ws;
 }
-
-void draw(Vertex_const_handle v) const
+  
+  //void draw(::Vertex_const_handle v, CGAL::Qt_widget& ws) const
 //{\Mop draws |v| according to the color and width specified by
 //    |C.color(v)| and |C.width(v)|.}
-{ 
-	_W << CGAL::RED << point(v);
-}
-
+  //{ 
+  //	ws << CGAL::RED << point(v);
+  //}
+  /*
 void draw(Halfedge_const_handle e) const
 //{\Mop draws |e| according to the color and width specified by
-//    |C.color(e)| and |C.width(e)|.}*/
+//    |C.color(e)| and |C.width(e)|.}
 { 
   Segment s(point(source(e)),point(target(e));
   _W << CGAL::LineWidth(2);
@@ -116,7 +137,7 @@ void draw(Face_const_handle f) const
 
 
 void draw_map() const
-/*{\Mop draw the whole plane map.}*/
+//{\Mop draw the whole plane map.}
 {
   Face_const_iterator 
     fit = faces_begin(), fend = faces_end();
@@ -134,7 +155,7 @@ void draw_map() const
   for (vit = vertices_begin(); vit != vend; ++vit) 
     draw(vit);
 }
-
+*/
 }//end namespace CGAL
 
 #endif
