@@ -32,6 +32,7 @@
 #include <iostream>
 
 #include <CGAL/utility.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 
 //-------------------------------------------------------------------
@@ -90,8 +91,6 @@ public:
 
 private:
 
-  typedef long Key;
- 
   typedef std::multimap< Coord_type, Cell_handle > Interval_cell_map;
   typedef typename Interval_cell_map::value_type   Interval_cell;
 
@@ -106,7 +105,7 @@ private:
 
   typedef std::vector< Coord_type > Alpha_spectrum;
   
-  typedef std::set< Key > Marked_cell_set;
+  typedef Unique_hash_map<Cell_handle, bool > Marked_cell_set;
 
 public:
 
@@ -1089,14 +1088,13 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
   // Inserts the alpha shape into the stream `os' as an indexed face set. 
   // Precondition: The insert operator must be defined for `Point'
 { 
+  typedef typename Alpha_shape_3<Dt>::Vertex_handle Vertex_handle;
   typedef typename Alpha_shape_3<Dt>::Interval_vertex_map Interval_vertex_map;
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
   const typename Alpha_shape_3<Dt>::Interval2* pInterval2;
 
-  typedef long Key;
-
-  std::map< Key, int > V;
+  Unique_hash_map< Vertex_handle, int > V;
 
   int number_of_vertices = 0;
 
@@ -1110,7 +1108,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
   if (A.get_mode() == Alpha_shape_3<Dt>::REGULARIZED)
     {
 
-      typename Alpha_shape_3<Dt>::Vertex_handle v;
+      Vertex_handle v;
       for (vertex_alpha_it = A._interval_vertex_map.begin(); 
 	   vertex_alpha_it != A._interval_vertex_map.end() &&
 	     (*vertex_alpha_it).first.first < A.get_alpha();
@@ -1138,7 +1136,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 	      assert(A.classify(v) ==
 		     Alpha_shape_3<Dt>::REGULAR);
 
-	      V[(Key)&(*v)] = number_of_vertices++;
+	      V[v] = number_of_vertices++;
 	      os << v->point() << std::endl;
 	    }
 	}
@@ -1197,16 +1195,16 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 
 	      int i0=(i+1)&3, i1=(i+2)&3, i2=(i+3)&3;
 
-	      os << V[(Key)&(*s->vertex(i0))] << ' ' 
-		 << V[(Key)&(*s->vertex(i1))] << ' ' 
-		 << V[(Key)&(*s->vertex(i2))] << std::endl;
+	      os << V[s->vertex(i0)] << ' ' 
+		 << V[s->vertex(i1)] << ' ' 
+		 << V[s->vertex(i2)] << std::endl;
 	    }
 	}
     }
   else  // A.get_mode() == GENERAL -----------------------------------------
     {
  
-       typename Alpha_shape_3<Dt>::Vertex_handle v;
+       Vertex_handle v;
      
       // write the regular vertices
 
@@ -1227,7 +1225,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 	      v = (*vertex_alpha_it).second;
 	      CGAL_triangulation_assertion(A.classify(v) ==
 					   Alpha_shape_3<Dt>::REGULAR);
-	      V[(Key)&(*v)] = number_of_vertices++;
+	      V[v] = number_of_vertices++;
 	      os << v->point() << std::endl;
 	    }
 	}
@@ -1241,7 +1239,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 	  CGAL_triangulation_assertion(A.classify(v) ==
 				       Alpha_shape_3<Dt>::SINGULAR);
 
-	  V[(Key)&(*v)] = number_of_vertices++;
+	  V[v] = number_of_vertices++;
 	  os << v->point() << std::endl;
 	}
  
@@ -1299,9 +1297,9 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 
 		  i0=(i+1)&3, i1=(i+2)&3, i2=(i+3)&3;
 
-		  os << V[(Key)&(*s->vertex(i0))] << ' ' 
-		     << V[(Key)&(*s->vertex(i1))] << ' ' 
-		     << V[(Key)&(*s->vertex(i2))] << std::endl;
+		  os << V[s->vertex(i0)] << ' ' 
+		     << V[s->vertex(i1)] << ' ' 
+		     << V[s->vertex(i2)] << std::endl;
 		  
 		}
 	      else // (pInterval->second == A.Infinity || 
@@ -1317,9 +1315,9 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 						   Alpha_shape_3<Dt>::SINGULAR);
 		      i0=(i+1)&3, i1=(i+2)&3, i2=(i+3)&3;
 
-		      os << V[(Key)&(*s->vertex(i0))] << ' ' 
-			 << V[(Key)&(*s->vertex(i1))] << ' ' 
-			 << V[(Key)&(*s->vertex(i2))] << std::endl;
+		      os << V[s->vertex(i0)] << ' ' 
+			 << V[s->vertex(i1)] << ' ' 
+			 << V[s->vertex(i2)] << std::endl;
 		      
 		    }	
 		}
@@ -1678,7 +1676,8 @@ Alpha_shape_3<Dt>::number_of_solid_components(const Coord_type& alpha) const
     // takes time O(#alpha_shape) amortized if STL_HASH_TABLES
     //            O(#alpha_shape log n) otherwise
 {
-  Marked_cell_set marked_cell_set;
+  typedef typename Marked_cell_set::Data Data;
+  Marked_cell_set marked_cell_set(false);
   Finite_cells_iterator cell_it, done = finite_cells_end();
   int nb_solid_components = 0;
 
@@ -1687,14 +1686,16 @@ Alpha_shape_3<Dt>::number_of_solid_components(const Coord_type& alpha) const
     {
       Cell_handle pCell = cell_it;
       assert(pCell != NULL);
-
-      if (classify(pCell, alpha) == INTERIOR &&
-	  ((marked_cell_set.insert((Key)&(*pCell)))).second)
-	// we traverse only interior simplices
-	{
+      
+      if (classify(pCell, alpha) == INTERIOR){
+	Data& data = marked_cell_set[pCell];
+	if(data == false) { 
+	  // we traverse only interior simplices
+	  data = true;
 	  traverse(pCell, marked_cell_set, alpha);
 	  nb_solid_components++;  
 	}
+      }
     }
   return nb_solid_components;
 }
@@ -1705,6 +1706,7 @@ void Alpha_shape_3<Dt>::traverse(Cell_handle pCell,
 				 Marked_cell_set& marked_cell_set,
 				 const Coord_type alpha) const
 {
+  typedef typename Marked_cell_set::Data Data;
   std::list<Cell_handle> cells;
   cells.push_back(pCell);
   Cell_handle pNeighbor;
@@ -1716,13 +1718,16 @@ void Alpha_shape_3<Dt>::traverse(Cell_handle pCell,
       {
 	pNeighbor = pCell->neighbor(i);
 	assert(pNeighbor != NULL);
-	if (classify(pNeighbor, alpha) == INTERIOR &&
-	    (marked_cell_set.insert((Key)&(*pNeighbor)).second)){
-	  cells.push_back(pNeighbor);
+	if (classify(pNeighbor, alpha) == INTERIOR){
+	  Data& data = marked_cell_set[pNeighbor];
+	  if(data == false){
+	    data = true;
+	    cells.push_back(pNeighbor);
+	  }
 	}
       }
-  }
-} 
+  } 
+}
 
 //----------------------------------------------------------------------
 
