@@ -364,8 +364,6 @@ private slots:
     std::ifstream f(fileName);
     assert( f );
 
-
-    Site t;
     int counter = 0;
     timer.start();
 
@@ -378,16 +376,14 @@ private slots:
       if (type == 'p') {
         Point p;
         f >> p;
-	t.set_point(p);
-        svd.insert(t.point());
-	tbox = t.point().bbox();
+        svd.insert(p);
+	tbox = p.bbox();
 	counter++;
       } else if (type == 's') {
-        Segment s;
-        f >> s;
-	t.set_segment(s);
-        svd.insert(t.source(), t.target());
-        tbox = t.segment().bbox();
+        Point p1, p2;
+        f >> p1 >> p2;
+        svd.insert(p1, p2);
+        tbox = Segment(p1,p2).bbox();
 	counter++;
       } else if (type == 'l') {
 	Vertex_handle vh;
@@ -399,14 +395,12 @@ private slots:
 	bool got_location = false;
         while(--nr_of_points!=0){
 	  f >> p2;
-	  Segment s(p1, p2);
-	  t.set_segment(s);
 	  if(!got_location){
-	    vh = svd.insert(t.source(), t.target());
+	    vh = svd.insert(p1, p2);
 	    got_location = true;
 	  } else
-	    vh = svd.insert(t.source(), t.target(), vh);
-	  tbox = tbox + s.bbox();
+	    vh = svd.insert(p1, p2, vh);
+	  tbox = tbox + Segment(p1,p2).bbox();
 	  counter++;
 	  p1 = p2;
         }
