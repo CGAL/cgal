@@ -67,7 +67,7 @@ struct Pointer
   bool operator==(const Pointer& p) const { return ptr() == p.ptr(); }
   bool operator!=(const Pointer& p) const { return !(*this == p); }
 
-  bool operator==(CGAL_NULL_TYPE n) const
+  bool operator==(CGAL_NULL_TYPE CGAL_assertion_code(n) ) const
     {
       CGAL_assertion(n == 0);
       return ptr() == NULL;
