@@ -115,7 +115,7 @@ Distance* distance_instance;
 	public:
 
 	template<class OutputIterator>  
-	OutputIterator  the_k_neighbor(OutputIterator res)
+	OutputIterator  the_k_neighbors(OutputIterator res)
 	{   
 		typename NN_list::iterator it=l.begin(); 
 		for (; it != l.end(); it++) { *res= *it; res++; }
