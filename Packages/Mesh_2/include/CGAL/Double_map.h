@@ -89,7 +89,11 @@ public :
 
   void pop_front()
     {
-      erase(front()->second);
+      reverse_iterator rit = reverse_func.begin();
+      direct_iterator pos = direct_func.find(rit->second);
+      assert(pos != direct_func.end());
+      direct_func.erase(pos);
+      reverse_func.erase(rit);
     }
 
   class Second_is {
