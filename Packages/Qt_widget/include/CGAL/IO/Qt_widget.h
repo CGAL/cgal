@@ -827,7 +827,8 @@ template< class Dt >
 Qt_widget&
 operator << ( Qt_widget& ws, const CGAL::Alpha_shape_2<Dt>& As)
 {
-  typedef typename CGAL::Alpha_shape_2<Dt>::Interval_edge_map Interval_edge_map;
+  typedef typename CGAL::Alpha_shape_2<Dt>::Interval_edge_map 
+	  Interval_edge_map;
   typename Interval_edge_map::const_iterator edge_alpha_it;
   const typename CGAL::Alpha_shape_2<Dt>::Interval3* pInterval;
   if (As.get_mode() == Alpha_shape_2<Dt>::REGULARIZED) 
