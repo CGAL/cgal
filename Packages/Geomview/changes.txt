@@ -7,6 +7,7 @@ Ver 3.5 (?? ???????? 2000)
 - in_binary_mode() -> get_binary_mode(), idem for ascii.
 - set_binary_mode() now takes a parameter (default=true), and returns the old
   value.
+- (echo "started") in your .geomview file is no longer necessary.
 
 Ver 3.4 (29 November 2000)
 - Removed the cruft about "ascii" and "binary" function pointers (beurk !).

@@ -21,10 +21,13 @@ http://www.geomview.org/}, which is a
 viewer for three-dimensional objects, originally developed at the Geometry
 Center in Minneapolis\footnote{\tt http://www.geom.umn.edu/}.
 
-\noindent {\bf Important:} The last line in the startup file \ccc{.geomview}
-must be \ccc{(echo "started")}. The commands \ccc{geomview} and \ccc{rsh}
-(when running on a remote machine) must be in the user's \ccc{PATH}, otherwise
-the program will not be able to execute.
+\noindent {\bf Note:} In releases up to and including 2.2, CGAL used to have
+the following requirement : the last line in the startup file \ccc{.geomview}
+must be \ccc{(echo "started")}.  This is no longer necessary.
+
+\noindent {\bf Important:} The commands \ccc{geomview} and \ccc{rsh} (when
+running on a remote machine) must be in the user's \ccc{PATH}, otherwise the
+program will not be able to execute.
 
 \begin{ccClass}{Geomview_stream}
 \ccDefinition
