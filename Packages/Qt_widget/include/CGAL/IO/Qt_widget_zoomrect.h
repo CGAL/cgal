@@ -80,8 +80,8 @@ private:
       if((e->x() != first_x) && (e->y() != first_y)) {
         double x, y, xfirst2, yfirst2;
         widget->x_real(e->x(), x);
-	widget->y_real(e->y(), y);
-	widget->x_real(first_x, xfirst2);
+        widget->y_real(e->y(), y);
+        widget->x_real(first_x, xfirst2);
         widget->y_real(first_y, yfirst2);
   			
         double	xmin, xmax, ymin, ymax;
@@ -90,8 +90,7 @@ private:
         if(y < yfirst2) {ymin = y; ymax = yfirst2;}
         else {ymin = yfirst2; ymax = y;};
 
-        widget->set_window(xmin, xmax, ymin, ymax);
-        widget->redraw();
+        widget->set_window(xmin, xmax, ymin, ymax);        
         on_first = FALSE;
       }
     }
