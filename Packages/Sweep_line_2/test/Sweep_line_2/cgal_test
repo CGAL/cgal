@@ -38,9 +38,9 @@ compile_and_run()
   if compile $1 $2 $3 ; then
     echo "   compilation of $1 succeeded" >> $ERRORFILE  
     SUBCURVES=""
-    run $1 $2 $3
+    run $1 $2 $3 $4
     SUBCURVES="subcurves"
-    run $1 $2 $3
+    run $1 $2 $3 $4
   else
     echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
   fi
@@ -48,16 +48,25 @@ compile_and_run()
   eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
 
 }
+compile_and_run_sweep()
+{
+    
+  echo "---$1---"
 
+  # running general test
+  if compile $1 $2 $3 ; then
+    echo "   compilation of $1 succeeded" >> $ERRORFILE  
+    run $1 $2 $3 $4
+  else
+    echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
+  fi
+
+  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
+
+}
 run()
 {
-  if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
-    datafiles="DATA/segments/*"
-  elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
-       datafiles="DATA/polylines/*"
-  elif [ $3 -eq $CGAL_SEGMENT_CIRCLE_TRAITS ]; then
-       datafiles="DATA/segment_circles/*"     
-  fi
+  datafiles="$4/*"
 
   for DATAFILE in ${datafiles}
   do
@@ -91,11 +100,7 @@ run()
 
 run_io()
 {
-  if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
-    datafiles="DATA/IO/segments/*"
-  elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
-    datafiles="DATA/IO/polylines/*"   
-  fi
+  datafiles="$4/*"
 
   if [ $3 -eq $CGAL_SEGMENT_TRAITS ] ; then
     iofiles="DATA/IO/segments/exact_io/"
@@ -172,36 +177,29 @@ else
   NAIVE=2
   WALK=3
 
+  #run the test for new sweep
+    (compile_and_run_sweep test_sweep $NAIVE $CGAL_SEGMENT_TRAITS "DATA/segments_tight")
+  exit 0
+
   # run test with generic segment traits
-    (compile_and_run test $TRAP  $CGAL_SEGMENT_TRAITS)
-    (compile_and_run test $NAIVE $CGAL_SEGMENT_TRAITS)
-    (compile_and_run test $WALK  $CGAL_SEGMENT_TRAITS)
+    (compile_and_run test $TRAP  $CGAL_SEGMENT_TRAITS "DATA/segments")
+    (compile_and_run test $NAIVE $CGAL_SEGMENT_TRAITS "DATA/segments")
+    (compile_and_run test $WALK  $CGAL_SEGMENT_TRAITS "DATA/segments")
   # run test with leda segment traits
-    (compile_and_run test $TRAP  $CGAL_SEGMENT_LEDA_TRAITS)
-    (compile_and_run test $NAIVE $CGAL_SEGMENT_LEDA_TRAITS)
-    (compile_and_run test $WALK  $CGAL_SEGMENT_LEDA_TRAITS)
+    (compile_and_run test $TRAP  $CGAL_SEGMENT_LEDA_TRAITS "DATA/segments")
+    (compile_and_run test $NAIVE $CGAL_SEGMENT_LEDA_TRAITS "DATA/segments")
+    (compile_and_run test $WALK  $CGAL_SEGMENT_LEDA_TRAITS "DATA/segments")
   # run test with generic polyline traits
-    (compile_and_run test $TRAP  $CGAL_POLYLINE_TRAITS)
-    (compile_and_run test $NAIVE $CGAL_POLYLINE_TRAITS)
-    (compile_and_run test $WALK  $CGAL_POLYLINE_TRAITS)
+    (compile_and_run test $TRAP  $CGAL_POLYLINE_TRAITS "DATA/polylines")
+    (compile_and_run test $NAIVE $CGAL_POLYLINE_TRAITS "DATA/polylines")
+    (compile_and_run test $WALK  $CGAL_POLYLINE_TRAITS "DATA/polylines")
 
   # Uncomment when leda polyline traits is fully debugged
   # run test with leda polyline traits
-  #  (compile_and_run test $TRAP  $CGAL_POLYLINE_LEDA_TRAITS)
-  #  (compile_and_run test $NAIVE $CGAL_POLYLINE_LEDA_TRAITS)
-  #  (compile_and_run test $WALK  $CGAL_POLYLINE_LEDA_TRAITS)
+  #  (compile_and_run test $TRAP  $CGAL_POLYLINE_LEDA_TRAITS "DATA/polylines")
+  #  (compile_and_run test $NAIVE $CGAL_POLYLINE_LEDA_TRAITS "DATA/polylines")
+  #  (compile_and_run test $WALK  $CGAL_POLYLINE_LEDA_TRAITS "DATA/polylines")
     
   # run test with segment circle traits
-    (compile_and_run test $WALK  $CGAL_SEGMENT_CIRCLE_TRAITS)
+    (compile_and_run test $WALK  $CGAL_SEGMENT_CIRCLE_TRAITS "DATA/segment_circles")
 fi
-
-
-
-
-
-
-
-
-
-
-
