@@ -977,7 +977,7 @@ set_compiler_flags()
 	    ICCCOMPILERBIN=`compiler_bin`
 	    ICCREALDIRNAME=`echo ${ICCCOMPILERBIN} | ${_sed} 's#bin/icc##g'`
 	    ADDITIONAL_LDFLAGS="-Wl,-R${ICCREALDIRNAME}lib"
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="idb"

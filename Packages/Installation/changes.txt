@@ -2,6 +2,10 @@
 //	Revision History for package Installation
 //=====================================================================
 
+9 August 2004 Menelaos Karavelas
+- Removed the -Xlinker option for ICC under Linux. RHEL complains when
+  trying to build the shared library
+
 9 August 2004 Sylvain Pion
 - Update supported compilers list :
     remove SunPRO 5.3 and 5.4,
