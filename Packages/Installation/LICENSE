@@ -23,10 +23,8 @@ The CGAL software falls under the license below:
 //   notice appears in all copies of the software and related documentation.
 //
 // Commercial licenses
-// - Commercial users may apply for an evaluation license by writing to
-//   (Andreas.Fabri@geometryfactory.com).
-// - A commercial license is available through Algorithmic Solutions, who also
-//   markets LEDA (http://www.algorithmic-solutions.com).
+// - Please check the CGAL web site http://www.cgal.org/index2.html for
+//   availability.
 //
 // The CGAL Consortium consists of Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
@@ -41,6 +39,10 @@ CGAL and has its own license.
 
 The directory stlport contains an stl library, patched by cgal. This library
 has its own license.
+
+The CGAL Qt widget (with source code in src/CGALQt and 
+include/CGAL/IO/Qt_widget*.h) is distributed under the Q Public License 
+(QPL). See http://www.trolltech.com/developer/licensing/qpl.html.
 
 -------------------------------------------------------------------------------
 EOF
