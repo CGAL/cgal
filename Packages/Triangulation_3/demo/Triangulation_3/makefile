@@ -15,7 +15,6 @@ CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            -Iinclude \
-	   -I../../include\
           $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
