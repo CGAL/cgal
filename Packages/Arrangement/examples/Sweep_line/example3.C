@@ -23,7 +23,7 @@ typedef Traits::Curve                                 Curve;
 using namespace std;
 
 
-int main(int argc, char* argv[])
+int main(/*int argc, char* argv[]*/)
 {
   int                num_segments;
   list<Curve>        segments;

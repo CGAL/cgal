@@ -4,7 +4,6 @@
 #include <iostream.h>
 #include <vector>
 
-
 #include <CGAL/Quotient.h>
 #include <CGAL/Cartesian.h>
 
@@ -37,9 +36,9 @@ typedef CGAL::Pm_file_writer<PM>                     Pm_writer;
 using std::cout;
 using std::cin;
 using std::endl;
+using std::vector;
 
-
-int main(int argc, char* argv[])
+int main(/*int argc, char* argv[]*/)
 {
   PM                 pm;
   int                num_segments;
