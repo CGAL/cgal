@@ -7,6 +7,9 @@ src/Geomview.C
 
 CHANGES
 
+Ver 2.2 18 Mai 99
+ Corrected doc files 
+
 Ver 2.1 16 April 99
  Changed read and write in Geomview_stream.C
  to ::read and ::write to avoid clashes with CGAL::read and CGAL::write
