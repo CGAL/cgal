@@ -1,0 +1,16 @@
+Modifier Package: Release changes:
+---------------------------------------------------------------------
+1.2 (07 Apr 1999)
+
+     Fixes testprogram for g++ 2.8.1 (derivation from namespace std::
+     classes problem).
+
+1.1 (07 Mar 1999)
+
+     Standard headers, std namespace and CGAL namespace.
+     This new package is spawned from the STL_Extension package
+     1.18 (19 Jan 1999). The Modifier_base class is here separated 
+     in its own package to reflect that it has its own chapter in 
+     the manual.
+
+
