@@ -473,7 +473,7 @@ public:
     {
       if(mesh == 0)
 	{
-	  std::cerr << "switch_to_mesh()" << std::endl;
+	  //	  std::cerr << "switch_to_mesh()" << std::endl;
 	  // "construct" a mesh from triangulation without refining it
 	  // (because of the third parameter dont_refine=true)
 	  mesh = new Mesh(*triangulation, traits, true);
@@ -486,8 +486,8 @@ public:
     {
       if(mesh != 0)
 	{
-	  std::cerr << "switch_to_triangulation()" << std::endl
-		    << mesh->number_of_vertices() << std::endl;
+	  //	  std::cerr << "switch_to_triangulation()" << std::endl
+	  //		    << mesh->number_of_vertices() << std::endl;
 	  triangulation = new Tr(); // empty triangulation
 	  triangulation->swap(*mesh); // swap *triangulation and *mesh
 	  // *mesh is now empty
