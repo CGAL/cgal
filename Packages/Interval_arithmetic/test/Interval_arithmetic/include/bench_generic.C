@@ -1,5 +1,5 @@
-// Generic bench file for the IA package. include/bench_generic.C
-// Written by Sylvain Pion, 1997-1999.
+// Generic bench file for the IA package.
+// Sylvain Pion, 1997-1999.
 
 // This file is included from tst[34].C, that do just a #define:
 // #define TESTED_TYPE Interval_nt_advanced // For tst3.C

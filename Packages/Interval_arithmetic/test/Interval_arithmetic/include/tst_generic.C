@@ -1,5 +1,5 @@
-// Generic test file for the IA package. include/tst_generic.C
-// Written by Sylvain Pion, 1997-1999.
+// Generic test file for the IA package.
+// Sylvain Pion, 1997-1999.
 
 // This file is included from tst[12].C, that do just a #define:
 // #define TESTED_TYPE Interval_nt_advanced // For tst1.C
