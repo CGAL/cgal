@@ -1,4 +1,4 @@
-This directory contains 5 example programs for Topological maps.
+This directory contains 5 example programs for Topological Maps.
 
 In example1 a simple Topological_map is constructed.
 
@@ -11,5 +11,4 @@ curves is demonstrated in example3.
 In example4 a Topological_map with 2 dimensional points is constructed.
  
 The last example, example5, shows how to apply various operations on edges
-of a Topological_mal (e.i., insertion, spliting, merging, and removal).
-
+of a Topological_map (e.i., insertion, splitting, merging, and removal).
