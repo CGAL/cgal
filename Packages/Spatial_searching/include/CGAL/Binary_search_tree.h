@@ -74,7 +74,7 @@ public:
 		if (t.use_extended_nodes())
 		{tree_root = new Node(c,t,true); 
 		 std::cout << "using extended internal nodes" << std::endl;}
-                 //  std::cout << "time t4 =" << tim.time() << " seconds" << std::endl;}
+                 
 		else
 		{tree_root = new Node(c,t,false); 
 		 std::cout << "not using extended internal nodes" 

@@ -80,20 +80,12 @@ namespace CGAL {
 		else */
 			the_node_type=INTERNAL;
 
-		/*
-		bool print_timer = (c.size() == 10000);
-                CGAL::Timer tim;
-                tim.reset(); tim.start();
-		*/
+		
 
     		Points_container<Item> c_low = Points_container<Item>(c.dimension());
 			Box<NT> bbox(c.bounding_box());
 
-                // if (print_timer) std::cout << "time t3.1 =" << tim.time() << " seconds" << std::endl;
-
     		sep = t.split(c, c_low);
-
-                // if (print_timer) std::cout << "time t3.2 =" << tim.time() << " seconds" << std::endl;
 	
     		int cd  = sep->cutting_dimension();
 
@@ -102,21 +94,16 @@ namespace CGAL {
     			high_val = bbox.upper(cd);
 		};
 
-                // if (print_timer) std::cout << "time t3.3 =" << tim.time() << " seconds" << std::endl;
-
     		if (c_low.size() > t.bucket_size())
       			lower_ch = new Binary_node<Traits>(c_low,t,use_extension);
     		else
       			lower_ch = new Binary_node<Traits>(c_low);
-
-                // if (print_timer) std::cout << "time t3.4 =" << tim.time() << " seconds" << std::endl;
 
     		if (c.size() > t.bucket_size())
       			upper_ch = new Binary_node<Traits>(c,t,use_extension);
     		else
       			upper_ch = new Binary_node<Traits>(c);
 
-                // if (print_timer) std::cout << "time t3.5 =" << tim.time() << " seconds" << std::endl;
   	};
 
         // members for all nodes

@@ -57,21 +57,20 @@ namespace CGAL {
     typedef Points_container<Item> Self;
 
   private:
-    Points_list *p_list;// array of sorted lists of pointers to points
+    Points_list p_list; // list of pointers to points
     int built_coord;    // a coordinate for which the pointer list is built
-    //    Points points;// points container
     Box<NT> bbox;       // bounding box, i.e. cell of node
     Box<NT> tbox;       // tight bounding box, i.e. minimal enclosing bounding
 	                // box of points
-
-    struct build_max_span_list : public std::unary_function<Item, void> {
-      Points_list *x;
-      build_max_span_list(Points_list *p) :
-	x(p) {}
+    /*
+    struct build_list : public std::unary_function<Item, void> {
+      Points_list x;
+      build_list(Points_list p) :
+		x(p) {}
       void operator() (Item& p) {
-	x->push_back(&p);
+		x.push_back(&p);
       }
-    };
+    }; */
 
   public:
     std::ostream& print(std::ostream& s) {
@@ -166,36 +165,38 @@ namespace CGAL {
 	}
 
     //  points
-    inline unsigned int size() const { return p_list[built_coord].size(); }
+    inline unsigned int size() const { return p_list.size(); }
 
     inline typename Points_list::const_iterator begin() const {
-      return p_list[built_coord].begin();
+      return p_list.begin();
     }
 
     inline typename Points_list::const_iterator end() const {
-      return p_list[built_coord].end();
+      return p_list.end();
     }
-
+    
     // building the container from a sequence of points
     template <class Iter>
     Points_container(const int d, Iter begin, Iter end) :
-      p_list(new Points_list[d]), bbox(d), tbox(d) {
+      bbox(d), tbox(d) {
 
       
 
       bbox = Box<NT>(d, begin, end);
       tbox = bbox;
-      std::for_each(begin, end,
-		    build_max_span_list(p_list + max_span_coord()));
 
+      // build list 
+      p_list.clear();
+      Iter it;
+      for (it=begin; it != end; ++it) p_list.push_back(&(*it));
 
-      p_list[max_span_coord()].sort(comp_coord_val<Item>(max_span_coord()));
+      // p_list[max_span_coord()].sort(comp_coord_val<Item>(max_span_coord()));
       built_coord = max_span_coord();
     }
 
 	// building an empty container 
 	Points_container(int d) :
-	p_list(new Points_list[d]), bbox(d), tbox(d) {}
+	bbox(d), tbox(d) {}
 
 	void swap(Points_container<Item>& c) {
 
@@ -225,23 +226,27 @@ namespace CGAL {
 
 	void add_points_from_container(Points_container<Item>& c) {
 	  // assert(built_coord==c.built_coord);
-	  merge(p_list[built_coord], c.p_list[built_coord], 
-		Less_lexicographically_d());
+	  merge(p_list, c.p_list); 
+		// Less_lexicographically_d());
 	}
 
     void recompute_tight_bounding_box() {
-		tbox.update_from_point_pointers(p_list[built_coord].begin(),
-		     p_list[built_coord].end(),p_list[built_coord].empty());
+		tbox.update_from_point_pointers(p_list.begin(),
+		     p_list.end(),p_list.empty());
 	}
 
 
       // note that splitting is restricted to the built coordinate
       template <class Separator>
-      void split_container(Points_container<Item>& c, Separator* sep, 
-	  bool sliding=false) {
+      void split_container(Points_container<Item>& c, Separator* sep,  
+	bool sliding=false) {
 
-	//	assert(dimension()==c.dimension());
+	//assert(dimension()==c.dimension());
 		
+        Points_list l_lower, l_upper;
+
+	l_lower.clear();
+	l_upper.clear();
 
         c.bbox=bbox;
         // bool test_validity=false;
@@ -249,81 +254,86 @@ namespace CGAL {
         const int split_coord = sep->cutting_dimension();
         const NT cutting_value = sep->cutting_value();
 
-		// if necessary prepare the coordinate and 
-		// clear old built_coord.
-		if (p_list[split_coord].empty()) {
-			// copy p_list[built_coord] to p_list[split_coord]
-			p_list[split_coord]=p_list[built_coord];
-			// sort p_list[split_coord]
-		p_list[split_coord].sort(comp_coord_val<Item>(split_coord));
-	        // clear old built coord
-		}
-		built_coord=split_coord;
-		c.built_coord=split_coord;
+        built_coord=split_coord;
+	c.built_coord=split_coord;
 		
-
-		for (int i = 0; i < dimension(); ++i) {
-			// if (! p_list[i].empty()) {
-			if (i==split_coord) {    
-                // find iterator to split the list
-				// avoid empty list by moving first 
-				c.p_list[i].clear();
-		typename Points_list::iterator pt;
-                for (pt = p_list[i].begin();
-				// ( (sep->side(*(*pt)) == ON_NEGATIVE_SIDE)
-				( ( (*(*pt))[split_coord] < cutting_value) 
-				&&
-				(pt != p_list[i].end())
-					); ++pt) {}
-                // avoid empty lists 
-				if (sliding) {
-			    	if (pt==p_list[i].begin()) pt++;
-					if (pt==p_list[i].end())  pt--;
-                };
-				// move points on negative side to c.p_list
-			    c.p_list[i].splice(c.p_list[i].end(), 
-				p_list[i], p_list[i].begin(), pt); 
+	
+	typename Points_list::iterator pt=p_list.begin();
 				
-		    } // end of if
-				else { 
-				  p_list[i].clear(); c.p_list[i].clear(); 
+	for (; (pt != p_list.end()); ++pt) {
+                        
+	if ( (*(*pt))[split_coord] < cutting_value) 
+			l_lower.push_back (*pt);
+		else
+			l_upper.push_back (*pt);
+	};
+	
+	if (sliding) { // avoid empty lists 
+		if (l_lower.empty()) {
+			  typename Points_list::iterator pt_min=l_upper.begin();
+			  NT min_value=bbox.upper(built_coord);
+			  for (pt=l_upper.begin(); (pt != l_upper.end()); ++pt) {
+				if ( (*(*pt))[split_coord] < min_value) {
+					min_value=(*(*pt))[split_coord];
+					pt_min=pt;
 				}
-		} // end of for
+			}
+			l_lower.splice(l_lower.end(), l_upper, pt_min);
+		}
+		if (l_upper.empty()) {
+			typename Points_list::iterator pt_max=l_lower.begin();
+			NT max_value=bbox.lower(built_coord);
+			for (pt=l_lower.begin(); (pt != l_lower.end()); ++pt) {
+				if ( (*(*pt))[split_coord] > max_value) {
+					max_value=(*(*pt))[split_coord];
+					pt_max=pt;
+				}
+			}
+			l_upper.splice(l_upper.end(), l_lower, pt_max);
+		}
+        }
+	
+
+	p_list.clear();
+        c.p_list.clear();
+        p_list.splice(p_list.end(),l_upper);
+        c.p_list.splice(c.p_list.end(),l_lower);
+        
 		
-		// adjusting boxes
-		bbox.set_lower(split_coord, cutting_value);
-		tbox.update_from_point_pointers(p_list[built_coord].begin(),
-		p_list[built_coord].end(),p_list[built_coord].empty());
-		c.bbox.set_upper(split_coord, cutting_value);
-		c.tbox.update_from_point_pointers(
-		c.p_list[c.built_coord].begin(),
-		c.p_list[c.built_coord].end(),c.p_list[c.built_coord].empty());
+	// adjusting boxes
+	bbox.set_lower(split_coord, cutting_value);
+	tbox.update_from_point_pointers(p_list.begin(),
+	p_list.end(),p_list.empty());
+	c.bbox.set_upper(split_coord, cutting_value);
+	c.tbox.update_from_point_pointers(
+	c.p_list.begin(),
+	c.p_list.end(),c.p_list.empty());
         
         // assert(is_valid()); 
         // assert(c.is_valid());
-	}
+    }
 
 	NT median(const int split_coord) {
-      if (p_list[split_coord].empty()) {
+      /* if (p_list.empty()) {
          // copy p_list[built_coord] to p_list[split_coord]
-         p_list[split_coord]=p_list[built_coord];
+         p_list[split_coord]=p_list[built_coord]; */
          // sort p_list[split_coord]
-         p_list[split_coord].sort(comp_coord_val<Item>(split_coord));
-      }
+      p_list.sort(comp_coord_val<Item>(split_coord));
+      // }
       typename Points_list::iterator 
-      median_point_ptr=p_list[split_coord].begin();
-      for (unsigned int i = 0; i < p_list[split_coord].size()/2-1; i++, 
+      median_point_ptr=p_list.begin();
+      for (unsigned int i = 0; i < p_list.size()/2-1; i++, 
 		   median_point_ptr++) {}
       NT val1=(*(*median_point_ptr))[split_coord];
       median_point_ptr++;
       NT val2=(*(*median_point_ptr))[split_coord];
       return (val1+val2)/2;
-    }
+    };
 
 
-    ~Points_container() { delete [] p_list; }
+    ~Points_container() { p_list.clear(); }
 
-    inline bool empty() const { return size() == 0;}
+    inline bool empty() const { return p_list.size() == 0;}
      /*
      bool is_valid() {
 
