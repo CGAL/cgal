@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.67 (18 september 00)
+-change type number of the test of Delaunay hierarchy to an exact type
+-chabge typedef in _test_triangulation_short.C _test_cls_Delaunay.C
+to please KCC 
+
 Ver 4.66 (14 september 00)
 - temporary modified the test of triangulation hierarchy
 to try to find out why it loops on VC++ :
