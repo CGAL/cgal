@@ -277,17 +277,17 @@ compose(const Translation_repC3<R> &t) const
   return Aff_transformation_3(t11,
                               t12,
                               t13,
-                              t14 + t._translationvector.x(),
+                              t14 + t.translationvector_.x(),
 
                               t21,
                               t22,
                               t23,
-                              t24 + t._translationvector.y(),
+                              t24 + t.translationvector_.y(),
 
                               t31,
                               t32,
                               t33,
-                              t34 + t._translationvector.z());
+                              t34 + t.translationvector_.z());
 }
 
 template < class R >
@@ -296,20 +296,20 @@ typename Aff_transformation_repC3<R>::Aff_transformation_3
 Aff_transformation_repC3<R>::
 compose(const Scaling_repC3<R> &t) const
 {
-  return Aff_transformation_3(t._scalefactor * t11,
-                              t._scalefactor * t12,
-                              t._scalefactor * t13,
-                              t._scalefactor * t14,
+  return Aff_transformation_3(t.scalefactor_ * t11,
+                              t.scalefactor_ * t12,
+                              t.scalefactor_ * t13,
+                              t.scalefactor_ * t14,
 			      
-                              t._scalefactor * t21,
-                              t._scalefactor * t22,
-                              t._scalefactor * t23,
-                              t._scalefactor * t24,
+                              t.scalefactor_ * t21,
+                              t.scalefactor_ * t22,
+                              t.scalefactor_ * t23,
+                              t.scalefactor_ * t24,
                               
-			      t._scalefactor * t31,
-                              t._scalefactor * t32,
-                              t._scalefactor * t33,
-                              t._scalefactor * t34);
+			      t.scalefactor_ * t31,
+                              t.scalefactor_ * t32,
+                              t.scalefactor_ * t33,
+                              t.scalefactor_ * t34);
 }
 
 template < class R >

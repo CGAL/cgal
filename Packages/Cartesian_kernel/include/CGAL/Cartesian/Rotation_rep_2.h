@@ -49,7 +49,7 @@ public:
   Rotation_repC2() {}
 
   Rotation_repC2(const FT &sinus, const FT &cosinus)
-    : _sinus(sinus), _cosinus(cosinus) {}
+    : sinus_(sinus), cosinus_(cosinus) {}
 
   Rotation_repC2(const Direction_2 &d,
                  const FT &eps_num,
@@ -66,32 +66,32 @@ public:
                                     denom,
                                     eps_num,
                                     eps_den);
-    _sinus   = sin_num/denom;
-    _cosinus = cos_num/denom;
+    sinus_   = sin_num/denom;
+    cosinus_ = cos_num/denom;
   }
 
   Point_2      transform(const Point_2 &p) const
   {
-    return Point_2(_cosinus * p.x() - _sinus * p.y(),
-                   _sinus * p.x() + _cosinus * p.y());
+    return Point_2(cosinus_ * p.x() - sinus_ * p.y(),
+                   sinus_ * p.x() + cosinus_ * p.y());
   }
 
   Vector_2     transform(const Vector_2 &v) const
   {
-    return Vector_2(_cosinus * v.x() - _sinus * v.y(),
-                    _sinus * v.x() + _cosinus * v.y());
+    return Vector_2(cosinus_ * v.x() - sinus_ * v.y(),
+                    sinus_ * v.x() + cosinus_ * v.y());
   }
 
   Direction_2  transform(const Direction_2 &d) const
   {
     Vector_2  v = d.to_vector();
-    return Direction_2(_cosinus * v.x() - _sinus * v.y(),
-                       _sinus * v.x() + _cosinus * v.y());
+    return Direction_2(cosinus_ * v.x() - sinus_ * v.y(),
+                       sinus_ * v.x() + cosinus_ * v.y());
   }
 
   Aff_transformation_2 inverse() const
   {
-    return Aff_transformation_2(ROTATION, - _sinus, _cosinus, FT(1));
+    return Aff_transformation_2(ROTATION, - sinus_, cosinus_, FT(1));
   }
 
   Aff_transformation_2 operator*(const Aff_t_base &t) const
@@ -101,39 +101,39 @@ public:
 
   Aff_transformation_2 compose(const Translation &t) const
   {
-    return Aff_transformation_2(_cosinus,
-                                    -_sinus,
-                                    t._translationvector.x(),
+    return Aff_transformation_2(cosinus_,
+                                    -sinus_,
+                                    t.translationvector_.x(),
 
-                                    _sinus,
-                                    _cosinus,
-                                    t._translationvector.y());
+                                    sinus_,
+                                    cosinus_,
+                                    t.translationvector_.y());
   }
 
   Aff_transformation_2 compose(const Rotation &t) const
   {
     return Aff_transformation_2(ROTATION,
-                                    t._sinus*_cosinus + t._cosinus*_sinus,
-                                    t._cosinus*_cosinus-t._sinus*_sinus );
+                                    t.sinus_*cosinus_ + t.cosinus_*sinus_,
+                                    t.cosinus_*cosinus_-t.sinus_*sinus_ );
   }
 
   Aff_transformation_2 compose(const Scaling &t) const
   {
-    return Aff_transformation_2(t._scalefactor*_cosinus,
-                                t._scalefactor*-_sinus,
+    return Aff_transformation_2(t.scalefactor_*cosinus_,
+                                t.scalefactor_*-sinus_,
 
-                                t._scalefactor*_sinus,
-                                t._scalefactor*_cosinus);
+                                t.scalefactor_*sinus_,
+                                t.scalefactor_*cosinus_);
   }
 
   Aff_transformation_2 compose(const Transformation &t) const
   {
-    return Aff_transformation_2(_cosinus*t.t11  + _sinus*t.t12,
-                                -_sinus*t.t11  + _cosinus*t.t12,
+    return Aff_transformation_2(cosinus_*t.t11  + sinus_*t.t12,
+                                -sinus_*t.t11  + cosinus_*t.t12,
                                 t.t13,
 
-                                _cosinus*t.t21 + _sinus*t.t22,
-                                -_sinus*t.t21 + _cosinus*t.t22,
+                                cosinus_*t.t21 + sinus_*t.t22,
+                                -sinus_*t.t21 + cosinus_*t.t22,
                                 t.t23);
   }
 
@@ -148,14 +148,14 @@ public:
     {
     case 0: switch (j)
             {
-              case 0: return _cosinus;
-              case 1: return -_sinus;
+              case 0: return cosinus_;
+              case 1: return -sinus_;
               case 2: return FT(0);
             }
     case 1: switch (j)
             {
-              case 0: return _sinus;
-              case 1: return _cosinus;
+              case 0: return sinus_;
+              case 1: return cosinus_;
               case 2: return FT(0);
             }
     case 2: switch (j)
@@ -170,13 +170,13 @@ public:
 
   std::ostream &print(std::ostream &os) const
   {
-    os << "Aff_transformationC2(" << _sinus << ", " << _cosinus <<  ")";
+    os << "Aff_transformationC2(" << sinus_ << ", " << cosinus_ <<  ")";
     return os;
   }
 
 private:
-  FT _sinus;
-  FT _cosinus;
+  FT sinus_;
+  FT cosinus_;
 };
 
 CGAL_END_NAMESPACE

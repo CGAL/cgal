@@ -226,10 +226,10 @@ compose(const Translation_repC2<R> &t) const
 {
   return Aff_transformation_2(t11,
                               t12,
-                              t13 + t._translationvector.x(),
+                              t13 + t.translationvector_.x(),
                               t21,
                               t22,
-                              t23 + t._translationvector.y());
+                              t23 + t.translationvector_.y());
 }
 
 template < class R >
@@ -238,12 +238,12 @@ typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
 compose(const Rotation_repC2<R> &t) const
 {
-  return Aff_transformation_2(t._cosinus*t11 - t._sinus*t21,
-                              t._cosinus*t12 - t._sinus*t22,
-                              t._cosinus*t13 - t._sinus*t23,
-                              t._sinus*t11 + t._cosinus*t21,
-                              t._sinus*t12 + t._cosinus*t22,
-                              t._sinus*t13 + t._cosinus*t23);
+  return Aff_transformation_2(t.cosinus_*t11 - t.sinus_*t21,
+                              t.cosinus_*t12 - t.sinus_*t22,
+                              t.cosinus_*t13 - t.sinus_*t23,
+                              t.sinus_*t11 + t.cosinus_*t21,
+                              t.sinus_*t12 + t.cosinus_*t22,
+                              t.sinus_*t13 + t.cosinus_*t23);
 }
 
 template < class R >
@@ -252,12 +252,12 @@ typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
 compose(const Scaling_repC2<R> &t) const
 {
-   return Aff_transformation_2(t._scalefactor * t11,
-                               t._scalefactor * t12,
-                               t._scalefactor * t13,
-                               t._scalefactor * t21,
-                               t._scalefactor * t22,
-                               t._scalefactor * t23);
+   return Aff_transformation_2(t.scalefactor_ * t11,
+                               t.scalefactor_ * t12,
+                               t.scalefactor_ * t13,
+                               t.scalefactor_ * t21,
+                               t.scalefactor_ * t22,
+                               t.scalefactor_ * t23);
 }
 
 #ifdef CGAL_CFG_TYPENAME_BUG

@@ -48,7 +48,7 @@ public:
   {}
 
   Scaling_repC2(const FT &scalefactor) :
-    _scalefactor(scalefactor)
+    scalefactor_(scalefactor)
   {}
 
   ~Scaling_repC2()
@@ -56,12 +56,12 @@ public:
 
   Point_2      transform(const Point_2 &p) const
   {
-    return Point_2(_scalefactor * p.x(), _scalefactor * p.y());
+    return Point_2(scalefactor_ * p.x(), scalefactor_ * p.y());
   }
 
   Vector_2      transform(const Vector_2 &p) const
   {
-    return Vector_2(_scalefactor * p.x(), _scalefactor * p.y());
+    return Vector_2(scalefactor_ * p.x(), scalefactor_ * p.y());
   }
 
   Direction_2  transform(const Direction_2 &d) const
@@ -77,43 +77,43 @@ public:
   Aff_transformation_2 compose(const Translation &t) const
   {
     FT ft0(0);
-    return Aff_transformation_2(_scalefactor,
+    return Aff_transformation_2(scalefactor_,
                                 ft0,
-                                t._translationvector.x(),
+                                t.translationvector_.x(),
 
                                 ft0,
-                                _scalefactor,
-                                t._translationvector.y());
+                                scalefactor_,
+                                t.translationvector_.y());
   }
 
   Aff_transformation_2 compose(const Rotation &t) const
   {
-    return Aff_transformation_2(_scalefactor * t._cosinus,
-                                _scalefactor * -t._sinus,
+    return Aff_transformation_2(scalefactor_ * t.cosinus_,
+                                scalefactor_ * -t.sinus_,
 
-                                _scalefactor * t._sinus,
-                                _scalefactor * t._cosinus);
+                                scalefactor_ * t.sinus_,
+                                scalefactor_ * t.cosinus_);
   }
 
   Aff_transformation_2 compose(const Scaling &t) const
   {
-    return Aff_transformation_2(SCALING, _scalefactor*t._scalefactor);
+    return Aff_transformation_2(SCALING, scalefactor_*t.scalefactor_);
   }
 
   Aff_transformation_2 compose(const Transformation &t) const
   {
-    return Aff_transformation_2(_scalefactor * t.t11,
-                                _scalefactor * t.t12,
+    return Aff_transformation_2(scalefactor_ * t.t11,
+                                scalefactor_ * t.t12,
                                  t.t13,
 
-                                _scalefactor * t.t21,
-                                _scalefactor * t.t22,
+                                scalefactor_ * t.t21,
+                                scalefactor_ * t.t22,
                                  t.t23);
   }
 
   Aff_transformation_2  inverse() const
   {
-    return Aff_transformation_2(SCALING, FT(1)/_scalefactor);
+    return Aff_transformation_2(SCALING, FT(1)/scalefactor_);
   }
 
   bool is_even() const
@@ -124,17 +124,17 @@ public:
   FT cartesian(int i, int j) const
   {
     if (i!=j) return FT(0);
-    return (i==2) ? FT(1) : _scalefactor;
+    return (i==2) ? FT(1) : scalefactor_;
   }
 
   std::ostream &print(std::ostream &os) const
   {
-    os << "Aff_transformationC2(" << _scalefactor <<  ")";
+    os << "Aff_transformationC2(" << scalefactor_ <<  ")";
     return os;
   }
 
 private:
-  FT _scalefactor;
+  FT scalefactor_;
 };
 
 CGAL_END_NAMESPACE

@@ -48,11 +48,11 @@ public:
   {}
 
   Translation_repC2(const Vector_2 &tv)
-    : _translationvector(tv)
+    : translationvector_(tv)
   {}
 
   Point_2     transform(const Point_2 &p) const
-                            { return p + _translationvector; }
+                            { return p + translationvector_; }
   Vector_2    transform(const Vector_2 &v) const { return v; }
   Direction_2 transform(const Direction_2 &d) const { return d; }
 
@@ -64,51 +64,51 @@ public:
   Aff_transformation_2 compose(const Translation &t) const
   {
     return Aff_transformation_2(TRANSLATION,
-                                _translationvector + t._translationvector);
+                                translationvector_ + t.translationvector_);
   }
 
   Aff_transformation_2 compose(const Rotation &t) const
   {
-    return Aff_transformation_2(t._cosinus,
-                                -t._sinus,
-                                t._cosinus*_translationvector.x() -
-                                t._sinus*_translationvector.y(),
+    return Aff_transformation_2(t.cosinus_,
+                                -t.sinus_,
+                                t.cosinus_*translationvector_.x() -
+                                t.sinus_*translationvector_.y(),
 
-                                t._sinus,
-                                t._cosinus,
-                                t._sinus*_translationvector.x() +
-                                t._cosinus*_translationvector.y());
+                                t.sinus_,
+                                t.cosinus_,
+                                t.sinus_*translationvector_.x() +
+                                t.cosinus_*translationvector_.y());
   }
 
   Aff_transformation_2 compose(const Scaling &t) const
   {
-    return Aff_transformation_2(t._scalefactor,
+    return Aff_transformation_2(t.scalefactor_,
                                 FT(0),
-                                t._scalefactor*_translationvector.x(),
+                                t.scalefactor_*translationvector_.x(),
 
                                 FT(0),
-                                t._scalefactor,
-                                t._scalefactor*_translationvector.y());
+                                t.scalefactor_,
+                                t.scalefactor_*translationvector_.y());
   }
 
   Aff_transformation_2 compose(const Transformation &t) const
   {
     return Aff_transformation_2(t.t11,
                                 t.t12,
-                                t.t11 * _translationvector.x()
-                                + t.t12 * _translationvector.y()
+                                t.t11 * translationvector_.x()
+                                + t.t12 * translationvector_.y()
                                 + t.t13,
 
                                 t.t21,
                                 t.t22,
-                                t.t21 * _translationvector.x()
-                                + t.t22*_translationvector.y()
+                                t.t21 * translationvector_.x()
+                                + t.t22*translationvector_.y()
                                 + t.t23);
   }
 
   Aff_transformation_2 inverse() const
   {
-    return Aff_transformation_2(TRANSLATION, - _translationvector);
+    return Aff_transformation_2(TRANSLATION, - translationvector_);
   }
 
   bool         is_even() const
@@ -119,19 +119,19 @@ public:
   FT cartesian(int i, int j) const
   {
     if (j==i) return FT(1);
-    if (j==2) return _translationvector[i];
+    if (j==2) return translationvector_[i];
     return FT(0);
   }
 
   std::ostream &print(std::ostream &os) const
   {
-    os << "Aff_transformationC2(VectorC2(" << _translationvector.x() << ", "
-       << _translationvector.y()  <<  "))";
+    os << "Aff_transformationC2(VectorC2(" << translationvector_.x() << ", "
+       << translationvector_.y()  <<  "))";
     return os;
   }
 
 private:
-  Vector_2   _translationvector;
+  Vector_2   translationvector_;
 };
 
 CGAL_END_NAMESPACE
