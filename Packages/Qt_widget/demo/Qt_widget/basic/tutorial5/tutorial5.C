@@ -17,9 +17,9 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 Delaunay dt;
 
 class My_Layer : public CGAL::Qt_widget_layer{
-  void draw(CGAL::Qt_widget& win){
-    win << CGAL::BLACK;
-    win << dt;
+  void draw(CGAL::Qt_widget& widget){
+    widget << CGAL::BLACK;
+    widget << dt;
   }
 };
 
@@ -38,23 +38,23 @@ private:
 
 class My_Window : public QMainWindow{
 public:
-  My_Window(int x, int y) : win(this)
+  My_Window(int x, int y)
   {
-    setCentralWidget(&win);
+    widget = new My_Widget(this);
+    setCentralWidget(widget);
     resize(x,y);
-    win.show();
-    win.set_window(0, x, 0, y);
+    widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar(&win, this);
+    stoolbar = new CGAL::Standard_toolbar(widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     setUsesBigPixmaps(true);
 
-    win.attach(&v);
+    widget->attach(&v);
   }
 private:
-  My_Widget win;
-  My_Layer v;
+  My_Widget *widget;
+  My_Layer  v;
   CGAL::Standard_toolbar *stoolbar;
 };
 

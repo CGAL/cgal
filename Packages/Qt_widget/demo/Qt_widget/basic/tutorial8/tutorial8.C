@@ -20,9 +20,9 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 Delaunay dt;
 
 class My_Layer : public CGAL::Qt_widget_layer{
-  void draw(CGAL::Qt_widget& win){
-    win << CGAL::BLACK;
-    win << dt;
+  void draw(CGAL::Qt_widget& widget){
+    widget << CGAL::BLACK;
+    widget << dt;
   }
 };
 
@@ -31,14 +31,14 @@ class My_Window : public QMainWindow{
 public:
   My_Window(int x, int y)
   {
-    win = new CGAL::Qt_widget(this);
-    setCentralWidget(win);
+    widget = new CGAL::Qt_widget(this);
+    setCentralWidget(widget);
     resize(x,y);
-    win->show();
-    win->set_window(0, x, 0, y);
+    widget->show();
+    widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar(win, this);
+    stoolbar = new CGAL::Standard_toolbar(widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     
     QToolBar  *tools_toolbar;
@@ -52,18 +52,18 @@ public:
 				  tools_toolbar, 
 				  "Point Tool");
     get_point_but->setToggleButton(TRUE);
-    win->attach(&v);
+    widget->attach(&v);
 
-    connect(win, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_object(CGAL::Object)));
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_object(CGAL::Object)));
   }
-  ~My_Window(){delete win;}
+  ~My_Window(){delete widget;}
 private slots:
   //this function is called every time the toolbar button is pressed
   void pointtool(){
     if (get_point_but->isOn())
-      win->attach(get_point);
+      widget->attach(get_point);
     else
-      win->detach_current_tool();
+      widget->detach_current_tool();
   }
 
   //this function is called every time a tool creates a Cgal object
@@ -73,12 +73,12 @@ private slots:
     if(CGAL::assign(p, obj))
     {
       dt.insert(p);
-      win->redraw();
-      *win << CGAL::RED << p;
+      widget->redraw();
+      *widget << CGAL::RED << p;
     }
   }
 private:
-  CGAL::Qt_widget *win;	//the instance of Qt_widget
+  CGAL::Qt_widget *widget;	//the instance of Qt_widget
   My_Layer v;		//an instance of a layer
   CGAL::Standard_toolbar *stoolbar; //the standard toolbar
   CGAL::Qt_widget_get_point<Rep> get_point;   //the generic tool that creates Cgal points

@@ -27,14 +27,14 @@ functionalities like you can use a toolbar, a status bar ... in other
 words you can create a complex MDI application. To use an instance of
 Qt_widget you have to say in the constructor:
 
-	setCentralWidget(&win);
+	setCentralWidget(widget);
 
-where win is an instance of Qt_widget. As you see it is also declared
+where widget is an instance of Qt_widget. As you see it is also declared
 in My_window.
 
 There is one more thing, at the constructor you see:
 
-	My_window(int x, int y) : win(this)
+	widget = new My_Widget(this);
 
 Also the constructor of My_widget is adapted:
 
@@ -44,7 +44,7 @@ This lines tells the application that My_window is a parent for
 My_widget. Try to comment this lines to see what happens. Two
 windows will appear, one for My_window and one for My_widget.
 
-In the constructor it is win.attach(&v); This way, the layer is
+In the constructor it is widget->attach(&v); This way, the layer is
 attached by My_widget. The rest of the code does the same thing as the
 previous tutorials: insert a new point in a Delaunay triangulation and
 draw the triangulation every time you click on the window.

@@ -16,8 +16,8 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 Delaunay dt;
 
 class My_Layer : public CGAL::Qt_widget_layer{
-  void draw(CGAL::Qt_widget& win){
-    win << dt;
+  void draw(CGAL::Qt_widget& widget){
+    widget << dt;
   }
 };
 
@@ -36,16 +36,16 @@ private:
 
 class My_Window : public QMainWindow{
 public:
-  My_Window(int x, int y) : win(this)
+  My_Window(int x, int y)
   {
-    setCentralWidget(&win);
+    widget = new My_Widget(this);
+    setCentralWidget(widget);
     resize(x,y);
-    win.show();
-    win.set_window(0, x, 0, y);
-    win.attach(&v);
+    widget->set_window(0, x, 0, y);
+    widget->attach(&v);
   }
 private:
-  My_Widget win;
+  My_Widget *widget;
   My_Layer v;
 };
 

@@ -18,9 +18,9 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 Delaunay dt;
 
 class My_Layer : public CGAL::Qt_widget_layer{
-  void draw(CGAL::Qt_widget& win){
-    win << CGAL::BLACK;
-    win << dt;
+  void draw(CGAL::Qt_widget& widget){
+    widget << CGAL::BLACK;
+    widget << dt;
   }
 };
 
@@ -29,22 +29,22 @@ class My_Window : public QMainWindow{
 public:
   My_Window(int x, int y)
   {
-    win = new CGAL::Qt_widget(this);
-    setCentralWidget(win);
+    widget = new CGAL::Qt_widget(this);
+    setCentralWidget(widget);
     resize(x,y);
-    win->show();
-    win->set_window(0, x, 0, y);
+    widget->show();
+    widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar(win, this);
+    stoolbar = new CGAL::Standard_toolbar(widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     
-    win->attach(&v);
+    widget->attach(&v);
 
-    connect(win, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_object(CGAL::Object)));
-    win->attach(get_point);
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_object(CGAL::Object)));
+    widget->attach(get_point);
   }
-  ~My_Window(){delete win;}
+  ~My_Window(){}
 private slots:
   void get_object(CGAL::Object obj)
   {
@@ -52,12 +52,12 @@ private slots:
     if(CGAL::assign(p, obj))
     {
       dt.insert(p);
-      win->redraw();
-      *win << CGAL::RED << p;
+      widget->redraw();
+      *widget << CGAL::RED << p;
     }
   }
 private:
-  CGAL::Qt_widget *win;
+  CGAL::Qt_widget *widget;
   My_Layer v;
   CGAL::Standard_toolbar *stoolbar;
   CGAL::Qt_widget_get_point<Rep> get_point;

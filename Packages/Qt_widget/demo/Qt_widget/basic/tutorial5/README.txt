@@ -18,7 +18,7 @@ use of standard toolbar. It is declared as private in My_Window class:
 
 To use it, in the constructor of My_Window, it is added:
 
-	stoolbar = new CGAL::Standard_toolbar(&win, this);
+	stoolbar = new CGAL::Standard_toolbar(widget, this);
 	this->addToolBar(stoolbar->toolbar(), Top, FALSE);
 
 In this tutorial you can play a little bit with the standard toolbar
