@@ -64,9 +64,9 @@ public:
 
   typedef typename Base::Geom_traits        Geom_traits;
 
-  typedef typename Geom_traits::Point_2     Point;
-  typedef typename Geom_traits::Segment_2   Segment;
-  typedef typename Geom_traits::Site_2      Site;
+  typedef typename Geom_traits::Point_2     Point_2;
+  typedef typename Geom_traits::Segment_2   Segment_2;
+  typedef typename Geom_traits::Site_2      Site_2;
 
   typedef typename Base::Vertex_handle      Vertex_handle;
   typedef typename Base::Face_handle        Face_handle;
@@ -118,8 +118,8 @@ public:
 public:
    // insertion of a point/segment
 
-  Vertex_handle  insert(const Point& p);
-  Vertex_handle  insert(const Point& p0, const Point& p1);
+  Vertex_handle  insert(const Point_2& p);
+  Vertex_handle  insert(const Point_2& p0, const Point_2& p1);
 
   template< class Input_iterator >
   void insert(Input_iterator first, Input_iterator beyond,
@@ -134,25 +134,25 @@ public:
     }
   }
 
-  Vertex_handle insert(const Point& p, Vertex_handle)
+  Vertex_handle insert(const Point_2& p, Vertex_handle)
   {
     return insert(p);
   }
 
-  Vertex_handle insert(const Point& p1, const Point& p2,
+  Vertex_handle insert(const Point_2& p1, const Point_2& p2,
 		       Vertex_handle)
   {
     return insert(p1, p2);
   }
 
 private:
-  Vertex_handle insert_point(const Point& p, int level);
-  void          insert_point(const Point& p, int level,
+  Vertex_handle insert_point(const Point_2& p, int level);
+  void          insert_point(const Point_2& p, int level,
 			     Vertex_handle* vertices);
 
-  Vertex_handle insert_segment(const Point& p0, const Point& p1,
+  Vertex_handle insert_segment(const Point_2& p0, const Point_2& p1,
 			       int level); 
-  void          insert(const Site& p, int level,
+  void          insert(const Site_2& p, int level,
 		       Vertex_handle* vertices);
 
 #if 0
@@ -163,16 +163,16 @@ public:
 
 public:
   // nearest neighbor
-  Vertex_handle  nearest_neighbor(const Point& p,
+  Vertex_handle  nearest_neighbor(const Point_2& p,
 				  bool force_point = false) const;
 
-  Vertex_handle  nearest_neighbor(const Point& p, Vertex_handle)
+  Vertex_handle  nearest_neighbor(const Point_2& p, Vertex_handle)
   {
     return nearest_neighbor(p);
   }
 
 private:
-  void nearest_neighbor(const Site& p,
+  void nearest_neighbor(const Site_2& p,
 			Vertex_handle vnear[svd_hierarchy_2__maxlevel],
 			bool force_point) const; 
   int random_level();
@@ -288,7 +288,7 @@ template<class Gt, class PC, class DS, class LTag>
 inline
 typename Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
-insert(const Point& p)
+insert(const Point_2& p)
 {
   return insert_point(p, UNDEFINED_LEVEL);
 }
@@ -297,7 +297,7 @@ template<class Gt, class PC, class DS, class LTag>
 inline
 typename Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
-insert_point(const Point& p, int level)
+insert_point(const Point_2& p, int level)
 
 {
   if ( level == UNDEFINED_LEVEL ) {
@@ -314,7 +314,7 @@ insert_point(const Point& p, int level)
 template<class Gt, class PC, class DS, class LTag>
 void
 Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
-insert_point(const Point& p, int level,	Vertex_handle* vertices)
+insert_point(const Point_2& p, int level,	Vertex_handle* vertices)
 {
   CGAL_precondition( level != UNDEFINED_LEVEL );
 
@@ -352,7 +352,7 @@ template<class Gt, class PC, class DS, class LTag>
 inline
 typename Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
-insert(const Point& p0, const Point& p1)
+insert(const Point_2& p0, const Point_2& p1)
 {
   return insert_segment(p0, p1, UNDEFINED_LEVEL);
 }
@@ -361,13 +361,13 @@ insert(const Point& p0, const Point& p1)
 template<class Gt, class PC, class DS, class LTag>
 typename Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
-insert_segment(const Point& p0, const Point& p1, int level)
+insert_segment(const Point_2& p0, const Point_2& p1, int level)
 {
   if ( level == UNDEFINED_LEVEL ) {
     level = random_level();
   }
 
-  Site t(Segment(p0, p1));
+  Site_2 t(Segment_2(p0, p1));
 
   if ( is_degenerate_segment(t) ) {
     return insert_point(p0, level);
@@ -456,17 +456,17 @@ remove(Vertex_handle v, bool remove_endpoints)
 template<class Gt, class PC, class DS, class LTag>
 typename Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::Vertex_handle 
 Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
-nearest_neighbor(const Point& p, bool force_point) const
+nearest_neighbor(const Point_2& p, bool force_point) const
 {
   Vertex_handle vnear[svd_hierarchy_2__maxlevel];
-  nearest_neighbor(Site(p), vnear, force_point);
+  nearest_neighbor(Site_2(p), vnear, force_point);
   return vnear[0];
 }
 
 template<class Gt, class PC, class DS, class LTag>
 void
 Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
-nearest_neighbor(const Site& p,
+nearest_neighbor(const Site_2& p,
 		 Vertex_handle vnear[svd_hierarchy_2__maxlevel],
 		 bool force_point) const
 {
