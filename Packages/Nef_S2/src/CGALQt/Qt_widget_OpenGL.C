@@ -1,6 +1,8 @@
+#ifdef CGAL_USE_QT
+
 #include <CGAL/IO/Qt_widget_OpenGL.h>
 
-Qt_widget_OpenGL::Qt_widget_OpenGL(int width, int height, long double scale) :
+Qt_widget_OpenGL::Qt_widget_OpenGL(int width, int height, double scale) :
   window_width(width),
   window_height(height),
   motion_mode(ROTATE),
@@ -218,3 +220,6 @@ void Qt_widget_OpenGL::slotFullscreen() {
 void Qt_widget_OpenGL::slotPerspective() {
   perspective = !perspective;
 }
+
+#include "QT_widget_OpenGL.moc"
+#endif
