@@ -251,6 +251,7 @@ typedef CGALi::Construct<Line_3>               Construct_line_3;
 typedef CGALi::Construct<Ray_3>                Construct_ray_3;
 typedef CGALi::Construct<Triangle_3>           Construct_triangle_3;
 typedef CGALi::Construct<Tetrahedron_3>        Construct_tetrahedron_3;
+typedef CGALi::Construct<Iso_cuboid_3>         Construct_iso_cuboid_3;
 typedef CGALi::Construct<Aff_transformation_3> Construct_aff_transformation_3;
 
 Construct_point_3 
@@ -288,6 +289,10 @@ construct_triangle_3_object() const
 Construct_tetrahedron_3
 construct_tetrahedron_object() const 
 { return Construct_tetrahedron_3(); }
+
+Construct_iso_cuboid_3
+construct_iso_cuboid_3_object() const
+{return Construct_iso_cuboid_3();}
 
 Construct_aff_transformation_3
 construct_aff_transformation_3_object() const 

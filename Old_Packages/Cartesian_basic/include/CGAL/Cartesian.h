@@ -112,6 +112,7 @@ struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
     typedef typename Kernel_base::Segment_3               Segment_3;
     typedef typename Kernel_base::Triangle_3              Triangle_3;
     typedef typename Kernel_base::Tetrahedron_3           Tetrahedron_3;
+    typedef typename Kernel_base::Iso_cuboid_3            Iso_cuboid_3;
     typedef typename Kernel_base::Aff_transformation_3    Aff_transformation_3;
 
     typedef typename Kernel_base::Point_d                 Point_d;
@@ -133,7 +134,8 @@ struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
     typedef typename Kernel_base::Triangle_2              Triangle_2_base;
     typedef typename Kernel_base::Circle_2                Circle_2_base;
     typedef typename Kernel_base::Iso_rectangle_2         Iso_rectangle_2_base;
-    typedef typename Kernel_base::Aff_transformation_2    Aff_transformation_2_base;
+    typedef typename Kernel_base::Aff_transformation_2  
+                                                     Aff_transformation_2_base;
 
     typedef typename Kernel_base::Point_3                 Point_3_base;
     typedef typename Kernel_base::Vector_3                Vector_3_base;
@@ -144,6 +146,8 @@ struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
     typedef typename Kernel_base::Segment_3               Segment_3_base;
     typedef typename Kernel_base::Triangle_3              Triangle_3_base;
     typedef typename Kernel_base::Tetrahedron_3           Tetrahedron_3_base;
+    typedef typename Kernel_base::Iso_cuboid_3            Iso_cuboid_3_base;
+
     typedef typename Kernel_base::Aff_transformation_3    Aff_transformation_3_base;
   
     typedef typename Kernel_base::Point_d                 Point_d_base;
@@ -175,6 +179,7 @@ struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
     typedef CGAL::Segment_3<Self>                         Segment_3;
     typedef CGAL::Triangle_3<Self>                        Triangle_3;
     typedef CGAL::Tetrahedron_3<Self>                     Tetrahedron_3;
+    typedef CGAL::Iso_cuboid_3<Self>                      Iso_cuboid_3;
     typedef CGAL::Aff_transformation_3<Self>              Aff_transformation_3;
 
     typedef CGAL::Point_d<Self>                           Point_d;
@@ -542,6 +547,7 @@ typedef CGALi::Construct<Line_3>                   Construct_line_3;
 typedef CGALi::Construct<Ray_3>                    Construct_ray_3;
 typedef CGALi::Construct<Triangle_3>               Construct_triangle_3;
 typedef CGALi::Construct<Tetrahedron_3>            Construct_tetrahedron_3;
+typedef CGALi::Construct<Iso_cuboid_3>             Construct_iso_cuboid_3;
 typedef CGALi::Construct<Aff_transformation_3>     Construct_aff_transformation_3;
 
 Construct_point_3 
@@ -579,6 +585,10 @@ construct_triangle_3_object() const
 Construct_tetrahedron_3
 construct_tetrahedron_object() const 
 { return Construct_tetrahedron_3(); }
+
+Construct_iso_cuboid_3
+construct_iso_cuboid_3_object() const
+{return Construct_iso_cuboid_3();}
 
 Construct_aff_transformation_3
 construct_aff_transformation_3_object() const 
