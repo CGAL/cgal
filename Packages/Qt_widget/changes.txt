@@ -1,3 +1,8 @@
+1.3.50 - 03/09/2003 (rursu)
+       - added demoicon_xpm definition in Qt_widget_xpm_icons.C and the 
+         declaration in pixmaps/demoicon.xpm. I want all the demos to use
+	 such an icon.
+
 
 1.3.49 - 01/09/2003 (rursu)
 ---------------------------
