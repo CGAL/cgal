@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.106 on 12 July 2001
+- Test-suite tweeks.
+
 Version 4.105 on 9 July 2001
 - __FUNCTION__ was not portable at all.
 

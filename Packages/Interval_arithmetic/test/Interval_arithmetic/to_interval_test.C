@@ -5,41 +5,16 @@
 // That one should not be needed in the long term:
 #include <CGAL/Interval_arithmetic.h>
 
-#if 0
-CGAL_BEGIN_NAMESPACE
-inline
-Interval_base
-to_interval (const double & z)
-{
-  return Interval_base(z);
-}
-
-inline
-Interval_base
-to_interval (const float & z)
-{
-  return Interval_base(z);
-}
-
-inline
-Interval_base
-to_interval (const int & z)
-{
-  return Interval_base(z);
-}
-CGAL_END_NAMESPACE
-#endif
-
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 #include <CGAL/leda_rational.h>
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/leda_real.h>
-#endif // LEDA
+#endif
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
-#endif // GMP
+#endif
 
 #if 0
 #ifdef CGAL_USE_CLN

@@ -1,18 +1,27 @@
 // Test program for the new filtering wrapper for kernel traits.
-// Currently, it's only a compilation test.
+// Currently, it's mostly a compilation test.
+
+// We need some short names :
+#define Cartesian CA
+#define Homogeneous HO
+#define Homogeneous_converter HC
+#define Cartesian_converter CC
+#define Simple_cartesian SC
+#define Filtered_kernel Fk
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
+// #include <CGAL/Homogeneous.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Homogeneous_converter.h>
+#include <CGAL/Cartesian_converter.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/MP_Float.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 
-#if 0
+#if 1
 typedef CGAL::Filtered_kernel<CGAL::Cartesian<double>,
                               CGAL::Simple_cartesian<CGAL::MP_Float> > Rep;
 #else

@@ -1,9 +1,6 @@
 // Benchmark for kernel constructions.
 // Sylvain Pion, September 2000.
 
-#include <CGAL/basic.h>
-#include <iostream>
-
 // Select the kernel you want to benchmark :
 
 #include <CGAL/Cartesian.h>
@@ -11,8 +8,7 @@
 // #include <CGAL/Simple_cartesian.h>
 // #include <CGAL/Homogeneous.h>
 
-#include <CGAL/Point_2.h>
-#include <CGAL/basic_constructions_2.h>
+#include <iostream>
 #include <CGAL/Timer.h>
 
 // NB : with doubles, I've got reliability problems of the benchmarks,

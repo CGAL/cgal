@@ -4,10 +4,15 @@
 // Workaround for buggy compilers.
 #ifdef CGAL_CFG_MATCHING_BUG_2
 #  define CGAL_IA_CT double
+#  define CGAL_IA_ET CGAL::MP_Float
 #  define CGAL_IA_PROTECTED true
 #  define CGAL_IA_CACHE No_Filter_Cache
-#  define CGAL_IA_ET CGAL::MP_Float
 #endif
+
+// Some short names
+#define Cartesian CA
+#define Cartesian_converter CC
+#define Kernel_checker KC
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Kernel_checker.h>
