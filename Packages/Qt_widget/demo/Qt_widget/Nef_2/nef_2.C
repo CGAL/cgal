@@ -38,22 +38,7 @@ int main(int, char*)
 #include <fstream>
 #include <stack>
 #include <set>
-#include <string>
 #include <list>
-
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/extremal_polygon_2.h>
-#include <CGAL/convex_hull_2.h>
-#include <CGAL/Polygon_2_algorithms.h>
-#include <CGAL/point_generators_2.h>
-
-
-#include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_Polygon_2.h>
-#include "Qt_widget_toolbar.h"
-#include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_layer.h>
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -68,22 +53,39 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 
+
+
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Gmpz.h>
+#include <CGAL/Filtered_extended_homogeneous.h>
+#include <CGAL/Nef_polyhedron_2.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/Nef_2/PM_visualizor.h>
+
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
+#include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/Qt_widget_Nef_2.h>
+
 typedef double                      Coord_type;
 typedef CGAL::Cartesian<Coord_type> Rep;
 
-typedef CGAL::Polygon_traits_2<Rep> Traits;
-typedef Traits::Point_2             Point;
-typedef Traits::Segment_2           Segment;
-typedef std::vector<Point>          Container;
-typedef CGAL::Polygon_2<Traits,Container>
-                                    Polygonvec;
+typedef CGAL::Gmpz RT;
+typedef CGAL::Filtered_extended_homogeneous<RT> Extended_kernel;
+typedef CGAL::Nef_polyhedron_2<Extended_kernel> Nef_polyhedron;
+typedef Nef_polyhedron::Point Point;
+typedef Nef_polyhedron::Line Line;
 
-const QString my_title_string("Maximum Inscribed K-gon Demo with"
+
+const QString my_title_string("Nef_2 Demo with"
 			      " CGAL Qt_widget");
 
 //global flags and variables
 int current_state;
 std::list<Point>	  list_of_points;
+Nef_polyhedron N1(Nef_polyhedron::COMPLETE);
 
 
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer
@@ -95,71 +97,7 @@ public:
 
   void draw()
   {
-    widget->lock();
-      
-      //MAXIMUM INSCRIBED 3-GON
-      Polygonvec  outpol;
-	CGAL::convex_hull_points_2(list_of_points.begin(), 
-			list_of_points.end(), std::back_inserter(outpol));
-      Polygonvec  kg;
-      if (outpol.size()>2)
-	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),
-			outpol.vertices_end(),3, std::back_inserter(kg));
-      
-      RasterOp old = widget->rasterOp();	//save the initial raster mode
-      widget->setRasterOp(XorROP);
-      *widget << CGAL::FillColor(CGAL::BLUE);      
-      *widget << kg;
-      widget->setRasterOp(old);
-
-      //MAXIMUM INSCRIBED 5-GON
-      Polygonvec  kg1;
-      if (outpol.size()>2)
-	CGAL::maximum_area_inscribed_k_gon(outpol.vertices_begin(),
-			outpol.vertices_end(),5, std::back_inserter(kg1));
-      
-      old = widget->rasterOp();	//save the initial raster mode
-      widget->setRasterOp(XorROP);
-      *widget << CGAL::FillColor(CGAL::GRAY);      
-      *widget << kg1;
-      widget->setRasterOp(old);  
-
-      //VERTICES
-      *widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
-      *widget << CGAL::GREEN;
-      std::list<Point>::iterator itp = list_of_points.begin();
-      while(itp!=list_of_points.end())
-	*widget << (*itp++);
-          
-
-      //CONVEX HULL
-      std::list<Point>  out;
-      std::list<Segment>  Sl;
-      CGAL::convex_hull_points_2(list_of_points.begin(), 
-				list_of_points.end(), std::back_inserter(out));
-      if( out.size() > 1 ) {
-	Point pakt,prev,pstart;
-
-	std::list<Point>::const_iterator it;
-	it=out.begin();
-	prev= *it; pstart=prev;
-	it++;
-
-	for(; it!=out.end(); ++it) {
-	  pakt= *it;
-	  Sl.push_back(Segment(prev,pakt));
-	  prev=pakt;
-	}
-	Sl.push_back(Segment(pakt,pstart));
-
-	*widget << CGAL::RED;
-	std::list<Segment>::iterator its = Sl.begin();
-	while(its!=Sl.end())
-	  *widget << (*its++);
-      }
-      
-      
-    widget->unlock();
+    *widget << N1;
   };	
   
 };//end class 
@@ -203,12 +141,28 @@ public:
 
     //the new tools toolbar
     //setUsesBigPixmaps(TRUE);
-    newtoolbar = new CGAL::Tools_toolbar(widget, this, &list_of_points);	
+    //newtoolbar = new CGAL::Tools_toolbar(widget, this, &list_of_points);	
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
-    this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
+    //this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   
+
+
+    //Nef_polyhedron
+    Line l(2,4,2);
+    Nef_polyhedron N2(l, Nef_polyhedron::INCLUDED);
+    Nef_polyhedron N3 = N2.complement();
+    CGAL_assertion(N1 == N2.join(N3));
+
+    Point p1(0, 0), p2(10, 10), p3(-20, 15);
+    Point triangle[3] = {p1, p2, p3};
+    Nef_polyhedron N4(triangle, triangle + 3);
+    Nef_polyhedron N5 = N2.intersection(N4);
+    CGAL_assertion(N5 <= N2 && N5 <= N4);
+
+
+
     *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
   
     resize(w,h);
@@ -301,13 +255,14 @@ private slots:
 
 private:
   CGAL::Qt_widget	  *widget;		
-  CGAL::Tools_toolbar	  *newtoolbar;
+  //  CGAL::Tools_toolbar	  *newtoolbar;
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
   int			  old_state;  	
   Qt_layer_show_ch	  testlayer;
+
 };
 
-#include "max_k-gon.moc"
+#include "nef_2.moc"
 
 
 int
