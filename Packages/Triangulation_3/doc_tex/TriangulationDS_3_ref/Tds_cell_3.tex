@@ -20,7 +20,7 @@
   
 The concept \ccRefName\ stores
 four pointers to its four vertices and four pointers to its four
-neighbors The vertices are indexed 0, 1, 2, and 3 in positive order.
+neighbors. The vertices are indexed 0, 1, 2, and 3 in positive order.
 The neighbor indexed $i$ lies opposite to vertex \ccc{i}.
 
 In degenerate dimensions, cells are used to store faces of maximal
@@ -40,7 +40,7 @@ The class \ccClassName\ defines the following types.
 
 \ccCreation
 \ccCreationVariable{c}  %% choose variable name
-\ccThree{Vertex*}{c.set_vertices());}{}
+\ccThree{Vertex_handle}{c.set_vertices(Vertex_handle v));}{}
 
 In order to obtain new cells or destruct unused cells, the user must call the
 \ccc{create_cell()} and \ccc{delete_cell()} methods of the triangulation data
@@ -50,49 +50,41 @@ structure.
 %{Introduces a cell \ccVar\ and initializes all vertices and neighbors 
 % with \ccc{NULL}.}
 
-%\ccConstructor{Cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);}
-%{Introduces a cell \ccVar, and initializes its vertices. The neighbors
-%are initialized with \ccc{NULL}.} 
-
-%\ccConstructor{Cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
-%                Cell* n0, Cell* n1, Cell* n2, Cell* n3);}
-%{Introduces a cell \ccVar, and initializes its vertices and neighbors.}
-
 \ccOperations
 
 \ccAccessFunctions
 
-\ccMethod{Vertex* vertex(int i) const;}
+\ccMethod{Vertex_handle vertex(int i) const;}
 {Returns the vertex \ccc{i} of \ccVar.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccGlue
-\ccMethod{int index(const Vertex* v) const;}
+\ccMethod{int index(Vertex_handle v) const;}
 {Returns the index of vertex \ccc{v} in \ccVar.
 \ccPrecond{\ccc{v} is a vertex of \ccVar}.}
 \ccGlue
-\ccMethod{bool has_vertex(const Vertex* v) const;}
+\ccMethod{bool has_vertex(Vertex_handle v) const;}
 {Returns \ccc{true} if  \ccc{v} is a vertex of \ccVar.}
 \ccGlue
-\ccMethod{bool has_vertex(const Vertex* v, int & i) const;}
+\ccMethod{bool has_vertex(Vertex_handle v, int & i) const;}
 {Returns \ccc{true} if \ccc{v} is a vertex of \ccVar, and
 computes its index \ccc{i} in \ccVar.}
 
-\ccMethod{Cell* neighbor(int i) const;}
+\ccMethod{Cell_handle neighbor(int i) const;}
 {Returns  the neighbor \ccc{i} of \ccVar.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccGlue
-\ccMethod{int index(const Cell* n) const;}
+\ccMethod{int index(Cell_handle n) const;}
 {Returns the index corresponding to neighboring cell \ccc{n}.
 \ccPrecond{\ccc{n} is a neighbor of \ccVar.}}
 \ccGlue
-\ccMethod{bool has_neighbor(const Cell* n) const;}
+\ccMethod{bool has_neighbor(Cell_handle n) const;}
 {Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
 \ccGlue
-\ccMethod{bool has_neighbor(const Cell* n, int & i) const;}
+\ccMethod{bool has_neighbor(Cell_handle n, int & i) const;}
 {Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
 computes its index \ccc{i} in \ccVar.}
 
-\ccMethod{Vertex* mirror_vertex(int i) const;}
+\ccMethod{Vertex_handle mirror_vertex(int i) const;}
 {Returns the vertex of the neighbor of \ccVar that is opposite to \ccVar.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccMethod{int mirror_index(int i) const;}
@@ -101,24 +93,24 @@ computes its index \ccc{i} in \ccVar.}
 
 \ccHeading{Setting}
 
-\ccMethod{void set_vertex(int i, Vertex* v);}
+\ccMethod{void set_vertex(int i, Vertex_handle v);}
 {Sets vertex \ccc{i} to \ccc{v}.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccGlue
-\ccMethod{void set_vertices(Vertex* v0,
-			Vertex* v1,
-		    	Vertex* v2,
-		    	Vertex* v3);}
+\ccMethod{void set_vertices(Vertex_handle v0,
+			Vertex_handle v1,
+		    	Vertex_handle v2,
+		    	Vertex_handle v3);}
 {Sets the vertex pointers.}
 
-\ccMethod{void set_neighbor(int i, Cell* n);}
+\ccMethod{void set_neighbor(int i, Cell_handle n);}
 {Sets neighbor \ccc{i} to \ccc{n}.
 \ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
 \ccGlue
-\ccMethod{void set_neighbors(Cell* n0,
-			     Cell* n1,
-			     Cell* n2,
-			     Cell* n3);}
+\ccMethod{void set_neighbors(Cell_handle n0,
+			     Cell_handle n1,
+			     Cell_handle n2,
+			     Cell_handle n3);}
 {Sets the neighbors pointers.}
 
 \ccHeading{Checking}
@@ -141,10 +133,6 @@ a precise indication of the kind of invalidity encountered.}
 \ccSeeAlso
 
 \ccc{TriangulationDataStructure_3::Vertex}.
-
-%% \ccExample
-
-%% \ccIncludeExampleCode{examples/Triangulation3/Tds_cell_3_prog.C}
 
 \end{ccRefConcept}
 

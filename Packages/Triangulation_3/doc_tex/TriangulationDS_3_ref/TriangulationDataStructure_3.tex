@@ -67,12 +67,11 @@ this use as a template parameter of \ccc{Triangulation_3}.
 
 \bigskip
 
-A class that satisfies the requirements for a
-triangulation data structure class must provide the following types and
-operations. 
+A class that satisfies the requirements for a triangulation data structure
+class must provide the following types and operations. 
 
 \ccTypes
-\ccThree{typedef triple <Cell*, int, int>}{Facet }{}
+\ccThree{typedef triple <Cell_handle, int, int>}{Facet }{}
 \ccThreeToTwo
 
 \ccNestedType{Vertex }{}
@@ -80,14 +79,15 @@ operations.
 \ccNestedType{Cell}{Cell type}
 \lcTex{
 Requirements for \ccc{Vertex} and \ccc{Cell} are described in
-\ccRefPage{TriangulationDataStructure_3::Vertex} and \ccRefPage{TriangulationDataStructure_3::Cell}.
+\ccRefPage{TriangulationDataStructure_3::Vertex} and
+\ccRefPage{TriangulationDataStructure_3::Cell}.
 }
 
-\ccTypedef{typedef triple<Cell*, int, int> Edge;}{\ccc{(c,i,j)} is the
+\ccTypedef{typedef triple<Cell_handle, int, int> Edge;}{\ccc{(c,i,j)} is the
 edge of cell \ccc{c} whose vertices indices are \ccc{i} and
 \ccc{j}. (See Section~\ref{TDS3-sec-intro}.)}
 \ccGlue
-\ccTypedef{typedef pair<Cell*, int>  Facet;}{\ccc{(c,i)} is the facet
+\ccTypedef{typedef pair<Cell_handle, int>  Facet;}{\ccc{(c,i)} is the facet
 of \ccc{c} opposite to the vertex of index \ccc{i}. (See
 Section~\ref{TDS3-sec-intro}.)} 
 
@@ -127,7 +127,7 @@ incident to a given edge. They are bidirectional and non-mutable.
 
 The previous two methods are equivalent.
 
-\ccThree{Vertex*xx}{tds.insert_in_facet()}{}
+\ccThree{Verte____}{tds.insert_in_facet()}{}
 
 \ccMethod{void swap(TriangulationDataStructure_3 & tds1);} 
 {Swaps \ccVar\ and \ccc{tds1}. There is no copy of cells and vertices,
@@ -135,7 +135,8 @@ thus this method runs in constant time. This method should be preferred to
 \ccVar=\ccc{tds1} or \ccVar(\ccc{tds1}) when \ccc{tds1} is deleted after
 that.}
 
-\ccMethod{Vertex* copy_tds(const TriangulationDataStructure_3 & tds1, Vertex* v = NULL);}
+\ccMethod{Vertex_handle
+copy_tds(const TriangulationDataStructure_3 & tds1, Vertex_handle v = NULL);}
 {\ccc{tds1} is copied into \ccVar. If $v\, !\!= NULL$, the vertex of \ccVar\ 
 corresponding to \ccc{v} is returned, otherwise \ccc{NULL} is returned.
 \ccPrecond{The optional argument \ccc{v} is a vertex of \ccc{tds1}.}}
@@ -178,15 +179,15 @@ counted.}
 
 \ccHeading{Queries}
 
-\ccMethod{bool is_vertex(Vertex* v) const;}
+\ccMethod{bool is_vertex(Vertex_handle v) const;}
 {Tests whether \ccc{v} is a vertex of \ccVar.}
 
-\ccMethod{bool is_edge(Cell* c, int i, int j) const;}
+\ccMethod{bool is_edge(Cell_handle c, int i, int j) const;}
 {Tests whether \ccc{(c,i,j)} is an edge of \ccVar. Answers \ccc{false} when
 \ccc{dimension()} $<1$ .}
 \ccGlue
-\ccMethod{bool is_edge(Vertex* u, Vertex* v, 
-			Cell* & c, int & i, int & j) const;}
+\ccMethod{bool is_edge(Vertex_handle u, Vertex_handle v, 
+			Cell_handle & c, int & i, int & j) const;}
 {Tests whether \ccc{(u,v)} is an edge of \ccVar. If the edge is found,
 it computes a cell \ccc{c} having this edge and the indices \ccc{i}
 and \ccc{j} of the vertices \ccc{u} and \ccc{v}, in this order.}
@@ -194,22 +195,22 @@ and \ccc{j} of the vertices \ccc{u} and \ccc{v}, in this order.}
 \ccMethod{bool is_edge(Vertex_handle u, Vertex_handle v) const;}
 {Tests whether \ccc{(u,v)} is an edge of \ccVar.}
 
-\ccMethod{ bool is_facet(Cell* c, int i) const;}
+\ccMethod{ bool is_facet(Cell_handle c, int i) const;}
 {Tests whether \ccc{(c,i)} is a facet of \ccVar. Answers \ccc{false} when
 \ccc{dimension()} $<2$ .}
 \ccGlue
-\ccMethod{bool is_facet(Vertex* u, Vertex* v, Vertex* w, 
-			Cell* & c, int & i, int & j, int & k) const;}
+\ccMethod{bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w, 
+			Cell_handle & c, int & i, int & j, int & k) const;}
 {Tests whether \ccc{(u,v,w)} is a facet of \ccVar. If the facet is found,
 it computes a cell \ccc{c} having this facet and the indices \ccc{i},
 \ccc{j} and \ccc{k} of the vertices \ccc{u}, \ccc{v} and \ccc{w}, in
 this order.} 
 
-\ccMethod{bool is_cell(Cell* c) const;}
+\ccMethod{bool is_cell(Cell_handle c) const;}
 {Tests whether \ccc{c} is a cell of \ccVar. Answers \ccc{false} when
 \ccc{dimension()} $<3$ .}
-\ccMethod{bool is_cell(Vertex* u, Vertex* v, Vertex* w, Vertex* t,
-			Cell* & c, int & i, int & j, int & k, int & l) const;}
+\ccMethod{bool is_cell(Vertex_handle u, Vertex_handle v, Vertex_handle w, Vertex_handle t,
+			Cell_handle & c, int & i, int & j, int & k, int & l) const;}
 {Tests whether \ccc{(u,v,w,t)} is a cell of \ccVar. If the cell
 \ccc{c} is found, it computes the indices \ccc{i}, \ccc{j}, \ccc{k}
 and \ccc{l} of the vertices \ccc{u}, \ccc{v}, \ccc{w} and \ccc{t} in
@@ -218,19 +219,19 @@ and \ccc{l} of the vertices \ccc{u}, \ccc{v}, \ccc{w} and \ccc{t} in
 There is a method \ccc{has_vertex} in the cell class. The analogous
 methods for facets are defined here.
 
-\ccMethod{bool has_vertex(const Facet & f, Vertex* v, int & j) const;}
+\ccMethod{bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;}
 {If \ccc{v} is a vertex of \ccc{f}, then \ccc{j} is the index of
 \ccc{v} in the cell \ccc{f.first}, and the method returns \ccc{true}.
 \ccPrecond{\ccVar.dimension()==3}}
 \ccGlue
-\ccMethod{bool has_vertex(Cell* c, int i, Vertex* v, int & j) const;}
+\ccMethod{bool has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const;}
 {Same for facet \ccc{(c,i)}. Computes the index \ccc{j} of \ccc{v} in
 \ccc{c}.}
 \ccGlue
-\ccMethod{bool has_vertex(const Facet & f, Vertex* v) const;}
+\ccMethod{bool has_vertex(const Facet & f, Vertex_handle v) const;}
 {}
 \ccGlue
-\ccMethod{bool has_vertex(Cell* c, int i, Vertex* v) const;}
+\ccMethod{bool has_vertex(Cell_handle c, int i, Vertex_handle v) const;}
 {Same as the first two methods, but these two methods do not return the
 index of the vertex.}
 
@@ -240,10 +241,10 @@ vertices.
 \ccMethod{bool are_equal(const Facet & f, const Facet & g) const;}
 {}
 \ccGlue
-\ccMethod{bool are_equal(Cell* c, int i, Cell* n, int j) const;}
+\ccMethod{bool are_equal(Cell_handle c, int i, Cell_handle n, int j) const;}
 {}
 \ccGlue
-\ccMethod{bool are_equal(const Facet & f, Cell* n, int j) const;}
+\ccMethod{bool are_equal(const Facet & f, Cell_handle n, int j) const;}
 {For these three methods: \ccPrecond{\ccVar.dimension()==3}.}
 
 \ccHeading{Flips}
@@ -282,28 +283,28 @@ combinatorial triangulation.
 
 \ccMethod{bool flip(Edge e);}
 \ccGlue
-\ccMethod{bool flip(Cell* c, int i, int j);}
+\ccMethod{bool flip(Cell_handle c, int i, int j);}
 {Before flipping, these methods check that edge \ccc{e=(c,i,j)} is
 flippable (which is quite expensive). They return \ccc{false} or
 \ccc{true} according to this test.}
 
 \ccMethod{void flip_flippable(Edge e);}
 \ccGlue
-\ccMethod{void flip_flippable(Cell* c, int i, int j);}
+\ccMethod{void flip_flippable(Cell_handle c, int i, int j);}
 {Should be preferred to the previous methods when the edge is
 known to be flippable.
 \ccPrecond{The edge is flippable.}}
 
 \ccMethod{bool flip(Facet f);}
 \ccGlue
-\ccMethod{bool flip(Cell* c, int i);}
+\ccMethod{bool flip(Cell_handle c, int i);}
 {Before flipping, these methods check that facet \ccc{f=(c,i)} is
 flippable (which is quite expensive). They return \ccc{false} or
 \ccc{true} according to this test.} 
 
 \ccMethod{void flip_flippable(Facet f);}
 \ccGlue
-\ccMethod{void flip_flippable(Cell* c, int i);}
+\ccMethod{void flip_flippable(Cell_handle c, int i);}
 {Should be preferred to the previous methods when the facet is
 known to be flippable.
 \ccPrecond{The facet is flippable.}}
@@ -313,7 +314,7 @@ known to be flippable.
 The following modifier member functions guarantee
 the combinatorial validity of the resulting triangulation.
 
-\ccMethod{Vertex * insert_in_cell(Vertex * v, Cell* c);} 
+\ccMethod{Vertex_handle insert_in_cell(Vertex_handle v, Cell_handle c);} 
 {Inserts vertex \ccc{v} in cell \ccc{c}. Cell \ccc{c} is split into four
 new cells, each of these cells being formed with \ccc{v} and a facet
 of \ccc{c}.
@@ -321,7 +322,7 @@ The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new
 vertex if \ccc{v} was \ccc{NULL}.
 \ccPrecond{\ccVar.dimension() $=3$ and \ccc{c} is a cell of \ccVar.}}
 
-\ccMethod{Vertex * insert_in_facet(Vertex * v, const Facet & f);} 
+\ccMethod{Vertex_handle insert_in_facet(Vertex_handle v, const Facet & f);} 
 {Inserts vertex \ccc{v} in facet \ccc{f}. In dimension 3, the two
 incident cells are split into 3 new cells; in dimension 2, the facet is
 split into 3 facets.
@@ -330,7 +331,7 @@ vertex if \ccc{v} was \ccc{NULL}.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and \ccc{f} is a
 facet of \ccVar.}} 
 
-\ccMethod{Vertex * insert_in_facet(Vertex * v, Cell* c, int i);} 
+\ccMethod{Vertex_handle insert_in_facet(Vertex_handle v, Cell_handle c, int i);} 
 {Inserts \ccc{v} in facet \ccc{i} of \ccc{c}.
 The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
 vertex if \ccc{v} was \ccc{NULL}.
@@ -338,7 +339,7 @@ vertex if \ccc{v} was \ccc{NULL}.
 in dimension~3, $i=3$ in dimension~2 and \ccc{(c,i)} is a facet of
 \ccVar.}} 
 
-\ccMethod{Vertex * insert_in_edge(Vertex * v, Edge e);} 
+\ccMethod{Vertex_handle insert_in_edge(Vertex_handle v, Edge e);} 
 {Inserts vertex \ccc{v} in edge \ccc{e}. In dimension 3, all the
 incident cells are split into 2 new cells; in dimension 2, the 2
 incident facets are split into 2 new facets; in dimension 1, the edge is 
@@ -348,7 +349,7 @@ vertex if \ccc{v} was \ccc{NULL}.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$ and \ccc{e} is an edge of
 \ccVar.}} 
 
-\ccMethod{Vertex * insert_in_edge(Vertex * v, Cell* c, int i, int j);} 
+\ccMethod{Vertex_handle insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j);} 
 {Inserts \ccc{v} in edge $(i,j)$ of \ccc{c}.
 The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
 vertex if \ccc{v} was \ccc{NULL}.
@@ -356,9 +357,9 @@ vertex if \ccc{v} was \ccc{NULL}.
 \{0,1,2,3\}$ in dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j
 \in \{0,1\}$ in dimension~1 and \ccc{(c,i,j)} is an edge of \ccVar.}}
 
-\ccMethod{Vertex * insert_increase_dimension(
-			Vertex * v, 
-			Vertex* star = NULL, 
+\ccMethod{Vertex_handle insert_increase_dimension(
+			Vertex_handle v, 
+			Vertex_handle star = NULL, 
 			bool reorient = false);}
 {Transforms a triangulation of the sphere $S^d$ of $\R^{d+1}$ into the
 triangulation of the sphere $S^{d+1}$ of $\R^{d+2}$ by adding vertex \ccc{v}:  
@@ -397,7 +398,7 @@ alt="insert_increase_dimension} (1-dimensional case)">
 \end{ccHtmlOnly}
 \end{figure} 
 
-\ccMethod{void remove_degree_dplus1(Vertex* v, Cell *f = NULL);}
+\ccMethod{void remove_degree_dplus1(Vertex_handle v, Cell_handle f = NULL);}
 {Removes \ccc{v}. The incident faces of maximal dimension incident to
 \ccc{v} are replaced by a single face of the same dimension. This
 operation is exactly reciprocal to \ccVar.\ccc{insert_in_cell(v)}.
@@ -414,29 +415,29 @@ data structure constructed by the default constructor.}
 The following modifiers can affect the validity of the triangulation
 data structure.
 
-\ccMethod{Vertex * create_vertex();}
+\ccMethod{Vertex_handle create_vertex();}
 {Creates a vertex and adds it to the triangulation data structure.}
 
-\ccMethod{Cell * create_cell();}
+\ccMethod{Cell_handle create_cell();}
 {Creates a cell and adds it to the triangulation data structure. Its 
 vertices and neighbors are initialized to \ccc{NULL}.
 The setting functions of the cell can be used later to modify them.}
 
-\ccMethod{Cell * create_cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);}
+\ccMethod{Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3);}
 {Creates a cell and adds it into the triangulation data
-structure. Initializes the vertices of the cell, its neighbor pointers 
+structure. Initializes the vertices of the cell, its neighbor handles
 being initialized with \ccc{NULL}.}
 
-\ccMethod{Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
-		     Cell* n0, Cell* n1, Cell* n2, Cell* n3);}
+\ccMethod{Cell_handle create_cell( Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
+		     Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3);}
 {Creates a cell, initializes its vertices and neighbors, and adds it
 into the triangulation data structure.}
 
-\ccMethod{void delete_vertex( Vertex* v );}
+\ccMethod{void delete_vertex( Vertex_handle v );}
 {Removes the vertex from the triangulation data structure.
 \ccPrecond{The vertex is a vertex of \ccVar.}}
 
-\ccMethod{void delete_cell( Cell* c );}
+\ccMethod{void delete_cell( Cell_handle c );}
 {Removes the cell from the triangulation data structure.
 \ccPrecond{The cell is a cell of \ccVar.}}
 
@@ -474,15 +475,15 @@ into the triangulation data structure.}
 {Starts at an arbitrary cell incident to \ccc{e}.
 \ccPrecond{\ccVar.\ccc{dimension()}~$=3$}}
 \ccGlue
-\ccMethod{Cell_circulator incident_cells(Cell* c, int i, int j) const;}
+\ccMethod{Cell_circulator incident_cells(Cell_handle c, int i, int j) const;}
 {As above for edge \ccc{(i,j)} of \ccc{c}.}
 \ccGlue
-\ccMethod{Cell_circulator incident_cells(const Edge & e, Cell* start) const;}
+\ccMethod{Cell_circulator incident_cells(const Edge & e, Cell_handle start) const;}
 {Starts at cell \ccc{start}.
 \ccPrecond{\ccVar.\ccc{dimension()}~$=3$ and \ccc{start} is incident to
 \ccc{e}.}}
 \ccGlue
-\ccMethod{Cell_circulator incident_cells(Cell* c, int i, int j, Cell* start)
+\ccMethod{Cell_circulator incident_cells(Cell_handle c, int i, int j, Cell_handle start)
 const;}
 {As above for edge \ccc{(i,j)} of \ccc{c}.}
 
@@ -493,22 +494,22 @@ facets sharing an edge in dimension~2.
 {Starts at an arbitrary facet incident to \ccc{e}.
 \ccPrecond{\ccVar.\ccc{dimension()}~$=3$}} 
 \ccGlue
-\ccMethod{Facet_circulator incident_facets(Cell* c, int i, int j) const;}
+\ccMethod{Facet_circulator incident_facets(Cell_handle c, int i, int j) const;}
 {As above for edge \ccc{(i,j)} of \ccc{c}.} 
 \ccGlue
 \ccMethod{Facet_circulator incident_facets(Edge e, Facet start) const;}
 {Starts at facet \ccc{start}.
 \ccPrecond{\ccc{start} is incident to \ccc{e}.}}
 \ccGlue
-\ccMethod{Facet_circulator incident_facets(Edge e, Cell* start, int f) const;}
+\ccMethod{Facet_circulator incident_facets(Edge e, Cell_handle start, int f) const;}
 {Starts at facet of index \ccc{f} in \ccc{start}.}
 \ccGlue
-\ccMethod{Facet_circulator incident_facets(Cell* c, int i, int j,
+\ccMethod{Facet_circulator incident_facets(Cell_handle c, int i, int j,
 Facet start) const;} 
 {As above for edge \ccc{(i,j)} of \ccc{c}.} 
 \ccGlue
-\ccMethod{Facet_circulator incident_facets(Cell* c, int i, int j,
-Cell* start, int f) const;}
+\ccMethod{Facet_circulator incident_facets(Cell_handle c, int i, int j,
+Cell_handle start, int f) const;}
 {As above for edge \ccc{(i,j)} of \ccc{c} and facet \ccc{(start,f)}.} 
 
 \ccHeading{Traversal of the incident cells and the

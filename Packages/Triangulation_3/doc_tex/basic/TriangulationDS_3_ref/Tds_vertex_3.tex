@@ -49,33 +49,17 @@ triangulation data structure.
 %{Introduces a vertex \ccVar. 
 %The pointer to the incident cell is initialized with \ccc{NULL}.}
 
-%\ccConstructor{Vertex(const Point & p);}
-%{Introduces a vertex \ccVar. Initializes its point with \ccc{p}.
-%The pointer to the incident cell is initialized with
-%\ccc{NULL}. {\textit{Optional for the triangulation data structure alone.}}}
-
-%\ccConstructor{Vertex(const Point & p, Cell* c);}
-%{Introduces a vertex \ccVar, and initializes the point with \ccc{p}
-%and sets the pointer to the incident cell to \ccc{c}. {\textit{Optional for the
-%triangulation data structure alone.}}}
-
-%\ccConstructor{Vertex(Cell* c);}
-%{Introduces a vertex \ccVar, and sets the pointer to the incident cell
-%to \ccc{c}.}
-
-%\ccConstructor{Vertex();}{default constructor.}
-
 \ccOperations
-\ccThree{Vertex*}{v.set_point()}{}
+\ccThree{Vertex_handle}{v.set_point(Vertex_handle v)}{}
 
 \ccAccessFunctions
 
-\ccMethod{Cell* cell() const;}
+\ccMethod{Cell_handle cell() const;}
 {Returns a cell of the triangulation having \ccVar\ as vertex.}
 
 \ccHeading{Setting}
 
-\ccMethod{void set_cell(Cell* c);}
+\ccMethod{void set_cell(Cell_handle c);}
 {Sets the incident cell to \ccc{c}.}
 
 \ccMethod{void set_point(const Point & p);}
@@ -99,10 +83,6 @@ a precise indication on the kind of invalidity encountered.}
 \ccSeeAlso
 
 \ccc{TriangulationDataStructure_3::Cell}.
-
-%% \ccExample
-
-%% \ccIncludeExampleCode{examples/Triangulation3/Tds_vertex_3_prog.C}
 
 \end{ccRefConcept}
 
