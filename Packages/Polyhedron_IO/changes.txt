@@ -1,5 +1,7 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+3.19 (7 October 2003) [af]
+- Switched to Filtered_kernel<Simple_cartesian<double> > in examples/Polyhedron_IO/terr_trian.C
 
 3.18 (22 September 2003)
 - new headers
