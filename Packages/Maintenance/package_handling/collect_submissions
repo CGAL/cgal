@@ -3,23 +3,20 @@
 use strict;
 
 #--------------------------------------------------------------#
-# This script scans through the mail box $::MAILBOX, using procmail.
-# If a message contains a line with the format
-#
-# package: <URL>
-#
-# this package will be automatically downloaded, and the sender of
-# the message will be notified.
+# This script scans through the mail box $::MAIL_IN, using formail.
+# It handles requests automatically.
+# This script deals with reading the mail box and dispatching the separate
+# mails to the program that treats one mail.
+# It takes care that there is only one program doing so, by means of locking.
 #--------------------------------------------------------------#
 
 # the mail boxes
 
 $::LOCKFILE='/projects/CGAL/submissions/autohandle/data/collect_submission.lock';
 $::MAIL_IN='/users/geert/PUBLIC/CGAL-submit/incoming-mail';
-#$::MAIL_OUT='/users/geert/tmp/handled-mail';
+#$::MAIL_OUT='/users/geert/PUBLIC/CGAL-submit/handled-mail';
 $::MAIL_TMP='/users/geert/PUBLIC/CGAL-submit/temp-mail';
 $::SCRIPT='/projects/CGAL/submissions/autohandle/scripts/collect_submissions';
-$::MAINTAINER='cgal-submit@cs.uu.nl';
 
 # program locations
 $::FORMAIL='/projects/CGAL/submissions/autohandle/scripts/formail';
@@ -36,87 +33,140 @@ $::max_tries_between_warning= int 21600/$::seconds_between_invocations;
 
 $ENV{PATH}='/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin';
 
+# variable that is set when there is an attempt to kill this process.
 $::please_die=0;
+
+$::invoker = $ENV{USER};
+if ($::invoker =~ /^\s*([-\@\w]+)\s*$/) {
+    $::invoker = "$1\@cs.uu.nl";
+} else {
+    print STDERR <<"TOTHIER";
+The script $::SCRIPT did not start because
+the USER environment value has a strange value.
+TOTHIER
+    exit 1;
+}
+
 $::hostname = $ENV{HOST};
 if ($::hostname =~ /^\s*([-\@\w]+)\s*$/) {
     $::hostname = $1;
 } else {
-    open NOTICE, "|Mail -s \"Collect_submissions not started!\" $::MAINTAINER";
-    print NOTICE <<"TOTHIER";
+    print STDERR <<"TOTHIER";
 The script $::SCRIPT did not start because
 the HOST environment value has a strange value.
 TOTHIER
-    close NOTICE;
     exit 1;
 }
+
 
 sub termination_signal_handler {
     $::please_die=1;
 }
 
-$::tries = 1;
-$::first_time = 1;
-$SIG{INT} = \&termination_signal_handler;
-$SIG{TERM} = \&termination_signal_handler;
-while (! $::please_die) {
+sub initialisation()
+{
+#
+# Disable signals that kill this process.
+#
+
+    $SIG{INT} = \&termination_signal_handler;
+    $SIG{TERM} = \&termination_signal_handler;
+
+#
+# Try to acquire the lock.
+# Quit with a message if it fails.
+#
+
     if ( system("$::LOCKCMD", "-r", '10', "$::LOCKFILE") != 0) {
-	--$::tries;
-	if ($::tries < 0) {
-	    open NOTICE, "|Mail -s \"Collect_submissions locked!\" $::MAINTAINER";
-	    print NOTICE <<"TOTHIER";
+	open NOTICE, "|Mail -s \"collect_submissions notice\" $::invoker";
+	print NOTICE <<"TOTHIER";
 The script $::SCRIPT could not proceed because
 it could not acquire the needed lock on file $::LOCKFILE.
 TOTHIER
-	    close NOTICE;
-	    $::tries = $::max_tries_between_warning;
-	}
-    } else {
-	$::tries = $::max_tries_between_warning;
-	if ($::first_time) {
-	    my $logline = `tail -1 $::LOGFILE`;
-	    if ($logline =~ /started/) {
-		unlink $::LOCKFILE;
-		open NOTICE, "|Mail -s \"Collect_submissions busy!\" $::MAINTAINER";
-		print NOTICE <<"TOTHIER";
+	close NOTICE;
+	exit 1;
+    }
+#
+# Now that you have the lock, check to see if there is another process
+# executing this program. If so, quit.
+#
+    my $logline = `tail -1 $::LOGFILE`;
+    if ($logline !~ /stopped/) {
+	unlink $::LOCKFILE;
+	open NOTICE, "|Mail -s \"collect_submissions notice\" $::invoker";
+	print NOTICE <<"TOTHIER";
 The script $::SCRIPT did not proceed because
 there seems to be another process collecting the mail messages.
 The file $::LOGFILE says:
 
 $logline
 TOTHIER
-		close NOTICE;
-		exit 1;
-	    }
-	    open LOGFILE, ">>$::LOGFILE";
-	    print LOGFILE "$::hostname $$: started executing on ", `date`;
-	    close LOGFILE;
-	    $::first_time = 0;
-	}
-    
-	if ( -f $::MAIL_TMP ) {
-	    open NOTICE, "|Mail -s \"Mail box $::MAIL_TMP was not emptied!\" $::MAINTAINER";
-print NOTICE <<"TOTHIER";
-	The script $::SCRIPT has been stopped!
-TOTHIER
-	    close NOTICE;
-	    unlink $::LOCKFILE;
-	    $::please_die = 1;
-	} else {
-	    if ( -f $::MAIL_IN ) {
-		rename($::MAIL_IN, $::MAIL_TMP);
-		if (system("$::FORMAIL -ns $::treat_one_mail_program < $::MAIL_TMP")== 0 )
-		{
-		    unlink $::MAIL_TMP;
-		}
-	    }
-	}
-	unlink $::LOCKFILE;
+	close NOTICE;
+	exit 1;
     }
-    sleep $::seconds_between_invocations unless $::please_die;
+#
+# We can proceed. Record a message to the log file that this process
+# takes control of dealing with the mail box.
+#
+    open LOGFILE, ">>$::LOGFILE";
+    print LOGFILE "$::hostname $$: started executing on ", `date`;
+    close LOGFILE;
+
+    unlink $::LOCKFILE;
 }
 
-open LOGFILE, ">>$::LOGFILE";
-print LOGFILE "$::hostname $$: stopped executing at ", `date`;
-close LOGFILE;
-exit 1;
+sub main_loop()
+{
+    my $tries_to_go = $::max_tries_between_warning;
+    while (! $::please_die) {
+	if ( system("$::LOCKCMD", "-r", '10', "$::LOCKFILE") != 0) {
+	    --$tries_to_go;
+	    if ($tries_to_go < 0) {
+		open NOTICE,
+		    "|Mail -s \"collect_submissions notice\" $::invoker";
+		print NOTICE <<"TOTHIER";
+The script $::SCRIPT could not proceed because
+it could not acquire the needed lock on file $::LOCKFILE.
+TOTHIER
+		close NOTICE;
+		$tries_to_go = $::max_tries_between_warning;
+	    }
+	} else {
+	    $tries_to_go = $::max_tries_between_warning;
+	    if ( -f $::MAIL_TMP ) {
+		open NOTICE,
+		    "|Mail -s \"collect_submissions notice\" $::invoker";
+print NOTICE <<"TOTHIER";
+The script $::SCRIPT has been stopped,
+because the temporary mail box $::MAIL_TMP was not emptied.
+TOTHIER
+		close NOTICE;
+		unlink $::LOCKFILE;
+		$::please_die = 1;
+	    } else {
+		if ( -f $::MAIL_IN ) {
+		    rename($::MAIL_IN, $::MAIL_TMP);
+		    if (system("$::FORMAIL -ns $::treat_one_mail_program < $::MAIL_TMP")== 0 )
+		    {
+			unlink $::MAIL_TMP;
+		    }
+		}
+	    }
+	    unlink $::LOCKFILE;
+	}
+	sleep $::seconds_between_invocations unless $::please_die;
+    }
+}
+
+sub finalisation()
+{
+    open LOGFILE, ">>$::LOGFILE";
+    print LOGFILE "$::hostname $$: stopped executing at ", `date`;
+    close LOGFILE;
+}
+
+initialisation();
+main_loop();
+finalisation();
+exit 0;
 
