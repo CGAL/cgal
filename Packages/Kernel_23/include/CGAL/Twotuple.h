@@ -27,24 +27,6 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class T >
-class _Twotuple : public Rep
-{
-public:
-  T  e0;
-  T  e1;
-
-  _Twotuple()
-  {}
-
-  _Twotuple(const T & a0, const T &a1)
-  : e0(a0), e1(a1)
-  {}
-
-  ~_Twotuple()
-  {}
-};
-
-template < class T >
 class Twotuple
 {
 public:
