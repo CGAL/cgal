@@ -11,17 +11,17 @@
     \pspicture[](0.0,0.0)(11.0,9.0)
     \psset{unit=1cm}
     \rput{0}(.0,.0){
-      \psaxes[linewidth=1.2pt]{->}(1,1)(0,0)(11,9)
+      \psaxes[linewidth=0.5pt,arrowsize=3pt 4]{->}(1,1)(0,0)(11,9)
       \rput{0}(1.0,1.0){
-	\psline[linewidth=1.5pt](1,4)(5,7)
+	\psline[linewidth=1.0pt](1,4)(5,7)
 	\uput[120]{0}(3,5.5){\Large $c_0$}
-	\psline[linewidth=1.5pt](5,7)(9,4)
+	\psline[linewidth=1.0pt](5,7)(9,4)
 	\uput[30]{0}(7,5.5){\Large $c_1$}
-	\psline[linewidth=1.5pt](9,4)(5,1)
+	\psline[linewidth=1.0pt](9,4)(5,1)
 	\uput[-30]{0}(7,2.5){\Large $c_2$}
-	\psline[linewidth=1.5pt](5,1)(1,4)
+	\psline[linewidth=1.0pt](5,1)(1,4)
 	\uput[-120]{0}(3,2.5){\Large $c_3$}
-	\psline[linewidth=1.5pt](1,4)(9,4)
+	\psline[linewidth=1.0pt](1,4)(9,4)
 	\uput[90]{0}(5,4){\Large $c_4$}
 
 	\pscircle*[linecolor=blue](1,4){3pt}
@@ -37,6 +37,7 @@
 
 	\psline[linewidth=1pt,linestyle=dashed,arrowsize=3pt 4]{->}(4,3)(4,4)
       }
+      \psframe[linewidth=0.5pt,framearc=.1](-1,-1)(12,10)
     }
     \endpspicture
   \end{center}
