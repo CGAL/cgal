@@ -46,6 +46,11 @@ extern "C" {
 }
 #endif
 
+// See below for explanation.  This must be outside namespace CGAL.
+#ifdef _MSC_VER
+extern "C" { double CGAL_ms_sqrt(double); }
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 // Some useful constants
@@ -97,8 +102,7 @@ inline double IA_force_to_double(double x)
 #endif
 
 // std::sqrt(double) on VC++ and CygWin is buggy when not optimizing.
-#if defined _MSC_VER
-extern "C" { double CGAL_ms_sqrt(double); }
+#ifdef _MSC_VER
 #  define CGAL_BUG_SQRT(d) CGAL_ms_sqrt(d)
 #elif defined __CYGWIN__
 inline double IA_bug_sqrt(double d)
