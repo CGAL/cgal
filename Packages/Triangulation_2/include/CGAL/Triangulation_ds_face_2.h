@@ -119,16 +119,16 @@ public:
   }
     
   //Miscelleanous
-  inline int ccw(int i) const
-  {
-    return (i+1) % 3;
-  }
-    
-  inline int cw(int i) const
-  {
-    return (i+2) % 3;
-  }
-   
+//   inline int ccw(int i) const
+//   {
+//     return (i+1) % 3;
+//   }
+//     
+//   inline int cw(int i) const
+//   {
+//     return (i+2) % 3;
+//   }
+//    
 
   //Additionnal Operations
   void insert_in_face(Vertex*& v)
@@ -268,7 +268,7 @@ public:
             ll->set_neighbor(lli, this);
         } 
         set_neighbor(cw(i), ll);
-	if (vertex(ccw(i))->face() == left) vertex(ccw(i))->set_face(f);    
+	if (vertex(ccw(i))->face() == left) vertex(ccw(i))->set_face(this);    
         
     
         
@@ -278,7 +278,7 @@ public:
             rr->set_neighbor(rri, this);
         } 
         set_neighbor(ccw(i), rr);
-	if (vertex(cw(i))->face() == right) vertex(cw(i))->set_face(f);  
+	if (vertex(cw(i))->face() == right) vertex(cw(i))->set_face(this);  
         
 	set_vertex(i, q);
 	if (q->face() == right || q->face() == left) {
