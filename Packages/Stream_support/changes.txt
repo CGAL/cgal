@@ -1,5 +1,8 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
+2.12 (30 Jan 01)
+- Readded some of the old code.
+
 2.11 (23 Jan 01)
 - All compilers support member templates.
 - Don't specialize for efficiency when it's not useful.

@@ -29,6 +29,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#define CGAL__VERB(x) if (b) *o << x; return *this
+
 class Verbose_ostream {
     bool          b;
     std::ostream* o;
@@ -42,11 +44,13 @@ public:
 
     template < class T >
     Verbose_ostream& operator<<(const T& t)
-    {
-        if (b)
-	    *o << t;
-	return *this;
-    }
+    { CGAL__VERB(t); }
+
+    Verbose_ostream& operator<<( std::ostream& (*f)(std::ostream&))
+    { CGAL__VERB(f); }
+
+    Verbose_ostream& operator<<( std::ios& (*f)(std::ios&))
+    { CGAL__VERB(f); }
 
     Verbose_ostream& flush()
     {
