@@ -1,19 +1,34 @@
-TODO: to be written by pierre
-
-TODO: with the "backdoor" mechanism: modifier (example: qt) 
+% to be written by pierre
 
 The quad-triangle subdivision scheme was introduced by
-Levin~\cite{l-pg-03}, then Stam and Loop~\cite{sl-qts-02}. It applies
-to polygon meshes and basically features Loop subdivision on triangles
+Levin~\cite{l-pg-03}, then Stam and Loop~\cite{qts}. It applies to
+polygon meshes and basically features Loop subdivision on triangles
 and Catmull-Clark subdivision on polygons of the control mesh (see
 Fig.\ref{fig:quad-triangle}). After one iteration of subdivision the
-subdivided model is only composed of triangles and quads. A simple
-solution for implementing such a scheme is to use the
-\italic{incremental builder} concept featured by CGAL 
-Polyhedron (see Section~\ref{sec:builder}).
+subdivided model is only composed of triangles and quads.
 
 \begin{figure}
     \centering{\includegraphics[width=7.0cm]{figs/quad-triangle}}
     \caption{Quad-triangle subdivision scheme.}
     \label{fig:quad-triangle}
 \end{figure}
+
+One solution for implementing quad-triangle scheme is to use an
+auxiliary class that supports the incremental construction of
+polyhedral surfaces, the \italic{incremental builder}. The incremental
+construction starts with a list of all point coordinates and concludes
+with a list of all facet polygons given by a sequence of vertex
+indices.  Beside being of interest for constructing polyhedral
+surfaces from indexed file formats, the incremental builder can be
+used from any other data structures, namely from an input mesh.\\
+
+The vertex, face and halfedge class primitives of the Polyhedron are
+initially enriched with an integer tag. The incremental builder first
+iterates over all primitives of the input mesh and circulates around
+their incident primitives to deduce the positions of the new vertices
+from the geometry rules. The integer tags keep track of the index of
+the new vertices in the input mesh, allowing a straigtforward assembly
+of all indexed triangles, resp. quads as the Loop, resp. barycentric
+subdivision refinement rules are applied for each facet of the input
+model.
+

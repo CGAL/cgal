@@ -1,78 +1,65 @@
 3D polygon surface mesh data structures based on the concept of
 halfedges~\cite{k-ugpdd-99} have been very successful for the design
-of general algorithms on meshes. 
-Although making a preliminary version of a halfedge-based mesh data
-structure is as a fairly simple task and is often proposed as a
-programming exercise, the time has come where we should not write our
-own mesh data structure from scratch anymore. With the emerging of
-the generic programming in C++ community, a set of reusable library
-components for graphics modeling and geometry processing are demanded
-by researchers and developers. Extensible algorithm models based on
-a robust and efficient mesh data structure will certainly speed up
-the research as well as the development cycle, and benefit the 
-community of the graphics modeling and geometry processing.  
+of general algorithms on meshes.  Although making a preliminary
+version of a halfedge-based mesh data structure is as a fairly simple
+task and is often proposed as a programming exercise, the time has
+come where we should not write our own mesh data structure from
+scratch anymore. With the emerging of the generic programming in C++
+community, a set of reusable library components for graphics modeling
+and geometry processing are demanded by researchers and
+developers. Extensible algorithm models based on a robust and
+efficient mesh data structure will certainly speed up the research as
+well as the development cycle, and benefit the community of the
+graphics modeling and geometry processing.\\
 
-Generic programming, also called static polymorphism, 
-provides a soft-coupled framework to support  
-data structures and algorithms. It identifies 
-the abstract representations of data structures and algorithms
-and focuses on representing families of domain concept.
-With the template mechanism of C++, the standard template 
-library \cite{} (STL) represents the fundamental data 
-structures such as vectors, lists and trees by abstract
-them into containers and device the access interface as 
-the iterators that visits the entities of the container
-in a specific order. STL also provides a set of generic 
-algorithms that can be (conditionally) paired with a container.
-Different from the container, the abstractions 
-of these algorithms are not the \emph{entities types} 
-but the \emph{operation types}. 
-Examples are the entity sorting and searching where users
-supply the equality predicates to specialize the algorithms.
-STL (with its generic programming paradigm) 
-frees software engineers from rebuilding
-the fundamental data structures and let them focus on the design 
-of the algorithms.
+Generic programming, also called static polymorphism, provides a
+soft-coupled framework to support data structures and algorithms. It
+identifies the abstract representations of data structures and
+algorithms and focuses on representing families of domain concept.
+With the template mechanism of C++, the standard template library
+\cite{ms-stl-96} (STL) represents the fundamental data structures such
+as vectors, lists and trees by abstract them into containers and
+device the access interface as the iterators that visits the entities
+of the container in a specific order. STL also provides a set of
+generic algorithms that can be (conditionally) paired with a
+container.  Different from the container, the abstractions of these
+algorithms are not the \emph{entities types} but the \emph{operation
+types}.  Examples are the entity sorting and searching where users
+supply the equality predicates to specialize the algorithms.  STL
+(with its generic programming paradigm) frees software engineers from
+rebuilding the fundamental data structures and let them focus on the
+design of the algorithms.\\
 
-For the graphics modeling and geometry 
-processing, algorithms are generally implemented 
-on a specific designed data structure such as
-the quad-tree structure \cite{} or patched 
-mesh structure \cite{} for primal quadrisection 
-subdivisions. Graphics softwares usually hold a data structure
-for storage and rendering and other data structures for
-specific geometry algorithms. The translations between the
-data structures invoke problems such as multiple storages,
-numeric inconsistency or performance deficiency.
-Most of the algorithm-specific data structures are
-variations of a edge-based mesh data structure.
-These variations are specialized by replacing the
-entities types, which in geometry are the position,
-the normal or other attributes such as color or texture
-coordinates. Most of the geometry algorithms combine
-two steps: \\
-\indent --- topology operations such as incidence traversal 
-and refinement,\\
-\indent --- geometry operations such as position adjustment
-and normal generation.\\ 
-\noindent A soft-coupled framework for
-geometry processing can then be built
-as a combination of three software components:
-the data structure, the topology operations and the 
-geometry operations. With a flexible design based on
-the generic programming paradigm, researchers and developers
-can then focus on the key operations, i.e.\ geometry 
-operations, of their algorithms.
+For the graphics modeling and geometry processing, algorithms are
+generally implemented on a specific designed data structure such as
+the quad-tree structure \cite{} or patched mesh structure \cite{} for
+primal quadrisection subdivisions. Graphics softwares usually hold a
+data structure for storage and rendering and other data structures for
+specific geometry algorithms. The translations between the data
+structures invoke problems such as multiple storages, numeric
+inconsistency or performance deficiency.  Most of the
+algorithm-specific data structures are variations of a edge-based mesh
+data structure.  These variations are specialized by replacing the
+entities types, which in geometry are the position, the normal or
+other attributes such as color or texture coordinates. Most of the
+geometry algorithms combine two steps: \\
+\indent --- topology operations such as incidence traversal and refinement,\\
+\indent --- geometry operations such as position adjustment and normal generation.\\ 
+\noindent A soft-coupled framework for geometry processing can then be built
+as a combination of three software components: the data structure, the
+topology operations and the geometry operations. With a flexible
+design based on the generic programming paradigm, researchers and
+developers can then focus on the key operations, i.e.\ geometry
+operations, of their algorithms.\\
 
-In this paper, we establish this soft-coupled
-framework of the geometry data structure and the geometry
-algorithms. We choose the CGAL polyhedron mesh as the
-data structure. The CGAL (computation geometry algorithm library)
-polyhedron mesh provides the halfedge data structure and the
-polyhedron mesh (an encapsulation of the halfedge data structure) 
-that can be \emph{specialized} to represent 
-specific geometry meshes. There are several reasons we
-choose the CGAL mesh data structure:\\
+In this paper, we establish this soft-coupled framework of the
+geometry data structure and the geometry algorithms. We choose the
+CGAL polyhedron mesh as the data structure. The CGAL (computation
+geometry algorithm library) polyhedron mesh provides the halfedge data
+structure and the polyhedron mesh (an encapsulation of the halfedge
+data structure) that can be \emph{specialized} to represent specific
+geometry meshes. There are several reasons we choose the CGAL mesh
+data structure:\\
 \indent --- It is designed and implemented adopting the
 generic programming paradigm. It demonstrates the possibility
 and powers of a generic geometry data structure.\\
@@ -80,38 +67,35 @@ and powers of a generic geometry data structure.\\
 \indent --- A complete set of the geometry entities and predications 
 is provided within CGAL.\\
 \indent --- CGAL is standardized following the C++ STL and has emerged
-as the standard geometry library in graphics community.\\ 
+as the standard geometric computing library.\\
 \indent --- No reinventing the wheel. The generic programming
 (and the object-oriented design) focuses on providing the
-reusable components, so we start with reusing the data structure.
+reusable components, so we start with reusing the data structure.\\
 
 We also choose subdivisions as the demonstrated geometry algorithms.
-Subdivision algorithms \emph{recursively} \emph{refine} (subdivide) 
+Subdivision algorithms \emph{recursively} \emph{refine} (subdivide)
 the control polyhedron and \emph{modify} (smooth) the geometry
-according to the stencils of the source mesh. The 
-recursion implies the \emph{multi-pass}; the refinement
-contains \emph{connectivity operations}; and the modification
-is composed of the \emph{stencil geometry operations}.
-These three properties are commonly shared by most geometry processing
-algorithms. TODO: given examples.
-By designing a generic subdivision framework,
-other geometry algorithms can be easily adapted into
-the framework.
+according to the stencils of the source mesh. The recursion implies
+the \emph{multi-pass}; the refinement contains \emph{connectivity
+operations}; and the modification is composed of the \emph{stencil
+geometry operations}.  These three properties are common components of
+most geometry processing algorithms. TODO: given examples.  By
+designing a generic subdivision framework, other geometry algorithms
+can be easily adapted into the framework.\\
 
-The intended audience of this paper are researchers, 
-developers or students in the graphics community developing 
-algorithms around meshes. Experiences on the advance C++
-design (i.e.\ generic programming using templates) and
-knowledge of the halfedge data structure and related
-algorithms (in specific subdivisions) are prerequisites. 
-We review the generic design of the CGAL 
-polyhedron mesh in section \ref{sect:}. Two subdivisions are then
-demonstrated as non-generic implementations in section \ref{sect:}.
-These two examples also show the considerations of the
-design of the access interface supported by the CGAL polyhedron
-mesh. In section \ref{sect:}, we identify the abstractions of
-the subdivisions and propose a prototype of the generic
-algorithms. In the conclusion, we ....
+The intended audience of this paper are researchers, developers or
+students in the graphics community developing algorithms around
+meshes. Experiences on the advance C++ design (i.e.\ generic
+programming using templates) and knowledge of the halfedge data
+structure and related algorithms (in specific subdivisions) are
+prerequisites.  We review the generic design of the CGAL polyhedron
+mesh in section \ref{sect:}. Two subdivisions are then demonstrated as
+non-generic implementations in section \ref{sect:}.  These two
+examples also show the considerations of the design of the access
+interface supported by the CGAL polyhedron mesh. In section
+\ref{sect:}, we identify the abstractions of the subdivisions and
+propose a prototype of the generic algorithms. In the conclusion, we
+....
 
 
 %% Though, unlike the foundanmental data structures such as

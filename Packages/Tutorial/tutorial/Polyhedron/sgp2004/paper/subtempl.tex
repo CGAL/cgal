@@ -1,35 +1,32 @@
 TODO: to be written by andy
 
-TODO: dissect the subdivisions and point out the generic parts (refinement
-+ smooth = subdivision).
+TODO: dissect the subdivisions and point out the generic parts
+(refinement + smooth = subdivision).
 
-Any implementation of a subdivision contains two major
-components: \emph{refinement} and \emph{geometry rules}.
-The geometry rules are merged into the refinement component
-in the examples of $\sqrt{3}$ and Quad-Triangle subdivisions.
-Refinements are defined by the 
+Any implementation of a subdivision contains two major components:
+\emph{refinement} and \emph{geometry rules}.  The geometry rules are
+merged into the refinement component in the examples of $\sqrt{3}$ and
+Quad-Triangle subdivisions.  Refinements are defined by the
 \emph{uniform connectivity reconfiguration} of the source 
-to the target mesh. The geometry rules,
-guarantee certain surface properties, e.g the smoothness, are the
-mapping functions of the \emph{stencil} in the source to the
-\emph{vertices} in the range mesh. Any subdivision in practice can
-be defined as a proper combination of a refinement and the
-geometry rules. Based on the paradigm of the
-\emph{policy-based design} \cite{a-rotm-02}, the combination can be
-designed as a \emph{host function} for the refinement
-templated with the \emph{policy classes} for the geometry rules.
-These policies grant the modification on the attributes of the
-target vertex and the ability to collect the attributes of the
-stencil of the source polyhedron.
+to the target mesh. The geometry rules, guarantee certain surface
+properties, e.g the smoothness, are the mapping functions of the
+\emph{stencil} in the source to the \emph{vertices} in the 
+range mesh. Any subdivision in practice can be defined as a proper
+combination of a refinement and the geometry rules. Based on the
+paradigm of the \emph{policy-based design} \cite{a-rotm-02}, the
+combination can be designed as a \emph{host function} for the
+refinement templated with the \emph{policy classes} for the geometry
+rules.  These policies grant the modification on the attributes of the
+target vertex and the ability to collect the attributes of the stencil
+of the source polyhedron.
 
-TODO: the input polyhedron is generic, i.e.\ no assumption
-is made for any attributes associated with the polyhedron.
-The host function, i.e.\ the refinement, cannot use any
-flag to register the correspondence between the refinement.
-The policy functors should grant the access any attributes
-of any specialized polyhedron. The policy functors also
-need to be complete covering all cases, e.g.\ interior and
-boundary.
+TODO: the input polyhedron is generic, i.e.\ no assumption is made for
+any attributes associated with the polyhedron.  The host function,
+i.e.\ the refinement, cannot use any flag to register the
+correspondence between the refinement.  The policy functors should
+grant the access any attributes of any specialized polyhedron. The
+policy functors also need to be complete covering all cases, e.g.\
+interior and boundary.
 
 %% We use Catmull-Clark (CC) subdivision as our first example (see
 %% Figure~\ref{fig:cc}). CC subdivision can be defined as the combination
@@ -70,11 +67,21 @@ boundary.
 %% function for the regular facet, i.e. the quadrilateral facet, is
 %% listed in the following codes.
 
-TODO: the framework is naturally multipass-able. Geometry processing 
+TODO: the framework is naturally multipass-able. Geometry processing
 algorithms like ?? and ?? can be easily adapted into the framework.
+
+% some typ. geometry processing algorithms are
+%   compression
+%   denoising, smoothing, fairing
+%   sampling, meshing
+%   watermarking
+%   parameterization
+%   etc.
+
+% multi pass ones are smoothing, but there are not that many
 
 TODO: since the writing memory is not overlapped, multi-threaded
 supporting is easily done.
 
-TODO: trade-off between generic and efficient. 
+TODO: trade-off between generic and efficient.
  

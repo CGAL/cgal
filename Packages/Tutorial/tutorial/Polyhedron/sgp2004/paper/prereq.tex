@@ -1,30 +1,33 @@
 % C++ and generic programming
 \noindent \textbf{Design patterns and generic programming.}
+
 Before using CGAL, it is mandatory to be familiar with C++,
 \emph{design patterns} and the \emph{generic programming paradigm}. 
-Design patterns \cite{Gamma:1995:DP} describe successful
-and \emph{reusable} solutions to standard software problems.
-The generic programming paradigm \cite{Alexandrescu:2001:MCD}
-features the notion of C++ class templates and function 
-templates, which is at the corner stone of all features 
-provided by CGAL. Details of the design of the CGAL polyhedron
-data structure are given in next section.
+Design patterns \cite{Gamma:1995:DP} describe successful and
+\emph{reusable} solutions to standard software problems.  The generic
+programming paradigm \cite{Alexandrescu:2001:MCD} features the notion
+of C++ class templates and function templates, which is at the corner
+stone of all features provided by CGAL. Details of the design of the
+CGAL polyhedron data structure are given in next section.\\
 
-An example illustrating design patterns and the generic 
-programming is the Standard Template
-Library (STL)~\cite{ms-stl-96}. Generality and flexibility is achieved
-with a set of \italic{concepts}, where a concept is a well defined set
-of requirements. One of them is the \italic{iterator} concept, which
-allows both referring to an item and traversing a sequence of
-items. Those items are stored in a data structure called
-\italic{container} in STL. Another concept, so-called
+An example illustrating design patterns and the generic programming is
+the Standard Template Library (STL)~\cite{ms-stl-96}. Generality and
+flexibility is achieved with a set of \italic{concepts}, where a
+concept is a well defined set of requirements. One of them is the
+\italic{iterator} concept, which allows both referring to an item and
+traversing a sequence of items. Those items are stored in a data
+structure called \italic{container} in STL. Another concept, so-called
 \italic{circulator}, allows traversing some circular sequences. They
 share most of the requirements with iterators, except the lack of
 past-the-end position in the sequence. Since CGAL is strongly inspired
 from the generality of STL, it is important to become familiar with
 its concepts before starting using it.
 
-TODO:The difference between: class and object; concept and model; 
+
+% pierre: although important, I am afraid the following todo sections
+% are is going to deep for the intended community.
+
+TODO:The difference between: class and object; concept and model;
 trait and policy.
 
 TODO:Explain the relation of: container and algorithm; specialization;

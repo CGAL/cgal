@@ -1,33 +1,24 @@
 TODO: to be written by lutz (probably a short extracts from lutz's papers)
 
-The CGAL library is a joint effort between nine European
-institutes~\cite{fgkss-dccga-00}. The goal of CGAL is to make
-available to users in industry and academia some efficient solutions
-to basic geometric problems developed in the area of computational
-geometry in a C++ software library.
-
-A polyhedron consists of \emph{topology primitives}, 
-such as vertices and facets, and \emph{geometry attributes}, 
-such as point positions and normals. 
-In graphics modeling, rendering attributes, 
-such as colors and texture coordinates, or algorithmic 
-attributes are also part of a polyhedron mesh.
-\cgalpoly\ relies on the halfedge data 
-structure \cite{hds} to provide the connectivity of 
-topology primitives of the represented polyhedron mesh. 
-The connectivity describes the incidences between 
-primitives. \poly\ supports generic attributes 
-by the templated primitives in the concept of the polyhedron
-items.
+A polyhedron consists of \emph{topology primitives}, such as vertices
+and facets, and \emph{geometry attributes}, such as point positions
+and normals.  In graphics modeling, rendering attributes, such as
+colors and texture coordinates, or algorithmic attributes are also
+part of a polyhedron mesh. \cgalpoly\ relies on the halfedge data
+structure \cite{hds} to provide the connectivity of topology
+primitives of the represented polyhedron mesh.  The connectivity
+describes the incidences between primitives. \poly\ supports generic
+attributes by the templated primitives in the concept of the
+polyhedron items.
 
 % ------------------------------------------------------------------------
+
 A \cgalpoly\ represents polyhedron surfaces in three dimensions
-consisting of vertices, edges, facets and incidence relations among them.
-The \emph{incidence relation} (or connectivity) of the \poly\ is
-internally represented by the \cgalhds . 
-The \poly\ only maintains the combinatorial integrity of the 
-polyhedral surface. The geometry primitives are the abstract 
-entities. A \poly\ is specialized by the
+consisting of vertices, edges, facets and incidence relations among
+them.  The \emph{incidence relation} (or connectivity) of the \poly\
+is internally represented by the \cgalhds.  The \poly\ only maintains
+the combinatorial integrity of the polyhedral surface. The geometry
+primitives are the abstract entities. A \poly\ is specialized by the
 template parameters of the kernel and primitives.
 
 TODO: design of the polyhedron (polyhedron(hds(kernel)))
@@ -35,41 +26,43 @@ TODO: design of the polyhedron (polyhedron(hds(kernel)))
 TODO: a specialized polyhedron demos the power and flexibility.
 
 % ------------------------------------------------------------------------
-TODO:modifications on a polyhedron that maintain the topology invariance:
-known invariant ops (euler ops) and postcondition of the modifier. Unlike
-fundamental data structures in STL, polyhedron need to support two
-set of the entity operations: connectivity operations and geometry 
-(including general attributes) operations. Similar to 
-entities in a vector or list, the geometry access is
-abstracted into the concepts of the iterator and circulator.
-But connectivity modifications need special object functions
-to ensure the topology integrity.
+
+TODO:modifications on a polyhedron that maintain the topology
+invariance: known invariant ops (euler ops) and postcondition of the
+modifier. Unlike fundamental data structures in STL, polyhedron needs
+to support two sets of the entity operations: connectivity operations
+and geometry (including general attributes) operations. Similar to
+entities in a vector or list, the geometry access is abstracted into
+the concepts of the iterator and circulator.  But connectivity
+modifications need special object functions to ensure the topology
+integrity.
 
 TODO: what kind of ops are needed to support different geometry algorithms?
 
 \cgalpoly\ provides a set of operators for combinatorial 
-modifications that maintain the combinatorial integrity
-of the polyhedron mesh. Most of them are categorized as Euler operations
-that assure the Euler-Poincar\'e equality.
-These atomic operators can split/join of two facets, two vertices 
-or two loops. They can also create/erase a center vertex or a facet.
+modifications that maintain the combinatorial integrity of the
+polyhedron mesh. Most of them are categorized as Euler operations that
+assure the Euler-Poincar\'e equality.  These atomic operators can
+split/join of two facets, two vertices or two loops. They can also
+create/erase a center vertex or a facet.
 
-In addition to these modification operators, 
-the \polybuilder\ warrants the direct accesses and modifications
-of the internal representation, i.e. the halfedge data structure, 
-of the \poly\ in a controlled environment. In CGAL, the 
-controlled environment is defined by a callback mechanism that
-manage the interaction between the polyhedron and a modifier. 
-A modifier is a function object allowed accesses 
-of the internal representation when it is delegated by the 
-polyhedron. A \polybuilder\ is then created to build  
-the connectivity of the halfedge data structure.
-The combinatorial integrity of the polyhedron is verified
-after the return of the modifier. The \polybuilder\ and the
-modifier are particularly useful for implementing file reader for 
-common file formats.
+In addition to these modification operators, the \polybuilder\
+warrants the direct accesses and modifications of the internal
+representation, i.e. the halfedge data structure, of the \poly\ in a
+controlled environment. In CGAL, the controlled environment is defined
+by a callback mechanism that manages the interaction between the
+polyhedron and a modifier.  A modifier is a function object allowed
+accesses of the internal representation when it is delegated by the
+polyhedron. A \polybuilder\ is then created to build the connectivity
+of the halfedge data structure.  The combinatorial integrity of the
+polyhedron is verified after the return of the modifier. The
+\polybuilder\ and the modifier are particularly useful for
+implementing file reader for common file formats.
 
 TODO: why support modifier in addition to euler ops? euler ops are
-more generic and \emph{standard} than modifier. If the connectivity operation
-is fully implemented with only these \emph{standard} ops,
+more generic and \emph{standard} than modifier. If the connectivity
+operation is fully implemented with only these \emph{standard} ops,
 the data structure can be general from the connectivity operation.
+
+pierre: modifier can also authorize transient states where the mesh is
+not manifold, the integrity being check once the builder is done.

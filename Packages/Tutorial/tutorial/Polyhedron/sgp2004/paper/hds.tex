@@ -1,26 +1,23 @@
-A halfedge data structure \cite{hds} 
-is an edge-centered data structure
-capable of maintaining incidence informations of vertices, edges and
-faces, for planar maps, polyhedron, or other orientable,
+A halfedge data structure \cite{hds} is an edge-centered data
+structure capable of maintaining incidence informations of vertices,
+edges and faces, for planar maps, polyhedron, or other orientable,
 two-dimensional surfaces embedded in arbitrary dimension. Each edge is
-decomposed into two halfedges with opposite orientations. 
-Two types of halfedge can be chosen for the data structure:
-facet-edge pair or vertex-edge pair. 
-One incident face and one incident vertex 
-are stored in each halfedge. For each
-face and each vertex, one incident halfedge is stored (see
-Fig.\ref{fig:halfedge}). The halfedge is designated as the
-connectivity primitive. Connectivity manipulations are based
-on the reconfiguration and the mesh traversal is equivalent
-to the adjacency walkng of the halfedges. 
-Halfedge data structures have been very successful for the design of
-algorithms on meshes for several reasons:
+decomposed into two halfedges with opposite orientations.  Two types
+of halfedge can be chosen for the data structure: facet-edge pair or
+vertex-edge pair.  One incident face and one incident vertex are
+stored in each halfedge. For each face and each vertex, one incident
+halfedge is stored (see Fig.\ref{fig:halfedge}). The halfedge is
+designated as the connectivity primitive. Connectivity manipulations
+are based on the reconfiguration and the mesh traversal is equivalent
+to the adjacency walking of the halfedges. Halfedge data structures
+have been very successful for the design of algorithms on meshes for
+several reasons:
 \begin{itemize}
 \item halfedges contain a constant number of adjacencies. 
-\item halfedges encode the mesh orientation
+\item halfedges encode the mesh orientation.
 \item navigation around vertices or facets is easy.
 \item corner attributes, such as crease normals, is allowed 
-to be associated with halfedges.
+      to be associated with halfedges.
 \end{itemize}
 
 \begin{figure}[htb]
@@ -29,17 +26,15 @@ to be associated with halfedges.
     \label{fig:halfedge}
 \end{figure}
 
-Halfedge data structure is a combinatorial data structure. 
-The geometric interpretation is instantiated with a defined
-kernel. A geometry kernel defines the dimensional primitives
-such as points and vectors and the geometry metrics such
-as distances and angles. A polyhedron is a constrained 
-combinatorial structure that can only represent 
-a 2-manifold. A 2-manifold is a surface where every 
-point is embedded by a disk (interior points) or 
-a half disk (boundary points). Polyhedrons are usually
-interpreted as the shell of a solid bounded by plane
-polygons in the 3D Euclidean space.
+Halfedge data structure is a combinatorial data structure.  The
+geometric interpretation is instantiated with a defined kernel. A
+geometry kernel defines the dimensional primitives such as points and
+vectors and the geometry metrics such as distances and angles. A
+polyhedron is a constrained combinatorial structure that can only
+represent a 2-manifold. A 2-manifold is a surface where every point is
+embedded by a disk (interior points) or a half disk (boundary
+points). Polyhedrons are usually interpreted as the shell of a solid
+bounded by plane polygons in the 3D Euclidean space.
 
 %% In the \poly, the \hds\ is interfaced and indirectly manipulated
 %% by the \poly. Since \hds\ is the internal representation of the
