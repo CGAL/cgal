@@ -21,7 +21,7 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
-//                 Sylvain Pion <Sylvain.Pion@mpi-sb.mpg.de>
+//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 
 
 // This file is obsolete and exists only for backwards-compatibility.
@@ -52,4 +52,3 @@ OutputIterator copy_n( InputIterator first,
 
 CGAL_END_NAMESPACE
 #endif // CGAL_COPY_N_H //
-// EOF //

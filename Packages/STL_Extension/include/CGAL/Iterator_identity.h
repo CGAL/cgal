@@ -21,10 +21,11 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
-//                 Sylvain Pion <Sylvain.Pion@mpi-sb.mpg.de>
+//                 Sylvain Pion <Sylvain.Pion@Sophia.inria.fr>
 
 #ifndef CGAL_ITERATOR_IDENTITY_H
 #define CGAL_ITERATOR_IDENTITY_H 1
+
 #include <CGAL/circulator.h>
 
 CGAL_BEGIN_NAMESPACE
