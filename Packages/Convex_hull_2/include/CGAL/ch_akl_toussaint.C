@@ -126,7 +126,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                                        res, ch_traits);
   }
 
-  first = save_first; 
+  CGAL_ch_postcondition_code( first = save_first; )
   CGAL_ch_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \
                                      res.output_so_far_end(), \
