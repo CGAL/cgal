@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
   std::ifstream in(argv[1]);
   Nef_polyhedron N;
   in >> N;
-  CGAL_NEF_SETDTHREAD(43);
+  CGAL_NEF_SETDTHREAD(43*47);
   std::cerr << N;
   SNC_decorator D(*const_cast<SNC_structure*>(N.sncp()));
 

@@ -6,6 +6,10 @@
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_io_parser.h>
+#include <CGAL/Nef_polyhedron_S2.h>
+
+#include <CGAL/IO/Qt_widget_Nef_S2.h>
+#include <qapplication.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -498,6 +502,22 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       SM_io_parser<Base>::dump(*this,std::cerr);
     }
 
+    void visualize() {
+      int argc=1;
+      char* argv[argc];
+      argv[0] = "Gaussian Map Viewer";
+
+      typedef typename CGAL::Nef_polyhedron_S2<K,CGAL::SM_items,Mark> Nef_polyhedron_S2;
+      typedef typename Nef_polyhedron_S2::Const_decorator SM_const_decorator;
+      SM_const_decorator SMCD(sphere_map());
+
+      QApplication a(argc, argv);
+      CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>* w = 
+	new CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>(SMCD);
+      a.setMainWidget(w);
+      w->show();
+      a.exec();     
+    }
     //    ~Gausian_map() { delete (Base*) this; }
 };
 

@@ -188,7 +188,8 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 	I.does_intersect_internally(r, f, ip);
 
 	Vertex_handle v = opposite[i] = C.create_from_facet(f,ip);
-	
+	pl->add_vertex(v);
+
 	SM_walls SMW_src(&*origin[i]);
 	SM_walls SMW_tgt(&*opposite[i]);
 	
@@ -214,6 +215,8 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 				    ip);
 
 	Vertex_handle v = opposite[i] = C.create_from_edge(e,ip);
+	pl->add_vertex(v);
+
 	SVertex_iterator svi = v->svertices_begin();
 	SVertex_handle svf = svi;
 	SVertex_handle svb = ++svi;
@@ -262,12 +265,13 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 	lateral_sv_tgt[i] = SMW_tgt.add_lateral_svertex(sphere_ray);
 	
 	SMW_src.add_sedge_between(ray_sv_src, lateral_svertex);
-	SMW_tgt.add_sedge_between(ray_sv_tgt, lateral_sv_tgt[i]);
+	SMW_tgt.add_sedge_between(ray_sv_tgt, lateral_sv_tgt[i], sphere_ray.sphere_circle());
 	
       } else {
 	std::cerr << "Found nothing " << std::endl;
 	opposite[i] = origin[i];
       }
+      std::cerr << "lateral_sv_tgt[" << i << "]=" << lateral_sv_tgt[i]->point() << std::endl;
     }
 
     for(int i=0; i<2; ++i) {
@@ -284,19 +288,75 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       SMW.add_sedge_between(src, lateral_sv_tgt[i]);    
     }
 
-    Sphere_circle c(Sphere_point(CGAL::ORIGIN - dir), lateral_sv_tgt[0]->point());
+    std::cerr << "lateral_sv_tgt=" << lateral_sv_tgt[0]->point() << " at " << lateral_sv_tgt[0]->source()->point() << std::endl 
+	      << "               " << lateral_sv_tgt[1]->point() << " at " << lateral_sv_tgt[1]->source()->point() << std::endl;
+
+    Sphere_circle c(ein->point(), Sphere_point(dir));
     do {
-      Object_handle o2 = pl->shoot(Ray_3(lateral_sv_tgt[0]->source()->point(),
-					 lateral_sv_tgt[0]->point()));
+      Ray_3 r(lateral_sv_tgt[0]->source()->point(),lateral_sv_tgt[0]->point()-CGAL::ORIGIN);
+      Object_handle o2 = pl->shoot(r);
       
+      std::cerr << "nachbehandlung: ray " << r << std::endl;
+
       Halffacet_handle f;
       Halfedge_handle e;
       Vertex_handle v;
-      if(assign(f,o2))
+      if(assign(f,o2)) {
+	std::cerr << "f " << f->plane() << std::endl;
 	CGAL_assertion_msg(false, "wrong handle");
-      else if(assign(e,o2)) {
-	CGAL_assertion_msg(false, "not implemented yet");
+      } else if(assign(e,o2)) {
+	std::cerr << "Found edge " << e->source()->point() 
+		  << "->" << e->twin()->source()->point() << std::endl;
+	Point_3 ip;
+	SNC_intersection I;
+	I.does_intersect_internally(r, Segment_3(e->source()->point(),
+						 e->twin()->source()->point()),  
+				    ip);
+	ip = normalized(ip);
+	std::cerr << ip << "=?=" << lateral_sv_tgt[1]->source()->point() << std::endl;
+	if(ip == lateral_sv_tgt[1]->source()->point()) {
+	  lateral_sv_tgt[0]->twin() = lateral_sv_tgt[1];
+	  lateral_sv_tgt[1]->twin() = lateral_sv_tgt[0];
+	  return;
+	}
+	
+	std::cerr << e->source()->point() << std::endl;
+	Vertex_handle v = C.create_from_edge(e,ip);
+	pl->add_vertex(v);
+	std::cerr << "new vertex " << v->point() << std::endl;
+
+	SVertex_iterator svi = v->svertices_begin();
+	SVertex_handle svf = svi;
+	SVertex_handle svb = ++svi;
+
+	if(svf->point() == e->point()) {
+	  svb->twin() = e;
+	  svf->twin() = e->twin();
+	  e->twin()->twin() = svf;
+	  e->twin() = svb;
+	} else {
+	  svf->twin() = e;
+	  svb->twin() = e->twin();
+	  e->twin()->twin() = svb;
+	  e->twin() = svf;
+	}
+
+	SM_walls SMW_src(&*lateral_sv_tgt[0]->source());
+	SM_walls SMW_tgt(&*v);
+	
+	SVertex_handle ray_sv_src = lateral_sv_tgt[0];
+	SVertex_handle ray_sv_tgt = SMW_tgt.add_ray_svertex(Sphere_point(CGAL::ORIGIN - lateral_sv_tgt[0]->point()));
+	ray_sv_src->twin() = ray_sv_tgt;
+	ray_sv_tgt->twin() = ray_sv_src;
+
+	SVertex_handle lateral_svertex = lateral_sv_tgt[0];
+	Sphere_segment sphere_ray(Sphere_point(CGAL::ORIGIN - lateral_svertex->point()), 
+				  lateral_svertex->point(),c);
+	lateral_sv_tgt[0] = SMW_tgt.add_lateral_svertex(sphere_ray);
+
+	SMW_tgt.add_sedge_between(ray_sv_tgt, lateral_sv_tgt[0]);	
       } else if(assign(v,o2)) {
+	std::cerr << "Found vertex " << v->point() << std::endl;
 	if(v == lateral_sv_tgt[1]->source()) {
 	  lateral_sv_tgt[0]->twin() = lateral_sv_tgt[1];
 	  lateral_sv_tgt[1]->twin() = lateral_sv_tgt[0];
@@ -310,7 +370,9 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 	lateral_sv_tgt[0] = 
 	  SMW.add_lateral_svertex(Sphere_segment(lateral_sv_tgt[0]->point().antipode(),
 						 lateral_sv_tgt[0]->point(), c));
-      }
+      } else
+	CGAL_assertion_msg(false, "wrong handle");
+      
     } while(true);
     
     //    CGAL::SNC_io_parser<SNC_structure> O(std::cerr, *sncp, false);

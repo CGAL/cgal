@@ -32,9 +32,10 @@ class SM_walls : SM_decorator<SMap> {
  public:
   SM_walls(Sphere_map* M) : Base(M) {}
 
-  SHalfedge_handle find_cap(SVertex_handle sv, Sphere_point sp) {
+  SHalfedge_handle find_cap(SVertex_handle sv, Sphere_point sp, Sphere_circle c) {
 
-    std::cerr << "find_cap " << sv->source()->point() << ":" << sv->point() << std::endl;
+    std::cerr << "find_cap " << sv->source()->point() << ":" << sv->point() 
+	      << " , sp : " << sp << std::endl;
     /*
     SHalfedge_handle se = sv->out_sedge();
     if(se != SHalfedge_handle())
@@ -53,7 +54,7 @@ class SM_walls : SM_decorator<SMap> {
     if( SD.is_isolated(sv))
       return SHalfedge_handle();    
 
-    Sphere_circle c(sv->point(), sp);
+    //    Sphere_circle c(sv->point(), sp);
     std::cerr << "sv    " << sv->point() << std::endl;
     std::cerr << "c     " << c.orthogonal_vector() << std::endl;
     SHalfedge_around_svertex_circulator sh(sv->out_sedge()), send(sh);
@@ -127,7 +128,7 @@ class SM_walls : SM_decorator<SMap> {
 
   SVertex_handle add_ray_svertex(Sphere_point sp) {
 
-    std::cerr << "add_ray_svertex" << std::endl;
+    std::cerr << "add_ray_svertex " << sp << std::endl;
 
     SM_point_locator P(sphere_map());
     Object_handle o = P.locate(sp);
@@ -199,6 +200,7 @@ class SM_walls : SM_decorator<SMap> {
       se->twin()->snext() = se->twin()->sprev() = se->twin();
       se->incident_sface() = sl->incident_sface();
       se->twin()->incident_sface() = sl->twin()->incident_sface();
+      se->mark() = se->twin()->mark() = sl->mark();
       store_sm_boundary_object(se,se->incident_sface());
       store_sm_boundary_object(se->twin(),se->twin()->incident_sface());
 
@@ -213,15 +215,20 @@ class SM_walls : SM_decorator<SMap> {
     return SVertex_handle();
   }
 
-  void add_sedge_between(SVertex_handle sv1, SVertex_handle sv2) {
-
+  void add_sedge_between(SVertex_handle sv1, SVertex_handle sv2, 
+			 Sphere_circle c = Sphere_circle()) { // = Sphere_circle(sv1->point(),sv2->point())) {
     std::cerr << "add sedges between " << sv1->point() 
 	      << ", " << sv2->point() 
 	      << " at " << sv1->source()->point() << std::endl;
 
-    SHalfedge_handle cap1 = find_cap(sv1,sv2->point());
+    CGAL_assertion(c != Sphere_circle() || sv1->point().antipode() != sv2->point());
+
+    if(c == Sphere_circle())
+      c = Sphere_circle(sv1->point(), sv2->point());
+
+    SHalfedge_handle cap1 = find_cap(sv1,sv2->point(),c);
     if(cap1 != SHalfedge_handle()) CGAL_assertion(cap1->source()==sv1);
-    SHalfedge_handle cap2 = find_cap(sv2,sv1->point());
+    SHalfedge_handle cap2 = find_cap(sv2,sv1->point(),c.opposite());
     if(cap2 != SHalfedge_handle()) CGAL_assertion(cap2->source()==sv2);
 
     SHalfedge_handle se_new;
@@ -240,6 +247,8 @@ class SM_walls : SM_decorator<SMap> {
 	se_new->incident_sface() = se_new->twin()->incident_sface() = sv1->incident_sface();
       }
     }
+    
+    se_new->mark() = se_new->twin()->mark() = se_new->incident_sface()->mark();
 
     std::cerr << sv1->point() << "->" << sv2->point() << "==" 
 	      << se_new->source()->point() << "->" << se_new->twin()->source()->point() << std::endl;
@@ -247,12 +256,11 @@ class SM_walls : SM_decorator<SMap> {
     CGAL_assertion(sv1 == se_new->source() && 
 		   sv2 == se_new->twin()->source());
 
-    se_new->circle() = Sphere_circle(se_new->source()->point(), 
-				     se_new->twin()->source()->point());
-    se_new->twin()->circle() = se_new->circle().opposite();
+    se_new->circle() = c;
+    se_new->twin()->circle() = c.opposite();
 
     // does the new sedge split a facet ?
-  }
+  }    
 
   SVertex_handle add_two(Sphere_point sp1, Sphere_point sp2) {
     std::cerr << "add_two " << sp1 << ", " << sp2 << std::endl;
@@ -311,6 +319,7 @@ class SM_walls : SM_decorator<SMap> {
     return SVertex_handle();
   }
 
+  /*
   SVertex_handle add_outgoing(Sphere_point sp, SVertex_handle sv) {
     SVertex_handle sv_new = new_svertex(sp);
     SHalfedge_handle se_cap = find_cap(sv,sp);
@@ -320,7 +329,7 @@ class SM_walls : SM_decorator<SMap> {
     se_new->twin()->circle() = se_new->circle().opposite();
     return sv_new;
   }
-
+  */
   /*
   void insert_new_svertex_into_sface(SFace_handle sf, const Sphere_point& sp) {
     SVertex_handle sv = new_svertex(sp);
