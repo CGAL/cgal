@@ -78,15 +78,17 @@ template <class R_>
 class Pm_straight_traits_2
 {
 public:
-  typedef R_ R;
-  typedef typename R::FT          FT;
-  typedef typename R::RT          RT;
-  typedef typename R::Point_2     Point_2;
-  typedef typename R::Vector_2    Vector_2;
-  typedef typename R::Direction_2 Direction_2;
-  typedef typename R::Segment_2   Segment_2;
-  typedef typename R::Ray_2       Ray_2;
-  typedef typename R::Line_2      Line_2;
+  typedef R_             R;
+
+  typedef typename R::FT FT;
+  typedef typename R::RT RT;
+
+  typedef Point_2<R>     Point_2;
+  typedef Vector_2<R>    Vector_2;
+  typedef Direction_2<R> Direction_2;
+  typedef Segment_2<R>   Segment_2;
+  typedef Ray_2<R>       Ray_2;
+  typedef Line_2<R>      Line_2;
 
   // Obsolete, for backward compatability
   typedef Point_2     Point;
@@ -96,18 +98,10 @@ public:
   typedef Ray_2       Ray;
   typedef Line_2      Line;
 
-  //typedef Point_2<R> Point;
-  //typedef Point_2<R> Point_2;
-  //typedef Vector_2<R> Vector;
-  //typedef Direction_2<R> Direction;
-  //typedef Segment_2<R> Segment;
-  //typedef Ray_2<R> Ray;
-  //typedef Line_2<R> Line;
-
-  typedef Segment X_bounded_curve;        // [ - curve -> ] 
-  typedef Ray X_target_unbounded_curve;        // [ - curve -> ) 
-  typedef Ray X_source_unbounded_curve;        // ( - curve -> ]        
-  typedef Line X_unbounded_curve;        // ( - curve -> ) 
+  typedef Segment_2 X_bounded_curve;        // [ - curve -> ] 
+  typedef Ray_2     X_target_unbounded_curve;        // [ - curve -> ) 
+  typedef Ray_2     X_source_unbounded_curve;        // ( - curve -> ]        
+  typedef Line_2    X_unbounded_curve;        // ( - curve -> ) 
 
   // The bounding box is not an Iso rectangle, but a Handle for one
   typedef Iso_rectangle_2<R> Bounding_box;
@@ -665,7 +659,8 @@ public:
           {
             X_bounded_curve seg;
             cv.current(seg);
-            return seg.opposite();
+            //return seg.opposite();
+            return typename R::Construct_opposite_segment_2()(seg);
           }
           // same curve with opposite orientation.
         case X_curve::MIN_UNBOUNDED:
@@ -685,7 +680,8 @@ public:
           {
             X_unbounded_curve line;
             cv.current(line);
-            return line.opposite();
+            //return line.opposite();
+            return typename R::Construct_opposite_line_2()(line);
           }                  
         default:
           CGAL_assertion(cv.bound_state()==X_curve::NO_UNBOUNDED||
