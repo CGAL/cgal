@@ -5486,7 +5486,7 @@ install_gmp_sub()
         _preopts="${_preopts} CXX=\"`compiler_bin`\""
         _opts="${_opts} --enable-cxx"
     fi
-    if _do_command_may_fail "${_preopts} ./configure ${_opts}" Configuring; then
+    if _do_command_may_fail "${_preopts} ./configure ${_opts} --enable-mpfr" Configuring; then
 	if _do_command_may_fail "make" Building
 	then
 	    _do_command "make install" "Installing"
@@ -6665,8 +6665,8 @@ upgrade()
     log_print "done."
 
     # copy gmp header and libs
-    upgrade_copy "search/copy gmp header files" "include" "${CGAL_INCL_DIR}" "gmp.h gmpxx.h"
-    upgrade_copy "search/copy gmp libs" "lib" "${CGAL_LIB_DIR}" "libgmp.* libgmpxx.* gmp.lib"
+    upgrade_copy "search/copy gmp header files" "include" "${CGAL_INCL_DIR}" "gmp.h gmpxx.h mpfr.h mpf2mpfr.h"
+    upgrade_copy "search/copy gmp libs" "lib" "${CGAL_LIB_DIR}" "libgmp.* libgmpxx.* gmp.lib libmpfr.* mpfr.lib"
     print_headline "D O N E"
     go_up_lines 1
     print_filled_line
