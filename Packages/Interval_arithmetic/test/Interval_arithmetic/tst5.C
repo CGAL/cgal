@@ -1,3 +1,6 @@
+// #define CGAL_NO_PRECONDITIONS
+// #define CGAL_NO_POSTCONDITIONS
+// #define CGAL_IA_DEBUG
 
 #include <CGAL/basic.h>
 #include <CGAL/config.h>
@@ -5,16 +8,15 @@
 // #include <CGAL/number_utils.h>
 #include <CGAL/Timer.h>
 
+#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/leda_real.h>
+
 #include <CGAL/predicates_on_ftC2.h>
 // #include <CGAL/predicates_on_ftC3.h>
 // #include <CGAL/predicates_on_rtH2.h>
 
-#define CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-#include <CGAL/Arithmetic_filter.h>
-
 #include <CGAL/double.h>
 #include <CGAL/Gmpz.h>
-#include <CGAL/leda_real.h>
 // #include <CGAL/leda_bigfloat.h>
 // #include <CGAL/leda_rational.h>
 // #include <CGAL/leda_integer.h>
@@ -24,12 +26,15 @@
 // #include <CGAL/Fixed_precision_nt.h>
 #include <CGAL/Double_eps.h>
 
+#define CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+#include <CGAL/Arithmetic_filter.h>
+
 // Don't be stupid, CGAL_Gmpz can only store integers !!!
 // typedef CGAL_Filtered_exact<double, CGAL_Gmpz> NT;
 // typedef CGAL_Filtered_exact<leda_real, leda_real> NT;
 // typedef CGAL_Filtered_exact<double, leda_bigfloat> NT;
-// typedef CGAL_Filtered_exact<double, leda_real> NT;
-typedef CGAL_Filtered_exact<double, leda_rational> NT;
+typedef CGAL_Filtered_exact<double, leda_real> NT;
+// typedef CGAL_Filtered_exact<double, leda_rational> NT;
 // typedef CGAL_Filtered_exact<float, leda_real> NT;
 // typedef CGAL_Filtered_exact<unsigned short int, leda_real> NT;
 // typedef CGAL_Filtered_exact<int, leda_real> NT;
