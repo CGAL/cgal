@@ -1,3 +1,6 @@
+3.43 (26 Feb 2003)
+- kernel archetype test file added
+
 3.42 (19 Feb 2003)
 - just resubmit
 
