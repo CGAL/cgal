@@ -2,18 +2,21 @@
 //	Revision History for package STL_Extension
 //=====================================================================
 
+Version 2.75 (12 May 2003)
+Added dox for Compact_container
+Fixed quadruple/triple dox
 
 //---------------------------------------------------------------------
-//	actual revision
+// pre 2.75	
 //---------------------------------------------------------------------
 
-GLOB: - Fix Compact_container for VC 7.1.
-GLOB: - Sun doesn't have operator!= for std::reverse_iterator
+GLOB: Fix Compact_container for VC 7.1.
+GLOB: Sun doesn't have operator!= for std::reverse_iterator
 GLOB: removed stlport/cgal_functional_base.h
 GLOB: Fix typo in iterator.h
-GLOB: SRC : Excluded vector from MSC VC6.
-GLOB: SRC : Added != and comparison ops for test class X in test_vector.C.
-GLOB: SRC : Changed vector to improve cross platform compilation.
+GLOB: Excluded vector from MSC VC6.
+GLOB: Added != and comparison ops for test class X in test_vector.C.
+GLOB: Changed vector to improve cross platform compilation.
 GLOB: Calls to std::uninitialized_.... use pointers as iterators to the
 GLOB: uninitialized memory. The std::uninitialized_fill has no return value.
 GLOB: The test_vector.C file used the same variable in several for loops.
