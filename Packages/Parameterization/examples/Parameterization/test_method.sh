@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test a parameterization method with all test files in data/ folder
+# Intensive test: test a parameterization method with all models in data folder
 # Usage: test_method.sh parameterization-method boundary-parameterization
 # Example: test_method.sh floater circle 
 # Example: test_method.sh lscm 2pts 
