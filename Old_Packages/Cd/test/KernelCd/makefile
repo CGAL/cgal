@@ -1,21 +1,22 @@
-# This is the makefile for compiling the CGAL Kernel test.
+# Created by the script create_makefile
+# This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CGAL_CXX = g++
-
-CXXFLAGS = -g \
+CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
-           -I./include \
+           $(EXTRA_FLAGS) \
+	   -I./include \
 	   -DCGAL_CFG_NO_ADVANCED_KERNEL \
 	   -DCGAL_NO_LEDA_HANDLE \
            -I../../include \
@@ -23,16 +24,20 @@ CXXFLAGS = -g \
 	   -I../../../C3/include \
 	   -I../../../Cartesian_basic/include \
            $(CGAL_CXXFLAGS) \
-           $(EXTRA_FLAGS) -Wall -W
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT) -Wall -W
 
-
-#	   -I $(CGAL)/test/NewKernel/include \
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
+          $(CGAL_LIBPATH)
+
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -44,8 +49,8 @@ all: test_kernelCd
 test_kernelCd$(EXE_EXT): test_kernelCd$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelCd test_kernelCd$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	- rm -f *.o *.ii *.s
+clean: \
+                   test_kernelCd.clean 
 
 distclean:
 	- rm core error* Program* Compiler* 
@@ -55,5 +60,6 @@ distclean:
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+

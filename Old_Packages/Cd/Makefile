@@ -57,5 +57,5 @@ $(Package).tar.gz:
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
 	version long_description.txt description.txt changes.txt \
-	include
+	include test
 	./check_headers.pl -u include/CGAL/*/*.[Ch]
