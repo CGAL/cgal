@@ -9,13 +9,13 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2001, May 23
+// release_date  : 
 //
 // file          : src/CGALWin/x11/_x_basic.C
-// package       : cgal_window (0.9.7)
+// package       : cgal_window (1.0)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 0.9.7
-// revision_date : 23 May 2001
+// revision      : 1.0
+// revision_date : 20 June 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
@@ -40,9 +40,11 @@
 #include <ctime>
 #include <cassert>
 
-#if defined(__KCC) || (defined(__sgi) && defined(_COMPILER_VERSION))
+//#if defined(__KCC) || (defined(__sgi) && defined(_COMPILER_VERSION))
 #include <cmath>
-#endif
+//#endif
+
+
 
 
 #include <unistd.h>
@@ -1400,6 +1402,7 @@ void x_box(int w, int x1, int y1, int x2, int y2)
           XDrawPoint(display,wp->win,wp->gc,x0+x,y0+y);\
  }
  
+using namespace std; 
 
 void x_arc0(int w, int x0, int y0, int r0, int, double start,double angle)
 { x11_win* wp = wlist[w];

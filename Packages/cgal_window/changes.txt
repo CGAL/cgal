@@ -1,3 +1,7 @@
+1.0    support for gcc 3.0
+       LEDA fpu initialization removed
+       some changes in the test files 
+
 0.9.9  /test subdir added
        some Makefiles were removed
 

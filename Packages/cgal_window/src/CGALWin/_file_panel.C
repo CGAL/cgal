@@ -9,13 +9,13 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2001, May 23
+// release_date  : 
 //
 // file          : src/CGALWin/_file_panel.C
-// package       : cgal_window (0.9.7)
+// package       : cgal_window (1.0)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 0.9.7
-// revision_date : 23 May 2001
+// revision      : 1.0
+// revision_date : 20 June 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
@@ -173,7 +173,9 @@ void file_panel::chdir()
   if ((*dir_name)[0] == '$')
   { //char* s = getenv(dir_name->del(0));
   
-    char* s = getenv(dir_name->erase(dir_name->begin()));
+    string hlp = dir_name->substr(1);
+  
+    char* s = getenv(hlp.c_str());
     if (s) *dir_name = s;
    }
 
