@@ -310,9 +310,9 @@ queries for points.
 
 The next geometric predicate is called \ccc{Vertex_conflict_2} and it
 involves four circles $P_1$, $P_2$, $P_3$, and $P_4$ (see
-Fig. \ref{fig-ag2vertexconflict}). The first three (red circles in
-Fig. \ref{fig-ag2vertexconflict}) define a tritangent circle (yellow
-circle in Fig. \ref{fig-ag2vertexconflict}). What we want to determine is
+Fig. \ref{figag2vc}). The first three (red circles in
+Fig. \ref{figag2vc}) define a tritangent circle (yellow
+circle in Fig. \ref{figag2vc}). What we want to determine is
 the sign of the distance of the green circle from the yellow
 circle. The distance between two circles $K_1=(c_1,r_1)$ and
 $K_2=(c_2, r_2)$ is defined as the distance of their centers minus
@@ -324,7 +324,7 @@ inserted in the diagram (the green circle). In the Apollonius graph
 it tells us if a triangular face of the diagram is to be destroyed or
 not.
 
-\begin{figure}[!htb]
+\begin{figure}[!htb]\label{figag2vc}
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics[width=0.4\textwidth]%
@@ -334,30 +334,20 @@ not.
 {Apollonius_graph_2/apollonius-vertex_conflict-true_bw.eps} 
 \end{center}
 \end{ccTexOnly}
-\begin{ccTexOnly}
-\caption{The \ccc{Vertex_conflict_2} predicate. The (unshaded) black
-  circles define the tritangent gray circle. We want to determine if
-  the sign of the distance of the shaded black circle from the gray
-  one. The gray curve is the bisector of the top-most and bottom-most
-  (unshaded) black circles. Left: the predicate returns
-  \ccc{NEGATIVE}. Right: the predicate returns \ccc{POSITIVE}.}
-  \label{fig-ag2vertexconflict}
-\end{ccTexOnly}
+\caption{
+    The \ccc{Vertex_conflict_2} predicate. The (unshaded) black
+    circles define the tritangent gray circle. We want to determine if
+    the sign of the distance of the shaded black circle from the gray
+    one. The gray curve is the bisector of the top-most and bottom-most
+    (unshaded) black circles. Left: the predicate returns
+    \ccc{NEGATIVE}. Right: the predicate returns \ccc{POSITIVE}.}
 \begin{ccHtmlOnly}
-\caption{The \ccc{Vertex_conflict_2} predicate. The red circles define
-  the tritangent yellow circle. We want to determine if the sign of
-  the distance of the green circle from the yellow one. The blue curve
-  is the bisector of the top-most and bottom-most red circles.
-  Left: the predicate returns \ccc{NEGATIVE}. Right: the predicate
-  returns \ccc{POSITIVE}.}\label{fig-ag2vertexconflict}
-\end{ccHtmlOnly}
-\begin{ccHtmlOnly}
-<center>
-<img border=0 src="./apollonius-vertex_conflict-false.gif" align=center
-alt="The Vertex_conflict_2 predicate returns false">
-<img border=0 src="./apollonius-vertex_conflict-true.gif" align=center
-alt="The Vertex_conflict_2 predicate returns true">
-</center>
+  <center>
+  <img border=0 src="./apollonius-vertex_conflict-false.gif" align=center
+  alt="The Vertex_conflict_2 predicate returns false">
+  <img border=0 src="./apollonius-vertex_conflict-true.gif" align=center
+  alt="The Vertex_conflict_2 predicate returns true">
+  </center>
 \end{ccHtmlOnly}
 \end{figure}
 
@@ -404,7 +394,6 @@ otherwise it is a finite edge.
 {Apollonius_graph_2/apollonius-both_vertices_bw.eps}\\
 \end{center}
 \end{ccTexOnly}
-\begin{ccTexOnly}
 \caption{The \ccc{Finite_edge_interior_conflict_2} predicate. The
   (unshaded) black circles define two tritangent gray circles, whose
   centers are the endpoints of the edge in the Apollonius diagram.
@@ -421,25 +410,6 @@ otherwise it is a finite edge.
   unaffected. Bottom right: The neighborhood around the two endpoints
   will be destroyed, but an interval in the interior of the edge will
   remain in the new diagram.}\label{fig-ag2edgeconflict}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-\caption{The \ccc{Finite_edge_interior_conflict_2} predicate. The red
-  circles define two tritangent yellow circles, whose centers are
-  the endpoints of the edge in the Apollonius diagram (dark blue curve
-  segment). The light blue curve is the bisecting curve of the
-  top-most and bottom-most red circles, and it is also the supporting
-  curve of the dark blue edge. The green circle is the circle to be
-  inserted. Top left: only a neighborhood around the left-most
-  endpoint of the edge will be destroyed. Top right: only a
-  neighborhood around the right-most endpoint of the edge will be
-  destroyed. Middle left: the green circle does not destroy any
-  portion of the edge. Middle right: the entire edge will be
-  destroyed. Bottom left: a neighborhood in the interior of the edge
-  will be destroyed; the regions near the endpoints remain
-  unaffected. Bottom right: The neighborhood around the two endpoints
-  will be destroyed, but an interval in the interior of the edge will
-  remain in the new diagram.}\label{fig-ag2edgeconflict}
-\end{ccHtmlOnly}
 \begin{ccHtmlOnly}
 <center>
 <img border=0 src="./apollonius-left_vertex.gif" align=center alt="">
@@ -514,9 +484,7 @@ manual.
 \section{The Apollonius graph hierarchy}
 \label{sec:apollonius2-hierarchy}
 
-The
-\ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
-class is nothing but the equivalent of the \ccc{Triangulation_hierarchy_2}
+The \ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>} class is nothing but the equivalent of the \ccc{Triangulation_hierarchy_2}
 class, applied to the Apollonius graph. It consists of a series of
 Apollonius graphs constructed in a manner analogous to the Delaunay
 hierarchy by Devillers \cite{d-iirdt-98}. The class
@@ -530,18 +498,3 @@ consisting of more than 1,000 circles. This threshold holds for both
 the construction of the Apollonius diagram itself, as well as for
 nearest neighbor queries.
 
-
-\section{Examples}
-\label{sec:apollonius2-examples}
-
-\subsection{First example}
-\ccIncludeExampleCode{Apollonius_graph_2/example1.C}
-
-\subsection{Second example}
-\ccIncludeExampleCode{Apollonius_graph_2/example2.C}
-
-\subsection{Third example}
-\ccIncludeExampleCode{Apollonius_graph_2/example3.C}
-
-\subsection{Fourth example}
-\ccIncludeExampleCode{Apollonius_graph_2/example4.C}
