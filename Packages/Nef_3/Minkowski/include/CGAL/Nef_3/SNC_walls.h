@@ -123,7 +123,7 @@ class SNC_walls : public SNC_decorator<SNC_> {
       SFace_handle sf;
       if(assign(sv,o)) {
 	opposite[i]=sv->twin()->source();
-	std::cerr << " Found vertex directly !!!! " << std::endl;
+	std::cerr << " Found svertex directly !!!! " << std::endl;
       }
       else {
 	Vertex_handle v;
@@ -146,9 +146,13 @@ class SNC_walls : public SNC_decorator<SNC_> {
 	  SMW.add_two(i==0?ein->point():ein->twin()->point(),
 		      Sphere_point(CGAL::ORIGIN - dir));
 	}
-	else if(assign(v,o2))
+	else if(assign(v,o2)) {
 	  std::cerr << "Found vertex " << std::endl;
-	else {
+	  opposite[i] = v;
+	  SM_walls SMW(&*opposite[i]);
+	  SMW.add_two(i==0?ein->point():ein->twin()->point(),
+		      Sphere_point(CGAL::ORIGIN - dir));	  
+	} else {
 	  std::cerr << "Found nothing " << std::endl;
 	  opposite[i] = origin[i];
 	}
