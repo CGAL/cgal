@@ -48,21 +48,30 @@ public:
   SphereC3();
   SphereC3(const Self &s);
 
+  // Sphere with center p, squared radius s, orientation o
   SphereC3(const Point_3 &p, const FT &s,
            const Orientation &o = COUNTERCLOCKWISE);
-  // Sphere with center p, squared radius s, orientation o
+  {
+    CGAL_kernel_precondition( ( s >= FT(0) ) && ( o != COLLINEAR) );
+
+    new ( static_cast< void*>(ptr)) Sphere_repC3<R>(p, s, o);
+  }
+
+  // Sphere passing through p,q,r,s, oriented by p, q, r, s
   SphereC3(const Point_3 &p, const Point_3 &q,
            const Point_3 &r, const Point_3 &s);
-  // Sphere passing through p,q,r,s, oriented by p, q, r, s
+
+  // Sphere with great circle passing through p,q,r, oriented by o
   SphereC3(const Point_3 &p, const Point_3 &q, const Point_3 &r,
 	   const Orientation &o = COUNTERCLOCKWISE);
-  // Sphere with great circle passing through p,q,r, oriented by o
+
+  // Sphere with diameter pq and orientation o
   SphereC3(const Point_3 & p, const Point_3 & q,
            const Orientation &o = COUNTERCLOCKWISE);
-  // Sphere with diameter pq and orientation o
+
+  // Sphere centered at p, radius 0, orientation o
   SphereC3(const Point_3 & p,
            const Orientation& o = COUNTERCLOCKWISE);
-  // Sphere centered at p, radius 0, orientation o
 
   ~SphereC3() {}
 
@@ -127,20 +136,6 @@ CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::SphereC3(const SphereC3<R CGAL_CTAG> &s)
   : Handle_for< Sphere_repC3<R> > (s)
 {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SphereC3<R CGAL_CTAG>::
-SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
-         const typename R::FT &s,
-         const Orientation &o)
-{
-  CGAL_kernel_precondition( ( s >= FT(0) ) &&
-                            ( o != COLLINEAR) );
-
-  new ( static_cast< void*>(ptr))
-      Sphere_repC3<R>(p, s, o);
-}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
