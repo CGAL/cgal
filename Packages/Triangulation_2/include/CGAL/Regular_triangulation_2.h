@@ -192,7 +192,7 @@ public:
   // 						  OutputItBoundaryEdges eit,
   // 						  OutputItHiddenVertices vit,  
   // 						  Face_handle start = 
-  //                                                 Face_handle(NULL)) const;
+  //                                                 Face_handle()) const;
   // template <class OutputItFaces, class OutputItBoundaryEdges> 
   // std::pair<OutputItFaces,OutputItBoundaryEdges>
   // get_conflicts_and_boundary(const Point  &p, 
@@ -215,13 +215,13 @@ public:
   // 						OutputItBoundaryEdges eit, 
   // 						OutputItHiddenVertices vit,
   // 						Face_handle start=
-  //                                                Face_handle(NULL)) const;
+  //                                                Face_handle()) const;
   //   template <class OutputItHiddenVertices> 
   //   OutputItHiddenVertices
   //   get_hidden_vertices(const Weighted_point  &p, 
   // 						OutputItHiddenVertices vit,
   // 						Face_handle start= 
-  //                                                  Face_handle(NULL)) const;
+  //                                                  Face_handle()) const;
   
   // DUAL
   Bare_point dual (Face_handle f) const;
@@ -236,7 +236,7 @@ public:
   // Insertion, Deletion and Flip
   Vertex_handle push_back(const Weighted_point &p);
   Vertex_handle insert(const Weighted_point &p, 
-		       Face_handle f = Face_handle(NULL) );
+		       Face_handle f = Face_handle() );
   Vertex_handle insert(const Weighted_point &p,
 	 	       Locate_type  lt,
 		       Face_handle loc, int li );
@@ -244,7 +244,7 @@ public:
   Vertex_handle insert_in_edge(const Weighted_point &p, Face_handle f, int i);
   void flip(Face_handle f, int i);
   void remove_degree_3(Vertex_handle v, 
-		       Face_handle f = Face_handle(NULL));
+		       Face_handle f = Face_handle());
   void remove(Vertex_handle v);
 
   All_vertices_iterator all_vertices_begin () const;
@@ -332,7 +332,7 @@ public:
 						  OutputItBoundaryEdges eit,
 						  OutputItHiddenVertices vit,
 						  Face_handle start = 
-						  Face_handle(NULL)) const
+						  Face_handle()) const
     {
       CGAL_triangulation_precondition( dimension() == 2);
       int li;
@@ -420,7 +420,7 @@ public:
   get_conflicts_and_boundary (const Weighted_point  &p, 
 			      OutputItFaces fit, 
 			      OutputItBoundaryEdges eit,
-			      Face_handle start = Face_handle(NULL)) const
+			      Face_handle start = Face_handle()) const
     {
       Triple<OutputItFaces,OutputItBoundaryEdges,Emptyset_iterator>
 	pp = 
@@ -435,7 +435,7 @@ public:
 				    OutputItFaces fit, 
 				    OutputItHiddenVertices vit,
 				    Face_handle start = 
-				    Face_handle(NULL)) const
+				    Face_handle()) const
     {
       Triple<OutputItFaces, Emptyset_iterator,OutputItHiddenVertices> 
 	pp = 
@@ -453,7 +453,7 @@ public:
 						OutputItBoundaryEdges eit, 
 						OutputItHiddenVertices vit,
 						Face_handle start = 
-						Face_handle(NULL)) const
+						Face_handle()) const
     {
       Triple<Emptyset_iterator,OutputItBoundaryEdges,
 	OutputItHiddenVertices> 
@@ -469,7 +469,7 @@ public:
   OutputItFaces
   get_conflicts (const Weighted_point  &p, 
 		 OutputItFaces fit, 
-		 Face_handle start= Face_handle(NULL)) const
+		 Face_handle start= Face_handle()) const
     {
       Triple<OutputItFaces,Emptyset_iterator,Emptyset_iterator>
 	pp = 
@@ -484,7 +484,7 @@ public:
   OutputItBoundaryEdges
   get_boundary_of_conflicts(const Weighted_point  &p, 
 			    OutputItBoundaryEdges eit, 
-			    Face_handle start= Face_handle(NULL)) const
+			    Face_handle start= Face_handle()) const
     {    
       Triple<Emptyset_iterator, OutputItBoundaryEdges,Emptyset_iterator>
 	pp = 
@@ -498,7 +498,7 @@ public:
   template <class OutputItHiddenVertices> 
   OutputItHiddenVertices 
   get_hidden_vertices(const Weighted_point  &p, OutputItHiddenVertices vit,
-		      Face_handle start= Face_handle(NULL)) const
+		      Face_handle start= Face_handle()) const
     {
       Triple<Emptyset_iterator,Emptyset_iterator,
 	OutputItHiddenVertices> 
@@ -999,7 +999,7 @@ Regular_triangulation_2<Gt,Tds>::
 insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li) 
 {
   if (number_of_vertices() <= 1) return Base::insert(p);
-  Vertex_handle v(NULL);
+  Vertex_handle v();
   Oriented_side os;
   switch (lt) {
   case Base::VERTEX:
@@ -1193,7 +1193,7 @@ void
 Regular_triangulation_2<Gt,Tds>::
 remove_degree_3(Vertex_handle v, Face_handle f) 
 {
-  if (f == Face_handle(NULL))    f=v->face();
+  if (f == Face_handle())    f=v->face();
   update_hidden_points_3_1(f, f->neighbor( cw(f->index(v))),
 			   f->neighbor(ccw(f->index(v))));
   Triangulation_2<Gt,Tds>::remove_degree_3(v,f);
@@ -1222,7 +1222,7 @@ void
 Regular_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v )
 {
-  CGAL_triangulation_precondition( v != NULL );
+  CGAL_triangulation_precondition( v != Vertex_handle() );
   CGAL_triangulation_precondition(!is_infinite(v));
    
   if (v->is_hidden()) {

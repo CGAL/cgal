@@ -112,7 +112,7 @@ public:
 
   // INSERTION
   Vertex_handle insert(const Point& p, 
-			       Face_handle start = Face_handle(NULL) );
+			       Face_handle start = Face_handle() );
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, 
@@ -161,7 +161,7 @@ public:
 
 protected:
   virtual Vertex_handle virtual_insert(const Point& a, 
-				       Face_handle start = Face_handle(NULL));
+				       Face_handle start = Face_handle());
   virtual Vertex_handle virtual_insert(const Point& a,
 				       Locate_type lt,
 				       Face_handle loc, 
@@ -577,7 +577,7 @@ intersect(Face_handle , int ,
 	    <<    std::endl
 	    << " intersecting constraints" << std::endl;
   CGAL_triangulation_assertion(false);
-  return Vertex_handle(NULL);
+  return Vertex_handle() ;
 }
 
 template <class Gt, class Tds, class Itag >
@@ -852,7 +852,7 @@ remove(Vertex_handle  v)
   // remove a vertex and updates the constrained edges of the new faces
   // precondition : there is no incident constraints
 {
-  CGAL_triangulation_precondition( v != NULL );
+  CGAL_triangulation_precondition( v != Vertex_handle() );
   CGAL_triangulation_precondition( ! is_infinite(v));
   CGAL_triangulation_precondition( ! are_there_incident_constraints(v));
     
@@ -987,7 +987,7 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
       n1=(*current).first;
       ind1=(*current).second;
       // in case n1 is no longer a triangle of the new triangulation
-      if ( n1->neighbor(ind1) != NULL ) {
+      if ( n1->neighbor(ind1) != Face_handle() ) {
 	n=n1->neighbor(ind1);
 	//ind=n1->mirror_index(ind1); 
 	// mirror_index does not work in this case
@@ -998,7 +998,7 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
       n2=(*next).first;
       ind2=(*next).second;
       // in case n2 is no longer a triangle of the new triangulation
-      if (n2->neighbor(ind2) != NULL ) {
+      if (n2->neighbor(ind2) != Face_handle() ) {
 	n=n2->neighbor(ind2); 
 	// ind=n2->mirror_index(ind2);
 	// mirror_index does not work in this case

@@ -72,7 +72,7 @@ typename Triangulation_ds_face_2<Fb>::Vertex_handle
 Triangulation_ds_face_2<Fb>::
 mirror_vertex(int i) const
 {
-  CGAL_triangulation_precondition ( neighbor(i) != NULL &&  dimension() >= 1);
+  CGAL_triangulation_precondition ( neighbor(i) != Face_handle() &&  dimension() >= 1);
   //return neighbor(i)->vertex(neighbor(i)->index(this->handle()));
   return neighbor(i)->vertex(mirror_index(i));
 }

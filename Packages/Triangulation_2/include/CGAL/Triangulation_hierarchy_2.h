@@ -73,7 +73,7 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
 
   // INSERT REMOVE
-  Vertex_handle insert(const Point &p, Face_handle start = Face_handle(NULL) );
+  Vertex_handle insert(const Point &p, Face_handle start = Face_handle() );
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
@@ -100,11 +100,11 @@ public:
   locate(const Point& p,
 	 Locate_type& lt,
 	 int& li,
-	 Face_handle start = Face_handle(NULL)) const;
+	 Face_handle start = Face_handle()) const;
 
   Face_handle
   locate(const Point &p,
-	 Face_handle start = Face_handle(NULL)) const;
+	 Face_handle start = Face_handle()) const;
 
 private:
   void  locate_in_all(const Point& p,
@@ -168,7 +168,7 @@ copy_triangulation(const Triangulation_hierarchy_2<Tr> &tr)
   {
     for( Finite_vertices_iterator it=hierarchy[0]->finite_vertices_begin(); 
 	 it != hierarchy[0]->finite_vertices_end(); ++it) {
-      if (it->up() != NULL) V[ it->up()->down() ] = it;
+      if (it->up() != Vertex_handle()) V[ it->up()->down() ] = it;
     }
   }
   {
@@ -180,7 +180,7 @@ copy_triangulation(const Triangulation_hierarchy_2<Tr> &tr)
 	// make reverse link
 	it->down()->set_up(it);
 	// make map for next level
-	if (it->up()!= NULL ) V[ it->up()->down() ] = it;
+	if (it->up()!=  Vertex_handle() ) V[ it->up()->down() ] = it;
       }
     }
   }
@@ -238,7 +238,7 @@ is_valid(bool verbose, int level) const
     //verify that lower level has no down pointers
   for( it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it) 
-    result = result && ( it->down() == NULL );
+    result = result && ( it->down() ==   Vertex_handle());
   //verify that other levels have down pointer and reciprocal link is fine
   for(i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
     for( it = hierarchy[i]->finite_vertices_begin(); 
@@ -249,7 +249,7 @@ is_valid(bool verbose, int level) const
   for(i=0;i<Triangulation_hierarchy_2__maxlevel-1;++i)
     for( it = hierarchy[i]->finite_vertices_begin(); 
 	 it != hierarchy[i]->finite_vertices_end(); ++it) 
-      result = result && ( it->up() == NULL ||
+      result = result && ( it->up() ==  Vertex_handle() ||
 	        &*it == &*(it->up())->down() );
   return result;
 }
@@ -334,7 +334,7 @@ remove(Vertex_handle v )
   int l = 0 ;
   while(1){
     hierarchy[l++]->remove(v);
-    if (u == NULL) break; 
+    if (u ==  Vertex_handle()) break; 
     if(l>Triangulation_hierarchy_2__maxlevel) break;
     v=u; u=v->up();
   }
@@ -393,8 +393,8 @@ locate_in_all(const Point& p,
     int& li,
     Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const
 {
-  Face_handle position(NULL);
-  Vertex_handle nearest(NULL);
+  Face_handle position();
+  Vertex_handle nearest();
   int level  = Triangulation_hierarchy_2__maxlevel;
   typename Geom_traits::Compare_distance_2 
     closer = geom_traits().compare_distance_2_object();

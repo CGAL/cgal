@@ -115,7 +115,7 @@ public:
 
   // INSERTION
   Vertex_handle insert(const Point& a, 
-		       Face_handle start = Face_handle(NULL) );
+		       Face_handle start = Face_handle() );
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
@@ -390,7 +390,7 @@ intersect(Face_handle , int ,
 	    <<    std::endl
 	    << " intersecting constraints" << std::endl;
   CGAL_triangulation_assertion(false);
-  return Vertex_handle(NULL);
+  return Vertex_handle();
 }
 
 template <class Tr>
