@@ -84,6 +84,8 @@ main( int, char**)
 	    break; } }
 
     while ( button != MOUSE_BUTTON( 3));                // right button
+
+    return( 0);
 }
 
 // ===== EOF ==================================================================
