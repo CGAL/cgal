@@ -1,4 +1,4 @@
-2.2.16 Example code cleanups.
+2.2.17 Example code cleanups.
 
 2.2.15 Small corrections in documentation
 
