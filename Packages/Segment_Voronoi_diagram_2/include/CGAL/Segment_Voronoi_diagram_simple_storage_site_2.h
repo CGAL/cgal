@@ -62,6 +62,19 @@ public:
     initialize_site(hp1, hp2);
   }
 
+  // COPY CONSTRUCTOR
+  //-----------------
+  Segment_Voronoi_diagram_simple_storage_site_2(const Self& other) {
+    copy_from(other);
+  }
+
+  // ASSIGNMENT OPERATOR
+  //--------------------
+  Self& operator=(const Self& other) {
+    copy_from(other);
+    return *this;
+  }
+
 public:
   // PREDICATES
   //-----------
@@ -113,6 +126,18 @@ protected:
     type_ = 2;
     h_[0] = hp1;
     h_[1] = hp2;
+  }
+
+  void copy_from(const Self& other) {
+    type_ = other.type_;
+
+    if ( !other.is_defined() ) { return; }
+
+    h_[0] = other.h_[0];
+
+    if ( other.is_segment() ) {
+      h_[1] = other.h_[1];
+    }
   }
 
 protected:

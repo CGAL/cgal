@@ -92,6 +92,19 @@ public:
     initialize_site(hp1, hp2, hq1, hq2, is_first_exact);
   }
 
+  // COPY CONSTRUCTOR
+  //-----------------
+  Segment_Voronoi_diagram_storage_site_2(const Self& other) {
+    copy_from(other);
+  }
+
+  // ASSIGNMENT OPERATOR
+  //--------------------
+  Self& operator=(const Self& other) {
+    copy_from(other);
+    return *this;
+  }
+
 public:
   // PREDICATES
   //-----------
@@ -232,6 +245,40 @@ protected:
     } else {
       h_[2] = hq1;
       h_[3] = hq2;
+    }
+  }
+
+  void copy_from(const Self& other) {
+    type_ = other.type_;
+
+    if ( !other.is_defined() ) { return; }
+
+    if ( other.is_point() ) {
+      if ( other.is_exact() ) {
+	h_[0] = other.h_[0];
+      } else {
+	h_[2] = other.h_[2];
+	h_[3] = other.h_[3];
+	h_[4] = other.h_[4];
+	h_[5] = other.h_[5];
+      }
+    } else {
+      h_[0] = other.h_[0];
+      h_[1] = other.h_[1];
+      if ( !other.is_exact() ) {
+	if ( other.is_exact(0) ) {
+	  h_[4] = other.h_[4];
+	  h_[5] = other.h_[5];
+	} else if ( other.is_exact(1) ) {
+	  h_[2] = other.h_[2];
+	  h_[3] = other.h_[3];
+	} else {
+	  h_[2] = other.h_[2];
+	  h_[3] = other.h_[3];
+	  h_[4] = other.h_[4];
+	  h_[5] = other.h_[5];
+	}
+      }
     }
   }
 
