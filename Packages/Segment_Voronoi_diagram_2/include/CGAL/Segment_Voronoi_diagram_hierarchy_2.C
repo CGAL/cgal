@@ -565,7 +565,7 @@ insert_segment_in_upper_levels(const Site_2& t, const Storage_site_2& ss,
       Vertex_handle v1(++(hierarchy[k]->finite_vertices_begin()));
       CGAL_precondition( v0 != Vertex_handle() &&
 			 v1 != Vertex_handle() );
-      vertex = hierarchy[k]->insert_third(v0, v1);
+      vertex = hierarchy[k]->insert_third(ss, v0, v1);
     } else {
       vertex = hierarchy[k]->insert_segment_interior(t, ss, vertices[k]);
     }

@@ -1,3 +1,6 @@
+27 August 2004:  Menelaos Karavelas
+- fixed bug in hierarchy about calling the wrong version of insert_third
+
 20 August 2004:  Menelaos Karavelas
 - fixed bugs in copy constructor/assignment operator for the segment
   Voronoi diagram and segment Voronoi diagram hierarchy classes
