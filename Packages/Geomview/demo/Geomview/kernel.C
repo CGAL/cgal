@@ -15,6 +15,9 @@
 #include <CGAL/Tetrahedron_3.h>
 #include <CGAL/Sphere_3.h>
 
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/intersections.h>
+
 #include <CGAL/IO/Geomview_stream.h>
 
 #include <unistd.h>
