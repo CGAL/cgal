@@ -41,9 +41,10 @@ show_triangulation_edges(Geomview_stream &gv, const Triangulation_2<GT,TDS> &T)
 {
     // Header.
     gv.set_ascii_mode();
-    gv << "(geometry triangulationwired {appearance {}{ SKEL \n";
-    gv << T.number_of_vertices();
-    gv << T.number_of_vertices() + T.number_of_faces()-1 << "\n";
+    gv << "(geometry " << gv.get_new_id("triangulationedge")
+       << " {appearance {}{ SKEL \n"
+       << T.number_of_vertices()
+       << T.number_of_vertices() + T.number_of_faces()-1 << "\n";
 
     // Finite vertices coordinates.
     std::map<Triangulation_2<GT, TDS>::Vertex_handle, int> V;
@@ -71,8 +72,9 @@ show_triangulation_faces(Geomview_stream &gv, const Triangulation_2<GT,TDS> &T)
 {
     // Header.
     gv.set_binary_mode();
-    gv << "(geometry triangulation {appearance {}{ OFF BINARY\n";
-    gv << T.number_of_vertices() << T.number_of_faces() << 0;
+    gv << "(geometry " << gv.get_new_id("triangulation")
+       << " {appearance {}{ OFF BINARY\n"
+       << T.number_of_vertices() << T.number_of_faces() << 0;
 
     // Finite vertices coordinates.
     std::map<Triangulation_2<GT, TDS>::Vertex_handle, int> V;
