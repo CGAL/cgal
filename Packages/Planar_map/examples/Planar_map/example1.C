@@ -13,7 +13,7 @@
 #include <algorithm>
 
 typedef CGAL::Quotient<long>              Number_type;
-typedef CGAL::Cartesian<Number_type  >    Kernel;
+typedef CGAL::Cartesian<Number_type>      Kernel;
 typedef CGAL::Pm_segment_traits_2<Kernel> Traits;
 typedef Traits::Point_2                   Point_2;
 typedef Traits::X_curve_2                 X_curve_2;
@@ -34,7 +34,7 @@ int main()
   cv[2] = X_curve_2(a2, a3);
   cv[3] = X_curve_2(a2, a4);
   cv[4] = X_curve_2(a3, a4);
-
+  
   std::cout << "The curves of the map :" << std::endl;
   std::copy(&cv[0], &cv[5], std::ostream_iterator<X_curve_2>(std::cout, "\n"));
   std::cout << std::endl;
@@ -51,7 +51,7 @@ int main()
 
   std::cout << "Upward vertical ray shooting from " << p << std::endl; 
   Planar_map::Halfedge_handle e = pm.vertical_ray_shoot(p, lt, true);
-  std::cout << "returned the curve " << e->curve() <<  ", oriented toward " 
+  std::cout << "returned the curve " << e->curve() << ", oriented toward " 
             << e->target()->point() << std::endl; 
   return 0;
 }

@@ -1,6 +1,8 @@
 // examples/Planar_map/example2.C
 // ------------------------------
 
+#include "short_names.h"
+
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Pm_default_dcel.h>
@@ -31,12 +33,12 @@ int main()
   cv[3] = X_curve_2(a2, a4);
   cv[4] = X_curve_2(a3, a4);
   
-  std::cout << "The curves of the map :" << std::endl; 
+  std::cout << "The curves of the map :" << std::endl;
   std::copy(&cv[0], &cv[5], std::ostream_iterator<X_curve_2>(std::cout, "\n"));
   std::cout << std::endl;
 
-  // Insert the five curves into the Planar_map:
-  std::cout << "inserting the curves to the map ... ";
+  // Insert the curves into the Planar_map:
+  std::cout << "Inserting the curves to the map ... ";
   pm.insert(&cv[0], &cv[5]);
   std::cout << ((pm.is_valid()) ? "map valid!" : "map invalid!") << std::endl
             << std::endl;
