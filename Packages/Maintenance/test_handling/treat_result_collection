@@ -11,38 +11,14 @@ my $unpack_dir= "/users/geert/CGAL/testresults";
 my $testresult_dir = "/users/www/CGAL/Members/Develop/testsuite";
 #my $testresult_dir = "/users/geert/tmp/tr";
 
+my ($cgal_version,$tarname,@results);
 sub usage()
 {
     print STDERR "usage: $0 URL\n"
 }
 
-# check if there is one param
-if ( $#ARGV != 0) {
-   usage();
-   die;
-}
-
-my $result_url = $ARGV[0];
-my $tarname=`basename $result_url .gz`;
-chomp $tarname;
-my $cgal_version;
-
-if ( $tarname =~ m/^(CGAL-\d+\.\d+-I-\d+)-/ ) {
-    $cgal_version=$1;
-} else {
-    die "$tarname is not a valid name for a testresult collection.\n";
-}
-
-chdir $unpack_dir or die;
-if  (system("$scriptsdir/get_cgal_html", $result_url) != 0) {
-die "Could not get URL $result_url\n";
-}
-system("gunzip", "${tarname}.gz")== 0 or die "Could not gunzip ${tarname}.gz\n";
-my @results;
-@results=grep /gz$/, `tar tf ${tarname}`;
-chomp @results;
-system("tar", "xf", ${tarname}, @results);
-system("$scriptsdir/to_zipped_format", @results);
+sub install_results()
+{
 chdir $testresult_dir;
 chdir $cgal_version;
 my $resultfile;
@@ -72,7 +48,35 @@ for $resultfile (@results) {
     $resultfile =~ s/^results_//;
     print NOTICE $resultfile, "\n";
 }
- 
 close NOTICE
+}
 
+# check if there is one param
+if ( $#ARGV != 0) {
+   usage();
+   die;
+}
 
+my $result_url = $ARGV[0];
+$tarname=`basename $result_url .gz`;
+chomp $tarname;
+
+if ( $tarname =~ m/^(CGAL-\d+\.\d+-I-\d+)-/ ) {
+    $cgal_version=$1;
+} else {
+    die "$tarname is not a valid name for a testresult collection.\n";
+}
+
+chdir $unpack_dir or die;
+if  (system("$scriptsdir/get_cgal_html", $result_url) != 0) {
+die "Could not get URL $result_url\n";
+}
+system("gunzip", "${tarname}.gz")== 0 or die "Could not gunzip ${tarname}.gz\n";
+@results=grep /gz$/, `tar tf ${tarname}`;
+chomp @results;
+system("tar", "xf", ${tarname}, @results);
+if (system("$scriptsdir/to_zipped_format", "-v", $cgal_version, @results)==0){
+   install_results;
+} else {
+   warn "to_zipped_format failed. Test collection not installed.\n";
+}
