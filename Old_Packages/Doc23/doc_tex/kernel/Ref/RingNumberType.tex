@@ -3,7 +3,9 @@
 \ccDefinition
 
 The concept \ccRefName\ defines the syntactic requirements a number type must
-meet in order to be used in \cgal.
+meet in order to be used in \cgal.  This implies that
+\ccc{CGAL::Number_type_traits<RingNumberType>::Has_division} is 
+\ccc{CGAL::Tag_false}.
 
 \ccRefines
 
@@ -23,11 +25,6 @@ CopyConstructable, Assignable
 
 
 \ccTypes
-
-\ccNestedType{Number_type_category}{indicates what kind of number type this is. 
-It should be defined as one of \ccc{Field_number_type_tag}, 
-\ccc{Ring_number_type_tag}, or \ccc{Euclidean_ring_number_type_tag}.}
-
 
 \ccSetTwoColumns{}{\hspace*{8.5cm}}
 \ccCreation
