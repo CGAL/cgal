@@ -136,8 +136,11 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
 
 void Qt_widget::showEvent(QShowEvent* e)
 {
-  if( set_scales_to_be_done )
+  if( set_scales_to_be_done ){
     set_scales();
+    add_to_history(); // add the current viewport
+    configure_history_buttons();
+  }
 
   return QWidget::showEvent(e);
 }
@@ -347,8 +350,16 @@ void Qt_widget::set_window(const double x_min, const double x_max,
   constranges = const_ranges;
   xcentre = xmin + (xmax - xmin)/2;
   ycentre = ymin + (ymax - ymin)/2;
-  set_scales();
- 
+  
+  if( ! isVisible() )
+  {
+    set_scales_to_be_done = true;
+    return;
+  };
+  set_scales_to_be_done = false;
+
+  
+  set_scales(); 
   add_to_history(); // add the current viewport
   configure_history_buttons();
 }
