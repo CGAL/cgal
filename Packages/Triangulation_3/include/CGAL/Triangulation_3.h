@@ -478,6 +478,29 @@ public:
       return side_of_edge(p, e.first, lt, li);
     }
 
+  // MODIFIERS
+  bool flip(Facet f);
+  bool flip(Cell_handle c, int i);
+  // returns false if the facet is not flippable
+  // true other wise and
+  // flips facet i of cell c
+  // c will be replaced by one of the new cells
+  void flip_flippable(Facet f);
+  void flip_flippable(Cell_handle c, int i);
+  // flips facet i of cell c
+  // c will be replaced by one of the new cells
+
+  bool flip(Edge e);
+  bool flip(Cell_handle c, int i, int j);
+  // returns false if the edge is not flippable
+  // true otherwise and
+  // flips edge i,j of cell c
+  // c will be deleted
+  void flip_flippable(Edge e);
+  void flip_flippable(Cell_handle c, int i, int j);
+  // flips edge i,j of cell c
+  // c will be deleted
+
   //INSERTION 
 
   Vertex_handle insert(const Point & p );
@@ -2388,6 +2411,232 @@ side_of_edge(const Point & p,
 }
 
 template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+flip( Facet f )
+{
+  return flip( f.first, f.second);
+}
+template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+flip( Cell_handle c, int i )
+{
+  CGAL_triangulation_precondition( (dimension() == 3) && (0<=i) && (i<4) 
+				   && (number_of_vertices() > 5) );
+
+  Cell_handle n = c->neighbor(i);
+  int in = n->index(c);
+  if ( is_infinite( c ) || is_infinite( n ) ) return false;
+  
+  if ( i%2 == 1 ) {
+    if ( geom_traits().orientation( c->vertex((i+1)&3)->point(),
+				    c->vertex((i+2)&3)->point(),
+				    n->vertex(in)->point(),
+				    c->vertex(i)->point() )
+	 != LEFTTURN ) return false;
+    if ( geom_traits().orientation( c->vertex((i+2)&3)->point(),
+				    c->vertex((i+3)&3)->point(),
+				    n->vertex(in)->point(),
+				    c->vertex(i)->point() )
+	 != LEFTTURN ) return false;
+    if ( geom_traits().orientation( c->vertex((i+3)&3)->point(),
+				    c->vertex((i+1)&3)->point(),
+				    n->vertex(in)->point(),
+				    c->vertex(i)->point() )
+	 != LEFTTURN ) return false;
+  }
+  else {
+    if ( geom_traits().orientation( c->vertex((i+2)&3)->point(),
+				    c->vertex((i+1)&3)->point(),
+				    n->vertex(in)->point(),
+				    c->vertex(i)->point() )
+	 != LEFTTURN ) return false;
+    if ( geom_traits().orientation( c->vertex((i+3)&3)->point(),
+				    c->vertex((i+2)&3)->point(),
+				    n->vertex(in)->point(),
+				    c->vertex(i)->point() )
+	 != LEFTTURN ) return false;
+    if ( geom_traits().orientation( c->vertex((i+1)&3)->point(),
+				    c->vertex((i+3)&3)->point(),
+				    n->vertex(in)->point(),
+				    c->vertex(i)->point() )
+	 != LEFTTURN ) return false;
+  }
+
+  _tds.flip_flippable( &(*c), i);
+  return true;
+}
+
+template < class GT, class Tds >
+void
+Triangulation_3<GT,Tds>::
+flip_flippable( Facet f )
+{
+  return flip_flippable( f.first, f.second);
+}
+template < class GT, class Tds >
+void
+Triangulation_3<GT,Tds>::
+flip_flippable( Cell_handle c, int i )
+{
+  CGAL_triangulation_precondition( (dimension() == 3) && (0<=i) && (i<4) 
+				   && (number_of_vertices() > 5) );
+  CGAL_triangulation_precondition_code( Cell_handle n = c->neighbor(i); );
+  CGAL_triangulation_precondition_code( int in = n->index(c); );
+  CGAL_triangulation_precondition( ( ! is_infinite( c ) ) && 
+				   ( ! is_infinite( n ) ) );
+  
+  if ( i%2 == 1 ) {
+    CGAL_triangulation_precondition
+      ( geom_traits().orientation( c->vertex((i+1)&3)->point(),
+				   c->vertex((i+2)&3)->point(),
+				   n->vertex(in)->point(),
+				   c->vertex(i)->point() )
+	== LEFTTURN );
+    CGAL_triangulation_precondition
+      ( geom_traits().orientation( c->vertex((i+2)&3)->point(),
+				   c->vertex((i+3)&3)->point(),
+				   n->vertex(in)->point(),
+				   c->vertex(i)->point() )
+	== LEFTTURN );
+    CGAL_triangulation_precondition
+      ( geom_traits().orientation( c->vertex((i+3)&3)->point(),
+				   c->vertex((i+1)&3)->point(),
+				   n->vertex(in)->point(),
+				   c->vertex(i)->point() )
+	== LEFTTURN );
+  }
+  else {
+    CGAL_triangulation_precondition
+      ( geom_traits().orientation( c->vertex((i+2)&3)->point(),
+				   c->vertex((i+1)&3)->point(),
+				   n->vertex(in)->point(),
+				   c->vertex(i)->point() )
+	== LEFTTURN );
+    CGAL_triangulation_precondition
+      ( geom_traits().orientation( c->vertex((i+3)&3)->point(),
+				   c->vertex((i+2)&3)->point(),
+				   n->vertex(in)->point(),
+				   c->vertex(i)->point() )
+	== LEFTTURN );
+    CGAL_triangulation_precondition
+      ( geom_traits().orientation( c->vertex((i+1)&3)->point(),
+				   c->vertex((i+3)&3)->point(),
+				   n->vertex(in)->point(),
+				   c->vertex(i)->point() )
+	== LEFTTURN );
+  }
+  
+  _tds.flip_flippable( &(*c), i);
+}
+
+template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+flip( Edge e )
+{
+  return flip( e.first, e.second, e.third );
+}
+template < class GT, class Tds >
+bool
+Triangulation_3<GT,Tds>::
+flip( Cell_handle c, int i, int j )
+  // flips edge i,j of cell c
+{
+  CGAL_triangulation_precondition( (dimension() == 3) 
+				   && (0<=i) && (i<4) 
+				   && (0<=j) && (j<4)
+				   && ( i != j )
+				   && (number_of_vertices() > 5) );
+
+  // checks that degree 3 and not on the convex hull
+  int degree = 0;
+  Cell_circulator ccir = incident_cells(c,i,j);
+  Cell_circulator cdone = ccir;
+  do {
+    if ( is_infinite(&(*ccir)) ) return false;
+    ++degree;
+    ++ccir;
+  } while ( ccir != cdone );
+
+  if ( degree != 3 ) return false;
+
+  // checks that future tetrahedra are well oriented
+  Cell_handle n = c->neighbor( nextposaround(i,j) );
+  int in = n->index( c->vertex(i) );
+  int jn = n->index( c->vertex(j) );
+  if ( geom_traits().orientation( c->vertex(nextposaround(i,j))->point(),
+				  c->vertex(nextposaround(j,i))->point(),
+				  n->vertex(nextposaround(jn,in))->point(),
+				  c->vertex(j)->point() )
+       != LEFTTURN ) return false;
+  if ( geom_traits().orientation( c->vertex(i)->point(),
+				  c->vertex(nextposaround(j,i))->point(),
+				  n->vertex(nextposaround(jn,in))->point(),
+				  c->vertex(nextposaround(i,j))->point() )
+       != LEFTTURN ) return false;
+
+  _tds.flip_flippable( &(*c), i, j );
+  return true;
+}
+
+template < class GT, class Tds >
+void
+Triangulation_3<GT,Tds>::
+flip_flippable( Edge e )
+{
+  return flip_flippable( e.first, e.second, e.third );
+}
+template < class GT, class Tds >
+void
+Triangulation_3<GT,Tds>::
+flip_flippable( Cell_handle c, int i, int j )
+  // flips edge i,j of cell c
+{
+  CGAL_triangulation_precondition( (dimension() == 3) 
+				   && (0<=i) && (i<4) 
+				   && (0<=j) && (j<4)
+				   && ( i != j )
+				   && (number_of_vertices() > 5) );
+  CGAL_triangulation_precondition_code
+    ( int degree = 0; );
+  CGAL_triangulation_precondition_code
+    ( Cell_circulator ccir = incident_cells(c,i,j); );
+  CGAL_triangulation_precondition_code
+    ( Cell_circulator cdone = ccir; );
+  CGAL_triangulation_precondition_code
+    ( do {
+      CGAL_triangulation_precondition( ! is_infinite(&(*ccir)) );
+      ++degree;
+      ++ccir;
+    } while ( ccir != cdone ););
+  CGAL_triangulation_precondition( degree==3 );
+
+  CGAL_triangulation_precondition_code
+    ( Cell_handle n = c->neighbor( nextposaround(i,j) ); );
+  CGAL_triangulation_precondition_code
+    ( int in = n->index( c->vertex(i) ); );
+  CGAL_triangulation_precondition_code
+    ( int jn = n->index( c->vertex(j) ); );
+  CGAL_triangulation_precondition
+    ( geom_traits().orientation( c->vertex(nextposaround(i,j))->point(),
+				 c->vertex(nextposaround(j,i))->point(),
+				 n->vertex(nextposaround(jn,in))->point(),
+				 c->vertex(j)->point() )
+       == LEFTTURN );
+  CGAL_triangulation_precondition
+    ( geom_traits().orientation( c->vertex(i)->point(),
+				 c->vertex(nextposaround(j,i))->point(),
+				 n->vertex(nextposaround(jn,in))->point(),
+				 c->vertex(nextposaround(i,j))->point() )
+       == LEFTTURN );
+
+  _tds.flip_flippable( &(*c), i, j );
+}
+
+
+template < class GT, class Tds >
 Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
 insert(const Point & p )
@@ -2975,7 +3224,7 @@ is_valid(bool verbose, int level) const
 	// 			      << std::endl; }
 	// 	  CGAL_triangulation_assertion(false); return false;
 	// 	}
-	is_valid_finite((*it).handle());
+	is_valid_finite((*it).handle(),verbose,level);
       }
       break;
     }
@@ -2983,7 +3232,7 @@ is_valid(bool verbose, int level) const
     {
       Facet_iterator it;
       for ( it = finite_facets_begin(); it != facets_end(); ++it ) {
-	is_valid_finite((*it).first);
+	is_valid_finite((*it).first,verbose,level);
       }
       break;
     }
@@ -2991,7 +3240,7 @@ is_valid(bool verbose, int level) const
     {
       Edge_iterator it;
       for ( it = finite_edges_begin(); it != edges_end(); ++it ) {
-	is_valid_finite((*it).first);
+	is_valid_finite((*it).first,verbose,level);
       }
       break;
     }
@@ -3017,7 +3266,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
     CGAL_triangulation_assertion(false); return false;
   }
   if ( is_finite(c) ) {
-    is_valid_finite(c);
+    is_valid_finite(c,verbose,level);
   }
   if (verbose) { std::cerr << "geometrically valid cell" << std::endl;}
   return true;
@@ -3040,7 +3289,8 @@ is_valid_finite(Cell_handle c, bool verbose, int level) const
 				 << c->vertex(0)->point() << ", " 
 				 << c->vertex(1)->point() << ", " 
 				 << c->vertex(2)->point() << ", " 
-				 << c->vertex(3)->point() << std::endl; }
+				 << c->vertex(3)->point() << std::endl; 
+	}
 	CGAL_triangulation_assertion(false); return false;
       }
       break;

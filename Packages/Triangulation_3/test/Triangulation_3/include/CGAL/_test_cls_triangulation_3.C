@@ -55,6 +55,7 @@ _test_cls_triangulation_3(const Triangulation &)
   typedef typename Cls::Vertex_handle        Vertex_handle;
   typedef typename Cls::Cell_handle          Cell_handle; 
   typedef typename Cls::Vertex_iterator      Vertex_iterator;
+  typedef typename Cls::Cell_iterator        Cell_iterator;
   typedef typename Cls::Locate_type          Locate_type;
   typedef std::list<Point>                        list_point;
 
@@ -611,6 +612,46 @@ _test_cls_triangulation_3(const Triangulation &)
   Segment s2 = T0.segment(Edge(c,0,1));
   assert(s1==s2);
      
+  std::cout << "  Test flip " << std::endl;
+  assert( T3_1.is_valid());
+  Cell_iterator cit, cdone = T3_1.cells_end();
+  int nbflips=0;
+  bool flipped;
+  cit = T3_1.finite_cells_begin();
+  Cell_iterator next_cell;
+  while ( cit != cdone ) {
+    // NOTE : cells are deleted during loop
+    // the cell_iterator is modified "by hand" (not using ++)
+    flipped = false; i=0; j=1;
+    next_cell = ++cit; --cit;
+    while ( (! flipped) && (i<4) ) {
+      if ( (i!=j) ) {
+	flipped = T3_1.flip( &(*cit), i, j ) ;
+	if (flipped) {
+	  nbflips++;
+	  assert(T3_1.is_valid());
+	}
+      }
+      if ( j==3 ) { i++; j=0; }
+      else j++;
+    }
+    cit = next_cell;
+  }
+  std::cout << nbflips << " flips 3-2" << std::endl;
+
+  nbflips=0;
+  for ( cit = T3_1.finite_cells_begin(); cit != cdone; cit++ ) {
+    // NOTE : the triangulation is modified during loop
+    // --> the cell_iterator does not mean a lot
+    for ( i=0; i<4; i++ ) {
+      flipped = T3_1.flip( &(*cit), i );
+      if (flipped) {
+	nbflips++;
+	assert(T3_1.is_valid());
+      }
+    }
+  }
+  std::cout << nbflips << " flips 2-3" << std::endl;
 
        // Iterator and circulator test
 
