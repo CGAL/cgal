@@ -41,29 +41,32 @@ except the iterators.
 \begin{ccAdvanced}
 \ccCreation
 
+In order to obtain new vertices or destruct unused vertices, the user must
+call the \ccc{create_vertex()} and \ccc{delete_vertex()} methods of the
+triangulation data structure.
 
-\ccConstructor{TriangulationDataStructure_2::Vertex();}{default
-constructor.
- The geometric information is
- initialized by the default constructor of class \ccc{Point}.
-The pointer to the incident face is initialized with \ccc{NULL}.}
+%\ccConstructor{TriangulationDataStructure_2::Vertex();}{default
+%constructor.
+% The geometric information is
+% initialized by the default constructor of class \ccc{Point}.
+%The pointer to the incident face is initialized with \ccc{NULL}.}
 
-\ccConstructor{TriangulationDataStructure_2::Vertex(const Point&
-p);}
-{introduces a vertex \ccVar, and initializes the geometric information.
-The pointer to the incident face is initialized with \ccc{NULL}.}
+%\ccConstructor{TriangulationDataStructure_2::Vertex(const Point&
+%p);}
+%{introduces a vertex \ccVar, and initializes the geometric information.
+%The pointer to the incident face is initialized with \ccc{NULL}.}
 
-\ccConstructor{TriangulationDataStructure_2::Vertex(const Point& p,
-                      Face* f);}
-{introduces a vertex \ccVar, and initializes the geometric information and 
-the pointer to the incident face.}
+%\ccConstructor{TriangulationDataStructure_2::Vertex(const Point& p,
+%                      Face_handle f);}
+%{introduces a vertex \ccVar, and initializes the geometric information and 
+%the pointer to the incident face.}
 
 \ccHeading{Setting}
 
 \ccMethod{void set_point(const Point& p);}
 {sets the geometric information to \ccc{p}.}
 \ccGlue
-\ccMethod{void set_face(Face* f);}
+\ccMethod{void set_face(Face_handle f);}
 {sets the incident face to \ccc{f}.}
 
 
@@ -74,7 +77,7 @@ the pointer to the incident face.}
 \ccMethod{Point point() const;}
 {returns  the geometric information of \ccVar.}
 \ccGlue
-\ccMethod{Face* face() const;}
+\ccMethod{Face_handle face() const;}
 {returns a face of the triangulation having  \ccVar\ as vertex.}
 
 \ccHeading{Traversal of the Adjacent Vertices, Incident Edges and Faces.}
@@ -98,21 +101,21 @@ by any modification of anyone of the two faces incident to \ccc{v}
 and \ccc{w}.
 
 \ccMethod{Vertex_circulator
-          incident_vertices(Face* f=NULL) const;}{\ccPrecond If the
+          incident_vertices(Face_handle f=NULL) const;}{\ccPrecond If the
 face \ccc{f} is given, it has to be incident to \ccVar\ 
 and the circulators begins with a vertex of \ccc{f} :
 the vertex \ccc{f->vertex(ccw(i))} 
 if \ccc{i} is the index of \ccVar\  in \ccc{f}.} 
 \ccGlue
 \ccMethod{Edge_circulator
-          incident_edges(Face* f=NULL) const;}{\ccPrecond If the
+          incident_edges(Face_handle f=NULL) const;}{\ccPrecond If the
 face \ccc{f} is given, it has to be incident to \ccVar\ 
 and the circulators begins with an edge of \ccc{f} :
 the edge \ccc{(f,cw(i))}
 where \ccc{i} is the index of \ccVar\  in \ccc{f}.}
 \ccGlue
 \ccMethod{Face_circulator
-          incident_faces(Face* f=NULL) const;}{\ccPrecond If the
+          incident_faces(Face_handle f=NULL) const;}{\ccPrecond If the
 face \ccc{f} is given, it has to be incident to \ccVar\
 and the crculators begins with the face
 \ccc{f}.}

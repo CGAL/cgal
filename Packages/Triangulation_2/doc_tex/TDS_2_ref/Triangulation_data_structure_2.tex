@@ -1,35 +1,33 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Triangulation_data_structure_using_list_2.tex
+% | Reference manual page: Triangulation_data_structure_2.tex
 % +------------------------------------------------------------------------+
-% | 07.04.2000   Author
-% | Package: Package
+% | 18.04.2002   Mariette Yvinec
+% | Package: Triangulation_2
 % | 
-\RCSdef{\RCSTriangulationdatastructureusinglistRev}{$Revision$}
-\RCSdefDate{\RCSTriangulationdatastructureusinglistDate}{$Date$}
+\RCSdef{\RCSTriangulationdatastructureRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationdatastructureDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_data_structure_using_list_2<Vb,Fb>}  %% add template arg's if necessary
+\begin{ccRefClass}{Triangulation_data_structure_2<Vb,Fb>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccCreationVariable{tds}
 \ccDefinition
   
-The class \ccRefName\ can be used as model
-for the \ccc{TriangulationDataStructure_2} concept
- for any
-orientable triangulation. It uses a \stl list to store the
-full dimensional faces of the triangulation.
+The class \ccRefName\ is a  model
+for the \ccc{TriangulationDataStructure_2} concept.
+It can be used to represent an orientable 2D triangulation
+embedded in a space of any dimension.
 
-
-\ccInclude{Triangulation_data_structure_using_list_2.h}
+\ccInclude{Triangulation_data_structure_2.h}
 
 \ccIsModel
-
 \ccc{TriangulationDataStructure_2}
+
 
 
 

@@ -15,13 +15,30 @@
 
 \subsection*{Definition}
 The triangulation data structure can be seen as a container
-for the faces and vertices of a triangulation. This class takes care
+for the faces and vertices of a triangulation. This class also takes care
 of all combinatorial operation of the triangulation.
 
-\cgal\ offers two models for the concept
-\ccc{TriangulationDataStructure_2}.
-Each of those models is templated by the base classes for the faces
-and vertices of the triangulation.
+The class \ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
+is  a model of the concept \ccc{TriangulationDataStructure_2}.
+To ensure all the \textbf{flexibility} of class \ccc{Triangulation_2}
+described in \ccRefPage{CGAL::Triangulation_2<Traits,Tds>}
+and in Chapter~\ref{Chapter_2D_Triangulations}, the  model 
+ \ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
+\ccRefName derives its \ccc{Vertex} and \ccc{Face} types
+from the two template parameters \ccc{Vb} and \ccc{Fb}.
+These parameters 
+have to be instantiated by models
+of the concepts describing the base classes
+for faces and vertices of a triangulation.
+
+Therefore, in addition to the
+ data structure concept and default model,
+we described in this chapter,  different concepts  and models of the
+base classes for the vertices and faces of the different triangulations.
+
+
+
+
 
 \subsection*{Concepts}
 \ccRefConceptPage{TriangulationDataStructure_2}\\
@@ -34,9 +51,7 @@ and vertices of the triangulation.
 \ccRefConceptPage{RegularTriangulationFaceBase_2}
 
 \subsection*{Classes}
-\ccRefIdfierPage{CGAL::Triangulation_data_structure_using_list_2<Vb,Fb>}\\
-\ccRefIdfierPage{CGAL::Triangulation_default_data_structure_2<Traits,Vb,Fb>}\\
-
+\ccRefIdfierPage{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
 \ccRefIdfierPage{CGAL::Triangulation_face_base_2<Traits>}\\
 \ccRefIdfierPage{CGAL::Triangulation_vertex_base_2<Traits>}\\
 \ccRefIdfierPage{CGAL::Regular_triangulation_face_base_2<Traits>}\\
