@@ -33,7 +33,7 @@ enclosing sphere and annulus (dD).
 
 \paragraph{Inscribed Areas.}
 Maximum area and perimeter inscribed $k$-gon (2D), extremal inscribed
-$k$-gon (2D).
+$k$-gon (2D), largest empty isorectangle (2D).
 
 \paragraph{Optimal Distances.}
 All furthest neigbors (2D), width of point set (3D), polytope distance (dD).
@@ -89,10 +89,12 @@ checking off, cf.~Section~\ref{sec:checks}.
 
 \ccRefIdfierPage{CGAL::maximum_area_inscribed_k_gon_2}\\
 \ccRefIdfierPage{CGAL::maximum_perimeter_inscribed_k_gon_2}\\
-\ccRefIdfierPage{CGAL::extremal_polygon_2}\\[1ex]
+\ccRefIdfierPage{CGAL::extremal_polygon_2}\\
+\ccRefIdfierPage{CGAL::Largest_empty_iso_rectangle_2<Traits>}\\[1ex]
 \ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<K>}\\
 \ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<K>}\\[1ex]
-\ccRefConceptPage{ExtremalPolygonTraits_2}
+\ccRefConceptPage{ExtremalPolygonTraits_2}\\
+\ccRefConceptPage{LargestEmptyIsoRectangleTraits_2}
 
 %% -----------------------------------------------------------------------------
 \subsection*{Optimal Distances}
@@ -153,6 +155,8 @@ checking off, cf.~Section~\ref{sec:checks}.
 %% Inscribed Areas
 
 \inputOpt{main_Extremal_polygons}
+
+\inputOpt{main_Largest_empty_iso_rectangle_2}
 
 %% Optimal Distances
 
