@@ -21,7 +21,6 @@
 #                    It is set by $treat_CGAL_header().
 # $new_protect_name: equivalent to CGAL_ARITHMETIC_FILTER_BASIC_H.
 
-$in_def=0;
 $in_decl=0;
 $after_template=0;
 $result_type="";
@@ -29,6 +28,7 @@ $result_type="";
 
 # A sub routine to treat the CGAL header: the first parsing step.
 sub treat_CGAL_header {
+  # We skip the old header.
   while (<>)
   {
     # get $file_name from the "file:" field in the headers.
@@ -36,7 +36,7 @@ sub treat_CGAL_header {
       $file_name = $1;
     }
 
-    # get $old_protect_name.
+    # get $old_protect_name and exit.
     if (/ifndef[\s]*CGAL_(.*_H)/) {
       $old_protect_name = "CGAL_$1";
       $new_protect_name = "CGAL_ARITHMETIC_FILTER_$1";
@@ -72,19 +72,22 @@ sub treat_CGAL_header {
 #ifndef $new_protect_name\n";
 }
 
-# A sub routine that just skips a "CGAL_NO_FILTER" section.
+# Skips a "CGAL_NO_FILTER" section.
 sub skip_no_filter_section {
-  while (<>) {
-    last if /\/\/CGAL_NO_FILTER_END/;
-  }
+  while (<>) { last if /\/\/CGAL_NO_FILTER_END/; }
+}
+
+# Skips the old body of the function.
+sub skip_old_body {
+  while (<>) { last if /^}$/; }
 }
 
 # List of CGAL's enum types.
-@CGAL_return_types=("Sign", "Comparison_result", "Orientation",
-	            "Oriented_side", "Bounded_side");
+@CGAL_enum_types=("Sign", "Comparison_result", "Orientation", "Oriented_side",
+                  "Bounded_side");
 %known_return_types=("bool", 1);
 
-foreach (@CGAL_return_types) {
+foreach (@CGAL_enum_types) {
   $known_return_types{$_}=1;
   $known_return_types{"CGAL::$_"}=1;
 }
@@ -94,44 +97,27 @@ foreach (@CGAL_return_types) {
 sub check_known_type {
   my ($type) = @_;
   if (not $known_return_types{$type}) {
-    print STDERR "// Warning: \"$type\" is unknown\n";
+    print STDERR "// Warning: \"$type\" is an unknown enumerative type\n";
   }
 }
 
-# Main program:
-
-treat_CGAL_header();
-
-while (<>)
-{
-  # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section:
-  if (/\/\/CGAL_NO_FILTER_BEGIN/) {
-    skip_no_filter_section();
-  }
-
-  if (/^}$/) {
-    $in_def=0;
-    next;
-  }
-  next if ($in_def);
-  if (/^{/) {
-    $after_template=0;
-    $in_decl=0;
-    $in_def=1;
-    check_known_type($result_type);
-    print
+# Puts the new body 
+sub put_new_body {
+  local ($result_type, $function_name, @args) = @_;
+  check_known_type($result_type);
+  print
 "{
   CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   try
   {
     $result_type result = $function_name(
 ";
-    foreach (@args) {
-      print "\t\t$_.interval()";
-      if ($_ ne $last_arg) { print ",\n"; }
-      else { print ");"; }
-    }
-    print "
+  foreach (@args) {
+    print "\t\t$_.interval()";
+    if ($_ ne $last_arg) { print ",\n"; }
+    else { print ");"; }
+  }
+  print "
     CGAL::FPU_set_cw(backup);
     return result;
   } 
@@ -140,18 +126,35 @@ while (<>)
     CGAL::FPU_set_cw(backup);
     return $function_name(
 ";
-    foreach (@args) {
-      print "\t\t$_.exact()";
-      if ($_ ne $last_arg) { print ",\n"; }
-      else { print ");"; }
-    }
-    print "
+  foreach (@args) {
+    print "\t\t$_.exact()";
+    if ($_ ne $last_arg) { print ",\n"; }
+    else { print ");"; }
+  }
+  print "
   }
 }
 ";
-  # MipsPro complains about the following assertion at the end, so it's
-  # removed: CGAL_assertion(false);
-    # print "args: @args\n" ;
+}
+
+# Main program:
+
+treat_CGAL_header();
+
+while (<>)
+{
+  # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section.
+  if (/\/\/CGAL_NO_FILTER_BEGIN/) {
+    skip_no_filter_section();
+    next;
+  }
+
+  # Treat the body of a function.
+  if (/^{/) {
+    skip_old_body();
+    put_new_body($result_type, $function_name, @args);
+    $after_template=0;
+    $in_decl=0;
     @args=();
     next;
   }
@@ -162,7 +165,7 @@ while (<>)
     s/inline/\/\/ inline/;             # Comment the INLINE line.
     if ( /\(/ ) { $in_decl=1; }
     if (! $in_decl) {
-      if (! (/INLINE/ || /inline/)) {
+      if (! (/inline/i)) {
         $result_type = $_;
         chop($result_type);
         # print "RESULT_TYPE = $result_type\n";
