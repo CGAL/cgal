@@ -1,4 +1,4 @@
-
+1.66 (5 September 2003) [af]
 - Functors Do_intersect_3 and Intersect_3 now call 
   CGALi::do_intersect, CGALi::intersection
 
