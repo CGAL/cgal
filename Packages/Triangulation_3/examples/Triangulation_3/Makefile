@@ -36,17 +36,17 @@ all: example_simple example_color example_hierarchy example_tds
 	./example_hierarchy
 	./example_tds
 
-example_simple: ../../src/Triangulation_3.o example_simple.o
-	$(CGAL_CXX) -o example_simple Triangulation_3.o example_simple.o $(LDFLAGS)
+example_simple: example_simple.o
+	$(CGAL_CXX) -o example_simple example_simple.o $(LDFLAGS)
 
-example_hierarchy: ../../src/Triangulation_3.o example_hierarchy.o
-	$(CGAL_CXX) -o example_hierarchy Triangulation_3.o example_hierarchy.o $(LDFLAGS)
+example_hierarchy: example_hierarchy.o
+	$(CGAL_CXX) -o example_hierarchy example_hierarchy.o $(LDFLAGS)
 
-example_color: ../../src/Triangulation_3.o example_color.o
-	$(CGAL_CXX) -o example_color Triangulation_3.o example_color.o $(LDFLAGS)
+example_color: example_color.o
+	$(CGAL_CXX) -o example_color example_color.o $(LDFLAGS)
 
-example_tds: ../../src/Triangulation_3.o example_tds.o
-	$(CGAL_CXX) -o example_tds Triangulation_3.o example_tds.o $(LDFLAGS)
+example_tds: example_tds.o
+	$(CGAL_CXX) -o example_tds example_tds.o $(LDFLAGS)
 
 clean:
 	rm -rf *~ *.o core example_simple example_color example_hierarchy example_tds output output_tds
