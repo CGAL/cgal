@@ -1,6 +1,6 @@
 /***************************************************************************
 quad-triangle.h  -  quad/triangle subdivision
--------------------
+----------------------------------------------------------------------------
 begin                : march 2003
 copyright            : (C) 2003 by Pierre Alliez - INRIA
 email                : pierre.alliez@sophia.inria.fr
@@ -12,24 +12,25 @@ email                : pierre.alliez@sophia.inria.fr
 #include "enriched_polyhedron.h"
 #include "builder.h"
 
-// "Quad/Triangle Subdivision"
-// Levin-Levin 02 
-// Stam-Loop 03
+// Implemented from:
+// Stam and Loop. Quad/Triangle Subdivision. 
+// Computer Graphics Forum.
+// Volume 22, Issue 1, March 2003.
+// Another reference is:
+// Levin. Polynomial Generation and Quasi-Interpolation 
+// in Stationary Non-Uniform Subdivision.
+// Computer Aided Geometric Design.
+// pages 41-60, volume 20(1), 2003.
 
 template <class HDS,class Polyhedron,class kernel>
 class CModifierQuadTriangle : public CGAL::Modifier_base<HDS>
 {
 private:
-  typedef typename kernel::FT           FT;
   typedef typename HDS::Vertex          Vertex;
   typedef typename Vertex::Point        Point;
   typedef typename HDS::Face_handle     Face_handle;
   typedef typename HDS::Halfedge_handle Halfedge_handle;
   typedef typename CGAL::Enriched_polyhedron_incremental_builder_3<HDS> builder;
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
-  typedef typename Polyhedron::Facet_handle Facet_handle;
-  typedef typename Polyhedron::Vertex_handle Vertex_handle;
-
   Polyhedron *m_pMesh;
 
 public:
@@ -40,9 +41,9 @@ public:
     CGAL_assertion(pMesh != NULL);
     m_pMesh = pMesh;
   }
-	~CModifierQuadTriangle() {}
+  ~CModifierQuadTriangle() {}
 
-	// subdivision
+  // subdivision
   void operator()( HDS& hds)
   {
     builder B(hds,true);
@@ -52,16 +53,12 @@ public:
     B.end_surface();
   }
 
-private:
-  
-  //***************************************************
   // add vertices
-  //***************************************************
   void add_vertices(builder &B)
   {
     // put original vertices
     int index = 0;
-    typename Polyhedron::Vertex_iterator pVertex;
+    Polyhedron::Vertex_iterator pVertex;
     for(pVertex = m_pMesh->vertices_begin();
         pVertex != m_pMesh->vertices_end();
         pVertex++)
@@ -73,7 +70,7 @@ private:
 
     // as many as #edges
     m_pMesh->tag_halfedges(-1);
-    typename Polyhedron::Halfedge_iterator pHalfedge;
+    Polyhedron::Halfedge_iterator pHalfedge;
     for(pHalfedge = m_pMesh->halfedges_begin();
         pHalfedge != m_pMesh->halfedges_end();
         pHalfedge++)
@@ -81,7 +78,7 @@ private:
       if(pHalfedge->tag() != -1)
         continue;
 
-      // simple edge bissection
+      // simple edge bisection
       const Point& p1 = pHalfedge->vertex()->point();
       const Point& p2 = pHalfedge->opposite()->vertex()->point();
       Point point = Point(0.5f*(p1.x()+p2.x()),
@@ -97,7 +94,7 @@ private:
 
     // and as many as #facets with degree > 3
     m_pMesh->tag_facets(-1);
-    typename Polyhedron::Facet_iterator pFacet;
+    Polyhedron::Facet_iterator pFacet;
     for(pFacet = m_pMesh->facets_begin();
         pFacet != m_pMesh->facets_end();
         pFacet++)
@@ -111,19 +108,17 @@ private:
 
       // barycentric subdivision
       Point barycenter;
-	    m_pMesh->compute_facet_center(pFacet,barycenter);
+      m_pMesh->compute_facet_center(pFacet,barycenter);
       B.add_vertex(barycenter);
       pFacet->tag(index);
       index++;
     }
   }
 
-  //***************************************************
   // add facets
-  //***************************************************
   void add_facets(builder &B)
   {
-    typename Polyhedron::Facet_iterator pFacet;
+    Polyhedron::Facet_iterator pFacet;
     for(pFacet = m_pMesh->facets_begin();
         pFacet != m_pMesh->facets_end();
         pFacet++)
@@ -133,7 +128,7 @@ private:
 
       if(degree == 3)
       {
-        typename Polyhedron::Halfedge_handle pHalfedge = pFacet->halfedge();
+        Polyhedron::Halfedge_handle pHalfedge = pFacet->halfedge();
         int i0 = pHalfedge->tag();
         int i1 = pHalfedge->vertex()->tag();
         int i2 = pHalfedge->next()->tag();
@@ -210,7 +205,7 @@ private:
         CGAL_assertion(i1 >= 0);
 
         // for each halfedge
-        typename Polyhedron::Halfedge_around_facet_circulator h;
+        Polyhedron::Halfedge_around_facet_circulator h;
         h = pFacet->facet_begin();
         do
         {
@@ -246,11 +241,9 @@ private:
     }
   }
 
-  //***************************************************
   // correcting factor
-  //***************************************************
-	static float correcting_factor(unsigned int ne,
-		                             unsigned int nq)
+  static float correcting_factor(unsigned int ne,
+                                 unsigned int nq)
   {
     if(ne == 2 && nq == 1)
       return -0.20505f;
@@ -266,10 +259,8 @@ private:
       return 0.10550f;
     return 0.0f;
   }
-public:  
-  //***************************************************
+  
   // smooth vertex positions
-  //***************************************************
   static void smooth(Polyhedron *pMesh,
                      bool smooth_boundary = true)
   {
@@ -277,12 +268,12 @@ public:
 
     // alloc position vectors
     unsigned int nb_vertices = pMesh->size_of_vertices();
-    FT *pPos = new FT[3*nb_vertices];
+    kernel::FT *pPos = new kernel::FT[3*nb_vertices];
     CGAL_assertion(pPos != NULL);
 
     // compute new positions
     unsigned int index = 0;
-    typename Polyhedron::Vertex_iterator pVertex;
+    Polyhedron::Vertex_iterator pVertex;
     for(pVertex = pMesh->vertices_begin();
         pVertex != pMesh->vertices_end();
         pVertex++)
@@ -301,11 +292,11 @@ public:
         // smooth using [1/4 1/2 1/4] cubic B-spline averaging mask
         else 
         {
-          const typename Polyhedron::Halfedge_handle& pHalfedge =
+          const Polyhedron::Halfedge_handle& pHalfedge =
             pMesh->get_border_halfedge(pVertex);
           CGAL_assertion(pHalfedge != NULL);
-          const Point& next = pHalfedge->vertex()->point();
-          const Point& prev = pHalfedge->prev()->prev()->vertex()->point();
+          const Point& next = pHalfedge->next()->vertex()->point();
+          const Point& prev = pHalfedge->prev()->vertex()->point();
           pPos[3*index]   = 0.25f*prev.x() + 0.5f*curr.x() + 0.25f*next.x();
           pPos[3*index+1] = 0.25f*prev.y() + 0.5f*curr.y() + 0.25f*next.y();
           pPos[3*index+2] = 0.25f*prev.z() + 0.5f*curr.z() + 0.25f*next.z();
@@ -318,12 +309,12 @@ public:
         unsigned int nb_edges = 0;
 
         // rotate around vertex to count #edges and #quads
-        Halfedge_around_vertex_circulator
+        Polyhedron::Halfedge_around_vertex_circulator
           pHalfEdge = pVertex->vertex_begin();
-        Halfedge_around_vertex_circulator end = pHalfEdge;
+        Polyhedron::Halfedge_around_vertex_circulator end = pHalfEdge;
         CGAL_For_all(pHalfEdge,end)
         {
-          const Facet_handle& pFacet = pHalfEdge->facet();
+          const Polyhedron::Facet_handle& pFacet = pHalfEdge->facet();
           CGAL_assertion(pFacet != NULL);
           unsigned int degree = Polyhedron::degree(pFacet);
           CGAL_assertion(degree == 4 || degree == 3);
@@ -333,12 +324,12 @@ public:
         }
 
         // compute coefficients
-        FT ne = (FT)nb_edges;
-        FT nq = (FT)nb_quads;
-        FT alpha = 1.0f / (1.0f + ne/2.0f + nq/4.0f);
-        FT beta = alpha / 2.0f;  // edges
-        FT gamma = alpha / 4.0f; // corners of incident quads
-        FT eta = correcting_factor(nb_edges,nb_quads);
+        kernel::FT ne = (kernel::FT)nb_edges;
+        kernel::FT nq = (kernel::FT)nb_quads;
+        kernel::FT alpha = 1.0f / (1.0f + ne/2.0f + nq/4.0f);
+        kernel::FT beta = alpha / 2.0f;  // edges
+        kernel::FT gamma = alpha / 4.0f; // corners of incident quads
+        kernel::FT eta = correcting_factor(nb_edges,nb_quads);
 
         // new position
         pPos[3*index]   = alpha * pVertex->point().x();
@@ -350,7 +341,7 @@ public:
         end = pHalfEdge;
         CGAL_For_all(pHalfEdge,end)
         {
-          const Facet_handle& pFacet = pHalfEdge->facet();
+          const Polyhedron::Facet_handle& pFacet = pHalfEdge->facet();
           CGAL_assertion(pFacet != NULL);
           unsigned int degree = Polyhedron::degree(pFacet);
           CGAL_assertion(degree == 4 || degree == 3);
@@ -404,15 +395,15 @@ public:
 template <class Polyhedron,class kernel>
 class CSubdivider_quad_triangle
 {
-	public:
+  public:
     typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
-		CSubdivider_quad_triangle() {}
-		~CSubdivider_quad_triangle() {}
+    CSubdivider_quad_triangle() {}
+    ~CSubdivider_quad_triangle() {}
 
-	public:
-		void subdivide(Polyhedron &OriginalMesh,
+  public:
+    void subdivide(Polyhedron &OriginalMesh,
                    Polyhedron &NewMesh,
-                   bool smooth_boundary = true)
+                   const bool smooth_boundary = true)
     {
       // subdivide, then smooth
       CModifierQuadTriangle<HalfedgeDS,Polyhedron,kernel> builder(&OriginalMesh);
