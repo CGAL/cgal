@@ -177,7 +177,7 @@ public:
   Vertex* insert_second();
   Vertex* insert_in_face(Face* f);
   Vertex* insert_in_edge(Face* f, int i);
-  Vertex* insert_dim_up(Vertex *w, bool orient=true);
+  Vertex* insert_dim_up(Vertex *w = NULL, bool orient=true);
   
   void remove_degree_3(Vertex* v, Face* f = NULL);
   void remove_1D(Vertex* v); 
@@ -500,7 +500,7 @@ insert_in_edge(Face* f, int i)
 template <  class Vb, class Fb>
 Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
-insert_dim_up(Vertex *w = NULL, bool orient)
+insert_dim_up(Vertex *w, bool orient)
 {
   // the following function insert 
   // a vertex  v which is outside the affine  hull of Tds
