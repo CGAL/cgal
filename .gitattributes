@@ -837,7 +837,6 @@ Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/l-simp.ipe -text
-Packages/Interval_arithmetic/src/Interval_arithmetic/workaround_4_ms.obj -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/IsoCuboid.eps -text
 Packages/Kernel_23/doc_tex/kernel/IsoCuboid.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/arrlinthree.gif -text svneol=unset#unset
