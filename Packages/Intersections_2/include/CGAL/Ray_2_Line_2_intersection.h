@@ -169,7 +169,7 @@ Ray_2_Line_2_pair<R>::Ray_2_Line_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Ray_2_Line_2_pair<R>::Intersection_results
+typename Ray_2_Line_2_pair<R>::Intersection_results
 Ray_2_Line_2_pair<R>::intersection_type() const
 {
     if (_known)

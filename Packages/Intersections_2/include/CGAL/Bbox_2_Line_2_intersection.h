@@ -62,7 +62,7 @@ Bbox_2_Line_2_pair intersection_computer_line_2(
 }
 
 inline bool do_intersect_line_2(
-    const Bbox_2 &box, double line_a, double line_b, double line_c);
+    const Bbox_2 &box, double line_a, double line_b, double line_c)
 {
     Bbox_2_Line_2_pair pair(box, line_a, line_b, line_c);
     return pair.intersection_type() != Bbox_2_Line_2_pair::NO;

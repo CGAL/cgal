@@ -59,7 +59,7 @@ Bbox_2_Line_2_pair intersection_computer_line_2(
 }
 
 inline bool do_intersect_line_2(
-    const Bbox_2 &box, double line_a, double line_b, double line_c);
+    const Bbox_2 &box, double line_a, double line_b, double line_c)
 {
     Bbox_2_Line_2_pair pair(box, line_a, line_b, line_c);
     return pair.intersection_type() != Bbox_2_Line_2_pair::NO;
@@ -711,7 +711,7 @@ Line_2_Line_2_pair<R>::Line_2_Line_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Line_2_Line_2_pair<R>::Intersection_results
+typename Line_2_Line_2_pair<R>::Intersection_results
 Line_2_Line_2_pair<R>::intersection_type() const
 @<Line_2_Line_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
@@ -914,7 +914,7 @@ Segment_2_Line_2_pair<R>::Segment_2_Line_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Segment_2_Line_2_pair<R>::Intersection_results
+typename Segment_2_Line_2_pair<R>::Intersection_results
 Segment_2_Line_2_pair<R>::intersection_type() const
 @<Segment_2_Line_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
@@ -1242,7 +1242,7 @@ Segment_2_Segment_2_pair<R>::Segment_2_Segment_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Segment_2_Segment_2_pair<R>::Intersection_results
+typename Segment_2_Segment_2_pair<R>::Intersection_results
 Segment_2_Segment_2_pair<R>::intersection_type() const
 @<Segment_2_Segment_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
@@ -1500,7 +1500,7 @@ Ray_2_Line_2_pair<R>::Ray_2_Line_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Ray_2_Line_2_pair<R>::Intersection_results
+typename Ray_2_Line_2_pair<R>::Intersection_results
 Ray_2_Line_2_pair<R>::intersection_type() const
 @<Ray_2_Line_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
@@ -1694,7 +1694,7 @@ Ray_2_Segment_2_pair<R>::Ray_2_Segment_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Ray_2_Segment_2_pair<R>::Intersection_results
+typename Ray_2_Segment_2_pair<R>::Intersection_results
 Ray_2_Segment_2_pair<R>::intersection_type() const
 @<Ray_2_Segment_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
@@ -1950,7 +1950,7 @@ Ray_2_Ray_2_pair<R>::Ray_2_Ray_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Ray_2_Ray_2_pair<R>::Intersection_results
+typename Ray_2_Ray_2_pair<R>::Intersection_results
 Ray_2_Ray_2_pair<R>::intersection_type() const
 @<Ray_2_Ray_2_pair intersection_type body@>
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2

@@ -424,7 +424,7 @@ Segment_2_Segment_2_pair<R>::Segment_2_Segment_2_pair(
 
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class R>
-Segment_2_Segment_2_pair<R>::Intersection_results
+typename Segment_2_Segment_2_pair<R>::Intersection_results
 Segment_2_Segment_2_pair<R>::intersection_type() const
 {
     if (_known)
