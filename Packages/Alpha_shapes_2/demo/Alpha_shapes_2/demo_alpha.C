@@ -30,6 +30,8 @@
 #include <iostream>
 #include <fstream>
 #include <strstream>
+#include <vector>
+#include <list>
 
 #include <CGAL/triangulation_assertions.h>
 

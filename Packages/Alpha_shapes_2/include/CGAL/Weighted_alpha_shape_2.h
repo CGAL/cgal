@@ -31,8 +31,6 @@
 
 #include <CGAL/basic.h>
 
-#include <vector>
-#include <list>
 // SGI MIPSpro C++ 7.x
 #ifdef STL_HASH_TABLES
 #include <hash_set>
@@ -105,9 +103,10 @@ public:
   // Introduces an alpha-shape `A' for a positive alpha-value
   // `alpha' that is initialized with the points in the range
   // from first to last
-#ifdef TEMPLATE_MEMBER_FUNCTIONS
 
-  template < class InputIterator >  
+#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
+
+  template <class InputIterator>
   Weighted_alpha_shape_2( InputIterator first,  
 			  InputIterator last,  
 			  const Coord_type& alpha = 0,
@@ -115,7 +114,7 @@ public:
     : Alpha_shape_2<Rt>(first, last, alpha, m) 
     {}
 
-#else
+#else //CGAL_CFG_NO_MEMBER_TEMPLATES
 #if defined(LIST) || defined(__SGI_STL_LIST)
 
   Weighted_alpha_shape_2(typename std::list<Point>::const_iterator first,
@@ -138,24 +137,47 @@ public:
 
 #endif // VECTOR
 
-#endif // TEMPLATE_MEMBER_FUNCTIONS
+#endif //CGAL_CFG_NO_MEMBER_TEMPLATES 
 
 
   //---------------heuristic initialization of weights----------------
 
+#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
+
+  template <class Iterator>
+  void
+  initialize_weights_to_the_nearest_voronoi_vertex
+  (Iterator  first, Iterator  last, const Coord_type &k);
+
+  //---------------------------------------------------------------------
+
+  template <class Iterator>
+  void
+  initialize_weights_to_the_nearest_voronoi_edge
+  (Iterator  first, Iterator  last, const Coord_type &k);
+
+  //---------------------------------------------------------------------
+
+  template <class Iterator>
+  void
+  initialize_weights_to_the_nearest_vertex
+  (Iterator  first, Iterator  last, const Coord_type &k);
+
+  
+#else //CGAL_CFG_NO_MEMBER_TEMPLATES
 #if defined(LIST) || defined(__SGI_STL_LIST)
 
   void
   initialize_weights_to_the_nearest_voronoi_vertex
   (typename std::list<Point>::iterator  first,
-   typename std::list<Point>::iterator  last);
+   typename std::list<Point>::iterator  last, const Coord_type &k);
 
   //---------------------------------------------------------------------
 
   void
   initialize_weights_to_the_nearest_voronoi_edge
   (typename std::list<Point>::iterator  first,
-   typename std::list<Point>::iterator  last);
+   typename std::list<Point>::iterator  last, const Coord_type &k);
 
 
   //---------------------------------------------------------------------
@@ -163,7 +185,7 @@ public:
   void
   initialize_weights_to_the_nearest_vertex
   (typename std::list<Point>::iterator  first,
-   typename std::list<Point>::iterator  last);
+   typename std::list<Point>::iterator  last, const Coord_type &k);
   
 
 #endif //LIST
@@ -173,44 +195,40 @@ public:
   void
   initialize_weights_to_the_nearest_voronoi_vertex
   (typename std::vector<Point>::iterator  first,
-   typename std::vector<Point>::iterator  last);
+   typename std::vector<Point>::iterator  last, const Coord_type &k);
 
   //---------------------------------------------------------------------
   
   void
   initialize_weights_to_the_nearest_voronoi_edge
   (typename std::vector<Point>::iterator  first,
-   typename std::vector<Point>::iterator  last);
+   typename std::vector<Point>::iterator  last, const Coord_type &k);
 
   //---------------------------------------------------------------------
 
   void
   initialize_weights_to_the_nearest_vertex
   (typename std::vector<Point>::iterator  first,
-   typename std::vector<Point>::iterator  last);
+   typename std::vector<Point>::iterator  last, const Coord_type &k);
   
   //---------------------------------------------------------------------
    
 
 #endif // VECTOR
-
+#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 };
 
 //---------------------- MEMBER FUNCTIONS -----------------------------
 
-#if defined(VECTOR) || defined(__SGI_STL_VECTOR)
+#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
 
-template<class Rt> 
+template <class Rt> template <class Iterator>
 void
 Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_vertex
-(typename std::vector<Point>::iterator  first,
- typename std::vector<Point>::iterator  last)
+(Iterator  first, Iterator  last, const Coord_type &k)
 { 
-  std::vector<Point> V;
-
   Delaunay_triangulation_2<Gt, Tds> D;
-  typename std::vector<Point>::const_iterator point_it;
-  
+  Iterator point_it;
   
   D.insert(first, last);
 
@@ -235,27 +253,21 @@ Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_vertex
 	    }
 	  while(++face_circ != done);
 	}
-      V.push_back(Point((*point_it).point(), .7*d));
+      (*point_it) = Point((*point_it).point(), k*k*d);
     }
-  first = V.begin();
-  last = V.end();
 }
 
-//-----------------------------------------------------------------------
-  
-template<class Rt>
+
+//---------------------------------------------------------------------
+
+template <class Rt> template <class Iterator>
 void
 Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_edge
-(typename std::vector<Point>::iterator  first,
- typename std::vector<Point>::iterator  last)
+(Iterator  first, Iterator  last, const Coord_type &k)
 { 
-  
-  std::vector<Point> V;
-
   typedef  Delaunay_triangulation_2<Gt, Tds> Dt_int;
   Dt_int D;	
-  typename std::vector<Point>::const_iterator point_it;
-  
+  Iterator point_it;
   
   D.insert(first, last);
 
@@ -296,12 +308,138 @@ Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_edge
 	  while(++face_circ != done);
 	}
       if (d != DBL_MAX)	
-	{ V.push_back(Point((*point_it).point(), .9*d)); }
+	(*point_it) = Point((*point_it).point(), k*k*d); 
       else	
-	{ V.push_back(Point((*point_it).point(), .0)); }
+	(*point_it) = Point((*point_it).point(), Coord_type(0));
     }
-  first = V.begin();
-  last = V.end();
+}
+
+
+//---------------------------------------------------------------------
+
+template <class Rt> template <class Iterator>
+void
+Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_vertex
+(Iterator  first, Iterator  last, const Coord_type &k)
+{ 
+  Delaunay_triangulation_2<Gt, Tds> D;
+  Iterator point_it;
+    
+  D.insert(first, last);
+
+  for( point_it = first; 
+       point_it != last; 
+       ++point_it) 
+    { 
+
+      D.remove(D.nearest_vertex(*point_it));
+      
+      Point neighbor = D.nearest_vertex(*point_it)->point();
+
+      (*point_it) = Point((*point_it).point(),k*k* 
+			  squared_distance(neighbor, *point_it));
+			
+      D.insert(*point_it);
+    }
+}
+ 
+#else // CGAL_CFG_NO_MEMBER_TEMPLATES
+
+//-------------------------------------------------------------------
+
+#if defined(VECTOR) || defined(__SGI_STL_VECTOR)
+
+template<class Rt> 
+void
+Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_vertex
+(typename std::vector<Point>::iterator  first,
+ typename std::vector<Point>::iterator  last, const Coord_type &k)
+{ 
+  Delaunay_triangulation_2<Gt, Tds> D;
+  typename std::vector<Point>::iterator point_it;
+  
+  D.insert(first, last);
+
+  for( point_it = first; 
+       point_it != last; 
+       ++point_it)    
+    { 
+      Face_circulator face_circ=D.incident_faces(D.nearest_vertex(*point_it)),
+	done = face_circ;
+      double d=DBL_MAX;
+      if (!face_circ.is_empty())	
+	{
+	  do	    
+	    {
+	      Face_handle f = face_circ;
+	      if (!D.is_infinite(f))		
+		{
+		  Point p = D.dual(f);
+		  double dd = squared_distance(p, *point_it);
+		  d = std::min(dd, d);
+		}
+	    }
+	  while(++face_circ != done);
+	}
+      (*point_it) = Point((*point_it).point(), k*k*d);
+    }
+}
+
+//-----------------------------------------------------------------------
+  
+template<class Rt>
+void
+Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_edge
+(typename std::vector<Point>::iterator  first,
+ typename std::vector<Point>::iterator  last, const Coord_type &k)
+{ 
+  typedef  Delaunay_triangulation_2<Gt, Tds> Dt_int;
+  Dt_int D;	
+  typename std::vector<Point>::iterator point_it;
+  
+  D.insert(first, last);
+
+  for( point_it = first; 
+       point_it != last; 
+       ++point_it)    
+    { 
+      typename Dt_int::Face_circulator face_circ=
+	D.incident_faces(D.nearest_vertex(*point_it)),
+	done = face_circ;
+
+      double d = DBL_MAX;
+      double dd = DBL_MAX;
+
+      if (!face_circ.is_empty())	
+	{
+	  do	    
+	    {
+	      typename Dt_int::Face_handle f = face_circ;
+	      if (!D.is_infinite(f))		
+		{
+		  for ( int i=0; i!=3; ++i)		    
+		    {
+		      typename Dt_int::Edge e(f,i);
+		      
+		      if ((!D.is_infinite(e.first))&&
+			  (!D.is_infinite(e.first->neighbor(e.second))))
+			{
+			  typename Gt::Segment seg(D.dual(e.first),
+						   D.dual(e.first
+							  ->neighbor(e.second)));
+			  dd = squared_distance(seg, *point_it);
+			}
+		      d = std::min(dd, d);
+		    }
+		}
+	    }
+	  while(++face_circ != done);
+	}
+      if (d != DBL_MAX)	
+	(*point_it) = Point((*point_it).point(), k*k*d); 
+      else	
+	(*point_it) = Point((*point_it).point(), Coord_type(0));
+    }
 }
 
 //-----------------------------------------------------------------------
@@ -310,14 +448,10 @@ template<class Rt>
 void
 Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_vertex
 (typename std::vector<Point>::iterator  first,
- typename std::vector<Point>::iterator  last) 
+ typename std::vector<Point>::iterator  last, const Coord_type &k) 
 { 
- 
-  std::vector<Point> V;
-
   Delaunay_triangulation_2<Gt, Tds> D;
-  typename std::vector<Point>::const_iterator point_it;
-  
+  typename std::vector<Point>::iterator point_it;
   
   D.insert(first, last);
 
@@ -330,13 +464,10 @@ Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_vertex
       
       Point neighbor = D.nearest_vertex(*point_it)->point();
 
-      V.push_back(Point((*point_it).point(), 
-			squared_distance(neighbor, *point_it)));
-			
+      (*point_it) = Point((*point_it).point(),k*k* 
+			  squared_distance(neighbor, *point_it));
       D.insert(*point_it);
     }
-  first = V.begin();
-  last = V.end();
 }
 
 #endif //VECTOR
@@ -349,13 +480,10 @@ template<class Rt>
 void
 Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_vertex
 (typename std::list<Point>::iterator  first,
- typename std::list<Point>::iterator  last)
+ typename std::list<Point>::iterator  last, const Coord_type &k)
 { 
-  std::list<Point> V;
-
   Delaunay_triangulation_2<Gt, Tds> D;
-  typename std::list<Point>::const_iterator point_it;
-  
+  typename std::list<Point>::iterator point_it;
   
   D.insert(first, last);
 
@@ -380,10 +508,8 @@ Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_vertex
 	    }
 	  while(++face_circ != done);
 	}
-      V.push_back(Point((*point_it).point(), .7*d));
+      (*point_it) = Point((*point_it).point(), k*k*d);
     }
-  first = V.begin();
-  last = V.end();
 }
 
 //-----------------------------------------------------------------------
@@ -392,15 +518,11 @@ template<class Rt>
 void
 Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_edge
 (typename std::list<Point>::iterator  first,
- typename std::list<Point>::iterator  last)
+ typename std::list<Point>::iterator  last, const Coord_type &k)
 { 
-  
-  std::list<Point> V;
-
   typedef  Delaunay_triangulation_2<Gt, Tds> Dt_int;
   Dt_int D;	
-  typename std::list<Point>::const_iterator point_it;
-  
+  typename std::list<Point>::iterator point_it;
   
   D.insert(first, last);
 
@@ -441,12 +563,10 @@ Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_voronoi_edge
 	  while(++face_circ != done);
 	}
       if (d != DBL_MAX)	
-	{ V.push_back(Point((*point_it).point(), .9*d)); }
+	(*point_it) = Point((*point_it).point(), k*k*d); 
       else	
-	{ V.push_back(Point((*point_it).point(), .0)); }
+	(*point_it) = Point((*point_it).point(), Coord_type(0));
     }
-  first = V.begin();
-  last = V.end();
 }
 
 //-----------------------------------------------------------------------
@@ -455,12 +575,10 @@ template<class Rt>
 void
 Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_vertex
 (typename std::list<Point>::iterator  first,
- typename std::list<Point>::iterator  last) 
+ typename std::list<Point>::iterator  last, const Coord_type &k) 
 { 
-  std::list<Point> V;
-
   Delaunay_triangulation_2<Gt, Tds> D;
-  typename std::list<Point>::const_iterator point_it;
+  typename std::list<Point>::iterator point_it;
   
   D.insert(first, last);
 
@@ -473,16 +591,16 @@ Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_vertex
       
       Point neighbor = D.nearest_vertex(*point_it)->point();
 
-      V.push_back(Point((*point_it).point(), 
-			squared_distance(neighbor, *point_it)));
-			
+      (*point_it) = Point((*point_it).point(),k*k* 
+			  squared_distance(neighbor, *point_it));
       D.insert(*point_it);
     }
-  first = V.begin();
-  last = V.end();
 }
 
-#endif //LIST
+//-------------------------------------------------------------------
+
+#endif // LIST
+#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 
 //-------------------------------------------------------------------
 CGAL_END_NAMESPACE

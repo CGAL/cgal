@@ -30,7 +30,9 @@
 #include <iostream>
 #include <fstream>
 #include <strstream>
+#include <vector>
 #include <list>
+
 #include <CGAL/triangulation_assertions.h>
 
 #define CGAL_ALPHA_WINDOW_STREAM
@@ -249,9 +251,9 @@ random_input(Alpha_shape_2 &A,
   std::vector<Point>::iterator first=V.begin(),
     last=V.end();
   if (opt.init)
-    { A.initialize_weights_to_the_nearest_voronoi_vertex(first, last); }
+    A.initialize_weights_to_the_nearest_voronoi_vertex(first, last, .7);
   else
-    { A.initialize_weights_to_the_nearest_vertex(first, last); }
+    A.initialize_weights_to_the_nearest_vertex(first, last, 1.0);
   for ( ;first!=last;first++)
     VV.push_back(*first);
   n = A.make_alpha_shape(VV.begin(), VV.end());
@@ -299,11 +301,13 @@ window_input(Alpha_shape_2 &A,
   std::vector<Point>::iterator first=V.begin(),
     last=V.end();
   if (opt.init)
-    { A.initialize_weights_to_the_nearest_voronoi_vertex(first, last); }
+    A.initialize_weights_to_the_nearest_voronoi_vertex(first, last, .7);
   else
-    { A.initialize_weights_to_the_nearest_vertex(first, last); }
+    A.initialize_weights_to_the_nearest_vertex(first, last, 1.0);
+
   for ( ;first!=last;first++)
     VV.push_back(*first);
+
   n = A.make_alpha_shape(VV.begin(), VV.end());
   end_timing(1);
   std::cout << "Inserted " << n  << " points" << endl;
@@ -344,9 +348,9 @@ file_input(Alpha_shape_2& A,
   std::vector<Point>::iterator first=V.begin(),
     last=V.end();
   if (opt.init)
-    { A.initialize_weights_to_the_nearest_voronoi_vertex(first, last); }
+    A.initialize_weights_to_the_nearest_voronoi_vertex(first, last, .7);
   else
-    { A.initialize_weights_to_the_nearest_vertex(first, last); }
+    A.initialize_weights_to_the_nearest_vertex(first, last, 1.0);
   for ( ;first!=last;first++)
     VV.push_back(*first);
   

@@ -17,12 +17,13 @@ $\alpha$ decreases, the $\alpha$-shape shrinks and develops cavities, as soon as
 a sphere of radius $\sqrt{\alpha}$ can be put inside.
 Finally, for $\alpha = 0$, the $\alpha$-shape is the set $S$ itself.
 
-We can describe two versions of Alpha Shapes, one is based on the Delaunay
-triangulation and the other is its generalization, remplacing the natural
-distance by the power to weighted points. The metric used determines the
-underlying triangulation of the alpha shape and the version computed, in one
-hand, the classic Alpha Shapes associated with the Delaunay triangulations
-(cf. \ref{I1_Sect_Delaunay}), on the other hand, the weighted Alpha Shapes
+We can describe two versions of alpha shapes, one is based on the Delaunay
+triangulation and the other on its generalization, the regular triangulation,
+replacing the natural distance by the power to weighted points. The metric used
+determines an underlying triangulation of the alpha shape and thus, the version
+computed. 
+In one hand, there is the classic alpha shapes associated with the Delaunay triangulations
+(cf. \ref{I1_Sect_Delaunay}), in the other hand, the weighted alpha shapes
 associated with the regular triangulations (cf. \ref{I1_Sect_Regular}).
 
 There is a close connection between alpha shapes and the underlying
@@ -30,19 +31,22 @@ triangulations. More precisely, the $\alpha$-complex of $S$ is a
 subcomplex of this triangulation of $S$, containing the $\alpha$-exposed
 $k$-simplices, $0 \leq k \leq d$. A simplex is $\alpha$-exposed, if there is an
 open disk (resp.\ ball) of radius $\sqrt{\alpha}$ through the vertices of the
-simplex that does not contain any other point of $S$, for the metric used for
+simplex that does not contain any other point of $S$, for the metric used in
 the computation of the underlying triangulation.  The corresponding
-$\alpha$-shape is its its frontier and the underlying space correspondant. 
+$\alpha$-shape is defined as the underlying interior space of the
+$\alpha$-complex. The  $\alpha$-shape is demarcated by a frontier, which is,
+under conditions described in \cite{bb-srmua-97t}, a linear approximation of the
+original contour. 
 
 In general, an $\alpha$-complex is a non-connected and non-pure polytope, it
 means, that one $k$-simplice, $0 \leq k \leq d-1$ is not necessary adjacent to
-a $(k+1)$-simplice
+a $(k+1)$-simplice.
 
 The $\alpha$-shapes of $S$ form a discrete family, even though they
 are defined for all real numbers $\alpha$ with $0 \leq \alpha
 \leq \infty$. Thus, we can represent the entire family of $\alpha$ shapes
 of $S$ by the underlying triangulation of $S$. In this representation
-each $k$-simplex of the Delaunay triangulation is associated with an
+each $k$-simplex of the underlying triangulation is associated with an
 interval that specifies for which values of $\alpha$ the $k$-simplex
 belongs to the $\alpha$-shape. Relying on this result, the family of
 $\alpha$-shapes can be computed efficiently and relatively
@@ -52,7 +56,7 @@ $\alpha$-values.
 
 %----------------------------------------------------------------------
 
-\section{General Alpha-Shape of Points in a Plane \label{I1_SectAlpha_Shape_2}}
+\section{Generic Alpha-Shapes of Points in a Plane \label{I1_SectAlpha_Shape_2}}
 
 \begin{ccClassTemplate} {Alpha_shape_2<Dt>}
 
@@ -326,7 +330,7 @@ use binary search.
 \ccStyle{A.number solid components} performs a graph traversal and takes time
 linear in the number of faces of the underlying triangulation.
 \ccStyle{A.find optimal alpha} uses binary search and takes time
-$O(\mbox{ \em n } \log{\mbox{ \em n } })$, $n$ the number of points.
+$O(\mbox{ \em n } \log{\mbox{ \em n } })$, where  $n$ is the number of points.
 
 %----------------------------------------------------------------------
 
@@ -381,7 +385,7 @@ can be provided.
 \ccConstructor{Gt();}
 {A default constructor.}
 
-\ccOperations
+\ccHeading{Constructions}
 
 \ccMethod{Coord_type squared_radius(const Point& p0,
 				const Point& p1, 
@@ -396,6 +400,8 @@ used by \ccStyle{Dt}.}
 points \ccStyle{p0, p1}, associated with the metric 
 used by \ccStyle{Dt}.}
 
+\ccHeading{Predicate}
+
 \ccMethod{Bounded_side side_of_circle(const Point& p0,
                                 const Point& p1,
                                 const Point& test) const;}
@@ -405,7 +411,7 @@ the points \ccStyle{p0, p1}, using the same metric as \ccStyle{Dt}.}
 \end{ccClass}
 
 
-\section*{For the Triangulation Data Structure Class}
+\section*{Triangulation Data Structure Class for an Alpha-Shape}
 
 The class \ccStyle{Alpha_shape_2<Dt>} parameterized with a
 triangulation data structure class \ccStyle{Tds}, that has exactly the same
@@ -417,7 +423,8 @@ But, she requires to be templated by special \ccc{Alpha_shape_vertex_base} and
 define the requirements of such Alpha Shape \ccc{Alpha_shape_vertex_base} and
 \ccc{Alpha_shape_face_base<Df>} classes.
 
-\subsection{Requirements for the \protect \ccc{Vertex_base} Classof an Alpha-Shape\label{I1_SectVertex}}
+\subsection{Requirements for the \protect \ccc{Vertex_base} Class of an
+Alpha-Shape\label{I1_SectVertex}} 
 
 The information about the alpha values associated  are accessible by the 
 vertices of the alpha shape. Thus the nested \ccc{Alpha_shape_vertex_base}
@@ -451,6 +458,8 @@ the \ccStyle{Gt}, already used by underlying triangulation \ccStyle{Dt}.}
 
 \ccCreation
 
+\begin{ccAdvanced}
+
 \ccConstructor{Alpha_shape_vertex_base();}{default constructor.}
 \ccGlue
 \ccConstructor{Alpha_shape_vertex_base(Point p);}{constructor setting
@@ -458,6 +467,8 @@ the point associated to.}
 \ccGlue
 \ccConstructor{Alpha_shape_vertex_base(Point p, void* f);} 
 {constructor setting the point  associated to and an incident face.}
+
+\end{ccAdvanced}
 
 \ccHeading{Access Functions}
 
@@ -468,10 +479,16 @@ for $\alpha$ under $\alpha_1$, the vertex is regular.}
 
 
 \ccModifiers
+
+\begin{ccAdvanced}
+
 \ccMethod{void set_range(std::pair< Coord_type, Coord_type > I);}
 {sets the alpha values $\alpha_1 \leq \alpha_2$, such as for
 $\alpha$ under $\alpha_2$, the vertex is attached but singular, and
 for $\alpha$ under $\alpha_1$, the vertex is regular.}
+
+\end{ccAdvanced}
+
 \end{ccClass}
 
 \subsection{Requirements for the \protect \ccc{Face_base} Class of an Alpha-Shape}
@@ -487,7 +504,7 @@ methods.
 This additional functionalities related to the alpha shape
 are requirements which have to be fulfilled
 by the base face  for an alpha shape,
-in addition to the functionalities required by an underlying triangulation Face \ccStyle{Df}.
+in addition to the functionalities required by an underlying triangulation face \ccStyle{Df}.
 They are listed below as such.
 
 \ccInheritsFrom
@@ -513,12 +530,17 @@ coordinate type of the point class.
 her face base \ccStyle{Df}.} 
 
 \ccCreation
+
+\begin{ccAdvanced}
+
 \ccConstructor{Alpha_shape_face_base();}{default constructor.}
 \ccGlue
 \ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void* v2);}{constructor setting the incident vertices.}
 \ccGlue
 \ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} 
 {constructor setting the incident vertices and the neighboring faces.}
+
+\end{ccAdvanced}
 
 \ccHeading{Access Functions}
 \ccMethod{Interval_3[3] get_ranges();}
@@ -533,6 +555,9 @@ under $\alpha_1$, the edge is interior.}
 face.}
 
 \ccModifiers
+
+\begin{ccAdvanced}
+
 \ccMethod{void set_ranges(Interval_3[3] V);}
 {sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three
 alpha values
@@ -544,13 +569,15 @@ under $\alpha_1$, the edge is interior.}
 {sets the Alpha value, under which the Alpha Shape contains the
 face.}
 
+\end{ccAdvanced}
+
 \end{ccClass}
 
 %----------------------------------------------------------------------
 
-\section{Classic version of Alpha-Shape}
+\section{Classic Version of Alpha-Shape}
 
-\subsection*{The underlying Triangulation}
+\subsection*{The Underlying Triangulation~: a Delaunay Triangulation}
 
 For a simple alpha shape, you have to choose a Delaunay triangulation as
 underlying triangulation \ccStyle{Dt} and follow the requirements listed above.
@@ -560,11 +587,11 @@ underlying triangulation \ccStyle{Dt} and follow the requirements listed above.
 \subsection*{Predefined Geometric Traits Class}
 
 Of course,  \cgal\ provides a default \ccc{Alpha_shape_traits} class in this
-case.
+case, with an implementation of the appropriate predicate and constructions.
 The class \ccc{Alpha_shape_euclidean_traits_2<Rp>} simply derived from 
 \ccc{Triangulation_euclidean_traits_2<Rp>}.
 
-\ccInclude{CGAL/Alpha_euclidean_traits_2.h}
+\ccInclude{CGAL/Alpha_shape_euclidean_traits_2.h}
 
 \subsection*{Predefined \protect \ccc{Vertex_base} Class}
 
@@ -580,13 +607,13 @@ for the Alpha Shape. The class
 \cgal\ provides a default \ccc{Face_base} class
 for the Alpha Shape. The class
 \ccc{Alpha_shape_face_base_2<Gt,Df>} simply derived from 
-\ccc{Df}, which can be instanciated with \ccc{Triangulation_face_base_2<Gt>}.
+\ccc{Df}, which can be instantiated with \ccc{Triangulation_face_base_2<Gt>}.
 
 \ccInclude{CGAL/Triangulation_face_base_2.h}
 
 \ccInclude{CGAL/Alpha_shape_face_base_2.h}
 
-\subsection*{Example}
+\subsection*{To Do a Classic Alpha-Shape}
 
 \ccExample
 The following code details the different steps to create 
@@ -605,9 +632,9 @@ typedef CGAL::Alpha_shape_2<Dt> Alpha_shape_2;
 
 %----------------------------------------------------------------------
 
-\section{Weighted version of Alpha-Shape}
+\section{Weighted Version of Alpha-Shape}
 
-\subsection*{The underlying Triangulation}
+\subsection*{The Underlying Triangulation~: a Regular Triangulation}
 
 For a weighted alpha shape, you have to choose a regular triangulation as
 underlying triangulation \ccStyle{Dt} and follow the requirements listed above.
@@ -617,11 +644,11 @@ underlying triangulation \ccStyle{Dt} and follow the requirements listed above.
 \subsection*{Predefined Geometric Traits Class}
 
 Of course,  \cgal\ provides a default \ccc{Alpha_shape_traits} class in this
-case.
+case, with an implementation of the appropriate predicate and constructions.
 The class \ccc{Weighted_alpha_shape_euclidean_traits_2<Rp>} simply derived from 
 \ccc{Regular_euclidean_traits_2<Rp>}.
 
-\ccInclude{CGAL/Alpha_euclidean_traits_2.h}
+\ccInclude{CGAL/Weighted_alpha_shape_euclidean_traits_2.h}
 
 \subsection*{Predefined \protect \ccc{Vertex_base} Class}
 
@@ -637,13 +664,13 @@ for the Alpha Shape. The class
 \cgal\ provides a default \ccc{Face_base} class
 for the Alpha Shape. The class
 \ccc{Alpha_shape_face_base_2<Gt,Df>} simply derived from 
-\ccc{Df}, which can be instanciated with \ccc{Regular_triangulation_face_base_2<Gt>}.
+\ccc{Df}, which can be instantiated with \ccc{Regular_triangulation_face_base_2<Gt>}.
 
 \ccInclude{CGAL/Regular_triangulation_face_base_2.h}
 
 \ccInclude{CGAL/Alpha_shape_face_base_2.h}
 
-\subsection*{Example}
+\subsection*{To Do a Weighted Alpha-Shape}
 
 \ccExample
 The following code details the different steps to create 
@@ -662,18 +689,18 @@ typedef CGAL::Alpha_shape_2<Rt> Alpha_shape_2;
 
 %----------------------------------------------------------------------
 
-\section{Additionnal functionnalities for weighted Alpha-Shape\label{I2_SectWeighted_Alpha_Shape_2}}
+\section{Additional Functionalities for Weighted Alpha-Shape\label{I2_SectWeighted_Alpha_Shape_2}}
 
 \begin{ccClassTemplate} {Weighted_alpha_shape_2<Rt>}
 
 \ccDefinition
 Specially for the weighted version, the computation of alpha shape often
-necessite an estimation of weights for the sample of points. This class
+enforces an estimation of weights for the sample of points. This class
 \ccClassTemplateName\ provides some heuristic methods to initialize these
-weights. They can deal with samples of points extract from a contour in a plane.
-The main idea is to control an union of sphere, dual of the weighted alpha shape, which
-preserve the skeletton of the original contour. The best results are in
-\ccc{GENERAL} mode, with $\alpha=0$.
+weights in two dimensions. They can deal with samples of points extract from a
+contour in a plane. The main idea is to control an union of sphere, dual of the
+weighted alpha shape, which has to preserve the skeleton of the original
+contour. The best results are in \ccc{GENERAL} mode, with $\alpha=0$.
 
 \ccInclude{CGAL/Weighted_alpha_shape_2.h}
 
@@ -710,27 +737,25 @@ introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
 
 \ccOperations
 
-\ccMethod{template < class InputIterator >
+\ccMethod{template < class Iterator >
 void
 initialize_weights_to_the_nearest_voronoi_vertex
-(Input_iterator first, Input_iterator last);}
-{initialize the weight of each point, stored in a container of points, with the
-distance to his nearest voronoi vertex.}
+(Iterator first, Iterator last, const Coord_type& k);}
+{initialize the weight of each point, stored in a container of points, with a value
+equal to the distance to his nearest Voronoi vertex multiply by $k \leq 1$.} 
   
-\ccMethod{template < class InputIterator >
+\ccMethod{template < class Iterator >
 void
 initialize_weights_to_the_nearest_voronoi_edge
-(Input_iterator first,
-Input_iterator last);}
-{initialize the weight of each point, stored in a container of points, with the
-distance to his nearest voronoi edge.}
+(Iterator first, Iterator last, const Coord_type& k);}
+{initialize the weight of each point, stored in a container of points, with a
+value equal to the distance to his nearest Voronoi edge multiply by $k \geq 1$.}
   
-\ccMethod{template < class InputIterator >
+\ccMethod{template < class Iterator >
 void
 initialize_weights_to_the_nearest_vertex
-(Input_iterator  first,
-Input_iterator  last);}
-{initialize the weight of each point, stored in a container of points, with the
-distance to his nearest vertex.} 
+(Iterator  first, Iterator  last, const Coord_type& k);}
+{initialize the weight of each point, stored in a container of points, with a
+value equal to the distance to his nearest vertex multiply by $k$.} 
  
 \end{ccClassTemplate}

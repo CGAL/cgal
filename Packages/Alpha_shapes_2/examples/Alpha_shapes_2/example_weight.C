@@ -15,6 +15,7 @@ correspondant a l'Alpha Shape ponderee.
 #include <strstream>
 // en fait le std dit sstream
 
+#include <vector>
 #include <list>
 
 #include <CGAL/Weighted_point.h>
@@ -28,7 +29,7 @@ correspondant a l'Alpha Shape ponderee.
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Regular_triangulation_2.h>
-#include <CGAL/Weighted_alpha_shape_2.h>
+#include <CGAL/Alpha_shape_2.h>
 
 typedef double coord_type;
 
@@ -50,7 +51,7 @@ typedef CGAL::Alpha_shape_face_base_2<Gt, Rf>  Fb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
 typedef CGAL::Regular_triangulation_2<Gt,Tds> Triangulation_2;
 
-typedef CGAL::Weighted_alpha_shape_2<Triangulation_2>  Alpha_shape_2;
+typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape_2;
 
 typedef Alpha_shape_2::Face  Face;
 typedef Alpha_shape_2::Vertex Vertex;

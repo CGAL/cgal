@@ -31,8 +31,6 @@
 
 #include <CGAL/basic.h>
 
-#include <vector>
-#include <list>
 // SGI MIPSpro C++ 7.x
 #ifdef STL_HASH_TABLES
 #include <hash_set>
@@ -42,6 +40,8 @@
 #include <set>
 #include <map>
 #endif
+
+#include <vector>
 
 #include <algorithm>
 #include <utility>
@@ -128,7 +128,9 @@ private:
   // #endif
 
   // triple causes under certian conditions a CC sun complier problem
-  typedef typename Tds::Face::Face::Interval_3 Interval3;
+  typedef typename Tds::Face Face_tds;
+  typedef typename Face_tds::Face Face_base;
+  typedef typename Face_base::Interval_3 Interval3;
 
   typedef std::pair< Interval3, Edge > Interval_edge;
   typedef std::vector< Interval_edge > Interval_edge_map;
@@ -212,29 +214,32 @@ public:
 // Introduces an alpha-shape `A' for a positive alpha-value
   // `alpha' that is initialized with the points in the range
   // from first to last
-#ifdef CGAL_TEMPLATE_MEMBER_FUNCTIONS
-  template < class InputIterator >  
+
+#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
+
+  template <class InputIterator>
   Alpha_shape_2( InputIterator first,  
 		 InputIterator last,  
 		 const Coord_type& alpha = 0,
 		 Mode = GENERAL) 
-{
-  if (Dt::insert(first, last) >= 4)
     {
-      // Compute the associated _interval_face_map
-      initialize_interval_face_map();
+      if (Dt::insert(first, last) >= 4)
+	{
+	  // Compute the associated _interval_face_map
+	  initialize_interval_face_map();
 
-      // Compute the associated _interval_edge_map
-      initialize_interval_edge_map();
+	  // Compute the associated _interval_edge_map
+	  initialize_interval_edge_map();
    
-      // Compute the associated _interval_vertex_map
-      initialize_interval_vertex_map();
+	  // Compute the associated _interval_vertex_map
+	  initialize_interval_vertex_map();
 
-      // merge the two maps
-      initialize_alpha_spectrum();
+	  // merge the two maps
+	  initialize_alpha_spectrum();
+	}
     }
-}
-#else
+
+#else //CGAL_CFG_NO_MEMBER_TEMPLATES 
 #if defined(LIST) || defined(__SGI_STL_LIST)
 Alpha_shape_2(typename std::list<Point>::const_iterator first,
 	      typename std::list<Point>::const_iterator last,
@@ -284,14 +289,16 @@ Alpha_shape_2(typename std::vector<Point>::const_iterator first,
 }
 #endif // VECTOR
 
-#endif // TEMPLATE_MEMBER_FUNCTIONS
+#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 
  
 public:
 
-//----------- OUTPUT A LIST OF POINTS CONNECTED BY PAIRS ------------ 
- 
+//----------- OUTPUT POINTS CONNECTED BY PAIRS ----------------------
+
+#if defined(LIST) || defined(__SGI_STL_LIST)
 std::list<Point> Output();
+#endif //LIST
  
 std::ostream& op_ostream(std::ostream& os) const;
 
@@ -303,10 +310,11 @@ Window_stream& op_window(Window_stream& W) const;
  
 //----------------------- OPERATIONS ---------------------------------
 
-#ifdef CGAL_TEMPLATE_MEMBER_FUNCTIONS
+#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
+
 template < class InputIterator >  
-int make_alpha_shape( InputIterator first,  
-		      InputIterator last) 
+int make_alpha_shape(InputIterator first,  
+		     InputIterator last) 
 {
 
   clear();
@@ -332,11 +340,17 @@ int make_alpha_shape( InputIterator first,
     }
   return n;
 }
+
 // Introduces an alpha-shape `A' for a positive alpha-value
 // `alpha' that is initialized with the points in the range
 // from first to last
-#else
+
+#else //CGAL_CFG_NO_MEMBER_TEMPLATES
+
+//-----------------------------------------------------------------------
+
 #if defined(LIST) || defined(__SGI_STL_LIST)
+
 int make_alpha_shape(typename std::list<Point>::const_iterator first,
 		     typename std::list<Point>::const_iterator last) 
 {
@@ -365,6 +379,8 @@ int make_alpha_shape(typename std::list<Point>::const_iterator first,
   return n;
 }
 #endif //LIST
+
+//-----------------------------------------------------------------------
 
 #if defined(VECTOR) || defined(__SGI_STL_VECTOR)
 
@@ -396,7 +412,7 @@ int  make_alpha_shape(typename std::vector<Point>::const_iterator first,
 }
 #endif // VECTOR
 
-#endif // TEMPLATE_MEMBER_FUNCTIONS
+#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 
 
 private :
@@ -796,135 +812,6 @@ Alpha_shape_2& operator=(const Alpha_shape_2& A)
 //---------------------------MEMBER FUNCTIONS-----------------------------
 
 template < class Dt >
-std::list<Alpha_shape_2<Dt>::Point> 
-Alpha_shape_2<Dt>::Output () 
-{
-
-  typename Interval_vertex_map::const_iterator vertex_alpha_it;
-
-  typename Interval_edge_map::const_iterator edge_alpha_it;
-
-  const Interval3* pInterval;
-  std::list<Point> L;
-
-
-  if (get_mode() == REGULARIZED) 
-    {
-
-      // it is much faster looking at the sorted intervals 
-      // than looking at all sorted faces
-      // alpha must be larger than the mid boundary
-      // and alpha is smaller than the upper boundary
-      for (edge_alpha_it = _interval_edge_map.begin(); 
-	   edge_alpha_it != _interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < get_alpha();
-	   ++edge_alpha_it) 
-	{
-      
-	  pInterval = &(*edge_alpha_it).first;
-
-	  if (pInterval->second != INFINITY)
-	    {
-	      // since this happens only for convex hull of dimension 1
-	      // thus singular
-	
-	      if(pInterval->second < get_alpha() &&
-		 (pInterval->third >= get_alpha()
-		  || pInterval->third == INFINITY)) 
-		{
-		  // alpha must be larger than the mid boundary
-		  // and alpha is smaller than the upper boundary
-		  // which might be infinity 
-		  // visualize the boundary
-	  
- CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-					(*edge_alpha_it).second.second) ==
-			       REGULAR));
-	  
-		  // if we used Edelsbrunner and Muecke's definition
-		  // regular means incident to a higher-dimensional face
-		  // thus we would write to many vertices
-		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second))
-			      .source());
-		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second))
-			      .target());
-		}
-	    }
-	}
-    }
-  else 
-    {  // get_mode() == GENERAL
-      // draw the edges
-      for (edge_alpha_it = _interval_edge_map.begin(); 
-	   edge_alpha_it != _interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < get_alpha();
-	   ++edge_alpha_it) 
-	{
-
-	  pInterval = &(*edge_alpha_it).first;
-	
-	  if (pInterval->first == UNDEFINED) 
-	    {
-
- CGAL_triangulation_assertion(pInterval->second != INFINITY);
-	      // since this happens only for convex hull of dimension 1
-	      // thus singular
-
-	      if(pInterval->second < get_alpha() &&
-		 (pInterval->third >= get_alpha()
-		  || pInterval->third == INFINITY)) 
-		{
-		  // alpha must be larger than the mid boundary
-		  // and alpha is smaller than the upper boundary
-		  // which might be infinity 
-		  // visualize the boundary
-		
- CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-					(*edge_alpha_it).second.second) ==
-			       REGULAR));
-		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second))
-			      .source());
-		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second))
-			      .target());
-		}
-	    }
-	  else 
-	    {
-
-	      if(pInterval->third >= get_alpha()
-		 || pInterval->third == INFINITY) 
-		{
-		  // if alpha is smaller than the upper boundary
-		  // which might be infinity 
-		  // visualize the boundary
-		
- CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
-					 (*edge_alpha_it).second.second) ==
-				REGULAR) || 
-			       (classify((*edge_alpha_it).second.first,
-					 (*edge_alpha_it).second.second) ==
-				SINGULAR)));
-		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second))
-			      .source());
-		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second))
-			      .target());
-		}
-	    }
-
-	}
-    }
-  return L;
-}
-
-//-------------------------------------------------------------------------
-
-template < class Dt >
 void 
 Alpha_shape_2<Dt>::initialize_interval_face_map(void) 
 {
@@ -1028,8 +915,7 @@ Alpha_shape_2<Dt>::initialize_interval_edge_map(void)
 		  // the edge is finite by construction
 		  CGAL_triangulation_precondition((is_infinite(pNeighbor) 
 						   && is_infinite(pFace)));
-		  interval = make_triple(
-					 squared_radius(pFace, i), 
+		  interval = make_triple(squared_radius(pFace, i), 
 					 INFINITY,
 					 INFINITY);
 		}
@@ -1220,21 +1106,23 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum(void)
   // distance(edge_it, _interval_edge_map.end(), nb_unattached_edges);
   // however the distance function is expensive
 
-
   while (edge_it != _interval_edge_map.end() &&
 	 face_it != _interval_face_map.end()) 
     {
+
       if ((*face_it).first < (*edge_it).first.first) 
 	{
-	  if (_alpha_spectrum.empty() || 
-	      _alpha_spectrum.back() < (*face_it).first)
+	  if (((_alpha_spectrum.empty() || 
+		_alpha_spectrum.back() < (*face_it).first)) && 
+	      ((*face_it).first > 0))
 	    _alpha_spectrum.push_back((*face_it).first);
 	  face_it++;
 	}
-      else 
+      else
 	{
-	  if (_alpha_spectrum.empty() || 
-	      _alpha_spectrum.back() < (*edge_it).first.first)
+	  if (((_alpha_spectrum.empty() || 
+		_alpha_spectrum.back() < (*edge_it).first.first)) &&
+	      (((*edge_it).first.first) > 0))
 	    _alpha_spectrum.push_back((*edge_it).first.first);
 	  edge_it++;
 	}
@@ -1242,19 +1130,22 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum(void)
     
   while (edge_it != _interval_edge_map.end()) 
     {
-      if (_alpha_spectrum.empty() || 
-	  _alpha_spectrum.back() < (*edge_it).first.first)
+      if (((_alpha_spectrum.empty() || 
+	    _alpha_spectrum.back() < (*edge_it).first.first))&&
+	  (((*edge_it).first.first) > 0))
 	_alpha_spectrum.push_back((*edge_it).first.first);
       edge_it++;
     }
 
   while (face_it != _interval_face_map.end()) 
     { 
-      if (_alpha_spectrum.empty() || 
-	  _alpha_spectrum.back() < (*face_it).first)
+      if (((_alpha_spectrum.empty() || 
+	    _alpha_spectrum.back() < (*face_it).first))&&
+	  ((*face_it).first > 0))
 	_alpha_spectrum.push_back((*face_it).first);
       face_it++;
     }
+
 }
 
 //-------------------------------------------------------------------------
@@ -2024,6 +1915,137 @@ Alpha_shape_2<Dt>::Vect_seg& operator<<
 {
   return A.op_vect_seg(V);
 }
+
+//-------------------------------------------------------------------
+
+#if defined(LIST) || defined(__SGI_STL_LIST)
+template < class Dt >
+std::list<Alpha_shape_2<Dt>::Point> 
+Alpha_shape_2<Dt>::Output () 
+{
+
+  typename Interval_vertex_map::const_iterator vertex_alpha_it;
+
+  typename Interval_edge_map::const_iterator edge_alpha_it;
+
+  const Interval3* pInterval;
+  std::list<Point> L;
+
+
+  if (get_mode() == REGULARIZED) 
+    {
+
+      // it is much faster looking at the sorted intervals 
+      // than looking at all sorted faces
+      // alpha must be larger than the mid boundary
+      // and alpha is smaller than the upper boundary
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
+	   ++edge_alpha_it) 
+	{
+      
+	  pInterval = &(*edge_alpha_it).first;
+
+	  if (pInterval->second != INFINITY)
+	    {
+	      // since this happens only for convex hull of dimension 1
+	      // thus singular
+	
+	      if(pInterval->second < get_alpha() &&
+		 (pInterval->third >= get_alpha()
+		  || pInterval->third == INFINITY)) 
+		{
+		  // alpha must be larger than the mid boundary
+		  // and alpha is smaller than the upper boundary
+		  // which might be infinity 
+		  // visualize the boundary
+	  
+ CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
+					(*edge_alpha_it).second.second) ==
+			       REGULAR));
+	  
+		  // if we used Edelsbrunner and Muecke's definition
+		  // regular means incident to a higher-dimensional face
+		  // thus we would write to many vertices
+		  L.push_back((segment((*edge_alpha_it).second.first,
+				       (*edge_alpha_it).second.second))
+			      .source());
+		  L.push_back((segment((*edge_alpha_it).second.first,
+				       (*edge_alpha_it).second.second))
+			      .target());
+		}
+	    }
+	}
+    }
+  else 
+    {  // get_mode() == GENERAL
+      // draw the edges
+      for (edge_alpha_it = _interval_edge_map.begin(); 
+	   edge_alpha_it != _interval_edge_map.end() &&
+	     (*edge_alpha_it).first.first < get_alpha();
+	   ++edge_alpha_it) 
+	{
+
+	  pInterval = &(*edge_alpha_it).first;
+	
+	  if (pInterval->first == UNDEFINED) 
+	    {
+
+ CGAL_triangulation_assertion(pInterval->second != INFINITY);
+	      // since this happens only for convex hull of dimension 1
+	      // thus singular
+
+	      if(pInterval->second < get_alpha() &&
+		 (pInterval->third >= get_alpha()
+		  || pInterval->third == INFINITY)) 
+		{
+		  // alpha must be larger than the mid boundary
+		  // and alpha is smaller than the upper boundary
+		  // which might be infinity 
+		  // visualize the boundary
+		
+ CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
+					(*edge_alpha_it).second.second) ==
+			       REGULAR));
+		  L.push_back((segment((*edge_alpha_it).second.first,
+				       (*edge_alpha_it).second.second))
+			      .source());
+		  L.push_back((segment((*edge_alpha_it).second.first,
+				       (*edge_alpha_it).second.second))
+			      .target());
+		}
+	    }
+	  else 
+	    {
+
+	      if(pInterval->third >= get_alpha()
+		 || pInterval->third == INFINITY) 
+		{
+		  // if alpha is smaller than the upper boundary
+		  // which might be infinity 
+		  // visualize the boundary
+		
+ CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
+					 (*edge_alpha_it).second.second) ==
+				REGULAR) || 
+			       (classify((*edge_alpha_it).second.first,
+					 (*edge_alpha_it).second.second) ==
+				SINGULAR)));
+		  L.push_back((segment((*edge_alpha_it).second.first,
+				       (*edge_alpha_it).second.second))
+			      .source());
+		  L.push_back((segment((*edge_alpha_it).second.first,
+				       (*edge_alpha_it).second.second))
+			      .target());
+		}
+	    }
+
+	}
+    }
+  return L;
+}
+#endif //LIST
 
 //-------------------------------------------------------------------
 CGAL_END_NAMESPACE

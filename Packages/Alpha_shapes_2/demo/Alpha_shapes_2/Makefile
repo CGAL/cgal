@@ -24,8 +24,8 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS =   -I$(HOME)/Cgal-2.0/To_submit/Alpha_shapes_2/include \
              $(CGAL_CXXFLAGS) \
-             -mcpu=ultrasparc -mtune=ultrasparc -O2 \
-             -B /u/alcor/0/prisme_util/Binutils/SunOS/bin/
+	     -mcpu=ultrasparc -mtune=ultrasparc -O2 \
+	     -B /u/alcor/0/prisme_util/Binutils/SunOS/bin/
 
 #-mcpu=ultrasparc -mtune=ultrasparc -Wall -W -O2 -DDEBUG
 #-B /u/alcor/0/prisme_util/Binutils/SunOS/bin/ -g

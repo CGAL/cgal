@@ -67,7 +67,8 @@ public:
     {
   
       return
-	CGAL::squared_radius_orthogonalcircle(p, q, r);
+	std::max
+	(Coord_type(0), CGAL::squared_radius_orthogonalcircle(p, q, r));
     }
 
 
@@ -78,7 +79,8 @@ public:
     {
 
       return
-	CGAL::squared_radius_smallest_orthogonalcircle(p, q);
+	std::max
+	(Coord_type(0), CGAL::squared_radius_smallest_orthogonalcircle(p, q));
     }
 
   Bounded_side side_of_circle(const Point &p,

@@ -15,6 +15,7 @@ correspondant a l'Alpha Shape.
 #include <strstream>
 // en fait le std dit sstream
 
+#include <vector>
 #include <list>
 
 #include <CGAL/Alpha_shape_euclidean_traits_2.h>
