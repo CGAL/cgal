@@ -379,6 +379,7 @@ will be declared const.
 
 
 % +-----------------------------------+
+\vspace*{-2mm}
 \ccHeading{Insertion}
 
 The following operations  allocate a new element of the named item.
@@ -406,6 +407,7 @@ respectively.
 
 
 % +-----------------------------------+
+\vspace*{-2mm}
 \ccHeading{Removal}
 
 The following operations erase an element referenced by a pointer.
@@ -422,6 +424,7 @@ all items are mandatory, if the corresponding item is supported.
           opposite halfedges $h$.} 
 \ccGlue
 \ccMethod{void delete_facet( Facet* f);}{deletes the facet $f$.}
+\vspace*{-2mm}
 
 \ccMethod{void vertex_pop_back();}{removes last vertex. Mandatory.}
 \ccGlue
@@ -490,7 +493,7 @@ invalidate these values, which are not automatically updated.
     \ccPrecond \ccc{normalize_border()} has been called and no
     halfedge insertion or removal and no change in border
     status of the halfedges have occurred since then.}
-
+\vspace*{-4mm}
 \end{ccAdvanced}
 
 % +-----------------------------------+
@@ -583,6 +586,7 @@ vertices, and facets.
 \ccGlue
 \ccNestedType{Facet}{corresponding facet type.}
 
+\newpage
 Type for (optionally) associated geometry. If a
 point is not supported the type is \ccc{void*}.
 
@@ -665,7 +669,7 @@ They are mutually linked with the \ccc{opposite()} member function.
 \ccMethod{Halfedge* prev();}{the previous halfedge around the facet.}
 \ccGlue
 \ccMethod{const Halfedge* prev() const;}{}
-\ccGlue
+
 \ccMethod{Vertex* vertex();}{the incident vertex.}
 \ccGlue
 \ccMethod{const Vertex* vertex() const;}{}
@@ -925,22 +929,6 @@ Figure~\ccTexHtml{\ref{figureOptionalBasesMethods}.}{}\begin{ccHtmlOnly}
   SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
 .\end{ccHtmlOnly}
 
-\begin{ccTexOnly}
-    \begin{figure}
-        \begin{center}
-          \parbox{\textwidth}{%
-              \includegraphics[width=\textwidth]{idraw/hds_bases_optional.ips}%
-          }
-        \end{center}
-        \caption{The three concepts \protect\ccc{Vertex_base}, 
-          \protect\ccc{Halfedge_base}, and 
-          \protect\ccc{Facet_base} for the halfedge data structure. Member
-          functions with shaded background are mandatory. The others
-          are optionally supported.}
-        \label{figureOptionalBasesMethods}
-    \end{figure}
-\end{ccTexOnly}
-
 \begin{ccHtmlOnly}
     <CENTER>
     <A NAME="figureOptionalBasesMethods">
@@ -954,8 +942,6 @@ Figure~\ccTexHtml{\ref{figureOptionalBasesMethods}.}{}\begin{ccHtmlOnly}
           are optionally supported.
     </CENTER>
 \end{ccHtmlOnly}
-
-
 
 
 \def\ccTagRmConstRefPair{\ccFalse}
@@ -1031,6 +1017,22 @@ supported or not.
 
 \end{ccClass}
 
+\begin{ccTexOnly}
+    \begin{figure}
+        \begin{center}
+          \parbox{\textwidth}{%
+              \includegraphics[width=\textwidth]{idraw/hds_bases_optional.ips}%
+          }
+        \end{center}
+        \caption{The three concepts \protect\ccc{Vertex_base}, 
+          \protect\ccc{Halfedge_base}, and 
+          \protect\ccc{Facet_base} for the halfedge data structure. Member
+          functions with shaded background are mandatory. The others
+          are optionally supported.}
+        \label{figureOptionalBasesMethods}
+    \end{figure}
+\end{ccTexOnly}
+
 % +-------------------------------------------------------------+
 \begin{ccClass}{Halfedge_base}
 \subsection{Requirements for \protect\ccc{Halfedge_base}}
@@ -1080,7 +1082,7 @@ The \ccc{is_border()} predicate is mandatory, but may return always
 \ccMethod{void* vertex();}{the incident vertex.}
 \ccGlue
 \ccMethod{const void* vertex() const;}{}
-\ccGlue
+
 \ccMethod{void* facet();}{the incident facet. If \ccVar\
           is a border halfedge the result might be \ccc{NULL} or a
           unique facet representing this open region or a unique facet
@@ -1173,7 +1175,6 @@ supported or not.
 \ccTagDefaults
 
 
-\newpage
 % +========================================================================+
 \section{Models of \protect\ccc{Vertex_base},
   \protect\ccc{Halfedge_base} and \protect\ccc{Facet_base}}
@@ -1577,6 +1578,7 @@ the halfedge \ccc{h->next} with a new facet in-between.
 
 
 % -----------------------------------------
+\newpage
 \ccHeading{Miscellaneous}
 \ccThree{void}{D.is_val}{}
 

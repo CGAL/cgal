@@ -1,6 +1,10 @@
 Halfedge_DS Package: Release changes:
 ---------------------------------------------------------------------
 
+2.16 (06 Jul 2001)
+
+     - Formatted the deprecated manual part.
+
 2.15 (05 Jul 2001)
 
      - New kernel traits introduced in old design.
