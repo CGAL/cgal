@@ -11,7 +11,7 @@
 // release       : $$
 // release_date  : $$
 //
-// file          : include/CGAL/Pm_segment_cached_traits_2.h
+// file          : include/CGAL/Arr_segment_cached_traits_2.h
 // package       : Planar_map (5.87)
 // maintainer    : Efi Fogel         <efif@math.tau.ac.il>
 // source        : 
