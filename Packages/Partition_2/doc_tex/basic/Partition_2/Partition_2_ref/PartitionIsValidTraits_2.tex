@@ -1,0 +1,209 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PartitionIsValidTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 10.05.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{PartitionIsValidTraits_2}
+
+\ccDefinition
+  
+Requirements of a traits class that is used 
+by \ccc{partition_is_valid_2}, \ccc{convex_partition_is_valid_2},
+and \ccc{y_monotone_partition_is_valid_2} for testing if a given set of 
+polygons are nonoverlapping and if their union is a polygon that is the 
+same as a polygon represented by a given sequence of points.  Note that the 
+traits class for \ccc{partition_is_valid_2} may have to satisfy additional
+requirements if each partition polygon is to be tested for having a
+particular property; see, for example, the descriptions of the 
+function \ccc{is_convex_2}
+and the concept YMonotonePartitionTraits\_2 for the additional requirements
+for testing for convexity and $y$-monotonicity, respectively.
+
+\ccTypes
+
+\ccNestedType{Point_2}{The point type on which the partitioning algorithm operates.}
+
+\ccNestedType{Polygon_2}{The polygon type created by the partitioning 
+function. This type should provide a nested type \ccc{Vertex_const_iterator} 
+that is the type of the non-mutable iterator over the polygon vertices.}%
+
+\ccNestedType{Is_valid}{A model of the concept PolygonIsValid}
+
+\ccNestedType{Less_xy_2}{
+Predicate object type that compares \ccc{Point_2}s lexicographically.
+Must provide \ccc{bool operator()(Point_2 p, Point_2 q)} where \ccc{true}
+is returned iff $p <_{xy} q$.
+We have $p<_{xy}q$, iff $p_x < q_x$ or $p_x = q_x$ and $p_y < q_y$,
+where $p_x$ and $p_y$ denote the $x$ and $y$ coordinates of point $p$, 
+respectively.
+}
+
+\ccNestedType{Leftturn_2}{
+Predicate object type that provides 
+\ccc{bool operator()(Point_2 p,Point_2 q,Point_2 r)}, which
+returns \ccc{true} iff \ccc{r} lies to the left of the 
+oriented line through \ccc{p} and \ccc{q}.}
+
+\ccNestedType{Orientation_2}{Predicate object type that provides
+\ccc{CGAL::Orientation operator()(Point_2 p, Point_2 q, Point_2 r)} that
+returns \ccStyle{CGAL::LEFTTURN}, if $r$ lies to the left of the oriented 
+line $l$ defined by $p$ and $q$, returns \ccStyle{CGAL::RIGHTTURN} if $r$ 
+lies to the right of $l$, and returns \ccStyle{CGAL::COLLINEAR} if $r$ lies
+on $l$.}
+
+
+The following three types are required by the functions \ccc{is_simple_2} and
+\ccc{orientation_2}, which are used to test the simplicity and CCW order
+of the partition polygons.
+
+\ccNestedType{Less_xy}{ Same as \ccc{Less_xy_2}. }
+\ccNestedType{Vector_2}{The vector type that can be constructed from the
+                        difference of two objects of type \ccc{Point_2}.}
+\ccNestedType{FT}{The coordinate type of the points ({\em i.e.} a field type)}
+
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+A default constructor and copy constructor are required.
+
+\ccOperations
+
+The following functions that create instances of the above predicate object
+types must exist.
+
+\ccMethod{Orientation_2 is_valid_object();}{}
+
+\ccMethod{Less_xy_2 less_xy_2_object();}{}
+
+\ccMethod{Leftturn_2 leftturn_2_object();}{}
+
+\ccMethod{Orientation_2 orientation_2_object();}{}
+
+
+The following functions are required by the functions \ccc{is_simple_2} and
+\ccc{orientation_2}, which are used to test the simplicity and CCW order
+of the partition polygons. 
+
+\ccMemberFunction{
+    Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const;
+}
+{
+\lcTex{
+Returns
+$
+  \left\{
+  \begin{array}{lll}
+     \ccStyle{SMALLER} & \mbox{if} & p_x < q_x \\
+     \ccStyle{EQUAL}   & \mbox{if} & p_x = q_x \\
+     \ccStyle{LARGER}  & \mbox{if} & p_x > q_x
+  \end{array}
+  \right.%}
+$
+}
+\lcHtml{
+Returns SMALLER if p_x < q_x, EQUAL if p_x = q_x and LARGER if p_x > q_x
+}
+}
+
+
+\ccMemberFunction{
+    Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const;
+}
+{
+\lcTex{
+Returns
+$
+  \left\{
+  \begin{array}{lll}
+     \ccStyle{SMALLER} & \mbox{if} & p_y < q_y \\
+     \ccStyle{EQUAL}   & \mbox{if} & p_y = q_y \\
+     \ccStyle{LARGER}  & \mbox{if} & p_y > q_y
+  \end{array}
+  \right.%}
+$
+}
+\lcHtml{
+Returns SMALLER if p_y < q_y, EQUAL if p_y = q_y and LARGER if p_y > q_y
+}
+}
+
+\ccMemberFunction{
+    FT cross_product_2(const Vector_2& p, const Vector_2& q) const;
+}
+{
+Returns $p_x q_y - p_y q_x$.
+}
+
+\ccMemberFunction{
+    bool do_intersect(const Point_2& p1,
+                      const Point_2& q1,
+                      const Point_2& p2,
+                      const Point_2& q2) const;
+}
+{
+Returns \ccc{true} iff the segments \ccStyle{[p1,q1]} and \ccStyle{[p2,q2]}
+intersect.
+}
+
+\ccMemberFunction{
+    bool have_equal_direction(const Vector_2& v1,
+                              const Vector_2& v2 ) const;
+}
+{
+Returns \ccc{true} iff the vectors \ccStyle{v1} and \ccStyle{v2} have the
+same direction.
+}
+
+\ccMemberFunction{
+    bool is_negative(const FT& x) const;
+}
+{
+Returns \ccStyle{true} iff \ccStyle{x<0}.
+}
+
+\ccMemberFunction{
+    bool lexicographically_yx_smaller_or_equal(const Point_2& p,
+                                               const Point_2& q) const;
+}
+{
+Returns \ccc{true} iff $p_y \leq q_y$ or $p_y = q_y$ and $p_x \leq q_x$.
+}
+
+\ccMethod{
+    Orientation
+    orientation(const Point_2& p, const Point_2& q, const Point_2& r) const;
+}
+{
+Returns \ccStyle{LEFTTURN}, if $r$ lies to the left of the oriented
+line $l$ defined by $p$ and $q$, returns \ccStyle{RIGHTTURN} if $r$
+lies to the right of $l$, and returns \ccStyle{COLLINEAR} if $r$ lies
+on $l$.
+}
+
+
+
+\ccHasModels
+
+\ccc{Partition_traits_2}
+
+\ccSeeAlso
+
+\ccc{approx_convex_partition_2},
+\ccc{greene_approx_convex_partition_2},
+\ccc{optimal_convex_partition_2},
+\ccc{y_monotone_partition_2}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

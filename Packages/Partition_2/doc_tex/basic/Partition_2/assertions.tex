@@ -1,0 +1,18 @@
+\begin{ccPackage}{polygon partitioning}
+\ccIndexAssertionFlag[polygon partitioning]
+The assertion flags for this package use \ccc{PARTITION} in their names
+({\em e.g.}, \ccc{CGAL_PARTITION_NO_POSTCONDITIONS}).
+The precondition checks for the planar polygon partitioning functions
+are:  counterclockwise ordering of the input vertices and simplicity of the 
+polygon these vertices represent.
+\ccIndexSubitem[C]{approx_convex_partition_2}{postconditions}
+\ccIndexSubitem[C]{greene_approx_convex_partition_2}{postconditions}
+\ccIndexSubitem[C]{optimal_convex_partition_2}{postconditions}
+\ccIndexSubitem[C]{y_monotone_partition_2}{postconditions}
+The postcondition checks are:  simplicity, counterclockwise orientation,
+and convexity (or $y$-monotonicity) of the partition polygons
+and validity of the partition ({\em i.e.}, the partition polygons are 
+nonoverlapping and the union of these polygons is the same as the
+original polygon)
+\ccIndexSubitemDef{partition}{valid}.
+\end{ccPackage}

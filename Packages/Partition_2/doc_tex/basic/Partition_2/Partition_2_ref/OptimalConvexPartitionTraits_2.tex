@@ -1,0 +1,102 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: OptimalConvexPartitionTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 10.05.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{OptimalConvexPartitionTraits_2}
+\ccIndexSubitemBegin[C]{optimal_convex_partition_2}{traits class}
+
+\ccDefinition
+  
+Requirements of a traits class to be
+used with the function \ccc{optimal_convex_partition_2}.
+
+\ccGeneralizes
+
+PartitionTraits\_2\ccIndexMainItem[c]{PartitionTraits_2}
+
+\ccTypes
+
+\ccIndexMainItem[c]{PartitionTraits_2}
+In addition to the types listed with the concept PartitionTraits\_2, the
+following types are required:
+
+\ccNestedType{Segment_2}{A segment type}
+\ccNestedType{Ray_2}{A ray type}
+\ccNestedType{Construct_segment_2}{Predicate object type that provides
+\ccc{Segment_2 operator()(Point_2 p, Point_2 q)}, which constructs and
+returns the segment defined by the points $p$ and $q$.}
+\ccNestedType{Construct_ray_2}{Predicate object type that provides
+\ccc{Ray_2 operator()(Point_2 p, Point_2 q)}, which constructs and returns
+the ray from point $p$ through point $q$.}
+\ccNestedType{Collinear_are_ordered_along_line_2}{Predicate object type that
+determines orderings of \ccc{Point_2}s on a line.  Must provide
+\ccc{bool operator()(Point_2 p, Point_2 q, Point_2 r)} that 
+returns \ccStyle{true}, iff \ccStyle{q} lies between \ccStyle{p}
+and \ccStyle{r} and \ccc{p}, \ccc{q}, and \ccc{r} statisfy the precondition
+that they are collinear.}
+
+\ccNestedType{Are_stritcly_ordered_along_line_2}{Predicate object type that
+determines orderings of \ccc{Point_2}s.  Must provide
+\ccc{bool operator()(Point_2 p, Point_2 q, Point_2 r)} that 
+returns \ccStyle{true}, iff the three points are collinear and 
+\ccStyle{q} lies strictly between \ccStyle{p}
+and \ccStyle{r}.  Note that \ccc{false} should be returned if
+\ccStyle{q==p} or \ccStyle{q==r}.}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+Only a default constructor and copy constructor are required.
+
+\ccOperations
+
+\ccIndexMainItem[c]{PartitionTraits_2}
+In addition to the functions required by PartitionTraits\_2, the following
+functions that create instances of the above predicate object types
+must exist:
+
+\ccSetThreeColumns{Collinear_are_ordered_along_line_2xxxx}{traits.collinear_are_ordered_along_line_2_object()}{}
+\ccMethod{Construct_segment_2 construct_segment_2_object() const;}{}
+\ccMethod{Construct_ray_2 construct_ray_2_object() const;}{}
+\ccMethod{Are_strictly_ordered_along_line_2
+    are_strictly_ordered_along_line_2_object() const;}{}
+
+%The following function is required by \ccc{is_convex_2}, which is used
+%to test the convexity postcondition:
+%\ccIndexSubitem[C]{optimal_convex_partition_2}{postconditions}
+%\ccIndexGlobalFunction{is_convex_2}
+%
+%\ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{8.5cm}}
+%\ccMemberFunction{
+%    bool lexicographically_yx_smaller(const Point_2& p,
+%                                      const Point_2& q) const;
+%}
+%{
+%Returns \ccc{true} iff $p_y < q_y$ or $p_y = q_y$ and $p_x < q_x$.
+%}
+
+
+\ccHasModels
+
+%\ccc{Partition_optimal_convex_traits_2},
+\ccc{Partition_traits_2}
+
+\ccSeeAlso
+
+\ccc{convex_partition_is_valid_2},
+\ccc{Partition_is_valid_traits_2}
+
+\ccIndexSubitemEnd[C]{optimal_convex_partition_2}{traits class}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,83 @@
+\begin{ccRefFunction}{optimal_convex_partition_2}
+
+Function that produces a set of convex polygons 
+that represent a partitioning of a polygon defined on a sequence of 
+points using the dynamic programming algorithm of Greene \cite{g-dpcp-83}.  
+The number of convex polygons produced is minimal.
+\ccIndexSubsubitem{polygon partitioning}{convex}{optimal}
+
+
+\ccInclude{CGAL/partition_2.h}
+
+\ccFunction{
+template <class InputIterator, class OutputIterator, class Traits>
+OutputIterator optimal_convex_partition_2(InputIterator first,
+                                          InputIterator beyond,
+                                          OutputIterator result,
+                                          const Traits& traits = Default_traits);
+}
+{
+computes a partition of the simple, counterclockwise-oriented polygon defined
+by the points in the range [\ccc{first}, \ccc{last}) into convex
+polygons. The counterclockwise-oriented partition polygons are written to
+the sequence starting at position \ccc{result}.  The past-the-end iterator for
+the resulting sequence of polygons is returned.
+}
+
+\ccHeading{Preconditions}
+\ccIndexSubitem[C]{optimal_convex_partition_2}{preconditions}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept OptimalConvexPartitionTraits\_2%
+          \ccIndexMainItem[c]{OptimalConvexPartitionTraits_2}.
+          For the purposes of checking the
+          postcondition that the partition is valid, \ccc{Traits} should
+          also be a model of ConvexPartitionIsValidTraits\_2.
+          \ccIndexMainItem[c]{ConvexPartitionIsValidTraits_2}
+    \item \ccc{OutputIterator::value_type} should be
+          \ccc{Traits::Polygon_2}.
+    \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
+          which should also be the type of the points stored in an object
+          of type \ccc{Traits::Polygon_2}.
+    \item Points in the range $[first, beyond)$ must define a simple polygon
+          whose vertices are oriented counterclockwise.
+\end{enumerate}
+
+The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2}. 
+\ccIndexTraitsClassDefault{optimal_convex_partition_2}
+
+\ccSeeAlso
+\ccc{approx_convex_partition_2},
+\ccc{convex_partition_is_valid_2},
+\ccc{greene_approx_convex_partition_2},
+\ccc{partition_is_valid_2},
+\ccc{Partition_is_valid_traits_2}
+
+
+\ccExample
+
+
+The following code fragment will compute an optimal
+convex partitioning of the simple polygon \ccc{P} using the default
+traits class and store the partition polygons in the list 
+\ccc{partition_polys}.
+
+\begin{verbatim}
+   typedef CGAL::Cartesian<double>                           R;
+   typedef CGAL::Polygon_traits_2<R>                         Traits;
+   typedef Traits::Point_2                                   Point_2;
+   typedef std::list<Point_2>                                Container;
+   typedef CGAL::Polygon_2<Traits, Container>                Polygon_2;
+
+   Polygon_2            P;
+   std::list<Polygon_2> partition_polys;
+
+   // ...
+   // insert vertices into P to create a simple CCW-oriented polygon
+   // ...
+   CGAL::optimal_convex_partition_2(P.vertices_begin(),
+                                    P.vertices_end(),
+                                    std::back_inserter(partition_polys));
+\end{verbatim}
+
+
+\end{ccRefFunction}

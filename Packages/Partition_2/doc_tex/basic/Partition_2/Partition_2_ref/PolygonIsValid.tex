@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PolygonIsValid.tex
+% +------------------------------------------------------------------------+
+% | 10.05.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectConcept}{PolygonIsValid}
+
+\ccDefinition
+  
+Function object that determines if a sequence of points represents a
+valid partition polygon or not, where ``valid'' can assume any of several
+meanings ({\it e.g.}, convex or $y$-monotone).
+\ccIndexSubitem{polygon partitioning}{valid}
+
+
+\ccCreation
+\ccCreationVariable{f}  %% choose variable name
+
+\ccConstructor{PolygonIsValid(const Traits& t);}{
+\ccc{Traits} is a model of the concept required by the function that checks
+for validity of the polygon.
+}
+
+\ccOperations
+
+\ccMethod{
+template<class InputIterator>
+bool operator()(InputIterator first, InputIterator last);}
+{ 
+  returns \ccc{true} iff the points in the range [\ccc{first},\ccc{last}) 
+  define a valid polygon.
+}
+
+\ccHasModels
+
+\ccc{Is_convex_2}, 
+\ccc{Is_y_monotone_2}
+
+\ccSeeAlso
+
+\ccc{approx_convex_partition_2},
+\ccc{convex_partition_is_valid_2},
+\ccc{greene_approx_convex_partition_2},
+\ccc{optimal_convex_partition_2},
+\ccc{partition_is_valid_2},
+\ccc{y_monotone_partition_2},
+\ccc{y_monotone_partition_is_valid_2}
+
+\end{ccRefFunctionObjectConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
