@@ -1,10 +1,9 @@
 #ifndef CGAL_TRIANGULATION_TEST_SHORT_NAMES_2_H
-#define CGAL_TRIANGULATION_TEST_SHORT_NAMES_2_
+#define CGAL_TRIANGULATION_TEST_SHORT_NAMES_2_H
 
 
-// Define shorter names to please linker (g++/egcs)
+// Define shorter names
 
-   #define Gmpz Gz
    #define Cartesian Ca
    #define Homogeneous Hg
 //   #define Quotient Qt

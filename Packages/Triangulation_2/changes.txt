@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+23 September 2004 Sylvain Pion
+- Don't shorten the name of Gmpz (g++ 3.4 issue).
+
 21 September 2004 Sylvain Pion
 - Merge Power_test_degenerated_2 into Power_test_2.
 
