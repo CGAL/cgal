@@ -50,8 +50,8 @@ as the weighted point type
 \ccc{Traits::Weigthed_point}
 defined by the geometric traits class of the regular triangulation.}
 \ccGlue
-\ccTypedef{typedef std::list<Weighted_point> Point_list;}
-{An std list of hidden points.}
+\ccTypedef{typedef std::list<void*> Vertex_list;}
+{An std list of hidden vertices.}
 
 
 \ccCreation
@@ -66,9 +66,8 @@ n0, void* n1, void* n2)} {Constructor setting the incident vertices and
 the neighboring faces.}
 
 \ccHeading{Access Functions}
-\ccMethod{Point_list& point_list();}
-{Returns a reference to the list of weighted points
-hidden by the face.}
+\ccMethod{Vertex_list& vertex_list();}
+{Returns a reference to the list of vertices hidden by the face.}
 
 
 \ccHasModels
