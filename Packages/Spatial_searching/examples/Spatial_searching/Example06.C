@@ -4,7 +4,6 @@
 
 #include <CGAL/basic.h>
 
-
 #include <vector>
 #include <numeric>
 #include <cassert>
@@ -114,7 +113,7 @@ int test_range_searching(CGAL::Split_rules::Split_rule s) {
   NN_priority_search NN(d, query_rectangle, tr_dist, 0);
   std::cout << "neighbour searching statistics using no extended nodes: " << std::endl;
   
-  // NN.the_k_neighbours(std::back_inserter(nearest_neighbours));
+  
 
   std::vector<NN_priority_search::Item_with_distance>::iterator it = nearest_neighbours.begin();
 

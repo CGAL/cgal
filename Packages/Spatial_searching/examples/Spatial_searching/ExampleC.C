@@ -1,12 +1,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian_d.h>
+#include <CGAL/Constructions_d.h>
 #include <CGAL/Iso_rectangle_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>
 #include <CGAL/Splitting_rules.h>
-#include <CGAL/General_priority_search.h>
-#include <CGAL/L1_distance_rectangle_point.h>
 
 #include <vector>
 #include <iostream>
@@ -17,41 +16,21 @@ typedef Point::R::FT NT;
 
 typedef CGAL::Iso_rectangle_d<R> Rectangle;
 typedef CGAL::Plane_separator<NT> Separator;
-
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::L1_distance_rectangle_point<Rectangle,Point> L1_distance;
-typedef CGAL::General_priority_search<Traits, Rectangle, L1_distance> 
-NN_priority_search;
-typedef NN_priority_search::iterator NN_iterator;
-
-template <class InputIterator, class Size, class OutputIterator>
-OutputIterator get_elements_in_query( InputIterator first, Size& n,
-                       OutputIterator result) {
-  
-  Size number_of_el_to_compute=n;
-  Size count=0;
-  while( ((*first).second == NT(0)) && (number_of_el_to_compute > 0)) {
-    
-    number_of_el_to_compute--;
-    count++;
-    *result = *first;
-    first++;
-    result++;
-  }
-  n=count;
-  return result;
-}
   
 int main() {
 
   int bucket_size=1;
   const int dim=4;
   
-  const int data_point_number=100;
   
   typedef std::list<Point> point_list;
   point_list data_points;
+  const int data_point_number=20;
   
+  typedef std::vector<Point> point_vector;
+  
+
   // add random points of dimension dim to data_points
   CGAL::Random Rnd;
   
@@ -62,14 +41,43 @@ int main() {
         data_points.push_front(Random_point);
   }
   
-
-
   Traits tr(bucket_size, CGAL::Split_rules::SLIDING_FAIR, 3, false);
 
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
+
+  point_vector points_in_rectangular_range_query;
+  point_vector points_in_spherical_range_query;
+
+  point_vector points_in_tree;
   
-  // define range query
+  d.report_all_points(std::back_inserter(points_in_tree));
+
+  // define center point
+  double c[dim];
+  for (int i=0; i<dim; i++) {
+  	c[i]=  300.0;
+  }
+  
+  Point C(dim,c,c+dim);
+
+  std::cout << "all points are:" << std::endl;
+  
+  for (int j=0; j < points_in_tree.size(); ++j) { 
+     std::cout << points_in_tree[j] << "d(C,p)=" << sqrt(CGAL::squared_distance(points_in_tree[j],C)) << std::endl; 
+  }
+  
+  
+  d.search(std::back_inserter(points_in_spherical_range_query),C,700.0,100.0);
+
+  std::cout << "points approximately in spherical range query are:" << std::endl;
+  
+  for (int j=0; j < points_in_spherical_range_query.size(); ++j) { 
+     std::cout << points_in_spherical_range_query[j] << std::endl; 
+  }
+ 
+ // define range query
+  
   double p[dim];
   double q[dim];
   for (int i=0; i<dim; i++) {
@@ -82,29 +90,16 @@ int main() {
 
   Rectangle query_rectangle(P,Q);
 
-  L1_distance tr_dist(dim);
+  d.search(std::back_inserter(points_in_rectangular_range_query),query_rectangle,100.0);
+
+  std::cout << "points approximately in rectangular range query [-100,900]^4 are:" << std::endl;
+
   
-  std::vector<NN_priority_search::Item_with_distance> elements_in_query; 
-  elements_in_query.reserve(data_point_number);
-
-  NN_priority_search NN(d, query_rectangle, tr_dist, NT(0));
-
-  std::vector<NN_priority_search::Item_with_distance>::iterator 
-  it = elements_in_query.begin();
-
-  int n=data_point_number;
-
-  get_elements_in_query(NN.begin(), n, it);
-   
-  std::cout << 
-  "The " << n << " items in the range [-100.0,900.0]^4 are: " 
-  << std::endl;
-
-  for (int j=0; j < n; ++j) { 
-     std::cout <<    
-     *(elements_in_query[j].first)
-     << std::endl; 
+  for (int j=0; j < points_in_rectangular_range_query.size(); ++j) { 
+     std::cout << points_in_rectangular_range_query[j] << std::endl; 
   }
+  
+
   return 0;
 };  
 

@@ -25,6 +25,9 @@
 #include <functional>
 #include <algorithm>
 #include <new>
+#include <cassert>
+#include <CGAL/Iso_rectangle_d.h>
+
 namespace CGAL {
 
   template <class Point, class T>
@@ -183,11 +186,15 @@ namespace CGAL {
     std::ostream& print(std::ostream& s) {
       s << "Rectangle dimension = " << dim;
       s << "\n lower: ";
-      std::copy(lower_, lower_ + dim,
-       	      std::ostream_iterator<NT>(s," "));
+      for (int i=0; i < dim; ++i)
+      s << lower_[i] << " ";
+      // std::copy(lower_, lower_ + dim,
+      // 	      std::ostream_iterator<NT>(s," "));
       s << "\n upper: ";
-      std::copy(upper_, upper_ + dim,
-	      std::ostream_iterator<NT>(s," "));
+      for (int j=0; j < dim; ++j)
+      s << upper_[j] << " ";
+      // std::copy(upper_, upper_ + dim,
+      //	      std::ostream_iterator<NT>(s," "));
       s << "\n maximum span " << max_span() <<
       " at coordinate " << max_span_coord() << std::endl;
       return s;
@@ -215,17 +222,36 @@ namespace CGAL {
 
     int dimension() const {return dim;}
 
-    /*
-    template <class Point> bool has_on_bounded_side(const Point& p) 
+  /* 
+  template <class Point> bool has_on_bounded_side(const Point& p) 
   {
     NT h;
     for (int i = 0; i < dimension(); ++i) {
         h=p[i];
-        if (h < min_coord(i) || h > max_coord(i)) return 0;
+        if ( (h < min_coord(i)) || (h > max_coord(i)) ) return 0;
     }
     return 1;
   } */
 
+  // checks whether an epsilon eroded iso rectangle r intersects the kd_tree rectangle   
+  template <class R>
+  inline bool intersects_eroded_rectangle(const Iso_rectangle_d<R>& r, const NT eps) 
+  {
+    for (int i = 0; i < dim; ++i) {
+        if ( (r.max_coord(i)-eps < lower_[i]) || (r.min_coord(i)+eps > upper_[i]) ) return 0;
+    }
+    return 1;
+  } 
+
+  // checks whether an epsilon dilated iso rectangle r encloses the kd_tree rectangle
+  template <class R>
+  inline bool is_enclosed_by_dilated_rectangle(const Iso_rectangle_d<R>& r, const NT eps) 
+  {
+    for (int i = 0; i < dim; ++i) {
+        if (  (r.max_coord(i)+eps < upper_[i]) || (r.min_coord(i)-eps > lower_[i]) ) return 0;
+    }
+    return 1;
+  } 
 
     Kd_tree_rectangle<NT>& operator= (const Kd_tree_rectangle<NT>& r) {
       
@@ -236,7 +262,33 @@ namespace CGAL {
       }
       return *this;
     }
-  }; // of class Kd_tree_rectangle
+  
+  template <class Point> 
+  bool min_squared_Euclidean_distance_to_point_is_at_most(const Point& p, const NT d) {
+		NT distance = NT(0);
+		
+		for (int i = 0; (i < dim) && (distance <= d); ++i) {
+			if (p[i] < lower_[i])
+				distance += (lower_[i]-p[i])*(lower_[i]-p[i]);
+			if (p[i] > upper_[i])
+				distance += (p[i]-upper_[i])*(p[i]-upper_[i]);
+		}
+		return (distance <= d);
+	}
+
+        template <class Point>
+	bool max_squared_Euclidean_distance_to_point_is_at_most(const Point& p, const NT d) {
+		NT distance=NT(0);
+		
+		for (int i = 0; (i < dim) && (distance <= d) ; ++i) {
+			if (p[i] <= (lower_[i]+upper_[i])/NT(2))
+				distance += (upper_[i]-p[i])*(upper_[i]-p[i]);
+			else
+				distance += (p[i]-lower_[i])*(p[i]-lower_[i]);
+		}
+		return (distance <= d);
+	}
+}; // of class Kd_tree_rectangle
 
   template <class NT>
     std::ostream& operator<< (std::ostream& s, Kd_tree_rectangle<NT>& r) {

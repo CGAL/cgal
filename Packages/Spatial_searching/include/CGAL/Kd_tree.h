@@ -74,6 +74,24 @@ public:
 	
   }
 
+  template <class OutputIterator, class R>
+	void search(OutputIterator it, Iso_rectangle_d<R>& r, NT eps=NT(0)) {
+		Kd_tree_rectangle<NT>* b = new Kd_tree_rectangle<NT>(*bbox);
+		tree_root->tree_items_in_rectangle(it,r,b,eps);
+		delete b;
+	}
+
+  template <class OutputIterator>
+	void search(OutputIterator it, Item& center, NT radius, NT eps=NT(0)) {
+		Kd_tree_rectangle<NT>* b = new Kd_tree_rectangle<NT>(*bbox);
+		tree_root->tree_items_in_sphere(it,center,(radius-eps)*(radius-eps),radius*radius,(radius+eps)*(radius+eps),b);
+		delete b;
+	}
+
+  template <class OutputIterator>
+	void report_all_points(OutputIterator it) 
+	{tree_root->tree_items(it);}
+
     ~Kd_tree() {
                   delete tree_root; 
 		  delete bbox;

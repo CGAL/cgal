@@ -37,7 +37,7 @@ namespace CGAL {
     // CGAL dependency typedef typename Kernel_traits<Item>::Kernel K;
     // CGAL dependency typedef typename K::FT NT;
     typedef typename Item::R::FT NT;
-    typedef std::pair<Item*,NT> Item_with_distance;
+    
     typedef typename Split_rules::Split_rule split_rule;
 
   private:

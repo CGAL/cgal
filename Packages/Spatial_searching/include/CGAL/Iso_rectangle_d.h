@@ -25,6 +25,7 @@
 #include <functional>
 #include <algorithm>
 #include <new>
+#include <cassert>
 
 namespace CGAL {
   
@@ -57,6 +58,16 @@ namespace CGAL {
 	  }
      }	  
     }
+
+  bool has_on_bounded_side(const Point_d& p) const
+  {
+    NT h;
+    for (int i = 0; i < dimension(); ++i) {
+        h=p[i];
+        if ( (h < lower[i]) || (h > upper[i]) ) return 0;
+    }
+    return 1;
+  } 
 
     inline int dimension() const { return dim;}
     

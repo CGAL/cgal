@@ -69,7 +69,8 @@ class Cell
     };
 
     
-typedef typename Tree_traits::Item_with_distance Item_with_distance;
+// using NT* instead of NT is needed to support homogeneous coordinates
+typedef std::pair<Item*,NT> Item_with_distance;
 typedef std::pair<Cell*,NT> Cell_with_distance;
 
 // this forward declaration may problems for g++ 
@@ -323,24 +324,24 @@ class Distance_smaller
     }
 
     // * operator
-    Item_with_distance& operator* () {
+    Item_with_distance& operator* () {                 
 			return *(Item_PriorityQueue->top());
     }
 
     // prefix operator
     Iterator_implementation& operator++() {
-        // std::cout << "called ++" << std::endl;
+        
         Delete_the_current_item_top();
         Compute_the_next_nearest_neighbour();
         return *this;
     }
 
     // postfix operator
-    std::auto_ptr<Item_with_distance> operator++(int) {
-        Item_with_distance Value = *(Item_PriorityQueue->top());
+    std::auto_ptr<Item_with_distance> operator++(int) {        
+        Item_with_distance Value = *(Item_PriorityQueue->top());        
         std::auto_ptr<Item_with_distance>
         result(new Item_with_distance(Value));
-        ++*this;
+        ++*this;        
         return result;
     }
 

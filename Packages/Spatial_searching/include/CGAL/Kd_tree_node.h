@@ -166,12 +166,88 @@ namespace CGAL {
 	template <class OutputIterator>
 	void tree_items(OutputIterator& it) {
             	if (is_leaf()) 
-			     if (n>0) for (Item_iterator i=begin(); i != end(); i++) *it=**i;
-			else {
-				lower()->tree_items(it);
-				upper()->tree_items(it);
+                        { 
+		          if (n>0) for (Item_iterator i=begin(); i != end(); i++) 
+				{*it=**i; ++it;} 
 			}
+		else {
+			lower_ch->tree_items(it);  
+			upper_ch->tree_items(it); 
 		}
+	}
+
+        template <class OutputIterator, class R>
+	void tree_items_in_rectangle(OutputIterator& it, Iso_rectangle_d<R>& r, Kd_tree_rectangle<NT>* b, NT eps) {
+            	if (is_leaf()) { 
+			     if (n>0) for (Item_iterator i=begin(); i != end(); i++) 
+				if (r.has_on_bounded_side(**i)) 
+                                 {*it=**i; ++it;}
+                }
+		else {
+                             // after splitting b denotes the lower part of b
+			     Kd_tree_rectangle<NT>* b_upper=b->split(sep->cutting_dimension(),sep->cutting_value());
+                             
+			     if (b->is_enclosed_by_dilated_rectangle(r,eps)) 	
+				lower_ch->tree_items(it);
+			     else
+		           	if (b->intersects_eroded_rectangle(r,eps)) 
+				    lower_ch->tree_items_in_rectangle(it,r,b,eps);
+
+                             if (b_upper->is_enclosed_by_dilated_rectangle(r,eps))        
+				upper_ch->tree_items(it);
+			     else
+			     	if (b_upper->intersects_eroded_rectangle(r,eps)) 
+				   upper_ch->tree_items_in_rectangle(it,r,b_upper,eps);	
+
+			     delete b_upper;
+		}
+	}
+
+   template <class OutputIterator>
+	void tree_items_in_sphere(OutputIterator& it, Item& center, 
+		NT min_squared_radius, NT squared_radius, NT max_squared_radius, Kd_tree_rectangle<NT>* b) {
+            	if (is_leaf()) { 
+			     if (n>0) for (Item_iterator item_it=begin(); item_it != end(); item_it++) 
+                                { // test whether the squared distance between **i and center 
+				  // is at most the squared_radius
+				  NT distance=NT(0);
+                                  int dim=center.dimension();
+				  
+		            	  for (int i = 0; (i < dim) && (distance <= squared_radius); ++i) {
+					distance += (center[i]-(**item_it)[i]) * (center[i]-(**item_it)[i]);
+				  }
+				  
+				  if (distance <= squared_radius) 
+                                   {*it=**item_it; ++it;}
+			     }   
+                }
+		else {
+                             // after splitting b denotes the lower part of b
+			     Kd_tree_rectangle<NT>* b_upper=b->split(sep->cutting_dimension(),sep->cutting_value());
+                             
+                             
+			     if // maximal range query encloses b
+				(b->max_squared_Euclidean_distance_to_point_is_at_most(center,max_squared_radius)) 	
+				lower_ch->tree_items(it);
+			     else 
+		           	if  // minimal range query intersects b
+				(b->min_squared_Euclidean_distance_to_point_is_at_most(center,min_squared_radius)) 
+					lower_ch->tree_items_in_sphere
+					(it,center,min_squared_radius,squared_radius,max_squared_radius,b);
+
+			     // the same for b_upper
+                              if // maximal range query encloses upper_b
+				(b_upper->max_squared_Euclidean_distance_to_point_is_at_most(center,max_squared_radius)) 	
+				upper_ch->tree_items(it);
+			     else 
+		           	if  // minimal range query intersects upper_b
+				(b_upper->min_squared_Euclidean_distance_to_point_is_at_most(center,min_squared_radius)) 
+					upper_ch->tree_items_in_sphere
+					(it,center,min_squared_radius,squared_radius,max_squared_radius,b_upper);
+				
+			     delete b_upper;
+		}
+	}
 
    };
 

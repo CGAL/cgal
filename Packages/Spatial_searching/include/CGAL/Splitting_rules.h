@@ -25,7 +25,6 @@
 // in several ways, the concept
 // Boxtree_splitter<NT>.
 
-
 #ifndef CGAL_SPLITTING_RULES_H
 #define CGAL_SPLITTING_RULES_H
 #include <CGAL/Point_container.h>

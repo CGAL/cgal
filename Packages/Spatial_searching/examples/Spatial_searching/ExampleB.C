@@ -58,8 +58,8 @@ int main() {
 
   // define query item
   double q[dim];
-  for (int i=0; i<dim; i++) {
-     q[i]=0.0;
+  for (int j=0; j<dim; j++) {
+     q[j]=0.0;
   }
   Point query_item(dim,q,q+dim);
 
@@ -89,10 +89,10 @@ int main() {
   std::cout << 
   "query point= 4 0.0 0.0 0.0 0.0" << std::endl <<  "5 exact furthest neighbours are: " 
   << std::endl; 
-  for (int i=0; i < neighbour_number; ++i) { 
+  for (int k=0; k < neighbour_number; ++k) { 
      std::cout << " d(q,fn)= " 
-     << tr_dist.inverse_of_transformed_distance(neighbours2[i].second) << 
-     " fn= " << *(neighbours2[i].first) << std::endl; 
+     << tr_dist.inverse_of_transformed_distance(neighbours2[k].second) << 
+     " fn= " << *(neighbours2[k].first) << std::endl; 
   }
   
   return 0;
