@@ -35,7 +35,6 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
-#include <CGAL/Nef_3/SNC_items.h>
 
 #ifdef CGAL_USE_QT
 #include <CGAL/IO/Qt_widget_Nef_3.h>
@@ -77,7 +76,7 @@ const char *kernelversion = "Simple homogeneous kernel.";
 #endif
 
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
-typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_items>     Nef_polyhedron;
+typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
 //typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_items,CGAL::Decomposition_mark>     Nef_polyhedron;
 // typedef Nef_polyhedron::Explorer           Explorer;
 typedef std::vector< Nef_polyhedron>       Nef_vector;
