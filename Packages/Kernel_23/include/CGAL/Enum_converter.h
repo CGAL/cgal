@@ -28,7 +28,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Enum_converter
+struct Enum_converter
 {
   bool              operator()(bool b) const { return b; }
 
