@@ -411,7 +411,7 @@ build_triangulation()
 }
 
 template<class Gt, class Tds>
-Constrained_triangulation_sweep_2<Gt,Tds>::Vertex_handle
+typename Constrained_triangulation_sweep_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_sweep_2<Gt,Tds>::
 treat_in_edges(const Event_queue_iterator & event,
                Sweep_status_iterator & loc)

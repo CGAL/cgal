@@ -96,7 +96,7 @@ template <class Point, class Weight>
 class Construct_weighted_circumcenter_2
 {
 public:
-  typedef Weighted_point <Point, Weight>        Weighted_point;
+  typedef CGAL::Weighted_point <Point, Weight>        Weighted_point;
   Point operator() ( Weighted_point p,
 		     Weighted_point q,
 		     Weighted_point r) 
@@ -152,7 +152,7 @@ template <class Point, class Weight>
 class Construct_radical_axis_2
 {
 public:
-  typedef Weighted_point <Point, Weight>   Weighted_point;
+  typedef CGAL::Weighted_point <Point, Weight>   Weighted_point;
   typedef typename Point::R  R;
 
   Line_2<R> operator() ( Weighted_point p, Weighted_point q) 
@@ -252,7 +252,7 @@ template <class Point, class Weight>
 class Power_test_2
 {
 public:
-  typedef Weighted_point <Point, Weight>        Weighted_point;
+  typedef CGAL::Weighted_point <Point, Weight>        Weighted_point;
   Oriented_side operator() ( Weighted_point p,
 			     Weighted_point q,
 			     Weighted_point r,
@@ -267,7 +267,7 @@ template <class Point, class Weight>
 class Power_test_degenerated_2
 {
 public:
-  typedef Weighted_point <Point, Weight>        Weighted_point;
+  typedef CGAL::Weighted_point <Point, Weight>        Weighted_point;
   Oriented_side operator() ( Weighted_point p,
 			     Weighted_point q,
 			     Weighted_point r)
@@ -287,7 +287,7 @@ public:
   typedef W                                     Weight;
   typedef Triangulation_euclidean_traits_2 <R>  Traits;
   typedef typename Traits::Point_2              Bare_point;
-  typedef Weighted_point <Bare_point, W>        Weighted_point;
+  typedef CGAL::Weighted_point <Bare_point, W>  Weighted_point;
   // This is required for the point() function of vertex base class
   // to be correctly return a weighted_point;
   // patch 27/11/00

@@ -430,7 +430,7 @@ operator--(int)
         
 template < class Gt, class Tds>
 inline
-Triangulation_all_vertices_iterator_2<Gt,Tds>::Vertex &
+typename Triangulation_all_vertices_iterator_2<Gt,Tds>::Vertex &
 Triangulation_all_vertices_iterator_2<Gt,Tds>::
 operator*() const
 {
@@ -439,7 +439,7 @@ operator*() const
 
 template < class Gt, class Tds>
 inline
-Triangulation_all_vertices_iterator_2<Gt,Tds>::Vertex*
+typename Triangulation_all_vertices_iterator_2<Gt,Tds>::Vertex*
 Triangulation_all_vertices_iterator_2<Gt,Tds>::
 operator->() const
 {
@@ -545,7 +545,7 @@ operator--(int)
         
 template < class Gt, class Tds>
 inline
-Triangulation_all_edges_iterator_2<Gt,Tds>::Edge
+typename Triangulation_all_edges_iterator_2<Gt,Tds>::Edge
 Triangulation_all_edges_iterator_2<Gt,Tds>::
 operator*() const
 {

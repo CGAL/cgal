@@ -5,6 +5,7 @@ Ver 5.22 (??)
 - replace "assert" by "CGAL_triangulation_assertion"
 - in Regular_triangulation_euclidean_traits_2<R,W>
  changed the default for W from R::FT to R::FT
+- SunPro support.
 
 Ver 5.21 (14/9/01)
 - added member functions to query the constraint hierarchy

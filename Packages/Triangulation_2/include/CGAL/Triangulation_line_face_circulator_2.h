@@ -260,8 +260,8 @@ Triangulation_line_face_circulator_2(const Point& pp,
     else if ( (pql == LEFTTURN) && (pqr == COLLINEAR) ){
       --fc;
       i = fc->index(inf);
-      Point s = fc->vertex(ccw(i))->point();
-      Orientation pqs  = _tr->orientation(p, q, s);
+      Point ss = fc->vertex(ccw(i))->point();
+      Orientation pqs  = _tr->orientation(p, q, ss);
       Face_handle fn;
       int in;
       switch(pqs) {
@@ -277,15 +277,15 @@ Triangulation_line_face_circulator_2(const Point& pp,
 	fn = fc->neighbor(i);
 	Vertex_handle vr = fc->vertex(cw(i)); // vertex corresponding to r
 	in = fn->index(vr);
-	s = fn->vertex(cw(in))->point();
-	pqs = _tr->orientation(p, q, s);
+	ss = fn->vertex(cw(in))->point();
+	pqs = _tr->orientation(p, q, ss);
 	Orientation pqss = RIGHTTURN;
 	while ( pqs != LEFTTURN) {
 	  pqss = pqs;
 	  fn = fn->neighbor(ccw(in));
 	  in = fn->index(vr);
-	  s = fn->vertex(cw(in))->point();
-	  pqs = _tr->orientation(p, q, s);
+	  ss = fn->vertex(cw(in))->point();
+	  pqs = _tr->orientation(p, q, ss);
 	}
 	if (pqss == RIGHTTURN)
 	  *this = Line_face_circulator( fn, in ,vertex_edge,t,p,q);

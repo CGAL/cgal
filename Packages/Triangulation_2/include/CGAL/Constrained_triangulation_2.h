@@ -217,7 +217,7 @@ public:
     
 template < class Gt, class Tds >
 inline
-Constrained_triangulation_2<Gt,Tds>::Vertex_handle
+typename Constrained_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds>::
 insert(const Point& a, Face_handle start)
 // inserts point a 
@@ -232,7 +232,7 @@ insert(const Point& a, Face_handle start)
 }
 
 template < class Gt, class Tds >
-Constrained_triangulation_2<Gt,Tds>::Vertex_handle
+typename Constrained_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds>::
 insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 // insert a point p, whose localisation is known (lt, f, i)
@@ -257,7 +257,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 }
 
 template < class Gt, class Tds >  
-Constrained_triangulation_2<Gt, Tds>::Vertex_handle 
+typename Constrained_triangulation_2<Gt, Tds>::Vertex_handle 
 Constrained_triangulation_2<Gt, Tds>::
 special_insert_in_edge(const Point & a, Face_handle f, int i)
   // insert  point p in edge(f,i)
@@ -339,7 +339,7 @@ insert(Vertex_handle  va, Vertex_handle vb)
 
 template <class Gt, class Tds >
 inline
-Constrained_triangulation_2<Gt,Tds>::Vertex_handle
+typename Constrained_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds>::
 push_back(const Point &p)
 {
@@ -473,7 +473,7 @@ mark_constraint(Face_handle fr, int i)
 }
 
 template < class Gt, class Tds >
-Constrained_triangulation_2<Gt,Tds>::Vertex_handle
+typename Constrained_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds>::
 insert_part(Vertex_handle  va, 
 	    Vertex_handle  vb,
@@ -653,7 +653,7 @@ is_constrained(Edge e) const
 }
     
 template < class Gt, class Tds >
-Constrained_triangulation_2<Gt,Tds>::Vertex_handle 
+typename Constrained_triangulation_2<Gt,Tds>::Vertex_handle 
 Constrained_triangulation_2<Gt,Tds>::
 find_intersected_faces(Vertex_handle va, 
 		       Vertex_handle vb,

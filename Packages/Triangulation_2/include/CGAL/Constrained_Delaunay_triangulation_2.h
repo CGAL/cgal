@@ -481,7 +481,7 @@ find_conflicts(Point p, std::list<Edge>& le, Face_handle hint) const
   
 template < class Gt, class Tds >  
 inline 
-Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle 
+typename Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle 
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 insert(const Point & a, Face_handle start)
  // inserts a in the triangulation
@@ -494,7 +494,7 @@ insert(const Point & a, Face_handle start)
 }
 
 template < class Gt, class Tds >
-Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+typename Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 // insert a point p, whose localisation is known (lt, f, i)
@@ -509,7 +509,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 
 template <class Gt, class Tds >
 inline
-Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+typename Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 push_back(const Point &p)
 {
@@ -544,7 +544,7 @@ insert(Vertex_handle  va, Vertex_handle vb)
 
 
 template < class Gt, class Tds >
-Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+typename Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 insert_part(Vertex_handle  va, 
 	    Vertex_handle  vb,
@@ -826,7 +826,7 @@ is_in_diametral_circle(Vertex_handle va, Vertex_handle vb, const Point & p)
 }
       
 template < class Gt, class Tds >  
-Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+typename Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 refine_edge(Face_handle & f, int & i,
 	    List_edges & list_of_non_gabriel_constraints,

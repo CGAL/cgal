@@ -274,7 +274,7 @@ is_valid(bool verbose, int level) const
 }
 
 template < class Gt, class Tds >
-Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>:: 
 nearest_vertex(const Point  &p, Face_handle f) const
 {
@@ -294,7 +294,7 @@ nearest_vertex(const Point  &p, Face_handle f) const
 }
   
 template < class Gt, class Tds >
-Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>:: 
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
@@ -322,7 +322,7 @@ nearest_vertex_2D(const Point& p, Face_handle f) const
 }
 
 template < class Gt, class Tds >
-Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>:: 
 nearest_vertex_1D(const Point& p) const
 {
@@ -365,7 +365,7 @@ look_nearest_neighbor(const Point& p,
 //DUALITY
 template<class Gt, class Tds>
 inline
-Delaunay_triangulation_2<Gt,Tds>::Point
+typename Delaunay_triangulation_2<Gt,Tds>::Point
 Delaunay_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
@@ -432,7 +432,7 @@ dual(const Finite_edges_iterator& ei) const
   
 template < class Gt, class Tds >
 inline
-Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 insert(const Point  &p,  Face_handle start)
 {
@@ -444,7 +444,7 @@ insert(const Point  &p,  Face_handle start)
   
 template < class Gt, class Tds >
 inline
-Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 push_back(const Point &p)
 {
@@ -453,7 +453,7 @@ push_back(const Point &p)
   
 template < class Gt, class Tds >
 inline
-Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 insert(const Point  &p, Locate_type lt, Face_handle loc, int li)
 {

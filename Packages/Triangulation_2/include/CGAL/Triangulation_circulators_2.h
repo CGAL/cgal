@@ -265,7 +265,7 @@ operator--(int)
 
 template < class Gt, class Tds>
 inline
-Triangulation_edge_circulator_2<Gt,Tds>::Edge
+typename Triangulation_edge_circulator_2<Gt,Tds>::Edge
 Triangulation_edge_circulator_2<Gt,Tds>::
 operator*() const 
 {

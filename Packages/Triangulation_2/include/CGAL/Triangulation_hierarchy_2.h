@@ -290,7 +290,7 @@ is_valid() const
 
   
 template <class Tr>
-Triangulation_hierarchy_2<Tr>::Vertex_handle
+typename Triangulation_hierarchy_2<Tr>::Vertex_handle
 Triangulation_hierarchy_2<Tr>::
 insert(const Point &p)
 {
@@ -318,7 +318,7 @@ insert(const Point &p)
 
 template <class Tr>
 inline
-Triangulation_hierarchy_2<Tr>::Vertex_handle
+typename Triangulation_hierarchy_2<Tr>::Vertex_handle
 Triangulation_hierarchy_2<Tr>::
 push_back(const Point &p)
 {
@@ -365,7 +365,7 @@ remove_second(Vertex_handle v )
 }
 
 template <class Tr>
-Triangulation_hierarchy_2<Tr>::Face_handle 
+typename Triangulation_hierarchy_2<Tr>::Face_handle 
 Triangulation_hierarchy_2<Tr>::
 locate(const Point& p, Locate_type& lt, int& li) const
 {
@@ -375,7 +375,7 @@ locate(const Point& p, Locate_type& lt, int& li) const
 }
 
 template <class Tr>
-Triangulation_hierarchy_2<Tr>::Face_handle 
+typename Triangulation_hierarchy_2<Tr>::Face_handle 
 Triangulation_hierarchy_2<Tr>::
 locate(const Point& p) const
 {

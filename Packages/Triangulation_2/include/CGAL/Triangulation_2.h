@@ -529,7 +529,7 @@ number_of_faces() const
 
 template <class Gt, class Tds >
 inline
-Triangulation_2<Gt,Tds>::Vertex_handle 
+typename Triangulation_2<Gt,Tds>::Vertex_handle 
 Triangulation_2<Gt,Tds>::
 infinite_vertex() const
 {
@@ -538,7 +538,7 @@ infinite_vertex() const
 
 template <class Gt, class Tds >
 inline
-Triangulation_2<Gt,Tds>::Vertex_handle 
+typename Triangulation_2<Gt,Tds>::Vertex_handle 
 Triangulation_2<Gt,Tds>::
 finite_vertex() const
 {
@@ -548,7 +548,7 @@ finite_vertex() const
    
 template <class Gt, class Tds >
 inline
-Triangulation_2<Gt,Tds>::Face_handle 
+typename Triangulation_2<Gt,Tds>::Face_handle 
 Triangulation_2<Gt,Tds>::
 infinite_face() const
 {
@@ -749,7 +749,7 @@ is_face(Vertex_handle v1,
 
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Triangle
+typename Triangulation_2<Gt, Tds>::Triangle
 Triangulation_2<Gt, Tds>::
 triangle(const Face_handle& f) const
 {
@@ -762,7 +762,7 @@ triangle(const Face_handle& f) const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Segment
+typename Triangulation_2<Gt, Tds>::Segment
 Triangulation_2<Gt, Tds>::
 segment(const Face_handle& f, int i) const
 {
@@ -774,7 +774,7 @@ segment(const Face_handle& f, int i) const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Segment
+typename Triangulation_2<Gt, Tds>::Segment
 Triangulation_2<Gt, Tds>::
 segment(const Edge& e) const
 {
@@ -786,7 +786,7 @@ segment(const Edge& e) const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Segment
+typename Triangulation_2<Gt, Tds>::Segment
 Triangulation_2<Gt, Tds>::
 segment(const Edge_circulator& ec) const
 {
@@ -794,7 +794,7 @@ segment(const Edge_circulator& ec) const
 }
     
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Segment
+typename Triangulation_2<Gt, Tds>::Segment
 Triangulation_2<Gt, Tds>::
 segment(const Finite_edges_iterator& ei) const
 {
@@ -802,7 +802,7 @@ segment(const Finite_edges_iterator& ei) const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Segment
+typename Triangulation_2<Gt, Tds>::Segment
 Triangulation_2<Gt, Tds>::
 segment(const All_edges_iterator& ei) const
 {
@@ -832,7 +832,7 @@ flip(Face_handle f, int i)
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_first(const Point& p)
 {
@@ -843,7 +843,7 @@ insert_first(const Point& p)
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_second(const Point& p)
 {
@@ -855,7 +855,7 @@ insert_second(const Point& p)
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_in_edge(const Point& p, Face_handle f,int i)
 {
@@ -872,7 +872,7 @@ insert_in_edge(const Point& p, Face_handle f,int i)
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_in_face(const Point& p, Face_handle f)
 {
@@ -884,7 +884,7 @@ insert_in_face(const Point& p, Face_handle f)
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_outside_convex_hull(const Point& p, Face_handle f)
 {
@@ -897,7 +897,7 @@ insert_outside_convex_hull(const Point& p, Face_handle f)
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_outside_convex_hull_1(const Point& p, Face_handle f)
 {
@@ -917,7 +917,7 @@ insert_outside_convex_hull_1(const Point& p, Face_handle f)
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_outside_convex_hull_2(const Point& p, Face_handle f)
 { 
@@ -982,7 +982,7 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
 } 
 
 template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert_outside_affine_hull(const Point& p)
 {
@@ -1001,7 +1001,7 @@ insert_outside_affine_hull(const Point& p)
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert(const Point &p, Face_handle start)
 {
@@ -1013,7 +1013,7 @@ insert(const Point &p, Face_handle start)
 
  
 template <class Gt, class Tds >
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert(const Point& p, Locate_type lt, Face_handle loc, int li)
   // insert a point p, whose localisation is known (lt, f, i)
@@ -1046,7 +1046,7 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int li)
 
 template <class Gt, class Tds >
 inline
-Triangulation_2<Gt,Tds>::Vertex_handle
+typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 push_back(const Point &p)
 {
@@ -1451,7 +1451,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
   
 template <class Gt, class Tds >    
 inline
-Triangulation_2<Gt, Tds>::Face_handle
+typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
 create_face(Face_handle f1, int i1,
 	 Face_handle f2, int i2,
@@ -1462,7 +1462,7 @@ create_face(Face_handle f1, int i1,
 
 template <class Gt, class Tds >    
 inline
-Triangulation_2<Gt, Tds>::Face_handle
+typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
 create_face(Face_handle f1, int i1,
 	 Face_handle f2, int i2)
@@ -1472,7 +1472,7 @@ create_face(Face_handle f1, int i1,
 
 template <class Gt, class Tds >    
 inline
-Triangulation_2<Gt, Tds>::Face_handle
+typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
 create_face(Face_handle f, int i, Vertex_handle v)
 {
@@ -1481,7 +1481,7 @@ create_face(Face_handle f, int i, Vertex_handle v)
 
 template <class Gt, class Tds >    
 inline
-Triangulation_2<Gt, Tds>::Face_handle
+typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
 create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
 {
@@ -1490,7 +1490,7 @@ create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
 
 template <class Gt, class Tds >    
 inline
-Triangulation_2<Gt, Tds>::Face_handle
+typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
 create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
 	    Face_handle f1, Face_handle f2,  Face_handle f3)
@@ -1501,7 +1501,7 @@ create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
 
 template <class Gt, class Tds >    
 inline
-Triangulation_2<Gt, Tds>::Face_handle
+typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
 create_face(Face_handle fh)
 {
@@ -1512,7 +1512,7 @@ create_face(Face_handle fh)
 
 template <class Gt, class Tds >    
 inline
-Triangulation_2<Gt, Tds>::Face_handle
+typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
 create_face()
 {
@@ -1532,7 +1532,7 @@ delete_face(Face_handle f)
 // POINT LOCATION
 
 template <class Gt, class Tds >    
-Triangulation_2<Gt, Tds>::Face_handle
+typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
 march_locate_1D(const Point& t,
 		Locate_type& lt,
@@ -1599,7 +1599,7 @@ march_locate_1D(const Point& t,
 }
 
 template <class Gt, class Tds >    
-Triangulation_2<Gt, Tds>::Face_handle
+typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
 march_locate_2D(const Face_handle& start,
 		const Point& t,
@@ -1767,7 +1767,7 @@ march_locate_2D(const Face_handle& start,
 
     
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Face_handle
+typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt,Tds>::
 locate(const Point& p,
        Locate_type& lt,
@@ -1804,7 +1804,7 @@ locate(const Point& p,
 
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>:: Face_handle
+typename Triangulation_2<Gt, Tds>:: Face_handle
 Triangulation_2<Gt, Tds>::
 locate(const Point &p,
        Face_handle start) const
@@ -1815,7 +1815,7 @@ locate(const Point &p,
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Finite_faces_iterator
+typename Triangulation_2<Gt, Tds>::Finite_faces_iterator
 Triangulation_2<Gt, Tds>::
 finite_faces_begin() const
 {
@@ -1825,7 +1825,7 @@ finite_faces_begin() const
 } 
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Finite_faces_iterator
+typename Triangulation_2<Gt, Tds>::Finite_faces_iterator
 Triangulation_2<Gt, Tds>::
 finite_faces_end() const
 {
@@ -1835,7 +1835,7 @@ finite_faces_end() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Finite_vertices_iterator
+typename Triangulation_2<Gt, Tds>::Finite_vertices_iterator
 Triangulation_2<Gt, Tds>::
 finite_vertices_begin() const
 {
@@ -1845,7 +1845,7 @@ finite_vertices_begin() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Finite_vertices_iterator
+typename Triangulation_2<Gt, Tds>::Finite_vertices_iterator
 Triangulation_2<Gt, Tds>::
 finite_vertices_end() const
 {
@@ -1855,7 +1855,7 @@ finite_vertices_end() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Finite_edges_iterator
+typename Triangulation_2<Gt, Tds>::Finite_edges_iterator
 Triangulation_2<Gt, Tds>::
 finite_edges_begin() const
 {
@@ -1865,7 +1865,7 @@ finite_edges_begin() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Finite_edges_iterator
+typename Triangulation_2<Gt, Tds>::Finite_edges_iterator
 Triangulation_2<Gt, Tds>::
 finite_edges_end() const
 {
@@ -1875,7 +1875,7 @@ finite_edges_end() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Point_iterator
+typename Triangulation_2<Gt, Tds>::Point_iterator
 Triangulation_2<Gt, Tds>::
 points_begin() const
 {
@@ -1883,7 +1883,7 @@ points_begin() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Point_iterator
+typename Triangulation_2<Gt, Tds>::Point_iterator
 Triangulation_2<Gt, Tds>::
 points_end() const
 {
@@ -1891,7 +1891,7 @@ points_end() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::All_faces_iterator
+typename Triangulation_2<Gt, Tds>::All_faces_iterator
 Triangulation_2<Gt, Tds>::
 all_faces_begin() const
 {
@@ -1901,7 +1901,7 @@ all_faces_begin() const
 } 
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::All_faces_iterator
+typename Triangulation_2<Gt, Tds>::All_faces_iterator
 Triangulation_2<Gt, Tds>::
 all_faces_end() const
 {
@@ -1911,7 +1911,7 @@ all_faces_end() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::All_vertices_iterator
+typename Triangulation_2<Gt, Tds>::All_vertices_iterator
 Triangulation_2<Gt, Tds>::
 all_vertices_begin() const
 {
@@ -1921,7 +1921,7 @@ all_vertices_begin() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::All_vertices_iterator
+typename Triangulation_2<Gt, Tds>::All_vertices_iterator
 Triangulation_2<Gt, Tds>::
 all_vertices_end() const
 {
@@ -1931,7 +1931,7 @@ all_vertices_end() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::All_edges_iterator
+typename Triangulation_2<Gt, Tds>::All_edges_iterator
 Triangulation_2<Gt, Tds>::
 all_edges_begin() const
 {
@@ -1941,7 +1941,7 @@ all_edges_begin() const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::All_edges_iterator
+typename Triangulation_2<Gt, Tds>::All_edges_iterator
 Triangulation_2<Gt, Tds>::
 all_edges_end() const
 {
@@ -1952,7 +1952,7 @@ all_edges_end() const
 
 template <class Gt, class Tds >
 inline
-Triangulation_2<Gt, Tds>::Face_circulator
+typename Triangulation_2<Gt, Tds>::Face_circulator
 Triangulation_2<Gt, Tds>::
 incident_faces(Vertex_handle v, Face_handle f) const
 {
@@ -1961,7 +1961,7 @@ incident_faces(Vertex_handle v, Face_handle f) const
 
 template <class Gt, class Tds >
 inline
-Triangulation_2<Gt, Tds>::Vertex_circulator
+typename Triangulation_2<Gt, Tds>::Vertex_circulator
 Triangulation_2<Gt, Tds>::  
 incident_vertices(Vertex_handle v,
 		  Face_handle f) const
@@ -1971,7 +1971,7 @@ incident_vertices(Vertex_handle v,
 
 template <class Gt, class Tds >
 inline
-Triangulation_2<Gt, Tds>::Edge_circulator
+typename Triangulation_2<Gt, Tds>::Edge_circulator
 Triangulation_2<Gt, Tds>::    
 incident_edges(Vertex_handle v,
 	       Face_handle f) const
@@ -1980,7 +1980,7 @@ incident_edges(Vertex_handle v,
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Line_face_circulator  
+typename Triangulation_2<Gt, Tds>::Line_face_circulator  
 Triangulation_2<Gt, Tds>::    
 line_walk(const Point& p, const Point& q,  Face_handle f) const
 {
@@ -2151,7 +2151,7 @@ orientation(const Point& p, const Point& q,const Point& r ) const
 
 template<class Gt, class Tds>
 inline
-Triangulation_2<Gt,Tds>::Point
+typename Triangulation_2<Gt,Tds>::Point
 Triangulation_2<Gt,Tds>::
 circumcenter (const Point& p0, const Point& p1, const Point&  p2) const
 {
@@ -2161,7 +2161,7 @@ circumcenter (const Point& p0, const Point& p1, const Point&  p2) const
 
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Point
+typename Triangulation_2<Gt, Tds>::Point
 Triangulation_2<Gt, Tds>::
 circumcenter(Face_handle  f) const
 {
@@ -2246,7 +2246,7 @@ file_output(std::ostream& os) const
 }
 
 template <class Gt, class Tds >
-Triangulation_2<Gt, Tds>::Vertex_handle
+typename Triangulation_2<Gt, Tds>::Vertex_handle
 Triangulation_2<Gt, Tds>::
 file_input(std::istream& is)
 {

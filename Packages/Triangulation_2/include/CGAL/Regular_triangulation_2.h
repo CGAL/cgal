@@ -365,7 +365,7 @@ affiche_tout()
 //DUALITY
 template < class Gt, class Tds >
 inline
-Regular_triangulation_2<Gt,Tds>::Point
+typename Regular_triangulation_2<Gt,Tds>::Point
 Regular_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
@@ -374,7 +374,7 @@ dual (Face_handle f) const
 
 template < class Gt, class Tds >
 inline
-Regular_triangulation_2<Gt,Tds>::Point
+typename Regular_triangulation_2<Gt,Tds>::Point
 Regular_triangulation_2<Gt,Tds>::
 weighted_circumcenter(Face_handle f) const
 {
@@ -386,7 +386,7 @@ weighted_circumcenter(Face_handle f) const
 
 template<class Gt, class Tds>
 inline
-Regular_triangulation_2<Gt,Tds>::Point
+typename Regular_triangulation_2<Gt,Tds>::Point
 Regular_triangulation_2<Gt,Tds>::
 weighted_circumcenter(const Weighted_point& p0, 
 		      const Weighted_point& p1, 
@@ -461,7 +461,7 @@ dual(const Finite_edges_iterator& ei) const
 
 //INSERTION-REMOVAL
 template < class Gt, class Tds >
-Regular_triangulation_2<Gt,Tds>::Vertex_handle
+typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
 push_back(const Weighted_point &p)
 {	
@@ -469,7 +469,7 @@ push_back(const Weighted_point &p)
 }
 
 template < class Gt, class Tds >
-Regular_triangulation_2<Gt,Tds>::Vertex_handle
+typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
 insert(const Weighted_point &p, Face_handle start)
 {
@@ -480,7 +480,7 @@ insert(const Weighted_point &p, Face_handle start)
 }
 
 template < class Gt, class Tds >
-Regular_triangulation_2<Gt,Tds>::Vertex_handle
+typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
 insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li) 
 {
@@ -522,7 +522,7 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
 }
 
 template < class Gt, class Tds >
-Regular_triangulation_2<Gt,Tds>::Vertex_handle
+typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
 insert_in_face(const Weighted_point &p, Face_handle f)
 {
@@ -534,7 +534,7 @@ insert_in_face(const Weighted_point &p, Face_handle f)
 }
 
 template < class Gt, class Tds >
-Regular_triangulation_2<Gt,Tds>::Vertex_handle
+typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
 insert_in_edge(const Weighted_point &p, Face_handle f, const int i)
 {

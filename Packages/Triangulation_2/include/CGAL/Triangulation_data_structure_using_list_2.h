@@ -1204,7 +1204,16 @@ copy_tds(const Tds &tds, const Vertex* v)
   // to provide parallel faces and vertices iterators
 //   for(Iterator_base ib = tds.iterator_base_begin();
 //       ib != tds.iterator_base_end(); ++ib) {
+#ifdef __SUNPRO_CC
+  typedef  std::reverse_iterator<Iterator_base,
+                                 typename Iterator_base::iterator_category,
+                                 typename Iterator_base::value_type,
+                                 typename Iterator_base::reference,
+                                 typename Iterator_base::pointer,
+                                 typename Iterator_base::difference_type> RIB;
+#else
   typedef  std::reverse_iterator<Iterator_base> RIB;
+#endif
   for(RIB rib=RIB(tds.iterator_base_end());
       rib != RIB(tds.iterator_base_begin());
       ++rib) {
