@@ -1,4 +1,4 @@
-demo/${PACKAGE}/README
+demo/Matrix_search/README
 ---------------------------
 
 Interactive demo programs of some optimisation algorithms in CGAL.
@@ -24,6 +24,13 @@ middle and deleted with the right mouse button. There is a button to
 generate random convex polygons and a slider to change k and n (the
 number of vertices to generate).
 
+rectangular_p_center_2_demo:
+
+compute the rectangular four-centers of a planar point set P, i.e.
+cover P with four congruent axis-parallel squares of minimal sidelength.
+define points by clicking with the left mouse button and end the input
+by clicking the middle mouse button. Then the result is computed and
+displayed. Click any button to end.
 
 Michael Hoffmann
 

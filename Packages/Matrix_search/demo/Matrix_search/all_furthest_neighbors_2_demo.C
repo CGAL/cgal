@@ -54,6 +54,8 @@
 #endif // CGAL_IO_WINDOW_STREAM_H
 #include <iostream>
 
+using std::cout;
+using std::endl;
 using std::vector;
 using std::back_inserter;
 using CGAL::Cartesian;
