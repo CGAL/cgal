@@ -1,4 +1,4 @@
-// Copyright (c) 2002  ETH Zurich (Switzerland).
+// Copyright (c) 2002  Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
