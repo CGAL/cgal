@@ -1,3 +1,6 @@
+2.44    (26 Feb 2003)
+- dynamic hull example changed
+
 2.43    (31 Oct 2002)
 - replace double by MP_Float as no-GMP, no-LEDA number type in examples
 

@@ -1,5 +1,5 @@
 //
-// file: examples/Convex_hull_3/dynamic_hull_3_ex.C
+// file          : examples/Convex_hull_3/dynamic_hull_3_ex.C
 //
 #ifdef _MSC_VER
 #define Cartesian Ca
@@ -25,10 +25,7 @@ typedef CGAL::MP_Float RT;
 
 typedef CGAL::Cartesian<RT>                         K;
 typedef K::Point_3                                  Point_3;
-typedef CGAL::Triangulation_cell_base_3<K>          Cb;
-typedef CGAL::Triangulation_vertex_base_3<K>        Vb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Cb> Tds;
-typedef CGAL::Delaunay_triangulation_3<K, Tds>      Delaunay;
+typedef CGAL::Delaunay_triangulation_3<K>           Delaunay;
 typedef Delaunay::Vertex_handle                     Vertex_handle;
 
 int main()
