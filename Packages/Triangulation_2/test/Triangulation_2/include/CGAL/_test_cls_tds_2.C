@@ -437,8 +437,8 @@ _test_tds_iterators( const Tds&  tds)
   typedef typename Tds::Edge_iterator     Edge_iterator;
   typedef typename Tds::Iterator_base     Iterator_base;
 
-  int nv, ne, nf, nb;
-  nv = ne = nf = nb = 0;
+  int nv, ne, nf;
+  nv = ne = nf = 0;
 
   Vertex v;
   Face f;

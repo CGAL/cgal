@@ -135,6 +135,7 @@ public:
   
 private:  
   void copy(const Constraint_hierarchy_2& ch);
+  void copy(const Constraint_hierarchy_2& ch, std::map<T,T>& vmap);
   H_edge    make_edge(T va, T vb) const;
   H_vertex_it     get_pos(T va, T vb) const;
   bool      get_contexts(T va, T vb, 
@@ -165,19 +166,69 @@ operator=(const Constraint_hierarchy_2& ch){
 template <class T, class Data> 
 void
 Constraint_hierarchy_2<T,Data>::
-copy(const Constraint_hierarchy_2& ch)
+copy(const Constraint_hierarchy_2& ch1)
+{
+  // create a identity transfer vertex map
+  std::map<T,T>  vmap;
+  H_c_iterator cit1 = ch1.c_begin();
+  for( ; cit1 != ch1.c_end(); ++cit1) {
+    H_vertex_it vit = cit1->second->begin();
+    for( ; vit != cit1->second->end(); ++vit) {
+      vmap[*vit] = *vit;
+    }
+  }
+  copy(ch1, vmap);
+}
+
+template <class T, class Data> 
+void
+Constraint_hierarchy_2<T,Data>::
+copy(const Constraint_hierarchy_2& ch1, std::map<T,T>& vmap)
+  // copy with a tranfer vertex map
 {
   clear();
-  H_c_iterator cit = ch.c_begin();
-  for( ; cit != ch.c_end(); ++cit) {
-    H_vertex_list* hvlist = new H_vertex_list(*(cit->second));
-    c_to_sc_map.insert(std::make_pair(cit->first, hvlist));
+  // copy c_to_sc_map
+  H_c_iterator cit1 = ch1.c_begin();
+  for( ; cit1 != ch1.c_end(); ++cit1) {
+    H_vertex u2 = vmap[cit1->first.first];
+    H_vertex v2 = vmap[cit1->first.second];
+    H_vertex_list* hvl1 = cit1->second;
+    H_vertex_list* hvl2 = new H_vertex_list;
+    H_vertex_it vit = hvl1->begin();
+    for( ; vit != hvl1->end(); ++vit) hvl2->push_back(vmap[*vit]);
+    c_to_sc_map[make_edge(u2,v2)] = hvl2;
   }
-  H_sc_iterator scit= ch.sc_begin();
-  for( ; scit != ch.sc_end(); ++scit) {
-    H_context_list* hclist = new H_context_list(*(scit->second));
-    sc_to_c_map.insert(std::make_pair(scit->first, hclist));
+  // copy sc_to_c_map
+  H_sc_iterator scit1 = ch1.sc_begin();
+  for( ; scit1 != ch1.sc_end(); ++scit1) {
+    //vertices of the subconstraints
+    H_vertex uu2 = vmap[scit1->first.first];
+    H_vertex vv2 = vmap[cit1->first.second];
+    H_context_list* hcl1  = scit1->second;
+    H_context_list* hcl2  = new H_context_list;
+    H_context_iterator cit1 = hcl1->begin();
+    for( ; cit1 != hcl1->end(); ++cit1){
+      // vertices of the enclosing constraints
+      H_vertex u2 = vmap[cit1->enclosing->front()];
+      H_vertex v2 = vmap[cit1->enclosing->back()];
+      H_context ctxt2;
+      ctxt2.enclosing = c_to_sc_map[make_edge(u2,v2)];
+      ctxt2.pos = ctxt2.enclosing->begin();
+      H_vertex_it aux = cit1->enclosing->begin();
+      while( aux != cit1->pos) {
+	++aux;
+	++ctxt2.pos;
+      }
+      hcl2->push_back(ctxt2);
+    }
+    sc_to_c_map[make_edge(uu2,vv2)] = hcl2;
   }
+  // copy of vertex_map
+  H_v_iterator hvit1 = ch1.vertex_map.begin();
+  for ( ; hvit1 != ch1.vertex_map.end(); ++hvit1){
+    vertex_map[vmap[hvit1->first]] = hvit1->second;
+  }
+  return;
 }
 
 
@@ -591,16 +642,16 @@ print() const
   for(hcit = c_begin(); hcit != c_end();  hcit++) {
     H_vertex_it vit = (*hcit).second->begin();
     for (; vit != (*hcit).second->end(); vit++){
-      //num ++;
+      num ++;
       vertex_num.insert(std::make_pair((*vit), num));
     }
   }
-  typename std::map<T,int>::iterator vnit = vertex_num.begin();
-  for(; vnit != vertex_num.end(); vnit++) {
-    vnit->second = ++num;
-    std::cerr << "vertex num " << num  << " " << vnit->first->point()
-	      << std::endl;
-  }
+//   typename std::map<T,int>::iterator vnit = vertex_num.begin();
+//   for(; vnit != vertex_num.end(); vnit++) {
+//     vnit->second = ++num;
+//     std::cerr << "vertex num " << num  << " " << vnit->first->point()
+// 	      << std::endl;
+//   }
 
   H_c_iterator cit=c_begin();
   H_sc_iterator scit=sc_begin();

@@ -106,8 +106,11 @@ _test_cls_hierarchy_2()
 
   //test clear() and copy()
   Hierarchy ch(h);
+  // h.print();
+  //ch.print();
   ch.clear();
   ch = h;
+  //ch.print();
   ch.clear();
   return;
 }

@@ -2,8 +2,9 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 Ver 7.10()
-- added #include  <CGAL/squared_distance_2.h> in 
-  Constrained_triangulation_plus_2
+- fixed copy of the constraint_hierarchy
+- added  : #include  <CGAL/squared_distance_2.h> in 
+  Constrained_triangulation_plus_2.h
 
 Ver 7.09 (19/03/02)
 - added delete and copy of constraint_hierarchy
