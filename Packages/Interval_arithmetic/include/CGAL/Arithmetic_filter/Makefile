@@ -11,8 +11,8 @@ SCRIPT = ../../../examples/Interval_arithmetic/filtered_predicate_converter
 BASE = $(CGAL)/include/CGAL
 
 # Tell which files must be treated.
-OBJECTS = predicates_on_ftC2.h \
-          predicates_on_ftC3.h \
+OBJECTS = predicates/kernel_ftC2.h \
+          predicates/kernel_ftC3.h \
           predicates/sign_of_determinant.h \
           predicates/Regular_triangulation_ftC2.h \
           predicates/Regular_triangulation_rtH2.h \
