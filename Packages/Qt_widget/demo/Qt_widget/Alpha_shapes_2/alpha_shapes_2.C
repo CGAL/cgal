@@ -17,7 +17,6 @@ int main(int, char*)
 
 
 #include "cgal_types.h"
-#include "helpwindow.h"
 #include "Qt_widget_toolbar.h"
 #include "Qt_widget_toolbar_layers.h"
 
@@ -25,6 +24,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_helpwindow.h>
 
 
 //STL 
@@ -215,8 +215,7 @@ public slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help
-        viewer");
+    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();

@@ -1,5 +1,25 @@
-#ifndef HELPWINDOW_H
-#define HELPWINDOW_H
+// ======================================================================
+//
+// Copyright (c) 1997-2002 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// file          : include/CGAL/IO/Qt_widget_helpwindow.h
+// package       : Qt_widget (1.2.46)
+// author(s)     : Radu Ursu
+// release       : $CGAL_Revision: CGAL-2.5-I-60 $
+// release_date  : $CGAL_Date: 2002/10/18 $
+//
+// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
+//
+// ======================================================================
+
+#ifndef CGAL_QT_WIDGET_HELPWINDOW_H
+#define CGAL_QT_WIDGET_HELPWINDOW_H
 
 #include <qmainwindow.h>
 #include <qtextbrowser.h>
@@ -32,8 +52,11 @@
 #include <qpaintdevicemetrics.h>
 
 
+
+
 class QComboBox;
 class QPopupMenu;
+
 class HelpWindow : public QMainWindow
 {
     Q_OBJECT
@@ -60,5 +83,9 @@ private:
     QPopupMenu *hist;
     QMap<int, QString> mHistory;
 };
+
+static char*back[];
+static char*forward[];
+static char*home[];
 
 #endif
