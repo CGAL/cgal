@@ -1,4 +1,4 @@
-2.1.15(13/05/02)   Updated INSTALL.win32 for CGAL-2.4
+2.1.15(13/05/02)   Updated INSTALL.win32 for CGAL-2.4 and added Install.hlp
 
 2.1.14(02/05/02)   added the projects to build the Qt_widget (CGALQt.lib)
 
