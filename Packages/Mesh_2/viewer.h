@@ -11,29 +11,23 @@
 #include <qlineedit.h>
 #include <qstatusbar.h>
 #include <list>
-#include <iostream>
-#include <math.h>
+//#include <iostream>
+//#include <math.h>
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
-// #include <CGAL/Triangulation_euclidean_traits_2.h>
-#include <CGAL/Constrained_triangulation_2.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Constrained_triangulation_face_base_2.h> 
-#include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Arithmetic_filter.h>
+// // #include <CGAL/Triangulation_euclidean_traits_2.h>
+// #include <CGAL/Constrained_triangulation_2.h>
+// #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+// #include <CGAL/Constrained_triangulation_face_base_2.h> 
+// #include <CGAL/triangulation_assertions.h>
+// #include <CGAL/Triangulation_short_names_2.h>
+// #include <CGAL/Arithmetic_filter.h>
 //#include <CGAL/double.h>
 //#include <LEDA/real.h>
-#include "Mesh.h"
+// #include "Mesh.h"
 
-typedef CGAL::Cartesian<double>                   Gt;
-// typedef CGAL::Triangulation_euclidean_traits_2<rep>    Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt>         Vb;
-typedef CGAL::Constrained_triangulation_face_base_2<Gt>           Fb;
-typedef CGAL::Triangulation_data_structure_using_list_2<Vb, Fb> Tds;
-typedef Mesh<Gt, Tds> Msh;
 
 class TrViewer;
 
@@ -58,15 +52,27 @@ class TrFrame : public QMainWindow {
    friend class TrViewer;
 };
 
-struct Point {
-  int x, y;
-  Point(int a, int b):x(a), y(b){}
-};
+// struct Point {
+//   int x, y;
+//   Point(int a, int b):x(a), y(b){}
+// };
 
-struct Line {
-  int x1,y1,x2,y2;
-  Line(int a, int b, int c, int d):x1(a), y1(b), x2(c), y2(d) {}
-};
+// struct Line {
+//   int x1,y1,x2,y2;
+//   Line(int a, int b, int c, int d):x1(a), y1(b), x2(c), y2(d) {}
+// };
+
+#ifdef CGAL_MESH_H
+
+typedef CGAL::Cartesian<double> K;
+typedef K::Point_2 Point;
+typedef K::Line_2 Line;
+
+typedef CGAL::Triangulation_vertex_base_2<K>         Vb;
+typedef CGAL::Constrained_triangulation_face_base_2<K>           Fb;
+typedef CGAL::Triangulation_data_structure_using_list_2<Vb, Fb> Tds;
+
+typedef Mesh<K, Tds> Msh;
 
 class TrViewer : public QWidget {
   Q_OBJECT
@@ -75,7 +81,8 @@ class TrViewer : public QWidget {
  protected:
   list<Point> points;
   list<Line> lines;
-  Msh mesh;
+  Msh *mesh;
+  bool auto_mesh;
   TrFrame *frame;
   void paintEvent(QPaintEvent *pe);
   void mouseMoveEvent(QMouseEvent *me);
@@ -85,10 +92,12 @@ class TrViewer : public QWidget {
   void mouseReleaseEvent(QMouseEvent *me);
   void keyPressEvent(QKeyEvent *ke);
  public slots:
-  void onStep();
   void onMesh();
+  void toggleAutoMesh(bool);
  public:
   friend class TrFrame;
 };
+
+#endif
 
 #endif

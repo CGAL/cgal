@@ -1,8 +1,10 @@
-#include "viewer.h"
+#include "Mesh.h"
 #include <qapplication.h>
 #include <qfiledialog.h>
 #include <stdlib.h>
 #include <fstream>
+#include "viewer.h"
+
 
 TrFrame::TrFrame() : 
   QMainWindow(0, "Triangulation Frame", WDestructiveClose) {
@@ -28,9 +30,12 @@ TrFrame::TrFrame() :
   scr->addChild(trv);
 
   QToolBar *toolBar = new QToolBar(this);
-  QPushButton *pbStep = new QPushButton("Step", toolBar);
-  connect(pbStep, SIGNAL(clicked()), trv, SLOT(onStep()));
-  //pbStep->setFixedSize(100, 32);
+  QPushButton *pbMesh = new QPushButton("Mesh", toolBar);
+  connect(pbMesh, SIGNAL(clicked()), trv, SLOT(onMesh()));
+  //pbMesh->setFixedSize(100, 32);
+  QPushButton *pbAutoMesh = new QPushButton("Auto Mesh", toolBar);
+  connect(pbAutoMesh, SIGNAL(toggled(bool)), trv, SLOT(toggleAutoMesh(bool)));
+  pbAutoMesh->setToggleButton(true);
   addToolBar(toolBar, "Controls");
   
   QToolBar *tbTrProps = new QToolBar(this);
@@ -56,14 +61,14 @@ TrFrame::TrFrame() :
 void TrFrame::clearTriangulation() {
   trv->points.clear();
   trv->lines.clear();
-  trv->mesh.reset();
+  trv->mesh->reset();
   trv->update();
 }
 
 void TrFrame::saveTriangulation() {
   // trv->points.clear();
   // trv->lines.clear();
-  //trv->mesh.clear();
+  //trv->mesh->clear();
   //trv->update();
   QFileDialog fd(this, "Save", TRUE);
   fd.setCaption("Save");
@@ -71,13 +76,13 @@ void TrFrame::saveTriangulation() {
   fd.exec();
   ofstream of(fd.selectedFile());
   //of<<trv->mesh;
-  trv->mesh.write(of);
+  trv->mesh->write(of);
 }
 
 void TrFrame::openTriangulation() {
 //   trv->points.clear();
 //   trv->lines.clear();
-//   trv->mesh.clear();
+//   trv->mesh->clear();
 //   trv->update();
   QFileDialog fd(this, "Open", TRUE);
   fd.setCaption("Open");
@@ -85,7 +90,7 @@ void TrFrame::openTriangulation() {
   fd.exec();
   ifstream f(fd.selectedFile());
   //f>>trv->mesh;
-  trv->mesh.read(f);
+  trv->mesh->read(f);
   trv->update();
 }
 
@@ -109,8 +114,11 @@ void TrFrame::setStatus(int x, int y) {
   lblStatus->setText(s);
 }
 
-TrViewer::TrViewer(TrFrame *f, QWidget *parent) : QWidget(parent) {
+TrViewer::TrViewer(TrFrame *f, QWidget *parent) : 
+  QWidget(parent), auto_mesh(false)
+{
   frame = f;
+  mesh= new Msh();
   setCursor(crossCursor);
   setMouseTracking(TRUE);
   //setFocusPolicy(QWidget::StrongFocus);
@@ -124,20 +132,20 @@ void TrViewer::paintEvent(QPaintEvent *pe) {
   
    p.setPen(QColor(0, 0, 255));
    p.setBrush(QBrush(NoBrush));
-   Msh::Edge_iterator eit = mesh.edges_begin();
-   while(eit != mesh.edges_end()) {
+   Msh::Edge_iterator eit = mesh->edges_begin();
+   while(eit != mesh->edges_end()) {
      Msh::Face_handle face = (*eit).first;
      int nedge = (*eit).second;
      double x1, x2, y1, y2;
      double D;
-     x1 = face->vertex(mesh.cw(nedge))->point().x();
-     y1 = face->vertex(mesh.cw(nedge))->point().y();
-     x2 = face->vertex(mesh.ccw(nedge))->point().x();
-     y2 = face->vertex(mesh.ccw(nedge))->point().y();
+     x1 = face->vertex(mesh->cw(nedge))->point().x();
+     y1 = face->vertex(mesh->cw(nedge))->point().y();
+     x2 = face->vertex(mesh->ccw(nedge))->point().x();
+     y2 = face->vertex(mesh->ccw(nedge))->point().y();
      D = ::sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
      
-     p.setPen(QColor(85, 85, 85));
-     p.drawEllipse((int)rint((x1+x2)/2.0-D/2.0), (int)rint((y1+y2)/2.0-D/2.0),      (int)D, (int)D); 
+//      p.setPen(QColor(85, 85, 85));
+//      p.drawEllipse((int)rint((x1+x2)/2.0-D/2.0), (int)rint((y1+y2)/2.0-D/2.0),      (int)D, (int)D); 
      if(face->is_constrained(nedge)) {
        p.setPen(QColor(255, 0, 0));
      } else {
@@ -148,8 +156,8 @@ void TrViewer::paintEvent(QPaintEvent *pe) {
    }
    p.setPen(QColor(0, 0, 255));
 //   p.setPen(QColor(0, 0, 255));
-//   Msh::Face_iterator fit = mesh.faces_begin();
-//   while(fit != mesh.faces_end()) {
+//   Msh::Face_iterator fit = mesh->faces_begin();
+//   while(fit != mesh->faces_end()) {
 //     double x1, x2, x3, y1, y2, y3;
 //     x1 =  (*fit).vertex(0)->point().x()/*.to_double()*/;
 //     x2 =  (*fit).vertex(1)->point().x()/*.to_double()*/;
@@ -162,10 +170,10 @@ void TrViewer::paintEvent(QPaintEvent *pe) {
 //     p.drawLine((int)x3, (int)y3, (int)x2, (int)y2); 
 //     fit++;
 //   }
-   Msh::Vertex_iterator vit = mesh.vertices_begin();
+   Msh::Vertex_iterator vit = mesh->vertices_begin();
    p.setPen(QColor(0, 255, 0));
    p.setBrush(QBrush(QColor(0,255,0)));
-   while(vit != mesh.vertices_end()){
+   while(vit != mesh->vertices_end()){
      p.drawEllipse((int)(*vit).point().x()/*.to_double()*/-1, 
 		  (int)(*vit).point().y()/*.to_double()*/-1, 3, 3);
      vit++;
@@ -175,9 +183,7 @@ void TrViewer::paintEvent(QPaintEvent *pe) {
    
 
 }
-void TrViewer::onStep() {
 
-}
 void TrViewer::mouseMoveEvent(QMouseEvent *me) {
   QString s;
   int x, y;
@@ -232,17 +238,19 @@ void TrViewer::mouseReleaseEvent(QMouseEvent *me) {
     //p.y() = itp->y;
       //Msh::Vertex v(p);
       //v.set_point(p);
-      mesh.insert(p);
+      mesh->insert(p);
       cout<<"ok"<<endl;
     } else {
       points.push_back(Point(startx, starty));
       points.push_back(Point(endx, endy));
-      lines.push_back(Line(startx, starty, endx, endy));
+      lines.push_back(Line(Point(startx, starty), Point(endx, endy)));
       cout<<"line : "<<startx<<" "<<starty<<" : "<<endx<<" "<<endy<<endl;
-      Msh::Point p1(startx, starty); //mesh.insert(p1);
-      Msh::Point p2(endx, endy); //mesh.insert(p2);
-      mesh.insert(p1, p2);
+      Msh::Point p1(startx, starty); //mesh->insert(p1);
+      Msh::Point p2(endx, endy); //mesh->insert(p2);
+      mesh->insert(p1, p2);
     }
+    if(auto_mesh)
+      mesh->refine_mesh();
     update();
   }
 }
@@ -257,11 +265,15 @@ void TrViewer::keyPressEvent(QKeyEvent *ke) {
 
 void TrViewer::onMesh(){
   try {
-    for(int i=0; i<1; i++) {
-      mesh.refine_mesh(this);
-    }
+    mesh->refine_mesh();
   } catch(...) {
     cerr<<"CGAL threw an exception"<<endl;
   }
 }
 
+void TrViewer::toggleAutoMesh(bool b) {
+  auto_mesh=b;
+}
+
+// moc_source_file: viewer.h
+#include "viewer.moc"

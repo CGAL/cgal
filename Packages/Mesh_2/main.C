@@ -1,3 +1,7 @@
+class Msh;
+class Point;
+class Line;
+
 #include "viewer.h"
 #include <iostream>
 #include <qapplication.h>

@@ -5,26 +5,29 @@
 #include <cmath>
 #include <iostream.h>
 #include <fstream.h>
-#include <qwidget.h>
+//#include <qwidget.h>
 #include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Triangulation_2.h>
+//#include <CGAL/Triangulation_vertex_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/predicate_classes_2.h>
-#include <CGAL/Triangulation_circulators_2.h>
+//#include <CGAL/predicate_classes_2.h>
+//#include <CGAL/Triangulation_circulators_2.h>
 
 //CGAL_BEGIN_NAMESPACE
 using namespace CGAL;
 
 #define INVALID_EDGE Edge(NULL, -1);
 
-#define UPDATE {viewer->repaint(); qApp->processEvents(); float ff; for(float f=0.0; f<1.2e6; f++) ff += sin(f);}
+// #define UPDATE {viewer->repaint(); qApp->processEvents(); float ff; for(float f=0.0; f<1.2e6; f++) ff += sin(f);}
 //#define UPDATE
 
-template <class Gt, class Tds> class Triangulation_finite_vertex_circulator :
-	public Triangulation_vertex_circulator_2<Gt, Tds>
-{
+// template <class Gt, class Tds> class Triangulation_finite_vertex_circulator :
+// 	public Triangulation_vertex_circulator_2<Gt, Tds>
+// {
 
-};
+// };
 
 template <class Gt, class Tds, class Mtraits = void>
 class Mesh:
@@ -32,7 +35,7 @@ public Constrained_Delaunay_triangulation_2 <Gt, Tds>
 {
 
 public:
-  QWidget *viewer;
+  //  QWidget *viewer;
 
   typedef Gt      Triangulation_geom_traits;
   typedef Tds     Triangulation_data_structure;
@@ -83,7 +86,7 @@ private:
 
 public:
   //INSERTION-REMOVAL
-  void refine_mesh(QWidget *v);
+  void refine_mesh(/*QWidget *v */);
   void bounds(FT &xmin, FT &ymin, 
 	      FT &xmax, FT &ymax,
 	      FT &xcenter, FT &ycenter);
@@ -427,7 +430,7 @@ template <class Gt, class Tds, class Mtraits>
 void Mesh<Gt, Tds, Mtraits>::
 refine_edge(Vertex_handle va, Vertex_handle vb)
 {
-  UPDATE;
+  // UPDATE;
   Face_handle f;
   int i;
   is_edge(va, vb, f, i);
@@ -515,7 +518,7 @@ refine_face(Face_handle f)
 	  }
 	}
   }
-  UPDATE; 
+  // UPDATE; 
   current_time++; 
   insertion_time[v] = current_time; 
   //flip_around(v);  
@@ -1114,9 +1117,9 @@ nearest_incident_vertex(Vertex_handle v)
 //the mesh refine function 
 template <class Gt, class Tds, class Mtraits>
 void Mesh<Gt, Tds, Mtraits>::
-refine_mesh( QWidget *w)
+refine_mesh(/* QWidget *w */)
 {
-  viewer = w;
+  //  viewer = w;
   // bounding_box();
   create_clusters();
   show_clusters();
