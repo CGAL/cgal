@@ -82,14 +82,14 @@ namespace CGAL {
 
   public:
 
-    inline void set_upper_bound(const int i, const NT x) {
+    inline void set_upper_bound(int i, const NT& x) {
       assert(i >= 0 && i < dim);
       assert(x >= lower_[i]);
       upper_[i] = x;
       set_max_span();
     }
 
-    inline void set_lower_bound(const int i, const NT x) {
+    inline void set_lower_bound(int i, const NT& x) {
       assert(i >= 0 && i < dim);
       assert(x <= upper_[i]);
       lower_[i] = x;
@@ -108,7 +108,7 @@ namespace CGAL {
       }
     }
     
-    Kd_tree_rectangle(const int d) : 
+    Kd_tree_rectangle(int d) : 
     dim(d), lower_(new NT[d]), upper_(new NT[d])
     {
       std::fill(lower_, lower_ + dim, 0);
@@ -127,7 +127,7 @@ namespace CGAL {
     }
 
     template <class PointIter>
-    Kd_tree_rectangle(const int d,  PointIter begin,  PointIter end)
+    Kd_tree_rectangle(int d,  PointIter begin,  PointIter end)
       : dim(d), lower_(new NT[d]), upper_(new NT[d]) 
     {
       // initialize with values of first point
