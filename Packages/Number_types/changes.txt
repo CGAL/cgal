@@ -1,3 +1,6 @@
+4.108 (7 August 2003)
+- abs() was failing with g++ 2.95 and mpz_class due to ?:.
+
 4.107 (30 July 2003)
 - Move sign(CORE::EXpr) and compare(CORE::Expr) in CGAL::NTS.
 
