@@ -1,6 +1,6 @@
 # Makefile for a CGAL package.
 
-.PHONY: doc package filters test submit version tag
+.PHONY: doc specific test submit Version
 
 Package:=$(shell basename `cat CVS/Repository`)
 TAG_VERSION:=v$(shell echo $(VERSION) | sed -e "s/\./_/g")
@@ -9,26 +9,18 @@ WWW_base=/net/servers/www-sop/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-package: doc filters clean $(Package).tar.gz
+all:
 	@echo "-----------------------------------"
-	@echo "---------- Don't forget: ----------"
-	@echo "-----------------------------------"
-	@echo "---- changes.txt               ----"
-	@echo "---- make test                 ----"
-	@echo "---- make VERSION=X.XX version ----"
-	@echo "---- cvs commit                ----"
-	@echo "---- make VERSION=X.XX tag     ----"
-	@echo "---- make package              ----"
-	@echo "---- make submit               ----"
+	@echo "---- edit changes.txt          ----"
+	@echo "---- make VERSION=X.XX submit  ----"
 	@echo "-----------------------------------"
 
-version:
+Version:
 	echo $(CGAL_VERSION) > version
-
-tag:
+	cvs commit -m "- Bump for $(CGAL_VERSION)" version
 	cvs tag -c $(TAG_VERSION)
 
-submit: package
+submit: doc specific clean Version $(Package).tar.gz
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
 	   changes.txt $(WWW_dir)
 	rm -f $(WWW_dir)/$(Package).ps.gz
@@ -64,5 +56,5 @@ doc_ps/$(Package).ps: doc_tex/support/NumberTypeSupport/Interval.tex
 
 # The following is specific to the IA package.
 
-filters:
+specific:
 	$(MAKE) -C include/CGAL/Arithmetic_filter
