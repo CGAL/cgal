@@ -1,3 +1,8 @@
+2.11
++ Removed workaround_stl.h workaround_return_type.h and workaround_casts.h.
++ removed obsolete config testfiles:
+  CGAL_CFG_DYNAMIC_CAST_BUG.C and CGAL_CFG_NO_DYNAMIC_CAST.C 
+
 2.10
 + Added CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM.C
 + Added CGAL_CFG_ENUM_BUG.C
