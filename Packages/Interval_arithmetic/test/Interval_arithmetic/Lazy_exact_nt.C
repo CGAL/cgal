@@ -72,7 +72,11 @@ int main ()
   std::cout << "sign(3*(1/3)-1) = " << CGAL::my_sign(NT(3)*(NT(1)/NT(3))-NT(1))
             << std::endl;
   std::cout << "sign(sqrt(2)^2-2) = "
+#ifdef CGAL_USE_LEDA
             << CGAL::my_sign(CGAL::my_square(CGAL_NTS sqrt(NT(2)))-NT(2))
+#else
+            << "EXACT SQUARE ROOT NOT AVAILABLE WITHOUT LEDA"
+#endif
             << std::endl;
   // std::cout << "sign(sqrt(2)) = " << CGAL_NTS sign(CGAL_NTS sqrt(NT(2))) << std::endl;
   // std::cout << "sign(square(2)) = " << CGAL_NTS sign(CGAL_NTS square(NT(2))) << std::endl;
