@@ -24,10 +24,10 @@ for DIR in ${DOCDIRS}; do
        echo
        echo "test_tex $SUBDIR"
        echo
-       TEXINPUTS=${SUBDIR}:../../examples:../../demo:${oritex}
+       TEXINPUTS=${SUBDIR}:${SUBDIR}_ref:../../examples:../../demo:${oritex}
        export TEXINPUTS
-       if [ $DIR = "basic" ]; then
-          echo "\includeonly{$SUBDIR/main,$SUBDIR/${SUBDIR}_ref/main}" >ionly
+       if [ $DIR = "basic" -o $DIR = "support" ]; then
+          echo "\includeonly{$SUBDIR/main,${SUBDIR}_ref/main}" >ionly
        else
           echo "\includeonly{$SUBDIR/main}" >ionly
        fi

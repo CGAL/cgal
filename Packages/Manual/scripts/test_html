@@ -97,7 +97,7 @@ Manual";
                echo "cc_manual_to_html log" >> $TO_HTML_LOG
                echo "*********************" >> $TO_HTML_LOG
    
-               if [ $DIR = "basic" ]; then
+               if [ $DIR = "basic" -o $DIR = "support" ]; then
                   cc_manual_to_html -author "<A HREF=http://www.cgal.org/ TARGET=_top>The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -title "$TITLE" -extended -header "../../../include" -o html_test user_part.tex $SUBDIR/html_wrapper -ref_manual ref_part.tex ${SUBDIR}/${SUBDIR}_ref/html_wrapper >> $TO_HTML_LOG 2>&1
                else
                   cc_manual_to_html -author "<A HREF=http://www.cgal.org/ TARGET=_top>The CGAL project</A>" -date "`date +%b` `date +%e`, `date +%Y`" -title "$TITLE" -extended -header "../../../include" -o html_test $SUBDIR/html_wrapper >> $TO_HTML_LOG 2>&1

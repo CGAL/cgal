@@ -113,7 +113,41 @@ echo "***copying common_intro.tex to kernel and support ***"
 \cp $TARGET_DIR/basic/Introduction/common_intro.tex $TARGET_DIR/support/Introduction
 \cp $TARGET_DIR/basic/Introduction/common_intro.tex $TARGET_DIR/kernel/
 
+echo "***copying Handle to Handles_and_Circs***"
+\cp $TARGET_DIR/support/Handle/*.tex $TARGET_DIR/support/Handles_and_Circs
+echo "***copying Circulator to Handles_and_Circs***"
+\cp $TARGET_DIR/support/Circulator/*.tex $TARGET_DIR/support/Handles_and_Circs
+echo "***recopying Handles_and_Circs/main.tex***"
+\cp doc_tex_skel/support/Handles_and_Circs/main.tex * $TARGET_DIR/support/Handles_and_Circs
 
+echo "***copying Handle_ref to Handles_and_Circs_ref***"
+\cp $TARGET_DIR/support/Handle_ref/*.tex $TARGET_DIR/support/Handles_and_Circs_ref
+echo "***copying Circulator_ref to Handles_and_Circs_ref***"
+\cp $TARGET_DIR/support/Circulator_ref/*.tex $TARGET_DIR/support/Handles_and_Circs_ref
+echo "***editing Handles_and_Circs_ref/intro.tex to include Handle and pointer***"
+sed 's/\\chapter{Circulators}/\\chapter{Handles and Circulators}/; \
+s/\\ccc{Random_access_circulator}/&\\\\ \\ccRefConceptPage{Handle}/; \
+s/\\ccRefIdfierPage{CGAL::Circulator_traits<C>}/&\\\\ \\ccRefIdfierPage{CGAL::Pointer<T>}/; \
+s/\\section\*{Summary}/& \\input{handle_intro}/' $TARGET_DIR/support/Circulator_ref/intro.tex > $TARGET_DIR/support/Handles_and_Circs_ref/intro.tex 
+echo "***creating new main.tex in Handles_and_Circs_ref***"
+cc_make_ref_pages $TARGET_DIR/support/Handles_and_Circs_ref
+
+echo "***copying Timer to Miscellaney***"
+\cp $TARGET_DIR/support/Timer/* $TARGET_DIR/support/Miscellaney
+\cp $TARGET_DIR/support/Timer_ref/* $TARGET_DIR/support/Miscellaney_ref
+echo "***copying Hash_map to Miscellaney***"
+\cp $TARGET_DIR/support/Hash_map/* $TARGET_DIR/support/Miscellaney
+\cp $TARGET_DIR/support/Hash_map_ref/* $TARGET_DIR/support/Miscellaney_ref
+echo "***copying Union_find to Miscellaney***"
+\cp $TARGET_DIR/support/Union_find/* $TARGET_DIR/support/Miscellaney
+\cp $TARGET_DIR/support/Union_find_ref/* $TARGET_DIR/support/Miscellaney_ref
+echo "***copying Modifier to Miscellaney***"
+\cp -r $TARGET_DIR/support/Modifier/*.tex $TARGET_DIR/support/Miscellaney
+\cp -r $TARGET_DIR/support/Modifier_ref/*.tex $TARGET_DIR/support/Miscellaney_ref
+echo "***recopying Miscellaney main.tex***"
+\cp doc_tex_skel/support/Miscellaney/main.tex $TARGET_DIR/support/Miscellaney
+echo "***creating Miscellaney_ref main.tex***"
+cc_make_ref_pages $TARGET_DIR/support/Miscellaney_ref
 
 cd $TARGET_DIR
 link_html_wrapper

@@ -78,7 +78,7 @@ for DIR in $DIRS ; do
   echo 
   echo "  ... creating $DIR's HTML"
   echo 
-  if [ $DIR = "basic" ]; then
+  if [ $DIR = "basic" -o $DIR = "support" ]; then
      to_html_w_parts 
   else
      to_html 

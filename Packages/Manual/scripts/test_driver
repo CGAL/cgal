@@ -73,7 +73,7 @@ for DIR in $DIRS ; do
   to_postscript $DIR
 
   echo "  creating $DIR's HTML"
-  if [ $DIR = "basic" ]; then
+  if [ $DIR = "basic" -o $DIR = "support" ]; then
      to_html_w_parts $DIR
   else
      to_html $DIR
