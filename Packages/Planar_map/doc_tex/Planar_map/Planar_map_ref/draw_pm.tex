@@ -12,23 +12,47 @@
 % +------------------------------------------------------------------------+
 
 %write_pm
-\begin{ccRefFunction}{draw_pm<Planar_map,Drawer,Window>(Planar_map pm, Drawer& dr, Window& w);}
-    
+\begin{ccRefFunction}{draw_pm}
+
 \ccCreationVariable{draw_pm}
 
 \ccDefinition
-\ccStyle{draw_pm} is a global function defined for writing \ccc{Planar map} to a graphic stream. 
-This function is templated with the \ccc{Planar map}, the \ccStyle{drawer} and the graphic stream.  
-This function uses the functions defined in \ccStyle{drawer}.
-The operators defined for writing \ccc{Planar map} to a graphic stream use this 
-function when parameterize the \ccStyle{drawer} with an object derived from 
-\ccc{Pm_drawer}. 
-The user may also notice that since the graphic stream is also 
-a templated parameter, he may call this function with any graphic 
-stream he chooses as long as functions for writing the geometric 
-components are provided in his graphic stream.
+The function \ccRefName\ sends an object of the template parameter
+type \ccc{Planar_map} to a graphic stream. The function is intended
+for cases in which the drawing object is not the default one, i.e. for
+user defined drawing classes. User defined drawers aim at drawing
+planar maps with additional information or aim at a different way to
+draw components. For a default use simply use the insertor operator
+(\ccc{<<}) of the graphic stream as in \ccc{my_window << pm}.
 
 \ccInclude{CGAL/IO/draw_pm.h}
+
+\ccFunction{template <Planar_map, Drawer, Window> 
+            void 
+            draw_pm(Planar_map pm, 
+                    Drawer&    dr, 
+                    Window&    w);}
+           {The function sends a planar map object to a graphic stream
+           \ccc{w}. The function uses the functions defined in
+           \ccStyle{dr}, the drawing object.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{Planar_map}  
+            should be of type \ccc{Planar_map_2<Dcel,Traits>}.
+   \item    \ccc{Drawer}  
+            should be of type \ccc{Pm_file_drawer<Planar_map>}.
+   \item    \ccc{Window} should support the insertor operator (\ccc{<<}) 
+            for the following types
+            \begin{itemize}
+                \item \ccc{Planar_map::Point_2},
+                \item \ccc{Planar_map::Curve}, 
+            \end{itemize}
+\end{enumerate}
+
+\ccSeeAlso
+     \ccc{write_pm}\lcTex{ 
+     (\ccRefPage{CGAL::write_pm})}\\
 
 \end{ccRefFunction} % writer_pm
 
@@ -37,18 +61,3 @@ components are provided in his graphic stream.
 \ccRefPageEnd
 % EOF
 % +------------------------------------------------------------------------+
-
-
-
-
-
-
-
-
-
-
-
-%%% Local Variables: 
-%%% mode: latex
-%%% TeX-master: "write_pm"
-%%% End: 
