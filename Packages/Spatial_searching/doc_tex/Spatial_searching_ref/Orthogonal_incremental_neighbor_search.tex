@@ -1,17 +1,17 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Orthogonal_priority_search.tex
+% | Reference manual page: Orthogonal_incremental_neighbor_search.tex
 % +------------------------------------------------------------------------+
 % | 1.07.2001   Johan W.H. Tangelder
 % | Package: ASPAS
 % |
-\RCSdef{\RCSOrthogonalprioritysearchRev}{$Revision$}
-\RCSdefDate{\RCSOrthogonalprioritysearchDate}{$Date$}
+\RCSdef{\RCSOrthogonalincrementalneighborsearchRev}{$Revision$}
+\RCSdefDate{\RCSOrthogonalincrementalneighborsearchDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Orthogonal_priority_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>}
+\begin{ccRefClass}{Orthogonal_incremental_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -19,9 +19,9 @@
 \ccDefinition
 
 The class \ccRefName\ implements incremental nearest and furthest neighbor searching
-using priority search on a tree.
+using incremental_neighbor search on a tree.
 
-\ccInclude{CGAL/Orthogonal_priority_search.h}
+\ccInclude{CGAL/Orthogonal_incremental_neighbor_search.h}
 
 \ccParameters
 
@@ -52,7 +52,7 @@ kd tree nodes.
 \ccCreationVariable{s}  %% choose variable name
 
 \def\ccLongParamLayout{\ccTrue}
-\ccConstructor{Orthogonal_priority_search(SpatialTree& tree, Point query, NT eps=NT(0.0),
+\ccConstructor{Orthogonal_incremental_neighbor_search(SpatialTree& tree, Point query, NT eps=NT(0.0),
                                           bool search_nearest=true, 
                                           OrthogonalDistance d=OrthogonalDistance());}
 {Constructor for incremental neighbor searching of the query item \ccc{query}
@@ -74,7 +74,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::General_priority_search<PointTraits, GeneralDistance, SpatialTree>}.
+\ccc{CGAL::General_incremental_neighbor_search<PointTraits, GeneralDistance, SpatialTree>}.
 
 \end{ccRefClass}
 

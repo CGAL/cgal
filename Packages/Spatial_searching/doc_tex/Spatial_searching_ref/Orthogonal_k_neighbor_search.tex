@@ -1,28 +1,28 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Orthogonal_standard_search.tex
+% | Reference manual page: Orthogonal_k_neighbor_search.tex
 % +------------------------------------------------------------------------+
 % | 1.07.2001   Johan W.H. Tangelder
 % | Package: ASPAS
 % |
-\RCSdef{\RCSOrthogonalstandardsearchRev}{$Revision$}
-\RCSdefDate{\RCSOrthogonalstandardsearchDate}{$Date$}
+\RCSdef{\RCSOrthogonalkneighborsearchRev}{$Revision$}
+\RCSdefDate{\RCSOrthogonalkneighborsearchDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Orthogonal_standard_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>}
+\begin{ccRefClass}{Orthogonal_k_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
 
-The class \ccRefName\ implements approximate $k$-nearest and $k$-furthest neighbor searching
-using standard search on a  tree using an orthogonal distance
-class. 
+The class \ccRefName\ implements approximate $k$-nearest and
+$k$-furthest neighbor searching using k_neighbor search on a tree
+using an orthogonal distance class.
 
-\ccInclude{CGAL/Orthogonal_standard_search.h}
+\ccInclude{CGAL/Orthogonal_k_neighbor_search.h}
 
 \ccParameters
 
@@ -31,13 +31,13 @@ for example \ccc{CGAL::Kd_tree_traits_2<Kernel>}.
 
 Expects for the second template argument a model of the
 concept GeneralDistance. The default type is 
-\ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
+\ccc{CGAL::Euclidean_distance<PointTraits>}.
 
 Expects for third template argument a model of the concept \ccc{Splitter}.
 The default type is \ccc{CGAL::Sliding_midpoint<PointTraits>}.
 
 Expects for fourth template argument an implementation of the concept \ccc{SpatialTree}.
-The default type is \ccc{CGAL::Kd_tree<TreeTraits, Splitter, CGAL::Tag_true>}.  The 
+The default type is \ccc{CGAL::Kd_tree<PointTraits, Splitter, CGAL::Tag_true>}.  The 
 template argument must be \ccc{CGAL::Tag_true} because orthogonal search needs extended 
 kd tree nodes.
 
@@ -54,7 +54,7 @@ kd tree nodes.
 \ccOperations
 
 \def\ccLongParamLayout{\ccTrue}
-\ccConstructor{Orthogonal_standard_search(SpatialTree tree, Point query, int k=1, NT eps=NT(0.0),
+\ccConstructor{Orthogonal_k_neighbor_search(SpatialTree tree, Point query, int k=1, NT eps=NT(0.0),
                                           bool search_nearest=true, 
                                           OrthogonalDistance d=OrthogonalDistance());}
 {Constructor for searching approximately $k$ neighbors of the query item \ccc{query} 
@@ -75,7 +75,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::General_standard_search<PointTraits, GeneralDistance, QueryItem, Tree>}.
+\ccc{CGAL::General_k_neighbor_search<PointTraits, GeneralDistance, QueryItem, Tree>}.
 
 \end{ccRefClass}
 
