@@ -42,6 +42,9 @@ int main(int, char*)
 #include "Qt_layer_show_triangulation.h"
 #include "Qt_layer_show_triangulation_constraints.h"
 #include "Qt_layer_show_circles.h"
+#ifdef CGAL_USE_BOOST
+#include "Show_clusters.h"
+#endif
 #include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
 
@@ -137,6 +140,11 @@ public:
   };
 };
 
+struct Vertex_to_point {
+  const Point& operator()(const Vertex& v) const
+    {  return v.point(); }
+};    
+
 class MyWindow : public QMainWindow
 {
   Q_OBJECT
@@ -160,16 +168,26 @@ public:
 
       hbox->addWidget(infoframe);
 
-      QGridLayout *vbox = new QGridLayout(infoframe, 1, 2, 10, 5, 
+      QGridLayout *vbox = new QGridLayout(infoframe, 2, 2, 10, 5, 
 					  "infolayout");
       vbox->setMargin(10);
 
-      QLabel *nbre_de_points_label = new QLabel(infoframe);
-      nbre_de_points_label->setText("Number of points: ");
-      vbox->addWidget(nbre_de_points_label, 0, 0, AlignRight | AlignTop );
+      QLabel *nb_of_points_label = new QLabel(infoframe);
+      nb_of_points_label->setText("Number of points: ");
+      vbox->addWidget(nb_of_points_label, 0, 0,
+		      AlignRight | AlignTop );
 
-      nbre_de_points = new QLabel("0", infoframe);
-      vbox->addWidget(nbre_de_points, 0, 1, AlignLeft | AlignTop );
+
+      nb_of_points = new QLabel("0", infoframe);
+      vbox->addWidget(nb_of_points, 0, 1, AlignLeft | AlignTop );
+
+      QLabel *nb_of_clusters_label = new QLabel(infoframe);
+      nb_of_clusters_label->setText("Number of clusters: ");
+      vbox->addWidget(nb_of_clusters_label, 1, 0,
+		      AlignRight | AlignTop );
+
+      nb_of_clusters = new QLabel("0", infoframe);
+      vbox->addWidget(nb_of_clusters, 1, 1, AlignLeft | AlignTop );
       
       setCentralWidget(mainframe);
       resize(700,500);
@@ -187,7 +205,7 @@ public:
 	new Show_points_from_triangulation(mesh,
 					   &Mesh::finite_vertices_begin,
 					   &Mesh::finite_vertices_end,
-					   std::mem_fun_ref(&Vertex::point));
+					   CGAL::BLACK, 1);
 
       show_seeds = new Show_seeds(mesh,
 				  &Mesh::seeds_begin,
@@ -196,17 +214,22 @@ public:
 				  5,
 				  CGAL::CROSS);
       show_triangulation = 
-	new CGAL::Qt_layer_show_triangulation<Mesh>(mesh);
+	new CGAL::Qt_layer_show_triangulation<Mesh>(mesh,
+						    CGAL::BLUE,1);
       show_marked = 
-	new Show_marked_faces<Mesh>(mesh);
+	new Show_marked_faces<Mesh>(mesh, CGAL::GREEN);
       show_constraints = 
 	new CGAL::Qt_layer_show_triangulation_constraints<Mesh>
-	(mesh);
+	(mesh, CGAL::RED, 1);
       show_circles = 
-	new CGAL::Qt_layer_show_circles<Mesh>(mesh);
+	new CGAL::Qt_layer_show_circles<Mesh>(mesh, CGAL::GRAY, 1);
       show_mouse = new CGAL::Qt_layer_mouse_coordinates(*this);
 
-      show_clusters = new Show_Clusters<Mesh>(*mesh);
+#ifdef CGAL_USE_BOOST
+      show_clusters = new Show_clusters<Mesh>(*mesh,
+					      CGAL::BLACK,3,CGAL::RECT,
+					      CGAL::YELLOW,3);
+#endif
 
       // layers order, first attached are "under" last attached
       widget->attach(show_marked);
@@ -214,10 +237,16 @@ public:
       widget->attach(show_constraints);
       widget->attach(show_circles);
       widget->attach(show_points);
+#ifdef CGAL_USE_BOOST
+      widget->attach(show_clusters);
+#endif
       widget->attach(show_seeds);
       widget->attach(show_mouse);
 
       show_circles->deactivate();
+#ifdef CGAL_USE_BOOST
+      show_clusters->deactivate();
+#endif
 
       get_point = new CGAL::Qt_widget_get_point<K>();
       widget->attach(get_point);
@@ -240,7 +269,8 @@ public:
 
 
       // TOOLBARS
-      // actions: bouding box and mesh
+
+      // Actions: bouding box and mesh
       QToolBar *toolBarActions = new QToolBar("Actions", this);
       QPushButton *pbBounding = 
 	new QPushButton("Insert bounding box", toolBarActions);
@@ -255,39 +285,6 @@ public:
 	new QPushButton("Conform", toolBarActions);
       connect(pbConform, SIGNAL(clicked()), this,
 	      SLOT(conformMesh()));
-
-      toolBarSteps = new QToolBar("Step actions",this);
-      toolBarSteps->hide();
-
-      pbMeshStep = 
-	new QPushButton("Mesh 1 step", toolBarSteps);
-      connect(pbMeshStep, SIGNAL(clicked()), this,
-	      SLOT(refineMeshStep()));
-
-      QSpinBox *sbStepLenght = 
-	new QSpinBox(1, INT_MAX, 1, toolBarSteps);
-      sbStepLenght->setValue(1);
-      step_lenght = 1;
-      connect(sbStepLenght, SIGNAL(valueChanged(int)), 
-	      this, SLOT(updateStepLenght(int)));
-
-      // TIMER
-      timer = new QTimer(this);
-      connect(timer, SIGNAL(timeout()),
-	      this, SLOT(refineMeshStep()));
-
-      pbMeshTimer = new QPushButton("Auto step", toolBarSteps);
-      pbMeshTimer->setToggleButton(true);
-      connect(pbMeshTimer, SIGNAL(stateChanged(int)),
-	      this, SLOT(updateTimer(int)));
-
-      QSpinBox *sbTimerInterval = 
-	new QSpinBox(0, INT_MAX, 10, toolBarSteps);
-      sbTimerInterval->setValue(1000);
-      sbTimerInterval->setSuffix("ms");
-      timer_interval=1000;
-      connect(sbTimerInterval, SIGNAL(valueChanged(int)),
-	      this, SLOT(updateTimerInterval(int)));
 
       // Inputs: polygons or points
       QToolBar *toolbarInputs = new QToolBar("Inputs",this);
@@ -327,7 +324,7 @@ public:
 
       pbPolygon->setOn(true);
 
-      // layers: points, edges, constrained edges
+      // Layers: points, edges, constrained edges
       QToolBar *toolbarLayers = new QToolBar("Layers",this);
 
       QToolButton *pbShowPoints 
@@ -414,7 +411,49 @@ public:
 	new CGAL::Qt_widget_standard_toolbar(widget, this);
       this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
 
+      // Steps actions: step by step meshing operations
+      toolBarAdvanced = new QToolBar("Advanced operations",this);
+      toolBarAdvanced->hide();
+
+      pbMeshStep = 
+	new QPushButton("Mesh 1 step", toolBarAdvanced);
+      connect(pbMeshStep, SIGNAL(clicked()), this,
+	      SLOT(refineMeshStep()));
+
+      QSpinBox *sbStepLenght = 
+	new QSpinBox(1, INT_MAX, 1, toolBarAdvanced);
+      sbStepLenght->setValue(1);
+      step_lenght = 1;
+      connect(sbStepLenght, SIGNAL(valueChanged(int)), 
+	      this, SLOT(updateStepLenght(int)));
+
+      timer = new QTimer(this);
+      connect(timer, SIGNAL(timeout()),
+	      this, SLOT(refineMeshStep()));
+
+      pbMeshTimer = new QPushButton("Auto step", toolBarAdvanced);
+      pbMeshTimer->setToggleButton(true);
+      connect(pbMeshTimer, SIGNAL(stateChanged(int)),
+	      this, SLOT(updateTimer(int)));
+
+      QSpinBox *sbTimerInterval = 
+	new QSpinBox(0, INT_MAX, 10, toolBarAdvanced);
+      sbTimerInterval->setValue(1000);
+      sbTimerInterval->setSuffix("ms");
+      timer_interval=1000;
+      connect(sbTimerInterval, SIGNAL(valueChanged(int)),
+	      this, SLOT(updateTimerInterval(int)));
+
+      QPushButton* pbShowCluster = 
+	new QPushButton("Show clusters", toolBarAdvanced);
+      pbShowCluster->setToggleButton(true);
+      connect(pbShowCluster, SIGNAL(stateChanged(int)),
+	      show_clusters, SLOT(stateChanged(int)));
+      connect(pbShowCluster, SIGNAL(stateChanged(int)),
+	      widget, SLOT(redraw()));
+
       setUsesBigPixmaps(true);
+
       // MENUS
       QPopupMenu *pmMesh = new QPopupMenu(this);
       menuBar()->insertItem("&File", pmMesh);
@@ -445,10 +484,12 @@ public:
 
       menuBar()->insertItem("&Advanced", this, SLOT(advanced()));
 
-      connect(this, SLOT(insertedInput()),
-	      this, SIGNAL(set_not_initialized()));
-      connect(this, SLOT(initializedMesh()),
-	      this, SIGNAL(set_initialized()));
+      connect(this, SIGNAL(insertedInput()),
+	      this, SLOT(after_inserted_input()));
+      connect(this, SIGNAL(insertedInput()),
+	      show_clusters, SLOT(reinitClusters()));
+      connect(this, SIGNAL(initializedMesh()),
+	      this, SLOT(set_initialized()));
 
       widget->set_window(-1.,1.,-1.,1.);
       widget->setMouseTracking(TRUE);
@@ -483,9 +524,11 @@ public slots:
     is_mesh_initialized = true;
   }
 
-  void set_not_initialized()
+  void after_inserted_input()
   {
     is_mesh_initialized = false;
+    nb_of_clusters_has_to_be_updated = true;
+    mesh->mark_facets();
   }
 
   void get_cgal_object(CGAL::Object obj)
@@ -530,7 +573,6 @@ public slots:
 	  else // get_point is active
 	    {
 	      mesh->insert(p);
-	      mesh->mark_facets();
 	      emit( insertedInput() );
 	    }
       else
@@ -540,10 +582,9 @@ public slots:
 		it!=poly.edges_end();
 		it++)
 	      mesh->insert((*it).source(),(*it).target());
-	    mesh->mark_facets();
 	    emit( insertedInput() );
 	  }
-      updatePointCouter();
+      updatePointCounter();
       widget->redraw();
     }
 
@@ -570,14 +611,18 @@ public slots:
       mesh->insert(bb2, bb3);
       mesh->insert(bb3, bb4);
       mesh->insert(bb4, bb1);
-      mesh->mark_facets();
       emit( insertedInput() );
       widget->redraw();
     }
 
-  void updatePointCouter()
+  void updatePointCounter()
     {
-      nbre_de_points->setNum(mesh->number_of_vertices());
+      nb_of_points->setNum(mesh->number_of_vertices());
+      if(nb_of_clusters_has_to_be_updated)
+	{
+	  nb_of_clusters_has_to_be_updated = false;
+	  nb_of_clusters->setNum(mesh->number_of_clusters_vertices());
+	}
     }
 
   void refineMesh()
@@ -585,7 +630,7 @@ public slots:
       saveTriangulationUrgently("last_input.edg");
       mesh->refine();
       is_mesh_initialized=true;
-      updatePointCouter();
+      updatePointCounter();
       widget->redraw();
     }
 
@@ -597,8 +642,8 @@ public slots:
 	  mesh->init();
 	  is_mesh_initialized=true;
 	}
-      mesh->conform(CGAL::Gabriel_conform_inside_policy_2());
-      updatePointCouter();
+      mesh->conform(Mesh::Is_locally_gabriel_conform());
+      updatePointCounter();
       widget->redraw();
     }
 
@@ -621,7 +666,7 @@ public slots:
 	    }
 	  --counter;
 	}
-      updatePointCouter();
+      updatePointCounter();
       widget->redraw();
     }
 
@@ -654,7 +699,7 @@ public slots:
     {
       mesh->clear();
       emit( insertedInput() );
-      updatePointCouter();
+      updatePointCounter();
       widget->clear_history();
       widget->redraw();
     }
@@ -676,7 +721,6 @@ public slots:
       if(s.right(5) == ".poly")
 	{
 	  read_poly(*mesh, f);
-	  emit( insertedInput() );
 	}
       else if(s.right(5) == ".data")
 	{
@@ -761,13 +805,11 @@ public slots:
 	  mesh->insert_constraint(tl, bl);
 
 	  clearSeeds();
-	  emit( insertedInput() );	  
 	}
       else
 	{
 	  read(*mesh, f);
 	  clearSeeds();
-	  emit( insertedInput() );
 	}
 
       // compute bounds
@@ -783,7 +825,8 @@ public slots:
 			 CGAL::to_double(ymax+1.1*yspan));
       widget->clear_history();
 
-      updatePointCouter();
+      emit( insertedInput() );
+      updatePointCounter();
       widget->redraw();
     }
 
@@ -851,15 +894,16 @@ public slots:
 
   void advanced()
   {
-    if( toolBarSteps->isVisible() )
-      toolBarSteps->hide();
+    if( toolBarAdvanced->isVisible() )
+      toolBarAdvanced->hide();
     else
-      toolBarSteps->show();
+      toolBarAdvanced->show();
   }
 
 private:
   static const QString my_filters;
   bool is_mesh_initialized;
+  bool nb_of_clusters_has_to_be_updated;
   Meshtraits traits;
   Mesh* mesh;
 
@@ -873,7 +917,7 @@ private:
   Follow_mouse* follow_mouse;
 
   typedef CGAL::Qt_layer_show_points<Mesh, Mesh::Finite_vertices_iterator,
-   				     std::const_mem_fun_ref_t<const Vertex::Point&, Vertex::Vb> >
+  Vertex_to_point>
     Show_points_from_triangulation;
 
   typedef CGAL::Qt_layer_show_points<Mesh, Mesh::Seeds_const_iterator>
@@ -887,14 +931,17 @@ private:
   CGAL::Qt_layer_mouse_coordinates* show_mouse;
   Show_marked_faces<Mesh>* show_marked;
 
+#ifdef CGAL_USE_BOOST
   Show_clusters<Mesh>* show_clusters;
+#endif
 
   //  QLabel* aspect_ratio_label;
-  QLabel *nbre_de_points;
+  QLabel *nb_of_points;
+  QLabel *nb_of_clusters;
   QTimer* timer;
   QPushButton *pbMeshTimer;
   QPushButton *pbMeshStep;
-  QToolBar *toolBarSteps;
+  QToolBar *toolBarAdvanced;
   int timer_interval;
   int step_lenght;
 };
@@ -943,8 +990,8 @@ int main(int argc, char** argv)
   app.setMainWidget(W);
   W->show();
 
-  my_previous_failure_function = 
-    CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
+//   my_previous_failure_function = 
+//     CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
 
   try {
     return app.exec();
@@ -965,5 +1012,10 @@ int main(int argc, char** argv)
 
 // moc_source_file: mesh_demo.C
 #include "mesh_demo.moc"
+
+#ifdef CGAL_USE_BOOST
+// moc_source_file: Show_clusters.h
+#include "Show_clusters.moc"
+#endif
 
 #endif

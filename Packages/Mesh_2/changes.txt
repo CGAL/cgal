@@ -1,6 +1,9 @@
 version 0.9.3 (2003/05/10)
 --------------------------
+o internal release
 o split of the code into Mesh_2 and Conform_2
+o the demo mesh_demo can now displays clusters
+o updated documentation (which is not really sync with the code)
 
 version 0.9.2 (2003/03/12)
 --------------------------

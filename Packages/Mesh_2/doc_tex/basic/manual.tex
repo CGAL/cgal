@@ -6,8 +6,12 @@
 
 \documentclass{book}
 
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{cprog}
+
+\usepackage{ae}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -83,7 +87,15 @@
 \ccDefGlobalScope{CGAL::}
 
 \begin{document}
+
+\newcommand{\todo}[1]{\textbf{TODO: #1}}
+
 \input{main}
+
+\begin{ccTexOnly}
+\input{implementation}
+\end{ccTexOnly}
+
 \lcTex{\printindex}        %places the index in the document
 
 \bibliographystyle{alpha}

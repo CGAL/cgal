@@ -24,6 +24,8 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
+#include <CGAL/Delaunay_triangulation_2.h>
+
 class Show_clusters_aux : public CGAL::Qt_widget_layer
 {
   Q_OBJECT
@@ -42,7 +44,10 @@ class Show_clusters : public Show_clusters_aux
 {
 public:
   typedef typename Conform::Point		Point;
-  typedef typename Conform::Triangulation       DT;
+  typedef typename Conform::Geom_traits         Geom_traits;
+  typedef CGAL::Delaunay_triangulation_2<Geom_traits> DT;
+  typedef typename DT::Finite_vertices_iterator Vertices_iterator;
+  typedef typename DT::Vertex_handle DT_vertex_handle;
   typedef typename Conform::Segment		Segment;
   typedef typename Conform::Face_handle		Face_handle;
   typedef typename Conform::Vertex_handle	Vertex_handle;
@@ -53,26 +58,64 @@ public:
   typedef typename List_of_points::const_iterator Point_iterator;
 
   Show_clusters(Conform &conform,
-		CGAL::Color c = CGAL::GREEN,
+		CGAL::Color color = CGAL::GREEN,
 		int pointsize = 3,
 		CGAL::PointStyle pointstyle = CGAL::DISC,
 		CGAL::Color lc = CGAL::RED,
 		int linewidth = 2)
-    : c(conform), dt(), first_time(true), _color(c),
+    : c(conform), dt(), first_time(true), _color(color),
       size(pointsize), style(pointstyle), _line_color(lc),
-      width(linewidth) {}
+      width(linewidth) 
+    {
+      for(CVIt it = conform.clusters_vertices_begin();
+	  it != conform.clusters_vertices_end();
+	  ++it)
+	dt.push_back( (*it)->point() );
+    }
+
+  void activating()
+  {
+    reinit_clusters();
+  }
 
   void reinit_clusters()
   {
+    if(!is_active()) return;
+
     dt.clear();
 
     for(CVIt it = c.clusters_vertices_begin();
 	it != c.clusters_vertices_end();
 	++it)
-      dt.push_back( (*it)->point() );
+      {
+	dt.push_back( (*it)->point() );
+      }
   }
 
-  void draw(){first_time = true;}
+  void draw()
+  {
+    first_time = true;
+
+    widget->lock();
+
+    QColor oldColor = widget->color();
+    int oldPointSize = widget->pointSize();
+    CGAL::PointStyle oldStyle = widget->pointStyle();
+
+    *widget << _color << CGAL::PointStyle(style)
+	    << CGAL::PointSize(size);
+
+    for(Vertices_iterator it = dt.finite_vertices_begin();
+	it != dt.finite_vertices_end();
+	++it)
+      *widget << it->point();
+
+    widget->setPointStyle(oldStyle);
+    widget->setPointSize(oldPointSize);
+    widget->setColor(oldColor);
+
+    widget->unlock();
+  }
 
   void mouseMoveEvent(QMouseEvent *e)
   {
@@ -83,19 +126,16 @@ public:
     widget->y_real(e->y(), y);
     Point p(x, y);
 
+    QColor oldColor = widget->color();
+    int oldWidth = widget->lineWidth();
+    
     RasterOp old = widget->rasterOp();	//save the initial raster mode
     widget->setRasterOp(XorROP);
     widget->lock();
 
-    Vertex_handle v = dt.nearest_vertex(p);
-    *widget << _color << CGAL::PointSize (pointsize)
-	    << CGAL::PointStyle (pointstyle);
-
-    if(!first_time)
-      *widget << oldPoint;
-    *widget << v->point();
-
+    DT_vertex_handle v = dt.nearest_vertex(p);
     *widget << _line_color << CGAL::LineWidth(width);
+
     if(!first_time)
       for(Point_iterator pIt = oldPoints.begin();
 	  pIt != oldPoints.end();
@@ -105,10 +145,11 @@ public:
 
     typename Conform::Locate_type lt;
     int i;
-    Face_handle fh = c.locate(v->point(), lt, t);
-    CGAL_assertion( lt == this->VERTEX );
+    Face_handle fh = c.locate(v->point(), lt, i);
+    CGAL_assertion( lt == Conform::VERTEX );
 
     Vertex_handle v2 = fh->vertex(i);
+    oldPoint = v2->point();
 
     int n = c.number_of_clusters_at_vertex(v2);
 
@@ -120,35 +161,28 @@ public:
 	    ++it)
 	  {
 	    oldPoints.push_back((*it)->point());
-	    *widget << Segment(*v2, (*it)->point());
+	    *widget << Segment(v2->point(), (*it)->point());
 	  }
       }
 
+    widget->setLineWidth(oldWidth);
+    widget->setColor(oldColor);
+
     widget->unlock();
     widget->setRasterOp(old);
-    oldPoint = v->point();
     first_time = false;
   }
 
   void leaveEvent(QEvent *)
   {
-    widget->lock();
-    RasterOp old = widget->rasterOp();	//save the initial raster mode
-    widget->setRasterOp(XorROP);
-
-    *widget << _color << CGAL::PointSize (pointsize) 
-	    << CGAL::PointStyle (pointstyle);
-    if(!first_time) *widget << oldPoint;
-
-    widget->unlock();
-    widget->setRasterOp(old);
+    // TODO: implement a correct leaveEvent
     first_time = true;
   }
 
 private:
   Conform& c;
   DT dt;
-  Point oldPoint, newPoint;
+  Point oldPoint;
   List_of_points oldPoints;
   bool  first_time;
   CGAL::Color _color;

@@ -1,40 +1,47 @@
 \begin{ccRefClass}{Mesh_2<Tr>}
 
-The class \ccRefName\ is the main class of this package. It derives
-from its template parameter \ccc{Tr}, that has to be a \cgal\ 
-constrained Delaunay triangulation (CDT). This CDT is also the type of
-the input of the meshing process. The geometric traits class of
-\ccc{Tr} has to be a model of the concept \ccc{MeshTraits_2} and also
-to the usual model of the geometric traits class of triangulations
-\ccc{Tr}. This traits class provides not only constructors and
-predicates needed by the mesh algorithm, but also defines the geometric 
-constraints on the triangles of the mesh. The meshing procedure is not 
-sure to finish if predicates are inexact.
+The class \ccRefName{} is the main class of this package. It derives
+from \ccc{Conform_triangulation_2<Tr>}. \ccc{Tr} has to be a \cgal\ 
+constrained Delaunay triangulation (CDT). Its geometric traits class
+must be a model of the concept \ccc{MeshTraits_2} and also to the
+usual model of the geometric traits class of triangulations \ccc{Tr}.
+This traits class provides not only constructors and predicates needed
+by the mesh algorithm, but also defines the geometric constraints on
+the triangles of the mesh. The meshing procedure is not sure to finish
+if predicates are inexact.
 
-A \ccRefName\ object is constructed from a \ccc{Tr}
-CDT. This CDT has to be segment bounded so that it can be
-meshed.. This can be achieved by inserting a bounding box in the
-CDT. The \ccRefName\ constructor will then compute a mesh of the CDT
-by refining triangles that are in the inner of the CDT. Triangles that 
-are connected to the infinite point will not be refined. If the CDT is 
-not segment bounded, no triangle at all will be refined.
+A \ccRefName{} object acts like a \ccc{Tr} CDT, in which one can
+insert points and constrained segments and every \ccc{Tr}'s availlable
+operations, until we call one of the meshing methods. After a call to
+one of these methods, the CDT is meshed according to the geometric
+constraints defined in the traits class.
 
-Constructors can also have extra parameters that correspond to a list
-of points, named \textit{seeds}. They define segment bounded zones
-that will not be refined. In all case, the zone of the infinite point
+Before the first call to a meshing method, one can insert points and
+constrained segments in the \ccRefName{} object, like in a CDT. When
+meshing methods are used, the CDT must be segment bounded. This can be
+achieved by inserting a bounding box in it. Meshing methods will then
+mesh the CDT by refining triangles that are in the interior of the
+CDT.  Triangles that are connected to the infinite vertex will not be
+refined. If the CDT is not segment bounded, no triangle at all will be
+refined. The refinement process needs to know which faces have to be
+refined, that's why the base face of the triangulation \ccc{Tr} has to
+be a model of the concept \ccc{MeshFaceBase_2}.
+
+One can also define a zone of the CDT's interior by specifying some
+\textit{seeds}. Seeds are points that define segment bounded zones
+that will not be refined. In all case, the zone of the infinite vertex
 will never be refined.
 
-Once a \ccRefName\ object has been constructed, no points nor segments
-can be inserted in it. The only authorized operations are usual
-``read-only'' access methods of the class \ccc{Tr} and the setting of
-a new geometric traits class, that defines stronger geometric
-constraints. In the latter case, the mesh will be refined.
+Once a meshing method is called, the CDT is meshed according to
+contraints until points or constrained segments are inserted again in
+the CDT. Then the \ccRefName{} object acts again as a normal \ccc{Tr}
+CDT. \todo{Pas facile a expliquer, ce truc!}.
 
 \ccInclude{CGAL/Mesh_2.h}
 
 \ccInheritsFrom
 
-\ccc{Tr}
+\ccc{Conform_triangulation_2<Tr>}
 
 \ccRequirements
 
@@ -42,40 +49,106 @@ constraints. In the latter case, the mesh will be refined.
 
 \ccTypes 
 \ccTypedef{typedef Tr Triangulation;}{the triangulation base class.}
+\ccTypedef{typedef Conform_triangulation_2<Tr> Conform;}{the conform
+  triangulation base class.}
+\ccNestedType{Seeds_iterator}{const iterator over defined seeds. Its
+  value type is \ccc{Geom_traits::Point}}
 
 \ccCreation
 \ccCreationVariable{mesh}
 
-\ccConstructor{Mesh_2();}{default constructor.}
 \ccConstructor{Mesh_2(const Geom_traits& gt = Geom_traits());}
 {Introduces an empty mesh \ccVar.}
-\ccConstructor{Mesh_2(Tr& t, const Geom_traits& gt = Geom_traits());}
-{Construct a mesh from a triangulation \ccc{t} of type \ccc{Tr}.}
-\ccConstructor{template <class SeedInputIterator> 
-  Mesh_2(Triangulation& t, Seed_it begin, Seed_it end, 
-         const Geom_traits& gt = Geom_traits(), bool mark = false);}
-{Construct a mesh from a triangulation \ccc{t} and define zones that
+
+\ccMethod{void clear();}{ Deletes all faces and finite vertices
+  resulting in an empty triangulation. Internal data structures are
+  cleared too. }
+
+\ccHeading{Seeds functions}
+
+The following functions are used to define seeds.
+
+\ccMethod{void  clear_seeds ();}{ Sets seeds to the empty set. Faces
+  that will be refined are all faces that are not connected to the
+  infinite vertex.}
+
+\ccMethod{template<class InputIterator>
+          void set_seeds(InputIterator b, InputIterator e,
+                         const bool mark=false);}
+{ Sets seeds to the sequence [begin. end]. This defines zones that
   will be refined (if mark=true) or not refined (if
-  mark=false). The sequence [begin. end] is the set of seeds defining
-  the zones.
+  mark=false).
   \ccPrecond The \ccc{value_type} of \ccc{begin} and \ccc{end}
   is \ccc{Point_2}.}
 
-\ccOperations
+These ones give the sequences of seeds.
+
+\ccMethod{Seeds_const_iterator  seeds_begin () const;}
+{ Start of the seeds sequence. }
+\ccGlue
+\ccMethod{Seeds_const_iterator  seeds_end () const;}
+{ Past the end of the seeds sequence. }
+
+\ccMethod{void mark_facets(); }
+{ This method updates immediately markers of all faces of the
+  triangulation, according to seeds. If this method is not called,
+  this is done by meshing methods. }
+
+\ccHeading{Meshing methods}
+
+The following method should be called after all points and constrained 
+segments are inserted in the CDT. It meshes the CDT according to the
+\ccc{Geom_traits::Is_bad} predicates on triangles. \todo{Dire que l'on 
+  a pas des garanties absolues.} The mesh can then be refined by
+changing the geometric traits class and calling again the following
+method.
+
+\ccMethod{void refine(); }
+{ \todo{Changer ce nom?}\\
+  Meshes the CDT. }
 
 \ccMethod{ void set_geom_traits(Geom_traits gt);}
-{ Assign \ccc{gt} to the geometric traits object and refine the mesh
-  according the new geometric constraints.}
+{ Assigns \ccc{gt} to the geometric traits object. One of the two
+  following functions must then be called to update the internal set
+  of bad faces.}
 
-\ccMethod{template <class FaceHandleInputIterator>
-  void set_geom_traits(Geom_traits gt, FaceHandleInputIterator begin,
-  FaceHandleInputIterator end);}
-{ This overloaded version of the previous method permits to set the
-  list of bad triangles directly, from the sequence [begin, end], so
-  that the algorithm will not scan the whole set of triangles to find
-  bad ones. To use if there is a non-naive way to find bad triangles.
-  \ccPrecond The \ccc{value_type} of \ccc{begin} and \ccc{end} is
-  \ccc{Face_handle}.}
+\ccMethod{void  calculate_bad_faces ();}
+{ Updates the internal set of bad faces by scanning all faces and
+  applying the \ccc{Geom_traits::Is_bad} predicate. }
+\ccGlue
+\ccMethod{template <class InputIterator>
+  void set_bad_faces(InputIterator begin,
+                     InputIterator end);}
+                   { This method permits to set the list of bad
+                     triangles directly, from the sequence [begin,
+                     end], so that the algorithm will not scan the
+                     whole set of triangles to find bad ones. To use
+                     if there is a non-naive way to find bad
+                     triangles.
+                     \ccPrecond The \ccc{value_type} of \ccc{begin}
+                     and \ccc{end} is \ccc{Face_handle}.}
 
+\begin{ccAdvanced}
+\ccHeading{Step by step operations}
+
+The \ccRefName{} class allows, for debugging or demos, to play the
+meshing algorithm step by step, using the following methods.
+
+\ccMethod{ void init(); }
+         { The method must be called after all points and constrained
+           segments are inserted and before any call to the following
+           method. If some points or segments are then inserted 
+           in the CDT, this method must be called again. }
+
+\ccMethod{ bool refine_step(); }
+         { Applies one step of the algorithm. At one step of the algorithm,
+           only one point is inserted. However, the algorithm
+           sometimes doesn't insert a point at a step. Anyway,
+           internal datas of the \ccRefName{} object are modified at
+           each step, until \ccc{c.is_conformed()}. If the algorithm
+           is finished, returns \ccc{false}. If not, return
+           \ccc{true}.}
+
+\end{ccAdvanced}
 
 \end{ccRefClass}

@@ -1,0 +1,112 @@
+\begin{ccRefClass}{Conform_triangulation_2<Tr>}
+
+The class \ccRefName{} is an auxiliary base class of \ccc{Mesh_2<Tr>}
+and is not intended to be used by usual users. Consider instead to use
+the global fonctions \ccc{gabriel_conform_2} and
+\ccc{delaunay_conform_2} defined in the same header.
+
+It derives from its template parameter \ccc{Tr}, that has to be a
+\cgal\ constrained Delaunay triangulation (CDT). The geometric traits
+class of \ccc{Tr} has to be a model of the concept
+\ccc{ConformTraits_2} and also to the usual model of the geometric
+traits class of triangulations \ccc{Tr}. This traits class provides
+constructors and predicates needed by the conforming algorithm. The
+algorithm is not sure to finish if predicates are inexact.
+
+A \ccRefName{} object acts like a \ccc{Tr} CDT, in which one can
+insert points and constrained segments and every \ccc{Tr}'s availlable
+operations, until we call one of the conforming methods. After a call
+to one of these methods, the constrained edges of the CDT are
+guaranteed to be conform, in a sens that depends from the conforming
+method called.  If one inserts points or constrained segments in the
+\ccRefName{} object after that, the edges are no longer guaranteed to
+be conform.
+
+The conforming methods insert points into constrained edges, splitting 
+them into sub-constraints. If you want to have access to inserted
+constraints, use \ccc{CGAL::Constrained_triangulation_plus_2<Tr>} as
+template parameter.
+
+\ccInclude{CGAL/Conform_2.h}
+
+\ccInheritsFrom
+
+\ccc{Tr}
+
+\ccRequirements
+
+\ccc{Tr} must be a \cgal\ constrained Delaunay triangulation.
+
+\ccTypes 
+\ccTypedef{typedef Tr Triangulation;}{the triangulation base class.}
+
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{Conform_triangulation_2(const Geom_traits& gt =
+  Geom_traits());}
+{Introduces an empty conform triangulation \ccVar.}
+
+\ccOperations
+
+\ccMethod{ void clear(); }
+{ Clear the CDT and its private datas, resulting in a empty CDT. }
+
+
+\ccHeading{Conforming methods}
+
+\ccMethod{ void delaunay_conform(); }
+{ Conforms the constrained edges regarding the Delaunay criteria.
+  After a call to this method, the CDT is a Delaunay triangulation. }
+
+\ccMethod{ void gabriel_conform(); }
+{ Conforms the constrained edges regarding the Gabriel criteria. After
+  a call to this method, all constrained edges $e$ have the
+  \emph{Gabriel property}: the circle that have $e$ as diameter
+  doesn't contain any points from the triangulation. }
+
+\begin{ccAdvanced}
+
+\ccMethod{ template <class Conform_policy>
+           void conform (const Conform_policy &conf_policy); }
+         { Conforms the constrained edges using the \emph{conforming
+             policy} \ccc{conf_policy}. \ccc{Conform_policy} must be a
+           model of \ccc{ConformPolicy_2} concept. After a call to
+           this method, every constrained edges of the CDT satisfy the
+           \ccc{Is_locally_conform} criteria of \ccc{conf_policy}. }
+
+\end{ccAdvanced}
+
+\begin{ccAdvanced}
+
+\ccHeading{Step by step operations}
+
+The \ccRefName{} class allows, for debugging or demos, to play the
+conforming algorithm step by step, using the following methods.
+
+\ccMethod{ template <class Conform_policy>
+           void init(const Conform_policy &conf_policy); }         
+         { The method must be called after all points and constrained
+           segments are inserted and before any call to the following
+           methods. If some points or segments are then inserted 
+           in the CDT, this method must be called again. }
+
+\ccMethod{ bool is_conformed (); }
+{ Tests if the CDT is conform to the conforming policy used in the
+  previous call to \ccc{init(conf_policy)}. }
+
+\ccMethod{ template<class Conform_policy>
+           bool refine_step (const Conform_policy &); }         
+         { Applies one step of the algorithm. The conforming policy
+           \ccc{conf_policy} must be the same as in the previous call
+           to \ccc{init(conf_policy)}. At one step of the algorithm,
+           only one point is inserted. However, the algorithm
+           sometimes doesn't insert a point at a step. Anyway,
+           internal datas of the \ccRefName{} object are modified at
+           each step, until \ccc{c.is_conformed()}. If
+           \ccc{c.is_conformed()}, returns \ccc{false}. If not (when
+           the algorithm is not finished), return \ccc{true}.}
+
+\end{ccAdvanced}
+
+\end{ccRefClass}

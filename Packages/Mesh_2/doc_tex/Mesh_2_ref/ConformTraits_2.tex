@@ -1,0 +1,70 @@
+\begin{ccRefConcept}{ConformTraits_2}
+
+\ccDefinition
+
+In addition of the requirements of the concept
+\ccc{DelaunayTriangulationTraits_2}, the concept \ccRefName\ has to
+provide a numeric field type \ccc{FT}, an enumeration \ccc{Angle}, a
+type \ccc{Vector_2} and several constructors on \ccc{Vector_2} and
+\ccc{Point_2}, and a predicate on angles \ccc{Angle_2}.
+
+\ccRefines
+
+\ccc{DelaunayTriangulationTraits_2}
+
+\ccTypes
+
+\ccNestedType{FT}{The field type.}
+\ccNestedType{Vector_2}{The vector type.}
+\ccNestedType{Construct_vector_2}{Constructor object. Must
+  provide the operator \ccc{Vector_2 operator()(Point a, Point b)}
+  that computes the vector $b-a$.}
+\ccNestedType{Construct_scaled_vector_2}{Constructor object. Must
+  provide the operator \ccc{Vector_2 operator()(Vector_2 v, FT scale)}
+  that computes the vector $scale \cdot \mathbf{v}$.}
+\ccNestedType{Construct_translated_point_2}{Construct object. Must
+  provide the operator \ccc{Point_2 operator()(Point_2 p, Vector_2 v)}
+  that computes the point $p + \mathbf{v}$.}
+\ccNestedType{Construct_midpoint_2}{Constructor object. Must provide
+  the operator \ccc{Point_2 operator()(Point_2 a, Point_2 b)} that
+  computes the middle point of the segment $ab$.}
+\ccEnum{enum Angle { OBTUSE, RIGHT, ACUTE};}{Enumeration needed by the
+  following type}
+\ccNestedType{Angle_2}{Predicate object. Must provide the operator
+  \ccc{Angle operator()(Point_2 p, Point_2 q, Point_2 r)} that OBTUSE,
+  RIGHT or ACUTE depending on the angle formed by the three points p,
+  q, r (q being the vertex of the angle).}
+\ccNestedType{Compute_squared_distance_2}{Constructor object. Must
+  provide the operator \ccc{FT operator()(Point_2 a, Point_2 b)} that
+  computes the squared distance between a and b.}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{MeshTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{MeshTraits_2(const MeshTraits_2& traits2);}
+{Copy constructor.}
+\ccGlue
+\ccMethod{MeshTraits_2 operator=(MeshTraits_2 traits2);}{Assignment
+  operator.}
+
+\ccHeading{Access to predicate and constructor objects}
+
+\ccMethod{Construct_vector_2 construct_vector_2_object();}{}
+\ccMethod{Construct_scaled_vector_2 construct_scaled_vector_2_object();}{}
+\ccMethod{Construct_translated_point_2
+  construct_translated_point_2_object();}{}
+\ccMethod{Constructor_midpoint_2 construct_midpoint_2_object();}{}
+\ccMethod{Angle_2 angle_2_object();}{}
+\ccMethod{Compute_squared_distance_2
+  compute_squared_distance_2_object();}{}
+
+\ccHasModels
+\ccc{Mesh_default_traits_2}\\
+\ccc{Mesh_size_traits_2}
+
+\todo{Est-ce que j'ai besoin de faire une
+  Conform\_default\_traits\_2?}
+
+\end{ccRefConcept}

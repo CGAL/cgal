@@ -29,6 +29,7 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
+          -L${HOME}/CGAL/Qt_widget/src/CGALQt \
           $(CGAL_QT_LDFLAGS)
 
 #---------------------------------------------------------------------#

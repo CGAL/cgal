@@ -7,74 +7,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Gabriel_conform_inside_policy_2
-{
-public:
-  template <class CTr>
-  struct Is_acceptable_in_a_cluster
-  {
-    bool operator()(const CTr&,
-		    const typename CTr::Face_handle& fh) const
-      {
-	return fh->is_marked();
-      }
-  };
-
-  template <class CTr>
-  Is_acceptable_in_a_cluster<CTr> is_acceptable_in_a_cluster_object() const
-    {
-      return Is_acceptable_in_a_cluster<CTr>();
-    }
-
-  template <class CTr>
-  struct Is_locally_conform
-  {
-  private:
-    typedef typename CTr::Geom_traits Geom_traits;
-    typedef typename Geom_traits::Angle_2 Angle_2;
-  public:
-    typedef typename CTr::Point Point;
-
-    bool operator()(const CTr& ct,
-		    const typename CTr::Face_handle& fh,
-		    const int i) const
-      {
-	const Angle_2 angle = ct.geom_traits().angle_2_object();
-
-	const Point& a = fh->vertex(ct.cw(i))->point();
-	const Point& b = fh->vertex(ct.ccw(i))->point();
-	const Point& c = fh->vertex(i)->point();
-	const Point& d = fh->mirror_vertex(i)->point();
-	
-	return( (!fh->is_marked() ||
-		 angle(a, c, b) != OBTUSE) &&
-
-		(!fh->neighbor(i)->is_marked() || 
-		 angle(a, d, b) != OBTUSE)
-	      );
-      }
-
-    bool operator()(const CTr& ct,
-		    const typename CTr::Face_handle& fh,
-		    const int i,
-		    const Point& p) const
-    {
-      const Angle_2 angle = ct.geom_traits().angle_2_object();
-      const Point& a = fh->vertex(ct.cw(i))->point();
-      const Point& b = fh->vertex(ct.ccw(i))->point();
-
-      return( !fh->is_marked() || angle(a, b, p) != OBTUSE );
-    }
-
-  };
-
-  template <class CTr>
-  Is_locally_conform<CTr> is_locally_conform_object() const
-    { 
-      return Is_locally_conform<CTr>();
-    }
-};
-
 /**
    Tr is a Delaunay constrained triangulation (with intersections or not)
 */
@@ -103,8 +35,8 @@ public:
 
   // -- types needed to access member datas
   typedef std::list<Point> Seeds;
-  typedef typename Seeds::iterator Seeds_iterator;
-  typedef typename Seeds::const_iterator Seeds_const_iterator;
+  typedef typename Seeds::const_iterator Seeds_iterator;
+  typedef Seeds_iterator Seeds_const_iterator;
 
   // --- CONSTRUCTORS ---
   
@@ -138,13 +70,14 @@ public:
   {
     seeds.clear();
     copy(b, e, std::back_inserter(seeds));
-    _mark=mark;
+    seeds_mark=mark;
     if(do_it_now) mark_facets();
   }
 
   void clear_seeds()
   {
     seeds.clear();
+    seeds_mark = false;
   }
 
   /** Procedure that forces facets to be marked immediatelly. */
@@ -192,6 +125,9 @@ public:
 
 private:
   // --- PRIVATE TYPES ---
+  typedef typename Conform::Is_locally_gabriel_conform
+    Is_locally_gabriel_conform;
+
   typedef CGAL::Triple<Vertex_handle,
                        Vertex_handle,
                        Vertex_handle> Threevertices; 
@@ -221,7 +157,7 @@ private:
   bool initialized;
 
   Seeds seeds;
-  bool _mark;
+  bool seeds_mark;
 
 private: 
   // --- PRIVATE MEMBER FUNCTIONS ---
@@ -271,7 +207,7 @@ private:
 
   // overrideen functions that inserts the point p in the edge
   // (fh,edge_index)  
-  Vertex_handle insert_in_the_edge(Face_handle fh, const int edge_index,
+  Vertex_handle virtual_insert_in_the_edge(Face_handle fh, const int edge_index,
 				   const Point& p);
 
   // -- helping computing functions -- 
@@ -374,13 +310,13 @@ mark_facets()
       for(All_faces_iterator it=all_faces_begin();
 	  it!=all_faces_end();
 	  ++it)
-	it->set_marked(!_mark);
+	it->set_marked(!seeds_mark);
 	  
       for(Seeds_const_iterator sit=seeds_begin(); sit!=seeds_end(); ++sit)
 	{
 	  Face_handle fh=locate(*sit);
 	  if(fh!=NULL)
-	    propagate_marks(fh, _mark);
+	    propagate_marks(fh, seeds_mark);
 	}
     }
   else
@@ -400,7 +336,7 @@ refine()
 
   while(!Conform::is_conformed() || !bad_faces.empty() )
     {
-      Conform::conform(Gabriel_conform_inside_policy_2());
+      Conform::conform(Is_locally_gabriel_conform());
       if ( !bad_faces.empty() )
 	process_one_face();
     }
@@ -434,8 +370,9 @@ init()
   bad_faces.clear();
   mark_facets(); // facets should be marked before the call to Base::init()
 
-  Base::init(Gabriel_conform_inside_policy_2()); // handles clusters and
-						 // edges
+  Base::init(Is_locally_gabriel_conform());
+  // handles clusters and edges
+
   fill_facet_map();
 }
 
@@ -444,9 +381,7 @@ inline
 bool Mesh_2<Tr>::
 refine_step()
 {
-  if( !Conform::is_conformed() )
-    Conform::refine_step(Gabriel_conform_inside_policy_2());
-  else
+  if( !Conform::refine_step(Is_locally_gabriel_conform()) )
     if ( !bad_faces.empty() )
       process_one_face();
     else
@@ -553,11 +488,7 @@ template <class Tr>
 void Mesh_2<Tr>::
 refine_face(const Face_handle f)
 {
-  typedef typename Gabriel_conform_inside_policy_2::
-    template Is_locally_conform<Self> Is_locally_conform;
-
-  Is_locally_conform is_gabriel_conform_inside =
-    Gabriel_conform_inside_policy_2().is_locally_conform_object<Self>();
+  Is_locally_gabriel_conform is_gabriel_conform;
 
   const Point& pc = circumcenter(f);
 
@@ -584,7 +515,7 @@ refine_face(const Face_handle f)
       const Vertex_handle
 	& va = fh->vertex(cw(i)),
 	& vb = fh->vertex(ccw(i));
-      if(fh->is_constrained(i) && !is_gabriel_conform_inside(*this, fh, i, pc))
+      if(fh->is_constrained(i) && !is_gabriel_conform(*this, fh, i, pc))
 	{
 	  split_the_face = false;
 	  Cluster c,c2;
@@ -678,7 +609,7 @@ template <class Tr>
 inline 
 typename Mesh_2<Tr>::Vertex_handle
 Mesh_2<Tr>::
-insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
+virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // insert the point p in the edge (fh, edge_index). It updates seeds 
   // too.
 {

@@ -44,7 +44,13 @@ public:
   typedef typename GT::Circle_2 Circle;
   typedef typename GT::FT		FT;
 
-  Qt_layer_show_circles(T*& t) : tr(t), do_erase(false) {};
+  Qt_layer_show_circles(T*& t,
+			CGAL::Color c = CGAL::GRAY,
+			int linewidth = 1,
+			CGAL::Color fill_color = CGAL::WHITE,
+			bool filled = false) :
+    tr(t), do_erase(false), color(c), width(linewidth),
+    fillcolor(fill_color), fill(filled) {};
 
   void draw() const
   {
@@ -113,10 +119,13 @@ private:
     {
       RasterOp oldRaster = widget->rasterOp();
       QColor oldcolor = widget->color();
+      QColor oldFillColor = widget->fillColor();
       int oldwidth = widget->lineWidth();
+      bool oldFilled = widget->isFilled();
       
-      *widget << CGAL::GRAY;
-      *widget << LineWidth(1);
+      *widget << color;
+      *widget << LineWidth(width) << FillColor(fillcolor);
+      widget->setFilled(fill);
       widget->get_painter().setRasterOp(NotROP);
       
       Point v=((*fh).vertex(0))->point();
@@ -125,6 +134,8 @@ private:
       *widget << Circle(c,squared_distance(v,c));
       widget->setColor(oldcolor);
       widget->setLineWidth(oldwidth);
+      widget->setFillColor(oldFillColor);
+      widget->setFilled(oldFilled);
       widget->setRasterOp(oldRaster);
       widget->do_paint();
     }
@@ -132,6 +143,11 @@ private:
   T*& tr;
   Face_handle  old_face;
   bool	       do_erase;
+  
+  CGAL::Color color;
+  int width;
+  CGAL::Color fillcolor;
+  bool fill;
 };//end class 
 
 } // namespace CGAL

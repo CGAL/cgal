@@ -16,7 +16,7 @@ public:
   Qt_layer_show_points(C *&container,
 		       iterator_function begin,
 		       iterator_function end,
-		       const Transform& t = Transform(),
+		       const Transform& t,
 		       Color c = CGAL::GREEN,
 		       int pointsize = 3,
 		       PointStyle pointstyle = CGAL::DISC)
@@ -37,6 +37,7 @@ public:
     widget->lock();
     QColor old_color = widget->color();
     int old_point_size = widget->pointSize();
+    CGAL::PointStyle old_style = widget->pointStyle();
 
     *widget << _color << CGAL::PointSize (size) 
 	    << CGAL::PointStyle (style);
@@ -46,6 +47,7 @@ public:
 	++it)
       *widget << trans(*it);
     
+    widget->setPointStyle(old_style);
     widget->setPointSize(old_point_size);
     widget->setColor(old_color);
     widget->unlock();
