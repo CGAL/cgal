@@ -958,7 +958,7 @@ Alpha_shape_3<Dt>::initialize_alpha_vertex_maps(bool reinitialize)
       
       // set alpha_mid and alpha_max and is_on_chull
       std::list<Cell_handle> incidents;
-      incident_cells(vit,back_inserter(incidents));
+      incident_cells(static_cast<Vertex_handle>(vit), back_inserter(incidents));
       typename std::list<Cell_handle>::iterator
 	chit=incidents.begin();
       if (is_infinite(*chit)) as->set_is_on_chull(true);
@@ -996,7 +996,7 @@ Alpha_shape_3<Dt>::initialize_alpha_vertex_maps(bool reinitialize)
       as->set_alpha_min(as->alpha_mid());
 
       std::list<Vertex_handle> incidentv;
-      incident_vertices(vit, back_inserter(incidentv));
+      incident_vertices(static_cast<Vertex_handle>(vit), back_inserter(incidentv));
       typename std::list<Vertex_handle>::iterator vvit=incidentv.begin();
       for( ; vvit != incidentv.end(); ++vvit){
 	if (!is_infinite(*vvit)) {
@@ -1111,31 +1111,31 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
   int number_of_vertices = 0;
 
   Alpha_shape_vertices_iterator vit;
-  for( vit = alpha_shape_vertices_begin();
-       vit != alpha_shape_vertices_end();
+  for( vit = A.alpha_shape_vertices_begin();
+       vit != A.alpha_shape_vertices_end();
        ++vit) {
     V[Vertex_handle(vit)] = number_of_vertices++;
-    os << v->point() << std::endl;
+    os << vit->point() << std::endl;
   }
 
   Cell_handle c;
   int i;
   Alpha_shape_facets_iterator fit;
-  for( fit = alpha_shape_faces_begin();
-       fit != alpha_shape_faces_end();
+  for( fit = A.alpha_shape_faces_begin();
+       fit != A.alpha_shape_faces_end();
        ++fit) {
     c = fit->first;
     i = fit->second;
     // the following ensures that regulat facets are output
     // in ccw order
-    if (classify(fit) == REGULAR && classify(c) ==EXTERIOR){
+    if (A.classify(fit) == AS::REGULAR && A.classify(c) == AS::EXTERIOR){
       c = c->neighbor(i);
       i = c->index(fit->first);
     }
     int i0=(i+1)&3, i1=(i+2)&3, i2=(i+3)&3;
-    os << V[s->vertex(i0)] << ' ' 
-		 << V[s->vertex(i1)] << ' ' 
-		 << V[s->vertex(i2)] << std::endl;
+    os << V[c->vertex(i0)] << ' ' 
+       << V[c->vertex(i1)] << ' ' 
+       << V[c->vertex(i2)] << std::endl;
   }
   return os;
 }
