@@ -134,6 +134,9 @@ public:
   Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj) const;
   Cell_handle locate(const Point& p) const;
 
+  Vertex_handle
+  nearest_vertex(const Point& p, Cell_handle start = NULL) const;
+
 private:
 
   struct locs {
@@ -393,6 +396,13 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   pos[0].lj = lj;
 }
 
+template <class Tr>
+typename Triangulation_hierarchy_3<Tr>::Vertex_handle 
+Triangulation_hierarchy_3<Tr>::
+nearest_vertex(const Point& p, Cell_handle start) const
+{
+    return Tr_Base::nearest_vertex(p, start != NULL ? start : locate(p));
+}
 
 template <class Tr>
 int

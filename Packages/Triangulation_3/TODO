@@ -52,7 +52,6 @@ dual sont effectivement utilisees
     profiter de ca pour avoir les adjacences directement (peut-etre en
     squattant le flag des cellules pour y mettre un pointeur vers la facette
     2d correspondante).
-- nearest neighbor
 - natural neighbors de Raphaelle a integrer
 - Pb du type de points pour les fonctions "dual" (robustesse dans le cas 
 des tetraedres presque plats) rounding ?

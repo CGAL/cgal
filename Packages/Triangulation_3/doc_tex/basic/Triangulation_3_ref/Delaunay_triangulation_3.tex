@@ -183,6 +183,12 @@ by \ccc{f} and not containing any other point of the triangulation,
 	  side_of_circle(Cell_handle c, int i, const Point & p);}
 {Same as the previous method for facet \ccc{i} of cell \ccc{c}.}
 
+\ccMethod{Vertex_handle nearest_vertex(Point p, Cell_handle c = NULL);}
+{Returns any nearest vertex to the point \ccc{p}.  The optional argument
+\ccc{c} is a hint specifying where to start the search.
+\ccPrecond{\ccVar.\ccc{dimension()} $= 3$, and \ccc{c} is a cell of \ccVar.}
+}
+
 A point \ccc{p} is said to be in conflict with a cell \ccc{c} in dimension 3
 (resp. a facet \ccc{f} in dimension 2) iff \ccVar.\ccc{side_of_sphere(c, p)}
 (resp. \ccVar.\ccc{side_of_circle(f, p)}) returns \ccc{ON_BOUNDED_SIDE}.

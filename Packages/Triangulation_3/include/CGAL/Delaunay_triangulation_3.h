@@ -307,6 +307,9 @@ public:
   Vertex_handle
   nearest_vertex_in_cell(const Point& p, const Cell_handle& c) const;
 
+  Vertex_handle
+  nearest_vertex(const Point& p, Cell_handle c = NULL) const;
+
   Point dual(Cell_handle c) const;
 
   Object dual(const Facet & f) const
@@ -1177,6 +1180,51 @@ nearest_vertex_in_cell(const Point& p, const Cell_handle& c) const
         if (dimension() == 3)
 	    nearest = nearest_vertex(p, nearest, c->vertex(3));
     }
+    return nearest;
+}
+
+template < class Gt, class Tds >
+typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds>::
+nearest_vertex(const Point& p, Cell_handle start) const
+{
+    // We only support dimension == 3, at least for now.
+    CGAL_triangulation_precondition(dimension() == 3);
+
+    Locate_type lt;
+    int li, lj;
+    Cell_handle c = locate(p, lt, li, lj, start);
+    if (lt == Tr_Base::VERTEX)
+	return c->vertex(li);
+
+    // Note that we could use/test/bench a different algorithm :
+    // - find the nearest_vertex_in_cell()
+    // - repeatedly take the nearest of its incident vertices if any
+    // - if not, we're done.
+
+    // The nearest neighbor is on the boundary of the conflict hole.
+    // So let's obtain the boundary facets.
+    std::vector<Facet> F;
+    find_conflicts(p, c, std::back_inserter(F),
+	           Emptyset_iterator(), Emptyset_iterator());
+
+    // Now put all boundary vertices uniquely.
+    // (should this be isolated in a separate function a la find_conflicts ?)
+    std::set<Vertex_handle> V;
+    for (typename std::vector<Facet>::const_iterator fit = F.begin();
+	 fit != F.end(); ++fit) {
+	if (fit->second != 0) V.insert(fit->first->vertex(0));
+	if (fit->second != 1) V.insert(fit->first->vertex(1));
+	if (fit->second != 2) V.insert(fit->first->vertex(2));
+	if (fit->second != 3) V.insert(fit->first->vertex(3));
+    }
+
+    // Note that we could do faster if p is outside the convex hull...
+    CGAL_triangulation_assertion(V.size() >= 2);
+    typename std::set<Vertex_handle>::const_iterator sit = V.begin();
+    Vertex_handle nearest = nearest_vertex(p, *sit++, *sit++);
+    for (; sit != V.end(); ++sit)
+        nearest = nearest_vertex(p, nearest, *sit);
     return nearest;
 }
 

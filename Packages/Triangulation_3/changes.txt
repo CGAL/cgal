@@ -1,3 +1,8 @@
+Version 1.176 (7 November 03)
+- Added Delaunay_3::nearest_vertex()
+
+-----------------------  CGAL 3.0 ------------------------
+
 Version 1.175 (30 October 03)
 - the previous fix is for SGI too [rursu]
 

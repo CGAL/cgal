@@ -51,3 +51,9 @@ Illustrates how to setup a 2D and a 3D triangulation data structure
 whose vertices respectively store vertex handles of the other one.
 
 --------------------------------------------------------------
+
+------- example_regular --------------------------------------
+
+Illustrates the use of Regular_triangulation_3.
+
+--------------------------------------------------------------
