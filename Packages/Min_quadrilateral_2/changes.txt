@@ -7,10 +7,11 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Changed concept names, added README for demo.
 DEMO: Do not compute min_strip for < 2 and min_quad for < 3 points.
 
 //---------------------------------------------------------------------
-//	 CGAL-2.2
+//	 CGAL 2.2
 //---------------------------------------------------------------------
 
 ALL : Fixed file headers.
