@@ -39,6 +39,8 @@ int main()
 
 #else
 
+#include <vector>
+
 #include <CGAL/Arr_leda_segment_exact_traits.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2.h>
@@ -55,7 +57,7 @@ int main()
 
 #include <LEDA/rat_window.h>
 #include <CGAL/IO/Pm_Window_stream.h>
-#include <vector>
+#include <CGAL/Ovl_utility.h>
 
 #if defined(LEDA_NAMESPACE)
 using namespace leda;
@@ -76,42 +78,12 @@ typedef CGAL::Map_overlay<PM, Ovl_change_notification>        MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<PM>           PmWalkPL;
 
-//I had to add these in global namespace for the program to compile
-
-/*
-  CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-  const Point& p)
-  {
-  //return os << leda_point(p.xcoordD(),p.ycoordD());
-  return os << p.to_point();
-  }
-  
-  
-  CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-  const X_curve &c)
-  {
-  return os << c.to_segment();
-  }*/
-
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
 static PmWalkPL pm_walk1, pm_walk2;
 static PM pm1(&pm_walk1); 
 static PM pm2(&pm_walk2);
-static CGAL::Window_stream W(700, 700, "CGAL - Segment Arrangement Demo");
-
-/*CGAL_BEGIN_NAMESPACE
-Window_stream& operator<<(Window_stream& os, const PM &pm)
-{
-  My_Arr_drawer< PM,
-                 PM::Ccb_halfedge_const_circulator, 
-                 PM::Holes_const_iterator> drawer(os);
-  
-  draw_pm(pm, drawer, os);
-  
-  return os;
-}
-CGAL_END_NAMESPACE*/
+static CGAL::Window_stream W(500, 500, "CGAL - Segment Map-Overlay Demo: Sweep Algorithm");
 
 // redraw function for the LEDA window. 
 // used automatically when window reappears.
@@ -128,18 +100,18 @@ void redraw(CGAL::Window_stream * wp)
   wp->stop_buffering();
 }
 
-void  draw_and_locate_maps (const MapOverlay& ovl, 
+/*void  draw_and_locate_maps (const MapOverlay& ovl, 
                             const PM& pm1, 
                             const PM& pm2, 
                             CGAL::Window_stream& W)
 { 
   
   // debug!
-  cout<<"unbounded faces: "<< &*(ovl.first_creator()->subdivision().unbounded_face())<<
-    "  "<<&*(ovl.second_creator()->subdivision().unbounded_face())<<endl;
+  //cout<<"unbounded faces: "<< &*(ovl.first_creator()->subdivision().unbounded_face())<<
+  //  "  "<<&*(ovl.second_creator()->subdivision().unbounded_face())<<endl;
 
-  if (!(ovl.second_creator()->subdivision().unbounded_face()->is_unbounded()))
-    cout<<"error: unbounded_face of second map is bounded"<<endl;
+  //if (!(ovl.second_creator()->subdivision().unbounded_face()->is_unbounded()))
+  //  cout<<"error: unbounded_face of second map is bounded"<<endl;
   
   W << CGAL::BLUE;
   W << pm1;
@@ -167,9 +139,6 @@ void  draw_and_locate_maps (const MapOverlay& ovl,
     
     NT z(x), w(y);
     Point p(z, w);
-
-    //debug.
-    cout<<p<<endl;
     
     PM::Locate_type lt;
     PM::Halfedge_const_handle e = pm.locate(p, lt);
@@ -184,29 +153,20 @@ void  draw_and_locate_maps (const MapOverlay& ovl,
       PM::Face_const_handle f1 = ovl.change_notification()->get_first_face_above(fh);
       PM::Face_const_handle f2 = ovl.change_notification()->get_second_face_above(fh);
       
-      cout<<"f1 and f2: "<<&*f1<<" "<<&*f2<<endl;
+      //cout<<"f1 and f2: "<<&*f1<<" "<<&*f2<<endl;
       
-      if (f1 == fh || f2 == fh)
-        std::cout<<"NULL faces pointers\n";
+      //if (f1 == fh || f2 == fh)
+      //  std::cout<<"NULL faces pointers\n";
  
       leda_color fg_col;
-      if (f1 != fh && !(f1->is_unbounded()) && f2 != fh && !(f2->is_unbounded()) ){
-        // debug!
-        cout<<"both maps lay above face"<<endl;
+      if (f1 != fh && !(f1->is_unbounded()) && f2 != fh && !(f2->is_unbounded()) )
         fg_col = leda_violet;
-      }
-      else if (f1 != fh && !(f1->is_unbounded())){
-        cout<<"first map lays above face"<<endl;
+      else if (f1 != fh && !(f1->is_unbounded()))
         fg_col = leda_blue;
-      }
-      else if (f2 != fh && !(f2->is_unbounded())){
-        cout<<"second map lays above face"<<endl;
+      else if (f2 != fh && !(f2->is_unbounded()))
         fg_col = leda_red;
-      }
-      else{
+      else
         fg_col = leda_orange;
-        cout<<"non map lays above face"<<endl;
-      }
       
       W.set_color(fg_col);
       W.set_fill_color(fg_col);
@@ -225,18 +185,17 @@ void  draw_and_locate_maps (const MapOverlay& ovl,
       do {
         W << (*cc).curve();
         W << cc->source()->point();
-        std::cout<<cc->curve()<<std::endl;
       } while (++cc != fh->outer_ccb());
       
-      for (PM::Holes_const_iterator hit = fh->holes_begin(); hit != fh->holes_end(); ++hit, ++hit) {
+      for (PM::Holes_const_iterator hit = fh->holes_begin(); hit != fh->holes_end(); ++hit) {
         PM::Ccb_halfedge_const_circulator cc(*hit);
         do{
-        W << cc->curve();
-        //std::cout<<cc->curve()<<std::endl;
+          W << cc->curve();
         } while (++cc != *hit);
       }
       
-      for (PM::Vertex_const_iterator  v_iter = pm.vertices_begin(); v_iter !=  pm.vertices_end(); v_iter++){
+      for (PM::Vertex_const_iterator  v_iter = pm.vertices_begin(); 
+           v_iter != pm.vertices_end(); ++v_iter){
         if (v_iter->get_first_vertex_above() != NULL && v_iter->get_second_vertex_above() != NULL)
           W.set_color(leda_violet);
         else if (v_iter->get_first_vertex_above() != NULL && v_iter->get_second_vertex_above() == NULL)
@@ -257,7 +216,7 @@ void  draw_and_locate_maps (const MapOverlay& ovl,
       }
     }
   }
-}
+}*/
 
 int  read_planar_map(PM& pm, CGAL::Window_stream& W)
 {
@@ -380,7 +339,7 @@ int main()
   std::cout<<"Orange Face - an overlay face laying under the unbounded faces of both maps"<<endl;
   
   // Point Location Queries
-  W.set_status_string("Map Overlay. ");
+  W.set_status_string("Map Overlay.");
   
   // if first map is empty
   if (pm1.halfedges_begin() == pm1.halfedges_end()) 
@@ -399,8 +358,10 @@ int main()
     }
   
   if (pm1.halfedges_begin() != pm1.halfedges_end() && 
-      pm2.halfedges_begin() != pm2.halfedges_end() )
-    draw_and_locate_maps(map_overlay,pm1,pm2,W);
+      pm2.halfedges_begin() != pm2.halfedges_end() ){
+    CGAL::Ovl_utility<PM,NT> utility;
+    utility.draw_and_locate_maps(map_overlay,pm1,pm2,W);
+  }
  
   return 0;  
 }
