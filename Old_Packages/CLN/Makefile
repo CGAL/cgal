@@ -27,6 +27,7 @@ version:
 
 tag:
 	cvs tag -c $(TAG_VERSION)
+	cvs tag -F -c current_submission
 
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
