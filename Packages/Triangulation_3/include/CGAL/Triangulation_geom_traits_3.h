@@ -97,6 +97,12 @@ class Triangulation_geom_traits_3
 public:
   typedef Repres Rep;
   typedef Point_3<Repres>  Point_3;
+
+  // The next typedef is there for backward compatibility
+  // Some users take their point type from the traits class.
+  // Before this type was Point
+  typedef Point_3 Point; 
+
   typedef Point_2< Cartesian< typename Repres::FT> >  Point2;
   typedef Segment_3<Repres> Segment_3;
   typedef Triangle_3<Repres> Triangle_3;
