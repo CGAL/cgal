@@ -2,6 +2,9 @@
 
 Package=Triangulation3
 
+TEXINPUTS=.:../../../examples:/0/prisme_util/latex:
+LATEX_CONV_INPUTS=.:../../../examples:/0/prisme/teillaud/CGAL/Triangulation3/examples
+
 .PHONY: doc package test
 
 package: doc clean
