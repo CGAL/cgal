@@ -1,12 +1,12 @@
 //#include "Box_intersection_d.h"
-#include <Box_intersection_d/box_traits.h>
+#include <CGAL/Box_intersection_d/box_traits.h>
 
-#include <Box_intersection_d/all_pairs.h>
-#include <Box_intersection_d/one_way_scan.h>
+#include <CGAL/Box_intersection_d/all_pairs.h>
+#include <CGAL/Box_intersection_d/one_way_scan.h>
 
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
-#include <Box_intersection_d/segment_tree.h>
+#include <CGAL/Box_intersection_d/segment_tree.h>
 
 #include "Timer.h"
 
@@ -21,7 +21,7 @@
 
 using namespace std;
 
-typedef Default_Bbox_d< int > Box;
+typedef Default_Bbox_d< int, 3 > Box;
 typedef Default_Bbox_d_Adapter< Box > BoxAdapter;
 typedef Default_Box_Traits< BoxAdapter > Traits;
 typedef vector< Box > BoxContainer;
@@ -164,8 +164,8 @@ test( const char* filename1, const char* filename2 )
 int main( int argc, char ** argv ) {
     for( unsigned int n = 1; n <= 6; ++n ) {
         stringstream file1, file2;
-        file1 << "test" << n << "_set1.box" << ends;
-        file2 << "test" << n << "_set2.box" << ends;
+        file1 << "data/test" << n << "_set1.box" << ends;
+        file2 << "data/test" << n << "_set2.box" << ends;
         test( file1.str().c_str(), file2.str().c_str() );
     }
 }

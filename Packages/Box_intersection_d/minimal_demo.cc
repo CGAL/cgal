@@ -24,7 +24,8 @@ void fill_boxes( unsigned int n, BoxContainer& boxes ) {
 }
 
 void callback( const Box& a, const Box& b ) {
-   cout << "intersection between box " << a.num() << " and " << b.num() << endl;
+    cout << "intersection between box "
+         << a.num() << " and " << b.num() << endl;
 };
 
 int main() {

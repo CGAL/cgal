@@ -1,11 +1,8 @@
-//#include "Box_intersection_d.h"
-#include <Box_intersection_d/box_traits.h>
-
-#include <Box_intersection_d/one_way_scan.h>
-
+#include <CGAL/Box_intersection_d/box_traits.h>
+#include <CGAL/Box_intersection_d/one_way_scan.h>
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
-#include <Box_intersection_d/segment_tree.h>
+#include <CGAL/Box_intersection_d/segment_tree.h>
 
 #include "Timer.h"
 
