@@ -403,9 +403,10 @@ and a triangulation data structure (TDS), which can be interchanged.
 
 The most useful flexibility is the ability given to the user to add his own
 data in the vertices and cells by providing his own vertex and cell base
-classes to the TDS.  The Figure~\ref{T3-fig-layers} shows in more detail the
-flexibility that is provided, and the place where the user can insert his own
-vertex and/or cell base classes.
+classes to \ccc{Triangulation_data_structure_3}.  The
+Figure~\ref{T3-fig-layers} shows in more detail the flexibility that is
+provided, and the place where the user can insert his own vertex and/or cell
+base classes.
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -423,26 +424,14 @@ vertex and/or cell base classes.
 \end{ccHtmlOnly}
 \end{figure}
 
-\subsection{Cyclic Dependency}
-
-Since adjacency relations are stored in the vertices and cells, it means that
-the vertex and cell base classes have to be able to store handles (an entity
-akeen to pointers) to their neighbors in the TDS.  This in turns means that the
-vertex and cell base classes have to know the types of these handles, which are
-provided by the TDS.  So in a sense, the base classes are parameterized by the
-TDS, and the TDS is parameterized by the vertex and cell base classes !
-This is a cycle which cannot be resolved easily.
-
-The solution that we have chosen is detailed in Section~\ref{tds3-cyclic} in
-Chapter~\ref{chapter-TDS3}.
-
 \subsection{Backward compatibility}
 
-Starting with \cgal\ release 3.0, the design has been changed in order to
-give the possibility to store handles directly in the vertex and cell base
-classes.  Previously, \texttt{void*} pointers were stored there instead, and
-later converted internally to handles, but this happened to be too restrictive
-for some uses.
+Starting with \cgal\ release 3.0, the design of the triangulation data
+structure has been changed in order to give the possibility to store handles
+(an entity akeen to pointers) directly in the vertex and cell base classes.
+Previously, \texttt{void*} pointers were stored there instead, and later
+converted internally to handles, but this happened to be too restrictive for
+some uses.
 
 The difference is visible to the user when he provides his own vertex or cell
 base class.  Previously, something like the following had to be written:
