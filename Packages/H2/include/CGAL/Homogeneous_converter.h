@@ -30,6 +30,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/NT_converter.h>
+#include <CGAL/Enum_converter.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,9 +39,13 @@ template < class K1, class K2,
 	                                     CGAL_TYPENAME_MSVC_NULL K2::RT>,
            class FT_Converter = NT_converter<CGAL_TYPENAME_MSVC_NULL K1::FT,
 	                                     CGAL_TYPENAME_MSVC_NULL K2::FT> >
-class Homogeneous_converter
+class Homogeneous_converter : public Enum_converter
 {
 public:
+    typedef K1            Source_kernel;
+    typedef K2            Target_kernel;
+    typedef RT_Converter  Ring_number_type_converter;
+    typedef FT_Converter  Field_number_type_converter;
 
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
