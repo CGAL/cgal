@@ -1,3 +1,6 @@
+27 December 2004 Mariette
+- changed assert() to CGAL_triangulation_assertion()
+
 18 December 2004 Sylvain Pion
 - Update headers of demo files.
 

@@ -1307,7 +1307,7 @@ Alpha_shape_2<Dt>::traverse(const Face_handle& pFace,
     for (int i=0; i<=3; i++)
       {
 	pNeighbor = pFace->neighbor(i);
-	assert(pNeighbor != NULL);
+	 CGAL_triangulation_assertion(pNeighbor != NULL);
 	if (classify(pNeighbor, alpha) == INTERIOR){
 	  Data& data = marked_face_set[pNeighbor];
 	  if(data == false){
