@@ -39,6 +39,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Iterator_project.h>
+#include <CGAL/Compact_container.h>
 #include <vector>
 #include <list>
 #include <cstddef>
@@ -82,14 +83,18 @@ class RC_vertex_d
 public:
   RC_vertex_d(Simplex_handle s, int i, const Point_d& p) :
     s_(s), index_(i), point_(p) {}
-  RC_vertex_d(const Point_d& p) : point_(p) {}
-  RC_vertex_d() :  s_(), index_(-42) {}
+  RC_vertex_d(const Point_d& p) : point_(p), pp(NULL) {}
+  RC_vertex_d() :  s_(), index_(-42), pp(NULL) {}
   // beware that ass_point was initialized here by nil_point
   ~RC_vertex_d() {}
 
   Simplex_handle simplex() const { return s_; }
   int index() const { return index_; }
   const Point_d& point() const { return point_; }
+
+  void* pp;
+  void*   for_compact_container() const { return pp; }
+  void* & for_compact_container()       { return pp; }
 
 #ifdef CGAL_USE_LEDA
   LEDA_MEMORY(RC_vertex_d)
@@ -153,6 +158,10 @@ public:
   Point_const_iterator points_end() const 
   { return Point_const_iterator(vertices.end()); }
 
+  void* pp;
+  void*   for_compact_container() const { return pp; }
+  void* & for_compact_container()       { return pp; }
+
   #if 0
   struct Point_const_iterator {
     typedef Point_const_iterator self;
@@ -202,9 +211,9 @@ public:
   #endif
           
 
-  RC_simplex_d() {}
+  RC_simplex_d() : pp(NULL) {}
   RC_simplex_d(int dmax) : 
-    vertices(dmax+1), neighbors(dmax+1), opposite_vertices(dmax+1)
+    vertices(dmax+1), neighbors(dmax+1), opposite_vertices(dmax+1), pp(NULL)
   { for (int i = 0; i <= dmax; i++) { 
       neighbors[i] = Simplex_handle(); 
       vertices[i] = Vertex_handle(); 
@@ -324,7 +333,7 @@ typedef R_ R;
 
 typedef RC_vertex_d<Self> Vertex;
 
-  typedef std::list<Vertex> Vertex_list;
+  typedef CGAL::Compact_container<Vertex> Vertex_list;
 
 typedef typename Vertex_list::iterator       Vertex_handle;
 /*{\Mtypemember the handle type for vertices of the complex.}*/
@@ -335,7 +344,7 @@ typedef typename Vertex_list::iterator       Vertex_iterator;
 typedef typename Vertex_list::const_iterator Vertex_const_iterator;
 
 typedef RC_simplex_d<Self> Simplex;
-typedef std::list<Simplex>    Simplex_list;
+typedef CGAL::Compact_container<Simplex>    Simplex_list;
 
 typedef typename Simplex_list::iterator       Simplex_handle;
 /*{\Mtypemember the handle type for simplices of the complex.}*/
@@ -494,8 +503,8 @@ Simplex_handle new_simplex()
 has no vertices yet.}*/
 { 
   Simplex s(dmax);
-  simplices_.push_back(s);
-  return --simplices_end(); 
+  Simplex_handle  h = simplices_.insert(s);
+  return h;
 }
 
 Vertex_handle  new_vertex() 
@@ -505,8 +514,8 @@ Vertex_handle  new_vertex()
         member of class |Regular_complex_d.|}*/
 { 
   Vertex v(nil_point);
-  vertices_.push_back(v);
-  return --vertices_end(); 
+  Vertex_handle h = vertices_.insert(v);
+  return h; 
 }
 
 Vertex_handle  new_vertex(const Point_d& p) 
@@ -515,8 +524,9 @@ Vertex_handle  new_vertex(const Point_d& p)
         simplex nor index yet.}*/
 { 
   Vertex v(p);
-  vertices_.push_back(v);
-  return --vertices_end(); }
+  Vertex_handle h = vertices_.insert(v);
+  return h;
+}
 
 void associate_vertex_with_simplex(Simplex_handle s, int i, Vertex_handle v)
 /*{\Mop sets the $i$-th vertex of |s| to |v| and records this fact in
