@@ -153,7 +153,7 @@ void delete_drawable(int, int);
   // deletes selected drawables
 void delete_selection();
 
-  void delete_group(int); //a commenter?????
+void delete_group(int); //a commenter?????
 
 pthread_t get_window_thread();
 
@@ -851,9 +851,12 @@ void Viewer_3::delete_group(int gr)
 {
   if ((gr <= group) && (gr>0)) {
      int l=get_line_number(gr,0);
-     if (l!=0) remove_line(l);
-     canvas->delete_group(gr);
-     group--;
+     scene->deselect();
+     while ( (l<=scene->size()) && (((char*) scene->data(l))[0] == gr)){
+        scene->select(l);
+        l++;
+     }
+     delete_selection();
   }
 }
 void Viewer_3::add_drawable(Drawable_object* obj, int i=1)
@@ -967,7 +970,7 @@ void Viewer_3::rebuild_graph()
   Scene_graph* scg=canvas->get_scene_graph();
   Scene_graph::iterator it;
   Scene_group::iterator git;
-   for (it=scg->begin() ; it!=scg->end(); it++) {
+  for (it=scg->begin() ; it!=scg->end(); it++) {
     group++;
     sprintf(nb,"%s %d", "@bGroup" , group);
     v= new char(2);
