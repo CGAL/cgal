@@ -61,6 +61,11 @@ public:
 	   const double area_bound)
       : Is_bad_base(aspect_bound, area_bound) {};
 
+    Mesh_2::Face_badness operator()(Quality q)
+    {
+      return Is_bad_base::operator()(q);
+    }
+
     Mesh_2::Face_badness operator()(const Face_handle& fh,
 				    Quality& q) const
     {

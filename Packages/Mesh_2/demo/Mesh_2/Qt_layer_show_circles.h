@@ -54,7 +54,7 @@ public:
     tr(t), do_erase(false), color(c), width(linewidth),
     fillcolor(fill_color), fill(filled) {};
 
-  void draw() const
+  void draw()
   {
     Qt_widget_layer::draw();
     do_erase = false;
@@ -110,7 +110,7 @@ public:
 	}
     };
 
-  void leaveEvent(QEvent e)
+  void leaveEvent(QEvent* e)
     {
       Qt_widget_layer::leaveEvent(e);
       if (tr->dimension()<1) return;      

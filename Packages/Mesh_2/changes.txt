@@ -1,3 +1,8 @@
+17 November 2004 Laurent Rineau
+- fix for g++-3.4
+- fix Delaunay_mesh_area_2 which was broken
+- fix warnings in demo/Mesh_2/ layers
+
 16 November 2004 Laurent Rineau
 - fix documentation
 - enum Face_badness { NOT_BAD, BAD, IMPERATIVELY_BAD }; and modified

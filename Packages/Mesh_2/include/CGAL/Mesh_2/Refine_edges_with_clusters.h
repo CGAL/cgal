@@ -192,7 +192,7 @@ public:
 // encroaches [v1,v2] and let rg be the length of the shortest edge
 // of T. If rmin >= rg, then split the edge.
 
-              if( imperatively || !ca.is_reduced() ||
+              if( this->imperatively || !ca.is_reduced() ||
                   ca.rmin >= shortest_edge_squared_length(fh) )
                 {
                   add_constrained_edge_to_be_conformed(v1,v2);

@@ -173,7 +173,7 @@ Qt_widget_style_editor::Qt_widget_style_editor(Style* style,
       QLabel* label = new QLabel( it.key(), this);
       layout->addWidget(label, row, labels_col);
 
-      QWidget* selector;
+      QWidget* selector = 0;
       switch( it.data().type() ) {
       case QVariant::Color:
 	selector = new Color_selector(it.data().toColor(), this);
