@@ -3,20 +3,23 @@
 - virer Dummy_output_iterator et le remplacer par empty_set_iterator
 - Harmoniser find_conflicts() avec le 3d
 - tester entree vrml
+- eclaircir ce qui arrive
+  quand il y a des points en trop dand un fichier d'entre .off
 - faire des fonctions globales pour les entrees sorties
   les mettre dans un fichier separe
   pour ne pas etre oblige d'inclure iostream obligatoirement
- 
-
 - ajouter dans la doc du line face circulator, la precondition p!= q
+
+ 
+- constrained_triangulation_plus_2 plante sur Sun CC
+- tenir compte remarque de sylvain a propos de design
 - documenter Constrained_triangulation_plus_2
 - tester Constrained_triangulation_plus_2 avec le Tag exact
 - Constrained_triangulation_plus_2 and ConstrainT_hierchy_2
   to be done or redone : copy swap and delete
 - Constraint_hierarchy_3 
   to be done or redone : copy swap and delete
-- utiliser  Emptyset_iterator et virer le fichier Dummy_output_iterator.h
-- harmoniser les fonctions find-conflicts avec le 3d.
+
 	
 - k orderVoronoi diagram (code de Julia)
 - Natural neighbor (code de Franck)

@@ -31,7 +31,7 @@
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_2.h> 
 #include <CGAL/Constrained_triangulation_face_base_2.h>
-#include <CGAL/Constrained_triangulation_sweep_2.h>
+//#include <CGAL/Constrained_triangulation_sweep_2.h>
 #include <CGAL/iterator.h>
 	
 CGAL_BEGIN_NAMESPACE
@@ -41,12 +41,12 @@ template < class Gt,
 		       Constrained_triangulation_face_base_2<Gt> > >
 class Constrained_triangulation_2  : public Triangulation_2<Gt,Tds>
 {
-  friend  class Constrained_triangulation_sweep_2<Gt,Tds>;
+  //friend  class Constrained_triangulation_sweep_2<Gt,Tds>;
   //friend Constrained_triangulation_sweep_2<Gt,Tds>::Neighbor_list;
 public:
   typedef Triangulation_2<Gt,Tds> Triangulation;
   typedef Constrained_triangulation_2<Gt,Tds>  Constrained_triangulation;
-  typedef Constrained_triangulation_sweep_2<Gt,Tds>  Sweep;
+  //typedef Constrained_triangulation_sweep_2<Gt,Tds>  Sweep;
   
   typedef typename Triangulation::Edge Edge;
   typedef typename Triangulation::Vertex Vertex;

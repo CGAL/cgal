@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.06 (8/03/02)
+- replaced Dummy_output_iterator by Emptyset_iterator
+- commented references to sweep construction of constrained triangulation
+
 Ver 7.05 (8/03/02)
 - fixed unused parameter in Triangulation_ds_iterator_2.h
 
