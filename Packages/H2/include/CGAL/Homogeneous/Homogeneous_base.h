@@ -109,9 +109,9 @@ struct Homogeneous_base
     typedef Aff_transformationH3<Kernel>            Aff_transformation_3;
 
     typedef Cartesian_coordinate_iterator_2<Kernel>
-                                 Cartesian_coordinate_const_iterator_2;
+                                 Cartesian_const_iterator_2;
     typedef Cartesian_coordinate_iterator_3<Kernel>
-                                 Cartesian_coordinate_const_iterator_3;
+                                 Cartesian_const_iterator_3;
 
     // Undocumented stuff.
     typedef Data_accessorH2<Kernel>                 Data_accessor_2;
