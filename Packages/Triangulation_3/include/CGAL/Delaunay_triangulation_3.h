@@ -199,12 +199,16 @@ public:
       return insert(p);
   }
 
-  template <class Out_it_boundary_facets,
-            class Out_it_cells, class Out_it_internal_facets>
-  void
+  template <class OutputIteratorBoundaryFacets,
+            class OutputIteratorCells,
+            class OutputIteratorInternalFacets>
+  Triple<OutputIteratorBoundaryFacets,
+         OutputIteratorCells,
+         OutputIteratorInternalFacets>
   find_conflicts(const Point &p, Cell_handle c,
-	         Out_it_boundary_facets bfit, Out_it_cells cit,
-		 Out_it_internal_facets ifit) const
+	         OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit,
+		 OutputIteratorInternalFacets ifit) const
   {
       CGAL_triangulation_precondition(dimension() >= 2);
 
@@ -215,20 +219,22 @@ public:
 
       if (dimension() == 2) {
           Conflict_tester_2 tester(p, this);
-	  find_conflicts_2(c, tester, std::back_inserter(facets),
-		                      std::back_inserter(cells),
-				      ifit);
+	  ifit = find_conflicts_2(c, tester,
+                                  make_triple(std::back_inserter(facets),
+		                              std::back_inserter(cells),
+                                              ifit)).third;
       }
       else {
           Conflict_tester_3 tester(p, this);
-	  find_conflicts_3(c, tester, std::back_inserter(facets),
-		                      std::back_inserter(cells),
-				      ifit);
+	  ifit = find_conflicts_3(c, tester,
+                                  make_triple(std::back_inserter(facets),
+		                              std::back_inserter(cells),
+                                              ifit)).third;
       }
 
       // Reset the conflict flag on the boundary.
       for(typename std::vector<Facet>::iterator fit=facets.begin();
-        fit != facets.end(); ++fit) {
+          fit != facets.end(); ++fit) {
         fit->first->neighbor(fit->second)->set_in_conflict_flag(0);
 	*bfit++ = *fit;
       }
@@ -239,6 +245,7 @@ public:
         (*ccit)->set_in_conflict_flag(0);
 	*cit++ = *ccit;
       }
+      return make_triple(bfit, cit, ifit);
   }
 
   // We return bool only for backward compatibility (it's always true).
