@@ -1,5 +1,5 @@
-
-
+2.9 (4 September 2003) [af]
+- Towards an extensible kernel
 
 2.8 (24 July 03) my
 - fixed Triangle_3_Ray_3 intersections in parallell cases

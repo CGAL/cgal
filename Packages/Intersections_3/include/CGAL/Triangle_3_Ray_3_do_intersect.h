@@ -30,9 +30,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
+
 template <class K>
-bool do_intersect(const Triangle_3<K> &t, 
-		  const Ray_3<K> &r,
+bool do_intersect(const CGAL_WRAP(K)::Triangle_3 &t, 
+		  const CGAL_WRAP(K)::Ray_3 &r,
 		  const K & k)
 {
 
@@ -146,15 +148,23 @@ bool do_intersect(const Triangle_3<K> &t,
     CGAL_kernel_assertion(false);
     return false;
     
-  }
-  
-  
+  } 
 }
 
 
 template <class K>
-bool do_intersect_coplanar(const Triangle_3<K> &t, 
-			   const Ray_3<K>      &r,
+inline
+bool do_intersect(const CGAL_WRAP(K)::Ray_3 &r,
+		  const CGAL_WRAP(K)::Triangle_3 &t, 
+		  const K & k)
+{
+  return do_intersect(t,r, k);
+}
+
+
+template <class K>
+bool do_intersect_coplanar(const CGAL_WRAP(K)::Triangle_3 &t, 
+			   const CGAL_WRAP(K)::Ray_3      &r,
 			   const K & k )
 {
   
@@ -288,13 +298,25 @@ bool do_intersect_coplanar(const Triangle_3<K> &t,
 }
 
 
+template <class K>
+inline
+bool do_intersect_coplanar(const CGAL_WRAP(K)::Ray_3      &r,
+			   const CGAL_WRAP(K)::Triangle_3 &t, 
+			   const K & k )
+{
+  return do_intersect_coplanar(t, r, k);
+}
+
+
+} // namespace CGALi
+
 
 template <class K>
 inline bool do_intersect(const Ray_3<K> &r, 
 			 const Triangle_3<K> &t)
 
 {
-  return do_intersect(t,r,K());
+  return CGALi::do_intersect(t,r,K());
 }
 
 
@@ -304,24 +326,25 @@ inline bool do_intersect(const Triangle_3<K> &t,
 			 const Ray_3<K> &r)
 
 {
-  return do_intersect(t,r,K());
+  return CGALi::do_intersect(t,r,K());
 }
 
 
+/*
 template <class K>
 inline bool do_intersect(const Ray_3<K> &r, 
 			 const Triangle_3<K> &t,
 			 const K & k )
 {
-  return do_intersect(t,r,k);
+  return CGALi::do_intersect(t,r,k);
 }
-
+*/
 
 template <class K>
 inline bool do_intersect_coplanar(const Triangle_3<K> &t, 
 				  const Ray_3<K>      &r)
 {
-  return do_intersect_coplanar(t,r,K());
+  return CGALi::do_intersect_coplanar(t,r,K());
 }
 CGAL_END_NAMESPACE
 

@@ -29,10 +29,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
 
 template <class K>
-bool do_intersect(const Triangle_3<K> &t, 
-		  const Plane_3<K>   &h,
+bool do_intersect(const CGAL_WRAP(K)::Triangle_3 &t, 
+		  const CGAL_WRAP(K)::Plane_3   &h,
 		  const K & k)
 {
   
@@ -66,20 +67,35 @@ bool do_intersect(const Triangle_3<K> &t,
   }
 }
 
+
+template <class K>
+inline
+bool do_intersect(const CGAL_WRAP(K)::Plane_3   &h,
+		  const CGAL_WRAP(K)::Triangle_3 &t, 
+		  const K & k)
+{
+  return do_intersect(t, h, k);
+}
+
+
+} // namespace CGALi
+
+
 template <class K>
 inline bool do_intersect(const Triangle_3<K> &t, 
 			 const Plane_3<K>    &h)
 {
-  return do_intersect(t,h,K());
+  return CGALi::do_intersect(t,h,K());
 }
   
 template <class K>
 inline bool do_intersect(const Plane_3<K>    &h, 
 			 const Triangle_3<K> &t)
 {
-  return do_intersect(t,h,K());
+  return CGALi::do_intersect(t,h,K());
 }
 
+/*
 template <class K>
 inline bool do_intersect(const Plane_3<K>    &h, 
 			 const Triangle_3<K> &t,
@@ -87,7 +103,7 @@ inline bool do_intersect(const Plane_3<K>    &h,
 {
   return do_intersect(t,h,k);
 }
-
+*/
 
 
 CGAL_END_NAMESPACE

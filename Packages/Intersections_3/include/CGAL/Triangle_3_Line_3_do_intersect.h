@@ -29,10 +29,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
 
 template <class K>
-bool do_intersect(const Triangle_3<K> &t, 
-		  const Line_3<K>     &l,
+bool do_intersect(const CGAL_WRAP(K)::Triangle_3 &t, 
+		  const CGAL_WRAP(K)::Line_3     &l,
 		  const K & k )
 {
   
@@ -97,16 +98,28 @@ bool do_intersect(const Triangle_3<K> &t,
   const Orientation pqa = coplanar_orientation(p,q,a);
   
   return  coplanar_orientation(p,q,b) != pqa 
-    ||  coplanar_orientation(p,q,c) != pqa ;
-  
+    ||  coplanar_orientation(p,q,c) != pqa ;  
 }
+
+
+template <class K>
+inline
+bool do_intersect(const CGAL_WRAP(K)::Line_3     &l,
+		  const CGAL_WRAP(K)::Triangle_3 &t, 
+		  const K & k )
+{
+  return do_intersect(t, l, k);
+}
+
+
+} // namespace CGALi
 
 
 template <class K>
 bool do_intersect(const Triangle_3<K> &t, 
 		  const Line_3<K>     &l)
 {
-  return do_intersect(t,l,K());
+  return CGALi::do_intersect(t,l,K());
 }
 
 
@@ -114,10 +127,10 @@ template <class K>
 inline bool do_intersect(const Line_3<K> &l, 
 			 const Triangle_3<K> &t)
 {
-  return do_intersect(t,l,K());
+  return CGALi::do_intersect(t,l,K());
 }
 
-
+/*
 template <class K>
 inline bool do_intersect(const Line_3<K> &l, 
 			 const Triangle_3<K> &t,
@@ -125,6 +138,7 @@ inline bool do_intersect(const Line_3<K> &l,
 {
   return do_intersect(t,l,k);
 }
+*/
 
 CGAL_END_NAMESPACE
 

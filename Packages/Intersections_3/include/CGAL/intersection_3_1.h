@@ -41,12 +41,7 @@ do_intersect(const Plane_3<R> &plane1, const Plane_3<R>&plane2)
 {
     return ! intersection(plane1, plane2).is_empty();
 }
-CGAL_END_NAMESPACE
 
-
-
-
-CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -74,12 +69,7 @@ do_intersect(
     return do_intersect(p2,p1);
 }
 
-CGAL_END_NAMESPACE
 
-
-
-
-CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -106,11 +96,7 @@ do_intersect(
 {
     return do_intersect(p2,p1);
 }
-CGAL_END_NAMESPACE
 
-
-
-CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
@@ -131,137 +117,107 @@ do_intersect(const Plane_3<R> &p1, const Segment_3<R> &p2);
 
 template <class R>
 inline bool
-do_intersect(
-    const Segment_3<R> &p1,
-    const Plane_3<R> &p2)
+do_intersect(const Segment_3<R> &p1,
+	     const Plane_3<R> &p2)
 {
     return do_intersect(p2,p1);
 }
 
-CGAL_END_NAMESPACE
 
-
-
-
-CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
 intersection(const Line_3<R> &line,
-        const Bbox_3 &box) ;
+	     const Bbox_3 &box) ;
 
 template <class R>
 inline Object
 intersection(const Bbox_3 &box,
-        const Line_3<R> &line)
+	     const Line_3<R> &line)
 {
     return intersection(line, box);
 }
 
-CGAL_END_NAMESPACE
 
-
-
-CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
 intersection(const Ray_3<R> &ray,
-        const Bbox_3 &box) ;
+	     const Bbox_3 &box) ;
 
 template <class R>
 inline Object
 intersection(const Bbox_3 &box,
-        const Ray_3<R> &ray)
+	     const Ray_3<R> &ray)
 {
     return intersection(ray, box);
 }
 
-CGAL_END_NAMESPACE
 
-
-
-CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
 intersection(const Segment_3<R> &seg,
-        const Bbox_3 &box) ;
+	     const Bbox_3 &box) ;
 
 template <class R>
 inline Object
 intersection(const Bbox_3 &box,
-        const Segment_3<R> &seg)
+	     const Segment_3<R> &seg)
 {
     return intersection(seg, box);
 }
-CGAL_END_NAMESPACE
 
-
-
-CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
 intersection(const Line_3<R> &line,
-        const Iso_cuboid_3<R> &box) ;
+	     const Iso_cuboid_3<R> &box) ;
 
 template <class R>
 inline Object
 intersection(const Iso_cuboid_3<R> &box,
-        const Line_3<R> &line)
+	     const Line_3<R> &line)
 {
     return intersection(line, box);
 }
 
-CGAL_END_NAMESPACE
 
-
-
-CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
 intersection(const Ray_3<R> &ray,
-        const Iso_cuboid_3<R> &box) ;
+	     const Iso_cuboid_3<R> &box) ;
 
 template <class R>
 inline Object
 intersection(const Iso_cuboid_3<R> &box,
-        const Ray_3<R> &ray)
+	     const Ray_3<R> &ray)
 {
     return intersection(ray, box);
 }
 
-CGAL_END_NAMESPACE
 
-
-
-CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
 intersection(const Segment_3<R> &seg,
-        const Iso_cuboid_3<R> &box) ;
+	     const Iso_cuboid_3<R> &box) ;
 
 template <class R>
 inline Object
 intersection(const Iso_cuboid_3<R> &box,
-        const Segment_3<R> &seg)
+	     const Segment_3<R> &seg)
 {
     return intersection(seg, box);
 }
 
-CGAL_END_NAMESPACE
 
-
-
-CGAL_BEGIN_NAMESPACE
 
 template <class R>
 Object
 intersection(const Iso_cuboid_3<R> &box1,
-        const Iso_cuboid_3<R> &box2) ;
+	     const Iso_cuboid_3<R> &box2) ;
 
 CGAL_END_NAMESPACE
 
