@@ -18,34 +18,41 @@
 
 \ccDefinition
   
-The function \ccRefName\ does this and that.
+The function \ccRefName\ computes if a polygon is clockwise or counterclockwise
+oriented.
 
 \ccInclude{orientation_2.h}
 
-\ccGlobalFunction{void orientation_2();}
+\ccGlobalFunction{
+template <class ForwardIterator, class Traits>
+Orientation orientation_2(ForwardIterator first, ForwardIterator last,
+                                    const Traits& traits);}
+{
+\ccPrecond \ccc{is_simple_2(first, last, traits);}
+}
 
-\ccIsModel
 
-Concept
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{bottom_vertex_2}{requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+	  PolygonTraits\_2\ccIndexMainItem[c]{PolygonTraits_2}.
+	  Only the following members of this traits class are used:
+          \begin{itemize}
+            \item \ccc{Less_xy_2}
+            \item \ccc{less_xy_2_object}
+            \item \ccc{orientation_2_object}
+          \end{itemize}
+    \item \ccc{ForwardIterator::value_type} should be \ccc{Traits::Point_2},
+\end{enumerate}
+
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
-
-\ccExample
-
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{examples/Polygon/orientation_2_prog.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+\ccRefIdfierPage{PolygonTraits_2} \\
+\ccRefIdfierPage{CGAL::is_simple_2} \\
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>} \\
+\ccc{CGAL::Orientation}
 
 %% \ccIncludeExampleCode{examples/Polygon/orientation_2_prog.C}
 

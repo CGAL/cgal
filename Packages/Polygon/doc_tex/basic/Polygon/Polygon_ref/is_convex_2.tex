@@ -11,41 +11,44 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{is_convex_2}  %% add template arg's if necessary
+\begin{ccRefFunction}{is_convex_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[function]{} %% add further index entries
 
 \ccDefinition
   
-The function \ccRefName\ does this and that.
+The function \ccRefName\ computes if a polygon is convex.
 
-\ccInclude{is_convex_2.h}
+\ccInclude{CGAL/Polygon_2_algorithms.h}
 
-\ccGlobalFunction{void is_convex_2();}
+\ccGlobalFunction{template <class ForwardIterator, class Traits>
+bool is_convex_2(ForwardIterator first, ForwardIterator last,
+const Traits& traits); }
+{
+}
 
-\ccIsModel
 
-Concept
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{bottom_vertex_2}{requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+	  PolygonTraits\_2\ccIndexMainItem[c]{PolygonTraits_2}.
+	  Only the following members of this traits class are used:
+          \begin{itemize}
+            \item \ccc{Less_xy_2}
+            \item \ccc{Orientation_2}
+            \item \ccc{less_xy_2_object}
+            \item \ccc{orientation_2_object}
+          \end{itemize}
+    \item \ccc{ForwardIterator::value_type} should be \ccc{Traits::Point_2},
+\end{enumerate}
+
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
-
-\ccExample
-
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{examples/Polygon/is_convex_2_prog.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+\ccRefIdfierPage{PolygonTraits_2} \\
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>} \\
 
 %% \ccIncludeExampleCode{examples/Polygon/is_convex_2_prog.C}
 

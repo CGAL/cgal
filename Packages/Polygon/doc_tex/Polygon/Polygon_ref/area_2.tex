@@ -18,34 +18,44 @@
 
 \ccDefinition
   
-The function \ccRefName\ does this and that.
+The function \ccRefName\ computes the signed area of a polygon.
 
-\ccInclude{area_2.h}
+\ccInclude{CGAL/Polygon_2_algorithms.h}
 
-\ccGlobalFunction{void area_2();}
+\ccGlobalFunction{
+template <class ForwardIterator, class Traits>
+void 
+area_2( ForwardIterator first, ForwardIterator last,
+   	typename Traits::FT &result,
+        const Traits& traits);}
+{
+Computes the signed area of the polygon defined by the range of points
+\ccc{first} \ldots\ \ccc{last}. The area is returned in the parameter
+\ccc{result}. The sign is positive for counterclockwise polygons, negative for
+clockwise polygons. If the polygon is not simple, the area is not well defined.
+}
 
-\ccIsModel
-
-Concept
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{bottom_vertex_2}{requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+	  PolygonTraits\_2\ccIndexMainItem[c]{PolygonTraits_2}.
+	  Only the following members of this traits class are used:
+          \begin{itemize}
+            \item \ccc{Compute_area_2}
+            \item \ccc{Construct_triangle_2}
+            \item \ccc{FT}
+            \item \ccc{compute_area_2_object}
+            \item \ccc{construct_triangle_2_object}
+          \end{itemize}
+    \item \ccc{ForwardIterator::value_type} should be \ccc{Traits::Point_2},
+\end{enumerate}
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
-
-\ccExample
-
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{examples/Polygon/area_2_prog.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+\ccRefIdfierPage{PolygonTraits_2} \\
+\ccRefIdfierPage{CGAL::orientation_2} \\
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>} \\
 
 %% \ccIncludeExampleCode{examples/Polygon/area_2_prog.C}
 

@@ -262,6 +262,10 @@ Packages/Planar_map/doc_tex/basic/Topological_map/dcel.gif -text svneol=unset#un
 Packages/Planar_map/doc_tex/basic/Topological_map/dcel.ipe -text
 Packages/Planar_map/doc_tex/basic/Topological_map/my_face.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/basic/Topological_map/my_face.ipe -text
+Packages/Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#unset
+Packages/Polygon/doc_tex/Polygon/pgn_algos.ipe -text
+Packages/Polygon/doc_tex/basic/Polygon/pgn_algos.gif -text svneol=unset#unset
+Packages/Polygon/doc_tex/basic/Polygon/pgn_algos.ipe -text
 Packages/Polyhedron/doc_tex/Polyhedron/add_facet1.gif svneol=native#unset
 Packages/Polyhedron/doc_tex/Polyhedron/add_facet2.gif svneol=native#unset
 Packages/Polyhedron/doc_tex/Polyhedron/cube_subdiv.gif -text svneol=unset#unset

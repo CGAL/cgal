@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Polygon_2<PolygonTraits_2, Sequence>}
+\begin{ccRefClass}{Polygon_2<PolygonTraits_2, Container>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -87,6 +87,7 @@ Their value type is \ccStyle{Segment_2}.
       the range \ccStyle{[first,last)}.
       The value type of \ccStyle{InputIterator} must be
                  \ccStyle{Point_2}.
+    }
 
   \ccConstructor{template <class ForwardCirculator>
       Polygon_2( ForwardCirculator start); }
@@ -94,6 +95,7 @@ Their value type is \ccStyle{Segment_2}.
       the range \ccStyle{[start,start]}.
       \ccPrecond The value type of \ccStyle{InputIterator} is
                  \ccStyle{Point_2}.
+    }
 
 
 \ccOperations
@@ -329,7 +331,7 @@ algorithms were used and what their complexity they have.
 
 The following code fragment creates a polygon and checks if it is convex.
 
-\ccIncludeVerbatim{Polygon/Polygon.C}
+\ccIncludeVerbatim{examples/Polygon/Polygon.C}
 
 
 %% \ccIncludeExampleCode{examples/Polygon/Polygon_2_prog.C}

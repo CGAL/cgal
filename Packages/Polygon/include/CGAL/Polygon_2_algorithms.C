@@ -126,14 +126,9 @@ Bbox_2 bbox_2(InputIterator first, InputIterator last)
 //-----------------------------------------------------------------------//
 //                          area_2
 //-----------------------------------------------------------------------//
-// uses Traits::determinant_2
+// uses Traits::
+//  implemented in header file
 
-// template <class ForwardIterator, class FT, class Traits>
-// void area_2(ForwardIterator first,
-//                 ForwardIterator last,
-//                 FT& result,
-//                 const Traits& traits)
-//{
 
 //-----------------------------------------------------------------------//
 //                          is_convex_2

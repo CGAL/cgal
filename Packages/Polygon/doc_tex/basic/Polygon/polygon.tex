@@ -29,9 +29,6 @@ The parameter \ccStyle{Traits} defines the types and predicates
 that are used in the polygon class and the polygon algorithms.
 For example \ccStyle{Traits::Point_2} denotes the type of the vertices
 of the polygon. 
-A default polygon traits class \ccStyle{Polygon_traits_2<R>} is provided 
-(see Section~\ref{sec:poly_default}), where \ccStyle{R} is a representation 
-class.
 The parameter \ccStyle{Container} specifies the type of container that is 
 used to store the sequence of vertices of the polygon, e.g.\ a list, a vector, 
 a tree, etc.
@@ -39,11 +36,6 @@ The type \ccStyle{Container} should fulfill the requirements of a sequence
 container given in \cite{ms-strg-96}. 
 The value type of the container should be the same as the point type of the 
 traits class.
-
-%{\em Note}: Currently, a polygon declaration looks like
-%\ccStyle{Polygon_2<Traits, list<Traits::Point_2> >}.
-%When nested templates become available this might be simplified to
-%\ccStyle{Polygon_2<Traits, list>}.
 
 \subsubsection*{Assertions}
 The polygon code uses infix \ccc{POLYGON} in the assertions,
@@ -61,9 +53,10 @@ others are mutable.
 
 \ccExample
 
-The following code fragment creates a polygon and checks if it is convex.
 
-\ccIncludeVerbatim{Polygon/Polygon.C}
+The following code fragment creates a polygon and does some checks.
+
+\ccIncludeExampleCode{examples/Polygon/Polygon.C}
 
 \end{ccClassTemplate}
 
@@ -89,3 +82,18 @@ intersection test. For the implementation a plane sweep algorithm is used, see a
 The complexity of the algorithm is $O(n \log n)$ (worst case), where $n$ is 
 the number of points in the range \ccStyle{[first,last)}.
 
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center} \IpeScale{100} \Ipe{pgn_algos.ipe} \end{center}
+\end{ccTexOnly}
+\caption{A polygon and some points
+\label{I1_Fig_a_polygon}}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=pgn_algos.gif align=center alt="Example polygon">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+\ccIncludeExampleCode{examples/Polygon/polygon_algorithms.C}
