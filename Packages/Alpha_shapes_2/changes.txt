@@ -1,4 +1,7 @@
-
+Version 11.36 [af]
+- Made predicates independent from CGAL::Cartesian
+- Switched from Cartesian to Filtered_kernel<Simple_cartesian<double> >
+- Removed  Alpha_shape_2<..>::op_vect_seg(std::vector<Edge>&)
 - Introduced caching for the alpha shape vertex and edge lists
 
 Version 11.35 [af]
