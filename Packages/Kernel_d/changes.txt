@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.82 (16 May 2003) [af]
+  - Added #include <cstddef> // for std::size_t, std::ptrdiff_t
+
 
 0.9.81 (9 May 2003)
   - Fixed <strstream> to <sstream>.
