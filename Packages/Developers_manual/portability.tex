@@ -262,29 +262,70 @@ for more explanation of some of these problems and known workarounds.
 
 \begin{description}
 \item[{\tt CGAL\_CFG\_CCTYPE\_MACRO\_BUG}]~\\
- \index{cctype functions@{\tt cctype} functions!as macros}
- This flag is set if a compiler defines the
- standard C library functions in {\tt cctype} ({\tt isdigit} \etc) as macros.
- According to the standard they have to be functions.
+ \index{cctype functions@{\tt cctype} functions!as macros} %
+ \ccIndexSubitem{compiler bugs}{macros} %
+ This flag is set if a compiler defines the standard C library
+ functions in {\tt cctype} ({\tt isdigit} \etc) as macros.  According
+ to the standard they have to be functions.
+ 
+\item[{\tt CGAL\_CFG\_EARLY\_INSTANTIATION\_BUG}]~\\
+  \ccIndexMainItem{early instantiation} %
+  \ccIndexSubitem{compiler bugs}{early instantiation} %
+  This flag is set, if a compiler instantiates a class template
+  \ccc{A<>} too early, where \ccc{A<>} is declared in the scope of
+  another class template \ccc{B<>}, such that \ccc{B<>} is the
+  template parameter of \ccc{A<>}. This bug shows up on VC~7.0
+  (\ccc{cl1300}).
 
 \item[{\tt CGAL\_CFG\_ENUM\_BUG}]~\\
- \ccIndexMainItem{enumeratrion bug}
+ \ccIndexMainItem{enumeration types} %
+ \ccIndexSubitem{compiler bugs}{enumeration types} %
  This flag is set, if the compiler does not promote enumeration types
  (which depend on a template parameter) correctly when they are used
  as int template arguments (\eg, Borland 5.5).
 
+\item[{\tt CGAL\_CFG\_EXPLICIT\_SPECIALIZATION\_MEMBER\_DECLARATION\_BUG}]~\\
+ \ccIndexMainItem{explicit specialization} %
+ \ccIndexSubitem{compiler bugs}{specializations} %
+ This flag is set, if a compiler does not support the declaration of
+ the specialized member. This is useful when you need to put the
+ definition in a \ccc{.C} file. The solution for VC~7.0 (\ccc{cl1300})
+ is to remove the declaration and to make the member inline to avoid
+ linker errors (more definitions in multiple units).
+
+\item[{\tt CGAL\_CFG\_LONGNAME\_BUG}]~\\
+ \ccIndexMainItem{long-name problem} %
+ \ccIndexSubitem{compiler bugs}{long symbol names} %
+ This flag is set if a compiler (or assembler or linker) has problems 
+ with long symbol names. 
+
 \item[{\tt CGAL\_CFG\_MATCHING\_BUG\_2}]~\\
- \ccIndexSubitem{matching}{function template}
- This flag is set if the compiler does not match the most
- specialized instance of a function template correctly,
- but complains about multiple matches
- (\eg, SGI 7.2).
+ \ccIndexSubitem{matching}{function template arguments} %
+ \ccIndexSubitem{compiler bugs}{function template overloading} %
+ This flag is set if the compiler does not match the most specialized
+ instance of a function template correctly, but complains about
+ multiple matches (\eg, SGI 7.2).
 
 \item[{\tt CGAL\_CFG\_MATCHING\_BUG\_3}]~\\
- \ccIndexSubitem{matching}{pointer type arguments}
-  This flag is set, if the compiler does not match function arguments 
-  of pointer type correctly, when the return type depends on 
-  the parameter's type (\eg, sun C++ 5.3).
+ \ccIndexSubitem{matching}{pointer type arguments} %
+ \ccIndexSubitem{compiler bugs}{function template overloading} %
+ This flag is set, if the compiler does not match function arguments
+ of pointer type correctly, when the return type depends on the
+ parameter's type (\eg, sun C++ 5.3).
+
+\item[{\tt CGAL\_CFG\_MATCHING\_BUG\_4}]~\\
+ \ccIndexSubitem{matching}{function template arguments} %
+ \ccIndexSubitem{compiler bugs}{function template overloading} %
+ This flag is set, if a compiler cannot distinguish the signature of
+ overloaded function templates, which have arguments whose type
+ depends on the template parameter.  This bug appears for example on
+ Sunpro~5.3 and 5.4.
+
+\item[{\tt CGAL\_CFG\_NET2003\_MATCHING\_BUG}]~\\
+ \ccIndexSubitem{matching}{member functions} %
+ \ccIndexSubitem{compiler bugs}{member functions} %
+ This flag is set, if the compiler does not match a member definition
+ to an existing declaration (eg., cl1310 Beta).
 
 \item[{\tt CGAL\_CFG\_NO\_AUTOMATIC\_TEMPLATE\_INCLUSION}]~\\
  \ccIndexSubitem{source files}{template implementation files}
@@ -303,7 +344,6 @@ for more explanation of some of these problems and known workarounds.
  {\tt .cxx}, {\tt .CXX}, or {\tt .cc}. The flag
  is set if this feature is missing.
  
-
 \item[{\tt CGAL\_CFG\_NO\_BIG\_ENDIAN}]~\\
   \ccIndexMainItem{big-endian}
   \ccIndexMainItem{little-endian}
@@ -311,92 +351,89 @@ for more explanation of some of these problems and known workarounds.
   big-endian and little-endian machines.  This flag is
   set if it is a little-endian machine.
  
-\item[{\tt CGAL\_CFG\_NO\_ITERATOR\_TRAITS}]~\\
-  \ccIndexMainItem{iterator traits}
-  The class \texttt{std::iterator\_traits} is part of the \texttt{std} library.
-  It is used to access certain properties of iterators, such as their value
-  type or iterator category (forward, bidirectional, \etc).
-  This flag is set if \texttt{std::iterator\_traits} is not fully supported 
-  including their use in a template class, as a default template
-  argument, and as a return type of global function.
-
 \item[{\tt CGAL\_CFG\_NO\_KOENIG\_LOOKUP}]~\\
-  \ccIndexMainItem{Koenig lookup}
- This flag is set if the compiler does not support the operator Koenig
- lookup. That is, it does not search in the namespace of the arguments for
- the function.
+  \ccIndexMainItem{Koenig lookup} %
+  \ccIndexSubitem{compiler bugs}{name lookup} %
+  This flag is set if the compiler does not support the operator
+  Koenig lookup. That is, it does not search in the namespace of the
+  arguments for the function.
  
 \item[{\tt CGAL\_CFG\_NO\_LIMITS}]~\\
-  \ccIndexMainItem{limits} This flag is set if a compiler does not
-  know the limits.
+  \ccIndexMainItem{limits} %
+  This flag is set if a compiler does not know the limits.
 
 \item[{\tt CGAL\_CFG\_NO\_LOCALE}]~\\
- \ccIndexMainItem{locale}
- This flag is set if a compiler does not know the locale classic. 
+  \ccIndexMainItem{locale} %
+  This flag is set if a compiler does not know the locale classic. 
 
-\item[{\tt CGAL\_CFG\_NO\_LONGNAME\_PROBLEM}]~\\
- \ccIndexMainItem{long-name problem}
- This flag is set if a compiler (or assembler or linker) has problems 
- with long names. 
-
+\item[{\tt CGAL\_CFG\_NO\_LONG\_LONG}]~\\
+  \index{long long@{\tt long long}} %
+  The \ccc{long long} built-in integral type is not part of the
+  \textsc{Iso} C++ standard, but many compilers support it
+  nevertheless, since it is part of the \textsc{Iso} C standard. This
+  flag is set if it is supported.
+  
 \item[{\tt CGAL\_CFG\_NO\_PARTIAL\_CLASS\_TEMPLATE\_SPECIALISATION}]~\\
- \ccIndexMainItem{partial specialization}
- This flag is set if a compiler doesn't support partial specialization 
- of class templates.
+  \ccIndexMainItem{partial specialization} %
+  \ccIndexSubitem{compiler bugs}{partial specialization} %
+  This flag is set if a compiler does not support partial
+  specialization of class templates.
 
-\item[{\tt CGAL\_CFG\_NO\_SCOPE\_MEMBER\_FUNCTION\_PARAMETERS}]~\\
- \ccIndexSubitem{scope operator}{with parameters}
- \ccIndexSubitem{inlining}{member function}
- The parameter types of member functions might contain a scope
- operator. This works as long as the member function is implemented
- inline in the class. If the member function is implemented external
- not all compilers are able to parse the scope operators correctly.
- This flag is set if the compiler fails parsing.
- 
-\item[{\tt CGAL\_CFG\_NO\_STANDARD\_HEADERS}]~\\ 
-  \ccIndexSubitem{header files}{standard}
-  This flag is
-  set if a compiler does not support the new standard headers (\ie,
-  without the {\tt .h} suffix).
+\item[{\tt CGAL\_CFG\_NO\_SFINAE}]~\\ 
+  \ccIndexSubitem{compiler bugs}{template instantiation} %
+  \ccIndexMainItem{sfinae} %
+  \ccIndexMainItem{substitution failure is not an error} %
+  This flag is set if the compiler doesn't support the SFINAE
+  principle (Substitution Failure Is Not An Error), which we
+  eventually plan to use for the next version of the kernel design.
  
 \item[{\tt CGAL\_CFG\_NO\_STDC\_NAMESPACE}]~\\ 
-  \index{C standard library!and namespace std@and namespace \ccStyle{std}} 
-  \ccIndexSubitem{namespace}{\ccFont std}
-  This flag is
-  set if a compiler does not put the parts of the standard library
-  inherited from the standard C library in namespace {\ccFont std} (only tests
-  for the symbols used in \cgal).
+  \index{C standard library!and namespace std@and namespace \ccStyle{std}} %
+  \ccIndexSubitem{namespace}{\ccFont std} %
+  This flag is set if a compiler does not put the parts of the
+  standard library inherited from the standard C library in namespace
+  {\ccFont std} (only tests for the symbols used in \cgal).
  
-\item[{\tt CGAL\_CFG\_NO\_TEMPLATE\_FRIEND\_DISTINCTION}]~\\ 
-  \ccIndexSubsubitem{template}{function}{friend declaration}
-  \ccIndexSubitem{friend declaration}{function template}
-  Checks whether the compiler wants to have a \texttt{<>} in friend
-  declarations of template functions.
-
-\item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_DEPENDING\_FUNCTION\_PARAM}]~\\ 
-  \ccIndexSubitem{template}{template parameter}
-  This flag is set of a compiler does not support member functions that have
-  parameter types that are dependent on the template parameter list of the
-  class and are implemented outside of the class body (\eg, g++ 2.95.2).
+\item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_DEPENDING\_FUNCTION\_PARAM}]~\\
+  \ccIndexSubitem{compiler bugs}{template parameters} %
+  \ccIndexSubitem{template}{template parameter} %
+  This flag is set of a compiler does not support member functions
+  that have parameter types that are dependent on the template
+  parameter list of the class and are implemented outside of the class
+  body (\eg, g++ 2.95.2).
   
-\item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_PARAM}]~\\ 
-  \ccIndexSubitem{template}{template parameter}
-  Nested
-  templates in template parameter, such as ``\texttt{template <
+\item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_PARAM}]~\\
+  \ccIndexSubitem{compiler bugs}{template parameters} %
+  \ccIndexSubitem{template}{template parameter} %
+  Nested templates in template parameter, such as ``\texttt{template <
     template <class T> class A>}'' are not supported by any compiler.
   This flag is set if they are not supported.
 
-\item[{\tt CGAL\_CFG\_TYPENAME\_BUG}]~\\
- \ccIndexSubitem{\tt typename}{and template parameter}
- \index{template!argument!with typename@with \texttt{typename}}
- This flag is set if a compiler complains about {\tt typename}, 
- when passing a dependent type as template argument.
+\item[{\tt CGAL\_CFG\_OUTOFLINE\_TEMPLATE\_MEMBER\_DEFINITION\_BUG}]~\\
+  \ccIndexSubitem{compiler bugs}{member definitions} %
+  This flag is set, if a compiler does not support the definition of
+  member templates out of line, \ie, outside class scope. The solution
+  is to put the definition inside the class. This is a feature of VC~6
+  (\ccc{cl1200}) and VC~7.0 (\ccc{cl1300}).
 
-\item[{\tt CGAL\_CFG\_USING\_USING\_BUG}]~\\
- \ccIndexSubitem{\tt using}{nested}
- This flag is set if a compiler does not accept a \texttt{using}
- decrlataion referring to a symbol that is again declared by a 
- using declaration.
+\item[{\tt CGAL\_CFG\_RETURN\_TYPE\_BUG}]~\\
+  \ccIndexMainItem{overloading on return type} %
+  \ccIndexSubitem{compiler bugs}{function template overloading} %
+  This flag is set, if a compiler does not accept the overloading of a
+  template function, when the template returns a reference, while the
+  overloading does not. This bug shows up on VC~6 (\ccc{cl1200}) and
+  VC~7.0 (\ccc{cl1300}).
+
+\item[{\tt CGAL\_CFG\_USING\_NAMESPACE\_BUG}]~\\
+  \ccIndexSubitem{compiler bugs}{namespaces} %
+  This flag is set, if a compiler cannot handle using directives
+  (using namespace \ldots) across different namespaces. Created to
+  work around a VC~7.0 (\ccc{cl1300}) bug.
+
+\item[{\tt CGAL\_CFG\_VC7\_PRIVATE\_TYPE\_BUG}]~\\
+  \ccIndexSubitem{compiler bugs}{access control} %
+  This is a test-case for a bug in VC~7.0 (\ccc{cl1300}) beta2 that
+  occurs in the kernel. The flag is set, if the bug is present.
 
 \end{description}
 \ccIndexMainItemEnd{workaround flags}
@@ -731,6 +768,15 @@ they are not forced to.
   put into an \stl\ vector (\eg, SunPro 4.2 with STLport-3.01). This
   program is used to detect this bug.
 
+\item[{\tt CGAL\_CFG\_NO\_ITERATOR\_TRAITS}]~\\
+  \ccIndexMainItem{iterator traits}
+  The class \texttt{std::iterator\_traits} is part of the \texttt{std} library.
+  It is used to access certain properties of iterators, such as their value
+  type or iterator category (forward, bidirectional, \etc).
+  This flag is set if \texttt{std::iterator\_traits} is not fully supported 
+  including their use in a template class, as a default template
+  argument, and as a return type of global function.
+
 \item[{\tt CGAL\_CFG\_MATCHING\_BUG\_1}]~\\
  This flag is set if the compiler does not match a function
  argument of type {\tt typename T::A} correctly.
@@ -822,6 +868,20 @@ they are not forced to.
   This flag is set if the compiler does not support the operator
   \ccc{reinterpret_cast}.
 
+\item[{\tt CGAL\_CFG\_NO\_SCOPE\_MEMBER\_FUNCTION\_PARAMETERS}]~\\
+  \ccIndexSubitem{scope operator}{with parameters} %
+  \ccIndexSubitem{inlining}{member function} %
+  The parameter types of member functions might contain a scope
+  operator. This works as long as the member function is implemented
+  inline in the class. If the member function is implemented external
+  not all compilers are able to parse the scope operators correctly.
+  This flag is set if the compiler fails parsing.
+ 
+\item[{\tt CGAL\_CFG\_NO\_STANDARD\_HEADERS}]~\\ 
+  \ccIndexSubitem{header files}{standard} %
+  This flag is set if a compiler does not support the new standard
+  headers (\ie, without the {\tt .h} suffix).
+ 
 \item[{\tt CGAL\_CFG\_NO\_STATIC\_CAST}]~\\
   This flag is set if the compiler does not support the operator
   \ccc{static_cast}.
@@ -844,6 +904,12 @@ they are not forced to.
   compilers know namespace \ccStyle{std} but do not implement namespaces in
   general.
 
+\item[{\tt CGAL\_CFG\_NO\_TEMPLATE\_FRIEND\_DISTINCTION}]~\\ 
+  \ccIndexSubsubitem{template}{function}{friend declaration}
+  \ccIndexSubitem{friend declaration}{function template}
+  Checks whether the compiler wants to have a \texttt{<>} in friend
+  declarations of template functions.
+
 \item[{\tt CGAL\_CFG\_NO\_TEMPLATE\_FUNCTION\_MATCHING}]~\\
   Some compilers (like g++ 2.7.2) follow the old rules for argument
   matching stated in the ARM: template functions have to match
@@ -862,6 +928,19 @@ they are not forced to.
 \item[{\tt CGAL\_CFG\_RETURN\_TYPE\_BUG\_2}]~\\
   The following flag is set, if a compiler does not allow the return
   type \ccc{A<T>::B} of a function or class method.
+
+\item[{\tt CGAL\_CFG\_TYPENAME\_BUG}]~\\
+ \ccIndexSubitem{\tt typename}{and template parameter} %
+ \index{template!argument!with typename@with \texttt{typename}} %
+ This flag is set if a compiler complains about {\tt typename}, when
+ passing a dependent type as template argument.
+
+\item[{\tt CGAL\_CFG\_USING\_USING\_BUG}]~\\
+ \ccIndexSubitem{\tt using}{nested} %
+ This flag is set if a compiler does not accept a \texttt{using}
+ declaration referring to a symbol that is again declared by a using
+ declaration.
+
 \end{description}
 \ccIndexSubitemEnd{workaround flags}{obsolete}
 
