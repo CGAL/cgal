@@ -67,7 +67,7 @@
        CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
        CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS )
 
-int main(int argc, char* argv[])
+int main()
 {
   std::cout << "A try to run test with LEDA traits but LEDA is not installed.";
   std::cout << std::endl;

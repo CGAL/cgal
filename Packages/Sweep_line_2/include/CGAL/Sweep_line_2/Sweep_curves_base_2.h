@@ -77,6 +77,12 @@ protected:
   
   //template <class Alloc_ = CGAL_ALLOCATOR(Curve_node_rep) >
   class Curve_node;
+  class Intersection_point_node;
+
+  // SUNPRO requires these friends.
+  friend class Curve_node_rep;
+  friend class Curve_node;
+  friend class Intersection_point_node;
   
   //template <class Point_plus>
   class Curve_node_rep { 
@@ -159,7 +165,7 @@ protected:
     typedef  typename Traits::X_curve                        X_curve; 
     typedef  typename Traits::Point                          Point;
     
-    typedef Curve_node_rep::Points_container             Points_container;
+    typedef typename Curve_node_rep::Points_container    Points_container;
     typedef typename Points_container::iterator          Points_iterator;
     typedef typename Points_container::const_iterator    Points_const_iterator;
 
@@ -1837,7 +1843,7 @@ protected:
            curves.begin(); cv_iter != curves.end(); cv_iter++){
       X_curve cv = cv_iter->get_curve(), left_cv, 
         right_cv = cv_iter->get_curve();
-      for (Curve_node::Points_const_iterator points_iter = 
+      for (typename Curve_node::Points_const_iterator points_iter = 
              cv_iter->points_begin(); 
            points_iter != cv_iter->points_end(); points_iter++){
         // make surve the splitting is not at the edge points.
@@ -1988,8 +1994,6 @@ protected:
     cout<<std::endl;
   }
   
-  friend class Curve_node_rep;
-  friend class Intersection_point_node;
   friend class less_xy;
   friend class less_yx;
 
@@ -2000,12 +2004,3 @@ protected:
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
-
-
-
-
