@@ -19,7 +19,6 @@
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Pm_with_intersections.h>
-#include <CGAL/sweep_to_construct_planar_map_2.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/Pm_Window_stream.h>
@@ -241,11 +240,9 @@ public:
   virtual void op()
   {
     Strategy strategy;
-    Pm pm(&strategy);
-    Traits traits;
-    CGAL::sweep_to_construct_planar_map_2(m_curveList.begin(),
-                                          m_curveList.end(),
-                                          traits, pm);
+    Pmwx pm(&strategy);
+    pm.insert(m_curveList.begin(), m_curveList.end());
+
     m_window->set_flush(0);
     (*m_window) << pm;
     m_window->set_flush(1);
@@ -290,7 +287,7 @@ public:
    */
   void clean()
   {
-    Basic_Pm::init();
+    Basic_Pm::clean();
     delete m_window;
   }
   
