@@ -48,7 +48,8 @@ bool test_svd(InputStream& is, const SVD&)
   typedef typename SVD2::Output_sites_iterator     Output_sites_iterator;
   end_testing("type definitions");
 
-  Point_2 p1(0,0), p2(0,1), p3(1,0), p4(1,1), p5(10,1);
+  Point_2 p1(0,0), p2(0,1), p3(1,0), p4(1,1);
+  //  Point_2 p5(10,1);
   Site_2 t1 = Site_2::construct_site_2(p1);
   Site_2 t2 = Site_2::construct_site_2(p2);
   Site_2 t3 = Site_2::construct_site_2(p3);
