@@ -30,8 +30,8 @@
 #include <CGAL/Nef_S2/Generic_handle_map.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #include <list>
-#undef _DEBUG
-#define _DEBUG 109
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 109
 #include <CGAL/Nef_S2/debug.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -25,8 +25,8 @@
 #include <CGAL/Nef_S2/Sphere_circle.h>
 #include <CGAL/Nef_S2/Sphere_direction.h>
 
-#undef _DEBUG
-#define _DEBUG 307
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 307
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -26,8 +26,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 
-#undef _DEBUG
-#define _DEBUG  23
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG  23
 #include <CGAL/Nef_S2/debug.h>
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <CGAL/Nef_S2/Sphere_map.h>

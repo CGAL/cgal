@@ -7,8 +7,8 @@
 #include <LEDA/graph.h>
 #include <LEDA/graph_misc.h>
 
-#undef _DEBUG
-#define _DEBUG 211
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 211
 #include <CGAL/Nef_S2/debug.h>
 
 template <typename R, typename ITERATOR>

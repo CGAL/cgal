@@ -25,8 +25,8 @@
 #include <CGAL/Nef_2/geninfo.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
-#undef _DEBUG
-#define _DEBUG 47
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 47
 #include <CGAL/Nef_S2/debug.h>
 
 

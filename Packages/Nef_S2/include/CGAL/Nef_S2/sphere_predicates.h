@@ -2,8 +2,8 @@
 #define CGAL_SPHERE_PREDICATES_H
 
 #include <CGAL/basic.h>
-#undef _DEBUG
-#define _DEBUG 23
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 23
 #include <CGAL/Nef_2/debug.h>
 #include <vector>
 

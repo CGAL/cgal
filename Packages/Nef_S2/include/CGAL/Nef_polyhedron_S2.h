@@ -33,8 +33,8 @@
 
 #include <vector>
 #include <list>
-#undef _DEBUG
-#define _DEBUG 121
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 121
 #include <CGAL/Nef_S2/debug.h>
 
 CGAL_BEGIN_NAMESPACE

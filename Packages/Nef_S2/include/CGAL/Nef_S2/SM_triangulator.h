@@ -30,8 +30,8 @@
 #include <CGAL/Nef_S2/SM_io_parser.h>
 #include <CGAL/Nef_S2/SM_constrained_triang_traits.h>
 
-#undef _DEBUG
-#define _DEBUG 137
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 137
 #include <CGAL/Nef_S2/debug.h>
 
 #define CGAL_USING(t) typedef typename Base::t t

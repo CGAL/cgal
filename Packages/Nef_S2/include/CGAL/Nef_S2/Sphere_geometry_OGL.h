@@ -13,8 +13,8 @@
 #include <string>
 #include <vector>
 
-#undef _DEBUG
-#define _DEBUG 151
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 151
 #include <CGAL/Nef_S2/debug.h>
 
 #define LGREY CGAL::Color(170,170,200)
