@@ -34,45 +34,43 @@ namespace CGAL {
   public:
     typedef Separator_ Separator;
     typedef Item_ Item;
+    typedef Item** Item_iterator;
     typedef typename Kernel_traits<Item>::Kernel K;
     typedef typename K::FT NT;
-    typedef Item** Item_iterator;
-    typedef typename std::list<Item>::iterator InputIterator;
     typedef std::pair<Item*,NT> Item_with_distance;
 
   private:
 
-    int Bucket_size;
-    Split_rule Selected_split_rule;
-    NT Aspect_ratio;
-    bool Use_extended_nodes;
+    int the_bucket_size;
+    Split_rule the_selected_split_rule;
+    NT the_aspect_ratio;
+    bool use_extended_nodes_option;
 
   public:
 
         
-
 	Kd_tree_traits_point(int bucket_size=1, 
 			     Split_rule My_split_rule=SLIDING_MIDPOINT,
 			     NT aspect_ratio=3.0, 
 			     bool use_extended_nodes=true) {
-		Bucket_size = bucket_size;
-		Selected_split_rule = My_split_rule;
-		Aspect_ratio = aspect_ratio;
-		Use_extended_nodes = use_extended_nodes;
+		the_bucket_size = bucket_size;
+		the_selected_split_rule = My_split_rule;
+		the_aspect_ratio = aspect_ratio;
+		use_extended_nodes_option = use_extended_nodes;
 	}
 
-    	NT aspect_ratio() {return Aspect_ratio;}
-	Split_rule  selected_split_rule() {return Selected_split_rule;}
-	Shrink_rule selected_shrink_rule() {return NONE;}
-    	unsigned int bucket_size() {return Bucket_size;}
-	bool use_extended_nodes() {return Use_extended_nodes;}
-        bool nearest_neighbour_search() {return Use_nearest_neighbour_search;}
+    	NT aspect_ratio() const {return the_aspect_ratio;}
+	Split_rule  selected_split_rule() const {return the_selected_split_rule;}
+	Shrink_rule selected_shrink_rule() const {return NONE;}
+    	unsigned int bucket_size() const {return the_bucket_size;}
+	bool use_extended_nodes() const {return use_extended_nodes_option;}
 
 	// split c0 in c0 and c1
-    	Separator* split(Points_container<Item>& c0, Points_container<Item>& c1) {
+    	Separator* split(Points_container<Item>& c0, Points_container<Item>& c1) 
+	{
 		Separator* sep;
 
-		switch (Selected_split_rule) {
+		switch (the_selected_split_rule) {
 
 			case SLIDING_MIDPOINT:
 				{Sliding_MidPoint<Item> M;

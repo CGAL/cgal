@@ -36,9 +36,7 @@ public:
   typedef typename Traits::NT NT;
   typedef typename Traits::Separator Separator;
   typedef Base_node<Traits> Node;
-  // typedef CGAL::Point_2< CGAL::Cartesian<NT> > Point_2D;
-  // typedef CGAL::Segment_2< CGAL::Cartesian<NT> > Segment_2D;
-
+  
 private:
 
   NT low_val;

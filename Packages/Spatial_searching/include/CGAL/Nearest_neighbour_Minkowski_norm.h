@@ -35,7 +35,7 @@
 // #include <CGAL/Kd_tree_traits_point.h>
 // #include <CGAL/Weighted_Minkowski_distance.h>
 
-using std::list; // to avoid compiler crash on MSVC++
+// using std::list; ?? to avoid compiler crash on MSVC++
 
 namespace CGAL {
 
@@ -68,7 +68,8 @@ class Priority_higher
                 search_nearest = s.Search_nearest();
         }
         //highest priority is smallest distance
-        bool operator() (Node_with_distance* n1, Node_with_distance* n2) const {
+        bool operator() (Node_with_distance* n1, Node_with_distance* n2) const 
+	{
                 if (search_nearest) { return (n1->second > n2->second);}
                 else {return (n2->second > n1->second);}
         }
@@ -87,7 +88,8 @@ class Distance_smaller
         }
 
         //highest priority is smallest distance
-        bool operator() (Item_with_distance* p1, Item_with_distance* p2) const {
+        bool operator() (Item_with_distance* p1, Item_with_distance* p2) const 
+	{
 		if (search_nearest) {return (p1->second > p2->second);}
                 else {return (p2->second > p1->second);}
         }
@@ -249,12 +251,15 @@ class Distance_smaller
 
 	reference_count=1;
         Orthogonal_Distance_instance=&tr;
-        multiplication_factor=Orthogonal_Distance_instance->transformed_distance(1.0+Eps);
+        multiplication_factor=
+	Orthogonal_Distance_instance->transformed_distance(1.0+Eps);
 
         if (search_nearest) distance_to_root=
-        Orthogonal_Distance_instance->lower_bound_distance_to_box(q,*(tree.bounding_box()));
+	Orthogonal_Distance_instance->lower_bound_distance_to_box(q,
+						*(tree.bounding_box()));
         else distance_to_root=
-   	Orthogonal_Distance_instance->upper_bound_distance_to_box(q,*(tree.bounding_box()));
+   	Orthogonal_Distance_instance->upper_bound_distance_to_box(q,
+						*(tree.bounding_box()));
 
         std::cout << "distance_to_root=" << distance_to_root << std::endl;
 
@@ -269,7 +274,8 @@ class Distance_smaller
 
 
 
-        Node_with_distance *The_Root = new Node_with_distance(tree.root(),distance_to_root);
+        Node_with_distance *The_Root = new Node_with_distance(tree.root(),
+						distance_to_root);
         PriorityQueue.push(The_Root);
 
         // rd is the distance of the top of the priority queue to q
@@ -411,11 +417,12 @@ class Distance_smaller
 }; // class Nearest neighbour_L2
 
 template <class Tree_traits, class Search_traits, class Orthogonal_Distance>
-void swap (typename Nearest_neighbour_PQ<Tree_traits, Search_traits, Orthogonal_Distance>::iterator& x,
-typename 
-Nearest_neighbour_PQ<Tree_traits, Search_traits, Orthogonal_Distance>::iterator& y) {
-typename 
-Nearest_neighbour_PQ<Tree_traits, Search_traits, Orthogonal_Distance>::iterator::Iterator_implementation
+void swap (typename Nearest_neighbour_PQ<Tree_traits, 
+		Search_traits, Orthogonal_Distance>::iterator& x,
+typename Nearest_neighbour_PQ<Tree_traits, Search_traits, 
+				Orthogonal_Distance>::iterator& y) {
+typename Nearest_neighbour_PQ<Tree_traits, Search_traits, 
+		Orthogonal_Distance>::iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;

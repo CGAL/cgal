@@ -68,8 +68,10 @@ public:
   Plane_separator<NT>* rule(Points_container<P>& c, NT Aspect_ratio) {
 		// find legal cut with max spread
 	    Plane_separator<NT>* sep = 
-        new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),0.0);
-        sep->set_cutting_val(c.balanced_fair(sep->cutting_dimension(),Aspect_ratio));
+        new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),
+				0.0);
+        sep->set_cutting_val(c.balanced_fair(sep->cutting_dimension(),
+				Aspect_ratio));
         return sep;
   }
 };
@@ -82,8 +84,10 @@ public:
   Plane_separator<NT>* rule(Points_container<P>& c, NT Aspect_ratio) {
     // find legal cut with max spread
     Plane_separator<NT>* sep = 
-    new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),0.0);
-    sep->set_cutting_val(c.balanced_sliding_fair(sep->cutting_dimension(),Aspect_ratio));
+    new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),
+			    0.0);
+    sep->set_cutting_val(c.balanced_sliding_fair(sep->cutting_dimension(),
+			 Aspect_ratio));
     return sep;
   }
 };
@@ -116,7 +120,8 @@ public:
   typedef typename K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c)
   {
-    Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),0.0);
+    Plane_separator<NT>* sep = 
+    new Plane_separator<NT>(c.max_span_coord(),0.0);
     sep->set_cutting_val(c.median(sep->cutting_dimension()));
 	return sep;
   }
@@ -129,7 +134,8 @@ public:
   typedef typename K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c)
   {
-    Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_tight_span_coord(),
+    Plane_separator<NT>* sep = 
+    new Plane_separator<NT>(c.max_tight_span_coord(),
     (c.max_tight_span_upper() + c.max_tight_span_lower())/2.0);
 	return sep;
   }

@@ -58,8 +58,10 @@ template < class NT> class Plane_separator {
     return i[cutting_dimension()] < cutting_value();
   }
 
-  Plane_separator(const int d, const NT& v) : cutting_dim(d), cutting_val(v) {}
-  Plane_separator(const Plane_separator<NT>& s) : cutting_dim(s.cutting_dimension()), 
+  Plane_separator(const int d, const NT& v) : 
+		cutting_dim(d), cutting_val(v) {}
+  Plane_separator(const Plane_separator<NT>& s) : 
+		cutting_dim(s.cutting_dimension()), 
 		cutting_val(s.cutting_value()) {}
   explicit Plane_separator() : cutting_dim(0), cutting_val(0) {}
   Plane_separator<NT>& operator= (const Plane_separator<NT>& s) {

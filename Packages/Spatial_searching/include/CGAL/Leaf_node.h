@@ -25,9 +25,6 @@
 #ifndef CGAL_LEAF_NODE_H
 #define CGAL_LEAF_NODE_H
 #include <CGAL/Base_node.h>
-// #include <CGAL/Cartesian.h>
-// #include <iomanip>
-// #include <CGAL/PS_stream.h>
 
 namespace CGAL {
 
@@ -51,24 +48,10 @@ public:
   Leaf_node(Points_container<Item>& c) :
     n(c.size()), data(new Item*[n]) {
     std::copy(c.begin(), c.end(), data);
-    // std::cout << "Boxtree_leaf_node_d called" << std::endl;
   }
 
-/*
-  void data_to_postscript(PS_Stream& PS,
-	const int i, const int j,
-	const NT mini, const NT maxi,
-	const NT minj, const NT maxj) {
-	  // PS << border_color(RED);  works only for visual
-	  for (Item_iterator it=begin(); it != end(); it++) { 
-	  Point_2D p ( (*(*it))[i], (*(*it))[j] ); 
-	  PS << p;
-	}
-  } */
 
-  // removed default constructor !!
   ~Leaf_node() {
-    // std::cout << "~Leaf_node called" << std::endl;
     delete []data;
   }
 };

@@ -254,7 +254,7 @@ namespace CGAL {
   template <class NT, class Point> 
   NT Min_squared_distance_l2_to_box(const Point& p,
 					      const Box<NT>& b) {
-	NT distance=0.0;
+	NT distance(0.0);
     for (int i = 0; i < b.dimension(); ++i) {
       if (p[i] < b.lower(i)) distance += (b.lower(i)-p[i])*(b.lower(i)-p[i]);
 	  if (p[i] > b.upper(i)) distance += (p[i]-b.upper(i))*(p[i]-b.upper(i));
@@ -265,7 +265,7 @@ namespace CGAL {
   template <class NT, class Point> 
   NT Max_squared_distance_l2_to_box(const Point& p,
 					      const Box<NT>& b) {
-	NT distance=0.0;
+	NT distance(0.0);
     for (int i = 0; i < b.dimension(); ++i) {
       if (p[i] >= (b.lower(i)+b.upper(i))/2.0) 
 		  distance += (p[i]-b.lower(i))*(p[i]-b.lower(i)); 
@@ -278,7 +278,7 @@ namespace CGAL {
   template <class NT, class Point> 
   NT Min_distance_linf_to_box(const Point& p,
 					      const Box<NT>& b) {
-	NT distance=0.0;
+	NT distance(0.0);
     for (int i = 0; i < b.dimension(); ++i) {
       if (b.lower(i) - p[i] > distance)  distance = b.lower(i)-p[i];
 	  if (p[i] - b.upper(i) > distance)  distance = p[i]-b.upper(i);
@@ -289,7 +289,7 @@ namespace CGAL {
   template <class NT, class Point> 
   NT Max_distance_linf_to_box(const Point& p,
 					      const Box<NT>& b) {
-	NT distance=0.0;
+	NT distance(0.0);
     for (int i = 0; i < b.dimension(); ++i) {
       if (p[i] >= (b.lower(i)+b.upper(i))/2.0) 
 		  if (p[i] - b.lower(i) > distance)  distance = p[i]-b.lower(i); 
