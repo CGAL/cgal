@@ -3,7 +3,7 @@
 \ccDefinition
 An object \ccStyle{l} of the data type \ccRefName\ is a directed
 straight line in the two-dimensional Euclidean plane $\E^2$. It is
-defined by the set of points with Cartesian coordinates $(x,y)$ 
+defined by the set of points with \ccHtmlNoLinksFrom{Cartesian} coordinates $(x,y)$ 
 that satisfy the equation 
 \begin{ccTexOnly}
 \[ l:\; a\, x +b\, y +c = 0. \]
@@ -13,7 +13,7 @@ that satisfy the equation
 \end{ccHtmlOnly}
  
 The line splits $\E^2$ in a {\em positive} and a {\em negative}
-side. A point $p$ with Cartesian coordinates 
+side. A point $p$ with \ccHtmlNoLinksFrom{Cartesian} coordinates 
 $(px, py)$ is on the positive side of \ccStyle{l}, iff
 \ccTexHtml{$a\, px + b\, py +c > 0$}{a px + b py + c > 0}, it is
 on the negative side of \ccStyle{l}, iff 
@@ -30,7 +30,7 @@ The positive side is to the left of \ccc{l}.
             {copy constructor.}
 
 \ccConstructor{Line_2(const Kernel::RT &a, const Kernel::RT &b, const Kernel::RT &c);}
-            {introduces a line \ccVar\ with the line equation in Cartesian
+            {introduces a line \ccVar\ with the line equation in \ccHtmlNoLinksFrom{Cartesian}
               coordinates $ax +by +c = 0$.}
 
 \ccConstructor{Line_2(const Point_2<Kernel> &p, const Point_2<Kernel> &q);}
@@ -157,9 +157,9 @@ For convenience we provide the following boolean functions:
 %loss of precision if the number type is not exact.
 
 \ccExample
-Let us first define two Cartesian two-dimensional points in the Euclidean 
+Let us first define two \ccHtmlNoLinksFrom{Cartesian} two-dimensional points in the Euclidean 
 plane $\E^2$. Their
-dimension and the fact that they are Cartesian is expressed by
+dimension and the fact that they are \ccHtmlNoLinksFrom{Cartesian} is expressed by
 the suffix \ccStyle{_2} and the representation type \ccStyle{Cartesian}.
 
 \begin{cprog}

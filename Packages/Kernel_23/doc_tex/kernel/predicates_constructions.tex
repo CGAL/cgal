@@ -14,7 +14,7 @@ function objects (provided by a kernel class).
 \cgal\ provides predicates for the \ccHtmlNoLinksFrom{orientation} of point 
 sets (\ccc{orientation}, \ccc{leftturn}, \ccc{rightturn}, \ccc{collinear},
 \ccc{coplanar}), for comparing points according to some given order, 
-especially for comparing Cartesian coordinates
+especially for comparing \ccHtmlNoLinksFrom{Cartesian} coordinates
 (e.g.~\ccc{lexicographically_xy_smaller}), in-circle and in-sphere tests,
 and predicates to compare distances.
 
@@ -73,7 +73,7 @@ represent an arbitrary class. The only operations it provides is
 to make copies and assignments, so that you can put them in lists
 or arrays. Note that \ccc{Object} is NOT a common base class for the
 elementary classes. Therefore, there is no 
-automatic conversion from these classes to \ccc{Object} Rather 
+automatic conversion from these classes to \ccc{Object}. Rather 
 this is done with the global function \ccc{make_object()}. This 
 encapsulation mechanism requires the use of \ccc{assign} to use 
 the functionality of the encapsulated class.
