@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+
+ver 8.32 (9/1/04)
+- fixed operator= of Constrained_triangulation_plus_2
+- added swap in Constriant_hierarchy_2
+- fixed swap in Constrained_triangulation_plus_2
+
 ver 8.31 (9/1/04)
 - just resubmit
 
