@@ -89,12 +89,12 @@ void bench()
 
 // OrientationC2() benchmark.
 
-IA_nt a(0.12);
-IA_nt b(IA_nt(21.0)/10.0);
-IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
-
 void bench_orientation()
 {
+  IA_nt a(0.12);
+  IA_nt b(IA_nt(21.0)/10.0);
+  IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
+
   int i;
   CGAL::Timer t;
   double dt;
