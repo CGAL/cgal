@@ -1,6 +1,7 @@
-Version 1.188 (?? January 04)
+Version 1.188 (18 January 04)
 - Remove useless friend declarations.
 - Replace NULL by default constructed Handles.
+- Remove obsolete CGAL_CFG_MATCHING_BUG_2 workaround (VC++ <= 7.0).
 
 Version 1.187 (07 January 04)
 - cleaning in demos and doc (#include for geomview)
