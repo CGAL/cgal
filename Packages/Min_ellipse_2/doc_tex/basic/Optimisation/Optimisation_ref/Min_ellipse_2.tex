@@ -120,7 +120,9 @@ reconstructing $me(P)$ from a given support set\ccIndexSubitem[t]{support
 \ccConstructor{ Min_ellipse_2( const Point&   p,
                                const Point&   q,
                                const Traits&  traits = Traits());}{
-        initializes \ccVar\ to $me(\{p,q\})$, the set
+        initializes \ccVar\ to $me(\{p,q\})$,
+\newlineByHand
+                                              the set
         $\{ \mbox{\ccTexHtml{$(1-\lambda)p + \lambda q \mid
           0 \leq \lambda \leq 1$}{(1-l)p + l q | 0 <= l <= 1}} \}$.
         \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
