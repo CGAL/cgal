@@ -14,6 +14,8 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
 	-I../../include \
+	-I../../../Triangulation/include \
+	-I../../../Triangulation3/include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
 	-O2 -W -Wall -pedantic
