@@ -113,7 +113,7 @@ private:
 public:
   template<class Out>
   void draw(Out &o) const;
-  Hot_Pixel(NT inp_x,NT inp_y,NT inp_pixel_size);
+  Hot_Pixel(Point_2 inp_point,NT inp_pixel_size);
   ~Hot_Pixel();
   inline NT get_x() const;
   inline NT get_y() const;
@@ -375,14 +375,14 @@ template<class Out> void Hot_Pixel<Rep_>::draw(Out &o) const
 
   // intersection pixel
 template<class Rep_>
-Hot_Pixel<Rep_>::Hot_Pixel(NT inp_x,NT inp_y,NT inp_pixel_size) :
+Hot_Pixel<Rep_>::Hot_Pixel(Point_2 inp_point,NT inp_pixel_size) :
                            pixel_size(inp_pixel_size)
   {
     // $$$$ the next two functions are not generic !!!
-    x = NT(floor((inp_x / pixel_size).to_double())) * pixel_size +
+    x = NT(floor((inp_point.x() / pixel_size).to_double())) * pixel_size +
         pixel_size / 2.0;
 
-    y = NT(floor((inp_y / pixel_size).to_double())) * pixel_size +
+    y = NT(floor((inp_point.y() / pixel_size).to_double())) * pixel_size +
         pixel_size / 2.0;
 
     right_seg = new Segment_2(Point_2(x + pixel_size / 2.0,y -
@@ -654,7 +654,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     for(typename std::list<Point_2>::const_iterator
             v_iter = mypointlist.begin();
 	v_iter != mypointlist.end();++v_iter) {
-      hp = new Hot_Pixel<Rep_>(v_iter->x(),v_iter->y(),pixel_size);
+      hp = new Hot_Pixel<Rep_>(*v_iter,pixel_size);
       hot_pixels_list.push_back(std::pair<std::pair<NT,NT>,Hot_Pixel<Rep_> *>(
             std::pair<NT,NT>(hp->get_x(),hp->get_y()),hp));
     }
@@ -785,7 +785,7 @@ void Snap_rounding_2<Rep_>::iterate()
       hot_pixel_iter = hot_pixels_intersected_set.begin();
       if(hot_pixel_iter == hot_pixels_intersected_set.end()) {
         // segment entirely inside a pixel
-        hp = new Hot_Pixel<Rep_>(iter->get_x1(),iter->get_y1(),pixel_size);
+        hp = new Hot_Pixel<Rep_>(iter->source(),pixel_size);
         seg_output.push_back(Point_2(hp->get_x(),hp->get_y()));
         erase_hp = true;
         delete(hp);
