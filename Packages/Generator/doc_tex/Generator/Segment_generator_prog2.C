@@ -16,13 +16,13 @@
 
 using namespace CGAL;
 
-typedef Cartesian<double>                            R;
-typedef Point_2<R>                                   Point;
-typedef Segment_2<R>                                 Segment;
-typedef Points_on_segment_2<Point>                   PG;
-typedef Creator_uniform_2< Point, Segment>           Creator;
-typedef Join_input_iterator_2< PG, PG, Creator>      Segm_iterator;
-typedef Counting_iterator<Segm_iterator,Segment>     Count_iterator;
+typedef Cartesian<double>                          R;
+typedef Point_2<R>                                 Point;
+typedef Segment_2<R>                               Segment;
+typedef Points_on_segment_2<Point>                 PG;
+typedef Creator_uniform_2< Point, Segment>         Creator;
+typedef Join_input_iterator_2< PG, PG, Creator>    Segm_iterator;
+typedef Counting_iterator<Segm_iterator,Segment>   Count_iterator;
 
 int main() {
     // Open window.
@@ -48,8 +48,7 @@ int main() {
                Ostream_iterator<Segment,Window_stream>(*window));
 
     // Wait for mouse click in window.
-    Point p;
-    *window >> p;
+    (*window).read_mouse();
     delete window;
     return 0;
 }

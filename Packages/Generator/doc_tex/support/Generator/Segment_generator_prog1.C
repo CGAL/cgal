@@ -48,8 +48,7 @@ int main() {
         *window << *i;
 
     //  Wait for mouse click in window.
-    Point p;
-    *window >> p;
+    (*window).read_mouse();
     delete window;
     return 0;
 }
