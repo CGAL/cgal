@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.104 on 4 July 2001
+- Kernel_checker : prints __FUNCTION__ or __PRETTY_FUNCTION__ to get more
+  information about which predicate it is.
+
 Version 4.103 on 4 July 2001
 - VC++ 7 warning.
 

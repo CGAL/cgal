@@ -64,6 +64,11 @@ public:
 	    std::cerr << "Kernel_checker error : " << res1 << " != " << res2
 		      << " for the inputs : " << std::endl;
 	    std::cerr << a1 << ", " << a2 << std::endl;
+#ifdef __GNUG__
+	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
+#else
+	    std::cerr << __FUNCTION__ << std::endl;
+#endif
 	    CGAL_kernel_assertion(false);
 	}
 	return res1;
@@ -80,6 +85,11 @@ public:
 	    std::cerr << "Kernel_checker error : " << res1 << " != " << res2
 		      << " for the inputs : " << std::endl;
 	    std::cerr << a1 << ", " << a2 << ", " << a3 << std::endl;
+#ifdef __GNUG__
+	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
+#else
+	    std::cerr << __FUNCTION__ << std::endl;
+#endif
 	    CGAL_kernel_assertion(false);
 	}
 	return res1;
@@ -97,6 +107,11 @@ public:
 		      << " for the inputs : " << std::endl;
 	    std::cerr << a1 << ", " << a2 << ", " << a3 << ", " << a4
 		      << std::endl;
+#ifdef __GNUG__
+	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
+#else
+	    std::cerr << __FUNCTION__ << std::endl;
+#endif
 	    CGAL_kernel_assertion(false);
 	}
 	return res1;
@@ -115,6 +130,11 @@ public:
 		      << " for the inputs : " << std::endl;
 	    std::cerr << a1 << ", " << a2 << ", " << a3 << ", " << a4
 		      << ", " << a5 << std::endl;
+#ifdef __GNUG__
+	    std::cerr << __PRETTY_FUNCTION__ << std::endl;
+#else
+	    std::cerr << __FUNCTION__ << std::endl;
+#endif
 	    CGAL_kernel_assertion(false);
 	}
 	return res1;
