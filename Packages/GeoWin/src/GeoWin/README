@@ -1,8 +1,0 @@
-Note that the Makefile in this directory is meant as an example Makefile
-for building the GeoWin library with g++.
-However the recommended way to build the GeoWin library 
-(especially on other platforms like MIPSPRO CC or Visual C++) is to build it
-together with the other LEDA libs (lconfig / make or make_lib) in the
-LEDA installation process. 
-
-
