@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_ellipse_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -51,28 +51,28 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declaration
 // =================
-template < class _R >
+template < class K_ >
 class Optimisation_ellipse_2;
 
 // Class interface
 // ===============
-template < class _R >
+template < class K_ >
 class Optimisation_ellipse_2 {
     /*
     friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS (
-        std::ostream&, const Optimisation_ellipse_2<_R>&);
+        std::ostream&, const Optimisation_ellipse_2<K_>&);
     friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS (
-        std::istream&, Optimisation_ellipse_2<_R> &);
+        std::istream&, Optimisation_ellipse_2<K_> &);
     friend  CGAL::Window_stream& operator << CGAL_NULL_TMPL_ARGS (
-        CGAL::Window_stream&, const Optimisation_ellipse_2<_R>&);
+        CGAL::Window_stream&, const Optimisation_ellipse_2<K_>&);
     */
   public:
     // types
-    typedef           _R                R;
-    typedef  typename _R::RT            RT;
-    typedef  typename _R::FT            FT;
-    typedef           CGAL::Point_2<R>  Point;
-    typedef           CGAL::Conic_2<R>  Conic;
+    typedef           K_                K;
+    typedef  typename K_::RT            RT;
+    typedef  typename K_::FT            FT;
+    typedef           CGAL::Point_2<K>  Point;
+    typedef           CGAL::Conic_2<K>  Conic;
     
     /**************************************************************************
     WORKAROUND: Some compilers are unable to match member functions defined
@@ -95,8 +95,8 @@ class Optimisation_ellipse_2 {
     int  number_of_boundary_points()
     
     // equality tests
-    bool  operator == ( const Optimisation_ellipse_2<R>& e) const;
-    bool  operator != ( const Optimisation_ellipse_2<R>& e) const;
+    bool  operator == ( const Optimisation_ellipse_2<K>& e) const;
+    bool  operator != ( const Optimisation_ellipse_2<K>& e) const;
     
     // predicates
     CGAL::Bounded_side  bounded_side( const Point& p) const;
@@ -205,7 +205,7 @@ class Optimisation_ellipse_2 {
         if ( n_boundary_points == 4)
             t = conic1.vol_minimum( dr, ds, dt, du, dv, dw);
     
-        Conic_2<R> c( conic1);
+        Conic_2<K> c( conic1);
         Conic_2< Cartesian<double> > e;
         e.set( CGAL::to_double( c.r()) + t*CGAL::to_double( dr),
                CGAL::to_double( c.s()) + t*CGAL::to_double( ds),
@@ -220,7 +220,7 @@ class Optimisation_ellipse_2 {
     // Equality tests
     // --------------
     bool
-    operator == ( const Optimisation_ellipse_2<R>& e) const
+    operator == ( const Optimisation_ellipse_2<K>& e) const
     {
         if ( n_boundary_points != e.n_boundary_points)
             return( false);
@@ -252,7 +252,7 @@ class Optimisation_ellipse_2 {
     
     inline
     bool
-    operator != ( const Optimisation_ellipse_2<R>& e) const
+    operator != ( const Optimisation_ellipse_2<K>& e) const
     {
         return( ! operator == ( e));
     }
@@ -336,13 +336,13 @@ class Optimisation_ellipse_2 {
 // =====================
 // I/O
 // ---
-template < class _R >
+template < class K_ >
 std::ostream&
-operator << ( std::ostream&, const CGAL::Optimisation_ellipse_2<_R>&);
+operator << ( std::ostream&, const CGAL::Optimisation_ellipse_2<K_>&);
 
-template < class _R >
+template < class K_ >
 std::istream&
-operator >> ( std::istream&, CGAL::Optimisation_ellipse_2<_R>&);
+operator >> ( std::istream&, CGAL::Optimisation_ellipse_2<K_>&);
 
 CGAL_END_NAMESPACE
 

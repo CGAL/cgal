@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_ellipse_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -56,18 +56,18 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declaration
 // =================
-template < class _Traits >
+template < class Traits_ >
 class Min_ellipse_2;
 
 // Class interface
 // ===============
-template < class _Traits >
+template < class Traits_ >
 class Min_ellipse_2 {
   public:
     // types
-    typedef           _Traits                           Traits;
-    typedef typename  _Traits::Point                    Point;
-    typedef typename  _Traits::Ellipse                  Ellipse;
+    typedef           Traits_                           Traits;
+    typedef typename  Traits_::Point                    Point;
+    typedef typename  Traits_::Ellipse                  Ellipse;
     typedef typename  std::list<Point>::const_iterator  Point_iterator;
     typedef           const Point *                     Support_point_iterator;
     
@@ -156,8 +156,8 @@ class Min_ellipse_2 {
     
 
     // copying and assignment not allowed!
-    Min_ellipse_2( const Min_ellipse_2<_Traits>&);
-    Min_ellipse_2<_Traits>& operator = ( const Min_ellipse_2<_Traits>&);
+    Min_ellipse_2( const Min_ellipse_2<Traits_>&);
+    Min_ellipse_2<Traits_>& operator = ( const Min_ellipse_2<Traits_>&);
 
 // ============================================================================
 
@@ -621,13 +621,13 @@ class Min_ellipse_2 {
 // =====================
 // I/O
 // ---
-template < class _Traits >
+template < class Traits_ >
 std::ostream&
-operator << ( std::ostream& os, const Min_ellipse_2<_Traits>& me);
+operator << ( std::ostream& os, const Min_ellipse_2<Traits_>& me);
 
-template < class _Traits >
+template < class Traits_ >
 std::istream&
-operator >> ( std::istream& is,       Min_ellipse_2<_Traits>& me);
+operator >> ( std::istream& is,       Min_ellipse_2<Traits_>& me);
 
 CGAL_END_NAMESPACE
 

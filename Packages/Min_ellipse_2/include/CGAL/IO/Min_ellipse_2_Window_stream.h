@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_ellipse_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -41,10 +41,10 @@
 #ifndef CGAL_IO_WINDOW_STREAM_OPTIMISATION_ELLIPSE_2
 #define CGAL_IO_WINDOW_STREAM_OPTIMISATION_ELLIPSE_2
 
-template< class R >
+template< class Traits_ >
 CGAL::Window_stream&
 operator << ( CGAL::Window_stream &ws,
-              const CGAL::Optimisation_ellipse_2<R>& oe)
+              const CGAL::Optimisation_ellipse_2<Traits_>& oe)
 {
     switch ( oe.n_boundary_points) {
       case 0:
@@ -79,12 +79,12 @@ operator << ( CGAL::Window_stream &ws,
 #ifndef CGAL_IO_WINDOW_STREAM_MIN_ELLIPSE_2
 #define CGAL_IO_WINDOW_STREAM_MIN_ELLIPSE_2
 
-template< class R >
+template< class Traits_ >
 CGAL::Window_stream&
 operator << ( CGAL::Window_stream &ws,
-              const CGAL::Min_ellipse_2<R>& min_ellipse)
+              const CGAL::Min_ellipse_2<Traits_>& min_ellipse)
 {
-    typedef CGAL::Min_ellipse_2<R>::Point_iterator  Point_iterator;
+    typedef CGAL::Min_ellipse_2<Traits_>::Point_iterator  Point_iterator;
 
     Point_iterator  first( min_ellipse.points_begin());
     Point_iterator  last ( min_ellipse.points_end());

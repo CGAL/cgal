@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_ellipse_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -32,9 +32,9 @@ CGAL_BEGIN_NAMESPACE
 
 // I/O
 // ---
-template < class _R >
+template < class K_ >
 std::ostream&
-operator << ( std::ostream& os, const CGAL::Optimisation_ellipse_2<_R>& e)
+operator << ( std::ostream& os, const CGAL::Optimisation_ellipse_2<K_>& e)
 {
     const char* const  empty       = "";
     const char* const  pretty_head = "CGAL::Optimisation_ellipse_2( ";
@@ -86,9 +86,9 @@ operator << ( std::ostream& os, const CGAL::Optimisation_ellipse_2<_R>& e)
     return( os);
 }
 
-template < class _R >
+template < class K_ >
 std::istream&
-operator >> ( std::istream& is, CGAL::Optimisation_ellipse_2<_R>& e)
+operator >> ( std::istream& is, CGAL::Optimisation_ellipse_2<K_>& e)
 {
     switch ( CGAL::get_mode( is)) {
 

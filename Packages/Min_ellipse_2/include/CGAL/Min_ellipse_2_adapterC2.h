@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_ellipse_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -40,13 +40,13 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declarations
 // ==================
-template < class _Traits >
+template < class Traits_ >
 class Min_ellipse_2;
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 class Min_ellipse_2_adapterC2;
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 class _Min_ellipse_2_adapterC2__Ellipse;
 
 // Class interface and implementation
@@ -82,12 +82,12 @@ are_ordered_along_lineC2( const PT& p, const PT& q, const PT& r,
                 || ( ( ry < qy) && ( qy < py)));
 }
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 class Min_ellipse_2_adapterC2 {
   public:
     // types
-    typedef  _PT  PT;
-    typedef  _DA  DA;
+    typedef  PT_  PT;
+    typedef  DA_  DA;
 
     // nested types
     typedef  PT                                             Point;
@@ -108,7 +108,7 @@ class Min_ellipse_2_adapterC2 {
     CGAL::Orientation
     orientation( const Point& p, const Point& q, const Point& r) const
     {
-        typedef  typename _DA::FT  FT;
+        typedef  typename DA_::FT  FT;
     
         FT  px;
         FT  py;
@@ -127,23 +127,23 @@ class Min_ellipse_2_adapterC2 {
 };
 
 // Nested type `Ellipse'
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 std::ostream&  operator << ( std::ostream& os,
-    const _Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+    const _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 std::istream&  operator >> ( std::istream& is,
-    _Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+    _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 class _Min_ellipse_2_adapterC2__Ellipse {
   public:
     // typedefs
-    typedef  _PT  PT;
-    typedef  _DA  DA;
+    typedef  PT_  PT;
+    typedef  DA_  DA;
 
     typedef           ConicCPA2< PT, DA>  CT;
-    typedef  typename _DA::FT                  FT;
+    typedef  typename DA_::FT                  FT;
 
   private:
     // data members
@@ -154,11 +154,11 @@ class _Min_ellipse_2_adapterC2__Ellipse {
 
     friend
     std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream& os,
-        const _Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+        const _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
     friend
     std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream& is,
-        _Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& c);
+        _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
   public:
     // types
@@ -290,7 +290,7 @@ class _Min_ellipse_2_adapterC2__Ellipse {
     // additional operations for checking
     bool
     operator == (
-        const CGAL::_Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e) const
+        const CGAL::_Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& e) const
     {
         if ( n_boundary_points != e.n_boundary_points)
             return( false);
@@ -322,17 +322,17 @@ class _Min_ellipse_2_adapterC2__Ellipse {
 
     bool
     operator != (
-        const CGAL::_Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e) const
+        const CGAL::_Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& e) const
     {
         return( ! ( *this == e));
     }
 };
 
 // I/O
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 std::ostream&
 operator << ( std::ostream& os,
-              const CGAL::_Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
+              const CGAL::_Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& e)
 {
     const char* const  empty       = "";
     const char* const  pretty_head =
@@ -385,10 +385,10 @@ operator << ( std::ostream& os,
     return( os);
 }
 
-template < class _PT, class _DA >
+template < class PT_, class DA_ >
 std::istream&
 operator >> ( std::istream& is,
-              CGAL::_Min_ellipse_2_adapterC2__Ellipse<_PT,_DA>& e)
+              CGAL::_Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& e)
 {
     switch ( CGAL::get_mode( is)) {
 

@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_ellipse_2.aw
-// revision      : 5.31
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -40,33 +40,33 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declarations
 // ==================
-template < class _Traits >
+template < class Traits_ >
 class Min_ellipse_2;
 
-template < class _R >
+template < class K_ >
 class Min_ellipse_2_traits_2;
 
 // Class interface and implementation
 // ==================================
-template < class _R >
+template < class K_ >
 class Min_ellipse_2_traits_2 {
   public:
     // types
-    typedef  _R                               R;
-    typedef  CGAL::Point_2<R>                 Point;
-    typedef  CGAL::Optimisation_ellipse_2<R>  Ellipse;
+    typedef  K_                               K;
+    typedef  CGAL::Point_2<K>                 Point;
+    typedef  CGAL::Optimisation_ellipse_2<K>  Ellipse;
 
 private:
     // data members
     Ellipse  ellipse;                                // current ellipse
 
     // friends
-    friend  class CGAL::Min_ellipse_2< CGAL::Min_ellipse_2_traits_2< R > >;
+    friend  class CGAL::Min_ellipse_2< CGAL::Min_ellipse_2_traits_2<K> >;
 
   public:
     // creation (use default implementations)
     // Min_ellipse_2_traits_2( );
-    // Min_ellipse_2_traits_2( Min_ellipse_2_traits_2<R> const&);
+    // Min_ellipse_2_traits_2( Min_ellipse_2_traits_2<K> const&);
 };
 
 CGAL_END_NAMESPACE
