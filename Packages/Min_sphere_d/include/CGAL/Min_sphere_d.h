@@ -110,14 +110,26 @@ public:
         {}
     
     
-    
+
+ 
     // STL-like constructor (member template)
     template <class InputIterator>
     Min_sphere_d( InputIterator first,
                        InputIterator last)
-        : d(-1), points( first, last), tco( Traits()), ms_basis (tco),
-          support_end(points.begin())
+      : d(-1), 
+#if ( _MSC_VER != 1300)   
+      points( first, last), 
+#endif
+      tco( Traits()), 
+      ms_basis (tco) 
+#if ( _MSC_VER != 1300) 
+      ,support_end(points.begin())
+#endif
     {
+#if ( _MSC_VER == 1300)
+      std::copy(first,last,std::back_inserter(points));
+      support_end = points.begin();
+#endif
         if (points.size()>0) {
             d = tco.access_dimension_d_object() (points.front());
             CGAL_optimisation_precondition ((d>=0) && all_points_have_dim(d));
@@ -130,9 +142,21 @@ public:
     Min_sphere_d( InputIterator first,
                        InputIterator last,
                        const Traits& traits)
-        : d(-1), points( first, last), tco( traits), ms_basis (tco),
-          support_end(points.begin())
+      : d(-1),
+#if ( _MSC_VER != 1300)  
+      points( first, last), 
+#endif
+      tco( traits), 
+      ms_basis (tco)
+#if ( _MSC_VER != 1300) 
+      ,support_end(points.begin())
+#endif
+
     {
+#if ( _MSC_VER == 1300)
+      std::copy(first,last,std::back_inserter(points));
+      support_end = points.begin();
+#endif
         if (points.size()>0) {
             d = tco.access_dimension_d_object() (points.front());
             CGAL_optimisation_precondition ((d>=0) && all_points_have_dim(d));
