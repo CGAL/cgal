@@ -142,6 +142,9 @@ protected:
     typedef typename Points_container::iterator         Points_iterator;
     typedef typename Points_container::const_iterator  
 	    					Points_const_iterator;
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
+    using Handle_for_Curve_node_rep::ptr;
+#endif
 
     Curve_node(Traits *traits_) : 
       Handle_for_Curve_node_rep(traits_) {
