@@ -120,14 +120,6 @@ public:
     widget->set_window(-1, 1, -1, 1);
   };
 
-  ~MyWindow()
-  {
-    delete newtoolbar;
-    delete vtoolbar;
-    delete stoolbar;
-  };
-
-	
 private:
   void something_changed(){current_state++;};
   

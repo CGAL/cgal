@@ -123,14 +123,6 @@ public:
     old_state = 0;
   };
 
-  ~MyWindow()
-  {
-    delete newtoolbar;
-    delete vtoolbar;
-    delete stoolbar;
-  };
-
-  
 private:
   void something_changed(){current_state++;};
   

@@ -45,10 +45,6 @@ class Standard_toolbar : public QObject
 	Q_OBJECT
 public:
   Standard_toolbar(Qt_widget *w, QMainWindow *mw);
-  ~Standard_toolbar()
-  {
-    delete maintoolbar;
-  };
   QToolBar*	toolbar(){return maintoolbar;}
 
 

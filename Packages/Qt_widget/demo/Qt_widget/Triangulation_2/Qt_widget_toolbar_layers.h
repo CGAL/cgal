@@ -58,7 +58,6 @@ public:
 		delete showP;
 		delete showNV;
 		delete showMC;
-		delete maintoolbar;
 	};
 	QToolBar*	toolbar(){return maintoolbar;};
 

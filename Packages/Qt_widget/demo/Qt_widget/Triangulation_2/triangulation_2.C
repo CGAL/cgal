@@ -142,13 +142,6 @@ public:
     old_state = 0;
   };
 
-  ~MyWindow()
-  {
-    delete newtoolbar;
-    delete vtoolbar;
-    delete stoolbar;
-  };
-
   void show_conflicts(Point p)
   {
     if(tr1.dimension()<2) return;

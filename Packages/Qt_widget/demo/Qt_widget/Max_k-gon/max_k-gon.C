@@ -218,13 +218,6 @@ public:
     widget->attach(&testlayer);
   };
 
-  ~MyWindow()
-  {
-    delete newtoolbar;
-    delete stoolbar;
-  };
-
-  
 private:
   void something_changed(){current_state++;};
   

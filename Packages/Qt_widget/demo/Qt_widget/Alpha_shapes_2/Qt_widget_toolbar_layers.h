@@ -64,10 +64,7 @@ class Layers_toolbar : public QObject
 	Q_OBJECT
 public:
 	Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
-	~Layers_toolbar()
-	{
-		delete maintoolbar;
-	};
+
 	QToolBar*	toolbar(){return maintoolbar;};
 
 signals:

@@ -51,10 +51,7 @@ class Tools_toolbar : public QObject
   Q_OBJECT
 public:
   Tools_toolbar(Qt_widget *w, QMainWindow *mw);
-  ~Tools_toolbar()
-  {
-    delete maintoolbar;
-  };
+
   QToolBar*	toolbar(){return maintoolbar;}
 
 signals:
