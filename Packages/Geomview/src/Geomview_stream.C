@@ -21,7 +21,7 @@
 // ============================================================================
 
 // Geomview doesn't work on M$ at the moment, so we don't compile this file.
-#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+#if !defined(__BORLANDC__) && !defined(_MSC_VER) && !defined(__MWERKS__)
 
 #include <CGAL/basic.h>
 

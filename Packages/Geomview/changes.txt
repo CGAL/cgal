@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.27 (17 October 2001)
+- Don't compile src/Geomview_stream.C on __MWERKS__ (CodeWarrior).
+
 Ver 3.26 (25 September 2001)
 - Don't compile the test program on windows.
 
