@@ -182,7 +182,7 @@ public:
   ~Triangulation_3()
   {
     clear();
-    infinite.Delete();
+    //    infinite.Delete();    BUG !!! already deleted by _tds.clear()
   }
 
   void clear()
@@ -193,8 +193,8 @@ public:
 
   Triangulation_3 & operator=(const Triangulation_3 & tr)
   {
-    clear();
-    infinite.Delete();
+//     clear();               BUG !!
+//     infinite.Delete();
     infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
     _gt = tr._gt;
     return *this;
@@ -204,8 +204,8 @@ public:
    
   void copy_triangulation(const Triangulation_3<GT,Tds> & tr)
   {
-    clear();
-    infinite.Delete();
+//     clear();               BUG !!
+//     infinite.Delete();
     _gt = tr._gt;
     infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
   }
