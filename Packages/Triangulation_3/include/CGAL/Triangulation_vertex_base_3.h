@@ -65,7 +65,7 @@ public:
   // ACCES 
 
   inline 
-  Point point() const
+  const Point & point() const
   { return _p; }
     
   inline 
