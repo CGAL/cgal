@@ -44,7 +44,7 @@ int main()
 {
   double zero = 0;
   double inf = 1/zero;
-  double nan = 0*inf;
+  double nan = zero*inf;
 
   bool b = true;
   b = b &&  is_valid(inf);

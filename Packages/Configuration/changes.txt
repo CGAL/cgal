@@ -1,3 +1,7 @@
+6 May 2004 Sylvain Pion
+- Slightly modify CGAL_CFG_IEEE_754_BUG.C so that ICC passes
+  when the -mp option is selected.
+
 6 May 2004 Laurent Rineau
 - Added CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG_2.C
 
