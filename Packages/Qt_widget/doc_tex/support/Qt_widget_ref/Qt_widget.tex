@@ -204,6 +204,28 @@ of the widget.}
 of the widget.}
 \ccMethod{double y_max() const;}{Returns the upper \ccc{y} coordinate
 of the widget.}
+\begin{ccAdvanced}
+The coordinates of the screen are maped to a certain interval that you 
+can choose  with \ccc{set_window} member function. The scale of the
+objects you can visualize is computed and maintained the same for both 
+axes to keep the aspect ratio of the objects. If you are not using
+\ccc{gmp} you should use \ccc{x_real} or \ccc{y_real} to get the real
+world coordinates, represented as a double, for your screen
+coordinates. If you are using \ccc{gmp} you can use the other verions
+of these two functions: \ccc{x_real_rational} and
+\ccc{y_real_rational}, with \ccc{Gmpq} return type. You may need it
+when you work with rationals. The double from the other function could 
+be more complex and can make you loose speed.
+
+\ccMethod{double x_real(int x) const;}{Returns the \ccc{x} real world
+coordinate of the \ccc{Qt_widget}.}
+\ccMethod{Gmpq y_real(int y) const;}{Returns the \ccc{y} real world
+coordinate of the \ccc{Qt_widget}.}
+\ccMethod{Gmpq x_real_rational(int x) const;}{Returns the \ccc{x} real world
+coordinate of the \ccc{Qt_widget}. Defined only if you built it with CGAL_USE_GMP.}
+\ccMethod{Gmpq y_real_rational(int y) const;}{Returns the \ccc{y} real world
+coordinate of the \ccc{Qt_widget}. Defined only if you built it with CGAL_USE_GMP.}
+\end{ccAdvanced}
 
 \begin{ccAdvanced}
 %PAINTER
