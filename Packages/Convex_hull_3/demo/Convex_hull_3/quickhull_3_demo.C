@@ -43,7 +43,7 @@ typedef CGAL::Cartesian<double>                   R;
 typedef CGAL::Convex_hull_traits_3<R>             Traits;
 typedef Traits::Polyhedron_3                      Polyhedron_3;
 
-/* define point creator */
+// define point creator 
 typedef CGAL::Point_3<R>                          Point_3;
 typedef CGAL::Creator_uniform_3<double, Point_3>  PointCreator;
 typedef CGAL::Random_points_in_sphere_3<Point_3, PointCreator> Generator;
@@ -76,9 +76,9 @@ void draw_points_and_hull(const std::vector<Point_3>& points,
       geomview << polyhedron;
 
 
-   cout << "Press any key to end the program: ";
+   std::cout << "Press any key to end the program: ";
    char wait;
-   cin >> wait;
+   std::cin >> wait;
 }
 
 
@@ -103,13 +103,13 @@ int main(int argc, char* argv[])
   std::vector<Point_3> points;
   Generator gen(100.0);
 
-  /* generate num points and copy them to a vector */
+  // generate num points and copy them to a vector 
   CGAL::copy_n( gen, num, std::back_inserter(points) );
   
-  /* define object to hold convex hull */
+  // define object to hold convex hull 
   CGAL::Object ch_object;
 
-  /* compute convex hull */
+  // compute convex hull 
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object);
   draw_points_and_hull(points, ch_object);
   return 0;
