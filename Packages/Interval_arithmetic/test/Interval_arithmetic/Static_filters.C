@@ -6,6 +6,7 @@
 #include <CGAL/Static_filters.h>
 #include <CGAL/Kernel_checker.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Random.h>
 
 typedef CGAL::Simple_cartesian<CGAL::MP_Float>   K4;
 typedef CGAL::Simple_cartesian<double>   K0;
@@ -18,11 +19,16 @@ typedef CGAL::Kernel_checker<K2, K4,
 typedef K3::Point_2    Point_2;
 typedef K3::Point_3    Point_3;
 
+double rand_base()
+{
+  return CGAL::default_random.get_double(0, 1);
+}
+
 // Random double almost in [0;1].
 double my_rand()
 {
   // Ensure 53 random bits, not 48.
-  return drand48() + drand48()/1024;
+  return rand_base() + rand_base()/1024;
 }
 
 // Random point in unit square.
@@ -59,16 +65,16 @@ Point_3 sphere_rand_p3()
 // Perturbation with given maximum relative epsilon.
 void perturb(Point_2 &p, double rel_eps)
 {
-  p = Point_2(p.x()*(1+drand48()*rel_eps),
-              p.y()*(1+drand48()*rel_eps));
+  p = Point_2(p.x()*(1+rand_base()*rel_eps),
+              p.y()*(1+rand_base()*rel_eps));
 }
 
 // Perturbation with given maximum relative epsilon.
 void perturb(Point_3 &p, double rel_eps)
 {
-  p = Point_3(p.x()*(1+drand48()*rel_eps),
-              p.y()*(1+drand48()*rel_eps),
-              p.z()*(1+drand48()*rel_eps));
+  p = Point_3(p.x()*(1+rand_base()*rel_eps),
+              p.y()*(1+rand_base()*rel_eps),
+              p.z()*(1+rand_base()*rel_eps));
 }
 
 void
