@@ -117,7 +117,8 @@ public:
     const;
 
   Vertex_handle
-  nearest_power_vertex_in_cell(const Bare_point& p, const Cell_handle& c)  const;
+  nearest_power_vertex_in_cell(const Bare_point& p, 
+			       const Cell_handle& c)  const;
 
   Vertex_handle
   nearest_power_vertex(const Bare_point& p, Cell_handle c =
