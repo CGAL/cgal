@@ -27,27 +27,32 @@
 #ifndef CGAL_HYPERBOLA_SEGMENT_2_H
 #define CGAL_HYPERBOLA_SEGMENT_2_H
 
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/IO/Window_stream.h>
 #include <CGAL/Hyperbola_2.h>
+
+#ifdef CGAL_USE_QT
+#include <CGAL/IO/Qt_widget.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Point, class Weight >
-class Hyperbola_segment_2 : public Hyperbola_2< Point, Weight >
+template < class Gt >
+class Hyperbola_segment_2 : public Hyperbola_2< Gt >
 {
 public:
+  typedef CGAL::Hyperbola_2<Gt>               Base;
+  typedef typename Base::Site_2               Site_2;
+  typedef typename Base::Point_2              Point_2;
+  typedef typename Base::Segment_2                Segment_2;
+  typedef typename Base::FT                       FT;
+
+#if 0
   typedef CGAL::Hyperbola_2<Point,Weight>         Base;
   typedef typename Base::Weighted_point           Weighted_point;
+#endif
   //  typedef typename R::RT          FT;
-  typedef double                                  FT;
-  typedef CGAL::Point_2< Cartesian<double> >      Point_2;
-  typedef CGAL::Segment_2< Cartesian<double> >    Segment_2;
+  //  typedef double                                  FT;
+  //  typedef CGAL::Point_2< Cartesian<double> >      Point_2;
+  //  typedef CGAL::Segment_2< Cartesian<double> >    Segment_2;
 
 protected:
   Point_2 p1, p2;
@@ -74,22 +79,18 @@ protected:
   inline
   Point_2 midpoint() const
   {
-    return Hyperbola_2< Point, Weight >::midpoint(p1, p2);
+    return Hyperbola_2< Gt >::midpoint(p1, p2);
   }
 
 public:
-  Hyperbola_segment_2() : Hyperbola_2< Point, Weight >() {}
+  Hyperbola_segment_2() : Hyperbola_2< Gt >() {}
 
-  Hyperbola_segment_2(const Weighted_point &f1,
-		      const Weighted_point &f2,
-		      const Point &p1,
-		      const Point &p2) :
-    Hyperbola_2< Point, Weight >(f1, f2)
+  Hyperbola_segment_2(const Site_2 &f1,	const Site_2 &f2,
+		      const Point_2 &p1, const Point_2 &p2)
+    : Hyperbola_2< Gt >(f1, f2)
   {
-    this->p1 = Point_2(CGAL_NTS to_double(p1.x()),
-		       CGAL_NTS to_double(p1.y()));
-    this->p2 = Point_2(CGAL_NTS to_double(p2.x()),
-		       CGAL_NTS to_double(p2.y()));
+    this->p1 = p1;
+    this->p2 = p2;
   }
 
   template< class Stream >
@@ -185,10 +186,9 @@ public:
 };
 
 
-template< class Stream, class Point, class Weight >
+template< class Stream, class Gt >
 inline
-Stream& operator<<(Stream &s,
-		   const Hyperbola_segment_2< Point, Weight > &H)
+Stream& operator<<(Stream &s, const Hyperbola_segment_2<Gt>& H)
 {
   H.draw(s);
   return s;

@@ -27,33 +27,38 @@
 #ifndef CGAL_HYPERBOLA_2_H
 #define CGAL_HYPERBOLA_2_H
 
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
 #include <CGAL/enum.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Weighted_point.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
 #include <CGAL/determinant.h>
-#include <CGAL/IO/Window_stream.h>
 
 #include <CGAL/Apollonius_site_2.h>
 #include <CGAL/Kernel_traits.h>
 
+#ifdef CGAL_USE_QT
+#include <CGAL/IO/Qt_widget.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
-template < class Point, class Weight >
+template < class Gt >
 class Hyperbola_2
 {
 public:
+  typedef Gt                Geom_traits;
+  typedef typename Gt::Site_2     Site_2;
+  typedef typename Gt::Segment_2  Segment_2;
+  typedef typename Gt::Point_2    Point_2;
+  typedef typename Gt::FT         FT;
+#if 0
   typedef typename Kernel_traits<Point>::Kernel   Kernel;
-  typedef CGAL::Apollonius_site_2<Kernel>         Weighted_point;
+  typedef CGAL::Apollonius_site_2<Kernel>         Site_2;
+  typedef typename Kernel::Segment_2              Segment_2;
+  typedef Point                                   Point_2;
+  typedef typename Kernel::FT                     FT;
+#endif
   //  typedef typename R::RT          FT;
-  typedef double                                  FT;
-  typedef CGAL::Point_2< Cartesian<double>  >     Point_2;
-  typedef CGAL::Segment_2< Cartesian< double > >  Segment_2;
+  //  typedef double                                  FT;
+  //  typedef CGAL::Point_2< Cartesian<double>  >     Point_2;
+  //  typedef CGAL::Segment_2< Cartesian< double > >  Segment_2;
 
 protected:
   FT STEP;
@@ -103,7 +108,7 @@ protected:
     FT dx = f2.x() - f1.x();
     FT dy = f2.y() - f1.y();
     FT a = CGAL_NTS sqrt(CGAL_NTS square(dx) + CGAL_NTS square(dy));
-    FT t = (1 + r / a) / FT(2);
+    FT t = (FT(1) + r / a) / FT(2);
 
     o = Point_2(dx * t + f1.x(), dy * t + f1.y());
   }
@@ -195,32 +200,28 @@ protected:
 public:
   Hyperbola_2()  { STEP = FT(2); }
 
-  Hyperbola_2(const Weighted_point &f1,	const Weighted_point &f2)
+  Hyperbola_2(const Site_2 &f1,	const Site_2 &f2)
   {
     STEP = FT(2);
-    this->r = CGAL_NTS to_double(f1.weight() - f2.weight());
+    this->r = f1.weight() - f2.weight();
     
-    this->f1 = Point_2(CGAL_NTS to_double(f1.point().x()),
-		       CGAL_NTS to_double(f1.point().y()));
-    this->f2 = Point_2(CGAL_NTS to_double(f2.point().x()),
-		       CGAL_NTS to_double(f2.point().y()));
+    this->f1 = f1.point();
+    this->f2 = f2.point();
 
     compute_origin();
   }
 
   Oriented_side
-  side_of_hyperbola(const Point &p) const
+  side_of_hyperbola(const Point_2 &p) const
   {
-    Point_2 q(CGAL_NTS to_double(p.x()),
-	      CGAL_NTS to_double(p.y()));
-    double dist = distance(q, f1) - distance(q, f2) - r;
+    double dist = distance(p, f1) - distance(p, f2) - r;
     if ( dist < 0 )  return ON_NEGATIVE_SIDE;
     if ( dist > 0 )  return ON_POSITIVE_SIDE;
     return ON_ORIENTED_BOUNDARY;
   }
 
 
-#if defined CGAL_QT_WIDGET_H
+#if defined CGAL_USE_QT
   void draw_qt(Qt_widget& W) const
     {
       std::vector< Point_2 > p;
@@ -234,13 +235,13 @@ public:
 
       FT STEP;
       if ( width < height ) {
-	STEP = width / 100.0;
+	STEP = width / 500.0;
       } else {
-	STEP = height / 100.0;
+	STEP = height / 500.0;
       }
       //    double mind = distance(o, f1) - r1;
       for (int i = 1; i <= 100; i++) {
-	p = compute_points(i * i * STEP);
+	p = compute_points(FT(i * i) * STEP);
 	
 	if ( p.size() > 0 ) {
 	  if ( right(p[0]) ) {
@@ -274,7 +275,7 @@ public:
 
     //    double mind = distance(o, f1) - r1;
     for (int i = 1; i <= 100; i++) {
-      p = compute_points(i * i * STEP);
+      p = compute_points(FT(i * i) * STEP);
 
       if ( p.size() > 0 ) {
 	if ( right(p[0]) ) {
@@ -298,20 +299,18 @@ public:
 
 };
 
-template< class Stream, class Point, class Weight >
+template< class Stream, class Gt >
 inline
-Stream& operator<<(Stream& s,
-		   const Hyperbola_2< Point, Weight > &H)
+Stream& operator<<(Stream& s, const Hyperbola_2<Gt> &H)
 {
   H.draw(s);
   return s;
 }
 
-#if defined CGAL_QT_WIDGET_H
-template< class Point, class Weight >
+#if defined CGAL_USE_QT
+template< class Gt >
 inline
-Qt_widget& operator<<(Qt_widget& s,
-		      const Hyperbola_2< Point, Weight > &H)
+Qt_widget& operator<<(Qt_widget& s, const Hyperbola_2< Gt > &H)
 {
   H.draw_qt(s);
   return s;

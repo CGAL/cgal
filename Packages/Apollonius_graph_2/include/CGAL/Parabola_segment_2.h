@@ -27,41 +27,36 @@
 #ifndef CGAL_PARABOLA_SEGMENT_2_H
 #define CGAL_PARABOLA_SEGMENT_2_H
 
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/IO/Window_stream.h>
 #include <CGAL/Parabola_2.h>
+
+#ifdef CGAL_USE_QT
+#include <CGAL/IO/Qt_widget.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Point, class Weight, class Line >
-class Parabola_segment_2 : public Parabola_2< Point, Weight, Line >
+template < class Gt >
+class Parabola_segment_2 : public Parabola_2< Gt >
 {
-  typedef CGAL::Parabola_2<Point,Weight,Line>     Base;
-  typedef typename Base::Weighted_point           Weighted_point;
-  typedef double                                  FT;
-  typedef CGAL::Point_2< Cartesian<double> >      Point_2;
-  typedef CGAL::Segment_2< Cartesian<double> >    Segment_2;
-  typedef CGAL::Line_2< Cartesian<double> >       Line_2;
+  typedef CGAL::Parabola_2<Gt>            Base;
+  typedef typename Base::Site_2           Site_2;
+  typedef typename Base::FT               FT;
+  typedef typename Base::Point_2          Point_2;
+  typedef typename Base::Segment_2        Segment_2;
+  typedef typename Base::Line_2           Line_2;
 
 protected:
   Point_2 p1, p2;
 
 public:
-  Parabola_segment_2() : Parabola_2< Point, Weight, Line >() {}
+  Parabola_segment_2() : Parabola_2< Gt >() {}
 
-  Parabola_segment_2(const Weighted_point &p, const Line &l,
-		     const Point &p1, const Point &p2) :
-    Parabola_2< Point, Weight, Line >(p, l)
+  Parabola_segment_2(const Site_2 &p, const Line_2 &l,
+		     const Point_2 &p1, const Point_2 &p2) :
+    Parabola_2< Gt >(p, l)
   {
-    this->p1 = Point_2(CGAL_NTS to_double(p1.x()),
-		       CGAL_NTS to_double(p1.y()));
-    this->p2 = Point_2(CGAL_NTS to_double(p2.x()),
-		       CGAL_NTS to_double(p2.y()));
+    this->p1 = p1;
+    this->p2 = p2;
   }
 
   template< class Stream >
@@ -69,7 +64,7 @@ public:
   {
     std::vector< Point_2 > p;
 
-    double s[2];
+    FT s[2];
 
     s[0] = t(p1);
     s[1] = t(p2);
@@ -86,30 +81,30 @@ public:
 
     if ( !(CGAL_NTS is_positive(s[0])) &&
 	 !(CGAL_NTS is_negative(s[1])) ) {
-      double tt;
+      FT tt;
       int k;
 
       p.push_back( this->o );
       k = 1;
-      tt = double(- this->STEP);
+      tt = -this->STEP;
       while ( CGAL_NTS compare(tt, s[0]) == LARGER ) {
 	p.insert( p.begin(), f(tt) );
 	k--;
-	tt = -double(k * k) * this->STEP;
+	tt = -FT(k * k) * this->STEP;
       }
       p.insert( p.begin(), f(s[0]) );
 
       k = 1;
-      tt = double(this->STEP);
+      tt = this->STEP;
       while ( CGAL_NTS compare(tt, s[1]) == SMALLER ) {
 	p.push_back( f(tt) );
 	k++;
-	tt = double(k * k) * this->STEP;
+	tt = FT(k * k) * this->STEP;
       }
       p.push_back( f(s[1]) );
     } else if ( !(CGAL_NTS is_negative(s[0])) &&
 		!(CGAL_NTS is_negative(s[1])) ) {
-      double tt;
+      FT tt;
       int k;
 
 
@@ -122,11 +117,11 @@ public:
 	if ( CGAL_NTS compare(tt, s[0]) != SMALLER )
 	  p.push_back( f(tt) );
 	k++;
-	tt = double(k * k) * this->STEP;
+	tt = FT(k * k) * this->STEP;
       }
       p.push_back( f(s[1]) );
     } else {
-      double tt;
+      FT tt;
       int k;
 
       p.push_back( f(s[1]) );
@@ -138,7 +133,7 @@ public:
 	if ( CGAL_NTS compare(tt, s[1]) != LARGER )
 	  p.push_back( f(tt) );
 	k--;
-	tt = -double(k * k) * this->STEP;
+	tt = -FT(k * k) * this->STEP;
       }
       p.push_back( f(s[0]) );
     }
@@ -149,10 +144,9 @@ public:
   }
 };
 
-template< class Stream, class Point, class Weight, class Line >
+template< class Stream, class Gt >
 inline
-Stream& operator<<(Stream &s,
-		   const Parabola_segment_2< Point, Weight, Line > &P)
+Stream& operator<<(Stream &s, const Parabola_segment_2<Gt> &P)
 {
   P.draw(s);
   return s;

@@ -1,5 +1,8 @@
 #ifdef CGAL_USE_QT
 
+#include <iostream>
+#include <fstream>
+
 #include <qapplication.h>
 #include <qmainwindow.h>
 

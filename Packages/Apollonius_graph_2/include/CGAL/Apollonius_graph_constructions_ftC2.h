@@ -81,19 +81,19 @@ w_plane_tangent_line_2(const FT &x1, const FT &y1, const FT &w1,
 }
 
 
-template < class FT, class We >
+template < class FT >
 inline
 void
-z_plane_circumcircle_2(const FT &x1, const FT &y1, const We &w1,
-		       const FT &x2, const FT &y2, const We &w2,
-		       const FT &x3, const FT &y3, const We &w3,
-		       FT       &cx, FT       &cy, We      &cwt)
+z_plane_circumcircle_2(const FT &x1, const FT &y1, const FT &w1,
+		       const FT &x2, const FT &y2, const FT &w2,
+		       const FT &x3, const FT &y3, const FT &w3,
+		       FT       &cx, FT       &cy, FT      &cwt)
 {
   // we assume that the weight w1 is the smallest among w1, w2, w3.
 
   FT a, b, c;
-  w_plane_tangent_line_2(x1, y1, FT(w1), x2, y2, FT(w2),
-			 x3, y3, FT(w3), a, b, c);
+  w_plane_tangent_line_2(x1, y1, w1, x2, y2, w2,
+			 x3, y3, w3, a, b, c);
 
   cx = -a / (FT(2) * c) + x1;
   cy =  b / (FT(2) * c) + y1;
@@ -104,21 +104,21 @@ z_plane_circumcircle_2(const FT &x1, const FT &y1, const We &w1,
   FT cwt2 = (CGAL_NTS square(a) + CGAL_NTS square(b)) / 
     (FT(4) * CGAL_NTS square(c));
 #endif
-  //  cwt = We(  CGAL_NTS sqrt(cwt2) - FT(w1)  );
-  cwt = We( FT(1) / (FT(2) * c) - FT(w1));
+  //  cwt = CGAL_NTS sqrt(cwt2) - FT(w1);
+  cwt = FT(1) / (FT(2) * c) - FT(w1);
 }
 
 
 
-template < class FT, class We >
+template < class FT >
 inline
 void
-ad_circumcenterC2(const FT &x1, const FT &y1, const We &w1,
-		  const FT &x2, const FT &y2, const We &w2,
-		  const FT &x3, const FT &y3, const We &w3,
+ad_circumcenterC2(const FT &x1, const FT &y1, const FT &w1,
+		  const FT &x2, const FT &y2, const FT &w2,
+		  const FT &x3, const FT &y3, const FT &w3,
 		  FT       &cx, FT       &cy)
 {
-  We cwt;
+  FT cwt;
   ad_circumcircleC2(x1, y1, w1,
 		    x2, y2, w2,
 		    x3, y3, w3,
@@ -126,12 +126,12 @@ ad_circumcenterC2(const FT &x1, const FT &y1, const We &w1,
 }
 
 
-template < class FT, class We >
+template < class FT >
 void
-ad_circumcircleC2(const FT &x1, const FT &y1, const We &w1,
-		  const FT &x2, const FT &y2, const We &w2,
-		  const FT &x3, const FT &y3, const We &w3,
-		  FT       &cx, FT       &cy, We      &cwt)
+ad_circumcircleC2(const FT &x1, const FT &y1, const FT &w1,
+		  const FT &x2, const FT &y2, const FT &w2,
+		  const FT &x3, const FT &y3, const FT &w3,
+		  FT       &cx, FT       &cy, FT      &cwt)
 {
   if (CGAL_NTS compare(w2, w1) != LARGER &&
       CGAL_NTS compare(w2, w3) != LARGER) {
@@ -154,15 +154,15 @@ ad_circumcircleC2(const FT &x1, const FT &y1, const We &w1,
 			 cx, cy, cwt);
 }
 
-template < class FT, class We >
+template < class FT >
 void
-ad_left_bitangent_lineC2(const FT &x1, const FT &y1, const We &w1,
-			 const FT &x2, const FT &y2, const We &w2,
+ad_left_bitangent_lineC2(const FT &x1, const FT &y1, const FT &w1,
+			 const FT &x2, const FT &y2, const FT &w2,
 			 FT       & a, FT       & b, FT       & c)
 {
   FT dx = x1 - x2;
   FT dy = y1 - y2;
-  FT dw = FT(w1 - w2);
+  FT dw = w1 - w2;
 
   FT dxw = det2x2_by_formula(x1, w1, x2, w2);
   FT dyw = det2x2_by_formula(y1, w1, y2, w2);

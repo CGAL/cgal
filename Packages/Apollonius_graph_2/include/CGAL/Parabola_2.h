@@ -27,66 +27,63 @@
 #ifndef CGAL_PARABOLA_2_H
 #define CGAL_PARABOLA_2_H
 
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Weighted_point.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Line_2.h>
-#include <CGAL/Segment_2.h>
 #include <CGAL/determinant.h>
-#include <CGAL/IO/Window_stream.h>
 
 #include <CGAL/Apollonius_site_2.h>
 #include <CGAL/Kernel_traits.h>
 
+#ifdef CGAL_USE_QT
+#include <CGAL/IO/Qt_widget.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 
-template < class Point, class Weight, class Line >
+template < class Gt >
 class Parabola_2
 {
 public:
-  typedef typename Kernel_traits<Point>::Kernel   Kernel;
-  typedef CGAL::Apollonius_site_2<Kernel>         Weighted_point;
-  typedef CGAL::Point_2< Cartesian<double> >      Point_2;
-  typedef CGAL::Segment_2< Cartesian<double> >    Segment_2;
-  typedef CGAL::Line_2< Cartesian<double> >       Line_2;
+  typedef typename Gt::Site_2                 Site_2;
+  typedef typename Gt::Point_2                Point_2;
+  typedef typename Gt::Segment_2              Segment_2;
+  typedef typename Gt::Line_2                 Line_2;
+  typedef typename Gt::FT                     FT;
+  //  typedef CGAL::Point_2< Cartesian<double> >      Point_2;
+  //  typedef CGAL::Segment_2< Cartesian<double> >    Segment_2;
+  //  typedef CGAL::Line_2< Cartesian<double> >       Line_2;
 
 protected:
   // static stuff
-  static const double STEP;
+  static const FT STEP;
 
   inline static
-  double square(const double &x)
+  FT square(const FT &x)
   {
     return x * x;
   }
 
   inline static
-  double norm2(const Point_2& p)
+  FT norm2(const Point_2& p)
   {
     return square(p.x()) + square(p.y());
   }
 
   inline static
-  double distance2(const Point_2& p1, const Point_2& p2)
+  FT distance2(const Point_2& p1, const Point_2& p2)
   {
-    double dx = p1.x()-p2.x();
-    double dy = p1.y()-p2.y();
+    FT dx = p1.x()-p2.x();
+    FT dy = p1.y()-p2.y();
     return square(dx) + square(dy);
   }
 
   inline static
-  double distance(const Point_2& p1, const Point_2& p2)
+  FT distance(const Point_2& p1, const Point_2& p2)
   {
     return sqrt( distance2(p1, p2) );
   }
 
   inline static
-  double distance(const Point_2& p, const Line_2& l)
+  FT distance(const Point_2& p, const Line_2& l)
   {
     return ( p.x() * l.a() + p.y() * l.b() + l.c() ) /
       sqrt( square(l.a()) + square(l.b()) );
@@ -98,7 +95,7 @@ protected:
   Point_2 o;
 
   inline
-  Point_2 lchain(const double &t) const
+  Point_2 lchain(const FT &t) const
   {
     std::vector< Point_2 > p = compute_points(t);
     if ( right(p[0]) )  return p[1];
@@ -106,35 +103,35 @@ protected:
   }
 
   inline
-  Point_2 rchain(const double &t) const
+  Point_2 rchain(const FT &t) const
   {
     std::vector< Point_2 > p = compute_points(t);
     if ( right(p[0]) )  return p[0];
     return p[1]; 
   }
 
-  std::vector< Point_2 > compute_points(const double &d) const
+  std::vector< Point_2 > compute_points(const FT &d) const
   {
     assert(d >= 0);
-    double d1 = distance(o, c) + d;
-    double d2 = distance(o, l) + d;
+    FT d1 = distance(o, c) + d;
+    FT d2 = distance(o, l) + d;
     d2 = d1;
     d1 *= d1;
 
     std::vector< Point_2 > p;
 
     if ( l.a() == ZERO ) {
-      double y = d2 * CGAL_NTS sign(l.b()) - l.c() / l.b();
+      FT y = d2 * CGAL_NTS sign(l.b()) - l.c() / l.b();
 
-      double C = CGAL_NTS square(y) - 2 * c.y() * y + 
+      FT C = CGAL_NTS square(y) - FT(2) * c.y() * y + 
 	square(c.x()) + square(c.y()) - d1;
 
-      double D = square(c.x()) - C;
+      FT D = square(c.x()) - C;
 
       D = CGAL_NTS abs(D);
 
-      double x1 = CGAL_NTS sqrt(D) + c.x();
-      double x2 = -CGAL_NTS sqrt(D) + c.x();
+      FT x1 = CGAL_NTS sqrt(D) + c.x();
+      FT x2 = -CGAL_NTS sqrt(D) + c.x();
 
       p.push_back(Point_2(x1, y));
       p.push_back(Point_2(x2, y));
@@ -142,23 +139,23 @@ protected:
       return p;
     }
 
-    double A = d2 * sqrt( square(l.a()) + square(l.b()) ) - l.c();
-    double B = square(c.x()) + square(c.y()) - d1;
+    FT A = d2 * sqrt( square(l.a()) + square(l.b()) ) - l.c();
+    FT B = square(c.x()) + square(c.y()) - d1;
 
-    double alpha = 1 + square(l.b() / l.a());
-    double beta = A * l.b() / square(l.a()) + c.y()
+    FT alpha = FT(1) + square(l.b() / l.a());
+    FT beta = A * l.b() / square(l.a()) + c.y()
       - c.x() * l.b() / l.a();
-    double gamma = square(A / l.a()) + B - 2 * c.x() * A / l.a();
+    FT gamma = square(A / l.a()) + B - FT(2) * c.x() * A / l.a();
 
-    double D = square(beta) - alpha * gamma;
+    FT D = square(beta) - alpha * gamma;
 
     D = CGAL_NTS abs(D);
 
-    double y1 = (beta + sqrt(D)) / alpha;
-    double y2 = (beta - sqrt(D)) / alpha;
+    FT y1 = (beta + sqrt(D)) / alpha;
+    FT y2 = (beta - sqrt(D)) / alpha;
 
-    double x1 = (A - l.b() * y1) / l.a();
-    double x2 = (A - l.b() * y2) / l.a();
+    FT x1 = (A - l.b() * y1) / l.a();
+    FT x2 = (A - l.b() * y2) / l.a();
 
     p.push_back(Point_2(x1, y1));
     p.push_back(Point_2(x2, y2));
@@ -169,69 +166,67 @@ protected:
   bool right(const Point_2& p) const
   {
     return CGAL_NTS
-      is_positive( det3x3_by_formula< double >(c.x(), c.y(), 1,
-					       o.x(), o.y(), 1,
-					       p.x(), p.y(), 1) );
+      is_positive( det3x3_by_formula< FT >(c.x(), c.y(), FT(1),
+					   o.x(), o.y(), FT(1),
+					   p.x(), p.y(), FT(1)) );
   }
 
   inline
   Point_2 midpoint(const Point_2& p1, const Point_2& p2) const
   {
-    double t1 = t(p1);
-    double t2 = t(p2);
-    double midt = (t1+t2)/2;
+    FT t1 = t(p1);
+    FT t2 = t(p2);
+    FT midt = (t1+t2)/2;
     return f(midt);
   }
 
   inline
-  Point_2 f(double t) const
+  Point_2 f(FT t) const
   {
     if ( CGAL_NTS is_negative(t) )  return rchain(-t);
     return lchain(t);
   }
 
   inline
-  double t(const Point_2 &p) const
+  FT t(const Point_2 &p) const
   {
-    double tt = distance(p, c) - distance(c, o);
+    FT tt = distance(p, c) - distance(c, o);
     if ( right(p) )  return -tt;
     return tt;
   }
 
   void compute_origin()
   {
-    double d = (l.a() * c.x() + l.b() * c.y() + l.c())
-      / (  2 * ( square(l.a()) + square(l.b()) )  );
+    FT d = (l.a() * c.x() + l.b() * c.y() + l.c())
+      / (  FT(2) * ( square(l.a()) + square(l.b()) )  );
     o = Point_2(c.x() - l.a() * d, c.y() - l.b() * d);
   }
 
 public:
   Parabola_2() {}
 
-  Parabola_2(const Weighted_point &p, const Line &l)
+  Parabola_2(const Site_2 &p, const Line_2 &l)
   {
-    this->c = Point_2(CGAL_NTS to_double(p.x()),
-		      CGAL_NTS to_double(p.y()));
-    double d_a = CGAL_NTS to_double(l.a());
-    double d_b = CGAL_NTS to_double(l.b());
-    double len = CGAL_NTS sqrt(CGAL_NTS square(d_a) +
-			       CGAL_NTS square(d_b));
+    this->c = p.point();
 
-    double r = CGAL_NTS to_double(p.weight()) * len;
+    FT d_a = CGAL_NTS to_double(l.a());
+    FT d_b = CGAL_NTS to_double(l.b());
+    FT len = CGAL_NTS sqrt(CGAL_NTS square(d_a) +
+			   CGAL_NTS square(d_b));
 
-    this->l = Line_2(CGAL_NTS to_double(-l.a()),
-		     CGAL_NTS to_double(-l.b()),
-		     CGAL_NTS to_double(-l.c()) + r);
+    FT r = p.weight() * len;
+
+    this->l = Line_2(-l.a(), -l.b(), -l.c() + r);
     compute_origin();
   }
 
   Oriented_side
-  side_of_parabola(const Point& p) const
+  side_of_parabola(const Point_2& p) const
   {
     Point_2 q(CGAL_NTS to_double(p.x()),
 	      CGAL_NTS to_double(p.y()));
 
-    double d = distance(q, c) - fabs(distance(q, l));
+    FT d = distance(q, c) - fabs(distance(q, l));
     if ( d < 0 )  return ON_NEGATIVE_SIDE;
     if ( d > 0 )  return ON_POSITIVE_SIDE;
     return ON_ORIENTED_BOUNDARY;
@@ -286,13 +281,12 @@ public:
   }
 };
 
-template < class Point, class Weight, class Line >
-const double Parabola_2<Point,Weight,Line>::STEP = 2;
+template < class Gt >
+const typename Parabola_2<Gt>::FT  Parabola_2<Gt>::STEP = 2;
 
-template< class Stream, class Point, class Weight, class Line >
+template< class Stream, class Gt >
 inline
-Stream& operator<<(Stream& s,
-		   const Parabola_2< Point, Weight, Line > &P)
+Stream& operator<<(Stream& s, const Parabola_2<Gt> &P)
 {
   P.draw(s);
   return s;

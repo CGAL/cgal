@@ -38,10 +38,13 @@
 #include <CGAL/in_place_edge_list.h>
 #include <CGAL/Apollonius_graph_euclidean_traits_wrapper_2.h>
 
+#include <CGAL/Apollonius_graph_constructions_C2.h>
 
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Nested_iterator.h>
 #include <CGAL/Concatenate_iterator.h>
+
+
 
 
 CGAL_BEGIN_NAMESPACE
@@ -62,6 +65,54 @@ template < class Gt,
 class Apollonius_graph_2
   : private Triangulation_2< Apollonius_graph_gt_wrapper<Gt>, Agds >
 {
+private:
+  // types and access methods needed for visualization
+  //--------------------------------------------------
+
+  // types
+  typedef CGAL::Construct_Apollonius_bisector_2<Gt>
+  Construct_Apollonius_bisector_2;
+
+  typedef CGAL::Construct_Apollonius_bisector_ray_2<Gt>
+  Construct_Apollonius_bisector_ray_2;
+
+  typedef CGAL::Construct_Apollonius_bisector_segment_2<Gt>
+  Construct_Apollonius_bisector_segment_2;
+
+  typedef CGAL::Construct_Apollonius_primal_ray_2<Gt>
+  Construct_Apollonius_primal_ray_2;
+
+  typedef CGAL::Construct_Apollonius_primal_segment_2<Gt>
+  Construct_Apollonius_primal_segment_2;
+
+
+  // access
+  Construct_Apollonius_bisector_2
+  construct_Apollonius_bisector_2_object() const {
+    return Construct_Apollonius_bisector_2();
+  }
+
+  Construct_Apollonius_bisector_ray_2
+  construct_Apollonius_bisector_ray_2_object() const {
+    return Construct_Apollonius_bisector_ray_2();
+  }
+
+  Construct_Apollonius_bisector_segment_2
+  construct_Apollonius_bisector_segment_2_object() const { 
+    return Construct_Apollonius_bisector_segment_2(); 
+  }
+
+  Construct_Apollonius_primal_ray_2
+  construct_Apollonius_primal_ray_2_object() const {
+    return Construct_Apollonius_primal_ray_2(); 
+  }
+
+  Construct_Apollonius_primal_segment_2
+  construct_Apollonius_primal_segment_2_object() const { 
+    return Construct_Apollonius_primal_segment_2();
+  }
+
+
 protected:
   // some local types
   typedef Apollonius_graph_gt_wrapper<Gt>        Modified_traits;
@@ -424,7 +475,7 @@ public:
 
   Site_2 dual(const Finite_faces_iterator& it) const
   {
-    typename Gt::Object_2 o = dual(*it);
+    typename Gt::Object_2 o = dual(Face_handle(it));
     Site_2 s;
     if ( assign(s, o) ) {
       return s;
@@ -463,11 +514,11 @@ public:
       
 
       typename Geom_traits::Segment_2 seg =
-	geom_traits().construct_Apollonius_primal_segment_2_object()(p1,p2);
+	construct_Apollonius_primal_segment_2_object()(p1,p2);
       typename Geom_traits::Ray_2 ray1 =
-	geom_traits().construct_Apollonius_primal_ray_2_object()(p1,p2,p2);
+	construct_Apollonius_primal_ray_2_object()(p1,p2,p2);
       typename Geom_traits::Ray_2 ray2 =
-	geom_traits().construct_Apollonius_primal_ray_2_object()(p2,p1,p1);
+	construct_Apollonius_primal_ray_2_object()(p2,p1,p1);
 
       str << seg;
       str << ray1;
@@ -475,7 +526,7 @@ public:
     } else {
       All_edges_iterator eit = all_edges_begin();
       for (; eit != all_edges_end(); ++eit) {
-	draw_primal_edge< Stream >(*eit, str);
+	draw_primal_edge< Stream >(eit, str);
       }
     }
     return str;
@@ -490,14 +541,14 @@ public:
       typename Geom_traits::Line_2     l;
       typename Geom_traits::Segment_2  s;
       typename Geom_traits::Ray_2      r;
-      typename Geom_traits::Hyperbola_2          h;
-      typename Geom_traits::Hyperbola_segment_2  hs;
-      typename Geom_traits::Hyperbola_ray_2      hr;
-      if (assign(hs, o))  str << hs;
+      CGAL::Hyperbola_2<Gt>            h;
+      CGAL::Hyperbola_segment_2<Gt>    hs;
+      CGAL::Hyperbola_ray_2<Gt>        hr;
+      if (assign(hs, o))  hs.draw(str);
       if (assign(s, o))   str << s; 
-      if (assign(hr, o))  str << hr;
+      if (assign(hr, o))  hr.draw(str);
       if (assign(r, o))   str << r;
-      if (assign(h, o))   str << h;
+      if (assign(h, o))   h.draw(str);
       if (assign(l, o))   str << l;
     }
     return str;
@@ -512,26 +563,46 @@ public:
 
 
   template< class Stream >
-  Stream& draw_dual_vertex(const Finite_vertices_iterator& it,
+  Stream& draw_dual_vertex(const Finite_faces_iterator& it,
 			   Stream &str) const
   {
     return str << dual(it);
   }
 
   template< class Stream >
-  Stream& draw_primal_edge(Edge e, Stream &str) const
+  Stream& draw_primal_edge(const Finite_edges_iterator& eit,
+			   Stream &str) const
   {
+    return draw_primal_edge(*eit, str);
+  }
+
+  template< class Stream >
+  Stream& draw_primal_edge(const All_edges_iterator& eit,
+			   Stream &str) const
+  {
+    return draw_primal_edge(*eit, str);
+  }
+
+
+  template < class Stream > 
+  Stream& draw_dual_edge(const Finite_edges_iterator& eit,
+			 Stream &str) const
+  {
+    return draw_dual_edge(*eit, str);
+  }
+
+  template< class Stream >
+  Stream& draw_primal_edge(const Edge& e, Stream &str) const
+  {
+    //    if ( is_infinite(e) ) { return str; }
     typename Gt::Object_2 o = primal(e);
-    //      typename Geom_traits::Line_2     l;
     typename Geom_traits::Segment_2  s;
     typename Geom_traits::Ray_2      r;
-    //      typename Geom_traits::Hyperbola_2          h;
-    typename Geom_traits::Hyperbola_segment_2  hs;
-    //      typename Geom_traits::Hyperbola_ray_2      hr;
-    typename Geom_traits::Parabola_segment_2   ps;
-    if (assign(hs, o))  str << hs;
+    CGAL::Hyperbola_segment_2<Gt>    hs;
+    CGAL::Parabola_segment_2<Gt>     ps;
+    if (assign(hs, o))  hs.draw(str);
     if (assign(s, o))   str << s; 
-    if (assign(ps, o))  str << ps;
+    if (assign(ps, o))  ps.draw(str);
     if (assign(r, o))   str << r;
     //      if (assign(hr, o))  str << hr;
     //      if (assign(h, o))   str << h;
@@ -540,21 +611,21 @@ public:
   }
 
   template < class Stream > 
-  Stream& draw_dual_edge(Edge e, Stream &str) const
+  Stream& draw_dual_edge(const Edge& e, Stream &str) const
   {
     if ( is_infinite(e) ) { return str; }
     typename Gt::Object_2 o = dual(e);
     typename Geom_traits::Line_2     l;
     typename Geom_traits::Segment_2  s;
     typename Geom_traits::Ray_2      r;
-    typename Geom_traits::Hyperbola_2          h;
-    typename Geom_traits::Hyperbola_segment_2  hs;
-    typename Geom_traits::Hyperbola_ray_2      hr;
-    if (assign(hs, o))  str << hs;
+    CGAL::Hyperbola_2<Gt>            h;
+    CGAL::Hyperbola_segment_2<Gt>    hs;
+    CGAL::Hyperbola_ray_2<Gt>        hr;
+    if (assign(hs, o))  hs.draw(str);
     if (assign(s, o))   str << s; 
-    if (assign(hr, o))  str << hr;
+    if (assign(hr, o))  hr.draw(str);
     if (assign(r, o))   str << r;
-    if (assign(h, o))   str << h;
+    if (assign(h, o))   h.draw(str);
     if (assign(l, o))   str << l;
 
     return str;
@@ -562,10 +633,10 @@ public:
 
   template< class Stream >
   inline
-  Stream& draw_primal_face(const Face_handle& f, Stream &str) const
+  Stream& draw_primal_face(All_faces_iterator fit, Stream &str) const
   {
     for (int i = 0; i < 3; i++) {
-      draw_primal_edge< Stream >(Edge(f, i), str);
+      draw_primal_edge< Stream >(Edge(Face_handle(fit), i), str);
     }
     return str;
   }
@@ -573,9 +644,10 @@ public:
 
   template< class Stream >
   inline
-  Stream& draw_dual_face(const Vertex_handle& v, Stream &str) const
+  Stream& draw_dual_face(const All_vertices_iterator& vit,
+			 Stream &str) const
   {
-    Edge_circulator ec_start = incident_edges(v);
+    Edge_circulator ec_start = incident_edges(Vertex_handle(vit));
     Edge_circulator ec = ec_start;
     do {
       draw_dual_edge< Stream >(*ec, str);

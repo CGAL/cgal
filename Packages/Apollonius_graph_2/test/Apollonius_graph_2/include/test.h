@@ -33,25 +33,18 @@ bool test_traits()
   typedef typename Traits::Line_2                Line_2;
   typedef typename Traits::Ray_2                 Ray_2;
   typedef typename Traits::Segment_2             Segment_2;
-  typedef typename Traits::Parabola_segment_2    Parabola_segment_2;
-  typedef typename Traits::Hyperbola_2           Hyperbola_2;
-  typedef typename Traits::Hyperbola_ray_2       Hyperbola_ray_2;
-  typedef typename Traits::Hyperbola_segment_2   Hyperbola_segment_2;
+  //  typedef typename Traits::Parabola_segment_2    Parabola_segment_2;
+  //  typedef typename Traits::Hyperbola_2           Hyperbola_2;
+  //  typedef typename Traits::Hyperbola_ray_2       Hyperbola_ray_2;
+  //  typedef typename Traits::Hyperbola_segment_2   Hyperbola_segment_2;
+
+  typedef typename Traits::Construct_object_2    Construct_object_2;
+  typedef typename Traits::Assign_2              Assign_2;
 
   typedef typename Traits::Construct_Apollonius_vertex_2
     Construct_Apollonius_vertex_2;
   typedef typename Traits::Construct_Apollonius_site_2
     Construct_Apollonius_site_2;
-  typedef typename Traits::Construct_Apollonius_bisector_2
-    Construct_Apollonius_bisector_2;
-  typedef typename Traits::Construct_Apollonius_bisector_ray_2
-    Construct_Apollonius_bisector_ray_2;
-  typedef typename Traits::Construct_Apollonius_bisector_segment_2
-    Construct_Apollonius_bisector_segment_2;
-  typedef typename Traits::Construct_Apollonius_primal_ray_2
-    Construct_Apollonius_primal_ray_2;
-  typedef typename Traits::Construct_Apollonius_primal_segment_2
-    Construct_Apollonius_primal_segment_2;
 
   typedef typename Traits::Compare_x_2       Compare_x_2;
   typedef typename Traits::Compare_y_2       Compare_y_2;
@@ -96,21 +89,14 @@ bool test_traits()
 
   // testing access to constructor objects
   //--------------------------------------------------------------------
+  Assign_2 assign_2 = tr.assign_2_object();
+  Construct_object_2 construct_object_2 =
+    tr.construct_object_2_object();
+
   Construct_Apollonius_vertex_2 apollonius_vertex =
     tr.construct_Apollonius_vertex_2_object();
   Construct_Apollonius_site_2 apollonius_site =
     tr.construct_Apollonius_site_2_object();
-  Construct_Apollonius_bisector_2 apollonius_bisector =
-    tr.construct_Apollonius_bisector_2_object();
-  Construct_Apollonius_bisector_ray_2 apollonius_bisector_ray =
-    tr.construct_Apollonius_bisector_ray_2_object();
-  Construct_Apollonius_bisector_segment_2 apollonius_bisector_segment =
-    tr.construct_Apollonius_bisector_segment_2_object();
-  Construct_Apollonius_primal_ray_2 apollonius_primal_ray =
-    tr.construct_Apollonius_primal_ray_2_object();
-  Construct_Apollonius_primal_segment_2 apollonius_primal_segment =
-    tr.construct_Apollonius_primal_segment_2_object();
-
 
 
   // testing correctness of predicates;
@@ -714,6 +700,45 @@ bool test_algo_generic(InputStream& is)
 		  ag.number_of_hidden_vertices() == 
 		  static_cast<int>(wp_list.size()) );
   CGAL_assertion( ag2.number_of_vertices() == 0 );
+
+
+  // drawing methods
+  //--------------------------------------------------------------------
+  ag.draw_primal(nos);
+  ag.draw_dual(nos);
+
+  for (fvit = ag.finite_vertices_begin();
+       fvit != ag.finite_vertices_end(); ++fvit) {
+    ag.draw_primal_vertex(fvit, nos);
+  }
+
+  for (ffit = ag.finite_faces_begin();
+       ffit != ag.finite_faces_end(); ++ffit) {
+    ag.draw_dual_vertex(ffit, nos);
+  }
+
+  for (feit = ag.finite_edges_begin();
+       feit != ag.finite_edges_end(); ++feit) {
+    ag.draw_primal_edge(feit, nos);
+    ag.draw_dual_edge(feit, nos);
+  }
+
+  for (aeit = ag.all_edges_begin();
+       aeit != ag.all_edges_end(); ++aeit) {
+    ag.draw_primal_edge(aeit, nos);
+  }
+
+  for (afit = ag.all_faces_begin();
+       afit != ag.all_faces_end(); ++afit) {
+    ag.draw_primal_face(afit, nos);
+  }
+
+  for (avit = ag.all_vertices_begin();
+       avit != ag.all_vertices_end(); ++avit) {
+    ag.draw_dual_face(avit, nos);
+  }
+
+  
 
   return true;
 }

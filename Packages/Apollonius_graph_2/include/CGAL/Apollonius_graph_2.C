@@ -145,7 +145,7 @@ circumcircle(const Site_2& p0, const Site_2& p1,
 	     const Site_2& p2) const
 {
   return
-    geom_traits().construct_Apollonius_weighted_point_2_object()(p0, p1, p2);
+    geom_traits().construct_Apollonius_site_2_object()(p0, p1, p2);
 }
 
 
@@ -156,7 +156,7 @@ Apollonius_graph_2<Gt,Agds>::
 circumcircle(const Site_2& p0, const Site_2& p1) const
 {
   return
-    geom_traits().construct_Apollonius_weighted_point_2_object()(p0, p1);
+    geom_traits().construct_Apollonius_site_2_object()(p0, p1);
 }
 
 
@@ -167,7 +167,21 @@ typename Gt::Object_2
 Apollonius_graph_2<Gt,Agds>::
 dual(const Face_handle& f) const
 {
-  return circumcircle(f);
+  if ( !is_infinite(f) ) {
+    Site_2 cc = circumcircle(f);
+    return geom_traits().construct_object_2_object()(cc);
+  }
+
+  int i_inf(-1);
+  for (int i = 0; i < 3; i++) {
+    if ( is_infinite( f->vertex(0) ) ) {
+      i_inf = i;
+      break;
+    }
+  }
+  typename Gt::Line_2 ll = circumcircle(f->vertex((i_inf+1)%3)->site(),
+					f->vertex((i_inf+2)%3)->site());
+  return geom_traits().construct_object_2_object()(ll);
 }
 
 
@@ -183,7 +197,7 @@ dual(const Edge e) const
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
 
-    return geom_traits().construct_Apollonius_bisector_2_object()(p,q);
+    return construct_Apollonius_bisector_2_object()(p,q);
   }
 
   // dimension == 2
@@ -194,8 +208,7 @@ dual(const Edge e) const
     Site_2 q = (e.first)->vertex(  cw(e.second) )->site();
     Site_2 r = (e.first)->vertex(     e.second  )->site();
     Site_2 s = (e.first)->mirror_vertex(e.second)->site();
-    return
-      geom_traits().construct_Apollonius_bisector_segment_2_object()(p,q,r,s);
+    return construct_Apollonius_bisector_segment_2_object()(p,q,r,s);
   }
 
   // both of the adjacent faces are infinite
@@ -203,7 +216,7 @@ dual(const Edge e) const
        is_infinite(e.first->neighbor(e.second)) )  {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
-    return geom_traits().construct_Apollonius_bisector_2_object()(p,q);
+    return construct_Apollonius_bisector_2_object()(p,q);
   }
 
   // only one of the adjacent faces is infinite
@@ -228,7 +241,7 @@ dual(const Edge e) const
   Site_2 q = ee.first->vertex(  cw(ee.second) )->site();
   Site_2 r = ee.first->vertex(     ee.second  )->site();
 
-  return geom_traits().construct_Apollonius_bisector_ray_2_object()(p,q,r);
+  return construct_Apollonius_bisector_ray_2_object()(p,q,r);
 }
 
 
@@ -242,8 +255,10 @@ primal(const Edge e) const
 {
   typedef typename Geom_traits::Segment_2  Segment;
   typedef typename Geom_traits::Ray_2      Ray;
-  typedef typename Geom_traits::Hyperbola_segment_2  Hyperbola_segment;
-  typedef typename Geom_traits::Parabola_segment_2   Parabola_segment;
+  typedef CGAL::Hyperbola_segment_2<Gt>    Hyperbola_segment;
+  typedef CGAL::Parabola_segment_2<Gt>     Parabola_segment;
+  //  typedef typename Geom_traits::Hyperbola_segment_2  Hyperbola_segment;
+  //  typedef typename Geom_traits::Parabola_segment_2   Parabola_segment;
 
   //  CGAL_triangulation_precondition( !is_infinite(e) );
 
@@ -254,14 +269,14 @@ primal(const Edge e) const
 	Site_2 p = e.first->vertex( ccw(e.second) )->site();
 	Site_2 r = e.first->vertex( e.second )->site();
 	Site_2 s = e.first->mirror_vertex( e.second )->site();
-	ray = geom_traits().construct_Apollonius_primal_ray_2_object()(p,r,s);
+	ray = construct_Apollonius_primal_ray_2_object()(p,r,s);
       } else {
 	CGAL_triangulation_assertion
 	  (   is_infinite( e.first->vertex(ccw(e.second)) )   );
 	Site_2 q = e.first->vertex( cw(e.second) )->site();
 	Site_2 r = e.first->vertex( e.second )->site();
 	Site_2 s = e.first->mirror_vertex( e.second )->site();
-	ray = geom_traits().construct_Apollonius_primal_ray_2_object()(q,s,r);
+	ray = construct_Apollonius_primal_ray_2_object()(q,s,r);
       }
       return make_object(ray);
     }
@@ -270,8 +285,7 @@ primal(const Edge e) const
   if ( dimension() == 1 ) {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
-    Segment seg =
-      geom_traits().construct_Apollonius_primal_segment_2_object()(p, q);
+    Segment seg = construct_Apollonius_primal_segment_2_object()(p, q);
     return make_object(seg);
 
   }
@@ -283,8 +297,7 @@ primal(const Edge e) const
     Site_2 q = (e.first)->vertex(  cw(e.second) )->site();
     Site_2 r = (e.first)->vertex(     e.second  )->site();
     Site_2 s = (e.first)->mirror_vertex(e.second)->site();
-    return
-      geom_traits().construct_Apollonius_primal_segment_2_object()(p,q,r,s);
+    return construct_Apollonius_primal_segment_2_object()(p,q,r,s);
   }
 
   // both of the adjacent faces are infinite
@@ -292,8 +305,7 @@ primal(const Edge e) const
        is_infinite(e.first->neighbor(e.second)) )  {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
-    Segment seg =
-      geom_traits().construct_Apollonius_primal_segment_2_object()(p,q);
+    Segment seg = construct_Apollonius_primal_segment_2_object()(p,q);
     return make_object(seg);
   }
 
@@ -306,7 +318,7 @@ primal(const Edge e) const
   Site_2 q = (ee.first)->vertex(  cw(ee.second) )->site();
   Site_2 r = (ee.first)->vertex(     ee.second  )->site();
   Parabola_segment ps =
-    geom_traits().construct_Apollonius_primal_segment_2_object()(p,q,r);
+    construct_Apollonius_primal_segment_2_object()(p,q,r);
   return make_object(ps);
 }
 

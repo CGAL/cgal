@@ -1,6 +1,8 @@
 #ifndef _MK___TYPEDEFS_H
 #define _MK___TYPEDEFS_H
 
+#include <CGAL/basic.h>
+
 #if 1
 
 //-------- choosing number type --- start ---------
@@ -62,7 +64,7 @@ typedef
 CGAL::Apollonius_graph_euclidean_traits_2<Rep,CGAL::Ring_tag>  Gt;
 
 typedef Gt::Point_2                           Point_2;
-typedef Gt::Kernel::Circle_2                  Circle_2;
+typedef Rep::Circle_2                         Circle_2;
 typedef Gt::Site_2                            Apollonius_site_2;
 typedef Gt::Site_2::Weight                    Weight;
 
