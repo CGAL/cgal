@@ -25,28 +25,26 @@
 #ifndef CGAL_SPHEREH3_H
 #define CGAL_SPHEREH3_H
 
-#include <CGAL/basic.h>
-#include <CGAL/PointH3.h>
-#include <CGAL/predicates_on_pointsH3.h>
-#include <CGAL/basic_constructionsH3.h>
-
 CGAL_BEGIN_NAMESPACE
+
+template <class R_> class SphereH3;
 
 template <class R>
 class Sphere_repH3 : public Ref_counted
 {
   public:
     typedef typename R::FT   FT;
+    typedef typename R::Kernel_base::Point_3  Point_3;
 
     friend class SphereH3<R>;
 
     Sphere_repH3() {}
 
-    Sphere_repH3(const PointH3<R> p, const FT sq_rad, const Orientation& o)
+    Sphere_repH3(const Point_3 p, const FT sq_rad, const Orientation& o)
       : center(p), squared_radius(sq_rad), orientation_(o) {}
 
   protected:
-    PointH3<R>   center;
+    Point_3   center;
     FT           squared_radius;
     Orientation  orientation_;
 };
@@ -56,17 +54,18 @@ class Simple_Sphere_repH3
 {
   public:
     typedef typename R::FT   FT;
+    typedef typename R::Kernel_base::Point_3  Point_3;
 
     friend class SphereH3<R>;
 
     Simple_Sphere_repH3() {}
 
-    Simple_Sphere_repH3(const PointH3<R> p, const FT sq_rad,
+    Simple_Sphere_repH3(const Point_3 p, const FT sq_rad,
 	                const Orientation& o)
       : center(p), squared_radius(sq_rad), orientation_(o) {}
 
   protected:
-    PointH3<R>   center;
+    Point_3   center;
     FT           squared_radius;
     Orientation  orientation_;
 };
@@ -77,9 +76,11 @@ class SphereH3
   : public R_::Sphere_handle_3
 {
   public:
-      typedef R_                R;
-      typedef typename R::RT    RT;
-      typedef typename R::FT    FT;
+    typedef R_                R;
+    typedef typename R::RT    RT;
+    typedef typename R::FT    FT;
+    typedef typename R::Kernel_base::Point_3  Point_3;
+    typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
       typedef typename R::Sphere_handle_3           Sphere_handle_3_;
       typedef typename Sphere_handle_3_::element_type Sphere_ref_3;
@@ -87,20 +88,20 @@ class SphereH3
       SphereH3()
         : Sphere_handle_3_() {}
 
-      SphereH3(const PointH3<R>& p, const FT& sq_rad,
+      SphereH3(const Point_3& p, const FT& sq_rad,
                const Orientation& o = COUNTERCLOCKWISE);
 
-      SphereH3(const PointH3<R>& p, const PointH3<R>& q,
-               const PointH3<R>& r, const PointH3<R>& u);
+      SphereH3(const Point_3& p, const Point_3& q,
+               const Point_3& r, const Point_3& u);
 
-      SphereH3(const PointH3<R>& p, const PointH3<R>& q,
-               const PointH3<R>& r,
+      SphereH3(const Point_3& p, const Point_3& q,
+               const Point_3& r,
                const Orientation& o = COUNTERCLOCKWISE);
 
-      SphereH3(const PointH3<R>&  p, const PointH3<R>&  q,
+      SphereH3(const Point_3&  p, const Point_3&  q,
                const Orientation& o = COUNTERCLOCKWISE);
 
-      SphereH3(const PointH3<R>&  p,
+      SphereH3(const Point_3&  p,
                const Orientation& o = COUNTERCLOCKWISE);
 
       bool
@@ -110,13 +111,13 @@ class SphereH3
       operator!=(const SphereH3<R>& s) const
       { return !(*this == s); }
 
-      const PointH3<R> & center() const;
+      const Point_3 & center() const;
 
       const FT & squared_radius() const;
 
       Orientation orientation() const;
 
-      SphereH3<R> orthogonal_transform(const Aff_transformationH3<R>& t) const;
+      SphereH3<R> orthogonal_transform(const Aff_transformation_3& t) const;
 
       bool is_degenerate() const;
 
@@ -124,36 +125,36 @@ class SphereH3
 
       Bbox_3 bbox() const;
 
-      Oriented_side oriented_side(const PointH3<R>& p) const;
+      Oriented_side oriented_side(const Point_3& p) const;
 
       bool
-      has_on_boundary(const PointH3<R>& p) const
+      has_on_boundary(const Point_3& p) const
       { return oriented_side(p)==ON_ORIENTED_BOUNDARY; }
 
       bool
-      has_on_positive_side(const PointH3<R>& p) const
+      has_on_positive_side(const Point_3& p) const
       { return oriented_side(p)==ON_POSITIVE_SIDE; }
 
       bool
-      has_on_negative_side(const PointH3<R>& p) const
+      has_on_negative_side(const Point_3& p) const
       { return oriented_side(p)==ON_NEGATIVE_SIDE; }
 
       Bounded_side
-      bounded_side(const PointH3<R>& p) const;
+      bounded_side(const Point_3& p) const;
 
       bool
-      has_on_bounded_side(const PointH3<R>& p) const
+      has_on_bounded_side(const Point_3& p) const
       { return bounded_side(p)==ON_BOUNDED_SIDE; }
 
       bool
-      has_on_unbounded_side(const PointH3<R>& p) const
+      has_on_unbounded_side(const Point_3& p) const
       { return bounded_side(p)==ON_UNBOUNDED_SIDE; }
 };
 
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-SphereH3<R>::SphereH3(const PointH3<R>& center,
+SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& center,
                           const FT& squared_radius,
                           const Orientation& o)
 {
@@ -164,7 +165,7 @@ SphereH3<R>::SphereH3(const PointH3<R>& center,
 
 template <class R>
 CGAL_KERNEL_CTOR_INLINE
-SphereH3<R>::SphereH3(const PointH3<R>& center,
+SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& center,
                           const Orientation& o)
 {
   CGAL_kernel_precondition( ( o != COLLINEAR) );
@@ -173,39 +174,39 @@ SphereH3<R>::SphereH3(const PointH3<R>& center,
 
 template <class R>
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
-SphereH3<R>::SphereH3(const PointH3<R>& p,
-                          const PointH3<R>& q,
+SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
+                          const typename SphereH3<R>::Point_3& q,
                           const Orientation& o)
 {
   CGAL_kernel_precondition( o != COLLINEAR);
-  PointH3<R> center = midpoint(p,q);
+  Point_3 center = midpoint(p,q);
   FT     squared_radius = squared_distance(p,center);
   initialize_with(Sphere_ref_3(center, squared_radius, o));
 }
 
 template <class R>
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
-SphereH3<R>::SphereH3(const PointH3<R>& p,
-                          const PointH3<R>& q,
-                          const PointH3<R>& r,
+SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
+                          const typename SphereH3<R>::Point_3& q,
+                          const typename SphereH3<R>::Point_3& r,
                           const Orientation& o)
 {
   CGAL_kernel_precondition( o != COLLINEAR);
-  PointH3<R> center = circumcenter(p,q,r);
+  Point_3 center = circumcenter(p,q,r);
   FT     squared_radius = squared_distance(p,center);
   initialize_with(Sphere_ref_3(center, squared_radius, o));
 }
 
 template <class R>
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
-SphereH3<R>::SphereH3(const PointH3<R>& p,
-                          const PointH3<R>& q,
-                          const PointH3<R>& r,
-                          const PointH3<R>& s)
+SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
+                          const typename SphereH3<R>::Point_3& q,
+                          const typename SphereH3<R>::Point_3& r,
+                          const typename SphereH3<R>::Point_3& s)
 {
   Orientation o = CGAL::orientation(p,q,r,s);
   CGAL_kernel_precondition( o != COLLINEAR);
-  PointH3<R> center = circumcenter(p,q,r,s);
+  Point_3 center = circumcenter(p,q,r,s);
   FT     squared_radius = squared_distance(p,center);
   initialize_with(Sphere_ref_3(center, squared_radius, o));
 }
@@ -222,7 +223,7 @@ SphereH3<R>::operator==(const SphereH3<R>& s) const
 
 template <class R>
 inline
-const PointH3<R> &
+const typename SphereH3<R>::Point_3 &
 SphereH3<R>::center() const
 { return Ptr()->center; }
 
@@ -247,13 +248,13 @@ SphereH3<R>::is_degenerate() const
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
-SphereH3<R>::oriented_side(const PointH3<R>& p) const
+SphereH3<R>::oriented_side(const typename SphereH3<R>::Point_3& p) const
 { return Oriented_side(bounded_side(p) * orientation()); }
 
 template <class R>
 CGAL_KERNEL_INLINE
 Bounded_side
-SphereH3<R>::bounded_side(const PointH3<R>& p) const
+SphereH3<R>::bounded_side(const typename SphereH3<R>::Point_3& p) const
 {
   return Bounded_side(CGAL_NTS compare(squared_radius(),
                                        squared_distance(center(),p)));

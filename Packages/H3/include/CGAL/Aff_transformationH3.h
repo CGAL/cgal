@@ -49,20 +49,25 @@ public:
   typedef R_                       R;
   typedef typename R::FT           FT;
   typedef typename R::RT           RT;
+  typedef typename R::Kernel_base::Point_3        Point_3;
+  typedef typename R::Kernel_base::Vector_3       Vector_3;
+  typedef typename R::Kernel_base::Direction_3    Direction_3;
+  typedef typename R::Kernel_base::Plane_3        Plane_3;
+  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
   virtual  ~Aff_transformation_rep_baseH3(){}
 
-  virtual  PointH3<R>
-           transform(const PointH3<R>&) const = 0;
+  virtual  Point_3
+           transform(const Point_3&) const = 0;
 
-  virtual  VectorH3<R>
-           transform(const VectorH3<R>&) const = 0;
+  virtual  Vector_3
+           transform(const Vector_3&) const = 0;
 
-  virtual  DirectionH3<R>
-           transform(const DirectionH3<R>&) const = 0;
+  virtual  Direction_3
+           transform(const Direction_3&) const = 0;
 
-  virtual  PlaneH3<R>
-           transform(const PlaneH3<R>&) const = 0;
+  virtual  Plane_3
+           transform(const Plane_3&) const = 0;
 
   virtual  Aff_transformationH3<R>
            inverse() const = 0;
@@ -90,6 +95,11 @@ public:
   typedef R_                       R;
   typedef typename R::FT           FT;
   typedef typename R::RT           RT;
+  typedef typename R::Kernel_base::Point_3        Point_3;
+  typedef typename R::Kernel_base::Vector_3       Vector_3;
+  typedef typename R::Kernel_base::Direction_3    Direction_3;
+  typedef typename R::Kernel_base::Plane_3        Plane_3;
+  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
   Aff_transformation_repH3() {}
 
@@ -100,25 +110,25 @@ public:
                                                               const RT& m33);
   virtual  ~Aff_transformation_repH3() {}
 
-  virtual  PointH3<R>
-           transform(const PointH3<R>& p) const;
+  virtual  Point_3
+           transform(const Point_3& p) const;
 
-  virtual  VectorH3<R>
-           transform(const VectorH3<R>& v) const;
+  virtual  Vector_3
+           transform(const Vector_3& v) const;
 
-  virtual  DirectionH3<R>
-           transform(const DirectionH3<R>& dir) const;
+  virtual  Direction_3
+           transform(const Direction_3& dir) const;
 
-  virtual  PlaneH3<R>
-           transform(const PlaneH3<R>& pl) const;
+  virtual  Plane_3
+           transform(const Plane_3& pl) const;
 
-  virtual  Aff_transformationH3<R>
+  virtual  Aff_transformation_3
            inverse() const;
 
   virtual  Aff_transformation_repH3<R>
            general_form() const;
 
-  virtual  Aff_transformationH3<R>
+  virtual  Aff_transformation_3
            transpose() const;
 
   virtual  bool
@@ -157,6 +167,11 @@ public:
   typedef R_                R;
   typedef typename R::RT    RT;
   typedef typename R::FT    FT;
+  typedef typename R::Kernel_base::Point_3        Point_3;
+  typedef typename R::Kernel_base::Vector_3       Vector_3;
+  typedef typename R::Kernel_base::Direction_3    Direction_3;
+  typedef typename R::Kernel_base::Plane_3        Plane_3;
+  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
            Identity_repH3()
            {}
@@ -164,32 +179,32 @@ public:
   virtual  ~Identity_repH3()
            {}
 
-  virtual  PointH3<R>
-           transform(const PointH3<R>& p) const
+  virtual  Point_3
+           transform(const Point_3& p) const
            { return p; }
 
-  virtual  VectorH3<R>
-           transform(const VectorH3<R>& v) const
+  virtual  Vector_3
+           transform(const Vector_3& v) const
            { return v; }
 
-  virtual  DirectionH3<R>
-           transform(const DirectionH3<R>& dir) const
+  virtual  Direction_3
+           transform(const Direction_3& dir) const
            { return dir; }
 
-  virtual  PlaneH3<R>
-           transform(const PlaneH3<R>& pl) const
+  virtual  Plane_3
+           transform(const Plane_3& pl) const
            { return pl; }
 
-  virtual  Aff_transformationH3<R>
+  virtual  Aff_transformation_3
            inverse() const
-           { return Aff_transformationH3<R>( IDENTITY); }
+           { return Aff_transformation_3( IDENTITY); }
 
   virtual  Aff_transformation_repH3<R>
            general_form() const;
 
-  virtual  Aff_transformationH3<R>
+  virtual  Aff_transformation_3
            transpose() const
-           { return Aff_transformationH3<R>( IDENTITY); }
+           { return Aff_transformation_3( IDENTITY); }
 
   virtual  bool
            is_even() const
@@ -211,31 +226,36 @@ public:
   typedef R_                   R;
   typedef typename R::FT       FT;
   typedef typename R::RT       RT;
+  typedef typename R::Kernel_base::Point_3        Point_3;
+  typedef typename R::Kernel_base::Vector_3       Vector_3;
+  typedef typename R::Kernel_base::Direction_3    Direction_3;
+  typedef typename R::Kernel_base::Plane_3        Plane_3;
+  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
-           Translation_repH3( const VectorH3<R>& v);
+           Translation_repH3( const Vector_3& v);
 
   virtual  ~Translation_repH3() {}
 
 
-  virtual  PointH3<R>
-           transform(const PointH3<R>& p) const;
+  virtual  Point_3
+           transform(const Point_3& p) const;
 
-  virtual  VectorH3<R>
-           transform(const VectorH3<R>& v) const;
+  virtual  Vector_3
+           transform(const Vector_3& v) const;
 
-  virtual  DirectionH3<R>
-           transform(const DirectionH3<R>& dir) const;
+  virtual  Direction_3
+           transform(const Direction_3& dir) const;
 
-  virtual  PlaneH3<R>
-           transform(const PlaneH3<R>& pl) const;
+  virtual  Plane_3
+           transform(const Plane_3& pl) const;
 
-  virtual  Aff_transformationH3<R>
+  virtual  Aff_transformation_3
            inverse() const;
 
   virtual  Aff_transformation_repH3<R>
            general_form() const;
 
-  virtual  Aff_transformationH3<R>
+  virtual  Aff_transformation_3
            transpose() const;
 
   virtual  bool
@@ -250,7 +270,7 @@ public:
 friend class Aff_transformationH3<R>;
 
 private:
-  VectorH3<R>  tv;
+  Vector_3  tv;
 };
 
 template < class R_ >
@@ -260,6 +280,10 @@ public:
   typedef R_                R;
   typedef typename R::RT    RT;
   typedef typename R::FT    FT;
+  typedef typename R::Kernel_base::Point_3        Point_3;
+  typedef typename R::Kernel_base::Vector_3       Vector_3;
+  typedef typename R::Kernel_base::Direction_3    Direction_3;
+  typedef typename R::Kernel_base::Plane_3        Plane_3;
 
   Aff_transformationH3();
 
@@ -267,7 +291,7 @@ public:
   Aff_transformationH3(const Identity_transformation&);
 
   // Translation
-  Aff_transformationH3(const Translation& , const VectorH3<R>& v);
+  Aff_transformationH3(const Translation& , const Vector_3& v);
 
   //  Scaling
   Aff_transformationH3(const Scaling&, const RT& num, const RT& den);
@@ -284,17 +308,17 @@ public:
                   const RT& m20, const RT& m21, const RT& m22,
                                                                const RT& m33);
 
-  PointH3<R>
-  transform(const PointH3<R>& p) const;
+  Point_3
+  transform(const Point_3& p) const;
 
-  VectorH3<R>
-  transform(const VectorH3<R>& v) const;
+  Vector_3
+  transform(const Vector_3& v) const;
 
-  DirectionH3<R>
-  transform(const DirectionH3<R>& d) const;
+  Direction_3
+  transform(const Direction_3& d) const;
 
-  PlaneH3<R>
-  transform(const PlaneH3<R>& pl) const;
+  Plane_3
+  transform(const Plane_3& pl) const;
 
   Aff_transformationH3<R>
   inverse()   const;
@@ -344,11 +368,11 @@ Aff_transformation_repH3<R>::Aff_transformation_repH3(
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH3<R>
-Aff_transformation_repH3<R>::transform(const PointH3<R>& p) const
+typename Aff_transformation_repH3<R>::Point_3
+Aff_transformation_repH3<R>::
+transform(const typename Aff_transformation_repH3<R>::Point_3& p) const
 {
-  return
-  PointH3<R>(t00 * p.hx() + t01 * p.hy() + t02 * p.hz() + t03 * p.hw(),
+  return Point_3(t00 * p.hx() + t01 * p.hy() + t02 * p.hz() + t03 * p.hw(),
                  t10 * p.hx() + t11 * p.hy() + t12 * p.hz() + t13 * p.hw(),
                  t20 * p.hx() + t21 * p.hy() + t22 * p.hz() + t23 * p.hw(),
                  t33 * p.hw());
@@ -356,11 +380,11 @@ Aff_transformation_repH3<R>::transform(const PointH3<R>& p) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-VectorH3<R>
-Aff_transformation_repH3<R>::transform(const VectorH3<R>& v) const
+typename Aff_transformation_repH3<R>::Vector_3
+Aff_transformation_repH3<R>::
+transform(const typename Aff_transformation_repH3<R>::Vector_3& v) const
 {
-  return
-  VectorH3<R>(t00 * v.hx() + t01 * v.hy() + t02 * v.hz(),
+  return Vector_3(t00 * v.hx() + t01 * v.hy() + t02 * v.hz(),
                   t10 * v.hx() + t11 * v.hy() + t12 * v.hz(),
                   t20 * v.hx() + t21 * v.hy() + t22 * v.hz(),
                   t33 * v.hw() );
@@ -368,38 +392,38 @@ Aff_transformation_repH3<R>::transform(const VectorH3<R>& v) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-DirectionH3<R>
-Aff_transformation_repH3<R>::transform(const DirectionH3<R>& d) const
+typename Aff_transformation_repH3<R>::Direction_3
+Aff_transformation_repH3<R>::
+transform(const typename Aff_transformation_repH3<R>::Direction_3& d) const
 {
-  VectorH3<R> v( d.to_vector() );
-  return DirectionH3<R>(t00 * v.hx() + t01 * v.hy() + t02 * v.hz(),
-                            t10 * v.hx() + t11 * v.hy() + t12 * v.hz(),
-                            t20 * v.hx() + t21 * v.hy() + t22 * v.hz(),
-                            t33 * v.hw() );
+  Vector_3 v( d.to_vector() );
+  return Direction_3(t00 * v.hx() + t01 * v.hy() + t02 * v.hz(),
+                     t10 * v.hx() + t11 * v.hy() + t12 * v.hz(),
+                     t20 * v.hx() + t21 * v.hy() + t22 * v.hz(),
+                     t33 * v.hw() );
 
 /*
-  return DirectionH3<R>( t00 * d.hx() + t01 * d.hy() + t02 * d.hz(),
-                             t10 * d.hx() + t11 * d.hy() + t12 * d.hz(),
-                             t20 * d.hx() + t21 * d.hy() + t22 * d.hz() );
+  return Direction_3( t00 * d.hx() + t01 * d.hy() + t02 * d.hz(),
+                      t10 * d.hx() + t11 * d.hy() + t12 * d.hz(),
+                      t20 * d.hx() + t21 * d.hy() + t22 * d.hz() );
 */
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-PlaneH3<R>
-Aff_transformation_repH3<R>::transform(const PlaneH3<R>& pl) const
+typename Aff_transformation_repH3<R>::Plane_3
+Aff_transformation_repH3<R>::
+transform(const typename Aff_transformation_repH3<R>::Plane_3& pl) const
 {
   if ( is_even() )
   {
-      return
-        PlaneH3<R>(
+      return Plane_3(
                transform(pl.point() ),
                transpose().inverse().transform(pl.orthogonal_direction() ));
   }
   else
   {
-     return
-       PlaneH3<R>(
+     return Plane_3(
                transform(pl.point() ),
                -(transpose().inverse().transform(pl.orthogonal_direction() )));
   }
@@ -407,12 +431,12 @@ Aff_transformation_repH3<R>::transform(const PlaneH3<R>& pl) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-Aff_transformationH3<R>
+typename Aff_transformation_repH3<R>::Aff_transformation_3
 Aff_transformation_repH3<R>::inverse() const
 {
   typedef typename R::RT RT;
   const RT  RT0(0);
-  return Aff_transformationH3<R>(
+  return Aff_transformation_3(
                            det3x3_by_formula( t11, t12, t13,
                                                    t21, t22, t23,     // i 00
                                                    RT0, RT0, t33 ),
@@ -478,14 +502,14 @@ Aff_transformation_repH3<R>::general_form() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-Aff_transformationH3<R>
+typename Aff_transformation_repH3<R>::Aff_transformation_3
 Aff_transformation_repH3<R>::transpose() const
 {
   typedef typename R::RT RT;
   const RT  RT0(0);
-  return Aff_transformationH3<R>( t00,    t10,    t20,    RT0,
-                                      t01,    t11,    t21,    RT0,
-                                      t02,    t12,    t22,    RT0,
+  return Aff_transformation_3( t00,    t10,    t20,    RT0,
+                               t01,    t11,    t21,    RT0,
+                               t02,    t12,    t22,    RT0,
                                                               t33);
 }
 
@@ -567,46 +591,51 @@ Identity_repH3<R>::general_form() const
 
 template < class R >
 inline
-Translation_repH3<R>::Translation_repH3( const VectorH3<R>& v)
+Translation_repH3<R>::
+Translation_repH3( const typename Translation_repH3<R>::Vector_3& v)
  : tv(v)
 {}
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH3<R>
-Translation_repH3<R>::transform(const PointH3<R>& p) const
+typename Translation_repH3<R>::Point_3
+Translation_repH3<R>::
+transform(const typename Translation_repH3<R>::Point_3& p) const
 {
-  return PointH3<R>( tv.hw() * p.hx() + tv.hx() * p.hw(),
-                         tv.hw() * p.hy() + tv.hy() * p.hw(),
-                         tv.hw() * p.hz() + tv.hz() * p.hw(),
-                         tv.hw() * p.hw() );
+  return Point_3( tv.hw() * p.hx() + tv.hx() * p.hw(),
+                  tv.hw() * p.hy() + tv.hy() * p.hw(),
+                  tv.hw() * p.hz() + tv.hz() * p.hw(),
+                  tv.hw() * p.hw() );
 }
 
 template < class R >
 inline
-VectorH3<R>
-Translation_repH3<R>::transform(const VectorH3<R>& v) const
+typename Translation_repH3<R>::Vector_3
+Translation_repH3<R>::
+transform(const typename Translation_repH3<R>::Vector_3& v) const
 { return v; }
 
 template < class R >
 inline
-DirectionH3<R>
-Translation_repH3<R>::transform(const DirectionH3<R>& dir) const
+typename Translation_repH3<R>::Direction_3
+Translation_repH3<R>::
+transform(const typename Translation_repH3<R>::Direction_3& dir) const
 { return dir; }
 
 template < class R >
 inline
-PlaneH3<R>
-Translation_repH3<R>::transform(const PlaneH3<R>& pl) const
+typename Translation_repH3<R>::Plane_3
+Translation_repH3<R>::
+transform(const typename Translation_repH3<R>::Plane_3& pl) const
 {
-  return PlaneH3<R>( transform( pl.point() ), pl.orthogonal_vector() );
+  return Plane_3( transform( pl.point() ), pl.orthogonal_vector() );
 }
 
 template < class R >
 inline
-Aff_transformationH3<R>
+typename Translation_repH3<R>::Aff_transformation_3
 Translation_repH3<R>::inverse() const
-{ return Aff_transformationH3<R>(TRANSLATION,  - tv ); }
+{ return Aff_transformation_3(TRANSLATION, - tv ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -622,16 +651,16 @@ Translation_repH3<R>::general_form() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-Aff_transformationH3<R>
+typename Translation_repH3<R>::Aff_transformation_3
 Translation_repH3<R>::transpose() const
 {
   typedef typename R::RT RT;
   const RT  RT0(0);
   const RT  RT1(1);
-  return Aff_transformationH3<R>( RT1,  RT0,  RT0,  RT0,
-                                  RT0,  RT1,  RT0,  RT0,
-                                  RT0,  RT0,  RT1,  RT0,
-                                  RT1 );
+  return Aff_transformation_3( RT1,  RT0,  RT0,  RT0,
+                               RT0,  RT1,  RT0,  RT0,
+                               RT0,  RT0,  RT1,  RT0,
+                               RT1 );
 }
 
 template < class R >
@@ -731,7 +760,8 @@ Aff_transformationH3(const Identity_transformation&)
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Aff_transformationH3<R>::
-Aff_transformationH3(const Translation&, const VectorH3<R>& v)
+Aff_transformationH3(const Translation&,
+	             const typename Aff_transformationH3<R>::Vector_3& v)
 { initialize_with(Translation_repH3<R>( v )); }
 
 template < class R >
@@ -779,28 +809,30 @@ Aff_transformationH3(
 
 template < class R >
 inline
-PointH3<R>
-Aff_transformationH3<R>::transform(const PointH3<R>& p) const
+typename Aff_transformationH3<R>::Point_3
+Aff_transformationH3<R>::
+transform(const typename Aff_transformationH3<R>::Point_3& p) const
 { return Ptr()->transform(p); }
 
 template < class R >
 inline
-VectorH3<R>
-Aff_transformationH3<R>::transform(const VectorH3<R>& v) const
+typename Aff_transformationH3<R>::Vector_3
+Aff_transformationH3<R>::
+transform(const typename Aff_transformationH3<R>::Vector_3& v) const
 { return Ptr()->transform(v); }
 
 template < class R >
 inline
-DirectionH3<R>
+typename Aff_transformationH3<R>::Direction_3
 Aff_transformationH3<R>::
-transform(const DirectionH3<R>& d) const
+transform(const typename Aff_transformationH3<R>::Direction_3& d) const
 { return Ptr()->transform(d); }
 
 template < class R >
 inline
-PlaneH3<R>
+typename Aff_transformationH3<R>::Plane_3
 Aff_transformationH3<R>::
-transform(const PlaneH3<R>& pl) const
+transform(const typename Aff_transformationH3<R>::Plane_3& pl) const
 { return Ptr()->transform(pl); }
 
 template < class R >

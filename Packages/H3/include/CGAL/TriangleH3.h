@@ -25,10 +25,6 @@
 #ifndef CGAL_TRIANGLEH3_H
 #define CGAL_TRIANGLEH3_H
 
-#include <CGAL/predicates_on_pointsH3.h>
-#include <CGAL/PlaneH3.h>
-#include <CGAL/TetrahedronH3.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
@@ -39,6 +35,12 @@ public:
   typedef R_                R;
   typedef typename R::RT    RT;
   typedef typename R::FT    FT;
+  typedef typename R::Kernel_base::Point_3          Point_3;
+  typedef typename R::Kernel_base::Plane_3          Plane_3;
+  typedef typename R::Kernel_base::Vector_3         Vector_3;
+  typedef typename R::Kernel_base::Segment_3        Segment_3;
+  typedef typename R::Kernel_base::Tetrahedron_3    Tetrahedron_3;
+  typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R::Triangle_handle_3         Triangle_handle_3_;
   typedef typename Triangle_handle_3_::element_type Triangle_ref_3;
@@ -46,23 +48,23 @@ public:
   TriangleH3()
     : Triangle_handle_3_(Triangle_ref_3()) {}
 
-  TriangleH3(const PointH3<R> &p,
-             const PointH3<R> &q,
-             const PointH3<R> &r)
+  TriangleH3(const Point_3 &p,
+             const Point_3 &q,
+             const Point_3 &r)
     : Triangle_handle_3_(Triangle_ref_3(p,q,r)) {}
 
   bool          operator==(const TriangleH3<R> &t) const;
   bool          operator!=(const TriangleH3<R> &t) const;
 
-  PlaneH3<R>    supporting_plane() const;
+  Plane_3       supporting_plane() const;
 
-  TriangleH3<R> transform(const Aff_transformationH3<R> &t) const;
-  bool          has_on(const PointH3<R> &p) const;
-  bool          nondegenerate_has_on(const PointH3<R> &p) const;
+  TriangleH3<R> transform(const Aff_transformation_3 &t) const;
+  bool          has_on(const Point_3 &p) const;
+  bool          nondegenerate_has_on(const Point_3 &p) const;
   bool          is_degenerate() const;
 
-  const PointH3<R> & vertex(int i) const;
-  const PointH3<R> & operator[](int i) const;
+  const Point_3 & vertex(int i) const;
+  const Point_3 & operator[](int i) const;
 
   FT       squared_area() const;
 
@@ -91,7 +93,7 @@ TriangleH3<R>::operator!=(const TriangleH3<R> &t) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-const PointH3<R> &
+const typename TriangleH3<R>::Point_3 &
 TriangleH3<R>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
@@ -103,7 +105,7 @@ TriangleH3<R>::vertex(int i) const
 
 template < class R >
 inline
-const PointH3<R> &
+const typename TriangleH3<R>::Point_3 &
 TriangleH3<R>::operator[](int i) const
 { return vertex(i); }
 
@@ -112,17 +114,17 @@ CGAL_KERNEL_MEDIUM_INLINE
 typename TriangleH3<R>::FT
 TriangleH3<R>::squared_area() const
 { 
-   VectorH3<R> v1 = vertex(1) - vertex(0);
-   VectorH3<R> v2 = vertex(2) - vertex(0);
-   VectorH3<R> v3 = cross_product(v1, v2);
+   Vector_3 v1 = vertex(1) - vertex(0);
+   Vector_3 v2 = vertex(2) - vertex(0);
+   Vector_3 v3 = cross_product(v1, v2);
    return (v3 * v3)/FT(4); 
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-PlaneH3<R>
+typename TriangleH3<R>::Plane_3
 TriangleH3<R>::supporting_plane() const
-{ return PlaneH3<R>(vertex(0), vertex(1), vertex(2)); }
+{ return Plane_3(vertex(0), vertex(1), vertex(2)); }
 
 template < class R >
 inline
@@ -134,7 +136,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 TriangleH3<R>
 TriangleH3<R>::
-transform(const Aff_transformationH3<R> &t) const
+transform(const typename TriangleH3<R>::Aff_transformation_3 &t) const
 {
   return TriangleH3<R>(t.transform(vertex(0)),
                                 t.transform(vertex(1)),
@@ -163,7 +165,7 @@ std::ostream &operator<<(std::ostream &os, const TriangleH3<R> &t)
 template < class R >
 std::istream &operator>>(std::istream &is, TriangleH3<R> &t)
 {
-  PointH3<R> p, q, r;
+  typename TriangleH3<R>::Point_3 p, q, r;
   is >> p >> q >> r;
   t = TriangleH3<R>(p, q, r);
   return is;
@@ -174,32 +176,32 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 TriangleH3<R>::
-nondegenerate_has_on(const PointH3<R> &p) const
+nondegenerate_has_on(const typename TriangleH3<R>::Point_3 &p) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  PlaneH3<R> sup_pl = supporting_plane();
+  Plane_3 sup_pl = supporting_plane();
   if ( !sup_pl.has_on(p) )
   {
       return false;
   }
-  TetrahedronH3<R> tetrapak( vertex(0),
-                                      vertex(1),
-                                      vertex(2),
-                                      vertex(0) + sup_pl.orthogonal_vector());
+  Tetrahedron_3 tetrapak( vertex(0),
+                          vertex(1),
+                          vertex(2),
+                          vertex(0) + sup_pl.orthogonal_vector());
   return tetrapak.has_on_boundary(p);
 }
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 bool
-TriangleH3<R>::has_on(const PointH3<R> &p) const
+TriangleH3<R>::has_on(const typename TriangleH3<R>::Point_3 &p) const
 {
   if (!is_degenerate() )
   {
       return nondegenerate_has_on(p);
   }
-  PointH3<R> minp( vertex(0) );
-  PointH3<R> maxp( vertex(1) );
+  Point_3 minp( vertex(0) );
+  Point_3 maxp( vertex(1) );
   if (lexicographically_xyz_smaller(vertex(1),vertex(0)) )
   {
       minp = vertex(1);
@@ -217,7 +219,7 @@ TriangleH3<R>::has_on(const PointH3<R> &p) const
   {
       return (p == maxp);
   }
-  SegmentH3<R> s(minp,maxp);
+  Segment_3 s(minp,maxp);
   return s.has_on(p);
 }
 

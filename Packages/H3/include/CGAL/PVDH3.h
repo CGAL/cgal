@@ -29,7 +29,6 @@
 #define CGAL_VECTORH3_H
 #define CGAL_DIRECTIONH3_H
 
-#include <CGAL/homogeneous_classes.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_3.h>
 
@@ -43,6 +42,9 @@ class PointH3
     typedef R_                 R;
     typedef typename R::RT     RT;
     typedef typename R::FT     FT;
+    typedef typename R::Kernel_base::Vector_3                Vector_3;
+    typedef typename R::Kernel_base::Direction_3             Direction_3;
+    typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
     typedef typename R::Point_handle_3       Point_handle_3_;
     typedef typename Point_handle_3_::element_type Point_ref_3;
@@ -52,7 +54,7 @@ class PointH3
 
   PointH3(const Origin &);
 
-  PointH3(const VectorH3<R>& v)
+  PointH3(const Vector_3& v)
     : Point_handle_3_(v) {}
 
   PointH3(const RT& x, const RT& y, const RT& z)
@@ -73,10 +75,10 @@ class PointH3
 
   int   dimension() const;
 
-  DirectionH3<R>
+  Direction_3
         direction() const;
   PointH3<R>
-        transform( const Aff_transformationH3<R> & t) const;
+        transform( const Aff_transformation_3 & t) const;
   Bbox_3
         bbox() const;
 
@@ -93,6 +95,9 @@ class VectorH3
     typedef R_                 R;
     typedef typename R::RT     RT;
     typedef typename R::FT     FT;
+    typedef typename R::Kernel_base::Point_3                Point_3;
+    typedef typename R::Kernel_base::Direction_3             Direction_3;
+    typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename R::Vector_handle_3           Vector_handle_3_;
   typedef typename Vector_handle_3_::element_type       Vector_ref_3;
@@ -100,7 +105,7 @@ class VectorH3
   VectorH3()
     : Vector_handle_3_(Vector_ref_3()) {}
 
-  VectorH3(const PointH3<R>& a, const PointH3<R>& b)
+  VectorH3(const Point_3& a, const Point_3& b)
     : Vector_handle_3_(b-a) {}
 
   VectorH3(const Null_vector&)
@@ -113,10 +118,10 @@ class VectorH3
 
 // undocumented:
 
-  VectorH3(const PointH3<R> & p)
+  VectorH3(const Point_3 & p)
     : Vector_handle_3_(p) {}
 
-  VectorH3(const DirectionH3<R> & d)   /* XXX */
+  VectorH3(const Direction_3 & d)   /* XXX */
     : Vector_handle_3_(d) {}
 
   FT    x()  const;
@@ -132,10 +137,10 @@ class VectorH3
 
   int   dimension() const;
 
-  DirectionH3<R>
+  Direction_3
         direction() const;
   VectorH3<R>
-        transform(const Aff_transformationH3<R>& t ) const;
+        transform(const Aff_transformation_3& t ) const;
 
   VectorH3<R>
         operator-() const;
@@ -154,6 +159,12 @@ class DirectionH3
     typedef R_                 R;
     typedef typename R::RT     RT;
     typedef typename R::FT     FT;
+    typedef typename R::Kernel_base::Point_3                Point_3;
+    typedef typename R::Kernel_base::Vector_3               Vector_3;
+    typedef typename R::Kernel_base::Segment_3              Segment_3;
+    typedef typename R::Kernel_base::Line_3                 Line_3;
+    typedef typename R::Kernel_base::Ray_3                  Ray_3;
+    typedef typename R::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
     typedef typename R::Direction_handle_3   Direction_handle_3_;
     typedef typename Direction_handle_3_::element_type Direction_ref_3;
@@ -161,26 +172,26 @@ class DirectionH3
   DirectionH3()
     : Direction_handle_3_(Direction_ref_3()) {}
 
-  DirectionH3(const PointH3<R> & p )
+  DirectionH3(const Point_3 & p )
     : Direction_handle_3_(p) {}
 
-  DirectionH3(const VectorH3<R> & v )
+  DirectionH3(const Vector_3 & v )
     : Direction_handle_3_(v) {}
 
-  DirectionH3(const LineH3<R> & l )
+  DirectionH3(const Line_3 & l )
     : Direction_handle_3_(l.direction()) {}
 
-  DirectionH3(const RayH3<R> & r )
+  DirectionH3(const Ray_3 & r )
     : Direction_handle_3_(r.direction()) {}
 
-  DirectionH3(const SegmentH3<R> & s )
+  DirectionH3(const Segment_3 & s )
     : Direction_handle_3_(s.direction()) {}
 
   DirectionH3(const RT& x, const RT& y,
               const RT& z, const RT& w = RT(1) );
 
   DirectionH3<R>
-        transform(const Aff_transformationH3<R> &) const ;
+        transform(const Aff_transformation_3 &) const ;
   DirectionH3<R>
         operator-() const;
 
@@ -189,7 +200,7 @@ class DirectionH3
   bool  operator==( const DirectionH3<R>& d) const;
   bool  operator!=( const DirectionH3<R>& d) const;
 
-  VectorH3<R>    to_vector() const;
+  Vector_3    to_vector() const;
 
   const RT & dx() const;
   const RT & dy() const;
@@ -312,9 +323,9 @@ PointH3<R>::operator[](int i) const
 
 template < class R >
 inline
-DirectionH3<R>
+typename PointH3<R>::Direction_3
 PointH3<R>::direction() const
-{ return DirectionH3<R>(*this); }
+{ return Direction_3(*this); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -468,9 +479,9 @@ VectorH3<R>::homogeneous(int i) const
 
 template < class R >
 inline
-DirectionH3<R>
+typename VectorH3<R>::Direction_3
 VectorH3<R>::direction() const
-{ return DirectionH3<R>(*this); }
+{ return Direction_3(*this); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -612,9 +623,9 @@ DirectionH3<R>::operator-() const
 
 template <class R >
 inline
-VectorH3<R>
+typename DirectionH3<R>::Vector_3
 DirectionH3<R>::to_vector() const
-{ return VectorH3<R>(*this); }
+{ return Vector_3(*this); }
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -764,7 +775,7 @@ CGAL_BEGIN_NAMESPACE
 template < class R >
 inline
 PointH3<R>
-PointH3<R>::transform(const Aff_transformationH3<R>& t) const
+PointH3<R>::transform(const typename PointH3<R>::Aff_transformation_3& t) const
 { return t.transform(*this); }
 
 template < class R >
@@ -810,7 +821,8 @@ PointH3<R>::bbox() const
 template < class R >
 inline
 VectorH3<R>
-VectorH3<R>::transform(const Aff_transformationH3<R>&t ) const
+VectorH3<R>::
+transform(const typename VectorH3<R>::Aff_transformation_3&t ) const
 { return t.transform(*this); }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_VECTORH3
@@ -866,7 +878,7 @@ template <class R >
 inline
 DirectionH3<R>
 DirectionH3<R>::
-transform(const Aff_transformationH3<R>& t) const
+transform(const typename DirectionH3<R>::Aff_transformation_3& t) const
 { return t.transform(*this); }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONH3

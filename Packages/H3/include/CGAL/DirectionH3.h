@@ -22,4 +22,3 @@
 // ======================================================================
  
 #include <CGAL/PVDH3.h>
-#include <CGAL/predicates_on_pointsH3.h>
