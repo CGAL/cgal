@@ -98,11 +98,12 @@ CGAL_BEGIN_NAMESPACE
 #define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW))
 #endif
 typedef unsigned short FPU_CW_t;
-// x86:                                    rounding | def. mask
-static const FPU_CW_t FPU_cw_near = _FPU_RC_NEAREST | 0x127f;
-static const FPU_CW_t FPU_cw_zero = _FPU_RC_ZERO    | 0x127f;
-static const FPU_CW_t FPU_cw_up   = _FPU_RC_UP      | 0x127f;
-static const FPU_CW_t FPU_cw_down = _FPU_RC_DOWN    | 0x127f;
+enum {  //               rounding | def. mask
+    FPU_cw_near = _FPU_RC_NEAREST | 0x127f,
+    FPU_cw_zero = _FPU_RC_ZERO    | 0x127f,
+    FPU_cw_up   = _FPU_RC_UP      | 0x127f,
+    FPU_cw_down = _FPU_RC_DOWN    | 0x127f
+};
 #endif // __i386
 
 #ifdef __sparc
@@ -110,17 +111,20 @@ static const FPU_CW_t FPU_cw_down = _FPU_RC_DOWN    | 0x127f;
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ld %0,%%fsr" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("st %%fsr,%0" : "=m" (CW))
 typedef unsigned int FPU_CW_t;
-// Sparc:                           rounding   | precision  | def.mask
-static const FPU_CW_t FPU_cw_near = 0x0        | 0x20000000 | 0x1f;
-static const FPU_CW_t FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f;
-static const FPU_CW_t FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f;
-static const FPU_CW_t FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f;
+enum {  //        rounding   | precision  | def.mask
+    FPU_cw_near = 0x0        | 0x20000000 | 0x1f,
+    FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f,
+    FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f,
+    FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f
+};
 #else
 typedef fp_rnd FPU_CW_t;
-static const FPU_CW_t FPU_cw_near = FP_RN;
-static const FPU_CW_t FPU_cw_zero = FP_RZ;
-static const FPU_CW_t FPU_cw_up   = FP_RP;
-static const FPU_CW_t FPU_cw_down = FP_RM;
+enum {
+    FPU_cw_near = FP_RN,
+    FPU_cw_zero = FP_RZ,
+    FPU_cw_up   = FP_RP,
+    FPU_cw_down = FP_RM
+};
 #endif
 #endif // __sparc
 
@@ -129,23 +133,29 @@ static const FPU_CW_t FPU_cw_down = FP_RM;
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
 typedef unsigned int FPU_CW_t;
-static const FPU_CW_t FPU_cw_near = 0x0;
-static const FPU_CW_t FPU_cw_zero = 0x1;
-static const FPU_CW_t FPU_cw_up   = 0x2;
-static const FPU_CW_t FPU_cw_down = 0x3;
+enum {
+    FPU_cw_near = 0x0,
+    FPU_cw_zero = 0x1,
+    FPU_cw_up   = 0x2,
+    FPU_cw_down = 0x3
+};
 #else
 #ifdef __SGI_ieeefph__ // 2 cases for C... I love IRIX !!!
 typedef fp_rnd FPU_CW_t;
-static const FPU_CW_t FPU_cw_near = FP_RN;
-static const FPU_CW_t FPU_cw_zero = FP_RZ;
-static const FPU_CW_t FPU_cw_up   = FP_RP;
-static const FPU_CW_t FPU_cw_down = FP_RM;
+enum {
+    FPU_cw_near = FP_RN,
+    FPU_cw_zero = FP_RZ,
+    FPU_cw_up   = FP_RP,
+    FPU_cw_down = FP_RM
+};
 #else
 typedef int FPU_CW_t;
-static const FPU_CW_t FPU_cw_near = ROUND_TO_NEAREST;
-static const FPU_CW_t FPU_cw_zero = ROUND_TO_ZERO;
-static const FPU_CW_t FPU_cw_up   = ROUND_TO_PLUS_INFINITY;
-static const FPU_CW_t FPU_cw_down = ROUND_TO_MINUS_INFINITY;
+enum {
+    FPU_cw_near = ROUND_TO_NEAREST,
+    FPU_cw_zero = ROUND_TO_ZERO,
+    FPU_cw_up   = ROUND_TO_PLUS_INFINITY,
+    FPU_cw_down = ROUND_TO_MINUS_INFINITY
+};
 #endif
 #endif
 #endif // __mips
@@ -155,22 +165,28 @@ static const FPU_CW_t FPU_cw_down = ROUND_TO_MINUS_INFINITY;
 #define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : :"f" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("excb; mf_fpcr %0" : "=f" (CW))
 typedef unsigned long FPU_CW_t;
-// Alpha:                           rounding
-static const FPU_CW_t FPU_cw_zero = 0x0000000000000000UL;
-static const FPU_CW_t FPU_cw_near = 0x0800000000000000UL;
-static const FPU_CW_t FPU_cw_up   = 0x0c00000000000000UL;
-static const FPU_CW_t FPU_cw_down = 0x0400000000000000UL;
+enum { //         rounding
+    // I guess it won't work, because enum == int.
+    FPU_cw_zero = 0x0000000000000000UL,
+    FPU_cw_near = 0x0800000000000000UL,
+    FPU_cw_up   = 0x0c00000000000000UL,
+    FPU_cw_down = 0x0400000000000000UL
+};
 #else
 typedef unsigned int FPU_CW_t;
-static const FPU_CW_t FPU_cw_zero = FP_RND_RZ;
-static const FPU_CW_t FPU_cw_near = FP_RND_RN;
-static const FPU_CW_t FPU_cw_up   = FP_RND_RP;
-static const FPU_CW_t FPU_cw_down = FP_RND_RM;
+enum {
+    FPU_cw_zero = FP_RND_RZ,
+    FPU_cw_near = FP_RND_RN,
+    FPU_cw_up   = FP_RND_RP,
+    FPU_cw_down = FP_RND_RM
+};
 #endif
 #endif // __alpha
 
 
-// Generic part.
+// Main functions:
+static inline FPU_CW_t FPU_get_control_word (void);
+static inline void FPU_set_control_word (FPU_CW_t);
 
 static inline FPU_CW_t FPU_get_control_word (void)
 {
