@@ -267,7 +267,7 @@ Geomview_stream::look_recenter() const
 Geomview_stream&
 Geomview_stream::operator<<(const std::string s)
 {
-    if (s.length() != ::write(out, s.data(), s.length())) {
+    if ((int)s.length() != ::write(out, s.data(), s.length())) {
         std::cerr << "write problem in the pipe while sending data to geomview"
              << std::endl;
         exit(-1);
