@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/GR /Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGAL3)\include\CGAL\config\msvc7&quot;;&quot;$(CGAL3)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;NOMINMAX;CGAL_USE_POLYHEDRON_DESIGN_TWO"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGAL3)/lib/msvc7/cgal_mt_debug.lib"
+				AdditionalOptions="$(CGALROOT)/lib/msvc7/cgal_mt_debug.lib"
 				AdditionalDependencies="opengl32.lib glu32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -82,7 +82,7 @@
 				FavorSizeOrSpeed="1"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="&quot;$(CGAL3)\include\CGAL\config\msvc7&quot;;&quot;$(CGAL3)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;NOMINMAX;CGAL_USE_POLYHEDRON_DESIGN_TWO"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="0"
@@ -95,7 +95,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGAL3)/lib/msvc7/cgal_mt_release.lib"
+				AdditionalOptions="$(CGALROOT)/lib/msvc7/cgal.lib"
 				AdditionalDependencies="opengl32.lib glu32.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="FALSE"
