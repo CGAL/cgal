@@ -26,14 +26,14 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-template < typename K >
+template < typename K_ >
 struct Weighted_point_mapper_2 
-  :   public K 
+  :   public K_ 
 {
-  typedef typename K::Weighted_point_2 Point_2;
+  typedef typename K_::Weighted_point_2 Point_2;
 
   Weighted_point_mapper_2() {}
-  Weighted_point_mapper_2(const K& k) : K(k) {}
+  Weighted_point_mapper_2(const K_& k) : K_(k) {}
 };
 
 template < class Gt, 
