@@ -43,21 +43,40 @@ cross-platform application development.
 % +-----------------------------------------------------+
 \section{Introduction}
 
-In this chapter we describe a widget and some helper classes that
-allow to interact with two dimensional \cgal\ objects in \cgalqt\/ based applications.
+This chapter describes the \ccc{Qt_widget} package which provides
+an interface between \cgal\  and the  {\sc Gui} toolkit \cgalqt\ .
+The \ccc{Qt_widget} package allows to build  Qt
+applications  showing two dimensional \cgal\ objects 
+and algorithms.
 
-The most important class is the class \ccStyle{Qt_widget}. It provides
-a drawing area and output stream operators for \cgal\ objects, as well
-as zooming and panning functionality.
+%In this chapter we describe a widget and some helper classes that
+%allow to interact with two dimensional \cgal\ objects in \cgalqt\/ based applications.
+
+The atom of the \cgalqt\ user interface is called a widget.
+A widget receives mouse, keyboard and other 
+events from the window system, and paints a representation of itself on the 
+screen. Widgets are rectangular, and the different widgets
+of an application  are sorted in a Z-order. Widgets
+can have a parent widget and  children.
+A widget is clipped by its parent and by the widgets in front of it. 
+
+
+The most important class in the package
+is the class \ccStyle{Qt_widget} which implements a widget
+providing 
+a drawing area and output stream operators for \cgal\ 
+two dimensional objects.  \ccStyle{Qt_widget} also provide
+zooming and panning functionalities.
 
 The \ccStyle{Qt_widget} allows to attach {\em layers}. Layers usually
 draw on the drawing area of the widget. Layers can be activated and
 deactivated, and what you see in the drawing area is the overlay of
-all attached activated layers. Layers can be used also for entering
+all attached activated layers. Layers can also be used for entering
 input, and \cgal\ provides input \ccc{layers} for the two-dimensional
 \cgal\ objects.
 
-Finally, we provide a {\em toolbar} for controlling the basic functionality
+The package includes also the class \ccc{Qt_widget_standard_toolbar}
+ providing a  standard toolbar for controlling the basic functionality
 of the \ccStyle{Qt_widget}.
 
 The following sections describe the main class as well as the helper classes
@@ -72,15 +91,16 @@ on the {\sc Qpl} see \verb+http://www.trolltech.com/developer/licensing/qpl.html
 \section{Qt\_widget}
 \label{Qt_widget}
 
-The class \ccStyle{Qt_widget} is derived from the \cgalqt\ class \ccStyle{QWidget}%
-\footnote{A widget is the atom of the user interface: It receives mouse, keyboard and other 
-events from the window system, and paints a representation of itself on the 
-screen. Every widget is rectangular, and they are sorted in a Z-order. A 
-widget is clipped by its parent and by the widgets in front of it.} 
+The class \ccStyle{Qt_widget} is derived from the class 
+\ccStyle{QWidget} 
+%\footnote{A widget is the atom of the user interface: It receives mouse, keyboard and other 
+%events from the window system, and paints a representation of itself on the 
+%screen. Every widget is rectangular, and they are sorted in a Z-order. A 
+%widget is clipped by its parent and by the widgets in front of it.} 
 which is the base class of all \cgalqt\ user interface objects. 
 
 
-The \ccStyle{Qt_widget} provides output operators for all \cgal\
+The \ccStyle{Qt_widget} provides output operators for two dimensional \cgal\
 objects. There are operators defined for output of : points, segments, 
 lines, rays, circles, triangles, rectangles, polygons, conics,  and all type of
 triangulations. Also some operators are defined to set
@@ -106,105 +126,72 @@ unlock() functions. See the manual reference pages of
 once, when \ccStyle{Qt\_widget} finds the last unlock(). This way you
 can avoid the window flickering.
 
-This example has a severe drawback: When you resize the window it is
-empty, as nothing is redrawn, that is this style of programs makes
+This example has a severe drawback: when you resize the window it is
+empty, as nothing is redrawn. This style of programs makes
 only sense, if you quickly want to validate output of a geometric
-computation. As in any event driven {\sc Gui} application, you have to provide 
-a draw callback so that the window system can update the drawing
+computation. As in any event driven {\sc Gui} application,
+ \cgalqt\  provides a callback mecanism so
+that the window system can update the drawing
 whenever necessary. This is the topic of the next example.
 
-\subsection{Example: Draw Callback}
+\subsection{Example: Signals and Slots}
 
-This example is slightly more involved. The user can enter points and
-the application draws the Delaunay triangulation of the point set. 
+This example is slightly more involved and uses  the central
+signal/slots mecanism of \cgalqt\ .
 
-\ccExample
+The main widget shows a
+Delaunay triangulation. Every time the mouse button is pressed over 
+the widget, a point is input  and inserted in the Delaunay
+triangulation. The result of this insertion appears immediately.
+Furthermore, the drawing is  updated every time the window is resized.
+
+
+\ccIncludeExampleCode{Qt_widget/Examples/tutorial2.C}
+
+
+\cgalqt applications are event driven and respond to user interaction.
+For example, when a user click on a menu item or on a toolbar button,
+the application executes some codes. The programmer of an
+application has to be able to relate events to the relevant code.
+\cgalqt provide for that the signals/slots mecanism~:
+\begin{description}
+\item{\bf Signals.}
+Each \cgalqt widget declares a set of signals which, using the
+keyword \ccc{emit}  can be  emitted by member functions 
+under some circumstances. Signals are declared by using 
+the keyword \ccc{signals:} just like an
+access specifier in your class declaration.
+\item {\bf Slots.}
+A slot is just a member function declared under a public (or private)
+slots section.
+\item{\bf Connect.}
+Signals and slots can be connected together using the method 
+\ccc{connect}. This method needs to know four things: the object
+that sends out the signal, the signal, 
+the object to which belong the connected slot
+and the slot connected to the signal.
+For instance, the statement  :
 \begin{ccExampleCode}
-#include <CGAL/Cartesian.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/IO/Qt_widget_Triangulation_2.h>
-#include <CGAL/IO/Qt_widget.h>
-#include <qapplication.h>
-
-typedef CGAL::Cartesian<double>             Rep;
-typedef CGAL::Point_2<Rep>                  Point;
-typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
-
-Delaunay dt;
-typedef CGAL::Qt_widget Qt_widget;
-class My_window : public Qt_widget {
-  Q_OBJECT
-public:
-  My_window(int x, int y){
-    resize(x,y);
-    connect(this, SIGNAL(redraw_on_back()),
-           this, SLOT(redraw_win()));
-  };
-private slots:  
-  void redraw_win()
-  {
-    *this << dt;
-  }
-private:
-  //this event is called only when the user presses the mouse
-  void mousePressEvent(QMouseEvent *e)
-  {
-    Qt_widget::mousePressEvent(e);
-    dt.insert(Point(x_real(e->x()), y_real(e->y())));
-    redraw();
-  }
-};
-
-//moc_source_file : tutorial2.C
-#include "tutorial2.moc"
-
-int main( int argc, char **argv )
-{
-    QApplication app( argc, argv );
-    My_window *W = new My_window(400,400);
-    app.setMainWidget( W );
-    W->show();
-    W->set_window(0, 400, 0, 400);
-    return app.exec();
-}
-
+connect(this, SIGNAL(redraw_on_back()), this,
+SLOT(redraw_win()));
 \end{ccExampleCode}
 
-As most {\sc Gui} toolkits Qt is event driven.  In the last line
-of function \ccc{main}, the program enters an event dispatch loop.
+connects the signal \ccc{redraw_on_back()} of the widget
+\ccc{this} to the slot \ccc{redraw_win()} of the same
+widget. Signals and slots of different widget can be connected
+together. Signals and slots can have any type of arguments,
+but a signal and a slot connected together must have the same arguments types. 
+\end{description}
 
-When events, like keyboard or mouse events, happen, they
-are forwarded to the widget that has focus.  Whenever one
-presses a mouse button on the drawing area of the \ccc{CGAL::Qt\_widget},
-the callback \ccc{mousePressEvent(QMouseEvent*e)} is called.
-The event itself carries information about the position of the mouse.
-
-In the example you see some \cgalqt\ specific keywords that we explain
-next.
-
-Signals are declared by using the keyword \ccc{signals:} just like an
-access specifier in your class declaration. When a component wants to
-send out a \ccc{signal}, it uses the keyword \ccc{emit}. Slots are
-declared and implemented just like any other \CC\ method. Slots can
-have any parameters, but to be connected to a certain signal, they
-must use the same parameter types as the signal. To use signals and
-slots in your code, you must be able to bring them together. This is
-done with the method \ccc{QObject::connect()}, which connects one
-signal to one slot. This method needs to know four things: the object
-that sends out the signal, the signal that it should connect the slot
-to, the object that will receive the signal, and the slot that will be 
-connected to the signal. The signal and slot are just typed in with
-their names and parameter types, and wrapped with {\sc Signal()} and
-{\sc Slot()}, respectively.
-
-Every class that defines at least a single signal or slot must 
-be derived from the class \ccc{QObject}. Every class that uses at
-least a single signal or slot must contain the macro {\sc Q\_object}.
+Every class that defines at least a signal or a slot must 
+be derived from the class \ccc{QObject}, 
+which is done by the macro {\sc Q\_object}.
 
 Whenever you define a class of your own that uses \ccc{signals} and/or
 \ccc{slots}, it is not enough to simply compile it. You must also run
 \ccc{moc}, the Meta-Object Compiler supplied with \cgalqt\, on the file
-that contains the class declaration. Running \ccc{moc} outputs glue code that
+that contains the class declaration. Running \ccc{moc} outputs glue
+code that
 is needed for the signal/slot mechanism to work. You have two
 possibilities to add this glue code to your application: either you
 include the code generated by \ccc{moc} in one of your source files or 
@@ -215,24 +202,36 @@ The line \ccc{//moc_source_file : tutorial2.C} is for users that use
 makefiles. This line tells to the \cgal\ makefile generator that
 \ccc{tutorial2.C} should be the file that \ccc{moc} should be run on.
  This is useful when you
-have some header fies in different directories and you want that
+have some header files in different directories and you want that
 \ccc{moc} parse them and include the code in the right files. If you
 are not using makefiles you should not be concerned about this line.
 
-The control flow in the last example is now as follows. When you press the
-mouse button, a point is inserted in the triangulation.  The widget's
-method \ccc{redraw} is called. This method implemented in
-\ccc{Qt_widget} emits a signal, which is connected to the slot 
-\ccc{My_window::redraw_win()} in this example. In this
-function the drawing of the Delaunay triangulation then finally
-happens.  Note that the very same happens automatically when you
-resize the window.
+Let us come back to the control flow in the above example.
+The main widget of the application is the widget \ccc{w}
+of  class \ccc{My_window}.  The creator  of 
+\ccc{My_window} triggers the creation of a \ccc{Qt_widget}
+accessible through the pointer \ccc{widget}.
+When  the mouse button is pressed in its drawing area,
+the \ccc{Qt_widget} 
+emits the signal  \ccc{s_mousePressEvent(QMouseEvent*)}
+connected to the slot \ccc{mousePressEvent(QMouseEvent*)} of \ccc{My_window}.
+This slot inserts the point in the Delaunay triangulation
+and calls the method \ccc{redraw()} of \ccc{Qt_widget}.
+The  \ccc{redraw()} method of \ccc{Qt_widget}
+emits the signal \ccc{redraw_on_back()}. This signal is
+connected to the slot \ccc{redraw_win()}
+of  \ccc{My_window} which actually draws the triangulation.
+Note that the  \ccc{Qt_widget}  emits the same signal
+\ccc{redraw_on_back()} when the window is resized. Thus,
+the signals/slots connection  ensures that the
+triangulation is redrawn  each time the window is resized.
+
 
 \begin{ccAdvanced}
-There are a couple of ways to draw something with \ccc{Qt_widget}. One way
+There are several ways to draw something with \ccc{Qt_widget}. One way
 is to use the signals \ccc{redraw_on_back()}, \ccc{redraw_on_front()}.
 This way you can bring your drawings before all or after all the
-other drawings. The other option is to use the \ccc{QPainter} instance 
+other drawings. An other option is to use the \ccc{QPainter} instance 
 of \ccc{Qt_widget} that you can get calling \ccc{get_painter()}
 method. The most recommended way is to use layers, that are described
 in the next section.
@@ -253,7 +252,8 @@ layers. Besides better code, layers have the advantage that they can
 be activated and deactivated at runtime. Finally, more modularity
 means a higher potential for reuse.
 
-A layer can be {\em attached} to a \ccc{Qt_widget}. The widget calls
+A layer can be {\em attached} to a \ccc{Qt_widget}. The \ccc{draw()}
+member function of the \ccc{Qt_widget} calls
 the method \ccc{Qt_widget_layer::draw()} of all attached layers, in the
 order that they were attached. It is a very simple rule: the last layer
 attached will be drawn on top.
@@ -507,26 +507,25 @@ standard toolbar">
 The functionality of the toolbar is as follows from the left to right:
 \begin{description}
 %       {Button---\Roman{bean}}{\usecounter{bean}\setlength{\rightmargin}{\leftmargin}}
-        \item[Point tool:] Deactivate the standard layers from the
-standard toolbar.
-        \item[History back:] Go back into the transformation history
+         \item[History back:] Go back into the transformation history
         \item[History forth:] Go forth into the transformation history
-        \item[Zoom In:] The scaling factor is multiplied by two
+        \item[Zoom In:] The scaling factor is multiplied by two,
 keeping the same center.
-        \item[Zoom Out:] The scaling factor is divided by two keeping
+        \item[Zoom Out:] The scaling factor is divided by two, keeping
 the same center.
+       \item[Point tool:] Deactivate the layers corresponding to the
+three following buttons which form an exclusive group
         \item[Focus on Point:] Lets you choose the center of the
 region where you want to focus.
         \item[Focus on the Region:] The area in the rectangle that you selected will be magnified to best fit in the window.
         \item[Hand Tool:] Used for translate. Click to select the
 first point of translation and drag to select the second point.
         \item[Mouse Coordinates Layer:] Mouse coordinates are
-displayed on the status bar of your window. You can deactivate this
+displayed on the status bar of your window.  You can deactivate this
 layer if you click on it. To activate it again just click one more time.
 \end{description}
 
-You can select a layer by clicking on a button of the standard
-toolbar. To deactivate the layer you should press on the arrow button.
+
 
 \ccExample
 \ccIncludeExampleCode{Qt_widget/Examples/standard_toolbar.C}
