@@ -216,10 +216,7 @@ sub print_resultpage()
 {
     my $platform_count = scalar(@platforms_to_do);
 
-    print OUTPUT << "EOF";
-<H2><A NAME="testresults">Test Results</A></H2>
-
-EOF
+    print OUTPUT '<H2><A NAME="testresults">Test Results</A></H2>'."\n";
     if ($PLATFORMS_BESIDE_RESULTS) {
     	print OUTPUT <<"EOF";
 <TABLE BORDER=0 CELLSPACING=5 CELLPADDING=0>
@@ -230,32 +227,18 @@ EOF
 
     print_result_table();
 
-
     if ($PLATFORMS_BESIDE_RESULTS) {
-    	print OUTPUT <<"EOF";
-<TD>
-<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0>
-EOF
+    	print OUTPUT "<TD>\n<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0>\n";
     	if ($platform_count > 0) {
     	    my $repeat_count = (1 + 1.1/16.5)*scalar(@test_directories)/($platform_count+0.25);
 	    while ($repeat_count >= 1) {
 	    	$repeat_count--;
-	    	print OUTPUT <<"EOF";
-<TR>
-<TD>
-EOF
+	    	print OUTPUT "<TR><TD>\n";
                 print_platforms();
-                print OUTPUT <<"EOF";
-</TR>
-EOF
+                print OUTPUT "</TR>\n";
 	    }
 	}
-
-	print OUTPUT <<"EOF";
-</TABLE>
-</TR>
-</TABLE>
-EOF
+	print OUTPUT "</TABLE>\n</TR>\n</TABLE>\n";
     }
     print OUTPUT "</BODY>\n</HTML>\n";
 }
@@ -387,22 +370,18 @@ EOF
 	print OUTPUT "<TD>$count\n"; 
 	++$platform_num;
     }
-    print OUTPUT "</TABLE>\n";
-    print OUTPUT "<P>\n";
+    print OUTPUT "</TABLE>\n<P>\n";
 }
 
 sub print_platforms()
 {
     my ($pf_no,$pf) = (1,"");
-    print OUTPUT <<'EOF';
-<TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >
-EOF
+    print OUTPUT "<TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >\n";
     foreach $pf (@platforms_to_do) {
 	print OUTPUT "<TR>\n<TD>$pf_no\n";
 	$pf_no++;
 	my $pf_short = short_pfname($pf);
-	print OUTPUT "<TD NOWRAP>$platform_short_names{$pf_short}\n";
-	print OUTPUT "</TR>\n";
+	print OUTPUT "<TD NOWRAP>$platform_short_names{$pf_short}\n</TR>\n";
     }
     print OUTPUT "</TABLE>\n";
 }
@@ -444,10 +423,7 @@ EOF
 EOF
     }
 
-    print OUTPUT<<'EOF';
-</OL>
-
-EOF
+    print OUTPUT "</OL>\n";
 }
 
 
