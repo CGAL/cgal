@@ -1,20 +1,16 @@
 /***********************************************************************
 
-Prend une liste de points et renvoie une liste de segments
-correspondant a l'Alpha Shape ponderee.
+Takes a list of points and returns a list of segments corresponding to
+the weighted Alpha Shape.
 
 ************************************************************************/
-
-
 
 #include <CGAL/Cartesian.h>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream>
-// en fait le std dit sstream
-
+#include <strstream> // The standard says sstream
 #include <vector>
 #include <list>
 
@@ -31,19 +27,17 @@ correspondant a l'Alpha Shape ponderee.
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
-//Choose the better number type as possible
+// Choose an exact number type.
 #ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
+#  include <CGAL/leda_integer.h>
 typedef leda_integer coord_type;
-#else//CGAL_USE_LEDA
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
+#elif defined CGAL_USE_GMP
+#  include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz coord_type;
-#else//CGAL_USE_GMP
-#include <CGAL/double.h>
-typedef double coord_type;
-#endif//CGAL_USE_GMP
-#endif//CGAL_USE_LEDA
+#else
+#  include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float coord_type;
+#endif
 
 typedef CGAL::Cartesian<coord_type>  K;
 typedef K::Point_2 Point_base;
@@ -127,11 +121,11 @@ file_input(std::list<Point>& L)
   int n;
   is >> n;
   std::cout << "Reading " << n << " points" << std::endl;
-  Point p;
+  Point_base p;
   for( ; n>0 ; n--)
     {
       is >> p;
-      L.push_back(Point (p.point(),Coord_type(10)));
+      L.push_back(Point (p,Coord_type(10)));
     }
   std::cout << "Points inserted" << std::endl;
   return true;

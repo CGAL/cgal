@@ -1,3 +1,10 @@
+version 11.1:
+- test/example programs use MP_Float instead of double when nor LEDA nor GMP
+  are there.
+- french comments translated in example programs.
+- fix bug in test/examle program for weighted reading weighted points from a
+  file containing normal points.
+
 version 11.0:
 doc revision for release.
 

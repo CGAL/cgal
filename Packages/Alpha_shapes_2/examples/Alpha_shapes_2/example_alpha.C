@@ -1,10 +1,9 @@
 /***********************************************************************
 
-Prend une liste de points et renvoie une liste de segments
-correspondant a l'Alpha Shape.
+Takes a list of points and returns a list of segments corresponding to the
+Alpha shape.
 
 ************************************************************************/
-
 
 
 #include <CGAL/Cartesian.h>
@@ -12,14 +11,11 @@ correspondant a l'Alpha Shape.
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream>
-// en fait le std dit sstream
-
+#include <strstream> // The standard says sstream
 #include <vector>
 #include <list>
 
 #include <CGAL/Alpha_shape_euclidean_traits_2.h>
-
 #include <CGAL/Alpha_shape_vertex_base_2.h>
 
 #include <CGAL/Triangulation_face_base_2.h>
@@ -28,19 +24,17 @@ correspondant a l'Alpha Shape.
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
-//Choose the better number type as possible
+// Choose an exact number type.
 #ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
+#  include <CGAL/leda_integer.h>
 typedef leda_integer coord_type;
-#else//CGAL_USE_LEDA
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
+#elif defined CGAL_USE_GMP
+#  include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz coord_type;
-#else//CGAL_USE_GMP
-#include <CGAL/double.h>
-typedef double coord_type;
-#endif//CGAL_USE_GMP
-#endif//CGAL_USE_LEDA
+#else
+#  include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float coord_type;
+#endif
 
 typedef CGAL::Cartesian<coord_type>  K;
 
