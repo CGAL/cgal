@@ -33,7 +33,7 @@ namespace CGAL {
     typedef typename SearchTraits::Sphere_d Sphere_d;
     typedef typename SearchTraits::FT    FT;
     typedef typename SearchTraits::Construct_center_d Construct_center_d;
-    typedef typename SearchTraits::Construct_squared_radius_d Construct_squared_radius_d
+    typedef typename SearchTraits::Compute_squared_radius_d Compute_squared_radius_d;
     typedef typename SearchTraits::Construct_cartesian_const_iterator_d Construct_cartesian_const_iterator_d;
     typedef typename SearchTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d;
     typedef Sphere_d Query_item;    
@@ -52,7 +52,7 @@ namespace CGAL {
 		for(; cit != ce; cit++, pit++){
 		  distance += ((*cit)-(*pit))*((*cit)-(*pit));
 		}
-                distance += - Construct_squared_radius_d()(q);
+                distance += - Compute_squared_radius_d()(q);
                 if (distance<0) distance=FT(0);
         	return distance;
 	}
@@ -74,7 +74,7 @@ namespace CGAL {
 				((*cit)-r.max_coord(i))*((*cit)-r.max_coord(i));
 			
 		};
-                distance += - Construct_squared_radius_d()(q);
+                distance += - Compute_squared_radius_d()(q);
                 if (distance<0) distance=FT(0);
 		return distance;
 	}
@@ -93,7 +93,7 @@ namespace CGAL {
 				else
 					distance += ((*cit)-r.min_coord(i))*((*cit)-r.min_coord(i));
 		};
-		distance += - Construct_squared_radius()(q);
+		distance += - Compute_squared_radius()(q);
                 if (distance<0) distance=FT(0);
 		return distance;
 	}
