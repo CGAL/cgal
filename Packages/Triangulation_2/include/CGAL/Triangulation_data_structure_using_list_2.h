@@ -98,7 +98,6 @@ public:
   typedef Triangulation_ds_vertex_circulator_2<Vertex,Face> 
 							Vertex_circulator;
   typedef Triangulation_ds_edge_circulator_2<Vertex,Face> 
-
 							Edge_circulator;
   typedef std::list<Edge> List_edges;
 

@@ -99,8 +99,10 @@ public:
   typedef Triangulation_ds_vertex_circulator_2<Vertex,Face> 
 							Vertex_circulator;
   typedef Triangulation_ds_edge_circulator_2<Vertex,Face> 
-
 							Edge_circulator;
+  typedef std::list<Edge> List_edges;
+
+  
 private:
   Geom_traits _geom_traits;
   Vertex* _infinite_vertex; // this is for the iterator only
@@ -184,6 +186,11 @@ public:
   void remove_first(Vertex* v);
   void remove_dim_down(Vertex* v);
 
+  Vertex* star_hole(List_edges& hole);
+  void    star_hole(Vertex* v, List_edges& hole);
+  void    make_hole(Vertex* v, List_edges& hole);
+
+  Vertex* create_vertex();
   Face* create_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3);
   Face* create_face(Face* f1, int i1, Face* f2, int i2);
   Face* create_face(Face* f1, int i1, Vertex* v);
@@ -193,6 +200,7 @@ public:
   Face* create_face(Face* f); // calls copy constructor of Face
   Face* create_face();
   void  delete_face(Face*);
+  void  delete_vertex(Vertex*);
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
@@ -755,6 +763,95 @@ remove_first(Vertex* v)
   return;
 }
 
+
+template <class Gt ,class Vb, class Fb>
+inline
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+star_hole(List_edges& hole)
+{
+  Vertex* newv = create_vertex();
+  star_hole(newv, hole);
+  return newv;
+}
+
+template <class Gt ,class Vb, class Fb>
+void
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+star_hole(Vertex* newv, List_edges& hole)
+  // star the hole represented by hole around newv
+  // the triangulation is assumed to have dim=2
+  // hole is supposed to be ccw oriented
+{
+  CGAL_triangulation_precondition(dimension() == 2);
+  List_edges::const_iterator hit = hole.begin();
+
+  Face* first_f = create_face(hit->first, hit->second, newv);
+  ++hit;
+  Face* previous_f=first_f, *next_f;
+  for( ; hit != hole.end(); hit++) {
+    next_f = create_face(hit->first, hit->second, newv);
+    next_f->set_neighbor(1, previous_f);
+    previous_f->set_neighbor(0, next_f);
+    previous_f=next_f;
+  }
+  next_f->set_neighbor(0, first_f);
+  first_f->set_neighbor(1, next_f);
+  newv->set_face(first_f);
+  return;    
+}
+
+template <class Gt ,class Vb, class Fb>
+void
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+make_hole(Vertex* v, List_edges& hole)
+  // delete the faces incident to v and v
+  // and return the dscription of the hole in hole
+{
+ CGAL_triangulation_precondition(dimension() == 2);
+ std::list<Face*> to_delete;  
+
+ Face*  f, *fn;
+ int i =0, in =0;
+ Vertex*  vv;
+
+ Face_circulator fc = v->incident_faces();
+ Face_circulator done(fc);
+ do {
+   f = &(*fc);
+   i = f->index(v);
+   fn = f->neighbor(i);
+   in = fn->index(f);
+   vv = f->vertex(cw(i));
+   if( vv->face()==  f) vv->set_face(fn);
+   vv = fc->vertex(ccw(i));
+   if( vv->face()== f) vv->set_face(fn);
+   fn->set_neighbor(in, NULL);
+   hole.push_back(Edge(fn,in));
+   to_delete.push_back(f);
+ }
+  while(++fc != done);
+
+  while (! to_delete.empty()){
+    delete_face(to_delete.front());
+    to_delete.pop_front();
+  }
+  delete_vertex(v);
+  return;
+}
+
+template <class Gt ,class Vb, class Fb>
+inline
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+create_vertex()
+{
+  Vertex* newv= new Vertex();
+  set_number_of_vertices(number_of_vertices()+ 1);
+  return newv;
+}
+
+
 template < class Gt , class Vb, class Fb>
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
@@ -845,7 +942,15 @@ delete_face(Face* f)
   delete f;
 }
 
-
+template <class Gt, class Vb, class Fb>
+inline void
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+delete_vertex(Vertex* v)
+{
+  delete v;
+  set_number_of_vertices(number_of_vertices() -1);
+  return;
+}
 
 // CHECKING
 template < class Gt , class Vb, class Fb>
