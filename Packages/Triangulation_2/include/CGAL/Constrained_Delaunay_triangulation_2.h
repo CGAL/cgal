@@ -29,7 +29,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
-#include <CGAL/Dummy_output_iterator.h>
+#include <CGAL/iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -233,8 +233,7 @@ public:
 		Out_it1 fit, 
 		Face_handle start= Face_handle()) const
     {
-      Dummy_output_iterator eit;
-      return get_conflicts_and_boundary(p, fit, eit, start);
+      return get_conflicts_and_boundary(p, fit, Emptyset_iterator(), start);
     }
 
   template <class Out_it2> 
@@ -243,8 +242,7 @@ public:
 			    Out_it2 eit, 
 			    Face_handle start= Face_handle()) const
     {
-      Dummy_output_iterator fit;
-      return get_conflicts_and_boundary(p, fit, eit, start);
+      return get_conflicts_and_boundary(p, Emptyset_iterator(), eit, start);
     }
 
 private:

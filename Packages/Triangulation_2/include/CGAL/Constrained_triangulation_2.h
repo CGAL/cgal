@@ -32,7 +32,7 @@
 #include <CGAL/Triangulation_2.h> 
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/Constrained_triangulation_sweep_2.h>
-#include <CGAL/Dummy_output_iterator.h>
+#include <CGAL/iterator.h>
 	
 CGAL_BEGIN_NAMESPACE
 template < class Gt, 
@@ -686,8 +686,7 @@ inline  bool
 Constrained_triangulation_2<Gt,Tds>::
 are_there_incident_constraints(Vertex_handle v) const
 {
-  Dummy_output_iterator out;
-  return are_there_incident_constraints(v, out);
+  return are_there_incident_constraints(v, Emptyset_iterator());
 }
 
 template < class Gt, class Tds >
